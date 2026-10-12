@@ -1,4 +1,34 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 53 -->
+
+## RUN_ID 53 — dsh CLI 与配置摸底
+
+> 定位 dsh 的配置方式（CLI 子命令 / 配置文件位置 / 是否有可 headless 写的 settings.yaml 模板）。
+
+```bash
+# RUN_ID 53 · dsh CLI + 配置摸底
+echo "=== [0] ==="; hostname; date '+%F %T'
+DSH="$(npm prefix -g)/bin/dsh"
+echo "DSH=$DSH"
+echo "=== [1] dsh 子命令/帮助 ==="
+for a in '--help' '-h' 'help' '--version'; do
+  echo "--- dsh $a ---"; timeout 10 "$DSH" $a 2>&1 | head -25
+done
+echo "=== [2] dsh web 帮助 ==="
+timeout 10 "$DSH" web --help 2>&1 | head -30
+echo "=== [3] dsh 包目录 ==="
+DSHREAL="$(readlink -f "$DSH" 2>/dev/null)"
+echo "DSHREAL=$DSHREAL"
+DSHPKG="$(cd "$(dirname "$DSHREAL")/.." 2>/dev/null && pwd)"
+echo "DSHPKG=$DSHPKG"
+ls -la "$DSHPKG" 2>/dev/null | head -40
+echo "--- 找 settings / 配置样例 ---"
+find "$DSHPKG" -maxdepth 4 \( -iname '*settings*' -o -iname '*.schema.json' -o -iname '*config*example*' \) 2>/dev/null | head -20
+echo "=== [4] 现有 dsh 配置 ==="
+ls -la ~/.dsh ~/.config/dsh 2>/dev/null || echo "(none)"
+echo "env DSH_HOME=${DSH_HOME:-<unset>}"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 52 -->
 
 ## RUN_ID 52 — 验证 API + 写 opencode 配置（base64，规避中继 guard 的 `:{` 误伤）
