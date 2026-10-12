@@ -1416,3 +1416,26 @@ T3 提速验证结果：
 **⑤ 纪律**：🚫 不 kill watchdog · commit 前缀 `pretrain P-8:` · 达到判据才动正式长跑 · 若 TASK 超 32KB 按规程自行归档。
 
 **结论**：A/B 已闭合 — B/A=1.031 < 1.12 → **FAIL** → MBS=2/GBS=1024 原定稿保留，原数字全不变。
+---
+
+## 📦 归档块 · §运维指令 2026-10-10（🚀 撤 P-8 暂缓令 · 按计划书启动 P-8【44B】dist_muon 版）—— 2026-10-12 被「🛑 停训换 AdamW」取代
+
+### 🆕 运维指令 · 2026-10-10（🚀 撤 P-8 暂缓令 · 按计划书启动 P-8【44B】）· 用户直令 · 最高优先
+
+> **用户令**：「pretrain：按此执行 P-8。」—— 本指令**撤销 P-8 暂缓令（10-02）**，按 `report_pretrain_p8_plan.html`（commit cb3f54c2）正式启动 Stage (i) 预训练。
+
+**① 对象**：从零训 Mamba2-hybrid 2.220B，真实语料，**44B token**（Chinchilla 下限，≈2.0 天 @ 249K tok/s）。
+
+**② 参数**（`pretrain_launcher.py`，TP1·DP8·8 卡独占）：`--arch mamba2 --tensor-parallel 1 --seq-length 4096 --global-batch-size 1024 --micro-batch-size 2 --precision bf16_mixed --optimizer dist_muon --lr 1e-3 --min-lr 1e-5 --lr-decay-style WSD --lr-warmup-iters 524 --lr-decay-iters 1049 --train-iters 10490 --save-interval 1049 --seed 1234`（端口/master_addr/数据路径按 operator 真实入口；`layer_wise_distributed_optimizer=True`）。
+
+**③ 数据（WSD 两段各配一套比，与数据段同步切换）**：Stable ~36B = **web 88 : code 8 : math 4**（web=base，用已分词存量 en_base 206.76B + l1_en_hq 152.17B + zh 112.47B ≈502B，web 需求仅 31.7B 已覆盖 → **en_v1_4 非 44B 档阻塞项，无需等下载完成**）；Decay ~8B = **SFT 64%**（SFT-2605 + SFT-Agent-2609，内部 5 类各 20%）+ L3 24% + code 8% + math 4%。
+
+**④ 随本指令生效的勘误（已订正任务书 §输入表 / §训练要求）**：配比 `86:10:4`→`88:8:4`、stable 主体 `L3`→`base`；warmup/decay 由绝对 `250/500` 改**比例 5%/10%**（44B 档 = 524/1049 步）。
+
+**⑤ 纪律**：从零（🚫 不加载任何权重）· WSD 完整走完（decay 尾段吃到 SFT 退火混合）· 每 500 步记 loss/val/grad_norm/tok/s/GPU 独占 · 禁叠加重 I/O（vision/data 避让）· NaN/发散/OOM 如实记录+留 ckpt+日志不静默重启 · 建议挂 MaxLogit/QK 谱范数监控（超阈值 μ(·) 归一化 = MuonClip 预案）。
+
+**⑥ 启动前最后核查**：8 卡独占无争用（nvidia-smi 全 0）/ 数据 bin·idx 路径与配比一致 / dist_muon layer-wise 生效 / 磁盘预留 ≥400GB（ckpt 11×~30GB）/ 启动后报 PID + 首 500 步 loss/tok/s。
+
+**⑦ 输出**：loss 曲线 + 每 10% ckpt 路径 + final 8 集 lm_eval（Table 2 常识）；commit 前缀 `pretrain P-8:`。en_v1_4 下满后并入后续 100B 档（另行再令）。
+
+> **执行结论（2026-10-12）**：dist_muon 44B 单跑 ~25.5h 至 step8490（80.9%，~36B/44B），loss 从健康 plateau 2.44（step7880-8090）经 step8180 急升到 2.59，随后缓慢上漂至 **2.623 全程新高**；grad_norm 0.14 → 0.35-0.89（健康 5-6×）；0 NaN 未停。用户判因 dist_muon → 令**停训、换 AdamW 从零重启**。ckpt@7343=最后健康点(loss2.44)、ckpt@8392=spike后，8 ckpt 保留为证据。

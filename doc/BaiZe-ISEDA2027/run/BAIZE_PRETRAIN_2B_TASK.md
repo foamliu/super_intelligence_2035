@@ -5,23 +5,27 @@
 
 > 📦 §运维指令·2026-10-10（⚗️ MBS 2→3 A/B 验证）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：B/A=1.031 < 1.12 → FAIL → MBS=2/GBS=1024 原定稿保留。需要时再读。
 
-### 🆕 运维指令 · 2026-10-10（🚀 撤 P-8 暂缓令 · 按计划书启动 P-8【44B】）· 用户直令 · 最高优先
+### 🆕 运维指令 · 2026-10-12（🛑 停训 P-8 · 优化器 Muon→AdamW 重新启动）· 用户直令 · 最高优先
 
-> **用户令**：「pretrain：按此执行 P-8。」—— 本指令**撤销 P-8 暂缓令（10-02）**，按 `report_pretrain_p8_plan.html`（commit cb3f54c2）正式启动 Stage (i) 预训练。
+> **用户令（2026-10-12）**：「pretrain：停掉训练，重新启动，优化器从 Muon 换回 AdamW。」—— 处置 P-8 stable 段 step8490 loss 慢速发散（2.623 新高 / grad_norm 0.89=健康 5-6×）。
 
-**① 对象**：从零训 Mamba2-hybrid 2.220B，真实语料，**44B token**（Chinchilla 下限，≈2.0 天 @ 249K tok/s）。
+**① 先停当前发散训练**：保存当前 step(~8490) ckpt 作 dist_muon 发散证据 → 优雅 `pkill -f pretrain_launcher.*p8`（kill torchrun PID 1799555）→ 等 30s 确认 8 卡释放。🚫 不 kill watchdog loop(PID 1391466)。
 
-**② 参数**（`pretrain_launcher.py`，TP1·DP8·8 卡独占）：`--arch mamba2 --tensor-parallel 1 --seq-length 4096 --global-batch-size 1024 --micro-batch-size 2 --precision bf16_mixed --optimizer dist_muon --lr 1e-3 --min-lr 1e-5 --lr-decay-style WSD --lr-warmup-iters 524 --lr-decay-iters 1049 --train-iters 10490 --save-interval 1049 --seed 1234`（端口/master_addr/数据路径按 operator 真实入口；`layer_wise_distributed_optimizer=True`）。
+**② 从零重启**（🚫 不加载任何权重/优化器状态）：44B token 从头训、全新 run。
 
-**③ 数据（WSD 两段各配一套比，与数据段同步切换）**：Stable ~36B = **web 88 : code 8 : math 4**（web=base，用已分词存量 en_base 206.76B + l1_en_hq 152.17B + zh 112.47B ≈502B，web 需求仅 31.7B 已覆盖 → **en_v1_4 非 44B 档阻塞项，无需等下载完成**）；Decay ~8B = **SFT 64%**（SFT-2605 + SFT-Agent-2609，内部 5 类各 20%）+ L3 24% + code 8% + math 4%。
+**③ 优化器换回 AdamW**：`--optimizer adamw --lr 3e-4 --min-lr 1e-5`（**去 `dist_muon` + `layer_wise_distributed_optimizer=True`**，回标准 Megatron AdamW；LR 1e-3→3e-4 = AdamW 标准值）。
 
-**④ 随本指令生效的勘误（已订正任务书 §输入表 / §训练要求）**：配比 `86:10:4`→`88:8:4`、stable 主体 `L3`→`base`；warmup/decay 由绝对 `250/500` 改**比例 5%/10%**（44B 档 = 524/1049 步）。
+**④ warmup 恢复 524**：从零 → **`--lr-warmup-iters 524`**（🚫 不再用崩溃恢复的 `0`）；`--lr-decay-style WSD --lr-decay-iters 1049 --train-iters 10490 --save-interval 1049 --seed 1234`，decay 切换 🔄 step9441。
 
-**⑤ 纪律**：从零（🚫 不加载任何权重）· WSD 完整走完（decay 尾段吃到 SFT 退火混合）· 每 500 步记 loss/val/grad_norm/tok/s/GPU 独占 · 禁叠加重 I/O（vision/data 避让）· NaN/发散/OOM 如实记录+留 ckpt+日志不静默重启 · 建议挂 MaxLogit/QK 谱范数监控（超阈值 μ(·) 归一化 = MuonClip 预案）。
+**⑤ 其余配方不变**：`--arch mamba2 --tensor-parallel 1 --seq-length 4096 --global-batch-size 1024 --micro-batch-size 2 --precision bf16_mixed`；WSD 5/85/10；stable ~36B=web88:code8:math4（存量 en_base+l1_en_hq+zh 已覆盖，无需等下载）；decay ~8B=SFT64%+L3 24%+code8%+math4%。
 
-**⑥ 启动前最后核查**：8 卡独占无争用（nvidia-smi 全 0）/ 数据 bin·idx 路径与配比一致 / dist_muon layer-wise 生效 / 磁盘预留 ≥400GB（ckpt 11×~30GB）/ 启动后报 PID + 首 500 步 loss/tok/s。
+**⑥ 纪律**：每 500 步记 loss/val/grad_norm/tok/s/8卡独占；NaN/发散/OOM 如实记录+留 ckpt+日志不静默重启。**AdamW 已收敛基线**（原 2.220B A/B 三路验证，loss 平滑无 spike）；若 AdamW 仍发散 → 上报（疑数据/配比而非优化器）。
 
-**⑦ 输出**：loss 曲线 + 每 10% ckpt 路径 + final 8 集 lm_eval（Table 2 常识）；commit 前缀 `pretrain P-8:`。en_v1_4 下满后并入后续 100B 档（另行再令）。
+**⑦ 同步改 decay 脚本**：`baize_p8_decay.sh` 两段同改 `adamw + lr 3e-4`（🚫 残留 dist_muon）。
+
+**⑧ dist_muon 版 ckpt 存档**：8 个（1049~8392，含 7343 健康点/8392 spike 后）**保留为证据**，新 run 用独立目录，🚫 不覆盖。
+
+> 📦 §运维指令·2026-10-10（🚀 撤 P-8 暂缓令 · dist_muon 启动）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：dist_muon 44B 跑到 step8490(80.9%) loss 慢速发散(2.62 新高/grad_norm 0.89) → 用户令停训换 AdamW 重启。需要时再读。
 
 > 📦 §2026-10-10（✅dist_muon默认 + ⚗️dist_muon重测 + 📄刷新Muon报告 + 📄昨夜报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：dist_muon=loss3.110/122,415tok/s/37.3GB（plain Muon −26%吞吐/+38%显存 全消除→P-8默认，LR 1e-3 保留）；Muon报告§7补外部基准+overhead归因；昨夜报告11.6KB。
 
