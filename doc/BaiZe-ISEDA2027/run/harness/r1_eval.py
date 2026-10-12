@@ -137,6 +137,17 @@ class UnshareSandbox(Sandbox):
     def run(self, cmd: str, workdir: str | None = None):
         full = f"cd {workdir} && {cmd}" if workdir else cmd
         r = str(self.rootfs)
+        # Inject fix env vars based on rootfs directory name (fix1, 2026-10-13).
+        # pytest: SETUPTOOLS_SCM_PRETEND_VERSION prevents 0.1.dev1 version conflict.
+        # matplotlib: MPLSETUPCFG points to mplsetup.cfg with system_freetype=True.
+        # All repos: PIP_NO_BUILD_ISOLATION=1 + pre-populated pip cache avoids
+        #   re-downloading build deps that the sandbox blocks.
+        extra_env = ""
+        rname = Path(r).name
+        if "pytest" in rname:
+            extra_env += " SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0"
+        if "matplotlib" in rname:
+            extra_env += " MPLSETUPCFG=/testbed/mplsetup.cfg"
         inner = (
             f"mount --bind /usr {r}/usr || exit 11; "
             f"mount --bind {r}/.locale {r}/usr/lib/locale || exit 12; "
@@ -145,6 +156,7 @@ class UnshareSandbox(Sandbox):
             f"http_proxy=http://172.19.92.25:13128 "
             f"https_proxy=http://172.19.92.25:13128 "
             f"PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ "
+            f"PIP_NO_BUILD_ISOLATION=1{extra_env} "
             f"/bin/bash -c {shlex.quote(full)}"
         )
         argv = ["unshare", "--user", "--map-root-user", "--mount", "--fork",
