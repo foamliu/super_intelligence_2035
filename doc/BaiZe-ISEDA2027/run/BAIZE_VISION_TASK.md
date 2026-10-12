@@ -9,6 +9,35 @@
 
 > 📦 §运维指令 · 2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_lit_ideas.html（28.4KB, 25篇→TOP-5）已交付，commit 6743baeb。需要时再读。
 
+### 🆕 运维指令 · 2026-10-12（📄 LLaVA-OneVision-1.5 复现计划 · 中文 HTML · 基模 Qwen3.5-4B + 框架 ms-swift）· 用户直令 · **最高优先**
+
+> **用户令（2026-10-12）**：「给 vision 下指令，写个 html 计划，目标是**复现 LLaVA-OneVision-1.5**：① **基模不是 Qwen3-4B，而是 Qwen3.5-4B**；② **训练框架用 ms-swift**；③ 训练数据**除了 85M 外都已下载完毕**（`/nas_train/app.e003192/datasets/mvp_lab`）；④ **可以 web search，写出超参数**；⑤ **估计在 H100×8 上的训练时间**。」
+> **性质**：**纯调研 + 计划 + 写作**（读仓内记录 + 按需 web search）⇒ 🚫 **不占 GPU、🚫 不打断在飞的 ④-4ep**；**本轮只出计划，不启动任何训练**（执行须另批）。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_llava_ov15_repro_plan.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 硬设定（按此，不得擅改；存疑先核实再如实标注）**：
+1. **基模 = Qwen3.5-4B**（**不是** Qwen3-4B）—— web 核实其 HF repo / 权重可得性 / tokenizer / chat 模板 / 与 Qwen3-4B 的差异；**若不存在或不公开 → 如实标「未核实/不可得」并给替代（降级回 Qwen3-4B）**。
+2. **训练框架 = ms-swift**（核版本/接口：`swift sft` / `swift pt`？对**自定义视觉塔**与 OV1.5 架构的支持；本机是否已有 ms-swift 环境；给**可直接跑的 `swift` 命令模板**）。
+3. **训练数据**：用户口径「除 85M 外都已下载完毕」，路径按用户给的 `/nas_train/app.e003192/datasets/mvp_lab` —— ⚠️ **本仓既有记录多为 `/nas_train/app.e0031982/datasets/mvp-lab/`**（`ARCHIVE_DATA_SPEC_HISTORY.md`），**请实地核实真实路径与存在性，以实际盘点为唯一准**；须**盘点可用子集 + 规模**（`du -sh` + parquet 计数），并判 **85M 已下 X% 的缺口**对配方的影响。
+4. **允许 web search**：出**完整超参数表**（每项给值 + 来源/依据）。
+5. **训练时间**：估 **H100×8** 墙钟（分阶段 + 敏感性）。
+
+**③ 报告必备节**：
+1. **HERO 结论 + TL;DR**：**能否复现 + 最大阻塞**（一句话）。
+2. **原版拆解**：LLaVA-OneVision-1.5（基模 Qwen3-4B / **RICE-ViT** / **85M mid-training + 22M SFT** 两阶段 / 公开超参）—— 附来源 URL + 时效。
+3. **BaiZe 复现差异表**：`Qwen3-4B → Qwen3.5-4B`（影响 tokenizer/模板/权重/能力）；`原生 HF 训练栈 → ms-swift`（并行/显存/接口差异）。
+4. **数据盘点 + 三阶段配方**（用**实测**路径）：`align / mid-train(85M) / SFT` 数据清单 + 规模 + **85M 缺口的降级方案**。
+5. **完整超参数表 + ms-swift 命令模板**：基模 / 视觉塔（复用哪个）/ projector / 精度 / optimizer+lr+wd+warmup+scheduler / global batch / seq len / 图像分辨率与 visual token 数 / epochs·steps / grad ckpt / ZeRO·DeepSpeed·并行 / ckpt 间隔 / 随机种子。
+6. **H100×8 训练时间估算**：分阶段 step 数 × 吞吐（img/s 或 tok/s）→ 墙钟；列假设（利用率 / NFS 争用 / 重算）与 ± 敏感性。
+7. **风险 & 阻塞清单**：Qwen3.5-4B 可得性 · ms-swift 对 OV1.5/视觉塔支持 · 85M 未下满 · 磁盘 · 与 ④-4ep 的 GPU 争用。
+8. **分阶段执行清单**（S0 环境 → S1 smoke → S2 mid-train → S3 SFT → S4 评测），每步给**判据 + 交付 + 预计成本（GPU·h）**。
+9. **诚实条款**：web 时效 / 未核实项**显式标注**。
+
+**④ 纪律**：🚫 **只出计划，不启动训练、不占 GPU**（执行另批）· 🚫 不改实验数值 · web 论据带来源 + 时效 · commit 前缀 `vision plan:` · 任务书 >32KB **自滚归档**（本块加入后请自滚回 ≤32KB）。
+
+---
+
 ### 🆕 运维指令 · 2026-10-12（🚀 启动 ④-4ep：从 2ep 检查点续训 · 判据改「4ep > 70% = 胜利」）· 用户直令 · 最高优先
 
 > **用户令（2026-10-12）**：「vision 可以在现有 2ep 检查点基础上继续训练的方式启动 4ep 吗？4ep 结果如果超过 70%，也是胜利。」—— **可以**（R12 已实证从 ckpt 续跑机制）；现启动 ④-4ep。
