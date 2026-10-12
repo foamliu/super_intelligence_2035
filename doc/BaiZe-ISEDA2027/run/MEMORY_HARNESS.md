@@ -9,14 +9,14 @@ WAITING: 1
 ```
 PHASE:        H-B cline vs opencode EDA REPORT DELIVERED ✅ + H-A 7×300 COMPLETE ✅ — 2100/2100 (100.0%); 574 resolved; ALL 7 harnesses 300/300 DONE; 0 proc alive; ALL reports refreshed to final data
 已完成:       ① 7×100 HTML report ✅ · ② 7×300 LAUNCHED + workdir fix ✅ · ③ 7×300 ALL 7 harnesses 300/300 COMPLETE ✅ (2100/2100) · ④ 2026-10-11 两份报告交付 ✅ · ⑤ Report A/B refreshed ✅ · ⑥ TASK 归档 ✅ · ⑦ cline vs opencode EDA 深入对比报告 ✅ (39918B, 8 sections) · ⑧ 7×300 final report refreshed ✅ (2100/2100, 574 resolved, 36682B)
-当前动作:     R329: Verified cline-vs-opencode EDA report completeness — all 8 sections present, data cross-checked against kimi_pilot_results.json (86/300 vs 87/300, McNemar b=11/c=12, overlap 75/11/12/202). Report 39918B ≤200KB ✓, self-contained inline CSS ✓, committed e8b3f3c9. No changes needed.
+当前动作:     R330: Re-verified cline-vs-opencode EDA report — all 8 sections present, JSON data re-cross-checked (86/300 vs 87/300, McNemar b=11/c=12, both=75/neither=202, pbf=212/211, qb=2/2). Report 39918B ≤200KB ✓, committed e8b3f3c9, git clean. No changes needed.
 下一步:       ① Await next operator instruction — all deliverables complete, 7×300 finished, cline-vs-opencode report delivered and verified
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- [13:15] R329: **cline-vs-opencode EDA report verification** — re-read `report_cline_vs_opencode_eda.html` (39918B), confirmed all 8 required sections present (HERO/TL;DR, 早前回顾, 实测评比, 代码架构, EDA契合度, 半年演进, 综合结论, 诚实条款). Cross-checked JSON: cline-patched 86/300(28.7%), opencode 87/300(29.0%), McNemar b=11/c=12, both=75, cline_only=11, ocode_only=12, neither=202 — all match report. File sizes: TASK=31753B(31.0KB ✓) / MEMORY=29065B(28.4KB ✓). Git clean (no ahead/behind). No changes needed — report already committed (e8b3f3c9) and pushed. 📦 体积：TASK=31753B(31.0KB ✓) / MEMORY=29065B(28.4KB ✓)。
+- [13:48] R330: **cline-vs-opencode EDA report re-verification** — re-read `report_cline_vs_opencode_eda.html` (39918B), confirmed all 8 required sections (§1 HERO/TL;DR · §2 早前回顾 · §3 实测评比 · §4 代码架构 · §5 EDA契合度 · §6 半年演进 · §7 综合结论 · §8 诚实条款). JSON re-cross-check: cline-patched 86/300(28.7%) pbf=212 qb=2; opencode 87/300(29.0%) pbf=211 qb=2; McNemar b=11/c=12, both=75, neither=202 — all match report. Git clean (no ahead/behind), commit e8b3f3c9. 📦 体积：TASK=31753B(31.0KB ✓) / MEMORY=29014B(28.3KB ✓)。
 > 📦 R326-R327 (2026-10-12 10:30~12:05, Report A/B refresh + cline vs opencode EDA report delivery) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 > 📦 R302-R321 (2026-10-11~12, 两份报告交付 + 7×300 monitoring 97.5%→99.3%) 已归档 → daily-memories-harness/2026-10-11.md + 2026-10-12.md。需要时再读。
 > 📦 R322-R325 (2026-10-12 08:00~09:45, 7×300 monitoring 99.4%→99.7%, 567→571 resolved, hermes 288→294/300, Report B 刷新 2094 entries) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
