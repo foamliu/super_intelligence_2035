@@ -64,7 +64,8 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
-- [2026-10-12 23:39] 🔎 **巡检(phi_k10 r3 ~1h11m健康·不动作退出)**：pgrep run_cline_script→PID622197 alive(etime01:10:51·STAT Ss)·log /tmp/ABL_phi_k10_r3.log 16.2MB mtime23:39(live)·**canary-by-log✅**：ACCESS RESTRICTED=728(hook live>0)·Forbidden=0✅·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=251 trace(>0·k=10预算约束生效·持续累积)·run_code=2502·infra✅：/home=29G·4端口8650/8651/8652/8654全OPEN✅·loop PID464225✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→re-grade同口径→timeout≤10且Pass@1≥75%→r3有效→r4。
+- [2026-10-13 00:05] 🔎 **巡检(phi_k10 r3 ~96min健康·不动作退出)**：pgrep run_cline_script→PID622197 alive(etime5815s≈96min·STAT Ss)·log /tmp/ABL_phi_k10_r3.log 22.0MB mtime00:05(live)·**canary-by-log✅**：ACCESS RESTRICTED=890(hook live>0)·Forbidden=0✅·沙盒=824(hook deployed)·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=390 trace(>0·k=10预算约束生效·持续累积)·run_code=3198·⚠️**infra端口告警**：4端口8650/8651/8652/8654=**1/4 OPEN**(仅8652 OPEN·8650/8651/8654 CLOSED)→r3已在跑不中断·**收割时重点核timeout数**·/home=29G✅·MCP:8090在听✅·loop PID2302281✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive(.last_run_id=64=inbox最新)·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→re-grade同口径→timeout≤10且Pass@1≥75%→r3有效→r4。
+- [2026-10-12 23:39] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~1h11m健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:39。
 - [2026-10-12 23:32] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~1h04m健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:32。
 - [2026-10-12 23:07] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~39min健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:07。
 - [2026-10-12 23:01] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~32min健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:01。
