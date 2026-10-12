@@ -133,12 +133,12 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 # Per-harness analysis sections
 harness_info = {
     'cline-patched': {'tools':'read_file/write_file/execute_command/search_codebase/list_files/ask_question (cline 原生工具集)','loop':'cline 的 agent 循环：模型决策 → 工具调用 → 结果注入 → 下一轮，无显式 turn limit 但有 Auto Compact 上下文压缩','context':'Auto Compact：per-provider 白名单（Claude 4/GPT-5/Gemini 2.5/Grok 4），阈值 = contextWindow × 0.9，压缩策略 = 摘要旧消息 + 保留最近窗口','plan':'Focus Chain 已被移除（task-proxy.ts:144 stub），无跨压缩持久任务状态','patch':'生成 diff/patch 后直接写入文件系统，依赖 git checkout 恢复','recovery':'失败后依赖 git stash/ref 恢复文件状态；压缩 sidecar 独立落盘（PR #12747 曾修复漂移）','stop':'模型自行决定停止（无显式 turn cap），或 wall timeout 1800s','strengths':'中上 resolve rate (28.7%)；wall time 适中 (498s mean)；Focus Chain 虽移除但基础循环稳定','weaknesses':'211/212 PBF 的 stdout_tail 出现 ai@7.0.49 transform error（99.5%！）；75/212 patch_not_applied (35.4%)；无跨压缩任务持久层'},
-    'opencode': {'tools':'read/write/edit/grep/glob/bash/unified_diff (opencode 原生工具集)','loop':'opencode 的 agent 循环类似 cline，但工具调用更轻量','context':'基于 opencode 自有的上下文管理，压缩策略未公开详细文档','plan':'有内置 todo/plan 机制','patch':'生成 unified_diff 格式 patch','recovery':'基于 git 的文件恢复','stop':'模型自行决定或 timeout','strengths':'最高 resolve rate 之一 (29.0%)；最快 wall time (460s mean)；与 cline 头对头最相似 (both=50)','weaknesses':'71/211 patch_not_applied (33.6%)；blocked=2'},
-    'pi': {'tools':'Pi agent 的原生工具集（文件读写 + 执行 + 搜索）','loop':'Pi 的 agent 循环','context':'Pi 的上下文管理','plan':'Pi 有内置任务跟踪','patch':'Pi 的 patch 生成','recovery':'Pi 的失败恢复','stop':'模型或 timeout','strengths':'最高 resolve rate (30.1%)；resolved wall time 最快 (363s mean)；与 cline both=54（最高重叠）','weaknesses':'70/200 patch_not_applied (35.0%)；blocked=7'},
+    'opencode': {'tools':'read/write/edit/grep/glob/bash/unified_diff (opencode 原生工具集)','loop':'opencode 的 agent 循环类似 cline，但工具调用更轻量','context':'基于 opencode 自有的上下文管理，压缩策略未公开详细文档','plan':'有内置 todo/plan 机制','patch':'生成 unified_diff 格式 patch','recovery':'基于 git 的文件恢复','stop':'模型自行决定或 timeout','strengths':f'最高 resolve rate 之一 ({stats["opencode"]["rate"]:.1f}%)；最快 wall time ({stats["opencode"]["wall_mean"]:.0f}s mean)；与 cline 头对头最相似 (both={h2h["opencode"]["both"]})','weaknesses':f'{stats["opencode"]["pbf_eval"].get("patch_not_applied",0)}/{stats["opencode"]["pbf"]} patch_not_applied ({100*stats["opencode"]["pbf_eval"].get("patch_not_applied",0)/stats["opencode"]["pbf"]:.1f}%)；blocked={stats["opencode"]["blocked"]}'},
+    'pi': {'tools':'Pi agent 的原生工具集（文件读写 + 执行 + 搜索）','loop':'Pi 的 agent 循环','context':'Pi 的上下文管理','plan':'Pi 有内置任务跟踪','patch':'Pi 的 patch 生成','recovery':'Pi 的失败恢复','stop':'模型或 timeout','strengths':f'最高 resolve rate ({stats["pi"]["rate"]:.1f}%)；resolved wall time 最快 ({stats["pi"]["rwall_mean"]:.0f}s mean)；与 cline both={h2h["pi"]["both"]}（高重叠）','weaknesses':f'{stats["pi"]["pbf_eval"].get("patch_not_applied",0)}/{stats["pi"]["pbf"]} patch_not_applied ({100*stats["pi"]["pbf_eval"].get("patch_not_applied",0)/stats["pi"]["pbf"]:.1f}%)；blocked={stats["pi"]["blocked"]}'},
     'codex': {'tools':'Codex 的工具集（shell + file ops + apply_patch）','loop':'Codex agent 循环，有 AutoCompactWindow（ServerObserved vs Estimated token 计量）','context':'codex-rs auto_compact_window.rs：服务端 usage 优先 + 客户端估算兜底；压缩 = 一个带 sidecar 的检查点事务','plan':'ThreadGoal + update_plan 把目标/计划脱离对话历史','patch':'apply_patch 工具生成结构化 patch','recovery':'Rollout + window_id 链提供审计与恢复锚','stop':'Auto Compact 触发或显式 turn cap','strengths':'token 计量最精确（服务端 usage 优先）；检查点原子事务；有独立 goal/plan 层','weaknesses':'最慢 (922s mean)；PBF wall time 1059s（远超其他）；resolve rate 仅 26.7%'},
     'claude-code': {'tools':'Read/Write/Edit/Bash/Grep/Glob/TodoWrite/SessionMemory 等','loop':'Claude Code 的 agent 循环','context':'getSystemContext/getUserContext memoized 单例；normalizeMessagesForAPI 归一化终点','plan':'TodoWriteTool 写 appState.todos（session 状态，不随压缩丢）；SessionMemory/extractMemories 自动记忆抽取','patch':'Edit 工具直接修改文件','recovery':'基于 git 的检查点','stop':'模型或 timeout','strengths':'有 TodoWrite + SessionMemory 持久层；memoized 归一化投影；token 计量用 api usage + 估算兜底','weaknesses':f'resolve rate {stats["claude-code"]["rate"]:.1f}%（偏低）；wall time {stats["claude-code"]["wall_mean"]:.0f}s（偏慢）；{stats["claude-code"]["pbf"]} PBF 中 {stats["claude-code"]["pbf_eval"].get("patch_not_applied",0)} patch_not_applied'},
-    'deepseek-harness': {'tools':'DeepSeek harness 的工具集','loop':'事件溯源：检查点 = append-only 事件流 flush，重放即回滚','context':'DeepSeek 的上下文管理','plan':'DeepSeek 的任务跟踪','patch':'DeepSeek 的 patch 生成','recovery':'事件溯源（无第二份状态需对齐）','stop':'模型或 timeout','strengths':'事件溯源检查点（无状态漂移）；wall time 适中 (491s)','weaknesses':'最低 resolve rate 之一 (23.7%)；13 blocked；4 no-patch（唯一有 no-patch 的 harness）'},
-    'hermes': {'tools':'Dev-Primitives（仓库产物 + agent 原生接口）+ 依赖感知动态激活','loop':'HERMES 框架：依赖感知动态激活 + 执行证据回检','context':'结构化上下文管理（Dev-Primitives 缓解上下文爆炸）','plan':'依赖感知组件定位','patch':'执行证据回检定位待改组件后生成 patch','recovery':'执行证据回检','stop':'模型或 timeout','strengths':'结构化上下文管理（Dev-Primitives）；执行证据回检','weaknesses':f'最低 resolve rate ({stats["hermes"]["rate"]:.1f}%)；最慢之一 ({stats["hermes"]["wall_mean"]:.0f}s mean)；仅 {stats["hermes"]["total"]} 条（未完成 300）'},
+    'deepseek-harness': {'tools':'DeepSeek harness 的工具集','loop':'事件溯源：检查点 = append-only 事件流 flush，重放即回滚','context':'DeepSeek 的上下文管理','plan':'DeepSeek 的任务跟踪','patch':'DeepSeek 的 patch 生成','recovery':'事件溯源（无第二份状态需对齐）','stop':'模型或 timeout','strengths':'事件溯源检查点（无状态漂移）；wall time 适中 (' + f'{stats["deepseek-harness"]["wall_mean"]:.0f}s)','weaknesses':f'最低 resolve rate ({stats["deepseek-harness"]["rate"]:.1f}%)；{stats["deepseek-harness"]["blocked"]} blocked；4 no-patch（唯一有 no-patch 的 harness）'},
+    'hermes': {'tools':'Dev-Primitives（仓库产物 + agent 原生接口）+ 依赖感知动态激活','loop':'HERMES 框架：依赖感知动态激活 + 执行证据回检','context':'结构化上下文管理（Dev-Primitives 缓解上下文爆炸）','plan':'依赖感知组件定位','patch':'执行证据回检定位待改组件后生成 patch','recovery':'执行证据回检','stop':'模型或 timeout','strengths':'结构化上下文管理（Dev-Primitives）；执行证据回检；patch_not_applied 率最低 (' + f'{100*stats["hermes"]["pbf_eval"].get("patch_not_applied",0)/stats["hermes"]["pbf"]:.1f}%)','weaknesses':f'resolve rate {stats["hermes"]["rate"]:.1f}%（中游）；最慢之一 ({stats["hermes"]["wall_mean"]:.0f}s mean)；仅 {stats["hermes"]["total"]} 条（未完成 300）'},
 }
 
 harness_sections = ""
@@ -173,10 +173,10 @@ matrix_dims = [
     ('计划/todo','Focus Chain 已移除 ❌','内置 todo','内置跟踪','ThreadGoal ✅','TodoWrite + SessionMemory ✅','DeepSeek 跟踪','依赖感知定位'),
     ('token 计量','3 字符/token 静态 ❌','估算','估算','服务端 usage ✅','api usage + 估算 ✅','估算','估算'),
     ('检查点','git stash + JSON sidecar（双源）','git 恢复','git 恢复','Rollout + window_id 原子 ✅','git 检查点','事件溯源（单源）✅','执行证据回检'),
-    ('resolve rate','28.7%','29.0%','30.1%','26.7%','25.4%','23.7%','23.5%'),
-    ('wall time (mean)','498s','460s','496s','922s','624s','491s','778s'),
-    ('patch_not_applied','75/212 (35.4%)','71/211 (33.6%)','70/200 (35.0%)','63/214 (29.4%)','57/198 (28.8%)','66/212 (31.1%)','49/179 (27.4%)'),
-    ('blocked','2','2','7','6','16','13','16'),
+    ('resolve rate',*[f'{stats[h]["rate"]:.1f}%' for h in harnesses]),
+    ('wall time (mean)',*[f'{stats[h]["wall_mean"]:.0f}s' for h in harnesses]),
+    ('patch_not_applied',*[f'{stats[h]["pbf_eval"].get("patch_not_applied",0)}/{stats[h]["pbf"]} ({100*stats[h]["pbf_eval"].get("patch_not_applied",0)/stats[h]["pbf"]:.1f}%)' if stats[h]["pbf"] else '—' for h in harnesses]),
+    ('blocked',*[str(stats[h]["blocked"]) for h in harnesses]),
 ]
 
 matrix_html = '<table><tr><th>维度</th>'
@@ -197,11 +197,11 @@ matrix_html += '</table>'
 # TOP-8 improvement suggestions
 improvements = [
     {'rank':'P0','title':'修复 ai@7.0.49 transform error','evidence':'211/212 cline PBF 的 stdout_tail 出现 node_modules/ai@7.0.49+.../dist/index.js:637 transform error（99.5%！）。这是 cline 依赖的 ai SDK 版本在序列化/反序列化时的报错。kimi_pilot_results.json cline-patched entries 的 stdout_tail 字段。','benefit':'消除 99.5% PBF 尾部的 transform error 噪音；可能减少 patch_not_applied（75/212=35.4%，部分可能由 transform error 导致 patch 格式损坏）。','impl':'升级 ai SDK 依赖或 patch transform 函数；在 PreToolUse hook 中增加 patch 格式校验。','priority':'P0（最高）——99.5% 的 PBF 尾部都有此 error','status':'new','cat':'已验证'},
-    {'rank':'P0','title':'降低 patch_not_applied 率（35.4% → 目标 <25%）','evidence':'cline 75/212 PBF = patch_not_applied（35.4%），高于 codex (29.4%) 和 claude-code (28.8%) 和 hermes (27.4%)。kimi_pilot_results.json eval.patch_applied=False。','benefit':'即使 patch 不正确，至少让 patch 能 apply——这样 f2p test 能跑起来，给出有价值的失败反馈。','impl':'在 patch 写入前增加格式校验 + git apply --check 预检；对 diff 格式做 normalization。','priority':'P0','status':'new','cat':'已验证'},
+    {'rank':'P0','title':'降低 patch_not_applied 率（35.4% → 目标 <25%）','evidence':f'cline {stats["cline-patched"]["pbf_eval"].get("patch_not_applied",0)}/{stats["cline-patched"]["pbf"]} PBF = patch_not_applied（{100*stats["cline-patched"]["pbf_eval"].get("patch_not_applied",0)/stats["cline-patched"]["pbf"]:.1f}%），高于 codex ({100*stats["codex"]["pbf_eval"].get("patch_not_applied",0)/stats["codex"]["pbf"]:.1f}%) 和 claude-code ({100*stats["claude-code"]["pbf_eval"].get("patch_not_applied",0)/stats["claude-code"]["pbf"]:.1f}%) 和 hermes ({100*stats["hermes"]["pbf_eval"].get("patch_not_applied",0)/stats["hermes"]["pbf"]:.1f}%)。kimi_pilot_results.json eval.patch_applied=False。','benefit':'即使 patch 不正确，至少让 patch 能 apply——这样 f2p test 能跑起来，给出有价值的失败反馈。','impl':'在 patch 写入前增加格式校验 + git apply --check 预检；对 diff 格式做 normalization。','priority':'P0','status':'new','cat':'已验证'},
     {'rank':'P1','title':'token 计量改「服务端 usage 优先 + 保守兜底」','evidence':'cline 用 3 字符/token 静态系数（tokens.ts:8 CHARS_PER_TOKEN=3）；codex 用 ServerObserved(i64) vs Estimated(i64) 双路（auto_compact_window.rs:24-30）。cline resolve rate 28.7% 但可能因 token 计量不准导致过早/过晚压缩。','benefit':'阈值准确 → 少溢出、少过早压缩；本地模型不踩 128K 假窗口（Issue #7772）。','impl':'在 API 响应中提取 usage.prompt_tokens，缓存为 ServerObserved；无 usage 时回退 3 字符/token。','priority':'P1','status':'existing','cat':'已提过（O5）'},
     {'rank':'P1','title':'补回 TodoWrite 等价物（跨压缩持久任务状态）','evidence':'cline Focus Chain 已移除（task-proxy.ts:144 currentFocusChainChecklist?: null）；codex 有 ThreadGoal；claude-code 有 TodoWriteTool + SessionMemory。cline 压缩后「从停止处继续」只能依赖摘要文本。','benefit':'压缩后进度不丢；减少重复探索。','impl':'在 session 状态中加 todos 数组（不随压缩丢）；UI 侧渲染为 checklist。','priority':'P1','status':'existing','cat':'已提过（O4）'},
     {'rank':'P1','title':'补 PreCompact/PostCompact 压缩生命周期 Hook','evidence':'cline compaction.ts:251-254 自认「compactions performed via plugin registerMessageBuilder() or beforeModel hook bypass this wrapper entirely, so they do not emit compaction telemetry」。codex 把压缩做成带 sidecar 的检查点事务。','benefit':'压缩行为可端到端审计；插件可干预压缩策略。','impl':'在 compaction 前后增加 PreCompact/PostCompact 事件，允许插件注册回调。','priority':'P1','status':'existing','cat':'已提过（O3）'},
-    {'rank':'P2','title':'速度优化：学习 opencode/pi 的更快循环','evidence':'cline wall_mean=498s vs opencode 460s vs pi 496s；cline resolved wall=399s vs opencode 370s vs pi 363s。pi 比 cline 快 10% 且 resolve rate 更高 (30.1% vs 28.7%)。','benefit':'减少 wall time 10-15%，提高吞吐。','impl':'分析 opencode/pi 的工具调用开销差异；优化 cline 的工具结果注入路径。','priority':'P2','status':'new','cat':'已验证'},
+    {'rank':'P2','title':'速度优化：学习 opencode/pi 的更快循环','evidence':f'cline wall_mean={stats["cline-patched"]["wall_mean"]:.0f}s vs opencode {stats["opencode"]["wall_mean"]:.0f}s vs pi {stats["pi"]["wall_mean"]:.0f}s；cline resolved wall={stats["cline-patched"]["rwall_mean"]:.0f}s vs opencode {stats["opencode"]["rwall_mean"]:.0f}s vs pi {stats["pi"]["rwall_mean"]:.0f}s。pi 比 cline 快 {(1-stats["pi"]["wall_mean"]/stats["cline-patched"]["wall_mean"])*100:.0f}% 且 resolve rate 更高 ({stats["pi"]["rate"]:.1f}% vs {stats["cline-patched"]["rate"]:.1f}%)。','benefit':'减少 wall time 10-15%，提高吞吐。','impl':'分析 opencode/pi 的工具调用开销差异；优化 cline 的工具结果注入路径。','priority':'P2','status':'new','cat':'已验证'},
     {'rank':'P2','title':'选择性证据保留压缩（inspired by UNREAL）','evidence':'cline 的 Auto Compact 是全量摘要旧消息——可能丢失高证据价值的历史片段。UNREAL (2610.08463) 证明「证据稀疏」路线有效：只喂被选中的证据。cline PBF 中 119 f2p_all_fail——部分可能因压缩后丢失了关键上下文。','benefit':'压缩后保留高证据价值的历史片段，减少 f2p_all_fail。','impl':'在压缩时用模型内部表示评估历史消息的证据价值，选择性保留 top-k 而非全量摘要。','priority':'P2','status':'new','cat':'仅灵感'},
     {'rank':'P2','title':'失败条件化重试（inspired by FC-SWE）','evidence':'cline 212 PBF 中 119 f2p_all_fail + 15 f2p_partial——这些是「知道改哪里但改不对」的实例。FC-SWE (2610.07898) 证明「失败补丁 + 验证器反馈」作为条件上下文再发起修复轨迹有效。当前 cline 失败后只做简单 retry。','benefit':'把 f2p_all_fail 的一部分转为 resolved；FC-SWE 报告 Resolved@2 52.8% vs @1 41.7%（+11.1pp）。','impl':'在 f2p 失败后，把 f2p test 输出 + 失败 patch 作为条件上下文注入新轨迹，而非从头开始。','priority':'P2','status':'new','cat':'仅灵感'},
 ]
@@ -254,7 +254,7 @@ html_content = f'''<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>交互轨迹对比分析报告 · harness 线 · 2026-10-11</title>
+<title>交互轨迹对比分析报告 · harness 线 · 2026-10-12（刷新）</title>
 <style>{css}</style>
 </head>
 <body>
@@ -264,25 +264,25 @@ html_content = f'''<!DOCTYPE html>
   <h1>交互轨迹对比分析报告：各 harness vs cline</h1>
   <div class="sub">harness 研究线 · 7 harness × SWE-bench Lite 300 条 · 同一 backbone (kimi-k2.6-cloud) · 以 cline 为轴</div>
   <div class="meta">
-    <span>2026-10-11</span><span>{len(data)} entries · 7 harness</span><span>{len(all7)} instances (all-7)</span><span>数据源：kimi_pilot_results.json</span>
+    <span>2026-10-12（刷新）</span><span>{len(data)} entries · 7 harness</span><span>{len(all7)} instances (all-7)</span><span>数据源：kimi_pilot_results.json</span>
   </div>
 </header>
 
 <div class="tldr">
-<b>HERO 一句话结论</b>：在同一 backbone (kimi-k2.6-cloud) 下，7 个 harness 的 resolve rate 从 23.5% 到 30.1%——<b>6.6pp 方差完全由 harness 架构差异造成</b>。
-<b>cline-patched (28.7%) 排第三</b>，但暴露两个硬伤：<b>① 99.5% 的 PBF 尾部有 ai@7.0.49 transform error</b>（211/212），<b>② patch_not_applied 率 35.4%</b>（75/212，高于 codex/claude-code/hermes）。
-<b>pi (30.1%) 最强且最快</b>（resolved wall 363s），<b>opencode (29.0%) 与 cline 最相似</b>（head-to-head both=50），<b>codex 最慢但 token 计量最精确</b>（服务端 usage 优先）。
+<b>HERO 一句话结论</b>：在同一 backbone (kimi-k2.6-cloud) 下，7 个 harness 的 resolve rate 从 {min(s["rate"] for s in stats.values()):.1f}% 到 {max(s["rate"] for s in stats.values()):.1f}%——<b>{max(s["rate"] for s in stats.values())-min(s["rate"] for s in stats.values()):.1f}pp 方差完全由 harness 架构差异造成</b>。
+<b>cline-patched ({stats["cline-patched"]["rate"]:.1f}%) 排第三</b>，但暴露两个硬伤：<b>① 99.5% 的 PBF 尾部有 ai@7.0.49 transform error</b>（211/212），<b>② patch_not_applied 率 {100*stats["cline-patched"]["pbf_eval"].get("patch_not_applied",0)/stats["cline-patched"]["pbf"]:.1f}%</b>（{stats["cline-patched"]["pbf_eval"].get("patch_not_applied",0)}/{stats["cline-patched"]["pbf"]}，高于 codex/claude-code/hermes）。
+<b>pi ({stats["pi"]["rate"]:.1f}%) 最强且最快</b>（resolved wall {stats["pi"]["rwall_mean"]:.0f}s），<b>opencode ({stats["opencode"]["rate"]:.1f}%) 与 cline 最相似</b>（head-to-head both={h2h["opencode"]["both"]}），<b>codex 最慢但 token 计量最精确</b>（服务端 usage 优先）。
 <br><b>TOP-8 改进建议</b>：P0 两条修 cline 的 ai@7.0.49 error + patch_not_applied；P1 三条沿用已提过的 O3/O4/O5；P2 三条新增（速度优化 + 选择性证据保留 + 失败条件化重试）。
 </div>
 
 <h2 class="sec">1. HERO 结论 + TL;DR</h2>
 <div class="card">
 <b>TL;DR</b>：<br>
-• <b>resolve rate 排名</b>：pi (30.1%) > opencode (29.0%) > cline-patched (28.7%) > codex (26.7%) > claude-code (25.4%) > deepseek-harness (23.7%) > hermes (23.5%)<br>
-• <b>速度排名</b>：opencode (460s) < pi (496s) < cline (498s) < deepseek (491s) < claude-code (624s) < hermes (778s) < codex (922s)<br>
-• <b>速度-精度 Pareto</b>：pi 是最优 Pareto 点（最高 rate + 第二快）；codex 是最差（最低 rate 之一 + 最慢）<br>
+• <b>resolve rate 排名</b>：pi ({stats["pi"]["rate"]:.1f}%) > opencode ({stats["opencode"]["rate"]:.1f}%) > cline-patched ({stats["cline-patched"]["rate"]:.1f}%) > hermes ({stats["hermes"]["rate"]:.1f}%) > codex ({stats["codex"]["rate"]:.1f}%) > claude-code ({stats["claude-code"]["rate"]:.1f}%) > deepseek-harness ({stats["deepseek-harness"]["rate"]:.1f}%)<br>
+• <b>速度排名</b>：opencode ({stats["opencode"]["wall_mean"]:.0f}s) < deepseek ({stats["deepseek-harness"]["wall_mean"]:.0f}s) < pi ({stats["pi"]["wall_mean"]:.0f}s) < cline ({stats["cline-patched"]["wall_mean"]:.0f}s) < claude-code ({stats["claude-code"]["wall_mean"]:.0f}s) < hermes ({stats["hermes"]["wall_mean"]:.0f}s) < codex ({stats["codex"]["wall_mean"]:.0f}s)<br>
+• <b>速度-精度 Pareto</b>：pi 是最优 Pareto 点（最高 rate + 第三快）；codex 是最差（resolve rate 偏低 + 最慢）<br>
 • <b>instance 重叠</b>：{len(all7)} 个 all-7 instances 中 {nobody} 个 nobody solved ({100*nobody/len(all7):.1f}%)、{everybody} 个 everybody solved ({100*everybody/len(all7):.1f}%)、{some} 个 some solved ({100*some/len(all7):.1f}%)<br>
-• <b>cline 独解能力</b>：2 个 instances 只有 cline 解出；head-to-head 与 opencode 互补性最弱（both=50），与 deepseek 互补性最强（cline_only=24）<br>
+• <b>cline 独解能力</b>：2 个 instances 只有 cline 解出；head-to-head 与 opencode 互补性最弱（both={h2h["opencode"]["both"]}），与 deepseek 互补性最强（cline_only={h2h["deepseek-harness"]["cline_only"]}）<br>
 • <b>eval 环境限制</b>：matplotlib/sphinx/pytest 全部 0%（7 harness 全 0%），这些 0 分不代表 harness 能力<br>
 • <b>cline 硬伤</b>：ai@7.0.49 transform error (99.5% PBF 尾部) + patch_not_applied 35.4%
 </div>
@@ -343,13 +343,13 @@ html_content = f'''<!DOCTYPE html>
 <div class="card cline">
 <table>
 <tr><th>指标</th><th>cline-patched</th><th>7-harness 中位数</th><th>排名</th></tr>
-<tr><td>resolve rate</td><td>28.7% (86/300)</td><td>26.7%</td><td>3/7</td></tr>
-<tr><td>wall time (mean)</td><td>498s</td><td>496s</td><td>4/7</td></tr>
-<tr><td>resolved wall (mean)</td><td>399s</td><td>445s</td><td>2/7（快）</td></tr>
-<tr><td>PBF wall (mean)</td><td>540s</td><td>558s</td><td>3/7</td></tr>
-<tr><td>patch_not_applied 率</td><td>35.4% (75/212)</td><td>33.6%</td><td>5/7（偏高）</td></tr>
-<tr><td>f2p_all_fail 率</td><td>56.1% (119/212)</td><td>56.6%</td><td>4/7</td></tr>
-<tr><td>blocked</td><td>2</td><td>7</td><td>1/7（最少）</td></tr>
+<tr><td>resolve rate</td><td>{stats["cline-patched"]["rate"]:.1f}% ({stats["cline-patched"]["resolved"]}/{stats["cline-patched"]["total"]})</td><td>{statistics.median([stats[h]["rate"] for h in harnesses]):.1f}%</td><td>3/7</td></tr>
+<tr><td>wall time (mean)</td><td>{stats["cline-patched"]["wall_mean"]:.0f}s</td><td>{statistics.median([stats[h]["wall_mean"] for h in harnesses]):.0f}s</td><td>4/7</td></tr>
+<tr><td>resolved wall (mean)</td><td>{stats["cline-patched"]["rwall_mean"]:.0f}s</td><td>{statistics.median([stats[h]["rwall_mean"] for h in harnesses]):.0f}s</td><td>2/7（快）</td></tr>
+<tr><td>PBF wall (mean)</td><td>{stats["cline-patched"]["fwall_mean"]:.0f}s</td><td>{statistics.median([stats[h]["fwall_mean"] for h in harnesses]):.0f}s</td><td>3/7</td></tr>
+<tr><td>patch_not_applied 率</td><td>{100*stats["cline-patched"]["pbf_eval"].get("patch_not_applied",0)/stats["cline-patched"]["pbf"]:.1f}% ({stats["cline-patched"]["pbf_eval"].get("patch_not_applied",0)}/{stats["cline-patched"]["pbf"]})</td><td>{statistics.median([100*stats[h]["pbf_eval"].get("patch_not_applied",0)/stats[h]["pbf"] for h in harnesses if stats[h]["pbf"]]):.1f}%</td><td>5/7（偏高）</td></tr>
+<tr><td>f2p_all_fail 率</td><td>{100*stats["cline-patched"]["pbf_eval"].get("f2p_all_fail",0)/stats["cline-patched"]["pbf"]:.1f}% ({stats["cline-patched"]["pbf_eval"].get("f2p_all_fail",0)}/{stats["cline-patched"]["pbf"]})</td><td>{statistics.median([100*stats[h]["pbf_eval"].get("f2p_all_fail",0)/stats[h]["pbf"] for h in harnesses if stats[h]["pbf"]]):.1f}%</td><td>4/7</td></tr>
+<tr><td>blocked</td><td>{stats["cline-patched"]["blocked"]}</td><td>{statistics.median([stats[h]["blocked"] for h in harnesses]):.0f}</td><td>1/7（最少）</td></tr>
 <tr><td>独解 instances</td><td>2</td><td>2</td><td>并列</td></tr>
 </table>
 <div class="ev"><b>错在哪一步</b>：cline 的主要失败不在「找不到要改的文件」（f2p_all_fail 率与中位数持平），而在 <b>patch 格式问题</b>（patch_not_applied 35.4%，偏高）和 <b>ai@7.0.49 transform error</b>（99.5% PBF 尾部）——这是 cline 依赖的 ai SDK 在序列化时的报错，可能导致 patch 格式损坏。</div>
@@ -359,19 +359,19 @@ html_content = f'''<!DOCTYPE html>
 <div class="card">
 <table>
 <tr><th>对比维度</th><th>cline 差在哪</th><th>cline 好在哪</th></tr>
-<tr><td>vs pi</td><td>rate 低 1.4pp；resolved wall 慢 36s；pi 独解 14 个 cline 未解的</td><td>blocked 更少 (2 vs 7)</td></tr>
-<tr><td>vs opencode</td><td>rate 低 0.3pp（几乎持平）；wall 慢 38s</td><td>head-to-head 完全对称（cline_only=10, other_only=10）；blocked 持平</td></tr>
-<tr><td>vs codex</td><td>codex 有 ThreadGoal + 服务端 token 计量 + 原子检查点</td><td>rate 高 2.0pp；wall 快 424s（近 2 倍）；blocked 更少</td></tr>
-<tr><td>vs claude-code</td><td>claude-code 有 TodoWrite + SessionMemory + memoized 归一化</td><td>rate 高 3.3pp；wall 快 126s；blocked 更少 (2 vs 16)</td></tr>
-<tr><td>vs deepseek</td><td>deepseek 有事件溯源检查点（无状态漂移）</td><td>rate 高 5.0pp；独解 24 个 deepseek 未解的；blocked 更少</td></tr>
-<tr><td>vs hermes</td><td>hermes 有 Dev-Primitives 结构化上下文 + 执行证据回检</td><td>rate 高 5.2pp；wall 快 280s；blocked 更少 (2 vs 16)</td></tr>
+<tr><td>vs pi</td><td>rate 低 {stats["pi"]["rate"]-stats["cline-patched"]["rate"]:.1f}pp；resolved wall 慢 {stats["cline-patched"]["rwall_mean"]-stats["pi"]["rwall_mean"]:.0f}s；pi 独解 {h2h["pi"]["other_only"]} 个 cline 未解的</td><td>blocked 更少 ({stats["cline-patched"]["blocked"]} vs {stats["pi"]["blocked"]})</td></tr>
+<tr><td>vs opencode</td><td>rate 低 {stats["opencode"]["rate"]-stats["cline-patched"]["rate"]:.1f}pp（几乎持平）；wall 慢 {stats["cline-patched"]["wall_mean"]-stats["opencode"]["wall_mean"]:.0f}s</td><td>head-to-head 几乎对称（cline_only={h2h["opencode"]["cline_only"]}, other_only={h2h["opencode"]["other_only"]}）；blocked 持平</td></tr>
+<tr><td>vs codex</td><td>codex 有 ThreadGoal + 服务端 token 计量 + 原子检查点</td><td>rate 高 {stats["cline-patched"]["rate"]-stats["codex"]["rate"]:.1f}pp；wall 快 {stats["codex"]["wall_mean"]-stats["cline-patched"]["wall_mean"]:.0f}s（近 2 倍）；blocked 更少</td></tr>
+<tr><td>vs claude-code</td><td>claude-code 有 TodoWrite + SessionMemory + memoized 归一化</td><td>rate 高 {stats["cline-patched"]["rate"]-stats["claude-code"]["rate"]:.1f}pp；wall 快 {stats["claude-code"]["wall_mean"]-stats["cline-patched"]["wall_mean"]:.0f}s；blocked 更少 ({stats["cline-patched"]["blocked"]} vs {stats["claude-code"]["blocked"]})</td></tr>
+<tr><td>vs deepseek</td><td>deepseek 有事件溯源检查点（无状态漂移）</td><td>rate 高 {stats["cline-patched"]["rate"]-stats["deepseek-harness"]["rate"]:.1f}pp；独解 {h2h["deepseek-harness"]["cline_only"]} 个 deepseek 未解的；blocked 更少</td></tr>
+<tr><td>vs hermes</td><td>hermes 有 Dev-Primitives 结构化上下文 + 执行证据回检 + 最低 patch_not_applied 率</td><td>rate 高 {stats["cline-patched"]["rate"]-stats["hermes"]["rate"]:.1f}pp；wall 快 {stats["hermes"]["wall_mean"]-stats["cline-patched"]["wall_mean"]:.0f}s；blocked 更少 ({stats["cline-patched"]["blocked"]} vs {stats["hermes"]["blocked"]})</td></tr>
 </table>
 </div>
 
 <h3 class="sub">7.3 Head-to-head（同 instance 对决，all-7 子集）</h3>
 <div class="card">
 {h2h_html}
-<div class="note"><b>解读</b>：cline vs opencode 最对称（both=50, 净优势=0）——两者解题风格最接近。cline vs deepseek 互补性最强（cline_only=24, other_only=12, 净优势=+12）——cline 在 deepseek 失败的 instance 上有显著优势。cline vs pi 略处下风（cline_only=6, other_only=14, 净优势=-8）。</div>
+<div class="note"><b>解读</b>：cline vs opencode 最对称（both={h2h["opencode"]["both"]}, 净优势={h2h["opencode"]["cline_only"]-h2h["opencode"]["other_only"]}）——两者解题风格最接近。cline vs deepseek 互补性最强（cline_only={h2h["deepseek-harness"]["cline_only"]}, other_only={h2h["deepseek-harness"]["other_only"]}, 净优势=+{h2h["deepseek-harness"]["cline_only"]-h2h["deepseek-harness"]["other_only"]}）——cline 在 deepseek 失败的 instance 上有显著优势。cline vs pi 略处下风（cline_only={h2h["pi"]["cline_only"]}, other_only={h2h["pi"]["other_only"]}, 净优势={h2h["pi"]["cline_only"]-h2h["pi"]["other_only"]}）。</div>
 </div>
 
 <h3 class="sub">7.4 ★ 改进意见清单（TOP-8）</h3>
@@ -440,7 +440,7 @@ html_content = f'''<!DOCTYPE html>
 </div>
 
 <footer>
-harness 线 · 交互轨迹对比分析报告 · 2026-10-11 · 自包含单文件 · 内联 CSS/SVG · 零外链 · 纯分析（不占 GPU）<br>
+harness 线 · 交互轨迹对比分析报告 · 2026-10-12（刷新）· 自包含单文件 · 内联 CSS/SVG · 零外链 · 纯分析（不占 GPU）<br>
 数据源：kimi_pilot_results.json ({len(data)} entries) + CLINE_IMPROVEMENT_OPPORTUNITIES.md + 5 份 SOURCE_ANALYSIS.html + report_harness_interaction_traces.html (2026-10-08, 旧报告)<br>
 以 cline 为轴 · 7 harness 对比 · TOP-8 改进建议 · 每格数字可复算（见 §9 证据索引）
 </footer>

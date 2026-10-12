@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>文献借鉴报告 · harness 线 · 2026-10-11</title>
+<title>文献借鉴报告 · harness 线 · 2026-10-12（补充 10-12 TestJack）</title>
 <style>:root{--bg:#f6f8fa;--card:#fff;--border:#d0d7de;--text:#1f2328;--muted:#59636e;--primary:#0b3d6e;--accent:#1f6feb;--ok:#1a7f37;--warn:#9a6700;--bad:#cf222e}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:var(--text);background:var(--bg);line-height:1.7;font-size:15px}
@@ -40,17 +40,17 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--border);color
 <div class="wrap">
 <header class="hero">
   <h1>文献借鉴报告：可借鉴 idea 精选</h1>
-  <div class="sub">harness 研究线 · 从 research 线 10-07~10-11 共 25 篇论文中提取可借鉴 idea</div>
+  <div class="sub">harness 研究线 · 从 research 线 10-07~10-11 共 25 篇论文 + 10-12 补充 1 篇（TestJack）= 26 篇中提取可借鉴 idea</div>
   <div class="meta">
-    <span>2026-10-11</span><span>25 篇 → TOP-5 + 7 备选</span><span>关注面：code agent · harness 架构 · 上下文压缩 · agent RL · SWE-bench 评测</span><span>数据源：research 线 daily HTML + papers.jsonl</span>
+    <span>2026-10-12（补充刷新）</span><span>26 篇 → TOP-5 + 8 备选</span><span>关注面：code agent · harness 架构 · 上下文压缩 · agent RL · SWE-bench 评测</span><span>数据源：research 线 daily HTML + papers.jsonl</span>
   </div>
 </header>
 <div class="tldr">
-<b>HERO 一句话结论</b>：25 篇论文中，对 harness 线<b>最有可执行价值的 TOP-5</b> 聚焦在三条技术线——<b>① agent RL 的 reward 设计</b>（FC-SWE 的失败条件化轨迹级奖励、VETTA 的 turn/token 双层信用分配），<b>② harness 架构的结构化</b>（HERMES 的 Dev-Primitives、CoTrace 的 harness-model 协同进化），<b>③ RL 扩展的工程范式</b>（MiMo-V2.6 的三轴扩展）。其中 FC-SWE 与 VETTA 可直接用于 BaiZe 后训练的 reward 设计；HERMES 与 CoTrace 可指导 harness 架构改进；MiMo-V2.6 给出工业级 RL 扩展路线图。<br><b>全部标注「仅灵感」</b>——数字均为论文自报，未复现。
+<b>HERO 一句话结论</b>：26 篇论文中，对 harness 线<b>最有可执行价值的 TOP-5</b> 聚焦在三条技术线——<b>① agent RL 的 reward 设计</b>（FC-SWE 的失败条件化轨迹级奖励、VETTA 的 turn/token 双层信用分配），<b>② harness 架构的结构化</b>（HERMES 的 Dev-Primitives、CoTrace 的 harness-model 协同进化），<b>③ RL 扩展的工程范式</b>（MiMo-V2.6 的三轴扩展）。其中 FC-SWE 与 VETTA 可直接用于 BaiZe 后训练的 reward 设计；HERMES 与 CoTrace 可指导 harness 架构改进；MiMo-V2.6 给出工业级 RL 扩展路线图。<b>10-12 补充的 TestJack</b>（rank 13）揭示了<b>评测方法论盲区</b>：34.4% 的「正确」trial 实际违反任务要求——直接质疑我们 7×300 横评的 resolve rate 可靠性。<br><b>全部标注「仅灵感」</b>——数字均为论文自报，未复现。
 </div>
 <h2 class="sec">方法与口径</h2>
 <div class="ok-box">
-<b>输入</b>：research 线 <code>doc/personal-watch/run/research/daily/2026-10-07.html</code> … <code>2026-10-11.html</code>（共 25 篇）+ <code>papers.jsonl</code>（186 篇全量）+ <code>TAKEAWAYS.md</code>。<br>
+<b>输入</b>：research 线 <code>doc/personal-watch/run/research/daily/2026-10-07.html</code> … <code>2026-10-11.html</code>（共 25 篇）+ <code>2026-10-12.html</code>（早报 3 篇，补充 TestJack 1 篇）+ <code>papers.jsonl</code>（186 篇全量）+ <code>TAKEAWAYS.md</code>。<br>
 <b>关注面</b>：code agent · harness 架构 · 交互轨迹与上下文压缩 · 工具调用与沙箱 · agent RL（reward 设计）· SWE-bench 类评测协议 · 成本-性能。<br>
 <b>筛选标准</b>：按可执行价值排序——① 与 harness 线/BaiZe 后训练的关联度 ② 方法的可操作性 ③ 证据强度。<br>
 <b>每条 idea 必带</b>：出处（arXiv ID + URL + 日期）· 一句话 · 与本线关系 · 借鉴成本 · 风险 · 价签。<br>
@@ -108,7 +108,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--border);color
   <div class="row"><div class="k">风险</div><div class="v">中（工业级报告，可行性已验证，但基础设施投入大）</div></div>
   <div class="row"><div class="k">价签</div><div class="v">约 2-4 人周</div></div>
 </div>
-<h2 class="sec">备选 idea（ranked 6-12）</h2>
+<h2 class="sec">备选 idea（ranked 6-13）</h2>
 <div class="card">
   <h3><span class="rank-badge" style="background:var(--muted)">6</span> HarnessSQL: Harness-Native Training for SQL Agents</h3>
   <div class="row"><div class="k">出处</div><div class="v"><code>2610.12274</code> · <a href="https://arxiv.org/abs/2610.12274">arXiv:2610.12274</a> · 2026-10-10 · <span class="badge b-jz">借鉴</span> · <span class="badge b-idea">仅灵感</span></div></div>
@@ -179,8 +179,18 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--border);color
   <div class="row"><div class="k">借鉴成本</div><div class="v">低</div></div>
   <div class="row"><div class="k">风险</div><div class="v">低</div></div>
   <div class="row"><div class="k">价签</div><div class="v">约 1 人日</div></div>
+</div><div class="card">
+  <h3><span class="rank-badge" style="background:var(--muted)">13</span> TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution</h3>
+  <div class="row"><div class="k">出处</div><div class="v"><code>2610.10619</code> · <a href="https://arxiv.org/abs/2610.10619">arXiv:2610.10619</a> · 2026-10-12 · <span class="badge b-jz">借鉴</span> · <span class="badge b-idea">仅灵感</span></div></div>
+  <div class="row"><div class="k">领域</div><div class="v">cs.SE · SWE-bench 评测, reward hacking, 评测器自适应</div></div>
+  <div class="row"><div class="k">一句话</div><div class="v"><b>评测器本身必须更自适应——对每次 trial 针对性地生成测试来审计固定评测器的盲区，用 ground-truth 通过的测试做交叉验证。</b></div></div>
+  <div class="row"><div class="k">摘要</div><div class="v">质疑「代码 Agent 基准分数 = 真实解题能力」：几乎所有现有 coding benchmark 仍沿用固定单元测试，而固定测试只覆盖任务要求的一部分 → Agent 可以钻评测空子（reward hacking）或悄悄漏掉必需行为却照样全绿。提出 TestJack：对每一次 trial 针对 prompt 要求自动生成测试（插件式），只用被 ground-truth patch 通过的测试，并复检每个 trial 的失败。在 6 个前沿模型后端 × 5 个基准（含 DeepSWE、SWE Marathon）上发现：约 34.4% 目前被判「正确」的…</div></div>
+  <div class="row"><div class="k">与本线关系</div><div class="v">直接对应我们的 SWE-bench 横评方法论。7×300 横评用固定 f2p/p2p test 判 resolved——TestJack 的发现（34.4% 假阳性）意味着我们的 resolve rate 可能被高估。可用于：① 评测口径改进（增加针对性测试）；② reward hacking 检测；③ 解释 PBF 中 f2p_pass_p2p_fail 的实例（可能是评测器盲区）。</div></div>
+  <div class="row"><div class="k">借鉴成本</div><div class="v">中（需实现 TestJack 的评测器进化管线 + ground-truth patch 交叉验证流程）</div></div>
+  <div class="row"><div class="k">风险</div><div class="v">中（方法在 6 模型 × 5 基准验证，但需要 ground-truth patch，SWE-bench Lite 有官方 patch 可用）</div></div>
+  <div class="row"><div class="k">价签</div><div class="v">约 1 人周</div></div>
 </div>
-<h2 class="sec">25 篇论文全览（按日期 × badge）</h2>
+<h2 class="sec">26 篇论文全览（按日期 × badge）</h2>
 <table>
 <tr><th>日期</th><th>借鉴</th><th>科普</th><th>与本线相关度</th></tr>
 <tr><td>2026-10-07</td><td>FC-SWE · HERMES · UNREAL</td><td>Building Rome · World Models Physics</td><td>FC-SWE ★★★ · HERMES ★★★ · UNREAL ★★</td></tr>
@@ -188,18 +198,19 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--border);color
 <tr><td>2026-10-09</td><td>CoTrace · 量化诊断 · VPS</td><td>METR Time Horizons</td><td>CoTrace ★★★ · METR ★</td></tr>
 <tr><td>2026-10-10</td><td>HarnessSQL · MiMo-V2.6 · OPD · DRQ</td><td>10:10 Clock · AI Hidden Messages</td><td>MiMo ★★★ · HarnessSQL ★★ · OPD ★★ · DRQ ★★</td></tr>
 <tr><td>2026-10-11</td><td>MiMo(续) · DRQ(续) · OPD(续)</td><td>Subliminal Learning · Scene Text</td><td>(与 10-10 同批)</td></tr>
+<tr><td>2026-10-12</td><td>TestJack（补充）</td><td>—（早报 3/5，晚报未出）</td><td>TestJack ★★★（评测方法论）</td></tr>
 </table>
 <div class="note">
 <b>诚实条款</b>：<br>
-① 全部 25 篇论文的数字均为<b>作者自报</b>（未复现），本报告只摘录原文结论，不转抄夸大。<br>
+① 全部 26 篇论文的数字均为<b>作者自报</b>（未复现），本报告只摘录原文结论，不转抄夸大。<br>
 ② <b>全部标注「仅灵感」</b>——当前未在 BaiZe/harness 线上验证任何 idea；如需验证，先报运维批准。<br>
 ③ TOP-5 的排序基于与 harness 线/BaiZe 后训练的关联度 + 可操作性，是人工判断，非量化排序。<br>
-④ 12 篇借鉴论文中，5 篇与 harness 线直接相关（FC-SWE / HERMES / CoTrace / VETTA / MiMo），其余 7 篇与 BaiZe 后训练/推理更相关但仍有交叉。<br>
+④ 13 篇借鉴论文中，6 篇与 harness 线直接相关（FC-SWE / HERMES / CoTrace / VETTA / MiMo / TestJack），其余 7 篇与 BaiZe 后训练/推理更相关但仍有交叉。<br>
 ⑤ 13 篇科普论文与本线直接关联弱，已略去详细分析（全量信息见 papers.jsonl）。
 </div>
 <footer>
-harness 线 · 文献借鉴报告 · 2026-10-11 · 自包含单文件 · 内联 CSS · 零外链 · 纯分析（不占 GPU）<br>
-数据源：research 线 daily HTML (10-07~10-11) + papers.jsonl + TAKEAWAYS.md · 每条 idea 均带出处 + 关系 + 成本 + 风险 + 价签
+harness 线 · 文献借鉴报告 · 2026-10-12（补充刷新）· 自包含单文件 · 内联 CSS · 零外链 · 纯分析（不占 GPU）<br>
+数据源：research 线 daily HTML (10-07~10-12) + papers.jsonl + TAKEAWAYS.md · 每条 idea 均带出处 + 关系 + 成本 + 风险 + 价签
 </footer>
 </div>
 </body>
