@@ -5,389 +5,432 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LLaVA-OneVision-1.5 复现计划 · BaiZe Vision</title>
 <style>
+:root{--bg:#0f1117;--card:#1a1d27;--border:#2a2e3a;--accent:#4fc3f7;--accent2:#81c784;--warn:#ffb74d;--danger:#ef5350;--text:#e0e0e0;--dim:#9e9e9e;--code:#1e1e2e}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.7;max-width:1100px;margin:0 auto;padding:20px}
-h1{color:#58a6ff;font-size:1.8em;border-bottom:2px solid #30363d;padding-bottom:.4em;margin:1.2em 0 .6em}
-h2{color:#79c0ff;font-size:1.4em;border-bottom:1px solid #21262d;padding-bottom:.3em;margin:1em 0 .5em}
-h3{color:#d2a8ff;font-size:1.15em;margin:.8em 0 .4em}
-p{margin:.5em 0}
-table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
-th,td{border:1px solid #30363d;padding:8px 12px;text-align:left}
-th{background:#161b22;color:#79c0ff;font-weight:600}
-tr:nth-child(even){background:#161b22}
-code{background:#1e2530;color:#f0883e;padding:2px 6px;border-radius:4px;font-family:'SF Mono',Consolas,monospace;font-size:.88em}
-pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;overflow-x:auto;margin:.8em 0;font-size:.85em;line-height:1.5}
-pre code{background:none;color:#c9d1d9;padding:0}
-.hero{background:linear-gradient(135deg,#1a1f2e,#0d1117);border:1px solid #30363d;border-radius:12px;padding:24px;margin:1em 0}
-.tldr{background:#1c2333;border-left:4px solid #58a6ff;padding:14px 18px;border-radius:0 8px 8px 0;margin:1em 0}
-.tldr strong{color:#58a6ff}
-.warn{background:#2d1b1b;border-left:4px solid #f85149;padding:14px 18px;border-radius:0 8px 8px 0;margin:1em 0}
-.warn strong{color:#f85149}
-.ok{background:#1b2d1b;border-left:4px solid #3fb950;padding:14px 18px;border-radius:0 8px 8px 0;margin:1em 0}
-.ok strong{color:#3fb950}
-.note{background:#1c2333;border-left:4px solid #d2a8ff;padding:14px 18px;border-radius:0 8px 8px 0;margin:1em 0}
-.note strong{color:#d2a8ff}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.8em;font-weight:600;margin:0 2px}
-.tag-ok{background:#1b3a1b;color:#3fb950}
-.tag-warn{background:#3a1b1b;color:#f85149}
-.tag-info{background:#1b2a3a;color:#58a6ff}
-.tag-pending{background:#3a3a1b;color:#e3b341}
-ul,ol{margin:.5em 0 .5em 1.5em}
-li{margin:.3em 0}
-.diff-table td:nth-child(1){width:18%}
-.footer{text-align:center;color:#6e7681;font-size:.85em;margin:2em 0 1em;padding-top:1em;border-top:1px solid #30363d}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","Microsoft YaHei",sans-serif;line-height:1.7;font-size:15px;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;color:var(--accent);margin:20px 0 10px;text-align:center;border-bottom:2px solid var(--border);padding-bottom:15px}
+h2{font-size:1.3em;color:var(--accent2);margin:30px 0 12px;border-left:4px solid var(--accent2);padding-left:12px}
+h3{font-size:1.1em;color:var(--accent);margin:22px 0 8px}
+h4{font-size:1em;color:var(--warn);margin:16px 0 6px}
+p{margin:8px 0}
+.hero{background:linear-gradient(135deg,#1a237e,#0d47a1);border-radius:12px;padding:25px;margin:20px 0;text-align:center}
+.hero h2{border:none;color:#fff;padding:0;margin:0 0 10px;font-size:1.2em}
+.hero p{color:#e3f2fd}
+.tldr{background:var(--card);border:2px solid var(--accent);border-radius:10px;padding:18px;margin:16px 0}
+.tldr-title{color:var(--accent);font-weight:bold;font-size:1.15em;margin-bottom:8px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.88em}
+th{background:var(--border);color:var(--accent);padding:10px 8px;text-align:left;border:1px solid #333;font-weight:600}
+td{padding:8px;border:1px solid #333;vertical-align:top}
+tr:nth-child(even){background:rgba(255,255,255,0.02)}
+code{background:var(--code);color:#c792ea;padding:2px 6px;border-radius:4px;font-family:"Fira Code","Consolas",monospace;font-size:0.85em}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;margin:12px 0;font-size:0.82em;line-height:1.5}
+pre code{background:none;padding:0;color:#c792ea}
+.cmd{color:#82aaff}.flag{color:#c3e88d}.val{color:#f78c6c}.cmt{color:#546e7a}
+.note{background:rgba(79,195,247,0.08);border-left:3px solid var(--accent);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+.warn{background:rgba(255,183,77,0.08);border-left:3px solid var(--warn);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+.danger{background:rgba(239,83,80,0.08);border-left:3px solid var(--danger);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+.ok{background:rgba(129,199,132,0.08);border-left:3px solid var(--accent2);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.75em;font-weight:600;margin:2px}
+.tag-ok{background:rgba(129,199,132,0.2);color:var(--accent2)}
+.tag-warn{background:rgba(255,183,77,0.2);color:var(--warn)}
+.tag-danger{background:rgba(239,83,80,0.2);color:var(--danger)}
+.tag-info{background:rgba(79,195,247,0.2);color:var(--accent)}
+footer{text-align:center;margin:30px 0 20px;color:var(--dim);font-size:0.85em;border-top:1px solid var(--border);padding-top:15px}
+ul,ol{margin:8px 0 8px 24px}
+li{margin:4px 0}
 </style>
 </head>
 <body>
-<div class="hero">
 <h1>LLaVA-OneVision-1.5 复现计划</h1>
-<p style="color:#8b949e">BaiZe Vision · 基模 Qwen3.5-4B + 训练框架 ms-swift · H100×8 训练时间估算</p>
-<p style="color:#6e7681;font-size:.85em;margin-top:.5em">生成日期：2026-10-12 · 纯调研+计划，不占 GPU</p>
+<p style="text-align:center;color:var(--dim)">BaiZe Vision 线 · 2026-10-12 · 基模 Qwen3.5-4B + 框架 ms-swift</p>
+<!-- HERO -->
+<div class="hero">
+<h2>🎯 HERO 结论</h2>
+<p><strong>技术上可行，但存在两个结构性阻塞</strong>：① Qwen3.5-4B 与原版基模 Qwen3-4B 架构<b>本质不同</b>（混合 GatedDeltaNet + 原生多模态），不是简单替换；② 原版训练栈基于 Megatron-AIAK，迁移到 ms-swift 需要<b>自定义模型注册 + 视觉塔适配</b>。最大阻塞 = <b>Qwen3.5-4B 自带视觉编码器</b>，与外部 RICE-ViT 的组合方式需重新设计。</p>
 </div>
+
+<!-- TL;DR -->
 <div class="tldr">
-<strong>TL;DR：</strong>
-<p style="margin-top:.5em">✅ <strong>技术上可以复现</strong>，ms-swift v4.2.0 已原生支持 <code>llava_onevision</code> + Qwen3.5；数据（含 85M）已全部就位。🔴 <strong>最大阻塞 = Qwen3.5-4B 原生多模态 vs 原版 Qwen3-4B 纯文本的架构差异</strong>，以及 H100×8 全量复现需 ~30–40 天（原版 128 A800×3.7 天），建议分阶段降配复现。</p>
+<div class="tldr-title">📋 TL;DR</div>
+<table>
+<tr><th style="width:30%">项目</th><th style="width:35%">原版 OV1.5-4B</th><th style="width:35%">BaiZe 复现方案</th></tr>
+<tr><td><b>基模</b></td><td>Qwen3-4B-Instruct-2507<br><span style="color:var(--dim)">标准 Transformer · 纯文本 · vocab 151K</span></td><td><span class="tag tag-warn">Qwen3.5-4B</span><br><span style="color:var(--dim)">混合 GatedDeltaNet · 原生多模态 · vocab 248K</span></td></tr>
+<tr><td><b>视觉塔</b></td><td>RICE-ViT-Large-patch14-560<br><span style="color:var(--dim)">DeepGlint-AI 外部 ViT</span></td><td><span class="tag tag-warn">需重新设计</span><br><span style="color:var(--dim)">Qwen3.5 自带 ViT vs 外挂 RICE-ViT</span></td></tr>
+<tr><td><b>训练框架</b></td><td>Megatron-LM + AIAK<br><span style="color:var(--dim)">离线 packing · mcore 格式</span></td><td><span class="tag tag-info">ms-swift (v4.3+)</span><br><span style="color:var(--dim)">已支持 Qwen3.5 · ZeRO2/3 · HF 格式</span></td></tr>
+<tr><td><b>训练数据</b></td><td>85M mid-train + 22M SFT<br><span style="color:var(--dim)">概念均衡 · packed WebDataset</span></td><td><span class="tag tag-ok">已盘点（实际路径见 §4）</span><br><span style="color:var(--dim)">5,714 tar 已下 + 181 SFT 子集</span></td></tr>
+<tr><td><b>H100×8 预估</b></td><td>~26,650 A100·h (≈$16K)</td><td><b>~9,600–13,300 H100·h</b><br><span style="color:var(--dim)">≈ <b>50–70 天</b>（单节点 8×H100）</span></td></tr>
+<tr><td><b>最大阻塞</b></td><td colspan="2" style="color:var(--warn)">Qwen3.5-4B 架构与原版不兼容：混合注意力 + 原生多模态，RICE-ViT 外挂方案需验证</td></tr>
+</table>
 </div>
-</div>
-
-<!-- §1 原版拆解 -->
-<h1>§1 原版 LLaVA-OneVision-1.5 拆解</h1>
-<h2>1.1 架构总览</h2>
-<table>
-<tr><th>组件</th><th>规格</th><th>来源</th></tr>
-<tr><td><strong>语言骨干</strong></td><td>Qwen3-4B（纯文本，32K 上下文）</td><td>HF: lmms-lab/LLaVA-OneVision-1.5-4B-Instruct</td></tr>
-<tr><td><strong>视觉塔</strong></td><td>RICE-ViT：1024 hidden, 24 layers, 14×14 patch, 2D RoPE</td><td>NVIDIA NeMo; arXiv:2509.23661</td></tr>
-<tr><td><strong>连接器</strong></td><td>2×2 spatial Patch Merger → LM hidden size</td><td>同上</td></tr>
-<tr><td><strong>架构类</strong></td><td>LlavaOneVisionForConditionalGeneration</td><td>transformers/NeMo</td></tr>
-<tr><td><strong>图像分辨率</strong></td><td>560×560（原生分辨率）</td><td>DeepWiki §3.3</td></tr>
-<tr><td><strong>视觉 token 数</strong></td><td>~400 tokens/图 (40×40 patches ÷4)</td><td>推算</td></tr>
-<tr><td><strong>序列长度</strong></td><td>4096 tokens</td><td>DeepWiki §3.3</td></tr>
-<tr><td><strong>精度</strong></td><td>BF16 混合精度</td><td>同上</td></tr>
-<tr><td><strong>参数总量</strong></td><td>~4B (LLM ~3.8B + ViT ~0.3B)</td><td>NVIDIA docs</td></tr>
-</table>
-<h2>1.2 四阶段训练流水线</h2>
-<table>
-<tr><th>阶段</th><th>名称</th><th>迭代数</th><th>数据</th><th>成本</th></tr>
-<tr><td>Stage 0</td><td>权重合并</td><td>—</td><td>—</td><td>~$0 (CPU)</td></tr>
-<tr><td>Stage 1</td><td>语言-图像对齐</td><td>2,500</td><td>558K 样本</td><td>~$1,000</td></tr>
-<tr><td>Stage 1.5</td><td>中期训练</td><td>20,000</td><td>85M 样本</td><td>~$12,000</td></tr>
-<tr><td>Stage 2</td><td>指令微调 SFT</td><td>3,500</td><td>780K 样本</td><td>~$3,000</td></tr>
-<tr><td><strong>合计</strong></td><td>—</td><td><strong>26,000</strong></td><td><strong>~86M</strong></td><td><strong>~$16,000</strong></td></tr>
-</table>
-<div class="note">
-<strong>关键发现（arXiv:2509.23661）：</strong>
-<ul>
-<li>中期训练<strong>简单扩增数据</strong>即可产生 SOTA 性能</li>
-<li>离线数据打包（sample packing）实现 <strong>11× 压缩率</strong></li>
-<li>训练框架 = AIAK-Training-LLM + Megatron</li>
-<li>硬件 = 128 A800 GPU × 3.7 天</li>
-<li>4B 在 27 个基准上超越 Qwen2.5-VL-3B</li>
-</ul>
-</div>
-<p style="color:#6e7681;font-size:.85em">来源：DeepWiki (indexed 2025-10-26) · NVIDIA NeMo docs · arXiv:2509.23661 · 检索 2026-10-12</p>
-
-<!-- §2 差异表 -->
-<h1>§2 BaiZe 复现差异表</h1>
-<h2>2.1 核心差异：Qwen3-4B → Qwen3.5-4B</h2>
-<table class="diff-table">
-<tr><th>维度</th><th>原版 (Qwen3-4B)</th><th>BaiZe 复现 (Qwen3.5-4B)</th></tr>
-<tr><td><strong>模态</strong></td><td>纯文本 LLM</td><td><span class="tag tag-warn">⚠ 原生多模态</span> 支持图文输入</td></tr>
-<tr><td><strong>上下文窗口</strong></td><td>32K tokens</td><td>262K tokens（可扩展至 1M+）</td></tr>
-<tr><td><strong>发布日期</strong></td><td>2025 年</td><td>2026-03-02（阿里千问开源）</td></tr>
-<tr><td><strong>许可</strong></td><td>需核实</td><td>Apache 2.0</td></tr>
-<tr><td><strong>HF repo</strong></td><td>Qwen/Qwen3-4B</td><td>Qwen/Qwen3.5-4B + Qwen/Qwen3.5-4B-Base</td></tr>
-<tr><td><strong>视觉编码器</strong></td><td>无（外接 RICE-ViT）</td><td><span class="tag tag-warn">⚠ 内置</span> 已有多模态视觉模块</td></tr>
-</table>
-<div class="warn">
-<strong>🔴 架构冲突分析：</strong>
-<p>原版 LLaVA-OV1.5 前提：纯文本 LLM + 外接 RICE-ViT。Qwen3.5-4B 已内置视觉编码器 → <strong>双视觉编码器冲突</strong>。</p>
-<p style="margin-top:.5em"><strong>三种解决方案：</strong></p>
-<ul>
-<li><strong>方案 A（推荐）</strong>：提取 Qwen3.5-4B 纯 LLM 解码器（剥离内置视觉模块）+ 外接 RICE-ViT。需核实 Qwen3.5-4B-Base 是否提供纯文本权重。</li>
-<li><strong>方案 B</strong>：用 Qwen3.5-4B 全量多模态模型，跳过 RICE-ViT，用内置视觉编码器 + LLaVA connector。架构偏离原版。</li>
-<li><strong>方案 C（降级回退）</strong>：降级回 Qwen3-4B（原版骨干），保证架构一致性。</li>
-</ul>
-<p style="margin-top:.5em;color:#e3b341">⚠ <strong>未核实</strong>：Qwen3.5-4B-Base 是否纯文本、视觉模块是否可禁用 —— 需上机拉取 config.json 核实。</p>
-</div>
-
-<h2>2.2 框架差异：AIAK Megatron → ms-swift</h2>
-<table class="diff-table">
-<tr><th>维度</th><th>原版 (AIAK Megatron)</th><th>BaiZe 复现 (ms-swift)</th></tr>
-<tr><td><strong>训练后端</strong></td><td>AIAK-Training-LLM + Megatron-LM</td><td>ms-swift（HF + Megatron-SWIFT 双后端）</td></tr>
-<tr><td><strong>模型支持</strong></td><td>自定义 LlavaOneVision</td><td><span class="tag tag-ok">✅ v4.2.0</span> <code>llava_onevision</code> model_type</td></tr>
-<tr><td><strong>Qwen3.5 支持</strong></td><td>—</td><td><span class="tag tag-ok">✅</span> FP8 训练 + 序列并行</td></tr>
-<tr><td><strong>并行策略</strong></td><td>分布式优化器并行</td><td>DDP / DeepSpeed ZeRO / FSDP / Megatron</td></tr>
-<tr><td><strong>数据格式</strong></td><td>WebDataset (.tar)</td><td>LLaVA 格式 + WebDataset + 自定义 JSON</td></tr>
-<tr><td><strong>多模态 packing</strong></td><td>离线打包 (11×)</td><td>支持 (100%+ 速度提升)</td></tr>
-<tr><td><strong>安装</strong></td><td>AIAK + Megatron-LM</td><td><code>pip install ms-swift</code></td></tr>
-<tr><td><strong>CLI</strong></td><td>自定义 shell 脚本</td><td><code>swift sft</code> / <code>swift pt</code></td></tr>
-</table>
-<div class="ok">
-<strong>✅ ms-swift 是可行的框架桥梁：</strong>v4.2.0 Release Notes 明确列出 <code>llava_onevision</code> 为新增 model_type（@randydl 贡献），同时支持 Qwen3.5 FP8 训练和序列并行。不需要从零实现架构适配。
-</div>
-<p style="color:#6e7681;font-size:.85em">来源：GitHub modelscope/ms-swift releases v4.2.0 · 检索 2026-10-12</p>
-
-<!-- §3 数据盘点 -->
-<h1>§3 数据盘点 + 三阶段配方</h1>
-<h2>3.1 实测数据路径与盘点</h2>
-<div class="note">
-<strong>🔎 路径核实：</strong>用户给定 <code>/nas_train/app.e003192/datasets/mvp_lab</code> 不存在；<strong>实际路径 = <code>/nas_train/app.e0031982/datasets/mvp-lab</code></strong>（e0031982 非 e003192，mvp-lab 非 mvp_lab）。以下基于上机 ls 实测。
-</div>
-<table>
-<tr><th>数据集</th><th>路径</th><th>格式</th><th>实测规模</th><th>状态</th></tr>
-<tr><td><strong>558K 对齐</strong></td><td>LLaVA-558K-Webdataset/</td><td>WebDataset</td><td>5 tar</td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>85M 中期(原始)</strong></td><td>...Mid-Training-85M/</td><td>子目录</td><td>6 子目录(coyo/datacomp1b/imagenet/laioncn/mint/obelics)+README</td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>85M 中期(打包)</strong></td><td>...85M-packed-webdataset/</td><td>WebDataset</td><td><strong>5,714 tar + idx</strong></td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>3M 快速子集</strong></td><td>...Quick-Start-3M/</td><td>WebDataset</td><td>60 tar</td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>SFT 指令(原始)</strong></td><td>...Instruct-Data/</td><td>Parquet</td><td><strong>181 子目录</strong></td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>SFT (WebDataset)</strong></td><td>...Instruct-Data-webdataset/</td><td>JSON</td><td>9 json packing 文件</td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>780K 指令</strong></td><td>LLaVA-NeXT-780k-webdataset/</td><td>WebDataset</td><td>78 tar</td><td><span class="tag tag-ok">✅</span></td></tr>
-<tr><td><strong>RL 数据</strong></td><td>LLaVA-OneVision-1.5-RL-Data/</td><td>子目录</td><td>stage1-normal + stage2-long</td><td><span class="tag tag-ok">✅</span></td></tr>
-</table>
-<div class="ok">
-<strong>✅ 85M 已全部就位：</strong>用户口径"除 85M 外已下载"与实测<strong>不符</strong> —— 85M 已下载（6 个原始子目录 + 5,714 个 packed tar）。README 标注 "All Completed"。另有 3M 子集可供 smoke test。
-</div>
-
-<h2>3.2 三阶段数据配方</h2>
-<table>
-<tr><th>阶段</th><th>数据集</th><th>路径</th><th>规模</th><th>说明</th></tr>
-<tr><td><strong>Stage 1: 对齐</strong></td><td>LLaVA-558K-Webdataset</td><td>LLaVA-558K-Webdataset/</td><td>558K / 5 tar</td><td>预训练 projector，冻结 LLM+ViT</td></tr>
-<tr><td><strong>Stage 1.5: 中期</strong></td><td>85M packed</td><td>...85M-packed-webdataset/</td><td>85M / 5,714 tar</td><td>全参数训练；或用 3M 子集快速验证</td></tr>
-<tr><td><strong>Stage 2: SFT</strong></td><td>Instruct-Data 或 780K</td><td>...Instruct-Data/ (181子目录) 或 780k (78 tar)</td><td>~780K</td><td>指令微调，全参数或 LoRA</td></tr>
-</table>
-
-<h2>3.3 85M 数据缺口分析</h2>
-<div class="note">
-<p>README 列出：ImageNet-21k, LAIONCN, DataComp-1B, Zero250M, COYO700M, SA-1B, MINT, Obelics。</p>
-<p>磁盘可见子目录：coyo, datacomp1b, imagenet, laioncn, mint, obelics —— <strong>缺少 Zero250M 和 SA-1B</strong>，但 packed webdataset（5,714 tar）可能已含全部源。</p>
-<p><strong>影响</strong>：若 packed tar 完整则<strong>无缺口</strong>。建议 S1 smoke test 用 wds 库抽样验证。</p>
-</div>
-
-<!-- §4 超参数表 + 命令模板 -->
-<h1>§4 完整超参数表 + ms-swift 命令模板</h1>
-<h2>4.1 超参数表</h2>
-<table>
-<tr><th>超参数</th><th>Stage 1 (对齐)</th><th>Stage 1.5 (中期)</th><th>Stage 2 (SFT)</th><th>来源</th></tr>
-<tr><td><strong>基模</strong></td><td colspan="3">Qwen3.5-4B(-Base) <span class="tag tag-warn">需核实</span></td><td>用户指定; HF: Qwen/Qwen3.5-4B</td></tr>
-<tr><td><strong>视觉塔</strong></td><td colspan="3">RICE-ViT (1024 hidden, 24 layers, 14×14 patch, 2D RoPE)</td><td>原版架构</td></tr>
-<tr><td><strong>连接器</strong></td><td colspan="3">2×2 Patch Merger → LM hidden</td><td>原版</td></tr>
-<tr><td><strong>精度</strong></td><td colspan="3">BF16</td><td>原版</td></tr>
-<tr><td><strong>优化器</strong></td><td colspan="3">AdamW (β₁=0.9, β₂=0.999)</td><td>标准</td></tr>
-<tr><td><strong>学习率</strong></td><td>1e-4</td><td>1e-4</td><td>1e-5 (LoRA: 1e-4)</td><td>百度云; SFT 降 10×; 需从 GitHub 脚本核实</td></tr>
-<tr><td><strong>权重衰减</strong></td><td colspan="3">0.0</td><td>默认</td></tr>
-<tr><td><strong>warmup</strong></td><td>~100 步</td><td>~1000 步</td><td>~100 步</td><td>百度云 warmup_steps=1000; 按迭代比例缩放</td></tr>
-<tr><td><strong>scheduler</strong></td><td colspan="3">cosine → min_lr (1/10 peak)</td><td>百度云</td></tr>
-<tr><td><strong>序列长度</strong></td><td colspan="3">4096 tokens</td><td>DeepWiki §3.3</td></tr>
-<tr><td><strong>图像分辨率</strong></td><td colspan="3">560×560</td><td>原版</td></tr>
-<tr><td><strong>视觉 token 数</strong></td><td colspan="3">~400 tokens/图</td><td>推算</td></tr>
-<tr><td><strong>全局 batch</strong></td><td>~256</td><td>~2048 (原版 128 GPU ×16)</td><td>~256</td><td>原版 accumulation-based</td></tr>
-<tr><td><strong>per-GPU batch</strong></td><td colspan="3">2–4</td><td>H100 80GB 显存约束</td></tr>
-<tr><td><strong>梯度累积</strong></td><td>16–32</td><td>64–128</td><td>16–32</td><td>补偿 GPU 不足</td></tr>
-<tr><td><strong>迭代数</strong></td><td>2,500</td><td>20,000</td><td>3,500</td><td>原版 DeepWiki</td></tr>
-<tr><td><strong>梯度检查点</strong></td><td colspan="3">启用</td><td>显存优化</td></tr>
-<tr><td><strong>梯度裁剪</strong></td><td colspan="3">1.0</td><td>原版</td></tr>
-<tr><td><strong>并行策略</strong></td><td colspan="3">DeepSpeed ZeRO-2 / ZeRO-3</td><td>ms-swift; 8 GPU 不足用 TP</td></tr>
-<tr><td><strong>ckpt 间隔</strong></td><td>每 500 步</td><td>每 2,000 步</td><td>每 500 步</td><td>按迭代 1/5</td></tr>
-<tr><td><strong>随机种子</strong></td><td colspan="3">42</td><td>可复现性</td></tr>
-</table>
-<p style="color:#e3b341;font-size:.85em">⚠ 精确 LR/warmup/batch 需从 GitHub <code>examples/llava_ov_1_5/quick_start/</code> 脚本逐字核实。上表基于 DeepWiki + 百度云（可能简化）。检索 2026-10-12。</p>
-
-<h2>4.2 ms-swift 命令模板</h2>
-<h3>环境准备</h3>
-<pre><code>pip install ms-swift  # v4.2.0+
-swift --version       # 应 >= 4.2.0
-swift sft --help | grep llava_onevision  # 验证支持</code></pre>
-
-<h3>Stage 1: 对齐训练</h3>
-<pre><code>NPROC_PER_NODE=8 swift sft \
-  --model_type llava_onevision \
-  --model Qwen/Qwen3.5-4B-Base \
-  --train_type lora \
-  --dataset /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-558K-Webdataset \
-  --torch_dtype bfloat16 \
-  --per_device_train_batch_size 4 --gradient_accumulation_steps 32 \
-  --learning_rate 1e-4 --warmup_steps 100 --lr_scheduler_type cosine \
-  --max_length 4096 --gradient_checkpointing true --deepspeed zero2 \
-  --save_steps 500 --logging_steps 10 --output_dir output/stage1_align \
-  --seed 42 --use_flash_attn true</code></pre>
-
-<h3>Stage 1.5: 中期训练（全参数）</h3>
-<pre><code>NPROC_PER_NODE=8 swift pt \
-  --model_type llava_onevision \
-  --model output/stage1_align/checkpoint-xxx \
-  --dataset .../LLaVA-OneVision-1.5-Mid-Training-85M-packed-webdataset \
-  --torch_dtype bfloat16 \
-  --per_device_train_batch_size 2 --gradient_accumulation_steps 128 \
-  --learning_rate 1e-4 --warmup_steps 1000 --lr_scheduler_type cosine \
-  --max_steps 20000 --max_length 4096 --gradient_checkpointing true \
-  --deepspeed zero3 --save_steps 2000 --logging_steps 50 \
-  --output_dir output/stage1.5_mid --seed 42 --use_flash_attn true</code></pre>
-
-<h3>Stage 2: 指令微调</h3>
-<pre><code>NPROC_PER_NODE=8 swift sft \
-  --model_type llava_onevision \
-  --model output/stage1.5_mid/checkpoint-xxx --train_type full \
-  --dataset .../LLaVA-NeXT-780k-webdataset \
-  --torch_dtype bfloat16 \
-  --per_device_train_batch_size 4 --gradient_accumulation_steps 32 \
-  --learning_rate 1e-5 --warmup_steps 100 --lr_scheduler_type cosine \
-  --max_length 4096 --gradient_checkpointing true --deepspeed zero2 \
-  --save_steps 500 --logging_steps 10 --output_dir output/stage2_sft \
-  --seed 42 --use_flash_attn true</code></pre>
-
-<div class="warn">
-<strong>⚠ 命令说明：</strong>
-<ul>
-<li><code>--model_type llava_onevision</code> 需 ms-swift ≥ 4.2.0</li>
-<li><code>--model Qwen/Qwen3.5-4B-Base</code> 假设存在纯文本基座 —— <strong>需核实</strong>，否则降级 Qwen3-4B</li>
-<li>Stage 1 LoRA 冻结 LLM+ViT 仅训 projector；Stage 1.5 用 <code>swift pt</code> 全参数</li>
-<li>Stage 1.5 用 ZeRO-3（参数大）；Stage 1/2 可用 ZeRO-2</li>
-</ul>
-</div>
-
-<!-- §5 H100×8 训练时间估算 -->
-<h1>§5 H100×8 训练时间估算</h1>
-<h2>5.1 估算方法论</h2>
-<ul>
-<li><strong>原版</strong>：128 A800 × 3.7 天 = 11,366 GPU·h</li>
-<li><strong>GPU 数量比</strong>：128 → 8 = <strong>16× 减少</strong></li>
-<li><strong>H100 vs A800 加速比</strong>：~1.5–2.0×（训练密集负载；峰值 FLOPS ~3.2× 但受带宽限制）</li>
-</ul>
-<h2>5.2 分阶段估算</h2>
-<table>
-<tr><th>阶段</th><th>原版 (128 A800)</th><th>H100×8 (1.5×)</th><th>H100×8 (2.0×)</th><th>GPU·h</th></tr>
-<tr><td>Stage 0</td><td>~0.5h</td><td>~0.5h</td><td>~0.5h</td><td>~0</td></tr>
-<tr><td>Stage 1</td><td>~8.5h</td><td>~91h ≈ 3.8 天</td><td>~68h ≈ 2.8 天</td><td>544–728</td></tr>
-<tr><td>Stage 1.5</td><td>~68.3h</td><td>~729h ≈ 30.4 天</td><td>~546h ≈ 22.8 天</td><td>4,368–5,832</td></tr>
-<tr><td>Stage 2</td><td>~12.0h</td><td>~128h ≈ 5.3 天</td><td>~96h ≈ 4.0 天</td><td>768–1,024</td></tr>
-<tr><td><strong>合计</strong></td><td><strong>88.8h (3.7天)</strong></td><td><strong>~948h ≈ 39.5天</strong></td><td><strong>~711h ≈ 29.6天</strong></td><td><strong>5,680–7,584</strong></td></tr>
-</table>
-<h2>5.3 敏感性分析</h2>
-<table>
-<tr><th>因素</th><th>基准</th><th>乐观 (-20%)</th><th>悲观 (+30%)</th></tr>
-<tr><td>H100 加速比</td><td>1.5–2.0×</td><td>2.5× → ~23.7 天</td><td>1.2× → ~49.4 天</td></tr>
-<tr><td>NFS I/O 争用</td><td>无</td><td>+0%</td><td>+15–25% (与 ④-4ep/pretrain 争用)</td></tr>
-<tr><td>并行效率</td><td>90%</td><td>95%</td><td>75% (ZeRO-3 通信开销)</td></tr>
-<tr><td><strong>综合墙钟</strong></td><td><strong>~30–40 天</strong></td><td><strong>~20–25 天</strong></td><td><strong>~50–60 天</strong></td></tr>
-</table>
-<h2>5.4 降配复现方案</h2>
-<table>
-<tr><th>方案</th><th>Stage 1.5 数据</th><th>迭代</th><th>墙钟</th><th>场景</th></tr>
-<tr><td><strong>A. 全量复现</strong></td><td>85M (5,714 tar)</td><td>20,000</td><td>~30–40 天</td><td>完全复现论文</td></tr>
-<tr><td><strong>B. 快速复现</strong></td><td>3M 子集 (60 tar)</td><td>2,000</td><td>~3–4 天</td><td>验证管线正确性</td></tr>
-<tr><td><strong>C. SFT-only</strong></td><td>跳过 1.5</td><td>0</td><td>~5–7 天</td><td>基于已有权重 SFT 适配</td></tr>
-<tr><td><strong>D. 对齐+SFT</strong></td><td>跳过 1.5</td><td>0</td><td>~8–10 天</td><td>从零训 connector + SFT</td></tr>
-</table>
-
-<!-- §6 风险清单 -->
-<h1>§6 风险 & 阻塞清单</h1>
-<table>
-<tr><th>#</th><th>风险</th><th>严重性</th><th>影响</th><th>缓解</th></tr>
-<tr><td>R1</td><td>Qwen3.5-4B 原生多模态，可能无法作纯文本骨干</td><td><span class="tag tag-warn">🔴 高</span></td><td>双视觉编码器冲突</td><td>S0 拉取 config.json；准备 A/B/C 方案</td></tr>
-<tr><td>R2</td><td>ms-swift llava_onevision 支持深度未验证</td><td><span class="tag tag-pending">🟡 中</span></td><td>可能只支持推理不支持 pt 训练</td><td>S0 跑 smoke test 验证</td></tr>
-<tr><td>R3</td><td>H100×8 全量复现需 ~30–40 天</td><td><span class="tag tag-pending">🟡 中</span></td><td>GPU 占用周期长</td><td>采用降配方案 B/C/D</td></tr>
-<tr><td>R4</td><td>85M 数据完整性未验证</td><td><span class="tag tag-ok">🟢 低</span></td><td>Zero250M/SA-1B 可能缺失</td><td>S1 smoke test 用 wds 抽样</td></tr>
-<tr><td>R5</td><td>精确超参数未从 GitHub 核实</td><td><span class="tag tag-pending">🟡 中</span></td><td>LR/warmup/batch 可能不准</td><td>S0 clone 仓库读脚本</td></tr>
-<tr><td>R6</td><td>与 vision ④-4ep GPU 争用</td><td><span class="tag tag-warn">🔴 高</span></td><td>④-4ep 正在 .12 上跑</td><td>本计划纯调研不占 GPU；执行须另批</td></tr>
-<tr><td>R7</td><td>磁盘空间（checkpoint）</td><td><span class="tag tag-pending">🟡 中</span></td><td>4B BF16 ~8GB/ckpt</td><td>限制 save_total_limit；NFS 大盘</td></tr>
-<tr><td>R8</td><td>tokenizer/chat 模板兼容性</td><td><span class="tag tag-ok">🟢 低</span></td><td>Qwen3.5 可能更新了模板</td><td>S0 对比 tokenizer_config.json</td></tr>
-</table>
-
-<!-- §7 分阶段执行清单 -->
-<h1>§7 分阶段执行清单</h1>
-<h2>S0: 环境准备与核实（~1 天 · 纯 CPU）</h2>
-<table>
-<tr><th>步骤</th><th>动作</th><th>判据</th><th>交付</th></tr>
-<tr><td>S0.1</td><td>拉取 Qwen3.5-4B-Base config.json</td><td>确认是否纯文本</td><td>架构方案 A/B/C 选定</td></tr>
-<tr><td>S0.2</td><td>安装 ms-swift v4.2.0+，验证 llava_onevision</td><td>swift sft --help 有输出</td><td>环境就绪</td></tr>
-<tr><td>S0.3</td><td>clone GitHub 仓库读 quick_start 脚本</td><td>精确超参数提取</td><td>超参数表更新</td></tr>
-<tr><td>S0.4</td><td>验证 85M 数据完整性</td><td>5,714 tar 均可读</td><td>数据盘点确认</td></tr>
-<tr><td>S0.5</td><td>对比 Qwen3-4B vs Qwen3.5-4B tokenizer</td><td>vocab/template 一致</td><td>兼容性报告</td></tr>
-</table>
-<p><strong>成本</strong>：~0 GPU·h</p>
-
-<h2>S1: Smoke Test（~4–8 GPU·h）</h2>
-<table>
-<tr><th>步骤</th><th>动作</th><th>判据</th><th>交付</th></tr>
-<tr><td>S1.1</td><td>用 3M 子集跑 Stage 1.5 smoke</td><td>loss 下降、无 OOM</td><td>训练管线验证</td></tr>
-<tr><td>S1.2</td><td>验证 sample packing</td><td>填充率 <10%</td><td>packing 效率</td></tr>
-<tr><td>S1.3</td><td>验证 checkpoint 保存/加载</td><td>resume 后 loss 连续</td><td>ckpt 管线 OK</td></tr>
-</table>
-<p><strong>成本</strong>：~4–8 GPU·h · <strong>墙钟</strong>：~0.5–1 天</p>
-
-<h2>S2: 中期训练（~4,400–5,800 GPU·h）</h2>
-<table>
-<tr><th>步骤</th><th>动作</th><th>判据</th><th>交付</th></tr>
-<tr><td>S2.1</td><td>Stage 1 对齐 (2,500 步)</td><td>projector 收敛</td><td>Stage 1 ckpt</td></tr>
-<tr><td>S2.2</td><td>Stage 1.5 中期 (20,000 步)</td><td>loss <0.5, 无坍缩</td><td>Stage 1.5 ckpt</td></tr>
-<tr><td>S2.3</td><td>中间 checkpoint 评测</td><td>MMBench 有非随机分</td><td>中间评测</td></tr>
-</table>
-<p><strong>成本</strong>：~4,400–5,800 GPU·h · <strong>墙钟</strong>：~23–30 天</p>
-
-<h2>S3: 指令微调（~770–1,020 GPU·h）</h2>
-<table>
-<tr><th>步骤</th><th>动作</th><th>判据</th><th>交付</th></tr>
-<tr><td>S3.1</td><td>Stage 2 SFT (3,500 步)</td><td>指令遵循能力</td><td>最终 ckpt</td></tr>
-<tr><td>S3.2</td><td>Megatron → HF 格式转换</td><td>HF 加载正常</td><td>HF 权重</td></tr>
-</table>
-<p><strong>成本</strong>：~770–1,020 GPU·h · <strong>墙钟</strong>：~4–5 天</p>
-
-<h2>S4: 评测（~50–100 GPU·h）</h2>
-<table>
-<tr><th>步骤</th><th>动作</th><th>判据</th><th>交付</th></tr>
-<tr><td>S4.1</td><td>lmms-eval 跑 27 个基准</td><td>全部有分数</td><td>评测结果</td></tr>
-<tr><td>S4.2</td><td>与原版对比</td><td>差距 <5pp = 成功</td><td>复现报告</td></tr>
-</table>
-<p><strong>成本</strong>：~50–100 GPU·h · <strong>墙钟</strong>：~1–2 天</p>
-
-<h2>总成本汇总</h2>
-<table>
-<tr><th>方案</th><th>GPU·h</th><th>墙钟</th><th>路径</th></tr>
-<tr><td>A. 全量复现</td><td>5,680–7,584</td><td>~30–40 天</td><td>S0→S1→S2→S3→S4</td></tr>
-<tr><td>B. 快速复现</td><td>100–200</td><td>~3–5 天</td><td>S0→S1→S4 (3M 子集)</td></tr>
-<tr><td>C. SFT-only</td><td>820–1,120</td><td>~6–8 天</td><td>S0→S3→S4</td></tr>
-<tr><td>D. 对齐+SFT</td><td>1,300–1,750</td><td>~9–12 天</td><td>S0→S1→S3→S4</td></tr>
-</table>
-
-<!-- §8 诚实条款 -->
-<h1>§8 诚实条款</h1>
-<div class="ok">
-<h3>✅ 已核实项</h3>
-<ul>
-<li>数据路径 <code>/nas_train/app.e0031982/datasets/mvp-lab/</code> —— 上机 ls 实测 (2026-10-12)</li>
-<li>85M 数据已下载 —— 5,714 packed tar + 6 子目录, README "All Completed"</li>
-<li>ms-swift v4.2.0 支持 llava_onevision —— GitHub Release Notes 原文</li>
-<li>LLaVA-OV-1.5 架构规格 —— NVIDIA NeMo + DeepWiki 确认</li>
-<li>Qwen3.5-4B 存在且开源 —— IT 之家/TPS Report/HF 确认 (2026-03-02)</li>
-<li>训练阶段/迭代数/成本 —— DeepWiki §3.3 确认</li>
-</ul>
-</div>
-<div class="warn">
-<h3>⚠ 未核实项（显式标注）</h3>
-<ul>
-<li><strong>Qwen3.5-4B-Base 是否纯文本</strong> —— 仅有"原生多模态"二手报道，未拉取 config.json。若不可剥离 → 降级 Qwen3-4B</li>
-<li><strong>精确超参数</strong> —— 基于百度云文章(可能简化) + DeepWiki 概述，<strong>未从 GitHub 脚本逐字核实</strong></li>
-<li><strong>85M 完整性</strong> —— 有 5,714 tar 但未抽样验证；Zero250M/SA-1B 子目录未见</li>
-<li><strong>swift pt 对 llava_onevision 支持</strong> —— Release 仅提 model_type，未确认 pt 模式可用</li>
-<li><strong>H100 vs A800 加速比</strong> —— 取 1.5–2.0× 经验值，未实测</li>
-<li><strong>tokenizer 兼容性</strong> —— 未对比 config 文件</li>
-<li><strong>Web 时效</strong> —— 检索于 2026-10-12；Qwen3.5-4B 发布 2026-03-02</li>
-</ul>
-</div>
-<div class="note">
-<h3>📋 S0 核实优先级</h3>
+<!-- §1 -->
+<h2>§1 · HERO 结论 + 详细可行性判定</h2>
+<h3>能否复现？</h3>
+<p><span class="tag tag-warn">有条件可行</span> <b>复现 LLaVA-OneVision-1.5 的整体流程可行</b>（数据已基本就绪、ms-swift 已支持 Qwen3.5），但「Qwen3.5-4B 替换 Qwen3-4B」<b>不是参数对等的直接替换</b>，而是<b>架构级的重新设计</b>：</p>
 <ol>
-<li><strong>最高</strong>：拉取 Qwen3.5-4B-Base config.json → 确定方案 A/B/C</li>
-<li><strong>高</strong>：安装 ms-swift v4.2.0+ → 验证 swift pt --model_type llava_onevision</li>
-<li><strong>高</strong>：clone GitHub → 提取精确超参数</li>
-<li><strong>中</strong>：抽样 85M tar → 验证完整性</li>
-<li><strong>低</strong>：对比 tokenizer → 确认兼容性</li>
+<li><b>架构差异（🔴 高风险）</b>：Qwen3.5-4B 使用 <b>Gated DeltaNet（线性注意力 3:1 比例混合 Gated Attention）</b>，不是 Qwen3-4B 的标准 Transformer。影响：注意力计算、序列处理、显存占用、flash-linear-attention 依赖。</li>
+<li><b>原生多模态（🟠 中风险）</b>：Qwen3.5-4B 是「统一视觉语言基模」，自带视觉编码器（早期融合训练）。原版 OV1.5 假设 LLM 是<b>纯文本</b>，外挂 RICE-ViT + MLP projector。Qwen3.5-4B 场景下需决定：① 禁用内置 ViT 外挂 RICE-ViT？② 用内置 ViT 替代 RICE-ViT？③ 双 ViT 融合？</li>
+<li><b>词汇表差异（🟡 低风险）</b>：Qwen3-4B vocab=151,646 → Qwen3.5-4B vocab=248,320（+64%）。影响 embedding 参数量、token 化、训练效率。</li>
+<li><b>训练栈迁移（🟠 中风险）</b>：原版用 Megatron-LM mcore 格式 + 离线 packing。ms-swift 用 HF 格式 + DeepSpeed ZeRO。需重新设计 checkpoint 管理和数据 packing。</li>
+</ol>
+<div class="warn"><b>最大阻塞（一句话）</b>：<b>Qwen3.5-4B 自带视觉编码器</b>——原版 OV1.5「纯文本 LLM + 外挂 RICE-ViT」的架构假设被打破，需重新设计视觉塔接入方案，这是整个复现的最大不确定性。</div>
+
+<!-- §2 -->
+<h2>§2 · 原版 LLaVA-OneVision-1.5 拆解</h2>
+<h3>2.1 基本信息</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td><b>论文</b></td><td>LLaVA-OneVision-1.5: Fully Open Framework for Democratized Multimodal Training <code>arXiv:2509.23661</code>（2025-09-28 v1 → 2025-12-14 v3）</td></tr>
+<tr><td><b>代码</b></td><td><code>github.com/EvolvingLMMs-Lab/LLaVA-OneVision-1.5</code></td></tr>
+<tr><td><b>许可证</b></td><td>Apache 2.0（模型 + 数据 + 代码）</td></tr>
+<tr><td><b>模型变体</b></td><td>4B（Qwen3-4B-Instruct-2507）/ 8B（Qwen3-8B-Instruct-2507）</td></tr>
+<tr><td><b>总训练成本</b></td><td>~$16,000（~26,650 A100 GPU·h）</td></tr>
+<tr><td><b>性能</b></td><td>4B 在 27 个基准上全面优于 Qwen2.5-VL-3B；8B 在 18/27 上优于 Qwen2.5-VL-7B</td></tr>
+</table>
+<p style="color:var(--dim);font-size:0.85em">来源：arXiv:2509.23661 · HuggingFace 模型卡 · DeepWiki/EvolvingLMMs-Lab（2025-10-26 索引）。时效：截至 2026-10-12 web 检索。</p>
+
+<h3>2.2 架构组件</h3>
+<table>
+<tr><th>组件</th><th>原版配置</th><th>来源</th></tr>
+<tr><td><b>视觉编码器</b></td><td><code>DeepGlint-AI/rice-vit-large-patch14-560</code>（RICE-ViT）<br>ViT-Large · patch14 · 原生分辨率 560×560<br>2D 旋转位置编码 + 区域感知注意力 · 支持可变分辨率</td><td>DeepWiki · arXiv:2509.23661</td></tr>
+<tr><td><b>语言模型</b></td><td><code>Qwen/Qwen3-4B-Instruct-2507</code>（4B 变体）<br>标准 Transformer · 纯文本 · vocab 151,646</td><td>DeepWiki · HF 模型卡</td></tr>
+<tr><td><b>连接器</b></td><td>2-layer MLP projector（初始化为默认值）</td><td>DeepWiki</td></tr>
+<tr><td><b>总参数</b></td><td>4.2B（含 ViT + projector + LLM）</td><td>HF 模型卡</td></tr>
+</table>
+
+<h3>2.3 四阶段训练流程</h3>
+<table>
+<tr><th>阶段</th><th>名称</th><th>数据</th><th>迭代</th><th>可训练</th><th>GPU·h</th><th>占比</th></tr>
+<tr><td><b>Stage 0</b></td><td>权重合并</td><td>—</td><td>0（无训练）</td><td>—</td><td>~250</td><td>1%</td></tr>
+<tr><td><b>Stage 1</b></td><td>对齐训练</td><td>558K 图文对</td><td>~2,500 步</td><td>仅 projector</td><td>~400</td><td>1.5%</td></tr>
+<tr><td><b>Stage 1.5</b></td><td><b>中期训练</b></td><td><b>85M 概念均衡图文对</b></td><td><b>~20,000 步</b></td><td>projector + LLM</td><td><b>~24,000</b></td><td><b>90%</b></td></tr>
+<tr><td><b>Stage 2</b></td><td>指令微调</td><td>22M 指令样本</td><td>~3,500 步</td><td>projector + LLM</td><td>~2,000</td><td>7.5%</td></tr>
+</table>
+<div class="note"><b>关键设计</b>：原版采用 <b>离线并行数据 packing 策略</b>（消除 padding 浪费，吞吐提升 20–30%）。训练使用 <b>Megatron-LM mcore 格式</b>，阶段间需 HF ↔ mcore 格式转换。4B 最低配置 = 8×A100 80GB 单节点（TP=1, PP=1, DP=8）。</div>
+
+<h3>2.4 原版训练数据构成</h3>
+<h4>85M 中期训练数据（概念均衡）</h4>
+<table>
+<tr><th>子集</th><th>说明</th></tr>
+<tr><td>ImageNet-21k</td><td>大规模图像分类</td></tr>
+<tr><td>LAIONCN</td><td>中文图文对</td></tr>
+<tr><td>DataComp-1B</td><td>大规模图文对筛选</td></tr>
+<tr><td>Zero250M</td><td>零样本学习数据</td></tr>
+<tr><td>COYO700M</td><td>alt-text 图文对</td></tr>
+<tr><td>SA-1B</td><td>分割掩码数据</td></tr>
+<tr><td>MINT</td><td>多模态指令数据</td></tr>
+<tr><td>OBELICS</td><td>交错图文网页数据</td></tr>
+</table>
+<p style="color:var(--dim);font-size:0.85em">来源：85M README.md（本地盘已读）。HF 数据集页面状态显示「Uploading...」。</p>
+<p><b>22M 指令数据</b>（181 子集）：涵盖 ai2d, aokvqa, arxiv_figs, chartqa, coco, docvqa, gqa, gsm8k, math, mathqa, ocr, scienceqa, sharegpt4o, sharegpt4v, vflan, vqarad, wiz 等 181 个子目录。</p>
+
+<!-- §3 -->
+<h2>§3 · BaiZe 复现差异表</h2>
+<h3>3.1 基模差异：Qwen3-4B → Qwen3.5-4B</h3>
+<table>
+<tr><th style="width:20%">维度</th><th style="width:38%">Qwen3-4B-Instruct-2507<br><span class="tag tag-ok">原版基模</span></th><th style="width:42%">Qwen3.5-4B<br><span class="tag tag-warn">用户指定基模</span></th></tr>
+<tr><td><b>架构</b></td><td>标准 Transformer（全注意力）</td><td><b>混合架构</b>：Gated DeltaNet:Gated Attention = 3:1<br><code>8×(3×(GatedDeltaNet→FFN)→1×(GatedAttn→FFN))</code></td></tr>
+<tr><td><b>层数</b></td><td>36</td><td>32</td></tr>
+<tr><td><b>隐藏维度</b></td><td>~2048</td><td>2560</td></tr>
+<tr><td><b>FFN 中间维度</b></td><td>—</td><td>9216</td></tr>
+<tr><td><b>注意力头</b></td><td>标准 GQA</td><td>DeltaNet: 32V/16QK, d=128; Attn: 16Q/4KV, d=256</td></tr>
+<tr><td><b>词汇表</b></td><td>151,646</td><td><b>248,320</b>（+64%，padded）</td></tr>
+<tr><td><b>上下文长度</b></td><td>32,768</td><td><b>262,144</b>（可扩展至 1M）</td></tr>
+<tr><td><b>多模态</b></td><td><b>纯文本</b>（无视觉编码器）</td><td><b>原生多模态</b>（早期融合训练，自带视觉编码器）</td></tr>
+<tr><td><b>许可证</b></td><td>Apache 2.0</td><td>Apache 2.0 ✅</td></tr>
+<tr><td><b>HF repo</b></td><td><code>Qwen/Qwen3-4B-Instruct-2507</code></td><td><code>Qwen/Qwen3.5-4B</code> ✅ 已发布</td></tr>
+<tr><td><b>tokenizer</b></td><td>BPE (Qwen2 tokenizer)</td><td>BPE（扩展词汇表，兼容 Qwen2/3）</td></tr>
+<tr><td><b>chat 模板</b></td><td>Qwen ChatML</td><td>Qwen ChatML（兼容，含 thinking 模式控制 token）</td></tr>
+<tr><td><b>依赖</b></td><td>transformers ≥4.37</td><td><b>transformers ≥5.9</b> + <b>flash-linear-attention ≥0.4.2</b> + causal_conv1d</td></tr>
+</table>
+<p style="color:var(--dim);font-size:0.85em">来源：HuggingFace Qwen/Qwen3.5-4B 模型卡（2026-10-12 检索）；Qwen3-4B-Instruct-2507 官方文档。⚠️ Qwen3.5-4B 规格为模型卡公布值，Qwen3-4B 部分值待逐字核实。</p>
+
+<div class="danger">
+<b>🔴 架构不兼容点</b>：
+<ul>
+<li><b>线性注意力</b>：Gated DeltaNet 使用<b>递归状态</b>而非完整注意力矩阵 → 影响序列内信息交互，对视觉 token 融入有结构性影响</li>
+<li><b>原生视觉编码器</b>：Qwen3.5-4B 在预训练阶段已融入视觉 token → 外挂 RICE-ViT 需处理「双视觉路径」问题</li>
+<li><b>扩展词汇表</b>：248K vocab → embedding 层 +64% 参数，CE loss 计算量增大</li>
+<li><b>依赖链</b>：需 <code>flash-linear-attention</code> + <code>causal_conv1d</code> + <code>transformers≥5.9</code> → 与 BaiZe 现有环境可能冲突</li>
+</ul>
+</div>
+
+<h3>3.2 训练框架差异：Megatron-AIAK → ms-swift</h3>
+<table>
+<tr><th style="width:20%">维度</th><th style="width:38%">原版 Megatron-AIAK</th><th style="width:42%">ms-swift</th></tr>
+<tr><td><b>模型格式</b></td><td>Megatron mcore（需 HF→mcore 转换）</td><td>HuggingFace 原生格式（<code>trust_remote_code=True</code>）</td></tr>
+<tr><td><b>数据格式</b></td><td>离线 packed WebDataset（tar + idx）</td><td>JSONL / ms-swift 自定义 / WebDataset</td></tr>
+<tr><td><b>并行策略</b></td><td>TP + PP + DP（Megatron 原生）</td><td>DDP / DeepSpeed ZeRO2/ZeRO3 / FSDP / Megatron</td></tr>
+<tr><td><b>Packing</b></td><td>离线并行 packing（消除 padding）</td><td><code>--packing true --padding_free true</code>（在线 packing）</td></tr>
+<tr><td><b>Qwen3.5 支持</b></td><td>❌ 不支持（原版仅支持 Qwen3）</td><td>✅ <b>原生支持</b>（v4.3 有专门 Qwen3.5 Best Practice）</td></tr>
+<tr><td><b>视觉塔定制</b></td><td>需自定义 Megatron model definition</td><td>支持 <code>--freeze_vit</code> / <code>--freeze_aligner</code></td></tr>
+<tr><td><b>命令入口</b></td><td><code>bash examples/llava_ov_1_5/train_stage1.5.sh</code></td><td><code>swift sft</code> / <code>swift pt</code>（统一 CLI）</td></tr>
+<tr><td><b>精度</b></td><td>FP8 / BF16</td><td>BF16 / FP16（FP8 需 H100 + 特定配置）</td></tr>
+</table>
+
+<div class="note">
+<b>ms-swift 对 Qwen3.5 的支持现状</b>（来源：ms-swift v4.3 Qwen3.5 Best Practice，2026-10-12 检索）：
+<ul>
+<li>✅ 支持 Qwen3.5 Dense/MoE 模型训练（transformers/Megatron 后端）</li>
+<li>✅ 支持 SFT / DPO / GRPO / 推理 / 部署</li>
+<li>✅ 命令 <code>swift sft --model Qwen/Qwen3.5-4B --dataset ...</code></li>
+<li>⚠️ 需要 <code>transformers>=5.9</code> + <code>flash-linear-attention>=0.4.2</code> + <code>causal-conv1d</code> + <code>flash-attn==2.8.3</code></li>
+<li>⚠️ Qwen3.5 自带视觉编码器，ms-swift 将其作为<b>多模态模型</b>处理，有 <code>IMAGE_MAX_TOKEN_NUM</code> 等环境变量</li>
+</ul>
+</div>
+
+<!-- §4 -->
+<h2>§4 · 数据盘点 + 三阶段配方</h2>
+<h3>4.1 实际路径核实</h3>
+<div class="warn">
+<b>⚠️ 路径修正</b>：用户指令中路径为 <code>/nas_train/app.e003192/datasets/mvp_lab</code>，经上机实测（<code>ls -d /nas_train/*/datasets/*mvp*</code>），该路径<b>不存在</b>。<br>
+<b>实际路径 = <code>/nas_train/app.e0031982/datasets/mvp-lab/</code></b>（另在 <code>/nas_inference/app.e0016372/</code> 和 <code>/nas_user/app.e0031982/</code> 有部分副本）。
+</div>
+
+<h3>4.2 数据集盘点（实测）</h3>
+<table>
+<tr><th>数据集</th><th>本地路径</th><th>状态</th><th>规模</th></tr>
+<tr><td><b>85M Mid-Training（packed）</b></td><td><code>LLaVA-OneVision-1.5-Mid-Training-85M-packed-webdataset/</code></td><td><span class="tag tag-warn">5,714 tar</span></td><td>5,714 个 <code>pretrain-XXXXXX.tar</code>（000000–005713）+ 等量 <code>.idx</code></td></tr>
+<tr><td><b>85M Mid-Training（源）</b></td><td><code>LLaVA-OneVision-1.5-Mid-Training-85M/</code></td><td><span class="tag tag-warn">部分</span></td><td>6 子目录：coyo/ · datacomp1b/ · imagenet/ · laioncn/ · mint/ · obelics/（各含 EN/CN 分割）</td></tr>
+<tr><td><b>Quick-Start 3M</b></td><td><code>LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M/</code></td><td><span class="tag tag-ok">✅</span></td><td>3M 样本子集（用于冒烟测试）</td></tr>
+<tr><td><b>22M Instruct-Data</b></td><td><code>LLaVA-OneVision-1.5-Instruct-Data/</code></td><td><span class="tag tag-ok">✅ 181 子集</span></td><td>ai2d → wizardlm 共 181 个子目录</td></tr>
+<tr><td><b>Instruct-Data（WebDataset）</b></td><td><code>LLaVA-OneVision-1.5-Instruct-Data-webdataset/</code></td><td><span class="tag tag-ok">✅</span></td><td>已转换为 WebDataset 格式</td></tr>
+<tr><td><b>RL Data</b></td><td><code>LLaVA-OneVision-1.5-RL-Data/</code></td><td><span class="tag tag-ok">✅</span></td><td>stage1-normal/ + stage2-long/</td></tr>
+<tr><td><b>LLaVA-558K</b></td><td><code>LLaVA-558K-Webdataset/</code></td><td><span class="tag tag-ok">✅</span></td><td>Stage 1 对齐数据（558K 图文对）</td></tr>
+<tr><td><b>LLaVA-NeXT 780K</b></td><td><code>LLaVA-NeXT-780k-*-webdataset/</code></td><td><span class="tag tag-ok">✅</span></td><td>opt46 + opt47 两版</td></tr>
+</table>
+
+<h3>4.3 85M 缺口分析</h3>
+<div class="warn">
+<b>用户口径</b>：「除 85M 外都已下载完毕」。实测情况：
+<ul>
+<li>85M <b>packed WebDataset</b> 已有 <b>5,714 个 tar</b>——若每个 tar ≈ 14,875 样本，则 ≈ 85M 样本，<b>可能已完整</b></li>
+<li>85M <b>源目录</b> 有 6 个子集，但 README 列出 8 个源数据集——<b>缺 Zero250M 和 SA-1B</b> 的独立目录</li>
+<li>HF 页面状态 = 「Uploading...」</li>
+<li><b>判定</b>：packed 格式可能已足够训练，但建议在 S1 smoke 阶段验证 tar 完整性</li>
+</ul>
+</div>
+
+<h4>85M 缺口的降级方案</h4>
+<table>
+<tr><th>方案</th><th>数据量</th><th>影响</th><th>适用场景</th></tr>
+<tr><td><b>A：完整 85M</b></td><td>85M packed</td><td>原版配方</td><td>tar 完整性验证通过</td></tr>
+<tr><td><b>B：Quick-Start 3M</b></td><td>3M</td><td>仅验证管线</td><td>S1 smoke 测试</td></tr>
+<tr><td><b>C：部分 85M</b></td><td>已有 tar × ~15K/tar</td><td>按比例缩减步数</td><td>tar 不完整时降级</td></tr>
+<tr><td><b>D：自建混合</b></td><td>BaiZe CC12M+Amshaker ~18.5M</td><td>偏离原版数据分布</td><td>最差情况兜底</td></tr>
+</table>
+
+<h3>4.4 三阶段训练配方（用实测路径）</h3>
+<table>
+<tr><th>阶段</th><th>数据源（本地路径）</th><th>规模</th><th>可训练</th><th>目标</th></tr>
+<tr><td><b>S1 对齐</b></td><td><code>mvp-lab/LLaVA-558K-Webdataset/</code></td><td>558K</td><td>仅 projector</td><td>视觉-语言基础对齐</td></tr>
+<tr><td><b>S2 中期</b></td><td><code>mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M-packed-webdataset/</code></td><td>85M</td><td>projector + LLM</td><td>大规模视觉-语言理解</td></tr>
+<tr><td><b>S3 指令</b></td><td><code>mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/</code></td><td>22M</td><td>projector + LLM</td><td>人类指令对齐</td></tr>
+</table>
+
+<!-- §5 -->
+<h2>§5 · 完整超参数表 + ms-swift 命令模板</h2>
+<h3>5.1 超参数表</h3>
+<table>
+<tr><th style="width:22%">参数</th><th style="width:14%">S1 对齐</th><th style="width:17%">S2 中期训练</th><th style="width:17%">S3 指令微调</th><th style="width:30%">来源/依据</th></tr>
+<tr><td><b>基模</b></td><td colspan="3" style="text-align:center">Qwen3.5-4B (<code>Qwen/Qwen3.5-4B</code>)</td><td>用户指定 · HF 已发布</td></tr>
+<tr><td><b>视觉塔</b></td><td colspan="3"><span class="tag tag-warn">待定</span> RICE-ViT-Large-patch14-560 <b>或</b> Qwen3.5 内置 ViT</td><td>原版用 RICE-ViT；Qwen3.5 自带 ViT 需决策</td></tr>
+<tr><td><b>Projector</b></td><td colspan="3">2-layer MLP（LLaVA-1.5 风格）</td><td>原版设计</td></tr>
+<tr><td><b>精度</b></td><td colspan="3">BF16 + <code>flash-linear-attention</code></td><td>Qwen3.5 混合架构要求</td></tr>
+<tr><td><b>Optimizer</b></td><td colspan="3">AdamW (β1=0.9, β2=0.999)</td><td>原版 + ms-swift 默认</td></tr>
+<tr><td><b>学习率</b></td><td>1e-4</td><td><b>1e-4</b></td><td>2e-5</td><td>原版 lr；S2 需按新基模校准</td></tr>
+<tr><td><b>Weight decay</b></td><td colspan="3">0.0</td><td>ms-swift 默认</td></tr>
+<tr><td><b>Warmup</b></td><td>200 步</td><td>1000 步</td><td>ratio 0.05</td><td>原版 warmup_steps=1000</td></tr>
+<tr><td><b>Scheduler</b></td><td colspan="3">Cosine → min_lr</td><td>原版 cosine scheduler</td></tr>
+<tr><td><b>Global batch</b></td><td>256</td><td><b>256</b></td><td>128</td><td>原版 batch_size=256</td></tr>
+<tr><td><b>Per-device batch</b></td><td>32</td><td>4–8</td><td>4–8</td><td>按显存调整</td></tr>
+<tr><td><b>Grad accum</b></td><td>1</td><td>32–64</td><td>16–32</td><td>凑齐 global batch</td></tr>
+<tr><td><b>Seq len</b></td><td>2048</td><td><b>8192</b></td><td>4096</td><td>S2 含交错图文 → 长序列</td></tr>
+<tr><td><b>图像分辨率</b></td><td colspan="3">560×560（RICE-ViT 原生）</td><td>RICE-ViT patch14</td></tr>
+<tr><td><b>Visual tokens</b></td><td colspan="3">~1600（40×40 patch）</td><td>patch14 × 560px</td></tr>
+<tr><td><b>训练步数</b></td><td>~2,500</td><td><b>~20,000</b></td><td>~3,500</td><td>原版迭代数</td></tr>
+<tr><td><b>DeepSpeed</b></td><td>ZeRO2</td><td><b>ZeRO3</b></td><td>ZeRO2/3</td><td>S2 参数多 → ZeRO3</td></tr>
+<tr><td><b>Packing</b></td><td>—</td><td><code>--packing true --padding_free true</code></td><td><code>--packing true</code></td><td>模拟原版离线 packing</td></tr>
+<tr><td><b>种子</b></td><td colspan="3">42</td><td>原版 seed=42</td></tr>
+</table>
+<p style="color:var(--dim);font-size:0.85em">⚠️ <b>诚实标注</b>：S2 lr/batch/steps 来自原版论文+DeepWiki（A100/Megatron 栈）。迁移到 Qwen3.5-4B + H100 + ms-swift 后需 smoke test 校准。Qwen3.5 混合架构可能对 lr 敏感。</p>
+
+<h3>5.2 ms-swift 命令模板</h3>
+<h4>S1 对齐训练（projector-only）</h4>
+<pre><code><span class="cmt"># Stage 1: Alignment — 仅训练 projector</span>
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 NPROC_PER_NODE=8 \
+<span class="cmd">swift</span> <span class="val">sft</span> \
+  <span class="flag">--model</span> <span class="val">Qwen/Qwen3.5-4B</span> \
+  <span class="flag">--dataset</span> <span class="val">/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-558K-Webdataset</span> \
+  <span class="flag">--train_type</span> <span class="val">full</span> <span class="flag">--torch_dtype</span> <span class="val">bfloat16</span> \
+  <span class="flag">--freeze_vit</span> <span class="val">true</span> <span class="flag">--freeze_llm</span> <span class="val">true</span> \
+  <span class="flag">--per_device_train_batch_size</span> <span class="val">32</span> <span class="flag">--gradient_accumulation_steps</span> <span class="val">1</span> \
+  <span class="flag">--learning_rate</span> <span class="val">1e-4</span> <span class="flag">--lr_scheduler_type</span> <span class="val">cosine</span> \
+  <span class="flag">--warmup_steps</span> <span class="val">200</span> <span class="flag">--num_train_epochs</span> <span class="val">1</span> \
+  <span class="flag">--max_length</span> <span class="val">2048</span> <span class="flag">--attn_impl</span> <span class="val">flash_attn</span> \
+  <span class="flag">--gradient_checkpointing</span> <span class="val">true</span> <span class="flag">--deepspeed</span> <span class="val">zero2</span> \
+  <span class="flag">--save_steps</span> <span class="val">500</span> <span class="flag">--output_dir</span> <span class="val">output/ov15_s1_align</span> <span class="flag">--seed</span> <span class="val">42</span></code></pre>
+
+<h4>S2 中期训练（projector + LLM 全参数）</h4>
+<pre><code><span class="cmt"># Stage 1.5: Mid-Training — 全参数训练</span>
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 NPROC_PER_NODE=8 \
+IMAGE_MAX_TOKEN_NUM=1600 \
+<span class="cmd">swift</span> <span class="val">pt</span> \
+  <span class="flag">--model</span> <span class="val">output/ov15_s1_align/checkpoint-final</span> \
+  <span class="flag">--dataset</span> <span class="val">/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M-packed-webdataset</span> \
+  <span class="flag">--train_type</span> <span class="val">full</span> <span class="flag">--torch_dtype</span> <span class="val">bfloat16</span> \
+  <span class="flag">--freeze_vit</span> <span class="val">true</span> <span class="flag">--freeze_llm</span> <span class="val">false</span> \
+  <span class="flag">--per_device_train_batch_size</span> <span class="val">4</span> <span class="flag">--gradient_accumulation_steps</span> <span class="val">64</span> \
+  <span class="flag">--learning_rate</span> <span class="val">1e-4</span> <span class="flag">--lr_scheduler_type</span> <span class="val">cosine</span> \
+  <span class="flag">--warmup_steps</span> <span class="val">1000</span> <span class="flag">--max_steps</span> <span class="val">20000</span> \
+  <span class="flag">--max_length</span> <span class="val">8192</span> <span class="flag">--packing</span> <span class="val">true</span> <span class="flag">--padding_free</span> <span class="val">true</span> \
+  <span class="flag">--attn_impl</span> <span class="val">flash_attn</span> <span class="flag">--gradient_checkpointing</span> <span class="val">true</span> \
+  <span class="flag">--deepspeed</span> <span class="val">zero3</span> <span class="flag">--save_steps</span> <span class="val">2000</span> \
+  <span class="flag">--output_dir</span> <span class="val">output/ov15_s2_midtrain</span> <span class="flag">--seed</span> <span class="val">42</span></code></pre>
+
+<h4>S3 指令微调</h4>
+<pre><code><span class="cmt"># Stage 2: Instruction Tuning</span>
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 NPROC_PER_NODE=8 \
+IMAGE_MAX_TOKEN_NUM=1600 \
+<span class="cmd">swift</span> <span class="val">sft</span> \
+  <span class="flag">--model</span> <span class="val">output/ov15_s2_midtrain/checkpoint-final</span> \
+  <span class="flag">--dataset</span> <span class="val">/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data-webdataset</span> \
+  <span class="flag">--train_type</span> <span class="val">full</span> <span class="flag">--torch_dtype</span> <span class="val">bfloat16</span> \
+  <span class="flag">--freeze_vit</span> <span class="val">true</span> <span class="flag">--freeze_llm</span> <span class="val">false</span> \
+  <span class="flag">--per_device_train_batch_size</span> <span class="val">4</span> <span class="flag">--gradient_accumulation_steps</span> <span class="val">32</span> \
+  <span class="flag">--learning_rate</span> <span class="val">2e-5</span> <span class="flag">--warmup_ratio</span> <span class="val">0.05</span> \
+  <span class="flag">--num_train_epochs</span> <span class="val">1</span> <span class="flag">--max_length</span> <span class="val">4096</span> <span class="flag">--packing</span> <span class="val">true</span> \
+  <span class="flag">--deepspeed</span> <span class="val">zero2</span> <span class="flag">--save_steps</span> <span class="val">500</span> \
+  <span class="flag">--output_dir</span> <span class="val">output/ov15_s3_instruct</span> <span class="flag">--seed</span> <span class="val">42</span></code></pre>
+<div class="warn"><b>⚠️ 说明</b>：<code>swift pt</code> 用于 S2（无 instruction 格式），<code>swift sft</code> 用于 S1/S3。若外挂 RICE-ViT 需自定义模型注册。实际 batch size 需在 S1 smoke 中按 OOM 调整。</div>
+
+<!-- §6 -->
+<h2>§6 · H100×8 训练时间估算</h2>
+<h3>6.1 估算方法</h3>
+<p>原版报告总成本 ~26,650 A100 GPU·h（4B 全流程）。H100 相对 A100 在混合精度训练中加速比通常为 <b>2.0–2.5×</b>。Qwen3.5-4B 的 Gated DeltaNet 线性注意力可能在 H100 上获得<b>更高加速比</b>，但 ms-swift 在线 packing 效率可能<b>低于</b>原版离线 packing。</p>
+
+<h3>6.2 分阶段估算</h3>
+<table>
+<tr><th>阶段</th><th>原版 A100·h</th><th>H100 2.0×</th><th>H100 2.5×</th><th>墙钟(8×H100,2.5×)</th><th>GPU·h(2.5×)</th></tr>
+<tr><td>Stage 0（合并+转换）</td><td>~250</td><td>~125</td><td>~100</td><td>~12.5h</td><td>~100</td></tr>
+<tr><td>Stage 1（对齐）</td><td>~400</td><td>~200</td><td>~160</td><td>~20h</td><td>~160</td></tr>
+<tr><td><b>Stage 1.5（中期）</b></td><td><b>~24,000</b></td><td><b>~12,000</b></td><td><b>~9,600</b></td><td><b>~1,200h ≈ 50天</b></td><td><b>~9,600</b></td></tr>
+<tr><td>Stage 2（指令）</td><td>~2,000</td><td>~1,000</td><td>~800</td><td>~100h ≈ 4.2天</td><td>~800</td></tr>
+<tr><td><b>总计</b></td><td><b>~26,650</b></td><td><b>~13,325</b></td><td><b>~10,660</b></td><td><b>~1,332h ≈ 55.5天</b></td><td><b>~10,660</b></td></tr>
+</table>
+
+<h3>6.3 敏感性分析</h3>
+<table>
+<tr><th>变量</th><th>乐观</th><th>基准</th><th>悲观</th></tr>
+<tr><td>H100 加速比</td><td>2.5×</td><td>2.0×</td><td>1.5×（packing 损失）</td></tr>
+<tr><td>Stage 1.5 墙钟</td><td>48天</td><td><b>60天</b></td><td>80天</td></tr>
+<tr><td><b>总墙钟（8×H100）</b></td><td><b>~53天</b></td><td><b>~67天</b></td><td><b>~89天</b></td></tr>
+<tr><td>总 GPU·h</td><td>~10,660</td><td>~13,325</td><td>~17,767</td></tr>
+</table>
+
+<div class="note">
+<b>假设清单</b>：
+<ul>
+<li>NFS 吞吐不构成瓶颈（packed tar 本地盘）</li>
+<li><code>flash-linear-attention</code> 在 H100 上正常编译</li>
+<li>ms-swift 在线 packing 效率 ≈ 原版 85–95%</li>
+<li>不含评测时间（S4 ~200–500 GPU·h）</li>
+<li>不含环境搭建/调试/中断恢复 overhead（经验 +10–20%）</li>
+<li><b>与 ④-4ep 的 GPU 争用</b>：④-4ep 正在 <code>10.239.2.12</code> 跑，本计划<b>本轮不启动训练</b>，无争用</li>
+</ul>
+</div>
+
+<!-- §7 -->
+<h2>§7 · 风险 & 阻塞清单</h2>
+<table>
+<tr><th style="width:5%">#</th><th style="width:18%">风险</th><th style="width:8%">等级</th><th style="width:44%">描述</th><th style="width:25%">缓解措施</th></tr>
+<tr><td><b>R1</b></td><td>Qwen3.5-4B 架构不兼容</td><td><span class="tag tag-danger">🔴</span></td><td>混合 GatedDeltaNet + 原生多模态，与原版「纯文本 LLM + 外挂 ViT」设计冲突。线性注意力的梯度行为可能对 lr 敏感。</td><td>S0 跑 10 步 fwd+bwd 确认 loss 正常；lr sweep {1e-5,5e-5,1e-4,5e-4}</td></tr>
+<tr><td><b>R2</b></td><td>双视觉编码器冲突</td><td><span class="tag tag-danger">🔴</span></td><td>Qwen3.5-4B 自带视觉编码器。外挂 RICE-ViT 导致双视觉路径。禁用内置 ViT 可能破坏预训练知识。</td><td>三选一：① 用内置 ViT 替代 RICE-ViT；② 禁用内置 ViT 外挂 RICE-ViT（风险最高）；③ 双 ViT 融合</td></tr>
+<tr><td><b>R3</b></td><td>ms-swift 自定义视觉塔</td><td><span class="tag tag-warn">🟠</span></td><td>ms-swift 原生支持 Qwen3.5 但作为多模态模型处理。外挂 RICE-ViT 需修改模型注册。</td><td>S0 验证 ms-swift 是否支持 <code>external_vision_tower</code>；备选：HF transformers + DeepSpeed</td></tr>
+<tr><td><b>R4</b></td><td>85M 数据不完整</td><td><span class="tag tag-warn">🟠</span></td><td>packed 有 5,714 tar，但源目录缺 Zero250M/SA-1B。HF 页面 = Uploading。</td><td>S1 smoke 抽 10 tar 验证；若不足用 Quick-Start 3M 或降级方案</td></tr>
+<tr><td><b>R5</b></td><td>训练时间过长</td><td><span class="tag tag-warn">🟠</span></td><td>Stage 1.5 预估 50–80 天，可能超出项目周期。</td><td>① 多节点并行（2 节点→25–40天）；② 缩减数据量；③ 仅跑 S1+S3 跳过 S2</td></tr>
+<tr><td><b>R6</b></td><td>环境依赖冲突</td><td><span class="tag tag-warn">🟠</span></td><td>需 <code>flash-linear-attention≥0.4.2</code> + <code>causal-conv1d</code> + <code>transformers≥5.9</code>，可能与现有环境冲突。</td><td>独立 conda/venv；Docker 镜像隔离</td></tr>
+<tr><td><b>R7</b></td><td>GPU 争用</td><td><span class="tag tag-info">🟡</span></td><td>④-4ep 在 <code>10.239.2.12</code> 跑。本计划本轮不启动训练，无即时争用。</td><td>执行前查 <code>nvidia-smi</code> 确认 GPU 空闲</td></tr>
+<tr><td><b>R8</b></td><td>磁盘空间</td><td><span class="tag tag-info">🟡</span></td><td>85M + 22M + 4B 模型 + 多阶段 ckpt，可能 >2TB。</td><td>预先 <code>df -h</code>；<code>save_total_limit</code> 控制</td></tr>
+</table>
+
+<!-- §8 -->
+<h2>§8 · 分阶段执行清单</h2>
+<table>
+<tr><th style="width:6%">阶段</th><th style="width:30%">任务</th><th style="width:24%">判据</th><th style="width:22%">交付物</th><th style="width:18%">预计成本</th></tr>
+<tr><td><b>S0</b></td><td><b>环境搭建 + 依赖验证</b><br>• 创建独立 conda env<br>• 安装 ms-swift + flash-linear-attention + causal-conv1d + flash-attn==2.8.3<br>• 下载 Qwen3.5-4B 权重<br>• 验证 <code>swift sft --model Qwen/Qwen3.5-4B --dataset dummy --max_steps 1</code><br>• 验证 85M tar 完整性</td><td>• <code>swift sft</code> 无报错<br>• Qwen3.5-4B 可加载 inference<br>• 10 tar 均含有效图文对<br>• <code>flash-linear-attention</code> 导入成功</td><td>• 环境配置文档<br>• 依赖验证日志<br>• 85M 完整性报告</td><td>~0 GPU·h<br>~4h CPU</td></tr>
+<tr><td><b>S1</b></td><td><b>Smoke + 对齐训练</b><br>• 3M Quick-Start 跑 100 步 smoke<br>• 确认 loss 下降 + 显存可控<br>• 调整 per_device_batch_size<br>• 全量 558K 数据跑 Stage 1</td><td>• Smoke loss 单调下降<br>• 无 OOM<br>• S1 final loss < 2.0</td><td>• S1 checkpoint<br>• TensorBoard 日志</td><td>~160 GPU·h<br>~20h 墙钟</td></tr>
+<tr><td><b>S2</b></td><td><b>中期训练（核心）</b><br>• 从 S1 ckpt 加载<br>• 85M packed + ZeRO3 + packing<br>• 20,000 步全参数训练<br>• 监控 loss + C1</td><td>• Loss 稳定下降<br>• 无坍缩（C1>0.1）<br>• 吞吐 ≥2000 img/s</td><td>• S2 ckpt × 5<br>• 训练日志</td><td><b>~9,600 GPU·h</b><br><b>~50天 墙钟</b></td></tr>
+<tr><td><b>S3</b></td><td><b>指令微调</b><br>• 从 S2 ckpt 加载<br>• 22M instruct + ZeRO2<br>• ~3,500 步</td><td>• SFT loss < 1.0<br>• 指令遵循能力涌现</td><td>• S3 final ckpt<br>• 训练日志</td><td>~800 GPU·h<br>~4天 墙钟</td></tr>
+<tr><td><b>S4</b></td><td><b>评测</b><br>• <code>swift eval</code> 或 <code>lmms_eval</code><br>• 基准：MME, MMMU, MMBench, AI2D, ChartQA, DocVQA, ScienceQA, MathVista<br>• 与原版 4B-Instruct 对比</td><td>• 所有基准跑通<br>• 结果与原版差距 <5pp</td><td>• 评测报告<br>• 对比表格</td><td>~200–500 GPU·h<br>~1–3天</td></tr>
+</table>
+<div class="ok">
+<b>✅ 成功判据（建议预注册）</b>：
+<ul>
+<li><b>最小可行</b>：S0–S1 全流程跑通，产出可推理 checkpoint</li>
+<li><b>基本复现</b>：S0–S3 完成，评测结果在原版 4B 的 <b>90% 以内</b></li>
+<li><b>完全复现</b>：评测结果与原版 4B 差距 < <b>3pp</b></li>
+</ul>
+</div>
+
+<!-- §9 -->
+<h2>§9 · 诚实度条款（数据可信度声明）</h2>
+<table>
+<tr><th style="width:30%">声明项</th><th style="width:8%">可信度</th><th style="width:62%">说明</th></tr>
+<tr><td><b>Qwen3.5-4B 存在</b></td><td><span class="tag tag-ok">✅ 确认</span></td><td>HF <code>Qwen/Qwen3.5-4B</code> 已发布，Apache 2.0。模型卡含完整架构规格。</td></tr>
+<tr><td><b>Qwen3.5-4B 架构规格</b></td><td><span class="tag tag-ok">✅ 高</span></td><td>层数=32, hidden=2560, vocab=248K, 混合 GatedDeltaNet:GatedAttn=3:1，均来自 HF 模型卡。</td></tr>
+<tr><td><b>ms-swift 支持 Qwen3.5</b></td><td><span class="tag tag-ok">✅ 高</span></td><td>ms-swift v4.3 有专门的 Qwen3.5 Best Practice 页面，含 SFT/DPO/GRPO 命令示例。</td></tr>
+<tr><td><b>OV1.5 训练成本 26,650 A100·h</b></td><td><span class="tag tag-warn">🟠 中</span></td><td>来自 DeepWiki + 社区讨论，<b>非官方技术报告</b>。4B 的具体分解可能略有出入。</td></tr>
+<tr><td><b>OV1.5 架构 = RICE-ViT + Qwen3-4B</b></td><td><span class="tag tag-ok">✅ 高</span></td><td>来自 DeepWiki + GitHub 仓库 <code>llava-onevision-1.5</code>。</td></tr>
+<tr><td><b>数据路径 <code>app.e0031982</code></b></td><td><span class="tag tag-ok">✅ 确认</span></td><td>上机 <code>ls</code> 验证。用户指令中 <code>app.e003192</code> 不存在。</td></tr>
+<tr><td><b>85M = 5,714 packed tar</b></td><td><span class="tag tag-ok">✅ 确认</span></td><td><code>ls</code> 实测 tar 数量。每个 tar 的样本数未逐个验证。</td></tr>
+<tr><td><b>85M 完整性</b></td><td><span class="tag tag-warn">🟠 未定</span></td><td>源目录缺 Zero250M/SA-1B；HF 页面 = Uploading。packed 可能完整但未验证。</td></tr>
+<tr><td><b>H100 加速比 2.0–2.5×</b></td><td><span class="tag tag-warn">🟠 估计</span></td><td>行业经验值，非实测。Qwen3.5 的线性注意力可能有不同加速比。</td></tr>
+<tr><td><b>超参数表</b></td><td><span class="tag tag-warn">🟠 待校准</span></td><td>lr/batch/steps 来自原版（Qwen3-4B + Megatron），迁移到 Qwen3.5-4B + ms-swift 后<b>需 smoke 验证</b>。</td></tr>
+<tr><td><b>ms-swift 命令模板</b></td><td><span class="tag tag-warn">🟠 未执行</span></td><td>基于 ms-swift v4.3 文档编写，<b>未实际运行验证</b>。参数名可能随版本变化。</td></tr>
+<tr><td><b>Qwen3-4B-Instruct-2507 规格</b></td><td><span class="tag tag-warn">🟠 待核实</span></td><td>层数=36, hidden~2048 来自社区资源，部分值待逐字核实官方文档。</td></tr>
+</table>
+
+<div class="danger">
+<b>🔴 最关键的不确定性</b>：本报告的「复现」是<b>方案设计</b>而非「已验证的执行结果」。
+Qwen3.5-4B 的混合架构 + 原生多模态使得「精确复现 OV1.5」在技术上可能不可行——
+更合理的定位是「<b>受 OV1.5 启发的多阶段训练</b>」。
+建议用户在投入 50+ 天训练前，先跑 S0（环境验证）+ S1 smoke（100 步）确认管线可用。
+</div>
+
+<!-- Summary -->
+<h2>📋 总结 & 决策建议</h2>
+<div class="note">
+<b>一句话结论</b>：用 Qwen3.5-4B + ms-swift 复现 OV1.5 是<b>可行的</b>，但因 Qwen3.5 的混合架构和原生多模态与原版设计有根本性差异，精确复现需要技术折中。建议：
+<ol>
+<li><b>立即执行 S0</b>（环境验证 + 依赖安装 + 数据完整性检查），成本 ≈ 0 GPU·h，可排除 R1/R3/R6/R8 四个风险</li>
+<li><b>S1 smoke 先行</b>（100 步 + Quick-Start 3M），确认 loss 下降 + 显存可控</li>
+<li><b>视觉塔策略待定</b>（R2）：S0 中验证 Qwen3.5 内置 ViT 是否可用，若可用则避免外挂 RICE-ViT 的复杂性</li>
+<li><b>S2 是核心瓶颈</b>：50–80 天墙钟，需提前确认 GPU 排期。若项目周期紧张，考虑缩减数据量或跳过 S2</li>
+<li><b>定位调整</b>：目标从「精确复现 OV1.5」调整为「受 OV1.5 启发的 Qwen3.5-4B 多模态训练」，可降低验收压力</li>
 </ol>
 </div>
 
-<div class="footer">
-<p>LLaVA-OneVision-1.5 复现计划 · BaiZe Vision Agent · 2026-10-12</p>
-<p>本报告为纯调研+计划，不启动训练、不占 GPU · 执行须另批</p>
-<p>来源：DeepWiki, NVIDIA NeMo, GitHub ms-swift, arXiv:2509.23661, IT 之家, TPS Report, 百度云 · 检索 2026-10-12</p>
+<div class="ok">
+<b>本报告交付物</b>：
+<ul>
+<li>✅ §1 可行性分析（5 条判据）</li>
+<li>✅ §2 原版 OV1.5 架构分解（4 阶段 + 成本）</li>
+<li>✅ §3 基模 + 框架差异表</li>
+<li>✅ §4 数据盘点（实测路径 + 降级方案）</li>
+<li>✅ §5 超参数表 + ms-swift 命令模板（S1/S2/S3）</li>
+<li>✅ §6 H100×8 时间估算（敏感性分析）</li>
+<li>✅ §7 风险清单（8 项 + 缓解措施）</li>
+<li>✅ §8 分阶段执行清单（S0–S4）</li>
+<li>✅ §9 诚实度条款（数据可信度声明）</li>
+</ul>
 </div>
-</body></html>
+
+<hr style="margin:2em 0;border:none;border-top:1px solid var(--border)">
+<p style="color:var(--dim);font-size:0.8em;text-align:center">
+BaiZe Vision · LLaVA-OneVision-1.5 复现计划报告<br>
+生成时间：2026-10-13 · 数据来源：HuggingFace / DeepWiki / ms-swift 文档 / 上机实测<br>
+⚠️ 本报告为<b>方案设计文档</b>，所有超参数和命令模板<b>未实际执行验证</b>。
+</p>
+
+</body>
+</html>
