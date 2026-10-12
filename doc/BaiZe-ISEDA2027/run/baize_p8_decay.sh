@@ -24,7 +24,7 @@ PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
 LOGDIR=/tmp
 export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230
 
-NAME="p8"               # SAME name → auto-loads checkpoint from same dir
+NAME="p8_adamw"         # ⭐ SAME name as AdamW stable run → auto-loads checkpoint from same dir
 PORT=29811              # different port to avoid conflict
 ITERS=10490             # total steps; decay goes 9441→10490
 WARMUP=0                # no warmup — resuming at peak LR
@@ -113,7 +113,7 @@ done
 # ========== 启动 decay phase 训练 ==========
 SUM="$LOGDIR/baize_p8_decay.log"
 LOG="$LOGDIR/baize_p8_decay_train.log"
-echo "===== P-8 decay START @ $(date '+%F %T') ITERS=${ITERS} WARMUP=${WARMUP} DECAY=${DECAY} LR=${LR} min=${MIN_LR} save=${SAVE_INTERVAL} optimizer=dist_muon =====" > "$SUM"
+echo "===== P-8 decay START @ $(date '+%F %T') ITERS=${ITERS} WARMUP=${WARMUP} DECAY=${DECAY} LR=${LR} min=${MIN_LR} save=${SAVE_INTERVAL} optimizer=adam(AdamW) =====" > "$SUM"
 echo "  NP=${NP} TP=${TP} DP=$((NP/TP))" >> "$SUM"
 echo "  resume from: ${STEP9441_CKPT}" >> "$SUM"
 echo "  decay blend: SFT 64% + L3 24% + code 8% + math 4%" >> "$SUM"
@@ -133,7 +133,7 @@ cd "$BASE" || exit 1
     --lr-warmup-iters "$WARMUP" --lr-decay-iters "$DECAY" --lr-decay-style WSD \
     --seed 1234 \
     --precision bf16_mixed \
-    --optimizer dist_muon > "$LOG" 2>&1
+    --optimizer adam > "$LOG" 2>&1
 RC=$?
 echo "  rc=${RC}" >> "$SUM"
 echo "===== P-8 decay END @ $(date '+%F %T') rc=${RC} =====" >> "$SUM"
