@@ -1,4 +1,37 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 63 -->
+
+## RUN_ID 63 — 重启 loop（编排 harness cline → opencode）
+
+> 脚本 `zhulong_loop.sh` 已切换为 opencode 编排。重启 loop 使其生效（评测 r5 用 `setsid` 启动，不受影响）。
+
+```bash
+# RUN_ID 63 · 重启 loop（换 opencode harness）
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode 可用 + config 含 glm ==="
+command -v opencode
+grep -c 'glm-5.2' ~/.config/opencode/opencode.json 2>/dev/null || echo 0
+echo "=== [2] 旧 loop / 编排 cline（重启前）==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-120
+pgrep -af '\.cline_zhulong' | cut -c1-120 | head -5
+echo "=== [3] r5 评测进程（应持续运行）==="
+pgrep -af 'run_cline_script' | cut -c1-110 | head -5
+echo "=== [4] 杀旧 loop + 旧编排 cline ==="
+pkill -f 'zhulong_loop[.]sh'; pkill -f '\.cline_zhulong'; sleep 2
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-100 || echo "(loop killed)"
+echo "=== [5] 重启 loop（opencode harness）==="
+cd /nasdata/app.e0031982/code/super_intelligence_2035
+setsid env PATH="$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH" \
+  https_proxy=http://172.19.92.23:13128 http_proxy=http://172.19.92.23:13128 \
+  bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+echo "=== [6] 新 loop + 日志尾 ==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-120
+echo "--- /tmp/zhulong_loop.log ---"; tail -15 /tmp/zhulong_loop.log | cut -c1-160
+echo "=== [7] r5 评测仍在跑？==="
+pgrep -af 'run_cline_script' | cut -c1-110 | head -3
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 62 -->
 
 ## RUN_ID 62 — opencode 剥 proxy 重测（LLM 回复 + bash 工具）
