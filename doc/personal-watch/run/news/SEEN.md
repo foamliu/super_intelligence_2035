@@ -661,3 +661,16 @@
 | 2026-10-12 | 英文源本轮不可用（`search_news`〔HN/GDELT〕与 `web_search`〔CN-Bing/360〕实测均无返回） | — | 留档(源故障 · 英文条数记 0 · 如实) | — |
 | 2026-10-12 | 防重核验（本窗候选与 `SEEN.md` 近邻比对） | — | 防重：`陈立武` = 本日第九十二轮 `012/013`「中国前沿 AI 模型 Token 成本低、普及快」另一事件 · `小鹏` = 第九十一轮「小鹏智驾欧洲 NGP」另一事件 · `Edge` = 10-03「Edge 侧边栏 AI」另一事件 ⇒ 本轮候选**不构成重复** | — |
 
+| 2026-10-13 | CounterPoint：内存短缺冲击全球手机市场 —— 2026Q3 全球智能手机出货量同比 **-20%**（创 2012 年以来同期最低）· 今年均价已涨 20%（三星份额 23% / 苹果 22% / 小米 -30% 以上） | IT之家（据 CounterPoint Research 博文 · `012/130` · 06:47 CST · 机构博文口径） | news | https://www.ithome.com/1/012/130.htm |
+| 2026-10-13 | 央视网《别被 AI 短剧带偏了 「吃了不烧心」≠食材一定好》（AI 短剧带火「不烧心」话术 → 公众认知偏差；本机仅取到标题 + 导语） | 央视网（10-12 21:11 CST） | news | https://news.cctv.com/2026/10/13/ARTIMs5Rd1rnYo7ym3uVmnno261013.shtml |
+| 2026-10-13 | 微软正式发布 **Maia 300** AI 芯片：台积电 N2P、288GB HBM4 / 18TB/s、FP4 13.8 PFLOPS、950W、单机架 96 颗、计划 2027 部署 | IT之家（`012/115` · 10-12 22:45 CST） | news | https://www.ithome.com/1/012/115.htm |
+| 2026-10-13 | AMD 发布智能体 AI 计算机架 **Helion**（OCP 规范 · 纯 CPU 版可扩至 32,768 核）与新一代 **锐龙 AI Halo** 开发者平台（至高 192GB LPDDR5X-8533 · 160GB 共享显存 → 本地跑 300B+ 模型） | IT之家（`012/103` · `012/104` · 10-12 22:17 / 22:27 CST） | news | https://www.ithome.com/1/012/103.htm ／ https://www.ithome.com/1/012/104.htm |
+| 2026-10-13 | 比亚迪 × 荣耀宣布战略合作：AI 语音 **A2A** 跨端打通（车机控手机 · YOYO 远程控车 / 手机镜像桌面 / YOYO 全技能上车） | IT之家（`012/121` · 10-12 23:08 CST · 双方公告口径） | news | https://www.ithome.com/1/012/121.htm |
+| 2026-10-13 | Epic 被曝推动开发者使用 AI，一款未公布的《星球大战》× 漫威联名射击游戏延期（**标题即标「据报」⇒ 传闻级**；本机正文仅取到标题区） | IGN〔记者 Michael Cripe〕（10-12 19:14 UTC = 03:14 CST） | news | https://www.ign.com/articles/epic-reportedly-pushing-devs-to-use-ai-delays-secret-star-wars-and-marvel-crossover-shooter |
+| 2026-10-13 | HN 本窗命中一批 non-news（《Why AI doesn't make companies more productive》〔Computerworld〕·《Broadcom/Intel CEOs on AI and ROI》〔Wolf Street〕·《AI's mathematics blitz…》〔The Economist〕·《AI Is a Tool. Using It Well Takes Skill.》〔yyhh.org〕·《China's Five-Year Plan Mandates AI Agents…》〔openclawai.io〕·《The Tetrad Tour, Part III》〔Substack〕·《Teaching a Door to Say No》〔2389.ai〕· WIRED Muse Agent 帖 · Show HN 一批〔Veda / RenkuOS / vibecheck / Ever / lucid〕· Intel D270 GPU 产品页） | 各站（经 HN 窗口拉取·2026-10-12 UTC） | 留档(analysis/opinion/feature/tool·不收) | https://news.ycombinator.com/newest |
+| 2026-10-13 | Ukrainian strikes didn't blow up Russian disinformation on social / AI Is Making Us Dumber – Unless We Fight Back | machinesociety.ai ／ blogspot（经 HN 窗口拉取） | 留档(substack/个人博客 analysis·不收) | https://news.ycombinator.com/newest |
+| 2026-10-13 | 微软 Googlebook **Linux Terminal** Preview（Google Android Developers 官方博客 · 10-12） | Google Android Developers（经 HN 元数据） | 留档(**本机 `fetch_page` SSL 握手超时 ⇒ 正文不可达** · 不满足四字段核验·不收) | https://news.ycombinator.com/newest |
+| 2026-10-13 | x.ai《The X Subscription》（官方公告页 · 10-12） | x.ai/news | 留档(官方公告页正文未取到 · 不收) | https://x.ai/news |
+| 2026-10-13 | 量子位 `qbitai.com/feed` 头部 10 条（最新 = **10-12 05:48 CST 前** ⇒ 落在上一窗口） | 量子位（`rss_latest`） | 防重(超本窗 · 昨日已在账或已判) | https://www.qbitai.com/feed |
+| 2026-10-13 | `cn_news` 本窗 30 条（可核实条目均**时政 / 国际 / 军事 / 民生 / 体育**，唯一 AI 具体事件 = 央视网《别被 AI 短剧带偏了》已入账） | 中新网 ／ 央视网 ／ 联合国新闻·中文（`cn_news` ≤10h · 30 条） | 留档(非 AI 具体事件 · 依 §1 清单与 §4 红线不收) | https://www.chinanews.com.cn/ ／ https://news.cctv.com/ |
+
