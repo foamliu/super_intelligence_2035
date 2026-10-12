@@ -3,7 +3,7 @@
 # Generation file: completed_code_generation_2026_1012_194140.jsonl
 # Batch: 2026_1012_194140
 # Auto-grade: 3/158 (1.9%) [known bug] | timeout=0, success=143, failure=0, fail=15
-set -euo pipefail
+set +e
 
 EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
 SANDBOX_ENDPOINTS="8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4"
