@@ -1,4 +1,59 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 59 -->
+
+## RUN_ID 59 — 写入 opencode 新配置（加 glm provider + 默认 glm-5.2）+ 端到端验证（带 proxy 测 Forbidden）
+
+> 把 `~/.config/opencode/opencode.json` 更新为「deepseek + glm 双 provider，默认 glm/glm-5.2」。
+> 然后用 loop 同样的环境（**带 proxy**）跑一次 glm，验证：① provider 识别；② 带 proxy 是否 `Forbidden`（决定 loop 里是否要剥 proxy）。
+
+```bash
+# RUN_ID 59 · 更新 opencode 配置 + glm 端到端
+set -e
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] 备份旧配置 ==="
+cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.bak.$(date +%s) 2>/dev/null && echo "backup ok" || echo "(no old config to backup)"
+echo "=== [2] 写入新配置 ==="
+cat > ~/.config/opencode/opencode.json <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": { "name": "DeepSeek V4 Pro Cloud" }
+      }
+    },
+    "glm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "GLM (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+      },
+      "models": {
+        "glm-5.2": { "name": "GLM-5.2" }
+      }
+    }
+  },
+  "model": "glm/glm-5.2"
+}
+EOF
+echo "written:"; cat ~/.config/opencode/opencode.json
+echo "=== [3] 带 proxy 端到端（模拟 loop 环境，测是否 Forbidden）==="
+export http_proxy=http://172.19.92.23:13128 https_proxy=http://172.19.92.23:13128 HTTP_PROXY=http://172.19.92.23:13128 HTTPS_PROXY=http://172.19.92.23:13128
+cd /nasdata/app.e0031982/code/super_intelligence_2035
+timeout 180 opencode run -m glm/glm-5.2 --auto "Reply with exactly this text and nothing else: GLM_OK" > /tmp/oc_glm_test.log 2>&1
+echo "rc=$?"
+echo "--- /tmp/oc_glm_test.log tail ---"; tail -35 /tmp/oc_glm_test.log | cut -c1-160
+echo "=== [4] Forbidden 扫描 ==="
+grep -c -iE 'forbidden|401|403|unauthorized' /tmp/oc_glm_test.log 2>/dev/null && echo "!!! 出现 Forbidden 相关字样" || echo "无 Forbidden 字样 ✅"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 58 -->
 
 ## RUN_ID 58 — 定位 opencode 可执行路径 + loop 进程 PATH/proxy
