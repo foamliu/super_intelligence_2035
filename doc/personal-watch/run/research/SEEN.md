@@ -3081,7 +3081,7 @@
 | 2026-10-12 | 2610.13896 | Structural Automata for Neural Semantic Parsing | cs.CL | 候选 |
 | 2026-10-12 | 2610.13895 | Task Context Shapes Component Roles in Language Models | cs.CL | 候选 |
 | 2026-10-12 | 2610.13891 | Beyond the Snowflakes: Disentangling Weather Effects from Confounding Meta-Factors in LiDAR Object Detection | cs.CV | 候选 |
-| 2026-10-12 | 2610.13889 | RATED: Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics | cs.AI | 候选 |
+| 2026-10-12 | 2610.13889 | RATED: Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics | cs.AI | 收录 |
 | 2026-10-12 | 2610.13886 | X-AgentRed: Red-Teaming Personal Agents in Evolving Multi-Service Ecosystems | cs.AI | 候选 |
 | 2026-10-12 | 2610.13881 | Prediction Is Not a Sufficient Memory State | cs.LG | 候选 |
 | 2026-10-12 | 2610.13872 | Tracking the Invisible: Self-Supervised Wheel Track Detection with Thermal-RGB Fusion | cs.CV | 候选 |
@@ -3094,7 +3094,7 @@
 | 2026-10-12 | 2610.13844 | Inference-Time Steering Across Scaffolds and Epitopes for Sample-Efficient De Novo Nanobody Design | cs.LG | 候选 |
 | 2026-10-12 | 2610.13841 | Returning to Development States: When Full Sandbox Snapshots Help Coding Agents | cs.LG | 候选 |
 | 2026-10-12 | 2610.13840 | Studying Comics at Scale with Artificial Intelligence: The PAGE Framework and Three Studies of American Comics and Japanese Manga | cs.AI | 候选 |
-| 2026-10-12 | 2610.13835 | Specialists Learn Faster: Knowledge Organization in Pre-training Shapes Knowledge Update Efficiency | cs.LG | 候选 |
+| 2026-10-12 | 2610.13835 | Specialists Learn Faster: Knowledge Organization in Pre-training Shapes Knowledge Update Efficiency | cs.LG | 收录 |
 | 2026-10-12 | 2610.13834 | On the Design Space of Continuous Diffusion Language Models | cs.LG | 候选 |
 | 2026-10-12 | 2610.13832 | SpatialASM: Internalizing Active Mentalization for Spatial Reasoning | cs.CV | 候选 |
 | 2026-10-12 | 2610.13829 | MC-EvoBench: Auditing Experience-Driven Self-Improvement in Minecraft Agents | cs.RO | 候选 |
@@ -3174,7 +3174,7 @@
 | 2026-10-12 | 2610.13008 | Provenance-Aware Belief Updating in Human-AI Feedback Loops | cs.AI | 候选 |
 | 2026-10-12 | 2610.12998 | Evaluating LLM Creativity through Long-Tail Performance | cs.CL | 候选 |
 | 2026-10-12 | 2610.12997 | Benchmarking Embedding Geometries and Clustering Algorithms for Unsupervised Patent Claim Classification | cs.AI | 候选 |
-| 2026-10-12 | 2610.12995 | What Should SFT Learn? Conditional Information Gain for Generalizable Post-Training | cs.CL | 候选 |
+| 2026-10-12 | 2610.12995 | What Should SFT Learn? Conditional Information Gain for Generalizable Post-Training | cs.CL | 收录 |
 | 2026-10-12 | 2610.12988 | SwingGuard: Risk-Conditioned Multi-Agent Swing Trading with Dual-Timescale Governance | cs.MA | 候选 |
 | 2026-10-12 | 2610.12984 | Work2Skill: Capturing Human GUI Experience for Reusable Agent Skill Induction | cs.AI | 候选 |
 | 2026-10-12 | 2610.12981 | The Evidence Anchoring Boundary: Where Visual Interventions Matter and When They Help in Multimodal LLMs | cs.CV | 候选 |
@@ -3429,3 +3429,4 @@
 
 > **第八十九轮（本地 2026-10-12 18:00（CST）· P0 第 4 批「晚 2」轮 · 当日收口 + 第 5 批 P0）**：**✅ PM 公告批次已刷新**（**15/15 查询 `ok`**，均 `attempts=1` 无重试；**`kept 169 / dropped 410`**；**公告批次 `2026-10-08` → `2026-10-09`、主源 `totalResults` `630048` → `630616`（+568）、最新样本 `published=2026-10-08T17:59:58Z` → `2026-10-09T17:59:56Z`**）—— ⚠️ **与 AM 第八十八轮「PM 大概率仍无新批」的预期相反（如实记录）**。**RSS cs.CL·CV·LG = 172 / 0 / 413**（cs.CV 空 feed，如实记录）→ **PM 有真实新批**，晚报 2 篇「科普」**取自本 PM 轮新发现**（非候选池承接）：**`2610.13948` Can Language Models Play the Wikipedia Game? / `2610.13860` Make It Flow: Animating Water in 3D Gaussian Splatting Scenes**。台账 **+169 行**（**收录 +2 / 候选 +167**）→ 累计行 **3220 条**（**收录 191 / 候选 2522 / 候选（RSS补充）507**）。证据：`raw/2026-10-12-{probe-r89.log,fetch-r89-seen.json}`（`probe.generated=2026-10-12T10:00:58Z` / `fetch.generated=2026-10-12T10:00:57Z`）+ `raw/2026-10-12-idlist-shortlist-r89.{xml,headers}`（`id_list` 实测 5/5：HTTP 200 + `application/atom+xml; charset=utf-8` + 有 `published`）+ `raw/2026-10-12-candlist-r89.txt`。R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS cs.CV 空 feed。口径见 `ARXIV_API.md` §9.91。**当日收口 5/5**：早 3（借鉴）+ 晚 2（科普）→ 第 5 批 P0 分镜脚本 `research/video/SCENES/10_12.html`（TOP-1 `2610.13948`）。
 
+> **第九十轮（本地 2026-10-13 06:00（CST）· P0 第 4 批「早 3」轮 · 新一日 AM 轮）**：**无新公告批次** —— 批次仍 `2026-10-09`（主源 `totalResults=630616`、最新样本 `published=2026-10-09T17:59:56Z`，**与第八十九轮 PM 完全一致**；72h 窗口 `2026-10-09T22:00Z ~ 2026-10-12T22:00Z` 已覆盖不到该批 17:59 条目 → 全部 stale / already in SEEN）；**15/15 查询 `ok`**（均 `attempts=1` 无重试），**kept 0 / dropped 600**（`window_mode=daily` 72h）→ **API 关键词 0 新增**（**周一 20:00 ET 的 `2026-10-10` 批尚未落地** → 时点正常，非「无数据」）；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ **RSS cs.CL·CV·LG = 172 / 0 / 413**（cs.CV 空 feed，如实记录）。**AM 无新批 → 无法做新发现** ⇒ 早报 3 篇「借鉴」**取自第八十九轮已入账的窗口内候选池** + **单条权威复核**（`id_list=2610.13835,2610.12995,2610.13841,2610.13889,2610.12598,2610.13438` → **6/6 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-13-idlist-shortlist-r90.{xml,headers}`）。**入账 3 篇**（`2610.12995` What Should SFT Learn? Conditional Information Gain / `2610.13835` Specialists Learn Faster: Knowledge Organization in Pre-training / `2610.13889` RATED: Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics）。台账 **行数不变 3220 条**（**3 行状态 候选 → 收录**）→ 累计（**收录 194 / 候选 3029**）；证据 `raw/2026-10-13-{probe-r90.log,fetch-r90-seen.json}`。口径见 `ARXIV_API.md` §9.92。**日报进度 3/5**（AM · 3 篇「借鉴」；18:00 晚报补 2 篇「科普」收口 5/5）。

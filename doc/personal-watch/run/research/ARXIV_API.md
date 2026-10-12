@@ -1350,3 +1350,29 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-12-*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-13 06:00`**（新一日「早 3」轮）：① 复验批次（`2026-10-09` 批已被 PM 消费；AM 轮预计见 `2026-10-10/12` 批陆续公告）；② 刷新则走标准 `--fetch` 增量，否则 **RSS 发现 + `id_list` 复核**；③ 日报进度回到 **3/5**（新一日 AM）；④ 可考虑按 `RESEARCH_MAIL_SPEC.md` 起草 ≤3 封作者邮件（**前 3 封需运维确认后发送**，草稿入 `research/mail/drafts/` 并登记 `research/mail/发送记录.md`）。
 
+### 9.92 第九十轮（本地 2026-10-13 06:00 时窗 · **P0 第 4 批第 13 轮 · 「早 3」轮 · 新一日 AM 轮**）：**无新公告批次**（批次仍 `2026-10-09`）→ **API 0 新增** → 早报 3 篇「借鉴」**取自前轮窗口内候选池** + 单条权威复核
+
+> **时点**：本地 `2026-10-13 06:00`（= UTC `2026-10-12T22:00`）为 **周一**。arXiv **工作日 20:00 ET 公告** → **周一（10-12）20:00 ET 的 `2026-10-10` 批尚未落地** → **关键词 API 增量 0 新增属正常**（**非「无数据」**）。实际批次仍为 **`2026-10-09`**（与第八十九轮 PM 完全一致，未刷新）。
+
+- **取源复验（R1′）** `--probe`（`generated=2026-10-12T22:00:27Z`，证据 `research/raw/2026-10-13-probe-r90.log`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=630616`，最新样本 `published=2026-10-09T17:59:56Z` | ✅ 可达（**批次仍 `2026-10-09`**，与第八十九轮 PM `630616` 一致 → **未刷新**） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable` | ❌ 不可达（**不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=172 / 0 / 413` | ✅ cs.CL/cs.LG 有内容 ｜ ⚠️ cs.CV 空 feed |
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-12T22:00:50Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600** → **0 新增**（72h 窗口 `2026-10-09T22:00Z~2026-10-12T22:00Z` 已覆盖不到 `2026-10-09` 批 17:59 条目 → 全部 stale / already in SEEN）。证据：`research/raw/2026-10-13-fetch-r90-seen.{json,log}`。
+
+- **精选权威复核（`id_list`）**：对**候选短名单 6 条**（3 入账 + 3 备选）走 **arXiv API `id_list` 单条复核**（`id_list=2610.13835,2610.12995,2610.13841,2610.13889,2610.12598,2610.13438`）→ **6/6 返回**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `research/raw/2026-10-13-idlist-shortlist-r90.{xml,headers}`）。最终入账 3 篇：
+  - `2610.12995` *What Should SFT Learn? Conditional Information Gain for Generalizable Post-Training*（`published=2026-10-09T04:57:55Z`，cs.CL（次 cs.AI/cs.LG），6 位署名 `Yuxuan Gu, Kequan Niu, Xiaocheng Feng, Yun Li, Yiqiao Yang, Bing Qin`，`comment` 空）；
+  - `2610.13835` *Specialists Learn Faster: Knowledge Organization in Pre-training Shapes Knowledge Update Efficiency*（`published=2026-10-09T16:42:33Z`，cs.LG，2 位署名 `Sheng Zhao, Yuhao Zhu`，`comment`: `25 pages, 12 figures, 11 tables. Project page: https://horizon-lab.org/specialist/`）；
+  - `2610.13889` *RATED: Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics*（`published=2026-10-09T17:38:11Z`，cs.AI（次 cs.IR），2 位署名 `Weiliang Chen, Song Liao`，`comment`: `Accepted at CIKM 2026`）。
+  - **去重复核**：3 个 ID 均**不在**任何 `daily/*.html`，检出时在 `SEEN.md` 为「候选」→ **无重复**。
+
+- **产出**：`research/daily/2026-10-13.html`（**自包含单文件**，**早报 3/5** = 3 篇「借鉴」）：序号 1–3；页头标「早报 · 3/5」+ 本轮取数说明（诚实口径 · AM）+ 附录 A（I→V）+ 附录 B（15 查询 per-query，均 `kept 0`）+ 附录 C（口径护栏）→ 同步 `research/daily/index.html`（新增 2026-10-13 行 → 早报 3/5）。**晚 2 篇「科普」** 待 18:00 PM 轮补录并收口 **5/5**。
+
+- **台账**：`research/SEEN.md` **行数不变 3,220 条**（**3 行状态 候选 → 收录**）→ **收录 194 / 候选 3029**；`research/papers.jsonl` **+3 → 194 行**。落盘脚本：`research/raw/update_r90.py`。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-13-*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-13 18:00`**（「晚 2」轮）：① 复验批次（**周一 20:00 ET 公告** → 本地 10-13 08:00 前后落地，PM 轮**有望见 `2026-10-10` 批**）；② 刷新则走标准 `--fetch` 增量，否则候选池「科普」口径；③ 日报进度 **3/5 → 5/5**（+ `## 晚报变更说明（AM → PM）`）；④ 第 5 批分镜脚本 `research/video/SCENES/10_13.html`；⑤ **每日论文日报邮件**（新职能）：选 3–5 篇 + PDF 入 `research/pdf/<date>/` + 发 `paul.liu@cxmt.com`。
+
