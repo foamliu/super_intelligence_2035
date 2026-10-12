@@ -1,4 +1,28 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 64 -->
+
+## RUN_ID 64 — 现场核对 opencode loop 是否正常工作
+
+> 确认：新 loop（opencode 编排）进程 alive + 最近日志展示正常周期 + r5 评测 healthy。
+
+```bash
+# RUN_ID 64 · 现场健康核对
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] loop + opencode 进程 ==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-90
+pgrep -af 'opencode run --dir' | cut -c1-110
+echo "=== [2] loop 日志尾（最近周期）==="
+tail -25 /tmp/zhulong_loop.log | cut -c1-170
+echo "=== [3] r5 评测进程 ==="
+pgrep -af 'run_cline_script' | cut -c1-100 | head -3
+echo "=== [4] r5 log 健康（Forbidden / 汇总）==="
+grep -c -i 'forbidden' /tmp/ABL_full_v3_r5_8650set.log 2>/dev/null || echo 0
+grep -oE 'run_code=[0-9]+' /tmp/ABL_full_v3_r5_8650set.log 2>/dev/null | tail -1
+ls -la /tmp/ABL_full_v3_r5_8650set.log 2>/dev/null | cut -c1-80
+echo "=== [5] 中继 alive ==="
+pgrep -af 'zhulong_ops_relay[.]sh' | cut -c1-90
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 63 -->
 
 ## RUN_ID 63 — 重启 loop（编排 harness cline → opencode）
