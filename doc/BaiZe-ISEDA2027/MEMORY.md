@@ -3,13 +3,14 @@
 
 ## 🆕 最近操作（2026-10-12）
 
-### 📋 六项运维指令下发（用户直令 · 10-12 晚）
+### 📋 七项运维指令下发（用户直令 · 10-12 晚）
 - **① harness 深挖令**（`fea9b643`·`afa06b20`）：7×300 **module 失败 21.5% vs wrong-fix 48%（纠正旧 83%）** + 根因（**沙箱网络策略挡 `pip install -e .`**）+ **web 对照** → `report_harness_eval_rootcause.html`；**已令逐项修复 P0 + 重跑受影响 case**。🚫 不占 GPU。
 - **② vision OV-1.5 复现计划**（`42d8c075`）：**基模 Qwen3.5-4B + ms-swift**，数据齐（除 85M），估 H100×8 → `report_vision_llava_ov15_repro_plan.html`（已交付）。
 - **③ video 下一章**（`1a522061`）：暖阳后做 `13_外骨骼`；旧原型 legacy TTS ⇒ 重做（去 TTS）。✅ 已开跑。
-- **④ video 推翻重做**（`9d3559cb`·`34ecbafa`）：**角色镜弃「T2I 首帧→I2V」⇒ 一律走 stem_fest 标准 `r2v`**（定妆照/合影 + 场景图；无角色 `t2v`）；**现有 T2I→I2V 成果（18_暖阳 / 13_外骨骼）删除重做**；改 `PIPELINE.md` + `PLAYBOOK §3` 路由。
-- **⑤ recruit 人数上限 ×10**（`9606d8d9`）：`≤2–3 人/批` ⇒ **`≤20–30 人/批`**（`≥60min`/不群发/台账/风控即停 保留）。
+- **④ video 推翻重做**（`9d3559cb`·`34ecbafa`）：**角色镜弃「T2I 首帧→I2V」⇒ 一律走 stem_fest 标准 `r2v`**；**现有 T2I→I2V 成果（18_暖阳 / 13_外骨骼）删除重做**；改 `PIPELINE.md`/`PLAYBOOK §3`。
+- **⑤ recruit 人数上限 ×10**（`9606d8d9`）：`≤2–3 人/批` ⇒ **`≤20–30 人/批`**。
 - **⑥ research 邮件**（`07f47211`·`b424233f`·`c1d0d90b`）：**每日论文日报**（选 3–5 篇下 PDF 发 `paul.liu@cxmt.com`，每天 1 封，`research/pdf/` 不入 git）；作者信**中文（中国人）+ 免审直发**。
+- **⑦ recruit 第 2 个 JD（全职·研究员）**（`b6d48f6f`）：用户「两个 JD（实习 + 助研）」→ 录入 `JD-AI-EDA-研究员-DRAM.md`；令按 **EDA 四大顶会（硬门槛）** 筛**社招池**出**全职短名单**。
 - **流水**：见 `daily-memories/2026-10-12.md`。
 
 WAITING: 0
