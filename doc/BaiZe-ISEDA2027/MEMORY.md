@@ -3,10 +3,11 @@
 
 ## 🆕 最近操作（2026-10-12）
 
-### 📋 两项运维指令下发（用户直令 · 2026-10-12 晚）
-- **① harness 深挖令**（commit `fea9b643`）：用户令查 7×300「是否很多 module 装不上致失败 / 能否解决 / 分数是否偏低（可 web search）」→ `run/BAIZE_HARNESS_TASK.md` 顶部「**最高优先**」块：**纯分析**统计 **env/module 失败 vs `pbf`（patch 成功但 F2P 未过 = wrong-fix）** 的真实占比 + 根因（我们 **unshare 共享 env（非 Docker）** vs 官方 **per-instance conda/镜像**；patch **仅单级 `git apply`** vs 官方**三级容错**）+ 可解决性（带可挽回题数）+ **web search 外部对照**（同类 harness pass@1 + kimi-k2 公开数）→ 交付 `report_harness_eval_rootcause.html`。🚫 不占 GPU；**重跑须先报后跑**。
-- **② vision OV-1.5 复现计划**（commit `42d8c075`）：用户令写**中文 HTML 计划**复现 **LLaVA-OneVision-1.5** —— 硬设定 **基模 Qwen3.5-4B（非 Qwen3-4B）· 框架 ms-swift · 训练数据除 85M 外已下完（`/nas_train/app.e003192/datasets/mvp_lab`；⚠️ 本仓记录多为 `.../app.e0031982/datasets/mvp-lab/`，令**实地核实**）· 可 web search 出**超参** · 估 **H100×8** 时间** → `run/BAIZE_VISION_TASK.md` 顶部「**最高优先**」块 → 交付 `report_vision_llava_ov15_repro_plan.html`（9 必备节）。🚫 只出计划、**不启动训练**、不打断 ④-4ep。
-- **流水**：见 `daily-memories/2026-10-12.md`（含 2026-10-11 四项指令指针）。
+### 📋 三项运维指令下发（用户直令 · 10-12 晚）
+- **① harness 深挖令**（`fea9b643`）：用户令查 7×300「是否很多 module 装不上致失败 / 能否解决 / 分数是否偏低（可 web search）」→ `run/BAIZE_HARNESS_TASK.md` 顶部「**最高优先**」块：**纯分析**统计 **env/module 失败 vs `pbf`（patch 成功但 F2P 未过 = wrong-fix）** 真实占比 + 根因（我们 **unshare 共享 env** vs 官方 **per-instance conda/镜像**；patch **仅单级 `git apply`** vs 官方**三级容错**）+ 可解决性 + **web search 外部对照**（同类 pass@1）→ 交付 `report_harness_eval_rootcause.html`。🚫 不占 GPU；**重跑须先报后跑**。
+- **② vision OV-1.5 复现计划**（`42d8c075`）：用户令写**中文 HTML 计划**复现 **LLaVA-OneVision-1.5** —— 硬设定 **基模 Qwen3.5-4B（非 Qwen3-4B）· 框架 ms-swift · 数据除 85M 外已下完（路径令其**自己上机核实**）· 可 web search 出**超参** · 估 **H100×8** 时间** → `run/BAIZE_VISION_TASK.md` 顶部块 → 交付 `report_vision_llava_ov15_repro_plan.html`（9 节）。🚫 只出计划、**不启动训练**、不打断 ④-4ep。
+- **③ video 下一章改判**（`1a522061`）：用户令「**暖阳之后做外骨骼**」→ 覆盖 PLAN 原定下一章 `08_认知矿工` ⇒ **先收尾 `18_暖阳`（最终 QC）→ 下一章 `13_外骨骼`（48 镜）**；因 13 旧原型音轨 = **legacy TTS（违反禁 TTS 令）⇒ 必须按新口径重做（H3 随视频生成台词）** → `personal-watch/run/WATCH_VIDEO_TASK.md` 顶部块。
+- **流水**：见 `daily-memories/2026-10-12.md`。
 
 WAITING: 0
 
