@@ -19,7 +19,7 @@
 **② 硬设定（按此，不得擅改；存疑先核实再如实标注）**：
 1. **基模 = Qwen3.5-4B**（**不是** Qwen3-4B）—— web 核实其 HF repo / 权重可得性 / tokenizer / chat 模板 / 与 Qwen3-4B 的差异；**若不存在或不公开 → 如实标「未核实/不可得」并给替代（降级回 Qwen3-4B）**。
 2. **训练框架 = ms-swift**（核版本/接口：`swift sft` / `swift pt`？对**自定义视觉塔**与 OV1.5 架构的支持；本机是否已有 ms-swift 环境；给**可直接跑的 `swift` 命令模板**）。
-3. **训练数据**：用户口径「除 85M 外都已下载完毕」，路径按用户给的 `/nas_train/app.e003192/datasets/mvp_lab` —— ⚠️ **本仓既有记录多为 `/nas_train/app.e0031982/datasets/mvp-lab/`**（`ARCHIVE_DATA_SPEC_HISTORY.md`），**请实地核实真实路径与存在性，以实际盘点为唯一准**；须**盘点可用子集 + 规模**（`du -sh` + parquet 计数），并判 **85M 已下 X% 的缺口**对配方的影响。
+3. **训练数据**：用户口径「除 85M 外都已下载完毕」，路径按用户给的 `/nas_train/app.e003192/datasets/mvp_lab` —— ⚠️ **本仓既有记录多为 `/nas_train/app.e0031982/datasets/mvp-lab/`**（`ARCHIVE_DATA_SPEC_HISTORY.md`）。**🔎 路径以你自己上机核实为准**（在 `.12`/`.29` 直接 `ls -d /nas_train/*/datasets/*mvp*` / `/nas_inference/*/datasets/*mvp*` / `/nas_user/*/datasets/*mvp*`，再 `du -sh`），**以实际盘点为唯一准**；🚫 **不要因「用户给的路径」与「仓内记录」不一致而停手、也不要回问运维** —— 你是唯一能看见文件系统的人，**自己判定并如实记「实际路径 = X」**。须**盘点可用子集 + 规模**（`du -sh` + parquet 计数），并判 **85M 已下 X% 的缺口**对配方的影响。
 4. **允许 web search**：出**完整超参数表**（每项给值 + 来源/依据）。
 5. **训练时间**：估 **H100×8** 墙钟（分阶段 + 敏感性）。
 
