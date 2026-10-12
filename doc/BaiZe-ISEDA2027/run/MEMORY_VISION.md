@@ -21,10 +21,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 474,330/748,404 (~63.4%), loss~0.14-0.28, C1=0.5672 healthy (oscillating 0.54-0.79, no collapse), ~2600 img/s). 10 ckpts saved (380k-470k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
+| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 500,730/748,404 (~66.9%), loss~0.08-0.14, C1=0.5399 healthy (oscillating 0.54-0.79, no collapse), ~5400 img/s, 13 ckpts saved (380k-500k). ETA ~05:15 Oct 13 (~6.4h remaining). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告, LLaVA-OV1.5 plan). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 22:05 (wake #32)**: LLaVA-OV1.5 复现计划已交付：`report_vision_llava_ov15_repro_plan.html`（28KB, 中文, 8节, 内联CSS, 零外链）。关键发现：① ms-swift v4.2.0 原生支持 `llava_onevision` model_type + Qwen3.5；② 数据全部就位（含85M, 5714 packed tar, 路径 `/nas_train/app.e0031982/datasets/mvp-lab/`）；③ Qwen3.5-4B 原生多模态（vs 原版 Qwen3-4B 纯文本）= 最大架构阻塞；④ H100×8 全量复现 ~30-40 天。④-4ep 仍在训练中（step ~474k/748k, ~63.4%, C1 healthy）。📦 体积：TASK=31.0KB / MEMORY=27.8KB（归档 ~3.3KB → ARCHIVE_OPERATOR_VISION.md, §0+§3 已搬） |
+| 更新 | **2026-10-12 22:52 (wake #33)**: ④-4ep 训练健康推进中——step 500,730/748,404 (~66.9%), loss~0.09, C1=0.5399 healthy, ~5400 img/s, 13 ckpts (380k-500k), ETA ~05:15 Oct 13. post_4ep_chain.sh (PID 3387016) 等待训练完成后自动接续 ProtB/ProtA/zs/k-NN 全套评测。三项运维指令均已完成或进行中：① LLaVA-OV1.5 plan ✅ (28KB) ② 中文报告 ✅ (36KB, 待 4ep 结果更新) ③ ④-4ep 🔄 (~67%). 📦 体积：TASK=31.0KB / MEMORY=27.9KB（无需归档） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -216,6 +216,8 @@ WAITING: 1
 - [16:00 Oct12] **Monitoring wake #24**: ✅ ALL tasks still complete — no new operator instructions (git diff e3540119..HEAD on TASK = empty). GPU .12 all 8 cards idle (0% util, 0 MiB). Git synced (main=origin/main). **Still awaiting operator review of ④-2ep results** (ProtB 65.37±0.01%, Δ+3.03pp, MODERATE — no 4ep unless operator requests). 📦 体积：TASK=28.2KB / MEMORY=31.8KB。
 - [18:40 Oct12] **Monitoring wake #26**: 🔄 ④-4ep training step 408,310/748,404 (~55%), **C1=0.5057 healthy** (C2_gap=+0.1933, C4=OK, loss~0.08, lr=2.44e-04 cosine), ~5,100 img/s (faster than 2ep 2,416), 4 ckpts saved (380k/390k/400k), PID 3421459 alive, post_4ep_chain.sh (PID 3445693) waiting. Remaining ~340k steps @ ~97ms/iter ≈ 9.2h → ETA ~Oct 13 04:00 → auto-eval ~3.5h → results ~Oct 13 07:30. ✅ 中文报告 (36KB) + EXPERIMENTS §9.7 已同步. 📦 体积：TASK=29.5KB / MEMORY=27.1KB（归档 ~5KB → daily-memories-vision/2026-10-12.md）。
 - [20:55 Oct12] **Monitoring wake #30**: 🔄 ④-4ep training step 463,790/748,404 (~62%), **C1=0.5089 healthy** (oscillating 0.50-0.59 across 299 PROBE lines, all C4=OK, no collapse), C2_gap=+0.1982, loss~0.08-0.15, lr=1.93e-04 cosine, ~2800 img/s (NFS contention), 9 ckpts saved (380k-460k, latest @20:41), PID 3421459 alive, post_4ep_chain.sh (PID 3445693) waiting. Remaining ~284,614 steps @ ~6 steps/s ≈ 13h → ETA ~Oct 13 10:00 → auto-eval ~3.5h → results ~Oct 13 13:30. 📦 体积：TASK=30.2KB / MEMORY=27.8KB。
+- [22:05 Oct12] **wake #32**: ✅ LLaVA-OV1.5 复现计划 HTML 交付 (`report_vision_llava_ov15_repro_plan.html`, 28KB, 8节). 关键发现：ms-swift v4.2.0 支持 llava_onevision+Qwen3.5; 数据全部就位; Qwen3.5-4B 原生多模态=最大阻塞; H100×8 全量~30-40天. 任务书归档 §0+§3 → 31KB. ④-4ep step ~474k/748k (~63.4%).
+- [22:52 Oct12] **Monitoring wake #33**: 🔄 ④-4ep training step 500,730/748,404 (~66.9%), **C1=0.5399 healthy** (C2_gap=+0.1898, C4=OK, loss~0.09, lr=1.62e-04 cosine), ~5400 img/s (recovered from NFS contention), 13 ckpts saved (380k-500k, latest @22:50), PID 3377716 alive, post_4ep_chain.sh (PID 3387016) waiting. Remaining ~247,674 steps @ ~93ms/iter ≈ 6.4h → ETA ~05:15 Oct 13 → auto-eval ~3.5h → results ~08:45 Oct 13. ✅ All 3 operator tasks done/in-progress: LLaVA plan✅ 中文报告✅ ④-4ep🔄. 📦 体积：TASK=31.0KB / MEMORY=27.9KB（无需归档）。
 
 
 
