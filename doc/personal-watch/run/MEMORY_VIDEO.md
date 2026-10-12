@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 19/54 镜成片 ✅ + 手机UI系列 16 帧全生成 ✅（本轮）
-已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 18_暖阳 19/54 镜成片（含补批 06/13/18/22/25）；手机 UI 系列 16 帧全生成（03/09/12/16/21/23/29/30/34/35/38/40/43/44/51/53）
-当前动作:     （本轮：补 23 消费记录 UI 帧 → 核验 16/16 帧 1280x720 → manifest notes 更新 → 回写 + commit+push）
-下一步:       剩余 35 镜出片：手机UI 16 镜（帧已备，扩 gen_ep18_h3_i2v 用 UI 帧 I2V）+ 数据流T2V 5 镜（15/20/27/28/54 无参考图）+ 其余 14 镜（07/17/31/32/39/41/42/45/46/47/48/49/50/52 需补人物/场景资产）→ 逐批 H3 出片 → 字幕/音效BGM → 合成（★ 音画钉长）
-阻塞:         无硬阻塞。剩余镜缺资产：数据流 T2V 5 镜无参考图；其余 14 镜需人物/场景帧（前妻闪回 45 用老周定妆照）。
+PHASE:        S3 放量 ✅ → 18_暖阳 31/54 镜成片 ✅（后台 I2V 批次续跑中）
+已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 18_暖阳 31/54 镜成片；手机 UI 系列 16 帧全生成；固化 gen_ep18_h3_i2v/t2v + update_ep18_manifest 三脚本
+当前动作:     （本轮：核验 31/54 镜 mp4 → manifest 19→31 verified → 固化脚本 commit+push；后台批次 gen_ep18_h3_i2v.py --skip-existing PID 9136 正在续跑 SHOT-49+）
+下一步:       收尾 I2V 批次（剩余 I2V 18 镜：03/09/12/16/21/23/30/34/35/38/40/43/44/49/50/51/52/53）→ 跑 gen_ep18_h3_t2v.py（15/20/27/28/54，5 镜）→ 字幕/音效BGM → 合成（★ 音画钉长）
+阻塞:         无硬阻塞。数据流 T2V 5 镜无参考图（走 T2V）；其余 I2V 18 镜帧已备（16 UI + 2 车内）。
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 续跑 · 补 23 UI 帧 + 核验 16/16 帧 → manifest notes 更新 → 回写 commit+push）
+- **上次唤醒**：2026-10-12（S3 续跑 · 核验 31/54 镜成片 + 固化 manifest/scripts + commit+push；后台 I2V 批次续跑中）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 续跑 · 18_暖阳 I2V 批次收 31/54 镜成片 ✅（后台批次续跑中）**：核验 31 镜 mp4 → manifest 19→31 → 固化脚本 commit+push。
+  - **核验（验收式陈述）**：`update_ep18_manifest.py --dry-run` + ffprobe 逐镜核验 **31/54 镜 mp4**（h264 1056×608 24fps + aac，时长吻合 §4.1 `17k+5`：3.042/4.458/5.167/6.583s）。新增 12 镜（07/17/29/31/32/39/41/42/45/46/47/48）。
+  - **manifest**：`OUTPUT/18_暖阳/videos/manifest.json` 19→**31 verified**（`verified_count:31` + notes「剩余 23 镜：I2V 18 + T2V 5」）。
+  - **固化脚本**：`gen_ep18_h3_i2v.py`（扩至全 49 I2V 镜含 16 UI 镜）、`gen_ep18_h3_t2v.py`（5 T2V 镜 15/20/27/28/54，steps=20，新增）、`update_ep18_manifest.py`（扫 mp4→ffprobe→回写 verified，新增）；三脚本 py_compile exit=0。
+  - **短剧仓 commit**：`2a9e851`（4 files, +988/−29）→ push ✅（`main...origin/main` 同步）。
+  - **背景**：上一轮遗留后台批次 `gen_ep18_h3_i2v.py --skip-existing`（PID 9136）未提交即被中断，本轮不干扰批次、改为核验+固化+commit。
+  - **下一步**：收尾 I2V 批次（剩余 18 镜）→ `gen_ep18_h3_t2v.py` 5 镜 → 字幕/音效BGM → 合成（★ 音画钉长）。
 
 - **2026-10-12 · S3 续跑 · 18_暖阳 手机UI系列 16 帧全生成 ✅（含补 23 消费记录）**：本轮补全 UI 帧缺口并核验。
   - **补 23**：`scripts/gen_ep18_ui_frames.py` SPECS 新增 SHOT-23（消费记录 `18_ui_23_orders.png`，seed=1923）；py_compile exit=0 + `--shot 23 --dry-run` 通过；后台 `Start-Process` 出 1 张（1331KB）。
