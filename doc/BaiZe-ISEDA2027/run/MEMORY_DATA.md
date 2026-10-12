@@ -183,24 +183,7 @@ ERROR_COUNT:  2
 
 
 
-> 📦 唤醒245 原文已归档 → `daily-memories-data/2026-10-10.md`（含全量污染扫描启动+GPIC 6677/8001+.29 GPU空5卡+体积18.6KB）
-> 📦 唤醒243-244 原文已归档 → `daily-memories-data/2026-10-09.md`（含en_base s24-s33全完成206.76B+投料前污染扫描10K docs 0命中+GPIC巡检）
-> 📦 唤醒234-242 原文已归档 → `daily-memories-data/2026-10-09.md`（含en_base s24-s33巡检全链+GPIC巡检+ETA纠正）
-> 📦 唤醒219-221 已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq分词12进程启动+巡检进度+GPIC计数）
-> 📦 唤醒211-218 原文已归档 → `daily-memories-data/2026-10-08.md`（含zh s9完成+论文更新+l1_en_hq巡检全链+GPIC巡检）
-> 📦 唤醒207-210 原文已归档 → `daily-memories-data/2026-10-08.md`（含zh分词巡检+report修正+GPIC巡检）
-> 📦 唤醒204-206 原文已归档 → `daily-memories-data/2026-10-08.md`（含s9崩溃修复+zh分词ETA修正+GPIC巡检）
-> 📦 唤醒201-203 原文已归档 → `daily-memories-data/2026-10-08.md`
-> 📦 唤醒191-200 原文已归档 → `daily-memories-data/2026-10-08.md`（含zh分词并行化启动+BO R2完成+top-K收尾+UltraX续传/完成+Spearman ρ=−0.80）
-
-
-
-
-> 📦 唤醒190 已归档 → `daily-memories-data/2026-10-07.md`
-> 📦 唤醒185 已归档 → `daily-memories-data/2026-10-07.md`
-> 📦 唤醒184 已归档 → `daily-memories-data/2026-10-07.md`
-> 📦 唤醒171-183 已归档 → `daily-memories-data/2026-10-07.md`
-> 📦 旧流水（唤醒156-166）已归档 → `daily-memories-data/2026-10-06.md`
+> 📦 唤醒156-245 原文已归档 → daily-memories-data/2026-10-06~10.md（含R3分词巡检全链+GPIC巡检+全量污染扫描+zh/l1_en_hq/en_base分词全链+BO R2+UltraX+论文更新等，详见各日文件）
 
 ## 运维问答
 
