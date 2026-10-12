@@ -10,7 +10,7 @@ WAITING: 1
 |:--|:--|
 | STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 r1✅78.5% r2✅76.6% r3✅77.2%(att2) r4🔄PID1921729**）|
 | CONFIG | `phi_k10`（S2 Φ 预算 k=10·EDA_PHI_BUDGET=10/EDA_PHI_LAGGED=0·base=full(V3+selfexpl)保留·set_s2_phi.py 只改预算不动 V3/SKILL_DATA_DIR✅）|
-| ROUND | 4（phi_k10 r1✅=78.5%(124/158·timeout=2)·r2✅=76.6%(121/158·timeout=0)·r3✅=77.2%(122/158·timeout=0·att2·att1=74.1%作废)·**r4🔄PID1921729**）|
+| ROUND | 4（phi_k10 r1✅=78.5%(124/158·timeout=2)·r2✅=76.6%(121/158·timeout=0)·r3✅=77.2%(122/158·timeout=0·att2·att1=74.1%作废)·**r4🔄PID1921729 ~1h07m**）|
 | PHASE | `running`（r4 code-gen进行中·PID1921729）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
@@ -64,6 +64,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
+- [2026-10-13 04:37] 🔎 **巡检(phi_k10 r4 ~1h07m健康·不动作退出)**：pgrep→PID1921729 alive(etime01:06:41·STAT Ss)·log /tmp/ABL_phi_k10_r4.log 17.0MB mtime04:37(live)·canary-by-log✅：ACCESS RESTRICTED=782(hook live>0)·Forbidden=0✅·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=232(>0·k=10预算约束生效)·run_code=2703·infra全绿：/home=29G✅·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·loop PID464225✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive(此前04:28时relay已不在·现已恢复)·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→auto-grade→re-grade→timeout≤10且Pass@1≥75%→r4有效→r5；<75%→retry。
 - [2026-10-13 04:28] 🔎 **巡检(phi_k10 r4 ~58min健康·不动作退出)**：pgrep→PID1921729 alive(etime57:47·STAT Ss)·log /tmp/ABL_phi_k10_r4.log 14.8MB mtime04:28(live)·canary-by-log✅：ACCESS RESTRICTED=714(hook live>0)·Forbidden=0✅·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=193(>0·k=10预算约束生效)·run_code=2353·infra全绿：/home=29G✅·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·loop PID464225✅有proxy(https_proxy=http://172.19.92.23:13128)·⚠️relay PID2080448已不在(ps无输出·last_run_id=64)·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→auto-grade→re-grade→timeout≤10且Pass@1≥75%→r4有效→r5；<75%→retry。
 - [2026-10-13 04:05] 🔎 **巡检(phi_k10 r4 ~35min健康·不动作退出)**：pgrep→PID1921729 alive(etime35:02·STAT Ss)·log /tmp/ABL_phi_k10_r4.log 8.5MB mtime04:05(live)·canary-by-log✅：ACCESS RESTRICTED=556(hook live>0)·Forbidden=0✅·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=85(>0·k=10预算约束生效)·run_code=1605·infra全绿：/home=29G✅·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·loop PID464225✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID2080448✅alive·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→auto-grade→re-grade→timeout≤10且Pass@1≥75%→r4有效→r5；<75%→retry。
 - [2026-10-13 03:57] 🔎 **巡检(phi_k10 r4 ~27min健康·不动作退出)**：pgrep→PID1921729 alive(etime26:39·STAT Ss)·log /tmp/ABL_phi_k10_r4.log 6.5MB mtime03:57(live)·canary-by-log✅：ACCESS RESTRICTED=448(hook live>0)·Forbidden=0✅·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=46(>0·k=10预算约束生效)·run_code=1222·infra全绿：/home=29G✅·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·loop PID464225✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID2039406✅alive·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→auto-grade→re-grade→timeout≤10且Pass@1≥75%→r4有效→r5；<75%→retry。
