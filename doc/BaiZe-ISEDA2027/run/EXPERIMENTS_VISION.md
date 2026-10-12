@@ -1083,3 +1083,4 @@ The uniform +1~1.4pp shift across all 4 independent metrics (ProtA/B, zs, k-NN) 
 
 > **文件**：`vision/report_vision_final_20261012_zh.html`（36KB，单文件内联 CSS/SVG，10 节 + 3 SVG 图表，全中文）。
 > **覆盖**：背景 → ③ 口径修订 → ① zero-shot（E1fair 34.10% / E2fair 35.45%，lp−zs gap ~28pp）→ ② probe 对照（×5ep=62.15%→probe 未欠拟合→62.34% 即特征质量天花板）→ 变体实验（V2 Muon 全 LR 坍缩❌ / V3 全量数据 ProtB 63.52% Δ+1.18pp Null）→ ④ epoch scaling（2ep ProtB 65.37±0.01% Δ+3.03pp / ProtA 53.82% / zs 38.52% / k-NN 40.67%，MODERATE）→ lp-epoch 曲线 → 结论与下一步。所有数字与本文件 §8.3–§9.6 完全一致，口径标 BaiZe internal protocol。
+> **🔄 更新（2026-10-12 17:23）**：报告已更新——运维新裁定「4ep > 70% = 胜利」→ **④-4ep 已启动**（从 2ep 检查点续训，--steps 748404，374,202 新步，~16.6h）。报告 TL;DR / §7 决策 / §10 结论均已同步标注 4ep 进行中。结果待训练完成后追加。

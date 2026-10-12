@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（✅ DONE）+ **① 同模型 zero-shot eval**（✅ DONE: E1fair 34.10%, E2fair 35.45%）+ **② k-NN probe 对照**（✅ DONE: k=20→37.68%）+ **变体实验 V2(Muon)→V3(全量数据)→V1(分辨率暂缓)**。
+> 🆕 **2026-10-12 17:23（运维直令 · 最高优先）**：用户令「vision 可以在现有 2ep 检查点基础上继续训练的方式启动 4ep 吗？4ep 结果如果超过 70%，也是胜利。」→ **④-4ep 已启动**：从 2ep final ckpt `vision.pt` 续训（--resume --steps 748404），输出新目录 `scaling_E4_4ep_ov2_w512_d30_p16_224`。374,202 新步，~16.6h，~133 GPU·h。post_4ep_chain.sh 已挂载（训练完自动接续 ProtB/ProtA/zs/k-NN 全套评测）。判据改：**4ep ProtB > 70% ⇒ 胜利**。
+> 🆕 **2026-10-12 17:23（运维直令 · 最高优先）**：中文版综合报告 `vision/report_vision_final_20261012_zh.html` 已存在（前一轮 wake #25 产出，36KB, 10节），本轮已**更新**：TL;DR / §7 决策 / §10 结论均标注「④-4ep 已启动，结果待出」。EXPERIMENTS_VISION.md §9.7 已同步更新。
 > 🔴 **V2 Muon COLLAPSED at ALL tested LRs** (2026-10-11): lr=5e-4 collapsed@step2100, lr=1e-4 collapsed@step4200. ❌ **Muon incompatible with AIMv2-style contrastive+reconstruction objective**. Full analysis in `EXPERIMENTS_VISION.md §9.2`.
 > ✅ **V3 Full GPIC Data TRAINING COMPLETE** (02:06–12:44 Oct 11): 230,598 steps (1 epoch of 118.1M pairs), AdamW, final_loss=0.1201, steady_img/s=2706.4, total=38,273s (~10.6h). 23 checkpoints (10k–230k) + final vision.pt (509MB). **No collapse** — C1 stable 0.50–0.53 throughout, C2_gap +0.19~+0.20, C4=OK all 768 PROBE points. total_shards=11,350 (vs E1fair 10,787).
 > ✅ **V3 ProtB EVAL DONE** (14:54 Oct 11): **63.52±0.01%** (3 seeds: 63.53/63.52/63.51%). **Δlp=+1.18pp** vs E1fair (62.34±0.01%) → **Null verdict** (|Δ|<1.5pp). Full-data recipe indistinguishable from baseline.
@@ -20,10 +21,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant reports ALL DELIVERED. ✅ **④-2ep TRAINING + ALL EVAL COMPLETE** (374,202 steps, 16.6h, C1 0.51→0.58, no collapse). **ProtB 65.37±0.01% (Δ+3.03pp), ProtA 53.82% (Δ+4.12pp), zs 38.52% (Δ+4.42pp), k-NN 40.67% (Δ+2.99pp). VERDICT: MODERATE → no 4ep unless operator requests.** lp-epoch curve plot generated. **Awaiting operator review of ④ results.** |
+| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 377860/748404, loss~0.08, C1=0.51, no collapse, ~4800 img/s). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 16:46 (wake #25)**: Operator instruction 2026-10-12 — wrote **中文版综合报告** `vision/report_vision_final_20261012_zh.html`（36KB, 10节, 3 SVG, 全中文, ≤200KB✅）covering ③→①→②→④ 全链路. Added §9.7 summary to EXPERIMENTS_VISION.md. All numbers consistent with §8.3–§9.6. 📦 体积：TASK=27.7KB / MEMORY=31.8KB（归档 0KB） |
+| 更新 | **2026-10-12 17:30 (wake #26)**: Operator instruction 2026-10-12 — launched **④-4ep** training (resume from 2ep ckpt, --steps 748404, 374,202 new steps). Created `run_e4_4ep.sh` + `post_4ep_chain.sh` (auto-eval after training). Training confirmed running (step 377860, loss~0.08, C1=0.51, no collapse, ~4800 img/s, 8 GPU 62-74% util). Updated 中文报告 (`report_vision_final_20261012_zh.html`) to reflect 4ep launch. Updated EXPERIMENTS_VISION.md §9.7. 📦 体积：TASK=30.2KB / MEMORY=32.2KB（归档 0KB） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）

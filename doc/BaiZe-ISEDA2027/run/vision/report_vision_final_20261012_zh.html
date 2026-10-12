@@ -59,7 +59,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 
 <div class="card tldr">
 <h3 style="color:var(--accent);margin-top:0">🎯 一句话总结</h3>
-<p>62.34% 是 <strong>当前数据规模（95.8M 图文对 · 1 epoch）与目标函数（AIMv2-style）下的特征质量天花板</strong>——不是评测方法的缺陷，也不是 probe 的欠拟合；将训练 epoch 翻倍（2 epoch）可将 ProtB 提升至 <strong>65.37%</strong>（Δ+3.03pp），收益中等且呈递减趋势。</p>
+<p>62.34% 是 <strong>当前数据规模（95.8M 图文对 · 1 epoch）与目标函数（AIMv2-style）下的特征质量天花板</strong>——不是评测方法的缺陷，也不是 probe 的欠拟合；将训练 epoch 翻倍（2 epoch）可将 ProtB 提升至 <strong>65.37%</strong>（Δ+3.03pp），收益中等且呈递减趋势。<strong>④-4ep 已于 2026-10-12 17:23 启动</strong>（从 2ep 续训，预计 ~16.6h），判据：4ep > 70% = 胜利。</p>
 </div>
 
 <h2>2. E1fair 基线配置速览</h2>
@@ -281,7 +281,8 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <div class="moderate-box">
 <h3>🎯 裁定结果：MODERATE（中等收益）</h3>
 <p>Δlp(ProtB) = <strong>+3.03pp</strong>，落在预注册的 <strong>+1.5~7.66pp</strong> 区间内 → "有收益，但呈递减趋势"。</p>
-<p><strong>决策</strong>：不启动 4 epoch 训练（除非运维明确要求）。2 epoch 的 +3.03pp 增益虽真实，但边际收益递减（从 1→2 ep 获 +3.03pp，推测 2→4 ep 增益将更小），不值得 ~160 GPU·h / ~20h 的额外成本。</p>
+<p><strong>原决策</strong>：不启动 4 epoch 训练——2 epoch 的 +3.03pp 增益虽真实，但边际收益递减。</p>
+<p><strong>🔄 运维新裁定（2026-10-12 17:23）</strong>：用户指令「4ep 结果如果超过 70%，也是胜利」→ <strong>④-4ep 已启动</strong>（从 2ep 检查点续训，--steps 748404，374,202 新步，~16.6h，预计 ~10-13 11:00 完成）。判据改为：<strong>4ep ProtB > 70% ⇒ 胜利</strong>；4ep 65–70% ⇒ 递减收益确认；4ep ~65% 横盘 ⇒ 天花板确认。训练完成后自动接续 ProtB/ProtA/zs/k-NN 全套评测。</p>
 </div>
 </div>
 
@@ -405,7 +406,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <li><strong>① zero-shot</strong>：E1fair zs=34.10% ≫ 随机 0.1% → 冻结文本塔带来了实质对齐收益；lp−zs gap +28pp → dense reconstruction 目标贡献了对比学习之外的表征质量。</li>
 <li><strong>② probe</strong>：×5 epoch（450ep）= 62.15% &lt; 90ep 基线；wd/LR 扫描最高 +0.35pp → probe <strong>不存在欠拟合</strong> → 62.34% 是<strong>真实的特征质量天花板</strong>。</li>
 <li><strong>变体</strong>：V2 Muon 全 LR 坍缩（与 AIMv2-style 不兼容）；V3 全量数据 +1.18pp → Null（不可分辨）。</li>
-<li><strong>④ epoch 缩放</strong>：2 epoch → ProtB <strong>65.37%</strong>（Δ+3.03pp），四指标一致 +3~4.4pp → <strong>MODERATE</strong>（有收益但递减）→ 不启动 4ep。</li>
+<li><strong>④ epoch 缩放</strong>：2 epoch → ProtB <strong>65.37%</strong>（Δ+3.03pp），四指标一致 +3~4.4pp → <strong>MODERATE</strong>（有收益但递减）。<strong>④-4ep 已启动</strong>（运维新裁定：4ep > 70% = 胜利），结果待出。</li>
 </ol>
 <p><strong>最终判断</strong>：62.34% 是当前数据规模（95.8M · 1ep）与目标函数（AIMv2-style）下的特征质量天花板。增加训练预算（2 epoch）可获得 +3.03pp 的中等收益，但边际递减；换优化器（Muon）不可行；加 7.6% 数据不可分辨。瓶颈在<strong>数据规模与目标函数</strong>，不在架构、评测方法或 probe 配置。</p>
 </div>
