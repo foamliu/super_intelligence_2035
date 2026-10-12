@@ -195,3 +195,8 @@
 > **累计（截至 2026-10-12 第八十八轮）**：收录 **189 篇**（`papers.jsonl` 189 行）/ 候选 **2862 篇**（仅存 `SEEN.md` 防重）；`SEEN.md` 台账行累计 **3051 条**（本轮无新增行，仅 3 行状态 候选 → 收录）。
 
 
+
+> 🗓 **第八十九轮（本地 2026-10-12 18:00 时窗 · P0 第 4 批「晚 2」轮 · 当日收口 + 第 5 批 P0 交付）**：**PM 公告批次已刷新** —— `2026-10-09` 提交批上线（主源 `totalResults` `630048` → **`630616`**，最新样本 `published=2026-10-08T17:59:58Z` → **`2026-10-09T17:59:56Z`**）；**15/15 查询 `ok`**（均 `attempts=1` 无重试），**kept 169 / dropped 410**（`window_mode=weekend_batch` 120h）→ **+169（收录 2 / 候选 167）**。⚠️ **与 AM 第八十八轮「PM 大概率仍无新批」的预期相反**（如实记录）。R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS cs.CL·CV·LG = **172 / 0 / 413**；证据 `raw/2026-10-12-{probe-r89.log,fetch-r89-seen.json}` · `raw/2026-10-12-idlist-shortlist-r89.{xml,headers}`；口径 `ARXIV_API.md` §9.91。**PM 有真实新批** → 晚报 2 篇「科普」取自**本 PM 轮新发现** + **单条权威复核**（`id_list=2610.13948,2610.13860,2610.13925,2610.13940,2610.12571` → **5/5** `HTTP 200` + `application/atom+xml; charset=utf-8` + 有 `published`、`comment`）→ **收录 +2** = `2610.13948`（Can Language Models Play the Wikipedia Game?）/ `2610.13860`（Make It Flow: Animating Water in 3D Gaussian Splatting Scenes）。**P0 交付①** `research/daily/2026-10-12.html` 收口 **5/5**（早 3 借鉴 + 晚 2 科普；新增 `## 晚报变更说明（AM → PM）` + PM 轮取数说明 + 附录 A′ + 附录 C 更新）+ `research/daily/index.html`；**P0 交付②** 第 5 批 `research/video/SCENES/10_12.html`（《论文两分钟》分镜脚本 · 当日 TOP-1 `2610.13948`：自包含单文件、固定五段、9 镜、口播 ≈426 字、含英文原题 / abs 链接 / 免责 / 合规自检）+ `research/video/SCENES/index.html`（新增 10_12 行）。
+>
+> **累计（截至 2026-10-12 第八十九轮）**：收录 **191 篇**（`papers.jsonl` 191 行）/ 候选 **3029 篇**（仅存 `SEEN.md` 防重）；`SEEN.md` 台账行累计 **3,220 条**（本轮 +169：收录 +2 / 候选 +167）。
+

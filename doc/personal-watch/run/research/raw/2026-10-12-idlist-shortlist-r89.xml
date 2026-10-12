@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/wQKKRlJsmYGdbggyIip5A3nolRE</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.13948,2610.13860,2610.13925,2610.13940,2610.12571&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-12T10:02:39Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.13948,2610.13860,2610.13925,2610.13940,2610.12571" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.13948v1</id>
+    <title>Can Language Models Play the Wikipedia Game?</title>
+    <updated>2026-10-09T17:59:56Z</updated>
+    <link href="https://arxiv.org/abs/2610.13948v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.13948v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Language models increasingly support or automate information retrieval from document collections too large to index. This task is difficult when it requires specialist linguistic or scientific knowledge. We used the Wikipedia Game to test language models on an analogous information retrieval task. In the game, players must reach a target article using only article links. We compared sentence embedding models and LLMs across five Wikipedia languages and five academic-literature datasets. We construct very large local graphs of Wikipedia pages and of paper citations using OpenAlex and provide code to build and navigate them. This allows the study of language models' navigation capabilities without relying on third-party APIs. We compared the models with human and TF-IDF benchmarks. The Wikipedia Game format enables robust comparisons across techniques, languages, and domains. No model significantly outperformed humans, although the best models (GPT-o3 mini, GPT-4o, QwQ:32B, and DeepSeek-R1:70B) achieved comparable success. Performance and rankings varied across languages and topics, with implications for practitioners utilising these techniques.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T17:59:56Z</published>
+    <arxiv:comment>64 pages (14-page main text, references and 16 appendices), 17 figures, 10 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Alexander Hickey</name>
+    </author>
+    <author>
+      <name>Joanna Knight</name>
+    </author>
+    <author>
+      <name>James Bishop</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.13940v1</id>
+    <title>Sandpile avalanches in two dimensions are finite</title>
+    <updated>2026-10-09T17:57:56Z</updated>
+    <link href="https://arxiv.org/abs/2610.13940v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.13940v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In the abelian sandpile model on $\mathbb{Z}^d$, a site with at least $2d$ grains topples by sending one grain to each neighbor. In a box $[-L,L]^d$ whose boundary absorbs grains, adding grains at random sites and toppling defines a Markov chain, and Athreya and Járai (2004) constructed the stationary state on $\mathbb{Z}^d$ as the limit of its stationary distributions as $L\to\infty$. By a formula of Dhar (1990), when a grain is added at the origin of a sandpile in the stationary state, the expected number of topplings at a site in the resulting avalanche is proportional to the Green function of simple random walk from the origin. This Green function is finite for $d\geq3$, where Járai and Redig (2008) proved that avalanches are almost surely finite, and infinite for $d=2$. We prove that for $d=2$ avalanches are nevertheless almost surely finite: the probability that an avalanche reaches distance $R$ is at most a negative power of $\log R$. The proof follows the avalanche backward and reduces the question to an estimate for the uniform spanning tree, which we prove by a multiscale electrical argument.</summary>
+    <category term="math.PR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T17:57:56Z</published>
+    <arxiv:comment>30 pages, 3 figures. Lean formalization: https://github.com/nitromannitol/finite-avalanche</arxiv:comment>
+    <arxiv:primary_category term="math.PR"/>
+    <author>
+      <name>Ahmed Bou-Rabee</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.13860v1</id>
+    <title>Make It Flow: Animating Water in 3D Gaussian Splatting Scenes</title>
+    <updated>2026-10-09T17:08:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.13860v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.13860v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Explicit 3D scene representations such as 3D Gaussian Splatting (3DGS) have recently enabled high-quality, real-time novel view synthesis. However, these methods assume static scenes, limiting realism in the presence of dynamic phenomena ubiquitous in real-world environments. While coherent motion (e.g., humans or vehicles) can be captured and reconstructed, high-frequency effects such as flowing water remain intractable under casual capture conditions, where dense multi-view, high-speed acquisition is not feasible. We present a method to animate water in static 3DGS scenes, enabling visually plausible motion without requiring dynamic capture or physical simulation. Our approach estimates 2D optical flow from reference images or model renderings and lifts it into a consistent 3D Eulerian motion field. We propose a cinemagraph-inspired algorithm that applies this motion field to deform Gaussian primitives, producing temporally seamless looping animations. The resulting representation retains real-time rendering performance, significantly enhances perceptual realism, and preserves free-viewpoint navigation within the scene. We evaluate our method on a newly captured dataset of in-the-wild waterfall scenes and demonstrate clear improvements over prior work in dynamic Gaussian splatting and 3D cinemagraph generation in visual quality and computational efficiency.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.GR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T17:08:02Z</published>
+    <arxiv:comment>Overview video at https://youtu.be/qf04D73kgrc</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Kjell Keune</name>
+    </author>
+    <author>
+      <name>Florian Hahlbohm</name>
+    </author>
+    <author>
+      <name>Jannis Möller</name>
+    </author>
+    <author>
+      <name>Susana Castillo</name>
+    </author>
+    <author>
+      <name>Martin Eisemann</name>
+    </author>
+    <author>
+      <name>Marcus Magnor</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12571v1</id>
+    <title>An all-transistor physical-learning transformer can be trained to perform in-context learning</title>
+    <updated>2026-10-08T18:01:05Z</updated>
+    <link href="https://arxiv.org/abs/2610.12571v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12571v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Most systems trained by equilibrium propagation or coupled learning are in the same class as multi-layer perceptrons: while they may be universal function approximators, they struggle to learn associative tasks which are easy for transformers. Equilibrium propagation relies on a bidirectional flow of information through the physical system between input and output. The reverse flow is broken by more complex nonlinear systems, such as those performing multiplication which is needed to express dot-product attention. Here we explicitly restore this bidirectional flow by introducing extra circuit elements for this purpose into a double or dyadic circuit. We then use these ideas to construct an attention mechanism exploiting the exponential current law of sub-threshold MOSFET devices. We show that in simulations this circuit can be trained to perform a simple in-context learning task, despite using realistic reverse components which transmit only an approximate gradient. For this training to succeed we need cross-entropy loss (not mean squared error). We generate nudges appropriate for this loss using a novel floating circuit element, based on the same MOSFET sub-circuit used for softmax. We train the resistors in this circuit using the Lion optimiser, which can be implemented using one capacitor per parameter to store local memory of past gradient estimates.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cond-mat.soft" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T18:01:05Z</published>
+    <arxiv:comment>18 pages, 11 figures, plus appendices</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Michael C. Abbott</name>
+    </author>
+    <author>
+      <name>Benjamin B. Machta</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.13925v1</id>
+    <title>Can machines reason non-verbally?</title>
+    <updated>2026-10-09T17:54:36Z</updated>
+    <link href="https://arxiv.org/abs/2610.13925v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.13925v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern machines can solve equations, follow logic and reason through language, yet they still struggle with problems that require visual non-verbal reasoning. This is evident even in advanced systems such as DeepSeek, ChatGPT and Gemini, which remain limited on visual tasks such as completing abstract patterns or delineating ambiguous regions-of-interest. Unlike explicit intermediate steps in verbal reasoning which can be verified through logic or automated tests, visual reasoning involves implicit intermediate steps with no clear methods for verification. Non-verbal reasoning is therefore challenging to model and, as a result, remains a fundamental limitation of current machine intelligence. Here we introduce GenVerOpt, a general framework that unifies generation, verification and optimisation into a reasoning pipeline for machines. By generating candidate solutions, verifying their correctness, and iteratively refining them, GenVerOpt enables per-sample optimisation rather than relying solely on dataset-level trends captured during model training. This process mirrors human problem-solving where multiple possibilities are imagined, evaluated, and refined until a correct solution emerges. Across diverse domains, GenVerOpt demonstrates capabilities beyond existing systems: it surpasses humans on abstract IQ puzzles, matches clinicians in prostate cancer segmentation, exceeds experts in liver vessel reconstruction and outperforms state-of-the-art approaches in tumour boundary alignment. These results show that machine reasoning can extend beyond language, establishing visual non-verbal reasoning as a foundation for more flexible and generalisable intelligence.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T17:54:36Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Shaheer U. Saeed</name>
+    </author>
+    <author>
+      <name>Zion Tse</name>
+    </author>
+    <author>
+      <name>Gregory Slabaugh</name>
+    </author>
+    <author>
+      <name>Daniel C. Alexander</name>
+    </author>
+    <author>
+      <name>Yipeng Hu</name>
+    </author>
+  </entry>
+</feed>

@@ -1325,3 +1325,28 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 
 - **下轮预期**：**本地 `2026-10-12 18:00`**（当日「晚 2」轮）：① 复验批次是否刷新（**周一 20:00 ET 公告** = **本地 10-13 08:00** 前后才落地，故 **PM 轮大概率仍无新批**）；② 晚报 2 篇「科普」继续从 **547 条窗口内候选池** 精选 + 单条权威复核；③ 日报收口 **5/5**（新增 `## 晚报变更说明（AM → PM）`）。
 
+### 9.91 第八十九轮（本地 2026-10-12 18:00 时窗 · **P0 第 4 批第 12 轮 · 「晚 2」轮 · 当日收口 + 第 5 批 P0**）：**PM 公告批次已刷新**（`2026-10-08` → `2026-10-09`）→ **API 169 新增** → **晚报 2 篇「科普」取自本 PM 轮新发现 + 单条权威复核**；日报收口 **5/5** + 分镜脚本交付
+
+> **时点**：本地 `2026-10-12 18:00`（= UTC `2026-10-12T10:00`）为 **周一**。⚠️ **与 AM 轮预期相反**：第八十八轮判断「PM 大概率仍无新批」，但本轮复验时 **arXiv 公告批次确已刷新**（`2026-10-09` 批上线）→ **PM 有真实新批可采**（**如实记录：AM 预期被证伪**）。
+
+- **取源复验（R1′）** `--probe --json`（`generated=2026-10-12T10:00:58Z`，证据 `research/raw/2026-10-12-probe-r89.log`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=630616`，最新样本 `published=2026-10-09T17:59:56Z` | ✅ 可达（**批次已刷新 `2026-10-08` → `2026-10-09`**，较 AM 第八十八轮 `630048` **+568**） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable` | ❌ 不可达（**不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=172 / 0 / 413` | ✅ cs.CL/cs.LG 有内容 ｜ ⚠️ cs.CV 空 feed |
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=weekend_batch`，窗口 120h**，`generated=2026-10-12T10:00:57Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 169 / dropped 410** → **169 新增**。per-query 命中（kept）：`sweep-cs-5cats` 40 · `llm-large-language-model` 30 · `llm-long-context` 4 · `llm-scaling-law` 0 · `slm-small-language-model` 1 · `slm-on-device` 10 · `mm-vision-language` 34 · `mm-multimodal` 13 · `mm-csmm` 4 · `agent-harness-title` 0 · `agent-swe-bench` 2 · `agent-tool-use` 2 · `agent-csma-multiagent` 6 · `nb-retrieval-augmented` 4 · `nb-alignment` 19。证据：`research/raw/2026-10-12-fetch-r89-seen.{json,log}`；候选清单 `research/raw/2026-10-12-candlist-r89.txt`。
+
+- **精选权威复核（`id_list`）**：对**科普短名单 5 条**走 **arXiv API `id_list` 单条复核**（`id_list=2610.13948,2610.13860,2610.13925,2610.13940,2610.12571`）→ **5/5 返回**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `research/raw/2026-10-12-idlist-shortlist-r89.{xml,headers}`）。最终入账 2 篇：
+  - `2610.13948` *Can Language Models Play the Wikipedia Game?*（`published=2026-10-09T17:59:56Z`，cs.AI（次 cs.IR），3 位署名 `Alexander Hickey, Joanna Knight, James Bishop`，`comment`: `64 pages (14-page main text, references and 16 appendices), 17 figures, 10 tables`）；
+  - `2610.13860` *Make It Flow: Animating Water in 3D Gaussian Splatting Scenes*（`published=2026-10-09T17:08:02Z`，cs.CV（次 cs.GR），6 位署名含 `Kjell Keune, Marcus Magnor`，`comment`: `Overview video at https://youtu.be/qf04D73kgrc`）。
+  - **去重复核**：2 个 ID 均**不在**任何 `daily/*.html` 与 `SEEN.md`（本 PM 轮新发现）→ **无重复**。
+
+- **产出**：`research/daily/2026-10-12.html`（**自包含单文件**，**晚报 5/5** = 早 3「借鉴」+ 晚 2「科普」）：新增 ④ `2610.13948` Wikipedia Game 与 ⑤ `2610.13860` Make It Flow；页头由「早报 3/5」改为「晚报 5/5」+ 新增 **PM 轮取数说明** + **附录 A′（PM 轮 I→V）** + 附录 C 更新窗口 / 标签 / 批次诚实口径 + 新增 **`## 晚报变更说明（AM → PM）`**（锚点 `#pm-change`）→ 同步 `research/daily/index.html`（2026-10-12 行 → 晚报 5/5）与 `research/INDEX.md`。**当日 TOP-1 = `2610.13948`** → 交付第 5 批 P0 分镜脚本 `research/video/SCENES/10_12.html`（自包含单文件，9 镜 / 固定五段 / 口播 ≈426 字），并同步 `research/video/SCENES/index.html`（新增 10_12 行）。
+
+- **台账**：`research/SEEN.md` **+169 → 3,220 行**（**收录 +2 / 候选 +167**）→ **收录 191 / 候选 3029**；`research/papers.jsonl` **+2 → 191 行**。落盘脚本：`research/raw/update_r89.py`。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-12-*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-13 06:00`**（新一日「早 3」轮）：① 复验批次（`2026-10-09` 批已被 PM 消费；AM 轮预计见 `2026-10-10/12` 批陆续公告）；② 刷新则走标准 `--fetch` 增量，否则 **RSS 发现 + `id_list` 复核**；③ 日报进度回到 **3/5**（新一日 AM）；④ 可考虑按 `RESEARCH_MAIL_SPEC.md` 起草 ≤3 封作者邮件（**前 3 封需运维确认后发送**，草稿入 `research/mail/drafts/` 并登记 `research/mail/发送记录.md`）。
+
