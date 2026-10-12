@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-B REPORTS DELIVERED ✅ + H-A 7×300 RUNNING — 2088/2100 (99.4%); 567 resolved; 6 harnesses 300/300 COMPLETE; hermes 288/300; 1 proc alive
+PHASE:        H-B REPORTS DELIVERED ✅ + H-A 7×300 RUNNING — 2091/2100 (99.6%); 570 resolved; 6 harnesses 300/300 COMPLETE; hermes 291/300 rem9; 1 proc alive
 已完成:       ① 7×100 HTML report ✅ · ② 7×300 LAUNCHED + workdir fix ✅ · ③ 6 harnesses 300/300 COMPLETE ✅ · ④ **2026-10-11 两份报告交付 ✅** — Report A (26.9KB) + Report B (50.2KB) · ⑤ Report B 刷新 ✅ (2061 entries) · ⑥ TASK 归档 ✅
-当前动作:     R322: 7×300 monitoring — 2088/2100 (99.4%, +2 since R321), 567 resolved. 1 proc alive (hermes 288/300 rem12 all sympy, PID 1473568, etimes≈200.8ks≈55.8h, currently doing git fetch on sympy repo). Per-harness (JSON-verified): cline 300(86,28.7%) / opencode 300(87,29.0%) / pi 300(91,30.3%✅BEST) / codex 300(80,26.7%) / claude 300(78,26.0%) / deepseek 300(71,23.7%) / hermes 288(74,25.7%). Total resolved=567.
-下一步:       ① Continue monitoring hermes (288/300, ~12 rem, ETA 2-4h) → ② When hermes finishes, generate final 7×300 HTML report + refresh Report B → ③ Retry blocked w/ --resume → ④ Reports A+B done — await next operator instruction
+当前动作:     R323: 7×300 monitoring — 2091/2100 (99.6%, +3 since R322), 570 resolved (+3). 1 proc alive (hermes 291/300 rem9 all sympy, PID 1473568, etimes≈202.8ks≈56.3h, currently running sympy__sympy-22840, child PID 4029613 etimes≈273s). Per-harness (JSON-verified): cline 300(86,28.7%) / opencode 300(87,29.0%) / pi 300(91,30.3%✅BEST) / codex 300(80,26.7%) / claude 300(78,26.0%) / deepseek 300(71,23.7%) / hermes 291(77,26.5%). Total resolved=570.
+下一步:       ① Continue monitoring hermes (291/300, ~9 rem, ETA 2-3h) → ② When hermes finishes, generate final 7×300 HTML report + refresh Report B → ③ Retry blocked w/ --resume → ④ Reports A+B done — await next operator instruction
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -24,6 +24,7 @@ ERROR_COUNT:  0
 > 📦 R317-R319 (2026-10-12 05:09~06:18, 7×300 monitoring 98.9%→99.1%, 559→563 resolved, hermes 276→281/300) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 > 📦 R320-R321 (2026-10-12 06:52~07:27, 7×300 monitoring 99.3%, 565→567 resolved, hermes 285→286/300) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 - [08:00] R322: 7×300 monitoring — 2088/2100 (99.4%, +2 since R321), 567 resolved. hermes 288/300 (+2, rem12 all sympy). 1 proc alive (hermes PID 1473568, etimes≈200.8ks≈55.8h, doing git fetch on sympy repo). Per-harness (JSON-verified): cline 300(86,28.7%) / opencode 300(87,29.0%) / pi 300(91,30.3%✅BEST) / codex 300(80,26.7%) / claude 300(78,26.0%) / deepseek 300(71,23.7%) / hermes 288(74,25.7%). Reports A+B intact. kimi_pilot_results.json actively written by hermes — not committing harness/ dir. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈29.5KB(✓).
+- [08:33] R323: 7×300 monitoring — 2091/2100 (99.6%, +3 since R322), 570 resolved (+3). hermes 291/300 (+3, rem9 all sympy). 1 proc alive (hermes PID 1473568, etimes≈202.8ks≈56.3h, running sympy__sympy-22840, child PID 4029613 etimes≈273s). Per-harness: cline 300(86,28.7%) / opencode 300(87,29.0%) / pi 300(91,30.3%✅BEST) / codex 300(80,26.7%) / claude 300(78,26.0%) / deepseek 300(71,23.7%) / hermes 291(77,26.5%). Classifications: resolved=570, pbf=1454, blocked=50, qb=13, np=4. Reports A+B intact. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈30.0KB(✓).
 
 ## ⚠️ 口径与并发 (Caliber & Concurrency Disclosure) — 2026-10-08⑦ 要求
 
