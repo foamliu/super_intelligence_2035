@@ -12,18 +12,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄en_v1_4下载进行中(PID2535486,21869/56461=38.7%,43/110 snapshots(s43 CC-MAIN-2018-09,350/512),~2.01TB,21.5MB/s(99s窗口)/13.1MB/s(38.5min avg),ETA~3.5-4.5天)+🔄85M下载(PID1015571,8148/12124=67.2%,obelics4284/5803=73.8%,sa1b+zero250m未开始,8.1MB/s(38.5min avg),~16.35TB remaining,ETA~23-28天,用户自管)+✅GPIC全完成(8160tar@/nas_inference)+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(8160tar@/nas_inference); ✅文献借鉴报告report_data_lit_ideas.html(commit c80c7a74,36KB,25篇→TOP-5+3附录); 🔄en_v1_4下载进行中(PID2535486,21869/56461=38.7%,~2.01TB,43/110snapshots,~13.1MB/s(38.5min),ETA~3.5-4.5天); 🔄85M用户管理下载(PID1015571,8148/12124=67.2%,obelics4284/5803=73.8%,sa1b+zero250m未开始,~8.1MB/s(38.5min),ETA~23-28天); ✅HfApi核实85M 8子集精确总量(12,124files/46.663TB)
-当前动作:     唤醒371(21:21@.12) 并发下载巡检第六十八次采样(85M+en_v1_4,~30s+99s双采样)：en_v1_4 PID2535486活(~52h,ppid=1),21869/56461=38.7%(+286 vs唤醒370),43/110(s43 CC-MAIN-2018-09,350/512,log@21:20),0 .incomplete,write_bytes S1=2003810754560→T2=2005936709632=Δ2126MB/99s→21.5MB/s,38.5min avg(vs唤醒370)=13.1MB/s,ETA~3.5-4.5天(剩余~4.74TB);85M PID1015571活(~7.5h,ppid=2000875,用户管理),8148/12124=67.2%(+4 vs唤醒370),obelics4284/5803=73.8%(+4)+5子集全满+sa1b0❌+zero250m0❌,1 .incomplete(0B,prev3GB file✅完成→新file起步),write_bytes bursty(S1→S2=0,S2→T2=+924MB,T2→T3=0,正常单线程hf pattern),38.5min avg=8.1MB/s,ETA~23-28天(剩余~16.35TB);争用38.5min avg合计21.2MB/s;GPIC✅8160tar@/nas_inference;disk 174T/207T=85%,34T avail;📦TASK=29.4KB✅/MEMORY=30.4KB✅
-下一步:       ①监控en_v1_4+85M下载进度(每唤醒检查PID/parquet/.incomplete/磁盘); ②85M 38.5min avg=8.1MB/s,write_bytes bursty属正常,继续监测; ③en_v1_4下满56461后必经check_contamination.py再报"en_v1_4下载完成"; ④P-8投料等运维指示
-阻塞:         en_v1_4下载进行中(ETA~3.5-4.5天@13.1MB/s,34592 remaining,~4.74TB); 85M下载进行中(用户管理PID1015571,38.5min avg=8.1MB/s,~16.35TB remaining,ETA~23-28天); P-8投料等运维指示
+PHASE:        🔄en_v1_4下载进行中(PID2535486,22155/56461=39.2%,44/110(s44 CC-MAIN-2018-13,100/512),~2.03TB,10.9MB/s(41min avg),ETA~3.5-5天)+🔄85M下载(PID1015571,8154/12124=67.2%,obelics4289/5803=73.9%,sa1b+zero250m未开始,8.5MB/s(41min avg),~16.2TB remaining,ETA~22-28天,用户自管)+✅GPIC全完成(8160tar)+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词✅(30.97B); en_base分词✅(206.76B); ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(8160tar); ✅文献借鉴报告(commit c80c7a74); 🔄en_v1_4下载进行中(PID2535486,22155/56461=39.2%,~2.03TB,44/110,ETA~3.5-5天); 🔄85M用户管理下载(PID1015571,8154/12124=67.2%,obelics4289/5803=73.9%,sa1b+zero250m未开始,ETA~22-28天); ✅HfApi核实85M 8子集精确总量(12,124files/46.663TB)
+当前动作:     唤醒372(22:05@.12) 并发下载巡检第六十九次采样(85M+en_v1_4,T1@22:01→T2@22:05)：en_v1_4 PID2535486活(~52.7h,ppid=1),22155/56461=39.2%(+286 vs唤醒371),44/110(s44 CC-MAIN-2018-13,100/512,log@21:57),0 .incomplete,write_bytes T1=2032751312896→T2=2034047242240=Δ1296MB/~240s→5.4MB/s short,41min avg(vs唤醒371 21:24)=Δ26.8GB/2460s→10.9MB/s,ETA~3.5-5天(剩余~4.72TB);85M PID1015571活(~8h,ppid=2000875,用户管理),8154/12124=67.2%(+6 vs唤醒371),obelics4289/5803=73.9%(+5)+5子集全满+sa1b0❌+zero250m0❌,1 .incomplete(0B,prev3.6GB file✅完成→新file起步),write_bytes T1=244146421760→T2=244677058560=Δ531MB/~240s→2.2MB/s short(bursty),41min avg=8.5MB/s,ETA~22-28天(剩余~16.2TB);争用41min avg合计19.4MB/s;GPIC✅8160tar(8000train+128test+32val,无新增自10-10);disk 174T/207T=85%,34T avail;📦TASK=29.4KB✅/MEMORY归档后~15.9KB✅(归档唤醒296-349+旧指针→daily-memories)
+下一步:       ①监控en_v1_4+85M下载进度(每唤醒检查PID/parquet/.incomplete/磁盘); ②en_v1_4下满56461后必经check_contamination.py再报"en_v1_4下载完成"; ③P-8投料等运维指示
+阻塞:         en_v1_4下载进行中(ETA~3.5-5天@10.9MB/s,34306 remaining,~4.72TB); 85M下载进行中(用户管理PID1015571,~16.2TB remaining,ETA~22-28天); P-8投料等运维指示
 ERROR_COUNT:  2
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-- [21:21] **唤醒371**：①本机=`.12`,git fetch✅(proxy,up to date,无新data线指令)。②并发下载巡检第六十八次采样(85M+en_v1_4,~30s+99s双采样,sleep74被tool 30s限制截断)。③en_v1_4:PID2535486活(~52h,ppid=1,etimes=186969s),21869/56461=38.7%(+286 vs唤醒370),43/110(s43 CC-MAIN-2018-09,350/512,log@21:20),0 .incomplete,write_bytes S1=2003810754560@21:22:52→T2=2005936709632@21:24:31=Δ2126MB/99s→21.5MB/s,38.5min avg(vs唤醒370 S1@20:46 write_bytes=1975654752256)=Δ30282MB/2310s→13.1MB/s,ETA~3.5-4.5天(剩余~4.74TB)。④85M:PID1015571活(~7.5h,ppid=2000875,用户管理,etimes=26843s),8148/12124=67.2%(+4 vs唤醒370),obelics4284/5803=73.8%(+4)+5子集全满(coyo1940+datacomp575+imagenet82+laioncn562+mint705)+sa1b0❌+zero250m0❌,1 .incomplete(0B,prev3GB file✅完成→新file起步),write_bytes bursty(S1=S2=222975021056→T2=223898607616=+924MB→T3=same,正常单线程hf download pattern),38.5min avg(vs唤醒370 S1@20:46 write_bytes=205243342848)=Δ18655MB/2310s→8.1MB/s,ETA~23-28天(剩余~16.35TB)。⑤争用38.5min avg合计21.2MB/s。⑥GPIC✅8160tar@/nas_inference。⑦disk 174T/207T=85%,34T avail。⑧下载线心跳：base✅全满|GPIC✅8160tar@/nas_inference|en_v1_4🔄21869/56461(38.7%,43/110+s43 350/512,PID2535486,~21.5MB/s(99s)/13.1MB/s(38.5min),ETA~3.5-4.5天)|85M🔄8148/12124(67.2%,obelics4284/5803=73.8%,sa1b+zero250m未开始,PID1015571,用户管理,~8.1MB/s(38.5min),ETA~23-28天)|P-8数据层✅全就绪。⑨📦TASK=29.4KB✅/MEMORY=30.4KB✅(无需归档)。
+- [22:05] **唤醒372**：①本机=`.12`,git fetch✅(proxy,up to date,无新data线指令)。②并发下载巡检第六十九次采样(85M+en_v1_4,T1@22:01→T2@22:05双采样)。③en_v1_4:PID2535486活(~52.7h,ppid=1),22155/56461=39.2%(+286 vs唤醒371),44/110(s44 CC-MAIN-2018-13,100/512,log@21:57),0 .incomplete,write_bytes T1=2032751312896→T2=2034047242240=Δ1296MB/~240s→5.4MB/s short,41min avg(vs唤醒371 21:24 write_bytes=2005936709632)=Δ26811MB/2460s→10.9MB/s,ETA~3.5-5天(剩余~4.72TB)。④85M:PID1015571活(~8h,ppid=2000875,用户管理),8154/12124=67.2%(+6 vs唤醒371),obelics4289/5803=73.9%(+5)+5子集全满(coyo1940+datacomp575+imagenet82+laioncn562+mint705)+sa1b0❌+zero250m0❌,1 .incomplete(0B,prev3.6GB file✅完成→新file起步),write_bytes T1=244146421760→T2=244677058560=Δ531MB/~240s→2.2MB/s short(bursty),41min avg(vs唤醒371 21:24 write_bytes=223898607616)=Δ20778MB/2460s→8.5MB/s,ETA~22-28天(剩余~16.2TB)。⑤争用41min avg合计19.4MB/s。⑥GPIC✅8160tar(8000train+128test+32val,无新增自10-10)。⑦disk 174T/207T=85%,34T avail。⑧下载线心跳：base✅全满|GPIC✅8160tar|en_v1_4🔄22155/56461(39.2%,44/110+s44 100/512,PID2535486,~10.9MB/s(41min),ETA~3.5-5天)|85M🔄8154/12124(67.2%,obelics4289/5803=73.9%,sa1b+zero250m未开始,PID1015571,用户管理,~8.5MB/s(41min),ETA~22-28天)|P-8数据层✅全就绪。⑨📦体积：TASK=29.4KB✅/MEMORY归档后~15.9KB✅(归档唤醒296-349+旧指针→daily-memories-data/2026-10-12.md)。
+> 📦 唤醒371 原文已归档 → `daily-memories-data/2026-10-12.md`（含第六十八次采样：en_v1_4 21869/56461=38.7% 43/110+s43 350/512+85M 8148/12124=67.2% obelics4284/5803=73.8% 21.5MB/s(99s)/13.1MB/s(38.5min)+8.1MB/s(38.5min)+争用21.2MB/s(38.5min)）
 > 📦 唤醒370 原文已归档 → `daily-memories-data/2026-10-12.md`（含第六十七次采样：en_v1_4 21583/56461=38.2% 43/110+s43 50/512+85M 8144/12124=67.1% obelics4280/5803=73.8% 10.55MB/s(74s)/13.67MB/s(41min)+8.16MB/s(74s)/6.84MB/s(41min)+争用18.70MB/s(74s)）
 > 📦 唤醒369 原文已归档 → `daily-memories-data/2026-10-12.md`（含第六十六次采样：en_v1_4 21303/56461=37.7% 42/110+s42 300/512+85M 8140/12124=67.1% obelics4276/5803=73.7% 12.85MB/s(82s)/12.50MB/s(44min)+3.27MB/s(82s)/8.43MB/s(44min)+争用16.12MB/s(82s)）
 > 📦 唤醒368 原文已归档 → `daily-memories-data/2026-10-12.md`（含第六十五次采样：en_v1_4 21024/56461=37.2% 42/110+s42+85M 8135/12124=67.1% obelics4271/5803=73.6% 7.95MB/s(56s)/0.005MB/s(85M瞬时近零)/12.07MB/s(40min)+争用7.96MB/s(56s)）
@@ -44,149 +45,7 @@ ERROR_COUNT:  2
 > 📦 唤醒351 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十八次采样：en_v1_4 16399/56461=29.0% 33/110+85M obelics4192/5803=72.2%+争用19.5MB/s 41min avg+两路均遇huggingface.co ReadTimeoutError）
 
 > 📦 唤醒350 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十七次采样：en_v1_4 16152/56461=28.6% 30/110+85M obelics4189/5803=72.2%+争用21.7MB/s 38min avg+proxy 503缓解）
-> 📦 唤醒349 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十六次采样：en_v1_4 15884/56461=28.1% 32/110+85M obelics4186/5803=72.1%+争用19.9MB/s 39min avg+⚠️proxy 503降速25%）
-> 📦 唤醒348 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十五次采样：en_v1_4 15636/56461=27.7% 30/110+85M obelics4182/5803=72.1%+争用25.0MB/s 88s avg）
-> 📦 唤醒347 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十四次采样：en_v1_4 15366/56461=27.2% 30/110+85M obelics4177/5803=72.0%+争用18.2MB/s 151s avg）
-> 📦 唤醒346 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十三次采样：en_v1_4 15087/56461=26.7% 30/110+85M obelics4174/5803=71.9%+争用20.2MB/s 44min avg）
-> 📦 唤醒345 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十二次采样：en_v1_4 14785/56461=26.2% 29/110+85M obelics4170/5803=71.9%+争用22.2MB/s 37min avg）
-> 📦 唤醒344 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十一次采样：en_v1_4 14518/56461=25.7% 28/110+85M obelics4166/5803=71.6%+争用23.35MB/s 162s avg）
-> 📦 唤醒343 原文已归档 → `daily-memories-data/2026-10-12.md`（含第四十次采样：en_v1_4 14253/56461=25.2% 28/110+85M obelics4162/5803=71.7%+争用20.9MB/s 36min avg）
-> 📦 唤醒342 原文已归档 → `daily-memories-data/2026-10-12.md`（含第三十九次采样：85M obelics4159/5803=71.6%+en_v1_4 14009/56461=24.8% 28/110+争用20.5MB/s 35min avg）
-> 📦 唤醒341 原文已归档 → `daily-memories-data/2026-10-12.md`（含第三十八次采样：85M obelics4155/5803=71.6%+en_v1_4 13773/56461=24.4% 27/110+争用20.1MB/s 39min avg）
-> 📦 唤醒340 原文已归档 → `daily-memories-data/2026-10-12.md`（含第三十七次采样：85M obelics4150/5803=71.5%+en_v1_4 13527/56461=23.9% 27/110+争用21.0MB/s 3.7h avg）
-> 📦 唤醒338 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十六次采样：85M obelics4114/5803=70.9%+en_v1_4 12047/56461=21.3% 25/110+争用21.1MB/s avg）
-> 📦 唤醒339 原文已归档 → `daily-memories-data/2026-10-12.md`（含文献借鉴报告验证：25篇arXiv ID全✅+TOP-5确认+归档10-11指令块）
-> 📦 文献借鉴报告生成(20:30) 原文已归档 → `daily-memories-data/2026-10-11.md`（report_data_lit_ideas.html 36KB,25篇→TOP-5+3附录,commit c80c7a74）
-> 📦 唤醒337 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十五次采样：85M obelics4092/5803+en_v1_4 s22 377/513+争用21.2MB/s avg+proxy MaxRetryError retry成功+git push 503失败2次）
-> 📦 唤醒336 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十四次采样：85M obelics4085/5803+en_v1_4 s22 100/513+争用21.3MB/s avg）
-> 📦 唤醒335 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十三次采样：85M obelics4078/5803+en_v1_4 s21 407/512+争用20.9MB/s avg）
-> 📦 唤醒334 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十二次采样：85M obelics4072/5803+en_v1_4 s21 100/513+争用20.1MB/s avg）
-> 📦 唤醒333 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十一次采样：85M obelics4066/5803+en_v1_4 s20 350/513+争用21.6MB/s avg）
-> 📦 唤醒332 原文已归档 → `daily-memories-data/2026-10-11.md`（含第三十次采样+HF API 85M总量复核=12,124files/46.663TB+85M obelics4056/5803+en_v1_4 s20 150/513+争用~20MB/s avg）
-> 📦 唤醒331 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十九次采样：85M obelics4048/5902+en_v1_4 s19 400/513+en_v1_4速率恢复至7.6MB/s+争用21.2MB/s avg）
-> 📦 唤醒330 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十八次采样：85M obelics4039/5902+en_v1_4 s19 200/513+争用20.05MB/s avg+en_v1_4速率降至1.55MB/s⚠️）
-
-> 📦 唤醒329 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十七次采样：85M obelics4027/5902+en_v1_4 s19 100/513+争用20.3MB/s avg+en_v1_4速率骤降3.7MB/s）
-> 📦 唤醒318 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十六次采样：85M obelics3950/5902+en_v1_4 s13 372/513+争用20.1MB/s avg+proxy 503影响）
-> 📦 唤醒322 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十次采样：85M obelics3976/5902+en_v1_4 s15 400/513+争用~21MB/s avg）
-> 📦 唤醒323 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十一次采样：85M PID2783115 obelics3984/5902+en_v1_4 s16 100/513+争用~20.8MB/s）
-> 📦 唤醒324 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十二次采样：85M PID1192761用户重启+obelics3991/5902+en_v1_4 s16 450/513+争用21.4MB/s）
-> 📦 唤醒325 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十三次采样：85M obelics3997/5902+en_v1_4 s17 243/513+争用21.1MB/s avg）
-> 📦 唤醒327 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十五次采样：85M obelics4010/5902+en_v1_4 s18 282/513+争用22.3MB/s avg+load 188）
-> 📦 唤醒328 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十六次采样：85M obelics4018/5902+en_v1_4 s19 started+争用20.8MB/s avg）
-> 📦 唤醒329 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十七次采样：85M obelics4027/5902+en_v1_4 s19 100/513+争用20.3MB/s avg+en_v1_4速率骤降3.7MB/s）
-> 📦 唤醒326 原文已归档 → `daily-memories-data/2026-10-11.md`（含第二十四次采样：85M obelics4004/5902+en_v1_4 s17 500/513+争用20.1MB/s avg）
-> 📦 唤醒321 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十九次采样：85M obelics3970/5902+en_v1_4 s15 100/513+争用25.1MB/s）
-> 📦 唤醒320 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十八次采样：85M obelics3965/5902+en_v1_4 s14 350/513+争用16.7MB/s）
-> 📦 唤醒319 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十七次采样：85M新PID2783115重启+obelics3958/5902+en_v1_4 s14 100/513+争用23.5MB/s）
-> 📦 唤醒317 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十五次采样：85M obelics3943/5902+en_v1_4 s12 DONE+s13 started+争用22.4MB/s）
-
-
-> 📦 唤醒316 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十四次采样：85M obelics3935/5902+en_v1_4 s12 DONE+s13 at 300/513+争用23.6MB/s）
-> 📦 唤醒315 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十三次采样：85M obelics3928/5902+en_v1_4 s11 DONE+s12 at 317+争用19.4MB/s）
-
-> 📦 唤醒314 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十二次采样：85M obelics3920/5902+en_v1_4 s11 at 200/513+GPIC PID3041212已死）
-
-> 📦 唤醒313 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十一次采样：85M obelics3913/5902+en_v1_4 s10 at 473/513+GPIC 8160tar核实）
-
-> 📦 唤醒312 原文已归档 → `daily-memories-data/2026-10-11.md`（含第十次采样：85M obelics3907/5902+en_v1_4 s10 at 150/513+HfApi 8子集精确总量表）
-
-> 📦 唤醒311 原文已归档 → `daily-memories-data/2026-10-11.md`（含第九次采样+HfApi核实85M精确总量=12,361files/46.663TB）
-
-> 📦 唤醒308-309 原文已归档 → `daily-memories-data/2026-10-11.md`（含第六~七次采样：85M obelics3879-3885+en_v1_4 s7-s8）
-> 📦 唤醒310 原文已归档 → `daily-memories-data/2026-10-11.md`（含第八次采样：85M obelics3892/5803=67.1%+en_v1_4 s8 DONE/s9 at 100/513+push 503失败已补推）
-
-> 📦 唤醒307 原文已归档 → `daily-memories-data/2026-10-10.md`（含第五次采样：85M obelics3872/5803=66.7%+en_v1_4 7/110+GPIC 8000tar+用户自管GPIC hf下载）
-> 📦 唤醒306 原文已归档 → `daily-memories-data/2026-10-10.md`（含并发下载巡检85M/en_v1_4各自速度ETA第四次采样+85M 8子集更正表+obelics3865/5803=66.6%）
-> 📦 唤醒305 原文已归档 → `daily-memories-data/2026-10-10.md`（含并发下载巡检85M/en_v1_4各自速度ETA第三次采样+85M总量更正表(8子集)+obelics3857/5803=66%）
-> 📦 唤醒303 原文已归档 → `daily-memories-data/2026-10-10.md`（含运维令更正85M总量46.7TB+并发下载巡检85M/en_v1_4各自速度ETA+HfApi逐子集核实表）
-> 📦 唤醒185-190 已归档 → `daily-memories-data/2026-10-07.md`（含BO方向bug调查全链+UltraX启动+zh分词启动详情）
-> 📦 唤醒201-203 已归档 → `daily-memories-data/2026-10-08.md`（含report_data_mix_summary.html产出+zh分词8进程启动+GPIC巡检）
-> 📦 唤醒220-224 已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq 12进程巡检全链+en_base/ultrax启动+GPIC巡检）
-> 📦 唤醒223-224 已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq 86-94%巡检+en_base/ultrax起步巡检+GPIC巡检）
-> 📦 唤醒225-226 原文已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq s12-s15完成+en_base起步+ultrax s34-s42完成+GPIC巡检）
-> 📦 唤醒253-255 原文已归档 → `daily-memories-data/2026-10-09.md`（含运维指令③执行:kill34旧进程+删46产物+smoke test 7源+核实197GB+创建run_tokenize_r3.sh+启动110进程+6目录盘点）
-> 📦 唤醒256-259 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 110进程启动巡检全链+GPIC巡检+l3_s39首shard完工+6目录盘点+④核实结论）
-
-> 📦 唤醒259 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 109/110进程巡检+l3_s39完工+GPIC纠正误计+6目录盘点+ETA重估1.404T tok→5.6TB .bin）
-> 📦 唤醒260-261 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 102-109进程巡检+.bin 1.49→2.0TB+8.idx[1l3+7math]+GPIC 7106→7137+ETA 10-15h）
-> 📦 唤醒279 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 96/110巡检+L3✅40/40+创建run_contam_scan_r3.sh+GPIC 7726/8001）
-
-
-
-
-> 📦 唤醒273-279 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词72→97/110全程巡检+GPIC 7528→7726+code_s13完工+6目录盘点+体积自检）
-
-> 📦 唤醒280 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 97/110巡检+code 17/30+GPIC 7757/8001+体积归档）
-
-> 📦 唤醒271-272 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词59-60/110巡检+GPIC 7453-7489+6目录盘点）
-
-> 📦 唤醒303 原文已归档 → `daily-memories-data/2026-10-10.md`（含HfApi核实85M 8子集精确总量12124files/46.66TB+obelics3844/5803+en_v1_4 5/110+争用26.4MB/s）
-
-> ⚠️ **唤醒302"关键更正:85M总量=7701/27T"❌作废**（唤醒303已用HfApi核实：真实总量=12,124files/46.66TB，302漏了sa1b+zero250m两子集+混淆已下/总量+obelics非100%）。见上方唤醒303。
-
-> 📦 唤醒302 原文已归档 → `daily-memories-data/2026-10-10.md`（含并发下载巡检85M/en_v1_4+85M PID2171453重启+en_v1_4 5/110+争用~20MB/s）
-
-> 📦 唤醒301 原文已归档 → `daily-memories-data/2026-10-10.md`（含并发下载巡检3次采样85M bursty+en_v1_4 4/110+争用~21-28MB/s+TASK归档3块）
-
-> 📦 唤醒300 原文已归档 → `daily-memories-data/2026-10-10.md`（含并发下载巡检85M/en_v1_4+85M 7684/12124=63%+en_v1_4 4/110+争用~21MB/s）
-
-> 📦 唤醒299 原文已归档 → `daily-memories-data/2026-10-10.md`（含en_v1_4巡检snapshot 3/110+rate~6.5fpm+GPIC全完成+R3 110/110）
-
-> 📦 唤醒298 原文已归档 → `daily-memories-data/2026-10-10.md`（含en_v1_4重启PID2535486+24workers+snapshot 3/110+6目录盘点全✅）
-
-> 📦 唤醒297 原文已归档 → `daily-memories-data/2026-10-10.md`（含en_v1_4巡检snapshot 2/110+清201 stale .lock+GPIC全完成+6目录盘点）
-
-- [16:01] **唤醒296**：①本机=`.12`,load~40/224。②en_v1_4下载优化:唤醒295的sequential Python脚本(~2 files/min)太慢→改写为parallel版本(ThreadPoolExecutor 8 workers+HF_HUB_ENABLE_HF_TRANSFER=1),4x加速到~7-8 files/min。③过程:kill旧PID1490375→试shell script(hf download --include per-snapshot)→发现需list全repo(56K files)也慢→kill shell PID57396→kill残留orphan PID61215(hf download child)→清理142 stale .lock文件→launch改进Python脚本PID349049。④当前:snapshot 1/110 SKIP(513 complete),snapshot 2/110 CC-MAIN-2013-48 downloading(115/513),634/56461 total,51GB,ETA~5.5天。⑤6目录盘点:Ultra-FineWeb base 524.43B/2.0TB✅|L3 40 shards✅|Code 30 shards✅|Math 40 shards✅|SFT-2605 20.96B/79GB✅|SFT-Agent 8.04B/30GB✅;R3合计110 .bin/5.4TB。⑥disk 37T free✅。⑦📦体积:TASK=30.1KB✅/MEMORY=20.3KB✅(无需归档)。下载线心跳：base✅全满|GPIC✅全满|en_v1_4🔄634/56461(2/110,PID349049,parallel 8+hf_transfer)|P-8数据层✅全就绪。
-
-> 📦 唤醒295 原文已归档 → `daily-memories-data/2026-10-10.md`（含en_v1_4首次启动+hf download CLI超时+Python per-file脚本创建+PID1490375启动）
-
-> 📦 唤醒293 原文已归档 → `daily-memories-data/2026-10-10.md`（含GPIC train 8000完成+val 14下载中+P-8全就绪+6目录盘点）
-
-> 📦 唤醒292 原文已归档 → `daily-memories-data/2026-10-10.md`（含P-8全就绪巡检+GPIC 7982/8001+6目录盘点全完成）
-
-> 📦 唤醒282-284 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 101-106/110巡检+code 21-26/30+GPIC 7817-7897+6目录盘点）
-
-> 📦 唤醒290-291 原文已归档 → `daily-memories-data/2026-10-10.md`（含P-8全就绪巡检+GPIC 7946-7957/8001+6目录盘点）
-
-> 📦 唤醒288 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 110/110DONE+contam scan启动+GPIC 7941/8001）
-
-> 📦 唤醒282-289 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 101-109/110巡检全程+code 21-29/30+contam scan 30/30 DONE+GPIC 7817-7944/8001+6目录盘点）
-
-> 📦 唤醒283 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 104/110巡检+code 24/30+GPIC 7845/8001）
-
-
-
-
-> 📦 唤醒284-287 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 106-109/110巡检+code 26-29/30+GPIC 7874-7939/8001+6目录盘点）
-
-> 📦 唤醒283 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 104/110巡检+code 24/30+GPIC 7845/8001）
-
-> 📦 唤醒282 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 101/110巡检+code 21/30+GPIC 7817/8001）
-
-> 📦 唤醒281 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 99/110巡检+code 19/30+GPIC 7916/8001）
-
-
-
-> 📦 唤醒262-267 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3分词巡检全链+GPIC巡检+6目录盘点+④核实结论+ETA递进）
-
-> 📦 唤醒256-258 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 110进程启动后2h巡检全链+.bin从736GB→1.3TB增长+GPIC 6987→7019+6目录盘点）
-
-> 📦 唤醒247-251 原文已归档 → `daily-memories-data/2026-10-09.md`（含运维指令①②执行+smoke test+11进程启动+GPIC 6734→6839巡检全链）
-
-> 📦 唤醒227-246 原文已归档 → `daily-memories-data/2026-10-08.md` 及 `2026-10-09.md`（含l1_en_hq/en_base/ultrax分词全链+全量污染扫描✅150K docs 0命中+GPIC巡检）
-
-> 📦 唤醒256-258 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 110进程启动后2h巡检全链+.bin从736GB→1.3TB增长+GPIC 6987→7019+6目录盘点）
-
-> 📦 唤醒247-251 原文已归档 → `daily-memories-data/2026-10-09.md`（含运维指令①②执行+smoke test+11进程启动+GPIC 6734→6839巡检全链）
-
-> 📦 唤醒227-233 原文已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq s18-s19完成+en_base起步+ETA纠正+GPIC巡检全链）
-
-
-
-
-
-> 📦 唤醒156-245 原文已归档 → daily-memories-data/2026-10-06~10.md（含R3分词巡检全链+GPIC巡检+全量污染扫描+zh/l1_en_hq/en_base分词全链+BO R2+UltraX+论文更新等，详见各日文件）
+> 📦 唤醒296-349 及更早流水指针已归档 → `daily-memories-data/2026-10-10.md` ~ `2026-10-12.md`（含并发下载巡检全链+R3分词+GPIC+BO R2+论文更新等，详见各日文件）
 
 ## 运维问答
 
