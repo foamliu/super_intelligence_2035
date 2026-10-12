@@ -52,6 +52,17 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
 - **修复**：~~S3 首轮——合成前 `ffprobe` 校验每条 TTS 实际时长 vs 剧本窗口，超窗时按实际时长重排后续 CUE 起点~~ ⇒ **不再需要**。
 - **状态**：🟠 **作废/关闭（2026-10-11 用户令：禁用 TTS）** —— 人物对话改由 **MiniMax H3 随视频一起生成**（写进 prompt 的 `Audio:`），成片音轨**不再叠加 TTS 人声** ⇒ 本问题（TTS 音轨互相重叠压没）**根因消失**。遗留的 EP13 `v3` 成片与 `*_tts_*.flac` 视为 **legacy**，不必再修；时序纪律转为 **音画钉长 + 逐镜内容偏移**（`STEM_FEST_PLAYBOOK.md` §7）。
 
+### #6 · 18_暖阳 13 张基础图缺失（OUTPUT/ 空）—— 🟠 已定位+再生中（2026-10-12）
+
+- **现象**：MEMORY/PLAN 声称「S3 首轮已产出 13 张基础图」，但 `OUTPUT/18_暖阳/` **为空**（`frames/` 空目录，0 张 PNG）。`OUTPUT/` 整体 .gitignore ⇒ 二进制产出从未 commit，换机/清理后丢失。
+- **核证**：`ASSETS/CHARACTERS/07_老周/` 仍有 3 张定妆（01 正面/02 半侧面/03 落泪）在盘；`OUTPUT/18_暖阳/frames/` 空。⇒ 前轮「13 张基础图」是**未留路径+字节证据的验收式陈述**，落盘证据未存活。
+- **根因（脚本 bug）**：`generate_ep18_t2i.py` 的 `_detect_comfyui_base()` 先查不存在的 `E:/ComfyUI`；ComfyUI 实际根 = `E:\code\ComfyUI` ⇒ 旧脚本产出从未落到本仓。
+- **修复**：`_detect_comfyui_base()` 改为优先 `E:/code/ComfyUI`（本机实际根）。
+- **再生**：后台跑 `generate_ep18_t2i.py`（13 帧 = image_edit×8 + zimage×5，ComfyUI 队列已确认提交 client_id `ep18_*`）；截至 2026-10-12 已核验首帧 `18_laozhou_02_profile_thinking.png` = 2041498B，其余进行中。
+- **教训**：产出必须「路径+字节」核验后再写『已完成』；`.gitignore` 下的二进制不能当跨机持久化依据。
+- **状态**：🟠 再生中（脚本已修 + 后台执行 + 首帧已核验）。
+
+
 ---
 
 ## 📋 处理原则

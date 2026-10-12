@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 续跑：13 张基础图 + 53 条台词已固化（ep18_dialogue.py · 🚫 禁用 TTS）；下一步 H3 I2V
-已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 首轮 ✅（18_暖阳 13 张基础图）；S3 续跑 ✅（53 条台词固化 ep18_dialogue.py + TTS 作废·按用户令禁用 TTS）
-当前动作:     （本轮 S3 续跑：误按旧口径跑 TTS → 落档发现用户令禁用 TTS → 中止 TTS + 固化台词源 ep18_dialogue.py + 回写 PLAN/MEMORY/日流水 + commit+push）
-下一步:       18_暖阳 续跑：video_minimax_h3_i2v 分镜视频（**台词随 H3 一起出 · 🚫 不用 TTS**）→ 字幕/音效BGM → 合成（★ 音画钉长）；BLOCKERS #5 已作废
-阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ #5✅(已作废) 已修；#2(MCP project_root=stem_fest 需传绝对路径·已照做) #3(15章缺规格) 待处理
+PHASE:        S3 放量 ✅ → 18_暖阳 续跑：帧缺失已定位+再生中（OUTPUT 空·脚本路径 bug 已修）；下一步 H3 I2V
+已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 首轮 ✅（18_暖阳 13 帧规格固化 generate_ep18_t2i.py）；S3 续跑 ✅（53 条台词固化 ep18_dialogue.py + TTS 作废·按用户令禁用 TTS）；S3 续跑 ✅（盘点发现 13 帧缺失 → 修脚本路径 bug → 后台再生）
+当前动作:     （本轮：git 同步+自检全绿 → 盘点发现 OUTPUT/18_暖阳 空（13 帧缺失）→ 修 _detect_comfyui_base() 路径 bug → 后台再生成 13 帧，首帧已核验 → 回写 PLAN/MEMORY/日流水 + commit+push）
+下一步:       帧再生成收尾（核验 13/13 帧字节）→ video_minimax_h3_i2v 分镜视频（**台词随 H3 一起出 · 🚫 不用 TTS**）→ 字幕/音效BGM → 合成（★ 音画钉长）
+阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ #5✅(已作废) 已修；#6(OUTPUT 帧缺失→已修+再生中) 处理中；#2(MCP project_root) #3(15章缺规格) 待处理
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-11（S3 续跑 · 18_暖阳 53 条台词固化 ep18_dialogue.py；用户令禁用 TTS → TTS 作废）
+- **上次唤醒**：2026-10-12（S3 续跑 · 盘点发现 18_暖阳 13 帧缺失 → 修 generate_ep18_t2i.py 路径 bug → 后台再生，首帧已核验）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 续跑 · 18_暖阳 帧缺失盘点 + 修 bug 再生 ✅**：git 同步+自检全绿后盘点，发现 MEMORY 声称的「13 张基础图」**未落盘**。
+  - **核证（验收式陈述）**：`OUTPUT/18_暖阳/` 空（仅空 `frames/` 目录，0 张 PNG）；`OUTPUT/` 整体 .gitignore ⇒ 二进制产出从未 commit、跨机丢失。仅 `ASSETS/CHARACTERS/07_老周/` 3 张定妆在盘。
+  - **根因 + 修复**：`generate_ep18_t2i.py` 的 `_detect_comfyui_base()` 先查不存在的 `E:/ComfyUI`，实际根 = `E:\code\ComfyUI` ⇒ 改为优先 `E:/code/ComfyUI`；dry-run 通过（13 帧）。
+  - **再生**：后台 `generate_ep18_t2i.py`（13 帧 = image_edit×8 + zimage×5），ComfyUI 队列确认已提交（client_id `ep18_*`）；已核验首帧 `18_laozhou_02_profile_thinking.png` = 2041498B。
+  - **教训**：产出须「路径+字节」核验后再写『已完成』；.gitignore 下二进制不可当持久化依据（入 BLOCKERS #6）。
+  - **下一步**：核验 13/13 帧字节 → `gen_ep18_h3_i2v.py` 分镜视频（台词随 H3 `Audio:` 出）。
+
 
 - **2026-10-11 · 纪律变更（用户令 · supervisor 落档）· 🚫 禁用 TTS ✅**：用户下令「**不要使用 TTS；视频中的人物对话全部由 MiniMax H3 随视频一起生成**」。已落文档：任务书 **运维指令区 ⑦ + §3 铁律 + §1 链路 + §4.5**；`video/PIPELINE.md` 按新口径改写（③ 环节＝随 H3 生成、⑤ 合成去掉 TTS 输入、⑥ 字幕时间轴改用镜头时长）；`STEM_FEST_PLAYBOOK.md` §5/§10 同步；`BLOCKERS.md` **#5 作废关闭**（根因消失）；`PLAN.md` 表头「旁白TTS」→「台词(H3)」＋状态列标注 EP13 音轨 legacy。
   - **⇒ 影响**：**EP13 的 TTS 产物与 `synth_ep13` 的 TTS 混音 = legacy**（不再使用、不再混入成片）；**后续各章一律不生成、不混任何 TTS**，台词写进 H3 `prompt` 的 `Audio:`。
