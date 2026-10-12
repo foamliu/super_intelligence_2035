@@ -7662,3 +7662,65 @@ index 3a646e8c..43e6ae5a 100644
   ABL_full_r5_8650set.log                        V2=0 V3=0 EVOLVE=0
 === DONE ===
 ```
+
+---
+
+## RUN_ID 49 · 2026-10-12 10:58:01 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 49 · opencode/deepseek-harness 安装前环境探针（只读）
+echo "=== [0] host/time/user ==="; hostname; date '+%F %T'; id -un
+echo "=== [1] tools (node/npm/pnpm/curl/git) ==="
+for t in node npm pnpm curl git; do
+  printf '%-6s ' "$t"
+  if command -v "$t" >/dev/null 2>&1; then "$t" --version 2>&1 | head -1; else echo "NOT FOUND"; fi
+done
+echo "=== [2] already installed? ==="
+printf 'opencode: '; command -v opencode >/dev/null 2>&1 && opencode --version 2>&1 | head -1 || echo "NOT installed"
+printf 'dsh:      '; command -v dsh >/dev/null 2>&1 && dsh --version 2>&1 | head -1 || echo "NOT installed"
+echo "=== [3] network (direct, no proxy) ==="
+for u in https://registry.npmjs.org/ https://github.com https://opencode.ai https://cdn.jsdelivr.net https://agi-gateway.cxmt.com; do
+  timeout 14 curl -sS -o /dev/null -w "$u -> HTTP=%{http_code} t=%{time_total}s\n" "$u" 2>&1 || echo "$u -> FAIL"
+done
+echo "=== [4] proxy env ==="; env | grep -iE 'proxy|no_proxy' || echo "(none)"
+echo "=== [5] npm prefix / node path ==="; npm config get prefix 2>/dev/null; command -v node
+echo "=== [6] existing config dirs ==="
+ls -ld ~/.config/opencode ~/.opencode ~/.dsh ~/.config/dsh 2>/dev/null || echo "(none present)"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time/user ===
+hfeg0tedaap02
+2026-10-12 10:58:01
+app.e0031982
+=== [1] tools (node/npm/pnpm/curl/git) ===
+node   v20.18.1
+npm    10.8.2
+pnpm   NOT FOUND
+curl   curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.7
+git    git version 2.43.0
+=== [2] already installed? ===
+opencode: NOT installed
+dsh:      NOT installed
+=== [3] network (direct, no proxy) ===
+https://registry.npmjs.org/ -> HTTP=200 t=0.184396s
+https://github.com -> HTTP=200 t=0.478387s
+curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to opencode.ai:443 
+https://opencode.ai -> HTTP=000 t=0.083640s
+https://opencode.ai -> FAIL
+curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to cdn.jsdelivr.net:443 
+https://cdn.jsdelivr.net -> HTTP=000 t=0.172417s
+https://cdn.jsdelivr.net -> FAIL
+https://agi-gateway.cxmt.com -> FAIL
+=== [4] proxy env ===
+https_proxy=http://172.19.92.23:13128
+=== [5] npm prefix / node path ===
+/nasdata/app.e0031982/.local/node-20
+/home/app.e0031982/.local/node-20/bin/node
+=== [6] existing config dirs ===
+(none present)
+=== DONE ===
+```
