@@ -23,7 +23,7 @@ WAITING: 1
 | PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant reports ALL DELIVERED. ✅ **④-2ep TRAINING + ALL EVAL COMPLETE** (374,202 steps, 16.6h, C1 0.51→0.58, no collapse). **ProtB 65.37±0.01% (Δ+3.03pp), ProtA 53.82% (Δ+4.12pp), zs 38.52% (Δ+4.42pp), k-NN 40.67% (Δ+2.99pp). VERDICT: MODERATE → no 4ep unless operator requests.** lp-epoch curve plot generated. **Awaiting operator review of ④ results.** |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 13:45 (wake #20)**: ✅ **④-2ep ALL EVAL COMPLETE!** ProtB 65.37±0.01% (Δ+3.03pp), ProtA 53.82% (Δ+4.12pp), zs 38.52%/70.81% (Δ+4.42pp), k-NN k=20 40.67% (Δ+2.99pp). All 4 metrics consistent +3~4.4pp shift → **VERDICT: MODERATE** (pre-registered: Δ+1.5~7.66pp). Epoch count is most impactful lever found: +3.03pp (2ep) > +1.18pp (full data V3) > +0.17pp (wider model E2fair). lp-epoch curve plot at `vision/lp_epoch_curve.png`. EXPERIMENTS_VISION.md §9.4/§9.5 fully updated. **No 4ep unless operator requests.** 📦 体积：TASK=28.2KB / MEMORY=~30.5KB |
+| 更新 | **2026-10-12 14:18 (wake #21)**: Monitoring wake — all tasks complete, no new operator instructions. Git synced, 8 GPUs idle. Still awaiting operator review of ④-2ep results (ProtB 65.37±0.01%, Δ+3.03pp, MODERATE). All ③①②④ + V1/V2/V3 variants done, all reports delivered. 📦 体积：TASK=28.2KB / MEMORY=~30.4KB |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
