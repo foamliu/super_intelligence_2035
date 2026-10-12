@@ -4522,5 +4522,499 @@
     },
     "flipped": "",
     "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-24265"
+  },
+  {
+    "key": "opencode|matplotlib__matplotlib-25498",
+    "instance_id": "matplotlib__matplotlib-25498",
+    "repo": "matplotlib/matplotlib",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-25498"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-25332",
+    "instance_id": "matplotlib__matplotlib-25332",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-25332"
+  },
+  {
+    "key": "opencode|matplotlib__matplotlib-26011",
+    "instance_id": "matplotlib__matplotlib-26011",
+    "repo": "matplotlib/matplotlib",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-26011"
+  },
+  {
+    "key": "opencode|matplotlib__matplotlib-26020",
+    "instance_id": "matplotlib__matplotlib-26020",
+    "repo": "matplotlib/matplotlib",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-26020"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-24334",
+    "instance_id": "matplotlib__matplotlib-24334",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 770
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-24334"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-24970",
+    "instance_id": "matplotlib__matplotlib-24970",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 253
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-24970"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-25433",
+    "instance_id": "matplotlib__matplotlib-25433",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-25433"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-25442",
+    "instance_id": "matplotlib__matplotlib-25442",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-25442"
+  },
+  {
+    "key": "opencode|pallets__flask-4992",
+    "instance_id": "pallets__flask-4992",
+    "repo": "pallets/flask",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/pallets__flask-4992"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-25079",
+    "instance_id": "matplotlib__matplotlib-25079",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-25079"
+  },
+  {
+    "key": "deepseek-harness|matplotlib__matplotlib-23562",
+    "instance_id": "matplotlib__matplotlib-23562",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 2,
+      "f2p_total": 2,
+      "p2p_pass": 132,
+      "p2p_total": 136
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/matplotlib__matplotlib-23562"
+  },
+  {
+    "key": "opencode|pallets__flask-5063",
+    "instance_id": "pallets__flask-5063",
+    "repo": "pallets/flask",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 54
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 54
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/pallets__flask-5063"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-25311",
+    "instance_id": "matplotlib__matplotlib-25311",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-25311"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-25498",
+    "instance_id": "matplotlib__matplotlib-25498",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-25498"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-25332",
+    "instance_id": "matplotlib__matplotlib-25332",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-25332"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-26011",
+    "instance_id": "matplotlib__matplotlib-26011",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-26011"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-26020",
+    "instance_id": "matplotlib__matplotlib-26020",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-26020"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-25433",
+    "instance_id": "matplotlib__matplotlib-25433",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-25433"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-25442",
+    "instance_id": "matplotlib__matplotlib-25442",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-25442"
   }
 ]

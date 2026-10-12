@@ -2,21 +2,22 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**执行中** 🔄。P0 四项修复已全部完成 ✅。**fix1 重评后台运行中**（PID 3594913, 376 entries, 当前进度 ~30% [114/376], ETA ~2.8h → ~05:50）。**最新结果**：114 条已保存 → **9 条 FLIPPED to RESOLVED** ✅（codex×3, claude-code×2, cline-patched×2, opencode×1, deepseek×1）· **57 条 patch 新增 apply 成功**（infra fix 确认 ✅）。pytest-11143 在 5 个 harness 上翻转 ✅。报告已刷新：`report_harness_eval_fix_rerun.html`（113 entries, 83 patch-fixed, +9 flipped）。待全部完成后刷新最终报告。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**执行中** 🔄。P0 四项修复已全部完成 ✅。**fix1 重评后台运行中**（PID 3594913, 467 total candidates, 当前进度 ~40% [190/467], ETA ~2h → ~05:40）。**最新结果**：190 条已保存 → **10 条 FLIPPED to RESOLVED** ✅（codex×3, claude-code×2, cline-patched×2, opencode×1, deepseek×1, hermes×1）· **134 条 patch 新增 apply 成功**（infra fix 确认 ✅）。pytest-11143 在 6 个 harness 上翻转 ✅。sklearn-10297 在 claude-code 上翻转 ✅。报告已刷新：`report_harness_eval_fix_rerun.html`（190 entries, 134 patch-fixed, +10 flipped）。待全部完成后刷新最终报告。
 
 ## 📊 进度快照
 
 ```
-PHASE:        FIX1 RE-EVAL RUNNING 🔄 — P0 fixes applied ✅; rerun_eval_fix1.py at ~30% [114/376], 9 FLIPPED ✅, 57 patches now applying ✅; report refreshed
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry) · ⑤ fix1 re-eval RUNNING 🔄 (114/376 done, 9 resolved, 57 patch-applied) · ⑥ report refreshed ✅ (113 entries, 83 patch-fixed, +9 flipped)
-当前动作:     R346: Monitoring fix1 re-eval (PID 3594913, 114/376 ~30%, ETA ~2.8h → ~05:50). 9 FLIPPED to RESOLVED across 5 harnesses (codex×3, claude-code×2, cline-patched×2, opencode×1, deepseek×1). pytest-11143 flipped for 5 harnesses. 57 patches now applying (infra fix confirmed ✅). Report refreshed via gen_fix_report.py.
-下一步:       ① Wait for fix1 re-eval to complete (~2.8h) ② Re-run gen_fix_report.py for final report with all 376 entries ③ Commit final results + report ④ Consider P1 items (astropy OOM, network 503 retry, per-instance Docker)
+PHASE:        FIX1 RE-EVAL RUNNING 🔄 — P0 fixes applied ✅; rerun_eval_fix1.py at ~40% [190/467], 10 FLIPPED ✅, 134 patches now applying ✅; report refreshed
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry) · ⑤ fix1 re-eval RUNNING 🔄 (190/467 done, 10 resolved, 134 patch-applied) · ⑥ report refreshed ✅ (190 entries, 134 patch-fixed, +10 flipped)
+当前动作:     R347: Monitoring fix1 re-eval (PID 3594913, 190/467 ~40%, ETA ~2h → ~05:40). 10 FLIPPED to RESOLVED across 6 harnesses (codex×3, claude-code×2, cline-patched×2, opencode×1, deepseek×1, hermes×1). pytest-11143 flipped for 6 harnesses. 134 patches now applying (infra fix confirmed ✅). Report refreshed via gen_fix_report.py.
+下一步:       ① Wait for fix1 re-eval to complete (~2h) ② Re-run gen_fix_report.py for final report with all 467 entries ③ Commit final results + report ④ Consider P1 items (astropy OOM, network 503 retry, per-instance Docker)
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
 - [03:02] R346: **fix1 re-eval monitoring** 🔄. Process PID 3594913 alive (etimes ~4376s ≈ 73min). Progress: 114/376 entries (~30%), up from 58 at R345. **9 FLIPPED to RESOLVED** ✅ (up from 3): codex×3 (pytest-11143/7168/7373), claude-code×2 (pytest-11143, sklearn-10297), cline-patched×2 (pytest-11143/11148), opencode×1 (pytest-11143), deepseek×1 (pytest-11143). **pytest-11143 flipped for 5 harnesses** → SETUPTOOLS_SCM_PRETEND_VERSION fix broadly effective. **57 patches newly applied** (up from 45). Report refreshed via gen_fix_report.py: 113 entries, 83 patch-fixed, +9 flipped. By repo: matplotlib 42, sklearn 26, pytest 25, sphinx 11, flask 8. By harness: codex 50, pi 15, opencode 14, cline-patched 13, claude-code 12, deepseek 7, hermes 1. ETA ~2.8h → ~05:50. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈30KB ✓。
+- [03:35] R347: **fix1 re-eval monitoring** 🔄. Process PID 3594913 alive (etimes ~6411s ≈ 107min). Progress: 190/467 entries (~40.7%), up from 114 at R346. **10 FLIPPED to RESOLVED** ✅ (up from 9): codex×3 (pytest-11143/7168/7373), claude-code×2 (pytest-11143, sklearn-10297), cline-patched×2 (pytest-11143/11148), opencode×1 (pytest-11143), deepseek×1 (pytest-11143), **hermes×1 (pytest-11143, NEW)**. **134 patches newly applied** (up from 57). Per-repo: matplotlib 67/90 patch-ok (0 resolved), pytest 15/27 patch-ok (9 resolved, 9 flipped), sklearn 22/30 patch-ok (1 resolved, 1 flipped), sphinx 28/31 patch-ok (0 resolved), flask 2/11 patch-ok (0 resolved). 0 errors. Report refreshed: 6706B, 190 entries, 134 patch-fixed, +10 flipped. Total candidates=467 (not 376 as previously estimated). ETA ~2h → ~05:40. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈30KB ✓.
 - [02:23] R345: fix1 re-eval monitoring. 38/376 (~10%), 3 FLIPPED, 45 patch-applied. Preliminary report generated (5098B).
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
