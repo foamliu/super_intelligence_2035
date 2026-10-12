@@ -687,3 +687,29 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 > **归档结论（2026-10-11）**：① 7×100 HTML 报告已交付 ✅（`report_harness_7x100.html`）；② 7×300 已启动 ✅（workdir 隔离修复 done, block=0 已验证, 2047/2100 = 97.5%, 554 resolved, 5 harness COMPLETE, hermes+claude-code 仍在跑）；②-C 成功判据待 7×300 完成后检查 blocked=0。本块已归档，7×300 监控继续在 MEMORY_HARNESS.md 顶部进行。
 
+---
+
+## 📦 §运维指令·2026-10-11（①文献借鉴 ②交互轨迹对比以 cline 为轴）→ 自 TASK 归档
+
+> 结论：`report_harness_lit_ideas.html`(26.9KB) + `report_harness_trace_vs_cline.html`(50.2KB) 均已交付 ✅（commit 前缀 `harness rpt:`）。
+
+**用户原话**：①「harness 看看这几天 research 积累的论文，找可借鉴 idea，写个 html 报告（中文版）。」②「分析各 harness 的交互轨迹，写个细致的分析报告（中文版），对比不同 harness 的优劣。当前 EDA Agent 我们基于 cline 开发，这个报告需要从各自 harness 跟 cline 的对比出发，提出对 cline 的改进意见。」
+
+**性质**：纯分析 + 写作（读已有轨迹/JSON/报告）⇒ 🚫 不占 GPU、🚫 不打断在飞的 7×300。
+
+**① 交付物 A（文献）**：`doc/BaiZe-ISEDA2027/report_harness_lit_ideas.html`
+**② 交付物 B（轨迹分析）**：`doc/BaiZe-ISEDA2027/report_harness_trace_vs_cline.html`
+两份均 中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB。
+
+**交付物 A · 文献借鉴报告**：
+- 输入（先 git pull）：research 线仓根相对 `doc/personal-watch/run/research/daily/2026-10-07.html` … `2026-10-11.html`（共 25 篇）+ `TOP_K.md`/`TOP_K.jsonl` + `papers.jsonl` + `TAKEAWAYS.md`。
+- 关注面：code agent · harness 架构 · 交互轨迹与上下文压缩 · 工具调用与沙箱 · agent RL · SWE-bench 类评测协议 · 成本-性能。
+- 每条 idea 必带：出处 + 一句话 + 与本线关系 + 借鉴成本 + 风险 + 价签；按可执行价值排序 TOP-5；区分「已验证」vs「仅灵感」。
+
+**交付物 B · 交互轨迹对比分析（本批重点 · 必须更细）**：
+- 定位：旧 `run/harness/report_harness_interaction_traces.html`（2026-10-08）已存在 ⇒ 必须更细，且以「各 harness vs cline」为轴，不得翻版。
+- 数据源：`run/harness/kimi_pilot_results.json`（含 stdout_tail/model_patch/traces）· `logs_7x300/` · `SWEBENCH_COMPARE.html` · `HARNESS_7WAY_COMPARISON.html` · `analyze_traces.py`/`gen_trace_report*.py`。
+- 必备 8 节：①HERO 一句话+TL;DR ②方法与口径（7 harness 版本/同 backbone/题集/判据/R1-R2 并发不可比性/轨迹缺失如实报）③逐 harness 剖析 7 段（工具集/循环控制/上下文管理压缩/计划 todo/patch 自检/失败恢复/何时停手/步数 wall-time，每段引 trace 证据）④跨 harness 对比矩阵（维度×7+cline 列）⑤各 harness 优劣 ⑥★cline 对比与改进 TOP-8（功能点+证据+预期收益+实现示意+优先级，区分已在 cline-patched 验过 vs 未验证）⑦证据索引（path:line/JSON 字段）⑧诚实条款。
+
+**纪律**：🚫 不改 7×300 在飞任务/数值；已在 `CLINE_IMPROVEMENT_OPPORTUNITIES.md` + `CLINE_IMPROVEMENTS_TOP5.html` 提过的结论须沿用并标「已提过」；commit 前缀 `harness rpt:`；任务书 >32KB 自滚归档。
+

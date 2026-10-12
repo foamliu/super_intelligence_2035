@@ -12,39 +12,34 @@
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
 
-### 🆕 运维指令 · 2026-10-11（📄 **① 文献借鉴报告 ② 交互轨迹对比分析报告（以 cline 为轴 · 提改进意见）** · 中文 HTML）· 用户直令 · 高优先
+### 🆕 运维指令 · 2026-10-12（🔬 cline vs opencode 谁更适合做 EDA agent harness 基座 · 深入对比 · 中文 HTML）· 用户直令 · 高优先
 
-> **用户原话（2026-10-11）**：① 「**harness** 看看**这几天 research 积累的论文**，找可借鉴 idea，**写个 html 报告（中文版）**。」② 「**分析各 harness 的交互轨迹，写个细致的分析报告（中文版），对比不同 harness 的优劣。当前 EDA Agent 我们基于 cline 开发，这个报告需要从各自 harness 跟 cline 的对比出发，提出对 cline 的改进意见。**」
-> **性质**：**纯分析 + 写作**（读已有轨迹 / JSON / 报告）⇒ 🚫 **不占 GPU、🚫 不打断在飞的 7×300**。
+> **用户原话（2026-10-12）**：「关于 cline 和 opencode 哪个更适合做 EDA agent harness 的基座，半年前我们做了一些分析（`/nas_train/app.e0031982/code/super_intelligence_2035/doc/zhulong_doc/Cline vs OpenCode 对比.md`，NAS 上 harness 可直接读）。现在既然 harness 能看到两边的代码，请参考早前的分析，做更加深入的对比分析 html 报告（中文版），可以按需 web search。」—— 分析文件在 NAS 上，**只需给 file_path**。
+> **性质**：**纯分析 + 写作**（读已有源码分析/轨迹/JSON + 按需 web search）⇒ 🚫 **不占 GPU、🚫 不打断在飞的 7×300 收尾**。
 
-**① 交付物 A（文献）**：`doc/BaiZe-ISEDA2027/report_harness_lit_ideas.html`
-**② 交付物 B（轨迹分析）**：`doc/BaiZe-ISEDA2027/report_harness_trace_vs_cline.html`
-两份均 **中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**。
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_cline_vs_opencode_eda.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 输入（file_path，NAS 可直接读，勿把大文件整段读进上下文）**：
+- 早前选型分析：`/nas_train/app.e0031982/code/super_intelligence_2035/doc/zhulong_doc/Cline vs OpenCode 对比.md`（2026-03-13，当年结论倾向 Cline CLI 2.0）
+- 双方源码分析：`run/harness/cline_SOURCE_ANALYSIS.html` · `run/harness/opencode_SOURCE_ANALYSIS.html`
+- 实测结果：`run/harness/kimi_pilot_results.json`（7×300，cline=86/300(28.7%) vs opencode=87/300(29.0%)）
+- cline 改进/轨迹（结论须沿用并标「已提过」）：`report_harness_trace_vs_cline.html` · `run/harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md` · `run/harness/CLINE_IMPROVEMENTS_TOP5.html`
+
+**③ 必备节**：
+1. **HERO 一句话结论 + TL;DR**。
+2. **早前结论回顾**：2026-03 选型论据（Cline=逐操作审批/MCP 生态/Checkpoint/子Agent vs OpenCode=本地模型/多模态/MIT 宽松）与当年为何选 Cline。
+3. **实测评比（核心增量）**：7×300 里 cline 86/300(28.7%) vs opencode 87/300(29.0%) **几乎打平（+0.3pp，无统计差别）**；从 `kimi_pilot_results.json` 抽**双方 wall-time / 步数 / token 量 / 失败分类(resolved·pbf·blocked·quota·np) / 同题重叠胜败**，逐项挂 JSON 字段证据。
+4. **代码架构对比**：工具集 / 循环控制与停手 / 上下文管理与压缩 / 审批粒度(Human-in-the-loop) / MCP / checkpoint / patch 生成与自检 / 失败恢复 —— 结合两份 `*_SOURCE_ANALYSIS.html`。
+5. **EDA 场景契合度**：不可逆操作安全(PDK 改参/仿真提交) / 变更管控 / MCP 封装 PyAether / 本地化离线部署 / 多模态扩展。
+6. **半年来演进（web search 按需）**：两框架**最新版本/生态/维护活跃度/协议与安全变更**，标**检索时效**（距今 2026-03 的 delta）；🚫 无法核实的显式标「未核实」。
+7. **综合结论**：谁更适合做 EDA agent harness 基座 + 理由（证据链或加权分）+ **风险 & 迁移成本** + 是否需「双轨并行」。
+8. **诚实条款**：样本量(300 题/单 backbone kimi-k2.6-cloud)/eval 环境限制/web 时效对结论的约束。
+
+**④ 纪律**：🚫 不改实验数值、不新跑评测 · **已在 `CLINE_IMPROVEMENT_OPPORTUNITIES.md` / `report_harness_trace_vs_cline.html` 提过的结论须沿用并标「已提过」**，本轮增量须显式列出 · web search 论据带来源+时效 · commit 前缀 `harness rpt:` · 证据索引每格可复算(path:line 或 JSON 字段) · 任务书 >32KB 自滚归档。
 
 ---
 
-**交付物 A · 文献借鉴报告**
-- **输入（先 `git pull`）**：research 线**仓根相对** `doc/personal-watch/run/research/daily/2026-10-07.html` … `2026-10-11.html`（**共 25 篇**）+ `TOP_K.md`/`TOP_K.jsonl` + `papers.jsonl` + `TAKEAWAYS.md`。
-- **关注面**：code agent · harness 架构 · 交互轨迹与上下文压缩 · 工具调用与沙箱 · agent RL（reward 设计）· SWE-bench 类评测协议 · 成本-性能。
-- **每条 idea 必带**：① 出处（原题 + arXiv ID + URL + 日期）② 一句话 ③ **与本线关系**（能用在**哪一环节**：题集 / 沙箱 / 评测 / agent 循环 / 报告）④ **借鉴成本** ⑤ **风险** ⑥ **价签**。**按可执行价值排序 · TOP-5**；显著区分「**已验证**」vs「**仅灵感**」；🚫 二手当一手。
-- 🚫 不改实验数值、不新跑评测；如需验证先报运维。
-
----
-
-**交付物 B · 交互轨迹对比分析（本批重点 · 必须更细）**
-- **定位**：`run/harness/report_harness_interaction_traces.html`（2026-10-08）**已存在** ⇒ 本报告**必须更细**，且**以「各 harness vs cline」为轴**，🚫 不得只是旧报告翻版（须**显式列出新增维度**）。
-- **数据源**：`run/harness/kimi_pilot_results.json`（含 `stdout_tail` / `model_patch` / traces）· `run/harness/logs_7x300/` · `run/harness/SWEBENCH_COMPARE.html` · `HARNESS_7WAY_COMPARISON.html` · `analyze_traces.py` / `gen_trace_report*.py`。
-- **必备节**：
-  1. **HERO 一句话结论** + TL;DR。
-  2. **方法与口径**：7 harness 版本 · 同一 backbone（kimi-k2.6-cloud）· 题集 · 判据 · **R1/R2 并发口径与不可比性声明** · 轨迹数据**可得性 + 缺失（如实报）**。
-  3. **逐 harness 剖析（7 段）**：**工具集 / 循环控制 / 上下文管理与压缩 / 计划·todo / patch 生成与自检 / 失败恢复 / 何时停手 / 典型步数与 wall-time 分布** —— **每段均引 trace 片段或统计证据**。
-  4. **跨 harness 对比矩阵**（维度 × 7 + **再加 cline 一列**）。
-  5. **各 harness 优劣**（强项/弱项，**逐条挂证据**）。
-  6. **★ cline 对比与改进意见（核心）**：① cline 在**同题上的轨迹特征**（步数 / token / 停手时机 / **错在哪一步**）；② 与各 harness 逐项对比**差在哪、好在哪**；③ **改进意见清单**：每条含 **功能点 + 证据（trace/统计）+ 预期收益 + 实现示意 + 优先级**，**给 TOP-8**；④ **区分**「**已在 `cline-patched` 里验过的**」vs「**未验证的**」。
-  7. **证据索引**：每格数字可复算（`path:line` 或 JSON 字段）。
-  8. **诚实条款**：哪些结论**受 eval 环境限制 / 样本量**约束；轨迹缺失如实标。
-
-**③ 纪律**：🚫 不改 7×300 在飞任务 / 数值；**已在 `run/harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md` + `CLINE_IMPROVEMENTS_TOP5.html` 提过的结论须沿用并标「已提过」**，新增部分才是本轮增量；commit 前缀 `harness rpt:`；任务书 >32KB 自滚归档。
+> 📦 §运维指令·2026-10-11（①文献借鉴 ②交互轨迹对比以 cline 为轴）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：report_harness_lit_ideas.html(26.9KB) + report_harness_trace_vs_cline.html(50.2KB) 均已交付 ✅。需要时再读。
 
 ---
 
