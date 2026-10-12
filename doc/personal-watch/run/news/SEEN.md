@@ -639,4 +639,16 @@
 | 2026-10-12 | Anthropic IPO：估值 / 时间窗分析 | CNBC（经 HN `search_by_date`·**约 10-07 ⇒ 超 72h**） | 留档(超 72h · 分析·不收) | https://www.cnbc.com/2026/10/07/anthropic-ipo.html |
 | 2026-10-12 | Military accelerates drone and AI use；国会要护栏 | WUNC（经 HN `search_by_date`） | 留档(涉政治 / 军事·依红线不收) | https://www.wunc.org/2026-10-12/military-accelerates-drone-and-ai-use-congress-wants-guardrails |
 | 2026-10-12 | 防重核验（本窗候选与 `SEEN.md` 近邻比对） | — | 防重：`LeCun` = 2026-10-03《Fortune》另一事件 · `三星 HBM` = 10-03 HBM4 定价 / 10-08 HBM4E 验证 / 10-08 越南建厂（均另一事件）⇒ 本轮候选**不构成重复** | — |
+| 2026-10-12 | Arena 第 41 周 AI 大模型周榜：Claude Opus 5.5 Max 首登智能体榜首，kimi-k3-max 稳居综合前 20 | IT之家〔据 Arena 平台〕（`011/948`·16:04 CST） | news | https://www.ithome.com/1/011/948.htm |
+| 2026-10-12 | 华为鸿蒙 HarmonyOS 7「小艺 AI 快捷栏」上线时间公布：预计 10 月底分批推送 | IT之家（`012/006`·17:26 CST） | news | https://www.ithome.com/1/012/006.htm |
+| 2026-10-12 | 微软总裁史密斯：AI 受到的监管甚至不如牛奶和洗衣机・失控智能体损害应由持有公司担责 | IT之家〔据《卫报》〕（`011/984`·16:48 CST） | news | https://www.ithome.com/1/011/984.htm |
+| 2026-10-12 | 报告：AI 开发普及以来美国初级程序员就业人数下降约 20%，专家警告 10 年后可能没高级人才可用 | IT之家〔据 CNBC〕（`011/958`·16:13 CST） | news | https://www.ithome.com/1/011/958.htm |
+| 2026-10-12 | 我国首列具身智能数字地铁列车 VELLINK 亮相：由被动执行指令转向主动优化运营 | IT之家〔据中车长春轨道客车〕（`011/985`·16:51 CST） | news | https://www.ithome.com/1/011/985.htm |
+| 2026-10-12 | 据报腾讯将推出「元宝助手」App：布局 Personal Agent 赛道、承载长周期任务与个人长期记忆 | IT之家〔据《读佳》〕（`012/026`·17:44 CST） | news | https://www.ithome.com/1/012/026.htm |
+| 2026-10-12 | 英特尔 CEO 陈立武：中国前沿 AI 模型 Token 成本较低、普及速度非常快，坚定支持开源 | IT之家〔据路透社〕（`012/013`·17:34 CST） | news | https://www.ithome.com/1/012/013.htm |
+| 2026-10-12 | 唯品会自研 AI 助手「AI 小唯」低调上线，灰度试水商品 AI 对比 | IT之家〔据新浪科技〕（`011/927`·15:22 CST） | news | https://www.ithome.com/1/011/927.htm |
+| 2026-10-12 | Britain to get first look at new AI systems after White House U-turn | The Telegraph（经 HN `search_news`·**10-11**） | 留档(付费墙 · 仅标题不收) | https://www.telegraph.co.uk/news/2026/10/11/britain-get-first-look-ai-systems-after-white-house-u-turn/ |
+| 2026-10-12 | Leading Chinese mathematicians unite behind use of AI in research | SCMP（经 HN `search_news`） | 留档(同事件 · 与第九十轮「丘成桐数学与 AI 实验室联盟」去重) | https://www.scmp.com/news/china/science/article/3370492 |
+| 2026-10-12 | 安蒙：AI 企业已要求高通在 2028 年推出支持 100B 模型本地运行的移动平台 | IT之家（`011/991`·**采访为「上月骁龙峰会」⇒ 超 72h**） | 留档(超 72h · 不收) | https://www.ithome.com/1/011/991.htm |
+| 2026-10-12 | 本窗 IT之家非 AI 段一批（`012/036` 雷鸟 AR · `012/025` 阿维塔 T09 · `011/999` 智能咖啡机 · `011/965` Gartner 量子计算 · `011/961` TIOBE 等） | IT之家（本窗 `011/905`~`012/036`） | 留档(非 AI 具体事件 · 消费硬件/汽车/游戏/电商 · 不收) | https://www.ithome.com/rss/ |
 
