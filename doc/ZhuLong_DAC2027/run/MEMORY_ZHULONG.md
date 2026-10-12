@@ -184,30 +184,8 @@ WAITING: 1
 
 - [2026-10-10 16:55] [⏩ 已滚出] ⠈ 巡检(r2_new code-gen 阶段) 详情见 daily-memories/2026-10-10.md（rolled 01:26）。
 
-- [2026-10-10 17:32] [⏩ 已滚出] ⠈ 巡检(r2_new code-gen 阶段,2h) 详情见 daily-memories/2026-10-10.md（rolled 01:26）。
-- [2026-10-10 18:06] [⏩ 已滚出] ⠈ 巡检(r2_new code-gen 阶段,2.5h) 详情见 daily-memories/2026-10-10.md。
-- [2026-10-10 18:40] [⏩ 已滚出] ⠈ 巡检(r2_new code-gen 阶段) 详情见 daily-memories/2026-10-10.md。
-- [2026-10-10 19:14] [⏩ 已滚出] 🔻 r2_new 收割=73.4%❌ → 启动 r2_new2(retry#1) 详情见 daily-memories/2026-10-10.md。
-- [2026-10-10 19:52] [⏩ 已滚出] ⠈ 巡检(r2_new2 code-gen 阶段) 详情见 daily-memories/2026-10-10.md。
-- [2026-10-10 20:27] [⏩ 已滚出] ⠈ 巡检(r2_new2 code-gen 阶段,71m) 详情见 daily-memories/2026-10-10.md。
-- [2026-10-10 20:49] [⏩ 已滚出] 🔬 根因排查完成(运维指令(四)/(三))·port 8667挂死+MCP 60s太短 详情见 daily-memories/2026-10-10.md §20:49。
-- [2026-10-10 22:39] [⏩ 已滚出] 🔄 运维指令(七)执行+auth修复→r2_new重启(8端口) 详情见 daily-memories/2026-10-10.md §22:39。
-
-- [2026-10-10 23:25] [⏩ 已滚出] 🔄 运维指令(八)执行→4端口回退+timeout:180→2/4端口挂死→blocked 详情见 daily-memories/2026-10-11.md §归档10-10。
-- [2026-10-11 00:08] [⏩ 已滚出] ⠈ 巡检→发现 r2_new 已在运行（端口恢复·前轮agent启动未记录） 详情见 daily-memories/2026-10-11.md §归档10-11。
-- [2026-10-11 00:52] [⏩ 已滚出] ⠈ 巡检(r2_new code-gen 阶段 ~70%·不动作) 详情见 daily-memories/2026-10-11.md §00:52。
-- [2026-10-11 01:26] [⏩ 已滚出] ⠈ 巡检(r2_new grading 阶段启动·不动作) 详情见 daily-memories/2026-10-11.md §01:26。
-- [2026-10-11 02:05] [⏩ 已滚出] ⠈ 巡检(r2_new grading 阶段·不动作) 详情见 daily-memories/2026-10-11.md §02:05。
-- [2026-10-11 02:41] [⏩ 已滚出] ⠈ 巡检(r2_new 仍跑·~3h·summary 未出·不动作) 详情见 daily-memories/2026-10-11.md §02:41。
-- [2026-10-11 03:15] [⏩ 已滚出] ⠈ 巡检(r2_new 仍跑·~3.5h·summary 未出·不动作) 详情见 daily-memories/2026-10-11.md §03:15。
-- [2026-10-11 03:49] [⏩ 已滚出] ⠈ 巡检(r2_new 仍跑·~4h5m·summary未出·不动作) 详情见 daily-memories/2026-10-11.md §03:49。
-- [2026-10-11 04:24] [⏩ 已滚出] ⠈ 巡检(r2_new 末段·152/158 done·summary未出·不动作) 详情见 daily-memories/2026-10-11.md §04:24。
-- [2026-10-11 05:01] [⏩ 已滚出] ⠈ 巡检(r2_new 末段·153/158 done·7 timeout≤10✅·5 remaining·summary未出·不动作) 详情见 daily-memories/2026-10-11.md §05:01。
-- [2026-10-11 05:40] [⏩ 已滚出] ⠈ 巡检(r2_new 末段·156/158 done·timeout=10=≤10边界⚠️·2 remaining·summary未出·不动作) 详情见 daily-memories/2026-10-11.md §05:40。
-- [2026-10-11 06:16] [⏩ 已滚出] ⠈ 巡检(r2_new 末段·156/158 done·timeout=10边界⚠️·summary未出·不动作) 详情见 daily-memories/2026-10-11.md §06:16。
-- [2026-10-11 07:00] [⏩ 已滚出] ⠈ **收割 r2_new + infra 全挂→PHASE=blocked** 详情见 daily-memories/2026-10-11.md §07:00。
-- [2026-10-11 08:18] [⏩ 已滚出] ⠈ **(九)执行确认+4端口恢复4/4健康✅→仅/home<8G阻塞→WAITING=1** 详情见 daily-memories/2026-10-11.md §08:18。
-- [2026-10-11 08:57] [⏩ 已滚出] ⠈ 巡检(r2 batch2026_1011_083246已起跑·code-gen阶段·canary✅·4端口4/4✅@10.129.32.75·⚠️RAG:9006当时未监听·不动作) 详情见 daily-memories/2026-10-11.md §08:57。该批后判❌INVALIDATED(5.7%)。
+- [2026-10-10] [⏩ 已滑出] 10-10 流水（r2_new/r2_new2 收割/根因排查/运维指令(七)(八)）详情见 daily-memories/2026-10-10.md。
+- [2026-10-11 00:08–08:57] [⏩ 已滑出] 10-11 早段流水（r2_new 巡检/收割/(九)执行/r2 batch083246 起跑→后判❌INVALIDATED 5.7%）详情见 daily-memories/2026-10-11.md §00:08–§08:57。
 - [2026-10-11 09:37] [⏩ 已滚出] ⏈ 巡检(r2 batch083246 code-gen 123/158·run_cline_script.sh已死·不动作) 详情见 daily-memories/2026-10-11.md §09:37。该批后判❌INVALIDATED(5.7%)。
 - [2026-10-11 10:20] [⏩ 已滚出] ⏈ r2 batch083246 code-gen完成(158/158)→手动grading启动→结果5.7%❌INVALIDATED 详情见 daily-memories/2026-10-11.md §10:20。
 - [2026-10-11 12:12] [⏩ 已滚出] ⠈ 巡检(r2 code-gen 43min 健康 不动作) 详情见 daily-memories/2026-10-11.md §14:18归档。
@@ -238,3 +216,4 @@ WAITING: 1
 - [2026-10-12 06:28] [⏩ 已滑出] 🔧✅ full_v3 r2 eval✅完成→auto-grade❌1.9%(benchmark bug)→re-grade启动(PID117530) 详情见 daily-memories/2026-10-12.md §06:28。
 - [2026-10-12 07:04] ✅ **full_v3 r2 re-grade✅=86.1%(136/158)有效→5项自检全通过→r3启动(PID276519)**：pgrep `run_eval.py|regrade`→无输出(re-grade已完成)·re-grade log /tmp/ABL_full_v3_r2_regrade.log tail=「136/158 pass (86.1%) | generated: 148 ok, 9 fail, 0 exec_err」→**r2有效**(Pass@1=86.1%≥75%✅·timeout=1≤10✅)。**5项自检**:①.env API_INFO_MERGED_FILE=V3✅+SKILL_DATA_DIR=./docs/skill_data_selfexpl✅(ls确认均存在)·②4端口8650/8651/8652/8654 4/4✅@10.129.32.75(SANDBOX_HOST=10.129.32.75·本机=10.251.36.15)·③MCP:8090✅(LISTEN)+tools含search_apis✅(r2 log确认)·④hook源scripts/cline_hooks/PreToolUse 10242B✅(run_cli.sh:seed_cline_hooks每轮自动部署→r3启动后log确认「部署沙盒 hook」+~/.cline/hooks/PreToolUse 10242B mtime07:10✅)·⑤/home=4G(用户授权)。r3已起:`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_v3_r3_8650set.log 2>&1 < /dev/null &`·PID276519✅·log增长中。loop PID61738✅有proxy·relay PID3277328✅alive。状态 STAGE=C1/CONFIG=full_v3/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检退出;无=收割r3(re-grade·log /tmp/ABL_full_v3_r3_regrade.log)→判据→r4→r5→5/5=[77.8,86.1,r3,r4,r5]mean±std→三组对照表→进C2.phi_k10。
 - [2026-10-12 07:45] ⠈ **巡检(full_v3 r3 code-gen ~35min 健康·不动作退出)**：pgrep `run_cline_script`→有输出(PID276519·ELAPSED 35:31·RSS 3584·Ss)·log /tmp/ABL_full_v3_r3_8650set.log 8.7MB/87974行·mtime 07:46(live)·ACCESS RESTRICTED=500✅(hook live)·Forbidden=0✅·stats汇总未现(Step2 code-gen进行中·~35min正常·参照r1 code-gen~3h尚早)。4端口8650/8651/8652/8654 4/4✅@10.129.32.75·MCP:8090(pid3000860)+18890✅LISTEN·RAG:9006✅(pid3503518)·hook ~/.cline/hooks/PreToolUse 10242B mtime07:10✅·loop PID61738✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive·/home=4G(用户授权)。按状态机 pgrep 有输出→不动作退出。状态不变 STAGE=C1/CONFIG=full_v3/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检退出;无=收割r3(auto-grade→re-grade同口径·--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r3_regrade.log)→判据 timeout≤10且Pass@1≥75%→r3有效→r4→r5→5/5=[77.8,86.1,r3,r4,r5]mean±std→三组对照表→进C2.phi_k10。
+- [2026-10-12 08:18] ⠈ **巡检(full_v3 r3 code-gen ~1h9m 健康·不动作退出)**：pgrep `run_cline_script`→有输出(PID276519·ELAPSED 01:08:40·RSS 3584·Ss)·log /tmp/ABL_full_v3_r3_8650set.log 15.5MB/mtime 08:19(live)·run_code=2429·ACCESS RESTRICTED=710✅(hook live)·Forbidden=0✅·stats汇总未现(Step2 code-gen进行中·~1h9m正常·参照r1 code-gen~3h尚早)。SANDBOX_HOST=10.129.32.75·PROXY_PORTS=8650,8651,8652,8654✅(本机localhost端口检测仅8652 OPEN=预期行为·端口在远端10.129.32.75)·MCP:8090(pid3000860)+18890✅LISTEN·hook ~/.cline/hooks/PreToolUse 10242B mtime07:10✅·loop PID61738✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive(.last_run_id=48)·/home=4G(用户授权)。按状态机 pgrep 有输出→不动作退出。状态不变 STAGE=C1/CONFIG=full_v3/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检退出;无=收割r3(auto-grade→re-grade同口径·--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r3_regrade.log)→判据 timeout≤10且Pass@1≥75%→r3有效→r4→r5→5/5=[77.8,86.1,r3,r4,r5]mean±std→三组对照表→进C2.phi_k10。
