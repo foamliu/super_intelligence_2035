@@ -8741,3 +8741,66 @@ OC_TOOL_OK
 OC_TOOL_OK
 file contains: OC_TOOL_OK=== DONE ===
 ```
+
+---
+
+## RUN_ID 63 · 2026-10-12 13:59:03 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 63 · 重启 loop（换 opencode harness）
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode 可用 + config 含 glm ==="
+command -v opencode
+grep -c 'glm-5.2' ~/.config/opencode/opencode.json 2>/dev/null || echo 0
+echo "=== [2] 旧 loop / 编排 cline（重启前）==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-120
+pgrep -af '\.cline_zhulong' | cut -c1-120 | head -5
+echo "=== [3] r5 评测进程（应持续运行）==="
+pgrep -af 'run_cline_script' | cut -c1-110 | head -5
+echo "=== [4] 杀旧 loop + 旧编排 cline ==="
+pkill -f 'zhulong_loop[.]sh'; pkill -f '\.cline_zhulong'; sleep 2
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-100 || echo "(loop killed)"
+echo "=== [5] 重启 loop（opencode harness）==="
+cd /nasdata/app.e0031982/code/super_intelligence_2035
+setsid env PATH="$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH" \
+  https_proxy=http://172.19.92.23:13128 http_proxy=http://172.19.92.23:13128 \
+  bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+echo "=== [6] 新 loop + 日志尾 ==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-120
+echo "--- /tmp/zhulong_loop.log ---"; tail -15 /tmp/zhulong_loop.log | cut -c1-160
+echo "=== [7] r5 评测仍在跑？==="
+pgrep -af 'run_cline_script' | cut -c1-110 | head -3
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 13:59:03
+=== [1] opencode 可用 + config 含 glm ===
+/home/app.e0031982/.local/node-20/bin/opencode
+2
+=== [2] 旧 loop / 编排 cline（重启前）===
+61738 bash zhulong_loop.sh
+=== [3] r5 评测进程（应持续运行）===
+2013673 bash scripts/run_cline_script.sh -p 8 -n
+=== [4] 杀旧 loop + 旧编排 cline ===
+=== [5] 重启 loop（opencode harness）===
+=== [6] 新 loop + 日志尾 ===
+2302281 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2302288 timeout -k 15 2700 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+2302289 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto -m glm/glm-
+--- /tmp/zhulong_loop.log ---
+[loop] 2026-10-12 13:59:06 wake up, invoking opencode ...
+[0m
+> build · glm-5.2
+[0m
+=== [7] r5 评测仍在跑？===
+2013673 bash scripts/run_cline_script.sh -p 8 -n
+2302288 timeout -k 15 2700 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_D
+2302289 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto -
+=== DONE ===
+```
