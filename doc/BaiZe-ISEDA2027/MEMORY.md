@@ -3,12 +3,10 @@
 
 ## 🆕 最近操作（2026-10-12）
 
-### 📋 harness 深挖令下发（用户直令 · 2026-10-12 晚）
-- **用户原话**：「harness 7×300 是否有很多 module 无法安装的问题导致失败，这些问题能否解决？现在的分数显然比预期低很多，你可以 web search。」
-- **已下发**（commit `fea9b643`）：`run/BAIZE_HARNESS_TASK.md` **运维指令区最前**新增「**最高优先**」块 —— 令 harness **纯分析**深挖：① 从 `kimi_pilot_results.json`（2100）统计 **env/module 安装失败 vs `pbf`（patch 成功但 F2P 未过 = wrong-fix）** 的真实占比（per-harness × 失败类矩阵）；② 根因定位（我们 **unshare 共享沙箱（非 Docker）** vs 官方 **per-instance conda env / 镜像**；patch 我们**仅单级 `git apply`** vs 官方**三级容错**）；③ **可解决性**逐项（per-instance 依赖装配 / **patch 三级容错** / infra），带成本 + 可挽回题数；④ **web search 外部对照**（同类 harness pass@1 + kimi-k2 公开 SWE-bench 数）答「cline 28.7% 是否偏低」。交付物 `report_harness_eval_rootcause.html`（中文 · 自包含 · 零外链 · ≤200KB）。🚫 不占 GPU；**任何重跑须先报后跑**。
-- **流水**：见 `daily-memories/2026-10-12.md`。
-
-> 📦 **2026-10-11「四项运维指令下发」原文已滚动归档** → `daily-memories/2026-10-11.md`（**原文未改一字**）；结论：vision×2 / pretrain / data / harness×2 / research 邮件权限 / recruit 澄清 **全部已下发**（commit `a4285bc6`）。需要时再读。
+### 📋 两项运维指令下发（用户直令 · 2026-10-12 晚）
+- **① harness 深挖令**（commit `fea9b643`）：用户令查 7×300「是否很多 module 装不上致失败 / 能否解决 / 分数是否偏低（可 web search）」→ `run/BAIZE_HARNESS_TASK.md` 顶部「**最高优先**」块：**纯分析**统计 **env/module 失败 vs `pbf`（patch 成功但 F2P 未过 = wrong-fix）** 的真实占比 + 根因（我们 **unshare 共享 env（非 Docker）** vs 官方 **per-instance conda/镜像**；patch **仅单级 `git apply`** vs 官方**三级容错**）+ 可解决性（带可挽回题数）+ **web search 外部对照**（同类 harness pass@1 + kimi-k2 公开数）→ 交付 `report_harness_eval_rootcause.html`。🚫 不占 GPU；**重跑须先报后跑**。
+- **② vision OV-1.5 复现计划**（commit `42d8c075`）：用户令写**中文 HTML 计划**复现 **LLaVA-OneVision-1.5** —— 硬设定 **基模 Qwen3.5-4B（非 Qwen3-4B）· 框架 ms-swift · 训练数据除 85M 外已下完（`/nas_train/app.e003192/datasets/mvp_lab`；⚠️ 本仓记录多为 `.../app.e0031982/datasets/mvp-lab/`，令**实地核实**）· 可 web search 出**超参** · 估 **H100×8** 时间** → `run/BAIZE_VISION_TASK.md` 顶部「**最高优先**」块 → 交付 `report_vision_llava_ov15_repro_plan.html`（9 必备节）。🚫 只出计划、**不启动训练**、不打断 ④-4ep。
+- **流水**：见 `daily-memories/2026-10-12.md`（含 2026-10-11 四项指令指针）。
 
 WAITING: 0
 
