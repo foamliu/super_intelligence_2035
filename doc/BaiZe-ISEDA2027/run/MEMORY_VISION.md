@@ -21,10 +21,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 440760/748404 (~59%), loss~0.10, C1=0.5085, no collapse, ~5300 img/s). 7 ckpts saved (380k-440k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
+| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 452,520/748,404 (~60%), loss~0.19, C1=0.5732, no collapse, ~2500 img/s). 8 ckpts saved (380k-450k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 19:50 (wake #28)**: Monitoring wake — ④-4ep training at step 440,760/748,404 (~59%), C1=0.5085 healthy (no collapse), C2_gap=+0.1985, loss_ema~0.10, lr=2.14e-04, ~5,300 img/s (range 4.2k–6.0k, NFS contention). 7 ckpts saved (380k-440k, latest vision_step440000.pt @19:46). post_4ep_chain.sh waiting. ETA ~307,644 remaining steps @ ~10.5 it/s ≈ 8.1h → completion ~04:00 Oct 13 → auto-eval ~3.5h → results ~07:30 Oct 13. No new operator instructions. 📦 体积：TASK=30.2KB / MEMORY=27.1KB（归档 0KB） |
+| 更新 | **2026-10-12 20:21 (wake #29)**: Monitoring wake — ④-4ep training at step 452,520/748,404 (~60.5%), C1=0.5732 healthy (no collapse), C2_gap=+0.1834, loss~0.19, lr=2.03e-04 (cosine decaying), ~2,500 img/s (range 1.8k–3.7k, NFS contention). 8 ckpts saved (380k-450k, latest vision_step450000.pt @20:12). post_4ep_chain.sh waiting. ETA ~295,884 remaining steps @ ~7.5 steps/s ≈ 11h → completion ~07:20 Oct 13 → auto-eval ~3.5h → results ~10:50 Oct 13. No new operator instructions. 📦 体积：TASK=30.2KB / MEMORY=27.8KB（归档 0KB） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
