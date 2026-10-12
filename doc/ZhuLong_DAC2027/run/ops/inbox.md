@@ -1,4 +1,24 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 57 -->
+
+## RUN_ID 57 — opencode run 完整帮助 + 当前 opencode 配置 + glm-5.2 key 可用性
+
+```bash
+# RUN_ID 57 · opencode run 完整参数 + 现有配置
+NPMBIN="$(npm prefix -g)/bin"
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode run --help (完整) ==="
+timeout 15 "$NPMBIN/opencode" run --help 2>&1 | sed -n '1,120p'
+echo "=== [2] 当前 opencode 全局配置 ==="
+timeout 10 cat ~/.config/opencode/opencode.json 2>/dev/null || echo "(no opencode.json)"
+echo "=== [3] opencode models (列出 provider/model) ==="
+timeout 20 "$NPMBIN/opencode" models 2>&1 | sed -n '1,60p'
+echo "=== [4] glm-5.2 key 可用性（网关 /cloud/v1 的 /models）==="
+timeout 20 curl -sS -m 15 http://agi-gateway.cxmt.com/cloud/v1/models \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23" \
+  2>&1 | head -c 800; echo
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 56 -->
 
 ## RUN_ID 56 — opencode CLI 摸底（为切换 agent loop 做准备）
