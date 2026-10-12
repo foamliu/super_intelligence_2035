@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Harness Eval Fix Re-run Report — 2026-10-13 02:26</title>
+<style>
+body { font-family: -apple-system, sans-serif; margin: 2em; background: #f5f5f5; }
+h1 { color: #333; } h2 { color: #444; margin-top: 1.5em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; background: white; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #4CAF50; color: white; } tr:nth-child(even) { background: #f9f9f9; }
+.summary { background: #e8f5e9; padding: 1em; border-radius: 8px; margin: 1em 0; }
+.fix-desc { background: #fff3e0; padding: 1em; border-radius: 8px; margin: 1em 0; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+</style></head><body>
+<h1>Harness Eval Fix Re-run Report</h1><p>Generated: 2026-10-13 02:26</p>
+<div class="summary"><h2>Summary</h2>
+<p><strong>Re-evaluated:</strong> 58 entries across 12 repos</p>
+<p><strong>Patch now applies:</strong> 45 entries (infra fix confirmed)</p>
+<p><strong>Newly resolved:</strong> <span style="color:green;font-weight:bold">+3</span> flipped</p></div>
+<div class="fix-desc"><h2>Fixes Applied (P0, 2026-10-13)</h2><ol>
+<li><strong>matplotlib</strong>: freetype headers+lib in conda env + <code>mplsetup.cfg</code> + <code>MPLSETUPCFG</code> env var</li>
+<li><strong>pytest</strong>: <code>SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0</code> env var</li>
+<li><strong>Unify</strong>: <code>PIP_NO_BUILD_ISOLATION=1</code> for all repos</li>
+<li><strong>sphinx</strong>: jinja2 3.1.4 aliases + git fetch retry for base_commit</li></ol></div>
+<h2>Per-Repo Comparison</h2>
+<table><thead><tr><th rowspan="2">Repo</th><th colspan="3">Original</th><th colspan="6">Fix1 Re-eval</th></tr>
+<tr><th>Total</th><th>Resolved</th><th>Patch Fail</th><th>Re-eval'd</th><th>Resolved</th><th>Patch OK</th><th>Tests Ran</th><th>Flipped</th><th>Errors</th></tr></thead>
+<tbody><tr><td>astropy/astropy</td><td>42</td><td>0</td><td>28</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>django/django</td><td>798</td><td>210</td><td>36</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>matplotlib/matplotlib</td><td>161</td><td>0</td><td>161</td><td>25</td><td>0</td><td>19</td><td>19</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>mwaskom/seaborn</td><td>28</td><td>7</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pallets/flask</td><td>21</td><td>0</td><td>14</td><td>3</td><td>0</td><td>1</td><td>1</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>psf/requests</td><td>42</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pydata/xarray</td><td>35</td><td>13</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pylint-dev/pylint</td><td>42</td><td>11</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pytest-dev/pytest</td><td>119</td><td>2</td><td>114</td><td>11</td><td>3</td><td>9</td><td>9</td><td style='color:green;font-weight:bold'>+3</td><td>0</td></tr><tr><td>scikit-learn/scikit-learn</td><td>161</td><td>70</td><td>36</td><td>9</td><td>0</td><td>7</td><td>7</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>sphinx-doc/sphinx</td><td>112</td><td>0</td><td>93</td><td>10</td><td>0</td><td>9</td><td>9</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>sympy/sympy</td><td>539</td><td>261</td><td>15</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr></tbody></table>
+<h2>Newly Resolved (Flipped)</h2><p>Total: <strong>3</strong></p>
+<table><thead><tr><th>Instance</th><th>Repo</th><th>Harness</th><th>Before</th><th>After</th></tr></thead><tbody><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>codex</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>codex</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=11/11, p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>codex</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=81/81</td></tr></tbody></table>
+<h2>Methodology</h2><ol>
+<li>Loaded kimi_pilot_results.json (original eval)</li>
+<li>Filtered non-resolved entries with patches in target repos</li>
+<li>Re-ran through r1_eval.py with fixed rootfs + injected env vars</li>
+<li>Compared old_eval vs new_eval; "flipped" = not-resolved → resolved</li></ol>
+</body></html>
