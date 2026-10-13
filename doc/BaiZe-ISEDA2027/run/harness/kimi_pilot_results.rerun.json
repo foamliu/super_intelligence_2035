@@ -317,5 +317,18 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25079",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": false,
+      "msg": "fetch failed (local=False): \n[TIMEOUT]"
+    },
+    "blocked": "fetch failed (local=False): \n[TIMEOUT]",
+    "classification": "blocked"
   }
 ]
