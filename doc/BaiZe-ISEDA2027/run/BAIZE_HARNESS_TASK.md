@@ -7,6 +7,24 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（🔧 P1 剩余项继续修 + 重评/重跑）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「harness 继续修。」—— 承接 fix1(34 flipped)+fix2(9 flipped) 已把 resolved **574→617（29.4%）**，现推进剩余 P1 项。
+> **性质**：CPU+磁盘，**不占 GPU**；与 `.29` pretrain 训练 / data 线下载错峰 IO（`nice` 限流）。
+
+**① 剩余项按此顺序修（每批开工前心跳报「instance×harness 条数 + ETA + 占用」→ 然后**直接执行**，不再逐条等确认；**P1-3 Docker 冻结跳过**）**：
+1. **fix3：matplotlib(30) + sklearn(27) 的 C 扩展 build deps + 重评**（~4h）
+   - matplotlib：在 `testbed_py39` 装 **qhull + freetype** build deps → 重建 `_c_internal_utils` 等 C 扩展 → `pip install -e .` 通过 → 重评这 30 条。
+   - sklearn：`testbed_py38` 装 build deps → 重建 sklearn C 扩展 → 重评 27 条。
+   - 结果写独立 `kimi_pilot_results.fix3.json`（幂等 `--resume`）。
+2. **sphinx 8 条逐条排查**：查 `base_commit` 可达性 / git checkout / 依赖；能修就修，修不了标「待 P1-3 Docker 或不可行」。
+3. **P1-1 astropy(28/42)**：`pip wheel astropy` 预编译 + 注入 `~/.cache/pip`（或增大杀沙箱 memory cgroup）→ 重评 28 条（~4h）。
+4. **P1-2 网络 503 + ②b 重跑 agent**：① git fetch 加 3 次重试+指数退避 + 预克隆 5 高频 repo（`/dev/shm/repos/`）；② 重跑 **blocked(50) + no-patch(4)**（**quota-blocked 14 不重跑**），同 7 harness + kimi-k2.6-cloud。（修 ~1h + 重跑 1–5.4h，CPU+API 配额）
+
+**② 前后对比与交付**：新结果一律独立 JSON（fix3 / astropy / rerun）；更新 `report_harness_eval_fix_rerun.html` 追加 per-repo before/after；报**累计 resolved 数 + cline resolve rate（29.4%→?）**，与 P0 预估（~+22/harness）对照；每项给证据（`test_output.txt` 前后 / rootfs 变化 / 命令）。
+
+**③ 纪律**：🚫 不占 GPU · 🚫 不改已发布数值 · 🚫 P1-3 Docker 冻结 · 全批幂等可续 · commit 前缀 `harness fix:` · 任务书 >32KB 自滚归档。
+
 > 📦 **历史运维指令已归档** → `run/ARCHIVE_OPERATOR_HARNESS.md`（已执行完 / 已作废的块；**需要时再读**，不要读进上下文）。
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
