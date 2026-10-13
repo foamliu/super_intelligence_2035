@@ -1,6 +1,43 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（📋 写正式训练 HTML 计划：全量 MiniCPM5 数据 + en_v1_4 · .12+.29 双机 16 卡 · 超参数 + 空窗期试验建议）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「安排 pretrain 写正式训练 html 计划：数据=所有 MiniCPM5 数据（包括正在下载的 en_v1_4），算力=.12 和 .29 两台机器一起上，写出超参数；P-8 之后到 en_v1_4 下载完成还有几天，建议做什么试验。」
+> **这 = 把 P-8 超参搜索的结果「转正」为生产级正式训练计划**（不是再搜一轮，是定稿落地）。
+
+**① 交付物**：自包含中文 HTML 报告 `report_pretrain_formal_train_plan.html`（投放 `run/` 下，git 提交 + push）。
+> 参考既有格式 `report_pretrain_p8_plan.html` / `BAIZE_2B_ARCH_SEARCH_PLAN.html`。P-8 还没跑完（当前 step~4660/10490，~1.1 天后结束），本计划是**前瞻定稿**，允许在报告里显式标注「以 P-8 最终 checkpoint 与 en_v1_4 实际落盘日为准」的活参数位。
+
+**② 数据（= 所有 MiniCPM5 数据 + en_v1_4）**：
+- base 主体升级为 **`en_v1_4`**（`openbmb/Ultra-FineWeb · data/ultrafineweb_en_v1_4/`，56,461 文件 / 6.75TB，**当前 46.7% 下载中，ETA ~5-14 天**），替代/放大之前的存量 en_base。
+- 其余照旧：zh、l1_en_hq、L3（en/zh QA+multi）、UltraX-Preview、`UltraData-Code`、`UltraData-Math`、SFT 退火源。
+- 报告须给：**稳定段与退火段的完整配比**（沿用 86:10:4 / 88:8:4 → 退火 SFT64%+L3 24%+code8%+math4% 这套，**但请你按 en_v1_4 实际 token 总量重算一次各成分绝对 token 数**）、**总可训 token 数**、**分阶段 token 预算**。
+- 📌 **数据依赖链必须画清**：`en_v1_4 下载满 56,461 → check_contamination.py 过闸 → 分词 → 投料`（data 线已把「下满必经污染扫描」写死，见 `MEMORY_DATA.md`）。正式训练**不可能早于 en_v1_4 下满 + 过闸 + 分词**，报告里这条时间线单列一节。
+
+**③ 算力（.12 + .29 双机 16×H100 80GB）**：
+- 明确写死 **2 节点 topology**：`.29`(8)× + `.12`(8)× = 16 卡；**两条都要写**：`nnodes=2`、跨节点 NCCL 走什么（IB/RoCE/以太 + 带宽，**必须实测 `nvidia-smi topo` / `all_reduce` 或 ibstat 取证**，不要拍脑袋）。
+- **并行策略**：P-8 = TP1/DP8/MBS2/GBS1024。16 卡候选 = **DP16（首选，对 SSM-heavy 的 Mamba2 最省心）** / TP2+DP8 / PP2+DP8 —— 每条给**吞吐预期 + 显存 + 复杂度**，**给出你的推荐 + 理由**（注意：Mamba2 SSM 层 TP 收益有限，报告里论证这一点）。
+- **GBS/LR 联动**：明确「16 卡是 **GBS 翻倍到 2048 还是维持 1024**」，并给对应的 **LR 是否 scale（线性/√scale 或保持 1e-3）** 的结论，不能含糊。
+- ⚠️ **协调现实**：`.12` 当前由 **vision 线占用**（R 循环跑实验），`.29` 跑完 P-8 才释放。正式训练的「双机一起上」**必须等 en_v1_4 就绪 + 两机都空**；报告里把「占卡协调 / 何时可开跑」讲清楚，**绝不能 kill vision / watchdog**。
+
+**④ 超参数（逐项写死，一行一个，含来源）**：
+- 模型架构（mamba2 56L、hidden 2048 / ffn 8192、4 attention 层、GQA、head_dim 128、vocab 129408 / tokenizer DeepSeek-V4.1-Flash eod）✓ 全抄 P-8。
+- `seq-length`（4096 起步；若要走长上下文训练见⑤-2）、`global-batch-size`、`micro-batch-size`、`tensor-parallel`/`pipeline-parallel`、`precision bf16_mixed`。
+- 优化器 `adamw` + `lr` + `min-lr` + `weight-decay` + `grad-clip`（AdamW 定 1e-3 的基线要标清楚）。
+- WSD：`lr-warmup-iters` / `lr-decay-style WSD` / `lr-decay-iters` / `train-iters` / **5/85/10 比例**、`seed`、`save-interval`、`eval-interval`。
+- 对应 **总 token 预算（估）** + **总步数** + **墙钟 ETA（16 卡 @实际 tok/s，给 ± 区间）**。
+- 每项超参要么标「继承 P-8 实证」要么标「新定 + 依据」，**不给未经论证的拍值**。
+
+**⑤ 空窗期试验建议（P-8 结束 → en_v1_4 下满 之间的 ~4-13 天）**——这是用户点名的第二问，报告单列一节，按**优先级 + 预算 + 用哪几卡 + ETA** 给出，建议候选（可增删，但须逐条给理由）：
+1. **🔑 双机 16 卡 scaling 彩排（P0 强烈建议）**：用**已就绪的 R3 存量**（1483.91B tok / 5.94TB 已分词）在 `.12+.29` 上跑 DP16 冒烟 + 短程训练，实测**跨节点吞吐 scaling（8→16 是否近线性）、ckpt 分片、容错、NCCL 稳定性**，产出正式训练可直接套用的 launcher+配置 → 直接消除「一起上」的最大风险。⚠️ 需等 `.12` 有空档，先 `.29` 单机 8 卡 rehearsal，再上 16。
+2. **长上下文训练延伸（T1 沉淀）**：存量数据上做 `seq 4096 → 32K/128K` 的续训（RoPE theta 调大 + 继续训练），补上训练侧长上下文结论（推理侧 1M/2M 已验）。
+3. **退火配比全量验证（S4/R3 收尾）**：decay 段 SFT64%+L3 24%+code8%+math4% 跑全量版，量化「退火 vs 直接停」的质量增益。
+4. （可选）**存量数据长跑 interim checkpoint**：2.2B 已到 44B=Chinchilla，若有余量续跑更高 token 档，作为 en_v1_4 落地前的中间基座。
+5. （可选）**formal 模型的推理/评测彩排**（SGLang 部署 + harness 打通，为下一步 P-9 推理基准铺路）。
+
+**⑥ 纪律（不变）**：🚫 绝不 kill `baize_pretrain_loop.sh`(watchdog PID 1391466) / vision 线进程 / data 线下载（esp. `en_v1_4` + `85M`）；重 I/O 实验避让 `/nas_train` NFS 与下载争用；报告体积自检（≤~30KB 单文件，超大则拆）；交付后 commit + push，并在 `MEMORY_PRETRAIN_2B.md` 心跳记「正式训练计划已交付」。
+
 > 📦 §运维指令·2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：`report_pretrain_lit_ideas.html` 29.8KB ✅ 交付（TOP-5+附表8+§4待验证+§5去重+§6映射+§7口径, 每条6字段齐全）。需要时再读。
 
 > 📦 §运维指令·2026-10-10（⚗️ MBS 2→3 A/B 验证）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：B/A=1.031 < 1.12 → FAIL → MBS=2/GBS=1024 原定稿保留。需要时再读。
