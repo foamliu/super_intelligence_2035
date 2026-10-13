@@ -770,3 +770,29 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **④ 纪律**：🚫 不改实验数值、不新跑评测 · **已在 `CLINE_IMPROVEMENT_OPPORTUNITIES.md` / `report_harness_trace_vs_cline.html` 提过的结论须沿用并标「已提过」**，本轮增量须显式列出 · web search 论据带来源+时效 · commit 前缀 `harness rpt:` · 证据索引每格可复算(path:line 或 JSON 字段) · 任务书 >32KB 自滚归档。
 
+### 🆕 运维指令 · 2026-10-12（🔧 **逐项修复 eval 基建缺陷 + 重跑受影响 case**）· 用户直令 · ⭐ 最高优先
+
+> **用户原话（2026-10-12）**：「**harness 深挖后发现的各种导致分数偏低的问题可以解决吗？如果可以，让他一一解决，然后重跑这些 case。**」
+> **运维答复**：**可以解决** —— 你自己的 `report_harness_eval_rootcause.html §4` 已给出 P0/P1 清单（含成本/预估挽回/风险）。⇒ **按本令执行：逐项修 → 重评/重跑 → 报前后对比**。
+
+**① 逐项修复（先 P0，源自本线报告 §4.1）** —— 每项做完**就地验证**（用其对应失败实例，确认 env 装配 / `pip install -e .` / 测试收集 **当步通过**）：
+1. **matplotlib**：pre-cache `freetype-2.6.1.tar.gz` 进 rootfs `build/`（或 manylinux wheel / 预编 `_c_internal_utils.so`）。（~2h）
+2. **pytest**：修 rootfs conda env 版本冲突（`minversion requires pytest-2.0, actual pytest-0.1.dev1`）。（~1h）
+3. **Unify：预置 pip wheels + 源码 tarball + build deps**（`PIP_NO_BUILD_ISOLATION=1`、预填 `~/.cache/pip`）—— **根修所有「外网下载」类失败**。（~4h）
+4. **sphinx**：修 `base_commit` 不匹配（rootfs git 仓库 checkout 到正确 commit / 每实例 fresh clone）。（~2h）
+
+**② 重跑口径（关键 · 先便宜后贵）**：
+- **a) 优先「重评现存 patch」**（**不重跑 agent**）：凡当时**已产出 patch**、只是 env/测试没跑起来的（`env-or-patch-fail` 451 + sphinx patch-apply 92）⇒ **用修好的 rootfs 重跑 `r1_eval.py`**（同 4 级 patch 容错）。
+- **b) 再「重跑 agent」**：仅对**当时没产出可用 patch** 的（`blocked`/`timeout`/`no-patch`；先做 P1 的「git fetch 重试 + 预克隆」修网络）才重跑 harness。
+- **c) 范围**：**只重跑受影响的 case**（那 5 个 repo 的实例 + sphinx；**不要**全量 2100）；**保持原 7 harness + 同 backbone** 以保可比。**开工前在心跳写清：本次重跑 = 哪些 instance × 几个 harness × 预计条数/ETA**（先报后跑）。
+- **d) 增量落盘 + 幂等可续**：新结果写**独立文件**（如 `harness/kimi_pilot_results.fix1.json`），🚫 **不覆盖** `kimi_pilot_results.json`；跑批幂等（已完成跳过）。
+
+**③ 交付**：
+- **追加/新出**：`report_harness_eval_rootcause.html` 加「**§7 修复与重跑结果：before/after per-repo resolved 表**」，或新出 `report_harness_eval_fix_rerun.html`（中文·自包含·零外链·≤200KB）。
+- 报 **before/after**：resolved 数 · cline resolve rate（28.7% → ?）· eval-OK 口径 · 按 repo 的失败→通过翻转数；**与 §4 预估（P0 ~+22/harness）对照**。
+- 留修复脚本 + 结果 JSON + 命令；`commit` 前缀 `harness fix:`。
+
+**④ P1（需先报后跑）**：astropy（沙箱内存 / 预编译 wheel，~4h）· 网络 503 重试（~1h）· **per-instance 预构建 Docker（官方做法，~2-3 天、高风险）** —— **做前先在心跳报「做法 / 成本 / ETA / 占用」**，等运维确认再动。
+
+**⑤ 纪律**：🚫 **不占 GPU** · 🚫 **不打扰 `.29` pretrain / 下载线的 I/O**（限流 `nice`）· 每项修复给**证据**（`test_output.txt` 前后 / rootfs 变化 / 命令）· **不改已发布数值**（新结果独立文件）· 任务书 >32KB 自滚归档。
+
