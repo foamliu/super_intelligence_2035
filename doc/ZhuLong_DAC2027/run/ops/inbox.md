@@ -1,11 +1,29 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 66 -->
+<!-- RUN_ID: 67 -->
+
+## RUN_ID 67 — 🔍 核验 loop 重启 + 是否恢复推车（只读）
+
+> 用户令：确认 zhulong loop 重启后是否正常（不再报 --dir），是否已从 phi_k3 r2 恢复。只读，不杀进程、不改配置、不 git 操作。
+
+```bash
+# RUN_ID 67 · 只读核验
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] zhulong_loop.sh 进程（应 1 个 ppid=1，etimes 小=新启动）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-120
+echo "=== [2] zhulong_ops_relay.sh 进程（应 1 个 ppid=1）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-120
+echo "=== [3] loop 日志尾（应见 invoking opencode，且无 Unrecognized flag）==="
+tail -25 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-160
+echo "=== [4] 是否有评测/opencode 在跑 ==="
+pgrep -af 'run_cline_script|opencode' | cut -c1-120 | head -5 || echo "无评测进程"
+echo "=== DONE ==="
+```
 
 ## RUN_ID 66 — 🔍 健康体检：zhulong loop + ops relay（只读）
 
 > 用户令：确认 zhulong loop 与 ops 中继进程是否健康（只读，不杀进程、不改配置、不 git 操作）。
 
-```bash
+```text
 # RUN_ID 66 · 只读健康体检
 echo "=== [0] ==="; hostname; date '+%F %T'
 echo "=== [1] zhulong_loop.sh 进程（pid/ppid/etimes）==="
