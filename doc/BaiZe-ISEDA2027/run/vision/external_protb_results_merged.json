@@ -1,0 +1,59 @@
+[
+  {
+    "model": "clip-vitl14-336",
+    "resolution": 336,
+    "feature_dim": 1024,
+    "loader": "clip",
+    "protb_mean": 0.826586643854777,
+    "protb_std": 0.00027438913612728554,
+    "protb_runs": [
+      0.8262199759483337,
+      0.8268799781799316,
+      0.8266599774360657
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~88.1% (CLIP ViT-L/14@336, OpenCLIP lp)"
+  },
+  {
+    "model": "openvision2-vitl14-336",
+    "resolution": 336,
+    "feature_dim": 1024,
+    "loader": "openclip",
+    "protb_mean": 0.8497466444969177,
+    "protb_std": 0.0001225857300551863,
+    "protb_runs": [
+      0.8497399687767029,
+      0.8495999574661255,
+      0.8499000072479248
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "79.81% (OV2 L/14@336, BaiZe ProtA R13)"
+  },
+  {
+    "model": "siglip2-so400m-384",
+    "resolution": 384,
+    "feature_dim": 1152,
+    "loader": "siglip2",
+    "protb_mean": 0.8746133049329122,
+    "protb_std": 9.97909017521574e-05,
+    "protb_runs": [
+      0.8746399879455566,
+      0.8747199773788452,
+      0.8744799494743347
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~83.1% (SigLIP2 so400m@384, hf lp)"
+  }
+]
