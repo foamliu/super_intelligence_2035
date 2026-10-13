@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-14 04:28（merge3ds ArmC 训练监控 · wake #62）**：✅ ArmC 训练健康：step ~25010/154500(16.2%), loss~0.35-0.55, C1=0.4743, C2_gap=+0.197, C4=OK (56 PROBEs 全绿)。⚠️ **吞吐退化**：step ~24860 起 ms/iter 从 ~210ms 升至 ~400-820ms, img/s 从 ~9500 降至 ~2500-4600, GPU4 util=0%（疑 NFS/IO 争用, data 线下载所致）。训练仍前进（非卡死）。ETA：若恢复~12:10 / 若持续退化~04:00 Oct15。ckpt: vision_step20000.pt。✅ eval chain(PID 3698490) 后台等待中。📦 体积：TASK=32.0KB✅ / MEMORY=30.1KB✅。
+> 🆕 **2026-10-14 05:05（merge3ds ArmC 训练监控 · wake #63）**：✅ ArmC 训练健康：step ~28890/154500(18.7%), loss~0.36-0.66, C1=0.4887, C2_gap=+0.199, C4=OK (96 PROBEs 全绿)。⚠️ **吞吐退化持续**：step ~28600 起 ms/iter mean=586ms (min=356/max=791), img/s ~2800-5800, GPU1/GPU5 util~32-34%（数据加载不均衡, NFS IO 争用）。训练仍前进。ETA：good(212ms)=~7.4h→~12:00 / avg(292ms)=~10.2h→~15:00 / degraded(650ms)=~22.7h→~04:00 Oct15。ckpt: step10000/step20000。✅ eval chain 后台等待中。📦 体积：TASK=32.0KB✅ / MEMORY=30.1KB✅。
 > ✅ **④-4ep TRAINING + ALL EVAL COMPLETE** (17:23 Oct 12 → 10:12:47 Oct 13 train, 10:14→12:43 Oct 13 eval): 748,404 steps (374,202 new from 2ep resume), total=60,545s (~16.8h), steady_img/s=2818.0, **final_loss=0.0805** (vs 2ep 0.1856). Last PROBE: C1=0.5932, C2_gap=+0.1791, C4=OK (no collapse). C1 trajectory: 2ep end 0.5804 → 4ep end 0.5932 (+0.0128). 37 ckpts (380k-740k) + final vision.pt (509MB). **④-4ep EVAL ALL DONE**: **ProtB 67.05±0.02%** (seeds 67.03/67.08/67.04, Δ+4.71pp vs 1ep, Δ+1.68pp vs 2ep), **ProtA 56.70%** (Δ+2.88pp vs 2ep), **zs 40.64%/72.64%** (Δ+2.12pp vs 2ep), **k-NN k=20 42.35%** (k=10: 41.94%, k=5: 39.77%, Δ+1.68pp vs 2ep). **VERDICT: MODERATE, DIMINISHING** — 67.05% < 70% victory threshold; 1→2ep +3.03pp, 2→4ep +1.68pp (ratio ~0.55) → trajectory upward but approaching ceiling. lp-epoch curve + Chinese report + EXPERIMENTS_VISION.md §9.7 all updated.
 > 🆕 **2026-10-13 12:43（④-4ep 全套评测完成）**：ProtB 67.05±0.02%（< 70% 胜利阈值，Δ+1.68pp vs 2ep），四指标一致 +1.7~2.9pp，递减确认（1→2 +3.03pp，2→4 +1.68pp）。中文报告 `vision/report_vision_final_20261012_zh.html` 已更新（TL;DR/§7/§8曲线/§9表/§10结论/柱状图）。EXPERIMENTS_VISION.md §9.5表+§9.4状态+§9.7 已同步。lp-epoch曲线已加 4ep 点。
 > 📦 V2 Muon / V3 全量数据 / ② probe sweep / ④-2ep（2026-10-11~12）已归档 → daily-memories-vision/2026-10-14.md；**结论**：V2 Muon 全 LR 坍缩❌；V3 全量 ProtB=63.52% Δ+1.18pp 不可分辨；② probe NOT underfitting（62.34%=ceiling）；④-2ep ProtB=65.37% Δ+3.03pp MODERATE。需要时再读。
@@ -17,10 +17,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **merge3ds ArmC 训练中（监控中 · wake #62）**：step ~25010/154500(16.2%), loss~0.35-0.55, C1=0.4743, C2_gap=+0.197, C4=OK (56 PROBEs 全绿)。⚠️ 吞吐退化(step ~24860起, ~210ms→~400-820ms/iter, 疑 NFS IO 争用)。训练仍前进。ETA: 若恢复~12:10 / 若持续~04:00 Oct15。✅ 外部编码器 ProtB 5/5 完成。✅ LR 3-臂扫描+文献表+数据量订正已写入计划报告。✅ `post_merge3ds_chain.sh`(PID 3698490) 后台等待中。📋 eval chain 完成后 → 收集结果 → `report_vision_merge3ds_result_zh.html`。 |
+| PHASE | 🔄 **merge3ds ArmC 训练中（监控中 · wake #63）**：step ~28890/154500(18.7%), loss~0.36-0.66, C1=0.4887, C2_gap=+0.199, C4=OK (96 PROBEs 全绿)。⚠️ 吞吐退化持续(step ~28600起, ms/iter mean=586ms, GPU1/5 util~32-34%, NFS IO 争用)。训练仍前进。ETA: good~12:00 / avg~15:00 / degraded~04:00 Oct15。✅ 外部编码器 ProtB 5/5 完成。✅ LR 3-臂扫描+文献表+数据量订正已写入计划报告。✅ eval chain 后台等待中。📋 eval chain 完成后 → 收集结果 → `report_vision_merge3ds_result_zh.html`。 |
 | ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-14 04:28 (wake #62)**: ✅ ArmC 训练健康：step ~25010/154500(16.2%), loss~0.35-0.55, C1=0.4743, C2_gap=+0.197, C4=OK (56 PROBEs 全绿)。⚠️ 吞吐退化(step ~24860起, ~210ms→~400-820ms/iter, img/s ~9500→~2500-4600, GPU4 util=0%, 疑 NFS IO 争用)。训练仍前进。ETA: 若恢复~12:10 / 若持续~04:00 Oct15。ckpt: vision_step20000.pt。✅ eval chain(PID 3698490) 后台等待中。📦 TASK=32.0KB✅ / MEMORY=30.1KB✅。 |
+| 更新 | **2026-10-14 05:05 (wake #63)**: ✅ ArmC 训练健康：step ~28890/154500(18.7%), loss~0.36-0.66, C1=0.4887, C2_gap=+0.199, C4=OK (96 PROBEs 全绿)。⚠️ 吞吐退化持续(step ~28600起, ms/iter mean=586ms, GPU1/5 util~32-34%, NFS IO 争用)。训练仍前进。ETA: good~12:00 / avg~15:00 / degraded~04:00 Oct15。ckpt: step10000/step20000。✅ eval chain 后台等待中。📦 TASK=32.0KB✅ / MEMORY=30.1KB✅。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -200,6 +200,7 @@ WAITING: 1
 
 ## 本唤醒流水
 
+- [05:05 Oct14] **Wake #63**: 🔄 **merge3ds ArmC 训练监控** — step ~28890/154500（18.7%），loss~0.36-0.66，C1=0.4887（健康，无坍缩），C2_gap=+0.1991, C4=OK (96 PROBEs 全绿)。⚠️ 吞吐退化持续：step ~28600 起 ms/iter mean=586ms (min=356/max=791), img/s ~2800-5800, GPU1/GPU5 util~32-34%（NFS IO 争用, data 线下载所致）。ETA: good(212ms)=~7.4h→~12:00 / avg(292ms)=~10.2h→~15:00 / degraded(650ms)=~22.7h→~04:00 Oct15。ckpt: step10000/step20000。✅ eval chain 后台等待中（post_merge3ds_chain.sh）。📋 训练完成→3-seed ProtB→结果报告 `report_vision_merge3ds_result_zh.html`。📦 体积：TASK=32.0KB✅ / MEMORY=30.1KB✅。
 - [02:03 Oct14] **Wake #58**: 🔄 **merge3ds ArmC 训练监控** — step 5740/154500（3.7%），loss~0.76↓（持续下降），C1=0.3922↑（健康上升，无坍缩），C2_gap=+0.1851, C4=OK。吞吐 ~9540 img/s, ~214ms/iter → ETA ~8.9h（预计 ~11:00 完成）。8 卡 H100 全活（~47.7GB/GPU）。✅ 所有运维指令已完成：①外部编码器 ProtB 5/5（SigLIP2 87.46%>AIMv2 85.22%>OV2 84.97%>CLIP 82.66%>RICE 81.72%）②LR 3-臂扫描+文献表写入计划报告 ③数据量口径订正（GPIC 94.0M快照/101.1M全量）④计划HTML已交付 ⑤ArmC训练运行中（LR=2e-3 ×4线性Goyal）。📋 训练完成→3-seed ProtB→结果报告 `report_vision_merge3ds_result_zh.html`。📦 体积：TASK=32.0KB✅ / MEMORY=29.0KB✅。
 - [16:24 Oct13] 🔬 **外部编码器 ProtB 评测启动**：运维令 2026-10-13（用 ProtB 评测 `/nas_train/app.e0031982/models` 下现有公众视觉编码器）。代码 `vision/external_encoder_protb.py`（5 模型加载层 + 特征提取 + 3-seed ProtB）+ `run_external_protb_parallel.sh`（5 GPU 并行）。Smoke test 全 PASS（CLIP 1024-d/SigLIP2 1152-d/AIMv2 2048-d/OV2 1024-d/RICE 1024-d）。已启动并行全量提取（GPU 3/4/5/6/7），吞吐 66-152 img/s，ETA 2-5h + 30min probe/模型。日志 `/tmp/external_protb_logs/*.log`。
 - [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发** — 已归档至 `daily-memories-vision/2026-10-09.md`。配方 `warmup=2000/lr=5e-4/cosine/min_lr=5e-5`，两臂同数据。
