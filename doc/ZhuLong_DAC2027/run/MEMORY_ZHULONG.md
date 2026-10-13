@@ -64,7 +64,8 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
-- [2026-10-13 13:27] 🔎 巡检(phi_k3 r1 ~76min健康·不动作退出)：PID136983 alive(etime=1:16:12)·log 17MB growing(13:02时12MB)·ACCESS RESTRICTED=756✅·PHI-BUDGET-EXHAUSTED=682✅(k=3预算生效)·timeout提及=22(not final)·/home=28G✅·loop PID464225+2302281均有proxy✅·状态不变·WAITING=1。**下轮**：pgrep有输出→巡检退出；无输出→auto-grade→re-grade→timeout≤10且Pass@1≥75%→r1有效→r2。
+- [2026-10-13 13:53] 🔎 巡检(phi_k3 r1 ~86min健康·不动作退出)：PID136983 alive(etime=1:25:31)·log 19MB growing(13:27时17MB)·ACCESS RESTRICTED=822✅·PHI-BUDGET-EXHAUSTED=790✅(k=3预算生效)·timeout提及=24(not final)·/home=28G✅·loop PID464225有proxy✅·状态不变·WAITING=1。**下轮**：pgrep有输出→巡检退出；无输出→auto-grade→re-grade→timeout≤10且Pass@1≥75%→r1有效→r2。
+- [2026-10-13 13:27] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~76min) 详情见 daily-memories/2026-10-13.md §13:27。
 - [2026-10-13 13:02] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~51min) 详情见 daily-memories/2026-10-13.md §13:02。
 - [2026-10-13 12:53] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~40min) 详情见 daily-memories/2026-10-13.md §12:53。
 - [2026-10-13 12:28] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~15min) 详情见 daily-memories/2026-10-13.md §12:28。
