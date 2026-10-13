@@ -13,9 +13,9 @@ WAITING: 0
 
 ```
 PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）🔶
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 03/06/07 三镜 ffprobe 验收 ✅（h264 864×480 24fps + aac，时长吻合 17k+5）
-当前动作:     gen_ep13_h3_r2v.py --wait --skip-existing 后台批量（26 镜串行 · 修复 _save_outputs 抓 images 键 · 首镜 09 在跑）
-下一步:       收 26 镜 R2V + 另写 gen_ep13_h3_t2v.py（19 无角色镜）→ BGM/SFX → synth → 字幕 → 六项验收
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/gen_ep13_h3_t2v.py（19 无角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 03/06/07 三镜 ffprobe 验收 ✅（h264 864×480 24fps + aac，时长吻合 17k+5）；R2V 已出 13/29 镜
+当前动作:     gen_ep13_h3_r2v.py --wait --skip-existing 后台批量（串行 · 约镜 23 在跑 · PID 10556 · 已出 13/29）
+下一步:       收 R2V 剩余 16 镜 → gen_ep13_h3_t2v.py 跑 19 无角色镜（队列空闲后提交，§4.8）→ BGM/SFX → synth → 字幕 → 六项验收
 阻塞:         无（BLOCKERS #7 已闭环）
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-13（13_外骨骼 R2V 迁移 · 补齐 14 张场景参考图 · BLOCKERS #7 ✅ · dry-run 全绿）
+- **上次唤醒**：2026-10-13（固化 gen_ep13_h3_t2v.py 19 无角色镜 · R2V 已出 13/29 · dry-run 全绿）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,12 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-13 · S3 续跑 · 固化 gen_ep13_h3_t2v.py（19 无角色镜 · T2V 路线）**：补齐 13_外骨骼 无角色镜的 H3 T2V 生成脚本，等 R2V 批次收尾后即可跑（队列空闲后提交，§4.8）。
+  - **脚本**：`scripts/gen_ep13_h3_t2v.py`（照 `gen_ep18_h3_t2v.py` T2V 注入 + `gen_ep13_h3_r2v.py` 4 键下载/CLI 范式）；19 镜硬编码（01/02/04/05/08/12/14/20/22/25/28/30/31/37/40/43/44/46/48），台词随 H3 生成（写进 `Audio:`），无台词镜只写正向音景；`mp=0.6 / steps=10 / 16:9`（steps 按 2026-10-12「别默认堆 20」回落，本批均静态/界面/道具镜）；seed=1300+镜号。
+  - **校验**：py_compile exit=0 + `--dry-run` 列出 19 镜（R2V 29 + T2V 19 = 48 全集，01–48 无缺无重）。
+  - **R2V 进度**：已落 13/29（03/06/07/09/10/11/13/15/16/17/18/19/21），约镜 23 在跑（PID 10556 串行 --wait）。
+  - **下一步**：收 R2V 剩余 16 镜 → 跑 T2V 19 镜 → BGM/SFX → `synth_ep13.py` → 字幕 → 六项验收。
 
 - **2026-10-13 · S3 续跑 · 13_外骨骼 R2V 批量启动（03/06/07 验收 ✅ + 26 镜后台跑）**：验证 3 个手动复制产物 + 定位 SaveVideo 登记键 + 修复自动下载 + 启动批量。
   - **验收（03/06/07）**：ffprobe 三镜均 **h264 864×480 24fps + aac**（mp=0.4 16:9），时长精确吻合 §4.1 `17k+5`：03=5.167s/124 帧、06=5.167s/124 帧、07=6.583s/158 帧 ⇒ 三镜规格达标。
