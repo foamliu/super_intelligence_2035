@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-13</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-13</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-13 ~16:30 · 覆盖六线：pretrain / vision / harness / data / zhulong / news</p>
+
+<div class='info'><strong>TL;DR</strong>：<strong>pretrain P-8（AdamW）健康重跑到 step4966/10490</strong>（loss 2.660 平滑下降、~249K tok/s），并交付<strong>正式训练计划 HTML</strong>（双机 16 卡）。<strong>vision ④-4ep 全套收官（ProtB 67.05±0.02% = 递减确认）</strong>，转入<strong>外部编码器 ProtB 横比评测</strong>（5 路并行，ETA ~6h）。<strong>harness fix3（C 扩展 build deps）修复 + 64 条重评运行中</strong>，root cause 已定位（pkg-config 路径）。<strong>data</strong>：en_v1_4 62% / 85M 69%，磁盘 85% 逼近预警线。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>P-8 AdamW 训练</td><td>step4966/10490（stable 47.3%），loss 2.660 平滑下降，~249K tok/s</td><td class='green'>🟢 健康推进</td></tr>
+<tr><td class='blue'>vision</td><td>外部编码器评测</td><td>④-4ep 收官 67.05%；5 路 ProtB 横比进行中（ETA ~6h）</td><td class='blue'>🔬 评测中</td></tr>
+<tr><td class='blue'>harness</td><td>fix3 重评</td><td>64 条 C 扩展 build deps 修复运行中；fix1+2 已达 617 resolved</td><td class='amber'>🟠 重评中</td></tr>
+<tr><td class='blue'>data</td><td>双路下载</td><td>en_v1_4 62.2% / 85M 69.0%；磁盘 85% 预警</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td class='blue'>zhulong</td><td>C2.phi_k3 暂停</td><td>r1=72.8%✅；沙盒重启中，PHASE=standby</td><td class='amber'>⏸ 暂停</td></tr>
+<tr><td class='blue'>news</td><td>常态化采集</td><td>第九十七轮 +7（累计 296）；微头条徐克帖</td><td class='green'>✅ 运行中</td></tr>
+</table>
+
+<h2>2. Pretrain —— P-8 AdamW 健康重跑 + 正式训练计划交付 🟢</h2>
+<div class='ok'><strong>P-8 AdamW 从零训练健康推进</strong>：step4966/10490（stable 段 47.3%，~20.8B/44B token），LR=1e-3 恒定，loss 3.98→2.646（step4660 首破 2.65）→2.660（step4966）平滑下降、无 spike；grad_norm 0.128 稳定，0 NaN / 0 skipped，~249K tok/s，8 卡 54-57GB · 97-100% util。</div>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>调度</td><td>WSD：warmup 524 步 ✅ 已完成 → stable 524→9441（当前 4966）→ decay 9441→10490（共 10490 步 / ~2.0 天）</td></tr>
+<tr><td>checkpoint</td><td>ckpt@1049 + 2098 + 3147 + 4196 均已保存（4.2GB each，17GB total）· next@5245（~1.3h）· decay 切@9441</td></tr>
+<tr><td>吞吐</td><td>~249K tok/s · torchrun PID 771300 / bash PID 771288（etimes ~23.3h）</td></tr>
+<tr><td>dist_muon 处置</td><td>已停（step8490 loss 2.623 发散）→ 换 AdamW 从零重启；8 个 ckpt（1049~8392, 34GB）保留为发散证据</td></tr>
+</table>
+<div class='ok'><strong>正式训练计划 HTML 已交付</strong>（<code>report_pretrain_formal_train_plan.html</code>, 27.9KB）：全量 MiniCPM5 数据 + en_v1_4 · <strong>.12+.29 双机 16 卡</strong> · DP16 推荐 · GBS=1024 / LR=1e-3 不变 · 附空窗期 5 试验建议；.29 拓扑实测 NV18 + RoCE 400Gb/s。</div>
+<div class='note'><strong>监控要点</strong>：next ckpt@5245 → decay 切换@9441（预案：ckpt@9441 保存后 <code>pkill -f pretrain_launcher.*p8_adamw</code> → 等 30s → <code>setsid bash baize_p8_decay.sh</code>）。🚫 绝不可 kill watchdog loop + 训练 + 下载。</div>
+
+<h2>3. Vision —— ④-4ep 收官 + 外部编码器 ProtB 横比 🔬</h2>
+<div class='ok'><strong>④-4ep 训练 + 全套评测全部完成</strong>（17:23 Oct 12 → 10:12 Oct 13 训练 748,404 步 / ~16.8h / 2818 img/s，10:14→12:43 评测）：final_loss=0.0805（vs 2ep 0.1856）。</div>
+<table><tr><th>指标（BaiZe internal protocol）</th><th>④-4ep</th><th>vs 2ep</th><th>vs 1ep</th></tr>
+<tr><td>ProtB（linear probe, 3-seed）</td><td class='blue'><strong>67.05±0.02%</strong></td><td class='green'>+1.68pp</td><td>+4.71pp</td></tr>
+<tr><td>ProtA</td><td>56.70%</td><td>+2.88pp</td><td>—</td></tr>
+<tr><td>zero-shot top1 / top5</td><td>40.64% / 72.64%</td><td>+2.12pp</td><td>—</td></tr>
+<tr><td>k-NN (k=20)</td><td>42.35%</td><td>+1.68pp</td><td>—</td></tr>
+</table>
+<div class='warn'><strong>④-4ep verdict = MODERATE, DIMINISHING</strong>：67.05% &lt; 70% 胜利阈值；1→2ep +3.03pp、2→4ep +1.68pp（比值 ~0.55）→ 上行但逼近特征质量天花板。中文报告 <code>vision/report_vision_final_20261012_zh.html</code>（8 节）+ lp-epoch 曲线 + EXPERIMENTS_VISION §9.7 均已更新。</div>
+<div class='info'><strong>外部编码器 ProtB 横比评测运行中</strong>（5 路并行 GPU0–4，15:37 起，ETA ~6h → ~21:30）：CLIP / SigLIP2 / AIMv2 / OV2 / RICE 5 模型 × ProtB 3-seed on IN-1K，用于补「主流协议」公开基准横比。已修 pyarrow thread contention（<code>pa.set_cpu_count(8)</code>），吞吐 CLIP=148 / OV2=152 / SigLIP2=110 / AIMv2=99 / RICE=65 img/s；CLIP/OV2 val 提取完成、train 提取进行中。</div>
+<div class='note'><strong>变体实验结论（已盖棺）</strong>：V2 Muon 全 LR 坍缩❌（与 AIMv2-style objective 不兼容）；V3 全量数据 Δlp=+1.18pp → Null（|Δ|&lt;1.5pp 不可分辨）。</div>
+
+<h2>4. Harness —— fix3（C 扩展 build deps）运行中 🟠</h2>
+<div class='ok'><strong>root cause 已定位并修复</strong>：pkg-config `.pc` 文件含完整 host 路径（<code>/nas_train/.../rootfs/.../opt/miniconda3/...</code>）而非 chroot 内部路径 → 沙箱内找不到 qhull/freetype 头文件。</div>
+<table><tr><th>修复措施</th><th>说明</th></tr>
+<tr><td>① <code>sed</code> 修正 `.pc` prefix</td><td>改为 chroot 内部路径 <code>/opt/miniconda3/envs/testbed_py39|py38</code></td></tr>
+<tr><td>② <code>r1_eval.py</code> 注入编译环境</td><td><code>CFLAGS/CPPFLAGS/LDFLAGS/PKG_CONFIG_PATH/C_INCLUDE_PATH/CPLUS_INCLUDE_PATH</code>（<code>env_override</code> 时）</td></tr>
+<tr><td>③ <code>pip install -e .</code> 加 <code>--no-build-isolation</code></td><td>复用 env 内已有依赖</td></tr>
+</table>
+<div class='ok'><strong>验证通过</strong>：matplotlib 首条 <code>patch_applied: false→true</code>（78s/条）；全量 64 条已后台启动（PID 2127908，<code>--resume</code>，ETA ~2–4h）。</div>
+<div class='warn'><strong>累计进度</strong>：fix1+fix2 完成 → 574→617 resolved（29.4%）；fix3 覆盖 matplotlib 29 + sklearn 27 + sphinx 8 = 64 条 C 扩展条目。剩余：sphinx 8 条逐条排查 · P1-1 astropy · P1-2 网络 503 + ②b 重跑 agent —— 均等运维确认。</div>
+
+<h2>5. Data —— 双路下载 + 磁盘预警 🟠</h2>
+<table><tr><th>项</th><th>进度</th><th>速率 / ETA</th><th>归属</th></tr>
+<tr><td>en_v1_4（Ultra-FineWeb）</td><td class='blue'>35109/56461（62.2%，53/110 snapshots，5.6T/6.75TB）</td><td>~21.8MB/s · ETA ~15h</td><td>data 线</td></tr>
+<tr><td>85M 多模态（LLaVA-OV-1.5）</td><td class='blue'>8361/12124（69.0%，29T/46.66TB）</td><td>~62MB/s · ETA 3–7 天</td><td>data 线看护（已从用户自管移交，PID 506606）</td></tr>
+<tr><td>GPIC</td><td class='green'>✅ 8000 train + 128 test tar（retry-loop 存活）</td><td>——</td><td>data 线</td></tr>
+<tr><td>R3 全量分词</td><td class='green'>✅ 110/110（1483.91B tok / 5.94TB）</td><td>——</td><td>data 线</td></tr>
+<tr><td>污染扫描</td><td class='green'>✅ 累计 220K docs 0 命中</td><td>——</td><td>data 线</td></tr>
+</table>
+<div class='warn'><strong>磁盘预警</strong>：/nas_train 已用 85%（32T 剩余）；en_v1_4 + 85M 两路下满将达 ~94.1%，<strong>约 2 天后逼近 90% 红线</strong>，届时须停 85M 等运维。85M 两大子集 <code>sa1b</code> + <code>zero250m</code>（≈9.85TB 剩余大头）尚未开始。</div>
+<div class='note'><strong>P-8 数据层已全就绪</strong>（R3 分词 + 污染 0 命中 + GPIC 全完成）；en_v1_4 / 85M 均为非 44B 档阻塞项，但 en_v1_4 下满 56461 后必经 <code>check_contamination.py</code> 再报完成。</div>
+
+<h2>6. Zhulong & News</h2>
+<div class='ok'><strong>Zhulong C2.phi_k3（Φ 预算 k=3）</strong>：r1 att1 = <strong>72.8%（115/158，timeout=0）</strong>✅ 有效（运维令十三：消融臂 Pass@1 任何值都有效）。运维令(十四)：<strong>沙盒重启中 → 暂停试验</strong>，att2 已 kill（114/158 未完成），PHASE=standby，待恢复后从 r2 继续。C2 前序臂：phi_k10 = 77.7±2.2%，full_v3 锚点 = 82.1±3.0%。</div>
+<div class='ok'><strong>News 常态采集（第 17 批 · 第九十七轮）</strong>：累计 <strong>296 条</strong>（当日 33）；微头条 15:01「导演徐克谈 AI」4 段 184 字（纯文字 · AI 声明连续第 10 篇生效）+ 引流评论 5 条 + 回评 0；基线 72 粉 / 微头条 432 条。</div>
+<div class='note'><strong>其余辅助线</strong>（git log 在动，非 run/ 四线体系）：video —— R2V 29/29 核验完成 + T2V 批量中（10/19）；recruit / research —— 论文日报 + 社招短名单推进（详见各自 MEMORY）。</div>
+
+<h2>7. 今日关键事件回看</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>~06:00–12:00</td><td>pretrain P-8 AdamW 稳定推进 loss 2.99→2.66（step1720→4966）；三次新低（2.6756 / 2.6739 / 2.6571）</td></tr>
+<tr><td>~12:43</td><td class='blue'>vision ④-4ep 全套评测完成（ProtB 67.05±0.02%，MODERATE/DIMINISHING）</td></tr>
+<tr><td>~14:30</td><td class='amber'>harness fix3 根因定位（pkg-config host 路径）+ 64 条重评启动</td></tr>
+<tr><td>~15:09</td><td>pretrain 交付正式训练计划 HTML（双机 16 卡）</td></tr>
+<tr><td>~15:26</td><td>data 第九十五次并发下载巡检（85M 69% + en_v1_4 62%，磁盘 85% 预警）</td></tr>
+<tr><td>~15:37</td><td class='blue'>vision 启动外部编码器 ProtB 横比（5 路并行，ETA ~6h）</td></tr>
+</table>
+
+<h2>8. 关注 / 风险</h2>
+<ul>
+<li>🟠 <strong>vision 外部编码器评测（~6h）</strong>：5 路并行占 GPU0–4，与 pretrain（.29 全 8 卡）不同机组；需监控吞吐与 pyarrow 争用，产出外部参照 HTML + EXPERIMENTS_VISION §external。</li>
+<li>🟠 <strong>harness fix3 重评（~2–4h）</strong>：64 条 C 扩展条目重评后生成 fix3 报告并更新 <code>report_harness_eval_fix_rerun.html</code>；sphinx 8 条 + astropy / 网络 503 待运维拍板。</li>
+<li>🟡 <strong>data 磁盘红线</strong>：约 2 天逼近 90%，届时须停 85M 等运维；密切盯 <code>sa1b</code>+<code>zero250m</code> 两个未开始子集。</li>
+<li>🟢 <strong>pretrain P-8</strong>：dissnem 换 AdamW 后健康，紧盯 next ckpt@5245 与 decay 切@9441，防再次发散。</li>
+<li>🟢 <strong>zhulong</strong>：沙盒重启完成后恢复 phi_k3 r2（PHASE=standby）。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_13.html · 数据来源：各线 MEMORY / git log（截至 2026-10-13 ~16:30）· 生成：Cline</footer>
+</body></html>
