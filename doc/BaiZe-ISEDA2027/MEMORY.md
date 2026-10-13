@@ -24,6 +24,10 @@
 - **vision**：**外部编码器 ProtB 做完后 → 执行「合并三数据集实验」**（GPIC+CC12M+Amshaker · **GBS/MBS ×4 · LR ×2** · **24h ≈3 epoch**）⇒ **放行起训**（覆盖前令「只出计划、不起训」）。已下发 `run/BAIZE_VISION_TASK.md` 顶。
 - **data**：**暂停 85M**（保留已下 ~69.2%，不删）+ 下载 **HF 图文对 TOP-5 中「未下载」的 4 个**（① `MVRL/WebMix-38M` ② `VedaLabs/wit_base` ④ `hanlincs/InternVL-SA1B-Caption-WebDataset` ⑤ `HuggingFaceM4/the_cauldron`；③ `BLIP3o/...` **已在本地**跳過）⇒ **落 `/nas_inference/app.e0031982/datasets/` 或 `/nas_user/<user>/datasets/`，🚫 不放 `/nas_train`**。已下发 `run/BAIZE_DATA_TASK.md` 顶。
 
+### 📋 任务书去粗体瘦身（用户直令 · 10-13 晚）
+- 用户：「现在任务书里 ** 太多，把 ** 删掉就能大幅瘦身。」⇒ 已删除 **BaiZe 7 + personal-watch 4 = 11 份任务书**里的**全部 `**` 粗体标记**（**行内代码 / 代码块内的一律保留**），**共 -13,760 字符 ≈ -13.4KB**；**纯格式化，不改任何指令语义**（git 显示 1700 行改动、增删平衡）。
+- ⚠️ **ZhuLong_DAC2027 的任务书**（`ZHULONG_TASK.md` 等）**未动**（另一项目线；如需处理请示）。
+
 ## 🆕 最近操作（2026-10-12）
 
 ### 📋 七项运维指令下发（用户直令 · 10-12 晚）
@@ -210,6 +214,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📋 2026-10-13 任务书去粗体瘦身**（用户直令）：删除 BaiZe 7 + personal-watch 4 = 11 份任务书的全部 `**` 粗体标记（代码内保留），共 -13.4KB；仅格式化不改语义；ZhuLong 任务书未动。
 
 - **📋 2026-10-13 vision 放行 + data 换下载目标**（用户直令）：vision 外部 ProtB 做完即跑「合并三数据集实验」（GBS/MBS×4·LR×2·24h≈3ep·放行起训）；data 暂停 85M（保留 69.2%）+ 下载 HF 图文对 TOP-5 未下的 4 个 → 落 /nas_inference 或 /nas_user 的 datasets（🚫 不放 /nas_train）。
 
