@@ -1086,3 +1086,36 @@ The uniform +1~1.4pp shift across all 4 independent metrics (ProtA/B, zs, k-NN) 
 > **文件**：`vision/report_vision_final_20261012_zh.html`（36KB，单文件内联 CSS/SVG，10 节 + 3 SVG 图表，全中文）。
 > **覆盖**：背景 → ③ 口径修订 → ① zero-shot（E1fair 34.10% / E2fair 35.45%，lp−zs gap ~28pp）→ ② probe 对照（×5ep=62.15%→probe 未欠拟合→62.34% 即特征质量天花板）→ 变体实验（V2 Muon 全 LR 坍缩❌ / V3 全量数据 ProtB 63.52% Δ+1.18pp Null）→ ④ epoch scaling（2ep ProtB 65.37±0.01% Δ+3.03pp / ProtA 53.82% / zs 38.52% / k-NN 40.67%，MODERATE）→ lp-epoch 曲线 → 结论与下一步。所有数字与本文件 §8.3–§9.6 完全一致，口径标 BaiZe internal protocol。
 > **✅ 更新（2026-10-13 12:43）**：④-4ep 训练+全套评测已完成。**ProtB 67.05±0.02%**（< 70% 胜利阈值，但 4 指标一致 +1.7~2.9pp vs 2ep，递减趋势确认：1→2ep +3.03pp，2→4ep +1.68pp）。ProtA 56.70%，zs 40.64%/72.64%，k-NN k=20 42.35%。final_loss=0.0805，C1=0.5932（+0.0128 vs 2ep），C4=OK。报告已同步更新（TL;DR / §7 / §8 曲线 / §9 汇总表 / §10 结论 / 柱状图）。
+
+---
+
+## §外部编码器 ProtB 参考（2026-10-13，用户直令）
+
+> 🚫 **红线**：以下所有数字均为**公众预训练模型的参考值**，必须**独立成表**，**绝不**与 BaiZe from-scratch 从零训练模型放在同一榜单中排名。各模型使用各自 **native 分辨率**（336/384/560）和 **native mean/std** 预处理 → **跨分辨率 lp 不可直接排高下**。文献锚点仅作「待核」标注，不当本项目结论。
+>
+> **报告文件**：`report_vision_external_protb_reference_zh.html`（中文 · 自包含 · 内联 CSS/SVG）。
+> **代码**：`vision/external_encoder_protb.py`（外部编码器加载 + 特征提取）+ `vision/lp_protocol_bridge.py`（Protocol B linear probe）。
+> **协议**：Protocol B = SGD+momentum0.9+cosine 90ep, bs1024, IN-1k full train 1.28M, IN-1k val 50k, 3 seeds (0/1/2) → mean±std。各模型 native 分辨率 + native 预处理，提取 pooled/CLS 特征后冻结。
+
+### 结果表（4/5 已完成，AIMv2 重跑中）
+
+| 模型 | Native 分辨率 | 特征维 | 参数量 | ProtB (3 seeds) | 各 seed 明细 | 文献锚点·待核 |
+|:--|:-:|:-:|:-:|:-:|:--|:--|
+| SigLIP2 so400m@384 | 384px | 1152 | ~400M (vision) | **87.46 ± 0.01%** | 87.46% / 87.47% / 87.45% | ~83.1% (HF lp) |
+| OpenVision2 ViT-L/14@336 | 336px | 1024 | ~304M (vision) | **84.97 ± 0.01%** | 84.97% / 84.96% / 84.99% | 79.81% (BaiZe ProtA R13) |
+| CLIP ViT-L/14@336 | 336px | 1024 | ~304M (vision) | **82.66 ± 0.03%** | 82.62% / 82.69% / 82.67% | ~88.1% (OpenCLIP lp) |
+| RICE-ViT-L@560 | 560px | 1024 | ~304M (vision) | **81.72 ± 0.01%** | 81.73% / 81.72% / 81.72% | ~84.0% (估算·待核) |
+| ~~AIMv2-1B@336~~ | 336px | 2048 | ~1B | **重跑中** | — | ~87.6% (Apple frozen trunk lp) |
+| *BaiZe ④-4ep (from-scratch)* | *224px* | *512* | *126.8M* | *67.05 ± 0.02%* | *67.03 / 67.08 / 67.04%* | *— (本项目从零训练，仅供参考)* |
+
+### AIMv2 重跑说明
+
+AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经排查发现 **wrapper bug**：AIMv2 无 CLS token（输出 `[B, 576, 2048]`），原 wrapper 误取 `[:, 0, :]`（top-left patch token）作为 pooled feature，而非 mean pooling。已修复为 `last_hidden_state.mean(dim=1)`，正在重新提取特征（~3.5h for 1.28M train images at 100 img/s）。完成后更新本表。
+
+### 关键观察
+
+1. **SigLIP2 so400m@384 以 87.46% 领先**，但其在 384px 分辨率 + 400M 参数量下评测，与 336px 模型不可直接排高下。
+2. **OpenVision2 ViT-L/14@336（84.97%）** 显著高于 BaiZe ProtA R13 的 79.81% —— 但 ProtA（kNN-based）与 ProtB（SGD linear probe）是不同协议，跨协议不可直接比较。
+3. **CLIP ViT-L/14@336（82.66%）** vs 文献 ~88.1%：差距可能来自评测协议差异（我们的 ProtB 用 SGD 90ep，OpenCLIP lp 可能用不同超参/数据增强）。
+4. **RICE-ViT-L@560（81.72%）**：560px 高分辨率未带来 ProtB 优势，可能与模型训练数据/策略有关。
+5. **BaiZe ④-4ep（67.05%）**：126.8M 参数 + 224px + 从零训练，与上述 304M–1B 参数 + 336–560px + 大规模预训练的公众模型存在量级差距，**不参与排名**，仅作绝对值参考。

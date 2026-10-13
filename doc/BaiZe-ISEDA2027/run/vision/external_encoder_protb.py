@@ -212,8 +212,10 @@ def load_aimv2(path, device):
         def forward(self, x):
             out = self.model(pixel_values=x)
             if isinstance(out, tuple): out = out[0]
-            if hasattr(out, 'last_hidden_state'): return out.last_hidden_state[:, 0, :]
-            return out[:, 0, :]
+            # AIMv2 has NO CLS token (576 patches only) -> use mean pooling
+            if hasattr(out, 'last_hidden_state'):
+                return out.last_hidden_state.mean(dim=1)
+            return out.mean(dim=1)
     w = Wrapper().to(device); w.model = model
     return w, feat_dim
 

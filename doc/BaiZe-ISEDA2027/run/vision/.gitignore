@@ -1,0 +1,2 @@
+# External encoder feature cache (5GB+ per model, not for git)
+external_features_cache/
