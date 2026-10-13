@@ -267,19 +267,30 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
     # -- 2) write eval.sh into rootfs, run it, capture output ----------------
     eval_script = test_spec.eval_script
     # fix2: apply env_override and extra_pip transformations (2026-10-13).
+    # fix2b (2026-10-13): use direct PATH export instead of relying on
+    # `conda activate`, which fails silently in the unshare chroot sandbox
+    # (the conda shell function isn't fully initialised, so `python` stays
+    # on the old testbed env's 3.8 instead of the override env's 3.9/3.8).
     if env_override:
+        env_path = f"/opt/miniconda3/envs/{env_override}"
+        replacement = (
+            f"export PATH={env_path}/bin:$PATH "
+            f"&& export CONDA_PREFIX={env_path} "
+            f"&& export CONDA_DEFAULT_ENV={env_override}"
+        )
         eval_script = eval_script.replace(
             "conda activate testbed",
-            f"conda activate {env_override}",
+            replacement,
         )
     if extra_pip:
-        # Insert extra pip install after the first 'conda activate' line.
+        # Insert extra pip install after the first env activation line.
+        # (Matches either 'conda activate' or the fix2b 'export PATH' replacement)
         lines = eval_script.split("\n")
         new_lines = []
         inserted = False
         for ln in lines:
             new_lines.append(ln)
-            if not inserted and "conda activate" in ln:
+            if not inserted and ("conda activate" in ln or "export PATH=" in ln):
                 new_lines.append(f"pip install {extra_pip}")
                 inserted = True
         eval_script = "\n".join(new_lines)
