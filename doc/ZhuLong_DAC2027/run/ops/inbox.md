@@ -1,11 +1,31 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 65 -->
+<!-- RUN_ID: 66 -->
+
+## RUN_ID 66 — 🔍 健康体检：zhulong loop + ops relay（只读）
+
+> 用户令：确认 zhulong loop 与 ops 中继进程是否健康（只读，不杀进程、不改配置、不 git 操作）。
+
+```bash
+# RUN_ID 66 · 只读健康体检
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] zhulong_loop.sh 进程（pid/ppid/etimes）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-120
+echo "=== [2] zhulong_ops_relay.sh 进程（pid/ppid/etimes）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-120
+echo "=== [3] loop 日志尾 ==="
+tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-160
+echo "=== [4] relay 日志尾 ==="
+tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-160
+echo "=== [5] 是否有 cline 在跑（zhulong）==="
+pgrep -af 'cline' | grep -i zhulong | cut -c1-120 || echo "无 zhulong cline"
+echo "=== DONE ==="
+```
 
 ## RUN_ID 65 — 🛑 立即杀评测进程（沙盒重启中·暂停试验）
 
 > 用户令：需要重启沙盒，立即暂停所有评测。
 
-```bash
+```text
 # RUN_ID 65 · 杀评测进程 + 记状态
 echo "=== [0] ==="; hostname; date '+%F %T'
 echo "=== [1] 杀前检查 ==="
