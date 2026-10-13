@@ -35,7 +35,7 @@ PRECLONE_DIR = Path("/dev/shm/repos")
 
 def _try_fetch_and_checkout(workdir, base_commit, origin_url, use_local):
     """Try fetch+checkout from given origin. Returns (ok, msg)."""
-    timeout = 300 if use_local else 120
+    timeout = 300 if use_local else 600  # github via proxy needs longer timeout
     ok, out = git_fetch_retry(workdir, base_commit, max_retries=3, timeout=timeout)
     if not ok:
         out2, rc2 = run(["git", "checkout", "-f", base_commit], cwd=workdir, timeout=60)
