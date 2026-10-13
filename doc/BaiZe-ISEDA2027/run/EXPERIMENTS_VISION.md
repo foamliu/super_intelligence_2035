@@ -1149,3 +1149,52 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 **已更新文件**：
 - `doc/BaiZe-ISEDA2027/report_vision_merge3ds_bs4_lr2_plan_zh.html`（§1–§9 全部数据量重算 + 双口径并列）
 - 本节（EXPERIMENTS_VISION.md 口径订正）
+
+---
+
+## §merge3ds 合并三数据集实验（2026-10-14 · 预注册 · 判据先行）
+
+> **运维指令**：2026-10-13「放行执行：GBS/MBS ×4 · LR 3-臂扫描 · 24h 预算」+「LR 缩放按文献规则：若预算只允许 1 臂 → 取臂 C ×4 线性（Goyal arXiv:1706.02677）」。
+> **计划文件**：`doc/BaiZe-ISEDA2027/report_vision_merge3ds_bs4_lr2_plan_zh.html`。
+> **门控**：✅ 外部编码器 ProtB 5/5 全部完成（2026-10-14 01:03）→ 门控通过，可起训。
+
+### 预注册判据（先定后测 · 不许事后改）
+
+| 判据 | 阈值 | 说明 |
+|:--|:--|:--|
+| **VICTORY** | ProtB ≥ 70% | 超过 ④-4ep 胜利阈值（67.05% → 70%+） |
+| **MODERATE** | ProtB 68–70% | 可分辨提升（Δ ≥ 1.5pp vs ④-4ep 67.05%）但未达胜利 |
+| **NULL** | ProtB < 68.5% | 不可分辨（Δ < 1.5pp）或下降 |
+| **COLLAPSE** | C1 > 0.95 at any step | 训练坍缩，实验作废 |
+| **OOM** | MBS=256 CUDA OOM | 需回退 MBS=64 + grad-accum 4（需改代码） |
+
+### 配置（Arm C · 单变量 · 除 GBS/MBS/LR 外与 ④-4ep 逐字节一致）
+
+| 参数 | ④-4ep 基线 | Arm C（本实验） | 倍数 | 依据 |
+|:--|:--|:--|:--|:--|
+| `--batch-size` | 64 | **256** | ×4 | GBS/MBS ×4 |
+| GBS (MBS×8) | 512 | **2048** | ×4 | — |
+| `--lr` | 5e-4 | **2e-3** | ×4 | Goyal 线性缩放规则 (arXiv:1706.02677) |
+| `--warmup` | 2000 | **8000** | ×4 | Goyal 要求 warmup 同比放大 |
+| `--min-lr` | 5e-5 | **2e-4** | ×4 | cosine 终点同比 |
+| `--steps` | 748,404 | **154,500** | — | ≈ 2.85 真实 epoch @ GBS=2048, ~24h |
+| `--resume` | 2ep ckpt | **无**（从零） | — | 新配方不从旧 ckpt 续 |
+| 其他 | — | **逐字节一致** | — | tower/width/depth/loss/mask-ratio/data/scheduler 等 |
+
+### Smoke test 结果（2026-10-14 01:24）
+
+- ✅ **No OOM**：MBS=256 使用 ~47.5GB/GPU（81.5GB total），余量充足
+- ✅ 10 步全部完成，loss 稳定（8.71–8.77），C1 正常
+- ✅ 吞吐：steady_image_s=5270.8（含 warmup 开销），步 7-10 达 ~8900–9670 img/s
+- ✅ 模型保存成功（`vision.pt`）
+
+### 输出目录
+
+`/nas_train/app.e0031982/datasets/baize-vision/out/merge3ds_bs4_lrC_w512_d30_p16_224`
+
+### 交付清单（训练完成后）
+
+1. 训练日志（`/tmp/merge3ds_armC_train.log`）
+2. ProtB 3-seed mean±std（复用 `lp_protocol_bridge.py`）
+3. 中文 HTML 结果报告 `report_vision_merge3ds_result_zh.html`
+4. EXPERIMENTS_VISION.md 新节（含 vs 基线 Δlp）
