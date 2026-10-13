@@ -1,0 +1,39 @@
+paul 您好，
+
+今日（2026-10-13）arXiv 当日筛选中精选 5 篇：其中 4 篇随附 PDF；另 1 篇 PDF 达 17.2MB（超单封附件预算），正文给链接与摘要。
+
+一、本轮取数说明（如实）
+- arXiv 公告批次仍停留在 2026-10-09，未刷新（totalResults=630616）；原因是周一 2026-10-12 为美国联邦假日（哥伦布日），公告顺延。
+- 以下 5 篇取自最近一次公告窗口的候选池，并已用 id_list 逐条复核（HTTP 200 + published 有效）。
+- 原文标题照抄未改写；文中数字均为「论文作者自报」，我们未复现。
+
+二、精选清单（3 篇「借鉴」+ 2 篇「科普 / 选题参考」）
+
+【借鉴｜与 BaiZe / ZhuLong 强相关】
+
+1. What Should SFT Learn? Conditional Information Gain for Generalizable Post-Training
+   arXiv:2610.12995 ｜ 附件：是（17 页）
+   为何值得读：给出「SFT 该给哪些 token 更大权重」的可落地判据 —— 用冻结参考模型比较「给 / 不给任务输入」时示范 token 的似然，得到条件信息增益（CIG），并推导出等价的标量加权 SFT 目标；不必改架构，只在 loss 上加一组预计算权重即可接进现有训练栈。对口 BaiZe 后训练（SFT 数据/权重的取舍）。
+
+2. Specialists Learn Faster: Knowledge Organization in Pre-training Shapes Knowledge Update Efficiency
+   arXiv:2610.13835 ｜ 附件：是（25 页）
+   为何值得读：指出「预训练阶段对知识（尤其时变知识）的组织方式」决定后续知识更新的成本：按时序训练的模型（specialists）更新新知识所需步数远少于打乱顺序训练的模型（generalists），并从第一性原理导出「更新成本 ↔ 优化动力学」规律与相应的数据组织策略。对口预训练数据配比 / 新知识注入。
+
+3. RATED: Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics
+   arXiv:2610.13889 ｜ 附件：是（6 页）
+   为何值得读：用「真实执行反馈（执行动态）」而非静态语义相似度来检索 agent 工具，提升工具选择可靠性（作者自报：MRR +52.2%，故障场景错误选择率 86.2% → 2.9%，重排延迟 <1ms）。对口 ZhuLong 的 code / agent harness 与工具调用可靠性。
+
+【科普｜选题 / 跨域参考】
+
+4. Designing Protein Structures from Natural Language
+   arXiv:2610.13917 ｜ 附件：否（PDF 17.2MB，超预算）｜ 链接：https://arxiv.org/abs/2610.13917
+   为何值得读：「用自然语言直接生成蛋白质结构」的方法样例 —— 构建文本—结构配对数据并做文本条件训练，辅以结构属性评测与湿实验验证（作者自报：18 项结构属性中 15 项优于基线、20 个靶点中至少 13 个领先、靶点 GM2A 上 9 个 binder 最强 K_D ≈ 107 nM）。可作「语言条件生成」在非文本域的对照参考。
+
+5. CaptchaAgent: Verifiable Visual Reasoning for CAPTCHA Solving
+   arXiv:2610.12866 ｜ 附件：是（约 5.3MB）
+   为何值得读：把视觉推理做成可核验流程（视觉中间表示 + 符号协议逼出精确计数 + 反事实一致性校验），在公开验证码基准上系统验证。对口多模态 agent 的「可验证推理」与可靠性设计。
+
+三、附件
+- 共 4 个 PDF（2610.12995 / 2610.13835 / 2610.13889 / 2610.12866），合计约 8.2 MB（单封上限 20 MB）。
+
+—— 《超级智能2035》· research 自动日报

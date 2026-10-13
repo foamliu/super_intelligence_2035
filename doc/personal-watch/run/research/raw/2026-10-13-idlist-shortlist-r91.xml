@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/Z8rqdtF0T+LUFl8rsO0PMR89ZC8</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.12866,2610.13917,2610.12596,2610.13928,2610.12842&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-13T10:03:16Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.12866,2610.13917,2610.12596,2610.13928,2610.12842" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.13917v1</id>
+    <title>Designing Protein Structures from Natural Language</title>
+    <updated>2026-10-09T17:51:55Z</updated>
+    <link href="https://arxiv.org/abs/2610.13917v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.13917v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A central challenge in de novo protein design is generating proteins with desired structural and functional properties. Existing design models typically require a dedicated input representation for each property, limiting the design objectives they support. We develop Prompteina, the first all-atom structure generation model that supports new and broader design objectives specified in natural language, analogous to text-to-image generation. To train Prompteina, we construct Prompteina-Data, a paired text--protein structure dataset of 1.8M structures and 50M+ captions describing global and residue-specific structural and functional properties. We adapt Proteina-Complexa, a pretrained structure generation model, through text-conditioned pretraining and finetuning that aligns residues with their corresponding text. Prompteina outperforms baselines on 15 of 18 structural properties and generates proteins that more closely match descriptions of their intended functions. In binder design, it leads baselines on at least 13 of 20 targets and improves interface confidence by 14\% over the strongest baseline. With iterative in silico feedback, Prompteina's gain over non-iterative generation is 57\% larger than the next-best baseline on the hardest targets. Finally, we experimentally validate Prompteina designs against GM2A, a target with no reported de novo binders. We identify nine binders, with the strongest at an apparent $K_{\mathrm{D}}$ of 107 nM. These results establish natural language as an effective and powerful conditioning interface for protein structure generation.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.BM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T17:51:55Z</published>
+    <arxiv:comment>53 pages, 9 figures. Code, data, and model weights: https://github.com/jleechung/prompteina</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Joseph Lee</name>
+    </author>
+    <author>
+      <name>Yanjing Li</name>
+    </author>
+    <author>
+      <name>Bo Qiang</name>
+    </author>
+    <author>
+      <name>Gregory Lau</name>
+    </author>
+    <author>
+      <name>Allyson Ettinger</name>
+    </author>
+    <author>
+      <name>Noah A. Smith</name>
+    </author>
+    <author>
+      <name>Rory Donovan-Maiye</name>
+    </author>
+    <author>
+      <name>David Baker</name>
+    </author>
+    <author>
+      <name>Hanna Hajishirzi</name>
+    </author>
+    <author>
+      <name>Pang Wei Koh</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.13928v1</id>
+    <title>AI Models Can Provably Hide Arbitrary Capabilities</title>
+    <updated>2026-10-09T17:55:06Z</updated>
+    <link href="https://arxiv.org/abs/2610.13928v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.13928v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Capability evaluations aim to surface dangerous model behaviors before deployment, but their reliability depends on the assumption that hidden capabilities can be elicited. We show this assumption does not hold under adversarial conditions by constructing backdoor attacks that embed encrypted neural networks within host model weights, decrypting and executing them only upon receiving a secret trigger. Using digital lockers, these hidden circuits remain provably hard to elicit and interpret under cryptographic assumptions, even given full access to model weights, extending prior work from hiding fixed strings to arbitrary computations. We implement our proof of concept constructions in PyTorch and evaluate elicitation through fine-tuning, weight noising, gradient-based trigger search, and latent adversarial training on a small chemical reaction prediction task - a proxy for CBRN-relevant capabilities. Our results demonstrate resistance to these methods and, together with our cryptographic guarantees, reveal a limit of elicitation-based capability audits. We release our models to support the improvement of defenses.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T17:55:06Z</published>
+    <arxiv:comment>22 pages, 6 figures, 3 tables. Accepted at NeurIPS 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Andis Draguns</name>
+    </author>
+    <author>
+      <name>Sumeet Ramesh Motwani</name>
+    </author>
+    <author>
+      <name>Raymond Douglas</name>
+    </author>
+    <author>
+      <name>Christian Schroeder de Witt</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12596v1</id>
+    <title>SpireBench: Evaluating Long-Horizon Strategic Play of Agentic Models with Slay the Spire</title>
+    <updated>2026-10-08T18:18:19Z</updated>
+    <link href="https://arxiv.org/abs/2610.12596v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12596v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic large language models now tackle complex tasks, yet strategic reasoning over long horizons is under-studied: most agentic benchmarks are short and episodic, and performance on long tasks is hard to dissect into stored knowledge, reasoning and luck. We introduce SpireBench, in which models play the complete commercial deck-builder Slay the Spire (StS), where early decisions decide long-term success. Across 20 large language models (LLMs) at the game's highest difficulty, frontier models beat heuristic baselines and match the average human player but remain far behind experts. This gap widens as the run lengthens: the strongest models win the first act as often as experts, then fall behind. What separates strong models from weak is how well they play each fight; all of them misjudge risk over a run, preserving health rather than spending it to grow stronger. A comprehensive, self-consistent renaming of every game term shows that part of their performance rests on prior knowledge of the game, and models do not improve from the memories they write across runs, which are often wrong and overly cautious. Our harness is the first to give a model the complete original game, and we compare it with existing harnesses. Overall, SpireBench offers an unsaturated long-horizon benchmark with tools to locate where and why agents fail.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T18:18:19Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Scott C. Lowe</name>
+    </author>
+    <author>
+      <name>Sander W. Keemink</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12866v1</id>
+    <title>CaptchaAgent: Verifiable Visual Reasoning for CAPTCHA Solving</title>
+    <updated>2026-10-09T01:50:26Z</updated>
+    <link href="https://arxiv.org/abs/2610.12866v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12866v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern reasoning CAPTCHAs require fine-grained perception, compositional relation reasoning, and grounded browser interaction. End-to-end vision-language model agents remain brittle in this setting because a missed object, incorrect count, or confused relation can propagate directly to the final action. To address this problem, we present CaptchaAgent, a structured visual reasoning framework for interactive CAPTCHA solving. Instead of predicting an action directly from a screenshot, CaptchaAgent first constructs a visual intermediate representation (V-IR) that explicitly records entities, attributes, and spatial or topological relations. A symbol-only ASCII protocol further requires the parser to commit to a concrete object set and count. Building on this global representation, localized evidence refinement revisits ambiguous regions at higher effective resolution, while counterfactual consistency verification tests whether the resulting action remains stable under task-preserving transformations. Across three proprietary backbones on Open CaptchaWorld, CaptchaAgent improves Pass@1 by 21.3-25.8 percentage points over a commercially available browser agent baseline evaluated with the same backbones. On the separate offline Oedipus-data benchmark, it further improves average Pass@1 by 9.2-12.3 percentage points over the Oedipus solver across three matched backbones. The intermediate traces show that exact counting, continuous geometry, and ordered execution remain major sources of automation difficulty for the evaluated agents, providing practical guidance for designing more resilient compositional CAPTCHAs.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T01:50:26Z</published>
+    <arxiv:comment>12-page main paper with 7 figures and 4 tables; 5-page supplementary material included</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Shangquan Sun</name>
+    </author>
+    <author>
+      <name>Ruoyu Chen</name>
+    </author>
+    <author>
+      <name>Zhirui Liu</name>
+    </author>
+    <author>
+      <name>Xiang Liu</name>
+    </author>
+    <author>
+      <name>Chenghao Qian</name>
+    </author>
+    <author>
+      <name>Wenqi Ren</name>
+    </author>
+    <author>
+      <name>Xiaochun Cao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12842v1</id>
+    <title>Neural networks are more modular than single neurons suggest</title>
+    <updated>2026-10-09T00:58:07Z</updated>
+    <link href="https://arxiv.org/abs/2610.12842v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12842v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Neural networks routinely develop representations in which individual neurons contribute to multiple distinct functions, leading to the widespread view that such networks lack modular organization. We challenge this conclusion by introducing a formally nested hierarchy of modularity: unit-level, which requires distinct computations to occupy disjoint neurons; orthogonal, which asks whether a rotation reveals functionally independent subspaces; and linear, which asks whether a bounded linear map can separate task-relevant computations into independent subspaces. We develop a unified framework for learning decompositions at each level and evaluating them causally through selective ablation. Across vision models, language models and multi-task Recurrent Neural Networks (RNNs), we find that networks which lack unit-level modularity nonetheless often exhibit clear functional modularity at the subspace level. In vision and language models, content versus style and syntax versus semantics respectively dissociate under subspace ablation despite sharing overlapping populations of neurons. These learned subspaces also align differentially with brain data, with content and style subspaces predicting higher and lower visual cortex respectively, and semantic subspaces outperforming syntactic ones in predicting language cortex activity. In RNNs trained on multiple cognitive tasks and previously shown to lack modular structure, our decomposition recovers sharp double dissociations between tasks. The absence of unit-level modularity frequently coexists with clear subspace-level modularity across domains, enabling targeted intervention on specific computations even in networks where no individual neuron is specialized, with broad implications for mechanistic interpretability and for understanding functional organization in both biological and artificial neural systems.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-09T00:58:07Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Shreya Saha</name>
+    </author>
+    <author>
+      <name>Benjamin Bergen</name>
+    </author>
+    <author>
+      <name>Meenakshi Khosla</name>
+    </author>
+  </entry>
+</feed>
