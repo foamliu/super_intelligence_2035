@@ -1,22 +1,41 @@
 [
   {
-    "model": "clip-vitl14-336",
-    "resolution": 336,
-    "feature_dim": 1024,
-    "loader": "clip",
-    "protb_mean": 0.826586643854777,
-    "protb_std": 0.00027438913612728554,
+    "model": "siglip2-so400m-384",
+    "resolution": 384,
+    "feature_dim": 1152,
+    "loader": "siglip2",
+    "protb_mean": 0.8746133049329122,
+    "protb_std": 9.97909017521574e-05,
     "protb_runs": [
-      0.8262199759483337,
-      0.8268799781799316,
-      0.8266599774360657
+      0.8746399879455566,
+      0.8747199773788452,
+      0.8744799494743347
     ],
     "seeds": [
       0,
       1,
       2
     ],
-    "paper_lp": "~88.1% (CLIP ViT-L/14@336, OpenCLIP lp)"
+    "paper_lp": "~83.1% (SigLIP2 so400m@384, hf lp)"
+  },
+  {
+    "model": "aimv2-1B-336",
+    "resolution": 336,
+    "feature_dim": 2048,
+    "loader": "aimv2",
+    "protb_mean": 0.8521999716758728,
+    "protb_std": 0.0004166583839722239,
+    "protb_runs": [
+      0.8516199588775635,
+      0.852400004863739,
+      0.8525799512863159
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~87.6% (AIMv2-L 0.3B@336, frozen trunk)"
   },
   {
     "model": "openvision2-vitl14-336",
@@ -38,6 +57,25 @@
     "paper_lp": "79.81% (OV2 L/14@336, BaiZe ProtA R13)"
   },
   {
+    "model": "clip-vitl14-336",
+    "resolution": 336,
+    "feature_dim": 1024,
+    "loader": "clip",
+    "protb_mean": 0.826586643854777,
+    "protb_std": 0.00027438913612728554,
+    "protb_runs": [
+      0.8262199759483337,
+      0.8268799781799316,
+      0.8266599774360657
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~88.1% (CLIP ViT-L/14@336, OpenCLIP lp)"
+  },
+  {
     "model": "rice-vitl14-560",
     "resolution": 560,
     "feature_dim": 1024,
@@ -55,24 +93,5 @@
       2
     ],
     "paper_lp": "~84.0% (RICE-ViT-L@560, estimated)"
-  },
-  {
-    "model": "siglip2-so400m-384",
-    "resolution": 384,
-    "feature_dim": 1152,
-    "loader": "siglip2",
-    "protb_mean": 0.8746133049329122,
-    "protb_std": 9.97909017521574e-05,
-    "protb_runs": [
-      0.8746399879455566,
-      0.8747199773788452,
-      0.8744799494743347
-    ],
-    "seeds": [
-      0,
-      1,
-      2
-    ],
-    "paper_lp": "~83.1% (SigLIP2 so400m@384, hf lp)"
   }
 ]
