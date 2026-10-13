@@ -13,9 +13,9 @@ WAITING: 0
 
 ```
 PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）🔶
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/gen_ep13_h3_t2v.py（19 无角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 03/06/07 三镜 ffprobe 验收 ✅（h264 864×480 24fps + aac，时长吻合 17k+5）；R2V 已出 13/29 镜
-当前动作:     gen_ep13_h3_r2v.py --wait --skip-existing 后台批量（串行 · 约镜 23 在跑 · PID 10556 · 已出 13/29）
-下一步:       收 R2V 剩余 16 镜 → gen_ep13_h3_t2v.py 跑 19 无角色镜（队列空闲后提交，§4.8）→ BGM/SFX → synth → 字幕 → 六项验收
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/gen_ep13_h3_t2v.py（19 无角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 03/06/07 三镜 ffprobe 验收 ✅（h264 864×480 24fps + aac，时长吻合 17k+5）；R2V 已出 24/29 镜；scripts/synth_ep13.py 重写（去 TTS · 48 镜音画钉长 · py_compile+dry-run 通过）
+当前动作:     gen_ep13_h3_r2v.py --wait --skip-existing 后台批量（串行 · 约镜 39 在跑 · PID 10556 · 已出 24/29）
+下一步:       收 R2V 剩余 5 镜（39/41/42/45/47）→ gen_ep13_h3_t2v.py 跑 19 无角色镜（队列空闲后提交，§4.8）→ 重写 gen_ep13_subtitles.py（去 TTS 时序）→ BGM/SFX → synth → 字幕 → 六项验收
 阻塞:         无（BLOCKERS #7 已闭环）
 ERROR_COUNT:  0
 ```
@@ -45,6 +45,12 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-13 · S3 续跑 · 重写 synth_ep13.py（去 TTS · 48 镜音画钉长）+ R2V 24/29 核验**：队列忙（R2V 批量在跑 · 约镜 39），本轮做不依赖队列的「脚本整改」活。
+  - **重写 `scripts/synth_ep13.py`**：旧版混 TTS（`TTS_CUES`/`13_tts_*.flac`）+ 引用旧 `_720p_`/`_sarah_desk_` 文件名，违反 2026-10-11「禁用 TTS」用户令 ⇒ 整体重写为「R2V 29 + T2V 19 = 48 镜」concat（`from gen_ep13_h3_r2v/t2v import SHOTS` 合并 `ALL`），沿用 EP18 已固化 **音画钉长**铁律（`h3_dur_sec` 按 `17k+5` 帧量化；每段音频 `aresample...atrim=0:<dur>...asetpts=N/SR/TB` 钉到「帧数÷24」；漂移闸门 <0.15s；🚫 `-shortest`），libass 字幕烧录。py_compile exit=0 + `--dry-run` 通过（24/48 镜在位、预计 134.63s、缺镜清单=19 T2V + 5 R2V 剩）。
+  - **R2V 批次进度**：`OUTPUT/13_外骨骼/videos/` 已落 24/29 镜（新增 23/24/26/27/29/32/33/34/35/36/38），约镜 39 在跑；PID 10556 存活（串行 --wait）；剩 39/41/42/45/47 五镜。
+  - **下一步**：收 R2V 剩余 5 镜 → 队列空闲后跑 `gen_ep13_h3_t2v.py` 19 无角色镜 → 重写 `gen_ep13_subtitles.py`（去 TTS 时序 · 48 镜台词）→ BGM/SFX → `synth_ep13.py` 合成 → 六项验收。
+
 
 - **2026-10-13 · S3 续跑 · 固化 gen_ep13_h3_t2v.py（19 无角色镜 · T2V 路线）**：补齐 13_外骨骼 无角色镜的 H3 T2V 生成脚本，等 R2V 批次收尾后即可跑（队列空闲后提交，§4.8）。
   - **脚本**：`scripts/gen_ep13_h3_t2v.py`（照 `gen_ep18_h3_t2v.py` T2V 注入 + `gen_ep13_h3_r2v.py` 4 键下载/CLI 范式）；19 镜硬编码（01/02/04/05/08/12/14/20/22/25/28/30/31/37/40/43/44/46/48），台词随 H3 生成（写进 `Audio:`），无台词镜只写正向音景；`mp=0.6 / steps=10 / 16:9`（steps 按 2026-10-12「别默认堆 20」回落，本批均静态/界面/道具镜）；seed=1300+镜号。
