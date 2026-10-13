@@ -21,10 +21,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **④-4ep TRAINING + ALL EVAL COMPLETE** — train done 10:12:47 Oct 13 (748,404 steps, final_loss=0.0805, C1=0.5932, C4=OK). Eval done 12:43 Oct 13: **ProtB 67.05±0.02%** (< 70% victory), ProtA 56.70%, zs 40.64%/72.64%, k-NN k=20 42.35%. VERDICT: MODERATE, DIMINISHING (1→2 +3.03pp, 2→4 +1.68pp). All 3 operator tasks DONE: LLaVA plan✅ 中文报告✅(updated with 4ep) ④-4ep✅. Next: await operator direction (Stage iv MLLM / w384 / more data). |
+| PHASE | 🔄 **External encoder ProtB eval RUNNING** (GPU 0, PID 376892, started 14:45 Oct 13): 5 public encoders (CLIP/SigLIP2/AIMv2/OV2/RICE) × ProtB 3-seed on IN-1K. CLIP val extraction in progress (10.7K/50K, 133 img/s). ETA all 5 models ~17.5h. ✅ ④-4ep report HTML delivered (`report_vision_4ep_experiment_zh.html`, 25.6KB). ✅ All 5 model loaders smoke-tested PASS. Feature caching to disk. Next: monitor → collect results → external reference HTML → EXPERIMENTS_VISION.md §external. |
 | ERROR_COUNT | 15（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-13 10:42 (wake #46)**: ④-4ep training ✅ COMPLETED at 10:12:47. 748,404 steps, total=60,545s (~16.8h), steady_img/s=2818.0, final_loss=0.0805 (vs 2ep 0.1856). Last PROBE: C1=0.5932, C2_gap=+0.1791, C4=OK. 37 ckpts (380k-740k)+vision.pt(509MB). Eval started 10:14 via post_4ep_chain.sh — ProtB feature extraction in progress (file 39/294, ~27GB read, NFS slow due to data line downloads). **Killed duplicate post_4ep_chain.sh** (PID 3445693 + bridge 1591206) — both chains detected training done simultaneously, both launched eval to same log. Active: PID 3387016→bridge 1543022. ✅ All 3 operator tasks: LLaVA plan✅ 中文报告✅ ④-4ep🔄(eval in progress). 📦 体积：TASK=31.0KB / MEMORY=29.7KB（无需归档） |
+| 更新 | **2026-10-13 14:45 (wake #49)**: External encoder ProtB eval LAUNCHED on GPU 0 (PID 376892). All 5 model loaders smoke-tested PASS (CLIP/SigLIP2/AIMv2/OV2/RICE). CLIP val feature extraction in progress (133 img/s, ETA ~17.5h all 5 models). ④-4ep report HTML delivered: `report_vision_4ep_experiment_zh.html` (25.6KB, 8 sections, 2 SVGs). Committed: `vision report:` (0dd4ceec) + `vision protb:` (3ef58018). 📦 体积：TASK=31.0KB / MEMORY=29.7KB（无需归档） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
