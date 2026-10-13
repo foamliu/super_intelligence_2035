@@ -87,8 +87,9 @@ def git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300):
         if rc == 0:
             return True, out
         if attempt < max_retries:
-            print(f"  [FETCH RETRY {attempt}/{max_retries}] timeout={timeout}s, waiting 10s...")
-            time.sleep(10)
+            backoff = 10 * (2 ** (attempt - 1))  # 10s, 20s, 40s exponential backoff
+            print(f"  [FETCH RETRY {attempt}/{max_retries}] timeout={timeout}s, waiting {backoff}s (exponential backoff)...")
+            time.sleep(backoff)
     return False, out
 
 

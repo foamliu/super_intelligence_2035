@@ -161,6 +161,7 @@ class UnshareSandbox(Sandbox):
             f"mount --bind /usr {r}/usr || exit 11; "
             f"mount --bind {r}/.locale {r}/usr/lib/locale || exit 12; "
             f"mount -t tmpfs tmpfs {r}/tmp || exit 13; "
+            f"mkdir -p {r}/dev/shm && mount -t tmpfs tmpfs {r}/dev/shm || exit 14; "
             f"chroot {r} /usr/bin/env HOME=/tmp TMPDIR=/tmp PIP_NO_INPUT=1 "
             f"http_proxy=http://172.19.92.25:13128 "
             f"https_proxy=http://172.19.92.25:13128 "
@@ -344,6 +345,19 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
             f'for f in {m.group(2)}; do '
             f'git checkout {m.group(1)} -- "$f" 2>/dev/null || rm -f "$f"; done'
         ),
+        eval_script,
+        flags=re.MULTILINE,
+    )
+
+    # fix4 (2026-10-13): Replace 'tox --current-env -epy39 -v --' with direct
+    # pytest invocation. The tox-current-env plugin (0.0.11) is incompatible
+    # with tox 4.x in the unshare sandbox — tox crashes silently with no
+    # output. The tox.ini for sphinx shows the actual command is:
+    #   python -X dev -X warn_default_encoding -m pytest --durations 25 {posargs}
+    # with setenv PYTHONWARNINGS=error. We replicate that directly.
+    eval_script = re.sub(
+        r'^tox\s+--current-env\s+-epy\d+\s+-v\s+--\s+',
+        'PYTHONWARNINGS=error python -X dev -X warn_default_encoding -m pytest --durations 25 ',
         eval_script,
         flags=re.MULTILINE,
     )
