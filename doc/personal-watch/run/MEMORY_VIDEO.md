@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片+BGM 达标 · 13_外骨骼 R2V 迁移中，场景图 14/14 已补齐，进入 R2V 29 镜批量）；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片+BGM 达标 · 13_外骨骼 R2V 端到端成片 ✅（48/48 镜 master+硬字幕成片，QC 通过））；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）🔶
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/gen_ep13_h3_t2v.py（19 无角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 03/06/07 三镜 ffprobe 验收 ✅（h264 864×480 24fps + aac，时长吻合 17k+5）；R2V 29/29 镜全部落盘 ✅（h264 864×480 24fps+aac 5.167s 吻合 17k+5）；synth_ep13.py + gen_ep13_subtitles.py 已固化（去 TTS）；任务书体积归档 ✅（42.3KB→33.7KB → WATCH_VIDEO_TASK_ARCHIVE.md）
-当前动作:     gen_ep13_h3_t2v.py --wait --skip-existing 后台批量（串行 · PID 3424 · 已出 10/19）
-下一步:       收 T2V 剩余 9 镜（25/28/30/31/37/40/43/44/46/48）→ gen_ep13_subtitles.py 出 SRT → synth_ep13.py 拼接（音画钉长）→ BGM（ace_step_t2audio 跨镜整体铺）→ 硬字幕 → 六项验收
+PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 端到端成片 ✅（样板第二例 · 48/48 镜）
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/gen_ep13_h3_t2v.py（19 无角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py + scripts/gen_ep13_subtitles.py + scripts/synth_ep13.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 29/29 + T2V 19/19 = 48/48 镜落盘 ✅；EP13_外骨骼_master.mp4（85.2MB）+ EP13_外骨骼_成片.mp4 硬字幕（90.7MB）已合成 ✅（1280×720@24fps h264+aac 262.88s · 音画漂移 0.011s）
+当前动作:     EP13 成片 QC 已闭环（ffprobe 分辨率/AV 同步/时长 + 抽帧 63s/259s 非空白）
+下一步:       （可选）SeedVR2 ×1.5 → 1920×1080 超分；（可选）BGM 跨镜混音；→ 18_暖阳 重做 / 下一章放量
 阻塞:         无（BLOCKERS #7 已闭环）
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-13（固化 gen_ep13_h3_t2v.py 19 无角色镜 · R2V 已出 13/29 · dry-run 全绿）
+- **上次唤醒**：2026-10-13（13_外骨骼 R2V 端到端成片 ✅ · 48/48 镜 master+硬字幕成片 QC 通过）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-13 · S3 收尾 · 13_外骨骼 R2V 端到端成片 ✅（48/48 镜 master + 硬字幕成片）**：本轮完成 EP13 外骨骼「样板第二例」端到端收口与 QC。
+  - **T2V 批次收齐**：`gen_ep13_h3_t2v.py` 19/19 无角色镜全部落盘；`OUTPUT/13_外骨骼/videos` R2V 29 + T2V 19 = **48/48 镜在位**。
+  - **★ concat 分辨率归一修复**：`scripts/synth_ep13.py::build_concat_cmd` 每镜视频链前加 `scale=1280:720:flags=lanczos,setsar=1`（R2V mp=0.4=864×480 vs T2V mp=0.6=1056×608 尺寸/宽高比 1.8 vs 1.737 不一致，直接 concat 报错）。
+  - **成片合成**：`gen_ep13_subtitles.py` 出 `EP13_外骨骼_字幕.srt`（11,610B）→ `synth_ep13.py` 拼接 `EP13_外骨骼_master.mp4`（89,320,786B）+ libass 硬字幕 → `EP13_外骨骼_成片.mp4`（95,126,651B）。
+  - **六项 QC（ffprobe 实测）**：master/成片均 **1280×720 @ 24fps h264 + aac**，视频 262.875s / 音轨 262.886s，**音画漂移 0.011s < 0.15s 闸门 ✅**；抽帧 63s/259s（`_chk_63.png`/`_chk_259.png`，1024×576）非空白（均值亮度 186.5/88.8，动态范围 0–255）。
+  - **遗留（可选后续）**：SeedVR2 ×1.5 → 1920×1080 超分；BGM 跨镜混音（ace_step_t2audio）。
+  - **下一步**：18_暖阳 重做 / 下一章放量。
+
 
 - **2026-10-13 · S3 续跑 · 任务书体积归档（⑥ 自滚归档）+ R2V 29/29 核验 + T2V 批量进行中**：本轮做不依赖 ComfyUI 队列的「记录/整改」活（T2V 批量串行在跑 · 队列 running=1 · PID 3424）。
   - **⑥ 体积归档**：`WATCH_VIDEO_TASK.md` 实测 42301B 越 40KB 红线 ⇒ Python 行级脚本把三块**已闭合**历史运维指令（2026-10-12 流水线改判 / 2026-10-12 下一章改判 / 2026-10-11 立线）**逐字归档**到 `run/video/WATCH_VIDEO_TASK_ARCHIVE.md`（80 行 · 8986B），任务书瘦身至 **33686B**（<40KB 红线），顶部留指针、唯一生效指令 = 2026-10-12「推翻旧法·R2V 重做」块。

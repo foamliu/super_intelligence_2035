@@ -48,7 +48,7 @@
 | 10 | 镜厅 | 54 | ✅ | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 待启动 |
 | 11 | 极速ASI | 54 | ✅ | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 待启动 |
 | 12 | 身体 | 55 | ✅ | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 待启动 |
-| **13** | **外骨骼** | **48** | ✅ | ✅ | ✅14场景参考 | ✅R2V 29/29 🔶T2V 10/19 | ✅H3随片(去TTS) | ⏳ | 🔶重做中 | 🔶 **S3 重做中**：R2V 29/29 落盘 + T2V 19 镜批量中（10/19）+ synth/subtitles 已固化待跑 |
+| **13** | **外骨骼** | **48** | ✅ | ✅ | ✅14场景参考 | ✅R2V 29/29+T2V 19/19 | ✅H3随片(去TTS) | ⏳ | ✅成片 | ✅ **S3 完成**：48/48 镜（R2V 29 + T2V 19）→ master + 硬字幕成片（1280×720@24fps 262.88s · 音画漂移 0.011s） |
 | 14 | 副作用 | 55 | ✅ | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 待启动 |
 | 15 | 南山台 | 55 | ✅ | ❌ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 缺规格 |
 | 16 | 三江 | 42 | ✅ | ❌ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 缺规格 |
@@ -85,7 +85,7 @@
 
 ## 4. 下一步（下一轮 · S3 放量）
 
-1. **S3 已收尾（18_暖阳）✅**：54/54 镜成片（`EP18_暖阳_成片.mp4` 273.34s/1056×608/h264+aac，主音画漂移 0.009s）+ 3 条 ACE-Step BGM + 混音 `EP18_暖阳_成片_BGM01.mp4`（**-23.8 LUFS / 峰值 -9.1 dBFS** 达标）。固化七脚本：`gen_ep18_h3_i2v/t2v` + `update_ep18_manifest` + `gen_ep18_subtitles` + `synth_ep18` + `gen_ep18_bgm` + `mix_ep18_bgm`。**下一步：BGM02/03 可选混音 → 最终 QC（qwen3_asr + sound_caption）→ 选定交付文件 → 下一章 **13_外骨骼重做（去 TTS·H3 随片）**（一次 1–2 章，`wait=False` 异步）；**本轮已启动**：已推翻「T2I→I2V」旧法 → 13_外骨骼改 R2V（29 有角色镜）+ T2V（19 无角色镜）：`gen_ep13_h3_r2v.py` 已收尾（29/29 落盘）+ `gen_ep13_h3_t2v.py` 批量中（10/19）+ `synth_ep13.py` / `gen_ep13_subtitles.py` 已重写（去 TTS）；任务书体积归档 ✅（→ WATCH_VIDEO_TASK_ARCHIVE.md）。
+1. **S3 已收尾（18_暖阳）✅**：54/54 镜成片（`EP18_暖阳_成片.mp4` 273.34s/1056×608/h264+aac，主音画漂移 0.009s）+ 3 条 ACE-Step BGM + 混音 `EP18_暖阳_成片_BGM01.mp4`（**-23.8 LUFS / 峰值 -9.1 dBFS** 达标）。固化七脚本：`gen_ep18_h3_i2v/t2v` + `update_ep18_manifest` + `gen_ep18_subtitles` + `synth_ep18` + `gen_ep18_bgm` + `mix_ep18_bgm`。**下一步：BGM02/03 可选混音 → 最终 QC（qwen3_asr + sound_caption）→ 选定交付文件 → 下一章 **13_外骨骼重做（去 TTS·H3 随片）**（一次 1–2 章，`wait=False` 异步）；**本轮已收尾 ✅**：已推翻「T2I→I2V」旧法 → 13_外骨骼改 R2V（29 有角色镜）+ T2V（19 无角色镜），**48/48 镜端到端成片**：`gen_ep13_h3_r2v.py` 29/29 + `gen_ep13_h3_t2v.py` 19/19 落盘 → `synth_ep13.py`（concat 分辨率归一 1280×720 + 音画钉长）→ `EP13_外骨骼_master.mp4` + `gen_ep13_subtitles.py` 硬字幕 `EP13_外骨骼_成片.mp4`（262.88s · 漂移 0.011s）；任务书体积归档 ✅（→ WATCH_VIDEO_TASK_ARCHIVE.md）。
 2. **BLOCKERS #5（混音时序重叠）已作废**（2026-10-11 禁用 TTS ⇒ 人声由 H3 随视频生成、不再叠 TTS 音轨）；时序纪律改为 **拼接时给每镜音轨钉长 + 逐镜测内容偏移**（`STEM_FEST_PLAYBOOK.md` §7）。
 3. 逐章复用 `synth_epXX.py` + `gen_epXX_subtitles.py` 范式（`ROOT = Path(__file__).resolve().parent.parent`）。
 
