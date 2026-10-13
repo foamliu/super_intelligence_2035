@@ -4,6 +4,7 @@ WAITING: 1
 
 ## 状态头
 
+> 🆕 **2026-10-13 16:24（外部编码器 ProtB 评测运行中）**：5 模型并行特征提取 + 3-seed ProtB 已在 `.12` GPU 3/4/5/6/7 启动（PID 22910，bash 父进程）。Smoke test 全 PASS（CLIP 1024-d/SigLIP2 1152-d/AIMv2 2048-d/OV2 1024-d/RICE 1024-d）。当前吞吐：CLIP 152 img/s · OV2 149 · SigLIP2 116 · AIMv2 103 · RICE 66。ETA：CLIP/OV2 ~2h、SigLIP2 ~2.5h、AIMv2 ~3h、RICE ~5h + 30min probe/模型。代码 `vision/external_encoder_protb.py` + `run_external_protb_parallel.sh`。日志 `/tmp/external_protb_logs/*.log`。特征缓存 `vision/external_features_cache/`。**红线：参考值表，不与 BaiZe from-scratch 混排**。
 > ✅ **④-4ep TRAINING + ALL EVAL COMPLETE** (17:23 Oct 12 → 10:12:47 Oct 13 train, 10:14→12:43 Oct 13 eval): 748,404 steps (374,202 new from 2ep resume), total=60,545s (~16.8h), steady_img/s=2818.0, **final_loss=0.0805** (vs 2ep 0.1856). Last PROBE: C1=0.5932, C2_gap=+0.1791, C4=OK (no collapse). C1 trajectory: 2ep end 0.5804 → 4ep end 0.5932 (+0.0128). 37 ckpts (380k-740k) + final vision.pt (509MB). **④-4ep EVAL ALL DONE**: **ProtB 67.05±0.02%** (seeds 67.03/67.08/67.04, Δ+4.71pp vs 1ep, Δ+1.68pp vs 2ep), **ProtA 56.70%** (Δ+2.88pp vs 2ep), **zs 40.64%/72.64%** (Δ+2.12pp vs 2ep), **k-NN k=20 42.35%** (k=10: 41.94%, k=5: 39.77%, Δ+1.68pp vs 2ep). **VERDICT: MODERATE, DIMINISHING** — 67.05% < 70% victory threshold; 1→2ep +3.03pp, 2→4ep +1.68pp (ratio ~0.55) → trajectory upward but approaching ceiling. lp-epoch curve + Chinese report + EXPERIMENTS_VISION.md §9.7 all updated.
 > 🆕 **2026-10-13 12:43（④-4ep 全套评测完成）**：ProtB 67.05±0.02%（< 70% 胜利阈值，Δ+1.68pp vs 2ep），四指标一致 +1.7~2.9pp，递减确认（1→2 +3.03pp，2→4 +1.68pp）。中文报告 `vision/report_vision_final_20261012_zh.html` 已更新（TL;DR/§7/§8曲线/§9表/§10结论/柱状图）。EXPERIMENTS_VISION.md §9.5表+§9.4状态+§9.7 已同步。lp-epoch曲线已加 4ep 点。
 > 🔴 **V2 Muon COLLAPSED at ALL tested LRs** (2026-10-11): lr=5e-4 collapsed@step2100, lr=1e-4 collapsed@step4200. ❌ **Muon incompatible with AIMv2-style contrastive+reconstruction objective**. Full analysis in `EXPERIMENTS_VISION.md §9.2`.
@@ -204,6 +205,7 @@ WAITING: 1
 
 ## 本唤醒流水
 
+- [16:24 Oct13] 🔬 **外部编码器 ProtB 评测启动**：运维令 2026-10-13（用 ProtB 评测 `/nas_train/app.e0031982/models` 下现有公众视觉编码器）。代码 `vision/external_encoder_protb.py`（5 模型加载层 + 特征提取 + 3-seed ProtB）+ `run_external_protb_parallel.sh`（5 GPU 并行）。Smoke test 全 PASS（CLIP 1024-d/SigLIP2 1152-d/AIMv2 2048-d/OV2 1024-d/RICE 1024-d）。已启动并行全量提取（GPU 3/4/5/6/7），吞吐 66-152 img/s，ETA 2-5h + 30min probe/模型。日志 `/tmp/external_protb_logs/*.log`。
 - [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发** — 已归档至 `daily-memories-vision/2026-10-09.md`。配方 `warmup=2000/lr=5e-4/cosine/min_lr=5e-5`，两臂同数据。
 
 > 📦 10-06~10-10 早期流水(R12b/scaling/fair-rerun)已归档 → daily-memories-vision/2026-10-{06,07,09,10}.md。**关键结论**：E1fair ProtB=62.34%, E2fair=62.51%, Δlp=+0.17pp indistinguishable。

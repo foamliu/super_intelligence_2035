@@ -27,9 +27,9 @@ mkdir -p "$LOGDIR"
 
 # Model → GPU mapping
 declare -A MODEL_GPU
-MODEL_GPU[clip-vitl14-336]=0
-MODEL_GPU[siglip2-so400m-384]=1
-MODEL_GPU[aimv2-1B-336]=2
+MODEL_GPU[clip-vitl14-336]=5
+MODEL_GPU[siglip2-so400m-384]=6
+MODEL_GPU[aimv2-1B-336]=7
 MODEL_GPU[openvision2-vitl14-336]=3
 MODEL_GPU[rice-vitl14-560]=4
 
