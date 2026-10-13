@@ -270,5 +270,52 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24334",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": false,
+      "msg": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 332937997d03e0c173be6d9fc1841e9186e857df\nfatal: remote error: upload-pack: not our ref 332937997d03e0c173be6d9fc1841e9186e857df\n; github=fetch failed (local=False): \n[TIMEOUT]"
+    },
+    "blocked": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 332937997d03e0c173be6d9fc1841e9186e857df\nfatal: remote error: upload-pack: not our ref 332937997d03e0c173be6d9fc1841e9186e857df\n; github=fetch failed (local=False): \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24970",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 460.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_claude_code_matplotlib__matplotlib-24970.json",
+      "stdout_tail": "n_single] base_commit=a3011dfd1aaa2487cce8aa7369475533133ef777\n[run_single] ps_len=1758\n[run_single] git reset --hard a3011dfd1aaa2487cce8aa7369475533133ef777\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=458.6s ==\n[run_single] model_patch: 780 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_claude_code_matplotlib__matplotlib-24970.json\n[run_single] cleanup: git reset --hard a3011dfd1aaa2487cce8aa7369475533133ef777\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 253
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]

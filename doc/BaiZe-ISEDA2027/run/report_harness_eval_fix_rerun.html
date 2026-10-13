@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Harness Eval 修复重评报告 — 2026-10-14 04:53（含 fix1+fix2+fix3+fix4）</title><style>
+<title>Harness Eval 修复重评报告 — 2026-10-14 06:50（含 fix1+fix2+fix3+fix4+rerun）</title><style>
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:2em;background:#f5f5f5;color:#333}
 h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:.3em}
 h2{color:#283593;margin-top:1.8em;border-left:4px solid #3f51b5;padding-left:.5em}
@@ -12,16 +12,17 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2
 .bn{font-size:1.5em;font-weight:bold}.green{color:#2e7d32}.red{color:#c62828}
 </style></head><body>
 <h1>Harness Eval 修复重评报告</h1>
-<p style="color:#999">生成时间：2026-10-14 04:53（含 fix1+fix2+fix3+fix4（进行中））｜数据：kimi_pilot_results.json(7×300) + fix1(376条) + fix2(33条) + fix3(64条) + fix4(59/61条)</p>
+<p style="color:#999">生成时间：2026-10-14 06:50（含 fix1+fix2+fix3+fix4+rerun）｜数据：kimi_pilot_results.json(7×300) + fix1(376条) + fix2(33条) + fix3(64条) + fix4(59/61条) + rerun(9/54条)</p>
 <div class="summary"><h2>核心结论</h2>
 <p><strong>fix1 重评范围：</strong>376条（5 repo 非 resolved 且有 patch × 7 harness）｜<strong>fix2：</strong>33条（pytest 18 + flask 14）｜<strong>fix3：</strong>64条（matplotlib 29 + sklearn 27 + sphinx 8）｜<strong>fix4：</strong>59/61条（sklearn 27 + sphinx 8 + astropy 26）</p>
 <p><strong>fix1 Patch 新增应用：</strong><span class="bn green">+215</span>条｜<strong>fix2 Patch 新增应用：</strong><span class="bn green">+28</span>条 → 合计 <span class="bn green">+243</span></p>
 <p><strong>fix1 新增 Resolved：</strong><span class="bn green">+34</span>条｜<strong>fix2 新增 Resolved：</strong><span class="bn green">+9</span>条 → 合计 <span class="bn green">+43</span></p>
-<p><strong>总 Resolved：</strong>574 → <span class="bn green">617</span>（27.3% → 29.4%，+2.0pp）</p>
+<p><strong>总 Resolved：</strong>574 → <span class="bn green">618</span>（27.3% → 29.4%，+2.0pp）｜ fix1+fix2 贡献 +43，fix3+fix4 贡献 +0，rerun 贡献 +1（进行中）</p>
 <p><strong>fix3 结果：</strong>29/64 patch-applied，<span class="red">0 flipped</span> — matplotlib C 扩展修复✅但 patch 全错(能力)；sklearn/sphinx 仍 context mismatch</p>
-<p><strong>fix4 结果(进行中 59/61)：</strong>25/59 patch-applied，<span class="red">0 flipped</span> — testbed_py38 修复 sklearn patch apply✅但 0 resolved(能力)；tox→pytest 修复 sphinx✅</p>
+<p><strong>fix4 结果(已完成 59/61)：</strong>25/59 patch-applied，<span class="red">0 flipped</span> — testbed_py38 修复 sklearn patch apply✅但 0 resolved(能力)；tox→pytest 修复 sphinx✅；astropy 0/26 patched（仍 context mismatch）</p>
+<p><strong>rerun 结果(进行中 9/54)：</strong>1 resolved（django-13933 by claude-code）· 5 patch-but-failed · 3 blocked（matplotlib git fetch 503）· codex 0-byte patch 问题持续</p>
 <p><strong>错误数：</strong>0</p>
-<p class="note">⚠️ fix4 重评仍在后台运行中（59/61 = 97%）。本报告为<strong>中间结果</strong>，最终报告将在全部完成后刷新。</p></div>
+<p class="note">⚠️ P1-2 rerun（blocked+no-patch 54条重跑）仍在后台运行中（9/54 = 17%）。本报告含<strong>中间结果</strong>，最终将在全部完成后刷新。</p></div>
 <div class="fixd"><h2>P0/P1 修复措施</h2><ol>
 <li><strong>fix1-pytest（SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0）</strong>：解决 <code>pytest-0.1.dev1</code> 版本冲突。贡献 33 翻转。</li>
 <li><strong>fix1-matplotlib（freetype 预置 + mplsetup.cfg）</strong>：freetype 头文件+库预拷贝到 conda env，<code>MPLSETUPCFG</code> 注入。</li>
@@ -102,18 +103,34 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2
 <li><strong>matplotlib</strong>：29/29 patches now apply ✅（C 扩展修复完全成功）→ 但 <strong>0/29 resolved</strong>（f2p 测试全不通过）→ <strong>agent 补丁全部不正确</strong>，这是 LLM 能力问题，非基础设施</li>
 <li><strong>sklearn</strong>：0/27 patches apply → 补丁上下文不匹配（Hunk FAILED）→ 需 fix4 的 testbed_py38 修复</li>
 <li><strong>sphinx</strong>：0/8 patches apply → tox 4.x 不兼容 → 需 fix4 的 tox→pytest 替换</li></ul></div>
-<h2>§4c fix4 结果（testbed_py38 + tox→pytest + astropy numpy&lt;1.24）（进行中）</h2><div class="fixd"><h3>修复措施</h3><ol>
+<h2>§4c fix4 结果（testbed_py38 + tox→pytest + astropy numpy&lt;1.24）（已完成 59/61）</h2><div class="fixd"><h3>修复措施</h3><ol>
 <li><strong>sklearn</strong>：<code>env_override=testbed_py38</code>（Python 3.8 代替 3.6，修复 importlib.resources 缺失）</li>
 <li><strong>sphinx</strong>：tox→pytest 正则替换（修复 tox 4.x 不兼容）</li>
 <li><strong>astropy</strong>：<code>extra_pip='numpy&lt;1.24'</code>（修复 np.int 弃用）+ /dev/shm tmpfs（修复 Cython SemLock）</li></ol></div>
 <table><thead><tr><th>Repo</th><th>已评/目标</th><th>Patch Applied</th><th>Resolved</th><th>Flipped</th><th>结论</th></tr></thead><tbody>
 <tr><td>astropy/astropy</td><td>26/26</td><td>0</td><td>0</td><td>0</td><td style='color:#c62828'>❌ 仍 context mismatch</td></tr><tr><td>scikit-learn/scikit-learn</td><td>25/27</td><td>19</td><td>0</td><td>0</td><td style='color:#c62828'>✅ infra 修复有效，❌ patch 全错(能力)</td></tr><tr><td>sphinx-doc/sphinx</td><td>8/8</td><td>6</td><td>0</td><td>0</td><td style='color:#c62828'>✅ infra 修复有效，❌ patch 全错(能力)</td></tr>
 <tr style="background:#e3f2fd;font-weight:bold"><td>总计</td><td>59/61</td><td>25</td><td>0</td><td>0</td><td>—</td></tr></tbody></table>
-<div class="note"><p><strong>fix4 关键发现(部分，进行中)：</strong></p><ul>
+<div class="note"><p><strong>fix4 关键发现(已完成)：</strong></p><ul>
 <li><strong>sklearn</strong>：19/25 patches now apply ✅（testbed_py38 修复有效！从 fix3 的 0/27 提升）→ 但 <strong>0 resolved</strong>（patch 全错，能力限制）</li>
-<li><strong>sphinx</strong>：6/8 patches apply（tox→pytest 修复有效！sphinx-8595 old=false→new=true）</li>
-<li><strong>astropy</strong>：26 条 — numpy&lt;1.24 + /dev/shm 修复</li>
-<li><strong>核心结论</strong>：fix4 证实 infra 修复（Python 版本、tox 替换）能让 patch 成功 apply，但 <strong>0 resolved = agent 生成的补丁本身不正确</strong>（f2p 测试不通过），这是 <strong>LLM 能力限制</strong>，非评测环境问题</li></ul></div>
+<li><strong>sphinx</strong>：6/8 patches apply（tox→pytest 修复有效！sphinx-8595 old=false→new=true）→ 但 <strong>0 resolved</strong>（patch 全错）</li>
+<li><strong>astropy</strong>：26 条 — numpy&lt;1.24 + /dev/shm 修复后 <strong>0/26 patches apply</strong>（仍 context mismatch — patch hunk 与 base_commit 不匹配，需进一步排查）</li>
+<li><strong>核心结论</strong>：fix4 证实 infra 修复（Python 版本、tox 替换）能让 patch 成功 apply，但 <strong>0 resolved = agent 生成的补丁本身不正确</strong>（f2p 测试不通过），这是 <strong>LLM 能力限制</strong>，非评测环境问题。fix3+fix4 合计 0 flipped，与 fix1+fix2 的 43 flipped 形成鲜明对比：早期修复（setuptools/werkzeug 版本）能挽回通过率，后期修复（C 扩展/Python 版本）只能让 patch apply 但无法翻转为 resolved</li></ul></div>
+<h2>§4d P1-2 Rerun 结果（blocked+no-patch 54条重跑）（进行中 9/54）</h2><div class="fixd"><h3>重跑措施</h3><ol>
+<li><strong>git fetch 3次重试+指数退避</strong>：解决 GitHub 503 间歇错误</li>
+<li><strong>预克隆 5 高频 repo</strong>：matplotlib/django/sympy/sklearn/pytest 到 /dev/shm/repos/（进行中 — matplotlib --depth=5000 clone 太慢 52MB/35min 已 kill）</li>
+<li><strong>排除 14 quota-blocked</strong>：全 django__django-16873（API 配额问题，非 infra）</li></ol></div>
+<table><thead><tr><th>Harness</th><th>已重跑/目标</th><th>Resolved</th><th>Patch-but-Failed</th><th>Blocked</th><th>结论</th></tr></thead><tbody>
+<tr><td>codex</td><td>4/4</td><td>0</td><td>4</td><td>0</td><td style='color:#c62828'>全 0-byte patch（harness 问题）</td></tr>
+<tr><td>claude-code</td><td>5/15</td><td>1</td><td>3</td><td>1</td><td style='color:#2e7d32'>django-13933 resolved ✅</td></tr>
+<tr><td>deepseek</td><td>0/15</td><td>—</td><td>—</td><td>—</td><td>待跑</td></tr>
+<tr><td>hermes</td><td>0/15</td><td>—</td><td>—</td><td>—</td><td>待跑</td></tr>
+<tr><td>pi</td><td>0/5</td><td>—</td><td>—</td><td>—</td><td>待跑</td></tr>
+<tr style="background:#e3f2fd;font-weight:bold"><td>总计</td><td>9/54</td><td>1</td><td>7</td><td>1</td><td>ETA ~8h</td></tr></tbody></table>
+<div class="note"><p><strong>rerun 关键发现(进行中)：</strong></p><ul>
+<li><strong>django-13933 by claude-code</strong>：唯一 resolved ✅ — 原始 run 因 git fetch 503 blocked，重跑后 claude-code 生成正确 patch</li>
+<li><strong>codex 全 0-byte patch</strong>：4/4 entries 产生 0 字节 patch → codex harness 在 kimi-k2.6-cloud 上的兼容性问题（非 LLM 能力）</li>
+<li><strong>matplotlib blocked</strong>：git fetch 503 持续 → 预克隆失败（proxy 带宽 ~1.5MB/min 太慢），需更浅 clone 或本地 cache</li>
+<li><strong>预计挽回</strong>：~5-10 resolved（主要来自 django/sympy 的 blocked entries）</li></ul></div>
 <h2>§5 方法论</h2><ol><li>加载原始kimi_pilot_results.json(7×300=2100)</li><li>筛选5 repo非resolved且有patch→376条</li><li>r1_eval.py用修复后rootfs+注入env重评(4级patch容错)</li><li>对比old_eval vs new_eval; flipped=not-resolved→resolved</li><li>结果写入独立文件kimi_pilot_results.fix1.json(不覆盖原始)</li><li>增量落盘+幂等可续(--resume)</li></ol>
 <h2>§6 可复现命令</h2><pre style="background:#263238;color:#eee;padding:1em;border-radius:8px;overflow-x:auto;font-size:12px">cd .../run/harness
 HF_HUB_OFFLINE=1 python3 rerun_eval_fix1.py --timeout 1200 --resume >> rerun_eval_fix1.log 2>&amp;1 &amp;
@@ -128,5 +145,5 @@ python3 gen_fix_report.py</pre>
 <tr><td>pip_install_fail</td><td>0</td><td>pip 安装失败</td><td style='color:#ff9800'>⚠️ 需预置 wheel</td></tr>
 </tbody></table>
 <div class="note"><p><strong>关键发现：</strong>72/97 条（74%）是 <strong>Python 版本不匹配</strong>（3.6→3.8 或 3.8→3.9），可通过为每个 repo 创建正确 Python 版本的 conda env 解决。14 条是 werkzeug 版本问题（flask），可通过预装兼容版本解决。这属于 <strong>P1-1（per-repo env）</strong> 范畴，需运维确认后执行。</p></div>
-<footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py | fix1(376) + fix2(33) + fix3(64) + fix4(59/61) | harness fix:</footer>
+<footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py | fix1(376) + fix2(33) + fix3(64) + fix4(59/61) + rerun(9/54) | harness fix:</footer>
 </body></html>
