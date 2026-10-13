@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-14 03:19（merge3ds ArmC 训练监控 + merged JSON 修复 · wake #60）**：✅ ArmC 训练健康运行中：step ~13990/154500, loss~0.37↓, C1=0.4207↑, C2_gap=+0.1857, C4=OK(loss_early=None)。吞吐 ~9600 img/s, ~212ms/iter, 剩余 ~140500 步 → ETA ~11:30。已存 ckpt: vision_fused.pt(step8100), vision_step10000.pt。✅ 修复 external_protb_results_merged.json（补入 AIMv2-1B 条目，现 5/5 齐全，按 ProtB 降序排列）。✅ 所有运维指令已完成：①外部编码器 ProtB 5/5 ②LR 3-臂扫描+文献表 ③数据量口径订正 ④计划HTML已交付 ⑤ArmC训练运行中。📋 训练完成→3-seed ProtB→结果报告。📦 体积：TASK=32.0KB✅ / MEMORY=29.0KB✅。
+> 🆕 **2026-10-14 03:54（merge3ds ArmC 训练监控 + eval chain 部署 · wake #61）**：✅ ArmC 训练健康运行中：step ~19830/154500, loss~0.44 (spike at 18k-19.5k recovered), C1=0.4946, C2_gap=+0.1899, C4=OK。吞吐 ~9400 img/s, ~215ms/iter, 剩余 ~134670 步 → ETA ~12:00。39 PROBE 全 C4=OK。✅ 创建+启动 `post_merge3ds_chain.sh`（后台等待训练完成→自动跑 ProtB/ProtA/zs/k-NN 全套评测→/tmp/merge3ds_armC_eval.log）。📋 训练完成→eval chain 自动评测→收集结果→报告。📦 体积：TASK=32.0KB✅ / MEMORY=30.1KB✅。
 > ✅ **④-4ep TRAINING + ALL EVAL COMPLETE** (17:23 Oct 12 → 10:12:47 Oct 13 train, 10:14→12:43 Oct 13 eval): 748,404 steps (374,202 new from 2ep resume), total=60,545s (~16.8h), steady_img/s=2818.0, **final_loss=0.0805** (vs 2ep 0.1856). Last PROBE: C1=0.5932, C2_gap=+0.1791, C4=OK (no collapse). C1 trajectory: 2ep end 0.5804 → 4ep end 0.5932 (+0.0128). 37 ckpts (380k-740k) + final vision.pt (509MB). **④-4ep EVAL ALL DONE**: **ProtB 67.05±0.02%** (seeds 67.03/67.08/67.04, Δ+4.71pp vs 1ep, Δ+1.68pp vs 2ep), **ProtA 56.70%** (Δ+2.88pp vs 2ep), **zs 40.64%/72.64%** (Δ+2.12pp vs 2ep), **k-NN k=20 42.35%** (k=10: 41.94%, k=5: 39.77%, Δ+1.68pp vs 2ep). **VERDICT: MODERATE, DIMINISHING** — 67.05% < 70% victory threshold; 1→2ep +3.03pp, 2→4ep +1.68pp (ratio ~0.55) → trajectory upward but approaching ceiling. lp-epoch curve + Chinese report + EXPERIMENTS_VISION.md §9.7 all updated.
 > 🆕 **2026-10-13 12:43（④-4ep 全套评测完成）**：ProtB 67.05±0.02%（< 70% 胜利阈值，Δ+1.68pp vs 2ep），四指标一致 +1.7~2.9pp，递减确认（1→2 +3.03pp，2→4 +1.68pp）。中文报告 `vision/report_vision_final_20261012_zh.html` 已更新（TL;DR/§7/§8曲线/§9表/§10结论/柱状图）。EXPERIMENTS_VISION.md §9.5表+§9.4状态+§9.7 已同步。lp-epoch曲线已加 4ep 点。
 > 📦 V2 Muon / V3 全量数据 / ② probe sweep / ④-2ep（2026-10-11~12）已归档 → daily-memories-vision/2026-10-14.md；**结论**：V2 Muon 全 LR 坍缩❌；V3 全量 ProtB=63.52% Δ+1.18pp 不可分辨；② probe NOT underfitting（62.34%=ceiling）；④-2ep ProtB=65.37% Δ+3.03pp MODERATE。需要时再读。
@@ -17,10 +17,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **merge3ds ArmC 训练中（监控中 · wake #60）**：step ~13990/154500, loss~0.37↓, C1=0.4207↑, C2_gap=+0.1857, C4=OK。吞吐 ~9600 img/s, ~212ms/iter, 剩余 ~140500 步 → ETA ~11:30。✅ 外部编码器 ProtB 5/5 全部完成（SigLIP2 87.46% > AIMv2 85.22% > OV2 84.97% > CLIP 82.66% > RICE 81.72%）。✅ LR 3-臂扫描+文献表+数据量口径订正均已写入计划报告。✅ merged JSON 已补入 AIMv2（5/5 齐全）。📋 训练完成后 → 3-seed ProtB 评测 → 结果报告。 |
+| PHASE | 🔄 **merge3ds ArmC 训练中（监控中 · wake #61）**：step ~19830/154500, loss~0.44 (spike 18k-19.5k recovered), C1=0.4946, C2_gap=+0.1899, C4=OK。吞吐 ~9400 img/s, ~215ms/iter, 剩余 ~134670 步 → ETA ~12:00。✅ 外部编码器 ProtB 5/5 完成。✅ LR 3-臂扫描+文献表+数据量订正已写入计划报告。✅ `post_merge3ds_chain.sh` 已后台启动（等待训练完成→自动 ProtB/ProtA/zs/k-NN 全套评测）。📋 eval chain 完成后 → 收集结果 → `report_vision_merge3ds_result_zh.html`。 |
 | ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-14 03:19 (wake #60)**: ✅ ArmC 训练健康运行中：step ~13990/154500, loss~0.37↓ (vs resume 时 0.62), C1=0.4207↑, C2_gap=+0.1857, C4=OK。吞吐 ~9600 img/s, ~212ms/iter, 剩余 ~140500 步, ETA ~11:30。ckpt: vision_fused.pt(8100) + vision_step10000.pt。✅ 修复 external_protb_results_merged.json 补入 AIMv2（现 5/5 齐全）。📦 TASK=32.0KB✅ / MEMORY=29.0KB✅。 |
+| 更新 | **2026-10-14 03:54 (wake #61)**: ✅ ArmC 训练健康：step ~19830/154500, loss~0.44 (spike at 18k-19.5k recovered, C1/C2 全程健康), C1=0.4946, C2_gap=+0.1899, C4=OK。吞吐 ~9400 img/s, ~215ms/iter, 剩余 ~134670 步, ETA ~12:00。✅ 创建+启动 `post_merge3ds_chain.sh`（后台等待训练完成→自动跑 ProtB(3 seeds)/ProtA/zs/k-NN→/tmp/merge3ds_armC_eval.log）。📦 TASK=32.0KB✅ / MEMORY=30.1KB✅。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
