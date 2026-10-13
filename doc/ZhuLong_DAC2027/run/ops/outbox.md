@@ -8958,3 +8958,57 @@ hfeg0tedaap02
 -rw-r--r-- 1 app.e0031982 app.adm 4544721 Oct 13 14:51 /tmp/ABL_phi_k3_r1_att2.l
 === DONE ===
 ```
+
+---
+
+## RUN_ID 66 · 2026-10-13 16:49:54 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 66 · 只读健康体检
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] zhulong_loop.sh 进程（pid/ppid/etimes）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-120
+echo "=== [2] zhulong_ops_relay.sh 进程（pid/ppid/etimes）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-120
+echo "=== [3] loop 日志尾 ==="
+tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-160
+echo "=== [4] relay 日志尾 ==="
+tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-160
+echo "=== [5] 是否有 cline 在跑（zhulong）==="
+pgrep -af 'cline' | grep -i zhulong | cut -c1-120 || echo "无 zhulong cline"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-13 16:49:54
+=== [1] zhulong_loop.sh 进程（pid/ppid/etimes）===
+ 464225       1   68156 bash zhulong_loop.sh
+2302281       1   96647 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+=== [2] zhulong_ops_relay.sh 进程（pid/ppid/etimes）===
+1443440 3896331       0 bash zhulong_ops_relay.sh
+3277328       1  203499 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_rela
+3896331       1   22448 bash zhulong_ops_relay.sh
+=== [3] loop 日志尾 ===
+[push] 2026-10-13 16:47:14 push interval reached, syncing ...
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-13 16:47:16 WAITING=1 (eval running / infra not ready) → sleep 1800s
+=== [4] relay 日志尾 ===
+[zhulong-relay] 2026-10-13 10:35:46 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+[zhulong-relay] RUN_ID=65 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=65 executed, exit=0, appended to outbox.
+[zhulong-relay] push FAILED (will retry next cycle)
+=== [5] 是否有 cline 在跑（zhulong）===
+19820 /bin/bash -c cd /home/app.t0002949/T0002949/zhulong/apps/cline-hub && export http_proxy=http://172.19.92.23:13128 
+20041 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/s
+3004948 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core
+4182399 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core
+4182953 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core
+=== DONE ===
+```
