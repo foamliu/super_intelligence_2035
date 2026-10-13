@@ -134,6 +134,11 @@ class UnshareSandbox(Sandbox):
     pins the intra-net proxy + aliyun PyPI so ``pip install -e .`` reaches wheels.
     """
 
+    def __init__(self, rootfs: Path, timeout: int, no_build_isolation: bool = False):
+        self.rootfs = Path(rootfs)
+        self.timeout = timeout
+        self.no_build_isolation = no_build_isolation
+
     def run(self, cmd: str, workdir: str | None = None):
         full = f"cd {workdir} && {cmd}" if workdir else cmd
         r = str(self.rootfs)
@@ -142,12 +147,15 @@ class UnshareSandbox(Sandbox):
         # matplotlib: MPLSETUPCFG points to mplsetup.cfg with system_freetype=True.
         # All repos: PIP_NO_BUILD_ISOLATION=1 + pre-populated pip cache avoids
         #   re-downloading build deps that the sandbox blocks.
+        # fix2 (2026-10-13): no_build_isolation flag for alternate envs (testbed_py38/py39)
+        #   that need pip to install build deps from PyPI.
         extra_env = ""
         rname = Path(r).name
         if "pytest" in rname:
             extra_env += " SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0"
         if "matplotlib" in rname:
             extra_env += " MPLSETUPCFG=/testbed/mplsetup.cfg"
+        nbi = "0" if self.no_build_isolation else "1"
         inner = (
             f"mount --bind /usr {r}/usr || exit 11; "
             f"mount --bind {r}/.locale {r}/usr/lib/locale || exit 12; "
@@ -156,7 +164,7 @@ class UnshareSandbox(Sandbox):
             f"http_proxy=http://172.19.92.25:13128 "
             f"https_proxy=http://172.19.92.25:13128 "
             f"PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ "
-            f"PIP_NO_BUILD_ISOLATION=1{extra_env} "
+            f"PIP_NO_BUILD_ISOLATION={nbi}{extra_env} "
             f"/bin/bash -c {shlex.quote(full)}"
         )
         argv = ["unshare", "--user", "--map-root-user", "--mount", "--fork",
@@ -179,11 +187,27 @@ SANDYBOXES = {"native": NativeSandbox, "unshare": UnshareSandbox}
 # ---------------------------------------------------------------------------
 def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
                     inst_log_dir: Path, skip_patch: bool = False,
-                    base_commit: str = ""):
-    """Run one instance and return the report dict (mirrors run_instance)."""
+                    base_commit: str = "",
+                    env_override: str = "",
+                    extra_pip: str = "",
+                    no_build_isolation: bool = False):
+    """Run one instance and return the report dict (mirrors run_instance).
+
+    fix2 additions (2026-10-13):
+      env_override: if set, replaces 'conda activate testbed' with
+        'conda activate {env_override}' in the eval script (e.g. 'testbed_py39').
+      extra_pip: if set, adds 'pip install {extra_pip}' after conda activate
+        in the eval script (e.g. "'werkzeug<2.3'").
+      no_build_isolation: if True, sets PIP_NO_BUILD_ISOLATION=0 (for alternate
+        envs that need pip to install build deps from PyPI).
+    """
     instance_id = test_spec.instance_id
     inst_log_dir.mkdir(parents=True, exist_ok=True)
-    sb = sandbox_cls(rootfs, timeout)
+    # Pass no_build_isolation to sandbox if it supports it.
+    try:
+        sb = sandbox_cls(rootfs, timeout, no_build_isolation=no_build_isolation)
+    except TypeError:
+        sb = sandbox_cls(rootfs, timeout)
 
     # -- 1) apply model patch (mirror run_evaluation.py:288-337) ------------
     if not skip_patch:
@@ -242,6 +266,23 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
 
     # -- 2) write eval.sh into rootfs, run it, capture output ----------------
     eval_script = test_spec.eval_script
+    # fix2: apply env_override and extra_pip transformations (2026-10-13).
+    if env_override:
+        eval_script = eval_script.replace(
+            "conda activate testbed",
+            f"conda activate {env_override}",
+        )
+    if extra_pip:
+        # Insert extra pip install after the first 'conda activate' line.
+        lines = eval_script.split("\n")
+        new_lines = []
+        inserted = False
+        for ln in lines:
+            new_lines.append(ln)
+            if not inserted and "conda activate" in ln:
+                new_lines.append(f"pip install {extra_pip}")
+                inserted = True
+        eval_script = "\n".join(new_lines)
     (inst_log_dir / "eval.sh").write_text(eval_script)
     (rootfs / "eval.sh").write_text(eval_script)
 
