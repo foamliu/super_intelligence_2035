@@ -9012,3 +9012,67 @@ Everything up-to-date
 4182953 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core
 === DONE ===
 ```
+
+---
+
+## RUN_ID 67 · 2026-10-13 17:15:23 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 67 · 只读核验
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] zhulong_loop.sh 进程（应 1 个 ppid=1，etimes 小=新启动）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-120
+echo "=== [2] zhulong_ops_relay.sh 进程（应 1 个 ppid=1）==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-120
+echo "=== [3] loop 日志尾（应见 invoking opencode，且无 Unrecognized flag）==="
+tail -25 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-160
+echo "=== [4] 是否有评测/opencode 在跑 ==="
+pgrep -af 'run_cline_script|opencode' | cut -c1-120 | head -5 || echo "无评测进程"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-13 17:15:23
+=== [1] zhulong_loop.sh 进程（应 1 个 ppid=1，etimes 小=新启动）===
+1523407       1     584 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+=== [2] zhulong_ops_relay.sh 进程（应 1 个 ppid=1）===
+1569058 3277328       0 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_rela
+3277328       1  205028 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_rela
+=== [3] loop 日志尾（应见 invoking opencode，且无 Unrecognized flag）===
+=== does start.sh export PYTHON to a file? check if loop sources it ===
+=== venv python full path ===
+lrwxrwxrwx 1 app.e0031982 app.adm  7 Sep 18 10:05 venv/bin/python -> python3
+lrwxrwxrwx 1 app.e0031982 app.adm 16 Sep 18 10:05 venv/bin/python3 -> /usr/bin/python3
+> build · glm-5.2
+Root cause: `start.sh` sets `PYTHON=venv/bin/python` but doesn't `export` it, so when I invoke `run_cline_script.sh` directly, it falls back to system `python` 
+[0m$ [0mcd /nasdata/app.e0031982/code/eda_fastmcp
+echo "=== kill any residual run_cline_script ==="
+pkill -f 'run_cline_script' 2>/dev/null; sleep 2
+pgrep -af 'run_cline_script' | grep -v opencode
+echo "--- (empty=clear) ---"
+echo "=== relaunch r2 with PYTHON=venv ==="
+export PYTHON="$PWD/venv/bin/python"
+echo "PYTHON=$PYTHON"
+$PYTHON -c "import pydantic; print('pydantic ok', pydantic.__version__)"
+setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_phi_k3_r2.log 2>&1 < /dev/null &
+sleep 8
+echo "=== verify ==="
+pgrep -af 'run_cline_script' | grep -v opencode | head -2
+echo "--- log tail ---"
+ls -l /tmp/ABL_phi_k3_r2.log
+tail -12 /tmp/ABL_phi_k3_r2.log
+=== kill any residual run_cline_script ===
+[loop] 2026-10-13 17:11:00 opencode returned (exit 0), checking git sync ...
+[loop] 2026-10-13 17:11:00 WAITING=1 (eval running / infra not ready) → sleep 1800s
+=== [4] 是否有评测/opencode 在跑 ===
+91400 /home/app.e0026456/.npm-global/lib/node_modules/@opencode/cli/bin/opencode.exe serve --service
+144158 opencode
+194973 opencode
+473117 /home/app.e0042624/.local/node/bin/opencode
+559898 opencode
+=== DONE ===
+```
