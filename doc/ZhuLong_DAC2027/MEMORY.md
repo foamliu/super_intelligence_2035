@@ -45,13 +45,13 @@ WAITING: 0
 
 ---
 
-## 3. 在途任务（状态实况 · 更新于 2026-10-11）
+## 3. 在途任务（状态实况 · 更新于 2026-10-13）
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID `303182` · proxy✅；MCP `:8090` PID `1092071`） | 🆕 **2026-10-11 刷新**：`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=2` · `PHASE=blocked` · `WAITING=1`；进度 **36/75 轮**（B 4/4；C1 三臂 5/5：`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5；**锚点 `C1.full` 仅 `r1=88.0%` 有效**）。**10-11 事件**：`(八)` 的 4 新端口 `8663/8666/8667/8670` 再次全挂死（0 字节/超时；`8670` 触 license 断路器 83 consecutive）→ `r2_new`（batch `2026_1010_234408`）code-gen 146/158/2 fail、**eval 未跑 = 无 official Pass@1** → **❌作废**。**用户裁定 → `(九)`+ops `RUN_ID 32`**：换回**旧 4 端口 `8650/8651/8652/8654`**（`(六)` 实测 3/3）+ `RAG_RECALL_URL`→**`9006`**（`9012` 已死）+ 删 hook `PreToolUse` + `.env` stash + 重启 `eda_fastmcp` + **4/4 健康才起 r2–r5**（log `/tmp/ABL_full_r2_8650set.log`）。**用户二段令「昨晚改动全部回退、无亮点」⇒ `timeout:180`（`(八)`③ 两处 `cline_mcp_settings.json`）已随 RUN_ID 32「3.6 步」回退**（427→10 不作保留理由）。详见 `daily-memories/2026-10-11.md`。 |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID `464225` · proxy✅；MCP `:8090` PID `131513`） | 🆕 **2026-10-13 刷新**：`STAGE=C2` · `CONFIG=phi_k3` · `ROUND=1 att2` · `PHASE=running` · `WAITING=1`；进度 **41/75 轮**（B 4/4✅；C1 4 臂 5/5✅ 含 `full_v3` 锚点 82.1±3.0%；**C2.phi_k10 5/5✅=77.7±2.2%**；phi_k3 r1 att1=72.8% 被**误判** <75% 作废 → att2 重跑中）。**🔴 2026-10-13 运维指令(十三) 已下发**：75% 下限**只适用于 `full` 锚点**，消融臂低分 = 真实消融效应，**不得作废/重跑**；phi_k3 r1=72.8% 应判有效。详见 `daily-memories/2026-10-13.md`。 |
 | 旧 legacy 线（S1 保真度 / 组件 / S2 1-shot 探路） | `MEMORY_s1_full.md` · `MEMORY_component_full.md` · `MEMORY_s2_1shot.md` | 只读历史 | ⬜ 均已由合并线接管或作废。**旧 5-run 可复用**：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2；1-shot 探路：`k10` 75.3 / `k3` 69.0 / `k1` 60.8 / `lagged` 84.2（S2）。⚠️ 其 loop 存活存疑（见 §4「接管 legacy 组件线」）。**三行原文已归档** → `daily-memories/2026-10-11.md`。 |
-| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑（10-11 08:07:34 重启后）** | `.last_run_id`=**32**（**RUN_ID 32 于 10-11 08:07:38 执行完，exit=0**：停评测 / 删 hook / `.env` stash + 换 `8650-8654` + RAG `9006` / **回退 `timeout:180`（removed=1）**；但 `start.sh exit=1` + 4 端口 `run_code` 全 0 字节 ⇒ **0/4 健康 ⇒ 未起 r2**）。**RUN_ID 33（08:11 下发）落地待核**。⚠️ **「失联」真因 = GitHub/proxy 断（`push FAILED`）而非进程死**；救援 = **借 BaiZe 中继（跑在 2.29）经 `ssh -p 3333` 进 36.15 重启**（本次 BaiZe `RUN_ID 86`，先例 83/84/85）⇒ 复用细节见 §7 第 18/19 条 + `daily-memories/2026-10-11.md`。⚠️ 30/31 曾出现**重复条目** ⇒ 块必须**幂等**。 |
+| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | `.last_run_id`≥32。⚠️ **「失联」真因 = GitHub/proxy 断（`push FAILED`）而非进程死**；救援 = **借 BaiZe 中继（跑在 2.29）经 `ssh -p 3333` 进 36.15 重启**（先例 83/84/85/86）⇒ 复用细节见 §7 第 18/19 条。 |
 
 > ✅ **历史口径已收敛**：起始点 = 从 `C1.wo_retrieval R2` 起（**已越过**）；「冻结令」已解除；「36.15 旧 agent 冲突」已由合并线接管处置。
 
