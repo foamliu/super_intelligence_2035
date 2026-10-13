@@ -2,7 +2,7 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376 entries）。**最终结果**：**34 条 FLIPPED to RESOLVED** ✅ · **+215 条 patch 新增 apply 成功** · **总 Resolved: 574→608 (27.3%→29.0%, +1.6pp)**。报告：`report_harness_eval_fix_rerun.html`（21.1KB, 含 §7 97-not-applied 根因分析）+ `kimi_pilot_results.fix1.json`（258KB, 独立）。**97 条仍未 apply 根因已查清**：72 条 Python 版本不匹配(42×3.6→3.8 + 30×3.8→3.9) + 14 条 werkzeug 版本 + 11 other。**P1 计划已报（见下方 §P1 PLAN），等运维确认**。**fix2 可行性测试已完成**（见下方 §FIX2 TEST）：matplotlib testbed_py39 因缺 qhull headers 阻塞，pytest/flask 未测但理论可行。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376, 34 flipped）。**fix2 重评完成** ✅（32/32, 9 flipped）— pytest `setuptools<70` + flask `werkzeug<2.3`。**累计结果**：**43 条 FLIPPED to RESOLVED** ✅ · **+243 条 patch 新增 apply** · **总 Resolved: 574→617 (27.3%→29.4%, +2.1pp)**。报告：`report_harness_eval_fix_rerun.html`（26.9KB, 含 §8 fix2 结果）+ `kimi_pilot_results.fix1.json`（258KB）+ `kimi_pilot_results.fix2.json`（独立）。**剩余 65 条 not-applied**：matplotlib 30 + sklearn 27 + sphinx 8（需 C 扩展 build deps）。**P1 计划已报（见下方 §P1 PLAN），等运维确认**。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -24,44 +24,44 @@ WAITING: 1
 
 > **建议优先级**：P1-2（~1h, 低风险）→ ②b 重跑（~1h）→ P1-1（~4h）→ P1-3 暂缓。**等运维确认后执行**。
 
-## §FIX2 TEST — P1-1b 可行性测试结果（2026-10-13 10:10~12:21 · 前序 session 完成）
+## §FIX2 RESULTS — P1-1b fix2 重评完成（2026-10-13 13:00 · 本轮完成）
 
-> **背景**：前序 cline session（auto-commit e8fba7ce @ 11:50）创建了 `rerun_eval_fix2.py` + 修改 `r1_eval.py`（fix2b：用 `export PATH` 代替 `conda activate`，因 chroot 内 conda shell function 未初始化），对 97 条 fix1-still-not-applied 条目做了 `--limit 1` 可行性测试（4 次 test run，同一 case：`matplotlib__matplotlib-25079 (codex)` + `testbed_py39`）。
+> **fix2 重评 32 条（pytest 18 + flask 14）全部完成** ✅（5.6min total）。
+> **修复措施**：pytest `pip install 'setuptools<70'` + flask `pip install 'werkzeug<2.3'`（均用现有 testbed env，无需 C 重建）。
+>
+> **pytest (18 条)**：**9 FLIPPED to RESOLVED** ✅ · 15/18 patch-applied（从 0/18！）· 3.6min
+> - pytest-5227：7/7 harness 全部 RESOLVED（codex/pi/opencode/cline-patched/deepseek/claude-code/hermes）
+> - pytest-5103：2/2 RESOLVED（pi/opencode）
+> - pytest-5221：6/6 patch-applied 但 f2p=0/2（全未通过 — patch 全错，agent 能力限制）
+> - pytest-11143/11148：3 条 patch 仍未 apply（pi 的 patch 有兼容性问题）
+>
+> **flask (14 条)**：**0 FLIPPED** · 13/14 patch-applied（从 0/14！）· 2.0min
+> - flask-4045：7/7 patch-applied，f2p=1/2（1/2 fail-to-pass 通过 — patch 部分正确但不完整）
+> - flask-4992：6/7 patch-applied，f2p=0/1（全未通过 — patch 质量限制）
+> - 1 条未 apply：opencode/flask-4992
+>
+> **累计（fix1+fix2）**：574→617 resolved（27.3%→29.4%, +2.1pp）· +243 patch-applied
+> **剩余 65 条 not-applied**：matplotlib 30（需 qhull+freetype build deps ~2h）· sklearn 27（需 build deps ~2h）· sphinx 8（待排查）
+> **r1_eval.py fix2b**：`conda activate {env}` → `export PATH={env_path}/bin:$PATH`（chroot 内 conda activate 修复，正确保留）
 
-**结果**：4/4 测试均 `patch_applied=False, resolved=False`。
-
-**根因**（test_output.txt 19MB，已读 tail）：
-1. `pip install -e .` 在 testbed_py39 中**失败** → `fatal error: libqhull_r/qhull_ra.h: No such file or directory`
-2. 原因：testbed_py39 conda env（Oct 5 创建）**缺 qhull/freetype 等 build deps**（这些只在 testbed env 中）
-3. C 扩展未重编译 → `ImportError: cannot import name '_c_internal_utils' from partially initialized module 'matplotlib'`
-4. report.json 标记 `patch_successfully_applied: false, infra_failure_reason: "missing_module"`
-
-**影响范围**：
-- **matplotlib (30 条)**：🔴 **阻塞** — 需先在 testbed_py39 安装 qhull + freetype + 重建 C 扩展（~2h）
-- **scikit-learn (27 条)**：🔴 **预计同样阻塞** — testbed_py38 需安装 build deps 重建 sklearn C 扩展（~2h）
-- **pytest (18 条)**：🟢 **理论可行** — 仅 `pip install 'setuptools<70'`，无 C 扩展重建
-- **flask (14 条)**：🟢 **理论可行** — 仅 `pip install 'werkzeug<2.3'`，无 C 扩展重建
-- **sphinx (8 条)**：🟡 **需验证** — 无 env 变更，可能受其他因素影响
-
-**r1_eval.py fix2b 修改（已 auto-commit）**：`conda activate {env}` → `export PATH={env_path}/bin:$PATH && export CONDA_PREFIX={env_path}`（chroot 内 conda activate 不生效的修复，**正确且应保留**）。
-
-**建议**：① 先测 pytest+flask（32 条，无需 C 重建，~30min）→ 若可行则立即报结果 ② matplotlib+sklearn 需额外 ~4h 安装 build deps + 重建 ③ **等运维确认后执行**。
+**下一步建议**：① matplotlib+sklearn 需额外 ~4h 安装 build deps + 重建 C 扩展（65 条中 57 条）② sphinx 8 条逐条排查 ③ **等运维确认后执行**
 
 ## 📊 进度快照
 
 ```
-PHASE:        P1 PLAN REPORTED + fix2 feasibility tested — waiting for operator confirmation
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (21.1KB, §1-§7) · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 feasibility test ✅ (matplotlib blocked by missing qhull headers, pytest/flask theoretically viable)
-当前动作:     R355: Analyzed fix2 test results from prior session auto-commit. matplotlib testbed_py39 blocked (qhull headers missing → pip install -e . fails → C extensions not rebuilt). r1_eval.py fix2b PATH fix is correct. Waiting for operator P1 confirmation.
-下一步:       ① 等运维确认 P1 优先级 ② 若批准 fix2：先测 pytest+flask (32条, ~30min, 无C重建) → 再处理 matplotlib+sklearn (需装build deps, ~4h) ③ P1-2 网络503 → ②b 重跑 ④ P1-3 暂缓
-阻塞:         <无>（P1 需运维确认后才动）
+PHASE:        fix2 COMPLETE — P1 remaining items waiting for operator confirmation
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 re-eval ✅ (376/376, 34 flipped) · ⑥ fix1 report ✅ · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 re-eval ✅ (32/32, 9 flipped) · ⑩ fix2 report §8 added ✅
+当前动作:     R356: fix2 re-eval of pytest(18)+flask(14) COMPLETED. pytest: 9 FLIPPED (setuptools<70), 15/18 patch-applied. flask: 0 FLIPPED, 13/14 patch-applied (werkzeug<2.3). Report updated with §8. Total: 574→617 (27.3%→29.4%).
+下一步:       ① 等运维确认 P1 剩余项 ② matplotlib+sklearn 65条需C扩展build deps(~4h) ③ P1-2网络503→②b重跑 ④ P1-3暂缓
+阻塞:         <无>（P1 剩余项需运维确认后才动）
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
-- [12:21] R355: **fix2 feasibility test analysis**. Prior session (auto-commit e8fba7ce @ 11:50) ran 4× `--limit 1` fix2 tests on `matplotlib__matplotlib-25079 (codex)` with `testbed_py39` — all `patch_applied=False`. Root cause: testbed_py39 missing qhull headers → `pip install -e .` fails → C extensions not rebuilt → `ImportError: _c_internal_utils`. r1_eval.py fix2b (PATH export vs conda activate) is correct. pytest/flask fix2 (pip-only, no C rebuild) theoretically viable but untested. No new operator instructions. Still waiting for P1 confirmation. 📦 TASK=32625B(31.9KB ✓) / MEMORY≈33100B(32.3KB ⚠️ 贴限).
+> 📦 R355 (2026-10-13 12:21, fix2 feasibility test analysis) 已归档 → daily-memories-harness/2026-10-13.md。
+- [13:00] R356: **fix2 re-eval COMPLETED** ✅. pytest 18条 (`setuptools<70`): **9 FLIPPED to RESOLVED**, 15/18 patch-applied (from 0/18). flask 14条 (`werkzeug<2.3`): 0 FLIPPED, 13/14 patch-applied (from 0/14). 累计 fix1+fix2: 574→617 resolved (27.3%→29.4%, +2.1pp), +243 patch-applied. Report §8 added (report_harness_eval_fix_rerun.html 26.9KB). Results in kimi_pilot_results.fix2.json (33 entries). pytest-5227 贡献 7/9 FLIPPED. flask 0 FLIPPED = patch 质量限制非 infra. 剩余 65 not-applied: matplotlib 30 + sklearn 27 + sphinx 8 (需 C 扩展 build deps). 📦 MEMORY size check pending.
 > 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。

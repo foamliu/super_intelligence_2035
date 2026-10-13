@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Harness Eval 修复重评报告 — 2026-10-13 07:46</title><style>
+<title>Harness Eval 修复重评报告 — 2026-10-13 13:00 (含 fix2)</title><style>
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:2em;background:#f5f5f5;color:#333}
 h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:.3em}
 h2{color:#283593;margin-top:1.8em;border-left:4px solid #3f51b5;padding-left:.5em}
@@ -12,14 +12,14 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2
 .bn{font-size:1.5em;font-weight:bold}.green{color:#2e7d32}.red{color:#c62828}
 </style></head><body>
 <h1>Harness Eval 修复重评报告</h1>
-<p style="color:#999">生成时间：2026-10-13 07:46｜数据：kimi_pilot_results.json(7×300) + kimi_pilot_results.fix1.json(376条)</p>
+<p style="color:#999">生成时间：2026-10-13 13:00（含 fix2 更新）｜数据：kimi_pilot_results.json(7×300) + kimi_pilot_results.fix1.json(376条) + kimi_pilot_results.fix2.json(32条)</p>
 <div class="summary"><h2>核心结论</h2>
-<p><strong>重评范围：</strong>376条（5 repo 非 resolved 且有 patch × 7 harness）</p>
-<p><strong>Patch 新增应用成功：</strong><span class="bn green">+215</span>条（基础设施修复确认✅）</p>
-<p><strong>新增 Resolved：</strong><span class="bn green">+34</span>条（not-resolved → resolved）</p>
-<p><strong>总 Resolved：</strong>574 → <span class="bn green">608</span>（27.3% → 29.0%，+1.6pp）</p>
+<p><strong>fix1 重评范围：</strong>376条（5 repo 非 resolved 且有 patch × 7 harness）｜<strong>fix2 重评范围：</strong>32条（fix1 后仍 not-applied 的 pytest 18 + flask 14）</p>
+<p><strong>fix1 Patch 新增应用：</strong><span class="bn green">+215</span>条｜<strong>fix2 Patch 新增应用：</strong><span class="bn green">+28</span>条 → 合计 <span class="bn green">+243</span></p>
+<p><strong>fix1 新增 Resolved：</strong><span class="bn green">+34</span>条｜<strong>fix2 新增 Resolved：</strong><span class="bn green">+9</span>条 → 合计 <span class="bn green">+43</span></p>
+<p><strong>总 Resolved：</strong>574 → <span class="bn green">617</span>（27.3% → 29.4%，+2.1pp）</p>
 <p><strong>错误数：</strong>0</p>
-<p class="note">✅ 进度：重评已全部完成（376/376 = 100%）。本报告为<strong>最终报告</strong>。</p></div>
+<p class="note">✅ 进度：fix1(376/376) + fix2(32/32) 全部完成。剩余 65 条 not-applied（matplotlib 30 + sklearn 27 + sphinx 8）需 C 扩展 build deps 修复。</p></div>
 <div class="fixd"><h2>P0 修复措施（2026-10-13）</h2><ol>
 <li><strong>pytest（SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0）</strong>：解决 <code>pytest-0.1.dev1</code> 版本冲突。贡献 33/34 翻转。</li>
 <li><strong>matplotlib（freetype 预置 + mplsetup.cfg）</strong>：freetype 头文件+库预拷贝到 conda env，<code>MPLSETUPCFG</code> 注入。</li>
@@ -98,5 +98,43 @@ python3 gen_fix_report.py</pre>
 <tr><td>pip_install_fail</td><td>0</td><td>pip 安装失败</td><td style='color:#ff9800'>⚠️ 需预置 wheel</td></tr>
 </tbody></table>
 <div class="note"><p><strong>关键发现：</strong>72/97 条（74%）是 <strong>Python 版本不匹配</strong>（3.6→3.8 或 3.8→3.9），可通过为每个 repo 创建正确 Python 版本的 conda env 解决。14 条是 werkzeug 版本问题（flask），可通过预装兼容版本解决。这属于 <strong>P1-1（per-repo env）</strong> 范畴，需运维确认后执行。</p></div>
-<footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py | 376/376 entries | harness fix:</footer>
+<h2>§8 Fix2 重评结果（P1-1b · 2026-10-13 13:00）</h2>
+<div class="summary">
+<p><strong>Fix2 范围：</strong>32 条（fix1 后仍 patch-not-applied 的 pytest 18 + flask 14）</p>
+<p><strong>修复措施：</strong>① pytest：<code>pip install 'setuptools&lt;70'</code>（降级 setuptools 修复兼容性）② flask：<code>pip install 'werkzeug&lt;2.3'</code>（降级 werkzeug 修复 API 兼容）</p>
+<p><strong>新增 Resolved：</strong><span class="bn green">+9</span> 条（全来自 pytest）</p>
+<p><strong>Patch 新增应用成功：</strong><span class="bn green">+28</span> 条（pytest 15/18 + flask 13/14）</p>
+<p><strong>累计（fix1+fix2）：</strong>574 → <span class="bn green">617</span>（27.3% → 29.4%，+2.1pp）</p>
+</div>
+<table><thead><tr><th>Repo</th><th>条目数</th><th>修复措施</th><th>新增 Resolved</th><th>Patch Applied</th><th>耗时</th></tr></thead><tbody>
+<tr><td>pytest-dev/pytest</td><td>18</td><td>setuptools&lt;70</td><td class="green"><strong>9</strong></td><td>15/18</td><td>3.6min</td></tr>
+<tr><td>pallets/flask</td><td>14</td><td>werkzeug&lt;2.3</td><td>0</td><td>13/14</td><td>2.0min</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>32</strong></td><td></td><td class="green"><strong>9</strong></td><td><strong>28/32</strong></td><td>5.6min</td></tr>
+</tbody></table>
+<h3>§8.1 pytest 新增 Resolved 明细（9 条 FLIPPED）</h3>
+<table><thead><tr><th>Instance</th><th>Harness</th><th>fix1 前</th><th>fix2 后</th></tr></thead><tbody>
+<tr><td>pytest-dev__pytest-5227</td><td>codex</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5103</td><td>pi</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5103</td><td>opencode</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5227</td><td>opencode</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5227</td><td>cline-patched</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5227</td><td>pi</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5227</td><td>deepseek-harness</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5227</td><td>claude-code</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+<tr><td>pytest-dev__pytest-5227</td><td>hermes</td><td style="color:#999">patch=F</td><td style="color:#2e7d32;font-weight:bold">RESOLVED</td></tr>
+</tbody></table>
+<div class="note"><p><strong>fix2 两层效果分析：</strong></p><ul>
+<li><strong>第一层(patch apply)</strong>：pytest 15/18 + flask 13/14 = 28/32 条从无法 apply → 可以 apply ✅ — <code>setuptools&lt;70</code> 和 <code>werkzeug&lt;2.3</code> 降级修复有效</li>
+<li><strong>第二层(resolved)</strong>：pytest 9 条 resolved（pytest-5227 贡献 7 条，pytest-5103 贡献 2 条）— patch 质量足够好；flask 0 条 resolved — 13 条 patch 已 apply 但 f2p 测试未全通过（f2p=1/2 或 0/1），属 patch 质量限制非基础设施</li>
+<li><strong>pytest-5221 现象</strong>：6 个 harness 的 patch 都 apply 成功但 f2p=0/2（全未通过）— 同一 instance 的 patch 全错，属 agent 能力限制</li>
+</ul></div>
+<h3>§8.2 剩余 65 条仍 Not-Applied（需进一步修复）</h3>
+<table><thead><tr><th>Repo</th><th>条目数</th><th>阻塞原因</th><th>修复方案</th><th>预估挽回</th></tr></thead><tbody>
+<tr><td>matplotlib</td><td>30</td><td>testbed_py39 缺 qhull/freetype headers → C 扩展编译失败</td><td>安装 qhull dev + freetype dev + 重建 C 扩展</td><td>0-5（patch 质量待验）</td></tr>
+<tr><td>scikit-learn</td><td>27</td><td>testbed_py38 预计同样缺 build deps</td><td>安装 build deps + 重建 sklearn C 扩展</td><td>0-3（patch 质量待验）</td></tr>
+<tr><td>sphinx</td><td>8</td><td>待排查（无 env 变更）</td><td>逐条检查 test_output</td><td>未知</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>65</strong></td><td></td><td></td><td><strong>0-8</strong></td></tr>
+</tbody></table>
+<div class="fixd"><p><strong>结论：</strong>fix2（P1-1b）成功从 97 条 not-applied 中恢复 <strong>28 条 patch apply</strong> + <strong>9 条 resolved</strong>。剩余 65 条中 matplotlib(30) + sklearn(27) 需 C 扩展 build deps（~4h，中等风险），sphinx(8) 需逐条排查。Flask 13 条 patch 已 apply 但 resolved=0，属 patch 质量限制。</p></div>
+<footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py + §8 fix2 manual | fix1: 376/376 + fix2: 32/32 entries | harness fix:</footer>
 </body></html>
