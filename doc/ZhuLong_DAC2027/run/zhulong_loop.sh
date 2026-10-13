@@ -113,9 +113,9 @@ while true; do
         prompt="$(< "$TASK_MD")"
         # 🚫 剥掉代理环境变量（内网网关 agi-gateway.cxmt.com 不该走外网代理，否则会 Forbidden/挂死——bun fetch 走外网代理会卡死）。
         #    ⚠️ 只作用于本行 opencode；loop 自身 / git push 仍保留 proxy（外网仍需代理）。
-        env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+        cd "$CWD" && env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          timeout -k 15 "$AGENT_TIMEOUT" opencode run --dir "$CWD" --auto -m "$OPENCODE_MODEL" "$prompt" < /dev/null
+          timeout -k 15 "$AGENT_TIMEOUT" opencode run --auto -m "$OPENCODE_MODEL" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') opencode returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
