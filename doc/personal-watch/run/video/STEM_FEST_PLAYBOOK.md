@@ -73,9 +73,9 @@
 | `ref_image_2` | 该镜**场景图** → `<Picture 2>` | 无角色镜走 `t2v`。 |
 | `prompt` | `CUT 1:` + **景别** + 动作 + `Audio:`（**只放 L1 台词原文**） | 一镜一个主景别；环境声**不写**在这（见 §5）。 |
 
-- **路由**：有角色 → `video_minimax_h3_i2v`（首帧图）；**多角色锁定** → `video_minimax_h3_r2v`（≤2 张参考图）；无参考图 → `t2v`；屏幕/UI 动态 → 降级备选（LTX）。
+- **路由（2026-10-12 更正）**：**有角色 → `video_minimax_h3_r2v`（唯一入选路线）**；**无角色 → `video_minimax_h3_t2v`**；屏幕/UI 动态 → 降级备选（LTX）。🚫 **不再**「先 `image_edit_longcat` 出首帧 → `video_minimax_h3_i2v` 喂首帧」。
 - **分辨率反推**（`ResolutionSelector`）：`√(megapixels×1024²/(16×9))` 取 32 的整数倍 ⇒ `0.6→1056×608`、`0.4→832×480`、`0.3→736×416`、`0.2→608×320`。
-- **前置**：分镜帧（`image_edit_longcat`）要求**输出画面脸高 ≥ 250 px**（小人脸进 H3 会漂）。
+- **参考图给图（按「在场人数」· 硬）**：画面该出现几人，参考图就须含几张脸——1 人＝单人定妆照 + 场景图；2 人＝二人合影（程序拼版，🚫 不经 `image_edit` 转）；≥2 人＝合影拼版；纯场景＝场景图（走 T2V）。
 - ★ **验证「这镜到底几步」—— 读 mp4 内嵌元数据**（永远可复算，别用画面统计量猜）：
   ```powershell
   ffprobe -v quiet -print_format json -show_entries format_tags <file.mp4>

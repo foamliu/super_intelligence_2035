@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：P0 · S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片 + BGM 混音达标）；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片+BGM 达标 · 13_外骨骼 R2V 迁移中，卡「补 14 张场景图」）；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 54/54 成片 + BGM 混音 ✅；13_外骨骼重做（去 TTS）🔶
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片（273.34s/1056×608/h264+aac）+ BGM01 混音（-23.8 LUFS）；最终 QC（qwen3_asr + sound_caption）已执行；13_外骨骼 T2I 14 帧脚本重写 + 后台重生成中
-当前动作:     重写 scripts/generate_ep13_t2i.py（14 帧 · 去 TTS · 人物 image_edit 主定妆照 / 非人物 zimage）→ py_compile + dry-run 通过 → 后台批量生成
-下一步:       收 13_外骨骼 T2I 14 帧 → I2V（H3 随片配音）→ 字幕/音效BGM → 合成 → 六项验收
-阻塞:         无硬阻塞。
+PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）🔶
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/make_group_composite.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘
+当前动作:     gen_ep13_h3_r2v.py py_compile + --dry-run 通过（报缺 14 张场景参考图，见 BLOCKERS #7）
+下一步:       补 14 张 _scene/ 场景图（z_image_turbo_t2i）→ R2V 29 镜 + T2V 19 镜 → BGM/SFX → synth → 字幕 → 六项验收
+阻塞:         缺 14 张场景参考图（BLOCKERS #7 · P0 · 补资产）
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 续跑 · 13_外骨骼重做启动 · 18_暖阳 最终 QC 已执行）
+- **上次唤醒**：2026-10-13（13_外骨骼 R2V 迁移 · 推翻 T2I→I2V 旧法 · 固化 R2V 脚本 + 合影拼版）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-13 · S3 续跑 · 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）✅**：按 operator 2026-10-12 令，弃用「T2I 首帧 → H3 I2V」，改用 stem_fest R2V 标准重做 13_外骨骼。
+  - **弃用旧输出**：`OUTPUT/13_外骨骼`（旧 T2I→I2V 成片）改名 `OUTPUT/_deprecated_t2i_2026-10-13`（29 文件 / 38.7 MiB，待 R2V 验证后再物理删除）；留档 `_deprecated_2026-10-13.md`。
+  - **整改文档**：`PIPELINE.md` 改 R2V-first（§1 链 / §2 参数 / §3 脚本索引，I2V/T2I/TTS 标 legacy）；`STEM_FEST_PLAYBOOK.md` §3 路由改「有角色→R2V 唯一 / 无角色→T2V」，新增「参考图按在场人数给脸」硬规则。
+  - **固化脚本**：新建 `scripts/gen_ep13_h3_r2v.py`（29 有角色镜 · 台词随 H3 · mp=0.4/steps=10/16:9 · ref1=定妆照/合影+ref2=场景图 · `--dry-run/--shot/--limit/--skip-existing`，py_compile + dry-run 通过）；新建 `scripts/make_group_composite.py`（合影程序拼版，🚫 不经 image_edit）。
+  - **补资产（合影）**：`ASSETS/CHARACTERS/_group/sarah_shixiong_hero_v01.png` + `sarah_linwei_hero_v01.png`（1920×1080，PIL 居中裁 4:5 拼版）。
+  - **验证**：3 张定妆照（莎拉 2848×1600 / 师兄 1920×1920 / 林薇 1672×941）在位；`--dry-run` 报缺 14 张场景参考图（→ BLOCKERS #7）。
+  - **下一步**：补 14 张 `_scene/` 场景图（z_image_turbo_t2i）→ R2V 29 镜 + T2V 19 镜 → BGM/SFX → synth → 字幕 → 六项验收。
 
 - **2026-10-12 · S3 续跑 · 13_外骨骼重做启动（去 TTS）+ 18_暖阳最终 QC 已执行 ✅**：按 operator 令「暖阳之后做外骨骼」，重写 EP13 T2I 脚本。
   - **18_暖阳最终 QC（已执行）**：`qwen3_asr` 回读 `EP18_暖阳_成片.mp4` 返回中文台词 transcript；`sound_caption` 回读 `EP18_暖阳_成片_BGM01.mp4` 返回环境音描述（H3 随片人声 + BGM 混音在轨）。逐字比对结论待下轮持久化。

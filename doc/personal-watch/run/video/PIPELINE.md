@@ -1,9 +1,11 @@
 # PIPELINE.md — video 线 · 固化流水线 / SOP
 
-> 维护：video agent · 首次生成 2026-10-11（S2 样板章 `13_外骨骼` 端到端打通后固化）
-> 目的：把「分镜帧 → I2V 视频（**台词随 H3 一起生成 · 🚫 不用 TTS**）→ BGM/音效 → 合成 → 字幕 → 验收」固化成可复用 SOP。
-> ⚠️ **2026-10-11 用户令：本线禁用 TTS**（人物对话全部由 MiniMax H3 随视频生成）——本文件已按此改写；EP13 的 TTS 环节/产物一律视为 **legacy**。
-> 姊妹文件：`PLAN.md`（逐章状态）· `BLOCKERS.md`（阻塞/环境）。
+> 维护：video agent · 首次生成 2026-10-11 · **2026-10-12 推翻旧法改 R2V**
+> 目的：把「参考图（定妆照/合影 + 场景图）→ **R2V 直出视频**（**台词随 H3 一起生成 · 🚫 不用 TTS**）→ BGM/音效 → 合成 → 字幕 → 验收」固化成可复用 SOP。
+> ⚠️ **2026-10-12 用户直令（最高优先）：推翻旧法** —— 「① T2I 出首帧 → ② H3 I2V」**不是 stem_fest 标准** ⇒ **作废删除重做**：
+> **有角色镜 → `video_minimax_h3_r2v`（唯一入选路线）；无角色镜 → `video_minimax_h3_t2v`。** 旧 I2V 首帧路径全部停用。
+> ⚠️ **2026-10-11 用户令：本线禁用 TTS**（人物对话全部由 MiniMax H3 随视频生成）；EP13 的 TTS 环节/产物一律视为 **legacy**。
+> 姊妹文件：`PLAN.md`（逐章状态）· `BLOCKERS.md`（阻塞/环境）· `STEM_FEST_PLAYBOOK.md`（§3 参数/路由权威）。
 
 ---
 
@@ -27,14 +29,16 @@
 
 ---
 
-## 1. 端到端链路（七环）
+## 1. 端到端链路（七环 · R2V 直出）
 
 ```
-SCENES/<章>.md 逐镜脚本
-   │ ① 分镜帧（T2I）
-   ├─ 人物镜：image_edit_longcat(定妆照)      ├─ 非人物：z_image_turbo_t2i
-   │ ② 视频片段（I2V）
-   └─ video_minimax_h3_i2v（首帧图 + 运动描述；megapixels≤0.6）
+SCENES/<章>.md 逐镜脚本（7 列 · 参考图提示列 = 唯一权威）
+   │ ① 参考图准备（★ 按「在场人数」给图 · 硬）
+   ├─ 人物镜：定妆照(一人一张) / 合影(程序拼版，🚫 不经 image_edit 转)
+   └─ 场景图：场景参考图（🚫 别用空场景）
+   │ ② 视频片段（★ R2V 直出 · 唯一入选路线）
+   ├─ 有角色镜：video_minimax_h3_r2v（ref_image_1=定妆照/合影 <Picture 1>；ref_image_2=场景图 <Picture 2>；megapixels≤0.4）
+   └─ 无角色镜：video_minimax_h3_t2v（megapixels≤0.6）
    │ ③ 台词（🚫 **不用 TTS** —— 随 ② 一起由 H3 生成，写进 prompt 的 `Audio:`）
    │ ④ BGM / 音效
    ├─ ace_step_t2audio(BGM)    ├─ stable_audio_3_sfx / woosh_sfx(音效)
@@ -50,13 +54,16 @@ SCENES/<章>.md 逐镜脚本
 
 ## 2. 各环节参数（样板章实测值）
 
-### ① 分镜帧
-- 非人物：`z_image_turbo_t2i`（`width=1280, height=720, steps=8, cfg=1.0, batch_size=1`）。
-- 人物（角色一致性）：`image_edit_longcat`（`image`=定妆照 `ASSETS/CHARACTERS/<角色>/...png`，`prompt`=新场景描述，`steps=50, cfg=4.5`）。
+### ① 参考图准备（按「在场人数」给图 · 硬）
+- **定妆照 = 外形的唯一权威**（一人一张 `ASSETS/CHARACTERS/<角色>/<slug>_hero_v01.png`，命名全 ASCII）。
+- **合影 = 程序拼版**（各定妆照裁人 → 并排拼一张宽图 → 入库 `ASSETS/CHARACTERS/_group/`），🚫 **不经 `image_edit_longcat` 转**（转过的合影身份失真）。
+- **场景图**：场景参考图 `ASSETS/CHARACTERS/_scene/` 或背景图；🚫 **别用空场景**（模型会优先渲染空背景）。
+- **参考图规则**：画面该出现几人，参考图就须含几张脸——1 人特写＝单人定妆照 + 场景图；2 人＝二人合影；纯场景＝场景图（走 T2V）。
 
-### ② 视频片段
-- `video_minimax_h3_i2v`：`prompt` 含 `SHOT 段 + 镜头运动 + Audio 环境音`；`image`=首帧图；`duration`≈5s；`aspect_ratio="16:9 (Widescreen)"`；`megapixels=0.6`；`steps=20`。
-- 多角色锁定：`video_minimax_h3_r2v`（`megapixels=0.4`，`<Picture 1>`/`<Picture 2>` 引用）。
+### ② 视频片段（★ R2V 直出）
+- **有角色镜**：`video_minimax_h3_r2v`（`ref_image_1`=定妆照/合影 `<Picture 1>`，`ref_image_2`=场景图 `<Picture 2>`；`megapixels=0.4`；`steps=10` 角色镜默认；`aspect_ratio="16:9 (Widescreen)"`；`duration` 照抄表内时长；`prompt`=`CUT 1:` + 景别 + 动作 + `Audio:` 只放 L1 台词原文）。
+- **无角色镜**：`video_minimax_h3_t2v`（`megapixels≤0.6`）。
+- 🚫 **不再** `image_edit_longcat` 先出首帧、再 `video_minimax_h3_i2v` 喂首帧。
 
 ### ③ 台词（🚫 **不用 TTS** · 随 ② 一起由 H3 生成）
 - **人物对话全部写进 H3 的 `prompt`** ⇒ `Audio:` 段只放 **L1 台词原文**（一人一镜一句/多句；环境声用 `（后期）` 标记、拼 prompt 前用 `strip_late_audio()` 剔除）。
@@ -99,11 +106,14 @@ ffmpeg -y -i video_track.mp4 -i bgm.mp3 -i sfx.mp3 -filter_complex "<钉长后�
 |:--|:--|
 | `synth_ep13.py` | 样板章合成（concat + amix 混音）——**范式** |
 | `gen_ep13_subtitles.py` | 中英双语 .srt + libass 烧录——**范式** |
-| `gen_ep13_bgm.py` / `gen_ep13_h3_i2v.py` | BGM / I2V 生成（**台词随 H3 一起出**） |
+| `gen_ep13_h3_r2v.py` | ★ **R2V 直出**（定妆照/合影 + 场景图 → H3 R2V；台词随 H3）——**角色镜头主用** |
+| `gen_epXX_h3_t2v.py` | 无角色镜 T2V（`gen_ep18_h3_t2v.py` 已固化） |
+| ~~`gen_ep13_h3_i2v.py`~~ / ~~`generate_ep13_t2i.py`~~ / ~~`gen_ep18_h3_i2v.py`~~ | 🚫 **legacy·停用**（I2V 首帧路径，2026-10-12 起作废） |
 | ~~`gen_ep13_tts.py`~~ / ~~`gen_ep13_ai_voice.py`~~ | 🚫 **legacy·禁用**（TTS，2026-10-11 起不再使用） |
+| `gen_ep13_bgm.py` | BGM（ACE-Step） |
 | `generate_ep13_14_videos.py` | 已用 `Path(__file__).resolve().parent.parent` 相对定位——**路径范式** |
 
-> 放量新章时：按上述范式复制为 `gen_epXX_*.py` + `synth_epXX.py`（**去掉 TTS 环节**），`ROOT` 统一用 `Path(__file__).resolve().parent.parent`。
+> 放量新章时：按 `gen_ep13_h3_r2v.py` 范式复制为 `gen_epXX_h3_r2v.py`（有角色镜）+ `gen_epXX_h3_t2v.py`（无角色镜）+ `synth_epXX.py`（**去掉 TTS 环节**），`ROOT` 统一用 `Path(__file__).resolve().parent.parent`。
 
 ---
 

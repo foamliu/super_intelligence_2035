@@ -63,6 +63,15 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
 - **教训**：产出必须「路径+字节」核验后再写『已完成』；`.gitignore` 下的二进制不能当跨机持久化依据。
 - **状态**：✅ 已闭环（2026-10-12 · 13/13 帧核验落盘；后续 H3 I2V 已启动）。
 
+### #7 · 13_外骨骼 R2V 缺 14 张场景参考图（补资产）—— 🟠 待补（2026-10-13）
+
+- **现象**：`scripts/gen_ep13_h3_r2v.py --dry-run` 报 29 镜缺 `ref2` 场景图：`ASSETS/CHARACTERS/_scene/13_*.png`（backstage/openmic/interview/testcar/annualparty/cafe/office/lab/subway/street/phone/screen_ui/virtual_audience/theatre_door，共 14 张）全缺。
+- **影响**：R2V 工作流 `ref_image_1/ref_image_2` 双参考图是硬输入，缺场景图 ⇒ 29 个有角色镜**无法开跑**（R2V 线卡在资产层，非 ComfyUI/脚本）。
+- **根因**：本集此前走「T2I 首帧 → I2V」旧法，从未备过 R2V 用的**独立场景参考图**；场景背景只在 `ASSETS/BACKGROUNDS/` 有 `.md` 规格、无 PNG。
+- **修复**：`z_image_turbo_t2i` 批量生成 14 张场景图（**无角色场景**，不需要角色一致性，正合 T2I 用途；16:9 1280×720），落盘 `ASSETS/CHARACTERS/_scene/13_*.png`，再复跑 `--dry-run` 到「✅ 所有参考图在位」。
+- **优先级**：P0（13_外骨骼重做的唯一硬阻塞）。
+- **状态**：🟠 待补（2026-10-13；合影已拼版到位，场景图待 T2I 生成）。
+
 
 ---
 
