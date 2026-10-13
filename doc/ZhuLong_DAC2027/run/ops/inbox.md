@@ -1,11 +1,34 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 65 -->
+
+## RUN_ID 65 — 🛑 立即杀评测进程（沙盒重启中·暂停试验）
+
+> 用户令：需要重启沙盒，立即暂停所有评测。
+
+```bash
+# RUN_ID 65 · 杀评测进程 + 记状态
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] 杀前检查 ==="
+pgrep -af 'run_cline_script' | cut -c1-100
+echo "=== [2] 杀评测进程 ==="
+pkill -f 'run_cline_script' 2>/dev/null; sleep 2
+pkill -f 'run_eval' 2>/dev/null; sleep 1
+echo "=== [3] 杀后确认 ==="
+pgrep -af 'run_cline_script' | cut -c1-100 || echo "run_cline_script: 已清"
+pgrep -af 'run_eval' | cut -c1-100 || echo "run_eval: 已清"
+echo "=== [4] loop 存活（不杀）==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-90 || echo "loop: 不在"
+echo "=== [5] 当前 phi_k3 att2 log 状态 ==="
+ls -la /tmp/ABL_phi_k3_r1_att2.log 2>/dev/null | cut -c1-80 || echo "log 不存在"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 64 -->
 
 ## RUN_ID 64 — 现场核对 opencode loop 是否正常工作
 
 > 确认：新 loop（opencode 编排）进程 alive + 最近日志展示正常周期 + r5 评测 healthy。
 
-```bash
+```text
 # RUN_ID 64 · 现场健康核对
 echo "=== [0] ==="; hostname; date '+%F %T'
 echo "=== [1] loop + opencode 进程 ==="
