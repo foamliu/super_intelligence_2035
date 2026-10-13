@@ -192,26 +192,7 @@
 ---
 
 
-> 📦 §运维指令 · 2026-10-08①（📝 更新论文 LaTeX）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：6_vision_encoder.tex 已更新（mask-ratio 表 + weight-ratio 表 + §VI-D AR 范式探索），main.pdf 11p 0err，commit 6f2baa2b。需要时再读。
-
-> 📦 §运维指令 · 2026-10-08②（📄 全线总结报告 HTML）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：report_vision_encoder_final.html（28.6KB, 10 节/4SVG）+ report_vision_final_20261008.html（v2 最终版）已交付，commit 67a306f8。需要时再读。
-
-> 📦 §运维指令 · 2026-10-07③（mask-ratio 消融报告 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_mask_ratio.html 已交付（34.3KB, 8节+2SVG, 倒U形 0.6 最优, commit ee9db3ca）。需要时再读。
-
-> 📦 §运维指令 · 2026-10-07②（GPU12 对账簿）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：pretrain 借 GPU1–7 跑完长上下文成本矩阵后 09:44 已归还，GPU12_ALLOC.md 已建。需要时再读。
-
-> 📦 §运维指令 · 2026-10-07（📊 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_10_07_vision_overnight.html 已交付（自包含 27.7KB，内联 SVG，零外部依赖）。需要时再读。
-
-> 📦 §运维指令 · 2026-10-08③（💬 下一步工作建议）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：4 题已答（未验证假设/Stage iv 前置/GPU 利用/论文补充），写入 MEMORY_VISION.md「运维问答」区，commit 0bb4dc24。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-06（✅ 批准 AIMv2 官方 AR 范式 + 6 点修订）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：6 点修订已落实，Arm A baseline lp=13.49% 最优 / Arm B pure AR 坍缩@step600 / Arm B-hybrid lp=1.37% Δ−12.1pp，report_vision_aimv2_official_vs_ours.html 已交付。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-06（📋 vision 后续队列裁定）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：队列全部完成（① lp 协议 A/B → ② mask-ratio 5 臂 0.6 最优 → ③ weight-ratio 4 臂 1:1 最优 → ④ 官方 AIMv2 AR Arm A/B/B-hybrid）。方向 1 待 GPIC 下载；方向 4 已作废。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-06（🔬 lp 评测协议与主流对齐研究）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_lp_protocol.html 已交付（21.2KB, 2026-10-07）。需要时再读。
+> 📦 2026-10-06~08 运维指令（8 条：①论文LaTeX ②全线报告 ③mask-ratio消融 ④GPU12对账 ⑤昨夜汇报 ⑥下一步建议 ⑦AIMv2 AR范式 ⑧队列裁定 ⑨lp协议研究）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 
 ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
@@ -290,16 +271,8 @@
 
 ### 5. 📚 背景参考（输入素材，不是任务）
 
-- `run/VISION_ARCH_FRONTIER_2026.md` —— 2026 前沿架构调研（iGVLM / TuringViT / MambaEye / MoE-ViE / FastVLM）+ 与 R8 的逐项对照 + §5 数据量口径错误更正。
-- 关键事实速查：
-  - R9 lp 渐近 25.1%（幂律 `acc=0.251−0.864·N^−0.090`，R²≈0.94）· 当前路线 = OpenVision2 w512 + CC12M+Amshaker + 冻结 CLIP-768 文本塔 + InfoNCE。
-  - R10-② 二维拟合（3 点 M 轴）：M 边际效应全区间为负（≈ −2.2 lp pp/参数翻倍）→ 数据受限区间加宽塔是负收益。
-  - `attention flash` 仅占 GPU 自耗 0.7%（P-4）· 分辨率 224/16。
-- 已核实官方资源（运维 2026-10-03）：
-  - `UCSC-VLAA/OpenVision`（Apache-2.0；同时支持「对比+生成」与「caption-only」两套目标；2026-08 已放出 decoder；训练栈 TPU/JAX，PyTorch 侧基于 OpenCLIP fork）。
-  - `apple-aiml-research/ml-aim`（AIMv2-L 0.3B = 87.6% 冻结 trunk / 77.0% LiT zero-shot；代码与权重均已发布；LICENSE 待逐字核实）。
-- 数据侧硬约束（机制推断，⚠️ 须 R11 实测验证，不得当结论引用）：我们 caption 偏短（CC12M = alt-text 短句 / Amshaker = 中长 / GPIC short = 20 tok），官方用 ReCap-DataComp-1B v2 的 LLaMA-3 长合成 caption → caption-only 生成式的监督密度会被我们的短 caption 拖累；AIMv2 式（含 patch 预测）不依赖 caption 丰富度。
-- 口径提醒：R6/R7 的「正式训练切 GPIC `short`」是另一条线；R9/R10 的 scaling 实际用的是 CC12M+Amshaker —— 报告里必须写清这条区分。
+> 📦 §5 背景参考（2026-10-03）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：含 R9/R10 关键事实 + 官方资源核实 + 数据侧硬约束 + 口径提醒。需要时再读。
+> ⚠️ **口径提醒（现行）**：R6/R7 的「正式训练切 GPIC `short`」是另一条线；R9/R10 的 scaling 实际用的是 CC12M+Amshaker —— 报告里必须写清这条区分。
 
 ### 📉 体积维护规程（2026-10-03 立 → 2026-10-06 升级为「记忆 + 任务书」双约束，硬性）
 

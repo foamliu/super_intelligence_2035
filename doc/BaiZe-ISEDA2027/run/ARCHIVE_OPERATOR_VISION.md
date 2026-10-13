@@ -1163,3 +1163,20 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **① 报告文件**：`vision/report_vision_final_20261012_zh.html`（中文版，单文件内联CSS/SVG，≤200KB）。**② 8节结构**：1.背景 2.③口径修订 3.①同模型zs 4.②probe对照 5.变体实验 6.④epoch scaling核心 7.lp-epoch曲线 8.结论与下一步。**③ 数字一致**：与MEMORY/EXPERIMENTS完全一致。**④ 交付**：commit 前缀 `vision report:`。
 > **交付**：report_vision_final_20261012_zh.html 已交付。结论：外部评审回应全链路收口。
+
+---
+
+## §5 背景参考（2026-10-13 从 BAIZE_VISION_TASK.md 搬入 · 原文不改）
+
+### 5. 📚 背景参考（输入素材，不是任务）
+
+- `run/VISION_ARCH_FRONTIER_2026.md` —— 2026 前沿架构调研（iGVLM / TuringViT / MambaEye / MoE-ViE / FastVLM）+ 与 R8 的逐项对照 + §5 数据量口径错误更正。
+- 关键事实速查：
+  - R9 lp 渐近 25.1%（幂律 `acc=0.251−0.864·N^−0.090`，R²≈0.94）· 当前路线 = OpenVision2 w512 + CC12M+Amshaker + 冻结 CLIP-768 文本塔 + InfoNCE。
+  - R10-② 二维拟合（3 点 M 轴）：M 边际效应全区间为负（≈ −2.2 lp pp/参数翻倍）→ 数据受限区间加宽塔是负收益。
+  - `attention flash` 仅占 GPU 自耗 0.7%（P-4）· 分辨率 224/16。
+- 已核实官方资源（运维 2026-10-03）：
+  - `UCSC-VLAA/OpenVision`（Apache-2.0；同时支持「对比+生成」与「caption-only」两套目标；2026-08 已放出 decoder；训练栈 TPU/JAX，PyTorch 侧基于 OpenCLIP fork）。
+  - `apple-aiml-research/ml-aim`（AIMv2-L 0.3B = 87.6% 冻结 trunk / 77.0% LiT zero-shot；代码与权重均已发布；LICENSE 待逐字核实）。
+- 数据侧硬约束（机制推断，⚠️ 须 R11 实测验证，不得当结论引用）：我们 caption 偏短（CC12M = alt-text 短句 / Amshaker = 中长 / GPIC short = 20 tok），官方用 ReCap-DataComp-1B v2 的 LLaMA-3 长合成 caption → caption-only 生成式的监督密度会被我们的短 caption 拖累；AIMv2 式（含 patch 预测）不依赖 caption 丰富度。
+- 口径提醒：R6/R7 的「正式训练切 GPIC `short`」是另一条线；R9/R10 的 scaling 实际用的是 CC12M+Amshaker —— 报告里必须写清这条区分。

@@ -43,42 +43,51 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </head>
 <body>
 <h1>BaiZe 视觉编码器 · 合并三数据集 · GBS/MBS×4 · LR×2 实验计划</h1>
-<p class="note">生成时间：2026-10-13 · 线：vision · 语言：中文 · 性质：<strong>纯计划（未启动训练 · 零 GPU 占用）</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §8.3–§9.7</code> / <code>vision/r9_train.py</code> / <code>vision/run_e4_4ep.sh</code> / <code>MEMORY_VISION.md</code></p>
+<p class="note">生成时间：2026-10-13（数据量口径订正版）· 线：vision · 语言：中文 · 性质：<strong>纯计划（未启动训练 · 零 GPU 占用）</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §8.3–§9.7</code> / <code>vision/r9_train.py</code> / <code>vision/run_e4_4ep.sh</code> / <code>MEMORY_VISION.md</code> / <code>vision/data_snapshot_20261009.txt</code>（<code>wc -l</code> = 7437）</p>
 
 <h2>1. HERO + TL;DR</h2>
 <div class="card tldr">
 <p><strong>核心问题</strong>：在 24 小时墙钟预算（<code>10.239.2.12</code> H100×8 独占）内，将 GBS/MBS ×4、LR ×2 后，能跑几个 epoch？ProtB 预期多少？</p>
 <ul>
-<li><strong>数据</strong>：GPIC（7437 tar）+ CC12M（1100 tar）+ Amshaker（2250 tar）= <strong>10787 shards ≈ 95.8M 图文对</strong>（与 ④-4ep 基线完全相同的冻结快照 <code>data_snapshot_20261009.txt</code>）</li>
+<li><strong>数据</strong>：GPIC（7437 tar × 12,639 ≈ <strong>94.0M</strong>）+ CC12M（1100 tar × 10,000 ≈ 11.0M）+ Amshaker（2250 tar × 2,646 ≈ 5.95M）= <strong>10787 shards ≈ 110.9M 图文对</strong>（快照口径 · <code>wc -l data_snapshot_20261009.txt</code> = 7437 行已核；全量 8000 tar ≈ 118.1M）<br><span class="warn">⚠️ 口径订正（2026-10-13）</span>：旧版此表写「~95.8M」系 <strong>6233-tar 时代旧值</strong>（<code>EXPERIMENTS_VISION.md</code> L489），快照冻结到 7437 tar 后未重算 → <strong>陈旧引用，已订正</strong>。</li>
 <li><strong>超参变动</strong>：MBS 64→<strong>256</strong>/GPU（×4），GBS 512→<strong>2048</strong>（×4，负样本 512→2048），LR 5e-4→<strong>1e-3</strong>（×2），warmup 2000→<strong>4000</strong>（×2 同比），cosine min_lr 5e-5→<strong>1e-4</strong>（=10%×lr）</li>
-<li><strong>时间估算</strong>：基线 steady 2818 img/s；×4 batch 后吞吐估计 2818–4227 img/s（NFS I/O 可能是瓶颈）→ <strong>1 epoch ≈ 6.3–9.4h → 24h 可跑 2.5–3.8 epoch（中位估计 ~3 epoch）</strong></li>
-<li><strong>ProtB 预估</strong>（<span class="tag tag-est">外推·待验</span>）：3 epoch ×4-GBS/×2-LR 预计 <strong>~64–66%</strong>（乐观~67%，悲观~63%）；vs ④-4ep 基线 67.05% <strong>可能持平或略低</strong>，原因是每 epoch 梯度更新数减少 4×（46,777 vs 187,101 步/epoch）且 LR 未按线性缩放规则充分放大</li>
+<li><strong>时间估算</strong>（按真实快照 110.9M）：基线 steady 2818 img/s；×4 batch 后吞吐估计 2818–4227 img/s → <strong>1 真实 epoch ≈ 7.3–10.9h → 24h 可跑 2.2–3.3 真实 epoch（中位估计 ~2.85 epoch）</strong>。⚠️ 3 真实 epoch（162,525 步）在 median 吞吐下需 ~25.2h（略超 24h）；若 24h 硬限 → 取 ~154,500 步 ≈ 2.85 真实 epoch。</li>
+<li><strong>ProtB 预估</strong>（<span class="tag tag-est">外推·待验</span>）：~2.85 真实 epoch（~154,500 步，~317M 累计样本）×4-GBS/×2-LR 预计 <strong>~64–66%</strong>（乐观~67%，悲观~63%）；vs ④-4ep 基线 67.05%（= 383M 累计样本 = 3.45 真实 epoch）<strong>可能持平或略低</strong>，原因是每真实 epoch 梯度更新数减少 4×（54,175 vs 187,101 步/真实 epoch [GBS=2048 vs 512]）且 LR 未按线性缩放规则充分放大</li>
 <li><strong>关键风险</strong>：① MBS=256 显存可能 OOM（需校核）② LR ×2 对 ×4 batch 为欠缩放（线性规则需 ×4）→ 收敛可能偏慢 ③ NFS I/O 瓶颈可能限制吞吐增益 ④ <code>r9_train.py</code> 无 grad-accum 参数 → 若 MBS=256 OOM 需改代码</li>
 </ul>
 </div>
 
 <div class="metric-grid">
 <div class="metric-card"><div class="label">基线 ④-4ep ProtB</div><div class="value best">67.05<span style="font-size:.6em">±0.02%</span></div><div class="delta">4 epoch · GBS=512 · LR=5e-4</div></div>
-<div class="metric-card"><div class="label">新方案 ProtB 预估（3ep）</div><div class="value warn">~64–66<span style="font-size:.6em">%</span></div><div class="delta"><span class="tag tag-est">外推·待验</span> · GBS=2048 · LR=1e-3</div></div>
-<div class="metric-card"><div class="label">24h 可跑 epoch 数</div><div class="value">~3<span style="font-size:.6em"> epoch</span></div><div class="delta">区间 2.5–3.8 · 取决于吞吐</div></div>
-<div class="metric-card"><div class="label">每 epoch 步数</div><div class="value">46,777<span style="font-size:.6em"> 步</span></div><div class="delta warn">vs 基线 187,101 步（÷4）</div></div>
+<div class="metric-card"><div class="label">新方案 ProtB 预估（~2.85ep）</div><div class="value warn">~64–66<span style="font-size:.6em">%</span></div><div class="delta"><span class="tag tag-est">外推·待验</span> · GBS=2048 · LR=1e-3</div></div>
+<div class="metric-card"><div class="label">24h 可跑真实 epoch</div><div class="value">~2.85<span style="font-size:.6em"> epoch</span></div><div class="delta">区间 2.2–3.3 · 按快照 110.9M</div></div>
+<div class="metric-card"><div class="label">每真实 epoch 步数</div><div class="value">54,175<span style="font-size:.6em"> 步</span></div><div class="delta warn">旧口径 46,780 步（按 95.8M）<br>vs 基线 187,101 步/epoch</div></div>
 </div>
 
 <h2>2. 三集合并方案</h2>
-<p>本实验沿用 <strong>④-4ep / E1fair 的冻结数据快照</strong>（<code>data_snapshot_20261009.txt</code>），不新增数据、不去重（与基线逐字节一致），确保只变超参。</p>
+<p>本实验沿用 <strong>④-4ep / E1fair 的冻结数据快照</strong>（<code>data_snapshot_20261009.txt</code>，7437 GPIC tar，<code>wc -l</code> = 7437 行已核），不新增数据、不去重（与基线逐字节一致），确保只变超参。</p>
 <table>
-<tr><th>数据集</th><th>来源路径</th><th>tar 数</th><th>估计对数</th><th>权重（自然）</th><th>caption 类型</th><th>备注</th></tr>
-<tr><td><strong>GPIC</strong></td><td><code>/nas_inference/.../gpic/train/</code>（snapshot 7437 tar）</td><td>7437</td><td>~80–85M</td><td>~84%</td><td>all（short+medium+long）</td><td><code>--data-source mixed --caption-type all</code></td></tr>
-<tr><td><strong>CC12M</strong></td><td><code>/nas_train/.../conceptual-captions-12m-webdataset/data/*.tar</code></td><td>1100</td><td>~9–11M</td><td>~10%</td><td>wds .txt（alt-text 短句）</td><td><code>--data-source wds</code> 格式</td></tr>
-<tr><td><strong>Amshaker</strong></td><td><code>/nas_user/.../Amshaker/Mobile-O-Pre-Train/*.tar</code></td><td>2250</td><td>~5–6M</td><td>~6%</td><td>wds .txt（中长 caption）</td><td>Mobile-O-Pre-Train 数据</td></tr>
-<tr><td><strong>合计</strong></td><td>—</td><td><strong>10787</strong></td><td><strong>~95.8M</strong></td><td>100%</td><td>—</td><td><code>total_shards=10787</code>（与基线一致）</td></tr>
+<tr><th>数据集</th><th>来源路径</th><th>tar 数（快照/全量）</th><th>每 tar 对数（实测）</th><th>对数（快照）</th><th>对数（全量）</th><th>权重（快照）</th><th>caption 类型</th></tr>
+<tr><td><strong>GPIC</strong></td><td><code>/nas_inference/.../gpic/train/</code></td><td>7437 / 8000</td><td>~12,639 ¹</td><td>~94.0M</td><td>~101.1M</td><td>84.7%</td><td>all（short+medium+long）</td></tr>
+<tr><td><strong>CC12M</strong></td><td><code>/nas_train/.../conceptual-captions-12m-webdataset/data/*.tar</code></td><td>1100 / 1100</td><td>~10,000</td><td>~11.0M</td><td>~11.0M</td><td>9.9%</td><td>wds .txt（alt-text 短句）</td></tr>
+<tr><td><strong>Amshaker</strong></td><td><code>/nas_user/.../Amshaker/Mobile-O-Pre-Train/*.tar</code></td><td>2250 / 2250</td><td>~2,646</td><td>~5.95M</td><td>~5.95M</td><td>5.4%</td><td>wds .txt（中长 caption）</td></tr>
+<tr><td><strong>合计</strong></td><td>—</td><td><strong>10787 / 11350</strong></td><td>—</td><td><strong>~110.9M</strong></td><td><strong>~118.1M</strong></td><td>100%</td><td><code>total_shards=10787</code>（快照）</td></tr>
 </table>
+<p class="note">¹ GPIC 每 tar 对数：实测 12,639（<code>EXPERIMENTS_VISION.md</code> L934，V3 全量实验用值）；另测 12,495（L60，8-tar 采样 <code>tar -tf … | grep -c '\.json$'</code>）。本表取 12,639 为主值（与全量 8000×12,639=101.1M 一致）；若取 12,495 → 快照 GPIC ≈ 93.0M、合计 ≈ 110.0M。来源命令：<code>wc -l data_snapshot_20261009.txt</code> = 7437；<code>wc -l data_snapshot_20261010_full.txt</code> = 8000。</p>
 <div class="card">
-<h3>数据口径说明</h3>
-<p>① <strong>运维指令标注 ≈59M 对</strong>：此数可能指 unique 图像数（去重后）；本线实际配置（<code>EXPERIMENTS_VISION.md</code> line 558 / <code>run_e4_4ep.sh</code>）记录 <strong>total_shards=10787 ≈ 95.8M 图文对</strong>（含 GPIC <code>caption_type=all</code> 的多 caption 展开）。R12b 全量（8000 GPIC tar）计 ~69.7M unique pairs → 本快照（7437 tar）unique 约 ~66M。</p>
-<p>② <strong>去重</strong>：本实验<strong>不做额外去重</strong>（与基线一致）；GPIC <code>caption_type=all</code> 下同一图像可能有多条 caption（short/medium/long），计为独立对。</p>
-<p>③ <strong>权重</strong>：自然混合（按 shard 数加权），不设人工采样权重（与基线一致）。</p>
-<p>④ <strong>冻结快照</strong>：使用 <code>data_snapshot_20261009.txt</code>（GPIC 7437 tar 列表）+ CC12M glob + Amshaker glob，与 ④-4ep 完全一致 → <strong>唯一变量 = 超参（GBS/MBS/LR）</strong>。</p>
+<h3>数据口径说明（⚠️ 2026-10-13 订正）</h3>
+<p>① <strong>两种口径并列</strong>（🚫 不混为一谈）：</p>
+<ul>
+<li><strong>数据集大小</strong>（快照实盘）：7437 GPIC tar × 12,639 + CC12M 11.0M + Amshaker 5.95M = <strong>~110.9M 对</strong>（<code>wc -l data_snapshot_20261009.txt</code> = 7437 行已核）。全量 8000 tar → <strong>~118.1M 对</strong>（<code>wc -l data_snapshot_20261010_full.txt</code> = 8000 行已核）。</li>
+<li><strong>训练实际喂入样本数</strong>（基线口径）：基线 ④-4ep 用 <code>--steps 187101</code> × GBS 512 = <strong>95.8M 样本/epoch</strong>。此 187,101 系 <strong>6233-tar 时代旧值</strong>（<code>EXPERIMENTS_VISION.md</code> L489: 6233×12,639+11+5.95≈95.7M），快照冻结到 7437 tar 后 <strong>未重算</strong> → 基线「1 epoch」实际仅覆盖 95.8M / 110.9M = <strong>86.4% 数据</strong>（≈ 0.86 真实 epoch）。</li>
+</ul>
+<p>② <strong>对 ProtB 的影响</strong>：R12b 发现「ProtB 主要取决于 <strong>累计喂入样本数</strong>（数据遍历次数）」→ 基线曲线应按 <strong>累计样本数</strong> 索引，而非名义 epoch 数。基线「4 epoch」= 748,404 × 512 = 383.2M 样本 = <strong>3.45 真实 epoch</strong>（非 4）。</p>
+<p>③ <strong>本实验步数</strong>（GBS=2048）：若按 <strong>真实快照</strong> 110.9M → 1 真实 epoch = ⌈110,949,743 / 2048⌉ = <strong>54,175 步</strong>，3 epoch = 162,525 步。若沿用 <strong>基线旧口径</strong> 95.8M → 1 epoch = ⌈95,803,712 / 2048⌉ = 46,780 步，3 epoch = 140,340 步。<strong>本计划以真实快照为准</strong>，同时列旧口径供对比。</p>
+<p>④ <strong>去重</strong>：本实验 <strong>不做额外去重</strong>（与基线一致）；GPIC <code>caption_type=all</code> 下同一图像可能有多条 caption（short/medium/long），计为独立对。</p>
+<p>⑤ <strong>权重</strong>：自然混合（按 shard 数加权），不设人工采样权重（与基线一致）。上表权重列已按快照对数重算（GPIC 84.7% / CC12M 9.9% / Amshaker 5.4%），与旧版「~84% / ~10% / ~6%」基本一致（因比例未变，变的是绝对对数与合计分母）。</p>
+<p>⑥ <strong>冻结快照</strong>：使用 <code>data_snapshot_20261009.txt</code>（7437 GPIC tar，total_shards=10787），与 ④-4ep / E1fair 完全一致 → <strong>唯一变量 = 超参（GBS/MBS/LR）</strong>。</p>
+<p>⑦ <strong>全量对比</strong>：GPIC 全量 8000 tar（<code>data_snapshot_20261010_full.txt</code>，total_shards=11350）→ 合计 ~118.1M 对。V3 实验已用全量（<code>EXPERIMENTS_VISION.md</code> §9.3，ProtB=63.52%）。</p>
+<p class="warn">⚠️ <strong>旧版自相矛盾已修</strong>：旧版 §2 权重列写 GPIC ~84%（=94M/111M，暗含快照口径）但对数列写 ~80–85M（=6233-tar 旧值），同表两列打架。现统一为快照口径，两列一致。</p>
 </div>
 
 <h2>3. 超参 Before → After 对照表</h2>
@@ -96,7 +105,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <tr><td><strong>模型</strong></td><td>OpenVision2 w512/d30（126.78M）</td><td>同左</td><td>不变</td><td>与基线一致</td></tr>
 <tr><td><strong>目标函数</strong></td><td>AIMv2-style（InfoNCE + masked-patch-MSE）</td><td>同左</td><td>不变</td><td><code>--loss aimv2 --mask-ratio 0.6 --contrast-weight 1.0 --patch-loss-weight 1.0</code></td></tr>
 <tr><td><strong>文本塔</strong></td><td>冻结 CLIP-ViT-L/14-336（768-d）</td><td>同左</td><td>不变</td><td><code>--text-finetune frozen</code></td></tr>
-<tr><td><strong>数据</strong></td><td>10787 shards ≈ 95.8M</td><td>同左</td><td>不变</td><td>同一冻结快照</td></tr>
+<tr><td><strong>数据</strong></td><td>10787 shards ≈ 110.9M（快照）/ 118.1M（全量）</td><td>同左</td><td>不变</td><td>同一冻结快照（<code>wc -l</code> = 7437 GPIC tar 已核）</td></tr>
 <tr><td><strong>Seed</strong></td><td>1234</td><td>1234</td><td>不变</td><td>与基线一致</td></tr>
 <tr><td><strong>精度</strong></td><td>bf16</td><td>bf16</td><td>不变</td><td>与基线一致</td></tr>
 <tr><td><strong>num-workers</strong></td><td>6</td><td>6–8</td><td>微调</td><td>×4 batch 需更多数据加载并行；视 NFS 带宽调整</td></tr>
@@ -131,45 +140,46 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <h2>4. 时间估算</h2>
 <h3>4.1 基线实测数据（来源：④-4ep / E1fair）</h3>
 <table>
-<tr><th>实验</th><th>步数</th><th>epoch</th><th>墙钟</th><th>steady img/s</th><th>avg img/s</th><th>数据来源</th></tr>
-<tr><td>E1fair（1ep）</td><td>187,101</td><td>1</td><td>31,937s (8.87h)</td><td>3,774.5</td><td>3,646</td><td><code>EXPERIMENTS_VISION.md §8.2.1</code></td></tr>
-<tr><td>④-2ep</td><td>374,202</td><td>2</td><td>59,616s (16.6h)</td><td>2,416.1</td><td>3,214</td><td><code>EXPERIMENTS_VISION.md §9.4</code></td></tr>
-<tr><td>④-4ep（resume）</td><td>748,404 (374k new)</td><td>4</td><td>60,545s (16.8h)</td><td>2,818.0</td><td>3,165</td><td><code>EXPERIMENTS_VISION.md §9.5</code></td></tr>
+<tr><th>实验</th><th>步数</th><th>名义 epoch</th><th>真实 epoch ²</th><th>累计样本</th><th>墙钟</th><th>steady img/s</th><th>avg img/s</th><th>数据来源</th></tr>
+<tr><td>E1fair（1ep）</td><td>187,101</td><td>1</td><td>0.86</td><td>95.8M</td><td>31,937s (8.87h)</td><td>3,774.5</td><td>3,646</td><td><code>EXPERIMENTS_VISION.md §8.2.1</code></td></tr>
+<tr><td>④-2ep</td><td>374,202</td><td>2</td><td>1.73</td><td>191.6M</td><td>59,616s (16.6h)</td><td>2,416.1</td><td>3,214</td><td><code>EXPERIMENTS_VISION.md §9.4</code></td></tr>
+<tr><td>④-4ep（resume）</td><td>748,404 (374k new)</td><td>4</td><td>3.45</td><td>383.2M</td><td>60,545s (16.8h)</td><td>2,818.0</td><td>3,165</td><td><code>EXPERIMENTS_VISION.md §9.5</code></td></tr>
 </table>
-<p class="note">steady = 中位吞吐；avg = 总图像数 / 总时间。差异来自 NFS I/O 波动、启动开销、PROBE 评估中断等。④-4ep 为 resume（跳过 warmup），2ep 含 warmup 故 steady 偏低。</p>
+<p class="note">² <strong>真实 epoch</strong> = 累计样本 / 快照数据集大小（110.9M）。基线名义 epoch = 187,101 × 512 = 95.8M 样本/epoch（6233-tar 时代旧值），实际仅覆盖快照的 86.4%。steady = 中位吞吐；avg = 总图像数 / 总时间。差异来自 NFS I/O 波动、启动开销、PROBE 评估中断等。④-4ep 为 resume（跳过 warmup），2ep 含 warmup 故 steady 偏低。</p>
 
 <h3>4.2 新方案吞吐估计</h3>
 <div class="card">
 <table>
-<tr><th>情景</th><th>假设</th><th>估计 img/s</th><th>1 epoch 墙钟</th><th>24h 可跑 epoch</th><th>24h 可跑步数</th></tr>
-<tr><td class="warn"><strong>保守</strong>（NFS I/O 瓶颈）</td><td>吞吐不变（I/O bound）</td><td>2,818</td><td>9.44h</td><td>2.54</td><td>118,931</td></tr>
-<tr><td><strong>中位</strong>（部分 GPU 利用改善）</td><td>×1.3 吞吐</td><td>3,663</td><td>7.26h</td><td>3.31</td><td>154,832</td></tr>
-<tr><td class="best"><strong>乐观</strong>（大 batch GPU 利用率提升）</td><td>×1.5 吞吐</td><td>4,227</td><td>6.29h</td><td>3.81</td><td>178,243</td></tr>
+<tr><th>情景</th><th>假设</th><th>估计 img/s</th><th>1 真实 epoch 墙钟 ³</th><th>24h 可跑真实 epoch</th><th>24h 可跑步数</th><th>旧口径 epoch ⁴</th></tr>
+<tr><td class="warn"><strong>保守</strong>（NFS I/O 瓶颈）</td><td>吞吐不变（I/O bound）</td><td>2,818</td><td>10.94h</td><td>2.20</td><td>118,889</td><td>2.54</td></tr>
+<tr><td><strong>中位</strong>（部分 GPU 利用改善）</td><td>×1.3 吞吐</td><td>3,663</td><td>8.41h</td><td>2.85</td><td>154,532</td><td>3.31</td></tr>
+<tr><td class="best"><strong>乐观</strong>（大 batch GPU 利用率提升）</td><td>×1.5 吞吐</td><td>4,227</td><td>7.29h</td><td>3.29</td><td>178,365</td><td>3.81</td></tr>
 </table>
-<p><strong>计算依据</strong>：1 epoch = 95.8M pairs / throughput；24h = 86,400s；新方案每 epoch 步数 = 95.8M / 2048 = <strong>46,777 步</strong>（vs 基线 187,101 步）。</p>
-<p class="note">⚠️ 基线 ④-4ep 期间 GPU 利用率常 < 10%（NFS 读瓶颈），说明计算远未饱和 → 大 batch 有空间提升 GPU 利用率。但 NFS 带宽不随 batch 变 → <strong>保守情景（吞吐不变）的概率不低</strong>。取<strong>中位估计 ~3 epoch</strong> 作为计划基准。</p>
+<p><strong>计算依据</strong>：1 真实 epoch = <strong>110.9M pairs</strong> / throughput（快照口径）；24h = 86,400s；新方案每真实 epoch 步数 = ⌈110,949,743 / 2048⌉ = <strong>54,175 步</strong>（vs 基线 187,101 步/epoch）。</p>
+<p class="note">³ <strong>真实 epoch</strong> = 按快照实际数据量 110.9M 对计算。⁴ <strong>旧口径 epoch</strong> = 按 95.8M（基线 6233-tar 时代值）计算，步数相同但 epoch 数不同。⚠️ <strong>3 真实 epoch（162,525 步）在中位吞吐下需 ~25.2h，略超 24h 预算</strong> → 建议设 <code>--steps 154500</code>（≈ 2.85 真实 epoch，中位 ~24.0h），或 <code>--steps 162525</code> 接受可能略超 24h。</p>
+<p class="note">⚠️ 基线 ④-4ep 期间 GPU 利用率常 < 10%（NFS 读瓶颈），说明计算远未饱和 → 大 batch 有空间提升 GPU 利用率。但 NFS 带宽不随 batch 变 → <strong>保守情景（吞吐不变）的概率不低</strong>。取<strong>中位估计 ~2.85 真实 epoch</strong> 作为计划基准。</p>
 </div>
 
 <h3>4.3 24h 预算分配</h3>
 <table>
 <tr><th>阶段</th><th>时间</th><th>说明</th></tr>
 <tr><td>启动 + warmup</td><td>~0.2h</td><td>模型加载 + CLIP 文本塔加载 + warmup 4000 步</td></tr>
-<tr><td>训练（~3 epoch）</td><td>~21.8h</td><td>3 × 7.26h（中位估计）= 21.78h</td></tr>
-<tr><td>保存 checkpoint</td><td>~0.2h</td><td>每 10k 步存一次（~14 次），最终 vision.pt ~509MB</td></tr>
+<tr><td>训练（~2.85 真实 epoch）</td><td>~24.0h</td><td>2.85 × 8.41h（中位估计）= 23.97h；或 3 × 8.41h = 25.2h（略超 24h）</td></tr>
+<tr><td>保存 checkpoint</td><td>~0.2h</td><td>每 10k 步存一次（~15 次），最终 vision.pt ~509MB</td></tr>
 <tr><td>ProtB 评测</td><td>~3.5h</td><td>特征提取 1.28M train + 50k val + 3-seed linear probe（不含在 24h 训练预算内）</td></tr>
-<tr><td><strong>训练合计</strong></td><td><strong>~22.2h</strong></td><td>在 24h 预算内 ✅（留 ~1.8h 余量）</td></tr>
+<tr><td><strong>训练合计</strong></td><td><strong>~24.2h</strong></td><td>中位估计；乐观 ~21.9h（留余量），保守 ~33h（超预算）。⚠️ 24h 硬限时取 <code>--steps 154500</code>（≈ 2.85 真实 epoch）</td></tr>
 </table>
 
 <h2>5. ProtB 预估（外推 · 待验）</h2>
 <div class="card">
-<h3>5.1 基线 epoch-ProtB 曲线（实测）</h3>
+<h3>5.1 基线 epoch-ProtB 曲线（实测 · 已按真实快照 110.9M 重新索引）</h3>
 <table>
-<tr><th>epoch</th><th>步数</th><th>GBS</th><th>ProtB（mean±std）</th><th>Δ vs 前一层</th><th>递减比</th></tr>
-<tr><td>1</td><td>187,101</td><td>512</td><td>62.34 ± 0.01%</td><td>—</td><td>—</td></tr>
-<tr><td>2</td><td>374,202</td><td>512</td><td>65.37 ± 0.01%</td><td class="warn">+3.03pp</td><td>—</td></tr>
-<tr><td>4</td><td>748,404</td><td>512</td><td class="best">67.05 ± 0.02%</td><td class="warn">+1.68pp</td><td>0.55</td></tr>
+<tr><th>名义 epoch</th><th>真实 epoch ⁵</th><th>累计样本</th><th>步数</th><th>GBS</th><th>ProtB（mean±std）</th><th>Δ vs 前一层</th><th>递减比</th></tr>
+<tr><td>1</td><td>0.86</td><td>95.8M</td><td>187,101</td><td>512</td><td>62.34 ± 0.01%</td><td>—</td><td>—</td></tr>
+<tr><td>2</td><td>1.73</td><td>191.6M</td><td>374,202</td><td>512</td><td>65.37 ± 0.01%</td><td class="warn">+3.03pp</td><td>—</td></tr>
+<tr><td>4</td><td>3.45</td><td>383.2M</td><td>748,404</td><td>512</td><td class="best">67.05 ± 0.02%</td><td class="warn">+1.68pp</td><td>0.55</td></tr>
 </table>
-<p class="note">递减比 = Δ(2→4) / Δ(1→2) = 1.68 / 3.03 ≈ 0.55。若保持此规律：8ep ≈ 67.97%，16ep ≈ 68.48%。但本实验改变了 batch size 和 LR → 曲线不可直接外推。</p>
+<p class="note">⁵ <strong>真实 epoch</strong> = 累计样本 / 快照数据集大小（110.9M）。基线名义「1 epoch」= 187,101 × 512 = 95.8M 样本，实际仅 0.86 真实 epoch（因 187,101 系 6233-tar 时代步数，快照已增至 7437 tar = 110.9M 对）。递减比 = Δ(2→4) / Δ(1→2) = 1.68 / 3.03 ≈ 0.55。若按真实 epoch 保持此规律：6.9 真实 ep ≈ 67.97%，13.8 真实 ep ≈ 68.48%。但本实验改变了 batch size 和 LR → 曲线不可直接外推。</p>
 </div>
 
 <h3>5.2 ×4-GBS / ×2-LR 对 ProtB 的影响分析</h3>
@@ -177,31 +187,32 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <table>
 <tr><th>因素</th><th>方向</th><th>量级估计</th><th>机制</th></tr>
 <tr><td><strong>负样本池 ×4</strong>（512→2048）</td><td class="best">↑ 正面</td><td>+0.5–1.5 pp</td><td>InfoNCE 对比学习：更多负样本 = 更硬的负例 = 更好的表征。文献 (CLIP) 显示 batch 512→2048 可提升 ~1–2pp。</td></tr>
-<tr><td><strong>每 epoch 梯度更新 ÷4</strong>（187k→47k 步）</td><td class="bad">↓ 负面</td><td>−1–3 pp</td><td>每 epoch 参数更新次数减少 4× → 收敛步数减少 → 同 epoch 下特征质量可能偏低。</td></tr>
+<tr><td><strong>每真实 epoch 梯度更新 ÷3.45</strong>（187k→54k 步/真实 epoch）</td><td class="bad">↓ 负面</td><td>−1–3 pp</td><td>每真实 epoch 参数更新次数减少 3.45×（基线 187,101 步/真实 epoch [GBS=512] vs 新方案 54,175 步/真实 epoch [GBS=2048]）→ 同真实 epoch 下特征质量可能偏低。</td></tr>
 <tr><td><strong>LR ×2（欠缩放）</strong></td><td class="warn">↓ 偏负面</td><td>−0.5–1.5 pp</td><td>线性规则需 ×4 LR；×2 = 0.5× 欠缩放 → 每 step 学习率相对不足 → 收敛偏慢。</td></tr>
 <tr><td><strong>warmup ×2</strong>（2000→4000）</td><td>中性</td><td>~0 pp</td><td>保持 warmup/LR 比例稳定，减少大 batch 初期不稳定。</td></tr>
-<tr><td><strong>数据不变</strong>（同快照）</td><td>中性</td><td>~0 pp</td><td>同一 95.8M 快照，数据质量/数量无变化。</td></tr>
+<tr><td><strong>数据不变</strong>（同快照）</td><td>中性</td><td>~0 pp</td><td>同一 110.9M 快照（7437 GPIC tar），数据质量/数量无变化。</td></tr>
 </table>
 <p><strong>净效应估计</strong>：负面（更新数↓ + LR 欠缩放）vs 正面（负样本↑）大致相抵，但负面略占优 → <strong>同 epoch 数下 ProtB 可能略低于基线</strong>。</p>
 </div>
 
-<h3>5.3 ProtB 预估表（3 情景）</h3>
+<h3>5.3 ProtB 预估表（3 情景 · 按真实 epoch）</h3>
 <table>
-<tr><th>情景</th><th>假设</th><th>1 ep</th><th>2 ep</th><th>3 ep（中位）</th><th>4 ep</th></tr>
+<tr><th>情景</th><th>假设</th><th>0.86 真实 ep</th><th>1.73 真实 ep</th><th>2.85 真实 ep（中位 24h）</th><th>3.45 真实 ep</th></tr>
 <tr><td class="best"><strong>乐观</strong>（数据主导）</td><td>ProtB 主要取决于数据遍历次数；负样本×4 补偿更新数↓</td><td>~62%</td><td>~65%</td><td class="best">~66%</td><td>~67%</td></tr>
 <tr><td><strong>中位</strong>（综合）</td><td>负面略占优；更新数↓ 抵消负样本↑</td><td>~60%</td><td>~63%</td><td class="warn">~65%</td><td>~66%</td></tr>
 <tr><td class="bad"><strong>悲观</strong>（更新主导）</td><td>ProtB 主要取决于梯度更新数；×2 LR 严重欠缩放</td><td>~58%</td><td>~61%</td><td class="bad">~63%</td><td>~64%</td></tr>
 </table>
-<p class="note"><span class="tag tag-est">外推·待验</span> 以上全部为<strong>基于基线曲线 + 理论分析的估算</strong>，非实测值。实际 ProtB 可能因 NFS 波动、训练随机性、模型-数据交互等因素偏离估计 ±2–3pp。<strong>本计划不编造数字，所有预估值均标注「外推·待验」。</strong></p>
+<p class="note"><span class="tag tag-est">外推·待验</span> 以上全部为<strong>基于基线曲线 + 理论分析的估算</strong>，非实测值。真实 epoch 按 110.9M 快照计算（0.86/1.73/2.85/3.45 分别对应 95.8M/191.6M/~317M/383.2M 累计样本）。24h 中位估计 ~2.85 真实 epoch ≈ 154,500 步 ≈ 317M 累计样本。实际 ProtB 可能因 NFS 波动、训练随机性、模型-数据交互等因素偏离估计 ±2–3pp。<strong>本计划不编造数字，所有预估值均标注「外推·待验」。</strong></p>
 
 <h3>5.4 与基线的预期对比</h3>
 <table>
-<tr><th>指标</th><th>④-4ep 基线（实测）</th><th>新方案 3ep（预估中位）</th><th>差异</th><th>说明</th></tr>
-<tr><td>ProtB</td><td class="best">67.05%</td><td class="warn">~65%（估）</td><td>~−2pp</td><td>同 3 epoch 数据量但更新数少 4× + LR 欠缩放</td></tr>
-<tr><td>训练步数</td><td>748,404</td><td>~140,331（3×46,777）</td><td>÷5.3</td><td>大 batch 大幅减少梯度更新数</td></tr>
-<tr><td>训练墙钟</td><td>16.8h（resume）</td><td>~21.8h</td><td>+5h</td><td>含 warmup（基线 resume 跳过 warmup）</td></tr>
+<tr><th>指标</th><th>④-4ep 基线（实测）</th><th>新方案 ~2.85 真实 ep（预估中位）</th><th>差异</th><th>说明</th></tr>
+<tr><td>ProtB</td><td class="best">67.05%</td><td class="warn">~65%（估）</td><td>~−2pp</td><td>基线 3.45 真实 epoch（383M 样本）vs 新方案 ~2.85 真实 epoch（~317M 样本）+ 更新数少 + LR 欠缩放</td></tr>
+<tr><td>训练步数</td><td>748,404</td><td>~154,500（2.85×54,175）</td><td>÷4.8</td><td>大 batch 大幅减少梯度更新数</td></tr>
+<tr><td>累计样本</td><td>383.2M</td><td>~317M</td><td>−17%</td><td>新方案 24h 预算下喂入更少样本</td></tr>
+<tr><td>训练墙钟</td><td>16.8h（resume）</td><td>~24.0h</td><td>+7.2h</td><td>含 warmup（基线 resume 跳过 warmup）</td></tr>
 <tr><td>每步处理图像</td><td>512</td><td>2048</td><td>×4</td><td>负样本 512→2048</td></tr>
-<tr><td>达到 67% 所需 epoch（估）</td><td>4</td><td>~5–6（估）</td><td>+1–2</td><td>大 batch + 欠缩放 → 需更多 epoch</td></tr>
+<tr><td>达到 67% 所需真实 epoch（估）</td><td>3.45</td><td>~4–5（估）</td><td>+0.5–1.5</td><td>大 batch + 欠缩放 → 需更多真实 epoch</td></tr>
 </table>
 
 <h2>6. 风险评估</h2>
@@ -209,12 +220,12 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <table>
 <tr><th>#</th><th>风险</th><th>概率</th><th>影响</th><th>缓解措施</th></tr>
 <tr><td>R1</td><td><strong>MBS=256 显存 OOM</strong></td><td>中</td><td>高（需改代码）</td><td>先 smoke test MBS=256 单步前向+反向；若 OOM → 方案 B：保持 MBS=64 + 新增 <code>--grad-accum 4</code>（~20 行代码改动）</td></tr>
-<tr><td>R2</td><td><strong>NFS I/O 瓶颈</strong>导致吞吐不提升</td><td>高</td><td>中（仅跑 2.5 epoch）</td><td>增加 <code>--num-workers 8</code>；与 data 线下载错峰；监控 <code>nvidia-smi</code> GPU 利用率</td></tr>
+<tr><td>R2</td><td><strong>NFS I/O 瓶颈</strong>导致吞吐不提升</td><td>高</td><td>中（仅跑 ~2.2 真实 epoch）</td><td>增加 <code>--num-workers 8</code>；与 data 线下载错峰；监控 <code>nvidia-smi</code> GPU 利用率</td></tr>
 <tr><td>R3</td><td><strong>LR 欠缩放</strong>导致收敛偏慢</td><td>中</td><td>中（ProtB 偏低 1–2pp）</td><td>记录 loss 曲线；若前 10k 步 loss 不降 → 回退 LR=2e-3（线性缩放）；warmup 后监控 C1 坍缩指标</td></tr>
 <tr><td>R4</td><td><strong>大 batch + 高 LR 训练不稳定</strong>（C1 坍缩）</td><td>低</td><td>高（实验作废）</td><td><code>r9_train.py</code> 有 C1/C2 坍缩检测；PROBE every 300 步监控；若 C1>0.95 → 自动 fuse + 停止</td></tr>
 <tr><td>R5</td><td><strong>24h 预算不足</strong>（吞吐低于预期）</td><td>中</td><td>低（少跑 0.5–1 epoch）</td><td>每 10k 步存 checkpoint；即使 24h 到期也有中间结果可评测</td></tr>
 <tr><td>R6</td><td><strong>与外部编码器评测 GPU 冲突</strong></td><td>低</td><td>中</td><td>外部评测 AIMv2/RICE 仍在跑（GPU 2,4）；新训练用 GPU 0–7 → 需等外部评测完成或分卡。建议<strong>等外部评测 5/5 完成后再启动</strong></td></tr>
-<tr><td>R7</td><td><strong>对比学习大 batch 效应不确定</strong></td><td>中</td><td>中</td><td>文献效应 (CLIP batch 512→2048 ≈ +1–2pp) 基于大规模数据；我们 95.8M 对可能不重现</td></tr>
+<tr><td>R7</td><td><strong>对比学习大 batch 效应不确定</strong></td><td>中</td><td>中</td><td>文献效应 (CLIP batch 512→2048 ≈ +1–2pp) 基于大规模数据；我们 110.9M 对可能不重现</td></tr>
 </table>
 </div>
 
@@ -231,7 +242,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <table>
 <tr><th>步</th><th>动作</th><th>命令 / 脚本</th><th>预计耗时</th><th>产物</th></tr>
 <tr><td>1</td><td>Smoke test MBS=256</td><td><code>r9_train.py --steps 10 --batch-size 256 ...</code></td><td>~5min</td><td>确认不 OOM + C1 正常</td></tr>
-<tr><td>2</td><td>启动训练</td><td>新建 <code>run_bs4_lr2.sh</code>（基于 <code>run_e4_4ep.sh</code> 改 <code>--batch-size 256 --lr 1e-3 --warmup 4000 --min-lr 1e-4 --steps 140331</code>）</td><td>~21.8h</td><td>vision.pt + checkpoints</td></tr>
+<tr><td>2</td><td>启动训练</td><td>新建 <code>run_bs4_lr2.sh</code>（基于 <code>run_e4_4ep.sh</code> 改 <code>--batch-size 256 --lr 1e-3 --warmup 4000 --min-lr 1e-4 --steps 154500</code>）</td><td>~24.0h</td><td>vision.pt + checkpoints</td></tr>
 <tr><td>3</td><td>监控训练</td><td>每 30min 检查 loss / C1 / C2 / img/s；坍缩则停止</td><td>持续</td><td>日志 <code>/tmp/bs4_lr2_train.log</code></td></tr>
 <tr><td>4</td><td>ProtB 评测</td><td><code>lp_protocol_bridge.py --vision vision.pt --protocol B --seeds 0 1 2</code></td><td>~3.5h</td><td>ProtB mean±std</td></tr>
 <tr><td>5</td><td>ProtA + zs + k-NN（可选）</td><td>同 ④-4ep 评测链</td><td>~1h</td><td>全指标对比表</td></tr>
@@ -244,7 +255,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <li><code>--lr 1e-3</code>（5e-4 → 1e-3, ×2）</li>
 <li><code>--warmup 4000</code>（2000 → 4000, ×2）</li>
 <li><code>--min-lr 1e-4</code>（5e-5 → 1e-4, ×2, =10%×lr）</li>
-<li><code>--steps 140331</code>（3 × 46777, 3 epoch @ GBS=2048）</li>
+<li><code>--steps 154500</code>（≈ 2.85 真实 epoch @ GBS=2048，中位吞吐 ~24h）；或 <code>--steps 162525</code>（3 真实 epoch，可能略超 24h）<br><span class="note">⚠️ 旧口径：3 × 46,780 = 140,340 步（按 95.8M）</span></li>
 <li>其余参数与 <code>run_e4_4ep.sh</code> 完全一致</li>
 <li>不使用 <code>--resume</code>（从零训练，非续训）</li>
 </ul>
@@ -255,9 +266,9 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <ol>
 <li><strong>本文件是计划，不是结果</strong>：所有 ProtB 数字（§5.3 表）均为<strong>基于基线曲线 + 理论分析的外推估计</strong>，标注 <span class="tag tag-est">外推·待验</span>。<strong>实测前不得引用为结论</strong>。</li>
 <li><strong>不编造数字</strong>：基线数字（62.34% / 65.37% / 67.05% / 2818 img/s / 10787 shards 等）全部来自 <code>EXPERIMENTS_VISION.md</code> / <code>MEMORY_VISION.md</code> 实测记录，可溯源。</li>
-<li><strong>时间估算有不确定度</strong>：24h 可跑 epoch 区间 2.5–3.8，取决于 NFS I/O 瓶颈程度。中位估计 3 epoch ≠ 保证值。</li>
+<li><strong>时间估算有不确定度</strong>：24h 可跑真实 epoch 区间 2.2–3.3（按快照 110.9M），取决于 NFS I/O 瓶颈程度。中位估计 ~2.85 真实 epoch ≠ 保证值。⚠️ 3 真实 epoch（162,525 步）在中位吞吐下需 ~25.2h（略超 24h）。</li>
 <li><strong>×2 LR 是保守选择</strong>：运维指令指定 ×2，非线性缩放规则建议的 ×4。若结果不佳，不排除是 LR 不足而非 batch size 问题。</li>
-<li><strong>数据口径</strong>：运维指令标 ≈59M 对，实际配置 95.8M 对（10787 shards）。差异可能来自 unique vs total pairs 的口径差。本计划以实际配置为准。</li>
+<li><strong>数据口径</strong>（⚠️ 2026-10-13 订正）：快照实盘 110.9M 对（7437 GPIC tar × 12,639 + CC12M 11.0M + Amshaker 5.95M，<code>wc -l</code> 已核）；全量 118.1M 对（8000 GPIC tar）。旧版报告写「95.8M」系 6233-tar 时代旧值（<code>EXPERIMENTS_VISION.md</code> L489），快照冻结到 7437 tar 后未重算 → <strong>陈旧引用，已订正</strong>。基线「1 epoch」= 187,101 × 512 = 95.8M 样本，实际仅覆盖快照 86.4% = 0.86 真实 epoch。两种口径并列（数据集大小 vs 训练实际喂入样本数），🚫 不混为一谈。</li>
 <li><strong>未启动训练</strong>：本计划严格遵守「只出计划不启动」纪律，<strong>不占 GPU</strong>，不打断在飞的外部编码器评测。</li>
 <li><strong>预注册判据（建议）</strong>：① ProtB ≥ 67%（= ④-4ep 基线）→ 大 batch 至少持平 → 可继续探索；② 64% ≤ ProtB &lt; 67% → 大 batch 略差 → LR 欠缩放可能为主因；③ ProtB &lt; 64% → 大 batch 显著不利 → 回退基线配置。判据须运维确认后定稿。</li>
 </ol>
@@ -267,7 +278,11 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <div class="refs">
 <p><strong>基线数据来源</strong>：</p>
 <ul>
-<li><code>EXPERIMENTS_VISION.md §8.3</code> — E1fair 配置（lr=5e-4, warmup=2000, cosine, bs=64×8=512, 10787 shards ≈ 95.8M）</li>
+<li><code>EXPERIMENTS_VISION.md §8.3</code> — E1fair 配置（lr=5e-4, warmup=2000, cosine, bs=64×8=512, 10787 shards, 快照 ≈ 110.9M 对 [7437 GPIC tar]）</li>
+<li><code>EXPERIMENTS_VISION.md §9.3</code> — V3 全量数据配置（GPIC 8000×12,639=101.1M + CC12M 11.0M + Amshaker 5.95M = 118.1M pairs）</li>
+<li><code>EXPERIMENTS_VISION.md L489</code> — 旧 6233-tar 数据量（≈95.7M pairs，已被 7437-tar 快照取代）</li>
+<li><code>EXPERIMENTS_VISION.md L60</code> — GPIC 每 tar 实测 ≈12,495 唯一图文对（8-tar 采样）</li>
+<li><code>vision/data_snapshot_20261009.txt</code> — 7437 行（<code>wc -l</code> 已核）；<code>data_snapshot_20261010_full.txt</code> — 8000 行（<code>wc -l</code> 已核）</li>
 <li><code>EXPERIMENTS_VISION.md §9.4</code> — ④-2ep 结果（ProtB 65.37±0.01%, 59,616s, 2416 img/s）</li>
 <li><code>EXPERIMENTS_VISION.md §9.5</code> — ④-4ep 结果（ProtB 67.05±0.02%, 60,545s, 2818 img/s）</li>
 <li><code>vision/run_e4_4ep.sh</code> — 实际训练命令（<code>--batch-size 64 --lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5 --loss aimv2 --mask-ratio 0.6 --data-source mixed --caption-type all</code>）</li>
