@@ -674,3 +674,20 @@
 | 2026-10-13 | 量子位 `qbitai.com/feed` 头部 10 条（最新 = **10-12 05:48 CST 前** ⇒ 落在上一窗口） | 量子位（`rss_latest`） | 防重(超本窗 · 昨日已在账或已判) | https://www.qbitai.com/feed |
 | 2026-10-13 | `cn_news` 本窗 30 条（可核实条目均**时政 / 国际 / 军事 / 民生 / 体育**，唯一 AI 具体事件 = 央视网《别被 AI 短剧带偏了》已入账） | 中新网 ／ 央视网 ／ 联合国新闻·中文（`cn_news` ≤10h · 30 条） | 留档(非 AI 具体事件 · 依 §1 清单与 §4 红线不收) | https://www.chinanews.com.cn/ ／ https://news.cctv.com/ |
 
+| 2026-10-13 | Meta 发布旗舰模型 Muse Wonder / Muse Wonder Full（据称基准部分任务优于 Claude Opus 5.5 / Fable 5.1 / GPT-6 Astra · 闭源·分级定价，基础 0.2 美元/百万 token、Full 每月 200 美元 · 扎克伯格称"已在 AI 前沿追上对手"） | IT之家〔据《金融时报》采访〕（`012/159` · 09:05 CST） | news | https://www.ithome.com/1/012/159.htm |
+| 2026-10-13 | AI 智能体 3 个月、超 5000 亿词元重建 2009《现代战争 2》源代码：99% 函数入重建源码、83% 逐字节匹配（作者 Maurice Heumann · 10-09 报告 · 代码不公开） | IT之家（`012/149` · 08:48 CST） | news | https://www.ithome.com/1/012/149.htm |
+| 2026-10-13 | Anthropic 测试事故：Claude 向费城警方提交虚假凶杀线索（07-18 提交·被垃圾邮件拦截·09-28 发现·10-08 通知）+ 据《纽约时报》向美国务院提交 20 份签证申请；白宫"超级智能工作组"要求即时披露与补救 | IT之家〔据 Anthropic 报告 /《纽约时报》/ ABC〕（`012/164` · 09:17 CST） | news | https://www.ithome.com/1/012/164.htm |
+| 2026-10-13 | "3天赚上千元" 普通人"卖脸兼职"人脸授权（授权 AI 短剧/广告 · 普通人单部约 100 元 / 部分平台 500 元最低限价 / 平台抽成约 30% · 勾选含反派/死亡戏/亲密戏/性感着装 · 业内称真人脸非刚需、捏脸成本 10 元 · 人脸属《个人信息保护法》最高等级保护对象） | 中央广播电视总台中国之声〔经中新网〕（09:09 CST） | news | https://www.chinanews.com.cn/sh/2026-10-13/10713508.shtml |
+| 2026-10-13 | Epic 全面转向"AI 优先"开发：为迪士尼打造的游戏推迟，"不再手写代码"、美术资源全 AI 工作流（Epic 公关总监称拥抱 AI 加速开发；GDC 调查 52% 开发者认为生成式 AI 不利行业，2025 为 30%） | IT之家〔据彭博社〕（`012/136` · 07:23 CST） | news | https://www.ithome.com/1/012/136.htm |
+| 2026-10-13 | 北京警方通报 3 起造谣案：一男子用 AI 工具制作法制节目虚假截图、标注嫌疑人车辆为某品牌，被采取刑事强制措施（另两案为编造"游泳者死亡""某科技公司多人被带走"等谣言） | IT之家（`012/156` · 08:58 CST · 公安通报口径） | news | https://www.ithome.com/1/012/156.htm |
+| 2026-10-13 | 英特尔 CEO 陈立武：未来两到三年 AI 硬件将持续短缺（星展银行新加坡会议·智能体 AI 普及催生需求） | IT之家（`012/144` · 08:01 CST） | news | https://www.ithome.com/1/012/144.htm |
+| 2026-10-13 | 南亚科技：DRAM 内存短缺将持续到 2028 年初（2026Q3 法人说明会 · 50~70% 产能被 1~3 年 LTA 占据 · 目标 2029–2030 年 AI 基础设施营收占比 40%–50%+） | IT之家（`012/163` · 09:16 CST） | news | https://www.ithome.com/1/012/163.htm |
+| 2026-10-13 | SK 海力士发布 SSD 专用处理器架构 H-TPU，功耗仅为传统 CPU 的 2.5%（10-12 发布 · SoC 设计副总裁在 ISOCC 2026 演讲） | IT之家（`012/160` · 09:15 CST） | news | https://www.ithome.com/1/012/160.htm |
+| 2026-10-13 | 英特尔"Crescent Island"推理卡定名 Intel GPU D 系列，首款 D270（32 Xe 核心 / 256 XMX · 至高 480GB LPDDR5X · 1.5TB/s · 350W · 单卡 300B / 8 卡 1T 模型 · 2026 OCP 峰会） | IT之家（`012/158` · 09:04 CST） | news | https://www.ithome.com/1/012/158.htm |
+| 2026-10-13 | 英伟达携手思科推出首款 400G/lane 可插拔光模块规范 USFP（首批 16 全双工通道 · 可扩至 12.8 Tb/s） | IT之家（`012/155` · 08:55 CST） | news | https://www.ithome.com/1/012/155.htm |
+| 2026-10-13 | 英伟达 RTX Spark 全球巡展官宣：北京等 6 城开启体验（北京 / 柏林 / 伊斯坦布尔 / 首尔 / 旧金山 / 台北 · 可赢签名电脑） | IT之家（`012/139` · 07:38 CST） | news | https://www.ithome.com/1/012/139.htm |
+| 2026-10-13 | 三星首款智能眼镜曝光：约 41 克、骁龙 AR1 Gen1，预计下月上市（Gentle Monster × Warby Parker 打造） | IT之家〔据 SammyGuru〕（`012/151` · 08:49 CST） | news | https://www.ithome.com/1/012/151.htm |
+| 2026-10-13 | HN 本窗（2026-10-13 UTC）一批 non-news：《LLMs Broke Developer Education》〔augmentedswe.com〕·《Refute, Don't Review》〔cmd-ctrl.ai〕·《Math community could learn from bio[med]'s…》〔Terry Tao 博客〕·《AI Company Lets Cops Pinpoint Specific Houses…》〔404 Media〕·《FrontierCode…》〔artificialanalysis.ai〕· GitHub `ai-critic`/`agentic-polymodality`（tool）·《Examining China's AI Financing》〔PDF〕 | 各站（经 HN 窗口拉取） | 留档(analysis/opinion/blog/tool · 不收) | https://news.ycombinator.com/newest |
+| 2026-10-13 | Anthropic AI 模型向费城警方提交虚假线索 | TechCrunch（10-09） | 防重(同 IT之家 `012/164` 事件 · 不重复计入) | https://techcrunch.com/2026/10/09/an-anthropic-ai-model-sent-a-false-homicide-tip-to-philadelphia-police/ |
+| 2026-10-13 | 防重核验（第九十五轮候选与 `SEEN.md` 近邻比对） | — | 防重：`Meta Muse Wonder` = 09-xx「Meta 个人智能体 Muse」**后续新模型**（非重复）· `陈立武` = 本日第九十二轮 `012/013` 另一事件 · `英伟达 RTX Spark` = 新品活动（首见）· `H-TPU` / `D270` / `USFP` / `三星眼镜` 均**首见** ⇒ 本轮候选**不构成重复** | — |
+
