@@ -648,3 +648,65 @@ setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC20
 
 ---
 
+
+## 📦 归档批次 · 2026-10-13 22:2x（phi_k3 r3 regrade 跑中·任务书超 40KB 红线·agent 自滚归档）
+
+> 以下 4 个已闭合运维块原文搬入：**(十四)** 暂停令（已被(十五)撤销）· **本轮 2026-10-11 执行顺序**（r2-r5 已完成）· **(十二)** full_v3 补跑（5/5✅ 82.1±3.0% 已交付）· **(九)** 换回旧 4 端口（已完成）。原块在任务书留 1 行指针。
+
+### 🆕 运维指令 · 2026-10-13（十四）— 🛑 立即暂停所有试验（沙盒重启中）【已被(十五)撤销·2026-10-13 归档】
+
+> **用户令（2026-10-13）**：「需要重启沙盒，让烛龙 agent 暂停试验。」
+
+**立即执行**：
+1. **杀掉当前评测进程**：`pkill -f 'run_cline_script'`（如有残留）。
+2. **不启动任何新轮次**。`PHASE=standby` · `WAITING=1` · `ERROR_COUNT=0`。
+3. **在 `MEMORY_ZHULONG.md` 顶部状态头记**：`PHASE=standby（运维令(十四)：沙盒重启中，暂停试验）`。
+4. **等运维下达「沙盒已就绪，可恢复试验」指令后再继续**。恢复时从 `phi_k3 r1`（att2 成绩或 72.8%）继续推进，不回退已完成的轮次。
+5. **⚠️ 不要动 `.env` / 端口 / MCP / hook**——沙盒重启由运维/用户操作，agent 只需等待。
+
+**红线**：
+- 🚫 不得启动任何新轮次。
+- 🚫 不得修改任何配置文件。
+- ✅ 只做：杀残留进程 + 记状态 + commit/push + 退出等待。
+
+### 🧭 本轮（2026-10-11 上午）执行顺序 —— 换回旧 4 端口 + 修 RAG + 删 hook → 推进 r2–r5【已完成·2026-10-13 归档】
+
+> ➡️ **按 `(九)` 执行**（`.env` 端口集换回 `8650/8651/8652/8654` + `RAG_RECALL_URL`→`9006` + 删 `~/.cline/hooks/PreToolUse` + `.env` stash 回退 + **回退 `timeout:180`** → 重跑 r2–r5）。
+> ⚠️ **`(九)`⓪ 先自查「中继执行了没有」**（`outbox.md` 有无 RUN_ID 32）——**中继近 11h 无活动、已判「疑似失联」**；若确实失联，`(九)`⓪ 授权你**自己照 `run/ops/inbox.md` 的 RUN_ID 32 块执行**（含重启中继），别干等。
+> ❌ `(八)` 已被 `(九)` 取代；`(七)/(六)/(四)/(三)` 已完成或作废 —— **勿重复**。
+
+### 🆕 运维指令 · 2026-10-11（十二）— r5 收割后补跑 5 轮「真正的 full」（自探索开启）【full_v3 5/5✅ 82.1±3.0% 已交付·2026-10-13 归档】
+
+> **用户令（2026-10-11）**：「**在当前 full 的 r5 跑完后，在后续任务开始前，先跑 5 轮「真实」full（自探索开启）配置。**」
+> **为什么（已取证 RUN_ID 46/47/48）**：**r1 = `/tmp/ABL_full_r1.log`（10-10 15:32，旧配置）**；而 `e51372ff`（**10-10 16:33** t0002997「**使用未增强文档，无自探索**」）改了 `.env` → `API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json`；**r2–r5 全在该改动之后** ⇒ 实跑的是 **V2 未增强 + 无自探索**，而 `set_ablation.py` 里 **`full` 的定义 = V3 增强文档**（= 自探索开）⇒ **C1 锚点混了两种配置**（这也解释 r1 88.0 vs r2–r5 ≈79）。
+
+**① 顺序（硬）**：`r5 收割 + 判定` → **【本批】`full_v3` 5 轮** → 之后才进 `C2.phi_k10`（不另等指令）。
+**② 配置切到「真 full（自探索开）」**：`python scripts/set_ablation.py full`（托管：检索 3 件套 ON + `run_code` ON + 完整回读 + `API_INFO_MERGED_FILE`）；**并手工恢复"自探索"的两项** —— RUN_ID 48 已拿到 `e51372ff` 的完整 diff，**自探索 = 这两个变量**：`API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V3.json` ＋ **`SKILL_DATA_DIR=./docs/skill_data_selfexpl`**（⚠️ **`SKILL_DATA_DIR` 不由 `set_ablation.py` 托管，必须手改**）。改前先 `cp .env .env.bak_$(date +%s)`；⇒ **必须 `bash scripts/stop.sh && bash scripts/start.sh` 重启 MCP 才生效**。
+**③ 开跑前 5 项自检（缺一不可，**原文贴进心跳**）**：① `.env` 的 `API_INFO_MERGED_FILE` = **V3** **且 `SKILL_DATA_DIR` = `./docs/skill_data_selfexpl`**（并 `ls -l docs/API_INFO_MERGED_V3.json docs/skill_data_selfexpl` 均存在）；② 4 端口 `8650/8651/8652/8654` **4/4 健康**；③ MCP 8090 在听 + 工具含 `search_apis`；④ **反作弊 hook 在位**（`~/.cline/hooks/PreToolUse` + 新 log「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0）—— 🚫 **未部署不得开跑**；⑤ `df -BG /home` ≥8G。
+**④ 跑法与判据**：与 r2–r5 **逐字同口径**（`bash scripts/run_cline_script.sh -p 8 -n` · 端口 8650-8654 · log **`/tmp/ABL_full_v3_r{1..5}_8650set.log`**）· 每轮 code-gen 后 **re-grade 同口径**（`--benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl --lang pyAether`；auto-grade 有 benchmark bug）· 判据 **timeout ≤10 且 Pass@1 ≥75%** ⇒ 该轮有效。
+**⑤ 交付**：`full_v3` 的 **N=5 mean±std** + **三组对照表**（`r1` 旧时代 V3 / `full` 现配 V2 = r2–r5 / **`full_v3` 新 5 轮**）+ **是否复现 r1 的 ~88%** 的结论。🚫 **不删**旧 batch/log（证据）；提交前缀 `zhulong full_v3:`。
+
+### 🆕 运维指令 · 2026-10-11（九）— 换回旧 4 端口 + RAG→9006 + 删 hook + .env 回退 + 重跑 r2–r5【已完成·2026-10-13 归档】
+
+> **用户令（2026-10-11 上午）**：「停掉当前评测；删 `~/.cline/hooks/PreToolUse`；`eda_fastmcp/.env` 本地改动 stash（回退昨晚改动）；**测试/应用端口 `8650`、`8651`、`8652`、`8654`**；改 `.env`；**ragrecall 端口重新设为 9006**；**重启 full r2-r5 及后续评测**。」
+> **本块应交由 ops 中继 `RUN_ID 32` 代做**（停评测/删 hook/`.env` 备份+stash/写新 `.env`/重启 `eda_fastmcp`/4 端口实测/**4/4 健康才起 r2**/**回退两处 `cline_mcp_settings.json` 的 `timeout:180`**）。⚠️ **用户二段令（10-11）：「昨晚的改动都是垃圾，全部回退，没有任何亮点」** ⇒ 32 块的 timeout:180 回退即按此令执行（**已推翻「保留」判断**）。
+
+**⓪ 先自查「中继执行了没有」（30 秒，每次唤醒必做）**
+- `grep -c '^## RUN_ID 32' run/ops/outbox.md` **≥1** ⇒ 已执行 → 走 ①（并按 ① 复核 r2 是否已起）。
+- **= 0** ⇒ **判中继失联**（**判据**：中继**最后一次成功执行是 10-10 20:59 的 RUN_ID 31**，此后无回写；⚠️ **不要**拿 `inbox.md` 的 mtime 计时 —— 运维会**原地修订** RUN_ID 32 块，修订**不算**重新计时）⇒ **你自己照 `run/ops/inbox.md` 里 RUN_ID 32 那个 bash 块执行**（244 行/幂等；原文即完整食谱：① 停评测——**只杀评测侧**，`pkill -f run_cline_script` 会误杀编排侧 cline；② 删 `~/.cline/hooks/PreToolUse`；③ `.env` 备份 + `git stash push -- .env`；④ 写 `PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS`（按 `.env`/HEAD 既有映射逐条核对，勿臆测 workdir）+ `RAG_RECALL_URL=http://localhost:9006/recall`；⑤ 重启 `eda_fastmcp`；⑥ 4 端口 `run_code` 实跑；⑦ **仅 4/4 健康才** 起 r2；⑧ **回退两处 `cline_mcp_settings.json` 的 `timeout:180`**）。**执行完**：把 `inbox.md` 的 `<!-- RUN_ID: 32 -->` 置 **33**、并把该 bash 块降级为 text 围栏（占位，防中继复活后重复执行）；并顺手重启中继：`pgrep -af zhulong_ops_relay.sh`（无 → `env PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" https_proxy=http://172.19.92.23:13128 setsid bash doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &`）。结论写进 `MEMORY_ZHULONG.md`。
+
+**🔧 infra 速记（10-11 实战；详见 `MEMORY.md` §7-18/19）**
+- **中继/loop「失联」≠ 进程死**：远端 `.last_run_id`/`outbox` 长期不动，多因 **GitHub/proxy 断 → `push FAILED (will retry next cycle)`**（看 `/tmp/zhulong_ops_relay.log` 尾）。**修法**：`pkill -f 'zhulong_ops_relay[.]sh'` → `setsid bash <脚本>`，**显式注入 `PATH=$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH` + `https_proxy=http://172.19.92.23:13128`** ⇒ 30–60s 内自 fetch 并补跑积压 RUN_ID（10-11 **08:07:34 重启 → 08:07:38 跑完 RUN_ID 32**）；**loop 同法**（RUN_ID 33 已重拉）。
+- **跨机救援桥 = BaiZe 中继（跑在 2.29）**：其块内 `timeout 240 ssh -p 3333 -o BatchMode=yes app.e0031982@localhost 'bash -s' <<'EOS' … EOS 2>&1 | cut -c1-190` 即**在 36.15 执行**（**36.15 ✗ 2.12 不可直连**；桥先例 RUN_ID 83/84/85/86）；**跨通道下发要错开 ≥30s**（push 撞车 → 记录只留本地，要下一次 run 才补推）。
+
+**📌 2026-10-11 08:2x 实况**：中继已救活并跑完 **RUN_ID 32/33**（exit=0）；`bash scripts/start.sh` **仍 exit=1**（`:8090` 未监听，但 `python main.py` 有 3 个进程在），4 端口在 08:14 实测 `run_code` 0 字节、**08:2x 已恢复 4/4 健康**；**loop 已于 08:13:55 重启**（`cline OK`）。⇒ **唯一硬阻塞 = `/home` 100%（4G < 8G 门槛）** ⇒ 未起 r2、`WAITING=1` 回报；**在运维裁定「可否带 4G 起跑」前不要开跑。** **✅ 用户 10-11 已裁定：授权带 4G 起跑 r2**（`/home` ≥8G 门槛放宽，其余硬闸不变）—— **RUN_ID 34 已按此下发**（MCP/RAG → 4 端口 → 起 r2）；另查明 **36.15 的 MCP 实际监听 `:18890`（不是 8090）**，`start.sh exit=1` 只因「18890 已被占用」= 已在跑。
+
+**① 若中继已执行 → 读 `outbox.md` 末尾 RUN_ID 32 的三件事**：(a) 4 端口实测结果；(b) `.env` 最终关键行（应 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=http://localhost:9006/recall`）；(c) r2 是否已起（eval PID / log `/tmp/ABL_full_r2_8650set.log` / 四 override / **hook 是否被重新部署**）。
+
+**② 状态记账（先改状态头再干活）**：`CONFIG=full`(锚点) · `ROUND=2` · `.env` 臂配置不动；**`r2_new`（batch `2026_1010_234408`）判 ❌作废**（code-gen 146/158 但 **eval Steps 5–7.1 未跑 = 无 official Pass@1**；log/batch 留证，不并入成绩）；**`r1=88.0%` 保留**；**端口口径 = `8650/8651/8652/8654` @ `10.129.32.75`**。
+⚠️ **披露清单**（写进结果报告「披露」节）：`.env` 端口集回退 + `RAG_RECALL_URL`→`9006`（原 `9012` 死）+ 删 `~/.cline/hooks/PreToolUse` + `cline_mcp_settings.json` 的 `"timeout": 180`（`(八)`③）—— **本轮已随 RUN_ID 32「3.6 步」一并回退**（用户 10-11 二段令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」）。
+
+**③ 分支**：已起 → **先核反作弊**（`ls -l ~/.cline/hooks/PreToolUse` + 新 log 出现「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0；**未部署 ⇒ 立即停本批、判作废、回报**）；随后 `pgrep -f '^bash scripts/run_cline_script'` **有输出=巡检退出**、**无输出=收割**。未起 → `WAITING=1` + 回报不健康端口原文，**不得带病开跑**。
+
+**④ 收割/推进（判据不变）**：`grep -E 'pass \(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_8650set.log | tail -10` → **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`** ⇒ r2 有效 ⇒ r3→r4→r5（同臂 `full` + **四 override**（见 §6 与旧 `(八)`⑥）+ log `/tmp/ABL_full_r3_8650set.log`…；**每轮开跑前 4 端口复检 + `df -BG /home` ≥8G**；不达标最多重跑 3 次 → 仍不达标 `WAITING=1` 回报）→ 5/5 `[88.0, r2–r5]` 算 mean±std → 回填 5 表锚点 → `PHASE=just_finished` → 进 `C2.phi_k10`。产出：各轮 `Pass@1 / timeout` + **「timeout × 端口」表** + hook/canary 复核结论。
+
