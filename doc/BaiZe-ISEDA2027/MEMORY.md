@@ -1,6 +1,16 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
+## 🆕 最近操作（2026-10-13）
+
+### 📋 五项运维指令下发（用户直令 · 10-13 晚）
+- **① data · HF 图文对数据集调研**（`run/BAIZE_DATA_TASK.md` 顶）：web search 为 **vision encoder 训练**找 HuggingFace **图文对数据集**，**硬口径 = image 带 bytes（非 url）**（HF `Image` feature / `datasets-server` features 为证）→ 中文 HTML `report_data_hf_imagetext_datasets_zh.html`；🚫 只调研不下数据、不打断 en_v1_4 / 85M。
+- **② vision · 合并三数据集实验计划**（`run/BAIZE_VISION_TASK.md` 顶）：中文 HTML 计划，**GPIC + CC12M + Amshaker 合并 · GBS/MBS ×4 · LR ×2**，预估 **24h 预算内 N epoch 时间 + ProtB**；🚫 只出计划不起训。
+- **③ pretrain · 正式训练计划书【重做】**（`run/BAIZE_PRETRAIN_2B_TASK.md` 顶）：用户判 v1 **不合格**（**仍假定总数据仅 100B**）→ 须按 **MiniCPM5 全量口径**回答：**总数据量 / 逐源 token / pretrain:decay 配比 / 总训练 token / 双机 16 卡墙钟**；数字可溯源，加「v1→v2 修订说明」。
+- **④ harness · 通过率为何这么低**（`run/BAIZE_HARNESS_TASK.md` 顶）：web 外部对照 + **轨迹细析** → 判「**合理否 / 能力 vs 环境**」+ **提升机会点按预计增益从高到低排序** → 中文 HTML `report_harness_why_low_passrate_zh.html`。
+- **⑤ recruit · 质询「今天为何一封简历邮件都没发」**（`doc/personal-watch/run/WATCH_RECRUIT_TASK.md` 顶）：令**先如实解释 06:00/18:00 两轮 + 0 封根因**，再**修复吞吐**（补核 publication / 补齐下载 / 用足 ≤20–30 上限 / 达标当轮即发）。**git 侧核**：本日仅第 16 轮（06:0x），0 达标 → 0 邮件。
+- **流水**：见 `daily-memories/2026-10-13.md`。
+
 ## 🆕 最近操作（2026-10-12）
 
 ### 📋 七项运维指令下发（用户直令 · 10-12 晚）
@@ -187,6 +197,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📋 2026-10-13 五项运维指令下发**（用户直令）：① data HF 图文对数据集调研（bytes 非 url）② vision 合并三数据集计划（GBS/MBS×4 · LR×2 · 24h）③ pretrain 正式训练计划书【重做】（按 MiniCPM5 全量口径 · 禁 100B）④ harness 通过率为何低（web 对照 + 轨迹 + 排序）⑤ recruit 质询 0 封推荐邮件（先解释后修复）。详见 `daily-memories/2026-10-13.md`。
 
 - **📦 2026-10-09 全部 §9 流水已滚动归档**（2026-10-11 执行 · **原文未改一字**：改序/砍实验 · Muon 下发+NeMo 支持更正 · 夜班 T1/T2/T3 · GO #252 Dense L=36 · 3-idea 征询 · BaiZe-2B vs MiniCPM5 公平对比核查）→ `daily-memories/2026-10-11.md`「从 MEMORY.md §9 滚动归档」。**勿再塞回本文件。**
 

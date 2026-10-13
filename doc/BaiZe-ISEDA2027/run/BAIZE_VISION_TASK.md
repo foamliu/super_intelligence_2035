@@ -1,6 +1,22 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（📄「合并三数据集 · GBS/MBS×4 · LR×2」实验计划 · 中文 HTML · 24h 预算）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「vision：生成 html 实验计划（中文版），合并三数据集，GBS/MBS ×4，LR ×2，预估 N epoch 的训练时间即 ProtB 成绩。预算 24 小时。」
+> **性质**：**只出计划（HTML），不启动训练**（未获批前）；纯写作 + 估算，**不占 GPU**。
+
+**① 口径（先核，勿臆断）**：
+- **三数据集** = 本线现有全部 **GPIC + CC12M + Amshaker**（≈59M 对）；以 `EXPERIMENTS_VISION.md` / `r9_train.py` 实际配置为准，如实列每集对数 + 权重 + 去重。
+- **GBS/MBS ×4**：相对**当前基线（E1fair / ④-4ep）**各 ×4（写「基线 X → 新 4X」），并做**显存 / grad-accum 可行性校核**。
+- **LR ×2**：相对基线 ×2（写「基线 LR → 新值」，warmup 是否同比调整）。
+- **预算 = 24 小时墙钟**（`.12` H100×8 独占）。
+
+**② 交付**：`doc/BaiZe-ISEDA2027/report_vision_merge3ds_bs4_lr2_plan_zh.html`（中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB）。必需节：① HERO+TL;DR（24h 能跑几 epoch + ProtB 预期）② 三集合并方案表 ③ **超参 before→after 表**（GBS/MBS/LR/warmup/grad-accum/显存，标 ×4/×2 依据）④ **时间估算**（用 ④-4ep 实测 ~2818 img/s → 单 epoch 墙钟 → 24h 内 N epoch）⑤ **ProtB 预估**（epoch 曲线 1ep 62.34 / 2ep 65.37 / 4ep 67.05 外推 + BS/LR 敏感性，标「外推·待验」）⑥ 风险 ⑦ 执行清单 ⑧ 诚实条款。
+
+**③ 纪律**：🚫 不占 GPU、不打断在飞评测 · 🚫 不编数字（外推标「估」）· commit 前缀 `vision plan:` · 任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-13（🔬 用 ProtB 评测 `/nas_train/app.e0031982/models` 下现有公众视觉编码器 · 参考值 · **最高优先**）· 用户直令
 
 > **用户令（2026-10-13）**：「用 ProtB 评测现有 vision encoder（CLIP、SigLIP/SigLIP2、AIMv2、OpenVision2、RiCE-ViT 等，都在 `/nas_train/app.e0031982/models` 已下载）。」

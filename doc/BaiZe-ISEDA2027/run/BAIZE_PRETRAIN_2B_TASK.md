@@ -1,6 +1,24 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（📋【重做】正式训练计划书 —— 须按 MiniCPM5「全量数据」口径，🚫 禁 100B 假设）· 用户直令 · 最高优先
+
+> **用户判不合格（2026-10-13）**：「`report_pretrain_formal_train_plan.html` 不合格，需要重做。问题：① **MiniCPM5 总数据量多少**、各数据源大约多少 token、**pretrain/decay 各如何配比**、**总计训练多少 token**（我说了 **MiniCPM5 有多少训多少**，那么有多少呢，**估不出来么**？）；**2 台机器需要多长时间**。② 说是按「正式」来、按 MiniCPM5 全量数据来，**你的报告还是假定总数据只有 100B**。**这是逗谁玩呢**？请**认真思考，仔细写好**这份计划书。」
+> **性质**：查证 + 写作（CPU，**不占 GPU**）；**不得打断在飞 P-8 训练**。
+
+**① 必答硬问题（v1 缺失）**：
+1. **MiniCPM5 训练数据总量 = ? token**：逐源拆解（web / code / math / 其他），**给估计方法与出处**（MiniCPM5 技术报告 / HF model card / 官方 config）；查不到就**明写估计依据 + 区间** —— 🚫 **不许再出现「100B」这类拍脑袋数**。
+2. **本项目可训数据全貌**：`MiniCPM5-{1B,2B}.config.json` + `data/` 盘点 + **R3 全量分词 110/110 = 1483.91B tok / 5.94TB**（逐子集：base 206.76B / l1_en_hq 152.17B / zh 112.47B / ultrax 30.97B / …）→ 对齐「**MiniCPM5 有多少训多少**」的**实际可训 token**。
+3. **pretrain(stable) / decay 配比**：stable:decay token 比例 + decay 段退火混料（SFT/L3/code/math）+ **总步数 / 总 token**。
+4. **2 台机（.12+.29，16×H100）墙钟**：用实测（单机 8 卡 **249K tok/s**；DP16 近线性**待彩排 → 标「待验」**）→ 总 token ÷ 有效吞吐 → **乐观 / 基准 / 保守三档**（含 warmup/decay/ckpt/eval 开销）。
+
+**② 红线**：🚫 **禁止再假设「总数据 100B / 200B」**，**必须按 MiniCPM5 全量口径**给总 token + 墙钟；**每个数字可溯源**（文件:行 / 官方来源 / 实测命令）；估算显式标「估 + 依据 + 区间」。
+
+**③ 交付**：**覆盖** `doc/BaiZe-ISEDA2027/run/report_pretrain_formal_train_plan.html`（中文 · 自包含 · 内联 CSS/SVG · ≤200KB）。节：① HERO+TL;DR（总数据 X B token · 16 卡 Y 天）② MiniCPM5 数据全貌（总 token + 逐源 + 出处）③ 本项目可训数据（R3 子集 token 表·实测）④ 配方（stable/decay 分配 + 配比 + 总步数 + WSD）⑤ 算力墙钟（三档）⑥ ckpt/磁盘/风险/前置 ⑦ **v1→v2 修订说明**（旧 100B 假设为何错）⑧ launcher + 纪律。
+
+**④ 纪律**：🚫 不占 GPU、不打断 P-8 监控 · 🚫 不改已发布数值 · 数字可溯源 · commit 前缀 `pretrain plan:` · 任务书 >32KB 自滚归档。
+
+
 > 📦 §运维指令·2026-10-13（📋 正式训练 HTML 计划：全量 MiniCPM5 + en_v1_4 · 双机 16 卡 · 超参 + 空窗期试验）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：`report_pretrain_formal_train_plan.html` 27.9KB ✅ 交付（commit 42399927，10 节自包含 HTML：数据/算力/超参/占卡协调/空窗期 5 试验/ckpt/纪律/launcher 模板）。需要时再读。
 
 > 📦 §运维指令·2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：`report_pretrain_lit_ideas.html` 29.8KB ✅ 交付（TOP-5+附表8+§4待验证+§5去重+§6映射+§7口径, 每条6字段齐全）。需要时再读。

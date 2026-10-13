@@ -7,6 +7,28 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（🔍 为 vision encoder 训练在 HuggingFace 找「图文对」数据集 · 要求 image 带 bytes（非 url）· 中文 HTML 报告）· 用户直令 · 高优先
+
+> **用户令（2026-10-13）**：「data：使用 web search 给 vision encoder 训练在 huggingface 上找图文对数据集（**要求 image 带 bytes 而非 url**），输出 html 报告（中文）。」
+> **性质**：纯 web 调研 + 写报告，**CPU/网络，不占 GPU**；web 请求**不占 NFS 带宽**，**不打断** en_v1_4 / 85M 下载。
+
+**① 目标**：为 **Stage (iii) 视觉编码器对比预训练**（现有 = GPIC + CC12M + Amshaker ≈59M 对）寻找**可直接下载即用**的图文对数据集，重点是 **image 列存的是真实像素 bytes（HF `Image` feature / parquet 内嵌二进制），而非仅 URL**。
+
+**② 逐条筛选口径（每项给证据）**：
+1. **image 载体**：确认 image 列 feature 类型 —— ✅ `Image`(bytes) / `{bytes,path}` vs ❌ `string`(url) / `{url}`。**最硬证据 = HF `datasets-server` `/info` 或 `/first-rows` 返回 `features['image'] == {'_type':'Image'}`**（仅看文字描述不算）。
+2. **规模**：图片对数 + 总字节（可估）。
+3. **许可**：license（cc-by(-sa) / mit / apache / 未标注）。
+4. **caption**：短/长 caption、alt-text；语言 en / zh / multi。
+5. **是否已用**（GPIC / CC12M / Amshaker / LAION 系须标注，避免重复）。
+6. **可达性**：HF 直连/镜像、是否 gated。
+
+**③ 方法**：HF Hub + `datasets-server` API 检索（`image-text pairs` · `caption` · `interleaved` · `alt-text` · `DataComp` · `pixelprose` · `redcaps` · `mmc4` · `OBELICS` · `MINT` · `wit` · `datacomp`…）；可用 `huggingface_hub` 列 features 佐证。
+
+**④ 交付**：`doc/BaiZe-ISEDA2027/report_data_hf_imagetext_datasets_zh.html`（中文 · 自包含 · 内联 CSS · 零外链 · ≤200KB）。必需节：① HERO+TL;DR（TOP 3–5 推荐）② 口径与 bytes/url 判定法 ③ **主表**（HF id · 对数 · 总大小 · image 载体证据 · caption · 语言 · 许可 · gated · 是否已用 · 推荐度）④ 三分类（✅bytes 可直接训 / ⚠️url 需抓 / ❌不可用）⑤ 下载命令模板 + 落盘路径建议 + 预估磁盘 ⑥ 与 GPIC/CC12M/Amshaker **互补性** ⑦ 风险/诚实条款。
+
+**⑤ 纪律**：🚫 不占 GPU · 🚫 不 kill / 不打断 en_v1_4、85M 下载 · 🚫 **本令只调研+出报告，不下数据**（真下载须运维二次确认）· 每条带 HF url + 访问日 · commit 前缀 `data rpt:` · 任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-13（📥 把 85M 下载从「用户自管」移交给 data 线启动 + 看护）· 用户直令 · 最高优先
 
 > **用户令（2026-10-13）**：「把运维（用户）起的 85M 下载停掉，由 data 启动和看护这个数据下载。」
