@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-14 02:03（merge3ds ArmC 训练监控 · wake #58）**：🔄 **训练健康进行中**：step 5740/154500（3.7%），loss~0.76（持续下降），C1=0.3922（健康上升中，无坍缩），C2_gap=+0.1851，C4=OK。吞吐 ~9540 img/s，~214ms/iter → ETA ~8.9h（预计 ~11:00 完成）。✅ 所有运维指令已完成：①外部编码器 ProtB 5/5（SigLIP2 87.46%>AIMv2 85.22%>OV2 84.97%>CLIP 82.66%>RICE 81.72%）②LR 3-臂扫描+文献表（Goyal/Smith/Shallue/McCandlish/SimCLR）写入计划报告 ③数据量口径订正（GPIC 94.0M快照/101.1M全量，合计110.9M/118.1M，旧95.8M标注为6233-tar旧值）④计划HTML已交付 ⑤ArmC训练已启动（LR=2e-3 ×4线性Goyal）。📋 训练完成→3-seed ProtB→结果报告。📦 体积：TASK=32.0KB✅ / MEMORY=29.0KB✅。
+> 🆕 **2026-10-14 02:42（merge3ds ArmC 训练 C4 误杀→已恢复 · wake #59）**：⚠️ **ArmC 训练在 step 8100 被 C4 误杀**（loss_ema=0.6414 vs 阈值 0.6404，差 0.001；C1=0.3999/C2_gap=+0.1868 均健康，非真坍缩）。✅ **已用 `--resume` 恢复**：从 vision_fused.pt(step 8100) 续训，C4 已禁用（C1/C2 仍活）。恢复后 PROBE step 8400: C1=0.4258↑, loss_ema=0.6241↓, C4=OK(loss_early=None)。吞吐 ~9200 img/s, ~222ms/iter, 剩余 146050 步 → ETA ~11:30。✅ 所有运维指令已完成：①外部编码器 ProtB 5/5 ②LR 3-臂扫描+文献表 ③数据量口径订正 ④计划HTML已交付 ⑤ArmC训练运行中(已恢复)。📋 训练完成→3-seed ProtB→结果报告。📦 体积：TASK=32.0KB✅ / MEMORY=29.0KB✅。
 > ✅ **④-4ep TRAINING + ALL EVAL COMPLETE** (17:23 Oct 12 → 10:12:47 Oct 13 train, 10:14→12:43 Oct 13 eval): 748,404 steps (374,202 new from 2ep resume), total=60,545s (~16.8h), steady_img/s=2818.0, **final_loss=0.0805** (vs 2ep 0.1856). Last PROBE: C1=0.5932, C2_gap=+0.1791, C4=OK (no collapse). C1 trajectory: 2ep end 0.5804 → 4ep end 0.5932 (+0.0128). 37 ckpts (380k-740k) + final vision.pt (509MB). **④-4ep EVAL ALL DONE**: **ProtB 67.05±0.02%** (seeds 67.03/67.08/67.04, Δ+4.71pp vs 1ep, Δ+1.68pp vs 2ep), **ProtA 56.70%** (Δ+2.88pp vs 2ep), **zs 40.64%/72.64%** (Δ+2.12pp vs 2ep), **k-NN k=20 42.35%** (k=10: 41.94%, k=5: 39.77%, Δ+1.68pp vs 2ep). **VERDICT: MODERATE, DIMINISHING** — 67.05% < 70% victory threshold; 1→2ep +3.03pp, 2→4ep +1.68pp (ratio ~0.55) → trajectory upward but approaching ceiling. lp-epoch curve + Chinese report + EXPERIMENTS_VISION.md §9.7 all updated.
 > 🆕 **2026-10-13 12:43（④-4ep 全套评测完成）**：ProtB 67.05±0.02%（< 70% 胜利阈值，Δ+1.68pp vs 2ep），四指标一致 +1.7~2.9pp，递减确认（1→2 +3.03pp，2→4 +1.68pp）。中文报告 `vision/report_vision_final_20261012_zh.html` 已更新（TL;DR/§7/§8曲线/§9表/§10结论/柱状图）。EXPERIMENTS_VISION.md §9.5表+§9.4状态+§9.7 已同步。lp-epoch曲线已加 4ep 点。
 > 📦 V2 Muon / V3 全量数据 / ② probe sweep / ④-2ep（2026-10-11~12）已归档 → daily-memories-vision/2026-10-14.md；**结论**：V2 Muon 全 LR 坍缩❌；V3 全量 ProtB=63.52% Δ+1.18pp 不可分辨；② probe NOT underfitting（62.34%=ceiling）；④-2ep ProtB=65.37% Δ+3.03pp MODERATE。需要时再读。
@@ -17,10 +17,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **merge3ds ArmC 训练中**（step 5740/154500=3.7%, GBS=2048, LR=2e-3 ×4, loss~0.76↓, C1=0.3922↑, ETA ~8.9h）。✅ 外部编码器 ProtB 5/5 全部完成（SigLIP2 87.46% > AIMv2 85.22% > OV2 84.97% > CLIP 82.66% > RICE 81.72%）。✅ LR 3-臂扫描+文献表+数据量口径订正均已写入计划报告。📋 训练完成后 → 3-seed ProtB 评测 → 结果报告。 |
-| ERROR_COUNT | 15（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed） |
+| PHASE | 🔄 **merge3ds ArmC 训练中（已恢复 · wake #59）**：step 8100 被 C4 误杀（loss_ema=0.6414 vs 阈值 0.6404，差 0.001，非真坍缩）→ 已用 `--resume` 从 vision_fused.pt 恢复，C4 禁用/C1+C2 仍活。当前 step ~8450/154500, loss~0.62↓, C1=0.4258↑, ETA ~11:30。✅ 外部编码器 ProtB 5/5 全部完成（SigLIP2 87.46% > AIMv2 85.22% > OV2 84.97% > CLIP 82.66% > RICE 81.72%）。✅ LR 3-臂扫描+文献表+数据量口径订正均已写入计划报告。📋 训练完成后 → 3-seed ProtB 评测 → 结果报告。 |
+| ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-14 02:03 (wake #58)**: merge3ds ArmC 训练监控。step 5740/154500=3.7%, loss~0.76↓, C1=0.3922↑(健康), C2_gap=+0.1851, C4=OK, ~9540 img/s, ~214ms/iter, ETA ~8.9h. 所有运维指令已完成：①外部ProtB 5/5 ②LR 3-臂+文献 ③数据量订正 ④计划HTML ⑤ArmC训练运行中. 📦 TASK=32.0KB✅ / MEMORY=29.0KB✅。 |
+| 更新 | **2026-10-14 02:42 (wake #59)**: ⚠️ ArmC 训练在 step 8100 被 C4 误杀（loss_ema=0.6414 vs 阈值 0.6404，差 0.001；C1=0.3999/C2_gap=+0.1868 均健康→非真坍缩）。根因：C4 baseline 在 step 8000（warmup 末）设为 0.6504，首个 probe 在 step 8100（仅 100 步后），loss 仅降 0.009 < 0.01 阈值。✅ 已用 `--resume vision_fused.pt` 恢复（C4 禁用/C1+C2 仍活），AdamW 重启瞬态 ~40 步消退（step 8150 loss=0.635 已低于停前 0.6414）。PROBE step 8400: C1=0.4258↑, loss_ema=0.6241↓, 健康。吞吐 ~9200 img/s, 剩余 ~146050 步, ETA ~11:30. 📦 TASK=32.0KB✅ / MEMORY=29.0KB✅。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
