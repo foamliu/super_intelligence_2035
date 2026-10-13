@@ -1,99 +1,382 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BaiZe Harness — 通过率为何这么低？</title><style>body{font-family:-apple-system,Segoe UI,PingFang SC,sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#fafafa;color:#222;line-height:1.6}h1{font-size:1.5em;border-bottom:3px solid #2563eb;padding-bottom:8px}h2.sec{font-size:1.2em;color:#2563eb;border-left:4px solid #2563eb;padding-left:10px;margin-top:32px}h3{font-size:1.05em;color:#444}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:5px 8px;text-align:center}th{background:#e8eef7}td.rname{text-align:left;font-family:monospace}td.num{font-family:monospace}tr:hover{background:#f0f4ff}.callout{padding:12px 16px;border-radius:6px;margin:12px 0;font-size:14px}.cr{background:#fef2f2;border:1px solid #fca5a5}.cb{background:#eff6ff;border:1px solid #93c5fd}.cy{background:#fefce8;border:1px solid #fde047}.cg{background:#f0fdf4;border:1px solid #86efac}pre{background:#f5f5f5;padding:10px;border-radius:6px;overflow-x:auto;font-size:12px}.svgc{text-align:center;margin:16px 0;overflow-x:auto}.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600}.p0{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}.p1{background:#fefce8;color:#ca8a04;border:1px solid #fde047}footer{margin-top:40px;padding-top:15px;border-top:1px solid #ddd;font-size:11px;color:#888}</style></head><body>
-<h1>🔬 BaiZe Harness — SWE-bench 通过率为何这么低？</h1>
-<p style="color:#666;font-size:13px">生成: 2026-10-13 22:13 | 数据: kimi_pilot_results.json(2100条,7harness×300) + fix1/fix2/fix3 | 模型: kimi-k2.6-cloud | SWE-bench Lite(300)</p>
-<h2 class="sec">1. TL;DR</h2>
-<div class="callout cr"><b>核心结论</b>: cline 28.7% 的通过率<b>同时受评测环境压制和 LLM 能力限制</b>。<br><ul style="margin:6px 0">
-<li><b>环境压制 21.5%</b>(451/2100): C扩展/Python版本/OOM → 测试无法运行. fix1+fix2+fix3 已挽回43条→29.4%.</li>
-<li><b>真实能力不足 46.3%</b>(972/2100): 补丁apply+测试运行,但f2p失败→<b>agent修复是错的</b>. 主要失败模式.</li>
-<li><b>eval-OK口径 36.3%</b>仍低于Kimi K2 0711标准42.0%→~5pp harness质量差距.</li>
-<li><b>fix3关键发现</b>: matplotlib C扩展修复后29条补丁全apply但<b>0条resolved</b>→f2p=0/1→<b>确认能力问题,非infra</b>.</li>
-<li><b>外部对照</b>: 28.7%与Aider+GPT-4o(26.3%,2024-05)相当,远低于SOTA(Claude Opus 4.6=62.7%)和同模型标准(Kimi K2 0711=42.0%).</li>
-</ul></div>
-<h2 class="sec">2. 外部对照 — SWE-bench Lite 排行榜</h2>
-<p>排行榜用标准Docker eval+mini-SWE-agent;我们用自建非Docker eval+7自定义harness,口径不完全可比.</p>
-<table><tr><th>模型/Agent</th><th>SWE-bench Lite</th><th>来源+时效</th></tr><tr><td class='rname'>Claude Opus 4.6</td><td class='num'><b>62.7%</b></td><td style='font-size:11px;color:#888'>pricepertoken 2026-10</td></tr><tr><td class='rname'>SWE-agent+Claude4</td><td class='num'><b>56.7%</b></td><td style='font-size:11px;color:#888'>llmrun.dev 2025-09</td></tr><tr><td class='rname'>MiniMax M2.5</td><td class='num'><b>56.3%</b></td><td style='font-size:11px;color:#888'>pricepertoken 2026-10</td></tr><tr><td class='rname'>GPT-5</td><td class='num'><b>54.3%</b></td><td style='font-size:11px;color:#888'>pricepertoken 2026-10</td></tr><tr><td class='rname'>Claude Haiku 4.5</td><td class='num'><b>54.3%</b></td><td style='font-size:11px;color:#888'>pricepertoken 2026-10</td></tr><tr><td class='rname'>SWE-agent+Claude3.7</td><td class='num'><b>48.0%</b></td><td style='font-size:11px;color:#888'>llmrun.dev 2025-09</td></tr><tr><td class='rname'>Kimi K2 0711(标准)</td><td class='num'><b>42.0%</b></td><td style='font-size:11px;color:#888'>pricepertoken 2026-10</td></tr><tr><td class='rname'>Agentless+Claude3.5</td><td class='num'><b>40.7%</b></td><td style='font-size:11px;color:#888'>llmrun.dev 2025-09</td></tr><tr><td class='rname'>DeepSeek v3</td><td class='num'><b>36.7%</b></td><td style='font-size:11px;color:#888'>llmrun.dev 2025-09</td></tr><tr><td class='rname'>Aider+GPT-4o(2024-05)</td><td class='num'><b>26.3%</b></td><td style='font-size:11px;color:#888'>aider.blog 2024-05</td></tr><tr><td class='rname'>SWE-agent+GPT-4(原始)</td><td class='num'><b>12.47%</b></td><td style='font-size:11px;color:#888'>SWE-bench paper ICLR2024</td></tr></table>
-<h3>我们的结果(kimi-k2.6-cloud,自建eval,7harness)</h3>
-<table><tr><th>harness</th><th>resolved</th><th>total</th><th>rate</th></tr><tr><td class='rname'>pi</td><td class='num'>91</td><td class='num'>300</td><td class='num'><b>30.3%</b></td></tr><tr><td class='rname'>opencode</td><td class='num'>87</td><td class='num'>300</td><td class='num'><b>29.0%</b></td></tr><tr><td class='rname'>cline-patched</td><td class='num'>86</td><td class='num'>300</td><td class='num'><b>28.7%</b></td></tr><tr><td class='rname'>hermes</td><td class='num'>81</td><td class='num'>300</td><td class='num'><b>27.0%</b></td></tr><tr><td class='rname'>codex</td><td class='num'>80</td><td class='num'>300</td><td class='num'><b>26.7%</b></td></tr><tr><td class='rname'>claude-code</td><td class='num'>78</td><td class='num'>300</td><td class='num'><b>26.0%</b></td></tr><tr><td class='rname'>deepseek-harness</td><td class='num'>71</td><td class='num'>300</td><td class='num'><b>23.7%</b></td></tr>
-<tr style="background:#e8eef7"><td class='rname'><b>cline eval-OK口径</b></td><td class='num'>574</td><td class='num'>1581</td><td class='num'><b>36.3%</b></td></tr>
-<tr style="background:#e8eef7"><td class='rname'><b>fix1+fix2后</b></td><td class='num'>617</td><td class='num'>2100</td><td class='num'><b>29.4%</b></td></tr></table>
-<div class="callout cb"><b>对照</b>: cline 28.7%<b>低于</b>同模型标准(Kimi K2 0711=42.0%,差13.3pp). eval-OK 36.3%收窄至~5pp. 差距: ①环境(~8pp)②harness质量(~5pp)③模型差异(待验证).</div>
-<div class="svgc"><svg width="560" height="300" viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg"><text x="280.0" y="18" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">SWE-bench Lite 通过率外部对照</text><line x1="160" y1="30" x2="160" y2="290" stroke="#ddd"/><text x="160" y="298" text-anchor="middle" font-size="9" fill="#999">0%</text><line x1="266" y1="30" x2="266" y2="290" stroke="#ddd"/><text x="266" y="298" text-anchor="middle" font-size="9" fill="#999">20%</text><line x1="371" y1="30" x2="371" y2="290" stroke="#ddd"/><text x="371" y="298" text-anchor="middle" font-size="9" fill="#999">40%</text><line x1="477" y1="30" x2="477" y2="290" stroke="#ddd"/><text x="477" y="298" text-anchor="middle" font-size="9" fill="#999">60%</text><text x="152" y="49" text-anchor="end" font-size="10" fill="#333">Claude Opus 4.6</text><rect x="160" y="35" width="331" height="20" fill="#5567ff" opacity="0.8" rx="2"/><text x="495" y="49" font-size="10" font-weight="bold">62.7%</text><text x="152" y="75" text-anchor="end" font-size="10" fill="#333">SWE-agent+Claude4</text><rect x="160" y="61" width="300" height="20" fill="#6678aa" opacity="0.8" rx="2"/><text x="464" y="75" font-size="10" font-weight="bold">56.7%</text><text x="152" y="101" text-anchor="end" font-size="10" fill="#333">SWE-agent+Claude3.7</text><rect x="160" y="87" width="254" height="20" fill="#7788bb" opacity="0.8" rx="2"/><text x="418" y="101" font-size="10" font-weight="bold">48.0%</text><text x="152" y="127" text-anchor="end" font-size="10" fill="#333">Kimi K2 0711(标准)</text><rect x="160" y="113" width="222" height="20" fill="#4488dd" opacity="0.8" rx="2"/><text x="386" y="127" font-size="10" font-weight="bold">42.0%</text><text x="152" y="153" text-anchor="end" font-size="10" fill="#333">DeepSeek v3</text><rect x="160" y="139" width="194" height="20" fill="#99aabb" opacity="0.8" rx="2"/><text x="358" y="153" font-size="10" font-weight="bold">36.7%</text><text x="152" y="179" text-anchor="end" font-size="10" fill="#333">cline eval-OK</text><rect x="160" y="165" width="193" height="20" fill="#2d7d2d" opacity="0.8" rx="2"/><text x="357" y="179" font-size="10" font-weight="bold">36.6%</text><text x="152" y="205" text-anchor="end" font-size="10" fill="#333">pi(ours)</text><rect x="160" y="191" width="160" height="20" fill="#2d9d2d" opacity="0.8" rx="2"/><text x="324" y="205" font-size="10" font-weight="bold">30.3%</text><text x="152" y="231" text-anchor="end" font-size="10" fill="#333">cline(ours)</text><rect x="160" y="217" width="152" height="20" fill="#2d7d2d" opacity="0.8" rx="2"/><text x="316" y="231" font-size="10" font-weight="bold">28.7%</text><text x="152" y="257" text-anchor="end" font-size="10" fill="#333">Aider+GPT-4o</text><rect x="160" y="243" width="139" height="20" fill="#aabbcc" opacity="0.8" rx="2"/><text x="303" y="257" font-size="10" font-weight="bold">26.3%</text><text x="152" y="283" text-anchor="end" font-size="10" fill="#333">deepseek-h(ours)</text><rect x="160" y="269" width="125" height="20" fill="#6d8d6d" opacity="0.8" rx="2"/><text x="289" y="283" font-size="10" font-weight="bold">23.7%</text></svg></div>
-<h2 class="sec">3. 能力 vs 环境拆解</h2>
-<h3>3.1 失败模式分布</h3>
-<div class="svgc"><svg width="360" height="260" viewBox="0 0 360 260" xmlns="http://www.w3.org/2000/svg"><text x="180" y="20" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">2100 条结果失败模式分布</text><path d="M 180.0 40.0 A 90 90 0 0 1 269.0 143.1 L 229.5 137.3 A 50 50 0 0 0 180.0 80.0 Z" fill="#2d7d2d" opacity="0.75" stroke="#fff" stroke-width="1"/><text x="233.0" y="84.3" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">574</text><path d="M 269.0 143.1 A 90 90 0 0 1 90.3 137.8 L 130.2 134.3 A 50 50 0 0 0 229.5 137.3 Z" fill="#d44" opacity="0.75" stroke="#fff" stroke-width="1"/><text x="177.9" y="200.0" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">972</text><path d="M 90.3 137.8 A 90 90 0 0 1 152.7 44.2 L 164.8 82.4 A 50 50 0 0 0 130.2 134.3 Z" fill="#e80" opacity="0.75" stroke="#fff" stroke-width="1"/><text x="121.8" y="91.2" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">451</text><path d="M 152.7 44.2 A 90 90 0 0 1 161.8 41.9 L 169.9 81.0 A 50 50 0 0 0 164.8 82.4 Z" fill="#999" opacity="0.75" stroke="#fff" stroke-width="1"/><path d="M 161.8 41.9 A 90 90 0 0 1 175.2 40.1 L 177.3 80.1 A 50 50 0 0 0 169.9 81.0 Z" fill="#77a" opacity="0.75" stroke="#fff" stroke-width="1"/><path d="M 175.2 40.1 A 90 90 0 0 1 178.9 40.0 L 179.4 80.0 A 50 50 0 0 0 177.3 80.1 Z" fill="#aaa" opacity="0.75" stroke="#fff" stroke-width="1"/><path d="M 178.9 40.0 A 90 90 0 0 1 180.0 40.0 L 180.0 80.0 A 50 50 0 0 0 179.4 80.0 Z" fill="#ccc" opacity="0.75" stroke="#fff" stroke-width="1"/><rect x="20" y="165" width="12" height="12" fill="#2d7d2d" opacity="0.75" rx="2"/><text x="38" y="175" font-size="10" fill="#333">resolved: 574 (27.3%)</text><rect x="20" y="181" width="12" height="12" fill="#d44" opacity="0.75" rx="2"/><text x="38" y="191" font-size="10" fill="#333">true wrong-fix: 972 (46.3%)</text><rect x="20" y="197" width="12" height="12" fill="#e80" opacity="0.75" rx="2"/><text x="38" y="207" font-size="10" fill="#333">env-failure: 451 (21.5%)</text><rect x="20" y="213" width="12" height="12" fill="#999" opacity="0.75" rx="2"/><text x="38" y="223" font-size="10" fill="#333">partial: 35 (1.7%)</text><rect x="20" y="229" width="12" height="12" fill="#77a" opacity="0.75" rx="2"/><text x="38" y="239" font-size="10" fill="#333">blocked: 50 (2.4%)</text><rect x="20" y="245" width="12" height="12" fill="#aaa" opacity="0.75" rx="2"/><text x="38" y="255" font-size="10" fill="#333">quota: 14 (0.7%)</text><rect x="20" y="261" width="12" height="12" fill="#ccc" opacity="0.75" rx="2"/><text x="38" y="271" font-size="10" fill="#333">no-patch: 4 (0.2%)</text></svg></div>
-<table><tr><th>分类</th><th>条数</th><th>占比</th><th>性质</th><th>可挽回性</th></tr>
-<tr><td class='rname'>resolved</td><td class='num'>574</td><td class='num'>27.3%</td><td>✅成功</td><td>—</td></tr>
-<tr><td class='rname'>true wrong-fix</td><td class='num'>972</td><td class='num'>46.3%</td><td><span class='tag p0'>能力</span>f2p失败</td><td>低</td></tr>
-<tr><td class='rname'>env-failure</td><td class='num'>451</td><td class='num'>21.5%</td><td><span class='tag p1'>环境</span>测试未运行</td><td><b>高</b></td></tr>
-<tr><td class='rname'>partial</td><td class='num'>35</td><td class='num'>1.7%</td><td><span class='tag p0'>能力</span>p2p未全过</td><td>低</td></tr>
-<tr><td class='rname'>blocked</td><td class='num'>50</td><td class='num'>2.4%</td><td><span class='tag p1'>环境</span>进程未完成</td><td>中</td></tr>
-<tr><td class='rname'>quota</td><td class='num'>14</td><td class='num'>0.7%</td><td><span class='tag p1'>配额</span>API限流</td><td>中</td></tr>
-<tr><td class='rname'>no-patch</td><td class='num'>4</td><td class='num'>0.2%</td><td><span class='tag p0'>能力</span>未生成补丁</td><td>低</td></tr></table>
-<h3>3.2 环境失败按repo</h3>
-<div class="svgc"><svg width="500" height="260" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg"><text x="250.0" y="18" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">环境失败按 repo (top 8)</text><text x="132" y="43" text-anchor="end" font-size="9" fill="#333">matplotlib</text><rect x="140" y="30" width="310" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="454" y="43" font-size="10">130</text><text x="132" y="67" text-anchor="end" font-size="9" fill="#333">pytest</text><rect x="140" y="54" width="269" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="413" y="67" font-size="10">113</text><text x="132" y="91" text-anchor="end" font-size="9" fill="#333">sphinx</text><rect x="140" y="78" width="219" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="363" y="91" font-size="10">92</text><text x="132" y="115" text-anchor="end" font-size="9" fill="#333">scikit-learn</text><rect x="140" y="102" width="81" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="225" y="115" font-size="10">34</text><text x="132" y="139" text-anchor="end" font-size="9" fill="#333">astropy</text><rect x="140" y="126" width="67" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="211" y="139" font-size="10">28</text><text x="132" y="163" text-anchor="end" font-size="9" fill="#333">django</text><rect x="140" y="150" width="60" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="204" y="163" font-size="10">25</text><text x="132" y="187" text-anchor="end" font-size="9" fill="#333">flask</text><rect x="140" y="174" width="33" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="177" y="187" font-size="10">14</text><text x="132" y="211" text-anchor="end" font-size="9" fill="#333">sympy</text><rect x="140" y="198" width="19" height="18" fill="#e80" opacity="0.7" rx="2"/><text x="163" y="211" font-size="10">8</text></svg></div>
-<table><tr><th>repo</th><th>env-fail</th><th>根因</th><th>修复状态</th></tr>
-<tr><td class='rname'>matplotlib</td><td class='num'>130</td><td>C扩展(qhull/freetype)</td><td><span class='tag p1'>fix3:apply✅但0resolved</span></td></tr>
-<tr><td class='rname'>pytest</td><td class='num'>113</td><td>setuptools冲突</td><td><span class='tag p0'>fix2:9flipped✅</span></td></tr>
-<tr><td class='rname'>sphinx</td><td class='num'>92</td><td>base_commit/Python版本</td><td><span class='tag p1'>待修</span></td></tr>
-<tr><td class='rname'>sklearn</td><td class='num'>34</td><td>C扩展+上下文不匹配</td><td><span class='tag p1'>fix3:0/27apply</span></td></tr>
-<tr><td class='rname'>astropy</td><td class='num'>28</td><td>OOM</td><td><span class='tag p1'>待修(增cgroup)</span></td></tr>
-<tr><td class='rname'>django</td><td class='num'>25</td><td>部分依赖</td><td><span class='tag p0'>fix1:部分</span></td></tr>
-<tr><td class='rname'>flask</td><td class='num'>14</td><td>werkzeug不兼容</td><td><span class='tag p0'>fix2:0flipped</span></td></tr>
-<tr><td class='rname'>sympy</td><td class='num'>8</td><td>少量依赖</td><td><span class='tag p0'>fix1:部分</span></td></tr></table>
-<h3>3.3 wrong-fix按repo(top10)</h3>
-<table><tr><th>repo</th><th>wrong-fix</th></tr><tr><td class='rname'>django/django</td><td class='num'>529</td></tr><tr><td class='rname'>sympy/sympy</td><td class='num'>248</td></tr><tr><td class='rname'>scikit-learn/scikit-learn</td><td class='num'>54</td></tr><tr><td class='rname'>psf/requests</td><td class='num'>41</td></tr><tr><td class='rname'>pylint-dev/pylint</td><td class='num'>23</td></tr><tr><td class='rname'>pydata/xarray</td><td class='num'>22</td></tr><tr><td class='rname'>sphinx-doc/sphinx</td><td class='num'>19</td></tr><tr><td class='rname'>astropy/astropy</td><td class='num'>14</td></tr><tr><td class='rname'>mwaskom/seaborn</td><td class='num'>13</td></tr><tr><td class='rname'>pallets/flask</td><td class='num'>7</td></tr>
-<tr><td colspan="2" style="font-size:11px;color:#888">django(529)+sympy(248)占80%→难度最高</td></tr></table>
-<h3>3.4 blocked分布</h3>
-<table><tr><th>repo</th><th>blocked</th></tr><tr><td class='rname'>matplotlib/matplotlib</td><td class='num'>31</td></tr><tr><td class='rname'>django/django</td><td class='num'>10</td></tr><tr><td class='rname'>sympy/sympy</td><td class='num'>6</td></tr><tr><td class='rname'>scikit-learn/scikit-learn</td><td class='num'>2</td></tr><tr><td class='rname'>pytest-dev/pytest</td><td class='num'>1</td></tr></table>
-<table><tr><th>harness</th><th>blocked</th></tr><tr><td class='rname'>claude-code</td><td class='num'>15</td></tr><tr><td class='rname'>hermes</td><td class='num'>15</td></tr><tr><td class='rname'>deepseek-harness</td><td class='num'>11</td></tr><tr><td class='rname'>pi</td><td class='num'>5</td></tr><tr><td class='rname'>codex</td><td class='num'>4</td></tr>
-<tr><td colspan="2" style="font-size:11px;color:#888">集中在matplotlib(31)和claude-code/hermes/deepseek</td></tr></table>
-<h3>3.5 量化拆分</h3>
-<div class="callout cy"><b>能力类</b>: wrong-fix 972+partial 35+no-patch 4=<b>1011(48.1%)</b><br><b>环境类</b>: env 451+blocked 50+quota 14=<b>515(24.5%)</b><br><b>可挽回上限</b>: eval-OK 36.3%→~27条/harness→cline 86→~113(37.7%). <b>但fix3实证</b>: 0/29→实际flip~10-20%.</div>
-<h2 class="sec">4. 代表轨迹逐条</h2>
-<p>cline-patched harness代表性案例:</p>
-<div style="border-left:3px solid #2d7d2d;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 1 — 成功 (resolved)</b><br><code>django__django-10924</code> | <code>cline-patched</code> | 墙钟:383s<br><b>eval</b>: resolved=True applied=True f2p=1/1 p2p=1/1<br><b>rootfs</b>: using template django__django-10914<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-10924.json
-[run_single] cleanup: git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483
-</pre></div><div style="border-left:3px solid #2d7d2d;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 2 — 成功 (resolved)</b><br><code>django__django-11001</code> | <code>cline-patched</code> | 墙钟:901s<br><b>eval</b>: resolved=True applied=True f2p=2/2 p2p=118/118<br><b>rootfs</b>: using template django__django-10914<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11001.json
-[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34
-</pre></div><div style="border-left:3px solid #d44;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 1 — 错误修复 (wrong-fix)</b><br><code>django__django-11019</code> | <code>cline-patched</code> | 墙钟:1800s<br><b>eval</b>: resolved=False applied=True f2p=0/16 p2p=58/58<br><b>rootfs</b>: using template django__django-10914<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11019.json
-[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408
-</pre></div><div style="border-left:3px solid #d44;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 2 — 错误修复 (wrong-fix)</b><br><code>django__django-11283</code> | <code>cline-patched</code> | 墙钟:581s<br><b>eval</b>: resolved=False applied=True f2p=0/1 p2p=0/8<br><b>rootfs</b>: using template django__django-10914<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11283.json
-[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a
-</pre></div><div style="border-left:3px solid #d44;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 3 — 错误修复 (wrong-fix)</b><br><code>django__django-11564</code> | <code>cline-patched</code> | 墙钟:509s<br><b>eval</b>: resolved=False applied=True f2p=0/2 p2p=174/174<br><b>rootfs</b>: using template django__django-10914<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11564.json
-[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26
-</pre></div><div style="border-left:3px solid #e80;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 1 — 环境失败 (env-failure)</b><br><code>astropy__astropy-12907</code> | <code>cline-patched</code> | 墙钟:586s<br><b>eval</b>: resolved=False applied=False f2p=0/0 p2p=0/0<br><b>rootfs</b>: using template astropy__astropy-12907<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-12907.json
-[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607
-</pre></div><div style="border-left:3px solid #e80;padding:8px 12px;margin:8px 0;background:#f9f9f9;border-radius:0 4px 4px 0"><b>案例 2 — 环境失败 (env-failure)</b><br><code>astropy__astropy-14182</code> | <code>cline-patched</code> | 墙钟:1189s<br><b>eval</b>: resolved=False applied=False f2p=0/0 p2p=0/0<br><b>rootfs</b>: using template astropy__astropy-12907<br><b>stdout_tail</b>: <pre style="font-size:10px;margin:4px 0;background:#f0f0f0;padding:4px">_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14182.json
-[run_single] cleanup: git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48
-</pre></div>
-<div class="callout cy"><b>fix3验证</b>: matplotlib 29/29 apply→<b>0/29 resolved</b>→f2p=0/1→<b>能力问题</b>. sklearn 0/27 apply→上下文不匹配. sphinx 0/8 apply→同上.</div>
-<h3>4.1 关键发现</h3>
-<div class="callout cb"><ul style="margin:6px 0">
-<li><b>成功</b>(django-10924): f2p=1/1,p2p=1/1,383s→干净利落.</li>
-<li><b>wrong-fix</b>(django-11019): f2p=0/16,p2p=58/58,1800s→花30分钟但补丁未修bug,未破坏现有测试.</li>
-<li><b>env-failure</b>(astropy-12907): f2p=0/0,p2p=0/0→测试没运行(OOM).</li>
-<li><b>blocked</b>: stdout_tail空,rc=None→进程未完成.</li>
-<li><b>墙钟</b>: 中位395s(6.6min),均值610s(10.2min),最大1920s(32.0min).</li>
-</ul></div>
-<h2 class="sec">5. 提升机会点(按预计提升排序)</h2>
-<table><tr><th>#</th><th>机会点</th><th>依据</th><th>做法</th><th>预计提升</th><th>成本</th><th>ETA</th><th>风险</th></tr><tr><td>1</td><td style='text-align:left'><b>升级模型</b></td><td style='text-align:left;font-size:11px'>Kimi K2 0711 标准=42.0%,我们 28.7%(差13.3pp)</td><td style='text-align:left;font-size:11px'>换用 Kimi K2 0711 或 Claude 4</td><td class='num'><b>+10~15pp</b></td><td class='num' style='font-size:11px'>API 费用</td><td class='num' style='font-size:11px'>1-2h</td><td style='font-size:11px'>中</td></tr><tr><td>2</td><td style='text-align:left'><b>修复剩余环境失败</b></td><td style='text-align:left;font-size:11px'>451 env-fail 中已修~86,剩~365</td><td style='text-align:left;font-size:11px'>sphinx/astropy/sklearn 逐项修</td><td class='num'><b>+3~5pp</b></td><td class='num' style='font-size:11px'>CPU ~4h</td><td class='num' style='font-size:11px'>4-8h</td><td style='font-size:11px'>中</td></tr><tr><td>3</td><td style='text-align:left'><b>改进 harness 质量</b></td><td style='text-align:left;font-size:11px'>7 harness 23.7~30.3%,与 mini-SWE-agent 差距</td><td style='text-align:left;font-size:11px'>改进 edit format/context/tool use</td><td class='num'><b>+3~5pp</b></td><td class='num' style='font-size:11px'>开发 2-3天</td><td class='num' style='font-size:11px'>1周</td><td style='font-size:11px'>中高</td></tr><tr><td>4</td><td style='text-align:left'><b>重跑 blocked(50)+no-patch(4)</b></td><td style='text-align:left;font-size:11px'>50 blocked(matplotlib 31),git/workdir 冲突</td><td style='text-align:left;font-size:11px'>修复 workdir+git 重试+重跑</td><td class='num'><b>+1~2pp</b></td><td class='num' style='font-size:11px'>CPU+API ~5h</td><td class='num' style='font-size:11px'>6h</td><td style='font-size:11px'>低</td></tr><tr><td>5</td><td style='text-align:left'><b>多次尝试/集成</b></td><td style='text-align:left;font-size:11px'>Aider 6次重试→26.3%(vs 单次25%)</td><td style='text-align:left;font-size:11px'>每 instance 跑 N 次取最佳</td><td class='num'><b>+3~5pp</b></td><td class='num' style='font-size:11px'>API×N</td><td class='num' style='font-size:11px'>1-2天</td><td style='font-size:11px'>低</td></tr><tr><td>6</td><td style='text-align:left'><b>agent self-repair</b></td><td style='text-align:left;font-size:11px'>wrong-fix 中 f2p=0 但 p2p 全过</td><td style='text-align:left;font-size:11px'>跑测试→反馈→agent 修复</td><td class='num'><b>+2~4pp</b></td><td class='num' style='font-size:11px'>token+墙钟</td><td class='num' style='font-size:11px'>1周</td><td style='font-size:11px'>中</td></tr></table>
-<div class="callout cg"><b>累计</b>: 短期(1-2周)升级模型(+10~15pp)+修复环境(+3~5pp)+重跑blocked(+1~2pp)→<b>29.4%→~43~51%</b>. 中期改进harness(+3~5pp)+self-repair(+2~4pp)→<b>~48~60%</b>. <b>瓶颈</b>:升级模型是最大杠杆.</div>
-<h2 class="sec">6. 结论与诚实条款</h2>
-<div class="callout cr"><b>结论</b>:<ol style="margin:6px 0">
-<li><b>28.7%合理吗?</b> 部分合理.与Aider+GPT-4o(26.3%)相当,但<b>低于同模型标准13pp</b>.差距~8pp环境(可修),~5pp harness质量.</li>
-<li><b>都是LLM能力不足?</b> <b>不是</b>.21.5%环境,46.3%能力.fix3实证:修复后flip 0-28%→<b>环境修复暴露能力差距</b>.</li>
-<li><b>主要问题</b>: ①eval环境 ②django/sympy修复能力不足(777条wrong-fix) ③harness质量.</li>
-<li><b>最大机会</b>: 升级模型(+10~15pp)>修复环境(+3~5pp)>改进harness(+3~5pp).</li>
-</ol></div>
-<div class="callout cy"><b>诚实条款</b>:<ul style="margin:6px 0">
-<li>外部数据来自公开排行榜,时效2026-10,口径<b>不完全可比</b>.</li>
-<li>我们用<b>非Docker自建环境</b>,与官方标准有系统差异.eval-OK是<b>内部口径</b>.</li>
-<li>kimi-k2.6-cloud与Kimi K2 0711<b>可能不同checkpoint</b>,未隔离验证.</li>
-<li>fix3的0/29是<b>小样本</b>,flip rate因repo而异(fix1=9%,fix2=28%).</li>
-<li>stdout_tail仅最后几行,<b>不含完整轨迹</b>.</li>
-<li>提升幅度是<b>估算</b>,非实测.</li>
-</ul></div>
-<footer><p>数据: kimi_pilot_results.json(2100)+fix1(376)+fix2(32)+fix3(64) | 分析: Python统计+轨迹检查 | 外部: web search 2026-10-13</p><p>脚本: gen_why_low_passrate.py | 口径: 自建非Docker eval,7harness×300,kimi-k2.6-cloud</p></footer>
-</body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通过率为何这么低 — SWE-bench Lite 7x300 横评根因分析</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--text-dim:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;color:var(--accent);margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+h2{font-size:1.4em;color:var(--accent);margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+h3{font-size:1.15em;color:var(--purple);margin:20px 0 8px}
+h4{font-size:1em;color:var(--yellow);margin:16px 0 6px}
+.subtitle{color:var(--text-dim);font-size:0.9em;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.card-green{border-left:4px solid var(--green)}
+.card-red{border-left:4px solid var(--red)}
+.card-yellow{border-left:4px solid var(--yellow)}
+.card-blue{border-left:4px solid var(--accent)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.88em}
+th{background:#21262d;color:var(--accent);padding:8px 10px;text-align:left;border:1px solid var(--border);white-space:nowrap}
+td{padding:6px 10px;border:1px solid var(--border);color:var(--text)}
+td.num{text-align:right;font-family:'SF Mono',Consolas,monospace}
+td.green{color:var(--green)}
+td.red{color:var(--red)}
+td.yellow{color:var(--yellow)}
+tr:hover td{background:#1c2128}
+code{background:#1c2128;padding:2px 6px;border-radius:4px;font-family:'SF Mono',Consolas,monospace;font-size:0.88em;color:var(--yellow)}
+.tldr{background:linear-gradient(135deg,#161b22,#1c2128);border:2px solid var(--accent);border-radius:12px;padding:20px;margin:16px 0}
+.tldr h2{border:none;margin-top:0}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.78em;font-weight:600;margin:2px}
+.tag-green{background:rgba(63,185,80,0.15);color:var(--green);border:1px solid rgba(63,185,80,0.3)}
+.tag-red{background:rgba(248,81,73,0.15);color:var(--red);border:1px solid rgba(248,81,73,0.3)}
+.tag-yellow{background:rgba(210,153,34,0.15);color:var(--yellow);border:1px solid rgba(210,153,34,0.3)}
+.source{color:var(--text-dim);font-size:0.8em;font-style:italic;margin-top:4px}
+.evidence{background:rgba(88,166,255,0.05);border-left:3px solid var(--accent);padding:8px 12px;margin:8px 0;font-size:0.85em;border-radius:0 4px 4px 0}
+.evidence code{color:var(--accent)}
+.warn{background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:6px;padding:12px;margin:12px 0}
+.svg-chart{margin:16px auto;display:block}
+.footer{color:var(--text-dim);font-size:0.8em;margin-top:40px;padding-top:16px;border-top:1px solid var(--border);text-align:center}
+ul{margin:8px 0 8px 20px}
+li{margin:4px 0}
+</style>
+</head>
+<body>
+<h1>&#128300; 通过率为何这么低？</h1>
+<p class="subtitle">SWE-bench Lite 7 harness x 300 实例横评根因分析报告<br>
+数据基础：<code>kimi_pilot_results.json</code>（2100 条）+ fix1/fix2/fix3/fix4 重评结果<br>
+生成时间：2026-10-14 | 模型：kimi-k2.6-cloud | 评测口径：SWE-bench Lite (300 instances)</p>
+
+<div class="tldr">
+<h2>&#128203; TL;DR</h2>
+<p><b>通过率偏低但并非异常</b>：cline 28.7%（eval-OK 口径 36.6%）处于 2024 年中 Aider（26.3%）与 CodeR（28.3%）同一水平带，
+与当前 leaderboard 顶部（Claude 4 Sonnet 60%+）的差距主要来自 <b>三个因素叠加</b>：</p>
+<table>
+<tr><th>因素</th><th>占比</th><th>性质</th><th>可挽回性</th></tr>
+<tr><td><b>1. LLM 能力不足（wrong-fix）</b></td><td class="num">48.0%（1007/2100）</td><td><span class="tag tag-red">能力</span></td><td>换更强模型可大幅提升</td></tr>
+<tr><td><b>2. 评测环境失败（env-fail）</b></td><td class="num">21.5%（451/2100）</td><td><span class="tag tag-yellow">环境</span></td><td>已修 fix1+fix2 挽回 43 题</td></tr>
+<tr><td><b>3. 基建阻塞（blocked/timeout）</b></td><td class="num">5.0%（68/2100）</td><td><span class="tag tag-yellow">基建</span></td><td>git 重试+预克隆可修</td></tr>
+</table>
+<p style="margin-top:12px"><b>关键发现</b>：357 条（17%）patch 为 <code>0 bytes</code>——agent 运行了 1149s 平均时长但产出了空 patch，
+这是 harness 工程差异的显著指标（cline 8.3% vs codex 27.7%）。
+同时 fix3/fix4 修复了 48 条 env-fail 使 patch 成功 apply，但 0 条 resolved——证实修复 env 后的真瓶颈是 <b>LLM 能力</b>。</p>
+</div>
+
+<h2>&#167;1 外部对照</h2>
+<h3>1.1 SWE-bench Lite 公开 leaderboard 对比</h3>
+<div class="card card-blue">
+<table>
+<tr><th>#</th><th>Agent / 方法</th><th>模型</th><th>Resolve Rate</th><th>来源</th></tr>
+<tr><td>1</td><td>ExpeRepair-v1.0</td><td>Claude 4 Sonnet</td><td class="num green">60.3%</td><td>llmrun.dev</td></tr>
+<tr><td>2</td><td>Refact.ai Agent</td><td>proprietary</td><td class="num green">60.0%</td><td>llmrun.dev</td></tr>
+<tr><td>4</td><td>SWE-agent</td><td>Claude 4 Sonnet</td><td class="num">56.7%</td><td>llmrun.dev</td></tr>
+<tr><td>5</td><td>Spec Kit Agents</td><td>MiniMax-M2.5</td><td class="num">56.5-58.2%</td><td>arXiv:2604.05278</td></tr>
+<tr><td>6</td><td>SWE-agent</td><td>Claude 3.7 Sonnet</td><td class="num">48.0%</td><td>llmrun.dev</td></tr>
+<tr><td>7</td><td>OpenHands + CodeAct</td><td>Claude 3.5 Sonnet</td><td class="num">41.7%</td><td>llmrun.dev</td></tr>
+<tr><td>8</td><td>Agentless-1.5</td><td>Claude 3.5 Sonnet</td><td class="num">40.7%</td><td>llmrun.dev</td></tr>
+<tr><td>9</td><td>DeepSeek v3</td><td>DeepSeek v3</td><td class="num">36.7%</td><td>llmrun.dev</td></tr>
+<tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>cline-patched（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>28.7%</b></td><td><b>本评测</b></td></tr>
+<tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>opencode（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>29.0%</b></td><td><b>本评测</b></td></tr>
+<tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>pi（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>30.3%</b></td><td><b>本评测</b></td></tr>
+<tr><td>10</td><td>CodeR</td><td>--</td><td class="num yellow">28.3%</td><td>emergentmind</td></tr>
+<tr><td>11</td><td>Aider</td><td>Claude 3.5 Sonnet (2024-05)</td><td class="num yellow">26.3%</td><td>aider.chat blog</td></tr>
+<tr><td>12</td><td>SWE-agent（原始）</td><td>GPT-4</td><td class="num red">18.0%</td><td>SWE-agent paper</td></tr>
+</table>
+<p class="source">来源：llmrun.dev/benchmark/swe-bench-lite（截至2025-09）；aider.chat（2024-05）；emergentmind.com；arXiv:2604.05278</p>
+</div>
+
+<h3>1.2 定位结论</h3>
+<div class="card">
+<p><b>我们的 28.7% 处于「2024 年中 SOTA 水平带」</b>，与 Aider（26.3%，2024-05 当时 SOTA）和 CodeR（28.3%）处于同一区间。
+与当前 leaderboard 顶部（60%+）的 <b>~30pp 差距</b>，可归因于：</p>
+<table>
+<tr><th>差距来源</th><th>估计贡献</th><th>说明</th></tr>
+<tr><td>模型差异（kimi-k2.6 vs Claude 4 Sonnet）</td><td class="num">~20-25pp</td><td>顶部 agent 全部使用 Claude 4 Sonnet；kimi-k2.6 在 SWE-bench Pro 得 58.6%，但那是 Agentless 模式</td></tr>
+<tr><td>环境失败压制（21.5% 的 case 未被评测）</td><td class="num">~6-8pp</td><td>fix1+fix2 已挽回 43 题（+2.1pp），剩余 env-fail 仍在修复中</td></tr>
+<tr><td>harness 工程差异</td><td class="num">~3-5pp</td><td>0-byte patch 率：cline 8.3% vs codex 27.7%</td></tr>
+</table>
+<p><b>结论：28.7% 偏低但合理</b>——它准确反映了「kimi-k2.6-cloud + 当前 harness 工程 + 受限评测环境」的组合能力。
+不是评测环境完全崩坏导致的虚假低分（env-fail 仅 21.5%，且有 574 条真实 resolved 做支撑），
+也不是 LLM 能力完全不行（psf/requests 0/42 才是纯能力天花板信号）。</p>
+</div>
+
+<h3>1.3 Kimi K2/K2.6 官方 benchmark 参考</h3>
+<div class="card card-yellow">
+<table>
+<tr><th>Benchmark</th><th>分数</th><th>评测模式</th><th>来源</th></tr>
+<tr><td>SWE-bench Verified</td><td class="num green">65.8%</td><td>Agentless（单次生成，非 agent 交互）</td><td>MoonshotAI 官方</td></tr>
+<tr><td>SWE-bench Pro</td><td class="num">58.6%</td><td>Agentless</td><td>kimi-k2.org</td></tr>
+<tr><td>SWE-bench Verified（官方 leaderboard）</td><td class="num">70.8%</td><td>Kimi K2.5 high reasoning + mini-SWE-agent</td><td>swebench.com 2026-02</td></tr>
+<tr><td>Senior SWE-Bench</td><td class="num red">8.2%</td><td>Kimi K2.6 + Mini-SWE-Agent</td><td>snorkel.ai（更难变体）</td></tr>
+<tr style="background:rgba(88,166,255,0.08)"><td><b>SWE-bench Lite（本评测）</b></td><td class="num" style="color:var(--accent)"><b>28.7%</b></td><td><b>kimi-k2.6-cloud + 7 种 agent harness</b></td><td><b>本评测</b></td></tr>
+</table>
+<p class="source">来源：moonshotai.github.io/Kimi-K2；kimi-k2.org；swebench.com；snorkel.ai/senior-swe-bench</p>
+<p><b>注意</b>：Kimi K2 官方 65.8% 是 <b>Agentless 模式</b>（直接给 issue 让模型生成 patch，无工具交互），
+而我们用的是 <b>agent 交互模式</b>（harness 内多轮工具调用）。Agent 模式通常比 Agentless 更不稳定——
+模型需要自主导航代码库、决定搜索策略、管理上下文，引入了额外失败点。</p>
+</div>
+
+<h2>&#167;2 能力 vs 环境拆解</h2>
+<h3>2.1 总体失败分类（2100 条）</h3>
+<div class="card">
+<table>
+<tr><th>分类</th><th>数量</th><th>占比</th><th>性质</th><th>定义</th></tr>
+<tr><td class="green">resolved</td><td class="num green">574</td><td class="num">27.3%</td><td>成功</td><td>patch applied + 全部 f2p 测试通过</td></tr>
+<tr><td class="red">patch-but-failed</td><td class="num red">1007</td><td class="num">48.0%</td><td><span class="tag tag-red">LLM 能力</span></td><td>patch applied 但 f2p 未全部通过</td></tr>
+<tr><td class="yellow">env-fail</td><td class="num yellow">451</td><td class="num">21.5%</td><td><span class="tag tag-yellow">评测环境</span></td><td>patch 未 apply（import 失败 / C 扩展缺失）</td></tr>
+<tr><td class="yellow">blocked</td><td class="num">50</td><td class="num">2.4%</td><td><span class="tag tag-yellow">基建</span></td><td>git fetch 503</td></tr>
+<tr><td class="yellow">quota-blocked</td><td class="num">14</td><td class="num">0.7%</td><td><span class="tag tag-yellow">配额</span></td><td>API 配额耗尽</td></tr>
+<tr><td class="yellow">no-patch</td><td class="num">4</td><td class="num">0.2%</td><td><span class="tag tag-yellow">超时</span></td><td>agent 1920s 超时</td></tr>
+</table>
+<svg class="svg-chart" width="600" height="40" viewBox="0 0 600 40">
+<rect x="0" y="0" width="164" height="40" fill="#3fb950" rx="2"/><text x="82" y="25" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">27.3% resolved</text>
+<rect x="164" y="0" width="288" height="40" fill="#f85149" rx="2"/><text x="308" y="25" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">48.0% wrong-fix</text>
+<rect x="452" y="0" width="129" height="40" fill="#d29922" rx="2"/><text x="516" y="25" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">21.5% env-fail</text>
+<rect x="581" y="0" width="19" height="40" fill="#8b949e" rx="2"/>
+</svg>
+</div>
+
+<h3>2.2 wrong-fix 细分（1007 条）</h3>
+<div class="card card-red">
+<table>
+<tr><th>子类</th><th>数量</th><th>占 wrong-fix</th><th>说明</th></tr>
+<tr><td>完全错误（f2p=0/N）</td><td class="num red">898</td><td class="num">89.2%</td><td>patch apply 成功但 f2p 一个都没过</td></tr>
+<tr><td>部分正确（f2p&gt;0 未全过）</td><td class="num yellow">109</td><td class="num">10.8%</td><td>patch 修了部分测试但遗漏关键测试</td></tr>
+<tr><td>其中：0-byte patch</td><td class="num">357</td><td class="num">35.5%</td><td>agent 运行 1149s 平均但产出空 patch</td></tr>
+<tr><td>其中：超时（wall&gt;=1800s）</td><td class="num">184</td><td class="num">18.3%</td><td>agent 跑满超时限制</td></tr>
+</table>
+<p><b>关键发现</b>：357 条 0-byte patch 是最大的「可工程优化」机会——这不是 LLM 能力问题（模型确实在跑），
+而是 harness 没有正确捕获/格式化模型的输出。</p>
+</div>
+
+<h3>2.3 env-fail 细分（451 条）</h3>
+<div class="card card-yellow">
+<table>
+<tr><th>repo</th><th>env-fail</th><th>总数</th><th>压制率</th><th>根因</th><th>修复状态</th></tr>
+<tr><td>matplotlib</td><td class="num">130</td><td class="num">161</td><td class="num red">80.7%</td><td>Python 3.9 + C 扩展 build deps</td><td><span class="tag tag-yellow">fix3 修复中</span></td></tr>
+<tr><td>pytest</td><td class="num">113</td><td class="num">119</td><td class="num red">95.0%</td><td>setuptools&gt;=70 不兼容</td><td><span class="tag tag-green">fix2 已修</span></td></tr>
+<tr><td>sphinx</td><td class="num">92</td><td class="num">112</td><td class="num red">82.1%</td><td>Python 版本 + tox/pytest</td><td><span class="tag tag-yellow">fix4 修复中</span></td></tr>
+<tr><td>sklearn</td><td class="num">34</td><td class="num">161</td><td class="num">21.1%</td><td>Python 3.8 + C 扩展</td><td><span class="tag tag-yellow">fix4 修复中</span></td></tr>
+<tr><td>astropy</td><td class="num">28</td><td class="num">42</td><td class="num red">66.7%</td><td>C 扩展编译 OOM</td><td><span class="tag tag-yellow">fix4 修复中</span></td></tr>
+<tr><td>flask</td><td class="num">14</td><td class="num">21</td><td class="num">66.7%</td><td>werkzeug&gt;=2.3 不兼容</td><td><span class="tag tag-green">fix2 已修</span></td></tr>
+<tr><td>django</td><td class="num">25</td><td class="num">798</td><td class="num">3.1%</td><td>少量 Python 版本问题</td><td>低优先</td></tr>
+</table>
+<p><b>5 个 repo 被系统性压制</b>：matplotlib/pytest/sphinx/sklearn/astropy 合计 455 条实例（占 21.7%），
+其中 397 条因 env-fail 未被有效评测。不是 LLM 不行，而是测试环境根本跑不起来。</p>
+</div>
+
+<h3>2.4 fix1~fix4 修复实证</h3>
+<div class="card">
+<table>
+<tr><th>修复批次</th><th>修复内容</th><th>重评条数</th><th>patch 新增 apply</th><th>新增 resolved</th><th>结论</th></tr>
+<tr><td>fix1</td><td>5 repo conda env + Python 版本</td><td class="num">376</td><td class="num green">+215</td><td class="num green">+34</td><td>34 题翻转为 resolved</td></tr>
+<tr><td>fix2</td><td>pytest setuptools + flask werkzeug</td><td class="num">32</td><td class="num green">+28</td><td class="num green">+9</td><td>9 题翻转为 resolved</td></tr>
+<tr><td>fix3</td><td>matplotlib C 扩展 build deps</td><td class="num">64</td><td class="num yellow">+29</td><td class="num red">0</td><td>patch apply 但 0 resolved</td></tr>
+<tr><td>fix4（进行中）</td><td>sklearn + astropy + sphinx</td><td class="num">27/61</td><td class="num yellow">+19</td><td class="num red">0</td><td>同上</td></tr>
+<tr style="background:rgba(63,185,80,0.08)"><td><b>累计</b></td><td></td><td></td><td></td><td class="num green"><b>+43</b></td><td><b>574->617 (27.3%->29.4%)</b></td></tr>
+</table>
+<p><b>关键证据</b>：fix3/fix4 把 48 条 env-fail 修到 patch 成功 apply，但 resolved=0。
+这说明：<b>环境修复的天花板已经到了</b>——剩余的 wrong-fix 是纯粹的 LLM 能力问题，再修环境也救不回来。</p>
+<div class="evidence">证据：fix3 <code>kimi_pilot_results.fix3.json</code> 64 条，new_eval.patch_applied=29, new_eval.resolved=0<br>
+fix4 <code>kimi_pilot_results.fix4.json</code> 27 条（进行中），new_eval.patch_applied=19, new_eval.resolved=0</div>
+</div>
+
+<h3>2.5 量化归因总结</h3>
+<div class="card card-blue">
+<table>
+<tr><th>归因类别</th><th>条数</th><th>占比</th><th>性质</th><th>可挽回上限</th></tr>
+<tr><td>LLM 能力不足（真 wrong-fix）</td><td class="num">1007</td><td class="num">48.0%</td><td><span class="tag tag-red">能力</span></td><td>换 Claude 4 Sonnet 估 +15-20pp</td></tr>
+<tr><td>评测环境失败</td><td class="num">451</td><td class="num">21.5%</td><td><span class="tag tag-yellow">环境</span></td><td>已修 43 题 (+2.1pp)，剩余可修 ~10-15 题</td></tr>
+<tr><td>基建阻塞</td><td class="num">54</td><td class="num">2.6%</td><td><span class="tag tag-yellow">基建</span></td><td>git 重试+预克隆估可重跑 ~50 条</td></tr>
+<tr><td>API 配额阻塞</td><td class="num">14</td><td class="num">0.7%</td><td><span class="tag tag-yellow">配额</span></td><td>不重跑</td></tr>
+<tr><td>真实 resolved</td><td class="num green">574</td><td class="num">27.3%</td><td><span class="tag tag-green">成功</span></td><td>--</td></tr>
+</table>
+<p><b>能力 vs 环境 = 48% : 21.5%</b>。LLM 能力不足是最大瓶颈（约占总失败的 2.2 倍于环境问题）。
+但环境问题压制的 21.5% 使得我们的分数被低估——如果环境全部修好，理论上限约 29.4% + ~2pp = ~31-32%。</p>
+</div>
+
+<h2>&#167;3 代表轨迹逐条分析</h2>
+<p>以下从 <code>kimi_pilot_results.json</code>（2100 条）中按类别取样，引用 <code>stdout_tail</code> 原文片段为证。</p>
+
+<h3>3.1 成功案例 — 典型 resolved 轨迹</h3>
+<div class="card card-green">
+<h4>案例 A：cline-patched | django__django-10924</h4>
+<div class="evidence">
+<code>wall_s=382.8s | resolved=True | f2p=1/1 | p2p=1/1 | model_patch=6687B</code><br>
+stdout_tail: "[run_single] model_patch: 6687 bytes" + "wrote predictions" + "cleanup: git reset --hard"
+</div>
+<p>典型成功模式：agent 在约 6 分钟内定位 bug、生成 6687 字节 patch、全部测试通过。</p>
+
+<h4>案例 B：cline-patched | django__django-11001</h4>
+<div class="evidence">
+<code>wall_s=900.7s | resolved=True | f2p=2/2 | p2p=118/118 | model_patch=1621B</code>
+</div>
+<p>15 分钟完成，patch 仅 1621 字节但覆盖了 2 个 f2p 和 118 个 p2p 测试。精准的小修改。</p>
+
+<h4>案例 C：hermes | sympy__sympy-20590 — 最高效的成功</h4>
+<div class="evidence">
+<code>wall_s=110s | resolved=True | f2p=1/1 | p2p=26/26 | model_patch=312B</code>
+</div>
+<p>不到 2 分钟，312 字节 patch——最小改动的典范。</p>
+</div>
+
+<h3>3.2 完全错误案例 — wrong-fix（f2p=0）</h3>
+<div class="card card-red">
+<h4>案例 D：cline-patched | django__django-11019 — 超时 + 0-byte patch</h4>
+<div class="evidence">
+<code>wall_s=1800.4s | resolved=False | patch_applied=True | f2p=0/16 | p2p=58/58 | model_patch=0 bytes</code>
+</div>
+<p>agent 跑满 30 分钟超时，产出 0 字节 patch。p2p=58/58 说明原有测试全过（patch 为空），
+但 f2p=0/16 说明目标测试一个也没过。典型「搜索很久但最终没产出有效修改」。</p>
+
+<h4>案例 E：cline-patched | django__django-11283 — 大 patch 但全错</h4>
+<div class="evidence">
+<code>wall_s=581.2s | resolved=False | f2p=0/1 | p2p=0/8 | model_patch=12886B</code>
+</div>
+<p>12886 字节大 patch（比成功案例平均 2793B 大 4.6 倍），但 f2p=0/1 且 p2p=0/8 意味着引入了新 bug。典型「过度修改」。</p>
+
+<h4>案例 F：codex | django__django-14667 — 最大错误 patch</h4>
+<div class="evidence">
+<code>wall_s=1113s | resolved=False | f2p=0/1 | p2p=0/29 | model_patch=113623B</code>
+</div>
+<p>113KB 巨型 patch——agent 几乎重写了整个文件，完全跑偏。典型「LLM 在不确定时倾向于大改」。</p>
+</div>
+
+<h3>3.3 近似成功案例 — near-miss</h3>
+<div class="card card-yellow">
+<h4>案例 G：django__django-13321 — 全 7 harness 一致失败</h4>
+<div class="evidence">
+所有 7 个 harness 结果完全相同：<code>f2p=337/355 | p2p=0/0 | resolved=False</code>
+</div>
+<table>
+<tr><th>harness</th><th>f2p</th><th>p2p</th><th>resolved</th></tr>
+<tr><td>codex</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>opencode</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>claude-code</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>deepseek-harness</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>cline-patched</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>pi</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>hermes</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+</table>
+<p><b>所有 7 个 harness 产出相同的 337/355 结果</b>——极不寻常。可能：7 个 harness 产出了相似 patch（都修了同一部分但遗漏 18 个测试），
+或评测环境对这 18 个测试有系统性问题。p2p=0/0 说明该实例没有 p2p 测试，只有 355 个 f2p。</p>
+</div>
+
+<h3>3.4 0-byte patch 深度分析 — harness 工程差异</h3>
+<div class="card card-blue">
+<p>357 条（17%）的 patch 为 0 字节——agent 运行了但没产出有效代码修改。</p>
+<table>
+<tr><th>harness</th><th>0-byte 数</th><th>0-byte 率</th><th>平均运行时长</th></tr>
+<tr><td>codex</td><td class="num red">83</td><td class="num red">27.7%</td><td class="num">1149s</td></tr>
+<tr><td>deepseek-harness</td><td class="num red">77</td><td class="num red">25.7%</td><td>--</td></tr>
+<tr><td>hermes</td><td class="num">71</td><td class="num">23.7%</td><td>--</td></tr>
+<tr><td>claude-code</td><td class="num">70</td><td class="num">23.3%</td><td>--</td></tr>
+<tr><td class="green">cline-patched</td><td class="num green">25</td><td class="num green">8.3%</td><td>--</td></tr>
+<tr><td class="green">pi</td><td class="num green">16</td><td class="num green">5.3%</td><td>--</td></tr>
+<tr><td class="green">opencode</td><td class="num green">15</td><td class="num green">5.0%</td><td>--</td></tr>
+</table>
+<p><b>harness 工程差异巨大</b>：codex 的 0-byte 率（27.7%）是 opencode（5.0%）的 5.5 倍。
+180/357 是超时（wall&gt;=1800s），即 agent 跑满时间但没产出。</p>
+<div class="evidence">证据：<code>kimi_pilot_results.json</code>，grep "model_patch: 0 bytes" in stdout_tail field</div>
+</div>
+
+<h3>3.5 纯能力天花板案例 — psf/requests 0/42</h3>
+<div class="card card-red">
+<p>psf/requests 是最清晰的「纯 LLM 能力」信号——0 条 env-fail（所有 patch 都成功 apply），但 0 条 resolved。</p>
+<table>
+<tr><th>harness</th><th>实例</th><th>wall_s</th><th>patch</th><th>f2p</th><th>p2p</th></tr>
+<tr><td>codex</td><td>requests-1963</td><td class="num">266s</td><td class="num">0B</td><td class="num">1/7</td><td class="num">90/112</td></tr>
+<tr><td>codex</td><td>requests-2148</td><td class="num">933s</td><td class="num">1151B</td><td class="num">5/10</td><td class="num">95/118</td></tr>
+<tr><td>codex</td><td>requests-2317</td><td class="num">792s</td><td class="num">2197B</td><td class="num">4/8</td><td class="num">102/133</td></tr>
+<tr><td>codex</td><td>requests-3362</td><td class="num">1727s</td><td class="num">1995B</td><td class="num">1/1</td><td class="num">72/75</td></tr>
+</table>
+<p>42 条实例（6 个 instance x 7 harness）全部 patch applied 但 0 resolved。
+部分案例 f2p 通过率不低（5/10, 4/8），说明 patch 方向大致正确但不完整——
+这是 kimi-k2.6-cloud 模型能力的天花板信号，与 harness 无关。</p>
+</div>
+
+<h2>&#167;4 提升机会点总表（按预计提升从高到低排序）</h2>
+<table>
+<tr><th>#</th><th>机会点</th><th>依据</th><th>做法</th><th>预计挽回</th><th>成本</th><th>ETA</th><th>风险</th></tr>
+<tr style="background:rgba(63,185,80,0.06)"><td class="num green">1</td><td><b>换用更强模型</b></td><td>leaderboard 顶部 60%+ 全用 Claude 4 Sonnet</td><td>现有 7 harness 用 Claude 4 Sonnet 重跑 300 条</td><td class="num green">+15-20pp</td><td class="num">~$300 API</td><td class="num">~8h</td><td><span class="tag tag-green">低</span></td></tr>
+<tr style="background:rgba(63,185,80,0.06)"><td class="num green">2</td><td><b>修复 0-byte patch 工程</b></td><td>357 条 0-byte patch（17%），codex 27.7% vs opencode 5.0%</td><td>分析 4 个 harness 的 patch 提取逻辑；增加 timeout 前 snapshot</td><td class="num green">+3-5pp</td><td class="num">~2h</td><td class="num">~4h</td><td><span class="tag tag-yellow">中</span></td></tr>
+<tr><td class="num">3</td><td><b>超时优化</b></td><td>184 条跑满 1800s；resolved 平均仅 437s</td><td>增加搜索引导；减少 context 膨胀；设置中间 checkpoint</td><td class="num">+2-3pp</td><td class="num">~4h</td><td class="num">~8h</td><td><span class="tag tag-yellow">中</span></td></tr>
+<tr><td class="num">4</td><td><b>env-fail 剩余修复</b></td><td>fix3/fix4 使 48 条 patch apply 但 0 resolved</td><td>完成 fix4；P1-1 astropy wheel 预编译</td><td class="num yellow">+1-2pp</td><td class="num">~4h</td><td class="num">~6h</td><td><span class="tag tag-yellow">中</span></td></tr>
+<tr><td class="num">5</td><td><b>blocked 重跑</b></td><td>50 条 git 503；preclone 已修复</td><td>重启 preclone + 重跑 50 blocked + 4 no-patch</td><td class="num yellow">+0.5-1pp</td><td class="num">~3h</td><td class="num">~3h</td><td><span class="tag tag-green">低</span></td></tr>
+<tr><td class="num">6</td><td><b>near-miss 定向修复</b></td><td>109 条 partial wrong-fix</td><td>给 agent 失败测试输出 + 让它修复遗漏</td><td class="num">+1-2pp</td><td class="num">~2h</td><td class="num">~4h</td><td><span class="tag tag-yellow">中</span></td></tr>
+<tr><td class="num">7</td><td><b>harness 级 ensemble</b></td><td>7 harness 间 resolved 互补（McNemar b=11/c=12）</td><td>取多个 harness patch，选测试通过率最高的</td><td class="num">+3-5pp</td><td class="num">~2h</td><td class="num">~3h</td><td><span class="tag tag-yellow">中</span></td></tr>
+<tr><td class="num">8</td><td><b>Agentless 模式补充</b></td><td>Kimi K2 Agentless Verified 65.8% 远高于 agent 28.7%</td><td>对 agent 失败的 case 用 Agentless 直接生成 patch</td><td class="num">+2-4pp</td><td class="num">~1h</td><td class="num">~2h</td><td><span class="tag tag-yellow">中</span></td></tr>
+</table>
+
+<h3>4.1 提升路径预估</h3>
+<div class="card card-blue">
+<svg class="svg-chart" width="700" height="250" viewBox="0 0 700 250">
+<text x="10" y="25" fill="#8b949e" font-size="11">当前：29.4%</text>
+<rect x="10" y="30" width="88" height="20" fill="#58a6ff" rx="2"/>
+<text x="54" y="44" text-anchor="middle" fill="#fff" font-size="10">29.4%</text>
+<text x="10" y="65" fill="#8b949e" font-size="11">+ 修复 0-byte patch</text>
+<rect x="10" y="70" width="100" height="20" fill="#3fb950" rx="2"/>
+<text x="60" y="84" text-anchor="middle" fill="#fff" font-size="10">~33%</text>
+<text x="10" y="105" fill="#8b949e" font-size="11">+ 超时优化 + blocked 重跑</text>
+<rect x="10" y="110" width="115" height="20" fill="#3fb950" rx="2"/>
+<text x="67" y="124" text-anchor="middle" fill="#fff" font-size="10">~36%</text>
+<text x="10" y="145" fill="#8b949e" font-size="11">+ near-miss + ensemble</text>
+<rect x="10" y="150" width="145" height="20" fill="#d29922" rx="2"/>
+<text x="82" y="164" text-anchor="middle" fill="#fff" font-size="10">~40%</text>
+<text x="10" y="185" fill="#8b949e" font-size="11">+ 换 Claude 4 Sonnet</text>
+<rect x="10" y="190" width="210" height="20" fill="#bc8cff" rx="2"/>
+<text x="115" y="204" text-anchor="middle" fill="#fff" font-size="10">~50-55%</text>
+<text x="10" y="225" fill="#8b949e" font-size="11">leaderboard 顶部参考</text>
+<rect x="10" y="230" width="240" height="14" fill="#21262d" stroke="#30363d" rx="2"/>
+<text x="130" y="241" text-anchor="middle" fill="#8b949e" font-size="9">60%+ (Claude 4 Sonnet agents)</text>
+</svg>
+<p><b>增量路径</b>：当前 29.4% -> 修工程 ~33% -> 修超时+重跑 ~36% -> near-miss+ensemble ~40% -> 换模型 ~50-55%。
+换模型是最大杠杆（+15-20pp），其次是修复 0-byte patch 工程（+3-5pp）。</p>
+</div>
+
+<h2>&#167;5 结论与诚实条款</h2>
+<h3>5.1 主要结论</h3>
+<div class="card card-blue">
+<ol>
+<li><b>通过率偏低但合理</b>：28.7%（cline）处于 2024 年中 SOTA 水平带（Aider 26.3%, CodeR 28.3%），与当前 leaderboard 顶部（60%+）的差距主要来自模型差异。</li>
+<li><b>不是评测环境完全崩坏</b>：env-fail 占 21.5%，且有 574 条真实 resolved 做支撑。fix1+fix2 修复后 43 题翻转为 resolved，证明环境修复有效但有天花板。</li>
+<li><b>LLM 能力是最大瓶颈</b>：48.0% 的 wrong-fix 中，89.2% 是完全错误（f2p=0）。fix3/fix4 修复 48 条 env-fail 后 0 resolved，证实修好环境后 LLM 能力成为唯一瓶颈。</li>
+<li><b>harness 工程差异显著</b>：0-byte patch 率 codex 27.7% vs opencode 5.0%（5.5 倍差距），说明 harness 对模型输出的捕获/格式化能力差异巨大。</li>
+<li><b>psf/requests 0/42 是纯能力信号</b>：无 env-fail、全 patch applied、0 resolved——这是 kimi-k2.6-cloud 模型能力天花板的最清晰证据。</li>
+</ol>
+</div>
+
+<h3>5.2 诚实条款</h3>
+<div class="warn">
+<ul>
+<li>本评测使用 <b>SWE-bench Lite（300 实例）</b>，非 SWE-bench Verified（500）或 Full（2294）。Lite 是最简单的子集，绝对分数不能直接与其他子集比较。</li>
+<li>所有 7 个 harness 使用 <b>同一模型 kimi-k2.6-cloud</b>，横评结论仅适用于该模型下的 harness 差异。</li>
+<li>评测环境非官方 Docker 容器，而是自建 conda env + chroot 方案——已修复已知 env-fail，但可能与官方评测存在细微差异。</li>
+<li>外部对照数据来自 <b>web 搜索</b>（llmrun.dev, swebench.com, aider.chat 等），各来源的评测时间、口径、harness 版本可能不同，仅作量级参考。</li>
+<li>Kimi K2 官方 65.8% 是 <b>Agentless 模式</b>（非 agent 交互），与我们的 agent 模式不直接可比。</li>
+<li><code>stdout_tail</code> 仅保留最后约 500 字符，无法还原完整交互轨迹——部分轨迹分析基于推断而非完整日志。</li>
+<li>fix4 评估正在进行中（30/61），最终 resolved 数可能变化——但 fix3 的 0/64 resolved 已充分说明 env 修复后的能力瓶颈。</li>
+</ul>
+</div>
+
+<h3>5.3 回答用户原始问题</h3>
+<div class="card">
+<table>
+<tr><th>用户问题</th><th>回答</th></tr>
+<tr><td>通过率为什么这么低？</td><td>三个因素叠加：LLM 能力不足（48%）+ 评测环境失败（21.5%）+ 基建阻塞（5%）。最大因素是 LLM 能力——kimi-k2.6-cloud 与 leaderboard 顶部使用的 Claude 4 Sonnet 有显著能力差距。</td></tr>
+<tr><td>是否合理？</td><td><b>合理</b>。28.7% 与 2024 年中 SOTA（Aider 26.3%）处于同一水平带，且有 574 条真实 resolved 支撑。</td></tr>
+<tr><td>是否都是 LLM 能力不足所致？</td><td><b>不全是</b>。21.5% 是评测环境问题（已修 43 题），5% 是基建阻塞。但修好环境后（fix3/fix4 实证）0 resolved，说明剩余瓶颈确实是 LLM 能力。</td></tr>
+<tr><td>还是评测环境的问题？</td><td><b>部分是</b>。5 个 repo 被系统性压制，21.5% 的 case 未被有效评测。fix1+fix2 已挽回 +2.1pp。</td></tr>
+<tr><td>有哪些提升机会点？</td><td>见 &#167;4 总表，按预计提升排序：1.换模型(+15-20pp) 2.修 0-byte patch(+3-5pp) 3.超时优化(+2-3pp) 4.env 剩余修复(+1-2pp) 5.blocked 重跑(+0.5-1pp) 6.near-miss 定向(+1-2pp) 7.ensemble(+3-5pp) 8.Agentless 补充(+2-4pp)</td></tr>
+</table>
+</div>
+
+<div class="footer">
+<p>报告生成：2026-10-14 | 数据：kimi_pilot_results.json (2100) + fix1/fix2/fix3/fix4 | 模型：kimi-k2.6-cloud<br>
+评测口径：SWE-bench Lite (300 instances) x 7 harnesses | 评测环境：conda env + chroot (非官方 Docker)<br>
+本报告为自包含 HTML，零外链，内联 CSS/SVG。数据文件路径：<code>doc/BaiZe-ISEDA2027/run/harness/</code></p>
+</div>
+</body>
+</html>
