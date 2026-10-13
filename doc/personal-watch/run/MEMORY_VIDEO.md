@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片+BGM 达标 · 13_外骨骼 R2V 迁移中，卡「补 14 张场景图」）；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片+BGM 达标 · 13_外骨骼 R2V 迁移中，场景图 14/14 已补齐，进入 R2V 29 镜批量）；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -13,10 +13,10 @@ WAITING: 0
 
 ```
 PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）🔶
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/make_group_composite.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘
-当前动作:     gen_ep13_h3_r2v.py py_compile + --dry-run 通过（报缺 14 张场景参考图，见 BLOCKERS #7）
-下一步:       补 14 张 _scene/ 场景图（z_image_turbo_t2i）→ R2V 29 镜 + T2V 19 镜 → BGM/SFX → synth → 字幕 → 六项验收
-阻塞:         缺 14 张场景参考图（BLOCKERS #7 · P0 · 补资产）
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）
+当前动作:     gen_ep13_h3_r2v.py --dry-run 已过「✅ 所有参考图在位」（29 镜就绪）
+下一步:       R2V 29 镜批量 + 另写 gen_ep13_h3_t2v.py（19 无角色镜）→ BGM/SFX → synth → 字幕 → 六项验收
+阻塞:         无（BLOCKERS #7 已闭环）
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-13（13_外骨骼 R2V 迁移 · 推翻 T2I→I2V 旧法 · 固化 R2V 脚本 + 合影拼版）
+- **上次唤醒**：2026-10-13（13_外骨骼 R2V 迁移 · 补齐 14 张场景参考图 · BLOCKERS #7 ✅ · dry-run 全绿）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,12 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-13 · S3 续跑 · 13_外骨骼 R2V 场景参考图补齐（BLOCKERS #7 ✅）**：补上「T2I 首帧→I2V」旧法从未备过的 14 张独立场景参考图，R2V 29 镜的 `ref2` 硬输入齐活。
+  - **固化脚本**：新建 `scripts/gen_ep13_scenes.py`（14 张无角色场景 · 16:9 1280×720 · `Z-Image-Turbo 文生图.json` · 负面词以 "Do NOT include: ..." 追加进正向，因该工作流负面被 ConditioningZeroOut 置零 · 按 class_type 通用注入 CLIPTextEncode/EmptySD3LatentImage/KSampler · `--dry-run/--key/--wait`）。
+  - **文件名权威**：`out` 文件名与 `gen_ep13_h3_r2v.py` 的 `REFS`/`REF_SLUG` 注册表逐字一致（`13_theatre_backstage.png` 等 14 张，非早期 `13_backstage.png` 式臆测名）。
+  - **核验**：14/14 落盘 `ASSETS/CHARACTERS/_scene/`（每张 1280×720 · 1.25–2.0 MB）；`gen_ep13_h3_r2v.py --dry-run` 报「✅ 所有参考图在位」并列出 29 镜计划。
+  - **下一步**：R2V 29 镜批量 + 另写 `gen_ep13_h3_t2v.py`（19 无角色镜）→ BGM/SFX → synth → 字幕 → 六项验收。
 
 - **2026-10-13 · S3 续跑 · 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）✅**：按 operator 2026-10-12 令，弃用「T2I 首帧 → H3 I2V」，改用 stem_fest R2V 标准重做 13_外骨骼。
   - **弃用旧输出**：`OUTPUT/13_外骨骼`（旧 T2I→I2V 成片）改名 `OUTPUT/_deprecated_t2i_2026-10-13`（29 文件 / 38.7 MiB，待 R2V 验证后再物理删除）；留档 `_deprecated_2026-10-13.md`。
