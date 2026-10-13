@@ -2,7 +2,7 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376 entries）。**最终结果**：**34 条 FLIPPED to RESOLVED** ✅ · **+215 条 patch 新增 apply 成功** · **总 Resolved: 574→608 (27.3%→29.0%, +1.6pp)**。报告：`report_harness_eval_fix_rerun.html`（21.1KB, 含 §7 97-not-applied 根因分析）+ `kimi_pilot_results.fix1.json`（258KB, 独立）。**97 条仍未 apply 根因已查清**：72 条 Python 版本不匹配(42×3.6→3.8 + 30×3.8→3.9) + 14 条 werkzeug 版本 + 11 other。**P1 计划已报（见下方 §P1 PLAN），等运维确认**。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376 entries）。**最终结果**：**34 条 FLIPPED to RESOLVED** ✅ · **+215 条 patch 新增 apply 成功** · **总 Resolved: 574→608 (27.3%→29.0%, +1.6pp)**。报告：`report_harness_eval_fix_rerun.html`（21.1KB, 含 §7 97-not-applied 根因分析）+ `kimi_pilot_results.fix1.json`（258KB, 独立）。**97 条仍未 apply 根因已查清**：72 条 Python 版本不匹配(42×3.6→3.8 + 30×3.8→3.9) + 14 条 werkzeug 版本 + 11 other。**P1 计划已报（见下方 §P1 PLAN），等运维确认**。**fix2 可行性测试已完成**（见下方 §FIX2 TEST）：matplotlib testbed_py39 因缺 qhull headers 阻塞，pytest/flask 未测但理论可行。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -24,21 +24,44 @@ WAITING: 1
 
 > **建议优先级**：P1-2（~1h, 低风险）→ ②b 重跑（~1h）→ P1-1（~4h）→ P1-3 暂缓。**等运维确认后执行**。
 
+## §FIX2 TEST — P1-1b 可行性测试结果（2026-10-13 10:10~12:21 · 前序 session 完成）
+
+> **背景**：前序 cline session（auto-commit e8fba7ce @ 11:50）创建了 `rerun_eval_fix2.py` + 修改 `r1_eval.py`（fix2b：用 `export PATH` 代替 `conda activate`，因 chroot 内 conda shell function 未初始化），对 97 条 fix1-still-not-applied 条目做了 `--limit 1` 可行性测试（4 次 test run，同一 case：`matplotlib__matplotlib-25079 (codex)` + `testbed_py39`）。
+
+**结果**：4/4 测试均 `patch_applied=False, resolved=False`。
+
+**根因**（test_output.txt 19MB，已读 tail）：
+1. `pip install -e .` 在 testbed_py39 中**失败** → `fatal error: libqhull_r/qhull_ra.h: No such file or directory`
+2. 原因：testbed_py39 conda env（Oct 5 创建）**缺 qhull/freetype 等 build deps**（这些只在 testbed env 中）
+3. C 扩展未重编译 → `ImportError: cannot import name '_c_internal_utils' from partially initialized module 'matplotlib'`
+4. report.json 标记 `patch_successfully_applied: false, infra_failure_reason: "missing_module"`
+
+**影响范围**：
+- **matplotlib (30 条)**：🔴 **阻塞** — 需先在 testbed_py39 安装 qhull + freetype + 重建 C 扩展（~2h）
+- **scikit-learn (27 条)**：🔴 **预计同样阻塞** — testbed_py38 需安装 build deps 重建 sklearn C 扩展（~2h）
+- **pytest (18 条)**：🟢 **理论可行** — 仅 `pip install 'setuptools<70'`，无 C 扩展重建
+- **flask (14 条)**：🟢 **理论可行** — 仅 `pip install 'werkzeug<2.3'`，无 C 扩展重建
+- **sphinx (8 条)**：🟡 **需验证** — 无 env 变更，可能受其他因素影响
+
+**r1_eval.py fix2b 修改（已 auto-commit）**：`conda activate {env}` → `export PATH={env_path}/bin:$PATH && export CONDA_PREFIX={env_path}`（chroot 内 conda activate 不生效的修复，**正确且应保留**）。
+
+**建议**：① 先测 pytest+flask（32 条，无需 C 重建，~30min）→ 若可行则立即报结果 ② matplotlib+sklearn 需额外 ~4h 安装 build deps + 重建 ③ **等运维确认后执行**。
+
 ## 📊 进度快照
 
 ```
-PHASE:        P1 PLAN REPORTED — waiting for operator confirmation (§P1 PLAN + §7 root cause in heartbeat)
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (21.1KB, §1-§7) · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ (72 py-version + 14 werkzeug + 11 other)
-当前动作:     R354: Monitoring wake. Git up to date, no new operator instructions. Fix1 results re-verified (34 flipped, +215 patch-applied, 574→608, 27.3%→29.0%). Both reports confirmed committed. Still waiting for P1 confirmation.
-下一步:       ① 等运维确认 P1 优先级 ② 批准后按序执行 P1-2 → ②b → P1-1(astropy) → P1-1b(per-repo py-version) ③ P1-3 暂缓（Docker 不可用）
+PHASE:        P1 PLAN REPORTED + fix2 feasibility tested — waiting for operator confirmation
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (21.1KB, §1-§7) · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 feasibility test ✅ (matplotlib blocked by missing qhull headers, pytest/flask theoretically viable)
+当前动作:     R355: Analyzed fix2 test results from prior session auto-commit. matplotlib testbed_py39 blocked (qhull headers missing → pip install -e . fails → C extensions not rebuilt). r1_eval.py fix2b PATH fix is correct. Waiting for operator P1 confirmation.
+下一步:       ① 等运维确认 P1 优先级 ② 若批准 fix2：先测 pytest+flask (32条, ~30min, 无C重建) → 再处理 matplotlib+sklearn (需装build deps, ~4h) ③ P1-2 网络503 → ②b 重跑 ④ P1-3 暂缓
 阻塞:         <无>（P1 需运维确认后才动）
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
-- [08:19] R353: Monitoring wake — fix1 re-verified (34 flipped, +215 patch-applied, 574→608). Waiting for P1 confirmation. 📦 TASK=32625B(31.9KB ✓) / MEMORY≈32150B(31.4KB ✓).
-- [08:57] R354: **Monitoring wake — all deliverables verified, still waiting for P1 confirmation**. Git up to date, no new operator instructions. Re-verified fix1 JSON: 376 entries, 34 flipped (cline 7, claude 6, opencode 6, hermes 5, pi 4, codex 3, deepseek 3), patch_applied 64→279 (+215), 97 still not-applied (mpl 30, sklearn 27, pytest 18, flask 14, sphinx 8). Both reports confirmed committed: rootcause (45612B @ doc/BaiZe-ISEDA2027/) + fix_rerun (21580B @ run/). No eval processes running. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈32300B(31.5KB ✓).
+> 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
+- [12:21] R355: **fix2 feasibility test analysis**. Prior session (auto-commit e8fba7ce @ 11:50) ran 4× `--limit 1` fix2 tests on `matplotlib__matplotlib-25079 (codex)` with `testbed_py39` — all `patch_applied=False`. Root cause: testbed_py39 missing qhull headers → `pip install -e .` fails → C extensions not rebuilt → `ImportError: _c_internal_utils`. r1_eval.py fix2b (PATH export vs conda activate) is correct. pytest/flask fix2 (pip-only, no C rebuild) theoretically viable but untested. No new operator instructions. Still waiting for P1 confirmation. 📦 TASK=32625B(31.9KB ✓) / MEMORY≈33100B(32.3KB ⚠️ 贴限).
 > 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
@@ -46,79 +69,14 @@ ERROR_COUNT:  0
 > 📦 R302-R321 (2026-10-11~12, 两份报告交付 + 7×300 monitoring 97.5%→99.3%) 已归档 → daily-memories-harness/2026-10-11.md + 2026-10-12.md。需要时再读。
 > 📦 R322-R325 (2026-10-12 08:00~09:45, 7×300 monitoring 99.4%→99.7%, 567→571 resolved, hermes 288→294/300, Report B 刷新 2094 entries) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 
-## ⚠️ 口径与并发 (Caliber & Concurrency Disclosure) — 2026-10-08⑦ 要求
+> 📦 §口径与并发 (2026-10-08⑦) 已归档 → daily-memories-harness/2026-10-08.md。**结论**：R1串行 vs R2并行已披露，workdir隔离修复holding，R2 resolve-rate下降=实例难度差异非并发污染。需要时再读。
 
-> **运维指令 2026-10-08⑦ 追认了并发变更（serial=1→7路并行），但要求显式披露口径。**
+## 🗣️ 运维问答
 
-| 维度 | Round-1 (30 条) | Round-2 (70 条新题) |
-|:--|:--|:--|
-| **并发** | **串行 (concurrency=1)** | **7 harness 全并行**（每个内部串行，7 个同时跑） |
-| **运行条件** | 无网关争用 | 7 harness 同时竞争网关配额/沙箱/I/O |
-| **--resume** | R2 复用 R1 的 30 条串行结果（不重跑） | 仅 70 条新题在 R2 并行条件下评测 |
-| **可比性** | ⚠️ **跨轮不可严格比**：同一张 7×100 表混了两种运行条件 | |
+> 📦 §运维问答·2026-10-08ⓔ（Q1-Q5 下一步工作建议）已归档 → daily-memories-harness/2026-10-08.md。**结论**：Q1-Q5 已回答（codex 300 偏差 3.3×、nobody-solved 12 条、patch 重叠度、wall time vs resolution、多 backbone 3 阶段建议），均已写入报告。需要时再读。
+> **当前无待答运维问题**。
 
-**关键事实**：
-1. **30 条 R1 实例 = `--resume` 复用的首轮串行结果**；**70 条新题 = 本轮并行结果** → SWEBENCH_COMPARE.html 每行标注 `R1复用` / `R2新跑`。
-2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
-3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
-
-**R2 监控快照**（2026-10-11 14:35，R293 更新）：
-
-| 指标 | R1 (30 serial) | R2 (70 parallel) / 7×300 | 判定 |
-|:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 7/1939 (0.4%) — all django__django-16873 | ⚠️ API quota, NOT workdir — acceptable |
-| **timeout** | 0 (codex 2) | 1 git-fetch TIMEOUT | ⚠️ network/infra — auto-re-run via --resume |
-| **workdir_blocked** | **0/210 (0%)** | **11 checkout (0 new R231→R293, 63 rounds; fix: git checkout -f applied)** | ✅ **per-harness workdir isolation FIX HOLDING** |
-| **git_fetch_blocked** | 0 | **61** (fetch_fail 503 proxy, −2 retried→pbf) | ⚠️ network/infra, NOT workdir — auto-re-run via --resume |
-| **no-patch** | 0/210 (0%) | 4 (deepseek) | ⚠️ eval env limitation |
-
-> 📦 §workdir git-checkout 冲突 + R2 resolve-rate 下降分析（R207 首次披露）已归档 → daily-memories-harness/2026-10-11.md。**结论**：88 workdir-blocked = 并行执行导致（已修复：per-harness workdir 隔离）；R2 resolve-rate 下降 = 实例难度差异 + eval 环境限制，非并发污染。均已写入 7×100 HTML 报告。需要时再读。
-
-## 🗣️ 运维问答 · 2026-10-08④（下一步工作建议）
-
-> 数据源：`kimi_pilot_results.json`（480 entries = 30×7=210 in-scope + codex×300 superset），全 kimi-k2.6-cloud backbone。
-
-### Q1. 横评数据的深度挖掘
-
-现有报告已覆盖 per-harness resolve rate、per-repo breakdown、failure mode、cost、difficulty。以下 4 角度**尚未覆盖**：
-
-**① Codex 300-instance 全量暴露的子集偏差（最高价值）**：codex 30-subset 46.7% vs 300-full **14.3%**——**3.3 倍偏差**。12 repo 中 7 个 0%（astropy/matplotlib/sklearn/sphinx/pytest/flask/requests），仅 django 28.9%、sympy 7.8% 非零。产出：对比柱状图（30-subset vs 300-full per-repo）。依据：`kimi_pilot_results.json` codex=300 entries。
-
-**② "Nobody solved" 12 条根因深挖**：报告 §4.4 列出 12 条 ALL-fail（40%）但未做根因。逐条检查 `harness_result.stdout_tail`，分类：跨文件修改 / 测试歧义 / 领域知识缺失。依据：12×7=84 entries 的 `stdout_tail`。
-
-**③ Patch 重叠度分析**：18 条 instance 有 2+ harness resolved（ALL=8+SOME=10），提取 `model_patch` 做 diff：convergent（同文件同行）vs divergent（不同方法）。限制：原始 patch 在 `/dev/shm/` 已过期，需重跑或从 git 恢复。
-
-**④ Wall time vs Resolution**：Pi avg 275s 但 60.0%，codex avg 843s 但 46.7%——速度与正确率**负相关**。分析 resolved vs failed 的 wall time 分布。
-
-### Q2. BaiZe backbone 接入评测的前置准备
-
-**P0（立即做）**：① Harness 冻结配置文档化（`harness_frozen_config.yaml` + `harness_adapter_spec.md`，从现有 `run_harness.py`/`run_serial_kimi.py`/`r1_eval.py` 抽取，半天）；② Endpoint 健康检查脚本（`endpoint_health_check.py`，测 `/v1/models` + `/v1/chat/completions` + 延迟，2h）。
-
-**P1（训练前做框架）**：③ 5-run 自动化（扩展 `run_serial_kimi.py` → `run_serial_multi.py --runs N`，聚合 mean±std，1 天）；④ 配对检验（`paired_stats.py`：McNemar + paired bootstrap CI，半天）；⑤ 诊断 D1–D6（从 `r1_eval.py` 抽取为 `diagnostic.py`，半天）。
-
-### Q3. 评测规模扩展的建议
-
-**强烈建议扩到 100–300 条**。依据：codex 30-subset 46.7% vs 300-full 14.3% = 3.3 倍偏差。30 条仅 django+sympy。
-
-**扩优先序**：① django（114/300，补 35–85 条）→ ② sympy（77/300，补 25–35 条）→ ③ sklearn+matplotlib（各 23/300，codex 300 上 0%，测试「完全失败 repo」）→ ④ 不急 sphinx/pytest（与 EDA 相关性低）。
-
-**EDA-Eval-PyAether 管线**：可提前搭建。现有 `run_harness.py`+`r1_eval.py` unshare 沙箱已验证。158 任务若也是「产 patch→跑 test→判 resolved」，管线可直接复用，只需替换数据集+评测脚本+沙箱环境。建议先 kimi 跑 5–10 条 smoke test。**缺什么**：EDA-Eval 158 任务定义文件+评测脚本（需确认是否已有）。
-
-
-
-### Q4. 多 backbone 对比的前置
-
-**现在可跑 pilot 版**，但有条件。**可行**：kimi × 7 harness × 30 条已完成，再跑 kimi × 2 harness × 20 新 instance 验证管线稳定性。**缺什么**：① MiniCPM5-2B endpoint——需 vLLM server，GPU 被训练占满，需等空窗；② DeepSeek-V4-Pro——需运维提供 API key；③ BaiZe base/SFT/RL——训练未完成。**3 阶段建议**：Phase 1（立即可做）kimi × 新 20 条 → Phase 2（等 GPU 空窗）MiniCPM5-2B × 2 harness × 20 条 → Phase 3（BaiZe 完成后）BaiZe-base/SFT/RL × 7 harness × 30+ 条。
-
-### Q5. 对论文的补充建议
-
-**① Harness 方差效应（核心）**：同一 backbone、同一 30 条，7 个 harness resolve rate 从 40.0% 到 60.0%——**20pp 方差完全由 harness 架构差异造成**。报告 BaiZe 成绩必须同时报告所用 harness。依据：210 entries per-harness 40.0%–60.0%。
-**② 子集偏差警告**：codex 30-subset 46.7% vs 300-full 14.3% = 3.3 倍偏差。论文应标注子集选择影响。依据：codex=300 entries。
-**③ 失败模式对训练的启示**：主要失败模式 f2p-fail（90%+），即「知道改哪里但改不对」。对 BaiZe RL——reward signal 应关注「patch 通过 f2p test」而非仅「patch apply」。依据：failure detail 分析。
-**④ 成本-性能 Pareto**：Pi（60.0%, 275s）vs deepseek-harness（40.0%, 293s）wall time 接近但差 20pp。依据：per-harness avg_wall_s + resolve rate。
-**⑤ "Nobody solved" 12 条作为难度基准**：12/30=40% 实例 7 个 harness 全失败，定义为「hard」实例。依据：instance-level ALL/NONE/SOME = 8/12/10。
-
-> 📦 R196（2026-10-09 01:35）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 53167B/520entries/156resolved，quota_blocked=0。需要时再读。
+> 📦 R196-R202 (2026-10-09, SWEBENCH_COMPARE monitoring) 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 
 > 📦 R198（2026-10-09 02:47）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 55001B/586entries/164resolved，quota_blocked=0。需要时再读。
 
