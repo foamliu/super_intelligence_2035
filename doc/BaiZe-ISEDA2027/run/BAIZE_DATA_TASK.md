@@ -7,6 +7,32 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（📥 把 85M 下载从「用户自管」移交给 data 线启动 + 看护）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「把运维（用户）起的 85M 下载停掉，由 data 启动和看护这个数据下载。」
+> **背景**：`mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M` 目前由**用户自管**进程在跑（此前 PID 1015571→555408，ppid 非 data 线），**不在 data 线 kill+restart 看护纪律内**，CDN 抖动崩了会静默卡住。现正式移交 data 线。
+
+**① 停掉用户进程（先定位再杀）**：
+1. `pgrep -af 'LLaVA-OneVision-1.5-Mid-Training-85M'`（或 `ps aux | grep 'hf download.*mvp-lab'`）定位当前 85M 进程（`hf download` 的 child，ppid 非 data 线）。
+2. `kill <pid>`（SIGTERM）→ 等 10–20s → `pgrep` 复核已退；僵死则 `kill -9`。
+3. ⚠️ **安全**：`hf download` 可断点续传，杀进程**不丢**已下 parquet；`.incomplete` 残留见下清理。
+
+**② 由 data 线重启并接管（复用你现有 en_v1_4/GPIC 的「setsid 重启续传」套路，即唤醒 33/35 处置 base/SFT-2605 的同一套）**：
+1. 先核实落盘路径（`ls -d` / `du -sh`）：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`（以实测为准，若实际在别处如实记「实际路径=X」）。
+2. 清残留：`find <dir> -name '*.incomplete' -delete`（只删 `.incomplete`，勿动已下 parquet）。
+3. 重启（**断点续传，绝不重下**）：`setsid -f nohup hf download --repo-type dataset mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M --local-dir <dir> > /tmp/85M_dl.log 2>&1`（如需 token 照旧加 `--token <HF_TOKEN>`；并发/workers 你按「不与 en_v1_4 互相饿死」自行定，如 `HF_HUB_ENABLE_HF_TRANSFER=1` 或有限并发）。
+4. 记新 PID，写进 `MEMORY_DATA.md` 心跳，把「85M 用户自管」**改**为「85M data 线看护 PID=xxx」。
+
+**③ 纳入看护纪律（与 en_v1_4 / GPIC 相同）**：
+- 每唤醒 `pgrep` 判活；死/僵/速率趋零 → **立即 kill+重启续传**（前置清 `.incomplete`），不必等运维点名。
+- 心跳**逐子集**报（8 子集 coyo/datacomp1b/imagenet/laioncn/mint/obelics/sa1b/zero250m 各自 file 数），**重点盯 `sa1b`+`zero250m` 两个一直未开始的子集**（≈9.85TB，是剩余大头）。
+- 速度/ETA 用「**字节增量 + 仓库总量 46.66TB 分母**」口径（延续 2026-10-10 更正；✅ 不用本地 `.metadata` 当分母）。
+- 与 en_v1_4 并行，两条各自报速度 + 注明共享带宽争用。
+
+**④ 磁盘注意**：`/nas_train` 现 ~85%（剩 ~32T），85M 剩余 ~17TB → **够放但告警**；逼近 90% 或 85M 会越界就**心跳标红 + 停 85M 等运维**，🚫 不自作主张删任何数据。
+
+**⑤ 完成后**：85M 下满 → `du -sh` 全量核实 ≈46.66TB / 12,124 files → 心跳报「85M 完成」→ 等运维指示再决定后续打包/对齐（85M 是**多模态 mid-training 数据，非 P-8 LLM 投料**，⚠️ 不并入 86:10:4 混料）。
+
 > 📦 **历史运维指令已归档** → `run/ARCHIVE_OPERATOR_DATA.md`（已执行完 / 已作废的块；**需要时再读**，不要读进上下文）。
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
