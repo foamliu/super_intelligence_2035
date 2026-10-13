@@ -34,7 +34,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </head>
 <body>
 <h1>BaiZe 视觉编码器 - 外部公众编码器 ProtB 参考评测报告</h1>
-<p class="note">生成时间：2026-10-13 21:22 · 线：vision · 语言：中文 · 性质：评测类（占 GPU · .12）· 协议：Protocol B（mainstream linear probe）</p>
+<p class="note">生成时间：2026-10-14 00:00 · 线：vision · 语言：中文 · 性质：评测类（占 GPU · .12）· 协议：Protocol B（mainstream linear probe）</p>
 
 <div class="warn-box">
 <h3>🚫 红线声明</h3>
@@ -47,7 +47,6 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <h3 style="color:var(--accent);margin-top:0">🎯 一句话总结</h3>
 <ul>
 <li>使用 <strong>Protocol B</strong>（SGD+momentum0.9+cosine 90ep, bs1024, IN-1k full train 1.28M, 3 seeds）对 <strong>5 个公众视觉编码器</strong>进行 linear-probe 评测，作为 BaiZe from-scratch 模型的<strong>参考对照</strong>。</li>
-<li><span class="tag tag-warn">AIMv2 重跑中</span> AIMv2-1B@336 因 pooling bug（原 wrapper 误取 top-left patch 而非 mean-pool，导致 52.35% 异常低分）已修复为 mean pooling，正在重新提取特征（预计 ~3.5h）。本报告暂列 4/5 模型，AIMv2 完成后更新。</li>
 <li>各模型均使用 native 分辨率与 native 预处理，提取 pooled/CLS 特征后冻结进行 linear probe。</li>
 <li>BaiZe from-scratch ④-4ep ProtB = <strong>67.05+/-0.02%</strong>（224px, 512-dim, 126.8M），列于表末<strong>仅供参考</strong>，不参与排名。</li>
 </ul>

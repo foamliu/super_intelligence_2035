@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe 视觉编码器 · 合并三数据集 · GBS/MBS×4 · LR×2 实验计划（中文 · 2026-10-13）</title>
+<title>BaiZe 视觉编码器 · 合并三数据集 · GBS/MBS×4 · LR 3-臂扫描（×2/×3/×4）实验计划（中文 · 2026-10-13）</title>
 <style>
 :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c;--cyan:#39d2c5}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -42,24 +42,24 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </style>
 </head>
 <body>
-<h1>BaiZe 视觉编码器 · 合并三数据集 · GBS/MBS×4 · LR×2 实验计划</h1>
-<p class="note">生成时间：2026-10-13（数据量口径订正版）· 线：vision · 语言：中文 · 性质：<strong>纯计划（未启动训练 · 零 GPU 占用）</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §8.3–§9.7</code> / <code>vision/r9_train.py</code> / <code>vision/run_e4_4ep.sh</code> / <code>MEMORY_VISION.md</code> / <code>vision/data_snapshot_20261009.txt</code>（<code>wc -l</code> = 7437）</p>
+<h1>BaiZe 视觉编码器 · 合并三数据集 · GBS/MBS×4 · LR 3-臂扫描实验计划</h1>
+<p class="note">生成时间：2026-10-13（数据量口径订正版 + LR 3-臂扫描文献依据版）· 线：vision · 语言：中文 · 性质：<strong>纯计划（未启动训练 · 零 GPU 占用）</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §8.3–§9.7</code> / <code>vision/r9_train.py</code> / <code>vision/run_e4_4ep.sh</code> / <code>MEMORY_VISION.md</code> / <code>vision/data_snapshot_20261009.txt</code>（<code>wc -l</code> = 7437）· LR 文献：Goyal arXiv:1706.02677 / Smith arXiv:1711.00489 / Shallue arXiv:1811.03600 / McCandlish arXiv:1812.06162 / SimCLR arXiv:2002.05709（访问日 2026-10-13）</p>
 
 <h2>1. HERO + TL;DR</h2>
 <div class="card tldr">
 <p><strong>核心问题</strong>：在 24 小时墙钟预算（<code>10.239.2.12</code> H100×8 独占）内，将 GBS/MBS ×4、LR ×2 后，能跑几个 epoch？ProtB 预期多少？</p>
 <ul>
 <li><strong>数据</strong>：GPIC（7437 tar × 12,639 ≈ <strong>94.0M</strong>）+ CC12M（1100 tar × 10,000 ≈ 11.0M）+ Amshaker（2250 tar × 2,646 ≈ 5.95M）= <strong>10787 shards ≈ 110.9M 图文对</strong>（快照口径 · <code>wc -l data_snapshot_20261009.txt</code> = 7437 行已核；全量 8000 tar ≈ 118.1M）<br><span class="warn">⚠️ 口径订正（2026-10-13）</span>：旧版此表写「~95.8M」系 <strong>6233-tar 时代旧值</strong>（<code>EXPERIMENTS_VISION.md</code> L489），快照冻结到 7437 tar 后未重算 → <strong>陈旧引用，已订正</strong>。</li>
-<li><strong>超参变动</strong>：MBS 64→<strong>256</strong>/GPU（×4），GBS 512→<strong>2048</strong>（×4，负样本 512→2048），LR 5e-4→<strong>1e-3</strong>（×2），warmup 2000→<strong>4000</strong>（×2 同比），cosine min_lr 5e-5→<strong>1e-4</strong>（=10%×lr）</li>
+<li><strong>超参变动</strong>：MBS 64→<strong>256</strong>/GPU（×4），GBS 512→<strong>2048</strong>（×4，负样本 512→2048），<strong>LR 3-臂扫描</strong>：臂 A = 1e-3（×2，次线性 √缩放）· 臂 B = 1.5e-3（×3）· 臂 C = 2e-3（×4，<strong>线性缩放 · Goyal 默认</strong>），warmup 同比放大（4000/6000/8000），cosine min_lr = 10%×lr</li>
 <li><strong>时间估算</strong>（按真实快照 110.9M）：基线 steady 2818 img/s；×4 batch 后吞吐估计 2818–4227 img/s → <strong>1 真实 epoch ≈ 7.3–10.9h → 24h 可跑 2.2–3.3 真实 epoch（中位估计 ~2.85 epoch）</strong>。⚠️ 3 真实 epoch（162,525 步）在 median 吞吐下需 ~25.2h（略超 24h）；若 24h 硬限 → 取 ~154,500 步 ≈ 2.85 真实 epoch。</li>
-<li><strong>ProtB 预估</strong>（<span class="tag tag-est">外推·待验</span>）：~2.85 真实 epoch（~154,500 步，~317M 累计样本）×4-GBS/×2-LR 预计 <strong>~64–66%</strong>（乐观~67%，悲观~63%）；vs ④-4ep 基线 67.05%（= 383M 累计样本 = 3.45 真实 epoch）<strong>可能持平或略低</strong>，原因是每真实 epoch 梯度更新数减少 4×（54,175 vs 187,101 步/真实 epoch [GBS=2048 vs 512]）且 LR 未按线性缩放规则充分放大</li>
-<li><strong>关键风险</strong>：① MBS=256 显存可能 OOM（需校核）② LR ×2 对 ×4 batch 为欠缩放（线性规则需 ×4）→ 收敛可能偏慢 ③ NFS I/O 瓶颈可能限制吞吐增益 ④ <code>r9_train.py</code> 无 grad-accum 参数 → 若 MBS=256 OOM 需改代码</li>
+<li><strong>ProtB 预估</strong>（<span class="tag tag-est">外推·待验</span>）：~2.85 真实 epoch（~154,500 步，~317M 累计样本），3 臂区间：<strong>臂 A (LR=1e-3, ×2) ~63–66% · 臂 B (LR=1.5e-3, ×3) ~64–67% · 臂 C (LR=2e-3, ×4 线性) ~65–68%</strong>；臂 C（线性缩放）有 Goyal 理论依据，预期最优；vs ④-4ep 基线 67.05%（= 383M 累计样本 = 3.45 真实 epoch）。若预算只允许 1 臂 ⇒ 取臂 C（×4 线性，Goyal 直接依据）</li>
+<li><strong>关键风险</strong>：① MBS=256 显存可能 OOM（需校核）② LR 过高（×4=2e-3）可能训练不稳定（C1 坍缩）→ warmup 同比放大 + C1 监控为缓解 ③ NFS I/O 瓶颈可能限制吞吐增益 ④ <code>r9_train.py</code> 无 grad-accum 参数 → 若 MBS=256 OOM 需改代码 ⑤ 3 臂各跑 24h = 总 72h GPU 预算（若预算只允许 1 臂 → 取臂 C ×4 线性）</li>
 </ul>
 </div>
 
 <div class="metric-grid">
 <div class="metric-card"><div class="label">基线 ④-4ep ProtB</div><div class="value best">67.05<span style="font-size:.6em">±0.02%</span></div><div class="delta">4 epoch · GBS=512 · LR=5e-4</div></div>
-<div class="metric-card"><div class="label">新方案 ProtB 预估（~2.85ep）</div><div class="value warn">~64–66<span style="font-size:.6em">%</span></div><div class="delta"><span class="tag tag-est">外推·待验</span> · GBS=2048 · LR=1e-3</div></div>
+<div class="metric-card"><div class="label">新方案 ProtB 预估（~2.85ep · 3 臂区间）</div><div class="value warn">~63–68<span style="font-size:.6em">%</span></div><div class="delta"><span class="tag tag-est">外推·待验</span> · 臂A×2 ~63–66 · 臂B×3 ~64–67 · 臂C×4 ~65–68</div></div>
 <div class="metric-card"><div class="label">24h 可跑真实 epoch</div><div class="value">~2.85<span style="font-size:.6em"> epoch</span></div><div class="delta">区间 2.2–3.3 · 按快照 110.9M</div></div>
 <div class="metric-card"><div class="label">每真实 epoch 步数</div><div class="value">54,175<span style="font-size:.6em"> 步</span></div><div class="delta warn">旧口径 46,780 步（按 95.8M）<br>vs 基线 187,101 步/epoch</div></div>
 </div>
@@ -95,10 +95,10 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <tr><th>超参</th><th>基线（④-4ep / E1fair）</th><th class="best">新方案（×4 / ×2）</th><th>变动</th><th>依据 / 说明</th></tr>
 <tr><td><strong>MBS</strong>（micro batch / GPU）</td><td>64</td><td class="best">256</td><td><strong>×4</strong></td><td>运维指令「GBS/MBS ×4」；<code>--batch-size 256</code></td></tr>
 <tr><td><strong>GBS</strong>（global batch = MBS×8）</td><td>512</td><td class="best">2048</td><td><strong>×4</strong></td><td>256×8=2048；InfoNCE 负样本 512→<strong>2048</strong>（对比学习信号增强 4×）</td></tr>
-<tr><td><strong>LR</strong>（peak learning rate）</td><td>5e-4</td><td class="best">1e-3</td><td><strong>×2</strong></td><td>运维指令「LR ×2」；注：线性缩放规则建议 ×4（=GBS×4），×2 为<strong>保守欠缩放</strong></td></tr>
-<tr><td><strong>Warmup</strong>（steps）</td><td>2000</td><td class="best">4000</td><td><strong>×2</strong></td><td>与 LR 同比放大，保持 warmup 梯度步数与 LR 峰值的比例稳定</td></tr>
+<tr><td><strong>LR</strong>（peak learning rate）</td><td>5e-4</td><td class="best">3-臂扫描：1e-3 / 1.5e-3 / <strong>2e-3</strong></td><td><strong>×2 / ×3 / ×4</strong></td><td>臂 A=×2（次线性 √缩放）· 臂 B=×3 · 臂 C=×4（<strong>线性缩放 · Goyal 默认</strong>）；文献依据见 §3.2；若预算只允许 1 臂 → 取臂 C</td></tr>
+<tr><td><strong>Warmup</strong>（steps）</td><td>2000</td><td class="best">4000 / 6000 / 8000</td><td><strong>×2 / ×3 / ×4</strong></td><td>与各臂 LR 同比放大（Goyal 要求 warmup 随 batch 同比增长），保持 warmup 梯度步数与 LR 峰值比例稳定</td></tr>
 <tr><td><strong>Scheduler</strong></td><td>cosine</td><td>cosine</td><td>不变</td><td>与基线一致</td></tr>
-<tr><td><strong>min_lr</strong></td><td>5e-5（=10%×lr）</td><td>1e-4（=10%×lr）</td><td>×2</td><td>保持 min_lr/lr = 10% 比例不变</td></tr>
+<tr><td><strong>min_lr</strong></td><td>5e-5（=10%×lr）</td><td>1e-4 / 1.5e-4 / 2e-4</td><td>×2 / ×3 / ×4</td><td>各臂保持 min_lr/lr = 10% 比例不变</td></tr>
 <tr><td><strong>Grad-accum</strong></td><td>1（无）</td><td>1（无）</td><td>不变</td><td><code>r9_train.py</code> 当前无 grad-accum 参数 → GBS = MBS × world_size；若 MBS=256 OOM 则<strong>需新增代码</strong></td></tr>
 <tr><td><strong>显存估计</strong>（/GPU）</td><td>~8–12 GB</td><td>~20–35 GB</td><td>×2–3</td><td>H100 80GB 应可容纳（详见 §3.1）</td></tr>
 <tr><td><strong>分辨率 / Patch</strong></td><td>224 / 16</td><td>224 / 16</td><td>不变</td><td>与基线一致</td></tr>
@@ -127,14 +127,29 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <p class="note">⚠️ <strong>OOM 风险</strong>：以上为粗估，实际激活取决于 PyTorch autograd 是否保留中间张量。基线 MBS=64 时 GPU 利用率常 < 10%（NFS 瓶颈），说明<strong>计算远未饱和</strong>，MBS=256 显存增长主要在激活。若 OOM → <strong>方案 B</strong>：保持 MBS=64，新增 <code>--grad-accum 4</code> 到 <code>r9_train.py</code>（代码改动 ~20 行），逻辑 GBS=2048 但吞吐不变（每 4 步做 1 次更新）。</p>
 </div>
 
-<h3>3.2 LR 缩放规则分析</h3>
+<h3>3.2 LR 缩放规则分析（3-臂扫描 · 文献依据）</h3>
 <div class="card">
+<p><strong>背景</strong>：GBS ×4（512→2048）后，LR 应如何调整？运维指令（2026-10-13）要求「按文献规则定，不要拍脑袋」。以下为带出处的文献核查结果。</p>
 <table>
-<tr><th>缩放规则</th><th>建议 LR</th><th>本方案 LR</th><th>偏差</th><th>影响</th></tr>
-<tr><td><strong>线性缩放</strong>（LR ∝ GBS）</td><td>5e-4 × 4 = <strong>2e-3</strong></td><td>1e-3</td><td class="warn">0.5× （欠缩放）</td><td>收敛可能偏慢；每 epoch 梯度更新少 + LR 不足 → 需更多 epoch 才能达到同等特征质量</td></tr>
-<tr><td><strong>平方根缩放</strong>（LR ∝ √GBS）</td><td>5e-4 × 2 = <strong>1e-3</strong></td><td>1e-3</td><td class="best">1.0× （匹配）</td><td>本方案 = 平方根缩放；适合对比学习经验</td></tr>
+<tr><th>缩放规则</th><th>建议 LR（×4 GBS）</th><th>文献出处</th><th>适用范围</th></tr>
+<tr><td><strong>线性缩放</strong>（LR ∝ GBS）</td><td>5e-4 × 4 = <strong>2e-3</strong></td><td>Goyal et al. 2017《Accurate, Large Minibatch SGD》(<strong>arXiv:1706.02677</strong>) — 「hyper-parameter-free linear scaling rule」+ warmup；ResNet-50/ImageNet batch 到 8192 无精度损失</td><td>SGD / SGD+momentum（经典 ImageNet 分类）</td></tr>
+<tr><td><strong>B ∝ LR 等价性</strong>（含 Adam）</td><td>同上 2e-3</td><td>Smith et al. 2017《Don't Decay the Learning Rate, Increase the Batch Size》(<strong>arXiv:1711.00489</strong>) — 对 SGD / SGD+momentum / Nesterov / <strong>Adam</strong> 均成立：「B ∝ ε」</td><td>SGD / Adam 均适用（本项目用 AdamW）</td></tr>
+<tr><td><strong>次线性 √缩放</strong>（LR ∝ √GBS）</td><td>5e-4 × 2 = <strong>1e-3</strong></td><td><span class="warn">⚠️ 工程惯例 · 无一手引用</span>：大批量训练中常被使用，但本轮未取得可引一手出处 → <strong>不当「权威规则」写</strong></td><td>工程惯例 · 非权威</td></tr>
 </table>
-<p>本方案 LR=1e-3 恰好匹配<strong>平方根缩放规则</strong>（√4=2，×2 LR），但低于线性缩放规则（×4 LR）。在大 batch 对比学习中，负样本池扩大（512→2048）本身提供了更强的对比信号，可能部分补偿 LR 欠缩放。<strong>结论：×2 LR 合理但偏保守，收敛速度可能慢于线性缩放方案。</strong></p>
+<p><strong>实证硬结论</strong>（Shallue et al. 2019《Measuring the Effects of Data Parallelism》<strong>JMLR 20</strong> / <strong>arXiv:1811.03600</strong> + Google《Deep Learning Tuning Playbook》）：</p>
+<ul>
+<li>① <strong>换 batch 必须重新调 LR</strong>（及动量/正则）——「optimizer hyperparameters (e.g. learning rate, momentum) and the regularization hyperparameters」最敏感</li>
+<li>② <strong>perfect scaling 仅在 critical batch size 以下成立</strong>，超过则收益递减（McCandlish et al. 2018, <strong>arXiv:1812.06162</strong>「gradient noise scale」）</li>
+</ul>
+<p><strong>对比学习专属</strong>：SimCLR (<strong>arXiv:2002.05709</strong>) —「contrastive learning benefits from larger batch sizes and more training steps」⇒ 欠缩放导致收敛慢，正确补救是<strong>加步数</strong>，不是降低要求。</p>
+<h4>3-臂扫描方案</h4>
+<table>
+<tr><th>臂</th><th>LR</th><th>缩放倍数</th><th>规则</th><th>warmup</th><th>min_lr</th><th>理论依据</th><th>预期</th></tr>
+<tr><td><strong>A</strong></td><td>1e-3</td><td>×2</td><td>次线性 √缩放</td><td>4000</td><td>1e-4</td><td class="warn">工程惯例 · 无一手引用</td><td>收敛最慢；ProtB 最低</td></tr>
+<tr><td><strong>B</strong></td><td>1.5e-3</td><td>×3</td><td>线性与 √ 之间</td><td>6000</td><td>1.5e-4</td><td>插值</td><td>折中</td></tr>
+<tr class="best"><td><strong>C</strong>（默认）</td><td><strong>2e-3</strong></td><td><strong>×4</strong></td><td><strong>线性缩放</strong></td><td>8000</td><td>2e-4</td><td>Goyal 2017 + Smith 2017（含 Adam）</td><td>有理论依据；预期最优</td></tr>
+</table>
+<p><strong>结论</strong>：按文献办事 = 做 3 臂小扫描，以 ProtB 取优，而非「拍一个数再预言会变差」。<strong>默认臂 C（×4 线性，Goyal 直接依据）</strong>；若预算只允许 1 臂 → 取臂 C，并显式声明「未做 LR 扫描」的局限。warmup 必须同比放大（Goyal 要求），否则大 batch 初期训练不稳定。</p>
 </div>
 
 <h2>4. 时间估算</h2>
@@ -182,37 +197,44 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <p class="note">⁵ <strong>真实 epoch</strong> = 累计样本 / 快照数据集大小（110.9M）。基线名义「1 epoch」= 187,101 × 512 = 95.8M 样本，实际仅 0.86 真实 epoch（因 187,101 系 6233-tar 时代步数，快照已增至 7437 tar = 110.9M 对）。递减比 = Δ(2→4) / Δ(1→2) = 1.68 / 3.03 ≈ 0.55。若按真实 epoch 保持此规律：6.9 真实 ep ≈ 67.97%，13.8 真实 ep ≈ 68.48%。但本实验改变了 batch size 和 LR → 曲线不可直接外推。</p>
 </div>
 
-<h3>5.2 ×4-GBS / ×2-LR 对 ProtB 的影响分析</h3>
+<h3>5.2 ×4-GBS / 3-臂 LR 对 ProtB 的影响分析</h3>
 <div class="card">
 <table>
 <tr><th>因素</th><th>方向</th><th>量级估计</th><th>机制</th></tr>
-<tr><td><strong>负样本池 ×4</strong>（512→2048）</td><td class="best">↑ 正面</td><td>+0.5–1.5 pp</td><td>InfoNCE 对比学习：更多负样本 = 更硬的负例 = 更好的表征。文献 (CLIP) 显示 batch 512→2048 可提升 ~1–2pp。</td></tr>
+<tr><td><strong>负样本池 ×4</strong>（512→2048）</td><td class="best">↑ 正面</td><td>+0.5–1.5 pp</td><td>InfoNCE 对比学习：更多负样本 = 更硬的负例 = 更好的表征。SimCLR (arXiv:2002.05709) 显示「contrastive learning benefits from larger batch sizes and more training steps」。</td></tr>
 <tr><td><strong>每真实 epoch 梯度更新 ÷3.45</strong>（187k→54k 步/真实 epoch）</td><td class="bad">↓ 负面</td><td>−1–3 pp</td><td>每真实 epoch 参数更新次数减少 3.45×（基线 187,101 步/真实 epoch [GBS=512] vs 新方案 54,175 步/真实 epoch [GBS=2048]）→ 同真实 epoch 下特征质量可能偏低。</td></tr>
-<tr><td><strong>LR ×2（欠缩放）</strong></td><td class="warn">↓ 偏负面</td><td>−0.5–1.5 pp</td><td>线性规则需 ×4 LR；×2 = 0.5× 欠缩放 → 每 step 学习率相对不足 → 收敛偏慢。</td></tr>
-<tr><td><strong>warmup ×2</strong>（2000→4000）</td><td>中性</td><td>~0 pp</td><td>保持 warmup/LR 比例稳定，减少大 batch 初期不稳定。</td></tr>
+<tr><td><strong>LR 3-臂扫描</strong>（×2/×3/×4）</td><td class="warn">臂间差异</td><td>臂 A→C +0.5–2 pp</td><td>臂 A (×2) = 次线性 √缩放（工程惯例 · 无一手引用），收敛偏慢；臂 C (×4) = 线性缩放（Goyal arXiv:1706.02677 + Smith arXiv:1711.00489 含 Adam），预期最优。Shallue et al. (arXiv:1811.03600) 实证：换 batch 必须重新调 LR → 3 臂扫描正是「按文献办事」。</td></tr>
+<tr><td><strong>warmup 同比放大</strong>（4000/6000/8000）</td><td>正面</td><td>+0.3–0.5 pp</td><td>Goyal 要求 warmup 随 batch/LR 同比增长，减少大 batch 初期不稳定 → 各臂均配 warmup。</td></tr>
 <tr><td><strong>数据不变</strong>（同快照）</td><td>中性</td><td>~0 pp</td><td>同一 110.9M 快照（7437 GPIC tar），数据质量/数量无变化。</td></tr>
 </table>
-<p><strong>净效应估计</strong>：负面（更新数↓ + LR 欠缩放）vs 正面（负样本↑）大致相抵，但负面略占优 → <strong>同 epoch 数下 ProtB 可能略低于基线</strong>。</p>
+<p><strong>净效应估计</strong>：臂 A (×2 LR) 负面（更新数↓ + LR 偏低）vs 正面（负样本↑）大致相抵，负面略占优 → ProtB 可能略低于基线。臂 C (×4 LR) 线性缩放补偿了更新数减少的效应 → ProtB 预期接近或持平基线。<strong>3 臂扫描的目的正是确定哪个 LR 缩放规则在本数据/模型上最有效</strong>。</p>
 </div>
 
-<h3>5.3 ProtB 预估表（3 情景 · 按真实 epoch）</h3>
+<h3>5.3 ProtB 预估表（3 臂 × 3 情景 · 按真实 epoch）</h3>
 <table>
-<tr><th>情景</th><th>假设</th><th>0.86 真实 ep</th><th>1.73 真实 ep</th><th>2.85 真实 ep（中位 24h）</th><th>3.45 真实 ep</th></tr>
-<tr><td class="best"><strong>乐观</strong>（数据主导）</td><td>ProtB 主要取决于数据遍历次数；负样本×4 补偿更新数↓</td><td>~62%</td><td>~65%</td><td class="best">~66%</td><td>~67%</td></tr>
-<tr><td><strong>中位</strong>（综合）</td><td>负面略占优；更新数↓ 抵消负样本↑</td><td>~60%</td><td>~63%</td><td class="warn">~65%</td><td>~66%</td></tr>
-<tr><td class="bad"><strong>悲观</strong>（更新主导）</td><td>ProtB 主要取决于梯度更新数；×2 LR 严重欠缩放</td><td>~58%</td><td>~61%</td><td class="bad">~63%</td><td>~64%</td></tr>
+<tr><th>臂</th><th>LR</th><th>情景</th><th>0.86 真实 ep</th><th>1.73 真实 ep</th><th>2.85 真实 ep（中位 24h）</th><th>3.45 真实 ep</th></tr>
+<tr><td rowspan="3"><strong>A</strong> (×2)</td><td rowspan="3">1e-3</td><td class="best">乐观</td><td>~61%</td><td>~64%</td><td>~66%</td><td>~67%</td></tr>
+<tr><td>中位</td><td>~59%</td><td>~62%</td><td class="warn">~64%</td><td>~65%</td></tr>
+<tr><td class="bad">悲观</td><td>~57%</td><td>~60%</td><td class="bad">~62%</td><td>~63%</td></tr>
+<tr><td rowspan="3"><strong>B</strong> (×3)</td><td rowspan="3">1.5e-3</td><td class="best">乐观</td><td>~62%</td><td>~65%</td><td>~67%</td><td>~68%</td></tr>
+<tr><td>中位</td><td>~60%</td><td>~63%</td><td class="warn">~65%</td><td>~66%</td></tr>
+<tr><td class="bad">悲观</td><td>~58%</td><td>~61%</td><td class="bad">~63%</td><td>~64%</td></tr>
+<tr><td rowspan="3" class="best"><strong>C</strong> (×4 线性)</td><td rowspan="3"><strong>2e-3</strong></td><td class="best">乐观</td><td>~63%</td><td>~66%</td><td class="best">~68%</td><td>~69%</td></tr>
+<tr><td>中位</td><td>~61%</td><td>~64%</td><td class="warn">~66%</td><td>~67%</td></tr>
+<tr><td class="bad">悲观</td><td>~59%</td><td>~62%</td><td class="bad">~64%</td><td>~65%</td></tr>
 </table>
-<p class="note"><span class="tag tag-est">外推·待验</span> 以上全部为<strong>基于基线曲线 + 理论分析的估算</strong>，非实测值。真实 epoch 按 110.9M 快照计算（0.86/1.73/2.85/3.45 分别对应 95.8M/191.6M/~317M/383.2M 累计样本）。24h 中位估计 ~2.85 真实 epoch ≈ 154,500 步 ≈ 317M 累计样本。实际 ProtB 可能因 NFS 波动、训练随机性、模型-数据交互等因素偏离估计 ±2–3pp。<strong>本计划不编造数字，所有预估值均标注「外推·待验」。</strong></p>
+<p class="note"><span class="tag tag-est">外推·待验</span> 以上全部为<strong>基于基线曲线 + 文献 LR 缩放规则的估算</strong>，非实测值。臂 C (×4) 预期最优（Goyal 线性缩放 + Smith 含 Adam 依据）。真实 epoch 按 110.9M 快照计算。24h 中位估计 ~2.85 真实 epoch ≈ 154,500 步 ≈ 317M 累计样本。实际 ProtB 可能因 NFS 波动、训练随机性、模型-数据交互等因素偏离估计 ±2–3pp。<strong>本计划不编造数字，所有预估值均标注「外推·待验」。</strong> McCandlish et al. (arXiv:1812.06162) 提示 perfect scaling 仅在 critical batch size 以下成立 → ×4 可能已超临界 → 收益递减风险存在。</p>
 
-<h3>5.4 与基线的预期对比</h3>
+<h3>5.4 与基线的预期对比（3 臂 · 预估中位）</h3>
 <table>
-<tr><th>指标</th><th>④-4ep 基线（实测）</th><th>新方案 ~2.85 真实 ep（预估中位）</th><th>差异</th><th>说明</th></tr>
-<tr><td>ProtB</td><td class="best">67.05%</td><td class="warn">~65%（估）</td><td>~−2pp</td><td>基线 3.45 真实 epoch（383M 样本）vs 新方案 ~2.85 真实 epoch（~317M 样本）+ 更新数少 + LR 欠缩放</td></tr>
-<tr><td>训练步数</td><td>748,404</td><td>~154,500（2.85×54,175）</td><td>÷4.8</td><td>大 batch 大幅减少梯度更新数</td></tr>
-<tr><td>累计样本</td><td>383.2M</td><td>~317M</td><td>−17%</td><td>新方案 24h 预算下喂入更少样本</td></tr>
-<tr><td>训练墙钟</td><td>16.8h（resume）</td><td>~24.0h</td><td>+7.2h</td><td>含 warmup（基线 resume 跳过 warmup）</td></tr>
-<tr><td>每步处理图像</td><td>512</td><td>2048</td><td>×4</td><td>负样本 512→2048</td></tr>
-<tr><td>达到 67% 所需真实 epoch（估）</td><td>3.45</td><td>~4–5（估）</td><td>+0.5–1.5</td><td>大 batch + 欠缩放 → 需更多真实 epoch</td></tr>
+<tr><th>指标</th><th>④-4ep 基线（实测）</th><th>臂 A (×2) ~2.85ep</th><th>臂 B (×3) ~2.85ep</th><th>臂 C (×4) ~2.85ep</th><th>说明</th></tr>
+<tr><td>ProtB</td><td class="best">67.05%</td><td class="warn">~64%（估）</td><td>~65%（估）</td><td>~66%（估）</td><td>臂 C 线性缩放最接近基线；臂 A 欠缩放最低</td></tr>
+<tr><td>LR</td><td>5e-4</td><td>1e-3</td><td>1.5e-3</td><td>2e-3</td><td>×2 / ×3 / ×4 缩放</td></tr>
+<tr><td>训练步数</td><td>748,404</td><td colspan="3">~154,500（2.85×54,175）</td><td>3 臂步数相同（同 GBS=2048）</td></tr>
+<tr><td>累计样本</td><td>383.2M</td><td colspan="3">~317M</td><td>−17%；新方案 24h 预算下喂入更少样本</td></tr>
+<tr><td>训练墙钟</td><td>16.8h（resume）</td><td colspan="3">~24.0h</td><td>含 warmup（基线 resume 跳过 warmup）</td></tr>
+<tr><td>每步处理图像</td><td>512</td><td colspan="3">2048</td><td>负样本 512→2048</td></tr>
+<tr><td>达到 67% 所需真实 epoch（估）</td><td>3.45</td><td>~5–6（估）</td><td>~4–5（估）</td><td>~4–4.5（估）</td><td>臂 C 线性缩放补偿更新数减少 → 需更少额外 epoch</td></tr>
 </table>
 
 <h2>6. 风险评估</h2>
@@ -221,7 +243,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <tr><th>#</th><th>风险</th><th>概率</th><th>影响</th><th>缓解措施</th></tr>
 <tr><td>R1</td><td><strong>MBS=256 显存 OOM</strong></td><td>中</td><td>高（需改代码）</td><td>先 smoke test MBS=256 单步前向+反向；若 OOM → 方案 B：保持 MBS=64 + 新增 <code>--grad-accum 4</code>（~20 行代码改动）</td></tr>
 <tr><td>R2</td><td><strong>NFS I/O 瓶颈</strong>导致吞吐不提升</td><td>高</td><td>中（仅跑 ~2.2 真实 epoch）</td><td>增加 <code>--num-workers 8</code>；与 data 线下载错峰；监控 <code>nvidia-smi</code> GPU 利用率</td></tr>
-<tr><td>R3</td><td><strong>LR 欠缩放</strong>导致收敛偏慢</td><td>中</td><td>中（ProtB 偏低 1–2pp）</td><td>记录 loss 曲线；若前 10k 步 loss 不降 → 回退 LR=2e-3（线性缩放）；warmup 后监控 C1 坍缩指标</td></tr>
+<tr><td>R3</td><td><strong>臂 C 高 LR (2e-3) 训练不稳定</strong>（C1 坍缩）</td><td>中</td><td>高（实验作废）</td><td>warmup 同比放大至 8000 步（Goyal 要求）；<code>r9_train.py</code> 有 C1/C2 坍缩检测；PROBE every 300 步监控；若 C1>0.95 → 自动 fuse + 停止；若臂 C 坍缩 → 回退臂 B 或 A</td></tr>
 <tr><td>R4</td><td><strong>大 batch + 高 LR 训练不稳定</strong>（C1 坍缩）</td><td>低</td><td>高（实验作废）</td><td><code>r9_train.py</code> 有 C1/C2 坍缩检测；PROBE every 300 步监控；若 C1>0.95 → 自动 fuse + 停止</td></tr>
 <tr><td>R5</td><td><strong>24h 预算不足</strong>（吞吐低于预期）</td><td>中</td><td>低（少跑 0.5–1 epoch）</td><td>每 10k 步存 checkpoint；即使 24h 到期也有中间结果可评测</td></tr>
 <tr><td>R6</td><td><strong>与外部编码器评测 GPU 冲突</strong></td><td>低</td><td>中</td><td>外部评测 AIMv2/RICE 仍在跑（GPU 2,4）；新训练用 GPU 0–7 → 需等外部评测完成或分卡。建议<strong>等外部评测 5/5 完成后再启动</strong></td></tr>
@@ -242,22 +264,26 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <table>
 <tr><th>步</th><th>动作</th><th>命令 / 脚本</th><th>预计耗时</th><th>产物</th></tr>
 <tr><td>1</td><td>Smoke test MBS=256</td><td><code>r9_train.py --steps 10 --batch-size 256 ...</code></td><td>~5min</td><td>确认不 OOM + C1 正常</td></tr>
-<tr><td>2</td><td>启动训练</td><td>新建 <code>run_bs4_lr2.sh</code>（基于 <code>run_e4_4ep.sh</code> 改 <code>--batch-size 256 --lr 1e-3 --warmup 4000 --min-lr 1e-4 --steps 154500</code>）</td><td>~24.0h</td><td>vision.pt + checkpoints</td></tr>
+<tr><td>2</td><td>启动训练（3 臂串行或选 1 臂）</td><td>臂 A: <code>run_bs4_lrA.sh</code>（<code>--batch-size 256 --lr 1e-3 --warmup 4000 --min-lr 1e-4 --steps 154500</code>）<br>臂 B: <code>run_bs4_lrB.sh</code>（<code>--lr 1.5e-3 --warmup 6000 --min-lr 1.5e-4 --steps 154500</code>）<br>臂 C: <code>run_bs4_lrC.sh</code>（<code>--lr 2e-3 --warmup 8000 --min-lr 2e-4 --steps 154500</code>）<br><strong>若预算只允许 1 臂 → 取臂 C（×4 线性 · Goyal 默认）</strong></td><td>~24.0h/臂（3 臂 = ~72h）</td><td>vision.pt_A/B/C + checkpoints</td></tr>
 <tr><td>3</td><td>监控训练</td><td>每 30min 检查 loss / C1 / C2 / img/s；坍缩则停止</td><td>持续</td><td>日志 <code>/tmp/bs4_lr2_train.log</code></td></tr>
-<tr><td>4</td><td>ProtB 评测</td><td><code>lp_protocol_bridge.py --vision vision.pt --protocol B --seeds 0 1 2</code></td><td>~3.5h</td><td>ProtB mean±std</td></tr>
+<tr><td>4</td><td>ProtB 评测（3 臂各评）</td><td><code>lp_protocol_bridge.py --vision vision.pt_A/B/C --protocol B --seeds 0 1 2</code></td><td>~3.5h/臂（3 臂 = ~10.5h）</td><td>ProtB mean±std × 3 臂</td></tr>
 <tr><td>5</td><td>ProtA + zs + k-NN（可选）</td><td>同 ④-4ep 评测链</td><td>~1h</td><td>全指标对比表</td></tr>
 <tr><td>6</td><td>出报告 + 更新 EXPERIMENTS_VISION.md</td><td>HTML 报告 + §9 新增小节</td><td>~0.5h</td><td>报告 + 实验记录</td></tr>
 </table>
-<h3>关键命令模板（新建 <code>run_bs4_lr2.sh</code>）</h3>
-<p>核心改动（vs <code>run_e4_4ep.sh</code>）：</p>
+<h3>关键命令模板（3 臂 · 基于 <code>run_e4_4ep.sh</code>）</h3>
+<p>核心改动（vs <code>run_e4_4ep.sh</code>）—— 除 LR/warmup/min_lr 外，三臂完全一致：</p>
+<table>
+<tr><th>参数</th><th>基线</th><th>臂 A (×2)</th><th>臂 B (×3)</th><th>臂 C (×4 · 默认)</th></tr>
+<tr><td><code>--batch-size</code></td><td>64</td><td colspan="3"><strong>256</strong>（×4，三臂相同）</td></tr>
+<tr><td><code>--lr</code></td><td>5e-4</td><td>1e-3</td><td>1.5e-3</td><td class="best">2e-3</td></tr>
+<tr><td><code>--warmup</code></td><td>2000</td><td>4000</td><td>6000</td><td class="best">8000</td></tr>
+<tr><td><code>--min-lr</code></td><td>5e-5</td><td>1e-4</td><td>1.5e-4</td><td class="best">2e-4</td></tr>
+<tr><td><code>--steps</code></td><td>748,404</td><td colspan="3">154,500（≈ 2.85 真实 epoch @ GBS=2048）</td></tr>
+</table>
 <ul>
-<li><code>--batch-size 256</code>（64 → 256, ×4）</li>
-<li><code>--lr 1e-3</code>（5e-4 → 1e-3, ×2）</li>
-<li><code>--warmup 4000</code>（2000 → 4000, ×2）</li>
-<li><code>--min-lr 1e-4</code>（5e-5 → 1e-4, ×2, =10%×lr）</li>
-<li><code>--steps 154500</code>（≈ 2.85 真实 epoch @ GBS=2048，中位吞吐 ~24h）；或 <code>--steps 162525</code>（3 真实 epoch，可能略超 24h）<br><span class="note">⚠️ 旧口径：3 × 46,780 = 140,340 步（按 95.8M）</span></li>
-<li>其余参数与 <code>run_e4_4ep.sh</code> 完全一致</li>
+<li>其余参数与 <code>run_e4_4ep.sh</code> 完全一致（<code>--scheduler cosine --loss aimv2 --mask-ratio 0.6 --data-source mixed --caption-type all</code>）</li>
 <li>不使用 <code>--resume</code>（从零训练，非续训）</li>
+<li>若预算只允许 1 臂 → <strong>取臂 C（×4 线性，Goyal arXiv:1706.02677 直接依据）</strong>，并在报告显式声明「未做 LR 扫描」的局限</li>
 </ul>
 </div>
 
@@ -267,10 +293,10 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <li><strong>本文件是计划，不是结果</strong>：所有 ProtB 数字（§5.3 表）均为<strong>基于基线曲线 + 理论分析的外推估计</strong>，标注 <span class="tag tag-est">外推·待验</span>。<strong>实测前不得引用为结论</strong>。</li>
 <li><strong>不编造数字</strong>：基线数字（62.34% / 65.37% / 67.05% / 2818 img/s / 10787 shards 等）全部来自 <code>EXPERIMENTS_VISION.md</code> / <code>MEMORY_VISION.md</code> 实测记录，可溯源。</li>
 <li><strong>时间估算有不确定度</strong>：24h 可跑真实 epoch 区间 2.2–3.3（按快照 110.9M），取决于 NFS I/O 瓶颈程度。中位估计 ~2.85 真实 epoch ≠ 保证值。⚠️ 3 真实 epoch（162,525 步）在中位吞吐下需 ~25.2h（略超 24h）。</li>
-<li><strong>×2 LR 是保守选择</strong>：运维指令指定 ×2，非线性缩放规则建议的 ×4。若结果不佳，不排除是 LR 不足而非 batch size 问题。</li>
+<li><strong>LR 3-臂扫描 · 文献依据</strong>：本计划将 LR 从单一 ×2 改为 3-臂扫描 {×2 (1e-3, 次线性) · ×3 (1.5e-3) · ×4 (2e-3, 线性)}，默认臂 C（×4 线性，Goyal arXiv:1706.02677 + Smith arXiv:1711.00489 含 Adam）。次线性 √缩放 (×2) <strong>无一手引用</strong>，标为「工程惯例」。Shallue et al. (arXiv:1811.03600) 实证：换 batch 必须重新调 LR → 3 臂扫描正是按此办事。若预算只允许 1 臂 → 取臂 C，并显式声明「未做 LR 扫描」的局限。McCandlish et al. (arXiv:1812.06162) 提示 perfect scaling 仅在 critical batch size 以下成立 → ×4 可能已超临界 → 收益递减风险。</li>
 <li><strong>数据口径</strong>（⚠️ 2026-10-13 订正）：快照实盘 110.9M 对（7437 GPIC tar × 12,639 + CC12M 11.0M + Amshaker 5.95M，<code>wc -l</code> 已核）；全量 118.1M 对（8000 GPIC tar）。旧版报告写「95.8M」系 6233-tar 时代旧值（<code>EXPERIMENTS_VISION.md</code> L489），快照冻结到 7437 tar 后未重算 → <strong>陈旧引用，已订正</strong>。基线「1 epoch」= 187,101 × 512 = 95.8M 样本，实际仅覆盖快照 86.4% = 0.86 真实 epoch。两种口径并列（数据集大小 vs 训练实际喂入样本数），🚫 不混为一谈。</li>
 <li><strong>未启动训练</strong>：本计划严格遵守「只出计划不启动」纪律，<strong>不占 GPU</strong>，不打断在飞的外部编码器评测。</li>
-<li><strong>预注册判据（建议）</strong>：① ProtB ≥ 67%（= ④-4ep 基线）→ 大 batch 至少持平 → 可继续探索；② 64% ≤ ProtB &lt; 67% → 大 batch 略差 → LR 欠缩放可能为主因；③ ProtB &lt; 64% → 大 batch 显著不利 → 回退基线配置。判据须运维确认后定稿。</li>
+<li><strong>预注册判据（建议）</strong>：① <strong>臂间比较</strong>：臂 C (×4) ProtB ≥ 臂 A (×2) → 线性缩放优于次线性 → 确认 Goyal 规则适用；② <strong>vs 基线</strong>：最优臂 ProtB ≥ 67%（= ④-4ep 基线）→ 大 batch 至少持平 → 可继续探索；③ 64% ≤ 最优臂 < 67% → 大 batch 略差 → 可能需更多 epoch；④ 最优臂 < 64% → 大 batch 显著不利 → 回退基线配置。判据须运维确认后定稿。</li>
 </ol>
 </div>
 
@@ -289,11 +315,20 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <li><code>vision/r9_train.py</code> argparse（L349–430）— 超参定义（无 grad-accum 参数；GBS = batch-size × world_size）</li>
 <li><code>MEMORY_VISION.md</code> 状态头 — ④-4ep 完整指标（ProtB/ProtA/zs/k-NN）</li>
 </ul>
-<p><strong>外推依据</strong>：</p>
+<p><strong>外推依据 · LR 缩放文献表（arXiv 号 + 访问日 2026-10-13）</strong>：</p>
+<table style="font-size:.85em">
+<tr><th>#</th><th>文献</th><th>arXiv</th><th>核心结论</th><th>在本计划的用途</th></tr>
+<tr><td>1</td><td>Goyal et al. 2017《Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour》</td><td><strong>arXiv:1706.02677</strong></td><td>线性缩放规则 LR ∝ batch + warmup；ResNet-50 batch 8192 无精度损失</td><td>臂 C (×4) 的直接依据 + warmup 同比放大要求</td></tr>
+<tr><td>2</td><td>Smith et al. 2017《Don't Decay the Learning Rate, Increase the Batch Size》</td><td><strong>arXiv:1711.00489</strong></td><td>B ∝ ε 对 SGD / SGD+momentum / Nesterov / <strong>Adam</strong> 均成立</td><td>将线性缩放扩展到 AdamW（本项目优化器）</td></tr>
+<tr><td>3</td><td>Shallue et al. 2019《Measuring the Effects of Data Parallelism…》</td><td><strong>arXiv:1811.03600</strong> (JMLR 20)</td><td>换 batch 必须重新调 LR（及动量/正则）；perfect scaling 仅在 critical batch size 以下</td><td>3-臂扫描的理论依据 + 收益递减风险提示</td></tr>
+<tr><td>4</td><td>McCandlish et al. 2018《An Empirical Model of Large-Batch Training》</td><td><strong>arXiv:1812.06162</strong></td><td>Gradient noise scale → critical batch size 概念；超过则收益递减</td><td>×4 GBS 可能已超临界 → 收益递减风险</td></tr>
+<tr><td>5</td><td>Chen et al. 2020《SimCLR》(A Simple Framework for Contrastive Learning)</td><td><strong>arXiv:2002.05709</strong></td><td>对比学习 benefits from larger batch sizes and more training steps</td><td>负样本池 ×4 的正面效应依据 + 欠缩放补救 = 加步数</td></tr>
+<tr><td>6</td><td>Google《Deep Learning Tuning Playbook》</td><td>（工程指南 · 非论文）</td><td>换 batch → 最敏感 = optimizer + regularization hyperparams</td><td>佐证「换 batch 必须重新调 LR」</td></tr>
+</table>
+<p class="note">⚠️ 次线性 √缩放规则 (LR ∝ √B) 在大批量训练中常被使用，但本轮<strong>未取得可引一手出处</strong> → 标为「工程惯例 · 无一手引用」，不当「权威规则」写。访问日期：2026-10-13。</p>
 <ul>
-<li>Goyal et al. 2017 — Linear Scaling Rule（LR ∝ batch size）</li>
-<li>CLIP (Radford et al. 2021) — batch size 512→2048 对对比学习的影响</li>
 <li>R12b 发现（<code>EXPERIMENTS_VISION.md</code> §R12b）— 「epoch 数比 unique 数据量更重要」→ 支持「ProtB 取决于数据遍历次数」假设</li>
+<li>CLIP (Radford et al. 2021) — batch size 512→2048 对对比学习的影响（经验参考）</li>
 </ul>
 </div>
 

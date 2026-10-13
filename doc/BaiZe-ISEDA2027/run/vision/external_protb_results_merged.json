@@ -38,6 +38,25 @@
     "paper_lp": "79.81% (OV2 L/14@336, BaiZe ProtA R13)"
   },
   {
+    "model": "rice-vitl14-560",
+    "resolution": 560,
+    "feature_dim": 1024,
+    "loader": "rice",
+    "protb_mean": 0.8172199726104736,
+    "protb_std": 7.119345048226111e-05,
+    "protb_runs": [
+      0.8173199892044067,
+      0.8171799778938293,
+      0.8171599507331848
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~84.0% (RICE-ViT-L@560, estimated)"
+  },
+  {
     "model": "siglip2-so400m-384",
     "resolution": 384,
     "feature_dim": 1152,
