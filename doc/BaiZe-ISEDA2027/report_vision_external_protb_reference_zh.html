@@ -34,7 +34,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </head>
 <body>
 <h1>BaiZe 视觉编码器 - 外部公众编码器 ProtB 参考评测报告</h1>
-<p class="note">生成时间：2026-10-14 00:00 · 线：vision · 语言：中文 · 性质：评测类（占 GPU · .12）· 协议：Protocol B（mainstream linear probe）</p>
+<p class="note">生成时间：2026-10-14 01:04 · 线：vision · 语言：中文 · 性质：评测类（占 GPU · .12）· 协议：Protocol B（mainstream linear probe）</p>
 
 <div class="warn-box">
 <h3>🚫 红线声明</h3>
@@ -90,51 +90,57 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </div>
 <table>
 <tr><th>模型</th><th>Native 分辨率</th><th>特征维</th><th>参数量</th><th>ProtB (3 seeds)</th><th>各 seed 明细</th><th>文献锚点 · 待核</th><th>备注</th></tr>
-<tr><td class="best">SigLIP2 so400m@384</td><td>384px</td><td>1152</td><td>~400M (vision)</td><td class="best">87.46 +/- 0.01%</td><td class="note">87.46% / 87.47% / 87.45%</td><td class="note">~83.1%<br><span class="note">HF linear probe</span></td><td class="note">Google SigLIP2，无原版 SigLIP</td></tr><tr><td class="">OpenVision2 ViT-L/14@336</td><td>336px</td><td>1024</td><td>~304M (vision)</td><td class="">84.97 +/- 0.01%</td><td class="note">84.97% / 84.96% / 84.99%</td><td class="note">79.81%<br><span class="note">BaiZe ProtA R13</span></td><td class="note">UCSC-VLAA 官方权重</td></tr><tr><td class="">CLIP ViT-L/14@336</td><td>336px</td><td>1024</td><td>~304M (vision)</td><td class="">82.66 +/- 0.03%</td><td class="note">82.62% / 82.69% / 82.67%</td><td class="note">~88.1%<br><span class="note">OpenCLIP linear probe</span></td><td class="note">OpenAI 原版，本线冻结文本塔同源</td></tr><tr><td class="">RICE-ViT-L@560</td><td>560px</td><td>1024</td><td>~304M (vision)</td><td class="">81.72 +/- 0.01%</td><td class="note">81.73% / 81.72% / 81.72%</td><td class="note">~84.0%<br><span class="note">估算值（待核）</span></td><td class="note">DeepGlint-AI，高分辨率 560px</td></tr>
+<tr><td class="best">SigLIP2 so400m@384</td><td>384px</td><td>1152</td><td>~400M (vision)</td><td class="best">87.46 +/- 0.01%</td><td class="note">87.46% / 87.47% / 87.45%</td><td class="note">~83.1%<br><span class="note">HF linear probe</span></td><td class="note">Google SigLIP2，无原版 SigLIP</td></tr><tr><td class="">AIMv2-1B@336</td><td>336px</td><td>2048</td><td>~1B</td><td class="">85.22 +/- 0.04%</td><td class="note">85.16% / 85.24% / 85.26%</td><td class="note">~87.6%<br><span class="note">Apple frozen trunk lp</span></td><td class="note">Apple AIMv2，自定义 modeling</td></tr><tr><td class="">OpenVision2 ViT-L/14@336</td><td>336px</td><td>1024</td><td>~304M (vision)</td><td class="">84.97 +/- 0.01%</td><td class="note">84.97% / 84.96% / 84.99%</td><td class="note">79.81%<br><span class="note">BaiZe ProtA R13</span></td><td class="note">UCSC-VLAA 官方权重</td></tr><tr><td class="">CLIP ViT-L/14@336</td><td>336px</td><td>1024</td><td>~304M (vision)</td><td class="">82.66 +/- 0.03%</td><td class="note">82.62% / 82.69% / 82.67%</td><td class="note">~88.1%<br><span class="note">OpenCLIP linear probe</span></td><td class="note">OpenAI 原版，本线冻结文本塔同源</td></tr><tr><td class="">RICE-ViT-L@560</td><td>560px</td><td>1024</td><td>~304M (vision)</td><td class="">81.72 +/- 0.01%</td><td class="note">81.73% / 81.72% / 81.72%</td><td class="note">~84.0%<br><span class="note">估算值（待核）</span></td><td class="note">DeepGlint-AI，高分辨率 560px</td></tr>
 <tr style="border-top:2px solid #f85149"><td style="color:#f85149">BaiZe 4-4ep (from-scratch)</td><td>224px</td><td>512</td><td>126.8M</td><td style="color:#f85149">67.05 +/- 0.02%</td><td class="note">67.03 / 67.08 / 67.04%</td><td class="note">-</td><td class="note" style="color:#f85149">本项目从零训练，仅供参考</td></tr>
 </table>
 <p class="note">ProtB = Protocol B linear probe（SGD+momentum0.9+cosine 90ep, bs1024, IN-1k full train 1.28M, IN-1k val 50k, 3 seeds）。文献锚点来自公开论文/官方报告，标注「待核」表示尚未逐字核实，仅供参考。</p>
 
 <h2>4. 可视化对比</h2>
 <div class="svg-container">
-<svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg"><line x1="180.0" y1="10" x2="180.0" y2="225" stroke="#30363d" stroke-dasharray="2,3"/>
-<text x="180.0" y="238" text-anchor="middle" fill="#8b949e" font-size="10">0%</text>
-<line x1="280.0" y1="10" x2="280.0" y2="225" stroke="#30363d" stroke-dasharray="2,3"/>
-<text x="280.0" y="238" text-anchor="middle" fill="#8b949e" font-size="10">20%</text>
-<line x1="380.0" y1="10" x2="380.0" y2="225" stroke="#30363d" stroke-dasharray="2,3"/>
-<text x="380.0" y="238" text-anchor="middle" fill="#8b949e" font-size="10">40%</text>
-<line x1="480.0" y1="10" x2="480.0" y2="225" stroke="#30363d" stroke-dasharray="2,3"/>
-<text x="480.0" y="238" text-anchor="middle" fill="#8b949e" font-size="10">60%</text>
-<line x1="580.0" y1="10" x2="580.0" y2="225" stroke="#30363d" stroke-dasharray="2,3"/>
-<text x="580.0" y="238" text-anchor="middle" fill="#8b949e" font-size="10">80%</text>
-<line x1="680.0" y1="10" x2="680.0" y2="225" stroke="#30363d" stroke-dasharray="2,3"/>
-<text x="680.0" y="238" text-anchor="middle" fill="#8b949e" font-size="10">100%</text><text x="172" y="42.4" text-anchor="end" fill="#e6edf3" font-size="11">SigLIP2 so400m@384</text>
+<svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg"><line x1="180.0" y1="10" x2="180.0" y2="265" stroke="#30363d" stroke-dasharray="2,3"/>
+<text x="180.0" y="278" text-anchor="middle" fill="#8b949e" font-size="10">0%</text>
+<line x1="280.0" y1="10" x2="280.0" y2="265" stroke="#30363d" stroke-dasharray="2,3"/>
+<text x="280.0" y="278" text-anchor="middle" fill="#8b949e" font-size="10">20%</text>
+<line x1="380.0" y1="10" x2="380.0" y2="265" stroke="#30363d" stroke-dasharray="2,3"/>
+<text x="380.0" y="278" text-anchor="middle" fill="#8b949e" font-size="10">40%</text>
+<line x1="480.0" y1="10" x2="480.0" y2="265" stroke="#30363d" stroke-dasharray="2,3"/>
+<text x="480.0" y="278" text-anchor="middle" fill="#8b949e" font-size="10">60%</text>
+<line x1="580.0" y1="10" x2="580.0" y2="265" stroke="#30363d" stroke-dasharray="2,3"/>
+<text x="580.0" y="278" text-anchor="middle" fill="#8b949e" font-size="10">80%</text>
+<line x1="680.0" y1="10" x2="680.0" y2="265" stroke="#30363d" stroke-dasharray="2,3"/>
+<text x="680.0" y="278" text-anchor="middle" fill="#8b949e" font-size="10">100%</text><text x="172" y="42.4" text-anchor="end" fill="#e6edf3" font-size="11">SigLIP2 so400m@384</text>
 <rect x="180" y="20" width="437.3" height="32" fill="#58a6ff" rx="3" opacity="0.85"/>
 <line x1="617.3" y1="36.0" x2="617.4" y2="36.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
 <line x1="617.3" y1="32.0" x2="617.3" y2="40.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
 <line x1="617.4" y1="32.0" x2="617.4" y2="40.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
 <text x="625.3" y="42.4" fill="#e6edf3" font-size="11">87.46%</text>
-<text x="172" y="82.4" text-anchor="end" fill="#e6edf3" font-size="11">OpenVision2 ViT-L/14@336</text>
-<rect x="180" y="60" width="424.9" height="32" fill="#3fb950" rx="3" opacity="0.85"/>
-<line x1="604.8" y1="76.0" x2="604.9" y2="76.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<line x1="604.8" y1="72.0" x2="604.8" y2="80.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<line x1="604.9" y1="72.0" x2="604.9" y2="80.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<text x="612.9" y="82.4" fill="#e6edf3" font-size="11">84.97%</text>
-<text x="172" y="122.4" text-anchor="end" fill="#e6edf3" font-size="11">CLIP ViT-L/14@336</text>
-<rect x="180" y="100" width="413.3" height="32" fill="#bc8cff" rx="3" opacity="0.85"/>
-<line x1="593.2" y1="116.0" x2="593.4" y2="116.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<line x1="593.2" y1="112.0" x2="593.2" y2="120.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<line x1="593.4" y1="112.0" x2="593.4" y2="120.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<text x="601.3" y="122.4" fill="#e6edf3" font-size="11">82.66%</text>
-<text x="172" y="162.4" text-anchor="end" fill="#e6edf3" font-size="11">RICE-ViT-L@560</text>
-<rect x="180" y="140" width="408.6" height="32" fill="#39d2c5" rx="3" opacity="0.85"/>
-<line x1="588.6" y1="156.0" x2="588.6" y2="156.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<line x1="588.6" y1="152.0" x2="588.6" y2="160.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<line x1="588.6" y1="152.0" x2="588.6" y2="160.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
-<text x="596.6" y="162.4" fill="#e6edf3" font-size="11">81.72%</text>
-<text x="172" y="202.4" text-anchor="end" fill="#f85149" font-size="11">BaiZe 4-4ep (from-scratch)</text>
-<rect x="180" y="180" width="335.2" height="32" fill="none" stroke="#f85149" stroke-width="2" stroke-dasharray="4,2" rx="3" opacity="0.8"/>
-<text x="523.2" y="202.4" fill="#f85149" font-size="11">67.05%</text></svg>
+<text x="172" y="82.4" text-anchor="end" fill="#e6edf3" font-size="11">AIMv2-1B@336</text>
+<rect x="180" y="60" width="426.1" height="32" fill="#3fb950" rx="3" opacity="0.85"/>
+<line x1="605.9" y1="76.0" x2="606.3" y2="76.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="605.9" y1="72.0" x2="605.9" y2="80.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="606.3" y1="72.0" x2="606.3" y2="80.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<text x="614.1" y="82.4" fill="#e6edf3" font-size="11">85.22%</text>
+<text x="172" y="122.4" text-anchor="end" fill="#e6edf3" font-size="11">OpenVision2 ViT-L/14@336</text>
+<rect x="180" y="100" width="424.9" height="32" fill="#bc8cff" rx="3" opacity="0.85"/>
+<line x1="604.8" y1="116.0" x2="604.9" y2="116.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="604.8" y1="112.0" x2="604.8" y2="120.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="604.9" y1="112.0" x2="604.9" y2="120.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<text x="612.9" y="122.4" fill="#e6edf3" font-size="11">84.97%</text>
+<text x="172" y="162.4" text-anchor="end" fill="#e6edf3" font-size="11">CLIP ViT-L/14@336</text>
+<rect x="180" y="140" width="413.3" height="32" fill="#39d2c5" rx="3" opacity="0.85"/>
+<line x1="593.2" y1="156.0" x2="593.4" y2="156.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="593.2" y1="152.0" x2="593.2" y2="160.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="593.4" y1="152.0" x2="593.4" y2="160.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<text x="601.3" y="162.4" fill="#e6edf3" font-size="11">82.66%</text>
+<text x="172" y="202.4" text-anchor="end" fill="#e6edf3" font-size="11">RICE-ViT-L@560</text>
+<rect x="180" y="180" width="408.6" height="32" fill="#e8873c" rx="3" opacity="0.85"/>
+<line x1="588.6" y1="196.0" x2="588.6" y2="196.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="588.6" y1="192.0" x2="588.6" y2="200.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<line x1="588.6" y1="192.0" x2="588.6" y2="200.0" stroke="#e6edf3" stroke-width="1.5" opacity="0.6"/>
+<text x="596.6" y="202.4" fill="#e6edf3" font-size="11">81.72%</text>
+<text x="172" y="242.4" text-anchor="end" fill="#f85149" font-size="11">BaiZe 4-4ep (from-scratch)</text>
+<rect x="180" y="220" width="335.2" height="32" fill="none" stroke="#f85149" stroke-width="2" stroke-dasharray="4,2" rx="3" opacity="0.8"/>
+<text x="523.2" y="242.4" fill="#f85149" font-size="11">67.05%</text></svg>
 </div>
 <p class="note">条形图按 ProtB mean 降序排列。BaiZe from-scratch 以虚线框标注，⚠️ 表示不参与公众模型排名。误差棒为 3-seed std。</p>
 
