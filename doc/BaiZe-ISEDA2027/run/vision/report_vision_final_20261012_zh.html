@@ -59,7 +59,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 
 <div class="card tldr">
 <h3 style="color:var(--accent);margin-top:0">🎯 一句话总结</h3>
-<p>62.34% 是 <strong>当前数据规模（95.8M 图文对 · 1 epoch）与目标函数（AIMv2-style）下的特征质量天花板</strong>——不是评测方法的缺陷，也不是 probe 的欠拟合；将训练 epoch 翻倍（2 epoch）可将 ProtB 提升至 <strong>65.37%</strong>（Δ+3.03pp），收益中等且呈递减趋势。<strong>④-4ep 已于 2026-10-12 17:23 启动</strong>（从 2ep 续训，预计 ~16.6h），判据：4ep > 70% = 胜利。</p>
+<p>62.34% 是 <strong>当前数据规模（95.8M 图文对 · 1 epoch）与目标函数（AIMv2-style）下的特征质量天花板</strong>——不是评测方法的缺陷，也不是 probe 的欠拟合；将训练 epoch 翻倍（2 epoch）可将 ProtB 提升至 <strong>65.37%</strong>（Δ+3.03pp），4 epoch 进一步提升至 <strong>67.05%</strong>（Δ+1.68pp vs 2ep），收益持续递减（1→2ep +3.03pp，2→4ep +1.68pp）。<strong>67.05% &lt; 70% 胜利阈值</strong>，但四项指标一致 +1.7~2.9pp，趋势仍在上升但趋于收敛。</p>
 </div>
 
 <h2>2. E1fair 基线配置速览</h2>
@@ -282,7 +282,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <h3>🎯 裁定结果：MODERATE（中等收益）</h3>
 <p>Δlp(ProtB) = <strong>+3.03pp</strong>，落在预注册的 <strong>+1.5~7.66pp</strong> 区间内 → "有收益，但呈递减趋势"。</p>
 <p><strong>原决策</strong>：不启动 4 epoch 训练——2 epoch 的 +3.03pp 增益虽真实，但边际收益递减。</p>
-<p><strong>🔄 运维新裁定（2026-10-12 17:23）</strong>：用户指令「4ep 结果如果超过 70%，也是胜利」→ <strong>④-4ep 已启动</strong>（从 2ep 检查点续训，--steps 748404，374,202 新步，~16.6h，预计 ~10-13 11:00 完成）。判据改为：<strong>4ep ProtB > 70% ⇒ 胜利</strong>；4ep 65–70% ⇒ 递减收益确认；4ep ~65% 横盘 ⇒ 天花板确认。训练完成后自动接续 ProtB/ProtA/zs/k-NN 全套评测。</p>
+<p><strong>✅ ④-4ep 结果（2026-10-13）</strong>：4ep 训练+全套评测已完成。748,404 步（374,202 新步），~16.8h，final_loss=0.0805。<strong>ProtB 67.05±0.02%</strong>（seeds: 67.03/67.08/67.04），<strong>未达 70% 胜利阈值</strong>。四项指标一致提升：ProtA 56.70%（Δ+2.88pp vs 2ep）、zero-shot 40.64%/72.64%（Δ+2.12pp）、k-NN k=20 42.35%（Δ+1.68pp）。递减趋势确认：<strong>1→2ep +3.03pp，2→4ep +1.68pp</strong>（比率 ~0.55）→ 趋势仍在上升但趋于收敛，特征质量天花板临近。</p>
 </div>
 </div>
 
@@ -321,20 +321,22 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <circle cx="300" cy="165" r="7" fill="#3fb950" stroke="#e6edf3" stroke-width="1.5"/>
 <text x="300" y="157" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">65.37%</text>
 <line x1="140" y1="223" x2="300" y2="165" stroke="#58a6ff" stroke-width="2" opacity="0.6"/>
-<line x1="300" y1="165" x2="620" y2="140" stroke="#d29922" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.4"/>
-<circle cx="620" cy="140" r="5" fill="none" stroke="#d29922" stroke-width="1.5" stroke-dasharray="3,2"/>
-<text x="620" y="132" text-anchor="middle" fill="#d29922" font-size="10" opacity="0.6">~67%？（推测）</text>
+<line x1="300" y1="165" x2="620" y2="125" stroke="#3fb950" stroke-width="2" opacity="0.6"/>
+<circle cx="620" cy="125" r="7" fill="#3fb950" stroke="#e6edf3" stroke-width="1.5"/>
+<text x="620" y="117" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">67.05%</text>
+<text x="460" y="136" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Δ +1.68pp</text>
+<text x="460" y="151" text-anchor="middle" fill="#8b949e" font-size="9">递减</text>
 <text x="220" y="210" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Δ +3.03pp</text>
 <text x="220" y="225" text-anchor="middle" fill="#8b949e" font-size="9">MODERATE</text>
-<rect x="90" y="35" width="220" height="48" fill="#161b22" stroke="#30363d" rx="4"/>
+<rect x="90" y="35" width="280" height="48" fill="#161b22" stroke="#30363d" rx="4"/>
 <circle cx="105" cy="50" r="5" fill="#58a6ff"/>
 <text x="118" y="54" fill="#e6edf3" font-size="10">E1fair（1 epoch）= 62.34%</text>
 <circle cx="105" cy="68" r="5" fill="#3fb950"/>
-<text x="118" y="72" fill="#e6edf3" font-size="10">④-2ep（2 epoch）= 65.37%</text>
+<text x="118" y="72" fill="#e6edf3" font-size="10">④-2ep = 65.37% / ④-4ep = 67.05%</text>
 <text x="380" y="20" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">ProtB lp–epoch 曲线（含预注册判定阈值标注）</text>
 </svg>
 </div>
-<p class="note">3 epoch 点为推测（虚线），实际未训练；4 epoch 同理。图中可见 1→2 epoch 增益 +3.03pp，但未达正面阈值 70%，落在中等区间内。</p>
+<p class="note">3 epoch 点未训练（无数据）。1→2 epoch 增益 +3.03pp，2→4 epoch 增益 +1.68pp，递减趋势明确。4ep = 67.05% 未达正面阈值 70%。</p>
 
 <h2>9. 全量结果汇总表</h2>
 <table>
@@ -343,14 +345,15 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <tr><td>V1（分辨率 336）</td><td colspan="6"><span class="tag tag-warn">暂缓</span>（用户："明天再说"，本轮未跑）</td></tr>
 <tr><td>V2（Muon 优化器）</td><td colspan="6"><span class="tag tag-fail">坍缩</span> C1=0.9569@step4200 · ❌ Muon 与 AIMv2-style 目标函数不兼容</td></tr>
 <tr><td>V3（全量数据）</td><td><strong>63.52 ± 0.01%</strong></td><td>50.53%</td><td>35.52%</td><td>38.94%</td><td>+1.18pp</td><td>✅ Null（|Δ|&lt;1.5pp）</td></tr>
-<tr><td><strong>④-2ep</strong>（2× epoch）</td><td><strong>65.37 ± 0.01%</strong></td><td><strong>53.82%</strong></td><td><strong>38.52%</strong>（top5: 70.81%）</td><td><strong>40.67%</strong></td><td class="best"><strong>+3.03pp</strong></td><td><span class="tag tag-moderate">MODERATE</span>（+1.5~7.66pp，递减，不启动 4ep）</td></tr>
+<tr><td><strong>④-2ep</strong>（2× epoch）</td><td><strong>65.37 ± 0.01%</strong></td><td><strong>53.82%</strong></td><td><strong>38.52%</strong>（top5: 70.81%）</td><td><strong>40.67%</strong></td><td class="best"><strong>+3.03pp</strong></td><td><span class="tag tag-moderate">MODERATE</span>（+1.5~7.66pp，递减）</td></tr>
+<tr><td><strong>④-4ep</strong>（4× epoch）</td><td><strong>67.05 ± 0.02%</strong></td><td><strong>56.70%</strong></td><td><strong>40.64%</strong>（top5: 72.64%）</td><td><strong>42.35%</strong></td><td class="best"><strong>+4.71pp</strong></td><td><span class="tag tag-moderate">MODERATE</span>（Δ2→4=+1.68pp，递减，&lt;70% 胜利阈值）</td></tr>
 </table>
 
 <div class="svg-container">
-<svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;font-size:11px">
-<rect x="0" y="0" width="700" height="320" fill="#0d1117"/>
-<text x="350" y="22" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">四指标跨变体对比（E1fair vs V3 vs ④-2ep）</text>
-<line x1="80" y1="280" x2="660" y2="280" stroke="#30363d" stroke-width="1.5"/>
+<svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;font-size:11px">
+<rect x="0" y="0" width="880" height="320" fill="#0d1117"/>
+<text x="440" y="22" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">四指标跨变体对比（E1fair vs V3 vs ④-2ep vs ④-4ep）</text>
+<line x1="80" y1="280" x2="820" y2="280" stroke="#30363d" stroke-width="1.5"/>
 <line x1="80" y1="40" x2="80" y2="280" stroke="#30363d" stroke-width="1.5"/>
 <text x="72" y="284" text-anchor="end" fill="#8b949e">30%</text>
 <text x="72" y="224" text-anchor="end" fill="#8b949e">40%</text>
@@ -385,6 +388,15 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <rect x="554" y="216" width="28" height="64" fill="#e8873c" opacity="0.85"/>
 <text x="568" y="211" text-anchor="middle" fill="#e8873c" font-size="9" font-weight="bold">40.7</text>
 <text x="520" y="298" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="bold">④-2ep (2 epoch)</text>
+<rect x="635" y="58" width="28" height="222" fill="#58a6ff" opacity="0.85"/>
+<text x="649" y="53" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="bold">67.1</text>
+<rect x="668" y="120" width="28" height="160" fill="#bc8cff" opacity="0.85"/>
+<text x="682" y="115" text-anchor="middle" fill="#bc8cff" font-size="9" font-weight="bold">56.7</text>
+<rect x="701" y="216" width="28" height="64" fill="#39d2c5" opacity="0.85"/>
+<text x="715" y="211" text-anchor="middle" fill="#39d2c5" font-size="9" font-weight="bold">40.6</text>
+<rect x="734" y="206" width="28" height="74" fill="#e8873c" opacity="0.85"/>
+<text x="748" y="201" text-anchor="middle" fill="#e8873c" font-size="9" font-weight="bold">42.4</text>
+<text x="700" y="298" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="bold">④-4ep (4 epoch)</text>
 <rect x="90" y="35" width="280" height="28" fill="#161b22" stroke="#30363d" rx="4"/>
 <rect x="100" y="44" width="12" height="10" fill="#58a6ff" opacity="0.85"/>
 <text x="118" y="53" fill="#e6edf3" font-size="10">ProtB</text>
@@ -406,9 +418,9 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <li><strong>① zero-shot</strong>：E1fair zs=34.10% ≫ 随机 0.1% → 冻结文本塔带来了实质对齐收益；lp−zs gap +28pp → dense reconstruction 目标贡献了对比学习之外的表征质量。</li>
 <li><strong>② probe</strong>：×5 epoch（450ep）= 62.15% &lt; 90ep 基线；wd/LR 扫描最高 +0.35pp → probe <strong>不存在欠拟合</strong> → 62.34% 是<strong>真实的特征质量天花板</strong>。</li>
 <li><strong>变体</strong>：V2 Muon 全 LR 坍缩（与 AIMv2-style 不兼容）；V3 全量数据 +1.18pp → Null（不可分辨）。</li>
-<li><strong>④ epoch 缩放</strong>：2 epoch → ProtB <strong>65.37%</strong>（Δ+3.03pp），四指标一致 +3~4.4pp → <strong>MODERATE</strong>（有收益但递减）。<strong>④-4ep 已启动</strong>（运维新裁定：4ep > 70% = 胜利），结果待出。</li>
+<li><strong>④ epoch 缩放</strong>：2 epoch → ProtB <strong>65.37%</strong>（Δ+3.03pp），4 epoch → ProtB <strong>67.05%</strong>（Δ+1.68pp vs 2ep），四指标一致 +1.7~2.9pp → <strong>MODERATE，递减</strong>（1→2ep +3.03pp，2→4ep +1.68pp，比率 ~0.55）。67.05% &lt; 70% 胜利阈值，趋势仍在上升但趋于收敛。</li>
 </ol>
-<p><strong>最终判断</strong>：62.34% 是当前数据规模（95.8M · 1ep）与目标函数（AIMv2-style）下的特征质量天花板。增加训练预算（2 epoch）可获得 +3.03pp 的中等收益，但边际递减；换优化器（Muon）不可行；加 7.6% 数据不可分辨。瓶颈在<strong>数据规模与目标函数</strong>，不在架构、评测方法或 probe 配置。</p>
+<p><strong>最终判断</strong>：62.34% 是当前数据规模（95.8M · 1ep）与目标函数（AIMv2-style）下的特征质量天花板。增加训练预算可获得持续但递减的收益：2 epoch +3.03pp（65.37%），4 epoch 再 +1.68pp（67.05%），仍未达 70% 胜利阈值。换优化器（Muon）不可行；加 7.6% 数据不可分辨。瓶颈在<strong>数据规模与目标函数</strong>，不在架构、评测方法或 probe 配置。下一步应转向 Stage (iv) MLLM 对齐或更大数据规模（如 GPIC 全量 100M+）。</p>
 </div>
 
 <div class="card">
