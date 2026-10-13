@@ -13,9 +13,9 @@ WAITING: 0
 
 ```
 PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 迁移（推翻「T2I→I2V」旧法 · 去 TTS）🔶
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）
-当前动作:     gen_ep13_h3_r2v.py --dry-run 已过「✅ 所有参考图在位」（29 镜就绪）
-下一步:       R2V 29 镜批量 + 另写 gen_ep13_h3_t2v.py（19 无角色镜）→ BGM/SFX → synth → 字幕 → 六项验收
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 03/06/07 三镜 ffprobe 验收 ✅（h264 864×480 24fps + aac，时长吻合 17k+5）
+当前动作:     gen_ep13_h3_r2v.py --wait --skip-existing 后台批量（26 镜串行 · 修复 _save_outputs 抓 images 键 · 首镜 09 在跑）
+下一步:       收 26 镜 R2V + 另写 gen_ep13_h3_t2v.py（19 无角色镜）→ BGM/SFX → synth → 字幕 → 六项验收
 阻塞:         无（BLOCKERS #7 已闭环）
 ERROR_COUNT:  0
 ```
@@ -45,6 +45,12 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-13 · S3 续跑 · 13_外骨骼 R2V 批量启动（03/06/07 验收 ✅ + 26 镜后台跑）**：验证 3 个手动复制产物 + 定位 SaveVideo 登记键 + 修复自动下载 + 启动批量。
+  - **验收（03/06/07）**：ffprobe 三镜均 **h264 864×480 24fps + aac**（mp=0.4 16:9），时长精确吻合 §4.1 `17k+5`：03=5.167s/124 帧、06=5.167s/124 帧、07=6.583s/158 帧 ⇒ 三镜规格达标。
+  - **定位 & 修复**：`/history` 确认 Minimax H3 的 `SaveVideo`（node 92）把 `.mp4` 登记在 **`images` 键**（type=output / subfolder=video），非 `videos` 键 ⇒ `gen_ep13_h3_r2v.py::_save_outputs` 改为遍历 images/gifs/videos/audio 四键 + `_download_view` 按 type/subfolder/filename 下载。
+  - **启动批量**：`gen_ep13_h3_r2v.py --wait --skip-existing --timeout 3600` 后台 Start-Process（PID 10556），串行提交+等待+自动下载剩余 26 镜（09/10/11/13/15/16/17/18/19/21/23/24/26/27/29/32/33/34/35/36/38/39/41/42/45/47）；首镜 09 已入队列 running。
+  - **下一步**：收 26 镜 → 另写 `gen_ep13_h3_t2v.py`（19 无角色镜）→ BGM/SFX → `synth_ep13.py` → 字幕 → 六项验收。
 
 - **2026-10-13 · S3 续跑 · 13_外骨骼 R2V 场景参考图补齐（BLOCKERS #7 ✅）**：补上「T2I 首帧→I2V」旧法从未备过的 14 张独立场景参考图，R2V 29 镜的 `ref2` 硬输入齐活。
   - **固化脚本**：新建 `scripts/gen_ep13_scenes.py`（14 张无角色场景 · 16:9 1280×720 · `Z-Image-Turbo 文生图.json` · 负面词以 "Do NOT include: ..." 追加进正向，因该工作流负面被 ConditioningZeroOut 置零 · 按 class_type 通用注入 CLIPTextEncode/EmptySD3LatentImage/KSampler · `--dry-run/--key/--wait`）。
