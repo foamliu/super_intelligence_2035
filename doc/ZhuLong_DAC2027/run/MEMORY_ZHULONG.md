@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 5/5✅=77.7±2.2%**；phi_k3 r1=72.8%✅·r2=66.5%✅·r3=69.6%✅·**r4=69.6%✅**·**r5 code-gen跑中PID3661493**)|
-| CONFIG | `phi_k3`（S2 Φ 预算 k=3·EDA_PHI_BUDGET=3/EDA_PHI_LAGGED=0·base=full(V3+selfexpl)保留·set_s2_phi.py 只改预算不动 V3/SKILL_DATA_DIR✅）|
-| ROUND | 1✅=72.8% · 2✅=66.5%(105/158) · 3✅=69.6%(110/158·timeout=0) · 4✅=69.6%(110/158·timeout=2) · **r5 code-gen✅done 03:03·batch=2026_1014_012928·regrade跑中PID4067351/4067354(133脚本组装·25 gen-fail=k=3预算效应)** |
-| PHASE | `running`（运维令(十五)：phi_k3 r5 regrade 跑中·等下轮收割）|
+| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 5/5✅=77.7±2.2%**·**phi_k3 5/5✅=69.1±2.5%**·**phi_k1 r1 跑中 PID15230**)|
+| CONFIG | `phi_k1`（S2 Φ 预算 k=1·EDA_PHI_BUDGET=1/EDA_PHI_LAGGED=0·base=full(V3+selfexpl)保留·set_s2_phi.py 只改预算不动 V3/SKILL_DATA_DIR✅）|
+| ROUND | phi_k3: 1✅=72.8% · 2✅=66.5% · 3✅=69.6% · 4✅=69.6% · **5✅=67.1%(106/158·timeout=0·25 gen-fail=k=3)** → **5/5=69.1±2.5%✅**; **phi_k1 r1 跑中 PID15230 (03:48启动·code-gen)** |
+| PHASE | `running`（phi_k1 r1 跑中·等下轮收割）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -31,8 +31,8 @@ WAITING: 1
 | C1 | full(V2)（旧锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→已由full_v3取代）|
 | C1 | full_v3(自探索·正式锚点) | **5/5 ✅ 82.1±3.0%** | [77.8,86.1,81.6,82.3,82.9]（运维指令(十二)补跑「真full=自探索开」·V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650set+RAG:9006·**未复现r1=88.0%**）|
 | C2 | phi_k10 | **5/5 ✅ 77.7±2.2%** | [78.5,76.6,77.2,81.0,75.3]（r1=124/158·timeout=2·r2=121/158·timeout=0·r3=122/158·att2·att1作废·r4=128/158·att3·att1/2作废·**r5=119/158·timeout=0·75.3%**）|
-| C2 | phi_k3 | 4✅→**r5 regrade跑中** | r1=72.8%✅(115/158·timeout=0)·r2=66.5%✅(105/158·timeout=0·31 gen-fail=k=3)·r3=69.6%✅(110/158·timeout=0·32 gen-fail=k=3)·r4=69.6%✅(110/158·timeout=2·23 gen-fail=k=3)·**r5 code-gen✅done 03:03·batch=2026_1014_012928·regrade跑中PID4067351(133脚本·25 gen-fail=k=3预算效应·非infra)**（探路 69.0%）|
-| C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
+| C2 | phi_k3 | **5/5 ✅ 69.1±2.5%** | r1=72.8%✅(115/158·timeout=0)·r2=66.5%✅(105/158·timeout=0)·r3=69.6%✅(110/158·timeout=0)·r4=69.6%✅(110/158·timeout=2)·**r5=67.1%✅(106/158·timeout=0·25 gen-fail=k=3预算效应·非infra)**（探路 69.0%）|
+| C2 | phi_k1 | **r1 跑中 PID15230** | ⬜（探路 60.8%·EDA_PHI_BUDGET=1·set_s2_phi.py phi_k1 切换完成 03:47·MCP 重启 03:47·r1 03:48 启动）|
 | C2 | phi_lagged | 1-5/5 | ⬜（探路 84.2%，r2 修复后 98.1%）|
 | S1 | omega_low | 1-5/5 | ⬜（旧 5-run 已出 r1=81.6 / r2=82.3，待定是否延续）|
 | S1 | readback_binary | 1-5/5 | ⬜ |
@@ -52,6 +52,7 @@ WAITING: 1
 | C1.full(V2)（旧锚点）| **81.4 ± 4.1%** | [88.0, 79.1, 77.2, 80.4, 82.3]（r1=V3文档混配置→已由full_v3取代）|
 | C1.full_v3(自探索·正式锚点) | **82.1 ± 3.0%** ✅ 5/5 | [77.8, 86.1, 81.6, 82.3, 82.9]（运维指令(十二)补跑「真full」V3+自探索·r1=77.8%(123/158·timeout=1)·r2=86.1%(136/158·timeout=1)·r3=81.6%(129/158·timeout=4)·r4=82.3%(130/158·timeout=6)·r5=82.9%(131/158·timeout=5)·**未复现r1=88.0%**）|
 | C2.phi_k10 | **77.7 ± 2.2%** ✅ 5/5 | [78.5, 76.6, 77.2, 81.0, 75.3]（r1=124/158·timeout=2·r2=121/158·timeout=0·r3=122/158·timeout=0·att2·r4=128/158·timeout=0·att3·**r5=119/158·timeout=0·75.3%**·PHI-BUDGET-EXHAUSTED=426✅）|
+| C2.phi_k3 | **69.1 ± 2.5%** ✅ 5/5 | [72.8, 66.5, 69.6, 69.6, 67.1]（r1=115/158·timeout=0·r2=105/158·timeout=0·r3=110/158·timeout=0·r4=110/158·timeout=2·**r5=106/158·timeout=0·67.1%**·PHI-BUDGET-EXHAUSTED=851✅·25 gen-fail=k=3预算效应·判据(十三)：消融臂Pass@1任何值有效·不重跑）|
 
 ### 三组对照表（运维指令(十二)⑤交付）
 
@@ -64,6 +65,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
+- [2026-10-14 03:48] ✅ **phi_k3 r5=67.1%✅有效→phi_k3 5/5=69.1±2.5%→切phi_k1→r1启动PID15230**：① regrade PID4067351已死→log /tmp/ABL_phi_k3_r5_regrade.log(6961B·mtime03:19)完整：`106/158 pass (67.1%) | generated: 133 ok, 25 fail, 0 exec_err`·batch=2026_1014_012928·生成状态`{'success':133,'failure':0,'timeout':0,'fail':25}`→**timeout=0≤10✅**·exec_err=0·license_error=0·Connection_error=0✅·**判据(运维令十五④/十三)满足→r5=67.1%有效**(消融臂Pass@1任何值有效·25 gen-fail=k=3预算效应非infra·不重跑)·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=851>0(k=3预算生效)·反作弊✅ACCESS RESTRICTED=845>0(hook live·已部署沙盒hook=1)。② **phi_k3 5/5=[72.8,66.5,69.6,69.6,67.1]→mean=69.1,std=2.5→69.1±2.5%✅**。③ **切phi_k1**：`./venv/bin/python scripts/set_s2_phi.py phi_k1`→EDA_PHI_BUDGET=1/EDA_PHI_LAGGED=0✅(set_s2_phi.py只改预算不动V3/SKILL_DATA_DIR=selfexpl)·`bash scripts/stop.sh && bash scripts/start.sh`→MCP:8090(pid8920)LISTEN✅·tools含search_apis✅。④ **phi_k1 r1启动**：`export PYTHON=$PWD/venv/bin/python`(防pydantic)·`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_phi_k1_r1.log`→PID15230✅·Step2格式化执行中。⑤ **loop状态**：原loop已死(NO_LOOP)→重启`setsid bash zhulong_loop.sh`(带proxy export)→loop PID17152 alive·但loop立即唤醒并spawn了**重复opencode PID17159**(与我并发race)→**已kill 17159**防重复启动r1·loop将~30min后下次唤醒读更新后MEMORY。infra全绿：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·/home=24G✅·license_error/Connection_error=0✅。状态 STAGE=C2/CONFIG=phi_k1/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep run_cline_script有输出→巡检退出；无输出→auto-grade(Step7.1 FileNotFoundError=已知benchmark bug)→手动regrade同口径(覆盖EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework)→**判据(运维令十五④/十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r1有效→r2。
 - [2026-10-14 03:11] ✅ **phi_k3 r5 code-gen完成→regrade启动PID4067351/4067354**：① pgrep run_cline_script→无输出·ps -p 3661493→GONE → r5 已结束·log /tmp/ABL_phi_k3_r5.log 23.2MB mtime03:03(已停)·batch=2026_1014_012928·gen_file /home/app.e0031982/eda_code_eval/completed_code_generation_2026_1014_012928.jsonl(327KB·158行✅)·**Step7.1 auto-grade失败=FileNotFoundError /home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether[已知benchmark bug·.env EVAL_FW_DIR指向app.t0002997·同r1/r2/r3/r4]**→② 创建 run_phi_k3_r5_regrade.sh（基于r4脚本改batch=2026_1014_012928·覆盖 EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·同口径 SANDBOX_ENDPOINTS=8650/8651/8652/8654 + RAG:9006 + SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic）→setsid bash run_phi_k3_r5_regrade.sh > /tmp/ABL_phi_k3_r5_regrade.log →PID4067351/4067354✅·regrade log: 组装**133脚本**完成(158任务·25 gen-fail=k=3预算效应·非infra)→sandbox执行中。③ r5 log canary✅：ACCESS RESTRICTED=845(hook live>0)·Forbidden=0·已部署沙盒hook=1·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=851(>0·k=3预算约束生效)·infra全绿：license_error=0·Connection_error=0·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(pid1530852)LISTEN✅·/home=24G✅·loop✅有proxy(https_proxy=http://172.19.92.23:13128)。状态 STAGE=C2/CONFIG=phi_k3/ROUND=5/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep run_eval无输出→读regrade log→**判据(运维令十五④·十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r5有效→phi_k3 5/5 mean±std→just_finished→切phi_k1。
 - [2026-10-14 02:37] 🔎 巡检(phi_k3 r5 ~1h07m健康·不动作退出)：PID3661493 alive(etime1:07:26·STAT Ss)·log /tmp/ABL_phi_k3_r5.log 17.0MB mtime02:36(live)·canary-by-log✅：ACCESS RESTRICTED=707(hook live>0)·Forbidden=0✅·已部署沙盒hook=1✅·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=634(>0·k=3预算约束生效)·无final pass(code-gen仍在进行)·infra全绿：/home=24G✅·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090 LISTEN✅·loop✅有proxy(https_proxy=http://172.19.92.23:13128)·.env=phi_k3(PHI_BUDGET=3/LAGGED=0/SKILL_DATA_DIR=selfexpl)✅·license_error/Connection_error=0✅·git clean。状态不变 STAGE=C2/CONFIG=phi_k3/ROUND=5/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep run_cline_script有输出→巡检退出；无输出→auto-grade(Step7.1 FileNotFoundError=已知benchmark bug)→手动regrade同口径→**判据(运维令十五④·十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r5有效→phi_k3 5/5 mean±std→just_finished→切phi_k1。
 - [2026-10-14 02:05] 🔎 巡检(phi_k3 r5 ~35min健康·不动作退出)：PID3661493 alive(etime35:31·STAT Ss)·log /tmp/ABL_phi_k3_r5.log 8.9MB mtime02:05(live)·canary-by-log✅：ACCESS RESTRICTED=524(hook live>0)·Forbidden=0✅·已部署沙盒hook=1✅·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=370(>0·k=3预算约束生效)·无final pass(code-gen仍在进行)·infra全绿：/home=24G✅·4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(pid1530852)LISTEN✅·loop✅有proxy(https_proxy=http://172.19.92.23:13128)·license_error=0·Connection_error=0✅。状态不变 STAGE=C2/CONFIG=phi_k3/ROUND=5/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep run_cline_script有输出→巡检退出；无输出→auto-grade(Step7.1 FileNotFoundError=已知benchmark bug)→手动regrade同口径→**判据(运维令十五④·十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r5有效→phi_k3 5/5 mean±std→just_finished→切phi_k1。
