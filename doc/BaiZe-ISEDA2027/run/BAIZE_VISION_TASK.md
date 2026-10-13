@@ -1,6 +1,26 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-13（📐 合并实验的 LR 缩放 —— 按文献规则定，🚫 禁拍脑袋）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「搜索一下，**GBS ×4 时 LR 应该怎么变**，不要胡咧咧。」
+> **运维已查（带出处 · 2026-10-13）**：
+> 1. **线性缩放规则（最经典）**：Goyal et al. 2017《Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour》(**arXiv:1706.02677**) 原文「adopt a **hyper-parameter-free linear scaling rule** for adjusting learning rates as a function of minibatch size」+ **warmup**；ResNet-50/ImageNet **batch 到 8192 无精度损失**。⇒ **GBS ×4 ⇒ LR ×4**。
+> 2. **B ∝ LR 等价性（含 Adam）**：Smith et al. 2017《Don't Decay the Learning Rate, Increase the Batch Size》(**arXiv:1711.00489**)——对 **SGD / SGD+momentum / Nesterov / Adam** 均成立：「increase the learning rate ε and scale the batch size **B ∝ ε**」。⇒ 同样支持 **×4**。
+> 3. **次线性 √ 规则（×2）**：大批量常用 `LR ∝ √B`。⚠️ 本轮运维**未取到可引一手出处** ⇒ **不得当「权威规则」写**；若用，必须标「**工程惯例 · 无一手引用**」。
+> 4. **实证硬结论**：Shallue et al. 2019《Measuring the Effects of Data Parallelism…》(**JMLR 20** · arXiv:1811.03600) + Google《Deep Learning Tuning Playbook》——① **换 batch 必须重新调 LR（及动量/正则）**（「the optimizer hyperparameters (e.g. learning rate, momentum) and the regularization hyperparameters」最敏感）；② **perfect scaling 仅在 critical batch size 以下成立，超过则收益递减**（McCandlish et al. 2018, arXiv:1812.06162「gradient noise scale」）。
+> 5. **对比学习专属**：SimCLR (arXiv:2002.05709) ——「contrastive learning **benefits from larger batch sizes and more training steps**」⇒ 欠缩放导致收敛慢，**正确补救是加步数**，不是降低要求。
+
+**① 令（改计划书 §3 + 定 LR）**：
+1. **LR 不许只拍一个数**：**按 Goyal 线性规则默认 ×4（5e-4 → 2e-3）**，**必须配同比 warmup**（Goyal 要求）。
+2. **写成 3 臂小扫描**：**LR ∈ { ×2 (1e-3, 次线性) · ×3 (1.5e-3) · ×4 (2e-3, 线性) }**，同预算各跑，**以 ProtB 取优** —— 这才是「按文献办事」，而不是「拍一个再预言会变差」。
+3. 报告 §3 那句「LR ×2 是保守欠缩放」**改为引用上述文献**（标清：线性=×4 / 次线性=×2 / 实证必须重调）；**ProtB 预估改为按 3 臂给区间**。
+4. 若预算只允许 1 个 LR ⇒ **取线性 ×4**（有 Goyal 直接依据），并在报告**显式声明「未做 LR 扫描」的局限**。
+
+**② 交付**：更新 `report_vision_merge3ds_bs4_lr2_plan_zh.html`（含文献表：arXiv 号 + 访问日）。
+**③ 纪律**：🚫 **无出处的规则不得写成「权威」**；commit 前缀 `vision fix:` · 任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-13（🔢 更正 `report_vision_merge3ds_bs4_lr2_plan_zh.html` 的数据量口径 —— **GPIC 被低估**，应按快照实盘重算）· 用户直令 · 最高优先
 
 > **用户质疑（2026-10-13）**：「三集合并 **GPIC 怎么会只有 ~80–85M 样本**呢？**应该 100M+ 样本吧**。」

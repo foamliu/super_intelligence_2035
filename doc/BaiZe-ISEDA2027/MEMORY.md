@@ -32,6 +32,15 @@
 - 用户质疑 `report_vision_merge3ds_bs4_lr2_plan_zh.html` 里 GPIC「~80–85M」太低（应 100M+）。**核实 = 用户对**：报告用了 **6233-tar 时代旧值**（合计 95.8M），而快照实为 **7437 GPIC tar**（`run/vision/data_snapshot_20261009.txt` 已核 **7437 行**）→ GPIC ≈ **93–94M**（全量 8000 tar = **101.1M**）→ 三集合计 ≈ **111M（快照）/ 118.1M（全量）**。报告**权重列(84%)与对数列(80-85M)自相矛盾**。
 - 已下发 `run/BAIZE_VISION_TASK.md` 顶：令按**快照实盘**重算 GPIC/合计/权重/epoch 定义/步数/24h-epoch/ProtB 外推，每数附盘点命令，并加 EXPERIMENTS 口径订正。
 
+### 📐 vision LR 缩放定则（用户直令 · 10-13 晚）
+- 用户令：「搜一下 GBS ×4 时 LR 应该怎么变，不要胡咧咧。」→ 运维查证（带出处）：
+  - **线性规则 = ×4**：Goyal 2017 (arXiv:1706.02677)「hyper-parameter-free linear scaling rule」+ warmup，batch 到 8192 无精度损失。
+  - **B ∝ LR（含 Adam）**：Smith 2017 (arXiv:1711.00489)。
+  - **次线性 √ = ×2**：工程惯例，**未取到一手出处** → 不得当权威引。
+  - **实证必重调**：Shallue 2019 (JMLR 20 · arXiv:1811.03600) + Google Playbook；critical batch size（McCandlish 2018, arXiv:1812.06162）。
+  - **对比学习**：SimCLR (arXiv:2002.05709) 「benefits from larger batch + more steps」。
+- 已下发 `run/BAIZE_VISION_TASK.md` 顶：**默认 LR ×4（5e-4→2e-3）配 warmup**；**做 3 臂 LR 扫描 {×2, ×3, ×4} 取 ProtB 最优**；§3 改引文献；无出处的规则禁写「权威」。
+
 ## 🆕 最近操作（2026-10-12）
 
 ### 📋 七项运维指令下发（用户直令 · 10-12 晚）
@@ -218,6 +227,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📐 2026-10-13 vision LR 缩放定则**（用户直令）：查证 GBS×4→LR 应变多少：线性规则(Goyal 2017 arXiv:1706.02677)=**×4**+warmup；B∝LR含Adam(Smith 2017 arXiv:1711.00489)；次线性√=×2(无一手出处)；实证必重调(Shallue 2019 arXiv:1811.03600)+critical batch(McCandlish 2018 arXiv:1812.06162)。已令 vision 默认 ×4 + 3 臂扫描{×2,×3,×4}。
 
 - **📋 2026-10-13 vision 数据量口径更正**（用户直令）：报告 GPIC「~80–85M」= 6233-tar 旧值；快照实为 7437 GPIC tar → GPIC ≈93–94M（全量 8000 tar=101.1M）→ 三集合计 ≈111M/118.1M。已令按实盘重算。
 
