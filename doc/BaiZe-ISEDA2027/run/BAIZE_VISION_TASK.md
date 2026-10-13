@@ -33,37 +33,7 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-13（📄 ④-4ep 实验报告（中文 HTML）· 末节「建议后续工作」含 MBS/GBS/LR 加速分析 + 三数据集 N-epoch 时间表）· 用户直令 · 最高优先
-
-> **用户令（2026-10-13）**：「就刚完成的实验（④-4ep epoch 缩放）写个 html 报告（中文版），最后加一节建议后续工作。另外：训练期间显存始终仅 ~20GB，能否用 MBS×4 + GBS×4 + LR×2 加速？下一步考虑合并三个数据集做 N epoch 训练，估计 N=1/2/4/8/16 的训练时间。」
-> **性质**：纯写作 + 上机核实数据体积（🔥 **零 GPU**；本线 ④-4ep 已全收尾、无在飞训练，不得占用 `.12` 卡）。
-
-**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_4ep_experiment_zh.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
-
-**② 报告结构（第 1–7 节 = ④-4ep 实验本体，第 8 节 = 建议后续工作【新增】）**：
-1. **HERO + TL;DR**：一句话结论 + 四指标（ProtB/ProtA/zs/k-NN）1ep/2ep/4ep 三列对比表。
-2. **动机与预注册**：epoch 缩放回应「特征质量能否靠更多 epoch 提升」；预注册判据（4ep ProtB>70% 胜利 / 65–70% 递减收益 / 横盘=天花板确认）。
-3. **方法与配置**：r9_train.py 续训（resume 2ep）、OpenVision2 w512/d30、224/16、**MBS=64/卡 × DP8 = GBS=512**、lr5e-4 warmup2000 cosine min5e-5、aimv2(mask0.6)、部分 GPIC 冻结快照（94.9M，total_shards=10787）。
-4. **训练过程**：748,404 步（新增 374,202）、~16.8h、steady_img/s≈2818、final_loss 0.0805（vs 2ep 0.1856）、C1 0.5804→0.5932 无坍缩、~999 GPU·h 累计。
-5. **评测结果**：四指标三列对比 + lp–epoch 曲线（中文轴）。
-6. **结论**：MODERATE / DIMINISHING（1→2 +3.03pp、2→4 +1.68pp，比例~0.55 递减；67.05%<70% 未达标）。
-7. **局限与诚实条款**。
-8. **建议后续工作（新增 · 必须含以下三块）**：
-   - **8-a MBS×4/GBS×4/LR×2 加速可行性**：口径先纠正——现状是 **MBS=64/卡、GBS=512**（`--batch-size 64` 是每卡微批，非全局）；显存 ~16.5GB/81.5GB 仅用 20%。结论：① 内存放得下 4×（MBS 256/卡 → ~60–80GB，仍 fit，先 smoke 验证）✅；② **LR×2（5e-4→1e-3）= sqrt 缩放法则**（batch×4 → lr×√4=×2）方向正确，但本线稳定点是 lr5e-4、lr3e-3 曾是 schedule 伪影 → **必须 smoke + 重开 C1/C2/C4 守卫**；③ ⚠️ **真正瓶颈是 NFS I/O 不是显存/算力**：④-4ep 实测 iter 128–286ms 随 NFS 争用抖动（data 线下载并发），NFS 清时 ~95–105ms（≈5100 img/s）→ **只加 batch 不加 dataloader 优化则加速有限**；杠杆 = `--num-workers`（脚本现传 6）→ 12–16 + tar 预铺本地 SSD/NVMe + 与 data 线下载错峰。给验证步骤：100 步 smoke（`--batch-size 256`）测 img/s vs 现状。
-   - **8-b 合并三数据集 N-epoch 时间表**：三集 = GPIC(8000 tar × 12639 ≈ 101M) + CC12M(1100 × 10000 ≈ 11M) + Amshaker(2250 × 2646 ≈ 6M) ≈ **118.1M 对/epoch**（⚠️ 以上机 `ls $GPIC|wc -l` 逐个核实为准，公式在 `run_scaling_experiment.sh:41-48`）。GBS=512 → **230,598 步/epoch**。当前有效吞吐 6.19 step/s（≈2818 img/s，NFS 争用）~ 10 step/s（≈5100 img/s，NFS 清）：
-     | N | 步数 | 保守(6.2/s) | 乐观(10/s) | 8 卡 GPU·h(保守) |
-     |--|--|--|--|--|
-     | 1 | 230,598 | ~10.3h | ~6.4h | ~83 |
-     | 2 | 461,196 | ~20.7h | ~12.8h | ~165 |
-     | 4 | 922,392 | ~41.3h(1.7d) | ~25.6h(1.1d) | ~330 |
-     | 8 | 1,844,784 | ~82.7h(3.4d) | ~51.3h(2.1d) | ~662 |
-     | 16 | 3,689,568 | ~165h(6.9d) | ~102h(4.3d) | ~1323 |
-     另给 GBS=2048（MBS×4）版本：步数 ÷4（57,650 步/epoch），若 I/O 修好吞吐同步 ~×3–4 → N=4 ~10h / N=16 ~41h（~1.7d）；⚠️ **warmup/cosine 须按总步数重设**（warmup≈1–2% 总步，不可沿用 2000）。
-   - **8-c 三方向排序**：Stage(iv) MLLM 对齐 / w384 更小塔 / 更多数据 N-epoch，结合 ISEDA 投稿线（~2027-02-01）给建议优先级；并指出 N-epoch 全量 vs V3（full 118.1M @1ep=63.52% Null）与 ④-4ep（部分 94.9M @4ep=67.05%）的关系。
-
-**③ 数字口径**：与 `MEMORY_VISION.md` 状态头 + `EXPERIMENTS_VISION.md §9.5/§9.7` 一字不差；绝对 lp 标「BaiZe internal protocol (ProtB)」；吞吐/显存/iter 用 `daily-memories-vision/2026-10-13.md` 实测数，**不得编造**；三数据集体量以上机核实为准（不核实标「待核」）。
-
-**④ 纪律**：🔥 零 GPU · 不改实验值 · commit 前缀 `vision report:` · 任务书 >32KB 按规程自滚归档。
+> 📦 §运维指令 · 2026-10-13（📄 ④-4ep 实验报告中文 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_4ep_experiment_zh.html 已交付，ProtB=67.05% MODERATE/DIMINISHING，含 MBS/GBS/LR 加速分析 + N-epoch 时间表。需要时再读。
 
 > 📦 §运维指令 · 2026-10-11（📄 外部反馈→审视+合入论文：Muon 梯度谱解释）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：VISION_MUON_REVIEW_2026-10-11.md + paper §VI-D Muon paragraph + bib entry (arXiv:2605.19282) delivered, 11→11 pages 0err, commit 95a94d0f。需要时再读。
 
@@ -73,74 +43,11 @@
 
 > 📦 §运维指令 · 2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_lit_ideas.html（28.4KB, 25篇→TOP-5）已交付，commit 6743baeb。需要时再读。
 
-### 🆕 运维指令 · 2026-10-12（📄 LLaVA-OneVision-1.5 复现计划 · 中文 HTML · 基模 Qwen3.5-4B + 框架 ms-swift）· 用户直令 · **最高优先**
+> 📦 §运维指令 · 2026-10-12（📄 LLaVA-OV1.5 复现计划）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_llava_ov15_repro_plan.html 已交付，含 Qwen3.5-4B+OV2视觉塔+ms-swift框架+S0-S4五阶段。需要时再读。
 
-> **用户令（2026-10-12）**：「给 vision 下指令，写个 html 计划，目标是**复现 LLaVA-OneVision-1.5**：① **基模不是 Qwen3-4B，而是 Qwen3.5-4B**；② **训练框架用 ms-swift**；③ 训练数据**除了 85M 外都已下载完毕**（`/nas_train/app.e003192/datasets/mvp_lab`）；④ **可以 web search，写出超参数**；⑤ **估计在 H100×8 上的训练时间**。」
-> **性质**：**纯调研 + 计划 + 写作**（读仓内记录 + 按需 web search）⇒ 🚫 **不占 GPU、🚫 不打断在飞的 ④-4ep**；**本轮只出计划，不启动任何训练**（执行须另批）。
+> 📦 §运维指令 · 2026-10-12（🚀 启动 ④-4ep 续训）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：④-4ep 训练+评测全完成，ProtB=67.05±0.02%，MODERATE/DIMINISHING（<70%未达标）。需要时再读。
 
-**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_llava_ov15_repro_plan.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
-
-**② 硬设定（按此，不得擅改；存疑先核实再如实标注）**：
-1. **基模 = Qwen3.5-4B**（**不是** Qwen3-4B）—— web 核实其 HF repo / 权重可得性 / tokenizer / chat 模板 / 与 Qwen3-4B 的差异；**若不存在或不公开 → 如实标「未核实/不可得」并给替代（降级回 Qwen3-4B）**。
-2. **训练框架 = ms-swift**（核版本/接口：`swift sft` / `swift pt`？对**自定义视觉塔**与 OV1.5 架构的支持；本机是否已有 ms-swift 环境；给**可直接跑的 `swift` 命令模板**）。
-3. **训练数据**：用户口径「除 85M 外都已下载完毕」，路径按用户给的 `/nas_train/app.e003192/datasets/mvp_lab` —— ⚠️ **本仓既有记录多为 `/nas_train/app.e0031982/datasets/mvp-lab/`**（`ARCHIVE_DATA_SPEC_HISTORY.md`）。**🔎 路径以你自己上机核实为准**（在 `.12`/`.29` 直接 `ls -d /nas_train/*/datasets/*mvp*` / `/nas_inference/*/datasets/*mvp*` / `/nas_user/*/datasets/*mvp*`，再 `du -sh`），**以实际盘点为唯一准**；🚫 **不要因「用户给的路径」与「仓内记录」不一致而停手、也不要回问运维** —— 你是唯一能看见文件系统的人，**自己判定并如实记「实际路径 = X」**。须**盘点可用子集 + 规模**（`du -sh` + parquet 计数），并判 **85M 已下 X% 的缺口**对配方的影响。
-4. **允许 web search**：出**完整超参数表**（每项给值 + 来源/依据）。
-5. **训练时间**：估 **H100×8** 墙钟（分阶段 + 敏感性）。
-
-**③ 报告必备节**：
-1. **HERO 结论 + TL;DR**：**能否复现 + 最大阻塞**（一句话）。
-2. **原版拆解**：LLaVA-OneVision-1.5（基模 Qwen3-4B / **RICE-ViT** / **85M mid-training + 22M SFT** 两阶段 / 公开超参）—— 附来源 URL + 时效。
-3. **BaiZe 复现差异表**：`Qwen3-4B → Qwen3.5-4B`（影响 tokenizer/模板/权重/能力）；`原生 HF 训练栈 → ms-swift`（并行/显存/接口差异）。
-4. **数据盘点 + 三阶段配方**（用**实测**路径）：`align / mid-train(85M) / SFT` 数据清单 + 规模 + **85M 缺口的降级方案**。
-5. **完整超参数表 + ms-swift 命令模板**：基模 / 视觉塔（复用哪个）/ projector / 精度 / optimizer+lr+wd+warmup+scheduler / global batch / seq len / 图像分辨率与 visual token 数 / epochs·steps / grad ckpt / ZeRO·DeepSpeed·并行 / ckpt 间隔 / 随机种子。
-6. **H100×8 训练时间估算**：分阶段 step 数 × 吞吐（img/s 或 tok/s）→ 墙钟；列假设（利用率 / NFS 争用 / 重算）与 ± 敏感性。
-7. **风险 & 阻塞清单**：Qwen3.5-4B 可得性 · ms-swift 对 OV1.5/视觉塔支持 · 85M 未下满 · 磁盘 · 与 ④-4ep 的 GPU 争用。
-8. **分阶段执行清单**（S0 环境 → S1 smoke → S2 mid-train → S3 SFT → S4 评测），每步给**判据 + 交付 + 预计成本（GPU·h）**。
-9. **诚实条款**：web 时效 / 未核实项**显式标注**。
-
-**④ 纪律**：🚫 **只出计划，不启动训练、不占 GPU**（执行另批）· 🚫 不改实验数值 · web 论据带来源 + 时效 · commit 前缀 `vision plan:` · 任务书 >32KB **自滚归档**（本块加入后请自滚回 ≤32KB）。
-
----
-
-### 🆕 运维指令 · 2026-10-12（🚀 启动 ④-4ep：从 2ep 检查点续训 · 判据改「4ep > 70% = 胜利」）· 用户直令 · 最高优先
-
-> **用户令（2026-10-12）**：「vision 可以在现有 2ep 检查点基础上继续训练的方式启动 4ep 吗？4ep 结果如果超过 70%，也是胜利。」—— **可以**（R12 已实证从 ckpt 续跑机制）；现启动 ④-4ep。
-
-**① 方式（续训 · 非从零）**：`r9_train.py --resume <2ep final ckpt> --steps 748404`，其余参数与 2ep **完全一致**：
-`--tower openvision2 --width 512 --depth 30 --steps 748404 --resolution 224 --patch 16 --batch-size 64 --lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5 --seed 1234 --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 --data "$FAIR_DATA"（同 frozen snapshot `data_snapshot_20261009.txt` + CC12M + Amshaker，total_shards=10787）--data-source mixed --caption-type all --save-every 10000`。
-
-**② resume 源 / 输出**：resume=`scaling_E4_2ep_ov2_w512_d30_p16_224/vision.pt`（无则 `vision_fused.pt`，再则最新 `vision_step*.pt`）；**输出新目录** `scaling_E4_4ep_ov2_w512_d30_p16_224`（🚫 勿覆盖 2ep 目录）。
-
-**③ 已核实的技术要点（r9_train.py 源码）**：resume 加载 vision+logit_scale+predictor+decoder，**不加载 optimizer**（AdamW 重启 = minor transient）；C4 守卫禁用、C1/C2 保留；LR 按 4ep 全程 cosine 重算（step374202 处 lr≈2.5e-4，从 2ep 末的 min_lr=5e-5 **跳回** — 属预期，AdamW 重新热身）；数据 sampler 不恢复、重新 shuffle（对「4 epoch 遍历同一 frozen snapshot」定义正确）。
-
-**④ 判据（运维新裁定 · 覆盖 §9.4 原「2ep≥70% 才启动 4ep」）**：**4ep ProtB > 70% ⇒ 胜利**（预算不足、62.34% 非天花板）；4ep 65–70% ⇒ 递减收益；4ep 仍 ~65% 横盘 ⇒ 特征/目标函数天花板确认。
-
-**⑤ 预期成本**：748404−374202 = 374202 新步 ≈ 再 ~16.6h（2ep 实测 2416 img/s）≈ 133 GPU·h。
-
-**⑥ 交付**：4ep 训完**自动跑 ProtA/ProtB/zs/k-NN 全套评测** + 更新 lp–epoch 曲线（62.34 → 65.37 → 4ep ?）；commit 前缀 `vision ④-4ep:`。
-
-**⑦ 与「📄 中文报告」指令关系**：**先 launch 4ep**（长任务后台占 GPU），训练期间并行产出中文报告（零 GPU）；报告若在 4ep 结果前出，先写「截至 2ep」版，4ep 结果一出即**追加/更新「4ep 结果」一节**。
-### 🆕 运维指令 · 2026-10-12（📄 写「中文版」HTML 综合报告：外部评审回应 ③→①→②→④ 全链路收口）· 用户直令 · 最高优先
-
-> **用户令（2026-10-12）**：「vision 刚刚完成任务了吗，让它写个 html 报告（中文版）。」—— ④ epoch scaling 全套已收尾（10-12 13:42），本轮「外部评审回应」实验链全部完成，现补一份**中文版**综合报告收口。
-
-**① 报告文件**：`vision/report_vision_final_20261012_zh.html`（**中文版**，单文件内联 CSS/SVG，无外部依赖，≤200KB）。
-
-**② 语言**：全中文（标题/节/正文/图表轴标签/图例/结论；ProtB、lp、zs、k-NN 等缩写保留英文，首现给中文释义）。
-
-**③ 必须覆盖（时间/逻辑序）**：
-1. **背景**：外部评审质疑 `E1fair` ProtB=62.34% 偏低 → 按 ③→①→②→④ 复核。
-2. **③ 口径修订**：所有绝对 lp 标「BaiZe internal protocol (ProtB)」，声明不可与外部同表 + 原因（目标函数/数据 95.8M·1ep/文本塔冻结/协议 ProtA−B 差 ~10pp）。
-3. **① 同模型 zero-shot**：E1fair 34.10% / E2fair 35.45%；lp−zs gap ~28pp 结论。
-4. **② probe 对照**：k-NN k=20→37.68% + probe sweep（×5ep 62.15% → **probe 未欠拟合，62.34% 即特征质量天花板**）。
-5. **变体实验**：V2 Muon 全 LR 坍缩❌（5e-4@2100 / 1e-4@4200，AIMv2 目标不兼容）；V3 全量数据 ProtB 63.52% Δ+1.18pp（Null）。
-6. **④ epoch scaling（核心）**：2ep **ProtB 65.37±0.01% Δ+3.03pp**、ProtA 53.82% Δ+4.12pp、zs 38.52% Δ+4.42pp、k-NN 40.67% Δ+2.99pp；**verdict=MODERATE**（预注册 Δ1.5–7.66pp → 有收益但递减 → 不启动 4ep）。
-7. **lp–epoch 曲线**：62.34%(1ep)→65.37%(2ep)，附预注册阈值标注（图中文）。
-8. **结论与下一步**：中文总结 + Stage(iv) MLLM 对齐 / w384 等方向。
-
-**④ 数字与 MEMORY_VISION.md / EXPERIMENTS_VISION.md 完全一致**（🚫 不改实验值、不加新结论）；口径标 BaiZe internal protocol。
-
-**⑤ 交付**：commit 前缀 `vision report:`；生成后报路径 + KB + 节数；在 `EXPERIMENTS_VISION.md §9.7` 补一句话摘要。
+> 📦 §运维指令 · 2026-10-12（📄 中文版综合报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_final_20261012_zh.html 已交付，外部评审回应全链路收口。需要时再读。
 
 > 📦 §运维指令 · 2026-10-10（🧭 外部评审回应 ③→①→②→④）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：③口径✅ ①zs✅ ②probe✅ ④2ep✅（MODERATE Δ+3.03pp）→ 全链路 DONE（10-12 13:42 收尾）。需要时再读。
 

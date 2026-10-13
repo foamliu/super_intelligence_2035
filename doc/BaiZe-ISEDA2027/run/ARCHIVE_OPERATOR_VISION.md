@@ -1108,3 +1108,58 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 | **11** | **R11-H 纯 AR** | GPU | R11-G | ✅ 已完成 |
 
 > **已合并**：「R11-L3」→ 并入 R14；「R11-D 验证 GPIC tar」→ 并入 E1/C1。
+
+---
+
+## Archived 2026-10-13 (Wake #49 · 外部编码器 ProtB 评测期间自滚归档)
+
+### 🆕 运维指令 · 2026-10-13（📄 ④-4ep 实验报告（中文 HTML）· 末节「建议后续工作」含 MBS/GBS/LR 加速分析 + 三数据集 N-epoch 时间表）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「就刚完成的实验（④-4ep epoch 缩放）写个 html 报告（中文版），最后加一节建议后续工作。另外：训练期间显存始终仅 ~20GB，能否用 MBS×4 + GBS×4 + LR×2 加速？下一步考虑合并三个数据集做 N epoch 训练，估计 N=1/2/4/8/16 的训练时间。」
+> **性质**：纯写作 + 上机核实数据体积（🔥 **零 GPU**；本线 ④-4ep 已全收尾、无在飞训练，不得占用 `.12` 卡）。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_4ep_experiment_zh.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 报告结构（第 1–7 节 = ④-4ep 实验本体，第 8 节 = 建议后续工作【新增】）**：
+1. **HERO + TL;DR**：一句话结论 + 四指标（ProtB/ProtA/zs/k-NN）1ep/2ep/4ep 三列对比表。
+2. **动机与预注册**：epoch 缩放回应「特征质量能否靠更多 epoch 提升」；预注册判据（4ep ProtB>70% 胜利 / 65–70% 递减收益 / 横盘=天花板确认）。
+3. **方法与配置**：r9_train.py 续训（resume 2ep）、OpenVision2 w512/d30、224/16、**MBS=64/卡 × DP8 = GBS=512**、lr5e-4 warmup2000 cosine min5e-5、aimv2(mask0.6)、部分 GPIC 冻结快照（94.9M，total_shards=10787）。
+4. **训练过程**：748,404 步（新增 374,202）、~16.8h、steady_img/s≈2818、final_loss 0.0805（vs 2ep 0.1856）、C1 0.5804→0.5932 无坍缩、~999 GPU·h 累计。
+5. **评测结果**：四指标三列对比 + lp–epoch 曲线（中文轴）。
+6. **结论**：MODERATE / DIMINISHING（1→2 +3.03pp、2→4 +1.68pp，比例~0.55 递减；67.05%<70% 未达标）。
+7. **局限与诚实条款**。
+8. **建议后续工作（新增 · 必须含以下三块）**：
+   - **8-a MBS×4/GBS×4/LR×2 加速可行性**：口径先纠正——现状是 **MBS=64/卡、GBS=512**（`--batch-size 64` 是每卡微批，非全局）；显存 ~16.5GB/81.5GB 仅用 20%。结论：① 内存放得下 4×（MBS 256/卡 → ~60–80GB，仍 fit，先 smoke 验证）✅；② **LR×2（5e-4→1e-3）= sqrt 缩放法则**（batch×4 → lr×√4=×2）方向正确，但本线稳定点是 lr5e-4、lr3e-3 曾是 schedule 伪影 → **必须 smoke + 重开 C1/C2/C4 守卫**；③ ⚠️ **真正瓶颈是 NFS I/O 不是显存/算力**：④-4ep 实测 iter 128–286ms 随 NFS 争用抖动（data 线下载并发），NFS 清时 ~95–105ms（≈5100 img/s）→ **只加 batch 不加 dataloader 优化则加速有限**；杠杆 = `--num-workers`（脚本现传 6）→ 12–16 + tar 预铺本地 SSD/NVMe + 与 data 线下载错峰。给验证步骤：100 步 smoke（`--batch-size 256`）测 img/s vs 现状。
+   - **8-b 合并三数据集 N-epoch 时间表**：三集 = GPIC(8000 tar × 12639 ≈ 101M) + CC12M(1100 × 10000 ≈ 11M) + Amshaker(2250 × 2646 ≈ 6M) ≈ **118.1M 对/epoch**。GBS=512 → **230,598 步/epoch**。当前有效吞吐 6.19 step/s（≈2818 img/s，NFS 争用）~ 10 step/s（≈5100 img/s，NFS 清）：N=1→~10.3h/6.4h, N=2→~20.7h/12.8h, N=4→~41.3h/25.6h, N=8→~82.7h/51.3h, N=16→~165h/102h。GBS=2048 版步数÷4（57,650 步/epoch），若 I/O 修好吞吐同步 ~×3–4 → N=4 ~10h / N=16 ~41h。
+   - **8-c 三方向排序**：Stage(iv) MLLM 对齐 / w384 更小塔 / 更多数据 N-epoch，结合 ISEDA 投稿线给建议优先级。
+
+**③ 数字口径**：与 MEMORY_VISION.md + EXPERIMENTS_VISION.md 一字不差。**④ 纪律**：🔥 零 GPU · commit 前缀 `vision report:`。
+> **交付**：report_vision_4ep_experiment_zh.html 已交付，commit 待本轮 push。结论：④-4ep ProtB=67.05%, MODERATE/DIMINISHING。
+
+---
+
+### 🆕 运维指令 · 2026-10-12（📄 LLaVA-OneVision-1.5 复现计划 · 中文 HTML · 基模 Qwen3.5-4B + 框架 ms-swift）· 用户直令 · **最高优先**
+
+> **用户令（2026-10-12）**：「给 vision 线写一份 LLaVA-OneVision-1.5 复现计划（中文 HTML），基座用 Qwen3.5-4B，框架用 ms-swift。」
+> **性质**：纯写作 + web 调研（🔥 零 GPU；**只出计划不启动训练**）。
+
+**① 交付物**：`vision/report_vision_llava_ov15_repro_plan.html`（中文 · 自包含 · ≤200KB）。**② 9 节结构**：1.背景 2.基模选型(Qwen3.5-4B) 3.视觉塔选型 4.数据集清单 5.超参表+命令模板 6.H100×8时间估算 7.风险阻塞 8.分阶段执行清单 9.诚实条款。**③ 纪律**：🚫 只出计划不占GPU · web 论据带来源+时效。
+> **交付**：report_vision_llava_ov15_repro_plan.html 已交付。结论：复现计划含 S0-S4 五阶段、Qwen3.5-4B+OV2视觉塔+ms-swift框架。
+
+---
+
+### 🆕 运维指令 · 2026-10-12（🚀 启动 ④-4ep：从 2ep 检查点续训 · 判据改「4ep > 70% = 胜利」）· 用户直令 · 最高优先
+
+> **用户令（2026-10-12）**：「vision 可以在现有 2ep 检查点基础上继续训练的方式启动 4ep 吗？4ep 结果如果超过 70%，也是胜利。」—— **可以**；现启动 ④-4ep。
+
+**① 方式**：`r9_train.py --resume <2ep final ckpt> --steps 748404`，其余参数与 2ep 完全一致。**② resume源/输出**：resume=scaling_E4_2ep_*/vision.pt；输出 scaling_E4_4ep_*（勿覆盖2ep）。**③ 技术要点**：resume加载vision+logit_scale+predictor+decoder，不加载optimizer；C4守卫禁用、C1/C2保留；LR按4ep全程cosine重算。**④ 判据**：4ep ProtB>70%⇒胜利；65-70%⇒递减收益；~65%横盘⇒天花板。**⑤ 预期成本**：374202新步≈16.6h≈133 GPU·h。**⑥ 交付**：训完自动跑全套评测 + 更新lp-epoch曲线。
+> **交付**：④-4ep 训练+评测全部完成。ProtB=67.05±0.02%, MODERATE/DIMINISHING（<70%未达标）。
+
+---
+
+### 🆕 运维指令 · 2026-10-12（📄 写「中文版」HTML 综合报告：外部评审回应 ③→①→②→④ 全链路收口）· 用户直令 · 最高优先
+
+> **用户令（2026-10-12）**：「vision 刚刚完成任务了吗，让它写个 html 报告（中文版）。」
+
+**① 报告文件**：`vision/report_vision_final_20261012_zh.html`（中文版，单文件内联CSS/SVG，≤200KB）。**② 8节结构**：1.背景 2.③口径修订 3.①同模型zs 4.②probe对照 5.变体实验 6.④epoch scaling核心 7.lp-epoch曲线 8.结论与下一步。**③ 数字一致**：与MEMORY/EXPERIMENTS完全一致。**④ 交付**：commit 前缀 `vision report:`。
+> **交付**：report_vision_final_20261012_zh.html 已交付。结论：外部评审回应全链路收口。

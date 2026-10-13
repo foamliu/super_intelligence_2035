@@ -19,6 +19,13 @@ Usage:
 import argparse, glob, json, math, os, sys, time
 from io import BytesIO
 
+# ── Thread limits (critical for parallel runs) ──
+os.environ.setdefault('OMP_NUM_THREADS', '8')
+os.environ.setdefault('MKL_NUM_THREADS', '8')
+os.environ.setdefault('OPENBLAS_NUM_THREADS', '8')
+import pyarrow as pa
+pa.set_cpu_count(8)
+
 import torch
 import torch.nn as nn
 import torchvision.transforms as T
@@ -439,7 +446,10 @@ def main():
               f'{r["protb_mean"]*100:>8.2f}+/-{r["protb_std"]*100:.2f} '
               f'{r["paper_lp"]:>12}', flush=True)
     print('-'*len(hdr), flush=True)
-    results_path = os.path.join(os.path.dirname(args.cache_dir), 'external_protb_results.json')
+    results_path = os.path.join(os.path.dirname(args.cache_dir),
+                                f'external_protb_results_{models_to_run[0]}.json'
+                                if len(models_to_run) == 1
+                                else 'external_protb_results.json')
     with open(results_path, 'w') as f: json.dump(all_results, f, indent=2)
     print(f'\n[EXTERNAL-PROTB] Results saved -> {results_path}', flush=True)
 
