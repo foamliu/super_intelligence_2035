@@ -2,7 +2,7 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376, 34 flipped）。**fix2 重评完成** ✅（32/32, 9 flipped）— pytest `setuptools<70` + flask `werkzeug<2.3`。**累计结果**：**43 条 FLIPPED to RESOLVED** ✅ · **+243 条 patch 新增 apply** · **总 Resolved: 574→617 (27.3%→29.4%, +2.1pp)**。报告：`report_harness_eval_fix_rerun.html`（26.9KB, 含 §8 fix2 结果）+ `kimi_pilot_results.fix1.json`（258KB）+ `kimi_pilot_results.fix2.json`（独立）。**剩余 65 条 not-applied**：matplotlib 30 + sklearn 27 + sphinx 8（需 C 扩展 build deps）。**P1 计划已报（见下方 §P1 PLAN），等运维确认**。
+> 🔧 **运维指令（2026-10-13 · 最高优先 · 每轮唤醒必读）**：**fix3 进行中** 🔄 — matplotlib(29)+sklearn(27)+sphinx(8)=64 条 C 扩展 build deps 修复 + 重评。**根因已找到并修复** ✅：pkg-config `.pc` 文件含完整 host 路径而非 chroot 内部路径 → `r1_eval.py` 注入 `CFLAGS`/`CPPFLAGS`/`PKG_CONFIG_PATH`/`C_INCLUDE_PATH`/`CPLUS_INCLUDE_PATH` + `--no-build-isolation` + 修正 `.pc` 文件 prefix。**测试验证** ✅：matplotlib 首条 `patch_applied: false→true`（78s/条）。全量 64 条已启动后台运行（PID 2127908, `--resume`）。**fix1+fix2 已完成** ✅：574→617 resolved (29.4%)。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -49,11 +49,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        fix2 COMPLETE — P1 remaining items waiting for operator confirmation
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 re-eval ✅ (376/376, 34 flipped) · ⑥ fix1 report ✅ · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 re-eval ✅ (32/32, 9 flipped) · ⑩ fix2 report §8 added ✅
-当前动作:     R356: fix2 re-eval of pytest(18)+flask(14) COMPLETED. pytest: 9 FLIPPED (setuptools<70), 15/18 patch-applied. flask: 0 FLIPPED, 13/14 patch-applied (werkzeug<2.3). Report updated with §8. Total: 574→617 (27.3%→29.4%).
-下一步:       ① 等运维确认 P1 剩余项 ② matplotlib+sklearn 65条需C扩展build deps(~4h) ③ P1-2网络503→②b重跑 ④ P1-3暂缓
-阻塞:         <无>（P1 剩余项需运维确认后才动）
+PHASE:        fix3 IN PROGRESS — C extension build deps fix + re-eval (64 entries)
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 re-eval ✅ (376/376, 34 flipped) · ⑥ fix1 report ✅ · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 re-eval ✅ (32/32, 9 flipped) · ⑩ fix2 report §8 added ✅ · ⑪ fix3 root cause found ✅ (pkg-config host paths) · ⑫ fix3 code fix applied ✅ (CFLAGS+--no-build-isolation+.pc fix) · ⑬ fix3 test verified ✅ (patch_applied false→true)
+当前动作:     R357: fix3 full run launched (PID 2127908, 64 entries, --resume). Root cause: pkg-config .pc files had full host paths → chroot can't find headers. Fix: (1) sed .pc files to chroot-internal paths (2) inject CFLAGS/CPPFLAGS/PKG_CONFIG_PATH/C_INCLUDE_PATH/CPLUS_INCLUDE_PATH in r1_eval.py (3) add --no-build-isolation to pip install. Test: matplotlib 1 entry → patch_applied=true (78s).
+下一步:       ① 监控 fix3 完成 (~2-4h) ② 生成 fix3 报告 + 更新 report_harness_eval_fix_rerun.html ③ sphinx 8 条逐条排查 ④ P1-1 astropy ⑤ P1-2 网络 503 + ②b 重跑 agent
+阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
@@ -61,7 +61,7 @@ ERROR_COUNT:  0
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
 > 📦 R355 (2026-10-13 12:21, fix2 feasibility test analysis) 已归档 → daily-memories-harness/2026-10-13.md。
-- [13:00] R356: **fix2 re-eval COMPLETED** ✅. pytest 18条 (`setuptools<70`): **9 FLIPPED to RESOLVED**, 15/18 patch-applied (from 0/18). flask 14条 (`werkzeug<2.3`): 0 FLIPPED, 13/14 patch-applied (from 0/14). 累计 fix1+fix2: 574→617 resolved (27.3%→29.4%, +2.1pp), +243 patch-applied. Report §8 added (report_harness_eval_fix_rerun.html 26.9KB). Results in kimi_pilot_results.fix2.json (33 entries). pytest-5227 贡献 7/9 FLIPPED. flask 0 FLIPPED = patch 质量限制非 infra. 剩余 65 not-applied: matplotlib 30 + sklearn 27 + sphinx 8 (需 C 扩展 build deps). 📦 MEMORY size check pending.
+- [14:30] R357: **fix3 launched** 🔄. Root cause: pkg-config `.pc` files in testbed_py39/testbed_py38 had full host paths (`/nas_train/.../rootfs/.../opt/miniconda3/...`) as prefix → chroot sandbox can't find qhull/freetype headers. Fix: (1) `sed` all `.pc` files to chroot-internal paths (`/opt/miniconda3/envs/testbed_py39`) (2) `r1_eval.py`: inject `CFLAGS`/`CPPFLAGS`/`LDFLAGS`/`PKG_CONFIG_PATH`/`C_INCLUDE_PATH`/`CPLUS_INCLUDE_PATH` when `env_override` set (3) add `--no-build-isolation` to `pip install -e .`. Test: matplotlib 1 entry → `patch_applied: false→true` ✅ (78s/entry). Full 64-entry run launched (PID 2127908, `--resume`). 📦 体积：TASK=34786B(34.0KB ⚠️) / MEMORY=27552B(26.9KB ✓).
 > 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。

@@ -273,14 +273,32 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
     # on the old testbed env's 3.8 instead of the override env's 3.9/3.8).
     if env_override:
         env_path = f"/opt/miniconda3/envs/{env_override}"
+        # fix3 (2026-10-13): inject compiler env vars so C extensions find
+        # headers (qhull, freetype) in the override env's include dir.
+        # Also add --no-build-isolation to pip install so it uses the
+        # already-installed packages instead of creating a build isolation
+        # env that can't find the conda env's headers.
         replacement = (
             f"export PATH={env_path}/bin:$PATH "
             f"&& export CONDA_PREFIX={env_path} "
-            f"&& export CONDA_DEFAULT_ENV={env_override}"
+            f"&& export CONDA_DEFAULT_ENV={env_override} "
+            f"&& export CFLAGS=-I{env_path}/include "
+            f"&& export CPPFLAGS=-I{env_path}/include "
+            f"&& export LDFLAGS=-L{env_path}/lib "
+            f"&& export PKG_CONFIG_PATH={env_path}/lib/pkgconfig "
+            f"&& export C_INCLUDE_PATH={env_path}/include "
+            f"&& export CPLUS_INCLUDE_PATH={env_path}/include"
         )
         eval_script = eval_script.replace(
             "conda activate testbed",
             replacement,
+        )
+        # Force --no-build-isolation on pip install -e . so pip uses the
+        # conda env's installed packages (numpy, Cython, etc.) instead of
+        # creating a temp build env that lacks qhull/freetype headers.
+        eval_script = eval_script.replace(
+            "pip install -e .",
+            "pip install --no-build-isolation -e .",
         )
     if extra_pip:
         # Insert extra pip install after the first env activation line.
