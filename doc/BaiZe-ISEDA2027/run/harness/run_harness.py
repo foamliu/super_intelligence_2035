@@ -181,7 +181,13 @@ class CodexDriver:
         ]
         # codex reads OPENAI_API_KEY for its provider; gw_proxy overrides the real
         # key upstream, so a dummy non-empty value here is sufficient.
-        r = _run(cmd, workdir, timeout, env={"OPENAI_API_KEY": DUMMY_KEY})
+        # 2026-10-14: OPENAI_BASE_URL redirects codex's "refresh available models"
+        # call (hardcoded to https://api.openai.com) to the local gateway, avoiding
+        # network failures when the external proxy is down or external net unreachable.
+        r = _run(cmd, workdir, timeout, env={
+            "OPENAI_API_KEY": DUMMY_KEY,
+            "OPENAI_BASE_URL": "http://127.0.0.1:9090/v1",
+        })
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
         return r

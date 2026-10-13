@@ -59,11 +59,22 @@ def detect_quota_error(output: str) -> int | None:
     return None
 
 
-def run(cmd, cwd=None, timeout=300, env=None):
+def run(cmd, cwd=None, timeout=300, env=None, skip_proxy=False):
+    """Run a subprocess. If skip_proxy=True, strip all proxy env vars —
+    needed for harness subprocesses whose API calls go to the local
+    gateway (127.0.0.1:9090) and would be 403'd by the external Squid proxy.
+    2026-10-14: discovered codex's Rust HTTP client ignores no_proxy for HTTP."""
     e = os.environ.copy()
-    e.setdefault("https_proxy", PROXY)
-    e.setdefault("http_proxy", PROXY)
-    e.setdefault("no_proxy", "127.0.0.1,localhost")
+    if skip_proxy:
+        for k in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY",
+                   "all_proxy", "ALL_PROXY"):
+            e.pop(k, None)
+        e["no_proxy"] = "*"
+        e["NO_PROXY"] = "*"
+    else:
+        e.setdefault("https_proxy", PROXY)
+        e.setdefault("http_proxy", PROXY)
+        e.setdefault("no_proxy", "127.0.0.1,localhost")
     if env:
         e.update(env)
     try:
@@ -171,7 +182,7 @@ def run_harness_serial(harness, instance_json, workdir, predictions_out):
            "--model-name", f"{harness}-{MODEL_NAME}"]
     for attempt in range(1, MAX_QUOTA_RETRIES + 1):
         t0 = time.time()
-        out, rc = run(cmd, timeout=TIMEOUT_RUN + 120)
+        out, rc = run(cmd, timeout=TIMEOUT_RUN + 120, skip_proxy=True)
         wall = time.time() - t0
         wait = detect_quota_error(out)
         if wait and attempt < MAX_QUOTA_RETRIES:

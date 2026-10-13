@@ -1477,5 +1477,383 @@
     },
     "flipped": "",
     "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/pi-kimi-k2.6-cloud/astropy__astropy-14182"
+  },
+  {
+    "key": "cline-patched|astropy__astropy-14182",
+    "instance_id": "astropy__astropy-14182",
+    "repo": "astropy/astropy",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/astropy__astropy-14182"
+  },
+  {
+    "key": "claude-code|astropy__astropy-14182",
+    "instance_id": "astropy__astropy-14182",
+    "repo": "astropy/astropy",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/claude-code-kimi-k2.6-cloud/astropy__astropy-14182"
+  },
+  {
+    "key": "hermes|astropy__astropy-14365",
+    "instance_id": "astropy__astropy-14365",
+    "repo": "astropy/astropy",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/hermes-kimi-k2.6-cloud/astropy__astropy-14365"
+  },
+  {
+    "key": "opencode|astropy__astropy-14365",
+    "instance_id": "astropy__astropy-14365",
+    "repo": "astropy/astropy",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/opencode-kimi-k2.6-cloud/astropy__astropy-14365"
+  },
+  {
+    "key": "deepseek-harness|astropy__astropy-14365",
+    "instance_id": "astropy__astropy-14365",
+    "repo": "astropy/astropy",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/deepseek-harness-kimi-k2.6-cloud/astropy__astropy-14365"
+  },
+  {
+    "key": "cline-patched|astropy__astropy-14365",
+    "instance_id": "astropy__astropy-14365",
+    "repo": "astropy/astropy",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/astropy__astropy-14365"
+  },
+  {
+    "key": "claude-code|astropy__astropy-14365",
+    "instance_id": "astropy__astropy-14365",
+    "repo": "astropy/astropy",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/claude-code-kimi-k2.6-cloud/astropy__astropy-14365"
+  },
+  {
+    "key": "pi|astropy__astropy-14365",
+    "instance_id": "astropy__astropy-14365",
+    "repo": "astropy/astropy",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/pi-kimi-k2.6-cloud/astropy__astropy-14365"
+  },
+  {
+    "key": "opencode|astropy__astropy-14995",
+    "instance_id": "astropy__astropy-14995",
+    "repo": "astropy/astropy",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/opencode-kimi-k2.6-cloud/astropy__astropy-14995"
+  },
+  {
+    "key": "hermes|astropy__astropy-14995",
+    "instance_id": "astropy__astropy-14995",
+    "repo": "astropy/astropy",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/hermes-kimi-k2.6-cloud/astropy__astropy-14995"
+  },
+  {
+    "key": "pi|astropy__astropy-14995",
+    "instance_id": "astropy__astropy-14995",
+    "repo": "astropy/astropy",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/pi-kimi-k2.6-cloud/astropy__astropy-14995"
+  },
+  {
+    "key": "cline-patched|astropy__astropy-14995",
+    "instance_id": "astropy__astropy-14995",
+    "repo": "astropy/astropy",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/astropy__astropy-14995"
+  },
+  {
+    "key": "claude-code|astropy__astropy-14995",
+    "instance_id": "astropy__astropy-14995",
+    "repo": "astropy/astropy",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/claude-code-kimi-k2.6-cloud/astropy__astropy-14995"
+  },
+  {
+    "key": "deepseek-harness|astropy__astropy-14995",
+    "instance_id": "astropy__astropy-14995",
+    "repo": "astropy/astropy",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/deepseek-harness-kimi-k2.6-cloud/astropy__astropy-14995"
   }
 ]
