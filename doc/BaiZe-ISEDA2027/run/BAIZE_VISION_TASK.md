@@ -1,6 +1,38 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（📄 ④-4ep 实验报告（中文 HTML）· 末节「建议后续工作」含 MBS/GBS/LR 加速分析 + 三数据集 N-epoch 时间表）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「就刚完成的实验（④-4ep epoch 缩放）写个 html 报告（中文版），最后加一节建议后续工作。另外：训练期间显存始终仅 ~20GB，能否用 MBS×4 + GBS×4 + LR×2 加速？下一步考虑合并三个数据集做 N epoch 训练，估计 N=1/2/4/8/16 的训练时间。」
+> **性质**：纯写作 + 上机核实数据体积（🔥 **零 GPU**；本线 ④-4ep 已全收尾、无在飞训练，不得占用 `.12` 卡）。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_4ep_experiment_zh.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 报告结构（第 1–7 节 = ④-4ep 实验本体，第 8 节 = 建议后续工作【新增】）**：
+1. **HERO + TL;DR**：一句话结论 + 四指标（ProtB/ProtA/zs/k-NN）1ep/2ep/4ep 三列对比表。
+2. **动机与预注册**：epoch 缩放回应「特征质量能否靠更多 epoch 提升」；预注册判据（4ep ProtB>70% 胜利 / 65–70% 递减收益 / 横盘=天花板确认）。
+3. **方法与配置**：r9_train.py 续训（resume 2ep）、OpenVision2 w512/d30、224/16、**MBS=64/卡 × DP8 = GBS=512**、lr5e-4 warmup2000 cosine min5e-5、aimv2(mask0.6)、部分 GPIC 冻结快照（94.9M，total_shards=10787）。
+4. **训练过程**：748,404 步（新增 374,202）、~16.8h、steady_img/s≈2818、final_loss 0.0805（vs 2ep 0.1856）、C1 0.5804→0.5932 无坍缩、~999 GPU·h 累计。
+5. **评测结果**：四指标三列对比 + lp–epoch 曲线（中文轴）。
+6. **结论**：MODERATE / DIMINISHING（1→2 +3.03pp、2→4 +1.68pp，比例~0.55 递减；67.05%<70% 未达标）。
+7. **局限与诚实条款**。
+8. **建议后续工作（新增 · 必须含以下三块）**：
+   - **8-a MBS×4/GBS×4/LR×2 加速可行性**：口径先纠正——现状是 **MBS=64/卡、GBS=512**（`--batch-size 64` 是每卡微批，非全局）；显存 ~16.5GB/81.5GB 仅用 20%。结论：① 内存放得下 4×（MBS 256/卡 → ~60–80GB，仍 fit，先 smoke 验证）✅；② **LR×2（5e-4→1e-3）= sqrt 缩放法则**（batch×4 → lr×√4=×2）方向正确，但本线稳定点是 lr5e-4、lr3e-3 曾是 schedule 伪影 → **必须 smoke + 重开 C1/C2/C4 守卫**；③ ⚠️ **真正瓶颈是 NFS I/O 不是显存/算力**：④-4ep 实测 iter 128–286ms 随 NFS 争用抖动（data 线下载并发），NFS 清时 ~95–105ms（≈5100 img/s）→ **只加 batch 不加 dataloader 优化则加速有限**；杠杆 = `--num-workers`（脚本现传 6）→ 12–16 + tar 预铺本地 SSD/NVMe + 与 data 线下载错峰。给验证步骤：100 步 smoke（`--batch-size 256`）测 img/s vs 现状。
+   - **8-b 合并三数据集 N-epoch 时间表**：三集 = GPIC(8000 tar × 12639 ≈ 101M) + CC12M(1100 × 10000 ≈ 11M) + Amshaker(2250 × 2646 ≈ 6M) ≈ **118.1M 对/epoch**（⚠️ 以上机 `ls $GPIC|wc -l` 逐个核实为准，公式在 `run_scaling_experiment.sh:41-48`）。GBS=512 → **230,598 步/epoch**。当前有效吞吐 6.19 step/s（≈2818 img/s，NFS 争用）~ 10 step/s（≈5100 img/s，NFS 清）：
+     | N | 步数 | 保守(6.2/s) | 乐观(10/s) | 8 卡 GPU·h(保守) |
+     |--|--|--|--|--|
+     | 1 | 230,598 | ~10.3h | ~6.4h | ~83 |
+     | 2 | 461,196 | ~20.7h | ~12.8h | ~165 |
+     | 4 | 922,392 | ~41.3h(1.7d) | ~25.6h(1.1d) | ~330 |
+     | 8 | 1,844,784 | ~82.7h(3.4d) | ~51.3h(2.1d) | ~662 |
+     | 16 | 3,689,568 | ~165h(6.9d) | ~102h(4.3d) | ~1323 |
+     另给 GBS=2048（MBS×4）版本：步数 ÷4（57,650 步/epoch），若 I/O 修好吞吐同步 ~×3–4 → N=4 ~10h / N=16 ~41h（~1.7d）；⚠️ **warmup/cosine 须按总步数重设**（warmup≈1–2% 总步，不可沿用 2000）。
+   - **8-c 三方向排序**：Stage(iv) MLLM 对齐 / w384 更小塔 / 更多数据 N-epoch，结合 ISEDA 投稿线（~2027-02-01）给建议优先级；并指出 N-epoch 全量 vs V3（full 118.1M @1ep=63.52% Null）与 ④-4ep（部分 94.9M @4ep=67.05%）的关系。
+
+**③ 数字口径**：与 `MEMORY_VISION.md` 状态头 + `EXPERIMENTS_VISION.md §9.5/§9.7` 一字不差；绝对 lp 标「BaiZe internal protocol (ProtB)」；吞吐/显存/iter 用 `daily-memories-vision/2026-10-13.md` 实测数，**不得编造**；三数据集体量以上机核实为准（不核实标「待核」）。
+
+**④ 纪律**：🔥 零 GPU · 不改实验值 · commit 前缀 `vision report:` · 任务书 >32KB 按规程自滚归档。
+
 > 📦 §运维指令 · 2026-10-11（📄 外部反馈→审视+合入论文：Muon 梯度谱解释）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：VISION_MUON_REVIEW_2026-10-11.md + paper §VI-D Muon paragraph + bib entry (arXiv:2605.19282) delivered, 11→11 pages 0err, commit 95a94d0f。需要时再读。
 
 ---
