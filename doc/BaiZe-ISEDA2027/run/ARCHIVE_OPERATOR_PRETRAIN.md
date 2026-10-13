@@ -1505,3 +1505,24 @@ T3 提速验证结果：
 
 > **执行结论（2026-10-12）**：dist_muon 已停（PID 1799555 killed），8 ckpt 保留为证据在 `p8/checkpoints/`。AdamW 从零重启成功（PID 771300, step0 起），`baize_p8_adamw_train.sh` + `baize_p8_decay.sh` 均已改为 `--optimizer adam --lr 1e-3`。warmup 524 ✅, stable 段 loss 平滑下降无 spike, grad_norm 0.12-0.20 稳定。当前 step~4966/10490, loss~2.66, 健康。
 
+
+---
+
+### 🆕 运维指令 · 2026-10-13（📋【重做 v2】正式训练计划书 —— 须按 MiniCPM5「全量数据」口径，🚫 禁 100B 假设）· 用户直令 · 最高优先
+
+> 用户判不合格（2026-10-13）：「`report_pretrain_formal_train_plan.html` 不合格，需要重做。问题：① MiniCPM5 总数据量多少、各数据源大约多少 token、pretrain/decay 各如何配比、总计训练多少 token（我说了 MiniCPM5 有多少训多少，那么有多少呢，估不出来么？）；2 台机器需要多长时间。② 说是按「正式」来、按 MiniCPM5 全量数据来，你的报告还是假定总数据只有 100B。这是逗谁玩呢？请认真思考，仔细写好这份计划书。」
+> 性质：查证 + 写作（CPU，不占 GPU）；不得打断在飞 P-8 训练。
+
+① 必答硬问题（v1 缺失）：
+1. MiniCPM5 训练数据总量 = ? token：逐源拆解（web / code / math / 其他），给估计方法与出处（MiniCPM5 技术报告 / HF model card / 官方 config）；查不到就明写估计依据 + 区间 —— 🚫 不许再出现「100B」这类拍脑袋数。
+2. 本项目可训数据全貌：`MiniCPM5-{1B,2B}.config.json` + `data/` 盘点 + R3 全量分词 110/110 = 1483.91B tok / 5.94TB（逐子集：base 206.76B / l1_en_hq 152.17B / zh 112.47B / ultrax 30.97B / …）→ 对齐「MiniCPM5 有多少训多少」的实际可训 token。
+3. pretrain(stable) / decay 配比：stable:decay token 比例 + decay 段退火混料（SFT/L3/code/math）+ 总步数 / 总 token。
+4. 2 台机（.12+.29，16×H100）墙钟：用实测（单机 8 卡 249K tok/s；DP16 近线性待彩排 → 标「待验」）→ 总 token ÷ 有效吞吐 → 乐观 / 基准 / 保守三档（含 warmup/decay/ckpt/eval 开销）。
+
+② 红线：🚫 禁止再假设「总数据 100B / 200B」，必须按 MiniCPM5 全量口径给总 token + 墙钟；每个数字可溯源（文件:行 / 官方来源 / 实测命令）；估算显式标「估 + 依据 + 区间」。
+
+③ 交付：覆盖 `doc/BaiZe-ISEDA2027/run/report_pretrain_formal_train_plan.html`（中文 · 自包含 · 内联 CSS/SVG · ≤200KB）。节：① HERO+TL;DR（总数据 X B token · 16 卡 Y 天）② MiniCPM5 数据全貌（总 token + 逐源 + 出处）③ 本项目可训数据（R3 子集 token 表·实测）④ 配方（stable/decay 分配 + 配比 + 总步数 + WSD）⑤ 算力墙钟（三档）⑥ ckpt/磁盘/风险/前置 ⑦ v1→v2 修订说明（旧 100B 假设为何错）⑧ launcher + 纪律。
+
+④ 纪律：🚫 不占 GPU、不打断 P-8 监控 · 🚫 不改已发布数值 · 数字可溯源 · commit 前缀 `pretrain plan:` · 任务书 >32KB 自滚归档。
+
+> **执行结论**：v2 已交付（commit fa25d488，30.4KB HTML，300B token 基准），但被用户再次否决 → v3 重做（实盘盘点口径）。
