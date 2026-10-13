@@ -29,15 +29,16 @@ WAITING: 1
 ```
 PHASE:        P1 PLAN REPORTED — waiting for operator confirmation (§P1 PLAN + §7 root cause in heartbeat)
 已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (21.1KB, §1-§7) · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ (72 py-version + 14 werkzeug + 11 other)
-当前动作:     R353: Monitoring wake. Git up to date, no new operator instructions. Fix1 results re-verified (34 flipped, +215 patch-applied, 574→608). Still waiting for P1 confirmation.
+当前动作:     R354: Monitoring wake. Git up to date, no new operator instructions. Fix1 results re-verified (34 flipped, +215 patch-applied, 574→608, 27.3%→29.0%). Both reports confirmed committed. Still waiting for P1 confirmation.
 下一步:       ① 等运维确认 P1 优先级 ② 批准后按序执行 P1-2 → ②b → P1-1(astropy) → P1-1b(per-repo py-version) ③ P1-3 暂缓（Docker 不可用）
 阻塞:         <无>（P1 需运维确认后才动）
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- [07:41] R352: **Monitoring wake — report finalized + 97 not-applied root cause analyzed**. No new operator instructions (git up to date). Fix1 results verified: 376/376, 34 FLIPPED, +215 patch-applied, 574→608 resolved (27.3%→29.0%). Report `report_harness_eval_fix_rerun.html` updated: "中间结果"→"最终报告", added §7 (97 not-applied: py_version_36_needs_38=42, py_version_38_needs_39=30, werkzeug_version=14, other=11). 72/97 are Python version mismatch → new P1-1b (per-repo conda env) proposed. `analyze_fix1_notapplied.py` committed. Still waiting for P1 confirmation. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈32200B(31.4KB ✓).
-- [08:19] R353: **Monitoring wake — fix1 results re-verified, still waiting for P1 confirmation**. Git up to date, no new operator instructions. Re-ran verification script: 34 flipped (cline 7, claude-code 6, opencode 6, hermes 5, pi 4, codex 3, deepseek 3), +215 patch-applied (64→279), 97 still not-applied (mpl 30, sklearn 27, pytest 18, flask 14, sphinx 8). All numbers match report ✅. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈32150B(31.4KB ✓).
+> 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
+- [08:19] R353: Monitoring wake — fix1 re-verified (34 flipped, +215 patch-applied, 574→608). Waiting for P1 confirmation. 📦 TASK=32625B(31.9KB ✓) / MEMORY≈32150B(31.4KB ✓).
+- [08:57] R354: **Monitoring wake — all deliverables verified, still waiting for P1 confirmation**. Git up to date, no new operator instructions. Re-verified fix1 JSON: 376 entries, 34 flipped (cline 7, claude 6, opencode 6, hermes 5, pi 4, codex 3, deepseek 3), patch_applied 64→279 (+215), 97 still not-applied (mpl 30, sklearn 27, pytest 18, flask 14, sphinx 8). Both reports confirmed committed: rootcause (45612B @ doc/BaiZe-ISEDA2027/) + fix_rerun (21580B @ run/). No eval processes running. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈32300B(31.5KB ✓).
 > 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
