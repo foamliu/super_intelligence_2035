@@ -691,3 +691,13 @@
 | 2026-10-13 | Anthropic AI 模型向费城警方提交虚假线索 | TechCrunch（10-09） | 防重(同 IT之家 `012/164` 事件 · 不重复计入) | https://techcrunch.com/2026/10/09/an-anthropic-ai-model-sent-a-false-homicide-tip-to-philadelphia-police/ |
 | 2026-10-13 | 防重核验（第九十五轮候选与 `SEEN.md` 近邻比对） | — | 防重：`Meta Muse Wonder` = 09-xx「Meta 个人智能体 Muse」**后续新模型**（非重复）· `陈立武` = 本日第九十二轮 `012/013` 另一事件 · `英伟达 RTX Spark` = 新品活动（首见）· `H-TPU` / `D270` / `USFP` / `三星眼镜` 均**首见** ⇒ 本轮候选**不构成重复** | — |
 
+| 2026-10-13 | Anthropic 推出新防护措施：模型蒸馏攻击中可窃取的数据量降低约 90%~99%（当地时间周一 · 对抗竞争对手复刻 Claude 前沿能力） | IT之家〔据外媒〕（`012/264` · 11:32 CST） | news | https://www.ithome.com/1/012/264.htm |
+| 2026-10-13 | 国内首家：字节 Seed 设立单独的大模型安全与对齐部门 "Seed Model-Alignment Preparedness"（严林负责 · 向吴永辉汇报 · 原 Responsible AI 团队转入） | IT之家〔据新浪科技〕（`012/270` · 11:48 CST） | news | https://www.ithome.com/1/012/270.htm |
+| 2026-10-13 | 阿里千问升级个人 AI 助理，Personal Agent "千问 Go！"即将发布（航班延误理赔 / 汽车保养 / 运动预约 / 购物比价） | IT之家〔据财新〕（`012/244` · 11:06 CST） | news | https://www.ithome.com/1/012/244.htm |
+| 2026-10-13 | 彭博行业研究：美国德州 1GW AI 数据中心建设成本可达 307 亿美元（约 2,058.69 亿元人民币 · Cushman & Wakefield 数据 + 内部分析） | IT之家〔据 Bloomberg Intelligence〕（`012/275` · 12:04 CST） | news | https://www.ithome.com/1/012/275.htm |
+| 2026-10-13 | 视塔机器人完成天使轮融资，华为哈勃投资参投（柔性光子晶体材料 · 触觉感知与机器人操作 · 南科大团队） | IT之家〔据投中网〕（`012/265` · 11:33 CST） | news | https://www.ithome.com/1/012/265.htm |
+| 2026-10-13 | Astera Labs 发布"计算无关"机架架构 Orion（开放标准 / 模块化 · 六大参考架构 · 支持 CPU 与 AI 推理加速器混搭） | IT之家（`012/250` · 11:18 CST） | news | https://www.ithome.com/1/012/250.htm |
+| 2026-10-13 | 巴克莱：近 3 个月 DDR4 合约价环比涨 24%，涨幅超 DDR5（10 月环比 +4% · 2026 价格维持高位 · 新客户供应协议定价变化） | IT之家（`012/243` · 11:06 CST） | news | https://www.ithome.com/1/012/243.htm |
+| 2026-10-13 | 防重核验（第九十六轮候选与 `SEEN.md` 近邻比对） | — | 防重：`012/275 数据中心成本` · `012/270 字节对齐部门` · `012/264 Anthropic 蒸馏防护` · `012/244 千问 Go` · `012/265 视塔机器人` · `012/250 Orion` 均**首见**；`012/243 巴克莱 DDR4` 与第九十四轮 `012/130 CounterPoint 手机均价` / 第九十五轮 `012/163 南亚 DRAM` 属**同一内存链条、但机构与数据点不同**（非重复） ⇒ 本轮候选**不构成重复** | — |
+| 2026-10-13 | 量子位 `feed` 头部《华为 AI 靠 RSI 通关 25 款游戏！操作次数比人类少 56%》（10-12 05:48 CST） | 量子位（`502654`） | 防重(落第九十四轮窗口 · 不重复计入) | https://www.qbitai.com/2026/10/502654.html |
+
