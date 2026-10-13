@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID `464225` · proxy✅；MCP `:8090` PID `131513`） | 🆕 **2026-10-13 刷新**：`STAGE=C2` · `CONFIG=phi_k3` · `ROUND=1 att2` · `PHASE=running` · `WAITING=1`；进度 **41/75 轮**（B 4/4✅；C1 4 臂 5/5✅ 含 `full_v3` 锚点 82.1±3.0%；**C2.phi_k10 5/5✅=77.7±2.2%**；phi_k3 r1 att1=72.8% 被**误判** <75% 作废 → att2 重跑中）。**🔴 2026-10-13 运维指令(十三) 已下发**：75% 下限**只适用于 `full` 锚点**，消融臂低分 = 真实消融效应，**不得作废/重跑**；phi_k3 r1=72.8% 应判有效。详见 `daily-memories/2026-10-13.md`。 |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🛑 **暂停**（沙盒重启中） | 🆕 **2026-10-13 运维令(十四)**：用户令「需要重启沙盒，暂停试验」。**ops `RUN_ID 65` 已下发**（杀 `run_cline_script` / `run_eval` 进程）。agent 应置 `PHASE=standby` · `WAITING=1`，不启动新轮次，等运维「沙盒已就绪」指令再恢复。进度 **41/75 轮**（B 4/4✅；C1 4 臂 5/5✅ 含 `full_v3` 锚点 82.1±3.0%；`C2.phi_k10` 5/5✅=77.7±2.2%；phi_k3 r1 att1=72.8% 被**误判**作废 → att2 重跑中被杀）。**同时下发的运维令(十三)**：75% 下限**只适用于 `full` 锚点**，消融臂低分 = 真实消融效应，**不得作废/重跑**。详见 `daily-memories/2026-10-13.md`。 |
 | 旧 legacy 线（S1 保真度 / 组件 / S2 1-shot 探路） | `MEMORY_s1_full.md` · `MEMORY_component_full.md` · `MEMORY_s2_1shot.md` | 只读历史 | ⬜ 均已由合并线接管或作废。**旧 5-run 可复用**：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2；1-shot 探路：`k10` 75.3 / `k3` 69.0 / `k1` 60.8 / `lagged` 84.2（S2）。⚠️ 其 loop 存活存疑（见 §4「接管 legacy 组件线」）。**三行原文已归档** → `daily-memories/2026-10-11.md`。 |
 | **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | `.last_run_id`≥32。⚠️ **「失联」真因 = GitHub/proxy 断（`push FAILED`）而非进程死**；救援 = **借 BaiZe 中继（跑在 2.29）经 `ssh -p 3333` 进 36.15 重启**（先例 83/84/85/86）⇒ 复用细节见 §7 第 18/19 条。 |
 
