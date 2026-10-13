@@ -101,60 +101,9 @@
 ---
 
 
-### 🆕 运维指令 · 2026-10-10（更正：85M 总量 = 46.7TB，否 7701/27T）· 用户直令 · 最高优先
+> 📦 §运维指令·2026-10-10（更正85M总量=46.7TB,否7701/27T）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：85M 8子集精确总量12,124files/46.663TB已核实,纠正旧口径。需要时再读。
 
-> 用户核实（2026-10-10 晚）：HF 官方页明写 `Total file size: 46.7 TB` ——
-> https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M
-
-① 事实（运维已用 HF API 复核）
-- 仓库顶层 = 8 个子集目录：`coyo` · `datacomp1b` · `imagenet` · `laioncn` · `mint` · `obelics` · `sa1b` · `zero250m`（+ `.gitattributes`/`README.md`）。
-- 官方总量 ≈ 46.7 TB（约 12,124 parquet）。
-
-② 唤醒 302 的「更正 7701/27T」❌ 作废 —— 两处口径错误
-1. 漏子集：302 的 per-subdir 只列了 6 个（coyo+datacomp1b+imagenet+laioncn+mint+obelics = 7701），把 `sa1b`(≈5.09TB) 与 `zero250m`(≈4.76TB) 整个漏掉（≈9.85TB）。
-2. 混淆「已下」与「总量」：`du=27T` 是本地已下载字节，不是仓库总量。以「本地 `.metadata`/已下 parquet 计数」当分母 ⇒ 必然把「未开始」误判成「已完成」。
-
-③ 正确口径（请据此重算并落表）
-- 总量 ≈ 46.66 TB / ~12,124 files（分母用 HF 仓库总量，❌ 不用本地 `.metadata` 计数）。
-- 本地已下 ≈ 27 TB ≈ 57%；剩余 ≈ 20 TB。
-- ETA（@12–16.6MB/s）≈ 14–25 天（保守 8MB/s → ≈29 天）⇒ 不是「10–30 分钟」。
-
-④ 执行
-1. 用 HF API 逐子集核实 —— `HfApi().list_repo_tree(repo, recursive=True)` 或 `/tree/main?recursive=true`，统计 8 个子集各自的【文件数 / 字节】，落一张表：`子集 | 总量 | 已下 | 剩余 | 是否已开始`。
-2. 明确纠正 `MEMORY_DATA.md` 心跳 + `daily-memories-data/2026-10-10.md` 里的「85M 100% / 27T / ETA 10–30min」写法；`sa1b`/`zero250m` 若未开始须标「未开始」，不得计入已完成。
-3. 重报 85M 真实进度% + ETA（分母 = 仓库总量）。
-
-⑤ 纪律不变：只读巡检，不 kill / 不重启 / 不改并发（85M 由用户自管，data 线仅巡检；除僵死按既定纪律处理）。
-
-> 📌 教训（记进本轮流水）：`huggingface_hub` 的本地 `.metadata` / 已下文件计数 = 已下载进度，≠ 仓库总量；总量必须取自 HF 仓库 tree/API。
-
-### 🆕 运维指令 · 2026-10-10（巡检并发下载 `85M` + `en_v1_4` · 回报各自速度/ETA）· 用户直令 · 最高优先
-
-> 用户令（2026-10-10 傍晚）：「我在同时下载 85M 和 en_v1_4，请看下各自下载速度和 ETA。」
-
-① 背景
-- `en_v1_4` = `openbmb/Ultra-FineWeb` · `data/ultrafineweb_en_v1_4/`（56,461 文件 / 6.75TB）——本轮由 data 线 parallel 脚本 `run/data_pipeline/download_en_v1_4.py` 下载（PID 2535486，24 workers + hf_transfer，落盘 `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/`）。
-- `85M` = `mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`（此前 §0.7.A 曾停；用户当前另行在同时下载）。
-
-② 执行（纯巡检，不改动任何下载）
-1. 判活：`pgrep -af 'hf download|download_en_v1_4|LLaVA|Ultra-FineWeb'`（各留原文；确认两路进程是否都在）。
-2. 两路各自取证（每路都要）：
-   - 已落盘：`find <dir> -name '*.parquet' | wc -l` + `du -sh <dir>`（间隔 60–120s 取两次求增量，⚠️ 不用总比例估）；
-   - 在途：`*.incomplete` 字节增长（`ls -l --time-style=+%H:%M` 两次）或 `/proc/<pid>/io` 的 `write_bytes` 6s 增量；
-   - log 尾部：`tail -n 5` 对应日志（`en_v1_4` → `/tmp/en_v1_4_dl.log`；`85M` → 其自身 `nohup`/`hf` 日志）。
-3. 算速度 + ETA（分路，给 ± 区间）：
-   - `en_v1_4`：速度（files/min 与 MB/s 双口径）→ ETA = 剩余文件/字节 ÷ 速度。
-   - `85M`：同上 —— ⚠️ 85M 是图像+文本 parquet，单件体积与 en_v1_4 量级差异大，ETA 必须按字节算，不能按文件数比例。
-   - 注明争用：两条同时跑 = 共享出口带宽，故实测速度 = 争用后速度；若能推断「单跑」速度，一并给出对比。
-
-③ 纪律
-- 只读巡检：不 kill / 不重启 / 不改并发。唯一例外 = 某路僵死（`write_bytes` 长时间 0 且 PID 已死）→ 才按既定纪律 kill + 同命令续传，并标「已重启」+ 新 PID。
-- 外网命令显式带 proxy；每条可能慢的命令带 `timeout`；不对大目录做全树遍历（`find` 限深度 / 限定子目录）。
-- 判活不许用文件数比例估，用字节增量 / `/proc/io`。
-
-④ 回写：本指令块下贴「两路各自：PID / 已落盘 / 实测速度 / ETA」表；同步更新 `MEMORY_DATA.md` 心跳与 `daily-memories-data/2026-10-10.md`。
-
-⑤ 体积：若 TASK 超 32KB，按「体积维护规程」把已闭合旧块原文搬入 `ARCHIVE_OPERATOR_DATA.md`（只搬迁留指针）。
+> 📦 §运维指令·2026-10-10（巡检并发下载85M+en_v1_4,回报各自速度/ETA）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：两路并发巡检已执行,85M+en_v1_4各自速度/ETA已报,持续看护中。需要时再读。
 
 > 📦 §运维指令·2026-10-10（🔄重启en_v1_4下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：en_v1_4已重启(PID2535486,parallel 24+hf_transfer),GPIC✅全完成→放行条件满足。需要时再读。
 

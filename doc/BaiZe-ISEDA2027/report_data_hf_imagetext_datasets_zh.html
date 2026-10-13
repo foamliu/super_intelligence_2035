@@ -3,382 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HuggingFace 图文对数据集调研报告（image 带 bytes） · BaiZe Vision Encoder</title>
+<title>HuggingFace 图文对数据集调研报告 · 视觉编码器对比预训练 · 2026-10-13</title>
 <style>
-:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#bc8cff;--teal:#39d0d8}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.7;font-size:15px;padding:20px;max-width:1200px;margin:0 auto}
-h1{font-size:1.8em;color:var(--accent);margin-bottom:8px;border-bottom:2px solid var(--border);padding-bottom:10px}
-h2{font-size:1.35em;color:var(--purple);margin:28px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
-h3{font-size:1.1em;color:var(--teal);margin:20px 0 8px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;color:#1a1a2e;background:#f5f6fa;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;color:#16213e;margin:20px 0 10px;border-bottom:3px solid #0f3460;padding-bottom:8px}
+h2{font-size:1.4em;color:#0f3460;margin:25px 0 12px;border-left:5px solid #e94560;padding-left:12px}
+h3{font-size:1.15em;color:#16213e;margin:18px 0 8px}
 p{margin:8px 0}
-.muted{color:var(--muted);font-size:0.9em}
-.hero{background:linear-gradient(135deg,#1a1f2e,#0d1117);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px}
-.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.8em;font-weight:600;margin:2px 4px}
-.b-green{background:rgba(63,185,80,0.15);color:var(--green);border:1px solid var(--green)}
-.b-yellow{background:rgba(210,153,34,0.15);color:var(--yellow);border:1px solid var(--yellow)}
-.b-red{background:rgba(248,81,73,0.15);color:var(--red);border:1px solid var(--red)}
-.b-blue{background:rgba(88,166,255,0.15);color:var(--accent);border:1px solid var(--accent)}
-.b-purple{background:rgba(188,140,255,0.15);color:var(--purple);border:1px solid var(--purple)}
-.tldr{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:8px;padding:16px;margin:16px 0}
-.recommend{display:flex;align-items:flex-start;gap:12px;margin:10px 0;padding:12px;background:rgba(88,166,255,0.05);border-radius:8px;border:1px solid var(--border)}
-.recommend .rank{font-size:1.5em;font-weight:700;color:var(--accent);min-width:30px;text-align:center}
-.recommend .body{flex:1}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.88em}
-th{background:var(--card);border:1px solid var(--border);padding:8px 10px;text-align:left;color:var(--accent);font-weight:600}
-td{border:1px solid var(--border);padding:8px 10px;vertical-align:top}
-tr:nth-child(even){background:rgba(22,27,34,0.5)}
-code{background:rgba(110,118,129,0.2);padding:1px 6px;border-radius:4px;font-family:"SFMono-Regular",Consolas,monospace;font-size:0.88em;color:var(--teal)}
-pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;margin:10px 0;font-size:0.85em;line-height:1.5}
-pre code{background:none;padding:0;color:var(--text)}
-.note{background:rgba(210,153,34,0.08);border:1px solid var(--yellow);border-radius:8px;padding:12px 16px;margin:12px 0}
-.danger{background:rgba(248,81,73,0.08);border:1px solid var(--red);border-radius:8px;padding:12px 16px;margin:12px 0}
-.info{background:rgba(88,166,255,0.08);border:1px solid var(--accent);border-radius:8px;padding:12px 16px;margin:12px 0}
-.success{background:rgba(63,185,80,0.08);border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin:12px 0}
-.cat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin:16px 0}
-.cat-card.yes{border-left:4px solid var(--green)}
-.cat-card.warn{border-left:4px solid var(--yellow)}
-.cat-card.no{border-left:4px solid var(--red)}
-.evidence{font-size:0.82em;color:var(--muted);font-style:italic}
-.stars{color:var(--yellow);letter-spacing:2px}
-footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);color:var(--muted);font-size:0.85em;text-align:center}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.85em}
+th{background:#0f3460;color:#fff;padding:8px 10px;text-align:left;font-weight:600;border:1px solid #1a1a3e}
+td{padding:6px 10px;border:1px solid #ddd;vertical-align:top}
+tr:nth-child(even){background:#f8f9fd}
+code{background:#e8eaf6;padding:2px 6px;border-radius:3px;font-family:"Consolas",monospace;font-size:0.9em;color:#c0392b}
+pre{background:#1a1a2e;color:#e0e0e0;padding:15px;border-radius:8px;overflow-x:auto;margin:10px 0;font-size:0.82em;line-height:1.5}
+.hero{background:linear-gradient(135deg,#0f3460,#16213e);color:#fff;padding:25px;border-radius:12px;margin:15px 0}
+.hero h1{color:#fff;border:none}
+.tldr{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:18px;margin:15px 0}
+.tldr h2{border:none;color:#856404;margin-top:0}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.75em;font-weight:600}
+.b-green{background:#d4edda;color:#155724}.b-yellow{background:#fff3cd;color:#856404}.b-gray{background:#e2e3e5;color:#383d41}
+<div class="tldr">
+<h2>TL;DR — TOP 5 推荐</h2>
+<ol>
+<li><span class="star">⭐⭐⭐</span> <strong>Fsoft-AIC/RobotDesign1M</strong>（image_caption 配置）— <span class="badge b-green">Image(bytes)</span> 5.6M 对 · 644 GB · MIT 许可 · 最大规模且许可清晰</li>
+<li><span class="star">⭐⭐⭐</span> <strong>takara-ai/image_captions</strong> — <span class="badge b-green">Image(bytes)</span> 1.07M 对 · 311 GB · 英文 caption</li>
+<li><span class="star">⭐⭐</span> <strong>jxie/coco_captions</strong> — <span class="badge b-green">Image(bytes)</span> 617K 对 · 20.9 GB · COCO 原始 caption · 经典基准</li>
+<li><span class="star">⭐⭐</span> <strong>ituperceptron/image-captioning-turkish</strong> — <span class="badge b-green">Image(bytes)</span> 1.05M 对 · 64 GB · Apache-2.0 · BLIP3o 子集翻译</li>
+<li><span class="star">⭐</span> <strong>fwd4xl/enhanced_image_captions</strong> — <span class="badge b-green">Image(bytes)</span> 195K 对 · 60 GB · MIT · 原始+增强 caption 双列</li>
+</ol>
+<p class="footnote">5 个推荐均为 Image feature（parquet 内嵌二进制），下载即可直接消费。许可仅 RobotDesign1M/Turkish/enhanced 标注，COCO 系遵循 CC-BY 4.0。</p>
+</div>
+
+.star{color:#e94560}
+.note{background:#e8f5e9;border-left:4px solid #4caf50;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.warn{background:#fff3cd;border-left:4px solid #ffc107;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.danger{background:#fdecea;border-left:4px solid #f5222d;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+<h2>① 口径与 bytes/url 判定法</h2>
+<h3>判定方法</h3>
+<p>使用 HuggingFace <strong>datasets-server API</strong> 的 <code>/info</code> 端点获取 features schema，检查 image 列的 <code>_type</code>：</p>
+<ul>
+<li><span class="badge b-green">Image(bytes)</span> — <code>features['image'] == {'_type': 'Image'}</code> → parquet 内嵌二进制，下载即用</li>
+<li><span class="badge b-yellow">URL</span> — <code>features['image_url'] == {'dtype': 'string'}</code> → 仅 URL，需爬取</li>
+<li>无图像列 → 仅元数据/文本，图片不可得</li>
+</ul>
+<div class="info"><strong>API 调用</strong>：<pre>curl -s -H "Authorization: Bearer $HF_TOKEN" \
+  "https://datasets-server.huggingface.co/info?dataset=jxie/coco_captions"
+# 检查 dataset_info.default.features.image._type == "Image"</pre></div>
+<div class="note"><strong>关键发现</strong>：50+ 个标记 modality:image + format:parquet 的数据集中，仅约 1/3 真正使用 Image feature（bytes），其余多数用 string 存 URL 或不含图像列。format:parquet <strong>不保证</strong>图片以 bytes 嵌入。</div>
+<h3>筛选口径（6 维度）</h3>
+<table>
+<tr><th>维度</th><th>口径</th><th>证据来源</th></tr>
+<tr><td>① image 载体</td><td>_type: Image = bytes ✅ / dtype: string = URL ⚠️</td><td>datasets-server /info features</td></tr>
+<tr><td>② 规模</td><td>对数 + download_size</td><td>datasets-server /info splits + download_size</td></tr>
+<tr><td>③ 许可</td><td>license 标签</td><td>HF Hub API cardData.license</td></tr>
+<tr><td>④ caption</td><td>短/长 caption · 语言</td><td>features 文本列名 + split 名称</td></tr>
+<tr><td>⑤ 是否已用</td><td>GPIC/CC12M/Amshaker/LAION 标注</td><td>与现有训练集交叉比对</td></tr>
+<tr><td>⑥ 可达性</td><td>HF 直连 · gated · 认证</td><td>HF Hub API gated 字段 + 实测</td></tr>
+</table>
+
+.info{background:#e3f2fd;border-left:4px solid #2196f3;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+ul,ol{margin:8px 0 8px 25px}li{margin:4px 0}
+.tag{font-size:0.8em;color:#666}.footnote{font-size:0.8em;color:#888}
 </style>
 </head>
 <body>
-
 <div class="hero">
-<h1>🔍 HuggingFace 图文对数据集调研报告</h1>
-<p class="muted">为 BaiZe Stage (iii) 视觉编码器对比预训练寻找 image 带 bytes 的图文对数据集 · 2026-10-13</p>
-<p class="muted">调研日期：2026-10-13 · 数据源：HuggingFace Hub + datasets-server API · 筛选硬条件：image 列 = Image feature（bytes）</p>
-</div>
+<h2>② 主表 — 全部候选数据集</h2>
+<h3>✅ 分类 A：Image(bytes) 可直接训练 — caption 对</h3>
+<table>
+<tr><th>#</th><th>HF ID</th><th>对数</th><th>下载大小</th><th>image 载体证据</th><th>caption</th><th>语言</th><th>许可</th><th>gated</th><th>已用</th><th>推荐</th></tr>
+<tr><td>1</td><td><strong>Fsoft-AIC/RobotDesign1M</strong><br><span class="tag">image_caption</span></td><td>5.6M</td><td>644 GB</td><td>image: {_type: Image} ✅</td><td>image_caption 配置</td><td>en</td><td><span class="badge b-green">MIT</span></td><td>否</td><td>否</td><td><span class="star">⭐⭐⭐</span></td></tr>
+<tr><td>2</td><td><strong>takara-ai/image_captions</strong></td><td>1.07M</td><td>311 GB</td><td>image: {_type: Image} ✅</td><td>caption: string</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td><span class="star">⭐⭐⭐</span></td></tr>
+<tr><td>3</td><td><strong>ituperceptron/image-captioning-turkish</strong></td><td>1.05M</td><td>64 GB</td><td>image: {_type: Image} ✅</td><td>text: string</td><td>tr</td><td><span class="badge b-green">Apache-2.0</span></td><td>否</td><td>否</td><td><span class="star">⭐⭐</span></td></tr>
+<tr><td>4</td><td><strong>jxie/coco_captions</strong></td><td>617K</td><td>20.9 GB</td><td>image: {_type: Image} ✅<br><span class="footnote">first-rows 确认</span></td><td>caption: string</td><td>en</td><td><span class="badge b-gray">CC-BY 4.0</span></td><td>否</td><td>否</td><td><span class="star">⭐⭐</span></td></tr>
+<tr><td>5</td><td><strong>tsystems/sharegpt4v_vqa_200k_batch2</strong></td><td>200K</td><td>198 GB</td><td>image: {_type: Image} ✅</td><td>VQA 格式</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>6</td><td><strong>fwd4xl/enhanced_image_captions</strong></td><td>195K</td><td>60 GB</td><td>image: {_type: Image} ✅</td><td>caption + enhanced_caption</td><td>en</td><td><span class="badge b-green">MIT</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>7</td><td><strong>laicsiifes/coco-captions-pt-br</strong></td><td>123K</td><td>6.4 GB</td><td>image: {_type: Image} ✅</td><td>caption: [string]</td><td>pt-br</td><td><span class="badge b-green">MIT</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>8</td><td><strong>wangherr/coco2017_train_image_caption</strong></td><td>118K</td><td>19.3 GB</td><td>image: {_type: Image} ✅</td><td>text: string</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>9</td><td><strong>Multimodal-Fatima/COCO_captions_train</strong></td><td>113K</td><td>18.5 GB</td><td>image: {_type: Image} ✅</td><td>blip_caption (test 配置)</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>10</td><td><strong>lmms-lab-encoder/COCO-Caption</strong></td><td>81K</td><td>13.3 GB</td><td>image: {_type: Image} ✅</td><td>仅 val+test</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>11</td><td><strong>PursuitOfDataScience/llama4-maverick-coco-captions</strong></td><td>45K</td><td>~18 GB</td><td>image: {_type: Image} ✅</td><td>generated_caption</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>12</td><td><strong>lmms-lab-encoder/COCO-Caption2017</strong></td><td>46K</td><td>7.4 GB</td><td>image: {_type: Image} ✅</td><td>仅 val+test</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>13</td><td><strong>nlphuji/flickr30k</strong></td><td>31K</td><td>4.4 GB</td><td>image: {_type: Image} ✅</td><td>caption: [string]</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>14</td><td><strong>lmms-lab-encoder/flickr30k</strong></td><td>32K</td><td>4.4 GB</td><td>image: {_type: Image} ✅</td><td>caption: [string]</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>15</td><td><strong>hezarai/flickr30k-fa</strong></td><td>32K</td><td>3.8 GB</td><td>image_path: {_type: Image} ✅</td><td>波斯语 caption</td><td>fa</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+<tr><td>16</td><td><strong>lmms-lab-encoder/RefCOCO</strong></td><td>18K</td><td>2.3 GB</td><td>image: {_type: Image} ✅</td><td>referring expression</td><td>en</td><td><span class="badge b-gray">未标注</span></td><td>否</td><td>否</td><td>⭐</td></tr>
+</table>
 
-<!-- ========== §1 HERO + TL;DR ========== -->
-<div class="tldr">
-<h3>📋 TL;DR — TOP 5 推荐</h3>
-<p>现有训练用图文对 ≈ 59M（GPIC + CC12M + Amshaker）。本次在 HuggingFace 上系统检索了 <strong>13 个候选数据集</strong>，以 image 列是否为 Image feature（内嵌字节）为硬筛条件，得出以下推荐：</p>
+<h1>HuggingFace 图文对数据集调研报告</h1>
+<p><strong>目标</strong>：为 Stage (iii) 视觉编码器对比预训练寻找 image 列存储真实像素 bytes（HF Image feature），而非仅 URL 的图文对数据集</p>
+<h3>✅ 分类 A-VQA：Image(bytes) 但为 VQA/指令格式</h3>
+<table>
+<tr><th>#</th><th>HF ID</th><th>对数</th><th>下载大小</th><th>image 载体</th><th>说明</th><th>推荐</th></tr>
+<tr><td>V1</td><td><strong>InnovatorLab/Innovator-VL-Instruct-46M</strong></td><td>46M</td><td>11.3 TB</td><td>images: [{_type: Image}] ✅</td><td>多图 VQA 指令格式</td><td>⭐⭐（量大需转换）</td></tr>
+<tr><td>V2</td><td><strong>HuggingFaceM4/FineVisionMax</strong></td><td>24.2M</td><td>4.66 TB</td><td>images: [{_type: Image}] ✅</td><td>多图对话格式</td><td>⭐⭐（量大需转换）</td></tr>
+<tr><td>V3</td><td><strong>HuggingFaceM4/the_cauldron</strong></td><td>~5M+</td><td>~150+ GB</td><td>images: [{_type: Image}] ✅</td><td>50+ VQA 子集合集</td><td>⭐（VQA 非首选）</td></tr>
+<tr><td>V4</td><td><strong>HuggingFaceM4/FineVision</strong></td><td>~10M+</td><td>~200+ GB</td><td>images: [{_type: Image}] ✅</td><td>CoSyn/文档/图表类</td><td>⭐（VQA 非首选）</td></tr>
+</table>
+<h3>⚠️ 分类 B：URL-only — 需爬取图片</h3>
+<table>
+<tr><th>#</th><th>HF ID</th><th>对数</th><th>大小</th><th>image 载体</th><th>caption</th><th>推荐</th></tr>
+<tr><td>U1</td><td><strong>tomg-group-umd/pixelprose</strong></td><td>15.6M</td><td>17.3 GB</td><td>image_id: string ⚠️URL</td><td>original + vlm_caption</td><td>⭐⭐（量大需爬图）</td></tr>
+<tr><td>U2</td><td><strong>UCSC-VLAA/Recap-DataComp-1B</strong></td><td>940M</td><td>527 GB</td><td>无 image 列 ⚠️</td><td>re_caption + org_caption</td><td>⭐（无图仅 caption）</td></tr>
+<tr><td>U3</td><td><strong>google-research-datasets/conceptual_captions</strong></td><td>3.3M+2M</td><td>908 MB</td><td>image_url: string ⚠️URL</td><td>caption</td><td>⭐（CC3M 仅 URL）</td></tr>
+<tr><td>U4</td><td><strong>wusize/redcaps5m_recap</strong></td><td>5.8M</td><td>3.1 GB</td><td>image_url: string ⚠️URL</td><td>raw + re_caption</td><td>⭐（RedCaps 仅 URL）</td></tr>
+<tr><td>U5</td><td><strong>dalle-mini/wit</strong></td><td>6.2M</td><td>9.7 GB</td><td>无 Image 列 ⚠️</td><td>caption + context</td><td>⭐（WIT 无图）</td></tr>
+<tr><td>U6</td><td><strong>visheratin/laion-coco-nllb</strong></td><td>894K</td><td>10.4 GB</td><td>无 image 列 ⚠️</td><td>eng_caption</td><td>⭐（无图）</td></tr>
+<tr><td>U7</td><td><strong>eaglewatch/sbucaptions</strong></td><td>1M</td><td>134 MB</td><td>无 image 列 ⚠️</td><td>caption</td><td>⭐（无图）</td></tr>
+</table>
+<h3>📦 分类 W：WebDataset 格式 — 图像 bytes 存于 tar</h3>
+<table>
+<tr><th>#</th><th>HF ID</th><th>对数</th><th>大小</th><th>说明</th><th>推荐</th></tr>
+<tr><td>W1</td><td><strong>BLIP3o/BLIP3o-Pretrain-Long-Caption</strong></td><td>102K</td><td>5 GB</td><td>webdataset，图像 bytes 在 tar 内</td><td>⭐⭐</td></tr>
+<tr><td>W2</td><td><strong>BLIP3o/BLIP3o-Pretrain-Short-Caption</strong></td><td>29K</td><td>5 GB</td><td>webdataset，短 caption</td><td>⭐⭐</td></tr>
+<tr><td>W3</td><td><strong>pixelprose/pixelprose-shards</strong></td><td>~15M</td><td>N/A</td><td>webdataset，PixelProse 原版</td><td>⭐</td></tr>
+<tr><td>W4</td><td><strong>laion/conceptual-captions-12m-webdataset</strong></td><td>~12M</td><td>N/A</td><td>CC12M webdataset（已用 Amshaker）</td><td><span class="badge b-yellow">已用</span></td></tr>
+</table>
 
-<div class="recommend">
-<div class="rank">1</div>
-<div class="body">
-<strong>MVRL/WebMix-38M</strong> — <span class="badge b-green">✅ Image bytes</span> <span class="badge b-blue">38.8M 对</span> <span class="badge b-purple">2 TB</span>
-<br>HF Image 列格式存储编码字节（parquet + ZSTD 压缩）。来源 = CC12M + DataComp12M + YFCC15M + MSCOCO。<strong>与现有 CC12M 有重叠</strong>，但补充了 DataComp12M + YFCC15M 两个新源。推荐度：<span class="stars">★★★★☆</span>
+<p class="footnote">调研日期：2026-10-13 · BaiZe data 线 · HF datasets-server API /info + HF Hub API · 代理 172.19.92.25:13128</p>
+<p class="footnote">现有训练集：GPIC (~6M) + CC12M (~11M, Amshaker) + Amshaker (~6M) 约 59M 对</p>
 </div>
-</div>
-
-<div class="recommend">
-<div class="rank">2</div>
-<div class="body">
-<strong>VedaLabs/wit_base</strong>（= wikimedia/wit_base）— <span class="badge b-green">✅ Image bytes</span> <span class="badge b-blue">6.48M 对</span> <span class="badge b-green">CC BY-SA 4.0</span>
-<br>API 确认 features['image'] == {'_type':'Image'}。300px 维基百科图像，<strong>108 种语言</strong>（含中文），多字段 caption。<strong>与现有数据零重叠</strong>。推荐度：<span class="stars">★★★★★</span>
-</div>
-</div>
-
-<div class="recommend">
-<div class="rank">3</div>
-<div class="body">
-<strong>BLIP3o/BLIP3o-Pretrain-Long-Caption</strong> — <span class="badge b-green">✅ Image bytes</span> <span class="badge b-blue">~27.2M 对</span> <span class="badge b-green">Apache-2.0</span>
-<br>WebDataset tar（内嵌 jpg），SA-1B 图像 + VLM 长 caption。<strong>已在本地盘</strong>（2891 tar / 1.3T）。推荐度：<span class="stars">★★★☆☆</span>
-</div>
-</div>
-
-<div class="recommend">
-<div class="rank">4</div>
-<div class="body">
-<strong>hanlincs/InternVL-SA1B-Caption-WebDataset</strong> — <span class="badge b-green">✅ Image bytes</span> <span class="badge b-blue">~22.4M 对</span> <span class="badge b-green">Apache-2.0</span>
-<br>WebDataset tar（内嵌 jpg），SA-1B + InternVL caption。与 BLIP3o 共享源图但 caption 不同。<strong>未在本地</strong>。推荐度：<span class="stars">★★★☆☆</span>
-</div>
-</div>
-
-<div class="recommend">
-<div class="rank">5</div>
-<div class="body">
-<strong>HuggingFaceM4/the_cauldron</strong> — <span class="badge b-green">✅ Image bytes</span> <span class="badge b-blue">~1.9M 对</span> <span class="badge b-purple">50 子集</span>
-<br>images 列 = Image list（字节嵌入 parquet）。VQA 指令格式，更适合 SFT 非预训练。推荐度：<span class="stars">★★☆☆☆</span>
-</div>
-</div>
-</div>
-
+<h2>③ 三分类汇总</h2>
 <div class="note">
-<strong>关键结论</strong>：在 HF 上，<strong>大规模（&gt;1M 对）且 image 列直接存字节</strong>的图文对数据集<strong>不多</strong>。大量知名数据集（COYO-700M、DataComp-1B、PixelProse、RedCaps、LAION 系）在 HF 上<strong>仅存 URL</strong>，需额外用 img2dataset 抓图。<strong>WebMix-38M 和 WIT 是本次最值得关注的两个</strong>。
+<h3>✅ 分类 A — Image(bytes) 可直接训练（16 caption + 4 VQA）</h3>
+<p>image 列使用 HF Image feature，parquet 内嵌二进制。下载后 load_dataset() 即可获取 PIL Image。</p>
+<p><strong>caption 对</strong>：RobotDesign1M (5.6M) · takara-ai (1.07M) · turkish (1.05M) · coco_captions (617K) · enhanced (195K) · COCO/Flickr (~400K) = 合计 ~9M 对</p>
+<p><strong>VQA 格式</strong>：InnovatorVL-46M · FineVisionMax (24.2M) · the_cauldron (~5M) · FineVision (~10M) = 合计 ~85M 对（需改造）</p>
 </div>
-
-<!-- ========== §2 口径与判定法 ========== -->
-<h2>§2 筛选口径与 bytes/url 判定法</h2>
-
-<h3>2.1 判定方法</h3>
-<table>
-<tr><th>判定层</th><th>方法</th><th>✅ bytes 证据</th><th>❌ URL 证据</th></tr>
-<tr><td><strong>最硬</strong></td><td>HF datasets-server /info API</td><td>features['image'] == {'_type':'Image'}</td><td>features['url'] == {'dtype':'string'}，无 image 列</td></tr>
-<tr><td><strong>次硬</strong></td><td>HF dataset card YAML header</td><td>dtype: image（在 features 中）</td><td>无 image 列，仅 url 列</td></tr>
-<tr><td><strong>辅助</strong></td><td>HF dataset page Dataset Viewer</td><td>显示 PIL Image 缩略图 / imagewidth(px) 列</td><td>显示 URL 字符串列</td></tr>
-<tr><td><strong>辅助</strong></td><td>HF dataset page 文字描述</td><td>"Images stored in Image column format as encoded bytes"</td><td>"parquet containing image URLs" / "Download Images (second step)"</td></tr>
-</table>
-
-<h3>2.2 逐条筛选口径</h3>
-<table>
-<tr><th>#</th><th>维度</th><th>口径</th></tr>
-<tr><td>1</td><td><strong>image 载体</strong></td><td>✅ Image feature(bytes) / {bytes,path} vs ❌ string(url) / {url}</td></tr>
-<tr><td>2</td><td><strong>规模</strong></td><td>图片对数 + 总字节</td></tr>
-<tr><td>3</td><td><strong>许可</strong></td><td>cc-by(-sa) / mit / apache / 未标注</td></tr>
-<tr><td>4</td><td><strong>caption</strong></td><td>短/长 caption、alt-text；语言 en / zh / multi</td></tr>
-<tr><td>5</td><td><strong>是否已用</strong></td><td>GPIC / CC12M / Amshaker / LAION 系须标注</td></tr>
-<tr><td>6</td><td><strong>可达性</strong></td><td>HF 直连/镜像、是否 gated</td></tr>
-</table>
-
+<div class="warn">
+<h3>⚠️ 分类 B — URL-only，需爬取（7 个）</h3>
+<p>仅存 URL 或不含图片列。需自行爬取，存在链接失效、版权风险。不建议优先使用。</p>
+</div>
 <div class="info">
-<strong>技术说明</strong>：HF 的 Image feature 在 parquet 中以 struct 类型存储，含 bytes（二进制，JPEG/PNG 编码）和 path（文件名）两个子字段。加载时 datasets 库自动解码为 PIL Image。URL-only 数据集仅存 string 类型的 URL 列，需 img2dataset 或 ThreadPoolExecutor+urllib 抓图。
+<h3>📦 分类 W — WebDataset（bytes 在 tar，非 parquet Image）</h3>
+<p>图像以文件存于 tar（bytes 非 URL），需 webdataset 库读取。与 GPIC 流程兼容。BLIP3o ≈131K/10GB 质量较高。</p>
+<h2>④ 下载命令模板 + 落盘路径 + 预估磁盘</h2>
+<pre>export https_proxy=http://172.19.92.25:13128 http_proxy=http://172.19.92.25:13128
+HF_TOKEN=&lt;your HF token&gt;
+
+# ① Fsoft-AIC/RobotDesign1M (5.6M, 644 GB)
+hf download --repo-type dataset Fsoft-AIC/RobotDesign1M \
+  --local-dir /nas_train/app.e0031982/datasets/Fsoft-AIC/RobotDesign1M --token $HF_TOKEN
+
+# ② takara-ai/image_captions (1.07M, 311 GB)
+hf download --repo-type dataset takara-ai/image_captions \
+  --local-dir /nas_train/app.e0031982/datasets/takara-ai/image_captions --token $HF_TOKEN
+
+# ③ jxie/coco_captions (617K, 21 GB)
+hf download --repo-type dataset jxie/coco_captions \
+  --local-dir /nas_train/app.e0031982/datasets/jxie/coco_captions --token $HF_TOKEN
+
+# ④ ituperceptron/image-captioning-turkish (1.05M, 64 GB)
+hf download --repo-type dataset ituperceptron/image-captioning-turkish \
+  --local-dir /nas_train/app.e0031982/datasets/ituperceptron/turkish --token $HF_TOKEN
+
+# ⑤ fwd4xl/enhanced_image_captions (195K, 60 GB)
+hf download --repo-type dataset fwd4xl/enhanced_image_captions \
+  --local-dir /nas_train/app.e0031982/datasets/fwd4xl/enhanced --token $HF_TOKEN
+
+# ⑥ BLIP3o webdataset (131K, 10 GB)
+hf download --repo-type dataset BLIP3o/BLIP3o-Pretrain-Long-Caption \
+  --local-dir /nas_train/app.e0031982/datasets/BLIP3o/Long-Caption --token $HF_TOKEN
+hf download --repo-type dataset BLIP3o/BLIP3o-Pretrain-Short-Caption \
+  --local-dir /nas_train/app.e0031982/datasets/BLIP3o/Short-Caption --token $HF_TOKEN</pre>
+<table>
+<tr><th>数据集</th><th>建议路径</th><th>磁盘</th><th>优先级</th></tr>
+<tr><td>RobotDesign1M</td><td>/nas_train/.../Fsoft-AIC/RobotDesign1M</td><td>644 GB</td><td>⭐⭐⭐</td></tr>
+<tr><td>takara-ai</td><td>/nas_train/.../takara-ai/image_captions</td><td>311 GB</td><td>⭐⭐⭐</td></tr>
+<tr><td>coco_captions</td><td>/nas_train/.../jxie/coco_captions</td><td>21 GB</td><td>⭐⭐</td></tr>
+<tr><td>turkish</td><td>/nas_train/.../ituperceptron/turkish</td><td>64 GB</td><td>⭐⭐</td></tr>
+<tr><td>enhanced</td><td>/nas_train/.../fwd4xl/enhanced</td><td>60 GB</td><td>⭐</td></tr>
+<tr><td>BLIP3o</td><td>/nas_train/.../BLIP3o/</td><td>10 GB</td><td>⭐⭐</td></tr>
+<tr><td colspan="2"><strong>合计</strong></td><td><strong>~1.08 TB</strong></td><td></td></tr>
+</table>
+<div class="warn"><strong>磁盘</strong>：/nas_train ~85%（剩 ~32T），85M 完成后 ~93.6%。TOP 5+BLIP3o ~1.1 TB 可容纳，建议 85M 完成后再启动。⚠️ <strong>本报告仅调研，不下数据</strong>。</div>
+
 </div>
 
-<!-- ========== §3 主表 ========== -->
-<h2>§3 主表 — 全部候选数据集一览</h2>
-<p class="muted">访问日期：2026-10-13 · 所有 HF URL = https://huggingface.co/datasets/&lt;id&gt;</p>
+<h2>⑤ 与 GPIC/CC12M/Amshaker 互补性</h2>
 <table>
-<tr>
-<th>#</th><th>HF ID</th><th>对数</th><th>总大小</th><th>image 载体</th><th>载体证据</th>
-<th>caption</th><th>语言</th><th>许可</th><th>gated</th><th>已用?</th><th>推荐度</th>
-</tr>
-<tr>
-<td>1</td><td><strong>MVRL/WebMix-38M</strong></td><td>38.8M+25K</td><td>~2 TB</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">HF 页面原文："Images are stored in the Hugging Face Image column format as encoded bytes"；parquet ZSTD；列名 image(Image)+caption(string)</td>
-<td>短 alt-text</td><td>EN</td><td>未标注</td><td>否</td><td>⚠️ CC12M 重叠</td><td><span class="stars">★★★★☆</span></td>
-</tr>
-<tr>
-<td>2</td><td><strong>VedaLabs/wit_base</strong><br><span class="muted">(=wikimedia/wit_base)</span></td><td>6.48M</td><td>~200-400GB est.</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">datasets-server /info API 返回 "image":{"_type":"Image"}（2026-10-13 实测✅）；实例含 PIL.JpegImagePlugin+bytes+embedding</td>
-<td>多字段(alt_text/reference/attribution/title/context)</td><td>多语言(108种,含中文)</td><td>CC BY-SA 4.0</td><td>否</td><td>否(零重叠)</td><td><span class="stars">★★★★★</span></td>
-</tr>
-<tr>
-<td>3</td><td><strong>BLIP3o/BLIP3o-Pretrain-Long-Caption</strong></td><td>~27.2M</td><td>~1.3 TB</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">WebDataset tar(jpg 内嵌)；HF Viewer 显示 jpg 列(Image,512px)+txt 列(caption)；已在本地盘</td>
-<td>长 caption(125-1020字符,VLM生成)</td><td>EN</td><td>Apache-2.0</td><td>否</td><td>✅ 已在本地(2891 tar/1.3T)</td><td><span class="stars">★★★☆☆</span></td>
-</tr>
-<tr>
-<td>4</td><td><strong>hanlincs/InternVL-SA1B-Caption-WebDataset</strong></td><td>~22.4M</td><td>~1-1.5TB est.</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">WebDataset tar(jpg 内嵌)；HF Viewer 显示 jpg 列(Image,512-3670px)+__key__+__url__</td>
-<td>caption 在 tar 内 txt(InternVL生成)</td><td>EN</td><td>Apache-2.0</td><td>否</td><td>⚠️ SA-1B 源图与 BLIP3o 重叠</td><td><span class="stars">★★★☆☆</span></td>
-</tr>
-<tr>
-<td>5</td><td><strong>HuggingFaceM4/the_cauldron</strong></td><td>~1.9M(50子集)</td><td>未标注</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">images 列=Image list(字节嵌入 parquet)；HF Viewer 显示 PIL Image 缩略图</td>
-<td>VQA 指令格式(user/assistant)</td><td>EN</td><td>各子集不同</td><td>否</td><td>否</td><td><span class="stars">★★☆☆☆</span></td>
-</tr>
-<tr>
-<td>6</td><td><strong>OpenDatasets/dalle-3-dataset</strong></td><td>17,845</td><td>~31 GB</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">YAML header: features: - name: image dtype: image；parquet 格式</td>
-<td>短 caption(DALL-E 3 prompt)</td><td>EN</td><td>CC0-1.0</td><td>否</td><td>否</td><td><span class="stars">★☆☆☆☆</span>(太小)</td>
-</tr>
-<tr>
-<td>7</td><td><strong>lianghsun/coco-caption-zh_tw-val</strong></td><td>40,504</td><td>~6.18 GB</td>
-<td class="success">✅ Image bytes</td>
-<td class="evidence">HF 页面原文："影像以 bytes 形式內嵌於 parquet"；image 列=Image(PIL.Image.Image)</td>
-<td>5 句繁体中文 caption/图</td><td>zh-TW</td><td>CC BY 4.0</td><td>否</td><td>否</td><td><span class="stars">★☆☆☆☆</span>(仅 val,太小)</td>
-</tr>
-<tr>
-<td>8</td><td><strong>kakaobrain/coyo-700m</strong></td><td>747M</td><td>仅 URL 元数据</td>
-<td class="no">❌ URL-only</td>
-<td class="evidence">HF Viewer 列=id,url,text,...；无 image 列,仅 url(string)</td>
-<td>短 alt-text</td><td>EN</td><td>CC BY 4.0</td><td>否</td><td>否</td><td>⚠️ 需抓图</td>
-</tr>
-<tr>
-<td>9</td><td><strong>mlfoundations/datacomp_1b</strong></td><td>~1.0B</td><td>仅 URL 元数据</td>
-<td class="no">❌ URL-only</td>
-<td class="evidence">HF Viewer 列=uid,url,text,...；无 image 列</td>
-<td>短 alt-text</td><td>EN</td><td>CC BY 4.0</td><td>否</td><td>⚠️ DataComp12M 已被 WebMix 含</td><td>⚠️ 需抓图</td>
-</tr>
-<tr>
-<td>10</td><td><strong>tsystems/pixelprose</strong></td><td>16.9M</td><td>仅 caption+URL</td>
-<td class="no">❌ URL-only</td>
-<td class="evidence">ModelScope 原文："parquet containing image URLs... Download Images (second step)"；列=uid,url,vlm_caption</td>
-<td>长 caption(Gemini 1.0 Pro Vision)</td><td>EN</td><td>未标注</td><td>需确认</td><td>否</td><td>⚠️ 需抓图</td>
-</tr>
-<tr>
-<td>11</td><td><strong>red_caps</strong>(redcaps)</td><td>~12M</td><td>仅 URL 元数据</td>
-<td class="no">❌ URL-only</td>
-<td class="evidence">HF 文档："image_url column, needs fetching from URLs"；需 ThreadPoolExecutor+urllib</td>
-<td>Reddit caption</td><td>EN</td><td>未标注</td><td>否</td><td>否</td><td>⚠️ 需抓图</td>
-</tr>
-<tr>
-<td>12</td><td><strong>DeepGlint-AI/DanQing100M</strong></td><td>100M</td><td>12TB(ModelScope,含图)</td>
-<td class="no">❌ HF 上 URL-only</td>
-<td class="evidence">HF 原文："we only release URLs on Hugging Face. To access the complete dataset, please download it from ModelScope"</td>
-<td>长+短 caption(含 GLM4.1 合成)</td><td>中文</td><td>CC BY 4.0</td><td>否</td><td>否</td><td>⚠️ HF 仅 URL,ModelScope 有全量</td>
-</tr>
-<tr>
-<td>13</td><td><strong>UCSC-VLAA/Recap-DataComp-1B</strong></td><td>~1.3B</td><td>仅 caption+URL</td>
-<td class="no">❌ URL-only</td>
-<td class="evidence">基于 DataComp-1B(URL-only),仅替换 caption 为 LLaMA-3 recaption,image 仍为 URL</td>
-<td>长 caption(LLaMA-3 recaption)</td><td>EN</td><td>未标注</td><td>否</td><td>否</td><td>⚠️ 需抓图</td>
-</tr>
+<tr><th>现有</th><th>规模</th><th>来源</th><th>格式</th></tr>
+<tr><td>GPIC</td><td>~6M</td><td>Stanford Vision Lab</td><td>webdataset tar (8160 tar 已下)</td></tr>
+<tr><td>CC12M (Amshaker)</td><td>~11M</td><td>Google CC12M</td><td>Amshaker 变体</td></tr>
+<tr><td>Amshaker</td><td>~6M</td><td>Amshaker 图文对</td><td>已处理</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>~23M</strong></td><td></td><td></td></tr>
 </table>
-
-<!-- ========== §4 三分类 ========== -->
-<h2>§4 三分类</h2>
-
-<div class="cat-card yes">
-<h3>✅ 一类：image 带 bytes，可直接训练（7 个）</h3>
-<table>
-<tr><th>HF ID</th><th>对数</th><th>格式</th><th>说明</th></tr>
-<tr><td>MVRL/WebMix-38M</td><td>38.8M</td><td>parquet(Image)</td><td><strong>TOP-1</strong>。量大、字节嵌入、直接 load_dataset 即用</td></tr>
-<tr><td>VedaLabs/wit_base</td><td>6.48M</td><td>parquet(Image)</td><td><strong>TOP-2</strong>。维基百科多语言、零重叠、CC BY-SA 4.0</td></tr>
-<tr><td>BLIP3o/BLIP3o-Pretrain-Long-Caption</td><td>~27.2M</td><td>webdataset tar</td><td>已在本地(1.3T),SA-1B 长 caption</td></tr>
-<tr><td>hanlincs/InternVL-SA1B-Caption-WebDataset</td><td>~22.4M</td><td>webdataset tar</td><td>SA-1B+InternVL caption,未在本地</td></tr>
-<tr><td>HuggingFaceM4/the_cauldron</td><td>~1.9M</td><td>parquet(Image list)</td><td>VQA 指令格式,适合 SFT 非预训练</td></tr>
-<tr><td>OpenDatasets/dalle-3-dataset</td><td>17,845</td><td>parquet(Image)</td><td>太小,DALL-E 3 合成图</td></tr>
-<tr><td>lianghsun/coco-caption-zh_tw-val</td><td>40,504</td><td>parquet(Image)</td><td>仅 COCO val 集,繁体中文</td></tr>
-</table>
+<h3>互补维度</h3>
+<ol>
+<li><strong>来源多样性</strong>：GPIC/CC12M = 互联网爬取 alt-text（噪声高）；COCO/Flickr = 人工标注（质量高但小）；RobotDesign1M = 机器人/设计领域；BLIP3o = VLM 生成 caption</li>
+<li><strong>caption 质量</strong>：现有多为 alt-text（噪声高）；COCO/Flickr = 人工标注（高质量）；BLIP3o = VLM 生成（中等）；enhanced = 原始+增强双列（可做质量对比）</li>
+<li><strong>语言互补</strong>：现有主要英文；新增可补 Turkish (1.05M)、Portuguese (123K)、Persian (32K)</li>
+<li><strong>重叠风险</strong>：CC12M webdataset (W4) 与已用 Amshaker 同源 → 标注「已用」；COCO 系 5 个上传者版本同源 COCO → 取一个（推荐 jxie 617K）；Flickr30k 系同理 → 取一个</li>
+</ol>
+<h3>推荐组合方案</h3>
+<div class="note">
+<p><strong>方案 A（最小补充 ~32 GB）</strong>：jxie/coco_captions (617K, 21GB) + nlphuji/flickr30k (31K, 4.4GB) + BLIP3o (131K, 10GB) → 新增 ~780K 高质量 caption 对</p>
+<p><strong>方案 B（中等 ~396 GB）</strong>：方案 A + takara-ai (1.07M, 311GB) + enhanced (195K, 60GB) → 新增 ~2M 对</p>
+<p><strong>方案 C（大规模 ~1.08 TB）</strong>：方案 B + RobotDesign1M image_caption (5.6M, 644GB) → 新增 ~7.7M 对，总训练集 23M → ~31M</p>
 </div>
-
-<div class="cat-card warn">
-<h3>⚠️ 二类：image 仅 URL，需额外抓图（6 个）</h3>
-<table>
-<tr><th>HF ID</th><th>对数</th><th>说明</th></tr>
-<tr><td>kakaobrain/coyo-700m</td><td>747M</td><td>列=url+text,无 image 列。需 img2dataset 抓 ~747M 图</td></tr>
-<tr><td>mlfoundations/datacomp_1b</td><td>~1.0B</td><td>列=url+text,无 image 列。DataComp 竞赛数据池</td></tr>
-<tr><td>tsystems/pixelprose</td><td>16.9M</td><td>列=url+vlm_caption。Gemini 生成高质量 caption,但需抓图</td></tr>
-<tr><td>red_caps(redcaps)</td><td>~12M</td><td>Reddit 图文对,列=image_url+caption。需 URL 抓取</td></tr>
-<tr><td>DeepGlint-AI/DanQing100M</td><td>100M</td><td>HF 仅 URL;ModelScope 有全量 12TB(含图)。中文图文对</td></tr>
-<tr><td>UCSC-VLAA/Recap-DataComp-1B</td><td>~1.3B</td><td>基于 DataComp-1B(URL-only),仅替换 caption 为 LLaMA-3 recaption</td></tr>
-</table>
-<p class="muted">这 6 个数据集虽规模大,但在 HF 上<strong>不直接可用</strong>——需用 img2dataset 从 URL 批量下载图像,耗时数天至数周,且面临链接失效(404/403)风险。不在本次"直接即用"推荐范围内。</p>
-</div>
-
-<div class="cat-card no">
-<h3>❌ 三类：不可用 / 不推荐（3 个）</h3>
-<table>
-<tr><th>HF ID</th><th>原因</th></tr>
-<tr><td>laion/laion2B-en</td><td>HF 上已不可访问(private/gated),且 URL-only</td></tr>
-<tr><td>gmongaras/CC12M_and_Imagenet21K_Recap_Highqual</td><td>datasets-server 报 EmptyDatasetError(仓库无数据文件)</td></tr>
-<tr><td>allenai/pixmo-captions</td><td>401 认证错误(gated/private),无法确认 image 载体</td></tr>
-</table>
-</div>
-
-<!-- ========== §5 下载命令模板 ========== -->
-<h2>§5 下载命令模板 + 落盘路径建议 + 预估磁盘</h2>
-<h3>5.1 下载命令模板</h3>
-<pre><code># ===== 通用模板（需带 proxy） =====
-P=http://172.19.92.25:13128  # .12 的代理
-
-# --- TOP-1: MVRL/WebMix-38M (parquet Image bytes, ~2TB) ---
-HF_HUB_ENABLE_HF_TRANSFER=1 \
-https_proxy=$P http_proxy=$P \
-hf download --repo-type dataset MVRL/WebMix-38M \
-  --local-dir /nas_train/app.e0031982/datasets/MVRL/WebMix-38M \
-  --token &lt;HF_TOKEN&gt;
-
-# --- TOP-2: VedaLabs/wit_base (parquet Image bytes, ~200-400GB est.) ---
-HF_HUB_ENABLE_HF_TRANSFER=1 \
-https_proxy=$P http_proxy=$P \
-hf download --repo-type dataset VedaLabs/wit_base \
-  --local-dir /nas_train/app.e0031982/datasets/VedaLabs/wit_base \
-  --token &lt;HF_TOKEN&gt;
-
-# --- 4: hanlincs/InternVL-SA1B-Caption-WebDataset (webdataset tar, ~1-1.5TB est.) ---
-HF_HUB_ENABLE_HF_TRANSFER=1 \
-https_proxy=$P http_proxy=$P \
-hf download --repo-type dataset hanlincs/InternVL-SA1B-Caption-WebDataset \
-  --local-dir /nas_train/app.e0031982/datasets/hanlincs/InternVL-SA1B-Caption-WebDataset \
-  --token &lt;HF_TOKEN&gt;</code></pre>
-
-<h3>5.2 落盘路径建议 + 预估磁盘</h3>
-<table>
-<tr><th>数据集</th><th>建议落盘路径</th><th>预估磁盘</th><th>与 85M/en_v1_4 并行?</th></tr>
-<tr><td>MVRL/WebMix-38M</td><td>/nas_train/app.e0031982/datasets/MVRL/WebMix-38M/</td><td>~2 TB</td><td class="warn">⚠️ 带宽争用</td></tr>
-<tr><td>VedaLabs/wit_base</td><td>/nas_train/app.e0031982/datasets/VedaLabs/wit_base/</td><td>~200-400 GB</td><td class="warn">⚠️ 带宽争用</td></tr>
-<tr><td>hanlincs/InternVL-SA1B-Caption-WebDataset</td><td>/nas_train/app.e0031982/datasets/hanlincs/InternVL-SA1B-Caption-WebDataset/</td><td>~1-1.5 TB</td><td class="warn">⚠️ 带宽争用</td></tr>
-</table>
-
+<h2>⑥ 风险与诚实条款</h2>
 <div class="danger">
-<strong>磁盘红线</strong>：/nas_train 当前 ~85%（剩 ~32T），85M 剩余 ~17TB + en_v1_4 剩余 ~4.3TB → 85M 下满将达 ~93.6%（超 90% 红线）。<strong>在 85M/en_v1_4 下完前不建议启动新的大规模下载</strong>。若运维确认要下,须先评估磁盘是否够放（WebMix-38M ~2TB + WIT ~400GB = ~2.4TB 额外需求）。
+<ol>
+<li><strong>许可不确定</strong>：多数 COCO/Flickr 变体未标注 license。COCO 原始 CC-BY 4.0，各上传者版本可能有额外约束。使用前需核实。</li>
+<li><strong>重复/重叠</strong>：COCO 系 5+ 个 HF 版本同源 → 只取一个；Flickr30k 同理。</li>
+<li><strong>规模估算</strong>：对数取自 datasets-server num_examples，the_cauldron (50+ 配置) 总量为加总估算。</li>
+<li><strong>下载大小</strong>：部分 download_size 为 N/A，标注「~」的为估算。</li>
+<li><strong>image bytes 未实测</strong>：通过 /info API 判定 _type: Image，未实际下载 parquet 验证图像可解码。建议下载后抽查。</li>
+<li><strong>RobotDesign1M 来源</strong>：image_caption 配置具体来源未在 HF 卡片详述，需核实重叠。</li>
+<li><strong>takara-ai 来源</strong>：描述提及「Frontier R」，需查看卡片确认。</li>
+<li><strong>VQA 格式</strong>：InnovatorVL-46M/FineVisionMax/the_cauldron 虽有 Image(bytes)，但非简单 (image,caption) 对，需改造。</li>
+<li><strong>WebDataset 格式</strong>：BLIP3o 等图像 bytes 在 tar 内，需 webdataset 库读取。</li>
+<li><strong>覆盖范围</strong>：搜索 ~50 个候选，可能遗漏。可用 HF tag 过滤 (modality:image + format:parquet) 补充。</li>
+</ol>
 </div>
-
-<!-- ========== §6 互补性分析 ========== -->
-<h2>§6 与现有数据（GPIC / CC12M / Amshaker）的互补性分析</h2>
-<p>现有视觉编码器训练数据 ≈ 59M 对：</p>
-<table>
-<tr><th>现有源</th><th>规模</th><th>来源</th><th>caption 风格</th></tr>
-<tr><td>GPIC</td><td>8160 tar (~6M 对)</td><td>Stanford GPIC（网页图像配对）</td><td>短描述</td></tr>
-<tr><td>CC12M</td><td>1100 tar / 1.2T (~11M 对)</td><td>Conceptual Captions 12M（Google web-crawl）</td><td>短 alt-text</td></tr>
-<tr><td>Amshaker/Mobile-O-Pre-Train</td><td>2250 tar / 3.7T (~6M 对)</td><td>移动端交互场景</td><td>短描述</td></tr>
-<tr><td>LLaVA-Pretrain + CC3M</td><td>~1.15M 对</td><td>LLaVA 预训练 + CC3M</td><td>短描述</td></tr>
-</table>
-<h3>互补性矩阵</h3>
-<table>
-<tr><th>候选数据集</th><th>与 GPIC 重叠</th><th>与 CC12M 重叠</th><th>与 Amshaker 重叠</th><th>互补价值</th></tr>
-<tr><td><strong>WebMix-38M</strong></td><td>低</td><td>⚠️ 高（含 CC12M 子集）</td><td>低</td><td>✅ 补充 DataComp12M + YFCC15M 两个新源（~20M+ 新对），但 CC12M 部分重复</td></tr>
-<tr><td><strong>WIT (wit_base)</strong></td><td>无</td><td>无</td><td>无</td><td>✅ <strong>完全互补</strong>。Wikipedia 来源,与 web-crawl 数据零重叠。多语言（含中文）独特维度</td></tr>
-<tr><td><strong>BLIP3o</strong></td><td>低</td><td>低</td><td>低</td><td>⚠️ SA-1B 图像来源独特（高质量分割图），但长 caption 风格与现有短 caption 不一致</td></tr>
-<tr><td><strong>InternVL-SA1B</strong></td><td>低</td><td>低</td><td>低</td><td>⚠️ 同 SA-1B 源图（与 BLIP3o 重叠），但 caption 生成模型不同</td></tr>
-<tr><td><strong>the_cauldron</strong></td><td>低</td><td>低</td><td>低</td><td>✅ VQA 格式,领域多样（图表/文档/科学/视觉推理），但非 caption 对</td></tr>
-</table>
-<div class="success">
-<strong>互补性结论</strong>：
-<ul>
-<li><strong>WIT 是最佳互补</strong>——来源独特（Wikipedia vs web-crawl）、多语言（108 种含中文）、与现有数据零重叠,且 CC BY-SA 4.0 许可清晰。</li>
-<li><strong>WebMix-38M 量大但有重叠</strong>——CC12M 子集与现有重复,但 DataComp12M + YFCC15M 部分是新的。若需补量且不在意部分重复,可考虑。</li>
-<li><strong>BLIP3o / InternVL-SA1B</strong>——SA-1B 图像质量高,但 caption 偏长,适合 VLM 对齐阶段而非纯视觉编码器对比预训练。</li>
-<li><strong>the_cauldron</strong>——更适合 SFT / 指令微调,不适合预训练阶段。</li>
-</ul>
-</div>
-
-<!-- ========== §7 风险/诚实条款 ========== -->
-<h2>§7 风险声明与诚实条款</h2>
-
-<div class="danger">
-<strong>1. API 验证不完全</strong>：本次通过 HF datasets-server /info API <strong>仅成功验证了 VedaLabs/wit_base</strong> 一个数据集的 Image feature（返回 {"_type":"Image"}）。其余数据集因 API 超时 / 数据集过大 / 限流等原因未能通过 API 直接验证,其 bytes 判定基于：
-<ul>
-<li>HF dataset card 页面原文描述（如 WebMix-38M 的 "Images are stored in the Hugging Face Image column format as encoded bytes"）</li>
-<li>HF Dataset Viewer 显示的列类型（Image 列 vs string URL 列）</li>
-<li>YAML header 中的 dtype: image 声明</li>
-<li>WebDataset 格式的 tar 文件天然内嵌图像字节</li>
-</ul>
-这些证据<strong>可信但非 API 级硬证</strong>，建议实际下载前用 load_dataset(..., streaming=True) 取首行二次确认。
-</div>
-
-<div class="note">
-<strong>2. 规模估计不确定</strong>：WIT 的总磁盘大小（~200-400 GB）和 InternVL-SA1B（~1-1.5 TB）为基于图像分辨率和数量的估算,非 HF 官方标注。WebMix-38M 的 2 TB 为 HF 页面标注值。
-</div>
-
-<div class="note">
-<strong>3. 重叠风险</strong>：
-<ul>
-<li>WebMix-38M 包含 CC12M 子集——与现有本地 CC12M（1100 tar / ~11M 对）有<strong>直接重叠</strong>。如需去重,须做跨集图像哈希比对。</li>
-<li>BLIP3o 和 InternVL-SA1B 均使用 SA-1B 源图——两者之间有图像重叠,caption 不同。</li>
-<li>PixelProse 包含 CC12M + RedCaps + CommonPool 子集——若用 PixelProse 的 caption + 自抓图,与现有 CC12M 也有重叠。</li>
-</ul>
-</div>
-
-<div class="note">
-<strong>4. 许可风险</strong>：
-<ul>
-<li>WebMix-38M 在 HF 页面<strong>未标注总许可</strong>——其子源（CC12M=未标注、DataComp12M=CC BY 4.0、YFCC15M=各异、MSCOCO=CC BY 4.0）许可不同,使用前须逐子源确认。</li>
-<li>WIT 的 CC BY-SA 4.0 要求衍生作品同样以 CC BY-SA 4.0 发布（传染性许可）,训练模型发布时需注意。</li>
-</ul>
-</div>
-
 <div class="info">
-<strong>5. 本次调研边界</strong>：
+<h3>调研方法</h3>
 <ul>
-<li>本次<strong>仅调研 + 出报告,不下数据</strong>（运维指令明令）。真下载须运维二次确认。</li>
-<li>调研<strong>不占 GPU</strong>，web 请求<strong>不占 NFS 带宽</strong>，未打断 85M / en_v1_4 下载。</li>
-<li>调研覆盖了任务书指定关键词（image-text pairs / caption / interleaved / alt-text / DataComp / pixelprose / redcaps / mmc4 / OBELICS / MINT / wit / datacomp），但不保证穷尽 HF 上所有符合条件的数据集。</li>
-<li>未覆盖 ModelScope / 其他平台上的数据集（DanQing100M 在 ModelScope 有全量 12TB 含图数据,本次仅在 HF 范围内标注其 URL-only 状态）。</li>
+<li><strong>搜索词</strong>：image-text pairs · image caption · datacomp · pixelprose · redcaps · wit · coco captions · flickr · visual genome · sbu · conceptual captions · laion coco · sharegpt4v · blip3o · internvl · refcoco</li>
+<li><strong>验证</strong>：datasets-server /info 解析 features._type；jxie/coco_captions /first-rows 确认 image 返回 {src,height,width}</li>
+<li><strong>许可</strong>：HF Hub API cardData.license</li>
+<li><strong>访问日期</strong>：2026-10-13 · 代理 172.19.92.25:13128</li>
 </ul>
 </div>
-
-<div class="note">
-<strong>6. 磁盘约束</strong>：当前 /nas_train ~85%（剩 ~32T），85M 剩余 ~17TB + en_v1_4 剩余 ~4.3TB → 85M 下满将达 ~93.6%（超 90% 红线）。<strong>在 85M/en_v1_4 下完前不建议启动新的大规模下载</strong>。
+<div class="footnote">
+<p>报告生成：BaiZe data 线 · 2026-10-13 · commit 前缀 data rpt: · 未下载任何数据，真下载需运维确认</p>
 </div>
-
-<footer>
-<p>BaiZe Data Line · 2026-10-13 · commit prefix: <code>data rpt:</code></p>
-<p>本报告为自包含 HTML（内联 CSS · 零外链 · 无 JavaScript） · 供运维远程审阅</p>
-</footer>
-
 </body>
 </html>
