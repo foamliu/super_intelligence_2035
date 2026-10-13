@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 正式训练计划书（全量 MiniCPM5 数据 + en_v1_4 · 双机 16×H100）</title><style>
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 正式训练计划书 v2（MiniCPM5 全量口径 · 300B token · 双机 16×H100）</title><style>
 body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1150px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}
 h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}
 h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:28px}
@@ -16,85 +16,87 @@ tr:nth-child(even){background:#ecf0f1}
 footer{text-align:center;color:#7f8c8d;margin-top:35px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}
 code{background:#f4f4f4;padding:2px 6px;border-radius:3px;font-size:12px}
 small{color:#7f8c8d}.hp{font-family:monospace;font-size:12px}
+.src{font-size:11px;color:#7f8c8d}
 </style></head><body>
-<h1>BaiZe 正式训练计划书 · Mamba2-Hybrid 2.220B · 全量 MiniCPM5 数据 + en_v1_4</h1>
-<p style='color:#7f8c8d'>生成时间：2026-10-13 · <strong class='blue'>.12 + .29 双机 16×H100 80GB</strong> · 数据主体：<code>Ultra-FineWeb en_v1_4</code>（6.75TB，下载中 46.7%） · 状态：<span class='amber'>前瞻定稿（活参数位以 P-8 最终 ckpt 与 en_v1_4 落盘日为准）</span></p>
+<h1>BaiZe 正式训练计划书 v2 · Mamba2-Hybrid 2.220B · MiniCPM5 全量口径 · 300B token</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-13 v2 · <strong class='blue'>.12 + .29 双机 16×H100 80GB</strong> · <span class='red'>v1 不合格重做：旧 100B 假设 → 改按 MiniCPM5 实际训练量 300B</span></p>
 
-<div class='info'><strong>TL;DR</strong>：本计划把 P-8 超参搜索结果「转正」为<strong>生产级正式训练方案</strong>。数据主体升级为 <code>en_v1_4</code>（~1.5T tokens 估计，需实际分词确认），算力从单机 8 卡扩展到<strong>双机 16 卡</strong>。推荐 <strong>DP16 · GBS=1024 · LR=1e-3</strong>（维持 P-8 验证口径，16 卡仅缩短墙钟不改 LR），token 预算 <strong>100B（推荐）/ 200B（上限）</strong>。正式训练<strong>不可能早于 en_v1_4 下满 + 过闸 + 分词</strong>（ETA ~5-14 天），空窗期建议先做<strong>双机 16 卡 scaling 彩排（P0）</strong>消除跨节点风险。</div>
+<div class='warn'><strong>⚡ v1→v2 修订核心</strong>：v1 假设「总数据 100B」是<strong>拍脑袋</strong>——MiniCPM5-1B 基座训练实际用 <strong>300B token</strong>（200B@4K + 75B@32K + 25B@128K，出处见 §2），MiniCPM5-2B「scales up the same training recipe」（ModelScope 官方模型卡）。<strong>「MiniCPM5 有多少训多少」= 300B token</strong>，不是 100B。本报告<strong>每个数字可溯源</strong>（文件:行 / 官方来源 / 实测命令）。</div>
 
-<h2>1. 数据：全量 MiniCPM5 数据 + en_v1_4</h2>
-<h3>1.1 en_v1_4 下载状态（2026-10-13 实测）</h3>
+<div class='info'><strong>TL;DR</strong>：正式训练目标 = <strong class='blue'>300B token</strong>（= MiniCPM5-1B 基座训练量，MiniCPM5-2B 同 recipe）。WSD：warmup 5% (15B) → stable 85% (255B, web 88:code 8:math 4) → decay 10% (30B, SFT 64%+L3 24%+code 8%+math 4%)。双机 16×H100 @ ~498K tok/s（DP16 近线性，<strong>待彩排验证</strong>）→ 墙钟 <strong>~7.3 天（基准）/ 7.0 天（乐观）/ 8.1 天（保守）</strong>。本项目可训数据 <strong>~2,015B token</strong>（已分词在盘+可重分词），300B 仅占 15% → <strong>单遍不重读，数据绰绰有余</strong>。en_v1_4（~1,500B，下载 49.6%）为<strong>增量</strong>非阻塞项。</div>
+
+<h2>§1 MiniCPM5 训练数据全貌（总 token + 逐源 + 出处）</h2>
+
+<h3>1.1 MiniCPM5 训练管线（三阶段）</h3>
+<div class='info'>MiniCPM5-2B 训练 = <strong>三阶段全栈实践 UltraData 分层数据管理</strong>（arXiv 2602.09003）：
+<br>① <strong>基座训练（Base Training）= stable + decay</strong> → 建立核心语言能力与训练稳定性
+<br>② <strong>中间训练（Mid-Training）= 200B Agent</strong> → 适配目标数据分布，灌入 Agent 能力
+<br>③ <strong>后训练（Post-Training）= 400B SFT → RL → OPD</strong> → 深度推理 + 16 专家蒸馏
+<br><span class='src'>出处：ModelScope 官方模型卡；open-llm-radar.com/models/minicpm5-2b；HuggingFace openbmb/MiniCPM5-2B 模型卡（2026-10-13 实读）</span></div>
+
+<h3>1.2 ⭐ 必答硬问题 ①：MiniCPM5 训练数据总量 = ? token</h3>
 <table>
-<tr><th>项</th><th>值</th><th>来源</th></tr>
-<tr><td>HF 仓库</td><td><code>openbmb/Ultra-FineWeb · data/ultrafineweb_en_v1_4/</code></td><td>运维指令</td></tr>
-<tr><td>总文件数</td><td>56,461</td><td>HF API</td></tr>
-<tr><td>总大小</td><td>6.75 TB</td><td>HF API</td></tr>
-<tr><td>已下载</td><td class='amber'>26,385 / 56,461 = 46.7%（~2.4 TB）</td><td>MEMORY_DATA 唤醒398</td></tr>
-<tr><td>下载速率</td><td>~3.7–5.0 MB/s（40min avg，与 85M 下载争用）</td><td>MEMORY_DATA</td></tr>
-<tr><td>ETA</td><td class='amber'>~5–14 天（剩余 ~4.35 TB）</td><td>MEMORY_DATA</td></tr>
-<tr><td>下载进程</td><td>PID 2535486 @ .12（ppid=1, setsid 守护，~68.6h）</td><td>MEMORY_DATA</td></tr>
+<tr><th>模型</th><th>阶段</th><th>token 量</th><th>拆解</th><th>出处与可信度</th></tr>
+<tr><td rowspan='3'><strong>MiniCPM5-1B</strong></td><td>基座训练 @4K</td><td><strong>200B</strong></td><td>4K 上下文 stable 训练</td><td>CSDN 引用官方材料（⚠️二级源）</td></tr>
+<tr><td>基座训练 @32K</td><td><strong>75B</strong></td><td>32K 上下文扩展训练</td><td>同上</td></tr>
+<tr><td>基座训练 @128K</td><td><strong>25B</strong></td><td>128K 上下文扩展训练</td><td>同上</td></tr>
+<tr><td></td><td><strong>1B 基座合计</strong></td><td class='blue'><strong>300B</strong></td><td>200+75+25</td><td>CSDN blog 引官方训练流程</td></tr>
+<tr><td rowspan='2'><strong>MiniCPM5-2B</strong></td><td>基座训练</td><td class='amber'><strong>~300B（估）</strong></td><td>未公开精确数；官方称「scales up the same training recipe」</td><td>ModelScope 官方模型卡原文</td></tr>
+<tr><td>中间训练</td><td><strong>200B</strong></td><td>Agent Midtraining</td><td>lininn.cn 引官方披露（⚠️二级源）</td></tr>
+<tr><td rowspan='2'><strong>MiniCPM5-2B</strong></td><td>SFT（后训练）</td><td><strong>400B</strong></td><td>深度思考 SFT</td><td class='green'>✅ HF 模型卡 + open-llm-radar 原文确认</td></tr>
+<tr><td>RL + OPD</td><td>~80K 样本</td><td>UltraData-RL-2609，16 专家蒸馏</td><td class='green'>✅ HF 模型卡确认</td></tr>
+<tr><td></td><td><strong>2B 全管线合计</strong></td><td class='blue'><strong>~900B</strong></td><td>~300B 基座 + 200B 中训 + 400B SFT</td><td>估（基座 300B 为估）</td></tr>
 </table>
-<div class='note'><strong>⚠️ 活参数</strong>：en_v1_4 实际落盘日取决于下载速率。报告内所有「正式训练启动日」均以 en_v1_4 实际落盘为准。</div>
+<div class='note'><strong>估算依据与区间</strong>：MiniCPM5-2B 基座训练精确 token 数<strong>未公开披露</strong>。估计方法：① 1B 基座 = 300B（CSDN 引官方）；② 2B 官方称「scales up the same training recipe」→ 同 recipe 同比例；③ Chinchilla 最优 = 50B，MiniCPM 远超；④ <strong>保守取 300B，可能区间 300B–500B</strong>。</div>
 
-<h3>1.2 全部数据源与已分词 token 量</h3>
+<h3>1.3 ⭐ 必答硬问题 ②：各数据源大约多少 token</h3>
 <table>
-<tr><th>数据源</th><th>角色</th><th>已分词 token</th><th>状态</th><th>备注</th></tr>
-<tr><td><strong>en_v1_4</strong>（新 base 主体）</td><td>Stable web 主体</td><td class='amber'>~1,500 B（估）</td><td>🟠 下载 46.7%</td><td>6.75TB×~250 tok/byte（R3密度）≈1.69T，保守取1.5T，<strong>需实际分词确认</strong></td></tr>
-<tr><td>en_base（旧 Ultra-FineWeb en）</td><td>Stable web（存量）</td><td>206.76 B</td><td class='green'>✅ 已分词</td><td>R3 110/110 产出</td></tr>
-<tr><td>l1_en_hq（高质量英文 web）</td><td>Stable web</td><td>152.17 B</td><td class='green'>✅ 已分词</td><td>R3 top-5 avg 占比 26.5%</td></tr>
-<tr><td>zh（中文 web）</td><td>Stable web</td><td>112.47 B</td><td class='green'>✅ 已分词</td><td>R3 best #8 占比 32.0%</td></tr>
-<tr><td>UltraX-Preview</td><td>Stable web（新增源）</td><td>30.97 B</td><td class='green'>✅ 已分词</td><td>479 文件已下满</td></tr>
-<tr><td>UltraData-Code</td><td>Stable + Decay code</td><td>~数十 B</td><td class='green'>✅ 已分词</td><td>含 anneal_code + r3_ultradata_code</td></tr>
-<tr><td>UltraData-Math</td><td>Stable + Decay math</td><td>~数十 B</td><td class='green'>✅ 已分词</td><td>含 anneal_math2 + r3_ultradata_math</td></tr>
-<tr><td>Ultra-FineWeb-L3（en/zh QA+multi）</td><td>Decay L3</td><td>~数十 B</td><td class='green'>✅ 已分词</td><td>高质量合成 QA</td></tr>
-<tr><td>UltraData-SFT-2605</td><td>Decay SFT 主体</td><td>~20.97 B</td><td class='green'>✅ 已分词</td><td>1504 jsonl / 318.99GB 逐字节一致</td></tr>
-<tr><td>UltraData-SFT-Agent-2609</td><td>Decay SFT 补充</td><td>~数 B</td><td class='green'>✅ 已分词</td><td>50 shard jsonl / 51 GiB</td></tr>
-<tr><td><strong>R3 全量合计</strong></td><td>—</td><td><strong>1,483.91 B</strong></td><td class='green'>✅ 110/110</td><td>5.94TB，污染扫描 220K docs 0 命中</td></tr>
+<tr><th>数据源</th><th>MiniCPM5 中的角色</th><th>官方/实测 token</th><th>出处</th></tr>
+<tr><td><strong>Ultra-FineWeb</strong>（base, en）</td><td>基座 stable web 主体</td><td><strong>~1T+</strong></td><td>DATA_RESEARCH.md:39 引 HF dataset card "1T en"</td></tr>
+<tr><td>Ultra-FineWeb（base, zh）</td><td>基座 stable web（中文）</td><td>~120B</td><td>同上</td></tr>
+<tr><td><strong>Ultra-FineWeb-L3</strong></td><td>基座 decay + 扩展</td><td><strong>~690B</strong>（en 467B + zh 223B）</td><td class='green'>✅ DATA_RESEARCH.md:55-61 实测外推</td></tr>
+<tr><td><strong>UltraX-Preview</strong></td><td>基座 web（新增精炼源）</td><td><strong>~100B</strong></td><td>lininn.cn 引官方「约 1000 亿 tokens」</td></tr>
+<tr><td><strong>UltraData-Code</strong></td><td>基座 + decay code</td><td><strong>~400B</strong>（精选层）</td><td>lininn.cn 引官方；DATA_LEDGER.md:15 原始 1.22TB≈411B</td></tr>
+<tr><td><strong>UltraData-Math</strong></td><td>基座 + decay math</td><td><strong>~303B</strong></td><td>DATA_LEDGER.md:16 原始 552GB≈303B</td></tr>
+<tr><td>UltraData-SFT-2605</td><td>后训练 SFT</td><td><strong>400B</strong></td><td class='green'>✅ HF 模型卡原文</td></tr>
+<tr><td>UltraData-RL-2609</td><td>后训练 RL</td><td>~80K 样本</td><td class='green'>✅ HF 模型卡原文</td></tr>
+<tr><td><strong>全平台总量</strong></td><td>—</td><td><strong>~2.4T+</strong></td><td>arXiv 2602.09003「2.4T open tokens」（全平台）</td></tr>
 </table>
+<div class='ok'><strong>结论</strong>：MiniCPM5 全平台数据 ~2.4T token，基座训练消耗 ~300B。「MiniCPM5 有多少训多少」对 BaiZe Stage(i) 基座训练 = <strong>300B token</strong>。</div>
 
-<h3>1.3 Stable 段配比（web:code:math = 88:8:4，web 内部按 R3 BO best #8 分解）</h3>
-<div class='note'><strong>配比来源</strong>：R3 BO 搜索（100 trials, 98 complete）best trial #8 score=0.4032。Web 内部：en=16.8% / zh=32.0% / l1=32.4% / ultrax=8.0%。web:code:math≈89:6:4，任务书要求沿用 88:8:4（code 从 6%→8%，差异在 BO landscape 平坦区 Δ=0.6pp 不可分辨）。</div>
+<h2>§2 本项目可训数据全貌（R3 子集 token 表 · 实测）</h2>
+
+<h3>2.1 已分词在盘数据（实测 .bin/.idx）</h3>
 <table>
-<tr><th>段内占比</th><th>源</th><th>100B → Stable 80B 之 token</th><th>200B → Stable 160B 之 token</th></tr>
-<tr><td>~88%（web）</td><td>en_v1_4（主体，替换旧 en_base）</td><td>~35.2 B（占 web 50%）</td><td>~70.4 B</td></tr>
-<tr><td></td><td>l1_en_hq</td><td>~17.6 B（占 web 25%）</td><td>~35.2 B</td></tr>
-<tr><td></td><td>zh</td><td>~10.6 B（占 web 15%）</td><td>~21.1 B</td></tr>
-<tr><td></td><td>UltraX-Preview</td><td>~7.0 B（占 web 10%）</td><td>~14.1 B</td></tr>
-<tr><td>~8%（code）</td><td>UltraData-Code</td><td>~6.4 B</td><td>~12.8 B</td></tr>
-<tr><td>~4%（math）</td><td>UltraData-Math</td><td>~3.2 B</td><td>~6.4 B</td></tr>
-<tr><td><strong>合计</strong></td><td></td><td><strong>~80.0 B</strong></td><td><strong>~160.0 B</strong></td></tr>
+<tr><th>#</th><th>数据源</th><th>shard</th><th>实测 token</th><th>.bin 体积</th><th>出处</th></tr>
+<tr><td>1</td><td>Ultra-FineWeb-L3（en+zh）</td><td>40/40</td><td class='green'><strong>658.91 B</strong></td><td>2.64 TB</td><td>daily-memories-data/2026-10-10:1208</td></tr>
+<tr><td>2</td><td>UltraData-Code</td><td>30/30</td><td class='green'><strong>550.07 B</strong></td><td>2.20 TB</td><td>同上</td></tr>
+<tr><td>3</td><td>UltraData-Math</td><td>40/40</td><td class='green'><strong>274.92 B</strong></td><td>1.10 TB</td><td>同上</td></tr>
+<tr><td colspan='6'><strong>R3 合计 = 1,483.91 B tok / 5.94 TB · 污染扫描 220K docs 0 命中 ✅</strong></td></tr>
+<tr><td>4</td><td>UltraData-SFT-2605</td><td>4</td><td class='green'><strong>20.96 B</strong></td><td>79 GB</td><td>daily-memories-data/2026-10-09:41</td></tr>
+<tr><td>5</td><td>UltraData-SFT-Agent-2609</td><td>4</td><td class='green'><strong>8.04 B</strong></td><td>30 GB</td><td>同上</td></tr>
+<tr><td colspan='6'><strong>在盘合计 = 1,512.91 B tok / 6.05 TB</strong></td></tr>
 </table>
-<div class='info'><strong>en_v1_4 充裕度</strong>：100B 预算下 en_v1_4 仅需 ~35B（占其 ~1.5T 储量的 2.3%）；200B 需 ~70B（4.7%）。<strong>数据不是瓶颈，token 预算（训练时长）才是</strong>。en_v1_4 下满后可做多 epoch 训练或留作后续扩展。</div>
 
-<h3>1.4 Decay 段配比（SFT 64% + L3 24% + code 8% + math 4%）</h3>
+<h3>2.2 需重分词数据（parquet 在盘，.bin 已清理）</h3>
 <table>
-<tr><th>段内占比</th><th>源</th><th>100B → Decay 20B 之 token</th><th>200B → Decay 40B 之 token</th></tr>
-<tr><td class='red'>~64%（SFT）</td><td>SFT-2605 + SFT-Agent-2609</td><td>~12.8 B</td><td>~25.6 B</td></tr>
-<tr><td>~24%（L3）</td><td>Ultra-FineWeb-L3（en/zh QA+multi）</td><td>~4.8 B</td><td>~9.6 B</td></tr>
-<tr><td>~8%（code）</td><td>UltraData-Code</td><td>~1.6 B</td><td>~3.2 B</td></tr>
-<tr><td>~4%（math）</td><td>UltraData-Math</td><td>~0.8 B</td><td>~1.6 B</td></tr>
-<tr><td><strong>合计</strong></td><td></td><td><strong>~20.0 B</strong></td><td><strong>~40.0 B</strong></td></tr>
+<tr><th>#</th><th>数据源</th><th>实测 token</th><th>原始 parquet</th><th>出处</th></tr>
+<tr><td>6</td><td>Ultra-FineWeb en_base</td><td><strong>206.76 B</strong></td><td>2,048 pq / 2.66 TB</td><td>MEMORY_DATA.md:16</td></tr>
+<tr><td>7</td><td>Ultra-FineWeb l1_en_hq</td><td><strong>152.17 B</strong></td><td>6,006 pq / 478 GB</td><td>同上</td></tr>
+<tr><td>8</td><td>Ultra-FineWeb zh</td><td><strong>112.47 B</strong></td><td>256 pq / 324 GB</td><td>同上</td></tr>
+<tr><td>9</td><td>UltraX-Preview</td><td><strong>30.97 B</strong></td><td>479 files ✅ 下满</td><td>同上</td></tr>
+<tr><td colspan='5'><strong>重分词合计 = 502.37 B tok（parquet 全在盘，~10–15h 可重跑）</strong></td></tr>
 </table>
-<div class='note'><strong>SFT-Mixed 内部 5 类</strong>：Mathematics / Code / Logic(CoT) / Knowledge / Commonsense，初始均分 20%×5（Xmodel-2 口径）。P-8 decay 脚本 <code>baize_p8_decay.sh</code> 已落地（SFT 4shard×w=8 + Agent 4shard×w=8=64, L3 8shard×w=3=24, code w=3+5=8, math w=3+1=4）。</div>
 
-<div class='svgc'><svg width="800" height="260" viewBox="0 0 800 260" style="font-family:monospace;font-size:11px">
-<text x="400" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">正式训练数据配方 token 分配（100B 推荐档）</text>
-<text x="160" y="42" text-anchor="middle" fill="#555">Stable ≈ 80B（web 88% : code 8% : math 4%）</text>
-<text x="560" y="42" text-anchor="middle" fill="#555">Decay ≈ 20B（SFT 64% + L3 24% + c8% + m4%）</text>
-<rect x="20" y="55" width="280" height="135" fill="#2e86c1"/><text x="160" y="115" text-anchor="middle" fill="#fff" font-size="13">web 88% ≈ 70.4B</text><text x="160" y="132" text-anchor="middle" fill="#fff" font-size="10">en_v1_4 50%·l1 25%·zh 15%·ultrax 10%</text>
-<rect x="20" y="190" width="255" height="22" fill="#27ae60"/><text x="147" y="206" text-anchor="middle" fill="#fff" font-size="10">code 8% ≈ 6.4B</text>
-<rect x="20" y="212" width="128" height="16" fill="#f1c40f"/><text x="84" y="224" text-anchor="middle" fill="#2c3e50" font-size="9">math 4% ≈ 3.2B</text>
-<rect x="460" y="55" width="200" height="120" fill="#e67e22"/><text x="560" y="110" text-anchor="middle" fill="#fff" font-size="13">SFT 64% ≈ 12.8B</text><text x="560" y="127" text-anchor="middle" fill="#fff" font-size="9">Math/Code/Logic/Kn/Commons</text>
-<rect x="460" y="175" width="200" height="38" fill="#8e44ad"/><text x="560" y="198" text-anchor="middle" fill="#fff" font-size="10">L3 24% ≈ 4.8B</text>
-<rect x="460" y="213" width="200" height="13" fill="#27ae60"/><text x="560" y="223" text-anchor="middle" fill="#fff" font-size="9">code 8% ≈ 1.6B</text>
-<rect x="460" y="226" width="200" height="10" fill="#f1c40f"/><text x="560" y="234" text-anchor="middle" fill="#2c3e50" font-size="8">math 4% ≈ 0.8B</text>
-</svg></div>
-
-<h3>1.5 📌 数据依赖链（正式训练不可绕过的时间线）</h3>
-<div class='warn'><strong>正式训练启动的硬前置链</strong>：
-<br><code>en_v1_4 下载满 56,461 文件</code> → <code>check_contamination.py 过闸（EDA-Eval 158 任务红线）</code> → <code>分词（preprocess_data.py → .bin/.idx）</code> → <code>投料训练</code>
-<br>⚠️ <strong>正式训练不可能早于 en_v1_4 下满 + 过闸 + 分词</strong>。data 线已明确：下满后必经污染扫描才报「en_v1_4 下载完成」。
-<br>⏱️ <strong>估计时间线</strong>：下载 ETA ~5-14 天 → 过闸 ~0.5 天 → 分词 ~1-2 天（6.75TB） → <strong>正式训练最早 T+7~16 天</strong>。</div>
+<h3>2.3 下载中 + 总量</h3>
+<table>
+<tr><th>数据源</th><th>估计 token</th><th>体积</th><th>进度</th></tr>
+<tr><td>en_v1_4（增量，非阻塞）</td><td class='amber'>~1,500 B</td><td>6.75 TB</td><td class='amber'>49.6%（ETA ~3.4 天）</td></tr>
+<tr><td><strong>在盘合计</strong></td><td><strong>1,512.91 B</strong></td><td>6.05 TB</td><td class='green'>✅</td></tr>
+<tr><td><strong>+ 重分词</strong></td><td><strong>2,015.28 B</strong></td><td>—</td><td class='green'>✅ parquet 在盘</td></tr>
+<tr><td><strong>+ en_v1_4 下满</strong></td><td><strong>~3,515 B</strong></td><td>—</td><td class='amber'>🟠 下载中</td></tr>
+</table>
+<div class='ok'><strong>充裕度</strong>：300B 仅占在盘数据的 <strong>19.8%</strong>（1513B）/ 占重分词后 <strong>14.9%</strong>（2015B）。<strong>单遍不重读，数据绰绰有余</strong>。en_v1_4 为增量非阻塞。</div>
 
 <h2>2. 算力：双机 16×H100 80GB</h2>
 <h3>2.1 节点拓扑（2026-10-13 在 .29 实测）</h3>
@@ -172,115 +174,147 @@ small{color:#7f8c8d}.hp{font-family:monospace;font-size:12px}
 <tr><td>Adam β1 / β2 / eps</td><td>0.9 / 0.95 / 1e-8</td><td>Megatron AdamW 默认（同 Round 1）</td></tr>
 </table>
 
-<h3>3.4 WSD 学习率调度（5/85/10）</h3>
+<h3>3.4 WSD 学习率调度（5/85/10 · 300B 档）</h3>
+<div class='note'><strong>token/step</strong> = GBS 1024 × seq 4096 = 4,194,304 ≈ <strong>4.19M</strong>。
+<strong>总步数</strong> = 300B / 4.19M = <strong>71,596 步</strong>（向上取整）。
+<strong>WSD 比例 5/85/10</strong>：warmup 5% = 3,580 步 (~15B tok) · stable 85% = 60,856 步 (~255B tok) · decay 10% = 7,160 步 (~30B tok)。</div>
 <table class='hp'>
-<tr><th>参数</th><th>100B 档</th><th>200B 档</th><th>来源</th></tr>
-<tr><td>--lr-decay-style</td><td>WSD</td><td>WSD</td><td>P-5a</td></tr>
-<tr><td>--lr-warmup-iters</td><td>1,192（5%）</td><td>2,384（5%）</td><td>比例 5% × 总步数</td></tr>
-<tr><td>stable 段步数</td><td>20,266（85%）</td><td>40,532（85%）</td><td>比例 85%</td></tr>
-<tr><td>--lr-decay-iters</td><td>2,384（10%）</td><td>4,768（10%）</td><td>比例 10%</td></tr>
-<tr><td>--train-iters</td><td><strong>23,842</strong></td><td><strong>47,684</strong></td><td>token / (GBS×seq) = 100B/4.19M</td></tr>
-<tr><td>--seed</td><td>1234</td><td>1234</td><td>继承 P-5a</td></tr>
-<tr><td>--save-interval</td><td>2,384（每 10%）</td><td>4,768（每 10%）</td><td>同 P-8 口径</td></tr>
-<tr><td>--eval-interval</td><td>500</td><td>500</td><td>同 P-8</td></tr>
-<tr><td>token/step</td><td colspan='2'>GBS 1024 × seq 4096 = 4,194,304 ≈ 4.19M</td><td>—</td></tr>
+<tr><th>参数</th><th>300B 档</th><th>来源</th></tr>
+<tr><td>--lr-decay-style</td><td>WSD</td><td>P-5a</td></tr>
+<tr><td>--lr-warmup-iters</td><td><strong>3,580（5%）</strong></td><td>5% × 71,596</td></tr>
+<tr><td>stable 段步数</td><td><strong>60,856（85%）</strong></td><td>85% × 71,596</td></tr>
+<tr><td>--lr-decay-iters</td><td><strong>7,160（10%）</strong></td><td>10% × 71,596</td></tr>
+<tr><td>--train-iters</td><td class='blue'><strong>71,596</strong></td><td>300B / 4.19M</td></tr>
+<tr><td>--seed</td><td>1234</td><td>继承 P-5a</td></tr>
+<tr><td>--save-interval</td><td>3,580（每 5%）</td><td>同 P-8 口径，20 个阶段点</td></tr>
+<tr><td>--eval-interval</td><td>500</td><td>同 P-8</td></tr>
 </table>
+<div class='info'><strong>WSD 各段 token 分配</strong>：
+<br>• <strong>Warmup 15B</strong>（3,580 步）：LR 从 0 线性升到 1e-3，数据 = stable blend（web 88% + code 8% + math 4%）
+<br>• <strong>Stable 255B</strong>（60,856 步）：LR 恒定 1e-3，数据 = stable blend
+<br>• <strong>Decay 30B</strong>（7,160 步）：LR 从 1e-3 衰减到 1e-5（WSD 1-sqrt 衰减），数据切换为 decay blend（SFT 64% + L3 24% + code 8% + math 4%）</div>
 
-<h3>3.5 总 token 预算 / 总步数 / 墙钟 ETA</h3>
+<h3>3.5 总 token 预算 / 总步数 / 墙钟 ETA（300B 基准 + 上下限）</h3>
 <table>
 <tr><th>档</th><th>token</th><th>总步数</th><th>16卡吞吐</th><th>墙钟</th><th>GPU·h</th><th>说明</th></tr>
-<tr><td>下限</td><td>44B</td><td>10,490</td><td>~498K tok/s</td><td>~24.6h ≈ 1.0 天</td><td>~393</td><td>Chinchilla 最优（= P-8 当前档，16 卡 ~1 天跑完）</td></tr>
-<tr><td class='green'><strong>推荐</strong></td><td class='green'>100B</td><td class='green'>23,842</td><td class='green'>~498K tok/s</td><td class='green'>~55.8h ≈ 2.3 天</td><td class='green'>~893</td><td>超 Chinchilla ~2.3×，契合论文推理效率卖点</td></tr>
-<tr><td>上限</td><td>200B</td><td>47,684</td><td>~498K tok/s</td><td>~111.6h ≈ 4.7 天</td><td>~1,786</td><td>时间充裕，en_v1_4 数据充裕（仅用 4.7%）</td></tr>
+<tr><td>下限</td><td>150B</td><td>35,798</td><td>~498K tok/s（待验）</td><td>~83.7h ≈ 3.5 天</td><td>~1,339</td><td>保守下限 = MiniCPM5 1B 基座 50%</td></tr>
+<tr><td class='green'><strong>推荐（= MiniCPM5 基座）</strong></td><td class='green'>300B</td><td class='green'>71,596</td><td class='green'>~498K tok/s（待验）</td><td class='green'>~167.4h ≈ 7.0 天</td><td class='green'>~2,678</td><td>MiniCPM5-1B 基座训练量；2B 估计 300B–500B</td></tr>
+<tr><td>上限</td><td>500B</td><td>119,328</td><td>~498K tok/s（待验）</td><td>~279.0h ≈ 11.6 天</td><td>~4,464</td><td>MiniCPM5-2B 基座估计上限；数据充裕（占在盘 33%）</td></tr>
 </table>
-<div class='note'><strong>吞吐假设</strong>：16 卡 = 2 × 8卡(249K) = 498K tok/s，假设 DP16 近线性扩展。跨节点 allreduce 开销 ~1%（见 §2.2），预计实测 470-498K。若彩排（§5 P0）实测低于 470K，需下调预算或排查 NCCL。<strong>墙钟 ETA 给 ±10% 区间</strong>。</div>
+<div class='note'><strong>吞吐假设</strong>：16 卡 = 2 × 8卡(249K) = 498K tok/s，DP16 近线性扩展（<strong>待彩排实测</strong>）。
+跨节点 allreduce 开销 ~1%（见 §2.2），预计实测 470-498K。
+若彩排实测低于 470K，需下调预算或排查 NCCL。<strong>墙钟 ETA 给 ±10% 区间</strong>。
+<br>⚠️ 300B 推荐档墙钟 ~7 天 = MiniCPM5 1B 基座训练量（200B@4K + 75B@32K + 25B@128K 合计 300B）。</div>
 
-<h2>4. 正式训练启动条件与占卡协调</h2>
-<div class='warn'><strong>⚠️ 协调现实（不可 kill 的进程）</strong>：
-<ul>
-<li><code>baize_pretrain_loop.sh</code> watchdog（PID 1391466）— 🚫 绝不 kill</li>
-<li>vision 线进程 @ .12（④-4ep eval @ 2026-10-13 12:43 完成，GPU 应已释放或即将释放）— 🚫 绝不 kill</li>
-<li>data 线下载（en_v1_4 PID 2535486 @ .12 + 85M PID 506606）— 🚫 绝不 kill</li>
-</ul>
-<strong>双机 16 卡「一起上」的条件</strong>：
-<br>① <strong>.29</strong>：P-8 AdamW 跑完（step~4660/10490, ETA ~1.1 天 → ~2026-10-14 下午）→ decay ~5h → 全部完成 ~2026-10-15
-<br>② <strong>.12</strong>：vision ④-4ep 已完成，GPU 可释放 → 需确认 vision 线无新任务
-<br>③ <strong>en_v1_4</strong>：下满 + 过闸 + 分词（ETA ~T+7~16 天）
-<br>→ <strong>正式训练最早开跑日 ≈ max(P-8 完成, .12 释放, en_v1_4 就绪) ≈ en_v1_4 就绪日</strong></div>
+<h2>§3 配方：Stable + Decay blend（300B 拆解）</h2>
 
-<h2>5. 空窗期试验建议（P-8 结束 → en_v1_4 下满，~4-13 天）</h2>
-<div class='info'>以下试验按<strong>优先级排序</strong>，每条给出理由、预算、用卡、ETA。所有试验<strong>只用已就绪的 R3 存量数据</strong>（1483.91B tok / 5.94TB），不依赖 en_v1_4。</div>
+<h3>3.1 Stable 段配比（255B · web 88% + code 8% + math 4%）</h3>
+<div class='note'><strong>配比来源</strong>：R3 BO 搜索（100 trials, 98 complete）best trial #8 score=0.4032。web:code:math = 88:8:4。
+Web 内部：en=16.8% / zh=32.0% / l1=32.4% / ultrax=8.0%（R3 BO best #8 口径）。</div>
 <table>
-<tr><th>#</th><th>试验</th><th>优先级</th><th>用卡</th><th>预算</th><th>ETA</th><th>理由 / 产出</th></tr>
-<tr><td class='green'>1</td><td><strong>双机 16 卡 scaling 彩排</strong></td><td class='green'>P0</td><td>.29单机→双机</td><td>~4h</td><td>~0.5天</td><td>用 R3 存量跑 DP16 冒烟+短程训练，实测<strong>跨节点吞吐 scaling、NCCL allreduce 带宽、ckpt 分片、容错</strong>。产出正式训练可直接套用的 launcher+配置 → <strong>直接消除「一起上」的最大风险</strong>。⚠️ 先 .29 单机 8 卡 rehearsal，再上 16 卡。需 .12 有空档。</td></tr>
-<tr><td>2</td><td><strong>长上下文训练延伸</strong></td><td>T1</td><td>.29 8 卡</td><td>~12h</td><td>~0.5天</td><td>用 P-8 ckpt 做 <code>seq 4096→32K/128K</code> 续训（RoPE theta 调大），补训练侧长上下文结论（推理侧 1M/2M 已验）。</td></tr>
-<tr><td>3</td><td><strong>退火配比全量验证</strong></td><td>S4/R3</td><td>.29 8 卡</td><td>~8h</td><td>~0.3天</td><td>decay 段全量版，量化「退火 vs 直接停」的质量增益。用 P-8 step9441 ckpt 做起点。</td></tr>
-<tr><td>4</td><td><strong>存量数据长跑 interim ckpt</strong></td><td>可选</td><td>.29 8 卡</td><td>~24h+</td><td>~1+天</td><td>续跑更高 token 档（60-80B），作为 en_v1_4 落地前的<strong>中间基座</strong>。</td></tr>
-<tr><td>5</td><td><strong>推理/评测彩排</strong></td><td>可选</td><td>.29 1-2 卡</td><td>~4h</td><td>~0.2天</td><td>SGLang 部署 P-8 final ckpt + harness 打通，为 P-9 推理基准铺路。可与 1-4 并行。</td></tr>
+<tr><th>段内占比</th><th>源</th><th>300B → Stable 255B 之 token</th></tr>
+<tr><td>~88%（web）</td><td>en_base + l1_en_hq + zh + UltraX</td><td>~224.4 B</td></tr>
+<tr><td></td><td>↳ en_base</td><td>~75.3 B（占 web 33.6%）</td></tr>
+<tr><td></td><td>↳ l1_en_hq</td><td>~72.8 B（占 web 32.4%）</td></tr>
+<tr><td></td><td>↳ zh</td><td>~71.8 B（占 web 32.0%）</td></tr>
+<tr><td></td><td>↳ UltraX</td><td>~18.0 B（占 web 8.0%）</td></tr>
+<tr><td>~8%（code）</td><td>UltraData-Code</td><td>~20.4 B</td></tr>
+<tr><td>~4%（math）</td><td>UltraData-Math</td><td>~10.2 B</td></tr>
+<tr><td><strong>合计</strong></td><td></td><td><strong>~255.0 B</strong></td></tr>
 </table>
-<div class='ok'><strong>推荐执行顺序</strong>：① <strong>P0 彩排（最高优先，等 .12 空档先单机再双机）</strong> → ② S4 退火全量（~8h）→ ③ T1 长上下文（~12h）→ ④/⑤ 视余量安排。⚠️ 所有试验<strong>避让 /nas_train NFS</strong>，重 I/O 错峰。</div>
+<div class='info'><strong>数据充裕度</strong>：web 源合计 502.37B（重分词后），255B 仅需 224B → 占 44.6%，<strong>单遍足够</strong>。code/math 在盘 550B/275B → 远超需求。</div>
 
-<h2>6. Checkpoint 与磁盘策略</h2>
+<h3>3.2 Decay 段配比（30B · SFT 64% + L3 24% + code 8% + math 4%）</h3>
 <table>
-<tr><th>项</th><th>100B 档</th><th>200B 档</th></tr>
-<tr><td>保存策略</td><td colspan='2'>final + 每 10% 一个（供 Stage (ii) 选起点 + 能力曲线）</td></tr>
-<tr><td>ckpt 数量</td><td>10 阶段点 + final = 11</td><td>10 + final = 11</td></tr>
-<tr><td>单 ckpt 体积</td><td colspan='2'>~4.2GB（仅权重）/ ~30GB（含 AdamW 状态）</td></tr>
-<tr><td>总占用（含优化器）</td><td>~330GB</td><td>~330GB</td></tr>
-<tr><td>磁盘</td><td colspan='2'>/nas_train 85% used, 32T avail → 无压力</td></tr>
+<tr><th>段内占比</th><th>源</th><th>300B → Decay 30B 之 token</th></tr>
+<tr><td class='red'>~64%（SFT）</td><td>SFT-2605 + SFT-Agent-2609</td><td>~19.2 B</td></tr>
+<tr><td>~24%（L3）</td><td>Ultra-FineWeb-L3</td><td>~7.2 B</td></tr>
+<tr><td>~8%（code）</td><td>UltraData-Code</td><td>~2.4 B</td></tr>
+<tr><td>~4%（math）</td><td>UltraData-Math</td><td>~1.2 B</td></tr>
+<tr><td><strong>合计</strong></td><td></td><td><strong>~30.0 B</strong></td></tr>
+</table>
+<div class='note'><strong>SFT-Mixed 内部 5 类</strong>：Mathematics / Code / Logic(CoT) / Knowledge / Commonsense，初始均分 20%×5（Xmodel-2 口径）。
+P-8 decay 脚本 <code>baize_p8_decay.sh</code> 已落地（SFT 4shard×w=8 + Agent 4shard×w=8=64, L3 8shard×w=3=24, code w=3+5=8, math w=3+1=4）。
+Decay blend 在 <strong>step 64,436</strong>（=71,596 - 7,160）切换投入。</div>
+
+<h2>§4 Checkpoint / 磁盘 / 风险</h2>
+
+<h3>4.1 Checkpoint 与磁盘（300B 档）</h3>
+<table>
+<tr><th>项</th><th>300B 档</th></tr>
+<tr><td>保存策略</td><td>final + 每 5% 一个（20 阶段点 + final = 21），供 Stage (ii) 选起点 + 能力曲线</td></tr>
+<tr><td>单 ckpt 体积</td><td>~4.2GB（仅权重）/ ~30GB（含 AdamW 状态）</td></tr>
+<tr><td>总占用（含优化器）</td><td>~630GB（21 × 30GB），可定期删旧 optimizer state</td></tr>
+<tr><td>磁盘</td><td>/nas_train 85% used, 32T avail → 无压力</td></tr>
 </table>
 
-<h2>7. 训练纪律</h2>
+<h3>4.2 训练纪律</h3>
 <ul>
-<li><strong>从零开始</strong>，不加载任何预训练权重（正式训练用 en_v1_4 新数据从头训）。</li>
+<li><strong>从零开始</strong>，不加载任何预训练权重。</li>
 <li><strong>WSD 完整走完</strong>，decay 尾段必须吃到 SFT 退火混合（SFT 64% + L3 24% + code 8% + math 4%）。</li>
 <li><strong>每 500 步</strong>记 train loss / val loss / grad norm / tok/s / GPU 独占核验。</li>
-<li><strong>禁止叠加抢卡任务</strong>（en_v1_4 下载应在正式训练前完成）。</li>
 <li><strong>NaN / 发散 / OOM 一律记录并保留 ckpt 与日志</strong>，不静默重启掩盖。</li>
-<li><strong>AdamW 已收敛基线</strong>：P-8 AdamW step4660 loss=2.646 平滑下降无 spike。若正式训练仍发散 → 上报。</li>
+<li><strong>AdamW 已收敛基线</strong>：P-8 AdamW step~5849 loss=2.588 平滑下降无 spike。若正式训练仍发散 → 上报。</li>
 </ul>
 
-<h2>8. 启动前置清单</h2>
-<table>
-<tr><th>#</th><th>前置项</th><th>状态</th><th>负责</th></tr>
-<tr><td>1</td><td>en_v1_4 下载满 56,461 文件</td><td class='amber'>🟠 46.7%</td><td>data 线</td></tr>
-<tr><td>2</td><td>check_contamination.py 过闸</td><td>⬜ 待下满后</td><td>data 线</td></tr>
-<tr><td>3</td><td>en_v1_4 分词（→ .bin/.idx）</td><td>⬜ 待过闸后</td><td>data / pretrain</td></tr>
-<tr><td>4</td><td>P-8 AdamW 完成 + ckpt 留存</td><td class='amber'>🟠 step~4660/10490</td><td>pretrain</td></tr>
-<tr><td>5</td><td>.12 GPU 释放</td><td class='green'>✅ eval done @ 10-13</td><td>vision</td></tr>
-<tr><td>6</td><td>双机 16 卡 scaling 彩排</td><td>⬜ 待 .12 空档</td><td>pretrain</td></tr>
-<tr><td>7</td><td>16 卡 launcher + blend 配置落地</td><td>⬜ 待彩排</td><td>pretrain</td></tr>
-<tr><td>8</td><td>磁盘确认（≥30T free）</td><td class='green'>✅ 32T avail</td><td>—</td></tr>
-</table>
-
-<h2>9. 16 卡 Launcher 脚本模板</h2>
-<div class='note'><code style='font-size:11px;white-space:pre-wrap'># Node 0 (.29): MASTER_ADDR=10.239.2.29
-torchrun --nnodes=2 --nproc_per_node=8 \
-  --master_addr=10.239.2.29 --master_port=29812 \
-  pretrain_launcher.py --arch mamba2 --name formal_train \
-  --tensor-parallel 1 --seq-length 4096 \
-  --global-batch-size 1024 --micro-batch-size 2 \
-  --precision bf16_mixed --optimizer adam \
-  --lr 1e-3 --min-lr 1e-5 --weight-decay 0.1 --grad-clip 1.0 \
-  --lr-warmup-iters 1192 --lr-decay-style WSD --lr-decay-iters 2384 \
-  --train-iters 23842 --save-interval 2384 --eval-interval 500 \
-  --seed 1234 --tokenizer-path data/tokenizer_eod \
-  --train-data-path &lt;en_v1_4_blend&gt;
-# Node 1 (.12): same MASTER_ADDR, node_rank=1</code>
-<br><small>NCCL 跨节点需设 <code>NCCL_SOCKET_IFNAME=bond0</code> + <code>NCCL_IB_HCA=mlx5_0</code>，彩排时验证。</small></div>
-
-<h2>10. 关键风险与缓解</h2>
+<h3>4.3 关键风险与缓解</h3>
 <table>
 <tr><th>风险</th><th>概率</th><th>影响</th><th>缓解</th></tr>
 <tr><td>跨节点 NCCL 不稳定</td><td>中</td><td>训练挂死</td><td>P0 彩排提前发现；NCCL_TIMEOUT=1800s；fallback 单机 8 卡</td></tr>
-<tr><td>DP16 吞吐非近线性</td><td>低-中</td><td>墙钟 +10%</td><td>P0 彩排实测；若 &lt;450K 则考虑 TP2+DP8</td></tr>
-<tr><td>en_v1_4 下载延期</td><td>中</td><td>训练推迟</td><td>空窗期试验利用存量数据；下载优先级最高</td></tr>
-<tr><td>en_v1_4 分词后发现污染</td><td>低</td><td>需清洗或回退</td><td>check_contamination.py 过闸；回退=用存量 en_base 206.76B</td></tr>
+<tr><td>DP16 吞吐非近线性（待验）</td><td>低-中</td><td>墙钟 +10%</td><td>P0 彩排实测；若 &lt;450K 则考虑 TP2+DP8 或下调预算</td></tr>
+<tr><td>300B 训练时长偏长（~7 天）</td><td>—</td><td>占用 GPU 7 天</td><td>MiniCPM5 1B 基座也需 300B；如需缩短可选 150B 档（~3.5 天）</td></tr>
+<tr><td>web base 需重分词</td><td>低</td><td>启动推迟 ~10-15h</td><td>parquet 全在盘，分词脚本已验证，可在 P-8 跑完期间并行完成</td></tr>
 <tr><td>AdamW 正式训练发散</td><td>低</td><td>需调参</td><td>P-8 AdamW 已实证收敛；grad_clip 1.0；每 500 步监控</td></tr>
 </table>
 
+<h2>§5 v1 → v2 修订说明</h2>
+<table>
+<tr><th>项</th><th>v1（已废弃）</th><th>v2（本版）</th><th>修订原因</th></tr>
+<tr><td class='red'><strong>训练 token 总量</strong></td><td class='red'>100B 推荐 / 200B 上限</td><td class='green'><strong>300B 推荐（= MiniCPM5-1B 基座）</strong></td><td>v1 假设「MiniCPM5 有 100B 训练数据」，实际 MiniCPM5-1B 基座 = 300B（200B@4K + 75B@32K + 25B@128K，CSDN 引官方）</td></tr>
+<tr><td>WSD 拆解</td><td>warmup 5B / stable 85B / decay 10B</td><td><strong>warmup 15B / stable 255B / decay 30B</strong></td><td>同 5/85/10 比例，总量从 100B → 300B</td></tr>
+<tr><td>总步数</td><td>23,842（100B）</td><td><strong>71,596（300B）</strong></td><td>300B / 4.19M tokens per step</td></tr>
+<tr><td>墙钟估计</td><td>~2.3 天（100B）</td><td><strong>~7.0 天（300B）</strong></td><td>同 ~498K tok/s 吞吐（待彩排实测）</td></tr>
+<tr><td>en_v1_4 定位</td><td>正式训练<strong>硬前置</strong>（必下满）</td><td><strong>增量非阻塞</strong>（在盘数据已够 300B）</td><td>在盘 1,513B + 重分词 502B = 2,015B >> 300B；en_v1_4 为增量提升数据多样性</td></tr>
+<tr><td>数据充裕度</td><td>100B 占 en_v1_4 ~2.3%</td><td>300B 占在盘数据 ~19.8%</td><td>v2 用 R3 在盘 + 重分词 web base，无需等 en_v1_4</td></tr>
+<tr><td>ckpt 数量</td><td>11（每 10%）</td><td>21（每 5%）</td><td>步数增加 3×，ckpt 间隔加密以获得更细能力曲线</td></tr>
+<tr><td>launcher 参数</td><td>--train-iters 23842</td><td><strong>--train-iters 71596</strong></td><td>300B / 4.19M</td></tr>
+</table>
+<div class='ok'><strong>v2 核心变更</strong>：训练 token 从 100B → <strong>300B</strong>（= MiniCPM5-1B 基座训练量），en_v1_4 从硬前置降级为增量非阻塞（在盘数据已足够 300B），墙钟从 ~2.3 天 → ~7.0 天。</div>
+
+<h2>§6 启动前置清单</h2>
+<table>
+<tr><th>#</th><th>前置项</th><th>状态</th><th>负责</th></tr>
+<tr><td>1</td><td>web base 重分词（en_base + l1 + zh + UltraX → .bin/.idx）</td><td class='amber'>🟠 parquet 在盘，~10-15h</td><td>data / pretrain</td></tr>
+<tr><td>2</td><td>P-8 AdamW 完成 + ckpt 留存</td><td class='amber'>🟠 step~5849/10490</td><td>pretrain</td></tr>
+<tr><td>3</td><td>.12 GPU 释放</td><td class='green'>✅ eval done @ 10-13</td><td>vision</td></tr>
+<tr><td>4</td><td>双机 16 卡 scaling 彩排（P0）</td><td>⬜ 待 .12 空档</td><td>pretrain</td></tr>
+<tr><td>5</td><td>16 卡 launcher + blend 配置落地</td><td>⬜ 待彩排</td><td>pretrain</td></tr>
+<tr><td>6</td><td>磁盘确认（≥30T free）</td><td class='green'>✅ 32T avail</td><td>—</td></tr>
+<tr><td>7</td><td>en_v1_4 下满 + 过闸 + 分词（<strong>增量非阻塞</strong>）</td><td class='amber'>🟠 49.6%（ETA ~3.4 天）</td><td>data 线</td></tr>
+</table>
+<div class='ok'><strong>关键变化</strong>：en_v1_4 从 v1 的硬前置（#1）降级为 v2 的增量非阻塞（#7）。v2 的硬前置是 <strong>web base 重分词</strong>（parquet 已在盘，~10-15h 即可完成）。
+正式训练最早开跑日 ≈ max(web base 重分词完成, P-8 完成, .12 释放, 彩排) → <strong>预计 T+2~3 天</strong>（远早于 v1 的 T+7~16 天）。</div>
+
+<h2>§7 16 卡 Launcher 脚本模板（300B 档）</h2>
+<div class='note'><code style='font-size:11px;white-space:pre-wrap'># Node 0 (.29): MASTER_ADDR=10.239.2.29
+torchrun --nnodes=2 --nproc_per_node=8 \
+  --master_addr=10.239.2.29 --master_port=29812 \
+  pretrain_launcher.py --arch mamba2 --name formal_train_300B \
+  --tensor-parallel 1 --seq-length 4096 \
+  --global-batch-size 1024 --micro-batch-size 2 \
+  --precision bf16_mixed --optimizer adamw \
+  --lr 1e-3 --min-lr 1e-5 --weight-decay 0.1 --grad-clip 1.0 \
+  --lr-warmup-iters 3580 --lr-decay-style WSD --lr-decay-iters 7160 \
+  --train-iters 71596 --save-interval 3580 --eval-interval 500 \
+  --seed 1234 --tokenizer-path data/tokenizer_eod \
+  --train-data-path &lt;stable_blend&gt; --decay-data-path &lt;decay_blend&gt;
+# Node 1 (.12): same MASTER_ADDR, node_rank=1</code>
+<br><small>NCCL 跨节点需设 <code>NCCL_SOCKET_IFNAME=bond0</code> + <code>NCCL_IB_HCA=mlx5_0</code>，彩排时验证。
+<br>decay blend 在 step 64,436 自动切换（= 71,596 - 7,160 decay iters）。</small></div>
+
 <footer>
-<p>本报告由 pretrain agent 自动生成（2026-10-13 唤醒 #387） · 数据来源：MEMORY_PRETRAIN_2B.md / MEMORY_DATA.md / DATA_MIX_RECIPE.md / EXPERIMENTS_PRETRAIN_2B_ROUND2.md / .29 实测拓扑</p>
-<p>活参数位：en_v1_4 token 量（需分词确认）· 跨节点 allreduce 带宽（需彩排实测）· 正式训练启动日（以 en_v1_4 落盘为准）</p>
+<p>本报告 v2 由 pretrain agent 自动生成（2026-10-13 唤醒 #387） · 数据来源：MEMORY_PRETRAIN_2B.md / MEMORY_DATA.md / DATA_MIX_RECIPE.md / DATA_RESEARCH.md / DATA_LEDGER.md / EXPERIMENTS_PRETRAIN_2B_ROUND2.md / .29 实测拓扑 / MiniCPM5 HF+ModelScope 模型卡 / CSDN</p>
+<p>活参数位：DP16 吞吐 ~498K tok/s（需彩排实测）· MiniCPM5-2B 基座精确 token 数（官方未公开，估 300B–500B）· web base 重分词 ETA（~10-15h）</p>
+<p><strong>v1 → v2</strong>：训练 token 100B → <strong>300B</strong>（MiniCPM5-1B 基座量）；en_v1_4 从硬前置降级为增量非阻塞；墙钟 ~2.3 天 → ~7.0 天</p>
 </footer>
 </body></html>
