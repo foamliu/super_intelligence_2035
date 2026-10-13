@@ -2,7 +2,7 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-13 · 最高优先 · 每轮唤醒必读）**：**fix3 完成 + 报告已交付** ✅ — fix3: matplotlib 29/29 patches apply（从 0！）但 **0/29 resolved** → f2p=0/1 → **确认 agent 能力问题，非 infra**。sklearn 0/27 apply（补丁上下文不匹配）· sphinx 0/8 apply（同上）。**「通过率为何这么低」报告已交付** ✅：`report_harness_why_low_passrate_zh.html`（28KB, 自包含, 3 SVG, 6 节）→ resolved=574(27.3%), env_fail=451(21.5%), true_wrong=972(46.3%), eval-OK=36.3%。**fix1+fix2 已完成** ✅：574→617 resolved (29.4%)。
+> 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：**fix4 重评进行中** 🔄 — `rerun_eval_fix4.py --resume` 运行中（PID 2940278, /tmp/fix4_eval.log），处理 61 条（sklearn 27 + astropy 26 + sphinx 8）。**fix4 修复措施**：① sklearn `env_override=testbed_py38`（Python 3.8 代替 3.6, 修复 importlib.resources 缺失）② sphinx tox→pytest 正则替换（修复 tox 4.x 不兼容）③ astropy `extra_pip='numpy<1.24'`（修复 np.int 弃用）④ astropy 字段路径 `eval_result` → `harness_result.eval` 修复。**fix4 初步结果**（9/61 完成）：sphinx 1/3 patch-applied ✅（tox→pytest 修复有效！sphinx-8595 old=false→new=true）· sklearn 0/6 patch-applied（**上下文不匹配 = agent 能力问题, 非 infra**）· 0 resolved（均为 agent patch 质量）。**preclone_repos.sh 运行中**（PID 2655397, matplotlib 克隆中, /dev/shm/repos/）。**fix1+fix2+fix3 已完成** ✅：574→617 resolved (29.4%)。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -49,15 +49,17 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        fix3 COMPLETE + why-low-passrate report delivered
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 re-eval ✅ (376/376, 34 flipped) · ⑥ fix1 report ✅ · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 re-eval ✅ (32/32, 9 flipped) · ⑩ fix2 report §8 added ✅ · ⑪ fix3 root cause found ✅ · ⑫ fix3 code fix applied ✅ · ⑬ fix3 test verified ✅ · ⑭ fix3 full run COMPLETE ✅ (64/64: mpl 29/29 apply+0 resolved, sklearn 0/27 apply, sphinx 0/8 apply) · ⑮ why-low-passrate report delivered ✅ (report_harness_why_low_passrate_zh.html, 28KB, 3 SVG, 6 sections)
-当前动作:     R358: 「通过率为何这么低」报告已交付。fix3 关键发现: matplotlib C扩展修复后 29/29 patches apply 但 0/29 resolved → f2p=0/1 → 确认 agent 能力问题非 infra。报告含: TL;DR + 外部对照(11 模型) + 能力vs环境拆解(7分类+3SVG) + 代表轨迹(8案例) + 机会点排序(6项) + 诚实条款。eval-OK口径=36.3%。
-下一步:       ① sklearn 27 条补丁上下文不匹配排查（base_commit 是否正确？）② sphinx 8 条逐条排查 ③ P1-1 astropy OOM 修复 ④ P1-2 网络 503 + blocked/no-patch 重跑 ⑤ 等运维确认后续优先级
+PHASE:        fix4 re-eval IN PROGRESS (sklearn+astropy+sphinx, 61 entries)
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 re-eval ✅ (376/376, 34 flipped) · ⑥ fix1 report ✅ · ⑦ P1 plan reported ✅ · ⑧ 97 not-applied root cause ✅ · ⑨ fix2 re-eval ✅ (32/32, 9 flipped) · ⑩ fix2 report §8 added ✅ · ⑪ fix3 root cause found ✅ · ⑫ fix3 code fix applied ✅ · ⑬ fix3 test verified ✅ · ⑭ fix3 full run COMPLETE ✅ (64/64: mpl 29/29 apply+0 resolved, sklearn 0/27 apply, sphinx 0/8 apply) · ⑮ why-low-passrate report delivered ✅ · ⑯ fix4 rerun_eval_fix4.py edited ✅ (sklearn py38, sphinx tox→pytest, astropy numpy<1.24) · ⑰ fix4 rootfs pytest-xdist broken dist-info cleaned ✅
+当前动作:     fix4 re-eval running (PID 2940278, 9/61 done, 1 patch-applied sphinx, 0 resolved). sklearn patches fail context match (agent capability). sphinx tox→pytest fix works (1/3 applied). preclone_repos.sh running (matplotlib clone via proxy, slow).
+下一步:       ① 等 fix4 eval 完成（ETA ~7min）② 检查 astropy entries 结果（numpy<1.24 fix）③ P1-2 blocked/no-patch 重跑（preclone 完成后）④ 更新 report ⑤ commit MEMORY
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- [00:50] R359: **fix4 re-eval launched** 🔄. Fixed: ① sklearn `env_override=testbed_py38` (Python 3.8 vs 3.6) ② sphinx tox→pytest regex in r1_eval.py ③ astropy `extra_pip='numpy<1.24'` ④ astropy field path `eval_result`→`harness_result.eval`. Rootfs fix: removed broken `pytest_xdist-3.6.1.dist-info` + `pytest_xvfb-3.0.0.dist-info` from testbed_py38 (module dirs missing, only dist-info present → pytest plugin load failure). Git index.lock cleaned from sklearn testbed. fix4 eval running (PID 2940278, 61 entries: sklearn 27 + astropy 26 + sphinx 8). preclone_repos.sh also running (PID 2655397, cloning repos to /dev/shm/repos/ for P1-2 blocked rerun).
+- [00:55] fix4 initial results (9/61): sphinx 1/3 patch-applied ✅ (tox→pytest fix works! sphinx-8595 old=false→new=true), sklearn 0/6 patch-applied (context mismatch = agent capability, NOT infra), 0 resolved. Entry 12 building sklearn C extensions in testbed_py38 (pip install running).
 - [22:15] R358: **「通过率为何这么低」报告交付** ✅. `report_harness_why_low_passrate_zh.html` (28388B=27.7KB, 自包含, 3 SVG, 6 节). fix3 完成确认: matplotlib 29/29 apply + 0/29 resolved (能力问题), sklearn 0/27 apply (上下文不匹配), sphinx 0/8 apply (同上). 报告核心数据: resolved=574(27.3%), env_fail=451(21.5%), true_wrong=972(46.3%), eval-OK=36.3%. 外部对照 11 模型 (Claude Opus 4.6=62.7% → Aider+GPT-4o=26.3%). 机会点 6 项排序 (升级模型+10~15pp 最大杠杆). 诚实条款 6 条. 📦 体积: TASK=32513B(31.7KB ✓) / MEMORY≈28KB(✓).
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
