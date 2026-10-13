@@ -43,32 +43,25 @@ import re, sys
 with open('$EVAL_LOG', 'r') as f:
     log = f.read()
 
-# Protocol B results (look for lp_top1 or accuracy patterns)
+# Protocol B results — ONLY match [BRIDGE] B seed=X: lp_top1=0.XXXX (XX.XX%)
+# (the mean line has ± in the percentage so it won't match this regex)
 protb_results = []
-for m in re.finditer(r'\[BRIDGE\]\s+B.*?lp_top1=([0-9.]+)\s*\(([0-9.]+)%\)', log):
+for m in re.finditer(r'\[BRIDGE\]\s+B seed=\d+.*?lp_top1=([0-9.]+)\s*\(([0-9.]+)%\)', log):
     protb_results.append(float(m.group(2)))
-for m in re.finditer(r'Protocol B.*?lp_top1=([0-9.]+)', log):
-    protb_results.append(float(m.group(1)))
 
-# Protocol A results
+# Protocol A results — ONLY match [BRIDGE] A: lp_top1=0.XXXX (XX.XX%)
 protA_results = []
-for m in re.finditer(r'\[BRIDGE\]\s+A.*?lp_top1=([0-9.]+)\s*\(([0-9.]+)%\)', log):
+for m in re.finditer(r'\[BRIDGE\]\s+A:.*?lp_top1=([0-9.]+)\s*\(([0-9.]+)%\)', log):
     protA_results.append(float(m.group(2)))
-for m in re.finditer(r'Protocol A.*?lp_top1=([0-9.]+)', log):
-    protA_results.append(float(m.group(1)))
 
-# Zero-shot results
+# Zero-shot results — match 'top1=XX.XX% top5=XX.XX%'
 zs_results = []
-for m in re.finditer(r'top-?1.*?([0-9.]+)%.*?top-?5.*?([0-9.]+)%', log):
-    zs_results.append((float(m.group(1)), float(m.group(2))))
-for m in re.finditer(r'top1=([0-9.]+).*?top5=([0-9.]+)', log):
+for m in re.finditer(r'top1=([0-9.]+)%.*?top5=([0-9.]+)%', log):
     zs_results.append((float(m.group(1)), float(m.group(2))))
 
-# k-NN results
+# k-NN results — match '[probe] k-NN k=XX: top1=XX.XX%'
 knn_results = []
-for m in re.finditer(r'k-?NN.*?k=(\d+).*?acc=([0-9.]+)%', log):
-    knn_results.append((int(m.group(1)), float(m.group(2))))
-for m in re.finditer(r'k=(\d+).*?top-?1.*?([0-9.]+)%', log):
+for m in re.finditer(r'k-NN\s+k=(\d+).*?top1=([0-9.]+)%', log):
     knn_results.append((int(m.group(1)), float(m.group(2))))
 
 print('--- Protocol B (3 seeds) ---')
@@ -111,24 +104,14 @@ else:
 echo "" | tee -a "$PARSED"
 echo "=== UPDATING LP-EPOCH CURVE ===" | tee -a "$PARSED"
 
-# Extract ProtB mean for curve
+# Extract ProtB mean for curve — ONLY match per-seed lines (not the mean line with ±)
 PROTB_MEAN=$("$PY" -c "
 import re
 with open('$EVAL_LOG', 'r') as f:
     log = f.read()
 protb = []
-for m in re.finditer(r'\[BRIDGE\]\s+B.*?lp_top1=([0-9.]+)\s*\(([0-9.]+)%\)', log):
+for m in re.finditer(r'\[BRIDGE\]\s+B seed=\d+.*?lp_top1=([0-9.]+)\s*\(([0-9.]+)%\)', log):
     protb.append(float(m.group(2)))
-for m in re.finditer(r'lp_top1=0\.\d+\s*\(([0-9.]+)%\)', log):
-    protb.append(float(m.group(1)))
-if not protb:
-    # Try other patterns
-    for m in re.finditer(r'lp_top1=([0-9.]+)', log):
-        val = float(m.group(1))
-        if val > 0.5:  # likely a percentage
-            protb.append(val)
-        elif val > 0:  # likely a fraction
-            protb.append(val * 100)
 if protb:
     avg = sum(protb) / len(protb)
     print(f'{avg:.2f}')
