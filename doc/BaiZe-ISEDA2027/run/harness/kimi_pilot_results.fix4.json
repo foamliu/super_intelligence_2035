@@ -1048,5 +1048,137 @@
     },
     "flipped": "",
     "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-25747"
+  },
+  {
+    "key": "hermes|scikit-learn__scikit-learn-25500",
+    "instance_id": "scikit-learn__scikit-learn-25500",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 45,
+      "p2p_total": 45
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-25500"
+  },
+  {
+    "key": "hermes|scikit-learn__scikit-learn-25747",
+    "instance_id": "scikit-learn__scikit-learn-25747",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 10,
+      "p2p_total": 14
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-25747"
+  },
+  {
+    "key": "hermes|sphinx-doc__sphinx-8595",
+    "instance_id": "sphinx-doc__sphinx-8595",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-8595"
+  },
+  {
+    "key": "codex|astropy__astropy-12907",
+    "instance_id": "astropy__astropy-12907",
+    "repo": "astropy/astropy",
+    "harness": "codex",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": null,
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/codex-kimi-k2.6-cloud/astropy__astropy-12907"
   }
 ]
