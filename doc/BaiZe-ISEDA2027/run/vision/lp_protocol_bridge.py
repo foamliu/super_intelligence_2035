@@ -186,6 +186,7 @@ def linear_probe_mainstream(Xtr, ytr, Xva, yva, device,
     Xtr = Xtr.to(device)
     ytr = ytr.to(device)
     yva = yva.to(device)
+    Xva = Xva.to(device)
     n = Xtr.shape[0]
     spe = math.ceil(n / batch_size)
     total_steps = epochs * spe
