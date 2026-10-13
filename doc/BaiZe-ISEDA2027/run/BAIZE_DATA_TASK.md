@@ -7,6 +7,33 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（⏸ 暂停 85M + 📥 下载 HF 图文对 TOP-5 中「未下载」的 4 个 · 落 `/nas_inference` 或 `/nas_user` 的 datasets（🚫 不放 `/nas_train`））· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「data：**暂停 85M**，开始下载推荐的 **TOP-5 中还没有下载的其它 4 个数据集**。**不要放在 `/nas_train`**，放在 **`/nas_user` 或 `/nas_inference`，我的 datasets 目录下**。」
+
+**① 暂停 85M**：
+1. 停 data 线 85M 的 **retry-loop（PID 2420118）+ hf download（PID 2420132）**：**先杀 wrapper 再杀 hf**（`pkill -f` 或 `kill`），`pgrep -af` 复核已退。
+2. 🚫 **保留已下内容**（不删任何 parquet）；`.incomplete` **默认保留**（便于将来续传），仅在确认不再续传时才清。
+3. 心跳把 85M 标 **`⏸ 暂停（用户令 2026-10-13）`** + 记已下进度（~8385/12124 ≈ 69.2%）。
+
+**② 下载 TOP-5 中「未下载」的 4 个**（TOP-3 **已在本地盘**，跳过）：
+| # | HF id | 规模 | 格式 |
+|:--|:--|:--|:--|
+| **TOP-1** | `MVRL/WebMix-38M` | 38.8M 对 / ~2 TB | parquet(Image) |
+| **TOP-2** | `VedaLabs/wit_base`（= wikimedia/wit_base） | 6.48M 对 / ~200–400 GB | parquet(Image) |
+| **TOP-4** | `hanlincs/InternVL-SA1B-Caption-WebDataset` | ~22.4M 对 / ~1–1.5 TB | webdataset tar |
+| **TOP-5** | `HuggingFaceM4/the_cauldron` | ~1.9M 对 / 50 子集 | parquet(Image list) |
+- ⚠️ **下载前先核实**每个 repo 的**实际大小 / 文件数 / 是否 gated**（`huggingface_hub` API 或 `hf download --dry-run`），**如实回报**；不可达/gated 的标「不可达」跳过。
+- **优先序**：TOP-1 → TOP-2 → TOP-4 → TOP-5（TOP-5 `the_cauldron` 是 **VQA/SFT 格式**，非纯预训练，**最后下**）。
+
+**③ 落盘路径（用户硬要求）**：
+- 🚫 **绝不放 `/nas_train`**（其已 ~85%，逼近红线）。
+- ✅ 放 **`/nas_inference/app.e0031982/datasets/`**（与 GPIC 同一 datasets 根）**或** `/nas_user/<你的用户>/datasets/`；建议 `<...>/datasets/<publisher>/<name>/`（如 `.../datasets/MVRL/WebMix-38M/`、`.../datasets/VedaLabs/wit_base/`…）。**以实测为准，把实际落盘路径写进心跳**。
+- ⚠️ 先 `df -h` 确认目标盘剩余空间 ≥ 预计总量（~2 + 0.4 + 1.5 + 少量 TB）。
+
+**④ 纪律**：`setsid` 守护 + 断点续传；纳入**「死/僵/速率趋零即 kill+restart」**看护；与仍在下行的 **en_v1_4** 报**各自速度 + 带宽争用**；🚫 **不删任何已有数据**；commit 前缀 `data dl:`；任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-13（🔍 为 vision encoder 训练在 HuggingFace 找「图文对」数据集 · 要求 image 带 bytes（非 url）· 中文 HTML 报告）· 用户直令 · 高优先
 
 > **用户令（2026-10-13）**：「data：使用 web search 给 vision encoder 训练在 huggingface 上找图文对数据集（**要求 image 带 bytes 而非 url**），输出 html 报告（中文）。」

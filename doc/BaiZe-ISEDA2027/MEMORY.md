@@ -20,6 +20,10 @@
 - 用户否决 v2：**「300B」无出处、且与实盘「2,015B」自相矛盾**；**MiniCPM5 无独立训练论文**（`arXiv 2602.09003` 实为清华 UltraData **数据管理框架**论文，非 MiniCPM5 模型论文；300B 出自 **CSDN 二级源**）。
 - 令 **v3**：**严格按「已下载 + 正在下载」实盘盘点**（`du` / 文件数）→ 换算 token → **总数 = 训练量**；🚫 禁引论文/CSDN 数字；每个 token 数须附**盘点命令**。已下发 `run/BAIZE_PRETRAIN_2B_TASK.md` 顶。
 
+### 📋 vision 放行执行 + data 换下载目标（用户直令 · 10-13 晚）
+- **vision**：**外部编码器 ProtB 做完后 → 执行「合并三数据集实验」**（GPIC+CC12M+Amshaker · **GBS/MBS ×4 · LR ×2** · **24h ≈3 epoch**）⇒ **放行起训**（覆盖前令「只出计划、不起训」）。已下发 `run/BAIZE_VISION_TASK.md` 顶。
+- **data**：**暂停 85M**（保留已下 ~69.2%，不删）+ 下载 **HF 图文对 TOP-5 中「未下载」的 4 个**（① `MVRL/WebMix-38M` ② `VedaLabs/wit_base` ④ `hanlincs/InternVL-SA1B-Caption-WebDataset` ⑤ `HuggingFaceM4/the_cauldron`；③ `BLIP3o/...` **已在本地**跳過）⇒ **落 `/nas_inference/app.e0031982/datasets/` 或 `/nas_user/<user>/datasets/`，🚫 不放 `/nas_train`**。已下发 `run/BAIZE_DATA_TASK.md` 顶。
+
 ## 🆕 最近操作（2026-10-12）
 
 ### 📋 七项运维指令下发（用户直令 · 10-12 晚）
@@ -206,6 +210,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📋 2026-10-13 vision 放行 + data 换下载目标**（用户直令）：vision 外部 ProtB 做完即跑「合并三数据集实验」（GBS/MBS×4·LR×2·24h≈3ep·放行起训）；data 暂停 85M（保留 69.2%）+ 下载 HF 图文对 TOP-5 未下的 4 个 → 落 /nas_inference 或 /nas_user 的 datasets（🚫 不放 /nas_train）。
 
 - **📋 2026-10-13 pretrain 计划书【v3 再重做】**（用户直令）：用户否 v2「300B」无出处（MiniCPM5 无训练论文；`arXiv 2602.09003`=UltraData 数据框架论文非 MiniCPM5；300B 出自 CSDN 二级源）→ 令 v3 **按「已下载+正在下载」实盘盘点换算 token**，禁引论文数字。
 

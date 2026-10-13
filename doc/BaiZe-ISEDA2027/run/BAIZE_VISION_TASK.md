@@ -1,6 +1,20 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（🚀【放行执行】外部编码器 ProtB 做完后 → 立刻跑「合并三数据集实验」：GBS/MBS ×4 · LR ×2 · 24h ≈3 epoch）· 用户直令 · 最高优先
+
+> **用户令（2026-10-13）**：「vision：**外部编码器 ProtB 做完后，执行「合并三数据集实验计划」。GBS/MBS ×4 · LR ×2 · 24h → 约 3 epoch。**」
+> **性质**：**占 GPU**（`.12` H100×8）。⚠️ 与前令「**只出计划、不起训**」不同 —— **本令 = 放行执行**（覆盖前令的「不启动训练」约束）。
+
+**① 前置门控（硬）**：**必须先跑完外部编码器 ProtB（5/5 全出结果）并交付报告**，再起本实验 —— 避免两组任务抢 `.12` GPU。路线：ProtB 全部完成 → 本实验开跑。
+**② 做法（按已交付计划 `report_vision_merge3ds_bs4_lr2_plan_zh.html`）**：
+- **数据**：合并 **GPIC + CC12M + Amshaker**（blend，权重/去重按计划）；
+- **超参**：**GBS ×4、MBS ×4、LR ×2**（相对 E1fair/④-4ep 基线，按计划表）；**预算 24h 墙钟 → 约 3 epoch**。
+- **流程**：**预注册**（判据先行）→ smoke（100 步）→ 全量 → **3-seed ProtB 评测**（复用 `lp_protocol_bridge.py`）。
+**③ 交付**：训练日志 + ProtB(3 seeds mean±std) + **中文 HTML 结果报告** `report_vision_merge3ds_result_zh.html` + `EXPERIMENTS_VISION.md` 新节（含 vs 基线 Δlp）。
+**④ 纪律**：起训前 `nvidia-smi` 确认 `.12` 空闲 · 与 data 线**新下载**错峰 IO · 单一变量（除 GBS/MBS/LR 外与基线逐字节一致）· commit 前缀 `vision merge3ds:` · 任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-13（📄「合并三数据集 · GBS/MBS×4 · LR×2」实验计划 · 中文 HTML · 24h 预算）· 用户直令 · 最高优先
 
 > **用户令（2026-10-13）**：「vision：生成 html 实验计划（中文版），合并三数据集，GBS/MBS ×4，LR ×2，预估 N epoch 的训练时间即 ProtB 成绩。预算 24 小时。」
