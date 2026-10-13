@@ -1,6 +1,38 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-13（🔬 用 ProtB 评测 `/nas_train/app.e0031982/models` 下现有公众视觉编码器 · 参考值 · **最高优先**）· 用户直令
+
+> **用户令（2026-10-13）**：「用 ProtB 评测现有 vision encoder（CLIP、SigLIP/SigLIP2、AIMv2、OpenVision2、RiCE-ViT 等，都在 `/nas_train/app.e0031982/models` 已下载）。」
+> **性质**：评测类任务（**占 GPU**，在 `.12`；不训练编码器，只 linear-probe）。🔥 ④-4ep 已全收尾、`.12` 8 卡空；只须注意与 **data 线 NFS 下载**错峰（它占 IO 不占 GPU)。
+
+**① 目标与范围（运维已实地盘点 `/nas_train/app.e0031982/models`，以下为实存编码器）**：
+| 模型 | 路径 | 加载方式 | 备注 |
+|--|--|--|--|
+| CLIP ViT-L/14 | `openai/clip-vit-large-patch14-336` | transformers `CLIPVisionModel` | 本线冻结文本塔同源，vision 侧可测 |
+| SigLIP2 so400m | `google/siglip2-so400m-patch14-384`（另有 `-224`/`-16-384`/`-16-512`） | transformers `Siglip2VisionModel` | ⚠️ **无原版 SigLIP**，只有 SigLIP2 |
+| AIMv2-1B | `apple/aimv2-1B-patch14-336`（另有 `-448`） | HF 自定义 `modeling_aimv2.py`（就在目录内） | `model.safetensors` 4.9GB |
+| OpenVision2 official | `UCSC-VLAA/openvision2-vit-large-patch14-336-vision-only` | open_clip（`open_clip_pytorch_model.bin`+`open_clip_config.json`） | R13 已跑过 Protocol A=79.81% |
+| RICE-ViT-L | `DeepGlint-AI/rice-vit-large-patch14-560` | HF `config.json`+`model.safetensors` | 需核 modeling 代码来源并落地 |
+| 可选加测 | `lmms-lab-encoder/onevision-encoder-large` | HF 自定义 `modeling_onevision_encoder.py` | 易加载则一并测 |
+
+**② 关键工程前提**：现有 `lp_protocol_bridge.py` **只吃 BaiZe `.pt`**（`load_vision`/`encode_images` 来自 `r8_eval_in1k.py`），**不能加载外部模型** → 需新增「外部编码器加载层」，把每个模型统一暴露成 `encode_images(imgs) → pooled_features`（用于 probe），并**按各自 native 分辨率 + native mean/std** 预处理（CLIP 336/CLIP-norm · SigLIP2 384 视其 preprocessor · AIMv2 336 · OV2 336 · RICE-ViT 560）。⚠️ **统一用 pooling 输出（cls/pooled），若各模型特征维不同属预期**。
+
+**③ Protocol（严格复用 ④-4ep 的 ProtB，冻结）**：IN-1k 官方 val(50k) 评测 + 全量 train(1.28M) SGD+momentum0.9、cosine(5ep warmup)、90ep、bs1024、**3 seeds(0/1/2) 报 mean±std**；直接复用 `lp_protocol_bridge.py` 的 `linear_probe_mainstream()`。
+
+**④ 红线**：
+1. 🚫 **公众预训练 =「参考值」，必须另起一张表，绝不与 from-scratch BaiZe（④-4ep 67.05% 等）放同一榜里排名不加区分**（历史纪律：『训练过的模型』打『从零的模型』是作弊口径）。
+2. 🚫 不许编数字：lp 用实测；公开论文 lp/zero-shot 只作「文献锚点 · 待核」标注，**不得当本项目结论**。
+3. ⚠️ 分辨率/patch 各不同（224/336/384/448/560）→ 报告每行**显式标注 native 分辨率**，并声明「跨分辨率 lp 不可直接排高下」。
+
+**⑤ 交付**：`doc/BaiZe-ISEDA2027/report_vision_external_protb_reference_zh.html`（中文 · 自包含 · 内联 CSS/SVG · 零外链）+ 在 `EXPERIMENTS_VISION.md` 新增「§外部编码器 ProtB 参考」小节。表 = 每模型一行：native 分辨率 · 特征维 · ProtB mean±std(3 seeds) ·（可选）zero-shot · 文献锚点。
+
+**⑥ 执行序（先 smoke 后全量）**：① 建加载层 + 每模型 smoke（能 load/能出特征/维度对/前向不 OOM）→ ② **先报**「最终模型清单 + 各 native 配置 + 全量 ETA + 占卡」再跑全量（⚠️ RICE-ViT@560 / AIMv2-1B 高分辨率重 I/O、显存大，feature extraction 可能 ~10–20h/模型，务必先给 ETA 与分批计划）→ ③ 全量 feature extraction + 3-seed probe → ④ 出表 + HTML + 提交。
+
+**⑦ 纪律**：占 `.12` GPU 前 `nvidia-smi` 确认空闲 · 与 data 线下载错峰（必要时夜间跑/降 workers）· commit 前缀 `vision protb:` · 任务书 >32KB 自滚归档。
+
+---
+
 ### 🆕 运维指令 · 2026-10-13（📄 ④-4ep 实验报告（中文 HTML）· 末节「建议后续工作」含 MBS/GBS/LR 加速分析 + 三数据集 N-epoch 时间表）· 用户直令 · 最高优先
 
 > **用户令（2026-10-13）**：「就刚完成的实验（④-4ep epoch 缩放）写个 html 报告（中文版），最后加一节建议后续工作。另外：训练期间显存始终仅 ~20GB，能否用 MBS×4 + GBS×4 + LR×2 加速？下一步考虑合并三个数据集做 N epoch 训练，估计 N=1/2/4/8/16 的训练时间。」
