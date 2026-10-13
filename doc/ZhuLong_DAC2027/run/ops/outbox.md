@@ -8919,3 +8919,42 @@ hfeg0tedaap02
 -rw-r--r-- 1 app.e0031982 app.adm 4543064 Oct 13 14:51 /tmp/ABL_phi_k3_r1_att2.l
 === DONE ===
 ```
+
+---
+
+## RUN_ID 65 · 2026-10-13 14:51:48 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 65 · 杀评测进程 + 记状态
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] 杀前检查 ==="
+pgrep -af 'run_cline_script' | cut -c1-100
+echo "=== [2] 杀评测进程 ==="
+pkill -f 'run_cline_script' 2>/dev/null; sleep 2
+pkill -f 'run_eval' 2>/dev/null; sleep 1
+echo "=== [3] 杀后确认 ==="
+pgrep -af 'run_cline_script' | cut -c1-100 || echo "run_cline_script: 已清"
+pgrep -af 'run_eval' | cut -c1-100 || echo "run_eval: 已清"
+echo "=== [4] loop 存活（不杀）==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-90 || echo "loop: 不在"
+echo "=== [5] 当前 phi_k3 att2 log 状态 ==="
+ls -la /tmp/ABL_phi_k3_r1_att2.log 2>/dev/null | cut -c1-80 || echo "log 不存在"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-13 14:51:48
+=== [1] 杀前检查 ===
+=== [2] 杀评测进程 ===
+=== [3] 杀后确认 ===
+=== [4] loop 存活（不杀）===
+464225 bash zhulong_loop.sh
+2302281 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+=== [5] 当前 phi_k3 att2 log 状态 ===
+-rw-r--r-- 1 app.e0031982 app.adm 4544721 Oct 13 14:51 /tmp/ABL_phi_k3_r1_att2.l
+=== DONE ===
+```
