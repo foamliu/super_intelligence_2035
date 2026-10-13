@@ -1,0 +1,632 @@
+[
+  {
+    "key": "codex|sphinx-doc__sphinx-8595",
+    "instance_id": "sphinx-doc__sphinx-8595",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "codex",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/codex-kimi-k2.6-cloud/sphinx-doc__sphinx-8595"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-10508",
+    "instance_id": "scikit-learn__scikit-learn-10508",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-10508"
+  },
+  {
+    "key": "claude-code|scikit-learn__scikit-learn-11281",
+    "instance_id": "scikit-learn__scikit-learn-11281",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-11281"
+  },
+  {
+    "key": "pi|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "deepseek-harness|scikit-learn__scikit-learn-11281",
+    "instance_id": "scikit-learn__scikit-learn-11281",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-11281"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-12471",
+    "instance_id": "scikit-learn__scikit-learn-12471",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-12471"
+  },
+  {
+    "key": "claude-code|sphinx-doc__sphinx-11445",
+    "instance_id": "sphinx-doc__sphinx-11445",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-11445"
+  },
+  {
+    "key": "deepseek-harness|sphinx-doc__sphinx-10325",
+    "instance_id": "sphinx-doc__sphinx-10325",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/deepseek-harness-kimi-k2.6-cloud/sphinx-doc__sphinx-10325"
+  },
+  {
+    "key": "hermes|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-25500",
+    "instance_id": "scikit-learn__scikit-learn-25500",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 45,
+      "p2p_total": 45
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-25500"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-25570",
+    "instance_id": "scikit-learn__scikit-learn-25570",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 3,
+      "p2p_pass": 72,
+      "p2p_total": 184
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-25570"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-25747",
+    "instance_id": "scikit-learn__scikit-learn-25747",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 10,
+      "p2p_total": 14
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-25747"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-25500",
+    "instance_id": "scikit-learn__scikit-learn-25500",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 45,
+      "p2p_total": 45
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-25500"
+  },
+  {
+    "key": "opencode|sphinx-doc__sphinx-8595",
+    "instance_id": "sphinx-doc__sphinx-8595",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8595"
+  },
+  {
+    "key": "pi|scikit-learn__scikit-learn-25500",
+    "instance_id": "scikit-learn__scikit-learn-25500",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 45,
+      "p2p_total": 45
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-25500"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-25570",
+    "instance_id": "scikit-learn__scikit-learn-25570",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 3,
+      "p2p_pass": 72,
+      "p2p_total": 184
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-25570"
+  },
+  {
+    "key": "pi|scikit-learn__scikit-learn-25570",
+    "instance_id": "scikit-learn__scikit-learn-25570",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 3,
+      "p2p_pass": 72,
+      "p2p_total": 184
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-25570"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-25638",
+    "instance_id": "scikit-learn__scikit-learn-25638",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "fix3_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 10,
+      "p2p_pass": 193,
+      "p2p_total": 194
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix4/FIX4/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-25638"
+  }
+]
