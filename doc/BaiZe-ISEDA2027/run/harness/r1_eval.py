@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shlex
 import subprocess
 import sys
@@ -278,10 +279,16 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
         # Also add --no-build-isolation to pip install so it uses the
         # already-installed packages instead of creating a build isolation
         # env that can't find the conda env's headers.
+        # fix3b (2026-10-13): add PYTHONHOME to fix Python binary whose
+        # sys.prefix points to a different rootfs template (e.g. sklearn's
+        # testbed_py38 Python has prefix pointing to matplotlib rootfs).
+        # Also unset PYTHONPATH to prevent cross-env site-packages leakage.
         replacement = (
             f"export PATH={env_path}/bin:$PATH "
             f"&& export CONDA_PREFIX={env_path} "
             f"&& export CONDA_DEFAULT_ENV={env_override} "
+            f"&& export PYTHONHOME={env_path} "
+            f"&& unset PYTHONPATH "
             f"&& export CFLAGS=-I{env_path}/include "
             f"&& export CPPFLAGS=-I{env_path}/include "
             f"&& export LDFLAGS=-L{env_path}/lib "
@@ -300,6 +307,18 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
             "pip install -e .",
             "pip install --no-build-isolation -e .",
         )
+        # fix3c (2026-10-13): Replace standalone 'pytest' commands with
+        # 'python -m pytest' so the correct Python (from PATH, which we
+        # just set to the override env) is used instead of the pytest
+        # script's shebang (which may point to the wrong conda env).
+        # Only matches 'pytest' at the start of a line (a shell command),
+        # not 'import pytest' or 'pytest.importorskip' inside patches.
+        eval_script = re.sub(
+            r'^pytest\s',
+            'python -m pytest ',
+            eval_script,
+            flags=re.MULTILINE,
+        )
     if extra_pip:
         # Insert extra pip install after the first env activation line.
         # (Matches either 'conda activate' or the fix2b 'export PATH' replacement)
@@ -312,6 +331,23 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
                 new_lines.append(f"pip install {extra_pip}")
                 inserted = True
         eval_script = "\n".join(new_lines)
+    # fix3b (2026-10-13): Handle 'git checkout <hash> <files>' lines in the
+    # eval script where some files may be NEW (created by the test patch, not
+    # existing at base_commit). The original 'git checkout <hash> <files>' fails
+    # for new files, and then 'git apply' (test patch) fails because the file
+    # already exists (created by the model patch). Fix: replace with a per-file
+    # loop that does 'git checkout' if the file exists at the commit, or 'rm -f'
+    # if it doesn't (so git apply can create it fresh).
+    eval_script = re.sub(
+        r'^git checkout ([0-9a-f]{7,40}) (.+)$',
+        lambda m: (
+            f'for f in {m.group(2)}; do '
+            f'git checkout {m.group(1)} -- "$f" 2>/dev/null || rm -f "$f"; done'
+        ),
+        eval_script,
+        flags=re.MULTILINE,
+    )
+
     (inst_log_dir / "eval.sh").write_text(eval_script)
     (rootfs / "eval.sh").write_text(eval_script)
 
