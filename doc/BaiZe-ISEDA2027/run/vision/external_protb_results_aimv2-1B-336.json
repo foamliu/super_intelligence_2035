@@ -1,0 +1,21 @@
+[
+  {
+    "model": "aimv2-1B-336",
+    "resolution": 336,
+    "feature_dim": 2048,
+    "loader": "aimv2",
+    "protb_mean": 0.52347332239151,
+    "protb_std": 0.0006745410291540848,
+    "protb_runs": [
+      0.5239199995994568,
+      0.5225200057029724,
+      0.5239799618721008
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~87.6% (AIMv2-L 0.3B@336, frozen trunk)"
+  }
+]
