@@ -709,3 +709,17 @@
 | 2026-10-13 | IDC：2026Q3 全球 PC 出货 6270 万台同比 -20.1%（连续第二季下滑 · 环比 -9.1% · 供应端未缓 + 涨价前提前备货） | IT之家（`012/359` · 14:48 CST） | news | https://www.ithome.com/1/012/359.htm |
 | 2026-10-13 | 防重核验（第九十七轮候选与 `SEEN.md` 近邻比对） | — | 防重：`徐克谈 AI` / `NHTSA 调查` / `Getty 破产重组` / `Anthropic 大阪` / `核反应堆接入 AI` / `IDC PC` / `湘江新区 AI 短剧` **均首见**；量子位 `502654`（华为 RSI 通关 25 款游戏）**落第九十四轮窗口 ⇒ 防重** | https://www.qbitai.com/2026/10/502654.html |
 
+| 2026-10-13 | 面壁智能发布新一代端侧多模态大模型 MiniCPM-V 4.7（35B-A3B / 1B 两种规格 · 系列首个 MoE · LES 前瞻专家调度 · 3GB 内存 13+ token/s · iPhone 17 Pro Max） | IT之家（`012/483` · 17:12 CST） | news | https://www.ithome.com/1/012/483.htm |
+| 2026-10-13 | 哈啰 Robotaxi 发布生成式驾驶世界模型 HelloWorld（按需构建驾驶数据 + 交互式策略测试 · 自然语言或编辑轨迹生成多视角视频与激光雷达观测） | IT之家（`012/493` · 17:50 CST） | news | https://www.ithome.com/1/012/493.htm |
+| 2026-10-13 | 微软逆转办公 AI 策略：新版 Copilot 整合完整 Word / Excel / PowerPoint 体验 ＋ Excel 引入「交互式画布」（AI 把零散数据变成可交互决策看板 · 两条合并计 1 条） | IT之家（`012/403` 15:41 ＋ `012/410` 15:54 CST） | news | https://www.ithome.com/1/012/403.htm |
+| 2026-10-13 | 亚马逊「机器人员工」突破 100 万台 / 人类员工超 150 万人（据 Ars Technica · 高风险作业替代口径 · 安全与用工争议升温 · 2025 年报称全球第二大雇主） | IT之家〔据 Ars Technica〕（`012/490` · 17:43 CST） | news | https://www.ithome.com/1/012/490.htm |
+| 2026-10-13 | 哀牢山首位「机器人科考队员」：云深处山猫 M20S 轮足机器人（替人探路 · 西黑冠长臂猿观测位前推约 20 米 · 拍到水晶兰） | IT之家（`012/482` · 17:05 CST） | news | https://www.ithome.com/1/012/482.htm |
+| 2026-10-13 | 79 岁陶华碧重新执掌老干妈：引入 AI 全链路管理厂区（2025 全年营收 54 亿元创品牌新高） | IT之家（`012/406` · 15:48 CST） | news | https://www.ithome.com/1/012/406.htm |
+| 2026-10-13 | Character.AI 申请破产，同意以 2000 万美元向迪士尼出售部分资产（细节未展开 · 仅标题口径） | IT之家（`012/420` · 16:22 CST） | news | https://www.ithome.com/1/012/420.htm |
+| 2026-10-13 | 曝梁文锋密集接触具身智能创业者，DeepSeek 拟入局具身智能（量子位同窗「梁文锋投了 Swin Transformer 作者 · Winverse AI」· 双源同事件计 1 条） | IT之家（`012/419` · 16:16 CST）＋ 量子位（`503093` · 17:33 CST） | news | https://www.ithome.com/1/012/419.htm |
+| 2026-10-13 | SpaceX 推出「X Subscription」：整合 Grok / Grok Bot / Cursor / X Premium（个人 Plus 8 美元 · 回收本日 `x.ai/news` 留档条 · 正文由 IT之家 补全） | IT之家（`012/487` · 17:32 CST） | news | https://www.ithome.com/1/012/487.htm |
+| 2026-10-13 | 阿里千问 N1 系列 AI 眼镜发布（支持更换电池 · Pro 版眼动交互 / 全天候健康监测 · 2899 元起） | IT之家（`012/400` · 15:33 CST） | news | https://www.ithome.com/1/012/400.htm |
+| 2026-10-13 | 华硕发布 NVIDIA MGX 服务器 XA P2N-E2，支持 RTX PRO 6000 Blackwell 双卡 | IT之家（`012/422` · 16:25 CST） | news | https://www.ithome.com/1/012/422.htm |
+| 2026-10-13 | 量子位《Claude 团队又搞事：实测 AI 全自主复制进智能家电》（摘要行「拉马克进化的幽灵」· 14:19 CST 落第九十七轮窗内 ⇒ **第九十八轮补收** · 实验口径待核） | 量子位（`502920` · 14:19 CST） | news | https://www.qbitai.com/2026/10/502920.html |
+| 2026-10-13 | 防重核验（第九十八轮候选与 `SEEN.md` 近邻比对） | — | 防重：量子位 `502954`（华为哈勃 / 机器人皮肤变色）= 第九十六轮 `012/265` **视塔机器人同事件**；量子位 `502767`（无问芯穹单轮 23 亿 / 累计 43 亿）= 10-12 `011/849` **同事件**；IT之家 `012/484`（Terafab 年内 10 款芯片）与 10-04「传台积电探索与 Terafab 合作」**同主体不同进展 ⇒ 仅留档**；`MiniCPM-V 4.7` / `HelloWorld` / `Character.AI 破产` / `DeepSeek 具身` / `千问 N1 眼镜` / `老干妈 AI 全链路` / `亚马逊 100 万台` / `哀牢山科考` / `华硕 MGX` / `微软 Copilot 逆转` 均**首见** ⇒ 本轮候选**不构成重复** | — |
+
