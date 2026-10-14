@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **🏁 P-8 AdamW 全部完成 + F2 论文回填完成**（stable 9441步 + decay fix 1149步 = 10590步, ~44.4B tokens, ~412 GPU·h, final loss 1.357）。✅ F2: 0_abstract.tex 加 production run 句, 4_llm_pretrain.tex 新增 §Full-Scale Production Training + Data 节 base "is being prepared"→"serves as", 13pp 0-error ✅。✅ 0 NaN, 0 skipped 全程。✅ 8 GPU 已释放。✅ 脚本 SEQ 已改 4096。
   - PHASE: **p8_complete_f2_done** — P-8 + F2 全部完成。P-8: 10590步/44.4B tok/412 GPU·h/final loss 1.357。F2: 论文 3 处修改(abstract+data+new subsection), 13pp 0-error 0-undefined-ref。final ckpt: `p8_adamw_decay/checkpoints/iter_0001149`。🚫绝不 kill watchdog loop(PID 1391466)。
   - ERROR_COUNT: 0
-  - 轮询状态：30min 长轮询。**8 GPU 全空闲**（.29, 0% util, 0 MiB, 2026-10-15 00:54 核验）。P-8 ✅ + F2 ✅ — 全部完成。📦 体积：TASK=28.0KB ✅ / MEMORY=22.4KB ✅ ≤32KB（本轮无归档）。→ **下一步**：等运维新指令。所有待办（P-8/v4报告/F2）均已闭合。
-  - 🩺 **本唤醒推进 = #436（2026-10-15 ~00:54, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）**：① git fetch → 无 ahead/behind；② GPU .29 全 0%/0MiB ✅；③ loop PID 1391466 运行中 ✅；④ 体积 TASK=28.0KB / MEMORY=22.4KB 均 ≤32KB ✅；⑤ 运维指令区全为归档指针，无新活跃指令。→ **下次唤醒**：继续等运维新指令。WAITING=1。
+  - 轮询状态：30min 长轮询。**8 GPU 全空闲**（.29, 0% util, 0 MiB, 2026-10-15 01:26 核验）。P-8 ✅ + F2 ✅ — 全部完成。📦 体积：TASK=28.0KB ✅ / MEMORY=22.4KB ✅ ≤32KB（本轮无归档）。→ **下一步**：等运维新指令。所有待办（P-8/v4报告/F2）均已闭合。
+  - 🩺 **本唤醒推进 = #437（2026-10-15 ~01:26, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）**：① git fetch → 无 ahead/behind；② GPU .29 全 0%/0MiB ✅；③ loop PID 1391466 运行中 ✅；④ 体积 TASK=28.0KB / MEMORY=22.4KB 均 ≤32KB ✅；⑤ 运维指令区全为归档指针，无新活跃指令。→ **下次唤醒**：继续等运维新指令。WAITING=1。
+  > 📦 **[已归档] #436 流水（2026-10-15 ~00:54, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #435 流水（2026-10-15 ~00:10, ✍️ F2 论文回填·P-8生产结果写入abstract+§4_full_train·13pp 0-error）→ daily-memories/2026-10-15.md；结论：F2 完成(3处修改+新增subsection), 13pp 0-error, 所有待办闭合。需要时再读。**
   > 📦 **[已归档] #434 流水（2026-10-14 ~23:45, 📦 任务书归档·v4 plan+decay fix 两块→ARCHIVE·TASK 35.1KB→28.0KB ✅）→ daily-memories/2026-10-14.md；结论：TASK 归档完成, 两项最高优先运维指令(v4报告+decay fix)均已完成。需要时再读。**
   > 📦 **[已归档] #433 流水（2026-10-14 ~22:30, 📋 v4 正式训练计划报告·47KB·3SVG·11表·14源精确token/int32/密度归因/D-scan/SFT过采样）→ daily-memories/2026-10-14.md；结论：v4 报告完成, 逐源精确token(577.98B .bin), D-scan(avg=11.9177×logD+33.87, R²=0.964), 诚实条款4级。需要时再读。**
