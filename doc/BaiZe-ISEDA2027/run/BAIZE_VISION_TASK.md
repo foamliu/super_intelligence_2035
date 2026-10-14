@@ -1,6 +1,23 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（📊 当前 ArmC 试验中文状态报告）· 用户直令
+
+> **用户令（2026-10-14）**：「vision 现在在做什么试验，让它写个 html 报告（中文版）。」
+
+**性质**：纯写作、零 GPU；在 ArmC 训练监控空窗期做，🚫 不干扰/不延迟训练。
+
+**① 报告主题**：交代「vision 当前正在做的试验」= **merge3ds 合并三数据集实验 · ArmC 臂**（当前训练中）。
+
+**② 报告必须包含**（中文、自包含 HTML，带内联 CSS/SVG，落 `doc/BaiZe-ISEDA2027/reports/report_vision_merge3ds_armc_status_zh.html`）：
+1. **实验定义**：合并 GPIC + CC12M + Amshaker；**GBS/MBS ×4 · LR ×4 = 2e-3**（Goyal 线性缩放规则，附 arXiv:1706.02677 出处）；`ArmC` 在 LR 3-臂扫描（×2/1e-3 · ×3/1.5e-3 · ×4/2e-3）中的定位与选优判据（**预注册先行**：以 3-seed ProtB 取优）。
+2. **数据量**：~118M pairs（7437-tar 快照 ≈110.9M / 全量 8000-tar 118.1M），标注「实验时快照 vs 全量」两口径。
+3. **实时进度（诚实如实）**：step ~48600/154500（31.4%）、loss 区间、C1 趋势、无坍缩、吞吐 bimodal（NFS IO）、ETA（avg ~01:25 Oct15）。
+4. **预期产出**：训练完成 → eval chain → 3-seed ProtB → 与基线对比（E1fair 62.34% / ④-4ep 67.05%）；判据 Δlp（|Δ|<1.5pp 不可分辨）。
+5. **诚实条款**：⚠️ 训练**进行中，无最终 ProtB**；当前数字均为暂态（public 引用勿当结论）。
+
+**③ 纪律**：🚫 不打断 ArmC 训练/eval chain；数字与 `EXPERIMENTS_VISION.md` / `MEMORY_VISION.md` 一致、🚫 凭印象；commit 前缀 `vision report:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-14（✍️ 放行刷新论文 —— 执行审视报告修改）· 用户直令 · 最高优先
 
 > **用户令（2026-10-14）**：「放行 vision 论文改进。」
