@@ -4,8 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-14 22:11（ArmC 监控 + MLLM bridge 三验 · wake #83）**：🔄 ArmC 训练健康：step **136,470**/154500(**88.3%**), loss~0.10-0.40(偶有spike正常), C1=**0.6250**(step136200 PROBE, 健康范围 0.59-0.75), C2_gap=+0.1746, C4=OK(454 PROBEs 全绿), LR=2.66e-4(cosine 衰减中), 吞吐~210ms/iter~9700 img/s。ckpt: 10k-130k(13 个)已存, next@140k。ETA: (154500-136470)×210ms≈1.05h → **~23:14 Oct14**。✅ eval chain(PID 3698490)等待中。✅ MLLM bridge 三验：CPU 单测 **5/5 PASSED**（重跑确认：strict=True 277/277, [1,3,224,224]→[1,196,512] bit-exact max_diff=0.00e+00, projector→[1,196,2560], e2e OK）。交付物确认全在盘：7 文件 mllm_bridge/ + 报告 20.6KB `doc/BaiZe-ISEDA2027/reports/report_vision_mllm_bridge_zh.html`。📦 体积：TASK=26.6KB✅ / MEMORY=30.7KB✅（归档 wake#82 → daily-memories）。
-> 📦 2026-10-14 ~21:05（wake #82 ArmC 监控 + MLLM bridge 复验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 126,180(81.7%), C1=0.6280, 422 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
+> 🆕 **2026-10-14 22:46（ArmC 监控 + MLLM bridge 四验 · wake #84）**：🔄 ArmC 训练健康：step **140,400**/154500(**90.8%**), loss~0.10-0.25(正常), C1=**0.6518**(step140400 PROBE, 稳定平台期 0.63-0.69), C2_gap=+0.1662, C4=OK(468 PROBEs 全绿), LR=2.41e-4(cosine 接近终点 2e-4), 吞吐~250ms/iter~8000 img/s(NFS恢复稳态)。ckpt: 10k-140k(14 个)已存, final@154500。ETA: (154500-140400)×250ms≈59min → **~23:45 Oct14**。✅ eval chain(PID 3698490)等待中。✅ MLLM bridge 四验：CPU 单测 **5/5 PASSED**（strict=True, [1,3,224,224]→[1,196,512] bit-exact max_diff=0.00e+00, projector→[1,196,2560], e2e OK）。📦 体积：TASK=26.6KB✅ / MEMORY=31.0KB✅。
+> 📦 2026-10-14 22:11（wake #83 ArmC 监控 + MLLM bridge 三验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 136,470(88.3%), C1=0.6250, 454 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-14 ~20:30（wake #81 MLLM bridge 交付）已归档 → daily-memories-vision/2026-10-14.md；**结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。需要时再读。
 > 📦 2026-10-14 ~18:49（wake #80）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 110,810(71.6%), C1=0.6113, 369 PROBEs全绿, 报告刷新。需要时再读。
 > 📦 2026-10-14 ~18:09（merge3ds ArmC 训练监控 + 报告刷新 · wake #79）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 107,760(69.7%), C1=0.6599, 359 PROBEs全健康, NFS停顿间歇, 报告刷新。需要时再读。
@@ -208,7 +208,7 @@ WAITING: 1
 
 ## 本唤醒流水
 
-- [21:05 Oct14] **Wake #82**: 🔄 ArmC 训练监控 + MLLM bridge 复验。ArmC: step **126,180**/154500(**81.7%**), C1=0.6280(健康), loss~0.10-0.12, LR=3.61e-4, 吞吐~210ms/iter~9600 img/s(NFS恢复), ckpt 10k-120k(12个), ETA ~22:40 Oct14。✅ MLLM bridge CPU 单测复验 5/5 PASSED（strict=True 277/277, bit-exact diff=0.00e+00, projector OK）。已归档 wake#81+#73 → daily-memories。📦 体积：TASK=26.6KB✅ / MEMORY=30.6KB✅。
+- [22:46 Oct14] **Wake #84**: 🔄 ArmC 训练监控 + MLLM bridge 四验 + 报告刷新。ArmC: step **140,400**/154500(**90.8%**), C1=0.6518(稳定平台期 0.63-0.69), loss~0.10-0.25, LR=2.41e-4, 吞吐~250ms/iter~8000 img/s(NFS恢复稳态), ckpt 10k-140k(14个), ETA ~23:45 Oct14。✅ MLLM bridge CPU 单测四验 5/5 PASSED（bit-exact diff=0.00e+00, projector OK）。✅ 报告 `report_vision_merge3ds_armc_status_zh.html` 刷新至 step 140,400。📦 体积：TASK=26.6KB✅ / MEMORY=31.0KB✅。
 - [16:57 Oct14] **Wake #77**: ✅ 刷新报告至 step 101,150(65.4%), C1=0.6415, 337 PROBEs全绿, ETA 20:30-21:30。📦 体积：TASK=31.8KB✅ / MEMORY=31.4KB✅。
 - [16:11 Oct14] **Wake #76**: ✅ 刷新报告至 step 97,500(63.1%), C1=0.6233, 325 PROBEs全绿, NFS停顿加剧, ETA 20:00-21:00。
 > 📦 [15:15 Oct14] Wake #75 流水已归档 → daily-memories-vision/2026-10-14.md。**关键**：step 93,750(60.7%) 报告刷新。需要时再读。
