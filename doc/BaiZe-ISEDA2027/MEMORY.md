@@ -148,7 +148,7 @@ WAITING: 0
 - **关键路径**：`P-5b → P-9 → P-6② → P-8`（P-8 = Stage(i) 本体，周级墙钟，仍暂缓等 base + 配比）。
 - 🔴 **配比搜索形态已改（2026-10-06）**：**不再用 2.2B 跑单臂**，改 **小代理（定案 `h=512/L=14`=96.8M = 1/23）× Optuna BO × 6 卡并行 × 1 天/段**；**24h 目标 200–400 trial**。锚点 = `ye2024datamixinglaws` + Xmodel-2 `400+ 次试验`。⇒ **「等配比」的等待时间从「周级」降到「2 天」。**
 - **两条硬口径（2026-10-03 定）**：
-  - **seq 统一 4096**（2 的幂 2¹²；**用户直令 2026-10-14**）；`4094` 是 P-8 脚本的**错误残留**（`baize_p8_train.sh:30`/`baize_p8_adamw_train.sh:33` = `SEQ=4094`，须改 4096；`EXPERIMENTS_PRETRAIN_2B.md:4`/`MEMORY_PRETRAIN_2B.md:183` 的「4094」记录一并更正）。
+  - **seq 统一 4096**（2 的幂 2¹²；**用户直令 2026-10-14**）；`4094` 是 P-8 脚本的**错误残留**（`baize_p8_train.sh:30`/`baize_p8_adamw_train.sh:33` = `SEQ=4094`，须改 4096；`EXPERIMENTS_PRETRAIN_2B.md:4`/`MEMORY_PRETRAIN_2B.md:183` 的「4094」记录一并更正）。**P-8 处置：让其按 4094 跑完（stable+decay 整轮），脚本改 4096 待 P-8 结束后再做；今后新 run 一律 4096。**
   - **每步 ≈ 4M token 不变量**：`4096↔GBS1024` · `8192↔512` · `16384↔256` · `2048↔2048`。**总步数 = 总token/4M，与 seq 无关**。
 - **FP8 机制**：`s` 取决于 **GEMM 的 M**，大 GEMM `M = MBS × seq`；**`M≳16K` 才 `s>1`**（seq 与 MBS 是等价杠杆）。
 - **vision 现状**：R9 lp 渐近 **25.1%**（当前路线 = **OpenVision2 w512 + CC12M+Amshaker + 冻结CLIP文本塔 + InfoNCE**；⚠️ **不是 GPIC**）；`attention flash` 仅占 GPU 自耗 **0.7%**（P-4 profile）。

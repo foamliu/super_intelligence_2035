@@ -11,6 +11,8 @@
 
 > ⚠️ **`4094` 是错误的，须统一为 4096**：① 脚本 `baize_p8_train.sh:30` / `baize_p8_adamw_train.sh:33` = `SEQ=4094`（改 4096）；② `EXPERIMENTS_PRETRAIN_2B.md:4` / `MEMORY_PRETRAIN_2B.md:183` 记录的「4094」亦须改 4096；③ 论文 `3_architecture.tex:31`（tab:config）· `4_llm_pretrain.tex:75` · `4_llm_pretrain.tex:165` 三处 `4094`（改 4096）。🚫 今后报告/论文/脚本**一律 4096**。
 
+> ✅ **P-8 处置（用户 2026-10-14 定）**：P-8 当前 run（`p8_adamw`，stable+decay 共 10490 步）**按 `seq=4094` 跑完，不干预**。**脚本 `SEQ` 改 4096 须等 P-8 整轮全部结束后再改**（stable + decay 都跑完、最后 ckpt 已保存）——尤其 `baize_p8_decay.sh:35` 在 step9441 切换时仍须保持 4094（与 stable 一致），🚫 不得中途改 decay 脚本。今后**新 run**（如正式训练）一律 4096。
+
 ### 🆕 运维指令 · 2026-10-14（📝 训练空窗期审视论文 · LLM 侧 · 出中文改进意见 HTML）· 用户直令
 
 > **用户令（2026-10-14）**：「安排 pretrain agent 在训练进行期间，审视论文（BaiZe-ISEDA2027），将改进意见写入 html 报告（中文版）。」
