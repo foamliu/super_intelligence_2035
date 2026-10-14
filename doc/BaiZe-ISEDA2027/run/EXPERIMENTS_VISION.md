@@ -1198,3 +1198,45 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 2. ProtB 3-seed mean±std（复用 `lp_protocol_bridge.py`）
 3. 中文 HTML 结果报告 `report_vision_merge3ds_result_zh.html`
 4. EXPERIMENTS_VISION.md 新节（含 vs 基线 Δlp）
+
+### 训练 + 评测结果（2026-10-15）
+
+**训练完成**：step 154500/154500, total=81,667s (~22.7h), steady_image/s=9,978.3, final_loss=0.2169, C1=0.6668, C2_gap=+0.1606, C4=OK 全程无坍缩。
+
+**评测结果**（eval chain `post_merge3ds_chain.sh` PID 3698490，日志 `/tmp/merge3ds_armC_eval.log`）：
+
+| 指标 | ④-4ep 基线 | merge3ds ArmC | Δ | 说明 |
+|:--|:--|:--|:--|:--|
+| **ProtB (3 seeds)** | 67.05 ± 0.02% | **68.25 ± 0.01%** | **+1.20pp** | seed0=68.27% / seed1=68.24% / seed2=68.25% |
+| **ProtA** | 56.70% | **59.41%** | **+2.71pp** | BaiZe internal protocol (AdamW full-batch 100ep) |
+| **Zero-shot top1** | 40.64% | **46.17%** | **+5.53pp** | top5: 72.64% → 77.43% (+4.79pp) |
+| **k-NN** | 42.35% (k=20) | **44.88%** (k=20) | **+2.53pp** | k=5: 41.85%, k=10: 44.24% |
+
+**预注册判据裁定**：
+- ProtB = 68.25% → 落入 68–70% MODERATE 绝对区间，但 **Δ = +1.20pp < 1.5pp 阈值**
+- 严格按判据：**NULL**（Δ < 1.5pp 不可分辨）
+- 但 zero-shot +5.53pp 和 ProtA +2.71pp 显示表征质量有实质提升 → 合并三数据集 + 大 batch 改善了表征通用性
+
+**配置差异**（vs ④-4ep 基线）：
+
+| 参数 | ④-4ep | ArmC | 变化 |
+|:--|:--|:--|:--|
+| 数据 | CC12M + Amshaker (~94M) | GPIC + CC12M + Amshaker (~111M) | +GPIC（三数据集合并） |
+| GBS (MBS×8) | 512 | 2048 | ×4 |
+| MBS | 64 | 256 | ×4 |
+| LR | 5e-4 | 2e-3 | ×4（Goyal arXiv:1706.02677 线性缩放） |
+| Warmup | 2000 | 8000 | ×4 |
+| min-LR | 5e-5 | 2e-4 | ×4 |
+| Steps | 748,404 (~4 epoch) | 154,500 (~2.85 epoch @ GBS=2048) | — |
+| final_loss | 0.0805 | 0.2169 | 不可直接比较（不同数据/步数） |
+| C1 (final) | 0.5932 | 0.6668 | +0.0736（对比对齐更强） |
+
+**分析**：
+1. ProtB Δ=+1.20pp 未达 1.5pp 阈值 → 严格判据 NULL；但 4 指标全部提升（zs +5.53pp, ProtA +2.71pp, k-NN +2.53pp）→ 合并三数据集 + 大 batch 训练改善了表征的通用性
+2. C1 从 0.5932 升至 0.6668（+0.0736），对比对齐增强——可能因 GPIC 短 caption 提供更密集的 image-text 对
+3. 多变量变更（数据组成 + GBS/MBS + LR），无法隔离单一因素贡献；后续可考虑消融
+4. 训练耗时 22.7h（vs ④-4ep 16.8h）——MBS=256 单步更慢但总步数更少；吞吐 9,978 img/s（vs ④-4ep 2,818 img/s）得益于大 batch
+
+**ckpt 路径**：`/nas_train/app.e0031982/datasets/baize-vision/out/merge3ds_bs4_lrC_w512_d30_p16_224/vision.pt`
+
+**报告文件**：`doc/BaiZe-ISEDA2027/reports/report_vision_merge3ds_result_zh.html`
