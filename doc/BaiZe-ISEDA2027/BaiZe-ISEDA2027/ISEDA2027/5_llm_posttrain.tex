@@ -36,6 +36,14 @@ R4 & R3 $+$ API-legality term \\
 \end{table}
 
 \subsection{Evaluation Protocol}\label{sec:posttrain-eval}
+
+We define four capability milestones to track progress through Stage~(ii):
+\begin{itemize}
+\item \textbf{M1 (tool-call legality):} the model generates syntactically valid PyAether API calls with no hallucinated symbols (measured by API-legality rate).
+\item \textbf{M2 (single-task pass):} the model solves individual EDA scripting tasks end-to-end (Pass@1 on EDA-Eval-PyAether).
+\item \textbf{M3 (multi-turn refinement):} the model recovers from execution failures by reading error output and revising code (multi-turn Pass@1 with up to 3 refinement rounds).
+\item \textbf{M4 (full benchmark):} the model achieves competitive end-to-end accuracy on the full $158$-task benchmark under the standard five-run protocol.
+\end{itemize}
 All post-training variants are scored on \textbf{EDA-Eval-PyAether}~\cite{liu2026zhulong}, a benchmark of $158$ real-world EDA scripting tasks.
 Each task pairs a natural-language prompt and a function signature with assertion-based test code, and is scored by execution in the vendor sandbox: a task passes when the generated code runs without error and every assertion holds.
 We follow the benchmark's own protocol so that our numbers are comparable to published ones: five independent runs with reshuffled task order and fresh context, reporting mean Pass@1 and its run-to-run standard deviation, with a $2500$-second per-task timeout and a single non-restartable trace per task.

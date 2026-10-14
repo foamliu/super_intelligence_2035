@@ -1526,3 +1526,60 @@ T3 提速验证结果：
 ④ 纪律：🚫 不占 GPU、不打断 P-8 监控 · 🚫 不改已发布数值 · 数字可溯源 · commit 前缀 `pretrain plan:` · 任务书 >32KB 自滚归档。
 
 > **执行结论**：v2 已交付（commit fa25d488，30.4KB HTML，300B token 基准），但被用户再次否决 → v3 重做（实盘盘点口径）。
+
+---
+
+### 🆕 运维指令 · 2026-10-14（📝 训练空窗期审视论文 · LLM 侧 · 出中文改进意见 HTML）· 用户直令
+
+> **用户令（2026-10-14）**：「安排 pretrain agent 在训练进行期间，审视论文（BaiZe-ISEDA2027），将改进意见写入 html 报告（中文版）。」
+
+**性质**：零 GPU 的「读 + 写」任务。**主线仍是 P-8 训练监控**——本任务只占用**监控完成后的空窗期**：🚫 绝不为论文审视而延迟/干扰 P-8 监控与 decay 切换（@9441）。
+
+**① 审视对象**：论文树 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`，**侧重 LLM 侧章节**：`ISEDA2027/0_abstract.tex` · `1_intro.tex` · `2_related_work.tex` · `3_architecture.tex` · `4_llm_pretrain.tex` · `5_llm_posttrain.tex` · `9_conclusion.tex` + `main.tex` + `reference.bib`。
+
+**② 审视维度（每条意见必须具体，贴 `文件:行号` 或具体数字，🚫 空泛）**：
+1. **架构数字一致性**：2.22B（`sum(numel())=2,220,268,032`）· 56 层含 4 层 attention · **seq 4096（2 的幂；见本文件「最佳实践/硬口径」）** · vocab 129,281 · tokenizer DeepSeek-V4.1-Flash —— 与 `EXPERIMENTS_2B.md` / `EXPERIMENTS_PRETRAIN_2B.md` 是否一致；有无 `4094` 残留（口径应统一 4096）。
+2. **预训练结果回填**：val loss@5000=2.7647 · final loss@20000=2.2054 · 3-seed 2.6739±0.0469 · LR 1e-3 / WSD / 退火 86:10:4 · 预算 ~85 GPU·h —— 是否已回填、有无陈旧值。
+3. **混合架构优势表**（dense vs hybrid：参数 −11.6% / loss −0.12 / decode 10.3×）——decode 10.3× 的「测量口径限定」（Megatron 直驱、生产栈会收窄）是否仍保留。
+4. **训练量极小**（655M token / 0.036% 数据池）是否如实声明为「代理实验」，未当收敛值引用。
+5. **Stage(ii) 后训练设计**：领域退火 + SFT + RLVR/GRPO + R1–R4 奖励表 + 成功阶梯 M1–M4 是否完整、口径一致。
+6. **数据配比**：每步 4M token 不变量 · 配比搜索（小代理 BO）口径是否表述一致。
+7. **可回填 [TBD] 清单**：哪些已有实测可回填（如 P-8 当前 loss ~2.49）、哪些仍缺轮次。
+
+**③ 交付**：中文、自包含 HTML `doc/BaiZe-ISEDA2027/reports/report_baize_paper_review_pretrain_zh.html`；分 🔴硬伤 / 🟠建议 / 🟢可回填 三级标注；文末附「可回填建议清单」。
+
+**④ 红线**：🚫 不直接改论文 `.tex`（只出意见，改稿须另行批准）；🚫 不为审视而延迟 P-8 监控 / decay 切换；✅ 数字须与 EXPERIMENTS 台账一致，不许凭印象；commit 前缀 `pretrain paper-review:` · 任务书 >32KB 自滚归档。
+
+> **执行结论**：报告已交付（#413，26.5KB，4项🔴+10项🟠+3项🟢），随后 #414 执行改稿（放行刷新论文指令）。
+
+---
+
+### 🆕 运维指令 · 2026-10-13（📋【再重做 v3】正式训练计划 —— 严格按「已下载 + 正在下载」实盘盘点换算 token，🚫 禁引论文/CSDN 数字）· 用户直令 · 最高优先
+
+> 用户原话（2026-10-13）：「既然你已经说了『本项目可训数据 ~2,015B token』，那么『300B』又从哪里来呢？请不要胡说八道，首先看 MiniCPM5 已经下载 + 正在下载的，一共有多少数据，可以转化多少 Token，不要胡说八道！！」「再说 MiniCPM5 有论文放出来吗？这又是在胡说八道！！」
+> 性质：实盘盘点 + 写作（CPU，不占 GPU）；不得打断在飞 P-8 训练。
+
+① 运维已核实（写进报告，防继续误引）：
+- ⚠️ MiniCPM5 没有独立训练论文。`arXiv 2602.09003` = 清华 UltraData《Tiered Data Management》数据管理框架论文（2026-02），不是 MiniCPM5 模型论文 —— v2 将其当作 MiniCPM5 训练出处 = 错。
+- MiniCPM5-1B（2026-05-26）/ 2B（2026-09-07）为 OpenBMB 模型发布（GitHub/HF 模型卡）；v2 的「300B / 200B@4K+75B@32K+25B@128K」出自 CSDN 二级源，无一手依据。
+- ⇒ v3 起：一律不得用论文/CSDN 的训练量数字当口径；用实盘。
+
+② v3 唯一口径 = 实盘（用户明确要求）：
+1. 盘点 MiniCPM5 相关全部数据（已下载 + 正在下载），逐源给：① 落盘路径 ② 文件数 ③ 字节数（`du -sh` / `find … | wc -l`）④ 状态（已下满 / 下载中 / 未开始）。
+   - 覆盖：Ultra-FineWeb(base en/zh) · Ultra-FineWeb-L3 · UltraX-Preview · UltraData-Code · UltraData-Math · UltraData-SFT/Agent-SFT · （85M 多模态单独列，标注非 LLM 投料）。
+   - 数据线口径可复用（`DATA_LEDGER.md` / `MEMORY_DATA.md`），但须上机 `du` 复核，冲突以实测为准。
+2. 换算 token：用实测密度（tok/byte）——已分词在盘者用实测 token（如 R3 全量 = 1483.91B tok / 5.94TB）；未分词者用密度估算并标「估」。
+3. 总计：已下满（确定） / + 下载中（估） 两条合计 —— 即「一共有多少数据 / 可训多少 token」。
+
+③ 交付：覆盖 `run/report_pretrain_formal_train_plan.html`（v3 · 中文 · 自包含 · ≤200KB）。结构：
+① HERO + TL;DR：实盘 = X TB / Y token（先答用户那一问）
+② 实盘盘点主表（逐源：路径 · 文件数 · 字节 · 状态 · token · 密度/token 来源）
+③ token 汇总（已下满 / 下载中 / 总计）
+④ 训练配方：按实盘总量做 WSD（warmup/stable/decay token 分配）+ 总步数
+⑤ 双机 16×H100 墙钟（基准用实测单机 8 卡 249K tok/s；DP16 近线性待彩排·标「待验」）
+⑥ 前置清单 / 风险 / launcher
+⑦ v2 → v3 修订说明（为何弃 300B：无一手来源 + 与实盘 2,015B 自相矛盾）+ 诚实条款（凡「估」须标；无法溯源者标「未核」或删）
+
+④ 红线：🚫 禁引 MiniCPM5 论文 / CSDN 的 300B；🚫 数字无溯源不准落笔；✅ 每个 token 数须给盘点命令 / 文件:行；🚫 不占 GPU、不打断 P-8 监控；commit 前缀 `pretrain plan:`；任务书 >32KB 自滚归档。
+
+> **执行结论**：v3 报告已交付 `reports/report_pretrain_formal_train_plan.html`，实盘盘点口径，在 origin/main。
