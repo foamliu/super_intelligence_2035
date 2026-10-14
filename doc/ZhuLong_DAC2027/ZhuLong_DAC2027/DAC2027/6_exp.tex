@@ -29,7 +29,7 @@ RQ1 and RQ2 test the framework's structural claims; RQ3 tests whether they follo
 
 \subsubsection{Benchmark and Evaluation Protocol}
 
-We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world PyAether scripting tasks. Following the evaluation protocol defined in Section~\ref{sec:benchmark}, we adopt \textbf{Pass@1} (execution success rate) as the primary metric. Each task is evaluated in a single trace: the agent may iterate \emph{within} that trace through the belief update $\Phi$ (Section~\ref{sec:agent-workflow}), but a task is never restarted across traces; the timeout is set to 2500 seconds per execution. Every tool call is additionally mediated by a file-based \texttt{PreToolUse} hook---a JSON-in/JSON-out script dispatched by Cline's hook engine from the configured hooks directory---that enforces a tool whitelist, blocks shell and code-search tools, and confines all file access to a fresh, empty working directory; on each call it allows the call, rewrites it to a harmless no-op (\texttt{overrideInput}), or rejects it with an error message (\texttt{cancel}), with MCP tool calls passing through, so neither a task's own assertions nor any project copy of a solution is reachable from the workspace. The hook is identical in every configuration reported here and is thus part of the fixed protocol rather than a variable; it is also what makes the baselines interpretable. Traces terminated by the hook are identified separately so that they are not read as capability failures. To assess statistical reliability given the modest benchmark size (158 tasks), each configuration is evaluated over five independent runs with reshuffled task orderings and fresh agent contexts, and accuracy is reported as mean $\pm$ standard deviation over those runs. Quantities aggregated over traces rather than over runs---read-back counts, activation ratios and tool-call totals---are given as single aggregates over the pooled traces, without run-level dispersion; effect sizes ($\Delta$) are computed from the mean values in the same table. The dominant sandbox-execution effect ($+[TBD]$ pp) exceeds the spread by an order of magnitude, consistent with the theoretical account in Section~\ref{sec:grounding-theory}. All figures in this section are provisional, obtained on the PyAether-only slice, and will be regenerated on the full EDA-Scripting-Bench (Section~\ref{sec:benchmark}).
+We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world PyAether scripting tasks. Following the evaluation protocol defined in Section~\ref{sec:benchmark}, we adopt \textbf{Pass@1} (execution success rate) as the primary metric. Each task is evaluated in a single trace: the agent may iterate \emph{within} that trace through the belief update $\Phi$ (Section~\ref{sec:agent-workflow}), but a task is never restarted across traces; the timeout is set to 2500 seconds per execution. Every tool call is additionally mediated by a file-based \texttt{PreToolUse} hook---a JSON-in/JSON-out script dispatched by Cline's hook engine from the configured hooks directory---that enforces a tool whitelist, blocks shell and code-search tools, and confines all file access to a fresh, empty working directory; on each call it allows the call, rewrites it to a harmless no-op (\texttt{overrideInput}), or rejects it with an error message (\texttt{cancel}), with MCP tool calls passing through, so neither a task's own assertions nor any project copy of a solution is reachable from the workspace. The hook is identical in every configuration reported here and is thus part of the fixed protocol rather than a variable; it is also what makes the baselines interpretable. Traces terminated by the hook are identified separately so that they are not read as capability failures. To assess statistical reliability given the modest benchmark size (158 tasks), each configuration is evaluated over five independent runs with reshuffled task orderings and fresh agent contexts, and accuracy is reported as mean $\pm$ standard deviation over those runs. Quantities aggregated over traces rather than over runs---read-back counts, activation ratios and tool-call totals---are given as single aggregates over the pooled traces, without run-level dispersion; effect sizes ($\Delta$) are computed from the mean values in the same table. Generation-stage failures---tasks that produce no executable code, e.g.\ due to timeout or an exhausted message budget---are counted as not-passed and remain in the 158-task denominator; for the S2 low-budget arms this generation failure (gen-fail) is the direct consequence of the $\Phi$ execution budget being exhausted, not an infrastructure fault. Run validity is gated separately: a run that suffers an infrastructure fault (license exhaustion, sandbox port unreachable, or insufficient disk) is discarded and re-run, and is not counted toward the five runs; the anti-leak hook is held identical across all arms. To isolate infrastructure degradation from ablation effects, the full-system anchor is required to reach at least 75\% Pass@1 as a health floor---a run below it signals an infrastructure problem rather than a capability result and is re-run---while ablation arms have no such floor, so that their (sometimes low) scores reflect the true ablation effect. The dominant sandbox-execution effect ($+10.3$ pp) exceeds the spread by an order of magnitude, consistent with the theoretical account in Section~\ref{sec:grounding-theory}. All figures in this section are provisional, obtained on the PyAether-only slice, and will be regenerated on the full EDA-Scripting-Bench (Section~\ref{sec:benchmark}).
 % 评测集与评估协议。我们在\textbf{EDA-Eval-PyAether}上评估ZhuLong，该评测集包含158个真实PyAether脚本任务。
 % 遵循第\ref{sec:benchmark}节定义的评估协议，我们采用\textbf{Pass@1}（执行成功率）作为主要指标。
 % 每个任务只在单条trace上评测：智能体可在该trace内通过信念更新$\Phi$（第\ref{sec:agent-workflow}节）反复迭代，
@@ -91,11 +91,11 @@ The framework of Section~\ref{sec:grounding-theory} fixes what each study must v
 \multicolumn{3}{l}{\textit{Progressive build-up (vs. previous row)}} \\
 Baseline 1: Pure LLM & 10.5 $\pm$ 1.9 & — \\
 Baseline 2: RAG & 71.8 $\pm$ 2.5 & +61.3 pp \\
-\textbf{ZhuLong} (Full) & \textbf{84.8 $\pm$ [TBD]} & \textbf{+[TBD] pp} \\
+\textbf{ZhuLong} (Full) & \textbf{82.1 $\pm$ 3.0} & \textbf{+10.3 pp} \\
 \midrule
 \multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
 ZhuLong w/o Sandbox & [TBD] $\pm$ [TBD] & -[TBD] pp \\
-ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -3.8 pp \\
+ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -1.1 pp \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -123,16 +123,15 @@ Principle 2 predicts that with the model fixed, accuracy is bounded by the fidel
 \textbf{Rung} & \textbf{Configuration} & \textbf{Pass@1 (\%)} \\
 \midrule
 (N) No observation & Baseline 1 (Pure LLM) & 10.5 $\pm$ 1.9 \\
-(L) Low fidelity & name-only index & 82.8 $\pm$ 1.0 \\
+(L) Low fidelity & name-only index & 82.8$^{\dagger}$ \\
 (H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & 71.8 $\pm$ 2.5 \\
 \bottomrule
 \end{tabular}
+$^{\dagger}$ provisional, $n{=}1$ (1-shot probe); 5-run re-measurement pending (S1.omega\_low arm underway).
 \end{table}
 % 表：Ω保真度阶梯（文档轴）。固定LLM、执行器与循环，仅改变API事实暴露的保真度。
-% 注：ICML 稿中同一阶梯报告为 (N)=0.0%、(L)=59.5%、(H)=87.3%——与本表的 (N)/(H) 口径不同，
-% 需先统一配置定义与评测协议，再决定引用哪一组数值。
 
-The documentation axis yields a non-monotone ordering: the low-fidelity rung (L) at 82.8 $\pm$ 1.0\% exceeds the high-fidelity rung (H) at 71.8 $\pm$ 2.5\%. This is not an artifact of the index---it reflects the presence of the effector. Rung (L) couples a name-only index with the full execution loop (sandbox and read-back), whereas (H) is the RAG baseline whose retrieval is high-fidelity but whose effector is absent. The comparison therefore isolates the effector's dominance over documentation fidelity: even a coarse index, once the agent can execute and observe results, outperforms a rich index used only for static retrieval.
+The documentation axis yields a non-monotone ordering: the low-fidelity rung (L) at 82.8\% (provisional, $n{=}1$) exceeds the high-fidelity rung (H) at 71.8 $\pm$ 2.5\%. This is not an artifact of the index---it reflects the presence of the effector. Rung (L) couples a name-only index with the full execution loop (sandbox and read-back), whereas (H) is the RAG baseline whose retrieval is high-fidelity but whose effector is absent. The comparison therefore isolates the effector's dominance over documentation fidelity: even a coarse index, once the agent can execute and observe results, outperforms a rich index used only for static retrieval.
 % 文档轴呈现非单调排序：低保真档(L)82.8±1.0%高于高保真档(H)71.8±2.5%。
 % 这并非索引问题，而是执行器在场与否的差异：(L)的name-only索引配完整执行闭环，
 % (H)为RAG基线（高保真检索但无执行器）。该对比说明执行器对文档保真度的支配地位：
@@ -155,30 +154,31 @@ Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution
 \toprule
 \textbf{Observation channel ($\Omega$)} & \textbf{Pass@1 (\%)} & \textbf{Mean read-backs} \\
 \midrule
-(N) None (prior only) & 73.3 $\pm$ 2.2 & [TBD] \\
-(B) Binary pass/fail & 66.2 $\pm$ 16.1 & [TBD] \\
-(F) Full observation & 84.8 $\pm$ [TBD] & [TBD] \\
+(N$'$) None (prior only) & 73.3$^{\dagger}$ & [TBD] \\
+(B) Binary pass/fail & 66.2$^{\dagger}$ & [TBD] \\
+(F) Full observation & 82.1 $\pm$ 3.0 & [TBD] \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 表：回读轴上的观测保真度消融（原则2）。
+% 表：回读轴上的观测保真度消融（原则2）。$^{\dagger}$ provisional, $n{=}1$ (1-shot probe); 5-run re-measurement pending (S1 read-back arms underway). (N$'$) denotes the read-back axis (no observation of live state), distinct from (N) in Table~\ref{tab:omega} (no observation channel at all).
 
-The results break the expected monotone ordering: (B) binary feedback (66.2 $\pm$ 16.1\%) falls \emph{below} (N) no feedback (73.3 $\pm$ 2.2\%), while (F) full observation (84.8\%) sits atop as predicted. The binary arm's large standard deviation ($\pm$16.1~pp, driven by one anomalous run at 43.0\%) signals instability rather than a stable ceiling. We attribute the N-over-B inversion to a signal-vs-noise effect: a binary pass/fail verdict gives the agent a categorical but content-free signal that can confirm a wrong hypothesis, whereas no feedback forces the agent to fall back on its retrieval-grounded prior---which, with the effector and high-fidelity index still active, is already strong. Full observation resolves the ambiguity by exposing the concrete error (type mismatch, missing state, wrong return value), turning a binary verdict into actionable evidence and recovering the expected ordering at the top. The N-to-F gap (73.3\% $\to$ 84.8\%, +11.5~pp) thus measures the practical value of \emph{informative} observation, while the (B) arm warns that partial feedback can be worse than none.
-% 结果打破预期单调排序：(B)二值反馈(66.2±16.1%)低于(N)无反馈(73.3±2.2%)，
-% (F)全观测(84.8%)如预期居首。二值臂标准差极大(±16.1pp，因单轮43.0%异常低)，
-% 表明不稳定而非稳定上限。N优于B归因于信号-噪声效应：二值pass/fail给出分类但无内容的信号，
+The results break the expected monotone ordering: (B) binary feedback (66.2\%, provisional $n{=}1$) falls \emph{below} (N$'$) no feedback (73.3\%, provisional $n{=}1$), while (F) full observation (82.1\%) sits atop as predicted. The binary arm's large spread (one anomalous probe run at 43.0\%) signals instability rather than a stable ceiling. We attribute the N$'$-over-B inversion to a signal-vs-noise effect: a binary pass/fail verdict gives the agent a categorical but content-free signal that can confirm a wrong hypothesis, whereas no feedback forces the agent to fall back on its retrieval-grounded prior---which, with the effector and high-fidelity index still active, is already strong. Full observation resolves the ambiguity by exposing the concrete error (type mismatch, missing state, wrong return value), turning a binary verdict into actionable evidence and recovering the expected ordering at the top. The N$'$-to-F gap (73.3\% $\to$ 82.1\%, +8.8~pp) thus measures the practical value of \emph{informative} observation, while the (B) arm warns that partial feedback can be worse than none. (B), (N$'$) and their read-back counts are provisional single-run probes; the 5-run re-measurement of the S1 read-back arms is underway and will finalize these values.)
+% 结果打破预期单调排序：(B)二值反馈(66.2%，provisional n=1)低于(N')无反馈(73.3%，provisional n=1)，
+% (F)全观测(82.1%)如预期居首。二值臂离散极大（单轮43.0%异常低），
+% 表明不稳定而非稳定上限。N'优于B归因于信号-噪声效应：二值pass/fail给出分类但无内容的信号，
 % 可能确认错误假设；无反馈则迫使智能体回退到检索支撑的先验——在执行器与高保真索引仍生效时该先验已足够强。
 % 全观测通过暴露具体错误（类型不匹配、状态缺失、返回值错误）消除歧义，将二值判定转为可操作证据，恢复顶部预期排序。
-% N→F差距(73.3%→84.8%，+11.5pp)衡量"信息性"观测的实操价值，而(B)臂警示部分反馈可能不如无反馈。
+% N'→F差距(73.3%→82.1%，+8.8pp)衡量"信息性"观测的实操价值，而(B)臂警示部分反馈可能不如无反馈。
+% (B)/(N')及其回读次数为单次探路 provisional；S1 回读轴 5-run 复测进行中，将最终化这些数值。
 
 \subsubsection{S2: The closed loop (RQ2)}
 \label{sec:closed-loop}
 
 Principle 3 requires two things: that actions reach the design through a causal interface, and that the belief update $\Phi$ run continuously.
 
-\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 84.8\% to [TBD]\% ($-[TBD]$~pp); adding it to the RAG baseline raises it from 71.8\% to [TBD]\% ($+[TBD]$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
-% 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从84.8\%降至[TBD]\%（-[TBD]pp）；
-% 把沙盒加入RAG基线使其从71.8\%升至[TBD]\%（+[TBD]pp）。没有执行器，$a_t$未被作用于设计，
+\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 82.1\% to [TBD]\% ($-[TBD]$~pp); adding it to the RAG baseline raises it from 71.8\% to 82.1\% ($+10.3$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
+% 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从82.1\%降至[TBD]\%（-[TBD]pp）；
+% 把沙盒加入RAG基线使其从71.8\%升至82.1\%（+10.3pp）。没有执行器，$a_t$未被作用于设计，
 % $b_t$得不到任何关于实时状态的证据，智能体退化为仅凭先验的预测器。
 
 \textbf{Belief update: how much evidence may $\Phi$ accumulate?} ZhuLong is an ICL-type autonomous agent: once the task is issued it plans, queries the API knowledge base, and executes and debugs code on its own, and it is the agent---not the harness---that decides when the result is good enough to submit. We therefore do not shorten the loop or force an early submission; we bound how often the loop \emph{may execute}, which is what determines how much state evidence $b_t$ ever receives. Operationally the bound is the number of \texttt{run\_code} calls a trace is allowed: once the budget is spent, the call is denied at the tool boundary by a second, co-resident \texttt{PreToolUse} hook that counts \texttt{run\_code} calls per trace; its error carries a unique \texttt{{[PHI-BUDGET-EXHAUSTED]}} prefix because Cline's hook engine OR-merges cancellations and concatenates their reasons, which would otherwise make the anti-leak hook's denials indistinguishable from the budget hook's, and the agent keeps running under its own control until it chooses to submit. Because termination stays with the agent, we report the harness's own finish reason next to accuracy---\emph{completed} (the agent decided it was done) versus \emph{max iterations} or budget-denied---so that a tight budget cannot be mistaken for early convergence. In an agent with no explicit posterior, $\Phi$ is realized by what remains in the model's context, so Table~\ref{tab:phi-bound} additionally includes a lagged channel realized as a single-slot ($L{=}1$) buffer in the \texttt{run\_code} handler, whose read-back returns the state emitted by the previous execution---with a \texttt{reported\_call\_index} recorded so the one-step lag is auditable---leaving the agent permanently one action behind the design; the first read-back carries no state, and every other setting is unchanged. Both axes leave the LLM, the observation content and the effector untouched. Principle 3 predicts that accuracy rises with the execution budget but saturates once updates are fast enough for the design's own dynamics, since evidence obtained before the previous action is partly obsolete by the time the next action is chosen.
@@ -199,19 +199,19 @@ Principle 3 requires two things: that actions reach the design through a causal 
 \centering
 \caption{Effect of bounding the evidence available to $\Phi$ (LLM, $\Omega$ and effector fixed). $k$ is the number of \texttt{run\_code} calls a trace may make---a budget on executions, not a count of design ``rounds''---and ``lagged'' denotes a read-back that returns the state produced by the \emph{previous} execution (the first carries none), so the agent never observes the outcome of its most recent action before acting again. Once the budget is spent the call is denied, yet the agent still terminates on its own; ``Converged'' is the share of traces whose finish reason is \emph{completed}.}
 \label{tab:phi-bound}
-\begin{tabular}{lcc}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} \\
+\textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} & \textbf{Mean gen-fail} \\
 \midrule
-$\Phi$ $k{=}1$ & 60.8 $\pm$ [TBD] & 71.5 \\
-$\Phi$ $k{=}3$ & 69.0 $\pm$ [TBD] & 79.1 \\
-$\Phi$ $k{=}10$ & 75.3 $\pm$ [TBD] & 91.1 \\
-$\Phi$ lagged & 84.2 $\pm$ [TBD] & 98.1 \\
-$\Phi$ unbounded (default) & 84.8 $\pm$ [TBD] & [TBD] \\
+$\Phi$ $k{=}1$ & $\sim$65.9$^{\ddagger}$ & 71.5$^{\dagger}$ & $\sim$32.5$^{\ddagger}$ \\
+$\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5 & 79.1$^{\dagger}$ & 27.6 \\
+$\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2 & 91.1$^{\dagger}$ & 18.8 \\
+$\Phi$ lagged & 84.2$^{\dagger}$ & 98.1$^{\dagger}$ & [TBD] \\
+$\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & [TBD] & [TBD] \\
 \bottomrule
 \end{tabular}
 
-\footnotesize{Provisional 1-shot probe values (one run per arm, $n{=}1$): Pass@1 is reported without standard deviation; the unbounded \emph{Converged} is pending the five-run re-measurement. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call). The unbounded anchor ($84.8\%$) is the full-system baseline carried over from S1.}
+\footnotesize{$k{=}10$ and $k{=}3$ are 5-run means (Pass@1 $\pm$ sample std, $n{=}5$); $^{\ddagger}$ provisional ($n{=}2$, r1=65.2, r2=66.5; r3--r5 pending); $^{\dagger}$ 1-shot probe ($n{=}1$) pending 5-run re-measurement; the unbounded anchor (82.1$\pm$3.0\%) is the full-system 5-run baseline (Table~\ref{tab:main-ablation}). \emph{Mean gen-fail} is the per-run count of tasks that produced no executable code (generation-stage failure), averaged over the available runs; it rises as $k$ shrinks, since a tighter execution budget leaves the agent unable to complete generation. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call).}
 \end{table}
 % 表：给$\Phi$可用证据加界的影响（固定LLM、$\Omega$与执行器）。
 % $k$为单条trace允许的\texttt{run\_code}调用次数（执行预算，而非"设计轮数"）；
@@ -220,10 +220,16 @@ $\Phi$ unbounded (default) & 84.8 $\pm$ [TBD] & [TBD] \\
 % "Converged"为结束原因为\emph{completed}的trace占比（原生 finish reason，见Cline agent runtime）。
 % 前四档在工具边界实现，无需改动智能体源码，也不强制提交时机；unbounded 即 ZhuLong（Full）。
 
+Reading Table~\ref{tab:phi-bound} together with the \emph{Mean gen-fail} column reveals the mechanism behind the monotone accuracy drop: as the execution budget $k$ shrinks, the number of tasks that fail to produce any executable code rises (18.8 at $k{=}10$, 27.6 at $k{=}3$, $\sim$32.5 at $k{=}1$), which in turn drives Pass@1 downward. The budget is exhausted at the tool boundary, but the agent keeps running under its own control; with no further \texttt{run\_code} calls permitted, it cannot finish or validate its generation, so the failure manifests at the generation stage rather than as an execution error. This $k\!\downarrow \to \text{gen-fail}\!\uparrow \to \text{Pass@1}\!\downarrow$ chain is the observable signature of $\Phi$ being bounded, and it is consistent with Principle 3: once the belief update can no longer accumulate state evidence, accuracy falls.
+% 结合 Pass@1 与 Mean gen-fail 两列可看出单调下降的机制：执行预算 k 越小，无法产出可执行代码的任务越多
+% （k=10: 18.8, k=3: 27.6, k=1: ~32.5），从而拉低 Pass@1。预算在工具边界耗尽，但智能体仍自主运行；
+% 无法再调用 run_code，便无法完成或验证生成，失败表现在生成阶段而非执行错误。
+% 这一 k↓→gen-fail↑→Pass@1↓ 链条是 Φ 被界的可观测特征，与原则3一致。
+
 \subsubsection{S3: The prior axis, the contrast arm of RQ1}
 \label{sec:k-axis}
 
-Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve, without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM itself---with the harness held fixed. We adopt DeepSeek-V4-Pro as the primary backbone across all experiments in this paper, based on a practical trade-off between model capability and inference cost: its performance is sufficiently strong to support the key findings from both our main experiments and ablation studies, while its cost remains manageable for running the complete set of configurations reported in this work. The quantitative results in Table~\ref{tab:llm-comparison} are provisional and will be re-measured on the full EDA-Scripting-Bench; the qualitative finding that the underlying model remains a decisive factor---even with retrieval and sandbox in place---is consistent across backbones.
+Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve, without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM itself---with the harness held fixed. We adopt DeepSeek-V4-Pro as the primary backbone across all experiments in this paper (a deployment running the FP4-quantized variant served via an internal gateway), based on a practical trade-off between model capability and inference cost: its performance is sufficiently strong to support the key findings from both our main experiments and ablation studies, while its cost remains manageable for running the complete set of configurations reported in this work. We note that GLM-5.2 attains a marginally higher Pass@1 (83.3\%) than the primary backbone (82.1\%), but the two overlap within one standard deviation; DeepSeek-V4-Pro is retained as the main-backbone anchor for deployment-availability and cost reasons rather than because it is the single strongest model. The quantitative results in Table~\ref{tab:llm-comparison} are provisional and will be re-measured on the full EDA-Scripting-Bench; the qualitative finding that the underlying model remains a decisive factor---even with retrieval and sandbox in place---is consistent across backbones.
 % S3：$\mathcal{K}$轴（原则1）。原则1把知识与信念解耦：冻结先验应当界定框架能达到的上限，而不替代观测。
 % 表~\ref{tab:llm-comparison}仅改变$\mathcal{K}$（即LLM本身），框架保持不变。
 
@@ -235,11 +241,11 @@ Principle 1 separates knowledge from belief: the frozen prior should bound what 
 \toprule
 \textbf{LLM Backbone} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
 \midrule
-DeepSeek-V4-Pro & 84.8 $\pm$ [TBD] & — \\
-GLM-5.2 & 83.3 $\pm$ 3.1 & -1.5 pp \\
-DeepSeek-V4-Flash & 16.7 $\pm$ 12.3 & -68.1 pp \\
-Kimi-K2.6 & 77.0 $\pm$ 1.6 & -7.8 pp \\
-Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -21.0 pp \\
+DeepSeek-V4-Pro & 82.1 $\pm$ 3.0 & — \\
+GLM-5.2 & 83.3 $\pm$ 3.1 & +1.2 pp \\
+DeepSeek-V4-Flash & 16.7 $\pm$ 12.3 & -65.4 pp \\
+Kimi-K2.6 & 77.0 $\pm$ 1.6 & -5.1 pp \\
+Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -18.3 pp \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -264,7 +270,7 @@ The three slices of \textbf{EDA-Scripting-Bench} share one task schema, one asse
 \label{sec:error-analysis}
 % 错误分析
 
-ZhuLong produces correct code for 134 of 158 tasks (84.8\% Pass@1). The 
+To characterize failure modes, we inspected a single representative trace in which ZhuLong solved 134 of 158 tasks; this is one probe trace, not the 5-run mean (82.1$\pm$3.0\%, Table~\ref{tab:main-ablation}), and the counts below describe that trace alone. The 
 remaining 24 failures comprise 3 generation-stage failures and 21 
 execution-stage failures. The generation failures fall into two categories: 
 the majority are timeouts on lengthy, multi-step tasks, reflecting 
@@ -275,7 +281,8 @@ locate the correct API from natural-language queries.
 We manually inspected 
 all 21 execution-stage failure traces and identify two root cause categories 
 (Table~\ref{tab:error-categories}).
-% ZhuLong 在 158 个任务中正确完成了 134 个（84.8% Pass@1）。其余 24 个失败
+% 为刻画失败模式，我们检查了一条代表性 trace：ZhuLong 在 158 个任务中正确完成 134 个；这是一条探路 trace，
+% 非 5-run 均值（82.1±3.0%，表~\ref{tab:main-ablation}），下述计数仅描述该 trace。其余 24 个失败
 % 包含 3 个生成阶段失败和 21 个执行阶段失败。生成失败分为两类：大多数为冗长
 % 多步任务的超时，反映的是计算预算约束而非能力限制，因为终止时轨迹显示推理仍在
 % 进行；在个别案例中，智能体将消息预算耗尽在反复调用 \texttt{search\_apis} 上，

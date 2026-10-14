@@ -21,15 +21,15 @@
 
     We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world 
     tasks with assertion-based execution, where the complete system achieves 
-    \textbf{84.8\%} Pass@1 in the commercial Empyrean Aether environment, substantially 
+    \textbf{82.1\%} Pass@1 ($\pm$3.0, 5-run mean) in the commercial Empyrean Aether environment, substantially 
     outperforming a pure LLM baseline (\textbf{10.5\%}). Ablation studies show the 
-    execution loop is decisive: adding sandbox execution to retrieval yields +[TBD] pp, 
-    while removing either execution ($-[TBD]$ pp) or retrieval ($-3.8$ pp) reduces 
+    execution loop is decisive: adding sandbox execution to retrieval yields +10.3 pp, 
+    while removing either execution ($-[TBD]$ pp) or retrieval ($-1.1$ pp) reduces 
     accuracy---consistent with the theoretical prediction.
     % 我们在EDA-Eval-PyAether（158个真实任务、断言式执行验证）上评估ZhuLong，完整系统在
-    % 商业Empyrean Aether环境中达到84.8\%的Pass@1，显著优于纯LLM基线（10.5\%）。消融表明
-    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+[TBD]个百分点，而移除执行（-[TBD]pp）
-    % 或检索（-3.8pp）都会使准确率坍塌——与理论预测一致。
+    % 商业Empyrean Aether环境中达到82.1\%的Pass@1（±3.0，5轮均值），显著优于纯LLM基线（10.5\%）。消融表明
+    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+10.3个百分点，而移除执行（-[TBD]pp）
+    % 或检索（-1.1pp）都会使准确率坍塌——与理论预测一致。
 All quantitative results in this draft are provisional, obtained on the PyAether-only 
     slice; final numbers will be reported on the unified \textbf{EDA-Scripting-Bench} 
     (PyAether + SKILL + Tcl).
