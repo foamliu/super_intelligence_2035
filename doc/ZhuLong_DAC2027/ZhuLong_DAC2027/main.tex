@@ -17,6 +17,10 @@
 \renewcommand{\footnoterule}{}
 
 \usepackage{doi}
+% acmart.cls only loads amssymb in the xetex/luatex branches; under pdflatex
+% the newtxmath branch omits it, leaving \triangleq (used in 4_grounding.tex)
+% undefined. Load explicitly for pdflatex compatibility.
+\usepackage{amssymb}
 
 \begin{document}
 

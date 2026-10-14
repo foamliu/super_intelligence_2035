@@ -199,6 +199,7 @@ Principle 3 requires two things: that actions reach the design through a causal 
 \centering
 \caption{Effect of bounding the evidence available to $\Phi$ (LLM, $\Omega$ and effector fixed). $k$ is the number of \texttt{run\_code} calls a trace may make---a budget on executions, not a count of design ``rounds''---and ``lagged'' denotes a read-back that returns the state produced by the \emph{previous} execution (the first carries none), so the agent never observes the outcome of its most recent action before acting again. Once the budget is spent the call is denied, yet the agent still terminates on its own; ``Converged'' is the share of traces whose finish reason is \emph{completed}.}
 \label{tab:phi-bound}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lccc}
 \toprule
 \textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} & \textbf{Mean gen-fail} \\
@@ -209,7 +210,7 @@ $\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2 & 91.1$^{\dagger}$ & 18.8 \\
 $\Phi$ lagged & 84.2$^{\dagger}$ & 98.1$^{\dagger}$ & [TBD] \\
 $\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & [TBD] & [TBD] \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 
 \footnotesize{$k{=}10$ and $k{=}3$ are 5-run means (Pass@1 $\pm$ sample std, $n{=}5$); $^{\ddagger}$ provisional ($n{=}2$, r1=65.2, r2=66.5; r3--r5 pending); $^{\dagger}$ 1-shot probe ($n{=}1$) pending 5-run re-measurement; the unbounded anchor (82.1$\pm$3.0\%) is the full-system 5-run baseline (Table~\ref{tab:main-ablation}). \emph{Mean gen-fail} is the per-run count of tasks that produced no executable code (generation-stage failure), averaged over the available runs; it rises as $k$ shrinks, since a tighter execution budget leaves the agent unable to complete generation. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call).}
 \end{table}
@@ -313,7 +314,7 @@ workflow errors & & 149, 150, 158, 052 \\
 The agent selects the correct API family but violates undocumented API contracts—such as hidden type expectations, internal state dependencies, or context preconditions—that the C++-generated bindings enforce but the documentation does not reveal.
 % 智能体选择了正确的 API 族，但违反了未文档化的 API 契约——例如隐藏的类型期望、内部状态依赖或上下文前置条件——这些由 C++ 生成的绑定强制执行，但文档并未揭示。
 
-\textit{Case study: Task 098 (delete\_design\_figures).} The agent located \texttt{aeSelectFigs} and \texttt{aeDeleteObj} by searching for ``delete figure objects,'' then passed a plain Python list to \texttt{aeSelectFigs}. The call succeeded, but the subsequent \texttt{aeDeleteObj} failed because the internal C++ selection state—which the API relies on—was never properly populated by the plain Python list. Across five subsequent \texttt{run\_code} calls within the same trace,
+\textit{Case study: Task 098 (delete\_design\_figures).} The agent located \texttt{ae\allowbreak Select\allowbreak Figs} and \texttt{ae\allowbreak Delete\allowbreak Obj} by searching for ``delete figure objects,'' then passed a plain Python list to \texttt{ae\allowbreak Select\allowbreak Figs}. The call succeeded, but the subsequent \texttt{ae\allowbreak Delete\allowbreak Obj} failed because the internal C++ selection state—which the API relies on—was never properly populated by the plain Python list. Across five subsequent \texttt{run\_code} calls within the same trace,
 the agent modified only its self-generated test harness rather than
 correcting the underlying type mismatch, as the runtime diagnostic
 (``Error: Failed to delete the selected figures.'') provided no
