@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 ~00:10（ArmC 监控 · wake #86）**：🔄 ArmC 训练健康：step **147,480**/154500(**95.5%**), loss~0.10-0.23(正常), C1=**0.6696**(step147300 PROBE, 平台期 0.65-0.75), C2_gap=+0.1603, C4=OK(**491 PROBEs 全绿**, 仅 step8100 warmup FAIL 1次), LR=2.10e-4(cosine→min_lr 2e-4), 吞吐 bimodal 322-875ms/iter(NFS波动)。ckpt: 10k-140k已存(14个), final@154500。ETA: (154500-147480)×~600ms≈70min → **~01:20 Oct15**。✅ eval chain(PID 3698490, ppid=1, etimes=72615s)等待中。✅ GPU: 8×H100 7/8@100%util ~47.8GB/GPU。✅ MLLM bridge 已交付(wake #81, commit 03c36f5f)，本轮重验 CPU 5/5 PASSED。📦 体积：TASK=26.0KB✅ / MEMORY=30.4KB✅。
+> 🆕 **2026-10-15 ~00:41（ArmC 监控 · wake #87）**：🔄 ArmC 训练健康：step **150,900**/154500(**97.6%**), loss~0.09-0.18(正常), C1=**0.6945**(step150900 PROBE, 平台期 0.65-0.75), C2_gap=+0.1529, C4=OK(**496+ PROBEs 全绿**, 仅 step8100 warmup FAIL 1次), LR=2.03e-4(cosine→min_lr 2e-4), 吞吐 ~200-205ms/iter(NFS配合良好, img/s~10000)。ckpt: 10k-150k已存(15个), final@154500。ETA: (154500-150900)×~205ms≈12min → **~00:53 Oct15**。✅ eval chain(PID 3698490, ppid=1, etimes=74754s)等待中。✅ MLLM bridge 已交付(wake #81, commit 03c36f5f)，本轮七验 CPU 5/5 PASSED（277/277 strict, bit-exact, projector 7.87M）。📦 体积：TASK=26.0KB✅ / MEMORY=30.6KB✅。
+> 📦 2026-10-15 ~00:10（wake #86 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 147,480(95.5%), C1=0.6696, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-14 23:31（wake #85 ArmC 监控 + MLLM bridge 五验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 144,450(93.4%), C1=0.6571, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-14 22:46（wake #84 ArmC 监控 + MLLM bridge 四验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 140,400(90.8%), C1=0.6518, 468 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-14 22:11（wake #83 ArmC 监控 + MLLM bridge 三验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 136,470(88.3%), C1=0.6250, 454 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
@@ -27,10 +28,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **merge3ds ArmC 训练中（监控中 · wake #80）**：step **110,810**/154500(**71.6%**), loss~0.11-0.39, C1=0.6113(@110700), C2_gap=+0.1766, C4=OK (**369 PROBEs全健康**)。C1 近11次(107700-110700)范围 0.611~0.671(均值~0.63, 略有振荡但稳定)。吞吐稳态~210-220ms/步但近期NFS停顿加剧(近100步avg~620ms)。ETA: ~21:30-02:30 Oct14-15。✅ 外部编码器 ProtB 5/5 完成+报告。✅ LR 3-臂扫描+文献表+数据量订正已写入计划报告。✅ 论文改稿P0+P1完成。✅ Stage(iv) MLLM 可行性评估报告已交付。✅ ckpt 10k-110k已存。✅ eval chain(PID 3698490)后台等待中。📋 eval chain 完成后 → 收集结果 → `report_vision_merge3ds_result_zh.html`。 |
+| PHASE | 🔄 **merge3ds ArmC 训练中（监控中 · wake #87）**：step **150,900**/154500(**97.6%**), loss~0.09-0.18, C1=0.6945(@150900), C2_gap=+0.1529, C4=OK (**496+ PROBEs全健康**)。C1 近10次(147300-150900)范围 0.63~0.69(均值~0.67, 稳定)。吞吐稳态~200-205ms/步(NFS配合好, img/s~10000)。ETA: **~00:53 Oct15**（剩余3600步×~205ms≈12min）。✅ 外部编码器 ProtB 5/5 完成+报告。✅ LR 3-臂扫描+文献表+数据量订正已写入计划报告。✅ 论文改稿P0+P1完成。✅ Stage(iv) MLLM 可行性评估报告已交付。✅ MLLM bridge 全套交付(commit 03c36f5f, CPU 5/5 PASSED 七验)。✅ ckpt 10k-150k已存(15个)。✅ eval chain(PID 3698490)后台等待中。📋 eval chain 完成后 → 收集结果 → `report_vision_merge3ds_result_zh.html`。 |
 | ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-14 ~12:46 (wake #72)**: ✅ ArmC 训练健康：step **76,460**/154500(**49.5%**), loss~0.15-0.39(contrast主导), C1=0.5415(@76200), C2_gap=+0.1903, C4=OK (**254 PROBEs 全健康**)。C1 近10次(73500-76200)范围 0.53~0.63(均值~0.58, 略有振荡但稳定)。LR=1.19e-3(cosine)。吞吐稳态~215ms/步(偶发NFS停顿)。ckpt: step10k-70k已存, next@80k。剩余78040步, ETA: ~17:15-17:30 Oct14。✅ eval chain(PID 3698490)等待中。📦 TASK=29.0KB✅ / MEMORY=30.0KB✅。 |
+| 更新 | **2026-10-15 ~00:41 (wake #87)**: ✅ ArmC 训练健康：step **150,900**/154500(**97.6%**), loss~0.09-0.18(正常), C1=0.6945(@150900), C2_gap=+0.1529, C4=OK (**496+ PROBEs全健康**)。C1 近10次(147300-150900)范围 0.63~0.69(均值~0.67, 稳定)。LR=2.03e-4(cosine→min_lr)。吞吐~200-205ms/步(NFS配合好, img/s~10000)。ckpt: step10k-150k已存(15个), final@154500。剩余3600步, ETA: ~00:53 Oct15。✅ eval chain(PID 3698490)等待中。✅ MLLM bridge 七验 CPU 5/5 PASSED。📦 TASK=26.0KB✅ / MEMORY=30.6KB✅。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
