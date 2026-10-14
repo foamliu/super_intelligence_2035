@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ▶️4路下载断点续传进行中(用户令2026-10-14 resume,唤醒456巡检wit_base速率趋零kill+restart+3路健康)+85M暂停(用户令2026-10-13,8436/12124=69.6%)+✅the_cauldron完成(938parquet/158G)+✅GPIC全完成(8160tar/12T)+✅R3分词110/110+✅HF imagetext报告→P-8数据层全就绪
+PHASE:        ▶️4路下载断点续传进行中(用户令2026-10-14 resume,唤醒457巡检4路全健康无kill/restart,wit_base重启恢复确认)+85M暂停(用户令2026-10-13,8436/12124=69.6%)+✅the_cauldron完成(938parquet/158G)+✅GPIC全完成(8160tar/12T)+✅R3分词110/110+✅HF imagetext报告→P-8数据层全就绪
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); R3全量分词110/110DONE(1483.91B tok/5.94TB); R3污染扫描30/30DONE(60K,0命中,累计220K全0)→P-8数据层全就绪; ✅GPIC下载完成(8160tar@/nas_inference,12T); ✅文献借鉴报告(c80c7a74); ✅85M用户进程移交data线; ✅HfApi核实85M总量(12,124files/46.663TB); ✅HF imagetext数据集调研报告(唤醒404); ✅85M暂停(用户令10-13); ✅4路HF图文对下载启动(唤醒405); ✅the_cauldron下载完成(938parquet/158G,唤醒422); ✅全部4路下载暂停(用户令2026-10-14); ✅全部4路下载恢复断点续传(用户令2026-10-14 resume,唤醒444,setsid启动4路wrapper+hf子进程)
-当前动作:     唤醒456(2026-10-15 06:05) 巡检4路下载断点续传健康态(唤醒455后~37min)。4路wrapper全部存活(ppid=1,etimes≈28200s≈470min)✅。en_v1_4 hf PID2111003(etimes=3095s,5 ESTAB连接)✅活跃,最新parquet 06:05。WebMix hf PID2798086(etimes=2528s,1 ESTAB)✅活跃,刚完成文件(.incomplete 134MB→0,parquet 177→178,最新06:08)。InternVL hf PID766408(etimes=28234s,6+ ESTAB)✅活跃,最新tar 06:08。**wit_base速率趋零→kill+restart**:PID766398 .incomplete 134MB自06:05起4min无增长+1 CLOSE-WAIT连接→kill→wrapper Attempt#2自动重启PID1675681(etimes=53s,下载train-00225)✅。进度(唤醒455→现在):en_v1_4 33800→33826(+26,59.9%,3.1T)|WebMix 158→178(+20,133G)|wit_base 217→225(+8,196G,重启中)|InternVL 472→487(+15tar,364G)。85M⏸暂停(0进程)✅。disk:/nas_user75%/28T,/nas_train85%/32T,/nas_inference80%/9.4T,/nas_env1%/9.9T。📦体积:TASK=29KB/MEMORY=31KB
-下一步:       ①看护4路下载(死/僵/速率趋零即kill+restart,wit_base新PID1675681需下轮确认恢复); ②85M维持暂停(用户令10-13); ③巡检进度/速率/ETA; ④P-8投料等运维指示
-阻塞:         无(4路下载进行中,wit_base刚重启初始化中); 85M暂停(用户令10-13); P-8投料等运维指示
+当前动作:     唤醒457(2026-10-15 06:46) 巡检4路下载断点续传健康态(唤醒456后~41min)。4路wrapper全部存活(ppid=1,etimes≈30387s≈506min)✅。4路hf全部活跃+多ESTAB连接✅：en_v1_4 PID2111003(6 ESTAB,part-0059@06:45,33851/56461=59.95%)|WebMix PID2798086(10 ESTAB,train-cc12m-198@06:44,199parquet/149G)|wit_base PID1675681(10 ESTAB,train-00240@06:45,241/330=73.0%,210G,**重启恢复确认✅**)|InternVL PID766408(9 ESTAB+1 CLOSE-WAIT,sa_000498@06:44,499tar/374G)。进度(唤醒456→现在):en_v1_4 33826→33851(+25,3.1T)|WebMix 178→199(+21,+16G)|wit_base 225→241(+16,+14G)|InternVL 487→499(+12tar,+10G)。85M⏸暂停(0进程)✅。disk:/nas_user75%/28T,/nas_train85%/32T,/nas_inference80%/9.4T,/nas_env1%/9.9T。📦体积:TASK=29KB/MEMORY=31KB
+下一步:       ①看护4路下载(死/僵/速率趋零即kill+restart); ②85M维持暂停(用户令10-13); ③巡检进度/速率/ETA; ④P-8投料等运维指示
+阻塞:         无(4路下载进行中,全部健康); 85M暂停(用户令10-13); P-8投料等运维指示
 ERROR_COUNT:  5
 ```
 
@@ -27,7 +27,8 @@ ERROR_COUNT:  5
 > 📦 唤醒453 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+WebMix速率趋零kill+restart+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒452 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/31KB）
 > 📦 唤醒455 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+WebMix速率趋零kill+restart PID2798086+4路进度对比表+disk 4盘+体积29KB/31KB）
-> [06:05] 唤醒456：巡检4路下载断点续传健康态(唤醒455后~37min)。4路wrapper全部存活(ppid=1,etimes≈28200s≈470min)✅。en_v1_4 hf PID2111003(5 ESTAB)✅活跃(最新parquet 06:05,33826files/3.1T/59.9%)。WebMix hf PID2798086(1 ESTAB)✅活跃(刚完成文件.parquet 177→178,最新06:08,133G)。InternVL hf PID766408(6+ ESTAB)✅活跃(最新tar 06:08,487tar/364G)。**wit_base速率趋零→kill+restart**:PID766398 .incomplete 134MB自06:05起4min无增长+1 CLOSE-WAIT连接→kill(exit=143)→wrapper Attempt#2自动重启PID1675681(etimes=53s,下载train-00225)✅,225parquet/196G保留✅。进度(唤醒455→现在):en_v1_4 +26|WebMix +20|wit_base +8(重启中)|InternVL +15tar。85M⏸暂停✅。disk:/nas_user75%/28T,/nas_train85%/32T,/nas_inference80%/9.4T,/nas_env1%/9.9T。📦体积:TASK=29KB/MEMORY=31KB(均≤32KB,无需归档)
+> [06:46] 唤醒457：巡检4路下载断点续传健康态(唤醒456后~41min)。4路wrapper全部存活(ppid=1,etimes≈30387s≈506min)✅。4路hf全活跃✅：en_v1_4 PID2111003(6 ESTAB,33851/56461=59.95%,+25parquet,part-0059@06:45)|WebMix PID2798086(10 ESTAB,199parquet/149G,+21,train-cc12m-198@06:44)|wit_base PID1675681(10 ESTAB,241/330=73.0%,210G,+16,train-00240@06:45,**重启恢复确认✅**)|InternVL PID766408(9 ESTAB+1 CLOSE-WAIT,499tar/374G,+12,sa_000498@06:44)。**无需kill/restart**。85M⏸暂停✅。disk:/nas_user75%/28T,/nas_train85%/32T,/nas_inference80%/9.4T,/nas_env1%/9.9T。📦体积:TASK=29KB/MEMORY=31KB(均≤32KB,无需归档)
+> 📦 唤醒456 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+wit_base速率趋零kill+restart PID1675681+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒451 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
 > 📦 唤醒450 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+en_v1_4 wrapper自动重启+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
 > 📦 唤醒449 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
