@@ -1,6 +1,36 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（📋 Stage(iv) MLLM 对齐方案可行性评估 · 出中文 HTML 报告）· 用户直令
+
+> **用户令（2026-10-14）**：「ArmC 训练&评测完成后，vision 做 Stage(iv) MLLM 对齐。用户已批准方向并给出具体方案（见下）。请 vision 评估此方案可行性 + 困难，写成 HTML 报告（中文版）。」—— **本阶段只做评估调研，🚫 不起训**。
+
+**① 用户给定方案（逐字传达）**：
+- 配方：**LLaVA-OneVision-1.5**
+- LLM：**Qwen3-4B**（`/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507`）
+- projector：**2 层 MLP**
+- vision encoder：**BaiZe 之眼 ProtB LP 分数最高的 checkpoint**（= ④-4ep，ProtB 67.05±0.02%）
+- 训练框架：**ms-swift**
+- Stage-1：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-558K-Webdataset`
+- Stage-1.5：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M`
+- Stage-2：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-webdataset`
+- 超参参考：`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/train_4b.sh`
+- 评测：**lmms-eval**
+- 评测集（17）：`ai2d, blink, chartqa, docvqa_val, gqa, infovqa_val, mme, mmmu_val, mmstar, ocrbench, realworldqa, scienceqa_img, textvqa_val, vizwiz_vqa_val, vqav2_val, countbench, mmmu_pro_standard`
+
+**② 评估要求（逐项本机核查，贴实测证据 `ls`/`du`/路径）**：
+1. **数据可获取性**：三个 Stage 数据路径是否存在/已下全（`ls` + `du -sh`），缺失哪些。
+2. **LLM**：Qwen3-4B 是否在盘、config/HF 格式是否可直接被 ms-swift 载入。
+3. **vision encoder 接入**：④-4ep ckpt 的保存格式（open_clip？自定义？）、特征维 512、如何 bridge 到 ms-swift/LLaVA 的 vision tower 接口（需改代码/写 wrapper？）。
+4. **框架/工具**：`ms-swift`、`lmms-eval`、`LLaVA-OneVision-1.5` repo（`train_4b.sh`）是否在盘/已装/版本；缺哪个、能否网络装（带 proxy）。
+5. **算力粗估**：Qwen3-4B + 2 层 MLP projector + 3 Stage 训练的 GPU·h（对照 `train_4b.sh` 超参 + `.12` 8×H100），预估墙钟。
+6. **困难分级清单**：🔴阻塞 / 🟠需解决 / 🟢顺利，每条附依据与建议绕过方式。
+7. **与 ArmC 衔接**：ArmC 训练+评测完成后，还差哪些前置才能开 Stage(iv)（数据/环境/算力空窗）。
+
+**③ 交付**：中文、自包含 HTML `reports/report_vision_mllm_stage4_feasibility_zh.html`；文末附「困难分级清单 + 建议排期」。
+
+**④ 纪律**：🚫 不起训、不占 GPU；不干扰 ArmC 训练/评测链（评估在空窗期做）；数字凭实测（路径存在性/大小），🚫 凭印象；commit 前缀 `vision mllm-plan:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-14（📊 当前 ArmC 试验中文状态报告）· 用户直令
 
 > **用户令（2026-10-14）**：「vision 现在在做什么试验，让它写个 html 报告（中文版）。」
