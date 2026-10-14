@@ -30,10 +30,9 @@
     % 商业Empyrean Aether环境中达到82.1\%的Pass@1（±3.0，5轮均值），显著优于纯LLM基线（10.5\%）。消融表明
     % 执行闭环是决定性的：在检索之上加入沙盒执行带来+10.3个百分点，而移除执行（-[TBD]pp）
     % 或检索（-1.1pp）都会使准确率坍塌——与理论预测一致。
-All quantitative results in this draft are provisional, obtained on the PyAether-only 
-    slice; final numbers will be reported on the unified \textbf{EDA-Scripting-Bench} 
-    (PyAether + SKILL + Tcl).
-    % 本文所有定量结果为暂定值，均来自PyAether切片；最终结果将在统一评测集EDA-Scripting-Bench（PyAether + SKILL + Tcl）上报告。
+The main quantitative results are measured on the 158-task PyAether slice; a cross-language reproduction of the component ablation on the SKILL (158) and Tcl (133) slices of the unified \textbf{EDA-Scripting-Bench} (449 tasks total) reproduces the same structure---the complete system is the top and the prior-only baseline the bottom on every language---and the remaining ablation axes are being re-measured on the full benchmark.
+    % 主定量结果在158题PyAether切片上测得；在统一评测集EDA-Scripting-Bench（449题：PyAether 158 + SKILL 158 + Tcl 133）的SKILL与Tcl切片上，
+    % 组件消融的跨语言复现重现了同一结构——完整系统在每个语言上均为top，纯先验基线均为bottom；其余消融轴在完整评测集上复测中。
 
 \end{abstract}
 

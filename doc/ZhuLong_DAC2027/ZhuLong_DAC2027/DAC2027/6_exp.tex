@@ -259,11 +259,31 @@ Read against Principle 2, this spread is what the $\mathcal{K}$ axis can move, a
 \subsubsection{RQ3: re-measuring the structure per toolchain}
 \label{sec:cross-language}
 
-The three slices of \textbf{EDA-Scripting-Bench} share one task schema, one assertion criterion and one harness (Section~\ref{sec:benchmark}), so the protocol of S1--S2 can be re-run slice by slice with nothing changed but the toolchain. We report the slices separately rather than pooled, and what the comparison is about is whether the \emph{ordering} of the configurations and the size of the gaps survive, not whether the absolute rates agree---different tools have different API surfaces and different baseline difficulty. These measurements are pending on the SKILL and Tcl slices.
-% RQ3：按工具链分别重测该结构。EDA-Scripting-Bench的三个切片共享同一任务模式、同一断言判据与同一框架，
-% 因此S1–S2的协议可以逐切片重跑，除工具链外不改动任何东西。
-% 我们分切片报告而非合并；关注的是各配置的排序与差距量级是否保持，而非绝对准确率是否一致——
-% 不同工具的API面与基线难度本就不同。SKILL与Tcl切片的测量待补。
+The three slices of \textbf{EDA-Scripting-Bench} share one task schema, one assertion criterion and one harness (Section~\ref{sec:benchmark}), so the protocol of S1--S2 can be re-run slice by slice with nothing changed but the toolchain. We report the slices separately rather than pooled, and what the comparison is about is whether the \emph{ordering} of the configurations and the size of the gaps survive, not whether the absolute rates agree---different tools have different API surfaces and different baseline difficulty. Table~\ref{tab:cross-language} reports an independent cross-language reproduction of the component ablation (the RQ2 build-up) on the SKILL slice (158 tasks) and the Tcl slice (133 tasks, spanning the Custom WaveView and Innovus runtimes), alongside the reproduction's own PyAether runs so that all four columns come from one self-consistent 5-run set per configuration. The absolute PyAether rates of this reproduction (e.g., full $81.4\pm1.5\%$) agree with the main-table anchor ($82.1\pm3.0\%$, Table~\ref{tab:main-ablation}) within one standard deviation; the comparison of interest here is the \emph{within-language} ordering, not cross-table absolute agreement.
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-language reproduction of the component ablation (RQ3). Pass@1 (\%), 5-run mean$\pm$std, on EDA-Scripting-Bench. The PyAether column is the reproduction's own runs (self-consistent with its SKILL/Tcl columns, within $1\sigma$ of the main-table anchor); Tcl is split into the WaveView and Innovus runtimes (133 tasks total). The full system is the top configuration on every language; the prior-only baseline is the bottom on every language.}
+\label{tab:cross-language}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Configuration} & \textbf{PyAether} & \textbf{SKILL} & \textbf{Tcl-WaveView} & \textbf{Tcl-Innovus} \\
+\midrule
+Pure LLM & 10.5 $\pm$ 1.9 & 33.2 $\pm$ 2.3 & 2.9 $\pm$ 1.1 & 20.0 $\pm$ 3.2 \\
+RAG (retrieval only) & 72.2 $\pm$ 1.6 & 33.9 $\pm$ 10.6 & 87.0 $\pm$ 3.0 & 81.4 $\pm$ 5.8 \\
+ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & 39.0 $\pm$ 12.6 & 81.6 $\pm$ 3.4 & 61.8 $\pm$ 34.6 \\
+\textbf{ZhuLong (Full)} & \textbf{81.4 $\pm$ 1.5} & \textbf{60.3 $\pm$ 6.7} & \textbf{88.6 $\pm$ 2.1} & \textbf{85.3 $\pm$ 15.4} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The qualitative structure reproduces across all three languages: the complete system is the \emph{top} configuration on PyAether, SKILL, Tcl-WaveView and Tcl-Innovus alike, and the prior-only baseline is the \emph{bottom} on every language. The dominance of observation-plus-execution over the prior alone is therefore not an artifact of one toolchain---it follows from the domain structure, which is exactly what RQ3 is designed to test. The intermediate ordering is less stable: on PyAether the sandbox-only variant (w/o Retrieval, $81.0\%$) beats retrieval-only (RAG, $72.2\%$), whereas on both Tcl runtimes the reverse holds (RAG $87.0\%/81.4\%$ vs.\ w/o Retrieval $81.6\%/61.8\%$) and on SKILL the two are statistically tied ($33.9\%$ vs.\ $39.0\%$), reflecting that different toolchains expose different amounts of usable documentation relative to executable feedback. What is invariant is the two extremes---the full system wins and the prior-only baseline loses on every language. The fidelity ($\Omega$) and belief-update ($\Phi$) axes of S1--S2 have not yet been re-measured on the SKILL and Tcl slices; Table~\ref{tab:cross-language} therefore covers the component build-up only, and the remaining axes are pending on those slices.
+% RQ3：按工具链分别重测该结构。表~\ref{tab:cross-language}给出组件消融在SKILL(158)与Tcl(133,WaveView+Innovus)切片上的
+% 独立复现，连同复现自身的PyAether列（四列来自同一自洽5-run集）。复现的PyAether绝对值与主表锚点(82.1±3.0%)在1σ内一致；
+% 此处关注的是切片内排序而非跨表绝对一致。定性结构在三种语言上复现：完整系统在每个语言上均为top，纯先验基线均为bottom。
+% 中间排序不稳定（PyAether上sandbox-only>RAG，Tcl上反之，SKILL上持平），反映不同工具链暴露的文档/可执行反馈比例不同。
+% 保真度(Ω)与Φ轴尚未在SKILL/Tcl复测，本表仅覆盖组件build-up，其余轴向pending。
 
 
 

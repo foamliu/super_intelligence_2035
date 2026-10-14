@@ -27,8 +27,9 @@ The main contributions are:
     single \texttt{lang} parameter so the same agent logic covers PyAether, SKILL, and Tcl
     (Section~\ref{sec:system}). In a commercial Empyrean Aether environment, ZhuLong attains
     \textbf{82.1\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} for a pure
-    LLM and \textbf{71.8\%} for a retrieval-augmented static baseline, and \textbf{[X\%]}
-    overall on the unified benchmark. % TODO: fill unified-benchmark Pass@1 once SKILL/Tcl slices are done
+    LLM and \textbf{71.8\%} for a retrieval-augmented static baseline. The same component
+    ordering reproduces across the SKILL and Tcl slices of EDA-Scripting-Bench
+    (Section~\ref{sec:cross-language}).
     Ablation shows that the three components are \emph{jointly necessary and not
     interchangeable}: adding sandbox execution to RAG yields \textbf{+10.3~pp}, while removing
     execution ($-[TBD]$~pp) or retrieval ($-1.1$~pp) reduces accuracy, and
