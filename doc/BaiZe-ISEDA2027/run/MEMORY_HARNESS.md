@@ -3,59 +3,20 @@
 WAITING: 1
 
 > 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-14 glm53 7×300 任务**：**✅ 7 路运行中（17:17 重启后稳定运行 ~73min，无 403/无崩溃）**。Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅（18:30 复验）。
+> **🆕 2026-10-14 glm53 7×300 任务**：**✅ 7 路运行中（17:17 重启后稳定运行 ~106min，无 403/无崩溃）**。Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅（19:03 复验）。
 > **P1-2 rerun** ✅ DONE：rerun_blocked.py 54/54 完成（4 resolved, 42 pbf, 8 blocked）。累计 kimi 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄：7 路运行中（17:17 重启，--resume）。**430/2100 entries (20.5%), 105 resolved (24.4%), 323 pbf, 2 quota-blocked**。Per-harness: deepseek 192(31,16.1%,1qb), codex 141(33,23.4%,1qb), claude-code 25(10,40.0%), hermes 21(9,42.9%), opencode 20(8,40.0%), pi 15(7,46.7%), cline-patched 16(7,43.8%)。**glm53 24.4% vs kimi 27.3%**（原口径 574/2100）→ 略低但样本尚小(430条)，codex/deepseek 已跑较多(拉低整体)，小样本harness passrate偏高。Pending: 1670/2100。ETA ~23h。load 30.2, RAM 1874G avail, /dev/shm 984G free。
+> **glm53 7×300** 🔄：7 路运行中（17:17 重启，--resume）。**466/2100 entries (22.2%), 117 resolved (25.1%), 347 pbf, 2 quota-blocked**。Per-harness: deepseek 206(38,18.4%,1qb), codex 151(34,22.5%,1qb), claude-code 26(10,38.5%), hermes 23(9,39.1%), opencode 22(8,36.4%), pi 19(9,47.4%), cline-patched 19(9,47.4%)。**glm53 25.1% vs kimi 27.3%**（原口径 574/2100）→ 略低但样本尚小(466条)，codex/deepseek 已跑较多(拉低整体)，小样本harness passrate偏高(38-47%)。Pending: 1634/2100。ETA ~25h。load 30.0, RAM 1871G avail, /dev/shm 984G free。
 
-## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
-
-> **数据基础**（从 `kimi_pilot_results.json` 2100 条 + `fix1.json` 376 条实测）：
-> - blocked: 50（matplotlib 31, django 10, sympy 6, sklearn 2, pytest 1；claude-code 15, hermes 15, deepseek 11, pi 5, codex 4）
-> - quota-blocked: 14（全 django__django-16873，API 配额问题，非 infra）
-> - no-patch: 4（全 deepseek，timeout）
-> - astropy patch-not-applied: 28/42（eval env 失败，未纳入 fix1 的 5 repo 范围）
-> - fix1 后仍 patch-not-applied: 97（mpl 30, sklearn 27, pytest 18, flask 14, sphinx 8）
-> - **97 条根因已查清（§7）**：py_version_36_needs_38=42(pytest/sklearn/sphinx) · py_version_38_needs_39=30(全 matplotlib) · werkzeug_version=14(全 flask) · other=11
-> - **新增 P1-1b**：per-repo Python 版本 conda env（3.8 for pytest/sklearn/sphinx, 3.9 for matplotlib）+ werkzeug 兼容版本预装 → 可修 86/97 条
-
-| P1 项 | 做法 | 成本 | ETA | 占用 | 预估挽回 | 风险 |
-|:--|:--|:--|:--|:--|:--|:--|
-| **P1-1 astropy** | 预编译 astropy wheel（`pip wheel astropy`）+ 注入 `~/.cache/pip`；或增大 eval 沙箱 memory limit（cgroup）| ~4h | 批准后 4h | CPU+磁盘（编译 ~2GB），无 GPU | ~28 patch-apply 新增（resolved 数取决于 patch 质量）| 中：astropy C 扩展编译依赖多 |
-| **P1-2 网络 503** | ① git fetch 加 3 次重试+指数退避 ② 预克隆 5 高频 repo 到本地缓存（`/dev/shm/repos/`），harness 从本地 clone | ~1h | 批准后 1h | CPU+磁盘（预克隆 ~5GB），无 GPU | 50 blocked → 可重跑 | 低：改 `run_serial_kimi.py` git 逻辑 |
-| **P1-3 Docker** | per-instance 预构建 Docker（官方做法）| ~2-3 天 | 2-3 天 | 重 CPU+大量磁盘+Docker | 理论上覆盖全部 env 失败 | 🔴 **不可行**：本机 `docker info`→NOT AVAILABLE，内网无法 `docker pull`。**建议暂缓** |
-| **②b 重跑 agent** | blocked(50)+no-patch(4)=54 条重跑 harness（同 7 harness+kimi-k2.6-cloud）；quota-blocked(14) 不重跑 | ~1h(并行)~5.4h(串行) | P1-2 后 ~1h | CPU+API 配额，无 GPU | 50 blocked → 重跑后估 ~5-10 resolved | 低：已验证流程 |
-
-> **建议优先级**：P1-2（~1h, 低风险）→ ②b 重跑（~1h）→ P1-1（~4h）→ P1-3 暂缓。**等运维确认后执行**。
-
-## §FIX2 RESULTS — P1-1b fix2 重评完成（2026-10-13 13:00 · 本轮完成）
-
-> **fix2 重评 32 条（pytest 18 + flask 14）全部完成** ✅（5.6min total）。
-> **修复措施**：pytest `pip install 'setuptools<70'` + flask `pip install 'werkzeug<2.3'`（均用现有 testbed env，无需 C 重建）。
->
-> **pytest (18 条)**：**9 FLIPPED to RESOLVED** ✅ · 15/18 patch-applied（从 0/18！）· 3.6min
-> - pytest-5227：7/7 harness 全部 RESOLVED（codex/pi/opencode/cline-patched/deepseek/claude-code/hermes）
-> - pytest-5103：2/2 RESOLVED（pi/opencode）
-> - pytest-5221：6/6 patch-applied 但 f2p=0/2（全未通过 — patch 全错，agent 能力限制）
-> - pytest-11143/11148：3 条 patch 仍未 apply（pi 的 patch 有兼容性问题）
->
-> **flask (14 条)**：**0 FLIPPED** · 13/14 patch-applied（从 0/14！）· 2.0min
-> - flask-4045：7/7 patch-applied，f2p=1/2（1/2 fail-to-pass 通过 — patch 部分正确但不完整）
-> - flask-4992：6/7 patch-applied，f2p=0/1（全未通过 — patch 质量限制）
-> - 1 条未 apply：opencode/flask-4992
->
-> **累计（fix1+fix2）**：574→617 resolved（27.3%→29.4%, +2.1pp）· +243 patch-applied
-> **剩余 65 条 not-applied**：matplotlib 30（需 qhull+freetype build deps ~2h）· sklearn 27（需 build deps ~2h）· sphinx 8（待排查）
-> **r1_eval.py fix2b**：`conda activate {env}` → `export PATH={env_path}/bin:$PATH`（chroot 内 conda activate 修复，正确保留）
-
-**下一步建议**：① matplotlib+sklearn 需额外 ~4h 安装 build deps + 重建 C 扩展（65 条中 57 条）② sphinx 8 条逐条排查 ③ **等运维确认后执行**
+> 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
+> 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
 
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING (395/2100, 94 resolved, /v1 endpoint) + P1-2 rerun DONE (54/54)
+PHASE:        glm53 7x300 RUNNING (466/2100, 117 resolved, /v1 endpoint) + P1-2 rerun DONE (54/54)
 已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574→621 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 403 fix ✅ + 7x300 RUNNING ✅ + run_harness.py /v1 fix ✅ · ⑪ P1-2 rerun ✅ (54/54, 4 resolved)
-当前动作:     glm53 7x300 RUNNING (7 harness × 300, restarted 17:17 CST, ~37min elapsed) — 395/2100 entries, 94 resolved (23.8%), 299 pbf, 2 quota-blocked. Per-harness: deepseek 180(29), codex 131(33), claude-code 23(9), hermes 19(8), opencode 17(6), pi 14(6), cline-patched 11(3). curl /v1 → 200 ✅ (17:54 re-verified). All 7 PIDs alive, gw_proxy 9092/9093 running.
-下一步:       ① Monitor glm53 7x300 progress (ETA ~28h remaining) ② When glm53 ≥50% done: interim comparison vs kimi ③ When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html ④ Restore kimi configs after glm53 run
+当前动作:     glm53 7x300 RUNNING (7 harness × 300, restarted 17:17 CST, ~106min elapsed) — 466/2100 entries (22.2%), 117 resolved (25.1%), 347 pbf, 2 quota-blocked. Per-harness: deepseek 206(38,18.4%,1qb), codex 151(34,22.5%,1qb), claude-code 26(10,38.5%), hermes 23(9,39.1%), opencode 22(8,36.4%), pi 19(9,47.4%), cline-patched 19(9,47.4%). curl /v1 → 200 ✅ (19:03 re-verified). All 7 PIDs alive (etimes ~6360s), gw_proxy 9092/9093 running.
+下一步:       ① Monitor glm53 7x300 progress (ETA ~25h remaining) ② When glm53 ≥50% done: interim comparison vs kimi ③ When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html ④ Restore kimi configs after glm53 run
 阻塞:         <无> — base URL 全部 /v1, curl 200 OK, 7 路正常运行, 无 403/quota/timeout
 ERROR_COUNT:  0
 ```
@@ -65,14 +26,12 @@ ERROR_COUNT:  0
 - [08:54] R369: rerun monitoring (13/54, 1 resolved) + report update. 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 - [09:40] R370: matplotlib preclone v2 + report update (15/54). 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R371-R372 (2026-10-14, glm53 403 resolved + early monitoring 23/2100) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
-- [12:40] R373: **glm53 7×300 monitoring + run_harness.py /v1 fix + curl re-verify**. curl POST `http://agi-gateway.cxmt.com/v1/chat/completions` (model=glm-5.3-flash) → **200 OK** ✅ (re-verified this round). **101/2100 entries** in `glm53_pilot_results.json`: 32 resolved, 69 pbf, 0 blocked/no-patch. Per-harness: cline-patched 29(11 resolved, 37.9%), codex 27(11, 40.7%), deepseek 31(10, 32.3%), claude-code 5(0), hermes/opencode/pi 3 each(0). Early django resolve rates notably higher than kimi (cline 37.9% vs 28.7%, codex 40.7% vs 26.7%). **Fixed `run_harness.py:36`**: GATEWAY default `/cloud/v1` → `/v1` (was the last stale /cloud/v1 in active code; not used in actual driver flow but updated per directive "三文件全更新"). All `/cloud/v1` references now only in comments/migration logic. 7 `run_serial_kimi.py --resume` processes running (PIDs 1262875~1278074, etimes ~4800s/~80min). gw_proxy 9092/9093 → `/v1` upstream. P1-2 rerun: 22/54 (3 resolved, PID 3541239). 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈32400B(31.6KB ✓) / 归档 0B。
-- [13:04] R374: **glm53 7×300 monitoring + curl re-verify**. curl POST `http://agi-gateway.cxmt.com/v1/chat/completions` (model=glm-5.3-flash) → **200 OK** ✅. **169/2100 entries**: 61 resolved, 108 pbf, 0 blocked/no-patch. Per-harness: cline-patched 45(20, 44.4%), codex 44(21, 47.7%), deepseek 53(19, 35.8%), claude-code 8(0), hermes 7(1), opencode 7(0), pi 5(0). All 7 `run_serial_kimi.py --resume` alive (etimes ~6760s/~1.9h). glm53 resolve rate consistently above kimi (cline 44.4% vs 28.7%, codex 47.7% vs 26.7%). P1-2 rerun: 34/54 (4 resolved, 21 pbf, 8 blocked, PID 3541239). No 403/quota/timeout. 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈32600B(31.8KB ✓) / 归档 0B。
-- [17:54] R375: **glm53 7×300 monitoring — crash recovery verified + progress update**. All 7 routes alive (PIDs 3023384~3034548, etimes ~2200s/~37min, restarted 17:17 after prior crash). curl POST `/v1/chat/completions` → **200 OK** ✅ (17:54 re-verified). **395/2100 entries (18.8%), 94 resolved (23.8%), 299 pbf, 2 quota-blocked** (django-16873 codex+deepseek). Per-harness: deepseek 180(29,16.1%,2qb), codex 131(33,25.2%), claude-code 23(9,39.1%), hermes 19(8,42.1%), opencode 17(6,35.3%), pi 14(6,42.9%), cline-patched 11(3,27.3%). gw_proxy 9092/9093 → `/v1` running. Base URL all `/v1` ✅ (grep confirmed no stale `/cloud/v1` in active code). P1-2 rerun ✅ DONE (54/54, 4 resolved, kimi 574→621). glm53 23.8% vs kimi 27.3% — slightly lower but only 395/2100 sample. ETA ~28h. load 24.8, RAM 1887G avail, /dev/shm 984G free. 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈31861B(31.1KB ✓) / 归档 0B。
+> 📦 R373-R375 (2026-10-14 12:40~17:54, glm53 7×300 monitoring 101→395 entries + run_harness.py /v1 fix + crash recovery) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R358-R365 (2026-10-13 22:15 ~ 2026-10-14 06:15, why-low report + fix4 + preclone + rerun launch) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
 > 📦 R355 (2026-10-13 12:21, fix2 feasibility test analysis) 已归档 → daily-memories-harness/2026-10-13.md。
-- [14:30] R357: **fix3 launched** 🔄. Root cause: pkg-config `.pc` files in testbed_py39/testbed_py38 had full host paths (`/nas_train/.../rootfs/.../opt/miniconda3/...`) as prefix → chroot sandbox can't find qhull/freetype headers. Fix: (1) `sed` all `.pc` files to chroot-internal paths (`/opt/miniconda3/envs/testbed_py39`) (2) `r1_eval.py`: inject `CFLAGS`/`CPPFLAGS`/`LDFLAGS`/`PKG_CONFIG_PATH`/`C_INCLUDE_PATH`/`CPLUS_INCLUDE_PATH` when `env_override` set (3) add `--no-build-isolation` to `pip install -e .`. Test: matplotlib 1 entry → `patch_applied: false→true` ✅ (78s/entry). Full 64-entry run launched (PID 2127908, `--resume`). 📦 体积：TASK=34786B(34.0KB ⚠️) / MEMORY=27552B(26.9KB ✓).
+> 📦 R357 (2026-10-13 14:30, fix3 launched: pkg-config .pc fix + r1_eval.py CFLAGS injection) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
@@ -195,3 +154,4 @@ ERROR_COUNT:  0
 - 2026-10-14 15:12 —— **glm53 7×300 monitoring** —— ALL 7 alive (cline-patched etimes=4284s~71min, 其余 6 路 ~14490s~4h)。**298/2100 (14.2%), 77 resolved (25.8%), 220 pbf, 1 quota-blocked (deepseek django-16873)**。Per-harness: codex 108(33,30.6%) / deepseek 132(25,18.9%,1qb) / claude-code 16(6,37.5%) / hermes 14(6,42.9%) / opencode 12(3,25.0%) / pi 12(4,33.3%) / cline-patched 4(0,0.0%,刚重启)。无 403/Forbidden ✅。**glm53 25.8% vs kimi 27.3%（原口径 574/2100）** → 略低，298 条样本尚小。eta ~16h。load 30.1, RAM 1883G, /dev/shm 985G。📦 体积：TASK=28709B(28.0KB ✓) / MEMORY=30226B(29.5KB ✓) / 归档 0B。
 - 2026-10-14 17:17 —— **glm53 7×300 CRASH RECOVERY + RESTART** —— 17:11 发现所有 7 路 harness 进程 + glm53 proxies (9092/9093) 全部死亡（dmesg 无 OOM，log 无 error msg，results file 最后修改 16:47→进程 ~16:47-17:11 间崩溃）。curl /v1 → 200 ✅（API 仍可用）。**修复**：① 重启 gw_proxy 9092 (PID 2941134) + gw_proxy_dsh 9093 (PID 2941137)，均 → `http://agi-gateway.cxmt.com/v1`；② 写 `restart_glm53_harnesses.sh`（`setsid nice -n 10` + `--resume`）；③ 重启 7 路（PIDs 3023384~3034548，ppid=1，stat=SNs）。Resume 验证：cline-patched skip 7, codex skip 116, deepseek skip 153, hermes skip 17, opencode skip 15, claude-code skip 22, pi skip 13 = 343 skip total。**344/2100 (16.4%), 86 resolved (25.0%), 257 pbf, 1 qb**。所有 log 显示 [RUN] 正常，无 403 ✅。codex+deepseek 仍遇 django-16873 quota-blocked（已知问题）。📦 体积：TASK=28709B(28.0KB ✓) / MEMORY=30852B(30.1KB ✓) / 归档 0B。
 - 2026-10-14 18:30 —— **glm53 7×300 monitoring R376** —— ALL 7 alive (etimes ~4280s = ~71min since 17:17 restart, ppid=1, stat=SNs)。curl /v1 → 200 ✅。**430/2100 (20.5%), 105 resolved (24.4%), 323 pbf, 2 qb**。Per-harness: deepseek 192(31,16.1%,1qb) / codex 141(33,23.4%,1qb) / claude-code 25(10,40.0%) / hermes 21(9,42.9%) / opencode 20(8,40.0%) / pi 15(7,46.7%) / cline-patched 16(7,43.8%)。全 7 路 log 活跃（proc fd 确认 [RUN]/[EVAL] 正常），无 403 ✅。gw_proxy_glm53.log 有 ConnectionResetError（客户端断连，proxy 仍存活 PID 2941134/2941137）。**glm53 24.4% vs kimi 27.3%**（原口径 574/2100）→ 略低，但 codex/deepseek 已跑较多且 passrate 偏低（16-23%），小样本 harness（pi/hermes/claude-code/cline-patched）passrate 偏高（40-47%），需等更多样本收敛。+87 entries in 73min = ~1.2/min, ETA ~23h。load 30.2, RAM 1874G, /dev/shm 984G。📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈32700B(31.9KB ✓) / 归档 0B。
+- 2026-10-14 19:03 —— **glm53 7×300 monitoring R377 + archival** —— ALL 7 alive (etimes ~6360s = ~106min since 17:17 restart, ppid=1, stat=SNs)。curl /v1 → 200 ✅ (19:03 re-verified)。**466/2100 (22.2%), 117 resolved (25.1%), 347 pbf, 2 qb**。Per-harness: deepseek 206(38,18.4%,1qb) / codex 151(34,22.5%,1qb) / claude-code 26(10,38.5%) / hermes 23(9,39.1%) / opencode 22(8,36.4%) / pi 19(9,47.4%) / cline-patched 19(9,47.4%)。无 403 ✅。**glm53 25.1% vs kimi 27.3%**（原口径 574/2100）→ 略低，但 codex/deepseek 已跑 151+206 条且 passrate 偏低(18-23%)拉低整体，小样本 harness（pi/hermes/claude-code/cline-patched ~19-26 条）passrate 偏高(38-47%)，需等更多样本收敛。+36 entries in 33min = ~1.1/min, ETA ~25h。load 30.0, RAM 1871G, /dev/shm 984G。**本轮归档**：§P1 PLAN + §FIX2 RESULTS → ARCHIVE_OPERATOR_HARNESS.md；R373-R375 + R357 → daily-memories-harness/2026-10-14.md。📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈27123B(26.5KB ✓) / 归档 ~6557B → ARCHIVE_OPERATOR_HARNESS.md。

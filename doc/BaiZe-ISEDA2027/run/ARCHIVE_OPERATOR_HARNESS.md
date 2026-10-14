@@ -909,3 +909,46 @@ timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -3
 4. 备选：自建轻量沙箱 —— `conda env per repo` + `bwrap` / `nsjail`（只替代"隔离"职责）。
 5. 若以上都不可行 → 明确写"H-A 在受限前提下无法按标准口径进行"，
    并给替代评测口径建议，但不得把它称作 SWE-bench 结果。
+
+---
+
+## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 已被 2026-10-13 指令取代 · 2026-10-14 归档）
+
+> **数据基础**（从 `kimi_pilot_results.json` 2100 条 + `fix1.json` 376 条实测）：
+> - blocked: 50（matplotlib 31, django 10, sympy 6, sklearn 2, pytest 1；claude-code 15, hermes 15, deepseek 11, pi 5, codex 4）
+> - quota-blocked: 14（全 django__django-16873，API 配额问题，非 infra）
+> - no-patch: 4（全 deepseek，timeout）
+> - astropy patch-not-applied: 28/42（eval env 失败，未纳入 fix1 的 5 repo 范围）
+> - fix1 后仍 patch-not-applied: 97（mpl 30, sklearn 27, pytest 18, flask 14, sphinx 8）
+> - **97 条根因已查清（§7）**：py_version_36_needs_38=42(pytest/sklearn/sphinx) · py_version_38_needs_39=30(全 matplotlib) · werkzeug_version=14(全 flask) · other=11
+> - **新增 P1-1b**：per-repo Python 版本 conda env（3.8 for pytest/sklearn/sphinx, 3.9 for matplotlib）+ werkzeug 兼容版本预装 → 可修 86/97 条
+
+| P1 项 | 做法 | 成本 | ETA | 占用 | 预估挽回 | 风险 |
+|:--|:--|:--|:--|:--|:--|:--|
+| **P1-1 astropy** | 预编译 astropy wheel（`pip wheel astropy`）+ 注入 `~/.cache/pip`；或增大 eval 沙箱 memory limit（cgroup）| ~4h | 批准后 4h | CPU+磁盘（编译 ~2GB），无 GPU | ~28 patch-apply 新增（resolved 数取决于 patch 质量）| 中：astropy C 扩展编译依赖多 |
+| **P1-2 网络 503** | ① git fetch 加 3 次重试+指数退避 ② 预克隆 5 高频 repo 到本地缓存（`/dev/shm/repos/`），harness 从本地 clone | ~1h | 批准后 1h | CPU+磁盘（预克隆 ~5GB），无 GPU | 50 blocked → 可重跑 | 低：改 `run_serial_kimi.py` git 逻辑 |
+| **P1-3 Docker** | per-instance 预构建 Docker（官方做法）| ~2-3 天 | 2-3 天 | 重 CPU+大量磁盘+Docker | 理论上覆盖全部 env 失败 | 🔴 **不可行**：本机 `docker info`→NOT AVAILABLE，内网无法 `docker pull`。**建议暂缓** |
+| **②b 重跑 agent** | blocked(50)+no-patch(4)=54 条重跑 harness（同 7 harness+kimi-k2.6-cloud）；quota-blocked(14) 不重跑 | ~1h(并行)~5.4h(串行) | P1-2 后 ~1h | CPU+API 配额，无 GPU | 50 blocked → 重跑后估 ~5-10 resolved | 低：已验证流程 |
+
+> **建议优先级**：P1-2（~1h, 低风险）→ ②b 重跑（~1h）→ P1-1（~4h）→ P1-3 暂缓。**等运维确认后执行**。
+
+## §FIX2 RESULTS — P1-1b fix2 重评完成（2026-10-13 13:00 · 2026-10-14 归档）
+
+> **fix2 重评 32 条（pytest 18 + flask 14）全部完成** ✅（5.6min total）。
+> **修复措施**：pytest `pip install 'setuptools<70'` + flask `pip install 'werkzeug<2.3'`（均用现有 testbed env，无需 C 重建）。
+>
+> **pytest (18 条)**：**9 FLIPPED to RESOLVED** ✅ · 15/18 patch-applied（从 0/18！）· 3.6min
+> - pytest-5227：7/7 harness 全部 RESOLVED（codex/pi/opencode/cline-patched/deepseek/claude-code/hermes）
+> - pytest-5103：2/2 RESOLVED（pi/opencode）
+> - pytest-5221：6/6 patch-applied 但 f2p=0/2（全未通过 — patch 全错，agent 能力限制）
+> - pytest-11143/11148：3 条 patch 仍未 apply（pi 的 patch 有兼容性问题）
+>
+> **flask (14 条)**：**0 FLIPPED** · 13/14 patch-applied（从 0/14！）· 2.0min
+> - flask-4045：7/7 patch-applied，f2p=1/2（1/2 fail-to-pass 通过 — patch 部分正确但不完整）
+> - flask-4992：6/7 patch-applied，f2p=0/1（全未通过 — patch 质量限制）
+> - 1 条未 apply：opencode/flask-4992
+>
+> **累计（fix1+fix2）**：574→617 resolved（27.3%→29.4%, +2.1pp）· +243 patch-applied
+> **剩余 65 条 not-applied**：matplotlib 30（需 qhull+freetype build deps ~2h）· sklearn 27（需 build deps ~2h）· sphinx 8（待排查）
+> **r1_eval.py fix2b**：`conda activate {env}` → `export PATH={env_path}/bin:$PATH`（chroot 内 conda activate 修复，正确保留）
+> **下一步建议**：① matplotlib+sklearn 需额外 ~4h 安装 build deps + 重建 C 扩展（65 条中 57 条）② sphinx 8 条逐条排查 ③ **等运维确认后执行**
