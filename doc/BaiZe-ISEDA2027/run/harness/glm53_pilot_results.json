@@ -24583,5 +24583,995 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-17139",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-17139.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-17139.json\n[run_single] cleanup: git reset --hard 1d3327b8e90a186df6972991963a5ae87053259d\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 67,
+        "p2p_total": 67
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12184",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 209.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12184.json",
+      "stdout_tail": "s_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 3281 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12184.json\n[run_single] cleanup: git reset --hard 5d674eac871a306405b0fbbaeb17bbeba9c68bf3\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 25,
+        "p2p_total": 25
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11910",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1800.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11910.json",
+      "stdout_tail": " instance_id=django__django-11910\n[run_single] base_commit=d232fd76a85870daf345fd8f8d617fe7802ae194\n[run_single] ps_len=1172\n[run_single] git reset --hard d232fd76a85870daf345fd8f8d617fe7802ae194\n[run_single] running pi ...\n== harness=pi rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11910.json\n[run_single] cleanup: git reset --hard d232fd76a85870daf345fd8f8d617fe7802ae194\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 110,
+        "p2p_total": 110
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-17630",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-17630.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-17630.json\n[run_single] cleanup: git reset --hard 58e78209c8577b9890e957b624466e5beed7eb08\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 19,
+        "p2p_total": 19
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11964",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 37.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11964.json",
+      "stdout_tail": "e] instance_id=django__django-11964\n[run_single] base_commit=fc2b1cc926e34041953738e58fa6ad3053059b22\n[run_single] ps_len=2353\n[run_single] git reset --hard fc2b1cc926e34041953738e58fa6ad3053059b22\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=37.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11964.json\n[run_single] cleanup: git reset --hard fc2b1cc926e34041953738e58fa6ad3053059b22\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-17655",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-17655.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-17655.json\n[run_single] cleanup: git reset --hard f5e965947af2410ded92cfad987aaf45262ea434\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 9,
+        "p2p_total": 9
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13028",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 257.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13028.json",
+      "stdout_tail": "case_when_qs (unittest.loader._FailedTest)\nRan 244 tests in 0.786s\nFAILED (errors=2, skipped=6)\n\u001b[0m\n\u001b[0m$ \u001b[0mpython tests/runtests.py basic lookup annotations defer get_or_create 2>&1 | grep -E \"^(OK|FAILED|Ran|ERROR)\"\nRan 222 tests in 0.751s\nOK (skipped=6)\n\u001b[0m\n\n[run_single] model_patch: 3044 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13028.json\n[run_single] cleanup: git reset --hard 78ad4b4b0201003792bfdbf1a7781cbc9ee03539\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 276,
+        "p2p_total": 276
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18057",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18057.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18057.json\n[run_single] cleanup: git reset --hard 62000f37b8821573ba00280524ffb4ac4a380875\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 98,
+        "p2p_total": 98
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11999",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 84.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11999.json",
+      "stdout_tail": "le] instance_id=django__django-11999\n[run_single] base_commit=84633905273fc916e3d17883810d9969c03f73c2\n[run_single] ps_len=512\n[run_single] git reset --hard 84633905273fc916e3d17883810d9969c03f73c2\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=83.6s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11999.json\n[run_single] cleanup: git reset --hard 84633905273fc916e3d17883810d9969c03f73c2\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 30,
+        "p2p_total": 30
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18087",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18087.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18087.json\n[run_single] cleanup: git reset --hard 9da013ad0ddc3cd96fe505f2e47c63e372040916\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 35,
+        "p2p_total": 35
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-18189",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 8.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18189.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18189.json\n[run_single] cleanup: git reset --hard 1923822ddf8265199dbd9ef9ce09641d3fd042b9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 41,
+        "p2p_total": 41
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18199",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18199.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18199.json\n[run_single] cleanup: git reset --hard ba80d1e493f21431b4bf729b3e0452cd47eb9566\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 113,
+        "p2p_total": 113
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-18532",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18532.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18532.json\n[run_single] cleanup: git reset --hard 74227f900b05009d4eed62e34a166228788a32ca\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 28,
+        "p2p_total": 28
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12589",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 1800.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12589.json",
+      "stdout_tail": "-12589\n[run_single] base_commit=895f28f9cbed817c00ab68770433170d83132d90\n[run_single] ps_len=2417\n[run_single] git reset --hard 895f28f9cbed817c00ab68770433170d83132d90\n[run_single] running claude-code ...\n== harness=claude-code rc=-1 timed_out=True wall=1800.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12589.json\n[run_single] cleanup: git reset --hard 895f28f9cbed817c00ab68770433170d83132d90\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 66,
+        "p2p_total": 66
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12284",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 893.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12284.json",
+      "stdout_tail": "s_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 6690 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12284.json\n[run_single] cleanup: git reset --hard c5e373d48cbdd923575956fed477b63d66d9603f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 31,
+        "p2p_total": 31
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18621",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18621.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18621.json\n[run_single] cleanup: git reset --hard b17ef6effe278d5b861d65896cc53442a6370d8f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12700",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 166.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12700.json",
+      "stdout_tail": "2700\n[run_single] base_commit=d51c50d836c5cf8db5566da17963f871be554615\n[run_single] ps_len=1703\n[run_single] git reset --hard d51c50d836c5cf8db5566da17963f871be554615\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=165.6s ==\n[run_single] model_patch: 2670 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12700.json\n[run_single] cleanup: git reset --hard d51c50d836c5cf8db5566da17963f871be554615\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 77,
+        "p2p_total": 77
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18698",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 50"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18698.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18698.json\n[run_single] cleanup: git reset --hard 3dff1b98a78f28c953ae2140b69356b8391e399c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 147,
+        "p2p_total": 147
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12286",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: fatal: unable to access 'https://github.com/django/django/': Received HTTP code "
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 40.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12286.json",
+      "stdout_tail": "s_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1363 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12286.json\n[run_single] cleanup: git reset --hard 979f61abd322507aafced9627702362e541ec34e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-18835",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18835.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-18835.json\n[run_single] cleanup: git reset --hard 516fa83e69caf1e68306cfc912a13f36c434d51c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 41,
+        "p2p_total": 41
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12113",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1002.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-12113.json",
+      "stdout_tail": "un_single] base_commit=62254c5202e80a68f4fe6572a2be46a3d953de1a\n[run_single] ps_len=4774\n[run_single] git reset --hard 62254c5202e80a68f4fe6572a2be46a3d953de1a\n[run_single] running pi ...\n== harness=pi rc=143 timed_out=False wall=1002.0s ==\n[stderr tail] ...Request aborted\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-12113.json\n[run_single] cleanup: git reset --hard 62254c5202e80a68f4fe6572a2be46a3d953de1a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-19007",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-19007.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-19007.json\n[run_single] cleanup: git reset --hard f9e030b57623bebdc2efa7f297c1b5ede08fcebf\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 26,
+        "p2p_total": 26
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12308",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 225.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12308.json",
+      "stdout_tail": "s_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2224 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12308.json\n[run_single] cleanup: git reset --hard 2e0f04507b17362239ba49830d26fec504d46978\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 20,
+        "p2p_total": 20
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12908",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 1800.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12908.json",
+      "stdout_tail": "=django__django-12908\n[run_single] base_commit=49ae7ce50a874f8a04cd910882fb9571ff3a0d7a\n[run_single] ps_len=1048\n[run_single] git reset --hard 49ae7ce50a874f8a04cd910882fb9571ff3a0d7a\n[run_single] running hermes ...\n== harness=hermes rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12908.json\n[run_single] cleanup: git reset --hard 49ae7ce50a874f8a04cd910882fb9571ff3a0d7a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 25,
+        "p2p_total": 25
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-19254",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-19254.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-19254.json\n[run_single] cleanup: git reset --hard e0ef1da13e2ab2a77866c05246f73c871ca9388c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 18,
+        "p2p_total": 18
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12915",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 40.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12915.json",
+      "stdout_tail": "=django__django-12915\n[run_single] base_commit=4652f1f0aa459a7b980441d629648707c32e36bf\n[run_single] ps_len=886\n[run_single] git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=39.7s ==\n[run_single] model_patch: 5505 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12915.json\n[run_single] cleanup: git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-19487",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-19487.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-19487.json\n[run_single] cleanup: git reset --hard 25fbcce5b1a4c7e3956e6062930f4a44ce95a632\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 90,
+        "p2p_total": 90
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-20049",
+    "repo": "sympy/sympy",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-20049.json",
+      "stdout_tail": "reasoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-20049.json\n[run_single] cleanup: git reset --hard d57aaf064041fe52c0fa357639b069100f8b28e1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 4,
+        "p2p_pass": 9,
+        "p2p_total": 9
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12983",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 58.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12983.json",
+      "stdout_tail": "=django__django-12983\n[run_single] base_commit=3bc4240d979812bd11365ede04c028ea13fdc8c6\n[run_single] ps_len=381\n[run_single] git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=58.1s ==\n[run_single] model_patch: 3074 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12983.json\n[run_single] cleanup: git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-13033",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 1,
+      "wall_s": 1800.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13033.json",
+      "stdout_tail": "ceback (most recent call last):\\n  File \"/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/pool.py\", line 268, in __del__\\nResourceWarning: unclosed running multiprocessing pool <multiprocessing.pool.Pool state=RUN pool_size=224>\\n\\x1b[0m\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13033.json\n[run_single] cleanup: git reset --hard a59de6e89e8dc1f3e71c9a5a5bbceb373ea5247e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 26,
+        "p2p_total": 26
+      }
+    },
+    "classification": "resolved"
   }
 ]
