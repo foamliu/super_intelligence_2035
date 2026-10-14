@@ -1583,3 +1583,27 @@ T3 提速验证结果：
 ④ 红线：🚫 禁引 MiniCPM5 论文 / CSDN 的 300B；🚫 数字无溯源不准落笔；✅ 每个 token 数须给盘点命令 / 文件:行；🚫 不占 GPU、不打断 P-8 监控；commit 前缀 `pretrain plan:`；任务书 >32KB 自滚归档。
 
 > **执行结论**：v3 报告已交付 `reports/report_pretrain_formal_train_plan.html`，实盘盘点口径，在 origin/main。
+
+---
+
+### 🆕 运维指令 · 2026-10-14（✍️ 放行刷新论文 —— 执行审视报告修改）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「关于白泽论文，pretrain 提到『共发现 4 项🔴硬伤、10 项🟠建议、3 项🟢可回填』。现在允许 pretrain 刷新论文。」
+
+**性质**：纯写作，零 GPU。**主线仍是 P-8 监控**——本任务在监控空窗期做，🚫 绝不为改稿延迟/干扰 P-8 监控与 decay 切换。
+
+**① 撤销「只报不改」红线**：放行你**修改论文 `.tex`**，执行你审视报告 `reports/report_baize_paper_review_pretrain_zh.html` 中的修改建议。
+
+**② 🔴 硬伤（H1–H4）必须修**：
+- **H1**（FP8 矛盾）：删「We adopt FP8…」，改为如实解释「FP8 在 M=65536 有 19.4% 加速，但生产 MBS2×seq=8192 远低于交叉点 M*≈30–32K，FP8 overhead 超加速（实测 s=0.91 即慢 9%）→ 故用 BF16」。
+- **H2**（20B-token 笔误）：`4_llm_pretrain.tex:115,120` 的「20B-token checkpoint」→「20K-step (≈655M tokens)」。
+- **H3**（层数错误）：`3_architecture.tex:11` + `4_llm_pretrain.tex:116` 的「24 Mamba-2 layers」→「52」。
+- **H4**（seq 口径）⚠️ **按用户最新直令统一为 4096（非报告里的 4094）**：论文 3 处 4094 改 4096 —— `3_architecture.tex:31`、`4_llm_pretrain.tex:75`（改「8×4096≈32.8K」）、`4_llm_pretrain.tex:165`；`4_llm_pretrain.tex:35/42`、`5_llm_posttrain.tex:14` 的 4096 保持不动。**脚本 `SEQ` 改 4096 另待 P-8 整轮结束（🚫 勿动脚本、勿动正在跑的 P-8）**，论文正文只写 4096。
+
+**③ 🟠 建议（S1–S10）均可执行**，逐条落地；其中 **S7**（PPL 4K=83.2 异常高）若无法定位根因，至少加注「评测集/方法与训练 loss 口径不同」，🚫 不许编造数值。
+
+**④ 🟢 可回填**：**F1**（后训练 [TBD]）无数据**不填**；**F2**（P-8 结果）**待 P-8 完成后再填**（当前 loss 2.49 不是最终值，勿写入）；**F3** 已写入，可微调位置。
+
+**⑤ 改稿纪律**：改后编译 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && make main.pdf`（或等效）验证 **0 error**，记页数变化；每处修改与台账对照、🚫 数字凭印象；完成后把「改了哪几处 + 编译结果」写进心跳；commit 前缀 `pretrain paper-fix:` · 任务书 >32KB 自滚归档。
+
+> **执行结论**：论文改稿已在 #414 完成（commit 75963f3d）。H1-H4 全修 + S1-S10 全执行 + reference.bib 加 3 条引用。编译 11 pages 0 error 0 undefined ref/citation ✅。F1 不填、F2 待 P-8 完成、F3 已写入。
