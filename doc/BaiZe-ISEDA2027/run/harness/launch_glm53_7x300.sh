@@ -110,6 +110,28 @@ else:
 "
 fi
 
+# ALSO update cline-patched harness data dir globalState.json (2026-10-14 fix)
+# cline-patched uses --data-dir /nas_train/app.e0031982/harness_work/cline_harness_data
+# (run_single.py:28), NOT ~/.cline/data/. Its globalState.json has openAiBaseUrl
+# pointing at the kimi proxy (port 9090) — must switch to glm53 proxy (port 9092).
+CLINE_HARNESS_GS="/nas_train/app.e0031982/harness_work/cline_harness_data/globalState.json"
+if [ -f "$CLINE_HARNESS_GS" ]; then
+  python3 -c "
+import json, pathlib
+p = pathlib.Path('$CLINE_HARNESS_GS')
+d = json.loads(p.read_text())
+old = d.get('openAiBaseUrl', '')
+if '9090' in old:
+    d['openAiBaseUrl'] = old.replace('9090', '${GW_PROXY_PORT_GLM53}')
+    d['actModeOpenAiModelId'] = '${GLM53_MODEL}'
+    d['planModeOpenAiModelId'] = '${GLM53_MODEL}'
+    p.write_text(json.dumps(d, indent=2))
+    print(f'  Updated cline-patched harness GS: {old} -> {d[\"openAiBaseUrl\"]}')
+else:
+    print(f'  cline-patched harness GS already OK: {old}')
+"
+fi
+
 # Update pi config: change baseUrl to 9092, add glm-5.3-flash model
 python3 -c "
 import json, pathlib

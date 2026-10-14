@@ -3,9 +3,9 @@
 WAITING: 1
 
 > 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-14 glm53 7×300 任务**：**✅ RUNNING — 403 RESOLVED + base url 全部 /v1**。根因：glm53 key 只在 `/v1` endpoint 有效（HTTP 200），`/cloud/v1` 返回 403。**修复**：① `launch_glm53_7x300.sh` GLM53_BASE + GW_UPSTREAM → `/v1`；② cline `globalState.json` openAiBaseUrl → `/v1`（备份 `.kimi_backup`）；③ **本轮** `run_harness.py:36` GATEWAY 默认值 `/cloud/v1` → `/v1`（补齐运维指令要求的「三文件全更新」，该变量虽非活跃路径但已更正）。7 路运行中（11:10 CST 启动）。curl 探针 /v1 → 200 ✅（本轮复验）。结果写 `glm53_pilot_results.json`。
+> **🆕 2026-10-14 glm53 7×300 任务**：**✅ RUNNING — cline-patched 403 真正修复（本轮）**。根因：上一轮 `launch_glm53_7x300.sh` 更新了 `~/.cline/data/globalState.json`，但 cline-patched 用的是 **独立 data dir** `/nas_train/app.e0031982/harness_work/cline_harness_data/globalState.json`（`run_single.py:28` `--data-dir`），其 `openAiBaseUrl` 仍指向 `http://127.0.0.1:9090/v1`（kimi proxy, 9090 端口, kimi key, `/cloud` upstream）→ glm-5.3-flash 模型发到 kimi proxy → 403 Forbidden。**本轮修复**：① 将 harness data dir 的 `globalState.json` `openAiBaseUrl` 从 `9090` → `9092`（glm53 proxy, `/v1` upstream）；② 更新 `actModeOpenAiModelId` → `glm-5.3-flash`；③ 从 `glm53_pilot_results.json` 删除全部 61 条 cline-patched 无效条目（flock 安全）；④ `setsid` 重启 cline-patched（PID 314979）。验证：cline-patched 首个实例 astropy-12907 `[RUN]` → `[EVAL]` 无 Forbidden ✅。curl /v1 → 200 ✅。
 > **P1-2 rerun** 🔄：rerun_blocked.py --resume 仍在跑（34/54, PID 3541239, 4 resolved, 21 pbf, 8 blocked）。累计 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄：7 路运行中（11:10 CST 启动, ~2h），**169/2100 entries, 61 resolved, 108 pbf, 0 blocked/no-patch**。Per-harness: cline-patched 45(20, 44.4%), codex 44(21, 47.7%), deepseek 53(19, 35.8%), claude-code 8(0), hermes 7(1), opencode 7(0), pi 5(0)。早期 resolve rate 显著高于 kimi（kimi cline 28.7% vs glm53 cline 44.4%）。ETA ~22h。无 403/quota/timeout。curl /v1 → 200 ✅（本轮复验）。
+> **glm53 7×300** 🔄：7 路运行中（cline-patched 13:47 重启, 其余 6 路自 11:10 CST），**172/2100 entries, 63 resolved (36.6%), 109 pbf, 0 blocked/no-patch**。Per-harness: codex 60(30, 50.0%), deepseek 73(25, 34.2%), claude-code 13(4, 30.8%), hermes 9(2, 22.2%), opencode 9(1, 11.1%), pi 8(1, 12.5%), cline-patched 0(刚重启, 首条在 EVAL)。**glm53 整体 36.6% vs kimi 29.4%** → 支持「模型能力是主因」假设。ETA ~22h。无 403/quota/timeout。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -182,31 +182,11 @@ ERROR_COUNT:  0
 - 2026-10-09 07:05 —— **第二百零五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 07:39 —— **第二百零六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 08:13 —— **第二百零七轮** —— 已归档 → daily-memories-harness/2026-10-09.md（⚠️ WORKDIR-BLOCKED DISCOVERY: 88 blocked, all R2 parallel, git checkout conflicts from shared workdirs. opencode DONE 100/100 35.0%. Plan: hermes done → serial re-run blocked → final 7×100）。需要时再读。
-- 2026-10-09 09:04 —— **第二百零八轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 09:40 —— **第二百零九轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 10:22 —— **第二百一十轮** —— 已归档 → daily-memories-harness/2026-10-09.md（🚀 OPTIMIZED BLOCKED RE-RUN: killed old serial script → launched rerun_blocked_optimized.sh. Phase 1 non-sympy=44 parallel with hermes, Phase 3 sympy=44 after. Hermes 88/100, 12 rem. SWEBENCH_COMPARE 57686B 688/700 193 resolved）。需要时再读。
-- 2026-10-09 11:01 —— **第二百一十一轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 11:37 —— **第二百一十二轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 12:17 —— **第二百一十三轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 12:53 —— **第二百一十四轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 13:28 —— **第二百一十五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 14:05 —— **第二百一十六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 14:44 —— **第二百一十七轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 15:20 —— **第二百一十八轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 16:03 —— **第二百一十九轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 16:40 —— **第二百二十轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 17:16 —— **第二百二十一轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 17:52 —— **第二百二十二轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 18:26 —— **第二百二十三轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 19:02 —— **第二百二十四轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 19:39 —— **第二百二十五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 20:18 —— **第二百二十六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 20:53 —— **第二百二十七轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 21:38 —— **第二百二十八轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 23:20 —— **第二百二十九轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
+> 📦 R208-R229 (2026-10-09 09:04~23:20, 7×100 第二轮 + blocked re-run + SWEBENCH_COMPARE) 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 > 📦 R230-R258 (2026-10-10 00:14~17:37, smoke test + 7×300 launch + monitoring 62%→71%) 已归档 → daily-memories-harness/2026-10-10.md。结论：7×300 launched 00:14, ALL 7 alive, workdir block=0 holding (R231→R258), progress 0→71.1% (1494/2100). 需要时再读。
 > 📦 R259-R268 (2026-10-10 18:13~23:29, 7×300 monitoring 72.0%→78.2%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1528→1642/2100, 334→362 resolved, workdir block=0 (30→38 rounds), hermes ETA 26→23.7h。需要时再读。
 > 📦 R269-R276 (2026-10-11 00:05~04:18, 7×300 monitoring 78.7%→83.4%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1670→1751/2100, 369→393 resolved, workdir block=0 (40→46 rounds), hermes ETA 23→22h。需要时再读。
 > 📦 R277-R281 (2026-10-11 04:54~07:18, 7×300 monitoring 83.9%→85.7%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1762→1800/2100, 398→413 resolved, workdir block=0 (47→51 rounds), blocked 90→83 trend, hermes ETA 18h。需要时再读。
 - 2026-10-11 13:51 —— **第二百九十二轮** —— 7×300 monitoring at 13:51 (2257 min since 00:14 launch, 37.6h). ALL 7 alive (etimes ~135417s, stat=S). 1927/2100 (91.8%), +14 since R291 (36 min). 487 resolved (+6) / 1355 pbf / 74 blocked (11 checkout + 61 git_fetch_503 + 1 timeout + 1 other) + 7 qb (ALL django__django-16873 API quota) + 4 np (all deepseek). Workdir fix holding ✅ (62nd round, 0 new checkout/overwrite). Code fix applied: git checkout -f (4 places in git_clone_or_fetch, lines 110/114/124/128) to force-clear 11 legacy checkout blocks on next process restart. Per-harness: cline 287(78,rem13) / codex 300(72,rem0,21 blk) / claude 264(61,rem36) / opencode 293(83,rem7) / deepseek 278(57,rem22) / hermes 235(58,rem65←BOTTLENECK,ETA~19.5h→~Oct 12 09:20) / pi 270(78,rem30). Blocked trend: 72→74 (+2: new git_fetch_503). Resources: load 16.95/16.34/13.50, 1821G avail RAM, /dev/shm 17G/992G(2%), GPU 100% (pretrain R2 active). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈32400B(31.6KB ✓)。
 - 2026-10-14 11:10 —— **glm53 7×300 LAUNCHED** —— 403 RESOLVED: glm53 key works on `/v1` (HTTP 200) NOT `/cloud/v1` (HTTP 403). Fixed `launch_glm53_7x300.sh`: GLM53_BASE + GW_UPSTREAM → `/v1`; cline globalState.json openAiBaseUrl → `/v1` (backed up). 7 harnesses launched (PIDs 1262875~1278074), gw_proxy 9092/9093 → `/v1`. cline-patched first instance (astropy-12907) already in EVAL phase ✅. P1-2 rerun ~20/54 still running. 📦 体积：TASK=27362B(26.7KB ✓) / MEMORY≈31100B(30.4KB ✓) / 归档 0B。
+- 2026-10-14 13:50 —— **cline-patched 403 真正修复** —— 发现上一轮 403 修复不完整：`launch_glm53_7x300.sh` 更新了 `~/.cline/data/globalState.json`（默认 cline 数据目录），但 cline-patched 用独立 data dir `/nas_train/app.e0031982/harness_work/cline_harness_data/`（`run_single.py:28` `--data-dir`），其 `globalState.json` 仍指向 `http://127.0.0.1:9090/v1`（kimi proxy 9090 → kimi key → `/cloud` → 403）。全部 61 条 cline-patched 条目均有 Forbidden（rc=1, wall~3s, empty patch）。**修复**：① harness data dir `globalState.json` `openAiBaseUrl` 9090→9092, model→glm-5.3-flash；② 删除 61 条无效条目（flock）；③ `setsid` 重启 cline-patched（PID 314979）；④ 验证：首条 astropy-12907 `[RUN]`→`[EVAL]` 无 Forbidden ✅。7 路全部存活。172 entries, 63 resolved (36.6%), 109 pbf。📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈31.5KB(✓) / 归档 0B。
