@@ -2,7 +2,7 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：**① report_harness_why_low_passrate_zh.html 已交付** ✅。**② fix4 COMPLETE** ✅（59/61，0 flipped=LLM能力瓶颈；sklearn 19/25 apply, sphinx 6/8 apply, astropy 0/26 apply）。**③ P1-2 rerun RUNNING** 🔄（rerun_blocked.py --resume，**11/54 done, 1 RESOLVED**（django-13933 by claude-code）；codex 4/4=patch-but-failed；claude-code 7/15 done: 1 resolved + 5 pbf + 1 blocked；matplotlib git fetch 503 仍偶发 → 2 blocked；ETA ~8h remaining）。**④ 累计：574→618 resolved (29.4%)**，fix1+fix2=+43，fix3+fix4=+0，rerun=+1。**⑤ report_harness_eval_fix_rerun.html 已更新** ✅（31KB，含§4d rerun section）。
+> 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：**① report_harness_why_low_passrate_zh.html 已交付** ✅。**② fix4 COMPLETE** ✅（59/61，0 flipped=LLM能力瓶颈）。**③ P1-2 rerun RUNNING** 🔄（rerun_blocked.py --resume，**12/54 done, 1 RESOLVED**（django-13933 by claude-code）；codex 4/4=pbf；claude-code 8/15 done: 1 resolved + 4 pbf + 3 blocked(全 matplotlib git 503)；matplotlib preclone 重试中 PID 1133201 ~15M/~170s；ETA ~6-8h remaining）。**④ 累计：574→618 resolved (29.4%)**。**⑤ report_harness_eval_fix_rerun.html 已更新** ✅（32KB，§4d updated 12/54）。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -49,17 +49,17 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        fix4 COMPLETE ✅ + P1-2 rerun_blocked RUNNING (11/54, 1 resolved) + preclone killed (too slow)
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (376/376, 34 flipped) · ⑥ fix2 ✅ (33/33, 9 flipped) · ⑦ fix3 ✅ (64/64, 0 flipped) · ⑧ fix4 ✅ (59/61, 0 flipped) · ⑨ why-low-passrate report ✅ · ⑩ report_harness_eval_fix_rerun.html updated ✅ (31KB, +§4d rerun)
-当前动作:     P1-2 rerun_blocked.py RUNNING (11/54, PID 3541239, 1 resolved=django-13933). codex 4/4 done (all pbf). claude-code 7/15 done (1 resolved, 5 pbf, 1 blocked). matplotlib git fetch 503 still intermittent → 2 blocked entries. ETA ~8h remaining.
-下一步:       ① 等 rerun_blocked.py 完成 (43 remaining, ETA ~8h) → merge results ② 如有新 resolved → 更新 report ③ astropy 0/26 apply 仍 env 失败待排查 ④ codex 0-byte patch 问题已确认为 harness 侧问题
+PHASE:        fix4 COMPLETE ✅ + P1-2 rerun_blocked RUNNING (12/54, 1 resolved) + matplotlib preclone retry RUNNING
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (376/376, 34 flipped) · ⑥ fix2 ✅ (33/33, 9 flipped) · ⑦ fix3 ✅ (64/64, 0 flipped) · ⑧ fix4 ✅ (59/61, 0 flipped) · ⑨ why-low-passrate report ✅ · ⑩ report_harness_eval_fix_rerun.html updated ✅ (32KB, §4d 12/54)
+当前动作:     P1-2 rerun_blocked.py RUNNING (12/54, PID 3541239, ~3.5h elapsed). codex 4/4 done (all pbf). claude-code 8/15 done (1 resolved, 4 pbf, 3 blocked=matplotlib git 503). Entry 13 in progress (matplotlib-25332 git fetch retry). matplotlib preclone retry RUNNING (PID 1133201, ~15M/170s via proxy). ETA ~6-8h remaining for rerun.
+下一步:       ① 等 rerun_blocked.py 完成 (42 remaining) → merge results ② matplotlib preclone 完成后剩余 mpl entries 自动使用本地 clone ③ 如有新 resolved → 更新 report ④ astropy 0/26 apply 仍 env 失败待排查
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
 - [06:50] R366: **report updated + preclone killed + rerun monitoring**. fix4 confirmed COMPLETE (59/61, 0 flipped, 25 patch-applied: sklearn 19/25 + sphinx 6/8 + astropy 0/26). **Killed slow matplotlib preclone** (PID 768337, 52MB in 35min through proxy, `timeout 900` SIGTERM ignored by git during network I/O → `kill -9`). Rerun continuing with github fallback (3-retry, ~10-20min/entry due to 503s). **report_harness_eval_fix_rerun.html updated** ✅ (31KB): fix4 status→COMPLETE, added §4d rerun section with per-harness table (codex 4/4=0-byte, claude-code 5/15=1 resolved, deepseek/hermes/pi pending). Accumulated: 574→618 resolved (29.4%), fix1+fix2=+43, fix3+fix4=+0, rerun=+1. 📦 体积：TASK=32513B(31.7KB ✓) / MEMORY≈?B（归档 ~3KB → daily 2026-10-14.md）.
-- [07:30] R367: **rerun progress monitoring + fix4/fix3 final analysis**. rerun_blocked.py RUNNING (PID 3541239, ~2.6h elapsed): 11/54 done, 1 RESOLVED (django-13933 by claude-code). Per-harness breakdown: codex 4/4 done (all patch-but-failed, no 0-byte this time), claude-code 7/15 done (1 resolved, 5 pbf, 1 blocked=matplotlib-24334 git fetch 503), remaining: claude-code 8 + deepseek 15 + pi 5 + hermes 15 = 43. matplotlib git fetch 503 still intermittent (2 retries exhausted on 2 entries → blocked). **fix4 definitive finding**: fix3+fix4 = 0 flipped across 64+59=123 entries → **LLM capability bottleneck confirmed** (infra fixes work: patch_applied 0→25, but all patches fail f2p tests). **astropy 0/26**: C extension env still broken (numpy<1.24 conflict + /dev/shm insufficient for build) → remaining infra issue. **sphinx 6/8 applied but 0 resolved**: 2 not-applied (claude-code/sphinx-11445, deepseek/sphinx-10325). 📦 体积：TASK=32513B(31.7KB ✓) / MEMORY≈28600B(27.9KB ✓).
+- [08:15] R368: **rerun monitoring + matplotlib preclone retry + report update**. rerun_blocked.py RUNNING (PID 3541239, ~3.5h): 12/54 done, 1 RESOLVED (django-13933). Per-harness: codex 4/4=pbf, claude-code 8/15 (1 resolved, 4 pbf, 3 blocked=matplotlib git 503). Entry 13 (matplotlib-25332) in progress, git fetch retry 1/3. **matplotlib preclone retry launched** (PID 1133201, `git clone --bare` via proxy, ~15M/170s=~88KB/s, ETA ~5-6h for full ~1.5GB repo). Previous preclone killed at R366 (52MB/35min too slow). Once preclone completes, rerun_blocked.py will auto-detect `/dev/shm/repos/matplotlib/HEAD` and use local clone for remaining matplotlib entries (deepseek 8 mpl + hermes 10 mpl + pi 1 mpl = 19 remaining). **report_harness_eval_fix_rerun.html §4d updated** ✅ (32KB, 9/54→12/54, per-harness table + notes refreshed). Network: github direct + proxy both timeout (>15s), confirming 503 is network-level not config. 📦 体积：TASK=32513B(31.7KB ✓) / MEMORY≈29700B(29.0KB ✓).
 > 📦 R358-R365 (2026-10-13 22:15 ~ 2026-10-14 06:15, why-low report + fix4 + preclone + rerun launch) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。

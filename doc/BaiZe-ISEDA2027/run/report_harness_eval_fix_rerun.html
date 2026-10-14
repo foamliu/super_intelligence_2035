@@ -115,22 +115,24 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2
 <li><strong>sphinx</strong>：6/8 patches apply（tox→pytest 修复有效！sphinx-8595 old=false→new=true）→ 但 <strong>0 resolved</strong>（patch 全错）</li>
 <li><strong>astropy</strong>：26 条 — numpy&lt;1.24 + /dev/shm 修复后 <strong>0/26 patches apply</strong>（仍 context mismatch — patch hunk 与 base_commit 不匹配，需进一步排查）</li>
 <li><strong>核心结论</strong>：fix4 证实 infra 修复（Python 版本、tox 替换）能让 patch 成功 apply，但 <strong>0 resolved = agent 生成的补丁本身不正确</strong>（f2p 测试不通过），这是 <strong>LLM 能力限制</strong>，非评测环境问题。fix3+fix4 合计 0 flipped，与 fix1+fix2 的 43 flipped 形成鲜明对比：早期修复（setuptools/werkzeug 版本）能挽回通过率，后期修复（C 扩展/Python 版本）只能让 patch apply 但无法翻转为 resolved</li></ul></div>
-<h2>§4d P1-2 Rerun 结果（blocked+no-patch 54条重跑）（进行中 9/54）</h2><div class="fixd"><h3>重跑措施</h3><ol>
+<h2>§4d P1-2 Rerun 结果（blocked+no-patch 54条重跑）（进行中 12/54）</h2><div class="fixd"><h3>重跑措施</h3><ol>
 <li><strong>git fetch 3次重试+指数退避</strong>：解决 GitHub 503 间歇错误</li>
-<li><strong>预克隆 5 高频 repo</strong>：matplotlib/django/sympy/sklearn/pytest 到 /dev/shm/repos/（进行中 — matplotlib --depth=5000 clone 太慢 52MB/35min 已 kill）</li>
+<li><strong>预克隆 matplotlib 到 /dev/shm/repos/</strong>：bare clone via proxy 进行中（R368 重试，~3MB/~40s，带宽 ~70KB/s，ETA ~6h）</li>
 <li><strong>排除 14 quota-blocked</strong>：全 django__django-16873（API 配额问题，非 infra）</li></ol></div>
 <table><thead><tr><th>Harness</th><th>已重跑/目标</th><th>Resolved</th><th>Patch-but-Failed</th><th>Blocked</th><th>结论</th></tr></thead><tbody>
-<tr><td>codex</td><td>4/4</td><td>0</td><td>4</td><td>0</td><td style='color:#c62828'>全 0-byte patch（harness 问题）</td></tr>
-<tr><td>claude-code</td><td>5/15</td><td>1</td><td>3</td><td>1</td><td style='color:#2e7d32'>django-13933 resolved ✅</td></tr>
+<tr><td>codex</td><td>4/4</td><td>0</td><td>4</td><td>0</td><td style='color:#c62828'>全 patch-but-failed（harness/LLM 能力）</td></tr>
+<tr><td>claude-code</td><td>8/15</td><td>1</td><td>4</td><td>3</td><td style='color:#2e7d32'>django-13933 resolved ✅; matplotlib 3 blocked (git 503)</td></tr>
 <tr><td>deepseek</td><td>0/15</td><td>—</td><td>—</td><td>—</td><td>待跑</td></tr>
 <tr><td>hermes</td><td>0/15</td><td>—</td><td>—</td><td>—</td><td>待跑</td></tr>
 <tr><td>pi</td><td>0/5</td><td>—</td><td>—</td><td>—</td><td>待跑</td></tr>
-<tr style="background:#e3f2fd;font-weight:bold"><td>总计</td><td>9/54</td><td>1</td><td>7</td><td>1</td><td>ETA ~8h</td></tr></tbody></table>
-<div class="note"><p><strong>rerun 关键发现(进行中)：</strong></p><ul>
+<tr style="background:#e3f2fd;font-weight:bold"><td>总计</td><td>12/54</td><td>1</td><td>8</td><td>3</td><td>ETA ~6-8h remaining</td></tr></tbody></table>
+<div class="note"><p><strong>rerun 关键发现(进行中 12/54)：</strong></p><ul>
 <li><strong>django-13933 by claude-code</strong>：唯一 resolved ✅ — 原始 run 因 git fetch 503 blocked，重跑后 claude-code 生成正确 patch</li>
-<li><strong>codex 全 0-byte patch</strong>：4/4 entries 产生 0 字节 patch → codex harness 在 kimi-k2.6-cloud 上的兼容性问题（非 LLM 能力）</li>
-<li><strong>matplotlib blocked</strong>：git fetch 503 持续 → 预克隆失败（proxy 带宽 ~1.5MB/min 太慢），需更浅 clone 或本地 cache</li>
-<li><strong>预计挽回</strong>：~5-10 resolved（主要来自 django/sympy 的 blocked entries）</li></ul></div>
+<li><strong>codex 4/4 patch-but-failed</strong>：这次无 0-byte patch（比原始 run 好），但 f2p 测试全不通过 → LLM 能力限制</li>
+<li><strong>matplotlib 3/4 blocked</strong>：git fetch 503 持续（3 retries 全部耗尽），仅 1/4 成功 fetch（但 patch-but-failed）→ matplotlib 预克隆进行中</li>
+<li><strong>matplotlib preclone 重试</strong>：R368 重启 bare clone via proxy（PID 1133201，~70KB/s，ETA ~6h），完成后剩余 matplotlib entries 可自动使用本地 clone</li>
+<li><strong>预计挽回</strong>：~3-8 resolved（主要来自 django/sympy 的 blocked entries；matplotlib 大概率 pbf）</li>
+<li><strong>累计 resolved</strong>：574→618 (29.4%)，fix1+fix2=+43，fix3+fix4=+0，rerun=+1（进行中）</li></ul></div>
 <h2>§5 方法论</h2><ol><li>加载原始kimi_pilot_results.json(7×300=2100)</li><li>筛选5 repo非resolved且有patch→376条</li><li>r1_eval.py用修复后rootfs+注入env重评(4级patch容错)</li><li>对比old_eval vs new_eval; flipped=not-resolved→resolved</li><li>结果写入独立文件kimi_pilot_results.fix1.json(不覆盖原始)</li><li>增量落盘+幂等可续(--resume)</li></ol>
 <h2>§6 可复现命令</h2><pre style="background:#263238;color:#eee;padding:1em;border-radius:8px;overflow-x:auto;font-size:12px">cd .../run/harness
 HF_HUB_OFFLINE=1 python3 rerun_eval_fix1.py --timeout 1200 --resume >> rerun_eval_fix1.log 2>&amp;1 &amp;
