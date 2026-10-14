@@ -710,3 +710,56 @@ setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC20
 
 **④ 收割/推进（判据不变）**：`grep -E 'pass \(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_8650set.log | tail -10` → **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`** ⇒ r2 有效 ⇒ r3→r4→r5（同臂 `full` + **四 override**（见 §6 与旧 `(八)`⑥）+ log `/tmp/ABL_full_r3_8650set.log`…；**每轮开跑前 4 端口复检 + `df -BG /home` ≥8G**；不达标最多重跑 3 次 → 仍不达标 `WAITING=1` 回报）→ 5/5 `[88.0, r2–r5]` 算 mean±std → 回填 5 表锚点 → `PHASE=just_finished` → 进 `C2.phi_k10`。产出：各轮 `Pass@1 / timeout` + **「timeout × 端口」表** + hook/canary 复核结论。
 
+
+---
+## [⏩ 从 ZHULONG_TASK.md 滚出 · 2026-10-14 21:46 归档] 运维指令（十六）+（十五）原文
+
+### 🆕 运维指令 · 2026-10-14（十六）— 📝 实验空窗期审视论文，出改进意见 HTML（中文）【用户直令 · 与评测并行不互斥】
+
+> **用户令（2026-10-14）**：「安排 zhulong agent 在实验进行期间，审视论文（ZhuLong_DAC2027），将改进意见写成 html 报告（中文版）。」
+
+**性质**：零 GPU 的纯「读 + 写」任务。**主线仍是评测**（当前 `phi_k1 r2` 跑中）——本任务只占用**等待评测结果的空窗期**：评测一有结果，立即回归评测（收割/打分/切下一臂）**优先于**论文审视，两者交替推进，🚫 绝不为论文审视而延迟/打断评测。
+
+**① 审视对象**：论文树 `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（`main.tex` + `DAC2027/0_abstract.tex`…`8_conclusion.tex` + `reference.bib`/`software.bib` + 已编译 `main.pdf`）。
+
+**② 审视维度（每条意见必须具体，🚫 空泛）**：
+1. **论点-证据一致性**：每句核心 claim 是否有实测数字支撑；对照当前评测实况（B 4 臂、C1 4 臂、C2 `phi_k10` 5/5、`phi_k3` 5/5、`phi_k1` r1/r2 进行中）——哪些表/数字还是 `[TBD]`、哪些与实测不符、哪些结论尚缺轮次支撑。
+2. **评测口径**：Pass@1 分母（158 全量 vs 生成成功子集）、5-run `mean±std` 是否齐、配对检验（McNemar / paired bootstrap）是否声明、`timeout ≤10` 与 `gen-fail`（生成失败）的处理口径是否在论文里交代清楚。
+3. **消融结论一致性**：Φ 预算单调趋势（`k10=77.7% > k3=69.1% > k1≈65%`）、gen-fail 随 k↓ 递增、`full_v3` 锚点 82.1±3.0%——论文的结论句是否与这些实测方向一致，有无过度声称。
+4. **贡献边界 / 与 BaiZe 关系**：harness 属 ZhuLong、backbone 属 BaiZe 的边界是否写清；是否按 DAC/ISEDA 双会「互相引用、不重报」的约定表述。
+5. **结构与表述**：Abstract/Intro/Conclusion 一致性、Limitations 段是否缺失、图表/交叉引用是否齐全、overfull hbox / 页数是否超限。
+6. **可回填项**：列出「**已有实测、可直接回填**」的 `[TBD]` 清单（附目标值），与「**仍缺数据、暂不能填**」的清单（附还缺哪几轮）。
+
+**③ 交付**：中文、自包含 HTML 报告 `doc/ZhuLong_DAC2027/reports/report_zhulong_paper_review_zh.html`（若 `reports/` 不存在则建）；每条意见贴 **`文件:行号`** 或**具体数据**，分「🔴 硬伤 / 🟠 建议 / 🟢 可回填」三级标注；文末附「已回填建议清单」。
+
+**④ 红线**：
+- 🚫 **不直接改论文 `.tex`**（只出意见报告；改稿须运维/用户另行批准）。
+- 🚫 不得为论文审视而 kill/延迟评测进程；评测优先级更高。
+- 🚫 不得空泛（「建议加强实验」这种无效）；每条必须可落到具体位置或数字。
+- ✅ 意见里引用实测数据时，须与 `MEMORY_ZHULONG.md` 执行看板/成绩一致，不许凭印象。
+
+**⑤ 纪律**：commit 前缀 `zhulong paper-review:`；产出后 `git add` 报告 + 回写 `MEMORY_ZHULONG.md` 心跳；任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-13（十五）— ✅ 沙盒已重启完成，恢复试验（撤销 (十四) 暂停令）【最高优先 · 用户直令】
+
+> **用户令（2026-10-13）**：「zhulong 沙盒已重启，让它继续试验。」
+
+**立即执行**：
+1. **撤销 (十四) 的暂停令**：`PHASE` 从 `standby` 切回运行态。
+2. **恢复点（不回退）**：从 `phi_k3 r2` 继续。`r1 = 72.8%`（115/158 · timeout=0）已按 (十三) 判有效；att2 被 (十四) kill 的 114/158 **不重跑、不作为 r1**。
+3. **开跑前 5 项自检（沙盒重启可能还原状态，必须重核，缺一不可）**：
+   ① `.env` 配置为 `phi_k3`（S2 Φ 预算 k=3 · base=full(V3+selfexpl) 保留，`set_s2_phi.py` 只改预算、不动 V3/SKILL_DATA_DIR）；
+   ② 4 端口 `8650/8651/8652/8654` 全健康；
+   ③ MCP `8090` 在听且工具含 `search_apis`；
+   ④ 反作弊 hook 在位（`~/.cline/hooks/PreToolUse` + 新 log「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0）；
+   ⑤ `df -BG /home` ≥8G。
+   若任一项缺失，先按 (十二) 口径补齐（`bash scripts/stop.sh && bash scripts/start.sh` 重启 MCP 使生效），再开跑。
+4. **跑法与判据（沿用 phi_k3 既有口径）**：`bash scripts/run_cline_script.sh -p 8 -n`；**判据 = `timeout ≤ 10` 且无 infra 故障**（license / 端口 / 磁盘 / auto-grade bug）；`Pass@1` 任何值均有效（低分 = 真实消融效应）→ **不得因 <75% 重跑**。
+5. **交付**：phi_k3 `N=5 mean±std` → 继续 C2 其余臂（phi_k1 / phi_lagged）→ 之后 S1。
+
+**红线**：
+- 🚫 不得重跑 att2 / 不得回退 r1（72.8% 已定）。
+- 🚫 不得以 `Pass@1 < 75%` 作废或重跑任何消融臂。
+- ✅ 沙盒重启若致 `.env` / 端口 / MCP / hook 异常，先修复（不动业务逻辑）再开跑，修复过程记进心跳。
+
+
