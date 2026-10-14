@@ -121,7 +121,7 @@ WAITING: 0
 > 📦 **归档指针（查旧决策去这里，勿再塞回本文件）**：① **`daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节** = D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay`「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定；② **`daily-memories/2026-10-05.md`「从 MEMORY.md §4 滚动归档」** = 本区已闭合的 `[x]` 条目（AIMv2 改写授权 · D-CLEAN-4 定案 · harness 取 kimi · sglang 走 conda · 环境隔离纪律 · proxy 口径 · Claude Code 合规口径定案）—— **原文未改一字**。
 
 > ③ **`daily-memories/2026-10-06.md`「从 MEMORY.md §4 滚动归档」**（2026-10-07 滚动）= **配比实验改道裁定 · 「实验」定义 5 条判据**。**原文未改一字。**
-- [ ] ⛔ **loop 优化：暂不做**（用户 10-03 定；需回公司重启 loop）· **文档口径**：seq 统一 **4094**（论文残留 4096 待对齐，见 3_architecture/4_llm_pretrain/5_llm_posttrain 三处）· 是否把关键决策并进 `BAIZE_PROGRESS.html`（单一事实来源）。
+- [ ] ⛔ **loop 优化：暂不做**（用户 10-03 定；需回公司重启 loop）· **文档口径**：seq 统一 **4096**（残留 4094 待对齐：论文 `3_architecture.tex:31`/`4_llm_pretrain.tex:75,165` + P-8 脚本 `SEQ=4094`）· 是否把关键决策并进 `BAIZE_PROGRESS.html`（单一事实来源）。
 
 ---
 
@@ -148,8 +148,8 @@ WAITING: 0
 - **关键路径**：`P-5b → P-9 → P-6② → P-8`（P-8 = Stage(i) 本体，周级墙钟，仍暂缓等 base + 配比）。
 - 🔴 **配比搜索形态已改（2026-10-06）**：**不再用 2.2B 跑单臂**，改 **小代理（定案 `h=512/L=14`=96.8M = 1/23）× Optuna BO × 6 卡并行 × 1 天/段**；**24h 目标 200–400 trial**。锚点 = `ye2024datamixinglaws` + Xmodel-2 `400+ 次试验`。⇒ **「等配比」的等待时间从「周级」降到「2 天」。**
 - **两条硬口径（2026-10-03 定）**：
-  - **seq 统一 4094**（P-8 实际跑 4094；2026-10-14 纠正早先「4096」误记——依据 `baize_p8_train.sh:30` / `EXPERIMENTS_PRETRAIN_2B.md:4`）。
-  - **每步 ≈ 4M token 不变量**：`4094↔GBS1024` · `8192↔512` · `16384↔256` · `2048↔2048`。**总步数 = 总token/4M，与 seq 无关**。
+  - **seq 统一 4096**（2 的幂 2¹²；**用户直令 2026-10-14**）；`4094` 是 P-8 脚本的**错误残留**（`baize_p8_train.sh:30`/`baize_p8_adamw_train.sh:33` = `SEQ=4094`，须改 4096；`EXPERIMENTS_PRETRAIN_2B.md:4`/`MEMORY_PRETRAIN_2B.md:183` 的「4094」记录一并更正）。
+  - **每步 ≈ 4M token 不变量**：`4096↔GBS1024` · `8192↔512` · `16384↔256` · `2048↔2048`。**总步数 = 总token/4M，与 seq 无关**。
 - **FP8 机制**：`s` 取决于 **GEMM 的 M**，大 GEMM `M = MBS × seq`；**`M≳16K` 才 `s>1`**（seq 与 MBS 是等价杠杆）。
 - **vision 现状**：R9 lp 渐近 **25.1%**（当前路线 = **OpenVision2 w512 + CC12M+Amshaker + 冻结CLIP文本塔 + InfoNCE**；⚠️ **不是 GPIC**）；`attention flash` 仅占 GPU 自耗 **0.7%**（P-4 profile）。
 - 🚩 **`launcher` 只暴露 MBS / TP / SP / seq-length / precision**（agent P-9 非 GPU 预研，2026-10-03）→ **P-9 只用已暴露开关、不改 recipe**；B/C/E/F 类（recompute / 通信重叠 / dataloader / attn-backend）**冻结**，其中 **NCCL（P-4 占 41.7%）** 收益最大 → 记录在案、**待批准后另开**。
