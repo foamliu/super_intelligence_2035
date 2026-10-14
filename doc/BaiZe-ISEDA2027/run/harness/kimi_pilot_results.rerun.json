@@ -356,5 +356,31 @@
     },
     "blocked": "fetch failed (local=False): \n[TIMEOUT]",
     "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25433",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": false,
+      "msg": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 7eafdd8af3c523c1c77b027d378fb337dd489f18\nfatal: remote error: upload-pack: not our ref 7eafdd8af3c523c1c77b027d378fb337dd489f18\n; github=fetch failed (local=False): \n[TIMEOUT]"
+    },
+    "blocked": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 7eafdd8af3c523c1c77b027d378fb337dd489f18\nfatal: remote error: upload-pack: not our ref 7eafdd8af3c523c1c77b027d378fb337dd489f18\n; github=fetch failed (local=False): \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25442",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": false,
+      "msg": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 73394f2b11321e03a5df199ec0196f27a728b0b0\nfatal: remote error: upload-pack: not our ref 73394f2b11321e03a5df199ec0196f27a728b0b0\n; github=fetch failed (local=False): \n[TIMEOUT]"
+    },
+    "blocked": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 73394f2b11321e03a5df199ec0196f27a728b0b0\nfatal: remote error: upload-pack: not our ref 73394f2b11321e03a5df199ec0196f27a728b0b0\n; github=fetch failed (local=False): \n[TIMEOUT]",
+    "classification": "blocked"
   }
 ]
