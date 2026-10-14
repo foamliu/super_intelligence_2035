@@ -1607,3 +1607,72 @@ T3 提速验证结果：
 **⑤ 改稿纪律**：改后编译 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && make main.pdf`（或等效）验证 **0 error**，记页数变化；每处修改与台账对照、🚫 数字凭印象；完成后把「改了哪几处 + 编译结果」写进心跳；commit 前缀 `pretrain paper-fix:` · 任务书 >32KB 自滚归档。
 
 > **执行结论**：论文改稿已在 #414 完成（commit 75963f3d）。H1-H4 全修 + S1-S10 全执行 + reference.bib 加 3 条引用。编译 11 pages 0 error 0 undefined ref/citation ✅。F1 不填、F2 待 P-8 完成、F3 已写入。
+
+
+---
+
+### 🆕 运维指令 · 2026-10-14（📋【v4 重做】正式训练计划 —— 逐源准确 token · 密度归因 · 全量配比+采样次数 · D 扫描能力预估）· 用户直令 · 最高优先
+
+> 用户令（2026-10-14），逐条质问 v3 `reports/report_pretrain_formal_train_plan.html`：
+> ① 已下满数据源 **密度 tok/byte 范围 0.0657–0.4977，为什么差别这么大？**
+> ② **分词后的 bin 文件里一个 token 占几个字节**（比如 2 字节），那 **bin 字节数 ÷ 2** 不就是 token 数吗？
+> ③ 为什么说「**训 2,232B 需 ~52 天（双机）不现实**」——**现实不现实不需要 agent 做决定**。
+> ④ 首先**得到每个数据源准确的 token 数**，这事不难吧？
+> ⑤ 如果**按全量来训，如何配比**？按此配比，**每个数据源平均被采样多少次**？
+> ⑥ 设几个**数据量 D（100B、200B、400B、800B、1.6T、3.2T…）**，**预估 8 个常识推理均分、6 个复杂推理均分**各自能达到多少。
+> **判定：v3 质量不合格 ⇒ 产 v4**（覆盖同一文件），逐条作答、每数可溯源、**不做主观「现实 / 建议」判断**。
+
+**① 逐源「准确 token 数」（替代密度估算）**
+- 目标：给每个源**准确 token 数**，🚫 **不再用密度外推**。
+- 方法（必贴命令 + 原始输出）：读**分词后 `.bin/.idx`** → **token 数 = Σ bin 字节数 ÷ bytes-per-token**。
+- **先核实「一个 token 占几字节」**（用户第②问）：查**分词/写盘代码 + 文件头**，确认 token id 的 **dtype**（`uint16`=2B / `uint32`/`int32`=4B）。⚠️ 本 tokenizer **vocab=129,281 > 65,536** ⇒ 若 uint16 会溢出，**大概率 4B**——**以源码 / 文件头为证，🚫 不许猜**；给结论 + 证据（`文件:行` + `xxd`/`np.fromfile` 抽样）。
+- 逐源给：**原始文本字节（解压后）· 压缩字节（parquet/jsonl 的 du -sb）· token 数 · tok/原始字节 · tok/压缩字节**。
+
+**② 密度 0.0657–0.4977 差异 —— 机制 + 证据（须查证，不许糊弄）**
+- 现报告用「du -sb 的**压缩字节**」作分母、token 作分子 ⇒ 该比值 = **tok/压缩字节**，**同时混入「压缩率」与「语言/领域 tokenization」两因素** ⇒ **不是有效文本密度，不能用于跨源 token 估算**。
+- 须**逐源实测（解压若干 shard）**给出：**tok/原始 UTF-8 字节（真密度）**，并解释差异来源（英语高压缩 → 低 tok/字节；中文 / 代码 / 数学符号 tokenization 更密 → 高 tok/字节；含 base64/长 metadata 的源更极端）。
+- 修正后主表**以「实测 token 数」为准**；密度**仅作诊断列**，注明「**压缩态密度 ≠ 文本密度**」。
+
+**③ 删除主观判断**
+- **移除**「不现实 / 不推荐 / 建议 D=…」等**主观结论**；报告只呈现**事实与数字**（墙钟、GPU·h、成本、采样次数），**决策留给用户**。
+
+**④ 全量训练配比 + 平均采样次数**
+- 给「**按全量（在盘 ~2,232B）训练**」的**配比方案**（Stable / Decay 两段；依据 `DATA_MIX_RECIPE` + BO best `web0.827/code0.062/math0.111`），并说清**逐源如何扩配比**。
+- 据此算**每源平均采样次数（epoch）=（D × 该源配比）÷ 该源 token 数** → 做成 **D × 逐源** 的表。
+
+**⑤ D 扫描 + 8 常识 / 6 复杂 能力预估（核心）**
+- **D ∈ {100B, 200B, 400B, 800B, 1.6T, 3.2T}（token）** + 基线 **44B** + **全量 2,232B** 对照。
+- **8 常识均分** = `arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`（zero-shot，与 P-6 / P-5b 同口径 `lm_eval`）；**6 复杂均分** = `gsm8k, math, bbh, mmlu, humaneval, mbpp`。
+- **拟合法**：用**已有 ckpt 的实测 8/6 集分数**（P-5b 20B 多 ckpt + P-6 + R2）拟合 **D→能力** 曲线（log-D 线性 / 幂律 / Chinchilla 式），外推各 D；**每点给点估计 + 区间**，**区分「实测 / 拟合 / 外推」三档**。
+- **web search** 借鉴公开 scaling law（Chinchilla arXiv:2203.15556 · SmolLM3 · OLMo 2 · Bai et al.），**带来源 + 访问日**，并说明与本模型（2.22B hybrid）设定的差异与局限。
+- ⚠️ **3,200B > 在盘 2,232B** ⇒ 该档需**重复采样（>1 epoch）**：**显式声明**并讨论「数据重复对能力的影响」（引已有 epoch-scaling 证据；跨域不可直接搬运，注明）。
+- 交付 **scaling 曲线图**（SVG：8 常识 & 6 复杂各一条）。
+
+**⑥ 交付与纪律**
+- 覆盖 `reports/report_pretrain_formal_train_plan.html`（中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB）；加「**v3→v4 修订说明**」（逐条对应本令 ①–⑤）+ 诚实条款（阈值 / 置信 / 外推风险）。
+- 每个数字**可溯源**（命令 / `文件:行` / data 线实测）；🚫 编造 · 🚫 复用陈旧聚合值 · 🚫 主观判断。
+- 🚫 不占 GPU、不打断 P-8 训练 / 监控；纯 CPU + web search。
+- commit 前缀 `pretrain plan:` · 任务书 >32KB 自滚归档。
+
+
+---
+
+### 🆕 运维指令 · 2026-10-14（🔧 修复 decay 段 LR 未衰减 + 重跑 decay）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「pretrain LR 未衰减：安排 pretrain 审视 decay 脚本，是否有问题。decay 不需要加载原来 stable 的优化器，只加载权重，稍稍 warmup 后，直接 decay 到 1e-5 即可。LR 不降不行，需要修复。」
+
+**① 审视（先查根因，贴源码 `文件:行` 证据，不许猜）**：
+- 读 `pretrain_launcher.py` 的 resume 逻辑：同名 `--name p8_adamw` 如何加载 `iter_0009441`，是否**连带加载 optimizer state + LR 调度器状态**。
+- 核实 `baize_p8_decay.sh` 传入的新调度参数（`--lr-warmup-iters 0 --lr-decay-iters 1049 --lr-decay-style WSD --lr 1e-3 --min-lr 1e-5`）是否被 **resume 的 optimizer state 覆盖** → 即 LR 卡 1e-3 恒定的根因（当前 decay 段 27 个 log 点 LR=1e-3 未衰减正是此因）。
+
+**② 修复（按用户给定方案逐字落实）**：
+- **decay 段只加载权重，🚫 不加载 stable 的 optimizer state**：用 launcher 已有的 `--no-load-optimizer` / `--no-load-lr-state`（或等价）flag；若 launcher 无此开关，则在 launcher 里**加一个最小改动**（新 flag，默认关闭，decay 时开启）。
+- **给稍许 warmup**（如 ~50–100 步，替代当前 `WARMUP=0`），然后 **LR 从 1e-3 线性 decay 到 1e-5**，覆盖 decay 段。
+
+**③ 重跑 decay 段**：
+- 停当前错误的 decay 进程（PID 1744126，LR 卡 1e-3 的那个）。
+- 🚫 **不重跑 stable 段**（stable 已正确完成，ckpt@9441 有效；SFT blend 不变）。
+- 从 `ckpt@9441` 重跑 decay（只加载权重 + warmup + decay 1e-3→1e-5），产出 final `ckpt@10490`。
+
+**④ 纪律**：改脚本后先语法检查/冒烟再跑；停旧 decay 后等 ~30s 待 GPU 释放；🚫 不碰 watchdog loop（PID 1391466）；**seq=4094 保持**（与 stable 一致，P-8 整轮 4094 不变）；修复 + 重跑结果写心跳；commit 前缀 `pretrain decay-fix:` · 任务书 >32KB 自滚归档。
+
