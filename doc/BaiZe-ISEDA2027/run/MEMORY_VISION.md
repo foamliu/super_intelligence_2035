@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 04:52（keepalive · 全任务已完成 · wake #94）**：✅ 所有运维指令均已完成：ArmC merge3ds 训练 154500/154500 ✅(C1=0.6668, 22.7h) · eval chain 4/4 ✅（ProtB 68.25±0.01% / ProtA 59.41% / zs 46.17%/77.43% / k-NN 44.88%）· MLLM bridge 5/5 CPU PASSED ✅（277/277 strict, bit-exact diff=0.00e+00, projector 7.87M）· 报告 5 份已交付 ✅。GPU: 8×H100 全空闲（0% util）。git pull/push 均失败（网络不可达 github.com:443），commit 26db97c0 本地 ahead 1 待补推。📦 体积：TASK=26.0KB✅ / MEMORY=29.3KB✅。下一步：⏰ 下轮唤醒第一件事补推 git push；等运维新指令或 GPU 空窗期跑 MLLM bridge GPU smoke test。
+> 🆕 **2026-10-15 07:04（keepalive · 全任务已完成 · wake #95）**：✅ 所有运维指令均已完成。CPU 单测再验 5/5 PASSED（277/277 strict, bit-exact diff=0.00e+00, projector 7.87M params, `[1,3,224,224]→[1,196,512]→[1,196,2560]` 全通过）。GPU: 8×H100 全空闲（0% util）。git push 仍失败（网络不可达 github.com:443），commit 69806e12 本地 ahead 1 待补推。📦 体积：TASK=26.0KB✅ / MEMORY=29.8KB✅。下一步：⏰ 下轮唤醒第一件事补推 git push；等运维新指令或 GPU 空窗期跑 MLLM bridge GPU smoke test。
+> 📦 2026-10-15 04:52（keepalive · 全任务已完成 · wake #94）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, git push 失败(网络)。需要时再读。
 > 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
 > 📦 2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp), 报告交付, MLLM bridge 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~02:09（wake #90 ArmC eval chain 进展）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB seed 0 streaming 151/294, eval chain 运行中, CPU 5/5 PASSED。需要时再读。
@@ -33,10 +34,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **ALL COMPLETE（wake #94）**：ArmC merge3ds 训练 154500/154500 ✅(C1=0.6668, 22.7h)。eval chain 4/4 ✅（ProtB 68.25±0.01% / ProtA 59.41% / zs 46.17%/77.43% / k-NN 44.88%）。MLLM bridge 7文件+报告 ✅(CPU 5/5 PASSED, commit 03c36f5f)。外部编码器 ProtB 5/5+报告 ✅。论文改稿P0+P1 ✅。Stage(iv) 可行性报告 ✅。GPU 8×H100 全空闲。等运维新指令。 |
+| PHASE | ✅ **ALL COMPLETE（wake #95）**：ArmC merge3ds 训练 154500/154500 ✅(C1=0.6668, 22.7h)。eval chain 4/4 ✅（ProtB 68.25±0.01% / ProtA 59.41% / zs 46.17%/77.43% / k-NN 44.88%）。MLLM bridge 7文件+报告 ✅(CPU 5/5 PASSED, commit 03c36f5f)。外部编码器 ProtB 5/5+报告 ✅。论文改稿P0+P1 ✅。Stage(iv) 可行性报告 ✅。GPU 8×H100 全空闲。等运维新指令。 |
 | ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-15 04:52 (wake #94)**: ✅ ALL COMPLETE。ArmC 训练 154500/154500(C1=0.6668, 22.7h, final_loss=0.2169)。eval chain 4/4 完成(ProtB 68.25±0.01%, ProtA 59.41%, zs 46.17%/77.43%, k-NN 44.88%)。MLLM bridge CPU 5/5 PASSED(277/277 strict, bit-exact, projector 7.87M)。GPU 8×H100 全空闲。git pull 失败(网络不可达)。📦 TASK=26.0KB✅ / MEMORY=29.3KB✅。 |
+| 更新 | **2026-10-15 07:04 (wake #95)**: ✅ ALL COMPLETE。ArmC 训练 154500/154500(C1=0.6668, 22.7h, final_loss=0.2169)。eval chain 4/4 完成(ProtB 68.25±0.01%, ProtA 59.41%, zs 46.17%/77.43%, k-NN 44.88%)。MLLM bridge CPU 5/5 PASSED(277/277 strict, bit-exact, projector 7.87M)。GPU 8×H100 全空闲。git push 失败(网络不可达)但无新变更待推。📦 TASK=26.0KB✅ / MEMORY=29.8KB✅。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
