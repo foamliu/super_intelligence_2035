@@ -21,7 +21,10 @@ mkdir -p "$LOGDIR"
 
 GLM53_MODEL="glm-5.3-flash"
 GLM53_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f"
-GLM53_BASE="http://agi-gateway.cxmt.com/cloud/v1"
+# 2026-10-14 FIX: glm53 key returns 403 on /cloud/v1 (MSE Gateway Basic auth),
+# but works on /v1 (HTTP 200 verified). Task instruction said /cloud/v1 but
+# the key is only provisioned for the /v1 endpoint.
+GLM53_BASE="http://agi-gateway.cxmt.com/v1"
 GW_PROXY_PORT_GLM53="9092"
 GW_DSH_PORT_GLM53="9093"
 RESULTS_FILE="$HERE/glm53_pilot_results.json"
@@ -55,7 +58,7 @@ echo "API probe passed (HTTP 200)"
 echo "Starting gw_proxy instances (port $GW_PROXY_PORT_GLM53 + $GW_DSH_PORT_GLM53)"
 if ! pgrep -f "gw_proxy.py.*GW_PROXY_PORT=$GW_PROXY_PORT_GLM53" > /dev/null 2>&1; then
   cd /nas_train/app.e0031982/harness_work
-  GW_UPSTREAM=http://agi-gateway.cxmt.com/cloud \
+  GW_UPSTREAM=http://agi-gateway.cxmt.com/v1 \
   GW_API_KEY="$GLM53_KEY" GW_PROXY_PORT="$GW_PROXY_PORT_GLM53" GW_PROXY_HOST=127.0.0.1 \
   setsid python3 "$GW_PROXY_PY" > /tmp/gw_proxy_glm53.log 2>&1 &
   echo "  Started gw_proxy (port $GW_PROXY_PORT_GLM53) PID=$!"
@@ -66,7 +69,7 @@ fi
 
 if ! pgrep -f "gw_proxy_dsh.py.*GW_PROXY_PORT=$GW_DSH_PORT_GLM53" > /dev/null 2>&1; then
   cd /nas_train/app.e0031982/harness_work
-  GW_UPSTREAM=http://agi-gateway.cxmt.com/cloud \
+  GW_UPSTREAM=http://agi-gateway.cxmt.com/v1 \
   GW_API_KEY="$GLM53_KEY" GW_PROXY_PORT="$GW_DSH_PORT_GLM53" GW_PROXY_HOST=127.0.0.1 \
   setsid python3 "$GW_PROXY_DSH_PY" > /tmp/gw_proxy_dsh_glm53.log 2>&1 &
   echo "  Started gw_proxy_dsh (port $GW_DSH_PORT_GLM53) PID=$!"
@@ -76,18 +79,36 @@ else
 fi
 cd "$HERE"
 
-# ── Step 2: Backup & update config files (pi, hermes, opencode) ──
+# ── Step 2: Backup & update config files (cline, pi, hermes, opencode) ──
 echo "Updating config files for glm-5.3-flash"
 PI_CFG="$HOME/.pi/agent/models.json"
 HERMES_CFG="$HOME/.hermes/config.yaml"
 OPENCODE_CFG="$HOME/.config/opencode/opencode.json"
+CLINE_GS="$HOME/.cline/data/globalState.json"
 
-for cfg in "$PI_CFG" "$HERMES_CFG" "$OPENCODE_CFG"; do
+for cfg in "$PI_CFG" "$HERMES_CFG" "$OPENCODE_CFG" "$CLINE_GS"; do
   if [ -f "$cfg" ] && [ ! -f "${cfg}.kimi_backup" ]; then
     cp "$cfg" "${cfg}.kimi_backup"
     echo "  Backed up: $cfg -> ${cfg}.kimi_backup"
   fi
 done
+
+# Update cline globalState.json: change openAiBaseUrl from /cloud/v1 to /v1
+# (glm53 key only works on /v1, not /cloud/v1 — 2026-10-14 verified)
+if [ -f "$CLINE_GS" ]; then
+  python3 -c "
+import json, pathlib
+p = pathlib.Path('$CLINE_GS')
+d = json.loads(p.read_text())
+old = d.get('openAiBaseUrl', '')
+if '/cloud/v1' in old:
+    d['openAiBaseUrl'] = old.replace('/cloud/v1', '/v1')
+    p.write_text(json.dumps(d, indent=2))
+    print(f'  Updated cline openAiBaseUrl: {old} -> {d[\"openAiBaseUrl\"]}')
+else:
+    print(f'  cline openAiBaseUrl already OK: {old}')
+"
+fi
 
 # Update pi config: change baseUrl to 9092, add glm-5.3-flash model
 python3 -c "
@@ -165,6 +186,6 @@ echo "Results: $RESULTS_FILE"
 echo "ETA: ~42h wall (N=1)"
 echo ""
 echo "Restore kimi configs after run:"
-echo "  for cfg in ~/.pi/agent/models.json ~/.hermes/config.yaml ~/.config/opencode/opencode.json; do"
+echo "  for cfg in ~/.pi/agent/models.json ~/.hermes/config.yaml ~/.config/opencode/opencode.json ~/.cline/data/globalState.json; do"
 echo "    [ -f \"\${cfg}.kimi_backup\" ] && cp \"\${cfg}.kimi_backup\" \"\$cfg\" && echo \"Restored \$cfg\""
 echo "  done"

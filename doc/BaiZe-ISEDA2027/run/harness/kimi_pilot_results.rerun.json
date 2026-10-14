@@ -382,5 +382,133 @@
     },
     "blocked": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref 73394f2b11321e03a5df199ec0196f27a728b0b0\nfatal: remote error: upload-pack: not our ref 73394f2b11321e03a5df199ec0196f27a728b0b0\n; github=fetch failed (local=False): \n[TIMEOUT]",
     "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25498",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": false,
+      "msg": "both local and github failed: local=fetch failed (local=True): fatal: '/dev/shm/repos/matplotlib' does not appear to be a git repository\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.\n; github=fetch failed (local=False): \n[TIMEOUT]"
+    },
+    "blocked": "both local and github failed: local=fetch failed (local=True): fatal: '/dev/shm/repos/matplotlib' does not appear to be a git repository\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.\n; github=fetch failed (local=False): \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-26011",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 3.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_claude_code_matplotlib__matplotlib-26011.json",
+      "stdout_tail": "\n[run_single] base_commit=00afcc0c6d4d2e4390338127f05b8f4fdb4e7087\n[run_single] ps_len=1637\n[run_single] git reset --hard 00afcc0c6d4d2e4390338127f05b8f4fdb4e7087\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=1.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_claude_code_matplotlib__matplotlib-26011.json\n[run_single] cleanup: git reset --hard 00afcc0c6d4d2e4390338127f05b8f4fdb4e7087\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-26020",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": false,
+      "msg": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref f6a781f77f5ddf1204c60ca7c544809407d4a807\nfatal: remote error: upload-pack: not our ref f6a781f77f5ddf1204c60ca7c544809407d4a807\n; github=fetch failed (local=False): \n[TIMEOUT]"
+    },
+    "blocked": "both local and github failed: local=fetch failed (local=True): fatal: git upload-pack: not our ref f6a781f77f5ddf1204c60ca7c544809407d4a807\nfatal: remote error: upload-pack: not our ref f6a781f77f5ddf1204c60ca7c544809407d4a807\n; github=fetch failed (local=False): \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "pytest-dev__pytest-5692",
+    "repo": "pytest-dev/pytest",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pytest-dev__pytest-11143"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 463.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_claude_code_pytest-dev__pytest-5692.json",
+      "stdout_tail": "\n[run_single] base_commit=29e336bd9bf87eaef8e2683196ee1975f1ad4088\n[run_single] ps_len=1280\n[run_single] git reset --hard 29e336bd9bf87eaef8e2683196ee1975f1ad4088\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=462.8s ==\n[run_single] model_patch: 2690 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_claude_code_pytest-dev__pytest-5692.json\n[run_single] cleanup: git reset --hard 29e336bd9bf87eaef8e2683196ee1975f1ad4088\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 68,
+        "p2p_total": 68
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-14024",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 1033.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sympy__sympy-14024.json",
+      "stdout_tail": "e] base_commit=b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] ps_len=685\n[run_single] git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=1033.0s ==\n[run_single] model_patch: 14512 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sympy__sympy-14024.json\n[run_single] cleanup: git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 83,
+        "p2p_total": 83
+      }
+    },
+    "classification": "resolved"
   }
 ]

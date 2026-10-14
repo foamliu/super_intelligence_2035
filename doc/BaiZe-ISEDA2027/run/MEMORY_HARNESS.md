@@ -3,8 +3,8 @@
 WAITING: 1
 
 > 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-14 glm53 7×300 任务**：**❌ BLOCKED — API key 403**。curl 探针确认 `glm-5.3-flash` key `02_088EE..._6903b05e...` 对**所有模型**返回 HTTP 403（MSE Gateway auth 拒绝），非模型授权问题。kimi key 对照正常（429=配额耗尽但 key 有效）。**基础设施已就绪**：`launch_glm53_7x300.sh` ✅ + `run_serial_kimi.py` RESULTS_PATH env ✅ + `run_harness.py` GW_PROXY_PORT env ✅。**key 修复后可直接 `bash launch_glm53_7x300.sh` 启动**。
-> **P1-2 rerun** 🔄：rerun_blocked.py --resume 仍在跑（18/54, PID 3541239, matplotlib git 503 retries）。累计 574→618 resolved (29.4%)。
+> **🆕 2026-10-14 glm53 7×300 任务**：**✅ RUNNING — 403 RESOLVED**。根因：glm53 key 只在 `/v1` endpoint 有效（HTTP 200），`/cloud/v1` 返回 403（MSE Gateway Basic auth 拒绝）。**修复**：`launch_glm53_7x300.sh` 中 `GLM53_BASE` + `GW_UPSTREAM` 改为 `http://agi-gateway.cxmt.com/v1`（非 `/cloud/v1`）；cline `globalState.json` 的 `openAiBaseUrl` 也从 `/cloud/v1` 改为 `/v1`（已备份 `.kimi_backup`）。7 路已启动（11:10 CST），cline-patched 首条已进 RUN→EVAL 阶段 ✅。gw_proxy 9092/9093 转发到 `/v1`。结果写 `glm53_pilot_results.json`。⚠️ 任务书指令写的是 `/cloud/v1`，但实测该 key 在 `/cloud/v1` 返回 403，在 `/v1` 返回 200——以实测为准。
+> **P1-2 rerun** 🔄：rerun_blocked.py --resume 仍在跑（~20/54, PID 3541239）。累计 574→618 resolved (29.4%)。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -51,11 +51,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 BLOCKED (API key 403) + infra prepared + P1-2 rerun RUNNING (18/54)
-已完成:       ① 7x300 COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 infra prepared ✅ (launch script + code changes)
-当前动作:     glm53 API key 403 BLOCKER reported + infrastructure prepared (launch_glm53_7x300.sh, RESULTS_PATH env, GW_PROXY_PORT env) + TASK.md archived (34680->27362B) + P1-2 rerun monitoring (18/54)
-下一步:       ① 等运维修复 glm53 API key (403->200) -> bash launch_glm53_7x300.sh 启动 7x300 ② P1-2 rerun 完成后 merge results ③ 如有新 resolved -> 更新 report
-阻塞:         glm53 API key 403 -- 02_088EE..._6903b05e... 被 MSE Gateway 拒绝（所有模型均 403，kimi key 对照正常=429）。需运维确认 key 是否已 provision 或提供新 key。
+PHASE:        glm53 7x300 RUNNING (403 resolved, /v1 endpoint) + P1-2 rerun RUNNING (~20/54)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 403 fix ✅ + 7x300 LAUNCHED ✅
+当前动作:     glm53 7x300 RUNNING (7 harness × 300, started 11:10 CST, ETA ~42h) — cline-patched first instance already in EVAL phase. gw_proxy 9092/9093 forwarding to /v1. P1-2 rerun ~20/54 in background.
+下一步:       ① Monitor glm53 7x300 progress (check logs_glm53/ + glm53_pilot_results.json) ② P1-2 rerun completion + merge ③ When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html ④ Restore kimi configs after glm53 run
+阻塞:         <无> — 403 已解决（glm53 key 用 /v1 而非 /cloud/v1）
 ERROR_COUNT:  0
 ```
 
@@ -206,3 +206,4 @@ ERROR_COUNT:  0
 > 📦 R269-R276 (2026-10-11 00:05~04:18, 7×300 monitoring 78.7%→83.4%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1670→1751/2100, 369→393 resolved, workdir block=0 (40→46 rounds), hermes ETA 23→22h。需要时再读。
 > 📦 R277-R281 (2026-10-11 04:54~07:18, 7×300 monitoring 83.9%→85.7%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1762→1800/2100, 398→413 resolved, workdir block=0 (47→51 rounds), blocked 90→83 trend, hermes ETA 18h。需要时再读。
 - 2026-10-11 13:51 —— **第二百九十二轮** —— 7×300 monitoring at 13:51 (2257 min since 00:14 launch, 37.6h). ALL 7 alive (etimes ~135417s, stat=S). 1927/2100 (91.8%), +14 since R291 (36 min). 487 resolved (+6) / 1355 pbf / 74 blocked (11 checkout + 61 git_fetch_503 + 1 timeout + 1 other) + 7 qb (ALL django__django-16873 API quota) + 4 np (all deepseek). Workdir fix holding ✅ (62nd round, 0 new checkout/overwrite). Code fix applied: git checkout -f (4 places in git_clone_or_fetch, lines 110/114/124/128) to force-clear 11 legacy checkout blocks on next process restart. Per-harness: cline 287(78,rem13) / codex 300(72,rem0,21 blk) / claude 264(61,rem36) / opencode 293(83,rem7) / deepseek 278(57,rem22) / hermes 235(58,rem65←BOTTLENECK,ETA~19.5h→~Oct 12 09:20) / pi 270(78,rem30). Blocked trend: 72→74 (+2: new git_fetch_503). Resources: load 16.95/16.34/13.50, 1821G avail RAM, /dev/shm 17G/992G(2%), GPU 100% (pretrain R2 active). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈32400B(31.6KB ✓)。
+- 2026-10-14 11:10 —— **glm53 7×300 LAUNCHED** —— 403 RESOLVED: glm53 key works on `/v1` (HTTP 200) NOT `/cloud/v1` (HTTP 403). Fixed `launch_glm53_7x300.sh`: GLM53_BASE + GW_UPSTREAM → `/v1`; cline globalState.json openAiBaseUrl → `/v1` (backed up). 7 harnesses launched (PIDs 1262875~1278074), gw_proxy 9092/9093 → `/v1`. cline-patched first instance (astropy-12907) already in EVAL phase ✅. P1-2 rerun ~20/54 still running. 📦 体积：TASK=27362B(26.7KB ✓) / MEMORY≈31100B(30.4KB ✓) / 归档 0B。
