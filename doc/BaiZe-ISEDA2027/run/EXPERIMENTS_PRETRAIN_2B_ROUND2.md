@@ -3413,3 +3413,52 @@ LR 线性 warmup 正常工作（旧 run 全程 1e-3 恒定）。warmup 完成后
 | `mamba2_hybrid_2b/recipe.py` | +5 行：参数 + `CheckpointConfig` |
 | `baize_p8_decay_fix.sh` | 新文件（130 行） |
 
+---
+
+## P-8 AdamW 全程汇总（2026-10-14 完成 · 2026-10-15 F2 论文回填）
+
+### 总览
+
+| 指标 | 值 |
+|:--|:--|
+| 架构 | Mamba2-hybrid 2.220B（52 SSM + 4 Attn） |
+| 并行 | TP1 · DP8 · MBS2 · seq4096 · BF16 |
+| 优化器 | AdamW（标准 Megatron adam, β₁=0.9, β₂=0.95） |
+| GBS | 1024（4.194M tok/步） |
+| 吞吐 | 249,040 tok/s（~600 TFLOP/s/GPU） |
+| **总步数** | **10,590**（stable 9,441 + decay 1,149） |
+| **总 token** | **~44.4B**（stable ~39.6B + decay ~4.8B） |
+| **总 GPU·h** | **~412**（stable ~367 + decay ~45） |
+| **墙钟** | ~2.15 天 |
+| **最终 loss** | **1.357**（decay 末步 step1149） |
+| NaN / skipped | 0 / 0（全程） |
+| final ckpt | `p8_adamw_decay/checkpoints/iter_0001149` |
+
+### Stable 段（9,441 步）
+
+- warmup 524 步 (5%) → stable 8,917 步 → 原计划 decay 1,049 步 (10%)（但 decay 单独跑见下）
+- LR = 1e-3 恒定
+- 数据：88:8:4 = web(mix_base 524B) : code : math
+- loss: 3.734（post-warmup）→ 2.456（step9441）
+- grad_norm 稳定 ~0.1
+- 9 个 ckpt（iter_0001049 ~ iter_0009441，每 1049 步）
+
+### Decay fix 段（1,149 步）
+
+- 从 stable ckpt@9441 resume（finetune mode，只加载权重）
+- warmup 100 步 → decay 1,049 步（LR 1e-3 → 1.85e-5 线性 WSD）
+- 数据：SFT 64% + L3 24% + code 8% + math 4%
+- loss: 1.914（warmup 后）→ 1.357（final）
+- 3 个 ckpt（iter_0000500, iter_0001000, iter_0001149）
+- 修复详情见上「P-8 AdamW Decay LR 修复」节
+
+### F2 论文回填（2026-10-15 完成）
+
+F2 = P-8 生产训练结果回填论文，已在 #435 完成：
+- **0_abstract.tex**: 加 1 句 production run（44B token / final loss 1.357 / 412 GPU·h）
+- **4_llm_pretrain.tex**:
+  - §4.5 Data: "is being prepared" → "serves as"（base 实际已用于 stable）
+  - 新增 §4.x \subsection{Full-Scale Production Training}\label{sec:full-train}：完整 stable/decay/summary 三段
+- **编译**: pdflatex+bibtex+pdflatex×3 → 13 pages, 0 error, 0 undefined ref/citation ✅
+- commit: pretrain #435
+
