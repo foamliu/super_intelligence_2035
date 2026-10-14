@@ -3,6 +3,10 @@
 
 ## 🆕 最近操作（2026-10-14）
 
+### 📋 pretrain 正式训练计划【v4 重做】（用户直令 · 10-14 晚）
+- 用户逐条质问 v3 `reports/report_pretrain_formal_train_plan.html`（判**质量不合格**）：① 密度 tok/byte 0.0657–0.4977 为何差这么大；② 分词 `.bin` 里 1 token 几个字节（bin 字节/每 token 字节 = token 数）；③ 为何擅自断言「训 2,232B 需 ~52 天不现实」——**现实与否不由 agent 定**；④ 要**逐源准确 token 数**；⑤ **全量训练配比 + 每源平均采样次数**；⑥ 设 **D={100B,200B,400B,800B,1.6T,3.2T}**，预估 **8 常识均分**（arc_c/arc_e/boolq/hellaswag/obqa/piqa/sciq/winogrande）与 **6 复杂均分**（gsm8k/math/bbh/mmlu/humaneval/mbpp）。
+- 已下发 `run/BAIZE_PRETRAIN_2B_TASK.md` 顶（最高优先）：产 **v4** 覆盖原文件 —— ① 逐源 token 从**分词后 .bin/.idx 实测**（先核实 dtype：vocab=129,281>65,536 ⇒ 大概率 4B，须以源码/文件头为证）；② **密度归因**（压缩态密度≠文本密度：du -sb 分母是压缩字节，混入压缩率+语言两因素）；③ **删主观判断**；④ 全量配比 + 采样次数表；⑤ **D 扫描 + 8/6 集能力预估**（用已有 ckpt 实测分数拟合 scaling + **web search** 借公开 scaling law，分「实测/拟合/外推」三档，3200B 需重复采样须声明）；⑥ 自包含 HTML + scaling 曲线图 + v3→v4 修订说明 + 诚实条款。纪律：🚫 不占 GPU · 每数可溯源 · commit `pretrain plan:`。详见 `daily-memories/2026-10-14.md`。
+
 ### ▶️ data 恢复全部 4 路下载（用户直令 · 10-14 晚）
 - 用户令：「**data 数据下载 resume**。」⇒ 已下发 `run/BAIZE_DATA_TASK.md` 顶（最高优先）：**恢复 `en_v1_4` + `WebMix-38M` + `wit_base` + `InternVL-SA1B` 共 4 路**（**断点续传**，`.incomplete` 已留）；⚠️ **85M 维持暂停**（10-13 令，除非用户另指）。
 - 要点：恢复前 `df -h`/`ls` 核余量与 `.incomplete`；`setsid` + 正确 PATH（防 `env: hf No such file`）；**「死/僵/速率趋零/PID 死 ⇒ 立即 kill+restart」**看护；落盘白名单不变（`en_v1_4` 文本语料按停前 `/nas_train` 原路径续传 = 既有例外）；**错峰** `.29` pretrain / `.12` vision。
@@ -236,6 +240,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📋 2026-10-14 pretrain 正式训练计划【v4 重做】**（用户直令）：判 v3 质量不合格。用户 6 问：① 密度 tok/byte 0.0657–0.4977 差异归因；② `.bin` 每 token 几字节（字节/每 token = token 数）；③ 删「52 天不现实」等主观判断（现实与否不由 agent 定）；④ 逐源**准确** token 数；⑤ 全量配比 + 每源采样次数；⑥ D={100B,200B,400B,800B,1.6T,3.2T} 的 **8 常识 / 6 复杂**均分预估。已下发 `run/BAIZE_PRETRAIN_2B_TASK.md` 顶：v4 覆盖原文件，逐源 token 从分词 `.bin/.idx` 实测（核实 dtype=2B/4B）· 密度归因（压缩态≠文本密度）· 删主观 · 采样次数表 · scaling 拟合+web search 外推（分实测/拟合/外推三档）· 自包含 HTML+曲线图+修订说明。commit `pretrain plan:`。
 
 - **▶️ 2026-10-14 data 恢复下载**（用户直令）：「data 数据下载 resume。」⇒ 已下发 `run/BAIZE_DATA_TASK.md` 顶：**恢复 `en_v1_4` + `WebMix-38M` + `wit_base` + `InternVL-SA1B` 4 路**（断点续传，`.incomplete` 保留）；**85M 维持暂停**。停前基线：en_v1_4 58.4%(32,995/56,461) · WebMix 78 · wit 79 · InternVL 303。纪律：`df -h` 核余量 · `setsid`+正确 PATH · 死/僵/速率趋零即 kill+restart · 错峰 `.29`/`.12` · commit `data dl:`。
 
