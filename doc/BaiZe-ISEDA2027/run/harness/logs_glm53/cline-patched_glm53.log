@@ -10,3 +10,14 @@ Serial kimi eval: harness=cline-patched model=glm-5.3-flash
 [SETUP] astropy__astropy-12907 for cline-patched
 
 [RUN] cline-patched on astropy__astropy-12907 ...
+  [EVAL] cline-patched on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | cline-patched | patch-but-failed
+
+############################################################
+# [2/300] cline-patched x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-14182 ...
