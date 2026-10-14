@@ -87,3 +87,14 @@ Serial kimi eval: harness=hermes model=glm-5.3-flash
 [SETUP] django__django-10924 for hermes
 
 [RUN] hermes on django__django-10924 ...
+  [EVAL] hermes on django__django-10924 ...
+  => django__django-10924 | hermes | patch-but-failed
+
+############################################################
+# [9/300] hermes x django__django-11001
+############################################################
+
+============================================================
+[SETUP] django__django-11001 for hermes
+
+[RUN] hermes on django__django-11001 ...

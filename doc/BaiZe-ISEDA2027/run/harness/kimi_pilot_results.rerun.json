@@ -1020,5 +1020,311 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-15498",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_pi_django__django-15498.json",
+      "stdout_tail": "ngle] base_commit=d90e34c61b27fba2527834806639eebbcfab9631\n[run_single] ps_len=350\n[run_single] git reset --hard d90e34c61b27fba2527834806639eebbcfab9631\n[run_single] running pi ...\n== harness=pi rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...403 status code (no body)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_pi_django__django-15498.json\n[run_single] cleanup: git reset --hard d90e34c61b27fba2527834806639eebbcfab9631\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 25
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-15695",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_pi_django__django-15695.json",
+      "stdout_tail": "gle] base_commit=647480166bfe7532e8c471fef0146e3a17e6c0c9\n[run_single] ps_len=1259\n[run_single] git reset --hard 647480166bfe7532e8c471fef0146e3a17e6c0c9\n[run_single] running pi ...\n== harness=pi rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...403 status code (no body)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_pi_django__django-15695.json\n[run_single] cleanup: git reset --hard 647480166bfe7532e8c471fef0146e3a17e6c0c9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 123
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-14092",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 0.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_pi_scikit-learn__scikit-learn-14092.json",
+      "stdout_tail": "mmit=df7dd8391148a873d157328a4f0328528a0c4ed9\n[run_single] ps_len=3091\n[run_single] git reset --hard df7dd8391148a873d157328a4f0328528a0c4ed9\n[run_single] running pi ...\n== harness=pi rc=1 timed_out=False wall=0.7s ==\n[stderr tail] ...403 status code (no body)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_pi_scikit-learn__scikit-learn-14092.json\n[run_single] cleanup: git reset --hard df7dd8391148a873d157328a4f0328528a0c4ed9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 212,
+        "p2p_total": 212
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-22005",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_pi_sympy__sympy-22005.json",
+      "stdout_tail": "ingle] base_commit=2c83657ff1c62fc2761b639469fdac7f7561a72a\n[run_single] ps_len=1509\n[run_single] git reset --hard 2c83657ff1c62fc2761b639469fdac7f7561a72a\n[run_single] running pi ...\n== harness=pi rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...403 status code (no body)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_pi_sympy__sympy-22005.json\n[run_single] cleanup: git reset --hard 2c83657ff1c62fc2761b639469fdac7f7561a72a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 2,
+        "p2p_total": 2
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-23562",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 6.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-23562.json",
+      "stdout_tail": "atplotlib-23562\n[run_single] base_commit=29a86636a9c45ab5ac4d80ac76eaee497f460dce\n[run_single] ps_len=1257\n[run_single] git reset --hard 29a86636a9c45ab5ac4d80ac76eaee497f460dce\n[run_single] running hermes ...\n== harness=hermes rc=2 timed_out=False wall=5.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-23562.json\n[run_single] cleanup: git reset --hard 29a86636a9c45ab5ac4d80ac76eaee497f460dce\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 132,
+        "p2p_total": 136
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-23563",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 6.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-23563.json",
+      "stdout_tail": "atplotlib-23563\n[run_single] base_commit=149a0398b391cfc4eddb5e659f50b3c66f32ea65\n[run_single] ps_len=4657\n[run_single] git reset --hard 149a0398b391cfc4eddb5e659f50b3c66f32ea65\n[run_single] running hermes ...\n== harness=hermes rc=2 timed_out=False wall=5.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-23563.json\n[run_single] cleanup: git reset --hard 149a0398b391cfc4eddb5e659f50b3c66f32ea65\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 132,
+        "p2p_total": 136
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-23964",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 5.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-23964.json",
+      "stdout_tail": "atplotlib-23964\n[run_single] base_commit=269c0b94b4fcf8b1135011c1556eac29dc09de15\n[run_single] ps_len=4307\n[run_single] git reset --hard 269c0b94b4fcf8b1135011c1556eac29dc09de15\n[run_single] running hermes ...\n== harness=hermes rc=2 timed_out=False wall=5.4s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-23964.json\n[run_single] cleanup: git reset --hard 269c0b94b4fcf8b1135011c1556eac29dc09de15\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 16
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24149",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 5.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-24149.json",
+      "stdout_tail": "atplotlib-24149\n[run_single] base_commit=af39f1edffcd828f05cfdd04f2e59506bb4a27bc\n[run_single] ps_len=3224\n[run_single] git reset --hard af39f1edffcd828f05cfdd04f2e59506bb4a27bc\n[run_single] running hermes ...\n== harness=hermes rc=2 timed_out=False wall=4.5s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-24149.json\n[run_single] cleanup: git reset --hard af39f1edffcd828f05cfdd04f2e59506bb4a27bc\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 767
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24265",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 6.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-24265.json",
+      "stdout_tail": "atplotlib-24265\n[run_single] base_commit=e148998d9bed9d1b53a91587ad48f9bb43c7737f\n[run_single] ps_len=1248\n[run_single] git reset --hard e148998d9bed9d1b53a91587ad48f9bb43c7737f\n[run_single] running hermes ...\n== harness=hermes rc=2 timed_out=False wall=5.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_hermes_matplotlib__matplotlib-24265.json\n[run_single] cleanup: git reset --hard e148998d9bed9d1b53a91587ad48f9bb43c7737f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 16
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]

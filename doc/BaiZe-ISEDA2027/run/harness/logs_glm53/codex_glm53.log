@@ -514,3 +514,94 @@ Serial kimi eval: harness=codex model=glm-5.3-flash
 
 ============================================================
 [SETUP] django__django-13028 for codex
+
+[RUN] codex on django__django-13028 ...
+  [EVAL] codex on django__django-13028 ...
+  => django__django-13028 | codex | resolved
+
+############################################################
+# [48/300] codex x django__django-13033
+############################################################
+
+============================================================
+[SETUP] django__django-13033 for codex
+
+[RUN] codex on django__django-13033 ...
+  [EVAL] codex on django__django-13033 ...
+  => django__django-13033 | codex | resolved
+
+############################################################
+# [49/300] codex x django__django-13158
+############################################################
+
+============================================================
+[SETUP] django__django-13158 for codex
+
+[RUN] codex on django__django-13158 ...
+  [EVAL] codex on django__django-13158 ...
+  => django__django-13158 | codex | resolved
+
+############################################################
+# [50/300] codex x django__django-13220
+############################################################
+
+============================================================
+[SETUP] django__django-13220 for codex
+
+[RUN] codex on django__django-13220 ...
+  [EVAL] codex on django__django-13220 ...
+  => django__django-13220 | codex | patch-but-failed
+
+############################################################
+# [51/300] codex x django__django-13230
+############################################################
+
+============================================================
+[SETUP] django__django-13230 for codex
+
+[RUN] codex on django__django-13230 ...
+  [EVAL] codex on django__django-13230 ...
+  => django__django-13230 | codex | patch-but-failed
+
+############################################################
+# [52/300] codex x django__django-13265
+############################################################
+
+============================================================
+[SETUP] django__django-13265 for codex
+
+[RUN] codex on django__django-13265 ...
+  [EVAL] codex on django__django-13265 ...
+  => django__django-13265 | codex | patch-but-failed
+
+############################################################
+# [53/300] codex x django__django-13315
+############################################################
+
+============================================================
+[SETUP] django__django-13315 for codex
+
+[RUN] codex on django__django-13315 ...
+  [EVAL] codex on django__django-13315 ...
+  => django__django-13315 | codex | resolved
+
+############################################################
+# [54/300] codex x django__django-13321
+############################################################
+
+============================================================
+[SETUP] django__django-13321 for codex
+
+[RUN] codex on django__django-13321 ...
+  [EVAL] codex on django__django-13321 ...
+  => django__django-13321 | codex | patch-but-failed
+
+############################################################
+# [55/300] codex x django__django-13401
+############################################################
+
+============================================================
+[SETUP] django__django-13401 for codex
+
+[RUN] codex on django__django-13401 ...
+  [EVAL] codex on django__django-13401 ...

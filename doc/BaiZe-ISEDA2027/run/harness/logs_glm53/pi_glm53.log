@@ -65,3 +65,25 @@ Serial kimi eval: harness=pi model=glm-5.3-flash
 [SETUP] astropy__astropy-7746 for pi
 
 [RUN] pi on astropy__astropy-7746 ...
+  [EVAL] pi on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | pi | patch-but-failed
+
+############################################################
+# [7/300] pi x django__django-10914
+############################################################
+
+============================================================
+[SETUP] django__django-10914 for pi
+
+[RUN] pi on django__django-10914 ...
+  [EVAL] pi on django__django-10914 ...
+  => django__django-10914 | pi | resolved
+
+############################################################
+# [8/300] pi x django__django-10924
+############################################################
+
+============================================================
+[SETUP] django__django-10924 for pi
+
+[RUN] pi on django__django-10924 ...

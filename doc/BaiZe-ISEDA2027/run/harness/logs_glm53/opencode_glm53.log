@@ -87,3 +87,25 @@ Serial kimi eval: harness=opencode model=glm-5.3-flash
 [SETUP] django__django-10924 for opencode
 
 [RUN] opencode on django__django-10924 ...
+  [EVAL] opencode on django__django-10924 ...
+  => django__django-10924 | opencode | patch-but-failed
+
+############################################################
+# [9/300] opencode x django__django-11001
+############################################################
+
+============================================================
+[SETUP] django__django-11001 for opencode
+
+[RUN] opencode on django__django-11001 ...
+  [EVAL] opencode on django__django-11001 ...
+  => django__django-11001 | opencode | resolved
+
+############################################################
+# [10/300] opencode x django__django-11019
+############################################################
+
+============================================================
+[SETUP] django__django-11019 for opencode
+
+[RUN] opencode on django__django-11019 ...
