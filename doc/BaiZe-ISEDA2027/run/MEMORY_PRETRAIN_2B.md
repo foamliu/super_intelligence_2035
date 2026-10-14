@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **🏁 P-8 AdamW 全部完成 + F2 论文回填完成**（stable 9441步 + decay fix 1149步 = 10590步, ~44.4B tokens, ~412 GPU·h, final loss 1.357）。✅ F2: 0_abstract.tex 加 production run 句, 4_llm_pretrain.tex 新增 §Full-Scale Production Training + Data 节 base "is being prepared"→"serves as", 13pp 0-error ✅。✅ 0 NaN, 0 skipped 全程。✅ 8 GPU 已释放。✅ 脚本 SEQ 已改 4096。
   - PHASE: **p8_complete_f2_done** — P-8 + F2 全部完成。P-8: 10590步/44.4B tok/412 GPU·h/final loss 1.357。F2: 论文 3 处修改(abstract+data+new subsection), 13pp 0-error 0-undefined-ref。final ckpt: `p8_adamw_decay/checkpoints/iter_0001149`。🚫绝不 kill watchdog loop(PID 1391466)。
   - ERROR_COUNT: 0
-  - 轮询状态：30min 长轮询。**8 GPU 全空闲**（.29, 0% util, 0 MiB, 2026-10-15 03:32 核验）。P-8 ✅ + F2 ✅ — 全部完成。📦 体积：TASK=28.6KB ✅ / MEMORY=23.2KB ✅ ≤32KB（本轮无归档）。→ **下一步**：等运维新指令。所有待办（P-8/v4报告/F2）均已闭合。
-  - 🩺 **本唤醒推进 = #442（2026-10-15 ~04:04, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）**：① git fetch → 无 ahead/behind（仅 harness glm53_pilot_results.json 未提交，非本线）；② GPU .29 全 0%/0MiB ✅ compute_apps=0；③ loop PID 1391466 运行中 ✅；④ 体积 TASK=28.0KB / MEMORY=22.8KB 均 ≤32KB ✅；⑤ 运维指令区全为归档指针，无新活跃指令。→ **下次唤醒**：继续等运维新指令。WAITING=1。
+  - 轮询状态：30min 长轮询。**8 GPU 全空闲**（.29, 0% util, 0 MiB, 2026-10-15 04:37 核验）。P-8 ✅ + F2 ✅ — 全部完成。📦 体积：TASK=28.6KB ✅ / MEMORY=23.6KB ✅ ≤32KB（本轮无归档）。→ **下一步**：等运维新指令。所有待办（P-8/v4报告/F2）均已闭合。
+  - 🩺 **本唤醒推进 = #443（2026-10-15 ~04:37, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）**：① git fetch → 无 ahead/behind（仅 harness glm53_pilot_results.json 未提交，非本线）；② GPU .29 全 0%/0MiB ✅ compute_apps=0；③ loop PID 1391466 运行中 ✅；④ 体积 TASK=28.6KB / MEMORY=23.6KB 均 ≤32KB ✅；⑤ 运维指令区全为归档指针，无新活跃指令。→ **下次唤醒**：继续等运维新指令。WAITING=1。
+  > 📦 **[已归档] #442 流水（2026-10-15 ~04:04, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #441 流水（2026-10-15 ~03:32, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #440 流水（2026-10-15 ~03:01, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #439 流水（2026-10-15 ~02:29, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
