@@ -24,13 +24,13 @@ export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230
 
 NAME="p8_adamw"         # ⭐ 独立目录，不覆盖 dist_muon 的 p8/
 PORT=29812              # different port
-ITERS=10490             # 44B token (GBS1024 × seq4094 = 4.192M token/步)
+ITERS=10490             # 44B token (GBS1024 × seq4096 = 4.194M token/步)
 WARMUP=524              # ⭐ 5% warmup (从头训，非崩溃恢复的 0)
 DECAY=1049              # 10% ≈ 1049 (decay 尾段步数)
 LR="1e-3"
 MIN_LR="1e-5"
 SAVE_INTERVAL=1049      # 每 ~10% 一个 ckpt
-SEQ=4094                # 固定口径（memory: "seq_length=4094, 非 4096"）
+SEQ=4096                # 固定口径（用户直令 2026-10-14：4096 = 2¹²）
 GBS=1024
 MBS=2                   # P-8 关键：MBS=2 → 249K tok/s
 TP=1

@@ -99,3 +99,92 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 ## S5-01 数据补切（≥700M token ✅ 完成，2026-09-30 13:16）
 - `preprocess_data.py --input-dir .../Ultra-FineWeb-L3/.../qa --output-prefix data/ultrafineweb_l3_qa_700m --max-docs 900000`。
 - ✅ 完成：**900000 docs / 741,712,139 tokens（≈742M ≥ 700M 门限）**，产物 `data/ultrafineweb_l3_qa_700m.bin`(2.97GB)/`.idx`(18MB)/`.json`。S5-01（20000 步≈655M）数据就绪。
+
+---
+
+## 🏁 P-8 Stage (i) 完整训练 — COMPLETED（2026-10-12 → 2026-10-14）
+
+> **这是 Stage (i) 的本体**：从零训练 2.22B Mamba2-hybrid，作为 Stage (ii)–(v) 的基座。
+> 配置：TP1/DP8, MBS=2, GBS=1024, seq=4094（⚠️ agent 错误，应为 4096；P-8 按 4094 跑完不干预，脚本已改 4096）, bf16, AdamW(β1=0.9 β2=0.95 eps=1e-5 wd=0.1), seed=1234。
+
+### P-8 总览
+
+| 项 | 值 |
+|:--|:--|
+| 架构 | Mamba2-hybrid 2.22B（52 SSM + 4 Attn） |
+| 优化器 | AdamW（dist_muon 发散后换回，用户直令 2026-10-12） |
+| 并行 | TP1 · DP8（无通信税） |
+| MBS / GBS | 2 / 1024 |
+| seq | 4094（P-8 实跑值；正确口径 4096，脚本已改） |
+| 精度 | bf16 |
+| 吞吐 | ~249K tok/s（last-100 步均值），~17.5s/step，~565 TFLOP/s/GPU |
+| 总步数 | 10590（stable 9441 + decay fix 1149） |
+| 总 tokens | ~44.4B（stable ~39.6B + decay ~4.8B） |
+| 总 GPU·h | ~412（stable ~367 + decay ~44.7） |
+| 总墙钟 | ~2.15 天 |
+| 0 NaN / 0 skipped | ✅ 全程 |
+| final ckpt | `p8_adamw_decay/checkpoints/iter_0001149` |
+
+### P-8 Stable 段（2026-10-12 → 2026-10-14, 9441 步）
+
+| 项 | 值 |
+|:--|:--|
+| 步数 | 9441（warmup 524 + stable 8917） |
+| LR | 1e-3（WSD stable，恒定） |
+| loss | 3.734（step610，warmup 后首 log）→ **2.456**（step9441） |
+| tokens | 9441 × 1024 × 4094 ≈ 39.6B |
+| 墙钟 | ~45.9h → GPU·h ~367 |
+| ckpts | 9 个：`p8_adamw/checkpoints/iter_0001049, 2098, 3147, 4196, 5245, 6294, 7343, 8392, 9441` |
+| 数据 | Ultra-FineWeb-L3 全量 en 子集（web=base 88% + code 8% + math 4%） |
+
+### P-8 Decay FIX 段（2026-10-14 15:58 → 21:32, 1149 步）
+
+> 🔧 **LR 未衰减根因**（2026-10-14 用户直令修复）：旧 decay 脚本 resume 时 `--name p8_adamw` 加载 `iter_0009441`，连带加载 optimizer state + LR scheduler state → scheduler 内部 step counter 恢复到 9441 → 新 decay 参数被旧 scheduler state 覆盖 → LR 卡 1e-3 恒定（27 个 log 点 LR=1e-3 未衰减）。
+> **修复方案**：finetune mode（只加载权重，不加载 optimizer/scheduler/train_state）→ step 重置为 0 → warmup 100 步 → decay 1049 步（1e-3→1e-5 WSD 线性）。新 run name `p8_adamw_decay`（独立目录，不覆盖 stable ckpts）。
+
+| 项 | 值 |
+|:--|:--|
+| 步数 | 1149（warmup 100 + decay 1049） |
+| LR | warmup 0→1e-3（100 步）→ decay 1e-3→**1.85e-5**（1049 步, WSD 线性 ✅） |
+| loss | 1.914（step10）→ **1.357**（step1140, 全 run 最低 ✅） |
+| 数据 | SFT 64% + L3 24% + code 8% + math 4%（退火混合 blend） |
+| tokens | 1149 × 1024 × 4094 ≈ 4.8B |
+| 墙钟 | ~5.57h → GPU·h ~44.7 |
+| ckpts | 3 个：`p8_adamw_decay/checkpoints/iter_0000500, 1000, 1149` |
+| finetune | True（只加载权重 from `p8_adamw/checkpoints/iter_0009441`） |
+
+### Decay FIX LR 衰减验证
+
+| step | LR (理论) | LR (实测) | match |
+|:--|:--|:--|:--|
+| 10 | 1.0e-4 | 1.000000E-04 | ✅ |
+| 100 (peak) | 1.0e-3 | ~1.0e-3 | ✅ |
+| 500 | 6.22e-4 | 6.22e-4 | ✅ |
+| 840 | 3.02e-4 | 3.016206E-04 | ✅ |
+| 1000 | 1.51e-4 | 1.506196E-04 | ✅ |
+| 1070 | 8.49e-5 | 8.455672E-05 | ✅ |
+| 1140 (last log) | 1.85e-5 | 1.849380E-05 | ✅ |
+
+理论值 = 1e-3 − (step−100)/1049 × (1e-3 − 1e-5)。全 108 个 log 点 LR 线性衰减精确匹配 ✅。
+
+### Decay FIX loss 曲线（关键点）
+
+| step | loss | 备注 |
+|:--|:--|:--|
+| 10 | 1.914 | warmup 开始 |
+| 100 | ~1.50 | warmup 结束（LR peak） |
+| 390 | 1.495 | |
+| 500 | 1.462 | ckpt@500 |
+| 840 | 1.393 | |
+| 1000 | 1.365 | ckpt@1000 |
+| 1030 | 1.358 | |
+| **1140** | **1.357** | **全 run 最低 ✅** |
+
+### 论文回填建议（§4 LLM 预训练）
+
+- **训练 token 数**：~44.4B（stable ~39.6B + decay ~4.8B），对应 Chinchilla 最优下限档（2.22B × 20 ≈ 44.4B）。
+- **GPU·h**：~412（8×H100, ~2.15 天）。
+- **最终 loss**：stable 2.456 → decay annealing 1.357（SFT blend 退火增益 ~1.10）。
+- **LR schedule**：WSD（warmup 5% → stable → decay 10%），stable LR=1e-3, min_lr=1e-5。
+- **⚠️ seq_length**：P-8 实跑 seq=4094（agent 错误），正确口径 4096（=2¹²），论文/脚本统一 4096。
+- **⚠️ §6 #13**：训练 token ~44.4B，非 1.8T（1.8T 是全语料上限，非实际训练量）。

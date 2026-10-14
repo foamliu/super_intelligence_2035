@@ -33,7 +33,7 @@ DECAY=1049               # decay over 1049 steps (1e-3 → 1e-5)
 LR="1e-3"
 MIN_LR="1e-5"
 SAVE_INTERVAL=500        # save at 500, 1000, 1149
-SEQ=4094                 # ⚠️ keep 4094 (same as stable, P-8 整轮不变)
+SEQ=4096                 # 固定口径（用户直令 2026-10-14：4096 = 2¹²；P-8 已完成，今后新 run 一律 4096）
 GBS=1024
 MBS=2
 TP=1

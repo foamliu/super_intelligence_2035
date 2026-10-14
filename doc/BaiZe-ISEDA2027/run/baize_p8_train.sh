@@ -21,13 +21,13 @@ export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230
 
 NAME="p8"
 PORT=29810
-ITERS=10490           # 44B token (GBS1024 × seq4094 = 4.192M token/步)
+ITERS=10490           # 44B token (GBS1024 × seq4096 = 4.194M token/步)
 WARMUP=524            # 5% ≈ 524
 DECAY=1049            # 10% ≈ 1049 (decay 尾段步数)
 LR="1e-3"
 MIN_LR="1e-5"
 SAVE_INTERVAL=1049    # 每 ~10% 一个 ckpt（11 个点：1049, 2098, ..., 10490）
-SEQ=4094              # 固定口径（memory: "seq_length=4094, 非 4096"）
+SEQ=4096              # 固定口径（用户直令 2026-10-14：4096 = 2¹²）
 GBS=1024
 MBS=2                 # P-8 关键改：MBS=2（P-5b 是 MBS=1）→ 249K tok/s
 TP=1

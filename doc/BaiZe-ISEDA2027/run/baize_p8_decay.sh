@@ -32,7 +32,7 @@ DECAY=1049              # decay over 1049 steps
 LR="1e-3"
 MIN_LR="1e-5"
 SAVE_INTERVAL=1049      # save at step 10490 (final)
-SEQ=4094
+SEQ=4096              # 固定口径（用户直令 2026-10-14：4096 = 2¹²）
 GBS=1024
 MBS=2
 TP=1
