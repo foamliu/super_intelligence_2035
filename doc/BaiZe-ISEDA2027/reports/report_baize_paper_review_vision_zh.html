@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-ISEDA2027 论文审视报告 · 视觉/多模态侧（中文）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+         background: #0d1117; color: #c9d1d9; line-height: 1.7; padding: 20px; max-width: 1100px; margin: 0 auto; }
+  h1 { color: #58a6ff; font-size: 1.6em; margin-bottom: 4px; }
+  h2 { color: #79c0ff; font-size: 1.3em; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #21262d; }
+  h3 { color: #d2a8ff; font-size: 1.1em; margin: 20px 0 8px; }
+  h4 { color: #f0b890; font-size: 1.0em; margin: 16px 0 6px; }
+  .meta { color: #8b949e; font-size: 0.85em; margin-bottom: 20px; }
+  .meta span { margin-right: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.88em; }
+  th, td { border: 1px solid #30363d; padding: 6px 10px; text-align: left; }
+  th { background: #161b22; color: #79c0ff; }
+  tr:nth-child(even) { background: #161b22; }
+  code { background: #1c2333; color: #f0883e; padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+  .issue { border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+  .issue-red { background: #1a0f0f; border-left: 4px solid #f85149; }
+  .issue-orange { background: #1a160f; border-left: 4px solid #d29922; }
+  .issue-green { background: #0f1a0f; border-left: 4px solid #3fb950; }
+  .tag-red { display: inline-block; background: #f85149; color: #fff; font-size: 0.75em; padding: 2px 8px; border-radius: 10px; margin-right: 6px; }
+  .tag-orange { display: inline-block; background: #d29922; color: #fff; font-size: 0.75em; padding: 2px 8px; border-radius: 10px; margin-right: 6px; }
+  .tag-green { display: inline-block; background: #3fb950; color: #fff; font-size: 0.75em; padding: 2px 8px; border-radius: 10px; margin-right: 6px; }
+  .ref { color: #8b949e; font-size: 0.82em; font-style: italic; }
+  .ok { color: #3fb950; } .warn { color: #d29922; } .bad { color: #f85149; }
+  .check-pass { color: #3fb950; font-weight: bold; }
+  .summary-box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .num-table td.num { text-align: right; font-family: monospace; }
+  .toc { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+  .toc a { color: #58a6ff; text-decoration: none; }
+  .toc li { margin: 4px 0; }
+  .footer { color: #8b949e; font-size: 0.8em; margin-top: 40px; padding-top: 16px; border-top: 1px solid #21262d; }
+</style>
+</head>
+<body>
+<h1>BaiZe-ISEDA2027 论文审视报告 · 视觉/多模态侧</h1>
+<div class="meta">
+  <span>📅 2026-10-14</span>
+  <span>🔍 6_vision_encoder / 7_mllm / 8_domain_rl（+0/1/2/3/9 视觉相关）</span>
+  <span>📊 地面真值：EXPERIMENTS_VISION.md</span>
+</div>
+<div class="summary-box">
+  <h3>📋 摘要</h3>
+  <p>共 <span class="bad">2 🔴</span> · <span class="warn">6 🟠</span> · <span class="ok">5 🟢</span>。论文第6章实验数字与 EXPERIMENTS_VISION.md <span class="check-pass">高度一致</span>（14/16 核验项通过）。核心缺失：Protocol B 下 ④-4ep 结果（ProtB 67.05±0.02%）完全未写入论文；数据量 "58.8M" 系旧快照值。外部编码器参照表、V3 Null、lp-epoch 曲线等均可回填。</p>
+</div>
+<div class="toc"><h3>📑 目录</h3><ol>
+  <li><a href="#d1">维度1：架构选型表</a> ✅</li>
+  <li><a href="#d2">维度2：R@1 退化</a> ✅</li>
+  <li><a href="#d3">维度3：④-4ep 回填</a> 🔴</li>
+  <li><a href="#d4">维度4：变体结论</a> 🟠</li>
+  <li><a href="#d5">维度5：外部编码器参照</a> 🟢</li>
+  <li><a href="#d6">维度6：分辨率局限</a> 🟠</li>
+  <li><a href="#d7">维度7：[TBD] 清单</a> 🟢</li>
+  <li><a href="#con">数字一致性核验总表</a></li>
+  <li><a href="#bf">可回填建议清单</a></li>
+</ol></div>
+
+<!-- 维度1 -->
+<h2 id="d1">维度1：视觉架构选型表</h2>
+<h3>1.1 Table 1 (tab:visarch) 数字核验</h3>
+<p>论文 <code>6_vision_encoder.tex:36-41</code> vs <code>EXPERIMENTS_VISION.md:13-18</code> 逐格核对：</p>
+<table class="num-table">
+  <tr><th>架构</th><th>论文 Loss@3k</th><th>记录 loss@3k</th><th>论文 img/s</th><th>记录 img/s</th><th>论文 zs</th><th>记录 zs</th><th>论文 lp</th><th>记录 lp</th><th>核验</th></tr>
+  <tr><td>OpenVision2</td><td>4.865</td><td>4.8646</td><td>3052</td><td>3051.8</td><td>0.95</td><td>0.95</td><td>1.14</td><td>1.14</td><td class="check-pass">✅</td></tr>
+  <tr><td>MambaEye</td><td>6.251</td><td>6.2507</td><td>950</td><td>949.5</td><td>0.10</td><td>0.10</td><td>0.10</td><td>0.10</td><td class="check-pass">✅</td></tr>
+  <tr><td>MoE-ViE</td><td>5.558</td><td>5.5580</td><td>1226</td><td>1225.7</td><td>0.35</td><td>0.35</td><td>0.28</td><td>0.28</td><td class="check-pass">✅</td></tr>
+  <tr><td>DeepEncoderV2</td><td>6.251</td><td>6.2513</td><td>1865</td><td>1864.5</td><td>0.10</td><td>0.10</td><td>0.10</td><td>0.10</td><td class="check-pass">✅</td></tr>
+  <tr><td>AIMv2</td><td>5.637</td><td>5.6370</td><td>3393</td><td>3392.5</td><td>0.38</td><td>0.38</td><td>0.25</td><td>0.25</td><td class="check-pass">✅</td></tr>
+  <tr><td>FastViTHD</td><td>5.668</td><td>5.6683</td><td>2097</td><td>2097.4</td><td>0.39</td><td>0.39</td><td>0.27</td><td>0.27</td><td class="check-pass">✅</td></tr>
+</table>
+<p class="ref">全部一致（四舍五入误差 &lt;0.01）。</p>
+
+<h3>1.2 R2 结论回填核验</h3>
+<table>
+  <tr><th>R2 结论</th><th>论文是否回填</th><th>位置</th><th>核验</th></tr>
+  <tr><td>LR 伪影（lr=1e-3 cosine collapse → 3e-3 更正）</td><td>✅</td><td><code>6_vision_encoder.tex:53-54</code></td><td class="check-pass">✅</td></tr>
+  <tr><td>架构 loss 不可分辨（旧结论已作废）</td><td>✅</td><td><code>6_vision_encoder.tex:46</code></td><td class="check-pass">✅ 不再引用旧结论</td></tr>
+  <tr><td>MambaEye 31.6ms 更正</td><td>⚠️</td><td>论文用 img/s=950，非 ms</td><td class="warn">🟠 31.6ms 疑为旧值已隐式修正为 950 img/s (≈1.05ms/img)</td></tr>
+</table>
+
+<h3>1.3 SSM 坍缩边界声明</h3>
+<div class="issue issue-green">
+  <span class="tag-green">✅ 正确</span><strong>C2 限定已写入论文</strong>
+  <p>论文 <code>6_vision_encoder.tex:51</code> 明确写道坍缩是 "(architecture, objective) pair" 的属性，不推广到 "state-space vision encoders are unusable"。与 <code>EXPERIMENTS_VISION.md:21</code> C2 限定一致。✅ 无过度声称。</p>
+</div>
+
+<!-- 维度2 -->
+<h2 id="d2">维度2：检索代理退化（R@1）</h2>
+<div class="issue issue-green">
+  <span class="tag-green">✅ 如实交代</span><strong>R@1=0.0002 已诚实报告，不再当有效指标</strong>
+  <p>论文 <code>6_vision_encoder.tex:225</code>："A retrieval proxy (R@1 on a held-out 5K subset of laioncn/EN) was degenerate (R@1=0.0002, exactly chance); we therefore use ImageNet-1k." 与 <code>EXPERIMENTS_VISION.md:20</code> 一致。✅</p>
+</div>
+<div class="issue issue-orange">
+  <span class="tag-orange">🟠 建议</span><strong>"2.5–9.5× chance" 需注明对应指标</strong>
+  <p>论文 <code>6_vision_encoder.tex:225</code> 写 "2.5–9.5× chance"，该范围仅对应 <strong>zero-shot top-1</strong>（0.25%→2.5×, 0.95%→9.5×）。lp top-1 范围实为 1.0–11.4×。建议注明倍率对应的指标。</p>
+</div>
+
+<!-- 维度3 -->
+<h2 id="d3">维度3：④-4ep 结果回填</h2>
+<div class="issue issue-red">
+  <span class="tag-red">🔴 硬伤</span><strong>Protocol B（主流对齐）下 ④-4ep 结果完全缺失</strong>
+  <p>论文第6章评测段（<code>6_vision_encoder.tex:223-227</code>）仅报告 <strong>Protocol A</strong>（自切分 50/类、full-batch、100ep、seed0）数字，lp 峰值 ~20.27%。以下 <strong>Protocol B</strong>（SGD+momentum+cosine 90ep, bs1024, IN-1k full 1.28M, 3 seeds）结果<strong>完全未出现</strong>：</p>
+  <table class="num-table">
+    <tr><th>实验</th><th>步数</th><th>ProtB (3-seed)</th><th>ProtA</th><th>zs top-1</th><th>k-NN</th><th>判定</th></tr>
+    <tr><td>E1fair (1ep)</td><td>187,101</td><td>62.34±0.01%</td><td>49.70%</td><td>34.10%</td><td>37.68%</td><td>基线</td></tr>
+    <tr><td>④-2ep</td><td>374,202</td><td>65.37±0.01%</td><td>53.82%</td><td>38.52%</td><td>40.67%</td><td>MODERATE (+3.03pp)</td></tr>
+    <tr><td>④-4ep</td><td>748,404</td><td><strong>67.05±0.02%</strong></td><td>56.70%</td><td>40.64%</td><td>42.35%</td><td>MODERATE DIMINISHING (+4.71pp vs 1ep)</td></tr>
+  </table>
+  <p class="ref">来源：<code>EXPERIMENTS_VISION.md:970-977</code></p>
+  <p><strong>影响</strong>：Protocol B 是与 DINOv2/MAE/iBOT 公开值可直接横比的唯一数字。67.05% 是当前最佳 from-scratch ProtB。1ep→2ep→4ep 递减趋势（+3.03→+1.68pp, ratio~0.55）是预算决策依据。<strong>建议</strong>：§6 新增 "Protocol B Evaluation" 小节 + lp-epoch 曲线。</p>
+</div>
+
+<div class="issue issue-red">
+  <span class="tag-red">🔴 硬伤</span><strong>数据量 "58.8M pairs" 系旧快照值</strong>
+  <p>论文 <code>6_vision_encoder.tex:96,130</code> 写 "the full 58.8M-pair corpus"。但 <code>EXPERIMENTS_VISION.md:1126-1147</code> 口径订正显示：</p>
+  <table class="num-table">
+    <tr><th>数据集</th><th>论文值</th><th>7437-tar 快照</th><th>8000-tar 全量</th></tr>
+    <tr><td>GPIC</td><td>~41.8M(推算)</td><td>~94.0M</td><td>~101.1M</td></tr>
+    <tr><td>CC12M</td><td>~11.0M</td><td>~11.0M</td><td>~11.0M</td></tr>
+    <tr><td>Amshaker</td><td>~5.95M</td><td>~5.95M</td><td>~5.95M</td></tr>
+    <tr><td><strong>合计</strong></td><td><strong>58.8M</strong></td><td><strong>~110.9M</strong></td><td><strong>~118.1M</strong></td></tr>
+  </table>
+  <p>论文 <code>6_vision_encoder.tex:77</code> 另写 "≈1.2×10⁸ pairs available"（120M）与全量 118.1M 一致 ✅。但 58.8M 已过时。<strong>建议</strong>：标注 "at the time of the 3-epoch experiment"，脚注补充 "corpus has since grown to ~118M pairs"。</p>
+</div>
+
+<!-- 维度4 -->
+<h2 id="d4">维度4：变体结论（Muon / V3）</h2>
+<h3>4.1 V2 Muon</h3>
+<div class="issue issue-green">
+  <span class="tag-green">✅ 准确</span><strong>Muon 全 LR 坍缩已如实写入</strong>
+  <p>论文 <code>6_vision_encoder.tex:278-281</code>：C₁→0.96, 4200 steps@lr=1e-4, 2100 steps@lr=5e-4。与 <code>EXPERIMENTS_VISION.md:909-917</code> 一致。正确引用 <code>fan2026pion</code> 解释根因。✅ 无过度声称。</p>
+</div>
+<h3>4.2 V3 全量数据 Null</h3>
+<div class="issue issue-orange">
+  <span class="tag-orange">🟠 建议</span><strong>V3 Null 结果未写入论文</strong>
+  <p><code>EXPERIMENTS_VISION.md:954-966</code>：ProtB=63.52±0.01%, Δ=+1.18pp, Null (|Δ|&lt;1.5pp)。4 指标一致 +0.8~+1.4pp 但均在噪声带内。建议补写，避免读者误以为"更多数据一定更好"。</p>
+</div>
+<h3>4.3 E1fair vs E2fair 公平重跑</h3>
+<div class="issue issue-orange">
+  <span class="tag-orange">🟠 建议</span><strong>w512 vs w768 公平重跑结论缺失</strong>
+  <p><code>EXPERIMENTS_VISION.md:970-972</code>：E1fair 62.34% vs E2fair 62.51%, Δ=+0.17pp 不可分辨。旧 "−5.59pp" 为 schedule 伪影已作废。建议补写以防读者复现旧伪影。</p>
+</div>
+
+<!-- 维度5 -->
+<h2 id="d5">维度5：外部编码器参照</h2>
+<div class="issue issue-green">
+  <span class="tag-green">🟢 可回填</span><strong>5 模型 ProtB 参照表已完成（2026-10-14），可独立成表</strong>
+  <p><code>EXPERIMENTS_VISION.md:1100-1109</code>：</p>
+  <table class="num-table">
+    <tr><th>模型</th><th>分辨率</th><th>参数量</th><th>ProtB (3 seeds)</th><th>文献锚点</th></tr>
+    <tr><td>SigLIP2 so400m@384</td><td>384px</td><td>~400M</td><td><strong>87.46±0.01%</strong></td><td>~83.1% (HF)</td></tr>
+    <tr><td>AIMv2-1B@336</td><td>336px</td><td>~1B</td><td><strong>85.22±0.04%</strong></td><td>~87.6% (Apple)</td></tr>
+    <tr><td>OV2 ViT-L/14@336</td><td>336px</td><td>~304M</td><td><strong>84.97±0.01%</strong></td><td>79.81% (BaiZe ProtA)</td></tr>
+    <tr><td>CLIP ViT-L/14@336</td><td>336px</td><td>~304M</td><td><strong>82.66±0.03%</strong></td><td>~88.1% (OpenCLIP)</td></tr>
+    <tr><td>RICE-ViT-L@560</td><td>560px</td><td>~304M</td><td><strong>81.72±0.01%</strong></td><td>~84.0% (估算)</td></tr>
+    <tr style="border-top:2px solid #f85149"><td style="color:#f85149">BaiZe ④-4ep</td><td style="color:#f85149">224px</td><td style="color:#f85149">126.8M</td><td style="color:#f85149">67.05±0.02%</td><td style="color:#f85149">— (从零训练)</td></tr>
+  </table>
+  <p><strong>红线</strong>：🚫 独立成表，绝不与 from-scratch 混排；native 分辨率不同，跨分辨率 lp 不可直接排高下。含 AIMv2 wrapper bug 修复说明（52.35%→85.22%）。</p>
+</div>
+
+<!-- 维度6 -->
+<h2 id="d6">维度6：分辨率局限</h2>
+<div class="issue issue-green">
+  <span class="tag-green">✅ 已声明</span><strong>224/16=196 token 局限已在论文中声明</strong>
+  <p>两处提及：<code>7_mllm.tex:17</code>（"196 tokens—a regime dominated by coarse semantics"）+ <code>6_vision_encoder.tex:227</code>（"a 196-token view is dominated by coarse semantics—does not transfer"）。✅ 正确推迟到 Stage (iv)。</p>
+</div>
+<div class="issue issue-orange">
+  <span class="tag-orange">🟠 建议</span><strong>分辨率局限可更具体量化</strong>
+  <p>建议补充：14×14=196 token，每 token ~16×16 像素；典型 EDA 版图线宽 0.5–2μm 在 224px 下仅 1–2 像素 → 单 token 内可能无法分辨相邻线条。对比 336/14=576 token（2.9×）、448/14=1024 token（5.2×）。V1 已暂缓（<code>EXPERIMENTS_VISION.md:973</code>）。</p>
+</div>
+
+<!-- 维度7 -->
+<h2 id="d7">维度7：[TBD] 清单与可回填分析</h2>
+<h3>7.1 论文现有 [TBD]</h3>
+<table>
+  <tr><th>位置</th><th>内容</th><th>可回填？</th></tr>
+  <tr><td><code>7_mllm.tex:21</code></td><td>Stage (iv) MLLM Results [TBD]</td><td>🚫 暂无（Stage iv 未完成）</td></tr>
+  <tr><td><code>8_domain_rl.tex:18</code></td><td>Stage (v) Domain RL Results [TBD]</td><td>🚫 暂无</td></tr>
+  <tr><td><code>9_conclusion.tex:5</code></td><td>Stage ii–v measurements [TBD]</td><td>🚫 同上</td></tr>
+</table>
+<h3>7.2 已有实测可回填的数据</h3>
+<table>
+  <tr><th>数据</th><th>来源</th><th>建议去向</th></tr>
+  <tr><td>④-4ep ProtB 67.05% + 全套指标</td><td>EV:977</td><td>§6 新增 Protocol B 小节</td></tr>
+  <tr><td>E1fair 62.34% / ④-2ep 65.37%</td><td>EV:972,976</td><td>同上（lp-epoch 曲线）</td></tr>
+  <tr><td>lp-epoch 曲线 PNG</td><td>vision/lp_epoch_curve.png</td><td>§6 新增 Figure</td></tr>
+  <tr><td>外部编码器 ProtB 5 模型表</td><td>EV:1100-1109</td><td>§6 新增 External Encoder Reference</td></tr>
+  <tr><td>V3 全量数据 Null（4 指标）</td><td>EV:954-966</td><td>§6 变体段落</td></tr>
+  <tr><td>E1fair vs E2fair 公平重跑</td><td>EV:970-972</td><td>§6 Scaling Behaviour</td></tr>
+  <tr><td>数据量口径订正</td><td>EV:1126-1147</td><td>§6 脚注</td></tr>
+  <tr><td>② probe ×5ep sweep</td><td>EV:1011</td><td>§6 评测协议</td></tr>
+</table>
+
+<!-- 一致性核验 -->
+<h2 id="con">数字一致性核验总表</h2>
+<table>
+  <tr><th>论文表/段</th><th>论文位置</th><th>实验记录</th><th>核验</th></tr>
+  <tr><td>Table 1 (visarch) 6 架构</td><td>L36-41</td><td>EV:13-18</td><td class="check-pass">✅ 全部一致</td></tr>
+  <tr><td>Table 2 (visscale) 7 点</td><td>L72</td><td>EV:52</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Table 3 (visaimv2)</td><td>L110-112</td><td>EV:94</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>四臂分解 ①6.08/④0.47/⑥-B 6.23/⑥-A 12.08</td><td>L120-123</td><td>R11:1132-1135</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Table 4 (visres)</td><td>L149-151</td><td>EV resolution</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Table 5 (visobj)</td><td>L168-173</td><td>EV obj</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Table 6 (vismask) 5 臂</td><td>L195-196</td><td>EV:144-148</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Table 7 (visweight) 4 臂</td><td>L217-218</td><td>EV weight</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Table 8 (visar) 3 臂</td><td>L264-266</td><td>EV:250, R11-H</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Muon C₁→0.96</td><td>L279-280</td><td>EV:909-917</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>R@1=0.0002</td><td>L225</td><td>EV:20</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>Scaling 外推 6×10¹⁰</td><td>L77</td><td>EV:54 (619亿)</td><td class="warn">⚠️ 舍入差异可接受</td></tr>
+  <tr><td>"58.8M-pair corpus"</td><td>L96,130</td><td>EV:1128 (旧值)</td><td class="bad">🔴 旧快照值</td></tr>
+  <tr><td>"≈1.2×10⁸ pairs available"</td><td>L77</td><td>EV:1137 (118.1M)</td><td class="check-pass">✅ 近似一致</td></tr>
+  <tr><td>3-epoch 176M/20.27%</td><td>L96</td><td>EV:96</td><td class="check-pass">✅ 一致</td></tr>
+  <tr><td>"2.5–9.5× chance"</td><td>L225</td><td>EV:67</td><td class="warn">🟠 仅对应 zs</td></tr>
+</table>
+<p><strong>核验结论</strong>：<span class="check-pass">14/16 完全一致</span>，2 项轻微偏差。论文第6章实验数字<strong>整体高度可信</strong>。</p>
+
+<!-- 可回填清单 -->
+<h2 id="bf">📋 可回填建议清单（按优先级）</h2>
+<div class="issue issue-red">
+  <h4>P0（🔴 硬伤 · 强烈建议）</h4>
+  <ol>
+    <li><strong>回填 Protocol B 评测结果</strong>：§6 新增 "Protocol B Evaluation" 小节，含 E1fair/④-2ep/④-4ep ProtB 3-seed 表 + lp-epoch 曲线。来源 <code>EV:970-977</code> + <code>vision/lp_epoch_curve.png</code>。</li>
+    <li><strong>更新数据量描述</strong>：标注 58.8M 为实验时快照值，脚注补充 "corpus grown to ~118M pairs (7437-tar snapshot)"。来源 <code>EV:1126-1147</code>。</li>
+  </ol>
+</div>
+<div class="issue issue-orange">
+  <h4>P1（🟠 建议）</h4>
+  <ol start="3">
+    <li><strong>外部编码器参照表</strong>：独立成表，标注 "公众预训练模型 · 不与 from-scratch 混排"。来源 <code>EV:1100-1109</code>。</li>
+    <li><strong>V3 全量数据 Null</strong>：4 指标 +0.8~+1.4pp 均在噪声带内 → "more data ≠ higher lp"。来源 <code>EV:954-966</code>。</li>
+    <li><strong>E1fair vs E2fair 公平重跑</strong>：Δ=+0.17pp Null，旧 "−5.59pp" 为 schedule 伪影。来源 <code>EV:970-972</code>。</li>
+    <li><strong>注明 "2.5–9.5× chance" 指标</strong>：改为 "zero-shot (2.5–9.5×) and linear-probe (1.0–11.4×)"。位置 <code>6_vision_encoder.tex:225</code>。</li>
+    <li><strong>量化 196-token 局限</strong>：14×14=196 token, ~16×16 px/token 对 fine-grained line drawings 的影响。位置 <code>7_mllm.tex:17</code>。</li>
+  </ol>
+</div>
+<div class="issue issue-green">
+  <h4>P2（🟢 可选 · 增强完整性）</h4>
+  <ol start="8">
+    <li><strong>① same-model zero-shot</strong>：E1fair 34.10% / E2fair 35.45%, lp−zs gap ~28pp。来源 <code>EV:1087</code>。</li>
+    <li><strong>② probe ×5ep sweep</strong>：×5ep=62.15% (−0.18pp) → "62.34% is feature quality ceiling, NOT probe limitation"。来源 <code>EV:1011,1080</code>。</li>
+    <li><strong>Muon C₁ 轨迹明细</strong>：3 次尝试 step/C₁ 表。来源 <code>EV:909-917</code>。</li>
+    <li><strong>R13 官方 OV2 参照</strong>：ProtA=79.81% vs 从零 7.99% → "瓶颈在数据+目标函数"。来源 <code>EV:107-121</code>。</li>
+    <li><strong>merge3ds 实验计划/结果</strong>（若已出）：GBS/MBS ×4 · LR ×4 (Goyal) · ~2.85 epoch。来源 <code>EV:1155-1200</code>。</li>
+  </ol>
+</div>
+
+<!-- 总结 -->
+<h2>总结</h2>
+<div class="summary-box">
+  <table>
+    <tr><th>维度</th><th>结果</th><th>严重度</th></tr>
+    <tr><td>1. 架构选型表</td><td>数字高度一致；R2 结论已回填；C2 限定已声明</td><td class="check-pass">✅</td></tr>
+    <tr><td>2. R@1 退化</td><td>如实交代，不再当有效指标</td><td class="check-pass">✅</td></tr>
+    <tr><td>3. ④-4ep 回填</td><td>Protocol B 完全缺失；数据量旧值</td><td class="bad">🔴 2 项</td></tr>
+    <tr><td>4. 变体结论</td><td>Muon ✅；V3 Null 和 E1fair/E2fair 缺失</td><td class="warn">🟠 2 项</td></tr>
+    <tr><td>5. 外部编码器</td><td>5 模型已完成，可回填</td><td class="ok">🟢</td></tr>
+    <tr><td>6. 分辨率局限</td><td>已声明，可更具体</td><td class="warn">🟠 1 项</td></tr>
+    <tr><td>7. [TBD] 清单</td><td>3 个 [TBD] 暂无实测；8 项已有数据可回填</td><td class="ok">🟢</td></tr>
+  </table>
+  <p style="margin-top:12px"><strong>整体评价</strong>：论文第6章实验数字<strong>高度可信</strong>（14/16 核验通过），无过度声称。主要不足是 Protocol B 结果缺失（无法与公开基准对照）和数据量旧值。建议优先回填 P0，其次 P1。</p>
+</div>
+
+<div class="footer">
+  <p>📌 遵循运维指令 2026-10-14：审视论文（BaiZe-ISEDA2027）→ 中文 HTML 改进意见报告。</p>
+  <p>🚫 红线：不直接改论文 .tex；数字须与 EXPERIMENTS_VISION.md 一致。</p>
+  <p>📁 <code>doc/BaiZe-ISEDA2027/reports/report_baize_paper_review_vision_zh.html</code> · commit 前缀 <code>vision paper-review:</code></p>
+</div>
+</body>
+</html>
