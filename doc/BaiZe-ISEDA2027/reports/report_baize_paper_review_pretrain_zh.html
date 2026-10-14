@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-ISEDA2027 论文审视报告（LLM 侧 · 中文版）</title>
+<style>
+:root{--red:#e74c3c;--orange:#e67e22;--green:#27ae60;--blue:#3498db;--gray:#95a5a6;--bg:#f8f9fa;--card:#fff;--border:#dee2e6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;background:var(--bg);color:#2c3e50;line-height:1.7;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;text-align:center;margin:20px 0 5px;color:#1a1a2e}
+h2{font-size:1.4em;border-bottom:2px solid var(--blue);padding-bottom:8px;margin:30px 0 15px;color:#1a1a2e}
+h3{font-size:1.15em;margin:20px 0 10px;color:#2c3e50}
+.subtitle{text-align:center;color:var(--gray);margin-bottom:20px;font-size:0.9em}
+.meta-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:15px 20px;margin:15px 0;font-size:0.88em}
+.meta-box table{width:100%;border-collapse:collapse}
+.meta-box td{padding:4px 8px;vertical-align:top}
+.meta-box td:first-child{font-weight:600;color:#555;white-space:nowrap;width:120px}
+.tldr{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-radius:10px;padding:20px 25px;margin:20px 0}
+.tldr h2{color:#fff;border-color:rgba(255,255,255,0.3)}
+.tldr p{margin:8px 0}
+.tldr ul{margin:8px 0 8px 20px}
+.issue{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px 22px;margin:15px 0;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.issue.red{border-left:5px solid var(--red)}
+.issue.orange{border-left:5px solid var(--orange)}
+.issue.green{border-left:5px solid var(--green)}
+.issue.blue{border-left:5px solid var(--blue)}
+.issue-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.78em;font-weight:700;color:#fff;white-space:nowrap}
+.badge.red{background:var(--red)}
+.badge.orange{background:var(--orange)}
+.badge.green{background:var(--green)}
+.badge.blue{background:var(--blue)}
+.issue h3{font-size:1.1em;margin:0;flex:1}
+.issue .file-ref{font-family:"Courier New",monospace;font-size:0.82em;color:#666;background:#f1f3f5;padding:2px 6px;border-radius:3px}
+.issue table{width:100%;border-collapse:collapse;margin:10px 0;font-size:0.86em}
+.issue th,.issue td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+.issue th{background:#e9ecef;font-weight:600}
+.issue .fix{background:#e8f5e9;border:1px solid #c8e6c9;border-radius:6px;padding:10px 15px;margin:10px 0;font-size:0.9em}
+.issue .fix::before{content:"🔧 建议修改：";font-weight:700;color:var(--green)}
+.issue .warn{background:#fff3cd;border:1px solid #ffeaa7;border-radius:6px;padding:10px 15px;margin:10px 0;font-size:0.9em}
+.issue .warn::before{content:"⚠️ 注意：";font-weight:700;color:var(--orange)}
+.issue .data{background:#e3f2fd;border:1px solid #bbdefb;border-radius:6px;padding:10px 15px;margin:10px 0;font-size:0.9em}
+.issue .data::before{content:"📊 台账数据：";font-weight:700;color:var(--blue)}
+.summary-table{width:100%;border-collapse:collapse;margin:15px 0;font-size:0.86em}
+.summary-table th,.summary-table td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+.summary-table th{background:#34495e;color:#fff;font-weight:600}
+.summary-table tr:nth-child(even){background:#f8f9fa}
+.footer{text-align:center;color:var(--gray);margin-top:30px;padding-top:15px;border-top:1px solid var(--border);font-size:0.82em}
+code{font-family:"Courier New",monospace;background:#f1f3f5;padding:1px 5px;border-radius:3px;font-size:0.88em}
+.match{color:var(--green);font-weight:600}
+.mismatch{color:var(--red);font-weight:600}
+</style>
+</head>
+<body>
+<h1>📋 BaiZe-ISEDA2027 论文审视报告</h1>
+<p class="subtitle">LLM 侧章节 · 中文版 · 2026-10-14 · pretrain agent #413</p>
+<div class="meta-box">
+<table>
+<tr><td>审视范围</td><td><code>0_abstract.tex</code> · <code>1_intro.tex</code> · <code>2_related_work.tex</code> · <code>3_architecture.tex</code> · <code>4_llm_pretrain.tex</code> · <code>5_llm_posttrain.tex</code> · <code>9_conclusion.tex</code> + <code>main.tex</code> + <code>reference.bib</code></td></tr>
+<tr><td>台账对照</td><td><code>EXPERIMENTS_2B.md</code> · <code>EXPERIMENTS_PRETRAIN_2B.md</code> · <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> · <code>MEMORY_PRETRAIN_2B.md</code></td></tr>
+<tr><td>P-8 状态</td><td>AdamW 从零训练中，step ~8510/10490（81%），loss last10 avg=2.4911，无 NaN ✅。本审视在监控空窗期完成，未延迟 P-8。</td></tr>
+<tr><td>红线遵守</td><td>🚫 未修改任何 <code>.tex</code> 文件；🚫 未占用 GPU；✅ 所有数字与 EXPERIMENTS 台账交叉核对</td></tr>
+</table>
+</div>
+<div class="tldr">
+<h2>🎯 摘要 (TL;DR)</h2>
+<p>共发现 <strong>4 项 🔴硬伤</strong>（必须修正的数字/逻辑矛盾）、<strong>10 项 🟠建议</strong>（可提升严谨性的改进点）、<strong>3 项 🟢可回填</strong>（已有数据可填入 [TBD] 的条目）。</p>
+<ul>
+<li><strong>最严重硬伤</strong>：论文声称 "adopt delayed-FP8" 但实际生产训练用 BF16（T3 实测 FP8 在 TP1/MBS2 下慢 9%）；"20B-token checkpoint" 实际只有 655M token；"24 Mamba-2 layers" 应为 52。</li>
+<li><strong>口径不统一</strong>：seq 4094 vs 4096 在论文内出现 6 处，3 处写 4094、3 处写 4096，未做解释。实际训练命令用 <code>--seq-length 4094</code>。</li>
+<li><strong>数据一致性</strong>：摘要/表格中的 val loss、3-seed σ、LR、退火配比等核心数字与台账 <strong>全部吻合</strong> ✅；架构对比 Δ≈0.30@5000步 有 P-3 实验支撑 ✅。</li>
+<li><strong>P-8 生产训练</strong>（44B token / GBS=1024）尚在进行中，完成后可大幅丰富论文 §4 结果。</li>
+</ul>
+</div>
+<h2>🔴 硬伤（Critical Issues）</h2>
+<div class="issue red">
+<div class="issue-header"><span class="badge red">🔴 H1</span><h3>FP8 采用声明与实际生产训练直接矛盾</h3></div>
+<p><strong>论文原文</strong>（<code>4_llm_pretrain.tex:161-162</code>）：</p>
+<div class="warn">"A 1000-step A/B comparison between BF16 and delayed-FP8 precision (FP8 with delayed scaling, M=65536) shows no persistent loss divergence… FP8 delivers a 19.4% throughput gain (233K vs. 195K tok/s) and saves 5.6GB per GPU. <strong>We therefore adopt delayed-FP8 as the precision for the full pre-training run.</strong>"</div>
+<p>但紧接其后（<code>4_llm_pretrain.tex:165</code>）的生产吞吐段写道：</p>
+<div class="warn">"At the production configuration (TP=1, DP=8, micro-batch 2, seq 4094, <strong>BF16</strong>), the hybrid backbone sustains 249,040 tok/s…"</div>
+<p><strong>台账实际</strong>（<code>BAIZE_PRETRAIN_2B_TASK.md</code> P-8 配方表 + <code>MEMORY_PRETRAIN_2B.md</code>）：</p>
+<div class="data">
+P-8 训练配方精度 = <strong>BF16</strong>（"FP8 在 TP1 上 s=0.91 慢 9%，不用"）。<br>
+T3 Test 4 实测：FP8 TP1 MBS2 M=8192 → s=0.915（228K tok/s，慢 9%），因 M=8192 ≪ FP8 交叉点 M*≈30–32K。<br>
+FP8 A/B 测试（19.4% 加速）使用 M=65536（大 M），与生产 M=8192 不可同日而语。<br>
+P-8 训练命令：<code>--precision bf16_mixed --optimizer adam</code>（非 FP8）。
+</div>
+<p><strong>问题本质</strong>：FP8 A/B 测试在大 M（65536）下做，确实有 19.4% 加速；但生产配置用小 M（8192），FP8 overhead 超过加速，实测慢 9%。论文从大 M 测试外推到小 M 生产配置，结论 "adopt FP8" 是错误的，且与同文后段的 "BF16" 矛盾。</p>
+<div class="fix">删除 "We therefore adopt delayed-FP8 as the precision for the full pre-training run"。改为如实陈述："FP8 with delayed scaling (M=65536) delivers a 19.4% throughput gain in the large-M regime, but our production configuration uses MBS=2×seq=8192, well below the FP8 crossover point M*≈30–32K, where FP8 overhead exceeds its acceleration (measured s=0.91, i.e. 9% slower). We therefore adopt BF16 for the production run." 这样既保留了 FP8 实验发现，又解释了为什么不用。</div>
+</div>
+<div class="issue red">
+<div class="issue-header"><span class="badge red">🔴 H2</span><h3>"20B-token checkpoint" 实为 655M-token</h3></div>
+<p><strong>论文原文</strong>（<code>4_llm_pretrain.tex:115</code> 及 <code>:120</code> 表标题）：</p>
+<div class="warn">"the <strong>20B-token checkpoint</strong> sustains near-constant perplexity from 4K to 1M tokens"<br>表标题："Training-free long-context perplexity of the Mamba2-hybrid (<strong>20B-token checkpoint</strong>, ABF θ=10⁶, b=1)."</div>
+<p><strong>台账实际</strong>（<code>EXPERIMENTS_PRETRAIN_2B.md:16</code> + <code>4_llm_pretrain.tex:75</code>）：</p>
+<div class="data">
+S5-01 长跑 = 20000 步 × GBS=8 × seq=4094 = <strong>655,040,000 ≈ 655M tokens</strong>。<br>
+论文自己在 line 75 正确写了 "20000 steps (≈655M tokens)"，但 line 115/120 却写 "20B-token"。<br>
+P-8 训练（进行中）到 step 8510 约消耗 35.7B token，但未完成，且 P-8 checkpoint 尚不可用于 PPL 测试。<br>
+没有任何 checkpoint 达到 20B token 规模。
+</div>
+<p><strong>判断</strong>："20B-token" 疑为 "20K-step" 或 "0.65B-token" 的笔误（20K 步 → 误写为 20B token）。长上下文 PPL 测试用的是 S5-01 的 20000 步 checkpoint（655M token），不是 20B token。</p>
+<div class="fix">将 <code>4_llm_pretrain.tex:115</code> 和 <code>:120</code> 中的 "20B-token checkpoint" 改为 "655M-token checkpoint" 或 "20K-step checkpoint (≈655M tokens)"，与 line 75 的表述一致。</div>
+</div>
+<div class="issue red">
+<div class="issue-header"><span class="badge red">🔴 H3</span><h3>"24 Mamba-2 state-space layers" 应为 52</h3></div>
+<p><strong>论文原文</strong>（出现 <strong>2 处</strong>）：</p>
+<div class="warn">
+<code>3_architecture.tex:11</code>："the <strong>24</strong> Mamba-2 state-space layers are position-agnostic"<br>
+<code>4_llm_pretrain.tex:116</code>："the <strong>24</strong> Mamba-2 state-space layers have no position dependency"
+</div>
+<p><strong>台账实际</strong>：</p>
+<div class="data">
+架构 = 56 层 - 4 attention 层 = <strong>52 非 attention 层</strong>（Mamba-2 + MLP）。<br>
+<code>MEMORY_PRETRAIN_2B.md</code> 顶部状态："52 SSM + 4 Attn"。<br>
+<code>EXPERIMENTS_2B.md:4</code>："Mamba2-hybrid（56 层，Nemotron-H 式顺序混合）"。<br>
+论文自己的摘要 / intro / architecture 节均写 "56 layers interleaving Mamba-2 state-space layers, four GQA layers, and MLP layers" → 56 - 4 = 52。<br>
+line 11 还据此算出 "4/56=7.1%"，这个比例正确（4 attention / 56 total），但 "24" Mamba-2 层数错误。
+</div>
+<p><strong>判断</strong>：Megatron-Core 的 Mamba2-hybrid 每个非 attention 层都含一个 Mamba-2 SSM + MLP，故 52 个非 attention 层 = 52 个 Mamba-2 SSM 层。"24" 来源不明，可能是早期草稿残留或计算错误。</p>
+<div class="fix">将 <code>3_architecture.tex:11</code> 和 <code>4_llm_pretrain.tex:116</code> 中的 "24 Mamba-2 state-space layers" 均改为 "52 Mamba-2 state-space layers"。</div>
+</div>
+<div class="issue red">
+<div class="issue-header"><span class="badge red">🔴 H4</span><h3>seq 4094 vs 4096 论文内部不一致（6 处出现）</h3></div>
+<p><strong>论文中的出现</strong>：</p>
+<table>
+<tr><th>位置</th><th>原文</th><th>写法</th></tr>
+<tr><td><code>3_architecture.tex:31</code> Table config</td><td>"Sequence length & 4094"</td><td class="mismatch">4094</td></tr>
+<tr><td><code>4_llm_pretrain.tex:35</code> Data 节</td><td>"packed to a sequence length of 4096"</td><td class="mismatch">4096</td></tr>
+<tr><td><code>4_llm_pretrain.tex:42</code> Mix search</td><td>"sequence length 4096"</td><td class="mismatch">4096</td></tr>
+<tr><td><code>4_llm_pretrain.tex:75</code> Search budget</td><td>"8×4094≈32.7K"</td><td class="mismatch">4094</td></tr>
+<tr><td><code>4_llm_pretrain.tex:165</code> Production</td><td>"seq 4094, BF16"</td><td class="mismatch">4094</td></tr>
+<tr><td><code>5_llm_posttrain.tex:14</code> Post-train</td><td>"4096-token window"</td><td class="mismatch">4096</td></tr>
+</table>
+<p><strong>台账实际</strong>：搜索实验 + P-8 生产训练<strong>实际代码均用 <code>--seq-length 4094</code></strong>。4096 可能是数据打包目标长度。</p>
+<div class="fix">统一口径，建议全文统一为 4094，并在 Data 节首次出现时加注："data is packed to 4096-token sequences, of which the model consumes 4094 tokens per position (Megatron-Core convention)"。</div>
+</div>
+<h2>🟠 建议（Suggestions）</h2>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S1</span><h3>Table archcomp 仅展示 1000 步 loss（Δ=-0.12），但正文引用 5000 步 Δ≈0.30</h3></div>
+<p>Table tab:archcomp（<code>4_llm_pretrain.tex:102</code>）："Final loss (1k steps) 4.81 vs 4.68, hybrid (-0.12)"。正文（<code>:9</code>）："the gap widening to Δ≈0.30 by step 5000"。台账 P-3 延长实验 5000 步 Δ=0.301 <strong>有数据支撑 ✅</strong>。但表格只展示 1k 步数据，读者无法看到 5k 步 Δ≈0.30。</p>
+<div class="fix">在 Table tab:archcomp 中增加一行 "Final loss (5k steps)"，或改为展示 5k 步口径的 loss。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S2</span><h3>训练量极小（655M token）未充分声明为 "代理实验"</h3></div>
+<p>论文 Intro 提到 "Reduced-horizon proxy search" 但未量化。§4.5 给了 "655M tokens" 但未对比数据池。655M / 2,015B = <strong>0.033%</strong>，仅为 Chinchilla 最优 (44B) 的 1.5%。论文核心 loss 2.2054 来自代理实验，但未声明。</p>
+<div class="fix">在 §4.5 或 §4.7 加一段："The search horizon (655M tokens) represents ~0.03% of the corpus and ~1.5% of Chinchilla-optimal (44B). The reported loss is a proxy-search outcome, not a converged result. A production run (44B tokens) is underway."</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S3</span><h3>稳定段配比 88:8:4 与退火段配比 86:10:4 区分不够清晰</h3></div>
+<p>论文 <code>:69</code> 写 "88:8:4 (web/code/math)"（稳定段），<code>:79</code> 写 "86:10:4"（退火段），摘要只提 86:10:4。此外 P-8 生产退火段配比 = SFT 64% + L3 24% + code 8% + math 4%（与搜索 86:10:4 <strong>完全不同</strong>），论文未提及。</p>
+<div class="fix">用小表并排展示两段配比，标注 stable vs annealing。注明 86:10:4 是搜索阶段退火配比，生产退火配比不同。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S4</span><h3>MiniCPM5 缺少独立引用</h3></div>
+<p><code>reference.bib</code> 只引了 MiniCPM (2024, arXiv:2404.06395)，论文正文提 "MiniCPM5-2B"。MiniCPM5 <strong>没有独立训练论文</strong>（已核实），是 2026 年 OpenBMB 模型发布。</p>
+<div class="fix">首次提及 MiniCPM5-2B 时加注 "(OpenBMB, 2026; model release without independent training paper)"，保留 minicpm2024 作为系列出处。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S5</span><h3>NeMo 未被引用</h3></div>
+<p>论文多处提 "NVIDIA NeMo recipe" 但 reference.bib 无 NeMo 引用，仅有 Megatron-LM。</p>
+<div class="fix">在 reference.bib 新增 NeMo 引用。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S6</span><h3>后训练缺 M1–M4 成功阶梯定义</h3></div>
+<p>R1–R4 奖励表 ✅ 已定义。但 M1–M4 成功阶梯在 <code>5_llm_posttrain.tex</code> 中完全缺失。</p>
+<div class="fix">在 §5.4 之前增加小节定义 M1–M4 里程碑（如 M1=基础 SFT pass@1, M2=工具调用, M3=多步推理, M4=完整 agent 闭环）。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S7</span><h3>PPL 表 4K 值异常高（83.2），与训练 loss 2.2054 不一致</h3></div>
+<p>Table tab:longctx-ppl 4K PPL = <strong>83.2</strong>，但 S5-01 final loss=2.2054 → PPL=e^2.2054≈<strong>9.07</strong>。差异 9.2 倍。可能原因：不同评测集/计算方法/checkpoint，但论文未解释。</p>
+<div class="fix">在 PPL 表附近增加注释说明计算方法、评测集，以及为何 4K PPL (83.2) 远高于 e^(loss)≈9。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S8</span><h3>生产训练吞吐段与 FP8 段逻辑断裂</h3></div>
+<p><code>4_llm_pretrain.tex:161-162</code> 说 "adopt FP8"，紧接 <code>:164-165</code> 说 "BF16, 249K tok/s"，两段矛盾无过渡。</p>
+<div class="fix">合并/重排：先写生产配置（BF16, 249K），再写 FP8 探索（大 M 有加速但生产不适用）。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S9</span><h3>S1 标签与实验台账不完全对应</h3></div>
+<p>论文 S1-01 val loss=2.849，台账 S2-02 (lr=3e-4)=2.8462，差异 0.003 在噪声内。但论文对搜索阶段重新编号（S1–S5），与台账编号不同。</p>
+<div class="fix">在 Table tab:configs 脚注注明对应台账 ID。</div>
+</div>
+<div class="issue orange">
+<div class="issue-header"><span class="badge orange">🟠 S10</span><h3>DeepSeek-V4.1-Flash tokenizer 未被引用</h3></div>
+<p><code>4_llm_pretrain.tex:35</code> 提到 DeepSeek-V4.1-Flash tokenizer 但 reference.bib 无引用。tokenizer 选择影响 vocab size 和参数量。</p>
+<div class="fix">新增 DeepSeek tokenizer 引用或注明出处。</div>
+</div>
+<h2>🟢 可回填 [TBD] 清单</h2>
+<div class="issue green">
+<div class="issue-header"><span class="badge green">🟢 F1</span><h3>后训练结果 [TBD]（Stage ii–v）</h3></div>
+<p><strong>位置</strong>：<code>5_llm_posttrain.tex:49</code> / <code>9_conclusion.tex:5</code>。Stage (ii)–(v) 尚未执行，[TBD] 合理。待后训练完成后回填。</p>
+</div>
+<div class="issue green">
+<div class="issue-header"><span class="badge green">🟢 F2</span><h3>P-8 生产训练结果（44B token / GBS=1024）— 可大幅丰富 §4</h3></div>
+<p><strong>当前</strong>：step 8510/10490 (81%)，loss last10 avg=2.4911，min=2.481677，~249K tok/s，grad_norm 稳定，0 NaN。总预算 44B token（≈Chinchilla 最优），预计 ~2 天完成。</p>
+<p><strong>可回填内容</strong>：§4 新增 "Production-Scale Training" 小节；对比搜索阶段（655M token）与生产阶段（44B token）loss 曲线；验证超参在生产规模下是否仍最优。</p>
+<p><strong>注意</strong>：P-8 尚未完成，当前 loss 2.49 不可作为最终值引用。</p>
+</div>
+<div class="issue green">
+<div class="issue-header"><span class="badge green">🟢 F3</span><h3>生产训练吞吐已可回填（249,040 tok/s）— 论文已有但标注不清</h3></div>
+<p>论文 <code>:165</code> 已写入 249,040 tok/s ✅，但位置在 FP8 段后易被误读。建议移到更显眼位置并标注 "BF16 production configuration"。</p>
+</div>
+<h2>✅ 可回填建议清单（汇总）</h2>
+<table class="summary-table">
+<tr><th>#</th><th>级别</th><th>条目</th><th>位置</th><th>状态</th><th>行动</th></tr>
+<tr><td>H1</td><td>🔴</td><td>FP8 采用声明与实际矛盾</td><td><code>4_llm_pretrain.tex:162</code></td><td>❌ 必须修正</td><td>删除 "adopt FP8"，改为解释为何用 BF16</td></tr>
+<tr><td>H2</td><td>🔴</td><td>"20B-token" 应为 655M</td><td><code>4_llm_pretrain.tex:115,120</code></td><td>❌ 必须修正</td><td>改为 "655M-token" 或 "20K-step"</td></tr>
+<tr><td>H3</td><td>🔴</td><td>"24 Mamba-2" 应为 52</td><td><code>3_architecture.tex:11</code>,<code>4_llm_pretrain.tex:116</code></td><td>❌ 必须修正</td><td>两处 "24" → "52"</td></tr>
+<tr><td>H4</td><td>🔴</td><td>seq 4094/4096 不一致</td><td>6 处</td><td>❌ 必须统一</td><td>统一为 4094 + 加注解释</td></tr>
+<tr><td>S1</td><td>🟠</td><td>Table archcomp 缺 5k 步 loss</td><td><code>4_llm_pretrain.tex:102</code></td><td>⚠️ 建议补充</td><td>增加 5k 步行或改为 5k 口径</td></tr>
+<tr><td>S2</td><td>🟠</td><td>655M token 未声明为代理</td><td><code>4_llm_pretrain.tex:75-86</code></td><td>⚠️ 建议补充</td><td>加 proxy 声明 + Chinchilla 对比</td></tr>
+<tr><td>S3</td><td>🟠</td><td>88:8:4 vs 86:10:4 区分不清</td><td><code>4_llm_pretrain.tex:69,79</code></td><td>⚠️ 建议补充</td><td>表格并排展示两段配比</td></tr>
+<tr><td>S4</td><td>🟠</td><td>MiniCPM5 缺独立引用</td><td><code>reference.bib</code></td><td>⚠️ 建议补充</td><td>加注 "no independent paper"</td></tr>
+<tr><td>S5</td><td>🟠</td><td>NeMo 未引用</td><td><code>reference.bib</code></td><td>⚠️ 建议补充</td><td>新增 NeMo 引用</td></tr>
+<tr><td>S6</td><td>🟠</td><td>后训练缺 M1–M4</td><td><code>5_llm_posttrain.tex</code></td><td>⚠️ 建议补充</td><td>增加 M1–M4 里程碑定义</td></tr>
+<tr><td>S7</td><td>🟠</td><td>PPL 4K=83.2 异常高</td><td><code>4_llm_pretrain.tex:127</code></td><td>⚠️ 需核实</td><td>解释 PPL 与 loss 差异</td></tr>
+<tr><td>S8</td><td>🟠</td><td>FP8 段与生产吞吐段逻辑断裂</td><td><code>4_llm_pretrain.tex:161-165</code></td><td>⚠️ 建议重组</td><td>合并/重排两段</td></tr>
+<tr><td>S9</td><td>🟠</td><td>S1 标签与台账不完全对应</td><td><code>4_llm_pretrain.tex:178</code></td><td>⚠️ 建议加注</td><td>脚注注明对应台账 ID</td></tr>
+<tr><td>S10</td><td>🟠</td><td>DeepSeek tokenizer 未引用</td><td><code>reference.bib</code></td><td>⚠️ 建议补充</td><td>新增 DeepSeek 引用</td></tr>
+<tr><td>F1</td><td>🟢</td><td>后训练 [TBD]</td><td><code>5_llm_posttrain.tex:49</code></td><td>⏳ 待 Stage ii</td><td>当前无数据可填</td></tr>
+<tr><td>F2</td><td>🟢</td><td>P-8 生产训练结果</td><td>§4 新增小节</td><td>⏳ 待 P-8 完成</td><td>44B token loss + 曲线</td></tr>
+<tr><td>F3</td><td>🟢</td><td>生产吞吐 249K tok/s</td><td><code>4_llm_pretrain.tex:165</code></td><td>✅ 已写入</td><td>移到更显眼位置</td></tr>
+</table>
+<h2>📊 核心数字一致性核对</h2>
+<table class="summary-table">
+<tr><th>指标</th><th>论文值</th><th>台账值</th><th>来源</th><th>一致?</th></tr>
+<tr><td>参数量</td><td>≈2.22B</td><td>2,220,268,032</td><td>EXPERIMENTS_2B.md:7</td><td class="match">✅</td></tr>
+<tr><td>Dense 参数量</td><td>2.51B</td><td>2.512B</td><td>EXPERIMENTS_2B.md:10</td><td class="match">✅</td></tr>
+<tr><td>参数减少</td><td>-11.6%</td><td>-11.6%</td><td>EXPERIMENTS_2B.md:20</td><td class="match">✅</td></tr>
+<tr><td>层数</td><td>56 (含 4 attn)</td><td>56 (52 SSM + 4 Attn)</td><td>MEMORY</td><td class="match">✅</td></tr>
+<tr><td>vocab size</td><td>129,281</td><td>129,281</td><td>EXPERIMENTS_2B.md:41</td><td class="match">✅</td></tr>
+<tr><td>val loss @20000</td><td>2.2054</td><td>2.205413</td><td>EXPERIMENTS_PRETRAIN_2B.md:16</td><td class="match">✅</td></tr>
+<tr><td>3-seed @5000</td><td>2.6739±0.0469</td><td>2.673868±0.0469</td><td>EXPERIMENTS_PRETRAIN_2B.md:16</td><td class="match">✅</td></tr>
+<tr><td>val loss @5000 (单seed)</td><td>2.7647</td><td>2.764702 (S3-05)</td><td>EXPERIMENTS_PRETRAIN_2B.md:12</td><td class="match">✅</td></tr>
+<tr><td>stable LR</td><td>1×10⁻³</td><td>1e-3</td><td>EXPERIMENTS_PRETRAIN_2B.md:10</td><td class="match">✅</td></tr>
+<tr><td>退火配比(搜索)</td><td>86:10:4</td><td>86:10:4</td><td>EXPERIMENTS_PRETRAIN_2B.md:14</td><td class="match">✅</td></tr>
+<tr><td>退火增益</td><td>~0.14</td><td>~0.14</td><td>EXPERIMENTS_PRETRAIN_2B.md:16</td><td class="match">✅</td></tr>
+<tr><td>GPU·h 消耗</td><td>≈85</td><td>≈85</td><td>EXPERIMENTS_PRETRAIN_2B.md</td><td class="match">✅</td></tr>
+<tr><td>decode 加速</td><td>10.3×</td><td>10.3× (22.77/2.21)</td><td>EXPERIMENTS_2B.md:75</td><td class="match">✅</td></tr>
+<tr><td>训练吞吐代价</td><td>~8%</td><td>~8% (P-7修正)</td><td>ROUND2.md:415</td><td class="match">✅</td></tr>
+<tr><td>Δloss @5000步</td><td>≈0.30</td><td>0.301 (P-3)</td><td>ROUND2.md:81</td><td class="match">✅</td></tr>
+<tr><td>生产吞吐</td><td>249,040 tok/s</td><td>249K (P-9.7)</td><td>MEMORY</td><td class="match">✅</td></tr>
+<tr><td>seq length</td><td>4094/4096 混用</td><td>4094 (实际代码)</td><td>EXPERIMENTS_PRETRAIN_2B.md:4</td><td class="mismatch">❌ 论文内部不一致</td></tr>
+<tr><td>FP8 采用</td><td>"adopt FP8"</td><td>bf16 (P-8实际)</td><td>MEMORY</td><td class="mismatch">❌ 矛盾</td></tr>
+<tr><td>checkpoint token量</td><td>"20B-token"</td><td>655M token</td><td>EXPERIMENTS_PRETRAIN_2B.md:16</td><td class="mismatch">❌ 笔误</td></tr>
+<tr><td>Mamba-2 层数</td><td>24</td><td>52</td><td>MEMORY</td><td class="mismatch">❌ 错误</td></tr>
+</table>
+<h2>附录：审视方法说明</h2>
+<div class="issue blue">
+<div class="issue-header"><span class="badge blue">📋 方法</span><h3>审视流程</h3></div>
+<ol>
+<li>读取论文 LLM 侧全部 .tex 文件 + main.tex + reference.bib</li>
+<li>读取实验台账 EXPERIMENTS_2B.md / EXPERIMENTS_PRETRAIN_2B.md / EXPERIMENTS_PRETRAIN_2B_ROUND2.md</li>
+<li>读取 MEMORY_PRETRAIN_2B.md 获取 P-8 当前状态</li>
+<li>逐维度审视：架构数字一致性 → 预训练结果回填 → 混合架构优势表 → 训练量声明 → 后训练设计 → 数据配比 → [TBD] 清单</li>
+<li>对每个发现，标注文件:行号，与台账交叉核对</li>
+<li>三级标注：🔴硬伤 / 🟠建议 / 🟢可回填</li>
+</ol>
+<p><strong>限制</strong>：本审视仅覆盖 LLM 侧章节，未深入 vision encoder (§6)、MLLM (§7)、domain RL (§8)。后训练 [TBD] 回填需待 Stage (ii)–(v) 执行后。</p>
+</div>
+<div class="footer">
+<p>BaiZe-ISEDA2027 论文审视报告 · LLM 侧 · pretrain agent #413 · 2026-10-14</p>
+<p>数据来源：EXPERIMENTS_2B.md / EXPERIMENTS_PRETRAIN_2B.md / EXPERIMENTS_PRETRAIN_2B_ROUND2.md / MEMORY_PRETRAIN_2B.md</p>
+<p>🚫 本报告不修改任何 .tex 文件；改稿须另行批准</p>
+</div>
+</body>
+</html>
