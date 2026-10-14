@@ -7,6 +7,33 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（🚀 用 glm-5.3-flash 重测 7×300 —— 验证「能力是主因」）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「根据报告，harness 任务模型能力是 passrate 低的主因。既然如此，请 harness 使用更强的模型 glm-5.3-flash 重测 SWE-bench-Lite(300) 7×300。」
+
+**背景**：审视结论 fix3/fix4 0-flip = **LLM 能力瓶颈（非 infra）**。现用更强 backbone `glm-5.3-flash` 重测，验证「换强模型 → passrate 显著提升」是否成立。
+
+**① 模型（逐字遵守）**：
+- model name：`glm-5.3-flash`
+- API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f`
+- Base URL：`http://agi-gateway.cxmt.com/cloud/v1`
+
+**② 跑法**：
+- 复用 7×300 框架：7 harness（`cline-patched` / `codex` / `hermes` / `opencode` / `claude-code` / `deepseek-harness` / `pi`）× 300 SWE-bench-Lite，backbone 换成 `glm-5.3-flash`。
+- 机制：`run_serial_kimi.py` 设 `HARNESS_MODEL=glm-5.3-flash`；cline auth 切 `-p openai -k <上述 key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.3-flash`（⚠️ 用 `/cloud/v1`，非 `/v1`）。
+- 结果独立 JSON（建议 `glm53_pilot_results.json`），🚫 **不覆盖** `kimi_pilot_results.json`（保留旧 backbone 证据）。
+- 幂等 `--resume`，沿用 `launch_7x300.sh` 模式（7 路并行、各自串行）。
+
+**③ 对比与交付**：
+- 与 `kimi-k2.6-cloud` 的 7×300 做**同 harness 逐项对比**（旧 574 resolved / 原口径）。
+- 交付中文 HTML（如 `reports/report_harness_glm53_vs_kimi_7x300.html`）：TL;DR / 7 harness × (glm53 vs kimi) resolved + passrate / 能力提升量（若显著提升 → 证实「能力是主因」）/ 结论 + 诚实条款。
+
+**④ 纪律**：
+- 🚫 不占 GPU（SWE-bench = CPU + API 配额）；与 `.29` pretrain P-8 训练、`.12` data 下载**避让 IO**（`nice` 限流、错峰）。
+- 开跑前 curl 探针确认 glm-5.3-flash key 可用（200）；监控 quota/timeout/no-patch 率。
+- ETA ~42h（7 路并行），结果幂等可续。
+- commit 前缀 `harness glm53:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-13（🔬 通过率为何这么低 —— web 对照 + 轨迹细析 + 提升机会点按预计增益排序）· 用户直令 · 最高优先
 
 > 用户令（2026-10-13）：「harness：首先 web search 后分析为什么通过率这么低；细致分析轨迹，回答通过率这么低是否合理、是否都是 LLM 能力不足所致，还是评测环境的问题？有哪些提升机会点？有哪些问题？如何解决，将建议按照预计提升从高到低排序。」
