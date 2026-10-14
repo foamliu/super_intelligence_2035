@@ -7,6 +7,23 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（🔧 更正 glm-5.3-flash Base URL → `/v1`，去掉 cloud）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「harness: glm-5.3-flash 的 apikey 没问题，但是 base url 需要去掉 cloud。」（附：用户实测 `curl http://agi-gateway.cxmt.com/v1/chat/completions` 已 200 OK）
+
+**① 更正上一指令的 Base URL（其余不变）**：
+- ❌ 旧（错）：`http://agi-gateway.cxmt.com/cloud/v1`
+- ✅ 新（对）：`http://agi-gateway.cxmt.com/v1`
+
+**② 关键区别（务必注意）**：`glm-5.3-flash` 走 **`/v1`** 路径；而 `glm-5.2` 才走 `/cloud/v1`。**不要**沿用 glm-5.2 的 `/cloud/v1` 给 glm-5.3-flash（这正是之前 403 的根因）。
+
+**③ 落地**：
+- cline auth：`-p openai -k <key>` + `-b http://agi-gateway.cxmt.com/v1` + `-m glm-5.3-flash`。
+- 同步更新 `launch_glm53_7x300.sh` / `run_serial_kimi.py` / `run_harness.py` 里所有 glm-5.3-flash 的 base url 为 `/v1`。
+- 更新后先用 curl 探针复验 200（`GET/POST http://agi-gateway.cxmt.com/v1/chat/completions`，model=glm-5.3-flash），再 `bash launch_glm53_7x300.sh` 启动 7×300。
+
+**④ 其余**：key / model name / 7×300 框架 / 独立 JSON / 对比报告要求一律不变（见上一指令）。🚫 不占 GPU、错峰 IO。commit 前缀 `harness glm53:`。
+
 ### 🆕 运维指令 · 2026-10-14（🚀 用 glm-5.3-flash 重测 7×300 —— 验证「能力是主因」）· 用户直令 · 最高优先
 
 > **用户令（2026-10-14）**：「根据报告，harness 任务模型能力是 passrate 低的主因。既然如此，请 harness 使用更强的模型 glm-5.3-flash 重测 SWE-bench-Lite(300) 7×300。」
