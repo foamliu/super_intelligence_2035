@@ -1399,3 +1399,82 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 ⑤ 体积：若 TASK 超 32KB，按「体积维护规程」把已闭合旧块原文搬入 `ARCHIVE_OPERATOR_DATA.md`（只搬迁留指针）。
 
 > **执行结论**：唤醒302-310已执行两路并发巡检,85M(en_v1_4)各自速度/ETA已报。后续唤醒持续看护。归档自BAIZE_DATA_TASK.md 2026-10-13(唤醒404)。
+---
+
+### 🆕 运维指令 · 2026-10-13（🔍 为 vision encoder 训练在 HuggingFace 找「图文对」数据集 · 要求 image 带 bytes（非 url）· 中文 HTML 报告）· 用户直令 · 高优先（归档自 BAIZE_DATA_TASK.md 2026-10-14 唤醒427）
+
+> 用户令（2026-10-13）：「data：使用 web search 给 vision encoder 训练在 huggingface 上找图文对数据集（要求 image 带 bytes 而非 url），输出 html 报告（中文）。」
+> 性质：纯 web 调研 + 写报告，CPU/网络，不占 GPU；web 请求不占 NFS 带宽，不打断 en_v1_4 / 85M 下载。
+
+① 目标：为 Stage (iii) 视觉编码器对比预训练（现有 = GPIC + CC12M + Amshaker ≈59M 对）寻找可直接下载即用的图文对数据集，重点是 image 列存的是真实像素 bytes（HF `Image` feature / parquet 内嵌二进制），而非仅 URL。
+
+② 逐条筛选口径（每项给证据）：
+1. image 载体：确认 image 列 feature 类型 —— ✅ `Image`(bytes) / `{bytes,path}` vs ❌ `string`(url) / `{url}`。最硬证据 = HF `datasets-server` `/info` 或 `/first-rows` 返回 `features['image'] == {'_type':'Image'}`（仅看文字描述不算）。
+2. 规模：图片对数 + 总字节（可估）。
+3. 许可：license（cc-by(-sa) / mit / apache / 未标注）。
+4. caption：短/长 caption、alt-text；语言 en / zh / multi。
+5. 是否已用（GPIC / CC12M / Amshaker / LAION 系须标注，避免重复）。
+6. 可达性：HF 直连/镜像、是否 gated。
+
+③ 方法：HF Hub + `datasets-server` API 检索（`image-text pairs` · `caption` · `interleaved` · `alt-text` · `DataComp` · `pixelprose` · `redcaps` · `mmc4` · `OBELICS` · `MINT` · `wit` · `datacomp`…）；可用 `huggingface_hub` 列 features 佐证。
+
+④ 交付：`doc/BaiZe-ISEDA2027/report_data_hf_imagetext_datasets_zh.html`（中文 · 自包含 · 内联 CSS · 零外链 · ≤200KB）。必需节：① HERO+TL;DR（TOP 3–5 推荐）② 口径与 bytes/url 判定法 ③ 主表（HF id · 对数 · 总大小 · image 载体证据 · caption · 语言 · 许可 · gated · 是否已用 · 推荐度）④ 三分类（✅bytes 可直接训 / ⚠️url 需抓 / ❌不可用）⑤ 下载命令模板 + 落盘路径建议 + 预估磁盘 ⑥ 与 GPIC/CC12M/Amshaker 互补性 ⑦ 风险/诚实条款。
+
+⑤ 纪律：🚫 不占 GPU · 🚫 不 kill / 不打断 en_v1_4、85M 下载 · 🚫 本令只调研+出报告，不下数据（真下载须运维二次确认）· 每条带 HF url + 访问日 · commit 前缀 `data rpt:` · 任务书 >32KB 自滚归档。
+
+> **执行结论**：唤醒404已交付 report_data_hf_imagetext_datasets_zh.html,含TOP-5推荐(WebMix-38M/wit_base/GPIC已用/the_cauldron/InternVL-SA1B)+bytes/url判定法+主表+三分类+下载模板+互补性+风险条款。归档自BAIZE_DATA_TASK.md 2026-10-14(唤醒427)。
+
+---
+
+### 🆕 运维指令 · 2026-10-13（📥 把 85M 下载从「用户自管」移交给 data 线启动 + 看护）· 用户直令 · 最高优先（归档自 BAIZE_DATA_TASK.md 2026-10-14 唤醒427）
+
+> 用户令（2026-10-13）：「把运维（用户）起的 85M 下载停掉，由 data 启动和看护这个数据下载。」
+> 背景：`mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M` 目前由用户自管进程在跑（此前 PID 1015571→555408，ppid 非 data 线），不在 data 线 kill+restart 看护纪律内，CDN 抖动崩了会静默卡住。现正式移交 data 线。
+
+① 停掉用户进程（先定位再杀）：
+1. `pgrep -af 'LLaVA-OneVision-1.5-Mid-Training-85M'`（或 `ps aux | grep 'hf download.*mvp-lab'`）定位当前 85M 进程（`hf download` 的 child，ppid 非 data 线）。
+2. `kill <pid>`（SIGTERM）→ 等 10–20s → `pgrep` 复核已退；僵死则 `kill -9`。
+3. ⚠️ 安全：`hf download` 可断点续传，杀进程不丢已下 parquet；`.incomplete` 残留见下清理。
+
+② 由 data 线重启并接管（复用你现有 en_v1_4/GPIC 的「setsid 重启续传」套路，即唤醒 33/35 处置 base/SFT-2605 的同一套）：
+1. 先核实落盘路径（`ls -d` / `du -sh`）：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`（以实测为准，若实际在别处如实记「实际路径=X」）。
+2. 清残留：`find <dir> -name '*.incomplete' -delete`（只删 `.incomplete`，勿动已下 parquet）。
+3. 重启（断点续传，绝不重下）：`setsid -f nohup hf download --repo-type dataset mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M --local-dir <dir> > /tmp/85M_dl.log 2>&1`（如需 token 照旧加 `--token <HF_TOKEN>`；并发/workers 你按「不与 en_v1_4 互相饿死」自行定，如 `HF_HUB_ENABLE_HF_TRANSFER=1` 或有限并发）。
+4. 记新 PID，写进 `MEMORY_DATA.md` 心跳，把「85M 用户自管」改为「85M data 线看护 PID=xxx」。
+
+③ 纳入看护纪律（与 en_v1_4 / GPIC 相同）：
+- 每唤醒 `pgrep` 判活；死/僵/速率趋零 → 立即 kill+重启续传（前置清 `.incomplete`），不必等运维点名。
+- 心跳逐子集报（8 子集 coyo/datacomp1b/imagenet/laioncn/mint/obelics/sa1b/zero250m 各自 file 数），重点盯 `sa1b`+`zero250m` 两个一直未开始的子集（≈9.85TB，是剩余大头）。
+- 速度/ETA 用「字节增量 + 仓库总量 46.66TB 分母」口径（延续 2026-10-10 更正；✅ 不用本地 `.metadata` 当分母）。
+- 与 en_v1_4 并行，两条各自报速度 + 注明共享带宽争用。
+
+④ 磁盘注意：`/nas_train` 现 ~85%（剩 ~32T），85M 剩余 ~17TB → 够放但告警；逼近 90% 或 85M 会越界就心跳标红 + 停 85M 等运维，🚫 不自作主张删任何数据。
+
+⑤ 完成后：85M 下满 → `du -sh` 全量核实 ≈46.66TB / 12,124 files → 心跳报「85M 完成」→ 等运维指示再决定后续打包/对齐（85M 是多模态 mid-training 数据，非 P-8 LLM 投料，⚠️ 不并入 86:10:4 混料）。
+
+> **执行结论**：唤醒405已将85M从用户自管移交data线启动+看护(PID2420118/2420132),后因用户令10-13暂停(8436/12124=69.6%),再因用户令10-14保持暂停。归档自BAIZE_DATA_TASK.md 2026-10-14(唤醒427)。
+---
+
+### 🚨 运维指令 · 2026-10-07（P0 · 两条下载线（base + GPIC）继续 / 立即重启 —— 正文口径统一为「数据下载失败需主动重启」）· 最高优先 · 用户直令（归档自 BAIZE_DATA_TASK.md 2026-10-14 唤醒427）
+
+> 用户 2026-10-07 直令：data 的两条数据下载线必须继续跑 —— base 死了 / 僵死就重启，从来没有过「拖着不动」的指令（用户原话逐字见 `run/ARCHIVE_OPERATOR_DATA.md`「2026-10-07 口径修正」块）。
+> ⇒ ① 两条下载线必须持续在跑：base（`ultrafineweb_l1_en_hq` + `ultrafineweb_zh`）+ GPIC；② 从来没有过「base 死了就拖着不动」的指令 —— 你心跳里连写的 `Base 下载: 进程已死（按指令保持不动）` 属误读，立即废止该口径。
+
+> 🔍 误读溯源（运维自查，如实说）：旧第 36 行那句 `🚫 不改白名单 / 不动下载`，本是 2026-10-03 白名单锁定时的巡检纪律，原意 =「不要擅自改白名单、不要乱动［健康的］下载」，不是「下载失败也不许重启」。2026-10-06 15:1x 用户已直令重启 base，那个 P0 块处置完后被归档进 `ARCHIVE_OPERATOR_DATA.md`（唤醒 167）⇒ 正文只剩「不动」半句，重启授权随归档一并消失。表述缺陷在运维，不在你。 完整溯源（含用户原话 + 被替换掉的旧字句原文）见归档「口径修正 · 2026-10-07」块。
+> ✅ 永久口径（即刻生效，覆盖旧表述）：数据下载失败需主动重启 —— 白名单内任一下载「失败 / 僵死 / 速率趋零 / PID 已死」⇒ 立即 `kill`（若还在）+ 重启（沿用既有 retry-loop 规程），报告里标「已重启」+ 新 PID；不再需要等运维点名。
+> 🚫 该条纪律今后只剩一种含义：不改白名单、不起白名单外的新下载；白名单内下载失败 ⇒ 按「数据下载失败需主动重启」处理，不许再写「保持不动」。
+
+> 本轮唤醒内做完（不许拖到下轮）：
+> 1. 取证：`ps -ef | grep -Ei 'hf download|huggingface-cli|hf_transfer|download_it_pairs'`（留原文）+ 两目录 `.incomplete` 计数 + 最新 mtime。
+> 2. 重启 base（`l1_en_hq` 停在 5476/6006 ≈91%、`zh` ✅ 256/256 已满）：
+>    - `--include 'data/ultrafineweb_l1_en_hq/*' 'data/ultrafineweb_zh/*'`（config 级）；🚫 绝不拉 `en_v1_4`；
+>    - retry-loop 包裹（失败 `sleep 30` 自愈 —— 你 2026-10-04 唤醒 85 用过、有效）+ `setsid nohup`（`ppid=1`）+ log `Ultra-FineWeb/download_l1_zh.log`；
+>    - ⚠️ 外网命令显式带 proxy（`.12` 用你 `~/.bashrc` 里的那个值）；
+>    - 命令原文 + 首次输出（起步 part 号）贴心跳。
+> 3. GPIC 判活（PID / `gpic_train_XXXX.tar` mtime / 24h 新增 tar 数）→ 死即重启（父 `download_it_pairs.sh` 一并核）；目标 8001 tar + test 128 ✓。
+> 4. 心跳格式（本轮起固定写一行）：`下载线：base l1_en_hq <n>/6006（+Δ, 活/已重启 PID, ETA）· zh ✅256/256 | GPIC <n>/8001（+Δ, 活/已重启 PID, ETA）`。
+> 5. P-8 关联（为什么急）：base = P-8（Stage (i) 本体）硬前置（已分词仅 22.05B tok，P-8 需 ~100B）⇒ base 下满即解锁 P-8 备料；`l1_en_hq` + `zh` 双满 ⇒ 报运维「MiniCPM5 base 族就绪」。
+
+> 纪律（不变）：🚫 不 kill 正在跑的 BO；🚫 不在 pretrain 释放前碰 GPU0-1；🚫 重 I/O 与 `.29` 抢 `/nas_train`；心跳 ≤60 min 且每步 commit + push；`TASK/MEMORY` ≤32KB。
+
+> **执行结论**：该P0块已被2026-10-14用户令暂停全部4路下载取代。base下载已完成(l1_en_hq✅+zh✅256/256),GPIC✅8160tar。永久口径「数据下载失败需主动重启」仍有效但当前为暂停态。归档自BAIZE_DATA_TASK.md 2026-10-14(唤醒427)。
