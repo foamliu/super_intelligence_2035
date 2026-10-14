@@ -3,9 +3,9 @@
 WAITING: 1
 
 > 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-14→15 glm53 7×300 任务**：**✅ codex+deepseek DONE(300/300 each) + 5 路运行中（~12.5h elapsed, 无 403/无崩溃）**。Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅（05:47 复验, 0.21s）。
+> **🆕 2026-10-14→15 glm53 7×300 任务**：**✅ codex+deepseek DONE(300/300 each) + 5 路运行中（~13.1h elapsed, 无 403/无崩溃）**。Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅（06:22 复验, 0.24s）。
 > **P1-2 rerun** ✅ DONE：rerun_blocked.py 54/54 完成（4 resolved, 42 pbf, 8 blocked）。累计 kimi 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄：codex 300/300 DONE(81,27.0%) + deepseek 300/300 DONE(71,23.7%) + 5 路运行中。**1068/2100 entries (50.9%), 300 resolved (28.1%), 764 pbf, 5 quota-blocked**。Per-harness: codex 300(81,27.0% DONE), deepseek 300(71,23.7% DONE), claude-code 84(31,36.9%), cline-patched 93(30,32.3%), hermes 121(29,24.0%), opencode 111(28,25.2%), pi 59(30,50.8%)。**🔑 关键发现（interim n=1068）：glm53 300(28.1%) ≈ kimi 299(28.0%)，McNemar b=2/c=1, chi2=0.33 (p>>0.05) → 1065/1068=99.7% 一致**。Pending: 1032/2100。ETA ~18h。load 28.0, RAM 1.8T, /dev/shm 1.5T。
+> **glm53 7×300** 🔄：codex 300/300 DONE(80,26.7%) + deepseek 300/300 DONE(71,23.7%) + 5 路运行中。**1089/2100 entries (51.9%), 300 resolved (27.5%), 784 pbf, 5 quota-blocked**。Per-harness: codex 300(80,26.7% DONE), deepseek 300(71,23.7% DONE), claude-code 86(31,36.0%), cline-patched 99(30,30.3%), hermes 127(29,22.8%), opencode 115(28,24.3%), pi 62(31,50.0%)。**🔑 关键发现（interim n=1089）：glm53 300(27.5%) ≈ kimi 299(27.5%)，McNemar b=2/c=1, chi2=0.33 (p>>0.05) → 1086/1089=99.7% 一致**。Pending: 1011/2100。ETA ~16h。load 28.5, RAM 1.9T, /dev/shm 985G。
 
 > 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
 > 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
@@ -13,10 +13,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING (1068/2100, 300 resolved, codex+deepseek DONE) + P1-2 rerun DONE (54/54)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574→621 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 403 fix ✅ + 7x300 RUNNING ✅ + run_harness.py /v1 fix ✅ · ⑪ P1-2 rerun ✅ (54/54, 4 resolved) · ⑫ interim glm53 vs kimi comparison ✅ (1068 overlap, McNemar b=2/c=1, chi2=0.33, 1065/1068=99.7% agreement)
-当前动作:     glm53 7x300 RUNNING (5 harness active + codex DONE + deepseek DONE, ~12.5h elapsed) — 1068/2100 entries (50.9%), 300 resolved (28.1%), 764 pbf, 5 quota-blocked. Per-harness: codex 300(81,27.0% DONE), deepseek 300(71,23.7% DONE), claude-code 84(31,36.9%), cline-patched 93(30,32.3%), hermes 121(29,24.0%), opencode 111(28,25.2%), pi 59(30,50.8%). curl /v1 → 200 ✅ (05:47, 0.21s). 5 PIDs alive (etimes ~45000s ~12.5h, ppid=1, stat=SNs). Interim (n=1068 overlap): glm53 300(28.1%) vs kimi 299(28.0%), both=298, b=2(glm53-only), c=1(kimi-only) → McNemar chi2=0.33, p>>0.05, 1065/1068=99.7% agreement.
-下一步:       ① Continue monitoring glm53 7x300 (ETA ~18h, 1032 remaining) ② When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html (full comparison) ③ Restore kimi configs after glm53 run
+PHASE:        glm53 7x300 RUNNING (1089/2100, 300 resolved, codex+deepseek DONE) + P1-2 rerun DONE (54/54)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574→621 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 403 fix ✅ + 7x300 RUNNING ✅ + run_harness.py /v1 fix ✅ · ⑪ P1-2 rerun ✅ (54/54, 4 resolved) · ⑫ interim glm53 vs kimi comparison ✅ (1089 overlap, McNemar b=2/c=1, chi2=0.33, 1086/1089=99.7% agreement)
+当前动作:     glm53 7x300 RUNNING (5 harness active + codex DONE + deepseek DONE, ~13.1h elapsed) — 1089/2100 entries (51.9%), 300 resolved (27.5%), 784 pbf, 5 quota-blocked. Per-harness: codex 300(80,26.7% DONE), deepseek 300(71,23.7% DONE), claude-code 86(31,36.0%), cline-patched 99(30,30.3%), hermes 127(29,22.8%), opencode 115(28,24.3%), pi 62(31,50.0%). curl /v1 → 200 ✅ (06:22, 0.24s). 5 PIDs alive (etimes ~47100s ~13.1h, ppid=1, stat=SNs). All logs active (0×403). Interim (n=1089 overlap): glm53 300(27.5%) vs kimi 299(27.5%), both=298, b=2(glm53-only), c=1(kimi-only) → McNemar chi2=0.33, p>>0.05, 1086/1089=99.7% agreement.
+下一步:       ① Continue monitoring glm53 7x300 (ETA ~16h, 1011 remaining) ② When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html (full comparison) ③ Restore kimi configs after glm53 run
 阻塞:         <无> — base URL 全部 /v1, curl 200 OK, 5 路正常运行 + codex+deepseek done, 5 quota-blocked
 ERROR_COUNT:  0
 ```
@@ -31,7 +31,8 @@ ERROR_COUNT:  0
 > 📦 R391 (2026-10-15 04:02, glm53 monitoring 980/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
 > 📦 R392 (2026-10-15 04:38, glm53 monitoring 1012/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
 > 📦 R393 (2026-10-15 05:14, glm53 monitoring 1044/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
-- [05:48] R394: glm53 7×300 monitoring — **1068/2100 (50.9%), 300 resolved (28.1%), 764 pbf, 5 qb**. codex 300/300 DONE(81,27.0%), deepseek 300/300 DONE(71,23.7%). 5 harnesses active (PIDs 3023384/3032805/3033846/3033868/3034548, etimes ~45000s ~12.5h, ppid=1, stat=SNs). **🔑 Interim (n=1068 overlap)**: glm53 300(28.1%) vs kimi 299(28.0%), both_r=298, b=2(glm53-only), c=1(kimi-only) → McNemar chi2=0.33, p>>0.05, **1065/1068=99.7% agreement**. Per-harness: pi 50.8%, claude-code 36.9%, cline-patched 32.3%, opencode 25.2%, codex 27.0%, hermes 24.0%, deepseek 23.7%. curl /v1→200 ✅ (05:47, 0.21s). +24 entries since R393 (34min). Remaining 1032, ETA ~18h. load 28.0, RAM 1.8T, /dev/shm 1.5T. 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY=28.9KB(28.1KB ✓) / 归档 0B.
+> 📦 R394 (2026-10-15 05:48, glm53 monitoring 1068/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
+- [06:23] R395: glm53 7×300 monitoring — **1089/2100 (51.9%), 300 resolved (27.5%), 784 pbf, 5 qb**. codex 300/300 DONE(80,26.7%), deepseek 300/300 DONE(71,23.7%). 5 harnesses active (PIDs 3023384/3032805/3033846/3033868/3034548, etimes ~47100s ~13.1h, ppid=1, stat=SNs, 0×403 in all logs). Per-harness: pi 62(31,50.0%), claude-code 86(31,36.0%), cline-patched 99(30,30.3%), codex 300(80,26.7% DONE), opencode 115(28,24.3%), hermes 127(29,22.8%), deepseek 300(71,23.7% DONE). **🔑 Interim (n=1089 overlap)**: glm53 300(27.5%) vs kimi 299(27.5%), both_r=298, b=2, c=1 → McNemar chi2=0.33, p>>0.05, **1086/1089=99.7% agreement**. +21 entries since R394 (35min) = ~36/h. Remaining 1011, ETA ~16h. curl /v1→200 ✅ (06:22, 0.24s). load 28.5, RAM 1.9T, /dev/shm 985G. 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY=28.9KB(28.1KB ✓) / 归档 0B.
 > 📦 R352-R385 (2026-10-13~14, 34 rounds of monitoring/fixes/reports) 已归档 → daily-memories-harness/2026-10-13.md + 2026-10-14.md + 2026-10-15.md。需要时再读。
 
 > 📦 §口径与并发 (2026-10-08⑦) 已归档 → daily-memories-harness/2026-10-08.md。**结论**：R1串行 vs R2并行已披露，workdir隔离修复holding，R2 resolve-rate下降=实例难度差异非并发污染。需要时再读。
