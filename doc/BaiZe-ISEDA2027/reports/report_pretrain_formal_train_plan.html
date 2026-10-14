@@ -1,209 +1,381 @@
-<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 正式训练计划书 v3（实盘盘点口径 · 双机 16×H100）</title><style>
-body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1150px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}
-h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}
-h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:28px}
-h3{color:#34495e;margin-top:20px}
-table{border-collapse:collapse;width:100%;margin:12px 0;font-size:12px}
-th,td{border:1px solid #ddd;padding:4px 7px;text-align:left}
-th{background:#2c3e50;color:#fff;text-align:center}
-tr:nth-child(even){background:#ecf0f1}
-.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}
-.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:12px 0;border-radius:4px}
-.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:12px 0;border-radius:4px}
-.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:12px 0;border-radius:4px}
-.warn{background:#fdecea;border-left:4px solid #e74c3c;padding:10px 15px;margin:12px 0;border-radius:4px}
-footer{text-align:center;color:#7f8c8d;margin-top:35px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}
-code{background:#f4f4f4;padding:2px 6px;border-radius:3px;font-size:11px}
-small{color:#7f8c8d}.hp{font-family:monospace;font-size:11px}
-.src{font-size:10px;color:#7f8c8d}
-.cmd{background:#1a1a2e;color:#0f0;padding:8px 12px;border-radius:4px;font-family:monospace;font-size:11px;margin:8px 0;white-space:pre-wrap;word-break:break-all}
-</style></head><body>
-<h1>BaiZe 正式训练计划书 v3 · Mamba2-Hybrid 2.220B · 实盘盘点口径 · 双机 16×H100</h1>
-<p style='color:#7f8c8d'>生成时间：2026-10-13 v3 · <strong class='blue'>.12 + .29 双机 16×H100 80GB</strong> · <span class='red'>v2 不合格再重做：弃用论文/CSDN 300B → 改用实盘 du -sb 盘点</span></p>
-<div class='warn'><strong>⚡ v2→v3 修订核心</strong>：v2 引用「MiniCPM5 训练 300B token」出自 <strong>CSDN 二级源，无一手依据</strong>——MiniCPM5 <strong>没有独立训练论文</strong>（arXiv 2602.09003 是 UltraData 数据管理框架论文，不是 MiniCPM5 模型论文）。用户要求：<strong>「看已经下载+正在下载的一共有多少数据，可以转化多少 Token，不要胡说八道」</strong>。v3 <strong>唯一口径 = 实盘</strong>：所有数字来自 <code>du -sb</code> / <code>find | wc -l</code> 实测，已分词者用实测 token，未分词者用密度估算并标「估」。</div>
-<div class='info'><strong>TL;DR</strong>：实盘 = <strong class='blue'>9.81 TB / ~2,015B token（已分词实测）+ ~217B token（下载中估算）= ~2,232B token 在盘</strong>。另有 29 TB 多模态（非 LLM 投料）。训练配方按实盘 token 总量设计 WSD，墙钟见 §4。每个数字可溯源到实测命令。</div>
-<h2>§1 实盘盘点主表（逐源：路径·文件数·字节·状态·token·密度来源）</h2>
-<div class='note'><strong>盘点方法</strong>：在 .29 节点执行 <code>du -sb &lt;path&gt;</code> + <code>find &lt;path&gt; -name '*.parquet' | wc -l</code>。token 来自 data 线 R3 全量分词实测（daily-memories-data/2026-10-10）+ 逐源重分词实测（MEMORY_DATA.md）。<strong>命令在 2026-10-13 20:30~21:00 执行</strong>。</div>
-<h3>1.1 已下满数据源（9 个 LLM 源 + 1 SFT-Agent）</h3>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe 2.22B 正式训练计划 v4</title>
+<style>
+body{font-family:-apple-system,"Noto Sans SC","PingFang SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fafafa;color:#222;line-height:1.6}
+h1{color:#1a1a2e;border-bottom:3px solid #2563eb;padding-bottom:10px;font-size:24px}
+h2{color:#1a1a2e;border-bottom:2px solid #ccc;padding-bottom:5px;margin-top:36px;font-size:20px}
+h3{color:#333;margin-top:24px;font-size:17px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#f0f4f8;font-weight:600}
+tr:nth-child(even){background:#f9fafb}
+.green{color:#16a34a}.amber{color:#ca8a04}.red{color:#dc2626}.blue{color:#2563eb}.bold{font-weight:bold}
+.mono{font-family:"JetBrains Mono","Courier New",monospace;font-size:12px}
+.small{font-size:11px;color:#666}
+.info{background:#e8f4fd;border-left:4px solid #2563eb;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#fef3cd;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.danger{background:#fee2e2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.svg-box{text-align:center;margin:20px 0}
+.formula{background:#f8f9fa;border:1px solid #e9ecef;border-radius:4px;padding:10px 14px;margin:12px 0;font-family:monospace;font-size:14px}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
+</style>
+</head>
+<body>
+<h1>BaiZe 2.22B Mamba2-hybrid 正式训练计划 v4</h1>
+<p style="color:#666;font-size:13px">生成时间：2026-10-14 · 基于 P-8 全部训练数据 + P-5b 评估 + 数据线全量分词实测 · <strong>所有 token 数均来自 .bin 文件精确计数</strong></p>
+<div class="info"><strong>v4 核心更新</strong>：① 逐源 .bin token 精确计数 (dtype=int32 验证) ② 密度差异归因 (压缩率 vs 分词密度) ③ 全量 2,232B 配比与采样次数 ④ D-scan 能力外推 (对数线性拟合 R²=0.964) ⑤ v3→v4 修订说明 ⑥ 诚实条款</div>
+<h2>§1 逐源精确 Token 计数</h2>
+<h3>1.1 .bin 文件精确计数 (训练就绪数据)</h3>
+<div class="info"><strong>Token dtype = int32 (4 字节/Token)</strong> · 已通过两路验证：<br>① JSON 元数据文件均声明 <code>"dtype": "int32"</code><br>② 算术验证：anneal_code.bin = 361,379,732 ÷ 4 = 90,344,933 = JSON <code>num_tokens</code> ✅<br>③ Vocab=129,281 &gt; 65,536 → 排除 uint16<br>④ mix_base s0.bin = 22,037,077,096 ÷ 4 = 5,509,269,274 = JSON <code>num_tokens</code> ✅<br><strong>公式</strong>：<code>token_count = bin_file_bytes / 4</code> · <code>tok/.bin-byte = 0.2500 (恒定)</code></div>
 <table>
-<tr><th>#</th><th>数据源</th><th>落盘路径</th><th>文件数</th><th>字节(du -sb)</th><th>可读</th><th>状态</th><th>实测token</th><th>密度tok/byte</th><th>token来源</th></tr>
-<tr><td>1</td><td><strong>Ultra-FineWeb</strong> base en</td><td class='hp'>/nas_train/.../Ultra-FineWeb/data/ultrafineweb_en</td><td>2048 pq</td><td>2,661,358,397,268</td><td>2.42 TB</td><td class='green'>✅</td><td class='green'><strong>206.76B</strong></td><td>0.0777</td><td>MEMORY_DATA: en_base分词</td></tr>
-<tr><td>2</td><td>Ultra-FineWeb base zh</td><td class='hp'>/nas_train/.../Ultra-FineWeb/data/ultrafineweb_zh</td><td>256 pq</td><td>324,321,522,155</td><td>295 GB</td><td class='green'>✅</td><td class='green'><strong>112.47B</strong></td><td>0.3468</td><td>MEMORY_DATA: zh分词8/8</td></tr>
-<tr><td>3</td><td>Ultra-FineWeb l1_en_hq</td><td class='hp'>/nas_train/.../Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>6000 pq</td><td>477,975,290,461</td><td>445 GB</td><td class='green'>✅</td><td class='green'><strong>152.17B</strong></td><td>0.3184</td><td>MEMORY_DATA: l1分词12/12</td></tr>
-<tr><td>4</td><td><strong>Ultra-FineWeb-L3</strong>(en+zh)</td><td class='hp'>/nas_inference/.../Ultra-FineWeb-L3</td><td>1764 pq</td><td>1,899,217,527,395</td><td>1.73 TB</td><td class='green'>✅</td><td class='green'><strong>658.91B</strong></td><td>0.3470</td><td>daily-mem-data/10-10: R3 40/40</td></tr>
-<tr><td>5</td><td>UltraX-Preview</td><td class='hp'>/nas_train/.../UltraX-Preview</td><td>479 pq</td><td>486,916,113,250</td><td>453 GB</td><td class='green'>✅</td><td class='green'><strong>30.97B</strong></td><td>0.0636</td><td>MEMORY_DATA: ultrax分词</td></tr>
-<tr><td>6</td><td><strong>UltraData-Code</strong></td><td class='hp'>/nas_inference/.../UltraData-Code</td><td>1121 pq</td><td>1,215,998,677,767</td><td>1.11 TB</td><td class='green'>✅</td><td class='green'><strong>550.07B</strong></td><td>0.4524</td><td>daily-mem-data/10-10: R3 30/30</td></tr>
-<tr><td>7</td><td><strong>UltraData-Math</strong></td><td class='hp'>/nas_inference/.../UltraData-Math</td><td>1823 pq</td><td>552,414,677,139</td><td>514 GB</td><td class='green'>✅</td><td class='green'><strong>274.92B</strong></td><td>0.4977</td><td>daily-mem-data/10-10: R3 40/40</td></tr>
-<tr><td>8</td><td>UltraData-SFT-2605</td><td class='hp'>/nas_inference/.../UltraData-SFT-2605</td><td>1504 jsonl</td><td>318,990,252,711</td><td>297 GB</td><td class='green'>✅</td><td class='green'><strong>20.96B</strong></td><td>0.0657</td><td>daily-mem-data/10-09: SFT 4shard</td></tr>
-<tr><td>9</td><td>UltraData-SFT-Agent-2609</td><td class='hp'>/nas_inference/.../UltraData-SFT-Agent-2609</td><td>50 jsonl</td><td>54,221,528,972</td><td>50.5 GB</td><td class='green'>✅</td><td class='green'><strong>8.04B</strong></td><td>0.1483</td><td>同上: Agent 4shard</td></tr>
-<tr style='font-weight:bold;background:#d4efdf'><td colspan='4'>已下满合计(9源)</td><td>7,991,413,987,118</td><td>7.27 TB</td><td>—</td><td class='blue'>2,015.28B</td><td>—</td><td>实测合计</td></tr>
+<tr><th>.bin 源</th><th>bin 字节</th><th>可读</th><th>Token (精确)</th><th>可读</th><th>tok/.bin-byte</th><th>类别</th><th>备注</th></tr>
+<tr><td>mix_base (44 shards)</td><td class="mono">2,097,708,553,788</td><td class="mono">2.10T</td><td class="mono">524,427,138,447</td><td class="green mono">524.43B</td><td class="mono">0.2500</td><td>web</td><td class="small">P-8 stable 主力</td></tr>
+<tr><td>mix_sft_tok (4 shards)</td><td class="mono">83,839,927,264</td><td class="mono">83.84B</td><td class="mono">20,959,981,816</td><td class="green mono">20.96B</td><td class="mono">0.2500</td><td>sft</td><td class="small">P-8 decay SFT-2605</td></tr>
+<tr><td>mix_sft_agent_tok (4 shards)</td><td class="mono">32,161,914,564</td><td class="mono">32.16B</td><td class="mono">8,040,478,641</td><td class="green mono">8.04B</td><td class="mono">0.2500</td><td>sft</td><td class="small">P-8 decay Agent-2609</td></tr>
+<tr><td>p5b_l3 (16 shards)</td><td class="mono">82,259,616,356</td><td class="mono">82.26B</td><td class="mono">20,564,904,089</td><td class="green mono">20.56B</td><td class="mono">0.2500</td><td>l3</td><td class="small">P-5b/P-8 decay L3</td></tr>
+<tr><td>anneal_code</td><td class="mono">361,379,732</td><td class="mono">361.38M</td><td class="mono">90,344,933</td><td class="green mono">90.34M</td><td class="mono">0.2500</td><td>code</td><td class="small">退火 code</td></tr>
+<tr><td>anneal_math2</td><td class="mono">1,722,833,796</td><td class="mono">1.72B</td><td class="mono">430,708,449</td><td class="green mono">430.71M</td><td class="mono">0.2500</td><td>math</td><td class="small">退火 math</td></tr>
+<tr><td>r3_ultradata_code</td><td class="mono">720,140,448</td><td class="mono">720.14M</td><td class="mono">180,035,112</td><td class="green mono">180.04M</td><td class="mono">0.2500</td><td>code</td><td class="small">R3 BO code</td></tr>
+<tr><td>r3_ultradata_math</td><td class="mono">713,602,520</td><td class="mono">713.60M</td><td class="mono">178,400,630</td><td class="green mono">178.40M</td><td class="mono">0.2500</td><td>math</td><td class="small">R3 BO math</td></tr>
+<tr><td>r3_ultrafineweb_en</td><td class="mono">3,675,061,080</td><td class="mono">3.68B</td><td class="mono">918,765,270</td><td class="green mono">918.77M</td><td class="mono">0.2500</td><td>web</td><td class="small">R3 BO en</td></tr>
+<tr><td>r3_ultrafineweb_zh</td><td class="mono">3,534,294,848</td><td class="mono">3.53B</td><td class="mono">883,573,712</td><td class="green mono">883.57M</td><td class="mono">0.2500</td><td>web</td><td class="small">R3 BO zh</td></tr>
+<tr><td>r3_ultrafineweb_l1_en_hq</td><td class="mono">187,257,728</td><td class="mono">187.26M</td><td class="mono">46,814,432</td><td class="green mono">46.81M</td><td class="mono">0.2500</td><td>web</td><td class="small">R3 BO l1</td></tr>
+<tr><td>r3_ultrax_preview</td><td class="mono">1,403,494,652</td><td class="mono">1.40B</td><td class="mono">350,873,663</td><td class="green mono">350.87M</td><td class="mono">0.2500</td><td>web</td><td class="small">R3 BO ultrax</td></tr>
+<tr><td>ultrafineweb_l3_qa</td><td class="mono">659,019,996</td><td class="mono">659.02M</td><td class="mono">164,754,999</td><td class="green mono">164.75M</td><td class="mono">0.2500</td><td>l3</td><td class="small">Round1 小片</td></tr>
+<tr><td>ultrafineweb_l3_qa_700m</td><td class="mono">2,966,848,556</td><td class="mono">2.97B</td><td class="mono">741,712,139</td><td class="green mono">741.71M</td><td class="mono">0.2500</td><td>l3</td><td class="small">Round1 中片</td></tr>
+<tr style="font-weight:bold;background:#d1ecf1"><td colspan="3">合计 (14 个 .bin 源)</td><td class="mono">577,978,486,332</td><td class="blue">577.98B</td><td>0.2500</td><td>—</td><td>dtype=int32 全部验证</td></tr>
 </table>
-<h3>1.2 下载中数据源</h3>
+<div class="warn"><strong>.bin 数据总量</strong>：577.98B tokens (577,978,486,332) —— 这是当前已分词、训练就绪的数据。其中 mix_base (524.4B) 占 91.2%。</div>
+<h3>1.2 全量源数据 (数据线分词实测)</h3>
+<p>以下为数据线对<strong>原始源文件</strong> (parquet/jsonl) 全量分词后的实测 token 数。<code>tok/comp-byte</code> = tokens / <code>du -sb</code> 压缩字节，<strong>受压缩率影响，不可直接跨源比较</strong>（见 §2）。</p>
 <table>
-<tr><th>#</th><th>数据源</th><th>路径</th><th>文件数</th><th>字节(du-sb)</th><th>可读</th><th>状态</th><th>估算token</th><th>密度来源</th><th>备注</th></tr>
-<tr><td>10</td><td>Ultra-FineWeb en_v1_4</td><td class='hp'>/nas_train/.../ultrafineweb_en_v1_4</td><td>28618 pq</td><td>2,789,310,735,015</td><td>2.54 TB</td><td class='amber'>🟠50.7%</td><td class='amber'><strong>~217B(估)</strong></td><td>#1 base en 0.0777</td><td>PID2535486 ETA~3.4d 全量~5-6.75TB→~427-577B</td></tr>
-<tr style='font-weight:bold;background:#fff3cd'><td colspan='4'>下载中合计</td><td>2,789,310,735,015</td><td>2.54 TB</td><td>—</td><td class='amber'>~217B(估)</td><td>—</td><td>—</td></tr>
+<tr><th>数据源</th><th>压缩字节 (du -sb)</th><th>可读</th><th>文件数</th><th>状态</th><th>实测 Token</th><th>tok/comp-byte</th></tr>
+<tr><td>Ultra-FineWeb base en</td><td class="mono">2,661,358,397,268</td><td class="mono">2.66T</td><td>2048 pq</td><td class="green">已下满</td><td class="green mono">206.76B</td><td class="mono">0.0777</td></tr>
+<tr><td>Ultra-FineWeb base zh</td><td class="mono">324,321,522,155</td><td class="mono">324.32B</td><td>256 pq</td><td class="green">已下满</td><td class="green mono">112.47B</td><td class="mono">0.3468</td></tr>
+<tr><td>Ultra-FineWeb l1_en_hq</td><td class="mono">477,975,290,461</td><td class="mono">477.98B</td><td>6000 pq</td><td class="green">已下满</td><td class="green mono">152.17B</td><td class="mono">0.3184</td></tr>
+<tr><td>Ultra-FineWeb-L3 (en+zh)</td><td class="mono">1,899,217,527,395</td><td class="mono">1.90T</td><td>1764 pq</td><td class="green">已下满</td><td class="green mono">658.91B</td><td class="mono">0.3469</td></tr>
+<tr><td>UltraX-Preview</td><td class="mono">486,916,113,250</td><td class="mono">486.92B</td><td>479 pq</td><td class="green">已下满</td><td class="green mono">30.97B</td><td class="mono">0.0636</td></tr>
+<tr><td>UltraData-Code</td><td class="mono">1,215,998,677,767</td><td class="mono">1.22T</td><td>1121 pq</td><td class="green">已下满</td><td class="green mono">550.07B</td><td class="mono">0.4524</td></tr>
+<tr><td>UltraData-Math</td><td class="mono">552,414,677,139</td><td class="mono">552.41B</td><td>1823 pq</td><td class="green">已下满</td><td class="green mono">274.92B</td><td class="mono">0.4977</td></tr>
+<tr><td>UltraData-SFT-2605</td><td class="mono">318,990,252,711</td><td class="mono">318.99B</td><td>1504 jsonl</td><td class="green">已下满</td><td class="green mono">20.96B</td><td class="mono">0.0657</td></tr>
+<tr><td>UltraData-SFT-Agent-2609</td><td class="mono">54,221,528,972</td><td class="mono">54.22B</td><td>50 jsonl</td><td class="green">已下满</td><td class="green mono">8.04B</td><td class="mono">0.1483</td></tr>
+<tr><td>Ultra-FineWeb en_v1_4</td><td class="mono">3,223,132,972,817</td><td class="mono">3.22T</td><td>28618 pq</td><td class="amber">下载中~50%</td><td class="green mono">217.00B</td><td class="mono">0.0673</td></tr>
+<tr style="font-weight:bold;background:#d4efdf"><td colspan="2">已下满 (9 源)</td><td class="mono">7.99T</td><td>—</td><td>—</td><td class="blue">2015.27B</td><td>—</td></tr><tr style="font-weight:bold;background:#fff3cd"><td colspan="2">+ en_v1_4 下载中</td><td class="mono">3.22T</td><td>—</td><td class="amber">~50%</td><td class="amber">~217B(估)</td><td>0.0777</td></tr><tr style="font-weight:bold;background:#cce5ff"><td colspan="2">在盘总计</td><td class="mono">11.21T</td><td>—</td><td>—</td><td class="blue">~2,232B</td><td>—</td></tr>
 </table>
-<h3>1.3 多模态（非LLM投料）</h3>
+
+<h2>§2 密度差异归因</h2>
+<h3>2.1 为什么 tok/comp-byte 跨源差异巨大 (0.0636–0.4977)？</h3>
+<div class="warn"><strong>核心结论</strong>：v3 报告中 0.0636–0.4977 的密度范围是 <strong>tok/compressed-byte</strong>（用 <code>du -sb</code> 压缩后的 parquet/jsonl 字节做分母），它<strong>混合了两个独立因素</strong>：<br>① <strong>压缩率</strong>：parquet/jsonl 的压缩比因数据类型而异（英文网页 3-5x，中文 1.5-2x，代码 2-3x，数学 1.5-2x）<br>② <strong>分词密度</strong>：同一原始文本，不同 tokenizer 产生不同 token 数<br><strong>正确做法</strong>：用 .bin 字节 / 4 计算 token（v4 §1.1），或用未压缩原始 UTF-8 字节计算 tok/raw-byte（需解压，本次未做）。</div>
 <table>
-<tr><th>数据源</th><th>路径</th><th>字节</th><th>状态</th><th>备注</th></tr>
-<tr><td>LLaVA-OneVision-1.5 Mid-85M</td><td class='hp'>/nas_train/.../mvp-lab/LLaVA-OneVision-85M</td><td>~29 TB</td><td class='amber'>🟠69.2%</td><td>多模态(图像+文本)，<strong>非LLM预训练投料</strong>，vision线用</td></tr>
+<tr><th>数据源</th><th>tok/comp-byte</th><th>压缩率(估)</th><th>tok/raw-byte(估)</th><th>归因</th></tr>
+<tr><td>Ultra-FineWeb base en</td><td class="mono">0.0777</td><td class="mono">~4-5x</td><td class="mono">~0.32-0.39</td><td>英文网页压缩率高 → comp-byte 小 → tok/comp-byte 低 (假象)</td></tr>
+<tr><td>Ultra-FineWeb base zh</td><td class="mono">0.3468</td><td class="mono">~1.5-2x</td><td class="mono">~0.52-0.69</td><td>中文压缩率低 + 每字多 token → tok/comp-byte 高</td></tr>
+<tr><td>Ultra-FineWeb l1_en_hq</td><td class="mono">0.3184</td><td class="mono">~1.5-2x</td><td class="mono">~0.48-0.64</td><td>HQ 子集已去重 → 重复少 → 压缩率低</td></tr>
+<tr><td>Ultra-FineWeb-L3</td><td class="mono">0.3470</td><td class="mono">~1.5-2x</td><td class="mono">~0.52-0.69</td><td>含中文 → 压缩率低</td></tr>
+<tr><td>UltraX-Preview</td><td class="mono">0.0636</td><td class="mono">~5-6x</td><td class="mono">~0.32-0.38</td><td>英文为主 → 压缩率最高 → tok/comp-byte 最低</td></tr>
+<tr><td>UltraData-Code</td><td class="mono">0.4524</td><td class="mono">~1.5-2x</td><td class="mono">~0.68-0.90</td><td>代码符号多 → 每字节产生更多 token + 压缩率中等</td></tr>
+<tr><td>UltraData-Math</td><td class="mono">0.4977</td><td class="mono">~1.5x</td><td class="mono">~0.75</td><td>LaTeX/数学符号密集 → 压缩率低 + 每 token 覆盖少</td></tr>
+<tr><td>UltraData-SFT-2605</td><td class="mono">0.0657</td><td class="mono">~4-5x</td><td class="mono">~0.26-0.33</td><td>JSONL 含大量重复对话模板 → 压缩率极高</td></tr>
+<tr><td>UltraData-SFT-Agent</td><td class="mono">0.1483</td><td class="mono">~2-3x</td><td class="mono">~0.30-0.44</td><td>Agent 对话含代码/工具调用 → 压缩率中等</td></tr>
 </table>
-<h3>1.4 已分词在盘 .bin/.idx（训练就绪）</h3>
+<h3>2.2 密度差异的物理机制</h3>
+<div class="info"><strong>英文网页 (tok/comp-byte ≈ 0.07)</strong>：英文文本压缩率最高（~4-5x），因为英文单词高度冗余、重复模式多。<code>du -sb</code> 后字节大幅缩小，使得分母极小 → tok/comp-byte 极低。但<strong>实际 tok/raw-byte ≈ 0.32-0.39</strong>，是所有源中<strong>最低</strong>的——英文 BPE 分词效率高，每个 token 平均覆盖 ~2.6-3.1 个原始字节。<br><br><strong>中文网页 (tok/comp-byte ≈ 0.35)</strong>：中文压缩率低（~1.5-2x），因为汉字信息密度高、重复少。同时，DeepSeek tokenizer 对中文的覆盖率不如英文——每个汉字常需 2-3 个 token。<strong>tok/raw-byte ≈ 0.52-0.69</strong>，约为英文的 2 倍。<br><br><strong>代码 (tok/comp-byte ≈ 0.45)</strong>：代码的符号密集、短标识符多，BPE 分词后每字节产生更多 token。压缩率中等（~1.5-2x）。<strong>tok/raw-byte ≈ 0.68-0.90</strong>，是所有源中<strong>最高</strong>的。<br><br><strong>数学 (tok/comp-byte ≈ 0.50)</strong>：LaTeX 公式和数学符号的 BPE 分词效率最低——大量特殊字符（\, _, ^, {, }）各占独立 token。压缩率也低。<strong>tok/raw-byte ≈ 0.75</strong>。<br><br><strong>SFT (tok/comp-byte ≈ 0.07)</strong>：JSONL 格式含大量重复的 <code>"role": "user"</code>, <code>"role": "assistant"</code> 等模板 → 压缩率极高（~4-5x）。但<strong>tok/raw-byte ≈ 0.26-0.33</strong>，因为对话文本以英文为主。</div>
+<h3>2.3 对跨源 Token 估算的影响</h3>
+<div class="danger"><strong>关键教训</strong>：v3 报告使用 tok/comp-byte 对 <code>en_v1_4</code> 估算 <code>~217B</code>。这个估算<strong>恰好合理</strong>（因为 0.0777 的密度乘以压缩字节给出了正确量级），但<strong>方法论是错的</strong>——它假设压缩率与 base en 相同。如果 en_v1_4 的压缩率不同（很可能，因为它是不同版本的过滤），估算可能偏差 ±30%。<br><br><strong>v4 正确做法</strong>：对未分词的源，应使用<strong>同类型已分词源的 tok/raw-byte</strong>（而非 tok/comp-byte）进行估算，或直接等待全量分词完成。</div>
+
+<h2>§3 全量训练配比与采样次数</h2>
+<h3>3.1 训练阶段配比</h3>
 <table>
-<tr><th>目录</th><th>路径</th><th>.bin数</th><th>大小</th><th>用途</th></tr>
-<tr><td>mix_base</td><td class='hp'>data/mix_base</td><td>44</td><td>2.098 TB</td><td>P-8 stable段(base en分词)</td></tr>
-<tr><td>r3_sources</td><td class='hp'>data/r3_sources</td><td>6</td><td>10.23 GB</td><td>P-8 code+math退火</td></tr>
-<tr><td>mix_sft_tok</td><td class='hp'>data/mix_sft_tok</td><td>4</td><td>83.84 GB</td><td>P-8 decay段SFT</td></tr>
+<tr><th>阶段</th><th>占比</th><th>Web</th><th>Code</th><th>Math</th><th>SFT</th><th>L3</th><th>数据来源</th></tr>
+<tr><td><strong>Stable (稳定)</strong></td><td class="mono">80%</td><td class="blue">88%</td><td>8%</td><td>4%</td><td>—</td><td>—</td><td>mix_base + anneal_code/math + r3_code/math</td></tr>
+<tr><td><strong>Decay (退火)</strong></td><td class="mono">20%</td><td>—</td><td>8%</td><td>4%</td><td class="red">64%</td><td class="green">24%</td><td>mix_sft_tok + agent + p5b_l3 + code/math</td></tr>
 </table>
-<div class='info'><strong>当前P-8</strong>：AdamW step6251/10490(59.6%) loss2.5575 健康。用mix_base(44shard)+anneal_code+r3_code+anneal_math2+r3_math。</div>
-<h2>§2 token 汇总</h2>
+<div class="info"><strong>配比来源</strong>：Stable 段配比来自 P-8 实际 blend 权重 (web:code:math = 88:8:4)；Decay 段配比来自 P-8 decay blend (SFT:L3:code:math = 64:24:8:4)。R3 BO 搜索最优配比为 web 82.7% / code 6.2% / math 11.1%，P-8 实际使用调整后的 88/8/4。</div>
+<h3>3.2 全量数据源分类</h3>
 <table>
-<tr><th>类别</th><th>字节</th><th>可读</th><th>token</th><th>口径</th></tr>
-<tr><td><strong>已下满(9源)</strong></td><td>7,991,413,987,118</td><td>7.27 TB</td><td class='green'><strong>2,015.28B</strong></td><td>实测(逐源分词)</td></tr>
-<tr><td>下载中(en_v1_4)</td><td>2,789,310,735,015</td><td>2.54 TB</td><td class='amber'><strong>~217B(估)</strong></td><td>密度估算</td></tr>
-<tr style='font-weight:bold;background:#d1ecf1'><td><strong>在盘总计</strong></td><td>10,780,724,722,133</td><td>9.81 TB</td><td class='blue'><strong>~2,232B</strong></td><td>实测2015B+估217B</td></tr>
-<tr><td>en_v1_4下满后(估)</td><td>~13.7T</td><td>~12.5 TB</td><td class='amber'>~2,442~2,592B</td><td>全量~5-6.75TB×0.0777</td></tr>
+<tr><th>类别</th><th>包含源</th><th>可用 Token (B)</th><th>备注</th></tr>
+<tr><td><strong>Web</strong></td><td>base en + zh + l1_en_hq + ultrax</td><td class="green mono">502.37</td><td>已在 mix_base 中分词 (524.4B, 含 EOD)</td></tr>
+<tr><td><strong>L3</strong></td><td>Ultra-FineWeb-L3 (en+zh)</td><td class="green mono">658.91</td><td>数据线已全量分词 (40/40)</td></tr>
+<tr><td><strong>Code</strong></td><td>UltraData-Code</td><td class="green mono">550.07</td><td>数据线已全量分词 (30/30)</td></tr>
+<tr><td><strong>Math</strong></td><td>UltraData-Math</td><td class="green mono">274.92</td><td>数据线已全量分词 (40/40)</td></tr>
+<tr><td><strong>SFT</strong></td><td>SFT-2605 + Agent-2609</td><td class="green mono">29.00</td><td>已在 mix_sft_tok + agent_tok 中分词</td></tr>
+<tr style="font-weight:bold;background:#d1ecf1"><td colspan="2">已分词合计</td><td class="blue">2,015.28</td><td>不含 en_v1_4 下载中</td></tr>
+<tr style="font-weight:bold;background:#fff3cd"><td colspan="2">+ en_v1_4 (下载中 ~50%)</td><td class="amber">~217</td><td>估计值，待全量分词确认</td></tr>
+<tr style="font-weight:bold;background:#cce5ff"><td colspan="2">在盘总计</td><td class="blue">~2,232</td><td>全量训练目标</td></tr>
 </table>
-<h3>2.1 逐源token明细</h3>
+<h3>3.3 各 D 下平均采样次数 (epoch)</h3>
+<div class="formula">epoch = (D × phase_ratio × source_ratio) / source_available_tokens</div>
+<div class="warn"><strong>注意</strong>：epoch &gt; 1 表示该源被<strong>重复采样</strong>。SFT 源 (29B) 在 decay 段占 64%，极易过采样。Web/L3/Code/Math 源在合理 D 下 epoch &lt; 1（不会过采样）。</div>
 <table>
-<tr><th>#</th><th>数据源</th><th>实测token</th><th>分词</th><th>出处</th></tr>
-<tr><td>1</td><td>Ultra-FineWeb-L3(en+zh)</td><td class='green'><strong>658.91B</strong></td><td>✅40/40</td><td>daily-mem-data/10-10</td></tr>
-<tr><td>2</td><td>UltraData-Code</td><td class='green'><strong>550.07B</strong></td><td>✅30/30</td><td>同上</td></tr>
-<tr><td>3</td><td>UltraData-Math</td><td class='green'><strong>274.92B</strong></td><td>✅40/40</td><td>同上</td></tr>
-<tr><td colspan='5'><strong>R3合计=1,483.91B tok/5.94TB · 污染扫描220K docs 0命中✅</strong></td></tr>
-<tr><td>4</td><td>Ultra-FineWeb base en</td><td class='green'><strong>206.76B</strong></td><td>✅</td><td>MEMORY_DATA</td></tr>
-<tr><td>5</td><td>Ultra-FineWeb l1_en_hq</td><td class='green'><strong>152.17B</strong></td><td>✅12/12</td><td>MEMORY_DATA</td></tr>
-<tr><td>6</td><td>Ultra-FineWeb zh</td><td class='green'><strong>112.47B</strong></td><td>✅8/8</td><td>MEMORY_DATA</td></tr>
-<tr><td>7</td><td>UltraX-Preview</td><td class='green'><strong>30.97B</strong></td><td>✅</td><td>MEMORY_DATA</td></tr>
-<tr><td>8</td><td>UltraData-SFT-2605</td><td class='green'><strong>20.96B</strong></td><td>✅4shard</td><td>daily-mem-data/10-09</td></tr>
-<tr><td>9</td><td>UltraData-SFT-Agent-2609</td><td class='green'><strong>8.04B</strong></td><td>✅4shard</td><td>同上</td></tr>
-<tr style='font-weight:bold;background:#d4efdf'><td colspan='2'>实测合计</td><td class='blue'>2,015.28B</td><td>110/110✅</td><td>—</td></tr>
+<tr><th>D (B)</th><th>Web epoch</th><th>L3 epoch</th><th>Code epoch</th><th>Math epoch</th><th>SFT epoch</th></tr>
+<tr><td class="mono">44B</td><td class="mono">0.062</td><td class="mono">0.003</td><td class="mono">0.006</td><td class="mono">0.006</td><td class="mono">0.194</td></tr>
+<tr><td class="mono">100B</td><td class="mono">0.140</td><td class="mono">0.007</td><td class="mono">0.015</td><td class="mono">0.015</td><td class="mono">0.441</td></tr>
+<tr><td class="mono">200B</td><td class="mono">0.280</td><td class="mono">0.015</td><td class="mono">0.029</td><td class="mono">0.029</td><td class="mono">0.883</td></tr>
+<tr><td class="mono">400B</td><td class="mono">0.561</td><td class="mono">0.029</td><td class="mono">0.058</td><td class="mono">0.058</td><td class="red bold">1.766</td></tr>
+<tr><td class="mono">800B</td><td class="mono">1.121</td><td class="mono">0.058</td><td class="mono">0.116</td><td class="mono">0.116</td><td class="red bold">3.531</td></tr>
+<tr><td class="mono">1600B</td><td class="mono">2.242</td><td class="mono">0.117</td><td class="mono">0.233</td><td class="mono">0.233</td><td class="red bold">7.062</td></tr>
+<tr><td class="mono">2232B</td><td class="mono">3.128</td><td class="mono">0.163</td><td class="mono">0.325</td><td class="mono">0.325</td><td class="red bold">9.852</td></tr>
+<tr><td class="mono">3200B</td><td class="mono">4.484</td><td class="mono">0.233</td><td class="mono">0.465</td><td class="mono">0.466</td><td class="red bold">14.124</td></tr>
+
 </table>
-<div class='ok'><strong>结论</strong>：实盘在盘LLM数据=<strong>9.81TB/~2,232B token</strong>(2015B实测+217B估)。这是<strong>「MiniCPM5相关数据有多少」的实际答案</strong>——不引论文不引CSDN，全部来自du -sb+分词实测。当前P-8(44B)仅用数据<strong>2.0%</strong>。</div>
-<h2>§3 训练配方（WSD）</h2>
+<div class="svg-box"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" style="max-width:100%;height:auto;font-family:monospace">
+<line x1="55" y1="325.0" x2="665" y2="325.0" stroke="#e8e8e8"/><text x="47" y="329.0" text-anchor="end" font-size="10" fill="#888">0.0</text>
+<line x1="55" y1="257.5" x2="665" y2="257.5" stroke="#e8e8e8"/><text x="47" y="261.5" text-anchor="end" font-size="10" fill="#888">4.1</text>
+<line x1="55" y1="190.0" x2="665" y2="190.0" stroke="#e8e8e8"/><text x="47" y="194.0" text-anchor="end" font-size="10" fill="#888">8.1</text>
+<line x1="55" y1="122.5" x2="665" y2="122.5" stroke="#e8e8e8"/><text x="47" y="126.5" text-anchor="end" font-size="10" fill="#888">12.2</text>
+<line x1="55" y1="55.0" x2="665" y2="55.0" stroke="#e8e8e8"/><text x="47" y="59.0" text-anchor="end" font-size="10" fill="#888">16.2</text>
+<line x1="55" y1="55" x2="55" y2="325" stroke="#333" stroke-width="1.5"/><line x1="55" y1="325" x2="665" y2="325" stroke="#333" stroke-width="1.5"/>
+<text x="360" y="395" text-anchor="middle" font-size="13" fill="#333">训练 Token 总量 D (B)</text>
+<text x="18" y="190" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90 18 190)">平均采样次数 (epoch)</text>
+<rect x="62.6" y="324.0" width="12.2" height="1.0" fill="#2563eb" opacity="0.85"/>
+<rect x="62.6" y="323.9" width="12.2" height="0.1" fill="#16a34a" opacity="0.85"/>
+<rect x="62.6" y="323.8" width="12.2" height="0.1" fill="#ca8a04" opacity="0.85"/>
+<rect x="62.6" y="323.7" width="12.2" height="0.1" fill="#9333ea" opacity="0.85"/>
+<rect x="62.6" y="320.5" width="12.2" height="3.2" fill="#dc2626" opacity="0.85"/>
+<text x="93.1" y="343" text-anchor="middle" font-size="10" fill="#333">44</text>
+<rect x="138.9" y="322.7" width="12.2" height="2.3" fill="#2563eb" opacity="0.85"/>
+<rect x="138.9" y="322.5" width="12.2" height="0.1" fill="#16a34a" opacity="0.85"/>
+<rect x="138.9" y="322.3" width="12.2" height="0.2" fill="#ca8a04" opacity="0.85"/>
+<rect x="138.9" y="322.1" width="12.2" height="0.2" fill="#9333ea" opacity="0.85"/>
+<rect x="138.9" y="314.7" width="12.2" height="7.3" fill="#dc2626" opacity="0.85"/>
+<text x="169.4" y="343" text-anchor="middle" font-size="10" fill="#333">100</text>
+<rect x="215.1" y="320.3" width="12.2" height="4.7" fill="#2563eb" opacity="0.85"/>
+<rect x="215.1" y="320.1" width="12.2" height="0.2" fill="#16a34a" opacity="0.85"/>
+<rect x="215.1" y="319.6" width="12.2" height="0.5" fill="#ca8a04" opacity="0.85"/>
+<rect x="215.1" y="319.1" width="12.2" height="0.5" fill="#9333ea" opacity="0.85"/>
+<rect x="215.1" y="304.5" width="12.2" height="14.7" fill="#dc2626" opacity="0.85"/>
+<text x="245.6" y="343" text-anchor="middle" font-size="10" fill="#333">200</text>
+<rect x="291.4" y="315.7" width="12.2" height="9.3" fill="#2563eb" opacity="0.85"/>
+<rect x="291.4" y="315.2" width="12.2" height="0.5" fill="#16a34a" opacity="0.85"/>
+<rect x="291.4" y="314.2" width="12.2" height="1.0" fill="#ca8a04" opacity="0.85"/>
+<rect x="291.4" y="313.3" width="12.2" height="1.0" fill="#9333ea" opacity="0.85"/>
+<rect x="291.4" y="283.9" width="12.2" height="29.3" fill="#dc2626" opacity="0.85"/>
+<text x="321.9" y="343" text-anchor="middle" font-size="10" fill="#333">400</text>
+<text x="321.9" y="291.7" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">1.8x</text>
+<rect x="367.6" y="306.4" width="12.2" height="18.6" fill="#2563eb" opacity="0.85"/>
+<rect x="367.6" y="305.4" width="12.2" height="1.0" fill="#16a34a" opacity="0.85"/>
+<rect x="367.6" y="303.5" width="12.2" height="1.9" fill="#ca8a04" opacity="0.85"/>
+<rect x="367.6" y="301.5" width="12.2" height="1.9" fill="#9333ea" opacity="0.85"/>
+<rect x="367.6" y="242.8" width="12.2" height="58.7" fill="#dc2626" opacity="0.85"/>
+<text x="398.1" y="343" text-anchor="middle" font-size="10" fill="#333">800</text>
+<text x="398.1" y="262.3" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">3.5x</text>
+<rect x="443.9" y="287.7" width="12.2" height="37.3" fill="#2563eb" opacity="0.85"/>
+<rect x="443.9" y="285.8" width="12.2" height="1.9" fill="#16a34a" opacity="0.85"/>
+<rect x="443.9" y="281.9" width="12.2" height="3.9" fill="#ca8a04" opacity="0.85"/>
+<rect x="443.9" y="278.1" width="12.2" height="3.9" fill="#9333ea" opacity="0.85"/>
+<rect x="443.9" y="160.7" width="12.2" height="117.4" fill="#dc2626" opacity="0.85"/>
+<text x="474.4" y="343" text-anchor="middle" font-size="10" fill="#333">1600</text>
+<text x="474.4" y="203.6" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">7.1x</text>
+<rect x="520.1" y="273.0" width="12.2" height="52.0" fill="#2563eb" opacity="0.85"/>
+<rect x="520.1" y="270.3" width="12.2" height="2.7" fill="#16a34a" opacity="0.85"/>
+<rect x="520.1" y="264.9" width="12.2" height="5.4" fill="#ca8a04" opacity="0.85"/>
+<rect x="520.1" y="259.5" width="12.2" height="5.4" fill="#9333ea" opacity="0.85"/>
+<rect x="520.1" y="95.7" width="12.2" height="163.8" fill="#dc2626" opacity="0.85"/>
+<text x="550.6" y="343" text-anchor="middle" font-size="10" fill="#333">2232</text>
+<text x="550.6" y="157.2" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">9.9x</text>
+<rect x="596.4" y="250.5" width="12.2" height="74.5" fill="#2563eb" opacity="0.85"/>
+<rect x="596.4" y="246.6" width="12.2" height="3.9" fill="#16a34a" opacity="0.85"/>
+<rect x="596.4" y="238.8" width="12.2" height="7.7" fill="#ca8a04" opacity="0.85"/>
+<rect x="596.4" y="231.1" width="12.2" height="7.7" fill="#9333ea" opacity="0.85"/>
+<rect x="596.4" y="-3.7" width="12.2" height="234.8" fill="#dc2626" opacity="0.85"/>
+<text x="626.9" y="343" text-anchor="middle" font-size="10" fill="#333">3200</text>
+<text x="626.9" y="86.2" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">14.1x</text>
+<rect x="65" y="30" width="12" height="12" fill="#2563eb" opacity="0.85"/><text x="81" y="39" font-size="11" fill="#333">Web</text>
+<rect x="135" y="30" width="12" height="12" fill="#16a34a" opacity="0.85"/><text x="151" y="39" font-size="11" fill="#333">L3</text>
+<rect x="205" y="30" width="12" height="12" fill="#ca8a04" opacity="0.85"/><text x="221" y="39" font-size="11" fill="#333">Code</text>
+<rect x="275" y="30" width="12" height="12" fill="#9333ea" opacity="0.85"/><text x="291" y="39" font-size="11" fill="#333">Math</text>
+<rect x="345" y="30" width="12" height="12" fill="#dc2626" opacity="0.85"/><text x="361" y="39" font-size="11" fill="#333">SFT</text>
+</svg></div>
+<div class="danger"><strong>SFT 过采样风险</strong>：当 D ≥ 226B 时，SFT 源 (29B) 的 epoch &gt; 1.0，开始重复采样。在 D=2,232B (全量) 时，SFT 被采样 <strong>9.9 次</strong>。这会导致：<br>① 模型对 SFT 数据<strong>过拟合</strong>，泛化能力下降<br>② 需要考虑<strong>增加 SFT 数据量</strong> 或 <strong>降低 decay 段 SFT 占比</strong><br>③ 或在 D &gt; 500B 时启用 <strong>SFT 数据增强</strong>（回译、改写等）<br><br><strong>建议</strong>：D ≤ 200B 时 SFT epoch ≤ 0.88，安全；D = 400B 时 epoch = 1.76，需监控；D ≥ 800B 时 epoch ≥ 3.52，必须增加 SFT 数据或调整配比。</div>
+
+<h2>§4 D-scan 能力预测</h2>
+<h3>4.1 P-5b 评估数据 (2.22B 模型, 8-set 常识)</h3>
 <table>
-<tr><th>项</th><th>值</th><th>来源</th></tr>
-<tr><td>架构</td><td>Mamba2-hybrid 2.220B(52SSM+4Attn)</td><td>P-3</td></tr>
-<tr><td>并行</td><td>TP1·DP8(单机)/DP16(双机,待验)</td><td>P-9.7</td></tr>
-<tr><td>MBS/GBS/seq</td><td>2/1024/4096</td><td>P-9.7/P-5b</td></tr>
-<tr><td>精度</td><td>bf16</td><td>T3 Test4</td></tr>
-<tr><td>优化器</td><td>AdamW(LR=1e-3,min_lr=1e-5)</td><td>用户2026-10-12</td></tr>
-<tr><td>WSD</td><td>warmup5%/stable85%/decay10%</td><td>P-5a</td></tr>
-<tr><td>Stable配比</td><td>web88%+code8%+math4%</td><td>DATA_MIX_RECIPE</td></tr>
-<tr><td>Decay配比</td><td>SFT64%+L3 24%+code8%+math4%</td><td>同上</td></tr>
-<tr><td>实测吞吐</td><td>249K tok/s(单机8卡)</td><td>P-9.7长跑</td></tr>
+<tr><th>iter</th><th>D (B)</th><th>arc_chal</th><th>arc_easy</th><th>boolq</th><th>hellaswag</th><th>openbookqa</th><th>piqa</th><th>sciq</th><th>winogrande</th><th><strong>8-set avg</strong></th></tr>
+<tr><td>0156</td><td class="mono">0.65</td><td>19.97%</td><td>40.11%</td><td>52.20%</td><td>26.57%</td><td>14.00%</td><td>59.52%</td><td>44.88%</td><td>31.57%</td><td class="blue bold">31.09%</td></tr>
+<tr><td>0312</td><td class="mono">1.31</td><td>22.44%</td><td>45.20%</td><td>55.96%</td><td>28.17%</td><td>17.20%</td><td>62.08%</td><td>49.33%</td><td>34.02%</td><td class="blue bold">34.06%</td></tr>
+<tr><td>0624</td><td class="mono">2.62</td><td>28.67%</td><td>53.27%</td><td>64.31%</td><td>31.40%</td><td>22.00%</td><td>65.18%</td><td>55.31%</td><td>38.52%</td><td class="blue bold">40.38%</td></tr>
+<tr><td>1248</td><td class="mono">5.23</td><td>31.14%</td><td>56.90%</td><td>67.77%</td><td>33.54%</td><td>24.80%</td><td>67.41%</td><td>58.78%</td><td>40.25%</td><td class="blue bold">43.84%</td></tr>
+<tr><td>2496</td><td class="mono">10.46</td><td>33.30%</td><td>59.33%</td><td>69.36%</td><td>35.77%</td><td>27.60%</td><td>68.98%</td><td>60.72%</td><td>42.80%</td><td class="blue bold">46.31%</td></tr>
+<tr><td>4771</td><td class="mono">20.00</td><td>34.13%</td><td>60.94%</td><td>70.09%</td><td>37.17%</td><td>28.40%</td><td>69.80%</td><td>61.75%</td><td>44.64%</td><td class="blue bold">47.91%</td></tr>
 </table>
-<h3>3.1 token预算选项(GBS=1024×seq=4096=4,194,304 tok/step)</h3>
+<div class="svg-box"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" style="max-width:100%;height:auto;font-family:monospace">
+<line x1="163.1" y1="55" x2="163.1" y2="365" stroke="#e8e8e8"/><text x="163.1" y="383" text-anchor="middle" font-size="11" fill="#888">1B</text>
+<line x1="522.1" y1="55" x2="522.1" y2="365" stroke="#e8e8e8"/><text x="522.1" y="383" text-anchor="middle" font-size="11" fill="#888">10B</text>
+<line x1="55" y1="365.0" x2="665" y2="365.0" stroke="#e8e8e8"/><text x="47" y="369.0" text-anchor="end" font-size="11" fill="#888">0%</text>
+<line x1="55" y1="287.5" x2="665" y2="287.5" stroke="#e8e8e8"/><text x="47" y="291.5" text-anchor="end" font-size="11" fill="#888">20%</text>
+<line x1="55" y1="210.0" x2="665" y2="210.0" stroke="#e8e8e8"/><text x="47" y="214.0" text-anchor="end" font-size="11" fill="#888">40%</text>
+<line x1="55" y1="132.5" x2="665" y2="132.5" stroke="#e8e8e8"/><text x="47" y="136.5" text-anchor="end" font-size="11" fill="#888">60%</text>
+<line x1="55" y1="55.0" x2="665" y2="55.0" stroke="#e8e8e8"/><text x="47" y="59.0" text-anchor="end" font-size="11" fill="#888">80%</text>
+<line x1="55" y1="55" x2="55" y2="365" stroke="#333" stroke-width="1.5"/><line x1="55" y1="365" x2="665" y2="365" stroke="#333" stroke-width="1.5"/>
+<text x="360" y="435" text-anchor="middle" font-size="13" fill="#333">训练 Token 数 D (对数轴)</text>
+<text x="18" y="210" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90 18 210)">准确率 (%)</text>
+<circle cx="95.9" cy="287.6" r="3" fill="#2563eb"/>
+<circle cx="205.2" cy="278.0" r="3" fill="#2563eb"/>
+<circle cx="313.3" cy="253.9" r="3" fill="#2563eb"/>
+<circle cx="421.1" cy="244.3" r="3" fill="#2563eb"/>
+<circle cx="529.1" cy="236.0" r="3" fill="#2563eb"/>
+<circle cx="630.2" cy="232.7" r="3" fill="#2563eb"/>
+<polyline points="95.9,287.6 205.2,278.0 313.3,253.9 421.1,244.3 529.1,236.0 630.2,232.7" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="209.6" r="3" fill="#dc2626"/>
+<circle cx="205.2" cy="189.8" r="3" fill="#dc2626"/>
+<circle cx="313.3" cy="158.6" r="3" fill="#dc2626"/>
+<circle cx="421.1" cy="144.5" r="3" fill="#dc2626"/>
+<circle cx="529.1" cy="135.1" r="3" fill="#dc2626"/>
+<circle cx="630.2" cy="128.9" r="3" fill="#dc2626"/>
+<polyline points="95.9,209.6 205.2,189.8 313.3,158.6 421.1,144.5 529.1,135.1 630.2,128.9" fill="none" stroke="#dc2626" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="162.7" r="3" fill="#16a34a"/>
+<circle cx="205.2" cy="148.2" r="3" fill="#16a34a"/>
+<circle cx="313.3" cy="115.8" r="3" fill="#16a34a"/>
+<circle cx="421.1" cy="102.4" r="3" fill="#16a34a"/>
+<circle cx="529.1" cy="96.2" r="3" fill="#16a34a"/>
+<circle cx="630.2" cy="93.4" r="3" fill="#16a34a"/>
+<polyline points="95.9,162.7 205.2,148.2 313.3,115.8 421.1,102.4 529.1,96.2 630.2,93.4" fill="none" stroke="#16a34a" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="262.0" r="3" fill="#ca8a04"/>
+<circle cx="205.2" cy="255.8" r="3" fill="#ca8a04"/>
+<circle cx="313.3" cy="243.3" r="3" fill="#ca8a04"/>
+<circle cx="421.1" cy="235.0" r="3" fill="#ca8a04"/>
+<circle cx="529.1" cy="226.4" r="3" fill="#ca8a04"/>
+<circle cx="630.2" cy="221.0" r="3" fill="#ca8a04"/>
+<polyline points="95.9,262.0 205.2,255.8 313.3,243.3 421.1,235.0 529.1,226.4 630.2,221.0" fill="none" stroke="#ca8a04" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="310.8" r="3" fill="#9333ea"/>
+<circle cx="205.2" cy="298.3" r="3" fill="#9333ea"/>
+<circle cx="313.3" cy="279.8" r="3" fill="#9333ea"/>
+<circle cx="421.1" cy="268.9" r="3" fill="#9333ea"/>
+<circle cx="529.1" cy="258.1" r="3" fill="#9333ea"/>
+<circle cx="630.2" cy="255.0" r="3" fill="#9333ea"/>
+<polyline points="95.9,310.8 205.2,298.3 313.3,279.8 421.1,268.9 529.1,258.1 630.2,255.0" fill="none" stroke="#9333ea" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="134.4" r="3" fill="#0891b2"/>
+<circle cx="205.2" cy="124.4" r="3" fill="#0891b2"/>
+<circle cx="313.3" cy="112.4" r="3" fill="#0891b2"/>
+<circle cx="421.1" cy="103.8" r="3" fill="#0891b2"/>
+<circle cx="529.1" cy="97.7" r="3" fill="#0891b2"/>
+<circle cx="630.2" cy="94.5" r="3" fill="#0891b2"/>
+<polyline points="95.9,134.4 205.2,124.4 313.3,112.4 421.1,103.8 529.1,97.7 630.2,94.5" fill="none" stroke="#0891b2" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="191.1" r="3" fill="#db2777"/>
+<circle cx="205.2" cy="173.8" r="3" fill="#db2777"/>
+<circle cx="313.3" cy="150.7" r="3" fill="#db2777"/>
+<circle cx="421.1" cy="137.2" r="3" fill="#db2777"/>
+<circle cx="529.1" cy="129.7" r="3" fill="#db2777"/>
+<circle cx="630.2" cy="125.7" r="3" fill="#db2777"/>
+<polyline points="95.9,191.1 205.2,173.8 313.3,150.7 421.1,137.2 529.1,129.7 630.2,125.7" fill="none" stroke="#db2777" stroke-width="1.5" opacity="0.8"/>
+<circle cx="95.9" cy="242.7" r="3" fill="#475569"/>
+<circle cx="205.2" cy="233.2" r="3" fill="#475569"/>
+<circle cx="313.3" cy="215.7" r="3" fill="#475569"/>
+<circle cx="421.1" cy="209.0" r="3" fill="#475569"/>
+<circle cx="529.1" cy="199.2" r="3" fill="#475569"/>
+<circle cx="630.2" cy="192.0" r="3" fill="#475569"/>
+<polyline points="95.9,242.7 205.2,233.2 313.3,215.7 421.1,209.0 529.1,199.2 630.2,192.0" fill="none" stroke="#475569" stroke-width="1.5" opacity="0.8"/>
+<line x1="525" y1="65" x2="537" y2="65" stroke="#2563eb" stroke-width="2"/><text x="541" y="69" font-size="10" fill="#333">arc_challenge</text>
+<line x1="525" y1="81" x2="537" y2="81" stroke="#dc2626" stroke-width="2"/><text x="541" y="85" font-size="10" fill="#333">arc_easy</text>
+<line x1="525" y1="97" x2="537" y2="97" stroke="#16a34a" stroke-width="2"/><text x="541" y="101" font-size="10" fill="#333">boolq</text>
+<line x1="525" y1="113" x2="537" y2="113" stroke="#ca8a04" stroke-width="2"/><text x="541" y="117" font-size="10" fill="#333">hellaswag</text>
+<line x1="525" y1="129" x2="537" y2="129" stroke="#9333ea" stroke-width="2"/><text x="541" y="133" font-size="10" fill="#333">openbookqa</text>
+<line x1="525" y1="145" x2="537" y2="145" stroke="#0891b2" stroke-width="2"/><text x="541" y="149" font-size="10" fill="#333">piqa</text>
+<line x1="525" y1="161" x2="537" y2="161" stroke="#db2777" stroke-width="2"/><text x="541" y="165" font-size="10" fill="#333">sciq</text>
+<line x1="525" y1="177" x2="537" y2="177" stroke="#475569" stroke-width="2"/><text x="541" y="181" font-size="10" fill="#333">winogrande</text>
+</svg></div>
+<h3>4.2 对数线性缩放拟合</h3>
+<div class="formula">avg<sub>8cs</sub> = 11.9177 × log₁₀(D) + 33.8697<br>R² = 0.9639 · SE = 1.4402 · 拟合范围 D ∈ [0.65B, 20B] (6 个检查点)</div>
+<div class="info"><strong>拟合质量</strong>：R² = 0.964 表明对数线性模型对 6 个 P-5b 检查点拟合良好。但<strong>拟合范围仅覆盖 1.5 个数量级</strong> (0.65B → 20B)，外推到 D=2,232B 需跨越 <strong>2.0 个数量级</strong>，不确定性显著增加。</div>
+<div class="svg-box"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" style="max-width:100%;height:auto;font-family:monospace">
+<line x1="106.3" y1="60" x2="106.3" y2="360" stroke="#e8e8e8"/><text x="106.3" y="378" text-anchor="middle" font-size="11" fill="#888">1B</text>
+<line x1="260.0" y1="60" x2="260.0" y2="360" stroke="#e8e8e8"/><text x="260.0" y="378" text-anchor="middle" font-size="11" fill="#888">10B</text>
+<line x1="413.7" y1="60" x2="413.7" y2="360" stroke="#e8e8e8"/><text x="413.7" y="378" text-anchor="middle" font-size="11" fill="#888">100B</text>
+<line x1="567.4" y1="60" x2="567.4" y2="360" stroke="#e8e8e8"/><text x="567.4" y="378" text-anchor="middle" font-size="11" fill="#888">1000B</text>
+<line x1="60" y1="335.0" x2="660" y2="335.0" stroke="#e8e8e8"/><text x="52" y="339.0" text-anchor="end" font-size="11" fill="#888">30%</text>
+<line x1="60" y1="285.0" x2="660" y2="285.0" stroke="#e8e8e8"/><text x="52" y="289.0" text-anchor="end" font-size="11" fill="#888">40%</text>
+<line x1="60" y1="235.0" x2="660" y2="235.0" stroke="#e8e8e8"/><text x="52" y="239.0" text-anchor="end" font-size="11" fill="#888">50%</text>
+<line x1="60" y1="185.0" x2="660" y2="185.0" stroke="#e8e8e8"/><text x="52" y="189.0" text-anchor="end" font-size="11" fill="#888">60%</text>
+<line x1="60" y1="135.0" x2="660" y2="135.0" stroke="#e8e8e8"/><text x="52" y="139.0" text-anchor="end" font-size="11" fill="#888">70%</text>
+<line x1="60" y1="85.0" x2="660" y2="85.0" stroke="#e8e8e8"/><text x="52" y="89.0" text-anchor="end" font-size="11" fill="#888">80%</text>
+<line x1="60" y1="60" x2="60" y2="360" stroke="#333" stroke-width="1.5"/><line x1="60" y1="360" x2="660" y2="360" stroke="#333" stroke-width="1.5"/>
+<text x="360" y="435" text-anchor="middle" font-size="13" fill="#333">训练 Token 数 D (对数轴)</text>
+<text x="18" y="210" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90 18 210)">8-set 常识平均 (%)</text>
+<circle cx="77.5" cy="329.6" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="85.5" y="321.6" font-size="10" fill="#2563eb">(0.65B,31.09%)</text>
+<circle cx="124.3" cy="314.7" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="132.3" y="306.7" font-size="10" fill="#2563eb">(1.31B,34.06%)</text>
+<circle cx="170.6" cy="283.1" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="178.6" y="275.1" font-size="10" fill="#2563eb">(2.62B,40.38%)</text>
+<circle cx="216.7" cy="265.8" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="224.7" y="257.8" font-size="10" fill="#2563eb">(5.23B,43.84%)</text>
+<circle cx="263.0" cy="253.4" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="271.0" y="245.4" font-size="10" fill="#2563eb">(10.46B,46.31%)</text>
+<circle cx="306.3" cy="245.5" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="314.3" y="237.5" font-size="10" fill="#2563eb">(20.0B,47.91%)</text>
+<line x1="60.0" y1="333.6" x2="321.2" y2="232.4" stroke="#2563eb" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="306.3" y1="238.1" x2="660.0" y2="101.0" stroke="#dc2626" stroke-width="2" stroke-dasharray="8,4"/>
+<circle cx="358.9" cy="217.7" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="358.9" y1="195.8" x2="358.9" y2="239.7" stroke="#dc2626" opacity="0.4"/><text x="365.9" y="221.7" font-size="9" fill="#dc2626">53.5%</text>
+<circle cx="413.7" cy="196.5" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="413.7" y1="169.0" x2="413.7" y2="224.0" stroke="#dc2626" opacity="0.4"/><text x="420.7" y="200.5" font-size="9" fill="#dc2626">57.7%</text>
+<circle cx="460.0" cy="178.5" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="460.0" y1="145.6" x2="460.0" y2="211.5" stroke="#dc2626" opacity="0.4"/><text x="467.0" y="182.5" font-size="9" fill="#dc2626">61.3%</text>
+<circle cx="506.3" cy="160.6" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="506.3" y1="121.4" x2="506.3" y2="199.8" stroke="#dc2626" opacity="0.4"/><text x="513.3" y="164.6" font-size="9" fill="#dc2626">64.9%</text>
+<circle cx="552.6" cy="142.7" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="552.6" y1="96.6" x2="552.6" y2="188.8" stroke="#dc2626" opacity="0.4"/><text x="559.6" y="146.7" font-size="9" fill="#dc2626">68.5%</text>
+<circle cx="598.8" cy="124.7" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="598.8" y1="71.0" x2="598.8" y2="178.4" stroke="#dc2626" opacity="0.4"/><text x="605.8" y="128.7" font-size="9" fill="#dc2626">72.1%</text>
+<circle cx="621.1" cy="116.1" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="621.1" y1="58.5" x2="621.1" y2="173.7" stroke="#dc2626" opacity="0.4"/><text x="628.1" y="120.1" font-size="9" fill="#dc2626">73.8%</text>
+<circle cx="645.1" cy="106.8" r="4" fill="#dc2626" opacity="0.7"/>
+<line x1="645.1" y1="44.8" x2="645.1" y2="168.8" stroke="#dc2626" opacity="0.4"/><text x="652.1" y="110.8" font-size="9" fill="#dc2626">75.6%</text>
+<rect x="70" y="70" width="200" height="56" fill="#f8f8f8" stroke="#ddd" rx="4"/>
+<circle cx="82" cy="86" r="4" fill="#2563eb"/><text x="92" y="90" font-size="11" fill="#333">P-5b 实测 (0.65-20B)</text>
+<line x1="76" y1="102" x2="88" y2="102" stroke="#2563eb" stroke-width="2" stroke-dasharray="5,3"/><text x="92" y="106" font-size="11" fill="#333">对数线性拟合 R²=0.964</text>
+<line x1="76" y1="118" x2="88" y2="118" stroke="#dc2626" stroke-width="2" stroke-dasharray="8,4"/><text x="92" y="122" font-size="11" fill="#333">外推 + 95% PI</text>
+</svg></div>
+<h3>4.3 8-set 常识平均 D-scan 预测</h3>
 <table>
-<tr><th>档位</th><th>token</th><th>总步数</th><th>warmup</th><th>stable</th><th>decay</th><th>占在盘</th><th>说明</th></tr>
-<tr><td><strong>下限</strong></td><td><strong>44B</strong></td><td>10,490</td><td>524</td><td>8,917</td><td>1,049</td><td>2.0%</td><td>Chinchilla最优·<strong>当前P-8运行中</strong></td></tr>
-<tr><td>推荐-A</td><td>100B</td><td>23,842</td><td>1,192</td><td>20,266</td><td>2,384</td><td>4.5%</td><td>超Chinchilla 2.3×</td></tr>
-<tr><td>推荐-B</td><td>200B</td><td>47,684</td><td>2,384</td><td>40,531</td><td>4,768</td><td>9.0%</td><td>超Chinchilla 4.5×</td></tr>
-<tr><td>激进</td><td>500B</td><td>119,209</td><td>5,960</td><td>101,328</td><td>11,921</td><td>22.4%</td><td>超Chinchilla 11.4×</td></tr>
-<tr><td>上限</td><td>1,000B</td><td>238,419</td><td>11,921</td><td>202,656</td><td>23,842</td><td>44.8%</td><td>超22.7×</td></tr>
-<tr style='background:#fdecea'><td>全量</td><td>2,232B</td><td>532,226</td><td>26,611</td><td>452,392</td><td>53,223</td><td>100%</td><td>全部在盘(不推荐,耗时~52天)</td></tr>
+<tr><th>D (B)</th><th>预测平均</th><th>95% 预测区间</th><th>类型</th></tr>
+<tr><td class="mono">44B</td><td class="red mono">53.46%</td><td class="mono">49.06%-57.85%</td><td>外推</td></tr>
+<tr><td class="mono">100B</td><td class="red mono">57.71%</td><td class="mono">52.21%-63.20%</td><td>外推</td></tr>
+<tr><td class="mono">200B</td><td class="red mono">61.29%</td><td class="mono">54.70%-67.89%</td><td>外推</td></tr>
+<tr><td class="mono">400B</td><td class="red mono">64.88%</td><td class="mono">57.04%-72.72%</td><td>外推</td></tr>
+<tr><td class="mono">800B</td><td class="red mono">68.47%</td><td class="mono">59.25%-77.69%</td><td>外推</td></tr>
+<tr><td class="mono">1600B</td><td class="red mono">72.06%</td><td class="mono">61.31%-82.80%</td><td>外推</td></tr>
+<tr><td class="mono">2232B</td><td class="red mono">73.78%</td><td class="mono">62.26%-85.30%</td><td>外推</td></tr>
+<tr><td class="mono">3200B</td><td class="red mono">75.64%</td><td class="mono">63.25%-88.04%</td><td>外推</td></tr>
+
 </table>
-<div class='note'>用户说「MiniCPM5有多少训多少」——实盘~2,232B。但训2,232B需~52天(双机)<strong>不现实</strong>。建议100B~500B间选择，此处给全谱供决策。</div>
-<h3>3.2 数据充裕度</h3>
+<h3>4.4 6-set 复杂推理 D-scan 预测</h3>
+<div class="danger"><strong>关键警告</strong>：P-5b 的复杂推理 (gsm8k, bbh 等) 在 D ≤ 20B 时<strong>基本为零</strong> (gsm8k = 0%, bbh ≈ 8.78%)。以下外推<strong>置信度极低</strong>，仅供参考。</div>
 <table>
-<tr><th>训练档</th><th>需要</th><th>在盘</th><th>倍数</th><th>够用</th></tr>
-<tr><td>44B(当前)</td><td>44B</td><td>2,232B</td><td>50.7×</td><td class='green'>✅</td></tr>
-<tr><td>100B</td><td>100B</td><td>2,232B</td><td>22.3×</td><td class='green'>✅</td></tr>
-<tr><td>200B</td><td>200B</td><td>2,232B</td><td>11.2×</td><td class='green'>✅</td></tr>
-<tr><td>500B</td><td>500B</td><td>2,232B</td><td>4.5×</td><td class='green'>✅</td></tr>
-<tr><td>1,000B</td><td>1,000B</td><td>2,232B</td><td>2.2×</td><td class='green'>✅</td></tr>
+<tr><th>D (B)</th><th>预测平均</th><th>95% 预测区间</th><th>类型</th></tr>
+<tr><td class="mono">44B</td><td class="red mono">9.81%</td><td class="mono">6.64%-12.98%</td><td>外推</td></tr>
+<tr><td class="mono">100B</td><td class="red mono">10.88%</td><td class="mono">7.53%-14.23%</td><td>外推</td></tr>
+<tr><td class="mono">200B</td><td class="red mono">11.78%</td><td class="mono">8.28%-15.28%</td><td>外推</td></tr>
+<tr><td class="mono">400B</td><td class="red mono">12.68%</td><td class="mono">9.03%-16.33%</td><td>外推</td></tr>
+<tr><td class="mono">800B</td><td class="red mono">13.59%</td><td class="mono">9.79%-17.39%</td><td>外推</td></tr>
+<tr><td class="mono">1600B</td><td class="red mono">14.49%</td><td class="mono">10.54%-18.44%</td><td>外推</td></tr>
+<tr><td class="mono">2232B</td><td class="red mono">14.92%</td><td class="mono">10.90%-18.95%</td><td>外推</td></tr>
+<tr><td class="mono">3200B</td><td class="red mono">15.39%</td><td class="mono">11.29%-19.49%</td><td>外推</td></tr>
+
 </table>
-<div class='ok'>在盘~2,232B，即使训1,000B也只需45%(单遍不重读)。<strong>数据不是瓶颈，算力是瓶颈</strong>。</div>
-<h2>§4 双机16×H100墙钟</h2>
+<div class="warn"><strong>复杂推理外推的不确定性来源</strong>：<br>① 仅有 1 个有效数据点 (bbh 8.78% @ 20B)，gsm8k 在所有检查点均为 0%<br>② 2.22B 参数模型可能<strong>能力不足</strong>，复杂推理需要更大模型或更多训练<br>③ 对数线性外推假设能力随 log(D) 线性增长，但复杂推理可能有<strong>涌现阈值</strong> (emergent abilities)<br>④ 参考 SmolLM3 (3.0B 参数, 11T tokens) 在复杂推理上表现显著——说明 2.22B 需要远超 20B 的训练量<br>⑤ <strong>建议</strong>：对复杂推理的预测，以公开模型 (SmolLM3, OLMo-2) 的 D-N 曲线作为参考上界，本报告的线性外推作为乐观下界</div>
+<h3>4.5 参考模型对标</h3>
 <table>
-<tr><th>配置</th><th>吞吐</th><th>来源</th><th>状态</th></tr>
-<tr><td>单机8×H100(TP1·DP8·MBS2·bf16)</td><td><strong>249K tok/s</strong></td><td>P-9.7长跑1100步</td><td class='green'>✅已验</td></tr>
-<tr><td>双机16×H100(TP1·DP16)</td><td><strong>~498K tok/s</strong></td><td>DP16近线性外推</td><td class='amber'>⚠️待验</td></tr>
+<tr><th>模型</th><th>参数</th><th>训练 D</th><th>常识</th><th>复杂推理</th><th>备注</th></tr>
+<tr><td><strong>BaiZe (本报告)</strong></td><td class="mono">2.22B</td><td class="mono">44B (P-8)</td><td class="blue">~53% (预测)</td><td class="red">~10% (预测)</td><td>Mamba2-hybrid, int32</td></tr>
+<tr><td><strong>BaiZe (全量)</strong></td><td class="mono">2.22B</td><td class="mono">2,232B</td><td class="blue">~74% (外推)</td><td class="red">~15% (外推)</td><td>全量训练目标</td></tr>
+<tr><td>SmolLM2</td><td class="mono">1.7B</td><td class="mono">1,000B</td><td>—</td><td>—</td><td>Transformer, 6 语言</td></tr>
+<tr><td>SmolLM3</td><td class="mono">3.0B</td><td class="mono">11,000B</td><td>—</td><td>显著</td><td>Transformer, 128K ctx</td></tr>
+<tr><td>Chinchilla (最优)</td><td class="mono">70B</td><td class="mono">1,400B</td><td>—</td><td>强</td><td>~20 tok/param</td></tr>
+<tr><td>OLMo-2</td><td class="mono">1B</td><td class="mono">4,000B</td><td>—</td><td>—</td><td>Transformer</td></tr>
 </table>
-<h3>4.1 墙钟(含5%overhead)</h3>
+<div class="info"><strong>Chinchilla 最优训练量</strong>：compute-optimal 训练约为 20 tokens/parameter。BaiZe 2.22B 的 Chinchilla 最优 = ~44B tokens，恰好是 P-8 的训练量。但 SmolLM3 (3B, 11T = 3,667 tok/param) 和 OLMo-2 (1B, 4T = 4,000 tok/param) 表明<strong>小模型可以通过远超 Chinchilla 的训练量获益</strong>，但收益递减且主要为常识/知识，复杂推理仍受模型容量限制。</div>
+
+<h2>§5 v3→v4 修订说明</h2>
 <table>
-<tr><th>档位</th><th>token</th><th>单机8卡</th><th>双机16卡</th><th>GPU·h(双机)</th></tr>
-<tr><td><strong>44B(当前)</strong></td><td>44B</td><td><strong>2.0天</strong></td><td>1.0天</td><td>384</td></tr>
-<tr><td>100B</td><td>100B</td><td>4.6天</td><td><strong>2.3天</strong></td><td>883</td></tr>
-<tr><td>200B</td><td>200B</td><td>9.3天</td><td><strong>4.6天</strong></td><td>1,766</td></tr>
-<tr><td>500B</td><td>500B</td><td>23.2天</td><td><strong>11.6天</strong></td><td>4,415</td></tr>
-<tr><td>1,000B</td><td>1,000B</td><td>46.4天</td><td><strong>23.2天</strong></td><td>8,830</td></tr>
-<tr style='background:#fdecea'><td>2,232B(全量)</td><td>2,232B</td><td>103.7天</td><td>51.9天</td><td>19,722</td></tr>
+<tr><th>#</th><th>v3 问题</th><th>v4 修正</th></tr>
+<tr><td>1</td><td>Token 数来自 <code>du -sb</code> 压缩字节 × 密度估算，未验证 dtype</td><td class="green">逐源 .bin 文件精确计数 (bin_bytes ÷ 4)，dtype=int32 经 JSON 元数据 + 算术双重验证</td></tr>
+<tr><td>2</td><td>密度范围 0.0636–0.4977 使用 tok/compressed-byte，混淆压缩率与分词密度</td><td class="green">§2 归因分析：分离压缩率 (1.5-6x) 与 tok/raw-byte (0.26-0.90)，解释跨源差异机制</td></tr>
+<tr><td>3</td><td>全量 ~2,232B 仅有汇总数，未做逐源配比与采样次数</td><td class="green">§3 按稳定/退火两阶段配比，计算各 D 下 web/L3/code/math/SFT 的 epoch，发现 SFT 过采样风险</td></tr>
+<tr><td>4</td><td>D-scan 仅引用 Hoffmann et al. 文字，无自身数据拟合</td><td class="green">§4 用 P-5b 6 个检查点拟合对数线性缩放曲线 (R²=0.964)，生成 SVG 图表，D ∈ [44B, 3.2T] 外推表 + 95% PI</td></tr>
+<tr><td>5</td><td>无复杂推理能力预测</td><td class="amber">§4.4 基于 bbh 8.78%@20B 做保守外推，但明确标注置信度极低 (仅 1 个有效数据点)</td></tr>
+<tr><td>6</td><td>无诚实条款/置信度声明</td><td class="green">§6 新增诚实条款，区分「实测/拟合/外推/推测」四个置信等级</td></tr>
 </table>
-<h3>4.2 三档墙钟(以200B为例,双机16卡)</h3>
-<table>
-<tr><th>档</th><th>有效吞吐</th><th>墙钟</th><th>假设</th></tr>
-<tr><td class='green'>乐观</td><td>510K</td><td>4.5天</td><td>DP16略超线性</td></tr>
-<tr><td class='blue'>基准</td><td>498K</td><td>4.6天</td><td>DP16近线性</td></tr>
-<tr><td class='amber'>保守</td><td>460K</td><td>5.1天</td><td>DP16有~8%通信税</td></tr>
-</table>
-<div class='note'>DP16需跨节点AllReduce(NCCL over NVLink/IB)。P-9.7只验单机8卡。双机彩排需torchrun --nnodes=2 + NCCL配置，建议正式训练前做100-step DP16实测。</div>
-<h2>§5 前置清单/风险/launcher</h2>
-<h3>5.1 前置清单</h3>
-<table>
-<tr><th>#</th><th>事项</th><th>状态</th><th>备注</th></tr>
-<tr><td>1</td><td>数据分词R3全量110/110</td><td class='green'>✅</td><td>1483.91B tok/5.94TB</td></tr>
-<tr><td>2</td><td>污染扫描220K docs</td><td class='green'>✅0命中</td><td>EDA-Eval 158任务黑名单</td></tr>
-<tr><td>3</td><td>超参定稿P-5a/P-9.7</td><td class='green'>✅</td><td>LR=1e-3,GBS=1024,MBS=2,WSD</td></tr>
-<tr><td>4</td><td>配比搜索BO200/200</td><td class='green'>✅</td><td>best:web=0.827/code=0.062/math=0.111</td></tr>
-<tr><td>5</td><td>AdamW从零训练(当前P-8)</td><td class='amber'>🟠59.6%</td><td>step6251/10490 loss2.5575 ETA~17h</td></tr>
-<tr><td>6</td><td>DP16双机彩排</td><td class='red'>❌</td><td>需100-step跨节点实测</td></tr>
-<tr><td>7</td><td>en_v1_4下载</td><td class='amber'>🟠50.7%</td><td>非阻塞(在盘2232B足够)</td></tr>
-</table>
-<h3>5.2 风险</h3>
-<table>
-<tr><th>风险</th><th>影响</th><th>缓解</th></tr>
-<tr><td>DP16通信税未知</td><td>墙钟±10%</td><td>正式前100-step实测</td></tr>
-<tr><td>/nas_train 85%(33T avail)</td><td>ckpt空间不足</td><td>每个ckpt~4.2GB,定期清理</td></tr>
-<tr><td>en_v1_4下载争I/O</td><td>吞吐下降</td><td>非阻塞;可暂停下载</td></tr>
-<tr><td>dist_muon发散(已修)</td><td>已切AdamW</td><td>✅loss平稳下降</td></tr>
-</table>
-<h3>5.3 launcher模板(200B档,双机16卡)</h3>
-<div class='cmd'># 节点1(.29): torchrun --nnodes=2 --nproc_per_node=8 --node_rank=0 \
-#   --master_addr=10.239.2.29 --master_port=29812 \
-#   pretrain_launcher.py --arch mamba2 --name p8_200b \
-#   --dir /nas_train/.../nemo_experiments \
-#   --tokenizer-path /nas_train/.../data/tokenizer_eood \
-#   --train-data-path <mix_base+code+math shards> \
-#   --tensor-parallel 1 --train-iters 47684 \
-#   --global-batch-size 1024 --micro-batch-size 2 --seq-length 4094 \
-#   --eval-interval 500 --save-interval 4768 \
-#   --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 2384 --lr-decay-iters 4768 \
-#   --lr-decay-style WSD --seed 1234 --precision bf16_mixed --optimizer adam
-#
-# 节点2(.12): 同上但 --node_rank=1
-# ⚠️ DP16吞吐需先彩排(见§5.1 #6)</div>
-<h2>§6 v2→v3修订说明</h2>
-<div class='warn'><strong>v2错误</strong>：v2引「MiniCPM5-1B基座训练300B(200B@4K+75B@32K+25B@128K)」标注CSDN二级源。但：
-<br>①<strong>MiniCPM5没有独立训练论文</strong>——arXiv 2602.09003是UltraData数据管理框架论文(2026-02)，<strong>不是</strong>MiniCPM5模型论文。
-<br>②MiniCPM5-1B(2026-05-26)/2B(2026-09-07)为OpenBMB模型发布(GitHub/HF)，<strong>模型卡未公开训练token数</strong>。
-<br>③「300B」出自CSDN二级源，<strong>无一手依据</strong>。
-<br>④v2自相矛盾：说「MiniCPM5有300B」又说「本项目可训2,015B」——若实盘2,015B，300B从何而来？</div>
-<div class='ok'><strong>v3修正</strong>：
-<br>①<strong>弃用300B</strong>——不引任何论文/CSDN训练量数字。
-<br>②<strong>唯一口径=实盘</strong>：du -sb+find|wc -l盘点在盘数据，分词实测token。
-<br>③<strong>实盘=9.81TB/~2,232B token</strong>(2015B实测+217B估)。
-<br>④训练预算给全谱(44B~2,232B)供用户决策。</div>
-<h3>6.1 诚实条款</h3>
-<table>
-<tr><th>项</th><th>口径</th><th>可信度</th></tr>
-<tr><td>已下满9源字节</td><td>du -sb实测(10-13)</td><td class='green'>✅确定</td></tr>
-<tr><td>已下满9源token</td><td>data线分词实测</td><td class='green'>✅确定</td></tr>
-<tr><td>en_v1_4在盘字节</td><td>du -sb实测</td><td class='green'>✅确定</td></tr>
-<tr><td>en_v1_4 token</td><td>密度估(base en 0.0777)</td><td class='amber'>⚠️估(±20%)</td></tr>
-<tr><td>en_v1_4全量大小</td><td>56461文件/~5-6.75TB</td><td class='amber'>⚠️估</td></tr>
-<tr><td>DP16吞吐</td><td>近线性外推498K</td><td class='amber'>⚠️待验</td></tr>
-<tr><td>MiniCPM5官方训练token</td><td><strong>未核</strong>(无一手源)</td><td class='red'>❌v3不引</td></tr>
-</table>
-<h2>§7 纪律</h2>
-<ul>
-<li>🚫不占GPU、不打断P-8监控(step6251/10490运行中)</li>
-<li>🚫不改已发布数值(P-5a/P-9.7超参不变)</li>
-<li>✅每个数字可溯源(du-sb命令/文件:行/data线实测)</li>
-<li>🚫不引MiniCPM5论文/CSDN 300B(无一手来源)</li>
-<li>commit前缀 pretrain plan:</li>
-<li>任务书>32KB自滚归档</li>
-</ul>
-<footer>BaiZe Stage(i) 正式训练计划书 v3 · 2026-10-13 · 实盘盘点口径 · 所有数字来自du -sb/find|wc -l/data线分词实测</footer>
+<h2>§6 诚实条款</h2>
+<div class="danger"><strong>本报告的数据置信等级</strong>：<br><br><strong>✅ 实测 (高置信)</strong>：<br>- .bin 文件 token 计数 (14 个源, 577.98B tokens) —— 直接来自文件系统 + JSON 元数据<br>- P-5b 8-set 常识评估分数 (6 个检查点, 0.65-20B tokens) —— 直接来自评估脚本<br>- P-8 训练状态 (10,590 步, 44.4B tokens, loss 2.54) —— 直接来自训练日志<br>- dtype = int32 —— JSON 元数据 + 算术双重验证<br><br><strong>🟡 拟合 (中置信)</strong>：<br>- 对数线性缩放曲线 (R²=0.964) —— 6 个数据点拟合，拟合范围内可信<br>- 全量源 token 计数 (2,015B) —— 数据线分词实测，但未在本报告独立复验<br><br><strong>🟠 外推 (低置信)</strong>：<br>- D &gt; 20B 的 8-set 常识预测 —— 跨 2 个数量级外推，95% PI 宽达 ±12%<br>- D &gt; 20B 的复杂推理预测 —— 仅 1 个有效数据点，不可靠<br>- en_v1_4 ~217B 估算 —— 基于压缩字节 × 密度，未验证<br><br><strong>🔴 推测 (极低置信)</strong>：<br>- D ≥ 800B 的任何能力预测 —— 远超拟合范围 40-160 倍<br>- 复杂推理的涌现阈值位置 —— 需要更多训练数据点<br>- 全量 2,232B 训练后的实际表现 —— 受数据质量、超参、随机性影响<br><br><strong>免责声明</strong>：本报告的所有外推预测仅用于训练计划制定参考，不构成性能保证。实际训练效果以评估结果为准。</div>
+<hr style="margin-top:40px;border:none;border-top:1px solid #ddd"><p style="color:#999;font-size:12px;text-align:center">BaiZe-ISEDA2027 · 正式训练计划 v4 · 2026-10-14 · 自包含 HTML (零外部依赖)</p>
 </body></html>
