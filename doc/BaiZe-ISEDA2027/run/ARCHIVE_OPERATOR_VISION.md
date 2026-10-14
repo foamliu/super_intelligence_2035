@@ -1261,3 +1261,25 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 > **③ 交付**：中文 HTML `report_baize_paper_review_vision_zh.html`。
 >
 > **结论**：✅ 已完成（09:25 Oct14）。交付 21.8KB HTML，2🔴硬伤 + 6🟠建议 + 5🟢可回填。14/16 核验项与 EXPERIMENTS_VISION.md 一致。详见 MEMORY_VISION.md 09:15 条目。
+
+---
+
+## 归档 · 2026-10-14 ~20:30（wake #81 · MLLM bridge 交付）
+
+以下 4 个已完成的运维指令块从 BAIZE_VISION_TASK.md 原文搬入此处（任务书中已替换为 1 行指针）。
+
+### §运维指令 · 2026-10-14（📋 Stage(iv) MLLM 对齐方案可行性评估）
+
+> **结论**：✅ 交付 28.5KB 中文 HTML `reports/report_vision_mllm_stage4_feasibility_zh.html`（9节）。逐项本机实测：数据✅3个Stage共265GB全在盘；LLM✅Qwen3-4B(8GB,HF safetensors,hidden_size=2560)；框架✅ms-swift 4.5.3+lmms-eval 0.7.1；vision encoder🔴需wrapper；算力~234-380 GPU·h。困难清单2🔴+6🟠+7🟢。详见 MEMORY_VISION.md wake #73。
+
+### §运维指令 · 2026-10-14（📊 当前 ArmC 试验中文状态报告）
+
+> **结论**：✅ report_vision_merge3ds_armc_status_zh.html 已交付(7节+2SVG+文献表)，已多次刷新至最新训练数据。详见 MEMORY_VISION.md wake #72。
+
+### §运维指令 · 2026-10-13（📐 LR 缩放规则）
+
+> **结论**：✅ 按文献定 LR ×4=2e-3（Goyal arXiv:1706.02677 线性缩放规则），3 臂扫描（×2/×3/×4），报告已更新含文献表。
+
+### §运维指令 · 2026-10-13（🔢 数据量口径更正）
+
+> **结论**：✅ GPIC 快照7437tar≈94M/全量101.1M, 三集合计快照≈111M/全量118.1M。旧95.8M系6233-tar时代值已订正。

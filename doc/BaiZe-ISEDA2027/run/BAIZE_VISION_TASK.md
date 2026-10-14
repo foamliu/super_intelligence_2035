@@ -29,97 +29,17 @@
 **⑤ 纪律**：commit 前缀 `vision mllm-bridge:`；任务书 >32KB 自滚归档；证据凭实测（贴 `python -c` 原始输出 + 文件路径），🚫 凭印象；**ArmC 监控/eval 仍是每次唤醒的第一优先动作**，本任务在空窗期推进。
 
 
-### 🆕 运维指令 · 2026-10-14（📋 Stage(iv) MLLM 对齐方案可行性评估 · 出中文 HTML 报告）· 用户直令
+> 📦 §运维指令 · 2026-10-14（📋 Stage(iv) MLLM 可行性评估）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 28.5KB 中文 HTML（9节），2🔴+6🟠+7🟢，3 Stage 数据265GB全在盘，wrapper/modeling 开发纯 CPU 可并行。需要时再读。
 
-> **用户令（2026-10-14）**：「ArmC 训练&评测完成后，vision 做 Stage(iv) MLLM 对齐。用户已批准方向并给出具体方案（见下）。请 vision 评估此方案可行性 + 困难，写成 HTML 报告（中文版）。」—— **本阶段只做评估调研，🚫 不起训**。
-
-**① 用户给定方案（逐字传达）**：
-- 配方：**LLaVA-OneVision-1.5**
-- LLM：**Qwen3-4B**（`/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507`）
-- projector：**2 层 MLP**
-- vision encoder：**BaiZe 之眼 ProtB LP 分数最高的 checkpoint**（= ④-4ep，ProtB 67.05±0.02%）
-- 训练框架：**ms-swift**
-- Stage-1：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-558K-Webdataset`
-- Stage-1.5：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M`
-- Stage-2：`/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-webdataset`
-- 超参参考：`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/train_4b.sh`
-- 评测：**lmms-eval**
-- 评测集（17）：`ai2d, blink, chartqa, docvqa_val, gqa, infovqa_val, mme, mmmu_val, mmstar, ocrbench, realworldqa, scienceqa_img, textvqa_val, vizwiz_vqa_val, vqav2_val, countbench, mmmu_pro_standard`
-
-**② 评估要求（逐项本机核查，贴实测证据 `ls`/`du`/路径）**：
-1. **数据可获取性**：三个 Stage 数据路径是否存在/已下全（`ls` + `du -sh`），缺失哪些。
-2. **LLM**：Qwen3-4B 是否在盘、config/HF 格式是否可直接被 ms-swift 载入。
-3. **vision encoder 接入**：④-4ep ckpt 的保存格式（open_clip？自定义？）、特征维 512、如何 bridge 到 ms-swift/LLaVA 的 vision tower 接口（需改代码/写 wrapper？）。
-4. **框架/工具**：`ms-swift`、`lmms-eval`、`LLaVA-OneVision-1.5` repo（`train_4b.sh`）是否在盘/已装/版本；缺哪个、能否网络装（带 proxy）。
-5. **算力粗估**：Qwen3-4B + 2 层 MLP projector + 3 Stage 训练的 GPU·h（对照 `train_4b.sh` 超参 + `.12` 8×H100），预估墙钟。
-6. **困难分级清单**：🔴阻塞 / 🟠需解决 / 🟢顺利，每条附依据与建议绕过方式。
-7. **与 ArmC 衔接**：ArmC 训练+评测完成后，还差哪些前置才能开 Stage(iv)（数据/环境/算力空窗）。
-
-**③ 交付**：中文、自包含 HTML `reports/report_vision_mllm_stage4_feasibility_zh.html`；文末附「困难分级清单 + 建议排期」。
-
-**④ 纪律**：🚫 不起训、不占 GPU；不干扰 ArmC 训练/评测链（评估在空窗期做）；数字凭实测（路径存在性/大小），🚫 凭印象；commit 前缀 `vision mllm-plan:` · 任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-14（📊 当前 ArmC 试验中文状态报告）· 用户直令
-
-> **用户令（2026-10-14）**：「vision 现在在做什么试验，让它写个 html 报告（中文版）。」
-
-**性质**：纯写作、零 GPU；在 ArmC 训练监控空窗期做，🚫 不干扰/不延迟训练。
-
-**① 报告主题**：交代「vision 当前正在做的试验」= **merge3ds 合并三数据集实验 · ArmC 臂**（当前训练中）。
-
-**② 报告必须包含**（中文、自包含 HTML，带内联 CSS/SVG，落 `doc/BaiZe-ISEDA2027/reports/report_vision_merge3ds_armc_status_zh.html`）：
-1. **实验定义**：合并 GPIC + CC12M + Amshaker；**GBS/MBS ×4 · LR ×4 = 2e-3**（Goyal 线性缩放规则，附 arXiv:1706.02677 出处）；`ArmC` 在 LR 3-臂扫描（×2/1e-3 · ×3/1.5e-3 · ×4/2e-3）中的定位与选优判据（**预注册先行**：以 3-seed ProtB 取优）。
-2. **数据量**：~118M pairs（7437-tar 快照 ≈110.9M / 全量 8000-tar 118.1M），标注「实验时快照 vs 全量」两口径。
-3. **实时进度（诚实如实）**：step ~48600/154500（31.4%）、loss 区间、C1 趋势、无坍缩、吞吐 bimodal（NFS IO）、ETA（avg ~01:25 Oct15）。
-4. **预期产出**：训练完成 → eval chain → 3-seed ProtB → 与基线对比（E1fair 62.34% / ④-4ep 67.05%）；判据 Δlp（|Δ|<1.5pp 不可分辨）。
-5. **诚实条款**：⚠️ 训练**进行中，无最终 ProtB**；当前数字均为暂态（public 引用勿当结论）。
-
-**③ 纪律**：🚫 不打断 ArmC 训练/eval chain；数字与 `EXPERIMENTS_VISION.md` / `MEMORY_VISION.md` 一致、🚫 凭印象；commit 前缀 `vision report:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-14（📊 ArmC 中文状态报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_merge3ds_armc_status_zh.html 已交付(7节+2SVG+文献表)，已多次刷新至最新训练数据。需要时再读。
 
 > 📦 §运维指令 · 2026-10-14（✍️ 放行刷新论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ P0+P1 全部修改完成，11→12 页 0 error（commit e0f75ef5）。需要时再读。
 
 > 📦 §运维指令 · 2026-10-14（📝 训练空窗期审视论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 21.8KB HTML，2🔴+6🟠+5🟢，14/16 核验一致。需要时再读。
 
-### 🆕 运维指令 · 2026-10-13（📐 合并实验的 LR 缩放 —— 按文献规则定，🚫 禁拍脑袋）· 用户直令 · 最高优先
+> 📦 §运维指令 · 2026-10-13（📐 LR 缩放规则）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 按文献定 LR ×4=2e-3（Goyal arXiv:1706.02677），3 臂扫描，报告已更新含文献表。需要时再读。
 
-> **用户令（2026-10-13）**：「搜索一下，**GBS ×4 时 LR 应该怎么变**，不要胡咧咧。」
-> **运维已查（带出处 · 2026-10-13）**：
-> 1. **线性缩放规则（最经典）**：Goyal et al. 2017《Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour》(**arXiv:1706.02677**) 原文「adopt a **hyper-parameter-free linear scaling rule** for adjusting learning rates as a function of minibatch size」+ **warmup**；ResNet-50/ImageNet **batch 到 8192 无精度损失**。⇒ **GBS ×4 ⇒ LR ×4**。
-> 2. **B ∝ LR 等价性（含 Adam）**：Smith et al. 2017《Don't Decay the Learning Rate, Increase the Batch Size》(**arXiv:1711.00489**)——对 **SGD / SGD+momentum / Nesterov / Adam** 均成立：「increase the learning rate ε and scale the batch size **B ∝ ε**」。⇒ 同样支持 **×4**。
-> 3. **次线性 √ 规则（×2）**：大批量常用 `LR ∝ √B`。⚠️ 本轮运维**未取到可引一手出处** ⇒ **不得当「权威规则」写**；若用，必须标「**工程惯例 · 无一手引用**」。
-> 4. **实证硬结论**：Shallue et al. 2019《Measuring the Effects of Data Parallelism…》(**JMLR 20** · arXiv:1811.03600) + Google《Deep Learning Tuning Playbook》——① **换 batch 必须重新调 LR（及动量/正则）**（「the optimizer hyperparameters (e.g. learning rate, momentum) and the regularization hyperparameters」最敏感）；② **perfect scaling 仅在 critical batch size 以下成立，超过则收益递减**（McCandlish et al. 2018, arXiv:1812.06162「gradient noise scale」）。
-> 5. **对比学习专属**：SimCLR (arXiv:2002.05709) ——「contrastive learning **benefits from larger batch sizes and more training steps**」⇒ 欠缩放导致收敛慢，**正确补救是加步数**，不是降低要求。
-
-**① 令（改计划书 §3 + 定 LR）**：
-1. **LR 不许只拍一个数**：**按 Goyal 线性规则默认 ×4（5e-4 → 2e-3）**，**必须配同比 warmup**（Goyal 要求）。
-2. **写成 3 臂小扫描**：**LR ∈ { ×2 (1e-3, 次线性) · ×3 (1.5e-3) · ×4 (2e-3, 线性) }**，同预算各跑，**以 ProtB 取优** —— 这才是「按文献办事」，而不是「拍一个再预言会变差」。
-3. 报告 §3 那句「LR ×2 是保守欠缩放」**改为引用上述文献**（标清：线性=×4 / 次线性=×2 / 实证必须重调）；**ProtB 预估改为按 3 臂给区间**。
-4. 若预算只允许 1 个 LR ⇒ **取线性 ×4**（有 Goyal 直接依据），并在报告**显式声明「未做 LR 扫描」的局限**。
-
-**② 交付**：更新 `report_vision_merge3ds_bs4_lr2_plan_zh.html`（含文献表：arXiv 号 + 访问日）。
-**③ 纪律**：🚫 **无出处的规则不得写成「权威」**；commit 前缀 `vision fix:` · 任务书 >32KB 自滚归档。
-
-
-### 🆕 运维指令 · 2026-10-13（🔢 更正 `report_vision_merge3ds_bs4_lr2_plan_zh.html` 的数据量口径 —— **GPIC 被低估**，应按快照实盘重算）· 用户直令 · 最高优先
-
-> **用户质疑（2026-10-13）**：「三集合并 **GPIC 怎么会只有 ~80–85M 样本**呢？**应该 100M+ 样本吧**。」
-> **运维核实（✓ 用户对 · 报告错）**：
-> - 报告 §2 写：GPIC(7437 tar) ≈ **~80–85M**、三集合计 ≈ **95.8M**。
-> - 本线自有记录相反：`EXPERIMENTS_VISION.md` **L934**「GPIC **8000×12,639 = 101.1M** + CC12M 11.0M + Amshaker 5.95M = **118.1M pairs**」；**L60**「GPIC 每 tar 实测 ≈12,495 对」。
-> - **实测快照**：`run/vision/data_snapshot_20261009.txt` = **7437 行**（7437 GPIC tar，已核）；`data_snapshot_20261010_full.txt` = **8000 行**。
-> ⇒ **GPIC 快照（7437 tar）≈ 93.0–94.0M 对 · GPIC 全量 = 101.1M 对**。**三集合计：快照 ≈ 110–111M · 全量 ≈ 118.1M**。
-> ⇒ 报告 §2 的「GPIC ~80–85M / 合计 95.8M」= **6233-tar 时代旧值**（`EXPERIMENTS_VISION.md` L489: 6233×12639+11+5.95≈95.7M），**快照冻结到 7437 tar 后未重算** ⇒ **陈旧引用**。
-> ⚠️ **自相矛盾**：报告 §2 **权重列**写 GPIC **~84%**（=94/111），**对数列**却写 ~80–85M（=0.84×95.8）—— 同表两列打架。
-
-**① 必做（只重算数字，不改配方）**：
-1. **重算 §1/§2/§3 全部数据量**：GPIC =（快照 7437 / 全量 8000）× **实测每 tar 对数**；CC12M / Amshaker 同法；给**三集合计（快照 / 全量 两栏）**。**每个数附来源**（快照 `wc -l` 行数 / per-tar 实测命令）。
-2. **重算受影响的量**：**epoch 定义 + 每 epoch 步数 + 24h 内 epoch 数 + ProtB 外推**。⚠️ 基线 ④-4ep「1 epoch = 187,101 步 × 512 = 95.8M」要按**真实快照量**重判（若快照 ≈111M，则 187,101 步其实 ≈ **0.86 epoch**）。
-3. **修自相矛盾的权重列**：GPIC/CC12M/Amshaker 占**三集合计**的 %（用重算后对数）。
-4. 若「快照实际对数」与「187,101×512」不一致，**如实并列两种口径**（「训练实际喂入样本数」vs「数据集大小」），🚫 不许混为一谈。
-
-**② 交付**：更新 `report_vision_merge3ds_bs4_lr2_plan_zh.html`（中文 · 自包含）+ 在 `EXPERIMENTS_VISION.md` 加一条**口径订正**（注明旧 95.8M 系 6233-tar 时代值，已被 7437-tar 快照取代）。
-
-**③ 纪律**：🚫 **不许再复用陈旧聚合值**；✅ 每个数字**可溯源到盘点命令**（`wc -l` / `tar -tf … | grep -c`，可 CPU 抽样）；commit 前缀 `vision fix:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-13（🔢 数据量口径更正）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ GPIC 快照7437tar≈94M/全量101.1M, 三集合计快照≈111M/全量118.1M, 报告已订正。需要时再读。
 
 
 ### 🆕 运维指令 · 2026-10-13（🚀【放行执行】外部编码器 ProtB 做完后 → 立刻跑「合并三数据集实验」：GBS/MBS ×4 · LR ×2 · 24h ≈3 epoch）· 用户直令 · 最高优先
