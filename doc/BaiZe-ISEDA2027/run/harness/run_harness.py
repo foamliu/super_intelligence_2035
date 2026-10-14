@@ -39,6 +39,9 @@ OPENCODE_MODEL = f"gw/{UNIFIED_MODEL}"  # provider/model per ~/.config/opencode/
 # Dummy key handed to harnesses that route through the local gw_proxy (the proxy
 # injects the real gateway key upstream).  See harness_work/gw_proxy.py.
 DUMMY_KEY = "dummy-key-for-proxy"
+# Configurable gw_proxy ports (2026-10-14: for glm53 parallel run on separate ports)
+GW_PROXY_PORT = os.environ.get("GW_PROXY_PORT", "9090")
+GW_DSH_PORT = os.environ.get("GW_DSH_PORT", "9091")
 CLINE_BIN = shutil.which("cline") or "/home/app.e0031982/.bun/bin/cline"
 CLINE_SECRETS = Path.home() / ".cline" / "data" / "secrets.json"
 
@@ -186,7 +189,7 @@ class CodexDriver:
         # network failures when the external proxy is down or external net unreachable.
         r = _run(cmd, workdir, timeout, env={
             "OPENAI_API_KEY": DUMMY_KEY,
-            "OPENAI_BASE_URL": "http://127.0.0.1:9090/v1",
+            "OPENAI_BASE_URL": f"http://127.0.0.1:{GW_PROXY_PORT}/v1",
         })
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
@@ -273,7 +276,7 @@ class ClaudeCodeDriver:
             "--dangerously-skip-permissions",
         ]
         env = {
-            "ANTHROPIC_BASE_URL": "http://127.0.0.1:9090",  # local gw_proxy
+            "ANTHROPIC_BASE_URL": f"http://127.0.0.1:{GW_PROXY_PORT}",  # local gw_proxy
             "ANTHROPIC_API_KEY": DUMMY_KEY,
             "ANTHROPIC_MODEL": UNIFIED_MODEL,
             "NO_PROXY": "127.0.0.1,localhost",
@@ -359,7 +362,7 @@ class DeepseekHarnessDriver:
             harness = DeepSeekHarness(
                 provider="deepseek-official",
                 model=UNIFIED_MODEL,
-                base_url=f"http://127.0.0.1:9091/v1",  # DSH proxy strips DeepSeek-specific params
+                base_url=f"http://127.0.0.1:{GW_DSH_PORT}/v1",  # DSH proxy strips DeepSeek-specific params
                 api_key=DUMMY_KEY,
                 cwd=str(workdir),
                 dsh_home=self._DSH_HOME,

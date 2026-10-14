@@ -34,20 +34,7 @@
 - ETA ~42h（7 路并行），结果幂等可续。
 - commit 前缀 `harness glm53:` · 任务书 >32KB 自滚归档。
 
-### 🆕 运维指令 · 2026-10-13（🔬 通过率为何这么低 —— web 对照 + 轨迹细析 + 提升机会点按预计增益排序）· 用户直令 · 最高优先
-
-> 用户令（2026-10-13）：「harness：首先 web search 后分析为什么通过率这么低；细致分析轨迹，回答通过率这么低是否合理、是否都是 LLM 能力不足所致，还是评测环境的问题？有哪些提升机会点？有哪些问题？如何解决，将建议按照预计提升从高到低排序。」
-> 性质：读数据 + web（CPU，不占 GPU）；与 fix3 重评 / 下载错峰 IO，并行不冲突。
-
-① 必答（逐条）：
-1. web 外部对照：公开 SWE-bench(-Lite/Verified) 同类 agent 的 pass@1（Claude / Codex / kimi / Aider…）+ 官方 reference resolve rate → 明确答「cline 28.7%（eval-OK 口径 36.6%）是偏低 / 相当 / 被环境压制」，带来源 + 时效。
-2. 是否合理 + 能力 vs 环境拆分：给量化拆分（agent 能力类失败 vs 评测环境/infra 类失败 ± 可挽回上限），引用已交付 `report_harness_eval_rootcause.html`（env 失败 21.5%、真 wrong-fix 48%、5 repo 系统性压制）。
-3. 细致轨迹分析：从 `kimi_pilot_results.json`（2100）+ 交互轨迹（`stdout_tail`/trace）逐条解读代表案例（成功 / wrong-fix / blocked 各取样），给 文件:行 / 原文片段为证。
-4. 提升机会点 + 问题 + 解法：按预计提升从高到低排序的表（每行：机会点 · 依据 · 做法 · 预计挽回 resolved 数或 pp · 成本 · ETA · 风险）。
-
-② 交付：`doc/BaiZe-ISEDA2027/report_harness_why_low_passrate_zh.html`（中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB）。节：TL;DR / 外部对照 / 能力 vs 环境拆解 / 代表轨迹逐条 / 排序后的提升机会点总表 / 结论与诚实条款。
-
-③ 纪律：🚫 不占 GPU、不改已发布数值 · web 论据带来源 + 时效 · 结论须有证据（文件:行）· 与 fix3 并行不冲突 · commit 前缀 `harness rpt:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令·2026-10-13（🔬 通过率为何这么低）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_harness_why_low_passrate_zh.html 已交付 ✅（web 对照 + 能力 vs 环境拆解 + 轨迹细析 + 提升机会点排序表）。需要时再读。
 
 
 ### 🆕 运维指令 · 2026-10-13（🔧 P1 剩余项继续修 + 重评/重跑）· 用户直令 · 最高优先
@@ -288,101 +275,7 @@ ERROR_COUNT:  <n>
 
 🚫 第 0 步没通过之前，不许"假装跑了"或"用其他指标冒充 SWE-bench" —— 如实报告阻塞。
 
-### 1.1-bis ⚠️ 无 Docker 路线（运维 2026-10-02 明确：公司内网无法 `docker pull`）
-
-> 已查实的事实（官方仓库原文）：
-> - SWE-bench 官方 harness 默认绑 Docker（README：「SWE-bench uses Docker for reproducible evaluations」；
->   2024-06-27 起改为「fully containerized evaluation harness using Docker」）。
-> - 官方唯一的"无 Docker"本地后端是 Modal（云）：`--modal true` —— 但要外网。
-> - `SWE-ReX`（SWE-agent 家族）支持 local / remote / Docker / Modal 等后端，
->   原文：「…executed locally or remotely in Docker containers, AWS remote machines, Modal, or something else…」+
->   「Support a broad range of platforms, including non-Linux machines without Docker」。
-> - 🚫 `SWE-MiniSandbox` —— 在官方仓库中未找到该名称。请自行查证（有就给 URL + 它解决什么）；查不到就写"未找到"，不要猜。
-
-> ### 🔑 关键认知：Docker 在这里不只是"隔离"，更是"per-instance 依赖环境的分发机制"
-> 每个 instance 一个预构建镜像，装着该 repo 在该 `base_commit` 下正确的依赖。
-> 换掉"隔离"很容易（bwrap / nsjail / local）；换掉"环境供应链"很难。
-
----
-
-#### ⭐ 第 0 步（先做）：连通性测试 —— 分清「事实」与「推测」
-
-> ### ⚠️ 运维更正（2026-10-02）：github 是可达的
-> `.29` / `.12` 都能从 github `git clone` 代码 —— 本任务线用于发布任务的仓库本身就在 github 上，
-> 所有 agent 的 `git fetch/pull/push` 一直正常。
-> → 不要把"github 不可达"当作前提（那是把"爬取层面不可达"错当成了"git 不可达"）。
->
-> ### 🔑 还必须分清另外两件被我混淆过的事
-> | | 实际状态 | 依据 |
-> |:--|:--|:--|
-> | `docker` 命令可用吗 | ❌ 不可用（`docker info` → `NOT AVAILABLE`）| 实测（RUN_ID 5） |
-> | 能不能 `docker pull` | ❓ 从未测过 | 此前只是推测，不要当事实 |
-> → "没装 Docker" 与 "装了也 pull 不到镜像" 是两件完全不同的事，都要实测。
-
-要测的清单（逐条记 `http_code` 或错误原文）
-
-```bash
-echo "=== A. GitHub（已知可达，复核 git 通道） ==="
-timeout 20 git ls-remote https://github.com/SWE-bench/SWE-bench.git HEAD 2>&1 | head -2
-
-echo "=== B. 依赖源（E′ 的关键待验项） ==="
-for u in https://pypi.org/simple/ https://files.pythonhosted.org/ ; do
-  printf '%-38s : ' "$u"; curl -sS -m 10 -o /dev/null -w '%{http_code}\n' "$u" 2>&1 | tail -1
-done
-# 内网镜像？（替换成你们实际的内网源）
-pip config list 2>/dev/null; cat /etc/pip.conf ~/.pip/pip.conf ~/.config/pip/pip.conf 2>/dev/null
-
-echo "=== C. Docker 相关（注意：docker 命令本身当前不可用） ==="
-which docker dockerd podman nerdctl 2>/dev/null || echo "(no docker/podman CLI)"
-curl -sS -m 10 -o /dev/null -w 'registry-1.docker.io : %{http_code}\n' https://registry-1.docker.io/v2/ 2>&1 | tail -1
-curl -sS -m 10 -o /dev/null -w 'ghcr.io             : %{http_code}\n' https://ghcr.io/v2/ 2>&1 | tail -1
-
-echo "=== D. SWE-bench 云（sb-cli 的命门） ==="
-for u in https://api.swebench.com/ https://www.swebench.com/ ; do
-  printf '%-38s : ' "$u"; curl -sS -m 10 -o /dev/null -w '%{http_code}\n' "$u" 2>&1 | tail -1
-done
-timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -3
-```
-
-判定（据此选路线）
-| 测试结果 | 结论 |
-|:--|:--|
-| B（pypi/内网镜像）通 | ✅ E′ 完全可行 —— `git clone`（已成立）+ 装依赖 → 不需要 Docker |
-| C 里能看到内网 registry 或 `docker pull` 成功 | ✅ 原路可行（最省事） |
-| D 通（且合规批准） | ✅ sb-cli 可用 → 给最强 harness 拿标准分数 |
-| B/C/D 全不通 | ⚠️ 才需要考虑自建沙箱 / 换口径 |
-
-#### 🚫 关于 sb-cli 的合规红线（必须先确认，再上传任何东西）
-
-`sb-cli` 的工作方式是 把 `predictions.json`（含 `model_patch`）上传到 SWE-bench 云端评测。
-- ✅ 缓解：patch 针对的是开源 repo（django / sympy 等），不是我们的私有代码。
-- ⚠️ 但：这是把代码片段发到外部服务 —— 公司政策可能不允许。
-- → 要求：上传前必须由运维/合规确认。未经确认，不得使用 sb-cli 上传任何东西。
-- 📌 另：sb-cli 需要邮箱 + 邮件验证码注册（`sb-cli gen-api-key <email>` → `verify-api-key <code>`），
-  且有配额（`sb-cli quota <subset> <split>`）—— 这两条也要先记下来。
-
----
-
-#### 路线优先级（连通性测试之后据此执行）
-
-1. 若 `docker pull` 实测可行（或内网有 Harbor 镜像代理）→ 原路最省事（写清证据）。
-2. ⭐ 路线 E′（推荐）：只挑 1–3 个高频 repo 的 instance
-   - 统计 `SWE-bench Lite`(300) 的 repo 分布 → 挑占比最高的 1–3 个 repo。
-   - `git clone` 该 repo @ `base_commit`（✅ github 已确认可达）+ 装该 repo 的依赖（待验 pypi/内网镜像）。
-   - 几个 harness 跑同一批 instance → 公平横评成立。
-   - ⚠️ 报告里必须标注：这是内部横评口径，不是标准 SWE-bench 分数，不能与 leaderboard 直接比。
-   - 💡 加强版：`SWE-bench` 仓库里带着每个 instance 的镜像构建规格（`swebench/harness/`）——
-     可直接照规格 build env，完全绕开 Docker Hub。
-3. 路线 sn（若 D 通 且 合规批准）：`sb-cli` —— 给最强 harness 拿与 leaderboard 可比的标准分数。
-4. 备选：自建轻量沙箱 —— `conda env per repo` + `bwrap` / `nsjail`（只替代"隔离"职责）。
-5. 若以上都不可行 → 明确写"H-A 在受限前提下无法按标准口径进行"，
-   并给替代评测口径建议，但不得把它称作 SWE-bench 结果。
-
-
-
-
-
-
+> 📦 §1.1-bis 无 Docker 路线 + 连通性测试 + sb-cli 合规 + 路线优先级 已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：R1 unshare 沙箱路线已选定并实现，2100 条评测已完成，pypi/内网镜像可用，docker 不可用。需要时再读。
 
 ### 1.2 评测设计（核查通过后）
 

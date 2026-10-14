@@ -18,7 +18,7 @@ INSTANCES_DIR = HARNESS_WORK / "instances"
 WORKDIRS = Path("/dev/shm/harness_work/workdirs")
 ROOTFS_DIR = HARNESS_WORK / "rootfs"
 LOGS_EVAL = HARNESS_WORK / "logs_eval"
-SUMMARY_PATH = HERE / "kimi_pilot_results.json"
+SUMMARY_PATH = Path(os.environ.get("RESULTS_PATH", str(HERE / "kimi_pilot_results.json")))
 ROOTFS_LOCK_PATH = HARNESS_WORK / "rootfs.lock"  # global flock for shared rootfs templates
 
 ROOTFS_TEMPLATES = {

@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：**① report_harness_why_low_passrate_zh.html 已交付** ✅。**② fix4 COMPLETE** ✅（59/61，0 flipped=LLM能力瓶颈）。**③ P1-2 rerun RUNNING** 🔄（rerun_blocked.py --resume，**15/54 done, 1 RESOLVED**（django-13933 by claude-code）；codex 4/4=pbf；claude-code 11/15 done: 1 resolved + 4 pbf + 6 blocked(全 matplotlib git 503)；**matplotlib preclone v2 RUNNING**（targeted --depth=1 fetch, 23 commits 逐条, PID 2883632, 13MB/~4min, ETA ~30-60min）；ETA ~4-6h remaining）。**④ 累计：574→618 resolved (29.4%)**。**⑤ report_harness_eval_fix_rerun.html 已更新** ✅（32KB，§4d updated 15/54）。
+> 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
+> **🆕 2026-10-14 glm53 7×300 任务**：**❌ BLOCKED — API key 403**。curl 探针确认 `glm-5.3-flash` key `02_088EE..._6903b05e...` 对**所有模型**返回 HTTP 403（MSE Gateway auth 拒绝），非模型授权问题。kimi key 对照正常（429=配额耗尽但 key 有效）。**基础设施已就绪**：`launch_glm53_7x300.sh` ✅ + `run_serial_kimi.py` RESULTS_PATH env ✅ + `run_harness.py` GW_PROXY_PORT env ✅。**key 修复后可直接 `bash launch_glm53_7x300.sh` 启动**。
+> **P1-2 rerun** 🔄：rerun_blocked.py --resume 仍在跑（18/54, PID 3541239, matplotlib git 503 retries）。累计 574→618 resolved (29.4%)。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -49,11 +51,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        fix4 COMPLETE ✅ + P1-2 rerun_blocked RUNNING (15/54, 1 resolved) + matplotlib preclone v2 RUNNING (targeted --depth=1 fetch)
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ · ③ cline vs opencode EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (376/376, 34 flipped) · ⑥ fix2 ✅ (33/33, 9 flipped) · ⑦ fix3 ✅ (64/64, 0 flipped) · ⑧ fix4 ✅ (59/61, 0 flipped) · ⑨ why-low-passrate report ✅ · ⑩ report_harness_eval_fix_rerun.html updated ✅ (32KB, §4d 15/54)
-当前动作:     P1-2 rerun_blocked.py RUNNING (15/54, PID 3541239, ~4.6h elapsed). codex 4/4 done (all pbf). claude-code 11/15 done (1 resolved, 4 pbf, 6 blocked=matplotlib git 503). Entry 16 in progress (matplotlib-25498 git fetch retry). **matplotlib preclone v2** RUNNING (targeted --depth=1 fetch, 23 commits, PID 2883632, 13MB/~4min). ETA ~4-6h remaining for rerun.
-下一步:       ① 等 matplotlib preclone v2 完成 (~30-60min) → 剩余 mpl entries 自动使用本地 clone ② 等 rerun_blocked.py 完成 (39 remaining) → merge results ③ 如有新 resolved → 更新 report ④ astropy 0/26 apply 仍 env 失败待排查
-阻塞:         <无>
+PHASE:        glm53 7x300 BLOCKED (API key 403) + infra prepared + P1-2 rerun RUNNING (18/54)
+已完成:       ① 7x300 COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 infra prepared ✅ (launch script + code changes)
+当前动作:     glm53 API key 403 BLOCKER reported + infrastructure prepared (launch_glm53_7x300.sh, RESULTS_PATH env, GW_PROXY_PORT env) + TASK.md archived (34680->27362B) + P1-2 rerun monitoring (18/54)
+下一步:       ① 等运维修复 glm53 API key (403->200) -> bash launch_glm53_7x300.sh 启动 7x300 ② P1-2 rerun 完成后 merge results ③ 如有新 resolved -> 更新 report
+阻塞:         glm53 API key 403 -- 02_088EE..._6903b05e... 被 MSE Gateway 拒绝（所有模型均 403，kimi key 对照正常=429）。需运维确认 key 是否已 provision 或提供新 key。
 ERROR_COUNT:  0
 ```
 
@@ -61,6 +63,7 @@ ERROR_COUNT:  0
 - [06:50] R366: **report updated + preclone killed + rerun monitoring**. fix4 confirmed COMPLETE (59/61, 0 flipped, 25 patch-applied: sklearn 19/25 + sphinx 6/8 + astropy 0/26). **Killed slow matplotlib preclone** (PID 768337, 52MB in 35min through proxy, `timeout 900` SIGTERM ignored by git during network I/O → `kill -9`). Rerun continuing with github fallback (3-retry, ~10-20min/entry due to 503s). **report_harness_eval_fix_rerun.html updated** ✅ (31KB): fix4 status→COMPLETE, added §4d rerun section with per-harness table (codex 4/4=0-byte, claude-code 5/15=1 resolved, deepseek/hermes/pi pending). Accumulated: 574→618 resolved (29.4%), fix1+fix2=+43, fix3+fix4=+0, rerun=+1. 📦 体积：TASK=32513B(31.7KB ✓) / MEMORY≈?B（归档 ~3KB → daily 2026-10-14.md）.
 - [08:54] R369: **rerun monitoring + report update**. rerun_blocked.py RUNNING (PID 3541239, ~3.9h): 13/54 done, 1 RESOLVED (django-13933). Per-harness: codex 4/4=pbf, claude-code 9/15 (1 resolved, 4 pbf, 4 blocked=matplotlib git 503). Entry 14 (matplotlib-25433) in progress, git fetch retries failing. matplotlib preclone RUNNING (PID 1133201, 131MB/~37min=~3.5MB/min, ETA ~6h). **report_harness_eval_fix_rerun.html §4d updated** ✅ (32KB, 12/54→13/54). 📦 体积：TASK=32513B(31.7KB ✓) / MEMORY≈29700B(29.0KB ✓).
 - [09:40] R370: **matplotlib preclone v2 (targeted --depth=1 fetch) + report update 15/54**. Killed stalled full bare clone (PID 1133201, 246MB/77min, no write for 10min=network stall). Removed incomplete bare repo. Created new bare repo + `preclone_matplotlib.sh`: fetches 23 base_commits with `--depth=1` via proxy, each ~1-3min, ETA ~30-60min total (vs ~6h for full clone). rerun at 15/54 (codex 4/4=pbf, claude-code 11/15: 1 resolved + 4 pbf + 6 blocked=matplotlib). Entry 16 (matplotlib-25498) in progress. **report_harness_eval_fix_rerun.html §4d updated** ✅ (32KB, 13/54→15/54, preclone v2 description, claude-code 9→11/15, blocked 4→6). 📦 体积：TASK=32513B(31.7KB ✓) / MEMORY≈?B（归档 0B）.
+- [14:00] R371: **glm53 7×300 BLOCKED (API key 403) + infra fully prepared + TASK.md archived**. curl 探针确认 glm53 key `02_088EE..._6903b05e...` 对所有模型（glm-5.3-flash/thinking/air）返回 **HTTP 403**（MSE Gateway auth 拒绝），非模型授权问题。kimi key 对照测试返回 429（key 有效但配额耗尽），证明 gateway 可达且问题在 glm53 key 本身。**基础设施已就绪**：① `launch_glm53_7x300.sh` 新建（curl probe gate + gw_proxy ports 9092/9093 + 7-harness parallel launch）② `run_serial_kimi.py` 加 RESULTS_PATH env（`glm53_pilot_results.json`）③ `run_harness.py` 加 GW_PROXY_PORT/GW_DSH_PORT env（默认 9090/9091，改为 9092/9093 避冲突）。**TASK.md 归档**（34680→27362B）：why-low-passrate 指令 + §1.1-bis 无 Docker 路线 已移入 ARCHIVE_OPERATOR_HARNESS.md。P1-2 rerun 仍在跑（18/54）。📦 体积：TASK=27362B(26.7KB ✓) / MEMORY≈29883B(29.2KB ✓).
 > 📦 R358-R365 (2026-10-13 22:15 ~ 2026-10-14 06:15, why-low report + fix4 + preclone + rerun launch) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
