@@ -17,6 +17,21 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-14（十九）— 🖨️ pdflatex 已装好，编译验证论文【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「zhulong 环境刚刚装好 pdflatex 了。」
+
+**① 现在编译验证论文**（衔接十七的 P0+P1+P2 改稿）：进论文树 → `pdflatex` + `bibtex` + `pdflatex×2`，验证改稿后 `main.pdf` 编译成功。
+
+**② 检查项（逐项报）**：
+- **0 error** · **0 undefined reference / citation**；有 warning 也要记录（尤其 bib 缺 page/volume 类）。
+- **页数变化**：改稿前 10 页 → 改稿后 ? 页。
+- **overfull hbox**：新增与否；>20pt 的必须是 0（README 自检阈值）。
+
+**③ 若编译报错**：先判断是**改稿引入**（如 label/引用、表格语法、`\cite` 错名）还是**环境**（缺 `.sty`/`.cls`/字体/`bibtex` 命令）。改稿引入的能修就修；环境缺件如实报并给等价替代（如缺 `texlive-latex-extra` 包名）。
+
+**④ 纪律**：纯 CPU 编译，不占 GPU；`main.pdf` 编译产物按仓库惯例提交（`.tex`+`.bib` 必交，`.aux/.log` 不入库）；commit 前缀 `zhulong compile:`；任务书 >32KB 自滚归档。主线 `phi_k1 r3 regrade` 照常推进，编译在空窗期做。
+
 ### 🆕 运维指令 · 2026-10-14（十八）— 🧩 评测集全貌 + SKILL/Tcl 结果并入论文【用户直令 · 最高优先】
 
 > **用户令（2026-10-14）**：「告知 zhulong agent：它自己在测 PyAether，其它 agent 在同时测 SKILL 和 TCL，结果汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。请 zhulong agent 在回填结果、刷新论文时，把 zhulong_results.md 中 SKILL/TCL 的结果带上。补充信息：EDA-Scripting-Bench 评测集中各语言 case 数，pyaether=158，skill=158，tcl=133，共计 449。」
