@@ -33,7 +33,12 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/cloud/v1")
+# 2026-10-14: default changed from /cloud/v1 to /v1 per operator directive
+# (glm-5.3-flash key only works on /v1; /cloud/v1 returns 403).
+# Note: this variable is a fallback default — all drivers route through local
+# gw_proxy or cline's own globalState.json, so it is not directly used in the
+# active flow. Updated for correctness/future-proofing.
+GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/v1")
 UNIFIED_MODEL = os.environ.get("HARNESS_MODEL", "kimi-k2.6-cloud")
 OPENCODE_MODEL = f"gw/{UNIFIED_MODEL}"  # provider/model per ~/.config/opencode/opencode.json
 # Dummy key handed to harnesses that route through the local gw_proxy (the proxy
