@@ -578,5 +578,447 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14855",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 787.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_django__django-14855.json",
+      "stdout_tail": "] base_commit=475cffd1d64c690cdad16ede4d5e81985738ceb4\n[run_single] ps_len=1011\n[run_single] git reset --hard 475cffd1d64c690cdad16ede4d5e81985738ceb4\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=786.7s ==\n[run_single] model_patch: 2682 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_django__django-14855.json\n[run_single] cleanup: git reset --hard 475cffd1d64c690cdad16ede4d5e81985738ceb4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 325
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-16400",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_django__django-16400.json",
+      "stdout_tail": "ingle] git reset --hard 0bd2c0c9015b53c41394a1c0989afbfd94dc2830\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-16400\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_django__django-16400.json\n[run_single] cleanup: git reset --hard 0bd2c0c9015b53c41394a1c0989afbfd94dc2830\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 63
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25332",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 837.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25332.json",
+      "stdout_tail": "ommit=66ba515e671638971bd11a34cff12c107a437e0b\n[run_single] ps_len=1004\n[run_single] git reset --hard 66ba515e671638971bd11a34cff12c107a437e0b\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=836.5s ==\n[run_single] model_patch: 1639 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25332.json\n[run_single] cleanup: git reset --hard 66ba515e671638971bd11a34cff12c107a437e0b\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25433",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 231.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25433.json",
+      "stdout_tail": "e_commit=7eafdd8af3c523c1c77b027d378fb337dd489f18\n[run_single] ps_len=1778\n[run_single] git reset --hard 7eafdd8af3c523c1c77b027d378fb337dd489f18\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=229.7s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25433.json\n[run_single] cleanup: git reset --hard 7eafdd8af3c523c1c77b027d378fb337dd489f18\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25442",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 91.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25442.json",
+      "stdout_tail": "se_commit=73394f2b11321e03a5df199ec0196f27a728b0b0\n[run_single] ps_len=1891\n[run_single] git reset --hard 73394f2b11321e03a5df199ec0196f27a728b0b0\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=91.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25442.json\n[run_single] cleanup: git reset --hard 73394f2b11321e03a5df199ec0196f27a728b0b0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25498",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 159.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25498.json",
+      "stdout_tail": "e_commit=78bf53caacbb5ce0dc7aa73f07a74c99f1ed919b\n[run_single] ps_len=1474\n[run_single] git reset --hard 78bf53caacbb5ce0dc7aa73f07a74c99f1ed919b\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=158.5s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-25498.json\n[run_single] cleanup: git reset --hard 78bf53caacbb5ce0dc7aa73f07a74c99f1ed919b\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-26011",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 304.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-26011.json",
+      "stdout_tail": "e_commit=00afcc0c6d4d2e4390338127f05b8f4fdb4e7087\n[run_single] ps_len=1637\n[run_single] git reset --hard 00afcc0c6d4d2e4390338127f05b8f4fdb4e7087\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=303.4s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-26011.json\n[run_single] cleanup: git reset --hard 00afcc0c6d4d2e4390338127f05b8f4fdb4e7087\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-26020",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch via github fallback (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 295.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-26020.json",
+      "stdout_tail": "_commit=f6a781f77f5ddf1204c60ca7c544809407d4a807\n[run_single] ps_len=19270\n[run_single] git reset --hard f6a781f77f5ddf1204c60ca7c544809407d4a807\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=294.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_matplotlib__matplotlib-26020.json\n[run_single] cleanup: git reset --hard f6a781f77f5ddf1204c60ca7c544809407d4a807\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pylint-dev__pylint-7080",
+    "repo": "pylint-dev/pylint",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pylint-dev__pylint-5859"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_pylint-dev__pylint-7080.json",
+      "stdout_tail": " git reset --hard 3c5eca2ded3dd2b59ebaf23eb289453b5d2930f0\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=1.0s ==\n[stderr tail] ...deepseek-harness run error: session \"pylint-dev__pylint-7080\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_pylint-dev__pylint-7080.json\n[run_single] cleanup: git reset --hard 3c5eca2ded3dd2b59ebaf23eb289453b5d2930f0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 105,
+        "p2p_total": 120
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-8435",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sphinx-doc__sphinx-8435.json",
+      "stdout_tail": " git reset --hard 5d8d6275a54f2c5fb72b82383b5712c22d337634\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"sphinx-doc__sphinx-8435\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sphinx-doc__sphinx-8435.json\n[run_single] cleanup: git reset --hard 5d8d6275a54f2c5fb72b82383b5712c22d337634\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 16
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-15609",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 149.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sympy__sympy-15609.json",
+      "stdout_tail": "ngle] base_commit=15f56f3b0006d2ed2c29bde3c43e91618012c849\n[run_single] ps_len=385\n[run_single] git reset --hard 15f56f3b0006d2ed2c29bde3c43e91618012c849\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=149.0s ==\n[run_single] model_patch: 526 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sympy__sympy-15609.json\n[run_single] cleanup: git reset --hard 15f56f3b0006d2ed2c29bde3c43e91618012c849\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 121,
+        "p2p_total": 121
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-16503",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sympy__sympy-16503.json",
+      "stdout_tail": "un_single] git reset --hard a7e6f093c98a3c4783848a19fce646e32b6e0161\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"sympy__sympy-16503\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_deepseek_harness_sympy__sympy-16503.json\n[run_single] cleanup: git reset --hard a7e6f093c98a3c4783848a19fce646e32b6e0161\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 121,
+        "p2p_total": 121
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-15400",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "rerun": true,
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+fetch (ok (local=False))"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/rerun/predictions_pi_django__django-15400.json",
+      "stdout_tail": "ngle] base_commit=4c76ffc2d6c77c850b4bef8d9acc197d11c47937\n[run_single] ps_len=760\n[run_single] git reset --hard 4c76ffc2d6c77c850b4bef8d9acc197d11c47937\n[run_single] running pi ...\n== harness=pi rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...403 status code (no body)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/rerun/predictions_pi_django__django-15400.json\n[run_single] cleanup: git reset --hard 4c76ffc2d6c77c850b4bef8d9acc197d11c47937\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 62
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]

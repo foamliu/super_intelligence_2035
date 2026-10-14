@@ -1,0 +1,100 @@
+  [RESUME] Skipping 0 completed for claude-code
+Serial kimi eval: harness=claude-code model=glm-5.3-flash
+  Total=300 Pending=300 Skip=0 Concurrency=1
+
+############################################################
+# [1/300] claude-code x astropy__astropy-12907
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-12907 for claude-code
+
+[RUN] claude-code on astropy__astropy-12907 ...
+  [EVAL] claude-code on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | claude-code | patch-but-failed
+
+############################################################
+# [2/300] claude-code x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for claude-code
+
+[RUN] claude-code on astropy__astropy-14182 ...
+  [EVAL] claude-code on astropy__astropy-14182 ...
+  => astropy__astropy-14182 | claude-code | patch-but-failed
+
+############################################################
+# [3/300] claude-code x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for claude-code
+
+[RUN] claude-code on astropy__astropy-14365 ...
+  [EVAL] claude-code on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | claude-code | patch-but-failed
+
+############################################################
+# [4/300] claude-code x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for claude-code
+
+[RUN] claude-code on astropy__astropy-14995 ...
+  [EVAL] claude-code on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | claude-code | patch-but-failed
+
+############################################################
+# [5/300] claude-code x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for claude-code
+
+[RUN] claude-code on astropy__astropy-6938 ...
+  [EVAL] claude-code on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | claude-code | patch-but-failed
+
+############################################################
+# [6/300] claude-code x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for claude-code
+
+[RUN] claude-code on astropy__astropy-7746 ...
+  [EVAL] claude-code on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | claude-code | patch-but-failed
+
+############################################################
+# [7/300] claude-code x django__django-10914
+############################################################
+
+============================================================
+[SETUP] django__django-10914 for claude-code
+
+[RUN] claude-code on django__django-10914 ...
+  [EVAL] claude-code on django__django-10914 ...
+  => django__django-10914 | claude-code | patch-but-failed
+
+############################################################
+# [8/300] claude-code x django__django-10924
+############################################################
+
+============================================================
+[SETUP] django__django-10924 for claude-code
+
+[RUN] claude-code on django__django-10924 ...
+  [EVAL] claude-code on django__django-10924 ...
+  => django__django-10924 | claude-code | patch-but-failed
+
+############################################################
+# [9/300] claude-code x django__django-11001
+############################################################
+
+============================================================
+[SETUP] django__django-11001 for claude-code
+
+[RUN] claude-code on django__django-11001 ...

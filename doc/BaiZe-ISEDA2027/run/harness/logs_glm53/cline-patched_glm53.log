@@ -1,0 +1,520 @@
+  [RESUME] Skipping 0 completed for cline-patched
+Serial kimi eval: harness=cline-patched model=glm-5.3-flash
+  Total=300 Pending=300 Skip=0 Concurrency=1
+
+############################################################
+# [1/300] cline-patched x astropy__astropy-12907
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-12907 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-12907 ...
+  [EVAL] cline-patched on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | cline-patched | patch-but-failed
+
+############################################################
+# [2/300] cline-patched x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-14182 ...
+  [EVAL] cline-patched on astropy__astropy-14182 ...
+  => astropy__astropy-14182 | cline-patched | patch-but-failed
+
+############################################################
+# [3/300] cline-patched x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-14365 ...
+  [EVAL] cline-patched on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | cline-patched | patch-but-failed
+
+############################################################
+# [4/300] cline-patched x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-14995 ...
+  [EVAL] cline-patched on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | cline-patched | patch-but-failed
+
+############################################################
+# [5/300] cline-patched x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-6938 ...
+  [EVAL] cline-patched on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | cline-patched | patch-but-failed
+
+############################################################
+# [6/300] cline-patched x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-7746 ...
+  [EVAL] cline-patched on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | cline-patched | patch-but-failed
+
+############################################################
+# [7/300] cline-patched x django__django-10914
+############################################################
+
+============================================================
+[SETUP] django__django-10914 for cline-patched
+
+[RUN] cline-patched on django__django-10914 ...
+  [EVAL] cline-patched on django__django-10914 ...
+  => django__django-10914 | cline-patched | patch-but-failed
+
+############################################################
+# [8/300] cline-patched x django__django-10924
+############################################################
+
+============================================================
+[SETUP] django__django-10924 for cline-patched
+
+[RUN] cline-patched on django__django-10924 ...
+  [EVAL] cline-patched on django__django-10924 ...
+  => django__django-10924 | cline-patched | resolved
+
+############################################################
+# [9/300] cline-patched x django__django-11001
+############################################################
+
+============================================================
+[SETUP] django__django-11001 for cline-patched
+
+[RUN] cline-patched on django__django-11001 ...
+  [EVAL] cline-patched on django__django-11001 ...
+  => django__django-11001 | cline-patched | resolved
+
+############################################################
+# [10/300] cline-patched x django__django-11019
+############################################################
+
+============================================================
+[SETUP] django__django-11019 for cline-patched
+
+[RUN] cline-patched on django__django-11019 ...
+  [EVAL] cline-patched on django__django-11019 ...
+  => django__django-11019 | cline-patched | patch-but-failed
+
+############################################################
+# [11/300] cline-patched x django__django-11039
+############################################################
+
+============================================================
+[SETUP] django__django-11039 for cline-patched
+
+[RUN] cline-patched on django__django-11039 ...
+  [EVAL] cline-patched on django__django-11039 ...
+  => django__django-11039 | cline-patched | resolved
+
+############################################################
+# [12/300] cline-patched x django__django-11049
+############################################################
+
+============================================================
+[SETUP] django__django-11049 for cline-patched
+
+[RUN] cline-patched on django__django-11049 ...
+  [EVAL] cline-patched on django__django-11049 ...
+  => django__django-11049 | cline-patched | resolved
+
+############################################################
+# [13/300] cline-patched x django__django-11099
+############################################################
+
+============================================================
+[SETUP] django__django-11099 for cline-patched
+
+[RUN] cline-patched on django__django-11099 ...
+  [EVAL] cline-patched on django__django-11099 ...
+  => django__django-11099 | cline-patched | resolved
+
+############################################################
+# [14/300] cline-patched x django__django-11133
+############################################################
+
+============================================================
+[SETUP] django__django-11133 for cline-patched
+
+[RUN] cline-patched on django__django-11133 ...
+  [EVAL] cline-patched on django__django-11133 ...
+  => django__django-11133 | cline-patched | resolved
+
+############################################################
+# [15/300] cline-patched x django__django-11179
+############################################################
+
+============================================================
+[SETUP] django__django-11179 for cline-patched
+
+[RUN] cline-patched on django__django-11179 ...
+  [EVAL] cline-patched on django__django-11179 ...
+  => django__django-11179 | cline-patched | resolved
+
+############################################################
+# [16/300] cline-patched x django__django-11283
+############################################################
+
+============================================================
+[SETUP] django__django-11283 for cline-patched
+
+[RUN] cline-patched on django__django-11283 ...
+  [EVAL] cline-patched on django__django-11283 ...
+  => django__django-11283 | cline-patched | patch-but-failed
+
+############################################################
+# [17/300] cline-patched x django__django-11422
+############################################################
+
+============================================================
+[SETUP] django__django-11422 for cline-patched
+
+[RUN] cline-patched on django__django-11422 ...
+  [EVAL] cline-patched on django__django-11422 ...
+  => django__django-11422 | cline-patched | resolved
+
+############################################################
+# [18/300] cline-patched x django__django-11564
+############################################################
+
+============================================================
+[SETUP] django__django-11564 for cline-patched
+
+[RUN] cline-patched on django__django-11564 ...
+  [EVAL] cline-patched on django__django-11564 ...
+  => django__django-11564 | cline-patched | patch-but-failed
+
+############################################################
+# [19/300] cline-patched x django__django-11583
+############################################################
+
+============================================================
+[SETUP] django__django-11583 for cline-patched
+
+[RUN] cline-patched on django__django-11583 ...
+  [EVAL] cline-patched on django__django-11583 ...
+  => django__django-11583 | cline-patched | resolved
+
+############################################################
+# [20/300] cline-patched x django__django-11620
+############################################################
+
+============================================================
+[SETUP] django__django-11620 for cline-patched
+
+[RUN] cline-patched on django__django-11620 ...
+  [EVAL] cline-patched on django__django-11620 ...
+  => django__django-11620 | cline-patched | resolved
+
+############################################################
+# [21/300] cline-patched x django__django-11630
+############################################################
+
+============================================================
+[SETUP] django__django-11630 for cline-patched
+
+[RUN] cline-patched on django__django-11630 ...
+  [EVAL] cline-patched on django__django-11630 ...
+  => django__django-11630 | cline-patched | patch-but-failed
+
+############################################################
+# [22/300] cline-patched x django__django-11742
+############################################################
+
+============================================================
+[SETUP] django__django-11742 for cline-patched
+
+[RUN] cline-patched on django__django-11742 ...
+  [EVAL] cline-patched on django__django-11742 ...
+  => django__django-11742 | cline-patched | patch-but-failed
+
+############################################################
+# [23/300] cline-patched x django__django-11797
+############################################################
+
+============================================================
+[SETUP] django__django-11797 for cline-patched
+
+[RUN] cline-patched on django__django-11797 ...
+  [EVAL] cline-patched on django__django-11797 ...
+  => django__django-11797 | cline-patched | patch-but-failed
+
+############################################################
+# [24/300] cline-patched x django__django-11815
+############################################################
+
+============================================================
+[SETUP] django__django-11815 for cline-patched
+
+[RUN] cline-patched on django__django-11815 ...
+  [EVAL] cline-patched on django__django-11815 ...
+  => django__django-11815 | cline-patched | patch-but-failed
+
+############################################################
+# [25/300] cline-patched x django__django-11848
+############################################################
+
+============================================================
+[SETUP] django__django-11848 for cline-patched
+
+[RUN] cline-patched on django__django-11848 ...
+  [EVAL] cline-patched on django__django-11848 ...
+  => django__django-11848 | cline-patched | patch-but-failed
+
+############################################################
+# [26/300] cline-patched x django__django-11905
+############################################################
+
+============================================================
+[SETUP] django__django-11905 for cline-patched
+
+[RUN] cline-patched on django__django-11905 ...
+  [EVAL] cline-patched on django__django-11905 ...
+  => django__django-11905 | cline-patched | patch-but-failed
+
+############################################################
+# [27/300] cline-patched x django__django-11910
+############################################################
+
+============================================================
+[SETUP] django__django-11910 for cline-patched
+
+[RUN] cline-patched on django__django-11910 ...
+  [EVAL] cline-patched on django__django-11910 ...
+  => django__django-11910 | cline-patched | patch-but-failed
+
+############################################################
+# [28/300] cline-patched x django__django-11964
+############################################################
+
+============================================================
+[SETUP] django__django-11964 for cline-patched
+
+[RUN] cline-patched on django__django-11964 ...
+  [EVAL] cline-patched on django__django-11964 ...
+  => django__django-11964 | cline-patched | patch-but-failed
+
+############################################################
+# [29/300] cline-patched x django__django-11999
+############################################################
+
+============================================================
+[SETUP] django__django-11999 for cline-patched
+
+[RUN] cline-patched on django__django-11999 ...
+  [EVAL] cline-patched on django__django-11999 ...
+  => django__django-11999 | cline-patched | resolved
+
+############################################################
+# [30/300] cline-patched x django__django-12113
+############################################################
+
+============================================================
+[SETUP] django__django-12113 for cline-patched
+
+[RUN] cline-patched on django__django-12113 ...
+  [EVAL] cline-patched on django__django-12113 ...
+  => django__django-12113 | cline-patched | patch-but-failed
+
+############################################################
+# [31/300] cline-patched x django__django-12125
+############################################################
+
+============================================================
+[SETUP] django__django-12125 for cline-patched
+
+[RUN] cline-patched on django__django-12125 ...
+  [EVAL] cline-patched on django__django-12125 ...
+  => django__django-12125 | cline-patched | patch-but-failed
+
+############################################################
+# [32/300] cline-patched x django__django-12184
+############################################################
+
+============================================================
+[SETUP] django__django-12184 for cline-patched
+
+[RUN] cline-patched on django__django-12184 ...
+  [QUOTA] cline-patched: quota exhausted, waiting 300s (retry 2/3)...
+  [EVAL] cline-patched on django__django-12184 ...
+  => django__django-12184 | cline-patched | resolved
+
+############################################################
+# [33/300] cline-patched x django__django-12284
+############################################################
+
+============================================================
+[SETUP] django__django-12284 for cline-patched
+
+[RUN] cline-patched on django__django-12284 ...
+  [EVAL] cline-patched on django__django-12284 ...
+  => django__django-12284 | cline-patched | resolved
+
+############################################################
+# [34/300] cline-patched x django__django-12286
+############################################################
+
+============================================================
+[SETUP] django__django-12286 for cline-patched
+
+[RUN] cline-patched on django__django-12286 ...
+  [EVAL] cline-patched on django__django-12286 ...
+  => django__django-12286 | cline-patched | patch-but-failed
+
+############################################################
+# [35/300] cline-patched x django__django-12308
+############################################################
+
+============================================================
+[SETUP] django__django-12308 for cline-patched
+
+[RUN] cline-patched on django__django-12308 ...
+  [EVAL] cline-patched on django__django-12308 ...
+  => django__django-12308 | cline-patched | patch-but-failed
+
+############################################################
+# [36/300] cline-patched x django__django-12453
+############################################################
+
+============================================================
+[SETUP] django__django-12453 for cline-patched
+
+[RUN] cline-patched on django__django-12453 ...
+  [EVAL] cline-patched on django__django-12453 ...
+  => django__django-12453 | cline-patched | resolved
+
+############################################################
+# [37/300] cline-patched x django__django-12470
+############################################################
+
+============================================================
+[SETUP] django__django-12470 for cline-patched
+
+[RUN] cline-patched on django__django-12470 ...
+  [EVAL] cline-patched on django__django-12470 ...
+  => django__django-12470 | cline-patched | patch-but-failed
+
+############################################################
+# [38/300] cline-patched x django__django-12497
+############################################################
+
+============================================================
+[SETUP] django__django-12497 for cline-patched
+
+[RUN] cline-patched on django__django-12497 ...
+  [EVAL] cline-patched on django__django-12497 ...
+  => django__django-12497 | cline-patched | resolved
+
+############################################################
+# [39/300] cline-patched x django__django-12589
+############################################################
+
+============================================================
+[SETUP] django__django-12589 for cline-patched
+
+[RUN] cline-patched on django__django-12589 ...
+  [EVAL] cline-patched on django__django-12589 ...
+  => django__django-12589 | cline-patched | resolved
+
+############################################################
+# [40/300] cline-patched x django__django-12700
+############################################################
+
+============================================================
+[SETUP] django__django-12700 for cline-patched
+
+[RUN] cline-patched on django__django-12700 ...
+  [EVAL] cline-patched on django__django-12700 ...
+  => django__django-12700 | cline-patched | resolved
+
+############################################################
+# [41/300] cline-patched x django__django-12708
+############################################################
+
+============================================================
+[SETUP] django__django-12708 for cline-patched
+
+[RUN] cline-patched on django__django-12708 ...
+  [EVAL] cline-patched on django__django-12708 ...
+  => django__django-12708 | cline-patched | resolved
+
+############################################################
+# [42/300] cline-patched x django__django-12747
+############################################################
+
+============================================================
+[SETUP] django__django-12747 for cline-patched
+
+[RUN] cline-patched on django__django-12747 ...
+  [EVAL] cline-patched on django__django-12747 ...
+  => django__django-12747 | cline-patched | patch-but-failed
+
+############################################################
+# [43/300] cline-patched x django__django-12856
+############################################################
+
+============================================================
+[SETUP] django__django-12856 for cline-patched
+
+[RUN] cline-patched on django__django-12856 ...
+  [EVAL] cline-patched on django__django-12856 ...
+  => django__django-12856 | cline-patched | resolved
+
+############################################################
+# [44/300] cline-patched x django__django-12908
+############################################################
+
+============================================================
+[SETUP] django__django-12908 for cline-patched
+
+[RUN] cline-patched on django__django-12908 ...
+  [EVAL] cline-patched on django__django-12908 ...
+  => django__django-12908 | cline-patched | resolved
+
+############################################################
+# [45/300] cline-patched x django__django-12915
+############################################################
+
+============================================================
+[SETUP] django__django-12915 for cline-patched
+
+[RUN] cline-patched on django__django-12915 ...
+  [EVAL] cline-patched on django__django-12915 ...
+  => django__django-12915 | cline-patched | patch-but-failed
+
+############################################################
+# [46/300] cline-patched x django__django-12983
+############################################################
+
+============================================================
+[SETUP] django__django-12983 for cline-patched
+
+[RUN] cline-patched on django__django-12983 ...
+  [EVAL] cline-patched on django__django-12983 ...
+  => django__django-12983 | cline-patched | resolved
+
+############################################################
+# [47/300] cline-patched x django__django-13028
+############################################################
+
+============================================================
+[SETUP] django__django-13028 for cline-patched
+
+[RUN] cline-patched on django__django-13028 ...
+  [EVAL] cline-patched on django__django-13028 ...

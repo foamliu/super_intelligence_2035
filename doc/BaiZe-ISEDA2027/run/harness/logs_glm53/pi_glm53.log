@@ -1,0 +1,67 @@
+  [RESUME] Skipping 0 completed for pi
+Serial kimi eval: harness=pi model=glm-5.3-flash
+  Total=300 Pending=300 Skip=0 Concurrency=1
+
+############################################################
+# [1/300] pi x astropy__astropy-12907
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-12907 for pi
+
+[RUN] pi on astropy__astropy-12907 ...
+  [EVAL] pi on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | pi | patch-but-failed
+
+############################################################
+# [2/300] pi x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for pi
+
+[RUN] pi on astropy__astropy-14182 ...
+  [EVAL] pi on astropy__astropy-14182 ...
+  => astropy__astropy-14182 | pi | patch-but-failed
+
+############################################################
+# [3/300] pi x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for pi
+
+[RUN] pi on astropy__astropy-14365 ...
+  [EVAL] pi on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | pi | patch-but-failed
+
+############################################################
+# [4/300] pi x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for pi
+
+[RUN] pi on astropy__astropy-14995 ...
+  [EVAL] pi on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | pi | patch-but-failed
+
+############################################################
+# [5/300] pi x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for pi
+
+[RUN] pi on astropy__astropy-6938 ...
+  [EVAL] pi on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | pi | patch-but-failed
+
+############################################################
+# [6/300] pi x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for pi
+
+[RUN] pi on astropy__astropy-7746 ...

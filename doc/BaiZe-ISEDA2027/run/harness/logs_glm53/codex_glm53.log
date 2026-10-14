@@ -1,0 +1,516 @@
+  [RESUME] Skipping 0 completed for codex
+Serial kimi eval: harness=codex model=glm-5.3-flash
+  Total=300 Pending=300 Skip=0 Concurrency=1
+
+############################################################
+# [1/300] codex x astropy__astropy-12907
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-12907 for codex
+
+[RUN] codex on astropy__astropy-12907 ...
+  [EVAL] codex on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | codex | patch-but-failed
+
+############################################################
+# [2/300] codex x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for codex
+
+[RUN] codex on astropy__astropy-14182 ...
+  [EVAL] codex on astropy__astropy-14182 ...
+  => astropy__astropy-14182 | codex | patch-but-failed
+
+############################################################
+# [3/300] codex x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for codex
+
+[RUN] codex on astropy__astropy-14365 ...
+  [EVAL] codex on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | codex | patch-but-failed
+
+############################################################
+# [4/300] codex x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for codex
+
+[RUN] codex on astropy__astropy-14995 ...
+  [EVAL] codex on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | codex | patch-but-failed
+
+############################################################
+# [5/300] codex x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for codex
+
+[RUN] codex on astropy__astropy-6938 ...
+  [EVAL] codex on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | codex | patch-but-failed
+
+############################################################
+# [6/300] codex x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for codex
+
+[RUN] codex on astropy__astropy-7746 ...
+  [EVAL] codex on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | codex | patch-but-failed
+
+############################################################
+# [7/300] codex x django__django-10914
+############################################################
+
+============================================================
+[SETUP] django__django-10914 for codex
+
+[RUN] codex on django__django-10914 ...
+  [EVAL] codex on django__django-10914 ...
+  => django__django-10914 | codex | resolved
+
+############################################################
+# [8/300] codex x django__django-10924
+############################################################
+
+============================================================
+[SETUP] django__django-10924 for codex
+
+[RUN] codex on django__django-10924 ...
+  [EVAL] codex on django__django-10924 ...
+  => django__django-10924 | codex | patch-but-failed
+
+############################################################
+# [9/300] codex x django__django-11001
+############################################################
+
+============================================================
+[SETUP] django__django-11001 for codex
+
+[RUN] codex on django__django-11001 ...
+  [EVAL] codex on django__django-11001 ...
+  => django__django-11001 | codex | resolved
+
+############################################################
+# [10/300] codex x django__django-11019
+############################################################
+
+============================================================
+[SETUP] django__django-11019 for codex
+
+[RUN] codex on django__django-11019 ...
+  [EVAL] codex on django__django-11019 ...
+  => django__django-11019 | codex | patch-but-failed
+
+############################################################
+# [11/300] codex x django__django-11039
+############################################################
+
+============================================================
+[SETUP] django__django-11039 for codex
+
+[RUN] codex on django__django-11039 ...
+  [EVAL] codex on django__django-11039 ...
+  => django__django-11039 | codex | resolved
+
+############################################################
+# [12/300] codex x django__django-11049
+############################################################
+
+============================================================
+[SETUP] django__django-11049 for codex
+
+[RUN] codex on django__django-11049 ...
+  [EVAL] codex on django__django-11049 ...
+  => django__django-11049 | codex | resolved
+
+############################################################
+# [13/300] codex x django__django-11099
+############################################################
+
+============================================================
+[SETUP] django__django-11099 for codex
+
+[RUN] codex on django__django-11099 ...
+  [EVAL] codex on django__django-11099 ...
+  => django__django-11099 | codex | resolved
+
+############################################################
+# [14/300] codex x django__django-11133
+############################################################
+
+============================================================
+[SETUP] django__django-11133 for codex
+
+[RUN] codex on django__django-11133 ...
+  [EVAL] codex on django__django-11133 ...
+  => django__django-11133 | codex | resolved
+
+############################################################
+# [15/300] codex x django__django-11179
+############################################################
+
+============================================================
+[SETUP] django__django-11179 for codex
+
+[RUN] codex on django__django-11179 ...
+  [EVAL] codex on django__django-11179 ...
+  => django__django-11179 | codex | resolved
+
+############################################################
+# [16/300] codex x django__django-11283
+############################################################
+
+============================================================
+[SETUP] django__django-11283 for codex
+
+[RUN] codex on django__django-11283 ...
+  [EVAL] codex on django__django-11283 ...
+  => django__django-11283 | codex | patch-but-failed
+
+############################################################
+# [17/300] codex x django__django-11422
+############################################################
+
+============================================================
+[SETUP] django__django-11422 for codex
+
+[RUN] codex on django__django-11422 ...
+  [EVAL] codex on django__django-11422 ...
+  => django__django-11422 | codex | patch-but-failed
+
+############################################################
+# [18/300] codex x django__django-11564
+############################################################
+
+============================================================
+[SETUP] django__django-11564 for codex
+
+[RUN] codex on django__django-11564 ...
+  [EVAL] codex on django__django-11564 ...
+  => django__django-11564 | codex | patch-but-failed
+
+############################################################
+# [19/300] codex x django__django-11583
+############################################################
+
+============================================================
+[SETUP] django__django-11583 for codex
+
+[RUN] codex on django__django-11583 ...
+  [EVAL] codex on django__django-11583 ...
+  => django__django-11583 | codex | resolved
+
+############################################################
+# [20/300] codex x django__django-11620
+############################################################
+
+============================================================
+[SETUP] django__django-11620 for codex
+
+[RUN] codex on django__django-11620 ...
+  [EVAL] codex on django__django-11620 ...
+  => django__django-11620 | codex | resolved
+
+############################################################
+# [21/300] codex x django__django-11630
+############################################################
+
+============================================================
+[SETUP] django__django-11630 for codex
+
+[RUN] codex on django__django-11630 ...
+  [EVAL] codex on django__django-11630 ...
+  => django__django-11630 | codex | patch-but-failed
+
+############################################################
+# [22/300] codex x django__django-11742
+############################################################
+
+============================================================
+[SETUP] django__django-11742 for codex
+
+[RUN] codex on django__django-11742 ...
+  [EVAL] codex on django__django-11742 ...
+  => django__django-11742 | codex | patch-but-failed
+
+############################################################
+# [23/300] codex x django__django-11797
+############################################################
+
+============================================================
+[SETUP] django__django-11797 for codex
+
+[RUN] codex on django__django-11797 ...
+  [EVAL] codex on django__django-11797 ...
+  => django__django-11797 | codex | patch-but-failed
+
+############################################################
+# [24/300] codex x django__django-11815
+############################################################
+
+============================================================
+[SETUP] django__django-11815 for codex
+
+[RUN] codex on django__django-11815 ...
+  [EVAL] codex on django__django-11815 ...
+  => django__django-11815 | codex | resolved
+
+############################################################
+# [25/300] codex x django__django-11848
+############################################################
+
+============================================================
+[SETUP] django__django-11848 for codex
+
+[RUN] codex on django__django-11848 ...
+  [EVAL] codex on django__django-11848 ...
+  => django__django-11848 | codex | patch-but-failed
+
+############################################################
+# [26/300] codex x django__django-11905
+############################################################
+
+============================================================
+[SETUP] django__django-11905 for codex
+
+[RUN] codex on django__django-11905 ...
+  [EVAL] codex on django__django-11905 ...
+  => django__django-11905 | codex | patch-but-failed
+
+############################################################
+# [27/300] codex x django__django-11910
+############################################################
+
+============================================================
+[SETUP] django__django-11910 for codex
+
+[RUN] codex on django__django-11910 ...
+  [EVAL] codex on django__django-11910 ...
+  => django__django-11910 | codex | resolved
+
+############################################################
+# [28/300] codex x django__django-11964
+############################################################
+
+============================================================
+[SETUP] django__django-11964 for codex
+
+[RUN] codex on django__django-11964 ...
+  [EVAL] codex on django__django-11964 ...
+  => django__django-11964 | codex | resolved
+
+############################################################
+# [29/300] codex x django__django-11999
+############################################################
+
+============================================================
+[SETUP] django__django-11999 for codex
+
+[RUN] codex on django__django-11999 ...
+  [EVAL] codex on django__django-11999 ...
+  => django__django-11999 | codex | resolved
+
+############################################################
+# [30/300] codex x django__django-12113
+############################################################
+
+============================================================
+[SETUP] django__django-12113 for codex
+
+[RUN] codex on django__django-12113 ...
+  [EVAL] codex on django__django-12113 ...
+  => django__django-12113 | codex | patch-but-failed
+
+############################################################
+# [31/300] codex x django__django-12125
+############################################################
+
+============================================================
+[SETUP] django__django-12125 for codex
+
+[RUN] codex on django__django-12125 ...
+  [EVAL] codex on django__django-12125 ...
+  => django__django-12125 | codex | resolved
+
+############################################################
+# [32/300] codex x django__django-12184
+############################################################
+
+============================================================
+[SETUP] django__django-12184 for codex
+
+[RUN] codex on django__django-12184 ...
+  [EVAL] codex on django__django-12184 ...
+  => django__django-12184 | codex | resolved
+
+############################################################
+# [33/300] codex x django__django-12284
+############################################################
+
+============================================================
+[SETUP] django__django-12284 for codex
+
+[RUN] codex on django__django-12284 ...
+  [EVAL] codex on django__django-12284 ...
+  => django__django-12284 | codex | resolved
+
+############################################################
+# [34/300] codex x django__django-12286
+############################################################
+
+============================================================
+[SETUP] django__django-12286 for codex
+
+[RUN] codex on django__django-12286 ...
+  [EVAL] codex on django__django-12286 ...
+  => django__django-12286 | codex | resolved
+
+############################################################
+# [35/300] codex x django__django-12308
+############################################################
+
+============================================================
+[SETUP] django__django-12308 for codex
+
+[RUN] codex on django__django-12308 ...
+  [EVAL] codex on django__django-12308 ...
+  => django__django-12308 | codex | patch-but-failed
+
+############################################################
+# [36/300] codex x django__django-12453
+############################################################
+
+============================================================
+[SETUP] django__django-12453 for codex
+
+[RUN] codex on django__django-12453 ...
+  [EVAL] codex on django__django-12453 ...
+  => django__django-12453 | codex | patch-but-failed
+
+############################################################
+# [37/300] codex x django__django-12470
+############################################################
+
+============================================================
+[SETUP] django__django-12470 for codex
+
+[RUN] codex on django__django-12470 ...
+  [EVAL] codex on django__django-12470 ...
+  => django__django-12470 | codex | patch-but-failed
+
+############################################################
+# [38/300] codex x django__django-12497
+############################################################
+
+============================================================
+[SETUP] django__django-12497 for codex
+
+[RUN] codex on django__django-12497 ...
+  [EVAL] codex on django__django-12497 ...
+  => django__django-12497 | codex | resolved
+
+############################################################
+# [39/300] codex x django__django-12589
+############################################################
+
+============================================================
+[SETUP] django__django-12589 for codex
+
+[RUN] codex on django__django-12589 ...
+  [EVAL] codex on django__django-12589 ...
+  => django__django-12589 | codex | patch-but-failed
+
+############################################################
+# [40/300] codex x django__django-12700
+############################################################
+
+============================================================
+[SETUP] django__django-12700 for codex
+
+[RUN] codex on django__django-12700 ...
+  [EVAL] codex on django__django-12700 ...
+  => django__django-12700 | codex | resolved
+
+############################################################
+# [41/300] codex x django__django-12708
+############################################################
+
+============================================================
+[SETUP] django__django-12708 for codex
+
+[RUN] codex on django__django-12708 ...
+  [EVAL] codex on django__django-12708 ...
+  => django__django-12708 | codex | patch-but-failed
+
+############################################################
+# [42/300] codex x django__django-12747
+############################################################
+
+============================================================
+[SETUP] django__django-12747 for codex
+
+[RUN] codex on django__django-12747 ...
+  [EVAL] codex on django__django-12747 ...
+  => django__django-12747 | codex | patch-but-failed
+
+############################################################
+# [43/300] codex x django__django-12856
+############################################################
+
+============================================================
+[SETUP] django__django-12856 for codex
+
+[RUN] codex on django__django-12856 ...
+  [EVAL] codex on django__django-12856 ...
+  => django__django-12856 | codex | resolved
+
+############################################################
+# [44/300] codex x django__django-12908
+############################################################
+
+============================================================
+[SETUP] django__django-12908 for codex
+
+[RUN] codex on django__django-12908 ...
+  [EVAL] codex on django__django-12908 ...
+  => django__django-12908 | codex | resolved
+
+############################################################
+# [45/300] codex x django__django-12915
+############################################################
+
+============================================================
+[SETUP] django__django-12915 for codex
+
+[RUN] codex on django__django-12915 ...
+  [EVAL] codex on django__django-12915 ...
+  => django__django-12915 | codex | patch-but-failed
+
+############################################################
+# [46/300] codex x django__django-12983
+############################################################
+
+============================================================
+[SETUP] django__django-12983 for codex
+
+[RUN] codex on django__django-12983 ...
+  [EVAL] codex on django__django-12983 ...
+  => django__django-12983 | codex | resolved
+
+############################################################
+# [47/300] codex x django__django-13028
+############################################################
+
+============================================================
+[SETUP] django__django-13028 for codex

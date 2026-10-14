@@ -1,0 +1,89 @@
+  [RESUME] Skipping 0 completed for hermes
+Serial kimi eval: harness=hermes model=glm-5.3-flash
+  Total=300 Pending=300 Skip=0 Concurrency=1
+
+############################################################
+# [1/300] hermes x astropy__astropy-12907
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-12907 for hermes
+
+[RUN] hermes on astropy__astropy-12907 ...
+  [EVAL] hermes on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | hermes | patch-but-failed
+
+############################################################
+# [2/300] hermes x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for hermes
+
+[RUN] hermes on astropy__astropy-14182 ...
+  [EVAL] hermes on astropy__astropy-14182 ...
+  => astropy__astropy-14182 | hermes | patch-but-failed
+
+############################################################
+# [3/300] hermes x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for hermes
+
+[RUN] hermes on astropy__astropy-14365 ...
+  [EVAL] hermes on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | hermes | patch-but-failed
+
+############################################################
+# [4/300] hermes x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for hermes
+
+[RUN] hermes on astropy__astropy-14995 ...
+  [EVAL] hermes on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | hermes | patch-but-failed
+
+############################################################
+# [5/300] hermes x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for hermes
+
+[RUN] hermes on astropy__astropy-6938 ...
+  [EVAL] hermes on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | hermes | patch-but-failed
+
+############################################################
+# [6/300] hermes x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for hermes
+
+[RUN] hermes on astropy__astropy-7746 ...
+  [EVAL] hermes on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | hermes | patch-but-failed
+
+############################################################
+# [7/300] hermes x django__django-10914
+############################################################
+
+============================================================
+[SETUP] django__django-10914 for hermes
+
+[RUN] hermes on django__django-10914 ...
+  [EVAL] hermes on django__django-10914 ...
+  => django__django-10914 | hermes | resolved
+
+############################################################
+# [8/300] hermes x django__django-10924
+############################################################
+
+============================================================
+[SETUP] django__django-10924 for hermes
+
+[RUN] hermes on django__django-10924 ...
