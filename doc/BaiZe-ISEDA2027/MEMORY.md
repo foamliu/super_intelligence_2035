@@ -3,6 +3,12 @@
 
 ## 🆕 最近操作（2026-10-14）
 
+### ▶️ data 恢复全部 4 路下载（用户直令 · 10-14 晚）
+- 用户令：「**data 数据下载 resume**。」⇒ 已下发 `run/BAIZE_DATA_TASK.md` 顶（最高优先）：**恢复 `en_v1_4` + `WebMix-38M` + `wit_base` + `InternVL-SA1B` 共 4 路**（**断点续传**，`.incomplete` 已留）；⚠️ **85M 维持暂停**（10-13 令，除非用户另指）。
+- 要点：恢复前 `df -h`/`ls` 核余量与 `.incomplete`；`setsid` + 正确 PATH（防 `env: hf No such file`）；**「死/僵/速率趋零/PID 死 ⇒ 立即 kill+restart」**看护；落盘白名单不变（`en_v1_4` 文本语料按停前 `/nas_train` 原路径续传 = 既有例外）；**错峰** `.29` pretrain / `.12` vision。
+- 停前基线：`en_v1_4` 32,995/56,461 ≈ **58.4%**（3.0T）· `WebMix` 78 parquet/59G · `wit` 79 parquet/70G · `InternVL` 303 tar/227G。
+- commit 前缀 `data dl:`。详见 `daily-memories/2026-10-14.md`。
+
 ### 🔧 vision【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（用户直令 · 10-14 晚）
 - 用户拍板（回复「关注/风险」决策点）：**现在就并行写 ViT wrapper**（纯 CPU、不占 GPU）。已下发 `run/BAIZE_VISION_TASK.md` 顶（最高优先 · 但仍低于 ArmC 训练/评测监控）：① **BaiZe vision tower HF wrapper**（`run/vision/mllm_bridge/` — 包 `models.py:OpenVision2` 为 HF `PreTrainedModel`，`model_type: baize_vision` + `config.json`；输出 patch-level `[B,196,1024]`、跳过 `ReadoutHead`；从 ④-4ep ckpt `{'vision': sd}` 载入并 `strict=True` 打印 matched/missing/unexpected）；② **自定义 LLaVA modeling**（基于 `modeling_llavaonevision1_5.py`；projector=2 层 MLP 1024→2560；跳过 spatial merge、196 tokens 直出；Stage-1 固定 224）；③ **CPU 单测**（载入通过 / 形状 `[1,196,1024]` / 与原始 `OpenVision2.forward(return_patch=True)` 逐元素 allclose / projector `[1,196,1024]→[1,196,2560]`）；④ `README.md` 接口与 ms-swift 接入 + GPU smoke 前置清单；报告 `reports/report_vision_mllm_bridge_zh.html`。**纪律** = 🚫 不打断 ArmC 训练/eval chain（PID 3698490）· **零 GPU** · CPU/IO 与 ArmC NFS 冲突时让路 · commit 前缀 `vision mllm-bridge:` · 任务书自滚。依据 = 可行性报告 §4.3/§7（🔴 R1 最大工程量）+ §8.2/§8.3（#3#4 纯 CPU 可并行）。详见 `daily-memories/2026-10-14.md`。
 
@@ -230,6 +236,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **▶️ 2026-10-14 data 恢复下载**（用户直令）：「data 数据下载 resume。」⇒ 已下发 `run/BAIZE_DATA_TASK.md` 顶：**恢复 `en_v1_4` + `WebMix-38M` + `wit_base` + `InternVL-SA1B` 4 路**（断点续传，`.incomplete` 保留）；**85M 维持暂停**。停前基线：en_v1_4 58.4%(32,995/56,461) · WebMix 78 · wit 79 · InternVL 303。纪律：`df -h` 核余量 · `setsid`+正确 PATH · 死/僵/速率趋零即 kill+restart · 错峰 `.29`/`.12` · commit `data dl:`。
 
 - **🔧 2026-10-14 vision 放行并行（ViT wrapper）**（用户直令）：用户拍板「现在就在 ArmC 期间并行写 ViT wrapper（纯 CPU）」。已下发 `run/BAIZE_VISION_TASK.md` 顶：BaiZe OpenVision2 → HF wrapper（patch-level `[B,196,1024]`、跳过 ReadoutHead、从 ④-4ep `{'vision': sd}` 载入）+ 自定义 LLaVA modeling（2 层 MLP 1024→2560、无 spatial merge、224）+ CPU 单测 + README + 中文报告 `report_vision_mllm_bridge_zh.html`；纪律 = 零 GPU · 不打断 ArmC 训练/eval · NFS 冲突让路 · commit 前缀 `vision mllm-bridge:`。
 
