@@ -15706,5 +15706,104 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-7686",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sphinx-doc__sphinx-7686.json",
+      "stdout_tail": "] git reset --hard 752d3285d250bbaf673cff25e83f03f247502021\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"sphinx-doc__sphinx-7686\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sphinx-doc__sphinx-7686.json\n[run_single] cleanup: git reset --hard 752d3285d250bbaf673cff25e83f03f247502021\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11797",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 358.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11797.json",
+      "stdout_tail": ".\"id\" = (SELECT MAX(U0.\"id\") AS \"m\" FROM \"auth_user\" U0 WHERE U0.\"email\" IS NULL GROUP BY U0.\"email\" LIMIT 1)\n\nRan 6 tests in 0.029s\n\nOK\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Reproduce the bug and trace the code path\n[\u2713] Implement fix\n[\u2713] Verify fix and run relevant tests\n\u001b[0m\n\n[run_single] model_patch: 2464 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11797.json\n[run_single] cleanup: git reset --hard 3346b78a8a872286a245d1e77ef4718fc5e6be1a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 38,
+        "p2p_total": 38
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-7738",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sphinx-doc__sphinx-7738.json",
+      "stdout_tail": "] git reset --hard c087d717f6ed183dd422359bf91210dc59689d63\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"sphinx-doc__sphinx-7738\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sphinx-doc__sphinx-7738.json\n[run_single] cleanup: git reset --hard c087d717f6ed183dd422359bf91210dc59689d63\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
