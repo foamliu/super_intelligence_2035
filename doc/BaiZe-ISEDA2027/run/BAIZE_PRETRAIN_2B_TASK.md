@@ -13,6 +13,25 @@
 
 > ✅ **P-8 处置（用户 2026-10-14 定）**：P-8 当前 run（`p8_adamw`，stable+decay 共 10490 步）**按 `seq=4094` 跑完，不干预**。**脚本 `SEQ` 改 4096 须等 P-8 整轮全部结束后再改**（stable + decay 都跑完、最后 ckpt 已保存）——尤其 `baize_p8_decay.sh:35` 在 step9441 切换时仍须保持 4094（与 stable 一致），🚫 不得中途改 decay 脚本。今后**新 run**（如正式训练）一律 4096。
 
+### 🆕 运维指令 · 2026-10-14（🔧 修复 decay 段 LR 未衰减 + 重跑 decay）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「pretrain LR 未衰减：安排 pretrain 审视 decay 脚本，是否有问题。decay 不需要加载原来 stable 的优化器，只加载权重，稍稍 warmup 后，直接 decay 到 1e-5 即可。LR 不降不行，需要修复。」
+
+**① 审视（先查根因，贴源码 `文件:行` 证据，不许猜）**：
+- 读 `pretrain_launcher.py` 的 resume 逻辑：同名 `--name p8_adamw` 如何加载 `iter_0009441`，是否**连带加载 optimizer state + LR 调度器状态**。
+- 核实 `baize_p8_decay.sh` 传入的新调度参数（`--lr-warmup-iters 0 --lr-decay-iters 1049 --lr-decay-style WSD --lr 1e-3 --min-lr 1e-5`）是否被 **resume 的 optimizer state 覆盖** → 即 LR 卡 1e-3 恒定的根因（当前 decay 段 27 个 log 点 LR=1e-3 未衰减正是此因）。
+
+**② 修复（按用户给定方案逐字落实）**：
+- **decay 段只加载权重，🚫 不加载 stable 的 optimizer state**：用 launcher 已有的 `--no-load-optimizer` / `--no-load-lr-state`（或等价）flag；若 launcher 无此开关，则在 launcher 里**加一个最小改动**（新 flag，默认关闭，decay 时开启）。
+- **给稍许 warmup**（如 ~50–100 步，替代当前 `WARMUP=0`），然后 **LR 从 1e-3 线性 decay 到 1e-5**，覆盖 decay 段。
+
+**③ 重跑 decay 段**：
+- 停当前错误的 decay 进程（PID 1744126，LR 卡 1e-3 的那个）。
+- 🚫 **不重跑 stable 段**（stable 已正确完成，ckpt@9441 有效；SFT blend 不变）。
+- 从 `ckpt@9441` 重跑 decay（只加载权重 + warmup + decay 1e-3→1e-5），产出 final `ckpt@10490`。
+
+**④ 纪律**：改脚本后先语法检查/冒烟再跑；停旧 decay 后等 ~30s 待 GPU 释放；🚫 不碰 watchdog loop（PID 1391466）；**seq=4094 保持**（与 stable 一致，P-8 整轮 4094 不变）；修复 + 重跑结果写心跳；commit 前缀 `pretrain decay-fix:` · 任务书 >32KB 自滚归档。
+
 > 📦 §运维指令·2026-10-14（✍️ 放行刷新论文 —— 执行审视报告修改）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：H1-H4+S1-S10 全修完成（commit 75963f3d, 11pp 0-error ✅）。F2（P-8 结果）待 P-8 完成后再填。需要时再读。
 
 > 📦 §运维指令·2026-10-14（📝 训练空窗期审视论文·LLM侧·中文HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告 26.5KB 已交付(#413, 4🔴+10🟠+3🟢)，随后 #414 执行改稿。需要时再读。
