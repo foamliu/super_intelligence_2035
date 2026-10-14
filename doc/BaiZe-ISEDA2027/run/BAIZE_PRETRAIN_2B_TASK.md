@@ -1,6 +1,27 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（📝 训练空窗期审视论文 · LLM 侧 · 出中文改进意见 HTML）· 用户直令
+
+> **用户令（2026-10-14）**：「安排 pretrain agent 在训练进行期间，审视论文（BaiZe-ISEDA2027），将改进意见写入 html 报告（中文版）。」
+
+**性质**：零 GPU 的「读 + 写」任务。**主线仍是 P-8 训练监控**——本任务只占用**监控完成后的空窗期**：🚫 绝不为论文审视而延迟/干扰 P-8 监控与 decay 切换（@9441）。
+
+**① 审视对象**：论文树 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`，**侧重 LLM 侧章节**：`ISEDA2027/0_abstract.tex` · `1_intro.tex` · `2_related_work.tex` · `3_architecture.tex` · `4_llm_pretrain.tex` · `5_llm_posttrain.tex` · `9_conclusion.tex` + `main.tex` + `reference.bib`。
+
+**② 审视维度（每条意见必须具体，贴 `文件:行号` 或具体数字，🚫 空泛）**：
+1. **架构数字一致性**：2.22B（`sum(numel())=2,220,268,032`）· 56 层含 4 层 attention · seq 4096 · vocab 129,281 · tokenizer DeepSeek-V4.1-Flash —— 与 `EXPERIMENTS_2B.md` / `EXPERIMENTS_PRETRAIN_2B.md` 是否一致；有无 `4094` 残留（口径应统一 4096）。
+2. **预训练结果回填**：val loss@5000=2.7647 · final loss@20000=2.2054 · 3-seed 2.6739±0.0469 · LR 1e-3 / WSD / 退火 86:10:4 · 预算 ~85 GPU·h —— 是否已回填、有无陈旧值。
+3. **混合架构优势表**（dense vs hybrid：参数 −11.6% / loss −0.12 / decode 10.3×）——decode 10.3× 的「测量口径限定」（Megatron 直驱、生产栈会收窄）是否仍保留。
+4. **训练量极小**（655M token / 0.036% 数据池）是否如实声明为「代理实验」，未当收敛值引用。
+5. **Stage(ii) 后训练设计**：领域退火 + SFT + RLVR/GRPO + R1–R4 奖励表 + 成功阶梯 M1–M4 是否完整、口径一致。
+6. **数据配比**：每步 4M token 不变量 · 配比搜索（小代理 BO）口径是否表述一致。
+7. **可回填 [TBD] 清单**：哪些已有实测可回填（如 P-8 当前 loss ~2.49）、哪些仍缺轮次。
+
+**③ 交付**：中文、自包含 HTML `doc/BaiZe-ISEDA2027/reports/report_baize_paper_review_pretrain_zh.html`；分 🔴硬伤 / 🟠建议 / 🟢可回填 三级标注；文末附「可回填建议清单」。
+
+**④ 红线**：🚫 不直接改论文 `.tex`（只出意见，改稿须另行批准）；🚫 不为审视而延迟 P-8 监控 / decay 切换；✅ 数字须与 EXPERIMENTS 台账一致，不许凭印象；commit 前缀 `pretrain paper-review:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-13（📋【再重做 v3】正式训练计划 —— 严格按「已下载 + 正在下载」实盘盘点换算 token，🚫 禁引论文/CSDN 数字）· 用户直令 · 最高优先
 
 > 用户原话（2026-10-13）：「既然你已经说了『本项目可训数据 ~2,015B token』，那么『300B』又从哪里来呢？请不要胡说八道，首先看 MiniCPM5 已经下载 + 正在下载的，一共有多少数据，可以转化多少 Token，不要胡说八道！！」「再说 MiniCPM5 有论文放出来吗？这又是在胡说八道！！」
