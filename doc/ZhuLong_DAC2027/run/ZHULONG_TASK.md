@@ -17,6 +17,33 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-14（十七）— ✍️ 放行改进论文（执行审视报告修改）【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「zhulong agent 论文改进报告已审视/批准，请 zhulong agent 按此改进论文。」
+
+**性质**：纯写作、零 GPU。**主线仍是评测**（当前 `phi_k1 r3` 跑中）——改稿只在空窗期做，🚫 绝不为改稿延迟/打断评测收割与切臂。
+
+**① 撤销「只报不改」红线**：放行你修改论文 `.tex`，执行审视报告 `reports/report_zhulong_paper_review_zh.html` 的修改（按 §8 优先级 P0→P1→P2→P3）。
+
+**② 🔴 P0 硬伤必须修（先改锚点、再批量同步，避免表文矛盾）**：
+- **锚点全局替换** `84.8% → 82.1±3.0%`（`0_abstract` / `1_intro` / `8_conclusion` + 4 表锚点行：main-ablation Full、ablation-harness F、phi-bound unbounded、llm-comparison DeepSeek-V4-Pro）。
+- **重算所有 Δ**：main-ablation（Full **+10.3pp**、wo_retrieval **−1.1pp**）· llm-comparison 4 个 Δ（**+1.2 / −65.4 / −5.1 / −18.3**）· §S2 正文（**+10.3pp**）。
+- **Error Analysis 重做/重声明**：改用 5-run 代表性 run（建议 full_v3 r3=81.6%、129/158）重计失败数；或显式标注「基于单次代表性 trace」。🚫 不得仍绑 84.8% 那次 134/158。
+- **硬伤#3**：`tab:omega` (L)=82.8、`tab:ablation-harness` (N)=73.3、(B)=66.2 无 5-run 支撑 → 一律标 `[provisional, n=1]` 或回退 `[TBD]`，🚫 不得再以 `±` 呈现（尤其 (B) ±16.1 的 std 无 n≥2 支撑）。
+- **硬伤#5**：`tab:phi-bound` 增加「Mean gen-fail」列（k10/k3/k1），§S2 正文补「k↓ → gen-fail↑ → Pass@1↓」1–2 句。
+- **硬伤#6**：§2（Background/Prior work）或 §3 加 1–2 句 BaiZe 边界，措辞中性如「本工作的 harness（三 MCP 工具 + 评测协议）属 ZhuLong；agent backbone 的底层能力另由互补工作 BaiZe[ref] 详述，二者互引不重报」。
+
+**③ 🟠/🟢 按 §8 清单继续**：
+- **P1**：补配对检验（paired bootstrap/McNemar）或在 Limitations 明示「未做配对检验」；§5.3/§6 补 gen-fail 计入分母 + infra 故障 run 剔除规则 + 75% 锚点健康下限；§6.1.4 声明 backbone 量化 `deepseek-v4-pro-fp4`；消歧 (N)→(N′)。
+- **P2**：删 ICML 中文注释（`6_exp.tex:132-133`）；加结果可视化图至少 2 张（消融条形 + Φ 折线）；Limitations 独立成节并补「未配对检验」「量化未消融」两条；附录加 75 轮原始值表。
+- **P3**：回填后重编译处理 overfull hbox（13.6pt/13.1pt 两处）；核对 DAC 2027 页数上限。
+
+**④ 🟢 可回填（§7.1 第 1–10 项）**：能填即填（k10→`77.7±2.2`、k3→`69.1±2.5`、锚点 `82.1±3.0` 等）。🚫 **仍缺数据项一律保留 `[TBD]`/provisional，不得编造**：phi_k1 r3–r5、phi_lagged、S1 三臂（omega_low/readback_binary/_none）、wo_sandbox、SKILL/Tcl、全部 Converged(%)。
+
+**⑤ 改稿纪律**：改后编译 `main.pdf` 验证 **0 error** + 报页数变化；每个数字与 `MEMORY_ZHULONG.md` 执行看板/成绩一致、🚫 凭印象；完成把「改了哪几处 + 编译结果」写进心跳；commit 前缀 `zhulong paper-fix:`（区别于 paper-review）· 任务书 >32KB 自滚归档。
+
+**红线**：🚫 评测优先于改稿，不得为此 kill/延迟评测；🚫 数字编造；✅ 锚点与全部 Δ 必须同步改，避免表文矛盾。
+
 ### 🆕 运维指令 · 2026-10-14（十六）— 📝 实验空窗期审视论文，出改进意见 HTML（中文）【用户直令 · 与评测并行不互斥】
 
 > **用户令（2026-10-14）**：「安排 zhulong agent 在实验进行期间，审视论文（ZhuLong_DAC2027），将改进意见写成 html 报告（中文版）。」
