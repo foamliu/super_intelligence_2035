@@ -49,21 +49,21 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </head>
 <body>
 <h1>📊 BaiZe 视觉编码器 · 当前试验中文状态报告</h1>
-<p class="note">报告主题：<strong>merge3ds 合并三数据集实验 · ArmC 臂</strong>（当前训练进行中） · 生成时间：2026-10-14 · 线：vision · 语言：中文 · 性质：<strong>训练进行中的实时状态快照</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §merge3ds</code> / <code>MEMORY_VISION.md</code>（wake #77, ~16:52 Oct14）/ <code>vision/run_merge3ds_armC_resume.sh</code> / <code>merge3ds_bs4_lrC_w512_d30_p16_224/train.log</code>（实时）/ <code>report_vision_merge3ds_bs4_lr2_plan_zh.html</code></p>
+<p class="note">报告主题：<strong>merge3ds 合并三数据集实验 · ArmC 臂</strong>（当前训练进行中） · 生成时间：2026-10-14 · 线：vision · 语言：中文 · 性质：<strong>训练进行中的实时状态快照</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §merge3ds</code> / <code>MEMORY_VISION.md</code>（wake #78, ~17:31 Oct14）/ <code>vision/run_merge3ds_armC_resume.sh</code> / <code>merge3ds_bs4_lrC_w512_d30_p16_224/train.log</code>（实时）/ <code>report_vision_merge3ds_bs4_lr2_plan_zh.html</code></p>
 
 <div class="honesty-box">
 <h3 style="color:var(--red)">⚠️ 诚实条款（务必先读）</h3>
-<p>本报告描述的 <strong>ArmC 训练仍在进行中</strong>，尚未跑完，<strong>没有最终 ProtB 结果</strong>。报告中所有训练指标（loss、C1、吞吐等）均为 <strong>2026-10-14 ~16:52（wake #77）的暂态快照</strong>，会随训练继续变化。<strong>公开引用时不得将当前数字当作最终结论</strong>。训练完成后将产出独立的 <code>report_vision_merge3ds_result_zh.html</code> 结果报告（含 3-seed ProtB），届时方可引用。</p>
+<p>本报告描述的 <strong>ArmC 训练仍在进行中</strong>，尚未跑完，<strong>没有最终 ProtB 结果</strong>。报告中所有训练指标（loss、C1、吞吐等）均为 <strong>2026-10-14 ~17:31（wake #78）的暂态快照</strong>，会随训练继续变化。<strong>公开引用时不得将当前数字当作最终结论</strong>。训练完成后将产出独立的 <code>report_vision_merge3ds_result_zh.html</code> 结果报告（含 3-seed ProtB），届时方可引用。</p>
 </div>
 
 <h2>1. 摘要（TL;DR）</h2>
 <div class="card tldr">
 <p><strong>正在做什么</strong>：在 BaiZe 视觉编码器 OpenVision2（w512/d30, 126.8M 参数）上，将 <strong>GBS 和 MBS 同时 ×4</strong>（512→2048 / 64→256），并按 <strong>Goyal 线性缩放规则</strong>将 LR ×4（5e-4→2e-3），在合并的三数据集（GPIC + CC12M + Amshaker, ~110.9M 对快照）上从零训练 154,500 步（≈2.85 真实 epoch），24 小时墙钟预算。</p>
 <ul>
-<li><strong>当前进度</strong>：step <strong>101,150 / 154,500（65.4%）</strong>，训练健康，无坍缩，已过 65%</li>
-<li><strong>C1（对比对齐）</strong>：0.6415（最近 10 次范围 0.593~0.749，均值 ~0.63，略有振荡但稳定，远低于坍缩阈值 0.95）</li>
-<li><strong>吞吐</strong>：稳态 ~210–220ms/步（~9,300–9,800 img/s），当前 NFS I/O 停顿持续（近 50 步 median ~600ms），非持续</li>
-<li><strong>预计完成</strong>：稳态(~215ms) → ~20:10 Oct14（约 3.2h 后） / 含NFS停顿(~500ms) → ~24:15 Oct14（约 7.4h 后） / 综合预估 ~20:30–21:30 Oct14</li>
+<li><strong>当前进度</strong>：step <strong>104,430 / 154,500（67.6%）</strong>，训练健康，无坍缩，已过 2/3</li>
+<li><strong>C1（对比对齐）</strong>：0.5819（最近 10 次范围 0.582~0.655，均值 ~0.62，略有振荡但稳定，远低于坍缩阈值 0.95）</li>
+<li><strong>吞吐</strong>：稳态 ~210–220ms/步（~9,300–9,800 img/s），NFS I/O 停顿间歇（部分步 500–900ms），非持续</li>
+<li><strong>预计完成</strong>：稳态(~215ms) → ~20:30 Oct14（约 3.0h 后） / 含NFS停顿(~500ms) → ~00:30 Oct15（约 7.0h 后） / 综合预估 ~21:00–23:00 Oct14</li>
 <li><strong>已完成的前置任务</strong>：✅ 外部编码器 ProtB 5/5 · ✅ LR 3-臂扫描文献调研 · ✅ 数据量口径订正 · ✅ 论文审视报告 · ✅ 论文改稿（P0+P1） · ✅ Stage(iv) MLLM 对齐方案可行性评估</li>
 <li><strong>训练完成后</strong>：eval chain 自动启动（PID 3698490 后台等待中）→ 3-seed ProtB → 结果报告</li>
 </ul>
@@ -145,40 +145,40 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 </div>
 </div>
 
-<h2>4. 实时训练进度（2026-10-14 ~16:52 · wake #77 快照）</h2>
+<h2>4. 实时训练进度（2026-10-14 ~17:31 · wake #78 快照）</h2>
 <div class="metric-grid">
-<div class="metric-card"><div class="label">当前步数</div><div class="value" style="color:var(--cyan)">101,150</div><div class="delta">/ 154,500（<strong>65.4%</strong>）</div></div>
-<div class="metric-card"><div class="label">C1（对比对齐）</div><div class="value" style="color:var(--green)">0.6415</div><div class="delta">最近 PROBE@101,100 · 健康平台期</div></div>
-<div class="metric-card"><div class="label">C2_gap</div><div class="value" style="color:var(--green)">+0.1678</div><div class="delta">正值 = 对比梯度方向正确</div></div>
-<div class="metric-card"><div class="label">C4 坍缩检测</div><div class="value" style="color:var(--green)">OK</div><div class="delta">337 PROBEs · 1 误报(已恢复) · 余全绿</div></div>
-<div class="metric-card"><div class="label">Loss 区间</div><div class="value" style="color:var(--accent)">0.15–0.38</div><div class="delta">contrast 主导 · patch_mse ~0.031–0.047</div></div>
-<div class="metric-card"><div class="label">当前 LR</div><div class="value" style="color:var(--orange)">7.27e-4</div><div class="delta">cosine 衰减中（peak 2e-3, warmup 已完成）</div></div>
+<div class="metric-card"><div class="label">当前步数</div><div class="value" style="color:var(--cyan)">104,430</div><div class="delta">/ 154,500（<strong>67.6%</strong>）</div></div>
+<div class="metric-card"><div class="label">C1（对比对齐）</div><div class="value" style="color:var(--green)">0.5819</div><div class="delta">最近 PROBE@104,400 · 健康平台期</div></div>
+<div class="metric-card"><div class="label">C2_gap</div><div class="value" style="color:var(--green)">+0.1833</div><div class="delta">正值 = 对比梯度方向正确</div></div>
+<div class="metric-card"><div class="label">C4 坍缩检测</div><div class="value" style="color:var(--green)">OK</div><div class="delta">348 PROBEs · 1 误报(已恢复) · 余全绿</div></div>
+<div class="metric-card"><div class="label">Loss 区间</div><div class="value" style="color:var(--accent)">0.19–0.45</div><div class="delta">contrast 主导 · patch_mse ~0.031–0.056</div></div>
+<div class="metric-card"><div class="label">当前 LR</div><div class="value" style="color:var(--orange)">6.71e-4</div><div class="delta">cosine 衰减中（peak 2e-3, warmup 已完成）</div></div>
 </div>
 
 <h3>4.1 进度条</h3>
-<div class="progress-bar"><div class="progress-fill" style="width:65.4%">65.4% · step 101,150 / 154,500</div></div>
-<p class="note">剩余 53,350 步 · ETA: 稳态(~215ms/步) ≈ 3.2h → <strong>~20:10 Oct14</strong> / 含NFS停顿(~500ms/步) ≈ 7.4h → ~24:15 Oct14 / 综合预估 ~20:30–21:30 Oct14</p>
+<div class="progress-bar"><div class="progress-fill" style="width:67.6%">67.6% · step 104,430 / 154,500</div></div>
+<p class="note">剩余 50,070 步 · ETA: 稳态(~215ms/步) ≈ 3.0h → <strong>~20:30 Oct14</strong> / 含NFS停顿(~500ms/步) ≈ 7.0h → ~00:30 Oct15 / 综合预估 ~21:00–23:00 Oct14</p>
 
 <h3>4.2 C1 趋势（坍缩检测核心指标）</h3>
 <div class="card">
 <p>C1（对比对齐指标）是坍缩检测的核心：C1 > 0.95 = 训练坍缩（实验作废），C1 < 0.6 = 健康。</p>
 <table>
-<tr><th>步数</th><th>98,400</th><th>98,700</th><th>99,000</th><th>99,300</th><th>99,600</th><th>99,900</th><th>100,200</th><th>100,500</th><th>100,800</th><th>101,100</th></tr>
-<tr><td>C1</td><td>0.6027</td><td>0.5927</td><td>0.6095</td><td>0.6108</td><td>0.6748</td><td>0.6040</td><td>0.6242</td><td>0.7491</td><td>0.6155</td><td><strong>0.6415</strong></td></tr>
+<tr><th>步数</th><th>101,400</th><th>101,700</th><th>102,000</th><th>102,300</th><th>102,600</th><th>102,900</th><th>103,200</th><th>103,500</th><th>103,800</th><th>104,100</th><th>104,400</th></tr>
+<tr><td>C1</td><td>0.6155</td><td>0.6188</td><td>0.6397</td><td>0.6504</td><td>0.6551</td><td>0.6207</td><td>0.6098</td><td>0.6086</td><td>0.6246</td><td>0.6336</td><td><strong>0.5819</strong></td></tr>
 </table>
-<p><strong>解读</strong>：最近 10 次 PROBE（step 98,400→101,100）C1 范围 0.5927~0.7491，均值 ~0.63，<strong>略有振荡但稳定</strong>，远低于坍缩阈值 0.95。训练健康。step 100,500 的 C1=0.7491 为近期高点（单次波动），下一次即回落至 0.6155。相比 step ~84k 的 ~0.59 和 step ~76k 的 ~0.54，C1 略有上升（0.54→0.63），但仍在健康平台区间内。振荡幅度（±0.08）属正常 batch 间波动，无持续上升趋势。</p>
+<p><strong>解读</strong>：最近 11 次 PROBE（step 101,400→104,400）C1 范围 0.5819~0.6551，均值 ~0.62，<strong>略有振荡但稳定</strong>，远低于坍缩阈值 0.95。训练健康。step 102,600 的 C1=0.6551 为近期高点，step 104,400 的 C1=0.5819 为近期低点（单次波动），整体在 0.58–0.66 区间内波动。相比 step ~84k 的 ~0.59 和 step ~76k 的 ~0.54，C1 在 0.54→0.62 区间内略有上升但仍在健康平台期。振荡幅度（±0.04）属正常 batch 间波动，无持续上升趋势。</p>
 </div>
 
 <h3>4.3 吞吐状况（⚠️ NFS I/O 争用）</h3>
 <div class="card">
-<p><strong>吞吐以稳态为主</strong>（当前 NFS I/O 停顿加剧）：</p>
+<p><strong>吞吐以稳态为主</strong>（NFS I/O 停顿间歇出现）：</p>
 <ul>
 <li><strong>当前稳态</strong>：~210–220ms/步（img/s ~8,600–9,800）—— 稳态步多数为 204~230ms</li>
-<li><strong>当前 NFS 停顿</strong>：近 50 步出现持续 NFS I/O 争用，部分步达 600~800ms（img/s 降至 2,600~4,100），median ~600ms / mean ~650ms。非持续 —— 此前 step 70k–100k 稳态维持 ~210–230ms</li>
-<li><strong>趋势</strong>：step 10k→48k NFS 争用严重（avg ~400–570ms），step 63k→100k 已恢复稳态（~210–230ms），step ~101k 再次出现 NFS 停顿（可能由其他线 I/O 活动引起）</li>
+<li><strong>当前 NFS 停顿</strong>：间歇出现 NFS I/O 争用，部分步达 500~900ms（img/s 降至 2,200~4,500），非持续 —— 稳态与停顿步交替出现</li>
+<li><strong>趋势</strong>：step 10k→48k NFS 争用严重（avg ~400–570ms），step 63k→100k 已恢复稳态（~210–230ms），step ~101k 再次出现 NFS 停顿，step ~104k 间歇性持续</li>
 </ul>
 <p><strong>GPU 利用率</strong>：8 GPU 在稳态吞吐下持续 ~100%，NFS I/O 停顿时部分 GPU 利用率短暂下降（恢复后即回升 100%）。计算为主，数据加载基本不构成持续瓶颈。</p>
-<p class="warn">⚠️ <strong>吞吐变化趋势</strong>：step 10k→20k avg=378ms, 20k→30k avg=462ms, 30k→48k avg ~570ms（NFS 争用高峰期，data 线下载所致）, 48k→63k avg ~400ms（改善中）, 63k→100k avg ~225ms（稳态为主，偶发 NFS 停顿拉高均值）, 100k→101k avg ~650ms（NFS I/O 停顿再次加剧，近 50 步 median 600ms）。</p>
+<p class="warn">⚠️ <strong>吞吐变化趋势</strong>：step 10k→20k avg=378ms, 20k→30k avg=462ms, 30k→48k avg ~570ms（NFS 争用高峰期，data 线下载所致）, 48k→63k avg ~400ms（改善中）, 63k→100k avg ~225ms（稳态为主，偶发 NFS 停顿拉高均值）, 100k→104k avg ~500ms（NFS I/O 停顿间歇，稳态与慢步交替）。</p>
 </div>
 
 <h3>4.4 Checkpoint 存档</h3>
@@ -204,8 +204,8 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <div class="timeline-item"><strong>2026-10-14 13:09</strong> — step 80,000 checkpoint 保存</div>
 <div class="timeline-item"><strong>2026-10-14 14:47</strong> — step 90,000 checkpoint 保存</div>
 <div class="timeline-item"><strong>2026-10-14 16:39</strong> — step 100,000 checkpoint 保存</div>
-<div class="timeline-item"><strong>2026-10-14 ~16:52</strong> — <strong>当前快照（wake #77）</strong>：step 101,150/154,500（65.4%），C1=0.6415（PROBE@101,100），健康，吞吐稳态 ~210–220ms/步，当前 NFS I/O 停顿持续（median ~600ms）</div>
-<div class="timeline-item"><strong>预计 ~20:30–21:30 Oct14</strong> — 训练完成（稳态~215ms→20:10 / 含NFS停顿~500ms→24:15 / 综合预估20:30–21:30）</div>
+<div class="timeline-item"><strong>2026-10-14 ~17:31</strong> — <strong>当前快照（wake #78）</strong>：step 104,430/154,500（67.6%），C1=0.5819（PROBE@104,400），健康，吞吐稳态 ~210–220ms/步，NFS I/O 停顿间歇（部分步 500–900ms）</div>
+<div class="timeline-item"><strong>预计 ~21:00–23:00 Oct14</strong> — 训练完成（稳态~215ms→20:30 / 含NFS停顿~500ms→00:30 Oct15 / 综合预估21:00–23:00）</div>
 </div>
 </div>
 
@@ -233,10 +233,10 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <text x="101" y="55" fill="#d29922" font-size="8" text-anchor="middle">warmup</text>
 <path d="M 80,220 L 122,40" stroke="#e8873c" stroke-width="2" fill="none"/>
 <path d="M 122,40 Q 300,45 420,100 T 680,185 L 760,196" stroke="#58a6ff" stroke-width="2" fill="none"/>
-<line x1="525" y1="40" x2="525" y2="220" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,3"/>
-<circle cx="525" cy="167" r="5" fill="#3fb950"/>
-<text x="532" y="163" fill="#3fb950" font-size="10">step 101,150 (65.4%)</text>
-<text x="532" y="175" fill="#3fb950" font-size="9">LR=7.27e-4</text>
+<line x1="542" y1="40" x2="542" y2="220" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,3"/>
+<circle cx="542" cy="175" r="5" fill="#3fb950"/>
+<text x="549" y="171" fill="#3fb950" font-size="10">step 104,430 (67.6%)</text>
+<text x="549" y="183" fill="#3fb950" font-size="9">LR=6.71e-4</text>
 <rect x="550" y="50" width="12" height="3" fill="#e8873c"/>
 <text x="568" y="54" fill="#8b949e" font-size="10">warmup (linear)</text>
 <rect x="550" y="65" width="12" height="3" fill="#58a6ff"/>
@@ -305,7 +305,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <h3>6.3 训练完成后的流程</h3>
 <div class="card">
 <div class="timeline">
-<div class="timeline-item"><strong>Step 1</strong> — ArmC 训练完成（~20:30–21:30 Oct14 预计，取决于 NFS I/O 状况；当前 NFS 停顿持续）</div>
+<div class="timeline-item"><strong>Step 1</strong> — ArmC 训练完成（~21:00–23:00 Oct14 预计，取决于 NFS I/O 状况；当前 NFS 停顿间歇）</div>
 <div class="timeline-item"><strong>Step 2</strong> — eval chain 自动启动（<code>post_merge3ds_chain.sh</code>, PID 3698490 后台等待中）→ Protocol B (3 seeds) + ProtA + zs + k-NN</div>
 <div class="timeline-item"><strong>Step 3</strong> — 3-seed ProtB 结果产出（预计 eval ~3–4h）</div>
 <div class="timeline-item"><strong>Step 4</strong> — 与基线对比：Δlp vs ④-4ep 67.05% / E1fair 62.34%</div>
@@ -334,10 +334,10 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 
 <div class="honesty-box">
 <h3 style="color:var(--red)">⚠️ 再次声明</h3>
-<p>截至本报告生成时（2026-10-14 ~16:52, wake #77）：</p>
+<p>截至本报告生成时（2026-10-14 ~17:31, wake #78）：</p>
 <ul>
-<li>✅ <strong>已确认</strong>：训练正常运行中（step 101,150/154,500, 65.4%），无坍缩（C1=0.6415, 337 PROBEs 全健康），无 OOM</li>
-<li>✅ <strong>已确认</strong>：smoke test 通过，MBS=256 可用（~47.5GB/GPU），吞吐稳态 ~210–220ms/步（~9,300–9,800 img/s），当前 NFS I/O 停顿持续（median ~600ms）</li>
+<li>✅ <strong>已确认</strong>：训练正常运行中（step 104,430/154,500, 67.6%），无坍缩（C1=0.5819, 348 PROBEs 全健康），无 OOM</li>
+<li>✅ <strong>已确认</strong>：smoke test 通过，MBS=256 可用（~47.5GB/GPU），吞吐稳态 ~210–220ms/步（~9,300–9,800 img/s），NFS I/O 停顿间歇（部分步 500–900ms）</li>
 <li>✅ <strong>已确认</strong>：10 个 checkpoint 已存档（step 10k/20k/30k/40k/50k/60k/70k/80k/90k/100k），eval chain（PID 3698490）在后台正确等待训练完成</li>
 <li>❌ <strong>尚未有</strong>：最终 ProtB 结果（训练未完成）</li>
 <li>❌ <strong>尚未有</strong>：与基线的 Δlp 对比（依赖 ProtB）</li>
@@ -358,7 +358,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <p>文献访问日：2026-10-13</p>
 </div>
 <div class="refs">
-<p><strong>数据溯源</strong>：<code>EXPERIMENTS_VISION.md §merge3ds</code> / <code>MEMORY_VISION.md</code> (wake #77) / <code>vision/run_merge3ds_armC_resume.sh</code> / <code>merge3ds_bs4_lrC_w512_d30_p16_224/train.log</code> / <code>report_vision_merge3ds_bs4_lr2_plan_zh.html</code> / <code>vision/data_snapshot_20261009.txt</code></p>
+<p><strong>数据溯源</strong>：<code>EXPERIMENTS_VISION.md §merge3ds</code> / <code>MEMORY_VISION.md</code> (wake #78) / <code>vision/run_merge3ds_armC_resume.sh</code> / <code>merge3ds_bs4_lrC_w512_d30_p16_224/train.log</code> / <code>report_vision_merge3ds_bs4_lr2_plan_zh.html</code> / <code>vision/data_snapshot_20261009.txt</code></p>
 <p style="color:var(--muted);font-size:.8em;margin-top:1em">commit 前缀：<code>vision report:</code> · 线：vision · 机器：10.239.2.12 (H100×8)</p>
 </div>
 </body>
