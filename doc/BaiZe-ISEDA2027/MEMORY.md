@@ -1,7 +1,10 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
-## 🆕 最近操作（2026-10-13）
+## 🆕 最近操作（2026-10-14）
+
+### 🔧 vision【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（用户直令 · 10-14 晚）
+- 用户拍板（回复「关注/风险」决策点）：**现在就并行写 ViT wrapper**（纯 CPU、不占 GPU）。已下发 `run/BAIZE_VISION_TASK.md` 顶（最高优先 · 但仍低于 ArmC 训练/评测监控）：① **BaiZe vision tower HF wrapper**（`run/vision/mllm_bridge/` — 包 `models.py:OpenVision2` 为 HF `PreTrainedModel`，`model_type: baize_vision` + `config.json`；输出 patch-level `[B,196,1024]`、跳过 `ReadoutHead`；从 ④-4ep ckpt `{'vision': sd}` 载入并 `strict=True` 打印 matched/missing/unexpected）；② **自定义 LLaVA modeling**（基于 `modeling_llavaonevision1_5.py`；projector=2 层 MLP 1024→2560；跳过 spatial merge、196 tokens 直出；Stage-1 固定 224）；③ **CPU 单测**（载入通过 / 形状 `[1,196,1024]` / 与原始 `OpenVision2.forward(return_patch=True)` 逐元素 allclose / projector `[1,196,1024]→[1,196,2560]`）；④ `README.md` 接口与 ms-swift 接入 + GPU smoke 前置清单；报告 `reports/report_vision_mllm_bridge_zh.html`。**纪律** = 🚫 不打断 ArmC 训练/eval chain（PID 3698490）· **零 GPU** · CPU/IO 与 ArmC NFS 冲突时让路 · commit 前缀 `vision mllm-bridge:` · 任务书自滚。依据 = 可行性报告 §4.3/§7（🔴 R1 最大工程量）+ §8.2/§8.3（#3#4 纯 CPU 可并行）。详见 `daily-memories/2026-10-14.md`。
 
 ### 📋 五项运维指令下发（用户直令 · 10-13 晚）
 - **① data · HF 图文对数据集调研**（`run/BAIZE_DATA_TASK.md` 顶）：web search 为 **vision encoder 训练**找 HuggingFace **图文对数据集**，**硬口径 = image 带 bytes（非 url）**（HF `Image` feature / `datasets-server` features 为证）→ 中文 HTML `report_data_hf_imagetext_datasets_zh.html`；🚫 只调研不下数据、不打断 en_v1_4 / 85M。
@@ -227,6 +230,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **🔧 2026-10-14 vision 放行并行（ViT wrapper）**（用户直令）：用户拍板「现在就在 ArmC 期间并行写 ViT wrapper（纯 CPU）」。已下发 `run/BAIZE_VISION_TASK.md` 顶：BaiZe OpenVision2 → HF wrapper（patch-level `[B,196,1024]`、跳过 ReadoutHead、从 ④-4ep `{'vision': sd}` 载入）+ 自定义 LLaVA modeling（2 层 MLP 1024→2560、无 spatial merge、224）+ CPU 单测 + README + 中文报告 `report_vision_mllm_bridge_zh.html`；纪律 = 零 GPU · 不打断 ArmC 训练/eval · NFS 冲突让路 · commit 前缀 `vision mllm-bridge:`。
 
 - **📐 2026-10-13 vision LR 缩放定则**（用户直令）：查证 GBS×4→LR 应变多少：线性规则(Goyal 2017 arXiv:1706.02677)=**×4**+warmup；B∝LR含Adam(Smith 2017 arXiv:1711.00489)；次线性√=×2(无一手出处)；实证必重调(Shallue 2019 arXiv:1811.03600)+critical batch(McCandlish 2018 arXiv:1812.06162)。已令 vision 默认 ×4 + 3 臂扫描{×2,×3,×4}。
 

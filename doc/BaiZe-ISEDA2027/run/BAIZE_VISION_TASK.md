@@ -1,6 +1,34 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（纯 CPU，不占 GPU））· 用户直令 · 最高优先（但仍低于 ArmC 训练/评测监控）
+
+> **用户令（2026-10-14）**：「vision MLLM 桥接：**现在就在 ArmC 期间并行写 ViT wrapper**（纯 CPU 可并行）。」
+> **背景**：可行性报告 `report_vision_mllm_stage4_feasibility_zh.html` §4.3/§7 已判定「视觉编码器桥接」= 🔴 R1 最大工程量（~1-2 天工程），且 §8.2/§8.3 明确 #3#4 为**纯 CPU 工作、可在 ArmC 训练期间并行完成、不占 GPU**。本令 = 批准 Phase0 并行开工（覆盖报告中 #3#4「未开始」状态）。
+
+**① 先决纪律（不可越线）**：
+- 🚫 **不打断/不延迟 ArmC 训练与 eval chain**（training PID + eval chain PID 3698490）；本任务**零 GPU**（仅 CPU 前向做 shape/数值单测）。
+- 🚫 不改 ArmC 训练脚本/数据/ckpt；不改已发布报告数字。
+- ⚠️ 若 CPU/IO 与 ArmC 的 NFS 读冲突（ArmC 近期已有 NFS 停顿），**主动让路**：把 CPU 密集步骤降到 nice / 串行 / 错峰。
+
+**② 交付物（落在 repo，可复现）**：
+1. **BaiZe vision tower HF wrapper**（建议 `run/vision/mllm_bridge/modeling_baize_vision.py` + `configuration_baize_vision.py`）：
+   - 把 `run/vision/models.py:OpenVision2`（image_size=224 / patch_size=16 / width=1024 / depth=30 / heads=16 / mlp_dim=4096）包成 HF `PreTrainedModel` 子类（`model_type: baize_vision`），加 `config.json`（含 `spatial_merge_size=1`）。
+   - **输出 patch-level features `[B,196,1024]`**：走 `forward(..., return_patch=True)` 取 `x`（`self.norm` 之后、**跳过 `ReadoutHead`**，ReadoutHead 仅对比学习用）。
+   - **权重加载**：从 ④-4ep ckpt 读 `{'vision': state_dict}`（按 `run/vision/r13_eval_official.py` / `r7_eval.py` 的既有映射，含 `visual.` 前缀剥离逻辑）；映射到 wrapper 参数名；`load_state_dict(strict=True)` 并打印 matched/missing/unexpected 列表。
+2. **自定义 LLaVA modeling 文件**（建议 `run/vision/mllm_bridge/modeling_llava_baize.py`，基于盘上 `modeling_llavaonevision1_5.py` 改写）：
+   - vision tower 调用替换为 BaiZe wrapper；**projector = 2 层 MLP（1024→2560）**；**跳过 spatial merge**（BaiZe 196 tokens 直出 vs RICE 576/4=144）；**Stage-1 固定 224**；同步处理 image-token 占位数（196）。
+3. **CPU 单测**（`run/vision/mllm_bridge/test_wrapper_cpu.py`，纯 CPU、形状/数值断言、不占 GPU）：
+   - ① wrapper 载入 ④-4ep ckpt 且 `strict=True` 通过；② 随机 `[1,3,224,224]` 前向 → patch 输出恰为 `[1,196,1024]`；③ 与原始 `OpenVision2.forward(return_patch=True)` **逐元素一致**（`torch.allclose`，证明封装无损）；④ projector 前向 `[1,196,1024] → [1,196,2560]`。
+4. **接口/接入说明**（`run/vision/mllm_bridge/README.md`）：目录结构、`config.json` 字段、如何被 ms-swift `swift sft/pretrain --model <baize_llava_dir> --template llava_onevision1_5` 加载、以及 GPU smoke test（100 步）的**前置清单**（GPU 空窗时才跑）。
+
+**③ 允许并行推进（不阻塞、可选）**：#6 Stage-1 数据格式适配（ms-swift 读 WebDataset）、#7 环境统一（py310 装 lmms-eval 或导出方案）——有余力可一并做，但**以 #3#4 为主**。
+
+**④ 交付报告**：更新/新增中文 HTML `reports/report_vision_mllm_bridge_zh.html`：wrapper 设计、**参数名映射表**、CPU 单测结果（贴原始输出）、与 RICE ViT 的差异处理（spatial_merge / 分辨率 / ReadoutHead）、GPU smoke 前置清单与剩余风险。
+
+**⑤ 纪律**：commit 前缀 `vision mllm-bridge:`；任务书 >32KB 自滚归档；证据凭实测（贴 `python -c` 原始输出 + 文件路径），🚫 凭印象；**ArmC 监控/eval 仍是每次唤醒的第一优先动作**，本任务在空窗期推进。
+
+
 ### 🆕 运维指令 · 2026-10-14（📋 Stage(iv) MLLM 对齐方案可行性评估 · 出中文 HTML 报告）· 用户直令
 
 > **用户令（2026-10-14）**：「ArmC 训练&评测完成后，vision 做 Stage(iv) MLLM 对齐。用户已批准方向并给出具体方案（见下）。请 vision 评估此方案可行性 + 困难，写成 HTML 报告（中文版）。」—— **本阶段只做评估调研，🚫 不起训**。
