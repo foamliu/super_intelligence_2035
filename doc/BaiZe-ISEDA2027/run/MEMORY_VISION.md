@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 ~00:41（ArmC 监控 · wake #87）**：🔄 ArmC 训练健康：step **150,900**/154500(**97.6%**), loss~0.09-0.18(正常), C1=**0.6945**(step150900 PROBE, 平台期 0.65-0.75), C2_gap=+0.1529, C4=OK(**496+ PROBEs 全绿**, 仅 step8100 warmup FAIL 1次), LR=2.03e-4(cosine→min_lr 2e-4), 吞吐 ~200-205ms/iter(NFS配合良好, img/s~10000)。ckpt: 10k-150k已存(15个), final@154500。ETA: (154500-150900)×~205ms≈12min → **~00:53 Oct15**。✅ eval chain(PID 3698490, ppid=1, etimes=74754s)等待中。✅ MLLM bridge 已交付(wake #81, commit 03c36f5f)，本轮七验 CPU 5/5 PASSED（277/277 strict, bit-exact, projector 7.87M）。📦 体积：TASK=26.0KB✅ / MEMORY=30.6KB✅。
+> 🆕 **2026-10-15 ~01:16（ArmC 监控 · wake #88）**：🔄 ArmC 训练即将完成：step **154,080**/154500(**99.7%**), loss~0.10-0.33(正常), C1=**0.6656**(step153900 PROBE, 平台期 0.65-0.70), C2_gap=+0.1628, C4=OK(**497+ PROBEs 全绿**, 仅 step8100 warmup FAIL 1次), LR=2.00e-4(=min_lr, cosine 到底), 吞吐 bimodal 430-914ms/iter(NFS波动, img/s 2241-4754)。ckpt: 10k-150k已存(15个), final@154500待存。ETA: (154500-154080)×~625ms≈**~4.4min → ~01:21 Oct15**。✅ eval chain(PID 3698490, ppid=1)等待中，训练完成自动触发 3-seed ProtB。✅ MLLM bridge 已交付(wake #81, commit 03c36f5f)，本轮八验 CPU 5/5 PASSED（277/277 strict, bit-exact max_diff=0.00e+00, projector 7.87M）。📦 体积：TASK=26.0KB✅ / MEMORY=31.6KB✅。
+> 📦 2026-10-15 ~00:41（wake #87 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 150,900(97.6%), C1=0.6945, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~00:10（wake #86 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 147,480(95.5%), C1=0.6696, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-14 23:31（wake #85 ArmC 监控 + MLLM bridge 五验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 144,450(93.4%), C1=0.6571, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-14 22:46（wake #84 ArmC 监控 + MLLM bridge 四验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 140,400(90.8%), C1=0.6518, 468 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
