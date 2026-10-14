@@ -88,31 +88,12 @@
 
 > 本节由外部运维通过 git 修改。agent 禁止修改本节（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 
-> 📦 2026-10-06 已归档：「B1 ctx 扩到 1M」+「hybrid 优势论证」两个运维块均已完成，原文见 `ARCHIVE_OPERATOR_PRETRAIN.md`。结论：PPL 1M=55.42 无退化，bottleneck=(c) attention O(n²) ≥512K，目标 ctx=32K–128K，advantage report 已交付。
-
-> 📦 §运维指令·2026-10-07⑤（T1 bf16-SSM重跑+T2公平对比+T3提速+T4效果）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：T1/T2 v2 ✅ warmup-corrected — float32 vs bf16 SSM 无差异(1.00×)，hybrid 比 dense 快 2.8-4.3×(128K-256K)，「dense 3.3× faster」是 warmup 假象已撤回；T3 短名单(C1 FP8-TP1/C2 recompute+MBS4) + T4 短名单(Q1 100B tokens/Q2 data mixture) 已交付。需要时再读。
-
-> 📦 §运维指令·2026-10-07④（5份研究型HTML报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：5份报告(r1-r5)全 ✅ 交付，r4 去重完成。需要时再读。
-
-> 📦 §运维指令·2026-10-07③（hybrid ctx扩2M-16M+显存归因）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：P-9.11-F ✅ — 2M@0.6 SERVED(TTFT=427s), 4M@0.85 TIMED OUT(servable but ~33min), 8M/16M单卡不可服务；VRAM恒定=mem-frac=0.3预分配假象(0.6→76GB)；V4② bf16 vs f32 1.67× 已更正为warmup假象。需要时再读。
-
-> 📦 §运维指令·2026-10-07②（长上下文推理成本矩阵 128K-1M）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：P-9.11-E COMPLETE — Dense OOMs@512K(KV pool=455K tokens), Hybrid serves 1M@~26GB(near-constant = `--mem-fraction-static 0.3` 预分配 ~24GB, 与 ctx 无关); 128K-256K Dense faster 1.7-3.3x prefill / 2.2-2.6x decode。sglang flag 沿用：`--mem-fraction-static 0.3 --attention-backend flashinfer --mamba-ssm-dtype float32` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`。需要时再读。
-> 📦 §运维指令·2026-10-07（📊 交付：昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：report_10_07_pretrain_overnight.html 已由 #164 交付(26.5KB,自包含,全自检过)。需要时再读。
+> 📦 §2026-10-06~07（ctx扩展+推理对比+5份报告+提速+裁决，共7块）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：PPL 1M=55.42无退化, hybrid vs dense prefill 2.18×, 5份HTML✅, A/B/D✅(BBH 14.26%, VRAM 5.35GB恒定), T1/T2 warmup-corrected(hybrid快2.8-4.3×), T3=recompute无效+FP8慢9%。需要时再读。
 
 
-> 📦 §运维指令·2026-10-09（T3 提速验证：recompute+FP8）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：Test 1 (recompute28+MBS4 TP1) OOM 79.2GB — recompute 对 Mamba2-hybrid 无效（52/56 层 SSM 激活常量级，仅省 ~0.6GB）；Test 4 (FP8 TP1 MBS2 M=8192) s=0.915 228K tok/s（慢 9%）；Test 2&3 跳过。P-8 最优 = TP1·MBS2·bf16 = 249K tok/s 确认。需要时再读。
+> 📦 §2026-10-08~09（R3配比+论文LaTeX+R2收官HTML+T3提速验证，共4块）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：R3 6维搜索✅, LaTeX更新✅, R2报告46KB✅, T3=recompute对Mamba2-hybrid无效(52/56层SSM激活常量级)+FP8慢9%, P-8最优=TP1·MBS2·bf16=249K tok/s。需要时再读。
 
-
-> 📦 §运维指令·2026-10-08（R3 数据配比搜索）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：R3 6维搜索完成，r3_best_blend.txt 已生成，Stable段配比已回写 DATA_MIX_RECIPE.md。需要时再读。
-
-> 📦 §运维指令·2026-10-08（更新论文 LaTeX）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：R2 实测数据已写入 4_llm_pretrain.tex / 3_architecture.tex，main.pdf 已 commit。需要时再读。
-
-> 📦 §运维指令·2026-10-08（R2 收官报告 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：report_pretrain_r2_final.html ✅(46KB) 已生成并 commit。需要时再读。
-
-
-> 📦 §运维指令·2026-10-06（裁决+提速令：批准A/B/D，C暂不动/E不做，NCCL拓扑核查+提速清单）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：P-9.12 NCCL已在用NVLink(P2P 100%,用户PCIe假设证伪,busbw 164.56GB/s),P-9.13 env无提速(249K tok/s上界),A 36/36✅(BBH峰值14.26%@2.62B),B✅(ABF不降反升+2.71pp,passkey 0%),D✅(VRAM 5.35GB恒定4K→128K)。需要时再读。
-
-> 📦 §运维指令·2026-10-06（空窗提案：5条候选A-E）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：运维裁决✅A/B/D批准,⏸C暂不动,🚫E不做。A/B/D均已✅COMPLETE。需要时再读。
+> 📦 §2026-10-06（裁决+空窗提案，2块）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：NVLink P2P 100%(busbw 164.56GB/s), A 36/36✅(BBH 14.26%), B✅(ABF+2.71pp), D✅(VRAM 5.35GB恒定), C暂不动, E不做。需要时再读。
 
 ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
 
@@ -157,9 +138,7 @@
 
 > ⏱️ 运维判死判据（硬）：心跳文件 >60 min 无新提交 ⇒ 按卡死处理，不再等你。你干得再多，心跳不动 = 仍会被判死。
 
-> 📦 §运维指令·2026-10-05深夜2（sglang上界+P-5b 8集+P-6②+P-9.5）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：4项全COMPLETE，4 HTML在doc/BaiZe-ISEDA2027/。
-> 📦 §运维指令·2026-10-05深夜（sglang可用→BaiZe vs MiniCPM5推理对比）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：P-9.11 COMPLETE，H1✅prefill 2.18×, H2⚠decode 1.18×, 128K failed。
-> 📦 §运维指令·2026-10-05晚（sglang conda env+proxy口径+环境隔离）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：sglang在vllm env可用(0.5.9)，proxy=http://172.19.92.25:13128，训练=py310/推理=vllm env隔离。
+> 📦 §2026-10-05（3项：sglang上界+对比+环境）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：sglang vllm env 可用(0.5.9), proxy=172.19.92.25:13128, P-9.11 prefill 2.18×, 128K failed。需要时再读。
 ### 📉 体积维护规程（2026-10-03 立 → 2026-10-06 升级为「记忆 + 任务书」双约束，硬性）
 
 > 理由：`MEMORY_*.md` 与 `BAIZE_<线>_TASK.md` 都每次唤醒被全文读进 prompt（`prompt="$(< "$TASK_MD")"`）⇒ 越大越烧 token。

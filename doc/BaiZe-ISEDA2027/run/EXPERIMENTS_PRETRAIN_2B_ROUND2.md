@@ -3359,3 +3359,57 @@ ssh 10.239.2.29 'cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && \
 冒烟日志：`/tmp/dist_muon_smoke.log`
 脚本：`run/muon_distmuon_realdata.sh` / `run/dist_muon_smoke_test.sh`
 
+
+---
+
+## P-8 AdamW Decay LR 修复（2026-10-14）
+
+### 问题
+P-8 AdamW decay 段（从 ckpt@9441 resume）LR 全程恒定 1.000000E-03，未按 WSD 调度衰减到 1e-5。27+ 个 log 点（step 9450→9870）全部 LR=1e-3。
+
+### 根因
+`baize_p8_decay.sh` 使用 `--name p8_adamw`（与 stable 同名）→ auto-resume from `p8_adamw/checkpoints/`。
+
+源码证据（`megatron/bridge/training/checkpointing.py`）：
+- `:1358` `if not cfg.checkpoint.finetune:` → 加载 `latest_train_state.pt` → `state.train_state.step = 9441`
+- `:1398` `if not release and not cfg.checkpoint.finetune and cfg.checkpoint.load_optim:` → recipe 设 `load_optim=False` → **scheduler state 不加载**
+
+结果：scheduler 内部 counter 从 0 开始。WSD 调度器将 stable 区映射为 0→9441，decay 区为 9441→10490。但 decay run 只有 1049 步（9441→10490），永远到不了 decay 区 → **LR 恒定 1e-3**。
+
+### 修复
+使用 Megatron bridge 内置的 `finetune=True` 模式：
+1. `pretrain_launcher.py:62-63`: wire up `finetune=args.finetune, load_dir=args.load_dir`（launcher 已有 argparse 定义，但之前未传递到 config）
+2. `mamba2_hybrid_2b/recipe.py:185-187`: `pretrain_config()` 加 `finetune: bool = False, load_dir: Optional[str] = None`
+3. `recipe.py:279`: `load=load_dir if load_dir is not None else checkpoint_dir`
+4. `recipe.py:293-294`: `finetune=finetune, load_rng=False`
+
+`finetune=True` 效果（`checkpointing.py`）：
+- `:1358` 跳过 `latest_train_state.pt` 加载
+- `:1367` `state.train_state.step = 0`（step 重置为 0）
+- `:1303` 跳过 optimizer/RNG state 加载
+- → scheduler 从新 config 开始：warmup 100 步 (0→1e-3) → decay 1049 步 (1e-3→1e-5)
+
+### 新脚本
+`baize_p8_decay_fix.sh`：
+- NAME=`p8_adamw_decay`（独立目录，不覆盖 stable ckpt）
+- ITERS=1149, WARMUP=100, DECAY=1049, SEQ=4094
+- `--finetune --load-dir=p8_adamw/checkpoints`
+- SFT blend: SFT64%+L324%+code8%+math4%
+- save@500/1000/1149 → `p8_adamw_decay/checkpoints/`
+
+### 验证
+| step | LR | loss | grad_norm | 状态 |
+|-----:|---:|-----:|----------:|:---|
+| 10 | 1.000e-4 | 1.914 | 0.226 | warmup 10/100 ✅ |
+| 20 | 2.000e-4 | 1.784 | 0.124 | warmup 20/100 ✅ |
+| 30 | 3.000e-4 | 1.692 | 0.093 | warmup 30/100 ✅ |
+
+LR 线性 warmup 正常工作（旧 run 全程 1e-3 恒定）。warmup 完成后（step 100）LR=1e-3，之后 decay 1049 步到 1e-5。
+
+### 代码变更
+| 文件 | 变更 |
+|:---|:---|
+| `pretrain_launcher.py` | +2 行：wire up `finetune`/`load_dir` args |
+| `mamba2_hybrid_2b/recipe.py` | +5 行：参数 + `CheckpointConfig` |
+| `baize_p8_decay_fix.sh` | 新文件（130 行） |
+
