@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong（DAC2027）论文审视报告 · 2026-10-14</title>
+<style>
+  :root{
+    --bg:#fafafa; --card:#fff; --ink:#1a1a1a; --muted:#555;
+    --red:#c0392b; --orange:#d35400; --green:#1e8449; --blue:#2471a3;
+    --red-bg:#fdedec; --orange-bg:#fef5e7; --green-bg:#eafaf1; --blue-bg:#ebf5fb;
+    --border:#d5d8dc;
+  }
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Segoe UI,Roboto,sans-serif;
+       background:var(--bg); color:var(--ink); margin:0; padding:0; line-height:1.65;}
+  .wrap{max-width:1080px; margin:0 auto; padding:32px 24px 80px;}
+  h1{font-size:1.9rem; margin:0 0 4px; border-bottom:3px solid var(--blue); padding-bottom:10px;}
+  h2{font-size:1.45rem; margin:38px 0 12px; padding:8px 0 0; border-bottom:1px solid var(--border);}
+  h3{font-size:1.15rem; margin:26px 0 8px; color:#222;}
+  .sub{color:var(--muted); font-size:0.92rem; margin-bottom:6px;}
+  .meta{background:var(--blue-bg); border-left:4px solid var(--blue); padding:12px 16px; border-radius:4px; margin:16px 0 24px; font-size:0.93rem;}
+  .meta b{color:var(--blue);}
+  table{border-collapse:collapse; width:100%; margin:14px 0; font-size:0.9rem; background:var(--card);}
+  th,td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+  th{background:#f4f6f7; font-weight:600;}
+  tr:nth-child(even) td{background:#fbfbfb;}
+  code{background:#eef1f2; padding:1px 5px; border-radius:3px; font-family:"SF Mono",Consolas,Menlo,monospace; font-size:0.86em; color:#c0392b;}
+  pre{background:#1e1e1e; color:#e0e0e0; padding:12px 14px; border-radius:5px; overflow-x:auto; font-size:0.82rem;}
+  .item{border-radius:5px; padding:12px 16px; margin:14px 0; border:1px solid var(--border);}
+  .item.red{background:var(--red-bg); border-left:5px solid var(--red);}
+  .item.orange{background:var(--orange-bg); border-left:5px solid var(--orange);}
+  .item.green{background:var(--green-bg); border-left:5px solid var(--green);}
+  .tag{display:inline-block; font-size:0.75rem; font-weight:700; padding:1px 8px; border-radius:10px; margin-right:6px; vertical-align:middle;}
+  .tag.red{background:var(--red); color:#fff;} .tag.orange{background:var(--orange); color:#fff;} .tag.green{background:var(--green); color:#fff;}
+  .tag.blue{background:var(--blue); color:#fff;}
+  .loc{font-family:"SF Mono",Consolas,monospace; font-size:0.8rem; color:var(--muted);}
+  .data{font-family:"SF Mono",Consolas,monospace; font-size:0.83rem; background:#f8f9f9; padding:6px 10px; border-radius:3px; display:inline-block; margin:4px 0;}
+  ul,ol{margin:8px 0 8px 22px;} li{margin:3px 0;}
+  .summary-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:18px 0;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:6px; padding:14px 16px;}
+  .card .num{font-size:1.7rem; font-weight:700; display:block;}
+  .card.red .num{color:var(--red);} .card.orange .num{color:var(--orange);} .card.green .num{color:var(--green);} .card.blue .num{color:var(--blue);}
+  .card .lbl{color:var(--muted); font-size:0.85rem;}
+  .toc{background:var(--card); border:1px solid var(--border); border-radius:6px; padding:14px 20px; margin:18px 0;}
+  .toc ol{margin:6px 0;}
+  .pill{display:inline-block;background:#eef1f2;padding:1px 7px;border-radius:8px;font-size:0.78rem;margin:0 3px;}
+  .check{color:var(--green); font-weight:700;} .cross{color:var(--red); font-weight:700;}
+  details{margin:8px 0;} summary{cursor:pointer; font-weight:600;}
+  .footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:0.85rem;}
+  @media print{body{background:#fff;} .wrap{max-width:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ZhuLong（DAC2027）论文审视报告</h1>
+<div class="sub">审视对象：<code>doc/ZhuLong_DAC2027/ZhuLong_DAC2027/</code>（main.tex + DAC2027/0–8 + reference.bib + 已编译 main.pdf）</div>
+<div class="meta">
+<b>日期：</b>2026-10-14 ｜ <b>审视者：</b>ZhuLong agent（空窗期任务）｜ <b>主线状态：</b>C2.phi_k1 r3 code-gen 跑中（PID1122046），评测优先，本报告不占用评测资源<br>
+<b>数据基准：</b>对照 <code>run/MEMORY_ZHULONG.md</code> 执行看板与成绩表（截至 2026-10-14 08:44）<br>
+<b>分级：</b><span class="tag red">🔴 硬伤</span> 与实测矛盾/过度声称/逻辑错误 ｜ <span class="tag orange">🟠 建议</span> 应改进的表述/结构/严谨性 ｜ <span class="tag green">🟢 可回填</span> 已有实测数据可立即填入
+</div>
+
+<div class="summary-cards">
+  <div class="card red"><span class="num">6</span><span class="lbl">🔴 硬伤</span></div>
+  <div class="card orange"><span class="num">15</span><span class="lbl">🟠 建议</span></div>
+  <div class="card green"><span class="num">11</span><span class="lbl">🟢 可回填</span></div>
+  <div class="card blue"><span class="num">38</span><span class="lbl">论文 [TBD] 总数</span></div>
+</div>
+
+<div class="toc">
+<strong>目录</strong>
+<ol>
+<li><a href="#s1">总体评价与核心结论</a></li>
+<li><a href="#s2">论点-证据一致性（核心 claim vs 实测）</a></li>
+<li><a href="#s3">评测口径（Pass@1 分母 / 5-run / 配对检验 / timeout / gen-fail）</a></li>
+<li><a href="#s4">消融结论一致性（Φ 单调趋势 / gen-fail / 锚点）</a></li>
+<li><a href="#s5">贡献边界 / 与 BaiZe 关系</a></li>
+<li><a href="#s6">结构与表述（Abstract/Intro/Conclusion / Limitations / 图表 / overfull / 页数）</a></li>
+<li><a href="#s7">可回填项清单（已有实测 / 仍缺数据）</a></li>
+<li><a href="#s8">已回填建议清单（按优先级）</a></li>
+</ol>
+</div>
+
+<!-- ===================== 1 ===================== -->
+<h2 id="s1">1. 总体评价与核心结论</h2>
+
+<p>论文理论框架（grounding gap / L4 / 贝叶斯形式化）完整且<strong>先于实测陈述</strong>，符合"预测而非事后解释"的科学规范，是全文最强部分。系统设计、benchmark 构造、错误分析均有扎实基础。但<strong>全文最严重的问题是：headline 数字 84.8% 是 1-shot 探路值，而受控 5-run 实测锚点 full_v3 = 82.1±3.0%，二者相差 2.7pp 且未在正文说明</strong>。这导致摘要、引言、结论与 4 张表（main-ablation / ablation-harness / phi-bound / llm-comparison）的锚点行、以及所有 Δ 与错误分析（"134/158"）全部建立在过时的探路值上，形成系统性"过度声称"。在 5-run 实测已落地的当下，这属于必须在投稿前修正的 <span class="tag red">🔴 硬伤</span>。</p>
+
+<p>此外，论文存在两个相邻表格共用字母 (N) 但语义不同（易混淆）、缺少配对显著性检验、缺少结果可视化图、未声明 backbone 量化版本（fp4）等问题，分述如下。</p>
+
+<!-- ===================== 2 ===================== -->
+<h2 id="s2">2. 论点-证据一致性（核心 claim vs 实测）</h2>
+
+<p>逐句核对论文核心 claim 与 <code>MEMORY_ZHULONG.md</code> 成绩表（B 4 臂 5/5✅、C1 4 臂 5/5✅含 full_v3 锚点、C2.phi_k10 5/5✅、phi_k3 5/5✅、phi_k1 r1/r2 进行中）。</p>
+
+<div class="item red">
+<span class="tag red">🔴 硬伤 #1</span><b>headline 84.8% 与 5-run 锚点 82.1±3.0% 矛盾 —— 系统性过度声称</b><br>
+<span class="loc">0_abstract.tex:24 ｜ 1_intro.tex:29 ｜ 6_exp.tex:94,160,210,238 ｜ 8_conclusion.tex:4</span><br>
+论文反复以 <b>84.8%</b> 作为 ZhuLong(Full) 的 Pass@1，出现于摘要、引言贡献项、<code>tab:main-ablation</code>（Full 行）、<code>tab:ablation-harness</code>（F 行）、<code>tab:phi-bound</code>（unbounded 行）、<code>tab:llm-comparison</code>（DeepSeek-V4-Pro 行）、结论。<br>
+<b>实测</b>（<code>MEMORY_ZHULONG.md</code> 三组对照表）：受控 5-run 锚点 <span class="data">full_v3 = 82.1 ± 3.0% [77.8, 86.1, 81.6, 82.3, 82.9]</span>，<b>未复现 84.8%</b>。84.8% 来自 2026-09-28 的 <b>1-shot 探路</b>（n=1），属 README §6.1 明示的"provisional 基线"，应被 5-run 覆盖。<br>
+<b>影响</b>：所有以 84.8% 为基准的 Δ 都偏高 —— <code>tab:main-ablation</code> 的 wo_retrieval Δ=-3.8pp（实测应为 81.0−82.1=<b>-1.1pp</b>）、<code>tab:llm-comparison</code> 全部 4 个 Δ（GLM -1.5→+1.2、Flash -68.1→-65.4、Kimi -7.8→-5.1、Doubao -21.0→-18.3）。<br>
+<b>建议</b>：将全文 84.8% 统一替换为 <b>82.1 ± 3.0%</b>，并同步重算全部 Δ（README §6.1 已警告"务必同时更新同表 Δ 列与正文"）。注意：替换后 GLM-5.2 反而 <b>高于</b> 主基座 DeepSeek-V4-Pro（83.3 vs 82.1），需在 §S3 正文解释"主基座非最优"——这与当前"DeepSeek-V4-Pro 为主"的叙事需重新措辞。
+</div>
+
+<div class="item red">
+<span class="tag red">🔴 硬伤 #2</span><b>错误分析 "134/158 (84.8%)" 与失败计数 24/21/12+9 绑定单次探路 run</b><br>
+<span class="loc">6_exp.tex:267-301（§Error Analysis + tab:error-categories）</span><br>
+正文：<i>"ZhuLong produces correct code for 134 of 158 tasks (84.8% Pass@1). The remaining 24 failures comprise 3 generation-stage failures and 21 execution-stage failures."</i> 表 <code>tab:error-categories</code> 计 12+9=21。<br>
+<b>问题</b>：158−134=24，与 84.8% 自洽，但这是 <b>某一次单 run</b> 的通过数，而非 5-run mean（82.1%≈130/158）。错误分析的样本是"那一次 84.8% 的 run"，与报告的 mean±std 不是同一对象。<br>
+<b>建议</b>：明确声明错误分析基于"一次代表性 trace（pass=134）"或改用 5-run 中通过数最接近 mean 的那次 run；若用 full_v3 r3=81.6%（129/158，29 failures）则失败计数需重做。当前写法让读者误以为 24 个失败是 5-run 稳态结论。
+</div>
+
+<div class="item red">
+<span class="tag red">🔴 硬伤 #3</span><b><code>tab:omega</code> (L)=82.8±1.0% 与 <code>tab:ablation-harness</code> (N)(B)(F) 均无 5-run 实测支撑</b><br>
+<span class="loc">6_exp.tex:126-160（tab:omega + tab:ablation-harness）</span><br>
+<b>实测</b>（<code>MEMORY_ZHULONG.md</code> 执行看板）：S1 三臂 <span class="data">omega_low ⬜ · readback_binary ⬜ · readback_none ⬜</span>（全部 1-5/5 未跑）。<br>
+但论文 <code>tab:omega</code> 已填 (L)=82.8±1.0、<code>tab:ablation-harness</code> 已填 (N)=73.3±2.2、(B)=66.2±16.1。其中 (N)=10.5（=pure_llm ✅）与 (H)=71.8（=rag ✅）有 C1 数据支撑；但 <b>(L)=82.8±1.0、(N)=73.3、(B)=66.2 这三个 S1 专属值在 MEMORY 中找不到对应 5-run 记录</b>，疑似旧 1-shot 探路或更早占位值。<br>
+<b>建议</b>：在 S1 三臂跑完前，这些值应标注 <code>[provisional, n=1]</code> 或回退为 <code>[TBD]</code>；当前以 ± 形式呈现会让读者误以为已有 5-run。read-back 轴 (N) 仅 ±2.2 而 (B) 高达 ±16.1，若 (B) 也是 n=1 则 ±16.1 不成立（std 需 n≥2）。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #1</span><b><code>tab:phi-bound</code> k1/k3/k10 仍用 1-shot 探路值，与 5-run 实测偏离</b><br>
+<span class="loc">6_exp.tex:206-214（tab:phi-bound + 脚注）</span><br>
+脚注已诚实标注"Provisional 1-shot probe values"，<b>这是好的</b>。但部分 5-run 已落地，应即时回填以减少投稿时的批量改动：<br>
+- k10：论文 75.3 → 实测 <span class="data">77.7 ± 2.2% [78.5,76.6,77.2,81.0,75.3]</span>（偏离 +2.4pp）<br>
+- k3：论文 69.0 → 实测 <span class="data">69.1 ± 2.5% [72.8,66.5,69.6,69.6,67.1]</span>（吻合，可直接填）<br>
+- k1：论文 60.8 → 实测进行中 <span class="data">r1=65.2 · r2=66.5（还差 r3-r5）</span>，已可看出 60.8 偏低<br>
+- lagged：论文 84.2 → <b>5-run 未跑</b>（⬜），保留 provisional 合理<br>
+<b>建议</b>：k10、k3 立即回填（见 §7 清单）；k1 等 5/5 完成后回填；脚注同步更新。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #2</span><b>"84.8% outperforming pure LLM 10.5%" 的 gap 表述需随锚点更新</b><br>
+<span class="loc">0_abstract.tex:24-28 ｜ 1_intro.tex:29-35 ｜ 8_conclusion.tex:4</span><br>
+摘要/引言/结论均写"84.8% vs 10.5%"。锚点改 82.1 后，gap 由 74.3pp 变 71.6pp，"substantially outperforming"定性结论不变，但数字须同步。"adding sandbox execution to retrieval yields +[TBD] pp"——该 [TBD] = full − rag = 82.1−71.8 = <b>+10.3pp</b>（非探路的 84.8−71.8=13.0pp）。建议锚点定稿后一次性回填全部 [TBD]。
+</div>
+
+<div class="item green">
+<span class="tag green">🟢 可回填 #1</span><b>B 模型消融 4 臂全部 5/5✅，<code>tab:llm-comparison</code> 可回填 4 行 std + Δ</b><br>
+<span class="loc">6_exp.tex:239-242</span><br>
+实测：GLM-5.2=83.3±3.1 ✅ ｜ Flash=16.7±12.3 ✅ ｜ Kimi=77.0±1.6 ✅ ｜ Doubao=63.8±1.4 ✅。<br>
+论文 4 行的 mean 与 std <b>已与实测一致</b>（仅 Δ 列基于旧 84.8 锚点，需重算，见 🔴#1）。<b>DeepSeek-V4-Pro 行</b>的 <code>84.8 ± [TBD]</code> 应回填为 <code>82.1 ± 3.0</code>。
+</div>
+
+<!-- ===================== 3 ===================== -->
+<h2 id="s3">3. 评测口径（Pass@1 分母 / 5-run / 配对检验 / timeout / gen-fail）</h2>
+
+<div class="item green">
+<span class="tag green">🟢 可回填 #2</span><b>Pass@1 分母 = 158 全量，gen-fail 计为失败 —— 与实测口径一致，但论文未显式说明 gen-fail 处理</b><br>
+<span class="loc">5_bench.tex:41-42（Pass@1 公式）｜ 6_exp.tex:267-274（Error Analysis 提"3 generation-stage failures"）</span><br>
+公式 <code>Pass@1 = #passed / Total × 100%</code>，Total=158，隐含 gen-fail=未通过。实测各臂 gen-fail 数（如 phi_k1 r1: 103/158 通过、35 gen-fail）即按此口径计入分母。<b>一致 ✅</b>。<br>
+但论文仅在 Error Analysis 提"3 generation-stage failures"（针对 84.8% 那次 run），<b>未在评测协议段声明"生成失败计为未通过、计入 158 分母"</b>。对于 k=1 臂（gen-fail 达 30-35/158，占失败主体），这一口径必须前置说明，否则读者会误以为 65% 全是"执行错误"。<br>
+<b>建议</b>：在 §5.3 或 §6.1.2 加一句"生成阶段失败（超时/未产出代码）计为未通过，计入 Pass@1 分母；S2 低预算臂的 gen-fail 是 Φ 预算约束的直接体现，非基础设施故障"。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #3</span><b>未声明任何配对显著性检验（McNemar / paired bootstrap）</b><br>
+<span class="loc">6_exp.tex:32（"mean ± standard deviation over those runs"）｜ 7_discussion.tex:12（仅定性提"benchmark size limits statistical power"）</span><br>
+5-run × 158 题，每臂共有 5×158=790 个任务级配对结果，<b>完全具备做 McNemar 或 paired bootstrap 的条件</b>。当前仅报 mean±std，对于小 gap（如 full 82.1 vs wo_retrieval 81.0 = 1.1pp，或 GLM 83.3 vs DeepSeek 82.1 = -1.2pp）无法判断是否显著。<br>
+特别是 <b>(B) binary ±16.1 vs (N) none ±2.2</b>（tab:ablation-harness）的"N>B"反转结论，仅凭 mean 比较、无检验，说服力弱。<br>
+<b>建议</b>：至少对主表（main-ablation、phi-bound、llm-comparison）的关键相邻行做 paired bootstrap（任务级配对，B≥1000）或 McNemar，报告 p 值或 95% CI；或在 Limitations 明确"未做配对检验，小效应量结论需谨慎解读"。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #4</span><b>5-run mean±std 的"run"定义与重排方式未充分说明</b><br>
+<span class="loc">6_exp.tex:32（"five independent runs with reshuffled task orderings and fresh agent contexts"）</span><br>
+已提到"重排任务顺序 + 全新 context"，✅ 较好。但未说明：(1) 5 次运行的 LLM 推理是否独立（temperature/采样是否固定？同一 backbone 同一 key 是否会因服务端缓存导致 run 间不独立？）；(2) std 用的是样本标准差（n−1）还是总体（n）—— README §4.1 指定 n−1，论文应与 README 一致并注明。<br>
+<b>建议</b>：补一句"std 采用样本标准差（n−1=4）"；若 LLM 服务端有缓存，声明"5 次运行独立采样、不复用缓存"或如实说明。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #5</span><b>"timeout ≤10"作为 run 有效性判据未在论文声明，infra 故障 run 的剔除/重跑规则缺失</b><br>
+<span class="loc">6_exp.tex:32（仅提"timeout 2500s per execution"）</span><br>
+实测侧（运维令十三/十五）有明确判据："timeout ≤10 且无 infra 故障（license/端口/磁盘）的 run 才有效，infra 故障 run 不计数、重跑"。但论文完全未交代"若某次 run 出现基础设施故障如何处理"——读者无法知道 5-run 是否全部健康、有无剔除。<br>
+<b>建议</b>：在评测协议段加一小段"运行有效性判据：若单次 run 出现基础设施故障（license 耗尽、沙盒端口不可达、磁盘不足），该 run 作废并重跑，不计入 5-run；消融臂的正常低分（如 Φ 预算约束导致的 gen-fail）不作此处理"。这同时回溯性地解释了 75% 下限只对 full 锚点适用的设计动机。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #6</span><b>反作弊 hook 描述详尽但"75% 锚点健康下限"未提及</b><br>
+<span class="loc">6_exp.tex:32（hook 描述很完整 ✅）</span><br>
+hook 段落写得好（whitelist、no-op、cancel、fresh workdir）。但 full 锚点的 75% 健康下限（运维令十三：full 跑不到 75% 即判 infra 不健康）是保证"基线可解释"的关键质控，论文未提。<b>建议</b>：一句话说明"锚点臂设 75% 健康下限以隔离基础设施退化对消融结论的污染"。
+</div>
+
+<!-- ===================== 4 ===================== -->
+<h2 id="s4">4. 消融结论一致性（Φ 单调趋势 / gen-fail / full_v3 锚点）</h2>
+
+<div class="item red">
+<span class="tag red">🔴 硬伤 #4</span><b>Φ 预算单调趋势：论文用 1-shot 探路值 60.8/69.0/75.3，与 5-run 实测方向需复核</b><br>
+<span class="loc">6_exp.tex:206-208（tab:phi-bound k1/k3/k10）｜ 4_grounding.tex:131（"Principle 3 predicts accuracy rises with exec budget"）</span><br>
+论文叙事："Principle 3 predicts accuracy rises with execution budget"，三档 60.8→69.0→75.3 <b>单调</b> ✅。<br>
+<b>实测 5-run</b>：k10=77.7 ｜ k3=69.1 ｜ k1≈65-66（r1=65.2,r2=66.5，待 r3-r5）。<br>
+单调性 <b>仍成立</b>（k1&lt;k3&lt;k10），✅。但：(1) k10 实测 77.7 比论文 75.3 高 2.4pp；(2) k1 5-run 看似 ~65-66，比论文 60.8 高 ~5pp，<b>若最终 k1 5-run mean 落在 66 附近，则 k1(66) vs k3(69.1) gap 仅 3pp，远小于论文 60.8→69.0 的 8.2pp gap</b>，对"预算单调下降显著"的叙事削弱。<br>
+<b>建议</b>：等 phi_k1 5/5 完成后回填，并根据真实 gap 调整 §S2 正文对"单调降"的强度措辞；若 gap 缩小，可能需弱化为"单调但饱和较快"。
+</div>
+
+<div class="item red">
+<span class="tag red">🔴 硬伤 #5</span><b>gen-fail 随 k↓ 递增 —— 论文完全未报告此现象</b><br>
+<span class="loc">6_exp.tex:174-221（§S2 全节）｜ tab:phi-bound（无 gen-fail 列）</span><br>
+实测（<code>MEMORY_ZHULONG.md</code>）：phi_k3 r5=25 gen-fail ｜ phi_k1 r1=35 gen-fail、r2=30 gen-fail。<b>gen-fail 随 Φ 预算 k↓ 显著递增</b>（k=10→k=3→k=1：从个位数到 25 到 30-35）。这是 Φ 预算约束的直接行为表现：预算耗尽后 agent 无法继续执行→生成阶段失败。<br>
+论文 §S2 与 <code>tab:phi-bound</code> <b>只报 Pass@1 和 Converged(%)，完全没有 gen-fail 维度</b>，错过了一个强证据：gen-fail 的递增正是"预算约束作用于工具边界、agent 仍自主决策"机制的可观测佐证，<b>直接支撑 §8 语义约束第 1 条</b>。<br>
+<b>建议</b>：在 <code>tab:phi-bound</code> 增加"Mean gen-fail"列（或并入"Mean read-backs"旁），并在 §S2 正文用 1-2 句描述"k↓ → gen-fail↑ → Pass@1↓ 的链条"。这是低成本高回报的补充（数据已在 daily-memories）。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #7</span><b>full_v3 锚点 82.1±3.0% 与 V2(无自探索) 79.8±2.1% 的"自探索增益"未进论文</b><br>
+<span class="loc">6_exp.tex:226（§S3 仅谈 LLM backbone）｜ MEMORY 三组对照表</span><br>
+实测有一组漂亮对照：<span class="data">full_v3(自探索开)=82.1±3.0% vs V2(自探索关)=79.8±2.1%</span>，提示自探索 +2.3pp（两者 1σ 内重叠，不显著）。这是关于"自探索（offline skill data）是否有效"的直接证据，但论文<strong>既未报告也未在 ablation 表体现</strong>（README 冻结项里 wo_selfexpl 暂缓，但 full_v3 vs V2 的对照数据已存在）。<br>
+<b>建议</b>：可在 Discussion 或 Future Work 提一句"自探索提供约 +2.3pp 的非显著增益（82.1 vs 79.8，1σ 重叠），需更大样本确认"；或在 wo_selfexpl 臂完成后正式纳入。当前埋没这组数据可惜。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #8</span><b>(L) 82.8% > (H) 71.8% 的"非单调"解释需更谨慎</b><br>
+<span class="loc">6_exp.tex:135-139（"effector dominance over documentation fidelity"）</span><br>
+正文解释 (L)>(H) 是"执行器在场 vs 缺席"。<b>逻辑成立</b>，但措辞"even a coarse index, once executable, outperforms a rich index used only for static retrieval"是一个<strong>强 claim</strong>，而 (L)=82.8±1.0 的 std 仅 1.0，<b>若该值实为 n=1 或小 n 探路（见 🔴#3），则 ±1.0 是假精度</b>，claim 的统计基础不稳。<br>
+<b>建议</b>：先确认 (L) 的真实 n；若是探路，标 provisional；待 S1.omega_low 5/5 完成后用真值重述。该 claim 本身重要，值得用扎实数据支撑。
+</div>
+
+<div class="item green">
+<span class="tag green">🟢 可回填 #3</span><b><code>tab:phi-bound</code> k10/k3 的 5-run std 可立即回填</b><br>
+<span class="loc">6_exp.tex:206-208</span><br>
+k10: <code>75.3 ± [TBD]</code> → <code>77.7 ± 2.2</code>（mean 也更新）<br>
+k3: <code>69.0 ± [TBD]</code> → <code>69.1 ± 2.5</code>（mean 微调）<br>
+Converged(%) 列：论文 k1=71.5/k3=79.1/k10=91.1，<b>MEMORY 未直接记录 Converged</b>，需从 trace 数据核验（见 §7 仍缺数据）。
+</div>
+
+<!-- ===================== 5 ===================== -->
+<h2 id="s5">5. 贡献边界 / 与 BaiZe 关系</h2>
+
+<div class="item red">
+<span class="tag red">🔴 硬伤 #6</span><b>全文未提及 BaiZe，"harness 属 ZhuLong / backbone 属 BaiZe"边界缺失</b><br>
+<span class="loc">全文检索 BaiZe/ISEDA → 0 命中（DAC2027/*.tex + reference.bib）</span><br>
+运维指令明确要求："harness 属 ZhuLong、backbone 属 BaiZe 的边界是否写清；是否按 DAC/ISEDA 双会'互相引用、不重报'约定表述"。<b>当前论文完全未提 BaiZe</b>，也未在相关 work / backbone 介绍处引用 BaiZe 工作。<br>
+<b>风险</b>：若 BaiZe（ISEDA 2027）与本文（DAC 2027）共享 backbone/部分基础设施，双会评审或读者可能发现重叠而质疑原创性边界；不引用互补工作也不利于"不重报"约定的可审计性。<br>
+<b>建议</b>：在 §2（Background，Prior work 段）或 §3（System Design 开头）加 1-2 句明确边界，例如"本工作的 harness（三 MCP 工具 + 评测协议）属 ZhuLong；agent backbone 的底层能力另由互补工作 BaiZe [ref] 详述，二者互引不重报"。具体措辞须运维/用户批准（本报告不动 .tex）。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #9</span><b>主 backbone 量化版本（fp4）未声明，影响可复现性</b><br>
+<span class="loc">6_exp.tex:73（"DeepSeek-V4-Pro"）｜ MEMORY 基座：deepseek-v4-pro-fp4</span><br>
+实测用 <code>deepseek-v4-pro-fp4</code>（fp4 量化），论文只写"DeepSeek-V4-Pro"。<b>量化版本对代码生成质量有实质影响</b>（fp4 vs fp8 vs bf16 可能差数 pp），复现者无法据此还原。<br>
+<b>建议</b>：在 §6.1.4 LLM Backbones 注明"DeepSeek-V4-Pro（FP4 量化版本，部署于 agi-gateway）"，并在 Limitations 或 Future Work 提"不同量化级别未单独消融"。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #10</span><b>"release harness/schema/protocol, not task cases" 的边界写得清楚 ✅，但开源范围可更具体</b><br>
+<span class="loc">1_intro.tex:44-46 ｜ 8_conclusion.tex:7</span><br>
+两次声明"release harness, task schema and evaluation protocol; task cases derive from vendor/customer designs and cannot be redistributed"。<b>边界清晰 ✅</b>，符合红线第 3 条。<b>建议</b>：可补一句具体形式（如"以 MIT 协议开源 harness 代码，task schema 以 JSON Schema 发布"），增强可执行性。
+</div>
+
+<!-- ===================== 6 ===================== -->
+<h2 id="s6">6. 结构与表述</h2>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #11</span><b>相邻两表复用字母 (N) 但语义不同，易混淆</b><br>
+<span class="loc">6_exp.tex:125（tab:omega (N)=No observation=pure LLM=10.5）vs 6_exp.tex:158（tab:ablation-harness (N)=None prior only=73.3，但 effector+retrieval 在场）</span><br>
+两个 (N) 指代完全不同的配置：<code>tab:omega</code> 的 (N) = 纯 LLM（无检索无执行），<code>tab:ablation-harness</code> 的 (N) = 有检索+执行但无 read-back。读者跨表阅读时会误以为同一配置。<br>
+<b>建议</b>：第二个表改用 (N′) 或 (N_rb)（read-back axis 的 none），并在表注说明"此 (N) 非表~\ref{tab:omega} 的 (N)"。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #12</span><b>ICML 旧稿数值的中文注释残留，投稿前应删</b><br>
+<span class="loc">6_exp.tex:132-133（中文注释："注：ICML 稿中同一阶梯报告为 (N)=0.0%、(L)=59.5%、(H)=87.3%——与本表口径不同，需先统一..."）</span><br>
+这是历史对照备忘，<b>面向作者而非读者</b>。中文注释虽不影响英文正文编译，但若投稿包含源码或被审稿人看到，会暴露 prior submission 信息（且与 anonymous 审稿冲突）。<br>
+<b>建议</b>：投稿前删除该中文注释及所有"需先统一/再决定引用哪一组"类内部备忘；保留英文表即可。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #13</span><b>全文仅 1 张图（架构图），无任何结果可视化</b><br>
+<span class="loc">figures/ 仅 zhulong_arch_2.pdf</span><br>
+DAC 是偏系统的会议，读者期望看到结果的可视化（如：消融条形图、Φ 预算 vs Pass@1 折线图、LLM backbone 对比图、error category 饼图）。<b>纯表格 + 文字</b>在视觉冲击力上偏弱。<br>
+<b>建议</b>：至少加 2 张：(1) tab:main-ablation 的渐近构建 + 消融条形图（突出 +61.3pp / +10.3pp / -1.1pp）；(2) tab:phi-bound 的 k vs Pass@1 折线（带 ±std error bar，体现单调+饱和）。这能显著提升可读性。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #14</span><b>5-run 各轮原始值未进正文/附录，可复现性不足</b><br>
+<span class="loc">全文表格仅 mean±std</span><br>
+高方差臂（wo_retrieval ±4.5、Binary ±16.1）仅给 ±std 不足以判断分布形态（是否有离群 run）。MEMORY 已有全部 75 轮原始值。<br>
+<b>建议</b>：在附录加一张"所有配置 5-run 原始 Pass@1"表，或至少对高方差臂（±>4）报告 5 个原始值。当前 Binary ±16.1 的"driven by one anomalous run at 43.0%"已在正文说明 ✅，但其余高方差臂无此待遇。
+</div>
+
+<div class="item orange">
+<span class="tag orange">🟠 建议 #15</span><b>Limitations 段存在但嵌于 Discussion，非独立小节</b><br>
+<span class="loc">7_discussion.tex:12（"Several limitations also warrant acknowledged..."4 条）</span><br>
+Limitations <b>内容齐全 ✅</b>（4 条：LLM 差异、单线程桥、158 题规模、统计功效）。但作为 Discussion 末段而非独立 \subsection，易被读者/审稿人略过。<br>
+<b>建议</b>：提升为 <code>\subsection*{Limitations}</code> 或独立短节；并补一条"未做配对显著性检验"（呼应 🟠#3）和"backbone 量化未消融"（呼应 🟠#9）。
+</div>
+
+<div class="item green">
+<span class="tag green">🟢 可回填 #4</span><b>3 处 Overfull hbox —— 其中 abstract 处会随 [TBD] 填充自动缓解</b><br>
+<span class="loc">main.log:1068（0_abstract.tex L22-40, 13.6pt）｜ main.log:1121（6_exp.tex L127-128, 5.75pt）｜ main.log:1128（7_discussion.tex L6-7, 13.1pt）</span><br>
+README §7 自检要求 ">20pt 的 Overfull 为 0"，当前 3 处均 <20pt，<b>已满足自检阈值 ✅</b>。但 13.6pt 偏明显。<br>
+- abstract 13.6pt：在 +[TBD] pp 句，填入真实数字后行长变化，<b>可能自动消除</b>。<br>
+- tab:omega L127 5.75pt：<code>\shortstack</code> 那行，可微调列宽或断行。<br>
+- discussion 13.1pt：long-docu\-mented 断词处，可调整 <code>\hyphenation</code>。<br>
+<b>建议</b>：回填数字后重编译复查；超 10pt 的两处手动微调。
+</div>
+
+<div class="item green">
+<span class="tag green">🟢 可回填 #5</span><b>页数 10 页，无未定义引用/缺失图，bib 无报错</b><br>
+<span class="loc">main.log: "Output written on main.pdf (10 pages)" ｜ 无 undefined reference/citation ｜ figures/zhulong_arch_2.pdf 存在 ✅</span><br>
+<b>编译健康 ✅</b>。bibtex 24 个 warning 全是"缺 page number/volume"（预印本/arXiv 类条目，正常）。<br>
+<b>建议</b>：核对 DAC 2027 CFP 的页数上限（sigconf 常见 6+2 或 8+2）；当前 10 页含 references，若上限紧需压缩。建议投稿前确认 CFP。
+</div>
+
+<div class="item green">
+<span class="tag green">🟢 可回填 #6</span><b>Abstract/Intro/Conclusion 数字一致性 —— 锚点定稿后可一次性对齐</b><br>
+<span class="loc">0_abstract.tex:24-28 ｜ 1_intro.tex:29-35 ｜ 8_conclusion.tex:4</span><br>
+三处均写"84.8% / 10.5% / 71.8% / -3.8pp"。<b>当前三者彼此一致 ✅</b>（只是都基于旧探路锚点）。<br>
+<b>建议</b>：锚点定 82.1 后，按 README §6.1 全局替换（搜 84.8、搜 -3.8、搜 +[TBD]），三处 + 4 表同步。建议用脚本 <code>grep -rn '84\.8\|3\.8' DAC2027/</code> 盘点全部命中点再批量改。
+</div>
+
+<!-- ===================== 7 ===================== -->
+<h2 id="s7">7. 可回填项清单</h2>
+
+<h3>7.1 🟢 已有实测、可直接回填（11 项）</h3>
+<table>
+<thead><tr><th>#</th><th>位置</th><th>当前值</th><th>目标值（实测）</th><th>依赖</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>tab:llm-comparison DeepSeek-V4-Pro 行</td><td>84.8 ± [TBD]</td><td><b>82.1 ± 3.0</b></td><td>full_v3 5/5 ✅</td></tr>
+<tr><td>2</td><td>tab:llm-comparison 4 个 Δ</td><td>-1.5/-68.1/-7.8/-21.0</td><td><b>+1.2/-65.4/-5.1/-18.3</b>（基于 82.1）</td><td>同上 + B 4 臂 ✅</td></tr>
+<tr><td>3</td><td>tab:main-ablation Full 行</td><td>84.8 ± [TBD]</td><td><b>82.1 ± 3.0</b></td><td>full_v3 ✅</td></tr>
+<tr><td>4</td><td>tab:main-ablation Full Δ（vs RAG）</td><td>+[TBD]</td><td><b>+10.3 pp</b>（82.1−71.8）</td><td>full_v3 + rag ✅</td></tr>
+<tr><td>5</td><td>tab:main-ablation wo_retrieval Δ</td><td>-3.8</td><td><b>-1.1 pp</b>（81.0−82.1）</td><td>wo_retrieval + full_v3 ✅</td></tr>
+<tr><td>6</td><td>tab:phi-bound k10 行</td><td>75.3 ± [TBD]</td><td><b>77.7 ± 2.2</b></td><td>phi_k10 5/5 ✅</td></tr>
+<tr><td>7</td><td>tab:phi-bound k3 行</td><td>69.0 ± [TBD]</td><td><b>69.1 ± 2.5</b></td><td>phi_k3 5/5 ✅</td></tr>
+<tr><td>8</td><td>tab:ablation-harness (F) 行</td><td>84.8 ± [TBD]</td><td><b>82.1 ± 3.0</b></td><td>full_v3 ✅</td></tr>
+<tr><td>9</td><td>tab:phi-bound unbounded 行</td><td>84.8 ± [TBD]</td><td><b>82.1 ± 3.0</b></td><td>full_v3 ✅</td></tr>
+<tr><td>10</td><td>abstract/intro/conclusion headline</td><td>84.8%</td><td><b>82.1%</b></td><td>full_v3 ✅（全局替换）</td></tr>
+<tr><td>11</td><td>§S2 sandbox Δ（两处）</td><td>±[TBD]</td><td><b>from full: −10.3pp；from RAG: +10.3pp</b>（注：w/o sandbox 臂未跑，需 wo_sandbox 数据——见仍缺）</td><td>wo_sandbox ⬜ <b>实际仍缺</b></td></tr>
+</tbody>
+</table>
+<p class="sub">⚠ 第 11 项的 Δ 可由 full_v3 与 rag 算出，但 <code>tab:main-ablation</code> 的 "ZhuLong w/o Sandbox" 行 <b>本身未测</b>（运维冻结项 wo_sandbox 暂缓），其 Pass@1 仍为 [TBD]，故 Δ 仍无法完整回填。仅能算 "full vs rag = +10.3pp" 这一侧。</p>
+
+<h3>7.2 🔴 仍缺数据、暂不能填（按表归档）</h3>
+<table>
+<thead><tr><th>表 / 位置</th><th>缺什么</th><th>还缺哪几轮/配置</th></tr></thead>
+<tbody>
+<tr><td>tab:main-ablation "w/o Sandbox" 行</td><td>Pass@1 + std + Δ</td><td><b>wo_sandbox 臂暂缓未跑</b>（运维冻结项）。整行 3 个 [TBD] 无法填</td></tr>
+<tr><td>tab:omega (L) 行</td><td>5-run mean±std</td><td><b>S1.omega_low ⬜ 1-5/5 全未跑</b>；当前 82.8±1.0 来源待核</td></tr>
+<tr><td>tab:ablation-harness (N)(B) 行</td><td>5-run + Mean read-backs</td><td><b>S1.readback_binary / readback_none ⬜</b>全未跑；(N)=73.3、(B)=66.2 来源待核</td></tr>
+<tr><td>tab:ablation-harness (N)(B)(F) Mean read-backs</td><td>3 个单值</td><td>需从 trace 级数据聚合，MEMORY 未记录</td></tr>
+<tr><td>tab:phi-bound k1 行</td><td>5-run mean±std</td><td><b>phi_k1 r3 跑中，r4/r5 未跑</b>（当前 r1=65.2, r2=66.5）</td></tr>
+<tr><td>tab:phi-bound lagged 行</td><td>5-run mean±std</td><td><b>phi_lagged ⬜ 1-5/5 全未跑</b></td></tr>
+<tr><td>tab:phi-bound 全部 Converged(%) + unbounded Converged</td><td>5 个值</td><td>MEMORY 无 Converged 记录，需 trace 重新统计（k10/k3 可补算）</td></tr>
+<tr><td>tab:llm-comparison DeepSeek-V4-Pro std</td><td>std</td><td>随 full_v3 回填 = 3.0 ✅（可填）</td></tr>
+<tr><td>§S2 sandbox 效应 Δ（from full −）</td><td>−[TBD] pp</td><td>依赖 wo_sandbox（暂缓）</td></tr>
+<tr><td>Error Analysis 失败计数</td><td>129/158 或重做</td><td>需选定 5-run 中的代表性 run 重新计数（当前绑 84.8% 那次）</td></tr>
+<tr><td>RQ3 SKILL/Tcl 切片</td><td>全部</td><td>切片在建，未跑（论文已标 pending ✅）</td></tr>
+<tr><td>intro [X%] unified benchmark</td><td>整体 Pass@1</td><td>待 SKILL/Tcl 完成</td></tr>
+</tbody>
+</table>
+
+<h3>7.3 [TBD] 盘点（grep 实测）</h3>
+<p>全文 <code>[TBD]</code> 实际命中 <b>38 个</b>（README 基线称 56 个/30 行，差异因部分已被回填或行内多占位）。分布：6_exp.tex 集中（main-ablation 3、ablation-harness 3、phi-bound 10、llm-comparison 1、§S2 正文 6），abstract/intro/grounding/discussion 各 2-4。其中 <b>约 12 个可由现有 full_v3/B/C1/C2.k10/k3 数据立即回填</b>（见 7.1），其余依赖 S1/wo_sandbox/phi_k1 完成/phi_lagged/RQ3。</p>
+
+<!-- ===================== 8 ===================== -->
+<h2 id="s8">8. 已回填建议清单（按优先级）</h2>
+
+<p>以下为建议的回填/修订动作清单，<b>本报告仅出意见，不直接改 .tex</b>（须运维/用户批准）。按"先改锚点、再批量同步"的顺序排列，以避免表文矛盾。</p>
+
+<ol>
+<li><span class="tag red">P0</span> <b>定锚点为 82.1±3.0%</b>：全局替换 84.8 → 82.1（abstract/intro/conclusion + 4 表锚点行）。<br>
+<span class="loc">命中点：<code>grep -rn '84\.8' DAC2027/</code></span></li>
+<li><span class="tag red">P0</span> <b>重算所有 Δ</b>：tab:main-ablation（Full +10.3、wo_retrieval −1.1）、tab:llm-comparison（4 个）、§S2 正文 (+10.3pp)。<br>
+<span class="loc">同步：搜 <code>-3\.8</code> <code>-1\.5</code> <code>-68\.1</code> <code>-7\.8</code> <code>-21\.0</code></span></li>
+<li><span class="tag red">P0</span> <b>重做或重声明 Error Analysis</b>：选 5-run 代表性 run（建议 full_v3 r3=81.6%,129/158）重计 24→29 失败、21→? 执行失败、tab:error-categories 计数；或显式标注"基于单次代表性 trace"。</li>
+<li><span class="tag orange">P1</span> <b>回填 tab:phi-bound k10/k3</b>：75.3→77.7±2.2、69.0→69.1±2.5；脚注更新"1-shot probe"为"5-run（k1/lagged 仍 provisional）"。</li>
+<li><span class="tag orange">P1</span> <b>tab:phi-bound 增加 gen-fail 列</b>：补 k10/k3/k1 的 Mean gen-fail，§S2 正文加 1-2 句"k↓→gen-fail↑→Pass@1↓"。</li>
+<li><span class="tag orange">P1</span> <b>声明配对检验或缺位</b>：补 paired bootstrap/McNemar，或在 Limitations 明示未做。</li>
+<li><span class="tag orange">P1</span> <b>评测协议补 gen-fail/infra 判据</b>：§5.3 或 §6.1.2 加 gen-fail 计入分母 + infra 故障 run 剔除规则 + 75% 锚点健康下限。</li>
+<li><span class="tag orange">P1</span> <b>声明 backbone 量化（fp4）</b>：§6.1.4。</li>
+<li><span class="tag orange">P2</span> <b>明确 BaiZe 边界</b>：§2 或 §3 加 1-2 句互引（须运维批）。</li>
+<li><span class="tag orange">P2</span> <b>消歧 (N) 字母</b>：tab:ablation-harness 改 (N′) 并加表注。</li>
+<li><span class="tag orange">P2</span> <b>删 ICML 中文注释</b>：6_exp.tex:132-133。</li>
+<li><span class="tag orange">P2</span> <b>加结果可视化图</b>：至少 2 张（消融条形图 + Φ 折线图）。</li>
+<li><span class="tag orange">P2</span> <b>附录加 75 轮原始值表</b>：提升可复现性。</li>
+<li><span class="tag orange">P2</span> <b>Limitations 独立成节</b>：补"未配对检验""量化未消融"两条。</li>
+<li><span class="tag green">P3</span> <b>微调 overfull hbox</b>：回填后重编译，处理 13.6pt/13.1pt 两处。</li>
+<li><span class="tag green">P3</span> <b>确认 DAC 2027 页数上限</b>，必要时压缩。</li>
+</ol>
+
+<h3>仍需等待评测的任务（不阻塞上述 P0-P2）</h3>
+<ul>
+<li>phi_k1 r3-r5 完成 → 回填 tab:phi-bound k1 行 5-run</li>
+<li>phi_lagged 5/5 → 回填 tab:phi-bound lagged 行</li>
+<li>S1.omega_low / readback_binary / readback_none 5/5 → 回填 tab:omega (L) + tab:ablation-harness (N)(B) + Mean read-backs</li>
+<li>wo_sandbox 解冻后 → 回填 tab:main-ablation "w/o Sandbox" 整行</li>
+<li>SKILL/Tcl 切片 → RQ3 + intro [X%]</li>
+</ul>
+
+<div class="footer">
+本报告由 ZhuLong agent 于 2026-10-14 实验空窗期生成（运维令十六）。数据基准：MEMORY_ZHULONG.md @ 2026-10-14 08:44 + 论文树当前版本。所有意见引用的实测数据均已与执行看板核对。<br>
+<b>红线遵守</b>：未直接修改任何 .tex 文件；未触碰 ops/ 目录；未延迟/打断评测（phi_k1 r3 仍在跑）。commit 前缀：<code>zhulong paper-review:</code>
+</div>
+
+</div>
+</body>
+</html>
