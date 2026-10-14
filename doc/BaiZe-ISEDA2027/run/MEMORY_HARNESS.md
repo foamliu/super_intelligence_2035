@@ -3,9 +3,9 @@
 WAITING: 1
 
 > 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-14 glm53 7×300 任务**：**✅ RESTARTED 17:17 — 全部 7 路已重启，无 403**。发现 17:11 所有 7 路进程 + glm53 proxies (9092/9093) 均已死亡（死因不明，非 OOM，log 无 error，可能 ~16:47 后崩溃）。curl /v1 → 200 ✅。已重启 gw_proxy 9092 + gw_proxy_dsh 9093（均 → `/v1`），再 `setsid` 重启 7 路 `--resume`。Base URL 全部 `/v1`（非 `/cloud/v1`）✅。
+> **🆕 2026-10-14 glm53 7×300 任务**：**✅ 7 路运行中（17:17 重启后稳定运行 ~37min，无 403/无崩溃）**。Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅（17:54 复验）。
 > **P1-2 rerun** ✅ DONE：rerun_blocked.py 54/54 完成（4 resolved, 42 pbf, 8 blocked）。累计 kimi 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄：7 路运行中（17:17 重启，--resume 跳过已完成）。**344/2100 entries (16.4%), 86 resolved (25.0%), 257 pbf, 1 quota-blocked**。Per-harness: codex 116(33, 28.4%), deepseek 154(26, 16.9%, 1qb), claude-code 22(9, 40.9%), hermes 17(7, 41.2%), opencode 15(6, 40.0%), pi 13(5, 38.5%), cline-patched 7(0, 0.0%)。**glm53 25.0% vs kimi 27.3%**（原口径 574/2100）→ 略低，344 条样本尚小。Pending: 1756/2100。ETA ~30h（从重启算）。load 27.3, RAM 1889G avail, /dev/shm 984G free。
+> **glm53 7×300** 🔄：7 路运行中（17:17 重启，--resume）。**395/2100 entries (18.8%), 94 resolved (23.8%), 299 pbf, 2 quota-blocked**。Per-harness: deepseek 180(29, 16.1%, 2qb), codex 131(33, 25.2%), claude-code 23(9, 39.1%), hermes 19(8, 42.1%), opencode 17(6, 35.3%), pi 14(6, 42.9%), cline-patched 11(3, 27.3%)。**glm53 23.8% vs kimi 27.3%**（原口径 574/2100）→ 略低但样本尚小(395条)。Pending: 1705/2100。ETA ~28h。load 24.8, RAM 1887G avail, /dev/shm 984G free。
 
 ## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
 
@@ -52,10 +52,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING (169/2100, 61 resolved, /v1 endpoint) + P1-2 rerun RUNNING (~34/54)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 403 fix ✅ + 7x300 LAUNCHED ✅ + run_harness.py /v1 fix ✅
-当前动作:     glm53 7x300 RUNNING (7 harness × 300, started 11:10 CST, ~2h elapsed) — 169/2100 entries, 61 resolved, 108 pbf, 0 blocked/no-patch. Per-harness: cline-patched 45(20, 44.4%), codex 44(21, 47.7%), deepseek 53(19, 35.8%), claude-code 8(0), hermes 7(1), opencode 7(0), pi 5(0). curl /v1 → 200 ✅ (re-verified). P1-2 rerun 34/54 (4 resolved, PID 3541239) in background.
-下一步:       ① Monitor glm53 7x300 progress (ETA ~22h remaining) ② P1-2 rerun completion + merge ③ When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html ④ Restore kimi configs after glm53 run
+PHASE:        glm53 7x300 RUNNING (395/2100, 94 resolved, /v1 endpoint) + P1-2 rerun DONE (54/54)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574→621 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ (34 flipped) · ⑥ fix2 ✅ (9 flipped) · ⑦ fix3 ✅ (0 flipped) · ⑧ fix4 ✅ (0 flipped) · ⑨ why-low-passrate ✅ · ⑩ glm53 403 fix ✅ + 7x300 RUNNING ✅ + run_harness.py /v1 fix ✅ · ⑪ P1-2 rerun ✅ (54/54, 4 resolved)
+当前动作:     glm53 7x300 RUNNING (7 harness × 300, restarted 17:17 CST, ~37min elapsed) — 395/2100 entries, 94 resolved (23.8%), 299 pbf, 2 quota-blocked. Per-harness: deepseek 180(29), codex 131(33), claude-code 23(9), hermes 19(8), opencode 17(6), pi 14(6), cline-patched 11(3). curl /v1 → 200 ✅ (17:54 re-verified). All 7 PIDs alive, gw_proxy 9092/9093 running.
+下一步:       ① Monitor glm53 7x300 progress (ETA ~28h remaining) ② When glm53 ≥50% done: interim comparison vs kimi ③ When glm53 done: generate report_harness_glm53_vs_kimi_7x300.html ④ Restore kimi configs after glm53 run
 阻塞:         <无> — base URL 全部 /v1, curl 200 OK, 7 路正常运行, 无 403/quota/timeout
 ERROR_COUNT:  0
 ```
@@ -67,6 +67,7 @@ ERROR_COUNT:  0
 > 📦 R371-R372 (2026-10-14, glm53 403 resolved + early monitoring 23/2100) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 - [12:40] R373: **glm53 7×300 monitoring + run_harness.py /v1 fix + curl re-verify**. curl POST `http://agi-gateway.cxmt.com/v1/chat/completions` (model=glm-5.3-flash) → **200 OK** ✅ (re-verified this round). **101/2100 entries** in `glm53_pilot_results.json`: 32 resolved, 69 pbf, 0 blocked/no-patch. Per-harness: cline-patched 29(11 resolved, 37.9%), codex 27(11, 40.7%), deepseek 31(10, 32.3%), claude-code 5(0), hermes/opencode/pi 3 each(0). Early django resolve rates notably higher than kimi (cline 37.9% vs 28.7%, codex 40.7% vs 26.7%). **Fixed `run_harness.py:36`**: GATEWAY default `/cloud/v1` → `/v1` (was the last stale /cloud/v1 in active code; not used in actual driver flow but updated per directive "三文件全更新"). All `/cloud/v1` references now only in comments/migration logic. 7 `run_serial_kimi.py --resume` processes running (PIDs 1262875~1278074, etimes ~4800s/~80min). gw_proxy 9092/9093 → `/v1` upstream. P1-2 rerun: 22/54 (3 resolved, PID 3541239). 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈32400B(31.6KB ✓) / 归档 0B。
 - [13:04] R374: **glm53 7×300 monitoring + curl re-verify**. curl POST `http://agi-gateway.cxmt.com/v1/chat/completions` (model=glm-5.3-flash) → **200 OK** ✅. **169/2100 entries**: 61 resolved, 108 pbf, 0 blocked/no-patch. Per-harness: cline-patched 45(20, 44.4%), codex 44(21, 47.7%), deepseek 53(19, 35.8%), claude-code 8(0), hermes 7(1), opencode 7(0), pi 5(0). All 7 `run_serial_kimi.py --resume` alive (etimes ~6760s/~1.9h). glm53 resolve rate consistently above kimi (cline 44.4% vs 28.7%, codex 47.7% vs 26.7%). P1-2 rerun: 34/54 (4 resolved, 21 pbf, 8 blocked, PID 3541239). No 403/quota/timeout. 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈32600B(31.8KB ✓) / 归档 0B。
+- [17:54] R375: **glm53 7×300 monitoring — crash recovery verified + progress update**. All 7 routes alive (PIDs 3023384~3034548, etimes ~2200s/~37min, restarted 17:17 after prior crash). curl POST `/v1/chat/completions` → **200 OK** ✅ (17:54 re-verified). **395/2100 entries (18.8%), 94 resolved (23.8%), 299 pbf, 2 quota-blocked** (django-16873 codex+deepseek). Per-harness: deepseek 180(29,16.1%,2qb), codex 131(33,25.2%), claude-code 23(9,39.1%), hermes 19(8,42.1%), opencode 17(6,35.3%), pi 14(6,42.9%), cline-patched 11(3,27.3%). gw_proxy 9092/9093 → `/v1` running. Base URL all `/v1` ✅ (grep confirmed no stale `/cloud/v1` in active code). P1-2 rerun ✅ DONE (54/54, 4 resolved, kimi 574→621). glm53 23.8% vs kimi 27.3% — slightly lower but only 395/2100 sample. ETA ~28h. load 24.8, RAM 1887G avail, /dev/shm 984G free. 📦 体积：TASK=28709B(28.0KB ✓) / MEMORY≈31861B(31.1KB ✓) / 归档 0B。
 > 📦 R358-R365 (2026-10-13 22:15 ~ 2026-10-14 06:15, why-low report + fix4 + preclone + rerun launch) 已归档 → daily-memories-harness/2026-10-14.md。需要时再读。
 > 📦 R352 (2026-10-13 07:41, report finalized + 97 not-applied root cause) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R353-R354 (2026-10-13 08:19~08:57, monitoring wakes, fix1 re-verified, waiting for P1) 已归档 → daily-memories-harness/2026-10-13.md。
