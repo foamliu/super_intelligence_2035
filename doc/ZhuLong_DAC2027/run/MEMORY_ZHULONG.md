@@ -9,10 +9,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；C2.phi_k10 5/5✅=77.7±2.2%；**C2.phi_k3 5/5✅=69.1±2.5%**；**C2.phi_k1 5/5✅=63.8±3.2%**[65.2,66.5,58.2,64.6,64.6]·单调k10>k3>k1✅·gen-fail随k↓递增✅；**phi_lagged r1✅=74.7%·r2✅=76.6%·r3✅=69.6%·r4 code-gen✅done → regrade跑中 PID1841422·03:37**；📝论文审视报告✅运维令十六完成·✍️运维令十七论文改进 P0+P1+P2 已改 .tex·🖨️运维令十九编译验证✅11页0error commit fb5e92f8·🧩运维令十八✅SKILL/Tcl已并入论文12页 commit b61970a8）|
+| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；C2.phi_k10 5/5✅=77.7±2.2%；**C2.phi_k3 5/5✅=69.1±2.5%**；**C2.phi_k1 5/5✅=63.8±3.2%**[65.2,66.5,58.2,64.6,64.6]·单调k10>k3>k1✅·gen-fail随k↓递增✅；**phi_lagged r1✅=74.7%·r2✅=76.6%·r3✅=69.6%·r4✅=69.6%·r5 code-gen 跑中 PID2034812·04:23**；📝论文审视报告✅运维令十六完成·✍️运维令十七论文改进 P0+P1+P2 已改 .tex·🖨️运维令十九编译验证✅11页0error commit fb5e92f8·🧩运维令十八✅SKILL/Tcl已并入论文12页 commit b61970a8）|
 | CONFIG | `phi_lagged`（S2 Φ 滞后 L=1·EDA_PHI_BUDGET=0(无上限)/EDA_PHI_LAGGED=1·base=full(V3+selfexpl)保留·set_s2_phi.py phi_lagged 已切+MCP重启PID3199195✅·§8.4 trace_key修复(ctx.session)已核在位·同臂续轮不切配置）|
-| ROUND | phi_k1: 5/5✅=63.8±3.2%; **phi_lagged r1✅=74.7%(118/158)·r2✅=76.6%(121/158·timeout=0·10 gen-fail)·r3✅=69.6%(110/158·timeout=1·11 gen-fail·batch=2026_1014_225714)·r4 code-gen✅done(158/0/0)→regrade跑中 PID1841422·03:37·batch=2026_1015_014926**（探路 84.2%，r2 修复后 98.1% 满分）|
-| PHASE | `running`（phi_lagged r4 regrade跑中 PID1841422·03:37:00启动·阶段2组装中·r1用时~25min·预计~04:00完·等下轮收割）|
+| ROUND | phi_k1: 5/5✅=63.8±3.2%; **phi_lagged r1✅=74.7%(118/158)·r2✅=76.6%(121/158·timeout=0·10 gen-fail)·r3✅=69.6%(110/158·timeout=1·11 gen-fail·batch=2026_1014_225714)·r4✅=69.6%(110/158·timeout=0·13 gen-fail·batch=2026_1015_014926)·r5 code-gen 跑中 PID2034812·04:23·batch=2026_1015_042258**（探路 84.2%，r2 修复后 98.1% 满分）|
+| PHASE | `running`（phi_lagged r5 code-gen 跑中 PID2034812·04:23:00启动·Step2格式化任务中·r1用时~25min code-gen+r1 regrade ~25min·预计~05:30收割 r5→5/5 mean±std→just_finished→切S1.omega_low）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -34,7 +34,7 @@ WAITING: 1
 | C2 | phi_k10 | **5/5 ✅ 77.7±2.2%** | [78.5,76.6,77.2,81.0,75.3]（r1=124/158·timeout=2·r2=121/158·timeout=0·r3=122/158·att2·att1作废·r4=128/158·att3·att1/2作废·**r5=119/158·timeout=0·75.3%**）|
 | C2 | phi_k3 | **5/5 ✅ 69.1±2.5%** | r1=72.8%✅(115/158·timeout=0)·r2=66.5%✅(105/158·timeout=0)·r3=69.6%✅(110/158·timeout=0)·r4=69.6%✅(110/158·timeout=2)·**r5=67.1%✅(106/158·timeout=0·25 gen-fail=k=3预算效应·非infra)**（探路 69.0%）|
 | C2 | phi_k1 | **5/5 ✅ 63.8±3.2%** | [65.2,66.5,58.2,64.6,64.6]（r1=103/158·timeout=0·35 gen-fail·r2=105/158·timeout=0·30 gen-fail·r3=92/158·timeout=1·39 gen-fail·r4=102/158·timeout=0·34 gen-fail·**r5=102/158·timeout=0·35 gen-fail**·PHI-BUDGET-EXHAUSTED>0✅·单调k10>k3>k1✅·探路 60.8%）|
-| C2 | phi_lagged | **r1✅=74.7% · r2✅=76.6% · r3✅=69.6% · r4 regrade跑中 PID1841422** | r1=118/158·timeout=0·5 gen-fail·PHI-LAGGED=1165✅·ACCESS RESTRICTED=930✅·batch=2026_1014_164101·regrade PID3846739✅19:25·**r2=121/158·timeout=0·10 gen-fail·batch=2026_1014_193437·regrade PID400780✅done 21:57·生成状态{success:148,failure:0,timeout:0,fail:10}·ACCESS RESTRICTED=981+PHI-LAGGED=1266+PHI-BUDGET-EXHAUSTED=0(lagged无上限合理)·infra errors=0✅·判据(十五④/十三)满足→r2=76.6%有效(消融臂Pass@1任何值有效·不重跑)**·**r3 regrade PID1234213✅done 01:36·`✅ 1014: 110/158 pass (69.6%) | generated: 146 ok, 11 fail, 0 exec_err`·生成状态{success:146,failure:0,timeout:1,fail:11}→timeout=1≤10✅·canary✅ACCESS RESTRICTED=998+PHI-LAGGED=1283+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据(十三)满足→r3=69.6%有效不重跑**·**r4 code-gen✅done(03:28·batch=2026_1015_014926·gen-file 158行·code/158个✅·canary✅ACCESS RESTRICTED=907+PHI-LAGGED=1119+PHI-BUDGET-EXHAUSTED=0·hook live+lagged机制生效✅·Step7.1 auto-grade FileNotFoundError=已知benchmark bug(.env EVAL_FW_DIR指向app.t0002997)→手动regrade同口径 PID1841422·03:37启动)**·探路 84.2%，r2 修复后 98.1%·§8.4 trace_key(ctx.session)已核在位·lagged机制(reported_call_index与实际调用差==1)待5/5完成核详细trace |
+| C2 | phi_lagged | **r1✅=74.7% · r2✅=76.6% · r3✅=69.6% · r4✅=69.6% · r5 code-gen 跑中 PID2034812** | r1=118/158·timeout=0·5 gen-fail·PHI-LAGGED=1165✅·ACCESS RESTRICTED=930✅·batch=2026_1014_164101·regrade PID3846739✅19:25·**r2=121/158·timeout=0·10 gen-fail·batch=2026_1014_193437·regrade PID400780✅done 21:57·生成状态{success:148,failure:0,timeout:0,fail:10}·ACCESS RESTRICTED=981+PHI-LAGGED=1266+PHI-BUDGET-EXHAUSTED=0(lagged无上限合理)·infra errors=0✅·判据(十五④/十三)满足→r2=76.6%有效(消融臂Pass@1任何值有效·不重跑)**·**r3 regrade PID1234213✅done 01:36·`✅ 1014: 110/158 pass (69.6%) | generated: 146 ok, 11 fail, 0 exec_err`·生成状态{success:146,failure:0,timeout:1,fail:11}→timeout=1≤10✅·canary✅ACCESS RESTRICTED=998+PHI-LAGGED=1283+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据(十三)满足→r3=69.6%有效不重跑**·**r4 regrade PID1841422✅done 04:00·`✅ 1015: 110/158 pass (69.6%) | generated: 145 ok, 13 fail, 0 exec_err`·生成状态{success:145,failure:0,timeout:0,fail:13}→timeout=0≤10✅·canary✅ACCESS RESTRICTED=907+PHI-LAGGED=1119+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据(十三)满足→r4=69.6%有效不重跑·batch=2026_1015_014926**·**r5 code-gen 启动 PID2034812·04:23·batch=2026_1015_042258·Step2格式化任务中**·探路 84.2%，r2 修复后 98.1%·§8.4 trace_key(ctx.session)已核在位·lagged机制(reported_call_index与实际调用差==1)待5/5完成核详细trace |
 | S1 | omega_low | 1-5/5 | ⬜（旧 5-run 已出 r1=81.6 / r2=82.3，待定是否延续）|
 | S1 | readback_binary | 1-5/5 | ⬜ |
 | S1 | readback_none | 1-5/5 | ⬜ |
@@ -55,7 +55,7 @@ WAITING: 1
 | C2.phi_k10 | **77.7 ± 2.2%** ✅ 5/5 | [78.5, 76.6, 77.2, 81.0, 75.3]（r1=124/158·timeout=2·r2=121/158·timeout=0·r3=122/158·timeout=0·att2·r4=128/158·timeout=0·att3·**r5=119/158·timeout=0·75.3%**·PHI-BUDGET-EXHAUSTED=426✅）|
 | C2.phi_k3 | **69.1 ± 2.5%** ✅ 5/5 | [72.8, 66.5, 69.6, 69.6, 67.1]（r1=115/158·timeout=0·r2=105/158·timeout=0·r3=110/158·timeout=0·r4=110/158·timeout=2·**r5=106/158·timeout=0·67.1%**·PHI-BUDGET-EXHAUSTED=851✅·25 gen-fail=k=3预算效应·判据(十三)：消融臂Pass@1任何值有效·不重跑）|
 | C2.phi_k1 | **63.8 ± 3.2%** ✅ 5/5 | [65.2, 66.5, 58.2, 64.6, 64.6]（r1=103/158·timeout=0·35 gen-fail·r2=105/158·timeout=0·30 gen-fail·r3=92/158·timeout=1·39 gen-fail·r4=102/158·timeout=0·34 gen-fail·**r5=102/158·timeout=0·35 gen-fail=k=1预算效应**·regrade PID3120482·生成状态`{'success':123,'failure':0,'timeout':0,'fail':35}`→**timeout=0≤10✅**·exec_err=0·license/Connection=0✅·PHI-BUDGET-EXHAUSTED=1141>0✅(k=1预算生效)·ACCESS RESTRICTED=827✅·判据(十五④/十三)满足→5/5有效不重跑·**单调k10=77.7>k3=69.1>k1=63.8✅·gen-fail随k↓递增✅**·探路 60.8%）|
-| C2.phi_lagged | r1✅=74.7% · r2✅=76.6% · r3✅=69.6% · r4 regrade跑中 (待 5/5) | r1=118/158·timeout=0·5 gen-fail·regrade PID3846739✅19:25·PHI-LAGGED=1165✅(lagged机制生效)·ACCESS RESTRICTED=930✅(hook live)·PHI-BUDGET-EXHAUSTED=0(lagged无上限合理)·infra errors=0✅·判据(十五④/十三)满足→r1=74.7%有效(消融臂Pass@1任何值有效·不重跑)·batch=2026_1014_164101·base=full(V3+selfexpl)·§8.4 trace_key(ctx.session)已核在位·**r2=121/158·76.6%·timeout=0·10 gen-fail(lagged缓冲效应·非infra)·batch=2026_1014_193437·regrade PID400780✅done 21:57·生成状态{success:148,failure:0,timeout:0,fail:10}·canary✅ACCESS RESTRICTED=981+PHI-LAGGED=1266+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据满足→r2=76.6%有效不重跑·**r3=110/158·69.6%·timeout=1·11 gen-fail·batch=2026_1014_225714·regrade PID1234213✅done 01:36·生成状态{success:146,failure:0,timeout:1,fail:11}·canary✅ACCESS RESTRICTED=998+PHI-LAGGED=1283+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据(十三)满足→r3=69.6%有效不重跑**·**r4 code-gen✅done(03:28·batch=2026_1015_014926·gen-file=completed_code_generation_2026_1015_014926.jsonl·158行·code/158个✅·canary✅ACCESS RESTRICTED=907+PHI-LAGGED=1119+PHI-BUDGET-EXHAUSTED=0·hook live+lagged机制生效✅·Step7.1 auto-grade FileNotFoundError=已知benchmark bug(.env EVAL_FW_DIR指向app.t0002997)→手动regrade同r1/r2/r3口径启动 PID1841422·03:37·阶段2组装中·预计~04:00完)**·探路 84.2%，r2 修复后 98.1% |
+| C2.phi_lagged | r1✅=74.7% · r2✅=76.6% · r3✅=69.6% · r4✅=69.6% · r5 code-gen 跑中 (待 5/5) | r1=118/158·timeout=0·5 gen-fail·regrade PID3846739✅19:25·PHI-LAGGED=1165✅(lagged机制生效)·ACCESS RESTRICTED=930✅(hook live)·PHI-BUDGET-EXHAUSTED=0(lagged无上限合理)·infra errors=0✅·判据(十五④/十三)满足→r1=74.7%有效(消融臂Pass@1任何值有效·不重跑)·batch=2026_1014_164101·base=full(V3+selfexpl)·§8.4 trace_key(ctx.session)已核在位·**r2=121/158·76.6%·timeout=0·10 gen-fail(lagged缓冲效应·非infra)·batch=2026_1014_193437·regrade PID400780✅done 21:57·生成状态{success:148,failure:0,timeout:0,fail:10}·canary✅ACCESS RESTRICTED=981+PHI-LAGGED=1266+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据满足→r2=76.6%有效不重跑·**r3=110/158·69.6%·timeout=1·11 gen-fail·batch=2026_1014_225714·regrade PID1234213✅done 01:36·生成状态{success:146,failure:0,timeout:1,fail:11}·canary✅ACCESS RESTRICTED=998+PHI-LAGGED=1283+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据(十三)满足→r3=69.6%有效不重跑**·**r4=110/158·69.6%·timeout=0·13 gen-fail(lagged缓冲效应·非infra)·batch=2026_1015_014926·regrade PID1841422✅done 04:00·`✅ 1015: 110/158 pass (69.6%) | generated: 145 ok, 13 fail, 0 exec_err`·生成状态{success:145,failure:0,timeout:0,fail:13}→timeout=0≤10✅·exec_err=0·canary✅ACCESS RESTRICTED=907+PHI-LAGGED=1119+PHI-BUDGET-EXHAUSTED=0·infra errors=0✅·判据(十三)满足→r4=69.6%有效不重跑**·**r5 code-gen 跑中 PID2034812·04:23·batch=2026_1015_042258·Step2格式化任务中**·探路 84.2%，r2 修复后 98.1% |
 
 ### 三组对照表（运维指令(十二)⑤交付）
 
@@ -68,6 +68,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
+- [2026-10-15 04:21] ✅ **phi_lagged r4✅收割=69.6% → r5 code-gen 启动 PID2034812**：① ps -p 1841422→**GONE**(r4 regrade完成·04:00)·regrade log /tmp/ABL_phi_lagged_r4_regrade.log(7KB)·`✅ 1015: 110/158 pass (69.6%) | generated: 145 ok, 13 fail, 0 exec_err`·生成状态`{'success':145,'failure':0,'timeout':0,'fail':13}`→**timeout=0≤10✅**·exec_err=0·infra errors(license/Connection)=0✅·**canary全绿**：r4 code-gen log ACCESS RESTRICTED=907(hook live✅)+PHI-LAGGED=1119(lagged机制生效✅)+PHI-BUDGET-EXHAUSTED=0(lagged无上限预算合理✅)·**判据(十三)满足→r4=69.6%有效**(消融臂Pass@1任何值有效·13 gen-fail=lagged缓冲效应非infra·不重跑)·§8.4 trace_key(ctx.session)已核在位·lagged机制(reported_call_index与实际调用差==1)待5/5完成核详细trace。② **infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(pid3199195)+RAG:9006(pid3503518)LISTEN✅·/home=20G(≥8G✅)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·cline✅·.env=phi_lagged(BUDGET=0/LAGGED=1/SKILL_DATA_DIR=selfexpl)✅。③ **r5启动**(同臂续轮不切配置·沿用r1/r2/r3/r4口径)：`export PYTHON=$PWD/venv/bin/python`(防pydantic)→`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_phi_lagged_r5.log`→**PID2034812✅·04:23:00启动**·batch=**2026_1015_042258**·Step2格式化任务进行中(158题)。状态 STAGE=C2/CONFIG=phi_lagged/ROUND=5/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：ps -p 2034812 GONE→读r5 log尾段（Step7.1 auto-grade FileNotFoundError=已知benchmark bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1015_042258·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON防pydantic）→**判据(十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r5有效→phi_lagged 5/5 mean±std→PHASE=just_finished→**切S1.omega_low**（执行`scripts/set_s1_fidelity.py omega_low`+stop.sh&&start.sh·先canary）→omega_low r1启动；alive→巡检退出。⚠️查r5用`ps -p 2034812`或`ps -eo pid,cmd|awk '/run_cline_script\.sh -p 8/&&!/opencode/'`，勿用`pgrep -f`(opencode cmdline含任务书全文→污染)。
 - [2026-10-15 03:37] ✅ **phi_lagged r4 code-gen✅done → regrade启动 PID1841422**：① ps -p 1397800→**GONE**(r4 code-gen完成·03:28)·log /tmp/ABL_phi_lagged_r4.log 24.2MB·batch=**2026_1015_014926**·gen-file `completed_code_generation_2026_1015_014926.jsonl`(369KB/158行·code/158个✅)·**Step7.1 auto-grade FileNotFoundError**(`PosixPath('/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether')`=已知benchmark bug·.env EVAL_FW_DIR 指向 app.t0002997)→跳过不影响生成产物·须手动regrade同口径。② **canary全绿**：r4 code-gen log ACCESS RESTRICTED=907(hook live✅)+PHI-LAGGED=1119(lagged机制生效✅)+PHI-BUDGET-EXHAUSTED=0(lagged无上限预算合理✅)。③ **infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(pid3199195)+RAG:9006(pid3503518)LISTEN✅·/home=20G(≥8G✅)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·cline✅·.env=phi_lagged(BUDGET=0/LAGGED=1)✅。④ **regrade启动**：建 run_phi_lagged_r4_regrade.sh(同r1/r2/r3模板改batch=2026_1015_014926·覆盖EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework+4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75+export PYTHON防pydantic)→setsid启动→**PID1841422✅·03:37:00启动**·阶段2组装已开始(r1用时~25min·预计~04:00完)。状态 STAGE=C2/CONFIG=phi_lagged/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：ps -p 1841422 GONE→读regrade log尾段`pass (xx.x%)`→**判据(十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r4有效→**§8.4 lagged额外核对：reported_call_index与实际调用差==1**→r5启动；alive→巡检退出。⚠️查regrade用`ps -p 1841422`，勿用`pgrep -f`(opencode cmdline含任务书全文→污染)。✅**push已补推成功**：前两次超时因当前shell缺proxy→显式`export https_proxy=http://172.19.92.23:13128`后push成功(013ac509..88df07bb·2 commits)。
 - [2026-10-15 03:02] [⏩ 已滚出] 🔎 巡检（phi_lagged r4 code-gen ~1h13m健康·不动作退出）详情见 daily-memories/2026-10-15.md §[滚出 03:37]。
 - [2026-10-15 02:26] 🔎 **巡检（phi_lagged r4 code-gen ~37min健康·不动作退出）**：ps -p 1397800→alive(etime 00:36:58·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_phi_lagged_r4.log 9.8MB mtime 02:26(live写入)·batch=**2026_1015_014926**·canary✅hook命中1190(ACCESS RESTRICTED+PHI-LAGGED+PHI-BUDGET-EXHAUSTED全>0·hook live+lagged机制生效)·**infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(pid3199195)+RAG:9006(pid3503518)LISTEN✅·/home=20G(≥8G✅)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·ops relay alive✅(PID3277328·3d18h)·cline✅·.env=phi_lagged(BUDGET=0/LAGGED=1)✅。r4仍在code-gen(~37min·典型~1.5h)→不收割不切臂·按§7 Step A(pgrep有输出→什么都不做退出)。⚠️查r4用`ps -p 1397800`，勿用`pgrep -f`(opencode cmdline含任务书全文→污染)。**归档**：本轮空窗期滚出2条已闭合流水(22:57 r3修复重启·12:49 phi_k1 r4巡检)至daily-14 §[滚出02:26]·MEMORY 34.6KB→~32KB(软目标内)。状态 STAGE=C2/CONFIG=phi_lagged/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：ps -p 1397800 GONE→读r4 log尾段`pass (xx.x%)`（若Step7.1 auto-grade FileNotFoundError=已知benchmark bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1015_014926·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=$PWD/venv/bin/python防pydantic）→**判据(十三)**：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r4有效→**§8.4 lagged额外核对：reported_call_index与实际调用差==1**→r5启动；alive→巡检退出。
@@ -113,87 +114,6 @@ WAITING: 1
 - [2026-10-14 01:29] [⏩ 已滚出] ✅ phi_k3 r4 regrade=69.6%✅有效→r5启动PID3661493 详情见 daily-memories/2026-10-14.md §01:29。
 - [2026-10-14 00:55] [⏩ 已滚出] ✅ phi_k3 r4 code-gen完成→regrade启动PID3524495 详情见 daily-memories/2026-10-14.md §00:55。
 - [2026-10-14 00:16] [⏩ 已滚出] 🔎 巡检(phi_k3 r4 ~1h11m健康·不动作退出) 详情见 daily-memories/2026-10-14.md §00:16。
-- [2026-10-13 23:41] [⏩ 已滚出] 🔎 巡检(phi_k3 r4 ~34min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §23:41。
-- [2026-10-13 23:05] [⏩ 已滚出] ✅ phi_k3 r3 regrade=69.6%✅有效→r4启动PID3106630 详情见 daily-memories/2026-10-13.md §23:05。
-- [2026-10-13 22:23] [⏩ 已滚出] ✅ phi_k3 r3 code-gen完成→regrade启动PID2934058 详情见 daily-memories/2026-10-13.md §22:23。
-- [2026-10-13 21:46] [⏩ 已滚出] 🔎 巡检(phi_k3 r3 ~1h42m健康·不动作退出) 详情见 daily-memories/2026-10-13.md §21:46。
-- [2026-10-13 21:14] [⏩ 已滚出] 🔎 巡检(phi_k3 r3 ~1h10m健康·不动作退出) 详情见 daily-memories/2026-10-13.md §21:14。
-- [2026-10-13 20:41] [⏩ 已滚出] 🔎 巡检(phi_k3 r3 ~37min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §20:41。
-- [2026-10-13 20:04] [⏩ 已滚出] ✅ phi_k3 r2 收割=66.5%✅有效→r3启动PID2329829 详情见 daily-memories/2026-10-13.md §20:04。
-- [2026-10-13 19:27] [⏩ 已滚出] ✅ phi_k3 r2 code-gen完成→regrade启动PID2160638 详情见 daily-memories/2026-10-13.md §19:27。
-- [2026-10-13 18:51] [⏩ 已滚出] 🔎 巡检(phi_k3 r2 ~1h40m健康·不动作退出) 详情见 daily-memories/2026-10-13.md §18:51。
-- [2026-10-13 18:17] [⏩ 已滚出] 🔎 巡检(phi_k3 r2 ~1h05m健康·不动作退出) 详情见 daily-memories/2026-10-13.md §18:17。
-- [2026-10-13 17:41] [⏩ 已滚出] 🔎 巡检(phi_k3 r2 ~29min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §17:41。
-- [2026-10-13 17:12] [⏩ 已滚出] ✅ 运维令(十五)执行：沙盒已重启，恢复试验→phi_k3 r2 跑中 详情见 daily-memories/2026-10-13.md §17:12。
-- [2026-10-13 15:05] [⏩ 已滚出] 🛑 运维令(十四)执行完毕：暂停所有试验（沙盒重启中） 详情见 daily-memories/2026-10-13.md §15:05。
-- [2026-10-13 14:43] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 att2 ~13min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §14:43。
-- [2026-10-13 14:27] [⏩ 已滚出] ❌🔄 phi_k3 r1 att1 regrade=72.8%(115/158)<75%→retry att2 code-gen启动 详情见 daily-memories/2026-10-13.md §14:27。
-- [2026-10-13 14:04] [⏩ 已滚出] ✅ phi_k3 r1 code-gen完成→regrade启动PID628670 详情见 daily-memories/2026-10-13.md §14:04。
-- [2026-10-13 13:53] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~86min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §13:53。
-- [2026-10-13 13:27] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~76min) 详情见 daily-memories/2026-10-13.md §13:27。
-- [2026-10-13 13:02] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~51min) 详情见 daily-memories/2026-10-13.md §13:02。
-- [2026-10-13 12:53] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~40min) 详情见 daily-memories/2026-10-13.md §12:53。
-- [2026-10-13 12:28] [⏩ 已滚出] 🔎 巡检(phi_k3 r1 ~15min) 详情见 daily-memories/2026-10-13.md §12:28。
-- [2026-10-13 12:13] [⏩ 已滚出] ✅ phi_k10 r5 regrade=75.3%✅→5/5=77.7±2.2%→切phi_k3→r1启动PID136983 详情见 daily-memories/2026-10-13.md §12:13。
-- [2026-10-13 11:49] [⏩ 已滚出] ✅ phi_k10 r5 code-gen完成→regrade PID47140 详情见 daily-memories/2026-10-13.md §11:49。
-- [2026-10-13 11:14] [⏩ 已滚出] 🔎 巡检(phi_k10 r5 ~1h49m健康·不动作退出) 详情见 daily-memories/2026-10-13.md §11:14。
-- [2026-10-13 10:40] [⏩ 已滚出] 🔎 巡检(phi_k10 r5 ~1h15m) 详情见 daily-memories/2026-10-13.md §10:40。
-- [2026-10-13 10:37] [⏩ 已滚出] 🔎 巡检(phi_k10 r5 ~1h09m) 详情见 daily-memories/2026-10-13.md §10:37。
-- [2026-10-13 10:04] [⏩ 已滚出] 🔎 巡检(phi_k10 r5 ~38min) 详情见 daily-memories/2026-10-13.md §10:04。
-- [2026-10-13 10:01] [⏩ 已滚出] 🔎 巡检(phi_k10 r5 ~35min) 详情见 daily-memories/2026-10-13.md §10:01。
-- [2026-10-13 09:31] [⏩ 已滚出] 🔎 巡检(phi_k10 r5 ~5min) 详情见 daily-memories/2026-10-13.md §09:31。
-- [2026-10-13 09:25] [⏩ 已滚出] ✅ phi_k10 r4 att3 regrade=81.0%→r5启动 详情见 daily-memories/2026-10-13.md §09:25。
-- [2026-10-13 08:57] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att3 ~1h41m) 详情见 daily-memories/2026-10-13.md §08:57。
-- [2026-10-13 08:32] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att3 ~76min) 详情见 daily-memories/2026-10-13.md §08:32。
-- [2026-10-13 08:22] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att3 ~67min) 详情见 daily-memories/2026-10-13.md §08:22。
-- [2026-10-13 07:59] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att3 ~42min) 详情见 daily-memories/2026-10-13.md §07:59。
-- [2026-10-13 07:49] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att3 ~33min) 详情见 daily-memories/2026-10-13.md §07:49。
-- [2026-10-13 07:30] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att3 ~10min) 详情见 daily-memories/2026-10-13.md §07:30。
-- [2026-10-13 07:16] [⏩ 已滚出] ❌🔄 phi_k10 r4 att2 regrade=74.1%<75%→retry att3 详情见 daily-memories/2026-10-13.md §07:16。
-- [2026-10-13 07:12] [⏩ 已滚出] 🔄 phi_k10 r4 att2 regrade重启(duplicate conflict处理) 详情见 daily-memories/2026-10-13.md §07:12。
-- [2026-10-13 06:51] [⏩ 已滚出] ✅ phi_k10 r4 att2 code-gen完成→re-grade启动 详情见 daily-memories/2026-10-13.md §06:51。
-- [2026-10-13 06:18] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att2 ~1h04m) 详情见 daily-memories/2026-10-13.md §06:18。
-- [2026-10-13 05:46] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att2 ~33min) 详情见 daily-memories/2026-10-13.md §05:46。
-- [2026-10-13 05:43] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 att2 ~30min) 详情见 daily-memories/2026-10-13.md §05:43。
-- [2026-10-13 05:13] [⏩ 已滚出] ❌🔄 phi_k10 r4 att1 regrade=63.3%<75%→retry att2 详情见 daily-memories/2026-10-13.md §05:13。
-- [2026-10-13 05:10] [⏩ 已滚出] ✅ phi_k10 r4 code-gen完成→regrade已在跑 详情见 daily-memories/2026-10-13.md §05:10。
-- [2026-10-13 04:37] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 ~1h07m) 详情见 daily-memories/2026-10-13.md §04:37。
-- [2026-10-13 04:28] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 ~58min) 详情见 daily-memories/2026-10-13.md §04:28。
-- [2026-10-13 04:05] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 ~35min) 详情见 daily-memories/2026-10-13.md §04:05。
-- [2026-10-13 03:57] [⏩ 已滚出] 🔎 巡检(phi_k10 r4 ~27min) 详情见 daily-memories/2026-10-13.md §03:57。
-- [2026-10-13 03:28] [⏩ 已滚出] ✅ phi_k10 r3 att2 regrade=77.2%→r4启动 详情见 daily-memories/2026-10-13.md §03:28。
-- [2026-10-13 02:55] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 att2 regrade ~2min50s) 详情见 daily-memories/2026-10-13.md §02:55。
-- [2026-10-13 02:51] [⏩ 已滚出] ✅ phi_k10 r3 att2 code-gen完成→regrade启动PID1775395 详情见 daily-memories/2026-10-13.md §02:51。
-- [2026-10-13 02:21] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 att2 ~1h06m) 详情见 daily-memories/2026-10-13.md §02:21。
-- [2026-10-13 02:18] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 att2 ~64min) 详情见 daily-memories/2026-10-13.md §02:18。
-- [2026-10-13 01:49] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 att2 ~35min) 详情见 daily-memories/2026-10-13.md §01:49。
-- [2026-10-13 01:17] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 att2 ~3min) 详情见 daily-memories/2026-10-13.md §01:17。
-- [2026-10-13 01:13] [⏩ 已滚出] ❌🔄 phi_k10 r3 regrade=74.1%<75%→retry att2 PID1325264 详情见 daily-memories/2026-10-13.md §01:13。
-- [2026-10-13 00:44] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 regrade ~3min) 详情见 daily-memories/2026-10-13.md §00:44。
-- [2026-10-13 00:38] [⏩ 已滚出] ✅ phi_k10 r3 code-gen完成→regrade启动PID1189185 详情见 daily-memories/2026-10-13.md §00:38。
-- [2026-10-13 00:12] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~103min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §00:12。
-- [2026-10-12 23:39] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~1h11m健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:39。
-- [2026-10-12 23:32] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~1h04m健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:32。
-- [2026-10-12 23:07] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~39min健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:07。
-- [2026-10-12 23:01] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~32min健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:01。
-- [2026-10-12 22:30] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~2min健康·不动作退出) 详情见 daily-memories/2026-10-12.md §22:30。
-- [2026-10-12 22:28] [⏩ 已滚出] ✅ phi_k10 r2 re-grade=76.6%✅有效→r3启动PID622197 详情见 daily-memories/2026-10-12.md §22:28。
-- [2026-10-12 19:25] [⏩ 已滚出] ✅ phi_k10 r1 re-grade=78.5%✅有效→r2启动PID4022652 详情见 daily-memories/2026-10-12.md §19:25。
-- [2026-10-12 18:50] [⏩ 已滚出] ✅ phi_k10 r1 code-gen完成→re-grade启动PID3875816 详情见 daily-memories/2026-10-12.md §18:50。
-- [2026-10-12 18:32] [⏩ 已滚出] 🔎 巡检(phi_k10 r1 ~1h49m) 详情见 daily-memories/2026-10-12.md §18:32。
-- [2026-10-12 18:01] [⏩ 已滚出] 🔎 巡检(phi_k10 r1 ~1h17m) 详情见 daily-memories/2026-10-12.md §18:01。
-- [2026-10-12 17:27] [⏩ 已滚出] 🔎 巡检(phi_k10 r1 ~43min) 详情见 daily-memories/2026-10-12.md §17:27。
-- [2026-10-12 16:43] [⏩ 已滚出] 🔄✅ C1.just_finished→切C2.phi_k10+启动r1 详情见 daily-memories/2026-10-12.md §16:43。
-- [2026-10-12 16:28] [⏩ 已滚出] ✅ full_v3 r5 re-grade=82.9%→5/5=82.1±3.0%→just_finished 详情见 daily-memories/2026-10-12.md §16:28。
-- [2026-10-12 15:49] [⏩ 已滚出] 🔧✅ full_v3 r5 code-gen→re-grade PID2850305 详情见 daily-memories/2026-10-12.md §15:49。
-- [2026-10-12 15:13] [⏩ 已滚出] 🔎 巡检(full_v3 r5 ~123min) 详情见 daily-memories/2026-10-12.md §15:13。
-- [2026-10-12 13:47] [⏩ 已滚出] 🚨✅ 运维指令(十三)清除卡死opencode+r5巡检 详情见 daily-memories/2026-10-12.md §13:47。
-- [2026-10-12 13:10] [⏩ 已滚出] ✅ full_v3 r4 re-grade=82.3%✅有效→r5启动(PID2013673) 详情见 daily-memories/2026-10-12.md §13:10。
-- [2026-10-12 12:58] [⏩ 已滚出] ✅ full_v3 r4 code-gen done→auto-grade 2.5%(bug)→re-grade启动PID1957360 详情见 daily-memories/2026-10-12.md §12:58。
-- [2026-10-12 10:40] [⏩ 已滚出] ⠈ 巡检(full_v3 r4 code-gen ~43min 健康·不动作退出) 详情见 daily-memories/2026-10-12.md §10:40。
-- [2026-10-12 09:54] [⏩ 已滚出] 🔧✅ full_v3 r3 re-grade=81.6%(129/158)有效→r4启动(PID1017587) 详情见 daily-memories/2026-10-12.md §09:54。
-- [2026-10-12 07:04] [⏩ 已滚出] ✅ full_v3 r2 re-grade=86.1%(136/158)有效→r3启动(PID276519) 详情见 daily-memories/2026-10-12.md §07:04。
-- [2026-10-12 03:29] [⏩ 已滚出] ✅ full_v3 r1 re-grade=77.8%(123/158)有效→r2启动(PID3619994) 详情见 daily-memories/2026-10-12.md §03:29。
-- [2026-10-12 00:43] [⏩ 已滚出] ✅ r5 re-grade=82.3%→full(V2)5/5=81.4±4.1%→.env切V3+MCP重启+full_v3 r1启动 详情见 daily-memories/2026-10-12.md §00:43。
+- [2026-10-12 → 10-13 指针块] [⏩ 已滚出] 82 条 10-12/10-13 单行指针（巡检/收割/切换记录，phi_k10 r1-r5·phi_k3 r1-r5·full_v3 r1-r4·运维令十三/十四/十五）已原文搬入 daily-memories/2026-10-13.md §[滚出 04:21→10-12/10-13 指针块]；各条原始详情见 daily-memories/2026-10-12.md / 2026-10-13.md §HH:MM。
 
 > **[2026-10-04 → 10-11 早期流水]**：已全部原文搬入 `daily-memories/2026-10-{04..11}.md`（各日 §HH:MM）。涉及 B.glm-5.2/flash/kimi/doubao 全 5 轮、C1.pure_llm/rag/wo_retrieval、C1.full(V2) r1-r5、运维指令(一)~(九)、RAG排查报告等。如需查阅见对应日期日报。
