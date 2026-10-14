@@ -1232,3 +1232,32 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 ⑦ 纪律：占 `.12` GPU 前 `nvidia-smi` 确认空闲 · 与 data 线下载错峰（必要时夜间跑/降 workers）· commit 前缀 `vision protb:` · 任务书 >32KB 自滚归档。
 
+
+---
+
+### 🆕 运维指令 · 2026-10-14（✍️ 放行刷新论文 —— 执行审视报告修改）· 用户直令 · 最高优先 [ARCHIVED 2026-10-14]
+
+> **用户令（2026-10-14）**：「放行 vision 论文改进。」
+>
+> **性质**：纯写作、零 GPU。**主线仍是 ArmC 训练监控 + eval chain**——改稿只在空窗期做，🚫 绝不为改稿延迟/打断 ArmC 监控。
+>
+> **① 撤销「只报不改」红线**：放行你修改论文 `.tex`，执行审视报告 `reports/report_baize_paper_review_vision_zh.html` 的修改（按「可回填建议清单」P0→P1→P2）。
+>
+> **② 🔴 P0 硬伤必须修**：回填 Protocol B 结果 + 数据量订正。
+> **③ 🟠 P1 建议执行**：外部编码器参照表 + V3 Null + E1fair-E2fair 公平重跑 + chance 倍率 + 196-token 量化。
+> **④ 🟢 P2 可选执行**：same-model zs、probe ×5ep sweep、Muon C₁ 轨迹、R13 官方 OV2 参照。
+>
+> **结论**：✅ 已完成（commit e0f75ef5, 10:06 Oct14）。P0+P1 全部修改，11→12 页 0 error。详见 MEMORY_VISION.md 10:05 条目。
+
+---
+
+### 🆕 运维指令 · 2026-10-14（📝 训练空窗期审视论文 · 视觉侧 · 出中文改进意见 HTML）· 用户直令 [ARCHIVED 2026-10-14]
+
+> **用户令（2026-10-14）**：「安排 vision agent 在训练进行期间，审视论文（BaiZe-ISEDA2027），将改进意见写入 html 报告（中文版）。」
+>
+> **性质**：零 GPU 的「读 + 写」任务，只占用监控完成后的空窗期。
+> **① 审视对象**：论文树 `ISEDA2027/6_vision_encoder.tex` · `7_mllm.tex` · `8_domain_rl.tex`。
+> **② 审视维度**：7 维度（架构选型表/检索代理退化/④-4ep回填/变体结论/外部编码器参照/分辨率局限/可回填TBD清单）。
+> **③ 交付**：中文 HTML `report_baize_paper_review_vision_zh.html`。
+>
+> **结论**：✅ 已完成（09:25 Oct14）。交付 21.8KB HTML，2🔴硬伤 + 6🟠建议 + 5🟢可回填。14/16 核验项与 EXPERIMENTS_VISION.md 一致。详见 MEMORY_VISION.md 09:15 条目。

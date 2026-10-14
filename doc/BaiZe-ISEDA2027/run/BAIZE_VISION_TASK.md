@@ -18,51 +18,9 @@
 
 **③ 纪律**：🚫 不打断 ArmC 训练/eval chain；数字与 `EXPERIMENTS_VISION.md` / `MEMORY_VISION.md` 一致、🚫 凭印象；commit 前缀 `vision report:` · 任务书 >32KB 自滚归档。
 
-### 🆕 运维指令 · 2026-10-14（✍️ 放行刷新论文 —— 执行审视报告修改）· 用户直令 · 最高优先
+> 📦 §运维指令 · 2026-10-14（✍️ 放行刷新论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ P0+P1 全部修改完成，11→12 页 0 error（commit e0f75ef5）。需要时再读。
 
-> **用户令（2026-10-14）**：「放行 vision 论文改进。」
-
-**性质**：纯写作、零 GPU。**主线仍是 ArmC 训练监控 + eval chain**——改稿只在空窗期做，🚫 绝不为改稿延迟/打断 ArmC 监控。
-
-**① 撤销「只报不改」红线**：放行你修改论文 `.tex`，执行审视报告 `reports/report_baize_paper_review_vision_zh.html` 的修改（按「可回填建议清单」P0→P1→P2）。
-
-**② 🔴 P0 硬伤必须修**：
-- **回填 Protocol B 结果**：§6 新增 "Protocol B Evaluation" 小节，含 E1fair `62.34±0.01%` / ④-2ep `65.37±0.01%` / ④-4ep `67.05±0.02%`（3-seed ProtB）+ ProtA `49.70/53.82/56.70` + zs + k-NN 全套 + `vision/lp_epoch_curve.png` 曲线。来源 `EXPERIMENTS_VISION.md:970-977`。
-- **数据量订正**：`6_vision_encoder.tex:96,130` 的「58.8M-pair」标注为「**实验时快照值**」，脚注补「corpus 已增长至 ~118M pairs（7437-tar 快照 ≈110.9M）」。来源 `EXPERIMENTS_VISION.md:1126-1147`。
-
-**③ 🟠 P1 建议执行**：
-- **外部编码器参照表**：独立成表、标「公众预训练模型 · 不与 from-scratch 混排」，5 模型 ProtB（SigLIP2 87.46 / AIMv2 85.22 / OV2 84.97 / CLIP 82.66 / RICE 81.72）+ BaiZe from-scratch 67.05 参考行。来源 `EV:1100-1109`。
-- **V3 全量数据 Null**：63.52%、Δ+1.18pp、4 指标 +0.8~+1.4pp 噪声带内 → 「more data ≠ higher lp」。来源 `EV:954-966`。
-- **E1fair vs E2fair 公平重跑**：Δ+0.17pp Null，旧「−5.59pp」系 schedule 伪影。来源 `EV:970-972`。
-- **注明倍率指标**：「2.5–9.5× chance」→ 「zero-shot (2.5–9.5×) and linear-probe (1.0–11.4×)」。`6_vision_encoder.tex:225`。
-- **量化 196-token 局限**：14×14=196 token、~16×16 px/token 对细线版图影响（336/14=576=2.9×、448/14=1024=5.2×）。`7_mllm.tex:17`。
-
-**④ 🟢 P2 可选执行**（增强完整性）：same-model zs、probe ×5ep sweep、Muon C₁ 轨迹、R13 官方 OV2 参照；**merge3ds 结果若未出则暂缓**（ArmC 仍在跑）。
-
-**⑤ 改稿纪律**：改后编译 `main.pdf` 验证 **0 error** + 报页数变化；数字与 `EXPERIMENTS_VISION.md` 一致、🚫 凭印象；完成把「改了哪几处 + 编译结果」写进心跳；commit 前缀 `vision paper-fix:`（区别于 paper-review）· 任务书 >32KB 自滚归档。
-
-**红线**：🚫 不为改稿延迟 ArmC 监控/eval chain；🚫 数字编造；✅ 外部编码器表**绝不与 from-scratch 混排**、跨分辨率不排高下。
-
-### 🆕 运维指令 · 2026-10-14（📝 训练空窗期审视论文 · 视觉侧 · 出中文改进意见 HTML）· 用户直令
-
-> **用户令（2026-10-14）**：「安排 vision agent 在训练进行期间，审视论文（BaiZe-ISEDA2027），将改进意见写入 html 报告（中文版）。」
-
-**性质**：零 GPU 的「读 + 写」任务。**主线仍是 ArmC 训练监控 + eval chain**——本任务只占用**监控完成后的空窗期**：🚫 绝不为论文审视而延迟/干扰 ArmC 训练监控与 eval chain。
-
-**① 审视对象**：论文树 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`，**侧重视觉/多模态侧章节**：`ISEDA2027/6_vision_encoder.tex` · `7_mllm.tex` · `8_domain_rl.tex`（另：0/1/2/9 章若见视觉相关硬伤也可提）。
-
-**② 审视维度（每条意见必须具体，贴 `文件:行号` 或具体数字，🚫 空泛）**：
-1. **视觉架构选型表**（OpenVision2 / DeepEncoderV2 / MambaEye / MoE-ViE，Loss@5k）——数字是否与 `EXPERIMENTS_VISION.md` 一致；R2 结论（LR 伪影、架构 loss 不可分辨、MambaEye 31.6ms 更正）是否回填。
-2. **检索代理退化**：`eval5k` 的 `R@1=0.0002`（随机水平）——论文是否如实交代「无有效下游指标」，是否仍把它当有效指标引用。
-3. **④-4ep 结果回填**：ProtB 67.05±0.02%（MODERATE/DIMINISHING）· lp-epoch 曲线 · 是否已写入论文；旧「1ep 62.34%」是否仍作为唯一锚点。
-4. **变体结论**：V2 Muon 全 LR 坍缩（与 AIMv2 objective 不兼容）· V3 全量数据 Δlp=+1.18pp Null —— 是否如实写入，有无过度声称。
-5. **外部编码器参照**：ProtB 横比表（SigLIP2 87.46% / AIMv2 85.22% / OV2 84.97% / CLIP 82.66% / RICE 81.72%）——是否独立成表、标注「公众预训练模型 · 不与 from-scratch 混排」。
-6. **分辨率局限**：224/16=196 token 对版图/原理图 VQA 的局限是否在 (iv) 声明。
-7. **可回填 [TBD] 清单**：哪些已有实测可回填、哪些仍缺。
-
-**③ 交付**：中文、自包含 HTML `doc/BaiZe-ISEDA2027/reports/report_baize_paper_review_vision_zh.html`；分 🔴硬伤 / 🟠建议 / 🟢可回填 三级标注；文末附「可回填建议清单」。
-
-**④ 红线**：🚫 不直接改论文 `.tex`（只出意见，改稿须另行批准）；🚫 不为审视而延迟 ArmC 监控 / eval chain；✅ 数字须与 `EXPERIMENTS_VISION.md` 一致，不许凭印象；commit 前缀 `vision paper-review:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-14（📝 训练空窗期审视论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 21.8KB HTML，2🔴+6🟠+5🟢，14/16 核验一致。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-13（📐 合并实验的 LR 缩放 —— 按文献规则定，🚫 禁拍脑袋）· 用户直令 · 最高优先
 

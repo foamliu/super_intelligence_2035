@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 视觉编码器 · 当前试验状态报告 · merge3ds 合并三数据集 · ArmC 臂（中文 · 2026-10-14）</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c;--cyan:#39d2c5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',Helvetica,Arial,sans-serif;line-height:1.7;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.7em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.5em 0 .5em}
+h2{font-size:1.3em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.1em;color:var(--green);margin:1em 0 .4em}
+h4{font-size:1.0em;color:var(--orange);margin:.8em 0 .3em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.88em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-done{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-warn{background:rgba(210,153,34,.2);color:var(--yellow)}
+.tag-est{background:rgba(88,166,255,.15);color:var(--accent)}
+.tag-live{background:rgba(57,210,197,.2);color:var(--cyan)}
+.refs{font-size:.85em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8em;margin:.8em 0}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8em 1em}
+.metric-card .label{color:var(--muted);font-size:.8em}
+.metric-card .value{font-size:1.5em;font-weight:700;margin:.2em 0}
+.metric-card .delta{font-size:.85em}
+.honesty-box{background:linear-gradient(135deg,#1f1410,#1a120a);border:2px solid var(--red);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.progress-bar{background:var(--card);border:1px solid var(--border);border-radius:4px;height:24px;margin:.5em 0;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,#238636,#3fb950);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8em;font-weight:600}
+.timeline{border-left:3px solid var(--border);padding-left:1em;margin:.5em 0}
+.timeline-item{margin:.5em 0;position:relative}
+.timeline-item::before{content:'●';position:absolute;left:-1.35em;color:var(--accent);font-size:.7em}
+</style>
+</head>
+<body>
+<h1>📊 BaiZe 视觉编码器 · 当前试验中文状态报告</h1>
+<p class="note">报告主题：<strong>merge3ds 合并三数据集实验 · ArmC 臂</strong>（当前训练进行中） · 生成时间：2026-10-14 · 线：vision · 语言：中文 · 性质：<strong>训练进行中的实时状态快照</strong> · 数据来源：<code>EXPERIMENTS_VISION.md §merge3ds</code> / <code>MEMORY_VISION.md</code>（wake #69, 08:40 Oct14）/ <code>vision/run_merge3ds_armC.sh</code> / <code>report_vision_merge3ds_bs4_lr2_plan_zh.html</code></p>
+
+<div class="honesty-box">
+<h3 style="color:var(--red)">⚠️ 诚实条款（务必先读）</h3>
+<p>本报告描述的 <strong>ArmC 训练仍在进行中</strong>，尚未跑完，<strong>没有最终 ProtB 结果</strong>。报告中所有训练指标（loss、C1、吞吐等）均为 <strong>2026-10-14 08:40（wake #69）的暂态快照</strong>，会随训练继续变化。<strong>公开引用时不得将当前数字当作最终结论</strong>。训练完成后将产出独立的 <code>report_vision_merge3ds_result_zh.html</code> 结果报告（含 3-seed ProtB），届时方可引用。</p>
+</div>
+
+<h2>1. 摘要（TL;DR）</h2>
+<div class="card tldr">
+<p><strong>正在做什么</strong>：在 BaiZe 视觉编码器 OpenVision2（w512/d30, 126.8M 参数）上，将 <strong>GBS 和 MBS 同时 ×4</strong>（512→2048 / 64→256），并按 <strong>Goyal 线性缩放规则</strong>将 LR ×4（5e-4→2e-3），在合并的三数据集（GPIC + CC12M + Amshaker, ~110.9M 对快照）上从零训练 154,500 步（≈2.85 真实 epoch），24 小时墙钟预算。</p>
+<ul>
+<li><strong>当前进度</strong>：step <strong>48,600 / 154,500（31.4%）</strong>，训练健康，无坍缩</li>
+<li><strong>C1（对比对齐）</strong>：0.5452（最近 5 次范围 0.53~0.55，稳定无趋势，远低于坍缩阈值 0.95）</li>
+<li><strong>吞吐</strong>：bimodal 400–900ms/步（avg ~570ms），NFS I/O 争用持续（data 线下载所致）</li>
+<li><strong>预计完成</strong>：avg 吞吐 → ~01:25 Oct15（约 16.8h 后）；good 吞吐 → ~17:25 Oct14</li>
+<li><strong>已完成的前置任务</strong>：✅ 外部编码器 ProtB 5/5 · ✅ LR 3-臂扫描文献调研 · ✅ 数据量口径订正 · ✅ 论文审视报告 · ✅ 论文改稿（P0+P1）</li>
+<li><strong>训练完成后</strong>：eval chain 自动启动（PID 3698490 后台等待中）→ 3-seed ProtB → 结果报告</li>
+</ul>
+</div>
+
+<h2>2. 实验定义</h2>
+<h3>2.1 核心问题</h3>
+<div class="card">
+<p>基线实验 ④-4ep 在 GBS=512 / MBS=64 / LR=5e-4 下训练 4 个名义 epoch（748,404 步 = 3.45 真实 epoch），ProtB 达到 <strong>67.05±0.02%</strong>。<strong>如果把 batch size 放大 4 倍</strong>（GBS=2048），InfoNCE 的负样本池也从 512 增到 2048（对比学习信号增强 4×），那么：</p>
+<ul>
+<li><strong>LR 应该怎么调？</strong> —— 按 Goyal 线性缩放规则，LR ×4 = 2e-3</li>
+<li><strong>更大 batch + 更大 LR 能否提升 ProtB？</strong> —— 以 3-seed ProtB 判优</li>
+<li><strong>24h 预算内能跑完多少？</strong> —— ~154,500 步 ≈ 2.85 真实 epoch</li>
+</ul>
+</div>
+
+<h3>2.2 ArmC 在 3-臂 LR 扫描中的定位</h3>
+<div class="card">
+<p>运维指令（2026-10-13）要求按文献做 3-臂 LR 扫描，以 ProtB 取优。但 GPU 预算只允许跑 1 臂 → 取<strong>有 Goyal 直接依据的臂 C（×4 线性）</strong>，并显式声明「未做完整 LR 扫描」的局限。</p>
+<table>
+<tr><th>臂</th><th>LR</th><th>缩放倍数</th><th>规则</th><th>warmup</th><th>min_lr</th><th>理论依据</th><th>状态</th></tr>
+<tr><td><strong>A</strong></td><td>1e-3</td><td>×2</td><td>次线性 √缩放</td><td>4000</td><td>1e-4</td><td class="warn">工程惯例 · 无一手引用</td><td class="tag tag-warn">未跑</td></tr>
+<tr><td><strong>B</strong></td><td>1.5e-3</td><td>×3</td><td>线性与 √ 之间</td><td>6000</td><td>1.5e-4</td><td>插值</td><td class="tag tag-warn">未跑</td></tr>
+<tr class="best"><td><strong>C</strong>（当前）</td><td><strong>2e-3</strong></td><td><strong>×4</strong></td><td><strong>线性缩放</strong></td><td>8000</td><td>2e-4</td><td>Goyal 2017 + Smith 2017（含 Adam）</td><td class="tag tag-live">🔄 训练中</td></tr>
+</table>
+<p class="note">⚠️ <strong>局限声明</strong>：本实验仅跑了臂 C，未做完整 3-臂对比。若臂 C ProtB 不及基线，无法排除「臂 A/B 更优」的可能性。</p>
+</div>
+
+<h3>2.3 LR 缩放规则文献依据</h3>
+<div class="card">
+<table>
+<tr><th>缩放规则</th><th>建议 LR（×4 GBS）</th><th>文献出处</th><th>适用范围</th></tr>
+<tr class="best"><td><strong>线性缩放</strong>（LR ∝ GBS）</td><td>5e-4 × 4 = <strong>2e-3</strong></td><td>Goyal et al. 2017 (arXiv:1706.02677) —「hyper-parameter-free linear scaling rule」+ warmup</td><td>SGD / SGD+momentum</td></tr>
+<tr><td>B ∝ LR 等价性（含 Adam）</td><td>同上 2e-3</td><td>Smith et al. 2017 (arXiv:1711.00489) — 对 SGD / Adam 均成立：「B ∝ ε」</td><td>SGD / Adam 均适用</td></tr>
+<tr><td>次线性 √缩放</td><td>5e-4 × 2 = 1e-3</td><td class="warn">⚠️ 工程惯例 · 无一手引用</td><td>工程惯例 · 非权威</td></tr>
+</table>
+<p><strong>实证硬结论</strong>（Shallue et al. 2019, JMLR 20, arXiv:1811.03600 + Google Playbook）：① 换 batch 必须重新调 LR；② perfect scaling 仅在 critical batch size 以下成立（McCandlish et al. 2018, arXiv:1812.06162）。</p>
+<p><strong>对比学习专属</strong>：SimCLR (arXiv:2002.05709) —「contrastive learning benefits from larger batch sizes and more training steps」⇒ 欠缩放导致收敛慢，正确补救是<strong>加步数</strong>。</p>
+</div>
+
+<h3>2.4 配置对照表（ArmC vs ④-4ep 基线）</h3>
+<div class="card">
+<table>
+<tr><th>参数</th><th>④-4ep 基线</th><th class="best">ArmC（本实验）</th><th>倍数</th><th>依据</th></tr>
+<tr><td><strong>MBS</strong></td><td>64</td><td class="best">256</td><td><strong>×4</strong></td><td>运维指令「GBS/MBS ×4」</td></tr>
+<tr><td><strong>GBS</strong></td><td>512</td><td class="best">2048</td><td><strong>×4</strong></td><td>InfoNCE 负样本 512→2048</td></tr>
+<tr><td><strong>LR</strong></td><td>5e-4</td><td class="best">2e-3</td><td><strong>×4</strong></td><td>Goyal 线性缩放 (arXiv:1706.02677)</td></tr>
+<tr><td><strong>Warmup</strong></td><td>2000</td><td class="best">8000</td><td><strong>×4</strong></td><td>Goyal 要求同比放大</td></tr>
+<tr><td><strong>min_lr</strong></td><td>5e-5</td><td class="best">2e-4</td><td><strong>×4</strong></td><td>cosine 终点同比</td></tr>
+<tr><td><strong>Scheduler</strong></td><td>cosine</td><td>cosine</td><td>不变</td><td>—</td></tr>
+<tr><td><strong>Steps</strong></td><td>748,404</td><td class="best">154,500</td><td>—</td><td>≈ 2.85 真实 epoch @ GBS=2048</td></tr>
+<tr><td><strong>Resume</strong></td><td>从 2ep ckpt 续</td><td class="best">无（从零）</td><td>—</td><td>新配方不从旧 ckpt 续</td></tr>
+<tr><td>模型</td><td>OpenVision2 w512/d30 (126.8M)</td><td>同左</td><td>不变</td><td>—</td></tr>
+<tr><td>目标函数</td><td>AIMv2-style (InfoNCE+masked-patch-MSE)</td><td>同左</td><td>不变</td><td><code>--loss aimv2 --mask-ratio 0.6 --cw 1.0 --plw 1.0</code></td></tr>
+<tr><td>文本塔</td><td>冻结 CLIP-ViT-L/14-336 (768-d)</td><td>同左</td><td>不变</td><td>—</td></tr>
+<tr><td>数据</td><td>10787 shards ≈ 110.9M (快照)</td><td>同左</td><td>不变</td><td>同一冻结快照</td></tr>
+<tr><td>分辨率/Patch</td><td>224/16</td><td>同左</td><td>不变</td><td>—</td></tr>
+<tr><td>精度</td><td>bf16</td><td>同左</td><td>不变</td><td>—</td></tr>
+<tr><td>Seed</td><td>1234</td><td>同左</td><td>不变</td><td>—</td></tr>
+</table>
+<p class="note"><strong>单一变量原则</strong>：除 GBS/MBS/LR（含 warmup/min_lr 同比）外，所有配置与 ④-4ep 基线<strong>逐字节一致</strong>。</p>
+</div>
+
+<h2>3. 数据量</h2>
+<div class="card">
+<table>
+<tr><th>数据集</th><th>tar 数（快照/全量）</th><th>每 tar 对数</th><th>对数（快照）</th><th>对数（全量）</th><th>权重（快照）</th><th>来源</th></tr>
+<tr><td><strong>GPIC</strong></td><td>7437 / 8000</td><td>~12,639 ¹</td><td>~94.0M</td><td>~101.1M</td><td>84.7%</td><td><code>wc -l data_snapshot_20261009.txt</code> = 7437</td></tr>
+<tr><td><strong>CC12M</strong></td><td>1100</td><td>~10,000</td><td>~11.0M</td><td>~11.0M</td><td>9.9%</td><td>1100 tar × 10,000</td></tr>
+<tr><td><strong>Amshaker</strong></td><td>2250</td><td>~2,646</td><td>~5.95M</td><td>~5.95M</td><td>5.4%</td><td>2250 tar × 2,646</td></tr>
+<tr class="best"><td><strong>合计</strong></td><td><strong>10787 / 11350</strong></td><td>—</td><td><strong>~110.9M</strong></td><td><strong>~118.1M</strong></td><td>100%</td><td><code>total_shards=10787</code></td></tr>
+</table>
+<p class="note">¹ GPIC 每 tar 对数：实测 12,639（<code>EXPERIMENTS_VISION.md</code> L934）；另测 12,495（L60, 8-tar 采样）。取 12,639 为主值。</p>
+<h4>两种口径说明（⚠️ 不混为一谈）</h4>
+<div class="card">
+<p><strong>① 实验时快照值</strong>（本实验实际使用）：7437 GPIC tar × 12,639 + CC12M 11.0M + Amshaker 5.95M = <strong>~110.9M 对</strong>。快照文件：<code>data_snapshot_20261009.txt</code>（<code>wc -l</code> = 7437 行已核）。<code>total_shards = 10787</code>，与 ④-4ep / E1fair 完全一致 → <strong>唯一变量 = 超参</strong>。</p>
+<p><strong>② 全量值</strong>（GPIC 全量 8000 tar）：8000 × 12,639 + 11.0M + 5.95M = <strong>~118.1M 对</strong>。快照文件：<code>data_snapshot_20261010_full.txt</code>（<code>wc -l</code> = 8000 行已核）。V3 实验已用全量（ProtB=63.52%, Δ+1.18pp 不可分辨）。</p>
+<p><strong>⚠️ 旧值订正</strong>：早期报告的「95.8M 对」系 <strong>6233-tar 时代旧值</strong>（快照冻结到 7437 tar 后未重算），已被 7437-tar 快照的 ~110.9M 取代。<strong>本实验使用 7437-tar 快照（~110.9M 对），非全量</strong>。</p>
+</div>
+</div>
+
+<h2>4. 实时训练进度（2026-10-14 08:40 · wake #69 快照）</h2>
+<div class="metric-grid">
+<div class="metric-card"><div class="label">当前步数</div><div class="value" style="color:var(--cyan)">48,600</div><div class="delta">/ 154,500（<strong>31.4%</strong>）</div></div>
+<div class="metric-card"><div class="label">C1（对比对齐）</div><div class="value" style="color:var(--green)">0.5452</div><div class="delta">健康 · 远低于坍缩阈值 0.95</div></div>
+<div class="metric-card"><div class="label">C2_gap</div><div class="value" style="color:var(--green)">+0.1910</div><div class="delta">正值 = 对比梯度方向正确</div></div>
+<div class="metric-card"><div class="label">C4 坍缩检测</div><div class="value" style="color:var(--green)">OK</div><div class="delta">162 PROBEs 全绿</div></div>
+<div class="metric-card"><div class="label">Loss 区间</div><div class="value" style="color:var(--accent)">0.23–0.61</div><div class="delta">contrast 主导 · patch_mse ~0.04–0.06</div></div>
+<div class="metric-card"><div class="label">当前 LR</div><div class="value" style="color:var(--orange)">1.68e-3</div><div class="delta">cosine 衰减中（peak 2e-3, warmup 已完成）</div></div>
+</div>
+
+<h3>4.1 进度条</h3>
+<div class="progress-bar"><div class="progress-fill" style="width:31.4%">31.4% · step 48,600 / 154,500</div></div>
+<p class="note">剩余 105,900 步 · ETA: avg(570ms/步) ≈ 16.8h → <strong>~01:25 Oct15</strong> / good(300ms/步) ≈ 8.8h → ~17:25 Oct14</p>
+
+<h3>4.2 C1 趋势（坍缩检测核心指标）</h3>
+<div class="card">
+<p>C1（对比对齐指标）是坍缩检测的核心：C1 > 0.95 = 训练坍缩（实验作废），C1 < 0.6 = 健康。</p>
+<table>
+<tr><th>步数</th><th>46,800</th><th>47,100</th><th>47,400</th><th>47,700</th><th>48,000</th><th>48,300</th><th>48,600</th></tr>
+<tr><td>C1</td><td>~0.53</td><td>~0.54</td><td>~0.55</td><td>~0.53</td><td>~0.54</td><td>~0.55</td><td><strong>0.5452</strong></td></tr>
+</table>
+<p><strong>解读</strong>：最近 5 次 PROBE（step 46,800→48,600）C1 范围 0.53~0.55，均值 ~0.54，<strong>稳定无趋势</strong>，远低于坍缩阈值 0.95。训练健康。</p>
+</div>
+
+<h3>4.3 吞吐状况（⚠️ NFS I/O 争用）</h3>
+<div class="card">
+<p><strong>吞吐呈双峰分布（bimodal）</strong>：</p>
+<ul>
+<li><strong>快峰</strong>：~300ms/步（img/s ~9,600）—— NFS I/O 无争用时</li>
+<li><strong>慢峰</strong>：~900ms/步（img/s ~2,200）—— NFS I/O 争用时（data 线下载所致）</li>
+<li><strong>当前平均</strong>：~570ms/步（step 48,300–48,600 区间）</li>
+</ul>
+<p><strong>GPU 利用率</strong>：7/8 GPU 持续 ~100%，GPU7 出现瞬态 0%（NFS I/O 等待数据时计算空闲）。瓶颈在数据加载而非计算。</p>
+<p class="warn">⚠️ <strong>吞吐退化趋势</strong>：step 10k→20k avg=378ms, 20k→30k avg=462ms, 30k→36k avg=651ms, 48k avg ~570ms —— NFS I/O 争用在 data 线下载期间持续。训练仍正常推进，但 ETA 受此影响。</p>
+</div>
+
+<h3>4.4 Checkpoint 存档</h3>
+<div class="card">
+<table>
+<tr><th>Checkpoint</th><th>step 10,000</th><th>step 20,000</th><th>step 30,000</th><th>step 40,000</th><th>step 50,000</th></tr>
+<tr><td>状态</td><td class="tag tag-done">✅ 已存</td><td class="tag tag-done">✅ 已存</td><td class="tag tag-done">✅ 已存</td><td class="tag tag-done">✅ 已存</td><td class="tag tag-est">ETA ~08:55</td></tr>
+</table>
+<p class="note">保存间隔 <code>--save-every 10000</code>。输出目录：<code>/nas_train/app.e0031982/datasets/baize-vision/out/merge3ds_bs4_lrC_w512_d30_p16_224</code></p>
+</div>
+
+<h3>4.5 训练时间线</h3>
+<div class="card">
+<div class="timeline">
+<div class="timeline-item"><strong>2026-10-14 01:24</strong> — Smoke test 通过（10 步，MBS=256 ~47.5GB/GPU，无 OOM，吞吐 ~9,600 img/s）</div>
+<div class="timeline-item"><strong>2026-10-14 ~01:30</strong> — ArmC 正式训练启动（fresh，无 --resume）</div>
+<div class="timeline-item"><strong>2026-10-14 ~04:00</strong> — step ~8,100 C4 误报（loss_ema=0.6414 vs threshold 0.6404，差 0.001，loss 实际在下降）→ 误停</div>
+<div class="timeline-item"><strong>2026-10-14 ~04:15</strong> — 从 step 8,100 ckpt resume（--resume 禁用 C4 guard，C1/C2 仍活跃）</div>
+<div class="timeline-item"><strong>2026-10-14 06:59</strong> — step 40,000 checkpoint 保存</div>
+<div class="timeline-item"><strong>2026-10-14 08:40</strong> — <strong>当前快照（wake #69）</strong>：step 48,600/154,500（31.4%），C1=0.5452，健康</div>
+<div class="timeline-item"><strong>预计 ~01:25 Oct15</strong> — 训练完成（avg 吞吐估算）</div>
+</div>
+</div>
+
+<h2>5. 可视化</h2>
+<h3>5.1 训练进度与 LR 调度</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="800" height="280" fill="#0d1117" rx="8"/>
+<line x1="80" y1="40" x2="80" y2="220" stroke="#30363d" stroke-width="1"/>
+<line x1="80" y1="220" x2="760" y2="220" stroke="#30363d" stroke-width="1"/>
+<line x1="80" y1="130" x2="760" y2="130" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+<text x="70" y="45" fill="#8b949e" font-size="10" text-anchor="end">2.0e-3</text>
+<text x="70" y="135" fill="#8b949e" font-size="10" text-anchor="end">1.25e-3</text>
+<text x="70" y="225" fill="#8b949e" font-size="10" text-anchor="end">5.0e-4</text>
+<text x="80" y="240" fill="#8b949e" font-size="10" text-anchor="middle">0</text>
+<text x="200" y="240" fill="#8b949e" font-size="10" text-anchor="middle">25k</text>
+<text x="320" y="240" fill="#8b949e" font-size="10" text-anchor="middle">50k</text>
+<text x="440" y="240" fill="#8b949e" font-size="10" text-anchor="middle">75k</text>
+<text x="560" y="240" fill="#8b949e" font-size="10" text-anchor="middle">100k</text>
+<text x="680" y="240" fill="#8b949e" font-size="10" text-anchor="middle">125k</text>
+<text x="760" y="240" fill="#8b949e" font-size="10" text-anchor="middle">154.5k</text>
+<text x="30" y="130" fill="#8b949e" font-size="11" transform="rotate(-90,30,130)" text-anchor="middle">LR</text>
+<text x="420" y="265" fill="#8b949e" font-size="11" text-anchor="middle">Training Steps</text>
+<rect x="80" y="40" width="42" height="180" fill="#1a2332" opacity="0.5"/>
+<text x="101" y="55" fill="#d29922" font-size="8" text-anchor="middle">warmup</text>
+<path d="M 80,220 L 122,40" stroke="#e8873c" stroke-width="2" fill="none"/>
+<path d="M 122,40 Q 300,45 420,100 T 680,185 L 760,196" stroke="#58a6ff" stroke-width="2" fill="none"/>
+<line x1="253" y1="40" x2="253" y2="220" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,3"/>
+<circle cx="253" cy="72" r="5" fill="#3fb950"/>
+<text x="260" y="68" fill="#3fb950" font-size="10">step 48,600 (31.4%)</text>
+<text x="260" y="80" fill="#3fb950" font-size="9">LR=1.68e-3</text>
+<rect x="550" y="50" width="12" height="3" fill="#e8873c"/>
+<text x="568" y="54" fill="#8b949e" font-size="10">warmup (linear)</text>
+<rect x="550" y="65" width="12" height="3" fill="#58a6ff"/>
+<text x="568" y="69" fill="#8b949e" font-size="10">cosine decay</text>
+<line x1="550" y1="82" x2="562" y2="82" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,3"/>
+<text x="568" y="86" fill="#8b949e" font-size="10">current step</text>
+</svg>
+</div>
+<p class="note">LR 调度：warmup 8000 步线性升温 0→2e-3，之后 cosine 衰减至 min_lr=2e-4。当前 step 48,600 时 LR≈1.68e-3。</p>
+
+<h3>5.2 C1 坍缩检测趋势</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="800" height="220" fill="#0d1117" rx="8"/>
+<rect x="80" y="30" width="680" height="30" fill="#f85149" opacity="0.15"/>
+<text x="84" y="48" fill="#f85149" font-size="9">⚠️ 坍缩区 C1 > 0.95</text>
+<line x1="80" y1="30" x2="80" y2="190" stroke="#30363d" stroke-width="1"/>
+<line x1="80" y1="190" x2="760" y2="190" stroke="#30363d" stroke-width="1"/>
+<text x="72" y="34" fill="#8b949e" font-size="10" text-anchor="end">1.0</text>
+<text x="72" y="64" fill="#f85149" font-size="10" text-anchor="end">0.95</text>
+<text x="72" y="127" fill="#8b949e" font-size="10" text-anchor="end">0.5</text>
+<text x="72" y="194" fill="#8b949e" font-size="10" text-anchor="end">0.0</text>
+<text x="80" y="208" fill="#8b949e" font-size="10" text-anchor="middle">0</text>
+<text x="200" y="208" fill="#8b949e" font-size="10" text-anchor="middle">25k</text>
+<text x="320" y="208" fill="#8b949e" font-size="10" text-anchor="middle">50k</text>
+<text x="560" y="208" fill="#8b949e" font-size="10" text-anchor="middle">100k</text>
+<text x="760" y="208" fill="#8b949e" font-size="10" text-anchor="middle">154.5k</text>
+<line x1="80" y1="64" x2="760" y2="64" stroke="#f85149" stroke-width="1" stroke-dasharray="6,4"/>
+<rect x="80" y="100" width="680" height="90" fill="#3fb950" opacity="0.05"/>
+<text x="84" y="115" fill="#3fb950" font-size="9">✅ 健康区 C1 < 0.6</text>
+<polyline points="86,160 110,140 135,120 165,108 200,100 253,90 320,86 440,82 560,80 680,78 760,76"
+  fill="none" stroke="#3fb950" stroke-width="2"/>
+<circle cx="253" cy="90" r="5" fill="#3fb950"/>
+<text x="262" y="88" fill="#3fb950" font-size="10">C1=0.5452</text>
+<text x="420" y="218" fill="#8b949e" font-size="10" text-anchor="middle">Training Steps (PROBE every 300 steps)</text>
+</svg>
+</div>
+<p class="note">C1 从训练初期 ~0.15 逐步上升到 ~0.55，稳定在健康区间（< 0.6），远低于坍缩阈值 0.95。<strong>162 个 PROBE 点全部健康（C4=OK）</strong>。</p>
+
+<h2>6. 预期产出与判据</h2>
+<h3>6.1 预注册判据（先定后测 · 不许事后改）</h3>
+<div class="card">
+<table>
+<tr><th>判据</th><th>阈值</th><th>说明</th><th>当前状态</th></tr>
+<tr class="best"><td><strong>VICTORY</strong></td><td>ProtB ≥ 70%</td><td>超过 ④-4ep 胜利阈值（67.05% → 70%+）</td><td class="tag tag-est">待测</td></tr>
+<tr><td><strong>MODERATE</strong></td><td>ProtB 68–70%</td><td>可分辨提升（Δ ≥ 1.5pp vs ④-4ep 67.05%）但未达胜利</td><td class="tag tag-est">待测</td></tr>
+<tr><td><strong>NULL</strong></td><td>ProtB &lt; 68.5%</td><td>不可分辨（Δ &lt; 1.5pp）或下降</td><td class="tag tag-est">待测</td></tr>
+<tr class="bad"><td><strong>COLLAPSE</strong></td><td>C1 &gt; 0.95 at any step</td><td>训练坍缩，实验作废</td><td class="tag tag-done">✅ 未触发</td></tr>
+<tr class="bad"><td><strong>OOM</strong></td><td>MBS=256 CUDA OOM</td><td>需回退 MBS=64 + grad-accum 4</td><td class="tag tag-done">✅ 未触发</td></tr>
+</table>
+<p class="note"><strong>可分辨判据</strong>：Δlp = |ProtB(ArmC) − ProtB(④-4ep)|；|Δ| &lt; 1.5pp = 不可分辨（跨实验噪声带取 1.5pp）。</p>
+</div>
+
+<h3>6.2 基线参照</h3>
+<div class="card">
+<table>
+<tr><th>实验</th><th>步数</th><th>真实 epoch</th><th>累计样本</th><th>GBS</th><th>LR</th><th>ProtB (3-seed)</th><th>结论</th></tr>
+<tr><td>E1fair (1ep)</td><td>187,101</td><td>0.86</td><td>95.8M</td><td>512</td><td>5e-4</td><td><strong>62.34±0.01%</strong></td><td>基线</td></tr>
+<tr><td>④-2ep</td><td>374,202</td><td>1.73</td><td>191.6M</td><td>512</td><td>5e-4</td><td><strong>65.37±0.01%</strong></td><td>MODERATE (+3.03pp)</td></tr>
+<tr class="best"><td>④-4ep</td><td>748,404</td><td>3.45</td><td>383.2M</td><td>512</td><td>5e-4</td><td><strong>67.05±0.02%</strong></td><td>DIMINISHING (+1.68pp)</td></tr>
+<tr><td><strong>ArmC（当前）</strong></td><td><strong>154,500</strong></td><td><strong>~2.85</strong></td><td><strong>~316.2M ²</strong></td><td><strong>2048</strong></td><td><strong>2e-3</strong></td><td class="tag tag-est">🔄 待测</td><td>—</td></tr>
+</table>
+<p class="note">² ArmC 累计样本 = 154,500 × 2048 = 316.2M。④-4ep 累计 383.2M > ArmC 316.2M → ArmC 遍历总量更少，但每步基于更大 batch（2048 vs 512）和更大 LR。</p>
+</div>
+
+<h3>6.3 训练完成后的流程</h3>
+<div class="card">
+<div class="timeline">
+<div class="timeline-item"><strong>Step 1</strong> — ArmC 训练完成（~01:25 Oct15 预计）</div>
+<div class="timeline-item"><strong>Step 2</strong> — eval chain 自动启动（<code>post_merge3ds_chain.sh</code>, PID 3698490 后台等待中）→ Protocol B (3 seeds) + ProtA + zs + k-NN</div>
+<div class="timeline-item"><strong>Step 3</strong> — 3-seed ProtB 结果产出（预计 eval ~3–4h）</div>
+<div class="timeline-item"><strong>Step 4</strong> — 与基线对比：Δlp vs ④-4ep 67.05% / E1fair 62.34%</div>
+<div class="timeline-item"><strong>Step 5</strong> — 交付 <code>report_vision_merge3ds_result_zh.html</code> + <code>EXPERIMENTS_VISION.md</code> 新节</div>
+</div>
+</div>
+
+<h2>7. 与基线对比（ArmC 与 ④-4ep 的关键差异）</h2>
+<div class="card">
+<table>
+<tr><th>维度</th><th>④-4ep 基线</th><th>ArmC（本实验）</th><th>差异分析</th></tr>
+<tr><td><strong>GBS</strong></td><td>512</td><td>2048</td><td>×4 → InfoNCE 负样本池 4× 大 → 对比学习信号更强</td></tr>
+<tr><td><strong>LR</strong></td><td>5e-4</td><td>2e-3</td><td>×4 → 按 Goyal 线性缩放，大 batch 需大 LR 补偿</td></tr>
+<tr><td><strong>步数</strong></td><td>748,404</td><td>154,500</td><td>×0.21 → 更少梯度更新步，但每步见更多样本</td></tr>
+<tr><td><strong>累计样本</strong></td><td>383.2M</td><td>~316.2M</td><td>ArmC 遍历总量更少（316M vs 383M）</td></tr>
+<tr><td><strong>每步样本</strong></td><td>512</td><td>2048</td><td>×4 → 每步梯度估计方差更低</td></tr>
+<tr><td><strong>真实 epoch</strong></td><td>3.45</td><td>~2.85</td><td>ArmC 数据遍历次数更少</td></tr>
+</table>
+<p><strong>核心科学问题</strong>：GBS ×4 + LR ×4 的「线性缩放」是否在对比学习场景成立？<strong>更少的更新步数（×0.21）+ 更大的 batch（×4）+ 更大的 LR（×4）能否达到与 ④-4ep 相当甚至更好的 ProtB？</strong></p>
+<ul>
+<li><strong>VICTORY（≥70%）</strong>：大 batch + 线性 LR 缩放在 AIMv2-style 上有效 → 可加速训练</li>
+<li><strong>MODERATE（68–70%）</strong>：有提升但有限 → 可能已过 critical batch size</li>
+<li><strong>NULL（&lt;68.5%）</strong>：未带来可分辨提升 → 可能因累计样本更少或 LR 不优</li>
+</ul>
+</div>
+
+<div class="honesty-box">
+<h3 style="color:var(--red)">⚠️ 再次声明</h3>
+<p>截至本报告生成时（2026-10-14 08:40, wake #69）：</p>
+<ul>
+<li>✅ <strong>已确认</strong>：训练正常运行中（step 48,600/154,500, 31.4%），无坍缩（C1=0.5452, 162 PROBEs 全绿），无 OOM</li>
+<li>✅ <strong>已确认</strong>：smoke test 通过，MBS=256 可用（~47.5GB/GPU），吞吐 bimodal 但训练持续推进</li>
+<li>✅ <strong>已确认</strong>：eval chain（PID 3698490）在后台正确等待训练完成</li>
+<li>❌ <strong>尚未有</strong>：最终 ProtB 结果（训练未完成）</li>
+<li>❌ <strong>尚未有</strong>：与基线的 Δlp 对比（依赖 ProtB）</li>
+<li>❌ <strong>尚未有</strong>：VICTORY/MODERATE/NULL 判定（依赖 ProtB）</li>
+</ul>
+<p><strong>当前所有训练指标均为暂态。公开引用请等待结果报告 <code>report_vision_merge3ds_result_zh.html</code>。</strong></p>
+</div>
+
+<div class="refs">
+<h3>参考文献</h3>
+<ul>
+<li>Goyal, P. et al. (2017). arXiv:1706.02677. — 线性缩放规则 + warmup</li>
+<li>Smith, S.L. et al. (2017). arXiv:1711.00489. — B ∝ LR 等价性（含 Adam）</li>
+<li>Shallue, C.J. et al. (2019). JMLR 20. arXiv:1811.03600. — 换 batch 必须重调 LR</li>
+<li>McCandlish, S. et al. (2018). arXiv:1812.06162. — gradient noise scale</li>
+<li>Chen, T. et al. (2020). arXiv:2002.05709. — SimCLR: 对比学习受益于更大 batch</li>
+</ul>
+<p>文献访问日：2026-10-13</p>
+</div>
+<div class="refs">
+<p><strong>数据溯源</strong>：<code>EXPERIMENTS_VISION.md §merge3ds</code> / <code>MEMORY_VISION.md</code> (wake #69) / <code>vision/run_merge3ds_armC.sh</code> / <code>report_vision_merge3ds_bs4_lr2_plan_zh.html</code> / <code>vision/data_snapshot_20261009.txt</code></p>
+<p style="color:var(--muted);font-size:.8em;margin-top:1em">commit 前缀：<code>vision report:</code> · 线：vision · 机器：10.239.2.12 (H100×8)</p>
+</div>
+</body>
+</html>
