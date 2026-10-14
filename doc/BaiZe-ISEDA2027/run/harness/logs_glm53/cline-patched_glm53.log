@@ -1,23 +1,12 @@
-  [RESUME] Skipping 0 completed for cline-patched
+  [RESUME] Skipping 7 completed for cline-patched
 Serial kimi eval: harness=cline-patched model=glm-5.3-flash
-  Total=300 Pending=300 Skip=0 Concurrency=1
+  Total=300 Pending=293 Skip=7 Concurrency=1
 
 ############################################################
-# [1/300] cline-patched x astropy__astropy-12907
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-12907 for cline-patched
-
-[RUN] cline-patched on astropy__astropy-12907 ...
-  [EVAL] cline-patched on astropy__astropy-12907 ...
-  => astropy__astropy-12907 | cline-patched | patch-but-failed
-
-############################################################
-# [2/300] cline-patched x astropy__astropy-14182
+# [1/293] cline-patched x django__django-10924
 ############################################################
 
 ============================================================
-[SETUP] astropy__astropy-14182 for cline-patched
+[SETUP] django__django-10924 for cline-patched
 
-[RUN] cline-patched on astropy__astropy-14182 ...
+[RUN] cline-patched on django__django-10924 ...

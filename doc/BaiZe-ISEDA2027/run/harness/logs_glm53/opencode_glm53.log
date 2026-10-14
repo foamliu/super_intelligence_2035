@@ -1,111 +1,12 @@
-  [RESUME] Skipping 0 completed for opencode
+  [RESUME] Skipping 15 completed for opencode
 Serial kimi eval: harness=opencode model=glm-5.3-flash
-  Total=300 Pending=300 Skip=0 Concurrency=1
+  Total=300 Pending=285 Skip=15 Concurrency=1
 
 ############################################################
-# [1/300] opencode x astropy__astropy-12907
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-12907 for opencode
-
-[RUN] opencode on astropy__astropy-12907 ...
-  [EVAL] opencode on astropy__astropy-12907 ...
-  => astropy__astropy-12907 | opencode | patch-but-failed
-
-############################################################
-# [2/300] opencode x astropy__astropy-14182
+# [1/285] opencode x django__django-11283
 ############################################################
 
 ============================================================
-[SETUP] astropy__astropy-14182 for opencode
+[SETUP] django__django-11283 for opencode
 
-[RUN] opencode on astropy__astropy-14182 ...
-  [EVAL] opencode on astropy__astropy-14182 ...
-  => astropy__astropy-14182 | opencode | patch-but-failed
-
-############################################################
-# [3/300] opencode x astropy__astropy-14365
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-14365 for opencode
-
-[RUN] opencode on astropy__astropy-14365 ...
-  [EVAL] opencode on astropy__astropy-14365 ...
-  => astropy__astropy-14365 | opencode | patch-but-failed
-
-############################################################
-# [4/300] opencode x astropy__astropy-14995
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-14995 for opencode
-
-[RUN] opencode on astropy__astropy-14995 ...
-  [EVAL] opencode on astropy__astropy-14995 ...
-  => astropy__astropy-14995 | opencode | patch-but-failed
-
-############################################################
-# [5/300] opencode x astropy__astropy-6938
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-6938 for opencode
-
-[RUN] opencode on astropy__astropy-6938 ...
-  [EVAL] opencode on astropy__astropy-6938 ...
-  => astropy__astropy-6938 | opencode | patch-but-failed
-
-############################################################
-# [6/300] opencode x astropy__astropy-7746
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-7746 for opencode
-
-[RUN] opencode on astropy__astropy-7746 ...
-  [EVAL] opencode on astropy__astropy-7746 ...
-  => astropy__astropy-7746 | opencode | patch-but-failed
-
-############################################################
-# [7/300] opencode x django__django-10914
-############################################################
-
-============================================================
-[SETUP] django__django-10914 for opencode
-
-[RUN] opencode on django__django-10914 ...
-  [EVAL] opencode on django__django-10914 ...
-  => django__django-10914 | opencode | patch-but-failed
-
-############################################################
-# [8/300] opencode x django__django-10924
-############################################################
-
-============================================================
-[SETUP] django__django-10924 for opencode
-
-[RUN] opencode on django__django-10924 ...
-  [EVAL] opencode on django__django-10924 ...
-  => django__django-10924 | opencode | patch-but-failed
-
-############################################################
-# [9/300] opencode x django__django-11001
-############################################################
-
-============================================================
-[SETUP] django__django-11001 for opencode
-
-[RUN] opencode on django__django-11001 ...
-  [EVAL] opencode on django__django-11001 ...
-  => django__django-11001 | opencode | resolved
-
-############################################################
-# [10/300] opencode x django__django-11019
-############################################################
-
-============================================================
-[SETUP] django__django-11019 for opencode
-
-[RUN] opencode on django__django-11019 ...
+[RUN] opencode on django__django-11283 ...
