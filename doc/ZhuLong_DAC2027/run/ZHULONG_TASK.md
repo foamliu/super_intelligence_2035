@@ -17,6 +17,30 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-14（十八）— 🧩 评测集全貌 + SKILL/Tcl 结果并入论文【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「告知 zhulong agent：它自己在测 PyAether，其它 agent 在同时测 SKILL 和 TCL，结果汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。请 zhulong agent 在回填结果、刷新论文时，把 zhulong_results.md 中 SKILL/TCL 的结果带上。补充信息：EDA-Scripting-Bench 评测集中各语言 case 数，pyaether=158，skill=158，tcl=133，共计 449。」
+
+**① 评测集全貌（EDA-Scripting-Bench，三语言）**：
+| 语言 | case 数 |
+|:--|:--|
+| PyAether | 158 |
+| SKILL | 158 |
+| Tcl | 133 |
+| **合计** | **449** |
+
+**② 分工**：你（zhulong）测 **PyAether（158）**；**其它 agent 并行测 SKILL（158）+ Tcl（133）**。三路结果统一汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。
+
+**③ 要求（衔接指令十七「放行刷新论文」）**：
+- 回填论文结果时，**以 `doc/ZhuLong_DAC2027/zhulong_results.md` 为汇总源**，把 **SKILL/Tcl 的结果一并带上**——论文评测口径从「PyAether 158」扩展为「**EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）**」。
+- 具体落地：
+  - 回填 **RQ3「SKILL/Tcl 切片」**（此前标 pending）——`zhulong_results.md` 中 SKILL/Tcl 已有结果即填，未齐则如实标 `partial`/`pending`。
+  - 回填 intro/abstract 的 **「unified benchmark [X%]」**——按三语言 449 合并 Pass@1 重算（或显式标注口径）。
+  - 全文凡涉及「PyAether-only」的主表/轴向，须改口径说明，🚫 避免「158」与「449」混用、避免读者误以为全榜只有 PyAether。
+- 🚫 不得只报 PyAether 而继续忽略 SKILL/Tcl；🚫 不得凭印象编 SKILL/Tcl 数字——**只认 `zhulong_results.md` 现存数字**，未齐标 pending。
+
+**④ 纪律**：每次唤醒刷新论文前先 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；数字与之逐字一致；缺数据标 pending 不编造；commit 前缀沿用 `zhulong paper-fix:`；评测主线不变（finish phi_k1 → phi_lagged → S1，改稿仍在空窗期做）。
+
 ### 🆕 运维指令 · 2026-10-14（十七）— ✍️ 放行改进论文（执行审视报告修改）【用户直令 · 最高优先】
 
 > **用户令（2026-10-14）**：「zhulong agent 论文改进报告已审视/批准，请 zhulong agent 按此改进论文。」
