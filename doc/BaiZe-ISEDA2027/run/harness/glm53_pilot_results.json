@@ -2,39 +2,6 @@
   {
     "instance_id": "astropy__astropy-12907",
     "repo": "astropy/astropy",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template astropy__astropy-12907"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-12907.json",
-      "stdout_tail": "_len=1246\n[run_single] git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:13:04.936Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "astropy__astropy-12907",
-    "repo": "astropy/astropy",
     "harness": "pi",
     "model": "glm-5.3-flash",
     "workdir_setup": {
@@ -117,39 +84,6 @@
       "wall_s": 8.2,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_astropy__astropy-12907.json",
       "stdout_tail": "oning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "astropy__astropy-14182",
-    "repo": "astropy/astropy",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template astropy__astropy-12907"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14182.json",
-      "stdout_tail": "_len=1871\n[run_single] git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:17:54.226Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14182.json\n[run_single] cleanup: git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -266,39 +200,6 @@
   {
     "instance_id": "astropy__astropy-14365",
     "repo": "astropy/astropy",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template astropy__astropy-12907"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14365.json",
-      "stdout_tail": "_len=1339\n[run_single] git reset --hard 7269fa3e33e8d02485a647da91a5a2a60a06af61\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:25:08.017Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14365.json\n[run_single] cleanup: git reset --hard 7269fa3e33e8d02485a647da91a5a2a60a06af61\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "astropy__astropy-14365",
-    "repo": "astropy/astropy",
     "harness": "deepseek-harness",
     "model": "glm-5.3-flash",
     "workdir_setup": {
@@ -348,39 +249,6 @@
       "wall_s": 7.3,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_astropy__astropy-14365.json",
       "stdout_tail": "oning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_astropy__astropy-14365.json\n[run_single] cleanup: git reset --hard 7269fa3e33e8d02485a647da91a5a2a60a06af61\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "astropy__astropy-14995",
-    "repo": "astropy/astropy",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template astropy__astropy-12907"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 2.7,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14995.json",
-      "stdout_tail": "_len=2455\n[run_single] git reset --hard b16c7d12ccbc7b2d20364b89fb44285bcbfede54\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.5s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:30:10.762Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-14995.json\n[run_single] cleanup: git reset --hard b16c7d12ccbc7b2d20364b89fb44285bcbfede54\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -497,39 +365,6 @@
   {
     "instance_id": "astropy__astropy-6938",
     "repo": "astropy/astropy",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template astropy__astropy-12907"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-6938.json",
-      "stdout_tail": "ps_len=527\n[run_single] git reset --hard c76af9ed6bb89bfba45b9f5bc1e635188278e2fa\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:37:15.001Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-6938.json\n[run_single] cleanup: git reset --hard c76af9ed6bb89bfba45b9f5bc1e635188278e2fa\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 0,
-        "p2p_total": 11
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "astropy__astropy-6938",
-    "repo": "astropy/astropy",
     "harness": "deepseek-harness",
     "model": "glm-5.3-flash",
     "workdir_setup": {
@@ -556,39 +391,6 @@
         "f2p_total": 2,
         "p2p_pass": 0,
         "p2p_total": 11
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "astropy__astropy-7746",
-    "repo": "astropy/astropy",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template astropy__astropy-12907"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-7746.json",
-      "stdout_tail": "s_len=2053\n[run_single] git reset --hard d5bd3f68bb6d5ce3a61bdce9883ee750d1afade5\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:41:19.351Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-7746.json\n[run_single] cleanup: git reset --hard d5bd3f68bb6d5ce3a61bdce9883ee750d1afade5\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 0,
-        "p2p_total": 56
       }
     },
     "classification": "patch-but-failed"
@@ -726,39 +528,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-10914",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.7,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-10914.json",
-      "stdout_tail": "ps_len=1021\n[run_single] git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.3s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:46:46.730Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-10914.json\n[run_single] cleanup: git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 98,
-        "p2p_total": 98
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "astropy__astropy-7746",
     "repo": "astropy/astropy",
     "harness": "codex",
@@ -858,39 +627,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-10924",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-10924.json",
-      "stdout_tail": " ps_len=822\n[run_single] git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:52:31.062Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-10924.json\n[run_single] cleanup: git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 1,
-        "p2p_total": 1
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-10914",
     "repo": "django/django",
     "harness": "codex",
@@ -959,39 +695,6 @@
   {
     "instance_id": "django__django-11001",
     "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11001.json",
-      "stdout_tail": "ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:53:34.688Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 2,
-        "f2p_total": 2,
-        "p2p_pass": 118,
-        "p2p_total": 118
-      }
-    },
-    "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-11001",
-    "repo": "django/django",
     "harness": "deepseek-harness",
     "model": "glm-5.3-flash",
     "workdir_setup": {
@@ -1051,39 +754,6 @@
         "f2p_total": 1,
         "p2p_pass": 0,
         "p2p_total": 1
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11019",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11019.json",
-      "stdout_tail": "ps_len=1801\n[run_single] git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:54:35.223Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 16,
-        "p2p_pass": 58,
-        "p2p_total": 58
       }
     },
     "classification": "patch-but-failed"
@@ -1223,39 +893,6 @@
   {
     "instance_id": "django__django-11039",
     "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11039.json",
-      "stdout_tail": " ps_len=879\n[run_single] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.8s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:57:51.282Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 88,
-        "p2p_total": 88
-      }
-    },
-    "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-11039",
-    "repo": "django/django",
     "harness": "deepseek-harness",
     "model": "glm-5.3-flash",
     "workdir_setup": {
@@ -1353,39 +990,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-11049",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11049.json",
-      "stdout_tail": " ps_len=706\n[run_single] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T03:59:47.546Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 8,
-        "p2p_total": 8
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-11099",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -1452,39 +1056,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-11099",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11099.json",
-      "stdout_tail": " ps_len=764\n[run_single] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:01:09.092Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 3,
-        "f2p_total": 3,
-        "p2p_pass": 19,
-        "p2p_total": 19
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-11133",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -1546,39 +1117,6 @@
         "f2p_total": 1,
         "p2p_pass": 8,
         "p2p_total": 8
-      }
-    },
-    "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-11133",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 2.8,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11133.json",
-      "stdout_tail": " ps_len=895\n[run_single] git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.6s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:02:01.679Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11133.json\n[run_single] cleanup: git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 64,
-        "p2p_total": 64
       }
     },
     "classification": "resolved"
@@ -1683,39 +1221,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-11179",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11179.json",
-      "stdout_tail": " ps_len=283\n[run_single] git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:04:09.968Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 40,
-        "p2p_total": 40
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-11283",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -1782,39 +1287,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-11283",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11283.json",
-      "stdout_tail": "ps_len=1193\n[run_single] git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.2s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:05:11.445Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 0,
-        "p2p_total": 8
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-11422",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -1876,39 +1348,6 @@
         "f2p_total": 1,
         "p2p_pass": 40,
         "p2p_total": 40
-      }
-    },
-    "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-11422",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11422.json",
-      "stdout_tail": " ps_len=669\n[run_single] git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:06:12.667Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 46,
-        "p2p_total": 46
       }
     },
     "classification": "resolved"
@@ -2013,39 +1452,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-11564",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.0,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11564.json",
-      "stdout_tail": " ps_len=928\n[run_single] git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:07:15.323Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 174,
-        "p2p_total": 174
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-11583",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -2110,39 +1516,6 @@
       }
     },
     "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11583",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11583.json",
-      "stdout_tail": "ps_len=4665\n[run_single] git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:09:25.688Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11583.json\n[run_single] cleanup: git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 2,
-        "f2p_total": 2,
-        "p2p_pass": 50,
-        "p2p_total": 50
-      }
-    },
-    "classification": "resolved"
   },
   {
     "instance_id": "django__django-11620",
@@ -2244,39 +1617,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-11620",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11620.json",
-      "stdout_tail": " ps_len=890\n[run_single] git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:10:45.838Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 66,
-        "p2p_total": 66
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-11742",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -2343,39 +1683,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-11630",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 2.9,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11630.json",
-      "stdout_tail": " ps_len=660\n[run_single] git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.6s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:11:49.836Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11630.json\n[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 16,
-        "p2p_total": 16
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "astropy__astropy-6938",
     "repo": "astropy/astropy",
     "harness": "claude-code",
@@ -2437,39 +1744,6 @@
         "f2p_total": 0,
         "p2p_pass": 0,
         "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11742",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11742.json",
-      "stdout_tail": " ps_len=328\n[run_single] git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:14:36.280Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 43,
-        "p2p_total": 43
       }
     },
     "classification": "patch-but-failed"
@@ -2539,39 +1813,6 @@
       }
     },
     "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-11797",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11797.json",
-      "stdout_tail": " ps_len=756\n[run_single] git reset --hard 3346b78a8a872286a245d1e77ef4718fc5e6be1a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.8s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:17:01.723Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11797.json\n[run_single] cleanup: git reset --hard 3346b78a8a872286a245d1e77ef4718fc5e6be1a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 38,
-        "p2p_total": 38
-      }
-    },
-    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-11630",
@@ -2673,39 +1914,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-11815",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.0,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11815.json",
-      "stdout_tail": "ps_len=1601\n[run_single] git reset --hard e02f67ef2d03d48128e7a118bf75f0418e24e8ac\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:19:12.752Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11815.json\n[run_single] cleanup: git reset --hard e02f67ef2d03d48128e7a118bf75f0418e24e8ac\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 44,
-        "p2p_total": 44
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-11742",
     "repo": "django/django",
     "harness": "codex",
@@ -2772,39 +1980,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-11848",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 2.7,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11848.json",
-      "stdout_tail": " ps_len=626\n[run_single] git reset --hard f0adf3b9b7a19cdee05368ff0c0c2d087f011180\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.5s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:20:09.106Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11848.json\n[run_single] cleanup: git reset --hard f0adf3b9b7a19cdee05368ff0c0c2d087f011180\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 43,
-        "p2p_total": 43
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-11910",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -2864,39 +2039,6 @@
         "patch_applied": true,
         "f2p_pass": 0,
         "f2p_total": 1,
-        "p2p_pass": 38,
-        "p2p_total": 38
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11905",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11905.json",
-      "stdout_tail": " ps_len=409\n[run_single] git reset --hard 2f72480fbd27896c986c45193e1603e35c0b19a7\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:21:08.633Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11905.json\n[run_single] cleanup: git reset --hard 2f72480fbd27896c986c45193e1603e35c0b19a7\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 2,
         "p2p_pass": 38,
         "p2p_total": 38
       }
@@ -2970,39 +2112,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-11910",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.0,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11910.json",
-      "stdout_tail": "ps_len=1172\n[run_single] git reset --hard d232fd76a85870daf345fd8f8d617fe7802ae194\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:22:05.581Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11910.json\n[run_single] cleanup: git reset --hard d232fd76a85870daf345fd8f8d617fe7802ae194\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-11999",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -3064,39 +2173,6 @@
         "f2p_total": 2,
         "p2p_pass": 43,
         "p2p_total": 43
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11964",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11964.json",
-      "stdout_tail": "ps_len=2353\n[run_single] git reset --hard fc2b1cc926e34041953738e58fa6ad3053059b22\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:22:59.827Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11964.json\n[run_single] cleanup: git reset --hard fc2b1cc926e34041953738e58fa6ad3053059b22\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 15,
-        "p2p_total": 15
       }
     },
     "classification": "patch-but-failed"
@@ -3166,39 +2242,6 @@
       }
     },
     "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11999",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11999.json",
-      "stdout_tail": " ps_len=512\n[run_single] git reset --hard 84633905273fc916e3d17883810d9969c03f73c2\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:24:46.964Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11999.json\n[run_single] cleanup: git reset --hard 84633905273fc916e3d17883810d9969c03f73c2\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 30,
-        "p2p_total": 30
-      }
-    },
-    "classification": "resolved"
   },
   {
     "instance_id": "astropy__astropy-14365",
@@ -3333,39 +2376,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-12113",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12113.json",
-      "stdout_tail": "ps_len=4774\n[run_single] git reset --hard 62254c5202e80a68f4fe6572a2be46a3d953de1a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:27:23.801Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12113.json\n[run_single] cleanup: git reset --hard 62254c5202e80a68f4fe6572a2be46a3d953de1a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-12184",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -3463,39 +2473,6 @@
       }
     },
     "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-12125",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 0,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12125.json",
-      "stdout_tail": "ngo-12125\n[run_single] base_commit=89d41cba392b759732ba9f1db4ff29ed47da6a56\n[run_single] ps_len=1589\n[run_single] git reset --hard 89d41cba392b759732ba9f1db4ff29ed47da6a56\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=2.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12125.json\n[run_single] cleanup: git reset --hard 89d41cba392b759732ba9f1db4ff29ed47da6a56\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 45,
-        "p2p_total": 45
-      }
-    },
-    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-12284",
@@ -3828,39 +2805,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-12184",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12184.json",
-      "stdout_tail": " ps_len=977\n[run_single] git reset --hard 5d674eac871a306405b0fbbaeb17bbeba9c68bf3\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.3s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:36:16.832Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12184.json\n[run_single] cleanup: git reset --hard 5d674eac871a306405b0fbbaeb17bbeba9c68bf3\n",
-      "quota_blocked": false,
-      "quota_retry": 2,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 25,
-        "p2p_total": 25
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-12470",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -3922,39 +2866,6 @@
         "f2p_total": 1,
         "p2p_pass": 25,
         "p2p_total": 25
-      }
-    },
-    "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-12284",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12284.json",
-      "stdout_tail": " ps_len=880\n[run_single] git reset --hard c5e373d48cbdd923575956fed477b63d66d9603f\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:39:37.245Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12284.json\n[run_single] cleanup: git reset --hard c5e373d48cbdd923575956fed477b63d66d9603f\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 31,
-        "p2p_total": 31
       }
     },
     "classification": "resolved"
@@ -4024,39 +2935,6 @@
       }
     },
     "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-12286",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12286.json",
-      "stdout_tail": " ps_len=741\n[run_single] git reset --hard 979f61abd322507aafced9627702362e541ec34e\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:40:37.610Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12286.json\n[run_single] cleanup: git reset --hard 979f61abd322507aafced9627702362e541ec34e\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-12589",
@@ -4158,39 +3036,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-12308",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12308.json",
-      "stdout_tail": " ps_len=459\n[run_single] git reset --hard 2e0f04507b17362239ba49830d26fec504d46978\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:41:58.906Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12308.json\n[run_single] cleanup: git reset --hard 2e0f04507b17362239ba49830d26fec504d46978\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 20,
-        "p2p_total": 20
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-12708",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -4255,39 +3100,6 @@
       }
     },
     "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-12453",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12453.json",
-      "stdout_tail": "ps_len=2906\n[run_single] git reset --hard b330b918e979ea39a21d47b61172d112caf432c3\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:43:03.238Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12453.json\n[run_single] cleanup: git reset --hard b330b918e979ea39a21d47b61172d112caf432c3\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 5,
-        "p2p_total": 5
-      }
-    },
-    "classification": "resolved"
   },
   {
     "instance_id": "django__django-12747",
@@ -4384,39 +3196,6 @@
         "f2p_total": 1,
         "p2p_pass": 5,
         "p2p_total": 5
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-12470",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12470.json",
-      "stdout_tail": " ps_len=599\n[run_single] git reset --hard 142ab6846ac09d6d401e26fc8b6b988a583ac0f5\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:44:05.568Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12470.json\n[run_single] cleanup: git reset --hard 142ab6846ac09d6d401e26fc8b6b988a583ac0f5\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": false,
-        "f2p_pass": 0,
-        "f2p_total": 0,
-        "p2p_pass": 0,
-        "p2p_total": 0
       }
     },
     "classification": "patch-but-failed"
@@ -4587,39 +3366,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-12497",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12497.json",
-      "stdout_tail": " ps_len=787\n[run_single] git reset --hard a4881f5e5d7ee38b7e83301331a0b4962845ef8a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:50:22.885Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12497.json\n[run_single] cleanup: git reset --hard a4881f5e5d7ee38b7e83301331a0b4962845ef8a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 2,
-        "f2p_total": 2,
-        "p2p_pass": 82,
-        "p2p_total": 82
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-12915",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -4719,39 +3465,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-12589",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12589.json",
-      "stdout_tail": "ps_len=2417\n[run_single] git reset --hard 895f28f9cbed817c00ab68770433170d83132d90\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:51:27.145Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12589.json\n[run_single] cleanup: git reset --hard 895f28f9cbed817c00ab68770433170d83132d90\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 66,
-        "p2p_total": 66
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-10914",
     "repo": "django/django",
     "harness": "claude-code",
@@ -4849,39 +3562,6 @@
       }
     },
     "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-12700",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12700.json",
-      "stdout_tail": "ps_len=1703\n[run_single] git reset --hard d51c50d836c5cf8db5566da17963f871be554615\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:54:33.220Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12700.json\n[run_single] cleanup: git reset --hard d51c50d836c5cf8db5566da17963f871be554615\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 77,
-        "p2p_total": 77
-      }
-    },
-    "classification": "resolved"
   },
   {
     "instance_id": "django__django-13028",
@@ -5016,39 +3696,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-12708",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12708.json",
-      "stdout_tail": " ps_len=959\n[run_single] git reset --hard 447980e72ac01da1594dd3373a03ba40b7ee6f80\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.2s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:57:36.353Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12708.json\n[run_single] cleanup: git reset --hard 447980e72ac01da1594dd3373a03ba40b7ee6f80\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 101,
-        "p2p_total": 101
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-13033",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -5148,39 +3795,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-12747",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12747.json",
-      "stdout_tail": " ps_len=927\n[run_single] git reset --hard c86201b6ed4f8256b0a0520c08aa674f623d4127\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T04:59:40.794Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12747.json\n[run_single] cleanup: git reset --hard c86201b6ed4f8256b0a0520c08aa674f623d4127\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 3,
-        "p2p_pass": 49,
-        "p2p_total": 49
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-13220",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -5247,39 +3861,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-12856",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12856.json",
-      "stdout_tail": " ps_len=467\n[run_single] git reset --hard 8328811f048fed0dd22573224def8c65410c9f2e\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:01:02.736Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12856.json\n[run_single] cleanup: git reset --hard 8328811f048fed0dd22573224def8c65410c9f2e\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 3,
-        "f2p_total": 3,
-        "p2p_pass": 78,
-        "p2p_total": 78
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-13230",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -5341,39 +3922,6 @@
         "f2p_total": 3,
         "p2p_pass": 78,
         "p2p_total": 78
-      }
-    },
-    "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-12908",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12908.json",
-      "stdout_tail": "ps_len=1048\n[run_single] git reset --hard 49ae7ce50a874f8a04cd910882fb9571ff3a0d7a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.8s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:02:05.213Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12908.json\n[run_single] cleanup: git reset --hard 49ae7ce50a874f8a04cd910882fb9571ff3a0d7a\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 2,
-        "f2p_total": 2,
-        "p2p_pass": 25,
-        "p2p_total": 25
       }
     },
     "classification": "resolved"
@@ -5478,39 +4026,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-12915",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12915.json",
-      "stdout_tail": " ps_len=886\n[run_single] git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:03:05.562Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12915.json\n[run_single] cleanup: git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 3,
-        "p2p_pass": 8,
-        "p2p_total": 8
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-10924",
     "repo": "django/django",
     "harness": "claude-code",
@@ -5610,39 +4125,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-12983",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12983.json",
-      "stdout_tail": " ps_len=381\n[run_single] git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:05:51.664Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12983.json\n[run_single] cleanup: git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 15,
-        "p2p_total": 15
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-13321",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -5740,39 +4222,6 @@
       }
     },
     "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-13028",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.4,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13028.json",
-      "stdout_tail": "ps_len=2839\n[run_single] git reset --hard 78ad4b4b0201003792bfdbf1a7781cbc9ee03539\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:07:20.600Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13028.json\n[run_single] cleanup: git reset --hard 78ad4b4b0201003792bfdbf1a7781cbc9ee03539\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 2,
-        "p2p_pass": 276,
-        "p2p_total": 276
-      }
-    },
-    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-13028",
@@ -5907,39 +4356,6 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-13033",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13033.json",
-      "stdout_tail": "ps_len=3732\n[run_single] git reset --hard a59de6e89e8dc1f3e71c9a5a5bbceb373ea5247e\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:08:56.145Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13033.json\n[run_single] cleanup: git reset --hard a59de6e89e8dc1f3e71c9a5a5bbceb373ea5247e\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 26,
-        "p2p_total": 26
-      }
-    },
-    "classification": "resolved"
-  },
-  {
     "instance_id": "django__django-13448",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -6004,39 +4420,6 @@
       }
     },
     "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-13158",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13158.json",
-      "stdout_tail": "ps_len=1176\n[run_single] git reset --hard 7af8f4127397279d19ef7c7899e93018274e2f9b\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.2s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:11:51.743Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13158.json\n[run_single] cleanup: git reset --hard 7af8f4127397279d19ef7c7899e93018274e2f9b\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 29,
-        "p2p_total": 29
-      }
-    },
-    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-13551",
@@ -6138,39 +4521,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-13220",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13220.json",
-      "stdout_tail": " ps_len=612\n[run_single] git reset --hard 16218c20606d8cd89c5393970c83da04598a3e04\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:14:21.235Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13220.json\n[run_single] cleanup: git reset --hard 16218c20606d8cd89c5393970c83da04598a3e04\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 2,
-        "f2p_total": 4,
-        "p2p_pass": 1,
-        "p2p_total": 1
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-13590",
     "repo": "django/django",
     "harness": "deepseek-harness",
@@ -6199,39 +4549,6 @@
         "f2p_total": 1,
         "p2p_pass": 140,
         "p2p_total": 145
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-13230",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.3,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13230.json",
-      "stdout_tail": " ps_len=342\n[run_single] git reset --hard 184a6eebb0ef56d5f1b1315a8e666830e37f3f81\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:15:48.580Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13230.json\n[run_single] cleanup: git reset --hard 184a6eebb0ef56d5f1b1315a8e666830e37f3f81\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 1,
-        "p2p_total": 23
       }
     },
     "classification": "patch-but-failed"
@@ -6336,39 +4653,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-13265",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13265.json",
-      "stdout_tail": "ps_len=1892\n[run_single] git reset --hard b2b0711b555fa292751763c2df4fe577c396f265\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.2s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:19:17.952Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13265.json\n[run_single] cleanup: git reset --hard b2b0711b555fa292751763c2df4fe577c396f265\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 2,
-        "f2p_total": 4,
-        "p2p_pass": 119,
-        "p2p_total": 119
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-13230",
     "repo": "django/django",
     "harness": "codex",
@@ -6433,39 +4717,6 @@
       }
     },
     "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-13315",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.1,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13315.json",
-      "stdout_tail": " ps_len=285\n[run_single] git reset --hard 36bc47069ce071e80c8129500de3b8664d2058a7\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.8s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:21:23.742Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13315.json\n[run_single] cleanup: git reset --hard 36bc47069ce071e80c8129500de3b8664d2058a7\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": true,
-        "patch_applied": true,
-        "f2p_pass": 1,
-        "f2p_total": 1,
-        "p2p_pass": 146,
-        "p2p_total": 146
-      }
-    },
-    "classification": "resolved"
   },
   {
     "instance_id": "django__django-13265",
@@ -6567,39 +4818,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-13321",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.2,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13321.json",
-      "stdout_tail": "ps_len=4422\n[run_single] git reset --hard 35b03788b0607c1f8d2b64e4fa9e1669b0907ea4\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=2.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:22:55.620Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13321.json\n[run_single] cleanup: git reset --hard 35b03788b0607c1f8d2b64e4fa9e1669b0907ea4\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 337,
-        "f2p_total": 355,
-        "p2p_pass": 0,
-        "p2p_total": 0
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-10924",
     "repo": "django/django",
     "harness": "hermes",
@@ -6697,39 +4915,6 @@
       }
     },
     "classification": "resolved"
-  },
-  {
-    "instance_id": "django__django-13401",
-    "repo": "django/django",
-    "harness": "cline-patched",
-    "model": "glm-5.3-flash",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 3.5,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13401.json",
-      "stdout_tail": "ps_len=1234\n[run_single] git reset --hard 453967477e3ddae704cd739eac2449c0e13d464c\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.2s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:26:25.668Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13401.json\n[run_single] cleanup: git reset --hard 453967477e3ddae704cd739eac2449c0e13d464c\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 32,
-        "p2p_total": 32
-      }
-    },
-    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-13321",
@@ -6831,9 +5016,9 @@
     "classification": "patch-but-failed"
   },
   {
-    "instance_id": "django__django-13447",
+    "instance_id": "django__django-13401",
     "repo": "django/django",
-    "harness": "cline-patched",
+    "harness": "codex",
     "model": "glm-5.3-flash",
     "workdir_setup": {
       "ok": true,
@@ -6844,11 +5029,77 @@
       "msg": "using template django__django-10914"
     },
     "harness_result": {
-      "harness": "cline-patched",
+      "harness": "codex",
       "returncode": 1,
-      "wall_s": 3.6,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13447.json",
-      "stdout_tail": " ps_len=390\n[run_single] git reset --hard 0456d3e42795481a186db05719300691fe2a1029\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=3.2s ==\n[stderr tail] ...{\"ts\":\"2026-10-14T05:29:03.969Z\",\"type\":\"error\",\"message\":\"Forbidden\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13447.json\n[run_single] cleanup: git reset --hard 0456d3e42795481a186db05719300691fe2a1029\n",
+      "wall_s": 7.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13401.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13401.json\n[run_single] cleanup: git reset --hard 453967477e3ddae704cd739eac2449c0e13d464c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 32,
+        "p2p_total": 32
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-13925",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-13925.json",
+      "stdout_tail": "single] git reset --hard 0c42cdf0d2422f4c080e93594d5d15381d6e955e\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-13925\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-13925.json\n[run_single] cleanup: git reset --hard 0c42cdf0d2422f4c080e93594d5d15381d6e955e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 24,
+        "p2p_total": 24
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13447",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 8.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13447.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13447.json\n[run_single] cleanup: git reset --hard 0456d3e42795481a186db05719300691fe2a1029\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -6859,6 +5110,930 @@
         "f2p_total": 1,
         "p2p_pass": 0,
         "p2p_total": 5
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13933",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-13933.json",
+      "stdout_tail": "single] git reset --hard 42e8cf47c7ee2db238bf91197ea398126c546741\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-13933\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-13933.json\n[run_single] cleanup: git reset --hard 42e8cf47c7ee2db238bf91197ea398126c546741\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 19,
+        "p2p_total": 19
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11039",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 226.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11039.json",
+      "stdout_tail": "11039\n[run_single] base_commit=d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] ps_len=879\n[run_single] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=226.0s ==\n[run_single] model_patch: 2058 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 88,
+        "p2p_total": 88
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-13964",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-13964.json",
+      "stdout_tail": "single] git reset --hard f39634ff229887bf7790c069d0c411b38494ca38\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-13964\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-13964.json\n[run_single] cleanup: git reset --hard f39634ff229887bf7790c069d0c411b38494ca38\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 35,
+        "p2p_total": 36
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13448",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13448.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13448.json\n[run_single] cleanup: git reset --hard 7b9596b974fb0ad1868b10c8c2174e10b72be403\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 7,
+        "p2p_total": 7
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14016",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14016.json",
+      "stdout_tail": "single] git reset --hard 1710cdbe79c90665046034fe1700933d038d90ad\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14016\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14016.json\n[run_single] cleanup: git reset --hard 1710cdbe79c90665046034fe1700933d038d90ad\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 13,
+        "p2p_total": 13
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-14017",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14017.json",
+      "stdout_tail": "single] git reset --hard 466920f6d726eee90d5566e0a9948e92b33a122e\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14017\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14017.json\n[run_single] cleanup: git reset --hard 466920f6d726eee90d5566e0a9948e92b33a122e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 147
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13551",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 8.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13551.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13551.json\n[run_single] cleanup: git reset --hard 7f9e4524d6b23424cf44fbe1bf1f4e70f6bb066e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 56,
+        "p2p_total": 56
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11049",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 212.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11049.json",
+      "stdout_tail": "11049\n[run_single] base_commit=17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] ps_len=706\n[run_single] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=212.3s ==\n[run_single] model_patch: 1134 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11001",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 868.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11001.json",
+      "stdout_tail": "jango__django-11001\n[run_single] base_commit=ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=867.8s ==\n[run_single] model_patch: 1779 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 118,
+        "p2p_total": 118
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-14155",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14155.json",
+      "stdout_tail": "single] git reset --hard 2f13c476abe4ba787b6cb71131818341911f43cc\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14155\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14155.json\n[run_single] cleanup: git reset --hard 2f13c476abe4ba787b6cb71131818341911f43cc\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 0,
+        "p2p_total": 89
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13590",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 8.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13590.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13590.json\n[run_single] cleanup: git reset --hard 755dbf39fcdc491fe9b588358303e259c7750be4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 145,
+        "p2p_total": 145
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-10924",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 1,
+      "wall_s": 1800.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-10924.json",
+      "stdout_tail": "] instance_id=django__django-10924\n[run_single] base_commit=bceadd2788dc2dad53eba0caae172bd8522fd483\n[run_single] ps_len=822\n[run_single] git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n[run_single] running pi ...\n== harness=pi rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-10924.json\n[run_single] cleanup: git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 1,
+        "p2p_total": 1
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11099",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 80.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11099.json",
+      "stdout_tail": "-11099\n[run_single] base_commit=d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] ps_len=764\n[run_single] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=80.2s ==\n[run_single] model_patch: 1948 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 19,
+        "p2p_total": 19
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-14238",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14238.json",
+      "stdout_tail": "single] git reset --hard 30e123ed351317b7527f632b3b7dc4e81e850449\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14238\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14238.json\n[run_single] cleanup: git reset --hard 30e123ed351317b7527f632b3b7dc4e81e850449\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 39
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14382",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14382.json",
+      "stdout_tail": "single] git reset --hard 29345aecf6e8d53ccb3577a3762bb0c263f7558d\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14382\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14382.json\n[run_single] cleanup: git reset --hard 29345aecf6e8d53ccb3577a3762bb0c263f7558d\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 1,
+        "p2p_total": 188
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13658",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13658.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13658.json\n[run_single] cleanup: git reset --hard 0773837e15bb632afffb6848a58c59a791008fa1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 181,
+        "p2p_total": 181
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-14411",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14411.json",
+      "stdout_tail": "single] git reset --hard fa4e963ee7e6876581b5432363603571839ba00c\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14411\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14411.json\n[run_single] cleanup: git reset --hard fa4e963ee7e6876581b5432363603571839ba00c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 83
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13660",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 9.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13660.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13660.json\n[run_single] cleanup: git reset --hard 50c3ac6fa9b7c8a94a6d1dc87edf775e3bc4d575\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 4,
+        "p2p_total": 6
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14534",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14534.json",
+      "stdout_tail": "single] git reset --hard 910ecd1b8df7678f45c3d507dde6bcb1faafa243\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14534\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14534.json\n[run_single] cleanup: git reset --hard 910ecd1b8df7678f45c3d507dde6bcb1faafa243\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 118
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11019",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 1700.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11019.json",
+      "stdout_tail": "dia(js=['a.js', 'b.js'])\n+        with self.assertWarnsMessage(RuntimeWarning, msg):\n+            self.assertEqual(media._js, ['b.js', 'a.js'])\n\u001b[0m\n\u001b[0m$ \u001b[0mpython tests/runtests.py forms_tests.tests.test_media -v 1 2>&1 | tail -3\nRan 19 tests in 0.008s\n\nOK\n\u001b[0m\n\n[run_single] model_patch: 7627 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 16,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14580",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14580.json",
+      "stdout_tail": "single] git reset --hard 36fa071d6ebd18a61c4d7f1b5c9d17106134bd44\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14580\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14580.json\n[run_single] cleanup: git reset --hard 36fa071d6ebd18a61c4d7f1b5c9d17106134bd44\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 49
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13710",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13710.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13710.json\n[run_single] cleanup: git reset --hard 1bd6a7a0acc11e249fca11c017505ad39f15ebf6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 62
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14608",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14608.json",
+      "stdout_tail": "single] git reset --hard 7f33c1e22dbc34a7afae7967783725b10f1f13b1\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=1.0s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14608\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14608.json\n[run_single] cleanup: git reset --hard 7f33c1e22dbc34a7afae7967783725b10f1f13b1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 4,
+        "p2p_pass": 0,
+        "p2p_total": 394
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13757",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13757.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13757.json\n[run_single] cleanup: git reset --hard 3f140dde51c0fe6c350acb7727bbe489a99f0632\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 76,
+        "p2p_total": 76
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-14667",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14667.json",
+      "stdout_tail": "single] git reset --hard 6a970a8b4600eb91be25f38caed0a52269d6303d\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14667\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14667.json\n[run_single] cleanup: git reset --hard 6a970a8b4600eb91be25f38caed0a52269d6303d\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 29
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13768",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 7.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13768.json",
+      "stdout_tail": "asoning depth for everyday tasks\"}, {\"effort\": \"high\", \"description\": \"Greater reasoning depth for complex problems\"}], \"supports_parallel_tool_calls\": true, \"shell_type\": \"shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13768.json\n[run_single] cleanup: git reset --hard 965d2d95c630939b53eb60d9c169f5dfc77ee0c6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 18,
+        "p2p_total": 18
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14672",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14672.json",
+      "stdout_tail": "single] git reset --hard 00ea883ef56fb5e092cbe4a6f7ff2e7470886ac4\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14672\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14672.json\n[run_single] cleanup: git reset --hard 00ea883ef56fb5e092cbe4a6f7ff2e7470886ac4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 168,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14730",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14730.json",
+      "stdout_tail": "single] git reset --hard 4fe3774c729f3fd5105b3001fe69a70bdca95ac3\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.8s ==\n[stderr tail] ...deepseek-harness run error: session \"django__django-14730\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-14730.json\n[run_single] cleanup: git reset --hard 4fe3774c729f3fd5105b3001fe69a70bdca95ac3\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 119
       }
     },
     "classification": "patch-but-failed"

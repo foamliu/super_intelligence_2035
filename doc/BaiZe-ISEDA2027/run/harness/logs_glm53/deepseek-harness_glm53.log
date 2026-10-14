@@ -715,3 +715,36 @@ Serial kimi eval: harness=deepseek-harness model=glm-5.3-flash
 
 [RUN] deepseek-harness on django__django-13925 ...
   [EVAL] deepseek-harness on django__django-13925 ...
+  => django__django-13925 | deepseek-harness | patch-but-failed
+
+############################################################
+# [66/300] deepseek-harness x django__django-13933
+############################################################
+
+============================================================
+[SETUP] django__django-13933 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13933 ...
+  [EVAL] deepseek-harness on django__django-13933 ...
+  => django__django-13933 | deepseek-harness | resolved
+
+############################################################
+# [67/300] deepseek-harness x django__django-13964
+############################################################
+
+============================================================
+[SETUP] django__django-13964 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13964 ...
+  [EVAL] deepseek-harness on django__django-13964 ...
+  => django__django-13964 | deepseek-harness | patch-but-failed
+
+############################################################
+# [68/300] deepseek-harness x django__django-14016
+############################################################
+
+============================================================
+[SETUP] django__django-14016 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14016 ...
+  [EVAL] deepseek-harness on django__django-14016 ...

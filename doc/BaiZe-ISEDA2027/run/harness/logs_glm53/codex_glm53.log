@@ -605,3 +605,33 @@ Serial kimi eval: harness=codex model=glm-5.3-flash
 
 [RUN] codex on django__django-13401 ...
   [EVAL] codex on django__django-13401 ...
+  => django__django-13401 | codex | resolved
+
+############################################################
+# [56/300] codex x django__django-13447
+############################################################
+
+============================================================
+[SETUP] django__django-13447 for codex
+
+[RUN] codex on django__django-13447 ...
+  [EVAL] codex on django__django-13447 ...
+  => django__django-13447 | codex | patch-but-failed
+
+############################################################
+# [57/300] codex x django__django-13448
+############################################################
+
+============================================================
+[SETUP] django__django-13448 for codex
+
+[RUN] codex on django__django-13448 ...
+  [EVAL] codex on django__django-13448 ...
+  => django__django-13448 | codex | patch-but-failed
+
+############################################################
+# [58/300] codex x django__django-13551
+############################################################
+
+============================================================
+[SETUP] django__django-13551 for codex

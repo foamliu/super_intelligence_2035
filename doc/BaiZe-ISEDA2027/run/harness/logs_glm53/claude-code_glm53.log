@@ -120,3 +120,14 @@ Serial kimi eval: harness=claude-code model=glm-5.3-flash
 [SETUP] django__django-11039 for claude-code
 
 [RUN] claude-code on django__django-11039 ...
+  [EVAL] claude-code on django__django-11039 ...
+  => django__django-11039 | claude-code | resolved
+
+############################################################
+# [12/300] claude-code x django__django-11049
+############################################################
+
+============================================================
+[SETUP] django__django-11049 for claude-code
+
+[RUN] claude-code on django__django-11049 ...
