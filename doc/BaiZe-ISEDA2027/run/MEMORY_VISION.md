@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）**：✅ ArmC 训练已完成(step 154500, C1=0.6668, 22.7h)。✅ **eval chain 全部 4/4 完成**：① **ProtB 68.25±0.01%**（Δ=+1.20pp）② **ProtA 59.41%**（Δ=+2.71pp）③ **Zero-shot 46.17%/77.43%**（Δ=+5.53pp/+4.79pp）④ **k-NN k=20 44.88%**（Δ=+2.53pp, k=5: 41.85%, k=10: 44.24%）。**4 指标全部提升**。严格判据 NULL（ProtB Δ=1.20pp < 1.5pp），但 zs/ProtA/k-NN 均显著提升（+2.5~5.5pp）。✅ 交付：EXPERIMENTS_VISION.md 新节 + `reports/report_vision_merge3ds_result_zh.html`。✅ MLLM bridge 5/5 CPU PASSED。GPU: 8×H100 全空闲。📦 体积：TASK=26.6KB✅ / MEMORY=30.0KB✅（归档 3 条→daily）。
+> 🆕 **2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）**：✅ 所有运维指令均已完成：ArmC merge3ds 训练+eval chain 4/4 ✅（ProtB 68.25±0.01% / ProtA 59.41% / zs 46.17%/77.43% / k-NN 44.88%）· MLLM bridge 5/5 CPU PASSED ✅（commit 03c36f5f, 本轮再验仍 5/5 PASSED, max abs diff=0.00e+00）· 报告已交付 ✅。GPU: 8×H100 全空闲。git pull 失败（网络不可达），无新运维指令。📦 体积：TASK=26.6KB✅ / MEMORY=30.0KB✅。下一步：等运维新指令或 GPU 空窗期跑 MLLM bridge GPU smoke test。
+> 📦 2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp), 报告交付, MLLM bridge 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~02:09（wake #90 ArmC eval chain 进展）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB seed 0 streaming 151/294, eval chain 运行中, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~01:16（wake #88 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 154,080(99.7%), C1=0.6656, ETA~4min, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~00:41（wake #87 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 150,900(97.6%), C1=0.6945, CPU 5/5 PASSED。需要时再读。
