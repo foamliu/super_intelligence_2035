@@ -1,6 +1,16 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看）
+
+> 以下为**固定口径**，除非运维再下新令，否则**不得更改**——尤其写进报告/论文时，逐字遵守。
+
+| 项 | 口径 | 依据（源码/台账） |
+|:--|:--|:--|
+| **seq_length** | **4094（非 4096）** | `baize_p8_train.sh:30` / `baize_p8_adamw_train.sh:33` = `SEQ=4094`；`EXPERIMENTS_PRETRAIN_2B.md:4`「固定口径：seq=4094」；`MEMORY_PRETRAIN_2B.md:183`「seq_length=4094（固定口径，**非 4096**）；改 seq 必须同时改 provider（recipe 已穿透）」 |
+
+> ⚠️ **论文现有 `4096` 系错误残留，须统一为 4094**，已知 3 处：`BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex:35`（packed to 4096）· `4_llm_pretrain.tex:42`（proxy at seq 4096）· `5_llm_posttrain.tex:14`（4096-token window of tab:config，而 tab:config 实为 4094）。🚫 今后报告/论文一律写 4094。
+
 ### 🆕 运维指令 · 2026-10-14（📝 训练空窗期审视论文 · LLM 侧 · 出中文改进意见 HTML）· 用户直令
 
 > **用户令（2026-10-14）**：「安排 pretrain agent 在训练进行期间，审视论文（BaiZe-ISEDA2027），将改进意见写入 html 报告（中文版）。」
@@ -10,7 +20,7 @@
 **① 审视对象**：论文树 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`，**侧重 LLM 侧章节**：`ISEDA2027/0_abstract.tex` · `1_intro.tex` · `2_related_work.tex` · `3_architecture.tex` · `4_llm_pretrain.tex` · `5_llm_posttrain.tex` · `9_conclusion.tex` + `main.tex` + `reference.bib`。
 
 **② 审视维度（每条意见必须具体，贴 `文件:行号` 或具体数字，🚫 空泛）**：
-1. **架构数字一致性**：2.22B（`sum(numel())=2,220,268,032`）· 56 层含 4 层 attention · seq 4096 · vocab 129,281 · tokenizer DeepSeek-V4.1-Flash —— 与 `EXPERIMENTS_2B.md` / `EXPERIMENTS_PRETRAIN_2B.md` 是否一致；有无 `4094` 残留（口径应统一 4096）。
+1. **架构数字一致性**：2.22B（`sum(numel())=2,220,268,032`）· 56 层含 4 层 attention · **seq 4094（非 4096，见本文件「最佳实践/硬口径」）** · vocab 129,281 · tokenizer DeepSeek-V4.1-Flash —— 与 `EXPERIMENTS_2B.md` / `EXPERIMENTS_PRETRAIN_2B.md` 是否一致；有无 `4096` 残留（口径应统一 4094）。
 2. **预训练结果回填**：val loss@5000=2.7647 · final loss@20000=2.2054 · 3-seed 2.6739±0.0469 · LR 1e-3 / WSD / 退火 86:10:4 · 预算 ~85 GPU·h —— 是否已回填、有无陈旧值。
 3. **混合架构优势表**（dense vs hybrid：参数 −11.6% / loss −0.12 / decode 10.3×）——decode 10.3× 的「测量口径限定」（Megatron 直驱、生产栈会收窄）是否仍保留。
 4. **训练量极小**（655M token / 0.036% 数据池）是否如实声明为「代理实验」，未当收敛值引用。
