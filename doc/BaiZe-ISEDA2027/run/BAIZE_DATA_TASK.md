@@ -7,6 +7,20 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-14（💾 新增下载落盘位置 `/nas_env`）· 用户直令 · 常驻
+
+> **用户令（2026-10-14）**：「告知 data，以后数据也可以下载到 `/nas_env`，目录仍然是 `app.e0031982/datasets`。」
+
+**① 新增可落盘位置（常驻，与现有并列）**：`/nas_env/app.e0031982/datasets/`。落盘路径形式仍是 `<盘>/app.e0031982/datasets/<publisher>/<name>/`。
+
+**② 现有落盘位置白名单（更新后）**：
+- ✅ `/nas_inference/app.e0031982/datasets/`
+- ✅ `/nas_user/<用户>/datasets/`（或 `/nas_user/app.e0031982/datasets/`）
+- ✅ **`/nas_env/app.e0031982/datasets/`（新增）**
+- 🚫 `/nas_train` 仍不放（已 ~85%）。
+
+**③ 纪律（不变）**：下载前 `df -h` 确认目标盘已挂载 + 剩余空间 ≥ 预计总量；`setsid` 守护 + 断点续传；纳入「死/僵/速率趋零即 kill+restart」看护；实际落盘路径写进心跳；commit 前缀 `data dl:`；任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-13（⏸ 暂停 85M + 📥 下载 HF 图文对 TOP-5 中「未下载」的 4 个 · 落 `/nas_inference` 或 `/nas_user` 的 datasets（🚫 不放 `/nas_train`））· 用户直令 · 最高优先
 
 > 用户令（2026-10-13）：「data：暂停 85M，开始下载推荐的 TOP-5 中还没有下载的其它 4 个数据集。不要放在 `/nas_train`，放在 `/nas_user` 或 `/nas_inference`，我的 datasets 目录下。」
