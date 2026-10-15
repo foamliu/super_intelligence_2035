@@ -2,12 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **🏁 P-8 AdamW 全部完成 + F2 论文回填完成**（stable 9441步 + decay fix 1149步 = 10590步, ~44.4B tokens, ~412 GPU·h, final loss 1.357）。✅ F2: 0_abstract.tex 加 production run 句, 4_llm_pretrain.tex 新增 §Full-Scale Production Training + Data 节 base "is being prepared"→"serves as", 13pp 0-error ✅。✅ 0 NaN, 0 skipped 全程。✅ 8 GPU 已释放。✅ 脚本 SEQ 已改 4096。
-  - PHASE: **p8_complete_f2_done** — P-8 + F2 全部完成。P-8: 10590步/44.4B tok/412 GPU·h/final loss 1.357。F2: 论文 3 处修改(abstract+data+new subsection), 13pp 0-error 0-undefined-ref。final ckpt: `p8_adamw_decay/checkpoints/iter_0001149`。🚫绝不 kill watchdog loop(PID 1391466)。
+- STAGE: **🏁 P-8 完成 + F2 完成 + 14-benchmark eval 完成 + Xmodel scaling 对比进行中**。P-8: 10590步/44.4B tok/final loss 1.357。14-dataset eval: CS8 Avg=49.21%, Complex Avg=6.81%(BBH 14.36%, MMLU 24.28%, GSM8K 1.59%)。Xmodel-2.5 step_2000(26.4B) CS=46.12%, step_4000(52.8B) CS=49.11%。Scaling report 已生成。下载进行中：Xmodel-2.5 final(41%), step_6000(34%), Xmodel-2 final(29%)。
+  - PHASE: **xmodel_scaling_eval** — P-8 14-dataset eval ✅ 完成。Xmodel-2.5 step_2000/4000 CS8 ✅。step_4000 Complex 6 运行中(MMLU likely only task to complete)。3 个模型下载进行中(wget via hf-mirror)。final ckpt: `p8_adamw_decay/checkpoints/iter_0001149`。🚫绝不 kill watchdog loop(PID 1391466)。
   - ERROR_COUNT: 0
-  - 轮询状态：30min 长轮询。**8 GPU 全空闲**（.29, 0% util, 0 MiB, 2026-10-15 07:17 核验）。P-8 ✅ + F2 ✅ — 全部完成。📦 体积：TASK=28.0KB ✅ / MEMORY=23.7KB ✅ ≤32KB（本轮无归档）。→ **下一步**：等运维新指令。所有待办（P-8/v4报告/F2）均已闭合。
-  - 🩺 **本唤醒推进 = #449（2026-10-15 ~07:51, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）**：① git fetch → 0 ahead/0 behind（仅 harness 文件未提交, 非本线）；② GPU .29 全 0%/0MiB ✅ compute_apps=0；③ loop PID 1391466 运行中 ✅；④ 体积 TASK=28.0KB / MEMORY=23.7KB 均 ≤32KB ✅；⑤ 运维指令区全为归档指针，无新活跃指令。→ **下次唤醒**：继续等运维新指令。WAITING=1。
-  > 📦 **[已归档] #448 流水（2026-10-15 ~07:17, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
+  - 轮询状态：GPU 0,1,3,4,5,6,7 用于 Xmodel step_4000 eval；GPU 2 空闲。📦 体积：TASK=28.0KB ✅ / MEMORY ~24KB ✅。→ **下一步**：等下载完成后运行 Xmodel final eval；收集更多 Xmodel history checkpoints；更新 scaling report。
+  - 🩺 **本唤醒推进 = #450（2026-10-15 ~15:30, 📊 14-benchmark eval + Xmodel scaling 对比）**：① P-8 final 14-dataset eval ✅ 全部完成(CS Avg=49.21%, CX Avg=6.81%, BBH=14.36%); ② P-8 intermediate CS8 ✅ 5 ckpt 收集(4.4B→44.0%, 13.2B→47.8%, 22B→48.6%, 30.8B→49.5%, 39.6B→49.3%); ③ Xmodel-2.5 step_2000 CS8 ✅(46.12%)+MMLU ✅(26.72%); ④ Xmodel-2.5 step_4000 CS8 ✅(49.11%); ⑤ scaling_report.html + SVG + JSON 已生成; ⑥ 下载进行中: Xmodel-2.5 final 41%, step_6000 34%, Xmodel-2 final 29%; ⑦ 修复 baize_p8_eval_collect.py(exact_match,flexible-extract + exact key match优先); ⑧ 创建 baize_scaling_report.py。→ **下次唤醒**：检查下载完成→运行 final eval；收集 step_4000 MMLU；更新 report。WAITING=1。
+  > 📦 **[已归档] #449 流水（2026-10-15 ~07:51, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #446 流水（2026-10-15 ~06:12, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #444 流水（2026-10-15 ~05:08, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
   > 📦 **[已归档] #442 流水（2026-10-15 ~04:04, 🔄 keepalive 心跳·状态无变化·8 GPU 全空闲·无新运维指令）→ daily-memories/2026-10-15.md；结论：keepalive, 无变化。需要时再读。**
