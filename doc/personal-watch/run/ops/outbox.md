@@ -1183,3 +1183,70 @@ VM-0-6-ubuntu
   HEAD=ca264791  ops(inbox): RUN_ID 12 = 加固版中继「端到端 + 冻�
 === DONE ===
 ```
+
+---
+
+## RUN_ID 13 · 2026-10-15 16:44:30 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 13 · news 停摆诊断 $(date '+%F %T') ==="; hostname; date '+%F %T'
+echo "=== [1] watch_news loop 进程 ==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'watch_news_loop' | grep -v grep | cut -c1-120
+echo "=== [2] 心跳文件 ==="
+ls -la --time-style=+%F_%H:%M:%S /tmp/watch_news_loop.hb 2>/dev/null || echo "HB 不存在"
+echo "=== [3] 日志尾 ==="
+tail -30 /tmp/watch_news_loop.log 2>/dev/null | cut -c1-160
+echo "=== [4] 错误探针 ==="
+grep -cE 'Forbidden|No such file|Token|额度用完|error:' /tmp/watch_news_loop.log 2>/dev/null
+echo "=== [5] ops_relay 进程 ==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay' | grep -v grep | cut -c1-120
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 13 · news 停摆诊断 2026-10-15 16:44:30 ===
+VM-0-6-ubuntu
+2026-10-15 16:44:30
+=== [1] watch_news loop 进程 ===
+2933676 2933674  351492 bash watch_news_loop.sh
+=== [2] 心跳文件 ===
+-rw-rw-r-- 1 liuyang liuyang 11 2026-10-15_16:40:09 /tmp/watch_news_loop.hb
+=== [3] 日志尾 ===
+[loop] 2026-10-15 12:05:12 wake up, invoking cline ... [mode=07:00,09:30,12:00,15:00,18:00,21:30]
+watch_news_loop.sh: line 211: cline: command not found
+[loop] 2026-10-15 12:05:12 cline returned (exit 127); log=/tmp/watch_news_cline_last.log
+[loop] 2026-10-15 12:05:12 ⚠️ 检测到 cline 失败/报错 → 本轮强制短睡重试（不睡长觉）
+[loop] 2026-10-15 12:05:12 🛑 已达本时窗重试上限（1）→ 不再重试（防死循环烧 token），等下一个时窗
+[loop] 2026-10-15 12:05:12 ⏰ 定时模式：下次唤醒 = 2026-10-15 15:00:00 CST（174min 后；每天 6 次 · 时窗 07:00,09:30,12:00,15:00,18:00,21:30�
+[loop] 2026-10-15 12:35:12 💤 等时窗中（剩余 144min；未调 cline = 零 token）
+[loop] 2026-10-15 13:05:12 💤 等时窗中（剩余 114min；未调 cline = 零 token）
+[loop] 2026-10-15 13:35:12 💤 等时窗中（剩余 84min；未调 cline = 零 token）
+[loop] 2026-10-15 14:05:12 💤 等时窗中（剩余 54min；未调 cline = 零 token）
+[loop] 2026-10-15 14:35:12 💤 等时窗中（剩余 24min；未调 cline = 零 token）
+[loop] 2026-10-15 15:00:00 wake up, invoking cline ... [mode=07:00,09:30,12:00,15:00,18:00,21:30]
+watch_news_loop.sh: line 211: cline: command not found
+[loop] 2026-10-15 15:00:00 cline returned (exit 127); log=/tmp/watch_news_cline_last.log
+[loop] 2026-10-15 15:00:00 ⚠️ 检测到 cline 失败/报错 → 本轮强制短睡重试（不睡长觉）
+[push] 2026-10-15 15:00:00 push interval reached, syncing ...
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-15 15:00:09 ⚠️ cline 失败/报错 → 本时窗内重试 1/1（sleep 300s 后立刻重试）
+[loop] 2026-10-15 15:05:09 wake up, invoking cline ... [mode=07:00,09:30,12:00,15:00,18:00,21:30]
+watch_news_loop.sh: line 211: cline: command not found
+[loop] 2026-10-15 15:05:09 cline returned (exit 127); log=/tmp/watch_news_cline_last.log
+[loop] 2026-10-15 15:05:09 ⚠️ 检测到 cline 失败/报错 → 本轮强制短睡重试（不睡长觉）
+[loop] 2026-10-15 15:05:09 🛑 已达本时窗重试上限（1）→ 不再重试（防死循环烧 token），等下一个时窗
+[loop] 2026-10-15 15:05:09 ⏰ 定时模式：下次唤醒 = 2026-10-15 18:00:00 CST（174min 后；每天 6 次 · 时窗 07:00,09:30,12:00,15:00,18:00,21:30�
+[loop] 2026-10-15 15:35:09 💤 等时窗中（剩余 144min；未调 cline = 零 token）
+[loop] 2026-10-15 16:05:09 💤 等时窗中（剩余 114min；未调 cline = 零 token）
+[loop] 2026-10-15 16:35:09 💤 等时窗中（剩余 84min；未调 cline = 零 token）
+=== [4] 错误探针 ===
+36
+=== [5] ops_relay 进程 ===
+1160036 1160035  721731 watch_ops_relay.sh ops_relay.sh
+=== DONE ===
+```
