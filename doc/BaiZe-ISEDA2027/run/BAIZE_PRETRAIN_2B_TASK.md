@@ -18,6 +18,19 @@
 > - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
 > - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
 
+### 🆕 运维指令 · 2026-10-15（🌐 下载 proxy 口径：92.23→hf-mirror / 92.25→hf.co · 慢则切换）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「pretrain 主要看下载速度。如果下载太慢，可以考虑用 92.25 这个代理，同时直连 hf.co。总结：92.23 用 hf-mirror；92.25 用 hf.co。」
+
+**① proxy 口径（常驻，下载一律按此）**：
+- `http://172.19.92.23:13128`（92.23）→ 配 **hf-mirror**（`HF_ENDPOINT=https://hf-mirror.com`）。
+- `http://172.19.92.25:13128`（92.25）→ **直连 hf.co**（🚫 不设 HF_ENDPOINT mirror）。
+
+**② 当前 Xmodel decay final 下载**：
+- 现走 hf-mirror（final 41%），**以实测速度为准**；太慢即切 92.25 + 直连 hf.co 续传（`hf download` 断点续传，无需从头）。
+
+**③ 纪律**：🚫 不重训 BaiZe；下载与 data 线错峰 IO、磁盘别超；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（📥 下载 Xmodel-2/2.5 decay 后 final 实测 14 集 · 眼见为实验证 decay 提升）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「你可以下载 decay 后的 Xmodel-2/2.5 看一看嘛，眼见为实。」
