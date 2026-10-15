@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）**：✅ **open_clip_baize.py** — `open_clip.create_model_and_transforms('baize-vit-512', pretrained=vision.pt)` 加载成功，`encode_image()` 输出 `[B, 196, 512]`，277/277 keys matched。✅ **export_llava_ov_hf.py** — 导出 HF 目录（config.json + preprocessor_config.json + open_clip_config.json + chat_template.json + pytorch_model.bin），`AutoConfig.from_pretrained()` 读取 `image_token_index=151655` / `vision_feature_select_strategy=default` ✅，`CLIPImageProcessor` 加载 ✅。✅ **test_open_clip_baize.py** — Test 1 (open_clip load + forward) PASSED, Test 2 (HF dir + AutoConfig) PASSED, Test 3 (E2E ai2d) DEFERRED (GPU)。🔧 **关键修正**：`embed_dim=768`（非 512，head.proj 是 [768,512]）；`heads=8`（非 16）；`configuration_baize_vision.py` 加 `CONFIG_MAPPING.register("baize_vision", ...)` 自动注册；`num_patches` 是 property 不可写入 config dict。🔄 **precache 9/17**（seedbench 下载中，PID 2430411）。下一步：precache 完成→limit50 8卡→全量 17 集→E2E ai2d 验证→ArmA retrain。📦 体积：TASK=32.6KB / MEMORY≈31KB。
+> 🆕 **2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败处理 + TASK 归档 · wake #106）**：🔄 **precache 10/17**（pope 处理中, PID 2430411, ~2.2h）。✅ 旧缓存复用完成（5 hub + 6 datasets 已在 /nas_env）。❌ **seedbench FAILED**：`ConnectionError: cas-server-direct.xethub.hf.co`（xet 协议超时 1000s）→ 已建 `retry_failed_precache.sh`（`HF_HUB_ENABLE_HF_TRANSFER=0` 禁 xet）。🔧 **缓存路径修复**：发现 lmms-eval 自动将 NFS 上的 `HF_DATASETS_CACHE` 重定向到 `/tmp`（仅 38G），8 卡评测会撑满 → 已在 `launch_lmms_eval.sh` / `run_precache.sh` / `precache_benchmarks.py` 添加 `LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache`（/data 6.8T 本地盘），绕过 /tmp 重定向。📦 **TASK 归档**：5 个已闭合运维块 → ARCHIVE_OPERATOR_VISION.md，TASK 35.9KB→26.5KB。下一步：precache 完成→复制 /tmp 缓存→/data→retry seedbench→limit50 8卡→全量 17 集。📦 体积：TASK=26.5KB / MEMORY≈31KB（归档 8.8KB → ARCHIVE_OPERATOR_VISION.md）。
+> 📦 2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU), embed_dim=768, image_token_index=151655。需要时再读。
 > 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
 > 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
@@ -36,10 +37,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集：precache 9/17 + open_clip/LLaVA-OV wrapper ✅（wake #105）**：Stage-1/1.5/2 全 ✅。open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU)。precache 运行中 (PID 2430411)。下一步：precache 完成→limit50 8卡→全量 17 集→E2E ai2d GPU 验证→ArmA retrain。 |
+| PHASE | 🔄 **lmms-eval 17 集：precache 10/17 + 缓存路径修复 ✅（wake #106）**：Stage-1/1.5/2 全 ✅。open_clip/LLaVA-OV wrapper ✅ (test 2/2 CPU)。precache 运行中 (PID 2430411, pope 处理中)。seedbench xet 失败→retry 脚本就绪。缓存路径 /tmp→/data 修复完成。下一步：precache 完成→复制缓存→retry seedbench→limit50 8卡→全量 17 集→E2E ai2d GPU→ArmA retrain。 |
 | ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-15 21:50 (wake #104)**: ❌ limit50 8卡评测 21:24 崩(磁盘满)。✅ 修复: HF_HOME→/nas_env(9.9T), 新建 precache_benchmarks.py 单进程预建缓存, launch_lmms_eval.sh 加磁盘检查。✅ Stage-2 step3500 确认完整(adapter 528MB+projector 15.7MB, loss=1.4853, train.log 末行=Complete)。🔄 预建缓存运行中(mmbench ✅, mmmu 下载中)。 |
+| 更新 | **2026-10-16 00:40 (wake #106)**: 🔄 precache 10/17 (pope 处理中, PID 2430411)。❌ seedbench FAILED (xet ConnectionError) → retry_failed_precache.sh 就绪 (HF_HUB_ENABLE_HF_TRANSFER=0)。🔧 缓存路径修复: LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache 绕过 lmms-eval NFS→/tmp 重定向 (38G→6.8T)。📦 TASK 归档 5 块 35.9KB→26.5KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）

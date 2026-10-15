@@ -18,7 +18,9 @@ export HF_HOME=/nas_env/app.e0031982/hf_home
 export HF_DATASETS_CACHE=$HF_HOME/datasets
 export HF_HUB_CACHE=$HF_HOME/hub
 export TRANSFORMERS_CACHE=$HF_HOME/transformers
-mkdir -p "$HF_DATASETS_CACHE" "$HF_HUB_CACHE" "$TRANSFORMERS_CACHE"
+# lmms-eval cache on LOCAL disk (/data, 6.8T) — avoids NFS→/tmp redirect (only 38G)
+export LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache
+mkdir -p "$HF_DATASETS_CACHE" "$HF_HUB_CACHE" "$TRANSFORMERS_CACHE" "$LMMS_EVAL_DATASETS_CACHE"
 
 LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
 

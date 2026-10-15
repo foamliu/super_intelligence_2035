@@ -27,105 +27,19 @@
 - **先定口径并在回报里写明**（这三项决定与官方 OV 的可比性）：① **分辨率**：**224 单块（推荐先跑通）** 还是 **384 + anyres**；② `image_token_index` 取值；③ 视觉特征取**哪一层**（官方 OV = SigLIP 倒数第二层）。
 - 🚫 **纪律**：报告里**必须标注与官方 LLaVA-OV 的 pipeline 差异**；**未做到 anyres 同构前，不得宣称与官方 LLaVA-OV 数字同框**。
 
-### 🆕 运维指令 · 2026-10-15 20:0x（🔬 **评测实况核查结论 + 4 项待办**）· 用户直令 · 最高优先
+> 📦 §运维指令 · 2026-10-15 20:0x（🔬 评测实况核查结论 + 7 项待办）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 全部 7 项已处置（提速/小样/数据/git/Stage-2/耗时归因/git push）。📌 口径：连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co。需要时再读。
 
-> **来源**：运维用 `ops` 中继（RUN_ID 93）在 `.29/.12` 机上**实测**，非推测。请按下面逐项处理并在下一轮回报。
->
-> **实测事实**：
-> 1. **.12 的 8×H100 全空闲**（0 MiB / 0%）——**当前没有评测/训练在跑**；`mllm_eval_results/` **为空**⇒ **完整 17 集评测从未启动**（只做过 realworldqa `--limit 50` 冒烟）。
-> 2. **Stage-2 只有 `step1000`**（mtime 15:45），而 `run_lmms_eval.py` 默认 `--step 3500` ⇒ 按默认跑会直接 `ERROR: Stage-2 checkpoint not found`。**step1000 之后是停了还是继续？** 必须澄清。
-> 3. **proxy 实测可用**：`.29` 上 `curl https://huggingface.co` → **直连 200 / 92.25 → 200**（92.23 无响应）；HF API 200、datasets 307 ⇒ **13:52 的 proxy 口径已验证通过**。
-> 4. 但 **`.12` 的 loop 环境里没有任何 proxy 变量**（`env|grep -i proxy` 空），而 `.12` **直连 github:443 不通** ⇒ 日志里 `push FAILED … Network is unreachable`；且**共享工作副本 `.git/index.lock` 被占** ⇒ `fatal: Unable to write new index file`、`nothing to commit` —— **这就是 12:15→18:29 有 6 小时看不到提交的原因（不是没干活，是推不上来）**。
-> 5. **17 集基准数据基本没下**：HF 缓存里只有 `real_world_qa` 一个 lmms 锁文件，其余是文本数据集 ⇒ 真跑 17 集时**首次下载是大头**。
-> 6. `run_lmms_eval.py` 仍是 **`batch_size=1`、单卡、无并行** ⇒ **17:15「大 batch + 多 GPU」提速令尚未落实**（这才是"评测会跑很久"的直接原因）。
+> 📦 §运维指令 · 2026-10-15 21:35（🔧 limit50 崩因=磁盘满 → 换盘+预建缓存+复跑）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ HF_HOME 已迁 /nas_env(9.9T)，precache_benchmarks.py 单进程预建缓存运行中(8/17 done)，磁盘检查已加入 launcher。需要时再读。
 
-**① 提速落实（必须）**：`batch_size` 调到实测不 OOM 的最大值（给 OOM 边界），**多卡**（lmms-eval 官方 `accelerate`/`parallelize` 用法，自行 web search 确认），**17 集一次命令行**（🚫 不许逐个 task 串行）。回报：实测 **samples/s、显存峰值、17 集 ETA**。
+> 📦 §运维指令 · 2026-10-15（⚡ lmms-eval 提速：17 集一次跑+大 batch+多 GPU）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ run_lmms_eval.py 已实现 17 集一次命令行+batch_size 可调+8卡 multi-GPU。需要时再读。
 
-**② 先小样再全量**：每集 `--limit 20~50` **17 集全过一遍**（验证 adapter 对每种 task 的输出解析都对），再放全量；避免又出现"某任务恒输出 A"这类只在大批量才暴露的问题。
-
-**③ 数据预下载**：用 `https_proxy=92.25` 直连 hf.co 预下载 17 集（🚫 勿用 hf-mirror）；回报**清单 + 总体积 + 预计耗时**。下载与 `.12` 上 data 线的 `hf download` 错峰。
-
-**④ 修 git 通道（否则进度永远推不出来）**：把 `https_proxy=http://172.19.92.25:13128` 写进 **loop/launcher 的环境**（如 `~/.bashrc` 或启动脚本），让 **git 也走 proxy**；并规避 `.git/index.lock` 争用（提交前重试/错峰，🚫 不要 `git add -A`）。回报：`git push` 成功证据。
-
-**⑤ Stage-2 澄清**：若 step1000 即中断，给出**原因 + 续训计划**；若已训完，说明 ckpt 实际路径，并**对齐 runner 的 `--step`**（勿再用默认 3500 猜）。
-
-**⑥ 回报形式**：写进 `MEMORY_VISION.md` 状态头 + 当日 `daily-memories-vision/`，含一节 **「评测耗时归因」**（训练链 / adapter 适配 / 数据通道 / generate 输出 bug / git 推送，各占多少小时），便于对用户解释。⚠️ 任务书已 ~32KB，本块执行后**自行归档旧块**到 `*_ARCHIVE`。
-
-**⑦ ✅ git push 已修（2026-10-15 20:0x，运维直改 `.12`）**：**根因** = `.12` **直连 github 不通**（实测 `000`），而 git 全局/仓库**都没有 proxy 配置**、loop 环境也无 proxy → `push FAILED … Network is unreachable`。
-**已修**：在 `.12` 写入 `git config --global http.proxy/https.proxy = http://172.19.92.23:13128`（**git 配置层，不是 env** —— 因为你调 cline 时会 `env -u https_proxy` 剥掉环境变量），`git ls-remote origin HEAD` 已验证通过。
-⇒ **不要再把时间花在排查 git/push 上**；下一轮 `git_push_if_needed` 应直接成功。若仍失败，回报 `git fetch`/`git push` 的**原文报错**。
-> 📌 口径：**连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co（🚫 不用 hf-mirror）**。见 `run/ops/README.md §7`。
-
-### 🆕 运维指令 · 2026-10-15 21:35（🔧 **limit50 评测崩因 = 磁盘满** → 换 HF 缓存盘 + 预建缓存 + 复跑）· 运维实测 · 最高优先
-
-> **实测事实（RUN_ID 100/101/102，非推测）**
-> - 20:26 启动的 8 卡 `--limit 50` 评测 **21:24:28 崩**：`OSError: [Errno 28] No space left on device`（pyarrow 写 datasets 生成时）→ `DatasetGenerationError` → rank1 退出 1 → `ChildFailedError`；**8 卡随后全空闲、无任何结果 JSON**。
-> - `.12` 磁盘：`/home` **196G（140G 用 / **47G 空闲** / 75%）** ← **HF 缓存默认就落这儿**（`~/.cache/huggingface` = datasets 11G + hub 12G = **23G**）；`/` 352G free；`/tmp` 69G free；**`/data` 6.8T free**；**`/nas_env` 9.9T free**。
-> - **判定**：8 个 rank 同时构建/写 datasets 缓存 ⇒ 在只剩 47G 的 `/home` 上形成写入突发 ⇒ 瞬时写满（崩后临时文件被清理，所以现在再查并不"满"）。
->
-> **① 换缓存盘（必做）**：HF 缓存从 `~/.cache`（/home，仅 196G）迁到**大盘**，且**所有 rank 共用**：
-> `export HF_HOME=/nas_env/app.e0031982/hf_home`（或 `/data/app.e0031982/hf_home`）、`export HF_DATASETS_CACHE=$HF_HOME/datasets`、`export HF_HUB_ENABLE_HF_TRANSFER=1`，下载/加载一律走 proxy `92.25`。
->
-> **② 先单进程预建缓存（必做）**：**先用单卡/单进程**把 17 集的 dataset cache 建好（或 `--limit 1` 单卡过一遍），**再**开 8 卡 multi-GPU —— 避免 8 rank 重复写同一份缓存。
->
-> **③ 资源看护**：开跑前 `df -h /home $HF_HOME`（要求可用 ≥50G）；跑中每隔几分钟看一眼；wrapper 里加低余量告警。
->
-> **④ 失败必须落原文**：把 `No space left on device` / `ChildFailedError` 这类**原文报错**写进 `MEMORY_VISION.md`（本次「GPU 全空闲 + 无结果 JSON」就是它）。
->
-> **⑤ 复跑顺序**：`--limit 50` × 17 集（验证）→ 全量 17 集 → 结果表 + 中文 HTML 报告。
-
-### 🆕 运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令 · 最高优先
-
-> **用户令（2026-10-15）**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」
-
-**① 评测提速（lmms-eval 17 benchmarks）**：
-- **一次命令行指定全部 17 个评测集**（`--tasks ai2d,blink,...,mmmu_pro_standard`，不是逐个 task 跑）。
-- **batch size 加大**（提高 GPU 利用率，自行调优到不 OOM）。
-- **允许多 GPU**（parallelize / accelerate 多卡，自行 web search lmms-eval 官方多卡用法；🚫 不要串行单 task、单卡）。
-
-**② 继续**：`.12` 8×H100 可用；评测数据用 proxy 直连 hf.co（92.25）下载，🚫 勿用 hf-mirror。
-
-**③ 纪律**：🚫 不打断 Stage 训练链；评测纯推理；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co 下载 lmms-eval 基准 · 恢复 17 benchmark）· 用户直令 · 最高优先
-
-> **用户令（2026-10-15）**：「如实使用 http://172.19.92.25:13128 这个 https_proxy，则需要直连 hf.co，不能用 https://hf-mirror.com。」
-
-**① proxy 纠正**：
-- 🚫 **去掉** `HF_ENDPOINT=https://hf-mirror.com`（及任何 hf-mirror 相关设置）。
-- ✅ 设 `https_proxy=http://172.19.92.25:13128` + `http_proxy=http://172.19.92.25:13128`，**直连 hf.co** 下载 lmms-eval 17 benchmark 数据（此前用 mirror / 未带 proxy 导致「HF Hub 不可达」）。
-
-**② 恢复 lmms-eval 评测**：
-- 🚫 不要降级为「本地 instruct held-out」——用 proxy 直连 hf.co 下载 17 benchmark 数据，恢复原计划的 **lmms-eval 17 集评测**。
-
-**③ Stage 推进（继续，勿停）**：
-- Stage-1.5 已完成（step20000，ckpt `/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15/step20000/`）→ gate check 后启动 **Stage-2 instruct（~3500 步）** → lmms-eval 17 集。
-
-**④ 纪律**：🚫 不打断 Stage 训练链；下载/评测一律带 proxy 直连 hf.co；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co · 恢复 17 benchmark）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ hf-mirror 已移除，proxy 92.25 直连已验证，17 集评测恢复，Stage-1.5/2 已完成。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）· 用户直令
 
 > 📦 §运维指令 · 2026-10-15（📚 历史实验结果全景总结）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付，8 主题全覆盖。需要时再读。
 
-### 🆕 运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程：smoke → Stage-1/1.5/2 → lmms-eval）· 用户直令 · 最高优先
-
-> **用户令（2026-10-15）**：「vision 为什么停下来不做 MLLM？」—— 你**是被授权做的**（用户早已批「我同意，可以做」），wrapper 已就绪，8 GPU 已空，现在放行执行完整 Stage(iv)，不再停在 Phase0。
-
-**① 前置已就绪（无需再确认）**：wrapper + 自定义 modeling + projector CPU 单测 **5/5 通过** ✅；**.12 8×H100 空闲** ✅；三个 Stage 数据 265GB 在盘 ✅；Qwen3-4B ✅；ms-swift 4.5.3 ✅；lmms-eval 0.7.1 ✅。
-
-**② 执行顺序（按可行性报告 §8.3 排期 + §9.2 建议，方案 A）**：
-1. **GPU smoke test**：加载 BaiZe wrapper + projector + Qwen3-4B，前向 1 batch（~1h）
-2. **Stage-1 Alignment**：冻结 LLM + vision tower，只训 projector（~2500 步；LR 先 1e-4 基线，不收敛扫 {5e-5, 2e-4, 5e-4}）
-3. **Stage-1.5 Mid-Training**：解冻 LLM（或 LoRA），~20000 步
-4. **Stage-2 Instruct**：~3500 步
-5. **lmms-eval 17 benchmarks**
-- 超参参照 `train_4b.sh` 但**用 ms-swift**；`SEQ_LEN=32768` 若 OOM 降 8192/16384；Stage-1 固定 224、跳过 spatial merge、image-token 占位 196。
-
-**③ 门控**：每 stage 完成上报一次（smoke 通过才进 Stage-1；Stage-1 通过才进 1.5，依此类推），各 stage 落 ckpt 到指定目录。
-
-**④ 交付**：全程日志 + 各 stage ckpt + 17 benchmark 结果表 + 中文 HTML 报告（含 vs LLaVA-OV1.5 RICE ViT 基线对比，方案 B 对照）。
-
-**⑤ 纪律**：开跑前 `nvidia-smi` 确认 .12 空窗；与 data 线下载错峰 IO；训练用 py310、评测用 ov_encoder（或 py310 装 lmms-eval）；🚫 不碰论文/其它线产物；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ Stage-1(2500步)+Stage-1.5(20000步)+Stage-2(3500步,loss=1.4853) 全部完成。lmms-eval 评测进行中(precache 8/17)。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（纯 CPU，不占 GPU））· 用户直令 · 最高优先（但仍低于 ArmC 训练/评测监控）
 

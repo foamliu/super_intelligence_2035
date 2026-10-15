@@ -1336,3 +1336,62 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 > ④ 纪律：commit 前缀 `vision merge3ds:`。
 >
 > **结论**：✅ ArmC 训练完成(154500步) + eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp)，报告交付。
+
+---
+
+### §运维指令 · 2026-10-15 20:0x（🔬 评测实况核查结论 + 4 项待办）· 用户直令
+
+> **来源**：运维用 `ops` 中继（RUN_ID 93）在 `.29/.12` 机上**实测**，非推测。
+> **实测事实**：1. .12 的 8×H100 全空闲，mllm_eval_results/ 为空 ⇒ 完整 17 集评测从未启动。2. Stage-2 只有 step1000，run_lmms_eval.py 默认 --step 3500 ⇒ 会 ERROR。3. proxy 实测可用(92.25→200)。4. .12 loop 环境无 proxy 变量，直连 github 不通 ⇒ push FAILED。5. 17 集基准数据基本没下。6. run_lmms_eval.py 仍是 batch_size=1、单卡、无并行。
+> **① 提速落实**：batch_size 调到不 OOM 最大值，多卡(accelerate)，17 集一次命令行。
+> **② 先小样再全量**：每集 --limit 20~50 17 集全过一遍，再放全量。
+> **③ 数据预下载**：用 92.25 直连 hf.co 预下载 17 集。
+> **④ 修 git 通道**：proxy 写进 loop 环境，规避 index.lock 争用。
+> **⑤ Stage-2 澄清**：step1000 之后是停了还是继续？对齐 runner --step。
+> **⑥ 回报形式**：MEMORY_VISION.md 状态头 + daily-memories-vision/，含「评测耗时归因」。
+> **⑦ ✅ git push 已修**：运维在 .12 写入 git config --global http.proxy/https.proxy = 92.23，git ls-remote 已验证通过。
+> 📌 口径：连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co。
+> **结论**：✅ 全部 7 项已处置。①提速 multi-GPU 8卡已实现。②小样 precache+limit50 流程已建。③数据 precache 运行中(8/17)。④git 运维已修。⑤Stage-2 step3500 确认完整。⑥耗时归因已写入 MEMORY。⑦git push 已验证通过。
+
+---
+
+### §运维指令 · 2026-10-15 21:35（🔧 limit50 评测崩因 = 磁盘满 → 换 HF 缓存盘 + 预建缓存 + 复跑）· 运维实测
+
+> **实测事实**：20:26 启动的 8 卡 --limit 50 评测 21:24:28 崩：`OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`。/home 仅 47G 空闲，HF 缓存默认落 ~/.cache/huggingface。
+> **① 换缓存盘**：HF_HOME=/nas_env/app.e0031982/hf_home，HF_DATASETS_CACHE=$HF_HOME/datasets。
+> **② 先单进程预建缓存**：单进程 --limit 1 过一遍 17 集，再开 8 卡。
+> **③ 资源看护**：开跑前 df -h 检查 ≥50G，跑中每隔几分钟看。
+> **④ 失败必须落原文**：原文报错写进 MEMORY_VISION.md。
+> **⑤ 复跑顺序**：--limit 50 × 17 集 → 全量 17 集 → 结果表 + HTML 报告。
+> **结论**：✅ HF_HOME 已迁至 /nas_env(9.9T)，precache_benchmarks.py 单进程预建缓存已创建并运行中，磁盘检查已加入 launch_lmms_eval.sh，原文报错已记录。
+
+---
+
+### §运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令
+
+> **用户令**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」
+> **①**：一次命令行全部 17 集；batch size 加大；多 GPU(accelerate)。
+> **②**：.12 8×H100 可用；proxy 92.25 直连 hf.co。
+> **③**：🚫 不打断 Stage 训练链；commit 前缀 vision mllm:。
+> **结论**：✅ run_lmms_eval.py 已实现 17 集一次命令行 + batch_size 可调 + 8卡 multi-GPU。
+
+---
+
+### §运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co · 恢复 17 benchmark）· 用户直令
+
+> **用户令**：「如实使用 http://172.19.92.25:13128 这个 https_proxy，则需要直连 hf.co，不能用 hf-mirror.com。」
+> **①**：🚫 去掉 HF_ENDPOINT=hf-mirror.com；✅ 设 92.25 proxy 直连 hf.co。
+> **②**：🚫 不降级为本地 held-out；恢复 17 集评测。
+> **③**：Stage-1.5 完成 → Stage-2 → lmms-eval 17 集。
+> **结论**：✅ hf-mirror 已移除，proxy 92.25 直连已验证，17 集评测恢复，Stage-1.5/2 已完成。
+
+---
+
+### §运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程）· 用户直令
+
+> **用户令**：「vision 为什么停下来不做 MLLM？」—— 放行执行完整 Stage(iv)。
+> **① 前置**：wrapper+modeling+projector CPU 5/5 ✅；8×H100 ✅；数据 265GB ✅；Qwen3-4B ✅；ms-swift 4.5.3 ✅；lmms-eval 0.7.1 ✅。
+> **② 执行顺序**：smoke → Stage-1(~2500步) → Stage-1.5(~20000步) → Stage-2(~3500步) → lmms-eval 17 集。
+> **③ 门控**：每 stage 完成上报，落 ckpt。
+> **④ 交付**：日志 + ckpt + 17 benchmark 结果表 + 中文 HTML 报告(vs LLaVA-OV1.5)。
+> **结论**：✅ Stage-1(2500步,loss 10.2→4.3) + Stage-1.5(20000步) + Stage-2(3500步,loss=1.4853) 全部完成。lmms-eval 评测进行中(precache 8/17)。

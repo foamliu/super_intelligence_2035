@@ -27,12 +27,20 @@ export HF_HUB_CACHE=$HF_HOME/hub
 export TRANSFORMERS_CACHE=$HF_HOME/transformers
 mkdir -p "$HF_DATASETS_CACHE" "$HF_HUB_CACHE" "$TRANSFORMERS_CACHE"
 
+# ---- lmms-eval datasets cache on LOCAL disk (/data, 6.8T free) ----
+# CRITICAL: lmms-eval detects NFS (HF_DATASETS_CACHE on /nas_env) and auto-redirects
+# to /tmp/lmms_eval_hf_datasets_{user}/ — which only has ~38G free.
+# 8 ranks building large datasets (VQAv2, etc.) simultaneously WILL fill /tmp.
+# LMMS_EVAL_DATASETS_CACHE overrides this redirect, forcing cache to /data (local, 6.8T).
+export LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache
+mkdir -p "$LMMS_EVAL_DATASETS_CACHE"
+
 # ---- disk space check (require >=50G available) ----
-AVAIL_KB=$(df -P /nas_env | tail -1 | awk '{print $4}')
+AVAIL_KB=$(df -P /data | tail -1 | awk '{print $4}')
 AVAIL_GB=$((AVAIL_KB / 1024 / 1024))
-echo "[launch] HF_HOME=$HF_HOME  /nas_env available=${AVAIL_GB}G"
+echo "[launch] LMMS_EVAL_DATASETS_CACHE=$LMMS_EVAL_DATASETS_CACHE  /data available=${AVAIL_GB}G"
 if [ "$AVAIL_GB" -lt 50 ]; then
-    echo "[launch] WARNING: /nas_env has only ${AVAIL_GB}G free (<50G threshold). Aborting."
+    echo "[launch] WARNING: /data has only ${AVAIL_GB}G free (<50G threshold). Aborting."
     exit 1
 fi
 
