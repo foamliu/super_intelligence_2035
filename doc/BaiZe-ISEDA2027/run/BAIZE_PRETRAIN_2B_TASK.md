@@ -13,6 +13,29 @@
 
 > ✅ **P-8 处置（用户 2026-10-14 定）**：P-8 当前 run（`p8_adamw`，stable+decay 共 10490 步）**按 `seq=4094` 跑完，不干预**。**脚本 `SEQ` 改 4096 须等 P-8 整轮全部结束后再改**（stable + decay 都跑完、最后 ckpt 已保存）——尤其 `baize_p8_decay.sh:35` 在 step9441 切换时仍须保持 4094（与 stable 一致），🚫 不得中途改 decay 脚本。今后**新 run**（如正式训练）一律 4096。
 
+> 📋 **评测口径（对齐 Xmodel-2 论文 Table 2/3 · 一律用 lm-eval）**：
+> - **常识推理 8 集**（zero-shot · raw accuracy · 另报 Avg）：`ARC-Challenge` `ARC-Easy` `BoolQ` `HellaSwag` `OpenBookQA` `PiQA` `SciQ` `Winogrande`
+> - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
+> - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
+
+### 🆕 运维指令 · 2026-10-15（📊 用 P-8 final ckpt 跑 lm-eval 评测：常识 8 集 + 复杂 6 集）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「pretrain 为什么不评测，不是说了常识推理 8 个评测集 + 复杂推理 6 个评测集要评测嘛。评测集如果任务书中没有那就加进去，看 Xmodel-2 论文提到的那些，使用 lm-eval 测。」
+
+**① 背景**：早期评价是在旧里程碑 ckpt（655M~20B，P-5b 系）上做的（P-6② 常识 8 集 48/48、A 复杂 6 集 36/36）。**P-8 final ckpt（~44.4B token，final loss 1.357）尚未评测**——现在补齐这一最关键的 44B 数据点。
+
+**② 评测对象**：P-8 final ckpt = `p8_adamw_decay/checkpoints/iter_0001149`（decay fix 后 final）。
+
+**③ 评测内容（lm-eval，口径见本区「评测口径」）**：
+- **常识推理 8 集**（zero-shot, raw accuracy + Avg）
+- **复杂推理 6 集**（lm-eval 默认 n-shot + Avg；HumanEval/MBPP 开代码执行）
+
+**④ 做法**：复用现有基建 —— ckpt→HF（`baize_p6_ckpt_to_hf.py`）→ lm-eval（常识 8 集用 `baize_p6_run_full.sh`/`baize_mix_eval.sh t2`；复杂 6 集用 `baize_complex6_eval_v2.sh`/`baize_mix_eval.sh t3`）。8 GPU 已空闲，可直接跑。
+
+**⑤ 交付**：① 8 集 + 6 集各自的 Avg + 逐集分数；② 把 44B 点**补进 scaling 曲线**（与 P-6② 48/48 + A 36/36 的 655M~20B 曲线并图）；③ 中文 HTML 报告（如 `reports/report_pretrain_p8_lmeval_8plus6_zh.html`），含「vs Xmodel-2-1.2B / Phi-1.5-1.3B 等参照线」。
+
+**⑥ 纪律**：纯评测（推理 GPU），8 GPU 已空可用；🚫 不重训、不改 ckpt；报数带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
 > 📦 §运维指令·2026-10-14（📋【v4 重做】正式训练计划）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v4 报告 47KB 已交付(commit 826ae3f7, 14源精确token/int32 dtype/密度归因/D-scan 6档/SVG曲线/全量配比+epoch表)。需要时再读。
 
 > 📦 §运维指令·2026-10-14（🔧 修复 decay 段 LR 未衰减 + 重跑 decay）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：decay fix 完成(#432)，只加载权重+warmup100+WSD线性 1e-3→1.85e-5，final ckpt@1149 已保存，8 GPU 释放。需要时再读。
