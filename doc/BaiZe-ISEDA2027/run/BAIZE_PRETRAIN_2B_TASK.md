@@ -15,7 +15,7 @@
 |:--|:--|:--|
 | **Xmodel-2** | `Xmodel-2/xmodel-2.tex` | §Pretraining（L101–190）：**§Training Stages（L132–139）**、**§Data Ratio Optimization in the Decay Stage（L141–146）**、§Training Data Distribution（L148–154）、§Training Loss（L181–183）；附录 Wind Tunnel（L417–460） |
 | **Xmodel-2.5** | `Xmodel-2.5/ACL2026/method.tex`、`result.tex` | **method §Three-Phase WSD**（W/S1/S2/D/LCR 五段的步数·GBS·SFT 占比）、**§Optimizer ablation（AdamW→Muon, +4.58pp）**；result §Training Loss（2M→4M 的 loss 台阶 + 长上下文段 52.36→52.49） |
-| **MiniCPM5 数据** | `run/DATA_RESEARCH.md` §Q1(1)（官方数据源清单 + 本地/HF 逐源核对表）；`run/DATA_MIX_RECIPE.md` | 逐源给「**MiniCPM5 官方源 → 本地落盘状态 → 本计划是否采用**」对照表；🚫 只用**已落盘/可复现**的源 |
+| **MiniCPM5 数据** | `run/DATA_RESEARCH.md` §Q1(1)（官方数据源清单）；**落盘状态以 `reports/report_pretrain_formal_train_plan.html` §1.2 + 运维实测为准**；`run/DATA_MIX_RECIPE.md` | 逐源给「**MiniCPM5 官方源 → 本地落盘状态 → 本计划是否采用**」对照表；🚫 只用**已落盘/可复现**的源。<br>⚠️ **注意**：`DATA_RESEARCH.md v1.1（10-01）` 里「Ultra-FineWeb base / UltraX-Preview 不在盘上」**已过时** —— 运维实测（RUN_ID 98 · 10-15）证明 **base en 2048 pq / zh 256 pq / l1_en_hq 6000 文件（均 0 incomplete）、UltraX-Preview 在盘**（`/nas_train/…/openbmb/UltraX-Preview`）；**确未下的只有 `UltraData-RL-2609`**，另 `UltraData-SFT-2605` 落盘为空需重下。 |
 | **BaiZe 自身证据** | `run/EXPERIMENTS_PRETRAIN_2B*.md`、本任务书常驻口径、P-8 实测 | P-8：stable 9441 + decay 1149 = 10590 步 / **44.4B tok** / final loss **1.357** / seq **4096**；R1→R3 BO：ρ=−0.43 → best t23=0.4155 → top-K ρ=−0.80；R3 最优 web82.7/code6.2/math11.1 |
 
 **③ 必须逐条回答的 5 个问题（= 报告主章节，**每条都要落到 BaiZe 的具体数字**）**

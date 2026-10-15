@@ -44,6 +44,19 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 - BaiZe 的数据计划 = L3 做 Stage(i) 主体、Code+Math 做退火、SFT-* 做 Stage(ii)，这三块里 **L3/Code/Math/Agent-SFT 全部已下全**，唯一落地缺口是 `UltraData-SFT-2605`（**已下但为空，需重下**，gated=auto 要先在 HF 点同意）。
 - MiniCPM5 官方还用了 `Ultra-FineWeb`（base）、`UltraX-Preview`、`UltraData-RL-2609` 三个本地**没有**的数据集，但**这三者均不在 BaiZe 计划的落地范围内**（BaiZe 用 L3 而非 base，RL 阶段数据自产），故不算必须补齐的缺口。
 
+> ⚠️ **v1.2 勘误（2026-10-15 · 运维实测 RUN_ID 98）—— 上表第 39/40 行已过时**：`Ultra-FineWeb（base）` 与 `UltraX-Preview` 随后由 data 线补下，**当时「❌ 不在盘上」是 10-01 的状态，现已下满**：
+>
+> | 源 | 落盘路径（实测） | 机上证据（10-15 21:10） |
+> |:--|:--|:--|
+> | Ultra-FineWeb **base en** | `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en` | **2048 parquet / 0 incomplete** ✅（末次写入 10-08） |
+> | Ultra-FineWeb **base zh** | `…/Ultra-FineWeb/data/ultrafineweb_zh` | **256 parquet / 0 incomplete** ✅ |
+> | `ultrafineweb_l1_en_hq` | `…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq` | **6000 文件 / 0 incomplete** ✅ |
+> | **UltraX-Preview** | `/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview`（⚠️ 在 **`/nas_train`**，不在 `/nas_inference`） | ✅ 在盘 |
+> | `UltraData-RL-2609` | — | ❌ **确未下**（白名单外 · RL 阶段用，非缺口） |
+> | `ultrafineweb_en_v1_4` | 见 `BAIZE_DATA_TASK.md` 的下载表（**不在** `/nas_train/openbmb/…`） | 🟡 下载中 |
+>
+> ⇒ **现状一律以 `reports/report_pretrain_formal_train_plan.html` §1.2（10-14）为准**：base en ≈**206.76B** tok / base zh ≈**112.47B** tok / UltraX ≈**30.97B** tok，**均已下满**；`UltraData-SFT-2605` 的缺口仍以本表第 38 行为准（需重下）。
+
 > 注：DATA_LEDGER §0 此前只记了 L3 的「616 / 617.6 GiB」（仅 en_qa 一支），漏记了 multi_style 与 zh 共 1148 支；实际 L3 全部 4 支 = **1764 parquet / ≈1.9 TiB** 已就位。已实测核对无误。
 > **v1.1 修订（官方 config 命名核对）**：HF 官方 4 个 config（https://huggingface.co/datasets/openbmb/Ultra-FineWeb-L3）为 `Ultra-FineWeb-L3-en-QA-Synthetic`(320M 行) / `-en-Multi-Style-Synthetic`(378M) / `-zh-QA-Synthetic`(157M) / `-zh-Multi-Style-Synthetic`(204M)，对应本地目录 `ultrafineweb_en_l3/qa`(616)、`en_l3/multi_style`(552)、`zh_l3/qa`(310)、`zh_l3/multi_style`(286)。HF 官方 `Number of rows: 1,058,535,126`、`Total file size: 1.9 TB`（= 1898 GB ≈ 1.8 TiB），与本地逐 parquet 数 + 字节和完全吻合 ✅。
 
