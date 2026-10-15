@@ -11533,3 +11533,99 @@ bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_
 > 📦 §运维指令 · 2026-10-10（🧪 变体实验：AdamW→Muon → 全量数据 → 分辨率暂缓）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：V2 Muon 全 LR 坍缩❌（lr=5e-4@step2100, lr=1e-4@step4200）；V3 全量数据 ProtB=63.52% Δ+1.18pp 不可�
 [relay] ⚠️ 输出超长，已截断到 20000 字符
 ```
+
+---
+
+## RUN_ID 107 · 2026-10-15 22:36:57 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 107 · 复核 106 结果 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+NEW=/nas_env/app.e0031982/hf_home
+VIS=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[1] 拷贝是否落地（期望：hub 5 个 + datasets 6 个）"
+ls -d "$NEW"/hub/datasets--lmms-lab--* 2>/dev/null | cut -c1-110
+ls -d "$NEW"/datasets/lmms-lab___* 2>/dev/null | cut -c1-110
+printf '   new HF_HOME size(MB) = '; timeout 90 du -sm "$NEW" 2>/dev/null | cut -f1
+echo "[2] precache 进程（显式排除 cline/bun）"
+for p in $(pgrep -f 'precache_benchmarks.py' 2>/dev/null); do
+  C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-140)
+  case "$C" in *cline*|*bun*) echo "   [skip: cline] pid=$p";; *) echo "   pid=$p :: $C";; esac
+done
+echo "[3] runner 脚本是否在"
+ls -la "$VIS"/mllm_bridge/run_precache.sh 2>/dev/null | cut -c1-140
+echo "[4] vision loop / cline"
+pgrep -af 'baize_vision_loop.sh' | cut -c1-90
+for p in $(pgrep -f 'cline' 2>/dev/null); do C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null); case "$C" in *bun*|*cline*) echo "   cline pid=$p ${C:0:80}";; esac; done | head -4
+echo "[5] vision loop 日志尾"; tail -14 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-175
+echo "[6] precache 日志尾"; tail -14 "$LOG" 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 107 ==="
+```
+
+**输出**
+```
+=== RUN_ID 107 · 复核 106 结果 2026-10-15 22:36:57 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 22:36:58 ===
+[1] 拷贝是否落地（期望：hub 5 个 + datasets 6 个）
+/nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--ai2d
+/nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--GQA
+/nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--MMBench
+/nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--MMMU
+/nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--textvqa
+/nas_env/app.e0031982/hf_home/datasets/lmms-lab___ai2d
+/nas_env/app.e0031982/hf_home/datasets/lmms-lab___gqa
+/nas_env/app.e0031982/hf_home/datasets/lmms-lab___mm_bench
+/nas_env/app.e0031982/hf_home/datasets/lmms-lab___mmmu
+/nas_env/app.e0031982/hf_home/datasets/lmms-lab___real_world_qa
+/nas_env/app.e0031982/hf_home/datasets/lmms-lab___textvqa
+   new HF_HOME size(MB) = 22356
+[2] precache 进程（显式排除 cline/bun）
+   [skip: cline] pid=1834398
+   pid=2430411 :: python mllm_bridge/precache_benchmarks.py --limit 1 
+[3] runner 脚本是否在
+-rwxr-xr-x 1 app.e0031982 app.adm 1288 Oct 15 21:46 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/mllm
+[4] vision loop / cline
+1815982 bash baize_vision_loop.sh
+   cline pid=1834398 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_
+   cline pid=1835927 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/
+   cline pid=3041408 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-dae
+[5] vision loop 日志尾
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-15 21:57:37 cline returned (exit 0), checking git push ...
+[loop] 2026-10-15 21:57:37 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-15 22:27:37 wake up, invoking cline ...
+[llmrot] 2026-10-15 22:27:38 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+[6] precache 日志尾
+[3/17] Pre-caching 'gqa'...
+Loading GQA images:   0%|          | 0/398 [00:00<?, ?it/s]Loading GQA images:   0%|          | 0/398 [00:00<?, ?it/s]Loading GQA images:   3%|▎         | 11/398 [00:00<0
+
+  ✅ gqa cached in 15.1s
+  [disk] 10085.3 GB free at HF_HOME
+
+[4/17] Pre-caching 'textvqa_val'...
+  ✅ gqa cached in 15.1s
+  [disk] 10085.3 GB free at HF_HOME
+
+[4/17] Pre-caching 'textvqa_val'...
+Downloading data:   0%|          | 0/20 [00:00<?, ?files/s]Downloading data:   0%|          | 0/20 [00:00<?, ?files/s]Downloading data:   5%|▌         | 1/20 [00:00<00:15
+
+Generating train split:   0%|          | 0/34602 [00:00<?, ? examples/s]Generating train split:   0%|          | 0/34602 [00:00<?, ? examples/s]Generating train split:   0%
+=== [.12] DONE ===
+=== DONE 107 ===
+```
