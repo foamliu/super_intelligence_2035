@@ -1250,3 +1250,74 @@ watch_news_loop.sh: line 211: cline: command not found
 1160036 1160035  721731 watch_ops_relay.sh ops_relay.sh
 === DONE ===
 ```
+
+---
+
+## RUN_ID 14 · 2026-10-15 18:17:06 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 14 · news 线修复（cline PATH → 重启 loop） $(date '+%F %T') ==="; hostname; date '+%F %T'
+echo "--- [0] 环境 ---"
+echo "PATH(relay)=$PATH"
+echo "loginPATH=$(bash -lc 'echo $PATH' 2>/dev/null)"
+echo "--- [1] cline 定位 ---"
+echo "PATHwhich=$(command -v cline 2>/dev/null || echo NONE)"
+echo "loginwhich=$(bash -lc 'command -v cline' 2>/dev/null | tail -1)"
+echo "node=$(command -v node 2>/dev/null || echo NONE) npm=$(command -v npm 2>/dev/null || echo NONE)"
+for d in /usr/local/bin /usr/bin /bin "$HOME/.local/bin" "$HOME/.npm-global/bin" "$HOME/bin"; do
+  ls -la "$d" 2>/dev/null | grep -i cline | cut -c1-140
+done
+timeout 30 find "$HOME" -maxdepth 5 -name cline -type f 2>/dev/null | head -5 | cut -c1-140
+echo "--- [2] 运行中 loop 的 PATH（对照） ---"
+LP="$(pgrep -f 'watch_news_loop.sh' | head -1)"; echo "loop pid=$LP"
+if [ -n "$LP" ]; then tr '\0' '\n' < "/proc/$LP/environ" 2>/dev/null | grep -E '^(PATH|HOME)=' | cut -c1-300; fi
+echo "--- [3] 同步仓库（取回修好的脚本） ---"
+R="$HOME/super_intelligence_2035/doc/personal-watch/run"
+cd "$R" || { echo "!!! 找不到 $R"; exit 0; }
+git fetch origin; git pull --rebase --autostash origin main; git --no-pager log --oneline -1
+grep -n 'CLINE_BIN' watch_news_loop.sh | head -3
+echo "--- [4] 重启 news loop ---"
+CLINE_BIN="$(command -v cline 2>/dev/null)"; [ -z "$CLINE_BIN" ] && CLINE_BIN="$(bash -lc 'command -v cline' 2>/dev/null | tail -1)"
+if [ -n "$CLINE_BIN" ] && [ -x "$CLINE_BIN" ]; then
+  echo "CLINE_BIN=$CLINE_BIN"
+  pkill -f 'watch_news_loop.sh'; sleep 2
+  setsid bash watch_news_loop.sh > /tmp/watch_news_loop.log 2>&1 < /dev/null &
+  sleep 4
+  echo "loop now: $(pgrep -af 'watch_news_loop.sh' | cut -c1-120)"
+  echo "--- log head ---"; head -10 /tmp/watch_news_loop.log | cut -c1-200
+  echo "--- HB ---"; ls -la --time-style=+%F_%H:%M:%S /tmp/watch_news_loop.hb 2>/dev/null || echo "HB 未生成"
+else
+  echo "!!! cline 仍未找到（PATH=$PATH）→ 未重启 loop；需先装 cline"
+fi
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 14 · news 线修复（cline PATH → 重启 loop） 2026-10-15 18:17:06 ===
+VM-0-6-ubuntu
+2026-10-15 18:17:06
+--- [0] 环境 ---
+PATH(relay)=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+loginPATH=/home/liuyang/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+--- [1] cline 定位 ---
+PATHwhich=NONE
+loginwhich=
+node=NONE npm=NONE
+--- [2] 运行中 loop 的 PATH（对照） ---
+loop pid=2933676
+HOME=/home/liuyang
+PATH=/home/liuyang/.local/bin:/home/liuyang/.nvm/versions/node/v24.21.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+--- [3] 同步仓库（取回修好的脚本） ---
+From github.com:foamliu/super_intelligence_2035
+ * branch              main       -> FETCH_HEAD
+Already up to date.
+87bca853 personal-watch ops: RUN_ID 14 修复 news 线（cline PATH 缺失 -> 并入登录 shell PATH + 显式 CLINE_BIN + FATAL 识别 command not found；中继重启 loop）
+64:#         ② 显式解析 cline 绝对路径 → `$CLINE_BIN`，之后调用不再依赖环境 PATH；
+71:CLINE_BIN="${CLINE_BIN:-}"
+72:if [ -z "$CLINE_BIN" ]; then CLINE_BIN="$(command -v cline 2>/dev/null || true)"; fi
+--- [4] 重启 news loop ---
+!!! cline 仍未找到（PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin）→ 未重启 loop；需先装 cline
+=== DONE ===
+```
