@@ -14,56 +14,37 @@ WAITING: 1
 ```
 PHASE:        ▶️3路下载断点续传进行中+✅wit_base完成(330/330parquet/287G)+85M暂停(用户令2026-10-13,8436/12124=69.6%)+✅the_cauldron完成+✅GPIC全完成+✅R3分词110/110+✅HF imagetext报告→P-8数据层全就绪
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); R3全量分词110/110DONE(1483.91B tok/5.94TB); R3污染扫描30/30DONE(60K,0命中,累计220K全0)→P-8数据层全就绪; ✅GPIC下载完成(8160tar@/nas_inference,12T); ✅文献借鉴报告(c80c7a74); ✅85M用户进程移交data线; ✅HfApi核实85M总量(12,124files/46.663TB); ✅HF imagetext数据集调研报告(唤醒404); ✅85M暂停(用户令10-13); ✅4路HF图文对下载启动(唤醒405); ✅the_cauldron下载完成(938parquet/158G,唤醒422); ✅全部4路下载暂停(用户令2026-10-14); ✅全部4路下载恢复断点续传(用户令2026-10-14 resume,唤醒444); ✅wit_base下载完成(330/330parquet/287G,2026-10-15 12:19,retry-loop自然退出)
-当前动作:     唤醒470(2026-10-15 16:08) 巡检3路下载断点续传健康态(唤醒469后~73min)。3路全健康✅无需kill/restart：en_v1_4 PID805947(wrap766325,hf重启~33min前,34378/56461=60.9%,3.1T,68dirs,+112par,0incomplete,~1.53par/min,ETA~10天)|WebMix PID2798086(wrap766313,544parquet/403G,+48par/+35G,1incomplete=正在下,~0.66par/min,ETA~2天)|InternVL PID766408(wrap766323,831tar/622G,+38tar/+29G,1incomplete=正在下,~0.52tar/min,ETA~1天)。3路HTTPS ESTAB✅(proxy 172.19.92.25:13128),last file均16:06(秒级活跃)。wit_base✅330/330/287G(已完成)。85M⏸暂停(0进程)✅。disk:train85%/user76%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=17KB(无需归档)
-下一步:       ①看护3路剩余下载(死/僵/速率趋零即kill+restart); ②85M维持暂停(用户令10-13); ③巡检进度/速率/ETA; ④P-8投料等运维指示
-阻塞:         无(3路下载进行中全部健康); 85M暂停(用户令10-13); P-8投料等运维指示
-ERROR_COUNT:  5
+当前动作:     唤醒471(2026-10-15 17:17) 巡检3路下载断点续传健康态(唤醒470后~69min)。3路全健康✅无需kill/restart：en_v1_4 PID805947(wrap766325,34641/56461=61.4%,3.1T,68dirs,+263par,0incomplete,last file 17:17,~3.8par/min,ETA~4天)|WebMix PID2798086(wrap766313,578parquet/428G,+34par/+25G,1incomplete=正在下,last file 17:17,~0.49par/min,ETA~3天)|InternVL PID766408(wrap766323,858tar/641G,+27tar/+19G,1incomplete=正在下,last file 17:17,~0.39tar/min,ETA~1.4天)。3路HTTPS ESTAB✅(55 conn via proxy)。wit_base✅330/330/287G(已完成)。85M⏸暂停(0进程)✅。disk:train85%/user76%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=17KB(无需归档)。⚠️git push失败(proxy 503+direct unreachable,待下一轮补推)
+下一步:       ①看护3路剩余下载(死/僵/速率趋零即kill+restart); ②85M维持暂停(用户令10-13); ③巡检进度/速率/ETA; ④P-8投料等运维指示; ⑤下一轮唤醒第一件事补推git
+阻塞:         无(3路下载进行中全部健康); 85M暂停(用户令10-13); P-8投料等运维指示; git push暂时不可达(proxy 503)
+ERROR_COUNT:  6
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [17:17] 唤醒471：巡检3路下载断点续传健康态(唤醒470后~69min)。3路全健康✅无需kill/restart：en_v1_4 PID805947(wrap766325,34641/56461=61.4%,3.1T,68dirs,+263par,0incomplete,last file 17:17:16,~3.8par/min,ETA~4天)|WebMix PID2798086(wrap766313,578parquet/428G,+34par/+25G,1incomplete=正在下,last file 17:17:29,~0.49par/min,ETA~3天)|InternVL PID766408(wrap766323,858tar/641G,+27tar/+19G,1incomplete=正在下,last file 17:17:13,~0.39tar/min,ETA~1.4天)。3路HTTPS ESTAB✅(55 conn via proxy 172.19.92.25:13128)。wit_base✅330/330/287G(已完成)。85M⏸暂停(0进程)✅。disk:train85%/user76%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=17KB(无需归档)。⚠️git push失败(proxy 503+direct unreachable,commit已本地,待下一轮补推)
+> 📦 唤醒470 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+3路进度对比表+disk 4盘+体积29KB/17KB）
+> 📦 唤醒469 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+3路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒468 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+3路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒467 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载+wit_base完成确认(330/330/287G,12:19自然退出)+3路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒466 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base仍在下载317parquet+4路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒465 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base wrapper自动重启hf确认+4路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒464 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒463 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒462 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
+> 📦 唤醒460 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/32KB）
+> 📦 唤醒459 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/31KB）
+> 📦 唤醒458 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/31KB）
+> 📦 唤醒457 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base重启恢复确认+4路进度对比表+disk 4盘+体积29KB/31KB）
+> 📦 唤醒456 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+wit_base速率趋零kill+restart PID1675681+4路进度对比表+disk 4盘+体积29KB/31KB）
+> 📦 唤醒455 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+WebMix速率趋零kill+restart PID2798086+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒454 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒453 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+WebMix速率趋零kill+restart+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒452 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/31KB）
-> 📦 唤醒455 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+WebMix速率趋零kill+restart PID2798086+4路进度对比表+disk 4盘+体积29KB/31KB）
-> 📦 唤醒458 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/31KB）
-> 📦 唤醒459 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/31KB）
-> 📦 唤醒460 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/32KB）
-> 📦 唤醒462 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒463 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒464 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒465 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base wrapper自动重启hf确认+4路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒466 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base仍在下载317parquet+4路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒467 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载+wit_base完成确认(330/330/287G,12:19自然退出)+3路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒469 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+3路进度对比表+disk 4盘+体积29KB/16KB）
-> [16:08] 唤醒470：巡检3路下载断点续传健康态(唤醒469后~73min)。3路全健康✅无需kill/restart：en_v1_4 PID805947(wrap766325,hf子进程~33min前由wrapper自动重启,34378/56461=60.9%,3.1T,68dirs,+112par,0incomplete,last file 16:06:21,~1.53par/min,ETA~10天)|WebMix PID2798086(wrap766313,544parquet/403G,+48par/+35G,1incomplete=正在下,last file 16:06:25,~0.66par/min,ETA~2天)|InternVL PID766408(wrap766323,831tar/622G,+38tar/+29G,1incomplete=正在下,last file 16:06:38,~0.52tar/min,ETA~1天)。3路HTTPS ESTAB✅(proxy 172.19.92.25:13128)。wit_base✅330/330/287G(已完成,无进程)。85M⏸暂停(0进程)✅。disk:train85%/user76%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=17KB(无需归档)
-> 📦 唤醒468 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+3路进度对比表+disk 4盘+体积29KB/16KB）
-> 📦 唤醒457 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base重启恢复确认+4路进度对比表+disk 4盘+体积29KB/31KB）
-> 📦 唤醒456 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+wit_base速率趋零kill+restart PID1675681+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒451 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
-> 📦 唤醒450 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+en_v1_4 wrapper自动重启+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
-> 📦 唤醒449 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
-> 📦 唤醒448 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
-> 📦 唤醒447 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
-> 📦 唤醒446 原文已归档 → `daily-memories-data/2026-10-14.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/29KB）
-> 📦 唤醒445 原文已归档 → `daily-memories-data/2026-10-14.md`（含巡检4路下载断点续传健康态+wrapper自动重启一次+4路进度对比表+速率估计+disk 4盘+体积29KB/29KB）
-> 📦 唤醒444 原文已归档 → `daily-memories-data/2026-10-14.md`（含恢复全部4路下载setsid启动+清理残留进程+4路进度基线+disk 4盘+体积29KB/29KB）
-> 📦 唤醒443 原文已归档 → `daily-memories-data/2026-10-14.md`（含第17次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积26KB/29KB）
-> 📦 唤醒442 原文已归档 → `daily-memories-data/2026-10-14.md`（含第16次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/29KB）
-> 📦 唤醒441 原文已归档 → `daily-memories-data/2026-10-14.md`（含第15次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/29KB）
-> 📦 唤醒440 原文已归档 → `daily-memories-data/2026-10-14.md`（含第14次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/29KB）
-> 📦 唤醒439 原文已归档 → `daily-memories-data/2026-10-14.md`（含第13次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积26KB/28KB）
-> 📦 唤醒438 原文已归档 → `daily-memories-data/2026-10-14.md`（含第12次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积26KB/28KB）
-> 📦 唤醒437 原文已归档 → `daily-memories-data/2026-10-14.md`（含第11次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积26KB/28KB）
-> 📦 唤醒436 原文已归档 → `daily-memories-data/2026-10-14.md`（含第10次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积26KB/28KB）
-> 📦 唤醒435 原文已归档 → `daily-memories-data/2026-10-14.md`（含第9次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/28KB）
-> 📦 唤醒434 原文已归档 → `daily-memories-data/2026-10-14.md`（含第8次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积26KB/27KB）
-> 📦 唤醒433 原文已归档 → `daily-memories-data/2026-10-14.md`（含第7次复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/28KB）
-> 📦 唤醒432 原文已归档 → `daily-memories-data/2026-10-14.md`（含复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/27KB）
-> 📦 唤醒430 原文已归档 → `daily-memories-data/2026-10-14.md`（含复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/27KB+git ahead-1待push）
-> 📦 唤醒429 原文已归档 → `daily-memories-data/2026-10-14.md`（含复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/27KB）
-> 📦 唤醒428 原文已归档 → `daily-memories-data/2026-10-14.md`（含复核暂停态+进度表6路+.incomplete保留+disk 4盘+体积27KB/26KB）
+> 📦 唤醒444-450 原文已归档 → `daily-memories-data/2026-10-14.md` ~ `2026-10-15.md`（含恢复全部4路下载setsid启动+巡检+wrapper自动重启+en_v1_4 wrapper自动重启+4路进度对比表，详见各日文件）
+> 📦 唤醒428-443 原文已归档 → `daily-memories-data/2026-10-14.md`（含第7~17次复核暂停态+进度表6路+.incomplete保留+disk 4盘，详见各日文件）
 > 📦 唤醒427及更早（唤醒296-427）流水指针已归档 → `daily-memories-data/2026-10-10.md` ~ `2026-10-14.md`（含6路下载巡检全链+暂停/恢复+the_cauldron完成+GPIC完成+85M移交/暂停+en_v1_4进度29%~58%+4路图文对启动+R3分词+BO R2等，详见各日文件）
 
 
