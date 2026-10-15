@@ -60,10 +60,11 @@ pkill -f 'watch_news_loop.sh'
 setsid bash "$HOME/start_news_loop.sh" > /tmp/watch_news_loop.log 2>&1 < /dev/null &
 ```
 
-**加固（已入仓 `watch_news_loop.sh`，2026-10-15）**：
-① 启动时并入**登录 shell 的 PATH**（nvm/node 常只在 login shell 生效）+ 显式解析 `$CLINE_BIN`，调用不再依赖环境 PATH；
-② `command not found` 纳入 `FATAL_RE`（→ 短睡重试而非睡长觉）；
-③ **自愈**：cline 缺失时自动 `npm i -g cline@latest`（≤240s）一次，`WATCH_NO_CLINE_SELFHEAL=1` 可关闭。
+**加固（已入仓三个 `watch_*_loop.sh`，2026-10-15）**：
+① **内生并入 nvm 的 node bin**（`$HOME/.nvm/versions/node/*/bin`）——⚠️ **本机 `~/.bashrc` 第 5–9 行有「非交互即 return」守卫**，所以 `bash -lc` **拿不到 nvm**（实测：`bash -lc` → nvm 段 **0** / `cline` **NONE**；`bash -ic` → **1** / 找到）。⇒ **不能只靠「登录 shell PATH」**；launcher 里补的也正是这一条，故脚本内**内生补齐**，保证「不走 launcher 直接起 loop」同样可用。
+② 显式解析 cline 绝对路径 → `$CLINE_BIN`，调用不再依赖环境 PATH；
+③ `cline: command not found` 纳入 `FATAL_RE`（→ 短睡重试而非睡长觉）；⚠️ **不要**写成裸 `command not found` —— agent 输出里出现该串（如某工具缺失）会把**整轮正常结果误判为失败**；
+④ **自愈**：cline 缺失时（子 shell 内先 `. nvm.sh` 再）`npm i -g cline@latest`（≤240s）一次，`WATCH_NO_CLINE_SELFHEAL=1` 可关闭。
 
 > 🔎 **判活口径（本次教训）**：`/tmp/watch_<线>_loop.hb` 超 2 个时窗未刷新 = 死；
 > **但"心跳正常"≠"在干活"** —— 本次恰恰是心跳正常、每轮却全失败。

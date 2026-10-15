@@ -63,6 +63,12 @@ CLINE_LOG="/tmp/watch_news_cline_last.log"   # cline 本轮输出，用于检测
 #   修法：① 并入【登录 shell】的 PATH —— nvm / npm-global / ~/.local/bin 常**只在 login shell 生效**；
 #         ② 显式解析 cline 绝对路径 → `$CLINE_BIN`，之后调用不再依赖环境 PATH；
 #         ③ 解析不到就**每轮显式报错**（🚫 不再"看着正常、其实什么都没干"）。
+# ①a 内生并入 nvm 的 node bin（本机 ~/.bashrc 有「非交互即 return」守卫 ⇒ ①b 的 bash -lc 拿不到 nvm）
+#     launcher 也只补这一条 —— 这里内生补上，保证「不走 launcher 直接起 loop」同样可用。
+for _nb in "$HOME"/.nvm/versions/node/*/bin; do
+    [ -x "$_nb/node" ] && PATH="$_nb:$PATH"
+done
+# ①b 并入登录 shell 的 PATH（对「无交互守卫」的机器有效）
 if [ "${WATCH_NO_LOGINPATH:-0}" != "1" ]; then
     _login_path="$(bash -lc 'echo $PATH' 2>/dev/null)"
     if [ -n "$_login_path" ]; then PATH="${_login_path}:${PATH}"; fi
