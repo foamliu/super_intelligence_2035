@@ -90,13 +90,17 @@ setsid bash "$HOME/start_news_loop.sh" > /tmp/watch_news_loop.log 2>&1 < /dev/nu
 ```bash
 cd ~/super_intelligence_2035/doc/personal-watch/run && git pull --rebase --autostash
 
-# 启动（先 news）
-setsid bash watch_news_loop.sh     > /tmp/watch_news_loop.log     2>&1 < /dev/null &
+# ⭐ 启动一律走 launcher（$HOME/start_<线>_loop.sh）——它负责 cd 到 run/ + 补 PATH
+#   （$HOME/.local/bin:$HOME/.nvm/versions/node/v24.21.0/bin）+ unset WATCH_INTERVAL_MIN。
+#   🚫 不要直接 `bash watch_<线>_loop.sh`：那样 PATH 里没有 nvm，cline 会 command not found（2026-10-13 事故形态）。
+# 启动（先 news，错峰 15min 再 research；recruit 独立）
+setsid bash "$HOME/start_news_loop.sh"     > /tmp/watch_news_loop.log     2>&1 < /dev/null &
 sleep 900                                                                 # 错峰 15min
-setsid bash watch_research_loop.sh > /tmp/watch_research_loop.log 2>&1 < /dev/null &
+setsid bash "$HOME/start_research_loop.sh" > /tmp/watch_research_loop.log 2>&1 < /dev/null &
+setsid bash "$HOME/start_recruit_loop.sh"  > /tmp/watch_recruit_loop.log  2>&1 < /dev/null &
 
-# 验证
-pgrep -af 'watch_(news|research)_loop.sh'     # 各 1 个
+# 验证（⚠️ 必须同时看进程 + 日志首行 `✅ cline=…`；只看 pgrep/心跳会被"心跳正常却每轮失败"骗过）
+pgrep -af 'watch_(news|research|recruit)_loop.sh'     # 各 1 个
 tail -5 /tmp/watch_news_loop.log
 ```
 **停止**：`pkill -f 'watch_news_loop.sh'; pkill -f 'watch_research_loop.sh'`
