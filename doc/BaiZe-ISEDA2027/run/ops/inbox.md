@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 99 -->
+<!-- RUN_ID: 100 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,47 @@
 
 ---
 
+## RUN_ID 100 — 📊 **vision limit50 评测结果巡检**（只读）
+
+> 背景：20:26 启动 `accelerate --multi_gpu --num_processes=8` + `batch_size=4` + `--limit 50`（17 集）。
+> 本块只读：GPU / 进程 / 结果目录 / **结果 JSON 逐任务指标** / 评测日志尾。
+
+```bash
+set -u
+echo "=== RUN_ID 100 · vision limit50 评测结果巡检 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[评测进程]"; pgrep -af 'lmms|run_lmms_eval|accelerate' 2>/dev/null | grep -v pgrep | cut -c1-120 | head -5
+echo "[结果目录]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | tail -6
+echo "[结果 JSON 逐任务指标]"
+for j in /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/*.json; do
+  [ -f "$j" ] || continue
+  python3 -c "
+import json,sys
+p=sys.argv[1]
+try: d=json.load(open(p))
+except Exception as e: print(p,'PARSE_FAIL',e); raise SystemExit
+r=d.get('results',{})
+print(p.split('/')[-1],'| tasks=',len(r))
+for k,v in list(r.items())[:20]:
+    m=[f'{a}={b:.3f}' for a,b in v.items() if isinstance(b,(int,float)) and ('acc' in a.lower() or 'exact' in a.lower())]
+    print('   ',k,m[:2])
+" "$j"
+done 2>&1 | head -35
+echo "[eval_limit50.log 尾部]"; tail -25 /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/eval_limit50.log 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 100 ==="
+```
+
 ## RUN_ID 99 — 🔍 **深度核查 `UltraData-SFT-2605` / `UltraData-RL-2609` 是否真的缺**（只读）
 
 > 背景：10-01 的 `DATA_RESEARCH v1.1` 说 SFT-2605「落盘为空」、RL-2609「未下」；而 `MEMORY_DATA`（10-02）说 SFT-2605 **已重下并逐字节核验一致**、`plan v4 §1.2` 也标「已下满」。本块**实测落定**（上一块 RUN_ID 98 只查到 maxdepth 2，不够深）。
 > 🚫 只读：不下载、不删、不动进程。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 99 · 深度核查 SFT-2605 / RL-2609 $(date '+%F %T') · host=$(hostname) ==="
 echo "--- [1] SFT-2605 盘上实况（深 6） ---"
