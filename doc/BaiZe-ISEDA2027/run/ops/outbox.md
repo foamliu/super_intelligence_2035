@@ -10109,3 +10109,65 @@ global http.proxy = http://172.19.92.23:13128
 === [.12] DONE ===
 === DONE 94 ===
 ```
+
+---
+
+## RUN_ID 95 · 2026-10-15 20:01:18 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 95 · 验证 .12 git 读写通道 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[git proxy] http=$(git config --global --get http.proxy)  https=$(git config --global --get https.proxy)"
+echo "--- [1] fetch（读通道，走 proxy） ---"
+timeout 90 git fetch origin > /tmp/_run95_fetch.log 2>&1; echo "fetch_exit=$?"; tail -3 /tmp/_run95_fetch.log
+echo "--- [2] no-op push（写通道，走 proxy） ---"
+timeout 90 git push origin main > /tmp/_run95_push.log 2>&1; echo "push_exit=$?"; tail -5 /tmp/_run95_push.log
+echo "--- [3] 领先/落后 ---"
+echo "origin/main...HEAD = $(git rev-list --left-right --count origin/main...HEAD 2>&1)"
+echo "--- [4] vision loop 日志（是否还报 push FAILED） ---"
+tail -40 /tmp/baize_vision_loop.log 2>/dev/null | grep -iE 'push|committed|wake up|cline returned|FAILED|index.lock' | tail -10 | cut -c1-175
+echo "--- [5] 最近 vision auto-commit ---"
+git log --oneline -30 --grep='vision' 2>&1 | head -6
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 95 ==="
+```
+
+**输出**
+```
+=== RUN_ID 95 · 验证 .12 git 读写通道 2026-10-15 20:01:18 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 20:01:19 ===
+[git proxy] http=http://172.19.92.23:13128  https=http://172.19.92.23:13128
+--- [1] fetch（读通道，走 proxy） ---
+fetch_exit=0
+--- [2] no-op push（写通道，走 proxy） ---
+push_exit=0
+Everything up-to-date
+--- [3] 领先/落后 ---
+origin/main...HEAD = 0	0
+--- [4] vision loop 日志（是否还报 push FAILED） ---
+### Files Committed
+**Commits**: `e80552df` (fix) and `4e7031ef` (daily memory) — both pushed to `origin/main`.
+[loop] 2026-10-15 18:31:09 cline returned (exit 0), checking git push ...
+[push] 2026-10-15 18:31:09 push interval reached, committing + pushing ...
+error: could not close '/nas_train/app.e0031982/code/super_intelligence_2035/.git/index.lock'
+[push] nothing to commit.
+fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035.git/': Failed to connect to github.com port 443 after 4 ms: Network is unreachable
+[push] push FAILED (will retry next cycle).
+[loop] 2026-10-15 19:36:51 wake up, invoking cline ...
+--- [5] 最近 vision auto-commit ---
+c2e3b10c baize ops: RUN_ID 95 验证 .12 git 读写通道 + ops/README §7 记录节点代理口径与 .12 push 修复 + vision 任务书 ⑦ 告知已修
+f4bb1b38 vision 运维: 评测实况核查结论+4项待办（RUN_ID 93 实测：GPU全空闲/17集未启动/stage2仅step1000/proxy 92.25已验证/.12无proxy致push失败/batch_size=1未提速）
+a582472f baize ops: RUN_ID 93 只读诊断 vision lmms-eval 实况（proxy 实测 + .12 评测进度/HF 数据落地/结果目录）
+4e7031ef vision: daily memory update - lmms-eval fix 0% to 34% RealWorldQA
+e80552df vision: fix lmms-eval degenerate A output - RealWorldQA 0% to 34%
+dcfb271c vision 运维: lmms-eval评测提速（17集一次跑+大batch+多GPU并行，勿串行单task）
+=== [.12] DONE ===
+=== DONE 95 ===
+```
