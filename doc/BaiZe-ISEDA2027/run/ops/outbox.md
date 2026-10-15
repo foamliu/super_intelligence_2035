@@ -10763,3 +10763,88 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
 === [.12] DONE ===
 === DONE 101 ===
 ```
+
+---
+
+## RUN_ID 102 · 2026-10-15 21:29:42 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 102 · .12 磁盘实况 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[挂载点]"; df -h 2>/dev/null | grep -vE 'tmpfs|udev|overlay' | head -18 | cut -c1-120
+echo "[关键路径属于哪块盘]"; for p in "$HOME" /tmp /nas_train /nas_inference /nas_env; do printf '%-16s ' "$p"; df -h "$p" 2>/dev/null | tail -1 | cut -c1-100; done
+echo "[HF 缓存体积]"; for d in "$HOME/.cache/huggingface/datasets" "$HOME/.cache/huggingface/hub" "$HOME/.cache/huggingface"; do printf '%-58s ' "$d"; (timeout 60 du -sh "$d" 2>/dev/null | cut -f1) || echo '-'; done
+echo "[HOME 一级目录 TOP10（有界）]"; timeout 60 du -sh "$HOME"/* 2>/dev/null | sort -rh | head -10 | cut -c1-120
+echo "[/tmp 体积]"; timeout 45 du -sh /tmp 2>/dev/null | cut -f1
+echo "[inode]"; df -i "$HOME" /tmp 2>/dev/null | cut -c1-110
+echo "[vision loop 日志尾]"; tail -12 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 102 ==="
+```
+
+**输出**
+```
+=== RUN_ID 102 · .12 磁盘实况 2026-10-15 21:29:42 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 21:29:43 ===
+[挂载点]
+Filesystem                                                                                    Size  Used Avail Use% Moun
+/dev/mapper/vgroot-lv_root                                                                    384G   13G  352G   4% /
+/dev/disk/by-id/dm-uuid-LVM-UETclYLHuakZce1jSQ4GH1B1q5RP71EHv3ML9jlJLo1LCsc0dhdIWdAjTf2glMyT   98G   25G   69G  27% /usr
+/dev/sdb2                                                                                     2.0G  346M  1.5G  19% /boo
+/dev/sdb1                                                                                     1.1G  6.1M  1.1G   1% /boo
+/dev/mapper/vgroot-lv_var                                                                      98G  6.5G   87G   7% /var
+/dev/mapper/vgroot-lv_tmp                                                                      98G   25G   69G  27% /tmp
+/dev/mapper/vgroot-lv_home                                                                    196G  140G   47G  75% /hom
+/dev/mapper/vgdata-lv_data                                                                    7.0T  285G  6.8T   4% /dat
+10.239.22.31:/vol_CTE0_data01                                                                 207T  176T   32T  85% /nas
+10.239.22.32:/vol_CTE0_data02                                                                 108T   82T   27T  76% /nas
+10.239.22.32:/vol_CTE0_data03                                                                  45T   36T  9.4T  80% /nas
+10.239.22.32:/vol_CTE0_data04                                                                  10T   14G  9.9T   1% /nas
+[关键路径属于哪块盘]
+/home/app.e0031982 /dev/mapper/vgroot-lv_home  196G  140G   47G  75% /home
+/tmp             /dev/mapper/vgroot-lv_tmp   98G   25G   69G  27% /tmp
+/nas_train       10.239.22.31:/vol_CTE0_data01  207T  176T   32T  85% /nas_train
+/nas_inference   10.239.22.32:/vol_CTE0_data03   45T   36T  9.4T  80% /nas_inference
+/nas_env         10.239.22.32:/vol_CTE0_data04   10T   14G  9.9T   1% /nas_env
+[HF 缓存体积]
+/home/app.e0031982/.cache/huggingface/datasets             11G
+/home/app.e0031982/.cache/huggingface/hub                  12G
+/home/app.e0031982/.cache/huggingface                      23G
+[HOME 一级目录 TOP10（有界）]
+165M	/home/app.e0031982/Miniforge3-Linux-x86_64.sh
+67M	/home/app.e0031982/vscode-server.tar.gz
+50M	/home/app.e0031982/Cline
+47M	/home/app.e0031982/uv-x86_64-unknown-linux-gnu
+19M	/home/app.e0031982/uv-x86_64-unknown-linux-gnu.tar.gz
+1.8M	/home/app.e0031982/patent
+92K	/home/app.e0031982/pyenvs
+12K	/home/app.e0031982/Documents
+4.0K	/home/app.e0031982/D031226@143702W0003345483F00000078I03K15650777.json
+4.0K	/home/app.e0031982/D031026@072432W0003314507F00016709I02K15607902.json
+[/tmp 体积]
+24G
+[inode]
+Filesystem                   Inodes   IUsed    IFree IUse% Mounted on
+/dev/mapper/vgroot-lv_home 13107200 1181259 11925941   10% /home
+/dev/mapper/vgroot-lv_tmp   6553600   59282  6494318    1% /tmp
+[vision loop 日志尾]
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-15 20:35:45 cline returned (exit 0), checking git push ...
+[loop] 2026-10-15 20:35:45 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-15 21:05:45 wake up, invoking cline ...
+[llmrot] 2026-10-15 21:05:46 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+=== [.12] DONE ===
+=== DONE 102 ===
+```
