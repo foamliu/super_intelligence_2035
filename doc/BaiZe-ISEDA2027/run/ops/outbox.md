@@ -10171,3 +10171,94 @@ dcfb271c vision 运维: lmms-eval评测提速（17集一次跑+大batch+多GPU�
 === [.12] DONE ===
 === DONE 95 ===
 ```
+
+---
+
+## RUN_ID 96 · 2026-10-15 20:18:06 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 96 · 复查 vision 推送/评测 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[评测/训练进程]"; pgrep -af 'lmms|run_lmms_eval|stage2|stage15|inference_eval' 2>/dev/null | grep -v pgrep | cut -c1-150 | head -10
+echo "[git 本地/远端]"; git log --oneline -2; echo "ahead/behind(origin/main...HEAD) = $(git rev-list --left-right --count origin/main...HEAD 2>&1)"
+echo "--- vision loop 日志（push/唤醒） ---"
+tail -25 /tmp/baize_vision_loop.log 2>/dev/null | grep -iE 'push|commit|wake up|cline returned|FAILED|index.lock' | tail -10 | cut -c1-175
+echo "--- 结果目录 mllm_eval_results ---"
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | head -12
+echo "--- stage2 / stage15 ckpt ---"
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2 2>/dev/null | head -8
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15 2>/dev/null | head -6
+echo "--- HF datasets 缓存（17 集落地情况） ---"
+ls /home/app.e0031982/.cache/huggingface/datasets 2>/dev/null | head -25
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 96 ==="
+```
+
+**输出**
+```
+=== RUN_ID 96 · 复查 vision 推送/评测 2026-10-15 20:18:06 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 20:18:07 ===
+[GPU]
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[评测/训练进程]
+1901592 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/code/super_intelligence_2035
+[git 本地/远端]
+3bc4ee5e baize ops: RUN_ID 96 复查 vision（git 推送是否成功 / 17 集评测是否启动）
+1e9bb48c recruit(R18/2026-10-15): 10-14 口径重判两池 + 推荐邮件 ×2 + 第 10 批索要简历 15 人
+ahead/behind(origin/main...HEAD) = 0	0
+--- vision loop 日志（push/唤醒） ---
+--- 结果目录 mllm_eval_results ---
+total 20
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 17:02 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+--- stage2 / stage15 ckpt ---
+total 112
+drwxr-xr-x   9 app.e0031982 app.adm  4096 Oct 15 15:36 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 15:45 step1000
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 15:47 step1500
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 15:49 step2000
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 15:51 step2500
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 15:53 step3000
+total 60
+drwxr-xr-x  12 app.e0031982 app.adm  4096 Oct 15 12:47 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 12:01 step10000
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 12:10 step12000
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 12:19 step14000
+--- HF datasets 缓存（17 集落地情况） ---
+allenai___ai2_arc
+allenai___openbookqa
+allenai___sciq
+allenai___winogrande
+google___boolq
+_home_app.e0031982_.cache_huggingface_datasets_allenai___ai2_arc_ARC-Challenge_0.0.0_210d026faf9955653af8916fad021475a3f00453.lock
+_home_app.e0031982_.cache_huggingface_datasets_allenai___ai2_arc_ARC-Easy_0.0.0_210d026faf9955653af8916fad021475a3f00453.lock
+_home_app.e0031982_.cache_huggingface_datasets_allenai___openbookqa_main_0.0.0_388097ea7776314e93a529163e0fea805b8a6454.lock
+_home_app.e0031982_.cache_huggingface_datasets_allenai___sciq_default_0.0.0_2c94ad3e1aafab77146f384e23536f97a4849815.lock
+_home_app.e0031982_.cache_huggingface_datasets_allenai___winogrande_winogrande_xl_0.0.0_01e74176c63542e6b0bcb004dcdea22d94fb67b5.lock
+_home_app.e0031982_.cache_huggingface_datasets_google___boolq_default_0.0.0_35b264d03638db9f4ce671b711558bf7ff0f80d5.lock
+_home_app.e0031982_.cache_huggingface_datasets_lmms-lab___real_world_qa_default_0.0.0_907c4e5228fd1703c710ed937601cb5f89ab8d5c.lock
+_home_app.e0031982_.cache_huggingface_datasets_lmms-lab___textvqa_default_0.0.0_9c0699cd19768ac5ab97568f6b3cbac4c0062884.lock
+_home_app.e0031982_.cache_huggingface_datasets_Rowan___hellaswag_default_0.0.0_218ec52e09a7e7462a5400043bb9a69a41d06b76.lock
+lmms-lab___real_world_qa
+lmms-lab___textvqa
+Rowan___hellaswag
+=== [.12] DONE ===
+=== DONE 96 ===
+```
