@@ -9986,3 +9986,126 @@ fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035.git/
 -rwxr-x--- 1 app.e0031982 app.adm     5752 Apr 15  2026 /tmp/final_test_openvision2.sh
 === DONE 93 ===
 ```
+
+---
+
+## RUN_ID 94 · 2026-10-15 19:58:55 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 94 · 修复 .12 git push $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [A] .29 侧对照 ---"
+printf '[.29 direct github] '; timeout 12 curl -s -o /dev/null -w '%{http_code}\n' https://github.com 2>&1
+printf '[.29 92.23  github] '; timeout 12 env https_proxy=http://172.19.92.23:13128 curl -s -o /dev/null -w '%{http_code}\n' https://github.com 2>&1
+printf '[.29 92.25  github] '; timeout 12 env https_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://github.com 2>&1
+echo "--- [B] .12 诊断 + [C] 修复 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "--- github 连通性（.12） ---"
+printf 'direct : '; timeout 12 curl -s -o /dev/null -w '%{http_code}\n' https://github.com
+for P in http://172.19.92.23:13128 http://172.19.92.25:13128; do
+  printf '%s : ' "$P"; timeout 12 env https_proxy=$P http_proxy=$P curl -s -o /dev/null -w '%{http_code}\n' https://github.com
+done
+echo "--- 现有 git 配置 / env ---"
+echo "global http.proxy  = $(git config --global --get http.proxy)"
+echo "global https.proxy = $(git config --global --get https.proxy)"
+echo "local  http.proxy  = $(git config --get http.proxy)"
+env | grep -i proxy || echo "(env 无 proxy)"
+echo "--- index.lock ---"
+ls -la .git/index.lock 2>/dev/null || echo "(无 index.lock)"
+echo "--- git 状态 ---"
+git status -sb 2>&1 | head -4
+echo "local  HEAD = $(git log --oneline -1 2>&1)"
+echo "origin HEAD = $(git log --oneline -1 origin/main 2>&1)"
+echo "ahead/behind(origin/main...HEAD) = $(git rev-list --left-right --count origin/main...HEAD 2>&1)"
+echo "--- vision loop 环境 ---"
+for p in $(pgrep -f baize_vision_loop.sh 2>/dev/null); do echo "pid=$p"; tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -iE '^(PATH|http_proxy|https_proxy|no_proxy)=' | head -6; done
+echo "--- [C1] 选可用 proxy 写入 git 全局配置 ---"
+GH=""
+for P in http://172.19.92.23:13128 http://172.19.92.25:13128; do
+  C=$(timeout 12 env https_proxy=$P curl -s -o /dev/null -w '%{http_code}' https://github.com 2>/dev/null)
+  if [ "$C" = "200" ] && [ -z "$GH" ]; then GH="$P"; fi
+done
+if [ -n "$GH" ]; then
+  git config --global http.proxy "$GH"; git config --global https.proxy "$GH"
+  echo "已设 git 全局 proxy = $GH"
+  echo -n "ls-remote 验证: "; timeout 60 git ls-remote origin HEAD 2>&1 | head -1
+else
+  echo "!! 92.23/92.25 都不通 github → 未改配置（需人工确认代理口径）"
+fi
+echo "--- [C2] 陈旧 index.lock ---"
+if [ -f .git/index.lock ]; then
+  if pgrep -af 'git (add|commit|pull|rebase|gc|merge)' >/dev/null 2>&1; then
+    echo "有活跃 git 进程 → 不动 lock:"; pgrep -af 'git (add|commit|pull|rebase|gc|merge)' 2>/dev/null | cut -c1-120 | head -5
+  else
+    echo "无活跃 git 进程 → 判为陈旧，删除"; rm -f .git/index.lock && echo "index.lock removed"
+  fi
+else
+  echo "(无 index.lock，无需处理)"
+fi
+echo "--- [C3] 试推（仅当本地领先） ---"
+AB=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+echo "本地领先 = ${AB} 个提交"
+if [ "${AB:-0}" -gt 0 ]; then
+  timeout 150 git push origin main 2>&1 | tail -4
+else
+  echo "(无需 push)"
+fi
+echo "--- [C4] 复查 ---"
+echo "global http.proxy = $(git config --global --get http.proxy)"
+timeout 30 git status -sb 2>&1 | head -2
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 94 ==="
+```
+
+**输出**
+```
+=== RUN_ID 94 · 修复 .12 git push 2026-10-15 19:58:55 · host=whag0pgpuap29 ===
+--- [A] .29 侧对照 ---
+[.29 direct github] 200
+[.29 92.23  github] 200
+[.29 92.25  github] 200
+--- [B] .12 诊断 + [C] 修复 ---
+=== [.12] whag0pgpuap12 2026-10-15 19:58:59 ===
+--- github 连通性（.12） ---
+direct : 000
+http://172.19.92.23:13128 : 200
+http://172.19.92.25:13128 : 200
+--- 现有 git 配置 / env ---
+global http.proxy  = 
+global https.proxy = 
+local  http.proxy  = 
+(env 无 proxy)
+--- index.lock ---
+(无 index.lock)
+--- git 状态 ---
+## main...origin/main
+ M doc/BaiZe-ISEDA2027/reports/report_vision_experiments_summary_zh.html
+ M doc/BaiZe-ISEDA2027/reports/report_xmodel_scaling_comparison_zh.html
+ M doc/BaiZe-ISEDA2027/run/harness/glm53_pilot_results.json
+local  HEAD = b0b880a4 baize ops: RUN_ID 94 修复 .12 git push（测 github 代理 92.23/92.25 -> 写 git 全局 proxy + 清陈旧 index.lock + 试推）
+origin HEAD = b0b880a4 baize ops: RUN_ID 94 修复 .12 git push（测 github 代理 92.23/92.25 -> 写 git 全局 proxy + 清陈旧 index.lock + 试推）
+ahead/behind(origin/main...HEAD) = 0	0
+--- vision loop 环境 ---
+pid=1815982
+PATH=/home/app.e0031982/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+--- [C1] 选可用 proxy 写入 git 全局配置 ---
+已设 git 全局 proxy = http://172.19.92.23:13128
+ls-remote 验证: b0b880a49bcc2c2c682c28b48f8997b6935422b2	HEAD
+--- [C2] 陈旧 index.lock ---
+(无 index.lock，无需处理)
+--- [C3] 试推（仅当本地领先） ---
+本地领先 = 0 个提交
+(无需 push)
+--- [C4] 复查 ---
+global http.proxy = http://172.19.92.23:13128
+## main...origin/main
+ M doc/BaiZe-ISEDA2027/reports/report_vision_experiments_summary_zh.html
+=== [.12] DONE ===
+=== DONE 94 ===
+```
