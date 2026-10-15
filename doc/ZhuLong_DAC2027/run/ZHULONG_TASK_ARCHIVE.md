@@ -763,3 +763,93 @@ setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC20
 - ✅ 沙盒重启若致 `.env` / 端口 / MCP / hook 异常，先修复（不动业务逻辑）再开跑，修复过程记进心跳。
 
 
+
+---
+## [归档 2026-10-15 09:34] 运维指令 (十八)(十九)(二十) — 已闭合，从 ZHULONG_TASK.md 原文搬入
+
+### 🆕 运维指令 · 2026-10-15（二十）— 📝 把最新评测结果填入 zhulong_results.md【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「让 zhulong 把最新评测结果填入 zhulong_results.md。」
+
+**① 填写对象**（`doc/ZhuLong_DAC2027/zhulong_results.md`，以下均为**已 5/5 收口的实测**，与 `MEMORY_ZHULONG.md` 执行看板逐字一致）：
+1. **S2.phi_k1**：5/5 = **63.8 ± 3.2%**（r1 65.2 · r2 66.5 · r3 58.2 · r4 64.6 · r5 =? 从台账/日报取准确值），并补各轮 gen-fail（k=1 预算效应：35/30/39/34/?）。
+2. **S2.phi_lagged**：5/5 = **73.0 ± 3.2%** [74.7, 76.6, 69.6, 69.6, 74.7]。
+3. **更正 B.deepseek-v4-flash**：当前标 `⬜ 0/5` 系漏填 → 应 **✅ 5/5 = 16.7 ± 12.3%** [9.5, 10.1, 19.0, 7.6, 37.3]。
+
+**② 填写规范**：
+- 每个臂填 **mean ± std + 5 轮明细 + gen-fail 数**（与论文 `tab:phi-bound` 口径一致）。
+- 把「S2 各臂仅有 1-shot 探路值」的旧注**删除/更新**（现在 k10/k3/k1/lagged 均已 5/5）。
+- 同步把 `[ ]`（未完成复选框）改成 `[x]`（已完成）。
+
+**③ 纪律**：数字从 `MEMORY_ZHULONG.md` 执行看板 / 当日 daily-memories 抄，🚫 凭印象；S1.omega_low 本论仍在跑、**不填**（只填已 5/5 的）；commit 前缀 `zhulong results:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-14（十九）— 🖨️ pdflatex 已装好，编译验证论文【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「zhulong 环境刚刚装好 pdflatex 了。」
+
+**① 现在编译验证论文**（衔接十七的 P0+P1+P2 改稿）：进论文树 → `pdflatex` + `bibtex` + `pdflatex×2`，验证改稿后 `main.pdf` 编译成功。
+
+**② 检查项（逐项报）**：
+- **0 error** · **0 undefined reference / citation**；有 warning 也要记录（尤其 bib 缺 page/volume 类）。
+- **页数变化**：改稿前 10 页 → 改稿后 ? 页。
+- **overfull hbox**：新增与否；>20pt 的必须是 0（README 自检阈值）。
+
+**③ 若编译报错**：先判断是**改稿引入**（如 label/引用、表格语法、`\cite` 错名）还是**环境**（缺 `.sty`/`.cls`/字体/`bibtex` 命令）。改稿引入的能修就修；环境缺件如实报并给等价替代（如缺 `texlive-latex-extra` 包名）。
+
+**④ 纪律**：纯 CPU 编译，不占 GPU；`main.pdf` 编译产物按仓库惯例提交（`.tex`+`.bib` 必交，`.aux/.log` 不入库）；commit 前缀 `zhulong compile:`；任务书 >32KB 自滚归档。主线 `phi_k1 r3 regrade` 照常推进，编译在空窗期做。
+
+### 🆕 运维指令 · 2026-10-14（十八）— 🧩 评测集全貌 + SKILL/Tcl 结果并入论文【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「告知 zhulong agent：它自己在测 PyAether，其它 agent 在同时测 SKILL 和 TCL，结果汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。请 zhulong agent 在回填结果、刷新论文时，把 zhulong_results.md 中 SKILL/TCL 的结果带上。补充信息：EDA-Scripting-Bench 评测集中各语言 case 数，pyaether=158，skill=158，tcl=133，共计 449。」
+
+**① 评测集全貌（EDA-Scripting-Bench，三语言）**：
+| 语言 | case 数 |
+|:--|:--|
+| PyAether | 158 |
+| SKILL | 158 |
+| Tcl | 133 |
+| **合计** | **449** |
+
+**② 分工**：你（zhulong）测 **PyAether（158）**；**其它 agent 并行测 SKILL（158）+ Tcl（133）**。三路结果统一汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。
+
+**③ 要求（衔接指令十七「放行刷新论文」）**：
+- 回填论文结果时，**以 `doc/ZhuLong_DAC2027/zhulong_results.md` 为汇总源**，把 **SKILL/Tcl 的结果一并带上**——论文评测口径从「PyAether 158」扩展为「**EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）**」。
+- 具体落地：
+  - 回填 **RQ3「SKILL/Tcl 切片」**（此前标 pending）——`zhulong_results.md` 中 SKILL/Tcl 已有结果即填，未齐则如实标 `partial`/`pending`。
+  - 回填 intro/abstract 的 **「unified benchmark [X%]」**——按三语言 449 合并 Pass@1 重算（或显式标注口径）。
+  - 全文凡涉及「PyAether-only」的主表/轴向，须改口径说明，🚫 避免「158」与「449」混用、避免读者误以为全榜只有 PyAether。
+- 🚫 不得只报 PyAether 而继续忽略 SKILL/Tcl；🚫 不得凭印象编 SKILL/Tcl 数字——**只认 `zhulong_results.md` 现存数字**，未齐标 pending。
+
+**④ 纪律**：每次唤醒刷新论文前先 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；数字与之逐字一致；缺数据标 pending 不编造；commit 前缀沿用 `zhulong paper-fix:`；评测主线不变（finish phi_k1 → phi_lagged → S1，改稿仍在空窗期做）。
+
+
+---
+## [归档 2026-10-15 09:35] 运维指令 (十七) — P0-P3 论文改稿已执行+编译验证通过，从 ZHULONG_TASK.md 原文搬入
+
+### 🆕 运维指令 · 2026-10-14（十七）— ✍️ 放行改进论文（执行审视报告修改）【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「zhulong agent 论文改进报告已审视/批准，请 zhulong agent 按此改进论文。」
+
+**性质**：纯写作、零 GPU。**主线仍是评测**（当前 `phi_k1 r3` 跑中）——改稿只在空窗期做，🚫 绝不为改稿延迟/打断评测收割与切臂。
+
+**① 撤销「只报不改」红线**：放行你修改论文 `.tex`，执行审视报告 `reports/report_zhulong_paper_review_zh.html` 的修改（按 §8 优先级 P0→P1→P2→P3）。
+
+**② 🔴 P0 硬伤必须修（先改锚点、再批量同步，避免表文矛盾）**：
+- **锚点全局替换** `84.8% → 82.1±3.0%`（`0_abstract` / `1_intro` / `8_conclusion` + 4 表锚点行：main-ablation Full、ablation-harness F、phi-bound unbounded、llm-comparison DeepSeek-V4-Pro）。
+- **重算所有 Δ**：main-ablation（Full **+10.3pp**、wo_retrieval **−1.1pp**）· llm-comparison 4 个 Δ（**+1.2 / −65.4 / −5.1 / −18.3**）· §S2 正文（**+10.3pp**）。
+- **Error Analysis 重做/重声明**：改用 5-run 代表性 run（建议 full_v3 r3=81.6%、129/158）重计失败数；或显式标注「基于单次代表性 trace」。🚫 不得仍绑 84.8% 那次 134/158。
+- **硬伤#3**：`tab:omega` (L)=82.8、`tab:ablation-harness` (N)=73.3、(B)=66.2 无 5-run 支撑 → 一律标 `[provisional, n=1]` 或回退 `[TBD]`，🚫 不得再以 `±` 呈现（尤其 (B) ±16.1 的 std 无 n≥2 支撑）。
+- **硬伤#5**：`tab:phi-bound` 增加「Mean gen-fail」列（k10/k3/k1），§S2 正文补「k↓ → gen-fail↑ → Pass@1↓」1–2 句。
+- **硬伤#6**：§2（Background/Prior work）或 §3 加 1–2 句 BaiZe 边界，措辞中性如「本工作的 harness（三 MCP 工具 + 评测协议）属 ZhuLong；agent backbone 的底层能力另由互补工作 BaiZe[ref] 详述，二者互引不重报」。
+
+**③ 🟠/🟢 按 §8 清单继续**：
+- **P1**：补配对检验（paired bootstrap/McNemar）或在 Limitations 明示「未做配对检验」；§5.3/§6 补 gen-fail 计入分母 + infra 故障 run 剔除规则 + 75% 锚点健康下限；§6.1.4 声明 backbone 量化 `deepseek-v4-pro-fp4`；消歧 (N)→(N′)。
+- **P2**：删 ICML 中文注释（`6_exp.tex:132-133`）；加结果可视化图至少 2 张（消融条形 + Φ 折线）；Limitations 独立成节并补「未配对检验」「量化未消融」两条；附录加 75 轮原始值表。
+- **P3**：回填后重编译处理 overfull hbox（13.6pt/13.1pt 两处）；核对 DAC 2027 页数上限。
+
+**④ 🟢 可回填（§7.1 第 1–10 项）**：能填即填（k10→`77.7±2.2`、k3→`69.1±2.5`、锚点 `82.1±3.0` 等）。🚫 **仍缺数据项一律保留 `[TBD]`/provisional，不得编造**：phi_k1 r3–r5、phi_lagged、S1 三臂（omega_low/readback_binary/_none）、wo_sandbox、SKILL/Tcl、全部 Converged(%)。
+
+**⑤ 改稿纪律**：改后编译 `main.pdf` 验证 **0 error** + 报页数变化；每个数字与 `MEMORY_ZHULONG.md` 执行看板/成绩一致、🚫 凭印象；完成把「改了哪几处 + 编译结果」写进心跳；commit 前缀 `zhulong paper-fix:`（区别于 paper-review）· 任务书 >32KB 自滚归档。
+
+**红线**：🚫 评测优先于改稿，不得为此 kill/延迟评测；🚫 数字编造；✅ 锚点与全部 Δ 必须同步改，避免表文矛盾。
+
