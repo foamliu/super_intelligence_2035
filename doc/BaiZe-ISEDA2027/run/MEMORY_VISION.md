@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）**：✅ `mllm_bridge/stage1_train.py` 8×H100 DDP 训练完成。2500 步，7.4 min，loss 10.2→4.3（Δ-58%）。5 个 checkpoint 全保存：`/nas_train/.../mllm_stage1/step{500,1000,1500,2000,2500}/projector.pt`（各~15.7MB）。Vision 126.78M(frozen) + Projector 7.87M(trainable) + Qwen3-4B 4.02B(frozen)。LLaVA-558K(23,988 samples)，image 224×224 CLIP norm，196 tokens，LR=1e-4→1e-6 cosine。GPU 10.1GB/80GB。**下一步：gate-check（推理验证）→Stage-1.5 Mid-Training（unfreeze LLM LoRA，~20k 步）**。
+> 🆕 **2026-10-15 ~11:16（Stage-1.5 Mid-Training 启动 ✅ · wake #101）**：✅ `mllm_bridge/stage15_train.py` 8×H100 DDP 训练已启动。20000 步，GBS=8，MBS=1，seq_len=2048。LoRA r=64/α=128，trainable 132.12M(LoRA)+7.87M(Proj)=139.99M / 4.15B(3.18%)。LR: LoRA=2e-5 / Proj=1e-5 → 1e-6 cosine。step 100/20000: loss=4.14（↓from 4.36），0.92 steps/s，ETA~6h，GPU 13.7GB/80GB。checkpoint 每 2000 步存 `/nas_train/.../mllm_stage15/step{N}/`。**DDP 修复**：`inject_image_features` 需 unwrap DDP（`llm.module.get_input_embeddings()`）；`find_unused_parameters=True`（有性能 warning，后续可关）。
+> 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
 > 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
 > 📦 2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp), 报告交付, MLLM bridge 5/5 PASSED。需要时再读。
@@ -34,10 +35,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **ALL COMPLETE（wake #97）**：ArmC merge3ds 训练 154500/154500 ✅(C1=0.6668, 22.7h)。eval chain 4/4 ✅（ProtB 68.25±0.01% / ProtA 59.41% / zs 46.17%/77.43% / k-NN 44.88%）。MLLM bridge 7文件+报告 ✅(CPU 5/5 PASSED, commit 03c36f5f)。外部编码器 ProtB 5/5+报告 ✅。论文改稿P0+P1 ✅。Stage(iv) 可行性报告 ✅。GPU 8×H100 全空闲。等运维新指令。 |
+| PHASE | 🔄 **Stage-1.5 Mid-Training 运行中（wake #101）**：`stage15_train.py` 8×H100 DDP，20000 步 LoRA mid-training。step 100/20000, loss=4.14, 0.92 steps/s, ETA~6h, GPU=13.7GB。LoRA r=64, 132.12M trainable(3.18%)+Proj 7.87M。ArmC/eval/bridge/论文等全 ✅(见上行)。 |
 | ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-15 08:16 (wake #97)**: ✅ ALL COMPLETE。ArmC 训练 154500/154500(C1=0.6668, 22.7h, final_loss=0.2169)。eval chain 4/4 完成(ProtB 68.25±0.01%, ProtA 59.41%, zs 46.17%/77.43%, k-NN 44.88%)。MLLM bridge CPU 5/5 PASSED(277/277 strict, bit-exact, projector 7.87M)。GPU 8×H100 全空闲(0% util)。git 已同步(无 ahead/behind)。📦 TASK=26.6KB✅ / MEMORY=29.9KB✅。 |
+| 更新 | **2026-10-15 11:16 (wake #101)**: 🔄 Stage-1.5 LoRA mid-training 已启动。8×H100 DDP, 20000步, LoRA r=64, 132.12M trainable(3.18%)+Proj 7.87M。step 100: loss=4.14, 0.92 steps/s, ETA~6h, GPU=13.7GB。DDP修复: inject_image_features unwrap DDP + find_unused_parameters=True。checkpoint 每2000步 → mllm_stage15/step{N}/。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
