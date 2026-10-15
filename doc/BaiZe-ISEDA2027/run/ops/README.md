@@ -88,3 +88,15 @@ setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
   ```
 - **验证**：`.12` 上 `git ls-remote origin HEAD` ✅ 返回 sha；`git ls-remote` 走同一 remote/凭据，读写路径一致。
 - **注意**：`.12` 与 `.29` **共用 NFS HOME 与工作副本** ⇒ 该 `--global` 配置对两机生效；但**若 `.12` 直连恢复**，建议移除该配置以免绕路（`git config --global --unset http.proxy`）。
+
+---
+
+## 8. ⚠️ 中继命令三条硬教训（2026-10-15 实测踩坑）
+
+| # | 坑 | 现象 | 正确做法 |
+|:--|:--|:--|:--|
+| 1 | **`pgrep/pkill -f <串>` 会误伤 cline** | loop 把**整份任务书当参数**传给 `cline`（`cline -c … "$prompt"`）⇒ **任务书里出现的任何字符串都会匹配到 cline 进程**。2026-10-15 我用 `pgrep -f 'precache_benchmarks.py'` 取到的 PID **其实是 cline** | ① 取 PID 后**逐个核对 cmdline**、**排除含 `cline`/`bun` 的**；② 杀进程优先 `kill <PID>`；③ **writer 侧**：命令块里**别写会被 `-f` 匹配的敏感串**（`[p]recache…` 括号技巧**只防自匹配、不防 cline**） |
+| 2 | **输出被 20000 字符截断** | 那次把 cline 的 33KB cmdline dump 出来 ⇒ 真正的 `[1]`–`[5]` 结果**全被截掉**，等于白跑一轮 | 大输出先 `cut -c1-140`/`head`；🚫 **不 dump `/proc/<pid>/cmdline`**（它可能就是整份任务书） |
+| 3 | **SIGTERM 未必有效** | `pkill -f …` 打到 cline，但它**忽略 SIGTERM 继续存活**（precache 的 python 则正常退出） | 要停 cline 用 `kill -9`，且**先确认目标 PID 不是 cline** |
+
+> 📌 同批经验（正向）：**HF 缓存迁移**用 `cp -a`（跨 FS，勿硬链）→ 实测把 `~/.cache/huggingface` 里已下的 lmms-lab 基准拷进新 `HF_HOME` 后，体积 6.3G→**22.4G**、precache 直接跳到 `[3/17]`（跳过已下集）⇒ **省 ~16GB 下载**。
