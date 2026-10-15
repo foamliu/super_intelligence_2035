@@ -4,6 +4,7 @@
 <!-- RUN_ID: 12 -->
 <!-- RUN_ID: 13 -->
 <!-- RUN_ID: 14 -->
+<!-- RUN_ID: 15 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -21,6 +22,41 @@
 > ✅ **实际结果已核验通过**：两条 loop 均在 **08:08:0x** 以新节律启动（`watch_news` pid=1156927 / `watch_research` pid=1157046），日志首行 = `[loop] ⏰ 定时模式已启用：唤醒时窗 = 6,18`，次行 = `⏰ 时窗参考：… 下一个时窗 = 2026-10-07 18:00:00 CST`；news 线已打印 `⏰ 定时模式：下次唤醒 = 2026-10-07 18:00:00 CST（588min 后）` 并写入 HB，research 线仍在首轮内。<br>
 > 🚫 **本块不宜再跑**：新节律下「重启 = 立刻多烧一轮 cline」（两线各一轮 ≈ 用户 token），**目标已达成，重复执行纯浪费**。⇒ `.last_run_id` 已同步置为 **11**（中继不会再取它）。<br>
 > ℹ️ **当时的通道故障**：中继 `pid=353526` 自 2026-10-06 18:06 起**卡死在命令替换管道上**（`fd 3 -> pipe:[…]` 只读端 + `wchan=pipe_read` + 无子进程 ⇒ 写端被脱离进程组的后台进程长期持有），故本块**未由中继执行**；已按「SSH 直连（用户授权）+ 中继加固（文件捕获 + stdin `/dev/null` + 失败打印原因 + 心跳）」两条腿处理。
+
+## RUN_ID 15 — 🔍 **news 修复·第 2 步：node/nvm/cline 文件现状**（只读 · 2026-10-15）
+
+> RUN_ID 14 结果：loop 的 PATH **含** `~/.nvm/versions/node/v24.21.0/bin`，但 `cline` 仍找不到；
+> 而中继自身环境 `node=NONE / npm=NONE`（中继 PATH 不含 nvm，故不能据此判缺失）。
+> 本块**只读**：确认「整套 node 版本目录被删」还是「仅 cline shim 被删」，以便精确恢复。
+
+```bash
+echo "=== RUN_ID 15 · news 修复·第2步：node/nvm/cline 现状（只读） $(date '+%F %T') ==="; hostname; date '+%F %T'
+echo "--- [1] nvm ---"
+ls -ld "$HOME/.nvm" 2>/dev/null | cut -c1-140
+ls -la "$HOME/.nvm/nvm.sh" 2>/dev/null | cut -c1-140
+echo "[nvm/versions/node]"; ls -la "$HOME/.nvm/versions/node/" 2>/dev/null | cut -c1-160
+echo "[v24.21.0/bin]"; ls -la "$HOME/.nvm/versions/node/v24.21.0/bin/" 2>/dev/null | head -25 | cut -c1-160
+echo "[v24.21.0/lib/node_modules]"; ls -la "$HOME/.nvm/versions/node/v24.21.0/lib/node_modules/" 2>/dev/null | head -25 | cut -c1-160
+echo "--- [2] cline/node/npm 绝对路径探测 ---"
+for b in "$HOME/.nvm/versions/node/v24.21.0/bin/cline" "$HOME/.nvm/versions/node/v24.21.0/bin/node" "$HOME/.nvm/versions/node/v24.21.0/bin/npm"; do
+  if [ -e "$b" ]; then ls -la "$b" | cut -c1-160; else echo "MISSING: $b"; fi
+done
+echo "--- [3] 其他 node 位置 ---"
+ls -la /usr/bin/node /usr/local/bin/node /snap/bin/node 2>/dev/null | cut -c1-140
+echo "[.local/bin]"; ls -la "$HOME/.local/bin" 2>/dev/null | head -30 | cut -c1-140
+echo "--- [4] bashrc / profile 的 nvm 段 ---"
+grep -n -i 'nvm\|NVM_DIR' "$HOME/.bashrc" "$HOME/.profile" 2>/dev/null | head -12 | cut -c1-160
+echo "--- [5] 磁盘 / 内存 ---"
+df -h / /home 2>/dev/null | cut -c1-120; free -m 2>/dev/null | head -3 | cut -c1-120
+echo "--- [6] launcher / 其他 loop ---"
+for f in "$HOME/start_recruit_loop.sh" "$HOME/start_news_loop.sh"; do if [ -e "$f" ]; then echo "FOUND $f"; ls -la "$f" | cut -c1-140; else echo "ABSENT $f"; fi; done
+pgrep -af 'watch_.*_loop.sh' 2>/dev/null | cut -c1-120
+echo "--- [7] recruit loop 日志尾（看是否同病） ---"
+tail -6 /tmp/watch_recruit_loop.log 2>/dev/null | cut -c1-160
+echo "--- [8] 最近删除/改动线索 ---"
+ls -la --time-style=+%F_%H:%M "$HOME" 2>/dev/null | head -25 | cut -c1-140
+echo "=== DONE ==="
+```
 
 ## RUN_ID 14 — 🔧 **修复 news 线：定位 cline + PATH 兜底 + 用修好的脚本重启 loop**（2026-10-15）
 
