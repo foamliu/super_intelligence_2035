@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 97 -->
+<!-- RUN_ID: 98 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,47 @@
 
 ---
 
+## RUN_ID 98 — 🔍 **核对纯文本语料盘上实况**（只读；回答「Ultra-FineWeb base 到底下没下」）
+
+> 背景：`DATA_RESEARCH.md v1.1（10-01）` 写「base / UltraX 不在盘上」，而 `plan v4（10-14）§1.2` 写「已下满」。本块只读实测落定。
+> 🚫 不下载、不删除、不动进程；🚫 不做整树 `du`（只对点名目录做有界 `find` 计数 + 一级 `ls`）。
+
+```bash
+set -u
+echo "=== RUN_ID 98 · 纯文本语料盘上实况 $(date '+%F %T') · host=$(hostname) ==="
+echo "--- 盘余量 ---"; df -h /nas_train /nas_inference /nas_user /nas_env 2>/dev/null | cut -c1-120
+echo "--- 一级目录 ---"
+for D in /nas_train/app.e0031982/datasets/openbmb /nas_inference/app.e0031982/datasets/openbmb /nas_train/openbmb/Ultra-FineWeb; do
+  echo "### $D"; ls -la "$D" 2>&1 | head -18 | cut -c1-135
+done
+echo "--- 点名 config 的存在性 + 文件计数（maxdepth 2） ---"
+for P in \
+ "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en" \
+ "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh" \
+ "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq" \
+ "/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraX-Preview" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609" \
+ "/nas_train/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4" ; do
+  if [ -d "$P" ]; then printf '%-92s EXISTS  files=%s  incomplete=%s\n' "$P" "$(timeout 40 find "$P" -maxdepth 2 -type f 2>/dev/null | wc -l)" "$(timeout 40 find "$P" -maxdepth 2 -name '*.incomplete' 2>/dev/null | wc -l)"; else printf '%-92s MISSING\n' "$P"; fi
+done
+echo "--- 最近写入时间（判断是否仍在长） ---"
+for P in /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb /nas_train/openbmb/Ultra-FineWeb; do
+  [ -d "$P" ] && { echo "## $P"; timeout 30 find "$P" -maxdepth 3 -type f -printf '%TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | sort -r | head -5 | cut -c1-140; }
+done
+echo "=== DONE 98 ==="
+```
+
 ## RUN_ID 97 — 📊 **vision 17 集评测进度巡检**（只读）
 
 > 背景：20:33 已启动 `accelerate launch --multi_gpu --num_processes=8` + `batch_size=4` + `--limit 50`（17 集验证评测）。
 > 本块只读：GPU 占用 / 评测进程 / 结果目录与 JSON / 评测日志尾。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 97 · vision 17 集评测进度 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
