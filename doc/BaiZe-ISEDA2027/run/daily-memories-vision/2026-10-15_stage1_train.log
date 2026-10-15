@@ -1,0 +1,326 @@
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1015 10:14:40.624000 2614156 site-packages/torch/distributed/run.py:774] 
+W1015 10:14:40.624000 2614156 site-packages/torch/distributed/run.py:774] *****************************************
+W1015 10:14:40.624000 2614156 site-packages/torch/distributed/run.py:774] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1015 10:14:40.624000 2614156 site-packages/torch/distributed/run.py:774] *****************************************
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Loading tokenizer...
+Building dataset index...
+[BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s][Rank 0] Dataset: 23988 samples from 5 tars
+Loading vision tower...
+[BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.19it/s][BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+`torch_dtype` is deprecated! Use `dtype` instead!
+[BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]  Vision: 126.78M params (frozen)
+Loading projector...
+  Projector: 7.87M params (trainable)
+Loading LLM (Qwen3-4B)...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s][BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.25it/s]`torch_dtype` is deprecated! Use `dtype` instead!
+[BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.15it/s]`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.70it/s]
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.27it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.28it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.25it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.85it/s]
+Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.34it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.25it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.28it/s][BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.89it/s]
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.28it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.90it/s]
+  LLM: 4.02B params (frozen)
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.31it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.94it/s]
+Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.23it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.82it/s]
+Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.16it/s][BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.01it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.53it/s]
+Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.31it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.30it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.93it/s]
+
+=== Stage-1 Alignment Training ===
+  World size: 8
+  Steps: 2500
+  GBS: 8, MBS: 1
+  Accum steps: 1
+  LR: 0.0001 -> 1e-06 (cosine, warmup 0.002)
+  Seq len: 2048
+  Trainable params: 7.87M
+
+  Step    10/2500 | loss=10.2452 | lr=1.00e-04 | 0.39 steps/s | ETA=106.1min | GPU mem=10.0GB
+  Step    20/2500 | loss=8.8068 | lr=1.00e-04 | 0.57 steps/s | ETA=72.2min | GPU mem=10.0GB
+  Step    30/2500 | loss=9.6868 | lr=1.00e-04 | 0.64 steps/s | ETA=64.1min | GPU mem=10.0GB
+  Step    40/2500 | loss=8.9855 | lr=1.00e-04 | 0.71 steps/s | ETA=58.2min | GPU mem=10.0GB
+  Step    50/2500 | loss=8.0552 | lr=9.99e-05 | 0.76 steps/s | ETA=53.5min | GPU mem=10.0GB
+  Step    60/2500 | loss=8.8312 | lr=9.99e-05 | 0.83 steps/s | ETA=49.1min | GPU mem=10.0GB
+  Step    70/2500 | loss=7.4806 | lr=9.98e-05 | 0.86 steps/s | ETA=47.0min | GPU mem=10.0GB
+  Step    80/2500 | loss=7.0068 | lr=9.98e-05 | 0.90 steps/s | ETA=44.8min | GPU mem=10.0GB
+  Step    90/2500 | loss=6.6958 | lr=9.97e-05 | 0.96 steps/s | ETA=41.8min | GPU mem=10.0GB
+  Step   100/2500 | loss=5.1348 | lr=9.97e-05 | 0.98 steps/s | ETA=41.0min | GPU mem=10.0GB
+  Step   110/2500 | loss=5.6355 | lr=9.96e-05 | 0.99 steps/s | ETA=40.3min | GPU mem=10.1GB
+  Step   120/2500 | loss=4.8419 | lr=9.95e-05 | 1.07 steps/s | ETA=37.2min | GPU mem=10.1GB
+  Step   130/2500 | loss=5.5091 | lr=9.94e-05 | 1.14 steps/s | ETA=34.6min | GPU mem=10.1GB
+  Step   140/2500 | loss=4.7709 | lr=9.93e-05 | 1.21 steps/s | ETA=32.4min | GPU mem=10.1GB
+  Step   150/2500 | loss=5.1487 | lr=9.92e-05 | 1.29 steps/s | ETA=30.4min | GPU mem=10.1GB
+  Step   160/2500 | loss=5.3562 | lr=9.91e-05 | 1.36 steps/s | ETA=28.7min | GPU mem=10.1GB
+  Step   170/2500 | loss=4.0252 | lr=9.89e-05 | 1.43 steps/s | ETA=27.2min | GPU mem=10.1GB
+  Step   180/2500 | loss=5.4121 | lr=9.88e-05 | 1.49 steps/s | ETA=25.9min | GPU mem=10.1GB
+  Step   190/2500 | loss=5.0754 | lr=9.87e-05 | 1.56 steps/s | ETA=24.7min | GPU mem=10.1GB
+  Step   200/2500 | loss=5.0217 | lr=9.85e-05 | 1.62 steps/s | ETA=23.6min | GPU mem=10.1GB
+  Step   210/2500 | loss=4.0383 | lr=9.84e-05 | 1.68 steps/s | ETA=22.7min | GPU mem=10.1GB
+  Step   220/2500 | loss=4.3918 | lr=9.82e-05 | 1.75 steps/s | ETA=21.8min | GPU mem=10.1GB
+  Step   230/2500 | loss=4.4500 | lr=9.80e-05 | 1.80 steps/s | ETA=21.0min | GPU mem=10.1GB
+  Step   240/2500 | loss=4.4662 | lr=9.79e-05 | 1.86 steps/s | ETA=20.2min | GPU mem=10.1GB
+  Step   250/2500 | loss=4.3800 | lr=9.77e-05 | 1.92 steps/s | ETA=19.5min | GPU mem=10.1GB
+  Step   260/2500 | loss=4.3216 | lr=9.75e-05 | 1.98 steps/s | ETA=18.9min | GPU mem=10.1GB
+  Step   270/2500 | loss=4.4965 | lr=9.73e-05 | 2.03 steps/s | ETA=18.3min | GPU mem=10.1GB
+  Step   280/2500 | loss=4.5414 | lr=9.71e-05 | 2.09 steps/s | ETA=17.7min | GPU mem=10.1GB
+  Step   290/2500 | loss=4.3085 | lr=9.69e-05 | 2.14 steps/s | ETA=17.2min | GPU mem=10.1GB
+  Step   300/2500 | loss=4.9375 | lr=9.66e-05 | 2.19 steps/s | ETA=16.7min | GPU mem=10.1GB
+  Step   310/2500 | loss=4.7777 | lr=9.64e-05 | 2.24 steps/s | ETA=16.3min | GPU mem=10.1GB
+  Step   320/2500 | loss=3.9431 | lr=9.62e-05 | 2.29 steps/s | ETA=15.9min | GPU mem=10.1GB
+  Step   330/2500 | loss=4.6085 | lr=9.59e-05 | 2.33 steps/s | ETA=15.5min | GPU mem=10.1GB
+  Step   340/2500 | loss=4.7098 | lr=9.57e-05 | 2.38 steps/s | ETA=15.1min | GPU mem=10.1GB
+  Step   350/2500 | loss=4.9538 | lr=9.54e-05 | 2.43 steps/s | ETA=14.8min | GPU mem=10.1GB
+  Step   360/2500 | loss=4.3842 | lr=9.52e-05 | 2.47 steps/s | ETA=14.5min | GPU mem=10.1GB
+  Step   370/2500 | loss=4.7257 | lr=9.49e-05 | 2.51 steps/s | ETA=14.2min | GPU mem=10.1GB
+  Step   380/2500 | loss=4.1095 | lr=9.46e-05 | 2.55 steps/s | ETA=13.9min | GPU mem=10.1GB
+  Step   390/2500 | loss=4.3781 | lr=9.43e-05 | 2.59 steps/s | ETA=13.6min | GPU mem=10.1GB
+  Step   400/2500 | loss=4.8452 | lr=9.40e-05 | 2.63 steps/s | ETA=13.3min | GPU mem=10.1GB
+  Step   410/2500 | loss=4.4570 | lr=9.37e-05 | 2.67 steps/s | ETA=13.1min | GPU mem=10.1GB
+  Step   420/2500 | loss=4.5439 | lr=9.34e-05 | 2.70 steps/s | ETA=12.8min | GPU mem=10.1GB
+  Step   430/2500 | loss=4.1033 | lr=9.31e-05 | 2.74 steps/s | ETA=12.6min | GPU mem=10.1GB
+  Step   440/2500 | loss=4.7978 | lr=9.28e-05 | 2.78 steps/s | ETA=12.3min | GPU mem=10.1GB
+  Step   450/2500 | loss=4.4513 | lr=9.25e-05 | 2.82 steps/s | ETA=12.1min | GPU mem=10.1GB
+  Step   460/2500 | loss=4.6226 | lr=9.21e-05 | 2.86 steps/s | ETA=11.9min | GPU mem=10.1GB
+  Step   470/2500 | loss=4.5151 | lr=9.18e-05 | 2.90 steps/s | ETA=11.7min | GPU mem=10.1GB
+  Step   480/2500 | loss=4.2550 | lr=9.14e-05 | 2.93 steps/s | ETA=11.5min | GPU mem=10.1GB
+  Step   490/2500 | loss=4.6772 | lr=9.11e-05 | 2.97 steps/s | ETA=11.3min | GPU mem=10.1GB
+  Step   500/2500 | loss=4.1656 | lr=9.07e-05 | 3.00 steps/s | ETA=11.1min | GPU mem=10.1GB
+  Saved checkpoint to /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step500/projector.pt
+  Step   510/2500 | loss=4.6213 | lr=9.04e-05 | 3.03 steps/s | ETA=10.9min | GPU mem=10.1GB
+  Step   520/2500 | loss=3.9211 | lr=9.00e-05 | 3.06 steps/s | ETA=10.8min | GPU mem=10.1GB
+  Step   530/2500 | loss=4.2329 | lr=8.96e-05 | 3.10 steps/s | ETA=10.6min | GPU mem=10.1GB
+  Step   540/2500 | loss=4.3107 | lr=8.92e-05 | 3.13 steps/s | ETA=10.4min | GPU mem=10.1GB
+  Step   550/2500 | loss=4.3515 | lr=8.88e-05 | 3.16 steps/s | ETA=10.3min | GPU mem=10.1GB
+  Step   560/2500 | loss=4.4983 | lr=8.84e-05 | 3.19 steps/s | ETA=10.1min | GPU mem=10.1GB
+  Step   570/2500 | loss=4.2344 | lr=8.80e-05 | 3.23 steps/s | ETA=10.0min | GPU mem=10.1GB
+  Step   580/2500 | loss=4.5747 | lr=8.76e-05 | 3.26 steps/s | ETA=9.8min | GPU mem=10.1GB
+  Step   590/2500 | loss=4.1311 | lr=8.72e-05 | 3.29 steps/s | ETA=9.7min | GPU mem=10.1GB
+  Step   600/2500 | loss=4.4025 | lr=8.68e-05 | 3.32 steps/s | ETA=9.5min | GPU mem=10.1GB
+  Step   610/2500 | loss=3.9374 | lr=8.64e-05 | 3.35 steps/s | ETA=9.4min | GPU mem=10.1GB
+  Step   620/2500 | loss=4.3022 | lr=8.59e-05 | 3.38 steps/s | ETA=9.3min | GPU mem=10.1GB
+  Step   630/2500 | loss=4.4767 | lr=8.55e-05 | 3.41 steps/s | ETA=9.1min | GPU mem=10.1GB
+  Step   640/2500 | loss=4.6687 | lr=8.50e-05 | 3.44 steps/s | ETA=9.0min | GPU mem=10.1GB
+  Step   650/2500 | loss=4.3917 | lr=8.46e-05 | 3.47 steps/s | ETA=8.9min | GPU mem=10.1GB
+  Step   660/2500 | loss=4.8904 | lr=8.41e-05 | 3.49 steps/s | ETA=8.8min | GPU mem=10.1GB
+  Step   670/2500 | loss=4.2511 | lr=8.37e-05 | 3.52 steps/s | ETA=8.7min | GPU mem=10.1GB
+  Step   680/2500 | loss=4.7795 | lr=8.32e-05 | 3.55 steps/s | ETA=8.5min | GPU mem=10.1GB
+  Step   690/2500 | loss=4.1289 | lr=8.27e-05 | 3.58 steps/s | ETA=8.4min | GPU mem=10.1GB
+  Step   700/2500 | loss=4.4317 | lr=8.23e-05 | 3.60 steps/s | ETA=8.3min | GPU mem=10.1GB
+  Step   710/2500 | loss=4.4948 | lr=8.18e-05 | 3.62 steps/s | ETA=8.2min | GPU mem=10.1GB
+  Step   720/2500 | loss=4.1034 | lr=8.13e-05 | 3.65 steps/s | ETA=8.1min | GPU mem=10.1GB
+  Step   730/2500 | loss=4.2360 | lr=8.08e-05 | 3.67 steps/s | ETA=8.0min | GPU mem=10.1GB
+  Step   740/2500 | loss=4.0034 | lr=8.03e-05 | 3.69 steps/s | ETA=8.0min | GPU mem=10.1GB
+  Step   750/2500 | loss=4.5965 | lr=7.98e-05 | 3.71 steps/s | ETA=7.9min | GPU mem=10.1GB
+  Step   760/2500 | loss=4.4283 | lr=7.93e-05 | 3.74 steps/s | ETA=7.8min | GPU mem=10.1GB
+  Step   770/2500 | loss=4.5283 | lr=7.88e-05 | 3.76 steps/s | ETA=7.7min | GPU mem=10.1GB
+  Step   780/2500 | loss=4.2434 | lr=7.83e-05 | 3.79 steps/s | ETA=7.6min | GPU mem=10.1GB
+  Step   790/2500 | loss=4.5514 | lr=7.78e-05 | 3.81 steps/s | ETA=7.5min | GPU mem=10.1GB
+  Step   800/2500 | loss=4.4916 | lr=7.73e-05 | 3.83 steps/s | ETA=7.4min | GPU mem=10.1GB
+  Step   810/2500 | loss=4.3927 | lr=7.67e-05 | 3.85 steps/s | ETA=7.3min | GPU mem=10.1GB
+  Step   820/2500 | loss=4.2667 | lr=7.62e-05 | 3.87 steps/s | ETA=7.2min | GPU mem=10.1GB
+  Step   830/2500 | loss=4.3327 | lr=7.57e-05 | 3.89 steps/s | ETA=7.2min | GPU mem=10.1GB
+  Step   840/2500 | loss=4.3591 | lr=7.51e-05 | 3.91 steps/s | ETA=7.1min | GPU mem=10.1GB
+  Step   850/2500 | loss=4.8144 | lr=7.46e-05 | 3.94 steps/s | ETA=7.0min | GPU mem=10.1GB
+  Step   860/2500 | loss=3.8755 | lr=7.40e-05 | 3.96 steps/s | ETA=6.9min | GPU mem=10.1GB
+  Step   870/2500 | loss=4.6261 | lr=7.35e-05 | 3.98 steps/s | ETA=6.8min | GPU mem=10.1GB
+  Step   880/2500 | loss=4.2078 | lr=7.29e-05 | 4.00 steps/s | ETA=6.7min | GPU mem=10.1GB
+  Step   890/2500 | loss=4.0914 | lr=7.24e-05 | 4.02 steps/s | ETA=6.7min | GPU mem=10.1GB
+  Step   900/2500 | loss=4.1750 | lr=7.18e-05 | 4.04 steps/s | ETA=6.6min | GPU mem=10.1GB
+  Step   910/2500 | loss=4.8777 | lr=7.12e-05 | 4.07 steps/s | ETA=6.5min | GPU mem=10.1GB
+  Step   920/2500 | loss=4.2991 | lr=7.07e-05 | 4.09 steps/s | ETA=6.4min | GPU mem=10.1GB
+  Step   930/2500 | loss=4.1746 | lr=7.01e-05 | 4.11 steps/s | ETA=6.4min | GPU mem=10.1GB
+  Step   940/2500 | loss=4.3227 | lr=6.95e-05 | 4.13 steps/s | ETA=6.3min | GPU mem=10.1GB
+  Step   950/2500 | loss=4.8562 | lr=6.90e-05 | 4.15 steps/s | ETA=6.2min | GPU mem=10.1GB
+  Step   960/2500 | loss=4.5489 | lr=6.84e-05 | 4.16 steps/s | ETA=6.2min | GPU mem=10.1GB
+  Step   970/2500 | loss=4.1995 | lr=6.78e-05 | 4.17 steps/s | ETA=6.1min | GPU mem=10.1GB
+  Step   980/2500 | loss=4.1382 | lr=6.72e-05 | 4.19 steps/s | ETA=6.0min | GPU mem=10.1GB
+  Step   990/2500 | loss=4.2199 | lr=6.66e-05 | 4.20 steps/s | ETA=6.0min | GPU mem=10.1GB
+  Step  1000/2500 | loss=4.3733 | lr=6.60e-05 | 4.22 steps/s | ETA=5.9min | GPU mem=10.1GB
+  Saved checkpoint to /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step1000/projector.pt
+  Step  1010/2500 | loss=4.0502 | lr=6.54e-05 | 4.24 steps/s | ETA=5.9min | GPU mem=10.1GB
+  Step  1020/2500 | loss=4.0654 | lr=6.48e-05 | 4.26 steps/s | ETA=5.8min | GPU mem=10.1GB
+  Step  1030/2500 | loss=4.0516 | lr=6.42e-05 | 4.28 steps/s | ETA=5.7min | GPU mem=10.1GB
+  Step  1040/2500 | loss=4.3776 | lr=6.36e-05 | 4.29 steps/s | ETA=5.7min | GPU mem=10.1GB
+  Step  1050/2500 | loss=4.0367 | lr=6.30e-05 | 4.31 steps/s | ETA=5.6min | GPU mem=10.1GB
+  Step  1060/2500 | loss=4.0326 | lr=6.24e-05 | 4.32 steps/s | ETA=5.6min | GPU mem=10.1GB
+  Step  1070/2500 | loss=4.0875 | lr=6.18e-05 | 4.34 steps/s | ETA=5.5min | GPU mem=10.1GB
+  Step  1080/2500 | loss=4.4787 | lr=6.12e-05 | 4.36 steps/s | ETA=5.4min | GPU mem=10.1GB
+  Step  1090/2500 | loss=4.3296 | lr=6.06e-05 | 4.38 steps/s | ETA=5.4min | GPU mem=10.1GB
+  Step  1100/2500 | loss=4.5955 | lr=6.00e-05 | 4.39 steps/s | ETA=5.3min | GPU mem=10.1GB
+  Step  1110/2500 | loss=4.2728 | lr=5.94e-05 | 4.41 steps/s | ETA=5.3min | GPU mem=10.1GB
+  Step  1120/2500 | loss=4.8494 | lr=5.88e-05 | 4.43 steps/s | ETA=5.2min | GPU mem=10.1GB
+  Step  1130/2500 | loss=3.9352 | lr=5.82e-05 | 4.44 steps/s | ETA=5.1min | GPU mem=10.1GB
+  Step  1140/2500 | loss=4.0937 | lr=5.76e-05 | 4.45 steps/s | ETA=5.1min | GPU mem=10.1GB
+  Step  1150/2500 | loss=4.2264 | lr=5.69e-05 | 4.46 steps/s | ETA=5.0min | GPU mem=10.1GB
+  Step  1160/2500 | loss=4.5890 | lr=5.63e-05 | 4.47 steps/s | ETA=5.0min | GPU mem=10.1GB
+  Step  1170/2500 | loss=4.2146 | lr=5.57e-05 | 4.48 steps/s | ETA=4.9min | GPU mem=10.1GB
+  Step  1180/2500 | loss=4.3940 | lr=5.51e-05 | 4.49 steps/s | ETA=4.9min | GPU mem=10.1GB
+  Step  1190/2500 | loss=4.4847 | lr=5.45e-05 | 4.51 steps/s | ETA=4.8min | GPU mem=10.1GB
+  Step  1200/2500 | loss=3.8315 | lr=5.38e-05 | 4.52 steps/s | ETA=4.8min | GPU mem=10.1GB
+  Step  1210/2500 | loss=4.0679 | lr=5.32e-05 | 4.54 steps/s | ETA=4.7min | GPU mem=10.1GB
+  Step  1220/2500 | loss=4.2225 | lr=5.26e-05 | 4.55 steps/s | ETA=4.7min | GPU mem=10.1GB
+  Step  1230/2500 | loss=4.3197 | lr=5.20e-05 | 4.57 steps/s | ETA=4.6min | GPU mem=10.1GB
+  Step  1240/2500 | loss=4.3360 | lr=5.13e-05 | 4.58 steps/s | ETA=4.6min | GPU mem=10.1GB
+  Step  1250/2500 | loss=4.1302 | lr=5.07e-05 | 4.60 steps/s | ETA=4.5min | GPU mem=10.1GB
+  Step  1260/2500 | loss=4.4804 | lr=5.01e-05 | 4.61 steps/s | ETA=4.5min | GPU mem=10.1GB
+  Step  1270/2500 | loss=3.9174 | lr=4.95e-05 | 4.63 steps/s | ETA=4.4min | GPU mem=10.1GB
+  Step  1280/2500 | loss=4.1270 | lr=4.88e-05 | 4.64 steps/s | ETA=4.4min | GPU mem=10.1GB
+  Step  1290/2500 | loss=4.2766 | lr=4.82e-05 | 4.66 steps/s | ETA=4.3min | GPU mem=10.1GB
+  Step  1300/2500 | loss=4.4596 | lr=4.76e-05 | 4.67 steps/s | ETA=4.3min | GPU mem=10.1GB
+  Step  1310/2500 | loss=4.7456 | lr=4.70e-05 | 4.68 steps/s | ETA=4.2min | GPU mem=10.1GB
+  Step  1320/2500 | loss=4.2043 | lr=4.64e-05 | 4.70 steps/s | ETA=4.2min | GPU mem=10.1GB
+  Step  1330/2500 | loss=4.5079 | lr=4.57e-05 | 4.71 steps/s | ETA=4.1min | GPU mem=10.1GB
+  Step  1340/2500 | loss=4.7809 | lr=4.51e-05 | 4.72 steps/s | ETA=4.1min | GPU mem=10.1GB
+  Step  1350/2500 | loss=4.6813 | lr=4.45e-05 | 4.72 steps/s | ETA=4.1min | GPU mem=10.1GB
+  Step  1360/2500 | loss=3.8850 | lr=4.39e-05 | 4.74 steps/s | ETA=4.0min | GPU mem=10.1GB
+  Step  1370/2500 | loss=4.4908 | lr=4.33e-05 | 4.75 steps/s | ETA=4.0min | GPU mem=10.1GB
+  Step  1380/2500 | loss=4.0982 | lr=4.26e-05 | 4.76 steps/s | ETA=3.9min | GPU mem=10.1GB
+  Step  1390/2500 | loss=4.5340 | lr=4.20e-05 | 4.78 steps/s | ETA=3.9min | GPU mem=10.1GB
+  Step  1400/2500 | loss=4.2432 | lr=4.14e-05 | 4.79 steps/s | ETA=3.8min | GPU mem=10.1GB
+  Step  1410/2500 | loss=3.9395 | lr=4.08e-05 | 4.80 steps/s | ETA=3.8min | GPU mem=10.1GB
+  Step  1420/2500 | loss=4.6502 | lr=4.02e-05 | 4.81 steps/s | ETA=3.7min | GPU mem=10.1GB
+  Step  1430/2500 | loss=3.9892 | lr=3.96e-05 | 4.83 steps/s | ETA=3.7min | GPU mem=10.1GB
+  Step  1440/2500 | loss=4.0605 | lr=3.90e-05 | 4.84 steps/s | ETA=3.7min | GPU mem=10.1GB
+  Step  1450/2500 | loss=4.5171 | lr=3.84e-05 | 4.85 steps/s | ETA=3.6min | GPU mem=10.1GB
+  Step  1460/2500 | loss=4.4431 | lr=3.78e-05 | 4.86 steps/s | ETA=3.6min | GPU mem=10.1GB
+  Step  1470/2500 | loss=4.4167 | lr=3.72e-05 | 4.87 steps/s | ETA=3.5min | GPU mem=10.1GB
+  Step  1480/2500 | loss=3.8882 | lr=3.66e-05 | 4.89 steps/s | ETA=3.5min | GPU mem=10.1GB
+  Step  1490/2500 | loss=4.7609 | lr=3.60e-05 | 4.90 steps/s | ETA=3.4min | GPU mem=10.1GB
+  Step  1500/2500 | loss=4.3333 | lr=3.54e-05 | 4.91 steps/s | ETA=3.4min | GPU mem=10.1GB
+  Saved checkpoint to /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step1500/projector.pt
+  Step  1510/2500 | loss=3.7891 | lr=3.48e-05 | 4.92 steps/s | ETA=3.4min | GPU mem=10.1GB
+  Step  1520/2500 | loss=3.5900 | lr=3.42e-05 | 4.93 steps/s | ETA=3.3min | GPU mem=10.1GB
+  Step  1530/2500 | loss=3.9759 | lr=3.36e-05 | 4.94 steps/s | ETA=3.3min | GPU mem=10.1GB
+  Step  1540/2500 | loss=4.7420 | lr=3.30e-05 | 4.95 steps/s | ETA=3.2min | GPU mem=10.1GB
+  Step  1550/2500 | loss=3.6587 | lr=3.24e-05 | 4.96 steps/s | ETA=3.2min | GPU mem=10.1GB
+  Step  1560/2500 | loss=4.6235 | lr=3.19e-05 | 4.97 steps/s | ETA=3.1min | GPU mem=10.1GB
+  Step  1570/2500 | loss=4.2003 | lr=3.13e-05 | 4.99 steps/s | ETA=3.1min | GPU mem=10.1GB
+  Step  1580/2500 | loss=4.2524 | lr=3.07e-05 | 5.00 steps/s | ETA=3.1min | GPU mem=10.1GB
+  Step  1590/2500 | loss=4.8364 | lr=3.01e-05 | 5.01 steps/s | ETA=3.0min | GPU mem=10.1GB
+  Step  1600/2500 | loss=3.9967 | lr=2.96e-05 | 5.02 steps/s | ETA=3.0min | GPU mem=10.1GB
+  Step  1610/2500 | loss=4.1712 | lr=2.90e-05 | 5.03 steps/s | ETA=2.9min | GPU mem=10.1GB
+  Step  1620/2500 | loss=4.7909 | lr=2.85e-05 | 5.04 steps/s | ETA=2.9min | GPU mem=10.1GB
+  Step  1630/2500 | loss=4.1005 | lr=2.79e-05 | 5.05 steps/s | ETA=2.9min | GPU mem=10.1GB
+  Step  1640/2500 | loss=4.2576 | lr=2.73e-05 | 5.06 steps/s | ETA=2.8min | GPU mem=10.1GB
+  Step  1650/2500 | loss=3.8714 | lr=2.68e-05 | 5.07 steps/s | ETA=2.8min | GPU mem=10.1GB
+  Step  1660/2500 | loss=3.8770 | lr=2.63e-05 | 5.08 steps/s | ETA=2.8min | GPU mem=10.1GB
+  Step  1670/2500 | loss=4.0181 | lr=2.57e-05 | 5.09 steps/s | ETA=2.7min | GPU mem=10.1GB
+  Step  1680/2500 | loss=4.1172 | lr=2.52e-05 | 5.09 steps/s | ETA=2.7min | GPU mem=10.1GB
+  Step  1690/2500 | loss=4.1107 | lr=2.46e-05 | 5.10 steps/s | ETA=2.6min | GPU mem=10.1GB
+  Step  1700/2500 | loss=4.1209 | lr=2.41e-05 | 5.10 steps/s | ETA=2.6min | GPU mem=10.1GB
+  Step  1710/2500 | loss=4.2010 | lr=2.36e-05 | 5.11 steps/s | ETA=2.6min | GPU mem=10.1GB
+  Step  1720/2500 | loss=4.2705 | lr=2.31e-05 | 5.12 steps/s | ETA=2.5min | GPU mem=10.1GB
+  Step  1730/2500 | loss=3.6862 | lr=2.26e-05 | 5.13 steps/s | ETA=2.5min | GPU mem=10.1GB
+  Step  1740/2500 | loss=5.1242 | lr=2.20e-05 | 5.14 steps/s | ETA=2.5min | GPU mem=10.1GB
+  Step  1750/2500 | loss=4.4694 | lr=2.15e-05 | 5.15 steps/s | ETA=2.4min | GPU mem=10.1GB
+  Step  1760/2500 | loss=4.3747 | lr=2.10e-05 | 5.16 steps/s | ETA=2.4min | GPU mem=10.1GB
+  Step  1770/2500 | loss=4.4691 | lr=2.05e-05 | 5.17 steps/s | ETA=2.4min | GPU mem=10.1GB
+  Step  1780/2500 | loss=4.6228 | lr=2.00e-05 | 5.18 steps/s | ETA=2.3min | GPU mem=10.1GB
+  Step  1790/2500 | loss=4.0654 | lr=1.95e-05 | 5.19 steps/s | ETA=2.3min | GPU mem=10.1GB
+  Step  1800/2500 | loss=4.1366 | lr=1.91e-05 | 5.19 steps/s | ETA=2.2min | GPU mem=10.1GB
+  Step  1810/2500 | loss=4.4049 | lr=1.86e-05 | 5.20 steps/s | ETA=2.2min | GPU mem=10.1GB
+  Step  1820/2500 | loss=4.2852 | lr=1.81e-05 | 5.20 steps/s | ETA=2.2min | GPU mem=10.1GB
+  Step  1830/2500 | loss=4.8012 | lr=1.76e-05 | 5.21 steps/s | ETA=2.1min | GPU mem=10.1GB
+  Step  1840/2500 | loss=4.5727 | lr=1.72e-05 | 5.22 steps/s | ETA=2.1min | GPU mem=10.1GB
+  Step  1850/2500 | loss=4.5288 | lr=1.67e-05 | 5.23 steps/s | ETA=2.1min | GPU mem=10.1GB
+  Step  1860/2500 | loss=4.4750 | lr=1.63e-05 | 5.24 steps/s | ETA=2.0min | GPU mem=10.1GB
+  Step  1870/2500 | loss=4.9327 | lr=1.58e-05 | 5.25 steps/s | ETA=2.0min | GPU mem=10.1GB
+  Step  1880/2500 | loss=4.1051 | lr=1.54e-05 | 5.25 steps/s | ETA=2.0min | GPU mem=10.1GB
+  Step  1890/2500 | loss=5.1995 | lr=1.49e-05 | 5.26 steps/s | ETA=1.9min | GPU mem=10.1GB
+  Step  1900/2500 | loss=3.6868 | lr=1.45e-05 | 5.26 steps/s | ETA=1.9min | GPU mem=10.1GB
+  Step  1910/2500 | loss=4.2435 | lr=1.41e-05 | 5.27 steps/s | ETA=1.9min | GPU mem=10.1GB
+  Step  1920/2500 | loss=4.5227 | lr=1.37e-05 | 5.27 steps/s | ETA=1.8min | GPU mem=10.1GB
+  Step  1930/2500 | loss=3.9766 | lr=1.33e-05 | 5.28 steps/s | ETA=1.8min | GPU mem=10.1GB
+  Step  1940/2500 | loss=3.6270 | lr=1.28e-05 | 5.29 steps/s | ETA=1.8min | GPU mem=10.1GB
+  Step  1950/2500 | loss=4.2555 | lr=1.24e-05 | 5.30 steps/s | ETA=1.7min | GPU mem=10.1GB
+  Step  1960/2500 | loss=4.1847 | lr=1.20e-05 | 5.31 steps/s | ETA=1.7min | GPU mem=10.1GB
+  Step  1970/2500 | loss=4.8465 | lr=1.17e-05 | 5.32 steps/s | ETA=1.7min | GPU mem=10.1GB
+  Step  1980/2500 | loss=3.8907 | lr=1.13e-05 | 5.33 steps/s | ETA=1.6min | GPU mem=10.1GB
+  Step  1990/2500 | loss=4.0314 | lr=1.09e-05 | 5.33 steps/s | ETA=1.6min | GPU mem=10.1GB
+  Step  2000/2500 | loss=3.9529 | lr=1.05e-05 | 5.33 steps/s | ETA=1.6min | GPU mem=10.1GB
+  Saved checkpoint to /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step2000/projector.pt
+  Step  2010/2500 | loss=4.7305 | lr=1.02e-05 | 5.34 steps/s | ETA=1.5min | GPU mem=10.1GB
+  Step  2020/2500 | loss=3.9514 | lr=9.80e-06 | 5.34 steps/s | ETA=1.5min | GPU mem=10.1GB
+  Step  2030/2500 | loss=4.9125 | lr=9.45e-06 | 5.35 steps/s | ETA=1.5min | GPU mem=10.1GB
+  Step  2040/2500 | loss=4.1310 | lr=9.11e-06 | 5.35 steps/s | ETA=1.4min | GPU mem=10.1GB
+  Step  2050/2500 | loss=3.8055 | lr=8.77e-06 | 5.36 steps/s | ETA=1.4min | GPU mem=10.1GB
+  Step  2060/2500 | loss=3.8489 | lr=8.44e-06 | 5.36 steps/s | ETA=1.4min | GPU mem=10.1GB
+  Step  2070/2500 | loss=3.4999 | lr=8.11e-06 | 5.37 steps/s | ETA=1.3min | GPU mem=10.1GB
+  Step  2080/2500 | loss=4.2399 | lr=7.79e-06 | 5.38 steps/s | ETA=1.3min | GPU mem=10.1GB
+  Step  2090/2500 | loss=4.7594 | lr=7.48e-06 | 5.39 steps/s | ETA=1.3min | GPU mem=10.1GB
+  Step  2100/2500 | loss=4.1658 | lr=7.18e-06 | 5.39 steps/s | ETA=1.2min | GPU mem=10.1GB
+  Step  2110/2500 | loss=4.3387 | lr=6.88e-06 | 5.40 steps/s | ETA=1.2min | GPU mem=10.1GB
+  Step  2120/2500 | loss=4.5806 | lr=6.59e-06 | 5.40 steps/s | ETA=1.2min | GPU mem=10.1GB
+  Step  2130/2500 | loss=4.2481 | lr=6.30e-06 | 5.41 steps/s | ETA=1.1min | GPU mem=10.1GB
+  Step  2140/2500 | loss=4.2887 | lr=6.03e-06 | 5.42 steps/s | ETA=1.1min | GPU mem=10.1GB
+  Step  2150/2500 | loss=4.4814 | lr=5.76e-06 | 5.42 steps/s | ETA=1.1min | GPU mem=10.1GB
+  Step  2160/2500 | loss=3.9014 | lr=5.49e-06 | 5.43 steps/s | ETA=1.0min | GPU mem=10.1GB
+  Step  2170/2500 | loss=3.8628 | lr=5.24e-06 | 5.44 steps/s | ETA=1.0min | GPU mem=10.1GB
+  Step  2180/2500 | loss=4.5261 | lr=4.99e-06 | 5.45 steps/s | ETA=1.0min | GPU mem=10.1GB
+  Step  2190/2500 | loss=4.3997 | lr=4.75e-06 | 5.45 steps/s | ETA=0.9min | GPU mem=10.1GB
+  Step  2200/2500 | loss=4.2385 | lr=4.51e-06 | 5.46 steps/s | ETA=0.9min | GPU mem=10.1GB
+  Step  2210/2500 | loss=3.9468 | lr=4.29e-06 | 5.47 steps/s | ETA=0.9min | GPU mem=10.1GB
+  Step  2220/2500 | loss=3.6905 | lr=4.07e-06 | 5.47 steps/s | ETA=0.9min | GPU mem=10.1GB
+  Step  2230/2500 | loss=4.1344 | lr=3.85e-06 | 5.47 steps/s | ETA=0.8min | GPU mem=10.1GB
+  Step  2240/2500 | loss=4.6625 | lr=3.65e-06 | 5.48 steps/s | ETA=0.8min | GPU mem=10.1GB
+  Step  2250/2500 | loss=4.2716 | lr=3.45e-06 | 5.48 steps/s | ETA=0.8min | GPU mem=10.1GB
+  Step  2260/2500 | loss=4.9116 | lr=3.26e-06 | 5.49 steps/s | ETA=0.7min | GPU mem=10.1GB
+  Step  2270/2500 | loss=4.0255 | lr=3.08e-06 | 5.49 steps/s | ETA=0.7min | GPU mem=10.1GB
+  Step  2280/2500 | loss=4.7691 | lr=2.90e-06 | 5.50 steps/s | ETA=0.7min | GPU mem=10.1GB
+  Step  2290/2500 | loss=4.2273 | lr=2.74e-06 | 5.51 steps/s | ETA=0.6min | GPU mem=10.1GB
+  Step  2300/2500 | loss=4.3609 | lr=2.58e-06 | 5.51 steps/s | ETA=0.6min | GPU mem=10.1GB
+  Step  2310/2500 | loss=4.1691 | lr=2.42e-06 | 5.52 steps/s | ETA=0.6min | GPU mem=10.1GB
+  Step  2320/2500 | loss=4.0962 | lr=2.28e-06 | 5.53 steps/s | ETA=0.5min | GPU mem=10.1GB
+  Step  2330/2500 | loss=4.2822 | lr=2.14e-06 | 5.53 steps/s | ETA=0.5min | GPU mem=10.1GB
+  Step  2340/2500 | loss=3.8284 | lr=2.01e-06 | 5.54 steps/s | ETA=0.5min | GPU mem=10.1GB
+  Step  2350/2500 | loss=4.5929 | lr=1.89e-06 | 5.55 steps/s | ETA=0.5min | GPU mem=10.1GB
+  Step  2360/2500 | loss=4.2145 | lr=1.78e-06 | 5.55 steps/s | ETA=0.4min | GPU mem=10.1GB
+  Step  2370/2500 | loss=4.1852 | lr=1.67e-06 | 5.56 steps/s | ETA=0.4min | GPU mem=10.1GB
+  Step  2380/2500 | loss=3.7955 | lr=1.57e-06 | 5.56 steps/s | ETA=0.4min | GPU mem=10.1GB
+  Step  2390/2500 | loss=4.0624 | lr=1.48e-06 | 5.57 steps/s | ETA=0.3min | GPU mem=10.1GB
+  Step  2400/2500 | loss=4.1702 | lr=1.40e-06 | 5.58 steps/s | ETA=0.3min | GPU mem=10.1GB
+  Step  2410/2500 | loss=4.2978 | lr=1.32e-06 | 5.58 steps/s | ETA=0.3min | GPU mem=10.1GB
+  Step  2420/2500 | loss=5.1517 | lr=1.26e-06 | 5.58 steps/s | ETA=0.2min | GPU mem=10.1GB
+  Step  2430/2500 | loss=4.5941 | lr=1.20e-06 | 5.59 steps/s | ETA=0.2min | GPU mem=10.1GB
+  Step  2440/2500 | loss=4.4054 | lr=1.15e-06 | 5.59 steps/s | ETA=0.2min | GPU mem=10.1GB
+  Step  2450/2500 | loss=4.8038 | lr=1.10e-06 | 5.59 steps/s | ETA=0.1min | GPU mem=10.1GB
+  Step  2460/2500 | loss=4.5538 | lr=1.07e-06 | 5.60 steps/s | ETA=0.1min | GPU mem=10.1GB
+  Step  2470/2500 | loss=4.1459 | lr=1.04e-06 | 5.60 steps/s | ETA=0.1min | GPU mem=10.1GB
+  Step  2480/2500 | loss=4.5798 | lr=1.02e-06 | 5.61 steps/s | ETA=0.1min | GPU mem=10.1GB
+  Step  2490/2500 | loss=4.5388 | lr=1.00e-06 | 5.62 steps/s | ETA=0.0min | GPU mem=10.1GB
+  Step  2500/2500 | loss=4.2812 | lr=1.00e-06 | 5.62 steps/s | ETA=0.0min | GPU mem=10.1GB
+  Saved checkpoint to /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step2500/projector.pt
+  Saved checkpoint to /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step2500/projector.pt
+
+=== Training Complete ===
+  Total time: 7.4 min
+  Final avg loss: 4.5066
+  Final checkpoint: /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage1/step2500/projector.pt

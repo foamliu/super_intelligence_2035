@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 ~11:00（MLLM GPU smoke test 7/7 PASSED · wake #99）**：✅ `mllm_bridge/smoke_test_gpu.py` 全 7 项通过。Vision 126.78M(277/277 strict) + Projector 7.87M(512→2560) + Qwen3-4B 4.02B(bf16) = 4.16B total。前向 [2,200,151936] logits ✅，loss=9.44 finite ✅，projector 梯度 fc1=104.29/fc2=229.85 ✅。GPU 峰值仅 11.08GB/80GB。**下一步：Stage-1 Alignment 训练**（冻结 LLM+vision，只训 projector，~2500 步，LR 1e-4）。
+> 🆕 **2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）**：✅ `mllm_bridge/stage1_train.py` 8×H100 DDP 训练完成。2500 步，7.4 min，loss 10.2→4.3（Δ-58%）。5 个 checkpoint 全保存：`/nas_train/.../mllm_stage1/step{500,1000,1500,2000,2500}/projector.pt`（各~15.7MB）。Vision 126.78M(frozen) + Projector 7.87M(trainable) + Qwen3-4B 4.02B(frozen)。LLaVA-558K(23,988 samples)，image 224×224 CLIP norm，196 tokens，LR=1e-4→1e-6 cosine。GPU 10.1GB/80GB。**下一步：gate-check（推理验证）→Stage-1.5 Mid-Training（unfreeze LLM LoRA，~20k 步）**。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
 > 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
 > 📦 2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp), 报告交付, MLLM bridge 5/5 PASSED。需要时再读。
