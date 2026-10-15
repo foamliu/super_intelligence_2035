@@ -31,9 +31,13 @@ os.makedirs(os.environ["HF_DATASETS_CACHE"], exist_ok=True)
 os.makedirs(os.environ["HF_HUB_CACHE"], exist_ok=True)
 os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
 os.environ.setdefault("HF_TOKEN", "hf_dummy")
-# lmms-eval cache on LOCAL disk (/data, 6.8T) — avoids NFS→/tmp redirect (only 38G)
-os.environ.setdefault("LMMS_EVAL_DATASETS_CACHE", "/data/app.e0031982/lmms_eval_cache")
-os.makedirs(os.environ["LMMS_EVAL_DATASETS_CACHE"], exist_ok=True)
+# lmms-eval cache — use /tmp by default (same as precache's NFS→/tmp redirect)
+# NOTE: /data/app.e0031982/ is root-owned and cannot be created.
+os.environ.setdefault("LMMS_EVAL_DATASETS_CACHE", "/tmp/lmms_eval_hf_datasets_app.e0031982")
+try:
+    os.makedirs(os.environ["LMMS_EVAL_DATASETS_CACHE"], exist_ok=True)
+except PermissionError:
+    pass  # directory already exists
 
 VISION_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BRIDGE_DIR = os.path.dirname(os.path.abspath(__file__))

@@ -20,9 +20,14 @@ export HF_HOME=/nas_env/app.e0031982/hf_home
 export HF_DATASETS_CACHE=$HF_HOME/datasets
 export HF_HUB_CACHE=$HF_HOME/hub
 export TRANSFORMERS_CACHE=$HF_HOME/transformers
-export LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache
+export LMMS_EVAL_DATASETS_CACHE=/tmp/lmms_eval_hf_datasets_app.e0031982
 export OMP_NUM_THREADS=1
-mkdir -p "$HF_DATASETS_CACHE" "$HF_HUB_CACHE" "$TRANSFORMERS_CACHE" "$LMMS_EVAL_DATASETS_CACHE"
+# NOTE: /data/app.e0031982/ is root-owned and cannot be created.
+# The running precache used the default lmms-eval NFS→/tmp redirect
+# (/tmp/lmms_eval_hf_datasets_app.e0031982, 38G cache already there).
+# We set LMMS_EVAL_DATASETS_CACHE explicitly to that same /tmp path
+# so the eval reuses the existing cache. /tmp has 32G free — enough
+# for limit50 (read-only, no new large datasets).
 
 LOG_DIR=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results
 mkdir -p "$LOG_DIR"
@@ -72,12 +77,12 @@ echo "[watcher] Launching limit50 8-GPU eval at $(date '+%Y-%m-%d %H:%M:%S')" | 
 # Re-enable hf_transfer for eval (downloads already cached)
 export HF_HUB_ENABLE_HF_TRANSFER=1
 
-# Disk space check
-AVAIL_KB=$(df -P /data | tail -1 | awk '{print $4}')
+# Disk space check (use /tmp since LMMS_EVAL_DATASETS_CACHE is on /tmp)
+AVAIL_KB=$(df -P /tmp | tail -1 | awk '{print $4}')
 AVAIL_GB=$((AVAIL_KB / 1024 / 1024))
-echo "[watcher] /data available: ${AVAIL_GB}G" | tee -a "$WATCHER_LOG"
-if [ "$AVAIL_GB" -lt 50 ]; then
-    echo "[watcher] WARNING: /data has only ${AVAIL_GB}G free. Aborting eval." | tee -a "$WATCHER_LOG"
+echo "[watcher] /tmp available: ${AVAIL_GB}G" | tee -a "$WATCHER_LOG"
+if [ "$AVAIL_GB" -lt 10 ]; then
+    echo "[watcher] WARNING: /tmp has only ${AVAIL_GB}G free (<10G threshold). Aborting eval." | tee -a "$WATCHER_LOG"
     exit 1
 fi
 
