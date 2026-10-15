@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败处理 + TASK 归档 · wake #106）**：🔄 **precache 10/17**（pope 处理中, PID 2430411, ~2.2h）。✅ 旧缓存复用完成（5 hub + 6 datasets 已在 /nas_env）。❌ **seedbench FAILED**：`ConnectionError: cas-server-direct.xethub.hf.co`（xet 协议超时 1000s）→ 已建 `retry_failed_precache.sh`（`HF_HUB_ENABLE_HF_TRANSFER=0` 禁 xet）。🔧 **缓存路径修复**：发现 lmms-eval 自动将 NFS 上的 `HF_DATASETS_CACHE` 重定向到 `/tmp`（仅 38G），8 卡评测会撑满 → 已在 `launch_lmms_eval.sh` / `run_precache.sh` / `precache_benchmarks.py` 添加 `LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache`（/data 6.8T 本地盘），绕过 /tmp 重定向。📦 **TASK 归档**：5 个已闭合运维块 → ARCHIVE_OPERATOR_VISION.md，TASK 35.9KB→26.5KB。下一步：precache 完成→复制 /tmp 缓存→/data→retry seedbench→limit50 8卡→全量 17 集。📦 体积：TASK=26.5KB / MEMORY≈31KB（归档 8.8KB → ARCHIVE_OPERATOR_VISION.md）。
+> 🆕 **2026-10-16 02:37（precache 14/17 ✅ + watcher 自动化脚本启动 · wake #107）**：🔄 **precache 14/17**（vqav2_val downloading 58% 21/36, ETA~15min; infovqa pending; PID 2430411, ~3.9h）。❌ seedbench FAILED (xet, 同前)。✅ 模型就绪：vision.pt + stage2/step3500 + Qwen3-4B + peft 0.18.0。✅ open_clip test 2/2 CPU PASSED。🔧 **watcher 脚本**（`wait_precache_then_eval.sh`, PID 3295550 nohup）：等 precache 退出 → retry seedbench (xet disabled) → launch limit50 8-GPU eval。如 seedbench retry 失败 → eval 跑 16 集。GPU 8×H100 全空闲。下一步：watcher 自动执行 → 检查 limit50 结果 → 全量 17 集 → ArmA retrain。📦 体积：TASK=27.1KB / MEMORY=31.3KB（本轮无归档）。
+> 📦 2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败 + TASK 归档 · wake #106）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 旧缓存复用, 缓存路径 /tmp→/data 修复, seedbench retry 脚本就绪, TASK 归档 5 块 35.9→26.5KB。需要时再读。
 > 📦 2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU), embed_dim=768, image_token_index=151655。需要时再读。
 > 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
 > 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
@@ -37,10 +38,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集：precache 10/17 + 缓存路径修复 ✅（wake #106）**：Stage-1/1.5/2 全 ✅。open_clip/LLaVA-OV wrapper ✅ (test 2/2 CPU)。precache 运行中 (PID 2430411, pope 处理中)。seedbench xet 失败→retry 脚本就绪。缓存路径 /tmp→/data 修复完成。下一步：precache 完成→复制缓存→retry seedbench→limit50 8卡→全量 17 集→E2E ai2d GPU→ArmA retrain。 |
+| PHASE | 🔄 **lmms-eval 17 集：precache 14/17 + watcher 自动化启动 ✅（wake #107）**：Stage-1/1.5/2 全 ✅。open_clip/LLaVA-OV wrapper ✅ (test 2/2 CPU)。precache 运行中 (PID 2430411, vqav2 downloading, infovqa pending)。watcher 脚本 PID 3295550 nohup：等 precache → retry seedbench → limit50 8卡 eval。GPU 8×H100 全空闲。下一步：watcher 自动完成 → 检查 limit50 → 全量 17 集 → ArmA retrain。 |
 | ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 00:40 (wake #106)**: 🔄 precache 10/17 (pope 处理中, PID 2430411)。❌ seedbench FAILED (xet ConnectionError) → retry_failed_precache.sh 就绪 (HF_HUB_ENABLE_HF_TRANSFER=0)。🔧 缓存路径修复: LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache 绕过 lmms-eval NFS→/tmp 重定向 (38G→6.8T)。📦 TASK 归档 5 块 35.9KB→26.5KB。 |
+| 更新 | **2026-10-16 02:37 (wake #107)**: 🔄 precache 14/17 (vqav2 downloading 58%, infovqa pending)。✅ 模型就绪 (vision.pt + stage2/step3500 + Qwen3-4B + peft 0.18.0)。✅ open_clip test 2/2 CPU。🔧 watcher 脚本 PID 3295550 nohup: 等 precache→retry seedbench→limit50 8卡 eval。GPU 8×H100 全空闲。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
