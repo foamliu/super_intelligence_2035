@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 92 -->
+<!-- RUN_ID: 93 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,6 +31,38 @@
 
 ---
 
+## RUN_ID 93 — 🔍 **只读：vision lmms-eval 实况诊断**（proxy 实测 + `.12` 评测进度/数据落地）
+
+> **背景（运维提问）**：用户问「vision 的 lmms-eval 评测为什么耗时长、现在什么状态、是否卡在 HF 数据下载、13:52 的 proxy 口径到底实测过没有」。
+> **本块只读**：① 在本机（`.29`）实测三档 proxy 到 `hf.co` 的连通性；② `ssh` 到 `.12` 看 GPU / 评测进程 / HF 缓存里 17 集基准数据是否落地 / 结果目录 / Stage-2 ckpt。
+> 🚫 不杀进程、不删文件、不动训练。
+
+```bash
+set -u
+echo "=== RUN_ID 93 · vision lmms-eval 实况诊断（只读） $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [1] proxy 口径实测（本机 → hf.co） ---"
+printf '[direct] '; timeout 15 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co 2>&1
+printf '[92.25 ] '; timeout 15 env https_proxy=http://172.19.92.25:13128 http_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co 2>&1
+printf '[92.23 ] '; timeout 15 env https_proxy=http://172.19.92.23:13128 http_proxy=http://172.19.92.23:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co 2>&1
+printf '[92.25 datasets] '; timeout 15 env https_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co/datasets/lmms-lab/RealWorldQA 2>&1
+printf '[92.25 resolve ] '; timeout 20 env https_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co/api/models/Qwen/Qwen3-4B-Instruct-2507 2>&1
+echo "--- [2] 远端 .12 —— GPU / 进程 / 落地数据 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=8 10.239.2.12 'hostname; date "+%F %T"
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+echo "[评测/训练进程]"; pgrep -af "lmms|stage2|stage15|inference_eval|smoke_test|torchrun|accelerate|python" 2>/dev/null | grep -v pgrep | cut -c1-140 | head -15
+echo "[vision loop]"; pgrep -af "baize_vision_loop|ops_relay" 2>/dev/null | cut -c1-110 | head -5
+echo "[proxy env]"; env | grep -i proxy | head -5
+echo "[HF hub 缓存]"; ls -la "$HOME/.cache/huggingface/hub" 2>/dev/null | head -25
+echo "[HF datasets 缓存]"; ls -la "$HOME/.cache/huggingface/datasets" 2>/dev/null | head -15
+echo "[结果目录 mllm_eval_results]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | head -15
+echo "[stage2 ckpt]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2 2>/dev/null | head -10
+echo "[stage15 ckpt]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15 2>/dev/null | head -10
+' 2>&1 | head -75
+echo "--- [3] 远端 vision loop / lmms-eval 日志尾 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=8 10.239.2.12 'tail -15 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-170; echo "--- /tmp 里的 lmms/eval 相关 ---"; ls -la /tmp/*lmms* /tmp/*eval* /tmp/*vision* 2>/dev/null | head -12' 2>&1 | head -40
+echo "=== DONE 93 ==="
+```
+
 ## RUN_ID 92 — 🧹 **只读：`/tmp` 清理前核查**（按 mtime 分桶 + 属主 + 活跃占用，为「批准删除清单」定量）
 
 > **背景（RUN_ID 90/91 已定位）**：**IT 报警 13:30 `/tmp` >95%**；13:43 实测 **38G/41%**、13:48 **39G/42%** ⇒ **瞬时报满、随后退潮 ~55G**。
@@ -38,7 +70,7 @@
 > **本块只做"定量核查"**：算出**按 mtime 分桶**各能安全回收多少（区分"活跃会话"与"死物"），供运维批「删哪些」。
 > 🚫 **本块不删任何东西**；🚫 不停服务、不动 harness。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 92 · 只读：/tmp 清理前核查 · $(date '+%F %T') · host=$(hostname) ==="
 echo "--- A) /tmp 当前 ---"
