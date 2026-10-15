@@ -17,6 +17,23 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-15（二十二）— 🔁 S1 重测调整：跳过 omega_low，改重测 readback_binary【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「为什么要跑 S1.omega_low，这个试验在 zhulong_results 不是已经测好填好了吗？反倒是 S1.readback_binary 标准差过大，需要重测。」
+
+**① 停止 omega_low 重跑（跳过）**：
+- omega_low legacy **82.8±1.0%（std=1.0，5-run 高度一致）** 已可信，**不必 fresh 重跑**。
+- 当前 omega_low r1（PID 2616015）若已跑完则收该结果即可；若仍在跑则 kill，**取消后续 r2–r5 计划**。
+- 采用 legacy **82.8±1.0%** 作为 omega_low 最终值（`zhulong_results.md` 标注来源＝legacy、std 可信）。
+
+**② 重测 readback_binary**：
+- legacy **66.2±16.1%** 的 std 过大（含 43.0% 离群 run），**需 fresh 5-run 重测**得到可靠 std。
+- 切配置 `readback_binary`（READBACK=binary + 核心 4 工具 + full 锚点 phi=BUDGET0/LAGGED0），`stop.sh && start.sh` 重启后跑满 5 轮。
+
+**③ readback_none**：legacy 73.3±2.2%（std=2.2）同样可信，**暂不重跑**（与 omega_low 同理）。
+
+**④ 纪律**：判据(十三)不变（消融臂 Pass@1 任何值有效、timeout≤10 且无 infra 故障）；重测 binary 后把 fresh 结果替换 `zhulong_results.md` 旧 legacy 值并注明；commit 前缀 `zhulong S1:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（二十一）— 🧪 结合进展提「15 天窗口消融建议」· 中文 HTML· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「安排 zhulong 结合试验进展，提出进一步消融试验的建议，写成 html 中文报告。现在到论文提交 deadline 还有 15 天。」
