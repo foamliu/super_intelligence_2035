@@ -1,6 +1,22 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co 下载 lmms-eval 基准 · 恢复 17 benchmark）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「如实使用 http://172.19.92.25:13128 这个 https_proxy，则需要直连 hf.co，不能用 https://hf-mirror.com。」
+
+**① proxy 纠正**：
+- 🚫 **去掉** `HF_ENDPOINT=https://hf-mirror.com`（及任何 hf-mirror 相关设置）。
+- ✅ 设 `https_proxy=http://172.19.92.25:13128` + `http_proxy=http://172.19.92.25:13128`，**直连 hf.co** 下载 lmms-eval 17 benchmark 数据（此前用 mirror / 未带 proxy 导致「HF Hub 不可达」）。
+
+**② 恢复 lmms-eval 评测**：
+- 🚫 不要降级为「本地 instruct held-out」——用 proxy 直连 hf.co 下载 17 benchmark 数据，恢复原计划的 **lmms-eval 17 集评测**。
+
+**③ Stage 推进（继续，勿停）**：
+- Stage-1.5 已完成（step20000，ckpt `/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15/step20000/`）→ gate check 后启动 **Stage-2 instruct（~3500 步）** → lmms-eval 17 集。
+
+**④ 纪律**：🚫 不打断 Stage 训练链；下载/评测一律带 proxy 直连 hf.co；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）· 用户直令
 
 > **用户令（2026-10-15）**：「vision 之前的实验结果如何，写成 html 中文报告。」
