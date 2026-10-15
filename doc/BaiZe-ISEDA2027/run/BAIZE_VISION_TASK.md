@@ -1,6 +1,30 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15 20:0x（🔬 **评测实况核查结论 + 4 项待办**）· 用户直令 · 最高优先
+
+> **来源**：运维用 `ops` 中继（RUN_ID 93）在 `.29/.12` 机上**实测**，非推测。请按下面逐项处理并在下一轮回报。
+>
+> **实测事实**：
+> 1. **.12 的 8×H100 全空闲**（0 MiB / 0%）——**当前没有评测/训练在跑**；`mllm_eval_results/` **为空**⇒ **完整 17 集评测从未启动**（只做过 realworldqa `--limit 50` 冒烟）。
+> 2. **Stage-2 只有 `step1000`**（mtime 15:45），而 `run_lmms_eval.py` 默认 `--step 3500` ⇒ 按默认跑会直接 `ERROR: Stage-2 checkpoint not found`。**step1000 之后是停了还是继续？** 必须澄清。
+> 3. **proxy 实测可用**：`.29` 上 `curl https://huggingface.co` → **直连 200 / 92.25 → 200**（92.23 无响应）；HF API 200、datasets 307 ⇒ **13:52 的 proxy 口径已验证通过**。
+> 4. 但 **`.12` 的 loop 环境里没有任何 proxy 变量**（`env|grep -i proxy` 空），而 `.12` **直连 github:443 不通** ⇒ 日志里 `push FAILED … Network is unreachable`；且**共享工作副本 `.git/index.lock` 被占** ⇒ `fatal: Unable to write new index file`、`nothing to commit` —— **这就是 12:15→18:29 有 6 小时看不到提交的原因（不是没干活，是推不上来）**。
+> 5. **17 集基准数据基本没下**：HF 缓存里只有 `real_world_qa` 一个 lmms 锁文件，其余是文本数据集 ⇒ 真跑 17 集时**首次下载是大头**。
+> 6. `run_lmms_eval.py` 仍是 **`batch_size=1`、单卡、无并行** ⇒ **17:15「大 batch + 多 GPU」提速令尚未落实**（这才是"评测会跑很久"的直接原因）。
+
+**① 提速落实（必须）**：`batch_size` 调到实测不 OOM 的最大值（给 OOM 边界），**多卡**（lmms-eval 官方 `accelerate`/`parallelize` 用法，自行 web search 确认），**17 集一次命令行**（🚫 不许逐个 task 串行）。回报：实测 **samples/s、显存峰值、17 集 ETA**。
+
+**② 先小样再全量**：每集 `--limit 20~50` **17 集全过一遍**（验证 adapter 对每种 task 的输出解析都对），再放全量；避免又出现"某任务恒输出 A"这类只在大批量才暴露的问题。
+
+**③ 数据预下载**：用 `https_proxy=92.25` 直连 hf.co 预下载 17 集（🚫 勿用 hf-mirror）；回报**清单 + 总体积 + 预计耗时**。下载与 `.12` 上 data 线的 `hf download` 错峰。
+
+**④ 修 git 通道（否则进度永远推不出来）**：把 `https_proxy=http://172.19.92.25:13128` 写进 **loop/launcher 的环境**（如 `~/.bashrc` 或启动脚本），让 **git 也走 proxy**；并规避 `.git/index.lock` 争用（提交前重试/错峰，🚫 不要 `git add -A`）。回报：`git push` 成功证据。
+
+**⑤ Stage-2 澄清**：若 step1000 即中断，给出**原因 + 续训计划**；若已训完，说明 ckpt 实际路径，并**对齐 runner 的 `--step`**（勿再用默认 3500 猜）。
+
+**⑥ 回报形式**：写进 `MEMORY_VISION.md` 状态头 + 当日 `daily-memories-vision/`，含一节 **「评测耗时归因」**（训练链 / adapter 适配 / 数据通道 / generate 输出 bug / git 推送，各占多少小时），便于对用户解释。⚠️ 任务书已 ~32KB，本块执行后**自行归档旧块**到 `*_ARCHIVE`。
+
 ### 🆕 运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」
