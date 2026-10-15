@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片+BGM 达标 · 13_外骨骼 R2V 端到端成片 ✅（48/48 镜 master+硬字幕成片，QC 通过））；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 R2V 端到端成片 ✅（54/54 镜 master+硬字幕成片，QC 通过）· 13_外骨骼 R2V 端到端成片 ✅（48/48 镜））；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 13_外骨骼 R2V 端到端成片 ✅（样板第二例 · 48/48 镜）
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片 + BGM01 混音（-23.8 LUFS）；13_外骨骼旧输出弃用（→ _deprecated_t2i_2026-10-13）；PIPELINE.md + STEM_FEST_PLAYBOOK.md 整改 R2V-first；固化 scripts/gen_ep13_h3_r2v.py（29 有角色镜）+ scripts/gen_ep13_h3_t2v.py（19 无角色镜）+ scripts/make_group_composite.py + scripts/gen_ep13_scenes.py + scripts/gen_ep13_subtitles.py + scripts/synth_ep13.py；合影 sarah_shixiong/sarah_linwei 程序拼版落盘；14 张场景参考图 14/14 落盘 _scene/（1280×720）；R2V 29/29 + T2V 19/19 = 48/48 镜落盘 ✅；EP13_外骨骼_master.mp4（85.2MB）+ EP13_外骨骼_成片.mp4 硬字幕（90.7MB）已合成 ✅（1280×720@24fps h264+aac 262.88s · 音画漂移 0.011s）
-当前动作:     EP13 成片 QC 已闭环（ffprobe 分辨率/AV 同步/时长 + 抽帧 63s/259s 非空白）
-下一步:       （可选）SeedVR2 ×1.5 → 1920×1080 超分；（可选）BGM 跨镜混音；→ 18_暖阳 重做 / 下一章放量
-阻塞:         无（BLOCKERS #7 已闭环）
+PHASE:        S3 放量 ✅ → 18_暖阳 R2V 端到端成片 ✅（第三例 · 54/54 镜）
+已完成:       S1 ✅；S2 ✅；S3 13_外骨骼 48/48 ✅ + 18_暖阳 54/54 成片 ✅；18_暖阳 R2V 32 + T2V 22 = 54/54 镜落盘；EP18_暖阳_master.mp4（85.4MB）+ EP18_暖阳_成片.mp4 硬字幕（87.5MB）已合成 ✅（1280×720@24fps h264+aac 273.33s · 音画漂移 0.009s）；scripts/gen_ep18_subtitles.py + scripts/synth_ep18.py 收口（I2V→R2V 路由 + SFX_ONLY 排除 13 无台词镜 + concat scale=1280:720 归一）
+当前动作:     EP18 成片 QC 已闭环（ffprobe 规格/AV 同步/时长 + 抽帧 6s/270s 非空白 + 底部字幕带亮斑核验）
+下一步:       （可选）SeedVR2 ×1.5 → 1920×1080 超分；（可选）BGM 跨镜混音；→ 下一章放量
+阻塞:         无
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-13（13_外骨骼 R2V 端到端成片 ✅ · 48/48 镜 master+硬字幕成片 QC 通过）
+- **上次唤醒**：2026-10-15（18_暖阳 R2V 端到端成片 ✅ · 54/54 镜 master+硬字幕成片 QC 通过）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-15 · S3 收尾 · 18_暖阳 R2V 端到端成片 ✅（54/54 镜 master + 硬字幕成片）**：本轮完成 EP18 暖阳「样板第三例」端到端收口与 QC。
+  - **资产核清**：`OUTPUT/18_暖阳/videos` R2V 32 + T2V 22 = **54/54 镜在位**；`EP18_暖阳_字幕.srt`（6,510B · 96 条）已生成。
+  - **★ 脚本收口**：`gen_ep18_subtitles.py` 台词取 H3 prompt `Audio:` 中文原文（🚫 无 TTS），`SFX_ONLY` 显式排除 13 个无台词镜（01/03/10/22/27/29/33/34/36/41/47/49/53）；`synth_ep18.py` 每镜视频链前加 `scale=1280:720:flags=lanczos,setsar=1`（R2V mp=0.4=864×480 vs T2V mp=0.6=1056×608 尺寸不一致），沿用音画钉长（`h3_dur_sec` + `atrim/asetpts` 钉帧）。
+  - **成片合成**：`EP18_暖阳_master.mp4`（85,442,249B）+ libass 硬字幕 → `EP18_暖阳_成片.mp4`（87,541,683B）。
+  - **QC（ffprobe + signalstats 实测）**：master/成片均 **1280×720 @ 24fps h264 + aac**，视频 273.333s / 音轨 273.342s，**音画漂移 0.009s < 0.15s 闸门 ✅**；抽帧 6s/270s（`_chk_06.png`/`_chk_270.png`）非空白（整帧 YAVG 122.4/25.3 · YMAX 235）；底部字幕带核验（帧 06 字幕带 YMIN=0 黑描边 + YMAX=220 白字在位；帧 270 片尾系统 UI 文字中下部高亮 YMAX 254/255）。
+  - **★ QC 程序化核验替代目视**：图像接口返回「Unsupported Image」不可读 ⇒ 改用 ffmpeg `signalstats,metadata=print:file=...` 量化核验（整帧 YAVG/YMIN/YMAX + 底部字幕区 crop 亮度），避免人工目视。
+  - **遗留（可选）**：SeedVR2 ×1.5 → 1920×1080 超分；BGM 跨镜混音（ace_step_t2audio）。
+  - **下一步**：下一章放量。
 
 - **2026-10-13 · S3 收尾 · 13_外骨骼 R2V 端到端成片 ✅（48/48 镜 master + 硬字幕成片）**：本轮完成 EP13 外骨骼「样板第二例」端到端收口与 QC。
   - **T2V 批次收齐**：`gen_ep13_h3_t2v.py` 19/19 无角色镜全部落盘；`OUTPUT/13_外骨骼/videos` R2V 29 + T2V 19 = **48/48 镜在位**。
