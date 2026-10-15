@@ -10613,3 +10613,153 @@ Root Cause (first observed failure):
 === [.12] DONE ===
 === DONE 100 ===
 ```
+
+---
+
+## RUN_ID 101 · 2026-10-15 21:26:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 101 · vision 评测失败根因 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+D=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "--- 关键错误行（grep） ---"
+grep -niE 'error|traceback|exception|out of memory|CUDA|assert|no space|permission denied|killed|KeyError|ValueError|RuntimeError|TypeError|OOM' "$D/eval_limit50.log" 2>/dev/null | head -40 | cut -c1-190
+echo "--- ChildFailedError 之前 120 行（滤空行） ---"
+L=$(grep -n 'ChildFailedError' "$D/eval_limit50.log" 2>/dev/null | head -1 | cut -d: -f1)
+if [ -n "$L" ]; then sed -n "$((L>120?L-120:1)),$((L+3))p" "$D/eval_limit50.log" | grep -vE '^[[:space:]]*$' | tail -45 | cut -c1-190; fi
+echo "--- 独立的 rank/accelerate 日志 ---"
+ls -la /tmp/*rank* /tmp/*accelerate* /tmp/*lmms* 2>/dev/null | head -12 | cut -c1-150
+for f in $(ls -t /tmp/*rank* 2>/dev/null | head -3); do echo "## $f"; tail -25 "$f" | grep -vE '^[[:space:]]*$' | tail -20 | cut -c1-185; done
+echo "--- 磁盘 / 显存 ---"; df -h /nas_train 2>/dev/null | tail -1; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8
+echo "--- vision loop 日志尾 ---"; tail -10 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 101 ==="
+```
+
+**输出**
+```
+=== RUN_ID 101 · vision 评测失败根因 2026-10-15 21:26:29 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 21:26:30 ===
+--- 关键错误行（grep） ---
+1:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. 
+9:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. 
+11:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+13:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+15:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+17:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+19:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+21:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+23:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead.
+156:[BaizeLLaVA] Model loaded on cuda:0 (local_rank=0)
+161:[BaizeLLaVA] Model loaded on cuda:5 (local_rank=5)
+166:[BaizeLLaVA] Model loaded on cuda:6 (local_rank=6)
+168:[BaizeLLaVA] Model loaded on cuda:2 (local_rank=2)
+170:[BaizeLLaVA] Model loaded on cuda:1 (local_rank=1)
+172:[BaizeLLaVA] Model loaded on cuda:3 (local_rank=3)
+174:[BaizeLLaVA] Model loaded on cuda:7 (local_rank=7)
+176:[BaizeLLaVA] Model loaded on cuda:4 (local_rank=4)
+242:Traceback (most recent call last):
+248:  File "pyarrow/error.pxi", line 89, in pyarrow.lib.check_status
+251:OSError: [Errno 28] No space left on device
+253:During handling of the above exception, another exception occurred:
+255:Traceback (most recent call last):
+262:OSError: [Errno 28] No space left on device
+264:The above exception was the direct cause of the following exception:
+266:Traceback (most recent call last):
+280:    raise DatasetGenerationError("An error occurred while generating the dataset") from e
+281:datasets.exceptions.DatasetGenerationError: An error occurred while generating the dataset
+283:The above exception was the direct cause of the following exception:
+285:Traceback (most recent call last):
+313:    raise retry_exc from fut.exception()
+314:tenacity.RetryError: RetryError[<Future at 0x7f259e45e1a0 state=finished raised DatasetGenerationError>]
+323:Traceback (most recent call last):
+337:    raise ChildFailedError(
+338:torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+351:  error_file: <N/A>
+352:  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+--- ChildFailedError 之前 120 行（滤空行） ---
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/tasks/__init__.py", line 378, in load_task_or_group
+    all_loaded_tasks = dict(collections.ChainMap(*map(load_fn, task_list)))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/tasks/__init__.py", line 297, in _load_individual_task_or_group
+    return _load_task(task_config, task=name_or_config)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/tasks/__init__.py", line 267, in _load_task
+    task_object = TaskObj(config=config, model_name=self.model_name)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/api/task.py", line 1758, in __init__
+    super().__init__(data_dir, cache_dir, download_mode, config, model_name)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/api/task.py", line 814, in __init__
+    self.download(self.config.dataset_kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/tenacity/__init__.py", line 330, in wrapped_f
+    return self(f, *args, **kw)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/tenacity/__init__.py", line 467, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/tenacity/__init__.py", line 368, in iter
+    result = action(retry_state)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/tenacity/__init__.py", line 411, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x7f259e45e1a0 state=finished raised DatasetGenerationError>]
+Downloading data:   0%|          | 0/20 [00:00<?, ?files/s]W1015 21:24:28.054000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550466 closing 
+W1015 21:24:28.055000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550472 closing signal SIGTERM
+W1015 21:24:28.056000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550474 closing signal SIGTERM
+W1015 21:24:28.056000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550477 closing signal SIGTERM
+W1015 21:24:28.056000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550479 closing signal SIGTERM
+W1015 21:24:28.057000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550483 closing signal SIGTERM
+W1015 21:24:28.058000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 1550485 closing signal SIGTERM
+E1015 21:24:31.090000 1534404 site-packages/torch/distributed/elastic/multiprocessing/api.py:874] failed (exitcode: 1) local_rank: 1 (pid: 1550471) of binary: /nas_train/app.e0031982/minifor
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/bin/accelerate", line 6, in <module>
+    sys.exit(main())
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py", line 50, in main
+    args.func(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1190, in launch_command
+    multi_gpu_launcher(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/accelerate/commands/launch.py", line 815, in multi_gpu_launcher
+    distrib_run.run(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 277, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+mllm_bridge/run_lmms_eval.py FAILED
+--- 独立的 rank/accelerate 日志 ---
+-rw-r--r-- 1 app.e0031982 app.adm   296 Oct 15 20:26 /tmp/lmms_eval_launch.log
+-rw-r----- 1 app.e0031982 app.adm  6448 Jun 16 15:00 /tmp/lmms_eval_run.log
+-rw-r--r-- 1 app.e0031982 app.adm  4258 Oct 15 17:56 /tmp/lmms_smoke.log
+-rw-r--r-- 1 app.e0031982 app.adm 10176 Oct 15 17:56 /tmp/lmms_smoke_test.json
+-rwxr-xr-x 1 app.e0031982 app.adm   512 Oct 15 17:26 /tmp/run_lmms_smoke.sh
+
+/tmp/lmms_eval_hf_datasets_app.t0002965:
+total 652
+drwxr-xr-x     2 app.t0002965 app.adm   4096 Sep 23 16:55 .
+drwxrwxrwt 10025 root         root    659456 Oct 15 21:25 ..
+--- 磁盘 / 显存 ---
+10.239.22.31:/vol_CTE0_data01  207T  176T   32T  85% /nas_train
+0, 0 MiB
+1, 0 MiB
+2, 0 MiB
+3, 0 MiB
+4, 0 MiB
+5, 0 MiB
+6, 4 MiB
+7, 4 MiB
+--- vision loop 日志尾 ---
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-15 20:35:45 cline returned (exit 0), checking git push ...
+[loop] 2026-10-15 20:35:45 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-15 21:05:45 wake up, invoking cline ...
+[llmrot] 2026-10-15 21:05:46 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+=== [.12] DONE ===
+=== DONE 101 ===
+```
