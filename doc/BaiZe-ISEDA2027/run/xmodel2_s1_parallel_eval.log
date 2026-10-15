@@ -1,0 +1,124 @@
+================================================================
+[2026-10-15 21:21:40] START parallel s1 eval
+================================================================
+[21:21:40] Phase 1: Launching 3 BBHs in parallel on GPUs 0,1,2
+[21:21:40] Launched BBH for s1/20K on GPU 0 (PID 2358495)
+[21:21:40] Launched BBH for s1/30K on GPU 1 (PID 2358498)
+[21:21:40] Launched BBH for s1/40K on GPU 2 (PID 2358501)
+[21:21:40] --- CS8 for s1/20K on GPUs 4-7 ---
+[21:26:31] CS8 DONE for s1/20K
+[21:26:31] --- Complex5 for s1/20K on GPUs 4-7 ---
+[21:49:22] Complex5 DONE for s1/20K
+[21:49:22] --- CS8 for s1/30K on GPUs 4-7 ---
+[21:54:14] CS8 DONE for s1/30K
+[21:54:14] --- Complex5 for s1/30K on GPUs 4-7 ---
+[22:16:22] Complex5 DONE for s1/30K
+[22:16:22] --- CS8 for s1/40K on GPUs 4-7 ---
+[22:21:19] CS8 DONE for s1/40K
+[22:21:19] --- Complex5 for s1/40K on GPUs 4-7 ---
+[22:43:39] Complex5 DONE for s1/40K
+[22:43:39] All CS8+Complex5 done. Waiting for BBHs...
+[00:00:55] BBH on GPU 0 DONE (exit=0)
+[00:00:55] BBH on GPU 1 DONE (exit=0)
+[00:00:55] BBH on GPU 2 DONE (exit=0)
+[00:00:55] Checking s1/10K BBH (PID 681295)...
+[00:00:55] s1/10K BBH done
+[00:00:55] Phase 5: Collecting all results
+[00:00:55] Collecting Xmodel-2 s1/10K (39.3B)...
+
+============================================================
+  Xmodel-2 s1/10K (39.3B) (39.3B tokens)
+============================================================
+  Common8 Avg: 46.65%
+    hellaswag           : 39.88%
+    arc_easy            : 41.37%
+    boolq               : 58.75%
+    arc_challenge       : 23.81%
+    sciq                : 67.30%
+    piqa                : 64.04%
+    winogrande          : 49.88%
+    openbookqa          : 28.20%
+  Complex6 Avg: 8.49%
+    gsm8k               : 1.21%
+    hendrycks_math500   : 3.40%
+    mmlu                : 25.45%
+    bbh_zeroshot        : 20.10%
+    humaneval           : 0.00%
+    mbpp                : 0.80%
+
+  Summary saved to: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel2_history/eval_s1_10000/p8_eval_summary.json
+[00:00:55] Collecting Xmodel-2 s1/20K (78.6B)...
+
+============================================================
+  Xmodel-2 s1/20K (78.6B) (78.6B tokens)
+============================================================
+  Common8 Avg: 49.07%
+    hellaswag           : 43.14%
+    arc_easy            : 43.39%
+    boolq               : 61.80%
+    arc_challenge       : 26.37%
+    sciq                : 69.20%
+    piqa                : 67.52%
+    winogrande          : 52.33%
+    openbookqa          : 28.80%
+  Complex6 Avg: N/A (incomplete)
+    gsm8k               : 0.91%
+    hendrycks_math500   : 3.40%
+    mmlu                : 26.56%
+    bbh_zeroshot        : 22.81%
+    humaneval           : None
+    mbpp                : None
+  Errors: ['cx_humaneval: no result file', 'cx_mbpp: no result file']
+
+  Summary saved to: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel2_history/eval_s1_20000/p8_eval_summary.json
+[00:00:55] Collecting Xmodel-2 s1/30K (117.9B)...
+
+============================================================
+  Xmodel-2 s1/30K (117.9B) (117.9B tokens)
+============================================================
+  Common8 Avg: 49.60%
+    hellaswag           : 45.16%
+    arc_easy            : 43.35%
+    boolq               : 58.17%
+    arc_challenge       : 25.77%
+    sciq                : 73.40%
+    piqa                : 68.17%
+    winogrande          : 52.80%
+    openbookqa          : 30.00%
+  Complex6 Avg: N/A (incomplete)
+    gsm8k               : 1.59%
+    hendrycks_math500   : 3.00%
+    mmlu                : 25.99%
+    bbh_zeroshot        : 24.90%
+    humaneval           : None
+    mbpp                : None
+  Errors: ['cx_humaneval: no result file', 'cx_mbpp: no result file']
+
+  Summary saved to: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel2_history/eval_s1_30000/p8_eval_summary.json
+[00:00:56] Collecting Xmodel-2 s1/40K (157.2B)...
+
+============================================================
+  Xmodel-2 s1/40K (157.2B) (157.2B tokens)
+============================================================
+  Common8 Avg: 50.31%
+    hellaswag           : 46.65%
+    arc_easy            : 45.75%
+    boolq               : 61.38%
+    arc_challenge       : 26.45%
+    sciq                : 72.40%
+    piqa                : 67.63%
+    winogrande          : 53.20%
+    openbookqa          : 29.00%
+  Complex6 Avg: N/A (incomplete)
+    gsm8k               : 0.99%
+    hendrycks_math500   : 4.00%
+    mmlu                : 25.81%
+    bbh_zeroshot        : 22.56%
+    humaneval           : None
+    mbpp                : None
+  Errors: ['cx_humaneval: no result file', 'cx_mbpp: no result file']
+
+  Summary saved to: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel2_history/eval_s1_40000/p8_eval_summary.json
+================================================================
+[2026-10-16 00:00:56] ALL DONE — 4 checkpoints evaluated
+================================================================

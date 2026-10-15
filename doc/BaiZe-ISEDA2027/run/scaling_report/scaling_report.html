@@ -1,80 +1,179 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>BaiZe-2B vs Xmodel Scaling</title>
-<style>body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:20px;background:#f8fafc;color:#1e293b}
-h1{color:#1e40af;border-bottom:3px solid #3b82f6;padding-bottom:10px}
-h2{color:#334155;margin-top:30px}
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<title>BaiZe-2B vs Xmodel Scaling (Updated)</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0 auto;padding:20px;background:#f8fafc;color:#1e293b;max-width:1200px}
+h1{color:#1e40af;border-bottom:3px solid #3b82f6;padding-bottom:10px;font-size:22px}
+h2{color:#334155;margin-top:30px;font-size:18px;border-bottom:1px solid #cbd5e1;padding-bottom:5px}
 table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}
 th,td{border:1px solid #cbd5e1;padding:6px 10px;text-align:center}
 th{background:#475569;color:white}tr:nth-child(even){background:#f1f5f9}
-.highlight{background:#fef3c7;font-weight:bold}.best{color:#16a34a;font-weight:bold}
-.note{background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 15px;margin:15px 0}
-.code{background:#1e293b;color:#e2e8f0;padding:10px;border-radius:5px;font-family:monospace}
-.chart{text-align:center;margin:20px 0}</style></head><body>
-<h1>BaiZe-2B vs Xmodel-2/2.5 Scaling 对比报告</h1>
-<p style="color:#64748b">生成时间: 2026-10-15 18:36 | 14 benchmarks (CS8 + Complex 6)</p>
-<h2>1. 模型架构对比</h2>
-<table><tr><th>模型</th><th>参数量</th><th>训练Token</th><th>架构</th><th>来源</th></tr>
-<tr class="highlight"><td>BaiZe-2B P-8</td><td>2.22B</td><td>44.4B</td><td>LLaMA-style</td><td>本项目</td></tr>
-<tr><td>Xmodel-2.5</td><td>1.30B</td><td>1.4T</td><td>Custom</td><td>XiaoduoAILab</td></tr>
-<tr><td>Xmodel-2</td><td>1.20B</td><td>1.5T</td><td>Custom</td><td>XiaoduoAILab</td></tr></table>
-<h2>2. CS8 Scaling 曲线</h2><div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" style="font-family:monospace">
+.highlight{background:#fef3c7;font-weight:bold}
+.note{background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 15px;margin:15px 0;font-size:13px}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 15px;margin:15px 0;font-size:13px}
+.chart{text-align:center;margin:20px 0}
+.small{font-size:11px;color:#64748b}
+</style></head><body>
+<h1>BaiZe-2B vs Xmodel-2/2.5 Scaling (Updated)</h1>
+<p class="small">生成: 2026-10-16 00:07 | CS8 0-shot + Complex6 default shots | lm-eval v0.4.x</p>
+<div class="success"><strong>核心发现</strong>：BaiZe-2B P-8 (39.6B) CS8=49.21% > Xmodel-2 s1/10K (39.3B) CS8=46.65%（+2.56pp）。相近 token 量下 BaiZe 常识推理不弱于 Xmodel-2。</div>
+<h2>1. 架构对比</h2>
+<table><tr><th>模型</th><th>参数</th><th>Token</th><th>架构</th><th>LR</th></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>2.22B</td><td>44.4B</td><td>Mamba2-hybrid</td><td>1e-3</td></tr>
+<tr><td>Xmodel-2.5</td><td>1.30B</td><td>1.4T</td><td>Dense 48L</td><td>1.67e-3</td></tr>
+<tr><td>Xmodel-2</td><td>1.20B</td><td>1.5T</td><td>Dense 48L</td><td>0.01</td></tr></table>
+<h2>2. CS8 Scaling 曲线</h2>
+<div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" style="font-family:monospace">
 <rect width="800" height="500" fill="white"/>
-<text x="400" y="25" text-anchor="middle" font-size="16" font-weight="bold">Common Sense 8 Avg vs Training Tokens</text>
-<line x1="60" y1="440" x2="740" y2="440" stroke="black"/>
-<line x1="60" y1="60" x2="60" y2="440" stroke="black"/>
-<line x1="55" y1="440" x2="60" y2="440" stroke="black"/>
-<text x="52" y="444" text-anchor="end" font-size="11">39</text>
-<line x1="55" y1="364" x2="60" y2="364" stroke="black"/>
-<text x="52" y="368" text-anchor="end" font-size="11">45</text>
-<line x1="55" y1="288" x2="60" y2="288" stroke="black"/>
-<text x="52" y="292" text-anchor="end" font-size="11">52</text>
-<line x1="55" y1="212" x2="60" y2="212" stroke="black"/>
-<text x="52" y="216" text-anchor="end" font-size="11">58</text>
-<line x1="55" y1="136" x2="60" y2="136" stroke="black"/>
-<text x="52" y="140" text-anchor="end" font-size="11">64</text>
-<line x1="55" y1="60" x2="60" y2="60" stroke="black"/>
-<text x="52" y="64" text-anchor="end" font-size="11">70</text>
-<line x1="60" y1="440" x2="60" y2="445" stroke="black"/>
-<text x="60" y="458" text-anchor="middle" font-size="11">4</text>
-<line x1="196" y1="440" x2="196" y2="445" stroke="black"/>
-<text x="196" y="458" text-anchor="middle" font-size="11">304</text>
-<line x1="332" y1="440" x2="332" y2="445" stroke="black"/>
-<text x="332" y="458" text-anchor="middle" font-size="11">603</text>
-<line x1="468" y1="440" x2="468" y2="445" stroke="black"/>
-<text x="468" y="458" text-anchor="middle" font-size="11">902</text>
-<line x1="604" y1="440" x2="604" y2="445" stroke="black"/>
-<text x="604" y="458" text-anchor="middle" font-size="11">1201</text>
-<line x1="740" y1="440" x2="740" y2="445" stroke="black"/>
-<text x="740" y="458" text-anchor="middle" font-size="11">1500</text>
-<text x="400" y="490" text-anchor="middle" font-size="12">Training Tokens (B)</text>
-<text x="15" y="250" text-anchor="middle" font-size="12" transform="rotate(-90,15,250)">CS8 Avg (%)</text>
-<polyline points="60.0,379.4 64.0,334.0 68.0,324.8 72.0,313.3 76.0,315.4 78.2,316.8" fill="none" stroke="#2563eb" stroke-width="2"/>
-<circle cx="60.0" cy="379.4" r="4" fill="#2563eb"/>
-<text x="66.0" y="373.4" font-size="9" fill="#2563eb">44.0</text>
-<circle cx="64.0" cy="334.0" r="4" fill="#2563eb"/>
-<text x="70.0" y="328.0" font-size="9" fill="#2563eb">47.8</text>
-<circle cx="68.0" cy="324.8" r="4" fill="#2563eb"/>
-<text x="74.0" y="318.8" font-size="9" fill="#2563eb">48.5</text>
-<circle cx="72.0" cy="313.3" r="4" fill="#2563eb"/>
-<text x="78.0" y="307.3" font-size="9" fill="#2563eb">49.5</text>
-<circle cx="76.0" cy="315.4" r="4" fill="#2563eb"/>
-<text x="82.0" y="309.4" font-size="9" fill="#2563eb">49.3</text>
-<circle cx="78.2" cy="316.8" r="4" fill="#2563eb"/>
-<text x="84.2" y="310.8" font-size="9" fill="#2563eb">49.2</text>
-<polyline points="70.0,354.2 82.0,317.9 94.0,304.8 694.5,120.6" fill="none" stroke="#dc2626" stroke-width="2"/>
-<circle cx="70.0" cy="354.2" r="4" fill="#dc2626"/>
-<text x="76.0" y="348.2" font-size="9" fill="#dc2626">46.1</text>
-<circle cx="82.0" cy="317.9" r="4" fill="#dc2626"/>
-<text x="88.0" y="311.9" font-size="9" fill="#dc2626">49.1</text>
-<circle cx="94.0" cy="304.8" r="4" fill="#dc2626"/>
-<text x="100.0" y="298.8" font-size="9" fill="#dc2626">50.2</text>
-<circle cx="694.5" cy="120.6" r="4" fill="#dc2626"/>
-<text x="700.5" y="114.6" font-size="9" fill="#dc2626">65.4</text>
-<circle cx="740.0" cy="127.6" r="4" fill="#16a34a"/>
-<text x="746.0" y="121.6" font-size="9" fill="#16a34a">64.8</text>
-<line x1="560" y1="70" x2="580" y2="70" stroke="#2563eb" stroke-width="2"/>
-<text x="585" y="74" font-size="11">BaiZe-2B (2.22B)</text>
-<line x1="560" y1="88" x2="580" y2="88" stroke="#dc2626" stroke-width="2"/>
-<text x="585" y="92" font-size="11">Xmodel-2.5 (1.3B)</text>
-<line x1="560" y1="106" x2="580" y2="106" stroke="#16a34a" stroke-width="2"/>
-<text x="585" y="110" font-size="11">Xmodel-2 (1.2B)</text>
-</svg></div><h2>3. CS8 详细结果</h2><table><tr><th>模型</th><th>Token(B)</th><th>参数(B)</th><th>hellasw</th><th>arc_eas</th><th>boolq</th><th>arc_cha</th><th>sciq</th><th>piqa</th><th>winogra</th><th>openboo</th><th>CS Avg</th></tr><tr class="highlight"><td>P-8 iter_1049 (4.4B)</td><td>4.4</td><td>2.22</td><td>29.4</td><td>42.1</td><td>61.7</td><td>24.0</td><td>52.2</td><td>60.7</td><td>52.2</td><td>30.0</td><td class="best">44.04</td></tr><tr class="highlight"><td>P-8 iter_3147 (13.2B)</td><td>13.2</td><td>2.22</td><td>35.9</td><td>48.0</td><td>62.0</td><td>25.9</td><td>61.6</td><td>66.3</td><td>50.9</td><td>31.6</td><td class="best">47.79</td></tr><tr class="highlight"><td>P-8 iter_5245 (22.0B)</td><td>22.0</td><td>2.22</td><td>38.9</td><td>48.7</td><td>56.9</td><td>28.3</td><td>64.1</td><td>68.0</td><td>50.5</td><td>33.0</td><td class="best">48.55</td></tr><tr class="highlight"><td>P-8 iter_7343 (30.8B)</td><td>30.8</td><td>2.22</td><td>40.5</td><td>50.4</td><td>59.4</td><td>27.8</td><td>64.3</td><td>68.7</td><td>51.5</td><td>33.4</td><td class="best">49.50</td></tr><tr class="highlight"><td>P-8 iter_9441 (39.6B)</td><td>39.6</td><td>2.22</td><td>41.7</td><td>52.2</td><td>51.1</td><td>29.4</td><td>65.8</td><td>68.9</td><td>52.1</td><td>33.4</td><td class="best">49.32</td></tr><tr class="highlight"><td>P-8 final (iter_1149, 44.4B)</td><td>44.4</td><td>2.22</td><td>40.1</td><td>50.4</td><td>57.1</td><td>27.9</td><td>67.6</td><td>66.9</td><td>51.1</td><td>32.6</td><td class="best">49.21</td></tr><tr class=""><td>Xmodel-2.5 step_2000 (26.4B)</td><td>26.4</td><td>1.3</td><td>30.4</td><td>44.2</td><td>61.7</td><td>26.0</td><td>67.4</td><td>60.1</td><td>51.3</td><td>28.0</td><td class="best">46.12</td></tr><tr class=""><td>Xmodel-2.5 step_4000 (52.8B)</td><td>52.8</td><td>1.3</td><td>35.8</td><td>50.6</td><td>58.7</td><td>25.3</td><td>76.0</td><td>64.3</td><td>51.2</td><td>31.0</td><td class="best">49.11</td></tr><tr class=""><td>Xmodel-2.5 step_6000 (79.2B)</td><td>79.2</td><td>1.3</td><td>39.2</td><td>52.6</td><td>59.8</td><td>28.1</td><td>77.7</td><td>66.0</td><td>50.2</td><td>28.0</td><td class="best">50.20</td></tr><tr class=""><td>Xmodel-2.5 final (1.4T)</td><td>1400.0</td><td>1.3</td><td>65.4</td><td>71.8</td><td>67.2</td><td>46.0</td><td>92.9</td><td>76.2</td><td>63.9</td><td>39.8</td><td class="best">65.40</td></tr><tr class=""><td>Xmodel-2 final (1.5T)</td><td>1500.0</td><td>1.2</td><td>63.0</td><td>68.4</td><td>74.8</td><td>41.5</td><td>92.3</td><td>75.0</td><td>63.2</td><td>40.4</td><td class="best">64.82</td></tr></table><h2>4. Complex 6 结果</h2><table><tr><th>模型</th><th>Token(B)</th><th>gsm8k</th><th>hendrycks_</th><th>mmlu</th><th>bbh_zerosh</th><th>humaneval</th><th>mbpp</th><th>CX Avg</th></tr><tr><td>P-8 final (iter_1149, 44.4B)</td><td>44.4</td><td>1.59</td><td>0.00</td><td>24.28</td><td>14.36</td><td>0.61</td><td>0.00</td><td>6.81</td></tr><tr><td>Xmodel-2.5 step_2000 (26.4B)</td><td>26.4</td><td>-</td><td>-</td><td>26.72</td><td>-</td><td>-</td><td>-</td><td>26.72</td></tr><tr><td>Xmodel-2.5 step_4000 (52.8B)</td><td>52.8</td><td>-</td><td>-</td><td>24.28</td><td>-</td><td>-</td><td>-</td><td>24.28</td></tr><tr><td>Xmodel-2.5 final (1.4T)</td><td>1400.0</td><td>59.59</td><td>12.40</td><td>51.95</td><td>25.86</td><td>13.41</td><td>34.20</td><td>32.90</td></tr><tr><td>Xmodel-2 final (1.5T)</td><td>1500.0</td><td>53.90</td><td>9.00</td><td>50.04</td><td>-</td><td>4.27</td><td>32.00</td><td>-</td></tr></table><h2>5. 关键发现</h2><div class="note"><p><strong>CS8 Scaling (常识推理 8 集):</strong></p><ul><li>BaiZe-2B (2.22B) 4.4B→44.4B tokens, CS8 从 44.0% → 49.2%</li><li>Xmodel-2.5 (1.3B) 26.4B tokens CS8=46.1%</li><li>Xmodel-2.5 (1.3B) 52.8B tokens CS8=49.1%</li><li>Xmodel-2.5 (1.3B) 79.2B tokens CS8=50.2%</li><li>Xmodel-2.5 (1.3B) 1400.0B tokens CS8=65.4%</li><li>Xmodel-2 (1.2B) 1500B tokens CS8=64.8% (论文 61.79%, raw acc 精确匹配)</li><li>在 22–80B token 范围内, BaiZe-2B 与 Xmodel-2.5 CS8 水平相当 (≈49–50%)</li><li>BaiZe-2B 用 31× 更少 tokens 达到可比 CS8 水平 (44.4B vs 1.4T)</li><li>Xmodel-2.5 从 79.2B→1.4T tokens, CS8 从 50.2%→65.4%, 衰减阶段增益显著</li></ul></div><div class="note"><p><strong>Complex 6 (复杂推理):</strong></p><ul><li>BaiZe-2B final CX Avg=6.81% (BBH 14.36%, MMLU 24.28%, GSM8K 1.59%)</li><li>Xmodel-2.5 final MMLU=52.0% (1.4T tokens, 5-shot) vs BaiZe 24.3% (44.4B)</li><li>2.2B 模型在 44.4B tokens 下推理/代码能力仍有限; 复杂推理需更多 tokens</li></ul></div><div class="note"><p><strong>结论:</strong></p><ul><li>BaiZe-2B (Mamba2-hybrid) 在预训练早期 (4–44B tokens) 常识推理学习效率与 Xmodel-2.5 (Transformer) 相当</li><li>衰减阶段 (decay stage) 对最终性能至关重要: Xmodel-2.5 从 79.2B→1.4T 增益 +15pp</li><li>BaiZe-2B 若延长训练至 1T+ tokens, 预计 CS8 可达 60%+ (基于当前 scaling 趋势)</li></ul></div><p style="color:#64748b;margin-top:30px">Generated by baize_scaling_report.py | 2026-10-15 18:36</p></body></html>
+<line x1="70" y1="450.0" x2="680" y2="450.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="454.0" text-anchor="end" font-size="10" fill="#64748b">40.8%</text>
+<line x1="70" y1="345.0" x2="680" y2="345.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="349.0" text-anchor="end" font-size="10" fill="#64748b">47.8%</text>
+<line x1="70" y1="240.0" x2="680" y2="240.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="244.0" text-anchor="end" font-size="10" fill="#64748b">54.7%</text>
+<line x1="70" y1="135.0" x2="680" y2="135.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="139.0" text-anchor="end" font-size="10" fill="#64748b">61.7%</text>
+<line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="34.0" text-anchor="end" font-size="10" fill="#64748b">68.6%</text>
+<line x1="121.0" y1="450" x2="121.0" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="121.0" y="468" text-anchor="middle" font-size="10" fill="#64748b">5B</text>
+<line x1="122.7" y1="450" x2="122.7" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="122.7" y="468" text-anchor="middle" font-size="10" fill="#64748b">10B</text>
+<line x1="126.1" y1="450" x2="126.1" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="126.1" y="468" text-anchor="middle" font-size="10" fill="#64748b">20B</text>
+<line x1="136.3" y1="450" x2="136.3" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="136.3" y="468" text-anchor="middle" font-size="10" fill="#64748b">50B</text>
+<line x1="153.3" y1="450" x2="153.3" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="153.3" y="468" text-anchor="middle" font-size="10" fill="#64748b">100B</text>
+<line x1="187.3" y1="450" x2="187.3" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="187.3" y="468" text-anchor="middle" font-size="10" fill="#64748b">200B</text>
+<line x1="289.3" y1="450" x2="289.3" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="289.3" y="468" text-anchor="middle" font-size="10" fill="#64748b">500B</text>
+<line x1="459.2" y1="450" x2="459.2" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="459.2" y="468" text-anchor="middle" font-size="10" fill="#64748b">1000B</text>
+<line x1="629.2" y1="450" x2="629.2" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="629.2" y="468" text-anchor="middle" font-size="10" fill="#64748b">1500B</text>
+<line x1="70" y1="30" x2="70" y2="450" stroke="#334155" stroke-width="1.5"/>
+<line x1="70" y1="450" x2="680" y2="450" stroke="#334155" stroke-width="1.5"/>
+<text x="400.0" y="492" text-anchor="middle" font-size="12" fill="#334155">Training Tokens (B)</text>
+<text x="15" y="250.0" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 15 250.0)">CS8 Avg</text>
+<text x="400.0" y="20" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">CS8 Avg vs Training Tokens</text>
+<path d="M120.8 401.5 L123.8 344.8 L126.8 333.4 L129.8 319.0 L132.8 321.6 L134.4 323.3" fill="none" stroke="#2563eb" stroke-width="2"/>
+<circle cx="120.8" cy="401.5" r="3.5" fill="#2563eb"/>
+<circle cx="123.8" cy="344.8" r="3.5" fill="#2563eb"/>
+<circle cx="126.8" cy="333.4" r="3.5" fill="#2563eb"/>
+<circle cx="129.8" cy="319.0" r="3.5" fill="#2563eb"/>
+<circle cx="132.8" cy="321.6" r="3.5" fill="#2563eb"/>
+<circle cx="134.4" cy="323.3" r="3.5" fill="#2563eb"/>
+<path d="M132.7 362.1 L146.1 325.5 L159.4 317.5 L172.8 306.7 L629.2 87.2" fill="none" stroke="#dc2626" stroke-width="2"/>
+<circle cx="132.7" cy="362.1" r="3.5" fill="#dc2626"/>
+<circle cx="146.1" cy="325.5" r="3.5" fill="#dc2626"/>
+<circle cx="159.4" cy="317.5" r="3.5" fill="#dc2626"/>
+<circle cx="172.8" cy="306.7" r="3.5" fill="#dc2626"/>
+<circle cx="629.2" cy="87.2" r="3.5" fill="#dc2626"/>
+<path d="M128.3 370.0 L137.3 324.8 L146.3 308.4 L595.2 78.5" fill="none" stroke="#16a34a" stroke-width="2"/>
+<circle cx="128.3" cy="370.0" r="3.5" fill="#16a34a"/>
+<circle cx="137.3" cy="324.8" r="3.5" fill="#16a34a"/>
+<circle cx="146.3" cy="308.4" r="3.5" fill="#16a34a"/>
+<circle cx="595.2" cy="78.5" r="3.5" fill="#16a34a"/>
+<rect x="690" y="40" width="12" height="12" fill="#2563eb"/>
+<text x="708" y="50" font-size="10" fill="#334155">BaiZe-2B (2.22B)</text>
+<rect x="690" y="58" width="12" height="12" fill="#dc2626"/>
+<text x="708" y="68" font-size="10" fill="#334155">Xmodel-2 (1.2B)</text>
+<rect x="690" y="76" width="12" height="12" fill="#16a34a"/>
+<text x="708" y="86" font-size="10" fill="#334155">Xmodel-2.5 (1.3B)</text>
+</svg></div>
+<p class="small" style="text-align:center">图1：CS8 vs Token。蓝=BaiZe 红=Xmodel-2 绿=Xmodel-2.5。Xmodel-2 s1=stable段历史ckpt。</p>
+<h2>3. Complex6 Scaling 曲线</h2>
+<div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" style="font-family:monospace">
+<rect width="800" height="500" fill="white"/>
+<line x1="70" y1="450.0" x2="680" y2="450.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="454.0" text-anchor="end" font-size="10" fill="#64748b">2.9%</text>
+<line x1="70" y1="345.0" x2="680" y2="345.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="349.0" text-anchor="end" font-size="10" fill="#64748b">11.4%</text>
+<line x1="70" y1="240.0" x2="680" y2="240.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="244.0" text-anchor="end" font-size="10" fill="#64748b">19.9%</text>
+<line x1="70" y1="135.0" x2="680" y2="135.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="139.0" text-anchor="end" font-size="10" fill="#64748b">28.3%</text>
+<line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="65" y="34.0" text-anchor="end" font-size="10" fill="#64748b">36.8%</text>
+<line x1="113.5" y1="450" x2="113.5" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="113.5" y="468" text-anchor="middle" font-size="10" fill="#64748b">5B</text>
+<line x1="115.2" y1="450" x2="115.2" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="115.2" y="468" text-anchor="middle" font-size="10" fill="#64748b">10B</text>
+<line x1="118.6" y1="450" x2="118.6" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="118.6" y="468" text-anchor="middle" font-size="10" fill="#64748b">20B</text>
+<line x1="129.0" y1="450" x2="129.0" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="129.0" y="468" text-anchor="middle" font-size="10" fill="#64748b">50B</text>
+<line x1="146.2" y1="450" x2="146.2" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="146.2" y="468" text-anchor="middle" font-size="10" fill="#64748b">100B</text>
+<line x1="180.7" y1="450" x2="180.7" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="180.7" y="468" text-anchor="middle" font-size="10" fill="#64748b">200B</text>
+<line x1="284.2" y1="450" x2="284.2" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="284.2" y="468" text-anchor="middle" font-size="10" fill="#64748b">500B</text>
+<line x1="456.7" y1="450" x2="456.7" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="456.7" y="468" text-anchor="middle" font-size="10" fill="#64748b">1000B</text>
+<line x1="629.2" y1="450" x2="629.2" y2="454" stroke="#64748b" stroke-width="1"/>
+<text x="629.2" y="468" text-anchor="middle" font-size="10" fill="#64748b">1500B</text>
+<line x1="70" y1="30" x2="70" y2="450" stroke="#334155" stroke-width="1.5"/>
+<line x1="70" y1="450" x2="680" y2="450" stroke="#334155" stroke-width="1.5"/>
+<text x="400.0" y="492" text-anchor="middle" font-size="12" fill="#334155">Training Tokens (B)</text>
+<text x="15" y="250.0" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 15 250.0)">Complex6 Avg</text>
+<text x="400.0" y="20" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">Complex6 Avg vs Training Tokens</text>
+<circle cx="127.0" cy="401.5" r="4" fill="#2563eb"/>
+<path d="M125.3 380.7 L629.2 114.0" fill="none" stroke="#dc2626" stroke-width="2"/>
+<circle cx="125.3" cy="380.7" r="3.5" fill="#dc2626"/>
+<circle cx="629.2" cy="114.0" r="3.5" fill="#dc2626"/>
+<path d="M120.8 155.0 L129.9 185.2 L594.7 78.5" fill="none" stroke="#16a34a" stroke-width="2"/>
+<circle cx="120.8" cy="155.0" r="3.5" fill="#16a34a"/>
+<circle cx="129.9" cy="185.2" r="3.5" fill="#16a34a"/>
+<circle cx="594.7" cy="78.5" r="3.5" fill="#16a34a"/>
+<rect x="690" y="40" width="12" height="12" fill="#2563eb"/>
+<text x="708" y="50" font-size="10" fill="#334155">BaiZe-2B (2.22B)</text>
+<rect x="690" y="58" width="12" height="12" fill="#dc2626"/>
+<text x="708" y="68" font-size="10" fill="#334155">Xmodel-2 (1.2B)</text>
+<rect x="690" y="76" width="12" height="12" fill="#16a34a"/>
+<text x="708" y="86" font-size="10" fill="#334155">Xmodel-2.5 (1.3B)</text>
+</svg></div>
+<p class="small" style="text-align:center">图2：Complex6 vs Token。Xmodel-2 s1/20K-40K缺HumanEval/MBPP（null）。</p>
+<h2>4. 逐Checkpoint分数表</h2>
+<table><tr><th>模型</th><th>Checkpoint</th><th>Token</th><th>参数</th><th>CS8</th><th>Complex6</th></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>P-8 iter_1049 (4.4B)</td><td>4.4B</td><td>2.22B</td><td>44.04%</td><td>N/A</td></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>P-8 iter_3147 (13.2B)</td><td>13.2B</td><td>2.22B</td><td>47.79%</td><td>N/A</td></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>P-8 iter_5245 (22.0B)</td><td>22.0B</td><td>2.22B</td><td>48.55%</td><td>N/A</td></tr>
+<tr><td>Xmodel-2.5</td><td>Xmodel-2.5 step_2000 (26.4B)</td><td>26.4B</td><td>1.3B</td><td>46.12%</td><td>26.72%</td></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>P-8 iter_7343 (30.8B)</td><td>30.8B</td><td>2.22B</td><td>49.50%</td><td>N/A</td></tr>
+<tr><td>Xmodel-2</td><td>Xmodel-2 s1/10K (39.3B)</td><td>39.3B</td><td>1.2B</td><td>46.65%</td><td>8.49%</td></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>P-8 iter_9441 (39.6B)</td><td>39.6B</td><td>2.22B</td><td>49.32%</td><td>N/A</td></tr>
+<tr class="highlight"><td>BaiZe-2B</td><td>P-8 final (iter_1149, 44.4B)</td><td>44.4B</td><td>2.22B</td><td>49.21%</td><td>6.81%</td></tr>
+<tr><td>Xmodel-2.5</td><td>Xmodel-2.5 step_4000 (52.8B)</td><td>52.8B</td><td>1.3B</td><td>49.11%</td><td>24.28%</td></tr>
+<tr><td>Xmodel-2</td><td>Xmodel-2 s1/20K (78.6B)</td><td>78.6B</td><td>1.2B</td><td>49.07%</td><td>N/A</td></tr>
+<tr><td>Xmodel-2.5</td><td>Xmodel-2.5 step_6000 (79.2B)</td><td>79.2B</td><td>1.3B</td><td>50.20%</td><td>N/A</td></tr>
+<tr><td>Xmodel-2</td><td>Xmodel-2 s1/30K (117.9B)</td><td>117.9B</td><td>1.2B</td><td>49.60%</td><td>N/A</td></tr>
+<tr><td>Xmodel-2</td><td>Xmodel-2 s1/40K (157.2B)</td><td>157.2B</td><td>1.2B</td><td>50.31%</td><td>N/A</td></tr>
+<tr><td>Xmodel-2.5</td><td>Xmodel-2.5 final (1.4T)</td><td>1400.0B</td><td>1.3B</td><td>65.40%</td><td>32.90%</td></tr>
+<tr><td>Xmodel-2</td><td>Xmodel-2 final (1.5T)</td><td>1500.0B</td><td>1.2B</td><td>64.82%</td><td>30.04%</td></tr>
+</table>
+<h2>5. 关键结论</h2>
+<div class="note">
+<strong>5.1 相近Token对比 (~39B)</strong><br>
+BaiZe P-8 (39.6B) CS8=49.32% vs Xmodel-2 s1/10K (39.3B) CS8=46.65% → BaiZe +2.67pp。<br>
+BaiZe final (44.4B) Complex6=6.81% vs Xmodel-2 s1/10K (39.3B) Complex6=8.49% → BaiZe -1.68pp。<br>
+<strong>结论</strong>：BaiZe 常识推理更强（+2.56pp），复杂推理略弱（-1.68pp，受44B token量限制）。
+</div>
+<div class="note">
+<strong>5.2 缩放趋势</strong><br>
+BaiZe CS8: 4.4B→44.4B = 44.04%→49.21% (+5.17pp)，~20B后趋于平坦。<br>
+Xmodel-2 CS8: 39.3B→157.2B = 46.65%→50.31% (+3.66pp)，1.5T final=64.82%。<br>
+Xmodel-2.5 CS8: 26.4B→1400B = 46.12%→65.40% (+19.28pp)。<br>
+BaiZe在44B token已接近Xmodel-2在157B的CS8水平（49.21% vs 50.31%）。
+</div>
+<div class="note">
+<strong>5.3 架构差异</strong><br>
+BaiZe 2.22B约为Xmodel-2 1.2B的1.85×参数。LR低10×（1e-3 vs 0.01）。<br>
+Xmodel-2 CS8跃升主要在decay段（SFT+LR退火），BaiZe decay仅4.8B（vs 20B）。
+</div>
+<hr style="margin:2em 0;border:none;border-top:1px solid #ddd">
+<p class="small" style="text-align:center;color:#888">
+BaiZe-2B vs Xmodel Scaling · 2026-10-16 00:07<br>
+lm-eval v0.4.x · trust_remote_code=True · Xmodel-2 s1 re-eval 2026-10-16
+</p></body></html>

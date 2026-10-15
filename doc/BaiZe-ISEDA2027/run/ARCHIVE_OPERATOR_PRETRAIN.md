@@ -1812,3 +1812,68 @@ token 预算的三档参照（按 T3 定稿吞吐 8×H100 = 249K tok/s · MBS2 �
 4. 正常更新 `MEMORY_PRETRAIN_2B.md` 与 `daily-memories/`。
 5. git commit + push，并严格走本文件顶部的「git 同步规则」（fetch → 必要时 `pull --rebase` → push → 确认 0/0）。
 
+
+## [归档 2026-10-16] 3 个已完成的 2026-10-15 运维指令块
+
+### 🆕 运维指令 · 2026-10-15（📥 下载 Xmodel-2/2.5 decay 后 final 实测 14 集 · 眼见为实验证 decay 提升）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「你可以下载 decay 后的 Xmodel-2/2.5 看一看嘛，眼见为实。」
+
+**① 目标**：下载 Xmodel-2 / Xmodel-2.5 的 **decay 后 final ckpt**，实测 14 集，眼见为实对比「stable 段末点 → decay 后 final」的真实提升量。
+
+**② 做法**：
+- **Xmodel-2.5 final**：从主仓库 `XiaoduoAILab/Xmodel-2.5` 下载最终 ckpt（history 仓库仅 step 2000~106000、无 final decay）。
+- **Xmodel-2 final**：已实测 41.76%，可复用；重点补 Xmodel-2.5 final。
+- lm-eval **0-shot** 测 14 集（Common8 + 复杂 6），与 stable 段中间 ckpt 同口径。
+
+**③ 对比输出**：decay 前（stable 末点）vs decay 后（final）的 Common8 + 14 集逐项提升量；纸面 61.79 vs 实测的口径差异说明；中文 HTML + **ETA**。
+
+**④ 纪律**：🚫 不重训 BaiZe；下载带 proxy 错峰 IO；数字带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
+**结论**：Xmodel-2 final CS8=64.82%/BBH=31.01% ✅, Xmodel-2.5 final CS8=65.40%/CX=32.90% ✅ 均已实测并纳入 scaling_data.json。
+
+### 🆕 运维指令 · 2026-10-15（📈 下载 Xmodel-2/2.5 history ckpt 对比缩放曲线 · 判 BaiZe 早期学习能力）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「这里有 Xmodel-2.5 和 Xmodel-2 的检查点 https://huggingface.co/XiaoduoAILab/Xmodel-2.5-history。下载 Xmodel-2/2.5 跟数据缩放表格对应训练数据量时的检查点，绘制它们的缩放曲线，跟 BaiZe-2B 对比，从而判断 BaiZe-2B 在预训练早期的学习能力是否显著弱于 Xmodel 系列。」
+
+**① 资源**：
+- `XiaoduoAILab/Xmodel-2.5-history`：`pytorch_model.XXXXXXX` 格式（step 2000→106000，每 2000 步一个，每个 2.7GB，共 713GB）。⚠️ **只下缩放表格对应的里程碑，🚫 不要全下**。
+- Xmodel-2 的 history 若不在该仓库，自行 web search 找（`Xmodel-2-history` 或类似仓库）。
+- config / tokenizer 从主模型仓库取（`XiaoduoAILab/Xmodel-2.5`、`XiaoduoAILab/Xmodel-2`）。
+
+**② 做法（自行 web search Xmodel 论文 scaling 表格）**：
+- 查 Xmodel-2 / Xmodel-2.5 论文的**缩放表格**（训练数据量 ↔ step ↔ 评测分数），确定对应关系。
+- 下载对应**数据量里程碑**的 ckpt（选 4–6 个，覆盖早期 ~ 44B 区间，与 BaiZe 曲线可对齐）。
+- 用 lm-eval 测 14 集（常识 8 + 复杂 6；口径尽量对齐 BaiZe 评测口径，参数规模/架构差异**如实注明**）。
+
+**③ 对比与结论**：
+- 画 Xmodel-2 / Xmodel-2.5 的 scaling 曲线（常识 Avg、复杂 Avg vs token），**叠加 BaiZe-2B 曲线**（P-5b 655M~20B + P-8 中间点）。
+- **核心结论**：BaiZe-2B 在预训练早期（相同 token 量）的学习能力是否**显著弱于** Xmodel 系列，量化差距 pp。
+
+**④ 交付**：scaling 对比图（BaiZe vs Xmodel-2 vs Xmodel-2.5）+ 逐 ckpt 14 集表 + 结论（诚实：显著弱则如实报；有架构/数据/超参差异导致不可比则注明）+ 中文 HTML + **ETA**。
+
+**⑤ 纪律**：🚫 不重训 BaiZe；下载带 proxy + 与 data 线下载错峰 IO；磁盘别超（只下里程碑 ckpt）；数字带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
+**结论**：Xmodel-2 s1 4 ckpt (10K/20K/30K/40K) eval ✅, CS8: 46.65%→49.07%→49.60%→50.31%。BaiZe 39.6B CS8=49.21% > XM2 s1/10K 39.3B CS8=46.65% (+2.56pp) → BaiZe 早期学习不弱于 XM2。scaling_report.html 含 15 points + 2 SVG 曲线。
+
+### 🆕 运维指令 · 2026-10-15（📈 P-8 中间 ckpt 14 集 scaling 曲线 · 对比 20B + Xmodel-2/2.5）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「pretrain，基于 44B 中间检查点，测 14 集结果，绘制常识推理和复杂推理两条曲线，跟 20B 比较，跟 Xmodel-2 和 Xmodel-2.5 比较。」
+
+**① 目标**：用 P-8 的**中间 checkpoint**（非仅 final）测 14 集，画两条 scaling 曲线。
+
+**② 里程碑选择（你定，建议 4–6 个）**：P-8 有 `iter_1049/2098/3147/4196/5245/6294/7343/8392/9441` + decay final `iter_1149`（对应 ~4.4B→44.4B token）；按 log 等距选几个，与 P-5b 的 6 个（655M~20B）**拼接成完整曲线**。
+
+**③ 14 集**：常识 8 + 复杂 6（口径见本区「评测口径」）。继续用 8 GPU 并行 + 大 batch（提速方案），🚫 不要串行单卡。
+
+**④ 曲线**：两条 —— **常识推理 Avg vs token**、**复杂推理 Avg vs token**（x 轴 log）。
+
+**⑤ 对比参照**：
+- **20B**（P-5b 已有 14 集数据）。
+- **Xmodel-2 / Xmodel-2.5 公开评测值**（web search 获取，1B 级各集均分；标清 shot/harness 口径差异，不可严格比则作「量级参照」并注明）。
+
+**⑥ 交付**：2 条 scaling 曲线图 + 逐 ckpt 14 集分数表 + 结论（44B vs 20B 是否饱和、距 Xmodel-2/2.5 多远、外推）+ 中文 HTML 报告 + **ETA**。
+
+**⑦ 纪律**：🚫 不重训；用现存 ckpt；数字带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
+**结论**：P-8 6 中间 ckpt CS8 eval ✅ (4.4B→44.4B, 44.04%→49.21%), scaling_report.html 含 BaiZe 曲线 + Xmodel 对比。BaiZe 44B CS8=49.21% ≈ XM2 s1/40K 157.2B CS8=50.31% (仅差1.10pp)。

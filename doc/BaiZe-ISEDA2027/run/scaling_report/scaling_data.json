@@ -213,6 +213,110 @@
   ],
   "xmodel_2": [
     {
+      "label": "Xmodel-2 s1/10K (39.3B)",
+      "tokens_B": 39.3,
+      "params_B": 1.2,
+      "cs_avg": 0.4665,
+      "cs_per_task": {
+        "hellaswag": 0.3988,
+        "arc_easy": 0.4137,
+        "boolq": 0.5875,
+        "arc_challenge": 0.2381,
+        "sciq": 0.673,
+        "piqa": 0.6404,
+        "winogrande": 0.4988,
+        "openbookqa": 0.282
+      },
+      "complex_avg": 0.0849,
+      "complex_per_task": {
+        "gsm8k": 0.0121,
+        "hendrycks_math500": 0.034,
+        "mmlu": 0.2545,
+        "bbh_zeroshot": 0.201,
+        "humaneval": 0.0,
+        "mbpp": 0.008
+      },
+      "source": "Xmodel-2-History s1/10K re-eval"
+    },
+    {
+      "label": "Xmodel-2 s1/20K (78.6B)",
+      "tokens_B": 78.6,
+      "params_B": 1.2,
+      "cs_avg": 0.4907,
+      "cs_per_task": {
+        "hellaswag": 0.4314,
+        "arc_easy": 0.4339,
+        "boolq": 0.618,
+        "arc_challenge": 0.2637,
+        "sciq": 0.692,
+        "piqa": 0.6752,
+        "winogrande": 0.5233,
+        "openbookqa": 0.288
+      },
+      "complex_avg": null,
+      "complex_per_task": {
+        "gsm8k": 0.0091,
+        "hendrycks_math500": 0.034,
+        "mmlu": 0.2656,
+        "bbh_zeroshot": 0.2281,
+        "humaneval": null,
+        "mbpp": null
+      },
+      "source": "Xmodel-2-History s1/20K re-eval"
+    },
+    {
+      "label": "Xmodel-2 s1/30K (117.9B)",
+      "tokens_B": 117.9,
+      "params_B": 1.2,
+      "cs_avg": 0.496,
+      "cs_per_task": {
+        "hellaswag": 0.4516,
+        "arc_easy": 0.4335,
+        "boolq": 0.5817,
+        "arc_challenge": 0.2577,
+        "sciq": 0.734,
+        "piqa": 0.6817,
+        "winogrande": 0.528,
+        "openbookqa": 0.3
+      },
+      "complex_avg": null,
+      "complex_per_task": {
+        "gsm8k": 0.0159,
+        "hendrycks_math500": 0.03,
+        "mmlu": 0.2599,
+        "bbh_zeroshot": 0.249,
+        "humaneval": null,
+        "mbpp": null
+      },
+      "source": "Xmodel-2-History s1/30K re-eval"
+    },
+    {
+      "label": "Xmodel-2 s1/40K (157.2B)",
+      "tokens_B": 157.2,
+      "params_B": 1.2,
+      "cs_avg": 0.5031,
+      "cs_per_task": {
+        "hellaswag": 0.4665,
+        "arc_easy": 0.4575,
+        "boolq": 0.6138,
+        "arc_challenge": 0.2645,
+        "sciq": 0.724,
+        "piqa": 0.6763,
+        "winogrande": 0.532,
+        "openbookqa": 0.29
+      },
+      "complex_avg": null,
+      "complex_per_task": {
+        "gsm8k": 0.0099,
+        "hendrycks_math500": 0.04,
+        "mmlu": 0.2581,
+        "bbh_zeroshot": 0.2256,
+        "humaneval": null,
+        "mbpp": null
+      },
+      "source": "Xmodel-2-History s1/40K re-eval"
+    },
+    {
       "label": "Xmodel-2 final (1.5T)",
       "tokens_B": 1500.0,
       "params_B": 1.2,
@@ -227,13 +331,14 @@
         "winogrande": 0.6322020520915549,
         "openbookqa": 0.404
       },
-      "complex_avg": null,
+      "complex_avg": 0.30035778175234334,
       "complex_per_task": {
         "gsm8k": 0.539,
         "hendrycks_math500": 0.09,
         "mmlu": 0.5003560746332432,
         "humaneval": 0.0427,
-        "mbpp": 0.32
+        "mbpp": 0.32,
+        "bbh_zeroshot": 0.3100906158808171
       },
       "source": "Xmodel-2 final"
     }
