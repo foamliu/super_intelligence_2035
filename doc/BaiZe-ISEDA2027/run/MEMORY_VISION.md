@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）**：🔄 precache **15/17** done（hallusion_bench ✅, realworldqa ✅, **vqav2 downloading 41%** 28/68 files @~45s/file, infovqa pending）。✅ watcher 健康（PID 3905600/3905610, 1.1h 稳定运行, 等 precache 退出）。✅ GPU 8×H100 全空闲。✅ Part A 旧缓存复用已确认（wake #106 完成, 6 集 cp -a 到 /nas_env）。✅ Part B open_clip_baize.py + export_llava_ov_hf.py 就绪（wake #105, test 2/2 CPU PASSED）。📦 MEMORY 归档 14 条 Oct14 📦→1 条 + 本唤醒流水旧条目归档, 31.2KB→~26KB。下一步（全自动）：precache 完成(~1-2h) → watcher retry seedbench → limit50 8卡 eval → 全量 17 集 → ArmA retrain。
+> 🆕 **2026-10-16 05:13（Part B 全验收 ✅✅✅ · wake #109）**：🎉 **Part B 三项验收全部通过**：① open_clip GPU 前向 ✅（`baize-vit-512` 加载, `encode_image` → `[2,196,512]` bf16, 无 NaN/Inf, vision_config 全字段正确）；② LLaVA-OV HF 导出 ✅（持久目录 `baize_llava_ov_hf/` 8 文件, AutoConfig 读 `image_token_index=151655`）；③ **ai2d --limit 5 = 0.6000** ✅（3/5 正确, 端到端管线 BaizeVision→projector→Qwen3-4B LoRA→generate 全通, GPU 0 单卡 36s）。🔄 precache **15/17** done（vqav2 78% 112/143 files @~48s/file ≈25min, 然后 infovqa pending）。✅ watcher 健康（PID 3905600, 等 precache 退出）。✅ GPU 8×H100 全空闲（测试用 GPU 0 已释放）。📦 体积：TASK=26.5KB / MEMORY=25.9KB（无归档）。下一步（全自动）：precache 完成(~1h) → watcher retry seedbench → limit50 8卡 eval → 全量 17 集 → ArmA retrain。
+> 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
 > 📦 2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败 + TASK 归档 · wake #106）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 旧缓存复用, 缓存路径 /tmp→/data 修复, seedbench retry 脚本就绪, TASK 归档 5 块 35.9→26.5KB。需要时再读。
 > 📦 2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU), embed_dim=768, image_token_index=151655。需要时再读。
 > 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
@@ -25,10 +26,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集：precache 15/17 + watcher 自动化运行中（wake #108）**：Stage-1/1.5/2 全 ✅。open_clip/LLaVA-OV wrapper ✅ (test 2/2 CPU)。precache 运行中 (PID 2430411, vqav2 41% downloading, infovqa pending, ETA~1-2h)。watcher PID 3905600：等 precache → retry seedbench → limit50 8卡 eval。GPU 8×H100 全空闲。下一步：watcher 自动完成 → 检查 limit50 → 全量 17 集 → ArmA retrain。 |
+| PHASE | 🔄 **lmms-eval 17 集：precache 15/17 + watcher 自动化运行中（wake #109）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅ (open_clip GPU + HF 导出 + ai2d=0.60)。precache 运行中 (PID 2430411, vqav2 78% downloading, infovqa pending, ETA~1h)。watcher PID 3905600：等 precache → retry seedbench → limit50 8卡 eval。GPU 8×H100 全空闲。下一步：watcher 自动完成 → 检查 limit50 → 全量 17 集 → ArmA retrain。 |
 | ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 03:55 (wake #108)**: 🔄 precache 15/17 (vqav2 41% downloading, infovqa pending, ETA~1-2h)。✅ 模型就绪 (vision.pt + stage2/step3500 + Qwen3-4B + peft 0.18.0)。✅ open_clip test 2/2 CPU。✅ watcher PID 3905600 健康: 等 precache→retry seedbench→limit50 8卡 eval。GPU 8×H100 全空闲。📦 MEMORY 归档减重 31.2KB→~26KB。 |
+| 更新 | **2026-10-16 05:13 (wake #109)**: 🎉 Part B 三项验收全通过：① open_clip GPU 前向 `[2,196,512]` ✅ ② HF 导出目录 8 文件 ✅ ③ ai2d --limit 5 = 0.6000 ✅。🔄 precache 15/17 (vqav2 78%, infovqa pending, ETA~1h)。✅ watcher PID 3905600 健康。GPU 8×H100 全空闲。📦 体积：TASK=26.5KB / MEMORY=25.9KB（无归档）。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
@@ -222,6 +223,7 @@ WAITING: 1
 > 📦 [Oct 13~14] 本唤醒流水旧条目（Wake #45~#84, 含 ArmC 监控/MLLM bridge/报告刷新/④-4ep eval/外部编码器, ~15条）已归档 → daily-memories-vision/2026-10-{13,14}.md。**关键结论**：ArmC 154500步完成(ProtB 68.25%), ④-4ep ProtB 67.05%, MLLM bridge 5/5 PASSED, 外部编码器 SigLIP2 87.46% 最高。需要时再读。
 > 📦 10-06~10-12 早期流水（R12b/scaling/fair-rerun/V3/②probe/④-2ep/④-4ep, ~40条）已归档 → daily-memories-vision/2026-10-{06..12}.md。**关键结论**：E1fair vs E2fair Δlp=+0.17pp indistinguishable; ④-4ep ProtB 67.05% MODERATE/DIMINISHING; ④-2ep ProtB 65.37%。需要时再读。
 - [03:55 Oct16] **Wake #108**: 🔄 precache 15/17 (vqav2 41% downloading 28/68 files @~45s/file, infovqa pending, ETA~1-2h)。✅ watcher PID 3905600/3905610 健康(1.1h 稳定)。✅ Part A 旧缓存复用确认(wake #106 done, 6 集 cp -a 到 /nas_env)。✅ Part B open_clip_baize.py + export_llava_ov_hf.py 就绪(test 2/2 CPU PASSED)。✅ GPU 8×H100 全空闲(0% util)。📦 MEMORY 归档减重: 14条 Oct14 📦→1条 + 本唤醒流水旧条目→2条汇总。📦 体积：TASK=26.5KB / MEMORY=~26KB（归档 ~5KB → daily-memories-vision/）。
+- [05:13 Oct16] **Wake #109**: 🎉 **Part B 三项验收全通过**：① open_clip GPU 前向 ✅（`baize-vit-512` bf16, `encode_image`→`[2,196,512]`, 无 NaN/Inf, `vision_config` 全字段: 224/16/512/30/512/196）；② LLaVA-OV HF 导出 ✅（持久目录 `baize_llava_ov_hf/` 8 文件: config.json+preprocessor+open_clip_config+pytorch_model.bin(507MB)+chat_template+modeling×3, AutoConfig 读 `image_token_index=151655`）；③ **ai2d --limit 5 = 0.6000** ✅（3/5 正确, GPU 0 单卡 36s, 管线: BaizeVision→projector→Qwen3-4B LoRA→generate）。🔄 precache 15/17 (vqav2 78% 112/143 @~48s/file ≈25min, infovqa pending)。✅ watcher PID 3905600 健康。✅ GPU 8×H100 全空闲。📦 体积：TASK=26.5KB / MEMORY=25.9KB（无归档）。
 
 
 
