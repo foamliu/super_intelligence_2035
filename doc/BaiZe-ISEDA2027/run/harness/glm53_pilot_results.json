@@ -39535,5 +39535,38 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-17051",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 1,
+      "wall_s": 1319.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-17051.json",
+      "stdout_tail": "c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n{\"ts\":\"2026-10-15T03:25:25.581Z\",\"type\":\"error\",\"message\":\"InvalidHTTPResponse fetching \\\"http://127.0.0.1:9092/v1/chat/completions\\\". For more information, pass `verbose: true` in the second argument to fetch()\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-17051.json\n[run_single] cleanup: git reset --hard b7a17b0ea0a2061bae752a3a2292007d41825814\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 5,
+        "p2p_pass": 0,
+        "p2p_total": 39
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
