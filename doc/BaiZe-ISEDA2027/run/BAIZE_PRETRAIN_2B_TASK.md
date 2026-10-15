@@ -1,6 +1,44 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15（📘 **编写《BaiZe-2B 预训练计划书 v5》中文 HTML**）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「安排 pretrain 写预训练计划书（html、中文）：① 认真阅读、仔细参考 Xmodel-2 / Xmodel-2.5（论文在仓库中）；② 使用 MiniCPM5 的数据；③ 建议 BaiZe-2B 的训练策略 —— 例如是否像 Xmodel 一样把 Stable 分成 S1/S2、GBS 先 2M 再 4M token、Decay 是否只用少量数据（比如 20B）、每阶段数据如何配比；④ 可以 web search；⑤ 是否需要数据配比实验、如何设置优化指标。」
+
+**① 交付物**：`reports/report_pretrain_baize2b_plan_v5_zh.html`
+- **中文 · 自包含**（内联 CSS + 内联 SVG，**无外链**）；表格 ≤6；🚫 不整段贴英文原文。
+- 与 v4（`reports/report_pretrain_formal_train_plan.html`）的关系：**v4 解决「数据侧精确计数/密度归因/配比」，v5 补「训练策略侧」的完整方案与决策依据**——v4 的表**不要整表重贴**，引用其 § 并给一句结论即可。
+
+**② 必读材料（逐节读；报告里引用要写到节号/行号）**
+
+| 材料 | 位置 | 必读重点 |
+|:--|:--|:--|
+| **Xmodel-2** | `Xmodel-2/xmodel-2.tex` | §Pretraining（L101–190）：**§Training Stages（L132–139）**、**§Data Ratio Optimization in the Decay Stage（L141–146）**、§Training Data Distribution（L148–154）、§Training Loss（L181–183）；附录 Wind Tunnel（L417–460） |
+| **Xmodel-2.5** | `Xmodel-2.5/ACL2026/method.tex`、`result.tex` | **method §Three-Phase WSD**（W/S1/S2/D/LCR 五段的步数·GBS·SFT 占比）、**§Optimizer ablation（AdamW→Muon, +4.58pp）**；result §Training Loss（2M→4M 的 loss 台阶 + 长上下文段 52.36→52.49） |
+| **MiniCPM5 数据** | `run/DATA_RESEARCH.md` §Q1(1)（官方数据源清单 + 本地/HF 逐源核对表）；`run/DATA_MIX_RECIPE.md` | 逐源给「**MiniCPM5 官方源 → 本地落盘状态 → 本计划是否采用**」对照表；🚫 只用**已落盘/可复现**的源 |
+| **BaiZe 自身证据** | `run/EXPERIMENTS_PRETRAIN_2B*.md`、本任务书常驻口径、P-8 实测 | P-8：stable 9441 + decay 1149 = 10590 步 / **44.4B tok** / final loss **1.357** / seq **4096**；R1→R3 BO：ρ=−0.43 → best t23=0.4155 → top-K ρ=−0.80；R3 最优 web82.7/code6.2/math11.1 |
+
+**③ 必须逐条回答的 5 个问题（= 报告主章节，**每条都要落到 BaiZe 的具体数字**）**
+1. **Stable 要不要分 S1/S2？** 对照 Xmodel-2.5（S1 3712×480≈**1.78M** tok / 270k 步；S2 3712×960≈**3.56M** tok / 260k 步）与 Xmodel-2（单段 **3.93M** tok）⇒ 给 **BaiZe 明确推荐**（分/不分 + 分段 GBS 序列 + **每段 token 预算与步数**，并按 2.22B 与 8×H100 实测吞吐折算 **GPU·h 与墙钟**）。
+2. **GBS 是否「先 2M 再 4M」？依据？** Xmodel 把该 loss 台阶解释为「**增大 batch ≈ 等效降低 LR**」⇒ 给 BaiZe 的 **分段 GBS 曲线**，并写清 seq=4096 下 `micro_bs × grad_accum × 8卡` 的换算（例：4096×128×8 = 4.19M）。
+3. **Decay 用多少 token？** Xmodel-2 = 5000 步 = **20B**；Xmodel-2.5 = **20k 步**（≈3.56M×20k）⇒ 给 BaiZe **推荐区间**（20B 起，30B/50B 作为备选）+ **判定依据**（建议用**现有 P-8 ckpt 沿 LR 衰减做小规模外推**，不重训）。
+4. **各阶段数据配比怎么定？** Stable：web:code:math（v4 现用 88:8:4；R3 BO 给 82.7:6.2:11.1）；Decay：SFT:L3:code:math（v4 现用 64:24:8:4；Xmodel 最优 **SFT 64%（区间 60–69%）**、Xmodel-2.5 **66.9%**）⇒ **逐阶段给建议配比 + 与 Xmodel/MiniCPM5 的三方对照表**。
+5. **要不要做数据配比实验？优化指标怎么设？** 必须明确「做/不做 + 把握有多大」；若做，给**可执行实验设计**：
+   - 代理模型（小模型 wind tunnel：nano/tiny 或 P-5b 1.8B）· 搜索维度 · 试次数 · GPU·h 预算；
+   - **优化指标**（建议显式定义：常识 8 集 + 复杂 6 集 + 中文 C-Eval/CMMLU 的**加权平均**，给出权重与理由，🚫 不要只盯 loss）；
+   - **代理↔目标相关性验证**（沿用既有 ρ 口径）与**结论迁移到 2.22B 的依据/边界**；
+   - 可复用基建：`baize_mix_optuna*.py`（R1/Round2/R3 BO）、R3 配比台账。
+
+**④ 允许 web search**：可查 MiniCPM5 / UltraData 数据卡、WSD / µP / batch-scaling 等公开资料；**每条外部结论都要给可点击 URL**；查不到就写「未找到」，🚫 不编造。
+
+**⑤ 硬口径（🚫 不得违反）**
+- **不打断**正在跑的 **Xmodel-2 s1 re-eval** 与任何训练/评测；本任务原则上**零 GPU**（若确需小实验，先在此区申请，≤30 GPU·min）。
+- token 数一律用 **`.bin 字节 ÷ 4`**（v4 §1.1 口径）；🚫 不得用 `du` 的压缩字节冒充 token。
+- **跨栈结论必须标不确定度**：如「Xmodel-2.5 的 1.4T vs BaiZe 的 44.4B token 口径差异」「Muon 在 decay 段 +4.58pp 能否迁移到 Mamba2-hybrid」，**不得直接照抄**，要写适用边界。
+- seq 口径 **4096**（用户直令）；commit 前缀 `pretrain plan v5:`；TASK >32KB 自滚归档。
+
+**⑥ 建议报告结构**：① **结论速览**（TL;DR 表：阶段 / token 预算 / GBS / LR / 配比）→ ② **三方对照**（Xmodel-2 / Xmodel-2.5 / MiniCPM5 各自的 stage 划分与依据）→ ③ **BaiZe-2B 推荐训练策略**（W/S/D + 是否 S1/S2 + 逐阶段 token·GBS·LR·配比）→ ④ **数据配比实验**（做不做 / 怎么做 / 优化指标定义 / 预算 / 迁移性）→ ⑤ **风险与不确定性** → ⑥ **附录**（与 P-8 的差异对照 + 可复现命令骨架）。
+
 ### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看）
 
 > 以下为**固定口径**，除非运维再下新令，否则**不得更改**——尤其写进报告/论文时，逐字遵守。
