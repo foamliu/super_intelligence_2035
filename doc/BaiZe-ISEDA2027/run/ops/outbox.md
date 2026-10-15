@@ -11297,3 +11297,239 @@ datasets--lmms-lab--textvqa
 === [.12] DONE ===
 === DONE 105 ===
 ```
+
+---
+
+## RUN_ID 106 · 2026-10-15 22:35:03 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 106 · 代做「复用旧缓存」 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+OLD="$HOME/.cache/huggingface"; NEW=/nas_env/app.e0031982/hf_home
+VIS=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[0] 记录 precache 现场（pid/父/命令/cwd）"
+PID=$(pgrep -f 'precache_benchmarks.py' | head -1 || true)
+if [ -n "${PID:-}" ]; then
+  echo "pid=$PID"; tr '\0' ' ' < "/proc/$PID/cmdline"; echo
+  PP=$(awk '{print $4}' /proc/$PID/stat 2>/dev/null)
+  echo "ppid=$PP"; tr '\0' ' ' < "/proc/$PP/cmdline" 2>/dev/null; echo
+  echo "cwd=$(readlink /proc/$PID/cwd 2>/dev/null)"
+else echo "(precache 当前未在跑)"; fi
+echo "[0b] runner 脚本是否存在"
+ls -la "$VIS/mllm_bridge/run_precache.sh" "$VIS/run_precache.sh" 2>/dev/null | cut -c1-140
+echo "[1] 停 precache"
+pkill -f precache_benchmarks.py 2>/dev/null; sleep 3
+pgrep -af 'precache_benchmarks.py' || echo "(已停)"
+echo "[2] 拷贝旧缓存 → 新 HF_HOME（cp -a，跨 FS）"
+df -h /nas_env | tail -1 | cut -c1-110
+mkdir -p "$NEW/hub" "$NEW/datasets"
+cp -a "$OLD"/hub/datasets--lmms-lab--ai2d "$OLD"/hub/datasets--lmms-lab--GQA "$OLD"/hub/datasets--lmms-lab--MMBench "$OLD"/hub/datasets--lmms-lab--MMMU "$OLD"/hub/datasets--lmms-lab--textvqa "$NEW/hub/" 2>&1 | tail -3
+cp -a "$OLD"/datasets/lmms-lab___ai2d "$OLD"/datasets/lmms-lab___gqa "$OLD"/datasets/lmms-lab___mm_bench "$OLD"/datasets/lmms-lab___mmmu "$OLD"/datasets/lmms-lab___real_world_qa "$OLD"/datasets/lmms-lab___textvqa "$NEW/datasets/" 2>&1 | tail -3
+echo "[3] 核验"
+ls -d "$NEW"/hub/datasets--lmms-lab--* 2>/dev/null | cut -c1-120
+ls -d "$NEW"/datasets/lmms-lab___* 2>/dev/null | cut -c1-120
+printf '   new HF_HOME size(MB)='; timeout 90 du -sm "$NEW" 2>/dev/null | cut -f1
+echo "[4] 续跑 precache（优先 runner 脚本；否则原样命令）"
+cd "$VIS" || exit 0
+if [ -f "$VIS/mllm_bridge/run_precache.sh" ]; then
+  setsid nohup bash "$VIS/mllm_bridge/run_precache.sh" >> "$LOG" 2>&1 < /dev/null &
+else
+  setsid nohup bash -c "source /nas_train/app.e0031982/miniforge3/etc/profile.d/conda.sh && conda activate py310 && cd $VIS && export HF_HOME=$NEW HF_DATASETS_CACHE=$NEW/datasets https_proxy=http://172.19.92.25:13128 http_proxy=http://172.19.92.25:13128 && python mllm_bridge/precache_benchmarks.py --limit 1" >> "$LOG" 2>&1 < /dev/null &
+fi
+sleep 8
+echo "precache now: $(pgrep -af 'precache_benchmarks.py' | cut -c1-120)"
+echo "[5] 日志尾"; tail -8 "$LOG" 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 106 ==="
+```
+
+**输出**
+```
+=== RUN_ID 106 · 代做「复用旧缓存」 2026-10-15 22:35:03 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 22:35:03 ===
+[0] 记录 precache 现场（pid/父/命令/cwd）
+pid=1834398
+bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -P openai-compatible -t 1500 # BAIZE_VISION_TASK.md
+## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+
+### 🆕 运维指令 · 2026-10-15 22:25（♻️ **别重下：先复用旧缓存** + 🧩 **ArmA 重训须实现 open_clip 协议 / LLaVA-OneVision 兼容**）· 用户直令 · 最高优先
+
+**A. 立刻做 —— 复用旧缓存（实测省 ~20G 下载 ≈ 1 小时）**
+- **实测事实**（运维 RUN_ID 105）：旧缓存 `/home/app.e0031982/.cache/huggingface/` 里**已有 6 个 lmms-lab 基准**：
+  - `hub/datasets--lmms-lab--{ai2d, GQA, MMBench, MMMU, textvqa}`（约 20G 量级）
+  - `datasets/lmms-lab___{ai2d, gqa, mm_bench, mmmu, real_world_qa, textvqa}`
+  - （都是今天 18:27–20:48 那次**失败评测**下下来的）
+- 而现在 `precache_benchmarks.py` 在新 `HF_HOME=/nas_env/...` **从零重下 GQA 等** ⇒ **白下**。
+- **做法（停 → 本地拷贝 → 续跑）**：
+  ```bash
+  pkill -f precache_benchmarks.py; sleep 2
+  cp -a "$HOME"/.cache/huggingface/hub/datasets--lmms-lab--{ai2d,GQA,MMBench,MMMU,textvqa} /nas_env/app.e0031982/hf_home/hub/
+  cp -a "$HOME"/.cache/huggingface/datasets/lmms-lab___* /nas_env/app.e0031982/hf_home/datasets/
+  ls -d /nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--* /nas_env/app.e0031982/hf_home/datasets/lmms-lab___*   # 核对 6 个都在
+  ```
+  ⚠️ 必须 `cp -a`（`/home`→`/nas_env` 跨文件系统，**不能硬链**）；🚫 **不要**把 `hub`/`datasets` 软链回 `/home`（那等于把写入引回只有 47G 余量的 `/home`，必再撑满）。
+- 续跑前 `df -h /nas_env` 核余量；🚫 不要重复下载已拷过来的那 6 个。
+- ⚠️ 另注：`/tmp/lmms_eval_hf_datasets_app.t0002965` 是**空的**，`/nas_train/app.e0031982/.cache/huggingface` 只有 `hub/xet`（非基准）⇒ 别处没有存量可挖；**其余 11 集（DocVQA / ChartQA / ScienceQA / SEED-Bench / POPE / VizWiz / OCRBench / MMVet / HallusionBench / VQAv2 / InfoVQA）确实从未下过**，仍要走下载。
+
+**B. ArmA 重训（今晚评测完开工）—— open_clip 协议 + LLaVA-OneVision 兼容（用户直令）**
+- **必做 ① `open_clip` 协议**：`open_clip.create_model_and_transforms('<name>', pretrained=<ckpt>)` 能加载；`encode_image(x)` / 前向返回 `[B, N, D]`（N = patch 数；**明文声明是否含 CLS / 是否 spatial-merge**）；暴露 `vision_config`（`image_size / patch_size / hidden_size / depth / width`）；预处理与现有 224 管线一致。
+- **必做 ② LLaVA-OV 兼容导出**：产出可被 OV 流程消费的 HF 目录 —— `config.json`（`model_type` + `vision_config`（clip/open_clip 系）+ `text_config`（Qwen3）+ **`image_token_index`** + **`vision_feature_select_strategy`**）、`preprocessor_config.json`（image processor）、chat template。
+- **验收（必须给证据）**：① `open_clip` 加载成功 + 一次前向的 shape/数值 sanity；② 该目录能被 `AutoConfig` / `AutoProcessor` 正常读；③ 用它跑 **`ai2d --limit 5`** 得到非 0 准确率（证明端到端通）。
+- **先定口径并在回报里写明**（这三项决定与官方 OV 的可比性）：① **分辨率**：**224 单块（推荐先跑通）** 还是 **384 + anyres**；② `image_token_index` 取值；③ 视觉特征取**哪一层**（官方 OV = SigLIP 倒数第二层）。
+- 🚫 **纪律**：报告里**必须标注与官方 LLaVA-OV 的 pipeline 差异**；**未做到 anyres 同构前，不得宣称与官方 LLaVA-OV 数字同框**。
+
+### 🆕 运维指令 · 2026-10-15 20:0x（🔬 **评测实况核查结论 + 4 项待办**）· 用户直令 · 最高优先
+
+> **来源**：运维用 `ops` 中继（RUN_ID 93）在 `.29/.12` 机上**实测**，非推测。请按下面逐项处理并在下一轮回报。
+>
+> **实测事实**：
+> 1. **.12 的 8×H100 全空闲**（0 MiB / 0%）——**当前没有评测/训练在跑**；`mllm_eval_results/` **为空**⇒ **完整 17 集评测从未启动**（只做过 realworldqa `--limit 50` 冒烟）。
+> 2. **Stage-2 只有 `step1000`**（mtime 15:45），而 `run_lmms_eval.py` 默认 `--step 3500` ⇒ 按默认跑会直接 `ERROR: Stage-2 checkpoint not found`。**step1000 之后是停了还是继续？** 必须澄清。
+> 3. **proxy 实测可用**：`.29` 上 `curl https://huggingface.co` → **直连 200 / 92.25 → 200**（92.23 无响应）；HF API 200、datasets 307 ⇒ **13:52 的 proxy 口径已验证通过**。
+> 4. 但 **`.12` 的 loop 环境里没有任何 proxy 变量**（`env|grep -i proxy` 空），而 `.12` **直连 github:443 不通** ⇒ 日志里 `push FAILED … Network is unreachable`；且**共享工作副本 `.git/index.lock` 被占** ⇒ `fatal: Unable to write new index file`、`nothing to commit` —— **这就是 12:15→18:29 有 6 小时看不到提交的原因（不是没干活，是推不上来）**。
+> 5. **17 集基准数据基本没下**：HF 缓存里只有 `real_world_qa` 一个 lmms 锁文件，其余是文本数据集 ⇒ 真跑 17 集时**首次下载是大头**。
+> 6. `run_lmms_eval.py` 仍是 **`batch_size=1`、单卡、无并行** ⇒ **17:15「大 batch + 多 GPU」提速令尚未落实**（这才是"评测会跑很久"的直接原因）。
+
+**① 提速落实（必须）**：`batch_size` 调到实测不 OOM 的最大值（给 OOM 边界），**多卡**（lmms-eval 官方 `accelerate`/`parallelize` 用法，自行 web search 确认），**17 集一次命令行**（🚫 不许逐个 task 串行）。回报：实测 **samples/s、显存峰值、17 集 ETA**。
+
+**② 先小样再全量**：每集 `--limit 20~50` **17 集全过一遍**（验证 adapter 对每种 task 的输出解析都对），再放全量；避免又出现"某任务恒输出 A"这类只在大批量才暴露的问题。
+
+**③ 数据预下载**：用 `https_proxy=92.25` 直连 hf.co 预下载 17 集（🚫 勿用 hf-mirror）；回报**清单 + 总体积 + 预计耗时**。下载与 `.12` 上 data 线的 `hf download` 错峰。
+
+**④ 修 git 通道（否则进度永远推不出来）**：把 `https_proxy=http://172.19.92.25:13128` 写进 **loop/launcher 的环境**（如 `~/.bashrc` 或启动脚本），让 **git 也走 proxy**；并规避 `.git/index.lock` 争用（提交前重试/错峰，🚫 不要 `git add -A`）。回报：`git push` 成功证据。
+
+**⑤ Stage-2 澄清**：若 step1000 即中断，给出**原因 + 续训计划**；若已训完，说明 ckpt 实际路径，并**对齐 runner 的 `--step`**（勿再用默认 3500 猜）。
+
+**⑥ 回报形式**：写进 `MEMORY_VISION.md` 状态头 + 当日 `daily-memories-vision/`，含一节 **「评测耗时归因」**（训练链 / adapter 适配 / 数据通道 / generate 输出 bug / git 推送，各占多少小时），便于对用户解释。⚠️ 任务书已 ~32KB，本块执行后**自行归档旧块**到 `*_ARCHIVE`。
+
+**⑦ ✅ git push 已修（2026-10-15 20:0x，运维直改 `.12`）**：**根因** = `.12` **直连 github 不通**（实测 `000`），而 git 全局/仓库**都没有 proxy 配置**、loop 环境也无 proxy → `push FAILED … Network is unreachable`。
+**已修**：在 `.12` 写入 `git config --global http.proxy/https.proxy = http://172.19.92.23:13128`（**git 配置层，不是 env** —— 因为你调 cline 时会 `env -u https_proxy` 剥掉环境变量），`git ls-remote origin HEAD` 已验证通过。
+⇒ **不要再把时间花在排查 git/push 上**；下一轮 `git_push_if_needed` 应直接成功。若仍失败，回报 `git fetch`/`git push` 的**原文报错**。
+> 📌 口径：**连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co（🚫 不用 hf-mirror）**。见 `run/ops/README.md §7`。
+
+### 🆕 运维指令 · 2026-10-15 21:35（🔧 **limit50 评测崩因 = 磁盘满** → 换 HF 缓存盘 + 预建缓存 + 复跑）· 运维实测 · 最高优先
+
+> **实测事实（RUN_ID 100/101/102，非推测）**
+> - 20:26 启动的 8 卡 `--limit 50` 评测 **21:24:28 崩**：`OSError: [Errno 28] No space left on device`（pyarrow 写 datasets 生成时）→ `DatasetGenerationError` → rank1 退出 1 → `ChildFailedError`；**8 卡随后全空闲、无任何结果 JSON**。
+> - `.12` 磁盘：`/home` **196G（140G 用 / **47G 空闲** / 75%）** ← **HF 缓存默认就落这儿**（`~/.cache/huggingface` = datasets 11G + hub 12G = **23G**）；`/` 352G free；`/tmp` 69G free；**`/data` 6.8T free**；**`/nas_env` 9.9T free**。
+> - **判定**：8 个 rank 同时构建/写 datasets 缓存 ⇒ 在只剩 47G 的 `/home` 上形成写入突发 ⇒ 瞬时写满（崩后临时文件被清理，所以现在再查并不"满"）。
+>
+> **① 换缓存盘（必做）**：HF 缓存从 `~/.cache`（/home，仅 196G）迁到**大盘**，且**所有 rank 共用**：
+> `export HF_HOME=/nas_env/app.e0031982/hf_home`（或 `/data/app.e0031982/hf_home`）、`export HF_DATASETS_CACHE=$HF_HOME/datasets`、`export HF_HUB_ENABLE_HF_TRANSFER=1`，下载/加载一律走 proxy `92.25`。
+>
+> **② 先单进程预建缓存（必做）**：**先用单卡/单进程**把 17 集的 dataset cache 建好（或 `--limit 1` 单卡过一遍），**再**开 8 卡 multi-GPU —— 避免 8 rank 重复写同一份缓存。
+>
+> **③ 资源看护**：开跑前 `df -h /home $HF_HOME`（要求可用 ≥50G）；跑中每隔几分钟看一眼；wrapper 里加低余量告警。
+>
+> **④ 失败必须落原文**：把 `No space left on device` / `ChildFailedError` 这类**原文报错**写进 `MEMORY_VISION.md`（本次「GPU 全空闲 + 无结果 JSON」就是它）。
+>
+> **⑤ 复跑顺序**：`--limit 50` × 17 集（验证）→ 全量 17 集 → 结果表 + 中文 HTML 报告。
+
+### 🆕 运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」
+
+**① 评测提速（lmms-eval 17 benchmarks）**：
+- **一次命令行指定全部 17 个评测集**（`--tasks ai2d,blink,...,mmmu_pro_standard`，不是逐个 task 跑）。
+- **batch size 加大**（提高 GPU 利用率，自行调优到不 OOM）。
+- **允许多 GPU**（parallelize / accelerate 多卡，自行 web search lmms-eval 官方多卡用法；🚫 不要串行单 task、单卡）。
+
+**② 继续**：`.12` 8×H100 可用；评测数据用 proxy 直连 hf.co（92.25）下载，🚫 勿用 hf-mirror。
+
+**③ 纪律**：🚫 不打断 Stage 训练链；评测纯推理；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co 下载 lmms-eval 基准 · 恢复 17 benchmark）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「如实使用 http://172.19.92.25:13128 这个 https_proxy，则需要直连 hf.co，不能用 https://hf-mirror.com。」
+
+**① proxy 纠正**：
+- 🚫 **去掉** `HF_ENDPOINT=https://hf-mirror.com`（及任何 hf-mirror 相关设置）。
+- ✅ 设 `https_proxy=http://172.19.92.25:13128` + `http_proxy=http://172.19.92.25:13128`，**直连 hf.co** 下载 lmms-eval 17 benchmark 数据（此前用 mirror / 未带 proxy 导致「HF Hub 不可达」）。
+
+**② 恢复 lmms-eval 评测**：
+- 🚫 不要降级为「本地 instruct held-out」——用 proxy 直连 hf.co 下载 17 benchmark 数据，恢复原计划的 **lmms-eval 17 集评测**。
+
+**③ Stage 推进（继续，勿停）**：
+- Stage-1.5 已完成（step20000，ckpt `/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15/step20000/`）→ gate check 后启动 **Stage-2 instruct（~3500 步）** → lmms-eval 17 集。
+
+**④ 纪律**：🚫 不打断 Stage 训练链；下载/评测一律带 proxy 直连 hf.co；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）· 用户直令
+
+> 📦 §运维指令 · 2026-10-15（📚 历史实验结果全景总结）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付，8 主题全覆盖。需要时再读。
+
+### 🆕 运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程：smoke → Stage-1/1.5/2 → lmms-eval）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「vision 为什么停下来不做 MLLM？」—— 你**是被授权做的**（用户早已批「我同意，可以做」），wrapper 已就绪，8 GPU 已空，现在放行执行完整 Stage(iv)，不再停在 Phase0。
+
+**① 前置已就绪（无需再确认）**：wrapper + 自定义 modeling + projector CPU 单测 **5/5 通过** ✅；**.12 8×H100 空闲** ✅；三个 Stage 数据 265GB 在盘 ✅；Qwen3-4B ✅；ms-swift 4.5.3 ✅；lmms-eval 0.7.1 ✅。
+
+**② 执行顺序（按可行性报告 §8.3 排期 + §9.2 建议，方案 A）**：
+1. **GPU smoke test**：加载 BaiZe wrapper + projector + Qwen3-4B，前向 1 batch（~1h）
+2. **Stage-1 Alignment**：冻结 LLM + vision tower，只训 projector（~2500 步；LR 先 1e-4 基线，不收敛扫 {5e-5, 2e-4, 5e-4}）
+3. **Stage-1.5 Mid-Training**：解冻 LLM（或 LoRA），~20000 步
+4. **Stage-2 Instruct**：~3500 步
+5. **lmms-eval 17 benchmarks**
+- 超参参照 `train_4b.sh` 但**用 ms-swift**；`SEQ_LEN=32768` 若 OOM 降 8192/16384；Stage-1 固定 224、跳过 spatial merge、image-token 占位 196。
+
+**③ 门控**：每 stage 完成上报一次（smoke 通过才进 Stage-1；Stage-1 通过才进 1.5，依此类推），各 stage 落 ckpt 到指定目录。
+
+**④ 交付**：全程日志 + 各 stage ckpt + 17 benchmark 结果表 + 中文 HTML 报告（含 vs LLaVA-OV1.5 RICE ViT 基线对比，方案 B 对照）。
+
+**⑤ 纪律**：开跑前 `nvidia-smi` 确认 .12 空窗；与 data 线下载错峰 IO；训练用 py310、评测用 ov_encoder（或 py310 装 lmms-eval）；🚫 不碰论文/其它线产物；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（纯 CPU，不占 GPU））· 用户直令 · 最高优先（但仍低于 ArmC 训练/评测监控）
+
+> 📦 §运维指令 · 2026-10-14（🔧 ArmC 期间先写 ViT wrapper）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。需要时再读。
+
+
+> 📦 §运维指令 · 2026-10-14（📋 Stage(iv) MLLM 可行性评估）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 28.5KB 中文 HTML（9节），2🔴+6🟠+7🟢，3 Stage 数据265GB全在盘，wrapper/modeling 开发纯 CPU 可并行。需要时再读。
+
+> 📦 §运维指令 · 2026-10-14（📊 ArmC 中文状态报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_merge3ds_armc_status_zh.html 已交付(7节+2SVG+文献表)，已多次刷新至最新训练数据。需要时再读。
+
+> 📦 §运维指令 · 2026-10-14（✍️ 放行刷新论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ P0+P1 全部修改完成，11→12 页 0 error（commit e0f75ef5）。需要时再读。
+
+> 📦 §运维指令 · 2026-10-14（📝 训练空窗期审视论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 21.8KB HTML，2🔴+6🟠+5🟢，14/16 核验一致。需要时再读。
+
+> 📦 §运维指令 · 2026-10-13（📐 LR 缩放规则）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 按文献定 LR ×4=2e-3（Goyal arXiv:1706.02677），3 臂扫描，报告已更新含文献表。需要时再读。
+
+> 📦 §运维指令 · 2026-10-13（🔢 数据量口径更正）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ GPIC 快照7437tar≈94M/全量101.1M, 三集合计快照≈111M/全量118.1M, 报告已订正。需要时再读。
+
+
+### 🆕 运维指令 · 2026-10-13（🚀【放行执行】外部编码器 ProtB 做完后 → 立刻跑「合并三数据集实验」：GBS/MBS ×4 · LR ×2 · 24h ≈3 epoch）· 用户直令 · 最高优先
+
+> 📦 §运维指令 · 2026-10-13（🚀 合并三数据集实验）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ ArmC 训练完成(154500步) + eval 4/4 全提升(ProtB 68.25% Δ+1.20pp)，报告交付。需要时再读。
+
+
+> 📦 §运维指令 · 2026-10-13（📄 合并三数据集实验计划 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_merge3ds_bs4_lr2_plan_zh.html（44.3KB）已交付，含 3 臂 LR 扫描 + 数据量订正 + 文献表。需要时再读。
+
+> 📦 §运维指令 · 2026-10-13（🔬 外部编码器 ProtB 评测）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：5/5 完成（SigLIP2 87.46% / AIMv2 85.22% / OV2 84.97% / CLIP 82.66% / RICE 81.72%），report_vision_external_protb_reference_zh.html 已交付。需要时再读。
+---
+
+> 📦 §运维指令 · 2026-10-13（📄 ④-4ep 实验报告中文 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_4ep_experiment_zh.html 已交付，ProtB=67.05% MODERATE/DIMINISHING，含 MBS/GBS/LR 加速分析 + N-epoch 时间表。需要时再读。
+
+> 📦 §运维指令 · 2026-10-11（📄 外部反馈→审视+合入论文：Muon 梯度谱解释）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：VISION_MUON_REVIEW_2026-10-11.md + paper §VI-D Muon paragraph + bib entry (arXiv:2605.19282) delivered, 11→11 pages 0err, commit 95a94d0f。需要时再读。
+
+---
+
+> 📦 §运维指令 · 2026-10-11（📄 Muon 坍缩根因分析报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_muon_collapse.html（33.6KB, 10节, 内联SVG）已交付，commit 6743baeb。需要时再读。
+
+> 📦 §运维指令 · 2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_lit_ideas.html（28.4KB, 25篇→TOP-5）已交付，commit 6743baeb。需要时再读。
+
+> 📦 §运维指令 · 2026-10-12（📄 LLaVA-OV1.5 复现计划）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_llava_ov15_repro_plan.html 已交付，含 Qwen3.5-4B+OV2视觉塔+ms-swift框架+S0-S4五阶段。需要时再读。
+
+> 📦 §运维指令 · 2026-10-12（🚀 启动 ④-4ep 续训）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：④-4ep 训练+评测全完成，ProtB=67.05±0.02%，MODERATE/DIMINISHING（<70%未达标）。需要时再读。
+
+> 📦 §运维指令 · 2026-10-12（📄 中文版综合报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_final_20261012_zh.html 已交付，外部评审回应全链路收口。需要时再读。
+
+> 📦 §运维指令 · 2026-10-10（🧭 外部评审回应 ③→①→②→④）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：③口径✅ ①zs✅ ②probe✅ ④2ep✅（MODERATE Δ+3.03pp）→ 全链路 DONE（10-12 13:42 收尾）。需要时再读。
+
+> 📦 §运维指令 · 2026-10-10（🧪 变体实验：AdamW→Muon → 全量数据 → 分辨率暂缓）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：V2 Muon 全 LR 坍缩❌（lr=5e-4@step2100, lr=1e-4@step4200）；V3 全量数据 ProtB=63.52% Δ+1.18pp 不可�
+[relay] ⚠️ 输出超长，已截断到 20000 字符
+```
