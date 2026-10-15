@@ -308,13 +308,26 @@ def load_results():
     """Load results under a shared lock (concurrent-safe with save_results)."""
     import fcntl
     lock_path = SUMMARY_PATH.with_suffix(".lock")
-    with open(lock_path, "w") as lf:
+    with open(lock_path, "a") as lf:  # 'a' not 'w' — don't truncate lock file
         fcntl.flock(lf, fcntl.LOCK_SH)
         try:
             if SUMMARY_PATH.exists():
                 try:
                     return json.loads(SUMMARY_PATH.read_text())
-                except Exception:
+                except Exception as e:
+                    # Don't silently return [] — that causes data loss when
+                    # save_results later writes only this harness's entries.
+                    # Instead, rename the corrupt file for later analysis and
+                    # return [] so the caller can continue.
+                    corrupt_backup = SUMMARY_PATH.with_suffix(
+                        f".corrupt.{int(time.time())}.json"
+                    )
+                    try:
+                        os.rename(str(SUMMARY_PATH), str(corrupt_backup))
+                        print(f"  [WARN] Results JSON corrupt ({e}), "
+                              f"backed up to {corrupt_backup.name}")
+                    except OSError:
+                        pass
                     return []
             return []
         finally:
@@ -328,18 +341,43 @@ def save_results(results, harness=None):
     written to disk; entries for *other* harnesses are preserved from the
     on-disk copy (preventing a stale in-memory list from clobbering a
     concurrent process's newer results).
+
+    2026-10-15 FIX (data-loss bug): Previously, on JSON parse error the
+    function silently set ``current = []`` and then wrote ONLY the current
+    harness's entries — destroying all other harnesses' data.  Now:
+      1. On parse error, rename the corrupt file for analysis and SKIP the
+         write (preserving whatever data we can recover later from git).
+      2. Use atomic write: write to a temp file then ``os.rename()`` (which
+         is atomic on the same filesystem) to prevent partial-write
+         corruption that caused the parse error in the first place.
+      3. Open the lock file with ``'a'`` not ``'w'`` to avoid truncating it
+         before the lock is acquired.
     """
-    import fcntl
+    import fcntl, tempfile
     lock_path = SUMMARY_PATH.with_suffix(".lock")
-    with open(lock_path, "w") as lf:
+    with open(lock_path, "a") as lf:  # 'a' not 'w' — don't truncate lock file
         fcntl.flock(lf, fcntl.LOCK_EX)
         try:
             current = []
             if SUMMARY_PATH.exists():
                 try:
                     current = json.loads(SUMMARY_PATH.read_text())
-                except Exception:
-                    current = []
+                except Exception as e:
+                    # CRITICAL FIX: do NOT set current=[] and write — that
+                    # destroys other harnesses' data.  Instead, back up the
+                    # corrupt file and skip this write entirely.
+                    corrupt_backup = SUMMARY_PATH.with_suffix(
+                        f".corrupt.{int(time.time())}.json"
+                    )
+                    try:
+                        os.rename(str(SUMMARY_PATH), str(corrupt_backup))
+                        print(f"  [ERROR] Results JSON corrupt on read ({e}); "
+                              f"backed up to {corrupt_backup.name}, SKIPPING write "
+                              f"to prevent data loss")
+                    except OSError:
+                        print(f"  [ERROR] Results JSON corrupt ({e}) and "
+                              f"backup failed; SKIPPING write")
+                    return  # <-- do NOT write; preserve what we have
             idx = {}
             for i, r in enumerate(current):
                 idx[(r.get("instance_id"), r.get("harness"))] = i
@@ -352,7 +390,23 @@ def save_results(results, harness=None):
                 else:
                     idx[key] = len(current)
                     current.append(r)
-            SUMMARY_PATH.write_text(json.dumps(current, indent=2, default=str))
+            # Atomic write: write to temp file in same directory, then rename
+            tmp_fd, tmp_path = tempfile.mkstemp(
+                dir=str(SUMMARY_PATH.parent),
+                prefix=".glm53_save_",
+                suffix=".tmp"
+            )
+            try:
+                with os.fdopen(tmp_fd, 'w') as tmp_f:
+                    json.dump(current, tmp_f, indent=2, default=str)
+                os.rename(tmp_path, str(SUMMARY_PATH))  # atomic on same fs
+            except Exception:
+                # Clean up temp file if rename failed
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
+                raise
         finally:
             fcntl.flock(lf, fcntl.LOCK_UN)
 
