@@ -71,7 +71,22 @@ export PATH
 CLINE_BIN="${CLINE_BIN:-}"
 if [ -z "$CLINE_BIN" ]; then CLINE_BIN="$(command -v cline 2>/dev/null || true)"; fi
 if [ -z "$CLINE_BIN" ]; then
-    echo "[loop] ❌ 找不到 cline（PATH=$PATH）→ 本线无法工作；请修 PATH 或重装 cline（npm i -g @cline/cli）"
+    echo "[loop] ❌ 找不到 cline（PATH=$PATH）→ 本线无法工作"
+    # 🩹 自愈（2026-10-13 事故：`npm update -g cline` 中断把包删了 ⇒ 全线 exit 127 静默停摆 2 天）
+    if [ "${WATCH_NO_CLINE_SELFHEAL:-0}" != "1" ]; then
+        echo "[loop] 🩹 尝试自动重装 cline（npm i -g cline@latest，最多 240s；日志 → $CLINE_LOG）"
+        (
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1
+            timeout 240 npm i -g cline@latest --no-fund --no-audit
+        ) >> "$CLINE_LOG" 2>&1 || true
+        CLINE_BIN="$(command -v cline 2>/dev/null || true)"
+    fi
+    if [ -n "$CLINE_BIN" ]; then
+        echo "[loop] 🩹 自愈成功：cline=$CLINE_BIN"
+    else
+        echo "[loop] 🩹 自愈失败：cline 仍不可用（详见 $CLINE_LOG）；请人工修 PATH/重装"
+    fi
 else
     echo "[loop] ✅ cline=$CLINE_BIN · $(timeout 15 "$CLINE_BIN" --version 2>/dev/null | head -1)"
 fi

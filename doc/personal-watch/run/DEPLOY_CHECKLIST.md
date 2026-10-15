@@ -42,6 +42,35 @@ curl -s -o /dev/null -w '%{http_code}\n' https://www.chinanews.com.cn/scroll-new
 git ls-remote --heads origin main >/dev/null && echo GIT_OK                                                 # GitHub 可达
 ```
 
+## 2.1 ⚠️ cline 自动更新曾导致**全线静默停摆**（2026-10-13 事故 · 已修复）
+
+**现象**：三条 loop 进程都在、心跳也正常，但**每个时窗的唤醒全部失败**，git 上只看到"进度停了"——
+`/tmp/watch_{news,research,recruit}_loop.log` 里每轮都是 `cline: command not found`（exit 127）⇒ **自 10-13 18:25 静默停摆 ≈2 天**。
+
+**根因**：cline 由 **hub daemon 自动更新**（`npm update -g cline --tag latest --min-release-age=0`，见 `~/.npm/_logs/`）。
+2026-10-13 18:25–18:28 该更新**三进程并发**执行 → **中途失败，`bin/cline` 与 `lib/node_modules/cline` 被删**
+（Node 本体 `~/.nvm/versions/node/v24.21.0/bin/node` 完好无损）⇒ 所有 loop 找不到 `cline`。
+
+**恢复步骤**（2026-10-15 实操）：
+```bash
+export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; nvm use 24.21.0
+npm i -g cline@3.0.61                    # 或 @latest；装完 `cline --version` 核对
+# 重启必须走 launcher（它补 PATH=$HOME/.nvm/versions/node/v24.21.0/bin；否则同样 command not found）
+pkill -f 'watch_news_loop.sh'
+setsid bash "$HOME/start_news_loop.sh" > /tmp/watch_news_loop.log 2>&1 < /dev/null &
+```
+
+**加固（已入仓 `watch_news_loop.sh`，2026-10-15）**：
+① 启动时并入**登录 shell 的 PATH**（nvm/node 常只在 login shell 生效）+ 显式解析 `$CLINE_BIN`，调用不再依赖环境 PATH；
+② `command not found` 纳入 `FATAL_RE`（→ 短睡重试而非睡长觉）；
+③ **自愈**：cline 缺失时自动 `npm i -g cline@latest`（≤240s）一次，`WATCH_NO_CLINE_SELFHEAL=1` 可关闭。
+
+> 🔎 **判活口径（本次教训）**：`/tmp/watch_<线>_loop.hb` 超 2 个时窗未刷新 = 死；
+> **但"心跳正常"≠"在干活"** —— 本次恰恰是心跳正常、每轮却全失败。
+> ⇒ 巡检必须**同时看 `/tmp/watch_<线>_loop.log` 尾部**（或本仓 `MEMORY_*` 的更新时间）。
+
+---
+
 ## 3. ⚙️ 2 核机器的加固（**针对 CPU 70–80% / 2G 内存**）
 
 | # | 措施 | 为什么 / 怎么做 |

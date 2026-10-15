@@ -28,8 +28,13 @@
 > RUN_ID 14 结果：loop 的 PATH **含** `~/.nvm/versions/node/v24.21.0/bin`，但 `cline` 仍找不到；
 > 而中继自身环境 `node=NONE / npm=NONE`（中继 PATH 不含 nvm，故不能据此判缺失）。
 > 本块**只读**：确认「整套 node 版本目录被删」还是「仅 cline shim 被删」，以便精确恢复。
+>
+> ⛔ **2026-10-15 18:27 作废（不再执行）**：supervisor 已改用 **SSH 直连**上机完成定位与修复，本块仅留审计。
+> - **根因**：2026-10-13 18:25–18:28 在 VM 上执行了 `npm update -g cline --tag latest --min-release-age=0`（**cline hub 的自动更新**，三进程并发，日志 `_logs/2026-10-13T10_25_26_*.log`）→ **更新中途失败，`bin/cline` 与 `lib/node_modules/cline` 被删** → VM 上 news / research / recruit **三条 loop 全部** `cline: command not found`（exit 127），**心跳正常、极隐蔽**，静默停摆 ≈2 天。
+> - **修复**：① `npm i -g cline@3.0.61`（随后自动更新至 **3.0.71**，`cline --version` ✅）；② 本仓 `watch_news_loop.sh` 加固（并入登录 shell PATH + 显式 `$CLINE_BIN` + `command not found` 纳入 FATAL + 缺失时 **自动重装自愈**）；③ 用官方 launcher `~/start_news_loop.sh` 重启 news loop（实测 `✅ cline=…/bin/cline · 3.0.71`，cline 会话在跑）。
+> - **旁证**：research(1157046) / recruit(3003649) loop 的 PATH 本就含 `~/.nvm/versions/node/v24.21.0/bin` ⇒ cline 回装后它们**下一次唤醒（2026-10-16 06:00）自动恢复**，无需重启。
 
-```bash
+```text
 echo "=== RUN_ID 15 · news 修复·第2步：node/nvm/cline 现状（只读） $(date '+%F %T') ==="; hostname; date '+%F %T'
 echo "--- [1] nvm ---"
 ls -ld "$HOME/.nvm" 2>/dev/null | cut -c1-140
