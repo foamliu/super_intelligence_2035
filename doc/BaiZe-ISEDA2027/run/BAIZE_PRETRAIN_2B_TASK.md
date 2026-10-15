@@ -18,6 +18,21 @@
 > - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
 > - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
 
+### 🆕 运维指令 · 2026-10-15（📥 下载 Xmodel-2/2.5 decay 后 final 实测 14 集 · 眼见为实验证 decay 提升）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「你可以下载 decay 后的 Xmodel-2/2.5 看一看嘛，眼见为实。」
+
+**① 目标**：下载 Xmodel-2 / Xmodel-2.5 的 **decay 后 final ckpt**，实测 14 集，眼见为实对比「stable 段末点 → decay 后 final」的真实提升量。
+
+**② 做法**：
+- **Xmodel-2.5 final**：从主仓库 `XiaoduoAILab/Xmodel-2.5` 下载最终 ckpt（history 仓库仅 step 2000~106000、无 final decay）。
+- **Xmodel-2 final**：已实测 41.76%，可复用；重点补 Xmodel-2.5 final。
+- lm-eval **0-shot** 测 14 集（Common8 + 复杂 6），与 stable 段中间 ckpt 同口径。
+
+**③ 对比输出**：decay 前（stable 末点）vs decay 后（final）的 Common8 + 14 集逐项提升量；纸面 61.79 vs 实测的口径差异说明；中文 HTML + **ETA**。
+
+**④ 纪律**：🚫 不重训 BaiZe；下载带 proxy 错峰 IO；数字带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（📈 下载 Xmodel-2/2.5 history ckpt 对比缩放曲线 · 判 BaiZe 早期学习能力）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「这里有 Xmodel-2.5 和 Xmodel-2 的检查点 https://huggingface.co/XiaoduoAILab/Xmodel-2.5-history。下载 Xmodel-2/2.5 跟数据缩放表格对应训练数据量时的检查点，绘制它们的缩放曲线，跟 BaiZe-2B 对比，从而判断 BaiZe-2B 在预训练早期的学习能力是否显著弱于 Xmodel 系列。」
