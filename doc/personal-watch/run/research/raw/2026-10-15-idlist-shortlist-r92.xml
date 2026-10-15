@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/VQDkUtJVzPvgAbX5PfhxolMWdJM</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.17637,2610.17202,2610.20193,2610.19863,2610.19587,2610.16867,2610.20549&amp;start=0&amp;max_results=20</title>
+  <updated>2026-10-15T11:50:54Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=20&amp;id_list=2610.17637,2610.17202,2610.20193,2610.19863,2610.19587,2610.16867,2610.20549" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>20</opensearch:itemsPerPage>
+  <opensearch:totalResults>7</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.20549v1</id>
+    <title>Frame Rate, Not the Grid: A Confound in Single-Clip Optical ENF Video Forensics</title>
+    <updated>2026-10-14T17:42:09Z</updated>
+    <link href="https://arxiv.org/abs/2610.20549v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.20549v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The optical electric network frequency, the faint mains-driven flicker imprinted on rolling-shutter video, is increasingly proposed for verifying where footage was captured and for flagging manipulated or generated video. This letter shows that reading the mains frequency from a single short clip is confounded by the camera frame rate: at the rates in common use, a harmonic of that rate lands in the same narrow band as the true flicker, so the recovered grid is set by the frame rate, not the supply, and the estimator returns a confident value instead of abstaining. The underlying aliasing is known; its forensic consequence is not, and is the contribution here. On the 804 clips with a measurable in-band line the flicker feature does not separate genuine from generated video (area under the curve 0.509), while the recovered grid tracks the frame rate exactly for the generators, and a controlled synthesis confirms the mechanism against ground truth for genuine grids. Single-clip grid, and hence region, identification is therefore unreliable at the standard rates, and a comb-aware estimator that models the frame-rate harmonics restores the distinction between a genuine grid and a frame-rate comb under controlled conditions.</summary>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-14T17:42:09Z</published>
+    <arxiv:comment>4 pages, 2 figures, 2 tables. Submitted to IEEE Signal Processing Letters. Code and data: https://github.com/RyanSolent95/enf-video-forensics</arxiv:comment>
+    <arxiv:primary_category term="cs.MM"/>
+    <author>
+      <name>Ryan Wyton</name>
+      <arxiv:affiliation>Southampton Solent University</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Bacha Rehman</name>
+      <arxiv:affiliation>Southampton Solent University</arxiv:affiliation>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.19863v1</id>
+    <title>When Extremists Enter LLM Societies: Investigating Extreme Behavior in Multi-Agent Systems</title>
+    <updated>2026-10-14T09:27:13Z</updated>
+    <link href="https://arxiv.org/abs/2610.19863v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.19863v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM) agents increasingly serve as computational actors in multi-agent social simulations. While existing work emphasizes representative personas and average-case behavior, social science shows that persistent tail actors can disproportionately shape collective dynamics. We study this regularity in controlled LLM-based multi-agent systems (LLM-MAS). In these systems, such actors cannot be reduced to fixed scalar states: prompts, natural-language histories, and backbone generation mediate their behavior and influence. We first analyzed three properties of extremists in sociology and model the LLM extremist based on LLM-native perspective. We introduce EXAM, an EXtremist Agent Modeling framework that capable of configuring extremist agents for specific tasks and precisely controlling their population proportion, spatial distribution, interaction protocols, and measurement interfaces. Across four scenarios: congressional election, financial crisis, epidemic public opinion, and iterated prisoner's dilemma, we observe that small persistent tail groups produce measurable, backbone- and scenario-dependent collective shifts. EXAM shows how this social-science regularity manifests through language-mediated mechanisms specific to LLM-based social simulation.</summary>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-14T09:27:13Z</published>
+    <arxiv:primary_category term="cs.MA"/>
+    <author>
+      <name>Guo Chen</name>
+    </author>
+    <author>
+      <name>Huaijin Xie</name>
+    </author>
+    <author>
+      <name>Ziwen Li</name>
+    </author>
+    <author>
+      <name>Reed Li</name>
+    </author>
+    <author>
+      <name>Yu Lu</name>
+    </author>
+    <author>
+      <name>Haibo Shi</name>
+    </author>
+    <author>
+      <name>Bingbing Xu</name>
+    </author>
+    <author>
+      <name>Junjie Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.17202v1</id>
+    <title>MLAfication: Efficiently Enabling High-Fidelity MLA for Modern LLMs</title>
+    <updated>2026-10-12T17:59:10Z</updated>
+    <link href="https://arxiv.org/abs/2610.17202v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.17202v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-Head Latent Attention (MLA) compresses the KV cache into a latent representation, reducing inference memory and bandwidth. Existing MHA2MLA/TransMLA methods do not support QKNorm and require costly recovery on modern LLMs, especially MoE. We present MLAfication, a QKNorm-compatible, parameter-efficient extension of MHA2MLA. It combines calibrated KNorm, parameter-efficient distillation, contribution-aware Partial-RoPE, and activation-aware joint KV initialization. Across MHA and GQA models, including QKNorm- and MoE-equipped variants, MLAfication preserves performance under substantial KV-cache compression, surpasses the current SOTA on commonsense and long-context benchmarks, and extends MLA conversion to modern architectures. On Qwen3-30B-A3B, MLAfication delivers up to $5.35\times$ the serving throughput of BF16 GQA and, combined with 4-bit KV quantization, reduces the KV-cache footprint by $94.73\%$. Our code is available at https://github.com/JT-Ushio/MLAfication.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-12T17:59:10Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Zile Wang</name>
+    </author>
+    <author>
+      <name>Zhide Xie</name>
+    </author>
+    <author>
+      <name>Tao Ji</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.16867v1</id>
+    <title>Davinci-Tool: Scaling Agentic Tool-Use Supervision with Verifiable Executable Environments</title>
+    <updated>2026-10-12T14:33:16Z</updated>
+    <link href="https://arxiv.org/abs/2610.16867v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.16867v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reliable agentic tool use requires training data that pair diverse multi-step workflows with executable evidence that the requested outcomes were achieved. Scaling either trajectory coverage or verification alone is insufficient as new environments introduce distinct states, rules, and dependencies that must also be reflected in the success criteria. To address this challenge, we introduce Davinci-Tool, a 30B tool-use model, and Davinci-ToolData, an execution-grounded dataset designed to scale environment coverage and outcome verification together. Davinci-ToolData preserves restorable states, execution traces, outcomes, and verifiers as a unified substrate for supervision. Two complementary pipelines populate this substrate: Execution-Grounded Task Synthesis (EGTS) derives verified demonstrations from independently authored systems, and Executable Environment Synthesis (EES) synthesizes auditable environments, state-grounded tasks, and executable verifiers across single and coordinated domains. These pipelines yield 30,395 verified trajectories spanning 2,260 invoked tool names. We first train on these demonstrations with supervised fine-tuning, then reuse EES states and verifiers to compare alternative actions and construct outcome-grounded preferences for Direct Preference Optimization. Davinci-Tool improves Qwen3-Coder-30B-A3B-Instruct from 52.4 to 88.2 on $τ^2$-bench, from 30.4 to 62.8 on BFCL v4 multi-turn, and from 16.9 to 56.2 on MCP-Atlas, outperforming Qwen3-Coder-480B-A35B-Instruct on all three benchmarks with only 1/16 of its total parameters. Code is available at https://github.com/MassLab-SII/Davinci-Tool.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-12T14:33:16Z</published>
+    <arxiv:comment>27 pages, 4 figures, 13 tables. Code: https://github.com/MassLab-SII/Davinci-Tool</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Xiaoyang Yuan</name>
+    </author>
+    <author>
+      <name>Ji Zhao</name>
+    </author>
+    <author>
+      <name>Xingyu Hu</name>
+    </author>
+    <author>
+      <name>Wenhan Wang</name>
+    </author>
+    <author>
+      <name>Yutao Hu</name>
+    </author>
+    <author>
+      <name>Qiaosheng Zhang</name>
+    </author>
+    <author>
+      <name>Pengfei Liu</name>
+    </author>
+    <author>
+      <name>Yu Qiao</name>
+    </author>
+    <author>
+      <name>Yi Bin</name>
+    </author>
+    <author>
+      <name>Wenqi Shao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.20193v1</id>
+    <title>SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming</title>
+    <updated>2026-10-14T13:41:49Z</updated>
+    <link href="https://arxiv.org/abs/2610.20193v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.20193v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Software engineering agents have advanced rapidly, but scaling their training remains constrained by the limited availability of high-quality executable tasks. Development histories contain valuable signals for constructing such tasks, yet they often require substantial reconstruction due to incomplete environments, missing tests, and inconsistent artifacts. We present SWE-Stream, a system for scaling executable SWE training data through progressive construction and elastic streaming execution. SWE-Stream progressively validates and refines task candidates, reusing existing artifacts when possible and applying targeted completion only when necessary. An elastic scheduler asynchronously coordinates construction stages under shared resource constraints, adapting execution budgets based on observed workload demands. Using development histories from 10,728 repositories across six programming languages, SWE-Stream constructs 80,874 validated tasks and collects 118,688 successful trajectories. Fine-tuning Qwen3-30B-A3B-Thinking-2507 on these trajectories achieves resolve rates of 69.0%, 49.3%, and 45.42% on SWE-bench Verified, Multilingual, and Pro, respectively. In a controlled comparison with approximately matched training budgets, SWE-Stream achieves a 45.6% resolve rate on SWE-bench Verified, outperforming three existing data sources. Moreover, its streaming construction strategy improves efficiency, delivering $1.45\times$ the accepted-task throughput of batch construction and accepting 13.2% more tasks than fixed-limit streaming.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-14T13:41:49Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Chengyang Liu</name>
+    </author>
+    <author>
+      <name>Wen Yang</name>
+    </author>
+    <author>
+      <name>Shifeng Chen</name>
+    </author>
+    <author>
+      <name>Delai Qiu</name>
+    </author>
+    <author>
+      <name>Ji Yang</name>
+    </author>
+    <author>
+      <name>Junnan Zhu</name>
+    </author>
+    <author>
+      <name>Yining Wang</name>
+    </author>
+    <author>
+      <name>Shengping Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.17637v1</id>
+    <title>Mixed Precision Scaling Laws for Quantized Pretraining</title>
+    <updated>2026-10-13T03:05:01Z</updated>
+    <link href="https://arxiv.org/abs/2610.17637v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.17637v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Since scaling laws were introduced for modern LLMs (Kaplan et al., 2020), several works have extended them to account for quantization, tracking the emerging low-precision data types supported on AI accelerators. We develop a more accurate scaling law for quantized pretraining with mixed precision across the forward and backward passes, grounded in optimization theory and validated empirically. Our formulation separates the effects of quantization on model capacity and on optimization efficiency, and explicitly models the persistent optimization error from forward and backward quantization identified through convergence analysis. To select the regimes for fitting and evaluating our law, we first decompose existing 4-bit training recipes into their forward and backward components, isolating those that most affect loss. Our Qwen3 experiments under selected 4-bit regimes, together with published Llama-style experiments, show that our law predicts loss with up to $11\times$ lower MSE than existing laws as model size and token count scale. Finally, we extend our law to layer-wise mixed precision and identify the optimal quantized-pretraining recipe, i.e., model size, training tokens, and per-layer forward/backward precision, under a hardware-aware compute budget. Unlike prior precision scaling laws, our law predicts that the optimal precision increases with the compute budget.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-13T03:05:01Z</published>
+    <arxiv:comment>Preprint</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jinuk Kim</name>
+    </author>
+    <author>
+      <name>Rajarshi Saha</name>
+    </author>
+    <author>
+      <name>Muhammed Fatih Balin</name>
+    </author>
+    <author>
+      <name>Youngsuk Park</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.19587v1</id>
+    <title>Moral Combat: Exploiting Moral Foundations Theory to Jailbreak LLMs</title>
+    <updated>2026-10-14T04:57:48Z</updated>
+    <link href="https://arxiv.org/abs/2610.19587v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.19587v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Social psychology has long described how people can be persuaded to interpret a harmful act as moral. Recent research suggests that Large Language Models (LLMs) echo aspects of human psychology, from cognitive biases to social conformity. This raises a question with direct safety implications: can LLMs be moralized to bypass safety guardrails? We answer this question with a multi-agent framework grounded in Moral Foundations Theory (MFT). Given a harmful request that is initially refused, our agents diagnose which moral foundation (MF) the prompt is violating, identify a justifiable foundation under which the same request appears virtuous, rewrite the prompt accordingly, and reinforce it with generated precedents of comparable moral reframing. We evaluate our framework on harmful prompts from three well-known jailbreak datasets across five open-source and proprietary models. Our analysis reveals that models are highly susceptible to moralization, exhibiting high single-trial jailbreak rates with success increasing further under repeated attempts. We also find that safety benchmarks are imbalanced in the MFs they violate, concentrating on foundations toward which models already exhibit biases.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-14T04:57:48Z</published>
+    <arxiv:comment>17 pages, 6 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Adel Khorramrouz</name>
+    </author>
+    <author>
+      <name>Yi-Chia Wang</name>
+    </author>
+    <author>
+      <name>Sharon Levy</name>
+    </author>
+  </entry>
+</feed>

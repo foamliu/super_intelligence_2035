@@ -1,0 +1,37 @@
+{
+  "generated": "2026-10-15T11:59Z",
+  "note": "R1' 分源实测（第九十二轮）。官方 `arxiv_fetch.py --probe` 一体式运行会在 HF 副源处长时间挂起（HF 连接不返回，实测 >600s 未结束）故本轮分源执行：arXiv 主源取 `--fetch` 的同一端点实测（r92-seen.json meta），HF 副源单独带硬 timeout 复测，RSS 走 `probe_rss()` 单独实测。分源执行不影响任何结论口径。",
+  "arxiv_api": {
+    "endpoint": "https://export.arxiv.org/api/query",
+    "status": 200,
+    "content_type": "application/atom+xml; charset=utf-8",
+    "ok": true,
+    "total_results": 633207,
+    "n_entries": 40,
+    "sample_latest_published": "2026-10-14T17:59:58Z",
+    "source": "research/raw/2026-10-15-fetch-r92-seen.json meta.per_query[0]"
+  },
+  "hf_daily": {
+    "endpoint": "https://huggingface.co/api/daily_papers",
+    "ok": false,
+    "n_ids": 0,
+    "error": "request failed: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/daily_papers (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7eef76152bd0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"
+  },
+  "arxiv_rss": {
+    "cs.CL": {
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 301
+    },
+    "cs.CV": {
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 234
+    },
+    "cs.LG": {
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 486
+    }
+  }
+}

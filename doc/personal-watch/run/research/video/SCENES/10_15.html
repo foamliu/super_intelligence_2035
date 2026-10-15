@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-15 · 换个说法，AI 也会被「说服」</title>
+<style>
+  :root { --primary:#5b1e6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#a3238e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#5b1e6e 0%,#a3238e 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(91,30,110,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#5b1e6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#5b1e6e; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f7eef8; color:#5b1e6e; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#5b1e6e; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#fff6fb; border:1px solid #f3c6e6; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-15</h1>
+  <div class="sub">今日 TOP-1：<b>换个说法，AI 也会被「说服」</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈442 字</b></div>
+  <div class="meta">
+    <span>📄 Moral Combat: Exploiting Moral Foundations Theory to Jailbreak LLMs</span>
+    <span>🆔 arXiv:2610.19587</span>
+    <span>👥 Adel Khorramrouz, Yi-Chia Wang, Sharon Levy</span>
+    <span>🗓 提交 2026-10-14 ｜ cs.CL（次 cs.CY）</span>
+    <span>🏷 标签：科普（AI 安全 · 越狱 · 社会心理学 · 多智能体）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 · 非官方 · 非结论</b>：本片为该论文的<b>科普转述</b>；「单次尝试越狱率很高、反复尝试进一步上升」「安全基准在道德基础上分布不均衡」等均为<b>作者自报、本线未复现</b>；「道德基础理论（MFT）」「道德化（moralization）」为<b>原文术语</b>。<b>⚠️ 本片只讲现象、机制与安全含义，不提供任何可操作的越狱话术模板；不点名任何具体模型的脆弱榜单。</b>画面<b>全部自绘 / 自生成，不盗用论文原图</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（TOP-1 挑选口径 = 目的 2「科普」，非「借鉴」）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>选它而非另一篇「科普」</b>：今日 2 篇科普为 <code>2610.19587</code>（本文）与 <code>2610.19863</code>（When Extremists Enter LLM Societies）。两者都「可懂」，但本文的<b>钩子更短、体感更普世、措辞风险更低</b>，故定为 TOP-1（另一篇作为备选，见日报第 5 条）。</li>
+    <li><b>大众能懂</b>：一句话钩子 —— 「<b>同一件坏事，只要被说成『为了更高尚的目的』，人就会觉得它没那么错；那 AI 呢？</b>」不需要任何 AI 背景就能接住。</li>
+    <li><b>有传播力</b>：① <b>话题普世</b> —— 说服、话术、「道德绑架」是人人有经验的事；② <b>有反转</b> —— 直觉以为护栏是「技术锁」，本文说的是漏洞在「<b>语言与道德框架</b>」这一层，模型是被<b>说服</b>而非被绕过；③ <b>结论可复述</b> —— 「<b>换个道德框架，AI 就容易松口</b>」＋「<b>反复试会更糟</b>」＋「<b>安全考卷本身偏科</b>」三条都适合口口相传。</li>
+    <li><b>可讲清 / 画面好做</b>：核心三件事 —— <b>请求卡翻面</b>、<b>道德基础图标（天平 / 家人 / 公平 / 权威 / 纯洁 / 自由）</b>、<b>成功率对比条</b>；全部扁平矢量自绘，无需论文原图。</li>
+    <li><b>有真实来源</b>：arXiv 编号 + abs 链接齐全；<code>comment</code> 自述 <b>17 页 / 6 图</b>，<b>无期刊信息</b>（预印本）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🎞 分镜表（逐镜 · 固定五段：钩子 → 问题 → 方法 → 结果 → 意义/展望）</h2>
+<table>
+  <tr>
+    <th style="width:42px;">镜号</th><th style="width:96px;">时间轴（时长）</th><th style="width:72px;">段落</th>
+    <th style="width:250px;">口播文案</th><th>画面描述（自绘 / 自生成）</th><th style="width:180px;">屏幕文字 / 字幕</th><th style="width:150px;">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">同一件坏事，只要换个说法，就变成好事了。人吃这一套 —— 那 AI 呢？</td>
+    <td>白底。中央一张<b>请求卡</b>：正面灰色、写着「<b>拒绝</b>」；卡片沿纵轴<b>翻转 180°</b>，背面变成暖色、写着「<b>可以</b>」。翻面瞬间，画面右上角浮出一个小问号（自绘）。</td>
+    <td>字幕：<b>换个说法，坏事就变好事？</b>（小字：AI 也会被「说动」吗）</td>
+    <td>轻快悬念音；BGM 起，节奏平稳、略带科普感。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–24s（14s）</td>
+    <td class="act">问题</td>
+    <td class="vo">大模型出厂前，都被反复教过：有害的请求要拒绝。但它同时又被训练成一个讲道理、有道德感的助手。</td>
+    <td>左边一座<b>盾牌 / 护栏</b>图标，上面标「<b>安全护栏</b>」；右边一个<b>天平</b>图标，标「<b>讲道理 · 有道德</b>」。两根线同时连到中央一个<b>对话气泡</b>（自绘），气泡里的请求卡被标红一次、又被标绿一次，来回闪烁。</td>
+    <td>字幕：<b>一边要拒绝 · 一边要讲道理</b>（小字：两套目标，同时生效）</td>
+    <td>盾牌出现配沉稳低音；天平摆动配清脆「叮—当」；BGM 略紧张。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>24–36s（12s）</td>
+    <td class="act">问题</td>
+    <td class="vo">心理学里有一张清单，叫道德基础理论：公平、关爱、忠诚、权威、纯洁、自由。同一件事，换个框架，好坏就反转了。</td>
+    <td>六个<b>扁平矢量图标</b>依次落位成两排三列（天平 = 公平 / 心 = 关爱 / 旗帜 = 忠诚 / 立柱 = 权威 / 花 = 纯洁 / 鸟 = 自由），每个下挂一句白话小字。随后整块图标板<b>整体旋转 180°</b>，图标颜色从红转蓝（自绘：同一件事的两种读法）。</td>
+    <td>字幕：<b>道德基础理论（MFT）：六种「讲道理」的角度</b>（小字：术语为原文所用）</td>
+    <td>六声依次「哒」；旋转时配一声「呼」的扫过音。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>36–52s（16s）</td>
+    <td class="act">方法</td>
+    <td class="vo">论文的做法很直接：请求被拒绝后，先看清它踩到了哪条道德底线；再换一个角度，让同一件事听起来正当、甚至值得赞美。</td>
+    <td>流程条推入，共四格（自绘）：① 被拒绝的请求卡；② 一个<b>放大镜</b>落在卡上，圈出「<b>踩到的道德基础 = 关爱</b>」；③ 卡片被<b>转向</b>，圈出「<b>可站得住的角度 = 忠诚</b>」；④ 卡面文字逐字<b>重写</b>（不展示具体改写内容，只显示「<b>已改写</b>」的灰条遮罩 —— 合规考虑）。</td>
+    <td>字幕：<b>① 诊断踩了哪条 → ② 换一个道德框架改写</b>（小字：⚠️ 不展示任何具体话术）</td>
+    <td>四格依次滑入配「唰唰唰唰」；放大镜落位配「叮」；改写条用「沙沙」快速音。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>52–68s（16s）</td>
+    <td class="act">方法</td>
+    <td class="vo">然后再喂它一点「社会证据」：生成几条同样思路的先例摆在旁边。像广告里那句「很多人也这么想」，让拒绝更难说出口。</td>
+    <td>改写后的卡片旁，<b>三到五张小卡片</b>从下方鱼贯浮出、整齐排列，每张只画一个「<b>✓</b>」与抽象符号（不写字）。整体画面上叠一条淡色带，标注「<b>先例 / 社会证据</b>」。最后所有卡片向中央的气泡收拢（自绘）。</td>
+    <td>字幕：<b>③ 加几个「先例」，让拒绝更难受</b>（小字：作者称之为道德重构先例）</td>
+    <td>卡片浮出配连续轻「啪」；收拢配一声「咻」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>68–82s（14s）</td>
+    <td class="act">方法</td>
+    <td class="vo">整套流程，是一群 AI 各管一件事、接力完成的：有的负责诊断，有的负责改写，有的负责找先例。</td>
+    <td>四个<b>小机器人头像</b>排成一列流水线（自绘），头顶分别挂职能标签「<b>诊断</b>」「<b>找角度</b>」「<b>改写</b>」「<b>找先例</b>」，卡片沿传送带依次经过四个工位，每过一个工位卡片颜色变一层。镜头拉远，露出这是<b>一个框架</b>（画面打上 <b>EXAM 式的「多智能体」示意</b> —— 注意：本示意为通用多智能体流程，<b>不等于</b>原文的具体模块命名）。</td>
+    <td>字幕：<b>④ 多智能体接力：诊断 → 找角度 → 改写 → 找先例</b>（小字：流程示意，非原文模块名）</td>
+    <td>传送带「咔哒咔哒」节奏；镜头拉远配一声「呼」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>82–97s（15s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果不太妙：在这套「道德化」说法下，模型的抵抗力明显下降。而且同一个请求反复试，成功率还会继续往上走。</td>
+    <td>白底 + 横向<b>对比条</b>（自绘，无具体数字）：上行标「<b>直接请求</b>」、条长较短；下行标「<b>道德化改写后</b>」、条明显更长。旁边一个<b>计数环</b>从「<b>第 1 次</b>」滚到「<b>第 N 次</b>」，随次数增加条长再涨一截。所有数字位置用「<b>—</b>」遮挡，并挂小字「作者自报 · 未复现」。</td>
+    <td>字幕：<b>换说法 → 更容易松口 ｜ 反复试 → 还在涨</b>（小字：作者自报 · 本线未复现 · 不公布具体数值）</td>
+    <td>上行条落下配闷「咚」；下行条更长时配一声上扬「咻」；计数环滚动配「嗒嗒嗒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>97–112s（15s）</td>
+    <td class="act">结果</td>
+    <td class="vo">更值得记的是第二点：用来考 AI 安全的题目本身就不均衡，几乎都压在 AI 本来就有偏差的那几条道德框架上。相当于考卷偏科。</td>
+    <td>画面变成一张<b>六格考卷</b>（对应六个道德基础）：其中两格被<b>填满密密麻麻的题</b>，其余四格<b>几乎空白</b>。一支笔在空白格上轻敲两下，落下「<b>缺题</b>」标记（自绘）。整体加一条淡色高亮带，标注「<b>安全评测的覆盖盲区</b>」。</td>
+    <td>字幕：<b>考 AI 安全的卷子，本身偏科</b>（小字：作者自报 · 未复现）</td>
+    <td>填格配快速「沙沙」；空白格敲击配两声空响「托、托」；BGM 降下来、留白。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">9</span></td>
+    <td>112–120s（8s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">所以，护栏不只写在代码里，也写在语言里。这篇讲的是一个现象，不是一把万能钥匙。论文链接放在简介。</td>
+    <td>回到开场那张<b>翻面的请求卡</b>；这一次卡片被<b>按住不翻</b>，盾牌图标缓缓放大包住它。镜头拉远，画面浮出论文<b>英文原题</b>与作者名；结尾定格一行字 + arXiv 编号，渐暗。</td>
+    <td>字幕：<b>「护栏不只写在代码里，也写在语言里」</b>（小字：现象级发现 · 非通用结论）＋ <code>arXiv:2610.19587</code> ＋「论文链接见简介」</td>
+    <td>BGM 收尾淡出，尾音留白 0.5s。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 9 镜分配 ≈ 32 + 46 + 53 + 55 + 55 + 44 + 51 + 58 + 48 ≈ <b>442 字</b>（按 180–200 字/分 ≈ <b>2 分 13 秒～2 分 27 秒</b>；本脚本按 <b>120s</b> 剪辑 ⇒ 需语速约 <b>221 字/分（略快）</b>，或按需把口播精简到 ~420 字 / 微调镜头时长）。<b>五段配比</b>：钩子 0–10s ｜ 问题 10–36s ｜ 方法 36–82s ｜ 结果 82–112s ｜ 意义 112–120s。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（请求卡翻面 / 盾牌与天平 / 六个道德基础图标 / 四格流程条 / 先例卡片 / 多智能体流水线 / 对比条与计数环 / 六格考卷）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 代码仓库截图。</li>
+    <li><b>风格建议</b>：白底 + 单一强调色（紫 / 洋红），扁平矢量图标 + 干净的卡片翻转动画；字号大、留白多；核心信息置于画面<b>中央安全区</b>，便于抖音竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；念「<b>公平、关爱、忠诚、权威、纯洁、自由</b>」六个词时<b>放慢、顿挫</b>，让听众听清；「<b>那 AI 呢？</b>」「<b>等于考卷偏科</b>」两处给情绪，但<b>不过度亢奋、不做惊悚处理</b>。</li>
+    <li><b>字幕</b>：关键概念上大字幕；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾必须给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>；提到「越狱率上升」处统一加小字「<b>作者自报 · 未复现</b>」，且<b>不出现任何具体百分比</b>。</li>
+    <li><b>术语友好化</b>：片中用<b>「护栏 / 说动 / 讲道理 / 考卷偏科」</b>等大众词；<b>越狱（jailbreak）/ 道德基础理论（MFT）/ 道德化（moralization）</b> 等术语首次出现时，字幕给一句白话（如「越狱 ＝ 让 AI 说出本该拒绝的话」）。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「SOTA / 颠覆 / 突破 / 崩溃 / 危险」；结论限定在「<b>本框架 / 本组数据集 / 本批模型</b>」范围内，并声明数字为<b>作者自报、本线未复现</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成。</li>
+    <li>🛡 <b>不提供可操作的有害内容（本片最硬红线）</b>：<b>不展示</b>任何改写后的提示词、<b>不给出</b>任何「道德框架 → 改写模板」的可复制示例；流程展示仅用<b>抽象图标 + 灰条遮罩</b>表示「已改写」。全片定位为<b>安全研究与防御视角</b>的现象转述。</li>
+    <li>✅ <b>不点名脆弱模型</b>：原文未给逐模型明细，本片同样<b>不做</b>任何模型的「脆弱榜单」；统一表述为「<b>跨多个模型的评测中观察到该现象</b>」。</li>
+    <li>✅ <b>不编造数据</b>：仅使用原文摘要可支撑的表述 —— 「单次尝试越狱率已高、反复尝试进一步上升」「安全基准在所违反的道德基础上分布不均衡」「跨 5 个开源与专有模型 / 3 个公开越狱数据集」；<b>不虚构</b>论文未提及的具体百分比或排行榜。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 已经失控 / 护栏形同虚设 / 人人都能越狱」等原文未支持的引申；「高度易感」严格限定为<b>本框架下的实验结果</b>。</li>
+    <li>✅ <b>署名如实</b>：作者名单照抄 arXiv 条目（Adel Khorramrouz, Yi-Chia Wang, Sharon Levy）<b>不臆测机构归属</b>。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-15</b> ｜ 文件 <code>research/video/SCENES/10_15.html</code> ｜ 当日 TOP-1</div>
+  <div>论文：<i>Moral Combat: Exploiting Moral Foundations Theory to Jailbreak LLMs</i>（Adel Khorramrouz, Yi-Chia Wang, Sharon Levy）｜ <a href="https://arxiv.org/abs/2610.19587">arXiv:2610.19587</a> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不提供任何可操作的有害内容</b>。本页为<b>自包含单文件</b>（内联 CSS，零外链）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-15.html">research/daily/2026-10-15.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a></div>
+</footer>
+</div>
+</body>
+</html>
