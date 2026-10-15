@@ -18,6 +18,28 @@
 > - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
 > - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
 
+### 🆕 运维指令 · 2026-10-15（📈 下载 Xmodel-2/2.5 history ckpt 对比缩放曲线 · 判 BaiZe 早期学习能力）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「这里有 Xmodel-2.5 和 Xmodel-2 的检查点 https://huggingface.co/XiaoduoAILab/Xmodel-2.5-history。下载 Xmodel-2/2.5 跟数据缩放表格对应训练数据量时的检查点，绘制它们的缩放曲线，跟 BaiZe-2B 对比，从而判断 BaiZe-2B 在预训练早期的学习能力是否显著弱于 Xmodel 系列。」
+
+**① 资源**：
+- `XiaoduoAILab/Xmodel-2.5-history`：`pytorch_model.XXXXXXX` 格式（step 2000→106000，每 2000 步一个，每个 2.7GB，共 713GB）。⚠️ **只下缩放表格对应的里程碑，🚫 不要全下**。
+- Xmodel-2 的 history 若不在该仓库，自行 web search 找（`Xmodel-2-history` 或类似仓库）。
+- config / tokenizer 从主模型仓库取（`XiaoduoAILab/Xmodel-2.5`、`XiaoduoAILab/Xmodel-2`）。
+
+**② 做法（自行 web search Xmodel 论文 scaling 表格）**：
+- 查 Xmodel-2 / Xmodel-2.5 论文的**缩放表格**（训练数据量 ↔ step ↔ 评测分数），确定对应关系。
+- 下载对应**数据量里程碑**的 ckpt（选 4–6 个，覆盖早期 ~ 44B 区间，与 BaiZe 曲线可对齐）。
+- 用 lm-eval 测 14 集（常识 8 + 复杂 6；口径尽量对齐 BaiZe 评测口径，参数规模/架构差异**如实注明**）。
+
+**③ 对比与结论**：
+- 画 Xmodel-2 / Xmodel-2.5 的 scaling 曲线（常识 Avg、复杂 Avg vs token），**叠加 BaiZe-2B 曲线**（P-5b 655M~20B + P-8 中间点）。
+- **核心结论**：BaiZe-2B 在预训练早期（相同 token 量）的学习能力是否**显著弱于** Xmodel 系列，量化差距 pp。
+
+**④ 交付**：scaling 对比图（BaiZe vs Xmodel-2 vs Xmodel-2.5）+ 逐 ckpt 14 集表 + 结论（诚实：显著弱则如实报；有架构/数据/超参差异导致不可比则注明）+ 中文 HTML + **ETA**。
+
+**⑤ 纪律**：🚫 不重训 BaiZe；下载带 proxy + 与 data 线下载错峰 IO；磁盘别超（只下里程碑 ckpt）；数字带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（📈 P-8 中间 ckpt 14 集 scaling 曲线 · 对比 20B + Xmodel-2/2.5）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「pretrain，基于 44B 中间检查点，测 14 集结果，绘制常识推理和复杂推理两条曲线，跟 20B 比较，跟 Xmodel-2 和 Xmodel-2.5 比较。」
