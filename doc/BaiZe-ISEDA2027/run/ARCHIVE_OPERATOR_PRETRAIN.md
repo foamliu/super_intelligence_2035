@@ -1712,3 +1712,103 @@ T3 提速验证结果：
 
 **⑥ 纪律**：纯评测（推理 GPU），8 GPU 已空可用；🚫 不重训、不改 ckpt；报数带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
 
+
+---
+
+## 📦 [已归档 2026-10-15] P-8 细节 + R2.3 交付物（P-8 已完成：10590步/44.4B tok/final loss 1.357）
+
+P-8 细节 —— 🏁 Stage (i) 完整训练（正式预训练）
+
+> ## ⏸ 运维 2026-10-02 指令：P-8 暂缓启动
+>
+> 原话：「测数据配比需要时间，下载 base 也需要时间…因此 P-8 暂缓启动，先做配比实验和下载 base。」
+>
+> 原因（两条前置都未就绪）：
+> 1. `Ultra-FineWeb`(base) 还在下载（115/64624，2.99 TB）—— 而它是 stable 段的主力数据；
+> 2. WSD 双阶段配比实验还没做（见 `BAIZE_DATA_TASK.md` §0.6）—— P-8 吃什么配比是它要定的。
+>
+> → 所以：不要因为"P-5b 快跑完了"就顺手启动 P-8。 前置未齐之前，P-8 不启动。
+> → 本唤醒及后续唤醒：做完 P-4R / 恢复 P-5b 之后，仍然等 data agent 的配比方案 + base 就绪。
+
+> ## 🎯 这是 Stage (i) 的本体
+> Stage (i) 的 scope 不变 = LLM 预训练（from scratch）。
+> P-1…P-7 全部只是前置选型实验（token 量级 164M–655M，合计 ~85 GPU·h）。
+> P-8 才是真正把 2.22B hybrid 训出来，作为 Stage (ii)–(v) 的基座。
+> 🚫 不要因为"实验都做完了"就把 Stage (i) 标成完成。
+
+> ### ⭐ P-8 训练配方（T3 定稿 · 2026-10-09）
+>
+> | 项 | 值 | 来源 |
+> |:--|:--|:--|
+> | 架构 | Mamba2-hybrid 2.22B（`--arch mamba2`，52 SSM + 4 Attn） | P-3 |
+> | 并行 | TP1 · DP8（无通信税） | P-9.7 |
+> | MBS | 2（⚠️ 不是 P-5b 的 MBS=1） | P-9.7 |
+> | seq | 4096 | P-9.7 |
+> | 精度 | bf16（FP8 在 TP1 上 s=0.91 慢 9%，不用） | T3 Test 4 |
+> | GBS | 1024 | P-5b / P-5a |
+> | 优化器 | `adamw`（标准 Megatron AdamW，默认） | 用户直令 2026-10-12：dist_muon 长跑 loss 发散 → 换回 AdamW |
+> | LR / 调度 | 1e-3 / WSD / warmup 5% / decay 10%（AdamW 初筛定值 1e-3；A/B 验证用 3e-4 公平对照） | P-5a |
+> | recompute | 不用（对 Mamba2-hybrid 无效：52/56 层 SSM 激活常量级，仅省 ~0.6GB） | T3 Test 1 |
+> | 实测吞吐 | 249K tok/s（last-100 步均值，1100 步长跑确认） | P-9.7 |
+>
+> FP8 死路：TP1 上 M 上限 = MBS2×seq4096 = 8192（recompute 无效 → MBS 封顶 2）→ M << FP8 交叉点 M\*≈30–32K → FP8 overhead > 加速 → s=0.91。FP8 转正需 M≥32768 → 需 TP4 → 但 TP4 通信税 −6% → 净增益被吃掉。→ bf16 TP1 MBS2 是最终最优，无更优解。
+>
+> ⚠️ P-5b 的 148K 是 MBS=1 的数字；P-8 改用 MBS=2 → 249K（1.7× 提速：GEMM 效率翻倍 + micro-step/grad-accumulation 减半）。旧参照表里的 92.6K 是 Round 1 跨节点旧值，已作废。
+
+
+输入（全部来自前序任务，不要自行改动）
+
+| 项 | 来自 |
+|:--|:--|
+| GBS | P-5a 的 GBS×LR 扫描结论（若无右移则沿用 GBS=8；若 P-5a 指向更优大 GBS 则采用并注明） |
+| LR / 调度 / 退火配比 | ⚠️ 2026-10-10 勘误：warmup/decay 按 比例 5%/10%（44B 档=524/1049 步，非旧 250/500）；LR=1e-3 / min_lr=1e-5（P-5a 确认 1e-3 全局极小值）；stable 配比 88:8:4（web=base 88% + code 8% + math 4%）、decay 配比 SFT 64% + L3 24% + code 8% + math 4%（见 DATA_MIX_RECIPE） |
+| token 预算 | ⭐ 由 P-5b 的 loss-vs-tokens 曲线决定（曲线何时变平 → 就在那附近取预算） |
+| 精度 | 若 P-4 证明 FP8 对本架构确有加速且不劣化 loss，可用 FP8；否则 bf16。必须记录采用与否及理由 |
+
+token 预算的三档参照（按 T3 定稿吞吐 8×H100 = 249K tok/s · MBS2 · bf16 折算）
+
+| 档位 | token | 墙钟 | GPU·h | 说明 |
+|:--|:--|:--|:--|:--|
+| 下限 | 44 B | ≈2.0 天 | ≈384 | Chinchilla 最优（2.22B × 20）。低于此不足以称为训练好的模型 |
+| 推荐 | 100 B | ≈4.6 天 | ≈883 | 超 Chinchilla ≈2.3×；契合论文推理效率卖点（推理最优需过训练） |
+| 上限 | 200 B | ≈9.3 天 | ≈1786 | 时间仍充裕，可考虑 |
+| ⚠️ 不计入 | 690 B（真实全语料） | ≈32 天 | ≈6144 | `/nas_train` 只剩 32T，不要定这个档 |
+
+> 默认按「推荐档 100B」准备；P-5b 曲线出来后，若曲线在更早处变平，就下调（省钱省时）。
+> ⚠️ 最终 token 预算定下后，必须在 `MEMORY_PRETRAIN_2B.md` 里写明并上报，再启动长跑。
+
+训练要求
+
+1. 从零开始（不加载任何预训练权重），真实语料（`Ultra-FineWeb-L3` 全量 en 子集 + code + math 退火配比），
+   不是 `ultrafineweb_l3_qa_700m` 那个 742M 小分片 —— 本次必须跑真正的全量语料。
+2. WSD 完整走完：warmup 5% → stable → decay 尾段必须真的吃到退火混合（SFT 64% 退火，Stage (i) 核心配方；44B 档 = warmup 524 → stable → decay 1049 步）。
+3. checkpoint 规划：至少保留 `final` + 每 10% 一个（供 Stage (ii) 选起点、供 P-6 画能力曲线）。
+   ⚠️ 每个 ckpt（2.22B 含 AdamW 状态）≈ ~30 GB；`/nas_train` 只剩 32T，先算好 ckpt 留存策略与清理时机。
+4. 训练中每 500 步记 `train loss` / `val loss` / `grad norm` / `tok/s` / GPU 独占核验。
+5. 禁止在 P-8 期间叠加其它重 I/O 或抢卡任务（vision / data 侧要避让）。
+6. 失败即如实记录：NaN / 发散 / OOM 一律记录并保留当时的 ckpt 与日志，不要静默重启掩盖。
+
+产出
+
+1. Stage (i) 最终 checkpoint（Stage (ii)–(v) 的基座）—— 这是本项目最关键的单个产物。
+2. `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 追加 P-8 节：完整 loss 曲线、实际 token 数、实际 GPU·h、
+   最终 `val loss`、与 P-5b 曲线预测值的对照（预测量 vs 实测量，这是对 scaling 曲线的一次真检验）。
+3. 论文回填建议：§4 应写清 实际训练 token 数 / GPU·h / 最终 loss，
+   把"从零训练一个 2.22B hybrid"的规模与代价如实写出来（并处理 §6 #13 的 1.8T 误读问题）。
+4. `BAIZE_PRETRAIN_RESULT.html` 更新为含 P-8 的最终版。
+5. git commit + push（只提交文本；checkpoint 不入库）。
+
+时间盒：下限 2.0 天 / 推荐 4.6 天（按 token 预算 · 249K tok/s）。超时或连续失败不要硬撑，
+记录卡点并上报 —— 但除非运维叫停，P-8 应跑到底。
+
+## R2.3 交付物
+
+1. `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`（新文件）：P-1/P-2/P-3 全部结果表 +
+   每条可复现命令 + 与 Round 1 的差异说明 + 「论文回填建议」段落（给出精确数值与文字建议，
+   特别是「最优点是否在边界」「Δ 是否在噪声内」这两个结论该怎么写）。
+2. 更新 `doc/BaiZe-ISEDA2027/BAIZE_PRETRAIN_RESULT.html` 或新建 `BAIZE_PRETRAIN_RESULT_ROUND2.html`（自包含）。
+3. 🚫 不要修改 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/*.tex` 与 `main.tex`——
+   论文已由外部统一重构并推送，回填由外部完成。你只在报告里给「回填建议」。
+4. 正常更新 `MEMORY_PRETRAIN_2B.md` 与 `daily-memories/`。
+5. git commit + push，并严格走本文件顶部的「git 同步规则」（fetch → 必要时 `pull --rebase` → push → 确认 0/0）。
+
