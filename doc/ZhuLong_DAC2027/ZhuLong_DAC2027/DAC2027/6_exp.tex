@@ -137,7 +137,7 @@ The documentation axis yields a non-monotone ordering: the low-fidelity rung (L)
 % (H)为RAG基线（高保真检索但无执行器）。该对比说明执行器对文档保真度的支配地位：
 % 即使粗糙索引，一旦可执行可观测，也优于仅用于静态检索的丰富索引。
 
-\textbf{Read-back axis.} The second axis is how much of the live state execution returns. Section~\ref{sec:bayesian} predicts that accuracy tracks this fidelity with the LLM held fixed; we therefore compare three closed-loop variants that differ only here: (N) \emph{no observation}---the agent predicts from the prior alone; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; and (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state are returned (the default). The framework predicts a monotone gain from (N) to (F); the measured ordering, however, is B $<$ N $<$ F, a result we analyze below.
+\textbf{Read-back axis.} The second axis is how much of the live state execution returns. Section~\ref{sec:bayesian} predicts that accuracy tracks this fidelity with the LLM held fixed; we therefore compare three closed-loop variants that differ only here: (N) \emph{no observation}---the agent predicts from the prior alone; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; and (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state are returned (the default). The framework predicts a monotone gain from (N) to (F); the measured ordering, however, is B $<$ N $<$ F, a result we analyze below. We emphasize that the three rungs compress the \emph{same} executed state to different bandwidths: (F) returns the full \texttt{error\_log}/\texttt{print\_log}/\texttt{result}; (B) collapses this to a single bit---\texttt{PASS} means only that the sandbox raised \emph{no exception} (an empty \texttt{error\_log}), not that the task's assertions held; and (N$'$) returns only the literal token \texttt{executed}. A binary \texttt{PASS} is therefore a content-free confirmation that can endorse a wrong hypothesis, which is the mechanism the analysis below appeals to.
 % 回读轴。第二条轴是执行返回多少实时状态信息。第~\ref{sec:bayesian}节预测固定LLM时准确率随该保真度变化，
 % 因此我们比较仅在此处不同的三个闭环变体：(N) 无观测、(B) 二值反馈、(F) 全观测。框架预测从(N)到(F)单调增益，
 % 但实测排序为 B < N < F，下文分析该结果。
@@ -154,13 +154,13 @@ Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution
 \toprule
 \textbf{Observation channel ($\Omega$)} & \textbf{Pass@1 (\%)} & \textbf{Mean read-backs} \\
 \midrule
-(N$'$) None (prior only) & 73.3$^{\dagger}$ & [TBD] \\
-(B) Binary pass/fail & 66.2$^{\dagger}$ & [TBD] \\
-(F) Full observation & 82.1 $\pm$ 3.0 & [TBD] \\
+(N$'$) None (prior only) & 73.3$^{\dagger}$ & [TBD]$^{\ddagger}$ \\
+(B) Binary pass/fail & 66.2$^{\dagger}$ & 27.6$^{\ddagger}$ \\
+(F) Full observation & 82.1 $\pm$ 3.0 & 12.1 \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 表：回读轴上的观测保真度消融（原则2）。$^{\dagger}$ provisional, $n{=}1$ (1-shot probe); 5-run re-measurement pending (S1 read-back arms underway). (N$'$) denotes the read-back axis (no observation of live state), distinct from (N) in Table~\ref{tab:omega} (no observation channel at all).
+% 表：回读轴上的观测保真度消融（原则2）。$^{\dagger}$ provisional, $n{=}1$ (1-shot probe); 5-run re-measurement pending (S1 read-back arms underway). $^{\ddagger}$ echo measurements aggregated from retained execution traces (see Table~\ref{tab:readback-cost}): (F) is the mean of 5 full-configuration runs; (B) is one fresh 5-run re-measurement run ($n{=}1$, re-test underway); (N$'$) traces were discarded during an earlier storage crisis and are not recoverable. (N$'$) denotes the read-back axis (no observation of live state), distinct from (N) in Table~\ref{tab:omega} (no observation channel at all).
 
 The results break the expected monotone ordering: (B) binary feedback (66.2\%, provisional $n{=}1$) falls \emph{below} (N$'$) no feedback (73.3\%, provisional $n{=}1$), while (F) full observation (82.1\%) sits atop as predicted. The binary arm's large spread (one anomalous probe run at 43.0\%) signals instability rather than a stable ceiling. We attribute the N$'$-over-B inversion to a signal-vs-noise effect: a binary pass/fail verdict gives the agent a categorical but content-free signal that can confirm a wrong hypothesis, whereas no feedback forces the agent to fall back on its retrieval-grounded prior---which, with the effector and high-fidelity index still active, is already strong. Full observation resolves the ambiguity by exposing the concrete error (type mismatch, missing state, wrong return value), turning a binary verdict into actionable evidence and recovering the expected ordering at the top. The N$'$-to-F gap (73.3\% $\to$ 82.1\%, +8.8~pp) thus measures the practical value of \emph{informative} observation, while the (B) arm warns that partial feedback can be worse than none. (B), (N$'$) and their read-back counts are provisional single-run probes; the 5-run re-measurement of the S1 read-back arms is underway and will finalize these values.)
 % 结果打破预期单调排序：(B)二值反馈(66.2%，provisional n=1)低于(N')无反馈(73.3%，provisional n=1)，
@@ -170,6 +170,31 @@ The results break the expected monotone ordering: (B) binary feedback (66.2\%, p
 % 全观测通过暴露具体错误（类型不匹配、状态缺失、返回值错误）消除歧义，将二值判定转为可操作证据，恢复顶部预期排序。
 % N'→F差距(73.3%→82.1%，+8.8pp)衡量"信息性"观测的实操价值，而(B)臂警示部分反馈可能不如无反馈。
 % (B)/(N')及其回读次数为单次探路 provisional；S1 回读轴 5-run 复测进行中，将最终化这些数值。
+
+Beyond accuracy, the read-back rungs differ sharply in \emph{convergence cost}---how much execution the agent must spend to reach a submission. Table~\ref{tab:readback-cost} aggregates per-trace execution traces retained from the runs above: the mean number of \texttt{run\_code} calls per task, the wall-clock of the code-generation phase, and the count of tasks that hit the per-task time limit (a proxy for non-convergence). With the LLM and effector fixed, dropping the observation bandwidth from (F) to (B) roughly \emph{doubles} the work the agent does per task: mean read-backs rise from 12.1 to 27.6 ($\sim$$2.3\times$), the code-generation wall-clock rises from 2.22~h to 4.25~h ($\sim$$1.9\times$), and the number of timed-out tasks rises from a mean of 3.4 to 13 ($\sim$$3.8\times$). The mechanism is visible in the traces: under (B) every execution returns \texttt{\{"response": "PASS"/"FAIL", "error\_log": "", "print\_log": ""\}}---the agent learns only that an exception was or was not raised, never which assertion failed or what the stack trace said, so it must hypothesize a correction blind and re-execute. One (B) trace issues 287 \texttt{run\_code} calls on a single task, cycling through \texttt{PASS}/\texttt{FAIL} verdicts with empty error logs. This is the cost-side counterpart of the accuracy result: poorer observation does not merely cap accuracy, it inflates the search effort needed to converge, and when the budget is fixed (per-task timeout) some tasks simply fail to converge in time---exactly the ``fidelity down $\to$ convergence cost up'' trade-off Principle~2 implies. We note that the fresh binary run whose cost we report reaches 75.9\% Pass@1, above the legacy single-run probe's 66.2\% in Table~\ref{tab:ablation-harness}; the 5-run re-measurement underway will reconcile the two and may restore the monotone N$'$\,$<$\,B\,$<$\,F ordering, but we do not pre-empt it here. (N$'$) cost figures are not recoverable: those legacy runs predate a storage migration that discarded the traces, and their wall-clock was further confounded by an infrastructure fault (license exhaustion and port failures) contemporaneous with the runs; the 5-run re-measurement underway will fill this cell from clean traces.
+% 收敛成本：回读保真度下降不只压低准确率，更抬高收敛所需执行量。(F)→(B)：平均 run_code 12.1→27.6(~2.3×)、
+% code-gen 墙钟 2.22h→4.25h(~1.9×)、超时任务 3.4→13(~3.8×)。(B) 下每次执行只回 PASS/FAIL 且 error_log 为空，
+% agent 必须盲猜修正再执行；单条 (B) trace 在一个任务上调用 287 次 run_code。(N') 成本数据因早期存储迁移
+% 丢失且其墙钟受同期 infra 故障混淆，不可恢复；5-run 复测将用干净 trace 补齐。
+
+\begin{table}[htbp]
+\centering
+\caption{Convergence cost along the read-back axis (LLM and effector fixed). ``Mean \texttt{run\_code}'' is the per-trace execution count; ``wall'' is the code-generation wall-clock per run; ``timeout'' is the number of tasks hitting the per-task time limit. Cost rises monotonically as observation bandwidth narrows from (F) to (B).}
+\label{tab:readback-cost}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Read-back} & \textbf{Pass@1 (\%)} & \textbf{Mean \texttt{run\_code}} & \textbf{Wall (h)} & \textbf{Timeout} \\
+\midrule
+(F) Full & 82.1 $\pm$ 3.0 & 12.1 & 2.22 & 3.4$^{\ast}$ \\
+(B) Binary & 75.9$^{\ddagger}$ & 27.6 & 4.25 & 13 \\
+(N$'$) None & 73.3$^{\dagger}$ & ---$^{\ddagger}$ & ---$^{\ddagger}$ & ---$^{\ddagger}$ \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+\footnotesize $^{\ast}$ mean of 5 full-configuration runs (range 1--6).\quad $^{\dagger}$ provisional, $n{=}1$ probe (5-run pending).\quad $^{\ddagger}$ fresh $n{=}1$ from retained traces; (N$'$) traces unrecoverable (see text).
+\end{table}
+% 表：回读轴收敛成本。(F)均值来自5轮 full_v3；(B)为 fresh r1（5-run 复测中）；(N') trace 不可恢复。
 
 \subsubsection{S2: The closed loop (RQ2)}
 \label{sec:closed-loop}
