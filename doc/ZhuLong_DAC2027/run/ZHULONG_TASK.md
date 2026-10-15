@@ -17,6 +17,27 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-15（二十四）— 📊 收集 readback 轴 echo 数据强化论文论证【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「好的，如果确认有价值，既然我们花了这么多时间，那应该收集更多信息，加入论文，强化论证依据。」
+
+**① 背景**：readback 消融（full/binary/none）有价值，且 binary 档 code-gen 显著变慢（~3×）本身即「保真度↓ → 收敛成本↑」的证据。现收集更多 echo 数据强化论证。
+
+**② 收集（从既有 trace / 日志 / daily-memories 聚合，🚫 不额外起评测）**：
+1. 每档 **run_code 平均调用次数**（Φ 执行次数）：full vs binary vs none。
+2. **code-gen 墙钟 / 迭代轮次**：full ~1.5h vs binary ~4-5h vs none（待量）。
+3. **gen-fail / timeout 率**随保真度下降的变化。
+4. **Pass@1**（已有）+ 提交前收敛轨迹（若有）。
+5. 代表性 trace 证据：binary 档 agent「盲试 / 反复迭代」的 1–2 条原文片段（截 log）。
+
+**③ 补进论文**（`tab:ablation-harness` 附近 + §S1 正文）：
+- **语义注记**：binary PASS = **1-bit exception signal（no exception raised）**，非 assertion-level correctness；none = 仅 `"executed"`。
+- **echo 表**：保真度（full/binary/none）× {Pass@1, 平均 run_code 次数, code-gen 墙钟, gen-fail} —— 展示「保真度↓ → 收敛成本↑」的单调证据。
+
+**④ 交付**：echo 数据表 + 论文改动（编译 0 error）+ 简述「强化了什么论证」。
+
+**⑤ 纪律**：🚫 不额外起评测（readback_binary 5-run 按指令二十三继续）；数据从既有 trace 聚合、贴 `文件:行`；commit 前缀 `zhulong S1-echo:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（二十三）— 🔜 S1.readback_binary 后编排：B.glm-5.3-flash → B.deepseek-v4-flash【用户直令】
 
 > **用户令（2026-10-15）**：「告诉 zhulong，S1.readback_binary 测完后，如无其它指示，则按次序测 B.glm-5.3-flash（GLM-5.3 Flash）→ B.deepseek-v4-flash（DeepSeek-V4 Flash）。」
