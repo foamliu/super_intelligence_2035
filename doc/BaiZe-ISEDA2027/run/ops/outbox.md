@@ -11133,3 +11133,167 @@ def main():
 === [.12] DONE ===
 === DONE 104 ===
 ```
+
+---
+
+## RUN_ID 105 · 2026-10-15 22:13:52 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 105 · 找已有评测缓存 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[1] 旧 HF 缓存（/home，即崩溃前用的那个）"
+for d in "$HOME/.cache/huggingface/datasets" "$HOME/.cache/huggingface/hub"; do
+  echo "## $d"; ls -la "$d" 2>/dev/null | head -25 | cut -c1-140
+  printf '   size='; timeout 60 du -sm "$d" 2>/dev/null | cut -f1
+done
+echo "[2] 旧缓存里的 benchmark 清单"
+echo "-- datasets/ --"; ls -1 "$HOME/.cache/huggingface/datasets" 2>/dev/null | grep -viE '\.lock$' | head -40
+echo "-- hub/datasets--* --"; ls -1 "$HOME/.cache/huggingface/hub" 2>/dev/null | grep -i '^datasets--' | head -40
+echo "[3] 其它候选位置"
+for d in /tmp/lmms_eval_hf_datasets_app.t0002965 "$HOME/.cache/huggingface/hub/datasets--lmms-lab--gqa" /nas_train/app.e0031982/.cache/huggingface /nas_inference/app.e0031982/.cache/huggingface; do
+  printf '%-62s ' "$d"; [ -d "$d" ] && { ls -1 "$d" 2>/dev/null | head -4 | tr '\n' ' '; echo; } || echo '(缺)'
+done
+echo "[4] 全盘找 lmms-eval 相关缓存目录"
+timeout 80 find "$HOME/.cache" /tmp /nas_train/app.e0031982 -maxdepth 4 -type d \( -name '*lmms*' -o -name 'datasets--lmms-lab--*' \) 2>/dev/null | head -20 | cut -c1-150
+echo "[5] 历史评测产物（判断之前测过哪些集）"
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/ 2>/dev/null | grep -iE 'eval|lmms|result' | head -15 | cut -c1-140
+echo "[6] 新 HF_HOME（当前 precache）已有"
+ls -1 /nas_env/app.e0031982/hf_home/hub 2>/dev/null | grep -i '^datasets--' | head -20
+printf '   new HF_HOME size='; timeout 60 du -sm /nas_env/app.e0031982/hf_home 2>/dev/null | cut -f1
+echo "[7] 是否有 llava-onevision 相关（回答第 2 问）"
+ls -d /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/models/*llava* 2>/dev/null | head -10 | cut -c1-150
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 105 ==="
+```
+
+**输出**
+```
+=== RUN_ID 105 · 找已有评测缓存 2026-10-15 22:13:52 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 22:13:53 ===
+[1] 旧 HF 缓存（/home，即崩溃前用的那个）
+## /home/app.e0031982/.cache/huggingface/datasets
+total 56
+drwxr-xr-x 14 app.e0031982 app.adm 4096 Oct 15 20:44 .
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 20:22 ..
+drwxr-xr-x  4 app.e0031982 app.adm 4096 Oct  6 15:20 allenai___ai2_arc
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:21 allenai___openbookqa
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:21 allenai___sciq
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:22 allenai___winogrande
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:20 google___boolq
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_allenai___ai2_arc_ARC-Challenge_0.0.0_21
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_allenai___ai2_arc_ARC-Easy_0.0.0_210d026
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:21 _home_app.e0031982_.cache_huggingface_datasets_allenai___openbookqa_main_0.0.0_388097ea
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:21 _home_app.e0031982_.cache_huggingface_datasets_allenai___sciq_default_0.0.0_2c94ad3e1aa
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:22 _home_app.e0031982_.cache_huggingface_datasets_allenai___winogrande_winogrande_xl_0.0.0
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_google___boolq_default_0.0.0_35b264d0363
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 20:23 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___ai2d_default_0.0.0_c83a9b9692
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 20:44 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___gqa_testdev_balanced_images_0
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 20:43 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___gqa_testdev_balanced_instruct
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 20:30 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___mm_bench_en_0.0.0_56ba1af8954
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 20:31 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___mmmu_default_0.0.0_364f2e2eb1
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 18:27 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___real_world_qa_default_0.0.0_9
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 20:48 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___textvqa_default_0.0.0_9c0699c
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_Rowan___hellaswag_default_0.0.0_218ec52e
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 15 20:23 lmms-lab___ai2d
+drwxr-xr-x  4 app.e0031982 app.adm 4096 Oct 15 20:44 lmms-lab___gqa
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 15 20:27 lmms-lab___mm_bench
+   size=11005
+## /home/app.e0031982/.cache/huggingface/hub
+total 88
+drwxr-xr-x 22 app.e0031982 app.adm 4096 Oct 15 20:48 .
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 20:22 ..
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:20 datasets--allenai--ai2_arc
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:21 datasets--allenai--openbookqa
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:22 datasets--allenai--sciq
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:22 datasets--allenai--winogrande
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:20 datasets--google--boolq
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--hanlincs--InternVL-SA1B-Caption-WebDataset
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--HuggingFaceM4--the_cauldron
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 20:26 datasets--lmms-lab--ai2d
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 20:45 datasets--lmms-lab--GQA
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 20:31 datasets--lmms-lab--MMBench
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 20:43 datasets--lmms-lab--MMMU
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct 15 21:24 datasets--lmms-lab--textvqa
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 14:46 datasets--mvp-lab--LLaVA-OneVision-1.5-Mid-Training-85M
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--MVRL--WebMix-38M
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  8 01:00 datasets--openbmb--Ultra-FineWeb
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  7 12:00 datasets--openbmb--UltraX-Preview
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:21 datasets--Rowan--hellaswag
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--VedaLabs--wit_base
+drwxr-xr-x  5 app.e0031982 app.adm 4096 Oct  6 15:21 datasets--ybisk--piqa
+drwxr-xr-x 14 app.e0031982 app.adm 4096 Oct 15 20:48 .locks
+   size=11418
+[2] 旧缓存里的 benchmark 清单
+-- datasets/ --
+allenai___ai2_arc
+allenai___openbookqa
+allenai___sciq
+allenai___winogrande
+google___boolq
+lmms-lab___ai2d
+lmms-lab___gqa
+lmms-lab___mm_bench
+lmms-lab___mmmu
+lmms-lab___real_world_qa
+lmms-lab___textvqa
+Rowan___hellaswag
+-- hub/datasets--* --
+datasets--allenai--ai2_arc
+datasets--allenai--openbookqa
+datasets--allenai--sciq
+datasets--allenai--winogrande
+datasets--google--boolq
+datasets--hanlincs--InternVL-SA1B-Caption-WebDataset
+datasets--HuggingFaceM4--the_cauldron
+datasets--lmms-lab--ai2d
+datasets--lmms-lab--GQA
+datasets--lmms-lab--MMBench
+datasets--lmms-lab--MMMU
+datasets--lmms-lab--textvqa
+datasets--mvp-lab--LLaVA-OneVision-1.5-Mid-Training-85M
+datasets--MVRL--WebMix-38M
+datasets--openbmb--Ultra-FineWeb
+datasets--openbmb--UltraX-Preview
+datasets--Rowan--hellaswag
+datasets--VedaLabs--wit_base
+datasets--ybisk--piqa
+[3] 其它候选位置
+/tmp/lmms_eval_hf_datasets_app.t0002965                        
+/home/app.e0031982/.cache/huggingface/hub/datasets--lmms-lab--gqa (缺)
+/nas_train/app.e0031982/.cache/huggingface                     hub xet 
+/nas_inference/app.e0031982/.cache/huggingface                 (缺)
+[4] 全盘找 lmms-eval 相关缓存目录
+/home/app.e0031982/.cache/huggingface/hub/datasets--lmms-lab--ai2d
+/home/app.e0031982/.cache/huggingface/hub/datasets--lmms-lab--MMMU
+/home/app.e0031982/.cache/huggingface/hub/.locks/datasets--lmms-lab--ai2d
+/home/app.e0031982/.cache/huggingface/hub/.locks/datasets--lmms-lab--MMMU
+/home/app.e0031982/.cache/huggingface/hub/.locks/datasets--lmms-lab--textvqa
+/home/app.e0031982/.cache/huggingface/hub/.locks/datasets--lmms-lab--MMBench
+/home/app.e0031982/.cache/huggingface/hub/.locks/datasets--lmms-lab--GQA
+/home/app.e0031982/.cache/huggingface/hub/datasets--lmms-lab--textvqa
+/home/app.e0031982/.cache/huggingface/hub/datasets--lmms-lab--MMBench
+/home/app.e0031982/.cache/huggingface/hub/datasets--lmms-lab--GQA
+/home/app.e0031982/.cache/huggingface/datasets/lmms-lab___textvqa
+/home/app.e0031982/.cache/huggingface/datasets/lmms-lab___ai2d
+/home/app.e0031982/.cache/huggingface/datasets/lmms-lab___gqa
+/home/app.e0031982/.cache/huggingface/datasets/lmms-lab___real_world_qa
+/home/app.e0031982/.cache/huggingface/datasets/lmms-lab___mm_bench
+/home/app.e0031982/.cache/huggingface/datasets/lmms-lab___mmmu
+/tmp/lmms_eval_hf_datasets_app.t0002965
+[5] 历史评测产物（判断之前测过哪些集）
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 21:45 mllm_eval_results
+[6] 新 HF_HOME（当前 precache）已有
+datasets--lmms-lab--GQA
+datasets--lmms-lab--MMBench
+datasets--lmms-lab--MMMU
+datasets--lmms-lab--textvqa
+   new HF_HOME size=6341
+[7] 是否有 llava-onevision 相关（回答第 2 问）
+=== [.12] DONE ===
+=== DONE 105 ===
+```
