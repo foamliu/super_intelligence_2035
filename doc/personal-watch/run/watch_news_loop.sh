@@ -57,6 +57,25 @@ MEMORY="$SCRIPT_DIR/MEMORY_NEWS.md"
 LAST_PUSH="/tmp/watch_news_last_push"
 CLINE_LOG="/tmp/watch_news_cline_last.log"   # cline 本轮输出，用于检测"报错却 exit 0"
 
+# ── 🔒 cline 可执行解析 & PATH 兜底（2026-10-15 修复）────────────────────────────
+#   故障：loop 环境 PATH 缺 cline ⇒ 第 211 行 `cline: command not found`（exit 127）
+#         ⇒ 每天 6 个时窗**全部静默失败**、news 停摆 ~2 天（心跳正常，极具迷惑性）。
+#   修法：① 并入【登录 shell】的 PATH —— nvm / npm-global / ~/.local/bin 常**只在 login shell 生效**；
+#         ② 显式解析 cline 绝对路径 → `$CLINE_BIN`，之后调用不再依赖环境 PATH；
+#         ③ 解析不到就**每轮显式报错**（🚫 不再"看着正常、其实什么都没干"）。
+if [ "${WATCH_NO_LOGINPATH:-0}" != "1" ]; then
+    _login_path="$(bash -lc 'echo $PATH' 2>/dev/null)"
+    if [ -n "$_login_path" ]; then PATH="${_login_path}:${PATH}"; fi
+fi
+export PATH
+CLINE_BIN="${CLINE_BIN:-}"
+if [ -z "$CLINE_BIN" ]; then CLINE_BIN="$(command -v cline 2>/dev/null || true)"; fi
+if [ -z "$CLINE_BIN" ]; then
+    echo "[loop] ❌ 找不到 cline（PATH=$PATH）→ 本线无法工作；请修 PATH 或重装 cline（npm i -g @cline/cli）"
+else
+    echo "[loop] ✅ cline=$CLINE_BIN · $(timeout 15 "$CLINE_BIN" --version 2>/dev/null | head -1)"
+fi
+
 # ── git 兜底同步：fetch → 必要时 pull --rebase → 只提交本线文件 → push ──
 git_sync_and_push() {
     local now last counts behind ahead
@@ -116,7 +135,7 @@ waiting_is_1() {
 }
 
 # cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
-FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟)'
+FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|command not found|cline: not found)'
 
 # ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=6,18 ⇒ 06:00 / 18:00）──
 next_slot_epoch() {
@@ -208,7 +227,7 @@ while true; do
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" --thinking "$THINKING" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
+        "${CLINE_BIN:-cline}" -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" --thinking "$THINKING" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
         rc="${PIPESTATUS[0]}"
         echo "[loop] $(date '+%F %T') cline returned (exit ${rc}); log=$CLINE_LOG"
         # 兜底：cline 常"报错仍 exit 0"（模型名错 / 额度耗尽）→ 从日志抓错，失败则强制短睡重试，不空耗

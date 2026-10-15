@@ -3,6 +3,7 @@
 <!-- RUN_ID: 11 -->
 <!-- RUN_ID: 12 -->
 <!-- RUN_ID: 13 -->
+<!-- RUN_ID: 14 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -20,6 +21,49 @@
 > ✅ **实际结果已核验通过**：两条 loop 均在 **08:08:0x** 以新节律启动（`watch_news` pid=1156927 / `watch_research` pid=1157046），日志首行 = `[loop] ⏰ 定时模式已启用：唤醒时窗 = 6,18`，次行 = `⏰ 时窗参考：… 下一个时窗 = 2026-10-07 18:00:00 CST`；news 线已打印 `⏰ 定时模式：下次唤醒 = 2026-10-07 18:00:00 CST（588min 后）` 并写入 HB，research 线仍在首轮内。<br>
 > 🚫 **本块不宜再跑**：新节律下「重启 = 立刻多烧一轮 cline」（两线各一轮 ≈ 用户 token），**目标已达成，重复执行纯浪费**。⇒ `.last_run_id` 已同步置为 **11**（中继不会再取它）。<br>
 > ℹ️ **当时的通道故障**：中继 `pid=353526` 自 2026-10-06 18:06 起**卡死在命令替换管道上**（`fd 3 -> pipe:[…]` 只读端 + `wchan=pipe_read` + 无子进程 ⇒ 写端被脱离进程组的后台进程长期持有），故本块**未由中继执行**；已按「SSH 直连（用户授权）+ 中继加固（文件捕获 + stdin `/dev/null` + 失败打印原因 + 心跳）」两条腿处理。
+
+## RUN_ID 14 — 🔧 **修复 news 线：定位 cline + PATH 兜底 + 用修好的脚本重启 loop**（2026-10-15）
+
+> 依据 RUN_ID 13 诊断：loop 进程活着、心跳正常，但每次唤醒都 `cline: command not found`（exit 127）⇒ 6 个时窗全部静默失败、停摆 ~2 天。
+> 已随本块提交脚本修复 `watch_news_loop.sh`（并入登录 shell 的 PATH + 显式解析 `$CLINE_BIN`）。
+> **本块会 kill 并重启 `watch_news_loop.sh`**（只动 news 线；🚫 不碰 ops_relay / 其他 loop）。
+
+```bash
+echo "=== RUN_ID 14 · news 线修复（cline PATH → 重启 loop） $(date '+%F %T') ==="; hostname; date '+%F %T'
+echo "--- [0] 环境 ---"
+echo "PATH(relay)=$PATH"
+echo "loginPATH=$(bash -lc 'echo $PATH' 2>/dev/null)"
+echo "--- [1] cline 定位 ---"
+echo "PATHwhich=$(command -v cline 2>/dev/null || echo NONE)"
+echo "loginwhich=$(bash -lc 'command -v cline' 2>/dev/null | tail -1)"
+echo "node=$(command -v node 2>/dev/null || echo NONE) npm=$(command -v npm 2>/dev/null || echo NONE)"
+for d in /usr/local/bin /usr/bin /bin "$HOME/.local/bin" "$HOME/.npm-global/bin" "$HOME/bin"; do
+  ls -la "$d" 2>/dev/null | grep -i cline | cut -c1-140
+done
+timeout 30 find "$HOME" -maxdepth 5 -name cline -type f 2>/dev/null | head -5 | cut -c1-140
+echo "--- [2] 运行中 loop 的 PATH（对照） ---"
+LP="$(pgrep -f 'watch_news_loop.sh' | head -1)"; echo "loop pid=$LP"
+if [ -n "$LP" ]; then tr '\0' '\n' < "/proc/$LP/environ" 2>/dev/null | grep -E '^(PATH|HOME)=' | cut -c1-300; fi
+echo "--- [3] 同步仓库（取回修好的脚本） ---"
+R="$HOME/super_intelligence_2035/doc/personal-watch/run"
+cd "$R" || { echo "!!! 找不到 $R"; exit 0; }
+git fetch origin; git pull --rebase --autostash origin main; git --no-pager log --oneline -1
+grep -n 'CLINE_BIN' watch_news_loop.sh | head -3
+echo "--- [4] 重启 news loop ---"
+CLINE_BIN="$(command -v cline 2>/dev/null)"; [ -z "$CLINE_BIN" ] && CLINE_BIN="$(bash -lc 'command -v cline' 2>/dev/null | tail -1)"
+if [ -n "$CLINE_BIN" ] && [ -x "$CLINE_BIN" ]; then
+  echo "CLINE_BIN=$CLINE_BIN"
+  pkill -f 'watch_news_loop.sh'; sleep 2
+  setsid bash watch_news_loop.sh > /tmp/watch_news_loop.log 2>&1 < /dev/null &
+  sleep 4
+  echo "loop now: $(pgrep -af 'watch_news_loop.sh' | cut -c1-120)"
+  echo "--- log head ---"; head -10 /tmp/watch_news_loop.log | cut -c1-200
+  echo "--- HB ---"; ls -la --time-style=+%F_%H:%M:%S /tmp/watch_news_loop.hb 2>/dev/null || echo "HB 未生成"
+else
+  echo "!!! cline 仍未找到（PATH=$PATH）→ 未重启 loop；需先装 cline"
+fi
+echo "=== DONE ==="
+```
 
 ## RUN_ID 13 — 🔍 **诊断 watch_news 停摆**（只读 · 2026-10-15）
 
