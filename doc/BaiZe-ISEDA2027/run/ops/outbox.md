@@ -10262,3 +10262,92 @@ Rowan___hellaswag
 === [.12] DONE ===
 === DONE 96 ===
 ```
+
+---
+
+## RUN_ID 97 · 2026-10-15 20:52:36 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 97 · vision 17 集评测进度 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[评测进程]"; pgrep -af 'lmms|run_lmms_eval|launch_lmms|accelerate' 2>/dev/null | grep -v pgrep | cut -c1-130 | head -10
+echo "[结果目录]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | tail -8
+echo "[结果 JSON 摘要]"; for j in /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/*.json; do [ -f "$j" ] && { echo "## $(basename "$j")  $(stat -c%s "$j")B"; python3 -c "
+import json,sys
+d=json.load(open('$j'))
+r=d.get('results',{})
+print(' tasks:',len(r))
+for k,v in list(r.items())[:20]:
+    m=[f'{kk}={vv:.4f}' for kk,vv in v.items() if isinstance(vv,(int,float))]
+    print('  ',k, m[:2])
+" 2>/dev/null | head -25; }; done
+echo "[评测日志尾]"; ls -la /tmp/*lmms*log /tmp/*eval*log 2>/dev/null | head -5
+for f in $(ls -t /tmp/*lmms*log /tmp/*eval*log 2>/dev/null | head -2); do echo "## $f"; tail -12 "$f" | cut -c1-170; done
+echo "[vision loop 日志尾]"; tail -6 /tmp/baize_vision_loop.log 2>/dev/null | grep -iE 'push|commit|wake|cline returned' | tail -4 | cut -c1-170
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 97 ==="
+```
+
+**输出**
+```
+=== RUN_ID 97 · vision 17 集评测进度 2026-10-15 20:52:37 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 20:52:37 ===
+[GPU]
+0, 17510 MiB, 0 %
+1, 9483 MiB, 0 %
+2, 9483 MiB, 0 %
+3, 9483 MiB, 0 %
+4, 9483 MiB, 0 %
+5, 9483 MiB, 0 %
+6, 9483 MiB, 0 %
+7, 9483 MiB, 0 %
+[评测进程]
+1534404 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 /nas_train/app.e0031982/miniforge3/envs/py310/bin/accelerate 
+1550466 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550471 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550472 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550474 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550477 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550479 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550483 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+1550485 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 -u mllm_bridge/run_lmms_eval.py --batch_size 4 --limit 50 --o
+[结果目录]
+total 100
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 20:29 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+-rw-r--r--   1 app.e0031982 app.adm 54408 Oct 15 20:51 eval_limit50.log
+-rw-r--r--   1 app.e0031982 app.adm 16010 Oct 15 20:28 eval.log
+[结果 JSON 摘要]
+[评测日志尾]
+-rw-r--r-- 1 app.e0031982 app.adm  9124 Oct  6 15:22 /tmp/create_eval_heldout.log
+-rw-r--r-- 1 app.e0031982 app.adm 11990 Oct 12 11:00 /tmp/e4_2ep_eval.log
+-rw-r--r-- 1 app.e0031982 app.adm  8684 Oct 12 13:42 /tmp/e4_2ep_eval_rerun.log
+-rw-r--r-- 1 app.e0031982 app.adm   607 Oct 12 13:42 /tmp/e4_2ep_eval_rerun_outer.log
+-rw-r--r-- 1 app.e0031982 app.adm  9132 Oct 13 12:42 /tmp/e4_4ep_eval.log
+## /tmp/lmms_eval_launch.log
+============================================================
+  BaiZe-LLaVA lmms-eval 17 Benchmarks (8×H100 multi-GPU)
+  Proxy: http://172.19.92.25:13128 (direct to hf.co)
+  Extra args: --batch_size 4
+  Start time: 2026-10-15 20:26:40
+============================================================
+## /tmp/lmms_eval_launch.log
+============================================================
+  BaiZe-LLaVA lmms-eval 17 Benchmarks (8×H100 multi-GPU)
+  Proxy: http://172.19.92.25:13128 (direct to hf.co)
+  Extra args: --batch_size 4
+  Start time: 2026-10-15 20:26:40
+============================================================
+[vision loop 日志尾]
+[loop] 2026-10-15 20:35:45 cline returned (exit 0), checking git push ...
+=== [.12] DONE ===
+=== DONE 97 ===
+```
