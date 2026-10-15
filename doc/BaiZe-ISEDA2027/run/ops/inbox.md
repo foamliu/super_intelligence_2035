@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 94 -->
+<!-- RUN_ID: 95 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,6 +31,36 @@
 
 ---
 
+## RUN_ID 95 — ✅ **验证 `.12` git 读写通道（proxy 已生效）+ vision 是否已能推**（只读 + 一次 no-op push）
+
+> **背景**：RUN_ID 94 已在 `.12` 写入 `git config --global http(s).proxy = http://172.19.92.23:13128`，`ls-remote` 已通过。
+> **本块**：验证**读（fetch）+ 写（no-op push）**两条路径都通，并看 vision loop 是否还报 `push FAILED`。
+> ⚠️ 只读 + 一次无提交的 push；🚫 不 commit、不 add、不杀进程。
+
+```bash
+set -u
+echo "=== RUN_ID 95 · 验证 .12 git 读写通道 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[git proxy] http=$(git config --global --get http.proxy)  https=$(git config --global --get https.proxy)"
+echo "--- [1] fetch（读通道，走 proxy） ---"
+timeout 90 git fetch origin > /tmp/_run95_fetch.log 2>&1; echo "fetch_exit=$?"; tail -3 /tmp/_run95_fetch.log
+echo "--- [2] no-op push（写通道，走 proxy） ---"
+timeout 90 git push origin main > /tmp/_run95_push.log 2>&1; echo "push_exit=$?"; tail -5 /tmp/_run95_push.log
+echo "--- [3] 领先/落后 ---"
+echo "origin/main...HEAD = $(git rev-list --left-right --count origin/main...HEAD 2>&1)"
+echo "--- [4] vision loop 日志（是否还报 push FAILED） ---"
+tail -40 /tmp/baize_vision_loop.log 2>/dev/null | grep -iE 'push|committed|wake up|cline returned|FAILED|index.lock' | tail -10 | cut -c1-175
+echo "--- [5] 最近 vision auto-commit ---"
+git log --oneline -30 --grep='vision' 2>&1 | head -6
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 95 ==="
+```
+
 ## RUN_ID 94 — 🔧 **修复 `.12` 的 git push（vision 推不上来）**：测 github 代理 + 设 git proxy + 清陈旧 index.lock + 试推
 
 > **用户口径（2026-10-15）**：**连 github 走 `92.23`；下数据用 `92.25` 直连 hf.co**。
@@ -38,7 +68,7 @@
 > **本块**：在 `.12` 上逐个测 `direct / 92.23 / 92.25` → github，把**可用者写进 git 全局配置**（git 不依赖 env，重启 loop 也生效），清理**陈旧** lock，然后试推。
 > ⚠️ 只改 `.12` 的 git 全局代理 + 删陈旧 lock；🚫 不做任何 `git add/commit`（不卷别线文件）、🚫 不杀进程。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 94 · 修复 .12 git push $(date '+%F %T') · host=$(hostname) ==="
 echo "--- [A] .29 侧对照 ---"

@@ -25,6 +25,11 @@
 
 **⑥ 回报形式**：写进 `MEMORY_VISION.md` 状态头 + 当日 `daily-memories-vision/`，含一节 **「评测耗时归因」**（训练链 / adapter 适配 / 数据通道 / generate 输出 bug / git 推送，各占多少小时），便于对用户解释。⚠️ 任务书已 ~32KB，本块执行后**自行归档旧块**到 `*_ARCHIVE`。
 
+**⑦ ✅ git push 已修（2026-10-15 20:0x，运维直改 `.12`）**：**根因** = `.12` **直连 github 不通**（实测 `000`），而 git 全局/仓库**都没有 proxy 配置**、loop 环境也无 proxy → `push FAILED … Network is unreachable`。
+**已修**：在 `.12` 写入 `git config --global http.proxy/https.proxy = http://172.19.92.23:13128`（**git 配置层，不是 env** —— 因为你调 cline 时会 `env -u https_proxy` 剥掉环境变量），`git ls-remote origin HEAD` 已验证通过。
+⇒ **不要再把时间花在排查 git/push 上**；下一轮 `git_push_if_needed` 应直接成功。若仍失败，回报 `git fetch`/`git push` 的**原文报错**。
+> 📌 口径：**连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co（🚫 不用 hf-mirror）**。见 `run/ops/README.md §7`。
+
 ### 🆕 运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」

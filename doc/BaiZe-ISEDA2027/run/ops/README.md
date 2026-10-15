@@ -62,3 +62,29 @@ setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
 正在运行的 loop 与训练进程、远端 `10.239.2.12` 的状态、git 状态、
 数据根目录清单、关键数据集规模、python/torch 版本、repo 布局。
 **启动后约 1 分钟就能拿到第一批环境实况。**
+
+---
+
+## 7. 已知环境事实：节点外网 / 代理（2026-10-15 实测）
+
+| 节点 | 直连外网 | github 需要 | HF 数据需要 |
+|:--|:--|:--|:--|
+| `.29`（whag0pgpuap29，中继主机） | ✅ **直连可用**（github/hf.co 均 200） | 直连即可（proxy 也 200） | 直连或 92.25 |
+| `.12`（whag0pgpuap12，vision 线） | ❌ **直连 github `000`（不可达）** | **`http://172.19.92.23:13128`** | **`http://172.19.92.25:13128` 直连 hf.co**（🚫 不用 hf-mirror） |
+
+**口径（用户直令 2026-10-15）**：**连 github 用 92.23；下数据用 92.25 直连 hf.co。**
+
+### ⚠️ `.12` 的 git push 曾长期失败（2026-10-15 已修）
+
+- **症状**：vision loop 日志反复 `push FAILED … Failed to connect to github.com port 443 … Network is unreachable`；
+  叠加共享工作副本偶发 `.git/index.lock` 被占（`fatal: Unable to write new index file`）⇒ **提交推不出来**（12:15→18:29 有 6 小时在 git 上看不到进展）。
+- **根因**（RUN_ID 94 实测）：`.12` **直连 github = `000`**，而该机 **git 全局/仓库级都没有 `http.proxy` 配置、loop 环境也没有 proxy 变量** ⇒ git 走直连必然失败。
+- **修法（已实施，RUN_ID 94）**——**写在 git 配置层**，因为 vision loop 调 cline 时会 `env -u http_proxy -u https_proxy …` **剥掉 proxy 环境变量**，只有 git config 能存活：
+  ```bash
+  # 在 .12 上（用户 app.e0031982，共享 NFS HOME）
+  git config --global http.proxy  http://172.19.92.23:13128
+  git config --global https.proxy http://172.19.92.23:13128
+  git ls-remote origin HEAD        # 验证（返回 HEAD sha 即通）
+  ```
+- **验证**：`.12` 上 `git ls-remote origin HEAD` ✅ 返回 sha；`git ls-remote` 走同一 remote/凭据，读写路径一致。
+- **注意**：`.12` 与 `.29` **共用 NFS HOME 与工作副本** ⇒ 该 `--global` 配置对两机生效；但**若 `.12` 直连恢复**，建议移除该配置以免绕路（`git config --global --unset http.proxy`）。
