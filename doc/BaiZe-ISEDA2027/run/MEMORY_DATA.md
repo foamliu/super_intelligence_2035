@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ▶️3路下载断点续传进行中+✅wit_base完成(唤醒467发现下载于12:19自然完成,330/330parquet/287G)+85M暂停(用户令2026-10-13,8436/12124=69.6%)+✅the_cauldron完成+✅GPIC全完成+✅R3分词110/110+✅HF imagetext报告→P-8数据层全就绪
+PHASE:        ▶️3路下载断点续传进行中+✅wit_base完成(330/330parquet/287G)+85M暂停(用户令2026-10-13,8436/12124=69.6%)+✅the_cauldron完成+✅GPIC全完成+✅R3分词110/110+✅HF imagetext报告→P-8数据层全就绪
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); R3全量分词110/110DONE(1483.91B tok/5.94TB); R3污染扫描30/30DONE(60K,0命中,累计220K全0)→P-8数据层全就绪; ✅GPIC下载完成(8160tar@/nas_inference,12T); ✅文献借鉴报告(c80c7a74); ✅85M用户进程移交data线; ✅HfApi核实85M总量(12,124files/46.663TB); ✅HF imagetext数据集调研报告(唤醒404); ✅85M暂停(用户令10-13); ✅4路HF图文对下载启动(唤醒405); ✅the_cauldron下载完成(938parquet/158G,唤醒422); ✅全部4路下载暂停(用户令2026-10-14); ✅全部4路下载恢复断点续传(用户令2026-10-14 resume,唤醒444); ✅wit_base下载完成(330/330parquet/287G,2026-10-15 12:19,retry-loop自然退出)
-当前动作:     唤醒467(2026-10-15 12:31) 巡检4路下载断点续传健康态(唤醒466后~34min)。**发现wit_base已完成**：retry-loop日志确认"COMPLETE (attempt #3)"于12:19退出,330/330parquet/287G,0 incomplete,wrapper已自然退出(无需重启)。剩余3路全健康✅：en_v1_4 PID2111003(wrapper PID766325,34125/56461=60.5%,3.1T,68dirs,+27par since last)|WebMix PID2798086(wrapper PID766313,392parquet/291G,+13par/+9G,log见active download)|InternVL PID766408(wrapper PID766323,693tar/518G,1 incomplete=正在下,+26tar/+19G)。3条HTTPS ESTAB✅。85M⏸暂停(0进程)✅。disk:4盘同前(train85%/user75%/inf80%/env1%)。📦体积:TASK=29KB/MEMORY=16KB(无需归档)
+当前动作:     唤醒468(2026-10-15 13:45) 巡检3路下载断点续传健康态(唤醒467后~74min)。3路全健康✅无需kill/restart：en_v1_4 PID2111003(wrap766325,34195/56461=60.6%,3.1T,68dirs,+70par,0incomplete,~0.95par/min,ETA~16天)|WebMix PID2798086(wrap766313,444parquet/329G,+52par/+38G,1incomplete=正在下,~0.70par/min,ETA~2.3天)|InternVL PID766408(wrap766323,744tar/556G,+51tar/+38G,1incomplete=正在下,~0.69tar/min,ETA~1.3天)。3路HTTPS ESTAB✅,last file均13:44(秒级活跃)。wit_base✅330/330/287G(已完成)。85M⏸暂停(0进程)✅。disk:train85%/user76%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=16KB(无需归档)
 下一步:       ①看护3路剩余下载(死/僵/速率趋零即kill+restart); ②85M维持暂停(用户令10-13); ③巡检进度/速率/ETA; ④P-8投料等运维指示
-阻塞:         无(3路下载进行中全部健康,wit_base已完成); 85M暂停(用户令10-13); P-8投料等运维指示
+阻塞:         无(3路下载进行中全部健康); 85M暂停(用户令10-13); P-8投料等运维指示
 ERROR_COUNT:  5
 ```
 
@@ -35,7 +35,8 @@ ERROR_COUNT:  5
 > 📦 唤醒464 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+4路进度对比表+disk 4盘+体积29KB/16KB）
 > 📦 唤醒465 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base wrapper自动重启hf确认+4路进度对比表+disk 4盘+体积29KB/16KB）
 > 📦 唤醒466 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base仍在下载317parquet+4路进度对比表+disk 4盘+体积29KB/16KB）
-> [12:31] 唤醒467：巡检4路下载断点续传健康态(唤醒466后~34min)。**wit_base已完成✅**：retry-loop日志确认"=== wit_base download COMPLETE (attempt #3) ==="于12:19自然退出,330/330parquet(train-00000~00329)/287G,0 incomplete,wrapper已退出(非崩溃,无需重启)。剩余3路全健康✅：en_v1_4 PID2111003(wrap766325,34125/56461=60.5%,3.1T,68dirs,+27par)|WebMix PID2798086(wrap766313,392parquet/291G,+13par/+9G,log见train-cc12m-00000392正在下)|InternVL PID766408(wrap766323,693tar/518G,1incomplete=正在下,+26tar/+19G)。3条HTTPS ESTAB✅。无需kill/restart。85M⏸暂停(0进程)✅。disk:train85%/user75%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=16KB(无需归档)
+> 📦 唤醒467 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载+wit_base完成确认(330/330/287G,12:19自然退出)+3路进度对比表+disk 4盘+体积29KB/16KB）
+> [13:45] 唤醒468：巡检3路下载断点续传健康态(唤醒467后~74min)。3路全健康✅无需kill/restart：en_v1_4 PID2111003(wrap766325,34195/56461=60.6%,3.1T,68dirs,+70par,0incomplete,last file 13:44:51,~0.95par/min,ETA~16天)|WebMix PID2798086(wrap766313,444parquet/329G,+52par/+38G,1incomplete=正在下,last file 13:44:50,~0.70par/min,ETA~2.3天)|InternVL PID766408(wrap766323,744tar/556G,+51tar/+38G,1incomplete=正在下,last file 13:44:49,~0.69tar/min,ETA~1.3天)。3路HTTPS ESTAB✅(均经proxy 172.19.92.25:13128)。wit_base✅330/330/287G(已完成,无进程)。85M⏸暂停(0进程)✅。disk:train85%/user76%/inf80%/env1%。📦体积:TASK=29KB/MEMORY=16KB(无需归档)
 > 📦 唤醒457 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路全健康无kill/restart+wit_base重启恢复确认+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒456 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载+wit_base速率趋零kill+restart PID1675681+4路进度对比表+disk 4盘+体积29KB/31KB）
 > 📦 唤醒451 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检4路下载断点续传健康态+4路进度对比表+速率估计+disk 4盘+体积29KB/30KB）
