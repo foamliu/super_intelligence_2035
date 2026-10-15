@@ -10848,3 +10848,95 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
 === [.12] DONE ===
 === DONE 102 ===
 ```
+
+---
+
+## RUN_ID 103 · 2026-10-15 22:05:22 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 103 · vision precache/评测状态 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[precache / eval 进程]"; pgrep -af 'precache|lmms|run_lmms_eval|accelerate' 2>/dev/null | grep -v pgrep | cut -c1-130 | head -8
+echo "[HF_HOME 是否落 /nas_env]"; ls -la /nas_env/app.e0031982/hf_home 2>/dev/null | head -8; printf 'size='; timeout 60 du -sh /nas_env/app.e0031982/hf_home 2>/dev/null | cut -f1
+echo "[已缓存 benchmark]"; ls /nas_env/app.e0031982/hf_home/datasets 2>/dev/null | head -25
+echo "[结果目录]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | tail -6
+echo "[precache / eval 日志尾]"; for f in $(ls -t /tmp/*precache* /tmp/*lmms* 2>/dev/null | head -3); do echo "## $f"; tail -8 "$f" | cut -c1-170; done
+echo "[磁盘]"; df -h /home /nas_env /nas_train 2>/dev/null | tail -3 | cut -c1-110
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 103 ==="
+```
+
+**输出**
+```
+=== RUN_ID 103 · vision precache/评测状态 2026-10-15 22:05:22 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 22:05:23 ===
+[GPU]
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[precache / eval 进程]
+2970787 bash -c source /nas_train/app.e0031982/miniforge3/etc/profile.d/conda.sh && conda activate py310 && cd /nas_train/app.e003
+2970799 python mllm_bridge/precache_benchmarks.py --limit 1
+[HF_HOME 是否落 /nas_env]
+total 24
+drwxr-xr-x 6 app.e0031982 app.adm 4096 Oct 15 21:46 .
+drwxr-xr-x 4 app.e0031982 root    4096 Oct 15 21:44 ..
+drwxr-xr-x 3 app.e0031982 app.adm 4096 Oct 15 21:58 datasets
+drwxr-xr-x 7 app.e0031982 app.adm 4096 Oct 15 22:02 hub
+drwxr-xr-x 2 app.e0031982 app.adm 4096 Oct 15 21:46 transformers
+drwxr-xr-x 4 app.e0031982 app.adm 4096 Oct 15 21:45 xet
+size=4.1G
+[已缓存 benchmark]
+lmms-lab___gqa
+_nas_env_app.e0031982_hf_home_datasets_lmms-lab___gqa_testdev_balanced_images_0.0.0_a6e72d6e1b912da88af8b2f9eba05d5ea8ec2dd8.lock
+[结果目录]
+total 132
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 21:45 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+-rw-r--r--   1 app.e0031982 app.adm 71122 Oct 15 21:24 eval_limit50.log
+-rw-r--r--   1 app.e0031982 app.adm 16010 Oct 15 20:28 eval.log
+-rw-r--r--   1 app.e0031982 app.adm 13416 Oct 15 22:04 precache.log
+[precache / eval 日志尾]
+## /tmp/lmms_eval_launch.log
+============================================================
+  BaiZe-LLaVA lmms-eval 17 Benchmarks (8×H100 multi-GPU)
+  Proxy: http://172.19.92.25:13128 (direct to hf.co)
+  Extra args: --batch_size 4
+  Start time: 2026-10-15 20:26:40
+============================================================
+## /tmp/lmms_smoke.log
+Results saved to /tmp/lmms_smoke_test.json
+
+============================================================
+Benchmark Results Summary
+============================================================
+  realworldqa                    exact_match,flexible-extract=0.0000
+============================================================
+DONE exit=0
+## /tmp/lmms_smoke_test.json
+      "total_output_tokens": 0.0,
+      "total_tokens": 0.0,
+      "total_correct_score": 0.0,
+      "avg_output_tokens_per_sample": 0.0,
+      "tokens_per_correct_answer": null
+    }
+  }
+}
+[磁盘]
+/dev/mapper/vgroot-lv_home     196G  140G   47G  76% /home
+10.239.22.32:/vol_CTE0_data04   10T   18G  9.9T   1% /nas_env
+10.239.22.31:/vol_CTE0_data01  207T  176T   32T  85% /nas_train
+=== [.12] DONE ===
+=== DONE 103 ===
+```
