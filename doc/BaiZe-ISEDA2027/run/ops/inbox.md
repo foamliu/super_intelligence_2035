@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 93 -->
+<!-- RUN_ID: 94 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,91 @@
 
 ---
 
+## RUN_ID 94 — 🔧 **修复 `.12` 的 git push（vision 推不上来）**：测 github 代理 + 设 git proxy + 清陈旧 index.lock + 试推
+
+> **用户口径（2026-10-15）**：**连 github 走 `92.23`；下数据用 `92.25` 直连 hf.co**。
+> **已实测背景（RUN_ID 93）**：`.12` 直连 `github.com:443` 不通（loop 日志 `push FAILED … Network is unreachable`），且 `.12` 的 loop 环境**无任何 proxy 变量**；同时共享工作副本出现过 `.git/index.lock` 被占（`Unable to write new index file`）。
+> **本块**：在 `.12` 上逐个测 `direct / 92.23 / 92.25` → github，把**可用者写进 git 全局配置**（git 不依赖 env，重启 loop 也生效），清理**陈旧** lock，然后试推。
+> ⚠️ 只改 `.12` 的 git 全局代理 + 删陈旧 lock；🚫 不做任何 `git add/commit`（不卷别线文件）、🚫 不杀进程。
+
+```bash
+set -u
+echo "=== RUN_ID 94 · 修复 .12 git push $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [A] .29 侧对照 ---"
+printf '[.29 direct github] '; timeout 12 curl -s -o /dev/null -w '%{http_code}\n' https://github.com 2>&1
+printf '[.29 92.23  github] '; timeout 12 env https_proxy=http://172.19.92.23:13128 curl -s -o /dev/null -w '%{http_code}\n' https://github.com 2>&1
+printf '[.29 92.25  github] '; timeout 12 env https_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://github.com 2>&1
+echo "--- [B] .12 诊断 + [C] 修复 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "--- github 连通性（.12） ---"
+printf 'direct : '; timeout 12 curl -s -o /dev/null -w '%{http_code}\n' https://github.com
+for P in http://172.19.92.23:13128 http://172.19.92.25:13128; do
+  printf '%s : ' "$P"; timeout 12 env https_proxy=$P http_proxy=$P curl -s -o /dev/null -w '%{http_code}\n' https://github.com
+done
+echo "--- 现有 git 配置 / env ---"
+echo "global http.proxy  = $(git config --global --get http.proxy)"
+echo "global https.proxy = $(git config --global --get https.proxy)"
+echo "local  http.proxy  = $(git config --get http.proxy)"
+env | grep -i proxy || echo "(env 无 proxy)"
+echo "--- index.lock ---"
+ls -la .git/index.lock 2>/dev/null || echo "(无 index.lock)"
+echo "--- git 状态 ---"
+git status -sb 2>&1 | head -4
+echo "local  HEAD = $(git log --oneline -1 2>&1)"
+echo "origin HEAD = $(git log --oneline -1 origin/main 2>&1)"
+echo "ahead/behind(origin/main...HEAD) = $(git rev-list --left-right --count origin/main...HEAD 2>&1)"
+echo "--- vision loop 环境 ---"
+for p in $(pgrep -f baize_vision_loop.sh 2>/dev/null); do echo "pid=$p"; tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -iE '^(PATH|http_proxy|https_proxy|no_proxy)=' | head -6; done
+echo "--- [C1] 选可用 proxy 写入 git 全局配置 ---"
+GH=""
+for P in http://172.19.92.23:13128 http://172.19.92.25:13128; do
+  C=$(timeout 12 env https_proxy=$P curl -s -o /dev/null -w '%{http_code}' https://github.com 2>/dev/null)
+  if [ "$C" = "200" ] && [ -z "$GH" ]; then GH="$P"; fi
+done
+if [ -n "$GH" ]; then
+  git config --global http.proxy "$GH"; git config --global https.proxy "$GH"
+  echo "已设 git 全局 proxy = $GH"
+  echo -n "ls-remote 验证: "; timeout 60 git ls-remote origin HEAD 2>&1 | head -1
+else
+  echo "!! 92.23/92.25 都不通 github → 未改配置（需人工确认代理口径）"
+fi
+echo "--- [C2] 陈旧 index.lock ---"
+if [ -f .git/index.lock ]; then
+  if pgrep -af 'git (add|commit|pull|rebase|gc|merge)' >/dev/null 2>&1; then
+    echo "有活跃 git 进程 → 不动 lock:"; pgrep -af 'git (add|commit|pull|rebase|gc|merge)' 2>/dev/null | cut -c1-120 | head -5
+  else
+    echo "无活跃 git 进程 → 判为陈旧，删除"; rm -f .git/index.lock && echo "index.lock removed"
+  fi
+else
+  echo "(无 index.lock，无需处理)"
+fi
+echo "--- [C3] 试推（仅当本地领先） ---"
+AB=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+echo "本地领先 = ${AB} 个提交"
+if [ "${AB:-0}" -gt 0 ]; then
+  timeout 150 git push origin main 2>&1 | tail -4
+else
+  echo "(无需 push)"
+fi
+echo "--- [C4] 复查 ---"
+echo "global http.proxy = $(git config --global --get http.proxy)"
+timeout 30 git status -sb 2>&1 | head -2
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 94 ==="
+```
+
 ## RUN_ID 93 — 🔍 **只读：vision lmms-eval 实况诊断**（proxy 实测 + `.12` 评测进度/数据落地）
 
 > **背景（运维提问）**：用户问「vision 的 lmms-eval 评测为什么耗时长、现在什么状态、是否卡在 HF 数据下载、13:52 的 proxy 口径到底实测过没有」。
 > **本块只读**：① 在本机（`.29`）实测三档 proxy 到 `hf.co` 的连通性；② `ssh` 到 `.12` 看 GPU / 评测进程 / HF 缓存里 17 集基准数据是否落地 / 结果目录 / Stage-2 ckpt。
 > 🚫 不杀进程、不删文件、不动训练。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 93 · vision lmms-eval 实况诊断（只读） $(date '+%F %T') · host=$(hostname) ==="
 echo "--- [1] proxy 口径实测（本机 → hf.co） ---"
