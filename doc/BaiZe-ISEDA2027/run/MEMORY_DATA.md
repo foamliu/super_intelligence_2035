@@ -12,19 +12,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ▶️4路下载(3路断点续传+UltraData-RL-2609进行中8/20jsonl+part-09下载中)+✅SFT-2605复核通过(1504jsonl/297GB/0incomplete)+✅wit_base完成+85M暂停(用户令10-13)+✅GPIC+✅R3分词→P-8数据层全就绪
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); R3全量分词110/110DONE(1483.91B tok/5.94TB); R3污染扫描30/30DONE(60K,0命中,累计220K全0)→P-8数据层全就绪; ✅GPIC下载完成(8160tar@/nas_inference,12T); ✅85M暂停(用户令10-13); ✅4路HF图文对下载; ✅the_cauldron完成(938parquet/158G); ✅全部4路暂停→恢复断点续传(用户令10-14); ✅wit_base完成(330/330/287G); ✅SFT-2605复核通过(1504jsonl/318990252711B/0incomplete,2026-10-15); ✅UltraData-RL-2609下载启动(2026-10-15 22:15,PID980464/980491); ✅HF API manifest获取(26files/187632276428B,已存hf_manifest.json)
-当前动作:     唤醒477(2026-10-16 00:41) 巡检4路下载+RL-2609进度。①SFT-2605✅确认不重下(1504jsonl/298G/0incomplete)。②RL-2609健康:PID980464(wrapper)/980491(hf)存活(etimes~8700s/2.4h),8/20jsonl完成(Code part-01~08=119.4GB),part-09下载中(5G,10s内+67MB=active),总115G+5G incomplete。HF API确认:26files/187632276428B(174.7GiB),gated=False。剩余~68GB,ETA~1-1.5h。hf_manifest.json已存。③3路既有下载全健康:en_v1_4(35099par,+45),WebMix(820par/607G,+29),InternVL(1084tar/811G,+24)。disk:train85%/user76%/inf80%/env2%(9.8T)。📦体积:TASK=32KB/MEMORY=14KB(无需归档)
-下一步:       ①看护RL-2609下载(8/20→20/20,死/僵/速率趋零即kill+restart); ②下完自校(文件数==26,.incomplete==0,逐文件字节比对hf_manifest.json写DATA_LEDGER); ③看护3路既有下载; ④85M维持暂停; ⑤P-8投料等运维指示
-阻塞:         无(4路下载进行中,RL-2609 ETA~1-1.5h); 85M暂停(用户令10-13); P-8投料等运维指示
+PHASE:        ▶️3路断点续传下载(en_v1_4+WebMix+InternVL)+✅✅RL-2609下完自校通过(20jsonl/187632276428B/26files字节比对全PASS)+✅SFT-2605复核通过(1504jsonl/297GB/0incomplete)+✅wit_base完成+85M暂停(用户令10-13)+✅GPIC+✅R3分词→P-8数据层全就绪
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); R3全量分词110/110DONE(1483.91B tok/5.94TB); R3污染扫描30/30DONE(60K,0命中,累计220K全0)→P-8数据层全就绪; ✅GPIC下载完成(8160tar@/nas_inference,12T); ✅85M暂停(用户令10-13); ✅4路HF图文对下载; ✅the_cauldron完成(938parquet/158G); ✅全部4路暂停→恢复断点续传(用户令10-14); ✅wit_base完成(330/330/287G); ✅SFT-2605复核通过(1504jsonl/318990252711B/0incomplete,2026-10-15); ✅✅UltraData-RL-2609下载完成+自校通过(20jsonl/187632276428B=174.70GiB/26files逐文件字节比对全PASS/0incomplete,落盘/nas_env,2026-10-16 01:26完成,耗时~3h11m)
+当前动作:     唤醒478(2026-10-16 01:17) 巡检4路下载+RL-2609全程监控至完成自校。①SFT-2605✅确认不重下(1504jsonl/318991557368B/0incomplete)。②RL-2609:从11/20jsonl实时监控至20/20完成(01:26),全程速率35-46MB/s(Code part-12+Knowledge×2+Long_Context×2+Math×4最后~3min内完成)。自校:26/26files逐文件字节比对hf_manifest.json全PASS,0.incomplete,total=187632276428B=174.70GiB。PID980464/980491已干净退出(retry-loop attempt#1成功)。③3路既有下载全健康:en_v1_4(35139par/56461=62.3%),WebMix(825par/610G),InternVL(1087tar/813G),全有.incomplete在长(PID存活)。disk:train85%/user76%/inf80%/env3%(9.7T)。📦体积:TASK=32KB/MEMORY=14KB(无需归档)
+下一步:       ①看护3路既有下载(en_v1_4/WebMix/InternVL,死/僵/速率趋零即kill+restart); ②85M维持暂停(用户令10-13); ③P-8投料等运维指示; ④RL-2609已就绪可随时用于RL训练
+阻塞:         无(3路下载进行中); 85M暂停(用户令10-13); P-8投料等运维指示
 ERROR_COUNT:  5
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [00:41] 唤醒477：巡检4路下载+RL-2609进度。①SFT-2605✅复确认(1504jsonl/298G/0incomplete)→不重下。②RL-2609健康:PID980464(wrapper)/980491(hf)存活(etimes~8700s/2.4h),8/20jsonl完成(Code part-01~08=119.4GB),part-09下载中(.incomplete 5G,10s内4.93G→5.0G=+67MB=active),总115G+5G。HF API(files_metadata=True):26files/187632276428B(174.7GiB),gated=False,lastModified=2026-09-07。hf_manifest.json已存落盘目录供自校。ETA~1-1.5h。③3路既有全健康:en_v1_4(35099par,+45),WebMix(820par/607G,+29),InternVL(1084tar/811G,+24)。disk:train85%/user76%/inf80%/env2%(9.8T)。📦体积:TASK=32KB/MEMORY=14KB(无需归档)
-> 📦 唤醒476 原文已归档 → `daily-memories-data/2026-10-16.md`（含巡检4路下载+RL-2609 5/20jsonl/82.7GB+3路进度+disk 4盘+体积32KB/14KB）
+> [01:17] 唤醒478：巡检4路下载+RL-2609全程监控至完成+自校。①SFT-2605✅复确认(1504jsonl/318991557368B/0incomplete)→不重下。②RL-2609:到达时11/20jsonl(Code part-01~11=175.8GB),实时监控part-12→Knowledge→Long_Context→Math,01:26全20/20完成。自校脚本(verify_rl2609.sh后台运行):26/26files逐文件字节比对hf_manifest.json全PASS,0.incomplete,total=187632276428B=174.70GiB。PID980464/980491干净退出(retry-loop attempt#1成功,exit code 0)。落盘/nas_env/app.e0031982/datasets/openbmb/UltraData-RL-2609/。③3路既有全健康:en_v1_4(35139par/56461=62.3%,PID2448730),WebMix(825par/610G,PID2798086),InternVL(1087tar/813G,PID766408),全有.incomplete在长(PID存活)。disk:train85%/user76%/inf80%/env3%(9.7T)。📦体积:TASK=32KB/MEMORY=14KB(无需归档)
+> 📦 唤醒477 原文已归档 → `daily-memories-data/2026-10-16.md`（含巡检4路下载+RL-2609 8/20jsonl/119.4GB+part-09下载中+3路进度+disk 4盘+体积32KB/14KB）
 > 📦 唤醒475 原文已归档 → `daily-memories-data/2026-10-15.md`（含验证SFT-2605通过+RL-2609四盘皆无→启动下载PID980464/980491+3路既有下载健康+disk 4盘+体积29KB/14KB）
 > 📦 唤醒474 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+en_v1_4 34951/56461=61.9%+WebMix 733par/542G+InternVL 992tar/741G+disk 4盘+体积29KB/14KB）
 > 📦 唤醒473 原文已归档 → `daily-memories-data/2026-10-15.md`（含巡检3路下载断点续传健康态+3路全健康无kill/restart+en_v1_4 wrapper重启hf+3路进度对比表+disk 4盘+体积29KB/14KB）
