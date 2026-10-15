@@ -853,3 +853,64 @@ setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC20
 
 **红线**：🚫 评测优先于改稿，不得为此 kill/延迟评测；🚫 数字编造；✅ 锚点与全部 Δ 必须同步改，避免表文矛盾。
 
+
+
+## [2026-10-15 17:35 归档] 运维令(二十五/二十四/二十一)已闭合·原文搬入
+
+> 归档原因：(二十五)催办=报告已交付 commit c1a3d177；(二十四)echo数据已并入论文✅15:30 commit zhulong S1-echo:；(二十一)15天建议书已交付 commit c1a3d177。保留(二十三)(二十二)为顶部活跃块（readback_binary 5/5 收口后执行）。
+
+### 🆕 运维指令 · 2026-10-15（二十五）— ⏰ 催办：消融试验中文建议书（指令二十一）尚未交付 · 现在就要【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「zhulong：消融实验中文建议书还是没给我。」
+
+**① 现状**：指令(二十一)「15 天窗口消融建议」纯写作、不占评测，但你连续排了(二十二)(二十三)(二十四)后一直没产出，`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html` 仍未生成。
+
+**② 立即产出**（占 readback_binary r2 code-gen 的空窗期，🚫 不占 GPU、不打断主线评测）：
+- 按指令(二十一)要求：结合当前进展（B/C1/C2 12 臂 5/5 + S1 readback_binary 重测中）+ **15 天 deadline**，提出「进一步消融试验」建议。
+- 每条四要素：动机 · 做法+成本（GPU/沙盒/墙钟）· 优先级（必做/建议/可选）· 与 S1/B 臂编排。
+- 文末附「**15 天排期表**」（S1 收尾 + readback echo + B.glm-5.3-flash/deepseek-v4-flash + 其它候选）。
+
+**③ 交付**：`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html`（中文自包含）。
+
+**④ 纪律**：纯 CPU 写作、现在就写；数字与 `MEMORY_ZHULONG.md` 看板一致；commit 前缀 `zhulong plan:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-15（二十四）— 📊 收集 readback 轴 echo 数据强化论文论证【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「好的，如果确认有价值，既然我们花了这么多时间，那应该收集更多信息，加入论文，强化论证依据。」
+
+**① 背景**：readback 消融（full/binary/none）有价值，且 binary 档 code-gen 显著变慢（~3×）本身即「保真度↓ → 收敛成本↑」的证据。现收集更多 echo 数据强化论证。
+
+**② 收集（从既有 trace / 日志 / daily-memories 聚合，🚫 不额外起评测）**：
+1. 每档 **run_code 平均调用次数**（Φ 执行次数）：full vs binary vs none。
+2. **code-gen 墙钟 / 迭代轮次**：full ~1.5h vs binary ~4-5h vs none（待量）。
+3. **gen-fail / timeout 率**随保真度下降的变化。
+4. **Pass@1**（已有）+ 提交前收敛轨迹（若有）。
+5. 代表性 trace 证据：binary 档 agent「盲试 / 反复迭代」的 1–2 条原文片段（截 log）。
+
+**③ 补进论文**（`tab:ablation-harness` 附近 + §S1 正文）：
+- **语义注记**：binary PASS = **1-bit exception signal（no exception raised）**，非 assertion-level correctness；none = 仅 `"executed"`。
+- **echo 表**：保真度（full/binary/none）× {Pass@1, 平均 run_code 次数, code-gen 墙钟, gen-fail} —— 展示「保真度↓ → 收敛成本↑」的单调证据。
+
+**④ 交付**：echo 数据表 + 论文改动（编译 0 error）+ 简述「强化了什么论证」。
+
+**⑤ 纪律**：🚫 不额外起评测（readback_binary 5-run 按指令二十三继续）；数据从既有 trace 聚合、贴 `文件:行`；commit 前缀 `zhulong S1-echo:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-15（二十一）— 🧪 结合进展提「15 天窗口消融建议」· 中文 HTML· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「安排 zhulong 结合试验进展，提出进一步消融试验的建议，写成 html 中文报告。现在到论文提交 deadline 还有 15 天。」
+
+**① 背景**：距投稿 deadline **15 天**。当前进展：B 4/4、C1 4/4、C2 4/4 已 5/5 收口（12 臂），**S1 三臂为剩余主线**（`omega_low` r1 跑中，`readback_binary` / `readback_none` 未跑）。
+
+**② 任务**：结合**当前试验进展 + 15 天时间约束**，提出「进一步消融试验」建议，写成中文 HTML 报告。每条建议给四要素：
+- **动机**：回答论文哪个开放问题 / 审稿人或读者最可能质疑什么
+- **做法 + 成本**：GPU/沙盒时延 + 墙钟估算
+- **优先级**：15 天窗口内「必做 / 建议 / 可选」三档
+- **编排**：与 S1 主线三臂的时间线如何错开（🚫 不与 S1 冲突）
+
+**③ 候选方向（自己 judge、不限于此，结合论文审视报告 §8「仍缺数据」清单）**：
+- 可回填但未做的消融（如 `wo_selfexpl` 自探索增益 82.1 vs 79.8、配对显著性检验 McNemar/paired bootstrap、gen-fail 机制深挖、错误分析基于 5-run 代表性 run 重做）
+- 其它你认为 15 天内价值最大的补充实验
+
+**④ 交付**：`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html`（中文自包含），文末附「**15 天排期表**」（按天列出 S1 收尾 + 各项消融）。
+
+**⑤ 纪律**：纯写作零 GPU，在 S1 评测空窗期做，🚫 不打断 S1 主线；数字与 `MEMORY_ZHULONG.md` 执行看板一致；commit 前缀 `zhulong plan:` · 任务书 >32KB 自滚归档。
