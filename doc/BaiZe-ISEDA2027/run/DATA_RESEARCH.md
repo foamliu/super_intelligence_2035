@@ -55,7 +55,10 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 > | `UltraData-RL-2609` | — | ❌ **确未下**（白名单外 · RL 阶段用，非缺口） |
 > | `ultrafineweb_en_v1_4` | 见 `BAIZE_DATA_TASK.md` 的下载表（**不在** `/nas_train/openbmb/…`） | 🟡 下载中 |
 >
-> ⇒ **现状一律以 `reports/report_pretrain_formal_train_plan.html` §1.2（10-14）为准**：base en ≈**206.76B** tok / base zh ≈**112.47B** tok / UltraX ≈**30.97B** tok，**均已下满**；`UltraData-SFT-2605` 的缺口仍以本表第 38 行为准（需重下）。
+> ⇒ **现状一律以 `reports/report_pretrain_formal_train_plan.html` §1.2（10-14）为准**：base en ≈**206.76B** tok / base zh ≈**112.47B** tok / UltraX ≈**30.97B** tok，**均已下满**。
+>
+> ⚠️ **同批勘误：本表第 38 行 `UltraData-SFT-2605`「落盘为空」也已过时** —— 它 **2026-10-02 就已重下并逐字节核验一致**（`MEMORY_DATA.md`：1504 文件 / 318,990,252,711 B），运维 10-15 深检（RUN_ID 99 · 21:17）实测 = **1504 jsonl / `.incomplete`=0 / ≈297.08 GB**（`/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605`，`data/{no_think,think}`）⇒ **不缺，🚫 不要重下**。
+> ✅ **真正没下的只有 `UltraData-RL-2609`**：四盘皆无、HF 缓存无；HF API = **`gated=False`（公开）**、26 siblings、lastModified 2026-09-07 ⇒ **用户 2026-10-15 已下令补下**（见 `BAIZE_DATA_TASK.md` 运维指令区）。
 
 > 注：DATA_LEDGER §0 此前只记了 L3 的「616 / 617.6 GiB」（仅 en_qa 一支），漏记了 multi_style 与 zh 共 1148 支；实际 L3 全部 4 支 = **1764 parquet / ≈1.9 TiB** 已就位。已实测核对无误。
 > **v1.1 修订（官方 config 命名核对）**：HF 官方 4 个 config（https://huggingface.co/datasets/openbmb/Ultra-FineWeb-L3）为 `Ultra-FineWeb-L3-en-QA-Synthetic`(320M 行) / `-en-Multi-Style-Synthetic`(378M) / `-zh-QA-Synthetic`(157M) / `-zh-Multi-Style-Synthetic`(204M)，对应本地目录 `ultrafineweb_en_l3/qa`(616)、`en_l3/multi_style`(552)、`zh_l3/qa`(310)、`zh_l3/multi_style`(286)。HF 官方 `Number of rows: 1,058,535,126`、`Total file size: 1.9 TB`（= 1898 GB ≈ 1.8 TiB），与本地逐 parquet 数 + 字节和完全吻合 ✅。

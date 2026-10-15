@@ -7,6 +7,34 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15（⬇️ **补下 `UltraData-RL-2609`** + 复核 SFT-2605）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「data：验证一下 `UltraData-SFT-2605`、`UltraData-RL-2609` 是否真的没有，没有就重新下载。」
+
+**① 运维已预核（RUN_ID 99 · 2026-10-15 21:17 实测，供你复核起点 · 机读事实）**
+
+| 数据集 | 盘上实测 | 判定 |
+|:--|:--|:--|
+| `UltraData-SFT-2605` | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605` → **1504 jsonl / `.incomplete`=0 / ≈297.08 GB**（`data/{no_think,think}`，顶层 README/LICENSE/.gitattributes 齐） | ✅ **不缺**（10-02 已重下并逐字节核验）⇒ 🚫 **不要重下** |
+| `UltraData-RL-2609` | `/nas_inference` `/nas_user` `/nas_env` `/nas_train` **四个盘皆无**；HF 缓存仅 `datasets--openbmb--Ultra-FineWeb` | ❌ **确实没下** ⇒ **需补下** |
+
+**② 授权：用户直令「解除白名单」——仅限本项**：`openbmb/UltraData-RL-2609` 此前属「白名单外一律不下载」；**本令起放行该一项**。🚫 **不得**借此扩权到其他白名单外数据集。
+- HF API 事实（10-15 实测）：**`gated=False`（公开，无需接条款）** · `siblings=26` · `lastModified=2026-09-07`；⚠️ **该 API 未回 size** ⇒ **下载前必须先用 `hf download --dry-run`（或 HfApi 列文件）取实际文件数 + 总字节，并如实回报**。
+
+**③ 下载要求**
+- **落盘（白名单内，按余量二选一）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609`（**9.4T free**）或 `/nas_env/app.e0031982/datasets/openbmb/UltraData-RL-2609`（**9.9T free**）。
+- **proxy 直连 hf.co**：`https_proxy=http://172.19.92.25:13128`（与既有下载同口径；🚫 不用 hf-mirror）。
+- `setsid` 守护 + **正确 PATH**（`bash -lc` 或显式 PATH，防 `env: 'hf': No such file`）；沿用既有 **retry-loop 模式**（先起 wrapper 再起 hf 子进程）。
+- ⚠️ **带宽纪律**：当前 **3 路在跑**（`en_v1_4` / `WebMix-38M` / `InternVL-SA1B`）——先记录各路 last-file 时间戳与速率作基线，**若新下载把它们挤到「速率趋零」，就错峰或调小 `--max-workers`**；老线一旦僵死/死掉，仍按常驻口径 **kill + restart**。
+
+**④ 收尾 / 回报**
+1. **进度表**：PID（wrapper + hf）· 已下文件数 / 总文件数 · 已下字节 · 速率 · ETA · **落盘路径** + `df -h` 余量。
+2. **下完自校**：文件数 == HF 清单数、`.incomplete == 0`，并与 HfApi 清单**逐文件字节比对**（沿用 10-02 对 SFT-2605 的核验口径），结果写进 `DATA_LEDGER.md`。
+3. `MEMORY_DATA.md` 进度快照 + `daily-memories-data/2026-10-15.md`；commit 前缀 `data dl:`。
+4. **如实**：不可达 / 被限流 / 失败 ⇒ 写「失败 + 原文报错」，🚫 不编造进度；查不到就写「未找到」。
+
+**⑤ 纪律**：🚫 不删任何已有数据；`GPIC` / `the_cauldron` / `wit_base` / **`UltraData-SFT-2605`（已下满，勿动）** 均不动；**85M 维持暂停**；错峰 IO；任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-14（▶️ 恢复全部 4 路下载 · 断点续传）· 用户直令 · 最高优先
 
 > **用户令（2026-10-14）**：「data 数据下载 resume。」（= 解除同日「⏸ 暂停全部 4 路下载」）
