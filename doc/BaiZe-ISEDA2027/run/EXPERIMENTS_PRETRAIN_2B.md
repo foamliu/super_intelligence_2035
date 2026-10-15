@@ -188,3 +188,71 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - **LR schedule**：WSD（warmup 5% → stable → decay 10%），stable LR=1e-3, min_lr=1e-5。
 - **⚠️ seq_length**：P-8 实跑 seq=4094（agent 错误），正确口径 4096（=2¹²），论文/脚本统一 4096。
 - **⚠️ §6 #13**：训练 token ~44.4B，非 1.8T（1.8T 是全语料上限，非实际训练量）。
+---
+
+## P-8 lm-eval 评测（8 常识 + 6 复杂推理，0-shot）
+
+> 检查点：`p8_adamw_decay/hf_iter_1149`（~44.4B tokens, Mamba2-hybrid 2.22B）
+> 评测框架：lm-eval-harness 0.4.13 | 0-shot | GPU: 10.239.2.29 GPU0-1
+> 报告：`reports/report_pretrain_p8_lmeval_8plus6_zh.html`
+> 日期：2026-10-15
+
+### Common8 结果（8 常识任务，0-shot）
+
+| 任务 | acc | acc_norm | 采用值 |
+|:--|--:|--:|--:|
+| OpenBookQA | 21.20% | 32.60% | 32.60% (acc_norm) |
+| ARC-Easy | 55.60% | 50.46% | 50.46% (acc_norm) |
+| ARC-Challenge | 26.54% | 27.90% | 27.90% (acc_norm) |
+| BoolQ | 57.09% | — | 57.09% (acc) |
+| HellaSwag | 33.41% | 40.09% | 40.09% (acc_norm) |
+| PiQA | 66.49% | 66.92% | 66.92% (acc_norm) |
+| SciQ | 72.70% | 67.60% | 67.60% (acc_norm) |
+| Winogrande | 51.07% | — | 51.07% (acc) |
+| **raw acc Avg** | | | **48.01%** |
+| **harness-standard Avg** | | | **49.22%** |
+
+### Common8 对比
+
+| 模型 | 参数量 | 训练 tokens | raw acc Avg |
+|:--|--:|--:|--:|
+| BaiZe P-8 (本实验) | 2.22B | 44.4B | **48.01%** |
+| BaiZe P-5b (iter_4771) | 2.22B | 20.0B | 47.91% |
+| Xmodel-2 | 1.2B | 1.5T | 61.79% |
+| Phi-1.5 | 1.3B | 150B | 65.68% |
+
+**关键发现**：P-8 在 44.4B tokens 的 Common8 均分与 P-5b 在 20B tokens 几乎持平（48.01% vs 47.91% raw / 49.22% vs 49.22% harness），表明 Common8 基准在 ~20B tokens 后已饱和。
+
+### Complex6 结果（6 复杂推理，0-shot）
+
+| 任务 | BaiZe P-8 | 状态 | 备注 |
+|:--|--:|:--|:--|
+| GSM8K | 1.50% | ✅ | flexible-extract, limit=200 |
+| MATH-500 | 0.00% | ✅ | exact_match |
+| MMLU | 23.79% | ✅ | acc, 0-shot（唯一与 Xmodel-2/Phi-1.5 0-shot 对齐） |
+| BBH | ⏳ | 进行中 | 2700 samples, ~34% done |
+| HumanEval | ⏳ | 待启动 | |
+| MBPP | ⏳ | 待启动 | |
+
+### Complex6 对比（MMLU 唯一 0-shot 对齐）
+
+| 模型 | MMLU (0-shot) | GSM8K (0/5-shot) | MATH (0/4-shot) |
+|:--|--:|--:|--:|
+| BaiZe P-8 | **23.79%** | 1.50% | 0.00% |
+| Xmodel-2 | 48.87% | 55.88% (5-shot) | 25.50% (4-shot) |
+| Phi-1.5 | 41.75% | 32.15% (5-shot) | 3.18% (4-shot) |
+
+### 数据缩放曲线（P-5b 0.655B→20B + P-8 44.4B）
+
+| Tokens | raw acc Avg | harness Avg |
+|--:|--:|--:|
+| 0.655B | 31.09% | 33.26% |
+| 1.31B | 34.06% | 36.02% |
+| 2.62B | 40.38% | 40.99% |
+| 5.24B | 43.84% | 44.40% |
+| 10.5B | 46.31% | 47.14% |
+| 20.0B | 47.91% | 49.22% |
+| **44.4B (P-8)** | **48.01%** | **49.22%** |
+
+> 从 20B→44.4B tokens，raw acc 仅提升 +0.10pp，harness 均分完全持平 → Common8 饱和。
+> 详细报告含 SVG 缩放曲线、逐项对比表、Xmodel-2/Phi-1.5 参考线。
