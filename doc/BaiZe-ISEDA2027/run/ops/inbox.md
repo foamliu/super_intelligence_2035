@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 107 -->
+<!-- RUN_ID: 108 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,42 @@
 
 ---
 
+## RUN_ID 108 — 📊 **vision precache 进度 + 速率**（只读；为 ETA 取数）
+
+> 只读；含 `sleep 45` 测增量。⚠️ 进程匹配**显式排除 cline/bun**（见 RUN_ID 107 教训）；🚫 不 dump cmdline 全文。
+
+```bash
+set -u
+echo "=== RUN_ID 108 · vision precache 进度 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+NEW=/nas_env/app.e0031982/hf_home
+LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+T1=$(timeout 60 du -sm "$NEW" 2>/dev/null | cut -f1); echo "size1=${T1} MB @ $(date '+%T')"
+sleep 45
+T2=$(timeout 60 du -sm "$NEW" 2>/dev/null | cut -f1); echo "size2=${T2} MB @ $(date '+%T')  ⇒ 增量 $((T2-T1)) MB/45s ≈ $(( (T2-T1)*4/3 )) MB/min"
+echo "[precache 进度行]"; grep -aE '^\[[0-9]+/17\]|cached in' "$LOG" 2>/dev/null | tail -14 | cut -c1-165
+echo "[日志尾 6 行]"; tail -6 "$LOG" 2>/dev/null | cut -c1-170
+echo "[precache 进程（排除 cline/bun）]"
+for p in $(pgrep -f 'precache_benchmarks.py' 2>/dev/null); do
+  C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-110)
+  case "$C" in *cline*|*bun*) : ;; *) echo "   pid=$p :: $C" ;; esac
+done
+echo "[HF hub 里已有的数据集]"; ls -1 "$NEW/hub" 2>/dev/null | grep -i '^datasets--' | head -30
+echo "[HF datasets 目录数]"; ls -1 "$NEW/datasets" 2>/dev/null | grep -v '\.lock' | wc -l
+echo "[GPU/磁盘]"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | head -2; df -h /nas_env 2>/dev/null | tail -1 | cut -c1-100
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 108 ==="
+```
+
 ## RUN_ID 107 — 🩺 **复核 RUN_ID 106 的实际结果**（并**排除 cline** 的安全进程匹配）
 
 > ⚠️ 教训（写进 SOP）：**`pgrep/pkill -f <串>` 会误伤 cline** —— loop 把**整份任务书当参数**传给 cline，所以**任何出现在任务书里的字符串都会匹配到 cline 进程**（RUN_ID 106 就先匹到 cline，把自己当成了 precache）。
 > 本块：只读复核「拷贝是否成功 / precache 是否在跑 / vision loop 是否活着」，**并按 PID 过滤掉 cline/bun**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 107 · 复核 106 结果 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
