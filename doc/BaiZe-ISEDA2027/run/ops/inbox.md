@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 106 -->
+<!-- RUN_ID: 107 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,48 @@
 
 ---
 
+## RUN_ID 107 — 🩺 **复核 RUN_ID 106 的实际结果**（并**排除 cline** 的安全进程匹配）
+
+> ⚠️ 教训（写进 SOP）：**`pgrep/pkill -f <串>` 会误伤 cline** —— loop 把**整份任务书当参数**传给 cline，所以**任何出现在任务书里的字符串都会匹配到 cline 进程**（RUN_ID 106 就先匹到 cline，把自己当成了 precache）。
+> 本块：只读复核「拷贝是否成功 / precache 是否在跑 / vision loop 是否活着」，**并按 PID 过滤掉 cline/bun**。
+
+```bash
+set -u
+echo "=== RUN_ID 107 · 复核 106 结果 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+NEW=/nas_env/app.e0031982/hf_home
+VIS=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[1] 拷贝是否落地（期望：hub 5 个 + datasets 6 个）"
+ls -d "$NEW"/hub/datasets--lmms-lab--* 2>/dev/null | cut -c1-110
+ls -d "$NEW"/datasets/lmms-lab___* 2>/dev/null | cut -c1-110
+printf '   new HF_HOME size(MB) = '; timeout 90 du -sm "$NEW" 2>/dev/null | cut -f1
+echo "[2] precache 进程（显式排除 cline/bun）"
+for p in $(pgrep -f 'precache_benchmarks.py' 2>/dev/null); do
+  C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-140)
+  case "$C" in *cline*|*bun*) echo "   [skip: cline] pid=$p";; *) echo "   pid=$p :: $C";; esac
+done
+echo "[3] runner 脚本是否在"
+ls -la "$VIS"/mllm_bridge/run_precache.sh 2>/dev/null | cut -c1-140
+echo "[4] vision loop / cline"
+pgrep -af 'baize_vision_loop.sh' | cut -c1-90
+for p in $(pgrep -f 'cline' 2>/dev/null); do C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null); case "$C" in *bun*|*cline*) echo "   cline pid=$p ${C:0:80}";; esac; done | head -4
+echo "[5] vision loop 日志尾"; tail -14 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-175
+echo "[6] precache 日志尾"; tail -14 "$LOG" 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 107 ==="
+```
+
 ## RUN_ID 106 — ♻️ **代做「复用旧缓存」**：停 precache → `cp -a` 已下的 6 个 lmms-lab 基准 → 续跑（省 ~20G/1h）
 
 > 用户已确认该步；运维**直接代做**（vision 下一轮唤醒还有 ~30min，此间每秒白下 ≈5MB）。
 > 目标：把 `/home/app.e0031982/.cache/huggingface/` 里**已有的 5 个 hub 归档 + 6 个 datasets 目录**拷进新 `HF_HOME=/nas_env/app.e0031982/hf_home/`，然后**原样续跑** precache（不重下这 6 个）。
 > ⚠️ 用 `cp -a`（跨文件系统）；🚫 不做任何软链；🚫 不删旧缓存。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 106 · 代做「复用旧缓存」 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
