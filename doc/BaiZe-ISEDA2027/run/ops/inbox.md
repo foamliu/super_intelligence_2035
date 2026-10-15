@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 105 -->
+<!-- RUN_ID: 106 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,64 @@
 
 ---
 
+## RUN_ID 106 — ♻️ **代做「复用旧缓存」**：停 precache → `cp -a` 已下的 6 个 lmms-lab 基准 → 续跑（省 ~20G/1h）
+
+> 用户已确认该步；运维**直接代做**（vision 下一轮唤醒还有 ~30min，此间每秒白下 ≈5MB）。
+> 目标：把 `/home/app.e0031982/.cache/huggingface/` 里**已有的 5 个 hub 归档 + 6 个 datasets 目录**拷进新 `HF_HOME=/nas_env/app.e0031982/hf_home/`，然后**原样续跑** precache（不重下这 6 个）。
+> ⚠️ 用 `cp -a`（跨文件系统）；🚫 不做任何软链；🚫 不删旧缓存。
+
+```bash
+set -u
+echo "=== RUN_ID 106 · 代做「复用旧缓存」 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+OLD="$HOME/.cache/huggingface"; NEW=/nas_env/app.e0031982/hf_home
+VIS=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[0] 记录 precache 现场（pid/父/命令/cwd）"
+PID=$(pgrep -f 'precache_benchmarks.py' | head -1 || true)
+if [ -n "${PID:-}" ]; then
+  echo "pid=$PID"; tr '\0' ' ' < "/proc/$PID/cmdline"; echo
+  PP=$(awk '{print $4}' /proc/$PID/stat 2>/dev/null)
+  echo "ppid=$PP"; tr '\0' ' ' < "/proc/$PP/cmdline" 2>/dev/null; echo
+  echo "cwd=$(readlink /proc/$PID/cwd 2>/dev/null)"
+else echo "(precache 当前未在跑)"; fi
+echo "[0b] runner 脚本是否存在"
+ls -la "$VIS/mllm_bridge/run_precache.sh" "$VIS/run_precache.sh" 2>/dev/null | cut -c1-140
+echo "[1] 停 precache"
+pkill -f precache_benchmarks.py 2>/dev/null; sleep 3
+pgrep -af 'precache_benchmarks.py' || echo "(已停)"
+echo "[2] 拷贝旧缓存 → 新 HF_HOME（cp -a，跨 FS）"
+df -h /nas_env | tail -1 | cut -c1-110
+mkdir -p "$NEW/hub" "$NEW/datasets"
+cp -a "$OLD"/hub/datasets--lmms-lab--ai2d "$OLD"/hub/datasets--lmms-lab--GQA "$OLD"/hub/datasets--lmms-lab--MMBench "$OLD"/hub/datasets--lmms-lab--MMMU "$OLD"/hub/datasets--lmms-lab--textvqa "$NEW/hub/" 2>&1 | tail -3
+cp -a "$OLD"/datasets/lmms-lab___ai2d "$OLD"/datasets/lmms-lab___gqa "$OLD"/datasets/lmms-lab___mm_bench "$OLD"/datasets/lmms-lab___mmmu "$OLD"/datasets/lmms-lab___real_world_qa "$OLD"/datasets/lmms-lab___textvqa "$NEW/datasets/" 2>&1 | tail -3
+echo "[3] 核验"
+ls -d "$NEW"/hub/datasets--lmms-lab--* 2>/dev/null | cut -c1-120
+ls -d "$NEW"/datasets/lmms-lab___* 2>/dev/null | cut -c1-120
+printf '   new HF_HOME size(MB)='; timeout 90 du -sm "$NEW" 2>/dev/null | cut -f1
+echo "[4] 续跑 precache（优先 runner 脚本；否则原样命令）"
+cd "$VIS" || exit 0
+if [ -f "$VIS/mllm_bridge/run_precache.sh" ]; then
+  setsid nohup bash "$VIS/mllm_bridge/run_precache.sh" >> "$LOG" 2>&1 < /dev/null &
+else
+  setsid nohup bash -c "source /nas_train/app.e0031982/miniforge3/etc/profile.d/conda.sh && conda activate py310 && cd $VIS && export HF_HOME=$NEW HF_DATASETS_CACHE=$NEW/datasets https_proxy=http://172.19.92.25:13128 http_proxy=http://172.19.92.25:13128 && python mllm_bridge/precache_benchmarks.py --limit 1" >> "$LOG" 2>&1 < /dev/null &
+fi
+sleep 8
+echo "precache now: $(pgrep -af 'precache_benchmarks.py' | cut -c1-120)"
+echo "[5] 日志尾"; tail -8 "$LOG" 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 106 ==="
+```
+
 ## RUN_ID 105 — 🔍 **找已有评测缓存（避免白重下）**（只读）
 
 > 用户质疑：这些 benchmark 之前测过，应在本机 cache 里 ⇒ 不该从零重下。
 > 本块只读：列出 `.12` 上所有可能位置的 HF 缓存、里面到底有哪些 benchmark、以及历史评测产物。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 105 · 找已有评测缓存 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
