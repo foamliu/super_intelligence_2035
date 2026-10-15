@@ -10526,3 +10526,90 @@ Filesystem                     Size  Used Avail Use% Mounted on
 10.239.23.32:/vol_CTE0_data04   10T   14G  9.9T   1% /nas_env
 === DONE 99 ===
 ```
+
+---
+
+## RUN_ID 100 · 2026-10-15 21:25:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 100 · vision limit50 评测结果巡检 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[评测进程]"; pgrep -af 'lmms|run_lmms_eval|accelerate' 2>/dev/null | grep -v pgrep | cut -c1-120 | head -5
+echo "[结果目录]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | tail -6
+echo "[结果 JSON 逐任务指标]"
+for j in /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/*.json; do
+  [ -f "$j" ] || continue
+  python3 -c "
+import json,sys
+p=sys.argv[1]
+try: d=json.load(open(p))
+except Exception as e: print(p,'PARSE_FAIL',e); raise SystemExit
+r=d.get('results',{})
+print(p.split('/')[-1],'| tasks=',len(r))
+for k,v in list(r.items())[:20]:
+    m=[f'{a}={b:.3f}' for a,b in v.items() if isinstance(b,(int,float)) and ('acc' in a.lower() or 'exact' in a.lower())]
+    print('   ',k,m[:2])
+" "$j"
+done 2>&1 | head -35
+echo "[eval_limit50.log 尾部]"; tail -25 /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/eval_limit50.log 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 100 ==="
+```
+
+**输出**
+```
+=== RUN_ID 100 · vision limit50 评测结果巡检 2026-10-15 21:25:19 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 21:25:19 ===
+[GPU]
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[评测进程]
+29379 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/
+[结果目录]
+total 116
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 20:29 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+-rw-r--r--   1 app.e0031982 app.adm 71122 Oct 15 21:24 eval_limit50.log
+-rw-r--r--   1 app.e0031982 app.adm 16010 Oct 15 20:28 eval.log
+[结果 JSON 逐任务指标]
+[eval_limit50.log 尾部]
+    multi_gpu_launcher(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/accelerate/commands/launch.py", line 815, in multi_gpu_launcher
+    distrib_run.run(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 277, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+mllm_bridge/run_lmms_eval.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-10-15_21:24:28
+  host      : whag0pgpuap12
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 1550471)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+=== [.12] DONE ===
+=== DONE 100 ===
+```
