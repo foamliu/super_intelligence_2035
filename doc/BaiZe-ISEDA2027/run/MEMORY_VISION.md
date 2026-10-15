@@ -4,8 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 10:30（vision report 全景总结交付 · wake #98）**：✅ `reports/report_vision_experiments_summary_zh.html` 已完成并 push（commit bf9ee3a1）。48.5KB / 609 行 / 9 节 / 16 表 / 2 内联 SVG 图（lp-epoch 曲线 + 外部编码器条形图）。所有数字来源于 `EXPERIMENTS_VISION.md` 并标注 §行号。HTML 结构验证通过（标签全部闭合）。下一步：等运维新指令。
-> 📦 2026-10-15 08:16（keepalive · 全任务已完成 · wake #97）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, git 已同步。需要时再读。
+> 🆕 **2026-10-15 ~11:00（MLLM GPU smoke test 7/7 PASSED · wake #99）**：✅ `mllm_bridge/smoke_test_gpu.py` 全 7 项通过。Vision 126.78M(277/277 strict) + Projector 7.87M(512→2560) + Qwen3-4B 4.02B(bf16) = 4.16B total。前向 [2,200,151936] logits ✅，loss=9.44 finite ✅，projector 梯度 fc1=104.29/fc2=229.85 ✅。GPU 峰值仅 11.08GB/80GB。**下一步：Stage-1 Alignment 训练**（冻结 LLM+vision，只训 projector，~2500 步，LR 1e-4）。
+> 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
 > 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
 > 📦 2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp), 报告交付, MLLM bridge 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~02:09（wake #90 ArmC eval chain 进展）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB seed 0 streaming 151/294, eval chain 运行中, CPU 5/5 PASSED。需要时再读。
