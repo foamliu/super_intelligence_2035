@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 98 -->
+<!-- RUN_ID: 99 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,55 @@
 
 ---
 
+## RUN_ID 99 — 🔍 **深度核查 `UltraData-SFT-2605` / `UltraData-RL-2609` 是否真的缺**（只读）
+
+> 背景：10-01 的 `DATA_RESEARCH v1.1` 说 SFT-2605「落盘为空」、RL-2609「未下」；而 `MEMORY_DATA`（10-02）说 SFT-2605 **已重下并逐字节核验一致**、`plan v4 §1.2` 也标「已下满」。本块**实测落定**（上一块 RUN_ID 98 只查到 maxdepth 2，不够深）。
+> 🚫 只读：不下载、不删、不动进程。
+
+```bash
+set -u
+echo "=== RUN_ID 99 · 深度核查 SFT-2605 / RL-2609 $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [1] SFT-2605 盘上实况（深 6） ---"
+P=/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605
+if [ -d "$P" ]; then
+  echo "顶层:"; ls -la "$P" 2>&1 | head -12 | cut -c1-135
+  echo "data/ 下:"; ls -la "$P/data" 2>/dev/null | head -12 | cut -c1-135
+  echo "jsonl 计数(深6) = $(timeout 60 find "$P" -maxdepth 6 -type f -name '*.jsonl' 2>/dev/null | wc -l)"
+  echo "incomplete 计数  = $(timeout 60 find "$P" -maxdepth 6 -type f -name '*.incomplete' 2>/dev/null | wc -l)"
+  echo -n "非 lock 总字节   = "; timeout 90 find "$P" -maxdepth 6 -type f -not -name '*.lock' -printf '%s\n' 2>/dev/null | awk '{s+=$1} END{printf "%d B  (%.2f GB)\n", s, s/1073741824}'
+else echo "MISSING: $P"; fi
+echo "--- [2] RL-2609 在四个盘 / HF 缓存 ---"
+for D in /nas_inference /nas_user /nas_env /nas_train; do
+  Q="$D/app.e0031982/datasets/openbmb/UltraData-RL-2609"
+  printf '%-62s %s\n' "$Q" "$([ -d "$Q" ] && echo EXISTS || echo -)"
+done
+echo "HF hub 缓存里 openbmb 的:"; ls -d /home/app.e0031982/.cache/huggingface/hub/datasets--openbmb--* 2>/dev/null | cut -c1-140
+echo "--- [3] HF 官方事实（API 直连） ---"
+for R in openbmb/UltraData-SFT-2605 openbmb/UltraData-RL-2609; do
+  echo "### $R"
+  timeout 30 curl -s "https://huggingface.co/api/datasets/$R?full=true" | python3 -c "
+import json,sys
+try:
+    d=json.load(sys.stdin)
+except Exception as e:
+    print('  PARSE_FAIL', e); raise SystemExit
+sib=d.get('siblings',[])
+sz=[(s.get('size') or 0) for s in sib]
+print('  gated=',d.get('gated'),'| lastModified=',d.get('lastModified'),'| siblings=',len(sib),'| with_size=',sum(1 for s in sib if s.get('size')),'| totalGB=',round(sum(sz)/1e9,2))
+" 2>&1 | head -4
+done
+echo "--- [4] 当前在跑的下载 ---"
+pgrep -af 'hf download|hf_transfer|huggingface_hub' 2>/dev/null | grep -v pgrep | cut -c1-140 | head -8
+echo "--- [5] 磁盘余量 ---"; df -h /nas_inference /nas_user /nas_env 2>/dev/null | cut -c1-110
+echo "=== DONE 99 ==="
+```
+
 ## RUN_ID 98 — 🔍 **核对纯文本语料盘上实况**（只读；回答「Ultra-FineWeb base 到底下没下」）
 
 > 背景：`DATA_RESEARCH.md v1.1（10-01）` 写「base / UltraX 不在盘上」，而 `plan v4（10-14）§1.2` 写「已下满」。本块只读实测落定。
 > 🚫 不下载、不删除、不动进程；🚫 不做整树 `du`（只对点名目录做有界 `find` 计数 + 一级 `ls`）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 98 · 纯文本语料盘上实况 $(date '+%F %T') · host=$(hostname) ==="
 echo "--- 盘余量 ---"; df -h /nas_train /nas_inference /nas_user /nas_env 2>/dev/null | cut -c1-120
