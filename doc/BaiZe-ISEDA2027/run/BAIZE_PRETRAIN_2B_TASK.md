@@ -18,26 +18,19 @@
 > - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
 > - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
 
-### 🆕 运维指令 · 2026-10-15（⚡ 评测提速：14 集并行 + 大 batch + 8 GPU）· 用户直令 · 最高优先
+### 🆕 运维指令 · 2026-10-15（⚡ 评测提速 v2：自搜 lm_eval 多卡用法 · 8 GPU 用满 · 尽快出结果 + 给 ETA）· 用户直令 · 最高优先
 
-> **用户令（2026-10-15）**：「pretrain 的评测效率是不是不高，只用了 2 卡，显存 GPU 利用都很低，batch size 是不是没设，lm_eval 可以把 14 个评测一起跑，把 batch size 加上去，把 8 个 GPU 给上去。」
+> **用户令（2026-10-15）**：「评测效率太低。你有 web search，自己搜 lm_eval 怎么用多卡/并行框架统筹资源，14 个 task 一次跑、8 GPU 用满，尽快出结果，并给出 ETA。」
 
-**现状（实测 .29）**：评测只用 **1 个 lm_eval 进程占 GPU0（31% util / 5431 MiB）**，其余 7 卡 0% —— 串行 + 小 batch，浪费严重。
+**① 目标**：P-8 final ckpt 的 14 集（常识 8 + 复杂 6）lm-eval 评测，**提速到 8 GPU 打满**，不要串行单卡跑。
 
-**① 停当前串行评测，重排为 14 集并行**：
-- 常识 8 + 复杂 6 = 14 评测**一起跑**，跨 **8 GPU 并行**（每卡 1–2 任务，参考 `baize_p6_run_full.sh` 的「每卡一任务」模式，扩到 14 任务）。
-- `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7`（.29 已空）。
+**② 做法（你自行 web search lm_eval 官方多卡/加速方案，具体参数你决定）**：
+- 用 lm_eval **一次指定 14 个 task**，并用**并行框架统筹资源**（如 `accelerate launch --multi_gpu --num_processes 8` 数据并行，或 `--model vllm` 多卡推理——以你 web 搜到的官方推荐为准）。
+- batch size 等按 GPU 利用率自行调优到打满；🚫 不要逐卡手动分任务。
 
-**② batch size 加大（逐集调到「接近显存上限、GPU util 打满、不 OOM」）**：
-- 常识短序列（boolq/piqa/sciq/winogrande/arc-e/arc-c/obqa）：batch **64–128**
-- 中长（hellaswag）：**32–64**
-- 复杂推理生成（gsm8k/math/humaneval/mbpp）：**8–16**（生成类别贪大）
-- mmlu/bbh：**16–32**
-- 加 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 防碎片 OOM。
+**③ 交付**：① 尽快出全部 14 集分数 + 8/6 Avg；② **明确给出 ETA（几点跑完）**；③ 中文 HTML 报告。
 
-**③ 交付不变**：14 集逐集分数 + 8 集 Avg + 6 集 Avg + 44B scaling 点 + 中文 HTML；报告里**记录每集 batch_size**。
-
-**④ 纪律**：评测纯推理、8 GPU 可用；🚫 不重训/不改 ckpt；某集 OOM 就单独降该集 batch（不整体重来）；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+**④ 纪律**：评测纯推理、8 GPU 可用（.29 已空）；🚫 不重训/不改 ckpt；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
 
 ### 🆕 运维指令 · 2026-10-15（📊 用 P-8 final ckpt 跑 lm-eval 评测：常识 8 集 + 复杂 6 集）· 用户直令 · 最高优先
 
