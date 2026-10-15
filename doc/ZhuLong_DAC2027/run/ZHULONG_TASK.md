@@ -17,6 +17,21 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-15（二十五）— ⏰ 催办：消融试验中文建议书（指令二十一）尚未交付 · 现在就要【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「zhulong：消融实验中文建议书还是没给我。」
+
+**① 现状**：指令(二十一)「15 天窗口消融建议」纯写作、不占评测，但你连续排了(二十二)(二十三)(二十四)后一直没产出，`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html` 仍未生成。
+
+**② 立即产出**（占 readback_binary r2 code-gen 的空窗期，🚫 不占 GPU、不打断主线评测）：
+- 按指令(二十一)要求：结合当前进展（B/C1/C2 12 臂 5/5 + S1 readback_binary 重测中）+ **15 天 deadline**，提出「进一步消融试验」建议。
+- 每条四要素：动机 · 做法+成本（GPU/沙盒/墙钟）· 优先级（必做/建议/可选）· 与 S1/B 臂编排。
+- 文末附「**15 天排期表**」（S1 收尾 + readback echo + B.glm-5.3-flash/deepseek-v4-flash + 其它候选）。
+
+**③ 交付**：`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html`（中文自包含）。
+
+**④ 纪律**：纯 CPU 写作、现在就写；数字与 `MEMORY_ZHULONG.md` 看板一致；commit 前缀 `zhulong plan:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（二十四）— 📊 收集 readback 轴 echo 数据强化论文论证【用户直令 · 最高优先】
 
 > **用户令（2026-10-15）**：「好的，如果确认有价值，既然我们花了这么多时间，那应该收集更多信息，加入论文，强化论证依据。」
