@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 95 -->
+<!-- RUN_ID: 96 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,44 @@
 
 ---
 
+## RUN_ID 96 — 🔍 **复查 vision：git 是否已能推 + 17 集评测是否启动**（只读）
+
+> **背景**：RUN_ID 94 已修 `.12` 的 git proxy（92.23），RUN_ID 95 验证 `fetch/push` 双向 exit=0。
+> **本块**：确认 ① vision loop 本轮是否成功 `auto-commit + push`；② 17 集评测有没有按新指令（大 batch + 多卡）启动、数据落地多少。
+> 🚫 只读，不动任何进程/文件。
+
+```bash
+set -u
+echo "=== RUN_ID 96 · 复查 vision 推送/评测 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[评测/训练进程]"; pgrep -af 'lmms|run_lmms_eval|stage2|stage15|inference_eval' 2>/dev/null | grep -v pgrep | cut -c1-150 | head -10
+echo "[git 本地/远端]"; git log --oneline -2; echo "ahead/behind(origin/main...HEAD) = $(git rev-list --left-right --count origin/main...HEAD 2>&1)"
+echo "--- vision loop 日志（push/唤醒） ---"
+tail -25 /tmp/baize_vision_loop.log 2>/dev/null | grep -iE 'push|commit|wake up|cline returned|FAILED|index.lock' | tail -10 | cut -c1-175
+echo "--- 结果目录 mllm_eval_results ---"
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | head -12
+echo "--- stage2 / stage15 ckpt ---"
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2 2>/dev/null | head -8
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15 2>/dev/null | head -6
+echo "--- HF datasets 缓存（17 集落地情况） ---"
+ls /home/app.e0031982/.cache/huggingface/datasets 2>/dev/null | head -25
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 96 ==="
+```
+
 ## RUN_ID 95 — ✅ **验证 `.12` git 读写通道（proxy 已生效）+ vision 是否已能推**（只读 + 一次 no-op push）
 
 > **背景**：RUN_ID 94 已在 `.12` 写入 `git config --global http(s).proxy = http://172.19.92.23:13128`，`ls-remote` 已通过。
 > **本块**：验证**读（fetch）+ 写（no-op push）**两条路径都通，并看 vision loop 是否还报 `push FAILED`。
 > ⚠️ 只读 + 一次无提交的 push；🚫 不 commit、不 add、不杀进程。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 95 · 验证 .12 git 读写通道 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
