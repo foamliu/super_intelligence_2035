@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ 已成片 · EP01 晨钟 视频生成中 12/54（R2V 28 + T2V 26 后台跑批）· 合成/字幕脚本已就绪）；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ 已成片 · EP01 晨钟 视频生成中 21/54（R2V 10/28 + T2V 11/26 后台跑批）· 合成/字幕脚本已就绪）；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,9 +12,9 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP01《晨钟》视频生成后台跑批中（54 镜 · 12/54 落盘）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；EP01 参考图 16 张 ✅ + 生成脚本三件套 ✅ + 合成/字幕脚本两件套 ✅（synth_ep01.py / gen_ep01_subtitles.py · dry-run 通过）
-当前动作:     EP01 H3 视频生成后台跑批续跑（R2V 28 mp=0.4 + T2V 26 mp=0.6 · steps=10 · --skip-existing --wait）；ComfyUI 队列 running 1 / pending 1；进程 py 1488/20976 均 ALIVE
+PHASE:        S3 放量 → EP01《晨钟》视频生成后台跑批中（54 镜 · 21/54 落盘）
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（R2V 29+T2V 19 · 成片 95.1MB）；18_暖阳 54/54 ✅（R2V 32+T2V 22 · 成片 87.5MB）；EP01 参考图 16 张 ✅ + R2V/T2V 生成脚本 ✅ + synth_ep01.py / gen_ep01_subtitles.py ✅（dry-run 通过）
+当前动作:     EP01 H3 视频生成后台跑批续跑（R2V 10/28 + T2V 11/26 · mp 0.4/0.6 · steps=10 · --skip-existing --wait）；ComfyUI 队列 running 1 / pending 1；进程 py 1488/20976 均 ALIVE
 下一步:       每小时核 EP01 出片进度（OUTPUT/01_晨钟/videos/ EP01_SHOT-*.mp4 计数）→ 全 54/54 落盘后跑 gen_ep01_subtitles.py + synth_ep01.py → 合成 + QC
 阻塞:         无
 ERROR_COUNT:  0
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-15（EP01 晨钟 出片核验 12/54 · 预写 synth_ep01.py + gen_ep01_subtitles.py · 后台跑批续跑中）
+- **上次唤醒**：2026-10-15（EP01 晨钟 出片核验 21/54 · R2V 整改闭环盘点 · 后台跑批续跑中）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-15 · S3 放量 · EP01《晨钟》出片核验 21/54 ✅（R2V 10/28 + T2V 11/26 · 后台跑批健康）+ R2V 整改闭环盘点**：本轮核验 EP01 后台跑批进度，并盘点 2026-10-12「推翻旧法·R2V 重做」整改的落地情况。
+  - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash` 先撞「cannot lock ref」（并发 git 进程所致 · 瞬态），复拉后 HEAD 从 b0b880a4 推进到 c2e3b10c（仍 behind 1 → origin/main 82bee819）；工作区已净（BaiZe 线改动已并入上游，非本线），3 条旧 stash 非本线、不碰。
+  - **自检**：ComfyUI 可达（RTX 4090 16GB · 空闲 6.6GB）· 队列 running 1 / pending 1 · ffmpeg 在 · MCP comfyui-drama 可用。
+  - **出片核验**：`OUTPUT/01_晨钟/videos/` **21/54 镜**落盘（R2V 10 = 02/04/05/06/07/08/09/10/11/12；T2V 11 = 01/03/13/14/15/19/22/23/24/26/29）；两进程 ALIVE（R2V pid 1488 / T2V pid 20976 = .pid 文件一致）。
+  - **spot QC（ffprobe 实测）**：镜12 R2V = h264 864×480 24fps 107帧 4.458s ✅；镜29 T2V = h264 1056×608 24fps 107帧 4.458s ✅；镜11 R2V = 864×480 73帧 3.042s ✅ —— 分辨率/帧率/`17k+5` 时长量化全部吻合。
+  - **★ R2V 整改闭环核验（运维指令 ①③④ 已落地）**：`PIPELINE.md` §1 已改「参考图 → R2V 直出」+ §2/§3 参数路由 + legacy I2V/TTS 停用 ✅；`STEM_FEST_PLAYBOOK.md` §3 路由行已更正「有角色→R2V（唯一）；无角色→T2V」✅；`OUTPUT/_deprecated_t2i_2026-10-13/`（frames/videos）在位 ✅；13/18 成片落盘（`EP13_外骨骼_成片.mp4` 95.1MB / `EP18_暖阳_成片.mp4` 87.5MB）✅。
+  - **下一步**：每小时核 EP01 出片进度（R2V 缺 18 镜 / T2V 缺 15 镜）→ 全 54/54 落盘后跑 `gen_ep01_subtitles.py`（SRT）→ `synth_ep01.py`（concat 音画钉长 + scale=1280:720 归一 + libass 硬字幕）→ QC。
 
 - **2026-10-15 · S3 放量 · EP01《晨钟》出片核验 + 预写合成/字幕脚本 ✅（12/54 落盘）**：本轮核验 EP01 后台跑批进度并预写合成脚本（跑批期间不占 ComfyUI）。
   - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase` 拉到新提交（zhulong 线 `fff139b7` 等，非本线）。
