@@ -30,6 +30,24 @@
 ⇒ **不要再把时间花在排查 git/push 上**；下一轮 `git_push_if_needed` 应直接成功。若仍失败，回报 `git fetch`/`git push` 的**原文报错**。
 > 📌 口径：**连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co（🚫 不用 hf-mirror）**。见 `run/ops/README.md §7`。
 
+### 🆕 运维指令 · 2026-10-15 21:35（🔧 **limit50 评测崩因 = 磁盘满** → 换 HF 缓存盘 + 预建缓存 + 复跑）· 运维实测 · 最高优先
+
+> **实测事实（RUN_ID 100/101/102，非推测）**
+> - 20:26 启动的 8 卡 `--limit 50` 评测 **21:24:28 崩**：`OSError: [Errno 28] No space left on device`（pyarrow 写 datasets 生成时）→ `DatasetGenerationError` → rank1 退出 1 → `ChildFailedError`；**8 卡随后全空闲、无任何结果 JSON**。
+> - `.12` 磁盘：`/home` **196G（140G 用 / **47G 空闲** / 75%）** ← **HF 缓存默认就落这儿**（`~/.cache/huggingface` = datasets 11G + hub 12G = **23G**）；`/` 352G free；`/tmp` 69G free；**`/data` 6.8T free**；**`/nas_env` 9.9T free**。
+> - **判定**：8 个 rank 同时构建/写 datasets 缓存 ⇒ 在只剩 47G 的 `/home` 上形成写入突发 ⇒ 瞬时写满（崩后临时文件被清理，所以现在再查并不"满"）。
+>
+> **① 换缓存盘（必做）**：HF 缓存从 `~/.cache`（/home，仅 196G）迁到**大盘**，且**所有 rank 共用**：
+> `export HF_HOME=/nas_env/app.e0031982/hf_home`（或 `/data/app.e0031982/hf_home`）、`export HF_DATASETS_CACHE=$HF_HOME/datasets`、`export HF_HUB_ENABLE_HF_TRANSFER=1`，下载/加载一律走 proxy `92.25`。
+>
+> **② 先单进程预建缓存（必做）**：**先用单卡/单进程**把 17 集的 dataset cache 建好（或 `--limit 1` 单卡过一遍），**再**开 8 卡 multi-GPU —— 避免 8 rank 重复写同一份缓存。
+>
+> **③ 资源看护**：开跑前 `df -h /home $HF_HOME`（要求可用 ≥50G）；跑中每隔几分钟看一眼；wrapper 里加低余量告警。
+>
+> **④ 失败必须落原文**：把 `No space left on device` / `ChildFailedError` 这类**原文报错**写进 `MEMORY_VISION.md`（本次「GPU 全空闲 + 无结果 JSON」就是它）。
+>
+> **⑤ 复跑顺序**：`--limit 50` × 17 集（验证）→ 全量 17 集 → 结果表 + 中文 HTML 报告。
+
 ### 🆕 运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」
