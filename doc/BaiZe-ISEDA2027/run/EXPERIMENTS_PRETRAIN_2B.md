@@ -227,20 +227,34 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 | 任务 | BaiZe P-8 | 状态 | 备注 |
 |:--|--:|:--|:--|
-| GSM8K | 1.50% | ✅ | flexible-extract, limit=200 |
+| GSM8K | 1.52% | ✅ | flexible-extract, 5-shot, full 1319 samples |
 | MATH-500 | 0.00% | ✅ | exact_match |
 | MMLU | 23.79% | ✅ | acc, 0-shot（唯一与 Xmodel-2/Phi-1.5 0-shot 对齐） |
-| BBH | ⏳ | 进行中 | 2700 samples, ~34% done |
-| HumanEval | ⏳ | 待启动 | |
-| MBPP | ⏳ | 待启动 | |
+| BBH | 14.04% | ✅ | flexible-extract, 0-shot, 2700 samples |
+| HumanEval | 0.61% | ✅ | pass@1=0.0061, 1/164 solved, --confirm_run_unsafe_code |
+| MBPP | 0.00% | ✅ | pass_at_1, --confirm_run_unsafe_code |
 
-### Complex6 对比（MMLU 唯一 0-shot 对齐）
+### Complex6 对比（0-shot 对齐项加粗）
 
-| 模型 | MMLU (0-shot) | GSM8K (0/5-shot) | MATH (0/4-shot) |
-|:--|--:|--:|--:|
-| BaiZe P-8 | **23.79%** | 1.50% | 0.00% |
-| Xmodel-2 | 48.87% | 55.88% (5-shot) | 25.50% (4-shot) |
-| Phi-1.5 | 41.75% | 32.15% (5-shot) | 3.18% (4-shot) |
+| 模型 | MMLU (0-shot) | GSM8K (0/5-shot) | MATH (0/4-shot) | BBH (0/3-shot) | HumanEval (0-shot) | MBPP (0-shot) |
+|:--|--:|--:|--:|--:|--:|--:|
+| BaiZe P-8 | **23.79%** | **1.52%** | 0.00% | **14.04%** | **0.61%** | **0.00%** |
+| Xmodel-2 | 48.87% | 55.88% (5-shot) | 25.50% (4-shot) | 48.40% (3-shot) | 29.88% | 29.20% |
+| Phi-1.5 | 41.75% | 32.15% (5-shot) | 3.18% (4-shot) | 28.81% (3-shot) | 36.59% | 35.40% |
+
+> Xmodel-2 Complex6 数据来自论文 Table 3（arxiv 2412.19638）。
+> BaiZe 与 Xmodel-2/Phi-1.5 均为 0-shot 评测，但 Xmodel-2 论文使用 few-shot（GSM8K 5-shot, MATH 4-shot, BBH 3-shot），故**仅 MMLU 可直接对比**。
+
+### Xmodel-2 Commonsense Reasoning 参考线（论文 Table 2，1.5T tokens）
+
+| 模型 | ARC-c | ARC-e | BoolQ | HellaSwag | OpenBookQA | PiQA | SciQ | Winogrande | Avg |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| **Xmodel-2-1.2B** | 39.16 | 71.55 | 74.65 | 47.45 | 29.20 | 74.81 | 93.60 | 63.93 | **61.79** |
+| BaiZe P-8 (44.4B) | 26.54 | 55.60 | 57.09 | 33.41 | 21.20 | 66.49 | 72.70 | 51.07 | **48.01** |
+| BaiZe P-5b (20.0B) | 25.94 | 41.96 | 61.41 | 29.24 | 31.20 | 58.60 | 51.60 | 51.70 | **47.91** |
+
+> Xmodel-2 在 1.5T tokens（34× BaiZe 训练量）达到 Common8 Avg 61.79%。
+> BaiZe 在 44.4B tokens 达到 48.01%，差距主要来自训练量（34×）与参数量（1.2B vs 2.2B 架构差异）。
 
 ### 数据缩放曲线（P-5b 0.655B→20B + P-8 44.4B）
 
@@ -256,3 +270,110 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 > 从 20B→44.4B tokens，raw acc 仅提升 +0.10pp，harness 均分完全持平 → Common8 饱和。
 > 详细报告含 SVG 缩放曲线、逐项对比表、Xmodel-2/Phi-1.5 参考线。
+
+### P-8 中间 checkpoint Common8 缩放评测（p8_adamw, 2026-10-15）
+
+> 训练配置：GBS=1024, seq=4094, ~4.193M tokens/step, 总 10590 步 = 44.4B tokens
+> 中间 ckpt 来自 `p8_adamw`（主训练），final ckpt 来自 `p8_adamw_decay`（LR 衰减阶段 +1149 步）
+
+#### iter_1049（~4.4B tokens, 10% 训练进度）— ✅ 全 8 集完成
+
+| 任务 | acc | acc_norm |
+|:--|--:|--:|
+| ARC-Challenge | 19.37% | 23.63% |
+| ARC-Easy | 47.10% | 42.09% |
+| BoolQ | 61.74% | — |
+| HellaSwag | 27.90% | 29.43% |
+| OpenBookQA | 15.60% | 29.60% |
+| PiQA | 60.99% | 60.72% |
+| SciQ | 58.10% | 52.20% |
+| Winogrande | 52.17% | — |
+| **raw acc Avg** | **42.86%** | |
+| **harness Avg** | **43.95%** | |
+
+#### iter_3147（~13.2B tokens, 30%）— ✅ 全 8 集完成
+
+| 任务 | acc | acc_norm |
+|:--|--:|--:|
+| ARC-Challenge | 22.01% | 26.28% |
+| ARC-Easy | 54.29% | 48.02% |
+| BoolQ | 62.05% | — |
+| HellaSwag | 31.15% | 35.89% |
+| OpenBookQA | 19.00% | 31.60% |
+| PiQA | 66.10% | 66.32% |
+| SciQ | 67.10% | 61.60% |
+| Winogrande | 50.91% | — |
+| **raw acc Avg** | **46.58%** | |
+| **harness Avg** | **47.83%** | |
+
+#### iter_5245（~22.0B tokens, 50%）— ✅ 全 8 集完成
+
+| 任务 | acc | acc_norm |
+|:--|--:|--:|
+| ARC-Challenge | 24.49% | 28.33% |
+| ARC-Easy | 55.81% | 48.74% |
+| BoolQ | 56.88% | — |
+| HellaSwag | 32.74% | 38.87% |
+| OpenBookQA | 21.40% | 33.00% |
+| PiQA | 67.36% | 67.95% |
+| SciQ | 70.40% | 64.10% |
+| Winogrande | 50.43% | — |
+| **raw acc Avg** | **47.44%** | |
+| **harness Avg** | **48.54%** | |
+
+#### iter_7343（~30.8B tokens, 70%）— ✅ 全 8 集完成
+
+| 任务 | acc | acc_norm |
+|:--|--:|--:|
+| ARC-Challenge | 24.06% | 27.82% |
+| ARC-Easy | 56.65% | 50.38% |
+| BoolQ | 59.36% | — |
+| HellaSwag | 33.50% | 40.54% |
+| OpenBookQA | 21.80% | 33.40% |
+| PiQA | 67.46% | 68.66% |
+| SciQ | 72.50% | 64.30% |
+| Winogrande | 51.54% | — |
+| **raw acc Avg** | **48.36%** | |
+| **harness Avg** | **49.50%** | |
+
+#### iter_9441（~39.6B tokens, 89%）— ✅ 全 8 集完成
+
+| 任务 | acc | acc_norm |
+|:--|--:|--:|
+| ARC-Challenge | 24.23% | 29.35% |
+| ARC-Easy | 57.91% | 52.19% |
+| BoolQ | 51.13% | — |
+| HellaSwag | 34.07% | 41.74% |
+| OpenBookQA | 20.60% | 33.40% |
+| PiQA | 67.57% | 68.88% |
+| SciQ | 72.80% | 65.80% |
+| Winogrande | 52.09% | — |
+| **raw acc Avg** | **47.55%** | |
+| **harness Avg** | **49.32%** | |
+
+#### P-8 内部缩放曲线（含 P-5b + P-8 中间点）
+
+| Tokens | 来源 | raw acc Avg | harness Avg |
+|--:|:--|--:|--:|
+| 0.655B | P-5b | 31.09% | 33.26% |
+| 1.31B | P-5b | 34.06% | 36.02% |
+| 2.62B | P-5b | 40.38% | 40.99% |
+| 4.4B | **P-8 iter_1049** | **42.86%** | **43.95%** |
+| 5.24B | P-5b | 43.84% | 44.40% |
+| 10.5B | P-5b | 46.31% | 47.14% |
+| 13.2B | **P-8 iter_3147** | **46.58%** | **47.83%** |
+| 20.0B | P-5b | 47.91% | 49.22% |
+| 22.0B | **P-8 iter_5245** | **47.44%** | **48.54%** |
+| 30.8B | **P-8 iter_7343** | **48.36%** | **49.50%** |
+| 39.6B | **P-8 iter_9441** | **47.55%** | **49.32%** |
+| **44.4B** | **P-8 final** | **48.01%** | **49.22%** |
+
+> P-8 iter_1049 (4.4B) 的 42.86% 与 P-5b 5.24B 的 43.84% 接近，
+> 表明不同训练配置在相近 token 量时 Common8 表现趋于一致。
+> 
+> **P-8 内部缩放趋势**（raw acc Avg）：4.4B→42.86%, 13.2B→46.58%, 22.0B→47.44%, 30.8B→48.36%, 39.6B→47.55%, 44.4B→48.01%
+> 在 ~30B tokens 后进入平台期（48±0.5%），与 P-5b 独立验证的 20B→47.91% 吻合。
+> 
+> **Complex6 完整结果**（P-8 final, 44.4B）：
+> GSM8K=1.52%, MATH=0%, MMLU=23.79%, BBH=14.04%, HumanEval=0.61%, MBPP=0%
+> → Complex6 Avg = **6.66%**（Xmodel-2: 39.62%, 但训练量 34× + 部分任务 few-shot）
