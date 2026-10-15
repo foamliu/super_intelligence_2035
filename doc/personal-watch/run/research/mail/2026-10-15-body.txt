@@ -1,0 +1,42 @@
+paul 您好，
+
+今日（2026-10-15）arXiv 当日筛选中精选 5 篇，5 篇 PDF 均随附（合计约 10.13 MB，单封上限 20 MB）。
+
+一、本轮取数说明（如实）
+- arXiv 公告批次本轮大幅刷新：2026-10-09 → 2026-10-14（totalResults 630616 → 633207），72h 窗口内新增 267 条候选 ⇒ 本日 5 篇**全部取自当日新批**（非承接旧候选池）。
+- 5 篇均已用 id_list 逐条复核（HTTP 200 + application/atom+xml + published 有效）。
+- 说明：本日 06:00 轮与日间轮未运行，5 篇由 18:00 单轮一次产出（故不设「早报 / 晚报」分段）；2026-10-14 日报因全 4 窗未运行而缺档，如实登记、不追补。
+- 原文标题照抄未改写；文中数字均为「论文作者自报」，我们未复现。
+
+二、精选清单（3 篇「借鉴」+ 2 篇「科普 / 选题参考」）
+
+【借鉴｜与 BaiZe / ZhuLong 强相关】
+
+1. Mixed Precision Scaling Laws for Quantized Pretraining
+   arXiv:2610.17637 ｜ 附件：是
+   为何值得读：把「量化对模型容量的影响」与「量化对优化效率的影响」分开建模，给出前向 / 反向混精度训练的规模律（显式刻画前向 / 反向量化带来的持续优化误差）。对口 BaiZe 预训练「规模律 → 算力 / 精度预算怎么分」这条主线：若要在 2B 规模做 bf16 以外的低精度训练，这是一条可「先算再试」的预测式；其「逐层混精度 + 硬件感知算力预算」结论可作为规模律实验矩阵的候选维度。⚠️ 数字为作者自报。
+
+2. MLAfication: Efficiently Enabling High-Fidelity MLA for Modern LLMs
+   arXiv:2610.17202 ｜ 附件：是
+   为何值得读：给出一条「不必从头重训」的 MHA / GQA → MLA 转换路线，且明确支持 QKNorm 与现代 MoE（恰是既有 MHA2MLA / TransMLA 不覆盖的两处）。对口 BaiZe 的高效推理与长上下文 / 显存带宽约束：KV cache 是长上下文推理第一成本项，其中「校准式 KNorm / 参数高效蒸馏 / 激活感知联合 KV 初始化」可拆分复用到我们自己的注意力改造实验。⚠️ 数字为作者自报（Qwen3-30B-A3B 服务侧结果）。
+
+3. SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming
+   arXiv:2610.20193 ｜ 附件：是
+   为何值得读：把「开发历史 → 可执行 SWE 训练任务」的构造流程工程化（渐进验证 + 弹性流式执行 + 复用已有产物），规模化到 80,874 个经验证任务 / 118,688 条成功轨迹。对口 ZhuLong 的 code / agent harness 数据构造与评测：其「渐进构造 + 负载自适应调度」的数据管线设计可直接对照我们的 agent 训练数据构建成本。
+
+【科普｜选题 / 跨域参考】
+
+4. Moral Combat: Exploiting Moral Foundations Theory to Jailbreak LLMs（本日 TOP-1 · 已出《论文两分钟》分镜脚本）
+   arXiv:2610.19587 ｜ 附件：是
+   为何值得读：用「道德基础理论」把被拒绝的有害请求重述为「正当 / 美德」请求，从而越过安全护栏 —— 话题大众零门槛理解、传播力强，且安全基准在所违反的道德基础上分布不均衡。对口 AI 安全评测与护栏设计：可作为「安全对齐评测要覆盖哪些心理维度」的思路参考。
+   ⚠️ 仅作研究动态转述，本文日不做任何可操作攻击方法的转述。
+
+5. When Extremists Enter LLM Societies: Investigating Extreme Behavior in Multi-Agent Systems
+   arXiv:2610.19863 ｜ 附件：是
+   为何值得读：在受控 LLM 多智能体系统里掺入固定比例的「极端者」agent（EXAM 框架），在选举 / 金融危机 / 疫情舆论 / 囚徒困境四类场景中观察集体偏移（作者自报：小而持续的尾部群体产生可测量的、依赖模型与场景的偏移）。对口多智能体模拟的可信度边界：提示「社会模拟中不能忽略少数派」。
+
+三、附件
+- 5 个 PDF：2610.17637（26 页）/ 2610.17202（12 页）/ 2610.20193（20 页）/ 2610.19587（17 页）/ 2610.19863（21 页），合计 10,623,379 B ≈ 10.13 MB（单封上限 20 MB）。
+- 下载校验（本轮补跑）：逐文件 `%PDF-` 头 + 尾部 `%%EOF` + `pdfinfo` 页数 + `pdftotext` 正文可解析（校验脚本 `research/raw/pdf_dl_r92.sh`，日志 `/tmp/pdf_dl_r92.log`）。
+
+—— 《超级智能2035》· research 自动日报
