@@ -1,9 +1,9 @@
-  [RESUME] Skipping 116 completed for codex
+  [RESUME] Skipping 298 completed for codex
 Serial kimi eval: harness=codex model=glm-5.3-flash
-  Total=300 Pending=184 Skip=116 Concurrency=1
+  Total=300 Pending=2 Skip=298 Concurrency=1
 
 ############################################################
-# [1/184] codex x django__django-16873
+# [1/2] codex x django__django-16873
 ############################################################
 
 ============================================================
@@ -11,3 +11,13 @@ Serial kimi eval: harness=codex model=glm-5.3-flash
 
 [RUN] codex on django__django-16873 ...
   [QUOTA] codex: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] codex: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] codex on django__django-16873 ...
+  => django__django-16873 | codex | quota-blocked
+
+############################################################
+# [2/2] codex x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for codex

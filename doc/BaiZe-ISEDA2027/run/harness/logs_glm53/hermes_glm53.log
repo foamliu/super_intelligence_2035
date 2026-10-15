@@ -1,12 +1,13 @@
-  [RESUME] Skipping 17 completed for hermes
+  [RESUME] Skipping 158 completed for hermes
 Serial kimi eval: harness=hermes model=glm-5.3-flash
-  Total=300 Pending=283 Skip=17 Concurrency=1
+  Total=300 Pending=142 Skip=158 Concurrency=1
 
 ############################################################
-# [1/283] hermes x django__django-11564
+# [1/142] hermes x django__django-16873
 ############################################################
 
 ============================================================
-[SETUP] django__django-11564 for hermes
+[SETUP] django__django-16873 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s (exponential backoff)...
 
-[RUN] hermes on django__django-11564 ...
+[RUN] hermes on django__django-16873 ...

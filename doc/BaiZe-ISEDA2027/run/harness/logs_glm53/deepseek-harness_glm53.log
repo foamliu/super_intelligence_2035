@@ -1,13 +1,14 @@
-  [RESUME] Skipping 153 completed for deepseek-harness
+  [RESUME] Skipping 298 completed for deepseek-harness
 Serial kimi eval: harness=deepseek-harness model=glm-5.3-flash
-  Total=300 Pending=147 Skip=153 Concurrency=1
+  Total=300 Pending=2 Skip=298 Concurrency=1
 
 ############################################################
-# [1/147] deepseek-harness x django__django-16873
+# [1/2] deepseek-harness x django__django-16873
 ############################################################
 
 ============================================================
 [SETUP] django__django-16873 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s (exponential backoff)...
 
 [RUN] deepseek-harness on django__django-16873 ...
   [QUOTA] deepseek-harness: quota exhausted, waiting 300s (retry 2/3)...

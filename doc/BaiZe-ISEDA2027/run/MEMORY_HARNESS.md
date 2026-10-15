@@ -6,7 +6,7 @@ WAITING: 1
 > **🆕 2026-10-14→15 glm53 7×300 任务**：Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅。
 > **🔴 DATA-LOSS BUG FIXED (2026-10-15 10:03)**：`save_results()` 在 JSON parse error 时静默 `current=[]` → 只写当前 harness 条目 → **843 条数据丢失**（codex 300/deepseek 300/opencode 126/cline-patched 117）。已从 git R400 恢复 1178 条 + 合并 8 条新条目 = **1186 条**。修复 `save_results`：① parse error 时 **skip write**（不再 `current=[]`）② atomic write（tmpfile+rename）③ lock file `open('a')` 不截断。全部 7 路已重启（`--resume`，跳过已完成的）。
 > **P1-2 rerun** ✅ DONE：rerun_blocked.py 54/54 完成（4 resolved, 42 pbf, 8 blocked）。累计 kimi 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄：**1186/2100 entries (56.5%), 306 resolved (25.8%), 924 pending**。Per-harness: codex 300(80 DONE,2 pending), deepseek 300(71 DONE,2 pending), hermes 159(158 done,142 pending), opencode 126(122 done,178 pending), cline-patched 117(116 done,184 pending), claude-code 103(103 done,197 pending), pi 81(81 done,219 pending)。全部 7 路已重启（PIDs 2918026~2918183, etimes~0, ppid=1, stat=SNs）。ETA ~30h。
+> **glm53 7×300** 🔄：**1194/2100 entries (56.9%), 306 resolved (25.6%), 906 pending**。Per-harness: codex 300/300 DONE(80 resolved,26.7%), deepseek 300/300 DONE(71,23.7%), hermes 159(31,19.5%,141 pending), opencode 126(28,22.2%,174 pending), cline-patched 117(30,25.6%,183 pending), claude-code 109(31,28.4%,191 pending), pi 82(35,42.7%,218 pending)。5 harnesses running (PIDs 2918026~2918183, etimes~2340s, ppid=1, stat=SNs)。Most stuck on django-16873 quota-blocked (300s retries)。save_results fix verified (JSON growing without data loss)。ETA ~30h。
 
 > 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
 > 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
@@ -14,11 +14,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RESTARTED after data-loss fix (1186/2100, 306 resolved, 924 pending)
+PHASE:        glm53 7x300 RUNNING — post-restart monitoring (1194/2100, 306 resolved, 906 pending)
 已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574→621 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 RUNNING + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ (save_results atomic write + skip-on-parse-error)
-当前动作:     glm53 7x300 RESTARTED — 1186/2100 entries (56.5%), 306 resolved (25.8%), 924 pending. 7 harnesses running (PIDs 2918026~2918183, ppid=1, stat=SNs, just started ~10:03). Per-harness: codex 300(80,2 pending), deepseek 300(71,2 pending), hermes 159(158 done,142 pending), opencode 126(122 done,178 pending), cline-patched 117(116 done,184 pending), claude-code 103(103 done,197 pending), pi 81(81 done,219 pending). Proxies healthy (9092→/v1, 9093→/v1).
-下一步:       ① Monitor glm53 7x300 (ETA ~30h, 924 remaining) ② Verify save_results fix works (check JSON grows without data loss) ③ When done: report_harness_glm53_vs_kimi_7x300.html ④ Restore kimi configs
-阻塞:         <无> — data-loss bug fixed, all 7 harnesses restarted with --resume
+当前动作:     glm53 7x300 monitoring R402 — 1194/2100 entries (56.9%), 306 resolved (25.6%), 906 pending. 5 harnesses running (PIDs 2918026~2918183, etimes~2340s, ppid=1, stat=SNs). codex+deepseek DONE (300/300 each). Most harnesses stuck on django-16873 quota-blocked (300s retries). save_results fix verified (8 new entries since restart, no data loss). Proxies healthy (9092→/v1, 9093→/v1).
+下一步:       ① Monitor glm53 7x300 (ETA ~30h, 906 remaining) ② When done: report_harness_glm53_vs_kimi_7x300.html ③ Restore kimi configs
+阻塞:         <无> — data-loss bug fixed, 5 harnesses running with --resume, codex+deepseek complete
 ERROR_COUNT:  0
 ```
 
@@ -39,6 +39,7 @@ ERROR_COUNT:  0
 - [08:44] R399: glm53 monitoring 1166/2100, McNemar 99.7% agreement. 📦 TASK=28.0KB ✓ / MEMORY=28.5KB ✓.
 - [09:19] R400: glm53 monitoring 1177/2100 (56.0%), 305 resolved. 5 harnesses active. ETA ~30h. 📦 TASK=28.0KB ✓ / MEMORY=28.7KB ✓.
 - [10:03] **R401: 🔴 DATA-LOSS BUG FOUND + FIXED** — glm53_pilot_results.json shrunk from 1178→343 entries (lost codex 300/deepseek 300/opencode 126/cline-patched 117). Root cause: `save_results()` line 341 `except: current = []` silently discards all data on JSON parse error, then writes ONLY current harness's entries. **Fix**: ① parse error → skip write (not `current=[]`) ② atomic write (tmpfile+os.rename) ③ lock file `open('a')` not `'w'`. Restored 1178 from git R400 + merged 8 new from truncated backup = 1186 entries (306 resolved). All 7 harnesses restarted with `--resume` (PIDs 2918026~2918183). API probe /v1 → 200 ✅. Proxies 9092/9093 healthy. 📦 体积：TASK=28.0KB ✓ / MEMORY=29.0KB ✓ / 归档 0B.
+- [10:43] **R402: glm53 7×300 post-restart monitoring** — 1194/2100 (56.9%), 306 resolved (25.6%), 877 pbf, 7 qb, 3 blk. +8 entries since R401 restart (39 min). **codex+deepseek COMPLETE** (300/300 each, exited). 5 harnesses running (PIDs 2918026~2918183, etimes~2340s, ppid=1, stat=SNs, 0% CPU = sleeping on quota retries). Most stuck on django-16873 quota-blocked (300s retry waits): cline-patched [1/184] retry 2/3, hermes [1/142], opencode [1/178]. claude-code most active [2/197] (completed django-15996 pbf → django-16041 [RUN]). pi [1/219] on django-14855 [RUN]. **save_results fix verified**: JSON growing without data loss (8 new entries, no truncation). Proxies 9092/9093→/v1 healthy (PIDs 2941134/2941137, etimes~62612s). glm53 25.6% vs kimi 27.3% (574/2100) → refutes "stronger model = higher passrate" (McNemar 99.7% agreement, n=1166). load 26.1, RAM 82G free/2.0T. ETA ~30h (906 pending). 📦 体积：TASK=28.0KB ✓ / MEMORY=29.5KB ✓ / 归档 0B.
 > 📦 R352-R395 (2026-10-13~15, 44 rounds of monitoring/fixes/reports) 已归档 → daily-memories-harness/2026-10-13.md + 2026-10-14.md + 2026-10-15.md。需要时再读。
 
 > 📦 §口径与并发 (2026-10-08⑦) 已归档 → daily-memories-harness/2026-10-08.md。**结论**：R1串行 vs R2并行已披露，workdir隔离修复holding，R2 resolve-rate下降=实例难度差异非并发污染。需要时再读。

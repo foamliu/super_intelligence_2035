@@ -1,12 +1,14 @@
-  [RESUME] Skipping 7 completed for cline-patched
+  [RESUME] Skipping 116 completed for cline-patched
 Serial kimi eval: harness=cline-patched model=glm-5.3-flash
-  Total=300 Pending=293 Skip=7 Concurrency=1
+  Total=300 Pending=184 Skip=116 Concurrency=1
 
 ############################################################
-# [1/293] cline-patched x django__django-10924
+# [1/184] cline-patched x django__django-16873
 ############################################################
 
 ============================================================
-[SETUP] django__django-10924 for cline-patched
+[SETUP] django__django-16873 for cline-patched
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s (exponential backoff)...
 
-[RUN] cline-patched on django__django-10924 ...
+[RUN] cline-patched on django__django-16873 ...
+  [QUOTA] cline-patched: quota exhausted, waiting 300s (retry 2/3)...
