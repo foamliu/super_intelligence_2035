@@ -1,6 +1,26 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程：smoke → Stage-1/1.5/2 → lmms-eval）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「vision 为什么停下来不做 MLLM？」—— 你**是被授权做的**（用户早已批「我同意，可以做」），wrapper 已就绪，8 GPU 已空，现在放行执行完整 Stage(iv)，不再停在 Phase0。
+
+**① 前置已就绪（无需再确认）**：wrapper + 自定义 modeling + projector CPU 单测 **5/5 通过** ✅；**.12 8×H100 空闲** ✅；三个 Stage 数据 265GB 在盘 ✅；Qwen3-4B ✅；ms-swift 4.5.3 ✅；lmms-eval 0.7.1 ✅。
+
+**② 执行顺序（按可行性报告 §8.3 排期 + §9.2 建议，方案 A）**：
+1. **GPU smoke test**：加载 BaiZe wrapper + projector + Qwen3-4B，前向 1 batch（~1h）
+2. **Stage-1 Alignment**：冻结 LLM + vision tower，只训 projector（~2500 步；LR 先 1e-4 基线，不收敛扫 {5e-5, 2e-4, 5e-4}）
+3. **Stage-1.5 Mid-Training**：解冻 LLM（或 LoRA），~20000 步
+4. **Stage-2 Instruct**：~3500 步
+5. **lmms-eval 17 benchmarks**
+- 超参参照 `train_4b.sh` 但**用 ms-swift**；`SEQ_LEN=32768` 若 OOM 降 8192/16384；Stage-1 固定 224、跳过 spatial merge、image-token 占位 196。
+
+**③ 门控**：每 stage 完成上报一次（smoke 通过才进 Stage-1；Stage-1 通过才进 1.5，依此类推），各 stage 落 ckpt 到指定目录。
+
+**④ 交付**：全程日志 + 各 stage ckpt + 17 benchmark 结果表 + 中文 HTML 报告（含 vs LLaVA-OV1.5 RICE ViT 基线对比，方案 B 对照）。
+
+**⑤ 纪律**：开跑前 `nvidia-smi` 确认 .12 空窗；与 data 线下载错峰 IO；训练用 py310、评测用 ov_encoder（或 py310 装 lmms-eval）；🚫 不碰论文/其它线产物；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（纯 CPU，不占 GPU））· 用户直令 · 最高优先（但仍低于 ArmC 训练/评测监控）
 
 > **用户令（2026-10-14）**：「vision MLLM 桥接：**现在就在 ArmC 期间并行写 ViT wrapper**（纯 CPU 可并行）。」
