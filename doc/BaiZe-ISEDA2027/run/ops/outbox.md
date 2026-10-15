@@ -10351,3 +10351,88 @@ drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
 === [.12] DONE ===
 === DONE 97 ===
 ```
+
+---
+
+## RUN_ID 98 · 2026-10-15 21:10:28 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 98 · 纯文本语料盘上实况 $(date '+%F %T') · host=$(hostname) ==="
+echo "--- 盘余量 ---"; df -h /nas_train /nas_inference /nas_user /nas_env 2>/dev/null | cut -c1-120
+echo "--- 一级目录 ---"
+for D in /nas_train/app.e0031982/datasets/openbmb /nas_inference/app.e0031982/datasets/openbmb /nas_train/openbmb/Ultra-FineWeb; do
+  echo "### $D"; ls -la "$D" 2>&1 | head -18 | cut -c1-135
+done
+echo "--- 点名 config 的存在性 + 文件计数（maxdepth 2） ---"
+for P in \
+ "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en" \
+ "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh" \
+ "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq" \
+ "/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraX-Preview" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609" \
+ "/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609" \
+ "/nas_train/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4" ; do
+  if [ -d "$P" ]; then printf '%-92s EXISTS  files=%s  incomplete=%s\n' "$P" "$(timeout 40 find "$P" -maxdepth 2 -type f 2>/dev/null | wc -l)" "$(timeout 40 find "$P" -maxdepth 2 -name '*.incomplete' 2>/dev/null | wc -l)"; else printf '%-92s MISSING\n' "$P"; fi
+done
+echo "--- 最近写入时间（判断是否仍在长） ---"
+for P in /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb /nas_train/openbmb/Ultra-FineWeb; do
+  [ -d "$P" ] && { echo "## $P"; timeout 30 find "$P" -maxdepth 3 -type f -printf '%TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | sort -r | head -5 | cut -c1-140; }
+done
+echo "=== DONE 98 ==="
+```
+
+**输出**
+```
+=== RUN_ID 98 · 纯文本语料盘上实况 2026-10-15 21:10:28 · host=whag0pgpuap29 ===
+--- 盘余量 ---
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01  207T  176T   32T  85% /nas_train
+10.239.23.32:/vol_CTE0_data03   45T   36T  9.4T  80% /nas_inference
+10.239.23.32:/vol_CTE0_data02  108T   82T   27T  76% /nas_user
+10.239.23.32:/vol_CTE0_data04   10T   14G  9.9T   1% /nas_env
+--- 一级目录 ---
+### /nas_train/app.e0031982/datasets/openbmb
+total 20
+drwxr-x---  4 app.e0031982 app.adm 4096 Oct  7 12:03 .
+drwxr-x--- 25 app.e0031982 app.adm 8192 Oct  9 08:45 ..
+drwxr-x---  5 app.e0031982 app.adm 4096 Oct  3 23:40 Ultra-FineWeb
+drwxr-xr-x  4 app.e0031982 app.adm 4096 Oct  7 12:03 UltraX-Preview
+### /nas_inference/app.e0031982/datasets/openbmb
+total 32
+drwxr-x---  8 app.e0031982 app.adm 4096 Oct  1 23:48 .
+drwxr-x--- 12 app.e0031982 app.adm 4096 Oct  1 15:32 ..
+drwxr-x---  5 app.e0031982 app.adm 4096 Sep 11 21:54 UltraData-Code
+drwxr-x---  5 app.e0031982 app.adm 4096 Sep 11 22:08 UltraData-Math
+drwxr-x---  5 app.e0031982 app.adm 4096 Oct  1 23:48 UltraData-SFT-2605
+drwxr-x---  5 app.e0031982 app.adm 4096 Sep 11 22:00 UltraData-SFT-Agent-2609
+drwxr-x---  5 app.e0031982 app.adm 4096 Oct  1 22:55 Ultra-FineWeb
+drwxr-x---  5 app.e0031982 app.adm 4096 Sep 11 14:01 Ultra-FineWeb-L3
+### /nas_train/openbmb/Ultra-FineWeb
+ls: cannot access '/nas_train/openbmb/Ultra-FineWeb': No such file or directory
+--- 点名 config 的存在性 + 文件计数（maxdepth 2） ---
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en                  EXISTS  files=2048  incomplete=0
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh                  EXISTS  files=256  incomplete=0
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq            EXISTS  files=6000  incomplete=0
+/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3                                EXISTS  files=7  incomplete=0
+/nas_inference/app.e0031982/datasets/openbmb/UltraX-Preview                                  MISSING
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code                                  EXISTS  files=10  incomplete=0
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math                                  EXISTS  files=8  incomplete=0
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605                              EXISTS  files=6  incomplete=0
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609                        EXISTS  files=7  incomplete=0
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609                               MISSING
+/nas_train/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4                                   MISSING
+--- 最近写入时间（判断是否仍在长） ---
+## /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb
+2026-10-08 01:07  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/ultrafineweb-zh-part-172-of-256.parquet
+2026-10-07 08:16  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/download_l1_zh.log
+2026-10-06 20:02  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/ultrafineweb-zh-part-256-of-256.parquet
+2026-10-06 20:01  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/ultrafineweb-zh-part-255-of-256.parquet
+2026-10-06 19:59  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/ultrafineweb-zh-part-254-of-256.parquet
+=== DONE 98 ===
+```
