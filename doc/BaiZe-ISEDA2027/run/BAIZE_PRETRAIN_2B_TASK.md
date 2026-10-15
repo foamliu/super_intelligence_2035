@@ -18,6 +18,27 @@
 > - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
 > - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
 
+### 🆕 运维指令 · 2026-10-15（⚡ 评测提速：14 集并行 + 大 batch + 8 GPU）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「pretrain 的评测效率是不是不高，只用了 2 卡，显存 GPU 利用都很低，batch size 是不是没设，lm_eval 可以把 14 个评测一起跑，把 batch size 加上去，把 8 个 GPU 给上去。」
+
+**现状（实测 .29）**：评测只用 **1 个 lm_eval 进程占 GPU0（31% util / 5431 MiB）**，其余 7 卡 0% —— 串行 + 小 batch，浪费严重。
+
+**① 停当前串行评测，重排为 14 集并行**：
+- 常识 8 + 复杂 6 = 14 评测**一起跑**，跨 **8 GPU 并行**（每卡 1–2 任务，参考 `baize_p6_run_full.sh` 的「每卡一任务」模式，扩到 14 任务）。
+- `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7`（.29 已空）。
+
+**② batch size 加大（逐集调到「接近显存上限、GPU util 打满、不 OOM」）**：
+- 常识短序列（boolq/piqa/sciq/winogrande/arc-e/arc-c/obqa）：batch **64–128**
+- 中长（hellaswag）：**32–64**
+- 复杂推理生成（gsm8k/math/humaneval/mbpp）：**8–16**（生成类别贪大）
+- mmlu/bbh：**16–32**
+- 加 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 防碎片 OOM。
+
+**③ 交付不变**：14 集逐集分数 + 8 集 Avg + 6 集 Avg + 44B scaling 点 + 中文 HTML；报告里**记录每集 batch_size**。
+
+**④ 纪律**：评测纯推理、8 GPU 可用；🚫 不重训/不改 ckpt；某集 OOM 就单独降该集 batch（不整体重来）；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（📊 用 P-8 final ckpt 跑 lm-eval 评测：常识 8 集 + 复杂 6 集）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「pretrain 为什么不评测，不是说了常识推理 8 个评测集 + 复杂推理 6 个评测集要评测嘛。评测集如果任务书中没有那就加进去，看 Xmodel-2 论文提到的那些，使用 lm-eval 测。」
