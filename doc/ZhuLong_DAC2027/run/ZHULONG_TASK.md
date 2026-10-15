@@ -17,6 +17,23 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-15（二十三）— 🔜 S1.readback_binary 后编排：B.glm-5.3-flash → B.deepseek-v4-flash【用户直令】
+
+> **用户令（2026-10-15）**：「告诉 zhulong，S1.readback_binary 测完后，如无其它指示，则按次序测 B.glm-5.3-flash（GLM-5.3 Flash）→ B.deepseek-v4-flash（DeepSeek-V4 Flash）。」
+
+**① 编排**（`readback_binary` 5-run 重测完成后，如无新指示，**自动接续**）：
+1. **B.glm-5.3-flash**（新加 B 模型消融臂，跑 5-run）：
+   - model：`glm-5.3-flash`
+   - API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f`
+   - Base URL：`http://agi-gateway.cxmt.com/v1`（⚠️ `/v1`，非 `/cloud/v1`）
+2. **B.deepseek-v4-flash**（重测 5-run）：legacy `16.7±12.3%` 有 r5=37.3 离群、std 过大 → fresh 5-run 修正 std。
+
+**② 做法**：与 B 臂既有口径一致（full harness + V3 自探索，主基座 deepseek-v4-pro-fp4 不变，**仅替换被评测 backbone** key/endpoint）；判据(十三)（消融臂 Pass@1 任何值有效、timeout≤10 且无 infra 故障）。
+
+**③ 完成**：填 `zhulong_results.md` B 臂表（新增 glm-5.3-flash 行 + 替换 deepseek-v4-flash 为 fresh 值）。
+
+**④ 纪律**：每臂切配置后 canary 自检；commit 前缀 `zhulong B:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（二十二）— 🔁 S1 重测调整：跳过 omega_low，改重测 readback_binary【用户直令 · 最高优先】
 
 > **用户令（2026-10-15）**：「为什么要跑 S1.omega_low，这个试验在 zhulong_results 不是已经测好填好了吗？反倒是 S1.readback_binary 标准差过大，需要重测。」
