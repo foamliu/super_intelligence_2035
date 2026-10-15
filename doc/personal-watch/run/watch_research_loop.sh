@@ -49,6 +49,40 @@ MEMORY="$SCRIPT_DIR/MEMORY_RESEARCH.md"
 LAST_PUSH="/tmp/watch_research_last_push"
 CLINE_LOG="/tmp/watch_research_cline_last.log"   # cline 本轮输出，用于检测"报错却 exit 0"
 
+# ── 🔒 cline 可执行解析 & PATH 兜底（2026-10-15 修复，与 news/recruit 同款）──────
+#   故障：loop 环境 PATH 缺 cline ⇒ `cline: command not found`（exit 127）⇒ 每个时窗全部静默失败。
+#   实例：2026-10-13 cline 包被 `npm update -g cline` 中断删除 ⇒ news/research/recruit **三线同时停摆 ≈2 天**，
+#         且**心跳正常**（极隐蔽）⇒ 判活必须同时看 `/tmp/watch_<线>_loop.log` 尾部。
+#   修法：① 并入【登录 shell】的 PATH（nvm / npm-global / ~/.local/bin 常只在 login shell 生效）；
+#         ② 显式解析 cline 绝对路径 → `$CLINE_BIN`，调用不再依赖环境 PATH；
+#         ③ 解析不到先**自愈**（npm i -g cline@latest，≤240s），仍失败才显式报错。
+if [ "${WATCH_NO_LOGINPATH:-0}" != "1" ]; then
+    _login_path="$(bash -lc 'echo $PATH' 2>/dev/null)"
+    if [ -n "$_login_path" ]; then PATH="${_login_path}:${PATH}"; fi
+fi
+export PATH
+CLINE_BIN="${CLINE_BIN:-}"
+if [ -z "$CLINE_BIN" ]; then CLINE_BIN="$(command -v cline 2>/dev/null || true)"; fi
+if [ -z "$CLINE_BIN" ]; then
+    echo "[loop] ❌ 找不到 cline（PATH=$PATH）→ 本线无法工作"
+    if [ "${WATCH_NO_CLINE_SELFHEAL:-0}" != "1" ]; then
+        echo "[loop] 🩹 尝试自动重装 cline（npm i -g cline@latest，最多 240s；日志 → $CLINE_LOG）"
+        (
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1
+            timeout 240 npm i -g cline@latest --no-fund --no-audit
+        ) >> "$CLINE_LOG" 2>&1 || true
+        CLINE_BIN="$(command -v cline 2>/dev/null || true)"
+    fi
+    if [ -n "$CLINE_BIN" ]; then
+        echo "[loop] 🩹 自愈成功：cline=$CLINE_BIN"
+    else
+        echo "[loop] 🩹 自愈失败：cline 仍不可用（详见 $CLINE_LOG）；请人工修 PATH/重装"
+    fi
+else
+    echo "[loop] ✅ cline=$CLINE_BIN · $(timeout 15 "$CLINE_BIN" --version 2>/dev/null | head -1)"
+fi
+
 # ── git 兜底同步：fetch → 必要时 pull --rebase → 只提交本线文件 → push ──
 git_sync_and_push() {
     local now last counts behind ahead
@@ -108,7 +142,7 @@ waiting_is_1() {
 }
 
 # cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
-FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟)'
+FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|command not found|cline: not found)'
 
 # ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=6,18 ⇒ 06:00 / 18:00）──
 next_slot_epoch() {
@@ -172,7 +206,7 @@ while true; do
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" --thinking "$THINKING" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
+        "${CLINE_BIN:-cline}" -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" --thinking "$THINKING" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
         rc="${PIPESTATUS[0]}"
         echo "[loop] $(date '+%F %T') cline returned (exit ${rc}); log=$CLINE_LOG"
         # 兜底：cline 常"报错仍 exit 0"（模型名错 / 额度耗尽）→ 从日志抓错，失败则强制短睡重试，不空耗
