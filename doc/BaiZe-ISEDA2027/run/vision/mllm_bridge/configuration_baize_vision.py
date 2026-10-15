@@ -72,3 +72,13 @@ class BaizeVisionConfig(PretrainedConfig):
         """Number of patch tokens = (image_size / patch_size)²."""
         grid = self.image_size // self.patch_size
         return grid * grid
+
+
+# Auto-register with transformers CONFIG_MAPPING so that LLaVA-OV style
+# composite configs (which look up vision_config["model_type"] in
+# CONFIG_MAPPING) can find us.
+try:
+    from transformers.models.auto.configuration_auto import CONFIG_MAPPING
+    CONFIG_MAPPING.register("baize_vision", BaizeVisionConfig)
+except Exception:
+    pass

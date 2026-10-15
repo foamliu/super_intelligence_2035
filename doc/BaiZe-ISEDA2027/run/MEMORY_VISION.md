@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 21:50（磁盘满崩因修复 + 预建缓存 · wake #104）**：❌ **limit50 8卡评测 21:24 崩**：`OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → rank1 exit 1 → `ChildFailedError`；根因 = 8 rank 同时在 `/home`（仅 47G 空闲）写 datasets 缓存 ⇒ 瞬时写满。✅ **修复**：① `HF_HOME` 迁到 `/nas_env/app.e0031982/hf_home`（9.9T 空闲）— `launch_lmms_eval.sh` + `run_lmms_eval.py` 均已加 `HF_HOME/HF_DATASETS_CACHE/HF_HUB_CACHE` env；② 新建 `precache_benchmarks.py` + `run_precache.sh` — 单进程预建 17 集 dataset cache，避免 8 rank 重复写；③ `launch_lmms_eval.sh` 加磁盘余量检查（<50G 则 abort）。🔄 **预建缓存运行中**（单进程，mmbench_en_dev ✅ 72s，mmmu_val 下载中 67MB+）。✅ **Stage-2 step3500 确认完整**（adapter 528MB + projector 15.7MB，loss=1.4853，15.4min，train.log 末行 `=== Stage-2 Training Complete ===`）。✅ **git push 已修**（运维配 git config http.proxy=92.23）。下一步：precache 完成→limit50 8卡验证→全量 17 集→结果表+HTML。📦 体积：TASK=32.6KB / MEMORY≈31KB。
+> 🆕 **2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）**：✅ **open_clip_baize.py** — `open_clip.create_model_and_transforms('baize-vit-512', pretrained=vision.pt)` 加载成功，`encode_image()` 输出 `[B, 196, 512]`，277/277 keys matched。✅ **export_llava_ov_hf.py** — 导出 HF 目录（config.json + preprocessor_config.json + open_clip_config.json + chat_template.json + pytorch_model.bin），`AutoConfig.from_pretrained()` 读取 `image_token_index=151655` / `vision_feature_select_strategy=default` ✅，`CLIPImageProcessor` 加载 ✅。✅ **test_open_clip_baize.py** — Test 1 (open_clip load + forward) PASSED, Test 2 (HF dir + AutoConfig) PASSED, Test 3 (E2E ai2d) DEFERRED (GPU)。🔧 **关键修正**：`embed_dim=768`（非 512，head.proj 是 [768,512]）；`heads=8`（非 16）；`configuration_baize_vision.py` 加 `CONFIG_MAPPING.register("baize_vision", ...)` 自动注册；`num_patches` 是 property 不可写入 config dict。🔄 **precache 9/17**（seedbench 下载中，PID 2430411）。下一步：precache 完成→limit50 8卡→全量 17 集→E2E ai2d 验证→ArmA retrain。📦 体积：TASK=32.6KB / MEMORY≈31KB。
 > 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
 > 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
@@ -36,7 +36,7 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集：预建缓存运行中（wake #104）**：Stage-1/1.5/2 全 ✅。limit50 8卡评测因磁盘满(`/home` 47G)崩 → 已迁 `HF_HOME=/nas_env`(9.9T) + 单进程预建缓存(进行中) → 复跑 limit50 → 全量。ArmC/eval/bridge/论文等全 ✅。 |
+| PHASE | 🔄 **lmms-eval 17 集：precache 9/17 + open_clip/LLaVA-OV wrapper ✅（wake #105）**：Stage-1/1.5/2 全 ✅。open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU)。precache 运行中 (PID 2430411)。下一步：precache 完成→limit50 8卡→全量 17 集→E2E ai2d GPU 验证→ArmA retrain。 |
 | ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
 | 更新 | **2026-10-15 21:50 (wake #104)**: ❌ limit50 8卡评测 21:24 崩(磁盘满)。✅ 修复: HF_HOME→/nas_env(9.9T), 新建 precache_benchmarks.py 单进程预建缓存, launch_lmms_eval.sh 加磁盘检查。✅ Stage-2 step3500 确认完整(adapter 528MB+projector 15.7MB, loss=1.4853, train.log 末行=Complete)。🔄 预建缓存运行中(mmbench ✅, mmmu 下载中)。 |
