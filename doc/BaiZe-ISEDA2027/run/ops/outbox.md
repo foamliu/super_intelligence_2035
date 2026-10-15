@@ -9839,3 +9839,150 @@ app.e0016372	2026-09-18	/tmp/base.log
 app.e0016372	2026-09-18	/tmp/pi-bash-43c279e0fba350cd.log
 === DONE 92 ===
 ```
+
+---
+
+## RUN_ID 93 · 2026-10-15 19:52:14 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 93 · vision lmms-eval 实况诊断（只读） $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [1] proxy 口径实测（本机 → hf.co） ---"
+printf '[direct] '; timeout 15 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co 2>&1
+printf '[92.25 ] '; timeout 15 env https_proxy=http://172.19.92.25:13128 http_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co 2>&1
+printf '[92.23 ] '; timeout 15 env https_proxy=http://172.19.92.23:13128 http_proxy=http://172.19.92.23:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co 2>&1
+printf '[92.25 datasets] '; timeout 15 env https_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co/datasets/lmms-lab/RealWorldQA 2>&1
+printf '[92.25 resolve ] '; timeout 20 env https_proxy=http://172.19.92.25:13128 curl -s -o /dev/null -w '%{http_code}\n' https://huggingface.co/api/models/Qwen/Qwen3-4B-Instruct-2507 2>&1
+echo "--- [2] 远端 .12 —— GPU / 进程 / 落地数据 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=8 10.239.2.12 'hostname; date "+%F %T"
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+echo "[评测/训练进程]"; pgrep -af "lmms|stage2|stage15|inference_eval|smoke_test|torchrun|accelerate|python" 2>/dev/null | grep -v pgrep | cut -c1-140 | head -15
+echo "[vision loop]"; pgrep -af "baize_vision_loop|ops_relay" 2>/dev/null | cut -c1-110 | head -5
+echo "[proxy env]"; env | grep -i proxy | head -5
+echo "[HF hub 缓存]"; ls -la "$HOME/.cache/huggingface/hub" 2>/dev/null | head -25
+echo "[HF datasets 缓存]"; ls -la "$HOME/.cache/huggingface/datasets" 2>/dev/null | head -15
+echo "[结果目录 mllm_eval_results]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | head -15
+echo "[stage2 ckpt]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2 2>/dev/null | head -10
+echo "[stage15 ckpt]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15 2>/dev/null | head -10
+' 2>&1 | head -75
+echo "--- [3] 远端 vision loop / lmms-eval 日志尾 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=8 10.239.2.12 'tail -15 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-170; echo "--- /tmp 里的 lmms/eval 相关 ---"; ls -la /tmp/*lmms* /tmp/*eval* /tmp/*vision* 2>/dev/null | head -12' 2>&1 | head -40
+echo "=== DONE 93 ==="
+```
+
+**输出**
+```
+=== RUN_ID 93 · vision lmms-eval 实况诊断（只读） 2026-10-15 19:52:14 · host=whag0pgpuap29 ===
+--- [1] proxy 口径实测（本机 → hf.co） ---
+[direct] 200
+[92.25 ] 200
+[92.23 ] [92.25 datasets] 307
+[92.25 resolve ] 200
+--- [2] 远端 .12 —— GPU / 进程 / 落地数据 ---
+whag0pgpuap12
+2026-10-15 19:52:36
+[GPU]
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[评测/训练进程]
+4405 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+234815 /bin/bash -c cd /home/app.e0027605 OLD=$(ss -ltnp 2>/dev/null | grep 8787 | grep -oP 'pid=\K[0-9]+') echo "kill old pid: $OLD" kill $
+234817 /home/app.e0027605/news_venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8787
+697495 /nas_train/app.t0002965/miniforge3/envs/py310/bin/python3.10 /nas_train/app.t0002965/miniforge3/envs/py310/bin/tensorboard --logdir /
+709505 /nas_train/app.t0002965/miniforge3/envs/py310/lib/python3.10/site-packages/tensorboard_data_server/bin/server --logdir=/nas_train/app
+766408 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 /nas_train/app.e0031982/miniforge3/envs/py310/bin/hf download --repo-typ
+795825 python -m sglang.launch_server --model-path /nas_train/app.t0002965/model/MiniCPM5-1B --chat-template /nas_train/app.t0002965/chat_te
+795826 python -m sglang.launch_server --model-path /nas_train/app.t0002965/model/MiniCPM5-2B --chat-template /nas_train/app.t0002965/chat_te
+809870 /nas_train/app.t0002965/sglang_env/bin/python /nas_train/app.t0002965/sglang_env/lib/python3.12/site-packages/torch/_inductor/compile
+809956 /nas_train/app.t0002965/sglang_env/bin/python /nas_train/app.t0002965/sglang_env/lib/python3.12/site-packages/torch/_inductor/compile
+815329 /nas_train/app.t0002965/sglang_env/bin/python -c from multiprocessing.resource_tracker import main;main(50)
+815382 /nas_train/app.t0002965/sglang_env/bin/python -c from multiprocessing.resource_tracker import main;main(50)
+821863 /nas_train/app.t0002965/sglang_env/bin/python /nas_train/app.t0002965/sglang_env/lib/python3.12/site-packages/torch/_inductor/compile
+821864 /nas_train/app.t0002965/sglang_env/bin/python /nas_train/app.t0002965/sglang_env/lib/python3.12/site-packages/torch/_inductor/compile
+821867 /nas_train/app.t0002965/sglang_env/bin/python /nas_train/app.t0002965/sglang_env/lib/python3.12/site-packages/torch/_inductor/compile
+[vision loop]
+1815982 bash baize_vision_loop.sh
+3055415 bash -c hostname; date "+%F %T" echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu
+[proxy env]
+[HF hub 缓存]
+total 68
+drwxr-xr-x 17 app.e0031982 app.adm 4096 Oct 13 22:39 .
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:18 ..
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:20 datasets--allenai--ai2_arc
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:21 datasets--allenai--openbookqa
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:22 datasets--allenai--sciq
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:22 datasets--allenai--winogrande
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:20 datasets--google--boolq
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--hanlincs--InternVL-SA1B-Caption-WebDataset
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--HuggingFaceM4--the_cauldron
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 14:46 datasets--mvp-lab--LLaVA-OneVision-1.5-Mid-Training-85M
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--MVRL--WebMix-38M
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  8 01:00 datasets--openbmb--Ultra-FineWeb
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  7 12:00 datasets--openbmb--UltraX-Preview
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:21 datasets--Rowan--hellaswag
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct 13 22:39 datasets--VedaLabs--wit_base
+drwxr-xr-x  5 app.e0031982 app.adm 4096 Oct  6 15:21 datasets--ybisk--piqa
+drwxr-xr-x  9 app.e0031982 app.adm 4096 Oct  6 15:22 .locks
+[HF datasets 缓存]
+total 40
+drwxr-xr-x 10 app.e0031982 app.adm 4096 Oct 15 17:27 .
+drwxr-xr-x  6 app.e0031982 app.adm 4096 Oct  6 15:18 ..
+drwxr-xr-x  4 app.e0031982 app.adm 4096 Oct  6 15:20 allenai___ai2_arc
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:21 allenai___openbookqa
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:21 allenai___sciq
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:22 allenai___winogrande
+drwxr-xr-x  3 app.e0031982 app.adm 4096 Oct  6 15:20 google___boolq
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_allenai___ai2_arc_ARC-Challenge_0.0.0_210d026faf9955653af8916fad021475a3f00453.lock
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_allenai___ai2_arc_ARC-Easy_0.0.0_210d026faf9955653af8916fad021475a3f00453.lock
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:21 _home_app.e0031982_.cache_huggingface_datasets_allenai___openbookqa_main_0.0.0_388097ea7776314e93a529163e0fea805b8a6454.lock
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:21 _home_app.e0031982_.cache_huggingface_datasets_allenai___sciq_default_0.0.0_2c94ad3e1aafab77146f384e23536f97a4849815.lock
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:22 _home_app.e0031982_.cache_huggingface_datasets_allenai___winogrande_winogrande_xl_0.0.0_01e74176c63542e6b0bcb004dcdea22d94fb67b5.lock
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct  6 15:20 _home_app.e0031982_.cache_huggingface_datasets_google___boolq_default_0.0.0_35b264d03638db9f4ce671b711558bf7ff0f80d5.lock
+-rw-r--r--  1 app.e0031982 app.adm    0 Oct 15 18:27 _home_app.e0031982_.cache_huggingface_datasets_lmms-lab___real_world_qa_default_0.0.0_907c4e5228fd1703c710ed937601cb5f89ab8d5c.lock
+[结果目录 mllm_eval_results]
+total 20
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 17:02 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+[stage2 ckpt]
+total 112
+drwxr-xr-x   9 app.e0031982 app.adm  4096 Oct 15 15:36 .
+drwxr-x--- 119 app.e0031982 app.adm 16384 Oct 15 17:02 ..
+drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 15 15:45 step1000
+--- [3] 远端 vision loop / lmms-eval 日志尾 ---
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-15 18:31:09 cline returned (exit 0), checking git push ...
+[push] 2026-10-15 18:31:09 push interval reached, committing + pushing ...
+error: could not close '/nas_train/app.e0031982/code/super_intelligence_2035/.git/index.lock'
+fatal: Unable to write new index file
+[push] nothing to commit.
+fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035.git/': Failed to connect to github.com port 443 after 4 ms: Network is unreachable
+[push] push FAILED (will retry next cycle).
+[loop] 2026-10-15 19:06:51 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-15 19:36:51 wake up, invoking cline ...
+[llmrot] 2026-10-15 19:36:52 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+--- /tmp 里的 lmms/eval 相关 ---
+-rw-r----- 1 app.e0031982 app.adm       11 Oct 15 19:06 /tmp/baize_vision_last_push
+-rw-r--r-- 1 app.e0031982 app.adm        2 Oct 15 19:36 /tmp/baize_vision_llm_idx
+-rw-r----- 1 app.e0031982 app.adm 40962576 Oct 15 19:36 /tmp/baize_vision_loop.log
+-rw-r--r-- 1 app.e0031982 app.adm     3333 Oct  5 07:59 /tmp/cimi_vision.log
+-rw-r--r-- 1 app.e0031982 app.adm     9124 Oct  6 15:22 /tmp/create_eval_heldout.log
+-rw-r--r-- 1 app.e0031982 app.adm    11990 Oct 12 11:00 /tmp/e4_2ep_eval.log
+-rw-r--r-- 1 app.e0031982 app.adm     8684 Oct 12 13:42 /tmp/e4_2ep_eval_rerun.log
+-rw-r--r-- 1 app.e0031982 app.adm      607 Oct 12 13:42 /tmp/e4_2ep_eval_rerun_outer.log
+-rw-r--r-- 1 app.e0031982 app.adm     9132 Oct 13 12:42 /tmp/e4_4ep_eval.log
+-rw-r----- 1 app.e0031982 app.adm    13285 Apr  2  2026 /tmp/eval.log
+-rw-r--r-- 1 app.e0031982 app.adm     7232 Oct 13 15:28 /tmp/external_full_eval.log
+-rwxr-x--- 1 app.e0031982 app.adm     5752 Apr 15  2026 /tmp/final_test_openvision2.sh
+=== DONE 93 ===
+```
