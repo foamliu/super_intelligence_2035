@@ -1676,3 +1676,39 @@ T3 提速验证结果：
 
 **④ 纪律**：改脚本后先语法检查/冒烟再跑；停旧 decay 后等 ~30s 待 GPU 释放；🚫 不碰 watchdog loop（PID 1391466）；**seq=4094 保持**（与 stable 一致，P-8 整轮 4094 不变）；修复 + 重跑结果写心跳；commit 前缀 `pretrain decay-fix:` · 任务书 >32KB 自滚归档。
 
+---
+
+### 🆕 运维指令 · 2026-10-15（⚡ 评测提速 v2：自搜 lm_eval 多卡用法 · 8 GPU 用满 · 尽快出结果 + 给 ETA）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「评测效率太低。你有 web search，自己搜 lm_eval 怎么用多卡/并行框架统筹资源，14 个 task 一次跑、8 GPU 用满，尽快出结果，并给出 ETA。」
+
+**① 目标**：P-8 final ckpt 的 14 集（常识 8 + 复杂 6）lm-eval 评测，**提速到 8 GPU 打满**，不要串行单卡跑。
+
+**② 做法（你自行 web search lm_eval 官方多卡/加速方案，具体参数你决定）**：
+- 用 lm_eval **一次指定 14 个 task**，并用**并行框架统筹资源**（如 `accelerate launch --multi_gpu --num_processes 8` 数据并行，或 `--model vllm` 多卡推理——以你 web 搜到的官方推荐为准）。
+- batch size 等按 GPU 利用率自行调优到打满；🚫 不要逐卡手动分任务。
+
+**③ 交付**：① 尽快出全部 14 集分数 + 8/6 Avg；② **明确给出 ETA（几点跑完）**；③ 中文 HTML 报告。
+
+**④ 纪律**：评测纯推理、8 GPU 可用（.29 已空）；🚫 不重训/不改 ckpt；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+
+---
+
+### 🆕 运维指令 · 2026-10-15（📊 用 P-8 final ckpt 跑 lm-eval 评测：常识 8 集 + 复杂 6 集）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「pretrain 为什么不评测，不是说了常识推理 8 个评测集 + 复杂推理 6 个评测集要评测嘛。评测集如果任务书中没有那就加进去，看 Xmodel-2 论文提到的那些，使用 lm-eval 测。」
+
+**① 背景**：早期评价是在旧里程碑 ckpt（655M~20B，P-5b 系）上做的（P-6② 常识 8 集 48/48、A 复杂 6 集 36/36）。**P-8 final ckpt（~44.4B token，final loss 1.357）尚未评测**——现在补齐这一最关键的 44B 数据点。
+
+**② 评测对象**：P-8 final ckpt = `p8_adamw_decay/checkpoints/iter_0001149`（decay fix 后 final）。
+
+**③ 评测内容（lm-eval，口径见本区「评测口径」）**：
+- **常识推理 8 集**（zero-shot, raw accuracy + Avg）
+- **复杂推理 6 集**（lm-eval 默认 n-shot + Avg；HumanEval/MBPP 开代码执行）
+
+**④ 做法**：复用现有基建 —— ckpt→HF（`baize_p6_ckpt_to_hf.py`）→ lm-eval（常识 8 集用 `baize_p6_run_full.sh`/`baize_mix_eval.sh t2`；复杂 6 集用 `baize_complex6_eval_v2.sh`/`baize_mix_eval.sh t3`）。8 GPU 已空闲，可直接跑。
+
+**⑤ 交付**：① 8 集 + 6 集各自的 Avg + 逐集分数；② 把 44B 点**补进 scaling 曲线**（与 P-6② 48/48 + A 36/36 的 655M~20B 曲线并图）；③ 中文 HTML 报告（如 `reports/report_pretrain_p8_lmeval_8plus6_zh.html`），含「vs Xmodel-2-1.2B / Phi-1.5-1.3B 等参照线」。
+
+**⑥ 纪律**：纯评测（推理 GPU），8 GPU 已空可用；🚫 不重训、不改 ckpt；报数带 harness 版本 + shot 数；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
+

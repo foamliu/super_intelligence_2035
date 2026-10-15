@@ -35,7 +35,7 @@ BAIZE_COMPLEX6_DATA = [
     (10.5,   5.10, 'P-5b 10.5B', {'gsm8k':0.0,'math500':0.0,'mmlu':23.46,'bbh':7.15,'humaneval':0.0,'mbpp':0.0}),
     (20.0,   5.80, 'P-5b 20B',   {'gsm8k':1.0,'math500':0.0,'mmlu':25.0,'bbh':8.78,'humaneval':0.0,'mbpp':0.0}),
     # P-8 decay 44.4B (from p8_adamw_decay/lm_eval_14, BBH pending → 5-task avg)
-    (44.4,   5.30, 'P-8 44.4B (BBH pending)', {'gsm8k':1.59,'math500':0.0,'mmlu':24.28,'bbh':None,'humaneval':0.61,'mbpp':0.0}),
+    (44.4,   6.81, 'P-8 44.4B final', {'gsm8k':1.59,'math500':0.0,'mmlu':24.28,'bbh':14.36,'humaneval':0.61,'mbpp':0.0}),
 ]
 
 XMODEL2_PAPER = {
