@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong（DAC2027）进一步消融试验建议书 · 2026-10-15</title>
+<style>
+  :root{
+    --bg:#fafafa; --card:#fff; --ink:#1a1a1a; --muted:#555;
+    --red:#c0392b; --orange:#d35400; --green:#1e8449; --blue:#2471a3; --purple:#7d3c98;
+    --red-bg:#fdedec; --orange-bg:#fef5e7; --green-bg:#eafaf1; --blue-bg:#ebf5fb; --purple-bg:#f5eef8;
+    --border:#d5d8dc;
+  }
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Segoe UI,Roboto,sans-serif;
+       background:var(--bg); color:var(--ink); margin:0; padding:0; line-height:1.65;}
+  .wrap{max-width:1080px; margin:0 auto; padding:32px 24px 80px;}
+  h1{font-size:1.9rem; margin:0 0 4px; border-bottom:3px solid var(--purple); padding-bottom:10px;}
+  h2{font-size:1.45rem; margin:38px 0 12px; padding:8px 0 0; border-bottom:1px solid var(--border);}
+  h3{font-size:1.15rem; margin:26px 0 8px; color:#222;}
+  h4{font-size:1.02rem; margin:20px 0 6px; color:#333;}
+  .sub{color:var(--muted); font-size:0.92rem; margin-bottom:6px;}
+  .meta{background:var(--purple-bg); border-left:4px solid var(--purple); padding:12px 16px; border-radius:4px; margin:16px 0 24px; font-size:0.93rem;}
+  .meta b{color:var(--purple);}
+  table{border-collapse:collapse; width:100%; margin:14px 0; font-size:0.9rem; background:var(--card);}
+  th,td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+  th{background:#f4f6f7; font-weight:600;}
+  tr:nth-child(even) td{background:#fbfbfb;}
+  code{background:#eef1f2; padding:1px 5px; border-radius:3px; font-family:"SF Mono",Consolas,Menlo,monospace; font-size:0.86em; color:#c0392b;}
+  pre{background:#1e1e1e; color:#e0e0e0; padding:12px 14px; border-radius:5px; overflow-x:auto; font-size:0.82rem;}
+  .item{border-radius:5px; padding:12px 16px; margin:18px 0; border:1px solid var(--border);}
+  .item.red{background:var(--red-bg); border-left:5px solid var(--red);}
+  .item.orange{background:var(--orange-bg); border-left:5px solid var(--orange);}
+  .item.green{background:var(--green-bg); border-left:5px solid var(--green);}
+  .item.blue{background:var(--blue-bg); border-left:5px solid var(--blue);}
+  .item.purple{background:var(--purple-bg); border-left:5px solid var(--purple);}
+  .tag{display:inline-block; font-size:0.75rem; font-weight:700; padding:1px 8px; border-radius:10px; margin-right:6px; vertical-align:middle; color:#fff;}
+  .tag.red{background:var(--red);} .tag.orange{background:var(--orange);} .tag.green{background:var(--green);} .tag.blue{background:var(--blue);} .tag.purple{background:var(--purple);} .tag.gray{background:#7f8c8d;}
+  .loc{font-family:"SF Mono",Consolas,monospace; font-size:0.8rem; color:var(--muted);}
+  .data{font-family:"SF Mono",Consolas,monospace; font-size:0.83rem; background:#f8f9f9; padding:6px 10px; border-radius:3px; display:inline-block; margin:4px 0;}
+  ul,ol{margin:8px 0 8px 22px;} li{margin:3px 0;}
+  .summary-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:6px; padding:14px 16px;}
+  .card .num{font-size:1.7rem; font-weight:700; display:block;}
+  .card.red .num{color:var(--red);} .card.orange .num{color:var(--orange);} .card.green .num{color:var(--green);} .card.blue .num{color:var(--blue);} .card.purple .num{color:var(--purple);}
+  .card .lbl{color:var(--muted); font-size:0.85rem;}
+  .toc{background:var(--card); border:1px solid var(--border); border-radius:6px; padding:14px 20px; margin:18px 0;}
+  .toc ol{margin:6px 0;}
+  .four{display:grid; grid-template-columns:1fr; gap:6px; margin:8px 0;}
+  .four div{padding:6px 10px; border-radius:3px; font-size:0.9rem;}
+  .four .m{background:var(--blue-bg); border-left:3px solid var(--blue);}
+  .four .h{background:var(--green-bg); border-left:3px solid var(--green);}
+  .four .p{background:var(--orange-bg); border-left:3px solid var(--orange);}
+  .four .s{background:var(--purple-bg); border-left:3px solid var(--purple);}
+  .four b{color:#222;}
+  .footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:0.85rem;}
+  @media print{body{background:#fff;} .wrap{max-width:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ZhuLong（DAC2027）进一步消融试验建议书</h1>
+<div class="sub">15 天窗口（2026-10-15 → 2026-10-29，投稿 deadline 2026-10-30）· 纯 CPU 写作，零 GPU，不打断主线评测</div>
+<div class="meta">
+<b>日期：</b>2026-10-15 ｜ <b>产出者：</b>ZhuLong agent（运维指令二十一·用户直令）｜ <b>主线状态：</b>S1.readback_binary r2 code-gen 跑中（PID511382），评测优先，本报告占用 readback_binary r2 的 code-gen 空窗期，不占用任何评测资源<br>
+<b>数据基准：</b>对照 <code>run/MEMORY_ZHULONG.md</code> 执行看板与成绩表 + <code>doc/ZhuLong_DAC2027/zhulong_results.md</code>（截至 2026-10-15 16:13）<br>
+<b>口径锚点：</b>full_v3 = <b>82.1 ± 3.0%</b>（自探索 ON，5/5）｜ 数据集 EDA-Eval-PyAether 158 任务 ｜ 每臂 N=5 轮 mean ± std<br>
+<b>分级：</b><span class="tag red">必做</span> 15 天窗口内必须完成 ｜ <span class="tag orange">建议</span> 显著提升论文说服力 ｜ <span class="tag gray">可选</span> 时间允许时锦上添花
+</div>
+
+<div class="summary-cards">
+  <div class="card red"><span class="num">3</span><span class="lbl">必做（纯 CPU）</span></div>
+  <div class="card orange"><span class="num">2</span><span class="lbl">建议（含 GPU）</span></div>
+  <div class="card" style="background:#f4f6f7;"><span class="num" style="color:#7f8c8d;">2</span><span class="lbl">可选</span></div>
+  <div class="card purple"><span class="num">~11</span><span class="lbl">主线后可用 GPU 天</span></div>
+</div>
+
+<div class="toc">
+<strong>目录</strong>
+<ol>
+<li><a href="#s1">背景与当前进展速览</a></li>
+<li><a href="#s2">时间与资源预算（关键：主线 GPU 早收口）</a></li>
+<li><a href="#s3">建议清单总览</a></li>
+<li><a href="#s4">必做项详述（纯 CPU，立即可做）</a></li>
+<li><a href="#s5">建议项详述（含 GPU，主线收口后做）</a></li>
+<li><a href="#s6">可选项详述</a></li>
+<li><a href="#s7">与 S1 / B 主线的编排原则</a></li>
+<li><a href="#s8">15 天排期表（按天）</a></li>
+<li><a href="#s9">风险与护栏</a></li>
+<li><a href="#s10">论文回填映射（建议 → [TBD]/provisional 落点）</a></li>
+</ol>
+</div>
+
+<h2 id="s1">1. 背景与当前进展速览</h2>
+
+<p>距投稿 deadline <b>15 天</b>（2026-10-30）。四个消融轴中，<b>B（模型）/ C1（组件）/ C2（S2 Φ）三轴已 5/5 全收口</b>（共 12 臂），仅 <b>S1 保真度轴剩 readback_binary 的 fresh 5-run 重测</b>（r1=75.9%✅，r2 code-gen 跑中，r3–r5 待跑）。此外运维指令二十三已排定 readback_binary 收口后的后继主线：<b>B.glm-5.3-flash（新臂 5-run）→ B.deepseek-v4-flash（fresh 重测 5-run，修正 std=12.3 过大）</b>。</p>
+
+<h3>1.1 已收口成绩（mean ± std，Pass@1 %，N=5）</h3>
+<table>
+<tr><th>轴</th><th>臂</th><th>mean ± std</th><th>Δ vs full_v3(82.1)</th><th>备注</th></tr>
+<tr><td rowspan="4">B 模型</td><td>glm-5.2</td><td>83.3 ± 3.1</td><td>+1.2 pp</td><td>略高于主基座，1σ 内重叠</td></tr>
+<tr><td>kimi-k2.6-cloud</td><td>77.0 ± 1.6</td><td>−5.1 pp</td><td>std 最小，最稳定</td></tr>
+<tr><td>doubao-seed-2.0-pro-cloud</td><td>63.8 ± 1.4</td><td>−18.3 pp</td><td>std 极小</td></tr>
+<tr><td>deepseek-v4-flash</td><td>16.7 ± 12.3</td><td>−65.4 pp</td><td>r5=37.3 离群，std 过大 → 待 fresh 重测</td></tr>
+<tr><td rowspan="5">C1 组件</td><td>full_v3（锚点·自探索 ON）</td><td><b>82.1 ± 3.0</b></td><td>—</td><td>正式锚点，五表复用</td></tr>
+<tr><td>wo_selfexp（V2·自探索 OFF）</td><td>77.3 ± 2.9</td><td>−4.8 pp</td><td>自探索增益，1σ 边缘</td></tr>
+<tr><td>wo_retrieval</td><td>81.0 ± 4.5</td><td>−1.1 pp</td><td>检索移除影响小</td></tr>
+<tr><td>rag（= w/o Sandbox）</td><td>71.8 ± 2.5</td><td>−10.3 pp</td><td>执行闭环是决定性的</td></tr>
+<tr><td>pure_llm（核心 4 全关）</td><td>10.5 ± 1.9</td><td>−71.6 pp</td><td>能力下限</td></tr>
+<tr><td rowspan="4">C2 S2 Φ</td><td>phi_k10</td><td>77.7 ± 2.2</td><td>−4.4 pp</td><td>PHI-BUDGET-EXHAUSTED=426</td></tr>
+<tr><td>phi_k3</td><td>69.1 ± 2.5</td><td>−13.0 pp</td><td>单调 k10>k3</td></tr>
+<tr><td>phi_k1</td><td>63.8 ± 3.2</td><td>−18.3 pp</td><td>单调 k10>k3>k1 ✅</td></tr>
+<tr><td>phi_lagged</td><td>73.0 ± 3.2</td><td>−9.1 pp</td><td>介于 k3 与 k10 之间</td></tr>
+<tr><td rowspan="3">S1 保真度</td><td>omega_low（Ω L）</td><td>82.8 ± 1.0</td><td>+0.7 pp</td><td>采信 legacy，std=1.0 可信</td></tr>
+<tr><td>readback_binary（B）</td><td>r1=75.9（fresh）/ 66.2±16.1（legacy）</td><td>—</td><td>fresh 5-run 重测中（legacy std 过大）</td></tr>
+<tr><td>readback_none（N′）</td><td>73.3 ± 2.2（legacy）</td><td>−8.8 pp</td><td>采信 legacy，暂不重跑</td></tr>
+</table>
+
+<h3>1.2 论文当前 [TBD] / provisional 残留（本建议书瞄准的回填点）</h3>
+<ul>
+<li><span class="loc">6_exp.tex:97</span> <code>tab:main-ablation</code>「ZhuLong w/o Sandbox」= <code>[TBD] ± [TBD]</code>（应为 rag=71.8±2.5，Δ=−10.3pp，数据已齐，纯回填）</li>
+<li><span class="loc">6_exp.tex:204 / 0_abstract.tex / 4_grounding.tex</span> 正文「removing execution drops Pass@1 from 82.1% to [TBD]% (−[TBD]pp)」(同上 71.8 / −10.3)</li>
+<li><span class="loc">6_exp.tex:157,163,195</span> <code>tab:ablation-harness</code> (N′) 的 read-backs 列 = <code>[TBD]‡</code>（traces 在早期磁盘危机已删，不可恢复 → 需 fresh 重跑才能补）</li>
+<li><span class="loc">6_exp.tex:235-236</span> <code>tab:phi-bound</code> lagged / unbounded 的 Converged(%) 与 Mean read-backs = <code>[TBD]</code>（traces 在位，可解析补齐）</li>
+<li><span class="loc">6_exp.tex:130,134</span> omega_low 标注 <code>provisional, n=1</code>（实际已采信 legacy 5-run 82.8±1.0，需把标注从 provisional 升级为 5-run）</li>
+<li>所有 5-run 臂均<b>无显著性检验</b>：mean ± std 已报，但 full vs wo_selfexp（Δ=−4.8pp，1σ 边缘）、full vs wo_retrieval（Δ=−1.1pp，远小于 std）等小差距<b>无统计显著性支撑</b>，是审稿人最可能质疑的点</li>
+</ul>
+
+<h2 id="s2">2. 时间与资源预算（关键：主线 GPU 早收口）</h2>
+
+<div class="item blue">
+<b>主线 GPU 占用估算</b>（readback_binary 档 binary 回读慢，约 4–4.5h/轮；B 模型档约 1.5h/轮）：
+<ul>
+<li><b>readback_binary</b>：r2 跑中（~2h 余量）+ r3+r4+r5 ≈ 13h → <b>~10-16 完成</b></li>
+<li><b>B.glm-5.3-flash</b>（5×~1.5h=7.5h）→ <b>~10-17 完成</b></li>
+<li><b>B.deepseek-v4-flash fresh</b>（5×~1.5h=7.5h）→ <b>~10-18 完成</b></li>
+</ul>
+<b>结论：主线 GPU 在 10-18 即可全部收口，10-19 → 10-29 共 ~11 个 GPU 天几乎全空。</b>这意味着 15 天窗口内有充裕的 GPU 预算做"建议/可选"档的补充评测，而所有"必做"档都是纯 CPU（解析既有 traces），可在主线 code-gen 跑的同时并行完成，<b>零冲突</b>。
+</div>
+
+<h2 id="s3">3. 建议清单总览</h2>
+
+<table>
+<tr><th>#</th><th>建议</th><th>类型</th><th>成本</th><th>优先级</th><th>回填/价值</th></tr>
+<tr><td>A1</td><td>配对显著性检验（McNemar + paired bootstrap）</td><td>纯 CPU</td><td>~1 天·0 GPU</td><td><span class="tag red">必做</span></td><td>补全所有 Δ 的统计支撑，回应审稿人首要质疑</td></tr>
+<tr><td>A2</td><td>Error Analysis 深挖（基于 full_v3 r3=81.6% 代表性 run，129 pass / 29 fail 分类）</td><td>纯 CPU</td><td>~1 天·0 GPU</td><td><span class="tag red">必做</span></td><td>充实 §error-analysis，把 L4 violation 从定性升为定量</td></tr>
+<tr><td>A3</td><td>phi-bound 的 Converged(%) / Mean read-backs / gen-fail trace 解析补齐</td><td>纯 CPU</td><td>~0.5 天·0 GPU</td><td><span class="tag red">必做</span></td><td>填 <code>tab:phi-bound</code> 4 个 [TBD]（unbounded/lagged），traces 在位</td></tr>
+<tr><td>B1</td><td>readback_none (N′) fresh 5-run 重测</td><td>GPU</td><td>5×~1.5h=7.5h</td><td><span class="tag orange">建议</span></td><td>补 N′ echo read-backs [TBD]‡ + 把 N′ 从 provisional 升 5-run；GPU 早收口可做</td></tr>
+<tr><td>B2</td><td>锚点 full 在完整 EDA-Scripting-Bench（449 任务）上 re-run 1 轮</td><td>GPU</td><td>1×~4h（含 SKILL+Tcl）</td><td><span class="tag orange">建议</span></td><td>回应"PyAether-only 切片能否泛化到全 bench"的审稿人质疑，验证 headline claim</td></tr>
+<tr><td>C1</td><td>gen-fail 机制深挖（k↓→gen-fail↑ 的 trace 因果链）</td><td>纯 CPU</td><td>~0.5 天·0 GPU</td><td><span class="tag gray">可选</span></td><td>强化 §8.4 叙事，可与 A2 合并</td></tr>
+<tr><td>C2</td><td>全 bench 上对 2–3 个关键消融臂（rag / pure_llm）各 re-run 1 轮</td><td>GPU</td><td>2–3×~4h</td><td><span class="tag gray">可选</span></td><td>若 B2 锚点泛化成立，进一步验证组件消融在全 bench 的趋势</td></tr>
+</table>
+
+<h2 id="s4">4. 必做项详述（纯 CPU，立即可做）</h2>
+
+<h3 id="a1">A1 · 配对显著性检验（McNemar + paired bootstrap）<span class="tag red">必做</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：论文所有消融比较仅报 mean ± std，<b>无任何显著性检验</b>。两个最关键的 claim 依赖小差距——(i) 执行闭环决定性：full(82.1) vs rag(71.8)，Δ=−10.3pp，看似远超 std，但<b>无 p 值</b>；(ii) 自探索增益：full(82.1) vs wo_selfexp(77.3)，Δ=−4.8pp，<b>两者 std 完全重叠</b>（3.0 与 2.9），审稿人必问"这是否统计显著"。检索移除 full vs wo_retrieval Δ=−1.1pp 更是远小于 std，必须显式说明"不显著"而非暗示有效。这是<b>论文最致命的开放缺口</b>。</div>
+<div class="h"><b>做法 + 成本</b>：从 5-run 的 retained traces 提取<b>每任务×每轮</b>的 pass/fail 矩阵（158 任务 × 5 轮 = 790 配对观测/臂）。对每对臂做：(a) <b>McNemar 检验</b>（基于 pooled pass/fall 列联表的配对二项检验，给出 χ² 与 p 值）；(b) <b>paired bootstrap</b>（对 158 任务重采样 10000 次，给出 Δ 的 95% 置信区间）。两者互补：McNemar 给单点 p 值，bootstrap 给 Δ 的区间。纯 Python（<code>statsmodels</code> / 手写 bootstrap），<b>0 GPU</b>，墙钟 ~4–6h 开发 + 跑全。</div>
+<div class="p"><b>优先级</b>：必做。这是<b>审稿人首要质疑</b>，且成本极低（纯 CPU，traces 已在位）。不做则论文多个 Δ 无法声称"显著"。</div>
+<div class="s"><b>编排</b>：纯 CPU，与 readback_binary r2–r5 及 B.glm-5.3-flash / B.deepseek-v4-flash <b>完全并行</b>，不占沙盒不占 GPU。建议 10-16 启动，10-17 完成。产出可直接回填正文 Δ 句与表格脚注。</div>
+</div>
+<div class="item green"><b>回填落点</b>：<code>tab:main-ablation</code> / <code>tab:phi-bound</code> / <code>tab:llm-comparison</code> 各 Δ 列加 p 值脚注；正文 §6 "execution is decisive"、§4 "self-exploration gain" 句加显著性标注（显著 / 不显著 / 边缘）。<b>关键诚实点</b>：wo_retrieval Δ=−1.1pp 大概率不显著 → 应如实写"retrieval removal is not statistically significant on PyAether-only slice"，反而强化"execution > retrieval"的核心叙事。</div>
+
+<h3 id="a2">A2 · Error Analysis 深挖（代表性 run 失败分类）<span class="tag red">必做</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：论文 §error-analysis 用 full_v3 r3=81.6%(129/158) 代表性 run 提及 L4 violation（隐藏类型契约、内部 selection state），但<b>分类是定性的、未给数量分布</b>。审稿人会问"29 个失败到底分几类、各占多少、是否印证 grounding-gap 的 L1–L4 框架"。这是把理论框架（§4）与实证缝合的关键证据。</div>
+<div class="h"><b>做法 + 成本</b>：取 full_v3 r3 的 29 个失败任务的 traces（batch <code>2026_1012_071034</code>，traces 在位），逐任务读 <code>error_log</code> / <code>run_code</code> 返回，按 L1（语法/API 名错）/ L2（参数/签名错）/ L3（语义/逻辑错）/ L4（设计状态相关：hidden type contract、internal selection、layout-dependent）四类人工归类，给数量表 + 2–3 条代表性 trace 原文片段。纯 CPU，<b>0 GPU</b>，墙钟 ~6–8h（含人工判读）。</div>
+<div class="p"><b>优先级</b>：必做。直接支撑 §4 grounding-gap 框架的实证性，是把"理论叙事"变成"有数据支撑的论证"的最低成本路径。</div>
+<div class="s"><b>编排</b>：纯 CPU，与主线评测<b>完全并行</b>。建议 10-17 启动（A1 完成后），10-18 完成。可与 C1（gen-fail 机制）合并做，共用 trace 解析脚本。</div>
+</div>
+<div class="item green"><b>回填落点</b>：§error-analysis 加失败分类表（L1–L4 × 数量 × 占比）+ 2–3 条 trace 证据；§4 grounding-gap 的 L4 原则从"定性提及"升为"29 个失败中 X 个属 L4"。</div>
+
+<h3 id="a3">A3 · phi-bound 的 Converged / read-backs / gen-fail trace 解析<span class="tag red">必做</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：<code>tab:phi-bound</code> 中 unbounded 与 lagged 两行的 <code>Converged(%)</code> 与 <code>Mean read-backs</code> 仍是 <code>[TBD]</code>（<span class="loc">6_exp.tex:236</span>）。k10/k3/k1 已有 gen-fail，但 Converged 与 read-backs 也未系统填。表格半空降低可信度，且 §8.4 要求"必须同步报告 Converged(%)"。</div>
+<div class="h"><b>做法 + 成本</b>：从 4 个 phi 臂的 5-run traces（k10/k3/k1/lagged 全部在位）+ full_v3 锚点 5 批，解析每 trace 的 <code>finish_reason==completed</code>（=Converged）与 <code>run_code</code> 调用次数（=read-backs），按臂汇总。脚本可复用 echo 数据收集（运维令二十四）已写的解析逻辑。纯 CPU，<b>0 GPU</b>，墙钟 ~3–4h。</div>
+<div class="p"><b>优先级</b>：必做。traces 全在位，成本极低，直接清掉 4 个 [TBD]，且 Converged 列是 §8.4 明文要求的。</div>
+<div class="s"><b>编排</b>：纯 CPU，与主线并行。建议 10-16 与 A1 同日启动（解析脚本类似），10-16 晚完成。</div>
+</div>
+
+<h2 id="s5">5. 建议项详述（含 GPU，主线收口后做）</h2>
+
+<h3 id="b1">B1 · readback_none (N′) fresh 5-run 重测<span class="tag orange">建议</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：N′ 档当前采信 legacy 73.3±2.2（5-run，Pass@1 可信），但<b>其 echo 数据（run_code 次数 / 墙钟 / gen-fail）在早期 /home 磁盘危机已删，不可恢复</b>，导致 <code>tab:ablation-harness</code> 与 <code>tab:readback-cost</code> 的 N′ read-backs 列恒为 <code>[TBD]‡</code>（脚注已注明 unrecoverable）。论文 §S1 的"保真度↓→收敛成本↑"单调论证<b>缺了 N′ 这一档的 cost 证据</b>，三档只有两档有 cost，论证链不完整。fresh 重测可同时（a）确认 Pass@1、（b）恢复 N′ 的 echo cost 数据补全单调证据。</div>
+<div class="h"><b>做法 + 成本</b>：切 <code>set_s1_fidelity.py readback_none</code> + <code>stop.sh && start.sh</code> → 跑 5 轮（每轮 ~1.5h，none 档回读最少 → 收敛最快）= <b>~7.5h GPU + 沙盒</b>。判据同 readback_binary（判据十三：仅 timeout≤10 且无 infra 故障，Pass@1 任何值有效）。echo 数据收集复用运维令二十四脚本。</div>
+<div class="p"><b>优先级</b>：建议（非必做）。Pass@1 已有可信 legacy 值，但 cost 证据缺失使单调论证留缺口；GPU 早收口（10-18 后空闲）使成本可承受。若时间紧可降为 1-run 探路只补 cost。</div>
+<div class="s"><b>编排</b>：在 B.deepseek-v4-flash fresh 收口<b>之后</b>启动（~10-19），不与主线冲突。占 ~1 个 GPU 天。完成后 S1 三档（full/binary/none）echo 数据齐全，<code>tab:readback-cost</code> 三行全填。</div>
+</div>
+<div class="item orange"><b>回填落点</b>：<code>tab:ablation-harness</code> (N′) read-backs 列 + <code>tab:readback-cost</code> N′ 行；§S1 单调论证补全"none 档 run_code 次数/墙钟"。</div>
+
+<h3 id="b2">B2 · 锚点 full 在完整 EDA-Scripting-Bench（449 任务）re-run 1 轮<span class="tag orange">建议</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：论文反复声明"all figures are provisional, obtained on the PyAether-only slice, will be regenerated on the full EDA-Scripting-Bench"（<span class="loc">6_exp.tex:32</span>等多处）。<b>截至投稿，没有任何一个数字来自完整 449 任务集</b>（PyAether 158 + SKILL 158 + Tcl 133）。审稿人最可能质疑"你的 headline claim（执行闭环决定性、+10.3pp）是否只是 PyAether 切片的偶然"。哪怕只把<b>锚点 full</b>在全 bench 跑 1 轮，验证 82% 量级在 449 任务上仍成立，就能把"provisional"降级为"validated on full bench, single run"，极大增强论文可信度。</div>
+<div class="h"><b>做法 + 成本</b>：保留 full 配置，仅把评测集从 PyAether-only 切到完整 EDA-Scripting-Bench（449），跑 <b>1 轮</b>（不是 5 轮，控成本）。SKILL/Tcl 档需确认沙盒 run_code 的 <code>lang=skill/tcl</code> + <code>host=virtuoso/waveview/innovus</code> 端口就绪。墙钟 ~4h（449 任务比 158 多 ~2.8×）。<b>0 额外 GPU 模型成本</b>（用同一 backbone）。</div>
+<div class="p"><b>优先级</b>：建议。这是把论文从"切片 provisional"推向"全 bench validated"的<b>性价比最高一步</b>，且只需 1 轮。若 1 轮锚点在全 bench 量级吻合（~80%），论文可信度跃升；若显著偏离，也提前暴露风险。</div>
+<div class="s"><b>编排</b>：在 B1（readback_none）<b>之后或并行</b>启动（~10-20），占 ~1 个 GPU 天。不与任何主线冲突。⚠️ 前置：确认 SKILL/Tcl 沙盒端口健康（virtuoso/waveview/innovus），否则只跑 PyAether+SKILL 两档。</div>
+</div>
+<div class="item orange"><b>回填落点</b>：新增一段"Full-bench validation"或在 §6 开头加一句"the anchor was re-measured on the full 449-task EDA-Scripting-Bench (1 run, X%), confirming the PyAether-slice findings generalize"；把正文多处 "provisional, PyAether-only" 的措辞软化。</div>
+
+<h2 id="s6">6. 可选项详述</h2>
+
+<h3 id="c1">C1 · gen-fail 机制深挖<span class="tag gray">可选</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：§8.4 已有"k↓→gen-fail↑→Pass@1↓"的趋势，但未展示<b>单条 trace 内</b>的因果链（agent 在预算耗尽后如何终止、是否产生半成品代码）。</div>
+<div class="h"><b>做法 + 成本</b>：取 phi_k1 r1（35 gen-fail，最多）的 5–10 条 gen-fail trace，看 agent 在 [PHI-BUDGET-EXHAUSTED] 后的后续行为。纯 CPU ~3h。<b>建议并入 A2</b>，共用 trace 解析。</div>
+<div class="p"><b>优先级</b>：可选。若 A2 时间富余则顺带做，否则舍弃。</div>
+<div class="s"><b>编排</b>：与 A2 合并，10-17–10-18。</div>
+</div>
+
+<h3 id="c2">C2 · 关键消融臂在全 bench re-run 1 轮<span class="tag gray">可选</span></h3>
+<div class="four">
+<div class="m"><b>动机</b>：若 B2 锚点在全 bench 泛化成立，进一步验证"组件消融趋势"（rag / pure_llm）在全 bench 是否仍保持 −10.3pp / −71.6pp 的量级。</div>
+<div class="h"><b>做法 + 成本</b>：rag + pure_llm 各 1 轮全 bench = 2×~4h = ~8h GPU。仅在 B2 结果乐观时启动。</div>
+<div class="p"><b>优先级</b>：可选。时间富余（~10-22 后）且 B2 成功时做，否则用 B2 单点锚点已够。</div>
+<div class="s"><b>编排</b>：B2 之后，10-22–10-24。</div>
+</div>
+
+<h2 id="s7">7. 与 S1 / B 主线的编排原则</h2>
+<ol>
+<li><b>评测优先纪律不变</b>：所有"必做"项（A1/A2/A3）纯 CPU，与主线 readback_binary r2–r5 + B.glm-5.3-flash + B.deepseek-v4-flash <b>完全并行</b>，绝不抢占沙盒端口或 GPU。</li>
+<li><b>主线 GPU 收口后才动"建议"项的 GPU</b>：B1/B2 的 GPU 占用排在 B.deepseek-v4-flash fresh 之后（~10-19 起），保证不延后任何主线臂。</li>
+<li><b>切配置纪律</b>：B1（readback_none）切配置必须 <code>set_s1_fidelity.py readback_none</code> + <code>stop.sh && start.sh</code> 串行 <code>&&</code>，核对 .env（OMEGA=high/READBACK=none/phi=0/0/核心4工具ON）；切回锚点时反向复位。B2 不切 set_ablation（保持 full），仅切评测集参数。</li>
+<li><b>判据十三常驻</b>：所有消融臂 Pass@1 任何值有效，仅 timeout≤10 且无 infra 故障为作废理由；不因低分重跑。</li>
+<li><b>数字同步纪律</b>：回填论文 Δ 列与正文同一数字必须同步改（README §6.1），A1 出 p 值后若某 Δ 改判"不显著"，正文相应句必须同步软化。</li>
+<li><b>每轮唤醒 commit+push</b>：每完成一个建议项即 <code>git add doc/ZhuLong_DAC2027/{run,ZhuLong_DAC2027}</code> + commit（前缀 <code>zhulong plan:</code> / <code>zhulong S1-echo:</code> / <code>zhulong paper-fix:</code>）+ push，不依赖 loop 兜底。</li>
+</ol>
+
+<h2 id="s8">8. 15 天排期表（按天）</h2>
+
+<table>
+<tr><th>日期</th><th>主线（GPU/沙盒）</th><th>补充消融（本建议书）</th><th>产出</th></tr>
+<tr><td><b>10-15（今）</b></td><td>readback_binary r2 跑中</td><td>✅ 本建议书交付</td><td>本 HTML 报告</td></tr>
+<tr><td>10-16</td><td>readback_binary r3（~4h）</td><td>A1 启动（trace 提取 + McNemar/bootstrap 脚本）；A3 启动（phi trace 解析）</td><td>A3 完成（phi [TBD] 清零）；A1 脚本就绪</td></tr>
+<tr><td>10-17</td><td>readback_binary r4（~4h）</td><td>A1 跑全 + 出 p 值表；A2 启动（29 失败分类）</td><td>A1 完成（显著性表）；A2 进行中</td></tr>
+<tr><td>10-18</td><td>readback_binary r5（~4h）→ S1.readback_binary 5/5 收口 → 切 B.glm-5.3-flash r1</td><td>A2 完成（失败分类表 + trace 证据）；C1 并入</td><td>A2 完成；回填 §error-analysis</td></tr>
+<tr><td>10-19</td><td>B.glm-5.3-flash r2–r5（~6h）→ 收口</td><td>A1/A2/A3 回填论文 .tex + 编译验证</td><td>论文 P0 回填（显著性 + error analysis + phi [TBD]）编译 0 error</td></tr>
+<tr><td>10-20</td><td>切 B.deepseek-v4-flash fresh r1–r3</td><td><b>B1 启动：readback_none fresh r1</b>（~1.5h，与 flash 串行沙盒间隙）⚠️ 注意沙盒端口争用，必要时 B1 排在 flash 之后</td><td>B1 r1</td></tr>
+<tr><td>10-21</td><td>B.deepseek-v4-flash fresh r4–r5 → 收口 → B 全轴收口</td><td>B1 r2–r3</td><td>B1 进行中</td></tr>
+<tr><td>10-22</td><td><b>主线全部收口 ✅</b>（GPU 空闲）</td><td>B1 r4–r5 → N′ 5/5 收口；<b>B2 启动：锚点 full 全 bench 1 轮</b>（~4h）</td><td>N′ echo 补全；B2 锚点全 bench 值</td></tr>
+<tr><td>10-23</td><td>GPU 空闲</td><td>B2 结果分析 + 回填；若乐观 → <b>C2 启动：rag 全 bench 1 轮</b></td><td>"Full-bench validation" 段落</td></tr>
+<tr><td>10-24</td><td>GPU 空闲</td><td>C2：pure_llm 全 bench 1 轮（若做）</td><td>组件消融全 bench 趋势</td></tr>
+<tr><td>10-25</td><td>—</td><td>全 bench 数据回填 + 论文修订</td><td>论文 v2 草稿</td></tr>
+<tr><td>10-26</td><td>—</td><td>论文修订（abstract/intro/conclusion 同步 provisional→validated 措辞）</td><td>全文措辞统一</td></tr>
+<tr><td>10-27</td><td>—</td><td>内部 review + 编译验证</td><td>编译 0 error，页数核查</td></tr>
+<tr><td>10-28</td><td>—</td><td>buffer（应对 SKILL/Tcl 端口故障 / 任意臂复跑）</td><td>—</td></tr>
+<tr><td>10-29</td><td>—</td><td>最终校对 + 提交准备</td><td>可投稿状态</td></tr>
+<tr><td><b>10-30</b></td><td>—</td><td><b>投稿 deadline</b></td><td>—</td></tr>
+</table>
+
+<div class="item purple">
+<b>排期弹性说明</b>：10-19 之前的"必做"项是<b>硬性</b>（纯 CPU、traces 在位、无外部依赖），即使主线延后也能完成。10-20 起的"建议"项依赖主线 GPU 收口，若 readback_binary 或 B 模型臂因 infra 延后，则 B1/B2 顺延，C2 可能舍弃。<b>底线交付</b>：即便所有 GPU 补充项都失败，仅 A1+A2+A3 三项纯 CPU 成果即可把论文从"多 Δ 无显著性 + error analysis 定性 + 4 个 [TBD]"升级到"全 Δ 有 p 值 + error analysis 定量 + 0 个 [TBD]"，已显著加强论证。
+</div>
+
+<h2 id="s9">9. 风险与护栏</h2>
+<ul>
+<li><b>SKILL/Tcl 沙盒端口</b>（B2/C2 前置）：完整 bench 需 virtuoso/waveview/innovus 端口就绪，此前主线的 4 端口（8650/8651/8652/8654@pyAether）不覆盖。B2 启动前必须 canary 确认，否则降级为 PyAether+SKILL 两档或放弃 B2。</li>
+<li><b>A1 trace 完整性</b>：5-run 的 per-task pass/fail 矩阵需确认每臂 5 批 traces 全在位（phi 臂 10-12 起的在位；pure_llm/rag 复用 legacy 可能 trace 已删 → 若删则该对只能用 McNemar 的 run-level 而非 task-level，或标注 n=available）。A1 启动第一步即核查 trace 在位情况。</li>
+<li><b>显著性结果可能不利</b>：A1 大概率会显示 wo_retrieval Δ=−1.1pp <b>不显著</b>、wo_selfexp Δ=−4.8pp <b>边缘或不显著</b>。<b>这不是坏事</b>——如实报告"retrieval removal not significant on PyAether slice"反而强化"execution > retrieval"的核心叙事，且体现严谨。红线：不得因不显著而隐藏或改口径。</li>
+<li><b>B2 全 bench 锚点可能偏离</b>：若 449 任务上锚点显著低于 82%（如 SKILL/Tcl 难度更高），则"provisional"不能升级为"validated"，需如实写"PyAether-slice anchor is X%, full-bench single-run is Y%, gap attributable to SKILL/Tcl difficulty"。<b>不得</b>只挑有利的 PyAether 数字。</li>
+<li><b>数字编造红线</b>：所有回填数字必须来自 <code>MEMORY_ZHULONG.md</code> 成绩表或 fresh trace 解析，<b>🚫 不得凭印象编造</b>；未齐项保留 <code>[TBD]</code>/provisional。</li>
+<li><b>任务书 >32KB 自滚归档</b>：本建议书交付后，若任务书超 32KB，按运维规程自行归档已闭合块至 <code>ZHULONG_TASK_ARCHIVE.md</code>。</li>
+</ul>
+
+<h2 id="s10">10. 论文回填映射（建议 → [TBD]/provisional 落点）</h2>
+<table>
+<tr><th>建议</th><th>回填的 [TBD]/provisional</th><th>位置</th><th>类型</th></tr>
+<tr><td>A1</td><td>各 Δ 的 p 值 / 95% CI（新增脚注）</td><td>tab:main-ablation / tab:phi-bound / tab:llm-comparison + 正文 Δ 句</td><td>新增</td></tr>
+<tr><td>A2</td><td>§error-analysis 失败分类表 + trace 证据</td><td>6_exp.tex §error-analysis</td><td>新增</td></tr>
+<tr><td>A3</td><td>phi unbounded/lagged 的 Converged(%) + Mean read-backs</td><td>tab:phi-bound :235-236</td><td>填 [TBD]</td></tr>
+<tr><td>A3（顺带）</td><td>w/o Sandbox = 71.8±2.5, Δ=−10.3pp（数据已齐）</td><td>tab:main-ablation :97 + 正文 :204 + abstract + 4_grounding</td><td>填 [TBD]（纯回填，非本建议书新数据）</td></tr>
+<tr><td>A3（顺带）</td><td>omega_low 从 provisional n=1 升 5-run 82.8±1.0</td><td>6_exp.tex :130,134 + tab:omega</td><td>改标注</td></tr>
+<tr><td>B1</td><td>N′ read-backs / 墙钟 / gen-fail</td><td>tab:ablation-harness :157 + tab:readback-cost :195</td><td>填 [TBD]‡</td></tr>
+<tr><td>B2</td><td>锚点全 bench 值 + "validated on full bench"</td><td>6_exp.tex §6 开头 + 各处 "provisional" 措辞</td><td>软化 provisional</td></tr>
+</table>
+
+<div class="item green">
+<b>最小可交付集（若 GPU 补充项全失败）</b>：A1 + A2 + A3 三项纯 CPU 即可清掉 <code>tab:phi-bound</code> 4 个 [TBD] + <code>tab:main-ablation</code> w/o Sandbox [TBD] + omega_low provisional 标注 + 为全表 Δ 加显著性，<b>论文 [TBD] 从 ~10 个降至 ~2 个（仅 N′ read-backs 与全 bench validation）</b>，论证强度显著提升。B1/B2 是"把剩余 2 个也清掉 + 升级 provisional"的增量。
+</div>
+
+<div class="footer">
+本建议书由 ZhuLong agent 于 2026-10-15 在 readback_binary r2 code-gen 空窗期产出（运维指令二十一，纯 CPU 写作，零 GPU，未打断主线评测）。数据基准：<code>run/MEMORY_ZHULONG.md</code>（截至 16:13）+ <code>zhulong_results.md</code>。commit 前缀：<code>zhulong plan:</code>。
+</div>
+
+</div>
+</body>
+</html>
