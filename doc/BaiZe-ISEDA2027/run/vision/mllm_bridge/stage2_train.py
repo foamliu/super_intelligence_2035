@@ -91,27 +91,44 @@ class LLaVANeXTInstructDataset(Dataset):
         self.data_dir = data_dir
         self._tar_cache = {}
         self.index = []
-        tars = sorted(Path(data_dir).glob('data-*.tar'))
-        for tar_path in tars:
-            try:
-                with tarfile.open(str(tar_path), 'r') as tf:
-                    names = tf.getnames()
-                groups = {}
-                for n in names:
-                    if n.endswith('.json'):
-                        prefix = n.rsplit('.json', 1)[0]
-                        groups.setdefault(prefix, {'json': True, 'imgs': []})
-                    elif n.endswith(('.jpg', '.png', '.jpeg')):
-                        parts = n.rsplit('.', 2)
-                        prefix = parts[0] if len(parts) >= 3 else n.rsplit('.', 1)[0]
-                        groups.setdefault(prefix, {'json': False, 'imgs': []})
-                        groups[prefix]['imgs'].append(n)
-                for prefix, info in groups.items():
-                    if info['json'] and len(info['imgs']) > 0:
-                        self.index.append((str(tar_path), prefix, sorted(info['imgs'])))
-            except Exception as e:
-                print0(f"WARNING: failed to index {tar_path}: {e}")
-        print0(f"[Rank {rank}] Dataset: {len(self.index)} samples from {len(tars)} tars")
+
+        if world > 1 and rank > 0:
+            # Non-root ranks: wait for rank 0 to build and broadcast the index
+            dist.barrier()
+            recv = [None]
+            dist.broadcast_object_list(recv, src=0)
+            self.index = recv[0]
+            tars_count = len(set(t for t, _, _ in self.index))
+        else:
+            # Rank 0 (or single-GPU): build the index
+            tars = sorted(Path(data_dir).glob('data-*.tar'))
+            for tar_path in tars:
+                try:
+                    with tarfile.open(str(tar_path), 'r') as tf:
+                        names = tf.getnames()
+                    groups = {}
+                    for n in names:
+                        if n.endswith('.json'):
+                            prefix = n.rsplit('.json', 1)[0]
+                            g = groups.setdefault(prefix, {'json': False, 'imgs': []})
+                            g['json'] = True
+                        elif n.endswith(('.jpg', '.png', '.jpeg')):
+                            parts = n.rsplit('.', 2)
+                            prefix = parts[0] if len(parts) >= 3 else n.rsplit('.', 1)[0]
+                            g = groups.setdefault(prefix, {'json': False, 'imgs': []})
+                            g['imgs'].append(n)
+                    for prefix, info in groups.items():
+                        if info['json'] and len(info['imgs']) > 0:
+                            self.index.append((str(tar_path), prefix, sorted(info['imgs'])))
+                except Exception as e:
+                    print0(f"WARNING: failed to index {tar_path}: {e}")
+            tars_count = len(tars)
+            print0(f"[Rank {rank}] Dataset: {len(self.index)} samples from {tars_count} tars")
+
+            if world > 1:
+                # Broadcast index to all ranks
+                dist.barrier()
+                dist.broadcast_object_list([self.index], src=0)
 
     def _get_tar(self, tar_path):
         if tar_path not in self._tar_cache:

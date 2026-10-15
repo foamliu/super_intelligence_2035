@@ -4,8 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）**：✅ Stage-1.5 完成(step20000)→✅ Stage-2 完成(step3500, loss=1.49, 15.4min)。✅ **lmms-eval multi-GPU 适配**：`lmms_eval_baize_llava.py` 加 LOCAL_RANK 多卡支持 + `run_lmms_eval.py` 加 batch_size 参数 + `launch_lmms_eval.sh` 用 `accelerate launch --multi_gpu --num_processes=8`。✅ **ai2d smoke test 通过**（--limit 5, exact_match=0.60, 模型生成正常）。✅ **HF_TOKEN=hf_dummy** 解决 huggingface_hub 0.36+ `token=True` 要求。✅ **proxy 直连 hf.co 下载成功**（ai2d 77MB 已缓存）。🔄 **--limit 50 全 17 集验证评测运行中**（8×H100, batch_size=4, accelerate multi-GPU）。✅ **git push 已修复**（运维已配 git config http.proxy=92.23, `git fetch` 验证通过）。下一步：limit50 结果验证→全量 17 集评测→结果报告。📦 体积：TASK=36.6KB（需归档）/ MEMORY=30.6KB。
-> 📦 2026-10-15 ~11:16（Stage-1.5 Mid-Training 启动 ✅ · wake #101）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage15_train.py 8×H100 DDP 启动，20000步 LoRA r=64，step100 loss=4.14。需要时再读。
+> 🆕 **2026-10-15 21:50（磁盘满崩因修复 + 预建缓存 · wake #104）**：❌ **limit50 8卡评测 21:24 崩**：`OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → rank1 exit 1 → `ChildFailedError`；根因 = 8 rank 同时在 `/home`（仅 47G 空闲）写 datasets 缓存 ⇒ 瞬时写满。✅ **修复**：① `HF_HOME` 迁到 `/nas_env/app.e0031982/hf_home`（9.9T 空闲）— `launch_lmms_eval.sh` + `run_lmms_eval.py` 均已加 `HF_HOME/HF_DATASETS_CACHE/HF_HUB_CACHE` env；② 新建 `precache_benchmarks.py` + `run_precache.sh` — 单进程预建 17 集 dataset cache，避免 8 rank 重复写；③ `launch_lmms_eval.sh` 加磁盘余量检查（<50G 则 abort）。🔄 **预建缓存运行中**（单进程，mmbench_en_dev ✅ 72s，mmmu_val 下载中 67MB+）。✅ **Stage-2 step3500 确认完整**（adapter 528MB + projector 15.7MB，loss=1.4853，15.4min，train.log 末行 `=== Stage-2 Training Complete ===`）。✅ **git push 已修**（运维配 git config http.proxy=92.23）。下一步：precache 完成→limit50 8卡验证→全量 17 集→结果表+HTML。📦 体积：TASK=32.6KB / MEMORY≈31KB。
+> 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
 > 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
 > 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
@@ -36,11 +36,22 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集 multi-GPU 评测运行中（wake #103）**：Stage-1/1.5/2 全 ✅，`run_lmms_eval.py` + `lmms_eval_baize_llava.py` 已适配 multi-GPU (accelerate, LOCAL_RANK) + batch_size=4。--limit 50 全 17 集验证评测启动中。ArmC/eval/bridge/论文等全 ✅。 |
-| ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
+| PHASE | 🔄 **lmms-eval 17 集：预建缓存运行中（wake #104）**：Stage-1/1.5/2 全 ✅。limit50 8卡评测因磁盘满(`/home` 47G)崩 → 已迁 `HF_HOME=/nas_env`(9.9T) + 单进程预建缓存(进行中) → 复跑 limit50 → 全量。ArmC/eval/bridge/论文等全 ✅。 |
+| ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-15 20:30 (wake #103)**: 🔄 lmms-eval 17 集 multi-GPU 评测。Stage-1.5(step20000)✅ Stage-2(step3500, loss=1.49)✅。`lmms_eval_baize_llava.py` 加 LOCAL_RANK 多卡 + `run_lmms_eval.py` 加 batch_size + `launch_lmms_eval.sh` 用 accelerate launch --multi_gpu --num_processes=8。ai2d smoke test 通过(0.60)。HF_TOKEN=hf_dummy 解决 token=True。proxy 直连 hf.co 下载 OK。--limit 50 全 17 集验证运行中。git push 已修复(运维配 git config proxy)。 |
+| 更新 | **2026-10-15 21:50 (wake #104)**: ❌ limit50 8卡评测 21:24 崩(磁盘满)。✅ 修复: HF_HOME→/nas_env(9.9T), 新建 precache_benchmarks.py 单进程预建缓存, launch_lmms_eval.sh 加磁盘检查。✅ Stage-2 step3500 确认完整(adapter 528MB+projector 15.7MB, loss=1.4853, train.log 末行=Complete)。🔄 预建缓存运行中(mmbench ✅, mmmu 下载中)。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
+
+### 评测耗时归因（2026-10-15）
+
+| 环节 | 耗时(估) | 说明 |
+|:--|:--|:--|
+| 训练链 (Stage-1/1.5/2) | ~4h | Stage-1 2500步(~1.5h) + Stage-1.5 20000步(~2h) + Stage-2 3500步(0.26h) + gate check/smoke(~0.3h) |
+| adapter 适配 (lmms-eval wrapper) | ~3h | `lmms_eval_baize_llava.py` 编写+调试(generate_until/loglikelihood/multi-GPU LOCAL_RANK/batch_size) |
+| 数据通道 (HF 下载) | ~1.5h | proxy 直连 hf.co；ai2d smoke 77MB OK；17 集首次下载是大头(预建缓存中) |
+| 磁盘满崩溃 + 修复 | ~0.5h | limit50 8卡同时写 `/home`(47G)→崩；修复=迁 HF_HOME→/nas_env + 单进程预建缓存 |
+| git 推送阻塞 | ~6h | `.12` 直连 github 不通(无 proxy)→ 6h 推不上来(运维已配 git config http.proxy=92.23 修复) |
+| generate 输出 bug | ~0.5h | 早期 ai2d 输出解析调试(`HF_TOKEN=hf_dummy` + adapter 输出格式) |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
 

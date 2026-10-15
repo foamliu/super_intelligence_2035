@@ -17,6 +17,25 @@ export HF_TOKEN=hf_dummy  # needed by huggingface_hub 0.36+ for token=True in ta
 # Remove any hf-mirror settings
 unset HF_ENDPOINT
 
+# ---- HF cache on large disk (NOT /home which is only 196G) ----
+# CRITICAL: /home has only 47G free; 8 ranks writing datasets cache simultaneously
+# caused "No space left on device" crash on 2026-10-15 21:24.
+# /nas_env has 9.9T free — all ranks share this cache.
+export HF_HOME=/nas_env/app.e0031982/hf_home
+export HF_DATASETS_CACHE=$HF_HOME/datasets
+export HF_HUB_CACHE=$HF_HOME/hub
+export TRANSFORMERS_CACHE=$HF_HOME/transformers
+mkdir -p "$HF_DATASETS_CACHE" "$HF_HUB_CACHE" "$TRANSFORMERS_CACHE"
+
+# ---- disk space check (require >=50G available) ----
+AVAIL_KB=$(df -P /nas_env | tail -1 | awk '{print $4}')
+AVAIL_GB=$((AVAIL_KB / 1024 / 1024))
+echo "[launch] HF_HOME=$HF_HOME  /nas_env available=${AVAIL_GB}G"
+if [ "$AVAIL_GB" -lt 50 ]; then
+    echo "[launch] WARNING: /nas_env has only ${AVAIL_GB}G free (<50G threshold). Aborting."
+    exit 1
+fi
+
 export OMP_NUM_THREADS=1
 
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision

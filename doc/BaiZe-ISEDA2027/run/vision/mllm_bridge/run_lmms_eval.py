@@ -17,6 +17,19 @@ os.environ.setdefault("http_proxy", "http://172.19.92.25:13128")
 # Remove any hf-mirror settings
 os.environ.pop("HF_ENDPOINT", None)
 
+# ---- HF cache on large disk (NOT /home which is only 196G) ----
+# CRITICAL: /home has only 47G free; 8 ranks writing datasets cache simultaneously
+# caused "No space left on device" crash on 2026-10-15 21:24.
+# /nas_env has 9.9T free — all ranks share this cache.
+os.environ.setdefault("HF_HOME", "/nas_env/app.e0031982/hf_home")
+os.environ.setdefault("HF_DATASETS_CACHE", os.path.join(os.environ["HF_HOME"], "datasets"))
+os.environ.setdefault("HF_HUB_CACHE", os.path.join(os.environ["HF_HOME"], "hub"))
+os.environ.setdefault("TRANSFORMERS_CACHE", os.path.join(os.environ["HF_HOME"], "transformers"))
+os.makedirs(os.environ["HF_DATASETS_CACHE"], exist_ok=True)
+os.makedirs(os.environ["HF_HUB_CACHE"], exist_ok=True)
+os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+os.environ.setdefault("HF_TOKEN", "hf_dummy")
+
 VISION_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BRIDGE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, VISION_DIR)
