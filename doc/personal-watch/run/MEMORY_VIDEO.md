@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S1/S2 完成 · S3 放量中 · 18_暖阳 R2V 端到端成片 ✅（54/54 镜 master+硬字幕成片，QC 通过）· 13_外骨骼 R2V 端到端成片 ✅（48/48 镜））；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ 已成片 · EP01 晨钟 视频生成已启动（R2V 28 + T2V 26 后台跑批中））；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 R2V 端到端成片 ✅（第三例 · 54/54 镜）
-已完成:       S1 ✅；S2 ✅；S3 13_外骨骼 48/48 ✅ + 18_暖阳 54/54 成片 ✅；18_暖阳 R2V 32 + T2V 22 = 54/54 镜落盘；EP18_暖阳_master.mp4（85.4MB）+ EP18_暖阳_成片.mp4 硬字幕（87.5MB）已合成 ✅（1280×720@24fps h264+aac 273.33s · 音画漂移 0.009s）；scripts/gen_ep18_subtitles.py + scripts/synth_ep18.py 收口（I2V→R2V 路由 + SFX_ONLY 排除 13 无台词镜 + concat scale=1280:720 归一）
-当前动作:     EP18 成片 QC 已闭环（ffprobe 规格/AV 同步/时长 + 抽帧 6s/270s 非空白 + 底部字幕带亮斑核验）
-下一步:       （可选）SeedVR2 ×1.5 → 1920×1080 超分；（可选）BGM 跨镜混音；→ 下一章放量
+PHASE:        S3 放量 → EP01《晨钟》视频生成启动（下一章 · 54 镜）
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；EP01 参考图 16 张 ✅（gen_ep01_scenes.py）+ 脚本三件套就绪
+当前动作:     EP01 H3 视频生成后台跑批（R2V 28 镜 mp=0.4 + T2V 26 镜 mp=0.6 · steps=10 · --skip-existing --wait）；ComfyUI 队列 running 1 / pending 2（已核验提交成功）
+下一步:       每小时核 EP01 出片进度（OUTPUT/01_晨钟/videos/ EP01_SHOT-*.mp4 计数）→ 全 54/54 落盘后写 synth_ep01.py + gen_ep01_subtitles.py → 合成 + QC
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-15（18_暖阳 R2V 端到端成片 ✅ · 54/54 镜 master+硬字幕成片 QC 通过）
+- **上次唤醒**：2026-10-15（EP01 晨钟 视频生成启动 · R2V 28 + T2V 26 后台跑批 · 脚本+参考图就绪）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-15 · S3 放量 · EP01《晨钟》视频生成启动 ✅（54 镜 · R2V 28 + T2V 26）**：本轮把下一章 EP01 晨钟 的视频生成跑起来。
+  - **盘点发现**：上一轮（17:11–17:25）已就绪 EP01 三脚本（`gen_ep01_scenes.py` / `gen_ep01_h3_r2v.py` / `gen_ep01_h3_t2v.py`，均未提交）+ 16 张参考图（`ASSETS/CHARACTERS/_scene/01_*.png`，4 角色 + 12 场景）；`OUTPUT/01_晨钟/` 尚 0 文件。
+  - **自检**：ComfyUI 可达（RTX 4090 16GB）· 队列空 · 两仓 pull 均 up-to-date。
+  - **dry-run 核验**：R2V 28 镜（`--dry-run` 报「✅ 所有参考图在位」）+ T2V 26 镜 = 54 镜，与 `SCENES/01_晨钟.md` 逐镜表一致。
+  - **★ 启动后台跑批**：`Start-Process py -3.10 scripts/gen_ep01_h3_r2v.py --skip-existing --wait`（pid 1488）+ `gen_ep01_h3_t2v.py`（pid 20976），stdout/stderr 落 `_gen_ep01_{r2v,t2v}.log/.err.log`，pid 落 `.pid`；核验 ComfyUI 队列 running 1 / pending 2（提交成功、正在出片）。
+  - **已知**：① 首镜 02 有 1 次重复提交（前一次 30s 超时被中断的 smoke test 已提交同 seed 1002 同镜，产物同 seed 相同、下载覆盖，无功能影响）；② `py` 重定向 stdout 到文件走块缓冲 ⇒ 日志暂 0 字节，监控改看 `OUTPUT/01_晨钟/videos/` 文件计数。
+  - **下一步**：每小时核 EP01 出片进度（`OUTPUT/01_晨钟/videos/EP01_SHOT-*.mp4` 计数）→ 全 54/54 后写 `synth_ep01.py` + `gen_ep01_subtitles.py`（复用 EP13/EP18 范式）→ 合成 + QC。
+
 
 - **2026-10-15 · S3 收尾 · 18_暖阳 R2V 端到端成片 ✅（54/54 镜 master + 硬字幕成片）**：本轮完成 EP18 暖阳「样板第三例」端到端收口与 QC。
   - **资产核清**：`OUTPUT/18_暖阳/videos` R2V 32 + T2V 22 = **54/54 镜在位**；`EP18_暖阳_字幕.srt`（6,510B · 96 条）已生成。
