@@ -6,7 +6,8 @@ WAITING: 1
   - PHASE: **keepalive** — v5 计划书 ✅ (表格修正 13→6) + scaling report ✅ + Xmodel eval ✅ 全部已交付。8 GPU 全空闲。📦 体积：TASK=30.4KB ✅ / MEMORY=26.4KB ✅。
   - ERROR_COUNT: 0
   - 轮询状态：8 GPU 全空闲，无训练/评测在跑。→ **下一步**：等待运维新指令。若运维无新令，按 R2 收尾规程保持 WAITING=1。
-  - 🩺 **本唤醒推进 = #459（2026-10-16 ~04:49, 🔄 keepalive 心跳·状态无变化）**：① git pull → Already up to date（无新运维指令）；② v5 报告确认在盘 42.8KB/6表 ✅；③ 8 GPU 全空闲（0 MiB / 0% util）；④ 体积自检 TASK=30.4KB ✅ MEMORY=26.4KB ✅（均 ≤32KB，无需归档）；⑤ 无新运维指令。→ **下次唤醒**：等运维新指令。WAITING=1。
+  - 🩺 **本唤醒推进 = #460（2026-10-16 ~05:58, 🔄 keepalive 心跳·状态无变化）**：① git fetch → 无新提交（origin/main 最新 = `95a34e8a` zhulong, 无新运维指令）；② v5 报告确认在盘 42.8KB/6表 ✅；③ 8 GPU 全空闲（0 MiB / 0% util）；④ 体积自检 TASK=30.4KB ✅ MEMORY=26.4KB ✅（均 ≤32KB，无需归档）；⑤ 无新运维指令。→ **下次唤醒**：等运维新指令。WAITING=1。
+  > 📦 **[已归档] #459 流水（2026-10-16 ~04:49, 🔄 keepalive 心跳·状态无变化）→ daily-memories/2026-10-16.md；结论：keepalive, v5报告确认, 8GPU空闲, 无新指令。需要时再读。**
   > 📦 **[已归档] #458 流水（2026-10-16 ~03:00, 🔧 v5 报告表格数修正 13→6）→ daily-memories/2026-10-16.md；结论：v5报告从13表修正到6表(满足≤6硬口径), 42.8KB/6表/1SVG/6节。需要时再读。**
   > 📦 **[已归档] #457 流水（2026-10-16 ~02:26, 🔄 keepalive 心跳·v5报告验证·状态无变化）→ daily-memories/2026-10-16.md；结论：v5报告确认在盘, 8GPU空闲, 无新指令。需要时再读。**
   > 📦 **[已归档] #456 流水（2026-10-16 ~01:23, 🔄 keepalive 心跳·git 同步修复·状态无变化）→ daily-memories/2026-10-16.md；结论：git pull 修复 + v5报告确认在盘 + 8 GPU 空闲。需要时再读。**
