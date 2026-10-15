@@ -53,15 +53,21 @@ def main():
         # Token counts verified from papers:
         #   Xmodel-2: 3.93M tokens/step (arXiv:2412.19638, confirmed by news article:
         #     "批次大小为393万个token"; decay T=5000 steps = 20B tokens → 5000×3.93M≈20B)
-        #   Xmodel-2.5 S1: 3712×480 = 1,781,760 ≈ 1.78M tokens/step (arXiv:2511.19496)
+        #   Xmodel-2.5: 13.2M tokens/step (arXiv:2511.19496)
+        #     Paper Table 1: seq_len=3712; total=1.4T tokens; 106K total steps
+        #     → 1.4T / 106000 = 13.2M tokens/step
+        #     (Earlier "3712×480" was wrong: 3712 is seq_len not batch_size)
         ('xmodel2_s1_10000', None, 39.3,  'Xmodel-2 s1/10K (39.3B)'),
         ('xmodel2_s1_20000', None, 78.6,  'Xmodel-2 s1/20K (78.6B)'),
         ('xmodel2_s1_30000', None, 117.9, 'Xmodel-2 s1/30K (117.9B)'),
         ('xmodel2_s1_40000', None, 157.2, 'Xmodel-2 s1/40K (157.2B)'),
         ('xmodel2_final',    None, 1500.0, 'Xmodel-2 final (1.5T)'),
-        ('xmodel25_step_2000',  None, 3.56,  'Xmodel-2.5 step 2K (3.56B)'),
-        ('xmodel25_step_10000', None, 17.82, 'Xmodel-2.5 step 10K (17.82B)'),
-        ('xmodel25_step_18000', None, 32.07, 'Xmodel-2.5 step 18K (32.07B)'),
+        ('xmodel25_step_2000',  None, 26.4,  'Xmodel-2.5 step 2K (26.4B)'),
+        ('xmodel25_step_4000',  None, 52.8,  'Xmodel-2.5 step 4K (52.8B)'),
+        ('xmodel25_step_6000',  None, 79.2,  'Xmodel-2.5 step 6K (79.2B)'),
+        ('xmodel25_step_8000',  None, 105.6, 'Xmodel-2.5 step 8K (105.6B)'),
+        ('xmodel25_step_10000', None, 132.0, 'Xmodel-2.5 step 10K (132B)'),
+        ('xmodel25_step_18000', None, 237.6, 'Xmodel-2.5 step 18K (237.6B)'),
     ]
     
     base = '/nas_train/app.e0031982/code/BaiZe-ISEDA2027/xmodel_eval'
