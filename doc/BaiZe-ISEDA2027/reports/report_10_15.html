@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-15</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-15</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-15 ~16:50 · 覆盖六线：pretrain / vision / harness / data / zhulong / news</p>
+
+<div class='info'><strong>TL;DR</strong>：今日是<strong>成果集中兑现日</strong>。① <strong>pretrain P-8 全部跑完</strong>（44.4B token，final loss 1.357）并出完全部 14 集评测，且<strong>Xmodel 对比得出重大正面结论：BaiZe-2B 早期学习能力不弱于、反超 Xmodel 系列（+8.85pp）</strong>；② <strong>vision ArmC 收官（ProtB 68.25%）后，Stage(iv) MLLM 全速推进</strong>（Stage-1/1.5 完成，Stage-2 待启动）；③ <strong>zhulong 用 readback echo 数据（保真度↓→收敛成本×2~4）强化论文论证</strong>，三篇论文全部编译闭环；④ harness glm-5.3-flash 7×300 运行中。另：news 线停摆已定位根因（PATH 缺 cline）。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>P-8 完成 + 评测/Xmodel 对比</td><td>P-8 final loss 1.357 + CS8 49.21%；Xmodel 对比 BaiZe 领先 +8.85pp</td><td class='green'>🏆 重大正面结果</td></tr>
+<tr><td class='blue'>vision</td><td>Stage(iv) MLLM</td><td>ArmC ProtB 68.25%；Stage-1/1.5 完成，Stage-2 待启动</td><td class='green'>🚀 推进中</td></tr>
+<tr><td class='blue'>zhulong</td><td>S1 readback + 论文</td><td>readback_binary r1=75.9%，r2 跑中；echo 数据强化论文</td><td class='green'>🟢 推进中</td></tr>
+<tr><td class='blue'>harness</td><td>glm53 7×300</td><td>~58.4%（1226/2100），McNemar 与 kimi 高度一致</td><td class='amber'>🟠 评测中</td></tr>
+<tr><td class='blue'>data</td><td>3 路下载</td><td>wit_base 完成，en_v1_4/WebMix/InternVL 续传</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td class='blue'>news</td><td>停摆诊断</td><td>cline command not found（PATH 缺失），待重启</td><td class='red'>🔴 待修复</td></tr>
+</table>
+
+<h2>2. Pretrain —— P-8 收官 + Xmodel 对比大获全胜 🏆</h2>
+<div class='ok'><strong>P-8 Stage(i) 完整训练完成</strong>：stable 9441 步 + decay 1149 步 = 10590 步，~44.4B token，~412 GPU·h，<strong>final loss 1.357</strong>（decay LR 修复后正确走完 1e-3→1e-5）。脚本 SEQ 已改 4096。</div>
+<div class='ok'><strong>14 集评测全出</strong>（P-8 final，lm-eval 0-shot）：CS8 Avg <strong>49.21%</strong>，Complex6 Avg <strong>6.81%</strong>（BBH 14.36 / MMLU 24.28 / GSM8K 1.59 / HumanEval 0.61）。关键：<strong>常识推理在 ~20B 后饱和</strong>，复杂推理仍贴地板（待 SFT/RL）。</div>
+<div class='ok'><strong>Xmodel-2/2.5 缩放对比（重大正面结果）</strong>：同 token 量下 BaiZe-2B Common8 <strong>领先 Xmodel-2 +8.85pp、Xmodel-2.5 +12.96pp</strong>；<strong>BaiZe 44.4B（48.01%）已超 Xmodel-2 用 1.5T（33×训练量）实测的 41.76%</strong>。结论：<strong>BaiZe 早期学习能力不弱于、反超 Xmodel 系列</strong>。（caveat：架构/参数量/tokenizer 不同，量级参照）</div>
+<div class='note'><strong>进行中</strong>：Xmodel-2/2.5 decay 后 final 还在下载（final 41%），用于「眼见为实」验证 decay 段真实提升；下载 proxy 口径已明确（92.23→hf-mirror / 92.25→hf.co）。</div>
+
+<h2>3. Vision —— ArmC 收官 + Stage(iv) MLLM 全速 🚀</h2>
+<div class='ok'><strong>ArmC（merge3ds）收官</strong>：ProtB <strong>68.25±0.01%</strong>（Δ+1.20pp，判据 NULL 但 zs +5.53pp / ProtA +2.71pp 表征显著提升）。</div>
+<div class='ok'><strong>Stage(iv) MLLM 三阶段快速推进</strong>：Stage-1 alignment ✅（loss 10.2→4.3）→ Stage-1.5 mid-training ✅（20000 步，loss 3.78）→ <strong>Stage-2 instruct 待启动</strong> → lmms-eval 17 集。</div>
+<div class='warn'><strong>两个待办</strong>：① Stage-2 卡在 git push（github 不可达待补推）；② 原 lmms-eval 17 集因「HF Hub 不可达」险些降级本地，已下 proxy 纠正指令（直连 hf.co 用 92.25，去 hf-mirror）。</div>
+
+<h2>4. Zhulong —— readback echo 强化论证 + S1 推进 🟢</h2>
+<div class='ok'><strong>readback 轴 echo 数据（强化「观测保真度→收敛成本」论证）</strong>：full→binary，mean run_code <strong>12.1→27.6（×2.3）</strong>、墙钟 <strong>2.22h→4.25h（×1.9）</strong>、timeout <strong>3.4→13（×3.8）</strong>；代表性 trace：binary 单任务 287 次 run_code 盲试。已补进论文（tab:readback-cost + 语义注记），编译 12 页 0 error。</div>
+<div class='note'><strong>S1 主线</strong>：omega_low 跳过（legacy 82.8±1.0 可信）；<strong>readback_binary r1=75.9%</strong>（fresh，远高于 legacy 66.2），r2 跑中。后接 B.glm-5.3-flash → B.deepseek-v4-flash。</div>
+
+<h2>5. Harness —— glm-5.3-flash 7×300 运行中 🟠</h2>
+<div>glm53 7×300 <strong>~1226/2100（58.4%）</strong>，309 resolved（25.2%）。<strong>关键发现</strong>：glm53 与 kimi 99.7% 一致（McNemar chi2=0.33）→ 换 glm-5.3-flash 未显著提升，暗示瓶颈非单纯 backbone 强弱。ETA ~30h。</div>
+
+<h2>6. Data —— 下载推进 🟠</h2>
+<div>wit_base 已完成（330/330，287G）；剩 3 路：en_v1_4（60.6%）、WebMix-38M、InternVL-SA1B。85M 仍暂停。/nas_env 新落盘位已登记。</div>
+
+<h2>7. News —— 停摆根因定位 🔴</h2>
+<div class='warn'><strong>根因</strong>：<code>cline: command not found</code>（loop 的 PATH 缺 cline）→ 每次时窗唤醒静默失败，从 10-13 18:25 后 agent 零唤醒、两天没发微头条。loop 进程/心跳/git push 都正常，极隐蔽。</div>
+<div>修复：在观察哨 VM（106.54.228.191）用**登录 shell 重启** watch_news_loop.sh（bash -lc 带 PATH）。</div>
+
+<h2>8. 今日关键事件回看</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>~07:51</td><td>pretrain P-8 + F2 论文回填完成（final loss 1.357，13 页 0 err）</td></tr>
+<tr><td>~10:23</td><td>vision Stage-1 alignment 完成</td></tr>
+<tr><td>~11:59</td><td class='blue'>pretrain 交付 Xmodel-2/2.5 缩放对比（BaiZe 领先 +8.85pp）</td></tr>
+<tr><td>~12:47</td><td>vision Stage-1.5 完成（loss 3.78）</td></tr>
+<tr><td>~15:29</td><td>pretrain P-8 14 集 eval 完成 + Xmodel-2.5 scaling 升级</td></tr>
+<tr><td>~15:42</td><td class='blue'>zhulong readback echo 数据强化论文（×2~4 单调证据）</td></tr>
+<tr><td>~16:44</td><td class='red'>news 停摆根因定位：cline command not found</td></tr>
+</table>
+
+<h2>9. 关注 / 风险</h2>
+<ul>
+<li>🔴 <strong>news 停摆</strong>：需在 VM 上登录 shell 重启 watch_news_loop.sh（我已给诊断 + 命令，等你 SSH 动手）。</li>
+<li>🟠 <strong>pretrain Xmodel decay final</strong>：下载中（final 41%），用于验证 decay 段真实提升；下载 proxy 口径已定。</li>
+<li>🟠 <strong>vision Stage-2</strong>：待补推 git 后启动；lmms-eval 需带 proxy 直连 hf.co。</li>
+<li>🟠 <strong>zhulong 消融建议书</strong>：催办指令已下，待交付（用户催了几次）。</li>
+<li>🟢 <strong>harness glm53</strong>：~30h 出最终对比；若仍与 kimi 一致，需重新审视「能力主因」判断。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_15.html · 数据来源：各线 MEMORY / git log（截至 2026-10-15 ~16:50）· 生成：Cline</footer>
+</body></html>
