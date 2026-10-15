@@ -85,6 +85,7 @@ for ckpt in "${CHECKPOINTS[@]}"; do
       --tasks "$TASK" \
       --num_fewshot "$SHOT" \
       --batch_size "$BATCH" \
+      --confirm_run_unsafe_code \
       --output_path "${OUT}/cx_${TASK}" \
       > "${OUT}/cx_${TASK}.log" 2>&1 &
     CX_PIDS+=($!)
