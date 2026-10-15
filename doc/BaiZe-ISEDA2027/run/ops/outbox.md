@@ -10940,3 +10940,196 @@ DONE exit=0
 === [.12] DONE ===
 === DONE 103 ===
 ```
+
+---
+
+## RUN_ID 104 · 2026-10-15 22:08:38 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 104 · vision precache 速率实测 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+H=/nas_env/app.e0031982/hf_home
+T1=$(timeout 60 du -sm "$H" 2>/dev/null | cut -f1); echo "size1 = ${T1} MB @ $(date '+%T')"
+sleep 60
+T2=$(timeout 60 du -sm "$H" 2>/dev/null | cut -f1); echo "size2 = ${T2} MB @ $(date '+%T')  ⇒ 60s 增量 $((T2-T1)) MB，约 $((T2-T1)) MB/min"
+echo "[HF_HOME 一级分布]"; timeout 60 du -sm "$H"/* 2>/dev/null | sort -rn | head -8 | cut -c1-110
+echo "[已建/在建的 benchmark 数据集]"; ls -1 "$H/datasets" 2>/dev/null | grep -v '\.lock' | head -30
+echo "[precache 进程]"; pgrep -af 'precache|lmms' 2>/dev/null | grep -v pgrep | cut -c1-150
+echo "[precache.log 全文]"; tail -60 /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log 2>/dev/null | cut -c1-185
+echo "[17 集清单 + limit 语义（precache_benchmarks.py 头部）]"; sed -n '1,70p' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/mllm_bridge/precache_benchmarks.py 2>/dev/null | cut -c1-170
+echo "[launch 脚本关键行]"; grep -nE 'HF_HOME|num_processes|batch_size|limit|tasks|accelerate|df ' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/mllm_bridge/launch_lmms_eval.sh 2>/dev/null | head -20 | cut -c1-180
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -3
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 104 ==="
+```
+
+**输出**
+```
+=== RUN_ID 104 · vision precache 速率实测 2026-10-15 22:08:38 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 22:08:39 ===
+size1 = 4717 MB @ 22:08:39
+size2 = 5021 MB @ 22:09:39  ⇒ 60s 增量 304 MB，约 304 MB/min
+[HF_HOME 一级分布]
+4957	/nas_env/app.e0031982/hf_home/hub
+63	/nas_env/app.e0031982/hf_home/datasets
+2	/nas_env/app.e0031982/hf_home/xet
+1	/nas_env/app.e0031982/hf_home/transformers
+[已建/在建的 benchmark 数据集]
+lmms-lab___gqa
+[precache 进程]
+2970787 bash -c source /nas_train/app.e0031982/miniforge3/etc/profile.d/conda.sh && conda activate py310 && cd /nas_train/app.e0031982/code/super_inte
+2970799 python mllm_bridge/precache_benchmarks.py --limit 1
+[precache.log 全文]
+============================================================
+  Pre-cache started: 2026-10-15 21:46:40
+  HF_HOME=/nas_env/app.e0031982/hf_home
+  Proxy=http://172.19.92.25:13128
+============================================================
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instea
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/transformers/utils/hub.py:111: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in 
+  warnings.warn(
+2026-10-15 21:46:51.384 | DEBUG    | lmms_eval.tasks:_get_task_and_group:484 - File _default_template_mmsearch_plus.yaml in /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/
+2026-10-15 21:46:51.640 | DEBUG    | lmms_eval.tasks:_get_task_and_group:458 - `group` and `group_alias` keys in tasks' configs will no longer be used in the next release of lmms-eval. 
+2026-10-15 21:46:51.894 | DEBUG    | lmms_eval.tasks:_get_task_and_group:484 - File _default_template.yaml in /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/
+2026-10-15 21:46:52.439 | DEBUG    | lmms_eval.tasks:_get_task_and_group:484 - File _default_template.yaml in /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/
+2026-10-15 21:46:53.079 | DEBUG    | lmms_eval.tasks:_get_task_and_group:484 - File _hd_epic_base.yaml in /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms
+2026-10-15 21:46:53.264 | DEBUG    | lmms_eval.tasks:_get_task_and_group:484 - File illusionvqa.yaml in /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_e
+2026-10-15 21:46:53.717 | DEBUG    | lmms_eval.tasks:_get_task_and_group:484 - File _default_template.yaml in /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/
+2026-10-15 21:46:53.782 | DEBUG    | lmms_eval.caching.fs_detect:detect_fs_type:165 - fs_detect: /nas_env/app.e0031982/hf_home/datasets -> REMOTE (fs=nfs, mount=/nas_env)
+2026-10-15 21:46:53.782 | DEBUG    | lmms_eval.caching.fs_detect:find_local_scratch:209 - fs_detect: local scratch -> /tmp
+2026-10-
+============================================================
+  lmms-eval Dataset Pre-Cache Builder (SINGLE PROCESS)
+  HF_HOME: /nas_env/app.e0031982/hf_home
+  HF_DATASETS_CACHE: /nas_env/app.e0031982/hf_home/datasets
+  Proxy: http://172.19.92.25:13128
+  Tasks: 17 benchmarks
+  Limit: 1
+  Start: 2026-10-15 21:46:04
+============================================================
+
+[precache] Disk space at HF_HOME: 10124.3 GB free
+
+[1/17] Pre-caching 'mmbench_en_dev'...
+Generating dev split:   0%|          | 0/4329 [00:00<?, ? examples/s]Generating dev split:  21%|██        | 900/4329 [00:00<00:00, 6990.58 examples/s]Generating dev split:  58%|�
+Generating test split:   0%|          | 0/6666 [00:00<?, ? examples/s]Generating test split:  17%|█▋        | 1100/6666 [00:00<00:00, 8885.96 examples/s]Generating test split:  4
+  ✅ mmbench_en_dev cached in 72.4s
+  [disk] 10124.2 GB free at HF_HOME
+
+[2/17] Pre-caching 'mmmu_val'...
+2026-10-15 21:47:21 | WARNING  | lmms_eval.llm_judge.providers.openai:__init__:30 - OpenAI client not available, falling back to requests
+2026-10-15 21:47:21 | WARNING  | lmms_eval.llm_judge.providers.openai:__init__:30 - OpenAI client not available, falling back to requests
+2026-10-15 21:47:21 | WARNING  | lmms_eval.llm_judge.providers.openai:__init__:30 - OpenAI client not available, falling back to requests
+2026-10-15 21:47:21 | WARNING  | lmms_eval.llm_judge.providers.openai:__init__:30 - OpenAI client not available, falling back to requests
+2026-10-15 21:47:21 | WARNING  | lmms_eval.llm_judge.providers.openai:__init__:30 - OpenAI client not available, falling back to requests
+Generating dev split:   0%|          | 0/150 [00:00<?, ? examples/s]Generating dev split:  67%|██████▋   | 100/150 [00:00<00:00, 352.49 examples/s]Generating dev split:
+Generating validation split:   0%|          | 0/900 [00:00<?, ? examples/s]Generating validation split:  11%|█         | 100/900 [00:00<00:05, 144.07 examples/s]Generating validati
+Generating test split:   0%|          | 0/10500 [00:00<?, ? examples/s]Generating test split:   1%|          | 100/10500 [00:00<00:17, 603.12 examples/s]Generating test split:   3%|�
+  ✅ mmmu_val cached in 677.3s
+  [disk] 10121.1 GB free at HF_HOME
+
+[3/17] Pre-caching 'gqa'...
+Generating testdev split:   0%|          | 0/12578 [00:00<?, ? examples/s]Generating testdev split: 100%|██████████| 12578/12578 [00:00<00:00, 325447.13 examples/s
+Generating testdev split:   0%|          | 0/398 [00:00<?, ? examples/s]Generating testdev split:  25%|██▌       | 100/398 [00:00<00:00, 971.63 examples/s]Generating testdev sp
+Loading GQA images:   0%|          | 0/398 [00:00<?, ?it/s]Loading GQA images:   6%|▌         | 22/398 [00:00<00:01, 216.38it/s]Loading GQA images:  11%|█         | 44/398 [00:00
+Map (num_proc=8):   0%|          | 0/12578 [00:00<?, ? examples/s]Map (num_proc=8):   5%|▌         | 659/12578 [00:02<00:38, 312.65 examples/s]Map (num_proc=8):  10%|█         | 
+  ✅ gqa cached in 223.7s
+  [disk] 10120.8 GB free at HF_HOME
+
+[4/17] Pre-caching 'textvqa_val'...
+Downloading data:   0%|          | 0/20 [00:00<?, ?files/s]Downloading data:   5%|▌         | 1/20 [01:09<21:59, 69.45s/files]Downloading data:  10%|█         | 2/20 [02:20<21:01
+[17 集清单 + limit 语义（precache_benchmarks.py 头部）]
+#!/usr/bin/env python
+"""Pre-download and build dataset cache for all 17 lmms-eval benchmarks.
+
+CRITICAL: Must be run as a SINGLE process (no multi-GPU / no accelerate)
+BEFORE launching the 8-GPU multi-GPU eval. This avoids 8 ranks
+simultaneously writing dataset cache to disk (which caused
+"No space left on device" on 2026-10-15 21:24).
+
+Usage:
+    cd run/vision
+    python mllm_bridge/precache_benchmarks.py [--limit 1]
+
+Environment:
+    https_proxy=http://172.19.92.25:13128  (direct to hf.co, NOT mirror)
+    HF_HOME=/nas_env/app.e0031982/hf_home  (large disk, NOT /home)
+"""
+
+import os, sys, time, argparse, traceback
+
+# ---- proxy: direct to hf.co (NOT mirror) ----
+os.environ.setdefault("https_proxy", "http://172.19.92.25:13128")
+os.environ.setdefault("http_proxy", "http://172.19.92.25:13128")
+os.environ.pop("HF_ENDPOINT", None)
+
+# ---- HF cache on large disk ----
+os.environ.setdefault("HF_HOME", "/nas_env/app.e0031982/hf_home")
+os.environ.setdefault("HF_DATASETS_CACHE", os.path.join(os.environ["HF_HOME"], "datasets"))
+os.environ.setdefault("HF_HUB_CACHE", os.path.join(os.environ["HF_HOME"], "hub"))
+os.environ.setdefault("TRANSFORMERS_CACHE", os.path.join(os.environ["HF_HOME"], "transformers"))
+os.makedirs(os.environ["HF_DATASETS_CACHE"], exist_ok=True)
+os.makedirs(os.environ["HF_HUB_CACHE"], exist_ok=True)
+os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+os.environ.setdefault("HF_TOKEN", "hf_dummy")
+
+VISION_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BRIDGE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, VISION_DIR)
+sys.path.insert(0, BRIDGE_DIR)
+
+# Import our custom model (registers it as an importable module)
+from mllm_bridge.lmms_eval_baize_llava import BaizeLLaVA  # noqa: F401
+
+from lmms_eval.tasks import TaskManager
+
+# 17 benchmarks (same as run_lmms_eval.py)
+BENCHMARKS_17 = [
+    "mmbench_en_dev",
+    "mmmu_val",
+    "gqa",
+    "textvqa_val",
+    "docvqa_val",
+    "chartqa",
+    "ai2d",
+    "scienceqa",
+    "seedbench",
+    "pope",
+    "vizwiz_vqa_val",
+    "ocrbench",
+    "mmvet",
+    "hallusion_bench_image",
+    "realworldqa",
+    "vqav2_val",
+    "infovqa_val",
+]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--limit", type=int, default=1,
+                        help="Limit samples per task (default 1, just to trigger download+cache build)")
+[launch 脚本关键行]
+3:# Usage: bash launch_lmms_eval.sh [--step 3500] [--limit 100] [--batch_size 4]
+6:# Multi-GPU: accelerate launch --multi_gpu --num_processes=8
+24:export HF_HOME=/nas_env/app.e0031982/hf_home
+25:export HF_DATASETS_CACHE=$HF_HOME/datasets
+26:export HF_HUB_CACHE=$HF_HOME/hub
+27:export TRANSFORMERS_CACHE=$HF_HOME/transformers
+31:AVAIL_KB=$(df -P /nas_env | tail -1 | awk '{print $4}')
+33:echo "[launch] HF_HOME=$HF_HOME  /nas_env available=${AVAIL_GB}G"
+56:exec accelerate launch \
+58:    --num_processes=8 \
+[GPU]
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+=== [.12] DONE ===
+=== DONE 104 ===
+```
