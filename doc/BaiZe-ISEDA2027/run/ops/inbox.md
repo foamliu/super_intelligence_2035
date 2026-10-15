@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 100 -->
+<!-- RUN_ID: 101 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,38 @@
 
 ---
 
+## RUN_ID 101 — 🔎 **vision limit50 评测失败根因**（只读；21:24 ChildFailedError）
+
+> 现象：20:26 启动的 8 卡 `--limit 50` 评测在 **21:24:28 rank1 exit 1** 崩掉（`ChildFailedError`），无结果 JSON。本块取**真实异常**（rank 日志 / 日志上文）。
+
+```bash
+set -u
+echo "=== RUN_ID 101 · vision 评测失败根因 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+D=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "--- 关键错误行（grep） ---"
+grep -niE 'error|traceback|exception|out of memory|CUDA|assert|no space|permission denied|killed|KeyError|ValueError|RuntimeError|TypeError|OOM' "$D/eval_limit50.log" 2>/dev/null | head -40 | cut -c1-190
+echo "--- ChildFailedError 之前 120 行（滤空行） ---"
+L=$(grep -n 'ChildFailedError' "$D/eval_limit50.log" 2>/dev/null | head -1 | cut -d: -f1)
+if [ -n "$L" ]; then sed -n "$((L>120?L-120:1)),$((L+3))p" "$D/eval_limit50.log" | grep -vE '^[[:space:]]*$' | tail -45 | cut -c1-190; fi
+echo "--- 独立的 rank/accelerate 日志 ---"
+ls -la /tmp/*rank* /tmp/*accelerate* /tmp/*lmms* 2>/dev/null | head -12 | cut -c1-150
+for f in $(ls -t /tmp/*rank* 2>/dev/null | head -3); do echo "## $f"; tail -25 "$f" | grep -vE '^[[:space:]]*$' | tail -20 | cut -c1-185; done
+echo "--- 磁盘 / 显存 ---"; df -h /nas_train 2>/dev/null | tail -1; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8
+echo "--- vision loop 日志尾 ---"; tail -10 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 101 ==="
+```
+
 ## RUN_ID 100 — 📊 **vision limit50 评测结果巡检**（只读）
 
 > 背景：20:26 启动 `accelerate --multi_gpu --num_processes=8` + `batch_size=4` + `--limit 50`（17 集）。
 > 本块只读：GPU / 进程 / 结果目录 / **结果 JSON 逐任务指标** / 评测日志尾。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 100 · vision limit50 评测结果巡检 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
