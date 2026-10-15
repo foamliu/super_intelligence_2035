@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 96 -->
+<!-- RUN_ID: 97 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,46 @@
 
 ---
 
+## RUN_ID 97 — 📊 **vision 17 集评测进度巡检**（只读）
+
+> 背景：20:33 已启动 `accelerate launch --multi_gpu --num_processes=8` + `batch_size=4` + `--limit 50`（17 集验证评测）。
+> 本块只读：GPU 占用 / 评测进程 / 结果目录与 JSON / 评测日志尾。
+
+```bash
+set -u
+echo "=== RUN_ID 97 · vision 17 集评测进度 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null || { echo "!! repo not found"; exit 0; }
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[评测进程]"; pgrep -af 'lmms|run_lmms_eval|launch_lmms|accelerate' 2>/dev/null | grep -v pgrep | cut -c1-130 | head -10
+echo "[结果目录]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | tail -8
+echo "[结果 JSON 摘要]"; for j in /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/*.json; do [ -f "$j" ] && { echo "## $(basename "$j")  $(stat -c%s "$j")B"; python3 -c "
+import json,sys
+d=json.load(open('$j'))
+r=d.get('results',{})
+print(' tasks:',len(r))
+for k,v in list(r.items())[:20]:
+    m=[f'{kk}={vv:.4f}' for kk,vv in v.items() if isinstance(vv,(int,float))]
+    print('  ',k, m[:2])
+" 2>/dev/null | head -25; }; done
+echo "[评测日志尾]"; ls -la /tmp/*lmms*log /tmp/*eval*log 2>/dev/null | head -5
+for f in $(ls -t /tmp/*lmms*log /tmp/*eval*log 2>/dev/null | head -2); do echo "## $f"; tail -12 "$f" | cut -c1-170; done
+echo "[vision loop 日志尾]"; tail -6 /tmp/baize_vision_loop.log 2>/dev/null | grep -iE 'push|commit|wake|cline returned' | tail -4 | cut -c1-170
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 97 ==="
+```
+
 ## RUN_ID 96 — 🔍 **复查 vision：git 是否已能推 + 17 集评测是否启动**（只读）
 
 > **背景**：RUN_ID 94 已修 `.12` 的 git proxy（92.23），RUN_ID 95 验证 `fetch/push` 双向 exit=0。
 > **本块**：确认 ① vision loop 本轮是否成功 `auto-commit + push`；② 17 集评测有没有按新指令（大 batch + 多卡）启动、数据落地多少。
 > 🚫 只读，不动任何进程/文件。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 96 · 复查 vision 推送/评测 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
