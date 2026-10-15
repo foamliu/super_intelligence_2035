@@ -1376,3 +1376,30 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-13-*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-13 18:00`**（「晚 2」轮）：① 复验批次（**周一 20:00 ET 公告** → 本地 10-13 08:00 前后落地，PM 轮**有望见 `2026-10-10` 批**）；② 刷新则走标准 `--fetch` 增量，否则候选池「科普」口径；③ 日报进度 **3/5 → 5/5**（+ `## 晚报变更说明（AM → PM）`）；④ 第 5 批分镜脚本 `research/video/SCENES/10_13.html`；⑤ **每日论文日报邮件**（新职能）：选 3–5 篇 + PDF 入 `research/pdf/<date>/` + 发 `paul.liu@cxmt.com`。
 
+
+### 9.94 第九十三轮（本地 2026-10-16 06:00 时窗 · **P0 第 4 批第 15 轮 · 「早 3」轮 · 新一日 AM 轮**）：**无新公告批次**（批次仍 `2026-10-14`）→ **API 0 新增** → 早报 3 篇「借鉴」**取自前轮窗口内候选池** + 单条权威复核
+
+> **时点**：本地 `2026-10-16 06:00`（= UTC `2026-10-15T22:00`）为 **周四**。arXiv **工作日 20:00 ET 公告** → **周三（10-15）20:00 ET 的 `2026-10-15` 批尚未落地**（本地 10-16 08:00 前后才落地）→ **关键词 API 增量 0 新增属正常**（**非「无数据」**）。实际批次仍为 **`2026-10-14`**（最新样本仍 `2026-10-14T17:59:58Z`，未刷新）。
+
+- **取源复验（R1′）** `--probe`（`generated=2026-10-15T22:00:26Z`，证据 `research/raw/2026-10-16-probe-r93.log`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=633208`，最新样本 `published=2026-10-14T17:59:58Z` | ✅ 可达（**批次仍 `2026-10-14`**，与第九十二轮 PM `633207` 仅 +1 渐进索引 → **未刷新**） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable`（`Errno 101`） | ❌ 不可达（**不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=301 / 234 / 486` | ✅ 三源均有内容（**仅作发现，非证据**） |
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-15T22:00:21Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600** → **0 新增**（72h 窗口 `2026-10-12T22:00Z~2026-10-15T22:00Z` 内条目均已 `already in SEEN` 或超窗）。证据：`research/raw/2026-10-16-fetch-r93-seen.{json,log}`。
+
+- **精选权威复核（`id_list`）**：对**候选短名单 5 条**（3 入账 + 2 备选）走 **arXiv API `id_list` 单条复核**（`id_list=2610.19605,2610.18616,2610.19210,2610.16867,2610.19439`）→ **5/5 返回**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `research/raw/2026-10-16-idlist-shortlist-r93.{xml,headers}`）。最终入账 3 篇：
+  - `2610.19605` *PN-Mix: Pair-Norm Guided Mixed-Precision Key Cache Quantization for Efficient Long-Output LLM Inference*（`published=2026-10-14T05:29:08Z`，cs.LG，2 位署名 `Gil Jae Song, Sungjoo Yoo`，`comment`: `EMNLP 2026`）；
+  - `2610.19210` *Titan-Llama: Retrofitting Pre-trained LLMs with External Neural Memory Modules*（`published=2026-10-13T21:23:58Z`，cs.CL，2 位署名 `Sarah Pan, Ali Behrouz`，`comment` 空）；
+  - `2610.18616` *Knowledge Graphs as Files: An Agent Harness Where Tool Creation and Tool Use Co-Evolve*（`published=2026-10-13T16:00:50Z`，cs.CL，3 位署名 `Yuyang Bai, Yu Wang, Yu Zhang`，`comment`: `27 pages. Code and data: github.com/leopoldwhite/DKGI`）。
+  - **去重复核**：3 个 ID 均**不在**任何 `daily/*.html`，检出时在 `SEEN.md` 为「候选」→ **无重复**。
+
+- **产出**：`research/daily/2026-10-16.html`（**自包含单文件**，**早报 3/5** = 3 篇「借鉴」）：序号 1–3；页头标「早报 · 3/5」+ 本轮取数说明（诚实口径 · AM）+ 附录 A（I→V）+ 附录 B（15 查询 per-query，均 `kept 0`）+ 附录 C（口径护栏）→ 同步 `research/daily/index.html`（新增 2026-10-16 行 → 早报 3/5）与 `research/INDEX.md`。**晚 2 篇「科普」** 待 18:00 PM 轮补录并收口 **5/5**。
+
+- **台账**：`research/SEEN.md` **行数不变 3,487 条**（**3 行状态 候选 → 收录**）→ **收录 204 / 候选 2776 / 候选（RSS 补充）507**；`research/papers.jsonl` **+3 → 204 行**。落盘脚本：`research/raw/update_r93.py`。
+- **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-16-*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-16 18:00`**（「晚 2」轮）：① 复验批次（**周三 20:00 ET 公告** → 本地 10-16 08:00 前后落地，PM 轮**有望见 `2026-10-15` 批**）；② 刷新则走标准 `--fetch` 增量，否则候选池「科普」口径；③ 日报进度 **3/5 → 5/5**（+ `## 晚报变更说明（AM → PM）`）；④ 第 5 批分镜脚本 `research/video/SCENES/10_16.html`；⑤ **每日论文日报邮件**（选 5 篇 + PDF 入 `research/pdf/<date>/` + 发 `paul.liu@cxmt.com`）。
+
