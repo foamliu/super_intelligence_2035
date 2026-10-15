@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 ~11:16（Stage-1.5 Mid-Training 启动 ✅ · wake #101）**：✅ `mllm_bridge/stage15_train.py` 8×H100 DDP 训练已启动。20000 步，GBS=8，MBS=1，seq_len=2048。LoRA r=64/α=128，trainable 132.12M(LoRA)+7.87M(Proj)=139.99M / 4.15B(3.18%)。LR: LoRA=2e-5 / Proj=1e-5 → 1e-6 cosine。step 100/20000: loss=4.14（↓from 4.36），0.92 steps/s，ETA~6h，GPU 13.7GB/80GB。checkpoint 每 2000 步存 `/nas_train/.../mllm_stage15/step{N}/`。**DDP 修复**：`inject_image_features` 需 unwrap DDP（`llm.module.get_input_embeddings()`）；`find_unused_parameters=True`（有性能 warning，后续可关）。
+> 🆕 **2026-10-15 ~12:15（Stage-1.5 监控 + Stage-2/Eval 脚本准备 · wake #102）**：Stage-1.5 step 10700/20000(53.5%)，loss≈3.65，3.65 steps/s，ETA~42min，GPU 13.7GB/80GB，健康。✅ **Stage-2 Instruct 脚本** `stage2_train.py` 已编写并编译通过（LLaVA-NeXT-780k instruct 数据，3500步，LoRA=1e-5/Proj=5e-6，从 stage15/step20000 续训）。✅ **推理评测脚本** `inference_eval.py` 已编写并编译通过（加载 Stage-2 ckpt，在 instruct 留出样本上做 VQA 准确率评测）。⚠️ HF Hub 网络不可达 → 无法下载 lmms-eval 基准数据，改为用本地 instruct 数据做 held-out 评测。下一步：Stage-1.5 完成后→gate check→启动 Stage-2（~16min）→推理评测→报告。
+> 📦 2026-10-15 ~11:16（Stage-1.5 Mid-Training 启动 ✅ · wake #101）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage15_train.py 8×H100 DDP 启动，20000步 LoRA r=64，step100 loss=4.14。需要时再读。
 > 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
 > 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
