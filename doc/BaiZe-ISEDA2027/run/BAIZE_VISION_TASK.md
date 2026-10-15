@@ -1,6 +1,28 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）· 用户直令
+
+> **用户令（2026-10-15）**：「vision 之前的实验结果如何，写成 html 中文报告。」
+
+**性质**：纯写作、零 GPU。**主线仍是刚放行的 MLLM 训练**——本任务在 MLLM smoke/Stage 间空窗期做，🚫 不延迟 MLLM 训练。
+
+**① 报告内容**：把 vision 线从架构选型到 merge3ds ArmC 的**全部关键实验结果**，按主题结构化整理成中文 HTML 报告。
+
+**② 必须覆盖**（基于 `EXPERIMENTS_VISION.md` 台账，每主题给动机/关键数字/判定/后续影响）：
+1. **架构选型（R2/R8）**：六架构四指标对比，OpenVision2 胜出（Loss@5k / img/s / 推理 ms/img）。
+2. **缩放（R9/R10）**：「塔越小越高」，w512=126.8M 定位。
+3. **AIMv2-style（R11）**：w512 翻盘、loss 轴主线。
+4. **E1/E2 公平重跑**：Δlp **+0.17pp 不可分辨**，旧「−5.59pp」= schedule 伪影。
+5. **epoch 缩放（④）**：1ep 62.34% / 2ep 65.37% / 4ep 67.05%（ProtB），递减收敛。
+6. **变体**：V2 Muon 全 LR 坍缩、V3 全量数据 Null（Δ+1.18pp）。
+7. **外部编码器 ProtB 参照**：5 模型 81.72~87.46 vs BaiZe 67.05。
+8. **merge3ds ArmC**：GBS/MBS×4 + LR×4 结果（若 eval chain 已出）。
+
+**③ 交付**：`reports/report_vision_experiments_summary_zh.html`（自包含中文、内联 CSS/SVG、可带 lp-epoch/scaling 曲线图）。
+
+**④ 纪律**：数字全部与 `EXPERIMENTS_VISION.md` 一致、贴 §行号，🚫 凭印象；🚫 不延迟 MLLM 训练；commit 前缀 `vision report:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程：smoke → Stage-1/1.5/2 → lmms-eval）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「vision 为什么停下来不做 MLLM？」—— 你**是被授权做的**（用户早已批「我同意，可以做」），wrapper 已就绪，8 GPU 已空，现在放行执行完整 Stage(iv)，不再停在 Phase0。
