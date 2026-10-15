@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 102 -->
+<!-- RUN_ID: 103 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,34 @@
 
 ---
 
+## RUN_ID 103 — 📊 **vision precache / 评测实时状态**（只读；验证「换 HF_HOME + 单进程预建」是否落地）
+
+> 背景：wake#104 自报已把 `HF_HOME` 迁 `/nas_env`、加 `precache_benchmarks.py` 单进程预建、加磁盘余量闸门。本块**机上验证**。
+
+```bash
+set -u
+echo "=== RUN_ID 103 · vision precache/评测状态 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[precache / eval 进程]"; pgrep -af 'precache|lmms|run_lmms_eval|accelerate' 2>/dev/null | grep -v pgrep | cut -c1-130 | head -8
+echo "[HF_HOME 是否落 /nas_env]"; ls -la /nas_env/app.e0031982/hf_home 2>/dev/null | head -8; printf 'size='; timeout 60 du -sh /nas_env/app.e0031982/hf_home 2>/dev/null | cut -f1
+echo "[已缓存 benchmark]"; ls /nas_env/app.e0031982/hf_home/datasets 2>/dev/null | head -25
+echo "[结果目录]"; ls -la /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results 2>/dev/null | tail -6
+echo "[precache / eval 日志尾]"; for f in $(ls -t /tmp/*precache* /tmp/*lmms* 2>/dev/null | head -3); do echo "## $f"; tail -8 "$f" | cut -c1-170; done
+echo "[磁盘]"; df -h /home /nas_env /nas_train 2>/dev/null | tail -3 | cut -c1-110
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 103 ==="
+```
+
 ## RUN_ID 102 — 💾 **`.12` 磁盘实况**（定位「No space left on device」是哪块盘 + HF 缓存体积）
 
 > RUN_ID 101 已确定根因：`OSError: [Errno 28] No space left on device`（pyarrow 写 datasets 生成时）→ `DatasetGenerationError` → rank1 崩。
 > 本块只读定位**满的是哪块盘**、HF 缓存多大、inode 情况。🚫 不删任何东西。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 102 · .12 磁盘实况 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
