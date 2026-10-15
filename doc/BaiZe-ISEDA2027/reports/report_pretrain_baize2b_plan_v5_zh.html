@@ -94,12 +94,11 @@ a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 <h4>分段依据与折算</h4>
 <p>Xmodel-2.5 的 S1/S2：<strong>S1 = 270k 步 × 1.78M = 481B tokens</strong>（占 stable 的 34%），<strong>S2 = 260k 步 × 3.56M = 927B tokens</strong>（占 66%）。总 stable ≈ 1.41T。</p>
 <p>BaiZe 500B 档分段（若采）：</p>
-<table>
-<tr><th>段</th><th>GBS</th><th>Batch (tok)</th><th>占比</th><th>Token</th><th>步数</th><th>墙钟</th></tr>
-<tr><td>S1</td><td class="mono">512</td><td class="mono">2.10M</td><td>40%</td><td class="mono">186.8B</td><td class="mono">89,078</td><td class="mono">~208h</td></tr>
-<tr><td>S2</td><td class="mono">1024</td><td class="mono">4.19M</td><td>60%</td><td class="mono">280.2B</td><td class="mono">66,808</td><td class="mono">~313h</td></tr>
-<tr style="font-weight:bold"><td>Stable 合计</td><td>—</td><td>—</td><td>100%</td><td class="mono">467.0B</td><td class="mono">155,886</td><td class="mono">~521h</td></tr>
-</table>
+<div class="formula">
+S1: GBS=512 → 2.10M tok/batch · 占40% · 186.8B tok · 89,078步 · ~208h
+S2: GBS=1024 → 4.19M tok/batch · 占60% · 280.2B tok · 66,808步 · ~313h
+Stable 合计: 467.0B tok · 155,886步 · ~521h (~21.7天)
+</div>
 <div class="small">注：墙钟按 ~249K tok/s（P-8 实测，<code>EXPERIMENTS_PRETRAIN_2B.md:120</code>）折算。GBS=512 时吞吐可能略降（更多 kernel launch overhead），实际墙钟可能 +5-10%。S1/S2 的总 token 和总算力与单段相同，差异仅在优化动态。</div>
 <div class="warn"><strong>不确定性标注</strong>：
 <br>① <strong>LR 差异影响</strong>：Xmodel-2/2.5 的 LR=0.01/1.67e-3，BaiZe LR=1e-3。batch 增大的「等效降 LR」效果在低 LR 下边际递减——BaiZe 的 LR 本已低至 Xmodel-2 的 1/10，batch 翻倍的等效降 LR 幅度可能不足以制造显著 loss 台阶。
@@ -132,13 +131,12 @@ GBS = MBS × grad_accum × 8 (GPU数)
 <br>• <strong>判定依据</strong>：用 P-8 现有 ckpt（iter_9441，stable 末点）沿 LR 衰减做小规模外推，不重训。
 </div>
 <h4>三方对比与推荐区间</h4>
-<table>
-<tr><th>模型</th><th>Decay tokens</th><th>占总 token</th><th>Decay 步数</th><th>退火方式</th><th>SFT 占比</th></tr>
-<tr><td>Xmodel-2</td><td class="mono">20B</td><td class="mono">~1.3%</td><td class="mono">5,000</td><td>指数 0.5<sup>(s-S)/T</sup></td><td>64%</td></tr>
-<tr><td>Xmodel-2.5</td><td class="mono">~71B</td><td class="mono">~5.1%</td><td class="mono">20,000</td><td>指数退火</td><td>66.9%</td></tr>
-<tr><td>BaiZe P-8</td><td class="mono">4.8B</td><td class="mono">~10.8%</td><td class="mono">1,149</td><td>WSD 线性</td><td>64%</td></tr>
-<tr style="font-weight:bold;background:#d1ecf1"><td>BaiZe 推荐</td><td class="blue mono">20B</td><td class="mono">~10% (200B档)</td><td class="mono">~4,770</td><td>WSD 线性</td><td>64%</td></tr>
-</table>
+<div class="info">
+<strong>Xmodel-2</strong>: 20B decay · 占1.3% · 5,000步 · 指数退火 0.5<sup>(s-S)/T</sup> · SFT 64%<br>
+<strong>Xmodel-2.5</strong>: ~71B decay · 占5.1% · 20,000步 · 指数退火 · SFT 66.9%<br>
+<strong>BaiZe P-8</strong>: 4.8B decay · 占10.8% · 1,149步 · WSD 线性 · SFT 64%<br>
+<strong class="blue">BaiZe 推荐</strong>: <span class="blue bold">20B</span> decay · 占~10% (200B档) · ~4,770步 · WSD 线性 · SFT 64%
+</div>
 <p><strong>为什么 20B 而非 P-8 的 4.8B？</strong></p>
 <ul>
 <li>P-8 decay 仅 1149 步（4.8B），loss 从 2.456→1.357 的骤降<strong>含大量 SFT 数据分布偏移成分</strong>（S4 实验已警示：<code>EXPERIMENTS_PRETRAIN_2B.md:14</code>："code/math 源本身熵更低，loss 降幅含分布偏移成分"）。这不是纯退火增益。</li>
@@ -156,14 +154,13 @@ GBS = MBS × grad_accum × 8 (GPU数)
 </div>
 <h3>3.4 问题④：各阶段数据配比怎么定？</h3>
 <h4>Stable 段配比</h4>
-<table>
-<tr><th>来源</th><th>web</th><th>code</th><th>math</th><th>依据</th></tr>
-<tr><td>P-8 实测</td><td>88%</td><td>8%</td><td>4%</td><td><code>EXPERIMENTS_PRETRAIN_2B.md:138</code>，P-8 实际投料</td></tr>
-<tr><td>R3 BO 最优 (#8)</td><td>89.2%</td><td>6.4%</td><td>4.4%</td><td><code>DATA_MIX_RECIPE.md:294</code>，18.36M 代理 100 trials</td></tr>
-<tr><td>R3 Top-5 均值</td><td>86.7%</td><td>12.8%</td><td>5.3%</td><td>landscape 平坦，top-5 Δ=0.0053</td></tr>
-<tr><td>Xmodel-2</td><td>—</td><td>—</td><td>—</td><td>未公开 stable 逐源百分比，仅给数据构成</td></tr>
-<tr style="font-weight:bold;background:#d1ecf1"><td>BaiZe 推荐</td><td class="blue">88%</td><td class="blue">6%</td><td class="blue">6%</td><td>R3 最优与 P-8 实测折中：code 降 8→6（R3），math 升 4→6（R3 信号 + v4 §3 配比分析）</td></tr>
-</table>
+<div class="info">
+<strong>P-8 实测</strong>: web 88% / code 8% / math 4% — <code>EXPERIMENTS_PRETRAIN_2B.md:138</code>，P-8 实际投料<br>
+<strong>R3 BO 最优 (#8)</strong>: web 89.2% / code 6.4% / math 4.4% — <code>DATA_MIX_RECIPE.md:294</code>，18.36M 代理 100 trials<br>
+<strong>R3 Top-5 均值</strong>: web 86.7% / code 12.8% / math 5.3% — landscape 平坦，top-5 Δ=0.0053<br>
+<strong>Xmodel-2</strong>: 未公开 stable 逐源百分比，仅给数据构成<br>
+<strong class="blue">BaiZe 推荐</strong>: <span class="blue bold">web 88% / code 6% / math 6%</span> — R3 最优与 P-8 实测折中：code 降 8→6（R3），math 升 4→6（R3 信号 + v4 §3 配比分析）
+</div>
 <div class="info"><strong>Web 内部分配</strong>（R3 BO 6 维分解，<code>DATA_MIX_RECIPE.md:306-313</code>）：
 <br>• l1_en_hq（高质量英文 web）：21-32%，top-5 avg 26.5% → <strong>质量 > 数量，web 段主力</strong>
 <br>• zh（中文 web）：方差极大（3-33%），landscape 平坦 → <strong>不做硬约束，按数据可用量分配</strong>
@@ -171,13 +168,12 @@ GBS = MBS × grad_accum × 8 (GPU数)
 <br>• 推荐 Web 内部：base_en 40% / base_zh 15% / l1_en_hq 25% / ultrax 10% / L3 10%（≈ Web 总量的 88%）
 </div>
 <h4>Decay 段配比</h4>
-<table>
-<tr><th>来源</th><th>SFT</th><th>L3</th><th>code</th><th>math</th><th>依据</th></tr>
-<tr><td>P-8 实测</td><td>64%</td><td>24%</td><td>8%</td><td>4%</td><td><code>EXPERIMENTS_PRETRAIN_2B.md:150</code></td></tr>
-<tr><td>Xmodel-2 最优</td><td>64%</td><td>—</td><td>—</td><td>—</td><td>400+ trials，区间 60-69%（<code>xmodel-2.tex:144-146,154</code>）</td></tr>
-<tr><td>Xmodel-2.5</td><td>66.9%</td><td>—</td><td>—</td><td>—</td><td><code>method.tex:42</code></td></tr>
-<tr style="font-weight:bold;background:#d1ecf1"><td>BaiZe 推荐</td><td class="blue">64%</td><td class="blue">24%</td><td class="blue">8%</td><td class="blue">4%</td><td>P-8 已验证 + Xmodel-2 最优区间内，保持不变</td></tr>
-</table>
+<div class="info">
+<strong>P-8 实测</strong>: SFT 64% / L3 24% / code 8% / math 4% — <code>EXPERIMENTS_PRETRAIN_2B.md:150</code><br>
+<strong>Xmodel-2 最优</strong>: SFT 64%（区间 60-69%） — 400+ trials（<code>xmodel-2.tex:144-146,154</code>）<br>
+<strong>Xmodel-2.5</strong>: SFT 66.9% — <code>method.tex:42</code><br>
+<strong class="blue">BaiZe 推荐</strong>: <span class="blue bold">SFT 64% / L3 24% / code 8% / math 4%</span> — P-8 已验证 + Xmodel-2 最优区间内，保持不变
+</div>
 <div class="info"><strong>SFT-Mixed 内部 5 类</strong>（Xmodel-2 定义：<code>xmodel-2.tex:152</code>）：
 Mathematics / Code / Logic (含 CoT) / Knowledge / Commonsense。Xmodel-2 发现<strong>指令格式 > 预训练格式</strong>（数学与代码），SimHash 去重 +1.7%。
 <br>BaiZe 的 SFT 数据 = UltraData-SFT-2605 (20.96B tok) + UltraData-SFT-Agent-2609 (8.04B tok) = 29.0B 总量。在 20B decay 中占 64% = 12.8B → epoch = 12.8/29.0 = 0.44（不过采样）。在 50B decay 中占 64% = 32B → epoch = 32/29.0 = 1.10（轻微过采样，可接受）。
@@ -251,16 +247,15 @@ R3 核心结论：<strong>在 18.36M 代理 + 1B token 规模下，精确配比�
 </ol>
 </div>
 <h4>若仍要做 Decay 段配比实验（可执行设计）</h4>
-<table>
-<tr><th>维度</th><th>设计</th></tr>
-<tr><td>代理模型</td><td>同 R3：d=128 / L=14 / tie-embed ≈ <strong>18.36M</strong>（不换代理，保证可比性）</td></tr>
-<tr><td>搜索空间</td><td>SFT% ∈ [50%, 80%]，其余按 L3:code:math = 6:2:1 固定比例分配（降维到 1 维搜索）</td></tr>
-<tr><td>每 trial</td><td>~5000 步 · GBS=1024 · MBS=16 · seq=2048 · LR=3e-3 · WSD · D=~1B token · decay 段从 step 4000 开始</td></tr>
-<tr><td>试次数</td><td>~50（1 维搜索，Optuna TPE）</td></tr>
-<tr><td>GPU·h 预算</td><td>~40 GPU·h（50 trials × ~48min/trial / 8 GPU 并行）</td></tr>
-<tr><td>优化指标</td><td>见 §4.3</td></tr>
-<tr><td>可复用基建</td><td><code>baize_mix_optuna_r3.py</code>（改 objective 为 Complex6 avg）、R3 配比台账</td></tr>
-</table>
+<div class="info">
+<strong>代理模型</strong>: 同 R3：d=128 / L=14 / tie-embed ≈ <strong>18.36M</strong>（不换代理，保证可比性）<br>
+<strong>搜索空间</strong>: SFT% ∈ [50%, 80%]，其余按 L3:code:math = 6:2:1 固定比例分配（降维到 1 维搜索）<br>
+<strong>每 trial</strong>: ~5000 步 · GBS=1024 · MBS=16 · seq=2048 · LR=3e-3 · WSD · D=~1B token · decay 段从 step 4000 开始<br>
+<strong>试次数</strong>: ~50（1 维搜索，Optuna TPE）<br>
+<strong>GPU·h 预算</strong>: ~40 GPU·h（50 trials × ~48min/trial / 8 GPU 并行）<br>
+<strong>优化指标</strong>: 见 §4.3<br>
+<strong>可复用基建</strong>: <code>baize_mix_optuna_r3.py</code>（改 objective 为 Complex6 avg）、R3 配比台账
+</div>
 <h3>4.3 优化指标定义（若做配比实验）</h3>
 <div class="danger"><strong>🚫 不要只盯 loss</strong>。Xmodel-2 原文已证明：<code>xmodel-2.tex:154</code> "These adjustments, combined with optimized data mixing and processing, improved complex reasoning performance by 29.31%"——<strong>loss 与下游任务的因果关系在 decay 段不成立</strong>（SFT 数据的熵更低，loss 下降含分布偏移成分）。</div>
 <p><strong>推荐优化指标：加权平均分</strong></p>
@@ -380,25 +375,23 @@ Chinese_avg = mean(C-Eval, CMMLU)  [5-shot]
 </div>
 <div class="small">注：以上为命令骨架，实际启动需确认数据 manifest 路径、wandb 配置、ckpt 存储路径。Warmup/Stable 用 stable_mix，Decay 切换为 decay_mix（通过 data config 切换）。</div>
 <h3>6.3 外部引用清单</h3>
-<table>
-<tr><th>引用</th><th>来源</th><th>关键数据</th></tr>
-<tr><td>Xmodel-2 论文</td><td><code>xmodel-2.tex</code>（本仓库 <code>Xmodel-2/</code>）</td><td>1.2B Dense, 1.5T tok, batch 3.93M, LR 0.01, decay 20B, SFT 64% 最优</td></tr>
-<tr><td>Xmodel-2.5 论文</td><td><code>method.tex</code> / <code>result.tex</code>（<code>Xmodel-2.5/ACL2026/</code>）</td><td>1.3B, 1.4T, S1+S2 分段, Muon +4.58pp, SFT 66.9%, C-Eval 45.54%</td></tr>
-<tr><td>MiniCPM5-2B</td><td><a href="https://open-llm-radar.com/models/minicpm5-2b">Open LLM Radar</a></td><td>2.52B Dense, 原生 131k ctx, 400B SFT post-training</td></tr>
-<tr><td>WSD Schedule</td><td><a href="https://ossaihub.com/glossary/wsd-schedule">OSS AI Hub</a></td><td>Warmup-Stable-Decay 调度定义</td></tr>
-<tr><td>批量缩放定律</td><td><a href="https://arxiv.org/pdf/2412.01505">Smith et al. 2018</a> + <a href="https://papers.nips.cc/paper_files/paper/2024/file/ef74413c7bf1d915c3e45c72e19e5d32-Paper-Conference.pdf">NeurIPS 2024, Surge</a></td><td>增大 batch ≈ 等效降低 LR</td></tr>
-<tr><td>Data Mixing Laws</td><td><a href="https://arxiv.org/abs/2406.11260">Ye et al. 2024</a></td><td>小模型配比实验可迁移到大模型</td></tr>
-<tr><td>Chinchilla</td><td><a href="https://arxiv.org/abs/2203.15556">Hoffmann et al. 2022</a></td><td>计算最优 token/param ≈ 20</td></tr>
-</table>
+<ul>
+<li><strong>Xmodel-2 论文</strong> — <code>xmodel-2.tex</code>（本仓库 <code>Xmodel-2/</code>）：1.2B Dense, 1.5T tok, batch 3.93M, LR 0.01, decay 20B, SFT 64% 最优</li>
+<li><strong>Xmodel-2.5 论文</strong> — <code>method.tex</code> / <code>result.tex</code>（<code>Xmodel-2.5/ACL2026/</code>）：1.3B, 1.4T, S1+S2 分段, Muon +4.58pp, SFT 66.9%, C-Eval 45.54%</li>
+<li><strong>MiniCPM5-2B</strong> — <a href="https://open-llm-radar.com/models/minicpm5-2b">Open LLM Radar</a>：2.52B Dense, 原生 131k ctx, 400B SFT post-training</li>
+<li><strong>WSD Schedule</strong> — <a href="https://ossaihub.com/glossary/wsd-schedule">OSS AI Hub</a>：Warmup-Stable-Decay 调度定义</li>
+<li><strong>批量缩放定律</strong> — <a href="https://arxiv.org/pdf/2412.01505">Smith et al. 2018</a> + <a href="https://papers.nips.cc/paper_files/paper/2024/file/ef74413c7bf1d915c3e45c72e19e5d32-Paper-Conference.pdf">NeurIPS 2024, Surge</a>：增大 batch ≈ 等效降低 LR</li>
+<li><strong>Data Mixing Laws</strong> — <a href="https://arxiv.org/abs/2406.11260">Ye et al. 2024</a>：小模型配比实验可迁移到大模型</li>
+<li><strong>Chinchilla</strong> — <a href="https://arxiv.org/abs/2203.15556">Hoffmann et al. 2022</a>：计算最优 token/param ≈ 20</li>
+</ul>
 <h3>6.4 内部文件引用清单</h3>
-<table>
-<tr><th>文件</th><th>用途</th><th>关键行/节</th></tr>
-<tr><td><code>EXPERIMENTS_PRETRAIN_2B.md</code></td><td>P-8 实验全记录</td><td>:10 LR 搜索 / :120 吞吐 / :138 stable 配比 / :150 decay 配比 / :151 decay 步数 / :224 CS8 / :236 Complex6</td></tr>
-<tr><td><code>DATA_MIX_RECIPE.md</code></td><td>R1/R2/R3 BO 实验记录</td><td>:14 代理口径 / :275-318 R3 BO / :294 best #8 / :306-313 6维分解 / :310 landscape 平坦</td></tr>
-<tr><td><code>DATA_RESEARCH.md</code></td><td>数据源调研</td><td>v1.1（落盘状态已过时，以 v4 §1.2 + 运维实测为准）</td></tr>
-<tr><td><code>MEMORY_PRETRAIN_2B.md</code></td><td>Pretrain agent 状态文件</td><td>:5 P-8 eval 对比</td></tr>
-<tr><td><code>report_pretrain_formal_train_plan.html</code></td><td>v4 报告（本报告前身）</td><td>§1.2 数据落盘 / §3.2 数据可用量 / §3.3 SFT epoch / §4 缩放外推 / §4.4 Complex6</td></tr>
-</table>
+<ul>
+<li><code>EXPERIMENTS_PRETRAIN_2B.md</code> — P-8 实验全记录 — :10 LR搜索 / :120 吞吐 / :138 stable配比 / :150 decay配比 / :151 decay步数 / :224 CS8 / :236 Complex6</li>
+<li><code>DATA_MIX_RECIPE.md</code> — R1/R2/R3 BO 实验记录 — :14 代理口径 / :275-318 R3 BO / :294 best #8 / :306-313 6维分解 / :310 landscape 平坦</li>
+<li><code>DATA_RESEARCH.md</code> — 数据源调研 — v1.1（落盘状态已过时，以 v4 §1.2 + 运维实测为准）</li>
+<li><code>MEMORY_PRETRAIN_2B.md</code> — Pretrain agent 状态文件 — :5 P-8 eval 对比</li>
+<li><code>report_pretrain_formal_train_plan.html</code> — v4 报告（本报告前身）— §1.2 数据落盘 / §3.2 数据可用量 / §3.3 SFT epoch / §4 缩放外推 / §4.4 Complex6</li>
+</ul>
 <h3>6.5 诚实条款（Honesty Clause）</h3>
 <div class="danger">
 <strong>本报告的局限性，明确声明：</strong>
