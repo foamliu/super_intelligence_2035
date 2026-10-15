@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 104 -->
+<!-- RUN_ID: 105 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,49 @@
 
 ---
 
+## RUN_ID 105 — 🔍 **找已有评测缓存（避免白重下）**（只读）
+
+> 用户质疑：这些 benchmark 之前测过，应在本机 cache 里 ⇒ 不该从零重下。
+> 本块只读：列出 `.12` 上所有可能位置的 HF 缓存、里面到底有哪些 benchmark、以及历史评测产物。
+
+```bash
+set -u
+echo "=== RUN_ID 105 · 找已有评测缓存 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[1] 旧 HF 缓存（/home，即崩溃前用的那个）"
+for d in "$HOME/.cache/huggingface/datasets" "$HOME/.cache/huggingface/hub"; do
+  echo "## $d"; ls -la "$d" 2>/dev/null | head -25 | cut -c1-140
+  printf '   size='; timeout 60 du -sm "$d" 2>/dev/null | cut -f1
+done
+echo "[2] 旧缓存里的 benchmark 清单"
+echo "-- datasets/ --"; ls -1 "$HOME/.cache/huggingface/datasets" 2>/dev/null | grep -viE '\.lock$' | head -40
+echo "-- hub/datasets--* --"; ls -1 "$HOME/.cache/huggingface/hub" 2>/dev/null | grep -i '^datasets--' | head -40
+echo "[3] 其它候选位置"
+for d in /tmp/lmms_eval_hf_datasets_app.t0002965 "$HOME/.cache/huggingface/hub/datasets--lmms-lab--gqa" /nas_train/app.e0031982/.cache/huggingface /nas_inference/app.e0031982/.cache/huggingface; do
+  printf '%-62s ' "$d"; [ -d "$d" ] && { ls -1 "$d" 2>/dev/null | head -4 | tr '\n' ' '; echo; } || echo '(缺)'
+done
+echo "[4] 全盘找 lmms-eval 相关缓存目录"
+timeout 80 find "$HOME/.cache" /tmp /nas_train/app.e0031982 -maxdepth 4 -type d \( -name '*lmms*' -o -name 'datasets--lmms-lab--*' \) 2>/dev/null | head -20 | cut -c1-150
+echo "[5] 历史评测产物（判断之前测过哪些集）"
+ls -la /nas_train/app.e0031982/datasets/baize-vision/out/ 2>/dev/null | grep -iE 'eval|lmms|result' | head -15 | cut -c1-140
+echo "[6] 新 HF_HOME（当前 precache）已有"
+ls -1 /nas_env/app.e0031982/hf_home/hub 2>/dev/null | grep -i '^datasets--' | head -20
+printf '   new HF_HOME size='; timeout 60 du -sm /nas_env/app.e0031982/hf_home 2>/dev/null | cut -f1
+echo "[7] 是否有 llava-onevision 相关（回答第 2 问）"
+ls -d /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lmms_eval/models/*llava* 2>/dev/null | head -10 | cut -c1-150
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 105 ==="
+```
+
 ## RUN_ID 104 — ⏱ **vision precache 进度 + 速率实测**（为估算 17 集评测 ETA 取数；只读）
 
 > 目的：量出 ① 预建缓存**当前速率（MB/min）**与**已完成/剩余集数**；② 17 集清单与 `--limit` 语义；③ 复跑的 launch 命令。
 > 🚫 只读；块内含 `sleep 60` 用于测增量（relay 单块上限 600s）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 104 · vision precache 速率实测 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
