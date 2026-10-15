@@ -1,6 +1,19 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-15（⚡ lmms-eval 评测提速：17 集一次跑 + 大 batch + 多 GPU）· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「vision 一个一个 task 低效评测，告诉它 lmms-eval：可以同时测 17 个评测集；batch size 可以加上去；允许多 GPU。」
+
+**① 评测提速（lmms-eval 17 benchmarks）**：
+- **一次命令行指定全部 17 个评测集**（`--tasks ai2d,blink,...,mmmu_pro_standard`，不是逐个 task 跑）。
+- **batch size 加大**（提高 GPU 利用率，自行调优到不 OOM）。
+- **允许多 GPU**（parallelize / accelerate 多卡，自行 web search lmms-eval 官方多卡用法；🚫 不要串行单 task、单卡）。
+
+**② 继续**：`.12` 8×H100 可用；评测数据用 proxy 直连 hf.co（92.25）下载，🚫 勿用 hf-mirror。
+
+**③ 纪律**：🚫 不打断 Stage 训练链；评测纯推理；commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co 下载 lmms-eval 基准 · 恢复 17 benchmark）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「如实使用 http://172.19.92.25:13128 这个 https_proxy，则需要直连 hf.co，不能用 https://hf-mirror.com。」
