@@ -50,14 +50,18 @@ def main():
     # Define checkpoint mapping
     checkpoints = [
         # (name, result_dir, tokens_B, label)
-        ('xmodel2_s1_10000', None, 12.3, 'Xmodel-2 s1/10K (12.3B)'),
-        ('xmodel2_s1_20000', None, 24.6, 'Xmodel-2 s1/20K (24.6B)'),
-        ('xmodel2_s1_30000', None, 36.9, 'Xmodel-2 s1/30K (36.9B)'),
-        ('xmodel2_s1_40000', None, 49.2, 'Xmodel-2 s1/40K (49.2B)'),
-        ('xmodel2_final',    None, 1452.0, 'Xmodel-2 final (1.45T)'),
-        ('xmodel25_step_2000',  None, 5.0,  'Xmodel-2.5 step 2K (5.0B)'),
-        ('xmodel25_step_10000', None, 25.0, 'Xmodel-2.5 step 10K (25.0B)'),
-        ('xmodel25_step_18000', None, 45.0, 'Xmodel-2.5 step 18K (45.0B)'),
+        # Token counts verified from papers:
+        #   Xmodel-2: 3.93M tokens/step (arXiv:2412.19638, confirmed by news article:
+        #     "批次大小为393万个token"; decay T=5000 steps = 20B tokens → 5000×3.93M≈20B)
+        #   Xmodel-2.5 S1: 3712×480 = 1,781,760 ≈ 1.78M tokens/step (arXiv:2511.19496)
+        ('xmodel2_s1_10000', None, 39.3,  'Xmodel-2 s1/10K (39.3B)'),
+        ('xmodel2_s1_20000', None, 78.6,  'Xmodel-2 s1/20K (78.6B)'),
+        ('xmodel2_s1_30000', None, 117.9, 'Xmodel-2 s1/30K (117.9B)'),
+        ('xmodel2_s1_40000', None, 157.2, 'Xmodel-2 s1/40K (157.2B)'),
+        ('xmodel2_final',    None, 1500.0, 'Xmodel-2 final (1.5T)'),
+        ('xmodel25_step_2000',  None, 3.56,  'Xmodel-2.5 step 2K (3.56B)'),
+        ('xmodel25_step_10000', None, 17.82, 'Xmodel-2.5 step 10K (17.82B)'),
+        ('xmodel25_step_18000', None, 32.07, 'Xmodel-2.5 step 18K (32.07B)'),
     ]
     
     base = '/nas_train/app.e0031982/code/BaiZe-ISEDA2027/xmodel_eval'

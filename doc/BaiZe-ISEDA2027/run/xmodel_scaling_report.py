@@ -20,7 +20,7 @@ BAIZE_DATA = [
 ]
 
 XMODEL2_PAPER = {
-    'tokens_B': 1452.0, 'avg': 61.79,
+    'tokens_B': 1500.0, 'avg': 61.79,
     'per_task': {
         'arc_challenge': 39.16, 'arc_easy': 71.55, 'boolq': 74.65,
         'hellaswag': 47.45, 'openbookqa': 29.20, 'piqa': 74.81,
@@ -133,14 +133,14 @@ def generate_html(xmodel2_data, xmodel25_data):
              '参数量 BaiZe(2.22B) > Xmodel-2(1.2B) ≈ Xmodel-2.5(1.3B)，tokenizer 不同，对比为<b>量级参照</b>。</div>')
     h.append('<h2>2. 检查点选择与 Token 映射</h2>')
     h.append('<table><tr><th>检查点</th><th>训练步数</th><th>累计 Token</th><th>对应 BaiZe</th></tr>')
-    h.append('<tr><td>Xmodel-2 s1/10000</td><td>10K</td><td>12.3B</td><td>P-8 iter_3147 (13.2B)</td></tr>')
-    h.append('<tr><td>Xmodel-2 s1/20000</td><td>20K</td><td>24.6B</td><td>P-8 iter_5245 (22.0B)</td></tr>')
-    h.append('<tr><td>Xmodel-2 s1/30000</td><td>30K</td><td>36.9B</td><td>P-8 iter_7343 (30.8B)</td></tr>')
-    h.append('<tr><td>Xmodel-2 s1/40000</td><td>40K</td><td>49.2B</td><td>P-8 final (44.4B)</td></tr>')
-    h.append('<tr><td>Xmodel-2 final</td><td>decay</td><td>~1.45T</td><td>论文参考点</td></tr>')
-    h.append('<tr><td>Xmodel-2.5 step 2000</td><td>2K</td><td>~5.0B</td><td>P-8 iter_1049 (4.4B)</td></tr>')
-    h.append('<tr><td>Xmodel-2.5 step 10000</td><td>10K</td><td>~25.0B</td><td>P-5b 20B</td></tr>')
-    h.append('<tr><td>Xmodel-2.5 step 18000</td><td>18K</td><td>~45.0B</td><td>P-8 final (44.4B)</td></tr></table>')
+    h.append('<tr><td>Xmodel-2 s1/10000</td><td>10K</td><td>39.3B</td><td>P-8 iter_9441 (39.6B)</td></tr>')
+    h.append('<tr><td>Xmodel-2 s1/20000</td><td>20K</td><td>78.6B</td><td>— (超 BaiZe 范围)</td></tr>')
+    h.append('<tr><td>Xmodel-2 s1/30000</td><td>30K</td><td>117.9B</td><td>— (超 BaiZe 范围)</td></tr>')
+    h.append('<tr><td>Xmodel-2 s1/40000</td><td>40K</td><td>157.2B</td><td>— (超 BaiZe 范围)</td></tr>')
+    h.append('<tr><td>Xmodel-2 final</td><td>decay</td><td>~1.5T</td><td>论文参考点</td></tr>')
+    h.append('<tr><td>Xmodel-2.5 step 2000</td><td>2K</td><td>3.56B</td><td>P-8 iter_1049 (4.4B)</td></tr>')
+    h.append('<tr><td>Xmodel-2.5 step 10000</td><td>10K</td><td>17.82B</td><td>P-8 iter_5245 (22.0B)</td></tr>')
+    h.append('<tr><td>Xmodel-2.5 step 18000</td><td>18K</td><td>32.07B</td><td>P-8 iter_7343 (30.8B)</td></tr></table>')
     h.append('<h2>3. 缩放曲线对比</h2>')
     h.append('<div class="svg-container">')
     h.append(svg_scaling_curve(BAIZE_DATA, xmodel2_data, xmodel25_data))
@@ -199,7 +199,7 @@ def gen_analysis_section(h, xmodel2_data, xmodel25_data):
                      f'<td class="{"good" if diff>0 else "bad"}">{diff:+.2f}</td><td>—</td><td>—</td></tr>')
     h.append('</table>')
     h.append('<h3>5.2 关键发现</h3>')
-    xm2_valid = [d for d in xmodel2_data if d.get('avg') is not None and d['tokens'] < 100]
+    xm2_valid = [d for d in xmodel2_data if d.get('avg') is not None and d['tokens'] < 200]
     h.append('<ul>')
     if xm2_valid:
         avg_diff = sum(d['avg'] - min(BAIZE_DATA, key=lambda b: abs(b[0]-d['tokens']))[1] for d in xm2_valid) / len(xm2_valid)
@@ -216,7 +216,7 @@ def gen_analysis_section(h, xmodel2_data, xmodel25_data):
         xm2_avg = sum(d['avg'] for d in xm2_valid) / len(xm2_valid)
         baize_avg = sum(min(BAIZE_DATA, key=lambda b: abs(b[0]-d['tokens']))[1] for d in xm2_valid) / len(xm2_valid)
         diff = xm2_avg - baize_avg
-        h.append(f'<p>在 4.4B–49.2B token 范围内，Xmodel-2 平均 {xm2_avg:.2f}%，BaiZe-2B 平均 {baize_avg:.2f}%，'
+        h.append(f'<p>在 39.3B–157.2B token 范围内，Xmodel-2 平均 {xm2_avg:.2f}%，BaiZe-2B 平均 {baize_avg:.2f}%，'
                  f'差距 <b class="{"bad" if diff>0 else "good"}">{diff:+.2f}pp</b>。</p>')
         if diff > 5:
             h.append(f'<p><b class="bad">BaiZe-2B 在预训练早期的常识推理学习能力显著弱于 Xmodel-2</b>，'
