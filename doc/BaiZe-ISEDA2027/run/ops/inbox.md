@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 103 -->
+<!-- RUN_ID: 104 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,38 @@
 
 ---
 
+## RUN_ID 104 — ⏱ **vision precache 进度 + 速率实测**（为估算 17 集评测 ETA 取数；只读）
+
+> 目的：量出 ① 预建缓存**当前速率（MB/min）**与**已完成/剩余集数**；② 17 集清单与 `--limit` 语义；③ 复跑的 launch 命令。
+> 🚫 只读；块内含 `sleep 60` 用于测增量（relay 单块上限 600s）。
+
+```bash
+set -u
+echo "=== RUN_ID 104 · vision precache 速率实测 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+H=/nas_env/app.e0031982/hf_home
+T1=$(timeout 60 du -sm "$H" 2>/dev/null | cut -f1); echo "size1 = ${T1} MB @ $(date '+%T')"
+sleep 60
+T2=$(timeout 60 du -sm "$H" 2>/dev/null | cut -f1); echo "size2 = ${T2} MB @ $(date '+%T')  ⇒ 60s 增量 $((T2-T1)) MB，约 $((T2-T1)) MB/min"
+echo "[HF_HOME 一级分布]"; timeout 60 du -sm "$H"/* 2>/dev/null | sort -rn | head -8 | cut -c1-110
+echo "[已建/在建的 benchmark 数据集]"; ls -1 "$H/datasets" 2>/dev/null | grep -v '\.lock' | head -30
+echo "[precache 进程]"; pgrep -af 'precache|lmms' 2>/dev/null | grep -v pgrep | cut -c1-150
+echo "[precache.log 全文]"; tail -60 /nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log 2>/dev/null | cut -c1-185
+echo "[17 集清单 + limit 语义（precache_benchmarks.py 头部）]"; sed -n '1,70p' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/mllm_bridge/precache_benchmarks.py 2>/dev/null | cut -c1-170
+echo "[launch 脚本关键行]"; grep -nE 'HF_HOME|num_processes|batch_size|limit|tasks|accelerate|df ' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/mllm_bridge/launch_lmms_eval.sh 2>/dev/null | head -20 | cut -c1-180
+echo "[GPU]"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -3
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 104 ==="
+```
+
 ## RUN_ID 103 — 📊 **vision precache / 评测实时状态**（只读；验证「换 HF_HOME + 单进程预建」是否落地）
 
 > 背景：wake#104 自报已把 `HF_HOME` 迁 `/nas_env`、加 `precache_benchmarks.py` 单进程预建、加磁盘余量闸门。本块**机上验证**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 103 · vision precache/评测状态 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
