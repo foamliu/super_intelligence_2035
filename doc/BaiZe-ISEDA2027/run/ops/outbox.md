@@ -11629,3 +11629,81 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
 === [.12] DONE ===
 === DONE 107 ===
 ```
+
+---
+
+## RUN_ID 108 · 2026-10-15 22:45:23 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 108 · vision precache 进度 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+NEW=/nas_env/app.e0031982/hf_home
+LOG=/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results/precache.log
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+T1=$(timeout 60 du -sm "$NEW" 2>/dev/null | cut -f1); echo "size1=${T1} MB @ $(date '+%T')"
+sleep 45
+T2=$(timeout 60 du -sm "$NEW" 2>/dev/null | cut -f1); echo "size2=${T2} MB @ $(date '+%T')  ⇒ 增量 $((T2-T1)) MB/45s ≈ $(( (T2-T1)*4/3 )) MB/min"
+echo "[precache 进度行]"; grep -aE '^\[[0-9]+/17\]|cached in' "$LOG" 2>/dev/null | tail -14 | cut -c1-165
+echo "[日志尾 6 行]"; tail -6 "$LOG" 2>/dev/null | cut -c1-170
+echo "[precache 进程（排除 cline/bun）]"
+for p in $(pgrep -f 'precache_benchmarks.py' 2>/dev/null); do
+  C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-110)
+  case "$C" in *cline*|*bun*) : ;; *) echo "   pid=$p :: $C" ;; esac
+done
+echo "[HF hub 里已有的数据集]"; ls -1 "$NEW/hub" 2>/dev/null | grep -i '^datasets--' | head -30
+echo "[HF datasets 目录数]"; ls -1 "$NEW/datasets" 2>/dev/null | grep -v '\.lock' | wc -l
+echo "[GPU/磁盘]"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | head -2; df -h /nas_env 2>/dev/null | tail -1 | cut -c1-100
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 108 ==="
+```
+
+**输出**
+```
+=== RUN_ID 108 · vision precache 进度 2026-10-15 22:45:23 · host=whag0pgpuap29 ===
+=== [.12] whag0pgpuap12 2026-10-15 22:45:24 ===
+size1=22420 MB @ 22:45:24
+size2=22420 MB @ 22:46:09  ⇒ 增量 0 MB/45s ≈ 0 MB/min
+[precache 进度行]
+[1/17] Pre-caching 'mmbench_en_dev'...
+  ✅ mmbench_en_dev cached in 8.5s
+[2/17] Pre-caching 'mmmu_val'...
+[1/17] Pre-caching 'mmbench_en_dev'...
+  ✅ mmbench_en_dev cached in 8.5s
+[2/17] Pre-caching 'mmmu_val'...
+  ✅ mmmu_val cached in 6.3s
+[3/17] Pre-caching 'gqa'...
+  ✅ mmmu_val cached in 6.3s
+[3/17] Pre-caching 'gqa'...
+  ✅ gqa cached in 15.1s
+[4/17] Pre-caching 'textvqa_val'...
+  ✅ gqa cached in 15.1s
+[4/17] Pre-caching 'textvqa_val'...
+[日志尾 6 行]
+Generating train split:   0%|          | 0/34602 [00:00<?, ? examples/s]Generating train split:   0%|          | 0/34602 [00:00<?, ? examples/s]Generating train split:
+
+Generating validation split:   0%|          | 0/5000 [00:00<?, ? examples/s]Generating validation split:   0%|          | 0/5000 [00:00<?, ? examples/s]Generating vali
+Generating validation split: 100%|██████████| 5000/5000 [00:02<00:00, 2005.39 examples/s]
+Generating test split:   0%|          | 0/5734 [00:00<?, ? examples/s]Generating test split:   0%|          | 0/5734 [00:00<?, ? examples/s]Generating test split:   2%
+
+[precache 进程（排除 cline/bun）]
+   pid=2430411 :: python mllm_bridge/precache_benchmarks.py --limit 1 
+[HF hub 里已有的数据集]
+datasets--lmms-lab--ai2d
+datasets--lmms-lab--DocVQA
+datasets--lmms-lab--GQA
+datasets--lmms-lab--MMBench
+datasets--lmms-lab--MMMU
+datasets--lmms-lab--textvqa
+[HF datasets 目录数]
+6
+[GPU/磁盘]
+0, 4 MiB
+1, 4 MiB
+10.239.22.32:/vol_CTE0_data04   10T   62G  9.9T   1% /nas_env
+=== [.12] DONE ===
+=== DONE 108 ===
+```
