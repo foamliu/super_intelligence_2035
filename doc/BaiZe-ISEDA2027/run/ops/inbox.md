@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 101 -->
+<!-- RUN_ID: 102 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,34 @@
 
 ---
 
+## RUN_ID 102 — 💾 **`.12` 磁盘实况**（定位「No space left on device」是哪块盘 + HF 缓存体积）
+
+> RUN_ID 101 已确定根因：`OSError: [Errno 28] No space left on device`（pyarrow 写 datasets 生成时）→ `DatasetGenerationError` → rank1 崩。
+> 本块只读定位**满的是哪块盘**、HF 缓存多大、inode 情况。🚫 不删任何东西。
+
+```bash
+set -u
+echo "=== RUN_ID 102 · .12 磁盘实况 $(date '+%F %T') · host=$(hostname) ==="
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
+set -u
+echo "=== [.12] $(hostname) $(date '+%F %T') ==="
+echo "[挂载点]"; df -h 2>/dev/null | grep -vE 'tmpfs|udev|overlay' | head -18 | cut -c1-120
+echo "[关键路径属于哪块盘]"; for p in "$HOME" /tmp /nas_train /nas_inference /nas_env; do printf '%-16s ' "$p"; df -h "$p" 2>/dev/null | tail -1 | cut -c1-100; done
+echo "[HF 缓存体积]"; for d in "$HOME/.cache/huggingface/datasets" "$HOME/.cache/huggingface/hub" "$HOME/.cache/huggingface"; do printf '%-58s ' "$d"; (timeout 60 du -sh "$d" 2>/dev/null | cut -f1) || echo '-'; done
+echo "[HOME 一级目录 TOP10（有界）]"; timeout 60 du -sh "$HOME"/* 2>/dev/null | sort -rh | head -10 | cut -c1-120
+echo "[/tmp 体积]"; timeout 45 du -sh /tmp 2>/dev/null | cut -f1
+echo "[inode]"; df -i "$HOME" /tmp 2>/dev/null | cut -c1-110
+echo "[vision loop 日志尾]"; tail -12 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-175
+echo "=== [.12] DONE ==="
+REMOTE
+echo "=== DONE 102 ==="
+```
+
 ## RUN_ID 101 — 🔎 **vision limit50 评测失败根因**（只读；21:24 ChildFailedError）
 
 > 现象：20:26 启动的 8 卡 `--limit 50` 评测在 **21:24:28 rank1 exit 1** 崩掉（`ChildFailedError`），无结果 JSON。本块取**真实异常**（rank 日志 / 日志上文）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 101 · vision 评测失败根因 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
