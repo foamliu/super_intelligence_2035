@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 02:46（watcher 重启 + /data→/tmp 缓存路径修复 · wake #107）**：✅ **关键修复**：`/data/app.e0031982/` root-owned 不可创建 → `LMMS_EVAL_DATASETS_CACHE` 改为 `/tmp/lmms_eval_hf_datasets_app.e0031982`（precache 已建 38G 缓存于此, /tmp 剩 32G）。✅ **watcher 重启**（`launch_watcher.sh` PID 3905600, setsid 稳定运行）：等 precache 退出 → retry seedbench (xet disabled) → launch limit50 8-GPU eval。🔄 precache 14/17（vqav2 61% 22/36, ETA~20min; PID 2430411, ~4.2h）。📦 commit 3a9032ef pushed。下一步（全自动）：watcher 执行 → 检查 limit50 → 全量 17 集 → ArmA retrain。⚠️ MEMORY=32.0KB 临近上限, 下轮须归档。
+> 🆕 **2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）**：🔄 precache **15/17** done（hallusion_bench ✅, realworldqa ✅, **vqav2 downloading 41%** 28/68 files @~45s/file, infovqa pending）。✅ watcher 健康（PID 3905600/3905610, 1.1h 稳定运行, 等 precache 退出）。✅ GPU 8×H100 全空闲。✅ Part A 旧缓存复用已确认（wake #106 完成, 6 集 cp -a 到 /nas_env）。✅ Part B open_clip_baize.py + export_llava_ov_hf.py 就绪（wake #105, test 2/2 CPU PASSED）。📦 MEMORY 归档 14 条 Oct14 📦→1 条 + 本唤醒流水旧条目归档, 31.2KB→~26KB。下一步（全自动）：precache 完成(~1-2h) → watcher retry seedbench → limit50 8卡 eval → 全量 17 集 → ArmA retrain。
 > 📦 2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败 + TASK 归档 · wake #106）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 旧缓存复用, 缓存路径 /tmp→/data 修复, seedbench retry 脚本就绪, TASK 归档 5 块 35.9→26.5KB。需要时再读。
 > 📦 2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU), embed_dim=768, image_token_index=151655。需要时再读。
 > 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
@@ -16,20 +16,7 @@ WAITING: 1
 > 📦 2026-10-15 ~01:16（wake #88 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 154,080(99.7%), C1=0.6656, ETA~4min, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~00:41（wake #87 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 150,900(97.6%), C1=0.6945, CPU 5/5 PASSED。需要时再读。
 > 📦 2026-10-15 ~00:10（wake #86 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 147,480(95.5%), C1=0.6696, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-14 23:31（wake #85 ArmC 监控 + MLLM bridge 五验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 144,450(93.4%), C1=0.6571, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-14 22:46（wake #84 ArmC 监控 + MLLM bridge 四验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 140,400(90.8%), C1=0.6518, 468 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-14 22:11（wake #83 ArmC 监控 + MLLM bridge 三验）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 136,470(88.3%), C1=0.6250, 454 PROBEs全绿, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-14 ~20:30（wake #81 MLLM bridge 交付）已归档 → daily-memories-vision/2026-10-14.md；**结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。需要时再读。
-> 📦 2026-10-14 ~18:49（wake #80）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 110,810(71.6%), C1=0.6113, 369 PROBEs全绿, 报告刷新。需要时再读。
-> 📦 2026-10-14 ~18:09（merge3ds ArmC 训练监控 + 报告刷新 · wake #79）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 107,760(69.7%), C1=0.6599, 359 PROBEs全健康, NFS停顿间歇, 报告刷新。需要时再读。
-> 📦 2026-10-14 ~16:11（merge3ds ArmC 训练监控 · wake #76）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 97,500(63.1%), C1=0.6233, 325 PROBEs全健康, NFS停顿加剧, 报告刷新。需要时再读。
-> 📦 2026-10-14 ~15:15（merge3ds ArmC 训练监控 · wake #75）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 93,750(60.7%), C1=0.6323, 312 PROBEs全健康, 报告刷新。需要时再读。
-> 📦 2026-10-14 14:16（wake #73 Stage(iv) MLLM 可行性评估）已归档 → daily-memories-vision/2026-10-14.md；**结论**：✅ 28.5KB HTML 9节, 2🔴+6🟠+7🟢, 数据265GB全在盘, wrapper/modeling 纯 CPU 可并行。需要时再读。
-> 📦 2026-10-14 ~12:46（ArmC 中文状态报告刷新 · wake #72）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 76,460/154500(49.5%), C1=0.5415, 254 PROBEs全健康, 报告刷新。需要时再读。
-> 📦 2026-10-14 10:40（ArmC 中文状态报告首次交付）已归档 → daily-memories-vision/2026-10-14.md；**结论**：report_vision_merge3ds_armc_status_zh.html 已交付(7节+2SVG+文献表)，报告已多次刷新至最新训练数据。需要时再读。
-> 📦 2026-10-14 10:05（论文改稿 P0+P1）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ 11→12 页 0 error, commit e0f75ef5。需要时再读。
-> 📦 2026-10-14 09:15（论文审视报告）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ 21.8KB HTML, 2🔴+6🟠+5🟢, 14/16 核验一致。需要时再读。
-> 📦 2026-10-14 08:40（ArmC 监控 wake #69）已归档 → daily-memories-vision/2026-10-14.md；**结论**：step 48600/154500(31.4%), C1=0.5452 健康。需要时再读。
+> 📦 2026-10-14 全天（wake #69~#85, 14 条）已归档 → daily-memories-vision/2026-10-14.md + 2026-10-15.md；**结论**：ArmC 训练全程健康(C1 0.54→0.66, 154500步完成), MLLM bridge 7文件交付, 论文 P0+P1 改稿 12页 0err, Stage(iv) 可行性评估 28.5KB HTML。需要时再读。
 > ✅ **④-4ep 基线（COMPLETE）**: ProtB 67.05±0.02% / ProtA 56.70% / zs 40.64%/72.64% / k-NN 42.35%. final_loss=0.0805, C1=0.5932, 748,404 steps, 60,545s. VERDICT: MODERATE, DIMINISHING. 详见 EXPERIMENTS_VISION.md §9.5/§9.7.
 > 📦 2026-10-13 12:43（④-4ep 评测完成）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB 67.05±0.02%, 递减确认。需要时再读。
 > 📦 V2 Muon / V3 全量数据 / ② probe sweep / ④-2ep（2026-10-11~12）已归档 → daily-memories-vision/2026-10-14.md；**结论**：V2 Muon 全 LR 坍缩❌；V3 全量 ProtB=63.52% Δ+1.18pp 不可分辨；② probe NOT underfitting（62.34%=ceiling）；④-2ep ProtB=65.37% Δ+3.03pp MODERATE。需要时再读。
@@ -38,10 +25,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集：precache 14/17 + watcher 自动化启动 ✅（wake #107）**：Stage-1/1.5/2 全 ✅。open_clip/LLaVA-OV wrapper ✅ (test 2/2 CPU)。precache 运行中 (PID 2430411, vqav2 downloading, infovqa pending)。watcher 脚本 PID 3295550 nohup：等 precache → retry seedbench → limit50 8卡 eval。GPU 8×H100 全空闲。下一步：watcher 自动完成 → 检查 limit50 → 全量 17 集 → ArmA retrain。 |
+| PHASE | 🔄 **lmms-eval 17 集：precache 15/17 + watcher 自动化运行中（wake #108）**：Stage-1/1.5/2 全 ✅。open_clip/LLaVA-OV wrapper ✅ (test 2/2 CPU)。precache 运行中 (PID 2430411, vqav2 41% downloading, infovqa pending, ETA~1-2h)。watcher PID 3905600：等 precache → retry seedbench → limit50 8卡 eval。GPU 8×H100 全空闲。下一步：watcher 自动完成 → 检查 limit50 → 全量 17 集 → ArmA retrain。 |
 | ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 02:37 (wake #107)**: 🔄 precache 14/17 (vqav2 downloading 58%, infovqa pending)。✅ 模型就绪 (vision.pt + stage2/step3500 + Qwen3-4B + peft 0.18.0)。✅ open_clip test 2/2 CPU。🔧 watcher 脚本 PID 3295550 nohup: 等 precache→retry seedbench→limit50 8卡 eval。GPU 8×H100 全空闲。 |
+| 更新 | **2026-10-16 03:55 (wake #108)**: 🔄 precache 15/17 (vqav2 41% downloading, infovqa pending, ETA~1-2h)。✅ 模型就绪 (vision.pt + stage2/step3500 + Qwen3-4B + peft 0.18.0)。✅ open_clip test 2/2 CPU。✅ watcher PID 3905600 健康: 等 precache→retry seedbench→limit50 8卡 eval。GPU 8×H100 全空闲。📦 MEMORY 归档减重 31.2KB→~26KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
@@ -232,24 +219,9 @@ WAITING: 1
 
 ## 本唤醒流水
 
-- [22:46 Oct14] **Wake #84**: 🔄 ArmC 训练监控 + MLLM bridge 四验 + 报告刷新。ArmC: step **140,400**/154500(**90.8%**), C1=0.6518(稳定平台期 0.63-0.69), loss~0.10-0.25, LR=2.41e-4, 吞吐~250ms/iter~8000 img/s(NFS恢复稳态), ckpt 10k-140k(14个), ETA ~23:45 Oct14。✅ MLLM bridge CPU 单测四验 5/5 PASSED（bit-exact diff=0.00e+00, projector OK）。✅ 报告 `report_vision_merge3ds_armc_status_zh.html` 刷新至 step 140,400。📦 体积：TASK=26.6KB✅ / MEMORY=31.0KB✅。
-- [16:57 Oct14] **Wake #77**: ✅ 刷新报告至 step 101,150(65.4%), C1=0.6415, 337 PROBEs全绿, ETA 20:30-21:30。📦 体积：TASK=31.8KB✅ / MEMORY=31.4KB✅。
-- [16:11 Oct14] **Wake #76**: ✅ 刷新报告至 step 97,500(63.1%), C1=0.6233, 325 PROBEs全绿, NFS停顿加剧, ETA 20:00-21:00。
-> 📦 [15:15 Oct14] Wake #75 流水已归档 → daily-memories-vision/2026-10-14.md。**关键**：step 93,750(60.7%) 报告刷新。需要时再读。
-> 📦 [12:46 Oct14] Wake #72 流水已归档 → daily-memories-vision/2026-10-14.md。**关键**：step 76,460(49.5%) 报告刷新。需要时再读。
-> 📦 [12:10 Oct14] Wake #71 + [08:40 Oct14] Wake #69 流水已归档 → daily-memories-vision/2026-10-14.md。**关键**：Wake #71 step 70,020(45.3%) 报告刷新；Wake #69 step 48,600(31.4%) NFS bimodal。需要时再读。
-> 📦 [02:03~06:20 Oct14] wake #58/#63/#64/#65 + 外部编码器ProtB启动（5条）已归档 → daily-memories-vision/2026-10-14.md「Archived wake entries (Oct 14 morning)」节。**关键**：ArmC 训练全程健康(C1 0.39→0.57上升)，NFS IO争用 step10k→48k 退化(378→570ms)，吞吐在63k后恢复。需要时再读。
-- [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发** — 已归档至 `daily-memories-vision/2026-10-09.md`。配方 `warmup=2000/lr=5e-4/cosine/min_lr=5e-5`，两臂同数据。
-
-> 📦 10-06~10-10 早期流水(R12b/scaling/fair-rerun)已归档 → daily-memories-vision/2026-10-{06,07,09,10}.md。**关键结论**：E1fair ProtB=62.34%, E2fair=62.51%, Δlp=+0.17pp indistinguishable。
-> 📦 10-11 00:15~21:35 流水(V3 training/eval/②probe/④-2ep launch, ~20条)已归档 → daily-memories-vision/2026-10-11.md。**关键结论**：V3 ProtB=63.52% Δ+1.18pp Null; ② ×5ep=62.15% probe NOT underfitting; V3 ProtA=50.53%/zs=35.52%/k-NN=38.94% all +0.83~+1.42pp Null; ④-2ep launched @18:25。
-
-> 📦 [23:00 Oct11~08:57 Oct12] ④-2ep 监控流水 (wakes Muon-review~#14, 10条) 已归档 → daily-memories-vision/2026-10-12.md「Archived wake entries」节。**结论**：④-2ep 训练全程健康（C1 0.46→0.60, 无坍缩），sympy 修复后自动评测成功。
-> 📦 [12:20~18:40 Oct12] ④-2ep eval → awaiting operator → ④-4ep launch 流水 (wakes #19/#22/#23/#24/#26, 5条) 已归档 → daily-memories-vision/2026-10-12.md「Archived wake entries (Oct 12 afternoon)」节。**关键**：④-2ep eval DONE (ProtB 65.37%), sympy fixed, GPU idle, operator 下令 ④-4ep 启动, step ~408k (~55%) @18:40。
-> 📦 [20:55~23:59 Oct12] ④-4ep 监控流水 wake #30/#32/#33/#34（4条）已归档 → daily-memories-vision/2026-10-13.md。**关键**：NFS 波动导致 ETA 反复；LLaVA plan 交付@22:05；训练全程 C1 健康 0.50-0.60 无坍缩。
-> 📦 [01:07~08:15 Oct13] ④-4ep 监控流水 wake #35~#45（11条）已归档 → daily-memories-vision/2026-10-13.md。**关键**：step 545k→711k (~73%→~95%), C1 0.53-0.65 全程健康无坍缩, NFS 波动后恢复 ~5,000+ img/s。
-- [08:15 Oct13] **Monitoring wake #45**: 🔄 ④-4ep training step 711,110/748,404 (~95.0%), C1=0.6277 healthy, ETA ~10:00. 📦 体积：TASK=31.0KB / MEMORY=28.9KB。
-> 📦 [08:15~19:30 Oct13] ④-4ep eval + 外部编码器 ProtB + HTML plan 流水 (wakes #45~#53, 6条) 已归档 → daily-memories-vision/2026-10-13.md「Archived wake entries (Oct 13 evening)」节。**关键**：④-4ep eval DONE (ProtB 67.05%); Xva device bug fixed; CLIP 82.66%/OV2 84.97%/SigLIP2 87.46%/AIMv2 52.35%; HTML plan delivered 28.9KB。需要时再读。
+> 📦 [Oct 13~14] 本唤醒流水旧条目（Wake #45~#84, 含 ArmC 监控/MLLM bridge/报告刷新/④-4ep eval/外部编码器, ~15条）已归档 → daily-memories-vision/2026-10-{13,14}.md。**关键结论**：ArmC 154500步完成(ProtB 68.25%), ④-4ep ProtB 67.05%, MLLM bridge 5/5 PASSED, 外部编码器 SigLIP2 87.46% 最高。需要时再读。
+> 📦 10-06~10-12 早期流水（R12b/scaling/fair-rerun/V3/②probe/④-2ep/④-4ep, ~40条）已归档 → daily-memories-vision/2026-10-{06..12}.md。**关键结论**：E1fair vs E2fair Δlp=+0.17pp indistinguishable; ④-4ep ProtB 67.05% MODERATE/DIMINISHING; ④-2ep ProtB 65.37%。需要时再读。
+- [03:55 Oct16] **Wake #108**: 🔄 precache 15/17 (vqav2 41% downloading 28/68 files @~45s/file, infovqa pending, ETA~1-2h)。✅ watcher PID 3905600/3905610 健康(1.1h 稳定)。✅ Part A 旧缓存复用确认(wake #106 done, 6 集 cp -a 到 /nas_env)。✅ Part B open_clip_baize.py + export_llava_ov_hf.py 就绪(test 2/2 CPU PASSED)。✅ GPU 8×H100 全空闲(0% util)。📦 MEMORY 归档减重: 14条 Oct14 📦→1条 + 本唤醒流水旧条目→2条汇总。📦 体积：TASK=26.5KB / MEMORY=~26KB（归档 ~5KB → daily-memories-vision/）。
 
 
 
