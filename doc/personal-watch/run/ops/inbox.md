@@ -2,6 +2,7 @@
 
 <!-- RUN_ID: 11 -->
 <!-- RUN_ID: 12 -->
+<!-- RUN_ID: 13 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -19,6 +20,25 @@
 > ✅ **实际结果已核验通过**：两条 loop 均在 **08:08:0x** 以新节律启动（`watch_news` pid=1156927 / `watch_research` pid=1157046），日志首行 = `[loop] ⏰ 定时模式已启用：唤醒时窗 = 6,18`，次行 = `⏰ 时窗参考：… 下一个时窗 = 2026-10-07 18:00:00 CST`；news 线已打印 `⏰ 定时模式：下次唤醒 = 2026-10-07 18:00:00 CST（588min 后）` 并写入 HB，research 线仍在首轮内。<br>
 > 🚫 **本块不宜再跑**：新节律下「重启 = 立刻多烧一轮 cline」（两线各一轮 ≈ 用户 token），**目标已达成，重复执行纯浪费**。⇒ `.last_run_id` 已同步置为 **11**（中继不会再取它）。<br>
 > ℹ️ **当时的通道故障**：中继 `pid=353526` 自 2026-10-06 18:06 起**卡死在命令替换管道上**（`fd 3 -> pipe:[…]` 只读端 + `wchan=pipe_read` + 无子进程 ⇒ 写端被脱离进程组的后台进程长期持有），故本块**未由中继执行**；已按「SSH 直连（用户授权）+ 中继加固（文件捕获 + stdin `/dev/null` + 失败打印原因 + 心跳）」两条腿处理。
+
+## RUN_ID 13 — 🔍 **诊断 watch_news 停摆**（只读 · 2026-10-15）
+
+> 现象：news 线最后 MEMORY 更新停在 2026-10-13 18:25，其后 2 天无活动、无微头条。只读排查：loop 进程 / 心跳 / 日志尾 / 错误探针。
+
+```bash
+echo "=== RUN_ID 13 · news 停摆诊断 $(date '+%F %T') ==="; hostname; date '+%F %T'
+echo "=== [1] watch_news loop 进程 ==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'watch_news_loop' | grep -v grep | cut -c1-120
+echo "=== [2] 心跳文件 ==="
+ls -la --time-style=+%F_%H:%M:%S /tmp/watch_news_loop.hb 2>/dev/null || echo "HB 不存在"
+echo "=== [3] 日志尾 ==="
+tail -30 /tmp/watch_news_loop.log 2>/dev/null | cut -c1-160
+echo "=== [4] 错误探针 ==="
+grep -cE 'Forbidden|No such file|Token|额度用完|error:' /tmp/watch_news_loop.log 2>/dev/null
+echo "=== [5] ops_relay 进程 ==="
+ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay' | grep -v grep | cut -c1-120
+echo "=== DONE ==="
+```
 
 ## RUN_ID 12 — 🧪 **加固版中继「端到端 + 冻死回归」自检**（只读诊断 + 1 个无害后台守护做回归探针）
 
