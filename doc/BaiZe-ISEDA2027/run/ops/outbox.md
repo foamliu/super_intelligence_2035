@@ -10436,3 +10436,93 @@ ls: cannot access '/nas_train/openbmb/Ultra-FineWeb': No such file or directory
 2026-10-06 19:59  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/ultrafineweb-zh-part-254-of-256.parquet
 === DONE 98 ===
 ```
+
+---
+
+## RUN_ID 99 · 2026-10-15 21:17:49 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 99 · 深度核查 SFT-2605 / RL-2609 $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [1] SFT-2605 盘上实况（深 6） ---"
+P=/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605
+if [ -d "$P" ]; then
+  echo "顶层:"; ls -la "$P" 2>&1 | head -12 | cut -c1-135
+  echo "data/ 下:"; ls -la "$P/data" 2>/dev/null | head -12 | cut -c1-135
+  echo "jsonl 计数(深6) = $(timeout 60 find "$P" -maxdepth 6 -type f -name '*.jsonl' 2>/dev/null | wc -l)"
+  echo "incomplete 计数  = $(timeout 60 find "$P" -maxdepth 6 -type f -name '*.incomplete' 2>/dev/null | wc -l)"
+  echo -n "非 lock 总字节   = "; timeout 90 find "$P" -maxdepth 6 -type f -not -name '*.lock' -printf '%s\n' 2>/dev/null | awk '{s+=$1} END{printf "%d B  (%.2f GB)\n", s, s/1073741824}'
+else echo "MISSING: $P"; fi
+echo "--- [2] RL-2609 在四个盘 / HF 缓存 ---"
+for D in /nas_inference /nas_user /nas_env /nas_train; do
+  Q="$D/app.e0031982/datasets/openbmb/UltraData-RL-2609"
+  printf '%-62s %s\n' "$Q" "$([ -d "$Q" ] && echo EXISTS || echo -)"
+done
+echo "HF hub 缓存里 openbmb 的:"; ls -d /home/app.e0031982/.cache/huggingface/hub/datasets--openbmb--* 2>/dev/null | cut -c1-140
+echo "--- [3] HF 官方事实（API 直连） ---"
+for R in openbmb/UltraData-SFT-2605 openbmb/UltraData-RL-2609; do
+  echo "### $R"
+  timeout 30 curl -s "https://huggingface.co/api/datasets/$R?full=true" | python3 -c "
+import json,sys
+try:
+    d=json.load(sys.stdin)
+except Exception as e:
+    print('  PARSE_FAIL', e); raise SystemExit
+sib=d.get('siblings',[])
+sz=[(s.get('size') or 0) for s in sib]
+print('  gated=',d.get('gated'),'| lastModified=',d.get('lastModified'),'| siblings=',len(sib),'| with_size=',sum(1 for s in sib if s.get('size')),'| totalGB=',round(sum(sz)/1e9,2))
+" 2>&1 | head -4
+done
+echo "--- [4] 当前在跑的下载 ---"
+pgrep -af 'hf download|hf_transfer|huggingface_hub' 2>/dev/null | grep -v pgrep | cut -c1-140 | head -8
+echo "--- [5] 磁盘余量 ---"; df -h /nas_inference /nas_user /nas_env 2>/dev/null | cut -c1-110
+echo "=== DONE 99 ==="
+```
+
+**输出**
+```
+=== RUN_ID 99 · 深度核查 SFT-2605 / RL-2609 2026-10-15 21:17:49 · host=whag0pgpuap29 ===
+--- [1] SFT-2605 盘上实况（深 6） ---
+顶层:
+total 212
+drwxr-x--- 5 app.e0031982 app.adm   4096 Oct  1 23:48 .
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  1 23:48 ..
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct  1 23:48 assets
+drwxr-x--- 3 app.e0031982 app.adm   4096 Sep 11 21:59 .cache
+drwxr-x--- 4 app.e0031982 app.adm   4096 Oct  2 06:22 data
+-rw-r----- 1 app.e0031982 app.adm 140874 Oct  1 23:48 .gitattributes
+-rw-r----- 1 app.e0031982 app.adm  11335 Sep 23 18:15 LICENSE
+-rw-r----- 1 app.e0031982 app.adm  11427 Sep 23 18:15 README.md
+-rw-r----- 1 app.e0031982 app.adm   8863 Oct  1 23:48 README_ZH.md
+data/ 下:
+total 16
+drwxr-x--- 4 app.e0031982 app.adm 4096 Oct  2 06:22 .
+drwxr-x--- 5 app.e0031982 app.adm 4096 Oct  1 23:48 ..
+drwxr-x--- 9 app.e0031982 app.adm 4096 Oct  2 06:22 no_think
+drwxr-x--- 7 app.e0031982 app.adm 4096 Oct  2 20:04 think
+jsonl 计数(深6) = 1504
+incomplete 计数  = 0
+非 lock 总字节   = 318990665250 B  (297.08 GB)
+--- [2] RL-2609 在四个盘 / HF 缓存 ---
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609 -
+/nas_user/app.e0031982/datasets/openbmb/UltraData-RL-2609      -
+/nas_env/app.e0031982/datasets/openbmb/UltraData-RL-2609       -
+/nas_train/app.e0031982/datasets/openbmb/UltraData-RL-2609     -
+HF hub 缓存里 openbmb 的:
+/home/app.e0031982/.cache/huggingface/hub/datasets--openbmb--Ultra-FineWeb
+--- [3] HF 官方事实（API 直连） ---
+### openbmb/UltraData-SFT-2605
+  gated= auto | lastModified= 2026-05-28T17:18:14.000Z | siblings= 1510 | with_size= 0 | totalGB= 0.0
+### openbmb/UltraData-RL-2609
+  gated= False | lastModified= 2026-09-07T12:18:58.000Z | siblings= 26 | with_size= 0 | totalGB= 0.0
+--- [4] 当前在跑的下载 ---
+3395379 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_in
+3395386 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /n
+--- [5] 磁盘余量 ---
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.32:/vol_CTE0_data03   45T   36T  9.4T  80% /nas_inference
+10.239.23.32:/vol_CTE0_data02  108T   82T   27T  76% /nas_user
+10.239.23.32:/vol_CTE0_data04   10T   14G  9.9T   1% /nas_env
+=== DONE 99 ===
+```
