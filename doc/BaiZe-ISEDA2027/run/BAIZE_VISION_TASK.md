@@ -61,25 +61,7 @@
 
 ### 🆕 运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）· 用户直令
 
-> **用户令（2026-10-15）**：「vision 之前的实验结果如何，写成 html 中文报告。」
-
-**性质**：纯写作、零 GPU。**主线仍是刚放行的 MLLM 训练**——本任务在 MLLM smoke/Stage 间空窗期做，🚫 不延迟 MLLM 训练。
-
-**① 报告内容**：把 vision 线从架构选型到 merge3ds ArmC 的**全部关键实验结果**，按主题结构化整理成中文 HTML 报告。
-
-**② 必须覆盖**（基于 `EXPERIMENTS_VISION.md` 台账，每主题给动机/关键数字/判定/后续影响）：
-1. **架构选型（R2/R8）**：六架构四指标对比，OpenVision2 胜出（Loss@5k / img/s / 推理 ms/img）。
-2. **缩放（R9/R10）**：「塔越小越高」，w512=126.8M 定位。
-3. **AIMv2-style（R11）**：w512 翻盘、loss 轴主线。
-4. **E1/E2 公平重跑**：Δlp **+0.17pp 不可分辨**，旧「−5.59pp」= schedule 伪影。
-5. **epoch 缩放（④）**：1ep 62.34% / 2ep 65.37% / 4ep 67.05%（ProtB），递减收敛。
-6. **变体**：V2 Muon 全 LR 坍缩、V3 全量数据 Null（Δ+1.18pp）。
-7. **外部编码器 ProtB 参照**：5 模型 81.72~87.46 vs BaiZe 67.05。
-8. **merge3ds ArmC**：GBS/MBS×4 + LR×4 结果（若 eval chain 已出）。
-
-**③ 交付**：`reports/report_vision_experiments_summary_zh.html`（自包含中文、内联 CSS/SVG、可带 lp-epoch/scaling 曲线图）。
-
-**④ 纪律**：数字全部与 `EXPERIMENTS_VISION.md` 一致、贴 §行号，🚫 凭印象；🚫 不延迟 MLLM 训练；commit 前缀 `vision report:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-15（📚 历史实验结果全景总结）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付，8 主题全覆盖。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程：smoke → Stage-1/1.5/2 → lmms-eval）· 用户直令 · 最高优先
 
@@ -103,30 +85,7 @@
 
 ### 🆕 运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（纯 CPU，不占 GPU））· 用户直令 · 最高优先（但仍低于 ArmC 训练/评测监控）
 
-> **用户令（2026-10-14）**：「vision MLLM 桥接：**现在就在 ArmC 期间并行写 ViT wrapper**（纯 CPU 可并行）。」
-> **背景**：可行性报告 `report_vision_mllm_stage4_feasibility_zh.html` §4.3/§7 已判定「视觉编码器桥接」= 🔴 R1 最大工程量（~1-2 天工程），且 §8.2/§8.3 明确 #3#4 为**纯 CPU 工作、可在 ArmC 训练期间并行完成、不占 GPU**。本令 = 批准 Phase0 并行开工（覆盖报告中 #3#4「未开始」状态）。
-
-**① 先决纪律（不可越线）**：
-- 🚫 **不打断/不延迟 ArmC 训练与 eval chain**（training PID + eval chain PID 3698490）；本任务**零 GPU**（仅 CPU 前向做 shape/数值单测）。
-- 🚫 不改 ArmC 训练脚本/数据/ckpt；不改已发布报告数字。
-- ⚠️ 若 CPU/IO 与 ArmC 的 NFS 读冲突（ArmC 近期已有 NFS 停顿），**主动让路**：把 CPU 密集步骤降到 nice / 串行 / 错峰。
-
-**② 交付物（落在 repo，可复现）**：
-1. **BaiZe vision tower HF wrapper**（建议 `run/vision/mllm_bridge/modeling_baize_vision.py` + `configuration_baize_vision.py`）：
-   - 把 `run/vision/models.py:OpenVision2`（image_size=224 / patch_size=16 / width=1024 / depth=30 / heads=16 / mlp_dim=4096）包成 HF `PreTrainedModel` 子类（`model_type: baize_vision`），加 `config.json`（含 `spatial_merge_size=1`）。
-   - **输出 patch-level features `[B,196,1024]`**：走 `forward(..., return_patch=True)` 取 `x`（`self.norm` 之后、**跳过 `ReadoutHead`**，ReadoutHead 仅对比学习用）。
-   - **权重加载**：从 ④-4ep ckpt 读 `{'vision': state_dict}`（按 `run/vision/r13_eval_official.py` / `r7_eval.py` 的既有映射，含 `visual.` 前缀剥离逻辑）；映射到 wrapper 参数名；`load_state_dict(strict=True)` 并打印 matched/missing/unexpected 列表。
-2. **自定义 LLaVA modeling 文件**（建议 `run/vision/mllm_bridge/modeling_llava_baize.py`，基于盘上 `modeling_llavaonevision1_5.py` 改写）：
-   - vision tower 调用替换为 BaiZe wrapper；**projector = 2 层 MLP（1024→2560）**；**跳过 spatial merge**（BaiZe 196 tokens 直出 vs RICE 576/4=144）；**Stage-1 固定 224**；同步处理 image-token 占位数（196）。
-3. **CPU 单测**（`run/vision/mllm_bridge/test_wrapper_cpu.py`，纯 CPU、形状/数值断言、不占 GPU）：
-   - ① wrapper 载入 ④-4ep ckpt 且 `strict=True` 通过；② 随机 `[1,3,224,224]` 前向 → patch 输出恰为 `[1,196,1024]`；③ 与原始 `OpenVision2.forward(return_patch=True)` **逐元素一致**（`torch.allclose`，证明封装无损）；④ projector 前向 `[1,196,1024] → [1,196,2560]`。
-4. **接口/接入说明**（`run/vision/mllm_bridge/README.md`）：目录结构、`config.json` 字段、如何被 ms-swift `swift sft/pretrain --model <baize_llava_dir> --template llava_onevision1_5` 加载、以及 GPU smoke test（100 步）的**前置清单**（GPU 空窗时才跑）。
-
-**③ 允许并行推进（不阻塞、可选）**：#6 Stage-1 数据格式适配（ms-swift 读 WebDataset）、#7 环境统一（py310 装 lmms-eval 或导出方案）——有余力可一并做，但**以 #3#4 为主**。
-
-**④ 交付报告**：更新/新增中文 HTML `reports/report_vision_mllm_bridge_zh.html`：wrapper 设计、**参数名映射表**、CPU 单测结果（贴原始输出）、与 RICE ViT 的差异处理（spatial_merge / 分辨率 / ReadoutHead）、GPU smoke 前置清单与剩余风险。
-
-**⑤ 纪律**：commit 前缀 `vision mllm-bridge:`；任务书 >32KB 自滚归档；证据凭实测（贴 `python -c` 原始输出 + 文件路径），🚫 凭印象；**ArmC 监控/eval 仍是每次唤醒的第一优先动作**，本任务在空窗期推进。
+> 📦 §运维指令 · 2026-10-14（🔧 ArmC 期间先写 ViT wrapper）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。需要时再读。
 
 
 > 📦 §运维指令 · 2026-10-14（📋 Stage(iv) MLLM 可行性评估）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 28.5KB 中文 HTML（9节），2🔴+6🟠+7🟢，3 Stage 数据265GB全在盘，wrapper/modeling 开发纯 CPU 可并行。需要时再读。
@@ -144,16 +103,7 @@
 
 ### 🆕 运维指令 · 2026-10-13（🚀【放行执行】外部编码器 ProtB 做完后 → 立刻跑「合并三数据集实验」：GBS/MBS ×4 · LR ×2 · 24h ≈3 epoch）· 用户直令 · 最高优先
 
-> 用户令（2026-10-13）：「vision：外部编码器 ProtB 做完后，执行「合并三数据集实验计划」。GBS/MBS ×4 · LR ×2 · 24h → 约 3 epoch。」
-> 性质：占 GPU（`.12` H100×8）。⚠️ 与前令「只出计划、不起训」不同 —— 本令 = 放行执行（覆盖前令的「不启动训练」约束）。
-
-① 前置门控（硬）：必须先跑完外部编码器 ProtB（5/5 全出结果）并交付报告，再起本实验 —— 避免两组任务抢 `.12` GPU。路线：ProtB 全部完成 → 本实验开跑。
-② 做法（按已交付计划 `report_vision_merge3ds_bs4_lr2_plan_zh.html`）：
-- 数据：合并 GPIC + CC12M + Amshaker（blend，权重/去重按计划）；
-- 超参：GBS ×4、MBS ×4、LR ×2（相对 E1fair/④-4ep 基线，按计划表）；预算 24h 墙钟 → 约 3 epoch。
-- 流程：预注册（判据先行）→ smoke（100 步）→ 全量 → 3-seed ProtB 评测（复用 `lp_protocol_bridge.py`）。
-③ 交付：训练日志 + ProtB(3 seeds mean±std) + 中文 HTML 结果报告 `report_vision_merge3ds_result_zh.html` + `EXPERIMENTS_VISION.md` 新节（含 vs 基线 Δlp）。
-④ 纪律：起训前 `nvidia-smi` 确认 `.12` 空闲 · 与 data 线新下载错峰 IO · 单一变量（除 GBS/MBS/LR 外与基线逐字节一致）· commit 前缀 `vision merge3ds:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-13（🚀 合并三数据集实验）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ ArmC 训练完成(154500步) + eval 4/4 全提升(ProtB 68.25% Δ+1.20pp)，报告交付。需要时再读。
 
 
 > 📦 §运维指令 · 2026-10-13（📄 合并三数据集实验计划 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_merge3ds_bs4_lr2_plan_zh.html（44.3KB）已交付，含 3 臂 LR 扫描 + 数据量订正 + 文献表。需要时再读。

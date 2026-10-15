@@ -1283,3 +1283,56 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 ### §运维指令 · 2026-10-13（🔢 数据量口径更正）
 
 > **结论**：✅ GPIC 快照7437tar≈94M/全量101.1M, 三集合计快照≈111M/全量118.1M。旧95.8M系6233-tar时代值已订正。
+
+### §运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）
+
+> **用户令（2026-10-15）**：「vision 之前的实验结果如何，写成 html 中文报告。」
+>
+> **性质**：纯写作、零 GPU。**主线仍是刚放行的 MLLM 训练**——本任务在 MLLM smoke/Stage 间空窗期做，🚫 不延迟 MLLM 训练。
+>
+> **① 报告内容**：把 vision 线从架构选型到 merge3ds ArmC 的**全部关键实验结果**，按主题结构化整理成中文 HTML 报告。
+>
+> **② 必须覆盖**（基于 `EXPERIMENTS_VISION.md` 台账，每主题给动机/关键数字/判定/后续影响）：
+> 1. **架构选型（R2/R8）**：六架构四指标对比，OpenVision2 胜出（Loss@5k / img/s / 推理 ms/img）。
+> 2. **缩放（R9/R10）**：「塔越小越高」，w512=126.8M 定位。
+> 3. **AIMv2-style（R11）**：w512 翻盘、loss 轴主线。
+> 4. **E1/E2 公平重跑**：Δlp **+0.17pp 不可分辨**，旧「−5.59pp」= schedule 伪影。
+> 5. **epoch 缩放（④）**：1ep 62.34% / 2ep 65.37% / 4ep 67.05%（ProtB），递减收敛。
+> 6. **变体**：V2 Muon 全 LR 坍缩、V3 全量数据 Null（Δ+1.18pp）。
+> 7. **外部编码器 ProtB 参照**：5 模型 81.72~87.46 vs BaiZe 67.05。
+> 8. **merge3ds ArmC**：GBS/MBS×4 + LR×4 结果（若 eval chain 已出）。
+>
+> **③ 交付**：`reports/report_vision_experiments_summary_zh.html`（自包含中文、内联 CSS/SVG、可带 lp-epoch/scaling 曲线图）。
+>
+> **④ 纪律**：数字全部与 `EXPERIMENTS_VISION.md` 一致、贴 §行号，🚫 凭印象；🚫 不延迟 MLLM 训练；commit 前缀 `vision report:` · 任务书 >32KB 自滚归档。
+>
+> **结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付，8 主题全覆盖。
+
+### §运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling）
+
+> **用户令（2026-10-14）**：「vision MLLM 桥接：**现在就在 ArmC 期间并行写 ViT wrapper**（纯 CPU 可并行）。」
+> **背景**：可行性报告 §4.3/§7 已判定「视觉编码器桥接」= 🔴 R1 最大工程量（~1-2 天工程），且 §8.2/§8.3 明确 #3#4 为**纯 CPU 工作、可在 ArmC 训练期间并行完成、不占 GPU**。本令 = 批准 Phase0 并行开工。
+>
+> **① 先决纪律**：🚫 不打断 ArmC 训练与 eval chain；零 GPU（仅 CPU 前向做 shape/数值单测）。
+>
+> **② 交付物**：1. BaiZe vision tower HF wrapper（modeling_baize_vision.py + configuration_baize_vision.py）；2. 自定义 LLaVA modeling（modeling_llava_baize.py，projector=2层MLP 1024→2560，跳过spatial merge）；3. CPU 单测（test_wrapper_cpu.py，5/5 通过）；4. README.md。
+>
+> **③ 允许并行推进**：#6 Stage-1 数据格式适配、#7 环境统一。
+>
+> **④ 交付报告**：中文 HTML report_vision_mllm_bridge_zh.html。
+>
+> **⑤ 纪律**：commit 前缀 `vision mllm-bridge:`。
+>
+> **结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。
+
+### §运维指令 · 2026-10-13（🚀【放行执行】外部编码器 ProtB 做完后 → 立刻跑「合并三数据集实验」）
+
+> 用户令（2026-10-13）：「vision：外部编码器 ProtB 做完后，执行「合并三数据集实验计划」。GBS/MBS ×4 · LR ×2 · 24h → 约 3 epoch。」
+> 性质：占 GPU（`.12` H100×8）。⚠️ 与前令「只出计划、不起训」不同 —— 本令 = 放行执行。
+>
+> ① 前置门控（硬）：必须先跑完外部编码器 ProtB（5/5 全出结果）并交付报告，再起本实验。
+> ② 做法（按已交付计划）：数据合并 GPIC + CC12M + Amshaker；超参 GBS ×4、MBS ×4、LR ×2；预算 24h → 约 3 epoch。
+> ③ 交付：训练日志 + ProtB(3 seeds mean±std) + 中文 HTML 结果报告 + EXPERIMENTS_VISION.md 新节。
+> ④ 纪律：commit 前缀 `vision merge3ds:`。
+>
+> **结论**：✅ ArmC 训练完成(154500步) + eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp)，报告交付。

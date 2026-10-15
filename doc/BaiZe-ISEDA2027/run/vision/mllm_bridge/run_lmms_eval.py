@@ -73,6 +73,7 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit samples per task (for testing)")
     parser.add_argument("--tasks", type=str, default=None, help="Comma-separated task list (default: all 17)")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
+    parser.add_argument("--batch_size", type=int, default=4, help="Batch size for evaluation (increase for throughput)")
     args = parser.parse_args()
 
     stage2_ckpt = os.path.join(STAGE2_BASE, f"step{args.step}")
@@ -92,9 +93,12 @@ def main():
     print(f"BaiZe-LLaVA lmms-eval 17 Benchmarks")
     print(f"  Stage-2 ckpt: {stage2_ckpt}")
     print(f"  Tasks: {len(tasks)} benchmarks")
+    print(f"  Batch size: {args.batch_size}")
     print(f"  Limit: {args.limit or 'full'}")
     print(f"  Output: {output_path}")
     print(f"  Proxy: {os.environ.get('https_proxy', 'none')}")
+    print(f"  LOCAL_RANK: {os.environ.get('LOCAL_RANK', 'N/A')}")
+    print(f"  WORLD_SIZE: {os.environ.get('WORLD_SIZE', '1')}")
     print(f"{'='*60}\n")
 
     tm = TaskManager()
@@ -103,7 +107,7 @@ def main():
         model="baize_llava",
         model_args=model_args,
         tasks=tasks,
-        batch_size=1,
+        batch_size=args.batch_size,
         limit=args.limit,
         log_samples=True,
         task_manager=tm,

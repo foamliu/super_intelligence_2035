@@ -40,10 +40,16 @@ class BaizeLLaVA(lmms):
                  llm_path="/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507",
                  device="cuda", batch_size=1, max_new_tokens=128, **kwargs):
         super().__init__()
+        # ---- Multi-GPU support via accelerate (LOCAL_RANK) ----
+        local_rank = int(os.environ.get("LOCAL_RANK", -1))
+        if local_rank >= 0:
+            device = f"cuda:{local_rank}"
+            torch.cuda.set_device(local_rank)
         self._device = torch.device(device if torch.cuda.is_available() else "cpu")
         self._batch_size = batch_size
         self._max_new_tokens = max_new_tokens
         self.dtype = torch.bfloat16
+        self.task_dict = {}  # set by evaluator before generate_until/loglikelihood
         self.transform = T.Compose([T.Resize(int(224*1.15)), T.CenterCrop(224), T.ToTensor(), T.Normalize(CLIP_MEAN, CLIP_STD)])
         self.tokenizer = AutoTokenizer.from_pretrained(llm_path, trust_remote_code=True)
         if self.tokenizer.pad_token_id is None:
@@ -63,7 +69,7 @@ class BaizeLLaVA(lmms):
         else:
             raise FileNotFoundError(f"Projector not found: {proj_path}")
         self.projector.eval()
-        llm = AutoModelForCausalLM.from_pretrained(llm_path, torch_dtype=self.dtype, device_map={"": self._device}, trust_remote_code=True)
+        llm = AutoModelForCausalLM.from_pretrained(llm_path, torch_dtype=self.dtype, device_map={"": str(self._device)}, trust_remote_code=True)
         adapter_config = os.path.join(stage2_ckpt, "adapter_config.json")
         if os.path.exists(adapter_config):
             self.llm = PeftModel.from_pretrained(llm, stage2_ckpt, is_trainable=False)
@@ -81,7 +87,7 @@ class BaizeLLaVA(lmms):
         else:
             self.llm = llm
         self.llm.eval()
-        print(f"[BaizeLLaVA] Model loaded on {self._device}")
+        print(f"[BaizeLLaVA] Model loaded on {self._device} (local_rank={local_rank})")
 
 
 
@@ -90,9 +96,9 @@ class BaizeLLaVA(lmms):
     @property
     def batch_size(self): return self._batch_size
     @property
-    def rank(self): return 0
+    def rank(self): return int(os.environ.get("LOCAL_RANK", 0))
     @property
-    def world_size(self): return 1
+    def world_size(self): return int(os.environ.get("WORLD_SIZE", 1))
 
     def _prepare_image(self, visual):
         if isinstance(visual, Image.Image):

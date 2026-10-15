@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-15 ~12:15（Stage-1.5 监控 + Stage-2/Eval 脚本准备 · wake #102）**：Stage-1.5 step 10700/20000(53.5%)，loss≈3.65，3.65 steps/s，ETA~42min，GPU 13.7GB/80GB，健康。✅ **Stage-2 Instruct 脚本** `stage2_train.py` 已编写并编译通过（LLaVA-NeXT-780k instruct 数据，3500步，LoRA=1e-5/Proj=5e-6，从 stage15/step20000 续训）。✅ **推理评测脚本** `inference_eval.py` 已编写并编译通过（加载 Stage-2 ckpt，在 instruct 留出样本上做 VQA 准确率评测）。⚠️ HF Hub 网络不可达 → 无法下载 lmms-eval 基准数据，改为用本地 instruct 数据做 held-out 评测。⚠️ **git push 失败**（github.com:443 Network is unreachable，重试2次仍失败），commit 73138dbd ahead 1，下一轮唤醒第一件事补推。下一步：Stage-1.5 完成后→gate check→启动 Stage-2（~16min）→推理评测→报告。📦 体积：TASK=30.1KB / MEMORY=30.0KB（归档 0KB）。
+> 🆕 **2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）**：✅ Stage-1.5 完成(step20000)→✅ Stage-2 完成(step3500, loss=1.49, 15.4min)。✅ **lmms-eval multi-GPU 适配**：`lmms_eval_baize_llava.py` 加 LOCAL_RANK 多卡支持 + `run_lmms_eval.py` 加 batch_size 参数 + `launch_lmms_eval.sh` 用 `accelerate launch --multi_gpu --num_processes=8`。✅ **ai2d smoke test 通过**（--limit 5, exact_match=0.60, 模型生成正常）。✅ **HF_TOKEN=hf_dummy** 解决 huggingface_hub 0.36+ `token=True` 要求。✅ **proxy 直连 hf.co 下载成功**（ai2d 77MB 已缓存）。🔄 **--limit 50 全 17 集验证评测运行中**（8×H100, batch_size=4, accelerate multi-GPU）。✅ **git push 已修复**（运维已配 git config http.proxy=92.23, `git fetch` 验证通过）。下一步：limit50 结果验证→全量 17 集评测→结果报告。📦 体积：TASK=36.6KB（需归档）/ MEMORY=30.6KB。
 > 📦 2026-10-15 ~11:16（Stage-1.5 Mid-Training 启动 ✅ · wake #101）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage15_train.py 8×H100 DDP 启动，20000步 LoRA r=64，step100 loss=4.14。需要时再读。
 > 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
 > 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
@@ -36,10 +36,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **Stage-1.5 Mid-Training 运行中（wake #101）**：`stage15_train.py` 8×H100 DDP，20000 步 LoRA mid-training。step 100/20000, loss=4.14, 0.92 steps/s, ETA~6h, GPU=13.7GB。LoRA r=64, 132.12M trainable(3.18%)+Proj 7.87M。ArmC/eval/bridge/论文等全 ✅(见上行)。 |
+| PHASE | 🔄 **lmms-eval 17 集 multi-GPU 评测运行中（wake #103）**：Stage-1/1.5/2 全 ✅，`run_lmms_eval.py` + `lmms_eval_baize_llava.py` 已适配 multi-GPU (accelerate, LOCAL_RANK) + batch_size=4。--limit 50 全 17 集验证评测启动中。ArmC/eval/bridge/论文等全 ✅。 |
 | ERROR_COUNT | 16（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError ⑮ Duplicate post_4ep_chain.sh — killed ⑯ C4 false-positive at step 8100 (loss missed threshold by 0.001, resumed via --resume)） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-15 11:16 (wake #101)**: 🔄 Stage-1.5 LoRA mid-training 已启动。8×H100 DDP, 20000步, LoRA r=64, 132.12M trainable(3.18%)+Proj 7.87M。step 100: loss=4.14, 0.92 steps/s, ETA~6h, GPU=13.7GB。DDP修复: inject_image_features unwrap DDP + find_unused_parameters=True。checkpoint 每2000步 → mllm_stage15/step{N}/。 |
+| 更新 | **2026-10-15 20:30 (wake #103)**: 🔄 lmms-eval 17 集 multi-GPU 评测。Stage-1.5(step20000)✅ Stage-2(step3500, loss=1.49)✅。`lmms_eval_baize_llava.py` 加 LOCAL_RANK 多卡 + `run_lmms_eval.py` 加 batch_size + `launch_lmms_eval.sh` 用 accelerate launch --multi_gpu --num_processes=8。ai2d smoke test 通过(0.60)。HF_TOKEN=hf_dummy 解决 token=True。proxy 直连 hf.co 下载 OK。--limit 50 全 17 集验证运行中。git push 已修复(运维配 git config proxy)。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
