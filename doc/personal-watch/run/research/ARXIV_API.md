@@ -1428,5 +1428,37 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 
 - **台账**：`research/SEEN.md` **3,487 → 3,688 行（+201）**（2 行「收录」+ 199 行「候选」）→ **收录 206 / 候选 2975 / 候选（RSS 补充）507**；`research/papers.jsonl` **204 → 206 行**。落盘脚本：`research/raw/update_r94.py`（备份 `/tmp/SEEN.bak`、`/tmp/papers.bak`）。
 - **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-16-*` 与 `raw/pdf_dl_r94.sh` 为一次性留证）。
-- **下轮预期**：**本地 `2026-10-17 06:00`**（新一日「早 3」轮）：① 复验批次（**周四 20:00 ET 的 `2026-10-16` 批** → 本地 10-17 08:00 前后落地 ⇒ AM 轮**预期 0 新增**，口径同既往 AM 轮）；② 早报 3 篇「借鉴」→ 进度 **3/5**；③ 第 5 批分镜脚本 `research/video/SCENES/10_17.html` 归 **18:00 PM 轮**；④ 当日论文日报邮件归 **18:00 PM 轮**。
+
+---
+
+### 9.96 第九十五轮（本地 2026-10-17 06:00 时窗 · **P0 第 4 批第 18 轮 · 「早 3」轮 · 新一日 AM 轮**）：**无新公告批次**（批次仍 `2026-10-15`）→ **API 0 新增** → **早报 3 篇「借鉴」取自第九十四轮 PM 候选池** + 单条权威复核 → 日报进度 **3/5**
+
+> **时点**：本地 `2026-10-17 06:00`（= UTC `2026-10-16T22:00`）为 **周五**。arXiv **工作日 20:00 ET 公告**、**周末不公告** → **周五（10-16）20:00 ET（= UTC 10-17T00:00）的 `2026-10-16` 批尚未落地**（本地 10-17 08:00 前后才可见）⇒ **AM 轮 0 新增属时点正常，非「无数据」**。实际批次 **仍 `2026-10-15`**（最新样本 `published=2026-10-15T17:59:59Z`）。
+
+- **取源复验（R1′）** `--probe`（证据 `research/raw/2026-10-17-probe-r95.log`，`generated=2026-10-16T22:01:26Z`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=633893`，最新样本 `published=2026-10-15T17:59:59Z` | ✅ 可达（**批次未刷新**，`633893` 与第九十四轮 PM 完全一致） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable`（`Errno 101`） | ❌ 不可达（**如实记 FAIL、不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=267 / 253 / 467` | ✅ 三源均有内容（**仅作发现，非证据**） |
+
+  > **诚实记录**：当日首次 `--probe` 中 arXiv 主源曾出现 1 次 `Read timed out. (read timeout=30)` **瞬时告警**（重试后 `status=200 ok=True`，`total=633893`）；后续复验（UTC `22:15:43`）**无该告警**。HF 为**确定性不可达**（`Errno 101`，非超时）。
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-16T22:10:24Z`）：**15/15 查询 `ok`**（`attempts=1`，**无重试**，`rate_limit_seconds=3.0`），**kept 0 / dropped 600**（`dropped` = 「已在 `SEEN.md`」+「超 72h 窗口」）→ **API 关键词 0 新增**。72h 窗口 `2026-10-13T22:10Z ~ 2026-10-16T22:10Z` 内条目均已入账或超窗。证据：`research/raw/2026-10-17-fetch-r95-seen.{json,log}`。
+
+- **承接候选池（AM 无新批 ⇒ 无法做新发现）**：早报 3 篇「借鉴」**取自第九十四轮 PM 已入账的窗口内候选池**（`research/raw/2026-10-16-fetch-r94-seen.json` 的 **201 条 kept**，其中 2 条已于 10-16 PM 收录，余 **199 条**为本轮候选）→ **候选池 ≠ 证据** ⇒ 对 5 条短名单（3 入账 + 2 备选）走 **arXiv API `id_list` 单条权威复核**（`id_list=2610.20673,2610.22344,2610.21126,2610.22353,2610.21165`）→ **5/5 返回**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `research/raw/2026-10-17-idlist-shortlist-r95.{xml,headers}`）。**入账 3 篇**（**均目的 1「借鉴」口径**）：
+  - `2610.21126` *Compression Does Not End at Selection: Post-Selection Positional Geometry for Sparse KV Caches*（`published=2026-10-15T02:30:27Z`，cs.CL，2 位署名，前 2 `Wanyang Hong, Zhaoning Zhang`，`comment` 空）→ 对齐 **BaiZe 长上下文 / KV cache / 高效推理**；
+  - `2610.20673` *HPCAgent-Bench: A Framework for Sound Benchmarking of Code-Optimizing Agents, Harnesses, and Skills*（`published=2026-10-14T13:22:48Z`，cs.SE，10 位署名，前 3 `Yakup Koray Budanaz, Lorenzo Paleari, Marcin Copik`，`comment: 20 pages, 9 figures, 17 tables`）→ 对齐 **ZhuLong code agent harness / 评测基准**；
+  - `2610.22344` *MLExpert: Towards a Generalist Agentic Model for Autonomous Machine Learning Engineering*（`published=2026-10-15T17:56:32Z`，cs.AI，10 位署名，前 3 `Shangheng Du, Jinxin Shi, Shuaiyu Zhang`，`comment: Code https://github.com/InternScience/MLExpert / Model https://huggingface.co/InternScience/MLExpert`）→ 桥接 **BaiZe MoE 后训练·RL** × **ZhuLong agentic 长时程执行**。
+  - **备选 2 篇（同批复核确认，留后续轮次）**：`2610.22353` *Rethinking Routing Exploration in Modern Mixture-of-Experts*（cs.LG，`2026-10-15T17:58:02Z`）· `2610.21165` *From Long Context to Selective Memory: A Survey of Memory-Centric Compression for Large Language Models*（cs.CL，`2026-10-15T03:24:36Z`）。
+  - **去重复核**：3 个 ID 均**不在**任何 `daily/*.html`，检出时在 `SEEN.md` 为「候选」→ **无重复**。
+
+- **口径护栏**：3 篇按**目的 1「借鉴」**（面向 BaiZe / ZhuLong 可落地：训练 / 数据 / 效率 / Agent）挑选，**不与目的 2「科普」混用**；摘要逐句译自 `id_list` 官方 abstract，**未扩写、未虚构数值与仓库地址**；数字均标「**作者自报 · 未复现**」；页内明标「**推荐 / 待读**」；**未做全文精读**声明随卡片给出。
+
+- **产出**：① `research/daily/2026-10-17.html`（**自包含单文件**，**早报 3/5** = 3 篇「借鉴」）：序号 1–3；页头标「早报 · 3/5」+ 本轮取数说明（诚实口径 · AM）+ 附录 A（I→V）+ 附录 B（15 查询 per-query，均 `kept 0`）+ 附录 C（口径护栏）；自检 `<div>` 88/88、`<table>` 2/2、`<tr>` 23/23、**零 `<script>`**、外链仅 `arxiv.org/abs/<id>`，**27,756 B**。② `research/daily/index.html`（新增 2026-10-17 早报 3/5 行 + footer「最近更新」）。③ `research/2026-10-17.md`。④ 同步 `research/INDEX.md`。**晚 2 篇「科普」** 待 18:00 PM 轮补录并收口 **5/5**。
+
+- **台账**：`research/SEEN.md` **行数不变 3,688 条**（**3 行状态 候选 → 收录**）→ **收录 209 / 候选 2972 / 候选（RSS 补充）507**；`research/papers.jsonl` **+3 → 209 行**。落盘脚本：`research/raw/update_r95.py`。
+- **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-17-*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-17 18:00`**（「晚 2」轮 · 当日收口）：① 复验批次（**⚠️ 本地 10-17 = 周六 ⇒ arXiv 周末不公告**，`window_mode` 或切 `weekend_batch`(120h) ⇒ **预期仍 0 新增**，仍须分源实测并如实记录）；② 晚报 2 篇「科普」→ 日报收口 **5/5**（+ `## 晚报变更说明（AM → PM）`）；③ 第 5 批分镜脚本 `research/video/SCENES/10_17.html`；④ **每日论文日报邮件（第 4 封）**（选 5 篇 + PDF 入 `research/pdf/2026-10-17/` + 发 `paul.liu@cxmt.com`）。
 
