@@ -14,7 +14,7 @@ CWD="$SCRIPT_DIR"
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
 REL="doc/BaiZe-ISEDA2027/run"   # 本任务在仓库中的相对目录（只提交这里的文件）
 
-MODEL="deepseek-v4-pro-cloud"     # 编排模型（2026-10-16 用户令：换 pi agent + deepseek-v4-pro-cloud）
+MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
 
 # 🔒 2026-10-04 运维（RUN_ID 50–53）：本线专用 cline 隔离配置目录
 #   背景：.29 上 pretrain 与 harness 共用一份 ~/.cline/data/globalState.json，
@@ -34,11 +34,7 @@ CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1
 # 若 secrets.json 读不到，fallback 到 glm-5.2 硬编码 key
 [ -z "$CLINE_KEY" ] && CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
-PI_CLI="$HOME/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js"  # pi agent 入口（2026-10-16 换掉 cline）
-PI_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"    # deepseek-v4-pro-cloud key
-BUN="$(command -v bun || echo /home/app.e0031982/.bun/bin/bun)"
-
-CLINE_TIMEOUT=1500              # 单次 agent 最多 25 分钟
+CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
 PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
 SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗）
 SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤醒间隔：30 分钟（省 token）
@@ -98,16 +94,18 @@ git_push_if_needed() {
 }
 
 while true; do
-    echo "[loop] $(date '+%F %T') wake up, invoking pi ..."
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        # 🚫 剥掉代理环境变量：内网网关 agi-gateway.cxmt.com 不该走外网代理（否则 Forbidden/挂起）。
-        #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy。
+        # 🚫 2026-10-04 运维修复：给 cline 剥掉代理环境变量。
+        #   内网网关 (OPENAI_API_URL=http://agi-gateway.cxmt.com/v1) 不该走外网代理，
+        #   否则网关返回 `error: Forbidden`，而 cline 仍 exit 0 → loop 静默空转（.29 曾因此瞎跑 ~9h，
+        #   10-04 07:15 ops 探查定位；.12 于 2026-09-29 遇过同样问题，unset http_proxy 即解决）。
+        #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-            PI_OFFLINE=1 PI_SKIP_VERSION_CHECK=1 \
-          "$BUN" "$PI_CLI" -p --provider cloud --model "$MODEL" --api-key "$PI_KEY" "$prompt" < /dev/null
-        echo "[loop] $(date '+%F %T') pi returned (exit $?), checking git push ..."
+          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
     fi
