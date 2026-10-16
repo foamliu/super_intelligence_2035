@@ -1,6 +1,20 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
+## 🆕 最近操作（2026-10-16）
+
+### 🚀 80B Decay 训练已在 .29 启动（Xmodel-2.5 step_532000 + Muon）
+- 目标：用 BaiZe 自定义数据配比 + Muon optimizer 在 Xmodel-2.5 稳定末ckpt 上跑 80B decay，超越 Xmodel-2.5 final（CS8=65.40% / CX=32.90%）。
+- 模型：1.35B params（2.70GB BF16），非 2B。checkpoint = `step_532000`。
+- 配置：SEQ=4096, GBS=960, MBS=2, ITERS=20346（80B / 3.932M = 20346 步）, WARMUP=100, LR=1.67e-3 → 1e-5（WSD exponential）, SAVE_INTERVAL=2000。
+- Muon BF16 兼容性修复：monkey-patch `newton_schulz` 接受 BF16 梯度，内部转 FP32 做 NS 正交化，结果转回 BF16（原 `p.grad = p.grad.float()` 会 TypeError）。
+- Smoke test 通过：30/100 步完成，loss 11.76→2.18（快速下降正常），GPU 58.5GB/80GB，util 97-100%，~182K tok/s。
+- 全量训练已启动：PID 2080678（torchrun），8 workers（PID 2082634-2082644），port 29815。输出 = `xmodel25_baize_80b_decay`。
+- 预计耗时：~4.7 天（20346 步 × ~20s/步）。首次 ckpt 在 step 2000（~11h）。
+- 脚本：`run/baize_xmodel25_decay.sh` + `run/baize_xmodel25_decay_train.py`。
+- 日志：`/tmp/baize_xmodel25_decay_train.log`（注意：因第二次启动 EADDRINUSE 竞争产生 sparse file 空洞，读 log 需用 `cat /proc/<worker_pid>/fd/1 | strings | grep '^\[step'`）。
+- commit 前缀 `pretrain decay80b:`。详见 `daily-memories/2026-10-16.md`。
+
 ## 🆕 最近操作（2026-10-14）
 
 ### 📋 pretrain 正式训练计划【v4 重做】（用户直令 · 10-14 晚）
