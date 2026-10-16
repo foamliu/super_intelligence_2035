@@ -1,6 +1,24 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（⚡ **ArmA 效率专项：先修分片不均与数据管线 · 🚫 不改配方**）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「vision 是否有提升效率的机会点？现在 GBS / MBS / 梯度累积分别是多少，其他超参数呢？」
+
+> **运维实测（源：`vision/armA_openclip_train.py` + `vision/run_armA_openclip.sh`）+ 机上涨卡实测（RUN_ID 109）**：
+> - **批形状**：**MBS = 256 图/卡 × 8 卡 = GBS 2048；梯度累积 = 1**（每 step 一次 fwd/bwd/opt，无 accum；`armA_openclip_train.py:178-199`）。
+> - **其它超参**：LR **2e-3 → 2e-4**（cosine，warmup **8000**）、steps **154500**（≈2.7ep/118M 对）、wd **0.1**、β **(0.9, 0.98)**、eps 1e-8、grad-clip **1.0**、**bf16**、`num_workers=6`、save every 10000、log every 20、seed 1234；`ClipLoss(local_loss=False, gather_with_grad=False, cache_labels=True)`；DDP `find_unused_parameters=False`。
+> - **实测瓶颈证据**：显存**仅 24.4GB / 80GB**，而 8 卡 **util = 100/100/59/0/92/2/6/26%（严重不均）** ⇒ **典型 straggler：多数卡在等数据**（不是算力不够、更不是显存不够）。
+
+**① 最高优先 —— 修分片不均**：`parse_shards()` 用 `all_shards[rank::world_size]`（`armA_openclip_train.py:59-73`）对**排序后**的 tar 列表做轮询切分 ⇒ 各 rank 拿到的**样本数/字节数不均衡**（webdataset tar 大小不一）。改为**按文件字节数装箱均衡**分配，或改用 `--data-source wds` 的 `split_by_node/split_by_worker`。**验收：8 卡 util ≥85% 且卡间方差显著变小。**
+**② 数据管线**：`num_workers` **6 → 12~16**，并加 `persistent_workers=True` + `prefetch_factor=4~8` + `pin_memory=True`（H2D 已 `non_blocking=True`）。
+**③ 白送项**：`torch.backends.cudnn.benchmark=True`（输入固定 224×224）；AdamW 加 `fused=True`；`precision='bf16'`（模型转 bf16）与外层 `autocast(bf16)` **二者留一**（现在双份，冗余）。
+**④ 可选**：`torch.compile(model)`（ViT-B 常 +10~25%，需验 DDP+autocast 兼容）。
+**⑤ 🚫 不改配方**：**GBS=2048 / MBS=256 / 累积=1 / LR 曲线一律不动**（否则与 ArmC、④-4ep 口径不可比）。若确要提 MBS（显存有 55GB 余量），**必须同步加梯度累积以保持 GBS=2048**，且需先回报再动。
+**⑥ 交付**：修前/修后 **it/s + 8 卡 util + 新 ETA** 对比表 → `MEMORY_VISION.md` + `daily-memories-vision/`；commit 前缀 `vision armA perf:`。
+**⑦ ⚠️ 体积**：任务书**已超 32KB** ⇒ **本轮须把已闭合块（10-16 三个评测块）原文归档进 `ARCHIVE_OPERATOR_VISION.md` 并压回 ≤32KB**。
+
+
 ### 🆕 运维指令 · 2026-10-16（📄 写 Stage(iv) 训练+12集评测报告 → 🚀 启动 ArmA open_clip 从头训 encoder）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16）**：「vision：把上一件工作，包括训练、12 集 lmms-eval 评测，写成中文 html 报告；然后启动 vision ArmA（open_clip 从头训 encoder）。」
