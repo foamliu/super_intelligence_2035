@@ -1,6 +1,17 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（📋 评测集缩编为 12 集）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「把评测集缩编到 12 集：ai2d, blink, chartqa, docvqa_val, infovqa_val, mme, mmmu_val, mmstar, ocrbench, realworldqa, countbench, mmmu_pro_standard。」
+
+**① 评测集 = 这 12 个（替换之前的 14 集）**：
+`ai2d` · `blink` · `chartqa` · `docvqa_val` · `infovqa_val` · `mme` · `mmmu_val` · `mmstar` · `ocrbench` · `realworldqa` · `countbench` · `mmmu_pro_standard`
+
+**② 跑法不变**：**每卡一个 benchmark**（单进程单卡，`--batch_size 32`，8 卡并行，避免 gather OOM）。12 集分 8 卡——样本量大的（`mmmu_val` / `mmmu_pro_standard` / `docvqa_val`）单独占卡，小的合并到一张卡。
+
+**③ 硬要求**：8 卡打满、batch 32、util 抬起；🚫 不 accelerate 多卡、不 batch 4、不空转。commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-16（🔧 评测按「每卡一个 benchmark」重排 · 立即打满 8 卡）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16）**：「那就把任务分在不同的卡啊，这个问题这么难吗？」
