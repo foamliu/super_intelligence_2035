@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 09:19（limit50 eval 14集 ✅ 全部完成 · wake #112b）**：🎉 **limit50 8-GPU eval 成功完成**: 14 benchmarks, 65s (09:18:00→09:19:05), 0 crash, 0 429。结果：scienceqa=72%, ai2d=58%, gqa=46%, pope=42%, mmbench=82.0, mmmu=38%, seedbench=34%, realworldqa=34%, infovqa=17.9%, vizwiz=10.6%, chartqa=10%, textvqa=6%, docvqa=3.8%, ocrbench=0%。JSON 存 `eval_step3500_1792113500.json` (10.6MB)。🔧 **三重修复链**: ① 429→`HF_HUB_OFFLINE=1`+precache_missing.py ② GPT-4 API crash→移除 mmvet+hallusion_bench ③ parent 进程被杀→`setsid` 替代 `nohup`。✅ GPU 8×H100 全空闲。下一步：全量 14 集 eval (无 --limit) → 加 vqav2 → ArmA retrain。
+> 🆕 **2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）**：🔄 **13集全量 eval 并行运行中**（去掉 vqav2+seedbench）。🔧 **三重优化**: ① `generate_until` 重写为真批量生成（batch B→单次 generate()，left-pad，5阶段流水线）② `log_samples=False` 防 `gather_object` 119GB OOM ③ batch_size 4→32。✅ **6集已完成**: mmmu_val=0.4289, realworldqa=0.4301, mmmu_pro=0.231, infovqa=0.166, ai2d=0.600, mmstar=0.268。🔄 **7集运行中**: mmbench+gqa+scienceqa（GPU0, 峰值71%util!）, textvqa+pope+vizwiz（GPU7）, docvqa（GPU2）, chartqa+ocrbench+countbench（GPU4）, mme+blink（GPU5）。旧代码 GPU util 0-28% → 新批量代码 GPU0 峰值 71%。新增 `launch_missing_tasks.sh` 脚本。
 > 📦 2026-10-16 06:23（precache 主跑完成 15OK/2FAIL · wake #110）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15OK/2FAIL, seedbench retry 进行中40%。需要时再读。
 > 📦 2026-10-16 05:13（Part B 全验收 ✅✅✅ · wake #109）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60), precache 主跑尚在进行。需要时再读。
 > 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
@@ -28,10 +28,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **全量 14集 eval 运行中（wake #112b, 09:23, port 29561, setsid）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅。✅ limit50 smoke test 通过 (65s)。🔄 全量 eval: 8 GPU util 35-51%, gen_text 产出正常, 预计 60-120min。下一步：全量 eval 完成 → ArmA retrain。 |
-| ERROR_COUNT | 19（①~⑯ 同前 ⑰ 磁盘满崩 ⑱ 429 崩 ⑲ GPT-4 API crash → 三重修复: offline+移除API集+setsid） |
+| PHASE | 🔄 **全量 13集 eval 并行运行中（wake #113, 10:52, batch_size=32）**：6/13 已完成, 7/13 运行中。GPU 0 峰值 71% util（旧代码仅 0-28%）。下一步：eval 完成 → 汇总结果 → ArmA retrain。 |
+| ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 09:25 (wake #112b)**: ✅ limit50 通过→🔄 全量 14集 eval 已启动 (09:23:44, PID 3679899 ppid=1 setsid, port 29561)。8 GPU util 35-51%, 模型加载✅, gen_text 产出正常。预计 60-120min。📦 MEMORY=28KB / TASK=28.6KB。 |
+| 更新 | **2026-10-16 10:55 (wake #113)**: 🔄 全量 13集 eval batch_size=32 并行运行中。6/13 完成。batched generate_until 重写 ✅, log_samples=False ✅, seedbench+vqav2 排除 ✅。📦 MEMORY=28KB / TASK=31.6KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）

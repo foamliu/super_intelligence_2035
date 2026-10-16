@@ -59,7 +59,8 @@ fi
 echo "[full_eval] LMMS_EVAL_DATASETS_CACHE=$LMMS_EVAL_DATASETS_CACHE"
 
 # ---- build task list ----
-ALL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,seedbench,pope,vizwiz_vqa_val,ocrbench,mmvet,hallusion_bench_image,realworldqa,infovqa_val"
+# 13 benchmarks (skip vqav2 + seedbench per user directive; skip mmvet + hallusion_bench — GPT-4 API)
+ALL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,pope,vizwiz_vqa_val,ocrbench,realworldqa,infovqa_val"
 if [ "$SKIP_VQAV2" = false ]; then
     ALL_TASKS="${ALL_TASKS},vqav2_val"
 fi
@@ -89,7 +90,7 @@ accelerate launch \
     --num_processes=8 \
     --main_process_port=29557 \
     mllm_bridge/run_lmms_eval.py \
-    --batch_size 4 \
+    --batch_size 32 \
     --tasks "$ALL_TASKS" \
     > "$EVAL_LOG" 2>&1
 

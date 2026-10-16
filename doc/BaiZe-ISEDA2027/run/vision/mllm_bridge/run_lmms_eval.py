@@ -86,7 +86,7 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit samples per task (for testing)")
     parser.add_argument("--tasks", type=str, default=None, help="Comma-separated task list (default: all 17)")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
-    parser.add_argument("--batch_size", type=int, default=4, help="Batch size for evaluation (increase for throughput)")
+    parser.add_argument("--batch_size", type=int, default=32, help="Batch size for evaluation (increase for throughput)")
     args = parser.parse_args()
 
     stage2_ckpt = os.path.join(STAGE2_BASE, f"step{args.step}")
@@ -116,13 +116,18 @@ def main():
 
     tm = TaskManager()
 
+    # log_samples=False: prevents gather_object OOM on large datasets.
+    # When log_samples=True, lmms-eval gathers ALL logged samples from 8 ranks
+    # to rank 0 via torch.distributed.gather_object, which tried to allocate
+    # 119 GiB for GQA (12k samples) → CUDA OOM crash.
+    # With log_samples=False, only aggregate metrics are gathered (tiny).
     results = simple_evaluate(
         model="baize_llava",
         model_args=model_args,
         tasks=tasks,
         batch_size=args.batch_size,
         limit=args.limit,
-        log_samples=True,
+        log_samples=False,
         task_manager=tm,
         verbosity="INFO",
     )

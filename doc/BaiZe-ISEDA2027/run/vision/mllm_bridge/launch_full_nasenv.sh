@@ -19,6 +19,8 @@ export HF_HUB_CACHE=$HF_HOME/hub
 export TRANSFORMERS_CACHE=$HF_HOME/transformers
 export HF_HUB_ENABLE_HF_TRANSFER=1
 export OMP_NUM_THREADS=1
+# Fix CUDA memory fragmentation (recommended by PyTorch OOM error message)
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # ---- cache on /nas_env (9.7T free, NOT /tmp which is full) ----
 NEW_CACHE=/nas_env/app.e0031982/lmms_eval_cache
@@ -65,7 +67,9 @@ fi
 
 # ---- Step 3: Launch FULL 8-GPU eval (no --limit) ----
 # 14 benchmarks (skip vqav2 — needs >28G arrow; skip mmvet + hallusion_bench — need GPT-4 API)
-EVAL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,seedbench,pope,vizwiz_vqa_val,ocrbench,realworldqa,infovqa_val"
+# 13 benchmarks (skip vqav2 — needs >28G arrow; skip seedbench — precache FAIL per user;
+#                   skip mmvet + hallusion_bench — need GPT-4 API)
+EVAL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,pope,vizwiz_vqa_val,ocrbench,realworldqa,infovqa_val"
 
 # Critical: prevent parallel HF Hub API calls (caused 429 crash on 2026-10-16 08:54)
 export HF_HUB_OFFLINE=1
@@ -85,7 +89,7 @@ accelerate launch \
     --num_processes=8 \
     --main_process_port=29561 \
     mllm_bridge/run_lmms_eval.py \
-    --batch_size 4 \
+    --batch_size 32 \
     --tasks "$EVAL_TASKS" \
     > "$EVAL_LOG" 2>&1
 EVAL_RC=$?

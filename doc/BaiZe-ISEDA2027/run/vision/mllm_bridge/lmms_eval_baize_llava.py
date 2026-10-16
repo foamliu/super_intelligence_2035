@@ -232,79 +232,110 @@ class BaizeLLaVA(lmms):
                 return []
 
     def generate_until(self, requests):
-        res = []
-        for i, req in enumerate(requests):
-            args = req.args
-            context = args[0] if len(args) > 0 else ""
-            raw_gk = args[1] if len(args) > 1 else {}
-            raw_dv = args[2] if len(args) > 2 else None
-            if callable(raw_gk) and isinstance(raw_dv, dict):
-                gen_kwargs = raw_dv
-            else:
-                gen_kwargs = raw_gk if isinstance(raw_gk, dict) else {}
-            visuals = self._get_visuals(req)
-            has_image = len(visuals) > 0
-            image_features = self._process_images(visuals)
-            if i < 2:
-                print(f"[BaizeLLaVA] req {i}: has_image={has_image}, ctx='{context[:80]}...', gen_kwargs={gen_kwargs}")
-                print(f"[BaizeLLaVA]   image_features={'None' if image_features is None else image_features.shape}")
-            clean_ctx = context.replace("<image>", "").strip()
-            prompt_text = ("<|image_pad|>\n" + clean_ctx) if has_image else clean_ctx
-            prompt = f"<|im_start|>user\n{prompt_text}<|im_end|>\n<|im_start|>assistant\n"
-            input_ids = self.tokenizer(prompt, add_special_tokens=False, return_tensors="pt")["input_ids"].to(self._device)
-            expanded = self._expand_image_tokens(input_ids[0].tolist())
-            input_ids = torch.tensor([expanded], dtype=torch.long, device=self._device)
-            if i < 2:
-                n_img_tokens = (input_ids[0] == IMAGE_TOKEN_ID).sum().item()
-                print(f"[BaizeLLaVA]   input_ids shape={input_ids.shape}, img_tokens={n_img_tokens}")
-            max_new = gen_kwargs.get("max_new_tokens", self._max_new_tokens)
-            im_end_id = self.tokenizer.convert_tokens_to_ids("<|im_end|>")
-            if im_end_id is None or im_end_id == self.tokenizer.unk_token_id:
-                im_end_id = 151645  # fallback: Qwen3 <|im_end|>
-            with torch.no_grad():
-                if image_features is not None:
-                    inputs_embeds = self._inject_image_features(input_ids, image_features)
-                    attn = torch.ones_like(input_ids)
-                    output = self.llm.generate(inputs_embeds=inputs_embeds, attention_mask=attn,
-                        max_new_tokens=max_new,
-                        do_sample=False, temperature=1.0, top_p=1.0, num_beams=1,
-                        pad_token_id=self.tokenizer.pad_token_id,
-                        eos_token_id=im_end_id)
-                    if i < 2:
-                        print(f"  [gen] output shape={output.shape}, output[0][:10]={output[0][:10].tolist()}")
-                        # Debug: inspect first-token logits to understand degenerate "A" output
-                        with torch.no_grad():
-                            dbg = self.llm(inputs_embeds=inputs_embeds, attention_mask=attn)
-                            dbg_logits = dbg.logits[0, -1]
-                            top5 = dbg_logits.topk(5)
-                            top5_str = [(self.tokenizer.decode([idx.item()]), f"{val.item():.2f}")
-                                        for val, idx in zip(top5.values, top5.indices)]
-                            print(f"  [gen] top-5 first-token logits: {top5_str}")
-                    # Handle both output formats:
-                    #   - inputs_embeds only → generate returns just new tokens [B, n_new]
-                    #   - some HF versions return full sequence [B, seq_len + n_new]
-                    input_len = inputs_embeds.shape[1]
-                    if output.shape[1] > input_len:
-                        new_tokens = output[0][input_len:]  # full sequence returned
-                    else:
-                        new_tokens = output[0]               # only new tokens returned
+        """Batched generation: processes self._batch_size requests in a single
+        generate() call for high GPU utilization.  Uses left-padding so all
+        sequences in the batch share the same prefill length.
+        """
+        n_reqs = len(requests)
+        res = [None] * n_reqs
+        bs = max(1, self._batch_size)
+        pad_id = self.tokenizer.pad_token_id
+        im_end_id = self.tokenizer.convert_tokens_to_ids("<|im_end|>")
+        if im_end_id is None or im_end_id == self.tokenizer.unk_token_id:
+            im_end_id = 151645
+
+        for batch_start in range(0, n_reqs, bs):
+            batch_idx = list(range(batch_start, min(batch_start + bs, n_reqs)))
+            B = len(batch_idx)
+
+            # ---- Phase 1: per-request setup (CPU, no GPU work) ----
+            batch_ids = []          # list[list[int]]  expanded token IDs
+            batch_img_feats = []     # list[Tensor[N,196,D] or None]
+            batch_gen_kw = []
+
+            for idx in batch_idx:
+                req = requests[idx]
+                args = req.args
+                context = args[0] if len(args) > 0 else ""
+                raw_gk = args[1] if len(args) > 1 else {}
+                raw_dv = args[2] if len(args) > 2 else None
+                if callable(raw_gk) and isinstance(raw_dv, dict):
+                    gen_kwargs = raw_dv
                 else:
-                    attn = torch.ones_like(input_ids)
-                    output = self.llm.generate(input_ids=input_ids, attention_mask=attn,
-                        max_new_tokens=max_new,
-                        do_sample=False, temperature=1.0, top_p=1.0, num_beams=1,
-                        pad_token_id=self.tokenizer.pad_token_id,
-                        eos_token_id=im_end_id)
-                    new_tokens = output[0][input_ids.shape[1]:]
-            text = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
-            if i < 2:
-                print(f"[BaizeLLaVA] req {i}: gen_text='{text[:100]}'")
-            until = gen_kwargs.get("until", None)
-            if until:
-                if isinstance(until, str): until = [until]
-                for stop in until:
-                    if stop in text: text = text[:text.index(stop)]
-            res.append(text)
+                    gen_kwargs = raw_gk if isinstance(raw_gk, dict) else {}
+                visuals = self._get_visuals(req)
+                has_image = len(visuals) > 0
+                img_feat = self._process_images(visuals)
+                clean_ctx = context.replace("<image>", "").strip()
+                prompt_text = ("<|image_pad|>\n" + clean_ctx) if has_image else clean_ctx
+                prompt = f"<|im_start|>user\n{prompt_text}<|im_end|>\n<|im_start|>assistant\n"
+                ids = self.tokenizer(prompt, add_special_tokens=False)["input_ids"]
+                expanded = self._expand_image_tokens(ids)
+                batch_ids.append(expanded)
+                batch_img_feats.append(img_feat)
+                batch_gen_kw.append(gen_kwargs)
+
+            if batch_start == 0:
+                print(f"[BaizeLLaVA] Batched generate: B={B}, seq_lens={sorted(set(len(x) for x in batch_ids))[:5]}")
+
+            # ---- Phase 2: left-pad to max length ----
+            max_len = max(len(ids) for ids in batch_ids)
+            padded = []
+            masks = []
+            for ids in batch_ids:
+                pl = max_len - len(ids)
+                padded.append([pad_id] * pl + ids)
+                masks.append([0] * pl + [1] * len(ids))
+
+            input_ids_t = torch.tensor(padded, dtype=torch.long, device=self._device)
+            attn_t = torch.tensor(masks, dtype=torch.long, device=self._device)
+
+            # ---- Phase 3: batched image features → inputs_embeds ----
+            has_any_img = any(f is not None for f in batch_img_feats)
+            if has_any_img:
+                ref = next(f for f in batch_img_feats if f is not None)
+                D = ref.shape[-1]
+                batched_feat = torch.zeros(B, NUM_IMAGE_TOKENS, D,
+                                           device=self._device, dtype=self.dtype)
+                for b, f in enumerate(batch_img_feats):
+                    if f is not None:
+                        batched_feat[b] = f[0]          # first image per sample
+                inputs_embeds = self._inject_image_features(input_ids_t, batched_feat)
+            else:
+                embed_tokens = self.llm.get_input_embeddings()
+                inputs_embeds = embed_tokens(input_ids_t)
+
+            # ---- Phase 4: batched generate() ----
+            max_new = max(gk.get("max_new_tokens", self._max_new_tokens)
+                          for gk in batch_gen_kw)
+            with torch.no_grad():
+                output = self.llm.generate(
+                    inputs_embeds=inputs_embeds,
+                    attention_mask=attn_t,
+                    max_new_tokens=max_new,
+                    do_sample=False, temperature=1.0, top_p=1.0,
+                    num_beams=1,
+                    pad_token_id=pad_id,
+                    eos_token_id=im_end_id,
+                )
+
+            # ---- Phase 5: decode + post-process per sample ----
+            in_len = inputs_embeds.shape[1]
+            for b, idx in enumerate(batch_idx):
+                if output.shape[1] > in_len:
+                    new_tokens = output[b][in_len:]
+                else:
+                    new_tokens = output[b]
+                text = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+                if batch_start == 0 and b < 2:
+                    print(f"[BaizeLLaVA] sample {b}: gen_text='{text[:80]}'")
+                until = batch_gen_kw[b].get("until", None)
+                if until:
+                    if isinstance(until, str): until = [until]
+                    for stop in until:
+                        if stop in text: text = text[:text.index(stop)]
+                res[idx] = text
+
         return res
 
     def generate_until_multi_round(self, requests):
