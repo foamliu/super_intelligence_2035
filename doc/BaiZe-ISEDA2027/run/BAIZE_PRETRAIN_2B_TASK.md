@@ -1,87 +1,13 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-16 22:4x（🔧 **MBS 卡在 logits 显存 → 改「分块 CE」（配方中性、零新依赖）**）· 运维提示 · 最高优先
+> 📦 §运维指令·2026-10-16 22:4x（🔧 MBS 卡 logits 显存 → 分块 CE）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分块 CE 已实现并修双 bug（label double-shift + μP logit scale=1/6），v2 正式训练已起（MBS=4/chunked CE/compile default/no_sync，~299K tok/s）。需要时再读。
 
-> **诊断（运维读你的 `baize_xmodel25_decay_v2.py` L400-411）**：loss 仍走 HF 内置 `model(input_ids=..., labels=labels).loss` ⇒ **会 materialize 全量 logits `[MBS, seq-1, 129281]`**。MBS=4/seq=3712 时 bf16 ≈ **3.8GB**、CE 内部若 upcast fp32 ≈ **7.7GB** —— **与实测 7.15GB 吻合，这正是 MBS=4 OOM 的根因，不是卡不够大。**
+> 📦 §运维指令·2026-10-16 22:1x（🛑 停训清卡做 8 卡 A/B 调试）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：A0–A5 对比完成，MBS=4+chunked CE 与 MBS=2 HF 吞吐等价（~299K），最优档已一次性重起正式 v2。需要时再读。
 
-**① 改「分块交叉熵」（数值等价 ⇒ 配方中性、无新依赖）**：不要走 `labels=` 路径，取 hidden 后按 seq 分块算 CE：
-- `hidden = model.model(input_ids=input_ids).last_hidden_state` → `[B,S,H]`；`W = model.lm_head.weight`
-- 逐块 `h = hidden[:, s:s+CHUNK]`（**CHUNK 从 256~512 起试**）→ `lg = h @ W.T`（有 bias 再 `F.linear`）→ `F.cross_entropy(lg.float(), labels[:, s:s+CHUNK], ignore_index=-100, reduction='sum')`，累加后 **÷ 有效 token 数**。
-- **logits 峰值从 `B×S×V` 降到 `B×CHUNK×V`（256/3712 ≈ 7%）⇒ 预计再省 3~6GB ⇒ MBS 4 / 6 / 8 有望都放得下**（配合 GC off）。
-- ⚠️ 用 **`reduction='sum'` ÷ 有效 token 数**（勿用 mean 再平均，会引入分母偏差）；`masked_fill(labels==eos,-100)` 保持。
-- 可作正式 v2 的默认路径（不是只用于 profile）。
+> 📦 §运维指令·2026-10-16（⚡ decay 提速专项：先量化→数据管线/GC/MBS）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分段计时落地（t_data≈0/opt≈1%/fwd_bwd≈98%），fast_data+GC off+MBS4 已落，seq 3712/ITERS 19980 已对齐 Xmodel-2.5 71.2B。需要时再读。
 
-**② A/B 矩阵更新**：A3/A4 改由「**分块 CE + MBS 4 / 8**」定义；某档若 OOM，先降 CHUNK 或再降一档 MBS，**并如实记录**。
-**③ 交付别漏**：**A0–A5 对比表** + **新 ETA**（现在 profile 脚本已有 6 个，注意 profile 输出目录别混）。
-**④ 纪律**：测完**立即**起正式 run（`3712 / 19980 / GBS960 / 最优 MBS / GC off`）；🚫 不长时间空置 8 卡；commit `pretrain perf:`；任务书 >32KB 自滚归档。
-
-
-### 🆕 运维指令 · 2026-10-16 22:1x（🛑 **用户已授权：停掉当前 decay 训练，用 8 卡做完整 A/B 调试**）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16 22:1x）**：「pretrain 可以把当前训练停下来调试。」
-> ⇒ **本条覆盖上一版「🚫 不得与在训抢卡」的限制**：现在**允许且要求**先停训、把 8 张卡腾给 profile，测出最优配置后**立刻正式重起**。（当前 run 仅 ~350 步、**首个 ckpt(@2000) 未落盘** ⇒ 停掉无损失；正式重起仍从 `step_532000` 开始。）
-
-**① 立即停训（腾卡，写进 MEMORY）**：**只** `pkill` 匹配 `baize_xmodel25_decay_train.py` 及其 torchrun（当前 **torchrun PID 2080678 + 8×rank 2082634..2082645**）；⛔ **不要杀 pretrain loop（PID 1294147）**、⛔ 不要碰 `.12`。停后 `nvidia-smi` 确认 8 卡释放（≤1GB），记「停训时刻 + 释放确认」。
-**② 8 卡 A/B 矩阵（逐档跑 · 每档 ≥30 步取稳态 · 每档记 tok/s + 8 卡显存 + util）**：
-
-| 档 | 配置 | 目的 |
-|:--|:--|:--|
-| **A0** | 现版基线（旧数据管线 + `--grad_checkpoint` + MBS2） | 复现 **183K** 基线 |
-| **A1** | A0 + `--fast_data`（`DataLoader(num_workers=8, pin_memory, prefetch_factor=4, persistent_workers)` + `np.concatenate`/`torch.from_numpy` 替 `tolist()/extend` + H2D `non_blocking=True`） | 量化**数据瓶颈** |
-| **A2** | A1 + **关 `--grad_checkpoint`** | 量化 GC 工时 |
-| **A3** | A2 + **MBS 4**（`grad_accum` 30，**GBS 仍 960**） | 量化 MBS 收益 |
-| **A4** | A3 + **MBS 8**（`grad_accum` 15，**GBS 仍 960**；显存不够则跳过并如实记录） | 探 MBS 上限 |
-| **A5** | 最优档 + `--adamw_fused`（若尚未含） | 收尾小项 |
-
-> ⚠️ **MBS 变化必须同步调 `grad_accum`，保持 `GBS=960` 不变**（否则改的是训练语义、不算配方中性；若确要试 GBS，单列一档并标注）。
-**③ 选最优 → 一次性正式重起**：`SEQ=3712 / ITERS=19980 / GBS=960 / MBS=最优 / 起点 step_532000 / 优化器 Muon / LR 1.67e-3→1e-5`，**保留分段计时日志**（`t_data / t_fwd_bwd / t_opt`，每 10 步打印）。🚫 **不得长时间空置 GPU**（profile 目标 ≤1.5h，测完立即起正式 run）。
-**④ 交付**：**A0–A5 对比表**（档 / 改动 / tok/s / 显存 / util / 相对 A0 提升 / 结论）+ **新 ETA** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit 前缀 `pretrain perf:`。
-**⑤ 纪律**：⛔ 不干扰 data 线；**任务书现 34.9KB ⇒ 本轮须归档已闭合块回 ≤32KB**。
-
-
-### 🆕 运维指令 · 2026-10-16（⚡ **decay 提速专项：先量化、再修数据管线/GC/MBS**）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「pretrain 训练效率太低（183K tok/s，我 BaiZe-2B 都有 249K）。是否 Muon 实现效率不高？**如果是就换 AdamW**。另外显存还有空间（58–60GB/卡），**看有没有机会把 MBS 提升一倍**。另外为省时间，**可考虑 seq-len 与总数据量都对齐 Xmodel-2.5（71.2B）**。」
-
-> **运维实测结论（逐条，均有出处）**：
-> - **① 🚫 不换 AdamW —— Muon 不是主因**。P-8 基线（`EXPERIMENTS_PRETRAIN_2B.md:108-120`）**同样是 MBS=2 / GBS≈1024 / seq4094 / DP8 / bf16**，却跑到 **249K tok/s（~17.5s/step、565 TFLOP/s/GPU）** ⇒ **MBS 相同、吞吐差 27%，问题不在 MBS、也不在 batch 形状**。差别在**技术栈**：P-8 = **Megatron-Core 全栈**；本 run = **HF `AutoModelForCausalLM` + 手写 DDP + 手写 `BlendedDataLoader`**（因 Megatron-Core 0.16.1 不实现 Xmodel μP 前向缩放，转换会破坏模型）。Muon 每**优化器步**仅更新一次（共 20346 步），被 **60 个 micro-step** 摊薄 ⇒ **非主因**；且换 AdamW 会**破坏与 Xmodel 官方「同配比·同优化器」的可比性**（本实验立论基础）⇒ **不许换**。
-> - **② 真瓶颈（可修，配方中性）**：数据管线 **单进程 / 无 worker / 无预取**，且**在训练主循环内同步**做 `IndexedDataset` 随机取 doc → `doc.tolist()` → Python `list.extend` 拼到 4096（`baize_xmodel25_decay_train.py:116-138`，纯 Python 逐 token）→ `.to(device)` **未用 `non_blocking`**（L320）⇒ **每 micro-step GPU 都在等 CPU**（60 次/步）。
-> - **③ 梯度检查点默认开着**（L214 `--grad_checkpoint` default=True）→ 反向重算 ≈ **+20~30%** 时间（P-8/Megatron 默认关闭）。
-> - **④ seq / 总 token 口径已澄清（落地方案见 §⑤）**：计划书口径 = **seq 3712 / 3.56M tok·步⁻¹**（`reports/report_xmodel25_decay_80b_plan_zh.html` §4）；起训脚本曾按「**4096 = 2¹²**」铁令覆盖为 4096（`baize_xmodel25_decay.sh:17`）——**该铁令只约束 BaiZe-2B 自研模型**，本 run 训的是 Xmodel ⇒ **本轮改回 Xmodel 原生 3712**。
-
-**① 先量化（改前必做，10 步）**：主循环加分段计时并打日志 —— `t_data`（next(data_iter) + H2D）/ `t_fwd_bwd` / `t_opt`（zero_grad + clip + muon + adamw），每 10 步打印均值。**用数据定位瓶颈，🚫 不许拍脑袋改配置。**
-**② 配方中性提速（不改变训练语义；改完从 step_532000 重起跑）**：
-- **a. 数据管线**：改 `torch.utils.data.DataLoader(num_workers=8, pin_memory=True, prefetch_factor=4, persistent_workers=True)`（或后台预取线程 + 队列）；`get_batch` 去掉 `.tolist()/extend`，改 `np.concatenate` + `torch.from_numpy`；H2D 改 `non_blocking=True`。
-- **b. 关梯度检查点**：`--grad_checkpoint` 默认改 **False**（显存不足再回退）。
-- **c. A/B `MBS 2→4`**：`grad_accum` 60→30（**GBS 保持 960 不变**），各跑 ~30 步测 tok/s；显存有 ~20GB 余量，预期可容纳。
-- **d. 可选**：AdamW 组加 `fused=True`。
-**③ 只有在①的分段计时**证明 Muon（含 `num_ns_steps=5` / `scale_mode="spectral"` / FP32 upcast 补丁）**占比显著**时，才允许动优化器 —— 且须**附计时证据**再定是否改。
-**④ 交付**：**tok/s 前后对比表 + 分段计时表 + 新 ETA** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit 前缀 `pretrain perf:`。
-**⑤ ✅ 本轮执行「seq / 总 token 对齐 Xmodel-2.5」（用户 2026-10-16 澄清：「**4096=2¹²**」铁令**只约束 BaiZe-2B 自研模型**；本 run 训练的是 **Xmodel** ⇒ 按 **Xmodel 原生口径**走，两令不矛盾）**：
-- `baize_xmodel25_decay.sh`：**`SEQ 4096 → 3712`**；**`ITERS 20346 → 19980`**（= **71.2B ÷ (960 × 3712 = 3.56352M tok/步)** ≈ 官方 **20,000 步 × 3.56M**，即 **总 decay token 与官方一致 = 71.2B**）。
-- **`GBS` 保持 960**（与官方 3.56M tok/步 等价）；**优化器仍用 Muon**；**起点不变**（step_532000）；LR 曲线保持 `1.67e-3 → 1e-5`（WSD，warmup 100）。
-- 收益：墙钟 **省 ~11% ≈ 0.5 天**，且与官方 **apples-to-apples**（唯一变量 = 数据配比，本实验的立论目标）。
-**⑥ 一次重起、两件事一起落**：**seq/ITERS 对齐** 与 **§② 的配方中性提速（数据管线 + 关 GC）** 在**同一次重启**完成，避免重复起停；**MBS 的 A/B（2→4）放在重起之后单独测**（不与其它改动叠加，便于归因）。
-**⑦ 交付**：对齐后的 **step / loss / LR / ETA 表** + **提速前后 tok/s 对比** + **分段计时表** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；**并同步更新 `reports/report_xmodel25_decay_80b_plan_zh.html` §4 对照表**（our **80B→71.2B**、**19980 步**、公平性论述改为「**同 token 预算 71.2B，唯一变量 = 数据配比**」）；commit 前缀 `pretrain decay80b:` / `pretrain perf:`。
-**⑧ 纪律**：⛔ 不干扰 data 线；任务书 >32KB 自滚归档。
-
-
-### 🚨 运维指令 · 2026-10-16 19:0x（⏱ **加急：立刻起训 80B decay，禁止再空转**）· 用户质询 · 最高优先
-
-> **用户质询（2026-10-16）**：「pretrain：执行 80B decay 实验 —— 他俩到底还在等什么？不知道 GPU 很贵吗？」
-> **事实（运维实测）**：放行令（13:47）+ NeMo 纠偏（15:32）均已下发，但本线**自 13:19 起零提交**，`.29` 8×H100 **空了 5.5 小时**。已另经 `ops/inbox.md` 下发 **RUN_ID 109** 核查 loop 死活并按需重启。
-
-**① 立刻执行（🚫 不得再以「等运维指令」为由空转）**：按 13:47 放行令 + 15:32 NeMo 纠偏起训 80B decay —— 起点 = **Xmodel-2.5 stable 末 ckpt（step 532000）**；数据 = **BaiZe 80B 配比**；优化器 = **Muon（NeMo/Megatron-Core 0.16.1 自带）**；🚫 **禁止 `find 全树` 找 muon.py**。目标 = 14 集超越 Xmodel-2.5 final（CS8 65.40% / CX 32.90%）。
-
-**② 执行顺序**：① `nvidia-smi` 确认 `.29` 空窗 → ② **HF ckpt → Megatron/NeMo 格式转换**（先跑小样本 smoke 再全量）→ ③ **复用 BaiZe P-8 的 muon 训练脚本**（只换模型）→ ④ 起训并回报 `step / loss / tok·s⁻¹ / ETA / 卡占用`。
-
-**③ 每轮唤醒必须落盘**：`MEMORY_PRETRAIN_2B.md`（step / loss / ETA / 卡占用）+ `daily-memories/` —— 哪怕单轮 cline 只跑 25 分钟也要写，🚫 **禁止静默**。
-
-**④ 阻塞必须显式报告**：卡在 ckpt 转换 / tokenizer 不兼容（128K vs 129K）/ 数据路径 / 依赖缺失等，须写明「**卡点 + 已试方案 + ETA + 需要什么**」，🚫 不许静默等待。
-
-**⑤ 纪律**：🚫 不 kill 别线进程 · 与 data 线错峰 IO · commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
-
+> 📦 §运维指令·2026-10-16 19:0x（⏱ 加急起训 80B decay）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：已起训（HF + 手写 DDP + TensorParallelMuon，非 Megatron 转换），后升级为 chunked CE v2 正式训练。需要时再读。
 
 > 📦 [已归档] **2026-10-16（🚀 放行执行 80B decay 实验 + 用 NeMo 训 Xmodel）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-16 归档块）。⚠️ **已执行完毕**；**实测修正**：Megatron-Core 0.16.1 **不实现 Xmodel 的 μP 前向缩放**（embed×12 / attn·ffn 残差×1.4/√48 / logits×1/6）⇒ **HF→Megatron 转换会破坏模型**，最终落地为 **HF `AutoModelForCausalLM` + 手写 DDP + Megatron `TensorParallelMuon` 优化器**（见 `baize_xmodel25_decay_train.py` docstring）。
 
