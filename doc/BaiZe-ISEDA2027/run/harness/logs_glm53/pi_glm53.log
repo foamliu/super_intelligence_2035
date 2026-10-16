@@ -11,3 +11,26 @@ Serial kimi eval: harness=pi model=glm-5.3-flash
 
 [RUN] pi on django__django-16873 ...
   [QUOTA] pi: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] pi on django__django-16873 ...
+  => django__django-16873 | pi | quota-blocked
+
+############################################################
+# [2/84] pi x matplotlib__matplotlib-22835
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-22835 for pi
+
+[RUN] pi on matplotlib__matplotlib-22835 ...
+  [EVAL] pi on matplotlib__matplotlib-22835 ...
+  => matplotlib__matplotlib-22835 | pi | patch-but-failed
+
+############################################################
+# [3/84] pi x matplotlib__matplotlib-23299
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23299 for pi
+
+[RUN] pi on matplotlib__matplotlib-23299 ...

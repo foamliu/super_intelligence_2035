@@ -38823,9 +38823,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 3.0,
+      "wall_s": 140.5,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-16873.json",
-      "stdout_tail": "ngo-16873\n[run_single] base_commit=fce90950bef348803fa7cc3e6bc65f4bce429b82\n[run_single] ps_len=2369\n[run_single] git reset --hard fce90950bef348803fa7cc3e6bc65f4bce429b82\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=2.6s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-16873.json\n[run_single] cleanup: git reset --hard fce90950bef348803fa7cc3e6bc65f4bce429b82\n",
+      "stdout_tail": "6873\n[run_single] base_commit=fce90950bef348803fa7cc3e6bc65f4bce429b82\n[run_single] ps_len=2369\n[run_single] git reset --hard fce90950bef348803fa7cc3e6bc65f4bce429b82\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=140.0s ==\n[run_single] model_patch: 3813 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-16873.json\n[run_single] cleanup: git reset --hard fce90950bef348803fa7cc3e6bc65f4bce429b82\n",
       "quota_blocked": true,
       "quota_retry": 3,
       "eval": {
@@ -39836,11 +39836,32 @@
     "harness": "cline-patched",
     "model": "glm-5.3-flash",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: \n[TIMEOUT]"
+      "ok": true,
+      "msg": "init+shallow fetch"
     },
-    "blocked": "git fetch failed: \n[TIMEOUT]",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 250.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_matplotlib__matplotlib-18869.json",
+      "stdout_tail": "n_single] base_commit=b7d05919865fc0c37a0164cf467d5d5513bd0ede\n[run_single] ps_len=1717\n[run_single] git reset --hard b7d05919865fc0c37a0164cf467d5d5513bd0ede\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=249.8s ==\n[run_single] model_patch: 3730 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_matplotlib__matplotlib-18869.json\n[run_single] cleanup: git reset --hard b7d05919865fc0c37a0164cf467d5d5513bd0ede\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "pylint-dev__pylint-5859",
@@ -40442,11 +40463,32 @@
     "harness": "cline-patched",
     "model": "glm-5.3-flash",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: \n[TIMEOUT]"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: \n[TIMEOUT]",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 783.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_matplotlib__matplotlib-23299.json",
+      "stdout_tail": "n_single] base_commit=3eadeacc06c9f2ddcdac6ae39819faa9fbee9e39\n[run_single] ps_len=1780\n[run_single] git reset --hard 3eadeacc06c9f2ddcdac6ae39819faa9fbee9e39\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=783.2s ==\n[run_single] model_patch: 2590 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_matplotlib__matplotlib-23299.json\n[run_single] cleanup: git reset --hard 3eadeacc06c9f2ddcdac6ae39819faa9fbee9e39\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-17087",
@@ -64638,7 +64680,7 @@
     "model": "glm-5.3-flash",
     "workdir_setup": {
       "ok": true,
-      "msg": "existing workdir updated"
+      "msg": "init+shallow fetch"
     },
     "rootfs_setup": {
       "ok": true,
@@ -64646,10 +64688,10 @@
     },
     "harness_result": {
       "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 225.4,
+      "returncode": 0,
+      "wall_s": 273.4,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-19487.json",
-      "stdout_tail": "/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n{\"ts\":\"2026-10-16T15:07:23.368Z\",\"type\":\"error\",\"message\":\"file is not a database\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-19487.json\n[run_single] cleanup: git reset --hard 25fbcce5b1a4c7e3956e6062930f4a44ce95a632\n",
+      "stdout_tail": "y-19487\n[run_single] base_commit=25fbcce5b1a4c7e3956e6062930f4a44ce95a632\n[run_single] ps_len=943\n[run_single] git reset --hard 25fbcce5b1a4c7e3956e6062930f4a44ce95a632\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=273.0s ==\n[run_single] model_patch: 1810 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-19487.json\n[run_single] cleanup: git reset --hard 25fbcce5b1a4c7e3956e6062930f4a44ce95a632\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -64943,10 +64985,10 @@
     },
     "harness_result": {
       "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 388.9,
+      "returncode": 0,
+      "wall_s": 276.3,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20049.json",
-      "stdout_tail": "/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n{\"ts\":\"2026-10-16T15:14:52.394Z\",\"type\":\"error\",\"message\":\"file is not a database\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20049.json\n[run_single] cleanup: git reset --hard d57aaf064041fe52c0fa357639b069100f8b28e1\n",
+      "stdout_tail": "-20049\n[run_single] base_commit=d57aaf064041fe52c0fa357639b069100f8b28e1\n[run_single] ps_len=2586\n[run_single] git reset --hard d57aaf064041fe52c0fa357639b069100f8b28e1\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=276.0s ==\n[run_single] model_patch: 3773 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20049.json\n[run_single] cleanup: git reset --hard d57aaf064041fe52c0fa357639b069100f8b28e1\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -64977,9 +65019,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 237.5,
+      "wall_s": 278.5,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20154.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 4535 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20154.json\n[run_single] cleanup: git reset --hard bdb49c4abfb35554a3c8ce761696ffff3bb837fe\n",
+      "stdout_tail": "y-20154\n[run_single] base_commit=bdb49c4abfb35554a3c8ce761696ffff3bb837fe\n[run_single] ps_len=552\n[run_single] git reset --hard bdb49c4abfb35554a3c8ce761696ffff3bb837fe\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=278.4s ==\n[run_single] model_patch: 5144 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20154.json\n[run_single] cleanup: git reset --hard bdb49c4abfb35554a3c8ce761696ffff3bb837fe\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65010,9 +65052,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 1216.1,
+      "wall_s": 552.2,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20212.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1404 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20212.json\n[run_single] cleanup: git reset --hard a106f4782a9dbe7f8fd16030f15401d977e03ae9\n",
+      "stdout_tail": "y-20212\n[run_single] base_commit=a106f4782a9dbe7f8fd16030f15401d977e03ae9\n[run_single] ps_len=466\n[run_single] git reset --hard a106f4782a9dbe7f8fd16030f15401d977e03ae9\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=552.0s ==\n[run_single] model_patch: 1638 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20212.json\n[run_single] cleanup: git reset --hard a106f4782a9dbe7f8fd16030f15401d977e03ae9\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65109,9 +65151,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 726.4,
+      "wall_s": 474.5,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20322.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2876 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20322.json\n[run_single] cleanup: git reset --hard ab864967e71c950a15771bb6c3723636026ba876\n",
+      "stdout_tail": "y-20322\n[run_single] base_commit=ab864967e71c950a15771bb6c3723636026ba876\n[run_single] ps_len=667\n[run_single] git reset --hard ab864967e71c950a15771bb6c3723636026ba876\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=474.3s ==\n[run_single] model_patch: 3031 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20322.json\n[run_single] cleanup: git reset --hard ab864967e71c950a15771bb6c3723636026ba876\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65142,9 +65184,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 155.7,
+      "wall_s": 317.9,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20442.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 3615 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20442.json\n[run_single] cleanup: git reset --hard 1abbc0ac3e552cb184317194e5d5c5b9dd8fb640\n",
+      "stdout_tail": "y-20442\n[run_single] base_commit=1abbc0ac3e552cb184317194e5d5c5b9dd8fb640\n[run_single] ps_len=731\n[run_single] git reset --hard 1abbc0ac3e552cb184317194e5d5c5b9dd8fb640\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=317.7s ==\n[run_single] model_patch: 2504 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20442.json\n[run_single] cleanup: git reset --hard 1abbc0ac3e552cb184317194e5d5c5b9dd8fb640\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65241,9 +65283,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 284.5,
+      "wall_s": 578.6,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20590.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1521 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20590.json\n[run_single] cleanup: git reset --hard cffd4e0f86fefd4802349a9f9b19ed70934ea354\n",
+      "stdout_tail": "y-20590\n[run_single] base_commit=cffd4e0f86fefd4802349a9f9b19ed70934ea354\n[run_single] ps_len=758\n[run_single] git reset --hard cffd4e0f86fefd4802349a9f9b19ed70934ea354\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=578.3s ==\n[run_single] model_patch: 1378 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20590.json\n[run_single] cleanup: git reset --hard cffd4e0f86fefd4802349a9f9b19ed70934ea354\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65340,9 +65382,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 493.9,
+      "wall_s": 294.3,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20639.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2207 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20639.json\n[run_single] cleanup: git reset --hard eb926a1d0c1158bf43f01eaf673dc84416b5ebb1\n",
+      "stdout_tail": "y-20639\n[run_single] base_commit=eb926a1d0c1158bf43f01eaf673dc84416b5ebb1\n[run_single] ps_len=561\n[run_single] git reset --hard eb926a1d0c1158bf43f01eaf673dc84416b5ebb1\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=293.9s ==\n[run_single] model_patch: 1808 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-20639.json\n[run_single] cleanup: git reset --hard eb926a1d0c1158bf43f01eaf673dc84416b5ebb1\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65472,9 +65514,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 481.3,
+      "wall_s": 228.4,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21055.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 3082 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21055.json\n[run_single] cleanup: git reset --hard 748ce73479ee2cd5c861431091001cc18943c735\n",
+      "stdout_tail": "-21055\n[run_single] base_commit=748ce73479ee2cd5c861431091001cc18943c735\n[run_single] ps_len=1029\n[run_single] git reset --hard 748ce73479ee2cd5c861431091001cc18943c735\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=228.2s ==\n[run_single] model_patch: 3242 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21055.json\n[run_single] cleanup: git reset --hard 748ce73479ee2cd5c861431091001cc18943c735\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65505,9 +65547,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 175.2,
+      "wall_s": 385.0,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21171.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1307 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21171.json\n[run_single] cleanup: git reset --hard aa22709cb7df2d7503803d4b2c0baa7aa21440b6\n",
+      "stdout_tail": "-21171\n[run_single] base_commit=aa22709cb7df2d7503803d4b2c0baa7aa21440b6\n[run_single] ps_len=8391\n[run_single] git reset --hard aa22709cb7df2d7503803d4b2c0baa7aa21440b6\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=384.8s ==\n[run_single] model_patch: 1802 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21171.json\n[run_single] cleanup: git reset --hard aa22709cb7df2d7503803d4b2c0baa7aa21440b6\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65637,9 +65679,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 588.9,
+      "wall_s": 255.7,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21379.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2209 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21379.json\n[run_single] cleanup: git reset --hard 624217179aaf8d094e6ff75b7493ad1ee47599b0\n",
+      "stdout_tail": "-21379\n[run_single] base_commit=624217179aaf8d094e6ff75b7493ad1ee47599b0\n[run_single] ps_len=1781\n[run_single] git reset --hard 624217179aaf8d094e6ff75b7493ad1ee47599b0\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=255.4s ==\n[run_single] model_patch: 2424 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21379.json\n[run_single] cleanup: git reset --hard 624217179aaf8d094e6ff75b7493ad1ee47599b0\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65670,9 +65712,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 506.4,
+      "wall_s": 662.9,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21612.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2857 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21612.json\n[run_single] cleanup: git reset --hard b4777fdcef467b7132c055f8ac2c9a5059e6a145\n",
+      "stdout_tail": "y-21612\n[run_single] base_commit=b4777fdcef467b7132c055f8ac2c9a5059e6a145\n[run_single] ps_len=681\n[run_single] git reset --hard b4777fdcef467b7132c055f8ac2c9a5059e6a145\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=662.7s ==\n[run_single] model_patch: 3266 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21612.json\n[run_single] cleanup: git reset --hard b4777fdcef467b7132c055f8ac2c9a5059e6a145\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -65835,9 +65877,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 528.3,
+      "wall_s": 99.3,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21614.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1466 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21614.json\n[run_single] cleanup: git reset --hard b4777fdcef467b7132c055f8ac2c9a5059e6a145\n",
+      "stdout_tail": "py-21614\n[run_single] base_commit=b4777fdcef467b7132c055f8ac2c9a5059e6a145\n[run_single] ps_len=378\n[run_single] git reset --hard b4777fdcef467b7132c055f8ac2c9a5059e6a145\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=99.1s ==\n[run_single] model_patch: 1259 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21614.json\n[run_single] cleanup: git reset --hard b4777fdcef467b7132c055f8ac2c9a5059e6a145\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -66000,9 +66042,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 670.4,
+      "wall_s": 359.8,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21627.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1327 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21627.json\n[run_single] cleanup: git reset --hard 126f80578140e752ad5135aac77b8ff887eede3e\n",
+      "stdout_tail": "y-21627\n[run_single] base_commit=126f80578140e752ad5135aac77b8ff887eede3e\n[run_single] ps_len=291\n[run_single] git reset --hard 126f80578140e752ad5135aac77b8ff887eede3e\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=359.7s ==\n[run_single] model_patch: 1114 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21627.json\n[run_single] cleanup: git reset --hard 126f80578140e752ad5135aac77b8ff887eede3e\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -66033,9 +66075,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 100.3,
+      "wall_s": 124.7,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21847.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 4270 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21847.json\n[run_single] cleanup: git reset --hard d9b18c518d64d0ebe8e35a98c2fb519938b9b151\n",
+      "stdout_tail": "-21847\n[run_single] base_commit=d9b18c518d64d0ebe8e35a98c2fb519938b9b151\n[run_single] ps_len=1061\n[run_single] git reset --hard d9b18c518d64d0ebe8e35a98c2fb519938b9b151\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=124.5s ==\n[run_single] model_patch: 3413 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-21847.json\n[run_single] cleanup: git reset --hard d9b18c518d64d0ebe8e35a98c2fb519938b9b151\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -66164,10 +66206,10 @@
     },
     "harness_result": {
       "harness": "cline-patched",
-      "returncode": 1,
-      "wall_s": 1800.4,
+      "returncode": 0,
+      "wall_s": 515.5,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22005.json",
-      "stdout_tail": "as_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22005.json\n[run_single] cleanup: git reset --hard 2c83657ff1c62fc2761b639469fdac7f7561a72a\n",
+      "stdout_tail": "-22005\n[run_single] base_commit=2c83657ff1c62fc2761b639469fdac7f7561a72a\n[run_single] ps_len=1509\n[run_single] git reset --hard 2c83657ff1c62fc2761b639469fdac7f7561a72a\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=515.3s ==\n[run_single] model_patch: 1454 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22005.json\n[run_single] cleanup: git reset --hard 2c83657ff1c62fc2761b639469fdac7f7561a72a\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -66264,9 +66306,9 @@
     "harness_result": {
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 306.5,
+      "wall_s": 292.1,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22714.json",
-      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1449 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22714.json\n[run_single] cleanup: git reset --hard 3ff4717b6aef6086e78f01cdfa06f64ae23aed7e\n",
+      "stdout_tail": "-22714\n[run_single] base_commit=3ff4717b6aef6086e78f01cdfa06f64ae23aed7e\n[run_single] ps_len=1660\n[run_single] git reset --hard 3ff4717b6aef6086e78f01cdfa06f64ae23aed7e\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=291.9s ==\n[run_single] model_patch: 2497 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22714.json\n[run_single] cleanup: git reset --hard 3ff4717b6aef6086e78f01cdfa06f64ae23aed7e\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -66280,5 +66322,269 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-8801",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 454.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sphinx-doc__sphinx-8801.json",
+      "stdout_tail": "ce_id=sphinx-doc__sphinx-8801\n[run_single] base_commit=7ca279e33aebb60168d35e6be4ed059f4a68f2c1\n[run_single] ps_len=897\n[run_single] git reset --hard 7ca279e33aebb60168d35e6be4ed059f4a68f2c1\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=454.6s ==\n[run_single] model_patch: 4251 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sphinx-doc__sphinx-8801.json\n[run_single] cleanup: git reset --hard 7ca279e33aebb60168d35e6be4ed059f4a68f2c1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11400",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 163.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11400.json",
+      "stdout_tail": "le] instance_id=sympy__sympy-11400\n[run_single] base_commit=8dcb12a6cf500e8738d6729ab954a261758f49ca\n[run_single] ps_len=318\n[run_single] git reset --hard 8dcb12a6cf500e8738d6729ab954a261758f49ca\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=163.0s ==\n[run_single] model_patch: 2085 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11400.json\n[run_single] cleanup: git reset --hard 8dcb12a6cf500e8738d6729ab954a261758f49ca\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 29,
+        "p2p_total": 29
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-11870",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 53.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11870.json",
+      "stdout_tail": "single] instance_id=sympy__sympy-11870\n[run_single] base_commit=5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n[run_single] ps_len=344\n[run_single] git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=53.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11897",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 49.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11897.json",
+      "stdout_tail": "ngle] instance_id=sympy__sympy-11897\n[run_single] base_commit=e2918c1205c47345eb73c9be68b14c0f15fdeb17\n[run_single] ps_len=634\n[run_single] git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=49.4s ==\n[run_single] model_patch: 883 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 93,
+        "p2p_total": 95
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-22840",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 1,
+      "wall_s": 378.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22840.json",
+      "stdout_tail": "cess successful response: TypeError: InvalidHTTPResponse fetching \\\"http://127.0.0.1:9092/v1/chat/completions\\\". For more information, pass `verbose: true` in the second argument to fetch() (InvalidHTTPResponse) (Request ID: b2cc9b70-e283-44e6-a03b-8e96411901d3)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-22840.json\n[run_single] cleanup: git reset --hard d822fcba181155b85ff2b29fe525adbafb22b448\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 2,
+        "p2p_pass": 95,
+        "p2p_total": 95
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-23117",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 332.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-23117.json",
+      "stdout_tail": "-23117\n[run_single] base_commit=c5cef2499d6eed024b0db5c792d6ec7c53baa470\n[run_single] ps_len=1375\n[run_single] git reset --hard c5cef2499d6eed024b0db5c792d6ec7c53baa470\n[run_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=332.2s ==\n[run_single] model_patch: 6229 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-23117.json\n[run_single] cleanup: git reset --hard c5cef2499d6eed024b0db5c792d6ec7c53baa470\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 3,
+        "p2p_total": 3
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-23191",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 575.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-23191.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 5134 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-23191.json\n[run_single] cleanup: git reset --hard fa9b4b140ec0eaf75a62c1111131626ef0f6f524\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 3,
+        "p2p_total": 3
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-12171",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 1040.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-12171.json",
+      "stdout_tail": "e] instance_id=sympy__sympy-12171\n[run_single] base_commit=ca6ef27272be31c9dc3753ede9232c39df9a75d8\n[run_single] ps_len=615\n[run_single] git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=1040.0s ==\n[run_single] model_patch: 2735 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
