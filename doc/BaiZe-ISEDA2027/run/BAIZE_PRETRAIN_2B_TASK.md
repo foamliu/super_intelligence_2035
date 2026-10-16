@@ -1,6 +1,24 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（📋 Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay · 争超 Xmodel-2.5 final · 先出计划书）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「安排 pretrain 用 Xmodel-2.5 stable 最后一个检查点做 decay 实验，用我们自己配比的 80B 数据做 decay，争取比 Xmodel-2.5 的 final 更强（14 个评测集）。先写个计划书（中文 html）。」
+
+**① 背景**：已实测 Xmodel-2.5 final（decay 后）CS8=65.40% / CX=32.90%，stable 段普遍偏低。目标：用 **BaiZe 自己配比的 80B 数据** 对 Xmodel-2.5 stable 末 ckpt 做 decay，争取 14 集超越其官方 final，验证「BaiZe decay 数据配比/annealing 策略更优」。
+
+**② 计划书须先定清（写进 HTML，每项带出处）**：
+1. **起点 ckpt**：Xmodel-2.5 stable 最后一个（decay 前）检查点——确认是哪个 step（约 step 100K?）、对应 token（13.2M/step 口径）、本地是否已下载；未下则列下载量与 HF 路径。
+2. **decay 数据配比（BaiZe 80B）**：给本源权重 + 80B 的 token 分配（可沿用 P-8 decay 的 SFT/L3/code/math annealing 思路）。
+3. **decay 超参**：WSD（warmup / decay 步数 / LR 1e-3→1e-5 / seq / GBS），标明与 Xmodel 官方训练 tokenizer/seq 的兼容处理。
+4. **14 评测集**：常识 8 + 复杂 6（对齐已有 Xmodel scaling 对比口径）；对比基准 = Xmodel-2.5 final 的 CS8 65.40% / CX 32.90%。
+5. **算力/墙钟**：80B decay 在 .29 8×H100 的 GPU·h + ETA。
+6. **风险/可行边界**：Xmodel-2.5 tokenizer/架构与我们不同，decay 用谁的 tokenizer？ckpt 转 HF / 推理 / lm-eval 链路是否可用（列出需验证项）。
+
+**③ 交付**：中文自包含 HTML 计划书（如 `reports/report_xmodel25_decay_80b_plan_zh.html`），含上述 6 点 + 预期提升 vs 基线。
+
+**④ 纪律**：🚫 先计划不起训；数字带出处（实测/源码）；commit 前缀 `pretrain plan:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15（📘 **编写《BaiZe-2B 预训练计划书 v5》中文 HTML**）· 用户直令 · 最高优先
 
 > **用户令（2026-10-15）**：「安排 pretrain 写预训练计划书（html、中文）：① 认真阅读、仔细参考 Xmodel-2 / Xmodel-2.5（论文在仓库中）；② 使用 MiniCPM5 的数据；③ 建议 BaiZe-2B 的训练策略 —— 例如是否像 Xmodel 一样把 Stable 分成 S1/S2、GBS 先 2M 再 4M token、Decay 是否只用少量数据（比如 20B）、每阶段数据如何配比；④ 可以 web search；⑤ 是否需要数据配比实验、如何设置优化指标。」
