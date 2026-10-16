@@ -40,7 +40,7 @@ LOG="/tmp/baize_xmodel25_decay_profile_$TAG.log"
 
 echo """
 ===== v2 COMPILE PROFILE @ $(date '+%F %T') =====
-  MBS=$MBS, GC=OFF, no_sync=True, compile=True (reduce-overhead + cudagraph_mark_step_begin)
+  MBS=$MBS, GC=OFF, no_sync=True, compile=True (mode=default, kernel fusion only)
 """
 rm -f "$OUT/train_log.txt" "$OUT/timing_log.txt"
 mkdir -p "$OUT"
@@ -56,7 +56,7 @@ mkdir -p "$OUT"
     --total_steps "$ITERS" --warmup_steps "$WARMUP" \
     --lr "$LR" --min_lr "$MIN_LR" \
     --profile_steps 20 --log_interval 5 \
-    --compile_model > "$LOG" 2>&1
+    --compile_model --compile_mode default > "$LOG" 2>&1
 
 rc=$?
 echo "===== v2 COMPILE PROFILE END @ $(date '+%F %T') rc=$rc ====="
