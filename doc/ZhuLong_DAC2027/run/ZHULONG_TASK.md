@@ -13,9 +13,26 @@
 | **编排模型** | `glm-5.2`（`02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23` · `http://agi-gateway.cxmt.com/cloud/v1`） |
 | **已完成（探路 1-shot）** | ✅ 组件 `pure_llm` 11.4% / `rag` 70.3% / `wo_retrieval` 81.6% / `full` 84.8%；✅ S2 Φ `k10` 75.3% / `k3` 69.0% / `k1` 60.8% / `lagged` 84.2%（r2 修复后 98.1% 满分） |
 | **旧 5-run 进行到哪** | ⏸ 旧 S1（`omega_low`）r1=81.6 / r2=82.3 ✅；r3 因 **infra 作废**（license 耗尽 + shard0/1 端口 8664/8665 宕 + `/home` 磁盘 <8G）自 9/30 停摆至今 |
-| **🚫 不做** | `wo_sandbox` / `wo_selfexpl`（tab:main-ablation 这两行暂缓）· `(H+E)` 档 · `phi_unbounded`（≡ full 锚点）· 主基座 `deepseek-v4-pro-fp4` 的模型消融臂（≡ full×5 锚点，不重跑） |
+| **🚫 不做** | `(H+E)` 档 · `phi_unbounded`（≡ full 锚点）· 主基座 `deepseek-v4-pro-fp4` 的模型消融臂（≡ full×5 锚点，不重跑）。**注**：`wo_sandbox`(=rag 已测) / `wo_selfexpl`(已测·运维令二十六排队干净重测) 不再「暂缓」。 |
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
+
+### 🆕 运维指令 · 2026-10-16（二十六）— 🔜 排队：B.deepseek-v4-flash 之后接 wo_selfexpl 干净 5-run【用户直令】
+
+> **用户令（2026-10-16）**：「B.deepseek-v4-flash 之后跑 wo_selfexpl，记录排队。」
+
+**① 排队顺序**（如无新指示，**自动接续**）：
+1. **B.glm-5.3-flash**（在跑，运维令二十三，r1✅80.4% / r2 跑中）→ 5/5 收口
+2. **B.deepseek-v4-flash** fresh 5-run（运维令二十三，替换 legacy 16.7±12.3% std 过大）
+3. **🆕 C1.wo_selfexpl 干净 5-run**（本指令新增）→ 替换当前带 † 脚注的 81.4±4.1%
+
+**② wo_selfexpl 干净 5-run 规格**：
+- 配置：V2 文档（**自探索 OFF**）+ 检索 ON + 沙盒 ON + 主基座 `deepseek-v4-pro-fp4`
+- ⚠️ **关键**：r1 必须**严格 V2**（不得误用 V3 自探索文档——旧 r1=88.0% 即此污染，已在论文 `tab:main-ablation` 标 † 脚注）
+- 判据(十三)：timeout≤10 且无 infra 故障，Pass@1 任何值有效
+- 5-run 收口后：算 mean±std → 回填 `tab:main-ablation` 的 `ZhuLong w/o Self-Expl.` 行（移除 † 脚注）+ 同步 `zhulong_results.md` C1.wo_selfexpl 节 + 正文 Δ
+
+**③ 纪律**：切配置后 canary 自检；commit 前缀 `zhulong C1:`；/home<8G 暂停清理。
 
 ### 🆕 运维指令 · 2026-10-15（二十五）— ⏰ 催办：消融试验中文建议书（指令二十一）尚未交付 · 现在就要【已完成·2026-10-15 归档】
 > ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15 17:35）。报告 `reports/report_zhulong_next_ablation_plan_zh.html` 已交付（32927B·10节·commit c1a3d177 @ 17:01:57·已push）。
