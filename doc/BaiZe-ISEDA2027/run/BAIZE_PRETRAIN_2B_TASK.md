@@ -7,6 +7,16 @@
 
 **① 背景**：已实测 Xmodel-2.5 final（decay 后）CS8=65.40% / CX=32.90%，stable 段普遍偏低。目标：用 **BaiZe 自己配比的 80B 数据** 对 Xmodel-2.5 stable 末 ckpt 做 decay，争取 14 集超越其官方 final，验证「BaiZe decay 数据配比/annealing 策略更优」。
 
+**⚖️ Xmodel-2.5 官方 decay 配置（用户提供的对照基准，计划书必须纳入）**：
+| 项 | Xmodel-2.5 官方 decay |
+|:--|:--|
+| Decay token 量 | **71.2B**（20,000 steps × 3.56M tokens/step）|
+| 占总训练（1.4T）| ~5% |
+| 数据配比 | **66.9% 高质量 SFT** + 其余 |
+| 优化器 | **decay 阶段 AdamW → Muon**（提升推理性能）|
+- **公平性**：我们给 **80B 预算 > 71.2B**，数据量已不落下风；若 80B 内 14 集超 Xmodel-2.5 final，即证明 BaiZe 的 decay 数据配比/annealing 策略更优。
+- ⚠️ 计划书须单列对照：**our 80B decay（配比/优化器/超参） vs Xmodel 71.2B decay（66.9% SFT + Muon）**，并说明我们是否也采用 decay 段切 Muon（注意：BaiZe P-8 用 dist_muon 曾发散换回 AdamW，需论证）。
+
 **② 计划书须先定清（写进 HTML，每项带出处）**：
 1. **起点 ckpt**：Xmodel-2.5 stable 最后一个（decay 前）检查点——确认是哪个 step（约 step 100K?）、对应 token（13.2M/step 口径）、本地是否已下载；未下则列下载量与 HF 路径。
 2. **decay 数据配比（BaiZe 80B）**：给本源权重 + 80B 的 token 分配（可沿用 P-8 decay 的 SFT/L3/code/math annealing 思路）。
