@@ -14,16 +14,17 @@ WAITING: 1
 ```
 PHASE:        ▶️3路断点续传下载(en_v1_4+WebMix+InternVL)+✅✅RL-2609下完自校通过(20jsonl/187632276428B/26files字节比对全PASS)+✅SFT-2605复核通过(1504jsonl/297GB/0incomplete)+✅wit_base完成+85M暂停(用户令10-13)+✅GPIC+✅R3分词→P-8数据层全就绪
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200(ρ=−0.43); s_step归因; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); R3全量分词110/110DONE(1483.91B tok/5.94TB); R3污染扫描30/30DONE(60K,0命中,累计220K全0)→P-8数据层全就绪; ✅GPIC下载完成(8160tar@/nas_inference,12T); ✅85M暂停(用户令10-13); ✅4路HF图文对下载; ✅the_cauldron完成(938parquet/158G); ✅全部4路暂停→恢复断点续传(用户令10-14); ✅wit_base完成(330/330/287G); ✅SFT-2605复核通过(1504jsonl/318990252711B/0incomplete,2026-10-15); ✅✅UltraData-RL-2609下载完成+自校通过(20jsonl/187632276428B=174.70GiB/26files逐文件字节比对全PASS/0incomplete,落盘/nas_env,2026-10-16 01:26完成,耗时~3h11m)
-当前动作:     唤醒484(2026-10-16 08:25) 3路下载健康巡检(常规看护)。全3路健康活跃无kill/restart:en_v1_4(36313par/56461=64.3%,+91par,PID3603052/wrapper766325,latest 08:25:36),WebMix(1027par/759G,+51par,PID2798086/wrapper766313,latest 08:25:33),InternVL(1274tar/953G,+48tar,PID766408/wrapper766323,latest 08:25:34)。RL-2609✅(20jsonl/0incomplete/175G),SFT-2605✅(1504jsonl/0incomplete)。85M⏸暂停。disk:train85%/user76%/inf80%/env3%(9.7T)。📦体积:TASK=32590B(32KB)/MEMORY=15KB(无需归档)
+当前动作:     唤醒485(2026-10-16 09:39) 3路下载全部429假死→已重启。发现全3路PID已死(HF 429限流致hf download返回exit0假COMPLETE,retry-loop退出)。en_v1_4(36363par/56461=64.4%/3.3T,PID606504/hf609935),WebMix(1040par/769G,PID606513/hf607568),InternVL(1298tar/971G,PID606518/hf607247)。全3路已恢复活跃下载(日志确认正在下新文件)。RL-2609✅(20jsonl/175G/0inc),SFT-2605✅(1504jsonl/298G/0inc)。85M⏸暂停。disk:train85%/user76%/inf80%/env4%(9.6T)。📦体积:TASK=32590B(32KB)/MEMORY=15KB(无需归档)
 下一步:       ①看护3路既有下载(en_v1_4/WebMix/InternVL,死/僵/速率趋零即kill+restart); ②85M维持暂停(用户令10-13); ③P-8投料等运维指示; ④RL-2609已就绪可随时用于RL训练
 阻塞:         无(3路下载进行中); 85M暂停(用户令10-13); P-8投料等运维指示
-ERROR_COUNT:  5
+ERROR_COUNT:  6
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [08:25] 唤醒484：3路下载健康巡检(常规看护)。全3路健康活跃无kill/restart:en_v1_4(36313par/56461=64.3%,+91par/1h,PID3603052/wrapper766325,latest 08:25:36),WebMix(1027par/759G,+51par/1h,PID2798086/wrapper766313,latest 08:25:33),InternVL(1274tar/953G,+48tar/1h,PID766408/wrapper766323,latest 08:25:34)。RL-2609✅(20jsonl/0incomplete/175G),SFT-2605✅(1504jsonl/0incomplete)。85M⏸暂停(0进程)。56 ESTAB conn via proxy。全3路0 .incomplete。disk:train85%(32T)/user76%(27T)/inf80%(9.4T)/env3%(9.7T)。📦体积:TASK=32590B(32KB)/MEMORY=15KB(无需归档)
+> [09:39] 唤醒485：3路下载全部429假死→已重启。发现全3路PID已死(日志显示08:54 HF 429限流→hf download返回exit0假COMPLETE→retry-loop误判完成退出)。en_v1_4(36363/56461=64.4%/3.3T,completed=47/skipped=63/failed=0,但多snapshot因429未真正下满→已重启PID606504/hf609935),WebMix(1040par/769G,假COMPLETE退出→已重启PID606513/hf607568),InternVL(1298tar/971G,假COMPLETE退出→已重启PID606518/hf607247)。全3路日志确认已恢复活跃下载(正在下新文件)。RL-2609✅(20jsonl/175G/0inc),SFT-2605✅(1504jsonl/298G/0inc)。85M⏸暂停。disk:train85%/user76%/inf80%/env4%(9.6T)。📦体积:TASK=32590B(32KB)/MEMORY=15KB(无需归档)
+> 📦 唤醒484 原文已归档 → `daily-memories-data/2026-10-16.md`（含3路下载健康巡检+全3路活跃无kill/restart+en_v1_4 36313/56461=64.3%+WebMix 1027par/759G+InternVL 1274tar/953G+RL-2609✅+SFT-2605✅+85M⏸+disk 4盘+体积32KB/15KB）
 > 📦 唤醒483 原文已归档 → `daily-memories-data/2026-10-16.md`（含3路下载健康巡检+全3路活跃无kill/restart+en_v1_4 36222/56461=64.2%+WebMix 976par/722G+InternVL 1226tar/917G+RL-2609✅+SFT-2605✅+85M⏸+disk 4盘+体积32KB/14KB）
 > 📦 唤醒482 原文已归档 → `daily-memories-data/2026-10-16.md`（含3路下载健康巡检+全3路活跃无kill/restart+en_v1_4 36031/56461=63.8%+WebMix 940par/696G+InternVL 1214tar/908G+RL-2609✅+SFT-2605✅+85M⏸+disk 4盘+体积32KB/14KB）
 > 📦 唤醒481 原文已归档 → `daily-memories-data/2026-10-16.md`（含3路下载健康巡检+全3路活跃无kill/restart+en_v1_4 35934/56461=63.6%+WebMix 901par+InternVL 1160tar+RL-2609✅+SFT-2605✅+85M⏸+disk 4盘+体积32KB/14KB）
