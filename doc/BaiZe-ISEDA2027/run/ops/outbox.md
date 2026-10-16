@@ -11838,3 +11838,125 @@ hostname: the specified hostname is invalid
 
 === DONE 109 ===
 ```
+
+---
+
+## RUN_ID 110 · 2026-10-16 18:55:12 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 110 · decay 在训确认+稳定性 · $(date '+%F %T') · host=$(hostname) ==="
+S1() { ps -eo pid=,ppid=,etime=,args= 2>/dev/null | grep -E 'baize_xmodel25_decay_train|pt_elastic' | grep -v grep | cut -c1-125 | head -12; }
+echo "--- A) 进程两采样（20s 间隔；PID 变 ⇒ 崩溃重启环）---"
+echo "[t0]"; S1
+sleep 20
+echo "[t0+20s]"; S1
+echo "--- B) GPU↔PID ---"
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | head -12
+echo "--- C) decay / ArmA 日志 ---"
+for L in $(ls -t /nas_train/app.e0031982/datasets/baize-pretrain*/logs/*.log /tmp/*decay*.log /tmp/*armA*.log /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/*decay*.log 2>/dev/null | head -4); do
+  echo "== $L"; ls -l "$L" 2>/dev/null | cut -c1-70; tail -10 "$L" 2>/dev/null | cut -c1-165
+done
+echo "--- D) run/ 最新脚本（找起训脚本/重试环）---"
+ls -lt /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ 2>/dev/null | head -9 | cut -c40-130
+echo "--- E) loop 脚本现在叫谁 ---"
+grep -nE 'invoking|MODEL=|MODEL_' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh 2>/dev/null | head -8 | cut -c1-130
+echo "--- F) pretrain 最近提交 ---"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && git log --date=format:'%m-%d %H:%M' --pretty=format:'%ad|%h|%s' -3 -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo; echo "=== DONE 110 ==="
+```
+
+**输出**
+```
+=== RUN_ID 110 · decay 在训确认+稳定性 · 2026-10-16 18:55:12 · host=whag0pgpuap29 ===
+--- A) 进程两采样（20s 间隔；PID 变 ⇒ 崩溃重启环）---
+[t0]
+ 729631  729623       00:19 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/
+ 736951  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736952  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736955  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736960  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736964  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736965  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736966  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736968  729631       00:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+[t0+20s]
+ 729631  729623       00:39 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/
+ 736951  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736952  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736955  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736960  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736964  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736965  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736966  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+ 736968  729631       00:37 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model
+--- B) GPU↔PID ---
+736951, 58502 MiB
+736952, 57042 MiB
+736955, 58502 MiB
+736960, 57042 MiB
+736964, 57042 MiB
+736965, 57042 MiB
+736966, 57042 MiB
+736968, 57042 MiB
+--- C) decay / ArmA 日志 ---
+== /tmp/baize_xmodel25_decay_train.log
+-rw-r----- 1 app.e0031982 app.adm 26337 Oct 16 18:55 /tmp/baize_xmodel
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s2: 1558885 docs, 0.80B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s3: 1558901 docs, 0.80B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s4: 1558896 docs, 0.80B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s5: 1558897 docs, 0.80B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s6: 1558900 docs, 0.80B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s7: 1558902 docs, 0.80B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/anneal_code: 66383 docs, 0.03B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/r3_sources/r3_ultradata_code: 276501 docs, 0.14B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/anneal_math2: 1000000 docs, 0.51B tokens
+  Loaded /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/r3_sources/r3_ultradata_math: 124614 docs, 0.06B tokens
+== /tmp/baize_xmodel25_decay.log
+-rw-r----- 1 app.e0031982 app.adm 302 Oct 16 18:54 /tmp/baize_xmodel25
+===== Decay START @ 2026-10-16 18:54:53 =====
+  Model=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 Output=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experimen
+  seq=4096 GBS=960 MBS=2 ITERS=20346 LR=1.67e-3 min=1e-5
+== /tmp/baize_p8_decay_fix.log
+-rw-r----- 1 app.e0031982 app.adm 609 Oct 14 21:32 /tmp/baize_p8_decay
+===== P-8 decay FIX START @ 2026-10-14 15:58:04 ITERS=1149 WARMUP=100 DECAY=1049 LR=1e-3 min=1e-5 save=500 optimizer=adam(AdamW) finetune=True =====
+  NP=8 TP=1 DP=8
+  finetune=True: load weights only from /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p8_adamw/checkpoints, fresh optimizer + scheduler, step=0
+  save to: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p8_adamw_decay/checkpoints
+  decay blend: SFT 64% + L3 24% + code 8% + math 4%
+  WSD: warmup 100 steps (0->1e-3) -> decay 1049 steps (1e-3->1e-5)
+  rc=0
+===== P-8 decay FIX END @ 2026-10-14 21:32:20 rc=0 =====
+== /tmp/baize_p8_decay_fix_train.log
+-rw-r----- 1 app.e0031982 app.adm 140004 Oct 14 21:32 /tmp/baize_p8_de
+Storing distributed optimizer sharded state of type fully_reshardable
+  successfully saved checkpoint from iteration    1149 to /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p8_adamw_decay/checkpoints [ t 1/1, p 1/1 ]
+[rank0]:[W1014 21:32:13.189698170 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank5]:[W1014 21:32:13.330850949 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank6]:[W1014 21:32:13.331181592 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank7]:[W1014 21:32:13.555257791 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank3]:[W1014 21:32:13.582474933 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank4]:[W1014 21:32:13.629829467 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank1]:[W1014 21:32:13.702662124 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+[rank2]:[W1014 21:32:13.967920195 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. 
+--- D) run/ 最新脚本（找起训脚本/重试环）---
+
+4 Oct 16 18:55 harness
+6 Oct 16 18:55 ops
+6 Oct 16 18:54 __pycache__
+9 Oct 16 18:54 baize_xmodel25_decay_train.py
+9 Oct 16 18:52 BAIZE_PRETRAIN_2B_TASK.md
+9 Oct 16 18:49 baize_xmodel25_decay.sh
+5 Oct 16 18:21 MEMORY_VISION.md
+0 Oct 16 18:18 vision
+--- E) loop 脚本现在叫谁 ---
+17:MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
+97:    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+--- F) pretrain 最近提交 ---
+10-16 13:19|41e8cb86|pretrain #465: Xmodel-2.5 decay 80B plan confirmed + TASK archive v5+proxy
+10-16 10:37|8f1411a8|pretrain #464: keepalive 心跳·v5报告确认(42.8KB/6表/全口径✅)·8GPU空闲·无新指令
+10-16 09:28|2007a16e|pretrain #463: keepalive 心跳·v5报告确认(42.8KB/6表/全口径✅)·8GPU空闲·无新指令
+
+=== DONE 110 ===
+```
