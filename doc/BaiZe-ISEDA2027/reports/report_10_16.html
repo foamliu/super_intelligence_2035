@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-16</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:28px}table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-16</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-16 ~17:30 · 覆盖六线：pretrain / vision / harness / data / zhulong / news</p>
+
+<div class='info'><strong>TL;DR</strong>：今日两大主成果——① <strong>pretrain 完成 Xmodel-2/2.5 全链路缩放对比</strong>（BaiZe 早期 CS8 领先 Xmodel +8.85pp；Xmodel「decay 段大幅提升」得到实测确认：CS8 50→65、CX 8.5→33），并<strong>放行「Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay 争超 final」实验</strong>；② <strong>vision 完成 12 集 lmms-eval 评测 + 报告</strong>，并实测发现<strong>自研 w512 视觉塔在 MLLM 下游全面落后官方 RiCEViT（平均 −36pp）</strong>，坐实 ArmA 转 open_clip 从头训的方向。另：news 线停摆已修复。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>Xmodel 对比 + 80B decay 待点火</td><td>Xmodel-2/2.5 全链路实测完成；80B decay 计划书已出+放行</td><td class='green'>🏆 成果落地</td></tr>
+<tr><td class='blue'>vision</td><td>12 集评测 + ArmA</td><td>12 集评测完成；自研 w512 落后 RiCEViT 36pp；ArmA 启动中</td><td class='green'>🟢 推进</td></tr>
+<tr><td class='blue'>zhulong</td><td>S1 + B 臂</td><td>readback_binary r1=75.9%；B.glm-5.3-flash r1=80.4%</td><td class='green'>🟢 推进</td></tr>
+<tr><td class='blue'>harness</td><td>glm53 7×300</td><td>~62%（与 kimi 高度一致）</td><td class='amber'>🟠 评测中</td></tr>
+<tr><td class='blue'>data</td><td>3 路下载</td><td>en_v1_4 65% / WebMix / InternVL；wit_base/SFT/RL 完成</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td class='blue'>news</td><td>恢复常态</td><td>停摆根因（PATH 缺 cline）已修复</td><td class='green'>✅ 已恢复</td></tr>
+</table>
+
+<h2>2. Pretrain —— Xmodel 全链路对比 + 80B decay 放行 🏆</h2>
+<div class='ok'><strong>Xmodel-2/2.5 缩放对比全实测完成</strong>（lm-eval 0-shot 同口径）：</div>
+<table><tr><th>模型/ckpt</th><th>token</th><th>Common8</th><th>Complex6</th></tr>
+<tr><td>Xmodel-2 s1/10K</td><td>39.3B</td><td>46.65%</td><td>8.49%</td></tr>
+<tr><td>Xmodel-2 s1/40K</td><td>157.2B</td><td>50.31%</td><td>—</td></tr>
+<tr><td class='blue'>Xmodel-2 final（decay）</td><td>1.5T</td><td class='blue'>64.82%</td><td>—</td></tr>
+<tr><td class='blue'>Xmodel-2.5 final（decay）</td><td>1.4T</td><td class='blue'>65.40%</td><td class='blue'>32.90%</td></tr>
+<tr><td>BaiZe P-8</td><td>39.6B</td><td>49.21%</td><td>6.81%</td></tr>
+</table>
+<div class='note'><strong>两个结论</strong>：① <strong>BaiZe 早期（&lt;50B）不弱于、反超 Xmodel</strong>（CS8 领先 +8.85pp，44B 已超 Xmodel-2 用 1.5T 的 41.76% 实测）；② <strong>Xmodel 的「decay 段大幅提升」被坐实</strong>（CS8 50→65 +15pp、CX 8.5→33 +24pp）——正是后续 80B decay 实验要复现/超越的对象。</div>
+<div class='ok'><strong>80B decay 实验已放行</strong>：用 <strong>Xmodel-2.5 stable 末 ckpt + BaiZe 自配 80B 数据 + Muon</strong> 做 decay，争 14 集超 Xmodel-2.5 final。计划书已交付（`report_xmodel25_decay_80b_plan_zh.html`），并用 NeMo 训（自带 Muon，禁 find 全树）。</div>
+
+<h2>3. Vision —— 12 集评测完成 + 自研 w512 落后 RiCEViT 🟢</h2>
+<div class='ok'><strong>12 集 lmms-eval 全量完成</strong>：ai2d 60.0% / realworldqa 43.0% / mmmu 42.9% / blink 38.5% / mmstar 26.8% / mmmu_pro 23.1% / MME 总分 847。</div>
+<div class='warn'><strong>关键发现：自研 w512 视觉塔在 MLLM 下游大幅落后官方 RiCEViT</strong>（同 Qwen3-4B + 同 LLaVA-OV1.5 三阶段配置）：平均 <strong>−36pp</strong>，细粒度任务更惨重——docvqa −74pp / chartqa −63pp / ocrbench −62pp / countbench −59pp。根因是「自研小规模从头训的视觉特征质量不足」，非仅分辨率。</div>
+<div class='ok'><strong>ArmA 已启动</strong>：转 open_clip 标准通路从头训视觉编码器（替代不兼容 open_clip 的自研 ViT）。Stage(iv) 报告已交付（含 RiCEViT 对比）。</div>
+
+<h2>4. Zhulong —— S1 readback + B 臂 推进 🟢</h2>
+<div>readback_binary <strong>r1=75.9%</strong>（fresh，远高于 legacy 66.2%）；B.glm-5.3-flash r1=80.4%、r2 code-gen 完成。readback 轴 echo 数据（保真度↓→收敛成本 ×2~4）已补进论文。</div>
+
+<h2>5. Harness / Data / News</h2>
+<div class='note'><strong>harness</strong>：glm-5.3-flash 7×300 ~62%（1306/2100），与 kimi 高度一致（McNemar 99.7% agreement）→ 换 backbone 未显著提升。</div>
+<div class='note'><strong>data</strong>：3 路下载（en_v1_4 65% / WebMix 1420par / InternVL 1624tar）；wit_base、SFT-2605、RL-2609 均完成。</div>
+<div class='ok'><strong>news</strong>：停摆根因（`cline: command not found`，PATH 缺失静默空转）已定位并重启修复，恢复发微头条。</div>
+
+<h2>6. 运维插曲：loop 编排 agent 换 pi 又回退</h2>
+<div class='warn'>尝试把 vision/pretrain loop 的编排 agent 从 cline 换成 <strong>pi（@fleetagent/pi-coding-agent）+ deepseek-v4-pro-cloud</strong>（因 cline 反复卡 MCP/初始化）。但发现 <strong>pi 处理 33KB 任务书大 prompt 会超时/卡住</strong>（小 prompt 秒回、33KB 卡），且 pi 的 trace 在 session 文件而非 loop 日志（不易 tail）。该改动随后被 <strong>revert 回 cline</strong>。教训：任务书过大（已超 32KB 软上限）是 agent 卡顿的共性根因之一，需瘦身。</div>
+
+<h2>7. 今日关键事件回看</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>~08:00</td><td>pretrain 交付 Xmodel-2/2.5 缩放对比（BaiZe 领先 +8.85pp）</td></tr>
+<tr><td>~12:00</td><td>pretrain 80B decay 计划书交付</td></tr>
+<tr><td>~13:00</td><td>vision 12 集 lmms-eval 全量完成</td></tr>
+<tr><td>~15:00</td><td class='red'>vision/pretrain loop 换 pi 又 revert（pi 大 prompt 超时）</td></tr>
+<tr><td>~16:00</td><td class='blue'>vision Stage(iv) 报告 + RiCEViT 对比（自研 w512 落后 36pp）</td></tr>
+<tr><td>~16:44</td><td class='red'>news 停摆根因定位 + 修复</td></tr>
+</table>
+
+<h2>8. 关注 / 风险</h2>
+<ul>
+<li>🔴 <strong>pretrain 80B decay 未点火</strong>（前置：Xmodel-2.5 ckpt 下载 + 80B 分词 + HF→NeMo 转换）。GPU 空转，需尽快推进前置。</li>
+<li>🟠 <strong>vision ArmA</strong> 刚启动，看 open_clip 从头训能否收窄与 RiCEViT 的 36pp 差距。</li>
+<li>🟠 <strong>agent 编排卡顿</strong>：任务书已超 32KB 软上限，是 cline/pi 都卡顿的共性根因，建议瘦身。</li>
+<li>🟠 <strong>harness glm53</strong>：~62%，最终对比待跑完。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_16.html · 数据来源：各线 MEMORY / git log（截至 2026-10-16 ~17:30）· 生成：Cline</footer>
+</body></html>
