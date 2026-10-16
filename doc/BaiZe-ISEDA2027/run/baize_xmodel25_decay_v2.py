@@ -219,6 +219,9 @@ def save_hf_checkpoint(model, tokenizer_dir, save_dir, rank):
         return
     os.makedirs(save_dir, exist_ok=True)
     m = model.module if isinstance(model, DDP) else model
+    # Unwrap torch.compile() wrapper (OptimizedModule has _orig_mod attribute)
+    if hasattr(m, '_orig_mod'):
+        m = m._orig_mod
     m.save_pretrained(save_dir, safe_serialization=True)
     for fn in os.listdir(tokenizer_dir):
         if fn.endswith(('.json', '.txt', '.model', '.py', '.pyc')) or 'token' in fn.lower():
