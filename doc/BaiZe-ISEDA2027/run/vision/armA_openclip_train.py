@@ -57,7 +57,20 @@ def cosine_lr(step, total, warmup, lr_max, lr_min):
 
 
 def parse_shards(data_arg, rank, world_size):
-    """Comma-separated globs and/or snapshot .txt files -> rank-sliced list."""
+    """Comma-separated globs and/or snapshot .txt files -> byte-balanced rank list.
+
+    Efficiency fix (2026-10-16, operator instruction): the old
+    ``all_shards[rank::world_size]`` strided slice on a *sorted* tar list
+    produced unequal byte totals across ranks because webdataset tars vary
+    widely in size.  GPU util evidence: 100/0/100/100/100/100/100/100 %
+    (rank 1 starved → 0% util = straggler).
+
+    New approach: Longest-Processing-Time (LPT) greedy bin-packing — sort
+    shards by file size descending, assign each to the rank with the smallest
+    cumulative bytes.  This minimises the max-minus-min byte spread and
+    eliminates the straggler without changing which shards are used (all
+    10787 shards still consumed, just re-distributed across ranks).
+    """
     all_shards = []
     for _g in data_arg.split(','):
         _g = _g.strip()
@@ -69,8 +82,32 @@ def parse_shards(data_arg, rank, world_size):
         else:
             all_shards.extend(sorted(glob.glob(_g)))
     all_shards = sorted(set(all_shards))
-    my_shards = all_shards[rank::world_size]
-    return my_shards, all_shards
+
+    if world_size <= 1:
+        return list(all_shards), all_shards
+
+    # --- LPT byte-balanced assignment ---
+    sizes = []
+    for s in all_shards:
+        try:
+            sizes.append(os.path.getsize(s))
+        except OSError:
+            sizes.append(0)
+    pairs = sorted(zip(sizes, all_shards), key=lambda x: -x[0])
+    rank_shards = [[] for _ in range(world_size)]
+    rank_bytes = [0] * world_size
+    for sz, sh in pairs:
+        r = min(range(world_size), key=lambda i: rank_bytes[i])
+        rank_shards[r].append(sh)
+        rank_bytes[r] += sz
+
+    if rank == 0:
+        bal = ' '.join(f'r{r}={rank_bytes[r] / 1e9:.2f}GB/{len(rank_shards[r])}t'
+                       for r in range(world_size))
+        mx, mn = max(rank_bytes), min(rank_bytes)
+        log(0, f'[ArmA] LPT shard balance: {bal}  spread={(mx - mn) / 1e9:.2f}GB '
+              f'({(mx - mn) / mx * 100:.1f}% imbalance)')
+    return rank_shards[rank], all_shards
 
 def main():
     ap = argparse.ArgumentParser(description='ArmA open_clip ViT-B/16 from-scratch CLIP')
@@ -98,6 +135,19 @@ def main():
     ap.add_argument('--grad-clip', type=float, default=1.0)
     ap.add_argument('--resume', action='store_true',
                     help='resume from latest.pt in output-dir')
+    # --- Efficiency params (2026-10-16 operator instruction) ---
+    ap.add_argument('--persistent-workers', action='store_true', default=True,
+                    help='keep dataloader workers alive across epochs')
+    ap.add_argument('--prefetch-factor', type=int, default=4,
+                    help='batches prefetched per worker (default 4)')
+    ap.add_argument('--pin-memory', action='store_true', default=True,
+                    help='pin host memory for faster H2D copy')
+    ap.add_argument('--cudnn-benchmark', action='store_true', default=True,
+                    help='enable cudnn.benchmark for fixed 224x224 inputs')
+    ap.add_argument('--fused-adamw', action='store_true', default=True,
+                    help='use fused AdamW optimizer (PyTorch 2.x)')
+    ap.add_argument('--compile', action='store_true', default=False,
+                    help='torch.compile model (optional, needs DDP compat test)')
     args = ap.parse_args()
 
     rank, world_size, local_rank = setup_ddp()
@@ -105,12 +155,27 @@ def main():
     torch.manual_seed(args.seed + rank)
     os.makedirs(args.output_dir, exist_ok=True)
 
+    # --- cudnn.benchmark: input size is fixed at 224x224, so cuDNN can
+    #     auto-select the fastest convolution algorithm (free ~5-10% speedup).
+    if args.cudnn_benchmark:
+        torch.backends.cudnn.benchmark = True
+
     # ---- Model: open_clip ViT-B/16, from scratch ----
+    # Efficiency fix (2026-10-16): keep model in fp32 (master weights) and rely
+    # on autocast for bf16 compute — standard AMP pattern.  Previously the model
+    # was *also* converted to bf16 via precision= arg, duplicating the autocast
+    # bf16 cast (redundant "dual bf16").  fp32 master weights give better
+    # gradient/optimizer precision at zero compute cost (activations still bf16).
     model, _, _ = open_clip.create_model_and_transforms(
-        MODEL_NAME, pretrained=None, precision=args.precision)
+        MODEL_NAME, pretrained=None)
     model = model.to(device)
     n_total = sum(p.numel() for p in model.parameters())
     n_visual = sum(p.numel() for p in model.visual.parameters())
+    # Optional torch.compile (disabled by default — needs DDP+autocast compat test)
+    if args.compile:
+        model = torch.compile(model)
+        log(rank, '[ArmA] torch.compile enabled')
+
     if world_size > 1:
         model = DDP(model, device_ids=[local_rank], find_unused_parameters=False)
     raw_model = model.module if isinstance(model, DDP) else model
@@ -121,8 +186,18 @@ def main():
         local_loss=False, gather_with_grad=False, cache_labels=True,
         rank=rank, world_size=world_size)
     trainable = [p for p in model.parameters() if p.requires_grad]
-    opt = torch.optim.AdamW(trainable, lr=args.lr, betas=(args.beta1, args.beta2),
-                            eps=args.eps, weight_decay=args.wd)
+    # Efficiency fix (2026-10-16): fused=True merges the per-parameter AdamW
+    # kernels into a single CUDA kernel — significant speedup on H100 with
+    # 149M params.  Falls back gracefully if unsupported.
+    try:
+        opt = torch.optim.AdamW(trainable, lr=args.lr, betas=(args.beta1, args.beta2),
+                                eps=args.eps, weight_decay=args.wd, fused=args.fused_adamw)
+        if args.fused_adamw and rank == 0:
+            log(rank, '[ArmA] AdamW fused=True (single-kernel optimizer)')
+    except (TypeError, RuntimeError):
+        log(rank, '[ArmA] fused AdamW unavailable, falling back to standard AdamW')
+        opt = torch.optim.AdamW(trainable, lr=args.lr, betas=(args.beta1, args.beta2),
+                                eps=args.eps, weight_decay=args.wd)
 
 
     # ---- Resume from checkpoint if requested ----
@@ -135,6 +210,16 @@ def main():
             start_step = ckpt.get('step', 0)
             if 'optimizer' in ckpt:
                 opt.load_state_dict(ckpt['optimizer'])
+                # Upcast optimizer state to fp32 if checkpoint was saved with
+                # bf16 model (precision dedup fix changed master weights to fp32).
+                for group in opt.param_groups:
+                    for p in group['params']:
+                        st = opt.state.get(p)
+                        if st:
+                            for k, v in st.items():
+                                if isinstance(v, torch.Tensor) and v.dtype != p.dtype:
+                                    st[k] = v.to(p.dtype)
+                log(rank, f'[ArmA] optimizer state loaded + upcast to {trainable[0].dtype}')
             log(rank, f'[ArmA] RESUMED from {latest_path} at step {start_step}')
         else:
             log(rank, f'[ArmA] --resume but no latest.pt found, starting fresh')
@@ -146,11 +231,17 @@ def main():
         loader = D.build_mixed_loader(my_shards, args.batch_size, tokenizer,
                                       size=224, num_workers=args.num_workers,
                                       shuffle=True, train=True, drop_last=True,
-                                      gpic_caption_type=args.caption_type)
+                                      gpic_caption_type=args.caption_type,
+                                      persistent_workers=args.persistent_workers,
+                                      prefetch_factor=args.prefetch_factor,
+                                      pin_memory=args.pin_memory)
     else:
         loader = D.build_loader(my_shards, args.batch_size, tokenizer,
                                 size=224, num_workers=args.num_workers,
-                                shuffle=True, train=True, drop_last=True)
+                                shuffle=True, train=True, drop_last=True,
+                                persistent_workers=args.persistent_workers,
+                                prefetch_factor=args.prefetch_factor,
+                                pin_memory=args.pin_memory)
 
     log(rank, f'[ArmA] open_clip {MODEL_NAME} from-scratch CLIP training')
     log(rank, f'[ArmA] visual={n_visual/1e6:.1f}M total={n_total/1e6:.1f}M '
@@ -163,6 +254,8 @@ def main():
     log(rank, f'[ArmA] output_dir={args.output_dir}')
 
     # ---- Training loop ----
+    # bf16 dedup (2026-10-16): model is now fp32 (master weights), so autocast
+    # is the SOLE bf16 path — standard AMP.  No more redundant dual bf16.
     if args.precision == 'bf16':
         autocast_ctx = torch.autocast('cuda', dtype=torch.bfloat16)
     elif args.precision == 'amp':

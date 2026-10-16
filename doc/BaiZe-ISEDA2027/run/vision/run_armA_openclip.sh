@@ -12,7 +12,12 @@
 #
 # Config (aligned with ArmC compute budget):
 #   GBS=2048 (MBS=256×8), LR=2e-3, warmup=8000, cosine->2e-4, steps=154500 (~2.7ep)
-#   AdamW wd=0.1 betas=(0.9,0.98), bf16, grad_clip=1.0
+#   AdamW wd=0.1 betas=(0.9,0.98), bf16(AMP), grad_clip=1.0
+#
+# Efficiency fix (2026-10-16, operator instruction):
+#   - LPT byte-balanced shard distribution (fixes straggler GPU util)
+#   - num_workers 6->12, persistent_workers, prefetch_factor=4, pin_memory
+#   - cudnn.benchmark=True, fused AdamW, bf16 dedup (fp32 master + autocast)
 #
 # Launch:
 #   setsid bash run_armA_openclip.sh > /tmp/armA_openclip_train.log 2>&1 < /dev/null &
@@ -44,7 +49,8 @@ echo "[ArmA] model=open_clip ViT-B/16 224px (86.2M visual, 149.6M total, from sc
 echo "[ArmA] objective=CLIP InfoNCE (open_clip.loss.ClipLoss, global gather)" >> "$LOG"
 echo "[ArmA] data=$FAIR_DATA" >> "$LOG"
 echo "[ArmA] schedule: lr=2e-3, warmup=8000, cosine->min_lr=2e-4, steps=$STEPS" >> "$LOG"
-echo "[ArmA] batch=256/GPU, GBS=2048, AdamW wd=0.1 betas=(0.9,0.98), bf16" >> "$LOG"
+echo "[ArmA] batch=256/GPU, GBS=2048, AdamW wd=0.1 betas=(0.9,0.98), bf16(AMP) fused=True" >> "$LOG"
+echo "[ArmA] perf: LPT shard balance, num_workers=12, persistent_workers, prefetch=4, pin_memory, cudnn.benchmark" >> "$LOG"
 echo "[ArmA] output_dir=$OUT" >> "$LOG"
 nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
 
@@ -61,7 +67,9 @@ fi
     --output-dir "$OUT" --steps "$STEPS" \
     --batch-size 256 --lr 2e-3 --min-lr 2e-4 --warmup 8000 \
     --wd 0.1 --beta1 0.9 --beta2 0.98 --precision bf16 --grad-clip 1.0 \
-    --save-every 10000 --log-every 20 --num-workers 6 --seed 1234 \
+    --save-every 10000 --log-every 20 --num-workers 12 --seed 1234 \
+    --persistent-workers --prefetch-factor 4 --pin-memory \
+    --cudnn-benchmark --fused-adamw \
     $RESUME_FLAG >> "$LOG" 2>&1
 
 rc=$?

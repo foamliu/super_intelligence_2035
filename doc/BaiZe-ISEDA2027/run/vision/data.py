@@ -36,7 +36,8 @@ def _no_split(src, group=None):
 
 def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
                  num_workers: int = 6, shuffle: bool = True, train: bool = True,
-                 drop_last: bool = True):
+                 drop_last: bool = True, persistent_workers: bool = False,
+                 prefetch_factor: int = None, pin_memory: bool = False):
     """`shard_list` is an explicit list of tar paths (already rank-sliced)."""
     tf = get_train_transform(size) if train else get_val_transform(size)
     # empty_check=False: datasets with few shards (e.g. en500k = 25 tars) would
@@ -60,14 +61,21 @@ def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
         texts = tokenizer(caps)
         return imgs, texts
 
-    loader = wds.WebLoader(dataset, batch_size=batch_size, num_workers=num_workers,
-                           collate_fn=collate, drop_last=drop_last)
+    loader_kwargs = dict(num_workers=num_workers, collate_fn=collate,
+                         drop_last=drop_last, pin_memory=pin_memory)
+    if num_workers > 0:
+        loader_kwargs['persistent_workers'] = persistent_workers
+        if prefetch_factor is not None:
+            loader_kwargs['prefetch_factor'] = prefetch_factor
+    loader = wds.WebLoader(dataset, batch_size=batch_size, **loader_kwargs)
     return loader
 
 
 def build_mixed_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
                        num_workers: int = 6, shuffle: bool = True, train: bool = True,
-                       drop_last: bool = True, gpic_caption_type='all'):
+                       drop_last: bool = True, gpic_caption_type='all',
+                       persistent_workers: bool = False,
+                       prefetch_factor: int = None, pin_memory: bool = False):
     """Mixed-source loader: handles BOTH GPIC-format and wds-format tars in one
     shard list.
 
@@ -147,8 +155,13 @@ def build_mixed_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
         texts = tokenizer(caps)
         return imgs, texts
 
-    loader = wds.WebLoader(dataset, batch_size=batch_size, num_workers=num_workers,
-                           collate_fn=collate, drop_last=drop_last)
+    loader_kwargs = dict(num_workers=num_workers, collate_fn=collate,
+                         drop_last=drop_last, pin_memory=pin_memory)
+    if num_workers > 0:
+        loader_kwargs['persistent_workers'] = persistent_workers
+        if prefetch_factor is not None:
+            loader_kwargs['prefetch_factor'] = prefetch_factor
+    loader = wds.WebLoader(dataset, batch_size=batch_size, **loader_kwargs)
     return loader
 
 
