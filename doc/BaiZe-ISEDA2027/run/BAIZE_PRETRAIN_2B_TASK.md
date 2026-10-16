@@ -9,7 +9,7 @@
 > - **① 🚫 不换 AdamW —— Muon 不是主因**。P-8 基线（`EXPERIMENTS_PRETRAIN_2B.md:108-120`）**同样是 MBS=2 / GBS≈1024 / seq4094 / DP8 / bf16**，却跑到 **249K tok/s（~17.5s/step、565 TFLOP/s/GPU）** ⇒ **MBS 相同、吞吐差 27%，问题不在 MBS、也不在 batch 形状**。差别在**技术栈**：P-8 = **Megatron-Core 全栈**；本 run = **HF `AutoModelForCausalLM` + 手写 DDP + 手写 `BlendedDataLoader`**（因 Megatron-Core 0.16.1 不实现 Xmodel μP 前向缩放，转换会破坏模型）。Muon 每**优化器步**仅更新一次（共 20346 步），被 **60 个 micro-step** 摊薄 ⇒ **非主因**；且换 AdamW 会**破坏与 Xmodel 官方「同配比·同优化器」的可比性**（本实验立论基础）⇒ **不许换**。
 > - **② 真瓶颈（可修，配方中性）**：数据管线 **单进程 / 无 worker / 无预取**，且**在训练主循环内同步**做 `IndexedDataset` 随机取 doc → `doc.tolist()` → Python `list.extend` 拼到 4096（`baize_xmodel25_decay_train.py:116-138`，纯 Python 逐 token）→ `.to(device)` **未用 `non_blocking`**（L320）⇒ **每 micro-step GPU 都在等 CPU**（60 次/步）。
 > - **③ 梯度检查点默认开着**（L214 `--grad_checkpoint` default=True）→ 反向重算 ≈ **+20~30%** 时间（P-8/Megatron 默认关闭）。
-> - **④ seq / 总 token 存在「铁令冲突」**：计划书口径 = **seq 3712 / 3.56M tok·步⁻¹**（`reports/report_xmodel25_decay_80b_plan_zh.html` §4），而起训脚本按你此前「**4096 = 2¹²**」铁令覆盖为 4096（`baize_xmodel25_decay.sh:17`）⇒ **本项待用户拍板，🚫 本轮不动**。
+> - **④ seq / 总 token 口径已澄清（落地方案见 §⑤）**：计划书口径 = **seq 3712 / 3.56M tok·步⁻¹**（`reports/report_xmodel25_decay_80b_plan_zh.html` §4）；起训脚本曾按「**4096 = 2¹²**」铁令覆盖为 4096（`baize_xmodel25_decay.sh:17`）——**该铁令只约束 BaiZe-2B 自研模型**，本 run 训的是 Xmodel ⇒ **本轮改回 Xmodel 原生 3712**。
 
 **① 先量化（改前必做，10 步）**：主循环加分段计时并打日志 —— `t_data`（next(data_iter) + H2D）/ `t_fwd_bwd` / `t_opt`（zero_grad + clip + muon + adamw），每 10 步打印均值。**用数据定位瓶颈，🚫 不许拍脑袋改配置。**
 **② 配方中性提速（不改变训练语义；改完从 step_532000 重起跑）**：
@@ -19,7 +19,13 @@
 - **d. 可选**：AdamW 组加 `fused=True`。
 **③ 只有在①的分段计时**证明 Muon（含 `num_ns_steps=5` / `scale_mode="spectral"` / FP32 upcast 补丁）**占比显著**时，才允许动优化器 —— 且须**附计时证据**再定是否改。
 **④ 交付**：**tok/s 前后对比表 + 分段计时表 + 新 ETA** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit 前缀 `pretrain perf:`。
-**⑤ 纪律**：🚫 本轮**不动 seq / 总 token**（待用户拍板；若对齐则 3712 + 71.2B ⇒ 19985 步，省 ~11% ≈ 0.5 天，且与官方 apples-to-apples）；⛔ 不干扰 data 线；**任务书已超 32KB ⇒ 本轮须归档已闭合块回 ≤32KB**。
+**⑤ ✅ 本轮执行「seq / 总 token 对齐 Xmodel-2.5」（用户 2026-10-16 澄清：「**4096=2¹²**」铁令**只约束 BaiZe-2B 自研模型**；本 run 训练的是 **Xmodel** ⇒ 按 **Xmodel 原生口径**走，两令不矛盾）**：
+- `baize_xmodel25_decay.sh`：**`SEQ 4096 → 3712`**；**`ITERS 20346 → 19980`**（= **71.2B ÷ (960 × 3712 = 3.56352M tok/步)** ≈ 官方 **20,000 步 × 3.56M**，即 **总 decay token 与官方一致 = 71.2B**）。
+- **`GBS` 保持 960**（与官方 3.56M tok/步 等价）；**优化器仍用 Muon**；**起点不变**（step_532000）；LR 曲线保持 `1.67e-3 → 1e-5`（WSD，warmup 100）。
+- 收益：墙钟 **省 ~11% ≈ 0.5 天**，且与官方 **apples-to-apples**（唯一变量 = 数据配比，本实验的立论目标）。
+**⑥ 一次重起、两件事一起落**：**seq/ITERS 对齐** 与 **§② 的配方中性提速（数据管线 + 关 GC）** 在**同一次重启**完成，避免重复起停；**MBS 的 A/B（2→4）放在重起之后单独测**（不与其它改动叠加，便于归因）。
+**⑦ 交付**：对齐后的 **step / loss / LR / ETA 表** + **提速前后 tok/s 对比** + **分段计时表** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；**并同步更新 `reports/report_xmodel25_decay_80b_plan_zh.html` §4 对照表**（our **80B→71.2B**、**19980 步**、公平性论述改为「**同 token 预算 71.2B，唯一变量 = 数据配比**」）；commit 前缀 `pretrain decay80b:` / `pretrain perf:`。
+**⑧ 纪律**：⛔ 不干扰 data 线；任务书 >32KB 自滚归档。
 
 
 ### 🚨 运维指令 · 2026-10-16 19:0x（⏱ **加急：立刻起训 80B decay，禁止再空转**）· 用户质询 · 最高优先
