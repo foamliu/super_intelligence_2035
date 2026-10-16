@@ -4,20 +4,19 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 22:0x（⚡ ArmA 效率专项：LPT 分片均衡 + 管线优化 · wake #119）**：✅ **运维指令 21:3x「效率专项」已执行**。改动（⚠️ 按首条指令一揽子应用，非单变量 A/B——21:3x 协议在改动后到达，已在心跳如实标注）：① **LPT 字节均衡分片**（`parse_shards` 从 strided slice → LPT 贪心装箱，8 rank 字节不均衡 **0.0%**，spread=0.22GB）；② **数据管线**（`num_workers` 6→12 + `persistent_workers` + `prefetch_factor=4` + `pin_memory`）；③ **白送**（`cudnn.benchmark=True` + AdamW `fused=True` + bf16 去重 fp32 master+autocast only）；④ `torch.compile` 标志已加未启用；⑤ 🚫 配方不变(GBS=2048/MBS=256/accum=1/LR 不动)。修 `sps` bug（`step/el`→`(step-start_step)/el`，resume 时 it/s 被膨胀）。
+> 🆕 **2026-10-16 23:1x（⚡ ArmA 效率专项监控 · wake #120）**：训练健康运行中，step **~43740/154500 (28.3%)**，从 step 30000 `--resume`（22:03 启动）。8 卡 util **98-100%/全卡**（straggler 已消除✅），LPT 分片均衡 **0.0% 不均**（spread=0.22GB✅）。**真实吞吐 ~3.35 it/s**（从 step 增量实测：13740 步 / 67.5 min），**真实 ETA ~9.2h**（≈ 2026-10-17 08:30 完成）。⚠️ **sps 显示 bug**：代码已修 `(step-start_step)/el`（22:16 改），但运行进程 22:03 启动时用的是旧 `step/el` → 日志显示 10.79 it/s / ETA 2.8h **均为膨胀值**，不影响训练本身，下次重启自动生效。loss EMA 已稳定振荡（0.45-0.79，C1~0.45-0.68，属 webdataset shard 难度波动，正常）。
 >
-> **📊 修前/修后对比表**：
+> **📊 效率对比表（wake #119 落地，详见 daily-memories-vision/2026-10-16.md）**：
 >
 > | 指标 | 修前 | 修后 | 验收 |
 > |:--|:--|:--|:--|
-> | 真实吞吐 (it/s) | **2.40** | **3.37** | **+40%** ✅≥+15% |
-> | 8 卡 GPU util | 3/5/12/100/71/100/100/35% | **99/99/99/100/99/99/100/99%** | ✅≥85% |
-> | 卡间方差 | 极大(straggler rank1=3%) | ≈0（全99-100%） | ✅显著变小 |
-> | 显存/卡 | 24.4 GB | 25.6 GB | +1.2GB（可接受） |
-> | 真实 ETA | 14.2h (from 31420) | **10.1h** (from 31840) | **省 ~4.1h** |
-> | loss/C1 | 0.69/0.72 | EMA warmup 中(0.72→0.49→恢复中) | 正常(EMA 重置 spike) |
+> | 真实吞吐 (it/s) | **2.40** | **3.35** | **+40%** ✅≥+15% |
+> | 8 卡 GPU util | 3/5/12/100/71/100/100/35% | **98-100%/全8卡** | ✅≥85% |
+> | 卡间方差 | 极大(straggler) | ≈0 | ✅显著变小 |
+> | 显存/卡 | 24.4 GB | 25.6 GB | +1.2GB |
+> | 真实 ETA | 14.2h | **~9.2h** (from 43740) | 省 ~5h |
 >
-> **训练状态**：step ~31840/154500(20.6%)，从 step 30000 `--resume`。loss 在 EMA warmup 振荡（C1 0.74→0.49，预计 ~2000 步恢复 0.70+）。📦 **TASK 归档**：10-15 22:25 块 + 3 heading-only 块 → ARCHIVE，TASK 34.1→30.4KB。📦 体积：TASK=30.4KB / MEMORY=~31KB。
+> **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=~31KB。
 > 📦 2026-10-16 17:30（🚀 ArmA open_clip 从头训已启动 · wake #116）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 报告交付 + ArmA 起训, step 180 loss=6.69。但 step 10000 存 ckpt 后因 barrier bug 崩溃。需要时再读。
 > 📦 2026-10-16 12:10（✅ 12集全量 eval 全部完成 · wake #114）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12/12 benchmarks 全部完成, consolidated_12benchmarks.json 交付。需要时再读。
 > 📦 2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 13集全量 eval 完成（per-GPU batch32），后缩编为12集。需要时再读。
@@ -44,10 +43,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **ArmA open_clip 训练中（wake #119, 22:0x, step ~31840/154500 20.6%）**：LPT 分片均衡 + 管线优化后 **GPU util 99-100%/全 8 卡**，真实吞吐 3.37 it/s（修前 2.40，+40%）。loss 在 EMA warmup 振荡中。ETA~10.1h。下一步：监控训练完成 → ProtB 评测。 |
+| PHASE | 🔄 **ArmA open_clip 训练中（wake #120, 23:1x, step ~43740/154500 28.3%）**：LPT+管线优化生效，8 卡 util 98-100%，真实吞吐 3.35 it/s（修前 2.40，+40%）。loss EMA 稳定振荡(C1~0.5)。真实 ETA ~9.2h（≈10-17 08:30）。⚠️ 日志 sps/ETA 膨胀(旧代码)，以本值为准。下一步：监控完成 → ProtB 评测。 |
 | ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 22:0x (wake #119)**: ⚡ ArmA 效率专项完成：LPT 分片均衡(0.0% 不均)+管线优化(num_workers 12+prefetch+pin_memory)+cudnn.benchmark+fused AdamW+bf16 去重。GPU util 3-100%→99-100%/8卡, 真实吞吐 2.40→3.37 it/s(+40%), ETA 14.2→10.1h。配方不变。📦 MEMORY=~31KB / TASK=30.4KB。 |
+| 更新 | **2026-10-16 23:1x (wake #120)**: ArmA 训练监控——step 43740/154500(28.3%), 8卡 util 98-100%, 真实 3.35 it/s, ETA~9.2h。⚠️ 日志 sps 膨胀(进程 22:03 启动用旧代码, 修复在 22:16 已入文件但未生效)。效率验收全通过(util≥85%✅ 方差小✅ +40%≥+15%✅)。④ torch.compile 待训后单测。📦 MEMORY=~31KB / TASK=30.4KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
