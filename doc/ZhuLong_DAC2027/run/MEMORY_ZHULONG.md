@@ -1,7 +1,7 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
-<!-- heartbeat 2026-10-16 15:01 -->
+<!-- heartbeat 2026-10-16 15:37 -->
 
 
 
@@ -74,6 +74,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
+- [2026-10-16 15:37] 🔎 **巡检（B.glm-5.3-flash r2 code-gen ~2h57m健康·不动作退出）**：ps -p 1253562→alive(etime 02:57:15·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_glm-5.3-flash_r2.log 11.5MB mtime 15:36(live写入·code-gen中·尾段 pyAether search_apis techGetTechLib)。**canary全绿**：ACCESS RESTRICTED=214(last50000·hook live✅)·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors(license/Connection)=0✅·无pass结果(r2仍code-gen)。**infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(404=alive)+RAG:9006(404=alive)✅·/home=22G(≥8G✅·95%使用需关注)·loop有proxy✅·ops relay alive✅·cline✅。r2仍code-gen(~2h57m·B臂典型~3-5h·r1~3h50m→继续等)→不收割不切臂·按§7 Step A(ps有输出→什么都不做退出)。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 1253562` alive→巡检退出；GONE→读 r2 log 尾段（若Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_124025·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic·模板=run_glm-5.3-flash_r1_regrade.sh 改 batch 即可）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r2有效→r3启动(同 r2 命令·export PYTHON)。⚠️查r2用`ps -p 1253562`勿用pgrep -f。⚠️/home=22G 95%若<8G需暂停清理。📝运维令(二十三) 5/5收口后接 B.deepseek-v4-flash fresh 5-run；运维令(二十六) 之后接 C1.wo_selfexpl 干净 5-run（严格V2·自探索OFF·替换 81.4±4.1%†脚注）。
 - [2026-10-16 15:01] 🔎 **巡检（B.glm-5.3-flash r2 code-gen ~2h21m健康·不动作退出）**：ps -p 1253562→alive(etime 02:20:56·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_glm-5.3-flash_r2.log 11.4MB mtime 15:00(live写入·code-gen中·尾段 pyAether run_code 沙盒执行验证 dbDelLib/aeDelLib)。**canary全绿**：ACCESS RESTRICTED=211(last50000·hook live✅)·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors(license/Connection)=0✅·无pass结果(r2仍code-gen)。**infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(404=alive)+RAG:9006(404=alive)✅·/home=22G(≥8G✅·95%使用需关注)·loop有proxy✅·ops relay alive✅·cline✅。r2仍code-gen(~2h21m·B臂典型~3-5h·r1~3h50m→继续等)→不收割不切臂·按§7 Step A(ps有输出→什么都不做退出)。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 1253562` alive→巡检退出；GONE→读 r2 log 尾段（若Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_124025·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic·模板=run_glm-5.3-flash_r1_regrade.sh 改 batch 即可）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r2有效→r3启动(同 r2 命令·export PYTHON)。⚠️查r2用`ps -p 1253562`勿用pgrep -f。⚠️/home=22G 95%若<8G需暂停清理。📝运维令(二十三) 5/5收口后接 B.deepseek-v4-flash fresh 5-run；运维令(二十六) 之后接 C1.wo_selfexpl 干净 5-run（严格V2·自探索OFF·替换 81.4±4.1%†脚注）。
 - [2026-10-16 14:24] 🔎 **巡检（B.glm-5.3-flash r2 code-gen ~1h44m健康·不动作退出）**：ps -p 1253562→alive(etime 01:43:41·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_glm-5.3-flash_r2.log 11.2MB mtime 14:24(live写入·code-gen中·尾段 pyAether run_code 沙盒执行验证)。**canary全绿**：ACCESS RESTRICTED=223(last50000·hook live✅)·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors(license/Connection)=0✅·无pass结果(r2仍code-gen)。**infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(404=alive)+RAG:9006(404=alive)✅·/home=13G(≥8G✅·97%使用需关注)·loop有proxy✅·ops relay alive✅·cline✅。r2仍code-gen(~1h44m·B臂典型~3-5h·r1~3h50m→继续等)→不收割不切臂·按§7 Step A(ps有输出→什么都不做退出)。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 1253562` alive→巡检退出；GONE→读 r2 log 尾段（若Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_124025·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic·模板=run_glm-5.3-flash_r1_regrade.sh 改 batch 即可）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r2有效→r3启动(同 r2 命令·export PYTHON)。⚠️查r2用`ps -p 1253562`勿用pgrep -f。⚠️/home=13G 97%若<8G需暂停清理。📝运维令(二十三) 5/5收口后接 B.deepseek-v4-flash fresh 5-run；运维令(二十六) 之后接 C1.wo_selfexpl 干净 5-run（严格V2·自探索OFF·替换 81.4±4.1%†脚注）。
 - [2026-10-16 13:48] 🔎 **巡检（B.glm-5.3-flash r2 code-gen ~1h08m健康·不动作退出）**：ps -p 1253562→alive(etime 01:07:41·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_glm-5.3-flash_r2.log 9.7MB mtime 13:48(live写入·code-gen中·尾段写文件 get_device_classification.py)。**canary全绿**：ACCESS RESTRICTED=186(last50000·hook live✅)·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors(license/Connection)=0✅·无pass结果(r2仍code-gen)。**infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(404=alive·PID146061)+RAG:9006(404=alive·PID3503518)✅·/home=15G(≥8G✅·97%使用需关注)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·ops relay alive✅·cline✅。.env=full锚点(PHI_BUDGET=0/PHI_LAGGED=0/READBACK=full✅)。r2仍code-gen(~1h08m·B臂典型~3-5h·r1~3h50m→继续等)→不收割不切臂·按§7 Step A(ps有输出→什么都不做退出)。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 1253562` alive→巡检退出；GONE→读 r2 log 尾段（若Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_124025·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic·模板=run_glm-5.3-flash_r1_regrade.sh 改 batch 即可）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r2有效→r3启动(同 r2 命令·export PYTHON)。⚠️查r2用`ps -p 1253562`勿用pgrep -f。⚠️/home=15G 97%若<8G需暂停清理。📝运维令(二十三) 5/5收口后接 B.deepseek-v4-flash fresh 5-run；运维令(二十六) 之后接 C1.wo_selfexpl 干净 5-run（严格V2·自探索OFF·替换 81.4±4.1%†脚注）。
@@ -139,44 +140,7 @@ WAITING: 1
 - [2026-10-15 01:13] [⏩ 已滚出] ✅ phi_lagged r3 code-gen✅done → regrade启动 PID1234213 详情见 daily-memories/2026-10-15.md §01:13。
 - [2026-10-15 00:38] [⏩ 已滚出] 🔎 巡检(phi_lagged r3 code-gen ~1h41m健康·不动作退出) 详情见 daily-memories/2026-10-15.md §[滚出 01:49→00:38]。
 - [2026-10-15 00:10] [⏩ 已滚出] 🔎 巡检(phi_lagged r3 code-gen ~1h07m健康·不动作退出) 详情见 daily-memories/2026-10-15.md §00:10。
-- [2026-10-14 23:31] [⏩ 已滚出] 🔎 巡检(phi_lagged r3 code-gen ~34min健康·不动作退出) 详情见 daily-memories/2026-10-15.md §[滚出 01:49→23:31]。
-- [2026-10-14 22:57] [⏩ 已滚出] 🔧 phi_lagged r3 修复重启 PID686884（漏 export PYTHON→Step2 pydantic死→重启 batch=2026_1014_225714）详情见 daily-memories/2026-10-14.md §[滚出 02:26]。
-- [2026-10-14 22:22] [⏩ 已滚出] ✅ phi_lagged r2✅收割=76.6% → r3 code-gen 启动 PID554055 详情见 daily-memories/2026-10-15.md §[滚出 13:59→22:22]。
-- [2026-10-14 21:46] [⏩ 已滚出] ✅ phi_lagged r2 code-gen✅done(158/0/0) → regrade启动 PID400780 详情见 daily-memories/2026-10-15.md §[滚出 13:59→21:46]。
-- [2026-10-14 21:10] [⏩ 已滚出] 🔎 巡检(phi_lagged r2 code-gen ~1h36m健康·不动作退出) 详情见 daily-memories/2026-10-14.md §[滚出 21:10→13:40]。
-- [2026-10-14 20:39] [⏩ 已滚出] 🔎 巡检(phi_lagged r2 ~1h05m健康·不动作退出) 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 20:07] [⏩ 已滚出] 🔎 巡检(phi_lagged r2 ~33min健康·不动作退出) 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 19:34] [⏩ 已滚出] ✅ phi_lagged r1✅收割=74.7% → r2 code-gen 启动 PID4009943 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 19:00] [⏩ 已滚出] ✅ phi_lagged r1 code-gen✅done → regrade启动 PID3846739 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 18:24] [⏩ 已滚出] 🔎 巡检(phi_lagged r1 ~1h43m健康·不动作退出) 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 17:52] [⏩ 已滚出] 🔎 巡检(phi_lagged r1 ~1h12m健康·不动作退出) 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 17:17] [⏩ 已滚出] 🔎 巡检(phi_lagged r1 ~37min健康·不动作退出) 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 16:41] [⏩ 已滚出] ✅ phi_k1 5/5=63.8±3.2%✅收割 → 切 phi_lagged → r1 code-gen 启动 PID3206663 详情见 daily-memories/2026-10-14.md §16:41。
-- [2026-10-14 14:18] [⏩ 已滚出] ✅ phi_k1 r4 收割=64.6%✅有效→r5 code-gen 启动 PID2555759 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 13:40] [⏩ 已滚出] 🖨️ 运维令十九编译验证✅ + phi_k1 r4 收割启动regrade 详情见 daily-memories/2026-10-14.md。
-- [2026-10-14 12:49] [⏩ 已滚出] 🔎 巡检（phi_k1 r4 code-gen ~1h10m健康·不动作退出·canary✅ACCESS RESTRICTED=706+PHI-BUDGET-EXHAUSTED=892）详情见 daily-memories/2026-10-14.md §[滚出 02:26]。
-- [2026-10-14 12:14] [⏩ 已滚出] 🔎 巡检(phi_k1 r4 code-gen ~36min健康·不动作退出) 详情见 daily-memories/2026-10-14.md §12:14。
-- [2026-10-14 11:38] [⏩ 已滚出] ✅ phi_k1 r3 收割=58.2%✅有效→r4 code-gen 启动 PID1915151 详情见 daily-memories/2026-10-14.md §11:38。
-- [2026-10-14 10:59] [⏩ 已滚出] ✅ **phi_k1 r3 code-gen完成→regrade启动 PID1753362** 详情见 daily-memories/2026-10-14.md §10:59。
-- [2026-10-14 10:21] [⏩ 已滚出] ✍️ 论文改进（运维令十七·空窗期·零GPU）P0+P1+P2 已改 .tex 详情见 daily-memories/2026-10-14.md §10:21。
-- [2026-10-14 09:28] [⏩ 已滚出] 📝 论文审视报告（运维令十六）✅ HTML 已交付 详情见 daily-memories/2026-10-14.md §09:28。
-- [2026-10-14 08:44] [⏩ 已滚出] ✅ phi_k1 r2 收割=66.5%✅有效→r3启动 PID1122046 详情见 daily-memories/2026-10-14.md §08:44。
-- [2026-10-14 08:07] [⏩ 已滚出] ✅ phi_k1 r2 code-gen完成→regrade启动PID977699 详情见 daily-memories/2026-10-14.md §08:07。
-- [2026-10-14 07:32] [⏩ 已滚出] 🔎 巡检(phi_k1 r2 ~1h09m健康·不动作退出) 详情见 daily-memories/2026-10-14.md §07:32。
-- [2026-10-14 06:54] [⏩ 已滚出] 🔎 巡检(phi_k1 r2 ~32min健康·不动作退出) 详情见 daily-memories/2026-10-14.md §06:54。
-- [2026-10-14 06:22] [⏩ 已滚出] ✅ phi_k1 r1 收割=65.2%✅有效→r2启动 PID594067 详情见 daily-memories/2026-10-14.md §06:22。
-- [2026-10-14 05:44] [⏩ 已滚出] ✅ phi_k1 r1 code-gen完成→regrade启动PID459959 详情见 daily-memories/2026-10-14.md §05:44。
-- [2026-10-14 05:09] [⏩ 已滚出] 🔎 巡检(phi_k1 r1 ~70min健康·不动作退出) 详情见 daily-memories/2026-10-14.md §05:09。
-- [2026-10-14 04:38] [⏩ 已滚出] 🔎 巡检(phi_k1 r1 ~39min健康·不动作退出) 详情见 daily-memories/2026-10-14.md §04:38。
-- [2026-10-14 04:04] [⏩ 已滚出] 🔎 巡检(phi_k1 r1 ~4min健康·不动作退出) 详情见 daily-memories/2026-10-14.md §04:04。
-- [2026-10-14 04:00] [⏩ 已滚出] 🛠️ 去重修正：发现并发 race→kill 全部污染 r1+孤儿 cline→停 loop→起 clean phi_k1 r1 PID66700 详情见 daily-memories/2026-10-14.md §04:00。
-- [2026-10-14 03:48] [⏩ 已滚出] ✅ phi_k3 r5=67.1%✅有效→phi_k3 5/5=69.1±2.5%→切phi_k1→r1启动PID15230 详情见 daily-memories/2026-10-14.md §03:48。
-- [2026-10-14 03:11] [⏩ 已滚出] ✅ phi_k3 r5 code-gen完成→regrade启动PID4067351/4067354 详情见 daily-memories/2026-10-14.md §03:11。
-- [2026-10-14 02:37] [⏩ 已滚出] 🔎 巡检(phi_k3 r5 ~1h07m健康·不动作退出) 详情见 daily-memories/2026-10-14.md §02:37。
-- [2026-10-14 02:05] [⏩ 已滚出] 🔎 巡检(phi_k3 r5 ~35min健康·不动作退出) 详情见 daily-memories/2026-10-14.md §02:05。
-- [2026-10-14 01:29] [⏩ 已滚出] ✅ phi_k3 r4 regrade=69.6%✅有效→r5启动PID3661493 详情见 daily-memories/2026-10-14.md §01:29。
-- [2026-10-14 00:55] [⏩ 已滚出] ✅ phi_k3 r4 code-gen完成→regrade启动PID3524495 详情见 daily-memories/2026-10-14.md §00:55。
-- [2026-10-14 00:16] [⏩ 已滚出] 🔎 巡检(phi_k3 r4 ~1h11m健康·不动作退出) 详情见 daily-memories/2026-10-14.md §00:16。
+- [2026-10-14 指针块] [⏩ 已滚出] 38 条 10-14 单行指针（phi_lagged r1-r3·phi_k1 r1-r5 收割/巡检/切换·运维令十六/十七/十九·论文改进）已原文搬入 daily-memories/2026-10-14.md §[滚出 10-14 指针块]；各条原始详情见 daily-memories/2026-10-14.md §HH:MM。
 - [2026-10-12 → 10-13 指针块] [⏩ 已滚出] 82 条 10-12/10-13 单行指针（巡检/收割/切换记录，phi_k10 r1-r5·phi_k3 r1-r5·full_v3 r1-r4·运维令十三/十四/十五）已原文搬入 daily-memories/2026-10-13.md §[滚出 04:21→10-12/10-13 指针块]；各条原始详情见 daily-memories/2026-10-12.md / 2026-10-13.md §HH:MM。
 
 > **[2026-10-04 → 10-11 早期流水]**：已全部原文搬入 `daily-memories/2026-10-{04..11}.md`（各日 §HH:MM）。涉及 B.glm-5.2/flash/kimi/doubao 全 5 轮、C1.pure_llm/rag/wo_retrieval、C1.full(V2) r1-r5、运维指令(一)~(九)、RAG排查报告等。如需查阅见对应日期日报。
