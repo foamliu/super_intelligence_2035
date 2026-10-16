@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 109 -->
+<!-- RUN_ID: 110 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,42 @@
 
 ---
 
+## RUN_ID 110 — 🔬 **decay 在训确认 · 稳定性 · 日志 · 启动者溯源**
+
+> 背景：RUN_ID 109 实测 `.29` 8×H100 **全 100% / 57GB 每卡**，`baize_xmodel25_decay_train.py` ×8 rank 在跑，但**进程 etime 仅 ~32s** ⇒ 须分辨「刚起」还是「崩溃重启环」。
+> 另：pretrain loop 活着（pid 1294147）但日志 `invoking pi` + 连续 3 次 `nothing of ours to commit` ⇒ agent 空转不写记忆。
+> ⚠️ 只读；🚫 不 kill；`pgrep/ps` 匹配显式排除 cline/bun。
+
+```bash
+set -u
+echo "=== RUN_ID 110 · decay 在训确认+稳定性 · $(date '+%F %T') · host=$(hostname) ==="
+S1() { ps -eo pid=,ppid=,etime=,args= 2>/dev/null | grep -E 'baize_xmodel25_decay_train|pt_elastic' | grep -v grep | cut -c1-125 | head -12; }
+echo "--- A) 进程两采样（20s 间隔；PID 变 ⇒ 崩溃重启环）---"
+echo "[t0]"; S1
+sleep 20
+echo "[t0+20s]"; S1
+echo "--- B) GPU↔PID ---"
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | head -12
+echo "--- C) decay / ArmA 日志 ---"
+for L in $(ls -t /nas_train/app.e0031982/datasets/baize-pretrain*/logs/*.log /tmp/*decay*.log /tmp/*armA*.log /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/*decay*.log 2>/dev/null | head -4); do
+  echo "== $L"; ls -l "$L" 2>/dev/null | cut -c1-70; tail -10 "$L" 2>/dev/null | cut -c1-165
+done
+echo "--- D) run/ 最新脚本（找起训脚本/重试环）---"
+ls -lt /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ 2>/dev/null | head -9 | cut -c40-130
+echo "--- E) loop 脚本现在叫谁 ---"
+grep -nE 'invoking|MODEL=|MODEL_' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh 2>/dev/null | head -8 | cut -c1-130
+echo "--- F) pretrain 最近提交 ---"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && git log --date=format:'%m-%d %H:%M' --pretty=format:'%ad|%h|%s' -3 -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo; echo "=== DONE 110 ==="
+```
+
 ## RUN_ID 109 — 🩺 **pretrain loop 健康核查 + 按需重启**（治「放行令无人执行」）
 
 > 背景：10-16 **13:47「放行 80B decay」** + **15:32「NeMo 训 Xmodel」**两条令之后，pretrain 线**自 13:19 起零提交**（连 30min auto-commit 都停）⇒ 疑 loop 进程已死 / 卡死。
 > 本块：① 探 .29 GPU + loop 进程 + loop 日志；② **仅当「未存活」时** `setsid` 重启（避免双实例）；③ 顺带确认 .12 vision ArmA 在训。
 > ⚠️ 进程匹配**显式排除 cline/bun**（RUN_ID 107 教训）；🚫 不 dump cmdline 全文；🚫 不 kill 任何进程（含 loop）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 109 · pretrain loop 核查 · $(date '+%F %T') · host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
