@@ -28,10 +28,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **limit50 14集 eval 成功完成（wake #112b, 09:18-09:19, 65s）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅。三重修复：① HF_HUB_OFFLINE=1 (429) ② 移除 mmvet+hallusion (GPT-4 API) ③ setsid (parent 进程被杀)。14 benchmarks 全跑通，结果存 JSON。GPU 8×H100 全空闲。下一步：全量 14 集 eval (无 --limit) → 加 vqav2 → ArmA retrain。 |
+| PHASE | 🔄 **全量 14集 eval 运行中（wake #112b, 09:23, port 29561, setsid）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅。✅ limit50 smoke test 通过 (65s)。🔄 全量 eval: 8 GPU util 35-51%, gen_text 产出正常, 预计 60-120min。下一步：全量 eval 完成 → ArmA retrain。 |
 | ERROR_COUNT | 19（①~⑯ 同前 ⑰ 磁盘满崩 ⑱ 429 崩 ⑲ GPT-4 API crash → 三重修复: offline+移除API集+setsid） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 09:19 (wake #112b)**: 🎉 limit50 14集 eval 成功! 65s, 0 crash。结果: scienceqa=72%, ai2d=58%, gqa=46%, pope=42%, mmbench=82, mmmu=38%, seedbench=34%, realworldqa=34%, infovqa=17.9%, vizwiz=10.6%, chartqa=10%, textvqa=6%, docvqa=3.8%, ocrbench=0%。JSON=eval_step3500_1792113500.json(10.6MB)。三重修复链完整。📦 MEMORY=29KB / TASK=28.6KB。 |
+| 更新 | **2026-10-16 09:25 (wake #112b)**: ✅ limit50 通过→🔄 全量 14集 eval 已启动 (09:23:44, PID 3679899 ppid=1 setsid, port 29561)。8 GPU util 35-51%, 模型加载✅, gen_text 产出正常。预计 60-120min。📦 MEMORY=28KB / TASK=28.6KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
