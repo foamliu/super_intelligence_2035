@@ -4,19 +4,19 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 23:1x（⚡ ArmA 效率专项监控 · wake #120）**：训练健康运行中，step **~43740/154500 (28.3%)**，从 step 30000 `--resume`（22:03 启动）。8 卡 util **98-100%/全卡**（straggler 已消除✅），LPT 分片均衡 **0.0% 不均**（spread=0.22GB✅）。**真实吞吐 ~3.35 it/s**（从 step 增量实测：13740 步 / 67.5 min），**真实 ETA ~9.2h**（≈ 2026-10-17 08:30 完成）。⚠️ **sps 显示 bug**：代码已修 `(step-start_step)/el`（22:16 改），但运行进程 22:03 启动时用的是旧 `step/el` → 日志显示 10.79 it/s / ETA 2.8h **均为膨胀值**，不影响训练本身，下次重启自动生效。loss EMA 已稳定振荡（0.45-0.79，C1~0.45-0.68，属 webdataset shard 难度波动，正常）。
+> 🆕 **2026-10-17 00:30（⚡ ArmA 效率专项监控 · wake #121）**：训练健康运行中，step **~59480/154500 (38.5%)**，从 step 30000 `--resume`（22:03 启动，已跑 146min）。8 卡 util **95-100%/全卡**（straggler 已消除✅），LPT 分片均衡 **0.0% 不均**（spread=0.22GB✅）。**真实吞吐 3.36 it/s**（从 step 增量实测：(59480−30000)/(146.1min×60)=3.36），**真实 ETA ~7.9h**（≈ 2026-10-17 08:20 完成）。⚠️ **sps 显示 bug**：代码已修 `(step-start_step)/el`，但运行进程 22:03 启动时用的是旧 `step/el` → 日志显示 6.79 it/s / ETA 3.9h **均为膨胀值**，不影响训练本身，下次重启自动生效。loss EMA 稳定振荡（0.33-0.63，C1~0.53-0.72，属 webdataset shard 难度波动，正常）。checkpoint_40000/50000 已存。
 >
-> **📊 效率对比表（wake #119 落地，详见 daily-memories-vision/2026-10-16.md）**：
+> **📊 效率对比表（wake #119 落地，wake #121 实测复核确认，详见 daily-memories-vision/2026-10-16.md）**：
 >
 > | 指标 | 修前 | 修后 | 验收 |
 > |:--|:--|:--|:--|
-> | 真实吞吐 (it/s) | **2.40** | **3.35** | **+40%** ✅≥+15% |
-> | 8 卡 GPU util | 3/5/12/100/71/100/100/35% | **98-100%/全8卡** | ✅≥85% |
+> | 真实吞吐 (it/s) | **2.40** | **3.36** | **+40%** ✅≥+15% |
+> | 8 卡 GPU util | 3/5/12/100/71/100/100/35% | **95-100%/全8卡** | ✅≥85% |
 > | 卡间方差 | 极大(straggler) | ≈0 | ✅显著变小 |
 > | 显存/卡 | 24.4 GB | 25.6 GB | +1.2GB |
-> | 真实 ETA | 14.2h | **~9.2h** (from 43740) | 省 ~5h |
+> | 真实 ETA | 14.2h | **~7.9h** (from 59480) | 省 ~6h |
 >
-> **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=~31KB。
+> **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=~32KB。
 > 📦 2026-10-16 17:30（🚀 ArmA open_clip 从头训已启动 · wake #116）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 报告交付 + ArmA 起训, step 180 loss=6.69。但 step 10000 存 ckpt 后因 barrier bug 崩溃。需要时再读。
 > 📦 2026-10-16 12:10（✅ 12集全量 eval 全部完成 · wake #114）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12/12 benchmarks 全部完成, consolidated_12benchmarks.json 交付。需要时再读。
 > 📦 2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 13集全量 eval 完成（per-GPU batch32），后缩编为12集。需要时再读。
@@ -24,16 +24,8 @@ WAITING: 1
 > 📦 2026-10-16 05:13（Part B 全验收 ✅✅✅ · wake #109）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60), precache 主跑尚在进行。需要时再读。
 > 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
 > 📦 2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败 + TASK 归档 · wake #106）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 旧缓存复用, 缓存路径 /tmp→/data 修复, seedbench retry 脚本就绪, TASK 归档 5 块 35.9→26.5KB。需要时再读。
-> 📦 2026-10-15 23:28（open_clip wrapper + LLaVA-OV HF export ✅ · wake #105）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ open_clip_baize.py + export_llava_ov_hf.py + test 2/2 PASSED (CPU), embed_dim=768, image_token_index=151655。需要时再读。
-> 📦 2026-10-15 20:30（lmms-eval 17 集 multi-GPU 评测启动 · wake #103）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1.5/2 完成, multi-GPU 适配, ai2d smoke 通过, limit50 启动后因磁盘满崩溃。需要时再读。
-> 📦 2026-10-15 ~10:23（Stage-1 Alignment 训练完成 ✅ · wake #100）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ stage1_train.py 2500步 loss 10.2→4.3，5 checkpoint，GPU 10.1GB。需要时再读。
-> 📦 2026-10-15 10:30（vision report 全景总结交付 · wake #98）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
-> 📦 2026-10-15 04:17（keepalive · 全任务已完成 · wake #93）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ CPU 5/5 PASSED, GPU 空闲, 无新指令。需要时再读。
-> 📦 2026-10-15 03:42（ArmC eval chain 全部完成 + 结果报告交付 · wake #92）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ eval 4/4 全提升(ProtB 68.25% Δ+1.20pp, zs 46.17% Δ+5.53pp), 报告交付, MLLM bridge 5/5 PASSED。需要时再读。
-> 📦 2026-10-15 ~02:09（wake #90 ArmC eval chain 进展）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB seed 0 streaming 151/294, eval chain 运行中, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-15 ~01:16（wake #88 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 154,080(99.7%), C1=0.6656, ETA~4min, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-15 ~00:41（wake #87 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 150,900(97.6%), C1=0.6945, CPU 5/5 PASSED。需要时再读。
-> 📦 2026-10-15 ~00:10（wake #86 ArmC 监控）已归档 → daily-memories-vision/2026-10-15.md；**结论**：step 147,480(95.5%), C1=0.6696, CPU 5/5 PASSED。需要时再读。
+> 📦 2026-10-15 全天（wake #88~#105, 18 条📦指针: Stage-1/1.5/2 训练+lmms-eval multi-GPU+precache+open_clip wrapper+HF export+报告）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1(2500步)+Stage-1.5(20000步)+Stage-2(3500步,loss=1.4853) 完成；open_clip_baize.py+export_llava_ov_hf.py test 2/2 CPU PASSED；report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
+> 📦 2026-10-16 00:40~06:23（wake #106~#110, 5条: precache 监控+缓存路径修复+Part B 验收+precache 主跑）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60)；precache 15OK/2FAIL。需要时再读。
 > 📦 2026-10-14 全天（wake #69~#85, 14 条）已归档 → daily-memories-vision/2026-10-14.md + 2026-10-15.md；**结论**：ArmC 训练全程健康(C1 0.54→0.66, 154500步完成), MLLM bridge 7文件交付, 论文 P0+P1 改稿 12页 0err, Stage(iv) 可行性评估 28.5KB HTML。需要时再读。
 > ✅ **④-4ep 基线（COMPLETE）**: ProtB 67.05±0.02% / ProtA 56.70% / zs 40.64%/72.64% / k-NN 42.35%. final_loss=0.0805, C1=0.5932, 748,404 steps, 60,545s. VERDICT: MODERATE, DIMINISHING. 详见 EXPERIMENTS_VISION.md §9.5/§9.7.
 > 📦 2026-10-13 12:43（④-4ep 评测完成）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB 67.05±0.02%, 递减确认。需要时再读。
@@ -239,12 +231,10 @@ WAITING: 1
 
 > 📦 [Oct 13~14] 本唤醒流水旧条目（Wake #45~#84, 含 ArmC 监控/MLLM bridge/报告刷新/④-4ep eval/外部编码器, ~15条）已归档 → daily-memories-vision/2026-10-{13,14}.md。**关键结论**：ArmC 154500步完成(ProtB 68.25%), ④-4ep ProtB 67.05%, MLLM bridge 5/5 PASSED, 外部编码器 SigLIP2 87.46% 最高。需要时再读。
 > 📦 10-06~10-12 早期流水（R12b/scaling/fair-rerun/V3/②probe/④-2ep/④-4ep, ~40条）已归档 → daily-memories-vision/2026-10-{06..12}.md。**关键结论**：E1fair vs E2fair Δlp=+0.17pp indistinguishable; ④-4ep ProtB 67.05% MODERATE/DIMINISHING; ④-2ep ProtB 65.37%。需要时再读。
-- [03:55 Oct16] **Wake #108**: 🔄 precache 15/17 (vqav2 41% downloading 28/68 files @~45s/file, infovqa pending, ETA~1-2h)。✅ watcher PID 3905600/3905610 健康(1.1h 稳定)。✅ Part A 旧缓存复用确认(wake #106 done, 6 集 cp -a 到 /nas_env)。✅ Part B open_clip_baize.py + export_llava_ov_hf.py 就绪(test 2/2 CPU PASSED)。✅ GPU 8×H100 全空闲(0% util)。📦 MEMORY 归档减重: 14条 Oct14 📦→1条 + 本唤醒流水旧条目→2条汇总。📦 体积：TASK=26.5KB / MEMORY=~26KB（归档 ~5KB → daily-memories-vision/）。
-- [05:13 Oct16] **Wake #109**: 🎉 **Part B 三项验收全通过**：① open_clip GPU 前向 ✅（`baize-vit-512` bf16, `encode_image`→`[2,196,512]`, 无 NaN/Inf, `vision_config` 全字段: 224/16/512/30/512/196）；② LLaVA-OV HF 导出 ✅（持久目录 `baize_llava_ov_hf/` 8 文件: config.json+preprocessor+open_clip_config+pytorch_model.bin(507MB)+chat_template+modeling×3, AutoConfig 读 `image_token_index=151655`）；③ **ai2d --limit 5 = 0.6000** ✅（3/5 正确, GPU 0 单卡 36s, 管线: BaizeVision→projector→Qwen3-4B LoRA→generate）。🔄 precache 15/17 (vqav2 78% 112/143 @~48s/file ≈25min, infovqa pending)。✅ watcher PID 3905600 健康。✅ GPU 8×H100 全空闲。📦 体积：TASK=26.5KB / MEMORY=25.9KB（无归档）。
-- [08:45 Oct16] **Wake #111**: ❌ **limit50 eval 被 abort** — /tmp 98%满(67G lmms-eval cache, 仅 2.4G free < 5G threshold)。📊 precache 全部完成: 16/17 OK (seedbench retry ✅ 4175s arrow 26G; vqav2 raw 在 hub 但 arrow 生成失败)。🔧 **修复**: 写 `launch_limit50_nasenv.sh` — 将 67G /tmp cache `cp -a`→/nas_env(9.7T), 完成后删 /tmp cache, 用 /nas_env cache 跑 limit50 16集(skip vqav2)。拷贝进行中(19G/67G, 8/16 dirs)。✅ GPU 8×H100 全空闲。📦 体积：TASK=28.5KB / MEMORY=28.0KB（无归档）。
-- [12:10 Oct16] **Wake #114**: ✅ **12集全量 eval 全部完成** — 用户指令缩编为12集(ai2d, blink, chartqa, docvqa_val, infovqa_val, mme, mmmu_val, mmstar, ocrbench, realworldqa, countbench, mmmu_pro_standard)。确认前轮13集per-GPU eval已全部完成(日志时间戳10:46~11:08)，12/12 benchmarks均有有效结果。📊 **合并结果**: ai2d=0.6004, blink=0.3852, chartqa=0.1224, docvqa_val=0.0741, infovqa_val=0.1658, mme=596.7+250.7, mmmu_val=0.4289, mmstar=0.2681, ocrbench=0.011, realworldqa=0.4301, countbench=0.1079, mmmu_pro_standard=0.2312。📝 新增 `launch_12benchmarks.sh`(12集per-GPU脚本)+`consolidate_12benchmarks.py`(合并多GPU JSON)。✅ `consolidated_12benchmarks.json` 已生成。✅ GPU 8×H100 全空闲(eval已完成)。📦 体积：TASK=31.6KB / MEMORY=~28KB（无归档）。
-- [13:18 Oct16] **Wake #115**: 🔄 **keepalive 验证** — git pull up to date, 无新运维指令。✅ 确认 12集 eval commit 77137bf6 已 push (git log 10-16 12:12)。✅ `vision/consolidated_12benchmarks.json` 在位 (6170B, 12 benchmarks 全有结果)。✅ ArmA open_clip Part B 验收已通过(wake #109)。✅ GPU 8×H100 全空闲(0% util, 0 MiB)。✅ 无运行中 eval/precache 进程。📦 体积：TASK=31.6KB / MEMORY=29.1KB（无归档，均 <32KB）。
+> 📦 [Oct 16] 本唤醒流水旧条目（Wake #108~#115, 含 precache 监控/Part B 验收/limit50 abort/12集 eval 完成/keepalive, 5条）已归档 → daily-memories-vision/2026-10-16.md。**关键结论**：✅ Part B 三项验收全通过(ai2d=0.60)；✅ 12/12 benchmarks 全量 eval 完成(ai2d 60.04%/mmmu 42.89%/realworldqa 43.01%)；consolidated_12benchmarks.json 交付。需要时再读。
 - [20:50 Oct16] **Wake #118**: 🔄 **ArmA 训练监控** — git pull up to date, 无新运维指令。✅ ArmA open_clip ViT-B/16 训练健康: 8×H100 全活跃(24GB/卡, util 0-100%), step 21940/154500(14.2%), loss~0.56, C1~0.57, lr=1.96e-3, 5.15 it/s, ETA~7.2h, checkpoint_20000.pt 已存。✅ Stage(iv) 报告(18.8KB) 在位。✅ barrier bug 修复后(wake #117) --resume 从 step 10000 恢复, 现已过 step 20000, 无崩溃。📦 TASK 归档: 4 个已完成 2026-10-16 评测指令块→ARCHIVE, TASK 33.4→29.9KB。📦 体积：TASK=29.9KB / MEMORY=30.2KB（归档 ~3.5KB → ARCHIVE_OPERATOR_VISION.md）。
+- [21:3x~23:1x Oct16] **Wake #119~#120**: ⚡ **ArmA 效率专项实验落地** — 按运维 21:3x 指令应用效率优化（⚠️ 一揽子，非单变量 A/B——改动在协议到达前已落地）：① LPT 字节均衡分片(parse_shards 改 LPT bin-packing, 0.0% 不均) ② num_workers 6→12 + persistent + prefetch4 + pin_memory ③ cudnn.benchmark + fused AdamW + bf16 去重(fp32 master+autocast) ④ torch.compile 标志加但未启用 ⑤ 🚫 配方不变(GBS=2048/MBS=256/累积=1/LR 曲线不动)。📊 实测: 修前 2.40 it/s + util 3/5/12/100/71/100/100/35%(straggler) → 修后 3.35 it/s(+40%) + util 95-100%/全卡。✅ 验收三项全达标: util≥85%✅ / 方差变小✅ / it/s≥+15%(+40%)✅。训练从 step 30000 --resume 续跑, 无从头训。commit `vision armA perf:`.
+- [00:30 Oct17] **Wake #121**: 🔄 **ArmA 训练健康监控 + 效率验收复核** — git pull up to date, 无新运维指令。✅ ArmA 训练健康: step 59480/154500(38.5%), 8×H100 util 95-100%/全卡(25.6GB/卡), loss 0.33-0.63 EMA, C1~0.53-0.72, lr=1.51e-3。✅ 真实吞吐复核: (59480−30000)/(146.1min×60)=**3.36 it/s**(日志显示 6.79 系旧 sps 公式膨胀值)。✅ LPT 分片 0.0% 不均(spread=0.22GB)。✅ checkpoint_40000/50000 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~7.9h → ~08:20 Oct17。📦 体积：TASK=30.4KB / MEMORY=~32KB（无归档，均 <32KB）。
 
 
 
