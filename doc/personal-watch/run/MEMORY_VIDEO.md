@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP02《经验》🔶 后台跑批中（20/55 落盘）；三章已成片（13/18/01）
+PHASE:        S3 放量 → EP02《经验》🔶 后台跑批中（33/55 落盘）；三章已成片（13/18/01）
 已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB · 漂移 0.010s）；EP02 资产（13 场景 + 2 合影）+ 生成脚本 + 字幕/合成脚本 ✅
-当前动作:     EP02《经验》R2V(32)+T2V(23) 后台跑批（--skip-existing --wait，PID 12416/3168）；本轮核验 20/55 落盘 + 复核字幕/合成脚本 + 全量参考图在位
+当前动作:     EP02《经验》R2V(32)+T2V(23) 后台跑批（--skip-existing --wait，PID 12416/3168）；本轮核验 33/55 落盘（较上轮 +13）+ 全量参考图在位 + 时长/QC 全绿 + dry-run 复核字幕/合成脚本
 下一步:       等 EP02 跑批收尾（55/55）→ 跑 gen_ep02_subtitles.py → synth_ep02.py（master + 硬字幕成片）→ ffprobe/signalstats QC
-阻塞:         无（ComfyUI 队列 running1/pending1 = EP02 跑批正常推进）
+阻塞:         无（ComfyUI 队列 running1/pending1 = EP02 跑批正常推进；余 22 镜 = R2V 16 + T2V 6 约 2.5h）
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-16（EP02《经验》跑批核验 20/55 + 复核字幕/合成脚本 + 全量参考图在位）
+- **上次唤醒**：2026-10-16（EP02《经验》跑批核验 33/55 + 时长/QC 全绿 + dry-run 复核收尾脚本 + 全量参考图在位）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-16 · S3 放量 · EP02《经验》跑批核验（33/55）+ 收尾脚本 dry-run ✅**：本轮核验 EP02 后台跑批健康（33/55 落盘，较上轮 +13），全量参考图在位，时长/QC 全绿，并 dry-run 复核字幕/合成脚本（不碰正在跑的 ComfyUI 队列）。
+  - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash` Fast-forward 69968183→41a5ee66（BaiZe/ZhuLong 等线，非本线），工作区净（他线 3 个未跟踪 .lnk/.docx 不碰）。
+  - **自检**：ComfyUI 可达（RTX 4090 16GB · 空闲 11.2GB）· 队列 running 1 / pending 1 = EP02 跑批正常 · ffmpeg 在 · MCP comfyui-drama/web-search 可用。
+  - **跑批核验**：`gen_ep02_h3_r2v.py`（PID 12416）+ `gen_ep02_h3_t2v.py`（PID 3168）两 `--wait` 进程在跑；`OUTPUT/02_经验/videos/` **33/55 镜**落盘；缺 22 镜 = R2V 16（30/31/33/34/35/36/37/39/42/43/44/45/46/47/48/49）+ T2V 6（50/51/52/53/54/55）。
+  - **QC 抽检（ffprobe 全 33 镜）**：无 0 字节/无缺音轨/无零时长（ALL-OK）；时长逐镜吻合 `17k+5` 量化（22→10.125s / 28·32→4.458s / 38→3.042s / 40→5.167s）；R2V 864×480（mp 0.4）/ T2V 1056×608（mp 0.6）均 h264+aac。
+  - **参考图核验**：R2V 17 张（角色定妆 5 + 场景 12）+ 合影拼版 2/2 全在位（`Test-Path` 逐张 OK）。
+  - **收尾脚本 dry-run 复核**：`gen_ep02_subtitles.py --dry-run` 正常出字幕预览（SFX_ONLY={01,14,26,34,36,41,50,51} 与逐镜表「音效（后期）」8 无台词镜一致）；`synth_ep02.py --dry-run` 报 33/55 在位 / 缺 22 镜 / 预计 169.79s（部分），有缺镜即中止拼接（闸门正确）。**脚本就绪，等收尾即可直接跑**。
+  - **下一步**：等 EP02 跑批收尾（55/55）→ `gen_ep02_subtitles.py` → `synth_ep02.py`（master + 硬字幕成片）→ ffprobe/signalstats QC。
 
 - **2026-10-16 · S3 放量 · EP02《经验》跑批核验（20/55）+ 复核收尾脚本 ✅**：本轮核验 EP02 后台跑批健康（20/55 落盘，较上轮 +10），复核已预写的字幕/合成脚本，并核对全量参考图在位（不碰正在跑的 ComfyUI 队列）。
   - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash`（git 走 stderr 报 NativeCommandError，实为 Fast-forward 后 up-to-date，工作区净，他线 3 个未跟踪 .lnk/.docx 不碰）。
