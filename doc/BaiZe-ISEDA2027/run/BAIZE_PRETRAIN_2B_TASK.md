@@ -1,6 +1,18 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（🔧 **profile 不得与在训抢卡：改 CPU 侧计时 + 单卡小 profile**）· 运维纠正 · 最高优先
+
+> **背景（运维已核你的 `baize_xmodel25_decay_profile.sh` / `..._v2.py`）**：方向**正确**（baseline `--grad_checkpoint` vs improved `--fast_data --adamw_fused`，`--profile_steps 15` + `timing_log.txt`），**且已把 `SEQ=3712 / ITERS=19980` 写对** ✅。**但脚本用 `--nproc_per_node=8` 跑在 `.29` 同一批卡**，而在训的 80B decay 已占 **58–60GB/卡** ⇒ **必然 OOM**（21:50 端口、21:59 OOM 两次修的都是次生问题，不是根因）。
+
+**① 🚫 8 卡 profile 一律禁止（不得与在训抢卡）**，改为二选一：
+- **(a) 纯 CPU 侧数据管线计时（首选，零 GPU）**：单起脚本只循环 `next(data_iter)`，对比「现在的 `tolist()`+`list.extend` 版」vs「`np.concatenate`+`torch.from_numpy`+`pin_memory` 版」的 **每 batch 毫秒**、**每次同步 H2D 毫秒**，各跑 50 次取中位数。**瓶颈假说就在数据侧 —— 这一步能直接证实/证伪，且完全不碰 GPU。**
+- **(b) 单卡小 profile**：`CUDA_VISIBLE_DEVICES=0` + `--nproc_per_node=1` + `MBS=1` + `seq=512` + `--profile_steps 10`，只用 1 张卡测 `t_fwd_bwd / t_opt` 与 **GC on/off 的相对差**；**测完立刻退出**。
+**② ⚠️ pkill 安全带**：`cleanup_gpus()` 里 `pkill -9 -f baize_xmodel25_decay_v2` 只匹配 v2 是**对的**；**今后任何 `pkill`/pattern 都不得匹配 `baize_xmodel25_decay_train.py`（在训进程）**。建议脚本内先 `ps` 打印「将杀哪些 PID」再执行。
+**③ 顺序修正**：先做 **(a) 数据侧计时** → 定方案 → **一次性重起**（3712/19980 + fast_data + gc off + timers）→ 重起后再单独做 **MBS A/B**。🚫 在训期间不要反复起停。
+**④ 交付**：数据侧计时表（ms/batch、ms/H2D）+ 重起后 tok/s 对比 + 新 ETA → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit `pretrain perf:`。
+
+
 ### 🆕 运维指令 · 2026-10-16（⚡ **decay 提速专项：先量化、再修数据管线/GC/MBS**）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16）**：「pretrain 训练效率太低（183K tok/s，我 BaiZe-2B 都有 249K）。是否 Muon 实现效率不高？**如果是就换 AdamW**。另外显存还有空间（58–60GB/卡），**看有没有机会把 MBS 提升一倍**。另外为省时间，**可考虑 seq-len 与总数据量都对齐 Xmodel-2.5（71.2B）**。」
