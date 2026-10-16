@@ -94,10 +94,13 @@ Baseline 2: RAG & 71.8 $\pm$ 2.5 & +61.3 pp \\
 \textbf{ZhuLong} (Full) & \textbf{82.1 $\pm$ 3.0} & \textbf{+10.3 pp} \\
 \midrule
 \multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
-ZhuLong w/o Sandbox & [TBD] $\pm$ [TBD] & -[TBD] pp \\
+ZhuLong w/o Sandbox & 71.8 $\pm$ 2.5 & -10.3 pp \\
+ZhuLong w/o Self-Expl. & 81.4 $\pm$ 4.1$^{\ast}$ & -0.7 pp \\
 ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -1.1 pp \\
 \bottomrule
 \end{tabular}
+\\[2pt]
+\footnotesize{$^{\ast}$ provisional: r1 of this arm was inadvertently run with V3 (self-exploration ON) docs; r2--r5 (clean V2) give 79.8$\pm$2.1\% ($n{=}4$). A clean 5-run re-measurement is pending.}
 \end{table}
 % 表：渐进构建与组件消融研究。上块为渐进构建，"Gain"表示
 % 相对于前一行的增量；下块为组件消融，"Drop"均表示相对于
@@ -123,15 +126,14 @@ Principle 2 predicts that with the model fixed, accuracy is bounded by the fidel
 \textbf{Rung} & \textbf{Configuration} & \textbf{Pass@1 (\%)} \\
 \midrule
 (N) No observation & Baseline 1 (Pure LLM) & 10.5 $\pm$ 1.9 \\
-(L) Low fidelity & name-only index & 82.8$^{\dagger}$ \\
+(L) Low fidelity & name-only index & 82.8 $\pm$ 1.0 \\
 (H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & 71.8 $\pm$ 2.5 \\
 \bottomrule
 \end{tabular}
-$^{\dagger}$ provisional, $n{=}1$ (1-shot probe); 5-run re-measurement pending (S1.omega\_low arm underway).
 \end{table}
 % 表：Ω保真度阶梯（文档轴）。固定LLM、执行器与循环，仅改变API事实暴露的保真度。
 
-The documentation axis yields a non-monotone ordering: the low-fidelity rung (L) at 82.8\% (provisional, $n{=}1$) exceeds the high-fidelity rung (H) at 71.8 $\pm$ 2.5\%. This is not an artifact of the index---it reflects the presence of the effector. Rung (L) couples a name-only index with the full execution loop (sandbox and read-back), whereas (H) is the RAG baseline whose retrieval is high-fidelity but whose effector is absent. The comparison therefore isolates the effector's dominance over documentation fidelity: even a coarse index, once the agent can execute and observe results, outperforms a rich index used only for static retrieval.
+The documentation axis yields a non-monotone ordering: the low-fidelity rung (L) at 82.8 $\pm$ 1.0\% exceeds the high-fidelity rung (H) at 71.8 $\pm$ 2.5\%. This is not an artifact of the index---it reflects the presence of the effector. Rung (L) couples a name-only index with the full execution loop (sandbox and read-back), whereas (H) is the RAG baseline whose retrieval is high-fidelity but whose effector is absent. The comparison therefore isolates the effector's dominance over documentation fidelity: even a coarse index, once the agent can execute and observe results, outperforms a rich index used only for static retrieval.
 % 文档轴呈现非单调排序：低保真档(L)82.8±1.0%高于高保真档(H)71.8±2.5%。
 % 这并非索引问题，而是执行器在场与否的差异：(L)的name-only索引配完整执行闭环，
 % (H)为RAG基线（高保真检索但无执行器）。该对比说明执行器对文档保真度的支配地位：
@@ -154,7 +156,7 @@ Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution
 \toprule
 \textbf{Observation channel ($\Omega$)} & \textbf{Pass@1 (\%)} & \textbf{Mean read-backs} \\
 \midrule
-(N$'$) None (prior only) & 73.3 $\pm$ 2.2 & [TBD]$^{\ddagger}$ \\
+(N$'$) None (prior only) & 73.3 $\pm$ 2.2 & ---$^{\ddagger}$ \\
 (B) Binary pass/fail & 78.1 $\pm$ 1.3 & 27.6$^{\ddagger}$ \\
 (F) Full observation & 82.1 $\pm$ 3.0 & 12.1 \\
 \bottomrule
@@ -200,8 +202,8 @@ Beyond accuracy, the read-back rungs differ sharply in \emph{convergence cost}--
 
 Principle 3 requires two things: that actions reach the design through a causal interface, and that the belief update $\Phi$ run continuously.
 
-\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 82.1\% to [TBD]\% ($-[TBD]$~pp); adding it to the RAG baseline raises it from 71.8\% to 82.1\% ($+10.3$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
-% 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从82.1\%降至[TBD]\%（-[TBD]pp）；
+\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 82.1\% to 71.8\% ($-10.3$~pp); adding it to the RAG baseline raises it from 71.8\% to 82.1\% ($+10.3$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
+% 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从82.1\%降至71.8\%（-10.3pp）；
 % 把沙盒加入RAG基线使其从71.8\%升至82.1\%（+10.3pp）。没有执行器，$a_t$未被作用于设计，
 % $b_t$得不到任何关于实时状态的证据，智能体退化为仅凭先验的预测器。
 
@@ -228,15 +230,15 @@ Principle 3 requires two things: that actions reach the design through a causal 
 \toprule
 \textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} & \textbf{Mean gen-fail} \\
 \midrule
-$\Phi$ $k{=}1$ & $\sim$65.9$^{\ddagger}$ & 71.5$^{\dagger}$ & $\sim$32.5$^{\ddagger}$ \\
-$\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5 & 79.1$^{\dagger}$ & 27.6 \\
-$\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2 & 91.1$^{\dagger}$ & 18.8 \\
-$\Phi$ lagged & 84.2$^{\dagger}$ & 98.1$^{\dagger}$ & [TBD] \\
-$\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & [TBD] & [TBD] \\
+$\Phi$ $k{=}1$ & 63.8 $\pm$ 3.2 & 76.3 & 34.6 \\
+$\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5 & 80.4 & 27.6 \\
+$\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2 & 90.4 & 17.4 \\
+$\Phi$ lagged & 73.0 $\pm$ 3.2 & 97.5 & 9.0 \\
+$\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & 99.1 & 10.4 \\
 \bottomrule
 \end{tabular}}
 
-\footnotesize{$k{=}10$ and $k{=}3$ are 5-run means (Pass@1 $\pm$ sample std, $n{=}5$); $^{\ddagger}$ provisional ($n{=}2$, r1=65.2, r2=66.5; r3--r5 pending); $^{\dagger}$ 1-shot probe ($n{=}1$) pending 5-run re-measurement; the unbounded anchor (82.1$\pm$3.0\%) is the full-system 5-run baseline (Table~\ref{tab:main-ablation}). \emph{Mean gen-fail} is the per-run count of tasks that produced no executable code (generation-stage failure), averaged over the available runs; it rises as $k$ shrinks, since a tighter execution budget leaves the agent unable to complete generation. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call).}
+\footnotesize{All entries are 5-run means (Pass@1 $\pm$ sample std, $n{=}5$); the unbounded anchor (82.1$\pm$3.0\%) is the full-system 5-run baseline (Table~\ref{tab:main-ablation}). \emph{Converged} is the share of traces whose finish reason is \emph{completed} (agent self-terminated), averaged over 5 runs. \emph{Mean gen-fail} is the per-run count of tasks that produced no executable code (generation-stage failure), averaged over 5 runs; it rises as $k$ shrinks, since a tighter execution budget leaves the agent unable to complete generation. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call).}
 \end{table}
 % 表：给$\Phi$可用证据加界的影响（固定LLM、$\Omega$与执行器）。
 % $k$为单条trace允许的\texttt{run\_code}调用次数（执行预算，而非"设计轮数"）；
@@ -245,9 +247,9 @@ $\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & [TBD] & [TBD] \\
 % "Converged"为结束原因为\emph{completed}的trace占比（原生 finish reason，见Cline agent runtime）。
 % 前四档在工具边界实现，无需改动智能体源码，也不强制提交时机；unbounded 即 ZhuLong（Full）。
 
-Reading Table~\ref{tab:phi-bound} together with the \emph{Mean gen-fail} column reveals the mechanism behind the monotone accuracy drop: as the execution budget $k$ shrinks, the number of tasks that fail to produce any executable code rises (18.8 at $k{=}10$, 27.6 at $k{=}3$, $\sim$32.5 at $k{=}1$), which in turn drives Pass@1 downward. The budget is exhausted at the tool boundary, but the agent keeps running under its own control; with no further \texttt{run\_code} calls permitted, it cannot finish or validate its generation, so the failure manifests at the generation stage rather than as an execution error. This $k\!\downarrow \to \text{gen-fail}\!\uparrow \to \text{Pass@1}\!\downarrow$ chain is the observable signature of $\Phi$ being bounded, and it is consistent with Principle 3: once the belief update can no longer accumulate state evidence, accuracy falls.
+Reading Table~\ref{tab:phi-bound} together with the \emph{Mean gen-fail} column reveals the mechanism behind the monotone accuracy drop: as the execution budget $k$ shrinks, the number of tasks that fail to produce any executable code rises (17.4 at $k{=}10$, 27.6 at $k{=}3$, 34.6 at $k{=}1$), which in turn drives Pass@1 downward. The budget is exhausted at the tool boundary, but the agent keeps running under its own control; with no further \texttt{run\_code} calls permitted, it cannot finish or validate its generation, so the failure manifests at the generation stage rather than as an execution error. This $k\!\downarrow \to \text{gen-fail}\!\uparrow \to \text{Pass@1}\!\downarrow$ chain is the observable signature of $\Phi$ being bounded, and it is consistent with Principle 3: once the belief update can no longer accumulate state evidence, accuracy falls.
 % 结合 Pass@1 与 Mean gen-fail 两列可看出单调下降的机制：执行预算 k 越小，无法产出可执行代码的任务越多
-% （k=10: 18.8, k=3: 27.6, k=1: ~32.5），从而拉低 Pass@1。预算在工具边界耗尽，但智能体仍自主运行；
+% （k=10: 17.4, k=3: 27.6, k=1: 34.6），从而拉低 Pass@1。预算在工具边界耗尽，但智能体仍自主运行；
 % 无法再调用 run_code，便无法完成或验证生成，失败表现在生成阶段而非执行错误。
 % 这一 k↓→gen-fail↑→Pass@1↓ 链条是 Φ 被界的可观测特征，与原则3一致。
 

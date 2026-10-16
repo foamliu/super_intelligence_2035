@@ -128,7 +128,7 @@ WAITING: 0
 - **四 shard 端口 = `8650/8651/8652/8654`**（10-11 RUN_ID 32 实测写回；旧 `8664/8665/8653/8669` 与 `8663/8666/8667/8670` 均**作废**）。
 - **36.15 = `hfeg0tedaap02`**（uid `app.e0031982`，其 repo 在 `/nasdata/`）；**`/home` 独立 LV、极易满**（10-11 实测 **100% / 4G**；大头是别的用户）→ **开跑前必查**。
 - **锚点复用（跑一次多处引用，禁止重跑）**：`C1.full ×5` = `tab:main-ablation`(full) + `tab:omega`(H) + `tab:ablation-harness`(F) + `tab:phi-bound`(unbounded) + `tab:llm-comparison`(主基座)。
-- **不做**：`wo_sandbox` / `wo_selfexpl`（main-ablation 两行暂缓）· `(H+E)` 档 · `phi_unbounded`（≡ full）· 主基座模型消融臂（≡ full）。
+- **不做**：`(H+E)` 档 · `phi_unbounded`（≡ full）· 主基座模型消融臂（≡ full）。
 
 ---
 
