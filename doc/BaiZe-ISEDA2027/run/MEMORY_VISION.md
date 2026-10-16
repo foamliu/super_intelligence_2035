@@ -4,7 +4,20 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 20:50（🔄 ArmA 训练监控健康 + TASK 归档减重 · wake #118）**：✅ **ArmA open_clip 训练健康运行中**：8×H100 全活跃(24GB/卡, util 0-100%), step 21940/154500(14.2%), loss~0.56, C1~0.57, lr=1.96e-3(warmup后cosine), 吞吐 5.15 it/s, **ETA~7.2h**。checkpoint_20000.pt 已存(20:31)。✅ Stage(iv) 报告(18.8KB) 已交付。✅ git pull up to date, 无新运维指令。📦 **TASK 归档减重**：4 个已完成的 2026-10-16 评测指令块(缩编12集/每卡一benchmark/停batch4/直跑全量)原文搬入 ARCHIVE_OPERATOR_VISION.md, 留 4 行指针 → TASK 33.4→29.9KB。下一步: 继续监控训练 → 完成后 ProtB 评测。📦 体积：TASK=29.9KB / MEMORY=30.2KB（归档 ~3.5KB → ARCHIVE_OPERATOR_VISION.md）。
+> 🆕 **2026-10-16 22:0x（⚡ ArmA 效率专项：LPT 分片均衡 + 管线优化 · wake #119）**：✅ **运维指令 21:3x「效率专项」已执行**。改动（⚠️ 按首条指令一揽子应用，非单变量 A/B——21:3x 协议在改动后到达，已在心跳如实标注）：① **LPT 字节均衡分片**（`parse_shards` 从 strided slice → LPT 贪心装箱，8 rank 字节不均衡 **0.0%**，spread=0.22GB）；② **数据管线**（`num_workers` 6→12 + `persistent_workers` + `prefetch_factor=4` + `pin_memory`）；③ **白送**（`cudnn.benchmark=True` + AdamW `fused=True` + bf16 去重 fp32 master+autocast only）；④ `torch.compile` 标志已加未启用；⑤ 🚫 配方不变(GBS=2048/MBS=256/accum=1/LR 不动)。修 `sps` bug（`step/el`→`(step-start_step)/el`，resume 时 it/s 被膨胀）。
+>
+> **📊 修前/修后对比表**：
+>
+> | 指标 | 修前 | 修后 | 验收 |
+> |:--|:--|:--|:--|
+> | 真实吞吐 (it/s) | **2.40** | **3.37** | **+40%** ✅≥+15% |
+> | 8 卡 GPU util | 3/5/12/100/71/100/100/35% | **99/99/99/100/99/99/100/99%** | ✅≥85% |
+> | 卡间方差 | 极大(straggler rank1=3%) | ≈0（全99-100%） | ✅显著变小 |
+> | 显存/卡 | 24.4 GB | 25.6 GB | +1.2GB（可接受） |
+> | 真实 ETA | 14.2h (from 31420) | **10.1h** (from 31840) | **省 ~4.1h** |
+> | loss/C1 | 0.69/0.72 | EMA warmup 中(0.72→0.49→恢复中) | 正常(EMA 重置 spike) |
+>
+> **训练状态**：step ~31840/154500(20.6%)，从 step 30000 `--resume`。loss 在 EMA warmup 振荡（C1 0.74→0.49，预计 ~2000 步恢复 0.70+）。📦 **TASK 归档**：10-15 22:25 块 + 3 heading-only 块 → ARCHIVE，TASK 34.1→30.4KB。📦 体积：TASK=30.4KB / MEMORY=~31KB。
 > 📦 2026-10-16 17:30（🚀 ArmA open_clip 从头训已启动 · wake #116）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 报告交付 + ArmA 起训, step 180 loss=6.69。但 step 10000 存 ckpt 后因 barrier bug 崩溃。需要时再读。
 > 📦 2026-10-16 12:10（✅ 12集全量 eval 全部完成 · wake #114）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12/12 benchmarks 全部完成, consolidated_12benchmarks.json 交付。需要时再读。
 > 📦 2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 13集全量 eval 完成（per-GPU batch32），后缩编为12集。需要时再读。
@@ -31,10 +44,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **全量 13集 eval 并行运行中（wake #113, 10:52, batch_size=32）**：6/13 已完成, 7/13 运行中。GPU 0 峰值 71% util（旧代码仅 0-28%）。下一步：eval 完成 → 汇总结果 → ArmA retrain。 |
+| PHASE | 🔄 **ArmA open_clip 训练中（wake #119, 22:0x, step ~31840/154500 20.6%）**：LPT 分片均衡 + 管线优化后 **GPU util 99-100%/全 8 卡**，真实吞吐 3.37 it/s（修前 2.40，+40%）。loss 在 EMA warmup 振荡中。ETA~10.1h。下一步：监控训练完成 → ProtB 评测。 |
 | ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 10:55 (wake #113)**: 🔄 全量 13集 eval batch_size=32 并行运行中。6/13 完成。batched generate_until 重写 ✅, log_samples=False ✅, seedbench+vqav2 排除 ✅。📦 MEMORY=28KB / TASK=31.6KB。 |
+| 更新 | **2026-10-16 22:0x (wake #119)**: ⚡ ArmA 效率专项完成：LPT 分片均衡(0.0% 不均)+管线优化(num_workers 12+prefetch+pin_memory)+cudnn.benchmark+fused AdamW+bf16 去重。GPU util 3-100%→99-100%/8卡, 真实吞吐 2.40→3.37 it/s(+40%), ETA 14.2→10.1h。配方不变。📦 MEMORY=~31KB / TASK=30.4KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）

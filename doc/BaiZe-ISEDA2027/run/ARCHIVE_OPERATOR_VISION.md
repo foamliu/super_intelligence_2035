@@ -1457,3 +1457,33 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **③ 纪律**：8 GPU 全空就立刻用满；🚫 不再 limit 冒烟；评测跑通一个算一个、别卡在数据缓存；commit 前缀 `vision mllm:` / `vision armA:` · 任务书 >32KB 自滚归档。
 > **结论**：✅ 去掉 vqav2/seedbench 后全量评测完成；ArmA 方向确认为 open_clip 标准 encoder（自研 ViT 判定失败），ArmA 训练已启动。
+
+---
+
+### 🆕 运维指令 · 2026-10-15 22:25（♻️ **别重下：先复用旧缓存** + 🧩 **ArmA 重训须实现 open_clip 协议 / LLaVA-OneVision 兼容**）· 用户直令 · 最高优先
+
+**A. 立刻做 —— 复用旧缓存（实测省 ~20G 下载 ≈ 1 小时）**
+- **实测事实**（运维 RUN_ID 105）：旧缓存 `/home/app.e0031982/.cache/huggingface/` 里**已有 6 个 lmms-lab 基准**：
+  - `hub/datasets--lmms-lab--{ai2d, GQA, MMBench, MMMU, textvqa}`（约 20G 量级）
+  - `datasets/lmms-lab___{ai2d, gqa, mm_bench, mmmu, real_world_qa, textvqa}`
+  - （都是今天 18:27–20:48 那次**失败评测**下下来的）
+- 而现在 `precache_benchmarks.py` 在新 `HF_HOME=/nas_env/...` **从零重下 GQA 等** ⇒ **白下**。
+- **做法（停 → 本地拷贝 → 续跑）**：
+  ```bash
+  pkill -f precache_benchmarks.py; sleep 2
+  cp -a "$HOME"/.cache/huggingface/hub/datasets--lmms-lab--{ai2d,GQA,MMBench,MMMU,textvqa} /nas_env/app.e0031982/hf_home/hub/
+  cp -a "$HOME"/.cache/huggingface/datasets/lmms-lab___* /nas_env/app.e0031982/hf_home/datasets/
+  ls -d /nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--* /nas_env/app.e0031982/hf_home/datasets/lmms-lab___*   # 核对 6 个都在
+  ```
+  ⚠️ 必须 `cp -a`（`/home`→`/nas_env` 跨文件系统，**不能硬链**）；🚫 **不要**把 `hub`/`datasets` 软链回 `/home`（那等于把写入引回只有 47G 余量的 `/home`，必再撑满）。
+- 续跑前 `df -h /nas_env` 核余量；🚫 不要重复下载已拷过来的那 6 个。
+- ⚠️ 另注：`/tmp/lmms_eval_hf_datasets_app.t0002965` 是**空的**，`/nas_train/app.e0031982/.cache/huggingface` 只有 `hub/xet`（非基准）⇒ 别处没有存量可挖；**其余 11 集（DocVQA / ChartQA / ScienceQA / SEED-Bench / POPE / VizWiz / OCRBench / MMVet / HallusionBench / VQAv2 / InfoVQA）确实从未下过**，仍要走下载。
+
+**B. ArmA 重训（今晚评测完开工）—— open_clip 协议 + LLaVA-OneVision 兼容（用户直令）**
+- **必做 ① `open_clip` 协议**：`open_clip.create_model_and_transforms('<name>', pretrained=<ckpt>)` 能加载；`encode_image(x)` / 前向返回 `[B, N, D]`（N = patch 数；**明文声明是否含 CLS / 是否 spatial-merge**）；暴露 `vision_config`（`image_size / patch_size / hidden_size / depth / width`）；预处理与现有 224 管线一致。
+- **必做 ② LLaVA-OV 兼容导出**：产出可被 OV 流程消费的 HF 目录 —— `config.json`（`model_type` + `vision_config`（clip/open_clip 系）+ `text_config`（Qwen3）+ **`image_token_index`** + **`vision_feature_select_strategy`**）、`preprocessor_config.json`（image processor）、chat template。
+- **验收（必须给证据）**：① `open_clip` 加载成功 + 一次前向的 shape/数值 sanity；② 该目录能被 `AutoConfig` / `AutoProcessor` 正常读；③ 用它跑 **`ai2d --limit 5`** 得到非 0 准确率（证明端到端通）。
+- **先定口径并在回报里写明**（这三项决定与官方 OV 的可比性）：① **分辨率**：**224 单块（推荐先跑通）** 还是 **384 + anyres**；② `image_token_index` 取值；③ 视觉特征取**哪一层**（官方 OV = SigLIP 倒数第二层）。
+- 🚫 **纪律**：报告里**必须标注与官方 LLaVA-OV 的 pipeline 差异**；**未做到 anyres 同构前，不得宣称与官方 LLaVA-OV 数字同框**。
+
+> **结论**：✅ A 部分 6 个旧缓存已 cp -a 复用；B 部分 open_clip 协议 + LLaVA-OV HF 导出全部验收通过（wake #109: open_clip GPU 前向 ✅, AutoConfig ✅, ai2d=0.60 ✅）。

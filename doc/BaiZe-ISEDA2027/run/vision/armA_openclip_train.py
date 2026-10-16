@@ -297,7 +297,7 @@ def main():
 
         if step % args.log_every == 0 and rank == 0:
             el = time.time() - t0
-            sps = step / el
+            sps = (step - start_step) / el  # real throughput (excludes resumed steps)
             eta_h = (args.steps - step) / sps / 3600
             log(rank, f'[ArmA] step {step}/{args.steps} loss={loss_ema:.4f} '
                       f'lr={lr_now:.2e} {sps:.2f} it/s ETA={eta_h:.1f}h '

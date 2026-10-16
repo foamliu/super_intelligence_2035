@@ -53,31 +53,7 @@
 
 > 📦 §运维指令 · 2026-10-16（🚀 评测直跑全量 + ArmA 转 open_clip）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 全量评测完成；ArmA 方向确认 open_clip 标准 encoder（自研 ViT 判定失败），训练已启动。需要时再读。
 
-### 🆕 运维指令 · 2026-10-15 22:25（♻️ **别重下：先复用旧缓存** + 🧩 **ArmA 重训须实现 open_clip 协议 / LLaVA-OneVision 兼容**）· 用户直令 · 最高优先
-
-**A. 立刻做 —— 复用旧缓存（实测省 ~20G 下载 ≈ 1 小时）**
-- **实测事实**（运维 RUN_ID 105）：旧缓存 `/home/app.e0031982/.cache/huggingface/` 里**已有 6 个 lmms-lab 基准**：
-  - `hub/datasets--lmms-lab--{ai2d, GQA, MMBench, MMMU, textvqa}`（约 20G 量级）
-  - `datasets/lmms-lab___{ai2d, gqa, mm_bench, mmmu, real_world_qa, textvqa}`
-  - （都是今天 18:27–20:48 那次**失败评测**下下来的）
-- 而现在 `precache_benchmarks.py` 在新 `HF_HOME=/nas_env/...` **从零重下 GQA 等** ⇒ **白下**。
-- **做法（停 → 本地拷贝 → 续跑）**：
-  ```bash
-  pkill -f precache_benchmarks.py; sleep 2
-  cp -a "$HOME"/.cache/huggingface/hub/datasets--lmms-lab--{ai2d,GQA,MMBench,MMMU,textvqa} /nas_env/app.e0031982/hf_home/hub/
-  cp -a "$HOME"/.cache/huggingface/datasets/lmms-lab___* /nas_env/app.e0031982/hf_home/datasets/
-  ls -d /nas_env/app.e0031982/hf_home/hub/datasets--lmms-lab--* /nas_env/app.e0031982/hf_home/datasets/lmms-lab___*   # 核对 6 个都在
-  ```
-  ⚠️ 必须 `cp -a`（`/home`→`/nas_env` 跨文件系统，**不能硬链**）；🚫 **不要**把 `hub`/`datasets` 软链回 `/home`（那等于把写入引回只有 47G 余量的 `/home`，必再撑满）。
-- 续跑前 `df -h /nas_env` 核余量；🚫 不要重复下载已拷过来的那 6 个。
-- ⚠️ 另注：`/tmp/lmms_eval_hf_datasets_app.t0002965` 是**空的**，`/nas_train/app.e0031982/.cache/huggingface` 只有 `hub/xet`（非基准）⇒ 别处没有存量可挖；**其余 11 集（DocVQA / ChartQA / ScienceQA / SEED-Bench / POPE / VizWiz / OCRBench / MMVet / HallusionBench / VQAv2 / InfoVQA）确实从未下过**，仍要走下载。
-
-**B. ArmA 重训（今晚评测完开工）—— open_clip 协议 + LLaVA-OneVision 兼容（用户直令）**
-- **必做 ① `open_clip` 协议**：`open_clip.create_model_and_transforms('<name>', pretrained=<ckpt>)` 能加载；`encode_image(x)` / 前向返回 `[B, N, D]`（N = patch 数；**明文声明是否含 CLS / 是否 spatial-merge**）；暴露 `vision_config`（`image_size / patch_size / hidden_size / depth / width`）；预处理与现有 224 管线一致。
-- **必做 ② LLaVA-OV 兼容导出**：产出可被 OV 流程消费的 HF 目录 —— `config.json`（`model_type` + `vision_config`（clip/open_clip 系）+ `text_config`（Qwen3）+ **`image_token_index`** + **`vision_feature_select_strategy`**）、`preprocessor_config.json`（image processor）、chat template。
-- **验收（必须给证据）**：① `open_clip` 加载成功 + 一次前向的 shape/数值 sanity；② 该目录能被 `AutoConfig` / `AutoProcessor` 正常读；③ 用它跑 **`ai2d --limit 5`** 得到非 0 准确率（证明端到端通）。
-- **先定口径并在回报里写明**（这三项决定与官方 OV 的可比性）：① **分辨率**：**224 单块（推荐先跑通）** 还是 **384 + anyres**；② `image_token_index` 取值；③ 视觉特征取**哪一层**（官方 OV = SigLIP 倒数第二层）。
-- 🚫 **纪律**：报告里**必须标注与官方 LLaVA-OV 的 pipeline 差异**；**未做到 anyres 同构前，不得宣称与官方 LLaVA-OV 数字同框**。
+> 📦 §运维指令 · 2026-10-15 22:25（♻️ 别重下 + 🧩 ArmA open_clip 协议/LLaVA-OV 兼容）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ A 旧缓存复用 + B open_clip 协议/HF 导出全验收通过(wake #109)。需要时再读。
 
 > 📦 §运维指令 · 2026-10-15 20:0x（🔬 评测实况核查结论 + 7 项待办）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 全部 7 项已处置（提速/小样/数据/git/Stage-2/耗时归因/git push）。📌 口径：连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co。需要时再读。
 
@@ -87,13 +63,9 @@
 
 > 📦 §运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co · 恢复 17 benchmark）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ hf-mirror 已移除，proxy 92.25 直连已验证，17 集评测恢复，Stage-1.5/2 已完成。需要时再读。
 
-### 🆕 运维指令 · 2026-10-15（📚 历史实验结果全景总结 · 中文 HTML）· 用户直令
-
 > 📦 §运维指令 · 2026-10-15（📚 历史实验结果全景总结）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付，8 主题全覆盖。需要时再读。
 
 > 📦 §运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ Stage-1(2500步)+Stage-1.5(20000步)+Stage-2(3500步,loss=1.4853) 全部完成。lmms-eval 评测进行中(precache 8/17)。需要时再读。
-
-### 🆕 运维指令 · 2026-10-14（🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling（纯 CPU，不占 GPU））· 用户直令 · 最高优先（但仍低于 ArmC 训练/评测监控）
 
 > 📦 §运维指令 · 2026-10-14（🔧 ArmC 期间先写 ViT wrapper）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。需要时再读。
 
@@ -110,8 +82,6 @@
 
 > 📦 §运维指令 · 2026-10-13（🔢 数据量口径更正）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ GPIC 快照7437tar≈94M/全量101.1M, 三集合计快照≈111M/全量118.1M, 报告已订正。需要时再读。
 
-
-### 🆕 运维指令 · 2026-10-13（🚀【放行执行】外部编码器 ProtB 做完后 → 立刻跑「合并三数据集实验」：GBS/MBS ×4 · LR ×2 · 24h ≈3 epoch）· 用户直令 · 最高优先
 
 > 📦 §运维指令 · 2026-10-13（🚀 合并三数据集实验）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ ArmC 训练完成(154500步) + eval 4/4 全提升(ProtB 68.25% Δ+1.20pp)，报告交付。需要时再读。
 
