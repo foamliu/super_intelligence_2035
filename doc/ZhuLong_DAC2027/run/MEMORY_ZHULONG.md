@@ -1,7 +1,7 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
-<!-- heartbeat 2026-10-16 10:47 -->
+<!-- heartbeat 2026-10-16 11:25 -->
 
 
 
@@ -28,7 +28,7 @@ WAITING: 1
 | B | deepseek-v4-flash | 5/5 ✅ | **16.7±12.3%** [9.5,10.1,19.0,7.6,37.3] |
 | B | kimi-k2.6-cloud | 5/5 ✅ | **77.0±1.6%** [79.1,76.6,77.2,74.7,77.2] |
 | B | doubao-seed-2.0-pro-cloud | 5/5 ✅ | **63.8±1.4%** [63.9,64.6,61.4,65.2,63.9] |
-| B | glm-5.3-flash（运维令二十三新臂）| **r1 code-gen 跑中 PID148637@08:12** | 🟡 batch=2026_1016_081219·~1h24m@09:37·canary ACCESS RESTRICTED=9 hook live✅·PHI=0 full phi✅·无 forbidden/403✅·glm-5.3-flash@/v1 key 6903b05e |
+| B | glm-5.3-flash（运维令二十三新臂）| **r1 code-gen 跑中 PID148637@08:12** | 🟡 batch=2026_1016_081219·~3h13m@11:25·canary ACCESS RESTRICTED=776(全文) hook live✅·PHI=0 full phi✅·无 forbidden/403✅·glm-5.3-flash@/v1 key 6903b05e |
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9] |
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
@@ -74,7 +74,8 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
-- [2026-10-16 10:47] 🔎 **巡检（B.glm-5.3-flash r1 code-gen ~2h35m健康·不动作退出）**：① ps -p 148637→alive(etime 02:35:00·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_glm-5.3-flash_r1.log 13.0MB mtime 10:47(live写入·Auto compacting)·**canary全绿**：ACCESS RESTRICTED=6(last80KB·hook live✅)·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors(license/Connection)=0✅·无pass结果(r1仍code-gen~2h35m·B臂典型~3-5h→继续等)。② **infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090+RAG:9006 LISTEN✅·/home=16G(≥8G✅·96%使用需关注)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·ops relay alive✅·cline✅。③ 不收割不切臂·按§7 Step A(pgrep有输出→什么都不做退出)。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 148637` alive→巡检退出；GONE→读 r1 log 尾段`pass (xx.x%)`（若Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_081219·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r1有效→r2启动(同样 export PYTHON=venv/bin/python)；alive→巡检退出。⚠️查r1用`ps -p 148637`，勿用`pgrep -f`(opencode cmdline含任务书全文→污染)。⚠️/home=16G 96%使用，若<8G需暂停评测清理。📝运维令(二十三) B.glm-5.3-flash 5/5 收口后接 B.deepseek-v4-flash fresh 5-run。
+- [2026-10-16 11:25] 🔎 **巡检（B.glm-5.3-flash r1 code-gen ~3h13m健康·不动作退出）**：① ps -p 148637→alive(etime 03:13:00·STAT Ss·`bash scripts/run_cline_script.sh -p 8 -n`)·log /tmp/ABL_glm-5.3-flash_r1.log 13.8MB mtime 11:25(live写入)·**canary全绿**：ACCESS RESTRICTED=776(全文·hook live✅)·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors(license/Connection/403/forbidden)=0✅·无pass结果(r1仍code-gen~3h13m·B臂典型~3-5h→继续等)。② **infra全绿**：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(pid146061)+RAG:9006(pid3503518)LISTEN✅·/home=15G(≥8G✅·97%使用需关注)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·ops relay alive✅·cline✅。③ 不收割不切臂·按§7 Step A(pgrep有输出→什么都不做退出)。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 148637` alive→巡检退出；GONE→读 r1 log 尾段`pass (xx.x%)`（若Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_081219·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python防pydantic）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r1有效→r2启动(同样 export PYTHON=venv/bin/python)；alive→巡检退出。⚠️查r1用`ps -p 148637`，勿用`pgrep -f`(opencode cmdline含任务书全文→污染)。⚠️/home=15G 97%使用，若<8G需暂停评测清理。📝运维令(二十三) B.glm-5.3-flash 5/5 收口后接 B.deepseek-v4-flash fresh 5-run。
+- [2026-10-16 10:47] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~2h35m健康·不动作退出）详情见 daily-memories/2026-10-16.md §10:47。
 - [2026-10-16 10:13] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~2h01m健康·不动作退出）详情见 daily-memories/2026-10-16.md §10:13。
 - [2026-10-16 09:37] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~1h24m健康·不动作退出）详情见 daily-memories/2026-10-16.md §09:37。
 - [2026-10-16 09:01] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~49min健康·不动作退出）+ 任务书归档减重 详情见 daily-memories/2026-10-16.md §09:01。
