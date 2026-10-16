@@ -11707,3 +11707,134 @@ datasets--lmms-lab--textvqa
 === [.12] DONE ===
 === DONE 108 ===
 ```
+
+---
+
+## RUN_ID 109 · 2026-10-16 18:52:57 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 109 · pretrain loop 核查 · $(date '+%F %T') · host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+REL=$R/doc/BaiZe-ISEDA2027/run
+LOG=/tmp/baize_pretrain_loop.log
+
+echo "--- A) .29 GPU 现状 ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+
+echo "--- B) pretrain loop 进程（排除 cline/bun） ---"
+found=0
+for p in $(pgrep -f 'baize_pretrain_loop' 2>/dev/null); do
+  C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-120)
+  case "$C" in *cline*|*bun*) : ;; *) echo "   pid=$p :: $C"; found=1 ;; esac
+done
+[ "$found" = 0 ] && echo "   （未发现 pretrain loop 进程）"
+
+echo "--- C) loop 日志尾 + 静默时长 ---"
+if [ -f "$LOG" ]; then
+  AGE=$(( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ))
+  echo "   log 静默 ${AGE}s（>2400s 疑卡死）"
+  tail -20 "$LOG" | cut -c1-160
+else
+  echo "   (无 $LOG)"
+fi
+
+echo "--- D) 训练/转换进程 ---"
+ps -eo pid=,etime=,comm=,args= 2>/dev/null | grep -Ei 'torchrun|megatron|nemo|convert|hf2m|ckpt_conv' | grep -v grep | cut -c1-150 | head -12 || echo "   (none)"
+
+echo "--- E) .12 vision ArmA 确认 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'echo "[.12] $(hostname $(date +%T))"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8; echo "-- procs --"; ps -eo etime=,args= | grep -Ei "open_clip|train.py" | grep -v grep | cut -c1-140 | head -4' 2>&1 | head -20
+
+echo "--- F) 按需重启 pretrain loop ---"
+if [ "$found" = 1 ]; then
+  echo "   loop 已存活 ⇒ 不重启（本块不 kill；若 log 静默 >2400s 需人工确认卡点）"
+else
+  echo "   ⚠️ loop 未存活 ⇒ setsid 重启：$REL/baize_pretrain_loop.sh"
+  cd "$REL" && setsid bash "$REL/baize_pretrain_loop.sh" > "$LOG" 2>&1 < /dev/null &
+  sleep 10
+  for p in $(pgrep -f 'baize_pretrain_loop' 2>/dev/null); do
+    C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-120)
+    case "$C" in *cline*|*bun*) : ;; *) echo "   新 PID=$p :: $C" ;; esac
+  done
+  echo "   重启后日志尾:"; tail -6 "$LOG" 2>/dev/null | cut -c1-160
+fi
+
+echo "--- G) pretrain 最近提交 ---"
+cd "$R" && git log --date=format:'%m-%d %H:%M' --pretty=format:'%ad|%h|%s' -3 -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo; echo "=== DONE 109 ==="
+```
+
+**输出**
+```
+=== RUN_ID 109 · pretrain loop 核查 · 2026-10-16 18:52:57 · host=whag0pgpuap29 ===
+--- A) .29 GPU 现状 ---
+0, 57051 MiB, 92 %
+1, 57051 MiB, 100 %
+2, 57051 MiB, 100 %
+3, 57051 MiB, 100 %
+4, 57051 MiB, 100 %
+5, 57051 MiB, 100 %
+6, 57051 MiB, 100 %
+7, 57051 MiB, 100 %
+--- B) pretrain loop 进程（排除 cline/bun） ---
+   pid=1294147 :: bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh 
+--- C) loop 日志尾 + 静默时长 ---
+   log 静默 1186s（>2400s 疑卡死）
+[loop] 2026-10-16 17:03:05 pi returned (exit 0), checking git push ...
+[push] 2026-10-16 17:03:05 push interval reached, syncing ...
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-16 17:03:07 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-16 17:33:07 wake up, invoking pi ...
+[loop] 2026-10-16 17:47:44 pi returned (exit 0), checking git push ...
+[push] 2026-10-16 17:47:44 push interval reached, syncing ...
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-16 17:47:46 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-16 18:17:46 wake up, invoking pi ...
+[loop] 2026-10-16 18:33:08 pi returned (exit 0), checking git push ...
+[push] 2026-10-16 18:33:08 push interval reached, syncing ...
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-16 18:33:12 WAITING=1（异步任务 running）→ sleep 1800s
+--- D) 训练/转换进程 ---
+ 528809       00:46 bun             /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/c
+ 549658       00:34 bash            bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && export HF_HOME=/nas_tra
+ 549672       00:34 pt_elastic      /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchru
+ 556035       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556037       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556039       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556041       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556042       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556044       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556046       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+ 556048       00:32 python          /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_train.py --model_path /nas_train/
+--- E) .12 vision ArmA 确认 ---
+hostname: the specified hostname is invalid
+[.12] 
+0, 24389 MiB, 100 %
+1, 24389 MiB, 100 %
+2, 24389 MiB, 59 %
+3, 24389 MiB, 0 %
+4, 24389 MiB, 92 %
+5, 24389 MiB, 2 %
+6, 24389 MiB, 6 %
+7, 24389 MiB, 26 %
+-- procs --
+      33:17 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 --master_addr=12
+      33:15 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armA_openclip_train.py --data data_snapshot_20261009.txt,/nas_train/
+      33:15 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armA_openclip_train.py --data data_snapshot_20261009.txt,/nas_train/
+      33:15 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armA_openclip_train.py --data data_snapshot_20261009.txt,/nas_train/
+--- F) 按需重启 pretrain loop ---
+   loop 已存活 ⇒ 不重启（本块不 kill；若 log 静默 >2400s 需人工确认卡点）
+--- G) pretrain 最近提交 ---
+10-16 13:19|41e8cb86|pretrain #465: Xmodel-2.5 decay 80B plan confirmed + TASK archive v5+proxy
+10-16 10:37|8f1411a8|pretrain #464: keepalive 心跳·v5报告确认(42.8KB/6表/全口径✅)·8GPU空闲·无新指令
+10-16 09:28|2007a16e|pretrain #463: keepalive 心跳·v5报告确认(42.8KB/6表/全口径✅)·8GPU空闲·无新指令
+
+=== DONE 109 ===
+```
