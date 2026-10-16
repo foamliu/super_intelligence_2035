@@ -1,0 +1,169 @@
+{
+  "description": "BaiZe-LLaVA 12-benchmark eval results (Stage-2 step3500, per-GPU batch_size=32)",
+  "benchmarks": [
+    "ai2d",
+    "blink",
+    "chartqa",
+    "docvqa_val",
+    "infovqa_val",
+    "mme",
+    "mmmu_val",
+    "mmstar",
+    "ocrbench",
+    "realworldqa",
+    "countbench",
+    "mmmu_pro_standard"
+  ],
+  "results": {
+    "ai2d": 0.6003886010362695,
+    "blink": 0.38524636932548334,
+    "chartqa": 0.1224,
+    "docvqa_val": 0.07410377623282605,
+    "infovqa_val": 0.16579990133631703,
+    "mme": {
+      "perception_score": 596.7476990796317,
+      "cognition_score": 250.71428571428572,
+      "total": 847.4619847939175
+    },
+    "mmmu_val": 0.42889,
+    "mmstar": 0.26806665227471954,
+    "ocrbench": 0.011,
+    "realworldqa": 0.4300653594771242,
+    "countbench": 0.1079429735234216,
+    "mmmu_pro_standard": 0.23121
+  },
+  "source_files": [
+    "eval_mmmu_val.json",
+    "eval_realworldqa.json",
+    "eval_mmmu_pro.json",
+    "eval_ai2d_mmstar.json",
+    "eval_infovqa.json",
+    "eval_chart_ocr_count.json",
+    "eval_docvqa.json",
+    "eval_mme_blink.json"
+  ],
+  "raw_results": {
+    "mmmu_val": {
+      "alias": "mmmu_val",
+      "mmmu_acc,none": 0.42889,
+      "mmmu_acc_stderr,none": "N/A",
+      "mmmu_acc_stderr_clt,none": "N/A",
+      "mmmu_acc_stderr_clustered,none": "N/A",
+      "mmmu_acc_pass_at_k,none": [],
+      "mmmu_acc_pass_at_k_stderr,none": [],
+      "submission,none": [],
+      "submission_stderr,none": []
+    },
+    "realworldqa": {
+      "alias": "realworldqa",
+      "exact_match,flexible-extract": 0.4300653594771242,
+      "exact_match_stderr,flexible-extract": 0.017911546264929346,
+      "exact_match_stderr_clt,flexible-extract": 0.01791154626492927,
+      "exact_match_stderr_clustered,flexible-extract": "N/A"
+    },
+    "mmmu_pro_standard": {
+      "alias": "mmmu_pro_standard",
+      "mmmu_acc,none": 0.23121,
+      "mmmu_acc_stderr,none": "N/A",
+      "mmmu_acc_stderr_clt,none": "N/A",
+      "mmmu_acc_stderr_clustered,none": "N/A"
+    },
+    "ai2d": {
+      "alias": "ai2d",
+      "exact_match,flexible-extract": 0.6003886010362695,
+      "exact_match_stderr,flexible-extract": 0.008815903716329584,
+      "exact_match_stderr_clt,flexible-extract": 0.008815903716329636,
+      "exact_match_stderr_clustered,flexible-extract": "N/A"
+    },
+    "mmstar": {
+      "alias": "mmstar",
+      "coarse perception,none": 0.16798655474015803,
+      "coarse perception_stderr,none": "N/A",
+      "coarse perception_stderr_clt,none": 0.024760377727750513,
+      "coarse perception_stderr_clustered,none": "N/A",
+      "average,none": 0.26806665227471954,
+      "average_stderr,none": "N/A",
+      "average_stderr_clt,none": 0.011466806810919912,
+      "average_stderr_clustered,none": "N/A",
+      "fine-grained perception,none": 0.24938590027020388,
+      "fine-grained perception_stderr,none": "N/A",
+      "fine-grained perception_stderr_clt,none": 0.027367497504863593,
+      "fine-grained perception_stderr_clustered,none": "N/A",
+      "instance reasoning,none": 0.2527491905889876,
+      "instance reasoning_stderr,none": "N/A",
+      "instance reasoning_stderr_clt,none": 0.027367497504863593,
+      "instance reasoning_stderr_clustered,none": "N/A",
+      "logical reasoning,none": 0.29773746605429774,
+      "logical reasoning_stderr,none": "N/A",
+      "logical reasoning_stderr_clt,none": 0.029150213374159652,
+      "logical reasoning_stderr_clustered,none": "N/A",
+      "math,none": 0.404621090617482,
+      "math_stderr,none": "N/A",
+      "math_stderr_clt,none": 0.03135596892377262,
+      "math_stderr_clustered,none": "N/A",
+      "science & technology,none": 0.23591971137718812,
+      "science & technology_stderr,none": "N/A",
+      "science & technology_stderr_clt,none": 0.025537121574548162,
+      "science & technology_stderr_clustered,none": "N/A"
+    },
+    "infovqa_val": {
+      "alias": "infovqa_val",
+      "anls,none": 0.16579990133631703,
+      "anls_stderr,none": 0.0062906578515898835,
+      "anls_stderr_clt,none": 0.006290657851589766,
+      "anls_stderr_clustered,none": "N/A"
+    },
+    "chartqa": {
+      "alias": "chartqa",
+      "relaxed_overall,none": 0.1224,
+      "relaxed_overall_stderr,none": 0.0065562557756634965,
+      "relaxed_overall_stderr_clt,none": 0.006556255775663299,
+      "relaxed_overall_stderr_clustered,none": "N/A",
+      "relaxed_human_split,none": 0.1384,
+      "relaxed_human_split_stderr,none": 0.009771014798072327,
+      "relaxed_human_split_stderr_clt,none": 0.009771014798072273,
+      "relaxed_human_split_stderr_clustered,none": "N/A",
+      "relaxed_augmented_split,none": 0.1064,
+      "relaxed_augmented_split_stderr,none": 0.008724914401015405,
+      "relaxed_augmented_split_stderr_clt,none": 0.00872491440101529,
+      "relaxed_augmented_split_stderr_clustered,none": "N/A"
+    },
+    "countbench": {
+      "alias": "countbench",
+      "acc,none": 0.1079429735234216,
+      "acc_stderr,none": 0.014018303486276642,
+      "acc_stderr_clt,none": 0.014018303486276579,
+      "acc_stderr_clustered,none": "N/A"
+    },
+    "ocrbench": {
+      "alias": "ocrbench",
+      "ocrbench_accuracy,none": 0.011,
+      "ocrbench_accuracy_stderr,none": "N/A",
+      "ocrbench_accuracy_stderr_clt,none": 0.003299983316607812,
+      "ocrbench_accuracy_stderr_clustered,none": "N/A"
+    },
+    "docvqa_val": {
+      "alias": "docvqa_val",
+      "anls,none": 0.07410377623282605,
+      "anls_stderr,none": 0.003026699239951945,
+      "anls_stderr_clt,none": 0.003026699239951975,
+      "anls_stderr_clustered,none": "N/A"
+    },
+    "mme": {
+      "alias": "mme",
+      "mme_cognition_score,none": 250.71428571428572,
+      "mme_cognition_score_stderr,none": "N/A",
+      "mme_cognition_score_stderr_clt,none": 0.030976433317570357,
+      "mme_cognition_score_stderr_clustered,none": "N/A",
+      "mme_perception_score,none": 596.7476990796317,
+      "mme_perception_score_stderr,none": "N/A",
+      "mme_perception_score_stderr_clt,none": 0.010873461597272396,
+      "mme_perception_score_stderr_clustered,none": "N/A"
+    },
+    "blink": {
+      "blink_acc,none": 0.38524636932548334,
+      "blink_acc_stderr,none": "N/A",
+      "alias": "blink"
+    }
+  }
+}
