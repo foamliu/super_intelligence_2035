@@ -2,12 +2,13 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **🚀 Xmodel-2.5 80B decay v2 训练 RUNNING**（01:20 启动, step 920/19980, loss 1.897, ~297.4K tok/s 稳态, ETA ~63h）。起点=step_532000 + BaiZe 80B(SFT64:L3:24:code8:math4) + Muon。**seq=3712/GBS=960/MBS=4/DP=8/总步19980=71.2B tok**。chunked CE + compile(default) + no_sync(default)。目标：14集超越 Xmodel-2.5 final (CS8 65.40%/CX 32.90%)。
-  - PHASE: **decay80b_v2** — Xmodel-2.5 80B decay v2 训练中（01:18 启动, MBS=4+chunked CE）。8×H100 全占满（97-100% util, 51.7GB/卡）。train_log: step920 loss=1.8969 lr=1.36e-3(衰减中) tok/s=297.4K(稳态~299K)。📦 体积：TASK=26.2KB ✅ / MEMORY=29.7KB ✅。
+- STAGE: **🚀 Xmodel-2.5 80B decay v2 训练 RUNNING**（01:20 启动, step 1080/19980, loss 1.735, ~297.6K tok/s 稳态, ETA ~62h）。起点=step_532000 + BaiZe 80B(SFT64:L3:24:code8:math4) + Muon。**seq=3712/GBS=960/MBS=4/DP=8/总步19980=71.2B tok**。chunked CE + compile(default) + no_sync(default)。目标：14集超越 Xmodel-2.5 final (CS8 65.40%/CX 32.90%)。
+  - PHASE: **decay80b_v2** — Xmodel-2.5 80B decay v2 训练中（01:18 启动, MBS=4+chunked CE）。8×H100 全占满（97-100% util, 51.7GB/卡）。train_log: step1080 loss=1.7348 lr=1.31e-3(衰减中) tok/s=297.6K(稳态~299K)。📦 体积：TASK=26.2KB ✅ / MEMORY=29.9KB ✅（归档 0KB）。
   - ERROR_COUNT: 0
-  - 轮询状态：8 GPU 全占满 — v2 训练健康运行中（torchrun PID 3753642, 01:18 启动, et~184min 无崩溃环, 0 NaN, 0 error）。→ **下一步**：每唤醒监控 step/loss/ETA；save_interval=2000（首个 ckpt@2000 ≈ ~08:00）。
+  - 轮询状态：8 GPU 全占满 — v2 训练健康运行中（torchrun PID 3753642, 01:18 启动, et~216min 无崩溃环, 0 NaN, 0 error）。→ **下一步**：每唤醒监控 step/loss/ETA；save_interval=2000（首个 ckpt@2000 ≈ ~08:00）。
   > 📦 **[已归档] #476 流水（2026-10-17 ~03:48, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step740 loss1.8562 tok/s297.1K 健康, et=148min 无崩溃环。需要时再读。**
-  - 🔧 **本唤醒推进 = #478（2026-10-17 ~04:24, 🩺 v2 训练监控）**：① **训练健康**：step920 loss=1.8969 lr=1.36e-3(衰减中) tok/s=297.4K(稳态~299K)，last10 波动 1.67~2.15(缓降)，t_data=0.5ms≈0%/fwd_bwd=391.7ms≈99%/opt=152ms≈1%，8卡 97-100% util/51.7GB，0 NaN/0 error，et=184min 无崩溃环。② ETA：11.92s/step → 剩 19060 步 ≈63.1h → ETA 10-19 ~19:30；首 ckpt@2000≈08:00(还~3.6h)。③ **下一步**：继续每唤醒监控 step/loss/ETA。WAITING=1。
+  > 📦 **[已归档] #478 流水（2026-10-17 ~04:24, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step920 loss1.8969 lr1.36e-3 tok/s297.4K 健康, et=184min 无崩溃环。需要时再读。**
+  - 🔧 **本唤醒推进 = #479（2026-10-17 ~04:56, 🩺 v2 训练监控）**：① **训练健康**：step1080 loss=1.7348 lr=1.31e-3(衰减中) tok/s=297.6K(稳态~299K)，last10 波动 1.73~1.89(缓降)，t_data=0.5ms≈0%/fwd_bwd=391.5ms≈99%/opt=160ms≈1%，8卡 97-100% util/51.7GB，0 NaN/0 error，et=216min 无崩溃环。② ETA：11.92s/step → 剩 18890 步 ≈62.5h → ETA 10-19 ~19:30；首 ckpt@2000≈08:00(还~3.1h)。③ **下一步**：继续每唤醒监控 step/loss/ETA。WAITING=1。
   > 📦 **[已归档] #477 流水（2026-10-17 ~03:52, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step760 loss1.8031 lr1.42e-3 tok/s297.1K 健康, et=152min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #475 流水（2026-10-17 ~03:20, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step600 loss1.967 tok/s296.7K 健康, et=122min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #474 流水（2026-10-17 ~02:48, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step440 loss2.0914 tok/s296.1K 健康, et=88min 无崩溃环。需要时再读。**
