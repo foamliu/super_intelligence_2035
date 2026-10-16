@@ -1,0 +1,301 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""生成 report_harness_glm53_7x300_zh.html —— glm-5.3-flash 7×300 阶段性中文报告。
+数据来源：glm53_pilot_results.json (glm-5.3-flash, 进行中) / kimi_pilot_results.json (kimi-k2.6-cloud, 完成)
+口径：resolved = classification == 'resolved'。McNemar 在 (harness, instance_id) 配对上做。
+"""
+import json, html as H, statistics
+from collections import Counter
+from math import comb
+from pathlib import Path
+
+ROOT = Path("/nas_train/app.e0031982/code/super_intelligence_2035")
+RUN  = ROOT / "doc/BaiZe-ISEDA2027/run/harness"
+OUT  = RUN / "reports/report_harness_glm53_7x300_zh.html"
+OUT.parent.mkdir(parents=True, exist_ok=True)
+
+GLM = json.load(open(RUN / "glm53_pilot_results.json"))
+KIM = json.load(open(RUN / "kimi_pilot_results.json"))
+
+HARNESSES = ['codex', 'deepseek-harness', 'hermes', 'opencode',
+             'cline-patched', 'claude-code', 'pi']
+SHORT = {'codex':'codex','deepseek-harness':'deepseek','hermes':'hermes',
+         'opencode':'opencode','cline-patched':'cline','claude-code':'claude','pi':'pi'}
+
+def esc(s): return H.escape(str(s), quote=True)
+def resolved_of(e): return e.get('classification') == 'resolved'
+
+def harness_stats(data, h):
+    es = [e for e in data if e['harness'] == h]
+    res = [e for e in es if resolved_of(e)]
+    pbf = [e for e in es if e.get('classification') == 'patch-but-failed']
+    blk = [e for e in es if e.get('classification') in ('blocked','quota-blocked')]
+    np_ = [e for e in es if e.get('classification') == 'no-patch']
+    walls = [e['harness_result']['wall_s'] for e in es if e.get('harness_result',{}).get('wall_s',0) > 0]
+    n = len(es)
+    return {'n':n,'resolved':len(res),'pbf':len(pbf),'blocked':len(blk),'no_patch':len(np_),
+            'pending':300-n,'rate':100*len(res)/n if n else 0,'wall_mean':statistics.mean(walls) if walls else 0}
+
+def make_map(data): return {(e['harness'],e['instance_id']): resolved_of(e) for e in data}
+gm = make_map(GLM); km = make_map(KIM)
+
+def mcnemar(h):
+    keys = [k for k in gm if k[0]==h and k in km]
+    yy=sum(1 for k in keys if gm[k] and km[k]); nn=sum(1 for k in keys if not gm[k] and not km[k])
+    b=sum(1 for k in keys if km[k] and not gm[k]); c=sum(1 for k in keys if gm[k] and not km[k])
+    n=len(keys); agree=yy+nn; bc=b+c
+    chi2=(b-c)**2/bc if bc>0 else 0.0
+    if bc>0:
+        kmin=min(b,c); p_exact=2*sum(comb(bc,i) for i in range(0,kmin+1))/(2**bc)
+        if p_exact>1: p_exact=1.0
+    else: p_exact=1.0
+    return {'n':n,'agree':agree,'yy':yy,'nn':nn,'b':b,'c':c,'bc':bc,'chi2':chi2,'p':p_exact}
+
+mc={h:mcnemar(h) for h in HARNESSES}
+tb=sum(mc[h]['b'] for h in HARNESSES); tc=sum(mc[h]['c'] for h in HARNESSES)
+tn=sum(mc[h]['n'] for h in HARNESSES); tag=sum(mc[h]['agree'] for h in HARNESSES)
+tbc=tb+tc; tchi2=(tb-tc)**2/tbc if tbc>0 else 0.0
+tkmin=min(tb,tc)
+tp_exact=2*sum(comb(tbc,i) for i in range(0,tkmin+1))/(2**tbc) if tbc>0 else 1.0
+if tp_exact>1: tp_exact=1.0
+
+gs={h:harness_stats(GLM,h) for h in HARNESSES}
+ks={h:harness_stats(KIM,h) for h in HARNESSES}
+g_total_res=sum(gs[h]['resolved'] for h in HARNESSES); g_total_n=sum(gs[h]['n'] for h in HARNESSES)
+k_total_res=sum(ks[h]['resolved'] for h in HARNESSES); k_total_n=sum(ks[h]['n'] for h in HARNESSES)
+g_pending=2100-g_total_n
+g_done=[h for h in HARNESSES if gs[h]['pending']==0]
+
+CSS = """
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+       max-width: 1080px; margin: 0 auto; padding: 24px 18px 60px; color: #1f2329;
+       line-height: 1.62; background: #f7f8fa; }
+h1 { font-size: 1.55rem; border-bottom: 3px solid #2563eb; padding-bottom: 8px; margin-bottom: 4px; }
+h2 { font-size: 1.22rem; color: #1e40af; margin-top: 34px; border-left: 5px solid #2563eb; padding-left: 10px; }
+h3 { font-size: 1.04rem; color: #334155; margin-top: 22px; }
+.sub { color: #64748b; font-size: .86rem; margin-bottom: 18px; }
+.tldr { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
+.tldr b { color: #1d4ed8; }
+.warn { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; margin: 16px 0; font-size: .9rem; }
+.warn b { color: #b45309; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: .9rem; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); border-radius: 8px; overflow: hidden; }
+th, td { padding: 7px 9px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+th { background: #f1f5f9; font-weight: 600; color: #334155; }
+td.l, th.l { text-align: left; }
+tr:hover td { background: #f8fafc; }
+.num { font-variant-numeric: tabular-nums; font-family: "SF Mono", Consolas, monospace; }
+.up { color: #16a34a; font-weight: 600; } .dn { color: #dc2626; font-weight: 600; } .eq { color: #64748b; }
+.pos { color: #16a34a; } .neg { color: #dc2626; } .muted { color: #94a3b8; }
+.bar-wrap { background: #e2e8f0; border-radius: 4px; height: 9px; width: 100%; min-width: 60px; display: inline-block; vertical-align: middle; }
+.bar { height: 9px; border-radius: 4px; } .bar-g { background: #3b82f6; } .bar-k { background: #f59e0b; }
+code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: .85em; font-family: "SF Mono", Consolas, monospace; }
+.src { font-size: .82rem; color: #64748b; background: #f8fafc; border-left: 3px solid #cbd5e1; padding: 6px 12px; margin: 8px 0; }
+.footer { margin-top: 40px; padding-top: 14px; border-top: 1px solid #cbd5e1; font-size: .8rem; color: #94a3b8; }
+.tag { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: .76rem; font-weight: 600; }
+.tag-done { background: #dcfce7; color: #15803d; } .tag-run { background: #fef3c7; color: #b45309; }
+.kpi { display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 0; }
+.kpi .card { flex: 1 1 150px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+.kpi .val { font-size: 1.5rem; font-weight: 700; } .kpi .lbl { font-size: .78rem; color: #64748b; }
+"""
+
+def bar(rate, cls):
+    return f'<span class="bar-wrap"><span class="bar {cls}" style="width:{rate:.0f}%"></span></span>'
+
+def delta_cell(d, fmt='{:+.1f}'):
+    if abs(d) < 1e-9: return f'<span class="eq">{fmt.format(d)}</span>'
+    cls = 'up' if d > 0 else 'dn'
+    return f'<span class="{cls}">{fmt.format(d)}</span>'
+
+rows_html = []
+for h in HARNESSES:
+    g=gs[h]; k=ks[h]; m=mc[h]
+    d_rate=g['rate']-k['rate']
+    pend=g['pending']
+    status=('<span class="tag tag-done">已完成</span>' if pend==0 else f'<span class="tag tag-run">进行中 · {pend} 待跑</span>')
+    rows_html.append(f"""\n    <tr>
+      <td class="l">{esc(h)} <span class="muted">({esc(SHORT[h])})</span></td>
+      <td class="num">{g['resolved']}/{g['n']}</td>
+      <td class="num">{g['rate']:.1f}%<br>{bar(g['rate'],'bar-g')}</td>
+      <td class="num">{k['resolved']}/{k['n']}</td>
+      <td class="num">{k['rate']:.1f}%<br>{bar(k['rate'],'bar-k')}</td>
+      <td class="num">{delta_cell(d_rate)}</td>
+      <td class="num">{m['n']}</td>
+      <td>{m['agree']}/{m['n']}<br><span class="muted num">{100*m['agree']/m['n']:.1f}%</span></td>
+      <td class="num">{m['b']} / {m['c']}</td>
+      <td class="num">{m['chi2']:.2f}</td>
+      <td class="num">{m['p']:.3f}</td>
+      <td>{status}</td>
+    </tr>""")
+rows_html.append(f"""\n    <tr style="background:#f8fafc;font-weight:600;">
+      <td class="l">合计 / Total</td>
+      <td class="num">{g_total_res}/{g_total_n}</td><td class="num">{100*g_total_res/g_total_n:.1f}%</td>
+      <td class="num">{k_total_res}/{k_total_n}</td><td class="num">{100*k_total_res/k_total_n:.1f}%</td>
+      <td class="num">{delta_cell(100*g_total_res/g_total_n-100*k_total_res/k_total_n)}</td>
+      <td class="num">{tn}</td><td>{tag}/{tn}<br><span class="muted num">{100*tag/tn:.1f}%</span></td>
+      <td class="num">{tb} / {tc}</td><td class="num">{tchi2:.2f}</td><td class="num">{tp_exact:.3f}</td>
+      <td><span class="tag tag-run">{g_pending} 待跑</span></td>
+    </tr>""")
+
+fail_rows=[]
+for h in HARNESSES:
+    g=gs[h]; k=ks[h]
+    fail_rows.append(f"\n    <tr><td class=\"l\">{esc(h)}</td><td class=\"num\">{g['pbf']}</td><td class=\"num\">{g['blocked']}</td><td class=\"num\">{g['no_patch']}</td><td class=\"num\">{k['pbf']}</td><td class=\"num\">{k['blocked']}</td><td class=\"num\">{k['no_patch']}</td></tr>")
+
+flip_details=[]
+for h in HARNESSES:
+    m=mc[h]
+    if m['b']+m['c']==0: continue
+    keys=[k for k in gm if k[0]==h and k in km]
+    for key in keys:
+        if gm[key]!=km[key]:
+            iid=key[1]; who='glm53 解决 / kimi 未解决' if gm[key] else 'kimi 解决 / glm53 未解决'
+            flip_details.append(f"<tr><td class='l'>{esc(h)}</td><td class='l'>{esc(iid)}</td><td>{who}</td></tr>")
+flip_html='\n'.join(flip_details) if flip_details else '<tr><td colspan=3 class="muted">无翻转实例</td></tr>'
+RT='2026-10-16'
+
+html = f"""<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>glm-5.3-flash 7×300 SWE-bench Lite 阶段性评测报告（中文）</title>
+<style>{CSS}</style></head><body>
+
+<h1>glm-5.3-flash 7×300 SWE-bench Lite 阶段性评测报告</h1>
+<div class="sub">
+  BaiZe Harness 研究线 · 报告时间 {RT} ·
+  数据：<code>glm53_pilot_results.json</code>（{g_total_n}/2100，进行中）vs
+  <code>kimi_pilot_results.json</code>（2100/2100，已完成）
+</div>
+
+<div class="warn">
+<b>⚠️ 诚实声明（务必先读）</b>：本报告为<b>阶段性结果</b>。glm-5.3-flash 7×300 评测
+<b>仍在后台运行</b>，当前已完成 <b>{g_total_n}/2100</b>（{100*g_total_n/2100:.1f}%），
+仍有 <b>{g_pending} 条待跑</b>。其中 {len(g_done)} 个 harness 已完成全部 300 条
+（{esc('、'.join(g_done))}），其余仍在进行。所有数字均为<b>当前快照</b>，
+最终结论待全部跑完后复核。本报告<b>不打断</b>后台评测。
+</div>
+
+<h2>① TL;DR — 核心结论</h2>
+<div class="tldr">
+<b>1. 换 backbone 未显著提升通过率。</b>glm-5.3-flash 当前整体 passrate
+<b>{100*g_total_res/g_total_n:.1f}%</b>（{g_total_res}/{g_total_n}），与 kimi-k2.6-cloud 的
+<b>{100*k_total_res/k_total_n:.1f}%</b>（{k_total_res}/{k_total_n}）几乎持平。<br>
+<b>2. 3 个已完成 harness 结果完全一致。</b>codex / deepseek / hermes 在两个模型上
+resolved 数<b>逐一相同</b>（80 / 71 / 81），delta = 0。<br>
+<b>3. McNemar 配对检验：无显著差异。</b>在 {tn} 个配对样本上，两模型决策一致率
+<b>{100*tag/tn:.1f}%</b>（{tag}/{tn}），仅 {tbc} 例翻转（b={tb}, c={tc}），
+χ²={tchi2:.2f}，精确双侧 p={tp_exact:.3f} ≫ 0.05 → <b>无法拒绝「两模型能力无差异」原假设</b>。<br>
+<b>4. 对「passrate 低主因是模型能力」判断的影响：</b>用「更强」的 glm-5.3-flash 替换
+kimi-k2.6-cloud 后 passrate<b>未见提升</b> → 在当前两个模型的<b>能力差异范围内</b>，
+passrate 瓶颈<b>不能仅靠换同级或略强模型突破</b>；真正约束更可能来自①任务本身难度
+②harness 工程能力（探索/定位/验证策略）③评测基建（已知 infra 问题）。
+</div>
+
+<h2>② 评测设置</h2>
+<table>
+<tr><th class="l">项</th><th>glm-5.3-flash（本轮）</th><th>kimi-k2.6-cloud（对照）</th></tr>
+<tr><td class="l">模型</td><td><code>glm-5.3-flash</code></td><td><code>kimi-k2.6-cloud</code></td></tr>
+<tr><td class="l">Base URL</td><td><code>http://agi-gateway.cxmt.com/v1</code></td><td>内网网关</td></tr>
+<tr><td class="l">数据集</td><td colspan="2">SWE-bench Lite（300 条 instance_id，7 harness × 300 = 2100 条）</td></tr>
+<tr><td class="l">7 harness</td><td colspan="2">codex · deepseek-harness · hermes · opencode · cline-patched · claude-code · pi</td></tr>
+<tr><td class="l">评测口径</td><td colspan="2">resolved = classification == 'resolved'（unshare 沙箱 + 官方 eval，与既有报告一致）</td></tr>
+<tr><td class="l">运行机制</td><td colspan="2">7 路并行（各 harness 串行），<code>--resume</code> 幂等可续，结果独立 JSON</td></tr>
+<tr><td class="l">完成度</td><td><b>{g_total_n}/2100（{100*g_total_n/2100:.1f}%）</b> · {g_pending} 待跑</td><td>2100/2100（100%）</td></tr>
+</table>
+<div class="src">数据来源：<code>run/harness/glm53_pilot_results.json</code>（mtime 2026-10-16，{g_total_n} 条）、
+<code>run/harness/kimi_pilot_results.json</code>（2100 条）。口径见 <code>gen_report_glm53_7x300_zh.py</code>。</div>
+
+<h2>③ 7 harness 逐项对比 + McNemar 配对检验</h2>
+<div class="kpi">
+  <div class="card"><div class="val num">{100*g_total_res/g_total_n:.1f}%</div><div class="lbl">glm53 整体 passrate（{g_total_n} 条）</div></div>
+  <div class="card"><div class="val num">{100*k_total_res/k_total_n:.1f}%</div><div class="lbl">kimi 整体 passrate（{k_total_n} 条）</div></div>
+  <div class="card"><div class="val num">{100*tag/tn:.1f}%</div><div class="lbl">配对一致率（{tn} 对）</div></div>
+  <div class="card"><div class="val num">p={tp_exact:.3f}</div><div class="lbl">McNemar 精确 p 值</div></div>
+</div>
+<table>
+<tr>
+  <th class="l" rowspan="2">Harness</th>
+  <th colspan="2">glm-5.3-flash</th><th colspan="2">kimi-k2.6-cloud</th>
+  <th rowspan="2">passrate<br>Δ(pp)</th><th rowspan="2">配对<br>样本数</th><th rowspan="2">一致率</th>
+  <th rowspan="2">翻转<br>b / c</th><th rowspan="2">χ²</th><th rowspan="2">精确 p</th><th rowspan="2">状态</th>
+</tr>
+<tr><th>resolved</th><th>passrate</th><th>resolved</th><th>passrate</th></tr>
+{''.join(rows_html)}
+</table>
+<p style="font-size:.84rem;color:#64748b;margin-top:6px">
+图例：<span class="bar-g">▮</span> glm53　<span class="bar-k">▮</span> kimi　
+McNemar 中 <b>b</b> = kimi 解决但 glm53 未解决，<b>c</b> = glm53 解决但 kimi 未解决。
+χ² = (b−c)²/(b+c)（无连续性校正）；p 为精确双侧二项检验（H0: 翻转概率 = 0.5）。
+</p>
+
+<h3>③.1 翻转实例清单（共 {tbc} 例）</h3>
+<table>
+<tr><th class="l">Harness</th><th class="l">instance_id</th><th>方向</th></tr>
+{flip_html}
+</table>
+<p class="muted" style="font-size:.84rem">{tbc} 例翻转 / {tn} 配对 = 仅 {100*tbc/tn:.2f}% 的实例两模型给出不同 resolve 结论。
+codex / deepseek / cline-patched / opencode 四个 harness 在重叠样本上 <b>零翻转</b>。</p>
+
+<h2>④ 关键发现分析</h2>
+<h3>④.1 三个已完成 harness 结果「逐题一致」</h3>
+<p>codex（80 vs 80）、deepseek-harness（71 vs 71）、hermes（81 vs 81）——这三个 harness 在两个模型上
+均已完成全部 300 条，且 <b>resolved 数完全相同</b>。McNemar 显示它们在 300/300 的配对上
+<b>零翻转</b>（b=c=0），意味着两个模型在<b>完全相同的 instance_id 子集</b>上成功 / 失败。
+这强烈表明：对于这些 harness，<b>解决哪些题主要由 harness 工程实现 + 任务难度决定，而非模型间的能力差异</b>。</p>
+<h3>④.2 McNemar 检验结论</h3>
+<table>
+<tr><th class="l">检验项</th><th>值</th><th>判读</th></tr>
+<tr><td class="l">配对样本数</td><td class="num">{tn}</td><td>两模型均有结果的 (harness, instance_id) 对</td></tr>
+<tr><td class="l">一致（both-resolved + both-failed）</td><td class="num">{tag}（{100*tag/tn:.1f}%）</td><td class="pos">极高一致</td></tr>
+<tr><td class="l">不一致（翻转 b+c）</td><td class="num">{tbc}</td><td class="neg">仅 {100*tbc/tn:.2f}%</td></tr>
+<tr><td class="l">χ² 统计量</td><td class="num">{tchi2:.2f}</td><td>远小于临界值 3.84（α=0.05, df=1）</td></tr>
+<tr><td class="l">精确双侧 p 值</td><td class="num">{tp_exact:.3f}</td><td class="pos">≫ 0.05 → 不显著</td></tr>
+</table>
+<p><b>统计结论</b>：无法拒绝原假设 H₀「glm-5.3-flash 与 kimi-k2.6-cloud 在 SWE-bench Lite 上的
+resolve 能力无差异」。本次实验<b>没有观察到</b> glm-5.3-flash 相对 kimi-k2.6-cloud 的显著能力提升。</p>
+<h3>④.3 对「passrate 低主因是模型能力」判断的影响</h3>
+<div class="tldr">
+<p>此前（2026-10-13 why-low-passrate 报告）判断「passrate 低主因是模型能力（非 infra）」，
+依据是 fix3/fix4 修复后 0-flip → 排除了基础设施因素。本轮用「更强的」glm-5.3-flash 重测，
+<b>预期</b>若能力是主因，则换强模型应带来显著提升。</p>
+<p><b>实测结果</b>：passrate 基本持平（{100*g_total_res/g_total_n:.1f}% vs {100*k_total_res/k_total_n:.1f}%），
+McNemar p={tp_exact:.3f} 不显著。<b>这意味着</b>：</p>
+<ul>
+  <li>kimi-k2.6-cloud 与 glm-5.3-flash 可能处于<b>相近的能力档位</b>，两者间的差异不足以撬动 SWE-bench Lite 的通过率——「换一个同级/略强的 API 模型」不是有效的提分手段。</li>
+  <li>真正能显著提升 passrate 的杠杆，更可能在<b>更大幅度</b>的能力跃迁（如顶级闭源模型）、或<b>harness 工程改进</b>（更深的 repo 探索、更好的定位/验证策略、更稳健的 patch 生成）上。</li>
+  <li>注意：这<b>不否定</b>「能力是主因」——它说明的是<b>这两个特定模型间的能力差</b>不足以体现。要证实/证伪，需引入能力差距更大的模型做对照。</li>
+</ul>
+</div>
+
+<h2>⑤ 失败模式分类对比</h2>
+<table>
+<tr>
+  <th class="l" rowspan="2">Harness</th>
+  <th colspan="3">glm-5.3-flash</th><th colspan="3">kimi-k2.6-cloud</th>
+</tr>
+<tr><th>patch-but-failed</th><th>blocked</th><th>no-patch</th><th>patch-but-failed</th><th>blocked</th><th>no-patch</th></tr>
+{''.join(fail_rows)}
+</table>
+<p class="muted" style="font-size:.84rem">两类模型的主要失败模式均为 <b>patch-but-failed</b>（生成了 patch 但未通过测试），
+占比结构相似，进一步佐证两模型在「能产出 patch 但 patch 不正确」这一失败模式上表现接近。</p>
+
+<h2>⑥ 复现方法</h2>
+<div class="src">
+数据：<code>run/harness/glm53_pilot_results.json</code>、<code>run/harness/kimi_pilot_results.json</code><br>
+口径：resolved = <code>e['classification'] == 'resolved'</code>（与运维指令「codex 80/300=26.7%」一致）<br>
+McNemar：对每个 (harness, instance_id) 两模型均有条目的配对，统计 b（kimi 解决/glm53 未）与 c（glm53 解决/kimi 未），
+χ²=(b−c)²/(b+c)，p = 精确双侧二项检验。<br>
+报告生成：<code>python3 run/harness/gen_report_glm53_7x300_zh.py</code> → <code>run/harness/reports/report_harness_glm53_7x300_zh.html</code>
+</div>
+
+<div class="footer">
+BaiZe Harness 研究线 · 自动生成于 {RT} · commit 前缀 <code>harness rpt:</code> · 评测仍在后台运行，最终结果待全部完成后更新。
+</div>
+
+</body></html>"""
+
+OUT.write_text(html, encoding="utf-8")
+print(f"OK wrote {OUT}  ({OUT.stat().st_size} bytes)")
+print(f"glm53: {g_total_res}/{g_total_n} ({100*g_total_res/g_total_n:.1f}%)  pending={g_pending}")
+print(f"kimi : {k_total_res}/{k_total_n} ({100*k_total_res/k_total_n:.1f}%)")
+print(f"McNemar: agree {tag}/{tn} ({100*tag/tn:.1f}%)  b={tb} c={tc}  chi2={tchi2:.2f}  p={tp_exact:.3f}")

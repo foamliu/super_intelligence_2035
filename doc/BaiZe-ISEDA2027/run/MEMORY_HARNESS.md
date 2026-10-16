@@ -14,15 +14,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING — monitoring R406 (1306/2100, 310 resolved, 794 pending)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574→621 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 RUNNING + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ (save_results atomic write + skip-on-parse-error)
-当前动作:     glm53 7x300 monitoring R406 — 1306/2100 entries (62.2%), 310 resolved (23.7%), 794 pending. 5 harnesses running (PIDs 2918026~2918183, etimes~31200s=8.7h since 10:03 restart, ppid=1, stat=SNs). codex+deepseek DONE (300/300 each). JSON actively updated (mtime 18:40). Last entries: hermes pytest-8365, pi django-16046, claude-code matplotlib-25332, cline-patched seaborn-2848, opencode matplotlib-26011. gw_proxy 9092/9093→/v1 healthy (PIDs 2941134/2941137). Logs writing to .nfs* files (visible log files stale since 10:16 — NFS silly-rename). save_results fix holding (1306 entries, 0 dups). curl /v1 → 401 (reachable). Rate ~13.8 entries/h since 10:03 restart. ETA ~58h. load 17.9, RAM 66G/2015G.
-下一步:       ① Monitor glm53 7x300 (ETA ~58h, 794 remaining) ② When done: report_harness_glm53_vs_kimi_7x300.html ③ Restore kimi configs
-阻塞:         <无> — all 5 harnesses alive, quota stalls transient
+PHASE:        glm53 7x300 RUNNING — 阶段性中文报告已交付 (1834/2100, 443 resolved, 266 pending)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 RUNNING + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (report_harness_glm53_7x300_zh.html, McNemar p=1.0)
+当前动作:     glm53 7x300 阶段性中文报告已交付 (R407, 18:11)。reports/report_harness_glm53_7x300_zh.html (19KB, 6 sections) — glm53 443/1834 (24.2%) vs kimi 574/2100 (27.3%)。McNemar: 1834 配对, 一致 99.7% (1829/1834), b=2 c=3, χ²=0.20, 精确 p=1.000 ≫0.05 → 无显著差异。3 个已完成 harness (codex/deepseek/hermes) resolved 逐一相同 (80/71/81)。结论：换 backbone 未显著提升 → 能力差不足以撬动 passrate。评测仍后台运行 (266 pending)，报告不打断评测。
+下一步:       ① 继续监控 glm53 7x300 至完成 (266 pending) ② 跑完后更新最终版报告 ③ 恢复 kimi configs
+阻塞:         <无> — 评测后台继续，报告已完成
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-16 18:11 —— **glm53 7×300 阶段性中文报告** —— 按运维指令（2026-10-16）生成 `reports/report_harness_glm53_7x300_zh.html`（19KB, 6 sections, 自包含）。数据：glm53 443/1834 (24.2%) vs kimi 574/2100 (27.3%)。McNemar 配对：1834 对，一致 99.7% (1829/1834)，b=2 c=3，χ²=0.20，精确 p=1.000 ≫0.05 → 无显著差异。3 个已完成 harness (codex 80/deepseek 71/hermes 81) resolved 逐一相同。结论：换 backbone 未显著提升 → 两模型能力差不足以撬动 passrate。诚实声明：评测仍后台运行 (266 pending)，数字为阶段性快照，不打断评测。生成器 `gen_report_glm53_7x300_zh.py`（classification=='resolved' 口径，与运维「codex 80/300=26.7%」一致）。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY=29990B(29.3KB ✓) / 归档 0B。
 > 📦 R366-R385 (2026-10-14, ~20 rounds of glm53 monitoring 23→872 + rerun + fixes) 已归档 → daily-memories-harness/2026-10-14.md + 2026-10-15.md。需要时再读。
 > 📦 R386 (2026-10-15 01:08, glm53 monitoring 872/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
 > 📦 R387 (2026-10-15 01:42, glm53 monitoring 887/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
