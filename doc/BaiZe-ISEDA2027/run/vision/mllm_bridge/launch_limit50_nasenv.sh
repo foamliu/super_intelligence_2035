@@ -33,6 +33,15 @@ SCRIPT_LOG="$LOG_DIR/launch_limit50_nasenv.log"
 
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
 
+# ---- guard: prevent duplicate runs ----
+LOCK_FILE=/tmp/launch_limit50_nasenv.lock
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+    echo "[guard] Another instance is already running (lock $LOCK_FILE held). Exiting." | tee -a "$SCRIPT_LOG"
+    exit 0
+fi
+echo "[guard] Lock acquired at $(date '+%H:%M:%S')" | tee -a "$SCRIPT_LOG"
+
 echo "============================================================" | tee "$SCRIPT_LOG"
 echo "  launch_limit50_nasenv started: $(date '+%Y-%m-%d %H:%M:%S')" | tee -a "$SCRIPT_LOG"
 echo "  NEW_CACHE=$NEW_CACHE  OLD_CACHE=$OLD_CACHE" | tee -a "$SCRIPT_LOG"
@@ -70,11 +79,21 @@ fi
 # ---- Step 4: Launch limit50 8-GPU eval ----
 # 16 benchmarks (skip vqav2_val — needs >28G arrow, will do in full eval on /nas_env)
 # seedbench IS included — lmms-eval task name is "seedbench", cache dir is "lmms-lab___seed-bench"
+#
+# FIX 2026-10-16: HF_HUB_OFFLINE=1 prevents 429 Too Many Requests when 8 ranks
+# try to load uncached datasets simultaneously. All 15 datasets are in the hub
+# cache (/nas_env/app.e0031982/hf_home/hub/), so offline mode works.
+# Pre-cached missing datasets (vizwiz, infovqa) via precache_missing.py first.
 EVAL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,seedbench,pope,vizwiz_vqa_val,ocrbench,mmvet,hallusion_bench_image,realworldqa,infovqa_val"
+
+# Critical: prevent parallel HF Hub API calls (caused 429 crash on 2026-10-16 08:54)
+export HF_HUB_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
 
 echo "" | tee -a "$SCRIPT_LOG"
 echo "[step4] Launching limit50 8-GPU eval at $(date '+%Y-%m-%d %H:%M:%S')" | tee -a "$SCRIPT_LOG"
 echo "[step4] Tasks: $EVAL_TASKS" | tee -a "$SCRIPT_LOG"
+echo "[step4] HF_HUB_OFFLINE=1 (prevent 429 from parallel API calls)" | tee -a "$SCRIPT_LOG"
 
 EVAL_LOG="$LOG_DIR/eval_limit50_nasenv.log"
 echo "[step4] Eval log: $EVAL_LOG" | tee -a "$SCRIPT_LOG"
@@ -82,7 +101,7 @@ echo "[step4] Eval log: $EVAL_LOG" | tee -a "$SCRIPT_LOG"
 accelerate launch \
     --multi_gpu \
     --num_processes=8 \
-    --main_process_port=29558 \
+    --main_process_port=29560 \
     mllm_bridge/run_lmms_eval.py \
     --limit 50 \
     --batch_size 4 \

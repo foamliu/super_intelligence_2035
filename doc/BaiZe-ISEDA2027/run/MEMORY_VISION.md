@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 08:45（limit50 eval 崩因=/tmp满→迁缓存→/nas_env 重启 · wake #111）**：📊 **precache 全部完成**: 16/17 OK (seedbench retry ✅ 4175s, arrow cache 26G; vqav2_val raw data 在 hub 但 arrow 生成失败)。❌ **limit50 eval 被 abort**: /tmp 98%满(67G lmms-eval cache, 仅 2.4G free < 5G threshold)。🔧 **修复中**: `launch_limit50_nasenv.sh` 正在将 67G /tmp cache `cp -a` → /nas_env(9.7T), 完成后删 /tmp cache 释放空间, 然后用 /nas_env cache 跑 limit50 8卡 eval(16 benchmarks, skip vqav2)。✅ Part B 全验收通过(open_clip GPU✅ + HF导出✅ + ai2d=0.60✅)。✅ GPU 8×H100 全空闲。📦 体积：TASK=28.5KB / MEMORY=28.0KB（无归档）。下一步：cache 拷贝完成(~10min) → limit50 eval → 全量 17集 → ArmA retrain。
+> 🆕 **2026-10-16 09:02（limit50 eval 429→修复→重跑成功 · wake #112）**：❌ **第1次 limit50 eval (08:51) 崩溃**: HF Hub 429 Too Many Requests — 8 ranks 同时加载 VizWiz-VQA（lmms_eval_cache 缺该 arrow）→ API 限流 → `ChildFailedError` rank 1。🔧 **根因**: /nas_env lmms_eval_cache 缺 3 集 (vizwiz/infovqa/vqav2)，datasets.load_dataset() 回退 HF Hub API 查 revision → 8 并发触发 429。✅ **修复**: ① `precache_missing.py` 单进程预生成 VizWiz arrow cache (4319 val + 8000 test, 35.5s)；InfoVQA 已在 doc_vqa/InfographicVQA 子目录；② launch 脚本加 `HF_HUB_OFFLINE=1` + `HF_DATASETS_OFFLINE=1` 阻断 API 调用；③ port 29559→29560。✅ **第2次 limit50 eval (09:02) 运行中**: 8 GPU 模型加载✅ (vision 277/277 matched, Qwen3-4B 3 shards)，inference 进行中 (GPU util 17-36%, gen_text 产出正常如 "Picaboo"=Snapchat 原名✅)。📦 lmms_eval_cache 15 dirs (全 16 集 minus vqav2)。/tmp 69G free, /nas_env 9798G free。下一步：等 eval 完成 → 检查 16 集 acc → 全量 17 集 → ArmA retrain。
 > 📦 2026-10-16 06:23（precache 主跑完成 15OK/2FAIL · wake #110）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15OK/2FAIL, seedbench retry 进行中40%。需要时再读。
 > 📦 2026-10-16 05:13（Part B 全验收 ✅✅✅ · wake #109）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60), precache 主跑尚在进行。需要时再读。
 > 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
@@ -28,10 +28,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **lmms-eval 17 集：precache 15/17 + watcher 自动化运行中（wake #109）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅ (open_clip GPU + HF 导出 + ai2d=0.60)。precache 运行中 (PID 2430411, vqav2 78% downloading, infovqa pending, ETA~1h)。watcher PID 3905600：等 precache → retry seedbench → limit50 8卡 eval。GPU 8×H100 全空闲。下一步：watcher 自动完成 → 检查 limit50 → 全量 17 集 → ArmA retrain。 |
-| ERROR_COUNT | 17（①~⑯ 同前 ⑰ limit50 8卡评测磁盘满崩: `OSError: [Errno 28] No space left on device` → `DatasetGenerationError` → `ChildFailedError`） |
+| PHASE | 🔄 **limit50 8-GPU eval 运行中（wake #112, 09:02 启动）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅。❌ 第1次 eval (08:51) 429 崩溃 → ✅ 修复 (precache_missing.py + HF_HUB_OFFLINE=1) → ✅ 第2次 eval (09:02) inference 进行中。GPU 8×H100 模型已加载 (18GB/10GB), util 17-36%。下一步：eval 完成 → 检查 16 集 acc → 全量 17 集 → ArmA retrain。 |
+| ERROR_COUNT | 18（①~⑯ 同前 ⑰ limit50 磁盘满崩 ⑱ limit50 HF Hub 429 崩: 8 ranks 并发 API → 429 → ChildFailedError → 修复: precache_missing.py + HF_HUB_OFFLINE=1） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 05:13 (wake #109)**: 🎉 Part B 三项验收全通过：① open_clip GPU 前向 `[2,196,512]` ✅ ② HF 导出目录 8 文件 ✅ ③ ai2d --limit 5 = 0.6000 ✅。🔄 precache 15/17 (vqav2 78%, infovqa pending, ETA~1h)。✅ watcher PID 3905600 健康。GPU 8×H100 全空闲。📦 体积：TASK=26.5KB / MEMORY=25.9KB（无归档）。 |
+| 更新 | **2026-10-16 09:02 (wake #112)**: ❌ 第1次 limit50 eval (08:51) 崩溃: HF Hub 429 (8 ranks 并发加载 VizWiz→API 限流)。✅ 修复: precache_missing.py 单进程预缓存 VizWiz (4319+8000, 35.5s) + launch 脚本加 HF_HUB_OFFLINE=1 + port→29560。✅ 第2次 eval (09:02) 运行中: 模型加载✅, inference 进行中 (GPU util 17-36%, gen "Picaboo"✅)。📦 TASK/MEMORY 体积待查。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
