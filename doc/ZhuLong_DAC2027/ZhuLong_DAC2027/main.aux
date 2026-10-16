@@ -47,18 +47,18 @@
 \newlabel{sec:bayesian}{{4.2}{4}{A Bayesian Formalization of the Grounding Gap}{subsection.4.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}ZhuLong as an Instance of the Agent Harness}{4}{subsection.4.3}\protected@file@percent }
 \newlabel{sec:zhuLong-harness}{{4.3}{4}{ZhuLong as an Instance of the Agent Harness}{subsection.4.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Design Principles}{4}{subsection.4.4}\protected@file@percent }
-\newlabel{sec:prediction}{{4.4}{4}{Design Principles}{subsection.4.4}{}}
 \citation{chen2021evaluating}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The four levels of information}}{5}{table.caption.6}\protected@file@percent }
 \newlabel{tab:four-levels}{{1}{5}{The four levels of information}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Design Principles}{5}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:prediction}{{4.4}{5}{Design Principles}{subsection.4.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Benchmark Construction}{5}{section.5}\protected@file@percent }
 \newlabel{sec:benchmark}{{5}{5}{Benchmark Construction}{section.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Dataset: EDA-Scripting-Bench}{5}{subsection.5.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Dataset: EDA-Eval-PyAether (PyAether slice)}{5}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Evaluation Protocol}{5}{subsection.5.3}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Task distribution by scenario}}{6}{table.caption.7}\protected@file@percent }
 \newlabel{tab:scenario-distribution}{{2}{6}{Task distribution by scenario}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Evaluation Protocol}{6}{subsection.5.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Experiments}{6}{section.6}\protected@file@percent }
 \newlabel{sec:experiments}{{6}{6}{Experiments}{section.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Experimental Setup}{6}{subsection.6.1}\protected@file@percent }
@@ -71,15 +71,15 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.4}LLM Backbones}{7}{subsubsection.6.1.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Results and Ablations}{7}{subsection.6.2}\protected@file@percent }
 \newlabel{sec:exp-results}{{6.2}{7}{Results and Ablations}{subsection.6.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Ablation study results}}{7}{table.caption.9}\protected@file@percent }
-\newlabel{tab:main-ablation}{{4}{7}{Ablation study results}{table.caption.9}{}}
 \newlabel{sec:omega-fidelity}{{6.2.1}{7}{S1: Observation fidelity (RQ1)}{subsubsection.6.2.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}S1: Observation fidelity (RQ1)}{7}{subsubsection.6.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Ablation study results}}{7}{table.caption.9}\protected@file@percent }
+\newlabel{tab:main-ablation}{{4}{7}{Ablation study results}{table.caption.9}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Observation fidelity along the documentation axis (LLM, effector and loop fixed)}}{7}{table.caption.10}\protected@file@percent }
 \newlabel{tab:omega}{{5}{7}{Observation fidelity along the documentation axis (LLM, effector and loop fixed)}{table.caption.10}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Observation-fidelity ablation along the read-back axis (RQ: Principle 2)}}{7}{table.caption.11}\protected@file@percent }
-\newlabel{tab:ablation-harness}{{6}{7}{Observation-fidelity ablation along the read-back axis (RQ: Principle 2)}{table.caption.11}{}}
 \citation{kumar2026agentforge,jiang2024seed}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Observation-fidelity ablation along the read-back axis (RQ: Principle 2)}}{8}{table.caption.11}\protected@file@percent }
+\newlabel{tab:ablation-harness}{{6}{8}{Observation-fidelity ablation along the read-back axis (RQ: Principle 2)}{table.caption.11}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Convergence cost along the read-back axis (LLM and effector fixed). ``Mean \texttt  {run\_code}'' is the per-trace execution count; ``wall'' is the code-generation wall-clock per run; ``timeout'' is the number of tasks hitting the per-task time limit. Cost rises monotonically as observation bandwidth narrows from (F) to (B).}}{8}{table.caption.12}\protected@file@percent }
 \newlabel{tab:readback-cost}{{7}{8}{Convergence cost along the read-back axis (LLM and effector fixed). ``Mean \texttt {run\_code}'' is the per-trace execution count; ``wall'' is the code-generation wall-clock per run; ``timeout'' is the number of tasks hitting the per-task time limit. Cost rises monotonically as observation bandwidth narrows from (F) to (B)}{table.caption.12}{}}
 \newlabel{sec:closed-loop}{{6.2.2}{8}{S2: The closed loop (RQ2)}{subsubsection.6.2.2}{}}
@@ -96,23 +96,20 @@
 \newlabel{tab:cross-language}{{10}{10}{Cross-language reproduction of the component ablation (RQ3). Pass@1 (\%), 5-run mean$\pm $std, on EDA-Scripting-Bench. The PyAether column is the reproduction's own runs (self-consistent with its SKILL/Tcl columns, within $1\sigma $ of the main-table anchor); Tcl is split into the WaveView and Innovus runtimes (133 tasks total). The full system is the top configuration on every language; the prior-only baseline is the bottom on every language}{table.caption.15}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Error Analysis}{10}{subsection.6.3}\protected@file@percent }
 \newlabel{sec:error-analysis}{{6.3}{10}{Error Analysis}{subsection.6.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}API misuse.}{10}{subsubsection.6.3.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Root cause categories for execution-stage failures}}{10}{table.caption.16}\protected@file@percent }
-\newlabel{tab:error-categories}{{11}{10}{Root cause categories for execution-stage failures}{table.caption.16}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}API composition and workflow errors.}{10}{subsubsection.6.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Failure classification for the representative trace (129/158 pass, 29 fail). Execution-stage failures are classified by the L1--L4 hierarchy of Section\nonbreakingspace \ref {sec:grounding-theory}. Generation-stage failures are broken down by cause.}}{10}{table.caption.16}\protected@file@percent }
+\newlabel{tab:error-categories}{{11}{10}{Failure classification for the representative trace (129/158 pass, 29 fail). Execution-stage failures are classified by the L1--L4 hierarchy of Section~\ref {sec:grounding-theory}. Generation-stage failures are broken down by cause}{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}L4: Situated truthfulness violations.}{10}{subsubsection.6.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}L3: Semantic and logic errors.}{11}{subsubsection.6.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3}Generation-stage failures.}{11}{subsubsection.6.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.4}Implications.}{11}{subsubsection.6.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{11}{section.7}\protected@file@percent }
+\newlabel{sec:discussion}{{7}{11}{Discussion}{section.7}{}}
 \bibstyle{ACM-Reference-Format}
 \bibdata{reference}
 \bibcite{mcp2024protocol}{{1}{2024}{{Anthropic}}{{}}}
 \bibcite{austin2021program}{{2}{2021}{{Austin et~al\mbox  {.}}}{{}}}
 \bibcite{blocklove2024eda}{{3}{2024}{{Blocklove et~al\mbox  {.}}}{{}}}
 \bibcite{bge2024}{{4}{2024b}{{Chen et~al\mbox  {.}}}{{}}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3}Implications.}{11}{subsubsection.6.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{11}{section.7}\protected@file@percent }
-\newlabel{sec:discussion}{{7}{11}{Discussion}{section.7}{}}
-\newlabel{sec:limitations}{{7}{11}{Limitations}{section*.17}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{11}{section.8}\protected@file@percent }
-\newlabel{sec:conclusion}{{8}{11}{Conclusion and Future Work}{section.8}{}}
-\@writefile{toc}{\contentsline {section}{References}{11}{section*.19}\protected@file@percent }
 \bibcite{chen2024dawning}{{5}{2024a}{{Chen et~al\mbox  {.}}}{{}}}
 \bibcite{chen2021evaluating}{{6}{2021}{{Chen et~al\mbox  {.}}}{{}}}
 \bibcite{cline2024cline}{{7}{2024}{{Contributors}}{{}}}
@@ -122,6 +119,10 @@
 \bibcite{kaelbling1998planning}{{11}{1998}{{Kaelbling et~al\mbox  {.}}}{{}}}
 \bibcite{kumar2026agentforge}{{12}{2026}{{Kumar et~al\mbox  {.}}}{{}}}
 \bibcite{li2026pdagent}{{13}{2026}{{Li et~al\mbox  {.}}}{{}}}
+\newlabel{sec:limitations}{{7}{12}{Limitations}{section*.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{12}{section.8}\protected@file@percent }
+\newlabel{sec:conclusion}{{8}{12}{Conclusion and Future Work}{section.8}{}}
+\@writefile{toc}{\contentsline {section}{References}{12}{section*.19}\protected@file@percent }
 \bibcite{liu2025layoutcopilot}{{14}{2025}{{Liu et~al\mbox  {.}}}{{}}}
 \bibcite{liu2023rtlcoder}{{15}{2024}{{Liu et~al\mbox  {.}}}{{}}}
 \bibcite{lee2025autoeda}{{16}{2025}{{Lu et~al\mbox  {.}}}{{}}}
@@ -141,5 +142,5 @@
 \newlabel{tocindent3}{19.01376pt}
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
-\newlabel{TotPages}{{12}{12}{}{page.12}{}}
-\gdef \@abspage@last{12}
+\newlabel{TotPages}{{13}{13}{}{page.13}{}}
+\gdef \@abspage@last{13}
