@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 01:43（⚡ ArmA 效率专项监控 · wake #122）**：训练健康运行中，step **74720/154500 (48.4%)**，从 step 30000 `--resume`（22:03 启动，已跑 219min）。8 卡 util **99-100%/全卡**（straggler 已消除✅），LPT 分片均衡 0.0% 不均✅。**真实吞吐 3.40 it/s**（实测：(74720−30000)/(219.1min×60)=3.40），**真实 ETA ~6.5h**（≈ 2026-10-17 08:13 完成，较 wake #121 的 7.9h 估计继续收敛）。⚠️ **sps 显示 bug**：日志显示 5.69 it/s / ETA 3.9h **均为膨胀值**（进程 22:03 启动用旧 `step/el`，代码 22:16 已修为 `(step-start_step)/el`，下次重启自动生效）。loss EMA 稳定振荡（0.28-0.40，C1~0.67-0.76，shard 难度波动正常），lr=1.23e-3（cosine 衰减中）。checkpoint_60000/70000 已存（70000 @ 01:17）。**效率验收全通过（+40% it/s / util≥85% / 方差≈0）**，🚫 不干扰训练。下一步：监控至完成 → ProtB 评测。
+> 🆕 **2026-10-17 02:57（⚡ ArmA 训练监控 · wake #123）**：训练健康运行中，step **88940/154500 (57.6%)**，从 step 30000 `--resume`（22:03 启动，已跑 293min）。8 卡 util **90-100%/全卡**（straggler 已消除✅）。**真实吞吐 3.35 it/s**（实测：(88940−30000)/17579s=3.353），**真实 ETA ~5.4h**（≈ 2026-10-17 08:24 完成，较 wake #122 的 6.5h 估计继续收敛）。⚠️ 日志显示 5.07 it/s / ETA 3.6h **仍为膨胀值**（进程 22:03 启动用旧 `step/el` 公式，代码已修为 `(step-start_step)/el`，下次重启自动生效）。loss EMA 稳定振荡（0.39-0.65，C1~0.52-0.68，shard 难度波动正常），lr=9.5e-4（cosine 衰减中）。checkpoint_80000 已存（@ 02:15）。**效率验收全通过（+40% it/s / util≥85% / 方差≈0）**，🚫 不干扰训练。下一步：监控至完成 → ProtB 评测。
 >
 > **📊 效率对比表（wake #119 落地，wake #121 实测复核确认，详见 daily-memories-vision/2026-10-16.md）**：
 >
@@ -16,7 +16,7 @@ WAITING: 1
 > | 显存/卡 | 24.4 GB | 25.6 GB | +1.2GB |
 > | 真实 ETA | 14.2h | **~7.9h** (from 59480) | 省 ~6h |
 >
-> **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=~32KB。
+> **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=29.3KB（wake #123 实测，均 <32KB）。
 > 📦 2026-10-16 17:30（🚀 ArmA open_clip 从头训已启动 · wake #116）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 报告交付 + ArmA 起训, step 180 loss=6.69。但 step 10000 存 ckpt 后因 barrier bug 崩溃。需要时再读。
 > 📦 2026-10-16 12:10（✅ 12集全量 eval 全部完成 · wake #114）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12/12 benchmarks 全部完成, consolidated_12benchmarks.json 交付。需要时再读。
 > 📦 2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 13集全量 eval 完成（per-GPU batch32），后缩编为12集。需要时再读。
@@ -235,6 +235,7 @@ WAITING: 1
 - [20:50 Oct16] **Wake #118**: 🔄 **ArmA 训练监控** — git pull up to date, 无新运维指令。✅ ArmA open_clip ViT-B/16 训练健康: 8×H100 全活跃(24GB/卡, util 0-100%), step 21940/154500(14.2%), loss~0.56, C1~0.57, lr=1.96e-3, 5.15 it/s, ETA~7.2h, checkpoint_20000.pt 已存。✅ Stage(iv) 报告(18.8KB) 在位。✅ barrier bug 修复后(wake #117) --resume 从 step 10000 恢复, 现已过 step 20000, 无崩溃。📦 TASK 归档: 4 个已完成 2026-10-16 评测指令块→ARCHIVE, TASK 33.4→29.9KB。📦 体积：TASK=29.9KB / MEMORY=30.2KB（归档 ~3.5KB → ARCHIVE_OPERATOR_VISION.md）。
 - [21:3x~23:1x Oct16] **Wake #119~#120**: ⚡ **ArmA 效率专项实验落地** — 按运维 21:3x 指令应用效率优化（⚠️ 一揽子，非单变量 A/B——改动在协议到达前已落地）：① LPT 字节均衡分片(parse_shards 改 LPT bin-packing, 0.0% 不均) ② num_workers 6→12 + persistent + prefetch4 + pin_memory ③ cudnn.benchmark + fused AdamW + bf16 去重(fp32 master+autocast) ④ torch.compile 标志加但未启用 ⑤ 🚫 配方不变(GBS=2048/MBS=256/累积=1/LR 曲线不动)。📊 实测: 修前 2.40 it/s + util 3/5/12/100/71/100/100/35%(straggler) → 修后 3.35 it/s(+40%) + util 95-100%/全卡。✅ 验收三项全达标: util≥85%✅ / 方差变小✅ / it/s≥+15%(+40%)✅。训练从 step 30000 --resume 续跑, 无从头训。commit `vision armA perf:`.
 - [00:30 Oct17] **Wake #121**: 🔄 **ArmA 训练健康监控 + 效率验收复核** — git pull up to date, 无新运维指令。✅ ArmA 训练健康: step 59480/154500(38.5%), 8×H100 util 95-100%/全卡(25.6GB/卡), loss 0.33-0.63 EMA, C1~0.53-0.72, lr=1.51e-3。✅ 真实吞吐复核: (59480−30000)/(146.1min×60)=**3.36 it/s**(日志显示 6.79 系旧 sps 公式膨胀值)。✅ LPT 分片 0.0% 不均(spread=0.22GB)。✅ checkpoint_40000/50000 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~7.9h → ~08:20 Oct17。📦 体积：TASK=30.4KB / MEMORY=~32KB（无归档，均 <32KB）。
+- [02:57 Oct17] **Wake #123**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step 88940/154500(57.6%)，8×H100 util 90-100%/全卡(25.6GB/卡)，loss 0.39-0.65 EMA 振荡(C1~0.52-0.68, shard 难度正常)，lr=9.5e-4。✅ 真实吞吐: (88940−30000)/17579s=**3.35 it/s**(日志 5.07 系旧 sps 公式膨胀值)。✅ checkpoint_80000 已存(@02:15)。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~5.4h → ~08:24 Oct17。📦 体积：TASK=30.4KB / MEMORY=29.3KB（无归档，均 <32KB）。
 
 
 
