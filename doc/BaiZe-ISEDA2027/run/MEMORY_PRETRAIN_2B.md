@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **🚀 Xmodel-2.5 80B decay 训练 RUNNING**（19:14:10 启动, step 190/20346, loss 11.65→1.60, ~183K tok/s, ETA ~5.0天）。起点=step_532000 + BaiZe 80B(SFT64:L3:24:code8:math4) + Megatron Muon(TensorParallelMuon)。seq=4096/GBS=960/MBS=2/DP=8/总步20346=80.0B tok。目标：14集超越 Xmodel-2.5 final (CS8 65.40%/CX 32.90%)。
-  - PHASE: **decay80b** — Xmodel-2.5 80B decay 训练中（19:14 启动, 已运行 68min）。8×H100 全占满（100% util, 58-60GB/卡）。train_log.txt: step190 loss=1.599 lr=1.63e-3(WSD衰减中) tok/s=183.3K。📦 体积：TASK=30.6KB ✅ / MEMORY=28.4KB ✅（均≤32KB，无需归档）。
+- STAGE: **🚀 Xmodel-2.5 80B decay 训练 RUNNING**（19:14:10 启动, step 330/20346, loss 11.65→1.45, ~183K tok/s, ETA ~5.0天）。起点=step_532000 + BaiZe 80B(SFT64:L3:24:code8:math4) + Megatron Muon(TensorParallelMuon)。seq=4096/GBS=960/MBS=2/DP=8/总步20346=80.0B tok。目标：14集超越 Xmodel-2.5 final (CS8 65.40%/CX 32.90%)。
+  - PHASE: **decay80b** — Xmodel-2.5 80B decay 训练中（19:14 启动, 已运行 ~118min）。8×H100 全占满（92-100% util, 58-60GB/卡）。train_log.txt: step330 loss=1.451(新低) lr=1.58e-3(WSD衰减中) tok/s=183.4K。📦 体积：TASK=31.8KB ✅ / MEMORY=28.0KB ✅（均≤32KB，无需归档）。
   - ERROR_COUNT: 0
-  - 轮询状态：8 GPU 全占满 — Xmodel-2.5 80B decay 训练健康运行中（PID 2080678 torchrun→8×rank, etime 72min 连续无崩溃重启环, 监控 train_log.txt）。→ **下一步**：每唤醒监控 step/loss/ETA；save_interval=2000（首个 ckpt@2000 ≈ 明日 ~07:10）。
-  - 🩺 **本唤醒推进 = #468（2026-10-16 ~20:24, 🩺 80B decay 监控·训练健康）**：① 训练连续运行 72min（torchrun PID 2080678 etime 4305s 稳定，8×rank PID 2082634..2082645 全活）；② training 健康：step 190/20346, loss 11.65→1.60(末1.599 持续下行, step190新低), lr=1.63e-3(WSD线性衰减中, 暖机100步峰1.67e-3), tok/s=183.3K(聚合稳定), elapsed 68.3min；③ ETA≈120h≈5.0天→~2026-10-21晚, 首ckpt@2000≈明日~07:10；④ 无NaN/无loss发散。→ **下次唤醒**：监控 step/loss/ETA 并回报。WAITING=1。
+  - 轮询状态：8 GPU 全占满 — Xmodel-2.5 80B decay 训练健康运行中（torchrun PID 2080678 + 8×rank PID 2082634..2082645, etime ~91min 连续无崩溃重启环, 监控 train_log.txt）。loop 进程存活（pid 1294147）。→ **下一步**：每唤醒监控 step/loss/ETA；save_interval=2000（首个 ckpt@2000 ≈ 明日 ~07:15）。
+  - 🩺 **本唤醒推进 = #469（2026-10-16 ~21:13, 🩺 80B decay 监控·训练健康）**：① 训练连续运行 ~91min（torchrun PID 2080678 + 8×rank PID 2082634..2082645 全活，etime 91min 稳定，无崩溃重启环）；② training 健康：step 330/20346, loss 11.65→1.4511(末1.451 新低), lr=1.58e-3(WSD线性衰减中, 暖机100步峰1.67e-3), tok/s=183.4K(聚合稳定), elapsed 118.3min；③ ETA≈120h≈5.0天→~2026-10-21晚, 首ckpt@2000≈明日~07:15；④ 无NaN/无loss发散；⑤ loop 存活(1294147) + 提交闭环(上一轮 b5e14a40)。→ **下次唤醒**：监控 step/loss/ETA 并回报。WAITING=1。
+  > 📦 **[已归档] #468 流水（2026-10-16 ~20:24, 🩺 80B decay 监控·训练健康）→ daily-memories/2026-10-16.md；结论：step190 loss1.599 lr1.63e-3 183Ktok/s ETA~5.0天, 8卡全占健康(et=72min无崩溃环)。需要时再读。**
   > 📦 **[已归档] #467 流水（2026-10-16 ~20:12, 🩺 80B decay 监控·训练健康）→ daily-memories/2026-10-16.md；结论：step160 loss1.86 lr1.65e-3 183Ktok/s ETA~5.0天, 运维核查闭环(非崩溃重启环)。需要时再读。**
   > 📦 **[已归档] #466 流水（2026-10-16 ~19:38, 🚀 80B decay 起训核查）→ daily-memories/2026-10-16.md；结论：训练19:14起训RUNNING, config核对✅(seq4096/GBS960/MBS2/DP8/20346步/TensorParallelMuon/数据SFT64:L3 24:code8:math4), tokenizer 128K↔129K remap(id≥128815→eos)已处理。需要时再读。**
   > 📦 **[已归档] #465 流水（2026-10-16 ~12:30, 📋 decay 80B 计划书确认 + TASK 归档 v5+proxy）→ daily-memories/2026-10-16.md；结论：计划书 36KB 确认 6 点全 ✅, TASK 34.3→26.9KB。需要时再读。**
