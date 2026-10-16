@@ -159,14 +159,14 @@ DeepSeek 系列轻量模型，验证小参数量 backbone 能否驱动框架。
 
 |轮次|PyAether|SKILL|TCL\_WaveView|TCL\_Innovus|
 |---|---|---|---|---|
-|r1|9\.5||||
-|r2|10\.1||||
-|r3|19\.0||||
-|r4|7\.6||||
-|r5|37\.3||||
-|**mean±std**|**16\.7 ± 12\.3%**||||
+|r1|8\.2||||
+|r2|15\.2||||
+|r3|10\.8||||
+|r4|13\.9||||
+|r5|11\.4||||
+|**mean±std**|**11\.9 ± 2\.7%**||||
 
-> 备注：r5=37\.3 为离群高值，5 轮 std=12\.3 较大（小参数量 backbone 输出不稳定），但 5/5 均无 infra 故障、判据满足，结果有效。
+> 备注：fresh 5-run（运维令二十三②·2026-10-17 收口）替换 legacy 16\.7 ± 12\.3% [9\.5, 10\.1, 19\.0, 7\.6, 37\.3]——legacy r5=37\.3 为离群高值致 std=12\.3 过大。fresh 5/5 = [8\.2, 15\.2, 10\.8, 13\.9, 11\.4] 各轮 gen success=13/31/17/24/28、timeout=0≤10、exec_err=0、0 quota error、0 infra 故障，判据(十三)满足（B 模型臂非 full 锚点·Pass@1 任何值有效）。std 12\.3→2\.7（离群消除），mean 16\.7→11\.9（legacy 均值被 r5=37\.3 抬高）。各轮 regrade log /tmp/ABL_deepseek-v4-flash_r{1..5}_regrade.log。backbone=deepseek-v4-flash@/v1 key c43c1f4a（主基座 deepseek-v4-pro-fp4 不变）。
 > 
 > 
 
@@ -219,7 +219,7 @@ GLM 新一代轻量模型，验证框架对 GLM 系轻量 backbone 的兼容性�
 |r5|61.4||||
 |**mean±std**|**66.8 ± 10.5%**||||
 
-> 备注：r1=80.4 偏高、r2=53.2 偏低，5 轮 std=10.5 较大（与 deepseek-v4-flash std=12.3 同类·轻量 backbone 高方差），但 5/5 各轮 timeout≤10（r1=9/r2=6/r3=0/r4=0/r5=0）且无 infra 故障、exec_err=0、判据(十三)满足，结果有效。glm-5.3-flash@/v1 key 6903b05e。
+> 备注：r1=80.4 偏高、r2=53.2 偏低，5 轮 std=10.5 较大（轻量 backbone 高方差），但 5/5 各轮 timeout≤10（r1=9/r2=6/r3=0/r4=0/r5=0）且无 infra 故障、exec_err=0、判据(十三)满足，结果有效。glm-5.3-flash@/v1 key 6903b05e。
 
 
 
