@@ -14,15 +14,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING — 阶段性中文报告已交付 (1834/2100, 443 resolved, 266 pending)
+PHASE:        glm53 7x300 RUNNING — 阶段性中文报告已刷新 (1858/2100, 454 resolved, 242 pending)
 已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 RUNNING + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (report_harness_glm53_7x300_zh.html, McNemar p=1.0)
-当前动作:     glm53 7x300 阶段性中文报告已交付 (R407, 18:11)。reports/report_harness_glm53_7x300_zh.html (19KB, 6 sections) — glm53 443/1834 (24.2%) vs kimi 574/2100 (27.3%)。McNemar: 1834 配对, 一致 99.7% (1829/1834), b=2 c=3, χ²=0.20, 精确 p=1.000 ≫0.05 → 无显著差异。3 个已完成 harness (codex/deepseek/hermes) resolved 逐一相同 (80/71/81)。结论：换 backbone 未显著提升 → 能力差不足以撬动 passrate。评测仍后台运行 (266 pending)，报告不打断评测。
-下一步:       ① 继续监控 glm53 7x300 至完成 (266 pending) ② 跑完后更新最终版报告 ③ 恢复 kimi configs
+当前动作:     glm53 7x300 阶段性中文报告已刷新 (R408, 19:24)。reports/report_harness_glm53_7x300_zh.html (19KB, 6 sections) — glm53 454/1858 (24.4%) vs kimi 574/2100 (27.3%)。McNemar: 1858 配对, 一致 99.7% (1853/1858), b=2 c=3, χ²=0.20, 精确 p=1.000 ≫0.05 → 无显著差异。3 个已完成 harness (codex/deepseek/hermes) resolved 逐一相同 (80/71/81)。结论：换 backbone 未显著提升 → 能力差不足以撬动 passrate。评测仍后台运行 (242 pending, .nfs* logs active)，报告不打断评测。
+下一步:       ① 继续监控 glm53 7x300 至完成 (242 pending) ② 跑完后更新最终版报告 ③ 恢复 kimi configs
 阻塞:         <无> — 评测后台继续，报告已完成
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-16 19:24 —— **glm53 7×300 阶段性中文报告刷新** —— 评测仍在后台运行（.nfs* 日志 19:23 仍在写入），数据从 1834→1858 entries。重新运行 `gen_report_glm53_7x300_zh.py` 刷新报告：glm53 454/1858 (24.4%) vs kimi 574/2100 (27.3%)。McNemar: 1858 配对, 一致 99.7% (1853/1858), b=2 c=3, χ²=0.20, 精确 p=1.000。3 个已完成 harness (codex 80/deepseek 71/hermes 81) 逐一相同。结论不变。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY≈30.7KB(30.0KB ✓) / 归档 0B。
 - 2026-10-16 18:11 —— **glm53 7×300 阶段性中文报告** —— 按运维指令（2026-10-16）生成 `reports/report_harness_glm53_7x300_zh.html`（19KB, 6 sections, 自包含）。数据：glm53 443/1834 (24.2%) vs kimi 574/2100 (27.3%)。McNemar 配对：1834 对，一致 99.7% (1829/1834)，b=2 c=3，χ²=0.20，精确 p=1.000 ≫0.05 → 无显著差异。3 个已完成 harness (codex 80/deepseek 71/hermes 81) resolved 逐一相同。结论：换 backbone 未显著提升 → 两模型能力差不足以撬动 passrate。诚实声明：评测仍后台运行 (266 pending)，数字为阶段性快照，不打断评测。生成器 `gen_report_glm53_7x300_zh.py`（classification=='resolved' 口径，与运维「codex 80/300=26.7%」一致）。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY=29990B(29.3KB ✓) / 归档 0B。
 > 📦 R366-R385 (2026-10-14, ~20 rounds of glm53 monitoring 23→872 + rerun + fixes) 已归档 → daily-memories-harness/2026-10-14.md + 2026-10-15.md。需要时再读。
 > 📦 R386 (2026-10-15 01:08, glm53 monitoring 872/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
