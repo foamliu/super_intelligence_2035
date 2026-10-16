@@ -15,7 +15,8 @@
 | 数据配比 | **66.9% 高质量 SFT** + 其余 |
 | 优化器 | **decay 阶段 AdamW → Muon**（提升推理性能）|
 - **公平性**：我们给 **80B 预算 > 71.2B**，数据量已不落下风；若 80B 内 14 集超 Xmodel-2.5 final，即证明 BaiZe 的 decay 数据配比/annealing 策略更优。
-- ⚠️ 计划书须单列对照：**our 80B decay（配比/优化器/超参） vs Xmodel 71.2B decay（66.9% SFT + Muon）**，并说明我们是否也采用 decay 段切 Muon（注意：BaiZe P-8 用 dist_muon 曾发散换回 AdamW，需论证）。
+- ⚠️ 计划书须单列对照：**our 80B decay（配比/优化器/超参） vs Xmodel 71.2B decay（66.9% SFT + Muon）**。
+- ✅ **decay 段用 Muon（对齐 Xmodel 官方，用户直令）**：此处训练的是 **Xmodel 模型（其 stable 末 ckpt）**，不是 BaiZe 原生模型——BaiZe P-8 的 dist_muon 发散是 BaiZe 架构/配方的问题，不适用于 Xmodel。Xmodel 官方自己也是「stable 段全用 Muon 会发散 → 只能把范围缩小到 decay 段才用 Muon」。故我们的 80B decay 也采用 Muon，与官方同构。
 
 **② 计划书须先定清（写进 HTML，每项带出处）**：
 1. **起点 ckpt**：Xmodel-2.5 stable 最后一个（decay 前）检查点——确认是哪个 step（约 step 100K?）、对应 token（13.2M/step 口径）、本地是否已下载；未下则列下载量与 HF 路径。
