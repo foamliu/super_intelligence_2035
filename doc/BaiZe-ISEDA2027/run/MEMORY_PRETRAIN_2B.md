@@ -2,14 +2,15 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **🚀 Xmodel-2.5 80B decay v2 训练 RUNNING**（01:20 启动, step 1470/19980, loss 1.683, ~297.9K tok/s 稳态, ETA ~61h）。起点=step_532000 + BaiZe 80B(SFT64:L3:24:code8:math4) + Muon。**seq=3712/GBS=960/MBS=4/DP=8/总步19980=71.2B tok**。chunked CE + compile(default) + no_sync(default)。目标：14集超越 Xmodel-2.5 final (CS8 65.40%/CX 32.90%)。
-  - PHASE: **decay80b_v2** — Xmodel-2.5 80B decay v2 训练中（01:18 启动, MBS=4+chunked CE）。8×H100(.29) 全占满（经 train_log 确认健康）。train_log: step1470 loss=1.6829 lr=1.19e-3(衰减中) tok/s=297.9K(稳态~298K)。⚠️ 本唤醒在 .12(vision 节点), .29 进程不可直查, 经 NFS 共享 train_log.txt 确认。📦 体积：TASK=26.2KB ✅ / MEMORY=30.8KB ✅（归档 0KB）。
+- STAGE: **🚀 Xmodel-2.5 80B decay v2 训练 RUNNING**（01:20 启动, step 1840/19980, loss 1.571, last10 avg 1.678, ~298.1K tok/s 稳态, ETA ~60h）。起点=step_532000 + BaiZe 80B(SFT64:L3:24:code8:math4) + Muon。**seq=3712/GBS=960/MBS=4/DP=8/总步19980=71.2B tok**。chunked CE + compile(default) + no_sync(default)。目标：14集超越 Xmodel-2.5 final (CS8 65.40%/CX 32.90%)。
+  - PHASE: **decay80b_v2** — Xmodel-2.5 80B decay v2 训练中（01:20 启动, MBS=4+chunked CE）。8×H100(.29) 全占满（经 train_log 确认健康）。train_log: step1840 loss=1.5710 lr=1.08e-3(衰减中) tok/s=298.1K(稳态~298K)。⚠️ 本唤醒在 .12(vision 节点), .29 进程不可直查, 经 NFS 共享 train_log.txt(NFS mtime 07:26 活跃写入)确认训练存活。📦 体积：TASK=26.2KB ✅ / MEMORY=30.8KB ✅（归档 0KB）。
   - ERROR_COUNT: 0
-  - 轮询状态：v2 训练健康运行中（train_log 最新 step1470 @06:12, et=293.3min, 0 NaN, 0 error, 0 crash）。→ **下一步**：每唤醒监控 step/loss/ETA；save_interval=2000（首个 ckpt@2000 ≈ ~08:00, 还~1.8h）。
+  - 轮询状态：v2 训练健康运行中（train_log 最新 step1840 @07:26, et=366.8min, 0 NaN, 0 error, 0 crash）。→ **下一步**：每唤醒监控 step/loss/ETA；save_interval=2000（首个 ckpt@2000 ≈ ~08:00, 还~32min）。
   > 📦 **[已归档] #476 流水（2026-10-17 ~03:48, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step740 loss1.8562 tok/s297.1K 健康, et=148min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #478 流水（2026-10-17 ~04:24, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step920 loss1.8969 lr1.36e-3 tok/s297.4K 健康, et=184min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #479 流水（2026-10-17 ~04:56, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step1080 loss1.7348 tok/s297.6K 健康, et=216min 无崩溃环。需要时再读。**
-  - 🔧 **本唤醒推进 = #481（2026-10-17 ~06:14, 🩺 v2 训练监控）**：① **训练健康**：step1470 loss=1.6829 lr=1.19e-3(衰减中) tok/s=297.9K(稳态~298K)，last10 avg=1.739(min10=1.6538@1440 缓降)，t_data=0.5ms≈0%/fwd_bwd=391.6ms≈99%/opt=152ms≈1%，0 NaN/0 error(全 log 0 报错)，et=293.3min 无崩溃环。⚠️ 本唤醒在 .12(vision 节点), .29 GPU 不可直查 → 经 NFS 共享 train_log.txt(NFS mtime 06:12 活跃写入)确认训练存活。② ETA：11.93s/step → 剩 18510 步 ≈61.3h → ETA 10-19 ~19:25；首 ckpt@2000≈08:00(还~1.8h)。③ **下一步**：继续每唤醒监控 step/loss/ETA。WAITING=1。
+  - 🔧 **本唤醒推进 = #482（2026-10-17 ~07:26, 🩺 v2 训练监控）**：① **训练健康**：step1840 loss=1.5710 lr=1.08e-3(衰减中) tok/s=298.1K(稳态~298K)，last10 avg=1.678(min10=1.5710@1840 缓降，较 #481 step1470 avg1.739 再降)，0 NaN/0 error(全 log 0 报错)，et=366.8min 无崩溃环。⚠️ 本唤醒在 .12(vision 节点), .29 GPU 不可直查 → 经 NFS 共享 train_log.txt(NFS mtime 07:26 活跃写入)确认训练存活。② ETA：11.9s/step → 剩 18140 步 ≈60.0h → ETA 10-19 ~19:25；首 ckpt@2000≈08:00(还~32min)。③ **下一步**：继续每唤醒监控 step/loss/ETA；下次唤醒应已过 step2000，核查首 ckpt 是否落盘。WAITING=1。
+  > 📦 **[已归档] #481 流水（2026-10-17 ~06:14, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step1470 loss1.6829 tok/s297.9K 健康, et=293.3min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #480 流水（2026-10-17 ~05:01, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step1110 loss1.8341 tok/s297.6K 健康, et=221.7min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #477 流水（2026-10-17 ~03:52, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step760 loss1.8031 lr1.42e-3 tok/s297.1K 健康, et=152min 无崩溃环。需要时再读。**
   > 📦 **[已归档] #475 流水（2026-10-17 ~03:20, 🩺 v2 训练监控）→ daily-memories/2026-10-17.md；结论：step600 loss1.967 tok/s296.7K 健康, et=122min 无崩溃环。需要时再读。**
