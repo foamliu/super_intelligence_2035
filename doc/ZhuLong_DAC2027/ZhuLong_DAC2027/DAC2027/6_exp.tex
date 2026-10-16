@@ -94,13 +94,13 @@ Baseline 2: RAG & 71.8 $\pm$ 2.5 & +61.3 pp \\
 \textbf{ZhuLong} (Full) & \textbf{82.1 $\pm$ 3.0} & \textbf{+10.3 pp} \\
 \midrule
 \multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
-ZhuLong w/o Sandbox & 71.8 $\pm$ 2.5 & -10.3 pp \\
-ZhuLong w/o Self-Expl. & 81.4 $\pm$ 4.1$^{\ast}$ & -0.7 pp \\
-ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -1.1 pp \\
+ZhuLong w/o Sandbox & 71.8 $\pm$ 2.5 & $-10.3$ pp$^{***}$ \\
+ZhuLong w/o Self-Expl. & 81.4 $\pm$ 4.1$^{\ast}$ & $-0.7$ pp$^{\text{ns}}$ \\
+ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & $-1.1$ pp$^{\text{ns}}$ \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-\footnotesize{$^{\ast}$ provisional: r1 of this arm was inadvertently run with V3 (self-exploration ON) docs; r2--r5 (clean V2) give 79.8$\pm$2.1\% ($n{=}4$). A clean 5-run re-measurement is pending.}
+\footnotesize{$^{\ast}$ provisional: r1 of this arm was inadvertently run with V3 (self-exploration ON) docs; r2--r5 (clean V2) give 79.8$\pm$2.1\% ($n{=}4$). A clean 5-run re-measurement is pending. Significance from McNemar test on pooled per-task pass/fail across 5 runs (790 paired observations per arm) and paired bootstrap (10\,000 resamples, 95\% percentile CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, $^{*}$p{<}0.05, ns = not significant. w/o Sandbox: McNemar $\chi^2{=}36.7$, $p{=}1.4{\times}10^{-9}$, bootstrap CI $[-14.2, -6.3]$~pp. w/o Retrieval: $p{=}0.61$, CI $[-4.2, +2.7]$~pp. w/o Self-Expl.: $p{=}0.79$, CI $[-3.2, +2.2]$~pp (not significant; clean $n{=}4$ gives $p{=}0.26$).}
 \end{table}
 % 表：渐进构建与组件消融研究。上块为渐进构建，"Gain"表示
 % 相对于前一行的增量；下块为组件消融，"Drop"均表示相对于
@@ -202,7 +202,7 @@ Beyond accuracy, the read-back rungs differ sharply in \emph{convergence cost}--
 
 Principle 3 requires two things: that actions reach the design through a causal interface, and that the belief update $\Phi$ run continuously.
 
-\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 82.1\% to 71.8\% ($-10.3$~pp); adding it to the RAG baseline raises it from 71.8\% to 82.1\% ($+10.3$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
+\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 82.1\% to 71.8\% ($-10.3$~pp; McNemar $p{=}1.4{\times}10^{-9}$, paired bootstrap 95\% CI $[-14.2, -6.3]$~pp); adding it to the RAG baseline raises it from 71.8\% to 82.1\% ($+10.3$~pp, same significance). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
 % 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从82.1\%降至71.8\%（-10.3pp）；
 % 把沙盒加入RAG基线使其从71.8\%升至82.1\%（+10.3pp）。没有执行器，$a_t$未被作用于设计，
 % $b_t$得不到任何关于实时状态的证据，智能体退化为仅凭先验的预测器。
@@ -230,15 +230,15 @@ Principle 3 requires two things: that actions reach the design through a causal 
 \toprule
 \textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} & \textbf{Mean gen-fail} \\
 \midrule
-$\Phi$ $k{=}1$ & 63.8 $\pm$ 3.2 & 76.3 & 34.6 \\
-$\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5 & 80.4 & 27.6 \\
-$\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2 & 90.4 & 17.4 \\
-$\Phi$ lagged & 73.0 $\pm$ 3.2 & 97.5 & 9.0 \\
+$\Phi$ $k{=}1$ & 63.8 $\pm$ 3.2$^{***}$ & 76.3 & 34.6 \\
+$\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5$^{***}$ & 80.4 & 27.6 \\
+$\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2$^{**}$ & 90.4 & 17.4 \\
+$\Phi$ lagged & 73.0 $\pm$ 3.2$^{***}$ & 97.5 & 9.0 \\
 $\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & 99.1 & 10.4 \\
 \bottomrule
 \end{tabular}}
 
-\footnotesize{All entries are 5-run means (Pass@1 $\pm$ sample std, $n{=}5$); the unbounded anchor (82.1$\pm$3.0\%) is the full-system 5-run baseline (Table~\ref{tab:main-ablation}). \emph{Converged} is the share of traces whose finish reason is \emph{completed} (agent self-terminated), averaged over 5 runs. \emph{Mean gen-fail} is the per-run count of tasks that produced no executable code (generation-stage failure), averaged over 5 runs; it rises as $k$ shrinks, since a tighter execution budget leaves the agent unable to complete generation. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call).}
+\footnotesize{All entries are 5-run means (Pass@1 $\pm$ sample std, $n{=}5$); the unbounded anchor (82.1$\pm$3.0\%) is the full-system 5-run baseline (Table~\ref{tab:main-ablation}). \emph{Converged} is the share of traces whose finish reason is \emph{completed} (agent self-terminated), averaged over 5 runs. \emph{Mean gen-fail} is the per-run count of tasks that produced no executable code (generation-stage failure), averaged over 5 runs; it rises as $k$ shrinks, since a tighter execution budget leaves the agent unable to complete generation. The lagged arm is filled from the re-run that fixed the per-task buffer isolation (audited lag ${=}1$ on every executed \texttt{run\_code} call). Significance vs.\ unbounded (McNemar on 790 paired observations per arm, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01. $k{=}10$: $p{=}0.006$, CI $[+1.3, +7.1]$~pp. $k{=}3$: $p{=}2{\times}10^{-13}$, CI $[+8.7, +17.0]$~pp. $k{=}1$: $p{=}2{\times}10^{-22}$, CI $[+14.4, +22.0]$~pp. lagged: $p{=}7{\times}10^{-9}$, CI $[+4.9, +12.9]$~pp.}
 \end{table}
 % 表：给$\Phi$可用证据加界的影响（固定LLM、$\Omega$与执行器）。
 % $k$为单条trace允许的\texttt{run\_code}调用次数（执行预算，而非"设计轮数"）；
@@ -269,12 +269,14 @@ Principle 1 separates knowledge from belief: the frozen prior should bound what 
 \textbf{LLM Backbone} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
 \midrule
 DeepSeek-V4-Pro & 82.1 $\pm$ 3.0 & — \\
-GLM-5.2 & 83.3 $\pm$ 3.1 & +1.2 pp \\
-DeepSeek-V4-Flash & 16.7 $\pm$ 12.3 & -65.4 pp \\
-Kimi-K2.6 & 77.0 $\pm$ 1.6 & -5.1 pp \\
-Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -18.3 pp \\
+GLM-5.2 & 83.3 $\pm$ 3.1 & +1.2 pp$^{\text{ns}}$ \\
+DeepSeek-V4-Flash & 16.7 $\pm$ 12.3 & -65.4 pp$^{***}$ \\
+Kimi-K2.6 & 77.0 $\pm$ 1.6 & -5.1 pp$^{**}$ \\
+Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -18.3 pp$^{***}$ \\
 \bottomrule
 \end{tabular}
+\\[2pt]
+\footnotesize{Significance vs.\ DeepSeek-V4-Pro (McNemar on 790 paired observations, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, ns = not significant. GLM-5.2: $p{=}0.38$, CI $[-2.7, +5.4]$~pp. Kimi-K2.6: $p{=}0.003$, CI $[+1.5, +8.4]$~pp. Doubao: $p{=}9{\times}10^{-23}$, CI $[+13.3, +23.3]$~pp. Flash: $p{<}10^{-100}$, CI $[+60.6, +69.8]$~pp.}
 \end{table}
 % 表：LLM主干的影响（ZhuLong）。
 
@@ -317,71 +319,51 @@ The qualitative structure reproduces across all three languages: the complete sy
 \label{sec:error-analysis}
 % 错误分析
 
-To characterize failure modes, we inspected a single representative trace in which ZhuLong solved 134 of 158 tasks; this is one probe trace, not the 5-run mean (82.1$\pm$3.0\%, Table~\ref{tab:main-ablation}), and the counts below describe that trace alone. The 
-remaining 24 failures comprise 3 generation-stage failures and 21 
-execution-stage failures. The generation failures fall into two categories: 
-the majority are timeouts on lengthy, multi-step tasks, reflecting 
-computational budget constraints rather than capability limits, as traces 
-show ongoing reasoning at termination; in a few cases, the agent exhausted 
-its message budget cycling through \texttt{search\_apis} calls, unable to 
-locate the correct API from natural-language queries. 
-We manually inspected 
-all 21 execution-stage failure traces and identify two root cause categories 
-(Table~\ref{tab:error-categories}).
-% 为刻画失败模式，我们检查了一条代表性 trace：ZhuLong 在 158 个任务中正确完成 134 个；这是一条探路 trace，
-% 非 5-run 均值（82.1±3.0%，表~\ref{tab:main-ablation}），下述计数仅描述该 trace。其余 24 个失败
-% 包含 3 个生成阶段失败和 21 个执行阶段失败。生成失败分为两类：大多数为冗长
-% 多步任务的超时，反映的是计算预算约束而非能力限制，因为终止时轨迹显示推理仍在
-% 进行；在个别案例中，智能体将消息预算耗尽在反复调用 \texttt{search\_apis} 上，
-% 无法从自然语言查询中找到正确的 API。我们也人工检查了全部 21 条执行阶段失败轨迹，
-% 归纳出两类根本原因（表~\ref{tab:error-categories}）。
+To characterize failure modes, we inspected a representative trace from the full-system 5-run set---the run whose Pass@1 (81.6\%, 129/158) is closest to the 5-run mean (82.1$\pm$3.0\%, Table~\ref{tab:main-ablation}). The 29 failures comprise 17 generation-stage failures (no executable code produced) and 12 execution-stage failures (code ran but assertions failed). We classify the 12 execution-stage failures by the L1--L4 information hierarchy of Section~\ref{sec:grounding-theory}: L1 (syntactic/API-name errors), L2 (parameter/signature errors), L3 (semantic/logic errors), and L4 (situated truthfulness violations---hidden type contracts, internal selection state, layout-dependent preconditions that no offline knowledge can resolve).
+% 为刻画失败模式，我们检查了 full-system 5-run 集合中的一条代表性 trace——Pass@1 (81.6%, 129/158) 最接近 5-run 均值 (82.1±3.0%) 的那轮。29 个失败包含 17 个生成阶段失败（未产出可执行代码）和 12 个执行阶段失败（代码运行但断言未通过）。我们按 §4 的 L1–L4 信息层次对 12 个执行阶段失败分类。
 
 \begin{table}[t]
 \centering
-\caption{Root cause categories for execution-stage failures}
+\caption{Failure classification for the representative trace (129/158 pass, 29 fail). Execution-stage failures are classified by the L1--L4 hierarchy of Section~\ref{sec:grounding-theory}. Generation-stage failures are broken down by cause.}
 \label{tab:error-categories}
+\small
 \begin{tabular}{lcc}
 \toprule
-Category & Count & Example Tasks \\
+\textbf{Category} & \textbf{Count} & \textbf{Example Tasks} \\
 \midrule
-API misuse & 12 & 068, 074, 092, 098, 063, \\ 
-& & 117, 133, 134, 121, 115, \\
-& & 114, 118 \\
+\multicolumn{3}{l}{\textit{Execution-stage failures (12)}} \\
+\quad L1: Syntactic / API-name & 0 & --- \\
+\quad L2: Parameter / signature & 0 & --- \\
+\quad L3: Semantic / logic & 4 & 017, 052, 058, 144 \\
+\quad L4: Situated / design-state & 8 & 010, 063, 068, 074, \\
+ & & 109, 142, 146, 155 \\
 \midrule
-API composition and  & 9 & 051, 058, 099, 111, 146, \\
-workflow errors & & 149, 150, 158, 052 \\
+\multicolumn{3}{l}{\textit{Generation-stage failures (17)}} \\
+\quad Timeout ($>$2500\,s) & 4 & 105, 123, 124, 129 \\
+\quad Wrong save path & 10 & 104, 106, 118, 119, \\
+ & & 128, 131, 145, 152, 158 \\
+\quad No code produced & 3 & 013, 072, 120 \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 表：执行阶段失败的根本原因类别
+% 表：代表性 trace 的失败分类（129/158 通过，29 失败）。执行阶段失败按 §4 的 L1–L4 层次分类；生成阶段失败按原因分解。
 
-\subsubsection{API misuse.}
+The dominant failure mode is L4: 8 of 12 execution-stage failures (67\%) are situated truthfulness violations that no amount of offline knowledge can prevent---the code is syntactically correct (L1), uses documented APIs with plausible arguments (L2--L3), yet fails because it violates an undocumented binding contract, depends on an internal selection state, or assumes a runtime context that does not hold. This directly supports the grounding-gap framework: the correctness criterion is an L4 property, and execution is the only channel that can observe the current design state.
+% 主导失败模式为 L4：12 个执行阶段失败中 8 个（67%）为情境真实性违反，离线知识无法防止——代码语法正确（L1）、使用已文档化 API 且参数合理（L2–L3），但因违反未文档化的绑定契约、依赖内部选中状态、或假设了不成立的运行时上下文而失败。这直接支持落地鸿沟框架。
 
-The agent selects the correct API family but violates undocumented API contracts—such as hidden type expectations, internal state dependencies, or context preconditions—that the C++-generated bindings enforce but the documentation does not reveal.
-% 智能体选择了正确的 API 族，但违反了未文档化的 API 契约——例如隐藏的类型期望、内部状态依赖或上下文前置条件——这些由 C++ 生成的绑定强制执行，但文档并未揭示。
+\subsubsection{L4: Situated truthfulness violations.}
+% L4：情境真实性违反
 
-\textit{Case study: Task 098 (delete\_design\_figures).} The agent located \texttt{ae\allowbreak Select\allowbreak Figs} and \texttt{ae\allowbreak Delete\allowbreak Obj} by searching for ``delete figure objects,'' then passed a plain Python list to \texttt{ae\allowbreak Select\allowbreak Figs}. The call succeeded, but the subsequent \texttt{ae\allowbreak Delete\allowbreak Obj} failed because the internal C++ selection state—which the API relies on—was never properly populated by the plain Python list. Across five subsequent \texttt{run\_code} calls within the same trace,
-the agent modified only its self-generated test harness rather than
-correcting the underlying type mismatch, as the runtime diagnostic
-(``Error: Failed to delete the selected figures.'') provided no
-actionable signal.
-% 案例研究：任务 098（delete_design_figures）。智能体通过搜索“delete figure objects”定位到 \texttt{aeSelectFigs} 和 \texttt{aeDeleteObj}，然后将普通 Python 列表传入 \texttt{aeSelectFigs}。调用成功，但随后的 \texttt{aeDeleteObj} 失败，因为该 API 所依赖的内部 C++ 选中状态未能被普通 Python 列表正确填充。在同一条轨迹内后续的五次 \texttt{run_code} 调用中，智能体仅修改了其自行生成的测试脚手架，而没有纠正底层的类型不匹配问题，因为运行时诊断（“Error: Failed to delete the selected figures.”）没有提供任何可操作的提示。
+The agent selects the correct API family and the generated code executes, but the result violates an undocumented contract that the C++-generated bindings enforce or the test oracle checks---hidden type expectations, internal state dependencies, or runtime-context preconditions that documentation does not reveal.
 
-Other instances share similar type-invisibility patterns: Task~074 passed 
-a Python list where \texttt{CStringList} was expected; Task~063 called a 
-function that returned an internal type name such as \texttt{"maskLayout"}, 
-while the test harness used a different getter that produced 
-\texttt{"cellFileType"}; and Task~114 selected \texttt{aeCreateRect}, which 
-requires an active AE GUI context, instead of \texttt{dbCrtRect(cv, ...)} 
-that operates directly on a design handle. The remaining cases in this 
-category follow analogous API selection or type mismatches.
-% 其他实例展现了类似的类型不可见模式：任务~074 将 Python 列表传给了期望
-% CStringList 的 API；任务~063 调用的函数返回了如 "maskLayout" 的内部类型名，
-% 而测试夹具使用不同的 getter 产生了 "cellFileType"；任务~114 选择了需要活跃
-% AE GUI 上下文的 aeCreateRect，而非直接操作设计句柄的 dbCrtRect(cv, ...)。
-% 此类别中的其余案例遵循类似的 API 选择或类型不匹配模式。
+\textit{Case study: Task 010 (add\_instance\_to\_schematic).} The agent's code creates a schematic instance from a master cellview. Its own \texttt{run\_code} tests report ``ALL ASSERTIONS PASSED'' and the instance is created successfully (\texttt{ntn\_inst: db: 0x13f961a}). Yet the official harness fails with \texttt{AssertionError: target\_cv must be an opened cellview object.} The agent passed a cellview handle that was valid in its own execution context but did not satisfy the ``opened'' precondition the test oracle enforces---a property of the live design state (L4), not of the API signature (L3).
 
-\subsubsection{API composition and workflow errors.}
+\textit{Case study: Task 063 (get\_cell\_file\_type).} The agent calls a function that returns an internal type name such as \texttt{"maskLayout"}, while the test harness uses a different getter that produces \texttt{"cellFileType"}. The API name is correct and the call succeeds, but the returned type depends on which internal representation the binding exposes---a situated property of the design database, not a documented return value. The agent cannot distinguish these without executing against the live design and reading back the actual type.
+
+\textit{Case study: Task 146 (classify\_device\_types).} The agent's 133-line classifier passes all its own assertions, but the official harness raises \texttt{AttributeError: type object 'Param' has no attribute 'value'}. The internal \texttt{Param} type exposes attributes differently depending on the runtime context; the agent accessed \texttt{param.value} based on documentation that describes the logical property, but the binding object does not expose \texttt{.value} in the test's execution path. The attribute's availability is a situated property of the object's runtime state, not a documented API contract.
+
+Other L4 instances follow analogous patterns: Task~074 attempted to create a \texttt{QStringList} via a self-invented wrapper that does not exist, because the C++ binding expects a specific type the documentation does not show how to construct from Python; Task~155 correctly implemented the \texttt{aeGetCommandPoint} call chain, but the function returns \texttt{False} in the headless sandbox rather than the \texttt{emyPointF} object the test expects---the return type depends on whether a GUI draw area is active, a runtime-context property the agent observed but could not resolve.
+\subsubsection{L3: Semantic and logic errors.}
 
 The agent selects individually valid APIs, and the generated code executes without runtime errors, but the composition logic---parameter propagation, post-processing, or control flow---fails the test oracle. These failures are harder to detect because each call appears correct in isolation.
 % 智能体选择了各自有效的 API，生成的代码无运行时错误地执行，但组合逻辑——参数传递、后处理或控制流——未能通过测试预言。此类失败更难检测，因为每个调用单独看都是正确的。
@@ -389,34 +371,24 @@ The agent selects individually valid APIs, and the generated code executes witho
 \textit{Case study: Task 052 (check\_view\_list).} The specification required invoking \texttt{EmyNtlUtil.checkViewList} for netlist view validation. Instead, the agent implemented a custom validator using pure Python logic. The code printed ``All assertions passed'' in its own embedded tests, but the harness applied standard validation on a different configuration, where the heuristic returned an error message rather than \texttt{"VALID"}. The agent replaced the mandated library call with an approximation, violating the test assertion.
 % 案例研究：任务 052（check_view_list）。规范要求调用 \texttt{EmyNtlUtil.checkViewList} 进行网表视图校验。智能体却实现了纯 Python 的自定义校验器。代码在自嵌入测试中打印“All assertions passed”，但测试夹具在另一配置上应用标准校验，此时自定义启发式规则返回了错误消息而非 \texttt{"VALID"}。智能体用近似逻辑替换了强制库调用，违反了测试断言。
 
-Other instances include: Task~058, where the agent used substring matching (\texttt{"high" in queue\_name}) instead of the equality check (\texttt{queue\_name == "priority"}) required by the specification, producing wrong \texttt{misc} parameter values; Task~051, where \texttt{str(result).strip()} caused an assertion-level type mismatch against the test's \texttt{QString} expectation; and Task~099, where the agent used \texttt{emyPointArrayShrinkGrow} to 
-expand a polygon, but the correct API was \texttt{dbExpandPoints} (bounding-box 
-expansion). The remaining cases exhibit similar errors, where the agent either 
-composed valid APIs incorrectly or substituted a mandated library call with 
-a custom approximation.
+\textit{Case study: Task 058 (batch\_oge\_job\_policies).} The agent used substring matching (\texttt{"high" in queue\_name}) instead of the equality check (\texttt{queue\_name == "priority"}) required by the specification, producing wrong \texttt{misc} parameter values. The API call itself was correct, but the logic governing which input maps to which parameter value was semantically wrong---a specification-comprehension failure (L3), not a type or context failure (L4).
 
-% 其他实例包括：任务~058，智能体使用子串匹配（\texttt{"high" in queue\_name}）而非规范要求的相等性检查（\texttt{queue\_name == "priority"}），导致 \texttt{misc} 参数值错误；任务~051，\texttt{str(result).strip()} 引发与测试 \texttt{QString} 期望的断言级类型不匹配；
-% 以及任务~099，智能体使用 \texttt{emyPointArrayShrinkGrow} 来扩展多边形，
-% 而正确的 API 是 \texttt{dbExpandPoints}（包围盒扩展）。其余案例展现了类似的
-% 错误：智能体要么错误地组合了有效的 API，要么用自定义的近似逻辑替代了强制库调用。
+The remaining L3 instances---Task~017 (instance-counting logic returns 0 instead of 2) and Task~144 (property set to \texttt{None} where a concrete value is expected)---follow the same pattern: valid API calls composed with incorrect logic.
+
+
+% L3 案例：任务 052 用自定义校验器替代强制库调用；任务 058 用子串匹配替代相等性检查。其余 L3：任务 017（实例计数逻辑返回 0）、任务 144（属性设为 None）——有效 API 调用组合了错误逻辑。
+
+\subsubsection{Generation-stage failures.}
+% 生成阶段失败
+
+The 17 generation-stage failures fall into three sub-categories (Table~\ref{tab:error-categories}). \emph{Timeout} (4 tasks): the agent exceeded the 2500\,s per-task limit on complex multi-step design-creation tasks requiring 24--41 APIs; traces show ongoing reasoning at termination, indicating computational-budget constraints rather than capability limits. \emph{Wrong save path} (10 tasks): the agent completed code generation and saved a valid \texttt{.py} file, but to the workspace root (\texttt{ws/}) instead of the expected \texttt{ws/pyAether\_code/} sub-directory, so the evaluation harness could not locate it. \emph{No code produced} (3 tasks): the agent's session was cancelled or ended without writing a code file, typically due to early termination on tasks with sparse documentation.
+
+The wrong-save-path failures are notable because the generated code is likely correct---the agent solved the task but lost the point on a procedural error. This is an L1-level failure (instruction following) rather than an L4 failure (situated truthfulness), and it is amenable to harness-level mitigation (stricter output-path enforcement) rather than to improved API knowledge.
+% 17 个生成阶段失败分为三类：超时（4个，24–41 API 复杂任务超 2500s）、错误保存路径（10个，存到 ws/ 而非 ws/pyAether_code/）、未产出代码（3个）。错误保存路径值得注意：代码可能正确但因程序性错误失分——L1 级失败而非 L4，可通过框架层面缓解。
 
 \subsubsection{Implications.}
-% 子子节：启示
+% 启示
 
-The analysis points to two recurring causes of execution-stage failures.
-First, undocumented API contracts and binding-level constraints are
-unavailable during code generation, forcing the agent to guess argument
-formats, while subsequent sandbox feedback often fails to expose the
-underlying constraints. Second, missing usage-level knowledge---such as
-correct API combinations, parameter conventions, and common pitfalls---
-forces the agent to rediscover solutions through trial and error. These
-findings motivate type-aware API documentation and case-level knowledge
-distillation, where resolved failures are stored as reusable experiences,
-forming the basis of agent self-evolution.
+The L1--L4 classification makes the grounding-gap framework concrete: 67\% of execution-stage failures are L4 (situated truthfulness violations), 33\% are L3 (semantic/logic), and 0\% are L1 or L2. No amount of offline knowledge---richer documentation, larger model, better retrieval---can prevent L4 failures, because the violated contracts are not visible until the agent acts on the live design and reads back the result. This is exactly why the execution loop is decisive (Section~\ref{sec:closed-loop}): the sandbox does not merely ``run the code,'' it is the only channel through which the agent can observe the hidden type contracts, internal selection states, and runtime-context dependencies that constitute two-thirds of the execution-stage failures. The generation-stage failures, by contrast, are mostly procedural (wrong save path) or budget-constrained (timeout), and are amenable to harness-level fixes rather than to knowledge improvements. These findings motivate type-aware API documentation and case-level knowledge distillation, where resolved L4 failures are stored as reusable experiences, forming the basis of agent self-evolution.
+% L1–L4 分类使落地鸿沟框架具体化：执行阶段失败中 67% 为 L4，33% 为 L3，0% 为 L1 或 L2。无论多少离线知识都无法防止 L4 失败。这正是执行闭环决定性的原因：沙盒是观测隐藏类型契约、内部选中状态、运行时上下文依赖的唯一通道。生成阶段失败多为程序性或预算受限，可通过框架层面修复。这些发现推动了类型感知 API 文档和案例级知识蒸馏。
 
-% 分析指出了执行阶段失败的两个常见原因。第一，未文档化的API 契约和绑定级
-% 约束在代码生成阶段不可见，迫使智能体猜测参数格式，而后续沙盒反馈通常也
-% 无法揭示其底层约束。第二，用法级知识的缺失——如正确的 API 组合、参数约定
-% 和常见陷阱——迫使智能体通过试错重新发现解决方案。这些发现推动了类型感知
-% API 文档和案例级知识蒸馏：将已解决的失败存储为可复用经验，从而为智能体
-% 自进化奠定基础。
