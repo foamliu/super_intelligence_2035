@@ -12,9 +12,9 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP03《种子》跑批中（R2V 9/38 落盘）；四章已成片（13/18/01/02）
+PHASE:        S3 放量 → EP03《种子》跑批中（R2V 22/38 落盘）；四章已成片（13/18/01/02）
 已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB）；02_经验 55/55 ✅（R2V 32 + T2V 23 · 成片 95.6MB）；03_种子 生成脚本(R2V38+T2V14) + 收尾脚本(字幕+合成) 就绪 ✅
-当前动作:     EP03《种子》跑批核验（R2V 9/38 落盘 · 场景参考图 11/11 + 合影拼版 1/1 在位）+ 提交 5 个生成/收尾脚本 + 回写记忆 + commit 两仓
+当前动作:     EP03《种子》跑批核验（R2V 22/38 落盘 · SHOT-29 进行中 · 场景参考图 11/11 + 合影拼版 1/1 在位）+ 复核收尾脚本 + 回写记忆 + commit 两仓
 下一步:       EP03 跑批收尾（等 R2V 38 + T2V 14 全落盘）→ gen_ep03_subtitles.py → synth_ep03.py（master + 硬字幕成片）→ ffprobe/libass QC
 阻塞:         无
 ERROR_COUNT:  0
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-16（EP03《种子》跑批核验 + 提交 5 个生成/收尾脚本 + 预写字幕/合成脚本 dry-run 通过 + commit 两仓）
+- **上次唤醒**：2026-10-16（EP03《种子》跑批核验 R2V 22/38 + 复核收尾脚本 + 回写记忆 + commit 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,16 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-16 · S3 放量 · EP03《种子》跑批核验（R2V 22/38）+ 复核收尾脚本 ✅**：本轮核验 EP03 后台跑批健康 + 复核收尾脚本就绪 + 回写记忆。
+  - **git 同步**：短剧仓 up-to-date（`## main...origin/main`，工作区仅历史未跟踪日志/`_card_preview`/`mcp_server` 等）；记录仓 `pull --rebase --autostash` Fast-forward（BaiZe/ZhuLong 等线 16 files）。
+  - **自检**：ComfyUI 可达（RTX 4090 16GB · 空闲 6.5GB）· 队列 running 1 / pending 0 = EP03 R2V 正常 · ffmpeg/ffprobe 在 · MCP comfyui-drama/web-search 可用。
+  - **跑批核验**：`_launch_ep03.cmd`（cmd PID 16396 + python 子进程 15560）在跑；`OUTPUT/03_种子/videos/` **22/38 R2V** 落盘（SHOT 02/04/05/06/08/09/10/11/12/14/15/17/18/20/21/22/23/24/25/26/27/28；SHOT-29 进行中），err.log 0 字节。**不碰正在跑的队列**（§3 铁律）。
+  - **资产核验**：场景参考图 11/11（`_scene/03_*.png`）+ 合影拼版 1/1（`_group/03_chensiwei_linwei_hero_v01.png`）全在位。
+  - **收尾脚本复核**：`gen_ep03_subtitles.py`（SFX_ONLY 11 无台词镜 + 无 CAPTION + `h3_dur_sec` 帧量化）+ `synth_ep03.py`（52 镜音画钉长 + scale=1280:720 + libass 硬字幕 + 漂移闸门 0.15s）代码复核无误，等跑批收尾即可直接跑（上轮 dry-run 已过）。
+  - **规格抽检（ffprobe SHOT-02）**：h264 864×480@24fps + aac（R2V mp=0.4 口径），22 镜均为非零落盘。
+  - **commit**：记录仓（MEMORY + daily + PLAN）。本轮无短剧仓代码改动（生成/收尾脚本上轮已提交，OUTPUT 二进制 gitignored）。
+
 
 - **2026-10-16 · S3 放量 · EP03《种子》跑批核验（R2V 9/38）+ 提交脚本 + 预写收尾 ✅**：本轮核验 EP03 后台跑批健康 + 提交 5 个生成/收尾脚本 + 预写字幕/合成脚本（dry-run 通过）。
   - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash` 二次确认 Already up to date（首次 `2>&1` 捕获报 `NativeCommandError` 为 PS 把 git stderr 当错误的误报，退出码实为 0）。
