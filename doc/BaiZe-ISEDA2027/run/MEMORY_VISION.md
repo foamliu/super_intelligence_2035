@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 06:33（⚡ ArmA 训练监控 · wake #126）**：训练健康运行中，step **132860/154500 (86.0%)**，从 step 30000 `--resume`（22:03 启动，已跑 509min）。8 卡 util **7/8 卡 100%（card0 瞬时 0% = nvidia-smi 快照波动，正常）**，25.6GB/卡。**真实吞吐 3.37 it/s**（实测：(132860−30000)/30522s=3.370，与 wake #123-#125 的 3.35-3.39 一致→吞吐稳态锁定），**真实 ETA ~1.8h**（21640 步 / 3.37 it/s → ≈ 2026-10-17 08:20 完成）。⚠️ 日志显示 4.35 it/s / ETA 1.4h **仍为膨胀值**（进程 22:03 启动用旧 `step/el` 公式，代码已修，下次重启自动生效）。loss EMA 稳定振荡（0.18-0.29，C1~0.83，shard 难度波动正常，lr=2.95e-4 cosine 末段）。checkpoint_120000(@05:25)+checkpoint_130000(@06:14) 已存。**效率验收全通过（+40% it/s / util≥85% / 方差≈0）**，🚫 不干扰训练。下一步：监控至完成（~08:20）→ 启动 ProtB 评测。📦 体积：TASK=29.7KB / MEMORY=29.9KB（均 <32KB）。
+> 🆕 **2026-10-17 07:5x（⚡ ArmA 训练监控 + ProtB 评测脚本就绪 · wake #127）**：训练健康运行中，step **149800/154500 (96.9%)**，从 step 30000 `--resume`（22:03 启动）。8 卡 util **7/8 卡 100%（瞬时 0% = 快照波动正常）**，25.6GB/卡。**真实吞吐 3.37 it/s**（稳态锁定），**真实 ETA ~23min**（4700 步 / 3.37 it/s → ≈ 2026-10-17 08:19 完成）。loss EMA 末段 0.19（C1~0.83，lr=2.05e-4 cosine 末段）。checkpoint_140000(@07:06)+latest.pt 已存。**效率验收全通过（+40% it/s / util≥85% / 方差≈0）**。✅ **新增**：`vision/armA_protb_eval.py`（Protocol B 线性探针评测，对齐 BP-3/④-4ep 口径）已写好并 CPU 验证——加载 latest.pt(step140000) 到 open_clip ViT-B/16 视觉塔，**0 个 visual key 缺失**，projected 特征=(2,512)/pooled=(2,768)；支持 8 卡分片抽取 1.28M train+50k val→3 seeds 线性探针。🚫 训练结束前不动 GPU。下一步：训练完成(~08:19)→起 ProtB 评测(8卡 sharded)。📦 体积：TASK=30.4KB / MEMORY=31.5KB（均 <32KB）。
 >
 > **📊 效率对比表（wake #119 落地，wake #121 实测复核确认，详见 daily-memories-vision/2026-10-16.md）**：
 >
@@ -35,10 +35,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **ArmA open_clip 训练中（wake #122, 01:43, step 74720/154500 48.4%）**：LPT+管线优化生效，8 卡 util 99-100%，真实吞吐 3.40 it/s（修前 2.40，+40%）。loss EMA 稳定振荡(C1~0.67-0.76)，lr=1.23e-3。真实 ETA ~6.5h（≈10-17 08:13）。⚠️ 日志 sps/ETA 膨胀(旧代码)，以本值为准。下一步：监控完成 → ProtB 评测。 |
+| PHASE | 🔄 **ArmA open_clip 训练中（wake #127, 07:5x, step 149800/154500 96.9%）**：LPT+管线优化生效，8 卡 util 99-100%，真实吞吐 3.37 it/s（修前 2.40，+40%）。loss EMA 末段 0.19(C1~0.83)，lr=2.05e-4。真实 ETA ~23min（≈10-17 08:19）。✅ armA_protb_eval.py 已写好+CPU验证(0 visual key缺失, feat 512/768)。下一步：训练完成→起 ProtB 评测(8卡 sharded)。 |
 | ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-17 01:43 (wake #122)**: ArmA 训练监控——step 74720/154500(48.4%), 8卡 util 99-100%, 真实 3.40 it/s, ETA~6.5h(≈08:13)。ckpt_70000 @ 01:17。效率验收全通过(util≥85%✅ 方差小✅ +40%≥+15%✅)。⚠️ 日志 sps 膨胀(进程 22:03 启动用旧代码, 修复在 22:16 已入文件但未生效)。④ torch.compile 待训后单测。📦 MEMORY=29.1KB / TASK=30.4KB(均≤32KB)。 |
+| 更新 | **2026-10-17 07:5x (wake #127)**: ArmA 训练监控 step149800/154500(96.9%), 8卡 util 99-100%, 真实3.37 it/s, ETA~23min(≈08:19)。ckpt_140000@07:06。✅ 新写 armA_protb_eval.py(Protocol B 线性探针, 对齐BP-3)并 CPU 验证: 加载latest.pt→open_clip视觉塔 0 key缺失, projected(2,512)/pooled(2,768)。效率验收全通过(+40%/util≥85%/方差≈0)。📦 MEMORY=31.5KB/TASK=30.4KB(均≤32KB)。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
