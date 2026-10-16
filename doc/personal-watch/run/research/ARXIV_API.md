@@ -1403,3 +1403,30 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-16-*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-16 18:00`**（「晚 2」轮）：① 复验批次（**周三 20:00 ET 公告** → 本地 10-16 08:00 前后落地，PM 轮**有望见 `2026-10-15` 批**）；② 刷新则走标准 `--fetch` 增量，否则候选池「科普」口径；③ 日报进度 **3/5 → 5/5**（+ `## 晚报变更说明（AM → PM）`）；④ 第 5 批分镜脚本 `research/video/SCENES/10_16.html`；⑤ **每日论文日报邮件**（选 5 篇 + PDF 入 `research/pdf/<date>/` + 发 `paul.liu@cxmt.com`）。
 
+### 9.95 第九十四轮（本地 2026-10-16 18:00 时窗 · **P0 第 4 批第 17 轮 · 「晚 2」轮 · 当日收口**）：**PM 公告批次已刷新**（`2026-10-14` → `2026-10-15`）→ **API 201 新增** → **晚报 2 篇「科普」取自本 PM 轮新发现** + 单条权威复核；日报收口 **5/5** + 分镜脚本交付
+
+> **时点**：本地 `2026-10-16 18:00`（= UTC `2026-10-16T10:00`）为 **周四**。arXiv **工作日 20:00 ET 公告** → **周三（10-15）20:00 ET 的 `2026-10-15` 批已落地**（AM 轮 UTC 22:00 时尚未可见，PM 轮 UTC 10:00 已可见 —— **时点正常，非「无数据」**）。实际批次 **`2026-10-14` → `2026-10-15`**（最新样本 `published=2026-10-15T17:59:59Z`）。
+
+- **取源复验（R1′）** `--probe`（证据 `research/raw/2026-10-16-probe-r94.log`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=633893`，最新样本 `published=2026-10-15T17:59:59Z` | ✅ 可达（**批次已刷新 `2026-10-14` → `2026-10-15`**，`633208` → `633893`） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable`（`Errno 101`） | ❌ 不可达（**如实记 FAIL、不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=267 / 253 / 467` | ✅ 三源均有内容（**仅作发现，非证据**） |
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-16T10:01:57Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 201 / dropped 361**（`dropped` = 「已在 `SEEN.md`」+「超 72h 窗口」）→ **201 条全部为当日新批的新发现**（**非承接旧候选池**）。证据：`research/raw/2026-10-16-fetch-r94-seen.{json,log}`。
+
+- **精选权威复核（`id_list`）**：对**候选短名单 5 条**（2 入账 + 3 备选）走 **arXiv API `id_list` 单条复核**（`id_list=2610.22319,2610.22333,2610.22367,2610.22053,2610.22273`）→ **5/5 返回**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `research/raw/2026-10-16-idlist-shortlist-r94.{xml,headers}`）。**候选池 ≠ 证据** 的口径不变：入账前一律单条复核。最终入账 2 篇（**均「科普」口径**）：
+  - `2610.22319` *A team of Gemini 4 Argon agents beats Minecraft*（`published=2026-10-15T17:51:32Z`，cs.AI，3 位署名 `Maxence Faldor, Satinder Singh, Roberta Raileanu`，`comment` 空）→ **本日 TOP-1**；
+  - `2610.22333` *Evaluation Awareness Beyond English: Do LLMs Act Differently When Tested in Indic Languages?*（`published=2026-10-15T17:53:33Z`，cs.AI，9 位署名，前 3 `Trizal Garg, Sibayan Mitra, Arya Karanjkar`，`comment` 空）。
+  - **去重复核**：2 个 ID 均**不在**任何 `daily/*.html`，检出时在 `SEEN.md` 为「候选」→ **无重复**。
+
+- **口径护栏**：晚报 2 篇按**目的 2「科普」**口径（大众看得懂 + 传播力）挑选，**不与目的 1「借鉴」混用**；数字（2783 程序 / 27h14m / 605 次死亡 / Easy 难度 / 14.4pp / 6.9%→11.3% / 47,880 条）**照抄原文摘要**并标「**作者自报 · 未复现**」；「首次端到端自主通关」照原文限定为 **「据作者所知（To our knowledge）」**，**不夸大**。
+
+- **产出**：① `research/daily/2026-10-16.html` **收口 5/5**（早 3「借鉴」不下架 + 晚 2「科普」；页头改晚报口径 + 进度 `5/5` + 段头「晚报 5 篇 · 借鉴 3 + 科普 2」+ `## 晚报变更说明（AM → PM）` + 附录 A′（PM 证据 I′→V′）+ 附录 B′（PM 15 查询 per-query）+ 附录 B·C 修订）；② `research/daily/index.html` 行更新为 **晚报 · 5/5**；③ **第 5 批 P0** `research/video/SCENES/10_16.html`（《论文两分钟》分镜脚本 · 当日 **TOP-1 = `2610.22319`** · 自包含单文件 · 固定五段 · 9 镜 · 口播 ≈427 字 · 英文原题 / abs 链接 / 免责 / 合规自检）+ `research/video/SCENES/index.html`（新增 10_16 行）；④ **每日论文日报邮件**（5 篇 + PDF ≤20MB → `paul.liu@cxmt.com`）。
+
+- **台账**：`research/SEEN.md` **3,487 → 3,688 行（+201）**（2 行「收录」+ 199 行「候选」）→ **收录 206 / 候选 2975 / 候选（RSS 补充）507**；`research/papers.jsonl` **204 → 206 行**。落盘脚本：`research/raw/update_r94.py`（备份 `/tmp/SEEN.bak`、`/tmp/papers.bak`）。
+- **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-16-*` 与 `raw/pdf_dl_r94.sh` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-17 06:00`**（新一日「早 3」轮）：① 复验批次（**周四 20:00 ET 的 `2026-10-16` 批** → 本地 10-17 08:00 前后落地 ⇒ AM 轮**预期 0 新增**，口径同既往 AM 轮）；② 早报 3 篇「借鉴」→ 进度 **3/5**；③ 第 5 批分镜脚本 `research/video/SCENES/10_17.html` 归 **18:00 PM 轮**；④ 当日论文日报邮件归 **18:00 PM 轮**。
+

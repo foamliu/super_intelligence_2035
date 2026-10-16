@@ -1,0 +1,42 @@
+paul 您好，
+
+今日（2026-10-16）arXiv 当日筛选中精选 5 篇，5 篇 PDF 均随附（合计 9,828,547 B ≈ 9.37 MB，单封上限 20 MB）。
+
+一、本轮取数说明（如实）
+- arXiv 公告批次本轮已刷新：2026-10-14 → 2026-10-15（totalResults 633208 → 633893，最新样本 published=2026-10-15T17:59:59Z）；72h 窗口内新增 201 条候选 ⇒ 晚报 2 篇取自当日新批（非承接旧候选池）。
+- 本日 5 篇 = 早报 3 篇（「借鉴」，06:00 轮产出）+ 晚报 2 篇（「科普」，18:00 轮产出），当日收口 5/5。
+- 5 篇均已用 arXiv API id_list 逐条复核（HTTP 200 + application/atom+xml + published 有效）：早 3 见 raw/2026-10-16-idlist-shortlist-r93.{xml,headers}，晚 2 见 raw/2026-10-16-idlist-shortlist-r94.{xml,headers}。
+- 原文标题照抄未改写；文中数字均为「论文作者自报」，我们未复现。
+- 副源 HF Daily Papers 本机不可达（Network is unreachable，Errno 101），如实登记为 FAIL —— 不影响主源（arXiv API）取数。
+
+二、精选清单（3 篇「借鉴」+ 2 篇「科普 / 选题参考」）
+
+【借鉴｜与 BaiZe / ZhuLong 强相关】
+
+1. PN-Mix: Pair-Norm Guided Mixed-Precision Key Cache Quantization for Efficient Long-Output LLM Inference
+   arXiv:2610.19605 ｜ 附件：是
+   为何值得读：LLM 长输出推理卡在 KV cache 的显存 / 带宽上；既有混合精度 key-cache 量化只按 key 统计估通道显著性，本文改在 RoPE 通道对层面做 logit 扰动分析，发现「query–key 对范数乘积大」的通道对量化误差对 logit 贡献显著，据此在 prefill 一次性定显著通道对、解码全程复用高精度，平均 2.26-bit 即达到 / 优于既往 2.32–2.39-bit 方法。对口 BaiZe 高效推理的「KV cache 量化精度预算」这条线：可作为我们低比特 KV 量化实验的显著性与调度设计对照。⚠️ 数字为作者自报（comment 自述 EMNLP 2026），本线未复现。
+
+2. Titan-Llama: Retrofitting Pre-trained LLMs with External Neural Memory Modules
+   arXiv:2610.19210 ｜ 附件：是
+   为何值得读：提出一种「后训练」改造法 —— 用分块注意力掩码对最近 token 保真、把历史压缩进循环的固定大小神经记忆模块（NMM），不必从头训练即可替换预训练注意力层。Llama-3.2-1B 上长文问答明显提升（QuALITY 23.87%→40.51%、LongHealth 14.50%→40.75%），同时 prefill / decode 更快、稳态显存更低。对口 BaiZe 的长上下文与记忆架构：是我们评估「外部记忆 / 循环层替换注意力」路线的一个低成本改造样例。⚠️ 数字为作者自报，未复现。
+
+3. Knowledge Graphs as Files: An Agent Harness Where Tool Creation and Tool Use Co-Evolve
+   arXiv:2610.18616 ｜ 附件：是
+   为何值得读：让 code agent 直接在完整的节点 / 边文件上写 Python 造出「图访问工具」，与 shell 搜索 / 文件检视交错，工具创建与使用共演化（而非只用预定义接口）；三领域基准上免训练即优于最强公开基线，消融显示「多轮编程 > 仅 shell > 预定义图工具」。对口 ZhuLong 的 agent harness 工具供给方式（固定工具集 vs 运行时自造）与 code agent 评测设计，可直接对照我们的 harness 取舍。⚠️ 数字为作者自报，未复现。
+
+【科普｜选题 / 跨域参考】
+
+4. A team of Gemini 4 Argon agents beats Minecraft（本日 TOP-1 · 已出《论文两分钟》分镜脚本）
+   arXiv:2610.22319 ｜ 附件：是
+   为何值得读：4 个 AI 智能体被放进沙盒化的 Minecraft 生存世界，只给一个目标「击败末影龙」——没人分配角色、没人写游戏脚本，计划 / 写程序 / 调试全由它们自己在聊天框里商量完成；从随机世界、简单难度起步，写了 2783 个程序、历时 27 小时 14 分钟通关，途中死亡 605 次。作者称「据我们所知」这是首次 AI 智能体端到端自主通关。对口长时程自主任务：可作「上千步、逾一天不散架的计划」这类能力的直观参照。⚠️ 数字为作者自报（To our knowledge = 据作者所知），未复现；不引申为「AI 已超越人类玩家」。
+
+5. Evaluation Awareness Beyond English: Do LLMs Act Differently When Tested in Indic Languages?
+   arXiv:2610.22333 ｜ 附件：是
+   为何值得读：模型常常能察觉「自己正在被测试」，这种「评测意识」会让它在安全评测时比日常使用更爱拒答；已有研究几乎只做英文，本文覆盖 3 个家族 4 个指令微调模型 × 5 种 Indic 语言 + 英文，发现被告知在被测试时拒答率上升（Indic 语言有害请求拒答率平均 +14.4 个百分点），同时无害 Indic 请求的拒答率也从 6.9% 抬到 11.3%，并公开 47,880 条判定回复。对口 AI 安全评测的可信度边界：提示「评测结果未必等于日常行为」。⚠️ 数字为作者自报，未复现。
+
+三、附件
+- 5 个 PDF：2610.19605（23 页 / 1,307,212 B）、2610.19210（15 页 / 1,181,834 B）、2610.18616（27 页 / 775,549 B）、2610.22319（17 页 / 6,215,260 B）、2610.22333（19 页 / 348,692 B）；合计 9,828,547 B ≈ 9.37 MB（单封上限 20 MB）。
+- 下载校验：逐文件 `%PDF-` 头 + `%%EOF` 尾 + `pdfinfo` 页数 + `pdftotext` 正文可解析，且**本地字节数 = 服务端 content-length**（逐文件比对）；脚本 `research/raw/pdf_dl_r94.sh`，日志 `/tmp/pdf_dl_r94.log`；PDF 落地 `research/pdf/2026-10-16/`（按仓库口径不入 git）。
+
+—— 《超级智能2035》· research 自动日报
