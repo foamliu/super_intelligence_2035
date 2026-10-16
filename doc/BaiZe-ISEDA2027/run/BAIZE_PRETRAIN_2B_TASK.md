@@ -1,6 +1,22 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🚨 运维指令 · 2026-10-16 19:0x（⏱ **加急：立刻起训 80B decay，禁止再空转**）· 用户质询 · 最高优先
+
+> **用户质询（2026-10-16）**：「pretrain：执行 80B decay 实验 —— 他俩到底还在等什么？不知道 GPU 很贵吗？」
+> **事实（运维实测）**：放行令（13:47）+ NeMo 纠偏（15:32）均已下发，但本线**自 13:19 起零提交**，`.29` 8×H100 **空了 5.5 小时**。已另经 `ops/inbox.md` 下发 **RUN_ID 109** 核查 loop 死活并按需重启。
+
+**① 立刻执行（🚫 不得再以「等运维指令」为由空转）**：按 13:47 放行令 + 15:32 NeMo 纠偏起训 80B decay —— 起点 = **Xmodel-2.5 stable 末 ckpt（step 532000）**；数据 = **BaiZe 80B 配比**；优化器 = **Muon（NeMo/Megatron-Core 0.16.1 自带）**；🚫 **禁止 `find 全树` 找 muon.py**。目标 = 14 集超越 Xmodel-2.5 final（CS8 65.40% / CX 32.90%）。
+
+**② 执行顺序**：① `nvidia-smi` 确认 `.29` 空窗 → ② **HF ckpt → Megatron/NeMo 格式转换**（先跑小样本 smoke 再全量）→ ③ **复用 BaiZe P-8 的 muon 训练脚本**（只换模型）→ ④ 起训并回报 `step / loss / tok·s⁻¹ / ETA / 卡占用`。
+
+**③ 每轮唤醒必须落盘**：`MEMORY_PRETRAIN_2B.md`（step / loss / ETA / 卡占用）+ `daily-memories/` —— 哪怕单轮 cline 只跑 25 分钟也要写，🚫 **禁止静默**。
+
+**④ 阻塞必须显式报告**：卡在 ckpt 转换 / tokenizer 不兼容（128K vs 129K）/ 数据路径 / 依赖缺失等，须写明「**卡点 + 已试方案 + ETA + 需要什么**」，🚫 不许静默等待。
+
+**⑤ 纪律**：🚫 不 kill 别线进程 · 与 data 线错峰 IO · commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-16（🚀 放行执行 80B decay 实验）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16）**：「pretrain：放行 80B decay 实验。」

@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 108 -->
+<!-- RUN_ID: 109 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,69 @@
 
 ---
 
+## RUN_ID 109 — 🩺 **pretrain loop 健康核查 + 按需重启**（治「放行令无人执行」）
+
+> 背景：10-16 **13:47「放行 80B decay」** + **15:32「NeMo 训 Xmodel」**两条令之后，pretrain 线**自 13:19 起零提交**（连 30min auto-commit 都停）⇒ 疑 loop 进程已死 / 卡死。
+> 本块：① 探 .29 GPU + loop 进程 + loop 日志；② **仅当「未存活」时** `setsid` 重启（避免双实例）；③ 顺带确认 .12 vision ArmA 在训。
+> ⚠️ 进程匹配**显式排除 cline/bun**（RUN_ID 107 教训）；🚫 不 dump cmdline 全文；🚫 不 kill 任何进程（含 loop）。
+
+```bash
+set -u
+echo "=== RUN_ID 109 · pretrain loop 核查 · $(date '+%F %T') · host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+REL=$R/doc/BaiZe-ISEDA2027/run
+LOG=/tmp/baize_pretrain_loop.log
+
+echo "--- A) .29 GPU 现状 ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+
+echo "--- B) pretrain loop 进程（排除 cline/bun） ---"
+found=0
+for p in $(pgrep -f 'baize_pretrain_loop' 2>/dev/null); do
+  C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-120)
+  case "$C" in *cline*|*bun*) : ;; *) echo "   pid=$p :: $C"; found=1 ;; esac
+done
+[ "$found" = 0 ] && echo "   （未发现 pretrain loop 进程）"
+
+echo "--- C) loop 日志尾 + 静默时长 ---"
+if [ -f "$LOG" ]; then
+  AGE=$(( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ))
+  echo "   log 静默 ${AGE}s（>2400s 疑卡死）"
+  tail -20 "$LOG" | cut -c1-160
+else
+  echo "   (无 $LOG)"
+fi
+
+echo "--- D) 训练/转换进程 ---"
+ps -eo pid=,etime=,comm=,args= 2>/dev/null | grep -Ei 'torchrun|megatron|nemo|convert|hf2m|ckpt_conv' | grep -v grep | cut -c1-150 | head -12 || echo "   (none)"
+
+echo "--- E) .12 vision ArmA 确认 ---"
+ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'echo "[.12] $(hostname $(date +%T))"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8; echo "-- procs --"; ps -eo etime=,args= | grep -Ei "open_clip|train.py" | grep -v grep | cut -c1-140 | head -4' 2>&1 | head -20
+
+echo "--- F) 按需重启 pretrain loop ---"
+if [ "$found" = 1 ]; then
+  echo "   loop 已存活 ⇒ 不重启（本块不 kill；若 log 静默 >2400s 需人工确认卡点）"
+else
+  echo "   ⚠️ loop 未存活 ⇒ setsid 重启：$REL/baize_pretrain_loop.sh"
+  cd "$REL" && setsid bash "$REL/baize_pretrain_loop.sh" > "$LOG" 2>&1 < /dev/null &
+  sleep 10
+  for p in $(pgrep -f 'baize_pretrain_loop' 2>/dev/null); do
+    C=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-120)
+    case "$C" in *cline*|*bun*) : ;; *) echo "   新 PID=$p :: $C" ;; esac
+  done
+  echo "   重启后日志尾:"; tail -6 "$LOG" 2>/dev/null | cut -c1-160
+fi
+
+echo "--- G) pretrain 最近提交 ---"
+cd "$R" && git log --date=format:'%m-%d %H:%M' --pretty=format:'%ad|%h|%s' -3 -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo; echo "=== DONE 109 ==="
+```
+
 ## RUN_ID 108 — 📊 **vision precache 进度 + 速率**（只读；为 ETA 取数）
 
 > 只读；含 `sleep 45` 测增量。⚠️ 进程匹配**显式排除 cline/bun**（见 RUN_ID 107 教训）；🚫 不 dump cmdline 全文。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 108 · vision precache 进度 $(date '+%F %T') · host=$(hostname) ==="
 ssh -o BatchMode=yes -o ConnectTimeout=10 10.239.2.12 'bash -s' <<'REMOTE'
