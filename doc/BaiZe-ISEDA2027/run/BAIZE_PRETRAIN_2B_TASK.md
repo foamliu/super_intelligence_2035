@@ -1,6 +1,19 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（🚀 放行执行 80B decay 实验）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「pretrain：放行 80B decay 实验。」
+
+**① 撤销「先计划不起训」**：放行按计划书 `reports/report_xmodel25_decay_80b_plan_zh.html` 执行。
+
+**② 执行要点（按计划书）**：
+- 起点：Xmodel-2.5 **stable 末 ckpt**（decay 前）。
+- decay：**BaiZe 自己配比的 80B 数据 + Muon**（对齐 Xmodel 官方 decay：71.2B / 66.9% SFT / Muon）。
+- 目标：14 集（常识 8 + 复杂 6）**超越 Xmodel-2.5 final**（CS8 65.40% / CX 32.90%）。
+
+**③ 纪律**：起训前 `nvidia-smi` 确认 .29 8×H100 空窗；下载/数据错峰 data 线 IO；每阶段回报进度 + ETA；commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-16（📋 Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay · 争超 Xmodel-2.5 final · 先出计划书）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16）**：「安排 pretrain 用 Xmodel-2.5 stable 最后一个检查点做 decay 实验，用我们自己配比的 80B 数据做 decay，争取比 Xmodel-2.5 的 final 更强（14 个评测集）。先写个计划书（中文 html）。」
