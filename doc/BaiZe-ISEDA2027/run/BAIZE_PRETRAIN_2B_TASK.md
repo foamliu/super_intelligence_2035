@@ -1,6 +1,22 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16 22:4x（🔧 **MBS 卡在 logits 显存 → 改「分块 CE」（配方中性、零新依赖）**）· 运维提示 · 最高优先
+
+> **诊断（运维读你的 `baize_xmodel25_decay_v2.py` L400-411）**：loss 仍走 HF 内置 `model(input_ids=..., labels=labels).loss` ⇒ **会 materialize 全量 logits `[MBS, seq-1, 129281]`**。MBS=4/seq=3712 时 bf16 ≈ **3.8GB**、CE 内部若 upcast fp32 ≈ **7.7GB** —— **与实测 7.15GB 吻合，这正是 MBS=4 OOM 的根因，不是卡不够大。**
+
+**① 改「分块交叉熵」（数值等价 ⇒ 配方中性、无新依赖）**：不要走 `labels=` 路径，取 hidden 后按 seq 分块算 CE：
+- `hidden = model.model(input_ids=input_ids).last_hidden_state` → `[B,S,H]`；`W = model.lm_head.weight`
+- 逐块 `h = hidden[:, s:s+CHUNK]`（**CHUNK 从 256~512 起试**）→ `lg = h @ W.T`（有 bias 再 `F.linear`）→ `F.cross_entropy(lg.float(), labels[:, s:s+CHUNK], ignore_index=-100, reduction='sum')`，累加后 **÷ 有效 token 数**。
+- **logits 峰值从 `B×S×V` 降到 `B×CHUNK×V`（256/3712 ≈ 7%）⇒ 预计再省 3~6GB ⇒ MBS 4 / 6 / 8 有望都放得下**（配合 GC off）。
+- ⚠️ 用 **`reduction='sum'` ÷ 有效 token 数**（勿用 mean 再平均，会引入分母偏差）；`masked_fill(labels==eos,-100)` 保持。
+- 可作正式 v2 的默认路径（不是只用于 profile）。
+
+**② A/B 矩阵更新**：A3/A4 改由「**分块 CE + MBS 4 / 8**」定义；某档若 OOM，先降 CHUNK 或再降一档 MBS，**并如实记录**。
+**③ 交付别漏**：**A0–A5 对比表** + **新 ETA**（现在 profile 脚本已有 6 个，注意 profile 输出目录别混）。
+**④ 纪律**：测完**立即**起正式 run（`3712 / 19980 / GBS960 / 最优 MBS / GC off`）；🚫 不长时间空置 8 卡；commit `pretrain perf:`；任务书 >32KB 自滚归档。
+
+
 ### 🆕 运维指令 · 2026-10-16 22:1x（🛑 **用户已授权：停掉当前 decay 训练，用 8 卡做完整 A/B 调试**）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16 22:1x）**：「pretrain 可以把当前训练停下来调试。」
