@@ -1,6 +1,27 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（⚡ **decay 提速专项：先量化、再修数据管线/GC/MBS**）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「pretrain 训练效率太低（183K tok/s，我 BaiZe-2B 都有 249K）。是否 Muon 实现效率不高？**如果是就换 AdamW**。另外显存还有空间（58–60GB/卡），**看有没有机会把 MBS 提升一倍**。另外为省时间，**可考虑 seq-len 与总数据量都对齐 Xmodel-2.5（71.2B）**。」
+
+> **运维实测结论（逐条，均有出处）**：
+> - **① 🚫 不换 AdamW —— Muon 不是主因**。P-8 基线（`EXPERIMENTS_PRETRAIN_2B.md:108-120`）**同样是 MBS=2 / GBS≈1024 / seq4094 / DP8 / bf16**，却跑到 **249K tok/s（~17.5s/step、565 TFLOP/s/GPU）** ⇒ **MBS 相同、吞吐差 27%，问题不在 MBS、也不在 batch 形状**。差别在**技术栈**：P-8 = **Megatron-Core 全栈**；本 run = **HF `AutoModelForCausalLM` + 手写 DDP + 手写 `BlendedDataLoader`**（因 Megatron-Core 0.16.1 不实现 Xmodel μP 前向缩放，转换会破坏模型）。Muon 每**优化器步**仅更新一次（共 20346 步），被 **60 个 micro-step** 摊薄 ⇒ **非主因**；且换 AdamW 会**破坏与 Xmodel 官方「同配比·同优化器」的可比性**（本实验立论基础）⇒ **不许换**。
+> - **② 真瓶颈（可修，配方中性）**：数据管线 **单进程 / 无 worker / 无预取**，且**在训练主循环内同步**做 `IndexedDataset` 随机取 doc → `doc.tolist()` → Python `list.extend` 拼到 4096（`baize_xmodel25_decay_train.py:116-138`，纯 Python 逐 token）→ `.to(device)` **未用 `non_blocking`**（L320）⇒ **每 micro-step GPU 都在等 CPU**（60 次/步）。
+> - **③ 梯度检查点默认开着**（L214 `--grad_checkpoint` default=True）→ 反向重算 ≈ **+20~30%** 时间（P-8/Megatron 默认关闭）。
+> - **④ seq / 总 token 存在「铁令冲突」**：计划书口径 = **seq 3712 / 3.56M tok·步⁻¹**（`reports/report_xmodel25_decay_80b_plan_zh.html` §4），而起训脚本按你此前「**4096 = 2¹²**」铁令覆盖为 4096（`baize_xmodel25_decay.sh:17`）⇒ **本项待用户拍板，🚫 本轮不动**。
+
+**① 先量化（改前必做，10 步）**：主循环加分段计时并打日志 —— `t_data`（next(data_iter) + H2D）/ `t_fwd_bwd` / `t_opt`（zero_grad + clip + muon + adamw），每 10 步打印均值。**用数据定位瓶颈，🚫 不许拍脑袋改配置。**
+**② 配方中性提速（不改变训练语义；改完从 step_532000 重起跑）**：
+- **a. 数据管线**：改 `torch.utils.data.DataLoader(num_workers=8, pin_memory=True, prefetch_factor=4, persistent_workers=True)`（或后台预取线程 + 队列）；`get_batch` 去掉 `.tolist()/extend`，改 `np.concatenate` + `torch.from_numpy`；H2D 改 `non_blocking=True`。
+- **b. 关梯度检查点**：`--grad_checkpoint` 默认改 **False**（显存不足再回退）。
+- **c. A/B `MBS 2→4`**：`grad_accum` 60→30（**GBS 保持 960 不变**），各跑 ~30 步测 tok/s；显存有 ~20GB 余量，预期可容纳。
+- **d. 可选**：AdamW 组加 `fused=True`。
+**③ 只有在①的分段计时**证明 Muon（含 `num_ns_steps=5` / `scale_mode="spectral"` / FP32 upcast 补丁）**占比显著**时，才允许动优化器 —— 且须**附计时证据**再定是否改。
+**④ 交付**：**tok/s 前后对比表 + 分段计时表 + 新 ETA** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit 前缀 `pretrain perf:`。
+**⑤ 纪律**：🚫 本轮**不动 seq / 总 token**（待用户拍板；若对齐则 3712 + 71.2B ⇒ 19985 步，省 ~11% ≈ 0.5 天，且与官方 apples-to-apples）；⛔ 不干扰 data 线；**任务书已超 32KB ⇒ 本轮须归档已闭合块回 ≤32KB**。
+
+
 ### 🚨 运维指令 · 2026-10-16 19:0x（⏱ **加急：立刻起训 80B decay，禁止再空转**）· 用户质询 · 最高优先
 
 > **用户质询（2026-10-16）**：「pretrain：执行 80B decay 实验 —— 他俩到底还在等什么？不知道 GPU 很贵吗？」
@@ -17,52 +38,9 @@
 **⑤ 纪律**：🚫 不 kill 别线进程 · 与 data 线错峰 IO · commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
 
 
-### 🆕 运维指令 · 2026-10-16（🚀 放行执行 80B decay 实验）· 用户直令 · 最高优先
+> 📦 [已归档] **2026-10-16（🚀 放行执行 80B decay 实验 + 用 NeMo 训 Xmodel）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-16 归档块）。⚠️ **已执行完毕**；**实测修正**：Megatron-Core 0.16.1 **不实现 Xmodel 的 μP 前向缩放**（embed×12 / attn·ffn 残差×1.4/√48 / logits×1/6）⇒ **HF→Megatron 转换会破坏模型**，最终落地为 **HF `AutoModelForCausalLM` + 手写 DDP + Megatron `TensorParallelMuon` 优化器**（见 `baize_xmodel25_decay_train.py` docstring）。
 
-> **用户令（2026-10-16）**：「pretrain：放行 80B decay 实验。」
-
-**🔧 用户纠正：用 NeMo 训 Xmodel，别 find 全树找 muon**：
-- NeMo/Megatron-Core 0.16.1 **自带 Muon**（`megatron/core/optimizer/muon.py`），之前 BaiZe P-8 的 `dist_muon` 就是 NeMo 训的。
-- 🚫 **不要 `find /nas_train 全树` 找 muon.py**（重 IO 全树遍历，又慢又蠢，还被 MEMORY 铁律禁止）。
-- 真正要做两件事：① **Xmodel-2.5 HF ckpt → Megatron/NeMo 格式转换**；② **复用 BaiZe P-8 的 muon 训练脚本**，把模型换成 Xmodel。
-
-**① 撤销「先计划不起训」**：放行按计划书 `reports/report_xmodel25_decay_80b_plan_zh.html` 执行。
-
-**② 执行要点（按计划书）**：
-- 起点：Xmodel-2.5 **stable 末 ckpt**（decay 前）。
-- decay：**BaiZe 自己配比的 80B 数据 + Muon**（对齐 Xmodel 官方 decay：71.2B / 66.9% SFT / Muon）。
-- 目标：14 集（常识 8 + 复杂 6）**超越 Xmodel-2.5 final**（CS8 65.40% / CX 32.90%）。
-
-**③ 纪律**：起训前 `nvidia-smi` 确认 .29 8×H100 空窗；下载/数据错峰 data 线 IO；每阶段回报进度 + ETA；commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-16（📋 Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay · 争超 Xmodel-2.5 final · 先出计划书）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「安排 pretrain 用 Xmodel-2.5 stable 最后一个检查点做 decay 实验，用我们自己配比的 80B 数据做 decay，争取比 Xmodel-2.5 的 final 更强（14 个评测集）。先写个计划书（中文 html）。」
-
-**① 背景**：已实测 Xmodel-2.5 final（decay 后）CS8=65.40% / CX=32.90%，stable 段普遍偏低。目标：用 **BaiZe 自己配比的 80B 数据** 对 Xmodel-2.5 stable 末 ckpt 做 decay，争取 14 集超越其官方 final，验证「BaiZe decay 数据配比/annealing 策略更优」。
-
-**⚖️ Xmodel-2.5 官方 decay 配置（用户提供的对照基准，计划书必须纳入）**：
-| 项 | Xmodel-2.5 官方 decay |
-|:--|:--|
-| Decay token 量 | **71.2B**（20,000 steps × 3.56M tokens/step）|
-| 占总训练（1.4T）| ~5% |
-| 数据配比 | **66.9% 高质量 SFT** + 其余 |
-| 优化器 | **decay 阶段 AdamW → Muon**（提升推理性能）|
-- **公平性**：我们给 **80B 预算 > 71.2B**，数据量已不落下风；若 80B 内 14 集超 Xmodel-2.5 final，即证明 BaiZe 的 decay 数据配比/annealing 策略更优。
-- ⚠️ 计划书须单列对照：**our 80B decay（配比/优化器/超参） vs Xmodel 71.2B decay（66.9% SFT + Muon）**。
-- ✅ **decay 段用 Muon（对齐 Xmodel 官方，用户直令）**：此处训练的是 **Xmodel 模型（其 stable 末 ckpt）**，不是 BaiZe 原生模型——BaiZe P-8 的 dist_muon 发散是 BaiZe 架构/配方的问题，不适用于 Xmodel。Xmodel 官方自己也是「stable 段全用 Muon 会发散 → 只能把范围缩小到 decay 段才用 Muon」。故我们的 80B decay 也采用 Muon，与官方同构。
-
-**② 计划书须先定清（写进 HTML，每项带出处）**：
-1. **起点 ckpt**：Xmodel-2.5 stable 最后一个（decay 前）检查点——确认是哪个 step（约 step 100K?）、对应 token（13.2M/step 口径）、本地是否已下载；未下则列下载量与 HF 路径。
-2. **decay 数据配比（BaiZe 80B）**：给本源权重 + 80B 的 token 分配（可沿用 P-8 decay 的 SFT/L3/code/math annealing 思路）。
-3. **decay 超参**：WSD（warmup / decay 步数 / LR 1e-3→1e-5 / seq / GBS），标明与 Xmodel 官方训练 tokenizer/seq 的兼容处理。
-4. **14 评测集**：常识 8 + 复杂 6（对齐已有 Xmodel scaling 对比口径）；对比基准 = Xmodel-2.5 final 的 CS8 65.40% / CX 32.90%。
-5. **算力/墙钟**：80B decay 在 .29 8×H100 的 GPU·h + ETA。
-6. **风险/可行边界**：Xmodel-2.5 tokenizer/架构与我们不同，decay 用谁的 tokenizer？ckpt 转 HF / 推理 / lm-eval 链路是否可用（列出需验证项）。
-
-**③ 交付**：中文自包含 HTML 计划书（如 `reports/report_xmodel25_decay_80b_plan_zh.html`），含上述 6 点 + 预期提升 vs 基线。
-
-**④ 纪律**：🚫 先计划不起训；数字带出处（实测/源码）；commit 前缀 `pretrain plan:` · 任务书 >32KB 自滚归档。
+> 📦 [已归档] **2026-10-16（📋 Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay · 先出计划书）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-16 归档块之二）。⚠️ **已执行完毕**：计划书 `reports/report_xmodel25_decay_80b_plan_zh.html`（36KB）已交付；**官方对照基准已落在计划书 §4**（Decay token **71.2B** = 20k 步 × **3.56M tok/步**、占总训练 1.4T 的 ~5%、**66.9% 高质量 SFT**、**AdamW→Muon**）；**decay 段用 Muon 的理由**（"stable 段全用 Muon 会发散 → 官方只把 Muon 缩到 decay 段；BaiZe P-8 的 dist_muon 发散不适用于 Xmodel"）亦已落计划书。
 
 > 📦 §运维指令·2026-10-15（📘 v5 预训练计划书）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v5 报告 42.8KB ✅ 交付(commit fc0a292b)，5问速答+三方对照+推荐策略+配比实验+风险+附录，6表1SVG。需要时再读。
 

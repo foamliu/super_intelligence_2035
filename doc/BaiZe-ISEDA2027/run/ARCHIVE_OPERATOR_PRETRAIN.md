@@ -1938,3 +1938,38 @@ token 预算的三档参照（按 T3 定稿吞吐 8×H100 = 249K tok/s · MBS2 �
 **③ 纪律**：🚫 不重训 BaiZe；下载与 data 线错峰 IO、磁盘别超；commit 前缀 `pretrain eval:` · 任务书 >32KB 自滚归档。
 
 **结论**：Xmodel-2/2.5 final 及 history ckpt 均已下载完成。proxy 口径作为常驻知识保留在 MEMORY 中。
+
+---
+
+## 归档块 · 运维指令「2026-10-16（🚀 放行执行 80B decay 实验 + 用 NeMo 训 Xmodel）」— 已执行完毕，2026-10-16 归档（原文字搬，不新增/不改写）
+
+> 【原文】**用户令（2026-10-16）**：「pretrain：放行 80B decay 实验。」
+
+> 【原文】**🔧 用户纠正：用 NeMo 训 Xmodel，别 find 全树找 muon**：
+> - NeMo/Megatron-Core 0.16.1 **自带 Muon**（`megatron/core/optimizer/muon.py`），之前 BaiZe P-8 的 `dist_muon` 就是 NeMo 训的。
+> - 🚫 **不要 `find /nas_train 全树` 找 muon.py**（重 IO 全树遍历，又慢又蠢，还被 MEMORY 铁律禁止）。
+> - 真正要做两件事：① **Xmodel-2.5 HF ckpt → Megatron/NeMo 格式转换**；② **复用 BaiZe P-8 的 muon 训练脚本**，把模型换成 Xmodel。
+
+> 【原文】**① 撤销「先计划不起训」**：放行按计划书 `reports/report_xmodel25_decay_80b_plan_zh.html` 执行。
+
+> 【原文】**② 执行要点（按计划书）**：
+> - 起点：Xmodel-2.5 **stable 末 ckpt**（decay 前）。
+> - decay：**BaiZe 自己配比的 80B 数据 + Muon**（对齐 Xmodel 官方 decay：71.2B / 66.9% SFT / Muon）。
+> - 目标：14 集（常识 8 + 复杂 6）**超越 Xmodel-2.5 final**（CS8 65.40% / CX 32.90%）。
+
+> 【原文】**③ 纪律**：起训前 `nvidia-smi` 确认 .29 8×H100 空窗；下载/数据错峰 data 线 IO；每阶段回报进度 + ETA；commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
+
+> 【结果】2026-10-16 19:14 decay 起训 RUNNING（step 190 loss 1.599 / 183K tok/s / 8×H100 100%）。**实测修正**：Megatron-Core 0.16.1 不实现 Xmodel μP 前向缩放 ⇒ HF→Megatron 转换会破坏模型 ⇒ 最终走 HF + 手写 DDP + Megatron TensorParallelMuon。
+---
+
+## 归档块之二 · 运维指令「2026-10-16（Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay · 先出计划书）」— 已执行完毕，2026-10-16 归档（原文字搬，不新增/不改写）
+
+> 【原文】**用户令（2026-10-16）**：「安排 pretrain 用 Xmodel-2.5 stable 最后一个检查点做 decay 实验，用我们自己配比的 80B 数据做 decay，争取比 Xmodel-2.5 的 final 更强（14 个评测集）。先写个计划书（中文 html）。」
+> 【原文】**① 背景**：已实测 Xmodel-2.5 final（decay 后）CS8=65.40% / CX=32.90%，stable 段普遍偏低。目标：用 BaiZe 自己配比的 80B 数据 对 Xmodel-2.5 stable 末 ckpt 做 decay，争取 14 集超越其官方 final，验证「BaiZe decay 数据配比/annealing 策略更优」。
+> 【原文】**官方 decay 对照基准**：Decay token 71.2B（20,000 steps × 3.56M tokens/step）；占总训练 1.4T 的 ~5%；数据配比 66.9% 高质量 SFT + 其余；优化器 decay 阶段 AdamW → Muon（提升推理性能）。
+> 【原文】**公平性**：我们给 80B 预算 > 71.2B，数据量已不落下风。**计划书须单列对照** our 80B vs Xmodel 71.2B。
+> 【原文】**decay 段用 Muon（对齐 Xmodel 官方，用户直令）**：此处训练的是 Xmodel 模型（stable 末 ckpt），不是 BaiZe 原生模型——BaiZe P-8 的 dist_muon 发散是 BaiZe 架构/配方的问题，不适用于 Xmodel。Xmodel 官方自己也是「stable 段全用 Muon 会发散 → 只能把范围缩小到 decay 段才用 Muon」。
+> 【原文】**② 计划书须先定清（6 点）**：① 起点 ckpt（哪个 step / 对应 token / 本地是否已下载）② decay 数据配比（BaiZe 80B 权重与 token 分配）③ decay 超参（WSD: warmup/decay 步数/LR/seq/GBS + tokenizer 兼容处理）④ 14 评测集（常识 8 + 复杂 6，基准 = Xmodel-2.5 final CS8 65.40%/CX 32.90%）⑤ 算力/墙钟（GPU·h + ETA）⑥ 风险/可行边界（tokenizer 归属、ckpt 转 HF / 推理 / lm-eval 链路需验证项）。
+> 【原文】**③ 交付**：中文自包含 HTML 计划书，含上述 6 点 + 预期提升 vs 基线。**④ 纪律**：🚫 先计划不起训；数字带出处；commit 前缀 `pretrain plan:`。
+
+> 【结果】计划书 `reports/report_xmodel25_decay_80b_plan_zh.html`（36KB）已于 2026-10-16 12:05 交付（commit cd67a21b）；同日 13:47 放行执行，19:14 decay 起训 RUNNING。
