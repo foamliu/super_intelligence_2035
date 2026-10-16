@@ -77,14 +77,18 @@ if [ "$AVAIL_GB" -lt 10 ]; then
 fi
 
 # ---- Step 4: Launch limit50 8-GPU eval ----
-# 16 benchmarks (skip vqav2_val — needs >28G arrow, will do in full eval on /nas_env)
+# 14 benchmarks (skip vqav2_val — needs >28G arrow; skip mmvet + hallusion_bench_image — need GPT-4 API for scoring)
 # seedbench IS included — lmms-eval task name is "seedbench", cache dir is "lmms-lab___seed-bench"
+#
+# FIX 2026-10-16 09:05: Removed mmvet + hallusion_bench_image — both call OpenAI GPT-4 API
+# for post-processing/scoring, but no OPENAI_API_KEY is configured → crash during aggregation.
+# Will add them back in full eval with API key or local judge.
 #
 # FIX 2026-10-16: HF_HUB_OFFLINE=1 prevents 429 Too Many Requests when 8 ranks
 # try to load uncached datasets simultaneously. All 15 datasets are in the hub
 # cache (/nas_env/app.e0031982/hf_home/hub/), so offline mode works.
 # Pre-cached missing datasets (vizwiz, infovqa) via precache_missing.py first.
-EVAL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,seedbench,pope,vizwiz_vqa_val,ocrbench,mmvet,hallusion_bench_image,realworldqa,infovqa_val"
+EVAL_TASKS="mmbench_en_dev,mmmu_val,gqa,textvqa_val,docvqa_val,chartqa,ai2d,scienceqa,seedbench,pope,vizwiz_vqa_val,ocrbench,realworldqa,infovqa_val"
 
 # Critical: prevent parallel HF Hub API calls (caused 429 crash on 2026-10-16 08:54)
 export HF_HUB_OFFLINE=1
