@@ -14,7 +14,7 @@ CWD="$SCRIPT_DIR"
 # git 仓库根目录（run/ 的上级 super_intelligence_2035）
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
 
-MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
+MODEL="deepseek-v4-pro-cloud"     # 编排模型（2026-10-16 用户令：换 pi agent + deepseek-v4-pro-cloud）
 
 # 🔒 2026-10-04 运维（RUN_ID 55）：本线专用 cline 隔离配置目录
 #   背景：多条线共用 ~/.cline/data/globalState.json，谁改了 openAiBaseUrl 就会影响别人
@@ -26,7 +26,10 @@ LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进
 # 🔑 glm-5.2 key
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
-CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
+CLINE_TIMEOUT=1500              # 单次 agent 最多 25 分钟
+PI_CLI="$HOME/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js"  # pi agent 入口（2026-10-16 换掉 cline）
+PI_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"    # deepseek-v4-pro-cloud key
+BUN="$(command -v bun || echo /home/app.e0031982/.bun/bin/bun)"
 PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
 SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗假期）
 SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤醒间隔：30 分钟（省 token）
@@ -73,19 +76,14 @@ git_push_if_needed() {
 }
 
 while true; do
-    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+    echo "[loop] $(date '+%F %T') wake up, invoking pi ..."
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-          # 🔑 额度/鉴权体检 + 自动轮换（候选 = doc/keys.txt 的 8 个 chat LLM；200 可用 / 429 额度耗尽 / 403 base 不匹配）
-          #    全挂 → 跳过本轮（不静默空转）；选中项的 base 会自动写进 cline 的 openAiBaseUrl
-          if llm_pick "$LLM_STATE" "$KEYS_TXT"; then
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
-          else
-            echo "[loop] $(date '+%F %T') !!! 无可用 LLM 候选 → 跳过本轮 cline"
-          fi
-        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
+            PI_OFFLINE=1 PI_SKIP_VERSION_CHECK=1 \
+          "$BUN" "$PI_CLI" -p --provider cloud --model "$MODEL" --api-key "$PI_KEY" "$prompt" < /dev/null
+        echo "[loop] $(date '+%F %T') pi returned (exit $?), checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
     fi
