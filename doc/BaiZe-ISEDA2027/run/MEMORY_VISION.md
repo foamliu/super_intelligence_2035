@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 13:18（keepalive · 全任务完成 · GPU 空闲 · wake #115）**：✅ 12集 eval 已确认完成（commit 77137bf6 pushed, `consolidated_12benchmarks.json` 在位）。✅ ArmA open_clip Part B 验收已通过（wake #109）。✅ GPU 8×H100 全空闲（0% util, 0 MiB）。✅ 无新运维指令（git pull up to date）。✅ 无运行中 eval/precache 进程。🔄 等待新指令。📦 体积：TASK=31.6KB / MEMORY=29.1KB（无归档）。
+> 🆕 **2026-10-16 17:30（🚀 ArmA open_clip 从头训已启动 · wake #116）**：✅ Stage(iv) 报告 `reports/report_vision_stage4_mllm_result_zh.html`(18.8KB) 已交付。🚀 **ArmA open_clip ViT-B/16 从头训已起训**（8×H100, GPU util 87-100%, 24GB/卡）：open_clip 标准 ViT-B/16(86.2M visual/149.6M total, both towers from scratch) + ClipLoss InfoNCE(global gather) + data.py mixed loader(GPIC+CC12M+Amshaker, 10787 shards ~118M) + AdamW lr=2e-3 warmup=8000 cosine->2e-4 + GBS=2048 + bf16 + steps=154500(~2.7ep)。✅ smoke test 3步通过 + checkpoint 经 `open_clip.create_model_and_transforms(pretrained=)` 加载验证通过(encode_image [B,512], 无NaN)。训练中: step 180 loss=6.69(↓from 7.66=ln2048) 2.88it/s ETA~15h。✅ checkpoint 每10K步保存(open_clip格式, 可直接 create_model_and_transforms 加载)。下一步: 监控训练 → 完成后 ProtB 评测。📦 体积：TASK=33.4KB(略超32KB,全为今日活跃指令无可归档) / MEMORY=29.6KB（无归档）。
 > 📦 2026-10-16 12:10（✅ 12集全量 eval 全部完成 · wake #114）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12/12 benchmarks 全部完成, consolidated_12benchmarks.json 交付。需要时再读。
 > 📦 2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 13集全量 eval 完成（per-GPU batch32），后缩编为12集。需要时再读。
 > 📦 2026-10-16 06:23（precache 主跑完成 15OK/2FAIL · wake #110）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15OK/2FAIL, seedbench retry 进行中40%。需要时再读。
