@@ -1,7 +1,7 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
-<!-- heartbeat 2026-10-16 12:04 -->
+<!-- heartbeat 2026-10-16 12:40 -->
 
 
 
@@ -11,10 +11,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `B`（**S1 全收口✅**：omega_low 跳过采信legacy 82.8±1.0%·**readback_binary fresh 5/5✅=78.1±1.3%**[75.9,79.1,77.8,78.5,79.1]替换legacy 66.2±16.1%·readback_none 跳过采信legacy 73.3±2.2%·→S1 done_all；**运维令二十三 B.glm-5.3-flash r1 code-gen✅done@12:02·gen{148succ/1fail/9timeout}·手动regrade跑中 PID1137656@12:04**）；B 4/4✅(glm-5.2/flash/kimi/doubao)+新增glm-5.3-flash进行中；C1 4臂5/5✅含full_v3锚点82.1±3.0%；C2 4/4全收口✅ phi_k10=77.7±2.2/k3=69.1±2.5/k1=63.8±3.2/lagged=73.0±3.2；📝论文 tab:ablation-harness(B)已同步 78.1±1.3%·反转叙事→单调恢复 N'<B<F·编译0error12页）|
+| STAGE | `B`（**S1 全收口✅**：omega_low 跳过采信legacy 82.8±1.0%·**readback_binary fresh 5/5✅=78.1±1.3%**[75.9,79.1,77.8,78.5,79.1]替换legacy 66.2±16.1%·readback_none 跳过采信legacy 73.3±2.2%·→S1 done_all；**运维令二十三 B.glm-5.3-flash r1✅收割=80.4%(127/158·timeout=9≤10)→r2 code-gen启动 PID1253562@12:40·batch=2026_1016_124025**）；B 4/4✅(glm-5.2/flash/kimi/doubao)+新增glm-5.3-flash r1done r2跑；C1 4臂5/5✅含full_v3锚点82.1±3.0%；C2 4/4全收口✅ phi_k10=77.7±2.2/k3=69.1±2.5/k1=63.8±3.2/lagged=73.0±3.2；📝论文 tab:ablation-harness(B)已同步 78.1±1.3%·反转叙事→单调恢复 N'<B<F·编译0error12页）|
 | CONFIG | `glm-5.3-flash`（B 模型消融新臂·运维令二十三·full harness: OMEGA=high/READBACK=full/BUDGET=0/LAGGED=0/V3自探索·核心4工具ON·cline auth=openai-compatible glm-5.3-flash@http://agi-gateway.cxmt.com/v1 key 6903b05e·MCP PID146061@8090✅·RAG:9006✅·沙盒hook由run_cli.sh seed_cline_hooks自部署✅）|
-| ROUND | **readback_binary 5/5✅=78.1±1.3%**[75.9,79.1,77.8,78.5,79.1]（fresh重测替换legacy 66.2±16.1%·运维令二十二②）；omega_low 跳过·采信legacy 82.8±1.0%；readback_none 跳过·采信legacy 73.3±2.2%（指令二十二③）；**S1 done_all → 运维令二十三 B.glm-5.3-flash r1 code-gen✅done@12:02·gen{148succ/1fail/9timeout/158total}·Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade跑中 PID1137658@12:04·batch=2026_1016_081219**|
-| PHASE | `running`（B.glm-5.3-flash r1 **手动regrade跑中 PID1137658(bash)→1137661(python)**·Phase2组装脚本中·batch=2026_1016_081219·4端口8650/8651/8652/8654·canary ACCESS RESTRICTED=796(全文) hook live✅·PHI markers=0 full phi✅·无真实forbidden/403✅·gen stats success=148/fail=1/timeout=9·r1~3h50m@12:02 code-gen完）|
+| ROUND | **B.glm-5.3-flash r1✅=80.4%(127/158·timeout=9≤10·exec_err=0·infra=0✅·判据(十三)有效·batch=2026_1016_081219·regrade done@12:22)→r2 code-gen跑中 PID1253562@12:40·batch=2026_1016_124025**；S1: readback_binary 5/5✅=78.1±1.3%[75.9,79.1,77.8,78.5,79.1]·omega_low 跳过采信legacy 82.8±1.0%·readback_none 跳过采信legacy 73.3±2.2%→S1 done_all|
+| PHASE | `running`（B.glm-5.3-flash **r2 code-gen跑中 PID1253562**·batch=2026_1016_124025·r1 regrade done@12:22=80.4%·4端口8650/8651/8652/8654全OPEN✅·MCP:8090+RAG:9006 alive✅·/home=15G(≥8G✅·97%需关注)·loop有proxy✅·canary r1全绿 ACCESS RESTRICTED=796·PHI=0 full phi✅）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -28,7 +28,7 @@ WAITING: 1
 | B | deepseek-v4-flash | 5/5 ✅ | **16.7±12.3%** [9.5,10.1,19.0,7.6,37.3] |
 | B | kimi-k2.6-cloud | 5/5 ✅ | **77.0±1.6%** [79.1,76.6,77.2,74.7,77.2] |
 | B | doubao-seed-2.0-pro-cloud | 5/5 ✅ | **63.8±1.4%** [63.9,64.6,61.4,65.2,63.9] |
-| B | glm-5.3-flash（运维令二十三新臂）| **r1 code-gen✅done@12:02·regrade跑中 PID1137658@12:04** | 🟡 batch=2026_1016_081219·r1~3h50m code-gen·gen{148succ/1fail/9timeout}·Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径·canary ACCESS RESTRICTED=796 hook live✅·PHI=0 full phi✅·无真实forbidden/403✅·glm-5.3-flash@/v1 key 6903b05e |
+| B | glm-5.3-flash（运维令二十三新臂）| **r1✅80.4% → r2 code-gen跑中 PID1253562@12:40** | 🟡 batch_r2=2026_1016_124025·r1=127/158·timeout=9≤10·exec_err=0·infra=0✅·判据(十三)有效·regrade done@12:22·gen{147succ/0fail/9timeout/2fail-exec}·canary ACCESS RESTRICTED=796 hook live✅·PHI=0 full phi✅·glm-5.3-flash@/v1 key 6903b05e |
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9] |
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
@@ -74,7 +74,8 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
-- [2026-10-16 12:04] ✅ **B.glm-5.3-flash r1 code-gen✅done@12:02 → 手动regrade启动 PID1137656@12:04**：① ps -p 148637→GONE·log 14.2MB·尾段 Step7.1 auto-grade `FileNotFoundError: PosixPath('/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether')`=已知benchmark bug(.env EVAL_FW_DIR 指向 app.t0002997)→跳过不影响生成产物·须手动regrade。② gen stats：success=148/failure=1/timeout=9/total=158·trace拷贝158个✅·completed_code_generation_2026_1016_081219.jsonl(705KB)✅。③ canary全绿：ACCESS RESTRICTED=796 hook live✅·PHI-BUDGET/LAGGED=0(full锚点 B模型臂无phi预算正确✅)·infra errors=0✅(唯一匹配"403 秒"=任务耗时误命中·非infra)。④ infra全绿：4端口8650/8651/8652/8654@10.129.32.75全OPEN✅·MCP:8090(HTTP404=alive✅)+RAG:9006(HTTP404=alive✅)·/home=15G(≥8G✅·97%需关注)·loop有proxy✅·ops relay alive✅·cline✅。⑤ regrade启动：建 run_glm-5.3-flash_r1_regrade.sh(同r5模板改batch=2026_1016_081219+覆盖EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework+4端口+RAG:9006+SANDBOX_HOST=10.129.32.75+export PYTHON防pydantic)→setsid启动→bash wrapper **PID1137658**→python run_eval.py PID1137661✅·12:04:08·Phase2组装脚本中(setsid wrapper 1137656已GONE=正常)。历史regrade用时~20-25min·预计~12:30完。状态不变 STAGE=B/CONFIG=glm-5.3-flash/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 1137658` GONE→读 regrade log /tmp/ABL_glm-5.3-flash_r1_regrade.log 尾段`pass (xx.x%)`→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r1有效→r2启动(export PYTHON=$PWD/venv/bin/python→setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_glm-5.3-flash_r2.log 2>&1 < /dev/null &)；alive→巡检退出。⚠️查regrade用`ps -p 1137658`勿用pgrep -f。⚠️/home=15G 97%若<8G需暂停清理。📝运维令(二十三) 5/5收口后接 B.deepseek-v4-flash fresh 5-run。
+- [2026-10-16 12:40] ✅ **B.glm-5.3-flash r1✅收割=80.4% → r2 code-gen启动 PID1253562@12:40**：① r1 regrade 12:04启动→12:22完成，`/tmp/ABL_glm-5.3-flash_r1_regrade.log` 尾段 `1016: 127/158 pass (80.4%) | generated: 147 ok, 2 fail, 0 exec_err`·gen stats `{'success':147,'failure':0,'timeout':9,'fail':2}`·PASS_RATE=0.8038·pyAether_aether 127/147=0.8639·unknown 0/11(11条=code-gen timeout=9+fail=2 未组装脚本)·执行结果归档 output_evaluation/20261016_1222_app.e0031982/。② 判据(十三)核对：timeout=9≤10✅·exec_err=0✅·无 license/Connection_error/端口宕✅→**r1 有效（消融臂 Pass@1 任何值有效，不得因<75%重跑）**·ERROR_COUNT 保持0。③ infra 全绿：4端口8650/8651/8652/8654@10.129.32.75 全OPEN✅·MCP:8090(HTTP404=alive)+RAG:9006(HTTP404=alive)✅·/home=15G(≥8G✅·97%使用需关注，若<8G需暂停清理)·loop有proxy(https_proxy=http://172.19.92.23:13128✅)·cline✅。④ r2 启动：`export PYTHON=$PWD/venv/bin/python` → `setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_glm-5.3-flash_r2.log 2>&1 < /dev/null &`·**PID1253562**·batch=2026_1016_124025·log 正常 Step0/1/1.5/2 流入✅。状态更新 STAGE=B/CONFIG=glm-5.3-flash/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**（评测优先）：`ps -p 1253562` alive→巡检退出；GONE→读 r2 log 尾段（若 Step7.1 auto-grade FileNotFoundError=已知bug→手动regrade同口径：EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework·batch=2026_1016_124025·4端口8650/8651/8652/8654+RAG:9006+SANDBOX_HOST=10.129.32.75·export PYTHON=venv/bin/python 防pydantic·模板=run_glm-5.3-flash_r1_regrade.sh 改 batch 即可）→判据(十三)：仅timeout≤10且无infra故障·Pass@1任何值有效·不得因<75%重跑→r2有效→r3启动(同 r2 命令·export PYTHON)。⚠️查r2用`ps -p 1253562`勿用pgrep -f。⚠️/home=15G 97%若<8G需暂停清理。📝运维令(二十三) 5/5收口后接 B.deepseek-v4-flash fresh 5-run。
+- [2026-10-16 12:04] [⏩ 已滚出] ✅ B.glm-5.3-flash r1 code-gen✅done@12:02 → 手动regrade启动 PID1137656@12:04 详情见 daily-memories/2026-10-16.md §12:04（已由12:40收割为80.4%→r2启动）。
 - [2026-10-16 11:25] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~3h13m健康·不动作退出）详情见 daily-memories/2026-10-16.md §11:25。
 - [2026-10-16 10:47] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~2h35m健康·不动作退出）详情见 daily-memories/2026-10-16.md §10:47。
 - [2026-10-16 10:13] [⏩ 已滚出] 🔎 巡检（B.glm-5.3-flash r1 code-gen ~2h01m健康·不动作退出）详情见 daily-memories/2026-10-16.md §10:13。
