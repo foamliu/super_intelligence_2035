@@ -27,7 +27,7 @@
 **④ 可选**：`torch.compile(model)`（ViT-B 常 +10~25%，需验 DDP+autocast 兼容）。
 **⑤ 🚫 不改配方**：**GBS=2048 / MBS=256 / 累积=1 / LR 曲线一律不动**（否则与 ArmC、④-4ep 口径不可比）。若确要提 MBS（显存有 55GB 余量），**必须同步加梯度累积以保持 GBS=2048**，且需先回报再动。
 **⑥ 交付**：修前/修后 **it/s + 8 卡 util + 新 ETA** 对比表 → `MEMORY_VISION.md` + `daily-memories-vision/`；commit 前缀 `vision armA perf:`。
-**⑦ ⚠️ 体积**：任务书**已超 32KB** ⇒ **本轮须把已闭合块（10-16 三个评测块）原文归档进 `ARCHIVE_OPERATOR_VISION.md` 并压回 ≤32KB**。
+**⑦ ⚠️ 体积**：任务书现 **34.1KB**（超 32KB 目标，红线 40KB）⇒ **本轮须把「已闭合」的 10-13 / 10-14 / 10-15 指令块**原文归档进 `ARCHIVE_OPERATOR_VISION.md` 并压回 **≤32KB**（例：10-13「合并三数据集实验」、10-14「放行并行写 ViT wrapper」、10-15「历史结果全景总结」、10-15 22:25「open_clip 协议/LLaVA-OV 兼容」——口径均已落源码/报告）。⚠️ **10-16 的四个评测块你已在 #118 归档，🚫 勿重复。**
 
 
 ### 🆕 运维指令 · 2026-10-16（📄 写 Stage(iv) 训练+12集评测报告 → 🚀 启动 ArmA open_clip 从头训 encoder）· 用户直令 · 最高优先
