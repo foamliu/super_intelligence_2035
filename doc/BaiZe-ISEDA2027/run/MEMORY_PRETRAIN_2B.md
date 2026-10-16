@@ -3,10 +3,11 @@ WAITING: 1
 
 ## 当前状态
 - STAGE: **🏁 v5 计划书 ✅ + Xmodel-2 s1 eval ✅ + scaling report 更新 ✅**。P-8: 10590步/44.4B tok/final loss 1.357。14-dataset eval: CS8 Avg=49.21%, Complex Avg=6.81%。v5 报告已交付(commit fc0a292b)。Xmodel-2 s1 并行 eval **全部完成**(2026-10-16 00:00)：s1/10K(39.3B) CS8=46.65%/CX=8.49% · s1/20K(78.6B) CS8=49.07% · s1/30K(117.9B) CS8=49.60% · s1/40K(157.2B) CS8=50.31%（20K-40K 缺 HumanEval/MBPP）。Xmodel-2.5 final ✅ (CS8=65.40%, CX=32.90%)。Xmodel-2 final ✅ (CS8=64.82%)。**核心发现**：BaiZe P-8(39.6B) CS8=49.21% > Xmodel-2 s1/10K(39.3B) CS8=46.65% (+2.56pp) → BaiZe 早期学习**不弱于** Xmodel-2。但 Complex6: BaiZe 6.81% < Xmodel-2 s1/10K 8.49% (−1.68pp)。
-  - PHASE: **keepalive** — v5 计划书 ✅ (表格修正 13→6) + scaling report ✅ + Xmodel eval ✅ 全部已交付。8 GPU 全空闲。📦 体积：TASK=30.4KB ✅ / MEMORY=26.5KB ✅。
+  - PHASE: **keepalive** — v5 计划书 ✅ (表格修正 13→6) + scaling report ✅ + Xmodel eval ✅ 全部已交付。8 GPU 全空闲。📦 体积：TASK=30.4KB ✅ / MEMORY=26.8KB ✅。
   - ERROR_COUNT: 0
   - 轮询状态：8 GPU 全空闲，无训练/评测在跑。→ **下一步**：等待运维新指令。若运维无新令，按 R2 收尾规程保持 WAITING=1。
-  - 🩺 **本唤醒推进 = #462（2026-10-16 ~08:17, 🔄 keepalive 心跳·v5报告复核·状态无变化）**：① git fetch → origin/main 最新 = `f54db765` zhulong 归档（无新运维指令）；② v5 报告复核：42.8KB / 6表 ✅(≤6) / 1SVG ✅ / 12外链 ✅ / 中文自包含 ✅ / seq=4096 ✅ / token口径 .bin÷4 ✅ / 5问全答 ✅ / §6.5诚实条款含跨架构不确定度 ✅；③ 8 GPU 全空闲；④ 体积自检 TASK=30.4KB ✅ MEMORY=26.5KB ✅（均 ≤32KB，无需归档）；⑤ 无新运维指令。→ **下次唤醒**：等运维新指令。WAITING=1。
+  - 🩺 **本唤醒推进 = #463（2026-10-16 ~09:27, 🔄 keepalive 心跳·v5报告确认·状态无变化）**：① git fetch → origin/main 最新 = `c90b6a1b` vision R9 eval（无新运维指令，TASK 文件无 diff）；② v5 报告确认在盘 42.8KB / 6表 ✅(≤6) / 1SVG ✅ / 12外链 ✅ / 中文自包含 ✅ / seq=4096 ✅ / token口径 .bin÷4 ✅ / 5问全答 ✅ / §6.5诚实条款含跨架构不确定度 ✅；③ 8 GPU 全空闲（nvidia-smi 确认 8×0%）；④ 体积自检 TASK=30.4KB ✅ MEMORY=26.8KB ✅（均 ≤32KB，无需归档）；⑤ 无新运维指令。→ **下次唤醒**：等运维新指令。WAITING=1。
+  > 📦 **[已归档] #462 流水（2026-10-16 ~08:17, 🔄 keepalive 心跳·v5报告复核·状态无变化）→ daily-memories/2026-10-16.md；结论：keepalive, v5报告复核全口径✅, 8GPU空闲, 无新指令。需要时再读。**
   > 📦 **[已归档] #461 流水（2026-10-16 ~07:07, 🔄 keepalive 心跳·状态无变化）→ daily-memories/2026-10-16.md；结论：keepalive, v5报告确认, 8GPU空闲, 无新指令。需要时再读。**
   > 📦 **[已归档] #459 流水（2026-10-16 ~04:49, 🔄 keepalive 心跳·状态无变化）→ daily-memories/2026-10-16.md；结论：keepalive, v5报告确认, 8GPU空闲, 无新指令。需要时再读。**
   > 📦 **[已归档] #458 流水（2026-10-16 ~03:00, 🔧 v5 报告表格数修正 13→6）→ daily-memories/2026-10-16.md；结论：v5报告从13表修正到6表(满足≤6硬口径), 42.8KB/6表/1SVG/6节。需要时再读。**
