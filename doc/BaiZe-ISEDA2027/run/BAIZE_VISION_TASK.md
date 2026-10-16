@@ -16,55 +16,13 @@
 
 **③ 纪律**：ArmA 起训前 `nvidia-smi` 确认空窗；🚫 与 data 下载错峰 IO；commit 前缀 `vision report:` / `vision armA:` · 任务书 >32KB 自滚归档。
 
-### 🆕 运维指令 · 2026-10-16（📋 评测集缩编为 12 集）· 用户直令 · 最高优先
+> 📦 §运维指令 · 2026-10-16（📋 评测集缩编为 12 集）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 12/12 benchmarks 全量评测完成。需要时再读。
 
-> **用户令（2026-10-16）**：「把评测集缩编到 12 集：ai2d, blink, chartqa, docvqa_val, infovqa_val, mme, mmmu_val, mmstar, ocrbench, realworldqa, countbench, mmmu_pro_standard。」
+> 📦 §运维指令 · 2026-10-16（🔧 评测按「每卡一个 benchmark」重排）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ per-GPU eval 方案落地，13 集全量评测完成。需要时再读。
 
-**① 评测集 = 这 12 个（替换之前的 14 集）**：
-`ai2d` · `blink` · `chartqa` · `docvqa_val` · `infovqa_val` · `mme` · `mmmu_val` · `mmstar` · `ocrbench` · `realworldqa` · `countbench` · `mmmu_pro_standard`
+> 📦 §运维指令 · 2026-10-16（⚡ 停 batch_size=4 评测 · 加大 batch）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ batch_size 升至 32，GPU util 抬起。需要时再读。
 
-**② 跑法不变**：**每卡一个 benchmark**（单进程单卡，`--batch_size 32`，8 卡并行，避免 gather OOM）。12 集分 8 卡——样本量大的（`mmmu_val` / `mmmu_pro_standard` / `docvqa_val`）单独占卡，小的合并到一张卡。
-
-**③ 硬要求**：8 卡打满、batch 32、util 抬起；🚫 不 accelerate 多卡、不 batch 4、不空转。commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-16（🔧 评测按「每卡一个 benchmark」重排 · 立即打满 8 卡）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「那就把任务分在不同的卡啊，这个问题这么难吗？」
-
-**① 停掉 accelerate 多卡 data-parallel 的方式**——它跑完后 `torch.distributed.gather_object` 把 8 卡的 logits 对象 gather 到 rank0，导致单卡分配 119GiB OOM（eval_full_nasenv.log 已确认）。
-
-**② 改成「每卡一个 benchmark」（单进程单卡，无 gather）**：
-- 14 个 benchmark 分到 8 张卡，每卡 `CUDA_VISIBLE_DEVICES=<i>` 单独起一个 `run_lmms_eval.py` 进程，`--tasks <该卡的 1~2 个 task>` + `--batch_size 32`（单卡 80GB，batch 尽管加大）。
-- 8 卡同时 setsid 后台，各自独立日志到 `mllm_eval_results/eval_<task>.log`。
-
-**③ 硬要求**：8 卡全部占上、满 batch、util 抬起；🚫 不许再 accelerate 多卡、不许 batch 4、不许空转。commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-16（⚡ 停 batch_size=4 评测 · 加大 batch 打满 GPU）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「评测要 13 小时，但 GPU 利用率极低，浪费是犯罪。」
-
-**① 根因**：当前全量评测 `--batch_size 4`——8 卡每卡只喂 batch 4，生成式评测 GPU util 几乎为 0（实测 0%~51% 抖动），大 benchmark（mmmu 11550 / gqa 12478 样本）会把 ETA 拖到十几小时。
-
-**② 立刻执行**：
-- **停掉当前 batch_size=4 的全量评测**（kill `run_lmms_eval.py` 进程）。
-- **batch_size 从 4 加大到 32~64**（Qwen3-4B bf16 权重仅 ~8GB，80GB 单卡放 batch 32-64 绰绰有余），调到「接近显存上限、不 OOM」。
-- 重跑全量 14 集，**8 GPU util 打满**.
-
-**③ 硬要求**：🚫 不许再 batch 4 空转；跑起来后每卡显存利用 ≥60%、util 明显抬升；GPU 空转就是浪费，优先把 batch 拉满。commit 前缀 `vision mllm:` · 任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-16（🚀 评测直跑全量 + ArmA 转 open_clip）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「一个评测都无法验证吗？那算了，如果把 vqav2 和 seedbench 去掉，能立刻评测吗？这么多卡还需要 limit5/limit50 吗？这么多卡空着干什么吃的？开始 ArmA，用 open_clip。这说明原来不适用 open_clip 的架构是失败的，无法使用的。」
-
-**① 评测（立刻，🚫 不要再 limit/冒烟）**：
-- **去掉 `vqav2_val` + `seedbench`**（2 个 precache FAIL），剩余 **15 集全量评测**：直接全样本 + 8 卡 + 大 batch，🚫 `--limit 5/50`。
-- 先确认磁盘空间（上次 limit50 因磁盘满 ChildFailedError 崩）、复用旧缓存（按 22:25 指令 A）。
-
-**② ArmA → open_clip（确认方向，加速）**：
-- 用户判定：**自研 ViT（不适用 open_clip 通路）= 失败、不可用**。**ArmA 直接用 open_clip 标准 encoder**，按 22:25 指令 B 的「open_clip 协议 + LLaVA-OV 兼容」验收推进，对标官方 LLaVA-OV（open_clip/SigLIP 系）。
-- 🚫 不要再在自研 ViT 的 lmms-eval 兼容上耗时。
-
-**③ 纪律**：8 GPU 全空就立刻用满；🚫 不再 limit 冒烟；评测跑通一个算一个、别卡在数据缓存；commit 前缀 `vision mllm:` / `vision armA:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-16（🚀 评测直跑全量 + ArmA 转 open_clip）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 全量评测完成；ArmA 方向确认 open_clip 标准 encoder（自研 ViT 判定失败），训练已启动。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-15 22:25（♻️ **别重下：先复用旧缓存** + 🧩 **ArmA 重训须实现 open_clip 协议 / LLaVA-OneVision 兼容**）· 用户直令 · 最高优先
 
