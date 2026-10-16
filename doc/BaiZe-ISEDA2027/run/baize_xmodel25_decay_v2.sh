@@ -18,7 +18,7 @@ PORT=29815
 # v2: seq=3712 (Xmodel native), ITERS=19980 (71.2B / (960*3712) = 19980)
 SEQ=3712
 GBS=960
-MBS=2
+MBS=4
 ITERS=19980
 WARMUP=100
 LR=1.67e-3
@@ -73,6 +73,8 @@ export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
     --adamw_fused \
     --compile_model \
     --compile_mode default \
+    --chunked_ce \
+    --ce_chunk_size 256 \
     $SMOKE > "$LOGDIR/baize_xmodel25_decay_v2_train.log" 2>&1
 RC=$?
 

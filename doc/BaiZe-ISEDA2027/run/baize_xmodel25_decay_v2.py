@@ -17,6 +17,7 @@ from contextlib import nullcontext as _null_ctx
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -231,6 +232,44 @@ def save_hf_checkpoint(model, tokenizer_dir, save_dir, rank):
     print(f"  Saved checkpoint to {save_dir}", flush=True)
 
 
+def chunked_cross_entropy(hidden, lm_head, labels, chunk_size=256, logit_scale=1.0):
+    """Compute cross-entropy in seq-dimension chunks to avoid materializing full [B,S,V] logits.
+
+    Numerically equivalent to F.cross_entropy(logits, labels, ignore_index=-100, reduction='mean')
+    where logits = lm_head(hidden) * logit_scale.
+
+    logit_scale replicates the μP output scaling applied inside the HF model's forward
+    (logits *= mup_output_scale / mup_width_multiplier).  Must be passed by the caller
+    because chunked CE calls lm_head directly, bypassing the HF forward.
+
+    Uses reduction='sum' per chunk, accumulates, then divides by total valid token count
+    (per operator instruction: avoid mean-then-average denominator bias).
+    """
+    W = lm_head.weight  # [V, H]
+    bias = getattr(lm_head, 'bias', None)
+    seq_len = hidden.shape[1]
+    total_loss = torch.zeros((), device=hidden.device, dtype=torch.float32)
+    total_valid = torch.zeros((), device=hidden.device, dtype=torch.long)
+    for s in range(0, seq_len, chunk_size):
+        e = min(s + chunk_size, seq_len)
+        h = hidden[:, s:e]               # [B, chunk, H]
+        l = labels[:, s:e]               # [B, chunk]
+        if bias is not None:
+            lg = F.linear(h, W, bias)    # [B, chunk, V]
+        else:
+            lg = F.linear(h, W)          # [B, chunk, V]
+        if logit_scale != 1.0:
+            lg = lg * logit_scale
+        loss_chunk = F.cross_entropy(
+            lg.float().reshape(-1, lg.size(-1)),  # [B*chunk, V]
+            l.reshape(-1),                         # [B*chunk]
+            ignore_index=-100, reduction='sum')
+        valid_chunk = (l != -100).sum()
+        total_loss = total_loss + loss_chunk
+        total_valid = total_valid + valid_chunk
+    return total_loss / total_valid.clamp(min=1)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, required=True)
@@ -266,6 +305,10 @@ def main():
                         help='Disable DDP no_sync() for grad accumulation (for A/B testing)')
     parser.add_argument('--no_ddp_static_graph', action='store_true', default=False,
                         help='Disable DDP static_graph (for A/B testing)')
+    parser.add_argument('--chunked_ce', action='store_true', default=False,
+                        help='Use chunked cross-entropy to avoid materializing full logits [B,S,V]')
+    parser.add_argument('--ce_chunk_size', type=int, default=256,
+                        help='Chunk size (in seq dimension) for chunked CE')
     args = parser.parse_args()
 
     if args.tokenizer_dir is None:
@@ -289,6 +332,23 @@ def main():
         trust_remote_code=True, attn_implementation='flash_attention_2',
     )
     model = model.to(device)
+    # Store raw model reference for chunked CE (before compile/DDP wrapping).
+    # chunked CE calls raw_model.model(input_ids) + raw_model.lm_head directly,
+    # bypassing compile/DDP forward — DDP gradient hooks still fire on backward.
+    raw_model = model
+    if args.chunked_ce:
+        # Ensure use_cache=False for chunked CE path (base model called directly)
+        raw_model.config.use_cache = False
+        if hasattr(raw_model, 'model') and hasattr(raw_model.model, 'config'):
+            raw_model.model.config.use_cache = False
+        # μP logit scale: HF forward applies logits *= mup_output_scale / mup_width_multiplier
+        # Chunked CE bypasses HF forward, so we must replicate this scaling.
+        if getattr(raw_model.config, 'use_mup', False):
+            mup_scale = raw_model.config.mup_output_scale / raw_model.config.mup_width_multiplier
+        else:
+            mup_scale = 1.0
+        if rank == 0:
+            print(f"  chunked_ce: ENABLED (chunk_size={args.ce_chunk_size}, mup_scale={mup_scale:.6f})", flush=True)
     if args.grad_checkpoint:
         if rank == 0:
             print("  gradient_checkpointing: ENABLED", flush=True)
@@ -299,10 +359,17 @@ def main():
         if rank == 0:
             print("  gradient_checkpointing: DISABLED (v2 default)", flush=True)
 
-    if args.compile_model:
+    if args.compile_model and not args.chunked_ce:
         if rank == 0:
             print(f"  torch.compile: ENABLED (mode={args.compile_mode})", flush=True)
         model = torch.compile(model, mode=args.compile_mode)
+    elif args.compile_model and args.chunked_ce:
+        # Compile just the base model (transformer layers) for chunked CE path.
+        # The base model is called once with full seq; chunked CE loops over
+        # the output hidden states in Python — no dynamic control flow inside compile.
+        if rank == 0:
+            print(f"  torch.compile(base_model): ENABLED (mode={args.compile_mode})", flush=True)
+        raw_model.model = torch.compile(raw_model.model, mode=args.compile_mode)
 
     if world_size > 1:
         ddp_kwargs = dict(device_ids=[local_rank], find_unused_parameters=False)
@@ -416,9 +483,24 @@ def main():
             if args.compile_model:
                 torch.compiler.cudagraph_mark_step_begin()
             with sync_ctx:
-                outputs = model(input_ids=input_ids, labels=labels)
-                loss = outputs.loss / grad_accum
-                loss.backward()
+                if args.chunked_ce:
+                    # Chunked CE: get hidden states from base model, compute CE in seq chunks
+                    # Bypasses compile/DDP forward — DDP gradient hooks fire on backward
+                    # use_cache=False is critical: otherwise KV cache is allocated for all layers
+                    hidden = raw_model.model(input_ids=input_ids, use_cache=False).last_hidden_state
+                    # Match HF model's internal label shift (modeling_xmodel2.py L1209-1210):
+                    #   shift_logits = logits[:, :-1], shift_labels = labels[:, 1:]
+                    # Data is already pre-shifted (input_ids=full[:,:-1], labels=full[:,1:]),
+                    # so HF model double-shifts.  Replicate here for numerical equivalence.
+                    loss = chunked_cross_entropy(hidden[:, :-1], raw_model.lm_head,
+                                                 labels[:, 1:], args.ce_chunk_size,
+                                                 logit_scale=mup_scale)
+                    loss = loss / grad_accum
+                    loss.backward()
+                else:
+                    outputs = model(input_ids=input_ids, labels=labels)
+                    loss = outputs.loss / grad_accum
+                    loss.backward()
             torch.cuda.synchronize()
             t_fb1 = time.time()
 
