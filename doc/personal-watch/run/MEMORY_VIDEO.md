@@ -1,9 +1,9 @@
 # MEMORY_VIDEO.md — 观察哨 · **video agent** 运行时记忆
 
-WAITING: 0
+WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ 三章已成片 · EP02《经验》后台跑批中）；`1` = 常态。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ / 02_经验 ✅ 四章已成片 · 待下轮唤醒按 §1/§2 推进下一章）。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP02《经验》🔶 后台跑批中（43/55 落盘）；三章已成片（13/18/01）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB · 漂移 0.010s）；EP02 资产（13 场景 + 2 合影）+ 生成脚本 + 字幕/合成脚本 ✅
-当前动作:     EP02《经验》R2V(32)+T2V(23) 后台跑批（--skip-existing --wait，PID 12416/3168）；本轮核验 43/55 落盘（较上轮 +10）+ 新增 10 镜 QC 全绿 + 参考图 13 场景+2 合影在位
-下一步:       等 EP02 跑批收尾（55/55）→ 跑 gen_ep02_subtitles.py → synth_ep02.py（master + 硬字幕成片）→ ffprobe/signalstats QC
-阻塞:         无（ComfyUI 队列 running1/pending1 = EP02 跑批正常推进；余 12 镜 = R2V 11 + T2V 1 约 2h）
+PHASE:        S3 放量 → EP02《经验》✅ 成片（master + 硬字幕）；四章已成片（13/18/01/02）
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB · 漂移 0.010s）；02_经验 55/55 ✅（R2V 32 + T2V 23 · 成片 95.6MB · 硬字幕无 tofu）
+当前动作:     EP02《经验》成片收尾：master + 硬字幕烧录 + QC（libass 无 tofu + 字幕区像素在轨 + 末条字幕 291.25s 无溢出）+ 清理临时脚本/帧 + 回写记忆 + commit 两仓
+下一步:       待下轮唤醒按 §1/§2 推进下一章（03_种子 等规格齐全章）
+阻塞:         无
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-16（EP02《经验》跑批核验 43/55 + 新增 10 镜 QC 全绿 + 参考图 13 场景+2 合影在位 + 队列推进正常）
+- **上次唤醒**：2026-10-16（EP02《经验》成片完成：master + 硬字幕烧录 + libass 无 tofu QC 全绿 + commit 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,13 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-16 · S3 放量 · EP02《经验》成片完成 ✅**：EP02 跑批收尾 55/55 → 字幕 → 合成 master → libass 硬字幕成片 → QC 全绿，第四章成片闭环。
+  - **出片核验**：`OUTPUT/02_经验/videos/` **55/55 镜**（R2V 32 + T2V 23）全部落盘（较上轮 43/55 补齐余 12 镜）。
+  - **字幕**：`gen_ep02_subtitles.py` 出 `EP02_经验_字幕.srt`（148 条 · 291.25s；SFX_ONLY 8 无台词镜）；末条 00:04:47.340→00:04:51.250 恰止于 291.25s，无溢出。
+  - **合成 + 烧录**：`synth_ep02.py` 拼接 → `EP02_经验_master.mp4`（98,366,172 B = 93.8MB）→ libass 硬字幕 `EP02_经验_成片.mp4`（100,266,980 B = 95.6MB）。修复 `fontsdir` 转义 bug（`C\:/Windows/Fonts`，原为过度转义 `C\\\\:/Windows/Fonts`）。
+  - **QC（ffprobe + libass + 像素）**：成片 1280×720 @ 24fps h264 + aac 32kHz 立体声 · 视频 6990 帧 = 291.25s / 音轨 291.256s；libass verbose `fontselect: (Microsoft YaHei,400,0) -> MicrosoftYaHei` + **0** "Glyph not found"（无 tofu）；抽帧 t5.5s 字幕区（底部 28%）近白像素占比 12.98%（字幕在轨）。
+  - **清理 + commit**：删除临时 `_burn_ep02_subs.py`/`_qc_ep02_subs.py` 与 QC 帧/日志；短剧仓 commit `synth_ep02.py`（fontsdir 修复）+ 记录仓 commit（MEMORY + daily + PLAN）。
 
 - **2026-10-16 · S3 放量 · EP02《经验》跑批核验（43/55）✅**：本轮核验 EP02 后台跑批健康（43/55 落盘，较上轮 +10），新增 10 镜 QC 全绿，参考图全量在位，未碰正在跑的 ComfyUI 队列。
   - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash` Fast-forward cd811bc4→b2ae586b（BaiZe/ZhuLong 等线，非本线），工作区净（他线/本线历史 .log/.pid/.lnk 未跟踪文件不碰）。
