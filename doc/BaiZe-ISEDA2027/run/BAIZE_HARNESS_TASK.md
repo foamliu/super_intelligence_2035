@@ -7,6 +7,20 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（📊 glm53 7×300 评测结果中文 HTML 报告）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「harness：glm53 评测结果写 html 中文报告。」
+
+**① 报告内容**（glm-5.3-flash 7×300，当前阶段结果）：
+- 7 harness × 300 的 resolved / passrate（codex 80/300=26.7%、deepseek 71/300=23.7% 已 DONE；hermes/opencode/cline-patched/claude-code/pi 进行中）。
+- 与 **kimi-k2.6-cloud 7×300** 的逐 harness 对比 + **McNemar 配对检验**（实测 99.7% agreement，chi2≈0.33，p≫0.05）。
+- 关键发现：glm53 与 kimi **高度一致 → 换 backbone 未显著提升**，对「passrate 低主因是模型能力」判断的影响。
+- 诚实声明：评测进行中（~1306/2100，515 pending），数字为阶段性；最终待跑完。
+
+**② 交付**：中文自包含 HTML（如 `reports/report_harness_glm53_7x300_zh.html`），含 7 harness 表 + McNemar 对比 + 结论 + 诚实条款。
+
+**③ 纪律**：🚫 不打断 glm53 评测（后台继续）；数字从 `glm53_pilot_results.json` / 现有报告取、贴 文件:行；commit 前缀 `harness rpt:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-14（🔧 更正 glm-5.3-flash Base URL → `/v1`，去掉 cloud）· 用户直令 · 最高优先
 
 > **用户令（2026-10-14）**：「harness: glm-5.3-flash 的 apikey 没问题，但是 base url 需要去掉 cloud。」（附：用户实测 `curl http://agi-gateway.cxmt.com/v1/chat/completions` 已 200 OK）
