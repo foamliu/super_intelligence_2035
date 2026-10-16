@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ 已成片 · EP01 晨钟 视频生成中 45/54（R2V 22/28 + T2V 23/26 后台跑批）· 合成/字幕脚本已就绪）；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ 三章已成片 · 下一章 EP02《经验》待启动）；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP01《晨钟》视频生成后台跑批中（54 镜 · 45/54 落盘）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（R2V 29+T2V 19 · 成片 95.1MB）；18_暖阳 54/54 ✅（R2V 32+T2V 22 · 成片 87.5MB）；EP01 参考图 16 张 ✅ + R2V/T2V 生成脚本 ✅ + synth_ep01.py / gen_ep01_subtitles.py ✅（dry-run 通过）
-当前动作:     EP01 H3 视频生成后台跑批续跑（R2V 22/28 + T2V 23/26 · mp 0.4/0.6 · steps=10 · --skip-existing --wait）；ComfyUI 队列 running 1 / pending 1；进程 py 1488/20976 均 ALIVE
-下一步:       每小时核 EP01 出片进度（OUTPUT/01_晨钟/videos/ EP01_SHOT-*.mp4 计数 · 缺 9 镜 = R2V 36/37/44/48/50/53 + T2V 51/52/54）→ 全 54/54 落盘后跑 gen_ep01_subtitles.py + synth_ep01.py → 合成 + QC
+PHASE:        S3 放量 → EP01《晨钟》✅ 成片（54/54 · 235.79s · 71.9MB）；三章已成片（13/18/01）
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB · 硬字幕 70 条 · 漂移 0.010s）
+当前动作:     EP01《晨钟》成片合成完毕：SRT（70 条）→ master（74.4MB）→ 硬字幕成片（EP01_晨钟_成片.mp4 75.4MB · 1280×720@24fps · h264+aac · 235.79s/235.80s）
+下一步:       选下一章 EP02《经验》（55 镜 · 规格 ✅）→ 补参考图/合影 + gen_ep02_h3_r2v/t2v.py + synth_ep02.py（复用 R2V/T2V 直出范式 · 🚫 无 TTS · 无 I2V 首帧）
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-15（EP01 晨钟 出片核验 45/54 · spot QC 10 新镜全绿 · 后台跑批续跑中）
+- **上次唤醒**：2026-10-16（EP01 晨钟 54/54 全部落盘 → 字幕 + 合成 + 硬字幕成片 ✅）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,16 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-16 · S3 放量 · EP01《晨钟》成片合成 ✅（54/54 → master + 硬字幕成片 75.4MB）**：本轮核验 EP01 后台跑批已全部完成（54/54 落盘、ComfyUI 队列清零），随即生成字幕、拼接、烧录硬字幕成片。
+  - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash` Fast-forward 5f443f2d→f047b463（BaiZe/ZhuLong/news/research 等线，非本线）；工作区净（他线在途文件不碰）。
+  - **自检**：ComfyUI 可达（RTX 4090 16GB · 空闲 14.7GB）· **队列已空（running 0 / pending 0）** = 后台跑批已收尾；ffmpeg 在 · MCP comfyui-drama 可用。
+  - **出片核验**：`OUTPUT/01_晨钟/videos/` **54/54 镜**（R2V 28 + T2V 26）全部落盘，缺镜清零（上轮缺 9 镜 = R2V 36/37/44/48/50/53 + T2V 51/52/54 已补齐）。
+  - **字幕**：`gen_ep01_subtitles.py` 出 `EP01_晨钟_字幕.srt`（70 条 · 235.79s；SFX_ONLY 26 无台词镜 + CAPTION 镜 54 收尾字幕），与 `SCENES/01_晨钟.md` 逐镜表「台词/音效」列逐镜核对一致。
+  - **合成**：`synth_ep01.py` 拼接 54 镜 → `EP01_晨钟_master.mp4`（74.4MB）→ libass 硬字幕 `EP01_晨钟_成片.mp4`（**75,435,064 B = 71.9MB**）。
+  - **QC（ffprobe + signalstats 实测）**：成片 **1280×720 @ 24fps h264 + aac**；视频 5659 帧 = 235.792s / 音轨 235.802s；**音画漂移 0.010s < 0.15s 闸门 ✅**；字幕带 signalstats（crop y640–720 @ t14.5s）YMIN=20 / YMAX=206 双峰在位（黑描边 + 白字）✅。图像接口「Unsupported Image」不可读 ⇒ 复用程序化 signalstats 核验（同 18_暖阳 口径）。
+  - **遗留（可选）**：SeedVR2 超分 1920×1080；BGM 跨镜混音（ace_step_t2audio）—— 与 13/18 同口径，暂缓。
+  - **下一步**：选下一章 EP02《经验》（55 镜，规格 ✅，待补参考图/合影 + R2V/T2V 生成脚本）。
 
 - **2026-10-15 · S3 放量 · EP01《晨钟》出片核验 45/54 ✅（R2V 22/28 + T2V 23/26 · 后台跑批健康）+ spot QC 10 新镜全绿**：本轮核验 EP01 后台跑批进度并抽检新落盘镜头规格。
   - **git 同步**：两仓 `git status -sb` 均 `main...origin/main`（无 ahead/behind）；记录仓 pull 时 git 走 stderr 被 PS 报 NativeCommandError（瞬态噪音），复检确认已在同步态；工作区净（他线在途文件不碰）。
