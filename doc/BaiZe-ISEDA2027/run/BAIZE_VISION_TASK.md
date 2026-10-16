@@ -1,6 +1,20 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（🚀 评测直跑全量 + ArmA 转 open_clip）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「一个评测都无法验证吗？那算了，如果把 vqav2 和 seedbench 去掉，能立刻评测吗？这么多卡还需要 limit5/limit50 吗？这么多卡空着干什么吃的？开始 ArmA，用 open_clip。这说明原来不适用 open_clip 的架构是失败的，无法使用的。」
+
+**① 评测（立刻，🚫 不要再 limit/冒烟）**：
+- **去掉 `vqav2_val` + `seedbench`**（2 个 precache FAIL），剩余 **15 集全量评测**：直接全样本 + 8 卡 + 大 batch，🚫 `--limit 5/50`。
+- 先确认磁盘空间（上次 limit50 因磁盘满 ChildFailedError 崩）、复用旧缓存（按 22:25 指令 A）。
+
+**② ArmA → open_clip（确认方向，加速）**：
+- 用户判定：**自研 ViT（不适用 open_clip 通路）= 失败、不可用**。**ArmA 直接用 open_clip 标准 encoder**，按 22:25 指令 B 的「open_clip 协议 + LLaVA-OV 兼容」验收推进，对标官方 LLaVA-OV（open_clip/SigLIP 系）。
+- 🚫 不要再在自研 ViT 的 lmms-eval 兼容上耗时。
+
+**③ 纪律**：8 GPU 全空就立刻用满；🚫 不再 limit 冒烟；评测跑通一个算一个、别卡在数据缓存；commit 前缀 `vision mllm:` / `vision armA:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-15 22:25（♻️ **别重下：先复用旧缓存** + 🧩 **ArmA 重训须实现 open_clip 协议 / LLaVA-OneVision 兼容**）· 用户直令 · 最高优先
 
 **A. 立刻做 —— 复用旧缓存（实测省 ~20G 下载 ≈ 1 小时）**
