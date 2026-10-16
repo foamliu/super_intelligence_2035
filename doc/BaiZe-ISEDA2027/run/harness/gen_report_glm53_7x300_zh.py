@@ -163,16 +163,16 @@ html = f"""<!DOCTYPE html>
 <h1>glm-5.3-flash 7×300 SWE-bench Lite 阶段性评测报告</h1>
 <div class="sub">
   BaiZe Harness 研究线 · 报告时间 {RT} ·
-  数据：<code>glm53_pilot_results.json</code>（{g_total_n}/2100，进行中）vs
+  数据：<code>glm53_pilot_results.json</code>（{g_total_n}/2100，已停止）vs
   <code>kimi_pilot_results.json</code>（2100/2100，已完成）
 </div>
 
 <div class="warn">
 <b>⚠️ 诚实声明（务必先读）</b>：本报告为<b>阶段性结果</b>。glm-5.3-flash 7×300 评测
-<b>仍在后台运行</b>，当前已完成 <b>{g_total_n}/2100</b>（{100*g_total_n/2100:.1f}%），
+<b>已停止</b>（后台评测进程已退出），当前已完成 <b>{g_total_n}/2100</b>（{100*g_total_n/2100:.1f}%），
 仍有 <b>{g_pending} 条待跑</b>。其中 {len(g_done)} 个 harness 已完成全部 300 条
-（{esc('、'.join(g_done))}），其余仍在进行。所有数字均为<b>当前快照</b>，
-最终结论待全部跑完后复核。本报告<b>不打断</b>后台评测。
+（{esc('、'.join(g_done))}），其余 4 个 harness 未跑完即停止。所有数字均为<b>当前快照</b>，
+最终结论待剩余 {g_pending} 条续跑完成后复核。
 </div>
 
 <h2>① TL;DR — 核心结论</h2>
@@ -289,7 +289,7 @@ McNemar：对每个 (harness, instance_id) 两模型均有条目的配对，统�
 </div>
 
 <div class="footer">
-BaiZe Harness 研究线 · 自动生成于 {RT} · commit 前缀 <code>harness rpt:</code> · 评测仍在后台运行，最终结果待全部完成后更新。
+BaiZe Harness 研究线 · 自动生成于 {RT} · commit 前缀 <code>harness rpt:</code> · 评测已停止（{g_pending} 条待跑），最终结果待续跑后更新。
 </div>
 
 </body></html>"""

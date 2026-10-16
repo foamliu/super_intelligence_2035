@@ -14,18 +14,18 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING — 阶段性中文报告已刷新 (1881/2100, 467 resolved, 219 pending)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 RUNNING + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (report_harness_glm53_7x300_zh.html, McNemar p=0.688)
-当前动作:     glm53 7x300 阶段性中文报告刷新 (R409, 20:34)。reports/report_harness_glm53_7x300_zh.html (19.5KB, 6 sections) — glm53 467/1881 (24.8%) vs kimi 574/2100 (27.3%)。McNemar: 1881 配对, 一致 99.7% (1875/1881), b=2 c=4, χ²=0.67, 精确 p=0.688 ≫0.05 → 无显著差异。3 个已完成 harness (codex/deepseek/hermes) resolved 逐一相同 (80/71/81)。Per-harness: codex 300(80), deepseek 300(71), hermes 300(81) DONE; opencode 270(68), cline 267(66), claude 244(53), pi 200(48) running。结论：换 backbone 未显著提升 → 能力差不足以撬动 passrate。评测仍后台运行 (219 pending, .nfs* logs 20:33 active)，报告不打断评测。
-下一步:       ① 继续监控 glm53 7x300 至完成 (219 pending) ② 跑完后更新最终版报告 ③ 恢复 kimi configs
-阻塞:         <无> — 评测后台继续，报告已完成
+PHASE:        glm53 7x300 STOPPED — 阶段性中文报告已刷新 (1912/2100, 485 resolved, 188 pending)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (report_harness_glm53_7x300_zh.html, McNemar p=0.688)
+当前动作:     glm53 7x300 阶段性中文报告刷新 (R410, 21:44)。reports/report_harness_glm53_7x300_zh.html (19.6KB, 6 sections) — glm53 485/1912 (25.4%) vs kimi 574/2100 (27.3%)。McNemar: 1912 配对, 一致 99.7% (1906/1912), b=2 c=4, χ²=0.67, 精确 p=0.688 ≫0.05 → 无显著差异。3 个已完成 harness (codex/deepseek/hermes) resolved 逐一相同 (80/71/81)。Per-harness: codex 300(80), deepseek 300(71), hermes 300(81) DONE; opencode 277(72), cline 271(69), claude 259(62), pi 205(50) 未跑完。**评测进程已全部退出**（ps 无 harness/python 进程），188 条待跑。诚实声明已更新为「已停止」。结论不变：换 backbone 未显著提升。
+下一步:       ① 续跑剩余 188 条 glm53（需重启 harness 进程）② 跑完后更新最终版报告 ③ 恢复 kimi configs
+阻塞:         <无> — 评测已停止（非崩溃，进程自然退出），报告已完成
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- 2026-10-16 20:34 —— **glm53 7×300 阶段性中文报告再次刷新** —— 评测仍在后台运行（.nfs* 日志 20:33 仍在写入），数据从 1858→1881 entries（+23）。重新运行 `gen_report_glm53_7x300_zh.py` 刷新报告：glm53 467/1881 (24.8%) vs kimi 574/2100 (27.3%)。McNemar: 1881 配对, 一致 99.7% (1875/1881), b=2 c=4, χ²=0.67, 精确 p=0.688。3 个已完成 harness (codex 80/deepseek 71/hermes 81) 逐一相同。结论不变。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY≈30.5KB(29.8KB ✓) / 归档 0B。
-- 2026-10-16 19:24 —— **glm53 7×300 阶段性中文报告刷新** —— 评测仍在后台运行（.nfs* 日志 19:23 仍在写入），数据从 1834→1858 entries。重新运行 `gen_report_glm53_7x300_zh.py` 刷新报告：glm53 454/1858 (24.4%) vs kimi 574/2100 (27.3%)。McNemar: 1858 配对, 一致 99.7% (1853/1858), b=2 c=3, χ²=0.20, 精确 p=1.000。3 个已完成 harness (codex 80/deepseek 71/hermes 81) 逐一相同。结论不变。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY≈30.7KB(30.0KB ✓) / 归档 0B。
-- 2026-10-16 18:11 —— **glm53 7×300 阶段性中文报告** —— 按运维指令（2026-10-16）生成 `reports/report_harness_glm53_7x300_zh.html`（19KB, 6 sections, 自包含）。数据：glm53 443/1834 (24.2%) vs kimi 574/2100 (27.3%)。McNemar 配对：1834 对，一致 99.7% (1829/1834)，b=2 c=3，χ²=0.20，精确 p=1.000 ≫0.05 → 无显著差异。3 个已完成 harness (codex 80/deepseek 71/hermes 81) resolved 逐一相同。结论：换 backbone 未显著提升 → 两模型能力差不足以撬动 passrate。诚实声明：评测仍后台运行 (266 pending)，数字为阶段性快照，不打断评测。生成器 `gen_report_glm53_7x300_zh.py`（classification=='resolved' 口径，与运维「codex 80/300=26.7%」一致）。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY=29990B(29.3KB ✓) / 归档 0B。
+- 2026-10-16 21:44 —— **glm53 7×300 报告刷新 + 评测已停止** —— 发现评测进程已全部退出（ps 无 harness 进程），数据停在 1912/2100（188 pending）。更新 `gen_report_glm53_7x300_zh.py` 诚实声明：「仍在后台运行」→「已停止（进程已退出）」。重新生成报告：glm53 485/1912 (25.4%) vs kimi 574/2100 (27.3%)。McNemar: 1912 配对, 一致 99.7% (1906/1912), b=2 c=4, χ²=0.67, 精确 p=0.688。3 个已完成 harness (codex 80/deepseek 71/hermes 81) 逐一相同。结论不变。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY≈31.2KB(30.5KB ✓) / 归档 0B。
+- 2026-10-16 20:34 —— **glm53 7×300 阶段性中文报告刷新** —— 数据 1858→1881 entries（+23）。glm53 467/1881 (24.8%) vs kimi 574/2100 (27.3%)。McNemar p=0.688。结论不变。
+- 2026-10-16 19:24 —— **glm53 7×300 阶段性中文报告刷新** —— 数据 1834→1858 entries。glm53 454/1858 (24.4%) vs kimi 574/2100 (27.3%)。McNemar p=1.000。结论不变。
 > 📦 R366-R385 (2026-10-14, ~20 rounds of glm53 monitoring 23→872 + rerun + fixes) 已归档 → daily-memories-harness/2026-10-14.md + 2026-10-15.md。需要时再读。
 > 📦 R386 (2026-10-15 01:08, glm53 monitoring 872/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
 > 📦 R387 (2026-10-15 01:42, glm53 monitoring 887/2100) 已归档 → daily-memories-harness/2026-10-15.md。需要时再读。
