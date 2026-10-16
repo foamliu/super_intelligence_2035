@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 80B Decay 计划书 — Xmodel-2.5 stable末ckpt + BaiZe配比</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8f9fa;color:#1a1a2e;line-height:1.7;max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:1.5rem;text-align:center;margin:20px 0 8px;color:#1a1a2e}
+h2{font-size:1.2rem;margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid #2563eb;color:#1e3a5f}
+h3{font-size:1.05rem;margin:20px 0 8px;color:#2563eb}
+h4{font-size:0.95rem;margin:16px 0 6px;color:#475569}
+p{margin:8px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.82rem}
+th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+td{padding:6px 10px;border-bottom:1px solid #e2e8f0}
+tr:nth-child(even){background:#f1f5f9}
+.green{color:#16a34a}.amber{color:#ca8a04}.red{color:#dc2626}.blue{color:#2563eb}.bold{font-weight:bold}
+.mono{font-family:"JetBrains Mono","Courier New",monospace;font-size:0.78rem}
+.small{font-size:0.75rem;color:#666}
+.info{background:#e8f4fd;border-left:4px solid #2563eb;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#fef3cd;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.danger{background:#fee2e2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.svg-box{text-align:center;margin:20px 0}
+.formula{background:#f8f9fa;border:1px solid #e9ecef;border-radius:4px;padding:10px 14px;margin:12px 0;font-family:monospace;font-size:0.85rem}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:0.8rem}
+pre{background:#1e293b;color:#e2e8f0;padding:14px;border-radius:6px;overflow-x:auto;font-size:0.78rem;line-height:1.5;margin:12px 0}
+.tldr{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:8px;margin:16px 0}
+.tldr h2{color:#fff;border:none}
+.tldr table{color:#1a1a2e}
+.tldr th{background:rgba(0,0,0,0.2)}
+.tldr td{background:rgba(255,255,255,0.9)}
+ul,ol{margin:8px 0 8px 24px}
+li{margin:4px 0}
+a{color:#2563eb;text-decoration:none}
+a:hover{text-decoration:underline}
+.ref{font-size:0.72rem;color:#888}
+</style>
+</head>
+<body>
+<h1>📋 BaiZe 80B Decay 计划书</h1>
+<p class="subtitle">Xmodel-2.5 stable 末 ckpt + BaiZe 配比做 decay · 争超 Xmodel-2.5 final<br>
+版本 v1 · 2026-10-16 · pretrain 线 · commit 前缀 <code>pretrain plan:</code></p>
+<!-- §1 TL;DR -->
+<div class="tldr">
+<h2>§1 结论速览（TL;DR）</h2>
+<p style="color:rgba(255,255,255,0.9);margin-bottom:12px">用 Xmodel-2.5 stable 末 ckpt（step 532000，~1.4T tokens 预训练后）做 80B token 的 WSD decay，
+争取 14 评测集超越 Xmodel-2.5 官方 final（CS8=65.40% / CX=32.90%），验证 BaiZe decay 数据配比/annealing 策略更优。
+<strong>本文件仅出计划，不起训。</strong></p>
+<table>
+<tr><th>项</th><th>BaiZe 80B Decay（本方案）</th><th>Xmodel-2.5 官方 Decay（对照）</th></tr>
+<tr><td><strong>起点 ckpt</strong></td><td>step 532000（stable 末，~1.41T tok）<br><span class="red">⚠️ 未下载，需从 HF 下载 2.7GB</span></td><td>同（官方内部 ckpt）</td></tr>
+<tr><td><strong>Decay token</strong></td><td><strong>80B</strong>（>71.2B，数据量不落下风）</td><td>71.2B（20k步 × 3.56M tok/步）</td></tr>
+<tr><td><strong>Decay 步数</strong></td><td>~22,472 步（80B ÷ 3.56M tok/步）</td><td>20,000 步</td></tr>
+<tr><td><strong>数据配比</strong></td><td>SFT <strong>64%</strong> : L3 24% : code 8% : math 4%（P-8 配方）</td><td>SFT <strong>66.9%</strong> + 其余 33.1%</td></tr>
+<tr><td><strong>优化器</strong></td><td><strong>Muon</strong>（对齐 Xmodel 官方，用户直令）</td><td>Muon（从 AdamW 切换，+4.58pp）</td></tr>
+<tr><td><strong>LR 调度</strong></td><td>WSD 指数退火 1.67e-3 → 1e-5</td><td>WSD 指数退火（同）</td></tr>
+<tr><td><strong>seq / GBS</strong></td><td>3712 / 3.56M（对齐 Xmodel 原生）</td><td>3712 / 3.56M</td></tr>
+<tr><td><strong>算力估算</strong></td><td>~50-65 GPU·h（8×H100），~2.1-2.7 天</td><td>—</td></tr>
+<tr><td><strong>评测基准</strong></td><td>14 集（CS8 + Complex6），对齐已有口径</td><td>13 集（同口径 + C-Eval/CMMLU）</td></tr>
+<tr><td><strong>🔴 关键风险</strong></td><td colspan="2">① Tokenizer 不兼容（128K vs 129K vocab）→ 需验证或重分词<br>② Code/Math 分词数据不足（879M vs 需 9.6B）→ 需重分词或调比<br>③ SFT 过采样（epoch 1.76）→ 可接受（decay 段质量优先）</td></tr>
+</table>
+</div>
+
+<!-- §2 背景与目标 -->
+<h2>§2 背景与目标</h2>
+<h3>2.1 已有实测结果</h3>
+<p>本线已完成 Xmodel-2.5 final 的 14 集 lm-eval 评测（2026-10-15，<code>baize_xmodel_eval.sh</code>，trust_remote_code=True）：</p>
+<ul>
+<li><strong>Xmodel-2.5 final</strong>（decay+LCR 后）：CS8 Avg = <strong>65.40%</strong> / Complex6 Avg = <strong>32.90%</strong>
+<span class="ref">（MEMORY_PRETRAIN_2B.md #451，lm-eval harness 0.4.x）</span></li>
+<li><strong>Xmodel-2.5 stable 段</strong>（step_2000/4000/6000）：CS8 显著低于 final（stable 段尚未退火）</li>
+<li><strong>Xmodel-2 final</strong>：CS8 = 64.82% <span class="ref">（同上）</span></li>
+<li><strong>BaiZe P-8</strong>（44.4B，Mamba2-hybrid 2.22B）：CS8 = 49.21% / CX = 6.81%
+<span class="ref">（不同架构/规模，不作直接基准）</span></li>
+</ul>
+<h3>2.2 实验目标</h3>
+<div class="info">
+<strong>核心命题</strong>：用 BaiZe 自己配比的 80B 数据（MiniCPM5 数据源 + P-8 decay 配方），
+对 Xmodel-2.5 stable 末 ckpt 做 WSD decay，争取 14 集超越 Xmodel-2.5 官方 final。
+若超越 → 证明「BaiZe decay 数据配比/annealing 策略」优于 Xmodel 官方（至少在同等模型上）。
+</div>
+<p><strong>公平性</strong>：我们给 80B 预算 > Xmodel 官方 71.2B，数据量不落下风；
+若 80B 内 14 集超 Xmodel-2.5 final，即证明 BaiZe 的 decay 数据配比/annealing 策略更优。
+超出 80B 仍不超 → 需分析是数据配比问题还是 annealing 策略问题。</p>
+<h3>2.3 Xmodel-2.5 训练全景（出处：method.tex L35-44）</h3>
+<p>Xmodel-2.5 采用五段 WSD 调度，总 560k 步 / 1.4T tokens：</p>
+<ul>
+<li><strong>Warmup (W)</strong>：2k 步，LR 线性升至 1.67×10⁻³（hidden）/ 0.01（embedding）</li>
+<li><strong>Stable S1</strong>：270k 步，batch = 3712×480 ≈ <strong>1.78M tok/步</strong> → ~480.6B tok</li>
+<li><strong>Stable S2</strong>：260k 步，batch = 3712×960 ≈ <strong>3.56M tok/步</strong> → ~925.6B tok</li>
+<li><strong>Decay (D)</strong>：20k 步，指数退火，batch ≈ 3.56M tok/步，<strong>66.9% SFT</strong>，AdamW→<strong>Muon</strong> → 71.2B tok</li>
+<li><strong>LCR</strong>：10k 步，同 66.9% SFT，batch = 16384×240 ≈ 3.93M tok/步，ctx 16k → 39.3B tok</li>
+</ul>
+<p class="ref">出处：Xmodel-2.5/ACL2026/method.tex §Three-Phase WSD（L35-44）；result.tex §Training Loss（L36-37）</p>
+<!-- §3 起点检查点 -->
+<h2>§3 起点检查点（Stable 末 Ckpt）</h2>
+<h3>3.1 确认 step 532000 = stable 末</h3>
+<p>根据 method.tex L38-44 的训练调度：</p>
+<div class="formula">
+Stable 末 = Warmup 2k + S1 270k + S2 260k = <strong>step 532,000</strong><br>
+Token at step 532k ≈ 2k×1.78M + 270k×1.78M + 260k×3.56M ≈ <strong>1.41T tokens</strong><br>
+Decay 起始 = step 532,000 → Decay 结束 = step 552,000（20k 步）<br>
+LCR = step 552,000 → 562,000（10k 步）
+</div>
+<p>HF History 仓库（<a href="https://huggingface.co/XiaoduoAILab/Xmodel-2.5-History">XiaoduoAILab/Xmodel-2.5-History</a>）
+完整覆盖 step 2000 → 560000，每 2000 步一个 ckpt（decay/LCR 段加密为每 1000 步）。
+<strong>pytorch_model.0532000 存在</strong>，即 stable 末 ckpt 可直接下载。</p>
+<h3>3.2 本地落盘状态</h3>
+<table>
+<tr><th>ckpt</th><th>step</th><th>token</th><th>大小</th><th>本地状态</th><th>HF 路径</th></tr>
+<tr><td>stable 末</td><td class="mono">532,000</td><td class="mono">~1.41T</td><td class="mono">2.7 GB</td><td class="red bold">❌ 未下载</td><td><a href="https://huggingface.co/XiaoduoAILab/Xmodel-2.5-History/resolve/main/pytorch_model.0532000">pytorch_model.0532000</a></td></tr>
+<tr><td>step_2000</td><td class="mono">2,000</td><td class="mono">~3.6B</td><td class="mono">2.7 GB</td><td class="green">✅ 已下载</td><td>同仓库</td></tr>
+<tr><td>step_4000</td><td class="mono">4,000</td><td class="mono">~7.1B</td><td class="mono">2.7 GB</td><td class="green">✅ 已下载</td><td>同仓库</td></tr>
+<tr><td>step_6000</td><td class="mono">6,000</td><td class="mono">~10.7B</td><td class="mono">2.7 GB</td><td class="green">✅ 已下载</td><td>同仓库</td></tr>
+<tr><td>final</td><td class="mono">560,000</td><td class="mono">~1.4T</td><td class="mono">2.7 GB</td><td class="green">✅ 已下载</td><td><a href="https://huggingface.co/XiaoduoAILab/Xmodel-2.5">Xmodel-2.5 main</a></td></tr>
+</table>
+<p class="ref">本地路径：<code>/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/</code>；
+step_6000 于 2026-10-15 下载并完成 14 集 eval</p>
+<div class="warn">
+<strong>下载需求</strong>：需从 HF History 下载 <code>pytorch_model.0532000</code>（2.7 GB）。
+使用 proxy 口径：92.25 直连 hf.co 或 92.23 + hf-mirror（任务书运维指令 2026-10-15）。
+下载后需复制 shared files（config.json / modeling_xmodel2.py / tokenizer.json 等）组装为 HF 模型目录，
+复用已有脚本 <code>baize_xmodel25_download.py</code> 的逻辑（修改 STEPS=[532000]）。
+</div>
+<h3>3.3 模型架构</h3>
+<p>Xmodel-2.5 = Dense decoder-only Llama 式架构（<strong>非</strong> Mamba2-hybrid），μP 兼容：</p>
+<ul>
+<li>Hidden 1536 / Intermediate 3840 / Layers 48 / Heads 24 / KV-heads 8（GQA）</li>
+<li>Vocab <strong>129,280</strong>（DeepSeek-v3 tokenizer）</li>
+<li>Seq 3712 / Max pos 131072 / RoPE base 500000</li>
+<li>参数量 ~1.3B（embedding sharing 减少 0.1B）</li>
+</ul>
+<p class="ref">出处：config.json（HF cache snapshots）；method.tex L9-12, Table 1</p>
+
+<!-- §4 对照 -->
+<h2>§4 Xmodel-2.5 官方 Decay vs BaiZe 80B Decay 对照</h2>
+<table>
+<tr><th>维度</th><th>Xmodel-2.5 官方 Decay</th><th>BaiZe 80B Decay（本方案）</th><th>差异说明</th></tr>
+<tr><td>Decay token</td><td class="mono">71.2B</td><td class="mono bold">80B</td><td class="green">+8.8B（12.4% 更多）</td></tr>
+<tr><td>Decay 步数</td><td class="mono">20,000</td><td class="mono">~22,472</td><td>步数更多 = 退火更充分</td></tr>
+<tr><td>GBS (tok/步)</td><td class="mono">3.56M</td><td class="mono">3.56M</td><td>对齐（同 seq×batch 配置）</td></tr>
+<tr><td>SFT 占比</td><td class="mono bold">66.9%</td><td class="mono bold">64%</td><td>均在 Xmodel-2 最优区间 60-69% 内</td></tr>
+<tr><td>SFT 来源</td><td>Xmodel 内部 SFT-Mixed<br>（Math/Code/Logic/Knowledge/Commonsense 5 类）</td><td>UltraData-SFT-2605 + SFT-Agent-2609<br>（MiniCPM5 数据源）</td><td>不同 SFT 源 → 核心对比变量</td></tr>
+<tr><td>预训练数据</td><td>Xmodel 内部 web/code/math</td><td>Ultra-FineWeb-L3 + UltraData-Code/Math</td><td>不同 web 源 → 次要对比变量</td></tr>
+<tr><td>优化器</td><td>AdamW → <strong>Muon</strong>（decay 段切换）</td><td><strong>Muon</strong>（decay 段，对齐官方）</td><td class="green">✅ 同构（用户直令）</td></tr>
+<tr><td>LR 调度</td><td>WSD 指数退火</td><td>WSD 指数退火</td><td>同</td></tr>
+<tr><td>LR 峰值 → 终值</td><td>1.67e-3 → ~1e-5</td><td>1.67e-3 → 1e-5</td><td>对齐（从 stable 末继承）</td></tr>
+<tr><td>seq_length</td><td>3712</td><td>3712</td><td>对齐 Xmodel 原生（非 BaiZe 4096）</td></tr>
+<tr><td>LCR 段</td><td>有（10k 步，ctx 16k）</td><td>无（本方案不含 LCR）</td><td>⚠️ 可能影响长上下文能力</td></tr>
+</table>
+<div class="info">
+<strong>单变量原则</strong>：与 Xmodel 官方 decay 相比，本方案的核心变量 = <strong>数据配比与数据来源</strong>。
+优化器（Muon）、LR 调度（WSD）、seq（3712）、GBS（3.56M）均对齐 → 若结果有差异，可归因于数据策略。
+</div>
+<p class="ref">Xmodel-2.5 官方 decay 配置出处：method.tex L42-48（Decay 段 + Optimizer ablation）；
+result.tex L4,37（52.49% avg, loss curve）；任务书运维指令 2026-10-16 L10-19</p>
+<!-- §5 数据配比 -->
+<h2>§5 Decay 数据配比（BaiZe 80B）</h2>
+<h3>5.1 P-8 Decay 配方（沿用）</h3>
+<p>沿用 BaiZe P-8 实测 decay 配方：<strong>SFT 64% : L3 24% : code 8% : math 4%</strong>
+<span class="ref">（baize_p8_decay.sh L7-10；DATA_MIX_RECIPE.md §3）</span></p>
+<p>SFT 64% 的依据：Xmodel-2 超过 400 次试验 → SFT 最优 60-69%，取 64%
+<span class="ref">（xmodel-2.tex L141-146, 154）</span>。
+Xmodel-2.5 取 66.9%，我们的 64% 在区间内，差异 2.9pp 可接受。</p>
+<h3>5.2 80B Token 分配与可用量对照</h3>
+<table>
+<tr><th>类别</th><th>配比</th><th>80B 需求</th><th>本地可用（分词后 .bin÷4）</th><th>epoch</th><th>状态</th></tr>
+<tr><td><strong>SFT-2605</strong></td><td>—</td><td>—</td><td class="mono">20.96B tok</td><td>—</td><td class="green">✅</td></tr>
+<tr><td><strong>SFT-Agent-2609</strong></td><td>—</td><td>—</td><td class="mono">8.04B tok</td><td>—</td><td class="green">✅</td></tr>
+<tr><td><strong>SFT 合计</strong></td><td class="mono">64%</td><td class="mono bold">51.2B</td><td class="mono">29.00B</td><td class="mono amber">1.76</td><td class="amber">⚠️ 过采样</td></tr>
+<tr><td><strong>L3 (web)</strong></td><td class="mono">24%</td><td class="mono">19.2B</td><td class="mono">20.56B</td><td class="mono green">0.93</td><td class="green">✅</td></tr>
+<tr><td><strong>Code</strong></td><td class="mono">8%</td><td class="mono">6.4B</td><td class="mono">0.27B</td><td class="mono red">23.7</td><td class="red bold">❌❌ 严重不足</td></tr>
+<tr><td><strong>Math</strong></td><td class="mono">4%</td><td class="mono">3.2B</td><td class="mono">0.61B</td><td class="mono red">5.25</td><td class="red bold">❌ 不足</td></tr>
+</table>
+<p class="ref">Token 计数口径：<code>.bin 字节 ÷ 4</code>（int32 dtype，v4 §1.1 口径）。
+Code = anneal_code 90.34M + r3_ultradata_code 180.04M = 270.38M；
+Math = anneal_math2 430.71M + r3_ultradata_math 178.40M = 609.11M。
+出处：v4 report §1 逐源精确计数</p>
+<div class="danger">
+<strong>🔴 Code/Math 分词数据严重不足</strong>：80B decay 需 code 6.4B + math 3.2B = 9.6B token，
+但已分词的 code+math 仅 879M token（epoch 5-24x）。原因：P-8 decay 仅 4.8B token（12% = 577M），
+现有分词量为其 1.5 倍已足够；但 80B decay 放大 17x，缺口巨大。
+</div>
+<h3>5.3 解决方案（三选一，推荐方案 A）</h3>
+<h4>方案 A：重分词 UltraData-Code/Math（推荐）</h4>
+<p>原始 parquet 已下满（UltraData-Code 1121 pq / UltraData-Math 1823 pq），
+用 <strong>Xmodel-2.5 tokenizer</strong>（129280 vocab）重新分词 → 可获得 ~100B+ token 的 code/math 数据。
+预估分词耗时：~2-4 GPU·h（CPU 分词，不占 GPU）。</p>
+<div class="success">
+<strong>推荐理由</strong>：① 数据量充足（epoch < 1）；② 使用 Xmodel-2.5 原生 tokenizer 消除兼容性风险；
+③ 原始数据已就位（DATA_RESEARCH.md Q1(1) 确认 1121/1823 parquet 全在）。
+</div>
+<h4>方案 B：调整配比降低 code/math 占比</h4>
+<p>将配比调整为 SFT 67% : L3 27% : code 3% : math 3%（code/math 各降 5pp），
+code 需 2.4B（epoch 8.9x）、math 需 2.4B（epoch 3.9x）。
+仍过采样但幅度可控；配比偏离 P-8 实测配方，但接近 Xmodel-2.5 的 66.9% SFT。</p>
+<h4>方案 C：接受高 epoch（不推荐）</h4>
+<p>直接使用现有分词数据，code epoch 23.7x、math epoch 5.25x。
+decay 段质量优先，高 epoch 不一定有害，但 code epoch 23.7x 极端，模型可能过拟合。</p>
+<h3>5.4 SFT 过采样分析</h3>
+<p>SFT 合计 29B token，80B decay 中占 64% = 51.2B → epoch 1.76。
+<span class="ref">v4 report §3 已分析此风险</span>。
+Xmodel-2 原文（L152）提到 SFT 数据经 SimHash 去重后<strong>重复使用</strong>（+1.7% gain），
+说明 decay 段适度重复采样 SFT 是<strong>可接受甚至有益的</strong>。
+epoch 1.76 在安全范围内。</p>
+
+<!-- §6 超参 -->
+<h2>§6 Decay 超参</h2>
+<h3>6.1 WSD 调度参数</h3>
+<table>
+<tr><th>参数</th><th>值</th><th>出处 / 依据</th></tr>
+<tr><td>Decay 总步数</td><td class="mono">~22,472</td><td>80B ÷ 3.56M tok/步</td></tr>
+<tr><td>Warmup 步数</td><td class="mono">100（短 warmup）</td><td>从 stable 末 ckpt 恢复，需短暂稳定 optimizer state</td></tr>
+<tr><td>LR 峰值</td><td class="mono">1.67e-3</td><td>method.tex L39（Xmodel-2.5 stable LR）</td></tr>
+<tr><td>LR 终值 (min_lr)</td><td class="mono">1e-5</td><td>P-8 实测最优（EXPERIMENTS S3-05）</td></tr>
+<tr><td>LR 退火方式</td><td>WSD 指数退火</td><td>method.tex L42; P-8 实测 WSD 胜 cosine</td></tr>
+<tr><td>退火公式</td><td class="mono">f(s) = 0.5^((s-S)/T)</td><td>xmodel-2.tex L138（指数退火）</td></tr>
+<tr><td>seq_length</td><td class="mono bold">3712</td><td>Xmodel-2.5 原生 seq（非 BaiZe 4096）</td></tr>
+<tr><td>GBS (tok/步)</td><td class="mono">3.56M</td><td>3712 × 960 = 3,563,520 ≈ 3.56M</td></tr>
+<tr><td>Micro BS</td><td class="mono">8</td><td>1.3B 模型 seq3712，8×H100 80GB 可容纳</td></tr>
+<tr><td>Grad accum</td><td class="mono">120</td><td>8 × 8 × 120 × 3712 = 3.56M ✅</td></tr>
+<tr><td>TP / DP</td><td class="mono">1 / 8</td><td>对齐 P-8 配置</td></tr>
+<tr><td>精度</td><td class="mono">bf16</td><td>Xmodel-2.5 原生（FP8 为可选加速）</td></tr>
+<tr><td>优化器</td><td class="mono bold">Muon</td><td>用户直令（对齐 Xmodel 官方）</td></tr>
+</table>
+<h3>6.2 Muon 优化器说明</h3>
+<div class="info">
+<strong>为什么用 Muon</strong>（用户直令 + Xmodel 官方同构）：
+<ul>
+<li>Xmodel-2.5 method.tex L46-49：<strong>decay 段 AdamW → Muon 单变量切换 → +4.58pp 绝对提升</strong></li>
+<li>此处的训练对象是 <strong>Xmodel 模型</strong>（其 stable 末 ckpt），不是 BaiZe 原生模型</li>
+<li>BaiZe P-8 的 dist_muon 发散是 <strong>BaiZe Mamba2-hybrid 架构</strong>的问题，不适用于 Xmodel（Dense Llama 式）</li>
+<li>Xmodel 官方自己也是「stable 段全用 Muon 会发散 → 只在 decay 段用 Muon」</li>
+</ul>
+</div>
+<p class="ref">出处：method.tex L46-49（Optimizer ablation）；任务书运维指令 2026-10-16 L19（用户直令）；
+EXPERIMENTS_PRETRAIN_2B.md P-8 dist_muon 发散记录</p>
+<h3>6.3 seq=3712 vs BaiZe 4096 的差异处理</h3>
+<p>Xmodel-2.5 原生 seq = 3712，BaiZe 固定口径 seq = 4096（用户直令 2026-10-14）。
+本实验训练的是 <strong>Xmodel 模型</strong>，须用 <strong>Xmodel 原生 seq 3712</strong>（非 BaiZe 4096）。
+已分词的 BaiZe 数据按 seq 4096 切片，需重新按 3712 切片。
+若重分词（方案 A），则直接按 3712 分词+切片，无此问题。</p>
+<!-- §7 算力 -->
+<h2>§7 算力 / 墙钟估算</h2>
+<h3>7.1 吞吐量估算</h3>
+<p>Xmodel-2.5 = 1.3B Dense 模型（48 层，hidden 1536），比 BaiZe P-8（2.22B Mamba2-hybrid 56 层）更小更简单。
+P-8 实测吞吐 ~249K tok/s（8×H100, seq 4094, GBS 1024, AdamW, bf16）。
+1.3B Dense 预估吞吐 ~350-400K tok/s（参数量 0.59x，无 SSM 开销）。</p>
+<table>
+<tr><th>项</th><th>保守估计</th><th>乐观估计</th></tr>
+<tr><td>吞吐 (tok/s)</td><td class="mono">350K</td><td class="mono">400K</td></tr>
+<tr><td>80B 所需时间</td><td class="mono">63.5h</td><td class="mono">55.6h</td></tr>
+<tr><td>GPU·h（8卡）</td><td class="mono">508 GPU·h</td><td class="mono">445 GPU·h</td></tr>
+<tr><td>墙钟 (天)</td><td class="mono">~2.6 天</td><td class="mono">~2.3 天</td></tr>
+</table>
+<p class="small">⚠️ Muon 优化器可能比 AdamW 慢 10-20%（额外矩阵正交化开销），已部分包含在保守估计中。
+FP8 混合精度可额外提速 ~30-40%，但需 Transformer Engine 支持，本方案先按 bf16 估算。</p>
+<h3>7.2 前置准备时间</h3>
+<table>
+<tr><th>步骤</th><th>耗时</th><th>GPU 占用</th></tr>
+<tr><td>下载 step 532000 ckpt（2.7GB）</td><td class="mono">~10-30 min</td><td>无</td></tr>
+<tr><td>Tokenizer 兼容性验证</td><td class="mono">~10 min</td><td>无</td></tr>
+<tr><td>重分词 Code/Math（方案 A）</td><td class="mono">~2-4h</td><td>无（CPU 分词）</td></tr>
+<tr><td>Checkpoint 格式转换（HF→训练框架）</td><td class="mono">~30 min</td><td>无</td></tr>
+<tr><td>Muon + Xmodel 架构兼容性冒烟（100步）</td><td class="mono">~10 min</td><td>≤2 GPU·min</td></tr>
+<tr><td><strong>前置合计</strong></td><td class="mono">~3-5h</td><td>≤2 GPU·min</td></tr>
+</table>
+
+<!-- §8 评测 -->
+<h2>§8 14 评测集与对比基准</h2>
+<h3>8.1 评测集清单（对齐任务书常驻口径）</h3>
+<table>
+<tr><th>类别</th><th>数据集</th><th>shot</th><th>Xmodel-2.5 final（基线）</th></tr>
+<tr><td rowspan="8"><strong>常识 8 (CS8)</strong><br>zero-shot<br>raw accuracy</td><td>ARC-Challenge</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>ARC-Easy</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>BoolQ</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>HellaSwag</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>OpenBookQA</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>PiQA</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>SciQ</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>Winogrande</td><td>0</td><td class="mono">—</td></tr>
+<tr><td><strong>CS8 Avg</strong></td><td colspan="2">—</td><td class="mono bold">65.40%</td></tr>
+<tr><td rowspan="6"><strong>复杂 6 (CX6)</strong><br>lm-eval 默认 shot</td><td>GSM8K</td><td>5</td><td class="mono">—</td></tr>
+<tr><td>MATH</td><td>4</td><td class="mono">—</td></tr>
+<tr><td>BBH</td><td>3</td><td class="mono">—</td></tr>
+<tr><td>MMLU</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>HumanEval</td><td>0</td><td class="mono">—</td></tr>
+<tr><td>MBPP</td><td>3</td><td class="mono">—</td></tr>
+<tr><td><strong>CX6 Avg</strong></td><td colspan="2">—</td><td class="mono bold">32.90%</td></tr>
+</table>
+<p class="ref">基线值来源：MEMORY_PRETRAIN_2B.md #451（本线 2026-10-15 实测，lm-eval harness 0.4.x，trust_remote_code=True）。
+评测脚本：<code>baize_xmodel_eval.sh</code>（已验证可用）。
+Xmodel-2.5 论文 Table 1 用 13 集（含 C-Eval/CMMLU），本方案用 14 集（对齐任务书口径），差异注明。</p>
+<h3>8.2 评测时机</h3>
+<ul>
+<li><strong>Decay 前基线</strong>：step 532000 ckpt 跑 14 集 → 确认 stable 末水平（预期 CS8 显著低于 final）</li>
+<li><strong>Decay 中间点</strong>：step 532000 + 10k 步（~35.6B）和 + 15k 步（~53.4B）各跑一次 CS8（快速 8 集）</li>
+<li><strong>Decay 结束</strong>：step 532000 + 22,472 步（80B）跑全量 14 集 → 与 Xmodel-2.5 final 对比</li>
+</ul>
+<h3>8.3 预期提升 vs 基线</h3>
+<p>decay 段的核心价值 = SFT 退火带来复杂推理能力飞跃。参考 Xmodel-2 的数据（xmodel-2.tex L154）：
+「整体复杂推理 +29.31%」。Xmodel-2.5 的 decay + Muon 带来 +4.58pp（method.tex L48）。
+我们的 80B decay（vs 官方 71.2B）+ Muon + 不同 SFT 配比 → <strong>预期 CS8 ≥ 65%，CX6 ≥ 30%</strong>，
+若超越 final 65.40%/32.90% 即成功。</p>
+<!-- SVG 时间线 -->
+<div class="svg-box">
+<svg width="900" height="200" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="900" height="200" fill="#f8f9fa" rx="8"/>
+<text x="450" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">Xmodel-2.5 训练调度与 BaiZe 80B Decay 位置</text>
+<rect x="50" y="60" width="15" height="30" fill="#93c5fd" rx="2"/>
+<text x="57" y="105" text-anchor="middle" font-size="9" fill="#475569">W</text>
+<text x="57" y="115" text-anchor="middle" font-size="8" fill="#888">2k</text>
+<rect x="65" y="60" width="180" height="30" fill="#60a5fa" rx="2"/>
+<text x="155" y="80" text-anchor="middle" font-size="10" fill="#fff">S1: 270k steps</text>
+<text x="155" y="105" text-anchor="middle" font-size="9" fill="#475569">1.78M tok/step</text>
+<rect x="245" y="60" width="170" height="30" fill="#3b82f6" rx="2"/>
+<text x="330" y="80" text-anchor="middle" font-size="10" fill="#fff">S2: 260k steps</text>
+<text x="330" y="105" text-anchor="middle" font-size="9" fill="#475569">3.56M tok/step</text>
+<line x1="415" y1="50" x2="415" y2="120" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2"/>
+<text x="415" y="45" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">step 532k</text>
+<text x="415" y="135" text-anchor="middle" font-size="9" fill="#dc2626">stable 末 ckpt</text>
+<rect x="415" y="60" width="60" height="30" fill="#fbbf24" rx="2"/>
+<text x="445" y="80" text-anchor="middle" font-size="9" fill="#1a1a2e">D: 20k</text>
+<text x="445" y="105" text-anchor="middle" font-size="8" fill="#888">71.2B</text>
+<rect x="475" y="60" width="30" height="30" fill="#fde68a" rx="2"/>
+<text x="490" y="80" text-anchor="middle" font-size="8" fill="#1a1a2e">LCR</text>
+<text x="490" y="105" text-anchor="middle" font-size="8" fill="#888">10k</text>
+<line x1="505" y1="50" x2="505" y2="120" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,2"/>
+<text x="505" y="45" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="bold">step 560k</text>
+<text x="505" y="135" text-anchor="middle" font-size="9" fill="#16a34a">final ckpt</text>
+<rect x="560" y="145" width="80" height="25" fill="#764ba2" rx="2"/>
+<text x="600" y="162" text-anchor="middle" font-size="9" fill="#fff">BaiZe 80B Decay</text>
+<text x="600" y="183" text-anchor="middle" font-size="8" fill="#764ba2">~22.5k steps</text>
+<line x1="415" y1="140" x2="560" y2="157" stroke="#764ba2" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="200" y="170" font-size="9" fill="#3b82f6">Official: 1.4T total, 71.2B decay, 66.9% SFT, Muon</text>
+<text x="560" y="195" font-size="9" fill="#764ba2">BaiZe: 80B decay, 64% SFT, Muon, no LCR</text>
+</svg>
+</div>
+
+<!-- §9 风险 -->
+<h2>§9 风险与可行边界</h2>
+<h3>9.1 🔴 Tokenizer 不兼容（最高风险）</h3>
+<div class="danger">
+<strong>问题</strong>：BaiZe tokenizer_eod vocab = <strong>128,000</strong>；
+Xmodel-2.5 tokenizer vocab = <strong>129,280</strong>（DeepSeek-v3）。
+两者均基于 DeepSeek tokenizer，但 vocab_size 不同 → <strong>token ID 映射可能不一致</strong>。
+若直接使用 BaiZe 分词数据训练 Xmodel-2.5 模型，轻则性能下降，重则训练崩溃。
+</div>
+<p><strong>验证方案</strong>（训练前必做，~10 min）：</p>
+<pre>
+# 对比两 tokenizer 对相同文本的编码结果
+python3 -c "
+from transformers import AutoTokenizer
+bz = AutoTokenizer.from_pretrained('data/tokenizer_eod')
+xm = AutoTokenizer.from_pretrained('xmodel25_snapshot_dir')
+test = ['Hello world', '你好世界', 'def foo(): pass', '2+2=4']
+for t in test:
+    b_ids = bz.encode(t)
+    x_ids = xm.encode(t)
+    print(f'{t[:30]:30s} BZ={len(b_ids):3d} XM={len(x_ids):3d} match={b_ids==x_ids}')
+"
+</pre>
+<p><strong>若不兼容</strong>（预期大概率不兼容，因 vocab 差 1280）→ <strong>必须用 Xmodel-2.5 tokenizer 重分词所有数据源</strong>。
+重分词工作量：SFT 29B + L3 20.56B + code/math → 原始 parquet 已就位，
+CPU 分词 ~4-8h（不占 GPU），产出的 .bin 量 ~100-120 GB（磁盘需确认余量）。</p>
+<h3>9.2 🟠 Checkpoint 格式转换</h3>
+<p>Xmodel-2.5 ckpt = HF 格式（<code>pytorch_model.bin</code> + <code>modeling_xmodel2.py</code>）。
+BaiZe 训练框架 = Megatron-Core（<code>pretrain_launcher.py</code>）。两条路线：</p>
+<ul>
+<li><strong>路线 A（推荐）</strong>：用 HF Trainer 训练（直接加载 <code>XmodelForCausalLM</code>），无需格式转换。
+已有 eval 脚本 <code>baize_xmodel_eval.sh</code> 证明 HF 路线可用。
+缺点：HF Trainer 可能比 Megatron-Core 慢 10-20%。</li>
+<li><strong>路线 B</strong>：转换 HF ckpt → Megatron-Core 格式，用 <code>pretrain_launcher.py</code> 训练。
+需编写转换脚本，且 Muon 优化器需在 Megatron-Core 中适配 Xmodel 架构。更复杂但吞吐更高。</li>
+</ul>
+<p><strong>建议</strong>：先用路线 A 冒烟验证（100 步），确认 Muon + Xmodel 架构稳定后决定是否切路线 B。</p>
+<h3>9.3 🟡 Muon + Xmodel 架构兼容性</h3>
+<p>Muon 优化器对权重矩阵做 Newton-Schulz 正交化。
+Xmodel-2.5 = Dense Llama 式（标准 Linear 层），与 Muon 兼容性预期良好（Xmodel 官方已验证 +4.58pp）。
+但 BaiZe 的 Megatron-Core Muon 实现是为 Mamba2-hybrid 调试的，需确认对标准 Transformer 层的兼容性。</p>
+<p><strong>验证</strong>：100 步冒烟训练 → 检查 loss 下降 + grad_norm 稳定 + 无 NaN。
+若 dist_muon 不兼容，可回退 AdamW（但失去 +4.58pp 理论增益）。</p>
+<h3>9.4 🟡 SFT 过采样（epoch 1.76）</h3>
+<p>SFT 29B / 51.2B 需求 = epoch 1.76。Xmodel-2 原文（L152）表明 SFT 数据去重后重复使用是可接受的。
+但 1.76 epoch 意味着 ~44% 的 SFT 数据被看 2 遍 → 可能对特定 SFT 样本过拟合。
+<strong>缓解</strong>：① decay 段侧重质量而非多样性，适度重复可接受；② 可在第二 epoch 加入数据增强；
+③ 若最终性能不理想，可降低 SFT 占比至 36%（29B/80B，epoch 1.0）。</p>
+<h3>9.5 🟢 seq=3712 vs 4096</h3>
+<p>非问题但需注意：Xmodel 原生 seq 3712 < BaiZe 口径 4096。
+本实验训练 Xmodel 模型 → 用 3712（不违反 BaiZe seq=4096 口径，因该口径仅约束 BaiZe 原生训练）。</p>
+<h3>9.6 🟢 无 LCR 段的影响</h3>
+<p>Xmodel-2.5 官方在 decay 后有 10k 步 LCR（ctx 16k），13-task avg 从 52.36 → 52.49（+0.13pp）。
+本方案不含 LCR → 长上下文能力可能略弱。但 14 集评测中无长上下文任务 → 对本实验结论无影响。</p>
+<!-- §10 附录 -->
+<h2>§10 附录</h2>
+<h3>10.1 前置准备命令骨架</h3>
+<pre>
+# ① 下载 step 532000 ckpt（stable 末）
+export https_proxy=http://172.19.92.25:13128
+export HF_HOME=/nas_train/app.e0031982/.cache
+python3 -c "
+from huggingface_hub import hf_hub_download
+path = hf_hub_download('XiaoduoAILab/Xmodel-2.5-History',
+    'pytorch_model.0532000',
+    local_dir='/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/_raw')
+print(f'Downloaded: {path}')
+"
+# 组装 HF 模型目录（复用 baize_xmodel25_download.py 逻辑）
+# → step_532000/ 目录含 config.json + modeling_xmodel2.py + tokenizer.json + pytorch_model.bin
+
+# ② Tokenizer 兼容性验证（见 §9.1 验证脚本）
+
+# ③ 重分词 Code/Math（方案 A，用 Xmodel-2.5 tokenizer）
+# 原始 parquet 路径：
+#   /nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/
+#   /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/
+# 分词脚本：复用 baize_tokenize_r3_sources.sh 逻辑，换 tokenizer 路径
+
+# ④ 100 步冒烟训练（验证 Muon + Xmodel 架构）
+# 确认 loss 下降 + grad_norm 稳定 + 无 NaN
+</pre>
+<h3>10.2 正式训练命令骨架（路线 A：HF Trainer）</h3>
+<pre>
+# BaiZe 80B Decay on Xmodel-2.5 stable 末 ckpt
+# 路线 A：HF Trainer + Muon
+
+MODEL=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000
+DATA=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data
+
+# Decay blend: SFT 64 : L3 24 : code 8 : math 4（与 P-8 同配方）
+# ⚠️ 若 tokenizer 不兼容，需用 Xmodel-2.5 tokenizer 重分词后的数据路径
+BLEND_SFT="$DATA/mix_sft_tok $DATA/mix_sft_agent_tok"   # 64%
+BLEND_L3="$DATA/p5b_l3"                                   # 24%
+BLEND_CODE="$DATA/r3_sources/r3_ultradata_code"           # 8%
+BLEND_MATH="$DATA/r3_sources/r3_ultradata_math"           # 4%
+
+# 超参
+SEQ=3712          # Xmodel 原生 seq
+GBS=3.56M         # 3712 × 960 ≈ 3.56M tok/步
+LR=1.67e-3        # Xmodel-2.5 stable LR
+MIN_LR=1e-5
+DECAY_STEPS=22472 # 80B ÷ 3.56M
+WARMUP=100
+OPTIMIZER=muon    # 对齐 Xmodel 官方（用户直令）
+
+# 训练（HF Trainer 或自定义训练循环）
+# 需实现：Muon optimizer + WSD LR scheduler + blend dataloader
+# 8×H100, TP=1, DP=8, bf16, grad_clip=1.0
+</pre>
+<h3>10.3 评测命令</h3>
+<pre>
+# Decay 后 14 集 eval（复用已有脚本）
+bash baize_xmodel_eval.sh \
+    /path/to/decay_final_ckpt \
+    /path/to/eval_output \
+    xmodel25_baize_80b_decay \
+    0,1,2,3,4,5,6,7 \
+    8
+
+# 对比基线：Xmodel-2.5 final CS8=65.40% / CX=32.90%
+# 超越即成功
+</pre>
+<h3>10.4 与 P-8 的差异对照</h3>
+<table>
+<tr><th>维度</th><th>BaiZe P-8 Decay</th><th>BaiZe 80B Decay（本方案）</th></tr>
+<tr><td>训练模型</td><td>BaiZe Mamba2-hybrid 2.22B</td><td>Xmodel-2.5 Dense 1.3B</td></tr>
+<tr><td>起点</td><td>从零训练 44.4B tok 后</td><td>从 Xmodel 1.4T tok stable 末</td></tr>
+<tr><td>Decay token</td><td class="mono">4.8B（1149步 × 4.19M）</td><td class="mono">80B（22472步 × 3.56M）</td></tr>
+<tr><td>数据配比</td><td>SFT:L3:code:math = 64:24:8:4</td><td>同（沿用 P-8 配方）</td></tr>
+<tr><td>优化器</td><td>AdamW（dist_muon 发散换回）</td><td>Muon（Xmodel 架构不发散）</td></tr>
+<tr><td>seq</td><td class="mono">4094（P-8 实际）/ 4096（新口径）</td><td class="mono">3712（Xmodel 原生）</td></tr>
+<tr><td>Tokenizer</td><td>BaiZe tokenizer_eod (128K vocab)</td><td>Xmodel-2.5 tokenizer (129K vocab) ⚠️</td></tr>
+<tr><td>评测基线</td><td>无外部基线（自训自评）</td><td>Xmodel-2.5 final CS8=65.40%</td></tr>
+</table>
+<h3>10.5 诚实条款（不确定度声明）</h3>
+<div class="warn">
+<ol>
+<li><strong>吞吐估算不确定度 ±15%</strong>：350-400K tok/s 为基于参数量比例的外推，
+实际吞吐取决于 Muon 开销 + HF Trainer 效率 + 数据加载瓶颈，需 100 步冒烟实测校准。</li>
+<li><strong>Tokenizer 兼容性未验证</strong>：128K vs 129K vocab 大概率不兼容 → 重分词可能为必做项，
+额外增加 ~4-8h 前置时间 + ~100GB 磁盘占用。</li>
+<li><strong>Muon + Xmodel 兼容性</strong>：Xmodel 官方已验证 +4.58pp，但我们的 Muon 实现（Megatron-Core muon.py）
+是为 Mamba2-hybrid 调试的，对标准 Transformer 的兼容性需冒烟验证。</li>
+<li><strong>SFT 来源差异</strong>：BaiZe 用 MiniCPM5 的 UltraData-SFT（公开），Xmodel 用内部 SFT-Mixed（未公开）。
+SFT 质量差异是核心对比变量，但也意味着「超越/未超越」可能归因于 SFT 数据质量而非配比策略。</li>
+<li><strong>80B vs 71.2B 的公平性</strong>：我们多给 8.8B token（12.4%），若仅微超 final，
+不能完全排除「多给数据」的贡献。建议同时跑 71.2B 对照组（同配比同超参，仅 decay token 不同）。</li>
+<li><strong>跨架构结论迁移边界</strong>：本实验训练的是 <strong>Xmodel Dense 架构</strong>，
+结论可迁移到「Dense LLM 的 decay 策略」，但不可直接迁移到 BaiZe Mamba2-hybrid 架构
+（P-8 dist_muon 发散已证明架构敏感性）。</li>
+</ol>
+</div>
+<hr>
+<p class="small" style="text-align:center;margin-top:20px">
+BaiZe pretrain 线 · 2026-10-16 · <code>pretrain plan: xmodel25 decay 80b plan</code><br>
+数据口径：.bin 字节 ÷ 4 (int32) · seq = 3712 (Xmodel 原生) · 评测 = lm-eval 14 集<br>
+引用：Xmodel-2.5 method.tex / result.tex / config.json · Xmodel-2 xmodel-2.tex L132-154 ·
+DATA_MIX_RECIPE.md §3 · EXPERIMENTS_PRETRAIN_2B.md P-8 · v4 report §1/§3
+</p>
+</body></html>
