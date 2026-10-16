@@ -22,6 +22,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export NCCL_TIMEOUT=1800
 export LD_LIBRARY_PATH=/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/lib:${LD_LIBRARY_PATH:-}
 export MASTER_ADDR=127.0.0.1
 export TOKENIZERS_PARALLELISM=false
@@ -47,6 +48,12 @@ echo "[ArmA] batch=256/GPU, GBS=2048, AdamW wd=0.1 betas=(0.9,0.98), bf16" >> "$
 echo "[ArmA] output_dir=$OUT" >> "$LOG"
 nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
 
+RESUME_FLAG=""
+if [ -f "$OUT/latest.pt" ]; then
+    RESUME_FLAG="--resume"
+    echo "[ArmA] found latest.pt → resuming" >> "$LOG"
+fi
+
 "$PY" -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
     --master_addr=$MASTER_ADDR --master_port=$((29800 + RANDOM % 1000)) \
     armA_openclip_train.py \
@@ -54,7 +61,8 @@ nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 
     --output-dir "$OUT" --steps "$STEPS" \
     --batch-size 256 --lr 2e-3 --min-lr 2e-4 --warmup 8000 \
     --wd 0.1 --beta1 0.9 --beta2 0.98 --precision bf16 --grad-clip 1.0 \
-    --save-every 10000 --log-every 20 --num-workers 6 --seed 1234 >> "$LOG" 2>&1
+    --save-every 10000 --log-every 20 --num-workers 6 --seed 1234 \
+    $RESUME_FLAG >> "$LOG" 2>&1
 
 rc=$?
 echo "===== ArmA done (exit $rc) $(date '+%F %T') =====" >> "$LOG"

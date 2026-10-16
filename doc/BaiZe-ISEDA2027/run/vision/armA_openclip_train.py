@@ -96,6 +96,8 @@ def main():
     ap.add_argument('--log-every', type=int, default=20)
     ap.add_argument('--precision', default='bf16', choices=['bf16', 'amp', 'fp32'])
     ap.add_argument('--grad-clip', type=float, default=1.0)
+    ap.add_argument('--resume', action='store_true',
+                    help='resume from latest.pt in output-dir')
     args = ap.parse_args()
 
     rank, world_size, local_rank = setup_ddp()
@@ -122,6 +124,20 @@ def main():
     opt = torch.optim.AdamW(trainable, lr=args.lr, betas=(args.beta1, args.beta2),
                             eps=args.eps, weight_decay=args.wd)
 
+
+    # ---- Resume from checkpoint if requested ----
+    start_step = 0
+    if args.resume:
+        latest_path = os.path.join(args.output_dir, 'latest.pt')
+        if os.path.isfile(latest_path):
+            ckpt = torch.load(latest_path, map_location='cpu')
+            raw_model.load_state_dict(ckpt['state_dict'])
+            start_step = ckpt.get('step', 0)
+            if 'optimizer' in ckpt:
+                opt.load_state_dict(ckpt['optimizer'])
+            log(rank, f'[ArmA] RESUMED from {latest_path} at step {start_step}')
+        else:
+            log(rank, f'[ArmA] --resume but no latest.pt found, starting fresh')
 
     # ---- Data: rank-sliced shards via data.py mixed loader ----
     my_shards, all_shards = parse_shards(args.data, rank, world_size)
@@ -154,7 +170,7 @@ def main():
     else:
         autocast_ctx = torch.cuda.amp.autocast(enabled=False)
     model.train()
-    step = 0
+    step = start_step
     t0 = time.time()
     loss_ema = None
     data_iter = iter(loader)
@@ -194,13 +210,15 @@ def main():
                       f'lr={lr_now:.2e} {sps:.2f} it/s ETA={eta_h:.1f}h '
                       f'C1~{math.exp(-loss_ema):.4f} t={el/60:.1f}min')
 
-        if (step % args.save_every == 0 or step == args.steps) and rank == 0:
-            ckpt_path = os.path.join(args.output_dir, f'checkpoint_{step}.pt')
-            payload = {'state_dict': raw_model.state_dict(), 'step': step,
-                       'model_name': MODEL_NAME, 'loss': loss_ema}
-            torch.save(payload, ckpt_path)
-            torch.save(payload, os.path.join(args.output_dir, 'latest.pt'))
-            log(rank, f'[ArmA] saved {ckpt_path} + latest.pt (loss={loss_ema:.4f})')
+        if step % args.save_every == 0 or step == args.steps:
+            if rank == 0:
+                ckpt_path = os.path.join(args.output_dir, f'checkpoint_{step}.pt')
+                payload = {'state_dict': raw_model.state_dict(), 'step': step,
+                           'model_name': MODEL_NAME, 'loss': loss_ema,
+                           'optimizer': opt.state_dict()}
+                torch.save(payload, ckpt_path)
+                torch.save(payload, os.path.join(args.output_dir, 'latest.pt'))
+                log(rank, f'[ArmA] saved {ckpt_path} + latest.pt (loss={loss_ema:.4f})')
             if world_size > 1:
                 dist.barrier()
 
