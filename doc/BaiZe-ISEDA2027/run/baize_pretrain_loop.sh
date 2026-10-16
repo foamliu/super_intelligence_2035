@@ -106,7 +106,7 @@ while true; do
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
             PI_OFFLINE=1 PI_SKIP_VERSION_CHECK=1 \
-          "$BUN" "$PI_CLI" -p --provider cloud --model "$MODEL" --api-key "$PI_KEY" "$prompt" < /dev/null
+          "$BUN" "$PI_CLI" -p --no-lsp --provider cloud --model "$MODEL" --api-key "$PI_KEY" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') pi returned (exit $?), checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
