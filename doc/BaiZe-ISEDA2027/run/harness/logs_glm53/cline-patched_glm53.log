@@ -1,9 +1,9 @@
-  [RESUME] Skipping 271 completed for cline-patched
+  [RESUME] Skipping 289 completed for cline-patched
 Serial kimi eval: harness=cline-patched model=glm-5.3-flash
-  Total=300 Pending=29 Skip=271 Concurrency=1
+  Total=300 Pending=11 Skip=289 Concurrency=1
 
 ############################################################
-# [1/29] cline-patched x django__django-16873
+# [1/11] cline-patched x django__django-16873
 ############################################################
 
 ============================================================
