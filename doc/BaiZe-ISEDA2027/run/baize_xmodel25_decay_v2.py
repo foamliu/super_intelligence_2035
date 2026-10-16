@@ -300,10 +300,12 @@ def main():
 
     if world_size > 1:
         ddp_kwargs = dict(device_ids=[local_rank], find_unused_parameters=False)
-        if not args.no_ddp_static_graph:
+        # static_graph=True is incompatible with no_sync() (causes expect_autograd_hooks_ assert)
+        # Only enable static_graph when no_sync is disabled
+        if not args.no_ddp_static_graph and args.no_ddp_no_sync:
             ddp_kwargs['static_graph'] = True
             if rank == 0:
-                print("  DDP: static_graph=True", flush=True)
+                print("  DDP: static_graph=True (no_sync disabled)", flush=True)
         ddp_kwargs['gradient_as_bucket_view'] = True
         model = DDP(model, **ddp_kwargs)
 
