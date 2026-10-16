@@ -6,7 +6,7 @@ WAITING: 1
 > **🆕 2026-10-14→15 glm53 7×300 任务**：Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅。
 > **🔴 DATA-LOSS BUG FIXED (2026-10-15 10:03)**：`save_results()` 在 JSON parse error 时静默 `current=[]` → 只写当前 harness 条目 → **843 条数据丢失**（codex 300/deepseek 300/opencode 126/cline-patched 117）。已从 git R400 恢复 1178 条 + 合并 8 条新条目 = **1186 条**。修复 `save_results`：① parse error 时 **skip write**（不再 `current=[]`）② atomic write（tmpfile+rename）③ lock file `open('a')` 不截断。全部 7 路已重启（`--resume`，跳过已完成的）。
 > **P1-2 rerun** ✅ DONE：rerun_blocked.py 54/54 完成（4 resolved, 42 pbf, 8 blocked）。累计 kimi 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄：**1306/2100 entries (62.2%), 310 resolved (23.7%), 794 pending**。Per-harness: codex 300/300 DONE(80,26.7%), deepseek 300/300 DONE(71,23.7%), hermes 180(35,19.4%,120 pending), opencode 141(28,19.9%,159 pending), cline-patched 143(30,21.0%,157 pending), claude-code 137(31,22.6%,163 pending), pi 105(35,33.3%,195 pending)。5 harnesses running (PIDs 2918026~2918183, etimes~31200s=8.7h since 10:03 restart, ppid=1, stat=SNs)。save_results fix holding (1306 entries, 0 dups). curl /v1 → 401 (reachable, auth needed) ✅. Logs writing to .nfs* files (NFS silly-rename, visible log files stale since 10:16). Rate ~13.8 entries/h since 10:03 restart. ETA ~58h。
+> **glm53 7×300** 🔄 **RESUMED (R411, 23:05)**：4 路重启补跑中（cline-patched/opencode/claude-code/pi --resume）。数据 1964/2100 (508 resolved, 25.9%)。退出根因=API rate-limit(429)并发限流（单请求 200）。codex 300(81)/deepseek 300(71)/hermes 300(82) DONE；claude-code 300(81)/opencode 281(74)/cline 275(69)/pi 208(50) 补跑中。PID 657743/660463/661874/663134 (ppid=1, nice=10)。restart_glm53_4routes.sh。gw_proxy 9092 运行中。429→300s 重试兜底。
 
 > 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
 > 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
@@ -14,15 +14,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 STOPPED — 阶段性中文报告已刷新 (1912/2100, 485 resolved, 188 pending)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (report_harness_glm53_7x300_zh.html, McNemar p=0.688)
-当前动作:     glm53 7x300 阶段性中文报告刷新 (R410, 21:44)。reports/report_harness_glm53_7x300_zh.html (19.6KB, 6 sections) — glm53 485/1912 (25.4%) vs kimi 574/2100 (27.3%)。McNemar: 1912 配对, 一致 99.7% (1906/1912), b=2 c=4, χ²=0.67, 精确 p=0.688 ≫0.05 → 无显著差异。3 个已完成 harness (codex/deepseek/hermes) resolved 逐一相同 (80/71/81)。Per-harness: codex 300(80), deepseek 300(71), hermes 300(81) DONE; opencode 277(72), cline 271(69), claude 259(62), pi 205(50) 未跑完。**评测进程已全部退出**（ps 无 harness/python 进程），188 条待跑。诚实声明已更新为「已停止」。结论不变：换 backbone 未显著提升。
-下一步:       ① 续跑剩余 188 条 glm53（需重启 harness 进程）② 跑完后更新最终版报告 ③ 恢复 kimi configs
-阻塞:         <无> — 评测已停止（非崩溃，进程自然退出），报告已完成
+PHASE:        glm53 7x300 RESUMED — 4 路重启补跑 (1964/2100 done, 508 resolved, 136 pending)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (McNemar p=0.688)
+当前动作:     R411 (23:05): 按运维指令重启 4 路未完成评测 (cline-patched/opencode/claude-code/pi --resume)。**退出根因=API rate-limit(429)耗尽**（detect_quota_error→300s 重试，3 路首实例即 429；单请求 curl/gw_proxy 9092 均 200 → 是并发限流非硬配额）。launch_glm53_7x300.sh 因 opencode/pi 配置漂移(无 'gw' provider)KeyError 中止 → 已直接修配置：opencode+pi 加 gw provider→9092。codex/deepseek/hermes 已 DONE(300)不重启。4 进程已起 PID 657743/660463/661874/663134 (ppid=1, nice=10, setsid)。已 +4 entries (1960→1964)。
+下一步:       ① 监控 4 路补跑直至完成 ② 跑完出最终版报告 (McNemar 全量 2100 配对) ③ 若再次退出记根因+重试(≤3)，仍不成以现状定稿 ④ 恢复 kimi configs
+阻塞:         <无> — 4 路运行中；429 rate-limit 会拖慢但有 300s 重试兜底
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-16 23:05 —— **R411: 重启 4 路补跑 glm53 7×300** —— 运维指令「重启未跑完的 4 路评测把 188 条补完」。实测数据已增至 1960/2100 (140 pending: cline 27/opencode 20/claude 1/pi 92)，非 188。退出根因=API rate-limit(429)耗尽（.nfs 日志见 [QUOTA] waiting 1809s retry 3/3 → quota-blocked → 进程退出；单请求 curl 200 → 并发限流）。curl /v1→200 ✅ gw_proxy 9092→200 ✅。launch_glm53_7x300.sh 因 opencode/pi 配置漂移(无 'gw' provider)KeyError 中止 → 直接修配置加 gw provider→9092。写 restart_glm53_4routes.sh（仅 4 路，codex/deepseek/hermes 已 DONE 不重启）→ setsid 启动 PID 657743/660463/661874/663134 (ppid=1, nice=10)。resume: cline 29pending/opencode 23/claude 7/pi 97=156(含重试 quota-blocked)。已 +4 entries (1964)。3 路首实例 429→300s 重试中。📦 体积：TASK≈29.9KB ✓ / MEMORY 见下。
 - 2026-10-16 21:44 —— **glm53 7×300 报告刷新 + 评测已停止** —— 发现评测进程已全部退出（ps 无 harness 进程），数据停在 1912/2100（188 pending）。更新 `gen_report_glm53_7x300_zh.py` 诚实声明：「仍在后台运行」→「已停止（进程已退出）」。重新生成报告：glm53 485/1912 (25.4%) vs kimi 574/2100 (27.3%)。McNemar: 1912 配对, 一致 99.7% (1906/1912), b=2 c=4, χ²=0.67, 精确 p=0.688。3 个已完成 harness (codex 80/deepseek 71/hermes 81) 逐一相同。结论不变。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY≈31.2KB(30.5KB ✓) / 归档 0B。
 - 2026-10-16 20:34 —— **glm53 7×300 阶段性中文报告刷新** —— 数据 1858→1881 entries（+23）。glm53 467/1881 (24.8%) vs kimi 574/2100 (27.3%)。McNemar p=0.688。结论不变。
 - 2026-10-16 19:24 —— **glm53 7×300 阶段性中文报告刷新** —— 数据 1834→1858 entries。glm53 454/1858 (24.4%) vs kimi 574/2100 (27.3%)。McNemar p=1.000。结论不变。

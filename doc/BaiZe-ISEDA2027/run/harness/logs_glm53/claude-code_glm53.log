@@ -1,24 +1,13 @@
-  [RESUME] Skipping 103 completed for claude-code
+  [RESUME] Skipping 293 completed for claude-code
 Serial kimi eval: harness=claude-code model=glm-5.3-flash
-  Total=300 Pending=197 Skip=103 Concurrency=1
+  Total=300 Pending=7 Skip=293 Concurrency=1
 
 ############################################################
-# [1/197] claude-code x django__django-15996
-############################################################
-
-============================================================
-[SETUP] django__django-15996 for claude-code
-
-[RUN] claude-code on django__django-15996 ...
-  [EVAL] claude-code on django__django-15996 ...
-  => django__django-15996 | claude-code | patch-but-failed
-
-############################################################
-# [2/197] claude-code x django__django-16041
+# [1/7] claude-code x django__django-16873
 ############################################################
 
 ============================================================
-[SETUP] django__django-16041 for claude-code
+[SETUP] django__django-16873 for claude-code
 
-[RUN] claude-code on django__django-16041 ...
-  [EVAL] claude-code on django__django-16041 ...
+[RUN] claude-code on django__django-16873 ...
+  [QUOTA] claude-code: quota exhausted, waiting 300s (retry 2/3)...

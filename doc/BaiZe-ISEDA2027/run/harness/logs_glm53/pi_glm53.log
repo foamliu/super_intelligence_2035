@@ -1,13 +1,13 @@
-  [RESUME] Skipping 81 completed for pi
+  [RESUME] Skipping 203 completed for pi
 Serial kimi eval: harness=pi model=glm-5.3-flash
-  Total=300 Pending=219 Skip=81 Concurrency=1
+  Total=300 Pending=97 Skip=203 Concurrency=1
 
 ############################################################
-# [1/219] pi x django__django-14855
+# [1/97] pi x django__django-16873
 ############################################################
 
 ============================================================
-[SETUP] django__django-14855 for pi
-  [FETCH RETRY 1/3] timeout=300s, waiting 10s (exponential backoff)...
+[SETUP] django__django-16873 for pi
 
-[RUN] pi on django__django-14855 ...
+[RUN] pi on django__django-16873 ...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 2/3)...
