@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-16 09:02（limit50 eval 429→修复→重跑成功 · wake #112）**：❌ **第1次 limit50 eval (08:51) 崩溃**: HF Hub 429 Too Many Requests — 8 ranks 同时加载 VizWiz-VQA（lmms_eval_cache 缺该 arrow）→ API 限流 → `ChildFailedError` rank 1。🔧 **根因**: /nas_env lmms_eval_cache 缺 3 集 (vizwiz/infovqa/vqav2)，datasets.load_dataset() 回退 HF Hub API 查 revision → 8 并发触发 429。✅ **修复**: ① `precache_missing.py` 单进程预生成 VizWiz arrow cache (4319 val + 8000 test, 35.5s)；InfoVQA 已在 doc_vqa/InfographicVQA 子目录；② launch 脚本加 `HF_HUB_OFFLINE=1` + `HF_DATASETS_OFFLINE=1` 阻断 API 调用；③ port 29559→29560。✅ **第2次 limit50 eval (09:02) 运行中**: 8 GPU 模型加载✅ (vision 277/277 matched, Qwen3-4B 3 shards)，inference 进行中 (GPU util 17-36%, gen_text 产出正常如 "Picaboo"=Snapchat 原名✅)。📦 lmms_eval_cache 15 dirs (全 16 集 minus vqav2)。/tmp 69G free, /nas_env 9798G free。下一步：等 eval 完成 → 检查 16 集 acc → 全量 17 集 → ArmA retrain。
+> 🆕 **2026-10-16 09:19（limit50 eval 14集 ✅ 全部完成 · wake #112b）**：🎉 **limit50 8-GPU eval 成功完成**: 14 benchmarks, 65s (09:18:00→09:19:05), 0 crash, 0 429。结果：scienceqa=72%, ai2d=58%, gqa=46%, pope=42%, mmbench=82.0, mmmu=38%, seedbench=34%, realworldqa=34%, infovqa=17.9%, vizwiz=10.6%, chartqa=10%, textvqa=6%, docvqa=3.8%, ocrbench=0%。JSON 存 `eval_step3500_1792113500.json` (10.6MB)。🔧 **三重修复链**: ① 429→`HF_HUB_OFFLINE=1`+precache_missing.py ② GPT-4 API crash→移除 mmvet+hallusion_bench ③ parent 进程被杀→`setsid` 替代 `nohup`。✅ GPU 8×H100 全空闲。下一步：全量 14 集 eval (无 --limit) → 加 vqav2 → ArmA retrain。
 > 📦 2026-10-16 06:23（precache 主跑完成 15OK/2FAIL · wake #110）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15OK/2FAIL, seedbench retry 进行中40%。需要时再读。
 > 📦 2026-10-16 05:13（Part B 全验收 ✅✅✅ · wake #109）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60), precache 主跑尚在进行。需要时再读。
 > 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
@@ -28,10 +28,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **limit50 8-GPU eval 运行中（wake #112, 09:02 启动）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅。❌ 第1次 eval (08:51) 429 崩溃 → ✅ 修复 (precache_missing.py + HF_HUB_OFFLINE=1) → ✅ 第2次 eval (09:02) inference 进行中。GPU 8×H100 模型已加载 (18GB/10GB), util 17-36%。下一步：eval 完成 → 检查 16 集 acc → 全量 17 集 → ArmA retrain。 |
-| ERROR_COUNT | 18（①~⑯ 同前 ⑰ limit50 磁盘满崩 ⑱ limit50 HF Hub 429 崩: 8 ranks 并发 API → 429 → ChildFailedError → 修复: precache_missing.py + HF_HUB_OFFLINE=1） |
+| PHASE | ✅ **limit50 14集 eval 成功完成（wake #112b, 09:18-09:19, 65s）**：Stage-1/1.5/2 全 ✅。Part B 验收 ✅✅✅。三重修复：① HF_HUB_OFFLINE=1 (429) ② 移除 mmvet+hallusion (GPT-4 API) ③ setsid (parent 进程被杀)。14 benchmarks 全跑通，结果存 JSON。GPU 8×H100 全空闲。下一步：全量 14 集 eval (无 --limit) → 加 vqav2 → ArmA retrain。 |
+| ERROR_COUNT | 19（①~⑯ 同前 ⑰ 磁盘满崩 ⑱ 429 崩 ⑲ GPT-4 API crash → 三重修复: offline+移除API集+setsid） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-16 09:02 (wake #112)**: ❌ 第1次 limit50 eval (08:51) 崩溃: HF Hub 429 (8 ranks 并发加载 VizWiz→API 限流)。✅ 修复: precache_missing.py 单进程预缓存 VizWiz (4319+8000, 35.5s) + launch 脚本加 HF_HUB_OFFLINE=1 + port→29560。✅ 第2次 eval (09:02) 运行中: 模型加载✅, inference 进行中 (GPU util 17-36%, gen "Picaboo"✅)。📦 TASK/MEMORY 体积待查。 |
+| 更新 | **2026-10-16 09:19 (wake #112b)**: 🎉 limit50 14集 eval 成功! 65s, 0 crash。结果: scienceqa=72%, ai2d=58%, gqa=46%, pope=42%, mmbench=82, mmmu=38%, seedbench=34%, realworldqa=34%, infovqa=17.9%, vizwiz=10.6%, chartqa=10%, textvqa=6%, docvqa=3.8%, ocrbench=0%。JSON=eval_step3500_1792113500.json(10.6MB)。三重修复链完整。📦 MEMORY=29KB / TASK=28.6KB。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
