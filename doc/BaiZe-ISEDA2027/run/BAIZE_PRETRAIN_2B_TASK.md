@@ -1,16 +1,27 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-16（🔧 **profile 不得与在训抢卡：改 CPU 侧计时 + 单卡小 profile**）· 运维纠正 · 最高优先
+### 🆕 运维指令 · 2026-10-16 22:1x（🛑 **用户已授权：停掉当前 decay 训练，用 8 卡做完整 A/B 调试**）· 用户直令 · 最高优先
 
-> **背景（运维已核你的 `baize_xmodel25_decay_profile.sh` / `..._v2.py`）**：方向**正确**（baseline `--grad_checkpoint` vs improved `--fast_data --adamw_fused`，`--profile_steps 15` + `timing_log.txt`），**且已把 `SEQ=3712 / ITERS=19980` 写对** ✅。**但脚本用 `--nproc_per_node=8` 跑在 `.29` 同一批卡**，而在训的 80B decay 已占 **58–60GB/卡** ⇒ **必然 OOM**（21:50 端口、21:59 OOM 两次修的都是次生问题，不是根因）。
+> **用户令（2026-10-16 22:1x）**：「pretrain 可以把当前训练停下来调试。」
+> ⇒ **本条覆盖上一版「🚫 不得与在训抢卡」的限制**：现在**允许且要求**先停训、把 8 张卡腾给 profile，测出最优配置后**立刻正式重起**。（当前 run 仅 ~350 步、**首个 ckpt(@2000) 未落盘** ⇒ 停掉无损失；正式重起仍从 `step_532000` 开始。）
 
-**① 🚫 8 卡 profile 一律禁止（不得与在训抢卡）**，改为二选一：
-- **(a) 纯 CPU 侧数据管线计时（首选，零 GPU）**：单起脚本只循环 `next(data_iter)`，对比「现在的 `tolist()`+`list.extend` 版」vs「`np.concatenate`+`torch.from_numpy`+`pin_memory` 版」的 **每 batch 毫秒**、**每次同步 H2D 毫秒**，各跑 50 次取中位数。**瓶颈假说就在数据侧 —— 这一步能直接证实/证伪，且完全不碰 GPU。**
-- **(b) 单卡小 profile**：`CUDA_VISIBLE_DEVICES=0` + `--nproc_per_node=1` + `MBS=1` + `seq=512` + `--profile_steps 10`，只用 1 张卡测 `t_fwd_bwd / t_opt` 与 **GC on/off 的相对差**；**测完立刻退出**。
-**② ⚠️ pkill 安全带**：`cleanup_gpus()` 里 `pkill -9 -f baize_xmodel25_decay_v2` 只匹配 v2 是**对的**；**今后任何 `pkill`/pattern 都不得匹配 `baize_xmodel25_decay_train.py`（在训进程）**。建议脚本内先 `ps` 打印「将杀哪些 PID」再执行。
-**③ 顺序修正**：先做 **(a) 数据侧计时** → 定方案 → **一次性重起**（3712/19980 + fast_data + gc off + timers）→ 重起后再单独做 **MBS A/B**。🚫 在训期间不要反复起停。
-**④ 交付**：数据侧计时表（ms/batch、ms/H2D）+ 重起后 tok/s 对比 + 新 ETA → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit `pretrain perf:`。
+**① 立即停训（腾卡，写进 MEMORY）**：**只** `pkill` 匹配 `baize_xmodel25_decay_train.py` 及其 torchrun（当前 **torchrun PID 2080678 + 8×rank 2082634..2082645**）；⛔ **不要杀 pretrain loop（PID 1294147）**、⛔ 不要碰 `.12`。停后 `nvidia-smi` 确认 8 卡释放（≤1GB），记「停训时刻 + 释放确认」。
+**② 8 卡 A/B 矩阵（逐档跑 · 每档 ≥30 步取稳态 · 每档记 tok/s + 8 卡显存 + util）**：
+
+| 档 | 配置 | 目的 |
+|:--|:--|:--|
+| **A0** | 现版基线（旧数据管线 + `--grad_checkpoint` + MBS2） | 复现 **183K** 基线 |
+| **A1** | A0 + `--fast_data`（`DataLoader(num_workers=8, pin_memory, prefetch_factor=4, persistent_workers)` + `np.concatenate`/`torch.from_numpy` 替 `tolist()/extend` + H2D `non_blocking=True`） | 量化**数据瓶颈** |
+| **A2** | A1 + **关 `--grad_checkpoint`** | 量化 GC 工时 |
+| **A3** | A2 + **MBS 4**（`grad_accum` 30，**GBS 仍 960**） | 量化 MBS 收益 |
+| **A4** | A3 + **MBS 8**（`grad_accum` 15，**GBS 仍 960**；显存不够则跳过并如实记录） | 探 MBS 上限 |
+| **A5** | 最优档 + `--adamw_fused`（若尚未含） | 收尾小项 |
+
+> ⚠️ **MBS 变化必须同步调 `grad_accum`，保持 `GBS=960` 不变**（否则改的是训练语义、不算配方中性；若确要试 GBS，单列一档并标注）。
+**③ 选最优 → 一次性正式重起**：`SEQ=3712 / ITERS=19980 / GBS=960 / MBS=最优 / 起点 step_532000 / 优化器 Muon / LR 1.67e-3→1e-5`，**保留分段计时日志**（`t_data / t_fwd_bwd / t_opt`，每 10 步打印）。🚫 **不得长时间空置 GPU**（profile 目标 ≤1.5h，测完立即起正式 run）。
+**④ 交付**：**A0–A5 对比表**（档 / 改动 / tok/s / 显存 / util / 相对 A0 提升 / 结论）+ **新 ETA** → `MEMORY_PRETRAIN_2B.md` + `daily-memories/`；commit 前缀 `pretrain perf:`。
+**⑤ 纪律**：⛔ 不干扰 data 线；**任务书现 34.9KB ⇒ 本轮须归档已闭合块回 ≤32KB**。
 
 
 ### 🆕 运维指令 · 2026-10-16（⚡ **decay 提速专项：先量化、再修数据管线/GC/MBS**）· 用户直令 · 最高优先
