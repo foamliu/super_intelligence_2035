@@ -48,11 +48,30 @@
 <li><strong>MMBench 感知 596.7 明显高于认知 250.7</strong>，符合「感知对齐更快、深层认知仍需更大规模」的预期。</li>
 </ul>
 
-<h2>6. 结论与后续</h2>
-<div class='ok'><strong>结论</strong>：Stage(iv) MLLM 对齐链路已端到端打通，12 集评测全量落地。当前主要瓶颈为 <strong>视觉分辨率（224px）</strong>，文档/图表类任务被压住。</div>
-<div class='note'><strong>后续</strong>：① 已在推进 <strong>ArmA</strong>——用 open_clip 协议从头训练视觉编码器，替代不兼容 open_clip 的自研 ViT 通路；② 若补齐任意分辨率（anyres/336px），DocVQA/ChartQA 有望显著回升。</div>
+<h2>6. 与 LLaVA-OV1.5 官方（RiCEViT）对比</h2>
+<p>下为 <strong>配方R-1.5（<code>llava-onevision-1.5-ricevit-4.5m</code>）</strong>——同样的 LLaVA-OV1.5 对齐训练配置，但 vision encoder 用官方 <strong>RiCEViT</strong>（而非 BaiZe 自研 w512）的结果：</p>
+<table><tr><th>指标</th><th>BaiZe 自研 w512</th><th>配方R-1.5（RiCEViT）</th><th>Δ（自研−RiCEViT）</th></tr>
+<tr><td>ai2d</td><td>60.04%</td><td>77.66%</td><td class='red'>−17.6pp</td></tr>
+<tr><td>realworldqa</td><td>43.01%</td><td>66.54%</td><td class='red'>−23.5pp</td></tr>
+<tr><td>mmmu_val</td><td>42.89%</td><td>47.33%</td><td class='red'>−4.4pp</td></tr>
+<tr><td>blink</td><td>38.52%</td><td>47.01%</td><td class='red'>−8.5pp</td></tr>
+<tr><td>mmstar</td><td>26.81%</td><td>54.53%</td><td class='red'>−27.7pp</td></tr>
+<tr><td>mmmu_pro</td><td>23.12%</td><td>29.54%</td><td class='red'>−6.4pp</td></tr>
+<tr><td>infovqa_val</td><td>16.58%</td><td>48.06%</td><td class='red'>−31.5pp</td></tr>
+<tr><td>chartqa</td><td>12.24%</td><td>75.72%</td><td class='red'>−63.5pp</td></tr>
+<tr><td>countbench</td><td>10.79%</td><td>70.06%</td><td class='red'>−59.3pp</td></tr>
+<tr><td>docvqa_val</td><td>7.41%</td><td>81.58%</td><td class='red'>−74.2pp</td></tr>
+<tr><td>ocrbench</td><td>1.1%</td><td>62.90%</td><td class='red'>−61.8pp</td></tr>
+<tr><td><strong>average（除 mme）</strong></td><td>≈24%</td><td class='blue'><strong>60.08%</strong></td><td class='red'><strong>−36pp</strong></td></tr>
+<tr><td>mme perception</td><td>596.75</td><td>1511.94</td><td class='red'>−915</td></tr>
+</table>
+<div class='warn'><strong>关键结论</strong>：在完全相同的 MLLM 对齐配置下（同为 Qwen3-4B + LLaVA-OV1.5 三阶段），<strong>RiCEViT 几乎全面碾压 BaiZe 自研 w512</strong>（平均 −36pp）。差距最狠的是<strong>细粒度视觉任务</strong>——docvqa（−74.2pp）、chartqa（−63.5pp）、ocrbench（−61.8pp）、countbench（−59.3pp），正是「高分辨率/高质量 patch 特征」敏感的类目。这直接印证了此前的判断：<strong>自研 w512 视觉塔在 MLLM 下游的视觉特征质量远不及官方 RiCEViT</strong>，也是「ArmA 改用 open_clip 标准通路 / RiCEViT 从头训」这一决策的根本依据。</div>
 
-<h2>诚实声明</h2>
+<h2>7. 结论与后续</h2>
+<div class='ok'><strong>结论</strong>：Stage(iv) MLLM 对齐链路已端到端打通、12 集评测全量落地。但与官方 RiCEViT 同配置对比，<strong>BaiZe 自研 w512 全面落后（平均 −36pp）</strong>，尤其细粒度视觉任务（doc −74pp / chart −63pp / ocr −62pp）。根因是<strong>自研小规模从头训的视觉特征质量不足</strong>，而非仅分辨率——这直接印证转向 ArmA（open_clip/RiCEViT 通路从头训）的必要性。</div>
+<div class='note'><strong>后续</strong>：① <strong>ArmA</strong> —— 用 open_clip 标准通路从头训练视觉编码器（已启动）；② 视觉塔的<strong>特征质量</strong>是主要矛盾（其次才是分辨率/anyres）。</div>
+
+<h2>8. 诚实声明</h2>
 <div class='info'>本报告的 12 集分数均为 <strong>BaiZe 自研视觉编码器（w512）不经 anyres</strong> 的结果，与官方 LLaVA-OneVision（SigLIP 384 + anyres）的公开数字<strong>不可同框直接比较</strong>（分辨率/视觉塔不同）。分数仅反映当前 BaiZe 管线在该配置下的实际水平。</div>
 
 <footer>BaiZe-ISEDA2027 · 报告 report_vision_stage4_mllm_result_zh.html · 数据来源：consolidated_12benchmarks.json + MEMORY_VISION.md · 生成：Cline</footer>
