@@ -40,7 +40,7 @@ LOG="/tmp/baize_xmodel25_decay_profile_$TAG.log"
 
 echo """
 ===== v2 COMPILE PROFILE @ $(date '+%F %T') =====
-  MBS=$MBS, GC=ON, no_sync=True, static_graph=True, compile=True (reduce-overhead)
+  MBS=$MBS, GC=OFF, no_sync=True, compile=True (reduce-overhead + cudagraph_mark_step_begin)
 """
 rm -f "$OUT/train_log.txt" "$OUT/timing_log.txt"
 mkdir -p "$OUT"

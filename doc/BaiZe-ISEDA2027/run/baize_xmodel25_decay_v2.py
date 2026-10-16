@@ -256,6 +256,9 @@ def main():
     # v2 perf optimizations
     parser.add_argument('--compile_model', action='store_true', default=False,
                         help='Use torch.compile() on the model (kernel fusion + CUDA graphs)')
+    parser.add_argument('--compile_mode', type=str, default='reduce-overhead',
+                        choices=['reduce-overhead', 'default'],
+                        help='torch.compile mode: reduce-overhead (CUDA graphs) or default (kernel fusion only)')
     parser.add_argument('--no_ddp_no_sync', action='store_true', default=False,
                         help='Disable DDP no_sync() for grad accumulation (for A/B testing)')
     parser.add_argument('--no_ddp_static_graph', action='store_true', default=False,
@@ -295,8 +298,8 @@ def main():
 
     if args.compile_model:
         if rank == 0:
-            print("  torch.compile: ENABLED (mode=reduce-overhead)", flush=True)
-        model = torch.compile(model, mode="reduce-overhead")
+            print(f"  torch.compile: ENABLED (mode={args.compile_mode})", flush=True)
+        model = torch.compile(model, mode=args.compile_mode)
 
     if world_size > 1:
         ddp_kwargs = dict(device_ids=[local_rank], find_unused_parameters=False)
@@ -406,6 +409,9 @@ def main():
             # This eliminates (grad_accum - 1) × all_reduce operations per optimizer step
             sync_ctx = model.no_sync() if (world_size > 1 and not args.no_ddp_no_sync
                                            and micro_idx < grad_accum - 1) else _null_ctx()
+            # Mark CUDA graph step boundary for torch.compile reduce-overhead mode
+            if args.compile_model:
+                torch.compiler.cudagraph_mark_step_begin()
             with sync_ctx:
                 outputs = model(input_ids=input_ids, labels=labels)
                 loss = outputs.loss / grad_accum
