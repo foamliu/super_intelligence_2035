@@ -61063,5 +61063,698 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-13439",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 110.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13439.json",
+      "stdout_tail": "_scikit-learn-13439\n[run_single] base_commit=a62775e99f2a5ea3d51db7160fad783f6cd8a4c5\n[run_single] ps_len=1234\n[run_single] git reset --hard a62775e99f2a5ea3d51db7160fad783f6cd8a4c5\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=109.7s ==\n[run_single] model_patch: 1015 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13439.json\n[run_single] cleanup: git reset --hard a62775e99f2a5ea3d51db7160fad783f6cd8a4c5\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 40,
+        "p2p_total": 40
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-17655",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 549.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-17655.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 4398 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-17655.json\n[run_single] cleanup: git reset --hard f5e965947af2410ded92cfad987aaf45262ea434\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 9,
+        "p2p_total": 9
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18087",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 1351.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18087.json",
+      "stdout_tail": "ons(+), 1 deletion(-)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Add round-trip fidelity guard in trig_split (fu.py)\n[\u2713] Add same guard in as_f_sign_1 (fu.py)\n[\u2713] Add regression tests (test_fu.py, test_trigsimp/test_simplify)\n[\u2713] Verify fix + run fu/trigsimp/simplify test suites\n\u001b[0m\n\n[run_single] model_patch: 3464 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18087.json\n[run_single] cleanup: git reset --hard 9da013ad0ddc3cd96fe505f2e47c63e372040916\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 2,
+        "p2p_pass": 35,
+        "p2p_total": 35
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-13496",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 223.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13496.json",
+      "stdout_tail": "_scikit-learn-13496\n[run_single] base_commit=3aefc834dce72e850bff48689bea3c7dff5f3fad\n[run_single] ps_len=1371\n[run_single] git reset --hard 3aefc834dce72e850bff48689bea3c7dff5f3fad\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=223.2s ==\n[run_single] model_patch: 4107 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13496.json\n[run_single] cleanup: git reset --hard 3aefc834dce72e850bff48689bea3c7dff5f3fad\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 19,
+        "p2p_total": 19
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18189",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 141.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18189.json",
+      "stdout_tail": "antine\nfrom sympy.abc import m, n\nprint(diophantine(n**4 + m**4 - 2**4 - 3**4, syms=(n,m), permute=True))\n\"\n/nas_train/app.e0031982/miniforge3/envs/py310/bin/python: No module named flake8\n{(-3, -2), (3, -2), (2, -3), (-2, -3), (2, 3), (-2, 3), (-3, 2), (3, 2)}\n\u001b[0m\n\n[run_single] model_patch: 1426 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18189.json\n[run_single] cleanup: git reset --hard 1923822ddf8265199dbd9ef9ce09641d3fd042b9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 41,
+        "p2p_total": 41
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-13497",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 168.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13497.json",
+      "stdout_tail": "__scikit-learn-13497\n[run_single] base_commit=26f690961a52946dd2f53bf0fdd4264b2ae5be90\n[run_single] ps_len=306\n[run_single] git reset --hard 26f690961a52946dd2f53bf0fdd4264b2ae5be90\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=168.3s ==\n[run_single] model_patch: 1807 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13497.json\n[run_single] cleanup: git reset --hard 26f690961a52946dd2f53bf0fdd4264b2ae5be90\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 7,
+        "p2p_total": 7
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-18199",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 136.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18199.json",
+      "stdout_tail": "eselected, 13 warnings in 1.68s\n\u001b[0m\n\u001b[0m$ \u001b[0mpython -m pytest sympy/solvers/tests/test_solveset.py -q -k \"solveset\" 2>&1 | tail -2\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n117 passed, 2 skipped, 12 xfailed, 13 warnings in 39.24s\n\u001b[0m\n\n[run_single] model_patch: 1181 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18199.json\n[run_single] cleanup: git reset --hard ba80d1e493f21431b4bf729b3e0452cd47eb9566\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 113,
+        "p2p_total": 113
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13895",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 1712.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13895.json",
+      "stdout_tail": "mpy-13895\n[run_single] base_commit=4da0b64558e9551a11a99bccc63557ba34f50c58\n[run_single] ps_len=545\n[run_single] git reset --hard 4da0b64558e9551a11a99bccc63557ba34f50c58\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=1712.6s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13895.json\n[run_single] cleanup: git reset --hard 4da0b64558e9551a11a99bccc63557ba34f50c58\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 82,
+        "p2p_total": 82
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13915",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 172.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13915.json",
+      "stdout_tail": "ympy-13915\n[run_single] base_commit=5c1644ff85e15752f9f8721bc142bfbf975e7805\n[run_single] ps_len=680\n[run_single] git reset --hard 5c1644ff85e15752f9f8721bc142bfbf975e7805\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=172.7s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13915.json\n[run_single] cleanup: git reset --hard 5c1644ff85e15752f9f8721bc142bfbf975e7805\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 62,
+        "p2p_total": 62
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-13584",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 282.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13584.json",
+      "stdout_tail": "__scikit-learn-13584\n[run_single] base_commit=0e3c1879b06d839171b7d0a607d71bbb19a966a9\n[run_single] ps_len=386\n[run_single] git reset --hard 0e3c1879b06d839171b7d0a607d71bbb19a966a9\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=282.6s ==\n[run_single] model_patch: 2074 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13584.json\n[run_single] cleanup: git reset --hard 0e3c1879b06d839171b7d0a607d71bbb19a966a9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 6,
+        "p2p_pass": 1,
+        "p2p_total": 3
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13971",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 95.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13971.json",
+      "stdout_tail": "py-13971\n[run_single] base_commit=84c125972ad535b2dfb245f8d311d347b45e5b8a\n[run_single] ps_len=515\n[run_single] git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=95.5s ==\n[run_single] model_patch: 2683 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13971.json\n[run_single] cleanup: git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 102,
+        "p2p_total": 102
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18057",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1170.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-18057.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2654 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-18057.json\n[run_single] cleanup: git reset --hard 62000f37b8821573ba00280524ffb4ac4a380875\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 98,
+        "p2p_total": 98
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-13779",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 118.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13779.json",
+      "stdout_tail": "__scikit-learn-13779\n[run_single] base_commit=b34751b7ed02b2cfcc36037fb729d4360480a299\n[run_single] ps_len=589\n[run_single] git reset --hard b34751b7ed02b2cfcc36037fb729d4360480a299\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=118.2s ==\n[run_single] model_patch: 1975 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-13779.json\n[run_single] cleanup: git reset --hard b34751b7ed02b2cfcc36037fb729d4360480a299\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 18,
+        "p2p_total": 18
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-14024",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 576.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-14024.json",
+      "stdout_tail": "ympy-14024\n[run_single] base_commit=b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] ps_len=685\n[run_single] git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=576.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-14024.json\n[run_single] cleanup: git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 83,
+        "p2p_total": 83
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-14087",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 272.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-14087.json",
+      "stdout_tail": "_scikit-learn-14087\n[run_single] base_commit=a5743ed36fbd3fbc8e351bdab16561fbfca7dfa1\n[run_single] ps_len=2320\n[run_single] git reset --hard a5743ed36fbd3fbc8e351bdab16561fbfca7dfa1\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=271.8s ==\n[run_single] model_patch: 3090 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-14087.json\n[run_single] cleanup: git reset --hard a5743ed36fbd3fbc8e351bdab16561fbfca7dfa1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 171,
+        "p2p_total": 172
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-14092",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 208.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-14092.json",
+      "stdout_tail": "_scikit-learn-14092\n[run_single] base_commit=df7dd8391148a873d157328a4f0328528a0c4ed9\n[run_single] ps_len=3091\n[run_single] git reset --hard df7dd8391148a873d157328a4f0328528a0c4ed9\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=208.5s ==\n[run_single] model_patch: 4461 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-14092.json\n[run_single] cleanup: git reset --hard df7dd8391148a873d157328a4f0328528a0c4ed9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 212,
+        "p2p_total": 212
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18532",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 1,
+      "wall_s": 1800.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18532.json",
+      "stdout_tail": "l -2\\n(no output)\\n\\n<shell_metadata>\\nshell tool terminated command after exceeding timeout 900000 ms. If this command is expected to take longer and is not waiting for interactive input, retry with a larger timeout value in milliseconds.\\n</shell_metadata>\\n\\x1b[0m\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18532.json\n[run_single] cleanup: git reset --hard 74227f900b05009d4eed62e34a166228788a32ca\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 28,
+        "p2p_total": 28
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-14894",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 101.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-14894.json",
+      "stdout_tail": "_scikit-learn-14894\n[run_single] base_commit=fdbaa58acbead5a254f2e6d597dc1ab3b947f4c6\n[run_single] ps_len=1716\n[run_single] git reset --hard fdbaa58acbead5a254f2e6d597dc1ab3b947f4c6\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=101.6s ==\n[run_single] model_patch: 1654 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-14894.json\n[run_single] cleanup: git reset --hard fdbaa58acbead5a254f2e6d597dc1ab3b947f4c6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 85,
+        "p2p_total": 85
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18087",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1452.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-18087.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 4046 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-18087.json\n[run_single] cleanup: git reset --hard 9da013ad0ddc3cd96fe505f2e47c63e372040916\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 2,
+        "p2p_pass": 35,
+        "p2p_total": 35
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-18189",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 143.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-18189.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1441 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-18189.json\n[run_single] cleanup: git reset --hard 1923822ddf8265199dbd9ef9ce09641d3fd042b9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 41,
+        "p2p_total": 41
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-18621",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "glm-5.3-flash",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 758.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18621.json",
+      "stdout_tail": " -c \"\nimport sympy\nM = sympy.Matrix([[1, 2], [3, 4]])\nD = sympy.BlockDiagMatrix(M)\nB = sympy.Matrix(D)\nprint(B)\n\" && python -m pytest sympy/matrices/expressions/tests/test_blockmatrix.py -q 2>&1 | tail -1\nMatrix([[1, 2], [3, 4]])\n17 passed, 13 warnings in 0.36s\n\u001b[0m\n\n[run_single] model_patch: 1527 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-18621.json\n[run_single] cleanup: git reset --hard b17ef6effe278d5b861d65896cc53442a6370d8f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "resolved"
   }
 ]
