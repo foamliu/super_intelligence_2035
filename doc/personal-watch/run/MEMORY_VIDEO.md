@@ -12,9 +12,9 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP03《种子》跑批中（R2V 22/38 落盘）；四章已成片（13/18/01/02）
+PHASE:        S3 放量 → EP03《种子》跑批中（R2V 33/38 落盘）；四章已成片（13/18/01/02）
 已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB）；02_经验 55/55 ✅（R2V 32 + T2V 23 · 成片 95.6MB）；03_种子 生成脚本(R2V38+T2V14) + 收尾脚本(字幕+合成) 就绪 ✅
-当前动作:     EP03《种子》跑批核验（R2V 22/38 落盘 · SHOT-29 进行中 · 场景参考图 11/11 + 合影拼版 1/1 在位）+ 复核收尾脚本 + 回写记忆 + commit 两仓
+当前动作:     EP03《种子》跑批核验（R2V 33/38 落盘 · SHOT-45 进行中 · 场景参考图 11/11 + 合影拼版 1/1 在位）+ 收尾脚本 dry-run 复核 + 回写记忆 + commit 两仓
 下一步:       EP03 跑批收尾（等 R2V 38 + T2V 14 全落盘）→ gen_ep03_subtitles.py → synth_ep03.py（master + 硬字幕成片）→ ffprobe/libass QC
 阻塞:         无
 ERROR_COUNT:  0
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-16（EP03《种子》跑批核验 R2V 22/38 + 复核收尾脚本 + 回写记忆 + commit 两仓）
+- **上次唤醒**：2026-10-16（EP03《种子》跑批核验 R2V 33/38 + 收尾脚本 dry-run 复核 + 回写记忆 + commit 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-16 · S3 放量 · EP03《种子》跑批核验（R2V 33/38）+ 收尾脚本 dry-run 复核 ✅**：本轮核验 EP03 后台跑批健康（较上轮 +11 镜）+ 收尾脚本 dry-run 全绿 + 回写记忆。
+  - **git 同步**：短剧仓 up-to-date（工作区仅历史未跟踪日志/pid/_card_preview/mcp_server 等）；记录仓 up-to-date。
+  - **自检**：ComfyUI 可达（RTX 4090 16GB · 空闲 11.6GB）· 队列 running 1 / pending 0 = EP03 R2V 正常 · ffmpeg/ffprobe 在（2025-10-12 build）· MCP comfyui-drama/web-search 可用。
+  - **跑批核验**：后台 `_launch_ep03.cmd`（R2V 脚本 PID 15560）在跑；`OUTPUT/03_种子/videos/` **33/38 R2V** 落盘（SHOT 02/04/05/06/08/09/10/11/12/14/15/17/18/20/21/22/23/24/25/26/27/28/29/31/32/34/35/38/39/40/41/43/44；SHOT-45 进行中），err.log 0 字节。**不碰正在跑的队列**（§3 铁律）。
+  - **剩余**：R2V 5 镜（45 进行中 / 46/47/49/52）+ T2V 14 镜（01/03/07/13/16/19/30/33/36/37/42/48/50/51）—— 全落盘后方可收尾。
+  - **收尾脚本 dry-run 复核**：`gen_ep03_subtitles.py --dry-run`（145 条 / 全片 267.96s · SFX_ONLY 11 无台词镜与逐镜表一致）+ `synth_ep03.py --dry-run`（33/52 镜在位 / 缺 19 = 上述 5 R2V + 14 T2V / 有缺镜即中止）均正常，等跑批收尾即可直接跑。
+  - **commit**：记录仓（MEMORY + daily + PLAN）。本轮无短剧仓代码改动（生成/收尾脚本上轮已提交，OUTPUT 二进制 gitignored）。
 
 - **2026-10-16 · S3 放量 · EP03《种子》跑批核验（R2V 22/38）+ 复核收尾脚本 ✅**：本轮核验 EP03 后台跑批健康 + 复核收尾脚本就绪 + 回写记忆。
   - **git 同步**：短剧仓 up-to-date（`## main...origin/main`，工作区仅历史未跟踪日志/`_card_preview`/`mcp_server` 等）；记录仓 `pull --rebase --autostash` Fast-forward（BaiZe/ZhuLong 等线 16 files）。
