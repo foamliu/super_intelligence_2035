@@ -5,6 +5,11 @@
 
 > **用户令（2026-10-16）**：「pretrain：放行 80B decay 实验。」
 
+**🔧 用户纠正：用 NeMo 训 Xmodel，别 find 全树找 muon**：
+- NeMo/Megatron-Core 0.16.1 **自带 Muon**（`megatron/core/optimizer/muon.py`），之前 BaiZe P-8 的 `dist_muon` 就是 NeMo 训的。
+- 🚫 **不要 `find /nas_train 全树` 找 muon.py**（重 IO 全树遍历，又慢又蠢，还被 MEMORY 铁律禁止）。
+- 真正要做两件事：① **Xmodel-2.5 HF ckpt → Megatron/NeMo 格式转换**；② **复用 BaiZe P-8 的 muon 训练脚本**，把模型换成 Xmodel。
+
 **① 撤销「先计划不起训」**：放行按计划书 `reports/report_xmodel25_decay_80b_plan_zh.html` 执行。
 
 **② 执行要点（按计划书）**：
