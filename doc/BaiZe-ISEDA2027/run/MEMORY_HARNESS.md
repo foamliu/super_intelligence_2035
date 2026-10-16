@@ -2,11 +2,11 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-14 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-14→15 glm53 7×300 任务**：Base URL 全部 `/v1`（非 `/cloud/v1`）✅。curl /v1 → 200 ✅。
-> **🔴 DATA-LOSS BUG FIXED (2026-10-15 10:03)**：`save_results()` 在 JSON parse error 时静默 `current=[]` → 只写当前 harness 条目 → **843 条数据丢失**（codex 300/deepseek 300/opencode 126/cline-patched 117）。已从 git R400 恢复 1178 条 + 合并 8 条新条目 = **1186 条**。修复 `save_results`：① parse error 时 **skip write**（不再 `current=[]`）② atomic write（tmpfile+rename）③ lock file `open('a')` 不截断。全部 7 路已重启（`--resume`，跳过已完成的）。
-> **P1-2 rerun** ✅ DONE：rerun_blocked.py 54/54 完成（4 resolved, 42 pbf, 8 blocked）。累计 kimi 574→621 resolved (29.6%)。
-> **glm53 7×300** 🔄 **RUNNING (R412, 00:26)**：4 路补跑进行中。数据 1989/2100 (520 resolved, 26.1%)，111 pending。claude-code 300(80) DONE ✅ · codex 300(80) · deepseek 300(71) · hermes 300(81) · opencode 291(83) 9pending · cline-patched 283(75) 17pending · pi 215(50) 85pending。4 进程活 (PID 657743/660463/661874/663134, etimes~4800s)。quota-blocked=11（django-16873×7 + sympy-23262×4，已耗尽 3 次重试）。429 rate-limit 间歇但 300s 重试兜底有效。
+> 🔧 **运维指令（2026-10-16 · 最高优先 · 每轮唤醒必读）**：
+> **🆕 2026-10-16 重启补完 188 条**：用 `--resume` 重启未跑完的 4 路（opencode/cline/claude/pi）。
+> **🔴 DATA-LOSS BUG #2 FIXED (2026-10-17 01:30)**：`load_results()` 在 JSON parse error 时**重命名**损坏文件 → `save_results()` 读到空文件 → 仅写当前 harness → **丢失 3 个 DONE harness 数据**（codex/deepseek/hermes 共 900 条）。根因=load_results 和 save_results **双重读取**：load_results 先 rename，save_results 找不到文件→current=[]。已从 `.corrupt` 备份恢复 1994 条 + 合并当前 1110 条 = **2011 条**。修复：① `load_results` **不再 rename**（留文件在原位）② `save_results` 改为**容错解析+恢复写入**（raw_decode salvage → merge → write）。
+> **glm53 7×300** 🔄 **RUNNING (R413, 01:39)**：2 路补跑中（cline-patched 11pending / pi 84pending）。数据 **2012/2100** (530 resolved, 26.3%)，88 pending。5 路 DONE ✅：codex 300(80) · deepseek 300(71) · hermes 300(81) · opencode 300(87) · claude-code 300(80)。cline-patched 290(81) · pi 222(50)。McNemar: 2006/2012 agree(99.7%), b=2 c=4, p=0.688。2 进程活 (PID 3849607/3849629, nice=10)。
+> **P1-2 rerun** ✅ DONE：kimi 574→621 resolved (29.6%)。
 
 > 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
 > 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
@@ -14,16 +14,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        glm53 7x300 RUNNING — 4 路补跑中 (1989/2100 done, 520 resolved, 111 pending)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 7x300 阶段性中文报告 ✅ (McNemar p=0.688) · ⑮ R411 重启 4 路 ✅
-当前动作:     R412 (00:26): 监控 4 路补跑。实测 1989/2100 (520 resolved, 26.1%)，较 R411 的 1964 增长 +25 entries。claude-code 已达 300/300 DONE(80 resolved)。cline-patched 283/300(75, 17pending, on sympy-21171) · opencode 291/300(83, 9pending, on sympy-22840 eval中) · pi 215/300(50, 85pending, on sphinx-8435)。4 进程均存活 (PID 657743/660463/661874/663134, etimes~4800s, ppid=1)。quota-blocked=11（3 次重试耗尽，不再重试）。退出根因仍是 429 并发限流但有 300s 重试兜底有效。
-下一步:       ① 继续监控至 3 路完成（pi 最慢 85 pending）② 全部完成或再次退出→出最终版报告(McNemar 全量配对) ③ 若再次退出记根因+重试(≤3)，仍不成以现状定稿 ④ 恢复 kimi configs
-阻塞:         <无> — 4 路运行中；pi 85 pending 是瓶颈（~2-3h ETA）
+PHASE:        glm53 7x300 RUNNING — 2 路补跑中 (2012/2100 done, 530 resolved, 88 pending)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ interim McNemar ✅ · ⑬ DATA-LOSS BUG FIX #1 ✅ · ⑭ glm53 中文报告 ✅ (McNemar p=0.688) · ⑮ R411 重启 4 路 ✅ · ⑯ DATA-LOSS BUG #2 FIX + 数据恢复 ✅ · ⑰ 报告刷新 (530/2012) ✅
+当前动作:     R413 (01:39): DATA-LOSS BUG #2 修复 + 数据恢复 + 重启 2 路补跑。发现 load_results 重命名损坏文件导致 save_results 丢数据（3 个 DONE harness 900 条丢失）。从 .corrupt 备份恢复 1994 条 + 合并 1110 条 = 2011 条。修复 load_results（不再 rename）+ save_results（容错 salvage+merge+write）。重启 cline-patched(11pending) + pi(84pending)。报告刷新至 530/2012 (26.3%)。2 进程活 (PID 3849607/3849629, etimes~220s)。
+下一步:       ① 监控 2 路至完成（pi 84 pending ~3-4h ETA）② 全部完成→出最终版报告(McNemar 全量 2100 配对) ③ 若再次退出记根因+重试(≤3)，仍不成以现状定稿 ④ 恢复 kimi configs
+阻塞:         <无> — 2 路运行中；pi 84 pending 是瓶颈（~3-4h ETA）
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- 2026-10-17 00:26 —— **R412: 监控 4 路补跑，进程健康推进** —— 4 进程均存活 (etimes~4800s)。数据 1964→1989 (+25 entries)，520 resolved (26.1%)。claude-code 达 300/300 DONE(80) ✅。cline-patched 283/300(75, 17pending) · opencode 291/300(83, 9pending) · pi 215/300(50, 85pending)。quota-blocked=11 (django-16873×7 + sympy-23262×4, 3 次重试耗尽)。日志在 .nfs* 文件 (NFS silly-rename) — cline 00:21 update, opencode 00:25 update (eval中), pi 00:19 update。无需干预，进程自跑中。📦 体积：TASK=31013B(30.3KB ✓) / MEMORY≈31.7KB(31.0KB ✓) / 归档 0B。
+- 2026-10-17 01:39 —— **R413: DATA-LOSS BUG #2 修复 + 数据恢复 + 重启 2 路补跑** —— 发现 `glm53_pilot_results.json` 仅 1110 条（4 harness），缺失 codex/deepseek/hermes（3 个 DONE harness 900 条丢失）。根因：`load_results()` 在 JSON parse error 时**重命名**损坏文件 → `save_results()` 读到空文件 → `current=[]` → 仅写当前 harness。`.corrupt.1792168873.json` 备份含全 7 harness 1994 条（525 resolved）。修复：① 停 3 进程 ② 从 corrupt 文件 raw_decode 恢复 1994 条 + 合并当前 1110 条 = 2011 条 ③ `load_results` 不再 rename（留文件原位）④ `save_results` 改为容错 salvage+merge+write（raw_decode 解析损坏文件 → 合并 → 原子写入）⑤ 重启 cline-patched(11pending PID 3849607) + pi(84pending PID 3849629) ⑥ 报告刷新：530/2012 (26.3%)，McNemar p=0.688，5 个 DONE harness 中 4 个 delta=0。📦 体积：TASK=31013B(30.3KB ✓) / MEMORY≈31.5KB(30.8KB ✓) / 归档 0B。
 - 2026-10-16 23:05 —— **R411: 重启 4 路补跑 glm53 7×300** —— 运维指令「重启未跑完的 4 路评测把 188 条补完」。实测数据已增至 1960/2100 (140 pending: cline 27/opencode 20/claude 1/pi 92)，非 188。退出根因=API rate-limit(429)耗尽（.nfs 日志见 [QUOTA] waiting 1809s retry 3/3 → quota-blocked → 进程退出；单请求 curl 200 → 并发限流）。curl /v1→200 ✅ gw_proxy 9092→200 ✅。launch_glm53_7x300.sh 因 opencode/pi 配置漂移(无 'gw' provider)KeyError 中止 → 直接修配置加 gw provider→9092。写 restart_glm53_4routes.sh（仅 4 路，codex/deepseek/hermes 已 DONE 不重启）→ setsid 启动 PID 657743/660463/661874/663134 (ppid=1, nice=10)。resume: cline 29pending/opencode 23/claude 7/pi 97=156(含重试 quota-blocked)。已 +4 entries (1964)。3 路首实例 429→300s 重试中。📦 体积：TASK≈29.9KB ✓ / MEMORY 见下。
 - 2026-10-16 21:44 —— **glm53 7×300 报告刷新 + 评测已停止** —— 发现评测进程已全部退出（ps 无 harness 进程），数据停在 1912/2100（188 pending）。更新 `gen_report_glm53_7x300_zh.py` 诚实声明：「仍在后台运行」→「已停止（进程已退出）」。重新生成报告：glm53 485/1912 (25.4%) vs kimi 574/2100 (27.3%)。McNemar: 1912 配对, 一致 99.7% (1906/1912), b=2 c=4, χ²=0.67, 精确 p=0.688。3 个已完成 harness (codex 80/deepseek 71/hermes 81) 逐一相同。结论不变。📦 体积：TASK=29906B(29.2KB ✓) / MEMORY≈31.2KB(30.5KB ✓) / 归档 0B。
 - 2026-10-16 20:34 —— **glm53 7×300 阶段性中文报告刷新** —— 数据 1858→1881 entries（+23）。glm53 467/1881 (24.8%) vs kimi 574/2100 (27.3%)。McNemar p=0.688。结论不变。

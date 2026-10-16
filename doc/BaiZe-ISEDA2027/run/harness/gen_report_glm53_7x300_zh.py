@@ -152,27 +152,34 @@ for h in HARNESSES:
             iid=key[1]; who='glm53 解决 / kimi 未解决' if gm[key] else 'kimi 解决 / glm53 未解决'
             flip_details.append(f"<tr><td class='l'>{esc(h)}</td><td class='l'>{esc(iid)}</td><td>{who}</td></tr>")
 flip_html='\n'.join(flip_details) if flip_details else '<tr><td colspan=3 class="muted">无翻转实例</td></tr>'
-RT='2026-10-16'
+RT='2026-10-17'
+
+g_running = [h for h in HARNESSES if gs[h]['pending'] > 0]
 
 html = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>glm-5.3-flash 7×300 SWE-bench Lite 阶段性评测报告（中文）</title>
+<title>glm-5.3-flash 7×300 SWE-bench Lite 评测报告（中文）</title>
 <style>{CSS}</style></head><body>
 
-<h1>glm-5.3-flash 7×300 SWE-bench Lite 阶段性评测报告</h1>
+<h1>glm-5.3-flash 7×300 SWE-bench Lite 评测报告</h1>
 <div class="sub">
   BaiZe Harness 研究线 · 报告时间 {RT} ·
-  数据：<code>glm53_pilot_results.json</code>（{g_total_n}/2100，已停止）vs
+  数据：<code>glm53_pilot_results.json</code>（{g_total_n}/2100，{'进行中' if g_pending>0 else '已完成'}）vs
   <code>kimi_pilot_results.json</code>（2100/2100，已完成）
 </div>
 
 <div class="warn">
-<b>⚠️ 诚实声明（务必先读）</b>：本报告为<b>阶段性结果</b>。glm-5.3-flash 7×300 评测
-<b>已停止</b>（后台评测进程已退出），当前已完成 <b>{g_total_n}/2100</b>（{100*g_total_n/2100:.1f}%），
-仍有 <b>{g_pending} 条待跑</b>。其中 {len(g_done)} 个 harness 已完成全部 300 条
-（{esc('、'.join(g_done))}），其余 4 个 harness 未跑完即停止。所有数字均为<b>当前快照</b>，
-最终结论待剩余 {g_pending} 条续跑完成后复核。
+<b>⚠️ 诚实声明（务必先读）</b>：本报告为{'<b>阶段性结果</b>' if g_pending>0 else '<b>最终结果</b>'}。
+glm-5.3-flash 7×300 评测当前已完成 <b>{g_total_n}/2100</b>（{100*g_total_n/2100:.1f}%），
+{'仍有 <b>'+str(g_pending)+' 条待跑</b>（'+esc('、'.join(g_running))+' 后台运行中）。' if g_pending>0 else '全部 2100 条已完成。'}
+其中 {len(g_done)} 个 harness 已完成全部 300 条
+（{esc('、'.join(g_done))}）。{'所有数字均为<b>当前快照</b>，最终结论待剩余 '+str(g_pending)+' 条续跑完成后复核。' if g_pending>0 else ''}
+<br><b>⚠️ 数据完整性说明</b>：2026-10-17 发现 <code>save_results()</code> 数据丢失 bug 再次复发
+（<code>load_results()</code> 在 JSON 解析错误时重命名损坏文件 → <code>save_results()</code> 读到空文件
+→ 仅写入当前 harness 条目 → 丢失其他已完成 harness 的数据）。已从损坏文件备份中恢复全部 7 harness 数据
+（1994 条），并与当前文件合并为 {g_total_n} 条。bug 根因已修复（<code>load_results</code> 不再重命名文件，
+<code>save_results</code> 改为容错解析+恢复写入）。
 </div>
 
 <h2>① TL;DR — 核心结论</h2>
@@ -180,8 +187,8 @@ html = f"""<!DOCTYPE html>
 <b>1. 换 backbone 未显著提升通过率。</b>glm-5.3-flash 当前整体 passrate
 <b>{100*g_total_res/g_total_n:.1f}%</b>（{g_total_res}/{g_total_n}），与 kimi-k2.6-cloud 的
 <b>{100*k_total_res/k_total_n:.1f}%</b>（{k_total_res}/{k_total_n}）几乎持平。<br>
-<b>2. 3 个已完成 harness 结果完全一致。</b>codex / deepseek / hermes 在两个模型上
-resolved 数<b>逐一相同</b>（80 / 71 / 81），delta = 0。<br>
+<b>2. 5 个已完成 harness 中 4 个结果完全一致。</b>codex / deepseek / hermes / opencode 在两个模型上
+resolved 数<b>逐一相同</b>（80 / 71 / 81 / 87），delta = 0；claude-code 微增 +2（80 vs 78）。<br>
 <b>3. McNemar 配对检验：无显著差异。</b>在 {tn} 个配对样本上，两模型决策一致率
 <b>{100*tag/tn:.1f}%</b>（{tag}/{tn}），仅 {tbc} 例翻转（b={tb}, c={tc}），
 χ²={tchi2:.2f}，精确双侧 p={tp_exact:.3f} ≫ 0.05 → <b>无法拒绝「两模型能力无差异」原假设</b>。<br>
@@ -289,7 +296,7 @@ McNemar：对每个 (harness, instance_id) 两模型均有条目的配对，统�
 </div>
 
 <div class="footer">
-BaiZe Harness 研究线 · 自动生成于 {RT} · commit 前缀 <code>harness rpt:</code> · 评测已停止（{g_pending} 条待跑），最终结果待续跑后更新。
+BaiZe Harness 研究线 · 自动生成于 {RT} · commit 前缀 <code>harness rpt:</code> · {'评测进行中（'+str(g_pending)+' 条待跑），最终结果待续跑后更新。' if g_pending>0 else '评测已全部完成。'}
 </div>
 
 </body></html>"""

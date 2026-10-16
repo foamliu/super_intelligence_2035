@@ -315,19 +315,14 @@ def load_results():
                 try:
                     return json.loads(SUMMARY_PATH.read_text())
                 except Exception as e:
-                    # Don't silently return [] — that causes data loss when
-                    # save_results later writes only this harness's entries.
-                    # Instead, rename the corrupt file for later analysis and
-                    # return [] so the caller can continue.
-                    corrupt_backup = SUMMARY_PATH.with_suffix(
-                        f".corrupt.{int(time.time())}.json"
-                    )
-                    try:
-                        os.rename(str(SUMMARY_PATH), str(corrupt_backup))
-                        print(f"  [WARN] Results JSON corrupt ({e}), "
-                              f"backed up to {corrupt_backup.name}")
-                    except OSError:
-                        pass
+                    # CRITICAL FIX (2026-10-17): Do NOT rename the corrupt file
+                    # here!  Previously load_results renamed it, then save_results
+                    # found no file → current=[] → wrote ONLY this harness's
+                    # entries → destroyed all other harnesses' data (843+ entries
+                    # lost twice).  Now: just return [] and leave the corrupt file
+                    # in place.  save_results will salvage+merge+recover it.
+                    print(f"  [WARN] Results JSON corrupt on load ({e}); "
+                          f"leaving file in place for save_results to salvage")
                     return []
             return []
         finally:
@@ -363,21 +358,46 @@ def save_results(results, harness=None):
                 try:
                     current = json.loads(SUMMARY_PATH.read_text())
                 except Exception as e:
-                    # CRITICAL FIX: do NOT set current=[] and write — that
-                    # destroys other harnesses' data.  Instead, back up the
-                    # corrupt file and skip this write entirely.
+                    # CRITICAL FIX (2026-10-17): Previously this block renamed
+                    # the corrupt file and returned (skipped write).  But
+                    # load_results had ALREADY renamed it (now fixed), so
+                    # save_results found no file → current=[] → wrote only this
+                    # harness's entries → destroyed all other harnesses' data.
+                    # Now: SALVAGE what we can from the corrupt file using
+                    # raw_decode (tolerant partial-parse), use that as `current`,
+                    # then continue with merge+write normally.  This recovers
+                    # other harnesses' data instead of losing it.
+                    print(f"  [WARN] Results JSON corrupt on read ({e}); "
+                          f"attempting salvage via tolerant parse")
+                    current = []
+                    try:
+                        raw = SUMMARY_PATH.read_bytes()
+                        decoder = json.JSONDecoder()
+                        s_idx = 0
+                        while s_idx < len(raw):
+                            try:
+                                obj, end = decoder.raw_decode(
+                                    raw[s_idx:].decode('utf-8', 'replace'))
+                                if isinstance(obj, list):
+                                    current.extend(obj)
+                                s_idx += end
+                            except json.JSONDecodeError:
+                                s_idx += 1
+                                if s_idx > len(raw):
+                                    break
+                        print(f"  [SALVAGE] Recovered {len(current)} entries "
+                              f"from corrupt file")
+                    except Exception as salvage_e:
+                        print(f"  [SALVAGE] Failed ({salvage_e}); "
+                              f"current=[] (other harnesses may be lost)")
+                        current = []
+                    # Back up the corrupt file for later analysis
                     corrupt_backup = SUMMARY_PATH.with_suffix(
-                        f".corrupt.{int(time.time())}.json"
-                    )
+                        f".corrupt.{int(time.time())}.json")
                     try:
                         os.rename(str(SUMMARY_PATH), str(corrupt_backup))
-                        print(f"  [ERROR] Results JSON corrupt on read ({e}); "
-                              f"backed up to {corrupt_backup.name}, SKIPPING write "
-                              f"to prevent data loss")
                     except OSError:
-                        print(f"  [ERROR] Results JSON corrupt ({e}) and "
-                              f"backup failed; SKIPPING write")
-                    return  # <-- do NOT write; preserve what we have
+                        pass
             idx = {}
             for i, r in enumerate(current):
                 idx[(r.get("instance_id"), r.get("harness"))] = i
