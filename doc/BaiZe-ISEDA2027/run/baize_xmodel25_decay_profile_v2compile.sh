@@ -56,7 +56,7 @@ mkdir -p "$OUT"
     --total_steps "$ITERS" --warmup_steps "$WARMUP" \
     --lr "$LR" --min_lr "$MIN_LR" \
     --profile_steps 20 --log_interval 5 \
-    --grad_checkpoint --compile_model > "$LOG" 2>&1
+    --compile_model > "$LOG" 2>&1
 
 rc=$?
 echo "===== v2 COMPILE PROFILE END @ $(date '+%F %T') rc=$rc ====="
