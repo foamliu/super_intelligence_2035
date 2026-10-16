@@ -1,6 +1,21 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-16（📄 写 Stage(iv) 训练+12集评测报告 → 🚀 启动 ArmA open_clip 从头训 encoder）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16）**：「vision：把上一件工作，包括训练、12 集 lmms-eval 评测，写成中文 html 报告；然后启动 vision ArmA（open_clip 从头训 encoder）。」
+
+**① 写报告（先做，纯写作零 GPU）**：
+- 覆盖 Stage(iv) MLLM 全链路：Stage-1/1.5/2 训练（loss / 步数 / ckpt）+ Part A/B 验收（open_clip 协议 + LLaVA-OV 兼容导出）+ **12 集 lmms-eval 评测结果**（ai2d 60.04% · realworldqa 43.01% · mmmu 42.89% · blink 38.52% · mmstar 26.81% · mmmu_pro 23.12% · infovqa 16.58% · chartqa 12.24% · countbench 10.79% · docvqa 7.41% · ocrbench 1.1% · mme 596.7+250.7，来源 `consolidated_12benchmarks.json`）。
+- 中文自包含 HTML：`reports/report_vision_stage4_mllm_result_zh.html`。
+
+**② 启动 ArmA（open_clip 从头训 encoder）**：
+- 用 **open_clip 协议/框架从头训练** vision encoder（🚫 不是自研 `vision/models.py` 框架），训完能被 `open_clip.create_model_and_transforms` 加载 + 直接走 open_clip/lmms-eval 评测，消除「自研架构不兼容 open_clip → 评测卡壳」的坑。
+- 配置方向：open_clip 标准 ViT（推荐 **ViT-B/16 224px，86M，比自研 126.8M 更快**）+ 从头对比学习；数据复用现有图文对（GPIC/CC12M/Amshaker）；**主判据 ProtB**，对齐 ④-4ep 口径。
+- 起训前回报「架构/规模 + 数据量 + 步数 + LR + ETA」；`.12` 8×H100 已空，直接起训。
+
+**③ 纪律**：ArmA 起训前 `nvidia-smi` 确认空窗；🚫 与 data 下载错峰 IO；commit 前缀 `vision report:` / `vision armA:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-16（📋 评测集缩编为 12 集）· 用户直令 · 最高优先
 
 > **用户令（2026-10-16）**：「把评测集缩编到 12 集：ai2d, blink, chartqa, docvqa_val, infovqa_val, mme, mmmu_val, mmstar, ocrbench, realworldqa, countbench, mmmu_pro_standard。」
