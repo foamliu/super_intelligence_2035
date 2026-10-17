@@ -1,27 +1,16 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
-### 🆕 运维指令 · 2026-10-17（✅ Docker 权限已就绪 · 复查推进 TB 2.0）· 用户直令
+### 🆕 运维指令 · 2026-10-17 20:0x（🚨 P0 抢修：重启 ops 中继 + 重跑 3 个失败 oracle 任务）
 
-> **用户令（2026-10-17）**：harness 若需 sudo 可用（密码另由运维掌握，🚫 不落盘不落库）；但运维已实测 Docker 权限**已 OK**。
-
-**① Docker 复查（实测结论，harness 只需 `docker ps` 复核）**：`id -nG` 已含 `docker` 组；`docker ps` **无需 sudo 即可跑**（daemon 正常）。→ TB 2.0 的「Docker 权限」blocker **已解除**，不必再等 ops usermod。
-
-**② 剩余 blocker**：仅 `terminal-bench@2.0` 数据集需 `harbor auth login`（GitHub OAuth，另行授权）。
-
-**③ 行动**：Docker OK 后 → 推进 T1 剩余（dataset 拉取 + `oracle 5×`）→ T2 正式横评。若后续哪步确需 root（如改系统级配置），回报运维，由运维提供 sudo 执行，🚫 agent 不自行猜测 sudo 用途。
-
-### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .29 /tmp 残留）· 用户直令
-
-> **用户令（2026-10-17）**：「让 harness 清理 .29 的 /tmp。」
-
-**① 清理范围**：harness 线在 `.29` 的 `/tmp` 下旧残留（>1 天未动用的 claude-code/opencode 旧 workdirs 拷贝、rootfs 克隆、旧 log、旧测试床临时等）。⚠️ 运维已清掉最大头 `/tmp/claude-6218`（27G）。
-
-**② 纪律**：
-- 先 `du -sh /tmp/* 2>/dev/null | sort -rh | head -20` 盘点，**只清本线自己的、确认 >1 天未动**的，把要删清单抄进心跳再删。
-- 🚫 不删：`/dev/shm/harness_work/workdirs/`（活跃评测在那边，不在 /tmp）、下载/克隆中、别线在途文件、<1 天的、`/tmp/systemd-*`。
-- ✅ 清完报 `df -h /tmp` 前后对比 + 释放量。
-- commit 前缀 `harness tmp-clean:` · 任务书 >32KB 自滚归档。
+> **实测状态**：TB2.0 `oracle -k 5` = **2/5**（✅ adaptive-rejection-sampler / break-filter-js-from-html；❌ **bn-fit-modify / build-cython-ext / build-pmars**，构建期拉包失败，`reward=0.0`）。**5/5 之前禁止 7×5 pilot 与 7×89。**
+> **另**：ops 中继被误杀（重启脚本 `pkill -f` 自匹配），当前无中继。按序只做这三件事：
+> 1) **安全重启中继**（启动命令必须写进脚本文件，禁止与 `pkill` 同行）：
+>    `printf '%s\n' '#!/bin/bash' 'cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run' 'pgrep -f "[o]ps_relay[.]sh" | xargs -r kill' 'sleep 2' 'setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &' > /tmp/restart_relay.sh && bash /tmp/restart_relay.sh`
+> 2) **带 overlay 重跑 3 个失败任务**（config `/tmp/tb_oracle_cfg_117.yaml`；overlay `/tmp/network-host-overlay.yml`）：
+>    `harbor run -p ~/terminal-bench/bn-fit-modify -p ~/terminal-bench/build-cython-ext -p ~/terminal-bench/build-pmars --agent oracle -n 3 -c /tmp/tb_oracle_cfg_117.yaml -o /tmp/oracle_fix118`
+> 3) 3/3 通过 → 全量 `harbor run -d terminal-bench@2.0 --agent oracle -k 5` 直到 **5/5**；per-task reward 写回 `MEMORY_HARNESS.md`；未过记 blocker 原文。
+> 📦 10-17「Docker 权限」「清 /tmp」已归档 → `ARCHIVE_OPERATOR_HARNESS.md`「归档块 M」；Docker 已 OK，`/tmp` 自清。
 
 ### 🆕 运维指令 · 2026-10-17（🧪 Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud）· 用户直令 · 最高优先（T1；T0 仍是 glm53 收口）
 

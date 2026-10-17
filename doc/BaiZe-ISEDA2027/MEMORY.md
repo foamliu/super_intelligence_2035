@@ -10,6 +10,16 @@
 - 任务书 `run/WATCH_RECRUIT_TASK.md` 顶部新块（R25）：本轮唤醒重判 R24 的「边界 9 / 在校 17」→ 应届/在校全部 `not-eligible`（校招），产出 **§十二 R25**；已发 5 封不撤回；06:00 只在「1–5 年 + 非应届 + 证据齐」A/B 里选。
 - **边界**：只约束全职岗；**实习岗不受影响**（18:00 实习专场照常）。任务书瘦身：R24 块已归档（块 L），TASK **32,752B（32.0KB ✓）**。
 - 详见 `daily-memories/2026-10-17.md`。
+### 🩺 harness 实况：oracle **2/5** + ops 中继被我误杀（已下发抢修）
+- **harness loop 未卡死**：进程存活；18:24 那轮 cline `run timed out after 1500s` 被杀 → MEMORY 停在 18:14；19:30 又正常唤醒。
+- **oracle -k 5 已于 18:04:54–18:12 跑完 = 2/5**（✅ adaptive-rejection-sampler / break-filter-js-from-html；❌ bn-fit-modify / build-cython-ext / build-pmars = **构建期拉包失败**）。⇒ 按任务书「oracle 必须 5/5」，**不得进 7×5 / 7×89**。
+- **数据集已本地齐全**：`~/terminal-bench/` 89 个 `task.toml`，registry 13.6MB → **跑评测不需要 GitHub 认证**（OAuth 三次兑换失败均为 code/verifier 不匹配，已放弃）。
+- **docker 组**：cline/loop **有**（gid 122）；**relay 没有** → RUN_ID 117 的 harbor 报 `Docker daemon is not running`。
+- 🔴 **事故（我的责任）**：RUN_ID 117 的重启脚本把启动命令与 `pkill -f "[o]ps_relay.sh"` 放在同一条命令行 → **自匹配，把中继连同执行重启的 shell 一起杀掉**，RUN_ID 118 未被拾取。教训：**重启必须把启动命令写进脚本文件，再用单独一次调用执行**。
+- 已下发 `run/BAIZE_HARNESS_TASK.md` 顶部 **P0 抢修块**（32,759B）：① 安全重启中继；② 用 `/tmp/tb_oracle_cfg_117.yaml`（`environment.extra_docker_compose=/tmp/network-host-overlay.yml`）重跑 3 个失败任务；③ 3/3 后再跑全量 oracle -k 5 到 5/5；**5/5 前禁止 pilot/全量**。原「Docker 权限」「清 /tmp」两块归档为「归档块 M」。
+- 详见 `daily-memories/2026-10-17.md`。
+
+
 
 
 ### 🧪 harness 新指令：Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud

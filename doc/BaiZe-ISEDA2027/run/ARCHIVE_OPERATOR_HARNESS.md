@@ -1022,3 +1022,30 @@ timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -3
 ② 前后对比与交付：新结果一律独立 JSON（fix3 / astropy / rerun）；更新 `report_harness_eval_fix_rerun.html` 追加 per-repo before/after；报累计 resolved 数 + cline resolve rate（29.4%→?），与 P0 预估（~+22/harness）对照；每项给证据（`test_output.txt` 前后 / rootfs 变化 / 命令）。
 
 ③ 纪律：🚫 不占 GPU · 🚫 不改已发布数值 · 🚫 P1-3 Docker 冻结 · 全批幂等可续 · commit 前缀 `harness fix:` · 任务书 >32KB 自滚归档。
+
+---
+
+## 归档块 M · 2026-10-17 两条运维块（Docker 权限复查 + 清理 .29 /tmp）— 2026-10-17 20:0x 运维搬出（原文，未改）
+
+### 🆕 运维指令 · 2026-10-17（✅ Docker 权限已就绪 · 复查推进 TB 2.0）· 用户直令
+
+> **用户令（2026-10-17）**：harness 若需 sudo 可用（密码另由运维掌握，🚫 不落盘不落库）；但运维已实测 Docker 权限**已 OK**。
+
+**① Docker 复查（实测结论，harness 只需 `docker ps` 复核）**：`id -nG` 已含 `docker` 组；`docker ps` **无需 sudo 即可跑**（daemon 正常）。→ TB 2.0 的「Docker 权限」blocker **已解除**，不必再等 ops usermod。
+
+**② 剩余 blocker**：仅 `terminal-bench@2.0` 数据集需 `harbor auth login`（GitHub OAuth，另行授权）。
+
+**③ 行动**：Docker OK 后 → 推进 T1 剩余（dataset 拉取 + `oracle 5×`）→ T2 正式横评。若后续哪步确需 root（如改系统级配置），回报运维，由运维提供 sudo 执行，🚫 agent 不自行猜测 sudo 用途。
+
+### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .29 /tmp 残留）· 用户直令
+
+> **用户令（2026-10-17）**：「让 harness 清理 .29 的 /tmp。」
+
+**① 清理范围**：harness 线在 `.29` 的 `/tmp` 下旧残留（>1 天未动用的 claude-code/opencode 旧 workdirs 拷贝、rootfs 克隆、旧 log、旧测试床临时等）。⚠️ 运维已清掉最大头 `/tmp/claude-6218`（27G）。
+
+**② 纪律**：
+- 先 `du -sh /tmp/* 2>/dev/null | sort -rh | head -20` 盘点，**只清本线自己的、确认 >1 天未动**的，把要删清单抄进心跳再删。
+- 🚫 不删：`/dev/shm/harness_work/workdirs/`（活跃评测在那边，不在 /tmp）、下载/克隆中、别线在途文件、<1 天的、`/tmp/systemd-*`。
+- ✅ 清完报 `df -h /tmp` 前后对比 + 释放量。
+- commit 前缀 `harness tmp-clean:` · 任务书 >32KB 自滚归档。
+
