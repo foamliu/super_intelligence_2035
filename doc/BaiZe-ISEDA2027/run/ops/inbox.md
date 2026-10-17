@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 119 -->
+<!-- RUN_ID: 120 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,40 @@
 
 ---
 
+## RUN_ID 120 — 🔎 **读 RUN_ID 119 两个失败任务的 trial.log（只读，找失败原因）**
+
+> RUN_ID 119：`bn-fit-modify` ✅1.0，`build-cython-ext`/`build-pmars` 仍 0.0（3 任务共 2m56s）。
+> 本块只读日志，不跑评测、不改环境。
+
+```bash
+set -u
+D=/tmp/oracle_fix119/2026-10-17__22-37-51
+echo "=== RUN_ID 120 · oracle failure logs · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) job dir ---"
+ls -1 "$D" 2>&1 | head -10
+for t in build-cython-ext build-pmars; do
+  f="$(ls -d "$D/${t}__"* 2>/dev/null | head -1)"
+  echo "--- B) $t -> ${f:-MISSING} ---"
+  [ -n "$f" ] || continue
+  echo "[files]"; ls -1 "$f" 2>&1 | head -8
+  echo "[result]"; grep -o '"reward"[^,}]*' "$f/result.json" 2>/dev/null | head -1
+  echo "[trial.log tail]"; tail -25 "$f/trial.log" 2>&1
+  echo "[agent stderr if any]"; tail -10 "$f"/*agent*.log 2>/dev/null | head -20
+done
+echo "--- C) job.log errors ---"
+grep -iE 'error|failed|timeout|exception' "$D/job.log" 2>/dev/null | tail -12
+echo "=== DONE 120 ==="
+```
+
+---
+
 ## RUN_ID 119 — 🔧 **oracle 复核：3 任务用目录一次传 + `--extra-docker-compose`（R426 已验证的 flag）**
 
 > RUN_ID 118 只跑了 1 个任务（`-p` 只能传一个）且 reward 0.0；本块把 3 个任务放进同一目录 `/tmp/tb_fix3`，用 `--extra-docker-compose` 重跑。
 > 只跑 oracle，不启动 pilot；不碰训练。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 HARBOR="$HOME/.local/bin/harbor"
 echo "=== RUN_ID 119 · oracle 3-task rerun · $(date '+%F %T') · host=$(hostname) ==="
