@@ -7,6 +7,64 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-18（🌐 `en_v1_4` 换 proxy：`172.19.92.23:13128` + hf-mirror 续传）· 用户直令 · 最高优先
+
+> **用户令（2026-10-18）**：「data: 既然 172.19.92.25:13128 返回503，那就尝试用 172.19.92.23:13128+hf-mirror 来续传」
+
+**① 范围（只动 `en_v1_4` 一路）**
+- 目标：`openbmb/Ultra-FineWeb · data/ultrafineweb_en_v1_4/`（56,461 文件 / 6.75TB），落盘 `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/` 不变。
+- 现状（唤醒 522）：**43,520 parquet / 0 `.incomplete` / 4.1T / 85 of 110 snapshot 目录完成**；wrapper 已退出（03:59，`completed=14 skipped=71 failed=25`）⇒ **只需续 25 个失败 shard**，已有的 85 个目录自动 SKIP（🚫 不要删、不要重下）。
+- 🚫 **不动**：85M（维持用户令 10-13 暂停）、GPIC、WebMix-38M、InternVL-SA1B、wit_base、the_cauldron、SFT-2605、RL-2609；不动 `.25` 上任何已完数据。
+
+**② proxy 口径（本令覆盖 10-15「.12 下数据一律 .25 直连 hf.co」——仅限 `en_v1_4` 这一路）**
+```bash
+export HF_PROXY=http://172.19.92.23:13128     # ⚠️ 不是 .25
+export HF_ENDPOINT=https://hf-mirror.com      # 92.23 恒配 hf-mirror（用户 10-15 口径）
+export https_proxy="$HF_PROXY"; export http_proxy="$HF_PROXY"
+export HF_HUB_DOWNLOAD_TIMEOUT=120
+export HF_HUB_ENABLE_HF_TRANSFER=1
+```
+- 若 `.23` 恢复后改用 `.25`：`HF_PROXY=http://172.19.92.25:13128` 且 **unset HF_ENDPOINT**（直连 hf.co）。
+- ⚠️ **脚本已改（运维 2026-10-18 直接提交）**：`run/data_pipeline/download_en_v1_4.py` 原先在 **L26-27 硬编码 `.25`**、`.sh` 在 L11-12 硬编码 `.25` ⇒ **只 export 环境变量无效**。现两脚本均改为读 `HF_PROXY` / `HF_ENDPOINT`（未设时默认 `.23` + hf-mirror）。**先 `git pull` 拿到新版再起**；若你本地有未提交改动，以本令为准合并，别把硬编码 `.25` 带回来。
+
+**③ 第一步：连通性探针（必须先做；单行命令，可直接复制到 `.12` 的 bash）**
+```bash
+curl -sS -m 20 -o /dev/null -w '.25 baseline -> hf.co: %{http_code} %{time_total}s\n' -x http://172.19.92.25:13128 https://huggingface.co
+curl -sS -m 20 -o /dev/null -w '.23 -> hf-mirror: %{http_code} %{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com
+curl -sS -m 25 -o /dev/null -w '.23 -> hf-mirror API: %{http_code}\n' -x http://172.19.92.23:13128 https://hf-mirror.com/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4
+curl -sS -m 20 -o /dev/null -w '.23 -> 无 mirror: %{http_code}\n' -x http://172.19.92.23:13128 https://huggingface.co
+```
+- **过闸判据**：`.23→hf-mirror` 与 `.23→hf-mirror API` **都返回 200/3xx**。任一非 200/3xx ⇒ **不要把 wrapper 起满**，按 ④ 的 B/C 处理并回报原文。
+
+**④ 起训（按探针结果选一条；同样单行，避免续行符被 Markdown 吞掉）**
+```bash
+# A 默认（探针全通）——脚本已改读 HF_PROXY/HF_ENDPOINT，默认即 .23 + hf-mirror
+export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.com; setsid -f nohup bash download_en_v1_4.sh > /tmp/en_v1_4_dl_dot23.log 2>&1
+# B `.23` 通但 hf download 列目录失败——改 Python 并行版（24 workers，per-snapshot 非递归 listing）
+export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.com; setsid -f nohup python3 download_en_v1_4.py > /tmp/en_v1_4_dl_dot23.log 2>&1
+```
+- 日志用**新文件名** `en_v1_4_dl_dot23.log`，保留旧 `en_v1_4_dl.log` 作证据；起 wrapper 前确认 `pgrep -af download_en_v1_4` 无残留旧进程。
+- **C（`.23` 也不通）**：**不许空转重试**——停手，把探针四条原文 + `.25` 恢复时的重启用命令写进心跳，报 blocker 等运维。
+
+**⑤ 保活 / 判活（10–15 min 内必须给一次结论）**
+- 进程：`pgrep -af 'download_en_v1_4'`（应见 wrapper PID + hf/python 子进程）。
+- **真推进（硬判据，🚫 不看进程存活）**：日志里出现 `[n/110] CC-MAIN-XXXX: downloading/DONE` **且** 目标目录 `du` 或 `/proc/<hf-pid>/io write_bytes` **在 120s 内增长**；或 `.incomplete` 字节增长。
+- 若 10 min 内 0 字节增长 ⇒ 视为假活：kill 该 wrapper → 换 ④-B 或 ④-C。
+
+**⑥ 回报（这一轮就要）**
+1. 探针 4 行原文（`.25` / `.23→mirror` / `.23→mirror API` / `.23→无 mirror`）。
+2. 用的哪条路径（A/B/C）+ wrapper PID + 日志路径 + 实际 `HF_PROXY` / `HF_ENDPOINT` 值。
+3. 25 个待续 shard 名单（从旧日志 `failed` 行取），完成后逐 shard 的 parquet 计数。
+4. **速率 + ETA**：先报 **MB/s（或 files/min）实测**，再给「25 shard 剩余 GB ÷ 速率」的 ETA；不许沿用旧的 7–8 天口径。
+5. 完成后自校：`parquet` 计数 vs HF 清单、`.incomplete == 0`，写入 `DATA_LEDGER.md`。
+6. 写 `MEMORY_DATA.md` 进度快照（PHASE/当前动作/下一步/阻塞 四行必须提到「`.23`+hf-mirror」）+ `daily-memories-data/2026-10-18.md`；commit 前缀 `data dl:`。
+
+**⑦ 纪律**
+- 只在这条线上换 proxy；**别线（vision 的 HF 评测、harness 安装包、git push）仍按 `run/ops/README.md §7` 口径**，🚫 不要顺手改全局 `~/.bashrc` / `git config`。
+- `git pull --rebase --autostash` 后如遇 `.25` 与 `.23` 记录冲突：**保留双方**（两条探针结果都要留档）。
+- 任务书 >32KB 自滚归档（只搬已闭合块原文 + 1 行指针）。
+
+
 ### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .12 /tmp 残留）· 用户直令
 
 > **用户令（2026-10-17）**：「让 data 清理 .12 的 /tmp。」
@@ -21,75 +79,16 @@
 
 ### 🆕 运维指令 · 2026-10-15（⬇️ **补下 `UltraData-RL-2609`** + 复核 SFT-2605）· 用户直令 · 最高优先
 
+> 📦 **已归档（2026-10-18 运维滚动，原文未改）** → `run/ARCHIVE_OPERATOR_DATA.md`「§运维指令·2026-10-15（补下 RL-2609 + 复核 SFT-2605）」。
+> **结论**：RL-2609 已下满并逐文件字节自校通过（20 jsonl / 174.75 GiB）；SFT-2605 复核通过（1504 jsonl / 0 incomplete），🚫 不需重下。需要时再读。
+
+
 > **用户令（2026-10-15）**：「data：验证一下 `UltraData-SFT-2605`、`UltraData-RL-2609` 是否真的没有，没有就重新下载。」
 
-**① 运维已预核（RUN_ID 99 · 2026-10-15 21:17 实测，供你复核起点 · 机读事实）**
+### 🆕 运维指令 · 2026-10-14（▶️ 恢复全部 4 路下载 · 断点续传）· 用户直令 · 最高优先> 📦 **已归档（2026-10-18 运维滚动，原文未改）** → `run/ARCHIVE_OPERATOR_DATA.md`「§运维指令·2026-10-14（恢复全部 4 路下载·断点续传）」。
+> **结论**：WebMix-38M / InternVL-SA1B / wit_base 已下满；en_v1_4 由 2026-10-18（.23 + hf-mirror 续传）接管。需要时再读。
 
-| 数据集 | 盘上实测 | 判定 |
-|:--|:--|:--|
-| `UltraData-SFT-2605` | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605` → **1504 jsonl / `.incomplete`=0 / ≈297.08 GB**（`data/{no_think,think}`，顶层 README/LICENSE/.gitattributes 齐） | ✅ **不缺**（10-02 已重下并逐字节核验）⇒ 🚫 **不要重下** |
-| `UltraData-RL-2609` | `/nas_inference` `/nas_user` `/nas_env` `/nas_train` **四个盘皆无**；HF 缓存仅 `datasets--openbmb--Ultra-FineWeb` | ❌ **确实没下** ⇒ **需补下** |
-
-**② 授权：用户直令「解除白名单」——仅限本项**：`openbmb/UltraData-RL-2609` 此前属「白名单外一律不下载」；**本令起放行该一项**。🚫 **不得**借此扩权到其他白名单外数据集。
-- HF API 事实（10-15 实测）：**`gated=False`（公开，无需接条款）** · `siblings=26` · `lastModified=2026-09-07`；⚠️ **该 API 未回 size** ⇒ **下载前必须先用 `hf download --dry-run`（或 HfApi 列文件）取实际文件数 + 总字节，并如实回报**。
-
-**③ 下载要求**
-- **落盘（白名单内，按余量二选一）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609`（**9.4T free**）或 `/nas_env/app.e0031982/datasets/openbmb/UltraData-RL-2609`（**9.9T free**）。
-- **proxy 直连 hf.co**：`https_proxy=http://172.19.92.25:13128`（与既有下载同口径；🚫 不用 hf-mirror）。
-- `setsid` 守护 + **正确 PATH**（`bash -lc` 或显式 PATH，防 `env: 'hf': No such file`）；沿用既有 **retry-loop 模式**（先起 wrapper 再起 hf 子进程）。
-- ⚠️ **带宽纪律**：当前 **3 路在跑**（`en_v1_4` / `WebMix-38M` / `InternVL-SA1B`）——先记录各路 last-file 时间戳与速率作基线，**若新下载把它们挤到「速率趋零」，就错峰或调小 `--max-workers`**；老线一旦僵死/死掉，仍按常驻口径 **kill + restart**。
-
-**④ 收尾 / 回报**
-1. **进度表**：PID（wrapper + hf）· 已下文件数 / 总文件数 · 已下字节 · 速率 · ETA · **落盘路径** + `df -h` 余量。
-2. **下完自校**：文件数 == HF 清单数、`.incomplete == 0`，并与 HfApi 清单**逐文件字节比对**（沿用 10-02 对 SFT-2605 的核验口径），结果写进 `DATA_LEDGER.md`。
-3. `MEMORY_DATA.md` 进度快照 + `daily-memories-data/2026-10-15.md`；commit 前缀 `data dl:`。
-4. **如实**：不可达 / 被限流 / 失败 ⇒ 写「失败 + 原文报错」，🚫 不编造进度；查不到就写「未找到」。
-
-**⑤ 纪律**：🚫 不删任何已有数据；`GPIC` / `the_cauldron` / `wit_base` / **`UltraData-SFT-2605`（已下满，勿动）** 均不动；**85M 维持暂停**；错峰 IO；任务书 >32KB 自滚归档。
-
-### 🆕 运维指令 · 2026-10-14（▶️ 恢复全部 4 路下载 · 断点续传）· 用户直令 · 最高优先
-
-> **用户令（2026-10-14）**：「data 数据下载 resume。」（= 解除同日「⏸ 暂停全部 4 路下载」）
-> **范围**：**恢复 `en_v1_4` + `WebMix-38M` + `wit_base` + `InternVL-SA1B` 共 4 路**（断点续传、`.incomplete` 处继续）。
-> ⚠️ **85M 本令不含**：维持暂停（2026-10-13 令）——**除非用户另指，不恢复 85M**。
-
-**① 恢复前先核（只读）**：`df -h` 确认目标盘已挂载且余量足；`ls -la` 确认各路 `.incomplete` 仍在。
-- ⚠️ 余量提示：`/nas_train 85%（32T free）` · `/nas_user 75%（28T free）` · `/nas_env 1%（9.9T）`。
-
-**② 恢复方式（逐路 · 断点续传）**：
-- **用停前的同一下载方式续传**（`hf download --resume` / 现有 retry-loop 脚本），**🚫 勿从头下**（`.incomplete` 已在）。
-- **`setsid` 守护** + **正确 PATH**（登录 shell `bash -lc` 或显式 PATH；防 `env: 'hf'/'cline': No such file`）；**先起 wrapper（retry-loop）再起 hf 子进程**（与暂停时相反顺序）。
-- **落盘白名单（不变）**：`/nas_inference/app.e0031982/datasets/` · `/nas_user/<user>/datasets/` · `/nas_env/app.e0031982/datasets/`（新增）；🚫 仍不放 `/nas_train`（**`en_v1_4` 是文本语料，按停前原路径 `/nas_train/openbmb/Ultra-FineWeb/...` 续传 —— 属既有例外，如实记**）。
-- **看护（沿用常驻口径）**：**失败 / 僵死 / 速率趋零 / PID 已死 ⇒ 立即 kill + restart**，心跳标「已重启」+ 新 PID（不必等运维点名）。
-
-**③ 恢复基线（停前值 · 供续传核对）**：
-| 路 | 停前进度 | 落盘路径 |
-|:--|:--|:--|
-| `en_v1_4` | 32,995 / 56,461 parquet ≈ **58.4%**（3.0T） | `/nas_train/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/` |
-| `WebMix-38M` | 78 parquet / 59G（+1 `.incomplete`） | `/nas_user`（datasets） |
-| `wit_base` | 79 parquet / 70G（+1 `.incomplete`） | `/nas_user`（datasets） |
-| `InternVL-SA1B` | 303 tar / 227G（+1 `.incomplete`） | `/nas_user`（datasets） |
-
-**④ 心跳 / 回写**：4 路状态改 `▶️ 下载中（2026-10-14 恢复）` + 各自**新 PID / 速率 / 进度 / ETA**；`MEMORY_DATA.md`（进度快照 + 流水）+ `daily-memories-data/2026-10-14.md`；commit 前缀 `data dl:`。
-
-**⑤ 纪律**：🚫 不删任何已有数据；**GPIC ✅ / the_cauldron ✅ 不动**；**85M 不动（维持暂停）**；**错峰 IO**（避开 `.29` pretrain / `.12` vision 训练）；任务书 >32KB 自滚归档。
-
-
-> 📦 §运维指令·2026-10-14（⏸ 暂停全部 4 路下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：已被同日「▶️ 恢复」块取代；4 路均已恢复并陆续下满（WebMix/wit_base/InternVL-SA1B✅），en_v1_4 仍在下载。需要时再读。
-
-### 🆕 运维指令 · 2026-10-14（💾 新增下载落盘位置 `/nas_env`）· 用户直令 · 常驻
-
-> **用户令（2026-10-14）**：「告知 data，以后数据也可以下载到 `/nas_env`，目录仍然是 `app.e0031982/datasets`。」
-
-**① 新增可落盘位置（常驻，与现有并列）**：`/nas_env/app.e0031982/datasets/`。落盘路径形式仍是 `<盘>/app.e0031982/datasets/<publisher>/<name>/`。
-
-**② 现有落盘位置白名单（更新后）**：
-- ✅ `/nas_inference/app.e0031982/datasets/`
-- ✅ `/nas_user/<用户>/datasets/`（或 `/nas_user/app.e0031982/datasets/`）
-- ✅ **`/nas_env/app.e0031982/datasets/`（新增）**
-- 🚫 `/nas_train` 仍不放（已 ~85%）。
-
-**③ 纪律（不变）**：下载前 `df -h` 确认目标盘已挂载 + 剩余空间 ≥ 预计总量；`setsid` 守护 + 断点续传；纳入「死/僵/速率趋零即 kill+restart」看护；实际落盘路径写进心跳；commit 前缀 `data dl:`；任务书 >32KB 自滚归档。
+### 🆕 运维指令 · 2026-10-14（💾 新增下载落盘位置 `/nas_env`）· 用户直令 · 常驻> 📦 **已归档（2026-10-18 运维滚动，原文未改）** → `run/ARCHIVE_OPERATOR_DATA.md`「§2026-10-14（新增落盘位置 `/nas_env`）」。常驻口径不变：`/nas_env` 仍为合法落盘地（仅用于新增下载）。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-13（⏸ 暂停 85M + 📥 下载 HF 图文对 TOP-5 中「未下载」的 4 个 · 落 `/nas_inference` 或 `/nas_user` 的 datasets（🚫 不放 `/nas_train`））· 用户直令 · 最高优先
 

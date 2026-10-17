@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 121 -->
+<!-- RUN_ID: 122 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -12,7 +12,7 @@
 >
 > ## 🚨🚨 **中继的真实行为（2026-10-02 实测，务必遵守）**
 > `ops_relay.sh:46` 的 `inbox_cmd_block()` 是：
-> ```bash
+> ```text
 > awk '/^```bash/{f=1;next} /^```/{if(f){exit}} f' "$INBOX"
 > ```
 > **→ 它只执行文件里<u>第一个</u> ```bash 块**，后面的块**永远不会被执行**。
@@ -31,11 +31,40 @@
 
 ---
 
+## RUN_ID 122 — 只读探针：.25 503 时改测 .23 + hf-mirror（不启动 / 不 kill / 不写文件）
+
+> 用途：给 data 线 2026-10-18 指令做机读事实（探针原文）。**只读**，无危险模式。
+
+```bash
+set -u
+echo "=== RUN_ID 122 · proxy 探针 · $(date '+%F %T') · host=$(hostname) ==="
+echo "[env] user=$(whoami) HF_ENDPOINT=${HF_ENDPOINT:-<unset>} HF_PROXY=${HF_PROXY:-<unset>}"
+echo "[1] .25 -> hf.co"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.25:13128 https://huggingface.co 2>&1
+echo "[2] .23 -> hf-mirror"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com 2>&1
+echo "[3] .23 -> hf-mirror API (en_v1_4 tree)"
+curl -sS -m 25 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4 2>&1
+echo "[4] .23 -> hf.co (no mirror)"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://huggingface.co 2>&1
+echo "[5] direct -> hf-mirror (no proxy)"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' https://hf-mirror.com 2>&1
+echo "[6] proxy listen"
+ss -ltn 2>/dev/null | grep -E ':13128' | head -4 || echo '    no 13128 listen entry'
+echo "[7] procs"
+pgrep -af 'download_en_v1_4' | cut -c1-120 || echo '    no download_en_v1_4 proc'
+echo "[8] disk"
+df -h /nas_train 2>/dev/null | tail -1
+echo "=== DONE 122 ==="
+```
+
+---
+
 ## RUN_ID 121 — 🔎 **读 verifier/agent 日志（只读）：确认 2 个任务到底卡在哪**
 
 > RUN_ID 120 的 trial.log 只有 "Collecting main service artifacts"，错误在 verifier 或 agent 子目录。
 
-```bash
+```text
 set -u
 D=/tmp/oracle_fix119/2026-10-17__22-37-51
 echo "=== RUN_ID 121 · verifier/agent logs · $(date '+%F %T') · host=$(hostname) ==="

@@ -1501,3 +1501,83 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 **④ 纪律**：🚫 不删任何已有数据；85M 本就是暂停态（不动）；GPIC ✅ / the_cauldron ✅ 已完成的也不动；`setsid` 守护进程清理干净；commit 前缀 `data dl:` · 任务书 >32KB 自滚归档。
 
 > **执行结论**：该块已被同日「▶️ 恢复全部 4 路下载」块取代；4 路均已恢复断点续传，WebMix/wit_base/InternVL-SA1B 陆续下满，en_v1_4 仍在下载中。归档自 BAIZE_DATA_TASK.md 2026-10-17(唤醒511)。
+
+## 运维指令 · 2026-10-15（⬇️ 补下 UltraData-RL-2609 + 复核 SFT-2605）· 用户直令 · 最高优先
+
+(2026-10-18 运维自 BAIZE_DATA_TASK.md 原文搬入，未改一字)
+
+**① 运维已预核（RUN_ID 99 · 2026-10-15 21:17 实测，供你复核起点 · 机读事实）**
+
+| 数据集 | 盘上实测 | 判定 |
+|:--|:--|:--|
+| `UltraData-SFT-2605` | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605` → **1504 jsonl / `.incomplete`=0 / ≈297.08 GB**（`data/{no_think,think}`，顶层 README/LICENSE/.gitattributes 齐） | ✅ **不缺**（10-02 已重下并逐字节核验）⇒ 🚫 **不要重下** |
+| `UltraData-RL-2609` | `/nas_inference` `/nas_user` `/nas_env` `/nas_train` **四个盘皆无**；HF 缓存仅 `datasets--openbmb--Ultra-FineWeb` | ❌ **确实没下** ⇒ **需补下** |
+
+**② 授权：用户直令「解除白名单」——仅限本项**：`openbmb/UltraData-RL-2609` 此前属「白名单外一律不下载」；**本令起放行该一项**。🚫 **不得**借此扩权到其他白名单外数据集。
+- HF API 事实（10-15 实测）：**`gated=False`（公开，无需接条款）** · `siblings=26` · `lastModified=2026-09-07`；⚠️ **该 API 未回 size** ⇒ **下载前必须先用 `hf download --dry-run`（或 HfApi 列文件）取实际文件数 + 总字节，并如实回报**。
+
+**③ 下载要求**
+- **落盘（白名单内，按余量二选一）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609`（**9.4T free**）或 `/nas_env/app.e0031982/datasets/openbmb/UltraData-RL-2609`（**9.9T free**）。
+- **proxy 直连 hf.co**：`https_proxy=http://172.19.92.25:13128`（与既有下载同口径；🚫 不用 hf-mirror）。
+- `setsid` 守护 + **正确 PATH**（`bash -lc` 或显式 PATH，防 `env: 'hf': No such file`）；沿用既有 **retry-loop 模式**（先起 wrapper 再起 hf 子进程）。
+- ⚠️ **带宽纪律**：当前 **3 路在跑**（`en_v1_4` / `WebMix-38M` / `InternVL-SA1B`）——先记录各路 last-file 时间戳与速率作基线，**若新下载把它们挤到「速率趋零」，就错峰或调小 `--max-workers`**；老线一旦僵死/死掉，仍按常驻口径 **kill + restart**。
+
+**④ 收尾 / 回报**
+1. **进度表**：PID（wrapper + hf）· 已下文件数 / 总文件数 · 已下字节 · 速率 · ETA · **落盘路径** + `df -h` 余量。
+2. **下完自校**：文件数 == HF 清单数、`.incomplete == 0`，并与 HfApi 清单**逐文件字节比对**（沿用 10-02 对 SFT-2605 的核验口径），结果写进 `DATA_LEDGER.md`。
+3. `MEMORY_DATA.md` 进度快照 + `daily-memories-data/2026-10-15.md`；commit 前缀 `data dl:`。
+4. **如实**：不可达 / 被限流 / 失败 ⇒ 写「失败 + 原文报错」，🚫 不编造进度；查不到就写「未找到」。
+
+**⑤ 纪律**：🚫 不删任何已有数据；`GPIC` / `the_cauldron` / `wit_base` / **`UltraData-SFT-2605`（已下满，勿动）** 均不动；**85M 维持暂停**；错峰 IO；任务书 >32KB 自滚归档。
+
+## 运维指令 · 2026-10-14（▶️ 恢复全部 4 路下载 · 断点续传）· 用户直令 · 最高优先
+
+(2026-10-18 运维自 BAIZE_DATA_TASK.md 原文搬入，未改一字)
+
+
+
+> **用户令（2026-10-14）**：「data 数据下载 resume。」（= 解除同日「⏸ 暂停全部 4 路下载」）
+> **范围**：**恢复 `en_v1_4` + `WebMix-38M` + `wit_base` + `InternVL-SA1B` 共 4 路**（断点续传、`.incomplete` 处继续）。
+> ⚠️ **85M 本令不含**：维持暂停（2026-10-13 令）——**除非用户另指，不恢复 85M**。
+
+**① 恢复前先核（只读）**：`df -h` 确认目标盘已挂载且余量足；`ls -la` 确认各路 `.incomplete` 仍在。
+- ⚠️ 余量提示：`/nas_train 85%（32T free）` · `/nas_user 75%（28T free）` · `/nas_env 1%（9.9T）`。
+
+**② 恢复方式（逐路 · 断点续传）**：
+- **用停前的同一下载方式续传**（`hf download --resume` / 现有 retry-loop 脚本），**🚫 勿从头下**（`.incomplete` 已在）。
+- **`setsid` 守护** + **正确 PATH**（登录 shell `bash -lc` 或显式 PATH；防 `env: 'hf'/'cline': No such file`）；**先起 wrapper（retry-loop）再起 hf 子进程**（与暂停时相反顺序）。
+- **落盘白名单（不变）**：`/nas_inference/app.e0031982/datasets/` · `/nas_user/<user>/datasets/` · `/nas_env/app.e0031982/datasets/`（新增）；🚫 仍不放 `/nas_train`（**`en_v1_4` 是文本语料，按停前原路径 `/nas_train/openbmb/Ultra-FineWeb/...` 续传 —— 属既有例外，如实记**）。
+- **看护（沿用常驻口径）**：**失败 / 僵死 / 速率趋零 / PID 已死 ⇒ 立即 kill + restart**，心跳标「已重启」+ 新 PID（不必等运维点名）。
+
+**③ 恢复基线（停前值 · 供续传核对）**：
+| 路 | 停前进度 | 落盘路径 |
+|:--|:--|:--|
+| `en_v1_4` | 32,995 / 56,461 parquet ≈ **58.4%**（3.0T） | `/nas_train/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/` |
+| `WebMix-38M` | 78 parquet / 59G（+1 `.incomplete`） | `/nas_user`（datasets） |
+| `wit_base` | 79 parquet / 70G（+1 `.incomplete`） | `/nas_user`（datasets） |
+| `InternVL-SA1B` | 303 tar / 227G（+1 `.incomplete`） | `/nas_user`（datasets） |
+
+**④ 心跳 / 回写**：4 路状态改 `▶️ 下载中（2026-10-14 恢复）` + 各自**新 PID / 速率 / 进度 / ETA**；`MEMORY_DATA.md`（进度快照 + 流水）+ `daily-memories-data/2026-10-14.md`；commit 前缀 `data dl:`。
+
+**⑤ 纪律**：🚫 不删任何已有数据；**GPIC ✅ / the_cauldron ✅ 不动**；**85M 不动（维持暂停）**；**错峰 IO**（避开 `.29` pretrain / `.12` vision 训练）；任务书 >32KB 自滚归档。
+
+
+> 📦 §运维指令·2026-10-14（⏸ 暂停全部 4 路下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：已被同日「▶️ 恢复」块取代；4 路均已恢复并陆续下满（WebMix/wit_base/InternVL-SA1B✅），en_v1_4 仍在下载。需要时再读。
+
+## 运维指令 · 2026-10-14（💾 新增下载落盘位置 `/nas_env`）· 用户直令 · 常驻
+
+(2026-10-18 运维自 BAIZE_DATA_TASK.md 原文搬入，未改一字)
+
+
+
+> **用户令（2026-10-14）**：「告知 data，以后数据也可以下载到 `/nas_env`，目录仍然是 `app.e0031982/datasets`。」
+
+**① 新增可落盘位置（常驻，与现有并列）**：`/nas_env/app.e0031982/datasets/`。落盘路径形式仍是 `<盘>/app.e0031982/datasets/<publisher>/<name>/`。
+
+**② 现有落盘位置白名单（更新后）**：
+- ✅ `/nas_inference/app.e0031982/datasets/`
+- ✅ `/nas_user/<用户>/datasets/`（或 `/nas_user/app.e0031982/datasets/`）
+- ✅ **`/nas_env/app.e0031982/datasets/`（新增）**
+- 🚫 `/nas_train` 仍不放（已 ~85%）。
+
+**③ 纪律（不变）**：下载前 `df -h` 确认目标盘已挂载 + 剩余空间 ≥ 预计总量；`setsid` 守护 + 断点续传；纳入「死/僵/速率趋零即 kill+restart」看护；实际落盘路径写进心跳；commit 前缀 `data dl:`；任务书 >32KB 自滚归档。

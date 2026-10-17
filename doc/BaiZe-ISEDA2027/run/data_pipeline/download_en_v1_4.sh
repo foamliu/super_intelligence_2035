@@ -8,8 +8,13 @@
 
 # NOTE: No `set -e` — we handle errors ourselves with retry logic
 export PATH="/nas_train/app.e0031982/miniforge3/envs/py310/bin:$PATH"
-export https_proxy=http://172.19.92.25:13128
-export http_proxy=http://172.19.92.25:13128
+# proxy 口径（运维指令 2026-10-18）：调用方可用 HF_PROXY / HF_ENDPOINT 覆盖
+#   .23 + hf-mirror ：HF_PROXY=http://172.19.92.23:13128 HF_ENDPOINT=https://hf-mirror.com
+#   .25 直连 hf.co  ：HF_PROXY=http://172.19.92.25:13128  + 不设 HF_ENDPOINT
+export HF_PROXY="${HF_PROXY:-http://172.19.92.23:13128}"
+export https_proxy="$HF_PROXY"
+export http_proxy="$HF_PROXY"
+export HF_ENDPOINT="${HF_ENDPOINT-https://hf-mirror.com}"
 export HF_HUB_DOWNLOAD_TIMEOUT=120
 export HF_HUB_ENABLE_HF_TRANSFER=1
 

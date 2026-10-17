@@ -1,6 +1,17 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
+## 🆕 最近操作（2026-10-18）
+
+### 🌐 data：`.25` proxy 503 → 改 `.23:13128` + hf-mirror 续传 `en_v1_4`（用户直令）
+- 用户令：「data: 既然 172.19.92.25:13128 返回503，那就尝试用 172.19.92.23:13128+hf-mirror 来续传」
+- 现状：43,520 parquet / 0 `.incomplete` / 4.1T / **85 of 110** snapshot 完成；wrapper 03:59 退出，**只差 25 shard**；`.25→hf.co` 503 已 ≈12h+。
+- **根因**：`run/data_pipeline/download_en_v1_4.py` L26-27 与 `.sh` L11-12 **硬编码 `.25`** ⇒ 只 export 无效。已改为读 `HF_PROXY` / `HF_ENDPOINT`（未设时默认 `.23` + `https://hf-mirror.com`）；回 `.25` 只需 `HF_PROXY=.25` + `unset HF_ENDPOINT`。
+- **已下发** `run/BAIZE_DATA_TASK.md` 顶部块（最高优先）：探针 4 条 → A/B/C 起训分支 → **按字节增长判活**（不看进程存活）→ 回报 25 shard 名单 + 实测 MB/s 与 ETA。范围仅 `en_v1_4`；85M 维持暂停。
+- **中继**：`run/ops/inbox.md` **RUN_ID 121 → 122**，首块 = 只读探针（`.12` 中继若活着可立即给机读结论）。
+- 体积：`BAIZE_DATA_TASK.md` 37,960B → 滚归档 3 个已闭合块（10-15 补下 RL-2609 / 10-14 恢复 4 路 / 10-14 `/nas_env`，原文移入 `ARCHIVE_OPERATOR_DATA.md`）→ **32,717B ✓**。
+- 详见 `daily-memories/2026-10-18.md`。
+
 ## 🆕 最近操作（2026-10-17）
 
 ### 🎯 recruit 口径再纠正：应届 = 校招（不要）· 全职硬门槛 ≥1 年经验

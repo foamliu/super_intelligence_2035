@@ -23,8 +23,14 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S", stream=sys.stdout)
 log = logging.getLogger("en_v1_4_dl")
 
-os.environ["https_proxy"] = "http://172.19.92.25:13128"
-os.environ["http_proxy"] = "http://172.19.92.25:13128"
+# proxy 口径（运维指令 2026-10-18）：优先取环境变量，未设才回落默认。
+#   .23 + hf-mirror ：export HF_PROXY=http://172.19.92.23:13128 HF_ENDPOINT=https://hf-mirror.com
+#   .25 直连 hf.co  ：export HF_PROXY=http://172.19.92.25:13128; unset HF_ENDPOINT
+# ⚠️ 不硬编码：否则调用方 export 的 proxy / HF_ENDPOINT 会被静默覆盖。
+_HF_PROXY = os.environ.get("HF_PROXY", "http://172.19.92.23:13128")
+os.environ["https_proxy"] = _HF_PROXY
+os.environ["http_proxy"] = _HF_PROXY
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 os.environ["HF_HUB_DOWNLOAD_TIMEOUT"] = "120"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
 
