@@ -739,3 +739,11 @@
 | 2026-10-17 | 马斯克称团队开发面向商业场景的专用议价机器人 Hagglebot（成本效益有望提升 5% 以上 · X 推文） | IT之家（`014/192` · 10-16 23:01 CST） | news(人物表态·未发布产品) | https://www.ithome.com/1/014/192.htm |
 | 2026-10-17 | 微软发布 Win11 多预览通道新版更新（XBOX 游戏界面 · Windows Hello 自动调节亮度 · Beta 26220.9739 / 28020.3262） | IT之家（`014/189` · 10-16 22:28 CST） | news(非 AI·系统更新) | https://www.ithome.com/1/014/189.htm |
 | 2026-10-17 | OpenAI 升级 ChatGPT for Chrome 扩展（v1.26.1005.11759）：可读取已打开的多个标签页 · Work 模式下经授权可代操作浏览器（填表单/发消息/下载/分组标签页）· 所有用户开放含免费 · 权限升级（书签/历史/通知）· 默认逐站请求确认 | IT之家（`014/214` · 10-17 08:31 CST · 另 `014/213` 同事件） | news | https://www.ithome.com/1/014/214.htm |
+| 2026-10-17 | 花旗、美国银行限制 AI 智能体访问客户账户（禁止第三方 AI 登录/办理交易 · 美银要求资金转出人工授权 · 摩根大通戴蒙同步表态） | IT之家（`014/260` · 10-17 11:32 CST · 转金融时报 10-16） | news | https://www.ithome.com/1/014/260.htm |
+| 2026-10-17 | 微软发布 Copilot for Legal：20 多项法律专用 AI 技能（合同审查 playbook / Cowork 跨文档提取义务 / Bloomberg Law·Harvey 等插件） | IT之家（`014/250` · 10-17 10:55 CST） | news(本轮发帖选题) | https://www.ithome.com/1/014/250.htm |
+| 2026-10-17 | 紫金山实验室等发布智能体互联平台 AXP（百万级注册 / 十万级并发 / CENI 4000 公里跨域寻址） | IT之家（`014/259` · 10-17 11:30 CST） | news(研发方口径) | https://www.ithome.com/1/014/259.htm |
+| 2026-10-17 | 谷歌升级安卓防诈骗：Gemini / Gemini Nano 做话术与链接检测，每月标记超 500 万条 | IT之家（`014/235` · 10-17 10:01 CST） | news | https://www.ithome.com/1/014/235.htm |
+| 2026-10-17 | 阿里 Qwen 开源 3D 创作评测基准 BlenderWorld（223 任务 / 2651 标准 / MIT） | IT之家（`014/217` · 10-17 08:43 CST） | news | https://www.ithome.com/1/014/217.htm |
+| 2026-10-17 | 微软研究院发布「AI 学生」StudentSim（个性化学生模拟器 · 国际象棋/英语写作/数学） | IT之家（`014/226` · 10-17 09:19 CST） | news | https://www.ithome.com/1/014/226.htm |
+| 2026-10-17 | 微软携手 CMU 推出初级工程师导师制 PRAISE | IT之家（`014/230` · 10-17 09:29 CST） | news | https://www.ithome.com/1/014/230.htm |
+| 2026-10-17 | 黄仁勋回应 AI 概念股大跌 | IT之家（`014/229`） | 不收(涉行情/人物表态) | https://www.ithome.com/1/014/229.htm |
