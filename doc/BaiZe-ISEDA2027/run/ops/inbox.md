@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 118 -->
+<!-- RUN_ID: 119 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,43 @@
 
 ---
 
+## RUN_ID 119 — 🔧 **oracle 复核：3 任务用目录一次传 + `--extra-docker-compose`（R426 已验证的 flag）**
+
+> RUN_ID 118 只跑了 1 个任务（`-p` 只能传一个）且 reward 0.0；本块把 3 个任务放进同一目录 `/tmp/tb_fix3`，用 `--extra-docker-compose` 重跑。
+> 只跑 oracle，不启动 pilot；不碰训练。
+
+```bash
+set -u
+HARBOR="$HOME/.local/bin/harbor"
+echo "=== RUN_ID 119 · oracle 3-task rerun · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) overlay head ---"
+head -20 /tmp/network-host-overlay.yml 2>&1
+echo "--- B) stage 3 tasks ---"
+rm -rf /tmp/tb_fix3; mkdir -p /tmp/tb_fix3
+for t in bn-fit-modify build-cython-ext build-pmars; do ln -s "$HOME/terminal-bench/$t" "/tmp/tb_fix3/$t"; done
+ls -l /tmp/tb_fix3
+echo "--- C) run (oracle, n=3, extra-docker-compose) ---"
+rm -rf /tmp/oracle_fix119
+timeout 480 sg docker -c "cd $HOME && timeout 450 $HARBOR run -p /tmp/tb_fix3 --agent oracle -n 3 --extra-docker-compose /tmp/network-host-overlay.yml -o /tmp/oracle_fix119" 2>&1 | tail -40
+echo "--- D) results ---"
+for f in /tmp/oracle_fix119/*/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r"
+done
+echo "=== DONE 119 ==="
+```
+
+---
+
 ## RUN_ID 118 — 🔧 **用 `sg docker` 提权重跑 3 个失败 oracle 任务（overlay 已在 117 写好）**
 
 > RUN_ID 117 失败根因：relay 进程无 docker 组 → `harbor run` 报 "Docker daemon is not running"（不是 overlay 问题）。
 > 本块：`sg docker -c '...'` 切换补组后重跑；仍不启动 pilot/全量。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 HARBOR="$HOME/.local/bin/harbor"
 echo "=== RUN_ID 118 · sg docker 重跑 oracle(3) · $(date '+%F %T') · host=$(hostname) ==="
