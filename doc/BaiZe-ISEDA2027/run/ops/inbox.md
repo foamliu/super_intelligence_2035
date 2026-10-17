@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 117 -->
+<!-- RUN_ID: 118 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,48 @@
 
 ---
 
+## RUN_ID 118 — 🔧 **用 `sg docker` 提权重跑 3 个失败 oracle 任务（overlay 已在 117 写好）**
+
+> RUN_ID 117 失败根因：relay 进程无 docker 组 → `harbor run` 报 "Docker daemon is not running"（不是 overlay 问题）。
+> 本块：`sg docker -c '...'` 切换补组后重跑；仍不启动 pilot/全量。
+
+```bash
+set -u
+HARBOR="$HOME/.local/bin/harbor"
+echo "=== RUN_ID 118 · sg docker 重跑 oracle(3) · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) docker via sg ---"
+sg docker -c 'docker ps --format "{{.Names}}"' 2>&1 | head -5
+echo "--- B) compose option ---"
+timeout 30 "$HARBOR" run --help 2>&1 | grep -iE 'compose|overlay' -A2 | head -14
+echo "--- C) rerun 3 tasks ---"
+rm -rf /tmp/oracle_fix118
+sg docker -c "cd $HOME && timeout 420 $HARBOR run \
+  -p $HOME/terminal-bench/bn-fit-modify \
+  -p $HOME/terminal-bench/build-cython-ext \
+  -p $HOME/terminal-bench/build-pmars \
+  --agent oracle -n 3 \
+  -c /tmp/tb_oracle_cfg_117.yaml \
+  -o /tmp/oracle_fix118" 2>&1 | tail -35
+echo "--- D) results ---"
+for f in /tmp/oracle_fix118/*/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r"
+done
+echo "=== DONE 118 ==="
+```
+
+---
+
 ## RUN_ID 117 — 🔧 **修 oracle：带 overlay 重跑 3 个失败任务 → 达标后才允许 pilot（含中继重启）**
 
 > 背景：RUN_ID 116 实测 oracle -k5 = **2/5**（失败：bn-fit-modify / build-cython-ext / build-pmars，均为构建期拉包）；
 > relay 自身缺 docker 组（loop/cline 有）。本块：用 `environment.extra_docker_compose=/tmp/network-host-overlay.yml` 重跑这 3 个任务。
 > ⚠️ 不启动 7×5 / 7×89；不 kill 训练；不改仓库文件。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 HARBOR="$HOME/.local/bin/harbor"
