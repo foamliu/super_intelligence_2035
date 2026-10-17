@@ -12638,3 +12638,71 @@ build-cython-ext__33t3Mpj | "reward": 0.0
 build-pmars__8E3x9BE | "reward": 0.0
 === DONE 119 ===
 ```
+
+---
+
+## RUN_ID 120 · 2026-10-17 22:42:57 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+D=/tmp/oracle_fix119/2026-10-17__22-37-51
+echo "=== RUN_ID 120 · oracle failure logs · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) job dir ---"
+ls -1 "$D" 2>&1 | head -10
+for t in build-cython-ext build-pmars; do
+  f="$(ls -d "$D/${t}__"* 2>/dev/null | head -1)"
+  echo "--- B) $t -> ${f:-MISSING} ---"
+  [ -n "$f" ] || continue
+  echo "[files]"; ls -1 "$f" 2>&1 | head -8
+  echo "[result]"; grep -o '"reward"[^,}]*' "$f/result.json" 2>/dev/null | head -1
+  echo "[trial.log tail]"; tail -25 "$f/trial.log" 2>&1
+  echo "[agent stderr if any]"; tail -10 "$f"/*agent*.log 2>/dev/null | head -20
+done
+echo "--- C) job.log errors ---"
+grep -iE 'error|failed|timeout|exception' "$D/job.log" 2>/dev/null | tail -12
+echo "=== DONE 120 ==="
+```
+
+**输出**
+```
+=== RUN_ID 120 · oracle failure logs · 2026-10-17 22:42:57 · host=whag0pgpuap29 ===
+--- A) job dir ---
+bn-fit-modify__MgrZjZi
+build-cython-ext__33t3Mpj
+build-pmars__8E3x9BE
+config.json
+job.log
+lock.json
+result.json
+--- B) build-cython-ext -> /tmp/oracle_fix119/2026-10-17__22-37-51/build-cython-ext__33t3Mpj ---
+[files]
+agent
+artifacts
+config.json
+lock.json
+result.json
+trial.log
+verifier
+[result]
+"reward": 0.0
+[trial.log tail]
+Collecting main service artifacts
+[agent stderr if any]
+--- B) build-pmars -> /tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE ---
+[files]
+agent
+artifacts
+config.json
+lock.json
+result.json
+trial.log
+verifier
+[result]
+"reward": 0.0
+[trial.log tail]
+Collecting main service artifacts
+[agent stderr if any]
+--- C) job.log errors ---
+=== DONE 120 ===
+```
