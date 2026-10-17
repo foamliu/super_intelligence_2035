@@ -12550,3 +12550,91 @@ Share results by running `harbor upload /tmp/oracle_fix118/2026-10-17__22-07-29`
 build-pmars__3iHDrqN | "reward": 0.0
 === DONE 118 ===
 ```
+
+---
+
+## RUN_ID 119 · 2026-10-17 22:37:50 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+HARBOR="$HOME/.local/bin/harbor"
+echo "=== RUN_ID 119 · oracle 3-task rerun · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) overlay head ---"
+head -20 /tmp/network-host-overlay.yml 2>&1
+echo "--- B) stage 3 tasks ---"
+rm -rf /tmp/tb_fix3; mkdir -p /tmp/tb_fix3
+for t in bn-fit-modify build-cython-ext build-pmars; do ln -s "$HOME/terminal-bench/$t" "/tmp/tb_fix3/$t"; done
+ls -l /tmp/tb_fix3
+echo "--- C) run (oracle, n=3, extra-docker-compose) ---"
+rm -rf /tmp/oracle_fix119
+timeout 480 sg docker -c "cd $HOME && timeout 450 $HARBOR run -p /tmp/tb_fix3 --agent oracle -n 3 --extra-docker-compose /tmp/network-host-overlay.yml -o /tmp/oracle_fix119" 2>&1 | tail -40
+echo "--- D) results ---"
+for f in /tmp/oracle_fix119/*/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r"
+done
+echo "=== DONE 119 ==="
+```
+
+**输出**
+```
+=== RUN_ID 119 · oracle 3-task rerun · 2026-10-17 22:37:50 · host=whag0pgpuap29 ===
+--- A) overlay head ---
+services:
+  main:
+    network_mode: host
+    environment:
+      - http_proxy=http://172.19.92.25:13128
+      - https_proxy=http://172.19.92.25:13128
+      - HTTP_PROXY=http://172.19.92.25:13128
+      - HTTPS_PROXY=http://172.19.92.25:13128
+      - no_proxy=localhost,127.0.0.1,10.239.0.0/16,172.19.0.0/16,172.16.0.0/16
+      - NO_PROXY=localhost,127.0.0.1,10.239.0.0/16,172.19.0.0/16,172.16.0.0/16
+      - UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+      - UV_CACHE_DIR=/tmp/uv-cache
+      - PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+      - PIP_TRUSTED_HOST=mirrors.aliyun.com
+      - GIT_SSL_NO_VERIFY=1
+      - GIT_HTTP_PROXY=http://172.19.92.25:13128
+      - GIT_HTTPS_PROXY=http://172.19.92.25:13128
+      - NVM_NODEJS_ORG_MIRROR=https://mirrors.aliyun.com/nodejs-release
+      - npm_config_registry=https://mirrors.cloud.tencent.com/npm/
+      - npm_config_strict_ssl=false
+--- B) stage 3 tasks ---
+total 0
+lrwxrwxrwx 1 app.e0031982 app.adm 47 Oct 17 22:37 bn-fit-modify -> /home/app.e0031982/terminal-bench/bn-fit-modify
+lrwxrwxrwx 1 app.e0031982 app.adm 50 Oct 17 22:37 build-cython-ext -> /home/app.e0031982/terminal-bench/build-cython-ext
+lrwxrwxrwx 1 app.e0031982 app.adm 45 Oct 17 22:37 build-pmars -> /home/app.e0031982/terminal-bench/build-pmars
+--- C) run (oracle, n=3, extra-docker-compose) ---
+  3/3 Mean: 0.333 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:02:56 0:00:00
+tb_fix3 • oracle
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Trials ┃ Exceptions ┃  Mean ┃
+┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│      3 │          0 │ 0.333 │
+└────────┴────────────┴───────┘
+
+┏━━━━━━━━┳━━━━━━━┓
+┃ Reward ┃ Count ┃
+┡━━━━━━━━╇━━━━━━━┩
+│ 1.0    │     1 │
+│ 0.0    │     2 │
+└────────┴───────┘
+
+Job Info
+Total runtime: 2m 56s
+Results written to /tmp/oracle_fix119/2026-10-17__22-37-51/result.json
+Inspect results by running `harbor view /tmp/oracle_fix119`
+Share results by running `harbor upload /tmp/oracle_fix119/2026-10-17__22-37-51`
+
+22:40:49 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 1/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 2.4s
+22:40:49 - LiteLLM:WARNING: get_model_cost_map.py:672 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable. Falling back to local backup.
+--- D) results ---
+bn-fit-modify__MgrZjZi | "reward": 1.0
+build-cython-ext__33t3Mpj | "reward": 0.0
+build-pmars__8E3x9BE | "reward": 0.0
+=== DONE 119 ===
+```
