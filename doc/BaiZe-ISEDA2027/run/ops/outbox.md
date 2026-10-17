@@ -12156,3 +12156,46 @@ View registered datasets at https://hub.harborframework.com/datasets
 https://ofhuhcpkvzjlejydnvyd.supabase.co/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fhub.harborframework.com%2Fauth%2Fcli-callback&code_challenge=KU2onn0dXsasdATi6vzCgJAyCcbGzK6-vD-4MrsXNpc&code_challenge_method=S256
 === DONE 113 ===
 ```
+
+---
+
+## RUN_ID 114 · 2026-10-17 18:59:41 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 114 · harbor auth code 兑换(3) · $(date '+%F %T') · host=$(hostname) ==="
+HARBOR="$HOME/.local/bin/harbor"
+[ -x "$HARBOR" ] || HARBOR="$(command -v harbor 2>/dev/null || true)"
+echo "[1] pending verifier"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/oauth-pending.json" 2>&1 | head -2
+echo "[2] exchange code"
+OUT="$(timeout 120 "$HARBOR" auth login --callback-url '3265fb06-ad21-4a10-addf-fad732e2f694' 2>&1 || true)"
+echo "$OUT" | tail -10
+if echo "$OUT" | grep -q 'Logged in as'; then OK=1; else OK=0; fi
+echo "[3] auth status AFTER"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -3
+echo "[4] credential file (no secret)"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/credentials.json" 2>&1 | head -2
+if [ "$OK" = 0 ]; then
+  echo "[5] fresh URL"
+  timeout 30 "$HARBOR" auth login --no-browser 2>&1 | grep -o 'https://[^ ]*' | head -2
+fi
+echo "=== DONE 114 ==="
+```
+
+**输出**
+```
+=== RUN_ID 114 · harbor auth code 兑换(3) · 2026-10-17 18:59:42 · host=whag0pgpuap29 ===
+[1] pending verifier
+mtime=2026-10-17 18:57:34.497481258 +0800 size=125
+[2] exchange code
+Login failed: OAuth code exchange failed: 
+[3] auth status AFTER
+Not authenticated. Run `harbor auth login`.
+[4] credential file (no secret)
+stat: cannot statx '/home/app.e0031982/.harbor/credentials.json': No such file or directory
+[5] fresh URL
+https://ofhuhcpkvzjlejydnvyd.supabase.co/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fhub.harborframework.com%2Fauth%2Fcli-callback&code_challenge=ERaeVHCYjYkYzIU0VxwXFdZ_ZHlHI8hJPX-1AQ8OkIk&code_challenge_method=S256
+=== DONE 114 ===
+```
