@@ -49,6 +49,8 @@
 | 2026-10-05 15:25 | data | GPU2-7 | ~2-4h | **⭐ Stable S0a 臂已启动！** P-9.9 ✅ 完成(15:15)→8 卡全释放→data 即刻起 S0a。口径：6卡 TP1/DP6 seq=4094 GBS=1020(DP6需整除6,基线1024→1020 -0.4%) mb=1 5000步 bf16 seed1234。BLEND=base:code:math=88:8:4(4 base shards×22=88 + code 8 + math 4)。PID 1995742/1995914(torchrun)/1998724-738(6 workers)，GPU2-7 ~32.5GB 0%util(首步CUDA编译中)。 | ✅ 运行中 |
 | 2026-10-09 晚 | **harness（运维代发）** | **不用 GPU；要 `.29` 的 CPU / 内存(tmpfs) / 磁盘 / 出网带宽** | **~42h（7 路并行）～ 14h（再叠 harness 内并发 N=3）** | **用户直令**（`BAIZE_HARNESS_TASK.md` 顶部 `2026-10-09⑧`）：起 **7×300 SWE-bench Lite 横评**（7 harness × 300，`--resume` 复用已有 700 条 ⇒ 新增 **1200 runs**）。⚠️ **与 pretrain 抢的是同一台 `.29`**：harness 是 agent CLI + git + unshare 沙箱（CPU/IO 重，另有 `/dev/shm` tmpfs 吃内存），**不占显存** ⇒ 与 pretrain 的 GPU 训练**可共存但会压 IO**。**互不 kill；harness 须在低负载窗口内分档上调并发（N=1→2→3，逐档验 block=0）。** | ⏸ **待资源核验**（harness 起跑前须 `uptime` + `nvidia-smi` + `df -h /dev/shm` + `free -g` 贴原文） |
 | 2026-10-17 12:0x | **vision** | **`.29` GPU 0–7（8 卡）** | **~15–17h（训练 13.4–14.2h + 启动/ckpt/ProtB 1–2h）** | **用户直令**（`BAIZE_VISION_TASK.md` 顶部 2026-10-17 12:0x）：ArmB = open_clip ViT-B/16 + AIMv2-style，全量 8000 GPIC + CC12M + Amshaker（≈117.25M 对 × 3 epoch），GBS 8192 / MBS 512（OOM 回退 4096/256），warmup 2000，LR 1e-3→1e-4。⚠️ `.12` 8 卡已被 pretrain 80B decay 全占（ETA ~10-20 02:30）⇒ **不抢 .12、不 kill pretrain**；先探 `.29`，空则立即起，否则写 watcher 等 `.12` 释放。 | ⏳ **待确认（先 `nvidia-smi` 探空）** |
+| 2026-10-17 12:2x | **pretrain** | **`.29` GPU 0–7（8 卡）** | **~64h**（resume 后 19,480 步 × 11.9s ≈ 64.4h） | **用户直令**：「pretrain 用 `.29`，vision 用 `.12`」⇒ 80B decay 从 `.12` 迁回 `.29`，用最新 ckpt resume（`latest.pt@500` 或 `step_532000`），配方不变；`.12` 同时释放给 vision ArmB。 | ✅ 已批准（用户直令） |
+
 
 
 

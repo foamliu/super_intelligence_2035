@@ -1,6 +1,19 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-17 12:2x（🖥️ `.12` 专属 vision；pretrain 迁 `.29`）· 用户直令 · 最高优先
+
+> **用户令（2026-10-17）**：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」
+
+- **分卡重划（立即生效）**：`.12` 8×H100 = **vision 独占**；`.29` 8×H100 = **pretrain**。vision **不再探 `.29`**、不再排队等 `.12`。
+- **起训前检查**：`nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv` + `pgrep -af 'baize_xmodel25_decay|torchrun.*baize_xmodel25_decay'`。
+  - 已无 pretrain 进程（0 MiB）→ **立即按顶部 ArmB 配方起训**。
+  - 仍有（pretrain 尚未自停）→ 等 **≤10min**；仍未停 ⇒ **用户已授权 kill（仅此一次）**：先 `ls -lt <pretrain OUT>/latest.pt` 记录最新 ckpt，再 `kill -TERM <PID>`，60s 后 `kill -KILL`；**只杀 `baize_xmodel25_decay*` / `torchrun.*baize_xmodel25_decay`**；🚫 不碰 loop / relay / data / harness。
+- kill 后 `nvidia-smi` 确认 8 卡 0 MiB，再起 ArmB；MEMORY 记「kill 时间 / PID / 最新 ckpt / 损失步数」。
+- 若读到 pretrain 的 `GPU12_RELEASED=1` 更好，但**用户令优先，不阻塞等待**。
+- GPU12 账本已登记 vision 8 卡（~15–16.5h）。
+
+
 ### 🆕 运维指令 · 2026-10-17 12:0x（🚀 启动 ArmB：open_clip ViT-B/16 + AIMv2-style · 全量 8000 GPIC · 3 epoch）· 用户直令 · 最高优先
 
 > **用户令（原文）**：「vision：启动下边实验 目标=AIMv2-style 数据=全量8000 tar GPIC + CC12M + Amshaker 塔=open_clip ViT-B/16 86.2M warmup=2000步 LR=1e-3，min_lr=1e-4 GBS=8192，MBS=512(如果OOM，则GBS=4096，MBS=256) epoch=3 按照这个配方训练，给个ETA 使用 open_clip接口（便于嵌入LLaVA-OneVision架构用lmms-eval评测）」

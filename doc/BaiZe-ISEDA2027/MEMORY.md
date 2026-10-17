@@ -35,6 +35,15 @@
 - **资源**：`.12` 8×H100 被 pretrain 80B decay 全占 ⇒ **不 kill/不抢**；先探 `.29`（ssh nvidia-smi），空则立即起，否则写 `run_armB_when_free.sh` 轮询 `.12` 自动起。已在 `run/GPU29_ALLOC.md` 登记申请行。
 - 任务书瘦身：归档 10-16 ArmA 块 + 10-13~10-16 历史指针，31,987B→**24,182B（23.6KB ✓）**。
 
+### 🖥️ 跨机重排（用户直令）：pretrain → `.29`，vision → `.12`
+- 用户令：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」
+- **根因**：crash5/6 是 `.12` 本地 `emerging_optimizers 0.5.0a0` 与 Megatron API 不匹配；为用该本地安装把 80B decay 从 `.29` 迁到 `.12`——**临时兼容性迁机，不是永久分卡**。
+- 已下发 `run/BAIZE_PRETRAIN_2B_TASK.md` 顶部：**先确认最新 ckpt（latest.pt@500 或 step_532000）→ SIGTERM→KILL 仅本任务 PID → 验证 `.12` 8 卡 0MiB → 写 `GPU12_RELEASED=1` → 到 `.29` preflight（版本/签名）→ `--resume` 起 v2**；配方不变；`.12` 不得再占。
+- 已下发 `run/BAIZE_VISION_TASK.md` 顶部：`.12` 8 卡 = vision 独占；起训前查 pretrain 进程，若 ≤10min 未自停，**用户已授权 kill（仅此一次，只杀 `baize_xmodel25_decay*`）**；释放后立即按 ArmB 配方起训。不再探 `.29`/不再排队。
+- 账本：`GPU29_ALLOC.md` +pretrain 8卡 ~64h；`GPU12_ALLOC.md` +vision 8卡 ~15–16.5h（均标「用户直令·已批准」）。
+- **ETA**：pretrain 若从 ckpt@500 resume → 19,480 步 ×11.9s ≈ **64.4h** → 约 **10-20 05:00** 完成；若只能从 step_532000 重起 → 损失 ≤500 步（≈1.65h）。vision ArmB：代码 1–2h + 训练 13.4–14.2h + 收尾 1–2h ⇒ **10-18 04:00–06:30**。
+- ⚠️ 状态矛盾：pretrain 记忆写 10:30 起 `.12` 占满，但 vision #130 在 11:1x 实测 `.12` 8 卡 0MiB、且 pretrain 10:38 后无提交——执行时以 `nvidia-smi` 原文为准；若 pretrain 已死，kill 为 no-op。
+
 
 ## 🆕 最近操作（2026-10-16）
 

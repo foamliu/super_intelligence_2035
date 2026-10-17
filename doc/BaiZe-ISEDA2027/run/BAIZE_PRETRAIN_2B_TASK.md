@@ -1,6 +1,30 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-17 12:2x（🛑 停止 `.12` 的 80B decay → 迁回 `.29` 续跑；`.12` 让给 vision）· 用户直令 · 最高优先
+
+> **用户令（2026-10-17）**：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」
+
+**① 根因（写进 MEMORY，不甩锅）**：crash5/6 是 `.12` 本地 `emerging_optimizers 0.5.0a0` 与 Megatron API 不匹配；为用该本地安装，把 80B decay 从 `.29` 迁到 `.12`。这是**兼容性临时迁机**，不是永久分卡。现按用户令**迁回 `.29`**。
+
+**② 停止 `.12`（先保 ckpt，再 kill）**
+- 记录原文：`date`、`nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv`、`pgrep -af 'baize_xmodel25_decay|torchrun.*baize_xmodel25_decay'`。
+- 查 ckpt：按脚本实际 `OUT`（`grep -n '^OUT=' run/baize_xmodel25_decay_v2.sh`）；`ls -lt $OUT/latest.pt $OUT/checkpoint_*.pt`；记录最新 step/mtime。
+  - 有 `latest.pt`（step≥500）→ 以它 resume；
+  - 只有 `step_532000` → 从 `step_532000` 重起，MEMORY 记「损失步数 ≈ X（≈X×11.9s）」。
+- 停止：`kill -TERM <torchrun leader>` → ≤120s 未退再 `kill -KILL` leader + workers。**只杀本任务 PID**；🚫 不碰 `baize_pretrain_loop.sh` / `baize_vision_loop.sh` / `ops_relay.sh` / data 下载 / harness。
+- 验证：`.12` 8 卡 `0 MiB / 0%`、无 compute apps；原文贴 MEMORY，写 `GPU12_RELEASED=1 <时间>`；**立即 commit `pretrain move29: release .12` 并 push**（vision 依赖此信号，但用户令优先，不阻塞 vision）。
+
+**③ 迁回 `.29` 续跑**
+- `.29` preflight（原文落盘）：`nvidia-smi` 8 卡空；`py310`；`torch / transformers / megatron.core / emerging_optimizers` 版本；**打印 `OrthogonalizedOptimizer.__init__` 与 `newton_schulz_tp` 签名**。
+  - ⚠️ `.12` 的 crash5/6 monkey-patch 只针对 `0.5.0a0`；`.29` 版本若不同，**不要盲套 patch**，按实际签名适配；`_orig_mod` 保存修复与版本无关，保留。
+- 起训：`cd run && setsid bash baize_xmodel25_decay_v2.sh > /tmp/baize_xmodel25_decay_v2_dot29.log 2>&1 < /dev/null &`；用 `--resume`（脚本已支持）指向最新 ckpt；确认 step/loss/tok/s、0 crash；首 ckpt 验证 `_orig_mod` 不崩。
+- 配方不变（seq 3712 / GBS 960 / ITERS 19980 / LR 1.67e-3→1e-5 / SAVE 500）；**不得改配方**。
+- MEMORY 写：机器 `.29`、PID、resume step、ETA、首 ckpt 时间；commit `pretrain move29:`。
+
+**④ 纪律**：只停自己任务；停前必须确认 ckpt；不删 ckpt；不占 `.12`；与 vision ArmB 错峰 IO；任务书 >32KB 自滚。
+
+
 > 📦 §运维指令·2026-10-16 22:4x（🔧 MBS 卡 logits 显存 → 分块 CE）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分块 CE 已实现并修双 bug（label double-shift + μP logit scale=1/6），v2 正式训练已起（MBS=4/chunked CE/compile default/no_sync，~299K tok/s）。需要时再读。
 
 > 📦 §运维指令·2026-10-16 22:1x（🛑 停训清卡做 8 卡 A/B 调试）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：A0–A5 对比完成，MBS=4+chunked CE 与 MBS=2 HF 吞吐等价（~299K），最优档已一次性重起正式 v2。需要时再读。
