@@ -2,7 +2,7 @@
 
 > **Status**: T1 prep (skeleton + unit tests). **Docker BLOCKED** — see Blockers below.
 > Backbone: `kimi-k2.6-cloud` @ `http://agi-gateway.cxmt.com/cloud/v1`
-> Framework: Harbor v0.24.0 · Dataset: `terminal-bench@2.0` (89 tasks per paper)
+> Framework: Harbor v0.24.0 · Dataset: `terminal-bench-core@0.1.1` (80 tasks per registry.json; task doc wrote "terminal-bench@2.0/89" — actual is 80, "以实际为准")
 
 ## Directory Layout
 
@@ -71,38 +71,56 @@ bash terminalbench/launch_tb_7way.sh --pilot
 | Harbor | 0.24.0 | `uv tool install harbor` |
 | uv | 0.8.13 | pre-installed |
 | Docker | 27.5.1 (client) | system — **BLOCKED: user not in docker group** |
-| Dataset | terminal-bench@2.0 | Harbor Hub (needs auth; currently not found) |
+| Dataset | terminal-bench-core@0.1.1 | Harbor Hub (needs auth; GitHub OAuth URL generated) — 80 tasks |
 | Model | kimi-k2.6-cloud | `doc/keys.txt` → `http://agi-gateway.cxmt.com/cloud/v1` |
 
-## Blockers (2026-10-17)
+## Blockers (2026-10-17, R424 updated)
 
-### B1: Docker Access Blocked
+### B1: Docker Access Blocked (HARD BLOCKER — all execution paths need Docker)
 
 **Symptom**: `docker info` → `permission denied while trying to connect to the Docker
 daemon socket at unix:///var/run/docker.sock`
 
 **Root cause**: `docker.sock` owned by `root:docker` (mode `srw-rw----`). User
 `app.e0031982` is in group `app.adm`, NOT in `docker` group. No passwordless sudo.
+No rootlesskit/podman. No TCP daemon reachable (localhost/.29/.12:2375 all fail).
 
 **Tried**: `docker info`(perm denied) · `sg docker`(invalid pw) · `newgrp docker`(invalid pw)
 · `sudo -n docker`(needs pw) · `podman`(not found) · `rootlesskit`(not found)
+· `docker -H tcp://localhost:2375`(no server) · `docker -H tcp://10.239.2.29:2375`(no server)
 · `harbor run --dry-run`("Docker daemon is not running")
 
 **Impact**: Cannot run any Terminal-Bench task. Cannot run oracle 5/5. Cannot validate
-adapters against real tasks.
+adapters against real tasks. **All paths (harbor run / tb run / oracle) require Docker.**
 
 **Fix needed**: Ops adds user to docker group (`sudo usermod -aG docker app.e0031982`),
-or run on a machine with Docker access.
+then user re-login or `newgrp docker`.
 
-### B2: Dataset terminal-bench@2.0 Not Found
+### B2: Dataset terminal-bench-core@0.1.1 (corrected from terminal-bench@2.0)
 
-**Symptom**: `harbor download terminal-bench@2.0` → "not found"
+**Actual dataset name**: `terminal-bench-core@0.1.1` (**80 tasks**, not 89).
+The task document wrote `terminal-bench@2.0` / 89 tasks; the actual registry
+(`laude-institute/t-bench` repo, `registry.json`) shows `terminal-bench-core@0.1.1`
+with 80 task_id_subset entries on branch `dataset/terminal-bench-core/v0.1.x`.
 
-**Tried**: `harbor dataset list`(→ web URL) · `harbor auth status`(not authenticated)
-· `curl hub.harborframework.com/datasets`(SSL error via proxy)
+**Why `harbor download` fails**:
+1. `harbor download terminal-bench@2.0` → not found (wrong name)
+2. `harbor download terminal-bench-core@0.1.1` (no auth) → not found (needs Harbor Hub auth)
+3. `harbor download --repo laude-institute/t-bench terminal-bench-core@0.1.1` → not found
+   (root cause: the repo's `registry.json` is legacy `tb` format with `task_id_subset`
+   field; Harbor's `DatasetSpec` model expects `tasks: list[RegistryTaskId]` → validation
+   mismatch → dataset appears "not found")
+4. The GitHub repo's tasks use legacy `task.yaml` format (not Harbor's `task.toml`)
 
-**Fix needed**: Authenticate with Harbor Hub (`harbor auth login`), or find correct
-dataset name/version.
+**Fix**: Authenticate with Harbor Hub via GitHub OAuth:
+1. `harbor auth login --no-browser` generates an OAuth URL (stored in `~/.harbor/oauth-pending.json`)
+2. Ops opens the URL in a browser → GitHub login → authorize
+3. Ops copies the full callback URL from the browser redirect
+4. Agent runs `harbor auth login --callback-url <callback_url>` to complete auth
+5. Then `harbor download terminal-bench-core@0.1.1` should work (Harbor Hub has Harbor-format version)
+
+**Alternative**: `uv tool install terminal-bench` → `tb run --dataset-name terminal-bench-core
+--dataset-version 0.1.1` — but also requires Docker (B1).
 
 ## Evaluation Design (Pre-registered)
 
