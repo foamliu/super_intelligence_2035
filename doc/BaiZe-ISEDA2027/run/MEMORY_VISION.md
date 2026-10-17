@@ -4,8 +4,9 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 22:26（🔄 ArmB 训练监控 · wake #139）**：git pull up to date, 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **27540/57250(48.1%)**，loss=0.32(contr=0.30 patch=0.022)，C1~0.74(正常振荡 0.69–0.85)，lr=6.03e-4(cosine 衰减)，**0.86 it/s**(稳态)，8×H100 100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=533min(8.9h)。✅ ckpt@10000+20000+latest.pt+open_clip_state_dict+predictor+config.json 均在。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**ETA**: (57250−27540)/0.86≈**9.6h → ~08:00 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.9KB / MEMORY=30.2KB。
+> 🆕 **2026-10-17 23:37（🔄 ArmB 训练监控 · wake #140）**：git pull up to date, 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **31480/57250(55.0%)**，loss~0.42(contr~0.40 patch~0.021)，C1 振荡 0.64–0.85(正常)，lr=5.03e-4(cosine 衰减)，**0.87 it/s**(稳态)，8×H100 100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=605min(10.1h)。✅ ckpt@30000(@23:09)+20000+latest.pt+open_clip_state_dict(598MB)+predictor+config.json 均在。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**ETA**: (57250−31480)/0.87≈**8.2h → ~07:50 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.2KB / MEMORY=30.7KB。
 >
+> 📦 2026-10-17 22:26（🔄 ArmB 训练监控 · wake #139）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step27540(48.1%)健康, 0.86 it/s, ckpt@20000+10000已存, ETA~08:00 10-18。
 > 📦 2026-10-17 21:1x（🔄 ArmB 训练监控 · wake #138）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step23680(41.4%)健康, 0.85 it/s, ckpt@20000+10000已存, ETA~08:00 10-18。
 > 📦 2026-10-17 19:5x（🔄 ArmB 训练监控 + ✅ ProtB eval 脚本就绪 · wake #137）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step20520(35.8%)健康, armB_protb_eval.py+run_armB_protb_eval.sh 交付(CPU单测3/3 PASSED), 0.88 it/s, ETA~07:30 10-18。
 > 📦 2026-10-17 18:39（🔄 ArmB 训练监控 · wake #136）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step15960(27.9%)健康, 0.87 it/s, ETA~10-18 08:00。
@@ -28,10 +29,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **ArmB 4-epoch 训练运行中（wake #132 重启, PID 1203161, 10-17 13:31）**：open_clip ViT-B/16 + AIMv2-style dense(InfoNCE + masked-patch MSE)。step 27540/57250(48.1%) loss=0.32, 0.86 it/s, 8×H100 100%/50.5GB, ckpt@10000+20000已存, ETA~9.6h→~08:00 10-18。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**WAITING=1**。前序 ArmA(154500步)+ProtB(58.03%)完成。 |
+| PHASE | 🚀 **ArmB 4-epoch 训练运行中（wake #132 重启, PID 1203161, 10-17 13:31）**：open_clip ViT-B/16 + AIMv2-style dense(InfoNCE + masked-patch MSE)。step 31480/57250(55.0%) loss~0.42, 0.87 it/s, 8×H100 100%/50.5GB, ckpt@30000+20000已存, ETA~8.2h→~07:50 10-18。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**WAITING=1**。前序 ArmA(154500步)+ProtB(58.03%)完成。 |
 | ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-17 22:26 (wake #139)**: ArmB 4-epoch 训练监控——step 27540/57250(48.1%), loss=0.32, C1~0.74, 0.86 it/s(稳态), ETA~9.6h→~08:00 10-18。8卡100%util, 50.5GB/卡, 无OOM。✅ checkpoint_20000+10000已存。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。P0(kill+起训)+P1(ArmA报告)均已交付。下一步: 监控→训完run_armB_protb_eval.sh→报告。📦 体积：TASK=26.9KB / MEMORY=30.2KB（均<32KB）。 |
+| 更新 | **2026-10-17 23:37 (wake #140)**: ArmB 4-epoch 训练监控——step 31480/57250(55.0%), loss~0.42, C1 振荡 0.64–0.85(正常), 0.87 it/s(稳态), ETA~8.2h→~07:50 10-18。8卡100%util, 50.5GB/卡, 无OOM。✅ checkpoint_30000(@23:09)+20000已存。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。P0(kill+起训)+P1(ArmA报告)均已交付。下一步: 监控→训完run_armB_protb_eval.sh→报告。📦 体积：TASK=26.2KB / MEMORY=30.7KB（均<32KB）。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
