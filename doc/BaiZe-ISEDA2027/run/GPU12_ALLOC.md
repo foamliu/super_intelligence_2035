@@ -43,6 +43,8 @@
 | 2026-10-07 20:08 | **vision** | **GPU0–7（全部 8 张）** | **~8h**（weight-ratio 4臂消融+eval） | ② mask-ratio 消融 ALL DONE(5 arms 09:52→19:42, IN-1k eval done 20:06). 8 GPU 重新空闲. ③ weight-ratio 消融需 8 GPU(4 arms: contrast:patch = 1:2/1:0.5/0.5:1/2:1, 30k steps/arm). 按既有优先序 vision > pretrain 推理 ⇒ **继续占用 8 GPU** | ✅ 已开跑（20:08, PID 187262, 8 GPU 16.5GB/卡 65-80%util, arm cw1_plw2 step~550/30k, ETA all+eval ~04:30） |
 | 2026-10-09 晚 | **vision（运维代发）** | **GPU0–7（全部 8 张）** | **~14–18h**（E1fair+E2fair 训练 + 双协议 eval） | **用户直令**：`BAIZE_VISION_TASK.md` 顶部 **2026-10-09⑨** —— 旧的 scaling E1/E2（`--lr 3e-3 --warmup 20`，187k 步 ⇒ warmup 仅 0.01%）**schedule 不公平，「bigger is worse」结论作废重做**；新配方 **`warmup=2000` / `lr=5e-4` / cosine / `min_lr=5e-5`**，两臂**必须用同一份冻结数据快照**（E1 用什么数据 E2 就用什么数据）。预计 E1fair ≈5.2–5.7h + E2fair ≈5.2–9.1h + eval ≈3.5h×2 | ✅ **8 GPU 全空闲（4MiB/卡 0%util），正在起跑**：r9_train.py cosine 支持 + snapshot_gpic(7437 GPIC tars) + smoke_cos 验证 → E1fair → E2fair → eval |
 | 2026-10-17 12:2x | **vision** | **GPU0–7（全部 8 张）** | **~15–16.5h**（ArmB 训练 13.4–14.2h + 启动/ckpt/ProtB 1–2h） | **用户直令**：「pretrain 用 `.29`，vision 用 `.12`」⇒ pretrain 80B decay 从 `.12` 迁出（先保 ckpt 再 kill），`.12` 8 卡归 vision；ArmB = open_clip ViT-B/16 + AIMv2-style，全量 8000 GPIC + CC12M + Amshaker（≈117.25M 对 ×3 epoch），GBS8192/MBS512（OOM→4096/256），warmup2000，LR1e-3→1e-4。 | ✅ 已批准（用户直令） |
+| 2026-10-17 12:4x | **vision** | **GPU0–7（8 张）** | **~19–21h**（4 epoch：训练 17.9–18.9h + 启动/ckpt/ProtB 1–2h） | **用户追加令**：3 epoch≈14h ⇒ **预约 4 epoch**（N≈117.25M×4=469M samples，GBS8192≈57,250 步，回退 4096≈114,500 步）；训完立即 ProtB。先 kill `.12` pretrain 进程（记录最新 ckpt），`.12` 独占。 | ✅ 已批准（用户直令；取代上一行 3 epoch） |
+
 
 
 ---

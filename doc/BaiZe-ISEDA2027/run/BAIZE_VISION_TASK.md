@@ -1,6 +1,17 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-17 12:4x（⚔️ 立即 kill `.12` pretrain 进程 → 起 ArmB；**改 4 epoch** → 训完评 ProtB）· 用户直令 · 最高优先
+
+> **用户令（2026-10-17）**：「让 vision 把 .12 pretrain 的训练进程杀掉，开始 vision 的工作。如果 3 个 epoch 只需 14h，那就预约 4 个 epoch，训练完了评测 ProtB」
+
+- **kill（立即，不再等 10min）**：先 `ls -lt <pretrain OUT>/latest.pt` 记录最新 ckpt；`pgrep -af 'baize_xmodel25_decay|torchrun.*baize_xmodel25_decay'`；`kill -TERM` 全部匹配 PID → 60s 未退则 `kill -KILL`；**只杀这些 PID**，不碰 loop/relay/data/harness；`nvidia-smi` 确认 8 卡 0 MiB。
+- **ArmB 配方不变，唯 epoch 3→4**：N≈117.25M → **469.0M samples**；**GBS8192 ≈57,250 步**（14,313/epoch）；回退 GBS4096 ≈114,500 步；warmup 2000 / LR 1e-3→1e-4 / MBS512 / AIMv2-style 均不变；save every 10k。
+- **ETA（4 epoch）**：按 6,900–7,300 samples/s → **纯训练 17.9–18.9h**；+启动/ckpt/ProtB 1–2h ⇒ **总 19–21h**（GPU·h ≈143–151）。若 13:30 起 → **10-18 08:30–10:30** 完成；若实测 6,000 samples/s → 21.7h 纯训练，按实测刷新。
+- **训完立即 ProtB**：复用 `armA_protb_eval.py` 口径（full IN-1k 1.28M train + 50k val、SGD 90ep、seeds 0/1/2、feature=projected、5-NN），输出 `armB_protb_vitb16_224_results.json` + 中文报告；预注册判据不变（lp ≥58.03；≥61.0 且 5-NN ≥48.98 → 接受混合）。
+- **次序**：先 kill + 起训（P0）；ArmA 报告/兼容性附录在训练中 CPU 补（P1）。
+
+
 ### 🆕 运维指令 · 2026-10-17 12:2x（🖥️ `.12` 专属 vision；pretrain 迁 `.29`）· 用户直令 · 最高优先
 
 > **用户令（2026-10-17）**：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」

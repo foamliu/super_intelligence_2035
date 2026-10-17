@@ -24,6 +24,11 @@
 
 **④ 纪律**：只停自己任务；停前必须确认 ckpt；不删 ckpt；不占 `.12`；与 vision ArmB 错峰 IO；任务书 >32KB 自滚。
 
+**⑤ 用户追加令（2026-10-17 12:4x）**：**「pretrain 在 `.29` 重启训练；以后不许随意换服务器。有问题上报或自己解决。训练重启后上报 ETA。」**
+- `.29` 重启是**硬指令**；从最新 ckpt resume；重启后 **≤30min 内**在 MEMORY 报：机器、PID、resume step、实测 s/step、tok/s、首 ckpt 时间、**ETA**。
+- **服务器固定**：`.29` = pretrain、`.12` = vision；**未经用户明确批准不得再换机**；故障必须**就地**定位/修复（版本/API/显存/NCCL 等），修不了再上报 blocker + 选项，不得擅自迁移。
+- `.29` 若 v2 compile 不生效（吞吐回落 ~184K tok/s / ~20s/step），按实测报 ETA（可能 ~108h），不得隐瞒。
+
 
 > 📦 §运维指令·2026-10-16 22:4x（🔧 MBS 卡 logits 显存 → 分块 CE）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分块 CE 已实现并修双 bug（label double-shift + μP logit scale=1/6），v2 正式训练已起（MBS=4/chunked CE/compile default/no_sync，~299K tok/s）。需要时再读。
 

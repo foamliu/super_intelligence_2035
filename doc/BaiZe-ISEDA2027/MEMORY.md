@@ -44,6 +44,13 @@
 - **ETA**：pretrain 若从 ckpt@500 resume → 19,480 步 ×11.9s ≈ **64.4h** → 约 **10-20 05:00** 完成；若只能从 step_532000 重起 → 损失 ≤500 步（≈1.65h）。vision ArmB：代码 1–2h + 训练 13.4–14.2h + 收尾 1–2h ⇒ **10-18 04:00–06:30**。
 - ⚠️ 状态矛盾：pretrain 记忆写 10:30 起 `.12` 占满，但 vision #130 在 11:1x 实测 `.12` 8 卡 0MiB、且 pretrain 10:38 后无提交——执行时以 `nvidia-smi` 原文为准；若 pretrain 已死，kill 为 no-op。
 
+### ⚔️ 用户追加令（12:4x）：vision 立即 kill `.12` pretrain + ArmB 改 4 epoch；pretrain `.29` 重启、服务器固定
+- 用户令：「让 vision 把 .12 pretrain 的训练进程杀掉，开始 vision 的工作。如果 3 个 epoch 只需 14h，那就预约 4 个 epoch，训练完了评测 ProtB。让 pretrain 在 .29 重启训练，以后不许随意换服务器。有问题上报或者自己解决。训练重启后上报 ETA。」
+- **vision**：新块置顶（取代 12:2x 的「等 ≤10min」）——**立即 kill**：先记录 pretrain `latest.pt` 与 PID，`TERM`→60s→`KILL`，只杀 `baize_xmodel25_decay*`；8 卡 0MiB 后按 ArmB 起训。**epoch 3→4**：N≈117.25M×4=469.0M samples；GBS8192≈**57,250 步**（回退 4096≈114,500）；warmup/LR/MBS/AIMv2 不变。**ETA：纯训练 17.9–18.9h + 收尾 1–2h ⇒ 19–21h（143–151 GPU·h）**；13:30 起 → **10-18 08:30–10:30** 完成。训完立即 ProtB（同 armA 口径，输出 `armB_protb_vitb16_224_results.json`）。
+- **pretrain**：追加第 ⑤ 条——`.29` 重启是硬指令，从最新 ckpt resume；**重启后 ≤30min 报 ETA**（机器/PID/resume step/s-per-step/tok/s/首 ckpt）；**服务器固定** `.29`=pretrain、`.12`=vision，未经明确批准不得再换机；故障就地修，修不了上报 blocker+选项。若 `.29` v2 compile 不生效（~184K tok/s / ~20s/step），按实测报（可能 ~108h）。
+- **ETA**：pretrain 从 ckpt@500 → 19,480×11.9s≈64.4h → 约 10-20 05:00；若从 step_532000 → 66.0h → 约 10-20 06:40；若 compile 失效 → ~108h。
+- 账本：`GPU12_ALLOC` 追加 4 epoch 行（~19–21h，取代 3 epoch 行）。
+
 
 ## 🆕 最近操作（2026-10-16）
 
