@@ -7,8 +7,8 @@
 > **另**：ops 中继被误杀（重启脚本 `pkill -f` 自匹配），当前无中继。按序只做这三件事：
 > 1) **安全重启中继**（启动命令必须写进脚本文件，禁止与 `pkill` 同行）：
 >    `printf '%s\n' '#!/bin/bash' 'cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run' 'pgrep -f "[o]ps_relay[.]sh" | xargs -r kill' 'sleep 2' 'setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &' > /tmp/restart_relay.sh && bash /tmp/restart_relay.sh`
-> 2) **带 overlay 重跑 3 个失败任务**（config `/tmp/tb_oracle_cfg_117.yaml`；overlay `/tmp/network-host-overlay.yml`）：
->    `harbor run -p ~/terminal-bench/bn-fit-modify -p ~/terminal-bench/build-cython-ext -p ~/terminal-bench/build-pmars --agent oracle -n 3 --extra-docker-compose /tmp/network-host-overlay.yml -o /tmp/oracle_fix118`（R426 已实测该 flag 生效）
+> 2) **带 overlay 重跑 3 个失败任务**：
+>    `harbor run -p ~/terminal-bench/bn-fit-modify -p ~/terminal-bench/build-cython-ext -p ~/terminal-bench/build-pmars --agent oracle -n 3 --extra-docker-compose /tmp/network-host-overlay.yml -o /tmp/oracle_fix118`（R426 实测有效）
 > 3) 3/3 通过 → 全量 `harbor run -d terminal-bench@2.0 --agent oracle -k 5` 直到 **5/5**；per-task reward 写回 `MEMORY_HARNESS.md`；未过记 blocker 原文。
 > 📦 10-17「Docker 权限」「清 /tmp」已归档 → `ARCHIVE_OPERATOR_HARNESS.md`「归档块 M」；Docker 已 OK，`/tmp` 自清。
 
