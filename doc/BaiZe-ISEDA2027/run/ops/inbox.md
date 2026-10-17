@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 113 -->
+<!-- RUN_ID: 114 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,42 @@
 
 ---
 
+## RUN_ID 114 — 🔐 **Harbor 登录（第三段）：兑换 code `3265fb06-…`（只认证，30s 内执行）**
+
+> 中继 RUN_ID 113 于 18:57:30 生成新链接（challenge=KU2onn0…），ops 已授权并即时回传 code。
+> 本块：立刻兑换 → 复查状态。失败则再出 URL。
+
+```bash
+set -u
+echo "=== RUN_ID 114 · harbor auth code 兑换(3) · $(date '+%F %T') · host=$(hostname) ==="
+HARBOR="$HOME/.local/bin/harbor"
+[ -x "$HARBOR" ] || HARBOR="$(command -v harbor 2>/dev/null || true)"
+echo "[1] pending verifier"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/oauth-pending.json" 2>&1 | head -2
+echo "[2] exchange code"
+OUT="$(timeout 120 "$HARBOR" auth login --callback-url '3265fb06-ad21-4a10-addf-fad732e2f694' 2>&1 || true)"
+echo "$OUT" | tail -10
+if echo "$OUT" | grep -q 'Logged in as'; then OK=1; else OK=0; fi
+echo "[3] auth status AFTER"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -3
+echo "[4] credential file (no secret)"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/credentials.json" 2>&1 | head -2
+if [ "$OK" = 0 ]; then
+  echo "[5] fresh URL"
+  timeout 30 "$HARBOR" auth login --no-browser 2>&1 | grep -o 'https://[^ ]*' | head -2
+fi
+echo "=== DONE 114 ==="
+```
+
+---
+
 ## RUN_ID 113 — 🔐 **Harbor 登录（第二段）：兑换 ops 新 code `1acc84df-…`（只认证）**
 
 > RUN_ID 112 已确认未认证且无 pending；中继于 18:44:01 重发了新授权链接，ops 已完成 GitHub 确认并提供新 code。
 > 本块：兑换 → 复查 → 核对本地数据集；失败则再打印新 URL。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 echo "=== RUN_ID 113 · harbor auth code 兑换(2) · $(date '+%F %T') · host=$(hostname) ==="
 HARBOR="$HOME/.local/bin/harbor"
