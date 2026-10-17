@@ -952,3 +952,73 @@ timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -3
 > **剩余 65 条 not-applied**：matplotlib 30（需 qhull+freetype build deps ~2h）· sklearn 27（需 build deps ~2h）· sphinx 8（待排查）
 > **r1_eval.py fix2b**：`conda activate {env}` → `export PATH={env_path}/bin:$PATH`（chroot 内 conda activate 修复，正确保留）
 > **下一步建议**：① matplotlib+sklearn 需额外 ~4h 安装 build deps + 重建 C 扩展（65 条中 57 条）② sphinx 8 条逐条排查 ③ **等运维确认后执行**
+
+---
+
+### §运维指令 · 2026-10-14（glm-5.3-flash 7×300：Base URL 更正 + 启动重测）· 原文（2026-10-17 由运维搬出，未改）
+
+### 🆕 运维指令 · 2026-10-14（🔧 更正 glm-5.3-flash Base URL → `/v1`，去掉 cloud）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「harness: glm-5.3-flash 的 apikey 没问题，但是 base url 需要去掉 cloud。」（附：用户实测 `curl http://agi-gateway.cxmt.com/v1/chat/completions` 已 200 OK）
+
+**① 更正上一指令的 Base URL（其余不变）**：
+- ❌ 旧（错）：`http://agi-gateway.cxmt.com/cloud/v1`
+- ✅ 新（对）：`http://agi-gateway.cxmt.com/v1`
+
+**② 关键区别（务必注意）**：`glm-5.3-flash` 走 **`/v1`** 路径；而 `glm-5.2` 才走 `/cloud/v1`。**不要**沿用 glm-5.2 的 `/cloud/v1` 给 glm-5.3-flash（这正是之前 403 的根因）。
+
+**③ 落地**：
+- cline auth：`-p openai -k <key>` + `-b http://agi-gateway.cxmt.com/v1` + `-m glm-5.3-flash`。
+- 同步更新 `launch_glm53_7x300.sh` / `run_serial_kimi.py` / `run_harness.py` 里所有 glm-5.3-flash 的 base url 为 `/v1`。
+- 更新后先用 curl 探针复验 200（`GET/POST http://agi-gateway.cxmt.com/v1/chat/completions`，model=glm-5.3-flash），再 `bash launch_glm53_7x300.sh` 启动 7×300。
+
+**④ 其余**：key / model name / 7×300 框架 / 独立 JSON / 对比报告要求一律不变（见上一指令）。🚫 不占 GPU、错峰 IO。commit 前缀 `harness glm53:`。
+
+### 🆕 运维指令 · 2026-10-14（🚀 用 glm-5.3-flash 重测 7×300 —— 验证「能力是主因」）· 用户直令 · 最高优先
+
+> **用户令（2026-10-14）**：「根据报告，harness 任务模型能力是 passrate 低的主因。既然如此，请 harness 使用更强的模型 glm-5.3-flash 重测 SWE-bench-Lite(300) 7×300。」
+
+**背景**：审视结论 fix3/fix4 0-flip = **LLM 能力瓶颈（非 infra）**。现用更强 backbone `glm-5.3-flash` 重测，验证「换强模型 → passrate 显著提升」是否成立。
+
+**① 模型（逐字遵守）**：
+- model name：`glm-5.3-flash`
+- API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f`
+- Base URL：`http://agi-gateway.cxmt.com/cloud/v1`
+
+**② 跑法**：
+- 复用 7×300 框架：7 harness（`cline-patched` / `codex` / `hermes` / `opencode` / `claude-code` / `deepseek-harness` / `pi`）× 300 SWE-bench-Lite，backbone 换成 `glm-5.3-flash`。
+- 机制：`run_serial_kimi.py` 设 `HARNESS_MODEL=glm-5.3-flash`；cline auth 切 `-p openai -k <上述 key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.3-flash`（⚠️ 用 `/cloud/v1`，非 `/v1`）。
+- 结果独立 JSON（建议 `glm53_pilot_results.json`），🚫 **不覆盖** `kimi_pilot_results.json`（保留旧 backbone 证据）。
+- 幂等 `--resume`，沿用 `launch_7x300.sh` 模式（7 路并行、各自串行）。
+
+**③ 对比与交付**：
+- 与 `kimi-k2.6-cloud` 的 7×300 做**同 harness 逐项对比**（旧 574 resolved / 原口径）。
+- 交付中文 HTML（如 `reports/report_harness_glm53_vs_kimi_7x300.html`）：TL;DR / 7 harness × (glm53 vs kimi) resolved + passrate / 能力提升量（若显著提升 → 证实「能力是主因」）/ 结论 + 诚实条款。
+
+**④ 纪律**：
+- 🚫 不占 GPU（SWE-bench = CPU + API 配额）；与 `.29` pretrain P-8 训练、`.12` data 下载**避让 IO**（`nice` 限流、错峰）。
+- 开跑前 curl 探针确认 glm-5.3-flash key 可用（200）；监控 quota/timeout/no-patch 率。
+- ETA ~42h（7 路并行），结果幂等可续。
+- commit 前缀 `harness glm53:` · 任务书 >32KB 自滚归档。
+
+---
+
+### §运维指令 · 2026-10-13（P1 剩余项继续修 + 重评/重跑）· 原文（2026-10-17 由运维搬出，未改）
+
+### 🆕 运维指令 · 2026-10-13（🔧 P1 剩余项继续修 + 重评/重跑）· 用户直令 · 最高优先
+
+> 用户令（2026-10-13）：「harness 继续修。」—— 承接 fix1(34 flipped)+fix2(9 flipped) 已把 resolved 574→617（29.4%），现推进剩余 P1 项。
+> 性质：CPU+磁盘，不占 GPU；与 `.29` pretrain 训练 / data 线下载错峰 IO（`nice` 限流）。
+
+① 剩余项按此顺序修（每批开工前心跳报「instance×harness 条数 + ETA + 占用」→ 然后直接执行，不再逐条等确认；P1-3 Docker 冻结跳过）：
+1. fix3：matplotlib(30) + sklearn(27) 的 C 扩展 build deps + 重评（~4h）
+   - matplotlib：在 `testbed_py39` 装 qhull + freetype build deps → 重建 `_c_internal_utils` 等 C 扩展 → `pip install -e .` 通过 → 重评这 30 条。
+   - sklearn：`testbed_py38` 装 build deps → 重建 sklearn C 扩展 → 重评 27 条。
+   - 结果写独立 `kimi_pilot_results.fix3.json`（幂等 `--resume`）。
+2. sphinx 8 条逐条排查：查 `base_commit` 可达性 / git checkout / 依赖；能修就修，修不了标「待 P1-3 Docker 或不可行」。
+3. P1-1 astropy(28/42)：`pip wheel astropy` 预编译 + 注入 `~/.cache/pip`（或增大杀沙箱 memory cgroup）→ 重评 28 条（~4h）。
+4. P1-2 网络 503 + ②b 重跑 agent：① git fetch 加 3 次重试+指数退避 + 预克隆 5 高频 repo（`/dev/shm/repos/`）；② 重跑 blocked(50) + no-patch(4)（quota-blocked 14 不重跑），同 7 harness + kimi-k2.6-cloud。（修 ~1h + 重跑 1–5.4h，CPU+API 配额）
+
+② 前后对比与交付：新结果一律独立 JSON（fix3 / astropy / rerun）；更新 `report_harness_eval_fix_rerun.html` 追加 per-repo before/after；报累计 resolved 数 + cline resolve rate（29.4%→?），与 P0 预估（~+22/harness）对照；每项给证据（`test_output.txt` 前后 / rootfs 变化 / 命令）。
+
+③ 纪律：🚫 不占 GPU · 🚫 不改已发布数值 · 🚫 P1-3 Docker 冻结 · 全批幂等可续 · commit 前缀 `harness fix:` · 任务书 >32KB 自滚归档。

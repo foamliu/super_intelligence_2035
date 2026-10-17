@@ -1,6 +1,17 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
+## 🆕 最近操作（2026-10-17）
+
+### 🧪 harness 新指令：Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud
+- 用户令：「harness：测完 glm53 7×300之后，开始基于kimi-k2.6做terminalbench的7 harness横评。」
+- 已下发 `run/BAIZE_HARNESS_TASK.md` **顶部（T1，最高优先；T0 仍是 glm53 收口）**：T0 = pi 剩 32 条跑完 → glm53 最终版报告（全量 2100 配对 McNemar）→ push；T1 = 收口前只做纯 CPU/IO 前置（uv/Harbor/Docker、dataset、oracle 5×、适配器骨架，零 API）；T2 = 定稿后立即启动正式横评；🚫 不得为赶 T2 kill/降速 pi。
+- 口径：TB2.0（arXiv:2601.11868，89 tasks，`terminal-bench@2.0`）· 7 harness（cline-patched/codex/hermes/opencode/claude-code/deepseek-harness/pi）· kimi-k2.6-cloud @ `/cloud/v1` · 7×89=623 · 每 harness 内串行 · 三列 resolved/failed/infra-or-quota · Wilson 95% CI + McNemar 精确检验 · 交付中文 HTML + 逐任务 JSON + 7 个 Harbor 适配器。
+- 前置红线：**oracle 5/5** + **实拉 1 个 TB 任务镜像**；Docker/内网阻断 ⇒ 立即记 blocker（完整报错+已试命令），**不许伪造、不许空转**。
+- 任务书同步瘦身：两条已闭的 2026-10-14 glm53 块原文移入 `run/ARCHIVE_OPERATOR_HARNESS.md`（28.1KB→约 32KB 内）。
+- 详见 `daily-memories/2026-10-17.md`。
+
+
 ## 🆕 最近操作（2026-10-16）
 
 ### 🚀 80B Decay 训练已在 .29 启动（Xmodel-2.5 step_532000 + Muon）

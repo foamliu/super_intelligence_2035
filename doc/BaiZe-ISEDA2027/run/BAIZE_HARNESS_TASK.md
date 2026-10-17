@@ -1,6 +1,54 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
+### 🆕 运维指令 · 2026-10-17（🧪 Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud）· 用户直令 · 最高优先（T1；T0 仍是 glm53 收口）
+
+> **用户令（2026-10-17）**：「harness：测完 glm53 7×300之后，开始基于kimi-k2.6做terminalbench的7 harness横评。」
+
+**⓪ 执行顺序（硬约束）**
+- **T0（先做，不得跳过）**：pi 剩余 **32 条**跑完 → 出 **glm53 7×300 最终版报告**（全量 2100 配对 McNemar）→ push。
+- **T1（收口前允许做）**：纯 CPU/IO 前置 —— Docker/uv/Harbor 安装、dataset 拉取、oracle 5×、7 个适配器骨架与单测。**零 API 调用**、不干扰 pi。
+- **T2（glm53 定稿 push 后立即启动）**：Terminal-Bench 正式横评。
+- 🚫 不得为赶 T2 而 kill / 降速正在跑的 pi。
+
+**① 基准与版本（先定后测）**
+- 基准 = **Terminal-Bench 2.0**（Harbor 框架；论文 arXiv:2601.11868 记 **89 tasks**；数据集 **`terminal-bench@2.0`**）。
+- 安装：`uv tool install harbor`（或 `pip install harbor`），**独立 uv/conda 环境**，🚫 不污染共享 `py310`。
+- **Oracle 必须 5/5**：`uv run harbor run -d terminal-bench@2.0 --agent oracle -k 5 --n-concurrent 4`。oracle 不过 ⇒ 先修环境（Docker/镜像/网络），**环境失败不得算到 harness 头上**。
+- 报告首段必须写明：`harbor --version`、`uv --version`、dataset 实际解析版本/commit、`docker version`、镜像 digest/拉取源；若实际任务数 ≠89，以实际为准并声明。
+
+**② 7 harness（与 7×300 同一套，不得替换/合并）**
+`cline-patched` / `codex` / `hermes` / `opencode` / `claude-code` / `deepseek-harness` / `pi`
+- 每 harness 一个 **Harbor 自定义 agent**（`BaseAgent` / `BaseInstalledAgent` 子类，放 `run/harness/terminalbench/agents/<name>.py`），**保留原生工具循环**（读/写/执行/多轮修复）。
+- 🚫 禁止「一个通用 shell agent 冒充 7 个」；🚫 禁止只换 system prompt 当不同 harness。
+- 适配器验收：单任务上产出 **≥1 条工具调用轨迹 + 非空提交**，trace 落 `run/harness/terminalbench/traces/`。
+
+**③ 模型与配额（逐字遵守）**
+- backbone = **`kimi-k2.6-cloud`**，Base URL = **`http://agi-gateway.cxmt.com/cloud/v1`**，key 取 `doc/keys.txt` 同名项（与旧 7×300 完全一致；**报告/任务书不得明文打印 key**）。
+- **同一 harness 全程只用一个模型**；换模型整臂重跑，禁止混算。
+- 429/额度墙：**暂停等窗口**并记录等待秒数，不硬刷；`quota-blocked` 单列，**不计入 harness 失败**。
+- 并发：每 harness 内 **并发 = 1**；7 路并行以「不触发 429」为限，触发即降到 2–3 路；所有结果带时间戳。
+
+**④ 规模与判据（预注册，先写后跑）**
+- 全量 = **7 × 89 = 623** 次（每任务每 harness 1 次，主口径 pass@1）。
+- 先跑 **7 × 5 分层 pilot**（覆盖不同任务族）只用于验收 pipeline，**不得替代全量**。
+- 主指标 **task resolution rate**；副指标 **timeout 率 / 无提交率 / 平均步数 / token 或 cost（若 Harbor 提供）**。
+- 统计：**Wilson 95% CI**；7×7 **McNemar 精确检验**（同一批任务配对，报 b/c/p，不做挑选性比较）；给「最小可检测差值」说明。
+- 三列口径 `resolved / failed / infra-or-quota`；某 harness infra 失败率 **>30% ⇒ 先停跑排障**，不得带病继续。
+
+**⑤ 交付物**
+1. `run/harness/terminalbench/`：7 适配器 + 启动脚本 + README（安装/复现命令/版本）+ mock 单测。
+2. `run/harness/terminalbench_kimi_k2.6_results.json`（逐任务逐 harness：结果、耗时、token、失败类别、trace 路径）。
+3. `reports/report_harness_terminalbench_7way_zh.html`：中文自包含；TL;DR / 总表（rate + CI）/ 逐任务热力表 / McNemar 矩阵 / 失败归因（环境 vs 能力 vs 适配器）/ 与 SWE-bench 7×300 结论对照 / **诚实条款**（内部口径、非官方榜、模型别名未经官方核验、dataset tag 会滚动）。
+4. `MEMORY_HARNESS.md` 状态头 + 心跳。
+
+**⑥ 纪律**
+- 🚫 不占 GPU；与 `.12` 80B decay / vision **错峰 IO**（`nice -n 19`；禁止大目录全树遍历）。
+- Docker 前置：`docker info` + `docker run --rm hello-world` + **实拉 1 个 TB 任务镜像**；内网阻断 ⇒ 立即在 MEMORY 记 **blocker + 完整报错 + 已试命令 + 替代方案**，**不许伪造结果、不许空跑**。
+- commit 前缀 **`harness tb:`**；任务书/MEMORY ≤32KB 自滚归档；每个数字可溯源到 `文件:行` 或原始日志。
+- 里程碑建议：T1 ≤2 次唤醒；pilot ≤24h；全量 ETA **3–5 天**（89×7，单任务 5–15min 量级，受配额/镜像拉取影响，报告须给实测 ETA）。
+
+
 ### 🆕 运维指令 · 2026-10-16（▶️ **重启未跑完的 4 路评测，把 188 条补完**）· 最高优先
 
 > **现状（R410 实测）**：glm53 7×300 的评测进程**已自然退出**（非崩溃），累计 **1912/2100 = 485 resolved（25.4%）** vs kimi 574/2100（27.3%）；**188 条 pending 未跑**；未完成的是 **opencode 277/300、cline 271/300、claude 259/300、pi 205/300**。报告已如实标注「已停止」（✅ 诚实声明正确）。
@@ -29,70 +77,12 @@
 
 **③ 纪律**：🚫 不打断 glm53 评测（后台继续）；数字从 `glm53_pilot_results.json` / 现有报告取、贴 文件:行；commit 前缀 `harness rpt:` · 任务书 >32KB 自滚归档。
 
-### 🆕 运维指令 · 2026-10-14（🔧 更正 glm-5.3-flash Base URL → `/v1`，去掉 cloud）· 用户直令 · 最高优先
-
-> **用户令（2026-10-14）**：「harness: glm-5.3-flash 的 apikey 没问题，但是 base url 需要去掉 cloud。」（附：用户实测 `curl http://agi-gateway.cxmt.com/v1/chat/completions` 已 200 OK）
-
-**① 更正上一指令的 Base URL（其余不变）**：
-- ❌ 旧（错）：`http://agi-gateway.cxmt.com/cloud/v1`
-- ✅ 新（对）：`http://agi-gateway.cxmt.com/v1`
-
-**② 关键区别（务必注意）**：`glm-5.3-flash` 走 **`/v1`** 路径；而 `glm-5.2` 才走 `/cloud/v1`。**不要**沿用 glm-5.2 的 `/cloud/v1` 给 glm-5.3-flash（这正是之前 403 的根因）。
-
-**③ 落地**：
-- cline auth：`-p openai -k <key>` + `-b http://agi-gateway.cxmt.com/v1` + `-m glm-5.3-flash`。
-- 同步更新 `launch_glm53_7x300.sh` / `run_serial_kimi.py` / `run_harness.py` 里所有 glm-5.3-flash 的 base url 为 `/v1`。
-- 更新后先用 curl 探针复验 200（`GET/POST http://agi-gateway.cxmt.com/v1/chat/completions`，model=glm-5.3-flash），再 `bash launch_glm53_7x300.sh` 启动 7×300。
-
-**④ 其余**：key / model name / 7×300 框架 / 独立 JSON / 对比报告要求一律不变（见上一指令）。🚫 不占 GPU、错峰 IO。commit 前缀 `harness glm53:`。
-
-### 🆕 运维指令 · 2026-10-14（🚀 用 glm-5.3-flash 重测 7×300 —— 验证「能力是主因」）· 用户直令 · 最高优先
-
-> **用户令（2026-10-14）**：「根据报告，harness 任务模型能力是 passrate 低的主因。既然如此，请 harness 使用更强的模型 glm-5.3-flash 重测 SWE-bench-Lite(300) 7×300。」
-
-**背景**：审视结论 fix3/fix4 0-flip = **LLM 能力瓶颈（非 infra）**。现用更强 backbone `glm-5.3-flash` 重测，验证「换强模型 → passrate 显著提升」是否成立。
-
-**① 模型（逐字遵守）**：
-- model name：`glm-5.3-flash`
-- API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f`
-- Base URL：`http://agi-gateway.cxmt.com/cloud/v1`
-
-**② 跑法**：
-- 复用 7×300 框架：7 harness（`cline-patched` / `codex` / `hermes` / `opencode` / `claude-code` / `deepseek-harness` / `pi`）× 300 SWE-bench-Lite，backbone 换成 `glm-5.3-flash`。
-- 机制：`run_serial_kimi.py` 设 `HARNESS_MODEL=glm-5.3-flash`；cline auth 切 `-p openai -k <上述 key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.3-flash`（⚠️ 用 `/cloud/v1`，非 `/v1`）。
-- 结果独立 JSON（建议 `glm53_pilot_results.json`），🚫 **不覆盖** `kimi_pilot_results.json`（保留旧 backbone 证据）。
-- 幂等 `--resume`，沿用 `launch_7x300.sh` 模式（7 路并行、各自串行）。
-
-**③ 对比与交付**：
-- 与 `kimi-k2.6-cloud` 的 7×300 做**同 harness 逐项对比**（旧 574 resolved / 原口径）。
-- 交付中文 HTML（如 `reports/report_harness_glm53_vs_kimi_7x300.html`）：TL;DR / 7 harness × (glm53 vs kimi) resolved + passrate / 能力提升量（若显著提升 → 证实「能力是主因」）/ 结论 + 诚实条款。
-
-**④ 纪律**：
-- 🚫 不占 GPU（SWE-bench = CPU + API 配额）；与 `.29` pretrain P-8 训练、`.12` data 下载**避让 IO**（`nice` 限流、错峰）。
-- 开跑前 curl 探针确认 glm-5.3-flash key 可用（200）；监控 quota/timeout/no-patch 率。
-- ETA ~42h（7 路并行），结果幂等可续。
-- commit 前缀 `harness glm53:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-14（glm-5.3-flash 7×300 两连发：Base URL 更正 `/v1` + 启动重测）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：glm53 7×300 已达 2068/2100（562 resolved, 27.2%），pi 尾部 32 条补跑中，报告 `report_harness_glm53_7x300_zh.html` 已交付。需要时再读。
 
 > 📦 §运维指令·2026-10-13（🔬 通过率为何这么低）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_harness_why_low_passrate_zh.html 已交付 ✅（web 对照 + 能力 vs 环境拆解 + 轨迹细析 + 提升机会点排序表）。需要时再读。
 
 
-### 🆕 运维指令 · 2026-10-13（🔧 P1 剩余项继续修 + 重评/重跑）· 用户直令 · 最高优先
-
-> 用户令（2026-10-13）：「harness 继续修。」—— 承接 fix1(34 flipped)+fix2(9 flipped) 已把 resolved 574→617（29.4%），现推进剩余 P1 项。
-> 性质：CPU+磁盘，不占 GPU；与 `.29` pretrain 训练 / data 线下载错峰 IO（`nice` 限流）。
-
-① 剩余项按此顺序修（每批开工前心跳报「instance×harness 条数 + ETA + 占用」→ 然后直接执行，不再逐条等确认；P1-3 Docker 冻结跳过）：
-1. fix3：matplotlib(30) + sklearn(27) 的 C 扩展 build deps + 重评（~4h）
-   - matplotlib：在 `testbed_py39` 装 qhull + freetype build deps → 重建 `_c_internal_utils` 等 C 扩展 → `pip install -e .` 通过 → 重评这 30 条。
-   - sklearn：`testbed_py38` 装 build deps → 重建 sklearn C 扩展 → 重评 27 条。
-   - 结果写独立 `kimi_pilot_results.fix3.json`（幂等 `--resume`）。
-2. sphinx 8 条逐条排查：查 `base_commit` 可达性 / git checkout / 依赖；能修就修，修不了标「待 P1-3 Docker 或不可行」。
-3. P1-1 astropy(28/42)：`pip wheel astropy` 预编译 + 注入 `~/.cache/pip`（或增大杀沙箱 memory cgroup）→ 重评 28 条（~4h）。
-4. P1-2 网络 503 + ②b 重跑 agent：① git fetch 加 3 次重试+指数退避 + 预克隆 5 高频 repo（`/dev/shm/repos/`）；② 重跑 blocked(50) + no-patch(4)（quota-blocked 14 不重跑），同 7 harness + kimi-k2.6-cloud。（修 ~1h + 重跑 1–5.4h，CPU+API 配额）
-
-② 前后对比与交付：新结果一律独立 JSON（fix3 / astropy / rerun）；更新 `report_harness_eval_fix_rerun.html` 追加 per-repo before/after；报累计 resolved 数 + cline resolve rate（29.4%→?），与 P0 预估（~+22/harness）对照；每项给证据（`test_output.txt` 前后 / rootfs 变化 / 命令）。
-
-③ 纪律：🚫 不占 GPU · 🚫 不改已发布数值 · 🚫 P1-3 Docker 冻结 · 全批幂等可续 · commit 前缀 `harness fix:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令 · 2026-10-13（🔧 P1 剩余项继续修 + 重评/重跑）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：fix3（matplotlib 30 + sklearn 27）、astropy 28、sphinx 8、P1-2 重跑均已完成/收口；后续由 glm53 7×300 与 Terminal-Bench 指令接续。需要时再读。
 
 > 📦 历史运维指令已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`（已执行完 / 已作废的块；需要时再读，不要读进上下文）。
 
