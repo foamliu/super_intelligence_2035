@@ -9076,3 +9076,114 @@ tail -12 /tmp/ABL_phi_k3_r2.log
 559898 opencode
 === DONE ===
 ```
+
+---
+
+## RUN_ID 68 · 2026-10-18 07:39:57 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 68 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] relay/loop procs"
+ps -eo pid=,ppid=,etimes=,args= | grep -E 'zhulong_loop[.]sh|zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-120 || echo '    NONE'
+echo "[1b] relay log tail"
+tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-160 || echo '    no relay log'
+echo "[2] eda_platform search"
+ls -d /nasdata/app.e0031982/code/* 2>/dev/null | grep -i eda | cut -c1-120
+ls -d /nasdata/app.e0031982/*/eda_platform /nasdata/app.e0031982/*/*/eda_platform 2>/dev/null | head -5
+echo '[2b] cline-cli nodes'
+find /nasdata/app.e0031982 -maxdepth 5 -type d -name eda_platform 2>/dev/null | head -5
+find /nasdata/app.e0031982 -maxdepth 6 -type d \( -name cline-cli -o -name '*cline*cli*' \) 2>/dev/null | head -8
+find /nasdata/app.e0031982 -maxdepth 7 -type f -name package.json -path '*cline-cli*' 2>/dev/null | head -8
+echo '[2c] build prerequisites'
+for b in node npm pnpm yarn bun tsc esbuild git tsx; do printf '    %-6s ' $b; command -v $b >/dev/null && $b --version 2>&1 | head -1 || echo MISSING; done
+echo "[2d] /home cline toolchain"
+ls -d /home/app.e0031982/.local/node-20/bin 2>/dev/null; ls /home/app.e0031982/.local/node-20/bin 2>/dev/null | head -12; ls -d /home/app.e0031982/.bun/bin 2>/dev/null; ls /home/app.e0031982/.bun/bin 2>/dev/null | head -8
+which cline 2>/dev/null; ls -l $(which cline 2>/dev/null) 2>/dev/null | cut -c1-140
+echo "[3] disk"
+df -h /home /nasdata 2>/dev/null | tail -3
+echo "[4] port / key model deepseek-v4-pro-cloud"
+for p in 8650 8651 8652 8654; do printf '    %s ' $p; (echo > /dev/tcp/10.129.32.75/$p) >/dev/null 2>&1 && echo OPEN || echo CLOSED; done
+KEY=$(grep -rhoE '02_088EE9051AAE4BF0ABFC713031BF697_[0-9a-f-]{36}' /nasdata/app.e0031982/code/eda_fastmcp/providers.json /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | head -1)
+if [ -n "${KEY:-}" ]; then
+  for m in deepseek-v4-pro-cloud deepseek-v4-flash; do
+    u=http://agi-gateway.cxmt.com/cloud/v1/chat/completions; [ $m = deepseek-v4-flash ] && u=http://agi-gateway.cxmt.com/v1/chat/completions
+    payload=$(cat <<EOF
+{"model":"$m","messages":[{"role":"user","content":"hi"}],"max_tokens":16}
+EOF
+)
+    code=$(curl -sS -m 40 -o /tmp/rid68_canary_$m.json -w '%{http_code}' -X POST "$u" -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' -d "$payload" 2>/dev/null)
+    echo "    $m -> HTTP $code"; head -c 160 /tmp/rid68_canary_$m.json 2>/dev/null; echo
+  done
+else
+  echo '    no key file found (providers.json/.env)'
+fi
+echo "=== DONE 68 ==="
+```
+
+**输出**
+```
+=== RUN_ID 68 | 2026-10-18 07:39:57 | host=hfeg0tedaap02 ===
+[1] relay/loop procs
+  81827       1  358610 bash zhulong_loop.sh
+1314455 3277328       0 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_rela
+3277328       1  602501 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_rela
+[1b] relay log tail
+[zhulong-relay] 2026-10-13 10:35:46 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+[zhulong-relay] RUN_ID=65 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=65 executed, exit=0, appended to outbox.
+[zhulong-relay] push FAILED (will retry next cycle)
+[zhulong-relay] RUN_ID=66 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=67 executed, exit=0, appended to outbox.
+[2] eda_platform search
+/nasdata/app.e0031982/code/BaiZe-ISEDA2027
+/nasdata/app.e0031982/code/EDA-e
+/nasdata/app.e0031982/code/EDA-Eval-Framework
+/nasdata/app.e0031982/code/EDA-Event-Framework
+/nasdata/app.e0031982/code/eda_fastmcp
+/nasdata/app.e0031982/code/EDA-Flow-PyAether-123
+/nasdata/app.e0031982/code/eda_platform
+/nasdata/app.e0031982/code/eda_sandbox_lite
+/nasdata/app.e0031982/code/eda_platform
+[2b] cline-cli nodes
+/nasdata/app.e0031982/code/eda_platform
+/nasdata/app.e0031982/code/eda_platform/apps/examples/cline-core-cli-agent
+/nasdata/app.e0031982/cline-cli-20260309-130628
+/nasdata/app.e0031982/cline-cli-20260309-130628/package.json
+[2c] build prerequisites
+    node   v20.18.1
+    npm    10.8.2
+    pnpm   MISSING
+    yarn   MISSING
+    bun    1.3.14
+    tsc    MISSING
+    esbuild MISSING
+    git    git version 2.43.0
+    tsx    MISSING
+[2d] /home cline toolchain
+/home/app.e0031982/.local/node-20/bin
+bun
+bunx
+cline
+corepack
+dsh
+node
+npm
+npx
+opencode
+opencode2
+/home/app.e0031982/.local/node-20/bin/cline
+lrwxrwxrwx 1 app.e0031982 app.adm 50 Aug  7 09:18 /home/app.e0031982/.local/node-20/bin/cline -> ../lib/node_modules/@cline/cli-linux-x64/bi
+[3] disk
+Filesystem                  Size  Used Avail Use% Mounted on
+/dev/mapper/vgroot-lv_home  394G  356G   22G  95% /home
+10.251.9.180:/g0tedaap      527G  249G  279G  48% /nasdata
+[4] port / key model deepseek-v4-pro-cloud
+    8650 OPEN
+    8651 OPEN
+    8652 OPEN
+    8654 OPEN
+    no key file found (providers.json/.env)
+=== DONE 68 ===
+```
