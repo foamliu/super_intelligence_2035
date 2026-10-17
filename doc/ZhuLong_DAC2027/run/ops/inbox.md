@@ -1,11 +1,51 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 67 -->
+<!-- RUN_ID: 68 -->
 
-## RUN_ID 67 — 🔍 核验 loop 重启 + 是否恢复推车（只读）
+## RUN_ID 68 — 只读：36.15 中继存活 + eda_platform/cline-cli 构建前置 + v4-pro-cloud 连通性
 
-> 用户令：确认 zhulong loop 重启后是否正常（不再报 --dir），是否已从 phi_k3 r2 恢复。只读，不杀进程、不改配置、不 git 操作。
+> 用途：回答两个问题 —— ① 36.15 ops 中继是否还活着（67 之后无回执）；② 为 zhulong 新任务（编译 eda_platform/cline-cli → 安装为 `zhulong`/`zl` → 用 EDA-Eval-PyAether 158 题跑分）核验构建前置与 `deepseek-v4-pro-cloud` 可达性。**只读**，不装包、不构建、不改配置。
 
 ```bash
+set -u
+echo "=== RUN_ID 68 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] relay/loop procs"
+ps -eo pid=,ppid=,etimes=,args= | grep -E 'zhulong_loop[.]sh|zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-120 || echo '    NONE'
+echo "[1b] relay log tail"
+tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-160 || echo '    no relay log'
+echo "[2] eda_platform search"
+ls -d /nasdata/app.e0031982/code/* 2>/dev/null | grep -i eda | cut -c1-120
+ls -d /nasdata/app.e0031982/*/eda_platform /nasdata/app.e0031982/*/*/eda_platform 2>/dev/null | head -5
+echo '[2b] cline-cli nodes'
+find /nasdata/app.e0031982 -maxdepth 5 -type d -name eda_platform 2>/dev/null | head -5
+find /nasdata/app.e0031982 -maxdepth 6 -type d \( -name cline-cli -o -name '*cline*cli*' \) 2>/dev/null | head -8
+find /nasdata/app.e0031982 -maxdepth 7 -type f -name package.json -path '*cline-cli*' 2>/dev/null | head -8
+echo '[2c] build prerequisites'
+for b in node npm pnpm yarn bun tsc esbuild git tsx; do printf '    %-6s ' $b; command -v $b >/dev/null && $b --version 2>&1 | head -1 || echo MISSING; done
+echo "[2d] /home cline toolchain"
+ls -d /home/app.e0031982/.local/node-20/bin 2>/dev/null; ls /home/app.e0031982/.local/node-20/bin 2>/dev/null | head -12; ls -d /home/app.e0031982/.bun/bin 2>/dev/null; ls /home/app.e0031982/.bun/bin 2>/dev/null | head -8
+which cline 2>/dev/null; ls -l $(which cline 2>/dev/null) 2>/dev/null | cut -c1-140
+echo "[3] disk"
+df -h /home /nasdata 2>/dev/null | tail -3
+echo "[4] port / key model deepseek-v4-pro-cloud"
+for p in 8650 8651 8652 8654; do printf '    %s ' $p; (echo > /dev/tcp/10.129.32.75/$p) >/dev/null 2>&1 && echo OPEN || echo CLOSED; done
+KEY=$(grep -rhoE '02_088EE9051AAE4BF0ABFC713031BF697_[0-9a-f-]{36}' /nasdata/app.e0031982/code/eda_fastmcp/providers.json /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | head -1)
+if [ -n "${KEY:-}" ]; then
+  for m in deepseek-v4-pro-cloud deepseek-v4-flash; do
+    u=http://agi-gateway.cxmt.com/cloud/v1/chat/completions; [ $m = deepseek-v4-flash ] && u=http://agi-gateway.cxmt.com/v1/chat/completions
+    payload=$(cat <<EOF
+{"model":"$m","messages":[{"role":"user","content":"hi"}],"max_tokens":16}
+EOF
+)
+    code=$(curl -sS -m 40 -o /tmp/rid68_canary_$m.json -w '%{http_code}' -X POST "$u" -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' -d "$payload" 2>/dev/null)
+    echo "    $m -> HTTP $code"; head -c 160 /tmp/rid68_canary_$m.json 2>/dev/null; echo
+  done
+else
+  echo '    no key file found (providers.json/.env)'
+fi
+echo "=== DONE 68 ==="
+```
+
+```text
 # RUN_ID 67 · 只读核验
 echo "=== [0] ==="; hostname; date '+%F %T'
 echo "=== [1] zhulong_loop.sh 进程（应 1 个 ppid=1，etimes 小=新启动）==="
