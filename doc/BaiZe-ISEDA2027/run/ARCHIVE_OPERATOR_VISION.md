@@ -1487,3 +1487,36 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 - 🚫 **纪律**：报告里**必须标注与官方 LLaVA-OV 的 pipeline 差异**；**未做到 anyres 同构前，不得宣称与官方 LLaVA-OV 数字同框**。
 
 > **结论**：✅ A 部分 6 个旧缓存已 cp -a 复用；B 部分 open_clip 协议 + LLaVA-OV HF 导出全部验收通过（wake #109: open_clip GPU 前向 ✅, AutoConfig ✅, ai2d=0.60 ✅）。
+
+---
+
+### §运维指令 · 2026-10-16 21:3x（ArmA 效率专项实验：逐项 A/B · 不改配方）· 原文（2026-10-17 由运维搬出，未改）
+
+### 🆕 运维指令 · 2026-10-16 21:3x（⚡ **ArmA 效率专项实验：按运维建议逐项 A/B · 🚫 不改配方**）· 用户直令 · 最高优先
+
+> **用户令（2026-10-16 21:3x）**：「vision：按你的建议实验 / 提升训练效率。」← **本轮主任务**
+> **用户令（2026-10-16 20:5x）**：「vision 是否有提升效率的机会点？现在 GBS / MBS / 梯度累积分别是多少，其他超参数呢？」
+
+**🧪 实验协议（严格照做，🚫 禁止一把梭同时改多项）**：
+1. **先测基线**：取最近 **200 步稳态窗口**的 `it/s` + **8 卡逐卡 util** + 每卡显存，落基线表。（当前参考：**5.15 it/s**、util **`100/100/59/0/92/2/6/26%`**、**24GB/卡**）
+2. **单变量 A/B**：**一次只改一项**，改后跑 **≥200 步**取稳态再比；**多项同改 ⇒ 无法归因，禁止**。
+3. **改后重启必须 `--resume`**（从 `latest.pt` 续训，当前 ckpt 到 step 20000/21940）⇒ 🚫 **不得从头训**。
+4. **每完成一档 commit 一次**（便于运维逐档核），前缀 `vision armA perf:`。
+5. **验收判据**：8 卡 util **≥85% 且卡间方差显著变小** + `it/s` 相对基线 **≥ +15%**；**未达标项一律回滚**并如实记为「无效」。
+6. **交付**：`MEMORY_VISION.md` + `daily-memories-vision/` 出一张 **对比表**（项 / 改动 / it/s / util / ETA / 结论）+ **新 ETA**。
+
+**📋 实验项（按优先级 = 即「我的建议」）**：
+
+> **运维实测（源：`vision/armA_openclip_train.py` + `vision/run_armA_openclip.sh`）+ 机上涨卡实测（RUN_ID 109）**：
+> - **批形状**：**MBS = 256 图/卡 × 8 卡 = GBS 2048；梯度累积 = 1**（每 step 一次 fwd/bwd/opt，无 accum；`armA_openclip_train.py:178-199`）。
+> - **其它超参**：LR **2e-3 → 2e-4**（cosine，warmup **8000**）、steps **154500**（≈2.7ep/118M 对）、wd **0.1**、β **(0.9, 0.98)**、eps 1e-8、grad-clip **1.0**、**bf16**、`num_workers=6`、save every 10000、log every 20、seed 1234；`ClipLoss(local_loss=False, gather_with_grad=False, cache_labels=True)`；DDP `find_unused_parameters=False`。
+> - **实测瓶颈证据**：显存**仅 24.4GB / 80GB**，而 8 卡 **util = 100/100/59/0/92/2/6/26%（严重不均）** ⇒ **典型 straggler：多数卡在等数据**（不是算力不够、更不是显存不够）。
+
+**① 最高优先 —— 修分片不均**：`parse_shards()` 用 `all_shards[rank::world_size]`（`armA_openclip_train.py:59-73`）对**排序后**的 tar 列表做轮询切分 ⇒ 各 rank 拿到的**样本数/字节数不均衡**（webdataset tar 大小不一）。改为**按文件字节数装箱均衡**分配，或改用 `--data-source wds` 的 `split_by_node/split_by_worker`。**验收：8 卡 util ≥85% 且卡间方差显著变小。**
+**② 数据管线**：`num_workers` **6 → 12~16**，并加 `persistent_workers=True` + `prefetch_factor=4~8` + `pin_memory=True`（H2D 已 `non_blocking=True`）。
+**③ 白送项**：`torch.backends.cudnn.benchmark=True`（输入固定 224×224）；AdamW 加 `fused=True`；`precision='bf16'`（模型转 bf16）与外层 `autocast(bf16)` **二者留一**（现在双份，冗余）。
+**④ 可选**：`torch.compile(model)`（ViT-B 常 +10~25%，需验 DDP+autocast 兼容）。
+**⑤ 🚫 不改配方**：**GBS=2048 / MBS=256 / 累积=1 / LR 曲线一律不动**（否则与 ArmC、④-4ep 口径不可比）。若确要提 MBS（显存有 55GB 余量），**必须同步加梯度累积以保持 GBS=2048**，且需先回报再动。
+**⑥ 交付**：修前/修后 **it/s + 8 卡 util + 新 ETA** 对比表 → `MEMORY_VISION.md` + `daily-memories-vision/`；commit 前缀 `vision armA perf:`。
+**⑦ ⚠️ 体积**：任务书现 **34.1KB**（超 32KB 目标，红线 40KB）⇒ **本轮须把「已闭合」的 10-13 / 10-14 / 10-15 指令块**原文归档进 `ARCHIVE_OPERATOR_VISION.md` 并压回 **≤32KB**（例：10-13「合并三数据集实验」、10-14「放行并行写 ViT wrapper」、10-15「历史结果全景总结」、10-15 22:25「open_clip 协议/LLaVA-OV 兼容」——口径均已落源码/报告）。⚠️ **10-16 的四个评测块你已在 #118 归档，🚫 勿重复。**
+

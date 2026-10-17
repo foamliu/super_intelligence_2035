@@ -11,6 +11,14 @@
 - 任务书同步瘦身：三条已闭块原文移入 `run/ARCHIVE_OPERATOR_HARNESS.md`（10-14 glm53 两连发 + 10-13 P1 剩余项）；`BAIZE_HARNESS_TASK.md` 31,372B→**31,212B（30.5KB ✓）**。
 - 详见 `daily-memories/2026-10-17.md`。
 
+### 📄 vision 新指令：ArmA 中文报告 + 归档 + open_clip × AIMv2-style 兼容性评估
+- 用户令：「vision：把 ArmA 结果写成中文报告并归档。问题：open_clip 接口和AIMv2-style不能兼容吗？」
+- 已下发 `run/BAIZE_VISION_TASK.md` 顶部：① 报告 `reports/report_vision_armA_openclip_result_zh.html`（ArmA ProtB **lp 58.03±0.02% / 5-NN 53.98%**；vs ④-4ep 67.05/42.35；**非单变量对照**必须声明）；② 归档 `EXPERIMENTS_VISION.md` §ArmA + `MEMORY_VISION.md`；③ 附录 A 回答兼容性；④ ArmB 代码（open_clip ViT-B/16 + 我们的 AIMv2-style，只变目标；预注册 lp ≥58.03、≥61.0% 且 5-NN ≥48.98% 接受）；⑤ **训练排队**（`.12` 8×H100 被 80B decay 全占，本轮只写代码/单测）。
+- **兼容性口径（我已核实代码）**：**模型/推理接口兼容**（ArmA 本身就是 open_clip 模型 + ClipLoss，`armA_openclip_train.py:286-287`；导出只用 `encode_image`）；**open_clip 自带损失/训练循环不兼容**（无 patch 级目标、无 mask 采样），需自定义 `PatchPredictor`(≈0.66M)+patch tokens+loss/训练步，≈1–2 人日 CPU；predictor 不进推理图，不影响导出。
+- 概念区分：官方 AIMv2=多模态自回归（`aimv2_ar`+decoder）；我们的 AIMv2-style=InfoNCE+masked patch MSE（`r9_train.py`）。
+- 任务书瘦身：10-16 21:3x 效率块归档（30,719B→26,768B→插入后 31,830B=31.1KB ✓）。
+- 详见 `daily-memories/2026-10-17.md`。
+
 
 ## 🆕 最近操作（2026-10-16）
 

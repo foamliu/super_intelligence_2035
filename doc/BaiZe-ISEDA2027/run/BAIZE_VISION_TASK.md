@@ -1,34 +1,40 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-16 21:3x（⚡ **ArmA 效率专项实验：按运维建议逐项 A/B · 🚫 不改配方**）· 用户直令 · 最高优先
+### 🆕 运维指令 · 2026-10-17（📄 ArmA 结果中文报告 + 归档 · 🔌 open_clip × AIMv2-style 兼容性工程评估）· 用户直令 · 最高优先
 
-> **用户令（2026-10-16 21:3x）**：「vision：按你的建议实验 / 提升训练效率。」← **本轮主任务**
-> **用户令（2026-10-16 20:5x）**：「vision 是否有提升效率的机会点？现在 GBS / MBS / 梯度累积分别是多少，其他超参数呢？」
+> **用户令（2026-10-17）**：「vision：把 ArmA 结果写成中文报告并归档。问题：open_clip 接口和AIMv2-style不能兼容吗？」
 
-**🧪 实验协议（严格照做，🚫 禁止一把梭同时改多项）**：
-1. **先测基线**：取最近 **200 步稳态窗口**的 `it/s` + **8 卡逐卡 util** + 每卡显存，落基线表。（当前参考：**5.15 it/s**、util **`100/100/59/0/92/2/6/26%`**、**24GB/卡**）
-2. **单变量 A/B**：**一次只改一项**，改后跑 **≥200 步**取稳态再比；**多项同改 ⇒ 无法归因，禁止**。
-3. **改后重启必须 `--resume`**（从 `latest.pt` 续训，当前 ckpt 到 step 20000/21940）⇒ 🚫 **不得从头训**。
-4. **每完成一档 commit 一次**（便于运维逐档核），前缀 `vision armA perf:`。
-5. **验收判据**：8 卡 util **≥85% 且卡间方差显著变小** + `it/s` 相对基线 **≥ +15%**；**未达标项一律回滚**并如实记为「无效」。
-6. **交付**：`MEMORY_VISION.md` + `daily-memories-vision/` 出一张 **对比表**（项 / 改动 / it/s / util / ETA / 结论）+ **新 ETA**。
+**① 报告（先做，纯写作零 GPU）**：`reports/report_vision_armA_openclip_result_zh.html`，中文自包含，必须含：
+- **协议**：ProtB（full IN-1k 1.28M train + 50k val，SGD 90 epochs，seeds 0/1/2），`feature=projected`，ckpt=`latest.pt`；数字取 `run/vision/armA_protb_vitb16_224_results.json`（lp 58.02/58.07/58.02 → **58.03±0.02%**；5-NN **53.98%**）。
+- **训练口径**：open_clip **ViT-B/16 224**（visual 86.2M / total 149.6M，双塔随机初始化）、**ClipLoss InfoNCE**、GBS 2048（MBS 256×8）、LR 2e-3→2e-4（warmup 8000）、**154,500 步**、数据 GPIC(7437)+CC12M(1100)+Amshaker(2250)=10,787 shards ≈118M 对；证据 `run_armA_openclip.sh:13-15,45-52` + `armA_openclip_train.py:169-187,256-316`。
+- **对比表**（同表列：协议/塔/参数量/目标/步数/数据/ProtB lp/5-NN）：ArmA vs **④-4ep（67.05±0.02 / 42.35）**、④-2ep、V3、R11-G 等，数值以 `EXPERIMENTS_VISION.md` 既有记录为准。
+- **关键解读（必须写）**：ArmA = **lp −9.02pp / 5-NN +11.63pp** ⇒ 检索型表征强、线性可分性弱，与「C1/lp 背离」假设一致；⚠️ **不是单变量对照**（塔 86.2M vs 126.8M、目标 InfoNCE vs AIMv2-style dense、步数/样本不同）⇒ **不得写成「AIMv2 目标比 InfoNCE 好 9pp」**。
+- **诚实条款**：内部 ProtB 口径、非官方榜；单 backbone/单预算点；5-NN 与 lp 口径不同；仅评测 3 seeds（训练单 seed）。
+- **归档**：报告 + 结果 JSON + 训练/评测日志路径写入 `MEMORY_VISION.md` 与 `EXPERIMENTS_VISION.md` 新 §「ArmA（open_clip ViT-B/16, 2026-10-17）」；commit `vision armA:`。
 
-**📋 实验项（按优先级 = 即「我的建议」）**：
+**② 回答问题（报告附录 A，必须给结论 + 代码行号）**：
+- **结论：分两层 —— 模型/推理接口兼容；open_clip 自带「训练损失/循环」不兼容（需自定义，不是不能做）。**
+- **兼容证据**：ArmA 用的就是 open_clip 模型，`model(imgs, texts) → (img_feat, txt_feat, logit_scale)` + `ClipLoss`（`armA_openclip_train.py:286-287`）；导出侧只需 `encode_image` 的 pooled/patch 输出（`mllm_bridge/open_clip_baize.py:8-16,26-34`）。predictor 是训练期辅助头，**不进入推理图** ⇒ 不影响 open_clip 加载/评测。
+- **不兼容点**：open_clip 的 loss 家族（Clip/SigLIP/CoCa/GenLIP…）**没有 patch 级重建目标**；其训练循环只吃 `(image,text)`，不提供 mask 采样/patch 目标。我们这套 AIMv2-style 是**自研训练环**：`loss = contrast_weight×InfoNCE + patch_loss_weight×MSE(predictor(patches[mask]), target[mask])`，`mask_ratio=0.6`（`r9_train.py:540-570` 区段；实现说明 `reports/report_vision_aimv2_impl.html`）。
+- **做「open_clip 模型 + AIMv2-style」需要 4 件事（≈1–2 人日，纯 CPU）**：
+  1. 在 open_clip ViT 上挂 `PatchPredictor`（≈0.66M）；
+  2. 取 patch tokens（按 open_clip 版本用 `visual.forward_features` / `visual.trunk.patch_embed` / `forward_intermediates` 之一，或用 forward hook **复用同一次前向**，避免二次算力；实现前先 `python -c` 打印 `type(model.visual)` 与可用方法并截图/日志存证）；
+  3. 自定义 loss + 训练步（照 ArmA 循环改 ≈50 行）；
+  4. ckpt 存 predictor；若 `contrast_weight=0`（纯 AR）→ `find_unused_parameters=True` 或冻结文本塔（ArmA 现为 `False`）。
+- **概念澄清**：官方 AIMv2 = 多模态自回归（图文 token + decoder，弃用对比），open_clip 的对比接口无法表达；本仓 `r9_train.py` 的 `aimv2_ar` + `decoder_depth` 才是那一支。报告须分开写，避免混淆。
 
-> **运维实测（源：`vision/armA_openclip_train.py` + `vision/run_armA_openclip.sh`）+ 机上涨卡实测（RUN_ID 109）**：
-> - **批形状**：**MBS = 256 图/卡 × 8 卡 = GBS 2048；梯度累积 = 1**（每 step 一次 fwd/bwd/opt，无 accum；`armA_openclip_train.py:178-199`）。
-> - **其它超参**：LR **2e-3 → 2e-4**（cosine，warmup **8000**）、steps **154500**（≈2.7ep/118M 对）、wd **0.1**、β **(0.9, 0.98)**、eps 1e-8、grad-clip **1.0**、**bf16**、`num_workers=6`、save every 10000、log every 20、seed 1234；`ClipLoss(local_loss=False, gather_with_grad=False, cache_labels=True)`；DDP `find_unused_parameters=False`。
-> - **实测瓶颈证据**：显存**仅 24.4GB / 80GB**，而 8 卡 **util = 100/100/59/0/92/2/6/26%（严重不均）** ⇒ **典型 straggler：多数卡在等数据**（不是算力不够、更不是显存不够）。
+**③ ArmB（代码先做，训练排队；🚫 现在不得占 GPU）**：
+- 设计 = **open_clip ViT-B/16 + 我们的 AIMv2-style**，**只变目标**：数据/步数/GBS/LR/seed 与 ArmA 全同；`contrast_weight=1.0, patch_loss_weight=1.0, mask_ratio=0.6`。
+- 交付：`run/vision/armB_aimv2_openclip.py`（或给 ArmA 脚本加 `--loss aimv2`，默认 `clip` 不变）+ `run/vision/run_armB_openclip.sh` + CPU 单测：(a) 前向形状 (b) predictor 参数量≈0.66M (c) loss 可反传 (d) `encode_image` 输出形状不变；README。
+- **预注册判据**：ProtB lp ≥ **58.03%** 为不倒退；若 **≥61.0%（+3pp）且 5-NN ≥48.98%（ArmA−5pp）** → 接受「open_clip + dense」混合；若 lp 提升 <1pp 或 5-NN 掉 >5pp → 判「目标与塔不匹配」，写负面结论。
+- **GPU 排队**：`.12` 8×H100 正被 pretrain 80B decay 全占（ETA ~10-20 02:30）⇒ **ArmB 训练须等运维放行/GPU 空闲**；本轮只做代码 + 单测 + 设计，**不得抢卡**。
+- commit 前缀 `vision armB:`；任务书/MEMORY ≤32KB 自滚。
 
-**① 最高优先 —— 修分片不均**：`parse_shards()` 用 `all_shards[rank::world_size]`（`armA_openclip_train.py:59-73`）对**排序后**的 tar 列表做轮询切分 ⇒ 各 rank 拿到的**样本数/字节数不均衡**（webdataset tar 大小不一）。改为**按文件字节数装箱均衡**分配，或改用 `--data-source wds` 的 `split_by_node/split_by_worker`。**验收：8 卡 util ≥85% 且卡间方差显著变小。**
-**② 数据管线**：`num_workers` **6 → 12~16**，并加 `persistent_workers=True` + `prefetch_factor=4~8` + `pin_memory=True`（H2D 已 `non_blocking=True`）。
-**③ 白送项**：`torch.backends.cudnn.benchmark=True`（输入固定 224×224）；AdamW 加 `fused=True`；`precision='bf16'`（模型转 bf16）与外层 `autocast(bf16)` **二者留一**（现在双份，冗余）。
-**④ 可选**：`torch.compile(model)`（ViT-B 常 +10~25%，需验 DDP+autocast 兼容）。
-**⑤ 🚫 不改配方**：**GBS=2048 / MBS=256 / 累积=1 / LR 曲线一律不动**（否则与 ArmC、④-4ep 口径不可比）。若确要提 MBS（显存有 55GB 余量），**必须同步加梯度累积以保持 GBS=2048**，且需先回报再动。
-**⑥ 交付**：修前/修后 **it/s + 8 卡 util + 新 ETA** 对比表 → `MEMORY_VISION.md` + `daily-memories-vision/`；commit 前缀 `vision armA perf:`。
-**⑦ ⚠️ 体积**：任务书现 **34.1KB**（超 32KB 目标，红线 40KB）⇒ **本轮须把「已闭合」的 10-13 / 10-14 / 10-15 指令块**原文归档进 `ARCHIVE_OPERATOR_VISION.md` 并压回 **≤32KB**（例：10-13「合并三数据集实验」、10-14「放行并行写 ViT wrapper」、10-15「历史结果全景总结」、10-15 22:25「open_clip 协议/LLaVA-OV 兼容」——口径均已落源码/报告）。⚠️ **10-16 的四个评测块你已在 #118 归档，🚫 勿重复。**
+**④ 纪律**：不占 GPU（除放行）；每个数字可溯源到 `文件:行`/原始日志；不改已发布数值；与 pretrain 线 IO 错峰。
 
+
+> 📦 §运维指令 · 2026-10-16 21:3x（⚡ ArmA 效率专项 A/B）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：LPT 分片+数据管线+cudnn/fused/bf16 去重一揽子落地，实测 **2.40→3.37 it/s（+40%）**、8 卡 util 95–100%、ETA 14.2h→7.9h；配方未改。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-16（📄 写 Stage(iv) 训练+12集评测报告 → 🚀 启动 ArmA open_clip 从头训 encoder）· 用户直令 · 最高优先
 
