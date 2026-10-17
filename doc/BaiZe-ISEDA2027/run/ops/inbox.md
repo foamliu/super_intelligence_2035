@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 110 -->
+<!-- RUN_ID: 111 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,39 @@
 
 ---
 
+## RUN_ID 111 — 🩺 **各线 loop 存活 + 双机 GPU 快照（只读）**
+
+> 目的：确认 pretrain/vision/harness/data/ops relay 是否存活，以及 `.29`/`.12` 实占。只读；不 kill、不启动任何训练。
+> 背景：11:5x 实测 pretrain #488 报 `.29` 健康 RUNNING、`.12` 已释放；但 vision 自 11:12 无提交，需确认 loop 是否活着。
+
+```bash
+set -u
+echo "=== RUN_ID 111 · loops + GPUs · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) loops ---"
+for p in '[b]aize_pretrain_loop.sh' '[b]aize_vision_loop.sh' '[b]aize_harness_loop.sh' '[b]aize_data_loop.sh' '[o]ps_relay.sh'; do
+  echo "[$p]"; pgrep -af "$p" 2>/dev/null | cut -c1-140 | head -4 || echo "NOT RUNNING"
+done
+echo "--- B) local GPU ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+echo "--- C) 10.239.2.29 GPU ---"
+timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader' 2>&1 | head -8 || echo "ssh .29 failed"
+echo "--- D) 10.239.2.12 GPU ---"
+timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader' 2>&1 | head -8 || echo "ssh .12 failed"
+echo "--- E) pretrain procs ---"
+pgrep -af '[b]aize_xmodel25_decay|torchrun.*baize_xmodel25_decay' 2>/dev/null | cut -c1-140 | head -6 || echo none
+echo "--- F) vision/train procs ---"
+pgrep -af '[a]rmB_aimv2|[a]rmA_openclip' 2>/dev/null | cut -c1-140 | head -6 || echo none
+echo "=== DONE 111 ==="
+```
+
+
 ## RUN_ID 110 — 🔬 **decay 在训确认 · 稳定性 · 日志 · 启动者溯源**
 
 > 背景：RUN_ID 109 实测 `.29` 8×H100 **全 100% / 57GB 每卡**，`baize_xmodel25_decay_train.py` ×8 rank 在跑，但**进程 etime 仅 ~32s** ⇒ 须分辨「刚起」还是「崩溃重启环」。
 > 另：pretrain loop 活着（pid 1294147）但日志 `invoking pi` + 连续 3 次 `nothing of ours to commit` ⇒ agent 空转不写记忆。
 > ⚠️ 只读；🚫 不 kill；`pgrep/ps` 匹配显式排除 cline/bun。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 110 · decay 在训确认+稳定性 · $(date '+%F %T') · host=$(hostname) ==="
 S1() { ps -eo pid=,ppid=,etime=,args= 2>/dev/null | grep -E 'baize_xmodel25_decay_train|pt_elastic' | grep -v grep | cut -c1-125 | head -12; }

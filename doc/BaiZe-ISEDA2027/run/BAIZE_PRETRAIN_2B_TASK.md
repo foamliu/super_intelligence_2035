@@ -5,7 +5,9 @@
 
 > **用户令（2026-10-17）**：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」
 
-**① 根因（写进 MEMORY，不甩锅）**：crash5/6 是 `.12` 本地 `emerging_optimizers 0.5.0a0` 与 Megatron API 不匹配；为用该本地安装，把 80B decay 从 `.29` 迁到 `.12`。这是**兼容性临时迁机**，不是永久分卡。现按用户令**迁回 `.29`**。
+**① 根因（写进 MEMORY，不甩锅）**：crash5/6 是 `.12` 本地 `emerging_optimizers 0.5.0a0` 与 Megatron API 不匹配；为用该本地安装，把 80B decay 从 `.29` 迁到 `.12`。这是**兼容性临时迁机**，不是永久分卡。现按用户令**固定 `.29`**。
+
+> ⚠️ **先查状态再动手（2026-10-17 11:5x 实测）**：`.29` **已在健康 RUNNING**（#488：08:44 起，step~860 @11:36，loss 2.03，296.8K tok/s，8 卡 100%/51.7GB，0 crash），且 **`.12` 已于 11:37 释放**（`GPU12_RELEASED=1`）。⇒ **目标已达成，不要重启**（重启会丢 860 步≈2.8h）；**只需上报 ETA**。仅当 `.29` 无进程/挂了，才执行 ②③ 的重启流程。
 
 **② 停止 `.12`（先保 ckpt，再 kill）**
 - 记录原文：`date`、`nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv`、`pgrep -af 'baize_xmodel25_decay|torchrun.*baize_xmodel25_decay'`。
@@ -25,7 +27,7 @@
 **④ 纪律**：只停自己任务；停前必须确认 ckpt；不删 ckpt；不占 `.12`；与 vision ArmB 错峰 IO；任务书 >32KB 自滚。
 
 **⑤ 用户追加令（2026-10-17 12:4x）**：**「pretrain 在 `.29` 重启训练；以后不许随意换服务器。有问题上报或自己解决。训练重启后上报 ETA。」**
-- `.29` 重启是**硬指令**；从最新 ckpt resume；重启后 **≤30min 内**在 MEMORY 报：机器、PID、resume step、实测 s/step、tok/s、首 ckpt 时间、**ETA**。
+- **`.29` 运行是硬指令；已在跑则不重启**：若健康 RUNNING（当前 step~860）→ **只报 ETA，不重启**；若挂了/无进程 → 从最新 ckpt resume，重启后 **≤30min 内**在 MEMORY 报：机器、PID、resume step、实测 s/step、tok/s、首 ckpt 时间、**ETA**。
 - **服务器固定**：`.29` = pretrain、`.12` = vision；**未经用户明确批准不得再换机**；故障必须**就地**定位/修复（版本/API/显存/NCCL 等），修不了再上报 blocker + 选项，不得擅自迁移。
 - `.29` 若 v2 compile 不生效（吞吐回落 ~184K tok/s / ~20s/step），按实测报 ETA（可能 ~108h），不得隐瞒。
 
