@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 116 -->
+<!-- RUN_ID: 117 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,64 @@
 
 ---
 
+## RUN_ID 117 — 🔧 **修 oracle：带 overlay 重跑 3 个失败任务 → 达标后才允许 pilot（含中继重启）**
+
+> 背景：RUN_ID 116 实测 oracle -k5 = **2/5**（失败：bn-fit-modify / build-cython-ext / build-pmars，均为构建期拉包）；
+> relay 自身缺 docker 组（loop/cline 有）。本块：用 `environment.extra_docker_compose=/tmp/network-host-overlay.yml` 重跑这 3 个任务。
+> ⚠️ 不启动 7×5 / 7×89；不 kill 训练；不改仓库文件。
+
+```bash
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+HARBOR="$HOME/.local/bin/harbor"
+echo "=== RUN_ID 117 · oracle 修复重跑(3 tasks, overlay) · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) harbor run help (filtered) ---"
+timeout 30 "$HARBOR" run --help 2>&1 | grep -iE 'compose|overlay|--task|--dataset|jobs-dir|n-concurrent' | head -20
+echo "--- B) overlay file ---"
+ls -l /tmp/network-host-overlay.yml 2>&1 | head -2
+echo "--- C) write job config ---"
+cat > /tmp/tb_oracle_cfg_117.yaml <<'YAML'
+environment:
+  extra_docker_compose:
+    - /tmp/network-host-overlay.yml
+YAML
+cat /tmp/tb_oracle_cfg_117.yaml
+rm -rf /tmp/oracle_fix117
+echo "--- D) rerun 3 failed tasks (oracle, n=3) ---"
+timeout 480 "$HARBOR" run \
+  -p "$HOME/terminal-bench/bn-fit-modify" \
+  -p "$HOME/terminal-bench/build-cython-ext" \
+  -p "$HOME/terminal-bench/build-pmars" \
+  --agent oracle -n 3 \
+  -c /tmp/tb_oracle_cfg_117.yaml \
+  -o /tmp/oracle_fix117 2>&1 | tail -30
+echo "--- E) results ---"
+for f in /tmp/oracle_fix117/*/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r"
+done
+echo "--- F) schedule ops relay restart (60s later, once) ---"
+if [ ! -f /tmp/ops_relay_restart_117.done ]; then
+  touch /tmp/ops_relay_restart_117.done
+  setsid nohup bash -c 'sleep 60; pkill -f "[o]ps_relay.sh"; sleep 2; cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &' >/dev/null 2>&1 &
+  echo "restart scheduled (60s)"
+else
+  echo "restart already scheduled; skip"
+fi
+echo "=== DONE 117 ==="
+```
+
+---
+
 ## RUN_ID 116 — 🔎 **oracle -k 5 结果核对 + docker 组权限坐实（只读）**
 
 > RUN_ID 115 显示：无 harbor 进程、oracle job 目录 18:04:54 已生成结果；但 relay 内 `docker ps` = permission denied。
 > 本块读 result.json 取 5 个任务 reward，并检查 relay/cline/loop 三个进程的补组（docker gid）。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 D=/tmp/oracle_validate/2026-10-17__18-04-54
 echo "=== RUN_ID 116 · oracle 结果 + docker 权限 · $(date '+%F %T') · host=$(hostname) ==="
