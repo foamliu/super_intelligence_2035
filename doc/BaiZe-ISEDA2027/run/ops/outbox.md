@@ -12040,3 +12040,62 @@ echo "=== DONE 111 ==="
 --- F) vision/train procs ---
 === DONE 111 ===
 ```
+
+---
+
+## RUN_ID 112 · 2026-10-17 18:44:00 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 112 · harbor auth code 兑换 · $(date '+%F %T') · host=$(hostname) ==="
+HARBOR="$(command -v harbor 2>/dev/null || true)"
+[ -n "$HARBOR" ] || HARBOR="$HOME/.local/bin/harbor"
+echo "[0] harbor=$HARBOR"
+if [ -x "$HARBOR" ]; then timeout 20 "$HARBOR" --version 2>&1 | head -3; else echo "harbor NOT FOUND"; fi
+echo "[1] auth status BEFORE"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -4
+echo "[2] pending verifier (mtime/size; TTL=30min)"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/oauth-pending.json" 2>&1 | head -2
+echo "[3] exchange code (dashed)"
+OUT1="$(timeout 120 "$HARBOR" auth login --callback-url '2b5e5ce1-c977-4904-b2bc-40af4951bafa' 2>&1 || true)"
+echo "$OUT1" | tail -12
+if echo "$OUT1" | grep -q 'Logged in as'; then OK=1; else OK=0; fi
+if [ "$OK" = 0 ]; then
+  echo "[3b] retry with no-dash form"
+  OUT2="$(timeout 120 "$HARBOR" auth login --callback-url '2b5e5ce11c9774904b2bc40af4951bafa' 2>&1 || true)"
+  echo "$OUT2" | tail -8
+  echo "$OUT2" | grep -q 'Logged in as' && OK=1
+fi
+echo "[4] auth status AFTER"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -4
+echo "[5] datasets list (head)"
+timeout 60 "$HARBOR" datasets list 2>&1 | head -12
+if [ "$OK" = 0 ]; then
+  echo "[6] still not logged in → fresh authorize URL for ops (pending verifier re-issued)"
+  timeout 30 "$HARBOR" auth login --no-browser 2>&1 | grep -o 'https://[^ ]*' | head -2
+fi
+echo "=== DONE 112 ==="
+```
+
+**输出**
+```
+=== RUN_ID 112 · harbor auth code 兑换 · 2026-10-17 18:44:01 · host=whag0pgpuap29 ===
+[0] harbor=/home/app.e0031982/.local/bin/harbor
+0.24.0
+[1] auth status BEFORE
+Not authenticated. Run `harbor auth login`.
+[2] pending verifier (mtime/size; TTL=30min)
+stat: cannot statx '/home/app.e0031982/.harbor/oauth-pending.json': No such file or directory
+[3] exchange code (dashed)
+Login failed: No pending login found (it may have expired). Start the sign-in again.
+[3b] retry with no-dash form
+Login failed: No pending login found (it may have expired). Start the sign-in again.
+[4] auth status AFTER
+Not authenticated. Run `harbor auth login`.
+[5] datasets list (head)
+View registered datasets at https://hub.harborframework.com/datasets
+[6] still not logged in → fresh authorize URL for ops (pending verifier re-issued)
+https://ofhuhcpkvzjlejydnvyd.supabase.co/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fhub.harborframework.com%2Fauth%2Fcli-callback&code_challenge=njR4si5nbMFMiYpCFj3wOZmRT1KcTDg3iCL9vhEbe3U&code_challenge_method=S256
+=== DONE 112 ===
+```
