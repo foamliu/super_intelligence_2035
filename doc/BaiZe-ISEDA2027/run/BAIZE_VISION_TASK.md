@@ -1,6 +1,51 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-17 12:0x（🚀 启动 ArmB：open_clip ViT-B/16 + AIMv2-style · 全量 8000 GPIC · 3 epoch）· 用户直令 · 最高优先
+
+> **用户令（原文）**：「vision：启动下边实验 目标=AIMv2-style 数据=全量8000 tar GPIC + CC12M + Amshaker 塔=open_clip ViT-B/16 86.2M warmup=2000步 LR=1e-3，min_lr=1e-4 GBS=8192，MBS=512(如果OOM，则GBS=4096，MBS=256) epoch=3 按照这个配方训练，给个ETA 使用 open_clip接口（便于嵌入LLaVA-OneVision架构用lmms-eval评测）」
+
+**⓪ 与上一条的关系**：本块**取代**上一条（2026-10-17 报告块）的 ③ ArmB 配方与排队；上一条的 **① ArmA 报告 / ② 兼容性附录仍要交**（训练起来后 CPU 补，见 ⑤）。
+
+**① 配方（逐字执行，不改）**：
+- 目标：**AIMv2-style** = `contrast_weight×InfoNCE + patch_loss_weight×MSE(predictor(patches[mask]), target[mask])`；`contrast_weight=1.0, patch_loss_weight=1.0, mask_ratio=0.6`（沿用 `r9_train.py:782-807` 口径；报告写清）。
+- 数据：**GPIC 全量 8000 tar + CC12M 1100 + Amshaker 2250 = 11,350 shards ≈117.3M 对**；新建 `data_snapshot_20261017_gpic8000.txt`；起训前 `ls | wc -l` + `find -name '*.incomplete'` 核，**实际数字写进 log/report**（若不足/路径不同，按实际并声明）。
+- 塔：**open_clip ViT-B/16 224**（visual 86.2M / total 149.6M，双塔随机初始化）。
+- 优化：**warmup=2000 步**；**LR 1e-3 → min 1e-4（cosine）**；AdamW wd=0.1、betas=(0.9,0.98)、grad_clip=1.0、bf16、seed=1234（未指定项沿用 ArmA，报告列明）。
+- 批：**GBS=8192, MBS=512/卡（累加 2）**；**OOM 回退 GBS=4096, MBS=256/卡（累加 2）**；实际档位 + 峰值显存必须记录。
+- 步数：**3 epoch**；N≈117.25M → **GBS8192 ≈42,940 步**（14,313/epoch）；回退 GBS4096 ≈85,876 步；以实际 N 重算并写进报告。
+- save every **10,000** 步 + final；保留 latest + 最近 2 个 ckpt（省盘）。
+
+**② open_clip 接口（硬要求）**：
+- 必须 `open_clip.create_model_and_transforms('ViT-B-16', pretrained=None)`；不得改模型类/换自研塔。
+- **predictor 只作训练辅助头**；取 patch tokens 必须**复用同一次 vision 前向**（forward hook / `forward_intermediates`），**禁止二次 forward**（否则 ETA +35–45%）。
+- 保存：`open_clip_state_dict.pt`（**剥离 predictor**）+ `predictor.pt` + `config.json`；验收 `open_clip.create_model_and_transforms('ViT-B-16', pretrained=<ckpt>)` **strict load 通过**。
+- LLaVA-OV/lmms-eval：新增 `mllm_bridge/open_clip_vitb16_768.py`（注册 `baize-vitb16-768`；`encode_image` → `[B,196,768]`；image_size 224 / patch 16 / 无 spatial merge）+ `export_for_llava_ov.py`；CPU 单测：open_clip 加载 / `encode_image` 形状 / wrapper 与原生 allclose / projector 768→LLM dim 形状。lmms-eval 用 1 个小样本冒烟（不阻塞训练）。
+
+**③ 起训（先探再起；🚫 不 kill pretrain）**：
+- 起训前 `nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv` 原文落盘。
+- `.12` 8×H100 正被 **pretrain 80B decay** 全占（ETA ~10-20 02:30）⇒ **不得 kill/降速/抢卡**。
+- 先试 `.29`（`ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'nvidia-smi'`）：若 8 卡空闲且同一 NFS 的 `py310` + open_clip 可用 → **立即在 .29 起训**；SSH 不通/环境缺 ⇒ 记 blocker（原文），**不得擅自装包/改共享 env**。
+- `.29` 不可用 ⇒ 写 `run/vision/run_armB_when_free.sh`：每 5min 轮询 `.12` 8 卡（无 compute apps 且每卡显存 >70GB）→ 满足即 `setsid` 起训；记录 pretrain 实际结束时间。
+- 若用户明确要求「停 pretrain 抢卡」才可停；本指令默认**不抢**。
+
+**④ ETA（按实测公式，起训后用自己的实测值刷新）**：
+- N≈117.3M（GPIC 8000×12,537≈100.3M + CC12M 11.0M + Amshaker 6.0M）；3 epoch = **351.9M samples**。
+- 吞吐：ArmA 实测 **3.37 it/s @ GBS2048 = 6,902 samples/s**；MBS512 预计 +0–5%，AIMv2 头 <1%（前提 = 复用前向）⇒ **6,900–7,300 samples/s**。
+- **纯训练 ≈13.4–14.2h**；+启动/ckpt/最终 ProtB（3 seeds）≈1–2h ⇒ **总 ETA ≈15–16.5h**；GPU·h ≈ **110–120**。
+- 若二次前向（禁止）→ 19–21h；若实测吞吐 6,000 → 16.3h 纯训练。
+- **两条起训情景**：① `.29` 空 → 代码 1–2h 后起（约 13:00–14:00）→ **10-18 04:00–06:30 完成**；② 只能等 `.12` → 10-20 02:30 起 → **10-20 17:00–19:00 完成**。
+- 报告必须给：实际 N / steps / samples/s / 墙钟 / 峰值显存 / 是否 OOM 回退。
+
+**⑤ 交付与次序**：
+1. **P0**：`run/vision/armB_aimv2_openclip.py` + `run/vision/run_armB_openclip.sh` + `run/vision/run_armB_when_free.sh` + CPU 单测（1–2h）。
+2. **P0**：起训（.29 优先，否则排队 .12）。
+3. **P1**：训练起来后用 CPU 补 **ArmA 中文报告 + 兼容性附录**（上一条要求）。
+4. `MEMORY_VISION.md` 状态头 + `daily-memories-vision/2026-10-17.md`；commit `vision armB:`。
+
+**⑥ 纪律**：不改配方；不 kill pretrain；不伪造 ETA/结果；不占 GPU 做 CPU 工作；任务书/MEMORY ≤32KB 自滚。
+
+
 ### 🆕 运维指令 · 2026-10-17（📄 ArmA 结果中文报告 + 归档 · 🔌 open_clip × AIMv2-style 兼容性工程评估）· 用户直令 · 最高优先
 
 > **用户令（2026-10-17）**：「vision：把 ArmA 结果写成中文报告并归档。问题：open_clip 接口和AIMv2-style不能兼容吗？」
@@ -24,123 +69,12 @@
   4. ckpt 存 predictor；**导出 open_clip 权重时必须剥离 predictor**（或单独存 `predictor.pt`），否则 `load_state_dict(strict=True)` 会报 unexpected keys；若 `contrast_weight=0`（纯 AR）→ `find_unused_parameters=True` 或冻结文本塔（ArmA 现为 `False`）。
 - **概念澄清**：官方 AIMv2 = 多模态自回归（图文 token + decoder，弃用对比），open_clip 的对比接口无法表达；本仓 `r9_train.py` 的 `aimv2_ar` + `decoder_depth` 才是那一支。报告须分开写，避免混淆。
 
-**③ ArmB（代码先做，训练排队；🚫 现在不得占 GPU）**：
-- 设计 = **open_clip ViT-B/16 + 我们的 AIMv2-style**，**只变目标**：数据/步数/GBS/LR/seed 与 ArmA 全同；`contrast_weight=1.0, patch_loss_weight=1.0, mask_ratio=0.6`。
-- 交付：`run/vision/armB_aimv2_openclip.py`（或给 ArmA 脚本加 `--loss aimv2`，默认 `clip` 不变）+ `run/vision/run_armB_openclip.sh` + CPU 单测：(a) 前向形状 (b) predictor 参数量≈0.66M (c) loss 可反传 (d) `encode_image` 输出形状不变；README。
-- **预注册判据**：ProtB lp ≥ **58.03%** 为不倒退；若 **≥61.0%（+3pp）且 5-NN ≥48.98%（ArmA−5pp）** → 接受「open_clip + dense」混合；若 lp 提升 <1pp 或 5-NN 掉 >5pp → 判「目标与塔不匹配」，写负面结论。
-- **GPU 排队**：`.12` 8×H100 正被 pretrain 80B decay 全占（ETA ~10-20 02:30）⇒ **ArmB 训练须等运维放行/GPU 空闲**；本轮只做代码 + 单测 + 设计，**不得抢卡**。
-- commit 前缀 `vision armB:`；任务书/MEMORY ≤32KB 自滚。
+**③ ArmB**：配方/起训/排队**已被 2026-10-17 12:0x 顶部指令取代**（open_clip ViT-B/16 + AIMv2-style，全量 8000 GPIC，3 epoch）；本条只保留 **① 报告** 与 **② 兼容性附录**。预注册判据仍有效：lp ≥58.03% 不倒退；≥61.0% 且 5-NN ≥48.98% → 接受混合；否则写负面结论。
 
 **④ 纪律**：不占 GPU（除放行）；每个数字可溯源到 `文件:行`/原始日志；不改已发布数值；与 pretrain 线 IO 错峰。
 
 
-> 📦 §运维指令 · 2026-10-16 21:3x（⚡ ArmA 效率专项 A/B）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：LPT 分片+数据管线+cudnn/fused/bf16 去重一揽子落地，实测 **2.40→3.37 it/s（+40%）**、8 卡 util 95–100%、ETA 14.2h→7.9h；配方未改。需要时再读。
-
-### 🆕 运维指令 · 2026-10-16（📄 写 Stage(iv) 训练+12集评测报告 → 🚀 启动 ArmA open_clip 从头训 encoder）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「vision：把上一件工作，包括训练、12 集 lmms-eval 评测，写成中文 html 报告；然后启动 vision ArmA（open_clip 从头训 encoder）。」
-
-**① 写报告（先做，纯写作零 GPU）**：
-- 覆盖 Stage(iv) MLLM 全链路：Stage-1/1.5/2 训练（loss / 步数 / ckpt）+ Part A/B 验收（open_clip 协议 + LLaVA-OV 兼容导出）+ **12 集 lmms-eval 评测结果**（ai2d 60.04% · realworldqa 43.01% · mmmu 42.89% · blink 38.52% · mmstar 26.81% · mmmu_pro 23.12% · infovqa 16.58% · chartqa 12.24% · countbench 10.79% · docvqa 7.41% · ocrbench 1.1% · mme 596.7+250.7，来源 `consolidated_12benchmarks.json`）。
-- 中文自包含 HTML：`reports/report_vision_stage4_mllm_result_zh.html`。
-
-**② 启动 ArmA（open_clip 从头训 encoder）**：
-- 用 **open_clip 协议/框架从头训练** vision encoder（🚫 不是自研 `vision/models.py` 框架），训完能被 `open_clip.create_model_and_transforms` 加载 + 直接走 open_clip/lmms-eval 评测，消除「自研架构不兼容 open_clip → 评测卡壳」的坑。
-- 配置方向：open_clip 标准 ViT（推荐 **ViT-B/16 224px，86M，比自研 126.8M 更快**）+ 从头对比学习；数据复用现有图文对（GPIC/CC12M/Amshaker）；**主判据 ProtB**，对齐 ④-4ep 口径。
-- 起训前回报「架构/规模 + 数据量 + 步数 + LR + ETA」；`.12` 8×H100 已空，直接起训。
-
-**③ 纪律**：ArmA 起训前 `nvidia-smi` 确认空窗；🚫 与 data 下载错峰 IO；commit 前缀 `vision report:` / `vision armA:` · 任务书 >32KB 自滚归档。
-
-> 📦 §运维指令 · 2026-10-16（📋 评测集缩编为 12 集）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 12/12 benchmarks 全量评测完成。需要时再读。
-
-> 📦 §运维指令 · 2026-10-16（🔧 评测按「每卡一个 benchmark」重排）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ per-GPU eval 方案落地，13 集全量评测完成。需要时再读。
-
-> 📦 §运维指令 · 2026-10-16（⚡ 停 batch_size=4 评测 · 加大 batch）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ batch_size 升至 32，GPU util 抬起。需要时再读。
-
-> 📦 §运维指令 · 2026-10-16（🚀 评测直跑全量 + ArmA 转 open_clip）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 全量评测完成；ArmA 方向确认 open_clip 标准 encoder（自研 ViT 判定失败），训练已启动。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15 22:25（♻️ 别重下 + 🧩 ArmA open_clip 协议/LLaVA-OV 兼容）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ A 旧缓存复用 + B open_clip 协议/HF 导出全验收通过(wake #109)。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15 20:0x（🔬 评测实况核查结论 + 7 项待办）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 全部 7 项已处置（提速/小样/数据/git/Stage-2/耗时归因/git push）。📌 口径：连 github 用 92.23；下 HF 数据用 92.25 直连 hf.co。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15 21:35（🔧 limit50 崩因=磁盘满 → 换盘+预建缓存+复跑）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ HF_HOME 已迁 /nas_env(9.9T)，precache_benchmarks.py 单进程预建缓存运行中(8/17 done)，磁盘检查已加入 launcher。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15（⚡ lmms-eval 提速：17 集一次跑+大 batch+多 GPU）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ run_lmms_eval.py 已实现 17 集一次命令行+batch_size 可调+8卡 multi-GPU。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15（🔧 proxy 纠正：直连 hf.co · 恢复 17 benchmark）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ hf-mirror 已移除，proxy 92.25 直连已验证，17 集评测恢复，Stage-1.5/2 已完成。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15（📚 历史实验结果全景总结）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_experiments_summary_zh.html 48.5KB 交付，8 主题全覆盖。需要时再读。
-
-> 📦 §运维指令 · 2026-10-15（🚀 放行执行 Stage(iv) MLLM 完整流程）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ Stage-1(2500步)+Stage-1.5(20000步)+Stage-2(3500步,loss=1.4853) 全部完成。lmms-eval 评测进行中(precache 8/17)。需要时再读。
-
-> 📦 §运维指令 · 2026-10-14（🔧 ArmC 期间先写 ViT wrapper）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ mllm_bridge/ 全套 7 文件 + 报告 20.6KB, CPU 5/5 PASSED, commit 03c36f5f。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-14（📋 Stage(iv) MLLM 可行性评估）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 28.5KB 中文 HTML（9节），2🔴+6🟠+7🟢，3 Stage 数据265GB全在盘，wrapper/modeling 开发纯 CPU 可并行。需要时再读。
-
-> 📦 §运维指令 · 2026-10-14（📊 ArmC 中文状态报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ report_vision_merge3ds_armc_status_zh.html 已交付(7节+2SVG+文献表)，已多次刷新至最新训练数据。需要时再读。
-
-> 📦 §运维指令 · 2026-10-14（✍️ 放行刷新论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ P0+P1 全部修改完成，11→12 页 0 error（commit e0f75ef5）。需要时再读。
-
-> 📦 §运维指令 · 2026-10-14（📝 训练空窗期审视论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 交付 21.8KB HTML，2🔴+6🟠+5🟢，14/16 核验一致。需要时再读。
-
-> 📦 §运维指令 · 2026-10-13（📐 LR 缩放规则）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ 按文献定 LR ×4=2e-3（Goyal arXiv:1706.02677），3 臂扫描，报告已更新含文献表。需要时再读。
-
-> 📦 §运维指令 · 2026-10-13（🔢 数据量口径更正）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ GPIC 快照7437tar≈94M/全量101.1M, 三集合计快照≈111M/全量118.1M, 报告已订正。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-13（🚀 合并三数据集实验）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：✅ ArmC 训练完成(154500步) + eval 4/4 全提升(ProtB 68.25% Δ+1.20pp)，报告交付。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-13（📄 合并三数据集实验计划 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_merge3ds_bs4_lr2_plan_zh.html（44.3KB）已交付，含 3 臂 LR 扫描 + 数据量订正 + 文献表。需要时再读。
-
-> 📦 §运维指令 · 2026-10-13（🔬 外部编码器 ProtB 评测）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：5/5 完成（SigLIP2 87.46% / AIMv2 85.22% / OV2 84.97% / CLIP 82.66% / RICE 81.72%），report_vision_external_protb_reference_zh.html 已交付。需要时再读。
----
-
-> 📦 §运维指令 · 2026-10-13（📄 ④-4ep 实验报告中文 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_4ep_experiment_zh.html 已交付，ProtB=67.05% MODERATE/DIMINISHING，含 MBS/GBS/LR 加速分析 + N-epoch 时间表。需要时再读。
-
-> 📦 §运维指令 · 2026-10-11（📄 外部反馈→审视+合入论文：Muon 梯度谱解释）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：VISION_MUON_REVIEW_2026-10-11.md + paper §VI-D Muon paragraph + bib entry (arXiv:2605.19282) delivered, 11→11 pages 0err, commit 95a94d0f。需要时再读。
-
----
-
-> 📦 §运维指令 · 2026-10-11（📄 Muon 坍缩根因分析报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_muon_collapse.html（33.6KB, 10节, 内联SVG）已交付，commit 6743baeb。需要时再读。
-
-> 📦 §运维指令 · 2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_lit_ideas.html（28.4KB, 25篇→TOP-5）已交付，commit 6743baeb。需要时再读。
-
-> 📦 §运维指令 · 2026-10-12（📄 LLaVA-OV1.5 复现计划）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_llava_ov15_repro_plan.html 已交付，含 Qwen3.5-4B+OV2视觉塔+ms-swift框架+S0-S4五阶段。需要时再读。
-
-> 📦 §运维指令 · 2026-10-12（🚀 启动 ④-4ep 续训）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：④-4ep 训练+评测全完成，ProtB=67.05±0.02%，MODERATE/DIMINISHING（<70%未达标）。需要时再读。
-
-> 📦 §运维指令 · 2026-10-12（📄 中文版综合报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_final_20261012_zh.html 已交付，外部评审回应全链路收口。需要时再读。
-
-> 📦 §运维指令 · 2026-10-10（🧭 外部评审回应 ③→①→②→④）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：③口径✅ ①zs✅ ②probe✅ ④2ep✅（MODERATE Δ+3.03pp）→ 全链路 DONE（10-12 13:42 收尾）。需要时再读。
-
-> 📦 §运维指令 · 2026-10-10（🧪 变体实验：AdamW→Muon → 全量数据 → 分辨率暂缓）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：V2 Muon 全 LR 坍缩❌（lr=5e-4@step2100, lr=1e-4@step4200）；V3 全量数据 ProtB=63.52% Δ+1.18pp 不可分辨；V1 分辨率暂缓。报告 `report_vision_variants_20261011.html` 已交付。需要时再读。
-
-> 📦 §运维征询 · 2026-10-10（下一步工作建议）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：已回答 → MEMORY_VISION.md「运维问答 · 2026-10-10」节。建议含 Stage(iv) MLLM 对齐、w384、C1-lp trade-off、336 分辨率、论文呈现等。需要时再读。
-
-> 📦 §运维指令 · 2026-10-10（📄 Scaling fair rerun 成果报告 HTML）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：`report_vision_scaling_fair.html`（36.7KB）已交付，Δlp=+0.17pp 不可分辨，⛔ 横幅已加。需要时再读。
-
-> 📦 §运维指令 · 2026-10-10（📄 昨夜工作汇报 HTML）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：`report_10_09_vision_overnight.html`（61.9KB）已交付，含 E1fair/E2fair 全程+最终 Δlp=+0.17pp。需要时再读。
-> 📦 历史运维指令已归档 → `run/ARCHIVE_OPERATOR_VISION.md`（已执行完 / 已作废的块；需要时再读，不要读进上下文）。
-
-> 本节由外部运维通过 git 修改。agent 禁止修改本节（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_VISION.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
-
----
-
-> 📦 §运维指令 · 2026-10-09⑨（🔁 公平性重跑）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：E1fair(62.34±0.01%) vs E2fair(62.51%)，Δlp=+0.17pp 不可分辨；旧「Bigger is WORSE −5.59pp」= schedule 伪影；`r9_train.py` cosine/min-lr 已加；两臂同一冻结快照 total_shards=10787。需要时再读。
-
----
-
-> 📦 2026-10-08⑥（E2 变更：作废官方 OV2 L/14@336 → w768/d30）已归档 → `ARCHIVE_OPERATOR_VISION.md`。结论：E2(w768/d30,284.54M) 已跑完+eval；配方公平性已被 2026-10-09⑨ 定性问题。需要时再读。
-
-
-> 📦 2026-10-08⑤（缩放对比实验）已归档 → `ARCHIVE_OPERATOR_VISION.md`。结论：E1(w512) vs E2(w768/d30) Δlp=−5.59pp，但建立在 `--lr 3e-3 --warmup 20`（warmup≈0%）上 ⇒ 公平性存疑，结论已作废 → 见 2026-10-09⑨ 公平重跑。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-08④（📐 全量 1-epoch 耗时估算）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：已用 scaling smoke 实测回答（E1=4697 img/s → 5.66h；区间 5.2–9.1h/epoch；1 epoch 足够）。需要时再读。
-
-
+> 📦 2026-10-13 ~ 10-16 历史运维指令指针（~90 条单行摘要）已原文归档 → `run/ARCHIVE_OPERATOR_VISION.md`；需要时再查，不要读进上下文。
 ### 🏆 最佳实践（BEST PRACTICES）— 2026-10-08 锁定 · 如无特殊指定，一律按此执行
 
 > 以下三项由 R2–R14 全线实验预注册 + 收敛后裁定，证据见对应报告/实验记录。

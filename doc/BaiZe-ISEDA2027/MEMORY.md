@@ -27,6 +27,14 @@
 - 任务书 `run/WATCH_RECRUIT_TASK.md` 顶部新块：下一唤醒**先重筛 61 会话 + 候选表**，产出 §十一 R24；已发 5 封不撤回、不补解释，台账标 `overqualified` 不再推进；18:00 **不发全职邮件**（守早 6 排期），新达标者留到下一 06:00；18:00 实习专场照常。
 - 任务书体积：32,537B→（插入 4KB）36,397B→归档 10-16 排期块（块 K）后 **34,972B（34.2KB）**；<40KB 红线，agent 下轮按规程继续自滚到 ≤32KB。
 
+### 🚀 vision 新指令：启动 ArmB（open_clip ViT-B/16 + AIMv2-style · 全量 8000 GPIC · 3 epoch）
+- 用户令：「目标=AIMv2-style；数据=全量 8000 tar GPIC + CC12M + Amshaker；塔=open_clip ViT-B/16 86.2M；warmup=2000；LR=1e-3, min_lr=1e-4；GBS=8192, MBS=512（OOM→4096/256）；epoch=3；给 ETA；使用 open_clip 接口（便于 LLaVA-OneVision + lmms-eval）。」
+- 已下发 `run/BAIZE_VISION_TASK.md` 顶部（最高优先）：AIMv2-style = InfoNCE(1.0) + masked patch MSE(1.0, mask 0.6)；数据 ≈117.25M 对 ×3 epoch；GBS8192 → **≈42,940 步**（14,313/epoch），回退 4096 → ≈85,876 步；save every 10k。
+- **ETA**：ArmA 实测 6,902 samples/s → 预计 6,900–7,300 → **纯训练 13.4–14.2h**；+启动/ckpt/ProtB 1–2h ⇒ **总 15–16.5h**（110–120 GPU·h）。情景① `.29` 空：代码 1–2h 后起，约 **10-18 04:00–06:30** 完成；② 等 `.12`（pretrain 10-20 02:30 结束）→ **10-20 17:00–19:00** 完成。
+- **open_clip 硬要求**：必须 `create_model_and_transforms('ViT-B-16')`；predictor 只为辅助头并剥离导出；patch tokens 必须复用同一次前向（禁止二次 forward）；新增 `mllm_bridge/open_clip_vitb16_768.py`（`baize-vitb16-768`, `encode_image`→[B,196,768]）+ `export_for_llava_ov.py` + CPU 单测。
+- **资源**：`.12` 8×H100 被 pretrain 80B decay 全占 ⇒ **不 kill/不抢**；先探 `.29`（ssh nvidia-smi），空则立即起，否则写 `run_armB_when_free.sh` 轮询 `.12` 自动起。已在 `run/GPU29_ALLOC.md` 登记申请行。
+- 任务书瘦身：归档 10-16 ArmA 块 + 10-13~10-16 历史指针，31,987B→**24,182B（23.6KB ✓）**。
+
 
 ## 🆕 最近操作（2026-10-16）
 
