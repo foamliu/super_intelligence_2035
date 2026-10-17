@@ -4,45 +4,55 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🆕 运维指令 · 2026-10-18（二十八）— 🧩 编译 `eda_platform` 的 `cline-cli` → 装成 `zhulong`/`zl` → 用 DeepSeek-V4-Pro-Cloud 跑一次 158 集得分数【用户直令 · 最高优先】
+### 🆕 运维指令 · 2026-10-18（二十八）— 🧩 编译 `eda_platform/apps/cli`（cline 改造版）→ 只以 `zhulong`/`zl` 安装 → 用 DeepSeek-V4-Pro-Cloud 跑一次 158 集得分数【用户直令 · 最高优先】
 
 > **用户令（2026-10-18）**：「编译 `eda_platform` 目录下的 `cline-cli`，把它安装成命令行工具 `zhulong`/`zl`，设置使用 `DeepSeek-V4-Pro-Cloud` 这个底模，用你一直使用的评测集测试一次，得出分数。」
+> **用户补充（同日，必须遵守）**：① `eda_platform` **本身就是 cline 仓库改造而来**，`apps/cli` 就是原来的 cline → **直接编 `eda_platform/apps/cli`，不用满盘找**；② **36.15 已装的 cline 3.0.51 不许覆盖/删除/改动**——迄今所有被测分数都是它跑出来的基线；新产物只叫 `zhulong`/`zl`。
 > ⚠️ **本条优先级高于令二十七（glm-5.3 复测）**；glm-5.3 复测暂停，等本条跑完或网关恢复后再议。
 
-**① 范围与前提**
-- `eda_platform` 在 **36.15**（本机，`/nasdata/...`），运维侧看不到，**由你先定位**：`ls -d /nasdata/app.e0031982/code/*eda* /nasdata/app.e0031982/*/*eda* 2>/dev/null`，再进到含 `cline-cli` 的目录（如 `eda_platform/cline-cli` 或 `eda_platform/packages/cline-cli`）。找不到就**在 30 min 内向心跳报告「未找到 + 已搜路径 + `ls`/`find` 原文」**，不要自己瞎猜目录、不要 clone 别处的 cline 顶替。
-- 构建只用本地工具链（`node`/`npm`/`pnpm`/`bun`，36.15 上 cline 本体在 `/home/app.e0031982/.local/node-20/bin/cline` 或 `~/.bun/bin/cline`）。**不装新依赖源**；装包走内网镜像（`https://mirrors.aliyun.com/npm/` / 腾讯 npm）。外网命令用 `https_proxy=http://172.19.92.23:13128`；**访问 `agi-gateway.cxmt.com` 时必须剥掉 proxy**（`env -u https_proxy -u http_proxy ...`，否则会 Forbidden/挂死）。
+**① 路径与前提**
+- 仓库根：`eda_platform`（36.15 本机，`/nasdata/...`）。目标包 = **`apps/cli`**（`package.json` 里应是 `@cline/cli` 或改造后的同名包）。先 `cd <eda_platform> && git status -sb && git log --oneline -1` 记录源版本。
+- 工具链：`bun`（cline 上游用 bun，36.15 已装）+ `node`。装依赖走内网镜像（`https://mirrors.aliyun.com/npm/` / 腾讯 npm）。外网命令带 `https_proxy=http://172.19.92.23:13128`；**访问 `agi-gateway.cxmt.com` 必须剥掉 proxy**（`env -u https_proxy -u http_proxy ...`）。
+- 🚫 不 clone 别处的 cline 顶替、不 `git checkout` 别人的改动、不改 `eda_platform` 源码（本次只“编译 + 安装 + 跑分”）。
 
-**② 编译 + 安装（两个名字指向同一产物）**
-1. 先看清项目怎么构建（`package.json` 的 `scripts.build`、`bun build --compile` 或 `pnpm build`），**记录原始命令并原样使用**，不要自创构建方式。
-2. 产物二选一：`bun build --compile` 单文件二进制，或 node 入口 + `bin` shim。
-3. **安装名 `zhulong` 与短别名 `zl` 都必须可执行**（例：`~/.local/bin/zhulong` + `~/.local/bin/zl → zhulong`，或 `~/.bun/bin` 下的同名链接；`chmod +x`；`PATH` 已含该目录）。
-4. 验收（把原文贴心跳）：`zhulong --version`、`zl --version`、`which -a zhulong zl`、`ls -l` 两行。**版本号必须与 `eda_platform` 源码一致**，若与现有 cline 3.0.51 不同，记录差异（这正是要测的变量）。
+**② 🔴 硬红线：不碰现有 cline 3.0.51（先取证，再动手）**
+1. 先记录基线（原文贴心跳）：
+   `which -a cline; cline --version; ls -l $(which cline); readlink -f $(which cline); ls -ld ~/.bun/bin/cline ~/.bun/install/global/node_modules/@cline 2>/dev/null`
+   ——3.0.51 是**被测基线**，本轮任何操作都不得让它失效。
+2. **禁止**：`curl .../install.sh | bash`、`bun add -g @cline/cli`、`bun link`/`bun pm link` 到 `@cline/cli`、`bun install -g`、`npm i -g @cline/*`、覆盖 `~/.bun/bin/cline`、改 `~/.bun/install/global/node_modules/@cline`、改 `~/.cline/`（配置与 hook）。
+3. `eda_platform/apps/cli` 里若本来就叫 `@cline/cli`：**改的都是产物名字与安装位置，不改包里 `bin` 名**（例：把构建产物复制成 `~/.local/bin/zhulong`，不要 `bun install -g` 把 `cline` 重新链过去）。
+4. 收尾必须复核一次：`cline --version` 仍为 **3.0.51**、`readlink -f $(which cline)` 与第 1 步一致；否则**立即报告并停止后续步骤**。
 
-**③ 配置底模 = DeepSeek-V4-Pro-Cloud**
-- 模型 id `deepseek-v4-pro-cloud`，base `http://agi-gateway.cxmt.com/cloud/v1`（历史实测 200；`/v1` 下的 `deepseek-v4-pro-fp4` 才是 403/429 的那个，**别混**）。
-- key：复用 `eda_fastmcp/providers.json` 或 `.env` 里的 `02_088EE...` 同批 key；**核验方式 = `curl` 一次 chat/completions 得 HTTP 200 + 有 content**（当前网关可能仍在 401，见 ⑤）。
-- **配置隔离**：`zhulong` 用**独立 data dir**（`--data-dir ~/.zhulong` 或等价参数），**不许改写 `~/.cline` 的 provider/settings**（那会污染正在跑的评测与本 loop）。
-- 写入后 `zhulong auth`/`zhulong config` 或直读配置文件，贴出实际生效的 `model` + `base url` + key 末 8 位。
+**③ 编译 + 安装（只出 `zhulong` / `zl`）**
+1. 按 `apps/cli/package.json` 的**原始脚本**构建（如 `bun run build` / `bun build ... --target=bun`），记录命令原文与耗时。
+2. 安装到**独立前缀**：`~/.local/zhulong/`（或 `~/.zhulong/bin/`），入口 = `~/.local/bin/zhulong` + `~/.local/bin/zl → zhulong`；`chmod +x`。
+3. 验收（原文贴心跳）：`zhulong --version`、`zl --version`、`which -a zhulong zl`、`ls -l ~/.local/bin/{zhulong,zl}`；**并给出 `zhulong --version` 与 `cline --version`(3.0.51) 的对比**（版本不同是正常的，这正是要测的变量）。
 
-**④ 跑一次评测（口径不变，跑 1 轮）**
-- 评测集 = `EDA-Eval-pyAether-158`（`benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl`），`Pass@1 = 通过/158`。
-- 复用现有 `eda_fastmcp` 的 harness：`scripts/run_cline_script.sh`（**先把其中的 `cline` 调用换成 `zhulong`/`zl`**，或复制一份 `run_zhulong_script.sh` 改一行；**不要改原脚本的判定/参数**）。
-- 参数照旧：`-p 8 -n`；若网关 401/429 致整批作废，按令二十七①「0-token>10%」降 `-p 4` 重跑一次（**只降并发、不改模型与配置**，心跳注明）。
-- 环境照旧：4 端口 `8650/8651/8652/8654`（`SANDBOX_HOST=10.129.32.75`）+ V3 文档 + 自探索 ON + **反作弊 hook 必须生效**（跑前做一次「应被拒」canary，未被拒 → 立即停，本批作废）。
+**④ 配置底模 = DeepSeek-V4-Pro-Cloud（与 cline 3.0.51 配置隔离）**
+- `deepseek-v4-pro-cloud` @ `http://agi-gateway.cxmt.com/cloud/v1`（历史实测 200；**别混 `/v1` 下的 `deepseek-v4-pro-fp4`**，那个是 403/429）。
+- `zhulong` 使用**独立 data dir**（`--data-dir ~/.zhulong` 或该版本等价参数），key 复用 `eda_fastmcp/providers.json` / `.env` 里 `02_088EE...` 同批 key，**不许写进 `~/.cline`**。
+- 验收：`curl` 一次 chat/completions 得 HTTP 200 + 有 content（当前网关可能仍 401）；贴出生效 `model` / `base url` / key 末 8 位 / data dir。
+
+**⑤ 跑一次评测（口径不变，1 轮）**
+- 评测集 `EDA-Eval-pyAether-158`（`benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl`），`Pass@1 = 通过/158`。
+- 复用 `eda_fastmcp/scripts/run_cline_script.sh`：**复制一份** `run_zhulong_script.sh`，**只把其中 `cline` 换成 `zhulong`（或 `zl`）这一处**；参数、判定、hook、端口一律不动。
+- `-p 8 -n`；若 401/429 致整批作废，按令二十七①「0-token>10%」降 `-p 4` 重跑一次（**只降并发**，心跳注明）。
+- 环境照旧：4 端口 `8650/8651/8652/8654`（`SANDBOX_HOST=10.129.32.75`）+ V3 文档 + 自探索 ON + **反作弊 hook canary 必须生效**。
 - 日志 `/tmp/ZL_v4procloud_r1.log`；打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE'`，**以 `pass (xx.x%)` 为准**；timeout / 0-token / quota 单列，不算模型分数。
 
-**⑤ 回报（本轮就要，写完再退出）**
-1. `eda_platform` 真实路径 + 构建命令 + 产物路径/大小 + `zhulong`/`zl` 验收原文。
-2. 生效配置（model / base / key 末 8 位 / data dir）。
-3. **`DeepSeek-V4-Pro-Cloud` 158 题 Pass@1 = xx.x%（通过数/158）**，附 `pass (` 那行原文 + `timeout`/`gen-fail`/`quota` 计数。
-4. 对照一句：vs `deepseek-v4-flash` 60.1±5.5%（n=5）· vs `glm-5.2` 83.3±3.1%（n=5）· vs 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）。**n=1 不与 ± 比较，只报单值并标 `[provisional,n=1]`**。
-5. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`）+ `zhulong_results.md` 新增一行（**必须 `[provisional,n=1]`，🚫 写成 ±**）+ `daily-memories/2026-10-18.md`；commit 前缀 `zhulong zl:`。
+**⑥ 回报（本轮就要，写完再退出）**
+1. `eda_platform` 路径 + `git log -1` + 构建命令原文 + 产物大小 + `zhulong`/`zl` 验收原文。
+2. **cline 3.0.51 未被改动**的证据：`cline --version` + `readlink -f`（与 ②-1 逐字一致）。
+3. 生效配置（model / base / key 末 8 位 / data dir）。
+4. **`DeepSeek-V4-Pro-Cloud` 158 题 Pass@1 = xx.x%（通过数/158）** + `pass (` 原文 + timeout/gen-fail/quota 计数。
+5. 对照一句：vs `deepseek-v4-flash` 60.1±5.5%（n=5）· `glm-5.2` 83.3±3.1%（n=5）· 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）。**n=1 只报单值并标 `[provisional,n=1]`，禁止写成 ±**。
+6. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`）+ `zhulong_results.md` 新增一行（标 `[provisional,n=1]`）+ `daily-memories/2026-10-18.md`；commit 前缀 `zhulong zl:`。
 
-**⑥ 纪律（红线）**
-- 🚫 不改论文口径、不动 `~/.cline` 全局配置、不 kill 本 loop / ops 中继 / 别人在跑的任务。
+**⑦ 纪律（红线）**
+- 🚫 覆盖/删除/重链现有 cline 3.0.51、改 `~/.cline`、跑 `curl|bash` 官方安装器。
+- 🚫 不改论文口径、不 kill 本 loop / ops 中继 / 别人在跑的任务。
 - 🚫 不把 n=1 的分数写进论文表（只进 `zhulong_results.md` 并标 provisional）。
-- ✅ 每轮只推进一步（构建 → 配置 → canary → 跑 → 打分 → 回报），`WAITING=1` 只在评测真正跑起来时置位。
+- ✅ 每轮只推进一步（取证 → 构建 → 安装 → 配置 → canary → 跑 → 打分 → 回报），`WAITING=1` 只在评测真正跑起来时置位。
 - 体积：任务书 ≤40KB（超了按常驻规程自己滚归档，**只搬已闭合块原文**）。
 
 
