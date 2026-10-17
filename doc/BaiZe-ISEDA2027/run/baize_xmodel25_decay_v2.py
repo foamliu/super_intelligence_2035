@@ -41,6 +41,46 @@ def build_optimizers(muon_params, adamw_params, lr, weight_decay, momentum=0.95,
         _muon_utils.newton_schulz = _bf16_compat_ns
         _muon_utils._bf16_patched = True
 
+    # --- Fix: emerging_optimizers 0.5.0a0 renamed 'mode' → 'tp_mode' in
+    # newton_schulz_tp(), but Megatron's muon.py still passes 'mode'.
+    # Patch: wrap newton_schulz_tp to accept 'mode' as alias for 'tp_mode'.
+    # Also patch in megatron.core.optimizer.muon namespace (imported at module level).
+    if not getattr(_muon_utils, '_tp_mode_patched', False):
+        _orig_ns_tp = _muon_utils.newton_schulz_tp
+
+        def _mode_compat_ns_tp(x, steps, coefficient_type, tp_group,
+                               partition_dim=None, mode='duplicated', **kwargs):
+            return _orig_ns_tp(x, steps, coefficient_type, tp_group,
+                               partition_dim=partition_dim, tp_mode=mode, **kwargs)
+
+        _muon_utils.newton_schulz_tp = _mode_compat_ns_tp
+        _muon_utils._tp_mode_patched = True
+        import megatron.core.optimizer.muon as _muon_mod
+        _muon_mod.newton_schulz_tp = _mode_compat_ns_tp
+
+    # --- Fix: emerging_optimizers 0.5.0a0 (installed at /tmp/Emerging-Optimizers/
+    # on .12) made 'nesterov' a required keyword-only arg in
+    # OrthogonalizedOptimizer.__init__, but Megatron's TensorParallelMuon passes
+    # 'use_nesterov' (→ **kwargs) instead.  On .29 the package isn't installed
+    # (OrthogonalizedOptimizer=object fallback, no issue).
+    # Patch: make nesterov default to True, extract from use_nesterov if present.
+    try:
+        from emerging_optimizers.orthogonalized_optimizers import (
+            OrthogonalizedOptimizer as _OrthoOpt,
+        )
+        if _OrthoOpt is not object and not getattr(_OrthoOpt, '_nesterov_patched', False):
+            _orig_ortho_init = _OrthoOpt.__init__
+
+            def _nesterov_compat_init(self, *args, nesterov=True, **kwargs):
+                if 'use_nesterov' in kwargs:
+                    nesterov = kwargs.pop('use_nesterov')
+                return _orig_ortho_init(self, *args, nesterov=nesterov, **kwargs)
+
+            _OrthoOpt.__init__ = _nesterov_compat_init
+            _OrthoOpt._nesterov_patched = True
+    except ImportError:
+        pass
+
     muon_opt = TensorParallelMuon(
         [{'params': muon_params}],
         lr=lr, momentum_beta=momentum, use_nesterov=True,
