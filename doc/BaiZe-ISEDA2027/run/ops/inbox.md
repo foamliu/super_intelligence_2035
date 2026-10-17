@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 112 -->
+<!-- RUN_ID: 113 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,51 @@
 
 ---
 
+## RUN_ID 113 — 🔐 **Harbor 登录（第二段）：兑换 ops 新 code `1acc84df-…`（只认证）**
+
+> RUN_ID 112 已确认未认证且无 pending；中继于 18:44:01 重发了新授权链接，ops 已完成 GitHub 确认并提供新 code。
+> 本块：兑换 → 复查 → 核对本地数据集；失败则再打印新 URL。
+
+```bash
+set -u
+echo "=== RUN_ID 113 · harbor auth code 兑换(2) · $(date '+%F %T') · host=$(hostname) ==="
+HARBOR="$HOME/.local/bin/harbor"
+[ -x "$HARBOR" ] || HARBOR="$(command -v harbor 2>/dev/null || true)"
+echo "[0] harbor=$HARBOR"
+echo "[1] pending verifier"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/oauth-pending.json" 2>&1 | head -2
+echo "[2] exchange code"
+OUT="$(timeout 120 "$HARBOR" auth login --callback-url '1acc84df-bbcf-4a6c-baf2-facaef7627aa' 2>&1 || true)"
+echo "$OUT" | tail -10
+if echo "$OUT" | grep -q 'Logged in as'; then OK=1; else OK=0; fi
+echo "[3] auth status AFTER"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -3
+echo "[4] local dataset probe (~/terminal-bench)"
+ls -1 "$HOME/terminal-bench" 2>/dev/null | head -5 || echo "no ~/terminal-bench"
+echo "task.toml count(maxdepth2): $(find "$HOME/terminal-bench" -maxdepth 2 -name 'task.toml' 2>/dev/null | wc -l)"
+echo "registry file: $(stat -c 'size=%s mtime=%y' /tmp/tb_registry_full.json 2>/dev/null || echo missing)"
+echo "[5] harbor datasets list (head)"
+timeout 60 "$HARBOR" datasets list 2>&1 | head -8
+if [ "$OK" = 0 ]; then
+  echo "[6] still not logged in → fresh URL"
+  timeout 30 "$HARBOR" auth login --no-browser 2>&1 | grep -o 'https://[^ ]*' | head -2
+fi
+echo "=== DONE 113 ==="
+```
+
+---
+
 ## RUN_ID 112 — 🔐 **Harbor 登录：用 ops 提供的 authorization code 兑换 API key（只做认证，不启动评测）**
+
+> （已执行，原文降级为 text 保存）
+
+```text
 
 > 用户已在 Harbor 页面完成 GitHub 确认，给出的 authorization code：
 > `2b5e5ce1-c977-4904-b2bc-40af4951bafa`（另一写法 `2b5e5ce1c9774904b2bc40af4951bafa`）。
 > 本块只做：查 auth 状态 → 尝试兑换 → 复查状态 → 失败则打印**新**授权 URL 供 ops 再点。
 > 🚫 不启动/不 kill 任何评测或训练；🚫 不打印 key 本体。
 
-```bash
 set -u
 echo "=== RUN_ID 112 · harbor auth code 兑换 · $(date '+%F %T') · host=$(hostname) ==="
 HARBOR="$(command -v harbor 2>/dev/null || true)"
