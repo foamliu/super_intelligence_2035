@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 120 -->
+<!-- RUN_ID: 121 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,37 @@
 
 ---
 
+## RUN_ID 121 — 🔎 **读 verifier/agent 日志（只读）：确认 2 个任务到底卡在哪**
+
+> RUN_ID 120 的 trial.log 只有 "Collecting main service artifacts"，错误在 verifier 或 agent 子目录。
+
+```bash
+set -u
+D=/tmp/oracle_fix119/2026-10-17__22-37-51
+echo "=== RUN_ID 121 · verifier/agent logs · $(date '+%F %T') · host=$(hostname) ==="
+for t in build-cython-ext build-pmars; do
+  f="$(ls -d "$D/${t}__"* 2>/dev/null | head -1)"
+  echo "=== $t -> ${f:-MISSING} ==="
+  [ -n "$f" ] || continue
+  echo "[result.json head]"; head -c 900 "$f/result.json" 2>&1; echo
+  echo "[verifier files]"; find "$f/verifier" -maxdepth 2 -type f 2>/dev/null | head -8
+  for g in "$f/verifier"/*.log "$f/verifier"/*/*.log "$f/agent"/*.log; do
+    [ -f "$g" ] || continue
+    echo "--- $g (tail 20) ---"; tail -20 "$g" 2>&1
+  done
+done
+echo "=== DONE 121 ==="
+```
+
+---
+
 ## RUN_ID 120 — 🔎 **读 RUN_ID 119 两个失败任务的 trial.log（只读，找失败原因）**
 
 > RUN_ID 119：`bn-fit-modify` ✅1.0，`build-cython-ext`/`build-pmars` 仍 0.0（3 任务共 2m56s）。
 > 本块只读日志，不跑评测、不改环境。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 D=/tmp/oracle_fix119/2026-10-17__22-37-51
 echo "=== RUN_ID 120 · oracle failure logs · $(date '+%F %T') · host=$(hostname) ==="
