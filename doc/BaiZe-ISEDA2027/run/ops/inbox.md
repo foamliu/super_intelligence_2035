@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 111 -->
+<!-- RUN_ID: 112 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,54 @@
 
 ---
 
+## RUN_ID 112 — 🔐 **Harbor 登录：用 ops 提供的 authorization code 兑换 API key（只做认证，不启动评测）**
+
+> 用户已在 Harbor 页面完成 GitHub 确认，给出的 authorization code：
+> `2b5e5ce1-c977-4904-b2bc-40af4951bafa`（另一写法 `2b5e5ce1c9774904b2bc40af4951bafa`）。
+> 本块只做：查 auth 状态 → 尝试兑换 → 复查状态 → 失败则打印**新**授权 URL 供 ops 再点。
+> 🚫 不启动/不 kill 任何评测或训练；🚫 不打印 key 本体。
+
+```bash
+set -u
+echo "=== RUN_ID 112 · harbor auth code 兑换 · $(date '+%F %T') · host=$(hostname) ==="
+HARBOR="$(command -v harbor 2>/dev/null || true)"
+[ -n "$HARBOR" ] || HARBOR="$HOME/.local/bin/harbor"
+echo "[0] harbor=$HARBOR"
+if [ -x "$HARBOR" ]; then timeout 20 "$HARBOR" --version 2>&1 | head -3; else echo "harbor NOT FOUND"; fi
+echo "[1] auth status BEFORE"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -4
+echo "[2] pending verifier (mtime/size; TTL=30min)"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/oauth-pending.json" 2>&1 | head -2
+echo "[3] exchange code (dashed)"
+OUT1="$(timeout 120 "$HARBOR" auth login --callback-url '2b5e5ce1-c977-4904-b2bc-40af4951bafa' 2>&1 || true)"
+echo "$OUT1" | tail -12
+if echo "$OUT1" | grep -q 'Logged in as'; then OK=1; else OK=0; fi
+if [ "$OK" = 0 ]; then
+  echo "[3b] retry with no-dash form"
+  OUT2="$(timeout 120 "$HARBOR" auth login --callback-url '2b5e5ce11c9774904b2bc40af4951bafa' 2>&1 || true)"
+  echo "$OUT2" | tail -8
+  echo "$OUT2" | grep -q 'Logged in as' && OK=1
+fi
+echo "[4] auth status AFTER"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -4
+echo "[5] datasets list (head)"
+timeout 60 "$HARBOR" datasets list 2>&1 | head -12
+if [ "$OK" = 0 ]; then
+  echo "[6] still not logged in → fresh authorize URL for ops (pending verifier re-issued)"
+  timeout 30 "$HARBOR" auth login --no-browser 2>&1 | grep -o 'https://[^ ]*' | head -2
+fi
+echo "=== DONE 112 ==="
+```
+
+---
+
 ## RUN_ID 111 — 🩺 **各线 loop 存活 + 双机 GPU 快照（只读）**
 
 > 目的：确认 pretrain/vision/harness/data/ops relay 是否存活，以及 `.29`/`.12` 实占。只读；不 kill、不启动任何训练。
 > 背景：11:5x 实测 pretrain #488 报 `.29` 健康 RUNNING、`.12` 已释放；但 vision 自 11:12 无提交，需确认 loop 是否活着。
 
-```bash
+```text
+
 set -u
 echo "=== RUN_ID 111 · loops + GPUs · $(date '+%F %T') · host=$(hostname) ==="
 echo "--- A) loops ---"
