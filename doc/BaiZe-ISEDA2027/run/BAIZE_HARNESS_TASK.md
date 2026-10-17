@@ -1,6 +1,18 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
+### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .29 /tmp 残留）· 用户直令
+
+> **用户令（2026-10-17）**：「让 harness 清理 .29 的 /tmp。」
+
+**① 清理范围**：harness 线在 `.29` 的 `/tmp` 下旧残留（>1 天未动用的 claude-code/opencode 旧 workdirs 拷贝、rootfs 克隆、旧 log、旧测试床临时等）。⚠️ 运维已清掉最大头 `/tmp/claude-6218`（27G）。
+
+**② 纪律**：
+- 先 `du -sh /tmp/* 2>/dev/null | sort -rh | head -20` 盘点，**只清本线自己的、确认 >1 天未动**的，把要删清单抄进心跳再删。
+- 🚫 不删：`/dev/shm/harness_work/workdirs/`（活跃评测在那边，不在 /tmp）、下载/克隆中、别线在途文件、<1 天的、`/tmp/systemd-*`。
+- ✅ 清完报 `df -h /tmp` 前后对比 + 释放量。
+- commit 前缀 `harness tmp-clean:` · 任务书 >32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-17（🧪 Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud）· 用户直令 · 最高优先（T1；T0 仍是 glm53 收口）
 
 > **用户令（2026-10-17）**：「harness：测完 glm53 7×300之后，开始基于kimi-k2.6做terminalbench的7 harness横评。」
