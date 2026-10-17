@@ -4,6 +4,48 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
+### 🆕 运维指令 · 2026-10-18（二十八）— 🧩 编译 `eda_platform` 的 `cline-cli` → 装成 `zhulong`/`zl` → 用 DeepSeek-V4-Pro-Cloud 跑一次 158 集得分数【用户直令 · 最高优先】
+
+> **用户令（2026-10-18）**：「编译 `eda_platform` 目录下的 `cline-cli`，把它安装成命令行工具 `zhulong`/`zl`，设置使用 `DeepSeek-V4-Pro-Cloud` 这个底模，用你一直使用的评测集测试一次，得出分数。」
+> ⚠️ **本条优先级高于令二十七（glm-5.3 复测）**；glm-5.3 复测暂停，等本条跑完或网关恢复后再议。
+
+**① 范围与前提**
+- `eda_platform` 在 **36.15**（本机，`/nasdata/...`），运维侧看不到，**由你先定位**：`ls -d /nasdata/app.e0031982/code/*eda* /nasdata/app.e0031982/*/*eda* 2>/dev/null`，再进到含 `cline-cli` 的目录（如 `eda_platform/cline-cli` 或 `eda_platform/packages/cline-cli`）。找不到就**在 30 min 内向心跳报告「未找到 + 已搜路径 + `ls`/`find` 原文」**，不要自己瞎猜目录、不要 clone 别处的 cline 顶替。
+- 构建只用本地工具链（`node`/`npm`/`pnpm`/`bun`，36.15 上 cline 本体在 `/home/app.e0031982/.local/node-20/bin/cline` 或 `~/.bun/bin/cline`）。**不装新依赖源**；装包走内网镜像（`https://mirrors.aliyun.com/npm/` / 腾讯 npm）。外网命令用 `https_proxy=http://172.19.92.23:13128`；**访问 `agi-gateway.cxmt.com` 时必须剥掉 proxy**（`env -u https_proxy -u http_proxy ...`，否则会 Forbidden/挂死）。
+
+**② 编译 + 安装（两个名字指向同一产物）**
+1. 先看清项目怎么构建（`package.json` 的 `scripts.build`、`bun build --compile` 或 `pnpm build`），**记录原始命令并原样使用**，不要自创构建方式。
+2. 产物二选一：`bun build --compile` 单文件二进制，或 node 入口 + `bin` shim。
+3. **安装名 `zhulong` 与短别名 `zl` 都必须可执行**（例：`~/.local/bin/zhulong` + `~/.local/bin/zl → zhulong`，或 `~/.bun/bin` 下的同名链接；`chmod +x`；`PATH` 已含该目录）。
+4. 验收（把原文贴心跳）：`zhulong --version`、`zl --version`、`which -a zhulong zl`、`ls -l` 两行。**版本号必须与 `eda_platform` 源码一致**，若与现有 cline 3.0.51 不同，记录差异（这正是要测的变量）。
+
+**③ 配置底模 = DeepSeek-V4-Pro-Cloud**
+- 模型 id `deepseek-v4-pro-cloud`，base `http://agi-gateway.cxmt.com/cloud/v1`（历史实测 200；`/v1` 下的 `deepseek-v4-pro-fp4` 才是 403/429 的那个，**别混**）。
+- key：复用 `eda_fastmcp/providers.json` 或 `.env` 里的 `02_088EE...` 同批 key；**核验方式 = `curl` 一次 chat/completions 得 HTTP 200 + 有 content**（当前网关可能仍在 401，见 ⑤）。
+- **配置隔离**：`zhulong` 用**独立 data dir**（`--data-dir ~/.zhulong` 或等价参数），**不许改写 `~/.cline` 的 provider/settings**（那会污染正在跑的评测与本 loop）。
+- 写入后 `zhulong auth`/`zhulong config` 或直读配置文件，贴出实际生效的 `model` + `base url` + key 末 8 位。
+
+**④ 跑一次评测（口径不变，跑 1 轮）**
+- 评测集 = `EDA-Eval-pyAether-158`（`benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl`），`Pass@1 = 通过/158`。
+- 复用现有 `eda_fastmcp` 的 harness：`scripts/run_cline_script.sh`（**先把其中的 `cline` 调用换成 `zhulong`/`zl`**，或复制一份 `run_zhulong_script.sh` 改一行；**不要改原脚本的判定/参数**）。
+- 参数照旧：`-p 8 -n`；若网关 401/429 致整批作废，按令二十七①「0-token>10%」降 `-p 4` 重跑一次（**只降并发、不改模型与配置**，心跳注明）。
+- 环境照旧：4 端口 `8650/8651/8652/8654`（`SANDBOX_HOST=10.129.32.75`）+ V3 文档 + 自探索 ON + **反作弊 hook 必须生效**（跑前做一次「应被拒」canary，未被拒 → 立即停，本批作废）。
+- 日志 `/tmp/ZL_v4procloud_r1.log`；打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE'`，**以 `pass (xx.x%)` 为准**；timeout / 0-token / quota 单列，不算模型分数。
+
+**⑤ 回报（本轮就要，写完再退出）**
+1. `eda_platform` 真实路径 + 构建命令 + 产物路径/大小 + `zhulong`/`zl` 验收原文。
+2. 生效配置（model / base / key 末 8 位 / data dir）。
+3. **`DeepSeek-V4-Pro-Cloud` 158 题 Pass@1 = xx.x%（通过数/158）**，附 `pass (` 那行原文 + `timeout`/`gen-fail`/`quota` 计数。
+4. 对照一句：vs `deepseek-v4-flash` 60.1±5.5%（n=5）· vs `glm-5.2` 83.3±3.1%（n=5）· vs 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）。**n=1 不与 ± 比较，只报单值并标 `[provisional,n=1]`**。
+5. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`）+ `zhulong_results.md` 新增一行（**必须 `[provisional,n=1]`，🚫 写成 ±**）+ `daily-memories/2026-10-18.md`；commit 前缀 `zhulong zl:`。
+
+**⑥ 纪律（红线）**
+- 🚫 不改论文口径、不动 `~/.cline` 全局配置、不 kill 本 loop / ops 中继 / 别人在跑的任务。
+- 🚫 不把 n=1 的分数写进论文表（只进 `zhulong_results.md` 并标 provisional）。
+- ✅ 每轮只推进一步（构建 → 配置 → canary → 跑 → 打分 → 回报），`WAITING=1` 只在评测真正跑起来时置位。
+- 体积：任务书 ≤40KB（超了按常驻规程自己滚归档，**只搬已闭合块原文**）。
+
+
 ### 0. 🎯 当前状态速览（每次唤醒先看这里）
 
 | 项 | 值（**2026-10-04 运维更新**）|
@@ -113,8 +155,7 @@ retest r1 = 60.1% (95/158) 的 63 个失败分解（batch `2026_1017_091724`，-
 > ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15）。SKILL/Tcl 已并入论文（commit b61970a8，12页）。**常驻纪律保留**：每次刷新论文前 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；口径=EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）；SKILL/Tcl 数字只认 zhulong_results.md 现存值，未齐标 pending，🚫 凭印象编造。
 
 ### 🆕 运维指令 · 2026-10-14（十七）— ✍️ 放行改进论文（执行审视报告修改）【P0-P3 已执行·2026-10-15 归档】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15）。P0+P1+P2 已改 .tex，编译验证✅ 11页 0 error（commit fb5e92f8）。**常驻纪律保留**：锚点=82.1±3.0%（全局同步，Δ 重算：main-ablation Full +10.3pp/wo_retrieval −1.1pp、llm-comparison +1.2/−65.4/−5.1/−18.3、§S2 +10.3pp）；Error Analysis 用 full_v3 r3=81.6%(129/158) 代表性 run 或显式标注；硬伤#3 (L)(N)(B) 无 5-run 支撑→`[provisional,n=1]`/`[TBD]`，🚫 以±呈现；硬伤#5 phi-bound 加「Mean gen-fail」列+「k↓→gen-fail↑→Pass@1↓」；硬伤#6 BaiZe 边界中性句；改稿前缀 `zhulong paper-fix:`；🚫 数字编造、🚫 评测优先于改稿、✅ 锚点与Δ同步；仍缺数据项保留 `[TBD]`/provisional 不得编造。
-
+> ⏩ 已归档 → `ZHULONG_TASK_ARCHIVE.md`（P0-P3 已执行、论文已编译；锂点 82.1±3.0% 同步、前缀 `zhulong paper-fix:`、不偏造、未测留 `[TBD]`）。
 ### 🆕 运维指令 · 2026-10-14（十六）— 📝 实验空窗期审视论文，出改进意见 HTML（中文）【已完成·2026-10-14 归档】
 
 > ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-14）。HTML 报告 `reports/report_zhulong_paper_review_zh.html` 已交付（运维令十七据此放行改稿）。
