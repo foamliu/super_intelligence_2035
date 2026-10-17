@@ -12798,3 +12798,107 @@ echo "=== DONE 121 ==="
 /tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE/verifier/ctrf.json
 === DONE 121 ===
 ```
+
+---
+
+## RUN_ID 122 · 2026-10-18 07:31:17 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 122 · proxy 探针 · $(date '+%F %T') · host=$(hostname) ==="
+echo "[env] user=$(whoami) HF_ENDPOINT=${HF_ENDPOINT:-<unset>} HF_PROXY=${HF_PROXY:-<unset>}"
+echo "[1] .25 -> hf.co"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.25:13128 https://huggingface.co 2>&1
+echo "[2] .23 -> hf-mirror"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com 2>&1
+echo "[3] .23 -> hf-mirror API (en_v1_4 tree)"
+curl -sS -m 25 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4 2>&1
+echo "[4] .23 -> hf.co (no mirror)"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://huggingface.co 2>&1
+echo "[5] direct -> hf-mirror (no proxy)"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' https://hf-mirror.com 2>&1
+echo "[6] proxy listen"
+ss -ltn 2>/dev/null | grep -E ':13128' | head -4 || echo '    no 13128 listen entry'
+echo "[7] procs"
+pgrep -af 'download_en_v1_4' | cut -c1-120 || echo '    no download_en_v1_4 proc'
+echo "[8] disk"
+df -h /nas_train 2>/dev/null | tail -1
+echo "=== DONE 122 ==="
+```
+
+**输出**
+```
+=== RUN_ID 122 · proxy 探针 · 2026-10-18 07:31:17 · host=whag0pgpuap12 ===
+[env] user=app.e0031982 HF_ENDPOINT=<unset> HF_PROXY=<unset>
+[1] .25 -> hf.co
+curl: (28) Operation timed out after 20000 milliseconds with 0 bytes received
+    http=000 t=20.000706s
+[2] .23 -> hf-mirror
+    http=200 t=0.326613s
+[3] .23 -> hf-mirror API (en_v1_4 tree)
+    http=200 t=0.570789s
+[4] .23 -> hf.co (no mirror)
+curl: (28) Operation timed out after 20000 milliseconds with 0 bytes received
+    http=000 t=20.000631s
+[5] direct -> hf-mirror (no proxy)
+curl: (7) Failed to connect to hf-mirror.com port 443 after 1 ms: Network is unreachable
+    http=000 t=0.001289s
+[6] proxy listen
+[7] procs
+[8] disk
+10.239.22.31:/vol_CTE0_data01  207T  177T   31T  86% /nas_train
+=== DONE 122 ===
+```
+
+---
+
+## RUN_ID 122 · 2026-10-18 07:31:18 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 122 · proxy 探针 · $(date '+%F %T') · host=$(hostname) ==="
+echo "[env] user=$(whoami) HF_ENDPOINT=${HF_ENDPOINT:-<unset>} HF_PROXY=${HF_PROXY:-<unset>}"
+echo "[1] .25 -> hf.co"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.25:13128 https://huggingface.co 2>&1
+echo "[2] .23 -> hf-mirror"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com 2>&1
+echo "[3] .23 -> hf-mirror API (en_v1_4 tree)"
+curl -sS -m 25 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4 2>&1
+echo "[4] .23 -> hf.co (no mirror)"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' -x http://172.19.92.23:13128 https://huggingface.co 2>&1
+echo "[5] direct -> hf-mirror (no proxy)"
+curl -sS -m 20 -o /dev/null -w '    http=%{http_code} t=%{time_total}s\n' https://hf-mirror.com 2>&1
+echo "[6] proxy listen"
+ss -ltn 2>/dev/null | grep -E ':13128' | head -4 || echo '    no 13128 listen entry'
+echo "[7] procs"
+pgrep -af 'download_en_v1_4' | cut -c1-120 || echo '    no download_en_v1_4 proc'
+echo "[8] disk"
+df -h /nas_train 2>/dev/null | tail -1
+echo "=== DONE 122 ==="
+```
+
+**输出**
+```
+=== RUN_ID 122 · proxy 探针 · 2026-10-18 07:31:18 · host=whag0pgpuap29 ===
+[env] user=app.e0031982 HF_ENDPOINT=<unset> HF_PROXY=<unset>
+[1] .25 -> hf.co
+curl: (28) Operation timed out after 20001 milliseconds with 0 bytes received
+    http=000 t=20.001596s
+[2] .23 -> hf-mirror
+    http=200 t=0.342935s
+[3] .23 -> hf-mirror API (en_v1_4 tree)
+    http=200 t=0.344244s
+[4] .23 -> hf.co (no mirror)
+curl: (28) Operation timed out after 20001 milliseconds with 0 bytes received
+    http=000 t=20.001726s
+[5] direct -> hf-mirror (no proxy)
+curl: (7) Failed to connect to hf-mirror.com port 443 after 8 ms: Network is unreachable
+    http=000 t=0.008623s
+[6] proxy listen
+[7] procs
+[8] disk
+10.239.23.31:/vol_CTE0_data01  207T  177T   31T  86% /nas_train
+=== DONE 122 ===
+```
