@@ -15,6 +15,23 @@
 
 > 📦 §运维指令·2026-10-15（📘 v5 预训练计划书）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v5 报告 42.8KB ✅ 交付(commit fc0a292b)，5问速答+三方对照+推荐策略+配比实验+风险+附录，6表1SVG。需要时再读。
 
+### 🆕 运维指令 · 2026-10-17（🔧 修复 80B decay 崩溃 `KeyError: '_orig_mod'` + resume 续跑）· 用户直令 · 最高优先
+
+> **用户令（2026-10-17）**：「下发指令开始修复。不过难道 pretrain 自己看到训练挂了，还能无动于衷吗？」
+
+**① 现象**：Xmodel-2.5 80B decay v2 训练 07:58:27 崩溃（rank0 exit 1），`/tmp/baize_xmodel25_decay_v2_train.log` 尾部 `KeyError: '_orig_mod'`；已训到 step ~1990/19980（~10%），loss 1.5~1.8 健康、~298K tok/s。GPU 已释放。
+
+**② 根因**：模型开了 `torch.compile`（`_orig_mod` = `OptimizedModule` 包装属性），但 checkpoint 保存代码直接 `model.state_dict()`，编译后的模型缺 `_orig_mod` 键 → 保存时崩溃。（22:16 也崩过同一处，v1→v2 重启后复现。）
+
+**③ 修复**：
+1. 改 `baize_xmodel25_decay_v2.py` 的 checkpoint 保存处：`state_dict()` → `getattr(model, '_orig_mod', model).state_dict()`（torch.compile 官方保存姿势）。
+2. 从最近 ckpt `--resume` 续跑（已 ~10%，续跑不从头）。
+3. 续跑后自检：过一个 save interval 确认能正常落 ckpt、不再 `_orig_mod` 崩。
+
+**④ 纪律（用户直令，务必记住）**：
+- 🚫 **以后训练崩溃（GPU 空 + train log 有 traceback/Error），pretrain 巡检时必须主动查根因 + 修复 + resume 续跑，不许等运维下发才动**。训练挂了还无动于衷 = 失职，比崩溃本身更严重。
+- 修复 + 续跑结果写心跳；commit 前缀 `pretrain decay-fix:` · 任务书 >32KB 自滚归档。
+
 ### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看）
 
 > 以下为**固定口径**，除非运维再下新令，否则**不得更改**——尤其写进报告/论文时，逐字遵守。
