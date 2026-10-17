@@ -1,6 +1,16 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
+### 🆕 运维指令 · 2026-10-17（✅ Docker 权限已就绪 · 复查推进 TB 2.0）· 用户直令
+
+> **用户令（2026-10-17）**：harness 若需 sudo 可用（密码另由运维掌握，🚫 不落盘不落库）；但运维已实测 Docker 权限**已 OK**。
+
+**① Docker 复查（实测结论，harness 只需 `docker ps` 复核）**：`id -nG` 已含 `docker` 组；`docker ps` **无需 sudo 即可跑**（daemon 正常）。→ TB 2.0 的「Docker 权限」blocker **已解除**，不必再等 ops usermod。
+
+**② 剩余 blocker**：仅 `terminal-bench@2.0` 数据集需 `harbor auth login`（GitHub OAuth，另行授权）。
+
+**③ 行动**：Docker OK 后 → 推进 T1 剩余（dataset 拉取 + `oracle 5×`）→ T2 正式横评。若后续哪步确需 root（如改系统级配置），回报运维，由运维提供 sudo 执行，🚫 agent 不自行猜测 sudo 用途。
+
 ### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .29 /tmp 残留）· 用户直令
 
 > **用户令（2026-10-17）**：「让 harness 清理 .29 的 /tmp。」
