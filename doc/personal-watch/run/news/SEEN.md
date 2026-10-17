@@ -752,3 +752,4 @@
 | 2026-10-17 | 苹果更新《App 审核指南》：AI 生成未经同意的私密图像纳入禁止 · 新增 2.5.19 反「诱饵式营销」 | IT之家（`014/209`） | news | https://www.ithome.com/1/014/209.htm |
 | 2026-10-17 | Meta 为 Facebook 用户提供 AI 驱动推荐定制工具 | IT之家（`014/286`） | news | https://www.ithome.com/1/014/286.htm |
 | 2026-10-17 | 荷兰法院：Meta 须向受害者组织开放算法与数据（据移动端首页导语） | 出处无法核验（`014/288` 实测为促销稿） | 不收(无法核验) | https://www.ithome.com/1/014/288.htm |
+| 2026-10-17 | DeepSeek 上线网页搜索 / 抓取 API：Search + Fetch，按成功请求计费每千次 5 元 | IT之家（`014/291`） | news | https://www.ithome.com/1/014/291.htm |
