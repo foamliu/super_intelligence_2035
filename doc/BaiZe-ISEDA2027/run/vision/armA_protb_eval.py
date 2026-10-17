@@ -324,10 +324,20 @@ def main():
         print(f'[gather] Xtr {list(Xtr.shape)} Xva {list(Xva.shape)}', flush=True)
     else:
         vision = load_armA_visual(args.ckpt, device, args.feature)
-        val_files = sorted(glob.glob(IN1K_VAL_GLOB))
-        print(f'[extract] val: {len(val_files)} parquet files', flush=True)
-        Xva, yva = extract_features_streaming(
-            vision, val_files, tf, device, bs=args.extract_bs, label='val')
+        # In sharded feat-dir mode, only shard 0 extracts val (it writes val.pt);
+        # shards 1-7 skip the redundant 50k val decode — previously all 8 ranks
+        # decoded the SAME val parquet from NFS simultaneously, which (together
+        # with OMP thread oversubscription) starved throughput to ~1.2 img/s.
+        skip_val = bool(args.feat_dir) and args.num_shards > 1 and args.shard > 0
+        Xva, yva = None, None
+        if not skip_val:
+            val_files = sorted(glob.glob(IN1K_VAL_GLOB))
+            print(f'[extract] val: {len(val_files)} parquet files', flush=True)
+            Xva, yva = extract_features_streaming(
+                vision, val_files, tf, device, bs=args.extract_bs, label='val')
+        else:
+            print(f'[extract] shard {args.shard}: skip val '
+                  f'(shard 0 writes val.pt)', flush=True)
         if args.probe_per_class and args.probe_per_class > 0:
             probe_imgs, probe_labels = load_probe_train_subset(
                 args.probe_per_class, args.size)

@@ -4,7 +4,9 @@ WAITING: 0
 
 ## 状态头
 
-> 🆕 **2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）**：ArmA 训练 **顺利完成**（exit 0，2026-10-17 08:15:15），step **154500/154500 (100%)**，最终 checkpoint `checkpoint_154500.pt`（1.7G）已存。✅ **效率验收全通过**：真实吞吐 3.37 it/s（+40% vs 修前 2.40 it/s），8 卡 util 95-100% 全卡（方差≈0），总耗时 ~7.9h（从 step30000 续训），比原计划省 ~6h。✅ **ProtB 评测已启动**（09:09）：8 卡 H100 并行特征提取中，预计 ~30min 完成；评测脚本 `vision/run_armA_protb_eval.sh` 已创建，输出将保存到 `vision/armA_protb_vitb16_224_results.json`。下一步：监控评测完成 → 写入结果到 MEMORY + 生成对比报告。📦 体积：TASK=30.4KB / MEMORY=31.8KB（均 <32KB）。
+> 🆕 **2026-10-17 10:0x（🔧 ProtB 评测卡死诊断+修复+重启 · wake #129）**：wake #128 启动的 ProtB 8 卡 sharded 评测**卡死**——`armA_protb_eval.py` 每进程默认 OMP 线程==nproc(224)，8 进程×~196 线程≈1500 线程在 224 核上 **7× 过订阅**，小张量算子全耗在线程调度 → 吞吐塌到 **~1.2 img/s**（49min 仅完成 1/14 val 文件，GPU util 0%）；且 8 卡**冗余**解码同一 50k val（7/8 浪费 + NFS 争用）。**修复**：① `run_armA_protb_eval.sh` 加 `OMP/MKL/OPENBLAS_NUM_THREADS=8`；② `armA_protb_eval.py` 仅 shard 0 抽 val、shard 1-7 skip。**重启后实测**：pcpu 2280%→~350%/进程，file1 完成 49min→<60s（≈50× 提速），稳态 ~250 img/s/卡，shard0 val 9/14 + shards1-7 train 各 ~8/37 文件进行中，ETA 抽取 ~12min + 3-seed probe ~8min ≈ 20min。下一步：监控评测完成→写入 ProtB 结果+生成对比报告。📦 体积：TASK=30.8KB / MEMORY=31.9KB（均 <32KB）。
+
+> 🆕 **2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）**：ArmA 训练完成（exit 0，step 154500/154500，ckpt 1.7G 已存）；效率验收全通过（3.37 it/s +40%，8 卡 95-100% util，~7.9h）。ProtB 评测 09:09 启动但卡死（详见 wake #129：已诊断+修复+重启）。
 >
 > **📊 效率对比表（wake #119 落地，wake #121 实测复核确认，详见 daily-memories-vision/2026-10-16.md）**：
 >
@@ -25,7 +27,6 @@ WAITING: 0
 > 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
 > 📦 2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败 + TASK 归档 · wake #106）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 旧缓存复用, 缓存路径 /tmp→/data 修复, seedbench retry 脚本就绪, TASK 归档 5 块 35.9→26.5KB。需要时再读。
 > 📦 2026-10-15 全天（wake #88~#105, 18 条📦指针: Stage-1/1.5/2 训练+lmms-eval multi-GPU+precache+open_clip wrapper+HF export+报告）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1(2500步)+Stage-1.5(20000步)+Stage-2(3500步,loss=1.4853) 完成；open_clip_baize.py+export_llava_ov_hf.py test 2/2 CPU PASSED；report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
-> 📦 2026-10-16 00:40~06:23（wake #106~#110, 5条: precache 监控+缓存路径修复+Part B 验收+precache 主跑）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60)；precache 15OK/2FAIL。需要时再读。
 > 📦 2026-10-14 全天（wake #69~#85, 14 条）已归档 → daily-memories-vision/2026-10-14.md + 2026-10-15.md；**结论**：ArmC 训练全程健康(C1 0.54→0.66, 154500步完成), MLLM bridge 7文件交付, 论文 P0+P1 改稿 12页 0err, Stage(iv) 可行性评估 28.5KB HTML。需要时再读。
 > ✅ **④-4ep 基线（COMPLETE）**: ProtB 67.05±0.02% / ProtA 56.70% / zs 40.64%/72.64% / k-NN 42.35%. final_loss=0.0805, C1=0.5932, 748,404 steps, 60,545s. VERDICT: MODERATE, DIMINISHING. 详见 EXPERIMENTS_VISION.md §9.5/§9.7.
 > 📦 2026-10-13 12:43（④-4ep 评测完成）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB 67.05±0.02%, 递减确认。需要时再读。

@@ -18,6 +18,15 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export LD_LIBRARY_PATH=/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/lib:${LD_LIBRARY_PATH:-}
 
+# Thread limits (2026-10-17 fix): this box has 224 cores; 8 extraction procs x
+# default OMP threads (==nproc) = ~1500 threads thrashing on 224 cores, which
+# made tiny per-image tensor ops (Normalize/stack) spend all CPU on thread
+# scheduling -> extraction crawled at ~1.2 img/s.  Cap each proc to 8 threads.
+export OMP_NUM_THREADS=8
+export MKL_NUM_THREADS=8
+export OPENBLAS_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
+
 PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
 CKPT=/nas_train/app.e0031982/datasets/baize-vision/out/armA_openclip_vitb16_224/latest.pt
 FEAT_DIR=/tmp/armA_protb_feats
