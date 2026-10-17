@@ -75,24 +75,7 @@
 **⑤ 纪律**：🚫 不删任何已有数据；**GPIC ✅ / the_cauldron ✅ 不动**；**85M 不动（维持暂停）**；**错峰 IO**（避开 `.29` pretrain / `.12` vision 训练）；任务书 >32KB 自滚归档。
 
 
-### 🆕 运维指令 · 2026-10-14（⏸ 暂停全部 4 路下载）· 用户直令 · 最高优先
-
-> **用户令（2026-10-14）**：「让 data 把数据下载暂停一下。」（运维已确认范围：**全部 4 路**）
-
-**① 暂停对象（4 路，全部 kill）**：
-1. `en_v1_4`（hf download，PID 2535486，及任何 en_v1_4 相关进程）
-2. `WebMix-38M`（retry-loop wrapper + hf download 子进程）
-3. `wit_base`（同上）
-4. `InternVL-SA1B`（同上）
-
-**② 暂停方式**：
-- **先 kill retry-loop wrapper 再 kill hf download**（否则 wrapper 会自动重启 hf）。
-- `pkill -f` / `kill` 后用 `pgrep -af` 复核 4 路全部已退。
-- 🚫 **保留已下内容**（不删任何 parquet / tar）；`.incomplete` 默认保留（便于将来断点续传）。
-
-**③ 心跳更新**：4 路全标 `⏸ 暂停（用户令 2026-10-14）`，并记各自已下进度（en_v1_4 ~58%、3 路图文对已下 GB 数）。
-
-**④ 纪律**：🚫 不删任何已有数据；85M 本就是暂停态（不动）；GPIC ✅ / the_cauldron ✅ 已完成的也不动；`setsid` 守护进程清理干净；commit 前缀 `data dl:` · 任务书 >32KB 自滚归档。
+> 📦 §运维指令·2026-10-14（⏸ 暂停全部 4 路下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：已被同日「▶️ 恢复」块取代；4 路均已恢复并陆续下满（WebMix/wit_base/InternVL-SA1B✅），en_v1_4 仍在下载。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-14（💾 新增下载落盘位置 `/nas_env`）· 用户直令 · 常驻
 
