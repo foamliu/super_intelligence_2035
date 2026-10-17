@@ -12476,3 +12476,77 @@ Docker daemon is not running. Please start Docker and try again.
 restart scheduled (60s)
 === DONE 117 ===
 ```
+
+---
+
+## RUN_ID 118 · 2026-10-17 22:07:27 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+HARBOR="$HOME/.local/bin/harbor"
+echo "=== RUN_ID 118 · sg docker 重跑 oracle(3) · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) docker via sg ---"
+sg docker -c 'docker ps --format "{{.Names}}"' 2>&1 | head -5
+echo "--- B) compose option ---"
+timeout 30 "$HARBOR" run --help 2>&1 | grep -iE 'compose|overlay' -A2 | head -14
+echo "--- C) rerun 3 tasks ---"
+rm -rf /tmp/oracle_fix118
+sg docker -c "cd $HOME && timeout 420 $HARBOR run \
+  -p $HOME/terminal-bench/bn-fit-modify \
+  -p $HOME/terminal-bench/build-cython-ext \
+  -p $HOME/terminal-bench/build-pmars \
+  --agent oracle -n 3 \
+  -c /tmp/tb_oracle_cfg_117.yaml \
+  -o /tmp/oracle_fix118" 2>&1 | tail -35
+echo "--- D) results ---"
+for f in /tmp/oracle_fix118/*/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r"
+done
+echo "=== DONE 118 ==="
+```
+
+**输出**
+```
+=== RUN_ID 118 · sg docker 重跑 oracle(3) · 2026-10-17 22:07:27 · host=whag0pgpuap29 ===
+--- A) docker via sg ---
+fix-git__4mtwriv__env-main-1
+--- B) compose option ---
+│                                                             (Docker Compose  │
+│                                                             service volume   │
+│                                                             format).         │
+--
+│                                                             Docker Compose   │
+│                                                             overlay file.    │
+│                                                             Can be used      │
+│                                                             multiple times.  │
+--- C) rerun 3 tasks ---
+  1/1 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:01:39 0:00:00
+adhoc • oracle
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Trials ┃ Exceptions ┃  Mean ┃
+┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│      1 │          0 │ 0.000 │
+└────────┴────────────┴───────┘
+
+┏━━━━━━━━┳━━━━━━━┓
+┃ Reward ┃ Count ┃
+┡━━━━━━━━╇━━━━━━━┩
+│ 0.0    │     1 │
+└────────┴───────┘
+
+Job Info
+Total runtime: 1m 39s
+Results written to /tmp/oracle_fix118/2026-10-17__22-07-29/result.json
+Inspect results by running `harbor view /tmp/oracle_fix118`
+Share results by running `harbor upload /tmp/oracle_fix118/2026-10-17__22-07-29`
+
+22:09:10 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 1/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 2.2s
+22:09:10 - LiteLLM:WARNING: get_model_cost_map.py:672 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable. Falling back to local backup.
+--- D) results ---
+build-pmars__3iHDrqN | "reward": 0.0
+=== DONE 118 ===
+```
