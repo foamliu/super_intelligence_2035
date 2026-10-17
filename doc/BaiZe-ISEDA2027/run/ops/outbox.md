@@ -12199,3 +12199,121 @@ stat: cannot statx '/home/app.e0031982/.harbor/credentials.json': No such file o
 https://ofhuhcpkvzjlejydnvyd.supabase.co/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fhub.harborframework.com%2Fauth%2Fcli-callback&code_challenge=ERaeVHCYjYkYzIU0VxwXFdZ_ZHlHI8hJPX-1AQ8OkIk&code_challenge_method=S256
 === DONE 114 ===
 ```
+
+---
+
+## RUN_ID 115 · 2026-10-17 19:32:35 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 115 · harness 诊断 · $(date '+%F %T') · host=$(hostname) ==="
+P_HAR="har""bor"; P_ORA="ora""cle"
+echo "--- A) loops ---"
+for p in '[b]aize_harness_loop.sh' '[b]aize_pretrain_loop.sh' '[o]ps_relay.sh'; do
+  echo "[$p]"; pgrep -af "$p" 2>/dev/null | cut -c1-120 | head -2 || echo none
+done
+echo "--- B) harbor/oracle procs (excl self) ---"
+ME=$$
+ps -eo pid,ppid,etime,args 2>/dev/null | grep -E "$P_HAR|$P_ORA" | grep -v "grep\|awk" | awk -v me="$ME" '$1!=me' | cut -c1-190 | head -12 || echo none
+echo "--- C) /tmp/oracle_validate ---"
+ls -la /tmp/oracle_validate 2>&1 | head -15
+echo "newest files:"; find /tmp/oracle_validate -maxdepth 3 -type f -newermt '-8 hours' 2>/dev/null | head -8
+echo "--- D) newest logs (tail 15) ---"
+for f in $(ls -t /tmp/oracle_validate/*.log 2>/dev/null | head -2); do echo "== $f"; tail -15 "$f"; done
+for f in $(find /tmp/oracle_validate -maxdepth 3 -name '*.log' 2>/dev/null | xargs ls -t 2>/dev/null | head -2); do echo "== $f"; tail -15 "$f"; done
+echo "--- E) docker containers ---"
+timeout 20 docker ps --format '{{.Names}}\t{{.Status}}\t{{.Image}}' 2>&1 | head -12 || echo "docker ps failed"
+echo "docker images(top5):"; timeout 20 docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}' 2>&1 | head -5
+echo "--- F) load / disk / gpu ---"
+uptime
+df -h /tmp 2>&1 | tail -1
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+echo "--- G) harness loop log (tail 12) ---"
+ls -l /tmp/baize_harness_loop.log 2>&1 | head -1; tail -12 /tmp/baize_harness_loop.log 2>&1
+echo "--- H) harness repo files mtime ---"
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+stat -c '%y %s %n' "$R/MEMORY_HARNESS.md" "$R/harness/glm53_pilot_results.json" 2>&1 | head -4
+echo "=== DONE 115 ==="
+```
+
+**输出**
+```
+=== RUN_ID 115 · harness 诊断 · 2026-10-17 19:32:35 · host=whag0pgpuap29 ===
+--- A) loops ---
+[[b]aize_harness_loop.sh]
+1784375 bash baize_harness_loop.sh
+3728296 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
+[[b]aize_pretrain_loop.sh]
+1294147 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+[[o]ps_relay.sh]
+2489749 bash ops_relay.sh
+3894142 bash ops_relay.sh
+--- B) harbor/oracle procs (excl self) ---
+--- C) /tmp/oracle_validate ---
+total 1128
+drwxr-xr-x     3 app.e0031982 app.adm    4096 Oct 17 18:04 .
+drwxrwxrwt 18846 root         root    1142784 Oct 17 19:32 ..
+drwxr-xr-x     7 app.e0031982 app.adm    4096 Oct 17 18:12 2026-10-17__18-04-54
+newest files:
+/tmp/oracle_validate/2026-10-17__18-04-54/build-cython-ext__waSRrDG/lock.json
+/tmp/oracle_validate/2026-10-17__18-04-54/build-cython-ext__waSRrDG/result.json
+/tmp/oracle_validate/2026-10-17__18-04-54/build-cython-ext__waSRrDG/config.json
+/tmp/oracle_validate/2026-10-17__18-04-54/build-cython-ext__waSRrDG/trial.log
+/tmp/oracle_validate/2026-10-17__18-04-54/job.log
+/tmp/oracle_validate/2026-10-17__18-04-54/lock.json
+/tmp/oracle_validate/2026-10-17__18-04-54/build-pmars__WoP82HV/lock.json
+/tmp/oracle_validate/2026-10-17__18-04-54/build-pmars__WoP82HV/result.json
+--- D) newest logs (tail 15) ---
+== /tmp/oracle_validate/2026-10-17__18-04-54/build-pmars__WoP82HV/trial.log
+Skipping image OS validation for alexgshaw/build-pmars:20251031: docker inspect returned 1
+Collecting main service artifacts
+== /tmp/oracle_validate/2026-10-17__18-04-54/job.log
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/bn-fit-modify:20251031: docker inspect returned 1
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/break-filter-js-from-html:20251031: docker inspect returned 1
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/build-cython-ext:20251031: docker inspect returned 1
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/build-pmars:20251031: docker inspect returned 1
+Collecting main service artifacts
+--- E) docker containers ---
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.47/containers/json": dial unix /var/run/docker.sock: connect: permission denied
+docker images(top5):
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Head "http://%2Fvar%2Frun%2Fdocker.sock/_ping": dial unix /var/run/docker.sock: connect: permission denied
+--- F) load / disk / gpu ---
+ 19:32:35 up 260 days,  6:22,  8 users,  load average: 29.76, 28.81, 28.60
+/dev/mapper/vgroot-lv_tmp   98G   15G   79G  16% /tmp
+0, 51763 MiB, 100 %
+1, 51763 MiB, 100 %
+2, 51763 MiB, 100 %
+3, 51763 MiB, 100 %
+4, 51763 MiB, 97 %
+5, 51763 MiB, 100 %
+6, 51763 MiB, 100 %
+7, 51763 MiB, 100 %
+--- G) harness loop log (tail 12) ---
+-rw-r----- 1 app.e0031982 app.adm 25113647 Oct 17 19:30 /tmp/baize_harness_loop.log
+[loop] 2026-10-17 18:24:38 wake up, invoking cline ...
+[31merror:[0m run timed out after 1500s
+
+[loop] 2026-10-17 19:00:17 cline returned (exit 0), checking git sync ...
+[push] 2026-10-17 19:00:17 push interval reached, syncing ...
+[push] ahead=0 behind=0
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035.git
+   d00c1b43..c92d2d48  main -> main
+[push] push OK.
+[loop] 2026-10-17 19:00:20 WAITING=1 (async task running) → sleep 1800s
+[loop] 2026-10-17 19:30:20 wake up, invoking cline ...
+--- H) harness repo files mtime ---
+2026-10-17 18:14:16.911067550 +0800 28990 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+2026-10-17 18:59:41.896314636 +0800 2904114 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/glm53_pilot_results.json
+=== DONE 115 ===
+```
