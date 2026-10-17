@@ -12099,3 +12099,60 @@ View registered datasets at https://hub.harborframework.com/datasets
 https://ofhuhcpkvzjlejydnvyd.supabase.co/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fhub.harborframework.com%2Fauth%2Fcli-callback&code_challenge=njR4si5nbMFMiYpCFj3wOZmRT1KcTDg3iCL9vhEbe3U&code_challenge_method=S256
 === DONE 112 ===
 ```
+
+---
+
+## RUN_ID 113 · 2026-10-17 18:57:30 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 113 · harbor auth code 兑换(2) · $(date '+%F %T') · host=$(hostname) ==="
+HARBOR="$HOME/.local/bin/harbor"
+[ -x "$HARBOR" ] || HARBOR="$(command -v harbor 2>/dev/null || true)"
+echo "[0] harbor=$HARBOR"
+echo "[1] pending verifier"
+stat -c 'mtime=%y size=%s' "$HOME/.harbor/oauth-pending.json" 2>&1 | head -2
+echo "[2] exchange code"
+OUT="$(timeout 120 "$HARBOR" auth login --callback-url '1acc84df-bbcf-4a6c-baf2-facaef7627aa' 2>&1 || true)"
+echo "$OUT" | tail -10
+if echo "$OUT" | grep -q 'Logged in as'; then OK=1; else OK=0; fi
+echo "[3] auth status AFTER"
+timeout 30 "$HARBOR" auth status 2>&1 | tail -3
+echo "[4] local dataset probe (~/terminal-bench)"
+ls -1 "$HOME/terminal-bench" 2>/dev/null | head -5 || echo "no ~/terminal-bench"
+echo "task.toml count(maxdepth2): $(find "$HOME/terminal-bench" -maxdepth 2 -name 'task.toml' 2>/dev/null | wc -l)"
+echo "registry file: $(stat -c 'size=%s mtime=%y' /tmp/tb_registry_full.json 2>/dev/null || echo missing)"
+echo "[5] harbor datasets list (head)"
+timeout 60 "$HARBOR" datasets list 2>&1 | head -8
+if [ "$OK" = 0 ]; then
+  echo "[6] still not logged in → fresh URL"
+  timeout 30 "$HARBOR" auth login --no-browser 2>&1 | grep -o 'https://[^ ]*' | head -2
+fi
+echo "=== DONE 113 ==="
+```
+
+**输出**
+```
+=== RUN_ID 113 · harbor auth code 兑换(2) · 2026-10-17 18:57:30 · host=whag0pgpuap29 ===
+[0] harbor=/home/app.e0031982/.local/bin/harbor
+[1] pending verifier
+mtime=2026-10-17 18:44:07.304645503 +0800 size=125
+[2] exchange code
+Login failed: OAuth code exchange failed: 
+[3] auth status AFTER
+Not authenticated. Run `harbor auth login`.
+[4] local dataset probe (~/terminal-bench)
+adaptive-rejection-sampler
+bn-fit-modify
+break-filter-js-from-html
+build-cython-ext
+build-pmars
+task.toml count(maxdepth2): 89
+registry file: size=13654627 mtime=2026-10-17 17:26:14.962680770 +0800
+[5] harbor datasets list (head)
+View registered datasets at https://hub.harborframework.com/datasets
+[6] still not logged in → fresh URL
+https://ofhuhcpkvzjlejydnvyd.supabase.co/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fhub.harborframework.com%2Fauth%2Fcli-callback&code_challenge=KU2onn0dXsasdATi6vzCgJAyCcbGzK6-vD-4MrsXNpc&code_challenge_method=S256
+=== DONE 113 ===
+```
