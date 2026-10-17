@@ -157,6 +157,21 @@
 
 DeepSeek 系列轻量模型，验证小参数量 backbone 能否驱动框架。
 
+**复测 5-run（运维令二十七②·2026-10-18 收口·trace 诊断修复后）**
+
+|轮次|PyAether|SKILL|TCL\_WaveView|TCL\_Innovus|
+|---|---|---|---|---|
+|r1|60\.1||||
+|r2|57\.0||||
+|r3|62\.7||||
+|r4|67\.7||||
+|r5|53\.2||||
+|**mean±std**|**60\.1 ± 5\.5%**||||
+
+> 备注：复测 5/5 = [60\.1, 57\.0, 62\.7, 67\.7, 53\.2]（运维令二十七②·2026-10-17~18·trace 诊断修复：并行度 8→4 + maxTokens 8192→16384 in providers\.json·r3 起用 16384·V3 自探索 ON + full harness）。各轮 gen success=108/110/117/126/92、timeout=0≤10、exec_err=0、0 quota error（r3-r5）/0 infra 故障，判据(十三)满足。**vs fresh 11\.9±2\.7% → +48\.2pp**，证实 fresh 5-run 低分主要由 infra 问题（gateway 并发限流 45% 0-token 失败 + reasoning-token 预算耗尽 28% null-content）导致，非模型能力。r5 gen-success=92 低于 r1-r4（108/110/117/126），致 r5=53\.2% 为 5 轮最低，但 timeout=0 仍判据十三有效。各轮 regrade log /tmp/ABL_deepseek-v4-flash_retest_r{1..5}_regrade\.log，归档 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/2026101{7,8}_*\_app\.e0031982/。backbone=deepseek-v4-flash@/v1 key c43c1f4a（主基座 deepseek-v4-pro-fp4 不变）。
+
+**fresh 5-run（运维令二十三②·2026-10-17 收口·已被复测取代·保留作历史对照）**
+
 |轮次|PyAether|SKILL|TCL\_WaveView|TCL\_Innovus|
 |---|---|---|---|---|
 |r1|8\.2||||
@@ -164,9 +179,9 @@ DeepSeek 系列轻量模型，验证小参数量 backbone 能否驱动框架。
 |r3|10\.8||||
 |r4|13\.9||||
 |r5|11\.4||||
-|**mean±std**|**11\.9 ± 2\.7%**||||
+|**mean±std**|**11\.9 ± 2\.7%**（已被复测 60\.1±5\.5% 取代）||||
 
-> 备注：fresh 5-run（运维令二十三②·2026-10-17 收口）替换 legacy 16\.7 ± 12\.3% [9\.5, 10\.1, 19\.0, 7\.6, 37\.3]——legacy r5=37\.3 为离群高值致 std=12\.3 过大。fresh 5/5 = [8\.2, 15\.2, 10\.8, 13\.9, 11\.4] 各轮 gen success=13/31/17/24/28、timeout=0≤10、exec_err=0、0 quota error、0 infra 故障，判据(十三)满足（B 模型臂非 full 锚点·Pass@1 任何值有效）。std 12\.3→2\.7（离群消除），mean 16\.7→11\.9（legacy 均值被 r5=37\.3 抬高）。各轮 regrade log /tmp/ABL_deepseek-v4-flash_r{1..5}_regrade.log。backbone=deepseek-v4-flash@/v1 key c43c1f4a（主基座 deepseek-v4-pro-fp4 不变）。
+> 备注：fresh 5-run（运维令二十三②·2026-10-17 收口）替换 legacy 16\.7 ± 12\.3% [9\.5, 10\.1, 19\.0, 7\.6, 37\.3]——legacy r5=37\.3 为离群高值致 std=12\.3 过大。fresh 5/5 = [8\.2, 15\.2, 10\.8, 13\.9, 11\.4] 各轮 gen success=13/31/17/24/28、timeout=0≤10、exec_err=0、0 quota error、0 infra 故障，判据(十三)满足（B 模型臂非 full 锚点·Pass@1 任何值有效）。std 12\.3→2\.7（离群消除），mean 16\.7→11\.9（legacy 均值被 r5=37\.3 抬高）。**⚠️ 2026-10-17 运维令二十七① trace 诊断发现 fresh 11\.9% 低分 73% 为 infra 问题（45% 0-token gateway 限流 + 28% null-content reasoning 预算耗尽）·复测 60\.1±5\.5% 已取代本值用于论文 tab:llm-comparison**。各轮 regrade log /tmp/ABL_deepseek-v4-flash_r{1..5}_regrade.log。backbone=deepseek-v4-flash@/v1 key c43c1f4a（主基座 deepseek-v4-pro-fp4 不变）。
 > 
 > 
 

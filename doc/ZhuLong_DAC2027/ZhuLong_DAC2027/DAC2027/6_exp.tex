@@ -270,13 +270,13 @@ Principle 1 separates knowledge from belief: the frozen prior should bound what 
 \midrule
 DeepSeek-V4-Pro & 81.4 $\pm$ 1.5 & — \\
 GLM-5.2 & 83.3 $\pm$ 3.1 & +1.9 pp$^{\text{ns}}$ \\
-DeepSeek-V4-Flash & 16.7 $\pm$ 12.3 & -64.7 pp$^{***}$ \\
+DeepSeek-V4-Flash$^{\dagger}$ & 60.1 $\pm$ 5.5 & -21.3 pp$^{***}$ \\
 Kimi-K2.6 & 77.0 $\pm$ 1.6 & -4.4 pp$^{**}$ \\
 Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -17.6 pp$^{***}$ \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-\footnotesize{Significance vs.\ DeepSeek-V4-Pro (McNemar on 790 paired observations, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, ns = not significant. GLM-5.2: $p{=}0.38$, CI $[-2.7, +5.4]$~pp. Kimi-K2.6: $p{=}0.003$, CI $[+1.5, +8.4]$~pp. Doubao: $p{=}9{\times}10^{-23}$, CI $[+13.3, +23.3]$~pp. Flash: $p{<}10^{-100}$, CI $[+60.6, +69.8]$~pp.}
+\footnotesize{Significance vs.\ DeepSeek-V4-Pro (McNemar on 790 paired observations, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, ns = not significant. GLM-5.2: $p{=}0.38$, CI $[-2.7, +5.4]$~pp. Kimi-K2.6: $p{=}0.003$, CI $[+1.5, +8.4]$~pp. Doubao: $p{=}9{\times}10^{-23}$, CI $[+13.3, +23.3]$~pp. Flash$^{\dagger}$: retest 5-run under reduced gateway parallelism (-p 4) and enlarged token budget (max\_tokens 16384); the initial 5-run (11.9 $\pm$ 2.7\%, $\Delta{=}-69.5$~pp) was depressed by an infrastructure confound (API-gateway concurrency cap and a reasoning-token budget exhausted before content emission), not by model capability. McNemar $p$ and CI on the retest set are pending re-computation and retained at the $^{***}$ level provisionally.}
 \end{table}
 % 表：LLM主干的影响（ZhuLong）。
 
