@@ -25,11 +25,32 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RESULTS_FILE="${SCRIPT_DIR}/../terminalbench_kimi_k2.6_results.json"
 TRACES_DIR="${SCRIPT_DIR}/traces"
 DATASET="terminal-bench@2.0"
+# Local task directory on .29 (89 tasks).  Used with -p since Harbor Hub
+# auth is not set up (harbor auth status → "Not authenticated").
+TB_TASKS_DIR="${TB_TASKS_DIR:-$HOME/terminal-bench}"
 HARNESSES=("cline-patched" "codex" "hermes" "opencode" "claude-code" "deepseek-harness" "pi")
 N_CONCURRENT=1
 K_ATTEMPTS=1
 PILOT_TASKS=5
 FULL_TASKS=89
+
+# 5 diverse pilot tasks covering different task families:
+#   - break-filter-js-from-html  (text/JS parsing)
+#   - bn-fit-modify              (scientific Python)
+#   - regex-log                  (shell/regex)
+#   - sqlite-db-truncate         (database)
+#   - fix-git                    (git workflow)
+PILOT_TASK_NAMES=(
+    "break-filter-js-from-html"
+    "bn-fit-modify"
+    "regex-log"
+    "sqlite-db-truncate"
+    "fix-git"
+)
+
+# Docker overlay for network/host mode (proxy + mirrors).  Required for
+# package installs inside containers (MITM proxy blocks external repos).
+TB_OVERLAY="${TB_OVERLAY:-/tmp/network-host-overlay-minimal2.yml}"
 
 # Parse args
 MODE="full"
@@ -68,15 +89,32 @@ echo "model: kimi-k2.6-cloud"
 echo "results: ${RESULTS_FILE}"
 echo ""
 
-# --- Oracle check (must be 5/5) ---
-echo "=== Oracle check (must be 5/5) ==="
-harbor run -d "${DATASET}" --agent oracle -k 5 --n-concurrent 4 \
+# --- Build task paths (local -p, since Harbor Hub auth not set up) ---
+if [[ "${MODE}" == "pilot" ]]; then
+    TASK_PATHS=""
+    for task in "${PILOT_TASK_NAMES[@]}"; do
+        TASK_PATHS+=" -p ${TB_TASKS_DIR}/${task}"
+    done
+    N_TASKS=${#PILOT_TASK_NAMES[@]}
+else
+    # Full mode: all 89 tasks from local directory
+    TASK_PATHS=""
+    for task_dir in "${TB_TASKS_DIR}"/*/; do
+        task_name=$(basename "${task_dir}")
+        TASK_PATHS+=" -p ${TB_TASKS_DIR}/${task_name}"
+    done
+    N_TASKS=$(ls -d "${TB_TASKS_DIR}"/*/ 2>/dev/null | wc -l)
+fi
+
+# --- Oracle check (must pass before full eval) ---
+echo "=== Oracle check (${N_TASKS} tasks with overlay) ==="
+harbor run ${TASK_PATHS} --agent oracle -k 1 --n-concurrent 4 \
+    --extra-docker-compose "${TB_OVERLAY}" \
     --jobs-dir "${SCRIPT_DIR}/oracle_check" 2>&1 | tee "${SCRIPT_DIR}/oracle_check.log"
-echo "Oracle check complete. Verify 5/5 before proceeding."
+echo "Oracle check complete. Verify all pass before proceeding."
 echo ""
 
 # --- Run each harness ---
-N_TASKS=$(( MODE == "pilot" ? PILOT_TASKS : FULL_TASKS ))
 echo "=== Running ${#HARNESSES[@]} harnesses × ${N_TASKS} tasks = $(( ${#HARNESSES[@]} * N_TASKS )) trials ==="
 
 for harness in "${HARNESSES[@]}"; do
@@ -97,10 +135,11 @@ for harness in "${HARNESSES[@]}"; do
     esac
 
     nice -n 19 harbor run \
-        -d "${DATASET}" \
+        ${TASK_PATHS} \
         --agent "${AGENT_PATH}" \
         -k "${K_ATTEMPTS}" \
         --n-concurrent "${N_CONCURRENT}" \
+        --extra-docker-compose "${TB_OVERLAY}" \
         --jobs-dir "${SCRIPT_DIR}/jobs_${harness}" \
         2>&1 | tee "${TRACES_DIR}/${harness}_run.log" || {
             echo "WARNING: ${harness} run failed (may be quota/infra). Continuing."

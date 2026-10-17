@@ -122,20 +122,43 @@ class TBBaseAgent(BaseInstalledAgent):
         )
 
     async def _install_node(self, environment: BaseEnvironment) -> None:
-        """Install Node.js (for cline, pi, claude-code, opencode harnesses)."""
+        """Install Node.js via NVM inside the Docker container.
+
+        Uses the aliyun Node.js mirror (NVM_NODEJS_ORG_MIRROR) and proxy
+        env vars set by the Docker overlay (--extra-docker-compose).
+        The MITM proxy requires ``-k`` (skip TLS verification).
+
+        Replaces the old nodesource.com approach which is blocked by the
+        MITM proxy (302→disable.htm for external apt repos).
+        """
+        nvm_version = "v0.40.1"
+        nvm_url = (
+            f"https://raw.githubusercontent.com/nvm-sh/nvm/{nvm_version}/install.sh"
+        )
         await self.exec_as_root(
             environment,
             command=(
-                f"curl -fsSL https://deb.nodesource.com/setup_{TB_NODE_VERSION}.x "
-                f"| bash - && apt-get install -y nodejs"
+                f'export NVM_NODEJS_ORG_MIRROR="${{NVM_NODEJS_ORG_MIRROR:-https://mirrors.aliyun.com/nodejs-release}}" && '
+                f"curl -kfsSL {nvm_url} | bash && "
+                f". /root/.nvm/nvm.sh && "
+                f"nvm install {TB_NODE_VERSION} && "
+                f"nvm alias default {TB_NODE_VERSION} && "
+                f"nvm use default && "
+                f'ln -sf "$(which node)" /usr/local/bin/node && '
+                f'ln -sf "$(which npm)" /usr/local/bin/npm && '
+                f'ln -sf "$(which npx)" /usr/local/bin/npx'
             ),
         )
 
     async def _install_bun(self, environment: BaseEnvironment) -> None:
-        """Install Bun runtime (needed by cline, pi)."""
+        """Install Bun runtime (needed by cline, pi).
+
+        Uses proxy env vars set by the Docker overlay; ``-k`` skips TLS
+        verification for the MITM proxy.
+        """
         await self.exec_as_agent(
             environment,
-            command="curl -fsSL https://bun.sh/install | bash",
+            command="curl -kfsSL https://bun.sh/install | bash",
         )
 
     # -- Abstract methods (subclasses must implement) ---------------------
