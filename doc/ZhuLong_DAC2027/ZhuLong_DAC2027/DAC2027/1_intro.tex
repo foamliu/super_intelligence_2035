@@ -26,13 +26,13 @@ The main contributions are:
     generate--execute--refine loop (the \emph{belief update}) form one closed loop, driven by a
     single \texttt{lang} parameter so the same agent logic covers PyAether, SKILL, and Tcl
     (Section~\ref{sec:system}). In a commercial Empyrean Aether environment, ZhuLong attains
-    \textbf{82.1\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} for a pure
-    LLM and \textbf{71.8\%} for a retrieval-augmented static baseline. The same component
+    \textbf{81.4\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} for a pure
+    LLM and \textbf{72.2\%} for a retrieval-augmented static baseline. The same component
     ordering reproduces across the SKILL and Tcl slices of EDA-Scripting-Bench
     (Section~\ref{sec:cross-language}).
     Ablation shows that the three components are \emph{jointly necessary and not
-    interchangeable}: adding sandbox execution to RAG yields \textbf{+10.3~pp}, while removing
-    execution ($-10.3$~pp) or retrieval ($-1.1$~pp) reduces accuracy, and
+    interchangeable}: adding sandbox execution to RAG yields \textbf{+9.2~pp}, while removing
+    execution ($-9.2$~pp) or retrieval ($-0.4$~pp) reduces accuracy, and
     bounding the belief update degrades it monotonically (Section~\ref{sec:experiments}).
 
     \item \textbf{A cross-language benchmark on which the same structure can be re-measured per toolchain (RQ3).}

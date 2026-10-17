@@ -21,15 +21,15 @@
 
     We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world 
     tasks with assertion-based execution, where the complete system achieves 
-    \textbf{82.1\%} Pass@1 ($\pm$3.0, 5-run mean) in the commercial Empyrean Aether environment, substantially 
+    \textbf{81.4\%} Pass@1 ($\pm$1.5, 5-run mean) in the commercial Empyrean Aether environment, substantially 
     outperforming a pure LLM baseline (\textbf{10.5\%}). Ablation studies show the 
-    execution loop is decisive: adding sandbox execution to retrieval yields +10.3 pp, 
-    while removing either execution ($-10.3$ pp) or retrieval ($-1.1$ pp) reduces 
+    execution loop is decisive: adding sandbox execution to retrieval yields +9.2 pp, 
+    while removing either execution ($-9.2$ pp) or retrieval ($-0.4$ pp) reduces 
     accuracy---consistent with the theoretical prediction.
     % 我们在EDA-Eval-PyAether（158个真实任务、断言式执行验证）上评估ZhuLong，完整系统在
-    % 商业Empyrean Aether环境中达到82.1\%的Pass@1（±3.0，5轮均值），显著优于纯LLM基线（10.5\%）。消融表明
-    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+10.3个百分点，而移除执行（-10.3pp）
-    % 或检索（-1.1pp）都会使准确率坍塌——与理论预测一致。
+    % 商业Empyrean Aether环境中达到81.4\%的Pass@1（±1.5，5轮均值），显著优于纯LLM基线（10.5\%）。消融表明
+    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+9.2个百分点，而移除执行（-9.2pp）
+    % 或检索（-0.4pp）都会使准确率坍塌——与理论预测一致。
 The main quantitative results are measured on the 158-task PyAether slice; a cross-language reproduction of the component ablation on the SKILL (158) and Tcl (133) slices of the unified \textbf{EDA-Scripting-Bench} (449 tasks total) reproduces the same structure---the complete system is the top and the prior-only baseline the bottom on every language---and the remaining ablation axes are being re-measured on the full benchmark.
     % 主定量结果在158题PyAether切片上测得；在统一评测集EDA-Scripting-Bench（449题：PyAether 158 + SKILL 158 + Tcl 133）的SKILL与Tcl切片上，
     % 组件消融的跨语言复现重现了同一结构——完整系统在每个语言上均为top，纯先验基线均为bottom；其余消融轴在完整评测集上复测中。
