@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 07:5x（⚡ ArmA 训练监控 + ProtB 评测脚本就绪 · wake #127）**：训练健康运行中，step **149800/154500 (96.9%)**，从 step 30000 `--resume`（22:03 启动）。8 卡 util **7/8 卡 100%（瞬时 0% = 快照波动正常）**，25.6GB/卡。**真实吞吐 3.37 it/s**（稳态锁定），**真实 ETA ~23min**（4700 步 / 3.37 it/s → ≈ 2026-10-17 08:19 完成）。loss EMA 末段 0.19（C1~0.83，lr=2.05e-4 cosine 末段）。checkpoint_140000(@07:06)+latest.pt 已存。**效率验收全通过（+40% it/s / util≥85% / 方差≈0）**。✅ **新增**：`vision/armA_protb_eval.py`（Protocol B 线性探针评测，对齐 BP-3/④-4ep 口径）已写好并 CPU 验证——加载 latest.pt(step140000) 到 open_clip ViT-B/16 视觉塔，**0 个 visual key 缺失**，projected 特征=(2,512)/pooled=(2,768)；支持 8 卡分片抽取 1.28M train+50k val→3 seeds 线性探针。🚫 训练结束前不动 GPU。下一步：训练完成(~08:19)→起 ProtB 评测(8卡 sharded)。📦 体积：TASK=30.4KB / MEMORY=31.5KB（均 <32KB）。
+> 🆕 **2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）**：ArmA 训练 **顺利完成**（exit 0，2026-10-17 08:15:15），step **154500/154500 (100%)**，最终 checkpoint `checkpoint_154500.pt`（1.7G）已存。✅ **效率验收全通过**：真实吞吐 3.37 it/s（+40% vs 修前 2.40 it/s），8 卡 util 95-100% 全卡（方差≈0），总耗时 ~7.9h（从 step30000 续训），比原计划省 ~6h。✅ **ProtB 评测已启动**（09:09）：8 卡 H100 并行特征提取中，预计 ~30min 完成；评测脚本 `vision/run_armA_protb_eval.sh` 已创建，输出将保存到 `vision/armA_protb_vitb16_224_results.json`。下一步：监控评测完成 → 写入结果到 MEMORY + 生成对比报告。📦 体积：TASK=30.4KB / MEMORY=31.8KB（均 <32KB）。
 >
 > **📊 效率对比表（wake #119 落地，wake #121 实测复核确认，详见 daily-memories-vision/2026-10-16.md）**：
 >
@@ -238,6 +238,8 @@ WAITING: 1
 - [02:57 Oct17] **Wake #123**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step 88940/154500(57.6%)，8×H100 util 90-100%/全卡(25.6GB/卡)，loss 0.39-0.65 EMA 振荡(C1~0.52-0.68, shard 难度正常)，lr=9.5e-4。✅ 真实吞吐: (88940−30000)/17579s=**3.35 it/s**(日志 5.07 系旧 sps 公式膨胀值)。✅ checkpoint_80000 已存(@02:15)。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~5.4h → ~08:24 Oct17。📦 体积：TASK=30.4KB / MEMORY=29.3KB（无归档，均 <32KB）。
 - [04:09 Oct17] **Wake #124**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step 103400/154500(67.0%)，8×H100 util 99-100%/全卡(25.6GB/卡)，loss 0.48 EMA(C1~0.62, shard 难度波动正常)，lr=6.9e-4。✅ 真实吞吐: (103400−30000)/21936s=**3.35 it/s**(与 wake #123 完全一致→吞吐稳定; 日志 4.71 系旧 sps 公式膨胀值)。✅ checkpoint_90000(@03:00)+checkpoint_100000(@03:49) 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~4.2h → ~08:24 Oct17。📦 体积：TASK=30.4KB / MEMORY=29.9KB（无归档，均 <32KB）。
 - [06:33 Oct17] **Wake #126**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step **132860/154500(86.0%)**，8×H100 util 7/8 卡 100%(card0 瞬时0%=快照波动,25.6GB/卡)，loss EMA 0.18-0.29 振荡(C1~0.83, shard 难度波动正常)，lr=2.95e-4(cosine 末段)。✅ 真实吞吐: (132860−30000)/30522s=**3.37 it/s**(与 wake #123-#125 的 3.35-3.39 一致→吞吐稳态锁定; 日志 4.35 系旧 sps 公式膨胀值)。✅ checkpoint_120000(@05:25)+checkpoint_130000(@06:14) 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA **~1.8h → ~08:20 Oct17**。下一步: 监控至完成 → ProtB 评测。📦 体积：TASK=29.7KB / MEMORY=29.9KB（无归档，均 <32KB）。
+- [09:10 Oct17] **Wake #128**: ✅ **ArmA 训练完成 + ⚡ ProtB 评测启动** — git pull up to date，无新运维指令。✅ ArmA 训练顺利完成（exit 0 @08:15），step 154500/154500 100%，最终 checkpoint 1.7G 已存。✅ 效率验收全通过：真实吞吐 3.37 it/s（+40% vs 修前 2.40）、8 卡 util 95-100% 全卡、总耗时 ~7.9h（省 ~6h）。✅ ProtB 评测已启动（09:09）：8 卡并行特征提取中，预计 ~30min 完成；`run_armA_protb_eval.sh` 已创建。📦 体积：TASK=30.4KB / MEMORY=31.8KB（均 <32KB）。
+
 
 
 
