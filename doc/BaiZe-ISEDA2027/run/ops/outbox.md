@@ -12317,3 +12317,87 @@ To https://github.com/foamliu/super_intelligence_2035.git
 2026-10-17 18:59:41.896314636 +0800 2904114 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/glm53_pilot_results.json
 === DONE 115 ===
 ```
+
+---
+
+## RUN_ID 116 · 2026-10-17 19:34:42 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+D=/tmp/oracle_validate/2026-10-17__18-04-54
+echo "=== RUN_ID 116 · oracle 结果 + docker 权限 · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) task dirs ---"
+ls -1 "$D" 2>/dev/null | head -10
+echo "--- B) per-task reward/status ---"
+for f in "$D"/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  s="$(grep -o '\"status\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r | $s"
+done
+echo "--- C) job.log tail ---"
+tail -20 "$D/job.log" 2>&1
+echo "--- D) job.log reward lines ---"
+grep -E 'reward|resolved|accuracy' "$D/job.log" 2>/dev/null | tail -8
+echo "--- E) relay groups ---"
+id -nG; getent group docker
+echo "--- F) cline proc groups ---"
+CP="$(pgrep -f '[c]line -c /nas_train' | head -1)"
+DGID="$(getent group docker | cut -d: -f3)"
+echo "cline_pid=${CP:-none} docker_gid=${DGID:-none}"
+[ -n "${CP:-}" ] && grep -E '^Groups:' /proc/"$CP"/status | tr '\t' ' ' | tee /tmp/_g1 | grep -qw "$DGID" && echo "cline HAS docker" || echo "cline LACKS docker"
+echo "--- G) harness loop groups ---"
+LP="$(pgrep -f '[b]aize_harness_loop.sh' | head -1)"
+echo "loop_pid=${LP:-none}"
+[ -n "${LP:-}" ] && grep -E '^Groups:' /proc/"$LP"/status | tr '\t' ' ' | tee /tmp/_g2 | grep -qw "$DGID" && echo "loop HAS docker" || echo "loop LACKS docker"
+echo "=== DONE 116 ==="
+```
+
+**输出**
+```
+=== RUN_ID 116 · oracle 结果 + docker 权限 · 2026-10-17 19:34:42 · host=whag0pgpuap29 ===
+--- A) task dirs ---
+adaptive-rejection-sampler__CXrA44Z
+bn-fit-modify__PeWxTeE
+break-filter-js-from-html__GLHbLqL
+build-cython-ext__waSRrDG
+build-pmars__WoP82HV
+config.json
+job.log
+lock.json
+result.json
+--- B) per-task reward/status ---
+adaptive-rejection-sampler__CXrA44Z | "reward": 1.0 | 
+bn-fit-modify__PeWxTeE | "reward": 0.0 | 
+break-filter-js-from-html__GLHbLqL | "reward": 1.0 | 
+build-cython-ext__waSRrDG | "reward": 0.0 | 
+build-pmars__WoP82HV | "reward": 0.0 | 
+--- C) job.log tail ---
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/bn-fit-modify:20251031: docker inspect returned 1
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/break-filter-js-from-html:20251031: docker inspect returned 1
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/build-cython-ext:20251031: docker inspect returned 1
+Collecting main service artifacts
+Agent 'oracle' does not declare an options_model; leftover kwargs are ignored
+Skipping image OS validation for alexgshaw/build-pmars:20251031: docker inspect returned 1
+Collecting main service artifacts
+--- D) job.log reward lines ---
+--- E) relay groups ---
+app.adm
+docker:x:122:app.e0020597,app.e0031982
+--- F) cline proc groups ---
+cline_pid=3728296 docker_gid=122
+cline HAS docker
+--- G) harness loop groups ---
+loop_pid=1784375
+loop HAS docker
+=== DONE 116 ===
+```
