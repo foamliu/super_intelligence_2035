@@ -1,10 +1,12 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 12:4x（🚀 ArmB 训练已启动 · wake #131）**：运维 10-17 指令——ArmB=open_clip ViT-B/16(86.2M visual/149.6M total, 从头)+AIMv2-style dense(1.0\*InfoNCE + 1.0\*masked-patch-MSE, mask_ratio=0.6)。✅ 全部代码+测试完成并验证：`armB_aimv2_openclip.py`(367行, forward hook 取 patch tokens [B,196,768] 零额外计算) / `run_armB_openclip.sh`(torchrun 8×GPU MBS=512 GBS=8192) / `run_armB_when_free.sh`(5min 轮询) / `test_armB_cpu.py`(6/6 PASSED: 模型创建✅ hook✅ predictor✅ mae_target✅ strict_load✅ loss✅) / `mllm_bridge/open_clip_vitb16_768.py`(encode_image→[B,196,768]✅) / `export_for_llava_ov.py`。✅ **训练已启动** 12:40:53 PID 1691076，8×H100 100% util/50.5GB/GPU，step 60/42940 loss=8.98(contr=8.04 patch=0.95) lr=2.95e-5 0.70 it/s ETA~17h。peak=50.3GB(MBS=512 无 OOM)。
+> 🆕 **2026-10-17 13:3x（🔄 ArmB 改 4 epoch 重启 · wake #132）**：运维 12:4x 指令「改 4 epoch → 训完评 ProtB」。✅ 已停 3-epoch 旧 run（PID 1691076，kill@13:30:22，停于 step 2620/42940，**无 ckpt 丢失**——首次 save@10000）。✅ `.12` 无 pretrain（已迁 .29，GPU12_RELEASED=1@11:37），8 卡确认 0 MiB。✅ 改 `run_armB_openclip.sh` STEPS 42940→**57250**(4ep) / OOM fallback 85880→114500；清空 OUT 目录。✅ **4-epoch 训练已启动** ~13:31 PID 1203148，8×H100 100% util/50.4GB/GPU，step 40/57250 loss=9.29(contr=8.25 patch=1.04) lr=1.95e-5(warmup) 0.71 it/s(爬坡中)，peak=50.3GB(MBS=512 无 OOM)，11350 shards LPT 0.0% 不均。配方=open_clip ViT-B/16(86.2M/149.6M,从头)+AIMv2-style(1.0\*InfoNCE+1.0\*masked-patch-MSE,mask=0.6)。**ETA**: 57250/0.90≈**17.7h 纯训练 → ~10-18 07:00**；+ProtB(3 seeds)1–2h ⇒ **~10-18 08:00–09:00**。下一步: 监控至完成 → ProtB 评测 → 报告。
+>
+> 📦 2026-10-17 12:4x（🚀 ArmB 3-epoch 训练启动 · wake #131）已归档；**结论**：3-epoch run(steps=42940) 被 wake #132 停止并改为 4 epoch(57250)。代码/测试/mllm_bridge 6/6 PASSED，配方不变唯 epoch 3→4。
 >
 > 🆕 **2026-10-17 11:1x（✅ 完成态核验 · wake #130）**：ArmA 训练(154500步✅)+ProtB 评测(lp=58.03%✅)+Stage(iv) 报告✅ 均已提交(da8e9cd1)。8 卡空闲。21:3x 效率验收全达标(+40% it/s / util 95-100% / 方差≈0)。📦 已归档 → daily-memories-vision/2026-10-17.md。
 
@@ -238,6 +240,7 @@ WAITING: 0
 - [04:09 Oct17] **Wake #124**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step 103400/154500(67.0%)，8×H100 util 99-100%/全卡(25.6GB/卡)，loss 0.48 EMA(C1~0.62, shard 难度波动正常)，lr=6.9e-4。✅ 真实吞吐: (103400−30000)/21936s=**3.35 it/s**(与 wake #123 完全一致→吞吐稳定; 日志 4.71 系旧 sps 公式膨胀值)。✅ checkpoint_90000(@03:00)+checkpoint_100000(@03:49) 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~4.2h → ~08:24 Oct17。📦 体积：TASK=30.4KB / MEMORY=29.9KB（无归档，均 <32KB）。
 - [06:33 Oct17] **Wake #126**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step **132860/154500(86.0%)**，8×H100 util 7/8 卡 100%(card0 瞬时0%=快照波动,25.6GB/卡)，loss EMA 0.18-0.29 振荡(C1~0.83, shard 难度波动正常)，lr=2.95e-4(cosine 末段)。✅ 真实吞吐: (132860−30000)/30522s=**3.37 it/s**(与 wake #123-#125 的 3.35-3.39 一致→吞吐稳态锁定; 日志 4.35 系旧 sps 公式膨胀值)。✅ checkpoint_120000(@05:25)+checkpoint_130000(@06:14) 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA **~1.8h → ~08:20 Oct17**。下一步: 监控至完成 → ProtB 评测。📦 体积：TASK=29.7KB / MEMORY=29.9KB（无归档，均 <32KB）。
 - [09:10 Oct17] **Wake #128**: ✅ **ArmA 训练完成 + ⚡ ProtB 评测启动** — git pull up to date，无新运维指令。✅ ArmA 训练顺利完成（exit 0 @08:15），step 154500/154500 100%，最终 checkpoint 1.7G 已存。✅ 效率验收全通过：真实吞吐 3.37 it/s（+40% vs 修前 2.40）、8 卡 util 95-100% 全卡、总耗时 ~7.9h（省 ~6h）。✅ ProtB 评测已启动（09:09）：8 卡并行特征提取中，预计 ~30min 完成；`run_armA_protb_eval.sh` 已创建。📦 体积：TASK=30.4KB / MEMORY=31.8KB（均 <32KB）。
+- [13:30 Oct17] **Wake #132**: 🔄 **ArmB 改 4 epoch 重启** — git pull up to date。读到运维 12:4x 指令「改 4 epoch → 训完评 ProtB」。✅ 发现 wake #131 起的 ArmB 为 **3 epoch(steps=42940)**，与最新指令(4 epoch/57250)不符。✅ `.12` 已无 pretrain(已迁.29)。✅ **kill 3-epoch run**(PID 1691076→1693419→1699855-62, kill-TERM@13:30:22, 停于 step 2620, **无 ckpt 丢失**[首次save@10000], 8 卡确认 0 MiB)。✅ 改 `run_armB_openclip.sh`: STEPS 42940→57250(4ep) / OOM fallback 85880→114500。✅ 清空 OUT 目录(无 stale latest.pt)。✅ **4-epoch 训练重启** ~13:31 PID 1203148: step 40/57250 loss=9.29 lr=1.95e-5(warmup) 0.71 it/s(爬坡), 8×H100 100%/50.4GB, peak=50.3GB, 11350 shards LPT 0.0%。ETA 57250/0.90≈17.7h→~10-18 07:00, +ProtB→~08:00-09:00。📦 体积：TASK=26.9KB / MEMORY=~31KB（均 <32KB）。
 
 
 

@@ -6,7 +6,7 @@
 #   - open_clip ViT-B/16 224px (86.2M visual / 149.6M total, both towers random)
 #   - AIMv2-style: 1.0*InfoNCE + 1.0*masked-patch-MSE, mask_ratio=0.6
 #   - GBS=8192 (MBS=512*8*accum=2); OOM fallback GBS=4096 (MBS=256*8*2)
-#   - LR=1e-3, warmup=2000, cosine->1e-4, 3 epoch (~42940 steps)
+#   - LR=1e-3, warmup=2000, cosine->1e-4, 4 epoch (~57250 steps)  [12:4x: epoch 3->4]
 #   - AdamW wd=0.1 betas=(0.9,0.98), bf16(AMP), grad_clip=1.0, seed=1234
 #   - Patch tokens via forward hook (single forward, no double)
 #   - Save: open_clip_state_dict.pt + predictor.pt + config.json + latest.pt
@@ -32,7 +32,7 @@ OUTROOT=/nas_train/app.e0031982/datasets/baize-vision/out
 OUT="$OUTROOT/armB_aimv2_openclip_vitb16_224"
 
 LOG=/tmp/armB_openclip_train.log
-STEPS=42940
+STEPS=57250
 
 # ---- MBS / accumulate (try 512 first, fallback to 256 on OOM) ----
 MBS=${1:-512}
@@ -81,7 +81,7 @@ if [ $rc -ne 0 ] && [ "$MBS" = "512" ] && grep -qi "out of memory\|CUDA error\|O
         --master_addr=$MASTER_ADDR --master_port=$((29800 + RANDOM % 1000)) \
         armB_aimv2_openclip.py \
         --data "$FAIR_DATA" --data-source mixed --caption-type all \
-        --output-dir "$OUT" --steps 85880 \
+        --output-dir "$OUT" --steps 114500 \
         --batch-size "$MBS" --accumulate "$ACCUM" \
         --lr 1e-3 --min-lr 1e-4 --warmup 2000 \
         --wd 0.1 --beta1 0.9 --beta2 0.98 --precision bf16 --grad-clip 1.0 \
