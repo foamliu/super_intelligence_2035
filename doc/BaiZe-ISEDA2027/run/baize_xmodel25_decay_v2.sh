@@ -75,6 +75,7 @@ export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
     --compile_mode default \
     --chunked_ce \
     --ce_chunk_size 256 \
+    --verify_save_step 20 \
     $SMOKE > "$LOGDIR/baize_xmodel25_decay_v2_train.log" 2>&1
 RC=$?
 

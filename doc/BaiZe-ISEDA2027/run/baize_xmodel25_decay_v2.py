@@ -220,10 +220,25 @@ def save_hf_checkpoint(model, tokenizer_dir, save_dir, rank):
         return
     os.makedirs(save_dir, exist_ok=True)
     m = model.module if isinstance(model, DDP) else model
-    # Unwrap torch.compile() wrapper (OptimizedModule has _orig_mod attribute)
+    # Unwrap torch.compile() wrapper on the outer model (OptimizedModule has _orig_mod)
     if hasattr(m, '_orig_mod'):
         m = m._orig_mod
-    m.save_pretrained(save_dir, safe_serialization=True)
+    # Handle inner compiled submodules: when --chunked_ce is used, only
+    # m.model (the transformer body) is compiled via torch.compile().
+    # accelerate's extract_model_from_parallel() has a bug: has_compiled_regions()
+    # returns True but it does model.__dict__["_orig_mod"] on the OUTER model,
+    # which doesn't have that key → KeyError.  Fix: temporarily swap compiled
+    # children with their _orig_mod before calling save_pretrained, then restore.
+    _swapped = {}
+    for name, child in m.named_children():
+        if hasattr(child, '_orig_mod'):
+            _swapped[name] = child
+            setattr(m, name, child._orig_mod)
+    try:
+        m.save_pretrained(save_dir, safe_serialization=True)
+    finally:
+        for name, child in _swapped.items():
+            setattr(m, name, child)
     for fn in os.listdir(tokenizer_dir):
         if fn.endswith(('.json', '.txt', '.model', '.py', '.pyc')) or 'token' in fn.lower():
             src = os.path.join(tokenizer_dir, fn)
@@ -309,6 +324,12 @@ def main():
                         help='Use chunked cross-entropy to avoid materializing full logits [B,S,V]')
     parser.add_argument('--ce_chunk_size', type=int, default=256,
                         help='Chunk size (in seq dimension) for chunked CE')
+    parser.add_argument('--resume', type=str, default=None,
+                        help='Path to a HF checkpoint directory to resume from '
+                             '(loads weights + sets start_step from dir name e.g. step_2000)')
+    parser.add_argument('--verify_save_step', type=int, default=0,
+                        help='If >0, save a test checkpoint at this step to verify '
+                             'save_pretrained works with torch.compile, then continue training')
     args = parser.parse_args()
 
     if args.tokenizer_dir is None:
@@ -326,9 +347,23 @@ def main():
         print(f"  Steps: {args.total_steps} (warmup={args.warmup_steps} decay={decay_steps})", flush=True)
         print(f"  v2: gc={args.grad_checkpoint} fast_data={args.fast_data} fused={args.adamw_fused} profile={args.profile_steps}", flush=True)
 
+    # Resume support: if --resume is given, load from that checkpoint instead
+    # of the original model_path.  Extract start_step from the directory name
+    # (e.g. .../step_2000 → 2000) so the LR schedule and step counter continue
+    # from the right point.  Optimizer state is NOT restored (Muon/AdamW restart
+    # from scratch — minor transient, acceptable for decay-phase resume).
+    start_step = 0
+    load_path = args.resume if args.resume else args.model_path
+    if args.resume:
+        resume_dir_name = os.path.basename(args.resume.rstrip('/'))
+        if resume_dir_name.startswith('step_'):
+            start_step = int(resume_dir_name.split('_')[1])
+        if rank == 0:
+            print(f"  RESUME: loading from {args.resume}, start_step={start_step}", flush=True)
+
     from transformers import AutoModelForCausalLM
     model = AutoModelForCausalLM.from_pretrained(
-        args.model_path, torch_dtype=torch.bfloat16,
+        load_path, torch_dtype=torch.bfloat16,
         trust_remote_code=True, attn_implementation='flash_attention_2',
     )
     model = model.to(device)
@@ -448,7 +483,7 @@ def main():
     t_opt_acc = 0.0
     timing_step_count = 0
 
-    for step in range(total_steps):
+    for step in range(start_step, total_steps):
         lr = wsd_lr_schedule(step, args.warmup_steps, decay_steps, args.lr, args.min_lr)
         for pg in muon_opt.param_groups:
             pg['lr'] = lr
@@ -552,6 +587,12 @@ def main():
             t_fwd_bwd_acc = 0.0
             t_opt_acc = 0.0
             timing_step_count = 0
+
+        # Early verify save: quickly confirm save_pretrained works with compile
+        if rank == 0 and args.verify_save_step > 0 and step == args.verify_save_step:
+            save_hf_checkpoint(model, args.tokenizer_dir,
+                               os.path.join(args.output_dir, f'verify_save_{step}'), rank)
+            print(f"  ✅ VERIFY SAVE at step {step} succeeded — checkpoint save bug fixed!", flush=True)
 
         if rank == 0 and args.profile_steps == 0 and not args.smoke_test \
            and step > 0 and (step + 1) % args.save_interval == 0:
