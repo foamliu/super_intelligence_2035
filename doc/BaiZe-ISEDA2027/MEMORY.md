@@ -10,6 +10,14 @@
 - 任务书 `run/WATCH_RECRUIT_TASK.md` 顶部新块（R25）：本轮唤醒重判 R24 的「边界 9 / 在校 17」→ 应届/在校全部 `not-eligible`（校招），产出 **§十二 R25**；已发 5 封不撤回；06:00 只在「1–5 年 + 非应届 + 证据齐」A/B 里选。
 - **边界**：只约束全职岗；**实习岗不受影响**（18:00 实习专场照常）。任务书瘦身：R24 块已归档（块 L），TASK **32,752B（32.0KB ✓）**。
 - 详见 `daily-memories/2026-10-17.md`。
+### 📚 news 新任务：发布《超级智能2035》到番茄小说（**前置闸未过**）
+- 用户令：把 `chapters_v1_1/` 42 章正文 + `images/` 配图发到番茄小说，创建连载作品；**先做前置检查，未通过不得建书**。
+- 已下发 `personal-watch/run/WATCH_NEWS_TASK.md` 顶部最高优先块（30,384B）：① 素材路径（`/home/liuyang/...`，不存在则回退）② 字数核算 ③ 账号等级（Lv0/Lv1 只能完本签约 ⇒ 停止建书）→ Lv2+ 才建书（书名/分类/简介含「本故事纯属虚构」/封面 `00_stone_forest_architecture.jpg`）→ **先发 3 章**，过审后 1–2 章/天。
+- **本机预量**：42 章 **中文字符 113,001 / 非空白 141,168（≈14.1 万）⇒ 未达 15 万门槛**（差 ~3.7 万中文字符 / ~0.9 万非空白）。最短 5 章（41/39/37/40/30）可作补写候选。
+- 纪律：不伪造、不批量发布、登录/实名/验证码需真人即报 blocker；交付 `news/fanqie/PLAN.md` + 截图/URL，commit `news fanqie:`。
+- ⏰ news loop 每天 **06:00 / 18:00** 唤醒 ⇒ 本任务实际开始时间 = **明早 06:00**。
+
+
 ### 🩺 harness 实况：oracle **2/5** + ops 中继被我误杀（已下发抢修）
 - **harness loop 未卡死**：进程存活；18:24 那轮 cline `run timed out after 1500s` 被杀 → MEMORY 停在 18:14；19:30 又正常唤醒。
 - **oracle -k 5 已于 18:04:54–18:12 跑完 = 2/5**（✅ adaptive-rejection-sampler / break-filter-js-from-html；❌ bn-fit-modify / build-cython-ext / build-pmars = **构建期拉包失败**）。⇒ 按任务书「oracle 必须 5/5」，**不得进 7×5 / 7×89**。
