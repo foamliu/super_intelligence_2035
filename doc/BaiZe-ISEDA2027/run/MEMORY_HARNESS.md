@@ -5,7 +5,7 @@ WAITING: 1
 > 🔧 **运维指令（2026-10-16 · 最高优先 · 每轮唤醒必读）**：
 > **🆕 2026-10-16 重启补完 188 条**：用 `--resume` 重启未跑完的 4 路（opencode/cline/claude/pi）。
 > **🔴 DATA-LOSS BUG #2 FIXED (2026-10-17 01:30)**：`load_results()` 在 JSON parse error 时**重命名**损坏文件 → `save_results()` 读到空文件 → 仅写当前 harness → **丢失 3 个 DONE harness 数据**（codex/deepseek/hermes 共 900 条）。根因=load_results 和 save_results **双重读取**：load_results 先 rename，save_results 找不到文件→current=[]。已从 `.corrupt` 备份恢复 1994 条 + 合并当前 1110 条 = **2011 条**。修复：① `load_results` **不再 rename**（留文件在原位）② `save_results` 改为**容错解析+恢复写入**（raw_decode salvage → merge → write）。
-> **glm53 7×300** 🔄 **pi 补跑中 (R423, 14:30)**：**7 路中 6 路 DONE ✅**（codex 80 · deepseek 71 · hermes 81 · opencode 87 · claude-code 80 · cline-patched 86，均 300/300）。数据 **2099/2100** (577 resolved, 27.5%)，1 pending（全在 pi）。pi 299/300(91 resolved, 30.3%)。McNemar: 2092/2099 agree(99.7%), b=2 c=5, p=0.453。pi PID 1195199 (etimes~7min, stat=SN), 卡在 django-16873 quota (retry 2/3, waiting 300s)。旧 pi 进程 PID 3849629 已 kill（误判退出=初始 grep 模式错误）。
+> **glm53 7×300** ✅ **COMPLETE (R423, 14:45)**：**全部 7 路 DONE ✅ 2100/2100**（codex 80 · deepseek 71 · hermes 81 · opencode 87 · claude-code 80 · cline-patched 86 · pi 92）。**577 resolved (27.5%)** vs kimi 574/2100 (27.3%)。McNemar: 2093/2100 agree(99.7%), b=2 c=5, p=0.453 → **换 backbone 无显著提升**。报告 `report_harness_glm53_7x300_zh.html` 已出最终版（pending=0）。pi PID 1195199 已完成 300/300（django-16873 标记 quota-blocked）。
 > **TB 2.0 BLOCKER**：① Docker 权限 (docker.sock root:docker, 用户不在 docker 组, 需 ops `usermod -aG docker app.e0031982`) ② 数据集 terminal-bench@2.0 not found (需 `harbor auth login` GitHub OAuth, URL 已生成供 ops 授权)。harbor v0.24.0 + uv v0.8.13 已装 ✅, oracle agent 存在 ✅, 7 adapter + 28 mock tests PASS ✅。
 > **P1-2 rerun** ✅ DONE：kimi 574→621 resolved (29.6%)。
 
@@ -15,11 +15,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB 2.0 T1 DONE (7 adapter + 28 tests) · glm53 7x300 pi 补跑中 (2099/2100, 577 resolved, 1 pending) · TB 2 BLOCKER (Docker+dataset)
-已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574 resolved) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 + /v1 fix ✅ · ⑪ P1-2 rerun ✅ · ⑫ McNemar ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 中文报告 ✅ (McNemar p=0.453) · ⑮ R411 重启 ✅ · ⑯ 数据恢复 ✅ · ⑰ R423 pi 重启+报告刷新 ✅ · ⑱ TB T1 适配器+28 tests ✅ · ⑲ harbor v0.24.0+uv v0.8.13 已装 ✅
-当前动作:     R423 (14:30): pi 重启 (PID 1195199, 299/300, 1 pending stuck on quota) + 报告刷新 (577/2099, McNemar p=0.453) + TB blocker 调查 (Docker 权限+dataset not found)
-下一步:       ① pi: 监控至完成 (1 pending, stuck on quota django-16873) ② pi 完成→最终报告 (2100/2100) ③ TB: 解决 Docker 权限 (需 ops `usermod -aG docker app.e0031982`) ④ TB: harbor auth login (需 ops 完成 GitHub OAuth) ⑤ TB: oracle 5/5 → 7×89 全量
-阻塞:         TB: Docker 权限 (docker.sock root:docker, 用户不在 docker 组, 需 ops `usermod -aG docker app.e0031982`) + 数据集 terminal-bench@2.0 not found (需 harbor auth login via GitHub OAuth, URL 已生成)。pi: 1 pending stuck on quota (django-16873, retry 2/3, 等待 300s)。
+PHASE:        T0 COMPLETE (glm53 7x300 2100/2100, 577 resolved, McNemar p=0.453) · TB 2.0 T1 DONE · TB 2 BLOCKER (Docker+dataset, 需 ops)
+已完成:       ① 7x300 kimi COMPLETE (2100/2100, 574) · ② eval rootcause ✅ · ③ EDA ✅ · ④ P0 fixes ✅ · ⑤ fix1 ✅ · ⑥ fix2 ✅ · ⑦ fix3 ✅ · ⑧ fix4 ✅ · ⑨ why-low-passrate ✅ · ⑩ glm53 7x300 2100/2100 ✅ (577 resolved, 27.5%) · ⑪ P1-2 rerun ✅ · ⑫ McNemar p=0.453 ✅ · ⑬ DATA-LOSS BUG FIX ✅ · ⑭ glm53 最终版报告 ✅ · ⑮ R411-R423 pi 补跑至 300/300 ✅ · ⑯ TB T1 适配器+28 tests ✅ · ⑰ harbor v0.24.0+uv v0.8.13 已装 ✅
+当前动作:     R423 (14:45): T0 完成 — glm53 7×300 全量 2100/2100, 577 resolved (27.5%), McNemar p=0.453, 报告最终版 pending=0。TB blocker 已深查 (Docker+dataset)。
+下一步:       ① T2 启动需 ops 解决 2 个 BLOCKER: Docker 权限 (`usermod -aG docker app.e0031982`) + harbor auth login (GitHub OAuth) ② TB: oracle 5/5 → 7×89 全量 ③ 等 ops 授权后获取 terminal-bench@2.0 数据集
+阻塞:         TB: ① Docker 权限 (docker.sock root:docker, 用户不在 docker 组, 需 ops `usermod -aG docker app.e0031982`) ② 数据集 terminal-bench@2.0 not found (需 harbor auth login via GitHub OAuth, URL 已生成供 ops 授权)。glm53 T0 已无阻塞。
 ERROR_COUNT:  0
 ```
 
