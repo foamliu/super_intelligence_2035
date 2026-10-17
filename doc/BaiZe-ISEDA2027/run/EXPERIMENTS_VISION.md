@@ -1240,3 +1240,75 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 **ckpt 路径**：`/nas_train/app.e0031982/datasets/baize-vision/out/merge3ds_bs4_lrC_w512_d30_p16_224/vision.pt`
 
 **报告文件**：`doc/BaiZe-ISEDA2027/reports/report_vision_merge3ds_result_zh.html`
+
+---
+
+## §10 ArmA（open_clip ViT-B/16 从头对比训练，2026-10-17）
+
+> **目的**：用 open_clip 标准 ViT-B/16（86.2M visual / 149.6M total，双塔随机初始化）从零开始做纯 CLIP InfoNCE 对比训练，作为"纯对比目标"的独立实验点，与主线 ④-4ep（AIMv2-style 稠密目标）对照。
+
+### §10.1 训练配置
+
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| 模型 | open_clip ViT-B/16 224px（86.2M visual / 149.6M total，`pretrained=None`） | `armA_openclip_train.py:169-170` |
+| 损失 | `open_clip.loss.ClipLoss`（标准 InfoNCE，global gather，local_loss=False） | `armA_openclip_train.py:185-187` |
+| 前向 | `model(imgs, texts) → (img_feat, txt_feat, logit_scale)` | `armA_openclip_train.py:286-287` |
+| 优化器 | AdamW fused=True, wd=0.1, betas=(0.9,0.98), grad_clip=1.0 | `run_armA_openclip.sh:69` |
+| LR | 2e-3 → 2e-4 cosine, warmup 8000 | `run_armA_openclip.sh:68` |
+| 批次 | GBS=2048 (MBS=256×8), bf16 AMP (fp32 master + autocast) | `run_armA_openclip.sh:52,68` |
+| 步数 | 154,500（≈2.7 epoch） | `run_armA_openclip.sh:14,45` |
+| 数据 | GPIC(7437)+CC12M(1100)+Amshaker(2250)=10,787 shards ≈118M 对 | `run_armA_openclip.sh:37-40` |
+| seed | 1234 | `run_armA_openclip.sh:70` |
+| 效率修复 | LPT 字节均衡分片 + num_workers=12 + persistent + prefetch4 + pin_memory + cudnn.benchmark + fused AdamW | `run_armA_openclip.sh:17-21` |
+
+### §10.2 训练结果
+
+| 指标 | 值 | 来源 |
+|:--|:--|:--|
+| 最终 step | 154,500/154,500 (100%) | `/tmp/armA_openclip_train.log` |
+| 最终 loss (EMA) | 0.4385 | 同上 |
+| 最终 C1 (~exp(−loss)) | ~0.6450 | 同上 |
+| 总耗时 | ≈611 min（含启动开销） | 同上 |
+| 稳态吞吐 | 3.37 it/s（+40% vs 修前 2.40，效率验收值） | MEMORY_VISION.md 效率表 |
+| GPU util | 8×H100 95-100% / 全卡 | 同上 |
+| 峰值显存 | 25.6 GB/卡 | 同上 |
+
+### §10.3 ProtB 评测结果（Protocol B，主流对齐）
+
+| 指标 | 值 | 来源 |
+|:--|:--|:--|
+| ProtB lp (seed 0) | 58.016% | `armA_protb_vitb16_224_results.json` |
+| ProtB lp (seed 1) | 58.066% | 同上 |
+| ProtB lp (seed 2) | 58.020% | 同上 |
+| **ProtB lp mean ± σ** | **58.034 ± 0.023%** → **58.03 ± 0.02%** | 同上 |
+| 5-NN (k=5, cosine) | 53.98% | 同上 |
+
+> 协议：Protocol B（SGD+momentum0.9+cosine 90ep, bs1024, IN-1k full train 1.28M, IN-1k val 50k, 3 seeds 0/1/2, feature=projected, ckpt=latest.pt）。
+
+### §10.4 对比（ArmA vs ④-4ep 基线）
+
+| 指标 | ArmA | ④-4ep | Δ (ArmA − ④-4ep) |
+|:--|--:|--:|--:|
+| ProtB lp | 58.03 ± 0.02% | 67.05 ± 0.02% | **−9.02 pp** |
+| k-NN | 53.98% (k=5) | 42.35% (k=20) | **+11.63 pp** |
+
+> ⚠️ **k 值口径**：ArmA k=5，④-4ep k=20（k=5=39.77%）。同取 k=5 → Δ=+14.21 pp。
+
+### §10.5 关键解读
+
+- ArmA = **lp −9.02pp / 5-NN +11.63pp** ⇒ 检索型表征强、线性可分性弱，与「C1/lp 背离」假设一致。
+- ⚠️ **不是单变量对照**（塔 86.2M vs 126.8M、目标 InfoNCE vs AIMv2-style dense、步数 154,500 vs 748,404、样本/批次不同）⇒ **不得写成「AIMv2 目标比 InfoNCE 好 9pp」**。
+- ArmB（open_clip ViT-B/16 + AIMv2-style，4 epoch，训练中）是"固定塔/数据、仅切换目标函数"的单变量对照，预期将给出 cleaner 对比。
+
+### §10.6 文件路径
+
+| 文件 | 路径 |
+|:--|:--|
+| 训练脚本 | `vision/run_armA_openclip.sh` |
+| 训练代码 | `vision/armA_openclip_train.py` |
+| 评测脚本 | `vision/run_armA_protb_eval.sh` + `vision/armA_protb_eval.py` |
+| 评测结果 JSON | `vision/armA_protb_vitb16_224_results.json` |
+| 训练日志 | `/tmp/armA_openclip_train.log` |
+| **中文报告** | `reports/report_vision_armA_openclip_result_zh.html`（含附录 A: open_clip × AIMv2-style 兼容性工程评估 + 附录 B: 官方 AIMv2 vs 本仓 AIMv2-style 概念澄清） |
+

@@ -4,7 +4,9 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 13:3x（🔄 ArmB 改 4 epoch 重启 · wake #132）**：运维 12:4x 指令「改 4 epoch → 训完评 ProtB」。✅ 已停 3-epoch 旧 run（PID 1691076，kill@13:30:22，停于 step 2620/42940，**无 ckpt 丢失**——首次 save@10000）。✅ `.12` 无 pretrain（已迁 .29，GPU12_RELEASED=1@11:37），8 卡确认 0 MiB。✅ 改 `run_armB_openclip.sh` STEPS 42940→**57250**(4ep) / OOM fallback 85880→114500；清空 OUT 目录。✅ **4-epoch 训练已启动** ~13:31 PID 1203148，8×H100 100% util/50.4GB/GPU，step 40/57250 loss=9.29(contr=8.25 patch=1.04) lr=1.95e-5(warmup) 0.71 it/s(爬坡中)，peak=50.3GB(MBS=512 无 OOM)，11350 shards LPT 0.0% 不均。配方=open_clip ViT-B/16(86.2M/149.6M,从头)+AIMv2-style(1.0\*InfoNCE+1.0\*masked-patch-MSE,mask=0.6)。**ETA**: 57250/0.90≈**17.7h 纯训练 → ~10-18 07:00**；+ProtB(3 seeds)1–2h ⇒ **~10-18 08:00–09:00**。下一步: 监控至完成 → ProtB 评测 → 报告。
+> 🆕 **2026-10-17 14:5x（🔄 ArmB 训练监控 + ✅ P1 ArmA 中文报告交付 · wake #133）**：git pull up to date，无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **4540/57250(7.9%)**，loss=0.70(contr=0.656 patch=0.045)，C1~0.52(warmup 后爬升中)，lr=9.95e-4(peak)，0.89 it/s，8×H100 96-100% util/50.5GB/卡(peak=50.4GB **无 OOM**, MBS=512 确认)，t=85min。真实吞吐 4540/5112s=**0.89 it/s**(稳态)。✅ **P1 交付**：`reports/report_vision_armA_openclip_result_zh.html`(25KB, 9节, 含附录A open_clip×AIMv2-style兼容性工程评估 + 附录B 官方AIMv2 vs 本仓AIMv2-style概念澄清)；EXPERIMENTS_VISION.md 新增 §10 ArmA(训练配置/结果/ProtB 58.03±0.02%/5-NN 53.98%/对比表/关键解读/文件路径)。**ETA**: (57250−4540)/0.89≈**16.5h → ~10-18 07:00**；+ProtB(3 seeds)1–2h ⇒ **~10-18 08:00–09:00**。下一步: 监控至完成 → ProtB 评测 → 报告。
+>
+> 📦 2026-10-17 13:3x（🔄 ArmB 改 4 epoch 重启 · wake #132）已归档；**结论**：4-epoch run(steps=57250)由 wake #132 启动(PID 1203148)，wake #133 确认健康运行中(step 4540)。
 >
 > 📦 2026-10-17 12:4x（🚀 ArmB 3-epoch 训练启动 · wake #131）已归档；**结论**：3-epoch run(steps=42940) 被 wake #132 停止并改为 4 epoch(57250)。代码/测试/mllm_bridge 6/6 PASSED，配方不变唯 epoch 3→4。
 >
@@ -12,17 +14,7 @@ WAITING: 1
 
 > 📦 2026-10-17 10:2x（🔧 ProtB 卡死修复 + ✅ ArmA ProtB lp=58.03±0.02% / 5-NN=53.98% · wake #129）已归档 → daily-memories-vision/2026-10-17.md；**结论**：OMP 线程过订阅修复(2280%→350% pcpu)，ProtB 完成 lp=58.03%（vs ④-4ep 67.05% −9.02pp，5-NN +11.6pp → CLIP 检索强但 lp 弱，合 BP-1）。
 
-> 🆕 **2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）**：ArmA 训练完成（exit 0，step 154500/154500，ckpt 1.7G 已存）；效率验收全通过（3.37 it/s +40%，8 卡 95-100% util，~7.9h）。ProtB 评测 09:09 启动但卡死（详见 wake #129：已诊断+修复+重启）。
->
-> **📊 效率对比表（wake #119 落地，wake #121 实测复核确认，详见 daily-memories-vision/2026-10-16.md）**：
->
-> | 指标 | 修前 | 修后 | 验收 |
-> |:--|:--|:--|:--|
-> | 真实吞吐 (it/s) | **2.40** | **3.36** | **+40%** ✅≥+15% |
-> | 8 卡 GPU util | 3/5/12/100/71/100/100/35% | **95-100%/全8卡** | ✅≥85% |
-> | 卡间方差 | 极大(straggler) | ≈0 | ✅显著变小 |
-> | 显存/卡 | 24.4 GB | 25.6 GB | +1.2GB |
-> | 真实 ETA | 14.2h | **~7.9h** (from 59480) | 省 ~6h |
+> 📦 2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）+ 📊 效率对比表 已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmA 训练完成(154500步, 3.37 it/s +40%, ~7.9h)；效率表(修前2.40→修后3.36 it/s, util 95-100%全卡, 省~6h)。
 >
 > **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=29.3KB（wake #123 实测，均 <32KB）。
 > 📦 2026-10-16 全天（wake #106~#116, ArmA 起训+12集 eval+precache+open_clip wrapper）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12集 eval 完成, ArmA 起训 step180 loss=6.69(step10000 ckpt 后 barrier bug 崩溃→已修)。
@@ -233,14 +225,14 @@ WAITING: 1
 > 📦 [Oct 13~14] 本唤醒流水旧条目（Wake #45~#84, 含 ArmC 监控/MLLM bridge/报告刷新/④-4ep eval/外部编码器, ~15条）已归档 → daily-memories-vision/2026-10-{13,14}.md。**关键结论**：ArmC 154500步完成(ProtB 68.25%), ④-4ep ProtB 67.05%, MLLM bridge 5/5 PASSED, 外部编码器 SigLIP2 87.46% 最高。需要时再读。
 > 📦 10-06~10-12 早期流水（R12b/scaling/fair-rerun/V3/②probe/④-2ep/④-4ep, ~40条）已归档 → daily-memories-vision/2026-10-{06..12}.md。**关键结论**：E1fair vs E2fair Δlp=+0.17pp indistinguishable; ④-4ep ProtB 67.05% MODERATE/DIMINISHING; ④-2ep ProtB 65.37%。需要时再读。
 > 📦 [Oct 16] 本唤醒流水旧条目（Wake #108~#115, 含 precache 监控/Part B 验收/limit50 abort/12集 eval 完成/keepalive, 5条）已归档 → daily-memories-vision/2026-10-16.md。**关键结论**：✅ Part B 三项验收全通过(ai2d=0.60)；✅ 12/12 benchmarks 全量 eval 完成(ai2d 60.04%/mmmu 42.89%/realworldqa 43.01%)；consolidated_12benchmarks.json 交付。需要时再读。
-- [20:50 Oct16] **Wake #118**: 🔄 **ArmA 训练监控** — git pull up to date, 无新运维指令。✅ ArmA open_clip ViT-B/16 训练健康: 8×H100 全活跃(24GB/卡, util 0-100%), step 21940/154500(14.2%), loss~0.56, C1~0.57, lr=1.96e-3, 5.15 it/s, ETA~7.2h, checkpoint_20000.pt 已存。✅ Stage(iv) 报告(18.8KB) 在位。✅ barrier bug 修复后(wake #117) --resume 从 step 10000 恢复, 现已过 step 20000, 无崩溃。📦 TASK 归档: 4 个已完成 2026-10-16 评测指令块→ARCHIVE, TASK 33.4→29.9KB。📦 体积：TASK=29.9KB / MEMORY=30.2KB（归档 ~3.5KB → ARCHIVE_OPERATOR_VISION.md）。
-- [21:3x~23:1x Oct16] **Wake #119~#120**: ⚡ **ArmA 效率专项实验落地** — 按运维 21:3x 指令应用效率优化（⚠️ 一揽子，非单变量 A/B——改动在协议到达前已落地）：① LPT 字节均衡分片(parse_shards 改 LPT bin-packing, 0.0% 不均) ② num_workers 6→12 + persistent + prefetch4 + pin_memory ③ cudnn.benchmark + fused AdamW + bf16 去重(fp32 master+autocast) ④ torch.compile 标志加但未启用 ⑤ 🚫 配方不变(GBS=2048/MBS=256/累积=1/LR 曲线不动)。📊 实测: 修前 2.40 it/s + util 3/5/12/100/71/100/100/35%(straggler) → 修后 3.35 it/s(+40%) + util 95-100%/全卡。✅ 验收三项全达标: util≥85%✅ / 方差变小✅ / it/s≥+15%(+40%)✅。训练从 step 30000 --resume 续跑, 无从头训。commit `vision armA perf:`.
+> 📦 [Oct16 20:50~23:1x] Wake #118~#120（ArmA 监控+效率专项落地）已归档 → daily-memories-vision/2026-10-16.md；**结论**：ArmA step21940 健康；效率优化一揽子落地(修前2.40→修后3.35 it/s +40%, util 95-100%全卡, 三项验收全达标)。
 - [00:30 Oct17] **Wake #121**: 🔄 **ArmA 训练健康监控 + 效率验收复核** — git pull up to date, 无新运维指令。✅ ArmA 训练健康: step 59480/154500(38.5%), 8×H100 util 95-100%/全卡(25.6GB/卡), loss 0.33-0.63 EMA, C1~0.53-0.72, lr=1.51e-3。✅ 真实吞吐复核: (59480−30000)/(146.1min×60)=**3.36 it/s**(日志显示 6.79 系旧 sps 公式膨胀值)。✅ LPT 分片 0.0% 不均(spread=0.22GB)。✅ checkpoint_40000/50000 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~7.9h → ~08:20 Oct17。📦 体积：TASK=30.4KB / MEMORY=~32KB（无归档，均 <32KB）。
 - [02:57 Oct17] **Wake #123**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step 88940/154500(57.6%)，8×H100 util 90-100%/全卡(25.6GB/卡)，loss 0.39-0.65 EMA 振荡(C1~0.52-0.68, shard 难度正常)，lr=9.5e-4。✅ 真实吞吐: (88940−30000)/17579s=**3.35 it/s**(日志 5.07 系旧 sps 公式膨胀值)。✅ checkpoint_80000 已存(@02:15)。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~5.4h → ~08:24 Oct17。📦 体积：TASK=30.4KB / MEMORY=29.3KB（无归档，均 <32KB）。
 - [04:09 Oct17] **Wake #124**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step 103400/154500(67.0%)，8×H100 util 99-100%/全卡(25.6GB/卡)，loss 0.48 EMA(C1~0.62, shard 难度波动正常)，lr=6.9e-4。✅ 真实吞吐: (103400−30000)/21936s=**3.35 it/s**(与 wake #123 完全一致→吞吐稳定; 日志 4.71 系旧 sps 公式膨胀值)。✅ checkpoint_90000(@03:00)+checkpoint_100000(@03:49) 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA ~4.2h → ~08:24 Oct17。📦 体积：TASK=30.4KB / MEMORY=29.9KB（无归档，均 <32KB）。
 - [06:33 Oct17] **Wake #126**: 🔄 **ArmA 训练监控** — git pull up to date，无新运维指令。✅ ArmA 训练健康: step **132860/154500(86.0%)**，8×H100 util 7/8 卡 100%(card0 瞬时0%=快照波动,25.6GB/卡)，loss EMA 0.18-0.29 振荡(C1~0.83, shard 难度波动正常)，lr=2.95e-4(cosine 末段)。✅ 真实吞吐: (132860−30000)/30522s=**3.37 it/s**(与 wake #123-#125 的 3.35-3.39 一致→吞吐稳态锁定; 日志 4.35 系旧 sps 公式膨胀值)。✅ checkpoint_120000(@05:25)+checkpoint_130000(@06:14) 已存。✅ 效率验收三项全达标(+40% it/s, util≥85%全卡, 方差≈0)。真实 ETA **~1.8h → ~08:20 Oct17**。下一步: 监控至完成 → ProtB 评测。📦 体积：TASK=29.7KB / MEMORY=29.9KB（无归档，均 <32KB）。
 - [09:10 Oct17] **Wake #128**: ✅ **ArmA 训练完成 + ⚡ ProtB 评测启动** — git pull up to date，无新运维指令。✅ ArmA 训练顺利完成（exit 0 @08:15），step 154500/154500 100%，最终 checkpoint 1.7G 已存。✅ 效率验收全通过：真实吞吐 3.37 it/s（+40% vs 修前 2.40）、8 卡 util 95-100% 全卡、总耗时 ~7.9h（省 ~6h）。✅ ProtB 评测已启动（09:09）：8 卡并行特征提取中，预计 ~30min 完成；`run_armA_protb_eval.sh` 已创建。📦 体积：TASK=30.4KB / MEMORY=31.8KB（均 <32KB）。
 - [13:30 Oct17] **Wake #132**: 🔄 **ArmB 改 4 epoch 重启** — git pull up to date。读到运维 12:4x 指令「改 4 epoch → 训完评 ProtB」。✅ 发现 wake #131 起的 ArmB 为 **3 epoch(steps=42940)**，与最新指令(4 epoch/57250)不符。✅ `.12` 已无 pretrain(已迁.29)。✅ **kill 3-epoch run**(PID 1691076→1693419→1699855-62, kill-TERM@13:30:22, 停于 step 2620, **无 ckpt 丢失**[首次save@10000], 8 卡确认 0 MiB)。✅ 改 `run_armB_openclip.sh`: STEPS 42940→57250(4ep) / OOM fallback 85880→114500。✅ 清空 OUT 目录(无 stale latest.pt)。✅ **4-epoch 训练重启** ~13:31 PID 1203148: step 40/57250 loss=9.29 lr=1.95e-5(warmup) 0.71 it/s(爬坡), 8×H100 100%/50.4GB, peak=50.3GB, 11350 shards LPT 0.0%。ETA 57250/0.90≈17.7h→~10-18 07:00, +ProtB→~08:00-09:00。📦 体积：TASK=26.9KB / MEMORY=~31KB（均 <32KB）。
+- [14:5x Oct17] **Wake #133**: 🔄 **ArmB 训练监控 + ✅ P1 ArmA 中文报告交付** — git pull up to date，无新运维指令。✅ **ArmB 4-epoch 训练健康**：step 4540/57250(7.9%)，loss=0.70(contr=0.656 patch=0.045)，C1~0.52(warmup后爬升)，lr=9.95e-4(peak)，0.89 it/s，8×H100 96-100% util/50.5GB/卡(peak=50.4GB **无OOM**, MBS=512确认)，t=85min。真实吞吐 0.89 it/s(稳态)。✅ **P1 ArmA 中文报告交付**(纯CPU不占GPU)：`reports/report_vision_armA_openclip_result_zh.html`(25KB, 9节)——含训练配置(open_clip ViT-B/16 86.2M/149.6M, ClipLoss InfoNCE, GBS2048, LR2e-3→2e-4, 154500步)、ProtB结果(lp 58.03±0.02%, 5-NN 53.98%)、对比表(ArmA vs ④-4ep/④-2ep/V3/R11-G)、关键解读(lp −9.02pp/5-NN +11.63pp → 检索强lp弱, 合C1/lp背离假设; ⚠️非单变量对照)、诚实条款、**附录A open_clip×AIMv2-style兼容性工程评估**(结论: 模型/推理接口✅兼容, 训练损失/循环❌需自定义; 4步实现≈1-2人日; ArmB已实现6/6单测通过)、**附录B 官方AIMv2 vs 本仓AIMv2-style概念澄清**。✅ EXPERIMENTS_VISION.md 新增 §10 ArmA 完整记录。ETA (57250−4540)/0.89≈16.5h→~10-18 07:00, +ProtB→~08:00-09:00。📦 体积：TASK=26.9KB / MEMORY=~32KB（均 <32KB, 无归档）。
 
 
 
