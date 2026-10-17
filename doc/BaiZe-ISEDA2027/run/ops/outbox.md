@@ -12401,3 +12401,78 @@ loop_pid=1784375
 loop HAS docker
 === DONE 116 ===
 ```
+
+---
+
+## RUN_ID 117 · 2026-10-17 19:56:09 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+HARBOR="$HOME/.local/bin/harbor"
+echo "=== RUN_ID 117 · oracle 修复重跑(3 tasks, overlay) · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) harbor run help (filtered) ---"
+timeout 30 "$HARBOR" run --help 2>&1 | grep -iE 'compose|overlay|--task|--dataset|jobs-dir|n-concurrent' | head -20
+echo "--- B) overlay file ---"
+ls -l /tmp/network-host-overlay.yml 2>&1 | head -2
+echo "--- C) write job config ---"
+cat > /tmp/tb_oracle_cfg_117.yaml <<'YAML'
+environment:
+  extra_docker_compose:
+    - /tmp/network-host-overlay.yml
+YAML
+cat /tmp/tb_oracle_cfg_117.yaml
+rm -rf /tmp/oracle_fix117
+echo "--- D) rerun 3 failed tasks (oracle, n=3) ---"
+timeout 480 "$HARBOR" run \
+  -p "$HOME/terminal-bench/bn-fit-modify" \
+  -p "$HOME/terminal-bench/build-cython-ext" \
+  -p "$HOME/terminal-bench/build-pmars" \
+  --agent oracle -n 3 \
+  -c /tmp/tb_oracle_cfg_117.yaml \
+  -o /tmp/oracle_fix117 2>&1 | tail -30
+echo "--- E) results ---"
+for f in /tmp/oracle_fix117/*/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r"
+done
+echo "--- F) schedule ops relay restart (60s later, once) ---"
+if [ ! -f /tmp/ops_relay_restart_117.done ]; then
+  touch /tmp/ops_relay_restart_117.done
+  setsid nohup bash -c 'sleep 60; pkill -f "[o]ps_relay.sh"; sleep 2; cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &' >/dev/null 2>&1 &
+  echo "restart scheduled (60s)"
+else
+  echo "restart already scheduled; skip"
+fi
+echo "=== DONE 117 ==="
+```
+
+**输出**
+```
+=== RUN_ID 117 · oracle 修复重跑(3 tasks, overlay) · 2026-10-17 19:56:09 · host=whag0pgpuap29 ===
+--- A) harbor run help (filtered) ---
+│ --jobs-dir               -o      <path>              Directory to store job  │
+│ --n-concurrent           -n      <int>               Number of concurrent    │
+│ --n-concurrent-agents            <int range> [x>=1]  Per-agent execution     │
+│                                                      most --n-concurrent.    │
+│                                                             (Docker Compose  │
+│                                                             Docker Compose   │
+│                                                             overlay file.    │
+│ --dataset                 -d      <str>   Dataset name@version (e.g.,        │
+│ --task                    -t      <str>   Run a single task from the         │
+--- B) overlay file ---
+-rw-r--r-- 1 app.e0031982 app.adm 1648 Oct 17 19:48 /tmp/network-host-overlay.yml
+--- C) write job config ---
+environment:
+  extra_docker_compose:
+    - /tmp/network-host-overlay.yml
+--- D) rerun 3 failed tasks (oracle, n=3) ---
+Docker daemon is not running. Please start Docker and try again.
+--- E) results ---
+--- F) schedule ops relay restart (60s later, once) ---
+restart scheduled (60s)
+=== DONE 117 ===
+```
