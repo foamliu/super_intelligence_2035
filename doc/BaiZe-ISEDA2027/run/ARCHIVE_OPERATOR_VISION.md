@@ -1638,3 +1638,13 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 > 📦 §运维指令 · 2026-10-08④（📐 全量 1-epoch 耗时估算）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；结论：已用 scaling smoke 实测回答（E1=4697 img/s → 5.66h；区间 5.2–9.1h/epoch；1 epoch 足够）。需要时再读。
 
 
+
+## 归档：MEMORY_VISION.md 滚动（wake #136, 2026-10-17 18:39）
+
+### 改动清单（原 line 23, 2026-10-16 era）
+> **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=29.3KB（wake #123 实测，均 <32KB）。
+
+### 旧📦指针（原 lines 28-30, 10-11~13 era）
+> 📦 2026-10-13 12:43（④-4ep 评测完成）已归档 → daily-memories-vision/2026-10-15.md；**结论**：ProtB 67.05±0.02%, 递减确认。需要时再读。
+> 📦 V2 Muon / V3 全量数据 / ② probe sweep / ④-2ep（2026-10-11~12）已归档 → daily-memories-vision/2026-10-14.md；**结论**：V2 Muon 全 LR 坍缩❌；V3 全量 ProtB=63.52% Δ+1.18pp 不可分辨；② probe NOT underfitting（62.34%=ceiling）；④-2ep ProtB=65.37% Δ+3.03pp MODERATE。需要时再读。
+> 📦 ④-2ep 详细训练/评测结果（374,202步/final_loss=0.1856/C1=0.5804/ProtB 65.37%/ProtA 53.82%/zs 38.52%/k-NN 40.67%）+ lp-epoch曲线 + epoch预注册 + ①②结果 已归档 → daily-memories-vision/2026-10-14.md。需要时再读。
