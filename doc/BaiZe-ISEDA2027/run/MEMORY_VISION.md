@@ -1,12 +1,14 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
-> 🆕 **2026-10-17 11:1x（✅ 完成态核验 · wake #130 · 置 WAITING=1）**：复验 ArmA 训练(154500步✅)+ProtB 评测(lp=58.03%✅)+Stage(iv) 报告✅ 均已提交(da8e9cd1 10:27)。8 卡全空闲(0%/0MiB)，无训练进程。21:3x 效率专项验收全达标(+40% it/s / util 95-100% / 方差≈0，详见上方对比表)。⚠️ 唯一协议偏差=改动一揽子应用(非单变量A/B)，21:3x 令到达时改动已在 wake#119 落地，训练已完结无法回溯逐项A/B——已如实记录。无活跃任务 → 置 **WAITING=1**，待运维新指令。
+> 🆕 **2026-10-17 12:4x（🚀 ArmB 训练已启动 · wake #131）**：运维 10-17 指令——ArmB=open_clip ViT-B/16(86.2M visual/149.6M total, 从头)+AIMv2-style dense(1.0\*InfoNCE + 1.0\*masked-patch-MSE, mask_ratio=0.6)。✅ 全部代码+测试完成并验证：`armB_aimv2_openclip.py`(367行, forward hook 取 patch tokens [B,196,768] 零额外计算) / `run_armB_openclip.sh`(torchrun 8×GPU MBS=512 GBS=8192) / `run_armB_when_free.sh`(5min 轮询) / `test_armB_cpu.py`(6/6 PASSED: 模型创建✅ hook✅ predictor✅ mae_target✅ strict_load✅ loss✅) / `mllm_bridge/open_clip_vitb16_768.py`(encode_image→[B,196,768]✅) / `export_for_llava_ov.py`。✅ **训练已启动** 12:40:53 PID 1691076，8×H100 100% util/50.5GB/GPU，step 60/42940 loss=8.98(contr=8.04 patch=0.95) lr=2.95e-5 0.70 it/s ETA~17h。peak=50.3GB(MBS=512 无 OOM)。
+>
+> 🆕 **2026-10-17 11:1x（✅ 完成态核验 · wake #130）**：ArmA 训练(154500步✅)+ProtB 评测(lp=58.03%✅)+Stage(iv) 报告✅ 均已提交(da8e9cd1)。8 卡空闲。21:3x 效率验收全达标(+40% it/s / util 95-100% / 方差≈0)。📦 已归档 → daily-memories-vision/2026-10-17.md。
 
-> 🆕 **2026-10-17 10:2x（🔧 ProtB 评测卡死修复 + ✅ ArmA ProtB 结果 · wake #129）**：wake #128 的 ProtB 8 卡评测卡死（~1.2 img/s，49min 仅 1/14 val 文件，GPU 0%）——根因：8 进程×nproc(224) OMP 线程 7× 过订阅 + 8 卡冗余解码同一 50k val。**修复**：`run_armA_protb_eval.sh` 加 `OMP/MKL/OPENBLAS_NUM_THREADS=8`；`armA_protb_eval.py` 仅 shard 0 抽 val。重启后 pcpu 2280%→~350%、file1 49min→<60s（≈50×）、稳态 ~250 img/s/卡。✅ **评测完成（10:23 exit 0）**：**ProtB lp = 58.03 ± 0.02%**（3 seeds 58.02/58.07/58.02，full IN-1k 1.28M train + 50k val，SGD 90ep），**5-NN = 53.98%**，JSON 存 `vision/armA_protb_vitb16_224_results.json`。**对比**：ArmA(从头 CLIP InfoNCE,154500 步) ProtB 58.03% vs ④-4ep(AIMv2-style dense) 67.05%（**−9.02pp**）；ArmA 5-NN 53.98% vs ④-4ep 42.35%（**+11.6pp**）→ CLIP 检索强但 lp 弱（合 BP-1）。📦 TASK=30.4KB/MEMORY≈32KB。
+> 📦 2026-10-17 10:2x（🔧 ProtB 卡死修复 + ✅ ArmA ProtB lp=58.03±0.02% / 5-NN=53.98% · wake #129）已归档 → daily-memories-vision/2026-10-17.md；**结论**：OMP 线程过订阅修复(2280%→350% pcpu)，ProtB 完成 lp=58.03%（vs ④-4ep 67.05% −9.02pp，5-NN +11.6pp → CLIP 检索强但 lp 弱，合 BP-1）。
 
 > 🆕 **2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）**：ArmA 训练完成（exit 0，step 154500/154500，ckpt 1.7G 已存）；效率验收全通过（3.37 it/s +40%，8 卡 95-100% util，~7.9h）。ProtB 评测 09:09 启动但卡死（详见 wake #129：已诊断+修复+重启）。
 >
@@ -21,13 +23,7 @@ WAITING: 1
 > | 真实 ETA | 14.2h | **~7.9h** (from 59480) | 省 ~6h |
 >
 > **改动清单**（⚠️ 一揽子应用，非单变量 A/B——21:3x 协议到达时改动已落地）：① LPT 字节均衡分片 ② num_workers 6→12+persistent+prefetch4+pin_memory ③ cudnn.benchmark+fused AdamW+bf16 去重 ④ torch.compile 标志已加未启用(待训后单测) ⑤ 🚫 配方不变。📦 体积：TASK=30.4KB / MEMORY=29.3KB（wake #123 实测，均 <32KB）。
-> 📦 2026-10-16 17:30（🚀 ArmA open_clip 从头训已启动 · wake #116）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 报告交付 + ArmA 起训, step 180 loss=6.69。但 step 10000 存 ckpt 后因 barrier bug 崩溃。需要时再读。
-> 📦 2026-10-16 12:10（✅ 12集全量 eval 全部完成 · wake #114）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12/12 benchmarks 全部完成, consolidated_12benchmarks.json 交付。需要时再读。
-> 📦 2026-10-16 10:55（全量 eval batch_size=32 并行运行中 · wake #113）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 13集全量 eval 完成（per-GPU batch32），后缩编为12集。需要时再读。
-> 📦 2026-10-16 06:23（precache 主跑完成 15OK/2FAIL · wake #110）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15OK/2FAIL, seedbench retry 进行中40%。需要时再读。
-> 📦 2026-10-16 05:13（Part B 全验收 ✅✅✅ · wake #109）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ Part B 三项验收全通过(open_clip GPU+HF导出+ai2d=0.60), precache 主跑尚在进行。需要时再读。
-> 📦 2026-10-16 03:55（precache 监控 + MEMORY 归档减重 · wake #108）已归档 → daily-memories-vision/2026-10-16.md；**结论**：precache 15/17, watcher 健康, MEMORY 归档 31.2→26KB。需要时再读。
-> 📦 2026-10-16 00:40（precache 监控 + 缓存路径修复 + seedbench xet 失败 + TASK 归档 · wake #106）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 旧缓存复用, 缓存路径 /tmp→/data 修复, seedbench retry 脚本就绪, TASK 归档 5 块 35.9→26.5KB。需要时再读。
+> 📦 2026-10-16 全天（wake #106~#116, ArmA 起训+12集 eval+precache+open_clip wrapper）已归档 → daily-memories-vision/2026-10-16.md；**结论**：✅ 12集 eval 完成, ArmA 起训 step180 loss=6.69(step10000 ckpt 后 barrier bug 崩溃→已修)。
 > 📦 2026-10-15 全天（wake #88~#105, 18 条📦指针: Stage-1/1.5/2 训练+lmms-eval multi-GPU+precache+open_clip wrapper+HF export+报告）已归档 → daily-memories-vision/2026-10-15.md；**结论**：✅ Stage-1(2500步)+Stage-1.5(20000步)+Stage-2(3500步,loss=1.4853) 完成；open_clip_baize.py+export_llava_ov_hf.py test 2/2 CPU PASSED；report_vision_experiments_summary_zh.html 48.5KB 交付。需要时再读。
 > 📦 2026-10-14 全天（wake #69~#85, 14 条）已归档 → daily-memories-vision/2026-10-14.md + 2026-10-15.md；**结论**：ArmC 训练全程健康(C1 0.54→0.66, 154500步完成), MLLM bridge 7文件交付, 论文 P0+P1 改稿 12页 0err, Stage(iv) 可行性评估 28.5KB HTML。需要时再读。
 > ✅ **④-4ep 基线（COMPLETE）**: ProtB 67.05±0.02% / ProtA 56.70% / zs 40.64%/72.64% / k-NN 42.35%. final_loss=0.0805, C1=0.5932, 748,404 steps, 60,545s. VERDICT: MODERATE, DIMINISHING. 详见 EXPERIMENTS_VISION.md §9.5/§9.7.
@@ -38,10 +34,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **ArmA 训练 + ProtB 评测全部完成（wake #129, 10-17 10:27 commit da8e9cd1）**：step 154500/154500 exit 0；ProtB lp=58.03±0.02%, 5-NN=53.98%。8 卡已全释放(0% util)。21:3x 效率专项验收全达标(+40% it/s / util 95-100% / 方差≈0)。**无活跃任务 → WAITING=1，待运维新指令**。 |
+| PHASE | 🚀 **ArmB 训练运行中（wake #131, 10-17 12:40 启动）**：open_clip ViT-B/16 + AIMv2-style dense(InfoNCE + masked-patch MSE)。step 60/42940 loss=8.98, 8×H100 100% util/50.5GB, ETA~17h。**WAITING=0**。前序 ArmA 训练(154500步)+ProtB(lp=58.03%)均已完成(da8e9cd1)。 |
 | ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-17 11:1x (wake #130)**: 完成态核验——ArmA 训练(154500步)+ProtB(lp=58.03%)+Stage(iv) 报告 均已完成并提交(da8e9cd1)。8 卡全空闲(0%/0MiB)，无训练进程。21:3x 效率验收全达标(详见上方对比表)。无活跃任务 → 置 WAITING=1 待新指令。📦 TASK=30.4KB/MEMORY=31.4KB(均≤32KB)。 |
+| 更新 | **2026-10-17 12:4x (wake #131)**: ArmB 训练已启动——`armB_aimv2_openclip.py`(367行)+`run_armB_openclip.sh`+`run_armB_when_free.sh`+`test_armB_cpu.py`(6/6 PASSED)+`mllm_bridge/open_clip_vitb16_768.py`(bridge✅)+`export_for_llava_ov.py` 全部完成。训练 12:40:53 启动 PID 1691076, step 60/42940 loss=8.98, 8×H100 100%/50.5GB, ETA~17h。📦 MEMORY 滚动(wake#129→📦指针, 7条旧📦合并为1条)。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
