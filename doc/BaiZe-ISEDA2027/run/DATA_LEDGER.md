@@ -17,6 +17,10 @@
 | 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 ✅ 已下满（1504 jsonl / 318,990,252,711 B = 318.99GB，与 HF 官方清单逐字节一致；0 .incomplete；2026-10-15 复核通过）**；Agent-2609=jsonl 50shard/51GiB | ✅ 就绪 | Stage(ii) SFT |
 | 通用文本·RL | UltraData-RL-2609 | **✅ 已下满（20 jsonl / 187,632,276,428 B = 174.70 GiB，与 HF 官方清单逐字节一致；0 .incomplete；26 files 全 PASS；2026-10-16 01:26 完成自校）**：`Code`×12 + `Knowledge`×2 + `Long_Context`×2 + `Math`×4 + 4 meta(.gitattributes/LICENSE/README.md/README_ZH.md) + 2 assets(logo.png/rl_data_pipeline.png)；gated=False, lastModified=2026-09-07 | ✅ 就绪（2026-10-15 22:15 启动 → 10-16 01:26 完成，耗时 ~3h11m） | Stage(ii) RL |
 | 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | **HF总量=12,124files/46.663TB（8子集HfApi核实2026-10-11 16:18：coyo1940/6.38T+datacomp575/1.89T+imagenet82/0.23T+laioncn562/1.74T+mint705/2.20T+obelics5803/24.35T+sa1b1147/5.09T+zero250m1310/4.76T）**；本地已下=**8,385parquet/≈30TB（69.2%files/64%bytes）**：5子集100%(coyo1940+datacomp575+imagenet82+laioncn562+mint705)+obelics4521/5803=77.9%，**sa1b+zero250m未开始** | 🔄 下载中（data线看护retry-loop PID2420118+hf PID2420132,~11.6MB/s avg,剩余~16.6TB,ETA~17天） | 视觉编码器 + MLLM 对齐 |
+| 通用多模态·HF图文对 | MVRL/WebMix-38M | **3886 parquet / 1.9 TB** / ~38.8M pairs | ✅ **已下满**（2026-10-17 15:10 自然完成，落盘 `/nas_user/app.e0031982/datasets/MVRL/WebMix-38M/`，0 .incomplete） | 视觉预训练图文对 |
+| 通用多模态·HF图文对 | VedaLabs/wit_base | **330 parquet / 287 GB** / ~6.48M pairs | ✅ **已下满**（落盘 `/nas_user/app.e0031982/datasets/`，0 .incomplete） | 视觉预训练图文对 |
+| 通用多模态·HF图文对 | hanlincs/InternVL-SA1B-Caption-WebDataset | **2000 tar / 1.5 TB** / ~22.4M pairs | ✅ **已下满**（2026-10-16 21:29 自然退出，落盘 `/nas_user/app.e0031982/datasets/`，0 .incomplete） | 视觉预训练图文对 |
+| 通用多模态·HF图文对 | HuggingFaceM4/the_cauldron | **938 parquet / 158 GB** / ~1.9M pairs / 50 子集 | ✅ **已下满**（落盘 `/nas_user/app.e0031982/datasets/`，0 .incomplete） | VQA/SFT 格式 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
 | **领域（EDA）** | PyAether/SKILL API 参考文档（`eda_fastmcp/docs/`）、EDA 工具文档、开源 HDL | **已确认来源 ≈45MB 纯文本**（API 参考文档） | 🟡 待授权确认 + 待入库 | Stage(ii) 领域退火 + SFT（最关键） |
