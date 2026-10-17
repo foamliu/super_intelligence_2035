@@ -2054,3 +2054,38 @@ token 预算的三档参照（按 T3 定稿吞吐 8×H100 = 249K tok/s · MBS2 �
 > 【原文】**⑤ 纪律**：🚫 不 kill 别线进程 · 与 data 线错峰 IO · commit 前缀 `pretrain decay80b:` · 任务书 >32KB 自滚归档。
 
 > 【结果】已起训（2026-10-16 19:14 decay RUNNING）；实测修正 = Megatron-Core 0.16.1 不实现 Xmodel μP 前向缩放 ⇒ HF→Megatron 转换会破坏模型 ⇒ 最终走 HF + 手写 DDP + Megatron TensorParallelMuon；后升级为 chunked CE v2 正式训练（2026-10-17 01:20）。
+
+---
+
+## 归档块 N · 2026-10-17 12:2x「停止 .12 的 80B decay → 迁回 .29」（原文，2026-10-17 20:4x 运维搬出）
+
+### 🆕 运维指令 · 2026-10-17 12:2x（🛑 停止 `.12` 的 80B decay → 迁回 `.29` 续跑；`.12` 让给 vision）· 用户直令 · 最高优先
+
+> **用户令（2026-10-17）**：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」
+
+**① 根因（写进 MEMORY，不甩锅）**：crash5/6 是 `.12` 本地 `emerging_optimizers 0.5.0a0` 与 Megatron API 不匹配；为用该本地安装，把 80B decay 从 `.29` 迁到 `.12`。这是**兼容性临时迁机**，不是永久分卡。现按用户令**固定 `.29`**。
+
+> ⚠️ **先查状态再动手（2026-10-17 11:5x 实测）**：`.29` **已在健康 RUNNING**（#488：08:44 起，step~860 @11:36，loss 2.03，296.8K tok/s，8 卡 100%/51.7GB，0 crash），且 **`.12` 已于 11:37 释放**（`GPU12_RELEASED=1`）。⇒ **目标已达成，不要重启**（重启会丢 860 步≈2.8h）；**只需上报 ETA**。仅当 `.29` 无进程/挂了，才执行 ②③ 的重启流程。
+
+**② 停止 `.12`（先保 ckpt，再 kill）**
+- 记录原文：`date`、`nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv`、`pgrep -af 'baize_xmodel25_decay|torchrun.*baize_xmodel25_decay'`。
+- 查 ckpt：按脚本实际 `OUT`（`grep -n '^OUT=' run/baize_xmodel25_decay_v2.sh`）；`ls -lt $OUT/latest.pt $OUT/checkpoint_*.pt`；记录最新 step/mtime。
+  - 有 `latest.pt`（step≥500）→ 以它 resume；
+  - 只有 `step_532000` → 从 `step_532000` 重起，MEMORY 记「损失步数 ≈ X（≈X×11.9s）」。
+- 停止：`kill -TERM <torchrun leader>` → ≤120s 未退再 `kill -KILL` leader + workers。**只杀本任务 PID**；🚫 不碰 `baize_pretrain_loop.sh` / `baize_vision_loop.sh` / `ops_relay.sh` / data 下载 / harness。
+- 验证：`.12` 8 卡 `0 MiB / 0%`、无 compute apps；原文贴 MEMORY，写 `GPU12_RELEASED=1 <时间>`；**立即 commit `pretrain move29: release .12` 并 push**（vision 依赖此信号，但用户令优先，不阻塞 vision）。
+
+**③ 迁回 `.29` 续跑**
+- `.29` preflight（原文落盘）：`nvidia-smi` 8 卡空；`py310`；`torch / transformers / megatron.core / emerging_optimizers` 版本；**打印 `OrthogonalizedOptimizer.__init__` 与 `newton_schulz_tp` 签名**。
+  - ⚠️ `.12` 的 crash5/6 monkey-patch 只针对 `0.5.0a0`；`.29` 版本若不同，**不要盲套 patch**，按实际签名适配；`_orig_mod` 保存修复与版本无关，保留。
+- 起训：`cd run && setsid bash baize_xmodel25_decay_v2.sh > /tmp/baize_xmodel25_decay_v2_dot29.log 2>&1 < /dev/null &`；用 `--resume`（脚本已支持）指向最新 ckpt；确认 step/loss/tok/s、0 crash；首 ckpt 验证 `_orig_mod` 不崩。
+- 配方不变（seq 3712 / GBS 960 / ITERS 19980 / LR 1.67e-3→1e-5 / SAVE 500）；**不得改配方**。
+- MEMORY 写：机器 `.29`、PID、resume step、ETA、首 ckpt 时间；commit `pretrain move29:`。
+
+**④ 纪律**：只停自己任务；停前必须确认 ckpt；不删 ckpt；不占 `.12`；与 vision ArmB 错峰 IO；任务书 >32KB 自滚。
+
+**⑤ 用户追加令（2026-10-17 12:4x）**：**「pretrain 在 `.29` 重启训练；以后不许随意换服务器。有问题上报或自己解决。训练重启后上报 ETA。」**
+- **`.29` 运行是硬指令；已在跑则不重启**：若健康 RUNNING（当前 step~860）→ **只报 ETA，不重启**；若挂了/无进程 → 从最新 ckpt resume，重启后 **≤30min 内**在 MEMORY 报：机器、PID、resume step、实测 s/step、tok/s、首 ckpt 时间、**ETA**。
+- **服务器固定**：`.29` = pretrain、`.12` = vision；**未经用户明确批准不得再换机**；故障必须**就地**定位/修复（版本/API/显存/NCCL 等），修不了再上报 blocker + 选项，不得擅自迁移。
+- `.29` 若 v2 compile 不生效（吞吐回落 ~184K tok/s / ~20s/step），按实测报 ETA（可能 ~108h），不得隐瞒。
+

@@ -1,35 +1,26 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-17 12:2x（🛑 停止 `.12` 的 80B decay → 迁回 `.29` 续跑；`.12` 让给 vision）· 用户直令 · 最高优先
+### 🆕 运维指令 · 2026-10-17 20:4x（🚨 P0 抢修：重启 ops 中继）· 用户直令 · 最高优先
 
-> **用户令（2026-10-17）**：「为什么 pretrain 占用 .12 呢？把它kill掉。pretrain用.29，vision用.12」
+> **用户令**：「pretrain 在 .29，现在空闲，让它去修复 ops 中继。」
+> 背景：上一轮重启脚本把启动命令与 `pkill -f` 写在同一行 → **自匹配误杀中继**；`.last_run_id` 停在 117，118 之后无回执。**pretrain 训练不受影响 —— 🚫 不要动 torchrun / 训练进程 / loop。**
 
-**① 根因（写进 MEMORY，不甩锅）**：crash5/6 是 `.12` 本地 `emerging_optimizers 0.5.0a0` 与 Megatron API 不匹配；为用该本地安装，把 80B decay 从 `.29` 迁到 `.12`。这是**兼容性临时迁机**，不是永久分卡。现按用户令**固定 `.29`**。
+**① 执行（必须写成脚本文件再运行，禁止在命令行里组合 pkill 与启动）**
+把下面 4 行写入 `/tmp/fix_relay_2040.sh`（第 1 行先 `cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run`）：
+- `pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill`
+- `sleep 2`
+- `setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &`
+- `sleep 3; pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-120; tail -5 /tmp/baize_ops_relay.log`
+然后 `bash /tmp/fix_relay_2040.sh`。
 
-> ⚠️ **先查状态再动手（2026-10-17 11:5x 实测）**：`.29` **已在健康 RUNNING**（#488：08:44 起，step~860 @11:36，loss 2.03，296.8K tok/s，8 卡 100%/51.7GB，0 crash），且 **`.12` 已于 11:37 释放**（`GPU12_RELEASED=1`）。⇒ **目标已达成，不要重启**（重启会丢 860 步≈2.8h）；**只需上报 ETA**。仅当 `.29` 无进程/挂了，才执行 ②③ 的重启流程。
+**② 判据**：after 至少 1 个 `bash ops_relay.sh` 进程；日志无 error；`.last_run_id` 仍 117（无新命令属正常）。
 
-**② 停止 `.12`（先保 ckpt，再 kill）**
-- 记录原文：`date`、`nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv`、`pgrep -af 'baize_xmodel25_decay|torchrun.*baize_xmodel25_decay'`。
-- 查 ckpt：按脚本实际 `OUT`（`grep -n '^OUT=' run/baize_xmodel25_decay_v2.sh`）；`ls -lt $OUT/latest.pt $OUT/checkpoint_*.pt`；记录最新 step/mtime。
-  - 有 `latest.pt`（step≥500）→ 以它 resume；
-  - 只有 `step_532000` → 从 `step_532000` 重起，MEMORY 记「损失步数 ≈ X（≈X×11.9s）」。
-- 停止：`kill -TERM <torchrun leader>` → ≤120s 未退再 `kill -KILL` leader + workers。**只杀本任务 PID**；🚫 不碰 `baize_pretrain_loop.sh` / `baize_vision_loop.sh` / `ops_relay.sh` / data 下载 / harness。
-- 验证：`.12` 8 卡 `0 MiB / 0%`、无 compute apps；原文贴 MEMORY，写 `GPU12_RELEASED=1 <时间>`；**立即 commit `pretrain move29: release .12` 并 push**（vision 依赖此信号，但用户令优先，不阻塞 vision）。
+**③ 回报**：`MEMORY_PRETRAIN_2B.md` 心跳写「中继已恢复 + PID + 时间」，commit `pretrain ops-fix:` 后 push。
 
-**③ 迁回 `.29` 续跑**
-- `.29` preflight（原文落盘）：`nvidia-smi` 8 卡空；`py310`；`torch / transformers / megatron.core / emerging_optimizers` 版本；**打印 `OrthogonalizedOptimizer.__init__` 与 `newton_schulz_tp` 签名**。
-  - ⚠️ `.12` 的 crash5/6 monkey-patch 只针对 `0.5.0a0`；`.29` 版本若不同，**不要盲套 patch**，按实际签名适配；`_orig_mod` 保存修复与版本无关，保留。
-- 起训：`cd run && setsid bash baize_xmodel25_decay_v2.sh > /tmp/baize_xmodel25_decay_v2_dot29.log 2>&1 < /dev/null &`；用 `--resume`（脚本已支持）指向最新 ckpt；确认 step/loss/tok/s、0 crash；首 ckpt 验证 `_orig_mod` 不崩。
-- 配方不变（seq 3712 / GBS 960 / ITERS 19980 / LR 1.67e-3→1e-5 / SAVE 500）；**不得改配方**。
-- MEMORY 写：机器 `.29`、PID、resume step、ETA、首 ckpt 时间；commit `pretrain move29:`。
+**④ 红线**：只做中继；🚫 不碰训练/loop/ckpt；🚫 不清 /tmp；🚫 改任何训练配置。
 
-**④ 纪律**：只停自己任务；停前必须确认 ckpt；不删 ckpt；不占 `.12`；与 vision ArmB 错峰 IO；任务书 >32KB 自滚。
-
-**⑤ 用户追加令（2026-10-17 12:4x）**：**「pretrain 在 `.29` 重启训练；以后不许随意换服务器。有问题上报或自己解决。训练重启后上报 ETA。」**
-- **`.29` 运行是硬指令；已在跑则不重启**：若健康 RUNNING（当前 step~860）→ **只报 ETA，不重启**；若挂了/无进程 → 从最新 ckpt resume，重启后 **≤30min 内**在 MEMORY 报：机器、PID、resume step、实测 s/step、tok/s、首 ckpt 时间、**ETA**。
-- **服务器固定**：`.29` = pretrain、`.12` = vision；**未经用户明确批准不得再换机**；故障必须**就地**定位/修复（版本/API/显存/NCCL 等），修不了再上报 blocker + 选项，不得擅自迁移。
-- `.29` 若 v2 compile 不生效（吞吐回落 ~184K tok/s / ~20s/step），按实测报 ETA（可能 ~108h），不得隐瞒。
+> 📦 2026-10-17 12:2x「停 `.12` 迁 `.29`」原文 → `ARCHIVE_OPERATOR_PRETRAIN.md`「归档块 N」。**仍生效**：`.29` 固定 pretrain / `.12` 固定 vision；未经批准不换机；已在跑不重启；故障就地修；compile 失效须如实报 ETA。
 
 
 > 📦 §运维指令·2026-10-16 22:4x（🔧 MBS 卡 logits 显存 → 分块 CE）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分块 CE 已实现并修双 bug（label double-shift + μP logit scale=1/6），v2 正式训练已起（MBS=4/chunked CE/compile default/no_sync，~299K tok/s）。需要时再读。

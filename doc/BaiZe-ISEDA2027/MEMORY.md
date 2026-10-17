@@ -19,6 +19,13 @@
 - 已下发 `run/BAIZE_HARNESS_TASK.md` 顶部 **P0 抢修块**（32,759B）：① 安全重启中继；② 用 `/tmp/tb_oracle_cfg_117.yaml`（`environment.extra_docker_compose=/tmp/network-host-overlay.yml`）重跑 3 个失败任务；③ 3/3 后再跑全量 oracle -k 5 到 5/5；**5/5 前禁止 pilot/全量**。原「Docker 权限」「清 /tmp」两块归档为「归档块 M」。
 - 详见 `daily-memories/2026-10-17.md`。
 
+### 🔧 pretrain 代修 ops 中继（用户令）
+- 用户令：「pretrain 在 .29，现在空闲，让它去修复 ops 中继。」
+- 已下发 `run/BAIZE_PRETRAIN_2B_TASK.md` 顶部 **P0 块**：把 4 行重启步骤写进 `/tmp/fix_relay_2040.sh` 再执行（`pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill` → sleep → `setsid bash ops_relay.sh …` → 复查），**禁止在命令行里组合 pkill 与启动**（上次即因此自匹配误杀）。
+- 判据：至少 1 个 `bash ops_relay.sh` 进程 + 日志无 error；**红线：不碰训练/torchrun/loop**。
+- 12:2x「停 `.12` 迁 `.29`」原文归档为「归档块 N」，任务书 **32,587B → 30,284B**；仍生效要点（`.29` 固定 pretrain、不换机、已在跑不重启）保留一行指针。
+
+
 
 
 
