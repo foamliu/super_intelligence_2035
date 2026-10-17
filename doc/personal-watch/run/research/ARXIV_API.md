@@ -1462,3 +1462,19 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-17-*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-17 18:00`**（「晚 2」轮 · 当日收口）：① 复验批次（**⚠️ 本地 10-17 = 周六 ⇒ arXiv 周末不公告**，`window_mode` 或切 `weekend_batch`(120h) ⇒ **预期仍 0 新增**，仍须分源实测并如实记录）；② 晚报 2 篇「科普」→ 日报收口 **5/5**（+ `## 晚报变更说明（AM → PM）`）；③ 第 5 批分镜脚本 `research/video/SCENES/10_17.html`；④ **每日论文日报邮件（第 4 封）**（选 5 篇 + PDF 入 `research/pdf/2026-10-17/` + 发 `paul.liu@cxmt.com`）。
 
+
+### 9.97 第九十六轮（本地 2026-10-17 18:00 时窗 · **P0 第 4 批第 19 轮 · 「晚 2」轮 · 当日收口**）：**无新公告批次**（**周六 arXiv 不公告**，批次仍 `2026-10-15`）→ `--fetch` 用 `window_mode=weekend_batch`（**≤120h**）→ **`kept 3` / `dropped 597`**，3 条**均为 `2026-10-12` 批旧条目补漏**（按「候选」登记、不计入今日 5 篇）→ **晚报 2 篇「科普」取自第九十四轮 PM 候选池** + 单条权威复核 → 日报**收口 5/5** + 第 5 批分镜脚本交付
+
+- **取源复验 R1′**（`generated=2026-10-17T10:00:21Z`，证据 `raw/2026-10-17-probe-r96.log`）：arXiv API ✅ `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults=633893`、最新样本 `published=2026-10-15T17:59:59Z`（**与第九十五轮 AM、第九十四轮 PM 完全一致** ⇒ **周六无新批属正常，非「无数据」**）／ **HF `daily_papers` ❌** `[Errno 101] Network is unreachable`（**如实记 FAIL、不伪造**）／ **RSS cs.CL · CV · LG = 0 / 0 / 0**（**周末空 feed** ⇒ 记「周末/未公告」，**不写成「无新增」**）。
+- **关键词增量**（`--fetch --seen research/SEEN.md`，`window_mode=weekend_batch`，120h，`generated=2026-10-17T10:02:03Z`，证据 `raw/2026-10-17-fetch-r96-seen.json`）：**15/15 查询 `ok`**（均 `attempts=1`，**无重试**）· **`kept 3` / `dropped 597`**。3 条 `kept`：`2610.16621`（cs.MA，`2026-10-12T11:38:15Z`）／ `2610.16537`（cs.LG，`2026-10-12T10:24:42Z`）／ `2610.16518`（cs.LG，`2026-10-12T10:09:03Z`）—— **全部早于 `2026-10-15` 批次、非新批、非科普题材** ⇒ **仅登记「候选」**（`raw/update_r96.py` 追加 3 行），**不计入今日 5 篇**。
+- **晚报 2 篇（科普）**（`id_list=2610.22371,2610.22372,2610.21011,2610.21176,2610.22324` → **5/5 返回**，`HTTP 200` + `application/atom+xml; charset=utf-8` + 有 `published`；证据 `raw/2026-10-17-idlist-shortlist-r96.{xml,headers}`）：
+  - `2610.22371` *Gen4P: Video Generators are 4D Perceivers*（`published=2026-10-15T17:59:48Z`，cs.CV，3 位署名 `Yitong Xia, Zeren Jiang, Chuanxia Zheng`，`comment: Project page: https://gen4p.github.io/`）→ **本日 TOP-1**（分镜 `video/SCENES/10_17.html`：9 镜 · 五段 120s · ≈436 字）
+  - `2610.22372` *LIBERO-PeRM: Benchmarking Personalized Robotic Manipulation*（`published=2026-10-15T17:59:59Z`，cs.RO，10 位署名，前 3 `Zhixu Li, Keqian Tang, Litian Gong`，`comment: NeurIPS 2026; Project Website: https://libero-perm.github.io/`）
+  - **备选 3 篇（同批复核确认，留后续轮次）**：`2610.21011` · `2610.21176` · `2610.22324`。
+  - **去重复核**：2 个 ID 均**不在**任何 `daily/*.html`，检出时在 `SEEN.md` 为「候选」（第九十四轮 PM 入账）→ **无重复**。
+- **口径护栏**：2 篇按**目的 2「科普」**（大众门槛低 + 可视化潜力）挑选，**不与目的 1「借鉴」混用**；「SOTA / 有竞争力」照原文 "state-of-the-art or competitive" 并标**作者自报 · 本线未复现**；**不**引申为「AI 已理解物理世界 / 已具备世界模型」。
+- **产出**：① `research/daily/2026-10-17.html` **收口 5/5**（序号 4–5 + `## 晚报变更说明（AM → PM）` + 附录 A′/B′ 新增、附录 C 修订、footer 改「晚报 · 5/5（已收口）」）② `research/daily/index.html`（首行改「晚报（PM）· 5 / 5」+ footer）③ `research/video/SCENES/10_17.html`（自包含单文件 · 零外链）④ `research/video/SCENES/index.html`（+1 行）⑤ `research/mail/drafts/2026-10-17-daily-report.md` + `research/mail/2026-10-17-body.txt`（每日论文日报第 4 封）。
+- **台账**：`SEEN.md` **2 行状态 候选 → 收录** + **追加 3 行候选** ⇒ **3,688 → 3,691 行** = **收录 211 / 候选 2973 / 候选（RSS 补充）507**；`research/papers.jsonl` **209 → 211 行**。落盘脚本：`research/raw/update_r96.py`。
+- **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-17-*r96*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-18 06:00`**（「早 3」轮 · 新一日 AM 轮）：① 复验批次（**周日 arXiv 亦不公告** ⇒ 预期仍 `2026-10-15` 批、`kept 0`，仍须分源实测）；② 早报 3 篇「借鉴」**取自候选池**（`2973` 条，优先 10-12 批补漏的 3 条新候选与 10-15 批未用条目）+ `id_list` 复核；③ **10-17 的 5 篇 PDF 已在 `research/pdf/2026-10-17/`**，无需重下。
+
