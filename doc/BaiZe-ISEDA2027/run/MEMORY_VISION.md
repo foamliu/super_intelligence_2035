@@ -4,8 +4,9 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-17 21:1x（🔄 ArmB 训练监控 · wake #138）**：git pull fast-forward(1 commit, personal-watch), 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **23680/57250(41.4%)**，loss=0.27(contr=0.245 patch=0.023)，C1~0.78(正常振荡峰值区间)，lr=6.99e-4(cosine 衰减)，**0.85 it/s**(稳态)，8×H100 100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=462min(7.7h)。✅ ckpt@10000+20000+latest.pt+open_clip_state_dict+predictor+config.json 均在。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**ETA**: (57250−23680)/0.85≈**11.0h → ~08:00 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.9KB / MEMORY=30.3KB。
+> 🆕 **2026-10-17 22:26（🔄 ArmB 训练监控 · wake #139）**：git pull up to date, 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **27540/57250(48.1%)**，loss=0.32(contr=0.30 patch=0.022)，C1~0.74(正常振荡 0.69–0.85)，lr=6.03e-4(cosine 衰减)，**0.86 it/s**(稳态)，8×H100 100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=533min(8.9h)。✅ ckpt@10000+20000+latest.pt+open_clip_state_dict+predictor+config.json 均在。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**ETA**: (57250−27540)/0.86≈**9.6h → ~08:00 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.9KB / MEMORY=30.2KB。
 >
+> 📦 2026-10-17 21:1x（🔄 ArmB 训练监控 · wake #138）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step23680(41.4%)健康, 0.85 it/s, ckpt@20000+10000已存, ETA~08:00 10-18。
 > 📦 2026-10-17 19:5x（🔄 ArmB 训练监控 + ✅ ProtB eval 脚本就绪 · wake #137）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step20520(35.8%)健康, armB_protb_eval.py+run_armB_protb_eval.sh 交付(CPU单测3/3 PASSED), 0.88 it/s, ETA~07:30 10-18。
 > 📦 2026-10-17 18:39（🔄 ArmB 训练监控 · wake #136）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step15960(27.9%)健康, 0.87 it/s, ETA~10-18 08:00。
 > 📦 2026-10-17 14:5x~17:27（🔄 ArmB 监控 · wake #133~#135）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step4540→12120 健康, P1 ArmA 中文报告交付(commit 2f15f88e), 0.86 it/s 稳态, checkpoint_10000 已存。
@@ -27,10 +28,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **ArmB 4-epoch 训练运行中（wake #132 重启, PID 1203161, 10-17 13:31）**：open_clip ViT-B/16 + AIMv2-style dense(InfoNCE + masked-patch MSE)。step 23680/57250(41.4%) loss=0.27, 0.85 it/s, 8×H100 100%/50.5GB, ckpt@10000+20000已存, ETA~11.0h→~08:00 10-18。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**WAITING=1**。前序 ArmA(154500步)+ProtB(58.03%)完成。 |
+| PHASE | 🚀 **ArmB 4-epoch 训练运行中（wake #132 重启, PID 1203161, 10-17 13:31）**：open_clip ViT-B/16 + AIMv2-style dense(InfoNCE + masked-patch MSE)。step 27540/57250(48.1%) loss=0.32, 0.86 it/s, 8×H100 100%/50.5GB, ckpt@10000+20000已存, ETA~9.6h→~08:00 10-18。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。**WAITING=1**。前序 ArmA(154500步)+ProtB(58.03%)完成。 |
 | ERROR_COUNT | 20（①~⑲ 同前 ⑳ gather_object 119GB OOM → `log_samples=False` 修复 + batched `generate_until` 重写） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-17 21:1x (wake #138)**: ArmB 4-epoch 训练监控——step 23680/57250(41.4%), loss=0.27, C1~0.78, 0.85 it/s(稳态), ETA~11.0h→~08:00 10-18。8卡100%util, 50.5GB/卡, 无OOM。✅ checkpoint_20000+10000已存。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。P0(kill+起训)+P1(ArmA报告)均已交付。下一步: 监控→训完run_armB_protb_eval.sh→报告。📦 体积：TASK=26.9KB / MEMORY=30.3KB（均<32KB）。 |
+| 更新 | **2026-10-17 22:26 (wake #139)**: ArmB 4-epoch 训练监控——step 27540/57250(48.1%), loss=0.32, C1~0.74, 0.86 it/s(稳态), ETA~9.6h→~08:00 10-18。8卡100%util, 50.5GB/卡, 无OOM。✅ checkpoint_20000+10000已存。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。P0(kill+起训)+P1(ArmA报告)均已交付。下一步: 监控→训完run_armB_protb_eval.sh→报告。📦 体积：TASK=26.9KB / MEMORY=30.2KB（均<32KB）。 |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
@@ -233,6 +234,8 @@ WAITING: 1
 - [17:27 Oct17] **Wake #135**: 🔄 **ArmB 训练监控** — git pull up to date，无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **12120/57250(21.2%)**，loss=0.48(contr=0.45 patch=0.030)，C1~0.60–0.70(对比损失正常振荡 0.55–0.71)，lr=9.28e-4(cosine 衰减)，**0.86 it/s**(稳态锁定)，8×H100 99–100% util/全卡/50.5GB/卡(peak=50.4GB **无OOM**, MBS=512确认)，t=234min(3.9h)。✅ checkpoint_10000(@16:49,1.81GB)+latest.pt+open_clip_state_dict(598MB)+predictor(4.7MB)+config.json。ETA (57250−12120)/0.86≈14.5h→~10-18 08:00。📦 体积：TASK=26.2KB / MEMORY=31.1KB。
 - [18:39 Oct17] **Wake #136**: 🔄 **ArmB 训练监控** — step 15960/57250(27.9%), loss=0.53, 0.87 it/s, ETA~08:00 10-18。详见 daily-memories-vision/2026-10-17.md。
 - [19:5x Oct17] **Wake #137**: 🔄 **ArmB 训练监控 + ✅ ProtB eval 脚本就绪** — git pull up to date，无新运维指令。✅ ArmB 4-epoch 训练健康: step **20520/57250(35.8%)**, loss=0.36(contr=0.33 patch=0.026), C1~0.72, lr=7.73e-4, **0.88 it/s**(稳态), 8×H100 100%/50.5GB(peak=50.4GB 无OOM), t=390min(6.5h)。✅ checkpoint_20000(@19:53)+10000+latest+open_clip_state_dict(598MB)+predictor+config。✅ **新建 `armB_protb_eval.py`(386行)+`run_armB_protb_eval.sh`** — CPU单测3/3 PASSED: open_clip_state_dict.pt(302keys)与latest.pt(308→302keys, predictor剥离)两条加载路径权重一致, visual=86.2M；复用ArmA ProtB口径(feature=projected, full IN-1k, SGD 90ep, seeds 0/1/2, 5-NN, OMP_NUM_THREADS=8修复)。ETA (57250−20520)/0.88≈**11.6h→~07:30 10-18**; +ProtB 1–2h⇒**~09:00 10-18**。下一步: 监控→训完`run_armB_protb_eval.sh`→报告。📦 体积：TASK=26.2KB / MEMORY=31.3KB。
+- [21:1x Oct17] **Wake #138**: 🔄 **ArmB 训练监控** — git pull fast-forward(1 commit, personal-watch), 无新运维指令。✅ ArmB 4-epoch 训练健康: step **23680/57250(41.4%)**, loss=0.27(contr=0.245 patch=0.023), C1~0.78, lr=6.99e-4, **0.85 it/s**(稳态), 8×H100 100%/50.5GB(peak=50.4GB 无OOM), t=462min(7.7h)。ETA (57250−23680)/0.85≈**11.0h→~08:00 10-18**。📦 体积：TASK=26.9KB / MEMORY=30.3KB。
+- [22:26 Oct17] **Wake #139**: 🔄 **ArmB 训练监控** — git pull up to date，无新运维指令。✅ ArmB 4-epoch 训练健康: step **27540/57250(48.1%)**, loss=0.32(contr=0.30 patch=0.022), C1~0.74(正常振荡 0.69–0.85), lr=6.03e-4, **0.86 it/s**(稳态), 8×H100 100%/50.5GB(peak=50.4GB 无OOM), t=533min(8.9h)。✅ checkpoint_10000+20000+latest+open_clip_state_dict(598MB)+predictor(4.7MB)+config.json 均在。ETA (57250−27540)/0.86≈**9.6h→~08:00 10-18**; +ProtB 1–2h⇒**~09:00–10:00 10-18**。下一步: 监控→训完`run_armB_protb_eval.sh`→报告。📦 体积：TASK=26.9KB / MEMORY=30.2KB（均<32KB）。
 
 
 
