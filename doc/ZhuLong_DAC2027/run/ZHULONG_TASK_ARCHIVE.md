@@ -935,3 +935,106 @@ setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC20
 **③ readback_none**：legacy 73.3±2.2%（std=2.2）同样可信，**暂不重跑**（与 omega_low 同理）。
 
 **④ 纪律**：判据(十三)不变（消融臂 Pass@1 任何值有效、timeout≤10 且无 infra 故障）；重测 binary 后把 fresh 结果替换 `zhulong_results.md` 旧 legacy 值并注明；commit 前缀 `zhulong S1:` · 任务书 >32KB 自滚归档。
+
+---
+
+## [归档 2026-10-18 02:57] 运维令二十六 & 二十三（被运维令二十七取代）
+
+> 搬出原因：运维令二十七（2026-10-17）对 B.glm-5.3-flash 和 B.deepseek-v4-flash 复测做了全新规格（trace 诊断 + maxTokens 16384 + -p 调整），并明确 wo_selfexpl r2-r5 不再跑（r1=83.5% 收口）。运维令二十三（原编排）与二十六（wo_selfexpl 排队）均被取代/闭合，原文搬入此处，TASK 留 1 行指针。
+
+### 运维指令 · 2026-10-16（二十六）— 🔜 排队：B.deepseek-v4-flash 之后接 wo_selfexpl 干净 5-run【用户直令·已被二十七取代·2026-10-18 归档】
+
+> **用户令（2026-10-16）**：「B.deepseek-v4-flash 之后跑 wo_selfexpl，记录排队。」
+
+**① 排队顺序**（如无新指示，**自动接续**）：
+1. **B.glm-5.3-flash**（在跑，运维令二十三，r1✅80.4% / r2 跑中）→ 5/5 收口
+2. **B.deepseek-v4-flash** fresh 5-run（运维令二十三，替换 legacy 16.7±12.3% std 过大）
+3. **🆕 C1.wo_selfexpl 干净 5-run**（本指令新增）→ 替换当前带 † 脚注的 81.4±4.1%
+
+**② wo_selfexpl 干净 5-run 规格**：
+- 配置：V2 文档（**自探索 OFF**）+ 检索 ON + 沙盒 ON + 主基座 `deepseek-v4-pro-fp4`
+- ⚠️ **关键**：r1 必须**严格 V2**（不得误用 V3 自探索文档——旧 r1=88.0% 即此污染，已在论文 `tab:main-ablation` 标 † 脚注）
+- 判据(十三)：timeout≤10 且无 infra 故障，Pass@1 任何值有效
+- 5-run 收口后：算 mean±std → 回填 `tab:main-ablation` 的 `ZhuLong w/o Self-Expl.` 行（移除 † 脚注）+ 同步 `zhulong_results.md` C1.wo_selfexpl 节 + 正文 Δ
+
+**③ 纪律**：切配置后 canary 自检；commit 前缀 `zhulong C1:`；/home<8G 暂停清理。
+
+**闭环状态（2026-10-18）**：被运维令二十七①取代——wo_selfexpl r1 regrade 已由运维侧手动启动（batch 2026_1017_055109），r1=83.5%(132/158) 收口，**r2-r5 不再跑**（陈熙元已测 wo_selfexpl = 77.3±2.9% 作为对照）。
+
+### 运维指令 · 2026-10-15（二十三）— 🔜 S1.readback_binary 后编排：B.glm-5.3-flash → B.deepseek-v4-flash【用户直令·已被二十七取代·2026-10-18 归档】
+
+> **用户令（2026-10-15）**：「告诉 zhulong，S1.readback_binary 测完后，如无其它指示，则按次序测 B.glm-5.3-flash（GLM-5.3 Flash）→ B.deepseek-v4-flash（DeepSeek-V4 Flash）。」
+
+**① 编排**（`readback_binary` 5-run 重测完成后，如无新指示，**自动接续**）：
+1. **B.glm-5.3-flash**（新加 B 模型消融臂，跑 5-run）：
+   - model：`glm-5.3-flash`
+   - API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f`
+   - Base URL：`http://agi-gateway.cxmt.com/v1`（⚠️ `/v1`，非 `/cloud/v1`）
+2. **B.deepseek-v4-flash**（重测 5-run）：legacy `16.7±12.3%` 有 r5=37.3 离群、std 过大 → fresh 5-run 修正 std。
+
+**② 做法**：与 B 臂既有口径一致（full harness + V3 自探索，主基座 deepseek-v4-pro-fp4 不变，**仅替换被评测 backbone** key/endpoint）；判据(十三)（消融臂 Pass@1 任何值有效、timeout≤10 且无 infra 故障）。
+
+**③ 完成**：填 `zhulong_results.md` B 臂表（新增 glm-5.3-flash 行 + 替换 deepseek-v4-flash 为 fresh 值）。
+
+**④ 纪律**：每臂切配置后 canary 自检；commit 前缀 `zhulong B:` · 任务书 >32KB 自滚归档。
+
+**闭环状态（2026-10-18）**：被运维令二十七取代——fresh 5-run 已出（glm-5.3-flash 66.8±10.5% std=10.5 偏大 / deepseek-v4-flash 11.9±2.7% 但 73% 失败为 infra 问题）。运维令二十七对两臂分别启动复测（deepseek-v4-flash 复测 5/5✅=60.1±5.5% 已收口；glm-5.3-flash 复测 r1 两次作废·infra 阻塞·等运维决策）。fresh 值保留为历史对照。
+
+---
+
+## [归档 2026-10-18 02:57] 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立
+
+> 搬出原因：合并执行已完成（单任务书 + 单 loop 运行中），起始状态已远过 init，ops 中继已稳定 6d+。infra 端口列表（8664/8665/8653/8669）已过时（实际为 8650/8651/8652/8654）。路径信息在 §6 + MEMORY 状态头已存。原文搬入此处，TASK 留 1 行指针。
+
+### 🆕 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立
+
+> 本次把 4 个 phase（S1 保真度 / 组件 / S2 Φ / 模型）**合并进本单一任务书 + 单一 loop**，不再按 `ablation_run_conductor_serial.sh` 拆 3 个 task book + 4 个 loop。**执行顺序不变**（README §8）：S1 → 组件 → S2 Φ → 模型。
+
+1. **环境（agent 最终跑在 36.15 服务器，必须用下表 `/nasdata/` 路径）**：
+   - `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`
+   - `PAPER=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027`（唯一可改 LaTeX 树）
+   - `GIT_ROOT=/nasdata/app.e0031982/code/super_intelligence_2035`
+   - **注意**：当前 2.12 开发机路径前缀为 `/nas_train/`（与 36.15 的 `/nasdata/` 独立挂载，互不关联）。旧 task book 中的 `/nasdata/` 路径在 36.15 上仍然有效，并非迁移关系。
+2. **infra 前置校验（PHASE=init 首次启动前必做，不满足则 `WAITING=1` 原地等）**：
+   - `df -h /home` 可用 **≥ ~8G**；四 shard 端口 **8664/8665/8653/8669 全 OPEN**；`run_code` 可正常执行（license 可用）。
+   - 旧停摆根因即此三项，**没恢复就别开跑，跑出来也作废**。
+3. **起始状态（运维在此填实）**：默认 `PHASE=init`，从 `STAGE=S1, CONFIG=omega_low, ROUND=1` 开始；若要延续旧 S1 进度，改填 `CONFIG=omega_low, ROUND=3`，并把 r1=81.6 / r2=82.3 写进 MEMORY 成绩表，r1/r2 不重跑。
+4. **ops 中继通道已就绪**：`run/zhulong_ops_relay.sh` + `run/ops/{inbox,outbox,README}.md`。运维通过 git 下发 shell 命令（~20s 轮询），与 BaiZe ops 相互独立。启动命令见 `run/ops/README.md` 或本报告 §6。
+   - ⚠️ 只有本区（运维指令区）的 ops 提及是写给人看的。**agent 不要碰 ops/ 目录**（中继专供运维下发命令，agent 写 MEMORY 和日常记录即可）。
+
+**闭环状态（2026-10-18）**：合并执行已落地（单任务书 + zhulong_loop.sh 运行中·PID81827）；起始点已远过 init（当前 B.glm-5.3-flash 复测）；ops 中继稳定（PID1023764）；infra 端口已更新为 8650/8651/8652/8654@10.129.32.75（原 8664/8665/8653/8669 过时）。
+
+---
+
+## [归档 2026-10-18 02:57] proxy 重启脚本（运维指令 · 2026-10-09 子节·已执行）
+
+> 搬出原因：该 restart 脚本已于 2026-10-08 执行完毕，loop 持续带代理运行（每次巡检确认）。常驻 self-check 规则保留在 TASK，仅 verbose 脚本搬入此处。
+
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+git pull --rebase --autostash origin main          # 先同步（这次用你当前 shell 的代理）
+pkill -f zhulong_loop.sh; sleep 3
+export https_proxy=http://172.19.92.23:13128
+export http_proxy=http://172.19.92.23:13128
+setsid bash zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+# 复核：新 loop 进程应带代理
+_NPID="$(pgrep -f 'zhulong_loop.sh' | head -1)"
+tr '\0' '\n' < /proc/$_NPID/environ | grep -iE 'https_proxy'
+```
+
+---
+
+## [归档 2026-10-18 02:57] 运维令十三 items 3-4（phi_k3/phi_k10 历史事件处理·已闭合）
+
+> 搬出原因：phi_k3 与 phi_k10 均已 5/5 收口（见 MEMORY 成绩表）。items 3-4 是当时的事件处理指令，已执行完毕。常驻规则（items 1,2,5 + 红线 + 背景 + 用户令）保留在 TASK。
+
+**原 item 3**：phi_k3 r1 att1 = 72.8%（115/158, timeout=0）应判为有效。立即：
+   - 如果 att2 仍在跑 → 等 att2 跑完后取 att2 的成绩（不浪费已投入的算力），记 r1 = att2 成绩；
+   - 如果 att2 已跑完 → 取 att2 成绩记 r1；
+   - 如果 att2 尚未开始 → 取消 att2，直接记 r1 = 72.8%，推进 r2。
+   - 无论哪种情况，ERROR_COUNT 重置为 0，不因 72.8% 计错误。
+
+**原 item 4**：phi_k10 已完成的 5/5 = [78.5, 76.6, 77.2, 81.0, 75.3] → 77.7±2.2% 保留不变（已跑完，不追溯重跑）。但须在成绩记录中标注：r3/r4/r5 经历了不必要的重试（att1 低分被误判为无效），最终取的是重试后的值；原始 att1 值（r3=74.1%, r4=63.3%/74.1%）应保留在 daily-memories 中作为证据，不删除。
+
+**闭环状态（2026-10-18）**：phi_k3 5/5=69.1±2.5% ✅；phi_k10 5/5=77.7±2.2% ✅。两臂均收口，事件处理指令已执行。
