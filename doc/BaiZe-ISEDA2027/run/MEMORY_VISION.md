@@ -4,7 +4,7 @@ WAITING: 0
 
 ## 状态头
 
-> 🆕 **2026-10-17 10:0x（🔧 ProtB 评测卡死诊断+修复+重启 · wake #129）**：wake #128 启动的 ProtB 8 卡 sharded 评测**卡死**——`armA_protb_eval.py` 每进程默认 OMP 线程==nproc(224)，8 进程×~196 线程≈1500 线程在 224 核上 **7× 过订阅**，小张量算子全耗在线程调度 → 吞吐塌到 **~1.2 img/s**（49min 仅完成 1/14 val 文件，GPU util 0%）；且 8 卡**冗余**解码同一 50k val（7/8 浪费 + NFS 争用）。**修复**：① `run_armA_protb_eval.sh` 加 `OMP/MKL/OPENBLAS_NUM_THREADS=8`；② `armA_protb_eval.py` 仅 shard 0 抽 val、shard 1-7 skip。**重启后实测**：pcpu 2280%→~350%/进程，file1 完成 49min→<60s（≈50× 提速），稳态 ~250 img/s/卡，shard0 val 9/14 + shards1-7 train 各 ~8/37 文件进行中，ETA 抽取 ~12min + 3-seed probe ~8min ≈ 20min。下一步：监控评测完成→写入 ProtB 结果+生成对比报告。📦 体积：TASK=30.8KB / MEMORY=31.9KB（均 <32KB）。
+> 🆕 **2026-10-17 10:2x（🔧 ProtB 评测卡死修复 + ✅ ArmA ProtB 结果 · wake #129）**：wake #128 的 ProtB 8 卡评测卡死（~1.2 img/s，49min 仅 1/14 val 文件，GPU 0%）——根因：8 进程×nproc(224) OMP 线程 7× 过订阅 + 8 卡冗余解码同一 50k val。**修复**：`run_armA_protb_eval.sh` 加 `OMP/MKL/OPENBLAS_NUM_THREADS=8`；`armA_protb_eval.py` 仅 shard 0 抽 val。重启后 pcpu 2280%→~350%、file1 49min→<60s（≈50×）、稳态 ~250 img/s/卡。✅ **评测完成（10:23 exit 0）**：**ProtB lp = 58.03 ± 0.02%**（3 seeds 58.02/58.07/58.02，full IN-1k 1.28M train + 50k val，SGD 90ep），**5-NN = 53.98%**，JSON 存 `vision/armA_protb_vitb16_224_results.json`。**对比**：ArmA(从头 CLIP InfoNCE,154500 步) ProtB 58.03% vs ④-4ep(AIMv2-style dense) 67.05%（**−9.02pp**）；ArmA 5-NN 53.98% vs ④-4ep 42.35%（**+11.6pp**）→ CLIP 检索强但 lp 弱（合 BP-1）。📦 TASK=30.4KB/MEMORY≈32KB。
 
 > 🆕 **2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）**：ArmA 训练完成（exit 0，step 154500/154500，ckpt 1.7G 已存）；效率验收全通过（3.37 it/s +40%，8 卡 95-100% util，~7.9h）。ProtB 评测 09:09 启动但卡死（详见 wake #129：已诊断+修复+重启）。
 >

@@ -1,0 +1,21 @@
+{
+  "ckpt": "latest.pt",
+  "model": "ViT-B-16",
+  "feature": "projected",
+  "protocol": "B",
+  "probe_train": "full",
+  "epochs": 90,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "lp_per_seed": [
+    58.01599621772766,
+    58.065998554229736,
+    58.01999568939209
+  ],
+  "lp_mean": 58.034,
+  "lp_sigma": 0.0227,
+  "knn5": 53.98
+}
