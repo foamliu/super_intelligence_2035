@@ -1,0 +1,14 @@
+Connection: close
+Content-Length: 13156
+server: Google Frontend
+via: 1.1 google, 1.1 varnish, 1.1 varnish, 1.1 varnish
+x-cloud-trace-context: d450774e953de16b8f226cc7f28d3708
+content-type: application/atom+xml; charset=utf-8
+Accept-Ranges: bytes
+Age: 0
+Date: Sat, 17 Oct 2026 22:01:55 GMT
+X-Served-By: cache-lga-kjfk8660042-LGA, cache-lga-kjfk8660042-LGA, cache-lga-kjfk8660042-LGA, cache-nrt-rjaa8190039-NRT
+X-Cache: MISS, MISS, MISS
+X-Cache-Hits: 0, 0, 0
+X-Timer: S1792274511.713280,VS0,VE4800
+Strict-Transport-Security: max-age=300

@@ -1478,3 +1478,26 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-17-*r96*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-18 06:00`**（「早 3」轮 · 新一日 AM 轮）：① 复验批次（**周日 arXiv 亦不公告** ⇒ 预期仍 `2026-10-15` 批、`kept 0`，仍须分源实测）；② 早报 3 篇「借鉴」**取自候选池**（`2973` 条，优先 10-12 批补漏的 3 条新候选与 10-15 批未用条目）+ `id_list` 复核；③ **10-17 的 5 篇 PDF 已在 `research/pdf/2026-10-17/`**，无需重下。
 
+
+### 9.98 第九十七轮（本地 2026-10-18 06:00 时窗 · **P0 第 4 批「早 3」轮 · 新一日 AM 轮**）：**无新公告批次**（**周日 arXiv 不公告**，批次仍 `2026-10-15`）→ `--fetch` 用 `window_mode=weekend_batch`（**≤120h**）→ **`kept 0` / `dropped 600`** → 早报 3 篇「借鉴」**取自第九十四轮 PM 候选池** + 单条权威复核 → 日报**进度 3/5**
+
+| 源 | 端点 | 实测 | 判定 |
+|:--|:--|:--|:--|
+| arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=633893`，最新样本 `published=2026-10-15T17:59:59Z` | ✅ 可达（**批次未刷新**，与 10-17 AM/PM 完全一致） |
+| HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable`（`Errno 101`） | ❌ 不可达（**如实记 FAIL、不伪造 `hf_daily`**） |
+| arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=0 / 0 / 0` | ⚠️ **周末空 feed**（记「周末/未公告」，**不写「无新增」**） |
+
+- **取源复验 R1′**（证据 `raw/2026-10-18-probe-r97.log`）：`generated≈2026-10-17T22:00Z`；本轮**无超时告警、无重试**；HF 为确定性不可达（`Errno 101`，非超时）；RSS 三源均 0 条 = 周末特征（与 10-17 PM 一致）。
+- **关键词增量** `--fetch --seen research/SEEN.md --out research/raw/2026-10-18-fetch-r97-seen.json`（`window_mode=weekend_batch`，`window_hours=120.0`，`generated=2026-10-17T22:00:49Z`）：**15/15 查询 `ok`**（均 `attempts=1`、`retries=[]`、`rate_limit_seconds=3.0`）· **`kept 0` / `dropped 600`**。`dropped` 构成 = 「`already in SEEN`」+「`stale >120h`」；每查询 `n_entries=40`。⇒ **API 关键词 0 新增**（**0 新增 ≠ 无数据**：周日不公告的时点现象）。
+- **承接候选池**：来源 `raw/2026-10-16-fetch-r94-seen.json`（10-15 批 **201 kept**，2 条已收录，余 199 条候选）→ 按「借鉴」口径筛 5 条短名单 → **`id_list` 权威复核** `2610.22353,2610.21755,2610.20980,2610.22273,2610.22196` → **5/5 返回**，`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `raw/2026-10-18-idlist-shortlist-r97.{xml,headers}`）：
+  - `2610.22353` *Rethinking Routing Exploration in Modern Mixture-of-Experts*（`published=2026-10-15T17:58:02Z`，cs.LG，5 位署名，前 3 `Bingcong Li, Hao Ma, Michael Muehlebach`，`comment` 空）→ **BaiZe MoE 路由诊断 / MirrorMoE 按 token 自适应抑制专家**；
+  - `2610.21755` *DeciCAD: Harness-Grounded Learning of Action Policies for CAD Agents*（`published=2026-10-15T12:11:43Z`，cs.AI，8 位署名，前 3 `Yufeng Peng, Yixin Zhang, Ziyi Liu`，`comment` 空）→ **ZhuLong harness 设计（语义动作 / 决策观测 / 持久状态）+ 因果决策监督 + 约束 RL**；
+  - `2610.20980` *How to Train Your Little Dragon: Teaching a Small Language Model to Construct and Refine GPU Optimization Scripts*（`published=2026-10-14T21:49:24Z`，cs.LG，10 位署名，前 3 `Annabelle Sujun Tang, Wei Tang, Songyao Jiang`，`comment` 空）→ **ZhuLong generate–execute–refine：生成编译器脚本 + 确定性解码 + 正确性门控 RL**。
+  - **备选 2 篇（同批复核确认，留后续轮次）**：`2610.22273`（`2026-10-15T17:35:17Z`）· `2610.22196`（`2026-10-15T16:46:47Z`）。
+  - **去重复核**：3 个 ID 均**不在**任何 `daily/*.html`（`2610.22353` 仅出现在 10-17 附录「备选」，未成卡片）；检出时在 `SEEN.md` 为「候选」⇒ **无重复**。
+- **口径护栏**：3 篇均按**目的 1「借鉴」**，**不与目的 2「科普」混用**；首次提交日 **均早于 2026-10-18**，页面明示「取自前轮候选池」，**不冒充当日新论文**；摘要逐句译自 `id_list` 官方 abstract，**未扩写、未虚构数值与仓库地址**；数字统一标「**作者自报 · 未复现**」；`comment` 均空 ⇒ **不写「已开源 / 有项目页」**；**未做全文精读**声明随卡片给出。
+- **产出**：① `research/daily/2026-10-18.html`（**自包含单文件**，**早报 3/5** = 3 篇「借鉴」；页头取数说明 + 附录 A（I→VI）+ 附录 B（15 查询 per-query，均 `kept 0`）+ 附录 C（口径护栏）；自检 `<div>` 74/74、`<table>` 2/2、`<tr>` 24/24、**零 `<script>`**、外链仅 `arxiv.org/abs/<id>`，**28.3 KB**）② `research/daily/index.html`（新增 2026-10-18 行 + footer）③ `research/2026-10-18.md` ④ 同步 `research/INDEX.md` ⑤ PDF：`research/pdf/2026-10-18/{2610.22353,2610.21755,2610.20980}.pdf`（`%PDF-` 头 + 15 / 25 / 20 页，`pdf/` 已在 `.gitignore`，不入库）。**晚 2 篇「科普」** 待 18:00 PM 轮补录收口 **5/5**。
+- **台账**：`SEEN.md` **行数不变 3,691 条**（**3 行状态 候选 → 收录**）→ **收录 214 / 候选 2,970 / 候选（RSS 补充）507**；`research/papers.jsonl` **211 → 214 行**。落盘脚本 `research/raw/update_r97.py`。
+- **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-18-*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-18 18:00`**（「晚 2」轮 · 当日收口）：① 复验批次（**周日仍不公告** ⇒ 预期 `kept 0`，仍须分源实测并如实记录）；② 晚报 2 篇「科普」→ 日报收口 **5/5**（+ `## 晚报变更说明（AM → PM）`）；③ 分镜脚本 + 每日论文日报邮件（第 5 封）。
+
