@@ -12706,3 +12706,95 @@ Collecting main service artifacts
 --- C) job.log errors ---
 === DONE 120 ===
 ```
+
+---
+
+## RUN_ID 121 · 2026-10-17 22:44:02 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+D=/tmp/oracle_fix119/2026-10-17__22-37-51
+echo "=== RUN_ID 121 · verifier/agent logs · $(date '+%F %T') · host=$(hostname) ==="
+for t in build-cython-ext build-pmars; do
+  f="$(ls -d "$D/${t}__"* 2>/dev/null | head -1)"
+  echo "=== $t -> ${f:-MISSING} ==="
+  [ -n "$f" ] || continue
+  echo "[result.json head]"; head -c 900 "$f/result.json" 2>&1; echo
+  echo "[verifier files]"; find "$f/verifier" -maxdepth 2 -type f 2>/dev/null | head -8
+  for g in "$f/verifier"/*.log "$f/verifier"/*/*.log "$f/agent"/*.log; do
+    [ -f "$g" ] || continue
+    echo "--- $g (tail 20) ---"; tail -20 "$g" 2>&1
+  done
+done
+echo "=== DONE 121 ==="
+```
+
+**输出**
+```
+=== RUN_ID 121 · verifier/agent logs · 2026-10-17 22:44:02 · host=whag0pgpuap29 ===
+=== build-cython-ext -> /tmp/oracle_fix119/2026-10-17__22-37-51/build-cython-ext__33t3Mpj ===
+[result.json head]
+{
+    "id": "22908f9e-9aff-4a30-9d9f-a58f7700de2c",
+    "task_name": "build-cython-ext",
+    "trial_name": "build-cython-ext__33t3Mpj",
+    "trial_uri": "file:///tmp/oracle_fix119/2026-10-17__22-37-51/build-cython-ext__33t3Mpj",
+    "task_id": {
+        "path": "/tmp/tb_fix3/build-cython-ext"
+    },
+    "source": "tb_fix3",
+    "task_checksum": "2ee06f290911251b296fa2e57db2da0c2c399e326585f3ed47531bb43887d4dd",
+    "config": {
+        "task": {
+            "path": "/tmp/tb_fix3/build-cython-ext",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "tb_fix3"
+        },
+        "trial_name": "build-cython-ext__33t3Mpj",
+        "trials_dir": "/tmp/oracle_fix119/2026-10-17__22-37-51",
+        "install_only": false,
+        "timeout_multiplier
+[verifier files]
+/tmp/oracle_fix119/2026-10-17__22-37-51/build-cython-ext__33t3Mpj/verifier/reward.txt
+/tmp/oracle_fix119/2026-10-17__22-37-51/build-cython-ext__33t3Mpj/verifier/test-stdout.txt
+/tmp/oracle_fix119/2026-10-17__22-37-51/build-cython-ext__33t3Mpj/verifier/ctrf.json
+=== build-pmars -> /tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE ===
+[result.json head]
+{
+    "id": "f258a505-5428-477c-a204-bcaebf7c5f1d",
+    "task_name": "build-pmars",
+    "trial_name": "build-pmars__8E3x9BE",
+    "trial_uri": "file:///tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE",
+    "task_id": {
+        "path": "/tmp/tb_fix3/build-pmars"
+    },
+    "source": "tb_fix3",
+    "task_checksum": "55f554b8d07c2ec69aa88e385675925e684eb09c256610e0abca10375efc3876",
+    "config": {
+        "task": {
+            "path": "/tmp/tb_fix3/build-pmars",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "tb_fix3"
+        },
+        "trial_name": "build-pmars__8E3x9BE",
+        "trials_dir": "/tmp/oracle_fix119/2026-10-17__22-37-51",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout
+[verifier files]
+/tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE/verifier/reward.txt
+/tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE/verifier/test-stdout.txt
+/tmp/oracle_fix119/2026-10-17__22-37-51/build-pmars__8E3x9BE/verifier/ctrf.json
+=== DONE 121 ===
+```
