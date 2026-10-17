@@ -11960,3 +11960,83 @@ Storing distributed optimizer sharded state of type fully_reshardable
 
 === DONE 110 ===
 ```
+
+---
+
+## RUN_ID 111 · 2026-10-17 11:56:14 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 111 · loops + GPUs · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) loops ---"
+for p in '[b]aize_pretrain_loop.sh' '[b]aize_vision_loop.sh' '[b]aize_harness_loop.sh' '[b]aize_data_loop.sh' '[o]ps_relay.sh'; do
+  echo "[$p]"; pgrep -af "$p" 2>/dev/null | cut -c1-140 | head -4 || echo "NOT RUNNING"
+done
+echo "--- B) local GPU ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+echo "--- C) 10.239.2.29 GPU ---"
+timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader' 2>&1 | head -8 || echo "ssh .29 failed"
+echo "--- D) 10.239.2.12 GPU ---"
+timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader' 2>&1 | head -8 || echo "ssh .12 failed"
+echo "--- E) pretrain procs ---"
+pgrep -af '[b]aize_xmodel25_decay|torchrun.*baize_xmodel25_decay' 2>/dev/null | cut -c1-140 | head -6 || echo none
+echo "--- F) vision/train procs ---"
+pgrep -af '[a]rmB_aimv2|[a]rmA_openclip' 2>/dev/null | cut -c1-140 | head -6 || echo none
+echo "=== DONE 111 ==="
+```
+
+**输出**
+```
+=== RUN_ID 111 · loops + GPUs · 2026-10-17 11:56:14 · host=whag0pgpuap29 ===
+--- A) loops ---
+[[b]aize_pretrain_loop.sh]
+1294147 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+[[b]aize_vision_loop.sh]
+[[b]aize_harness_loop.sh]
+1784375 bash baize_harness_loop.sh
+3669370 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-appr
+3669377 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_2035/
+[[b]aize_data_loop.sh]
+3669370 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-appr
+3669377 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_2035/
+[[o]ps_relay.sh]
+2489749 bash ops_relay.sh
+4106470 bash ops_relay.sh
+--- B) local GPU ---
+0, 51763 MiB, 100 %
+1, 51763 MiB, 100 %
+2, 51763 MiB, 100 %
+3, 51763 MiB, 100 %
+4, 51763 MiB, 100 %
+5, 51763 MiB, 100 %
+6, 51763 MiB, 100 %
+7, 51763 MiB, 100 %
+--- C) 10.239.2.29 GPU ---
+0, 51763 MiB, 100 %
+1, 51763 MiB, 100 %
+2, 51763 MiB, 97 %
+3, 51763 MiB, 100 %
+4, 51763 MiB, 100 %
+5, 51763 MiB, 100 %
+6, 51763 MiB, 100 %
+7, 51763 MiB, 100 %
+--- D) 10.239.2.12 GPU ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+--- E) pretrain procs ---
+2098980 bash -c ls -la /tmp/baize_xmodel25_decay_v2_train.log 2>&1; echo ===CKPT===; find /nas_train/app.e0031982 -path "*xmodel25*decay*" -
+2597495 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash baize_xmodel25_decay_v2.sh < 
+2597505 bash baize_xmodel25_decay_v2.sh
+2597555 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=1 --npr
+2605722 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/Bai
+2605723 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/Bai
+--- F) vision/train procs ---
+=== DONE 111 ===
+```
