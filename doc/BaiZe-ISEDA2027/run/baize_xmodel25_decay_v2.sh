@@ -23,7 +23,7 @@ ITERS=19980
 WARMUP=100
 LR=1.67e-3
 MIN_LR=1e-5
-SAVE_INTERVAL=2000
+SAVE_INTERVAL=500        # crash2 fix: was 2000 (first ckpt too far → crash@410 lost everything); 500 = lose ≤500 steps on crash
 
 SMOKE=""
 if [ "${1:-}" = "--smoke" ]; then
@@ -76,7 +76,8 @@ export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
     --chunked_ce \
     --ce_chunk_size 256 \
     --verify_save_step 20 \
-    $SMOKE > "$LOGDIR/baize_xmodel25_decay_v2_train.log" 2>&1
+    $SMOKE > "$OUTPUT_DIR/baize_xmodel25_decay_v2_train.log" 2>&1
+# crash2 fix: log to OUTPUT_DIR (persistent NFS) not /tmp (gets cleaned → traceback lost)
 RC=$?
 
 echo "  rc=${RC}" 
