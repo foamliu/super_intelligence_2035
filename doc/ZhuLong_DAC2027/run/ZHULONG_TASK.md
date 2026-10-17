@@ -39,10 +39,33 @@
 
 **B.deepseek-v4-flash 复测（优先·修复基础设施）**：
 - **并行度 8 → 4**（缓解 gateway 并发限流，减少 0-token 失败）
-- **max_tokens ≥ 8192**（让 reasoning 有足够预算后仍能产出 content；或通过 `extra_body` 传 `{"thinking": {"type": "disabled"}}` 禁用推理——运维侧实测 API 支持，但需验证 cline 能否传 extra_body）
+- **maxTokens 8192 → 16384**（方案 A·2026-10-17 16:32 已 apply 到 `providers.json`·`updatedAt=2026-10-17T08:32:44Z`·backup=`providers.json.bak.maxTokens8192`）。**根因**：deepseek-v4-flash 是 reasoning 模型，`max_tokens` 是 `reasoning_tokens + content_tokens` 的合并上限。简单调用 reasoning 就烧 4413 token，复杂调用可烧 8000+ → 8192 被吃光 → content=null。**其它模型没问题**因为：deepseek-v4-pro-fp4 reasoning 极省（简单 44 token）/ glm-5.2 / kimi / doubao / glm-5.3-flash 是非推理模型（reasoning_tokens≈0），全部预算给 content。`reasoning: {enabled: false}` 在 cline 侧只控制是否传 reasoning flag，**不控制 API 端是否推理**——API 网关侧 deepseek-v4-flash 永远是推理模型，实测 `reasoning_tokens=4413` 证实。fresh 5-run（11.9%）时 providers.json **未设 maxTokens** → API 用更紧的默认值（疑 4096）→ null-content 率 28%；retest r1 设 8192 → null-content 降到 7%；r3 起用 16384 → 目标 null-content ≤2%。备选方案 B（`{"thinking":{"type":"disabled"}}` 经 extra_body 禁推理）未采纳——风险是降模型复杂任务表现。
 - 其余配置不变：backbone=deepseek-v4-flash @ `/v1` key `c43c1f4a`，full harness（OMEGA=high / READBACK=full / BUDGET=0 / LAGGED=0），V3 文档 + 自探索 ON
 - 5-run fresh，判据(十三)：timeout≤10 且无 infra 故障
 - **⚠️ 若 0-token 失败仍 >10%，再降并行度到 2**
+
+**②·bis r1 trace 深度诊断（2026-10-17 16:00·用户令「60% 也偏低，再看看 trace」）**：
+
+retest r1 = 60.1% (95/158) 的 63 个失败分解（batch `2026_1017_091724`，-p 4 + maxTokens=8192）：
+
+| 失败类型 | 数量 | 占比 | 根因 | 可修复？ |
+|---------|------|------|------|---------|
+| 🔴 cancelled + editor=0 | **19** | 12.0% | Agent 用 `run_commands`(shell) 做文件操作，**全部被 anti-leak hook 阻断**（"ACCESS RESTRICTED"），**19/20 从不使用 `editor` 工具保存代码** → 放弃或循环到超时。Agent 已正确 search_apis + get_api_details + 规划方案，但无法保存代码文件 | ✅ 工具引导（prompt 或禁 run_commands） |
+| 🟠 0-token | 17 | 10.8% | 全部在 batch 末尾（任务 142-158，03:14-03:15 UTC，batch 最后 1 分钟）。**-p 4 没用**——不是并发限流，是 **API 日配额在跑完 ~140 个任务后耗尽**。紧接的 r2 确认 HTTP 429 | ✅ 配额保障（非降并行度） |
+| 🟡 null-content | 11 | 7.0% | Agent **正确使用 MCP 工具**（search 8-154 次 + run_code 4-288 次），但**最后一次 API 调用** reasoning 耗尽 8192 → content=null。复杂任务尤其严重（task 111: 1105 msgs, 288 run_code, 14.7M input tokens） | ✅ maxTokens 16384（方案 A·已 apply） |
+| ⚪ regrade-fail | 13 | 8.2% | 代码生成成功但 regrade 未通过 | ❌ 模型能力 |
+| ⚪ code-fail | 2 | 1.3% | 代码有误 | ❌ 模型能力 |
+| cancelled + editor>0 | 1 | 0.6% | 用了 editor 但未收敛 | ❌ 模型能力 |
+
+**关键证据**：
+- PASS 任务全部使用 `editor`（1-39 次）保存代码；CANCELLED 任务 19/20 的 `editor` 调用数 = **0**
+- PASS 任务 tool 分布：`pyAether_MCP_server__run_code`=1443 / `search_apis`=767 / `get_api_details`=413 / `editor`=369
+- CANCELLED 任务 tool 分布：`search_apis`=539 / `run_code`=371 / `run_commands`=257（全 blocked）/ `editor`=55（仅 1 任务）
+- task 044 示例（17 msgs 后 cancelled）：正确 search_apis 找到 `dmLibObj`/`dmGetObjType`/`dmSizeLibrary` + get_api_details + 规划实现 → 调 `run_commands({'commands':['mkdir -p ...']})` → ACCESS RESTRICTED → 再试 5 次 ls/pwd/find/mkdir → 全 ACCESS RESTRICTED → cancelled，**从未尝试 `editor`**
+
+**可修复空间估算**：当前 60.1% → 修复 #1（editor 引导）+19 → 72.8% → 修复 #2（配额）+17 → 83.5% → 修复 #3（maxTokens 16384）+11 → 90.5%。真实模型能力上限（regrade-fail + code-fail 不可修）≈ 90%。
+
+**r2b regrade = 57.0% (90/158)**（batch `2026_1017_135447`·gen 110 ok / 48 fail / 0 timeout / 18 quota-error·判据十三 timeout=0≤10 有效）。r2b 仍用 maxTokens=8192（16384 在 r2b 完成后才 apply）。r2b 比 r1 低 3.1pp，可能因 r2b 的 18 条 quota error 拖低（r1 的 17 条 0-token 全在末尾 142-158，r2b 的 18 条分散在中间）。
 
 **B.glm-5.3-flash 复测**：
 - 配置不变：backbone=glm-5.3-flash @ `/v1` key `6903b05e`，full harness，V3 + 自探索 ON
