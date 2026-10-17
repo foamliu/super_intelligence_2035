@@ -3,7 +3,7 @@
 WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ / 02_经验 ✅ / 03_种子 ✅ 五章已成片 / 04_棋子 🔄生成中）。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ / 02_经验 ✅ / 03_种子 ✅ 五章已成片 / 04_棋子 🔄生成中 R2V 7/21）。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP04《棋子》生成中；五章已成片（13/18/01/02/03）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；EP04 场景参考图 15/15 ✅（R2V 21 + T2V 34 = 55 镜）
-当前动作:     EP04《棋子》后台跑批中（R2V 21 + T2V 34 · _launch_ep04.cmd · --skip-existing --wait 顺序提交）+ 回写记忆 + commit 两仓
-下一步:       逐轮核验 EP04 落盘（R2V 21 + T2V 34 = 55 镜），全落盘后收尾（subtitles/synth → master/成片）
+PHASE:        S3 放量 → EP04《棋子》生成中（R2V 7/21 落盘）；五章已成片（13/18/01/02/03）
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；EP04 场景参考图 15/15 ✅ + R2V 7/21 落盘 + 收尾三脚本就绪（subtitles/synth/_finish）
+当前动作:     EP04《棋子》后台跑批中（R2V 21 + T2V 34 · _launch_ep04.cmd · --skip-existing --wait 顺序提交 · R2V 已 7/21）+ 回写记忆 + commit 两仓
+下一步:       逐轮核验 EP04 落盘（R2V 21 + T2V 34 = 55 镜），全落盘后跑 _finish_ep04.py 收尾（subtitles 158 条 → synth master/成片）
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-17（EP04《棋子》启动：15 场景参考图已产 + R2V 21/T2V 34 后台跑批提交 · 回写记忆 + commit 两仓）
+- **上次唤醒**：2026-10-17（EP04《棋子》落盘核验：R2V 7/21 已落盘 + 备好收尾三脚本 gen_ep04_subtitles/synth/_finish · 回写记忆 + commit 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-17 · S3 放量 · EP04《棋子》落盘核验 + 收尾脚本准备 ✅**：本轮核验 EP04 后台跑批进展（R2V 7/21 已落盘），并备好收尾三脚本（离线、不干扰在跑队列）。
+  - **git 同步**：短剧仓 `pull --rebase --autostash` up-to-date；记录仓 Fast-forward（1 file · harness glm53_pilot_results）。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 空闲 12.1GB · 队列 running 1/pending 0 = EP04 跑批进行中）；ffmpeg/ffprobe 在；MCP comfyui-drama/web-search 可用。
+  - **跑批核验**：`_launch_ep04.cmd`（PID 16544）在跑；`_gen_ep04_all.log` 显示 SCENES DONE(exit=0) → START R2V；`OUTPUT/04_棋子/videos/` 已 **7/55 落盘**（R2V 02/04/06/07/09/16/18）；err 日志空（无 OOM/报错）。
+  - **备好收尾三脚本**：`scripts/gen_ep04_subtitles.py`（158 条字幕 · SFX_ONLY 11 镜 01/02/16/17/22/24/28/33/36/46/52 已排除 · dry-run ✅）、`scripts/synth_ep04.py`（55 镜 concat · 音画钉长闸门 <0.15s · dry-run 7/55 ✅）、`_finish_ep04.py`（等 55 镜全落盘 → subtitles+synth → FINISH_EP04_COMPLETE）；三脚本 `py_compile` + dry-run 全绿。
+  - **commit**：短剧仓提交 3 脚本（`video:` 前缀）；记录仓回写 MEMORY + daily + PLAN。
+  - **下一步**：逐轮核验 EP04 落盘（55 镜），全落盘后跑 `_finish_ep04.py` 收尾。
 
 - **2026-10-17 · S3 放量 · EP04《棋子》启动（15 场景参考图 + R2V/T2V 后台跑批提交）✅**：本轮启动 EP04《棋子》（55 镜），产出 15 张场景参考图并提交 R2V 21 + T2V 34 后台跑批。
   - **git 同步**：短剧仓 `pull --rebase --autostash` up-to-date；记录仓 `pull --rebase --autostash` up-to-date。
