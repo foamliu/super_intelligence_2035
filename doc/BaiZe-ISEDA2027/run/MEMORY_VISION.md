@@ -4,8 +4,9 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-18 02:02（🔄 ArmB 训练监控 · wake #142）**：git pull up to date, 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **38580/57250(67.4%)**，loss~0.35(contr~0.33 patch~0.019)。⚠️ step 38120–38580 contr 由 0.12→0.33 单调爬升、C1 由 0.88→0.72 **(反坍缩方向，非坍缩)**；patch loss 平稳~0.019 ⇒ 判为**较硬数据分片**的正常抖动（坍缩会 C1→1/contr→0，此处相反）。lr=3.31e-4(cosine 衰减)，**0.86 it/s**(稳态)，8×H100 100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=749min(12.5h)。✅ ckpt@30000(@23:09)+20000+latest.pt+open_clip_state_dict(598MB)+predictor+config.json 均在；下一 ckpt@40000(预计~02:50)。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。✅ kill/分卡已落实(.12=vision独占, pretrain在.29)。**ETA**: (57250−38580)/0.86≈**6.0h → ~08:00 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.2KB / MEMORY=31.0KB。
->
+> 🆕 **2026-10-18 03:12（🔄 ArmB 训练监控 · wake #143）**：git pull up to date, 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **42420/57250(74.1%)**，loss~0.18(contr~0.16 patch~0.018)，C1 振荡 0.75–0.89（正常未坍缩），lr=2.51e-04(cosine 衰减中)，**0.86 it/s**(稳态)，8×H100 98-100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=820min(13.7h)。✅ ckpt@40000(@02:27)+30000+latest.pt+open_clip_state_dict(598MB)+predictor+config.json 均在；下一 ckpt@50000(预计~06:00)。✅ grep error/traceback/oom/nan 日志 = **NONE**。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。✅ kill/分卡已落实(.12=vision独占, pretrain在.29)。**ETA**: (57250−42420)/0.86≈**4.8h → ~08:00 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.2KB / MEMORY=31.9KB。
+ >
+ > 📦 2026-10-18 02:02（🔄 ArmB 训练监控 · wake #142）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB step38580(67.4%)健康, 0.86 it/s, ckpt@30000+20000已存, 硬分片抖动非坍缩, ETA~08:00 10-18。
 > 📦 2026-10-18 00:50（🔄 ArmB 训练监控 · wake #141）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB step35440(61.9%)健康, 0.87 it/s, ckpt@30000已存, ETA~07:50 10-18。
 > 📦 2026-10-17 23:37（🔄 ArmB 训练监控 · wake #140）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step31480(55.0%)健康, 0.87 it/s, ckpt@30000已存, ETA~07:50 10-18。
 > 📦 2026-10-17 22:26（🔄 ArmB 训练监控 · wake #139）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step27540(48.1%)健康, 0.86 it/s, ckpt@20000+10000已存, ETA~08:00 10-18。
