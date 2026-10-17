@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 114 -->
+<!-- RUN_ID: 115 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,52 @@
 
 ---
 
+## RUN_ID 115 — 🩺 **harness 是否卡死（只读诊断：进程/作业目录/容器/日志）**
+
+> 背景：17:57 记 `oracle -k 5 validating (PID 1680140)` 后 MEMORY 无回写；需判断仍在跑 / 已完成 / 已卡死。
+> 只读：不 kill、不启动评测、不改任何文件。
+
+```bash
+set -u
+echo "=== RUN_ID 115 · harness 诊断 · $(date '+%F %T') · host=$(hostname) ==="
+P_HAR="har""bor"; P_ORA="ora""cle"
+echo "--- A) loops ---"
+for p in '[b]aize_harness_loop.sh' '[b]aize_pretrain_loop.sh' '[o]ps_relay.sh'; do
+  echo "[$p]"; pgrep -af "$p" 2>/dev/null | cut -c1-120 | head -2 || echo none
+done
+echo "--- B) harbor/oracle procs (excl self) ---"
+ME=$$
+ps -eo pid,ppid,etime,args 2>/dev/null | grep -E "$P_HAR|$P_ORA" | grep -v "grep\|awk" | awk -v me="$ME" '$1!=me' | cut -c1-190 | head -12 || echo none
+echo "--- C) /tmp/oracle_validate ---"
+ls -la /tmp/oracle_validate 2>&1 | head -15
+echo "newest files:"; find /tmp/oracle_validate -maxdepth 3 -type f -newermt '-8 hours' 2>/dev/null | head -8
+echo "--- D) newest logs (tail 15) ---"
+for f in $(ls -t /tmp/oracle_validate/*.log 2>/dev/null | head -2); do echo "== $f"; tail -15 "$f"; done
+for f in $(find /tmp/oracle_validate -maxdepth 3 -name '*.log' 2>/dev/null | xargs ls -t 2>/dev/null | head -2); do echo "== $f"; tail -15 "$f"; done
+echo "--- E) docker containers ---"
+timeout 20 docker ps --format '{{.Names}}\t{{.Status}}\t{{.Image}}' 2>&1 | head -12 || echo "docker ps failed"
+echo "docker images(top5):"; timeout 20 docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}' 2>&1 | head -5
+echo "--- F) load / disk / gpu ---"
+uptime
+df -h /tmp 2>&1 | tail -1
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>&1 | head -8
+echo "--- G) harness loop log (tail 12) ---"
+ls -l /tmp/baize_harness_loop.log 2>&1 | head -1; tail -12 /tmp/baize_harness_loop.log 2>&1
+echo "--- H) harness repo files mtime ---"
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+stat -c '%y %s %n' "$R/MEMORY_HARNESS.md" "$R/harness/glm53_pilot_results.json" 2>&1 | head -4
+echo "=== DONE 115 ==="
+```
+
+---
+
 ## RUN_ID 114 — 🔐 **Harbor 登录（第三段）：兑换 code `3265fb06-…`（只认证，30s 内执行）**
 
 > 中继 RUN_ID 113 于 18:57:30 生成新链接（challenge=KU2onn0…），ops 已授权并即时回传 code。
 > 本块：立刻兑换 → 复查状态。失败则再出 URL。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 echo "=== RUN_ID 114 · harbor auth code 兑换(3) · $(date '+%F %T') · host=$(hostname) ==="
 HARBOR="$HOME/.local/bin/harbor"
