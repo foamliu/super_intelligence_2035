@@ -12,8 +12,13 @@
 
 **① 路径与前提**
 - 仓库根：`eda_platform`（36.15 本机，`/nasdata/...`）。目标包 = **`apps/cli`**（`package.json` 里应是 `@cline/cli` 或改造后的同名包）。先 `cd <eda_platform> && git status -sb && git log --oneline -1` 记录源版本。
+- 🔢 **用户提供的关键前提（务必按此解读结果）**：
+  - `eda_platform` 里的 cline 是**老版本**，其 **`cline-core` SDK 版本 = `0.0.51`**；
+  - 被测基线 **cline 3.0.51 的 `cline-core` SDK 版本 = `0.0.71`**。
+  - ⇒ 这条线测的是**"老 SDK 的改造版" vs "新 SDK 的官方版"**，SDK 代差是**结果的主要解释变量之一**，回报时必须显式写明两侧 `cline-core` 版本（`zhulong` 侧 = 你构建出来的实际版本，`cline` 侧 = `0.0.71`）。
+  - 构建后**必须实证**：`eda_platform` 里解析到的 `cline-core` 版本（查 `bun.lock`/`bun.lockb`/`package.json` 的 `dependencies`、`node_modules/@cline/core/package.json` 的 `version`，以及 `apps/cli/node_modules` 下的实际链接）→ 若是 **`0.0.51`** 就照实记录；若解析成别的版本（例如网络拉到最新），**不要偷偷升级**，如实报告并停在这一步等运维确认。
 - 工具链：`bun`（cline 上游用 bun，36.15 已装）+ `node`。装依赖走内网镜像（`https://mirrors.aliyun.com/npm/` / 腾讯 npm）。外网命令带 `https_proxy=http://172.19.92.23:13128`；**访问 `agi-gateway.cxmt.com` 必须剥掉 proxy**（`env -u https_proxy -u http_proxy ...`）。
-- 🚫 不 clone 别处的 cline 顶替、不 `git checkout` 别人的改动、不改 `eda_platform` 源码（本次只“编译 + 安装 + 跑分”）。
+- 🚫 不 clone 别处的 cline 顶替、不 `git checkout` 别人的改动、不改 `eda_platform` 源码（本次只“编译 + 安装 + 跑分”）；**`bun install` 之后先用 `bun pm ls | grep cline` 核对 SDK 版本没被悄悄换掉**。
 
 **② 🔴 硬红线：不碰现有 cline 3.0.51（先取证，再动手）**
 1. 先记录基线（原文贴心跳）：
@@ -27,6 +32,11 @@
 1. 按 `apps/cli/package.json` 的**原始脚本**构建（如 `bun run build` / `bun build ... --target=bun`），记录命令原文与耗时。
 2. 安装到**独立前缀**：`~/.local/zhulong/`（或 `~/.zhulong/bin/`），入口 = `~/.local/bin/zhulong` + `~/.local/bin/zl → zhulong`；`chmod +x`。
 3. 验收（原文贴心跳）：`zhulong --version`、`zl --version`、`which -a zhulong zl`、`ls -l ~/.local/bin/{zhulong,zl}`；**并给出 `zhulong --version` 与 `cline --version`(3.0.51) 的对比**（版本不同是正常的，这正是要测的变量）。
+4. **SDK 版本三连核验**（原文贴心跳，三处都要）：
+   - `eda_platform`：`grep -rn '"@cline/core"' package.json apps/cli/package.json bun.lock 2>/dev/null | head`
+   - 实装：`cat node_modules/@cline/core/package.json apps/cli/node_modules/@cline/core/package.json 2>/dev/null | grep '"version"'`
+   - 运行期：`zhulong --version`（若 CLI 会带出 SDK 版本就一并贴；不会就明确写"CLI 不暴露"）
+   - 判据：**`@cline/core` 应为 `0.0.51`**（老版）。若因 `bun install` 被解析到 `0.0.71` 或更新 ⇒ **不要继续跑分**，先报告（这是"老版改造是否还具备实验意义"的前提，由运维决定）。
 
 **④ 配置底模 = DeepSeek-V4-Pro-Cloud（与 cline 3.0.51 配置隔离）**
 - `deepseek-v4-pro-cloud` @ `http://agi-gateway.cxmt.com/cloud/v1`（历史实测 200；**别混 `/v1` 下的 `deepseek-v4-pro-fp4`**，那个是 403/429）。
@@ -42,14 +52,16 @@
 
 **⑥ 回报（本轮就要，写完再退出）**
 1. `eda_platform` 路径 + `git log -1` + 构建命令原文 + 产物大小 + `zhulong`/`zl` 验收原文。
-2. **cline 3.0.51 未被改动**的证据：`cline --version` + `readlink -f`（与 ②-1 逐字一致）。
-3. 生效配置（model / base / key 末 8 位 / data dir）。
-4. **`DeepSeek-V4-Pro-Cloud` 158 题 Pass@1 = xx.x%（通过数/158）** + `pass (` 原文 + timeout/gen-fail/quota 计数。
-5. 对照一句：vs `deepseek-v4-flash` 60.1±5.5%（n=5）· `glm-5.2` 83.3±3.1%（n=5）· 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）。**n=1 只报单值并标 `[provisional,n=1]`，禁止写成 ±**。
-6. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`）+ `zhulong_results.md` 新增一行（标 `[provisional,n=1]`）+ `daily-memories/2026-10-18.md`；commit 前缀 `zhulong zl:`。
+2. **版本对照表（必填）**：`zhulong` 的 `@cline/core` 实测版本（应为 **0.0.51**）vs `cline` 3.0.51 的 `@cline/core` = **0.0.71**；`zhulong --version` vs `cline --version`。
+3. **cline 3.0.51 未被改动**的证据：`cline --version` + `readlink -f`（与 ②-1 逐字一致）。
+4. 生效配置（model / base / key 末 8 位 / data dir）。
+5. **`DeepSeek-V4-Pro-Cloud` 158 题 Pass@1 = xx.x%（通过数/158）** + `pass (` 原文 + timeout/gen-fail/quota 计数。
+6. 对照一句：vs `deepseek-v4-flash` 60.1±5.5%（n=5，SDK 0.0.71）· `glm-5.2` 83.3±3.1%（n=5）· 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）。**n=1 只报单值并标 `[provisional,n=1]`，禁止写成 ±**；**差异不得归因于模型，须并列写明"SDK 0.0.51 vs 0.0.71"**。
+7. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`）+ `zhulong_results.md` 新增一行（标 `[provisional,n=1]` + `SDK 0.0.51` 注脚）+ `daily-memories/2026-10-18.md`；commit 前缀 `zhulong zl:`。
 
 **⑦ 纪律（红线）**
 - 🚫 覆盖/删除/重链现有 cline 3.0.51、改 `~/.cline`、跑 `curl|bash` 官方安装器。
+- 🔢 **`@cline/core` 必须是 `0.0.51`**：若 `bun install` 后变成 `0.0.71`/更新（网络解析到最新），**停下来报告**，不要用升级后的 SDK 跑分（那就不是"老版改造"了）。
 - 🚫 不改论文口径、不 kill 本 loop / ops 中继 / 别人在跑的任务。
 - 🚫 不把 n=1 的分数写进论文表（只进 `zhulong_results.md` 并标 provisional）。
 - ✅ 每轮只推进一步（取证 → 构建 → 安装 → 配置 → canary → 跑 → 打分 → 回报），`WAITING=1` 只在评测真正跑起来时置位。
