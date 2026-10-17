@@ -17,6 +17,51 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-17（二十七）— 🔁 复测 B.glm-5.3-flash 和 B.deepseek-v4-flash（trace 诊断发现基础设施问题）【用户直令】
+
+> **用户令（2026-10-17）**：「DeepSeek-V4-Flash 的跑分比预期低，你去看下 trace。复测 GLM-5.3-Flash 和 DeepSeek-V4-Flash。」
+
+**① 背景·trace 诊断结论**（运维侧已完成分析）：
+
+**DeepSeek-V4-Flash fresh 5-run = 11.9±2.7%**，但 trace 分析发现 **73% 失败是基础设施问题，非模型能力**：
+- **45% (356/790) 0-token 失败**：API gateway 并发限流，请求 6 秒内被拒（inputTokens=0, outputTokens=0）。时间线证据：r1 首批 8 并发成功，40 秒后后续请求开始 0-token 失败。
+- **28% (219/790) null-content 失败**：deepseek-v4-flash 是**推理模型**，先产出 reasoning token 再产出 content。cline 配置 `reasoning: {enabled: false}` + max_tokens 不足 → reasoning 耗尽 token 预算 → content=null → cline 写 `pass` 占位。
+- **9.4% (74/790) real-code-fail**：模型真正写错代码。
+- **关键**：在模型**实际产出代码**的 178 个任务中，**通过率 = 104/178 = 58.4%**（若算上 gen-success 但 regrade-fail 则更高）。11.9% 被基础设施严重拖低。
+
+**GLM-5.3-Flash 5-run = 66.8±10.5%**，trace 分析：
+- GLM-5.3-flash **非推理模型**（8 并发 API 测试全部 HTTP 200 + 有 content），无 reasoning 耗尽问题。
+- gen-fail 率 23.4%（含少量 0-token 2.9% + 部分 null-content 14.1% + real-fail 6.2%），gen-success 605/790 = 76.6%。
+- 在产出代码的任务中通过率 528/605 = 87.3%。
+- **std=10.5 偏大**（r1=80.4 / r2=53.2 / r3=73.4 / r4=65.8 / r5=61.4），复测目标：确认是否为模型真实方差或仍有隐藏 infra 因素。
+
+**② 复测规格**：
+
+**B.deepseek-v4-flash 复测（优先·修复基础设施）**：
+- **并行度 8 → 4**（缓解 gateway 并发限流，减少 0-token 失败）
+- **max_tokens ≥ 8192**（让 reasoning 有足够预算后仍能产出 content；或通过 `extra_body` 传 `{"thinking": {"type": "disabled"}}` 禁用推理——运维侧实测 API 支持，但需验证 cline 能否传 extra_body）
+- 其余配置不变：backbone=deepseek-v4-flash @ `/v1` key `c43c1f4a`，full harness（OMEGA=high / READBACK=full / BUDGET=0 / LAGGED=0），V3 文档 + 自探索 ON
+- 5-run fresh，判据(十三)：timeout≤10 且无 infra 故障
+- **⚠️ 若 0-token 失败仍 >10%，再降并行度到 2**
+
+**B.glm-5.3-flash 复测**：
+- 配置不变：backbone=glm-5.3-flash @ `/v1` key `6903b05e`，full harness，V3 + 自探索 ON
+- 并行度保持 8（API 测试确认 8 并发无问题）
+- 5-run fresh，判据(十三)
+- 目标：确认 std 是否收窄（当前 10.5 → 目标 <8）
+
+**③ 执行顺序**：
+1. **当前 wo_selfexpl r1 regrade 已由运维侧手动启动**（PID 1597537 · batch 2026_1017_055109 · 08:45）→ r1 评分出结果即可，**r2-r5 不用再跑**（陈熙元已测 wo_selfexpl = 77.3±2.9%，作为对照，见 `zhulong_results.md`）
+2. **B.deepseek-v4-flash 复测 5-run**（本指令②规格）
+3. **B.glm-5.3-flash 复测 5-run**（本指令②规格）
+
+**④ 收口后**：
+- deepseek-v4-flash：对比 fresh(11.9%) vs 复测，若大幅提升则替换 `tab:llm-comparison` 行 + 在论文注明「初测受 gateway 并发限制影响」
+- glm-5.3-flash：对比 66.8% vs 复测，若 std 收窄则替换
+- 同步 `zhulong_results.md` + `MEMORY_ZHULONG.md`
+
+**⑤ 纪律**：切配置后 canary 自检；commit 前缀 `zhulong B:`；/home<8G 暂停清理。
+
 ### 🆕 运维指令 · 2026-10-16（二十六）— 🔜 排队：B.deepseek-v4-flash 之后接 wo_selfexpl 干净 5-run【用户直令】
 
 > **用户令（2026-10-16）**：「B.deepseek-v4-flash 之后跑 wo_selfexpl，记录排队。」
