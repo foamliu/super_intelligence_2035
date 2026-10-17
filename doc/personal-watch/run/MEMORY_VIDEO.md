@@ -3,7 +3,7 @@
 WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ / 02_经验 ✅ 四章已成片 · EP03《种子》跑批进行中）。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 13_外骨骼 ✅ / 18_暖阳 ✅ / 01_晨钟 ✅ / 02_经验 ✅ / 03_种子 ✅ 五章已成片）。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP03《种子》跑批中（R2V 38/38 ✅ + T2V 4/14）；四章已成片（13/18/01/02）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅（成片 95.1MB）；18_暖阳 54/54 ✅（成片 87.5MB）；01_晨钟 54/54 ✅（R2V 28 + T2V 26 · 成片 75.4MB）；02_经验 55/55 ✅（R2V 32 + T2V 23 · 成片 95.6MB）；03_种子 生成脚本(R2V38+T2V14) + 收尾脚本(字幕+合成) 就绪 ✅
-当前动作:     EP03《种子》跑批核验（R2V 38/38 全落盘 exit=0 · T2V 4/14 · SHOT-16 进行中 · 场景参考图 11/11 + 合影拼版 1/1 在位）+ 收尾脚本 dry-run 复核 + 回写记忆 + commit 两仓
-下一步:       EP03 跑批收尾（等 T2V 14 全落盘：缺 16/19/30/33/36/37/42/48/50/51）→ gen_ep03_subtitles.py → synth_ep03.py（master + 硬字幕成片）→ ffprobe/libass QC
+PHASE:        S3 放量 → EP03《种子》成片完成；五章已成片（13/18/01/02/03）
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅（R2V 38 + T2V 14 · 成片 267.97s · 1280×720@24fps）
+当前动作:     EP03《种子》收尾核验（52/52 全落盘 + master/成片/字幕 三件套到位 · 音画漂移 0.009s 闸门通过）+ 回写记忆 + commit 两仓
+下一步:       启动 EP04《棋子》（55 镜）R2V/T2V 生成脚本（gen_ep04_scenes/h3_r2v/h3_t2v.py，照 EP03 范式）
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-16（EP03《种子》跑批核验 R2V 38/38 + T2V 4/14 + 收尾脚本 dry-run 复核 + 回写记忆 + commit 两仓）
+- **上次唤醒**：2026-10-17（EP03《种子》成片完成：52/52 镜 + master/成片/字幕 三件套 · 音画漂移 0.009s 闸门通过 · 回写记忆 + commit 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-17 · S3 放量 · EP03《种子》成片完成 ✅（五章已成片）**：本轮核验 EP03 后台跑批收尾 + 成片落盘 + 回写记忆 + commit 两仓。
+  - **git 同步**：短剧仓 up-to-date；记录仓 `pull --rebase --autostash` Fast-forward（BaiZe/ZhuLong/data 等线 21 files）。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 空闲 8.2GB · 队列 running 0/pending 0 = EP03 跑批已清空）；ffmpeg/ffprobe 在（2025-10-12 build）；MCP comfyui-drama/web-search 可用。
+  - **跑批收尾核验**：`OUTPUT/03_种子/videos/` 已 **52/52 落盘**（R2V 38/38 + T2V 14/14）；`_finish_ep03.py` 收尾脚本已跑完 `FINISH_EP03_COMPLETE`（subtitles exit=0 · synth exit=0）。
+  - **成片三件套（ffprobe 实测）**：`EP03_种子_master.mp4`（87,794,479 B · 267.967s · 1280×720@24fps · h264+aac）；`EP03_种子_成片.mp4`（90,546,969 B · 267.967s · 1280×720@24fps · libass 硬字幕）；`EP03_种子_字幕.srt`（9,952 B · 145 条 · 435 行）。
+  - **音画钉长闸门**：master 视频 267.958s / 音轨 267.967s / 漂移 0.009s < 0.15s ✅ 通过。
+  - **commit**：记录仓（MEMORY + daily + PLAN）。短剧仓本轮无代码改动（EP03 生成/收尾脚本上轮已提交，OUTPUT 二进制 gitignored）。
+  - **下一步**：EP04《棋子》（55 镜）R2V/T2V 直出。
 
 - **2026-10-16 · S3 放量 · EP03《种子》跑批核验（R2V 38/38 ✅ + T2V 4/14）+ 收尾脚本 dry-run 复核 ✅**：本轮核验 EP03 后台跑批健康（较上轮 +9 镜：R2V 45/46/47/49/52 收尾 + T2V 01/03/07/13）+ 收尾脚本 dry-run 全绿 + 回写记忆。
   - **git 同步**：短剧仓 up-to-date（工作区仅历史未跟踪日志/pid/_card_preview/mcp_server 等）；记录仓 `pull --rebase --autostash` Fast-forward（BaiZe/news 等线 10 files）。
