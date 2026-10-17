@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 115 -->
+<!-- RUN_ID: 116 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,52 @@
 
 ---
 
+## RUN_ID 116 — 🔎 **oracle -k 5 结果核对 + docker 组权限坐实（只读）**
+
+> RUN_ID 115 显示：无 harbor 进程、oracle job 目录 18:04:54 已生成结果；但 relay 内 `docker ps` = permission denied。
+> 本块读 result.json 取 5 个任务 reward，并检查 relay/cline/loop 三个进程的补组（docker gid）。
+
+```bash
+set -u
+D=/tmp/oracle_validate/2026-10-17__18-04-54
+echo "=== RUN_ID 116 · oracle 结果 + docker 权限 · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) task dirs ---"
+ls -1 "$D" 2>/dev/null | head -10
+echo "--- B) per-task reward/status ---"
+for f in "$D"/*/result.json; do
+  [ -f "$f" ] || continue
+  t="$(basename "$(dirname "$f")")"
+  r="$(grep -o '\"reward\"[^,}]*' "$f" | head -1)"
+  s="$(grep -o '\"status\"[^,}]*' "$f" | head -1)"
+  echo "$t | $r | $s"
+done
+echo "--- C) job.log tail ---"
+tail -20 "$D/job.log" 2>&1
+echo "--- D) job.log reward lines ---"
+grep -E 'reward|resolved|accuracy' "$D/job.log" 2>/dev/null | tail -8
+echo "--- E) relay groups ---"
+id -nG; getent group docker
+echo "--- F) cline proc groups ---"
+CP="$(pgrep -f '[c]line -c /nas_train' | head -1)"
+DGID="$(getent group docker | cut -d: -f3)"
+echo "cline_pid=${CP:-none} docker_gid=${DGID:-none}"
+[ -n "${CP:-}" ] && grep -E '^Groups:' /proc/"$CP"/status | tr '\t' ' ' | tee /tmp/_g1 | grep -qw "$DGID" && echo "cline HAS docker" || echo "cline LACKS docker"
+echo "--- G) harness loop groups ---"
+LP="$(pgrep -f '[b]aize_harness_loop.sh' | head -1)"
+echo "loop_pid=${LP:-none}"
+[ -n "${LP:-}" ] && grep -E '^Groups:' /proc/"$LP"/status | tr '\t' ' ' | tee /tmp/_g2 | grep -qw "$DGID" && echo "loop HAS docker" || echo "loop LACKS docker"
+echo "=== DONE 116 ==="
+```
+
+---
+
 ## RUN_ID 115 — 🩺 **harness 是否卡死（只读诊断：进程/作业目录/容器/日志）**
 
 > 背景：17:57 记 `oracle -k 5 validating (PID 1680140)` 后 MEMORY 无回写；需判断仍在跑 / 已完成 / 已卡死。
 > 只读：不 kill、不启动评测、不改任何文件。
 
-```bash
+（已执行，原文降级为 text 保存）
+
 set -u
 echo "=== RUN_ID 115 · harness 诊断 · $(date '+%F %T') · host=$(hostname) ==="
 P_HAR="har""bor"; P_ORA="ora""cle"
