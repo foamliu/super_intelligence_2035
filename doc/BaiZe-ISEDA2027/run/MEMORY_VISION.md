@@ -4,7 +4,8 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-18 03:12（🔄 ArmB 训练监控 · wake #143）**：git pull up to date, 无新运维指令。✅ **ArmB 4-epoch 训练健康**：step **42420/57250(74.1%)**，loss~0.18(contr~0.16 patch~0.018)，C1 振荡 0.75–0.89（正常未坍缩），lr=2.51e-04(cosine 衰减中)，**0.86 it/s**(稳态)，8×H100 98-100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=820min(13.7h)。✅ ckpt@40000(@02:27)+30000+latest.pt+open_clip_state_dict(598MB)+predictor+config.json 均在；下一 ckpt@50000(预计~06:00)。✅ grep error/traceback/oom/nan 日志 = **NONE**。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(CPU单测3/3 PASSED)。✅ kill/分卡已落实(.12=vision独占, pretrain在.29)。**ETA**: (57250−42420)/0.86≈**4.8h → ~08:00 10-18**；+ProtB 1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至完成 → `run_armB_protb_eval.sh` → 报告。📦 体积：TASK=26.2KB / MEMORY=31.9KB。
+> 🆕 **2026-10-18 05:37（🔄 ArmB 训练监控 · wake #144）**：git pull up to date, 无新运维指令（顶部 12:4x「kill .12 pretrain→起 ArmB 4epoch」已于 wake #131/#132 执行完毕；.12 上 8 GPU 进程=**ArmB 训练非 pretrain**, pgrep baize_xmodel25_decay=空, 不杀）。✅ **ArmB 4-epoch 训练健康**：step **50360/57250(88.0%)**，loss~0.20(硬分片抖动非坍缩, contr~0.19 patch~0.016)，C1 0.77–0.89（正常），lr=1.34e-04(cosine→1e-4)，**0.87 it/s**(稳态)，8×H100 100% util/50.5GB/卡(peak=50.4GB 无OOM)，t=964.7min(16.1h)。✅ ckpt@50000(@05:28)+40000+latest.pt+open_clip_state_dict(598MB)+predictor+config.json 均在；checkpoint_30000 已自动删(keep-ckpts 2)。✅ grep error/traceback/oom/nan = **NONE**(仅 pynvml FutureWarning 良性)。✅ ArmA 中文报告+附录A(兼容性)/B(概念澄清)已交付(report_vision_armA_openclip_result_zh.html, wake#133)。✅ armB_protb_eval.py+run_armB_protb_eval.sh 就绪(OMP_NUM_THREADS=8 修复过订阅, 偏好 open_clip_state_dict.pt)。**ETA**: (57250−50360)/0.87≈**2.2h → ~07:50 10-18** 训完；+ProtB(3 seeds)1–2h ⇒ **~09:00–10:00 10-18**。下一步: 监控至 57250 → `run_armB_protb_eval.sh` → armB 中文报告。📦 体积：TASK=26.2KB / MEMORY=31.9KB。
+ > 📦 2026-10-18 03:12（🔄 ArmB 训练监控 · wake #143）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB step42420(74.1%)健康, 0.86 it/s, ckpt@40000已存, ETA~08:00 10-18。
  >
  > 📦 2026-10-18 02:02（🔄 ArmB 训练监控 · wake #142）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB step38580(67.4%)健康, 0.86 it/s, ckpt@30000+20000已存, 硬分片抖动非坍缩, ETA~08:00 10-18。
 > 📦 2026-10-18 00:50（🔄 ArmB 训练监控 · wake #141）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB step35440(61.9%)健康, 0.87 it/s, ckpt@30000已存, ETA~07:50 10-18。
@@ -17,13 +18,7 @@ WAITING: 1
 >
 > 📦 2026-10-17 13:3x（🔄 ArmB 改 4 epoch 重启 · wake #132）已归档；**结论**：4-epoch run(steps=57250)由 wake #132 启动(PID 1203148)，wake #133 确认健康运行中(step 4540)。
 >
-> 📦 2026-10-17 12:4x（🚀 ArmB 3-epoch 训练启动 · wake #131）已归档；**结论**：3-epoch run(steps=42940) 被 wake #132 停止并改为 4 epoch(57250)。代码/测试/mllm_bridge 6/6 PASSED，配方不变唯 epoch 3→4。
->
-> 📦 2026-10-17 11:1x（✅ 完成态核验 · wake #130）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmA 训练(154500步)+ProtB(lp=58.03%)+Stage(iv) 报告全闭环(da8e9cd1)。
-
-> 📦 2026-10-17 10:2x（🔧 ProtB 卡死修复 + ✅ ArmA ProtB lp=58.03±0.02% / 5-NN=53.98% · wake #129）已归档 → daily-memories-vision/2026-10-17.md；**结论**：OMP 线程过订阅修复(2280%→350% pcpu)，ProtB 完成 lp=58.03%（vs ④-4ep 67.05% −9.02pp，5-NN +11.6pp → CLIP 检索强但 lp 弱，合 BP-1）。
-
-> 📦 2026-10-17 09:1x（✅ ArmA 训练完成 + ⚡ ProtB 评测启动 · wake #128）+ 📊 效率对比表 已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmA 训练完成(154500步, 3.37 it/s +40%, ~7.9h)；效率表(修前2.40→修后3.36 it/s, util 95-100%全卡, 省~6h)。
+> 📦 2026-10-17 09:1x~12:4x（wake #128~#131: ArmA 训练完成154500步 + ProtB lp=58.03±0.02%/5-NN=53.98% + Stage(iv)报告闭环(da8e9cd1) + ArmB 3-epoch 启动后被 #132 改 4-epoch）已归档 → daily-memories-vision/2026-10-17.md。
 >
 > 📦 **改动清单 + 10-14~16 全天流水**（wake #106~#128, ArmA 起训/12集 eval/Stage-1/1.5/2/open_clip wrapper）已归档 → daily-memories-vision/2026-10-{14,15,16}.md + ARCHIVE_OPERATOR_VISION.md；**结论**：✅ ArmA 全链路完成, 改动清单(LPT/workers/cudnn/fused)已落地, 配方不变。
 > ✅ **④-4ep 基线（COMPLETE）**: ProtB 67.05±0.02% / ProtA 56.70% / zs 40.64%/72.64% / k-NN 42.35%. final_loss=0.0805, C1=0.5932, 748,404 steps, 60,545s. VERDICT: MODERATE, DIMINISHING. 详见 EXPERIMENTS_VISION.md §9.5/§9.7.
