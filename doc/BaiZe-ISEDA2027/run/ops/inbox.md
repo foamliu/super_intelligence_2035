@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 132 -->
+<!-- RUN_ID: 133 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,41 @@
 
 ---
 
+## RUN_ID 133 — 只读：`.12` GPU 上到底是谁在跑（ArmC 的 wd 是多少）
+
+> 用途：用 `nvidia-smi --query-compute-apps` 拿真实 PID → `/proc/<pid>/cmdline`，并查 `armC*` 输出目录/日志。**只读，不 kill、不启动。**
+
+```bash
+set -u
+echo "=== RUN_ID 133 | .12 GPU owner | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+echo "[1] compute apps"
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>&1 | head -20
+echo "[2] cmdlines"
+for p in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | tr -d ' ' | sort -u | head -10); do
+  echo "--- PID $p ---"
+  tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null; echo
+done
+echo "[3] arm dirs"
+find /nas_train/app.e0031982/datasets/baize-vision/out -maxdepth 1 -type d -name 'armC*' -printf '%TY-%Tm-%Td %TH:%TM %p\n' 2>/dev/null | tail -10
+echo "[4] logs"
+ls -lt /tmp/*armC* /tmp/*arm* 2>/dev/null | head -10 || true
+for f in /tmp/armC*.log; do
+  [ -f "$f" ] || continue
+  echo "--- $f ---"; tail -10 "$f" 2>&1 | cut -c1-220
+done
+echo "[5] git"
+git log -1 --oneline
+git log -5 --oneline --grep='armC'
+echo "=== DONE 133 ==="
+```
+
 ## RUN_ID 132 — 同步 `.12` 并检查 ArmC 是否已启动（wd 是否 0.01）
 
 > 用途：pull 最新 ArmC 任务书（含 wd 0.01），只读检查 `.12` 上是否已有 ArmC 进程/日志/输出目录。**不 kill、不启动**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 132 | ArmC wd check | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
