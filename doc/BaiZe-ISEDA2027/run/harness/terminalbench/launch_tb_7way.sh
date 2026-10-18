@@ -43,17 +43,22 @@ K_ATTEMPTS=1
 PILOT_TASKS=5
 FULL_TASKS=89
 
-# 5 diverse pilot tasks covering different task families:
+# 5 diverse pilot tasks covering different task families.  All five MUST have a
+# locally-cached Docker image (alexgshaw/<task>:20251031) because the docker
+# daemon's MITM proxy cannot reach Docker Hub (registry-1.docker.io times out),
+# so `harbor run` cannot pull missing images on .29.  Verified 2026-10-18 (R433b):
+# only ~15 of 89 task images are local; the two original pilot picks
+# `regex-log` and `sqlite-db-truncate` had NO local image and were replaced.
 #   - break-filter-js-from-html  (text/JS parsing)
 #   - bn-fit-modify              (scientific Python)
-#   - regex-log                  (shell/regex)
-#   - sqlite-db-truncate         (database)
-#   - fix-git                    (git workflow)
+#   - log-summary-date-ranges    (log/shell parsing — replaces regex-log)
+#   - chess-best-move            (algorithm/search — replaces sqlite-db-truncate)
+#   - fix-git                    (git workflow; R433b smoke reward=1.0 ✅)
 PILOT_TASK_NAMES=(
     "break-filter-js-from-html"
     "bn-fit-modify"
-    "regex-log"
-    "sqlite-db-truncate"
+    "log-summary-date-ranges"
+    "chess-best-move"
     "fix-git"
 )
 
