@@ -2,6 +2,14 @@
 
 WAITING: 1
 
+> 🆕 **R438 (2026-10-18 21:0x) — RE-VERIFY 2: relay caught up (139) + API gate ✅ HTTP200 + Docker STILL blocked → BLOCKER unchanged (needs operator root)**：
+> **① Relay**：PID 2663131 ppid=1 etimes=18590（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID（137/138/139 已全部执行，中继已恢复并追平）⇒ P0① 满足，无需重启。
+> **② API gate ✅**（pilot 判据 ②，不需 Docker）：`curl http://agi-gateway.cxmt.com/cloud/v1/chat/completions`（kimi-k2.6-cloud, max_tokens=8）= **HTTP 200, 0.79s**，返回合法 chat.completion（`finish_reason:length`，key len 72，内网网关免代理）⇒ 模型可达。
+> **③ 代码 prep 复验**：`grep default_working_dir agents/`=**0 残留** ✓；`py_compile agents/*.py __init__.py`=**8/8 OK** ✓；7 适配器 `task_env_config.workdir` 全在位（f2045c54 holding）；Harbor v0.24.0 ✅；launch_tb_7way.sh ✅（PYTHONPATH bug-A fix 在位）。
+> **④ Docker 仍 BLOCKED**（21:01 复测，与 R437 一致）：`id` groups=app.adm **不在 docker 组**；`getent group docker`=`docker:x:123:`（zero members）；`/var/run/docker.sock`=0660 root:docker；`docker info`=permission denied；`sudo -n`=需密码；`doc/sudo.txt` 不存在。**无 self-service 路径**。
+> **🔴 BLOCKER 不变（需运维 root）**：① `sudo usermod -aG docker app.e0031982`+新登录；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好后立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54）→ gate → full 7×89。
+> **Next**：等 Docker 恢复 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY 本轮归档 R436 ~2.3KB → daily（R436 原文已在 daily line 295）。
+
 > 🆕 **R437 (2026-10-18 19:4x) — RE-VERIFY: relay healthy (P0① done) + Docker STILL BLOCKED + code prep clean → BLOCKER needs operator root**：
 > **① Ops relay（10:18 P0①）已满足**：`bash ops_relay.sh` PID 2663131 ppid=1 etimes=13763（真守护进程），`ops/.last_run_id`=**137**（远超 10:2x 指令所提的 RUN_ID 123；123→137 共 14 个 RUN 已正常执行）⇒ 中继未冻死，无需重启。
 > **② Docker 仍 BLOCKED（19:4x 复测，与 R436 一致）**：`getent group docker`=`docker:x:123:`（zero members，group 又被 rebuild）；`docker info`=permission denied；`/var/run/docker.sock`=`srw-rw---- root docker`(0660)；`id`=uid=6218 gid=6002 **不在 docker 组**；`sudo -n -l`="a password is required"（无 NOPASSWD，`/etc/sudoers.d/` 仅 README）；`doc/sudo.txt` **全仓库不存在**；无 TCP docker 端口（2375/2376 未监听）；`DOCKER_HOST` unset；`/etc/gshadow` 不可读。**无任何 self-service 路径**。
@@ -10,20 +18,7 @@ WAITING: 1
 > **Next**：等 Docker 恢复 → 重跑 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7 runnable）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY≈31.7KB(✓) / 归档 R435 ~2.4KB → daily-memories-harness/2026-10-18.md（R435 原文已在 daily）。
 
 
-> 🆕 **R436 (2026-10-18 18:24) — Gen2 pilot re-run STILL 6/7 failed: found REAL root cause `default_working_dir` AttributeError → FIXED in 6 adapters, but Docker access LOST (docker group zero members, sudo.txt gone) → BLOCKER needs operator**：
-> **Gen2 pilot re-run**（17:06–18:13, after R435 fixes committed 17:02 as 60ff7977）结果：
-> - **cline-patched** 5/5 n_errored=1（4 completed, 1 error）— 唯一基本 OK ✅
-> - **codex** 5/5 errored — install OK（npm prefix fix 生效），但 `AttributeError: 'DockerEnvironment' object has no attribute 'default_working_dir'`
-> - **hermes** 5/5 errored — 3× pip `--upgrade pip` fail（`Cannot uninstall pip 24.0, RECORD file not found`）+ 2× same `default_working_dir` AttributeError
-> - **opencode** 5/5 errored — install OK（npm install opencode-ai 生效），但 same `default_working_dir` AttributeError
-> - **claude-code** 2/5 errored + interrupted（finished_at=null, pilot process died at 18:13）— same `default_working_dir` AttributeError
-> - **deepseek-harness** 5/5 errored（Gen1 16:07, 未用 R435 fix 重跑）— PEP 668 + `default_working_dir`
-> - **pi** 5/5 errored（Gen1 16:16, 未用 R435 fix 重跑）— npm error + `default_working_dir`
-> **🔴 真正的根因**：6 个适配器（codex/hermes/opencode/claude-code/deepseek/pi）的 `run()` 方法都用 `environment.default_working_dir`，但 Harbor `DockerEnvironment` **没有此属性**（grep Harbor 源码确认：正确属性是 `environment.task_env_config.workdir`）。cline_patched 用 `getattr(environment, "task_env_config", None)` → `getattr(_task_cfg, "workdir", None)` 所以不报错。
-> **Fix（commit f2045c54）**：① 6 个适配器 `run()` 全部改为 `_task_cfg = getattr(environment, "task_env_config", None); cwd = str(getattr(_task_cfg, "workdir", None) or "/root")`（与 cline_patched 一致）② hermes/deepseek install 去掉 `--upgrade pip`（Debian pip 24.0 无法 uninstall）。py_compile 8/8 ✅，28/28 mock 单测 ✅，grep 确认 `default_working_dir` 在 agents/ 源码中 0 残留。
-> **🔴 BLOCKER — Docker 访问丢失**：`getent group docker` → `docker:x:123:`（zero members，group 被 rebuild）。`/var/run/docker.sock` = `srw-rw---- root docker`（0660），我（uid 6218, gid 6002 app.adm）不在 docker 组 → `docker info` = permission denied。dockerd **正在运行**（PID 2278524, systemd, since Jul 30），非 daemon 问题。`doc/sudo.txt` **已不存在**（ops inbox 历史命令引用 `PW=$(sed -n '2p' doc/sudo.txt)` 但文件被删）→ 无法 `sudo usermod -aG docker`。`sudo -l` 需密码，`sg docker` 需组成员或组密码（均无），无 NOPASSWD sudoers，无 rootless docker，无 TCP docker 端口。
-> **需运维**：① `sudo usermod -aG docker app.e0031982`（或 `sudo gpasswd -a app.e0031982 docker`）+ 恢复 `doc/sudo.txt`；或 ② `sudo chmod 666 /var/run/docker.sock`（临时开 socket）。修好后我立即 `sg docker -c 'bash launch_tb_7way.sh --pilot'` 重跑。
-> **Next**：等 Docker 恢复 → 重跑 7×5 pilot（Gen3, 用 f2045c54 修复）→ gate → full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY≈31KB(✓) / 归档 0B。
+> 📦 R436 (2026-10-18 18:24, Gen2 pilot 6/7 fail + default_working_dir root-cause FIXED f2045c54 + Docker access LOST) 已归档 → daily-memories-harness/2026-10-18.md（line 295）。结论：default_working_dir AttributeError 根因已在 6 适配器修复（f2045c54），Docker 权限丢失 blocker 由 R437/R438 承接。需要时再读。
 
 > 📦 R435 (2026-10-18 16:57, 7×5 pilot v1 COMPLETE: cline-patched 0.8 / 6-7 infra-fail → 3 root causes FOUND & FIXED) 已归档 → daily-memories-harness/2026-10-18.md。结论：pilot v1 cline-patched 4/5(0.8)✅，6/7 全 infra-fail（npm RO mount / pip PEP668 / opencode GitHub DL），3 类根因全 FIXED（_base.py npm prefix /usr/local + hermes+deepseek --break-system-packages + opencode npm install）。已被 R436 default_working_dir 根因修复取代。需要时再读。
 
@@ -51,9 +46,9 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB T2 7×5 PILOT Gen3 — code READY (default_working_dir fixed f2045c54, py_compile 8/8), BLOCKED on Docker access (needs operator root)
-已完成:       ①-㉘ · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 (cline-patched 0.8) · ㉟ 3 infra bugs FIXED (R435) · ㊱ default_working_dir root-cause FIXED in 6 adapters (f2045c54, R436) · ㊲ R437 re-verify: relay OK + code prep clean
-当前动作:     R437 (19:4x): re-verified relay healthy (P0① done, .last_run_id=137) + Docker STILL blocked (docker:x:123: zero members, permission denied, no sudo.txt, no NOPASSWD, no TCP port) + code prep clean (default_working_dir 0 residual, py_compile 8/8 OK, agents in sync origin). Cannot self-restore Docker (needs root).
+PHASE:        TB T2 7×5 PILOT Gen3 — code+API READY (default_working_dir fixed f2045c54, py_compile 8/8, kimi API ✅ HTTP200), BLOCKED on Docker access (needs operator root)
+已完成:       ①-㉘ · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 (cline-patched 0.8) · ㉟ 3 infra bugs FIXED (R435) · ㊱ default_working_dir root-cause FIXED in 6 adapters (f2045c54, R436) · ㊲ R437 re-verify: relay OK + code prep clean · ㊳ R438 re-verify 2: relay caught up(139) + API gate ✅ HTTP200 + Docker still blocked
+当前动作:     R438 (21:0x): re-verified relay caught up (.last_run_id=139=inbox top, 137-139 all executed) + API gate ✅ (kimi-k2.6-cloud HTTP 200 0.79s, no Docker needed) + Docker STILL blocked (docker:x:123: zero members, /var/run/docker.sock 0660, no sudo.txt, no NOPASSWD) + code prep clean (default_working_dir 0 residual, py_compile 8/8, workdir fix in all 7, f2045c54). No new inbox harness instr (137-139 are relay/zhulong diagnostics).
 下一步:       等运维恢复 Docker（`sudo usermod -aG docker app.e0031982`+新登录 / `sudo chmod 666 /var/run/docker.sock`）→ 立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89 → gen_report
 阻塞:         🔴 Docker 访问丢失（docker group zero members, /var/run/docker.sock 0660 root:docker, doc/sudo.txt 不存在, 无 NOPASSWD sudo, 无 TCP docker 端口）。需运维 root：`sudo usermod -aG docker app.e0031982` 或 `sudo chmod 666 /var/run/docker.sock`。⚠️ full-eval 镜像阻塞预警：89 task 仅 ~15 本地镜像，Docker Hub pull 被代理阻断。
 ERROR_COUNT:  0
