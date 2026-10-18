@@ -13,6 +13,7 @@ Run:     cline -c <cwd> --data-dir /tmp/cline_tb_data \
 
 from __future__ import annotations
 
+import json
 import shlex
 from typing import Annotated, Any, override
 
@@ -152,6 +153,35 @@ class ClinePatched(TBBaseAgent):
         """
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
+
+        # Pre-create providers.json with baseUrl so cline's openai-compatible
+        # provider knows where to send API requests.  Cline does NOT read
+        # OPENAI_BASE_URL from env (confirmed: 0 occurrences in source).
+        # Without baseUrl in providers.json, cline defaults to api.openai.com
+        # or api.cline.bot, which fails with our kimi-k2.6-cloud key.
+        providers_json = json.dumps({
+            "version": 1,
+            "lastUsedProvider": "openai-compatible",
+            "modes": {},
+            "providers": {
+                "openai-compatible": {
+                    "settings": {
+                        "provider": "openai-compatible",
+                        "apiKey": self._tb_api_key,
+                        "model": self._tb_model,
+                        "baseUrl": self._tb_base_url,
+                    },
+                    "tokenSource": "manual",
+                },
+            },
+        })
+        setup_cmd = (
+            f"mkdir -p {shlex.quote(self._data_dir)}/settings && "
+            f"printf '%s' {shlex.quote(providers_json)} > "
+            f"{shlex.quote(self._data_dir)}/settings/providers.json"
+        )
+        await environment.exec(command=setup_cmd)
+
         cmd = (
             f"cline -c {shlex.quote(cwd)} "
             f"--data-dir {shlex.quote(self._data_dir)} "

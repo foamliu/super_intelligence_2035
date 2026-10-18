@@ -113,12 +113,36 @@ class TBBaseAgent(BaseInstalledAgent):
     # -- Helpers available to subclasses ----------------------------------
 
     def _env_for_harness(self, extra: dict[str, str] | None = None) -> dict[str, str]:
-        """Build the env dict that all harness CLIs need to reach the model."""
+        """Build the env dict that all harness CLIs need to reach the model.
+
+        The Docker overlay sets HTTP_PROXY/HTTPS_PROXY for apt/npm installs,
+        but the model gateway (agi-gateway.cxmt.com) is on the internal network
+        (10.128.246.174) and must NOT go through the MITM proxy — the proxy
+        corrupts streaming API responses.  We extend NO_PROXY to include the
+        gateway hostname so harness CLIs connect directly.
+        """
+        # Derive the gateway hostname from TB_BASE_URL for NO_PROXY.
+        gateway_host = self._tb_base_url
+        # Strip scheme
+        if "://" in gateway_host:
+            gateway_host = gateway_host.split("://", 1)[1]
+        # Strip path
+        gateway_host = gateway_host.split("/", 1)[0]
+        # Strip port
+        gateway_host = gateway_host.split(":", 1)[0]
+
+        no_proxy_val = (
+            f"localhost,127.0.0.1,10.239.*,172.19.*,{gateway_host}"
+        )
+
         env: dict[str, str] = {
             "OPENAI_API_KEY": self._tb_api_key,
             "OPENAI_BASE_URL": self._tb_base_url,
             "TB_MODEL": self._tb_model,
             "TB_BASE_URL": self._tb_base_url,
+            # Bypass the MITM proxy for model API calls (gateway is internal).
+            "NO_PROXY": no_proxy_val,
+            "no_proxy": no_proxy_val,
             # Disable telemetry / auto-update to keep runs reproducible
             "DISABLE_TELEMETRY": "1",
             "DISABLE_ERROR_REPORTING": "1",
