@@ -36,6 +36,11 @@
 - `(N′)` / DeepSeek-V4-Flash second / Qwen3.8-27B 都按 5-run mean±std；n<5 不得写 ±。
 - 不碰论文口径；不杀 loop/中继；每次只推进一步。
 
+**⑤ 网关探针不需要等 ops 中继（2026-10-18 20:5x 备注）**
+- 中继（`ops_relay.sh`）近 1.5h 未消费任何 RUN_ID（137/138/139 均无回执，而 pretrain/zhulong push 正常）⇒ **不要因为「中继没回」就阻塞本队列**。
+- 你在 `.29` 本机，**可直接在本机用 curl 做 canary**（剥 proxy + `NO_PROXY`，不打印 key），结果照 ① 记录；只有需要 `.12` 数据侧的日志才走中继。
+- 中继重启属 harness 线 P0，不在本任务内处理；🚫 不要在命令行里直接 `pkill -f ops_relay.sh`（会自匹配杀到自己的 shell）。
+
 ### 🆕 运维指令 · 2026-10-18（三十一）— ▶️ **启动 B.glm-5.3-flash 复测 5-run**（`-p 4` 起步）【用户直令 · 最高优先】
 
 > 用户令（2026-10-18）：「让 zhulong 启动 B.glm-5.3-flash 复测」。
