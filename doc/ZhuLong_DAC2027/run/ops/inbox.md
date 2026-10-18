@@ -1,11 +1,36 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 72 -->
+<!-- RUN_ID: 73 -->
+
+## RUN_ID 73 — 只读：定位 `restore_config()` 的调用链与硬编码路径
+
+> 用途：查看 `run_eval.py` 的 `restore_config()` 定义、调用点、`eval_one`/`main` 片段，以及 `/home/app.t0002997` / `EDA-Eval-Framework` 是否硬编码。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 73 | inspect restore_config | $(date '+%F %T') | host=$(hostname) ==="
+F=/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py
+echo "[1] def restore_config"
+grep -n -A 50 'def restore_config' "$F" | head -70
+echo "[2] call sites"
+grep -n 'restore_config' "$F" | head -20
+echo "[3] eval_one 390-415"
+sed -n '390,415p' "$F"
+echo "[4] main 1030-1050"
+sed -n '1030,1050p' "$F"
+echo "[5] hardcoded paths"
+grep -nE 'EDA-Eval-Framework|app\.t0002997|/home/|EVAL_FW_DIR|SANDBOX_ENDPOINTS' "$F" | head -60
+echo "[6] scripts grep"
+grep -rnE 'EDA-Eval-Framework_1_pyaether|/home/app\.t0002997' /nasdata/app.e0031982/code/eda_fastmcp/scripts --include='*.py' --include='*.sh' 2>/dev/null | head -20
+echo "[7] env dir"
+ls -ld /nasdata/app.e0031982/code/EDA-Eval-Framework /home/app.t0002997 2>&1
+echo "=== DONE 73 ==="
+```
 
 ## RUN_ID 72 — 只读：r1 traceback 完整异常 + 是否已有可打分结果
 
 > 用途：RUN_ID 71 已确认 r1 进程死亡、日志 11:31 停在 `restore_config()` 的 traceback；本块取完整异常、日志尾部、`pass (` 行、loop 日志与心跳。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 72 | zhulong r1 crash/score probe | $(date '+%F %T') | host=$(hostname) ==="
 BASE=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
