@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 128 -->
+<!-- RUN_ID: 129 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,48 @@
 
 ---
 
+## RUN_ID 129 — sudo 只读：确认 `.29` 真实 train_log（/tmp）当前 step，避免误杀
+
+> 用途：NFS 的 `$OUTPUT_DIR/baize_xmodel25_decay_v2_train.log` 是 `.12` 旧 run（10-17 10:45）；`.29` 真实日志是 `/tmp/baize_xmodel25_decay_v2_train.log`。本块只读确认当前 step/进程/GPU。**不 kill、不启动。**
+
+```bash
+set -u
+echo "=== RUN_ID 129 | real train log check | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+PW=$(sed -n '2p' doc/sudo.txt)
+cat > /nas_train/app.e0031982/pretrain_log.sh <<'EOS'
+#!/bin/bash
+set -u
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay
+echo "=== TORCHRUN ==="
+ps -o pid,ppid,etimes,lstart,args -p 2597555 2>&1 | cut -c1-220
+echo "=== /tmp LOG STAT ==="
+ls -l /tmp/baize_xmodel25_decay_v2_train.log 2>&1
+echo "=== /tmp LOG TAIL ==="
+tail -8 /tmp/baize_xmodel25_decay_v2_train.log 2>&1 | cut -c1-220
+echo "=== /tmp STEP ==="
+grep -E 'step [0-9]+/19980|step=[0-9]+' /tmp/baize_xmodel25_decay_v2_train.log 2>/dev/null | tail -3
+echo "=== NFS LOG STAT (should be old .12) ==="
+ls -l "$D/baize_xmodel25_decay_v2_train.log" 2>&1
+echo "=== GPU ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+EOS
+chmod +x /nas_train/app.e0031982/pretrain_log.sh
+H=$(hostname)
+if [ "$H" = "whag0pgpuap29" ]; then
+  printf '%s\n' "$PW" | sudo -S -p "" bash /nas_train/app.e0031982/pretrain_log.sh
+else
+  printf '%s\n' "$PW" | ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'sudo -S -p "" bash /nas_train/app.e0031982/pretrain_log.sh'
+fi
+echo "=== DONE 129 ==="
+```
+
 ## RUN_ID 128 — sudo 只读：当前训练 step 与进程启动时间（决定是否 kill）
 
 > 用途：读 torchrun PID 2597555 的 etimes/lstart、worker 启动时间、train_log 当前 step 与 RESUME/error 行，确认是 step_0 从头重启还是 9400+ 自愈。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 128 | pretrain step check | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
