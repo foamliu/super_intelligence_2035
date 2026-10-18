@@ -9626,3 +9626,172 @@ MEMORY mtime=2026-10-18 12:21:26.863303000 +0800
 <!-- heartbeat 2026-10-18 12:18 -->
 === DONE 72 ===
 ```
+
+---
+
+## RUN_ID 73 · 2026-10-18 12:27:38 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 73 | inspect restore_config | $(date '+%F %T') | host=$(hostname) ==="
+F=/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py
+echo "[1] def restore_config"
+grep -n -A 50 'def restore_config' "$F" | head -70
+echo "[2] call sites"
+grep -n 'restore_config' "$F" | head -20
+echo "[3] eval_one 390-415"
+sed -n '390,415p' "$F"
+echo "[4] main 1030-1050"
+sed -n '1030,1050p' "$F"
+echo "[5] hardcoded paths"
+grep -nE 'EDA-Eval-Framework|app\.t0002997|/home/|EVAL_FW_DIR|SANDBOX_ENDPOINTS' "$F" | head -60
+echo "[6] scripts grep"
+grep -rnE 'EDA-Eval-Framework_1_pyaether|/home/app\.t0002997' /nasdata/app.e0031982/code/eda_fastmcp/scripts --include='*.py' --include='*.sh' 2>/dev/null | head -20
+echo "[7] env dir"
+ls -ld /nasdata/app.e0031982/code/EDA-Eval-Framework /home/app.t0002997 2>&1
+echo "=== DONE 73 ==="
+```
+
+**输出**
+```
+=== RUN_ID 73 | inspect restore_config | 2026-10-18 12:27:38 | host=hfeg0tedaap02 ===
+[1] def restore_config
+192:def restore_config() -> None:
+193-    """恢复 config.yaml 到 git 原始状态。
+194-    pyAether 框架是 git 仓库 → git checkout 还原。
+195-    SKILL 框架副本无 .git → 从 .config.yaml.baseline 还原(若存在), 否则 no-op
+196-    (patch_config 对 generations_file 是整行替换, 幂等, 累积无害)。
+197-    """
+198-    result = subprocess.run(
+199-        ["git", "checkout", "config.yaml"],
+200-        cwd=EVAL_FW,
+201-        capture_output=True,
+202-    )
+203-    if result.returncode != 0:
+204-        # git 不可用(如 SKILL 框架无 .git): 从 baseline 副本还原
+205-        baseline = EVAL_FW / ".config.yaml.baseline"
+206-        if baseline.is_file():
+207-            import shutil
+208-            shutil.copy2(baseline, CONFIG)
+209-            print(f"  (restored config.yaml from baseline, no git in {EVAL_FW.name})")
+210-
+211-
+212-def cleanup_generated_solutions() -> None:
+213-    """评估后清理 assemble 产出的中间脚本目录。
+214-
+215-    generated_solutions 是 candidate 代码 + benchmark test 拼装出的可执行 .py，
+216-    沙箱跑完即无用，且可由 generations JSONL + benchmark 重建。留着只会越堆越多
+217-    （每轮 155+ 个文件），故默认每轮评估后清掉。见 GENERATED_SOLUTIONS_DIRS 注释。
+218-    """
+219-    import shutil
+220-    # 重建路径: 包含当前 lang 框架 + pyAether 框架(若不同) + 本地 eda_code_eval。
+221-    # GENERATED_SOLUTIONS_DIRS 在模块加载时求值(EVAL_FW 当时=pyAether), 故这里补当前框架。
+222-    dirs = list(GENERATED_SOLUTIONS_DIRS)
+223-    cur = _eval_fw() / "output_code_generation" / "generated_solutions"
+224-    if cur not in dirs:
+225-        dirs.append(cur)
+226-    for d in dirs:
+227-        if d.is_dir():
+228-            shutil.rmtree(d)
+229-            print(f"  🧹 已清理中间脚本目录: {d}")
+230-
+231-
+232-# =============================================
+233-# 评估步骤
+234-# =============================================
+235-
+236-def run_step(cmd: list, step_name: str) -> int:
+237-    """运行子步骤，流式输出"""
+238-    print(f"  $ {' '.join(str(c) for c in cmd)}")
+239-    result = subprocess.run(cmd, cwd=EVAL_FW, capture_output=False)
+240-    if result.returncode != 0:
+241-        print(f"  ❌ {step_name} failed (rc={result.returncode})")
+242-    return result.returncode
+[2] call sites
+192:def restore_config() -> None:
+407:    restore_config()
+906:            restore_config()
+930:            restore_config()
+951:        restore_config()
+962:            restore_config()
+975:            restore_config()
+1020:            restore_config()
+1030:        restore_config()
+1060:    restore_config()
+[3] eval_one 390-415
+                so.unlink()  # 清理分片输出
+    print(f"  ✅ 合并 {merged} 条结果 → {output_file_rel}")
+
+    # 清理 shard 目录
+    for sd in shard_dirs:
+        shutil.rmtree(sd, ignore_errors=True)
+
+    return rc_any
+
+
+def eval_one(jsonl_name: str, tag: str, skip_assemble: bool = False, keep_scripts: bool = False) -> bool:
+    """对单个 JSONL 跑完整评估流程"""
+    print(f"\n{'='*70}")
+    print(f"  评估轮次: {tag} ({jsonl_name})")
+    print(f"{'='*70}")
+
+    # Patch config
+    restore_config()
+    patch_config(jsonl_name)
+    print(f"  config.yaml patched")
+
+    # Step 1: Assemble
+    if not skip_assemble:
+        print(f"\n--- Step 1: Assemble ---")
+        rc = run_step(
+            [str(PYTHON), "scripts/assemble_for_execution.py", "--config", "config.yaml"],
+[4] main 1030-1050
+        restore_config()
+        # 清理补测 assemble 产出的中间脚本（同 eval_one，尊重 --keep-scripts）
+        if not args.keep_scripts:
+            cleanup_generated_solutions()
+        print("\nconfig.yaml restored to original")
+        print("\nDone!")
+        return
+
+    # 依次评估
+    success_rounds = []
+    for tag, jsonl_name in rounds:
+        ok = eval_one(
+            jsonl_name, tag,
+            skip_assemble=args.skip_assemble,
+            keep_scripts=args.keep_scripts,
+        )
+        if ok:
+            success_rounds.append((tag, jsonl_name))
+
+    # 历史对比分析（所有轮次都跑完后）
+    if len(success_rounds) > 1:
+[5] hardcoded paths
+3:EDA-Eval-Framework eval_only 评估脚本
+55:# 评估并发 = 多沙箱分片数(配合 SANDBOX_ENDPOINTS)。默认 4(4端口并行)。
+56:# 有 SANDBOX_ENDPOINTS 时: N=分片数, 每片绑一个端口(独立 workdir)→ 无污染真并行。
+57:# 无 SANDBOX_ENDPOINTS 或 N=1: 回退单进程 --workers 1 串行(旧治标模式)。
+65:# lang="pyAether"(默认) → EDA-Eval-Framework (assemble .py + run_on_sandbox 看 error_log 判分)
+66:# lang="skill"          → EDA-Eval-Framework-SKILL (assemble .il + run_on_sandbox 看 SKILL-case-OK 判分)
+67:# lang="tcl"            → EDA-Eval-Framework-Tcl (assemble .tcl + run_on_sandbox 看 TCL-case-OK 判分)
+68:EVAL_FW_PYAETHER = Path(os.getenv("EVAL_FW_DIR",
+69:    str(Path.home() / "20260806" / "EDA-Eval-Framework")))
+70:EVAL_FW_SKILL = Path(os.getenv("EVAL_FW_DIR_SKILL",
+71:    str(Path.home() / "20260802" / "EDA-Eval-Framework-SKILL")))
+72:EVAL_FW_TCL = Path(os.getenv("EVAL_FW_DIR_TCL",
+73:    str(Path.home() / "EDA-Eval-Framework-Tcl")))
+128:    """在 EDA-Eval-Framework config.yaml 上 patch 值，不改键顺序
+249:# 复用生成侧 SANDBOX_ENDPOINTS 配置(单一事实源)。每个 shard 用 SANDBOX_CONFIG_JSON
+254:    """解析 SANDBOX_ENDPOINTS → [(port, workdir), ...]。空 → None(走单端口)。"""
+255:    raw = os.getenv("SANDBOX_ENDPOINTS", "").strip()
+283:    # SKILL/Tcl 与 pyAether 共用 SANDBOX_ENDPOINTS 多端口池(4 端口隔离, 各独立 workdir)。
+774:        description="EDA-Eval-Framework eval_only 评估脚本",
+807:        help="评测语言: pyAether(默认) / skill(EDA-Eval-Framework-SKILL, 判 SKILL-case-OK) / tcl(EDA-Eval-Framework-Tcl, 判 TCL-case-OK)",
+[6] scripts grep
+[7] env dir
+drwxr-x--x 11 app.t0002997 app.adm 4096 Oct 10 16:33 /home/app.t0002997
+drwxr-x--- 13 app.e0031982 app.adm 4096 Oct 18 12:17 /nasdata/app.e0031982/code/EDA-Eval-Framework
+=== DONE 73 ===
+```
