@@ -139,10 +139,10 @@ The documentation axis yields a non-monotone ordering: the low-fidelity rung (L)
 % (H)为RAG基线（高保真检索但无执行器）。该对比说明执行器对文档保真度的支配地位：
 % 即使粗糙索引，一旦可执行可观测，也优于仅用于静态检索的丰富索引。
 
-\textbf{Read-back axis.} The second axis is how much of the live state execution returns. Section~\ref{sec:bayesian} predicts that accuracy tracks this fidelity with the LLM held fixed; we therefore compare three closed-loop variants that differ only here: (N) \emph{no observation}---the agent predicts from the prior alone; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; and (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state are returned (the default). The framework predicts a monotone gain from (N) to (F); the measured ordering, however, is B $<$ N $<$ F, a result we analyze below. We emphasize that the three rungs compress the \emph{same} executed state to different bandwidths: (F) returns the full \texttt{error\_log}/\texttt{print\_log}/\texttt{result}; (B) collapses this to a single bit---\texttt{PASS} means only that the sandbox raised \emph{no exception} (an empty \texttt{error\_log}), not that the task's assertions held; and (N$'$) returns only the literal token \texttt{executed}. A binary \texttt{PASS} is therefore a content-free confirmation that can endorse a wrong hypothesis, which is the mechanism the analysis below appeals to.
+\textbf{Read-back axis.} The second axis is how much of the live state execution returns. Section~\ref{sec:bayesian} predicts that accuracy tracks this fidelity with the LLM held fixed; we therefore compare three closed-loop variants that differ only here: (N) \emph{no observation}---the agent predicts from the prior alone; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; and (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state are returned (the default). The framework predicts a monotone gain from (N) to (F); the fresh 5-run measurement recovers the predicted ordering N$'$ $<$ B $<$ F; an earlier legacy probe had suggested the opposite, as analyzed below. We emphasize that the three rungs compress the \emph{same} executed state to different bandwidths: (F) returns the full \texttt{error\_log}/\texttt{print\_log}/\texttt{result}; (B) collapses this to a single bit---\texttt{PASS} means only that the sandbox raised \emph{no exception} (an empty \texttt{error\_log}), not that the task's assertions held; and (N$'$) returns only the literal token \texttt{executed}. A binary \texttt{PASS} is therefore a content-free confirmation that can endorse a wrong hypothesis, which is the mechanism the analysis below appeals to.
 % 回读轴。第二条轴是执行返回多少实时状态信息。第~\ref{sec:bayesian}节预测固定LLM时准确率随该保真度变化，
 % 因此我们比较仅在此处不同的三个闭环变体：(N) 无观测、(B) 二值反馈、(F) 全观测。框架预测从(N)到(F)单调增益，
-% 但实测排序为 B < N < F，下文分析该结果。
+% fresh 5-run 实测排序为 N' < B < F；早期 legacy 探路曾出现相反排序，下文分析。
 
 Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution read-backs per variant.
 % 表~\ref{tab:ablation-harness}报告各变体的 Pass@1 与平均信念更新轮数。
@@ -188,7 +188,7 @@ Beyond accuracy, the read-back rungs differ sharply in \emph{convergence cost}--
 \textbf{Read-back} & \textbf{Pass@1 (\%)} & \textbf{Mean \texttt{run\_code}} & \textbf{Wall (h)} & \textbf{Timeout} \\
 \midrule
 (F) Full & 81.4 $\pm$ 1.5 & 12.1 & 2.22 & 3.4$^{\ast}$ \\
-(B) Binary & 75.9$^{\ddagger}$ & 27.6 & 4.25 & 13 \\
+(B) Binary & 78.1$^{\ddagger}$ & 27.6 & 4.25 & 13 \\
 (N$'$) None & 73.3$^{\dagger}$ & ---$^{\ddagger}$ & ---$^{\ddagger}$ & ---$^{\ddagger}$ \\
 \bottomrule
 \end{tabular}
