@@ -3,22 +3,76 @@
 # Injected via `harbor run --extra-docker-compose <this-file>`.  Provides:
 #   1. Pre-mounted Node.js at /opt/node (avoids NVM download; fast path for
 #      _base.py:_install_node).
-#   2. Pre-mounted host Bun global node_modules at /opt/cline-modules (read-only)
-#      so the cline-patched fast path (cline_patched.py:install) finds the
-#      standalone @cline/cli-linux-x64/bin/cline ELF binary (v3.0.72, 132 MB,
-#      only needs glibc — confirmed via ldd 2026-10-18) without any npm install.
+#   2. Pre-mounted standalone cline ELF at /opt/cline-modules (read-only).
+#      Source = /nas_train/app.e0031982/download/cline-standalone (NFS, shared
+#      across .12/.29, readable in-container like /opt/node).  Contains the
+#      standalone @cline/cli-linux-x64/bin/cline ELF (v3.0.72, 132 MB, Bun-
+#      compiled, only needs glibc — confirmed via ldd 2026-10-18) so the
+#      cline-patched fast path (cline_patched.py:install) needs no npm install.
+#      NOTE (2026-10-18 R433): the prior source ~/.bun/install/global/node_modules
+#      is .12-local ext4 and on .29 holds only symlinks to the cline *source*
+#      repo (no cli-linux-x64 ELF) — so it was replaced by this NFS copy.
 #   3. npm registry mirror + proxy env for harnesses that still need npm
 #      (codex / opencode / claude-code / pi).
 #
 # Host paths are .29-specific (confirmed 2026-10-18).  This file lives in the
 # repo (stable) instead of /tmp (volatile) so it survives reboots.
 services:
-  client:
+  # Harbor's task container is the `main` service (see harbor's
+  # docker-compose-prebuilt.yaml).  The prior version targeted `client`, which
+  # docker-compose treats as a brand-NEW service — so env/volumes/network never
+  # reached the task container (root cause of the R431/R432 smoke failures).
+  # Fixed 2026-10-18 (R433).
+  main:
+    # Host networking is REQUIRED: the internal model gateway
+    # (agi-gateway.cxmt.com -> 10.128.246.174) is only reachable from the host's
+    # routing table; the default docker bridge cannot resolve/route it.
+    network_mode: host
     environment:
-      npm_config_registry: https://registry.npmmirror.com
-      npm_config_strict_ssl: "false"
-      npm_config_proxy: http://172.19.92.25:13128
-      npm_config_https_proxy: http://172.19.92.25:13128
+      # MITM proxy for external package installs (npm/pip/uv/apt to public
+      # mirrors).  The internal model gateway is in no_proxy so the agent's API
+      # calls go DIRECT (host net shares .29's route to 10.128.246.174).
+      - http_proxy=http://172.19.92.25:13128
+      - https_proxy=http://172.19.92.25:13128
+      - HTTP_PROXY=http://172.19.92.25:13128
+      - HTTPS_PROXY=http://172.19.92.25:13128
+      # astral.sh is in no_proxy ON PURPOSE (R433b, 2026-10-18): TB 2.0 verifier
+      # test.sh does `curl -LsSf https://astral.sh/uv/0.9.5/install.sh | sh`.
+      # Via the proxy, astral.sh returns 301 but the CDN redirect's TLS hangs
+      # ~5 min until the proxy times it out (curl rc=28) — pure overhead since
+      # uvx is already pre-mounted below.  astral.sh is DIRECTLY UNREACHABLE from
+      # .29 (no internet route; "Network is unreachable" in <100ms), so forcing
+      # curl to bypass the proxy makes it fail fast and the verifier proceeds to
+      # `source env` + `uvx` immediately.  cline's API calls hit the gateway
+      # (also in no_proxy), never astral.sh, so this is safe.
+      - no_proxy=localhost,127.0.0.1,agi-gateway.cxmt.com,10.128.0.0/16,10.239.0.0/16,172.19.0.0/16,172.16.0.0/16,astral.sh
+      - NO_PROXY=localhost,127.0.0.1,agi-gateway.cxmt.com,10.128.0.0/16,10.239.0.0/16,172.19.0.0/16,172.16.0.0/16,astral.sh
+      - UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+      - PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+      - PIP_TRUSTED_HOST=mirrors.aliyun.com
+      - npm_config_registry=https://registry.npmmirror.com
+      - npm_config_strict_ssl=false
+      - npm_config_proxy=http://172.19.92.25:13128
+      - npm_config_https_proxy=http://172.19.92.25:13128
+      - NVM_NODEJS_ORG_MIRROR=https://mirrors.aliyun.com/nodejs-release
+      - NVM_CURL_FLAGS=-k
+      - GIT_SSL_NO_VERIFY=1
+      - GIT_HTTP_PROXY=http://172.19.92.25:13128
+      - GIT_HTTPS_PROXY=http://172.19.92.25:13128
     volumes:
+      # Node.js (fast path for _base.py:_install_node) — stable NFS path.
       - /nas_train/app.e0031982/download/node-v22.19.0-linux-x64:/opt/node:ro
-      - /home/app.e0031982/.bun/install/global/node_modules:/opt/cline-modules:ro
+      # Standalone cline ELF (fast path for cline_patched.py:install) — NFS copy.
+      - /nas_train/app.e0031982/download/cline-standalone:/opt/cline-modules:ro
+      # uv / uvx / cpython from host (for harnesses that install via uv, e.g.
+      # codex / opencode, AND for TB 2.0 verifiers which invoke `uvx`).  Mounted
+      # read-only: TB task test.sh's `curl|sh` uv-self-install will fail to
+      # overwrite /root/.local/bin/uv but the pre-mounted 0.8.13 satisfies uvx.
+      - /usr/local/bin/uv:/root/.local/bin/uv:ro
+      - /usr/local/bin/uvx:/root/.local/bin/uvx:ro
+      - /home/app.e0031982/.local/share/uv/python:/root/.local/share/uv/python:ro
+      # TB 2.0 verifier test.sh does `source /root/.local/bin/env` (line ~10) to
+      # put ~/.local/bin on PATH so `uvx` is found.  Without this mount the
+      # verifier errors "env: No such file" then "uvx: command not found" and
+      # every task scores reward 0 regardless of agent quality (R433 root cause).
+      - /nas_train/app.e0031982/download/tb-overlay/env:/root/.local/bin/env:ro
