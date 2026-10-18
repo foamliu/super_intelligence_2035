@@ -2,6 +2,13 @@
 
 WAITING: 1
 
+> 🆕 **R439 (2026-10-18 22:21) — RE-VERIFY 3: relay healthy(139) + Docker STILL blocked (4th round) → BLOCKER unchanged (needs operator root)**：
+> **① Relay ✅**：PID 2663131 ppid=1 etimes=23563（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID 139 ⇒ 中继健康已追平，P0① 满足，**无需重启**。⚠️ 运维重启脚本里的 `/nasdata/...` 路径在本机不存在（实际 `/nas_train/...`），强行跑会杀掉健康中继且重启失败 → **不执行该脚本**。
+> **② Docker 仍 BLOCKED（22:21 复测，第 4 轮，与 R436/R437/R438 一致）**：`id`=groups=app.adm **不在 docker 组**；`getent group docker`=`docker:x:123:`（zero members）；`/var/run/docker.sock`=0660 root:docker；`docker info`→Server: permission denied；`sudo -n`=需密码；`sg docker`='Invalid password'；`command -v podman`=空；`DOCKER_HOST`=unset；TCP 2375/2376 无监听。**已穷尽 self-service 路径，无解**。
+> **③ 代码 prep 仍 clean**（f2045c54）：grep default_working_dir=0 残留 ✓；7 适配器 workdir 在位；Harbor v0.24.0 ✅；launch_tb_7way.sh ✅；API gate ✅ HTTP200（R438 验）。
+> **🔴 BLOCKER 不变（需运维 root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`+新登录会话；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好后立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54）→ gate → full 7×89。
+> **Next**：等 Docker 恢复 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY 归档 R433/R434 后 ~28KB（✓）。
+
 > 🆕 **R438 (2026-10-18 21:0x) — RE-VERIFY 2: relay caught up (139) + API gate ✅ HTTP200 + Docker STILL blocked → BLOCKER unchanged (needs operator root)**：
 > **① Relay**：PID 2663131 ppid=1 etimes=18590（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID（137/138/139 已全部执行，中继已恢复并追平）⇒ P0① 满足，无需重启。
 > **② API gate ✅**（pilot 判据 ②，不需 Docker）：`curl http://agi-gateway.cxmt.com/cloud/v1/chat/completions`（kimi-k2.6-cloud, max_tokens=8）= **HTTP 200, 0.79s**，返回合法 chat.completion（`finish_reason:length`，key len 72，内网网关免代理）⇒ 模型可达。
@@ -22,19 +29,8 @@ WAITING: 1
 
 > 📦 R435 (2026-10-18 16:57, 7×5 pilot v1 COMPLETE: cline-patched 0.8 / 6-7 infra-fail → 3 root causes FOUND & FIXED) 已归档 → daily-memories-harness/2026-10-18.md。结论：pilot v1 cline-patched 4/5(0.8)✅，6/7 全 infra-fail（npm RO mount / pip PEP668 / opencode GitHub DL），3 类根因全 FIXED（_base.py npm prefix /usr/local + hermes+deepseek --break-system-packages + opencode npm install）。已被 R436 default_working_dir 根因修复取代。需要时再读。
 
-> 🟢 **R433 (2026-10-18 15:03) — SMOKE PASSED reward=1.0 ✅ + 7×5 pilot launched（crashed → R434 修复重跑）**：
-> **solo smoke R433b (cline-patched × fix-git) ✅ reward 1.0**（`n_completed:1, n_errored:0, mean:1.0`，14:43→14:50）。verifier 流程：`apt install curl`→`curl -LsSf astral.sh/uv/0.9.5/install.sh`（SSL timeout rc=28 ~5min）→`source /root/.local/bin/env`→`uvx -p3.13 pytest`→**2 passed**（test_about_file/test_layout_file）→reward.txt=1。**根因修复确认**：overlay `client:`→`main:` + `network_mode:host` + 挂 `/root/.local/bin/env`（verifier `source env` 找到 mounted uvx）。cline agent 跑了 13 轮 API（run_commands×3+/editor×1+，exit_code:0）真实解题，非 infra 噪声。
-> **overlay 再优化（commit 27758bad）**：`no_proxy`/`NO_PROXY` 加 `astral.sh` —— .29 对 astral.sh **直连 Network unreachable**（无互联网路由），绕过代理后 curl rc=7 **~3s 快失败** vs 经代理 CDN TLS 挂 ~5min → 每 verifier 省 ~5min（full 623 trial 省 ~52h）。`/etc/hosts` 挂载 + `--add-host` 在 `network_mode:host` 下**均失效**（getent 仍返真实 Cloudflare IP），故用 no_proxy 方案。YAML ✅，容器内实测 curl 3s 快失败 + 流程续到 uvx。
-> **7×5 PILOT 已启动**（.29 PID 1331208，15:03:31，wrapper `/nas_train/app.e0031982/download/tb-overlay/tb_pilot_7way.sh`）：oracle check(5 task, n-concurrent 4)→7 harness×5 task=35 trial。pilot task 改用**本地有镜像**的 5 个 `break-filter-js-from-html / bn-fit-modify / log-summary-date-ranges / chess-best-move / fix-git`——原 `regex-log`/`sqlite-db-truncate` **无本地镜像**且 Docker Hub pull 被代理阻断（registry-1.docker.io timeout）→已替换（launch_tb_7way.sh 已改）。wrapper 注入 PATH(~/.local/bin harbor)+proxy+TB_API_KEY，避 §3(4)「非登录 shell 无 cline/harbor」坑。启动验证：harbor 0.24.0 ✅、key len 72 ✅、overlay astral.sh 7 行 ✅、oracle 容器 fix-git Up ✅。
-> **🔴 FULL-EVAL 镜像阻塞预警**：89 task 仅 **~15 本地镜像**（alexgshaw/*:20251031）；Docker Hub pull 被 MITM 代理阻断（registry-1.docker.io `Client.Timeout exceeded`）→ full 7×89 暂只能跑本地镜像 task。需解决镜像拉取（Docker Hub mirror / 批量预拉 / 本地 build）才能跑满 89。
-> **Next**：① poll oracle check（5 task reward 应=1.0，验证 overlay 对多 task 有效 + curl 快失败）② oracle ✅ → 监控 7 harness 35 trial（gate: infra≤20%, ≥6/7 runnable）③ 解决 full-eval 镜像拉取 ④ full 7×89 ⑤ gen_7way_report。
-> 🆕 **R434 (2026-10-18 15:22) — `-p` 单值 BUG 修复 → oracle 5/5 ✅ → PILOT RE-LAUNCH (PID 2731368)**：
-> **R433 pilot 崩溃双因**：① `harbor run -p/--path` 是**单值**（`Path|None` last-wins，非 `list[Path]`，源码 harbor/cli/jobs.py 确认）→ 多个 `-p` 只留最后一个 → oracle 实跑 1 task(fix-git reward=1, 1m48s, astral.sh 快失败 ✅)。② **运行中编辑 NFS 上的 launch_tb_7way.sh** → bash 增量读遇 `Stale file handle` → 脚本 oracle 后崩溃，7 harness 未跑。
-> **修复(commit 6ebf67f7)**：pilot=`mktemp -d`+5 symlink→单 `-p <dataset-dir>`；full=`-p ${TB_TASKS_DIR}`。bash -n ✅。**oracle_val5 独立验证 5/5 reward=1** ✅（break-filter/log-summary 慢：verifier test.sh 内 apt-get 经代理每次重跑，非镜像层缓存）。
-> **PILOT RE-LAUNCHED**(.29 PID 2731368, setsid 后台, `/tmp/launch_pilot.sh` 注 PATH+proxy+TB_API_KEY)：oracle 4/5 reward=1(break-filter apt-get 中)→将跑 7 harness×5=35 trial。**🔒铁律：pilot 运行期间禁编辑 NFS 上 launch_tb_7way.sh**。
-> **Next**：① oracle 5/5→② 首个 harness(cline-patched)确认 kimi API 调通→③ 35-trial gate(infra≤20%,≥6/7)→④ full-eval 镜像方案→⑤ full 7×89。📦MEMORY~32.4KB,R432 待归档。
-
-
+> 📦 R433 (2026-10-18 15:03, SMOKE PASSED reward=1.0 + 7×5 pilot launched) 已归档 → daily-memories-harness/2026-10-18.md。结论：solo smoke ✅ reward 1.0（cline-patched × fix-git, 13 轮 API 真解题），overlay no_proxy astral.sh 省 ~52h，pilot 启动后被 R434 的 `-p` 单值 bug 崩溃。需要时再读。
+> 📦 R434 (2026-10-18 15:22, `-p` 单值 BUG 修复 + oracle 5/5 ✅ + pilot re-launch) 已归档 → daily-memories-harness/2026-10-18.md。结论：harbor `-p` 单值 last-wins bug 修复(6ebf67f7)，oracle 5/5 ✅，pilot re-launched(PID 2731368)→后被 R436 default_working_dir 根因取代。需要时再读。
 > 📦 R432 (2026-10-18 13:50, 4 bugs fixed + gateway ✅ + docker blocker → resolved) 已归档 → daily-memories-harness/2026-10-18.md。结论：PYTHONPATH/key/overlay 3 bugs 修复，docker 权限已由运维恢复，smoke+ pilot 已跑。需要时再读。
 
 > 📦 R431 (2026-10-18 12:30) — archived → `daily-memories-harness/2026-10-18.md`。结论：relay fixed（inbox RUN_ID 标记问题），smoke failed at cline install（npm fallback 装错包），3 bugs found（A:PYTHONPATH / B:key提取 / C:Docker Hub不可达）——**全部在 R432 修复**（C 改用 overlay 挂 host cline 二进制，绕过 npm）。
@@ -55,6 +51,8 @@ ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-18 22:21 —— R439: RE-VERIFY 3（第 4 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1 etimes=23563，`ops/.last_run_id`=139=inbox top RUN_ID 139）⇒ P0① 满足，无需重启；运维重启脚本里 `/nasdata/...` 路径本机不存在（实际 `/nas_train/...`）故不执行（强行跑会杀健康中继+重启失败）。Docker 仍 BLOCKED（22:21 复测，与 R436/R437/R438 一致）：`id`=不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / socket 0660 root:docker / `docker info`→permission denied / `sudo -n`=需密码 / `sg docker`=Invalid password / 无 podman / DOCKER_HOST unset / 无 TCP 2375/2376 → 已穷尽 self-service，BLOCKER 不变（需运维 root）。代码 prep clean（f2045c54，grep=0 残留，Harbor v0.24.0，API gate ✅ HTTP200）。归档 R433/R434 原文→daily（MEMORY 30986→29404B ✓）。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
+
 - 2026-10-18 19:4x —— R437: ① ops relay re-verified healthy（P0① 已满足：PID 2663131 ppid=1 etimes=13763，`ops/.last_run_id`=137，远超 10:2x 指令的 RUN_ID 123；123→137 共 14 RUN 正常执行）⇒ 中继未冻死，无需重启。② Docker 仍 BLOCKED（复测）：`getent group docker`=`docker:x:123:`(zero members)，`docker info`=permission denied，`/var/run/docker.sock`=0660 root:docker，`id`=uid6218 gid6002 不在 docker 组，`sudo -n -l`=需密码（无 NOPASSWD，sudoers.d 仅 README），`doc/sudo.txt` 全仓库不存在，无 TCP docker 端口，`DOCKER_HOST` unset，`/etc/gshadow` 不可读 → 无 self-service 路径。③ 代码 prep 复验（不需 Docker）：`grep -rn default_working_dir agents/`=0 残留 ✓，`py_compile agents/*.py __init__.py`=OK(8 文件)，fix 已 commit f2045c54，`git status -- harness/terminalbench/agents`=与 origin 同步无未提交。结论：pilot 代码就绪，唯一阻塞=Docker 权限（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。WAITING=1。
 - 2026-10-18 16:57 —— R435: 7×5 pilot v1 COMPLETE（.29, 35 trial）。oracle 5/5 ✅。cline-patched 4/5 (0.8) ✅。6/7 harness 全 infra-fail（codex/claude-code/pi: npm ENOENT on RO /opt/node; hermes/deepseek: pip PEP668; opencode: GitHub DL exit 56）。3 类根因全 FIXED: _base.py npm prefix /usr/local + hermes/deepseek --break-system-packages + opencode npm install。容器实测 codex-cli 0.94.0 ✅。28/28 mock ✅。待 push + .29 重跑 pilot。
 - 2026-10-18 12:30 —— R431: ① ops relay 修复——RUN_ID 123 不执行真因=inbox.md 触发标记 122 未更到 123（relay 未冻结），已 122→123(commit eb204521)+push，123 在 .29 执行成功；kill .12 stray relay(pid 1048010)，.29 single relay(pid 1972249,ppid=1)；123 probe 训练全健康。② TB solo smoke 跑起 on .29：cline-patched × fix-git(cached image)，跑 2m24s → FAILED at cline install(npm install -g cline exit 1；根因=cline 是 bun 源码构建非 npm 包，fast-path 嵌入式 bun 二进制不存在)。③ 发现 3 bug：launch_tb_7way.sh 未设 PYTHONPATH(自定义 adapter 导入失败)/key 提取破损(全角冒号+-A1,取空→401)/Docker Hub 不可达 via proxy(仅 cached image 能跑,regex-log 未缓存致首试 16s 失败)。改 fix-git(cache)后容器 Up，但 cline install fail。WAITING=0 待修 cline install 路径。
