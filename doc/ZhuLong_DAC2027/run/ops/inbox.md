@@ -1,11 +1,31 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 76 -->
+<!-- RUN_ID: 77 -->
+
+## RUN_ID 77 — 只读：pyAether r1 regrade 进度/是否出分
+
+> 用途：RUN_ID 76 已启动 regrade；本块只读查看进程、日志尾部、`pass (xx.x%)` 与输出目录，不 kill、不改配置。
+
+```bash
+set -u
+echo "=== RUN_ID 77 | pyaether regrade progress | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[r]un_eval\.py|[r]egrade_zl_glm52' | cut -c1-190 || true
+echo "[2] log stat"
+stat -c '%n size=%s mtime=%y' /tmp/ZL_glm52_r1_regrade.log 2>&1
+echo "[3] tail 40"
+tail -40 /tmp/ZL_glm52_r1_regrade.log 2>&1 | cut -c1-220
+echo "[4] score/progress"
+grep -E 'pass \(|PASS_RATE|评估结果汇总|通过率|准确率|REGRADE DONE' /tmp/ZL_glm52_r1_regrade.log 2>/dev/null | tail -10 | cut -c1-220
+echo "[5] output dir"
+ls -lt /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation 2>/dev/null | head -5
+echo "=== DONE 77 ==="
+```
 
 ## RUN_ID 76 — 修 `EVAL_FW_DIR` 并重启 r1 评分（若未在跑）
 
 > 用户令：`~/.bashrc` 加 `export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`；`.env` 保持“为空才赋值”；然后重启 grade（若未启动）。**会备份 `.env`**；只改配置 + 启动评分，不 kill 现有任务。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 76 | fix EVAL_FW_DIR + start regrade | $(date '+%F %T') | host=$(hostname) ==="
 E=/nasdata/app.e0031982/code/eda_fastmcp
