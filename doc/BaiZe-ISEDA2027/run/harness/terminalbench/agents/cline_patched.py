@@ -159,15 +159,18 @@ class ClinePatched(TBBaseAgent):
         # way to persist baseUrl is via `cline auth -b <url>`, which writes it
         # to providers.json settings.  We run auth first, then run the task
         # WITHOUT -k (key already saved by auth) to avoid overwriting baseUrl.
+        # NOTE: `cline auth` uses -p (lowercase) for --provider, while the
+        # main `cline` command uses -P (uppercase).  See `cline auth --help`.
         auth_cmd = (
             f"cline auth "
-            f"-P openai "
+            f"-p openai "
             f"-k {shlex.quote(self._tb_api_key)} "
             f"-m {shlex.quote(self._tb_model)} "
             f"-b {shlex.quote(self._tb_base_url)} "
             f"--data-dir {shlex.quote(self._data_dir)}"
         )
-        auth_result = await environment.exec(command=auth_cmd)
+        env = self._env_for_harness()
+        auth_result = await environment.exec(command=auth_cmd, env=env)
         if auth_result.return_code != 0:
             raise RuntimeError(
                 f"Cline auth failed (exit {auth_result.return_code}): "
@@ -181,7 +184,6 @@ class ClinePatched(TBBaseAgent):
             f"--auto-approve true --json "
             f"{shlex.quote(instruction)}"
         )
-        env = self._env_for_harness()
 
         result = await environment.exec(
             command=cmd,
