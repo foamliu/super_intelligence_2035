@@ -13963,3 +13963,92 @@ bash /tmp/fix_relay_29_1018.sh
 6. **长上下文注入（ABF）**：ABF vs YaRN 对比（含 +10.5% PPL 税）、推理侧配置 diff、训练侧 seq 课程与 token 预算、1M 阶段独立 ETA、能力门禁（�
 [relay] ⚠️ 输出超长，已截断到 20000 字符
 ```
+
+---
+
+## RUN_ID 128 · 2026-10-18 16:38:53 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 128 | pretrain step check | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin >/dev/null 2>&1 || true
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+PW=$(sed -n '2p' doc/sudo.txt)
+cat > /nas_train/app.e0031982/pretrain_step.sh <<'EOS'
+#!/bin/bash
+set -u
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay
+echo "=== TORCHRUN 2597555 ==="
+ps -o pid,ppid,etimes,lstart,args -p 2597555 2>&1 | cut -c1-220
+echo "=== WORKERS ==="
+ps -eo pid,ppid,etimes,args | grep '[b]aize_xmodel25_decay_v2.py' | head -3 | cut -c1-180
+echo "=== LOG STAT ==="
+stat -c '%y %s' "$D/baize_xmodel25_decay_v2_train.log" 2>&1
+echo "=== LOG TAIL ==="
+tail -30 "$D/baize_xmodel25_decay_v2_train.log" 2>&1 | cut -c1-220
+echo "=== STEP LINES ==="
+grep -E 'step [0-9]+/|step=[0-9]+' "$D/baize_xmodel25_decay_v2_train.log" 2>/dev/null | tail -5
+echo "=== RESUME/ERROR ==="
+grep -nE 'RESUME|start_step|Traceback|Error|OOM' "$D/baize_xmodel25_decay_v2_train.log" 2>/dev/null | tail -10
+EOS
+chmod +x /nas_train/app.e0031982/pretrain_step.sh
+H=$(hostname)
+if [ "$H" = "whag0pgpuap29" ]; then
+  printf '%s\n' "$PW" | sudo -S -p "" bash /nas_train/app.e0031982/pretrain_step.sh
+else
+  printf '%s\n' "$PW" | ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'sudo -S -p "" bash /nas_train/app.e0031982/pretrain_step.sh'
+fi
+echo "=== DONE 128 ==="
+```
+
+**输出**
+```
+=== RUN_ID 128 | pretrain step check | 2026-10-18 16:38:53 | host=whag0pgpuap12 ===
+=== TORCHRUN 2597555 ===
+    PID    PPID ELAPSED                  STARTED COMMAND
+2597555 2597505  114893 Sat Oct 17 08:44:02 2026 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 -
+=== WORKERS ===
+2597555 2597505  114893 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=1 --nproc_per_node=8 --master_a
+2605722 2597555  114890 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experi
+2605723 2597555  114890 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experi
+=== LOG STAT ===
+2026-10-17 10:45:48.356905062 +0800 32933
+=== LOG TAIL ===
+W1017 10:45:44.550000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596711 closing signal SIGTERM
+W1017 10:45:44.553000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596712 closing signal SIGTERM
+W1017 10:45:44.557000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596713 closing signal SIGTERM
+W1017 10:45:44.561000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596714 closing signal SIGTERM
+W1017 10:45:44.565000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596715 closing signal SIGTERM
+W1017 10:45:44.569000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596716 closing signal SIGTERM
+W1017 10:45:44.571000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596717 closing signal SIGTERM
+W1017 10:45:44.573000 593117 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 596718 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==2.8.0+cu128', 'console_scripts', 'torchrun')())
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    result = agent.run()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+    result = f(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 715, in run
+    result = self._invoke_run(role)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 879, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 593117 got signal: 15
+=== STEP LINES ===
+=== RESUME/ERROR ===
+259:Traceback (most recent call last):
+=== DONE 128 ===
+```
