@@ -3,7 +3,7 @@
 WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05））。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05）· EP06《情绪》跑批中）。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；下一章 EP06《情绪》（54 镜）待启动
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅ + 成片 272.84s；05_临界点 55/55 ✅（R2V 41 + T2V 14）→ 字幕 206 条 → master + 硬字幕成片 295.51s
-当前动作:     EP05《临界点》收尾：55/55 镜 → 字幕 206 条 → master（295.50s · 漂移 0.006s）→ libass 硬字幕成片（1280×720@24fps · 106.1MB）✅ 交付 + 回写记忆 + commit + push 两仓
-下一步:       启动 EP06《情绪》（54 镜）——先 gen_ep06_scenes.py 补场景参考图，再固化 H3 脚本跑分镜
+PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）已启动跑批
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅；05_临界点 55/55 ✅ + 成片 295.51s；EP06 资产全位（4 场景图 + 1 合影 + 定妆照）+ 脚本固化（r2v/t2v/recover）
+当前动作:     EP06《情绪》启动：提交 51 镜 H3 后台跑批（R2V 27 + T2V 24 · running 1/pending 50 · 烟雾测试 3 镜已落盘 02/06 R2V + 01 T2V）
+下一步:       逐轮核验+回收 EP06 出片（recover_ep06_h3.py，51→54 镜）；54 镜全落盘后固化 gen_ep06_subtitles.py + synth_ep06.py 交付成片
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-18（EP05《临界点》成片交付 ✅：55/55 镜 → 字幕 206 条 → master 295.50s 漂移 0.006s → libass 硬字幕成片 106.1MB · 修复 synth_ep05.py fontsdir 冒号 bug · 回写记忆 + commit + push 两仓）
+- **上次唤醒**：2026-10-18（EP06《情绪》启动跑批 ✅：资产 4 场景图+1 合影核验在位 → 固化 recover_ep06_h3.py → 提交 51 镜 H3 后台跑批（R2V 27 + T2V 24 · running 1/pending 50）· 回写记忆 + commit + push 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-18 · S3 放量 · EP06《情绪》启动跑批 ✅（54 镜 · 提交 51 镜 H3 后台）**：续上轮「下一步」，启动 EP06《情绪》（54 镜）。
+  - **git 同步**：短剧仓 up-to-date（`d36a389`）；记录仓 up-to-date（`a4136670` · 本轮无新提交可拉）。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 队列空）；ffmpeg/ffprobe 在（2025-10-12 build）；MCP comfyui-drama/web-search 可用。
+  - **资产核验**：`ASSETS/CHARACTERS/_scene/06_*.png` 4/4 落盘（lab/factory/mozi_ui/old_worker · 1.4–1.9MB）；`_group/06_chensiwei_linwei_hero_v01.png` 合影在位；定妆照 `01_林薇/55.png` + `02_陈思危/125.png` 在位。
+  - **脚本固化**：`gen_ep06_h3_r2v.py`（29 镜）/`gen_ep06_h3_t2v.py`（25 镜）上轮已固化（已 commit）；本轮新增 `recover_ep06_h3.py`（镜像 EP05 范式，py_compile exit=0 + 实测回收 3 镜）。
+  - **提交跑批**：后台 Start-Process 提交 `gen_ep06_h3_r2v.py --skip-existing`（R2V PID 37684）+ `gen_ep06_h3_t2v.py --skip-existing`（T2V PID 24916）→ ComfyUI 队列 **running 1/pending 50**（51 镜 = 54 − 3 烟雾测试已落盘：02/06 R2V + 01 T2V）；err 日志空（无 OOM/报错）。
+  - **下一步**：逐轮核验+回收 EP06 出片（`recover_ep06_h3.py`，51→54 镜）；54 镜全落盘后固化 `gen_ep06_subtitles.py` + `synth_ep06.py` 交付成片。
 
 - **2026-10-18 · S3 放量 · EP05《临界点》成片交付 ✅（55/55 镜 → 字幕 206 条 → master + 硬字幕成片）**：续上轮「下一步」，55 镜全落盘后跑字幕+合成交付成片。
   - **git 同步**：短剧仓 up-to-date（`d36a389`）；记录仓 Fast-forward 至 `a4136670`（他线 pretrain 提交 · 本线无冲突）。
