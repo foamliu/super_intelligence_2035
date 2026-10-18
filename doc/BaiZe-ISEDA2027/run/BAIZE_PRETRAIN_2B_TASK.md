@@ -1,5 +1,39 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🆕 运维指令 · 2026-10-18 16:2x（🚨 P0：立即 resume 80B decay v2 + **长期授权：训练挂了自行重启，不再等许可**）· 用户直令 · 最高优先
+
+> 用户令（2026-10-18）：「pretrain：重启 resume 训练，以后这种事不需要运维许可，自己的训练挂了，唤醒时看到了立刻修。」
+> 现状：#548 已确认 **15:53:22 step 9400 后训练死亡**（GPU 全空、无 torchrun、日志无错）；最新 ckpt = **step_8000**（11:15）；step 8001–9400 将丢。**本轮直接 resume，不要等许可。**
+
+**① 立即 resume（本轮唤醒）**
+1. 确认 `nvidia-smi` 8 卡空、无 `torchrun`；确认 ckpt：
+   ```bash
+   ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000/model.safetensors
+   ```
+   若 `step_8000` 缺失，选最新的 `step_*`（必须含 `model.safetensors`）。
+2. 给 `run/baize_xmodel25_decay_v2.sh` 加可选 resume（或直接改 torchrun 参数）：
+   ```bash
+   RESUME_DIR="${RESUME_DIR:-}"
+   RESUME_ARG=""
+   [ -n "$RESUME_DIR" ] && RESUME_ARG="--resume $RESUME_DIR"
+   # 在 baize_xmodel25_decay_v2.py 参数末尾加 $RESUME_ARG
+   ```
+   启动：
+   ```bash
+   cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+   RESUME_DIR=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 \
+     setsid bash baize_xmodel25_decay_v2.sh > /tmp/baize_xmodel25_decay_v2_resume.log 2>&1 < /dev/null &
+   ```
+   `--resume` 会从 step_8000 续跑（LR schedule 按 8000 起算；optimizer 状态不恢复，属已知小 transient）。脚本内部日志仍写 `$OUTPUT_DIR/baize_xmodel25_decay_v2_train.log`。
+3. 判据：torchrun PID + 8 workers；8 卡 100%；train_log 从 **step 8001** 继续增长、无 error/traceback/OOM/CUDA；`--resume` 打印 `start_step=8000`。
+4. 记录：MEMORY + daily + commit `pretrain resume:`。
+
+**② 长期规则（立即生效，覆盖旧的「等运维许可」）**
+- 以后唤醒先查训练：`pgrep -af torchrun`、`nvidia-smi`、train_log 尾部。
+- **训练进程消失 / 崩溃 / 被杀** ⇒ 自查日志 → 选最新有效 `step_*` ckpt → **立即 `--resume` 重启**，不需要逐次等运维许可。
+- 仅以下情况停手报 blocker：① 没有任何有效 ckpt；② 同一原因 1h 内连续崩 ≥2 次；③ 硬件/磁盘/网络错误明确；④ 重启命令本身失败。
+- 仍禁止：kill 健康训练、改配方/数据、动别的线。
+
 ### 🆕 运维指令 · 2026-10-18 12:0x（🚨 P0：立即修复 `.29` 的 ops 中继；先于一切巡检/写作）· 用户直令 · 最高优先
 
 > **背景**：`run/ops/inbox.md` 的 RUN_ID 123（09:54 推送）至今无回执，`run/ops/.last_run_id` 仍为 **122**；而 pretrain（11:42）/vision（11:21）仍能正常 push ⇒ `.29` 本机 ops 中继停摆/冻死，不是网络。你与中继同在 `.29`，由你修复。
