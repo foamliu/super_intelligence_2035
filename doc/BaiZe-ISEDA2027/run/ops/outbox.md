@@ -14515,3 +14515,48 @@ KILL PID 3698325
 7, 0 %, 4 MiB
 === DONE 134 ===
 ```
+
+---
+
+## RUN_ID 135 · 2026-10-18 17:44:37 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 135 | .25 proxy -> hf.co | $(date '+%F %T') | host=$(hostname) ==="
+P25=http://172.19.92.25:13128
+P23=http://172.19.92.23:13128
+echo "[1] .25 -> hf.co"
+curl -sS -m 20 -o /dev/null -w 'http=%{http_code} t=%{time_total}s\n' -x "$P25" https://huggingface.co 2>&1
+echo "[2] .25 -> HF API tree (en_v1_4)"
+curl -sS -m 25 -o /tmp/rid135_tree.json -w 'http=%{http_code} t=%{time_total}s size=%{size_download}\n' -x "$P25" 'https://huggingface.co/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4' 2>&1
+head -c 200 /tmp/rid135_tree.json 2>/dev/null; echo
+echo "[3] .25 -> resolve README (follow redirects)"
+curl -sS -L -m 30 -o /dev/null -w 'http=%{http_code} t=%{time_total}s size=%{size_download}\n' -x "$P25" 'https://huggingface.co/datasets/openbmb/Ultra-FineWeb/resolve/main/README.md' 2>&1
+echo "[4] .23 -> hf-mirror (control)"
+curl -sS -m 20 -o /dev/null -w 'http=%{http_code} t=%{time_total}s\n' -x "$P23" https://hf-mirror.com 2>&1
+echo "[5] direct -> hf.co (control)"
+curl -sS -m 10 -o /dev/null -w 'http=%{http_code} t=%{time_total}s\n' https://huggingface.co 2>&1
+echo "=== DONE 135 ==="
+```
+
+**输出**
+```
+=== RUN_ID 135 | .25 proxy -> hf.co | 2026-10-18 17:44:37 | host=whag0pgpuap29 ===
+[1] .25 -> hf.co
+curl: (28) Operation timed out after 20001 milliseconds with 0 bytes received
+http=000 t=20.001754s
+[2] .25 -> HF API tree (en_v1_4)
+curl: (28) Operation timed out after 25001 milliseconds with 0 bytes received
+http=000 t=25.001222s size=0
+
+[3] .25 -> resolve README (follow redirects)
+curl: (28) Operation timed out after 30000 milliseconds with 0 bytes received
+http=000 t=30.000839s size=0
+[4] .23 -> hf-mirror (control)
+http=200 t=1.425162s
+[5] direct -> hf.co (control)
+curl: (7) Failed to connect to huggingface.co port 443 after 17 ms: Network is unreachable
+http=000 t=0.017891s
+=== DONE 135 ===
+```
