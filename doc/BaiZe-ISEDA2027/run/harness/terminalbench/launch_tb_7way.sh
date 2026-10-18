@@ -109,26 +109,30 @@ echo "model: kimi-k2.6-cloud"
 echo "results: ${RESULTS_FILE}"
 echo ""
 
-# --- Build task paths (local -p, since Harbor Hub auth not set up) ---
+# --- Build the dataset path for `harbor run` ---
+# harbor's `-p`/`--path` is SINGLE-VALUE (typed `Path | None`, last-wins —
+# confirmed in harbor/cli/jobs.py: `path: Annotated[Path | None, ...]`, unlike
+# `extra_instruction_paths: Annotated[list[Path] | None, ...]` which IS
+# additive).  To run MULTIPLE tasks you must pass a DATASET directory (a dir of
+# task dirs) as ONE `-p`.  The prior version emitted many `-p` flags so only the
+# LAST task ran — the 2026-10-18 oracle check ran only fix-git despite 5 `-p`.
 if [[ "${MODE}" == "pilot" ]]; then
-    TASK_PATHS=""
+    # Pilot: assemble a temp dataset dir of symlinks to the 5 local-image tasks.
+    PILOT_DATASET="$(mktemp -d -t tb_pilot_dataset_XXXXXX)"
     for task in "${PILOT_TASK_NAMES[@]}"; do
-        TASK_PATHS+=" -p ${TB_TASKS_DIR}/${task}"
+        ln -sf "${TB_TASKS_DIR}/${task}" "${PILOT_DATASET}/${task}"
     done
+    TASK_PATH="${PILOT_DATASET}"
     N_TASKS=${#PILOT_TASK_NAMES[@]}
 else
-    # Full mode: all 89 tasks from local directory
-    TASK_PATHS=""
-    for task_dir in "${TB_TASKS_DIR}"/*/; do
-        task_name=$(basename "${task_dir}")
-        TASK_PATHS+=" -p ${TB_TASKS_DIR}/${task_name}"
-    done
+    # Full mode: the whole local dataset directory (every task dir inside).
+    TASK_PATH="${TB_TASKS_DIR}"
     N_TASKS=$(ls -d "${TB_TASKS_DIR}"/*/ 2>/dev/null | wc -l)
 fi
 
 # --- Oracle check (must pass before full eval) ---
 echo "=== Oracle check (${N_TASKS} tasks with overlay) ==="
-harbor run ${TASK_PATHS} --agent oracle -k 1 --n-concurrent 4 \
+harbor run -p "${TASK_PATH}" --agent oracle -k 1 --n-concurrent 4 \
     --extra-docker-compose "${TB_OVERLAY}" \
     --jobs-dir "${SCRIPT_DIR}/oracle_check" 2>&1 | tee "${SCRIPT_DIR}/oracle_check.log"
 echo "Oracle check complete. Verify all pass before proceeding."
@@ -155,7 +159,7 @@ for harness in "${HARNESSES[@]}"; do
     esac
 
     nice -n 19 harbor run \
-        ${TASK_PATHS} \
+        -p "${TASK_PATH}" \
         --agent "${AGENT_PATH}" \
         -k "${K_ATTEMPTS}" \
         --n-concurrent "${N_CONCURRENT}" \
