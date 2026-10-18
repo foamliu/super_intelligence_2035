@@ -63,6 +63,15 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
 - **教训**：产出必须「路径+字节」核验后再写『已完成』；`.gitignore` 下的二进制不能当跨机持久化依据。
 - **状态**：✅ 已闭环（2026-10-12 · 13/13 帧核验落盘；后续 H3 I2V 已启动）。
 
+### #8 · ComfyUI 重启会清空队列与历史（在途跑批丢失）—— 🟠 已补投（2026-10-18）
+
+- **现象**：2026-10-18 21:28:34 ComfyUI `main.py --port 8188` 重启（PID 10048/10064），`/history` 清空（0 条）、队列 0/0 ⇒ 上一轮排队的 **40 pending 镜**（EP06《情绪》在途批次）全部丢失。
+- **根因**：ComfyUI 队列与 `/history` 是**内存态**，进程重启即清空（未启用持久化存储）；本机计划任务 `ComfyUI` 开机自启 + 可能偶发崩溃重启。
+- **影响**：在途跑批的镜头需**重新补投**（`--skip-existing` 已落盘的跳过，只补缺失镜）；已落盘到 `OUTPUT/` 的 13 镜不受影响。
+- **处置**：核验落盘 13/54 镜在盘 + 参考图/工作流在位 → 补投 `gen_ep06_h3_r2v.py --skip-existing` + `gen_ep06_h3_t2v.py --skip-existing`（41 镜）→ 队列恢复 running 1/pending 40。
+- **教训**：① 每轮唤醒先查 `/history` + `/queue` 与落盘数是否一致（`recover_*.py` 报「已回收 X/54」若骤降即为重启迹象）；② 跑批用 `--skip-existing` 幂等可续跑，重启后可一键补投；③ 长跑批中断是常态，判活靠「落盘 mp4 数」而非「队列数」。
+- **状态**：🟠 已补投恢复（本轮）；长期建议（可选）→ 报告运维评估 ComfyUI 队列/历史持久化。
+
 ### #7 · 13_外骨骼 R2V 缺 14 张场景参考图（补资产）—— ✅ 已闭环（2026-10-13）
 
 - **现象**：`scripts/gen_ep13_h3_r2v.py --dry-run` 报 29 镜缺 `ref2` 场景图：`ASSETS/CHARACTERS/_scene/13_*.png`（backstage/openmic/interview/testcar/annualparty/cafe/office/lab/subway/street/phone/screen_ui/virtual_audience/theatre_door，共 14 张）全缺。

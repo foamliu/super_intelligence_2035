@@ -3,7 +3,7 @@
 WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05）· EP06《情绪》跑批中）。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05）· EP06《情绪》补投跑批中）。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）跑批中 · 13/54 落盘
+PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）补投跑批中 · 13/54 落盘
 已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅；05_临界点 55/55 ✅ + 成片 295.51s；EP06 资产全位 + 脚本固化（r2v/t2v/recover/subtitles/synth）
-当前动作:     EP06《情绪》H3 后台跑批中（running 1/pending 40 · 已回收 13/54 镜：R2V 7 + T2V 6）；本轮固化字幕/合成脚本并回收核验
+当前动作:     ⚠️ 发现 ComfyUI 21:28 重启致队列/历史清空（40 pending 镜丢失）→ 补投 41 镜（R2V 22 + T2V 19）后台跑批中（running 1/pending 40）
 下一步:       逐轮核验+回收 EP06 出片（recover_ep06_h3.py，13→54 镜）；54 镜全落盘后跑 gen_ep06_subtitles.py（131 条）+ synth_ep06.py 交付成片
-阻塞:         无
+阻塞:         无（ComfyUI 重启致在途队列丢失已补投；见 BLOCKERS #8）
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-18（EP06《情绪》H3 出片核验+回收 13/54 + 固化字幕/合成脚本 ✅：回收 13 镜（R2V 7 + T2V 6）→ 新建 gen_ep06_subtitles.py（131 条）+ synth_ep06.py → 回写记忆 + commit + push 两仓）
+- **上次唤醒**：2026-10-18（EP06《情绪》ComfyUI 重启致队列清空 · 补投 41 镜 ✅：发现 ComfyUI 21:28 重启清空 /history+队列 → 核验 13/54 镜在盘 → 补投 41 镜（R2V 22 + T2V 19）后台跑批 → 回写记忆 + commit + push）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-18 · S3 放量 · EP06《情绪》ComfyUI 重启致队列清空 · 补投 41 镜 ✅**：续上轮「下一步」，核验 EP06 出片时发现 ComfyUI 重启导致在途队列丢失，补投缺失镜。
+  - **git 同步**：短剧仓 up-to-date（`c57dcbb`）；记录仓 Fast-forward 至 `6aeda515`（他线 zhulong/pretrain/harness 提交 · 本线无冲突）。
+  - **自检**：ComfyUI 首连 WinError 10061（刚重启中）→ 复检 `/system_stats` 可达（v0.33.0 · RTX 4090 16GB · 空闲 14.7GB · 队列 0/0）；ffmpeg/ffprobe 在；MCP comfyui-drama/web-search 可用。
+  - **⚠️ ComfyUI 重启**：`main.py --port 8188` 进程 **21:28:34** 重启（PID 10048/10064），`/history` 清空（0 条）、队列 0/0 ⇒ 上轮排队的 **40 pending 镜丢失**（ComfyUI 历史/队列为内存态，重启即清）。已记 BLOCKERS #8。
+  - **落盘核验**：`OUTPUT/06_情绪/videos/` **13/54 镜在盘**（R2V 7：02/06/11/12/14/16/19 + T2V 6：01/03/04/05/07/08）；参考图 7/7 + 工作流 2/2 在位（含 ComfyUI input 目录）。
+  - **补投跑批**：后台 Start-Process 补投 `gen_ep06_h3_r2v.py --skip-existing`（PID 4756）+ `gen_ep06_h3_t2v.py --skip-existing`（PID 9160）→ ComfyUI 队列 **running 1/pending 40 = 41 镜**（= 22 R2V + 19 T2V 缺失镜，`--skip-existing` 正确跳过 13 已盘）；两脚本自然退出、err 日志空（无 OOM/报错）。
+  - **下一步**：逐轮核验+回收 EP06 出片（13→54 镜）；54 镜全落盘后跑 `gen_ep06_subtitles.py` + `synth_ep06.py` 交付成片。
+
 
 - **2026-10-18 · S3 放量 · EP06《情绪》H3 出片核验+回收 13/54 + 固化字幕/合成脚本 ✅**：续上轮「下一步」，核验+回收 EP06 出片并提前固化字幕/合成脚本。
   - **git 同步**：短剧仓 up-to-date（`0a2be18`）；记录仓 Fast-forward `4c5a60d1..c271f7e8`（他线 pretrain/vision 提交 · 本线无冲突）。
