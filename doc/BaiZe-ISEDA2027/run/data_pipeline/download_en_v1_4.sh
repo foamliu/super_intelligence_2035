@@ -16,7 +16,7 @@ export https_proxy="$HF_PROXY"
 export http_proxy="$HF_PROXY"
 export HF_ENDPOINT="${HF_ENDPOINT-https://hf-mirror.com}"
 export HF_HUB_DOWNLOAD_TIMEOUT=120
-export HF_HUB_ENABLE_HF_TRANSFER=1
+export HF_HUB_ENABLE_HF_TRANSFER="${HF_HUB_ENABLE_HF_TRANSFER:-1}"
 
 LOCAL_DIR="/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb"
 REPO="openbmb/Ultra-FineWeb"

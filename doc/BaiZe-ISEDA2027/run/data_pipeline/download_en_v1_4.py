@@ -32,7 +32,7 @@ os.environ["https_proxy"] = _HF_PROXY
 os.environ["http_proxy"] = _HF_PROXY
 os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 os.environ["HF_HUB_DOWNLOAD_TIMEOUT"] = "120"
-os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
+os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
 
 api = HfApi()
 _print_lock = threading.Lock()
