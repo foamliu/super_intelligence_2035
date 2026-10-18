@@ -1,5 +1,35 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🆕 运维指令 · 2026-10-18 12:0x（🚨 P0：立即修复 `.29` 的 ops 中继；先于一切巡检/写作）· 用户直令 · 最高优先
+
+> **背景**：`run/ops/inbox.md` 的 RUN_ID 123（09:54 推送）至今无回执，`run/ops/.last_run_id` 仍为 **122**；而 pretrain（11:42）/vision（11:21）仍能正常 push ⇒ `.29` 本机 ops 中继停摆/冻死，不是网络。你与中继同在 `.29`，由你修复。
+> ⚠️ 历史事故：命令行里把 `pkill -f "ops_relay.sh"` 与启动命令写在一起 → 自匹配，把中继和执行 shell 一起杀。**必须写进脚本文件再执行**。
+
+**① 安全重启（照抄执行，一次跑完）**
+```bash
+cat > /tmp/fix_relay_29_1018.sh <<'EOF'
+set -u
+R=/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "=== BEFORE $(date '+%F %T') ==="
+pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-160 || true
+echo -n "last_run_id="; cat "$R/ops/.last_run_id" 2>/dev/null || echo MISSING
+pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill
+sleep 2
+cd "$R"
+env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy setsid bash ops_relay.sh > /tmp/baize_ops_relay_29.log 2>&1 < /dev/null &
+sleep 3
+echo "=== AFTER ==="
+pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-160 || true
+tail -10 /tmp/baize_ops_relay_29.log
+EOF
+bash /tmp/fix_relay_29_1018.sh
+```
+- **判据**：≥1 个 `bash ops_relay.sh` 进程；**60–120s 内** `.last_run_id` 从 **122 → 123**，且 `run/ops/outbox.md` 末尾出现 `RUN_ID 123` 回执（含 `.29` loop/GPU + `.12` git 只读诊断）。
+- 若 2 次仍不起：贴 `pgrep -af 'bash [o]ps_relay[.]sh'`、`tail -40 /tmp/baize_ops_relay_29.log`、`ls -l run/ops/.last_run_id` 原文报 blocker，🚫 不再反复 kill。
+- 🚫 红线：不碰 torchrun/训练/ckpt；不 kill pretrain loop；不改 `ops_relay.sh` 本体；不清理 `/tmp`。
+- ✅ 完成后在本轮 MEMORY 记：中继 PID、`.last_run_id`、outbox 的 RUN_ID 123 摘要、error scan；commit 前缀 `pretrain ops:`。
+
+
 
 ### 🆕 运维指令 · 2026-10-18②（📄 补交 v5 中文 HTML + 🔧 启动 v5 的数据前置实测：分词吞吐与 500B 可行性）· 用户直令 · 最高优先（纯 CPU，零 GPU）
 
