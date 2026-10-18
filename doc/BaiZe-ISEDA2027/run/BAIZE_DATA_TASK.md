@@ -7,6 +7,28 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-18 21:0x（🔴 分词口径纠正：不按 1.5T/500B 预算截断；要分就某个数据源全部分词）· 用户直令 · 最高优先 · 覆盖旧「到 500B」表述
+
+> **用户原话**：「Data 分词我没有说按 1.5T 分，要分就某个数据源全部分词。」
+> **纠正**：**1.5T / 500B 是 v5 训练取用量估算，不是分词目标、不是停止条件**；分词必须按**某个数据源全量**执行。
+>
+> **当前源 = `en_v1_4`**：对 `CC-MAIN-*` 全部 **110 个 snapshot 目录**逐 shard 分词，直到 **110/110** 都有 `.bin/.idx/.json`；**不要在第 8 个 shard、92.6B tok 或 500B tok 处停止/宣告完成**。
+>
+> **执行口径**：
+> 1. 当前 `run_tokenize_env14_resume.sh`（PID 2446254）继续跑完已下载 shards；
+> 2. 下载完成的 shard（512 parquet 且无 `.incomplete`）立即排队分词；
+> 3. 下载未完成的 shard **不提前分词**，标 `PENDING_DOWNLOAD`；
+> 4. 全部 110 shard 完成后产出 `env14_fullsource_manifest.tsv` + `env14_fullsource_summary.json`（每 shard tokens/bytes/status + 全源总 tokens），并写入 `DATA_LEDGER.md`；
+> 5. 全源完成前，任何报告**不得**写「en_v1_4 分词完成」；
+> 6. 当前 `run_tokenize_env14_resume.sh` 退出后，用 **`data_pipeline/run_tokenize_env14_fullsource.sh`** 接管（本次已新增）：自动扫描 110 个 shard、跳过 DONE/RUNNING、下载完成后自动补分，直到 **110/110**；启动：
+>    `setsid -f nohup bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_tokenize_env14_fullsource.sh > /tmp/run_tokenize_env14_fullsource.log 2>&1 &`
+>    （脚本内置等待 resume 退出，避免双 launcher；不要手工再起第二份）。
+>
+> **报告**：每次唤醒报 `done/110`、`tokens 累计`、`PENDING_DOWNLOAD`、`全源 ETA`。按当前 8 workers ≈230B tok/day，全源 ≈2.31T ≈ **10 天**；若批准 16 workers ≈ **5 天**（不擅自加并发）。
+>
+> 🚫 不为凑 500B/1.5T 跳 shard、不混源部分分词、不把训练取用量当分词上限。
+
+
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。

@@ -3,6 +3,8 @@
 > 生成：2026-10-18 · 纯写作（零 GPU）· commit 前缀 `pretrain plan-v5:`
 > 配套 HTML：`reports/report_pretrain_formal_v5_plan_zh.html`
 > 数据源：`DATA_LEDGER.md`（唯一数据源）· 吞吐源：T3/P-9.6–9.7 实测 249K tok/s
+> ⚠️ **数据口径（2026-10-18 用户纠正）**：分词按**数据源全量**（当前 `en_v1_4` 110/110 shard）执行；**1.5T 是训练 token 预算，不是分词目标/上限**。不得按 500B/1.5T 截断分词。
+
 
 ---
 
