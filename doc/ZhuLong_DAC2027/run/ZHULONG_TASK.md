@@ -4,7 +4,52 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🆕 运维指令 · 2026-10-18（二十八）— 🧩 编译 `eda_platform/apps/cli`（cline 改造版）→ 只以 `zhulong`/`zl` 安装 → 用 DeepSeek-V4-Pro-Cloud 跑一次 158 集得分数【用户直令 · 最高优先】
+### 🆕 运维指令 · 2026-10-18（二十九）— 🔁 **ZL 评测基模改为 `glm-5.2`**（v4-pro-cloud 被网关 403 封族）→ 跑 158 集得分数【用户直令 · 最高优先 · 覆盖令二十八③的模型口径】
+
+> **用户令（2026-10-18）**：「那就把 eda_platform 评测的基模换成 glm-5.2」
+> ⇒ **令二十八的其他内容全部继续有效**（`eda_platform/apps/cli` 编译、`zhulong`/`zl` 安装、**不碰 cline 3.0.51**、隔离配置、158 集口径、n=1 标 provisional）；**仅替换"底模"这一项**：`deepseek-v4-pro-cloud` → **`glm-5.2`**。
+
+**① 为什么可以换（已核实）**：`glm-5.2` @ `http://agi-gateway.cxmt.com/cloud/v1` 与你给的 key（`02_088EE…c2759d74`）**实测 200**（令二十八 agent 自测的对照组），且 gateway 401 已于 07:40 恢复 → **无阻塞**。
+
+**② 重新配置（只改 zhulong 自己的 data dir）**
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+zhulong auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2 --data-dir ~/.zhulong
+zhulong --version; zl --version
+```
+- 期望：`Provider configured: openai-compatible (glm-5.2)`；`--data-dir` 仍为 **`~/.zhulong`**；**🚫 不写 `~/.cline`**。
+- 贴出生效的 `model=glm-5.2` / `baseUrl=…/cloud/v1` / key 末 8 位（应为 `88ea2f23`）/ data dir。
+
+**③ 先做两个前置核验（上一轮漏了 SDK 版本，这次必须先补）**
+1. **`@cline/core` 版本三连**（这是"老 SDK 0.0.51 改造版"的实验前提）：
+   `grep -n '"@cline/core"' package.json apps/cli/package.json bun.lock | head` ·
+   `cat node_modules/@cline/core/package.json apps/cli/node_modules/@cline/core/package.json 2>/dev/null | grep -m2 version` ·
+   `bun pm ls 2>/dev/null | grep -i cline | head`
+   → **期望 `0.0.51`**；若不是（如被解析到 `0.0.71+`），**照实记录并继续跑**，但必须在回报里显式标注"SDK 已漂移，对照含义变化"，🚫 不得隐瞒。
+2. **cline 3.0.51 未被改动**：`cline --version`（=3.0.51）+ `readlink -f $(which cline)` 与令二十八取证**逐字一致**。
+
+**④ 起跑（口径照旧，只换模型）**
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+export PYTHON=$PWD/venv/bin/python
+setsid bash scripts/run_zhulong_script.sh -p 8 -n > /tmp/ZL_glm52_r1.log 2>&1 < /dev/null &
+```
+- 评测集 `EDA-Eval-pyAether-158`；4 端口 `8650/8651/8652/8654` + `SANDBOX_HOST=10.129.32.75` + V3 文档 + 自探索 ON；**反作弊 hook canary 必须先过**（应被拒未被拒 ⇒ 停，本批作废）。
+- 若出现 **429/限流**（glm 族历史上有并发限流）⇒ 按令二十七① **降 `-p 4` 重跑一次**（只降并发，不改模型/配置），心跳注明。
+- 若出现 **401/403** ⇒ 立即停，贴响应头原文，报 blocker（不空转）。
+
+**⑤ 打分与回报（本轮就要）**
+1. 构建产物与安装不变项：`zhulong --version` = **3.0.29** vs `cline --version` = **3.0.51**（版本差异即被测变量）。
+2. 配置三项（model / base / data dir）+ ③ 的两个核验原文。
+3. **`glm-5.2` × `zhulong(3.0.29)` 158 题 Pass@1 = xx.x%（通过数/158）** + `pass (` 原文 + timeout / gen-fail / quota 计数。
+4. **对照必须写清"同模型、不同 CLI/SDK"**：既有 `glm-5.2` 臂 = **83.3±3.1%（n=5，cline 3.0.51 / cline-core 0.0.71）**；本次为 **n=1、zhulong 3.0.29**，因此只能单值 + `[provisional,n=1]`，🚫 不得写 ±、🚫 不得据此断言"改造版更好/更差"（n=1 + 版本双变量）。
+5. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`，CONFIG 改为 `ZL.glm-5.2`）+ `zhulong_results.md` 新增一行（标 `[provisional,n=1]`，注脚写 `zhulong 3.0.29 / cline-core X` 与 `cline 3.0.51 / cline-core 0.0.71` 的对照）+ `daily-memories/2026-10-18.md`；commit 前缀 `zhulong zl:`。
+
+**⑥ 红线（不变）**
+- 🚫 覆盖/删除/重链 cline 3.0.51、改 `~/.cline`、`curl|bash` 官方安装器。
+- 🚫 不改论文口径、不 kill loop / ops 中继 / 别人在跑的任务；n=1 不进论文表。
+- ✅ 每轮只推进一步；`WAITING=1` 仅在评测真正跑起来时置位。
+
 
 > **用户令（2026-10-18）**：「编译 `eda_platform` 目录下的 `cline-cli`，把它安装成命令行工具 `zhulong`/`zl`，设置使用 `DeepSeek-V4-Pro-Cloud` 这个底模，用你一直使用的评测集测试一次，得出分数。」
 > **用户补充（同日，必须遵守）**：① `eda_platform` **本身就是 cline 仓库改造而来**，`apps/cli` 就是原来的 cline → **直接编 `eda_platform/apps/cli`，不用满盘找**；② **36.15 已装的 cline 3.0.51 不许覆盖/删除/改动**——迄今所有被测分数都是它跑出来的基线；新产物只叫 `zhulong`/`zl`。

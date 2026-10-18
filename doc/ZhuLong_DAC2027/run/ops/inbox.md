@@ -1,11 +1,48 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 68 -->
+<!-- RUN_ID: 69 -->
 
+## RUN_ID 69 — 只读：glm-5.2 可用性 + zhulong/cline 版本 + @cline/core SDK 版本
+
+> 用途：令二十九换模型前先核验 —— ① `glm-5.2` @ cloud/v1 是否 200；② `zhulong`(3.0.29) 与 `cline`(3.0.51) 并存且基线未动；③ `eda_platform` 的 `@cline/core` 实际版本（期望 0.0.51）。**只读**，不改配置、不跑评测。
+
+```bash
+set -u
+echo "=== RUN_ID 69 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] zhulong / cline binaries"
+ls -l ~/.local/bin/zhulong ~/.local/bin/zl 2>/dev/null; which -a zhulong zl 2>/dev/null
+echo "[2] cline 3.0.51 baseline (must be unchanged)"
+which -a cline; cline --version 2>&1 | head -2; readlink -f $(which cline) 2>/dev/null
+echo "[3] @cline/core versions"
+grep -n '"@cline/core"' /nasdata/app.e0031982/code/eda_platform/package.json /nasdata/app.e0031982/code/eda_platform/apps/cli/package.json 2>/dev/null | head -5
+cat /nasdata/app.e0031982/code/eda_platform/node_modules/@cline/core/package.json /nasdata/app.e0031982/code/eda_platform/apps/cli/node_modules/@cline/core/package.json 2>/dev/null | grep -m4 '"version"'
+grep -n '@cline/core' /nasdata/app.e0031982/code/eda_platform/bun.lock 2>/dev/null | head -5
+echo "[4] zhulong version"
+PATH=$HOME/.local/bin:$PATH; zhulong --version 2>&1 | head -2; zl --version 2>&1 | head -2
+echo "[5] canary glm-5.2 vs v4-pro-cloud @ cloud/v1"
+P="/home/app.e0031982/.local/pnpm/pnpm"; :
+KEY=$(grep -rhoE '02_088EE9051AAE4BF0ABFC713031BF697_[0-9a-f-]{36}' /nasdata/app.e0031982/code/eda_fastmcp/.env /nasdata/app.e0031982/code/eda_fastmcp/providers.json ~/.zhulong/settings/providers.json 2>/dev/null | head -1)
+if [ -n "${KEY:-}" ]; then
+  for m in glm-5.2 deepseek-v4-pro-cloud; do
+    payload=$(cat <<EOF
+{"model":"$m","messages":[{"role":"user","content":"hi"}],"max_tokens":16}
+EOF
+)
+    code=$(curl -sS -m 40 -o /tmp/rid69_$m.json -w '%{http_code}' -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' -d "$payload" 2>/dev/null)
+    echo "    $m -> HTTP $code"; head -c 140 /tmp/rid69_$m.json 2>/dev/null; echo
+  done
+else
+  echo '    no key found'
+fi
+echo "[6] infra"
+df -h /home /nasdata 2>/dev/null | tail -2
+ps -eo pid=,ppid=,etimes=,args= | grep -E "zhulong_loop[.]sh|zhulong_ops_relay[.]sh" | grep -v grep | cut -c1-100
+echo "=== DONE 69 ==="
+```
 ## RUN_ID 68 — 只读：36.15 中继存活 + eda_platform/cline-cli 构建前置 + v4-pro-cloud 连通性
 
 > 用途：回答两个问题 —— ① 36.15 ops 中继是否还活着（67 之后无回执）；② 为 zhulong 新任务（编译 eda_platform/cline-cli → 安装为 `zhulong`/`zl` → 用 EDA-Eval-PyAether 158 题跑分）核验构建前置与 `deepseek-v4-pro-cloud` 可达性。**只读**，不装包、不构建、不改配置。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 68 | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] relay/loop procs"
