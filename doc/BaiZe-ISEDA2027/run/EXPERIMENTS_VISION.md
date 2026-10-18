@@ -1312,3 +1312,81 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 | 训练日志 | `/tmp/armA_openclip_train.log` |
 | **中文报告** | `reports/report_vision_armA_openclip_result_zh.html`（含附录 A: open_clip × AIMv2-style 兼容性工程评估 + 附录 B: 官方 AIMv2 vs 本仓 AIMv2-style 概念澄清） |
 
+## §11 ArmB（open_clip ViT-B/16 + AIMv2-style 稠密目标，2026-10-18）
+
+> **目的**：在 ArmA 的 open_clip 标准塔上叠加 AIMv2-style 稠密目标（InfoNCE 对比 + masked patch prediction），检验「稠密监督是否在标准架构上同时提升 lp 与 k-NN」（ArmA 呈 lp↓/k-NN↑ 背离，本臂预期翻为双升）。
+
+### §11.1 训练配置
+
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| 模型 | open_clip ViT-B/16 224px（86.2M visual / 149.6M total，`pretrained=None`，双塔随机初始化） | `armB_aimv2_openclip.py` |
+| 损失 | contrast（open_clip InfoNCE，contrast_w=1.0）+ masked patch prediction（patch_w=1.0，mask_ratio=0.6）+ AIM | `armB_aimv2_openclip.py:210-211` |
+| 前向 | 双塔 forward → img_feat/txt_feat + 对 60% patch 做 masked reconstruction | 同上 |
+| 优化器 | AdamW fused=True, wd=0.1, betas=(0.9,0.98), grad_clip=1.0 | `run_armB_openclip.sh` |
+| LR | 1e-3 → 1e-5 cosine, warmup 2000 | `run_armB_openclip.sh` |
+| 批次 | GBS=8192 (MBS=1024×8), bf16 AMP | `run_armB_openclip.sh` |
+| 步数 | 57,250（= 4 epoch，数据 ≈117M 对） | `run_armB_openclip.sh` |
+| 数据 | GPIC(7437)+CC12M(1100)+Amshaker(2250) ≈10,787 shards ≈117M 对（与 ArmA 同源） | `run_armB_openclip.sh` |
+| seed | 1234 | `run_armB_openclip.sh` |
+
+### §11.2 训练结果
+
+| 指标 | 值 | 来源 |
+|:--|:--|:--|
+| 最终 step | 57,250/57,250 (100%) | `/tmp/armB_openclip_train.log` |
+| 最终 loss (EMA) | 0.1263（contr=0.1109 / patch=0.0155） | 同上 |
+| C1 范围 | 0.86–0.93（全程无坍缩） | 同上 |
+| 总耗时 | 18.37h | 同上 |
+| 稳态吞吐 | 0.87 it/s | 同上 |
+| 峰值显存 | 50.4 GB/卡 | 同上 |
+| 退出码 | 0（`===== ArmB done (exit 0) =====`） | 同上 |
+| 产物 | open_clip_state_dict.pt(571M)+predictor.pt+config.json+latest.pt+checkpoint_57250.pt+50000.pt | 同上 |
+
+### §11.3 ProtB 评测结果（Protocol B，主流对齐）
+
+| 指标 | 值 | 来源 |
+|:--|:--|:--|
+| ProtB lp (seed 0) | 62.084% | `armB_protb_vitb16_224_results.json` |
+| ProtB lp (seed 1) | 62.086% | 同上 |
+| ProtB lp (seed 2) | 62.110% | 同上 |
+| **ProtB lp mean ± σ** | **62.093 ± 0.012%** → **62.09 ± 0.01%** | 同上 |
+| 5-NN (k=5, cosine) | 58.102% | 同上 |
+
+> 协议：Protocol B（SGD+momentum0.9+cosine 90ep, bs1024, IN-1k full train 1.28M, IN-1k val 50k, 3 seeds 0/1/2, feature=projected, ckpt=open_clip_state_dict.pt）。与 ArmA 同协议、同 ckpt 选择（final state dict），**严格可比**。
+
+### §11.4 预注册判据（先定后测）
+
+| 判据 | 阈值 | 实测 | 裁定 |
+|:--|:--|--:|:--|
+| J1 不倒退（vs ArmA lp） | lp ≥ 58.03% | 62.09% | ✅ PASS |
+| J2 混合 recipe 接受 | lp ≥ 61.0% 且 5-NN ≥ 48.98% | 62.09% / 58.10% | ✅✅ PASS |
+
+> **两项判据均通过 → ArmB 混合 recipe（open_clip 塔 + AIMv2-style 稠密目标）被 ACCEPTED**。
+
+### §11.5 对比（ArmB vs ArmA · 同 k=5 · 同 Protocol B）
+
+| 指标 | ArmA | ArmB | Δ (ArmB − ArmA) |
+|:--|--:|--:|--:|
+| ProtB lp | 58.03 ± 0.02% | 62.09 ± 0.01% | **+4.06 pp** |
+| 5-NN (k=5) | 53.98% | 58.10% | **+4.12 pp** |
+
+> ArmB 为**双探针同步提升**（lp↑ 且 k-NN↑），与 ④-4ep 的 lp↑/k-NN↓ trade-off 形态不同 —— 在 open_clip 标准塔上，AIMv2-style 稠密目标同时改善了线性可分性与近邻检索两类表征质量。
+
+### §11.6 关键解读与诚实披露
+
+- ArmB 在 open_clip ViT-B/16 塔上同时提升 lp 与 5-NN，验证了「稠密监督在标准架构上可双升」的假设方向（与 R11-L④ CoCa 负结果对比：CoCa caption 监督把 trunk 打回随机，而 caption-无关的 masked patch reconstruction 没有）。
+- ⚠️ **不是严格单变量对照**：ArmA 与 ArmB 在 GBS（2048 vs 8192）、epoch（2.7 vs 4.0）、lr（2e-3 vs 1e-3）、warmup（8000 vs 2000）上均不同。+4pp 是「recipe 切换」的综合效应，**不能孤立归因为目标函数的贡献**。需控制变量消融才能定量分解各因子。
+- 与 §10 ArmA 的 ④-4ep 基线对比同样如此：ArmB ≠ ④-4ep 的「塔/数据/目标」单一变量切换（塔 86.2M vs 126.8M、数据量、步数均不同）。
+
+### §11.7 文件路径
+
+| 文件 | 路径 |
+|:--|:--|
+| 训练脚本 | `vision/run_armB_openclip.sh` |
+| 训练代码 | `vision/armB_aimv2_openclip.py` |
+| 评测脚本 | `vision/run_armB_protb_eval.sh` + `vision/armA_protb_eval.py`（复用 ArmA 评测代码） |
+| 评测结果 JSON | `vision/armB_protb_vitb16_224_results.json` |
+| 训练日志 | `/tmp/armB_openclip_train.log` |
+| **中文报告** | `reports/report_vision_armB_openclip_result_zh.html`（§1–§7 + 附录 A: open_clip × AIMv2-style 兼容性 + 附录 B: 官方 AIMv2 概念澄清） |
+

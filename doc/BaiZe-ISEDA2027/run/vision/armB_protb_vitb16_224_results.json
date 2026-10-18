@@ -1,0 +1,21 @@
+{
+  "ckpt": "open_clip_state_dict.pt",
+  "model": "ViT-B-16",
+  "feature": "projected",
+  "protocol": "B",
+  "probe_train": "full",
+  "epochs": 90,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "lp_per_seed": [
+    62.084001302719116,
+    62.08599805831909,
+    62.11000084877014
+  ],
+  "lp_mean": 62.0933,
+  "lp_sigma": 0.0118,
+  "knn5": 58.102
+}

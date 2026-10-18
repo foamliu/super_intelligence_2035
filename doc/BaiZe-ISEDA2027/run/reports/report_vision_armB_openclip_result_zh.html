@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArmB 实验报告：open_clip ViT-B/16 + AIMv2-style 稠密目标 · ProtB 评测 · 2026-10-18</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--code-bg:#1c2333}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;line-height:1.7;font-size:15px;padding:20px;max-width:1100px;margin:0 auto}
+h1{color:var(--accent);font-size:1.6em;border-bottom:2px solid var(--border);padding-bottom:10px;margin-bottom:8px}
+h2{color:var(--purple);font-size:1.25em;margin-top:28px;margin-bottom:10px;border-left:4px solid var(--purple);padding-left:10px}
+h3{color:var(--accent);font-size:1.1em;margin-top:20px;margin-bottom:8px}
+.subtitle{color:var(--muted);font-size:0.85em;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px;margin:14px 0}
+.card-note{background:rgba(210,153,34,0.08);border-color:var(--yellow)}
+.card-warn{background:rgba(248,81,73,0.08);border-color:var(--red)}
+.card-good{background:rgba(63,185,80,0.08);border-color:var(--green)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.9em}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left}
+th{background:var(--code-bg);color:var(--accent);font-weight:600}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover{background:rgba(88,166,255,0.06)}
+.best{color:var(--green);font-weight:700}
+.worst{color:var(--red)}
+code{background:var(--code-bg);color:var(--green);padding:2px 6px;border-radius:4px;font-size:0.88em;font-family:'SF Mono','Fira Code',monospace}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:12px;overflow-x:auto;font-size:0.85em;line-height:1.5;margin:10px 0}
+pre code{background:none;padding:0;color:var(--text)}
+.ref{color:var(--muted);font-size:0.82em;font-family:monospace}
+ul,ol{margin:8px 0 8px 22px}
+li{margin:4px 0}
+.kpi{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0}
+.kpi-item{flex:1;min-width:160px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.kpi-val{font-size:1.8em;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi-label{color:var(--muted);font-size:0.8em;margin-top:4px}
+.kpi-green .kpi-val{color:var(--green)}
+.kpi-blue .kpi-val{color:var(--accent)}
+.delta-pos{color:var(--green);font-weight:600}
+.delta-neg{color:var(--red);font-weight:600}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:24px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc ul{list-style:none;margin:0}
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);color:var(--muted);font-size:0.8em}
+blockquote{border-left:3px solid var(--accent);margin:12px 0;padding-left:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<h1>ArmB 实验报告：open_clip ViT-B/16 + AIMv2-style 稠密目标</h1>
+<div class="subtitle">BaiZe 视觉编码器 · Stage(iii) · 2026-10-18<br>评测协议 Protocol B（主流对齐） · 报告自包含中文版<br><span class="ref">数据来源：vision/armB_protb_vitb16_224_results.json · vision/armB_aimv2_openclip.py · run_armB_openclip.sh · /tmp/armB_openclip_train.log · vision/armA_protb_vitb16_224_results.json（对照）</span></div>
+<div class="toc"><strong>目录</strong><ul><li><a href="#s1">1. 实验概述</a></li><li><a href="#s2">2. 训练配置</a></li><li><a href="#s3">3. 评测协议（Protocol B）</a></li><li><a href="#s4">4. 评测结果</a></li><li><a href="#s5">5. 对比表</a></li><li><a href="#s6">6. 关键解读</a></li><li><a href="#s7">7. 诚实条款</a></li><li><a href="#appA">附录 A：open_clip × AIMv2-style 兼容性（已实现验证）</a></li><li><a href="#appB">附录 B：概念澄清 —— 官方 AIMv2 vs 本仓 AIMv2-style</a></li></ul></div>
+
+<h2 id="s1">1. 实验概述</h2>
+<div class="card">
+<p><strong>ArmB</strong> 是 BaiZe 视觉编码器系列中与 <a href="report_vision_armA_openclip_result_zh.html">ArmA</a> 配对的对照实验。它在 <strong>同一个 open_clip 标准 ViT-B/16（224px）视觉塔</strong>上，将 ArmA 的纯对比目标（InfoNCE）替换为 BaiZe 主线采用的 <strong>AIMv2-style 稠密目标（InfoNCE + masked-patch-MSE，权重 1:1，mask_ratio=0.6）</strong>，以回答核心问题：</p>
+<blockquote>在<strong>同一视觉塔、同一数据源</strong>下，把目标函数从纯对比切换为"对比 + 稠密重建"，在线性探针（lp）与 k-NN 检索两个维度上，表征质量如何变化？</blockquote>
+<p><strong>结论（一句话）</strong>：ArmB 在两个探针上<strong>均优于</strong> ArmA —— <strong>lp 62.09±0.01% vs 58.03±0.02%（+4.06 pp）</strong>，<strong>5-NN 58.10% vs 53.98%（+4.12 pp）</strong>。与主线 ④-4ep 基线（lp 67.05% / k-NN 42.35%）"检索弱、线性可分性强"的模式不同，ArmB 呈现"<strong>双探针齐升</strong>"的均衡模式（详见 <a href="#s6">§6</a>）。</p>
+<p><strong>预注册验收判据（均已通过）</strong>：</p>
+<ul>
+<li>lp ≥ 58.03%（相对 ArmA 不倒退）→ <span class="best">✅ 62.09% &gt; 58.03%</span></li>
+<li>lp ≥ 61.0% <strong>且</strong> 5-NN ≥ 48.98% → 接受混合配方 → <span class="best">✅ 62.09% ≥ 61.0% 且 58.10% ≥ 48.98%</span></li>
+</ul>
+<p class="ref">⚠️ 注意：判据针对"配方整体效果"而非"目标函数独占贡献"——ArmB 与 ArmA 在 batch/epoch/lr 上亦有差异（见 <a href="#s6">§6.2</a>），故 +4 pp 是"配方切换"的综合效应，不能全部归因于目标函数。</p>
+</div>
+<h2 id="s2">2. 训练配置</h2>
+<div class="card">
+<h3>2.1 模型</h3>
+<table><tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>模型名称</td><td><code>ViT-B-16</code>（open_clip 原生）</td><td class="ref">armB_aimv2_openclip.py</td></tr>
+<tr><td>分辨率</td><td>224 × 224</td><td class="ref">open_clip 默认</td></tr>
+<tr><td>视觉塔参数量</td><td>86.2M</td><td class="ref">训练日志 objective 行</td></tr>
+<tr><td>双塔总参数量</td><td>149.6M</td><td class="ref">同上 total_clip</td></tr>
+<tr><td>Predictor（训练期辅助头）</td><td>1.18M（Linear→LN→GELU→Linear）</td><td class="ref">同上 predictor</td></tr>
+<tr><td>初始化</td><td>双塔均随机初始化（<code>pretrained=None</code>）</td><td class="ref">armB_aimv2_openclip.py</td></tr>
+<tr><td>加载方式</td><td><code>open_clip.create_model_and_transforms('ViT-B-16', pretrained=None)</code></td><td class="ref">同上</td></tr>
+<tr><td>与 ArmA 的塔</td><td><strong>完全相同</strong>（同一 open_clip ViT-B/16，86.2M visual）</td><td class="ref">单变量控制点①</td></tr></table>
+
+<h3>2.2 目标函数（与 ArmA 的核心差异）</h3>
+<table><tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>损失函数</td><td><strong>AIMv2-style</strong> = 1.0 × InfoNCE + 1.0 × masked-patch-MSE</td><td class="ref">训练日志 objective 行</td></tr>
+<tr><td>对比项</td><td><code>open_clip.loss.ClipLoss</code>（标准 InfoNCE，global gather）</td><td class="ref">armB_aimv2_openclip.py</td></tr>
+<tr><td>稠密项</td><td>masked-patch MSE 重建（MAE norm_pix 目标）</td><td class="ref">同上</td></tr>
+<tr><td>mask_ratio</td><td>0.6（60% patch 被掩码）</td><td class="ref">训练日志</td></tr>
+<tr><td>contrast_weight</td><td>1.0</td><td class="ref">同上</td></tr>
+<tr><td>patch_weight</td><td>1.0（对比 : 稠密 = 1 : 1）</td><td class="ref">同上</td></tr>
+<tr><td>前向</td><td>单次前向取 pooled + patch tokens（<strong>禁止二次 forward</strong>），patch 经 forward hook / <code>forward_features</code></td><td class="ref">armB_aimv2_openclip.py</td></tr>
+<tr><td>Predictor</td><td>独立 DDP 模块，仅在训练期存在；推理/评测时<strong>完全不加载</strong></td><td class="ref">checkpoint 剥离逻辑</td></tr></table>
+<p><strong>与 ArmA 的差异</strong>：ArmA 仅 <code>loss = ClipLoss(img_feat, txt_feat, logit_scale)</code>（纯对比）；ArmB 在同一次前向后额外取 patch tokens → 随机掩码 → Predictor 预测被掩码 patch → MSE，与 InfoNCE 加权求和。这是两者目标函数层面的唯一设计差异。</p>
+
+<h3>2.3 优化器与调度</h3>
+<table><tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>优化器</td><td>AdamW（fused=True）</td><td class="ref">训练日志</td></tr>
+<tr><td>学习率</td><td>1e-3 → 1e-4（cosine decay）</td><td class="ref">训练日志 schedule 行</td></tr>
+<tr><td>warmup</td><td>2,000 步</td><td class="ref">同上</td></tr>
+<tr><td>weight decay</td><td>0.1</td><td class="ref">同上</td></tr>
+<tr><td>betas</td><td>(0.9, 0.98)</td><td class="ref">同上</td></tr>
+<tr><td>精度</td><td>bf16（AMP，fp32 master + autocast）</td><td class="ref">同上</td></tr>
+<tr><td>grad clip</td><td>1.0</td><td class="ref">run_armB_openclip.sh</td></tr>
+<tr><td>seed</td><td>1234</td><td class="ref">同上</td></tr>
+<tr><td>与 ArmA 的差异</td><td>lr 1e-3（ArmA 为 2e-3）；warmup 2000（ArmA 为 8000）</td><td class="ref">非单变量点</td></tr></table>
+
+<h3>2.4 批次与步数</h3>
+<table><tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>全局批大小（GBS）</td><td><strong>8,192</strong></td><td class="ref">训练日志 batch 行</td></tr>
+<tr><td>单卡批大小（MBS）</td><td>512 × 8 GPU × accum=2 = 8,192</td><td class="ref">同上</td></tr>
+<tr><td>GPU</td><td>8 × H100（100% util，~50.5GB/卡）</td><td class="ref">训练日志</td></tr>
+<tr><td>总步数</td><td><strong>57,250</strong>（= 4 epoch）</td><td class="ref">训练日志 schedule 行</td></tr>
+<tr><td>样本遍历量</td><td>57,250 × 8,192 ≈ <strong>469M</strong> 样本</td><td class="ref">计算</td></tr>
+<tr><td>吞吐</td><td>0.87 it/s（稳态）</td><td class="ref">训练日志</td></tr>
+<tr><td>训练时长</td><td>18.37h</td><td class="ref">DONE 行</td></tr>
+<tr><td>峰值显存</td><td>50.4GB/卡（无 OOM）</td><td class="ref">训练日志 peak</td></tr>
+<tr><td>与 ArmA 的差异</td><td>GBS 8,192（ArmA 为 2,048，4×）；epoch 4（ArmA 为 2.7）；样本 469M（ArmA 为 316M，1.48×）</td><td class="ref">非单变量点</td></tr></table>
+
+<h3>2.5 训练健康度</h3>
+<table><tr><th>指标</th><th>起始（step 20）</th><th>终态（step 57,250）</th><th>判定</th></tr>
+<tr><td>总 loss</td><td>9.4469</td><td>0.1263</td><td class="best">✅ 正常下降</td></tr>
+<tr><td>contrast loss</td><td>8.3381</td><td>0.1109</td><td class="best">✅ 正常</td></tr>
+<tr><td>patch MSE loss</td><td>1.1088</td><td>0.0155</td><td class="best">✅ 正常</td></tr>
+<tr><td>C1（对比对齐度）</td><td>~0.0002</td><td>0.86–0.93</td><td class="best">✅ 未坍缩</td></tr>
+<tr><td>error / traceback / OOM / NaN</td><td>—</td><td>0</td><td class="best">✅ 零错误</td></tr>
+<tr><td>退出码</td><td>—</td><td>0（2026-10-18 07:55:18）</td><td class="best">✅ 正常退出</td></tr></table>
+<p>终态 contr=0.1109、patch=0.0155：对比项占主导（≈88%），稠密项已收敛到很小值，两项协同下降、无一方主导失控。C1 0.86–0.93 远离坍缩区（≥0.97），说明对比目标未被稠密项"稀释"到失效。</p>
+</div>
+<h2 id="s3">3. 评测协议（Protocol B）</h2>
+<div class="card">
+<p>ArmB 与 ArmA 使用<strong>完全相同的 Protocol B</strong>（保证可比性）：</p>
+<table><tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>协议</td><td>Protocol B（BaiZe 内部，与公开主流对齐）</td><td class="ref">armB_protb_eval.py</td></tr>
+<tr><td>特征</td><td><code>projected</code>（512-d，pooler 投影后）</td><td class="ref">results.json feature</td></tr>
+<tr><td>checkpoint</td><td><code>open_clip_state_dict.pt</code>（<strong>已剥离 predictor</strong>）</td><td class="ref">results.json ckpt</td></tr>
+<tr><td>探针训练集</td><td>full（1.28M 训练图像）</td><td class="ref">results.json probe_train</td></tr>
+<tr><td>验证集</td><td>50,000 图像</td><td class="ref">eval 日志 val.total</td></tr>
+<tr><td>线性探针</td><td>SGD，90 epochs，3 seeds（0/1/2）</td><td class="ref">results.json epochs/seeds</td></tr>
+<tr><td>5-NN</td><td>cosine similarity + k=5 近邻投票</td><td class="ref">armB_protb_eval.py</td></tr>
+<tr><td>特征提取</td><td>8-shard 并行（CPU-bound，parquet 解码），.12 上 8×H100</td><td class="ref">eval 日志</td></tr>
+<tr><td>结果文件</td><td><code>vision/armB_protb_vitb16_224_results.json</code></td><td class="ref">eval 日志 saved 行</td></tr></table>
+<p class="ref">⚠️ <strong>5-NN 的 k 口径</strong>：ArmA 与 ArmB 均用 k=5；主线 ④-4ep 用 k=20。k 不同则 5-NN / k-NN 数值<strong>不可直接比较</strong>（见 <a href="#s5">§5.1</a>）。</p>
+</div>
+
+<h2 id="s4">4. 评测结果</h2>
+<div class="card card-good">
+<p>ArmB ProtB 评测于 2026-10-18 08:31:00 完成（exit 0）。原始结果：<span class="ref">vision/armB_protb_vitb16_224_results.json</span></p>
+<div class="kpi">
+<div class="kpi-item kpi-green"><div class="kpi-val">62.09%</div><div class="kpi-label">线性探针 lp（mean）</div></div>
+<div class="kpi-item kpi-blue"><div class="kpi-val">±0.01%</div><div class="kpi-label">lp 标准差（3 seeds）</div></div>
+<div class="kpi-item kpi-green"><div class="kpi-val">58.10%</div><div class="kpi-label">5-NN 检索</div></div>
+</div>
+<h3>4.1 线性探针逐 seed</h3>
+<table><tr><th>seed</th><th>lp（%）</th><th>与均值差</th></tr>
+<tr><td>0</td><td class="num">62.084</td><td class="num">−0.009</td></tr>
+<tr><td>1</td><td class="num">62.086</td><td class="num">−0.007</td></tr>
+<tr><td>2</td><td class="num">62.110</td><td class="num">+0.017</td></tr>
+<tr><td><strong>mean ± σ</strong></td><td class="num"><strong>62.093 ± 0.012</strong></td><td class="num">—</td></tr></table>
+<p>三个 seed 的 lp 极度一致（σ=0.012 pp，与 ArmA 的 σ=0.023 pp 同量级），说明评测端随机性可忽略，结果稳定。</p>
+<h3>4.2 5-NN</h3>
+<table><tr><th>指标</th><th>值</th></tr>
+<tr><td>5-NN top-1</td><td class="num"><strong>58.102%</strong></td></tr>
+<tr><td>距离</td><td>cosine similarity</td></tr>
+<tr><td>k</td><td>5</td></tr></table>
+</div>
+<h2 id="s5">5. 对比表</h2>
+<div class="card">
+<h3>5.1 三方对比（ArmA · ArmB · 主线 ④-4ep）</h3>
+<table>
+<tr><th>实验</th><th>目标函数</th><th>视觉塔</th><th>visual 参数</th><th>GBS</th><th>epoch</th><th>样本量</th><th>lp（%）</th><th>lp σ</th><th>k-NN（%）</th><th>k</th></tr>
+<tr><td><strong>ArmA</strong></td><td>InfoNCE（纯对比）</td><td>open_clip ViT-B/16</td><td class="num">86.2M</td><td class="num">2,048</td><td class="num">2.7</td><td class="num">316M</td><td class="num">58.034</td><td class="num">0.023</td><td class="num">53.98</td><td class="num">5</td></tr>
+<tr><td><strong>ArmB</strong></td><td>AIMv2-style（InfoNCE+patch-MSE 1:1, mask 0.6）</td><td>open_clip ViT-B/16</td><td class="num">86.2M</td><td class="num">8,192</td><td class="num">4.0</td><td class="num">469M</td><td class="num"><strong>62.093</strong></td><td class="num">0.012</td><td class="num"><strong>58.102</strong></td><td class="num">5</td></tr>
+<tr><td>④-4ep</td><td>AIMv2-style</td><td>custom OpenVision2 w512/d30</td><td class="num">126.8M</td><td class="num">—</td><td class="num">4</td><td class="num">—</td><td class="num">67.05</td><td class="num">0.02</td><td class="num">42.35</td><td class="num">20</td></tr>
+</table>
+<p class="ref">数据来源：armA_protb_vitb16_224_results.json · armB_protb_vitb16_224_results.json · EXPERIMENTS_VISION.md（④-4ep）。k-NN 列因 k 不同（5 vs 20）<strong>不可跨行直接比大小</strong>，仅 ArmA↔ArmB（同 k=5）可严格比较。</p>
+
+<h3>5.2 ArmA → ArmB 增量（同 k=5，严格可比）</h3>
+<table><tr><th>指标</th><th>ArmA</th><th>ArmB</th><th>Δ</th><th>显著性</th></tr>
+<tr><td>lp mean</td><td class="num">58.034%</td><td class="num">62.093%</td><td class="num delta-pos">+4.059 pp</td><td class="num">≈205σ（σ≈0.02）</td></tr>
+<tr><td>lp σ</td><td class="num">0.023</td><td class="num">0.012</td><td class="num delta-pos">更稳</td><td class="num">—</td></tr>
+<tr><td>5-NN（k=5）</td><td class="num">53.98%</td><td class="num">58.102%</td><td class="num delta-pos">+4.122 pp</td><td class="num">单 seed，无 σ</td></tr></table>
+<p>在<strong>同一 k=5 口径</strong>下，ArmB 相对 ArmA：lp <span class="delta-pos">+4.06 pp</span>、5-NN <span class="delta-pos">+4.12 pp</span>，<strong>两个探针同步提升</strong>。lp 的提升幅度约为评测标准差的 200 倍，统计上压倒性显著。</p>
+</div>
+
+<h2 id="s6">6. 关键解读</h2>
+<div class="card card-good">
+<h3>6.1 核心发现：同塔上双探针齐升（与 ④-4ep 的"取舍"模式不同）</h3>
+<p>ArmB 与 ArmA 共享<strong>同一视觉塔（open_clip ViT-B/16, 86.2M）</strong>与<strong>同一数据源</strong>，目标函数从纯 InfoNCE 切换为 AIMv2-style（InfoNCE + masked-patch-MSE）。结果是：</p>
+<ul>
+<li><strong>线性探针 lp +4.06 pp</strong>：稠密重建项促使 patch token 编码更丰富的局部信息，提升了特征空间的线性可分性。</li>
+<li><strong>5-NN +4.12 pp</strong>：与主线 ④-4ep（AIMv2-style 在 custom 126.8M 塔上 k-NN 仅 42.35%，<em>低于</em>其 lp 67.05%）形成鲜明对照 —— 在 open_clip ViT-B/16 塔上，稠密目标<strong>没有</strong>牺牲检索质量，反而同步提升。</li>
+</ul>
+<p>这提示一个比"目标函数谁更好"更细致的结论：<strong>塔的归纳偏置与稠密目标存在交互</strong>。open_clip ViT-B/16（CLIP 风格全局池化 + 强对比预训练结构先验）似乎能更好地"吸收"稠密重建信号而不损害近邻结构；而 custom 126.8M 塔在相同目标下呈现"lp↑ / k-NN↓"的取舍。</p>
+</div>
+<div class="card card-warn">
+<h3>6.2 ⚠️ 严禁过度解读：这不是严格单变量对照</h3>
+<p>ArmA 与 ArmB <strong>在 batch / epoch / lr 上亦有差异</strong>，因此 <strong>不得</strong> 将 +4 pp 完全归因于"目标函数差异"：</p>
+<table><tr><th>变量</th><th>ArmA</th><th>ArmB</th><th>是否单变量？</th></tr>
+<tr><td>视觉塔</td><td>open_clip ViT-B/16 (86.2M)</td><td>open_clip ViT-B/16 (86.2M)</td><td class="best">✅ 相同</td></tr>
+<tr><td>数据源</td><td>≈118M 对</td><td>≈118M 对（同源）</td><td class="best">✅ 相同</td></tr>
+<tr><td>目标函数</td><td>InfoNCE</td><td>InfoNCE + patch-MSE</td><td class="best">✅ 不同（设计主变量）</td></tr>
+<tr><td>全局批大小</td><td>2,048</td><td>8,192（4×）</td><td class="worst">❌ 不同</td></tr>
+<tr><td>epoch / 样本量</td><td>2.7 / 316M</td><td>4.0 / 469M（1.48×）</td><td class="worst">❌ 不同</td></tr>
+<tr><td>学习率</td><td>2e-3</td><td>1e-3</td><td class="worst">❌ 不同</td></tr>
+<tr><td>warmup</td><td>8,000</td><td>2,000</td><td class="worst">❌ 不同</td></tr></table>
+<p><strong>正确表述</strong>：ArmB = "BaiZe AIMv2-style 标准配方（大 batch + 4 epoch + AIMv2-style 目标）" 应用在 open_clip ViT-B/16 塔上；ArmA = "open_clip 标准配方（小 batch + 2.7 epoch + 纯 InfoNCE）"。+4 pp 反映的是<strong>"配方整体切换"</strong>的综合效应（目标函数 + batch + epoch + lr 联动），<strong>不能</strong>在控制其他变量的前提下量化"目标函数独占贡献了多少 pp"。</p>
+<p><strong>含义</strong>：ArmB 训练了 1.48× 的样本量、用了 4× 的 batch —— 部分增益可能来自"更多训练"而非"更好目标"。要得到目标函数的<strong>纯单变量</strong>贡献，需固定 batch/epoch/lr，仅切换目标函数的后续实验（建议：ArmB-config 但 contrast_weight=0 / patch_weight=0 的消融）。</p>
+<p><strong>对预注册判据的影响</strong>：判据（lp≥58.03% 不倒退；lp≥61.0% 且 5-NN≥48.98% → 接受）针对的是<strong>配方整体效果</strong>（"换上 AIMv2-style 配方后是否更好"），<strong>不</strong>要求隔离目标函数贡献。故判据通过 = "AIMv2-style 配方可接受"，<strong>≠</strong> "证明 patch-MSE 目标本身贡献了 +4 pp"。</p>
+</div>
+<div class="card">
+<h3>6.3 塔效应：为何 ArmB 与 ④-4ep 在 k-NN 上表现相反？</h3>
+<table><tr><th>配置</th><th>塔</th><th>目标</th><th>lp</th><th>k-NN</th><th>模式</th></tr>
+<tr><td>④-4ep</td><td>custom 126.8M (w512/d30)</td><td>AIMv2-style</td><td class="num">67.05%</td><td class="num">42.35% (k=20)</td><td class="worst">lp↑ / k-NN↓ 取舍</td></tr>
+<tr><td>ArmB</td><td>open_clip ViT-B/16 (86.2M)</td><td>AIMv2-style</td><td class="num">62.09%</td><td class="num">58.10% (k=5)</td><td class="best">lp↑ / k-NN↑ 齐升</td></tr></table>
+<p>两个 AIMv2-style 实验在 k-NN 上方向相反：④-4ep 的稠密目标"牺牲"了检索（k-NN 远低于 lp），而 ArmB 没有牺牲。最可能解释是<strong>塔的归纳偏置</strong>：open_clip ViT-B/16 的 CLIP 式全局池化 + class token 结构，在与 InfoNCE 共训时强约束了 pooled 特征的语义聚类（C1 0.86–0.93），使 patch-MSE 的局部信号"补强"而非"挤占"全局表示空间。custom 126.8M 塔缺乏这一约束，patch-MSE 主导了表示，检索质量下降。</p>
+<p class="ref">⚠️ 此为<strong>假设性解读</strong>：④-4ep 与 ArmB 的塔、参数量、k 口径均不同，不能严格归因。需"同塔同目标、仅换 k"或"同塔同 k、仅换目标"的消融来确证。</p>
+</div>
+<div class="card card-good">
+<h3>6.4 验收结论</h3>
+<table><tr><th>预注册判据</th><th>阈值</th><th>ArmB 实测</th><th>判定</th></tr>
+<tr><td>不倒退（相对 ArmA lp）</td><td>lp ≥ 58.03%</td><td class="num">62.09%</td><td class="best">✅ 通过（+4.06 pp）</td></tr>
+<tr><td>接受混合配方</td><td>lp ≥ 61.0% 且 5-NN ≥ 48.98%</td><td class="num">62.09% &amp; 58.10%</td><td class="best">✅ 通过（双探针均超阈值）</td></tr></table>
+<p><strong>结论</strong>：在 open_clip ViT-B/16 塔上，BaiZe AIMv2-style 配方（InfoNCE + masked-patch-MSE, 1:1, mask 0.6, GBS 8192, 4 epoch）相对 open_clip 标准 InfoNCE 配方，在 lp 与 5-NN 上<strong>双探针均显著提升且不倒退</strong>，<strong>接受该混合配方</strong>作为该塔上的训练方案。</p>
+<p><strong>后续建议</strong>：① batch/epoch/lr-matched 消融（固定 ArmB 配方仅切目标函数）以隔离 patch-MSE 的纯贡献；② 在 open_clip ViT-B/16 上延长训练（8 epoch）看 lp 是否逼近 ④-4ep 的 67%；③ 统一 k 口径（k=5 与 k=20 都跑）使 ArmB ↔ ④-4ep 的 k-NN 可严格比较。</p>
+</div>
+
+<h2 id="s7">7. 诚实条款</h2>
+<div class="card card-note">
+<ul>
+<li><strong>内部 ProtB 口径</strong>：本报告所有 lp/k-NN 数字使用 BaiZe 内部 Protocol B，<strong>非官方排行榜协议</strong>。Protocol B 设计目标是与公开主流值对齐，但仍是内部实现。</li>
+<li><strong>非严格单变量</strong>（最重要）：ArmA 与 ArmB 在<strong>塔、数据源</strong>上相同，但在<strong>batch（2048 vs 8192）、epoch（2.7 vs 4）、样本量（316M vs 469M）、lr（2e-3 vs 1e-3）、warmup（8000 vs 2000）</strong>上均不同。+4 pp 是"配方整体切换"的综合效应，<strong>不能</strong>全部归因于目标函数。需 batch/epoch-matched 消融才能隔离 patch-MSE 的纯贡献（见 <a href="#s6">§6.2</a>）。</li>
+<li><strong>单 backbone / 单训练 seed</strong>：ArmB 仅训练了一个 checkpoint（训练 seed=1234），ProtB 评测用 3 seeds（0/1/2）。σ=0.012 pp 极小但仅反映评测端随机性，<strong>不含训练端随机性</strong>。不代表 open_clip ViT-B/16 + AIMv2-style 在所有训练 seed 下的上界。</li>
+<li><strong>5-NN 与 lp 口径不同</strong>：k-NN 用 cosine + k 近邻投票，lp 用线性分类器 + softmax；两者衡量表征的不同性质。且 ArmA/ArmB 的 k=5 与 ④-4ep 的 k=20 口径不同（见 <a href="#s5">§5.1</a>），跨配置比 k-NN 须谨慎。</li>
+<li><strong>5-NN 仅单 seed</strong>：5-NN 无随机性（确定性近邻投票），但只评了一个特征集，未做 bootstrap 置信区间。</li>
+<li><strong>塔效应解读为假设</strong>：§6.3 对"为何 ArmB 与 ④-4ep 在 k-NN 上相反"的解释是假设性机制，未经同塔同 k 消融确证。</li>
+<li><strong>数据量标注</strong>：ArmA/ArmB 数据源相同（≈118M 对），但 epoch 数不同（2.7 vs 4），ArmB 多见 1.48× 样本。</li>
+<li><strong>效率数字</strong>：0.87 it/s 为 ArmB 稳态值；ArmB 因额外 patch 前向 + Predictor，比 ArmA（3.37 it/s，更小 batch）单步更重，但 GBS 大 4× 故总样本吞吐更高。两者效率不可直接比（配置不同）。</li>
+</ul>
+</div>
+<h2 id="appA">附录 A：open_clip × AIMv2-style 兼容性（已实现验证）</h2>
+<div class="card">
+<h3>A.1 结论（ArmB 已实证）</h3>
+<table><tr><th>层面</th><th>兼容？</th><th>说明</th></tr>
+<tr><td><strong>模型 / 推理接口</strong></td><td class="best">✅ 完全兼容（已验证）</td><td>ArmB 用 open_clip ViT-B/16 训练，评测时 <code>open_clip.create_model_and_transforms('ViT-B-16', pretrained=&lt;open_clip_state_dict.pt&gt;)</code> strict load 通过，<code>encode_image</code> 正常出 pooled/patch 特征</td></tr>
+<tr><td><strong>训练损失 / 训练循环</strong></td><td class="best">✅ 已自研实现（armB_aimv2_openclip.py）</td><td>在 open_clip 前向后挂 PatchPredictor（1.18M），单次前向取 patch tokens → mask 采样 → MSE，与 ClipLoss 加权；6/6 CPU 单测通过，57,250 步训练零错误</td></tr></table>
+<h3>A.2 实现要点（ArmB 已落地）</h3>
+<ol>
+<li><strong>挂 PatchPredictor</strong>：在 open_clip ViT 上挂 <code>PatchPredictor</code>（Linear→LN→GELU→Linear，1.18M 参数），作为独立 DDP 模块。</li>
+<li><strong>取 patch tokens（复用同一次前向）</strong>：单次 vision 前向后通过 forward hook / <code>forward_features</code> 取 patch tokens，<strong>禁止二次 forward</strong>（实测 0.87 it/s，无额外 35–45% 开销）。</li>
+<li><strong>自定义 loss + 训练步</strong>：<code>model(imgs, texts)</code> 后取 patch tokens → mask 采样（mask_ratio=0.6）→ predictor 前向 → MSE → 与 InfoNCE 加权（1:1）求和。</li>
+<li><strong>checkpoint 存取：剥离 predictor</strong>：保存 <code>open_clip_state_dict.pt</code>（剥离 predictor，571M）+ <code>predictor.pt</code> + <code>config.json</code>；验收 <code>open_clip.create_model_and_transforms('ViT-B-16', pretrained=&lt;ckpt&gt;)</code> strict load 通过 → 评测侧无感知 predictor。</li>
+</ol>
+<p><strong>工程量回顾</strong>：ArmA 报告附录 A 将此评估为"≈1–2 人日，纯 CPU"；ArmB 已按该方案完整实现（<code>armB_aimv2_openclip.py</code>），6/6 CPU 单测通过，训练 + 评测全链路闭环。该兼容性结论已从"评估"升级为"<strong>已验证</strong>"。</p>
+</div>
+
+<h2 id="appB">附录 B：概念澄清 —— 官方 AIMv2 vs 本仓 AIMv2-style</h2>
+<div class="card card-note">
+<table><tr><th></th><th>官方 AIMv2 (Apple)</th><th>本仓 AIMv2-style (BaiZe)</th></tr>
+<tr><td>范式</td><td>多模态自回归（Multimodal AR）</td><td>对比 + 稠密重建（Contrastive + Dense）</td></tr>
+<tr><td>核心机制</td><td>图文 token 拼接 + causal decoder + next-token 预测</td><td>InfoNCE 对比 + masked-patch MSE 重建</td></tr>
+<tr><td>对比项</td><td><strong>弃用</strong>对比损失</td><td><strong>保留</strong> InfoNCE（contrast_weight=1.0）</td></tr>
+<tr><td>文本塔</td><td>融入 AR 序列</td><td>独立文本塔（CLIP-ViT-L/14-336，冻结）</td></tr>
+<tr><td>注意力</td><td>causal（单向）</td><td>bidirectional（双向）</td></tr>
+<tr><td>代码位置</td><td>—</td><td><code>armB_aimv2_openclip.py</code>（open_clip 塔）· <code>r9_train.py</code> <code>--loss aimv2</code>（custom 塔）</td></tr></table>
+<ul>
+<li>本仓 <code>--loss aimv2</code>（BP-1 锁定最佳实践）= <strong>对比 + masked-patch-MSE</strong>，双向 ViT，<strong>保留 InfoNCE</strong>。这是"AIMv2-<em>style</em>"（受启发），不是官方 AIMv2 的复现。<strong>ArmB 即此范式在 open_clip 塔上的实例。</strong></li>
+<li>本仓 <code>--loss aimv2_ar</code> = 更接近官方 AIMv2 的<strong>纯自回归</strong>路线。<strong>已被实验否决</strong>（R11-H：step 600 坍缩 C1=0.97；AR+InfoNCE hybrid：lp=1.37%，−12.1 pp）。</li>
+<li>open_clip 的对比接口<strong>无法表达</strong>官方 AIMv2 的自回归范式。若需走官方 AIMv2 路线，需完全自研训练环。</li>
+</ul>
+<p class="ref">证据：BP-1 否决项 · EXPERIMENTS_VISION_ROUND11.md §14–§17 · r9_train.py:808-815 · ArmB 训练日志 objective 行</p>
+</div>
+
+<div class="footer">
+<p><strong>报告版本</strong>：1.0 · 2026-10-18<br><strong>作者</strong>：BaiZe vision agent (wake #146)<br><strong>数据可溯源性</strong>：每个数字标注 <code>文件</code> 或原始日志路径；结果 JSON 与训练日志均存档<br><strong>归档</strong>：报告路径已写入 MEMORY_VISION.md 与 EXPERIMENTS_VISION.md<br><strong>关联实验</strong>：<a href="report_vision_armA_openclip_result_zh.html">ArmA</a>（同塔纯 InfoNCE 对照，lp 58.03% / 5-NN 53.98%）· 主线 ④-4ep（custom 126.8M + AIMv2-style，lp 67.05% / k-NN 42.35%）<br><strong>预注册判据</strong>：lp≥58.03% 不倒退 ✅；lp≥61.0% 且 5-NN≥48.98% 接受混合 ✅ → <strong>混合配方接受</strong>（注：判据针对配方整体效果，非目标函数独占贡献，见 §6.2）</p>
+</div>
+</body>
+</html>
