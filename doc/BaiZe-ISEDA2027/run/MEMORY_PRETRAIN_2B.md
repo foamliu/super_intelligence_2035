@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-18 16:4x 更正（sudo 实测）**：训练**没有死**——`.29` PID 2597555 从 **10-17 08:44** 一直存活，GPU **8×100%/51763 MiB**，`/tmp/baize_xmodel25_decay_v2_train.log` 当前 **step 9630/19980（48.2%）**、loss 1.3255、0 error。**#548 是误判**：它读的 `$OUTPUT_DIR/...train.log` 是 `.12` 旧 run 的 10-17 10:45 SIGTERM traceback，不是 `.29` 实时日志。**不要重启/不要 resume**；判活只认 `/tmp/baize_xmodel25_decay_v2_train.log` + `pgrep torchrun` + GPU。
+
 ## 当前状态
 - STAGE: **🟢 Xmodel-2.5 80B decay v2 训练健康 @.29**（16:29:07 step9580/19980 loss1.3367 lr1.63e-4 tok/s298.8K elapsed1904min；8卡全速 100% util / 51763MiB，0 error）。⚠️ **#548「15:53:22 训练死亡」系误报**：torchrun PID**2597555**（Oct17 08:44:02 起）**31.7h 连续存活从未中断**，train_log step9400(15:53:22)→step9580(16:29:07) **无缝 2min/10步**，grep resume/restart/error=0；nvidia-smi compute-apps=8×PIDs2605722-29(ppid全=2597555) 各51754MiB。**本轮不 resume**（16:2x 令前置"GPU空/无torchrun"不成立，若执行=杀健康31.7h训练+回退step_8000丢1580步）。✅ P0 ops 中继：PID1972249 存活、.last_run_id=125。10-18② v5 三交付物已闭合。
   - PHASE: **decay80b_v2_RUNNING** — 80B decay v2 在 .29 **健康运行**（step9580/19980=47.9%, loss1.3367, tok/s298.8K, lr1.63e-4, elapsed1904min）。**#548「死亡」=误报**（torchrun 2597555 自 Oct17 08:44 连续存活 31.7h、无重启无 resume 标记）。ckpt step_2000/4000/6000/8000 已存，下一@step10000(~17:4x)。ETA(19980-9580)=10400步×11.9s≈34.4h→10-20 02:5x。

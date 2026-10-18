@@ -1,5 +1,12 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🆕 运维指令 · 2026-10-18 16:4x（✅ 更正：#548 是误判，训练未死——**不要重启**）· 运维 sudo 实测
+
+> **实测**：`.29` **PID 2597555 从 10-17 08:44 一直存活**（etimes ~115000s）；GPU **8×100%/51763 MiB**；`/tmp/baize_xmodel25_decay_v2_train.log` 当前 **step 9630/19980（48.2%）**，loss 1.3255，lr 1.61e-4，298.8K tok/s，**0 error**。
+> **#548 误判根因**：它读的 `$OUTPUT_DIR/baize_xmodel25_decay_v2_train.log` 是 **`.12` 旧 run** 的日志（10-17 10:45 SIGTERM traceback），不是 `.29` 的实时日志。
+> **判活规则（立即生效）**：先 `pgrep -af torchrun` + `nvidia-smi` + **`tail /tmp/baize_xmodel25_decay_v2_train.log` 看 step 是否增长**；**NFS `$OUTPUT_DIR/...train.log` 不能作为判据**（那是 `.12` 旧日志）。
+> **本块覆盖 16:2x 的“立即 resume”**：训练活着 ⇒ **不要重启/不要 resume**。只有确认 `torchrun` 消失 + GPU 空闲 + `/tmp` log 停止增长，才按 16:2x 的长期规则 resume。
+
 ### 🆕 运维指令 · 2026-10-18 16:2x（🚨 P0：立即 resume 80B decay v2 + **长期授权：训练挂了自行重启，不再等许可**）· 用户直令 · 最高优先
 
 > 用户令（2026-10-18）：「pretrain：重启 resume 训练，以后这种事不需要运维许可，自己的训练挂了，唤醒时看到了立刻修。」
