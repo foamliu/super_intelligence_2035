@@ -1,0 +1,118 @@
+{
+    "id": "ded77ee2-8514-4cea-b0ec-999a02081cf7",
+    "task_name": "chess-best-move",
+    "trial_name": "chess-best-move__REnRDwh",
+    "trial_uri": "file:///nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/oracle_check/2026-10-19__07-47-19/chess-best-move__REnRDwh",
+    "task_id": {
+        "path": "/tmp/tb_pilot_dataset_G6SwkJ/chess-best-move"
+    },
+    "source": "tb_pilot_dataset_G6SwkJ",
+    "task_checksum": "a31d482d846322d57f0e3ee3c56d4ff2171fe39908dadd8092d036f17114fbef",
+    "config": {
+        "task": {
+            "path": "/tmp/tb_pilot_dataset_G6SwkJ/chess-best-move",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "tb_pilot_dataset_G6SwkJ"
+        },
+        "trial_name": "chess-best-move__REnRDwh",
+        "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/oracle_check/2026-10-19__07-47-19",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "oracle",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "stream": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [
+                "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+            ],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "db4d3bf7-deb0-4803-a312-731da32d5893",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "oracle",
+        "version": "1.0.0",
+        "model_info": null
+    },
+    "agent_result": {
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null,
+        "model_usage": null,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        }
+    },
+    "verifier_environment_mode": "shared",
+    "exception_info": null,
+    "started_at": "2026-10-18T23:47:19.446619Z",
+    "finished_at": "2026-10-18T23:48:17.342657Z",
+    "environment_setup": {
+        "started_at": "2026-10-18T23:47:19.608696Z",
+        "finished_at": "2026-10-18T23:47:20.744565Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-18T23:47:20.744593Z",
+        "finished_at": "2026-10-18T23:47:20.744644Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-18T23:47:20.744719Z",
+        "finished_at": "2026-10-18T23:47:56.441154Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-18T23:47:56.890085Z",
+        "finished_at": "2026-10-18T23:48:06.622978Z"
+    },
+    "step_results": null
+}

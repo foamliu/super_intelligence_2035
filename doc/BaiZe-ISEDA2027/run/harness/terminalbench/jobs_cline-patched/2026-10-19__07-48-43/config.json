@@ -1,0 +1,20 @@
+{
+    "jobs_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_cline-patched",
+    "n_concurrent_trials": 1,
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "agents": [
+        {
+            "name": "terminalbench.agents.cline_patched:ClinePatched"
+        }
+    ],
+    "datasets": [
+        {
+            "path": "/tmp/tb_pilot_dataset_G6SwkJ"
+        }
+    ]
+}
