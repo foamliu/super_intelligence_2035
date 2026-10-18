@@ -1,6 +1,15 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
+
+> 🆕 **R431 (2026-10-18 12:30) — OPS RELAY FIXED + TB SOLO SMOKE RUNNING · 3 BUGS FOUND**：
+> **① Relay fix (P0 DONE)**：RUN_ID 123 不执行的真因 = `ops/inbox.md` 第 3 行触发标记 `<!-- RUN_ID: 122 -->` 没随 123 命令块更新（relay 正则只读 HTML 注释，不读 `## RUN_ID 123` 标题）→ relay 健康、从未冻结。已 122→123（commit eb204521 push）→ 123 在 .29 执行一次成功（exit 0, .last_run_id=123）。**另发现 .12 上有 stray relay (pid 1048010) 与 .29 主 relay 共享 NFS .last_run_id → 双执行竞态，已 kill**；.29 现 single relay (pid 1972249, ppid=1)。123 probe：训练全健康（.29 8GPU@97-100% pretrain / .12 8GPU@39-78% vision），各 loop alive。
+> **② TB solo smoke FAILED (2m24s) at cline install — `NonZeroAgentExitCodeError`**：env 容器正常 Up（cached fix-git image ✅），node fast-path ✅（node v22.23.3 / npm 10.9.9 via /opt/node，tencent mirror + strict-ssl=false ✅），但 **`npm install -g cline@latest` exit 1**。**根因**：本机 cline **不是公开 npm 包**——它是 `/nas_train/app.e0031982/harness/cline` 的 **bun 源码构建**（`@cline/cli -> apps/cli`，`package.json` bin=`src/index.ts`，bun 全局 link；`apps/cli/bin/cline` 是 4446B 的 **node 解析 shim**，找嵌入式 bun 平台二进制）。fast-path（cline_patched.py 行 93-115）期望 `/opt/cline-modules/@cline/cli-linux-x64/bin/cline` **嵌入式 bun 二进制**，但**该二进制本机不存在**（node_modules 里无 `@cline/cli-linux-x64`，只有 `apps/cli/dist/index.js` 28MB bundle + 源码）→ fast-path 不触发 → npm fallback 装错包 fail。**修法（pilot 前必修）**：① 本机用 bun `--compile` 构建 cline 独立二进制（`~/.bun/bin/bun build --compile --target=bun-linux-x64 apps/cli/src/index.ts`），或用 `dist/index.js` 经 bun 跑；② overlay 挂载 cline 源码+node_modules+bun 到容器；③ 改 cline_patched fast-path 检查路径/启动方式（`CLINE_BIN_PATH` env 或 `bun dist/index.js` 包装）。bun 在本机 `~/.bun/bin/bun`(92MB) ✅。jobs=jobs_smoke_cline/2026-10-18__12-36-47/。
+> **③ 三个关键 bug（pilot 前必修）**：
+>   - **bug-A (launch_tb_7way.sh)**：脚本**未设 PYTHONPATH** → 自定义 adapter `terminalbench.agents.*` 无法被 harbor 导入（harbor=uv tool 隔离 venv）。已验证 `PYTHONPATH=run/harness harbor_python -c "import terminalbench.agents.cline_patched"`→OK cline-patched。修法：`harbor run` 前加 `export PYTHONPATH="${SCRIPT_DIR}/..:$PYTHONPATH"`。
+>   - **bug-B (launch_tb_7way.sh key 提取)**：`grep -A1 'kimi-k2.6-cloud' keys.txt | grep 'API Key' | awk '{print $3}'` **取空**（keys.txt 用全角冒号"："；API Key 行是模型名后第 2 行，-A1 抓不到；awk $3 因全角冒号非空白分隔符而空）→ 静默 401。**正确**：`grep -A2 'kimi-k2.6-cloud' keys.txt | grep 'API Key' | awk -F'：' '{print $2}' | tr -d '[:space:]'`（=72 字符，已验证）。⚠️ keys.txt 共 12 个 "API Key" 行，**务必 -A2 限定 kimi**，否则拼接全部 12 key（720 字符）。
+>   - **bug-C (Docker Hub 不可达)**：MITM proxy 172.19.92.25:13128 **到不了 registry-1.docker.io**（direct=000、via-proxy 亦失败）；daemon.json 已配 proxy 仍超时。**只有本地已缓存 task image 能跑**（oracle 5/5 正因镜像 11-14 月前预拉）。`alexgshaw/regex-log:20251031` **未缓存** → 首试 smoke 16s 失败（docker compose up 拉镜像超时）；改用 cached fix-git 后容器 Up。**pilot/full 89 任务前必须解决未缓存镜像拉取路径**（registry mirror 或预拉），否则未缓存任务全 fail。
+> **pilot 任务缓存状态**：break-filter-js-from-html ✅ · bn-fit-modify ✅ · fix-git ✅ · regex-log ❌(未缓存) · sqlite-db-truncate ❓(待查)。已缓存 15+ 个 alexgshaw/* 镜像。
 
 > 🔧 **运维指令（2026-10-16 · 最高优先 · 每轮唤醒必读）**：
 > **🆕 2026-10-16 重启补完 188 条**：用 `--resume` 重启未跑完的 4 路（opencode/cline/claude/pi）。
@@ -16,15 +25,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T0 COMPLETE · TB T2 PILOT PREP (oracle 5/5 ✅, 7 adapters ✅ skeletons, launch script fixed for local paths)
-已完成:       ①-㉘ same · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapter skeletons + mock tests (28/28 OK) · ㉜ launch_tb_7way.sh fixed (-p local paths + overlay, not -d dataset)
-当前动作:     R430 (07:20): MEMORY archived (33.5KB→23.6KB) · _base.py _install_node fixed (NVM+aliyun mirror, not nodesource.com) · launch script fixed (local -p paths + minimal2 overlay, 5 pilot tasks selected) · adapter tests 28/28 OK
-下一步:       ① Smoke test 1 adapter (cline-patched) on 1 task on .29 to validate NVM install + API + trace ② If smoke OK → run 7×5 pilot on .29 ③ Full 7×89 eval
-阻塞:         无 — oracle 5/5 ✅. NOTE: Docker only on .29 (not .12), Harbor Hub auth not done (use local -p paths). Adapters need smoke test (install() uses NVM+mirrors, untested in real container).
+PHASE:        TB T2 SOLO SMOKE FAILED at cline install (smoke #3 done, 2m24s) · ops relay fixed · cline-install 路径需重做
+已完成:       ①-㉘ same · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script (local -p) · ㉝ R431: ops relay fixed (inbox marker 122→123, commit eb204521) + stray .12 relay killed + 123 ran ✅ · ㉞ TB solo smoke ran 2m24s → FAILED at cline install (npm fallback targets non-existent pkg; fast-path embedded-bun binary absent)
+当前动作:     R431 (12:45): smoke 诊断完成。cline install 路径根本性破损——本机 cline=bun 源码构建(非 npm 包)，fast-path 期望的嵌入式 bun 二进制不存在 → npm fallback 装错包 fail。node fast-path/env 容器/镜像缓存均 ✅。
+下一步:       ① 修 cline install：本机 bun --compile 构建独立二进制(或 dist/index.js+bun) + overlay 挂载 cline 源码/bun + 改 cline_patched fast-path 路径 ② 重跑 smoke(cline-patched × fix-git) ③ 修 launch_tb_7way.sh bug-A(PYTHONPATH)+bug-B(key) ④ 解 bug-C(未缓存镜像拉取) ⑤ smoke pass → 7×5 pilot
+阻塞:         cline install 路径破损(smoke fail 根因，pilot 前必修) · bug-C Docker Hub 不可达(未缓存镜像) · bug-A/B launch script。其余无。
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-18 12:30 —— R431: ① ops relay 修复——RUN_ID 123 不执行真因=inbox.md 触发标记 122 未更到 123（relay 未冻结），已 122→123(commit eb204521)+push，123 在 .29 执行成功；kill .12 stray relay(pid 1048010)，.29 single relay(pid 1972249,ppid=1)；123 probe 训练全健康。② TB solo smoke 跑起 on .29：cline-patched × fix-git(cached image)，跑 2m24s → FAILED at cline install(npm install -g cline exit 1；根因=cline 是 bun 源码构建非 npm 包，fast-path 嵌入式 bun 二进制不存在)。③ 发现 3 bug：launch_tb_7way.sh 未设 PYTHONPATH(自定义 adapter 导入失败)/key 提取破损(全角冒号+-A1,取空→401)/Docker Hub 不可达 via proxy(仅 cached image 能跑,regex-log 未缓存致首试 16s 失败)。改 fix-git(cache)后容器 Up，但 cline install fail。WAITING=0 待修 cline install 路径。
 - 2026-10-18 07:20 —— R430: MEMORY archived 33.5KB→23.6KB · _base.py _install_node fixed (NVM+aliyun mirror replaces blocked nodesource.com) · launch_tb_7way.sh fixed (local -p paths + minimal2 overlay, 5 pilot tasks) · 28/28 adapter tests OK · Docker on .29 ✅ (not .12) · Next: smoke test 1 adapter on .29
 - 2026-10-18 06:06 —— R429: Oracle 5/5 ✅ ALL PASS (BCE fix8: numpy 2.x alias + planarity 1.0.0 key remap). Details → daily-memories-harness/2026-10-18.md
 - 2026-10-18 03:55 —— R427: Oracle 4/5 (build-pmars ✅ fix125 snapshot, BCE ❌ numpy 2.x). Details → daily-memories-harness/2026-10-18.md
