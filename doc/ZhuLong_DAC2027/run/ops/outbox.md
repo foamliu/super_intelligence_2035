@@ -10099,3 +10099,96 @@ OLDPWD=/nasdata/app.e0031982/code/super_intelligence_2035
 269:EVAL_ROOT_DIR=${HOME}/eda_code_eval
 === DONE 75 ===
 ```
+
+---
+
+## RUN_ID 76 · 2026-10-18 13:39:26 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 76 | fix EVAL_FW_DIR + start regrade | $(date '+%F %T') | host=$(hostname) ==="
+E=/nasdata/app.e0031982/code/eda_fastmcp
+echo "[1] current"
+grep -n '^EVAL_FW_DIR' "$E/.env" 2>/dev/null
+grep -n '^export EVAL_FW_DIR' ~/.bashrc 2>/dev/null || true
+echo "[2] backup + patch"
+cp -a "$E/.env" "$E/.env.bak.eval_fw_$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
+sed -i 's|^EVAL_FW_DIR=.*|EVAL_FW_DIR=${EVAL_FW_DIR:=/nasdata/app.e0031982/code/EDA-Eval-Framework}|' "$E/.env"
+grep -q '^export EVAL_FW_DIR=' ~/.bashrc || echo 'export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework' >> ~/.bashrc
+grep -n '^EVAL_FW_DIR' "$E/.env" | head -3
+grep -n '^export EVAL_FW_DIR' ~/.bashrc | head -3
+echo "[3] running grade?"
+if pgrep -af '[r]un_eval[.]py|[r]egrade_zl_glm52' > /tmp/rid76_running.txt; then
+  echo "ALREADY_RUNNING"; cat /tmp/rid76_running.txt; exit 0
+fi
+echo "NO_GRADE_RUNNING"
+echo "[4] write regrade script"
+cat > /tmp/regrade_zl_glm52_r1.sh <<'EOS'
+#!/bin/bash
+set +e
+export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+export SANDBOX_ENDPOINTS="8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4"
+export PROXY_PORTS="8650,8651,8652,8654"
+export RAG_RECALL_URL="http://localhost:9006/recall"
+export SANDBOX_HOST="10.129.32.75"
+export EVAL_ROOT_DIR="$HOME/eda_code_eval"
+GEN_FILE="completed_code_generation_2026_1018_093852.jsonl"
+BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+LANG="pyAether"
+PYTHON="/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python"
+RUN_EVAL="/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py"
+cd "$EVAL_FW_DIR" || { echo "CD FAILED"; exit 1; }
+echo "=== ZL.glm-5.2 r1 REGRADE $(date '+%F %T') ==="
+echo "EVAL_FW_DIR=$EVAL_FW_DIR"
+ls -l "$EVAL_ROOT_DIR/$GEN_FILE" 2>&1
+"$PYTHON" "$RUN_EVAL" -g "$GEN_FILE" --lang "$LANG" --benchmark "$BENCHMARK"
+rc=$?
+echo "=== REGRADE DONE rc=$rc $(date '+%F %T') ==="
+exit $rc
+EOS
+chmod +x /tmp/regrade_zl_glm52_r1.sh
+echo "[5] start"
+setsid -f nohup bash /tmp/regrade_zl_glm52_r1.sh > /tmp/ZL_glm52_r1_regrade.log 2>&1 < /dev/null
+sleep 3
+pgrep -af '[r]un_eval[.]py|[r]egrade_zl_glm52' | head -5
+echo "--- log head ---"
+head -20 /tmp/ZL_glm52_r1_regrade.log 2>&1
+echo "=== DONE 76 ==="
+```
+
+**输出**
+```
+=== RUN_ID 76 | fix EVAL_FW_DIR + start regrade | 2026-10-18 13:39:26 | host=hfeg0tedaap02 ===
+[1] current
+266:EVAL_FW_DIR=${EVAL_FW_DIR:=/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether}
+267:EVAL_FW_DIR_SKILL=${EVAL_FW_DIR:=proj/EDA-Eval-Framework_1_skill}
+268:EVAL_FW_DIR_TCL=${EVAL_FW_DIR_TCL:=/home/app.t0002997/proj/EDA-Eval-Framework_1_tcl}
+[2] backup + patch
+266:EVAL_FW_DIR=${EVAL_FW_DIR:=/nasdata/app.e0031982/code/EDA-Eval-Framework}
+267:EVAL_FW_DIR_SKILL=${EVAL_FW_DIR:=proj/EDA-Eval-Framework_1_skill}
+268:EVAL_FW_DIR_TCL=${EVAL_FW_DIR_TCL:=/home/app.t0002997/proj/EDA-Eval-Framework_1_tcl}
+138:export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+[3] running grade?
+NO_GRADE_RUNNING
+[4] write regrade script
+[5] start
+1653629 bash /tmp/regrade_zl_glm52_r1.sh
+1653633 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py -g completed_code_generation_2026_1018_093852.jsonl --lang pyAether --benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl
+--- log head ---
+=== ZL.glm-5.2 r1 REGRADE 2026-10-18 13:39:26 ===
+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+-rw-r----- 1 app.e0031982 app.adm 595918 Oct 18 11:31 /home/app.e0031982/eda_code_eval/completed_code_generation_2026_1018_093852.jsonl
+2026-10-18 13:39:26,449 - INFO - --- [阶段2] 开始：组装可执行脚本 ---
+2026-10-18 13:39:26,454 - INFO - 配置 'clean_main_block' 为 True。将从 'completion' 中移除 __main__ 代码块。
+2026-10-18 13:39:26,455 - WARNING - 输出目录 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions 已存在。将清空该目录以确保干净的运行环境。
+2026-10-18 13:39:26,608 - INFO - 已创建并清空输出目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-18 13:39:26,608 - INFO - 从 benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl 读取评测问题...
+2026-10-18 13:39:26,610 - INFO - 成功加载 158 个问题的测试代码。
+2026-10-18 13:39:26,610 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_2026_1018_093852.jsonl 流式读取生成的代码...
+2026-10-18 13:39:26,612 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/158 [00:00<?, ?it/s]组装脚本:  26%|██▌       | 41/158 [00:00<00:00, 409.73it/s]组装脚本:  69%|██████▉   | 109/158 [00:00<00:00, 567.25it/s]组装脚本: 100%|██████████| 158/158 [00:00<00:00, 583.20it/s]
+2026-10-18 13:39:26,890 - INFO - 成功组装并保存了 153 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-18 13:39:26,890 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
+=== DONE 76 ===
+```
