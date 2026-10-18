@@ -1,51 +1,27 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-18（📊 ArmB 的 **1/2/3 epoch 检查点**也要测 ProtB，并与**历史最好结果**对比，写进中文 HTML）· 用户直令 · 最高优先
+### 🆕 运维指令 · 2026-10-18（🚫 **取消** ArmB 的 1/2/3 epoch 回放任务 —— 检查点已不存在）· 用户直令 · 最高优先（覆盖同日上一条）
 
-> **用户令（2026-10-18）**：「让 vision 把这次 1,2,3 epoch 检查点的 ProtB 也测一下，在中文 html 报告中，跟原来的最好结果做下对比」
+> **用户令（2026-10-18）**：「vision 回放 1/2/3 epoch 要不要做：之前没有存检查点吗？如果没有存，还需要重新训练，那就不做了。」
 
-**① 先认清现实：这三个 ckpt 现在盘上没有，必须"回放到那个时刻"取**
-- ArmB 训练脚本是 `--save-every 10000 --keep-ckpts 2`（`run/vision/run_armB_openclip.sh:70-72`）⇒ **只留最近 2 个 `checkpoint_*.pt`**，日志里可见 `[ArmB] removed old ckpt checkpoint_30000.pt`。
-- 已知步数换算（GBS 8192、4 epoch=57250 步 ⇒ **每 epoch ≈ 14,313 步**）：**1ep≈14313 · 2ep≈28626 · 3ep≈42939**（以 `--steps 42940`=3ep 的历史记录为准，四舍五入到 10000 的整倍数没有意义，**就用这三个精确步数**）。
-- ⇒ **取证**：先 `ls -lt $OUT/checkpoint_*.pt $OUT/latest.pt`，若 `14313/28626/42939` 不在盘上（几乎必然），走 ② 的 **resume-and-stop 回放**；🚫 **不要**用 `checkpoint_10000/20000/40000` 冒充 1/2/3 epoch。
+**① 结论：不做。** 已核实（机读证据，不是推测）：
+- `run/vision/armB_aimv2_openclip.py:349-354`：`--keep-ckpts 2` ⇒ 每保存一个新 ckpt，就删最老的 → **盘上永远只留最近 2 个 `checkpoint_*.pt`**；
+- 训练日志/流水实证：`keep-ckpts=2 已回收 checkpoint_10000`（10-17 14:5x）、`checkpoint_30000.pt 已自动删(keep-ckpts 2)`（10-18 05:37）、`[ArmB] removed old ckpt checkpoint_30000.pt`；
+- ⇒ **1ep=14313、2ep=28626、3ep=42939 三个步点的权重都已不存在**，要拿只能**从零重训≈27.6h** ⇒ 投入产出不成立，**取消**。
 
-**② 回放取 ckpt（推荐做法，成本远低于重跑）**
-- 若能拿到**当时的 `latest.pt`**（含完整 optimizer 状态）→ 直接 `--resume` 到目标步再停，最省；
-- 若拿不到（只剩 final 的 `open_clip_state_dict.pt`）→ **从零重训**，只跑到目标步即停（数据/seed/超参必须与本次 ArmB **完全一致**：`data_snapshot_20261017_gpic8000.txt`、seed 1234、GBS 8192、MBS 512、lr 1e-3/warmup 2000、mask 0.6）。
-- 每个目标步都保存**干净权重**（`open_clip_state_dict.pt` 形式，直接喂 `armB_protb_eval.py`），命名 `armB_ep{N}_step{step}_openclip.pt`，放在 `$OUT/epoch_ckpts/`。
-- 回放**必须**先报成本：每 epoch ≈ **18.37h/4 ≈ 4.6h**（本次实测 57250 步 18.37h）⇒ 到 1/2/3ep 合计 ≈ **27.6h**（8 卡）。**开跑前先报这个数给运维确认**（若 `.12` 已有其它任务占用则先报排期）。
+**② 你要做的事（只做收尾，不占 GPU）**
+1. **不做任何回放/重训**；🚫 不启动训练；🚫 不改 `--keep-ckpts`；🚫 不动已有 final 产物。
+2. 若已按上一条指令开始任何动作 ⇒ **立即停止**（`pkill -f armB_aimv2_openclip` 仅限回放进程；若无则 no-op），并在心跳写"未启动/已停止"。
+3. 在 `MEMORY_VISION.md` 状态头写明：**「ArmB 1/2/3 epoch 曲线：取消（ckpt 未保留，重训 27.6h 不划算）」**，并标注"今后若需 epoch 曲线，须在训练前把 `--keep-ckpts` 设为 ≥4 或 `--save-every` 调小"。
+4. `reports/report_vision_armB_openclip_result_zh.html` 里**不要**出现 epoch 曲线/1-2-3ep 占位；若已有相关小节，改成一句说明：**"epoch 1/2/3 检查点未保留（keep-ckpts=2），故本报告只给 final(4ep)"**。
+5. commit 前缀 `vision armB-noep:`；`MEMORY_VISION.md` 保持 ≤32KB（自滚）。
 
-**③ ProtB 评测（口径与正式 ProtB 完全一致，才有可比性）**
-- 用 `run/vision/armB_protb_eval.sh` + `armB_protb_eval.py`：**full IN-1k 1.28M train + 50k val、SGD 90ep、seeds 0/1/2、feature=projected、5-NN**。
-- 每个 epoch ckpt 出一份 `armB_protb_ep{N}_results.json`（字段与 `armB_protb_vitb16_224_results.json` 对齐：lp_mean/lp_std/5nn/zs 等）。
-- 4 个点（1ep/2ep/3ep/4ep-final）**必须用同一个 eval 口径**；4ep 已有结果就直接引用，**不重跑**。
-- 若要省时间：特征提取可复用同一套 IN-1k 图像缓存（8 shard 已落盘），只换 backbone 权重。
-
-**④ 中文 HTML 报告（交付物）**
-- 路径：`reports/report_vision_armB_epoch_curve_zh.html`（自包含、无外链）。
-- **必须包含**：
-  1. **主表**：epoch=1/2/3/4 → `lp mean±std`（3 seeds）、`5-NN`、`zs@IN-1k`、`C1`、训练 loss/contr/patch；
-  2. **折线图**（内联 SVG）：lp / 5-NN 随 epoch 的曲线，标出预注册阈值 **lp=58.03%**（不倒退）与 **61.0% + 5-NN 48.98%**（接受混合）；
-  3. **与历史结果的对比表（分两层写，禁止把不同配方混成一行）**：
-     - **第 1 层 · 与 ArmB 同族/同口径可比**：
-       - `ArmA`（open_clip ViT-B/16 86.2M + **InfoNCE**，ProtB）：**58.03±0.02% / 5-NN 53.98%** → 这是 ArmB 的直接对照（只差目标函数）。
-       - 预注册阈值：lp ≥ 58.03%（不倒退）、≥ 61.0% 且 5-NN ≥ 48.98%（接受混合）。
-     - **第 2 层 · 历史基线（塔更大/配方不同，只能作"项目最好结果"参看，🚫 不参与 ArmB 优劣判断）**：
-       - `④-4ep`（**126.8M** 自研塔，ProtB）：**67.05±0.02%**（ProtA 56.70 / zs 40.64→72.64 / k-NN 42.35；`EXPERIMENTS_VISION.md §9.5/§9.7`）
-       - `ArmC（merge3ds）`：**68.25±0.01%**（**GBS 2048 / LR 2e-3 / warmup 8000 / 154,500 步**，与 ④-4ep *逐字节一致除 batch/LR*；判据 NUL/MODERATE→按 Δ+1.20pp 判 NULL、但 zs +5.53pp / ProtA +2.71pp）
-       - ⇒ 表头必须写清：**ArmB 是 86.2M 塔 + AIMv2-style 目标，与 ④/ArmC 差 3 个变量（塔规模、目标、数据/步数）**，只能作"距项目最好结果还差多少"的参照。
-     - **一行"项目最好结果"**：`ArmC 68.25±0.01%`（当前最高；`④-4ep 67.05%` 次之）。
-  4. **一段诚实结论**：ArmB 每 epoch 的边际增益（lp/5-NN 是否仍在涨或已饱和）、是否越过 61% 门槛、与 58.03%（ArmA）的 Δ、以及与 67.05/68.25 的差距；**差异归因必须列全变量**（塔 86.2M vs 126.8M、InfoNCE vs AIMv2-style、数据 11350 shard vs ④ 的数据、GBS/LR/步数）。🚫 不得写"AIMv2 优于/劣于 InfoNCE X pp"这类单因果结论（ArmA vs ArmB 才是单变量，且只在同塔同数据前提下成立）。
-  5. **附录**：每个 ckpt 的训练步数/时间戳/文件大小/评测命令原文/随机种子。
-
-**⑤ 顺序与纪律**
-- **P0 不打断**：正在跑的 4ep ProtB（`run_armB_protb_eval.sh`）**先跑完**，其结果是④表里的第 4 行；🚫 不要 kill、不要抢卡。
-- **P0.5**：4ep 结果一出 → 先出中文报告 v1（ArmA/④/ArmC/ArmB-4ep 对比），**不含 1/2/3ep**，让用户先看到 ArmB 是否达标。
-- **P1**：再按 ②③ 回放 1/2/3ep → 报告 v2（补全 epoch 曲线）。
-- commit 前缀 `vision armB-epochs:`；`MEMORY_VISION.md` 顶部加一行指针（≤32KB 自滚）。
+**③ 顺带（同一轮可做，零 GPU）**：把「ArmB 4ep final」这一行正式并进 `zhulong_results` 式的成绩表（在 `EXPERIMENTS_VISION.md §11` 已有的话核对一遍数字）：**lp 62.09±0.01% / 5-NN 58.10%**，并保留"与 ArmA 的 +4.06pp/+4.12pp 是 recipe 综合效应"的诚实注脚。
 
 
+> ⛔ **旧指令已作废（2026-10-18运维裁定）**：原要求测 1/2/3 epoch 的 ProtB，因 `--keep-ckpts 2` 已把这些 `checkpoint_*.pt` 滚动删除，取回需重训 ≈27.6h ⇒ **做罢**。
+> 仅保留事实：ArmB `--save-every 10000 --keep-ckpts 2`；1ep≈14313 / 2ep≈28626 / 3ep≈42939。
 ### 🆕 运维指令 · 2026-10-17 12:4x（⚔️ 立即 kill `.12` pretrain 进程 → 起 ArmB；**改 4 epoch** → 训完评 ProtB）· 用户直令 · 最高优先
 > ⏩ 已执行并归档（杀 pretrain → ArmB 4-epoch）已完成；详情 → `daily-memories-vision/2026-10-17.md`。
 
