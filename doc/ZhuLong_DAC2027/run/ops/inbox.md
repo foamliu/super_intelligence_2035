@@ -1,11 +1,39 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 70 -->
+<!-- RUN_ID: 71 -->
+
+## RUN_ID 71 — 只读：r1 为何未打分 + loop/中继是否存活
+
+> 用途：确认 `run_zhulong_script` / PID 1424781 是否还在、日志是否已出现 `pass (xx.x%)`、`zhulong_loop.sh` 是否存活、MEMORY 心跳为何停在 10:55。**只读**，不 kill、不打分、不改配置。
+
+```bash
+set -u
+echo "=== RUN_ID 71 | zhulong r1 read-only probe | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+cd "$BASE" 2>/dev/null || true
+echo "[1] loop/relay/r1 procs"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[r]un_zhulong_script|[z]hulong_ops_relay\.sh|[o]ps_relay\.sh' | cut -c1-180 || true
+echo "[2] r1 pid 1424781 (if alive)"
+ps -o pid,ppid,etimes,args -p 1424781 2>&1 | cut -c1-180
+echo "[3] log stat"
+stat -c '%n size=%s mtime=%y' /tmp/ZL_glm52_r1.log 2>&1
+echo "[4] log tail"
+tail -40 /tmp/ZL_glm52_r1.log 2>&1 | cut -c1-200
+echo "[5] score/progress lines"
+grep -E 'pass \(|评估结果汇总|PASS_RATE|DONE|完成|成功|失败' /tmp/ZL_glm52_r1.log 2>/dev/null | tail -15 | cut -c1-200
+echo "[6] task markers (last 20000 lines)"
+tail -20000 /tmp/ZL_glm52_r1.log 2>/dev/null | grep -cE 'task|Task|TASK|评估' || true
+echo "[7] memory heartbeat"
+grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null; stat -c 'MEMORY mtime=%y' MEMORY_ZHULONG.md 2>/dev/null
+echo "[8] relay last_run_id/log"
+cat ops/.last_run_id 2>/dev/null; tail -5 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-200 || true
+echo "=== DONE 71 ==="
+```
 
 ## RUN_ID 70 — 重编译论文 PDF（数字/scope 修订后）
 
 > 用途：在 36.15 上重跑 pdflatex + bibtex，验证数字修订后的论文无编译错误，并更新 `main.pdf`。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 70 | paper rebuild | $(date '+%F %T') | host=$(hostname) ==="
 cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027 || { echo "CD FAILED"; exit 1; }
