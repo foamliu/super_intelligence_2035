@@ -46,7 +46,7 @@ class HermesTB(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = HermesTBOptions.model_validate(kwargs) if kwargs else HermesTBOptions()
+        opts = self._opts(HermesTBOptions, kwargs)
         self._max_turns = opts.max_turns or 50
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
 
@@ -106,11 +106,11 @@ class HermesTB(TBBaseAgent):
             "no_proxy": "127.0.0.1,localhost",
             "NO_PROXY": "127.0.0.1,localhost",
         })
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} {cmd}",
-            timeout=self._timeout,
+            command=cmd,
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         context.trajectory_stdout = result.stdout or ""

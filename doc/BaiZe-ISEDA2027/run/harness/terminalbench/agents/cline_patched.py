@@ -63,7 +63,7 @@ class ClinePatched(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = ClinePatchedOptions.model_validate(kwargs) if kwargs else ClinePatchedOptions()
+        opts = self._opts(ClinePatchedOptions, kwargs)
         self._cline_version = opts.cline_version or "latest"
         self._data_dir = opts.data_dir or "/tmp/cline_tb_data"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
@@ -75,12 +75,62 @@ class ClinePatched(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install Cline CLI inside the Docker container via npm."""
+        """Install Cline CLI inside the Docker container.
+
+        Priority 1 — use a pre-mounted Cline at ``/opt/cline-modules`` (read-only
+        volume from the host's ``~/.bun/install/global/node_modules``, injected
+        by the Docker overlay).  The platform-specific ELF binary at
+        ``@cline/cli-linux-x64/bin/cline`` has Bun embedded and only needs
+        glibc, so no Node.js or npm install is required.  This avoids the
+        6+ minute npm dependency-tree download inside the container.
+
+        Priority 2 — fall back to ``npm install -g cline`` (slow, ~6 min).
+        Uses a LOCAL cache (``/tmp/npm-cache-cline``) to avoid cross-device
+        hardlink (EXDEV) failures on NFS-mounted ``/root/.npm/_cacache``.
+        """
         await self._install_node(environment)
+
+        # Fast path: overlay already mounted cline at /opt/cline-modules.
+        check = await environment.exec(
+            command=(
+                "test -f /opt/cline-modules/@cline/cli-linux-x64/bin/cline "
+                "&& echo yes || echo no"
+            ),
+        )
+        if check.return_code == 0 and "yes" in (check.stdout or ""):
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "ln -sf /opt/cline-modules/@cline/cli-linux-x64/bin/cline "
+                    "/usr/local/bin/cline && "
+                    "cline --version"
+                ),
+            )
+            result = await environment.exec(command="cline --version")
+            if result.return_code != 0:
+                raise RuntimeError(
+                    f"Cline pre-mount check failed: {result.stderr}"
+                )
+            self._version = result.stdout.strip()
+            return
+
+        # Fallback: npm install (slow, ~6 min).
+        # npm package is unscoped "cline" (NOT "@anthropic-ai/cline" which
+        # does not exist on npm).  Cline Bot Inc. publishes as "cline".
         ver = self._cline_version
         await self.exec_as_root(
             environment,
-            command=f"npm install -g @anthropic-ai/cline@{ver} 2>&1 | tail -5",
+            command=(
+                f"echo '--- npm config ---' && "
+                f"npm config get registry && "
+                f"npm config get strict-ssl && "
+                f"echo '--- env proxy ---' && "
+                f"env | grep -iE 'proxy|npm_config' | head -10 && "
+                f"npm install -g cline@{ver} --cache /tmp/npm-cache-cline 2>&1 || "
+                f"  (echo '=== NPM DEBUG LOG ===' && "
+                f"   cat /root/.npm/_logs/*debug*.log 2>/dev/null | tail -40 && "
+                f"   exit 1)"
+            ),
         )
         # Verify installation
         result = await environment.exec(command="cline --version")
@@ -100,7 +150,8 @@ class ClinePatched(TBBaseAgent):
         Preserves native tool loop: Cline's --json mode outputs each tool call
         and result, which we capture into the trajectory.
         """
-        cwd = str(environment.default_working_dir or "/root")
+        _task_cfg = getattr(environment, "task_env_config", None)
+        cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
         cmd = (
             f"cline -c {shlex.quote(cwd)} "
             f"--data-dir {shlex.quote(self._data_dir)} "
@@ -110,11 +161,11 @@ class ClinePatched(TBBaseAgent):
             f"{shlex.quote(instruction)}"
         )
         env = self._env_for_harness()
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} {cmd}",
-            timeout=self._timeout,
+            command=cmd,
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         # Populate context with results

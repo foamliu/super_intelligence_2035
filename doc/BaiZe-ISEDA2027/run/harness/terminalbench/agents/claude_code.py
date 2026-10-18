@@ -56,7 +56,7 @@ class ClaudeCodeTB(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = ClaudeCodeTBOptions.model_validate(kwargs) if kwargs else ClaudeCodeTBOptions()
+        opts = self._opts(ClaudeCodeTBOptions, kwargs)
         self._max_turns = opts.max_turns or 50
         self._permission_mode = opts.permission_mode or "bypassPermissions"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
@@ -106,11 +106,11 @@ class ClaudeCodeTB(TBBaseAgent):
             "OTEL_METRICS_EXPORTER": "none",
             "OTEL_LOGS_EXPORTER": "none",
         })
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} {cmd}",
-            timeout=self._timeout,
+            command=cmd,
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         context.trajectory_stdout = result.stdout or ""

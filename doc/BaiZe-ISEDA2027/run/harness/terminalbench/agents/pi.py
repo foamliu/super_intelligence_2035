@@ -48,7 +48,7 @@ class PiTB(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = PiTBOptions.model_validate(kwargs) if kwargs else PiTBOptions()
+        opts = self._opts(PiTBOptions, kwargs)
         self._pi_version = opts.pi_version or "latest"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
 
@@ -119,11 +119,11 @@ class PiTB(TBBaseAgent):
             "no_proxy": "127.0.0.1,localhost",
             "NO_PROXY": "127.0.0.1,localhost",
         })
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} {cmd}",
-            timeout=self._timeout,
+            command=cmd,
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         context.trajectory_stdout = result.stdout or ""

@@ -70,11 +70,15 @@ class TBBaseAgent(BaseInstalledAgent):
     """
 
     #: All TB adapters share the same model connection spec.
+    # harbor 0.24.0 ModelConnectionSpec fields: default_provider, api_key_envs
+    # (tuple), base_url_envs (tuple), passthrough.  We use the "openai"
+    # provider (OpenAI-compatible gateway) with our custom env names so harbor
+    # can locate the key/URL; the adapter's run() also sets OPENAI_API_KEY /
+    # OPENAI_BASE_URL explicitly for the harness CLI.
     MODEL_CONNECTION: ClassVar[ModelConnectionSpec | None] = ModelConnectionSpec(
-        kind="openai",
-        base_url=TB_BASE_URL,
-        api_key_env="TB_API_KEY",
-        model_name=TB_MODEL,
+        default_provider="openai",
+        api_key_envs=("TB_API_KEY",),
+        base_url_envs=("TB_BASE_URL",),
     )
 
     capabilities: ClassVar[AgentCapabilities] = AgentCapabilities()
@@ -86,6 +90,25 @@ class TBBaseAgent(BaseInstalledAgent):
         self._tb_model = TB_MODEL
         self._tb_base_url = TB_BASE_URL
         self._tb_api_key = TB_API_KEY or TB_DUMMY_KEY
+        # Stash extra_env from harbor (model credentials may be injected here)
+        # so subclasses can merge them into the harness CLI env if desired.
+        self._harbor_extra_env: dict[str, str] = kwargs.get("extra_env") or {}
+
+    @staticmethod
+    def _opts(options_cls: type, kwargs: dict[str, Any]):
+        """Validate adapter-specific options, ignoring harbor's extra kwargs.
+
+        Harbor passes ``logs_dir``, ``model_name``, ``extra_env``, ``logger``,
+        ``config``, ``prompt_template_path`` etc. to ``__init__``.  The pydantic
+        Options models forbid extras by default, so we filter to known fields
+        before validation.
+        """
+        if not kwargs:
+            return options_cls()
+        known = {
+            k: v for k, v in kwargs.items() if k in options_cls.model_fields
+        }
+        return options_cls.model_validate(known)
 
     # -- Helpers available to subclasses ----------------------------------
 
@@ -118,19 +141,37 @@ class TBBaseAgent(BaseInstalledAgent):
         return await environment.exec(
             command=command,
             user=user,
-            timeout=timeout or TB_AGENT_TIMEOUT,
+            timeout_sec=int(timeout or TB_AGENT_TIMEOUT),
         )
 
     async def _install_node(self, environment: BaseEnvironment) -> None:
-        """Install Node.js via NVM inside the Docker container.
+        """Make Node.js available inside the Docker container.
 
-        Uses the aliyun Node.js mirror (NVM_NODEJS_ORG_MIRROR) and proxy
-        env vars set by the Docker overlay (--extra-docker-compose).
-        The MITM proxy requires ``-k`` (skip TLS verification).
+        Priority 1 — use a pre-mounted Node.js at ``/opt/node`` (read-only
+        volume injected by the Docker overlay, e.g.
+        ``/tmp/node-preinstalled/node-v22...:/opt/node:ro``).  This avoids any
+        network download and is the fast path used by the TB overlay.
 
-        Replaces the old nodesource.com approach which is blocked by the
-        MITM proxy (302→disable.htm for external apt repos).
+        Priority 2 — fall back to an NVM install (aliyun mirror + MITM proxy
+        with ``-k``).  Used when no pre-mounted node is available.
         """
+        # Fast path: overlay already mounted node at /opt/node.
+        check = await environment.exec(
+            command="test -x /opt/node/bin/node && echo yes || echo no"
+        )
+        if check.return_code == 0 and "yes" in (check.stdout or ""):
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "ln -sf /opt/node/bin/node /usr/local/bin/node && "
+                    "ln -sf /opt/node/bin/npm /usr/local/bin/npm && "
+                    "ln -sf /opt/node/bin/npx /usr/local/bin/npx && "
+                    "node --version && npm --version"
+                ),
+            )
+            return
+
+        # Fallback: NVM install.
         nvm_version = "v0.40.1"
         nvm_url = (
             f"https://raw.githubusercontent.com/nvm-sh/nvm/{nvm_version}/install.sh"

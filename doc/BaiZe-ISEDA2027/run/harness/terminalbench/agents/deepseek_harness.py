@@ -48,7 +48,7 @@ class DeepseekHarnessTB(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = DeepseekHarnessTBOptions.model_validate(kwargs) if kwargs else DeepseekHarnessTBOptions()
+        opts = self._opts(DeepseekHarnessTBOptions, kwargs)
         self._profile = opts.profile or "sdk-minimal"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
         self._dsh_home = "/tmp/dsh_home_tb"
@@ -121,11 +121,11 @@ with harness:
         await environment.upload_file(script_local, script_remote)
 
         env = self._env_for_harness()
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} python3 {script_remote}",
-            timeout=self._timeout,
+            command=f"python3 {script_remote}",
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         context.trajectory_stdout = result.stdout or ""

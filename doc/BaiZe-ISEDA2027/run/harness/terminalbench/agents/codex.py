@@ -54,7 +54,7 @@ class CodexTB(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = CodexTBOptions.model_validate(kwargs) if kwargs else CodexTBOptions()
+        opts = self._opts(CodexTBOptions, kwargs)
         self._codex_version = opts.codex_version or "0.94.0"
         self._sandbox = opts.sandbox or "workspace-write"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
@@ -94,11 +94,11 @@ class CodexTB(TBBaseAgent):
             f"{shlex.quote(instruction)}"
         )
         env = self._env_for_harness()
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} {cmd}",
-            timeout=self._timeout,
+            command=cmd,
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         context.trajectory_stdout = result.stdout or ""

@@ -46,7 +46,7 @@ class OpenCodeTB(TBBaseAgent):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        opts = OpenCodeTBOptions.model_validate(kwargs) if kwargs else OpenCodeTBOptions()
+        opts = self._opts(OpenCodeTBOptions, kwargs)
         self._opencode_version = opts.opencode_version or "latest"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
         # Provider/model format: gw/<model> per opencode.json convention
@@ -109,11 +109,11 @@ class OpenCodeTB(TBBaseAgent):
             f"{shlex.quote(instruction)}"
         )
         env = self._env_for_harness()
-        env_str = " ".join(f"{k}={shlex.quote(v)}" for k, v in env.items())
 
         result = await environment.exec(
-            command=f"{env_str} {cmd}",
-            timeout=self._timeout,
+            command=cmd,
+            env=env,
+            timeout_sec=self._timeout,
         )
 
         context.trajectory_stdout = result.stdout or ""
