@@ -22,6 +22,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 from mllm_bridge.modeling_baize_vision import BaizeVisionModel
 from mllm_bridge.modeling_llava_baize import BaizeMultiModalProjector
+from mllm_bridge.open_clip_vitb16_768 import create_baize_vitb16_768, BAIZE_VITB16_WIDTH
 
 IMAGE_TOKEN_ID = 151655
 NUM_IMAGE_TOKENS = 196
@@ -38,8 +39,14 @@ class BaizeLLaVA(lmms):
     def __init__(self, ckpt="/nas_train/app.e0031982/datasets/baize-vision/out/scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt",
                  stage2_ckpt="/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2/step3500",
                  llm_path="/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507",
-                 device="cuda", batch_size=1, max_new_tokens=128, **kwargs):
+                 device="cuda", batch_size=1, max_new_tokens=128,
+                 vision_backend="baize_4ep", **kwargs):
+        """vision_backend:
+             'baize_4ep' -> BaizeVisionModel.from_baize_checkpoint(ckpt)  (512-d, ④-4ep tower)
+             'armB'      -> create_baize_vitb16_768(pretrained=ckpt)       (768-d, open_clip ViT-B/16)
+        """
         super().__init__()
+        self.vision_backend = vision_backend
         # ---- Multi-GPU support via accelerate (LOCAL_RANK) ----
         local_rank = int(os.environ.get("LOCAL_RANK", -1))
         if local_rank >= 0:
@@ -55,11 +62,20 @@ class BaizeLLaVA(lmms):
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         self.eot_token_id = self.tokenizer.eos_token_id
-        self.vision = BaizeVisionModel.from_baize_checkpoint(ckpt)
+        if self.vision_backend == "armB":
+            # ArmB: open_clip ViT-B/16, 768-d patch tokens [B,196,768]
+            self.vision, _, _ = create_baize_vitb16_768(pretrained=ckpt, device="cpu")
+            vision_width = BAIZE_VITB16_WIDTH  # 768
+            print(f"[BaizeLLaVA] vision_backend=armB (open_clip ViT-B/16, 768-d) ckpt={ckpt}")
+        else:
+            # ④-4ep: BaiZe OpenVision2 ViT, 512-d patch tokens [B,196,512]
+            self.vision = BaizeVisionModel.from_baize_checkpoint(ckpt)
+            vision_width = self.vision.config.width  # 512
+            print(f"[BaizeLLaVA] vision_backend=baize_4ep (BaiZe ViT, {vision_width}-d) ckpt={ckpt}")
         self.vision = self.vision.to(device=self._device, dtype=self.dtype)
         for p in self.vision.parameters(): p.requires_grad = False
         self.vision.eval()
-        self.projector = BaizeMultiModalProjector(self.vision.config.width, LLM_HIDDEN_SIZE).to(device=self._device, dtype=self.dtype)
+        self.projector = BaizeMultiModalProjector(vision_width, LLM_HIDDEN_SIZE).to(device=self._device, dtype=self.dtype)
         proj_path = os.path.join(stage2_ckpt, "projector.pt")
         if os.path.exists(proj_path):
             ck = torch.load(proj_path, map_location="cpu", weights_only=False)

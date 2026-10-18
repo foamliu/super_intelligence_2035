@@ -53,10 +53,13 @@ MODEL_REGISTRY_V2.register_manifest(
 )
 print(f"[run_lmms_eval] Registered 'baize_llava' in MODEL_REGISTRY_V2")
 
-CKPT = "/nas_train/app.e0031982/datasets/baize-vision/out/scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt"
+CKPT_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt"
+CKPT_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/armB_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
 LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
-STAGE2_BASE = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2"
-RESULTS_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results"
+STAGE2_BASE_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2"
+STAGE2_BASE_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armB"
+RESULTS_DIR_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results"
+RESULTS_DIR_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armB"
 
 # 17 benchmarks (standard VLM evaluation suite)
 BENCHMARKS_17 = [
@@ -87,20 +90,34 @@ def main():
     parser.add_argument("--tasks", type=str, default=None, help="Comma-separated task list (default: all 17)")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
     parser.add_argument("--batch_size", type=int, default=32, help="Batch size for evaluation (increase for throughput)")
+    parser.add_argument("--vision_backend", type=str, default="baize_4ep",
+                        choices=["baize_4ep", "armB"],
+                        help="baize_4ep=④-4ep BaiZe ViT(512d); armB=open_clip ViT-B/16(768d)")
+    parser.add_argument("--ckpt", type=str, default=None, help="Override vision tower checkpoint path")
+    parser.add_argument("--stage2_base", type=str, default=None, help="Override stage2 ckpt base dir (step appended)")
     args = parser.parse_args()
 
-    stage2_ckpt = os.path.join(STAGE2_BASE, f"step{args.step}")
+    # Resolve backend-specific defaults
+    if args.vision_backend == "armB":
+        ckpt = args.ckpt or CKPT_ARMB
+        stage2_base = args.stage2_base or STAGE2_BASE_ARMB
+        results_dir = RESULTS_DIR_ARMB
+    else:
+        ckpt = args.ckpt or CKPT_4EP
+        stage2_base = args.stage2_base or STAGE2_BASE_4EP
+        results_dir = RESULTS_DIR_4EP
+    stage2_ckpt = os.path.join(stage2_base, f"step{args.step}")
     if not os.path.exists(os.path.join(stage2_ckpt, "projector.pt")):
         print(f"ERROR: Stage-2 checkpoint not found at {stage2_ckpt}")
         sys.exit(1)
 
     tasks = args.tasks.split(",") if args.tasks else BENCHMARKS_17
-    os.makedirs(RESULTS_DIR, exist_ok=True)
+    os.makedirs(results_dir, exist_ok=True)
     output_path = args.output or os.path.join(
-        RESULTS_DIR, f"eval_step{args.step}_{int(time.time())}.json"
+        results_dir, f"eval_{args.vision_backend}_step{args.step}_{int(time.time())}.json"
     )
 
-    model_args = f"ckpt={CKPT},stage2_ckpt={stage2_ckpt},llm_path={LLM_PATH},max_new_tokens=128"
+    model_args = f"ckpt={ckpt},stage2_ckpt={stage2_ckpt},llm_path={LLM_PATH},vision_backend={args.vision_backend},max_new_tokens=128"
 
     print(f"\n{'='*60}")
     print(f"BaiZe-LLaVA lmms-eval 17 Benchmarks")

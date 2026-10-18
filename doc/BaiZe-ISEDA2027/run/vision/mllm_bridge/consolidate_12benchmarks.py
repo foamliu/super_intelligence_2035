@@ -61,12 +61,19 @@ def extract_primary_metric(task_name, metrics):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--results_dir", type=str, default=RESULTS_DIR,
+                    help="Dir holding per-GPU eval_*.json files (default: ④-4ep dir)")
+    args = ap.parse_args()
+    results_dir = args.results_dir
+
     consolidated = {}
     all_results = {}
     missing = []
 
     for fname, benchmarks in SOURCE_FILES.items():
-        fpath = os.path.join(RESULTS_DIR, fname)
+        fpath = os.path.join(results_dir, fname)
         if not os.path.exists(fpath):
             print(f"WARNING: {fpath} not found")
             for b in benchmarks:
@@ -130,7 +137,7 @@ def main():
     print("=" * 70)
 
     # Save consolidated JSON
-    out_path = os.path.join(RESULTS_DIR, "consolidated_12benchmarks.json")
+    out_path = os.path.join(results_dir, "consolidated_12benchmarks.json")
     output = {
         "description": "BaiZe-LLaVA 12-benchmark eval results (Stage-2 step3500, per-GPU batch_size=32)",
         "benchmarks": BENCHMARKS_12,
