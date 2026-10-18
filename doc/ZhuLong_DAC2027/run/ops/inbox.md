@@ -1,11 +1,36 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 71 -->
+<!-- RUN_ID: 72 -->
+
+## RUN_ID 72 — 只读：r1 traceback 完整异常 + 是否已有可打分结果
+
+> 用途：RUN_ID 71 已确认 r1 进程死亡、日志 11:31 停在 `restore_config()` 的 traceback；本块取完整异常、日志尾部、`pass (` 行、loop 日志与心跳。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 72 | zhulong r1 crash/score probe | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+cd "$BASE" 2>/dev/null || true
+echo "[1] log tail 100"
+tail -100 /tmp/ZL_glm52_r1.log 2>&1 | cut -c1-220
+echo "[2] errors"
+grep -nE 'Traceback|Error|Exception|FileNotFound|Permission|OSError|CalledProcess|returncode|No such file' /tmp/ZL_glm52_r1.log 2>/dev/null | tail -25 | cut -c1-220
+echo "[3] score lines"
+grep -E 'pass \(|PASS_RATE|评估结果汇总|通过率|准确率' /tmp/ZL_glm52_r1.log 2>/dev/null | tail -15 | cut -c1-220
+echo "[4] loop log"
+ls -lt /tmp/*zhulong*loop*.log /tmp/*zhulong*.log 2>/dev/null | head -5
+tail -30 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-220 || true
+echo "[5] loop/relay procs"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[z]hulong_ops_relay\.sh' | cut -c1-160 || true
+echo "[6] memory mtime/heartbeat"
+stat -c 'MEMORY mtime=%y' MEMORY_ZHULONG.md 2>/dev/null; grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null
+echo "=== DONE 72 ==="
+```
 
 ## RUN_ID 71 — 只读：r1 为何未打分 + loop/中继是否存活
 
 > 用途：确认 `run_zhulong_script` / PID 1424781 是否还在、日志是否已出现 `pass (xx.x%)`、`zhulong_loop.sh` 是否存活、MEMORY 心跳为何停在 10:55。**只读**，不 kill、不打分、不改配置。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 71 | zhulong r1 read-only probe | $(date '+%F %T') | host=$(hostname) ==="
 BASE=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
