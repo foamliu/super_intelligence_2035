@@ -767,3 +767,14 @@
 | 2026-10-18 | 微软取消与英国数据中心企业 Nscale 的合作，后者 IPO 计划受挫 | IT之家（`014/574`，转每日电讯报） | news | https://www.ithome.com/1/014/574.htm |
 | 2026-10-18 | 世界银行首席知识官呼吁发展中国家开发小型（端侧）AI 模型 | IT之家（`014/577`，转卫报） | 不收(表态/倡议) | https://www.ithome.com/1/014/577.htm |
 | 2026-10-18 | 北大团队称 AGI 需先有「自我意识」 | IT之家（`014/586`） | 不收(论文观点·正文未通读) | https://www.ithome.com/1/014/586.htm |
+| 2026-10-19 | Anthropic 拟设「公共利益基金」，初始注入 5% 股份，估值每涨 50% 再追加 2% | IT之家（`014/622`） | news | https://www.ithome.com/1/014/622.htm |
+| 2026-10-19 | Anthropic 游说自家 AI 安全法案：致死致伤超 50 人或损失超 10 亿美元才可叫停发布 | Tom's Hardware（转 Politico · 2026-10-18） | news | https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropics-proposed-ai-safety-bill-only-kicks-in-if-50-deaths-or-usd1-billion-in-damages-are-on-the-line-proposal-would-effectively-make-the-commerce-department-the-only-agency-capable-of-stopping-an-ai-model |
+| 2026-10-19 | 三星将用台积电 3nm 为英伟达生产下一代 HBM 基底裸片（核心裸片统一 1c） | IT之家（`014/612`，转首尔经济日报） | news | https://www.ithome.com/1/014/612.htm |
+| 2026-10-19 | 索尼专利：AI 在 GPU 渲染完成前预测下一帧以减少卡顿 | IT之家（`014/615`，转 TechSpot） | news | https://www.ithome.com/1/014/615.htm |
+| 2026-10-19 | 京东：未来 5 年创造超 10 万个机器人维修工程师岗位 | IT之家（`014/537`，据京东黑板报） | news | https://www.ithome.com/1/014/537.htm |
+| 2026-10-19 | 「AI 玩具」2025 年市场 290 亿元、退货率常年 50% 以上 | IT之家（`014/540`，转 Tech 星球） | news | https://www.ithome.com/1/014/540.htm |
+| 2026-10-19 | 国家电影局、体育总局通知：鼓励电影院空闲时段直播重大体育赛事 | IT之家（`014/616`，据央视财经） | news | https://www.ithome.com/1/014/616.htm |
+| 2026-10-19 | AP：美国零售商采用 AI 定价，消费者不安上升 | HN → AP | 不收(抓取超时·未读正文) | https://apnews.com/article/ai-prices-dynamic-customers-technology-64c446cd117d3be664de4ab570fb9857 |
+| 2026-10-19 | Anthropic AI 安全法案（Politico 原文） | HN → Politico | 不收(403·改取 Tom's Hardware) | https://www.politico.com/news/2026/10/16/anthropic-ai-safety-01124654 |
+| 2026-10-19 | 中国研究者用国产 AI 解 3D Ghys 猜想 | HN → CGTN | 不收(报道 10-15 超 72h·未读正文) | https://news.cgtn.com/news/2026-10-15/Chinese-researchers-solve-3D-Ghys-conjecture-with-homegrown-AI-model-1RgD8zQ3Z3a/p.html |
+| 2026-10-19 | 消息称戴尔显示器本月起上调出货价 3-5% | IT之家（`014/596`） | 不收(爆料·非AI·行情向) | https://www.ithome.com/1/014/596.htm |
