@@ -24,7 +24,13 @@
 >    `setsid -f nohup bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_tokenize_env14_fullsource.sh > /tmp/run_tokenize_env14_fullsource.log 2>&1 &`
 >    （脚本内置等待 resume 退出，避免双 launcher；不要手工再起第二份）。
 >
-> **报告**：每次唤醒报 `done/110`、`tokens 累计`、`PENDING_DOWNLOAD`、`全源 ETA`。按当前 8 workers ≈230B tok/day，全源 ≈2.31T ≈ **10 天**；若批准 16 workers ≈ **5 天**（不擅自加并发）。
+> **报告**：每次唤醒报 `done/110`、`tokens 累计`、`PENDING_DOWNLOAD`、`全源 ETA`。
+>
+> **并发（2026-10-18 21:0x 用户批准）**：分词可用 **32 或 64 核**。默认 **32**；按当前 8 workers ≈230B tok/day 线性外推：32 ≈ **2.5 天**、64 ≈ **1.3–1.5 天**（全源 2.31T；实际受 NFS/内存影响）。先以 32 起跑，10–15 分钟后看 `pgrep -c preprocess_data_cm`、`/proc/io`、NFS 延迟与 tok/s；若近似线性且内存充足，再升 64。
+>
+> **接管方式**：当前 `run_tokenize_env14_resume.sh`（PID 2446254）只是发射器；先 `kill 2446254`（**不要杀 8 个 `preprocess_data_cm.py` 子进程**），确认子进程仍 alive 后，立即：
+> `MAX_CONCURRENT=32 setsid -f nohup bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_tokenize_env14_fullsource.sh > /tmp/run_tokenize_env14_fullsource.log 2>&1 &`
+> 若 kill 把子进程也带走，等子进程退出后再启动；DONE shard 自动跳过，不会重复分词。
 >
 > 🚫 不为凑 500B/1.5T 跳 shard、不混源部分分词、不把训练取用量当分词上限。
 

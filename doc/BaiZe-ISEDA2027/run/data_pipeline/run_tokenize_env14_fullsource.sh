@@ -19,7 +19,9 @@ MANIFEST="$OUT_DIR/env14_fullsource_manifest.tsv"
 SUMMARY="$OUT_DIR/env14_fullsource_summary.json"
 
 EXPECTED_SHARDS=110
-MAX_CONCURRENT=8
+# 2026-10-18 user: tokenization may use 32 or 64 cores.
+# Default 32; override with MAX_CONCURRENT=64 after checking RAM/NFS headroom.
+MAX_CONCURRENT=${MAX_CONCURRENT:-32}
 NICE=19
 RESCAN=600
 
