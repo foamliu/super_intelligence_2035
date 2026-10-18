@@ -1,8 +1,8 @@
 # 排队计划：read-back 轴成本重测（N' + B）
 
-> 状态：**QUEUED（2026-10-18）** · 不打断当前 `ZL.glm-5.2` r1
+> 状态：**IN PROGRESS（2026-10-18）** · ② (B) 成本 5-run ✅ 已完成（零 GPU，trace 全在） · ③ (N') 5-run 待跑
 > 关联审计：`run/PAPER_RETEST_AUDIT.md`
-> 目标：① 补 `(N')` 5-run 的 Pass@1 + 成本；② 把 `(B)` 成本从 n=1 升到 5-run；③ 检验「成本是否随观测变窄单调上升」还是「无反馈反而少搜索」。
+> 目标：① 补 `(N')` 5-run 的 Pass@1 + 成本；② ✅ 把 `(B)` 成本从 n=1 升到 5-run（2026-10-18 零 GPU 完成：22.3±3.3 / 3.73±0.72h / 7.6±3.4）；③ 检验「成本是否随观测变窄单调上升」还是「无反馈反而少搜索」。
 
 ---
 
@@ -83,14 +83,23 @@ cp -a "$OUT/<batch>" "$DEST"/ 2>/dev/null || true
 
 ---
 
-## 5. `(B)` 成本 5-run（优先零 GPU）
+## 5. `(B)` 成本 5-run（优先零 GPU）✅ **已完成（2026-10-18）**
 
-先查 2026-10-15 的五个 fresh batch 是否仍有 trace：
-- r1 `2026_1015_093317`、r2 `2026_1015_143848`、r3 `2026_1015_193004`、r4/r5 从 `/tmp/ABL_readback_binary_r{4,5}.log` 的 batch 行恢复。
+✅ 5 个 fresh batch 的 trace 全部保留在 `~/eda_code_eval/`：
+- r1 `2026_1015_093317`、r2 `2026_1015_143848`、r3 `2026_1015_193004`、r4 `2026_1015_233638`、r5 `2026_1016_041955`（与 `output_evaluation/` regrade dir 的 `generations_file` 一一对应）。
 
-若 `output_evaluation/2026_1015_*` 或 `~/.cline/data` 仍有逐 trace 记录：直接解析 5 轮，产出 `mean±std`（零 GPU）。  
-若 trace 已丢失：按 §2 同法补 `(B)` 5-run（`READBACK=binary`），预计 ≈7.5h GPU。  
-**注意**：现表 `(B)` 的 13 是 r1 的 timeout，5-run 均值可能不同；不要沿用 13。
+✅ 直接解析 5 轮，产出 `mean±std`（零 GPU）：`run/extract_readback_binary_cost_5run.py` + `run/readback_binary_cost_5run.json`。
+
+| 指标 | r1 | r2 | r3 | r4 | r5 | **5-run mean ± std** | 旧 n=1 |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Pass@1 (%) | 75.9 | 79.1 | 77.8 | 78.5 | 79.1 | 78.1 ± 1.3 | 78.1 ± 1.3 |
+| Mean read-backs | 27.57 | 19.13 | 20.35 | 23.13 | 21.44 | **22.3 ± 3.3** | 27.6 |
+| Wall per task (s) | 692.3 | 581.2 | 567.1 | 576.9 | 475.4 | **578.6 ± 77.0** | — |
+| Batch real-elapsed (h) | 4.33 | 3.80 | 3.25 | 4.49 | 2.79 | **3.73 ± 0.72** | 4.25 |
+| Timeout count | 13 | 8 | 7 | 6 | 4 | **7.6 ± 3.4** | 13 |
+| Converged (%) | 96.8 | 97.5 | 98.1 | 94.9 | 96.2 | **96.7 ± 1.2** | — |
+
+**注意**：现表 `(B)` 的 13 是 r1 的 timeout；5-run 均值 = 7.6±3.4（已替换）。论文 `tab:readback-cost` (B) 行 + `tab:ablation-harness` (B) Mean read-backs + 正文比例（1.8×/1.7×/2.2×）均已 sync，编译 13 页 0 error。
 
 ---
 

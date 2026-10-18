@@ -20,9 +20,9 @@
 | 9 | `tab:ablation-harness` (N') | **73.3 ± 2.2** | legacy 5-run `[72.2,70.3,73.4,75.9,74.7]` | 5 | ⚠️ **legacy 核心臂** | **重测 5-run（同时补成本）**；N'<B<F 唯一 legacy 点 | **P0** | ≈7.5h GPU |
 | 10 | `tab:ablation-harness` (B) | **78.1 ± 1.3** | fresh 5-run（10-15~16） | 5 | ✅ 准确率 | 不重测准确率；成本见 #14 | — | — |
 | 11 | `tab:ablation-harness` (F) | **81.4 ± 1.5** | fresh 5-run | 5 | ✅ | 不重测 | — | — |
-| 12 | `tab:ablation-harness` Mean read-backs | 12.1 / 27.6 / — | (F) 5-run；(B) **r1 单轮**；(N') trace 丢失 | 5/1/0 | ⚠️ n 不一致 | 脚注已改 `(B) n=1`；B 5-run 见 #14 | P0/P1 | 见 #14 |
+| 12 | `tab:ablation-harness` Mean read-backs | 12.1 / 22.3 / — | (F) 5-run；(B) **5-run mean**（2026-10-18 提取）；(N') trace 丢失 | 5/5/0 | ✅ | (B) 已 5-run；脚注已去 ‡ | — | 已完成 |
 | 13 | `tab:readback-cost` (F) | 12.1 / 2.22 / 3.4 | 5-run 均值（timeout range 1–6） | 5 | ✅ | 不重测 | — | — |
-| 14 | `tab:readback-cost` (B) | **27.6 / 4.25 / 13** | **r1 单轮**（13 = readback_binary r1 timeout） | **1** | ⚠️ **n=1** | 先从 5 个 fresh batch 的保留 trace 提取；无 trace 再补 5-run | **P0** | CPU / ≈7.5h GPU |
+| 14 | `tab:readback-cost` (B) | **22.3 ± 3.3 / 3.73 ± 0.72 / 7.6 ± 3.4** | **5-run mean ± std**（2026-10-18 从保留 trace 零 GPU 提取·`run/extract_readback_binary_cost_5run.py`） | 5 | ✅ DONE | 5 个 fresh batch trace 全在 `~/eda_code_eval/`，逐 task 解析 run\_code calls / wall-clock / timeout / Converged / tokens | — | CPU（已完成） |
 | 15 | `tab:readback-cost` (N') | **— / — / —** | trace 在存储迁移中丢失；墙钟受 license/端口故障污染 | 0 | ❌ **缺失** | **重测 5-run 并保留 trace**，同时补 Pass@1 与成本 | **P0** | ≈7.5h GPU |
 | 16 | `tab:phi-bound` k10/k3/k1/lagged | 77.7/69.1/63.8/73.0 | 各自 5-run；Converged/gen-fail 齐全 | 5 | ✅ | 不重测 | — | — |
 | 17 | `tab:phi-bound` unbounded | **81.4 ± 1.5** + Converged **99.1** + gen-fail **10.4** | **Pass@1 来自陈熙元 81.4 集；99.1/10.4 来自刘杨 82.1 集** | 5+5 | 🔴 **两套 run 混用** | 从 81.4 集重算 Converged/gen-fail；否则不能贴 81.4 标签 | **P0** | CPU |
@@ -46,7 +46,7 @@
 | 顺序 | 臂 | 目的 | 轮数 | 预计 | 依赖 |
 |:--:|:--|:--|:--:|:--:|:--|
 | 1 | **S1.readback_none (N')** | 补 Pass@1 + mean `run_code` / wall / timeout / Converged / gen-fail | 5 | ≈7.5h | ZL.glm-5.2 r1 结束、GPU 空闲 |
-| 2 | **S1.readback_binary (B) 成本** | 把 27.6/4.25/13 从 n=1 升到 5-run | 0（有 trace）/5 | CPU 或 ≈7.5h | 先查 `output_evaluation/2026_1015_*` 的 trace |
+| 2 | **S1.readback_binary (B) 成本** | 把 27.6/4.25/13 从 n=1 升到 5-run | 0（有 trace） | **CPU 已完成** | 5 个 fresh batch trace 全在，零 GPU 提取 |
 | 3 | **S1.omega_low (L)**（可选） | 消除 `(L)` legacy 与 `(H)` fresh 混用；验证非单调 | 5 | ≈7.5h | 优先级低于 N'/B |
 | 4 | **C1.wo_selfexp**（可选） | 对账 77.3±2.9（陈） vs 83.5（刘 n=1） | 5 | ≈7.5h | 若论文保留 −4.1 pp 结论 |
 
@@ -59,7 +59,7 @@
 1. **`tab:phi-bound` unbounded 行**：从陈熙元 81.4 集的 trace 重算 `Converged` 与 `Mean gen-fail`；若 trace 不可得，则把该行改成与 82.1 集一致，并明确标注「此表 unbounded 使用 82.1 集」——**不能继续把 81.4 的 Pass@1 和 82.1 的 Converged/gen-fail 拼在一行**。
 2. **`tab:phi-bound` p/CI**：确认 McNemar/paired bootstrap 的对照 unbounded 集；与上一条统一。
 3. **Flash retest 显著性**：对 60.1±5.5 的 5-run retest 重算 McNemar/CI，替换继承的 `***`。
-4. **B 成本 5-run 提取**：优先从 `2026_1015_*` 五个 batch 的保留 trace 解析；若 trace 存在，这一步零 GPU。
+4. **B 成本 5-run 提取**：✅ **已完成（2026-10-18，零 GPU）**——5 个 fresh batch 的 trace 全部保留在 `~/eda_code_eval/`，`run/extract_readback_binary_cost_5run.py` 逐 task 解析出 5-run mean±std：Mean read-backs 22.3±3.3、Wall 3.73±0.72h、Timeout 7.6±3.4、Converged 96.7±1.2%。论文 `tab:readback-cost` (B) 行与 `tab:ablation-harness` (B) Mean read-backs 已 sync，正文比例改为 1.8×/1.7×/2.2×，编译 13 页 0 error。
 5. **任何以 82.1 为基准的 Δ**：全部改为对 81.4 重算（例如 lagged 的 −9.1 pp 应改为约 −8.4 pp，若论文正文引用了该差值）。
 
 ---
@@ -94,7 +94,7 @@
 
 1. **P0-CPU**：`tab:phi-bound` unbounded 行 + p/CI 重算（零 GPU，修掉最硬的内在不一致）。
 2. **P0-GPU**：`(N')` 5-run（准确率 + 成本 + trace 保留）。
-3. **P0-CPU/GPU**：`(B)` 成本 5-run（先查 trace；没有才跑）。
+3. **P0-CPU/GPU**：`(B)` 成本 5-run ✅ **已完成（2026-10-18，零 GPU，trace 全在）**——`run/extract_readback_binary_cost_5run.py` 产出 22.3±3.3 / 3.73±0.72h / 7.6±3.4；论文已 sync + 编译通过。
 4. **P1-CPU**：Flash retest 显著性重算。
 5. **P1-GPU（可选）**：`omega_low (L)` 5-run；`w/o Self-Expl` 5-run。
 

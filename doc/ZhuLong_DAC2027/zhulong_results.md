@@ -393,9 +393,23 @@ V3，自探索 ON
 
 > 沙盒执行后仅返回 pass/fail（二元回读），不返回 stdout/异常栈/逐断言结果。agent 知道代码是否通过但不知道错在哪。对应论文 `tab:ablation-harness` 的 \(B\) 档。
 > 
+> **成本 5-run（2026-10-18 零 GPU 从保留 trace 提取，运维令三十②/PLAN_RETEST_READBACK_COST §5）**：从 `~/eda_code_eval/{2026_1015_093317,2026_1015_143848,2026_1015_193004,2026_1015_233638,2026_1016_041955}/trace/<task>/` 解析 5 轮 fresh batch 的逐 trace 指标，替换论文 `tab:readback-cost` (B) 行的 n=1 值（27.6 / 4.25 / 13）。
 > 
-
-
+> | 指标 | r1 | r2 | r3 | r4 | r5 | **5-run mean ± std** | 旧 n=1 |
+> |:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+> | Pass@1 (%) | 75.9 | 79.1 | 77.8 | 78.5 | 79.1 | **78.1 ± 1.3** | 78.1 ± 1.3 |
+> | Mean read-backs (run\_code/task) | 27.57 | 19.13 | 20.35 | 23.13 | 21.44 | **22.3 ± 3.3** | 27.6 |
+> | Wall-clock per task (s) | 692.3 | 581.2 | 567.1 | 576.9 | 475.4 | **578.6 ± 77.0** (9.64 min) | — |
+> | Batch real-elapsed (h, parallel) | 4.33 | 3.80 | 3.25 | 4.49 | 2.79 | **3.73 ± 0.72** | 4.25 |
+> | Timeout count | 13 | 8 | 7 | 6 | 4 | **7.6 ± 3.4** | 13 |
+> | Converged (%) | 96.8 | 97.5 | 98.1 | 94.9 | 96.2 | **96.7 ± 1.2** | — |
+> | Gen-fail count | 1 | 0 | 0 | 0 | 0 | **0.2 ± 0.4** | — |
+> | Max run\_code on one task | 287 (t118) | 225 (t131) | 201 (t118) | 299 (t147) | 265 (t105) | max=299 | 287 |
+> | Input tokens mean | 1.86M | 1.33M | 1.30M | 1.60M | 1.40M | **1.50M ± 0.24M** | — |
+> | Output tokens mean | 35340 | 30425 | 32182 | 34438 | 30380 | **32553 ± 2275** | — |
+> 
+> 提取脚本：`run/extract_readback_binary_cost_5run.py`；JSON：`run/readback_binary_cost_5run.json`。
+> 论文已 sync：`tab:readback-cost` (B) 行 → `22.3 ± 3.3 / 3.73 ± 0.72 / 7.6 ± 3.4`（5-run，去掉 ‡脚注）；`tab:ablation-harness` (B) Mean read-backs → 22.3（5-run 均值）；正文比例更新为 1.8×/1.7×/2.2×（原 2.3×/1.9×/3.8×）；编译 13 页 0 error。
 
 |轮次|PyAether|SKILL|TCL\_WaveView|TCL\_Innovus|
 |---|---|---|---|---|
