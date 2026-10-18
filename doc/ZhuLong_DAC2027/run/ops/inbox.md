@@ -1,11 +1,34 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 79 -->
+<!-- RUN_ID: 80 -->
+
+## RUN_ID 80 — 只读 canary：pro-cloud vs pro-fp4 是否都 403
+
+> 用途：用多把已有 key 分别测 `deepseek-v4-pro-cloud`、`deepseek-v4-pro-fp4`、`glm-5.2`、`deepseek-v4-flash`，只打印 HTTP code 与短 body，不打印 key。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 80 | pro-cloud vs pro-fp4 canary | $(date '+%F %T') | host=$(hostname) ==="
+E=/nasdata/app.e0031982/code/eda_fastmcp
+KEYS=$(grep -rhoE '02_[A-Za-z0-9_-]{20,}' "$E/.env" "$E/providers.json" "$HOME/.zhulong/settings/providers.json" 2>/dev/null | sort -u | head -8)
+echo "keys_found=$(printf '%s\n' "$KEYS" | grep -c .)"
+for spec in "deepseek-v4-pro-cloud|http://agi-gateway.cxmt.com/cloud/v1" "deepseek-v4-pro-fp4|http://agi-gateway.cxmt.com/v1" "glm-5.2|http://agi-gateway.cxmt.com/cloud/v1" "deepseek-v4-flash|http://agi-gateway.cxmt.com/v1"; do
+  m=${spec%%|*}; url=${spec#*|}; best=000
+  for k in $KEYS; do
+    code=$(env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy curl -sS --noproxy '*' --connect-timeout 3 -m 8 -o /tmp/rid80_"$m".json -w '%{http_code}' -X POST "$url/chat/completions" -H "Authorization: Bearer $k" -H 'Content-Type: application/json' -d "{\"model\":\"$m\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":16}" 2>/dev/null)
+    if [ "$code" = "200" ]; then best=200; break; fi
+    if [ "$best" = "000" ] || { [ "$code" != "000" ] && [ "$best" != "200" ]; }; then best=$code; fi
+  done
+  echo "$m -> best HTTP $best"
+  head -c 140 /tmp/rid80_"$m".json 2>/dev/null | tr '\n' ' '; echo
+done
+echo "=== DONE 80 ==="
+```
 
 ## RUN_ID 79 — 只读：14:22 轮是否已启动 B.glm-5.3-flash 复测
 
 > 用途：确认 `run_cline_script.sh -p 4` / glm-5.3 进程、`/tmp/ABL_glm-5.3-flash*` 日志、loop 日志与 MEMORY 心跳。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 79 | zhulong retest status | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] procs"
