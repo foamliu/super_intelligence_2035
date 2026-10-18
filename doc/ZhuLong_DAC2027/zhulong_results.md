@@ -606,8 +606,8 @@ V3，自探索 ON
 
 > **背景**：运维令二十八原定底模 `deepseek-v4-pro-cloud` 被 MSE Gateway HTTP 403 封禁（全 8 key × 2 path × 6 模型名变体均 403），eval 未跑 n=0。运维令二十九用户直令：底模改为 `glm-5.2`（@ cloud/v1 同 key 实测 200），其余口径照旧（构建/安装/隔离配置/158 集/n=1 provisional/不碰 cline 3.0.51）。
 
-> **状态：🟠 eval 跑中（r1，n=1 in-progress）— 2026-10-18 09:38 启动**
-> 标记：`[provisional, n=1, in-progress]`（评测尚未完成，分数待补；n=1 不入论文表，仅作 `zhulong 3.0.29 / cline-core 0.0.51` vs `cline 3.0.51 / cline-core 0.0.71` 对照参考）。
+> **状态：✅ r1 完成（n=1，2026-10-18 09:38→12:17）— Pass@1 = 84.2%**
+> 标记：`[provisional, n=1]`（n=1 不入论文表，仅作 `zhulong 3.0.29 / cline-core 0.0.51` vs `cline 3.0.51 / cline-core 0.0.71` 对照参考；🚫 ±、🚫 因果归因）。
 
 ### ① 版本对照（必填）
 | 项 | zhulong（被测） | cline（基线对照） |
@@ -642,15 +642,26 @@ V3，自探索 ON
   - agent 工具分布（采样前 ~3 分钟）：`[thinking]`=79 / `[pyAether_MCP_server__search_apis]`=29 / `[pyAether_MCP_server__get_api_details]`=29 / `[pyAether_MCP_server__run_code]`=21 / `[search_apis_by_keyword]`=14 / `[run_commands]`=13（全 blocked）/ `[editor]`=10 / `[read_files]`=5 → MCP 工具调用正常，editor 写代码未被阻（合法 workspace 内），符合 deepseek-v4-flash retest r1 trace 中 PASS 任务的工具使用模式。
 - **判据**：r1 完成后打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ZL_glm52_r1.log | tail -5`（以 `pass (xx.x%)` 为准）；timeout / 0-token / quota 单列。若 429/限流 → 按令二十七① 降 `-p 4` 重跑一次（只降并发，不改模型/配置）；若 401/403 → 立即停、贴响应头原文、报 blocker（不空转）。
 
-### ⑤ Pass@1（待补·r1 跑完后回填）
-- **`glm-5.2` × `zhulong(3.0.29)` 158 题 Pass@1 = `[TBD·in-progress]` %**（通过数/158 = `[TBD]`/158）。
-- `pass (` 原文：`[TBD·r1 完成后 grep]`。
-- timeout / gen-fail / 0-token / quota 计数：`[TBD·r1 完成后统计]`。
+### ⑤ Pass@1（r1 已完成 · 2026-10-18 12:17 · n=1 · `[provisional,n=1]`）
+- **`glm-5.2` × `zhulong(3.0.29)` 158 题 Pass@1 = 84.2%**（通过数/158 = **133/158**）。
+- `pass (` 原文（regrade log 末尾）：
+  - `✅ 1018: 133/158 pass (84.2%) | generated: 153 ok, 3 fail`
+  - `通过率: 0.8418 (133/158 个任务通过)`
+  - `生成状态统计: {'success': 153, 'failure': 0, 'timeout': 2, 'fail': 3}`
+  - `pyAether_aether (lang=pyAether, host=aether, 样本 133/153): PASS_RATE=0.8693`
+- **失败/异常计数**（main eval log `/tmp/ZL_glm52_r1.log` + regrade log `/tmp/ZL_glm52_r1_regrade.log`）：
+  - gen-success = **153** / gen-fail = **3** / gen-timeout = **2** / 158 − (153+3+2) = 0 余
+  - 0-token 失败 = **0**（grep `0-token|inputTokens.*0.*outputTokens.*0` = 0）
+  - HTTP 429 / quota error = **0**（grep `HTTP 429|429 Too Many|quota_exceeded` = 0；r1 全程无网关限流·与 deepseek-v4-flash fresh 45% 0-token 形成对比）
+  - null-content 失败 = **0**（grep `null.*content|content.*null` = 0；glm-5.2 reasoning 未耗光预算·providers.json 沿用 API 默认 maxTokens 即可）
+  - 反作弊 hook canary ✅：`grep -c 'ACCESS RESTRICTED' /tmp/ZL_glm52_r1.log` = 571（hook 全程生效）
+- **regrade 流程注记**（运维侧手动 regrade）：eval r1 auto-grade 因 `eda_fastmcp/.env` `EVAL_FW_DIR` 指向 `/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether`（不存在路径）而失败；agent 改用 `EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework` 覆盖启动手动 regrade（`scripts/run_eval.py -g completed_code_generation_2026_1018_093852.jsonl --benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl --skip-assemble`）。**首次 regrade 因 regrade 启动脚本误 export `https_proxy=http://172.19.92.23:13128` 致沙盒 HTTP `10.129.32.75:8650` 走 Squid proxy → HTTP 503 Connection timed out**；**修复 = unset proxy + `NO_PROXY=10.129.32.75`**（沙盒为内网 IP，无需 proxy），regrade 11:56:34 重启 → 12:17:06 EXIT=0 完成（~20 min）。regrade log /tmp/ZL_glm52_r1_regrade.log；归档 `EDA-Eval-Framework/output_evaluation/20260918_*` 之前的 batch 目录（本批 2026_1018_093852 归档在 `20260918_*` 序列下，运维侧 regrade 不自动归档）。
 
 ### ⑥ 对照（同模型、不同 CLI/SDK · n=1 · 仅参考 · 🚫 不入论文表）
 - **既有 `glm-5.2` 臂**（n=5，cline 3.0.51 / cline-core 0.0.71）= **83.3 ± 3.1%** [84.2, 87.3, 84.2, 79.1, 81.6]
-- **本次 ZL.glm-5.2**（n=1，zhulong 3.0.29 / cline-core 0.0.51）= `[provisional, n=1, in-progress]` → r1 完成后填单值，**禁止 ±**（n=1）、**禁止据此断言「改造版更好/更差」**（n=1 + 版本双变量：CLI 3.0.29 vs 3.0.51、SDK 0.0.51 vs 0.0.71）。
+- **本次 ZL.glm-5.2**（n=1，zhulong 3.0.29 / cline-core 0.0.51）= **84.2%** [provisional, n=1]（133/158）。**禁止 ±**（n=1）、**禁止据此断言「改造版更好/更差」**（n=1 + 版本双变量：CLI 3.0.29 vs 3.0.51、SDK 0.0.51 vs 0.0.71）。n=1 单值落在 n=5 区间 [79.1, 87.3] 内、紧贴均值 83.3% 上方 0.9pp，**符合「老 SDK 改造版在同模型上仍具备实验意义」的前提**（运维令二十八①「SDK 0.0.51 是否还具实验意义」的实证回答：YES）。
 - **并列写明 SDK 代差**：两侧变量 = (CLI 版本, cline-core 版本) = (3.0.29, 0.0.51) vs (3.0.51, 0.0.71)，差异不得归因于单一变量。
+- 与 deepseek-v4-flash 复测 60.1±5.5%（n=5·SDK 0.0.71·trace 修复后）对比：glm-5.2 单次 84.2% 显著高于 flash 5 轮均值，但**不跨模型比较**（运维令二十九①「同模型、不同 CLI/SDK」才是被测变量；跨模型比较在 tab:llm-comparison 由 n=5 主表负责，n=1 不入）。
 
 ### ⑦ 注脚（同步 `MEMORY_ZHULONG.md` + `daily-memories/2026-10-18.md`）
 - commit 前缀 `zhulong zl:`；n=1 不进论文表。
