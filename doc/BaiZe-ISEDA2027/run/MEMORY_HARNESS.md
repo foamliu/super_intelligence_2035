@@ -2,13 +2,25 @@
 
 WAITING: 1
 
-> 🆕 **R445 (2026-10-19 06:23) — RE-VERIFY 10: relay ✅(139, 14.6h) + Docker STILL blocked (10th round, identical) + NO new ops instruction (origin=6bb4eae3 data) → BLOCKER unchanged · 心跳提交**：
-> **① Relay ✅（不执行 10:18 重启脚本）**：PID 2663131 `bash ops_relay.sh` ppid=1 etimes=52454s（~14.6h，10-18 13:33 started），`ops/.last_run_id`=**139**=inbox top `RUN_ID: 139` ⇒ P0① 实质满足（139≫123）。重启脚本会杀健康中继（违反红线「不杀健康」+ AGENTS.md「绝不要把两个都杀掉」）且有自匹配事故史 → 不执行。
-> **② 无新指令**：`git fetch origin`=up to date（remote_head=6bb4eae3 data 06:14）；inbox 无 RUN_ID >139 ⇒ 运维尚未处置 Docker blocker。
-> **③ Docker 🔴 BLOCKED（06:23 复测，第 10 轮，与 R436-R444 完全一致）**：`id` uid=6218 groups=app.adm（**不在 docker 组**）；`getent group docker`=`docker:x:123:` zero members；`/var/run/docker.sock`=srw-rw---- root:docker(0660)；`docker info` Client-only / Server permission denied；`sudo -n`=需密码。无 podman、`DOCKER_HOST`=unset。**self-service 穷尽，无 sudo 无解**。
-> **④ 代码/API 仍 ✅（R443 已验，本轮无变化未重测）**：API ✅ HTTP200(kimi-k2.6-cloud) + 代码 prep ✅(f2045c54, py_compile 9/9, oracle 5/5, R435 三修复在位)。**Docker 一恢复即 `bash launch_tb_7way.sh --pilot`**。
-> **🔴 BLOCKER 不变（需运维 root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`+新登录会话；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89(623)。
-> **Next**：等 Docker 恢复 → pilot → gate → full。📦 体积：TASK=29962B(29.2KB ✓) / MEMORY 归档 R444→daily-10-19 +R445 ≈30.6KB(✓)。WAITING=1（blocked 长睡合理；按判死判据每轮提交心跳）。
+## 📊 进度快照
+
+```
+PHASE:        TB 7×5 pilot Gen3 RUNNING on .29 (via SSH) — Docker unblock found
+已完成:       oracle 5/5 ✅ · 7 adapters ✅ · 28/28 mock tests ✅ · smoke ✅(R433) · pilot v1 ✅(R435) · R436 default_working_dir fix ✅ · API gate ✅ HTTP200
+当前动作:     7×5 pilot Gen3 launched on .29 (PID 2393345 launch_tb_7way.sh --pilot), oracle check in progress, 3 Docker containers Up
+下一步:       monitor pilot → pilot gate (infra≤20% AND ≥6/7 runnable) → 7×89 full (623 trials) → results.json + report HTML
+阻塞:         无（Docker 已在 .29 恢复 — R436-R445 误在 .12 查本地 Docker，实际 Docker 只在 .29）
+ERROR_COUNT:  0
+```
+
+> 🆕 **R446 (2026-10-19 07:47) — 🟢 BREAKTHROUGH: Docker works on `.29` (not `.12`!) → 7×5 pilot Gen3 LAUNCHED on `.29` via SSH · 心跳提交**：
+> **① 根因定位（纠正 R436-R445 共 10 轮误判）**：本机 hostname=`whag0pgpuap12`(IP 10.239.2.**12**)，Docker 在 `.12` 上 **从未可用**（task 书明文「Docker 只在 `.29`」「Docker 只在 .29」）。R436-R445 一直在 `.12` 查本地 Docker（`id` groups=app.adm 不含 docker）→ 必然 blocked，结论「需运维 root」是**误判**。**实际 Docker 在 `.29` 完全可用**：`ssh 10.239.2.29 'id'`→`groups=6002(app.adm),122(docker)`✅；`docker run --rm hello-world`→"Hello from Docker!"✅；`docker info` Client 27.5.1 + Server OK✅；`/tmp` 73G free✅；`.29` relay PID 1972249 ppid=1 健康。
+> **② 全部 prereq 在 `.29` 确认**：harbor 0.24.0(`~/.local/bin/harbor`→uv tool，需 login-shell PATH `bash -lc`)✅；`~/terminal-bench` 89 task dirs + 5 pilot tasks(break-filter-js-from-html/bn-fit-modify/log-summary-date-ranges/chess-best-move/fix-git)全在✅；`overlay-network-host.yml`(5012B)✅；`/tmp/node-preinstalled/node-v22.23.3`✅(_install_node fast-path)；API gate ✅ HTTP200(kimi-k2.6-cloud, key len=72, `curl /cloud/v1/chat/completions`→合法 chat.completion `model:kimi-k2.6`)；无 pilot 在跑✅；R431/R435/R436 修复在位(launch_tb_7way.sh:30 PYTHONPATH / _base.py:54 default_working_dir / _base.py:182-201 _install_node)✅。
+> **③ 7×5 pilot Gen3 已在 `.29` 后台启动**：写 `/tmp/launch_pilot_gen3.sh`(.29)→`setsid bash`(PID 2393339)→`nice -n 19 bash launch_tb_7way.sh --pilot`(PID 2393345)，07:47:17 start，stdout→`.29:/tmp/launch_pilot_gen3.out`。pre-flight PASS(harbor 0.24.0/docker 27.5.1/dataset terminal-bench@2.0/model kimi-k2.6-cloud)。Oracle check 已启动，**3 个 Docker 容器已 Up**（bn-fit-modify/log-summary-date-ranges/chess-best-move，cached `alexgshaw/*:20251031`）✅。不占 GPU，nice -n 19。
+> **④ Relay ✅（不重启）**：`.12` PID 2663131 ppid=1(.last_run_id=139)；`.29` PID 1972249 ppid=1。inbox 仍 RUN_ID 139（只读诊断），无 RUN_ID >139；`git fetch`(proxy .25)=up to date，remote 最新=data 07:38 / vision 07:23（非 harness 指令）。
+> **Next**：下轮唤醒查 pilot 进度（`ssh .29 'tail /tmp/launch_pilot_gen3.out; docker ps; ls traces/'`）→ oracle ✅ + 7 路 trial 跑完 → pilot 判据 gate（infra≤20% 且 ≥6/7 runnable）→ 放行 7×89 全量(623)。📦 体积：TASK=29962B(29.2KB ✓) / MEMORY 归档 R445→daily-10-19 +R446 ≈30.5KB(✓)。WAITING=1（pilot 在跑，长睡合理；按判死判据每轮提交心跳）。
+
+> 📦 R445 (2026-10-19 06:23, RE-VERIFY 10: relay✅(139)+Docker blocked 10th+no new instr) 已归档 → daily-memories-harness/2026-10-19.md。结论：relay健康(139)、Docker 误判（实际 .29 可用，由 R446 承接并启动 pilot）。需要时再读。
 
 > 📦 R444 (2026-10-19 05:01, RE-VERIFY 9: relay✅(139)+Docker blocked 9th+no new instr) 已归档 → daily-memories-harness/2026-10-19.md。结论：relay健康(139)、Docker blocker 由 R445 承接。需要时再读。
 
