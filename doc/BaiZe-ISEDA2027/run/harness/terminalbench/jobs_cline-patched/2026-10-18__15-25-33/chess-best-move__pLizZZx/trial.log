@@ -2,3 +2,4 @@ Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/no
 Command outputs captured
 Running command: ln -sf /opt/cline-modules/@cline/cli-linux-x64/bin/cline /usr/local/bin/cline && cline --version
 Command outputs captured
+Collecting main service artifacts

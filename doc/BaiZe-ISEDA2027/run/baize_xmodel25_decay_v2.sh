@@ -32,6 +32,11 @@ if [ "${1:-}" = "--smoke" ]; then
     echo "SMOKE TEST MODE"
 fi
 
+# Resume support (16:2x long-term rule): --resume from latest step_* ckpt
+RESUME_DIR="${RESUME_DIR:-}"
+RESUME_ARG=""
+[ -n "$RESUME_DIR" ] && RESUME_ARG="--resume $RESUME_DIR"
+
 echo "===== Pre-flight @ $(date '+%F %T') ====="
 echo "  Model: $MODEL_DIR"
 echo "  Output: $OUTPUT_DIR"
@@ -44,6 +49,11 @@ echo "  DDP no_sync: YES (defer all-reduce to last micro-step)"
 echo "  Data blend: SFT 64% : L3 24% : code 8% : math 4%"
 echo "  Save interval: $SAVE_INTERVAL"
 echo "  Projected: ~300K tok/s, ~11.9s/step, ~66h total"
+if [ -n "$RESUME_DIR" ]; then
+    echo "  RESUME: from $RESUME_DIR (start_step from dir name, optimizer state NOT restored)"
+else
+    echo "  RESUME: none (fresh start)"
+fi
 
 cd "$RUN_DIR" || exit 1
 
@@ -76,8 +86,10 @@ export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
     --chunked_ce \
     --ce_chunk_size 256 \
     --verify_save_step 20 \
-    $SMOKE > "$OUTPUT_DIR/baize_xmodel25_decay_v2_train.log" 2>&1
-# crash2 fix: log to OUTPUT_DIR (persistent NFS) not /tmp (gets cleaned → traceback lost)
+    $RESUME_ARG \
+    $SMOKE > /tmp/baize_xmodel25_decay_v2_train.log 2>&1
+# 16:4x rule: log to /tmp for判活 (pgrep + nvidia-smi + tail /tmp/...log step growth)
+# NFS $OUTPUT_DIR/...log is NOT reliable (shared path, .12 stale run overwrites)
 RC=$?
 
 echo "  rc=${RC}" 

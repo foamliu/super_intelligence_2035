@@ -1,0 +1,27 @@
+  5/5 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:09:59 0:00:00
+tb_pilot_dataset_kBSCHi • opencode
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Trials ┃ Exceptions ┃  Mean ┃
+┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│      0 │          5 │ 0.000 │
+└────────┴────────────┴───────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ Exception                 ┃ Count ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│ NetworkConnectionError    │     1 │
+│ NonZeroAgentExitCodeError │     4 │
+└───────────────────────────┴───────┘
+
+Job Info
+Total runtime: 10m 0s
+Results written to 
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
+ness/terminalbench/jobs_opencode/2026-10-18__15-56-36/result.json
+Inspect results by running `harbor view 
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
+ness/terminalbench/jobs_opencode`
+Share results by running `harbor upload 
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
+ness/terminalbench/jobs_opencode/2026-10-18__15-56-36`
+
