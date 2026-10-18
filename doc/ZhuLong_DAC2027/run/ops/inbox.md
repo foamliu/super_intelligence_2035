@@ -1,11 +1,67 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 75 -->
+<!-- RUN_ID: 76 -->
+
+## RUN_ID 76 — 修 `EVAL_FW_DIR` 并重启 r1 评分（若未在跑）
+
+> 用户令：`~/.bashrc` 加 `export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`；`.env` 保持“为空才赋值”；然后重启 grade（若未启动）。**会备份 `.env`**；只改配置 + 启动评分，不 kill 现有任务。
+
+```bash
+set -u
+echo "=== RUN_ID 76 | fix EVAL_FW_DIR + start regrade | $(date '+%F %T') | host=$(hostname) ==="
+E=/nasdata/app.e0031982/code/eda_fastmcp
+echo "[1] current"
+grep -n '^EVAL_FW_DIR' "$E/.env" 2>/dev/null
+grep -n '^export EVAL_FW_DIR' ~/.bashrc 2>/dev/null || true
+echo "[2] backup + patch"
+cp -a "$E/.env" "$E/.env.bak.eval_fw_$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
+sed -i 's|^EVAL_FW_DIR=.*|EVAL_FW_DIR=${EVAL_FW_DIR:=/nasdata/app.e0031982/code/EDA-Eval-Framework}|' "$E/.env"
+grep -q '^export EVAL_FW_DIR=' ~/.bashrc || echo 'export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework' >> ~/.bashrc
+grep -n '^EVAL_FW_DIR' "$E/.env" | head -3
+grep -n '^export EVAL_FW_DIR' ~/.bashrc | head -3
+echo "[3] running grade?"
+if pgrep -af '[r]un_eval[.]py|[r]egrade_zl_glm52' > /tmp/rid76_running.txt; then
+  echo "ALREADY_RUNNING"; cat /tmp/rid76_running.txt; exit 0
+fi
+echo "NO_GRADE_RUNNING"
+echo "[4] write regrade script"
+cat > /tmp/regrade_zl_glm52_r1.sh <<'EOS'
+#!/bin/bash
+set +e
+export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+export SANDBOX_ENDPOINTS="8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4"
+export PROXY_PORTS="8650,8651,8652,8654"
+export RAG_RECALL_URL="http://localhost:9006/recall"
+export SANDBOX_HOST="10.129.32.75"
+export EVAL_ROOT_DIR="$HOME/eda_code_eval"
+GEN_FILE="completed_code_generation_2026_1018_093852.jsonl"
+BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+LANG="pyAether"
+PYTHON="/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python"
+RUN_EVAL="/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py"
+cd "$EVAL_FW_DIR" || { echo "CD FAILED"; exit 1; }
+echo "=== ZL.glm-5.2 r1 REGRADE $(date '+%F %T') ==="
+echo "EVAL_FW_DIR=$EVAL_FW_DIR"
+ls -l "$EVAL_ROOT_DIR/$GEN_FILE" 2>&1
+"$PYTHON" "$RUN_EVAL" -g "$GEN_FILE" --lang "$LANG" --benchmark "$BENCHMARK"
+rc=$?
+echo "=== REGRADE DONE rc=$rc $(date '+%F %T') ==="
+exit $rc
+EOS
+chmod +x /tmp/regrade_zl_glm52_r1.sh
+echo "[5] start"
+setsid -f nohup bash /tmp/regrade_zl_glm52_r1.sh > /tmp/ZL_glm52_r1_regrade.log 2>&1 < /dev/null
+sleep 3
+pgrep -af '[r]un_eval[.]py|[r]egrade_zl_glm52' | head -5
+echo "--- log head ---"
+head -20 /tmp/ZL_glm52_r1_regrade.log 2>&1
+echo "=== DONE 76 ==="
+```
 
 ## RUN_ID 75 — 只读：`EVAL_FW_DIR` 到底是谁设成了 `/home/app.t0002997/...`
 
 > 用途：查 `.env`、`zhulong_loop.sh` 进程环境、relay 进程环境、`run_zhulong_script.sh`，确认 `EVAL_FW_DIR` 的来源。**只读**，不打印 secrets。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 75 | inspect EVAL_FW_DIR source | $(date '+%F %T') | host=$(hostname) ==="
 E=/nasdata/app.e0031982/code/eda_fastmcp
