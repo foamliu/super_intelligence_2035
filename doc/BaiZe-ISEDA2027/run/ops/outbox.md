@@ -13041,3 +13041,31 @@ none
 - Solo smoke command ready: TB_API_KEY=<72char> bash launch_tb_7way.sh --smoke
 
 **Agent action**: WAITING=1 in MEMORY_HARNESS.md. Will auto-proceed once docker access is detected on next wake.
+
+---
+
+## RUN_ID 124 · 2026-10-18 16:24:02 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 124 | pull latest task books on .29 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main
+git log -1 --oneline
+grep -n '16:2x' doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md | head -3 || true
+echo "=== DONE 124 ==="
+```
+
+**输出**
+```
+=== RUN_ID 124 | pull latest task books on .29 | 2026-10-18 16:24:02 | host=whag0pgpuap12 ===
+From https://github.com/foamliu/super_intelligence_2035
+ * branch              main       -> FETCH_HEAD
+Already up to date.
+e1d59a20 ops 124: pull latest task books on .29 before pretrain wake
+3:### 🆕 运维指令 · 2026-10-18 16:2x（🚨 P0：立即 resume 80B decay v2 + **长期授权：训练挂了自行重启，不再等许可**）· 用户直令 · 最高优先
+=== DONE 124 ===
+```
