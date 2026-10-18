@@ -14326,3 +14326,192 @@ echo "=== DONE 133 ==="
 e1e41bcb vision ops: ArmC add weight decay 0.1->0.01 (two-variable, armC_20261018)
 === DONE 133 ===
 ```
+
+---
+
+## RUN_ID 134 · 2026-10-18 17:17:25 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 134 | kill duplicate pretrain on .12 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] before"
+ps -eo pid,ppid,pgid,etimes,args | grep '[b]aize_xmodel25_decay_v2.py' | cut -c1-200 || true
+echo "[2] kill --resume step_8000"
+for p in $(pgrep -f 'baize_xmodel25_decay_v2.py.*--resume.*step_8000' 2>/dev/null); do
+  echo "kill PID $p"; kill -TERM "$p" 2>/dev/null || true
+done
+sleep 3
+for p in $(pgrep -f 'baize_xmodel25_decay_v2.py.*--resume.*step_8000' 2>/dev/null); do
+  echo "KILL PID $p"; kill -KILL "$p" 2>/dev/null || true
+done
+sleep 2
+echo "[3] after"
+ps -eo pid,ppid,etimes,args | grep '[b]aize_xmodel25_decay_v2.py' | cut -c1-200 || true
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== DONE 134 ==="
+```
+
+**输出**
+```
+=== RUN_ID 134 | kill duplicate pretrain on .12 | 2026-10-18 17:17:25 | host=whag0pgpuap12 ===
+[1] before
+3698325 3698323 3698323     970 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.
+3698840 3698325 3698840     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698846 3698325 3698846     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698847 3698325 3698847     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698848 3698325 3698848     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698849 3698325 3698849     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698850 3698325 3698850     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698852 3698325 3698852     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3698854 3698325 3698854     968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737189 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737203 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737216 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737229 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737234 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737244 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737252 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737265 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737270 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737279 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737285 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737293 3698854 3698854     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737300 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737308 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737314 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737324 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737328 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737349 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737351 3698852 3698852     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737371 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737405 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737406 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737429 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737430 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737458 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737459 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737470 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737472 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737477 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737478 3698849 3698849     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737483 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737490 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737492 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737497 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737503 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737516 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737518 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737523 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737528 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737544 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737547 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737557 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737560 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737564 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737571 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737575 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737581 3698848 3698848     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737585 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737587 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737595 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737596 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737607 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737609 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737621 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737623 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737632 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737634 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737655 3698840 3698840     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737656 3698846 3698846     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737675 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737676 3698850 3698850     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737710 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737748 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+3737787 3698847 3698847     941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel
+[2] kill --resume step_8000
+kill PID 3698325
+kill PID 3698840
+kill PID 3698846
+kill PID 3698847
+kill PID 3698848
+kill PID 3698849
+kill PID 3698850
+kill PID 3698852
+kill PID 3698854
+kill PID 3737189
+kill PID 3737203
+kill PID 3737216
+kill PID 3737229
+kill PID 3737234
+kill PID 3737244
+kill PID 3737252
+kill PID 3737265
+kill PID 3737270
+kill PID 3737279
+kill PID 3737285
+kill PID 3737293
+kill PID 3737300
+kill PID 3737308
+kill PID 3737314
+kill PID 3737324
+kill PID 3737328
+kill PID 3737349
+kill PID 3737351
+kill PID 3737371
+kill PID 3737405
+kill PID 3737406
+kill PID 3737429
+kill PID 3737430
+kill PID 3737458
+kill PID 3737459
+kill PID 3737470
+kill PID 3737472
+kill PID 3737477
+kill PID 3737478
+kill PID 3737483
+kill PID 3737490
+kill PID 3737492
+kill PID 3737497
+kill PID 3737503
+kill PID 3737516
+kill PID 3737518
+kill PID 3737523
+kill PID 3737528
+kill PID 3737544
+kill PID 3737547
+kill PID 3737557
+kill PID 3737560
+kill PID 3737564
+kill PID 3737571
+kill PID 3737575
+kill PID 3737581
+kill PID 3737585
+kill PID 3737587
+kill PID 3737595
+kill PID 3737596
+kill PID 3737607
+kill PID 3737609
+kill PID 3737621
+kill PID 3737623
+kill PID 3737632
+kill PID 3737634
+kill PID 3737655
+kill PID 3737656
+kill PID 3737675
+kill PID 3737676
+kill PID 3737710
+kill PID 3737748
+kill PID 3737787
+KILL PID 3698325
+[3] after
+0, 0 %, 4 MiB
+1, 0 %, 4 MiB
+2, 0 %, 4 MiB
+3, 0 %, 4 MiB
+4, 0 %, 4 MiB
+5, 0 %, 4 MiB
+6, 0 %, 4 MiB
+7, 0 %, 4 MiB
+=== DONE 134 ===
+```
