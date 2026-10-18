@@ -64,8 +64,8 @@ class DeepseekHarnessTB(TBBaseAgent):
         await self.exec_as_root(
             environment,
             command=(
-                "pip install --upgrade pip && "
-                "pip install deepseek-harness-sdk 2>&1 | tail -5"
+                "pip install --break-system-packages --upgrade pip && "
+                "pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5"
             ),
         )
         # Verify import

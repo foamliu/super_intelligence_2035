@@ -2,6 +2,23 @@
 
 WAITING: 1
 
+> 🆕 **R435 (2026-10-18 16:57) — 7×5 PILOT COMPLETE: 1/7 passed (cline-patched 0.8), 6/7 infra-failed → 3 root causes FOUND & FIXED, awaiting re-run**：
+> **Pilot 结果**（7 harness × 5 task = 35 trial, .29 PID 2731368, oracle 5/5 ✅ reward=1.0）：
+> - **cline-patched** 5/5 mean=**0.800** ✅（4/5 resolved: bn-fit/break-filter/fix-git/log-summary, chess-best-move failed）
+> - **codex** 0/5 mean=0.0 — 5×NonZeroAgentExitCodeError（`npm install -g @openai/codex` exit 254）
+> - **hermes** 0/5 mean=0.0 — 5×（2 NonZero + 3 AttributeError）（`pip install hermes-agent` PEP 668）
+> - **opencode** 0/5 mean=0.0 — 4×NonZeroAgentExitCodeError（`curl|bash` GitHub releases DL exit 56）
+> - **claude-code** 0/5 mean=0.0 — 5×NonZeroAgentExitCodeError（`npm install -g @anthropic-ai/claude-code` exit 254）
+> - **deepseek-harness** 0/5 mean=0.0 — 5×（2 NonZero + 3 AttributeError）（`pip install deepseek-harness-sdk` PEP 668）
+> - **pi** 0/5 mean=0.0 — 5×NonZeroAgentExitCodeError（`npm install -g @fleetagent/pi-coding-agent` exit 254）
+> **🔴 Pilot gate: 6/7 = 85.7% infra failure → BLOCKER**（>50% & ≥3 路全挂）。但全为 infra/install 问题，非模型能力。
+> **根因 3 类 + Fix**：
+> ① **npm RO mount**（codex/claude-code/pi）：`/opt/node` 挂 `:ro` → `npm install -g` 写 `/opt/node/lib/node_modules` → `ENOENT no such file or directory, mkdir '/opt/node/lib/node_modules/@openai'`。**Fix**：`_base.py:_install_node` fast path 加 `mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local`。**验证 ✅**：容器内 `npm install -g @openai/codex@0.94.0` → `codex-cli 0.94.0` exit 0（3min, bn-fit-modify image）。
+> ② **pip PEP 668**（hermes/deepseek-harness）：容器 Python 3.12 `externally-managed-environment` → pip 拒绝系统级安装。**Fix**：加 `--break-system-packages` flag。
+> ③ **opencode GitHub DL**（opencode）：`curl -fsSL https://opencode.ai/install | bash` → 脚本从 `github.com/anomalyco/opencode/releases` 下载二进制 → proxy exit 56（NetworkConnectionError）。**Fix**：改用 `npm install -g opencode-ai`（install script 的 npm fallback 路径），复用 ① 的 prefix fix。
+> **修复文件**：`agents/_base.py`（npm prefix）、`agents/hermes.py`（--break-system-packages）、`agents/deepseek_harness.py`（--break-system-packages）、`agents/opencode.py`（npm install 替代 curl|bash）。py_compile ✅ 7/7，28/28 mock 单测 ✅。
+> **Next**：① git push（adapter 修复在 NFS 共享，.29 立即可见）② .29 重跑 `launch_tb_7way.sh --pilot` ③ gate（infra ≤20%, ≥6/7 runnable）→ ④ full 7×89 ⑤ gen_report。📦 体积：TASK≈30KB / MEMORY≈27KB（归档 R432+旧指令 ~7KB → ARCHIVE）。
+
 > 🟢 **R433 (2026-10-18 15:03) — SMOKE PASSED reward=1.0 ✅ + 7×5 pilot launched（crashed → R434 修复重跑）**：
 > **solo smoke R433b (cline-patched × fix-git) ✅ reward 1.0**（`n_completed:1, n_errored:0, mean:1.0`，14:43→14:50）。verifier 流程：`apt install curl`→`curl -LsSf astral.sh/uv/0.9.5/install.sh`（SSL timeout rc=28 ~5min）→`source /root/.local/bin/env`→`uvx -p3.13 pytest`→**2 passed**（test_about_file/test_layout_file）→reward.txt=1。**根因修复确认**：overlay `client:`→`main:` + `network_mode:host` + 挂 `/root/.local/bin/env`（verifier `source env` 找到 mounted uvx）。cline agent 跑了 13 轮 API（run_commands×3+/editor×1+，exit_code:0）真实解题，非 infra 噪声。
 > **overlay 再优化（commit 27758bad）**：`no_proxy`/`NO_PROXY` 加 `astral.sh` —— .29 对 astral.sh **直连 Network unreachable**（无互联网路由），绕过代理后 curl rc=7 **~3s 快失败** vs 经代理 CDN TLS 挂 ~5min → 每 verifier 省 ~5min（full 623 trial 省 ~52h）。`/etc/hosts` 挂载 + `--add-host` 在 `network_mode:host` 下**均失效**（getent 仍返真实 Cloudflare IP），故用 no_proxy 方案。YAML ✅，容器内实测 curl 3s 快失败 + 流程续到 uvx。
@@ -15,24 +32,10 @@ WAITING: 1
 > **Next**：① oracle 5/5→② 首个 harness(cline-patched)确认 kimi API 调通→③ 35-trial gate(infra≤20%,≥6/7)→④ full-eval 镜像方案→⑤ full 7×89。📦MEMORY~32.4KB,R432 待归档。
 
 
-> 🆕 **R432 (2026-10-18 13:50) — 4 BUGS FIXED + GATEWAY ✅ + 🔴 DOCKER BLOCKER (需 root)**：
-> **代码修复（无需 docker，全部验证通过，bash -n + pyyaml safe_load ✅）**：
->   - **bug-A (PYTHONPATH)** ✅ FIXED：`launch_tb_7way.sh` 行 30 加 `export PYTHONPATH="${SCRIPT_DIR}/..:${PYTHONPATH:-}"`。验证：harbor venv python `import terminalbench.agents.cline_patched` → `import OK: cline-patched`。
->   - **bug-B (key 提取)** ✅ FIXED：改为 `grep -A2 'kimi-k2.6-cloud' keys.txt | grep 'API Key' | awk -F'：' '{print $2}' | tr -d '[:space:]'`。验证：72 字符 key（`02_088EE...9a9f`）。
->   - **bug-C/overlay** ✅ FIXED：新建稳定 overlay `harness/terminalbench/overlay-network-host.yml`（挂载 `/opt/node` + `/opt/cline-modules`，含 npm mirror+proxy）；launch 默认指向它（不再用 /tmp volatile `minimal2.yml`）。cline fast-path（`cline_patched.py` 行 93-115）将触发——host cline = 132MB standalone ELF（`@cline/cli-linux-x64/bin/cline`，v3.0.72），ldd 仅需 glibc，容器内可直跑，**无需 npm install**。
->   - **task dir** ✅：`~/terminal-bench` → `/tmp/terminal-bench-repo/original-tasks` symlink（226 任务目录，5 pilot 全在）。
-> **网关验证** ✅ NOT blocker：`curl /v1/models` → HTTP 200；`curl /v1/chat/completions`（kimi-k2.6-cloud, max_tokens=5）→ HTTP 200，model=`kimi-k2.6`，0.75s。
-> **🔴 DOCKER BLOCKER（需 root/运维）**：`docker info` → permission denied（docker socket `/var/run/docker.sock`）。根因：docker 组被重建（旧 gid 122→`_lldpd`，docker 现 gid 123，**零成员**）。`sg docker -c 'docker info'` → "Invalid password"（非成员且无密码）。无 passwordless sudo，无 setuid docker。**.29 上无任何进程有 docker 访问权**（已查 `/proc/*/status` Groups，无 gid 123）。**已试命令（全失败）**：`docker info`、`docker images`、`sg docker -c 'docker info'`、`sudo -n docker info`。**修复方案**：需 root 执行 `sudo usermod -aG docker app.e0031982`（或 `sudo gpasswd -a app.e0031982 docker`）→ `newgrp docker` 或重新登录 → 即可跑 smoke。**smoke / pilot / full 全部阻塞于此**。
-> **Next（docker 恢复后）**：① solo smoke（cline-patched × fix-git）→ ② 7×5 pilot → ③ gate（infra ≤20%, ≥6 runnable）→ ④ 7×89 full（623 trials 或以实际 226 任务为准）。
+> 📦 R432 (2026-10-18 13:50, 4 bugs fixed + gateway ✅ + docker blocker → resolved) 已归档 → daily-memories-harness/2026-10-18.md。结论：PYTHONPATH/key/overlay 3 bugs 修复，docker 权限已由运维恢复，smoke+ pilot 已跑。需要时再读。
 
 > 📦 R431 (2026-10-18 12:30) — archived → `daily-memories-harness/2026-10-18.md`。结论：relay fixed（inbox RUN_ID 标记问题），smoke failed at cline install（npm fallback 装错包），3 bugs found（A:PYTHONPATH / B:key提取 / C:Docker Hub不可达）——**全部在 R432 修复**（C 改用 overlay 挂 host cline 二进制，绕过 npm）。
-> 🔧 **运维指令（2026-10-16 · 最高优先 · 每轮唤醒必读）**：
-> **🆕 2026-10-16 重启补完 188 条**：用 `--resume` 重启未跑完的 4 路（opencode/cline/claude/pi）。
-> **🔴 DATA-LOSS BUG #2 FIXED (2026-10-17 01:30)**：`load_results()` 在 JSON parse error 时**重命名**损坏文件 → `save_results()` 读到空文件 → 仅写当前 harness → **丢失 3 个 DONE harness 数据**（codex/deepseek/hermes 共 900 条）。根因=load_results 和 save_results **双重读取**：load_results 先 rename，save_results 找不到文件→current=[]。已从 `.corrupt` 备份恢复 1994 条 + 合并当前 1110 条 = **2011 条**。修复：① `load_results` **不再 rename**（留文件在原位）② `save_results` 改为**容错解析+恢复写入**（raw_decode salvage → merge → write）。
-> **glm53 7×300** ✅ **COMPLETE (R423, 14:45)**：**全部 7 路 DONE ✅ 2100/2100**（codex 80 · deepseek 71 · hermes 81 · opencode 87 · claude-code 80 · cline-patched 86 · pi 92）。**577 resolved (27.5%)** vs kimi 574/2100 (27.3%)。McNemar: 2093/2100 agree(99.7%), b=2 c=5, p=0.453 → **换 backbone 无显著提升**。报告 `report_harness_glm53_7x300_zh.html` 已出最终版（pending=0）。pi PID 1195199 已完成 300/300（django-16873 标记 quota-blocked）。
-> **TB 2.0 PROGRESS（R426, 21:12 — Codex pilot ✅ API working, task timeout）**：① Docker ✅ ② Dataset ✅ (89 tasks) ③ Oracle 1-task ✅ reward 1.0 ④ Docker networking ✅ (host net + aliyun mirror + uv mount) ⑤ **Codex 1-task pilot COMPLETE** — codex 0.94.0 + `wire_api="chat"` config → **Chat Completions API works through gw_proxy!** Agent executed ~44 commands, created todo list, problem-solved R installation. **Timed out after 900s** (AgentTimeoutError, reward 0.0) because R installation was blocked by conflicting Debian/Ubuntu apt sources in container. **Key: API issue SOLVED, timeout is task-specific.** ⑥ apt .deb corruption FIXED (HTTP sources + `Verify-Peer "false"` + `Install-Recommends "false"`) ⑦ NVM mirror ✅ (aliyun), Tencent npm mirror ✅ ⑧ codex.py fully patched (NVM mirror + curl -k + npm registry/strict_ssl + ca_certificates) ⑨ eve.py patched (NVM mirror). **Next: check other 6 agents' install requirements, run 7×5 pilot.**
-> **Proxy notes**: MITM proxy at 172.19.92.25:13128. HTTP **blocks** archive.ubuntu.com + deb.debian.org (302→disable.htm). HTTPS pypi.org → tls handshake eof. BUT mirrors.aliyun.com HTTP (apt) + HTTPS (pip/uv) **both work**. Docker daemon proxy in `/etc/docker/daemon.json` ✅, image pulls work ✅. Host uv 0.8.13 at `/usr/local/bin/uv`, Python 3.13.7 at `~/.local/share/uv/python/`.
-> **P1-2 rerun** ✅ DONE：kimi 574→621 resolved (29.6%)。
+> 📦 §运维指令(2026-10-16) + DATA-LOSS BUG#2 + glm53 7×300 COMPLETE + TB 2.0 R426 progress + Proxy notes 已归档 → daily-memories-harness/2026-10-18.md。结论：glm53 2100/2100 DONE(577 resolved)，data-loss bug 修复，TB Docker/networking/oracle 全打通。需要时再读。
 
 > 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
 > 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
@@ -40,15 +43,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB T2 7×5 PILOT RE-LAUNCHED (PID 2731368, -p dataset-dir fix commit 6ebf67f7) · oracle 5/5 ✅ · 监控 35-trial gate
-已完成:       ①-㉘ same · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script (local -p) · ㉝ R431: ops relay fixed (inbox marker 122→123, commit eb204521) + stray .12 relay killed + 123 ran ✅ · ㉞ TB solo smoke ran 2m24s → FAILED at cline install (npm fallback targets non-existent pkg; fast-path embedded-bun binary absent)
-当前动作:     R431 (12:45): smoke 诊断完成。cline install 路径根本性破损——本机 cline=bun 源码构建(非 npm 包)，fast-path 期望的嵌入式 bun 二进制不存在 → npm fallback 装错包 fail。node fast-path/env 容器/镜像缓存均 ✅。
-下一步:       ① 修 cline install：本机 bun --compile 构建独立二进制(或 dist/index.js+bun) + overlay 挂载 cline 源码/bun + 改 cline_patched fast-path 路径 ② 重跑 smoke(cline-patched × fix-git) ③ 修 launch_tb_7way.sh bug-A(PYTHONPATH)+bug-B(key) ④ 解 bug-C(未缓存镜像拉取) ⑤ smoke pass → 7×5 pilot
-阻塞:         cline install 路径破损(smoke fail 根因，pilot 前必修) · bug-C Docker Hub 不可达(未缓存镜像) · bug-A/B launch script。其余无。
+PHASE:        TB T2 7×5 PILOT v2 — 6/7 infra-fail FIXED (npm prefix + pip --break-system-packages + opencode via npm), awaiting re-run
+已完成:       ①-㉘ same · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 COMPLETE (cline-patched 0.8, 6/7 infra-fail) · ㉟ 3 root causes found + FIXED (R435)
+当前动作:     R435 (16:57): pilot v1 结果分析 + 3 类 infra bug 修复（npm RO mount / pip PEP668 / opencode GitHub DL）。4 adapter 文件已改，py_compile + 28/28 mock ✅，npm prefix fix 容器实测 ✅ codex-cli 0.94.0。待 git push + .29 重跑 pilot。
+下一步:       ① git push ② .29 重跑 `launch_tb_7way.sh --pilot` ③ pilot gate（infra ≤20%, ≥6/7 runnable）→ ④ full 7×89 ⑤ gen_report
+阻塞:         无（infra bugs 已修，待验证）。🔴 full-eval 镜像阻塞预警：89 task 仅 ~15 本地镜像，Docker Hub pull 被代理阻断。
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-18 16:57 —— R435: 7×5 pilot v1 COMPLETE（.29, 35 trial）。oracle 5/5 ✅。cline-patched 4/5 (0.8) ✅。6/7 harness 全 infra-fail（codex/claude-code/pi: npm ENOENT on RO /opt/node; hermes/deepseek: pip PEP668; opencode: GitHub DL exit 56）。3 类根因全 FIXED: _base.py npm prefix /usr/local + hermes/deepseek --break-system-packages + opencode npm install。容器实测 codex-cli 0.94.0 ✅。28/28 mock ✅。待 push + .29 重跑 pilot。
 - 2026-10-18 12:30 —— R431: ① ops relay 修复——RUN_ID 123 不执行真因=inbox.md 触发标记 122 未更到 123（relay 未冻结），已 122→123(commit eb204521)+push，123 在 .29 执行成功；kill .12 stray relay(pid 1048010)，.29 single relay(pid 1972249,ppid=1)；123 probe 训练全健康。② TB solo smoke 跑起 on .29：cline-patched × fix-git(cached image)，跑 2m24s → FAILED at cline install(npm install -g cline exit 1；根因=cline 是 bun 源码构建非 npm 包，fast-path 嵌入式 bun 二进制不存在)。③ 发现 3 bug：launch_tb_7way.sh 未设 PYTHONPATH(自定义 adapter 导入失败)/key 提取破损(全角冒号+-A1,取空→401)/Docker Hub 不可达 via proxy(仅 cached image 能跑,regex-log 未缓存致首试 16s 失败)。改 fix-git(cache)后容器 Up，但 cline install fail。WAITING=0 待修 cline install 路径。
 - 2026-10-18 07:20 —— R430: MEMORY archived 33.5KB→23.6KB · _base.py _install_node fixed (NVM+aliyun mirror replaces blocked nodesource.com) · launch_tb_7way.sh fixed (local -p paths + minimal2 overlay, 5 pilot tasks) · 28/28 adapter tests OK · Docker on .29 ✅ (not .12) · Next: smoke test 1 adapter on .29
 - 2026-10-18 06:06 —— R429: Oracle 5/5 ✅ ALL PASS (BCE fix8: numpy 2.x alias + planarity 1.0.0 key remap). Details → daily-memories-harness/2026-10-18.md

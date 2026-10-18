@@ -190,6 +190,11 @@ class TBBaseAgent(BaseInstalledAgent):
                     "ln -sf /opt/node/bin/node /usr/local/bin/node && "
                     "ln -sf /opt/node/bin/npm /usr/local/bin/npm && "
                     "ln -sf /opt/node/bin/npx /usr/local/bin/npx && "
+                    # /opt/node is mounted read-only, so npm install -g (which
+                    # writes to /opt/node/lib/node_modules) fails with ENOENT.
+                    # Redirect the global prefix to /usr/local (writable).
+                    "mkdir -p /usr/local/lib/node_modules && "
+                    "npm config set prefix /usr/local && "
                     "node --version && npm --version"
                 ),
             )

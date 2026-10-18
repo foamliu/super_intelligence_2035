@@ -62,8 +62,8 @@ class HermesTB(TBBaseAgent):
         await self.exec_as_root(
             environment,
             command=(
-                "pip install --upgrade pip && "
-                "pip install hermes-agent 2>&1 | tail -5"
+                "pip install --break-system-packages --upgrade pip && "
+                "pip install --break-system-packages hermes-agent 2>&1 | tail -5"
             ),
         )
         result = await environment.exec(command="hermes --version 2>&1 || true")

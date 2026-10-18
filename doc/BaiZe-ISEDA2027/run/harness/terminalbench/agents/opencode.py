@@ -59,13 +59,19 @@ class OpenCodeTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install OpenCode binary inside the Docker container."""
-        # OpenCode is a single binary; download from GitHub releases
+        """Install OpenCode inside the Docker container via npm.
+
+        The official install script (curl | bash) downloads a binary from
+        GitHub releases (github.com/anomalyco/opencode/releases), which fails
+        through the MITM proxy with exit 56 (NetworkConnectionError).
+        npm install -g opencode-ai is the fallback path in the official script
+        and works reliably with the npmmirror registry + writable prefix set
+        by _install_node.
+        """
+        await self._install_node(environment)
         await self.exec_as_root(
             environment,
-            command=(
-                f"curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5"
-            ),
+            command="npm install -g opencode-ai 2>&1 | tail -5",
         )
         result = await environment.exec(command="opencode version 2>&1 || true")
         self._version = result.stdout.strip() or "unknown"
