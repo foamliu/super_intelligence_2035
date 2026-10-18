@@ -205,3 +205,68 @@ installing to /usr/local/lib/R/site-library/00LOCK-bnlearn/00new/bnlearn/libs
 * DONE (bnlearn)
 > 
 > 
+[1] "--- Fitted Linear Gaussian Bayesian Network ---"
+
+  Bayesian network parameters
+
+  Parameters of node U (Gaussian distribution)
+
+Conditional density: U
+Coefficients:
+(Intercept)  
+   50.47989  
+Standard deviation of the residuals: 10.68515 
+
+  Parameters of node Y (Gaussian distribution)
+
+Conditional density: Y | U
+Coefficients:
+(Intercept)            U  
+ 12.4283907    0.7513157  
+Standard deviation of the residuals: 10.62714 
+
+  Parameters of node R (Gaussian distribution)
+
+Conditional density: R | U
+Coefficients:
+(Intercept)            U  
+ -3.1974119    0.9827893  
+Standard deviation of the residuals: 10.58143 
+
+  Parameters of node D (Gaussian distribution)
+
+Conditional density: D | U + Y
+Coefficients:
+(Intercept)            U            Y  
+-12.2965135    0.5495886    0.4485709  
+Standard deviation of the residuals: 14.09165 
+
+  Parameters of node M (Gaussian distribution)
+
+Conditional density: M | U + R
+Coefficients:
+(Intercept)            U            R  
+-11.3570201    0.7675166    0.3028659  
+Standard deviation of the residuals: 12.48215 
+
+[1] "--- Original Parameters for Node D ---"
+
+  Parameters of node D (Gaussian distribution)
+
+Conditional density: D | U + Y
+Coefficients:
+(Intercept)            U            Y  
+-12.2965135    0.5495886    0.4485709  
+Standard deviation of the residuals: 14.09165 
+[1] "--- Intervened Parameters for Node D ---"
+
+  Parameters of node D (Gaussian distribution)
+
+Conditional density: D | U + Y
+Coefficients:
+(Intercept)            U            Y  
+-12.2965135    0.5495886    0.4485709  
+Standard deviation of the residuals: 14.09165 
+[1] "--- Distributional Shift in D (due to intervention on Y -> D) ---"
+[1] "Original Mean of D: 38.0343251805548"
+[1] "New Mean of D after intervention: 15.498665534146"

@@ -1,5 +1,5 @@
-  5/5 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:08:32 0:00:00
-tb_pilot_dataset_kBSCHi • deepseek-harness
+  5/5 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:06:31 0:00:00
+tb_pilot_dataset_jZ9F8w • deepseek-harness
 ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
 ┃ Trials ┃ Exceptions ┃  Mean ┃
 ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
@@ -14,14 +14,14 @@ tb_pilot_dataset_kBSCHi • deepseek-harness
 └───────────────────────────┴───────┘
 
 Job Info
-Total runtime: 8m 33s
+Total runtime: 6m 31s
 Results written to 
 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
-ness/terminalbench/jobs_deepseek-harness/2026-10-18__16-07-59/result.json
+ness/terminalbench/jobs_deepseek-harness/2026-10-18__18-15-03/result.json
 Inspect results by running `harbor view 
 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
 ness/terminalbench/jobs_deepseek-harness`
 Share results by running `harbor upload 
 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
-ness/terminalbench/jobs_deepseek-harness/2026-10-18__16-07-59`
+ness/terminalbench/jobs_deepseek-harness/2026-10-18__18-15-03`
 
