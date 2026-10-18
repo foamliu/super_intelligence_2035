@@ -13,7 +13,6 @@ Run:     cline -c <cwd> --data-dir /tmp/cline_tb_data \
 
 from __future__ import annotations
 
-import json
 import shlex
 from typing import Annotated, Any, override
 
@@ -154,39 +153,31 @@ class ClinePatched(TBBaseAgent):
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
 
-        # Pre-create providers.json with baseUrl so cline's openai-compatible
-        # provider knows where to send API requests.  Cline does NOT read
-        # OPENAI_BASE_URL from env (confirmed: 0 occurrences in source).
-        # Without baseUrl in providers.json, cline defaults to api.openai.com
-        # or api.cline.bot, which fails with our kimi-k2.6-cloud key.
-        providers_json = json.dumps({
-            "version": 1,
-            "lastUsedProvider": "openai-compatible",
-            "modes": {},
-            "providers": {
-                "openai-compatible": {
-                    "settings": {
-                        "provider": "openai-compatible",
-                        "apiKey": self._tb_api_key,
-                        "model": self._tb_model,
-                        "baseUrl": self._tb_base_url,
-                    },
-                    "tokenSource": "manual",
-                },
-            },
-        })
-        setup_cmd = (
-            f"mkdir -p {shlex.quote(self._data_dir)}/settings && "
-            f"printf '%s' {shlex.quote(providers_json)} > "
-            f"{shlex.quote(self._data_dir)}/settings/providers.json"
+        # Configure the openai-compatible provider with baseUrl via `cline auth`.
+        # Cline does NOT read OPENAI_BASE_URL from env (0 occurrences in source),
+        # and it overwrites any pre-created providers.json on startup.  The only
+        # way to persist baseUrl is via `cline auth -b <url>`, which writes it
+        # to providers.json settings.  We run auth first, then run the task
+        # WITHOUT -k (key already saved by auth) to avoid overwriting baseUrl.
+        auth_cmd = (
+            f"cline auth "
+            f"-P openai "
+            f"-k {shlex.quote(self._tb_api_key)} "
+            f"-m {shlex.quote(self._tb_model)} "
+            f"-b {shlex.quote(self._tb_base_url)} "
+            f"--data-dir {shlex.quote(self._data_dir)}"
         )
-        await environment.exec(command=setup_cmd)
+        auth_result = await environment.exec(command=auth_cmd)
+        if auth_result.return_code != 0:
+            raise RuntimeError(
+                f"Cline auth failed (exit {auth_result.return_code}): "
+                f"{(auth_result.stderr or '')[:500]}"
+            )
 
         cmd = (
             f"cline -c {shlex.quote(cwd)} "
             f"--data-dir {shlex.quote(self._data_dir)} "
             f"-P openai -m {shlex.quote(self._tb_model)} "
-            f"-k {shlex.quote(self._tb_api_key)} "
             f"--auto-approve true --json "
             f"{shlex.quote(instruction)}"
         )
