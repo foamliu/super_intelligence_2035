@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 123 -->
+<!-- RUN_ID: 124 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,27 @@
 
 ---
 
+## RUN_ID 124 — 同步 `.29` 共享工作副本（让 pretrain 16:25 唤醒读到 resume 令）
+
+> 用途：把 `origin/main` 拉到 `.29` 的共享工作副本，确保 pretrain 下一轮读到「立即 resume step_8000」；只做 fetch/pull，不碰训练。
+
+```bash
+set -u
+echo "=== RUN_ID 124 | pull latest task books on .29 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main
+git log -1 --oneline
+grep -n '16:2x' doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md | head -3 || true
+echo "=== DONE 124 ==="
+```
+
 ## RUN_ID 123 — 🩺 只读探针：pretrain/data/harness/vision 的 loop 是否存活 + GPU 实况（不启动 / 不 kill / 不写文件）
 
 > 用途：2026-10-18 09:5x 发现 pretrain/data/harness 的巡检提交分别停在 08:14 / 07:59 / 07:33，疑似 loop 停摆。**只读**，无危险模式；每条命令都有界。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 123 · loop/GPU read-only probe · $(date '+%F %T') · host=$(hostname) ==="
 echo "[1] .29 loops"
