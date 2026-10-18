@@ -1390,3 +1390,79 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 | 训练日志 | `/tmp/armB_openclip_train.log` |
 | **中文报告** | `reports/report_vision_armB_openclip_result_zh.html`（§1–§7 + 附录 A: open_clip × AIMv2-style 兼容性 + 附录 B: 官方 AIMv2 概念澄清） |
 
+
+---
+
+## §12 ArmB-Stage4 · MLLM 对齐 + 12 集 lmms-eval 评测（2026-10-18）
+
+### §12.1 实验概述
+
+将 ArmB 视觉编码器（open_clip ViT-B/16，768-d，86.2M，ProtB lp=62.09%）经 LLaVA-OV1.5 三阶段对齐（Stage-1 → Stage-1.5 → Stage-2）接入 Qwen3-4B，在 12 个 lmms-eval benchmark 上评测，对比 ④-4ep 基线。
+
+### §12.2 模型配置
+
+| 组件 | ArmB | ④-4ep（基线） |
+|:--|:--|:--|
+| 视觉编码器 | open_clip ViT-B/16 · 768-d · 86.2M | 自研 w512 · 512-d · 126.8M |
+| ProtB lp | 62.09 ± 0.01% | 67.05 ± 0.02% |
+| Projector | 2 层 MLP 768→2560 · 8.52M | 2 层 MLP 512→2560 · 7.87M |
+| LLM | Qwen3-4B-Instruct-2507 | 同左 |
+| 三阶段配方 | LLaVA-OV1.5（Stage-1 2500 / Stage-1.5 20000 / Stage-2 3500） | 同左 |
+
+### §12.3 12 集评测结果 + Δ vs ④-4ep
+
+| # | Benchmark | ArmB | ④-4ep | Δ |
+|:--:|:--|--:|--:|--:|
+| 1 | ai2d | 60.69% | 60.04% | **+0.65pp** |
+| 2 | RealWorldQA | 45.49% | 43.01% | **+2.48pp** |
+| 3 | MMMU (val) | 43.67% | 42.89% | **+0.78pp** |
+| 4 | Blink | 38.94% | 38.52% | **+0.41pp** |
+| 5 | MMStar | 27.95% | 26.81% | **+1.14pp** |
+| 6 | MMMU-Pro | 22.43% | 23.12% | −0.69pp |
+| 7 | InfoVQA | 16.88% | 16.58% | **+0.30pp** |
+| 8 | ChartQA | 12.52% | 12.24% | **+0.28pp** |
+| 9 | CountBench | 9.57% | 10.79% | −1.22pp |
+| 10 | DocVQA | 7.36% | 7.41% | −0.05pp |
+| 11 | OCRBench | 1.60% | 1.10% | **+0.50pp** |
+| — | **平均（除 MME）** | **26.10%** | **25.68%** | **+0.42pp** |
+| 12 | MME total | 796.51 | 847.46 | −50.95 |
+| 12a | MME perception | 583.65 | 596.75 | −13.10 |
+| 12b | MME cognition | 212.86 | 250.71 | −37.85 |
+
+### §12.4 预注册判据裁定
+
+| 档位 | 条件 | ArmB 实际 | 裁定 |
+|:--|:--|:--|:--:|
+| 强成功 | 平均 ≥ 30% | 26.10% | ✗ |
+| 成功 | 平均 > 24% **且** DocVQA/ChartQA/OCRBench 任一 ≥ +10pp | 26.10% > 24% ✓，但 max Δ = +0.50pp | ✗ |
+| 不可分辨 | 22% – 26% | 26.10%（上沿 +0.10pp） | **≈ 边界** |
+| 失败 | 平均 ≤ 22% | 26.10% | ✗ |
+
+> **预注册裁定：不可分辨（边界值）**。ArmB 12 集平均 26.10%，略高于 ④-4ep（+0.42pp），处于不可分辨区间上沿。8/11 benchmark 方向为正但无 +10pp 突破。
+
+### §12.5 与 RiCEViT（配方R-1.5）对比
+
+| 指标 | ArmB | ④-4ep | RiCEViT | Δ(ArmB−RiCEViT) |
+|:--|--:|--:|--:|--:|
+| 平均（除 MME） | 26.10% | 25.68% | 60.08% | **−34.0pp** |
+| DocVQA | 7.36% | 7.41% | 81.58% | −74.2pp |
+| ChartQA | 12.52% | 12.24% | 75.72% | −63.2pp |
+| OCRBench | 1.60% | 1.10% | 62.90% | −61.3pp |
+
+> ArmB 与 ④-4ep 一样全面落后 RiCEViT（−34pp vs −34.4pp），差距几乎相同。细粒度任务（doc/chart/ocr）仍是最大短板，瓶颈在分辨率（224px / 196 tokens）非视觉塔选型。
+
+### §12.6 关键结论
+
+1. **open_clip 接口 + AIMv2-style 表征在 MLLM 下游与 ④-4ep 基本持平**（Δ=+0.42pp，评测噪声内），未拉开差距。
+2. **ProtB → MLLM 传递性再次证伪**：ArmB ProtB lp（62.09%）低于 ④（67.05%）5pp，但 MLLM 评测反超 0.42pp。线性探针不预测 MLLM 下游表现。
+3. **分辨率是系统性瓶颈**：DocVQA/ChartQA/OCRBench 与 ④ 几乎相同（均 <13%），远落后 RiCEViT（>62%），说明瓶颈在 224px/196tokens 而非视觉塔。
+4. **MME 认知下降**（−37.85）是唯一明显劣化的指标，可能因 768-d 特征空间在 LoRA 微调后对认知推理适配不如 512-d，但样本量不足以确证。
+
+### §12.7 文件路径
+
+| 文件 | 路径 |
+|:--|:--|
+| 评测脚本 | `vision/run_lmms_eval.py` + `vision/rerun_missing_8benchmarks_armB.sh` |
+| 评测结果 | `datasets/baize-vision/out/mllm_eval_results_armB/consolidated_12benchmarks.json` |
+| **中文报告** | `reports/report_vision_armB_mllm_stage4_zh.html` |
+| 评测日志 | `/tmp/rerun_8b_armB.log` |
