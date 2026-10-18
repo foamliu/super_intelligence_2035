@@ -9309,3 +9309,115 @@ To https://github.com/foamliu/super_intelligence_2035
    53eca1b4..2a7cfc03  main -> main
 === DONE 70 ===
 ```
+
+---
+
+## RUN_ID 71 · 2026-10-18 12:20:20 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 71 | zhulong r1 read-only probe | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+cd "$BASE" 2>/dev/null || true
+echo "[1] loop/relay/r1 procs"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[r]un_zhulong_script|[z]hulong_ops_relay\.sh|[o]ps_relay\.sh' | cut -c1-180 || true
+echo "[2] r1 pid 1424781 (if alive)"
+ps -o pid,ppid,etimes,args -p 1424781 2>&1 | cut -c1-180
+echo "[3] log stat"
+stat -c '%n size=%s mtime=%y' /tmp/ZL_glm52_r1.log 2>&1
+echo "[4] log tail"
+tail -40 /tmp/ZL_glm52_r1.log 2>&1 | cut -c1-200
+echo "[5] score/progress lines"
+grep -E 'pass \(|评估结果汇总|PASS_RATE|DONE|完成|成功|失败' /tmp/ZL_glm52_r1.log 2>/dev/null | tail -15 | cut -c1-200
+echo "[6] task markers (last 20000 lines)"
+tail -20000 /tmp/ZL_glm52_r1.log 2>/dev/null | grep -cE 'task|Task|TASK|评估' || true
+echo "[7] memory heartbeat"
+grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null; stat -c 'MEMORY mtime=%y' MEMORY_ZHULONG.md 2>/dev/null
+echo "[8] relay last_run_id/log"
+cat ops/.last_run_id 2>/dev/null; tail -5 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-200 || true
+echo "=== DONE 71 ==="
+```
+
+**输出**
+```
+=== RUN_ID 71 | zhulong r1 read-only probe | 2026-10-18 12:20:20 | host=hfeg0tedaap02 ===
+[1] loop/relay/r1 procs
+  81827       1  375433 bash zhulong_loop.sh
+1584673 3277328       0 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+3277328       1  619325 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+[2] r1 pid 1424781 (if alive)
+    PID    PPID ELAPSED COMMAND
+[3] log stat
+/tmp/ZL_glm52_r1.log size=10321861 mtime=2026-10-18 11:31:26.826932185 +0800
+[4] log tail
+  lang=pyAether → 框架: EDA-Eval-Framework_1_pyaether
+
+======================================================================
+  评估轮次: 1018 (completed_code_generation_2026_1018_093852.jsonl)
+======================================================================
+Traceback (most recent call last):
+  File "/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py", line 1071, in <module>
+    main()
+  File "/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py", line 1041, in main
+    ok = eval_one(
+         ^^^^^^^^^
+  File "/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py", line 407, in eval_one
+    restore_config()
+  File "/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py", line 198, in restore_config
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: PosixPath('/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether')
+[0;31m[ERROR][0m scripts/run_eval.py 执行失败
+[1;33m[WARNING][0m [Step 7.1] 评估失败 (跳过, 不影响生成产物)
+[0;34m[INFO][0m [Step 8] 跳过 Memory Bank 更新 (自进化未开启)
+[0;34m[INFO][0m [Step 8.5] 跳过 Skill 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.55] 跳过 Skill 质量门禁 (自进化未开启)
+[0;34m[INFO][0m [Step 8.6] 跳过 Rules 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.65] 跳过 Rule 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.7] 跳过 Skill 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.9] 跳过 L1 语义合并 (自进化未开启)
+[0;34m[INFO][0m [Step 8.92] 跳过 L1 突触修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.95] 跳过 validator 规则挖掘 (自进化未开启)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 生成代码文件:   code_generation_2026_1018_093852.jsonl
+[0;34m[INFO][0m 原始数据集名:   EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m 输出目录:       /home/app.e0031982/eda_code_eval/2026_1018_093852
+[0;34m[INFO][0m =============================================
+[5] score/progress lines
+[0;34m[INFO][0m 统计: 成功[156] / 超时[2] / 失败[0]
+[0;34m[INFO][0m 平均成功任务耗时: 328 秒
+[0;32m[SUCCESS][0m   端口 8650 清理完成
+[0;32m[SUCCESS][0m   端口 8651 清理完成
+[0;32m[SUCCESS][0m   端口 8652 清理完成
+[0;32m[SUCCESS][0m   端口 8654 清理完成
+[0;32m[SUCCESS][0m cline 批量处理完成
+[0;32m[SUCCESS][0m 格式化输出完成
+[complete_code_generation] 补全完成！
+[complete_code_generation] 成功任务: 153
+[complete_code_generation] 失败任务: 3
+[0;32m[SUCCESS][0m 代码生成的状态补全完成
+[0;32m[SUCCESS][0m cline trace 拷贝完成: 158 个对话记录 (其中 158 个重命名为 benchmark ID) -> /home/app.e0031982/eda_code_eval/2026_1018_093852/trace
+[0;31m[ERROR][0m scripts/run_eval.py 执行失败
+[1;33m[WARNING][0m [Step 7.1] 评估失败 (跳过, 不影响生成产物)
+[6] task markers (last 20000 lines)
+233
+[7] memory heartbeat
+<!-- heartbeat 2026-10-18 10:55 -->
+MEMORY mtime=2026-10-18 10:56:37.495476000 +0800
+[8] relay last_run_id/log
+70
+[zhulong-relay] RUN_ID=67 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=68 executed, exit=0, appended to outbox.
+[zhulong-relay] push FAILED (will retry next cycle)
+[zhulong-relay] RUN_ID=69 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=70 executed, exit=0, appended to outbox.
+=== DONE 71 ===
+```
