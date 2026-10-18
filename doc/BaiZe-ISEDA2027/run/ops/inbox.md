@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 129 -->
+<!-- RUN_ID: 130 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,28 @@
 
 ---
 
+## RUN_ID 130 — 同步 `.29` 工作副本（务必让 16:4x “训练未死”更正先于唤醒）
+
+> 用途：只 `git pull`，把 16:4x 更正同步到 `.29` 共享工作副本，防止 16:55 唤醒误重启健康训练。**不碰训练**。
+
+```bash
+set -u
+echo "=== RUN_ID 130 | pull 16:4x correction | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main || true
+git log -1 --oneline
+grep -n '16:4x' doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md | head -3
+grep -n '没有死' doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | head -2
+echo "=== DONE 130 ==="
+```
+
 ## RUN_ID 129 — sudo 只读：确认 `.29` 真实 train_log（/tmp）当前 step，避免误杀
 
 > 用途：NFS 的 `$OUTPUT_DIR/baize_xmodel25_decay_v2_train.log` 是 `.12` 旧 run（10-17 10:45）；`.29` 真实日志是 `/tmp/baize_xmodel25_decay_v2_train.log`。本块只读确认当前 step/进程/GPU。**不 kill、不启动。**
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 129 | real train log check | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
