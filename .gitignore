@@ -21,3 +21,4 @@ desktop.ini
 # ⚠️ 提交前自查：git check-ignore -v <file>  应命中本文件
 
 hf_checkpoints/
+doc/sudo.txt
