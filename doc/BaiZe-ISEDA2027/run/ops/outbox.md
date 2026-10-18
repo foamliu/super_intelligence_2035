@@ -14122,3 +14122,33 @@ echo "=== DONE 129 ==="
 7, 100 %, 51763 MiB
 === DONE 129 ===
 ```
+
+---
+
+## RUN_ID 130 · 2026-10-18 16:50:19 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 130 | pull 16:4x correction | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main || true
+git log -1 --oneline
+grep -n '16:4x' doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md | head -3
+grep -n '没有死' doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | head -2
+echo "=== DONE 130 ==="
+```
+
+**输出**
+```
+=== RUN_ID 130 | pull 16:4x correction | 2026-10-18 16:50:19 | host=whag0pgpuap12 ===
+From https://github.com/foamliu/super_intelligence_2035
+ * branch              main       -> FETCH_HEAD
+Already up to date.
+8acfb233 data dl: wake528 en_v1_4下载+分词巡检(git push已修复+下载2.83MB/s 86/110shards+分词8workers alive 314B tok/day)
+3:### 🆕 运维指令 · 2026-10-18 16:4x（✅ 更正：#548 是误判，训练未死——**不要重启**）· 运维 sudo 实测
+4:> 🆕 **2026-10-18 16:4x 更正（sudo 实测）**：训练**没有死**——`.29` PID 2597555 从 **10-17 08:44** 一直存活，GPU **8×100%/51763 MiB**，`/tmp/baize_xmodel25_decay_v2_train.log` 当前 **step 9630/19980（48.2%）**、loss 1.3255、0 error。**#548 是误判**：它读的 `$OUTPUT_DIR/...train.log` 是 `.12` 旧 run 的 10-17 10:45 SIGTERM traceback，不是 `.29` 实时日志。**不要重启/不要 resume**；判活只认 `/tmp/baize_xmodel25_decay_v2_train.log` + `pgrep torchrun` + GPU。
+=== DONE 130 ===
+```
