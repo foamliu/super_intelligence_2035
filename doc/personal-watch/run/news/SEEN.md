@@ -753,3 +753,11 @@
 | 2026-10-17 | Meta 为 Facebook 用户提供 AI 驱动推荐定制工具 | IT之家（`014/286`） | news | https://www.ithome.com/1/014/286.htm |
 | 2026-10-17 | 荷兰法院：Meta 须向受害者组织开放算法与数据（据移动端首页导语） | 出处无法核验（`014/288` 实测为促销稿） | 不收(无法核验) | https://www.ithome.com/1/014/288.htm |
 | 2026-10-17 | DeepSeek 上线网页搜索 / 抓取 API：Search + Fetch，按成功请求计费每千次 5 元 | IT之家（`014/291`） | news | https://www.ithome.com/1/014/291.htm |
+| 2026-10-18 | 「鹏城云脑 Ⅲ」10000P 国产算力上线试运行（昇腾 384 超节点 · 全部建成 16000P） | IT之家（`014/387`） | news | https://www.ithome.com/1/014/387.htm |
+| 2026-10-18 | Anthropic 发布内部用工报告：初级技术岗新员工占比 27%→9% | IT之家（`014/450`） | news | https://www.ithome.com/1/014/450.htm |
+| 2026-10-18 | 联想 ThinkBook X AI 2027 轻薄本上架（第三代酷睿） | IT之家（`014/432`） | news | https://www.ithome.com/1/014/432.htm |
+| 2026-10-18 | 魅族 22 推送 Flyme AIOS 12.7.0.0A：「超级 Aicy」助手更新 | IT之家（`014/438`） | news | https://www.ithome.com/1/014/438.htm |
+| 2026-10-18 | 华硕首款英特尔 Arc Pro B70 显卡：32GB ECC 显存 · 标称 367 TOPS | IT之家（`014/390`） | news | https://www.ithome.com/1/014/390.htm |
+| 2026-10-18 | 我国首个全国产十万卡 AI 超集群真机亮相（8 月已官宣投用 · 本次为会展亮相） | IT之家（`014/456`） | news(不收·同设施不同阶段) | https://www.ithome.com/1/014/456.htm |
+| 2026-10-18 | 亚马逊云科技 CFO：AI 服务器投资回报周期不到三年 | IT之家（`014/488`） | 不收(表态+行情) | https://www.ithome.com/1/014/488.htm |
+| 2026-10-18 | 特斯拉司机称开 FSD 后睡着撞警车致两名巡警重伤 | IT之家（`014/348`） | 不收(伤亡个案) | https://www.ithome.com/1/014/348.htm |
