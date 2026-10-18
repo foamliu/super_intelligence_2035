@@ -22,12 +22,21 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# bug-A fix (R431): harbor is a uv tool (isolated venv) and cannot import our
+# custom adapters from `terminalbench.agents.*` unless the parent of the
+# `terminalbench` package is on PYTHONPATH.  SCRIPT_DIR is .../terminalbench,
+# so its parent (the harness/ dir) is what must be importable.
+# Verified: PYTHONPATH=<harness> python -c "import terminalbench.agents.cline_patched" → OK.
+export PYTHONPATH="${SCRIPT_DIR}/..:${PYTHONPATH:-}"
 RESULTS_FILE="${SCRIPT_DIR}/../terminalbench_kimi_k2.6_results.json"
 TRACES_DIR="${SCRIPT_DIR}/traces"
 DATASET="terminal-bench@2.0"
-# Local task directory on .29 (89 tasks).  Used with -p since Harbor Hub
-# auth is not set up (harbor auth status → "Not authenticated").
-TB_TASKS_DIR="${TB_TASKS_DIR:-$HOME/terminal-bench}"
+# Local task directory on .29 (226 task dirs present; TB 2.0 spec lists 89 —
+# we run whatever is present, per task §① "以实际为准").  Used with -p since
+# Harbor Hub auth is not set up.  ~/terminal-bench is a symlink to
+# /tmp/terminal-bench-repo/original-tasks (created by the agent; /tmp is
+# volatile — if cleaned, re-download or restore the symlink).
+TB_TASKS_DIR="${TB_TASKS_DIR:-${HOME}/terminal-bench}"
 HARNESSES=("cline-patched" "codex" "hermes" "opencode" "claude-code" "deepseek-harness" "pi")
 N_CONCURRENT=1
 K_ATTEMPTS=1
@@ -50,7 +59,9 @@ PILOT_TASK_NAMES=(
 
 # Docker overlay for network/host mode (proxy + mirrors).  Required for
 # package installs inside containers (MITM proxy blocks external repos).
-TB_OVERLAY="${TB_OVERLAY:-/tmp/network-host-overlay-minimal2.yml}"
+# Overlay now lives in the repo (stable) instead of /tmp (volatile).  It mounts
+# both /opt/node and /opt/cline-modules so the cline-patched fast path triggers.
+TB_OVERLAY="${TB_OVERLAY:-${SCRIPT_DIR}/overlay-network-host.yml}"
 
 # Parse args
 MODE="full"
@@ -67,7 +78,11 @@ echo "Mode: ${MODE}"
 
 if [[ -z "${TB_API_KEY:-}" ]]; then
     echo "ERROR: TB_API_KEY not set. Source from doc/keys.txt:" >&2
-    echo "  export TB_API_KEY=\$(grep -A1 'kimi-k2.6-cloud' doc/keys.txt | grep 'API Key' | awk '{print \$3}')" >&2
+    # bug-B fix (R431): keys.txt uses FULL-WIDTH colon (：), so awk '{print $3}'
+    # (whitespace split) returns empty.  Use -A2 + awk -F'：' to split on it.
+    # MUST scope to kimi (keys.txt has 12 "API Key" lines; without the kimi
+    # filter you'd concatenate all 12 keys).  Verified: yields a 72-char key.
+    echo "  export TB_API_KEY=\$(grep -A2 'kimi-k2.6-cloud' doc/keys.txt | grep 'API Key' | awk -F'：' '{print \$2}' | tr -d '[:space:]')" >&2
     exit 1
 fi
 

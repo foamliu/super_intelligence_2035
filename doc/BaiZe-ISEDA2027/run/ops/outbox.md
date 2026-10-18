@@ -13014,3 +13014,30 @@ none
 5f46a4a173e68b3d82b8dd26bbe59a5733ffc83e	HEAD
 === DONE 123 ===
 ```
+
+---
+
+## AGENT BLOCKER REPORT - 2026-10-18 13:50 - harness line (R432)
+
+**Blocker**: Docker access lost on .29 — cannot run Terminal-Bench smoke/pilot/full.
+
+**Root cause**: docker group was recreated (old gid 122 -> _lldpd; docker now gid 123 with zero members). User app.e0031982 is no longer in the docker group.
+
+**Symptoms**:
+- docker info -> permission denied (docker socket /var/run/docker.sock)
+- sg docker -c 'docker info' -> Invalid password (not a member, no group password)
+- sudo -n docker info -> no passwordless sudo
+- No process on .29 has gid 123 in supplementary groups (checked /proc/*/status)
+
+**Fix needed (requires root)**:
+    sudo usermod -aG docker app.e0031982
+    # or: sudo gpasswd -a app.e0031982 docker
+    # Then: newgrp docker  (or re-login)
+
+**Whats ready once docker is restored**:
+- 4 code bugs fixed (PYTHONPATH, key extraction, overlay path, task dir) - all verified
+- Gateway confirmed HTTP 200 (kimi-k2.6-cloud works, 0.75s response)
+- Overlay mounts host cline binary (132MB standalone ELF, glibc-only) -> no npm install needed
+- Solo smoke command ready: TB_API_KEY=<72char> bash launch_tb_7way.sh --smoke
+
+**Agent action**: WAITING=1 in MEMORY_HARNESS.md. Will auto-proceed once docker access is detected on next wake.
