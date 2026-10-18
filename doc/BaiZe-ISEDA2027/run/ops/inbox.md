@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 127 -->
+<!-- RUN_ID: 128 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,50 @@
 
 ---
 
+## RUN_ID 128 — sudo 只读：当前训练 step 与进程启动时间（决定是否 kill）
+
+> 用途：读 torchrun PID 2597555 的 etimes/lstart、worker 启动时间、train_log 当前 step 与 RESUME/error 行，确认是 step_0 从头重启还是 9400+ 自愈。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 128 | pretrain step check | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin >/dev/null 2>&1 || true
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+PW=$(sed -n '2p' doc/sudo.txt)
+cat > /nas_train/app.e0031982/pretrain_step.sh <<'EOS'
+#!/bin/bash
+set -u
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay
+echo "=== TORCHRUN 2597555 ==="
+ps -o pid,ppid,etimes,lstart,args -p 2597555 2>&1 | cut -c1-220
+echo "=== WORKERS ==="
+ps -eo pid,ppid,etimes,args | grep '[b]aize_xmodel25_decay_v2.py' | head -3 | cut -c1-180
+echo "=== LOG STAT ==="
+stat -c '%y %s' "$D/baize_xmodel25_decay_v2_train.log" 2>&1
+echo "=== LOG TAIL ==="
+tail -30 "$D/baize_xmodel25_decay_v2_train.log" 2>&1 | cut -c1-220
+echo "=== STEP LINES ==="
+grep -E 'step [0-9]+/|step=[0-9]+' "$D/baize_xmodel25_decay_v2_train.log" 2>/dev/null | tail -5
+echo "=== RESUME/ERROR ==="
+grep -nE 'RESUME|start_step|Traceback|Error|OOM' "$D/baize_xmodel25_decay_v2_train.log" 2>/dev/null | tail -10
+EOS
+chmod +x /nas_train/app.e0031982/pretrain_step.sh
+H=$(hostname)
+if [ "$H" = "whag0pgpuap29" ]; then
+  printf '%s\n' "$PW" | sudo -S -p "" bash /nas_train/app.e0031982/pretrain_step.sh
+else
+  printf '%s\n' "$PW" | ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'sudo -S -p "" bash /nas_train/app.e0031982/pretrain_step.sh'
+fi
+echo "=== DONE 128 ==="
+```
+
 ## RUN_ID 127 — sudo 只读确认：当前训练是 `--resume step_8000` 还是从头开始
 
 > 用途：查 `.29` 上 torchrun/worker 的**完整 cmdline**（是否含 `--resume`/`--model_path`）与 train_log 头部（是否 `start_step=8000`）。**只读**，不 kill、不启动。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 127 | verify resume args | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
