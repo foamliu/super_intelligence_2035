@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5（Stable 段 1.5T token）</title>
+<style>
+body{font-family:-apple-system,"Noto Sans SC","PingFang SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fafafa;color:#222;line-height:1.65}
+h1{color:#1a1a2e;border-bottom:3px solid #2563eb;padding-bottom:10px;font-size:24px}
+h2{color:#1a1a2e;border-bottom:2px solid #ccc;padding-bottom:5px;margin-top:36px;font-size:20px}
+h3{color:#333;margin-top:24px;font-size:17px}
+h4{color:#444;margin-top:18px;font-size:15px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#f0f4f8;font-weight:600}
+tr:nth-child(even){background:#f9fafb}
+.green{color:#16a34a}.amber{color:#ca8a04}.red{color:#dc2626}.blue{color:#2563eb}.bold{font-weight:bold}
+.mono{font-family:"JetBrains Mono","Courier New",monospace;font-size:12px}
+.small{font-size:11px;color:#666}
+.info{background:#e8f4fd;border-left:4px solid #2563eb;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#fef3cd;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.danger{background:#fee2e2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.formula{background:#f8f9fa;border:1px solid #e9ecef;border-radius:4px;padding:10px 14px;margin:12px 0;font-family:monospace;font-size:14px}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
+</style>
+</head>
+<body>
+<h1>BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5</h1>
+<p style="color:#666;font-size:13px">Stable 段 1.5T token · 生成时间：2026-10-18 · 纯写作（零 GPU）· 配套：<code>run/PLAN_V5_STABLE_1.5T.md</code>（Markdown 版）+ <code>run/PLAN_V5_DATA_PREREQ.md</code>（数据前置实测）<br>数据源：<code>DATA_LEDGER.md</code>（唯一数据源）· 吞吐源：T3/P-9.6–9.7 实测 249K tok/s · commit 前缀 <code>pretrain plan-v5:</code></p>
+
+<div class="info"><strong>v5 定位</strong>：用户直令「写《BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5》」，主要写 Stable 部分，使用 1.5T token。本报告是 <code>PLAN_V5_STABLE_1.5T.md</code> 的中文自包含 HTML 版——数字与该 Markdown <strong>逐项一致</strong>，不新增/不改写任何配方。长上下文章、风险表、前置条件表均为用户追加要求（2026-10-18②）。</div>
+
+<h2>§0 一页结论</h2>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>模型</td><td>BaiZe 2.22B Mamba2-hybrid（56 层 = 52 Mamba2 + 4 full_attention）</td></tr>
+<tr><td>总训练量</td><td><strong>1.5T token</strong>（Stable 段；warmup 2000 步 ≈ 4B tok 另计）</td></tr>
+<tr><td>阶段</td><td>S1（500B, en_v1_4 单源, 2M tok/step）→ S2（1T, 混料, 4M tok/step）</td></tr>
+<tr><td>步数</td><td>S1 250,000 + S2 250,000 = <strong>500,000 步</strong>（+ 2,000 warmup）</td></tr>
+<tr><td>学习率</td><td>warmup 2000 步后<strong>恒定 1e-3</strong>（S1/S2 全程同一常数，不做 cosine/decay）</td></tr>
+<tr><td>ckpt</td><td>每 2000 步 → <strong>250 个</strong>（S1 125 + S2 125）</td></tr>
+<tr><td>评测</td><td>每个 ckpt <strong>CS8</strong>（Common8, 0-shot, raw accuracy + Avg）</td></tr>
+<tr><td>基准吞吐</td><td><strong>249K tok/s</strong>（TP1/DP8/MBS2/seq4096/GBS1024/bf16, T3/P-9.6–9.7 实测）</td></tr>
+<tr><td>纯训练</td><td><strong>69.7 天</strong>（249K 基准）</td></tr>
+<tr><td>含评测日历</td><td><strong>约 74–76 天</strong>（+ 250×CS8 12.5–20.8h [假设] + 5% 余量）</td></tr>
+<tr><td>tokens/param</td><td>1.5T / 2.22B ≈ <strong>676 tok/param</strong></td></tr>
+</table>
+
+<div class="success"><strong>次序裁定</strong>：✅ <strong>采纳</strong> decay → 1M 长上下文（ABF）→ SFT/RL。1M 阶段独立 ETA（见 §6），不与 1.5T Stable 混算。</div>
+
+<div class="warn"><strong>主要风险</strong>：① LR 恒定后期可能欠拟合 ② 2M→4M batch 跳变 loss 断点 ③ en_v1_4 分词（<span class="green">已实测：16 并发 ≈ 1 天切完 500B，R3 降级为 🟢</span>） ④ 单机连续 ~70 天故障恢复 ⑤ 1M 阶段吞吐塌陷 ⑥ 250 ckpt 存储/评测开销 ⑦ 长上下文阶段 LR。</div>
+
+<div class="info"><strong>前置条件</strong>：① en_v1_4 分词 500B tok（<span class="green">已实测可行：已下 4.08TB ≈ 1.40T tok，余量 2.80×，16 并发 ≈ 1 天</span>，详见 <code>PLAN_V5_DATA_PREREQ.md</code>） ② S2 混料源就绪（code 411B ✅ / math 303B ✅ / HQ 1.415T ✅, 余量 ≥1.82×）。</div>
+
+<h2>§1 模型与并行配置</h2>
+<table>
+<tr><th>参数</th><th>值</th><th>来源</th></tr>
+<tr><td>架构</td><td>Mamba2-hybrid</td><td>BaiZe Stage(i)</td></tr>
+<tr><td>总参数</td><td class="mono">2.22B</td><td>实算（embed 265M×2 + 56 层 + norm）</td></tr>
+<tr><td>层数</td><td>56（52 Mamba2 + 4 full_attention）</td><td>架构定义</td></tr>
+<tr><td>hidden_size</td><td class="mono">2,048</td><td>P-3/P-8 config</td></tr>
+<tr><td>vocab_size</td><td class="mono">129,408</td><td>DeepSeek tokenizer（pad 129408 / eod 129280）</td></tr>
+<tr><td>seq_length</td><td><strong>4096</strong></td><td>用户直令（2¹²）</td></tr>
+<tr><td>并行</td><td><strong>TP1 · DP8</strong></td><td>T3/P-9.6 最优</td></tr>
+<tr><td>micro_batch_size</td><td>2</td><td>T3 实测最优</td></tr>
+<tr><td>global_batch_size</td><td>S1: 488 / S2: 976</td><td>由 tok/step 推导（见 §2）</td></tr>
+<tr><td>精度</td><td>bf16</td><td>基准配置</td></tr>
+<tr><td>torch.compile</td><td>✅ default</td><td>P-8/v2 已验证</td></tr>
+<tr><td>优化器</td><td>AdamW fused</td><td>P-8 最终选择（Muon 在 44B 发散，不用于 stable）</td></tr>
+</table>
+
+<h2>§2 两阶段配方表</h2>
+<table>
+<tr><th>项</th><th>S1</th><th>S2</th></tr>
+<tr><td>每 step token</td><td><strong>2M tok</strong></td><td><strong>4M tok</strong></td></tr>
+<tr><td>总 token</td><td><strong>500B</strong></td><td><strong>1T</strong></td></tr>
+<tr><td>步数</td><td class="mono">500B/2M = 250,000</td><td class="mono">1T/4M = 250,000</td></tr>
+<tr><td>seq × GBS</td><td class="mono">4096 × 488 = 2.00M</td><td class="mono">4096 × 976 = 4.00M</td></tr>
+<tr><td>MBS / DP</td><td class="mono">2 / 8 → grad accum = 31</td><td class="mono">2 / 8 → grad accum = 61</td></tr>
+<tr><td>学习率</td><td>1e-3 恒定（warmup 2000 步线性）</td><td>1e-3 恒定</td></tr>
+<tr><td>数据</td><td>en_v1_4 <strong>100%</strong></td><td>code 20% + math 1–2% + HQ 预训练</td></tr>
+<tr><td>每 step 时间</td><td class="mono">2M/249K = 8.0 s</td><td class="mono">4M/249K = 16.1 s</td></tr>
+<tr><td>纯训练时长</td><td class="mono">250K×8.0 = 557.9h = <strong>23.2 天</strong></td><td class="mono">250K×16.1 = 1,115.6h = <strong>46.5 天</strong></td></tr>
+<tr><td>ckpt 数</td><td>125</td><td>125</td></tr>
+</table>
+
+<div class="info"><strong>warmup</strong>：2000 步线性 0→1e-3，消耗 2000 × 2M = 4B tok（S1 预算内）。<br><strong>S1→S2 切换</strong>：batch 从 2M 跳到 4M（GBS 488→976），grad accum 31→61，per-step 8.0→16.1s。切换时记录 loss 断点（预期 loss 短暂下降，因有效 batch 增大）。</div>
+
+<h2>§3 数据配比与来源</h2>
+<div class="small">唯一数据源：<code>DATA_LEDGER.md</code>（2026-10-01 实测盘点 v0）。分词实测：<code>PLAN_V5_DATA_PREREQ.md</code>（2026-10-18 抽样）。</div>
+
+<h3>3.1 S1 数据</h3>
+<table>
+<tr><th>源</th><th>需求</th><th>可用</th><th>状态</th><th>余量</th></tr>
+<tr><td>en_v1_4</td><td>500B tok</td><td>≈2.31T tok（6.75T bytes, 56,461 文件）<br><span class="small">实测 0.343 tok/parquetB（PLAN_V5_DATA_PREREQ §3）</span></td><td><span class="amber">86/110 shard 已下（≈4.08TB ≈ 1.40T tok），<strong>未分词</strong></span></td><td><strong>2.80×</strong>（已下部分）</td></tr>
+</table>
+<div class="success"><strong>R3 实测结论</strong>（<code>PLAN_V5_DATA_PREREQ.md</code>）：已下 4.08TB ≈ 1.40T tok，对 S1 的 500B 余量 2.80×——<strong>已下部分就够 S1 500B，不依赖剩余 25 shard 续传</strong>。分词吞吐：端到端 375K tok/s/进程，16 并发 ≈ <strong>1 天</strong>切完 500B（纯 CPU，可与 .29 的 80B decay 并行）。🔴 R3 降级为 🟢。</div>
+
+<h3>3.2 S2 数据</h3>
+<table>
+<tr><th>源</th><th>需求</th><th>可用</th><th>状态</th><th>余量倍数</th></tr>
+<tr><td>code（UltraData-Code）</td><td><strong>200B</strong>（20%）</td><td>411B（L2 355B + L3 56B）<br><span class="small">DATA_LEDGER §0：1121 parquet / 1.22 TB</span></td><td>✅ 已下满</td><td><strong>2.06×</strong></td></tr>
+<tr><td>math（UltraData-Math）</td><td><strong>10–20B</strong>（1–2%）</td><td>303B（L1 184B + L2p 32B + L3 87B）<br><span class="small">DATA_LEDGER §0：1823 parquet / 552 GB</span></td><td>✅ 已下满</td><td><strong>15–30×</strong></td></tr>
+<tr><td>HQ 预训练（组合）</td><td><strong>780–790B</strong>（~79%）</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>├ ultraweb_en（base）</td><td>—</td><td>≈1.12T tok（2.66T, 2048 文件）<br><span class="small">DATA_LEDGER §0</span></td><td>✅ 已下满</td><td>—</td></tr>
+<tr><td>├ l1_en_hq</td><td>—</td><td>152B tok（478G, 6006 文件）<br><span class="small">DATA_LEDGER §0</span></td><td>✅ 已下满</td><td>—</td></tr>
+<tr><td>├ zh</td><td>—</td><td>112B tok（324G, 256 文件）<br><span class="small">DATA_LEDGER §0</span></td><td>✅ 已下满</td><td>—</td></tr>
+<tr><td>└ UltraX</td><td>—</td><td>31B tok<br><span class="small">v4 report §1.2：487G / 30.97B tok</span></td><td>✅ 已下满</td><td>—</td></tr>
+<tr style="font-weight:bold;background:#d4efdf"><td>HQ 合计</td><td>780–790B</td><td><strong>≈1.415T</strong></td><td>✅</td><td><strong>1.79–1.82×</strong></td></tr>
+</table>
+<div class="warn"><strong>瓶颈</strong>：HQ 预训练余量最低（1.82×），但充足。code 余量 2.06×，math 极充足。所有 S2 数据源均可追溯至 <code>DATA_LEDGER.md</code>。</div>
+
+<h2>§4 时长估算</h2>
+<h3>4.1 基准</h3>
+<div class="formula">基准吞吐 = <strong>249K tok/s</strong>（来源：T3/P-9.6–9.7「P-8 最优 = TP1·MBS2·bf16 = 249K tok/s」）<br>基准 1 step = 4096 × 1024 = 4.19M tok → 16.84 s/step</div>
+<div class="danger"><strong>⚠️ 不要把 298.6K tok/s 当成本模型基准</strong>：那是 <strong>Xmodel-2.5 80B decay</strong> 在 .29 的实测（seq 3712 / GBS 960），<strong>模型与序列都不同</strong>，只能当“同机上限”参考，不可混用。</div>
+
+<h3>4.2 纯训练（按 249K）</h3>
+<table>
+<tr><th>阶段</th><th>计算</th><th>时长</th></tr>
+<tr><td>S1</td><td class="mono">500B / 249K = 2,008,032s</td><td>557.8h = <strong>23.2 天</strong></td></tr>
+<tr><td>S2</td><td class="mono">1T / 249K = 4,016,064s</td><td>1,115.6h = <strong>46.5 天</strong></td></tr>
+<tr style="font-weight:bold;background:#d1ecf1"><td>合计</td><td class="mono">1.5T / 249K</td><td><strong>1,673.4h ≈ 69.7 天</strong></td></tr>
+</table>
+
+<h3>4.3 吞吐敏感性表</h3>
+<table>
+<tr><th>吞吐</th><th>1.5T 纯训练</th><th>说明</th></tr>
+<tr><td class="mono">218K tok/s</td><td><strong>79.6 天</strong></td><td>P-9.1 早测值（疑有争用，保守下界）</td></tr>
+<tr style="background:#d4efdf"><td class="mono bold">249K tok/s</td><td><strong>69.7 天</strong></td><td>T3/P-9.6–9.7 基准</td></tr>
+<tr><td class="mono">280K tok/s</td><td>62.0 天</td><td>若 S1 纯 web 短样本、packing 更满</td></tr>
+<tr><td class="mono">320K tok/s</td><td>54.3 天</td><td>需 FP8 / 更优 kernel（T3 实测 FP8 在 TP1 未提速）</td></tr>
+</table>
+
+<h3>4.4 FLOPs 交叉验证</h3>
+<div class="formula">总 FLOPs = 6 × N × T = 6 × 2.22e9 × 1.5e12 ≈ <strong>2.0 × 10²²</strong><br>8×H100 bf16 dense peak = 8 × 989 TFLOPS = 7.912 × 10¹⁵ FLOPS<br>249K tok/s 反推 MFU = 6 × 2.22e9 × 249K / 7.912e15 ≈ <strong>41.9%</strong><br>FLOPs 口径（6ND, 同 MFU）→ 2.0e22 / (7.912e15 × 0.419) ≈ <strong>33.2 天</strong></div>
+<div class="warn"><strong>⚠️ 两个口径差 2.1×</strong>：token 口径来自<strong>真机实测吞吐</strong>（含 SSM scan、通信、优化器、packing 填充与 dataloader），FLOPs 的 6ND 只算 dense matmul（Mamba2 的 scan/conv 不计入，且 2.22B 未含 embedding 以外的稀疏开销）。<strong>结论以 token 吞吐口径（69.7 天）为准，FLOPs 仅作 sanity check。</strong></div>
+<table>
+<tr><th>MFU</th><th>1.5T 纯训练</th></tr>
+<tr><td class="mono">30%</td><td>97.4 天</td></tr>
+<tr><td class="mono">37%</td><td>79.0 天</td></tr>
+<tr><td class="mono">41.9%</td><td>33.2 天（FLOPs 口径）</td></tr>
+</table>
+
+<h3>4.5 含评测的真实日历时间</h3>
+<table>
+<tr><th>项</th><th>时长</th><th>说明</th></tr>
+<tr><td>纯训练</td><td>69.7 天</td><td>249K 基准</td></tr>
+<tr><td>250 次 CS8 评测</td><td class="mono">12.5–20.8h [假设]</td><td>3–5 min/ckpt × 250（8 GPU 并行评测流程）</td></tr>
+<tr><td>启动/重启/故障余量</td><td class="mono">5% × 69.7 = 3.5 天</td><td>保守</td></tr>
+<tr style="font-weight:bold;background:#d1ecf1"><td>日历合计</td><td><strong>约 74–76 天</strong></td><td>—</td></tr>
+</table>
+
+<h2>§5 ckpt 与评测</h2>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>保存间隔</td><td>每 <strong>2000 步</strong></td></tr>
+<tr><td>总 ckpt 数</td><td><strong>250</strong>（S1: 125, S2: 125）</td></tr>
+<tr><td>每个 ckpt 大小</td><td>≈2.7 GB（model.safetensors, bf16 2.22B）[假设]</td></tr>
+<tr><td>存储总量</td><td class="mono">250 × 2.7 ≈ <strong>675 GB</strong> [假设]（需确认 NFS 余量：/nas_train 31T free）</td></tr>
+<tr><td>评测口径</td><td>CS8（Common8, 0-shot, raw accuracy + Avg）</td></tr>
+<tr><td>CS8 集</td><td>ARC-Challenge, ARC-Easy, BoolQ, HellaSwag, OpenBookQA, PiQA, SciQ, Winogrande</td></tr>
+<tr><td>评测耗时</td><td class="mono">3–5 min/ckpt [假设]（8 GPU 并行 lm-eval）</td></tr>
+<tr><td>评测调度</td><td>每 2000 步保存后立即跑 CS8；结果记入 scaling 曲线</td></tr>
+</table>
+<div class="warn">⚠️ ckpt 存储需规划：675 GB 在 31T free 中可行，但建议保留最新 N 个 + 定期清理旧 ckpt。</div>
+
+<h2>§6 长上下文注入（ABF）</h2>
+
+<h3>6.1 注入方案 = ABF（不是 YaRN），分两层</h3>
+<h4>推理侧（零训练）</h4>
+<div class="formula">
+rope_theta: 1e4 → <strong>1e6</strong><br>
+max_position_embeddings: 4096 → <strong>1,048,576</strong>（1M）<br>
+沿用 <code>baize_b1_longctx_extend.py</code> 的 B1 写法
+</div>
+<div class="info">
+<strong>既有实测</strong>：PPL 4K=83.24 → 128K=54.66 → 1M=55.42，全程 53–56 <strong>无退化</strong>。<br>
+<strong>机制解释</strong>：56 层里只有 <strong>4 层 full_attention 吃 RoPE</strong>，Mamba2 层无位置编码 ⇒ ABF 只需适配 4/56 层 → 这是 hybrid 相对 dense 的<strong>结构性优势</strong>。
+</div>
+
+<h4>训练侧（真正“注入”）</h4>
+<div class="warn">ABF 免训练只保 PPL，<strong>不产生 needle/多跳检索能力</strong>（B1 已证 passkey 0%，且明确“是模型能力问题不是 ctx 问题”）⇒ 1M 能力必须在<strong>长上下文续训阶段</strong>用真实长文档训练，不能只靠配置外推。</div>
+
+<h3>6.2 ABF vs YaRN 对比（含代价）</h3>
+<table>
+<tr><th>方案</th><th>代价</th><th>收益</th><th>结论</th></tr>
+<tr><td><strong>ABF</strong></td><td>PPL@4K <strong>+10.5%</strong>（75.36→83.24）</td><td>免训练到 1M；零依赖（改 config）</td><td>✅ <strong>v5 采用</strong></td></tr>
+<tr><td>YaRN</td><td>需 rope_scaling 参数（factor/original_max_pos/attn_factor）</td><td>对只作用于 4 层的 hybrid 收益有限、且引入新的超参面</td><td>仅作对照/兜底</td></tr>
+</table>
+<div class="small">仓库既有结论：hybrid 应沿用 B1 的 ABF 写法，dense 才需 YaRN/rope_scaling（<code>ARCHIVE_OPERATOR_PRETRAIN.md</code>）。</div>
+
+<h3>6.3 次序评估：decay → 1M → SFT/RL</h3>
+<table>
+<tr><th>段</th><th>评估</th><th>理由</th></tr>
+<tr><td>decay 在 1M 前</td><td class="green">✅ 合理</td><td>先让 Stable 段收敛（LR 从 1e-3 降下来），再进长上下文；否则恒定 1e-3 在 1M 长度上会破坏已学分布</td></tr>
+<tr><td>1M 在 SFT/RL 前</td><td class="green">✅ 合理</td><td>对齐阶段（SFT/RL）的样本要“装得进”上下文，长上下文能力必须先具备；顺序颠倒会逼 SFT 用短样本、再返工。<strong>但要求写成“长上下文阶段也是预训练的一部分”</strong>，用 pretraining 数据（长文档/代码库/多文件仓库），<strong>不是 SFT 数据</strong></td></tr>
+</table>
+<div class="success"><strong>裁定</strong>：✅ 采纳 decay → 1M → SFT/RL。</div>
+
+<h3>6.4 注入时序图（文字版）</h3>
+<div class="formula">
+S1 (500B, 2M tok/step, en_v1_4) → S2 (1T, 4M tok/step, 混料) → decay (LR 1e-3→1e-5, ~5天) → 长上下文续训 (ABF config + seq 课程 32K→1M, ~53天[假设]) → 能力门禁 (needle/RULER/长文档QA) → SFT/RL (Stage ii)
+</div>
+
+<h3>6.5 各阶段 seq / LR / token 预算表</h3>
+<table>
+<tr><th>阶段</th><th>seq</th><th>LR</th><th>token 预算</th><th>吞吐预估</th><th>时长 [假设]</th></tr>
+<tr><td>Stable S1</td><td class="mono">4096</td><td class="mono">1e-3 恒定</td><td class="mono">500B</td><td class="mono">249K</td><td class="mono">23.2 天</td></tr>
+<tr><td>Stable S2</td><td class="mono">4096</td><td class="mono">1e-3 恒定</td><td class="mono">1T</td><td class="mono">249K</td><td class="mono">46.5 天</td></tr>
+<tr><td>Decay</td><td class="mono">4096</td><td class="mono">1e-3→1e-5</td><td class="mono">~20B</td><td class="mono">249K</td><td class="mono">~5 天</td></tr>
+<tr><td>长上下文 32K</td><td class="mono">32768</td><td class="mono">[待批准]</td><td class="mono">50B</td><td class="mono">~80K</td><td class="mono">~7.2 天</td></tr>
+<tr><td>长上下文 128K</td><td class="mono">131072</td><td class="mono">[待批准]</td><td class="mono">100B</td><td class="mono">~50K</td><td class="mono">~23.1 天</td></tr>
+<tr><td>长上下文 256K</td><td class="mono">262144</td><td class="mono">[待批准]</td><td class="mono">50B</td><td class="mono">~40K</td><td class="mono">~14.5 天</td></tr>
+<tr><td>长上下文 512K</td><td class="mono">524288</td><td class="mono">[待批准]</td><td class="mono">20B</td><td class="mono">~35K</td><td class="mono">~6.6 天</td></tr>
+<tr><td>长上下文 1M</td><td class="mono">1048576</td><td class="mono">[待批准]</td><td class="mono">10B</td><td class="mono">~30K</td><td class="mono">~3.9 天</td></tr>
+</table>
+<div class="small">长上下文阶段的 LR 需单独设置（decay 后 LR 已降到低值，长上下文阶段 LR 若继续低位会学不动），建议该阶段小幅回升 LR——<strong>需用户批准，不得擅改</strong>。</div>
+
+<h3>6.6 ABF 配置表（key/value 级 diff）</h3>
+<div class="formula">
+// baize_b1_longctx_extend.py 同款<br>
+config.rope_theta = <span style="color:#2563eb">1e6</span>          // 原 1e4<br>
+config.max_position_embeddings = <span style="color:#2563eb">1048576</span>  // 原 4096<br>
+// 无需 rope_scaling（ABF 不使用 YaRN 参数）<br>
+// 仅作用于 4 层 full_attention（Mamba2 层无位置编码）
+</div>
+
+<h3>6.7 能力评测矩阵</h3>
+<table>
+<tr><th>评测</th><th>度量</th><th>阶段</th><th>门禁</th></tr>
+<tr><td>PPL</td><td>4K→1M 各点 PPL</td><td>ABF 推理侧</td><td>1M PPL ≤ 60（实测 55.42 ✅）</td></tr>
+<tr><td>passkey/needle</td><td>多位置检索准确率</td><td>长上下文续训后</td><td>&gt;80%（B1 ABF-only=0% → 必须训练）</td></tr>
+<tr><td>RULER</td><td>多跳检索 / 聚合</td><td>长上下文续训后</td><td>待定</td></tr>
+<tr><td>长文档 QA</td><td>端到端问答</td><td>SFT/RL 前</td><td>不达标不进 SFT</td></tr>
+</table>
+
+<h3>6.8 1M 阶段独立 ETA（单列，不与 1.5T Stable 混算）</h3>
+<div class="formula">
+seq 课程预算 [假设]：32K(50B) + 128K(100B) + 256K(50B) + 512K(20B) + 1M(10B) = <strong>230B tok</strong><br>
+吞吐估算：1M 阶段 attention 占比高，吞吐预计降至 <strong>30–80K tok/s</strong> [假设]（1M PPL 单次 172s 反推）<br>
+粗估时长：230B / 50K = 4,600,000s ≈ <strong>53 天</strong> [假设，待实测修正]
+</div>
+<div class="warn"><strong>降本方案</strong>：用 ABF 外推 + 只在 128K 做训练、1M 靠外推 → 可将 token 预算从 230B 降到 ~150B（省 35%），但 needle/多跳检索能力可能不足 → 需实测验证后决定。</div>
+
+<h2>§7 风险与待拍板项</h2>
+<table>
+<tr><th>#</th><th>风险</th><th>影响</th><th>对策 / 监控判据</th><th>状态</th></tr>
+<tr><td>R1</td><td><strong>LR 1e-3 恒定</strong>后期欠拟合</td><td>S2 后半段 loss 不降</td><td>每 2000 步监控 loss；若 S2 后半段（步 370K+）仍单调不降 → 建议加短 decay（<strong>需用户批准，不得擅改</strong>）</td><td class="amber">🟡 待监控</td></tr>
+<tr><td>R2</td><td><strong>2M→4M batch 跳变</strong> loss 断点</td><td>S1→S2 切换时 loss 短暂波动</td><td>记录断点；预期 loss 短暂下降（有效 batch 增大）；若 loss 跳升 &gt;0.3 → 暂停并排查</td><td class="green">🟢 低风险</td></tr>
+<tr><td>R3</td><td><strong>en_v1_4 分词</strong></td><td>S1 数据管线</td><td>已实测：端到端 375K tok/s/进程，已下 4.08TB（≈1.40T tok）余量 2.80×，16 并发 ≈ 1 天切完 500B（见 <code>PLAN_V5_DATA_PREREQ.md</code>）</td><td class="green">🟢 已实测</td></tr>
+<tr><td>R4</td><td><strong>250 ckpt 存储/评测</strong></td><td>675 GB 存储 + 12.5–20.8h 评测</td><td>保留最新 N + 定期清理旧 ckpt；评测并行化</td><td class="green">🟢 可控</td></tr>
+<tr><td>R5</td><td><strong>单机 ~70 天故障恢复</strong></td><td>节点宕机/NCCL/磁盘故障</td><td>健壮 ckpt + <code>--resume</code>；每 2000 步存 ckpt（最多丢 4B tok）；运维监控</td><td class="amber">🟡 需预案</td></tr>
+<tr><td>R6</td><td><strong>1M 吞吐塌陷</strong></td><td>长上下文阶段极慢</td><td>seq 课程阶梯；ABF 外推兜底；1M 阶段独立 ETA（§6.8）</td><td class="amber">🟡 待实测</td></tr>
+<tr><td>R7</td><td><strong>长上下文阶段 LR</strong></td><td>decay 后 LR 太低学不动</td><td>单独设 LR（小幅回升，<strong>需用户批准</strong>）</td><td class="amber">🟡 待拍板</td></tr>
+</table>
+
+<h3>前置条件表</h3>
+<table>
+<tr><th>#</th><th>前置条件</th><th>需求</th><th>当前状态</th><th>预计就绪</th></tr>
+<tr><td>P1</td><td>en_v1_4 分词 500B tok</td><td>1.46TB parquet / 24–31 shard</td><td class="green">✅ 已下 4.08TB（余量 2.80×），16 并发 ≈ 1 天</td><td class="mono">~2026-10-20</td></tr>
+<tr><td>P2</td><td>S2 code 数据</td><td>200B tok</td><td class="green">✅ UltraData-Code 411B 已下满</td><td>已就绪</td></tr>
+<tr><td>P3</td><td>S2 math 数据</td><td>10–20B tok</td><td class="green">✅ UltraData-Math 303B 已下满</td><td>已就绪</td></tr>
+<tr><td>P4</td><td>S2 HQ 预训练数据</td><td>780–790B tok</td><td class="green">✅ 1.415T 已下满（余量 1.82×）</td><td>已就绪</td></tr>
+<tr><td>P5</td><td>.29 训练机释放</td><td>8×H100 GPU</td><td class="amber">80B decay 运行中，ETA ~2026-10-20 02:5x</td><td class="mono">~2026-10-20</td></tr>
+<tr><td>P6</td><td>ckpt 存储</td><td>675 GB</td><td class="green">/nas_train 31T free</td><td>已就绪</td></tr>
+</table>
+<div class="info"><strong>关键路径</strong>：分词不是关键路径（16 并发 ≈ 1 天，早于 decay 结束）；<strong>关键路径是 .29 训练机释放（~2026-10-20）</strong>。最早可开工日期 ≈ <strong>2026-10-20 / 10-21</strong>。</div>
+
+<h2>§8 里程碑表（按周，249K 基准）</h2>
+<div class="small">S1 = 23.2 天 ≈ 3.3 周 · S2 = 46.5 天 ≈ 6.6 周</div>
+<table>
+<tr><th>周</th><th>阶段</th><th>步数范围</th><th>ckpt #</th><th>预期 CS8 [假设]</th></tr>
+<tr><td>W1</td><td>S1</td><td class="mono">0–60K</td><td class="mono">0–30</td><td>~35–40% (起步)</td></tr>
+<tr><td>W2</td><td>S1</td><td class="mono">60K–120K</td><td class="mono">30–60</td><td>~40–45%</td></tr>
+<tr><td>W3</td><td>S1</td><td class="mono">120K–180K</td><td class="mono">60–90</td><td>~45–48%</td></tr>
+<tr><td>W3.3</td><td>S1</td><td class="mono">180K–252K</td><td class="mono">90–125</td><td>~48–50% (S1 终)</td></tr>
+<tr><td>W4–5</td><td>S2</td><td class="mono">252K–372K</td><td class="mono">125–185</td><td>~50–53%</td></tr>
+<tr><td>W6–7</td><td>S2</td><td class="mono">372K–502K</td><td class="mono">185–250</td><td>~53–56% (S2 终)</td></tr>
+<tr><td>W10</td><td>decay</td><td>—</td><td>—</td><td>LR 1e-3→1e-5, ~5 天</td></tr>
+<tr><td>W10–17</td><td>1M 长上下文</td><td>—</td><td>—</td><td>seq 课程, ~53 天 [假设]</td></tr>
+<tr><td>W17+</td><td>SFT/RL</td><td>—</td><td>—</td><td>Stage(ii)</td></tr>
+</table>
+<div class="warn">⚠️ CS8 预期区间为 [假设]（基于 P-6/P-8 scaling 外推：44.4B→49.21%, 1.5T→待实测）。Xmodel-2.5（1.4T tok）CS8=65.40% 可作远期参考。</div>
+
+<h2>附录：可行性问题正面回答</h2>
+
+<h3>Q1: LR 1e-3 恒定是否会欠拟合？</h3>
+<div class="info">
+<strong>历史对照</strong>：P-8 用 3e-3（44B, 发散后换 1e-3 AdamW 重启）；decay run 用 1.67e-3→1e-5。<br>
+<strong>判断</strong>：1e-3 介于 P-8（3e-3）和 decay min（1e-5）之间，<strong>合理但偏保守</strong>。1.5T token 量大，恒定 LR 可能在 S2 后半段收敛放缓。<br>
+<strong>监控判据</strong>：每 2000 步记录 loss；若 S2 后半段（步 370K+）loss 仍单调不降 → 建议在 S2 末端加短 decay（需用户批准，<strong>不得擅改</strong>）。
+</div>
+
+<h3>Q2: batch 从 2M 跳到 4M 怎么处理？</h3>
+<div class="info">
+seq 4096 / MBS 2 时：<strong>2M tok → GBS 488</strong>（grad accum 31）；<strong>4M tok → GBS 976</strong>（grad accum 61）。<br>
+per-step 时间：<strong>8.0s → 16.1s</strong>（@249K）。<br>
+切换记录：S1 最后一个 ckpt 的 loss vs S2 第一个 ckpt 的 loss（断点监控）。
+</div>
+
+<h3>Q3: en_v1_4 数据量够吗？</h3>
+<div class="success">
+需 500B tok，全量 ≈2.31T tok（实测 0.343 tok/parquetB × 6.75TB, <code>PLAN_V5_DATA_PREREQ.md</code> §3）。500B = 全量的 21.6%。<br>
+当前：86/110 shard 已下（≈4.08TB ≈ 1.40T tok），<strong>已下部分就够 500B</strong>（余量 2.80×）。<br>
+<strong>分词实测</strong>：端到端 375K tok/s/进程，16 并发 ≈ 1 天切完 500B（纯 CPU）。<strong>R3 已降级为 🟢。</strong>
+</div>
+
+<h3>Q4: S2 混料供给够吗？</h3>
+<div class="success">
+code 200B：UltraData-Code 411B ✅（余量 2.06×）<br>
+math 10–20B：UltraData-Math 303B ✅（余量 15–30×）<br>
+HQ 780–790B：ultraweb_en(1.12T) + l1_en_hq(152B) + zh(112B) + UltraX(31B) = 1.415T ✅（余量 1.82×）<br>
+<strong>瓶颈 = HQ 预训练</strong>（余量最低 1.82×，但充足）。所有数字可追溯至 <code>DATA_LEDGER.md</code>。
+</div>
+
+<hr style="margin:2em 0;border:none;border-top:1px solid #ddd">
+<div class="small" style="text-align:center;color:#888">
+BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5（Stable 段 1.5T token）· 2026-10-18<br>
+自包含 HTML 报告 · 无外部 CSS/JS 依赖 · 数据来源：<code>DATA_LEDGER.md</code> · 吞吐来源：T3/P-9.6–9.7<br>
+配套：<code>run/PLAN_V5_STABLE_1.5T.md</code>（Markdown 版）· <code>run/PLAN_V5_DATA_PREREQ.md</code>（数据前置实测）<br>
+生成者：pretrain agent (cline) · commit 前缀 <code>pretrain plan-v5:</code> · 审核状态：待用户确认
+</div>
+</body></html>

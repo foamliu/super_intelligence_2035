@@ -1,0 +1,141 @@
+# PLAN_V5_DATA_PREREQ — en_v1_4 分词吞吐实测与 500B 可行性（v5 前置 · 纯 CPU 抽样实测）
+
+> 生成：2026-10-18 · 纯 CPU（`nice -19` 单进程 + 抽样 3 shard）· 零 GPU · 不动 `.29` 80B decay
+> 配套：`reports/report_pretrain_formal_v5_plan_zh.html` / `run/PLAN_V5_STABLE_1.5T.md`
+> 目的（2026-10-18② 令）：把 v5 计划里的 🔴 R3 阻塞项「en_v1_4 未分词」变成**有数字的排期**。
+> 分工：**下载/分词由 data 线执行**；本文件是 **v5 侧给出的口径与验收**，供两条线用同一套数字。
+
+---
+
+## 0. 一页结论
+
+| 项 | 实测值 | 说明 |
+|:--|:--|:--|
+| 单进程分词吞吐（tokenize-only） | **474K tok/s** | 逐文档 DeepSeek BPE + EOD，不含 .bin/.idx 落盘 |
+| 单进程端到端吞吐（含 .bin/.idx） | **375K tok/s** | 真跑 `preprocess_data.py`（本地 /tmp 落盘；生产落 NFS 可能略慢） |
+| tokens / parquet 字节（snappy） | **0.3427 tok/B** | 用于「下载了多少字节 → 多少 token」换算 |
+| tokens / raw 文本字节 | **0.2130 tok/B**（≈4.69 B/tok） | 词表压缩率 |
+| 全量 6.75TB → 总 token | **≈2.31 T** | 台账 ≈2.2T 成立（+5.1%，在抽样误差内） |
+| 已下 4.0829TB → 已可切 token | **≈1.40 T** | 已下 43,520 parquet / 86 dir（快照时点，仍增长中） |
+| 500B token 需要 | **≈1.46 TB parquet ≈ 24–31 shard** | 占全量 21.6% |
+| 已下数据对 500B 的余量 | **2.80×** | ✅ 已下部分就够 S1 500B，不阻塞 |
+| 500B 分词天数（端到端 375K） | 4 并发 **3.86 天** / 8 并发 **1.93 天** / 16 并发 **0.96 天** | 线性扩展假设（224 CPU 充裕） |
+
+**核心裁定**：🔴 R3 降级为 🟢——**S1 的 500B en_v1_4 切词不依赖「剩余 25 shard 续传」，用已下的 4.08TB（≈1.40T tok，2.80× 余量）即可立即开工**。分词也不是 bottleneck：16 并发 ≈ **1 天**切完 500B（纯 CPU，可与 `.29` 的 80B decay 并行跑）。最早可开工日期 ≈ **2026-10-20／10-21**（受 `.29` 训练机释放 ~10-20 02:5x 约束，而非分词约束）。
+
+---
+
+## 1. 抽样对象（原文实测）
+
+**样本**：从 `en_v1_4` 已下部分取最早 3 个 shard、每 shard 前 2 个 parquet（共 6 个文件，全文件跑完，无 doc 截断）。
+**口径**：与 `mamba2_hybrid_2b/preprocess_data.py` 完全一致——`AutoTokenizer(DeepSeek-V4.1-Flash)` + 追加 EOD `<|endoftext|>`（vocab 129280→129281），逐文档 `tokenizer(text)` 单条编码 + 结尾 1 个 EOD；`iter_batches(batch_size=1024)` 流式读 snappy parquet 的 `content` 列。
+
+数据根：`/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/`
+
+| 文件 | docs | tokens | rawB | parquetB | 进程耗时 | tok/s | tok/rawB | tok/parquetB |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|
+| CC-MAIN-2013-20 part-0001 | 34,479 | 28,652,998 | 135,069,035 | 84,956,780 | 59.2s | 483,609 | 0.2121 | 0.3373 |
+| CC-MAIN-2013-20 part-0002 | 34,477 | 28,782,957 | 135,768,411 | 85,328,601 | 60.9s | 472,598 | 0.2120 | 0.3373 |
+| CC-MAIN-2014-10 part-0001 | 34,130 | 31,384,479 | 146,732,227 | 90,587,530 | 66.4s | 472,763 | 0.2139 | 0.3465 |
+| CC-MAIN-2014-10 part-0002 | 34,130 | 30,867,663 | 144,764,722 | 89,083,041 | 64.4s | 479,071 | 0.2132 | 0.3465 |
+| CC-MAIN-2015-06 part-0001 | 30,487 | 28,286,524 | 132,568,762 | 81,948,067 | 60.0s | 471,474 | 0.2134 | 0.3452 |
+| CC-MAIN-2015-06 part-0002 | 30,486 | 27,693,199 | 129,884,920 | 80,715,130 | 59.3s | 466,825 | 0.2132 | 0.3431 |
+| **合计** | **198,189** | **175,667,820** | **824,788,077** | **512,619,149** | **370.3s** | **474,409** | **0.2130** | **0.3427** |
+
+> ⚠️ 上述 tok/s 是 **tokenize-only**（读 parquet + 逐文档 tokenize + EOD），不含 `.bin/.idx` 落盘与 tensor 转换。
+
+---
+
+## 2. 端到端吞吐（真跑 `preprocess_data.py`，含 .bin/.idx）
+
+为对齐真实分词流水线，对同一文件 `CC-MAIN-2013-20 part-0001` 用 **原版 `preprocess_data.py`**（`--mode content --dtype int32`）完整跑一遍：
+
+| 口径 | 结果 |
+|:--|:--|
+| 输入 | 1 file / 34,479 docs |
+| 输出 | 28,652,998 tokens（.bin 114.6MB + .idx + .json）|
+| 墙钟 | **76.36 s**（`/usr/bin/time -v`，含 tokenizer 载入 + EOD 副本落盘）|
+| **端到端 tok/s** | **375,236 tok/s** |
+
+**与 tokenize-only（474K）差 ≈ 21%**：这 21% 是 `IndexedDatasetBuilder.add_item`（list→tensor）+ int32 `.bin` 逐文档追加落盘 + `.idx` finalize 的开销。
+
+> ⚠️ 本次 `.bin` 落在**本地 /tmp**（ext4）；生产落盘 `/nas_train/app.e0031982/datasets/baize-data/text/`（**NFS**，`10.239.23.31`，31T free）。NFS 写路径比本地慢，**排期建议以 375K 为基准、并留余量**（见 §4 敏感性）。
+
+---
+
+## 3. 换算基线（用实测，非估算）
+
+| 换算 | 算式 | 结果 |
+|:--|:--|:--|
+| 全量 token 数 | 6.75e12 B × 0.3427 tok/B | **≈2.31 T token**（台账 ≈2.2T 成立，+5.1%） |
+| 已下 token 数 | 4.0829e12 B × 0.3427 | **≈1.40 T token** |
+| 500B 需要字节 | 500e9 / 0.3427 | **≈1.46 TB parquet**（占全量 21.6%） |
+| 500B 需要 shard（满集密度） | 500e9 / (2.31e12/110) | ≈ **24 shard**（满集 21.0B tok/shard） |
+| 500B 需要 shard（已下密度） | 500e9 / (1.40e12/86) | ≈ **31 shard**（已下 16.3B tok/shard） |
+| 100B 需要（起跑子集） | 100e9 / 0.3427 | ≈ **0.29 TB parquet ≈ 5–6 shard** |
+
+> 说明：已下 shard 平均密度（16.3B tok/shard）低于满集密度（21.0B），因已下的是 2013–2021 早期 snapshot、平均 doc 偏小；尚未下的约 24 shard 是 2021+ 新 snapshot，密度更高。全量换算以**实测 0.3427 tok/parquetB** 统一外推，误差 ≤5%。
+
+**台账验证结论**：DATA_LEDGER「en_v1_4 全量 ≈2.2T token」**成立**，实测外推 2.31T（+5.1%）。建议 data 线把精确口径定为 **0.343 tok/parquetB ↔ 6.75TB = 2.31T**。
+
+---
+
+## 4. 500B 分词天数（三档并发）
+
+> 前提假设（写死）：① 并发 = 并行**进程数**（每进程单线程逐文档，与既有 `baize_tokenize_en_base_parallel.sh` 同模型）；② 各进程切**互不相交的 shard 子集**、各写各的 `.bin/.idx`，线性扩展成立；③ 本机 224 CPU（`nproc=224`、load≈25），4/8/16 并发 CPU 充裕；④ 吞吐与 batch 组合无关。
+
+| 并发 | 500B 天数（端到端 375K） | 500B 天数（tokenize-only 474K） |
+|:--|:--|:--|
+| 1 进程 | 15.4 天 | 12.2 天 |
+| **4 进程** | **3.86 天** | 3.05 天 |
+| **8 进程** | **1.93 天** | 1.53 天 |
+| **16 进程** | **0.96 天** | 0.76 天 |
+
+算式：`天数 = 500e9 / (tok/s × 并发) / 86400`。端到端 375K 为主口径（含落盘）；tokenize-only 474K 为理想下界（若落盘与 tokenize 充分重叠 / 用本地盘）。
+
+**100B 起跑子集（建议，见 §5）**：端到端 375K 下 4 并发 0.77 天 / 8 并发 0.39 天 / 16 并发 0.19 天。
+
+---
+
+## 5. 500B 最早可开工日期 + 「先用已分词部分起跑」建议（只建议，不擅改配方）
+
+**结论：分词不是关键路径；关键路径是 `.29` 训练机释放。**
+
+1. **下载侧**：已下 4.0829TB ≈ 1.40T token，对 S1 500B 余量 **2.80×**。⇒ 剩余 25 shard 续传**只为凑满全量 2.31T（S2 及后续）**，不是 S1 开工的前提。S1 切词可**立即开始**。
+2. **分词侧**：500B @16 并发 ≈ **1 天**（375K 端到端）；@8 并发 ≈ 2 天。纯 CPU，可与 `.29` 80B decay（GPU）并行，不抢卡。
+3. **训练机侧**：`.29` 被 80B decay 占用至 ~2026-10-20 02:5x（ETA 以当时心跳为准）。S1 起跑需等它释放（或按用户令切换）。
+4. **最早可开工日期**：`max(分词完成, .29 释放) + 验收` ≈ **2026-10-20／10-21**（若数据线即刻起 16 并发切 500B，分词 ~1 天即完成，早于 decay 结束）。
+
+**建议（若分词成为瓶颈，S1 先用已分词部分起跑）**：✅ 可行且建议——
+- 已下数据本身就够 500B，无需等待；即便要尽早起跑，可先切 **100B（≈0.29TB，5–6 shard，16 并发 ≈ 4.5h）** 供 S1 前 12,500 step（100B/2M=50,000 step）滚动消耗，余量按训练消耗速率持续补切，形成「边下边切边训」的流水线。
+- 此建议**不改变 v5 配方**（S1 仍是 en_v1_4 单源 500B、2M tok/step），仅改变「何时起跑」的调度粒度。是否采纳由用户拍板。
+
+---
+
+## 6. 与 data 线口径对齐（两线统一用这套数字）
+
+> 依 10-18② 令：本组数字同步进 `DATA_LEDGER.md`（由 data 线写入；本线**只提交本文件，不改 data 的文件**）。
+
+| 口径项 | 统一采用值 |
+|:--|:--|
+| tokenize 吞吐基准 | **375K tok/s/进程**（端到端，含 .bin/.idx；474K 为 tokenize-only 上限） |
+| 数据密度 | **0.343 tok/parquetB**（raw 文本为 0.213 tok/rawB） |
+| 全量 token | **6.75TB → 2.31T**（台账 2.2T 无误，建议更新为 2.31T） |
+| 500B 用料 | **1.46TB parquet ↔ 24–31 shard** |
+| 500B 分词 ETA | 4/8/16 并发 = **3.86 / 1.93 / 0.96 天**（375K 端到端） |
+| 验收判据 | 切出的 `.bin/.idx` 用 `preprocess_data.cm` 同款 `IndexedDatasetBuilder`，`.json` 的 `num_tokens` 累计应 ≈ 500B（按 0.343 tok/B 反推源字节）；EOD=129280、vocab=129281、padded=129408 |
+
+---
+
+## 7. 附录：测量脚本与复现
+
+- 脚本：`run/data_pipeline/measure_v5_tokenize.py`（复用 `preprocess_data.py` 的 `_add_eod_token`/`_tokenize_document`，读 `*.parquet` 的 `content` 列，逐文档 tokenize + 计 rawB/tok/耗时）。
+- 复现（单次抽样）：
+  ```bash
+  conda activate py310
+  export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230:${PYTHONPATH:-}
+  nice -19 python run/data_pipeline/measure_v5_tokenize.py \
+    --shard-dirs <CC-MAIN-xxxx> <CC-MAIN-yyyy> ... --files-per-shard 2
+  ```
+- 端到端复现：symlink 单文件为 `.snappy.parquet` → 原版 `preprocess_data.py --mode content --dtype int32` → `/usr/bin/time -v`。
+- 快照时点：2026-10-18 ~09:30（下载仍在进行，已下 86 dir / 43,520 file / 4.08TB）。数字随下载进展变化，倒算方法与密度系数不变。
