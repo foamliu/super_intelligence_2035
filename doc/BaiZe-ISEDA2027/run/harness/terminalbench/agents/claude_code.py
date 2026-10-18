@@ -113,9 +113,11 @@ class ClaudeCodeTB(TBBaseAgent):
             timeout_sec=self._timeout,
         )
 
-        context.trajectory_stdout = result.stdout or ""
-        context.trajectory_stderr = result.stderr or ""
-        context.exit_code = result.return_code
+        context.metadata = {
+            "stdout": result.stdout or "",
+            "stderr": result.stderr or "",
+            "exit_code": result.return_code,
+        }
 
         if result.return_code != 0:
             raise RuntimeError(
