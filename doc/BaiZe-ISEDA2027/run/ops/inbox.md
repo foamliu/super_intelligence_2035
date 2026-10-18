@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 135 -->
+<!-- RUN_ID: 136 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,30 @@
 
 ---
 
+## RUN_ID 136 — 只读：ArmC 是否已启动（进程/输出/日志/GPU）
+
+> 用途：确认 `.12` 上 `armC_20261018` 是否已起跑，给 ETA 用。**只读**，不启动、不 kill。
+
+```bash
+set -u
+echo "=== RUN_ID 136 | ArmC started? | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[a]rmC_20261018|[a]rmC_aimv2|[a]rmC_openclip|[t]orchrun' | cut -c1-200 || true
+echo "[2] out dirs"
+ls -lt /nas_train/app.e0031982/datasets/baize-vision/out | head -8
+echo "[3] log"
+ls -l /tmp/armC_openclip_train.log 2>&1
+tail -8 /tmp/armC_openclip_train.log 2>&1 | cut -c1-220
+echo "[4] gpu"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== DONE 136 ==="
+```
+
 ## RUN_ID 135 — 只读探针：`.25` 代理 → `hf.co` 是否恢复
 
 > 用途：测 `172.19.92.25:13128` 到 `huggingface.co` 首页/API/resolve 小文件；`.23 + hf-mirror` 作对照。**只读**，不改配置、不启停下载。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 135 | .25 proxy -> hf.co | $(date '+%F %T') | host=$(hostname) ==="
 P25=http://172.19.92.25:13128
