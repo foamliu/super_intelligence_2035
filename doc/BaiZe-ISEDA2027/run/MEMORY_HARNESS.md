@@ -7,7 +7,7 @@ WAITING: 1
 > **② Docker 仍 BLOCKED（19:4x 复测，与 R436 一致）**：`getent group docker`=`docker:x:123:`（zero members，group 又被 rebuild）；`docker info`=permission denied；`/var/run/docker.sock`=`srw-rw---- root docker`(0660)；`id`=uid=6218 gid=6002 **不在 docker 组**；`sudo -n -l`="a password is required"（无 NOPASSWD，`/etc/sudoers.d/` 仅 README）；`doc/sudo.txt` **全仓库不存在**；无 TCP docker 端口（2375/2376 未监听）；`DOCKER_HOST` unset；`/etc/gshadow` 不可读。**无任何 self-service 路径**。
 > **③ 代码 prep 复验（不需 Docker，pilot 可立即重跑）**：`grep -rn default_working_dir agents/`=**0 残留** ✓；`python3 -m py_compile agents/*.py __init__.py`=**OK**（8 文件）；fix 已 commit **f2045c54**；`git status -- harness/terminalbench/agents`=与 origin 同步、无未提交改动。7 适配器 `task_env_config.workdir` 用法统一（与 cline_patched 一致）。
 > **🔴 需运维（root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`（或 `sudo gpasswd -a app.e0031982 docker`）**+ 新登录会话**（usermod 不影响当前 session）；或 ② `sudo chmod 666 /var/run/docker.sock`（临时开 socket，免新登录）；并恢复 `doc/sudo.txt`。**修好后我立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54 修复）→ gate → full 7×89**。
-> **Next**：等 Docker 恢复 → 重跑 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7 runnable）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY≈31KB(✓) / 归档 0B（本轮均在 32KB 内，未触发归档）。
+> **Next**：等 Docker 恢复 → 重跑 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7 runnable）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY≈31.7KB(✓) / 归档 R435 ~2.4KB → daily-memories-harness/2026-10-18.md（R435 原文已在 daily）。
 
 
 > 🆕 **R436 (2026-10-18 18:24) — Gen2 pilot re-run STILL 6/7 failed: found REAL root cause `default_working_dir` AttributeError → FIXED in 6 adapters, but Docker access LOST (docker group zero members, sudo.txt gone) → BLOCKER needs operator**：
@@ -25,22 +25,7 @@ WAITING: 1
 > **需运维**：① `sudo usermod -aG docker app.e0031982`（或 `sudo gpasswd -a app.e0031982 docker`）+ 恢复 `doc/sudo.txt`；或 ② `sudo chmod 666 /var/run/docker.sock`（临时开 socket）。修好后我立即 `sg docker -c 'bash launch_tb_7way.sh --pilot'` 重跑。
 > **Next**：等 Docker 恢复 → 重跑 7×5 pilot（Gen3, 用 f2045c54 修复）→ gate → full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY≈31KB(✓) / 归档 0B。
 
-> 🆕 **R435 (2026-10-18 16:57) — 7×5 PILOT COMPLETE: 1/7 passed (cline-patched 0.8), 6/7 infra-failed → 3 root causes FOUND & FIXED, awaiting re-run**：
-> **Pilot 结果**（7 harness × 5 task = 35 trial, .29 PID 2731368, oracle 5/5 ✅ reward=1.0）：
-> - **cline-patched** 5/5 mean=**0.800** ✅（4/5 resolved: bn-fit/break-filter/fix-git/log-summary, chess-best-move failed）
-> - **codex** 0/5 mean=0.0 — 5×NonZeroAgentExitCodeError（`npm install -g @openai/codex` exit 254）
-> - **hermes** 0/5 mean=0.0 — 5×（2 NonZero + 3 AttributeError）（`pip install hermes-agent` PEP 668）
-> - **opencode** 0/5 mean=0.0 — 4×NonZeroAgentExitCodeError（`curl|bash` GitHub releases DL exit 56）
-> - **claude-code** 0/5 mean=0.0 — 5×NonZeroAgentExitCodeError（`npm install -g @anthropic-ai/claude-code` exit 254）
-> - **deepseek-harness** 0/5 mean=0.0 — 5×（2 NonZero + 3 AttributeError）（`pip install deepseek-harness-sdk` PEP 668）
-> - **pi** 0/5 mean=0.0 — 5×NonZeroAgentExitCodeError（`npm install -g @fleetagent/pi-coding-agent` exit 254）
-> **🔴 Pilot gate: 6/7 = 85.7% infra failure → BLOCKER**（>50% & ≥3 路全挂）。但全为 infra/install 问题，非模型能力。
-> **根因 3 类 + Fix**：
-> ① **npm RO mount**（codex/claude-code/pi）：`/opt/node` 挂 `:ro` → `npm install -g` 写 `/opt/node/lib/node_modules` → `ENOENT no such file or directory, mkdir '/opt/node/lib/node_modules/@openai'`。**Fix**：`_base.py:_install_node` fast path 加 `mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local`。**验证 ✅**：容器内 `npm install -g @openai/codex@0.94.0` → `codex-cli 0.94.0` exit 0（3min, bn-fit-modify image）。
-> ② **pip PEP 668**（hermes/deepseek-harness）：容器 Python 3.12 `externally-managed-environment` → pip 拒绝系统级安装。**Fix**：加 `--break-system-packages` flag。
-> ③ **opencode GitHub DL**（opencode）：`curl -fsSL https://opencode.ai/install | bash` → 脚本从 `github.com/anomalyco/opencode/releases` 下载二进制 → proxy exit 56（NetworkConnectionError）。**Fix**：改用 `npm install -g opencode-ai`（install script 的 npm fallback 路径），复用 ① 的 prefix fix。
-> **修复文件**：`agents/_base.py`（npm prefix）、`agents/hermes.py`（--break-system-packages）、`agents/deepseek_harness.py`（--break-system-packages）、`agents/opencode.py`（npm install 替代 curl|bash）。py_compile ✅ 7/7，28/28 mock 单测 ✅。
-> **Next**：① git push（adapter 修复在 NFS 共享，.29 立即可见）② .29 重跑 `launch_tb_7way.sh --pilot` ③ gate（infra ≤20%, ≥6/7 runnable）→ ④ full 7×89 ⑤ gen_report。📦 体积：TASK≈30KB / MEMORY≈27KB（归档 R432+旧指令 ~7KB → ARCHIVE）。
+> 📦 R435 (2026-10-18 16:57, 7×5 pilot v1 COMPLETE: cline-patched 0.8 / 6-7 infra-fail → 3 root causes FOUND & FIXED) 已归档 → daily-memories-harness/2026-10-18.md。结论：pilot v1 cline-patched 4/5(0.8)✅，6/7 全 infra-fail（npm RO mount / pip PEP668 / opencode GitHub DL），3 类根因全 FIXED（_base.py npm prefix /usr/local + hermes+deepseek --break-system-packages + opencode npm install）。已被 R436 default_working_dir 根因修复取代。需要时再读。
 
 > 🟢 **R433 (2026-10-18 15:03) — SMOKE PASSED reward=1.0 ✅ + 7×5 pilot launched（crashed → R434 修复重跑）**：
 > **solo smoke R433b (cline-patched × fix-git) ✅ reward 1.0**（`n_completed:1, n_errored:0, mean:1.0`，14:43→14:50）。verifier 流程：`apt install curl`→`curl -LsSf astral.sh/uv/0.9.5/install.sh`（SSL timeout rc=28 ~5min）→`source /root/.local/bin/env`→`uvx -p3.13 pytest`→**2 passed**（test_about_file/test_layout_file）→reward.txt=1。**根因修复确认**：overlay `client:`→`main:` + `network_mode:host` + 挂 `/root/.local/bin/env`（verifier `source env` 找到 mounted uvx）。cline agent 跑了 13 轮 API（run_commands×3+/editor×1+，exit_code:0）真实解题，非 infra 噪声。
@@ -75,6 +60,7 @@ ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-18 19:4x —— R437: ① ops relay re-verified healthy（P0① 已满足：PID 2663131 ppid=1 etimes=13763，`ops/.last_run_id`=137，远超 10:2x 指令的 RUN_ID 123；123→137 共 14 RUN 正常执行）⇒ 中继未冻死，无需重启。② Docker 仍 BLOCKED（复测）：`getent group docker`=`docker:x:123:`(zero members)，`docker info`=permission denied，`/var/run/docker.sock`=0660 root:docker，`id`=uid6218 gid6002 不在 docker 组，`sudo -n -l`=需密码（无 NOPASSWD，sudoers.d 仅 README），`doc/sudo.txt` 全仓库不存在，无 TCP docker 端口，`DOCKER_HOST` unset，`/etc/gshadow` 不可读 → 无 self-service 路径。③ 代码 prep 复验（不需 Docker）：`grep -rn default_working_dir agents/`=0 残留 ✓，`py_compile agents/*.py __init__.py`=OK(8 文件)，fix 已 commit f2045c54，`git status -- harness/terminalbench/agents`=与 origin 同步无未提交。结论：pilot 代码就绪，唯一阻塞=Docker 权限（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。WAITING=1。
 - 2026-10-18 16:57 —— R435: 7×5 pilot v1 COMPLETE（.29, 35 trial）。oracle 5/5 ✅。cline-patched 4/5 (0.8) ✅。6/7 harness 全 infra-fail（codex/claude-code/pi: npm ENOENT on RO /opt/node; hermes/deepseek: pip PEP668; opencode: GitHub DL exit 56）。3 类根因全 FIXED: _base.py npm prefix /usr/local + hermes/deepseek --break-system-packages + opencode npm install。容器实测 codex-cli 0.94.0 ✅。28/28 mock ✅。待 push + .29 重跑 pilot。
 - 2026-10-18 12:30 —— R431: ① ops relay 修复——RUN_ID 123 不执行真因=inbox.md 触发标记 122 未更到 123（relay 未冻结），已 122→123(commit eb204521)+push，123 在 .29 执行成功；kill .12 stray relay(pid 1048010)，.29 single relay(pid 1972249,ppid=1)；123 probe 训练全健康。② TB solo smoke 跑起 on .29：cline-patched × fix-git(cached image)，跑 2m24s → FAILED at cline install(npm install -g cline exit 1；根因=cline 是 bun 源码构建非 npm 包，fast-path 嵌入式 bun 二进制不存在)。③ 发现 3 bug：launch_tb_7way.sh 未设 PYTHONPATH(自定义 adapter 导入失败)/key 提取破损(全角冒号+-A1,取空→401)/Docker Hub 不可达 via proxy(仅 cached image 能跑,regex-log 未缓存致首试 16s 失败)。改 fix-git(cache)后容器 Up，但 cline install fail。WAITING=0 待修 cline install 路径。
 - 2026-10-18 07:20 —— R430: MEMORY archived 33.5KB→23.6KB · _base.py _install_node fixed (NVM+aliyun mirror replaces blocked nodesource.com) · launch_tb_7way.sh fixed (local -p paths + minimal2 overlay, 5 pilot tasks) · 28/28 adapter tests OK · Docker on .29 ✅ (not .12) · Next: smoke test 1 adapter on .29
