@@ -1,11 +1,32 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 74 -->
+<!-- RUN_ID: 75 -->
+
+## RUN_ID 75 — 只读：`EVAL_FW_DIR` 到底是谁设成了 `/home/app.t0002997/...`
+
+> 用途：查 `.env`、`zhulong_loop.sh` 进程环境、relay 进程环境、`run_zhulong_script.sh`，确认 `EVAL_FW_DIR` 的来源。**只读**，不打印 secrets。
+
+```bash
+set -u
+echo "=== RUN_ID 75 | inspect EVAL_FW_DIR source | $(date '+%F %T') | host=$(hostname) ==="
+E=/nasdata/app.e0031982/code/eda_fastmcp
+echo "[1] .env EVAL/FRAMEWORK"
+grep -nE 'EVAL|FRAMEWORK' "$E/.env" 2>/dev/null | head -60
+echo "[2] loop PID 81827 env"
+tr '\0' '\n' < /proc/81827/environ 2>/dev/null | grep -E 'EVAL_FW_DIR|EVAL_ROOT_DIR|EDA-Eval-Framework|app\.t0002997|/nasdata' | head -40
+echo "[3] relay PID 3277328 env"
+tr '\0' '\n' < /proc/3277328/environ 2>/dev/null | grep -E 'EVAL_FW_DIR|EVAL_ROOT_DIR|EDA-Eval-Framework|app\.t0002997|/nasdata' | head -40
+echo "[4] run_zhulong full EVAL grep"
+grep -nE 'EVAL_FW|EVAL_ROOT|EDA-Eval-Framework|app\.t0002997|\.env|source ' "$E/scripts/run_zhulong_script.sh" 2>/dev/null | head -60
+echo "[5] .env full EVAL"
+grep -nE 'EVAL|FRAMEWORK' "$E/.env" 2>/dev/null | head -60
+echo "=== DONE 75 ==="
+```
 
 ## RUN_ID 74 — 只读：`EVAL_FW` 的定义/默认值 + run 脚本是否设置 `EVAL_FW_DIR`
 
 > 用途：RUN_ID 73 已确认 `restore_config()` 用 `cwd=EVAL_FW`，错误路径来自 `EVAL_FW` 本身；本块定位它的定义、默认值与 `run_zhulong_script.sh`/`run_cline_script.sh` 的环境，判断是否硬编码。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 74 | inspect EVAL_FW | $(date '+%F %T') | host=$(hostname) ==="
 F=/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py
