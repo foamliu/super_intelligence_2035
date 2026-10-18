@@ -113,6 +113,14 @@ setsid bash scripts/run_zhulong_script.sh -p 8 -n > /tmp/ZL_glm52_r1.log 2>&1 < 
 - 体积：任务书 ≤40KB（超了按常驻规程自己滚归档，**只搬已闭合块原文**）。
 
 
+### 🆕 运维指令 · 2026-10-18（三十）— 🧪 P1 排队：(N') 成本重测 + (B) 5-run 成本【不打断当前 ZL eval】
+
+> 详见 `run/PLAN_RETEST_READBACK_COST.md` + `run/PAPER_RETEST_AUDIT.md`（本轮已提交）。
+> **顺序**：① 当前 `ZL.glm-5.2` r1 跑完 → ② 先查 `output_evaluation/2026_1015_*` 的 trace，能提取 `(B)` 5-run 成本就零 GPU 先做 → ③ 再排 `(N')` 5-run（READBACK=none，~7.5h GPU，**必须保留 trace**）→ ④ 更新 `zhulong_results.md` / `6_exp.tex` / 重编译 PDF。
+> **预注册**：不假设成本单调；若 `(N')` 成本低于 `(B)/(F)`，如实报告「无反馈→少搜索/早提交」，把成本结论限定在 `(B)→(F)`。
+> 🚫 不打断 eval、不改 cline 3.0.51、不换主基座 `deepseek-v4-pro-fp4`、不删 trace、不插补。
+
+
 ### 0. 🎯 当前状态速览（每次唤醒先看这里）
 
 | 项 | 值（**2026-10-04 运维更新**）|
