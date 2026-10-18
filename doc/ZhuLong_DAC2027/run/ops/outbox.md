@@ -10320,3 +10320,83 @@ Everything up-to-date
 [loop] 2026-10-18 13:52:24 WAITING=1 (eval running / infra not ready) → sleep 1800s
 === DONE 78 ===
 ```
+
+---
+
+## RUN_ID 79 · 2026-10-18 14:37:01 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 79 | zhulong retest status | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[r]un_cline_script|[g]lm-5\.3|[r]un_eval\.py|[r]egrade' | cut -c1-190 || true
+echo "[2] logs"
+ls -lt /tmp/ABL_glm-5.3-flash* /tmp/*glm53* 2>/dev/null | head -10 || true
+echo "[3] loop log"
+tail -30 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-220 || true
+echo "[4] memory"
+grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null; grep -m1 'WAITING' MEMORY_ZHULONG.md 2>/dev/null
+echo "[5] loop/relay"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[z]hulong_ops_relay\.sh' | cut -c1-160 || true
+echo "=== DONE 79 ==="
+```
+
+**输出**
+```
+=== RUN_ID 79 | zhulong retest status | 2026-10-18 14:37:01 | host=hfeg0tedaap02 ===
+[1] procs
+1690490   81827     876 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 🔧 运维指令区（OPERATO
+1690491 1690490     876 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 🔧 运维指令区（OPERATOR NOTES）— 每�
+1695920       1     521 bash scripts/run_cline_script.sh -p 4 -n
+[2] logs
+-rw-r----- 1 app.e0031982 app.adm  1464303 Oct 18 14:37 /tmp/ABL_glm-5.3-flash_retest_r1.log
+-rw-r----- 1 app.e0031982 app.adm      668 Oct 18 14:26 /tmp/canary_glm53.json
+-rw-r----- 1 app.e0031982 app.adm        0 Oct 18 07:20 /tmp/canary_glm53.log
+-rw-r----- 1 app.e0031982 app.adm  1815973 Oct 18 01:06 /tmp/ABL_glm-5.3-flash_retest_r1_RETRY1_INVALID_infra_gateway_8p.log
+-rw-r----- 1 app.e0031982 app.adm  1645601 Oct 18 00:26 /tmp/ABL_glm-5.3-flash_retest_r1_INVALID_infra_quota.log
+-rw-r----- 1 app.e0031982 app.adm      611 Oct 18 00:17 /tmp/canary_glm53c.json
+-rw-r----- 1 app.e0031982 app.adm       53 Oct 18 00:16 /tmp/canary_glm53b.json
+-rw-r----- 1 app.e0031982 app.adm     6967 Oct 16 22:55 /tmp/ABL_glm-5.3-flash_r5_regrade.log
+-rw-r----- 1 app.e0031982 app.adm 10285756 Oct 16 21:53 /tmp/ABL_glm-5.3-flash_r5.log
+-rw-r----- 1 app.e0031982 app.adm     6892 Oct 16 20:46 /tmp/ABL_glm-5.3-flash_r4_regrade.log
+[3] loop log
+ > **[2026-10-04 → 10-11 早期流水]**：已全部原文搬入 `daily-memories/2026-10-{04..11}.md`（各日 §HH:MM）。涉及 B.glm-5.2/flash/kimi/doubao 全 5 轮、C1.pure_llm/rag/wo_retrieval、C1.full(V2) r1-r
+
+> build · glm-5.2
+[0m$ [0mcd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+wc -c MEMORY_ZHULONG.md ZHULONG_TASK.md
+34133 MEMORY_ZHULONG.md
+55426 ZHULONG_TASK.md
+89559 total
+> build · glm-5.2
+MEMORY is now 34KB (under 40KB red line). The task book is 55KB (over 40KB red line) — I should archive a closed block. Let me check which closed operator note is the largest to archive:
+[0m$ [0mcd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+echo "=== ZHULONG_TASK.md line count ==="
+wc -l ZHULONG_TASK.md
+echo "=== find 运维令二十八 block boundaries ==="
+grep -n '运维指令 · 2026-10-18（二十八\|运维指令 · 2026-10-18（二十七\|运维指令 · 2026-10-18（二十九\|运维指令 · 2026-10-18（三十' ZHULONG_TASK.md | head -10
+echo "=== ZHULONG_TASK_ARCHIVE.md size ==="
+ls -la ZHULONG_TASK_ARCHIVE.md 2>&1 | head -3
+=== ZHULONG_TASK.md line count ===
+607 ZHULONG_TASK.md
+=== find 运维令二十八 block boundaries ===
+7:### 🆕 运维指令 · 2026-10-18（三十一）— ▶️ **启动 B.glm-5.3-flash 复测 5-run**（`-p 4` 起步）【用户直令 · 最高优先】
+32:### 🆕 运维指令 · 2026-10-18（二十九）— 🔁 **ZL 评测基模改为 `glm-5.2`**（v4-pro-cloud 被网关 403 封族）→ 跑 158 集得分数【用户直令 · 最高优先 · 覆盖令二十八③的�
+141:### 🆕 运维指令 · 2026-10-18（三十）— 🧪 P1 排队：(N') 成本重测 + (B) 5-run 成本【不打断当前 ZL eval】
+=== ZHULONG_TASK_ARCHIVE.md size ===
+-rw-r--r-- 1 app.e0031982 app.adm 97625 Oct 18 03:06 ZHULONG_TASK_ARCHIVE.md
+> build · glm-5.2
+[0m✱ [0mGrep "运维指令 · 2026-10-18（二十八|用户令（2026-10-18）」：「编译 `eda_platform`" [90min ZHULONG_TASK.md · 0 matches[0m
+> build · glm-5.2
+[0m✱ [0mGrep "二十八|eda_platform|DeepSeek-V4-Pro-Cloud|zhulong.*zl.*安装" [90min ZHULONG_TASK.md · 16 matches[0m
+> build · glm-5.2
+[4] memory
+[5] loop/relay
+  81827       1  383634 bash zhulong_loop.sh
+1690490   81827     876 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 
+1690491 1690490     876 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 🔧 运维指令�
+1706003 3277328       0 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+3277328       1  627525 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+=== DONE 79 ===
+```
