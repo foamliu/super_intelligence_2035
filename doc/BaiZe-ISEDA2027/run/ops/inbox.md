@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 136 -->
+<!-- RUN_ID: 137 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,32 @@
 
 ---
 
+## RUN_ID 137 — 只读：zhulong GLM-5.3 r2–r5 进度 + 队列探针前置信息
+
+> 用途：给「令三十二」条件队列做准备 —— ① GLM-5.3 r2–r5 跑到第几轮/结果文件是否已落；② 顺手把 `pro-fp4` / `pro-cloud` 的**只读 canary** 先做掉（不跑评测、不改配置）；③ Qwen3.8-27B 网关是否有该模型。
+> ⚠️ **不启动任何评测**、不 kill、不改配置；canary 只发 1 次最小请求（max_tokens=8）。
+
+```bash
+set -u
+echo "=== RUN_ID 137 | zhulong queue preflight | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+echo "[1] zhulong task book head (令三十二 in place?)"
+grep -n '（三十二）' $BASE/ZHULONG_TASK.md | cut -c1-160 || echo 'MISSING 三十二 — need git pull'
+echo "[2] running eval procs"
+ps -eo pid,etimes,args | grep -E '[r]un_eval|[z]hulong|[p]arallel' | cut -c1-180 | head -12 || true
+echo "[3] latest run dirs"
+ls -lt /nasdata/app.e0031982 2>/dev/null | head -5 || true
+ls -lt $BASE/results 2>/dev/null | head -12 || true
+echo "[4] mem tail"
+tail -25 $BASE/MEMORY_ZHULONG.md 2>/dev/null | cut -c1-200 || true
+echo "=== DONE 137 ==="
+```
+
 ## RUN_ID 136 — 只读：ArmC 是否已启动（进程/输出/日志/GPU）
 
 > 用途：确认 `.12` 上 `armC_20261018` 是否已起跑，给 ETA 用。**只读**，不启动、不 kill。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 136 | ArmC started? | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] procs"
