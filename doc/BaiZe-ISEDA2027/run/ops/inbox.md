@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 134 -->
+<!-- RUN_ID: 135 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,34 @@
 
 ---
 
+## RUN_ID 135 — 只读探针：`.25` 代理 → `hf.co` 是否恢复
+
+> 用途：测 `172.19.92.25:13128` 到 `huggingface.co` 首页/API/resolve 小文件；`.23 + hf-mirror` 作对照。**只读**，不改配置、不启停下载。
+
+```bash
+set -u
+echo "=== RUN_ID 135 | .25 proxy -> hf.co | $(date '+%F %T') | host=$(hostname) ==="
+P25=http://172.19.92.25:13128
+P23=http://172.19.92.23:13128
+echo "[1] .25 -> hf.co"
+curl -sS -m 20 -o /dev/null -w 'http=%{http_code} t=%{time_total}s\n' -x "$P25" https://huggingface.co 2>&1
+echo "[2] .25 -> HF API tree (en_v1_4)"
+curl -sS -m 25 -o /tmp/rid135_tree.json -w 'http=%{http_code} t=%{time_total}s size=%{size_download}\n' -x "$P25" 'https://huggingface.co/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4' 2>&1
+head -c 200 /tmp/rid135_tree.json 2>/dev/null; echo
+echo "[3] .25 -> resolve README (follow redirects)"
+curl -sS -L -m 30 -o /dev/null -w 'http=%{http_code} t=%{time_total}s size=%{size_download}\n' -x "$P25" 'https://huggingface.co/datasets/openbmb/Ultra-FineWeb/resolve/main/README.md' 2>&1
+echo "[4] .23 -> hf-mirror (control)"
+curl -sS -m 20 -o /dev/null -w 'http=%{http_code} t=%{time_total}s\n' -x "$P23" https://hf-mirror.com 2>&1
+echo "[5] direct -> hf.co (control)"
+curl -sS -m 10 -o /dev/null -w 'http=%{http_code} t=%{time_total}s\n' https://huggingface.co 2>&1
+echo "=== DONE 135 ==="
+```
+
 ## RUN_ID 134 — 停掉 `.12` 上重复的 pretrain `--resume step_8000`，给 ArmC 让卡
 
 > 背景：RUN_ID 133 发现 `.12` 8 卡跑的是 `baize_xmodel25_decay_v2.py --resume .../step_8000`（PIDs 3698840+），而 `.29` 原训练 PID2597555 仍健康——这是**重复训练**，且会挡住 ArmC。**只 kill `.12` 上带 `--resume .../step_8000` 的 pretrain 进程**，不碰 `.29`、不碰 loop/中继/ArmB 文件。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 134 | kill duplicate pretrain on .12 | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] before"
