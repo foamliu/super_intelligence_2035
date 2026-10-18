@@ -2,12 +2,18 @@
 
 WAITING: 1
 
-> 🟢 **R433 (2026-10-18 15:03) — SMOKE PASSED reward=1.0 ✅ + 7×5 PILOT LAUNCHED**：
+> 🟢 **R433 (2026-10-18 15:03) — SMOKE PASSED reward=1.0 ✅ + 7×5 pilot launched（crashed → R434 修复重跑）**：
 > **solo smoke R433b (cline-patched × fix-git) ✅ reward 1.0**（`n_completed:1, n_errored:0, mean:1.0`，14:43→14:50）。verifier 流程：`apt install curl`→`curl -LsSf astral.sh/uv/0.9.5/install.sh`（SSL timeout rc=28 ~5min）→`source /root/.local/bin/env`→`uvx -p3.13 pytest`→**2 passed**（test_about_file/test_layout_file）→reward.txt=1。**根因修复确认**：overlay `client:`→`main:` + `network_mode:host` + 挂 `/root/.local/bin/env`（verifier `source env` 找到 mounted uvx）。cline agent 跑了 13 轮 API（run_commands×3+/editor×1+，exit_code:0）真实解题，非 infra 噪声。
 > **overlay 再优化（commit 27758bad）**：`no_proxy`/`NO_PROXY` 加 `astral.sh` —— .29 对 astral.sh **直连 Network unreachable**（无互联网路由），绕过代理后 curl rc=7 **~3s 快失败** vs 经代理 CDN TLS 挂 ~5min → 每 verifier 省 ~5min（full 623 trial 省 ~52h）。`/etc/hosts` 挂载 + `--add-host` 在 `network_mode:host` 下**均失效**（getent 仍返真实 Cloudflare IP），故用 no_proxy 方案。YAML ✅，容器内实测 curl 3s 快失败 + 流程续到 uvx。
 > **7×5 PILOT 已启动**（.29 PID 1331208，15:03:31，wrapper `/nas_train/app.e0031982/download/tb-overlay/tb_pilot_7way.sh`）：oracle check(5 task, n-concurrent 4)→7 harness×5 task=35 trial。pilot task 改用**本地有镜像**的 5 个 `break-filter-js-from-html / bn-fit-modify / log-summary-date-ranges / chess-best-move / fix-git`——原 `regex-log`/`sqlite-db-truncate` **无本地镜像**且 Docker Hub pull 被代理阻断（registry-1.docker.io timeout）→已替换（launch_tb_7way.sh 已改）。wrapper 注入 PATH(~/.local/bin harbor)+proxy+TB_API_KEY，避 §3(4)「非登录 shell 无 cline/harbor」坑。启动验证：harbor 0.24.0 ✅、key len 72 ✅、overlay astral.sh 7 行 ✅、oracle 容器 fix-git Up ✅。
 > **🔴 FULL-EVAL 镜像阻塞预警**：89 task 仅 **~15 本地镜像**（alexgshaw/*:20251031）；Docker Hub pull 被 MITM 代理阻断（registry-1.docker.io `Client.Timeout exceeded`）→ full 7×89 暂只能跑本地镜像 task。需解决镜像拉取（Docker Hub mirror / 批量预拉 / 本地 build）才能跑满 89。
 > **Next**：① poll oracle check（5 task reward 应=1.0，验证 overlay 对多 task 有效 + curl 快失败）② oracle ✅ → 监控 7 harness 35 trial（gate: infra≤20%, ≥6/7 runnable）③ 解决 full-eval 镜像拉取 ④ full 7×89 ⑤ gen_7way_report。
+> 🆕 **R434 (2026-10-18 15:22) — `-p` 单值 BUG 修复 → oracle 5/5 ✅ → PILOT RE-LAUNCH (PID 2731368)**：
+> **R433 pilot 崩溃双因**：① `harbor run -p/--path` 是**单值**（`Path|None` last-wins，非 `list[Path]`，源码 harbor/cli/jobs.py 确认）→ 多个 `-p` 只留最后一个 → oracle 实跑 1 task(fix-git reward=1, 1m48s, astral.sh 快失败 ✅)。② **运行中编辑 NFS 上的 launch_tb_7way.sh** → bash 增量读遇 `Stale file handle` → 脚本 oracle 后崩溃，7 harness 未跑。
+> **修复(commit 6ebf67f7)**：pilot=`mktemp -d`+5 symlink→单 `-p <dataset-dir>`；full=`-p ${TB_TASKS_DIR}`。bash -n ✅。**oracle_val5 独立验证 5/5 reward=1** ✅（break-filter/log-summary 慢：verifier test.sh 内 apt-get 经代理每次重跑，非镜像层缓存）。
+> **PILOT RE-LAUNCHED**(.29 PID 2731368, setsid 后台, `/tmp/launch_pilot.sh` 注 PATH+proxy+TB_API_KEY)：oracle 4/5 reward=1(break-filter apt-get 中)→将跑 7 harness×5=35 trial。**🔒铁律：pilot 运行期间禁编辑 NFS 上 launch_tb_7way.sh**。
+> **Next**：① oracle 5/5→② 首个 harness(cline-patched)确认 kimi API 调通→③ 35-trial gate(infra≤20%,≥6/7)→④ full-eval 镜像方案→⑤ full 7×89。📦MEMORY~32.4KB,R432 待归档。
+
 
 > 🆕 **R432 (2026-10-18 13:50) — 4 BUGS FIXED + GATEWAY ✅ + 🔴 DOCKER BLOCKER (需 root)**：
 > **代码修复（无需 docker，全部验证通过，bash -n + pyyaml safe_load ✅）**：
@@ -34,7 +40,7 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB T2 SOLO SMOKE FAILED at cline install (smoke #3 done, 2m24s) · ops relay fixed · cline-install 路径需重做
+PHASE:        TB T2 7×5 PILOT RE-LAUNCHED (PID 2731368, -p dataset-dir fix commit 6ebf67f7) · oracle 5/5 ✅ · 监控 35-trial gate
 已完成:       ①-㉘ same · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script (local -p) · ㉝ R431: ops relay fixed (inbox marker 122→123, commit eb204521) + stray .12 relay killed + 123 ran ✅ · ㉞ TB solo smoke ran 2m24s → FAILED at cline install (npm fallback targets non-existent pkg; fast-path embedded-bun binary absent)
 当前动作:     R431 (12:45): smoke 诊断完成。cline install 路径根本性破损——本机 cline=bun 源码构建(非 npm 包)，fast-path 期望的嵌入式 bun 二进制不存在 → npm fallback 装错包 fail。node fast-path/env 容器/镜像缓存均 ✅。
 下一步:       ① 修 cline install：本机 bun --compile 构建独立二进制(或 dist/index.js+bun) + overlay 挂载 cline 源码/bun + 改 cline_patched fast-path 路径 ② 重跑 smoke(cline-patched × fix-git) ③ 修 launch_tb_7way.sh bug-A(PYTHONPATH)+bug-B(key) ④ 解 bug-C(未缓存镜像拉取) ⑤ smoke pass → 7×5 pilot
