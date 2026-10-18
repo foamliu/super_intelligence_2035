@@ -14052,3 +14052,73 @@ torch.distributed.elastic.multiprocessing.api.SignalException: Process 593117 go
 259:Traceback (most recent call last):
 === DONE 128 ===
 ```
+
+---
+
+## RUN_ID 129 · 2026-10-18 16:40:39 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 129 | real train log check | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+PW=$(sed -n '2p' doc/sudo.txt)
+cat > /nas_train/app.e0031982/pretrain_log.sh <<'EOS'
+#!/bin/bash
+set -u
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay
+echo "=== TORCHRUN ==="
+ps -o pid,ppid,etimes,lstart,args -p 2597555 2>&1 | cut -c1-220
+echo "=== /tmp LOG STAT ==="
+ls -l /tmp/baize_xmodel25_decay_v2_train.log 2>&1
+echo "=== /tmp LOG TAIL ==="
+tail -8 /tmp/baize_xmodel25_decay_v2_train.log 2>&1 | cut -c1-220
+echo "=== /tmp STEP ==="
+grep -E 'step [0-9]+/19980|step=[0-9]+' /tmp/baize_xmodel25_decay_v2_train.log 2>/dev/null | tail -3
+echo "=== NFS LOG STAT (should be old .12) ==="
+ls -l "$D/baize_xmodel25_decay_v2_train.log" 2>&1
+echo "=== GPU ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+EOS
+chmod +x /nas_train/app.e0031982/pretrain_log.sh
+H=$(hostname)
+if [ "$H" = "whag0pgpuap29" ]; then
+  printf '%s\n' "$PW" | sudo -S -p "" bash /nas_train/app.e0031982/pretrain_log.sh
+else
+  printf '%s\n' "$PW" | ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'sudo -S -p "" bash /nas_train/app.e0031982/pretrain_log.sh'
+fi
+echo "=== DONE 129 ==="
+```
+
+**输出**
+```
+=== RUN_ID 129 | real train log check | 2026-10-18 16:40:40 | host=whag0pgpuap12 ===
+=== TORCHRUN ===
+    PID    PPID ELAPSED                  STARTED COMMAND
+2597555 2597505  114998 Sat Oct 17 08:44:02 2026 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 -
+=== /tmp LOG STAT ===
+-rw-r--r-- 1 app.e0031982 app.adm 362080 Oct 18 16:39 /tmp/baize_xmodel25_decay_v2_train.log
+=== /tmp LOG TAIL ===
+[step  9610/19980] loss=1.2726 lr=1.62e-04 tok/s=298.8K elapsed=1910.5min
+[timing step  9614] t_data=0.5ms/micro t_fwd_bwd=391.1ms/micro t_opt=152.1ms/step t_total=11897.9ms/step pct: data=0% fwd_bwd=99% opt=1%
+[timing step  9619] t_data=0.5ms/micro t_fwd_bwd=391.2ms/micro t_opt=152.4ms/step t_total=11902.6ms/step pct: data=0% fwd_bwd=99% opt=1%
+[step  9620/19980] loss=1.2717 lr=1.61e-04 tok/s=298.8K elapsed=1912.5min
+[timing step  9624] t_data=0.5ms/micro t_fwd_bwd=391.3ms/micro t_opt=160.1ms/step t_total=11914.1ms/step pct: data=0% fwd_bwd=99% opt=1%
+[timing step  9629] t_data=0.4ms/micro t_fwd_bwd=391.3ms/micro t_opt=160.4ms/step t_total=11911.7ms/step pct: data=0% fwd_bwd=99% opt=1%
+[step  9630/19980] loss=1.3255 lr=1.61e-04 tok/s=298.8K elapsed=1914.5min
+[timing step  9634] t_data=0.5ms/micro t_fwd_bwd=391.3ms/micro t_opt=157.5ms/step t_total=11910.0ms/step pct: data=0% fwd_bwd=99% opt=1%
+=== /tmp STEP ===
+=== NFS LOG STAT (should be old .12) ===
+-rw-r----- 1 app.e0031982 app.adm 32933 Oct 17 10:45 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/baize_xmodel25_decay_v2_train.log
+=== GPU ===
+0, 100 %, 51763 MiB
+1, 100 %, 51763 MiB
+2, 100 %, 51763 MiB
+3, 100 %, 51763 MiB
+4, 100 %, 51763 MiB
+5, 100 %, 51763 MiB
+6, 100 %, 51763 MiB
+7, 100 %, 51763 MiB
+=== DONE 129 ===
+```
