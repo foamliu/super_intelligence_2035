@@ -100,6 +100,9 @@ def download_one(repo_path, expected_size, max_retries=MAX_RETRIES):
     lp = local_path_for(repo_path)
     if is_complete(repo_path, expected_size):
         return ("skip", 0)
+    # Ensure the parent shard directory exists (fixes [Errno 2] No such file
+    # or directory: '....partial' when downloading into a brand-new shard dir)
+    os.makedirs(os.path.dirname(lp), exist_ok=True)
     tmp = lp + ".partial"
     url = f"{_ENDPOINT}/datasets/{REPO_ID}/resolve/main/{repo_path}"
     for attempt in range(1, max_retries + 1):
