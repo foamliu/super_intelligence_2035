@@ -12,10 +12,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）已启动跑批
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅；05_临界点 55/55 ✅ + 成片 295.51s；EP06 资产全位（4 场景图 + 1 合影 + 定妆照）+ 脚本固化（r2v/t2v/recover）
-当前动作:     EP06《情绪》启动：提交 51 镜 H3 后台跑批（R2V 27 + T2V 24 · running 1/pending 50 · 烟雾测试 3 镜已落盘 02/06 R2V + 01 T2V）
-下一步:       逐轮核验+回收 EP06 出片（recover_ep06_h3.py，51→54 镜）；54 镜全落盘后固化 gen_ep06_subtitles.py + synth_ep06.py 交付成片
+PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）跑批中 · 13/54 落盘
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅；05_临界点 55/55 ✅ + 成片 295.51s；EP06 资产全位 + 脚本固化（r2v/t2v/recover/subtitles/synth）
+当前动作:     EP06《情绪》H3 后台跑批中（running 1/pending 40 · 已回收 13/54 镜：R2V 7 + T2V 6）；本轮固化字幕/合成脚本并回收核验
+下一步:       逐轮核验+回收 EP06 出片（recover_ep06_h3.py，13→54 镜）；54 镜全落盘后跑 gen_ep06_subtitles.py（131 条）+ synth_ep06.py 交付成片
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-18（EP06《情绪》启动跑批 ✅：资产 4 场景图+1 合影核验在位 → 固化 recover_ep06_h3.py → 提交 51 镜 H3 后台跑批（R2V 27 + T2V 24 · running 1/pending 50）· 回写记忆 + commit + push 两仓）
+- **上次唤醒**：2026-10-18（EP06《情绪》H3 出片核验+回收 13/54 + 固化字幕/合成脚本 ✅：回收 13 镜（R2V 7 + T2V 6）→ 新建 gen_ep06_subtitles.py（131 条）+ synth_ep06.py → 回写记忆 + commit + push 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-18 · S3 放量 · EP06《情绪》H3 出片核验+回收 13/54 + 固化字幕/合成脚本 ✅**：续上轮「下一步」，核验+回收 EP06 出片并提前固化字幕/合成脚本。
+  - **git 同步**：短剧仓 up-to-date（`0a2be18`）；记录仓 Fast-forward `4c5a60d1..c271f7e8`（他线 pretrain/vision 提交 · 本线无冲突）。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 空闲 13.3GB · 队列 running 1/pending 40）；ffmpeg/ffprobe 在；MCP comfyui-drama/web-search 可用。
+  - **回收**：`recover_ep06_h3.py` 回收 **13/54 镜**（R2V 7/29 + T2V 6/25）；ffprobe 全部合规（R2V 864×480 / T2V 1056×608，h264+aac 24fps，帧数 73/107/124 = 3.04/4.46/5.17s 档）。
+  - **固化脚本**：新建 `scripts/gen_ep06_subtitles.py`（131 条 · 全片 257.75s）+ `scripts/synth_ep06.py`；py_compile exit=0 + dry-run 通过（synth 正确识别 13/54 在位 / 41 缺失）。
+  - **跑批健康**：gen 脚本 PID 37684/24916 已自然退出（全部 51 镜已提交）；队列 running 1/pending 40（剩余 41 镜由 ComfyUI 自主处理，无 OOM/报错）。
+  - **下一步**：逐轮核验+回收 EP06 出片（13→54 镜）；54 镜全落盘后跑 `gen_ep06_subtitles.py` + `synth_ep06.py` 交付成片。
 
 - **2026-10-18 · S3 放量 · EP06《情绪》启动跑批 ✅（54 镜 · 提交 51 镜 H3 后台）**：续上轮「下一步」，启动 EP06《情绪》（54 镜）。
   - **git 同步**：短剧仓 up-to-date（`d36a389`）；记录仓 up-to-date（`a4136670` · 本轮无新提交可拉）。
