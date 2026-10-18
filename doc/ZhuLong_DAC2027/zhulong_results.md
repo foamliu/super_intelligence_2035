@@ -597,3 +597,59 @@ V3，自探索 ON
 ### ⑥ 对照（无法给出 Pass@1，n=0）
 - vs `deepseek-v4-flash` 60.1±5.5%（n=5）· `glm-5.2` 83.3±3.1%（n=5）· 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）：**`deepseek-v4-pro-cloud` 158 题 Pass@1 = N/A `[blocked, n=0]`**（网关 403，eval 未跑，无通过数/158，无 timeout/gen-fail/quota 计数）。**禁止写成 ±**（n=0）。
 - 待网关解封 `deepseek-v4-pro-cloud`（canary HTTP 200 + content）后：`cd $BASE_DIR && export PYTHON=$PWD/venv/bin/python && setsid bash scripts/run_zhulong_script.sh -p 8 -n > /tmp/ZL_v4procloud_r1.log 2>&1 < /dev/null &` → 打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ZL_v4procloud_r1.log | tail -5`（Step7.1 auto-grade 已知 FileNotFoundError bug → 手动 regrade，模板同 deepseek-v4-flash retest，改 batch + GEN_FILE）→ n=1 单值标 `[provisional,n=1]`。
+
+---
+
+## ZL.glm-5.2 — `zhulong`/`zl` CLI × `glm-5.2`（运维令二十九·2026-10-18 · 用户直令「把 eda_platform 评测的基模换成 glm-5.2」）
+
+> **背景**：运维令二十八原定底模 `deepseek-v4-pro-cloud` 被 MSE Gateway HTTP 403 封禁（全 8 key × 2 path × 6 模型名变体均 403），eval 未跑 n=0。运维令二十九用户直令：底模改为 `glm-5.2`（@ cloud/v1 同 key 实测 200），其余口径照旧（构建/安装/隔离配置/158 集/n=1 provisional/不碰 cline 3.0.51）。
+
+> **状态：🟠 eval 跑中（r1，n=1 in-progress）— 2026-10-18 09:38 启动**
+> 标记：`[provisional, n=1, in-progress]`（评测尚未完成，分数待补；n=1 不入论文表，仅作 `zhulong 3.0.29 / cline-core 0.0.51` vs `cline 3.0.51 / cline-core 0.0.71` 对照参考）。
+
+### ① 版本对照（必填）
+| 项 | zhulong（被测） | cline（基线对照） |
+|---|---|---|
+| CLI `--version` | **3.0.29**（@cline/cli，build from `eda_platform/apps/cli`·git log -1=`ee7ec42 add read me`）| **3.0.51**（@cline/cli-linux-x64，运维令二十八取证 + 二十九收尾复核逐字一致） |
+| `@cline/core` SDK | **0.0.51** ✅（pre-check ① 三连核验：`apps/cli/package.json` `"@cline/core": "workspace:*"` → `node_modules/@cline/core/package.json` `"version": "0.0.51"` → `bun pm ls` `@cline/core@workspace:sdk/packages/core`） | 0.0.71（运维令二十八用户提供前提） |
+| 入口 | `~/.local/bin/{zhulong,zl}` → `~/.local/zhulong/bin/zhulong`（bun wrapper, 52 MB） | `/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline`（148,957,504 B） |
+
+### ② cline 3.0.51 未被改动 ✅（取证 → 二十九收尾复核逐字一致）
+- 取证（动手前）：`which -a cline`=`/home/app.e0031982/.local/node-20/bin/cline`；`cline --version`=`3.0.51`；`readlink -f $(which cline)`=`/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline`；`~/.bun/bin/cline` 不存在。
+- 二十九收尾复核（eval 启动后 09:42）：`which -a cline` 同上；`cline --version`=`3.0.51`；`readlink -f $(which cline)` 与取证**逐字一致**。
+- 全程未 `curl|bash` 官方安装器、未 `bun add/link/install -g @cline/cli`、未覆盖 `~/.bun/bin/cline`、未改 `~/.local/node-20/lib/node_modules/@cline`、未改 `~/.cline`（`/nasdata/app.e0031982/.cline` mtime 仍 2026-09-22 16:09，`~/.cline/data/settings/providers.json` mtime 仍 2026-10-18 00:55，本轮仅写 `~/.zhulong/settings/providers.json`）。
+
+### ③ 配置 = glm-5.2（与 cline 3.0.51 配置隔离）✅
+- `zhulong auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2 --data-dir ~/.zhulong` → `Provider configured: openai-compatible (glm-5.2)`
+- **生效配置**（`~/.zhulong/settings/providers.json`，updatedAt=`2026-10-18T01:36:17.350Z`）：
+  - `model` = `glm-5.2`
+  - `baseUrl` = `http://agi-gateway.cxmt.com/cloud/v1`
+  - `apiKey` 末 8 位 = `88ea2f23`（同 key 实测 HTTP 200 + content）
+  - data dir = `~/.zhulong`（独立，**未写进 `~/.cline`**）
+- **gateway canary**（剥 proxy 直 curl）：
+  - `max_tokens=16`：HTTP 200 + `reasoning_content` 16 token（glm-5.2 实为推理模型，小预算被 reasoning 烧光）
+  - `max_tokens=256`：HTTP 200 + `content="ok"` + `reasoning_tokens=111` + `finish_reason=stop` ✅（content 正常产出）
+  - ⚠️ zhulong providers.json 当前**未设 `maxTokens`**（沿用 API 默认）。若 r1 出现 null-content 失败（glm-5.2 reasoning 耗光预算）→ 不擅自加 maxTokens，按令二十九「只换模型，不改配置」红线，回报等运维决策（同 deepseek-v4-flash 令二十七② maxTokens 修复路径）。
+
+### ④ eval r1 启动（2026-10-18 09:38:52）
+- 启动命令：`cd $BASE_DIR && export PYTHON=$PWD/venv/bin/python && setsid bash scripts/run_zhulong_script.sh -p 8 -n > /tmp/ZL_glm52_r1.log 2>&1 < /dev/null &`（PID 1424781 · batch `2026_1018_093852` · `-p 8` + `-n`（禁 Memory Bank 注入）+ timeout 2500 + 4 端口 8650/8651/8652/8654@10.129.32.75 + V3 文档 + 自探索 ON + full harness）。
+- **infra 全绿**：4 端口全 OPEN ✅；`/home`=20G（≥8G ✅，95% 需关注）；loop PID 81827 有 proxy ✅；ops relay PID 1422695 alive ✅；MCP@8090 / RAG@9006 alive ✅。
+- **反作弊 hook canary ✅**（eval 启动后 09:41 抽样）：
+  - hook 部署：`~/.cline/hooks/PreToolUse`（10,242 B，09:39 由 `seed_cline_hooks` 自动部署）✅。
+  - hook 生效证据：`grep -c 'ACCESS RESTRICTED' /tmp/ZL_glm52_r1.log` = **26**（agent 调 `run_commands` 13 次全被阻，符合预期「应被拒」）。
+  - agent 工具分布（采样前 ~3 分钟）：`[thinking]`=79 / `[pyAether_MCP_server__search_apis]`=29 / `[pyAether_MCP_server__get_api_details]`=29 / `[pyAether_MCP_server__run_code]`=21 / `[search_apis_by_keyword]`=14 / `[run_commands]`=13（全 blocked）/ `[editor]`=10 / `[read_files]`=5 → MCP 工具调用正常，editor 写代码未被阻（合法 workspace 内），符合 deepseek-v4-flash retest r1 trace 中 PASS 任务的工具使用模式。
+- **判据**：r1 完成后打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ZL_glm52_r1.log | tail -5`（以 `pass (xx.x%)` 为准）；timeout / 0-token / quota 单列。若 429/限流 → 按令二十七① 降 `-p 4` 重跑一次（只降并发，不改模型/配置）；若 401/403 → 立即停、贴响应头原文、报 blocker（不空转）。
+
+### ⑤ Pass@1（待补·r1 跑完后回填）
+- **`glm-5.2` × `zhulong(3.0.29)` 158 题 Pass@1 = `[TBD·in-progress]` %**（通过数/158 = `[TBD]`/158）。
+- `pass (` 原文：`[TBD·r1 完成后 grep]`。
+- timeout / gen-fail / 0-token / quota 计数：`[TBD·r1 完成后统计]`。
+
+### ⑥ 对照（同模型、不同 CLI/SDK · n=1 · 仅参考 · 🚫 不入论文表）
+- **既有 `glm-5.2` 臂**（n=5，cline 3.0.51 / cline-core 0.0.71）= **83.3 ± 3.1%** [84.2, 87.3, 84.2, 79.1, 81.6]
+- **本次 ZL.glm-5.2**（n=1，zhulong 3.0.29 / cline-core 0.0.51）= `[provisional, n=1, in-progress]` → r1 完成后填单值，**禁止 ±**（n=1）、**禁止据此断言「改造版更好/更差」**（n=1 + 版本双变量：CLI 3.0.29 vs 3.0.51、SDK 0.0.51 vs 0.0.71）。
+- **并列写明 SDK 代差**：两侧变量 = (CLI 版本, cline-core 版本) = (3.0.29, 0.0.51) vs (3.0.51, 0.0.71)，差异不得归因于单一变量。
+
+### ⑦ 注脚（同步 `MEMORY_ZHULONG.md` + `daily-memories/2026-10-18.md`）
+- commit 前缀 `zhulong zl:`；n=1 不进论文表。
+- r1 完成后步骤：① grep `pass (` 打分 → ② 统计 timeout/gen-fail/0-token/quota → ③ 回填本节 ⑤ + ⑥ → ④ 同步 `MEMORY_ZHULONG.md`（PHASE=just_finished / CONFIG=`ZL.glm-5.2` / ROUND=r1 done）+ `daily-memories/2026-10-18.md` → ⑤ commit `zhulong zl: glm-5.2 r1 = xx.x% [provisional,n=1]`。
