@@ -10025,3 +10025,77 @@ GENERATED_SOLUTIONS_DIRS = [
 /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_zhulong_script.sh:581:# 必须在 step_update_memory_bank 之前: update_memory_bank.py 通过 EVAL_FW_DIR 自动配对 batch→eval,
 === DONE 74 ===
 ```
+
+---
+
+## RUN_ID 75 · 2026-10-18 12:30:51 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 75 | inspect EVAL_FW_DIR source | $(date '+%F %T') | host=$(hostname) ==="
+E=/nasdata/app.e0031982/code/eda_fastmcp
+echo "[1] .env EVAL/FRAMEWORK"
+grep -nE 'EVAL|FRAMEWORK' "$E/.env" 2>/dev/null | head -60
+echo "[2] loop PID 81827 env"
+tr '\0' '\n' < /proc/81827/environ 2>/dev/null | grep -E 'EVAL_FW_DIR|EVAL_ROOT_DIR|EDA-Eval-Framework|app\.t0002997|/nasdata' | head -40
+echo "[3] relay PID 3277328 env"
+tr '\0' '\n' < /proc/3277328/environ 2>/dev/null | grep -E 'EVAL_FW_DIR|EVAL_ROOT_DIR|EDA-Eval-Framework|app\.t0002997|/nasdata' | head -40
+echo "[4] run_zhulong full EVAL grep"
+grep -nE 'EVAL_FW|EVAL_ROOT|EDA-Eval-Framework|app\.t0002997|\.env|source ' "$E/scripts/run_zhulong_script.sh" 2>/dev/null | head -60
+echo "[5] .env full EVAL"
+grep -nE 'EVAL|FRAMEWORK' "$E/.env" 2>/dev/null | head -60
+echo "=== DONE 75 ==="
+```
+
+**输出**
+```
+=== RUN_ID 75 | inspect EVAL_FW_DIR source | 2026-10-18 12:30:51 | host=hfeg0tedaap02 ===
+[1] .env EVAL/FRAMEWORK
+126:EVAL_SANDBOX_WORKERS=4
+265:# EVAL_FW_DIR=/home/app.t0002596/devops/EDA-Eval-Framework
+266:EVAL_FW_DIR=${EVAL_FW_DIR:=/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether}
+267:EVAL_FW_DIR_SKILL=${EVAL_FW_DIR:=proj/EDA-Eval-Framework_1_skill}
+268:EVAL_FW_DIR_TCL=${EVAL_FW_DIR_TCL:=/home/app.t0002997/proj/EDA-Eval-Framework_1_tcl}
+269:EVAL_ROOT_DIR=${HOME}/eda_code_eval
+[2] loop PID 81827 env
+OLD_PWD=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+PWD=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+OLDPWD=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+[3] relay PID 3277328 env
+PWD=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+CLINE_CONNECTOR_CLI_LAUNCH={"launcher":"/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline","connectArgsPrefix":["connect"],"cwd":"/nasdata/app.e0031982/code/super_intelligence_2035"}
+OLDPWD=/nasdata/app.e0031982/code/super_intelligence_2035
+[4] run_zhulong full EVAL grep
+16:# 加载 .env 配置（含 CLI_AGENT 等变量）
+17:set -a; source "${PROJECT_DIR}/.env" 2>/dev/null || true; set +a
+20:source "${SCRIPT_DIR}/common.sh"
+30:# pyAether prompt 模板（从 .env 的 EDA_PROMPT_TEMPLATE_PYAETHER 读取，可 env 覆盖）
+45:readonly EVAL_ROOT_DIR="$HOME/eda_code_eval"
+46:ensure_dir "$EVAL_ROOT_DIR"
+239:    local batch_dir="${EVAL_ROOT_DIR}/${TIMESTAMP2}"
+301:    export EVAL_ROOT_DIR
+313:    CLI_OUTPUT_DIR="${EVAL_ROOT_DIR}/${BATCH_ID}/code"
+330:    OUTPUT_FILE="$EVAL_ROOT_DIR/code_generation_${TIMESTAMP2}.jsonl"
+344:    local log_dir="${EVAL_ROOT_DIR}/${BATCH_ID}/logs"
+354:    local trace_dst="${EVAL_ROOT_DIR}/${BATCH_ID}/trace"
+403:        local code_dir="${EVAL_ROOT_DIR}/${BATCH_ID}/code"
+438:        local isolation_dir="${EVAL_ROOT_DIR}/${BATCH_ID}/cli_data"
+526:        local isolation_dir="${EVAL_ROOT_DIR}/${BATCH_ID}/cli_data"
+567:    local jsonl_path="${EVAL_ROOT_DIR}/${jsonl_name}"
+581:# 必须在 step_update_memory_bank 之前: update_memory_bank.py 通过 EVAL_FW_DIR 自动配对 batch→eval,
+590:    local eval_dir="${EVAL_ROOT_DIR}/${BATCH_ID}"
+669:    local eval_dir="${EVAL_ROOT_DIR}/${BATCH_ID}"
+689:    local eval_dir="${EVAL_ROOT_DIR}/${BATCH_ID}"
+725:    print_info "输出目录:       ${EVAL_ROOT_DIR}/${BATCH_ID}"
+730:        local filter_dir="${EVAL_ROOT_DIR}/${TIMESTAMP2}/full_tasks_filtered"
+813:    # MCP 运行时静态检查由 .env 的 EDA_VALIDATOR_EVOLVE 控制(run_code)。
+[5] .env full EVAL
+126:EVAL_SANDBOX_WORKERS=4
+265:# EVAL_FW_DIR=/home/app.t0002596/devops/EDA-Eval-Framework
+266:EVAL_FW_DIR=${EVAL_FW_DIR:=/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether}
+267:EVAL_FW_DIR_SKILL=${EVAL_FW_DIR:=proj/EDA-Eval-Framework_1_skill}
+268:EVAL_FW_DIR_TCL=${EVAL_FW_DIR_TCL:=/home/app.t0002997/proj/EDA-Eval-Framework_1_tcl}
+269:EVAL_ROOT_DIR=${HOME}/eda_code_eval
+=== DONE 75 ===
+```
