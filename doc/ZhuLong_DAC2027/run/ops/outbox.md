@@ -10246,3 +10246,77 @@ drwxr-x--- 2 app.e0031982 app.adm   4096 Oct 18 00:01 20261018_0001_app.e0031982
 drwxr-x--- 2 app.e0031982 app.adm   4096 Oct 17 22:34 20261017_2234_app.e0031982
 === DONE 77 ===
 ```
+
+---
+
+## RUN_ID 78 · 2026-10-18 13:54:58 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 78 | stop redundant regrade + inspect agent | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] candidates"
+ps -eo pid,ppid,pgid,etimes,args | grep -E '[r]egrade_zl_glm52|[c]ompleted_code_generation_2026_1018_093852|[g]lm-5\.3|[r]un_cline_script|[r]un_zhulong_script|[r]un_eval\.py' | cut -c1-200 || true
+echo "[2] stop redundant"
+for p in $(pgrep -f '^bash /tmp/regrade_zl_glm52_r1.sh$' 2>/dev/null); do
+  pgid=$(ps -o pgid= -p "$p" | tr -d ' ')
+  echo "kill script pid=$p pgid=$pgid"
+  if [ -n "$pgid" ] && [ "$pgid" != "1" ]; then kill -TERM -- -"$pgid" 2>/dev/null || true; else kill -TERM "$p" 2>/dev/null || true; fi
+done
+for p in $(pgrep -f 'completed_code_generation_2026_1018_093852.jsonl' 2>/dev/null); do
+  echo "kill child pid=$p"; kill -TERM "$p" 2>/dev/null || true
+done
+sleep 2
+echo "[3] remaining"
+ps -eo pid,ppid,etimes,args | grep -E '[r]egrade_zl_glm52|[c]ompleted_code_generation_2026_1018_093852|[r]un_eval\.py' | cut -c1-200 || true
+echo "[4] agent loop/relay"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[z]hulong_ops_relay\.sh' | cut -c1-160 || true
+echo "[5] memory"
+grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null; grep -m1 'WAITING' MEMORY_ZHULONG.md 2>/dev/null
+echo "[6] glm-5.3 procs/logs"
+ps -eo pid,ppid,etimes,args | grep -E '[g]lm-5\.3|[g]lm53|[r]un_cline_script' | cut -c1-180 || true
+ls -lt /tmp/*glm*53* 2>/dev/null | head -5 || true
+echo "[7] loop log tail"
+tail -20 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-200 || true
+echo "=== DONE 78 ==="
+```
+
+**输出**
+```
+=== RUN_ID 78 | stop redundant regrade + inspect agent | 2026-10-18 13:54:58 | host=hfeg0tedaap02 ===
+[1] candidates
+[2] stop redundant
+[3] remaining
+[4] agent loop/relay
+  81827       1  381113 bash zhulong_loop.sh
+1667287 3277328       2 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+3277328       1  625005 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+[5] memory
+[6] glm-5.3 procs/logs
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 18 07:20 /tmp/canary_glm53.log
+-rw-r----- 1 app.e0031982 app.adm 611 Oct 18 00:17 /tmp/canary_glm53c.json
+-rw-r----- 1 app.e0031982 app.adm  53 Oct 18 00:16 /tmp/canary_glm53b.json
+-rw-r----- 1 app.e0031982 app.adm 731 Oct 18 00:16 /tmp/canary_glm53.json
+[7] loop log tail
+1. **(N') 5-run blocker 仍在**：主基座 `deepseek-v4-pro-fp4` 网关 canary = **HTTP 403 Forbidden**，全 8 key × 2 path（/v1 + /cloud/v1）全 403，headers 与 13:10 MEMORY blocker 逐字一
+
+2. **对照组仍可用**：`glm-5.2@cloud/v1` HTTP 200 ✅（编排模型未被封）· `deepseek-v4-flash@/v1` HTTP 200 ✅。**非全族封，仅 pro-fp4 通道被封**。
+
+3. **infra 全绿**：4 端口 OPEN · `/home`=20G（95%）· loop PID81827 有 proxy · ops relay PID3277328 alive · MCP@8090/RAG@9006 LISTEN。
+
+4. **ops RUN_ID 76 在 13:39 启动了重复 regrade**（同一 r1 数据·12:17 已出正式结果 84.2% 133/158）·regrade PID 1653633 alive（stage 3 sandbox exec，预计 ~14:00 完成）·**不 
+
+5. **无新运维指令**（运维令二十九 + 三十 仍现行·ops inbox .last_run_id=77）。
+
+**下一步**：等运维放行（A=网关恢复后启动 (N') r1 / B=运维批准换模型 / C=跳过 (N') 采信 legacy 73.3±2.2%）。
+
+**commit**：`87de3a1a zhulong (N'): 13:50 patrol ...` 已 push 到 `origin/main`。
+[loop] 2026-10-18 13:52:22 opencode returned (exit 0), checking git sync ...
+[push] 2026-10-18 13:52:22 push interval reached, syncing ...
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-18 13:52:24 WAITING=1 (eval running / infra not ready) → sleep 1800s
+=== DONE 78 ===
+```
