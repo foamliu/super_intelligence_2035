@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 133 -->
+<!-- RUN_ID: 134 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,35 @@
 
 ---
 
+## RUN_ID 134 — 停掉 `.12` 上重复的 pretrain `--resume step_8000`，给 ArmC 让卡
+
+> 背景：RUN_ID 133 发现 `.12` 8 卡跑的是 `baize_xmodel25_decay_v2.py --resume .../step_8000`（PIDs 3698840+），而 `.29` 原训练 PID2597555 仍健康——这是**重复训练**，且会挡住 ArmC。**只 kill `.12` 上带 `--resume .../step_8000` 的 pretrain 进程**，不碰 `.29`、不碰 loop/中继/ArmB 文件。
+
+```bash
+set -u
+echo "=== RUN_ID 134 | kill duplicate pretrain on .12 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] before"
+ps -eo pid,ppid,pgid,etimes,args | grep '[b]aize_xmodel25_decay_v2.py' | cut -c1-200 || true
+echo "[2] kill --resume step_8000"
+for p in $(pgrep -f 'baize_xmodel25_decay_v2.py.*--resume.*step_8000' 2>/dev/null); do
+  echo "kill PID $p"; kill -TERM "$p" 2>/dev/null || true
+done
+sleep 3
+for p in $(pgrep -f 'baize_xmodel25_decay_v2.py.*--resume.*step_8000' 2>/dev/null); do
+  echo "KILL PID $p"; kill -KILL "$p" 2>/dev/null || true
+done
+sleep 2
+echo "[3] after"
+ps -eo pid,ppid,etimes,args | grep '[b]aize_xmodel25_decay_v2.py' | cut -c1-200 || true
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== DONE 134 ==="
+```
+
 ## RUN_ID 133 — 只读：`.12` GPU 上到底是谁在跑（ArmC 的 wd 是多少）
 
 > 用途：用 `nvidia-smi --query-compute-apps` 拿真实 PID → `/proc/<pid>/cmdline`，并查 `armC*` 输出目录/日志。**只读，不 kill、不启动。**
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 133 | .12 GPU owner | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
