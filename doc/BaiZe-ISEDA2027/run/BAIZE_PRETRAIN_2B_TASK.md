@@ -29,6 +29,8 @@
 4. 记录：MEMORY + daily + commit `pretrain resume:`。
 
 **② 长期规则（立即生效，覆盖旧的「等运维许可」）**
+> ⚠️ **作用域**：旧块（12:0x / 10-18② / 其它）里的「不重启 / 不碰训练 / 等运维裁定」只适用于各自任务；**训练已死时一律按本块 resume**。
+
 - 以后唤醒先查训练：`pgrep -af torchrun`、`nvidia-smi`、train_log 尾部。
 - **训练进程消失 / 崩溃 / 被杀** ⇒ 自查日志 → 选最新有效 `step_*` ckpt → **立即 `--resume` 重启**，不需要逐次等运维许可。
 - 仅以下情况停手报 blocker：① 没有任何有效 ckpt；② 同一原因 1h 内连续崩 ≥2 次；③ 硬件/磁盘/网络错误明确；④ 重启命令本身失败。
@@ -60,7 +62,7 @@ bash /tmp/fix_relay_29_1018.sh
 ```
 - **判据**：≥1 个 `bash ops_relay.sh` 进程；**60–120s 内** `.last_run_id` 从 **122 → 123**，且 `run/ops/outbox.md` 末尾出现 `RUN_ID 123` 回执（含 `.29` loop/GPU + `.12` git 只读诊断）。
 - 若 2 次仍不起：贴 `pgrep -af 'bash [o]ps_relay[.]sh'`、`tail -40 /tmp/baize_ops_relay_29.log`、`ls -l run/ops/.last_run_id` 原文报 blocker，🚫 不再反复 kill。
-- 🚫 红线：不碰 torchrun/训练/ckpt；不 kill pretrain loop；不改 `ops_relay.sh` 本体；不清理 `/tmp`。
+- 🚫 红线：不碰 torchrun/训练/ckpt；不 kill pretrain loop；不改 `ops_relay.sh` 本体；不清理 `/tmp`。**（仅限本中继修复块；训练死亡见顶部 16:2x，必须 resume）**
 - ✅ 完成后在本轮 MEMORY 记：中继 PID、`.last_run_id`、outbox 的 RUN_ID 123 摘要、error scan；commit 前缀 `pretrain ops:`。
 
 
@@ -86,7 +88,7 @@ bash /tmp/fix_relay_29_1018.sh
 3. **与 data 线口径对齐**：同一组数字写进 `DATA_LEDGER.md`（你只提交 `PLAN_V5_DATA_PREREQ.md`，不改 data 的文件）。
 
 **③ 纪律**
-- 🚫 不动 `.29` 的 80B decay（不重启、不 kill、不抢卡）；🚫 不改 v5 配方/判据（要改先报批）。
+- 🚫 不动 `.29` 的 80B decay（不重启、不 kill、不抢卡）；🚫 不改 v5 配方/判据（要改先报批）。**（仅限本 v5 写作块；训练死亡见顶部 16:2x，必须 resume）**
 - 🚫 分词只跑 `nice -19` 小并发抽样（2–3 shard），**不要**在 `.29` 上开全量分词（那是 data 线的活，且会拖慢训练 IO）。
 - ✅ commit 前缀 `pretrain plan-v5:`；`MEMORY_PRETRAIN_2B.md` 加一行指针（≤32KB 自滚）。
 
@@ -183,7 +185,7 @@ bash /tmp/fix_relay_29_1018.sh
 - 🚫 数字必须可追溯：每个 token 数/吞吐/时长后面括号注来源（**BaiZe 吞吐引 T3/P-9.6–9.7 的 249K**；数据引 `DATA_LEDGER.md`；算式自带）。**禁止把 Xmodel-2.5 的 298.6K tok/s 当作本模型基准**（那是 80B decay 在 `.29` 的实测，模型/seq 都不同，只能作同机上限参考）。
 - 🚫 不把"计划"写成"已完成"；未验证的假设（如 CS8 评测 3–5 min/ckpt）要**标 `[假设]`**。
 - ✅ commit 前缀 `pretrain plan-v5:`；写完在 `MEMORY_PRETRAIN_2B.md` 顶部加一行指针（体积 ≤32KB，超了自滚）。
-- ✅ 本令**不改变**正在跑的 80B decay v2（🚫 不重启、不 kill）；两者独立。
+- ✅ 本令**不改变**正在跑的 80B decay v2（🚫 不重启、不 kill）；两者独立。**（仅限本计划块；训练死亡见顶部 16:2x，必须 resume）**
 
 
 > 📦 §2026-10-17 两块（P0 中继抢修 / `_orig_mod` 崩溃修复）均已闭合 → 原文已在 `daily-memories/2026-10-17.md`；结论：中继 PID2706247 健康（RUN_ID118-122 exit=0）；`_orig_mod` 修复验证通过，断点续跑至 6890/19980 无崩。
