@@ -1,11 +1,32 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 73 -->
+<!-- RUN_ID: 74 -->
+
+## RUN_ID 74 — 只读：`EVAL_FW` 的定义/默认值 + run 脚本是否设置 `EVAL_FW_DIR`
+
+> 用途：RUN_ID 73 已确认 `restore_config()` 用 `cwd=EVAL_FW`，错误路径来自 `EVAL_FW` 本身；本块定位它的定义、默认值与 `run_zhulong_script.sh`/`run_cline_script.sh` 的环境，判断是否硬编码。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 74 | inspect EVAL_FW | $(date '+%F %T') | host=$(hostname) ==="
+F=/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py
+echo "[1] run_eval.py head 110"
+sed -n '1,110p' "$F"
+echo "[2] EVAL_FW refs"
+grep -nE 'EVAL_FW|EVAL_FW_DIR|_eval_fw|t0002997|/home/' "$F" | head -70
+echo "[3] run_zhulong_script env"
+grep -nE 'EVAL_FW_DIR|EVAL_FW|EDA-Eval-Framework|SANDBOX_ENDPOINTS|LANG|export' /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_zhulong_script.sh | head -60
+echo "[4] run_cline_script env"
+grep -nE 'EVAL_FW_DIR|EVAL_FW|EDA-Eval-Framework|SANDBOX_ENDPOINTS|LANG|export' /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh | head -60
+echo "[5] global grep"
+grep -rnE 'EDA-Eval-Framework_1_pyaether|/home/app\.t0002997|EVAL_FW_DIR' /nasdata/app.e0031982/code/eda_fastmcp/scripts /nasdata/app.e0031982/code/eda_fastmcp/*.py 2>/dev/null | head -50
+echo "=== DONE 74 ==="
+```
 
 ## RUN_ID 73 — 只读：定位 `restore_config()` 的调用链与硬编码路径
 
 > 用途：查看 `run_eval.py` 的 `restore_config()` 定义、调用点、`eval_one`/`main` 片段，以及 `/home/app.t0002997` / `EDA-Eval-Framework` 是否硬编码。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 73 | inspect restore_config | $(date '+%F %T') | host=$(hostname) ==="
 F=/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py
