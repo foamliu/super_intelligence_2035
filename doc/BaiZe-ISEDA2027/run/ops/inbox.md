@@ -44,11 +44,13 @@ echo "[1] zhulong task book head (令三十二 in place?)"
 grep -n '（三十二）' $BASE/ZHULONG_TASK.md | cut -c1-160 || echo 'MISSING 三十二 — need git pull'
 echo "[2] running eval procs"
 ps -eo pid,etimes,args | grep -E '[r]un_eval|[z]hulong|[p]arallel' | cut -c1-180 | head -12 || true
-echo "[3] latest run dirs"
-ls -lt /nasdata/app.e0031982 2>/dev/null | head -5 || true
-ls -lt $BASE/results 2>/dev/null | head -12 || true
-echo "[4] mem tail"
-tail -25 $BASE/MEMORY_ZHULONG.md 2>/dev/null | cut -c1-200 || true
+echo "[3] latest glm-5.3 retest / regrade logs"
+ls -lt /tmp/ABL_glm-5.3-flash_retest_r*_regrade.log /tmp/ABL_glm-5.3-flash_retest_r*.log 2>/dev/null | head -8
+for f in /tmp/ABL_glm-5.3-flash_retest_r*_regrade.log; do [ -f "$f" ] && { echo "--- $f"; grep -E 'pass \(' "$f" | tail -2; }; done
+echo "[4] recent batches (code-gen done?)"
+ls -1dt /home/app.e0031982/eda_code_eval/2026_1018_* 2>/dev/null | head -5 || true
+echo "[5] mem tail"
+tail -8 $BASE/MEMORY_ZHULONG.md 2>/dev/null | cut -c1-200 || true
 echo "=== DONE 137 ==="
 ```
 
