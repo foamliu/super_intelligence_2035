@@ -3,7 +3,7 @@
 WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 六章已成片（13/18/01/02/03/04）/ 05_临界点 🔄H3 分镜视频出片中 51/55）。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05））。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,10 +12,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → EP05《临界点》H3 分镜视频批量出片中（55 镜 · R2V 41 + T2V 14 · 后台跑批）；六章已成片（13/18/01/02/03/04）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅ + 成片 272.84s；EP05 场景参考图 32/32 ✅；EP05 H3 脚本固化 + 55 镜已提交（已回收 51/55 = R2V 41/41 ✅ + T2V 10/14）；gen_ep05_subtitles.py + synth_ep05.py 已固化并 dry-run 通过
-当前动作:     EP05《临界点》H3 分镜视频批量出片收尾（ComfyUI 队列 running 1/pending 3）；本轮回收 8 镜（T2V 11/15/18/21/24/26/32/36）并 ffprobe 核验 51/51 合规 + 回写记忆 + commit
-下一步:       逐轮核验+回收 EP05 出片（51→55 镜 · recover_ep05_h3.py · 剩 T2V 4 镜 38/45/50/51 仍在队列）；55 镜全落盘后跑 gen_ep05_subtitles.py + synth_ep05.py 交付成片
+PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；下一章 EP06《情绪》（54 镜）待启动
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅ + 成片 272.84s；05_临界点 55/55 ✅（R2V 41 + T2V 14）→ 字幕 206 条 → master + 硬字幕成片 295.51s
+当前动作:     EP05《临界点》收尾：55/55 镜 → 字幕 206 条 → master（295.50s · 漂移 0.006s）→ libass 硬字幕成片（1280×720@24fps · 106.1MB）✅ 交付 + 回写记忆 + commit + push 两仓
+下一步:       启动 EP06《情绪》（54 镜）——先 gen_ep06_scenes.py 补场景参考图，再固化 H3 脚本跑分镜
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-18（EP05 出片核验+回收：回收 51/55 镜 · 新回收 8 镜（T2V 11/15/18/21/24/26/32/36）ffprobe 51/51 合规 · 队列 running 1/pending 3 · 回写记忆 + commit）
+- **上次唤醒**：2026-10-18（EP05《临界点》成片交付 ✅：55/55 镜 → 字幕 206 条 → master 295.50s 漂移 0.006s → libass 硬字幕成片 106.1MB · 修复 synth_ep05.py fontsdir 冒号 bug · 回写记忆 + commit + push 两仓）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,16 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-18 · S3 放量 · EP05《临界点》成片交付 ✅（55/55 镜 → 字幕 206 条 → master + 硬字幕成片）**：续上轮「下一步」，55 镜全落盘后跑字幕+合成交付成片。
+  - **git 同步**：短剧仓 up-to-date（`d36a389`）；记录仓 Fast-forward 至 `a4136670`（他线 pretrain 提交 · 本线无冲突）。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 队列空）；ffmpeg/ffprobe 在；MCP comfyui-drama/web-search 可用。
+  - **落盘核验**：`recover_ep05_h3.py` 恢复全部 **55/55 镜**（R2V 41/41 ✅ + T2V 14/14 ✅，含此前缺失的 38/45/50/51）；4 个新镜 ffprobe 合规（h264 1056×608 24fps + aac）。
+  - **字幕**：`gen_ep05_subtitles.py` 生成 `EP05_临界点_字幕.srt`（206 条 · 全片 295.50s）。
+  - **合成**：`synth_ep05.py` 拼接 55 镜 → `EP05_临界点_master.mp4`（1280×720@24fps · 295.50s · 102.6MB · **音画漂移 0.006s** ✅ <0.15s）。
+  - **硬字幕烧录踩坑**：首次烧录失败，根因 `subtitles=...:fontsdir='C:/Windows/Fonts'` 的**冒号破坏 ffmpeg 滤镜参数解析**（报 `No option name near '/Windows/Fonts'`）⇒ 去掉 fontsdir 依赖 libass 系统字体 + SRT 复制成 ASCII 名 `ep05_sub.srt`；修复 `synth_ep05.py` 后成功 → `EP05_临界点_成片.mp4`（**1280×720@24fps · 295.51s · h264+aac · 106.1MB · 漂移 0.006s**）。
+  - **commit**：短剧仓修复 `synth_ep05.py`（去 fontsdir）；记录仓 MEMORY + daily + PLAN。
+  - **下一步**：启动 EP06《情绪》（54 镜）——先 `gen_ep06_scenes.py` 补场景参考图，再固化 H3 脚本跑分镜。
 
 - **2026-10-18 · S3 放量 · EP05《临界点》H3 出片核验+回收（51/55）✅**：续上轮「下一步」，逐轮核验+回收 EP05 出片；回收 51/55（R2V 41/41 + T2V 10/14）。
   - **git 同步**：短剧仓 up-to-date（`d36a389`）；记录仓 Fast-forward `58117ba0..0d776231`（他线 vision/BaiZe 提交 · 本线无冲突）。
