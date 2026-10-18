@@ -44,76 +44,10 @@
 - 不占 `.29`、不碰 data/pretrain/harness 线；`.12` 8 卡由 ArmC 独占。
 - ETA：训练 ~18.4h + ProtB ~1h + MLLM 三阶段 ~1.8h + 12 集 ~1.5h ≈ **22–24h**。
 
-### 🆕 运维指令 · 2026-10-18（🚀 **P0：`.12` 空档跑 ArmB → MLLM 三阶段 → lmms-eval 12 集**，用 open_clip 接口，对照 ④-4ep 基线）· 用户直令 · 最高优先
+> 📦 运维指令「P0：`.12` 空档跑 ArmB→MLLM 三阶段→lmms-eval 12 集」（2026-10-18）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：ArmB→MLLM 12集DONE，平均(除MME)=26.10% vs ④-4ep 25.68%，裁定**不可分辨(边界值)**；报告 report_vision_armB_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§12。需要时再读。
 
-> **用户令（2026-10-18）**：「P0：.12 空档跑 ArmB→MLLM 三阶段 + 12 集」
-> **目的（先讲清要回答什么）**：ArmB（86.2M, open_clip + AIMv2-style）接 LLaVA-OV1.5 三阶段后，**12 集能不能超过 ④-4ep 的 ≈24%**。这是"open_clip 接口 + 更好表征"能否兑现到 MLLM 下游的**唯一直接证据**。
+> 📦 运维指令「vision 回放 1/2/3 epoch」+ ⛔作废（2026-10-18）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：不做（ArmB `--keep-ckpts 2` 已滚动删除 1/2/3ep ckpt，重训≈27.6h 不划算）；仅保留事实 1ep≈14313/2ep≈28626/3ep≈42939。需要时再读。
 
-**① 基线（必须写在报告里，不得改写）**
-- ④-4ep（126.8M, w512, 224px）→ Stage-iv 三阶段 → lmms-eval 12 集：ai2d 60.04 / RealWorldQA 43.01 / MMMU 42.89 / Blink 38.52 / MMStar 26.81 / MMMU-Pro 23.12 / InfoVQA 16.58 / ChartQA 12.24 / CountBench 10.79 / DocVQA 7.41 / OCRBench 1.10 / MME 847.5（perc 596.75 + cog 250.71）；**平均（除 MME）≈ 24%**（`reports/report_vision_stage4_mllm_result_zh.html` §4/§6）。
-- 官方 RiCEViT 同配方：平均 **60.08%**（上限参照，不作为本次判据）。
-- ArmB：**ProtB lp 62.09±0.01% / 5-NN 58.10%**（ckpt = `…/armB_aimv2_openclip_vitb16_224/open_clip_state_dict.pt`）。
-
-**② 预注册判据（先定后测，🚫 不许事后改）**
-| 判定 | 条件 |
-|:--|:--|
-| **强成功** | 12 集平均（除 MME）**≥ 30%** |
-| **成功** | 平均 **> 24%（基线）** 且 DocVQA/ChartQA/OCRBench **任一项 ≥ +10pp** |
-| **不可分辨** | 平均 22%–26% |
-| **失败** | 平均 **≤ 22%** |
-- 另必须报：**MME 总分**与 **perc/cog 拆分**；每集与 ④-4ep 的 Δ 表。
-
-**③ 前置（先做，任一不过就停并报 blocker）**
-1. `.12` **8×H100 全空**（`nvidia-smi` 0 MiB、无 compute apps）；若被占用 ⇒ 报占用者与 ETA，**不抢**。
-2. **ArmB → open_clip/LLaVA-OV 导出**：`run/vision/mllm_bridge/open_clip_vitb16_768.py`（注册 `baize-vitb16-768`，`encode_image → [B,196,768]`）+ `export_for_llava_ov.py`；**strict load 校验**（ArmB ckpt 是 `open_clip_state_dict.pt`，**无需**剥 `clip.` 前缀，那是 full ckpt 的处理）+ 打印 matched/missing/unexpected。
-3. **projector 维度改口**：ArmB 输出 **768** 而非 ④-4ep 的 512 ⇒ 2 层 MLP projector 为 **768→2560**（不是 1024→2560、也不是 512→2560）。改完跑 `test_wrapper_cpu.py` 等价单测（形状 `[1,196,768] → [1,196,2560]`）。
-4. `gate_check_stage1.py` 的阈值沿用 ④ 的口径；若形状相关断言写死 512，**只改维度、不改判据**，并在报告注明。
-5. lmms-eval 12 集数据缓存已在盘（`LMMS_EVAL_DATASETS_CACHE=/data/app.e0031982/lmms_eval_cache`）；先 `--limit 5` 跑 ai2d 冒烟（期望 ≈0.60 量级，与 ④ 的 smoke 同法）。
-
-**④ 训练（配方与 ④-4ep / LLaVA-OV1.5 **逐项一致**，只换视觉塔与 projector 宽度）**
-| 阶段 | 步数 | 训练什么 | LR | 其他 |
-|:--|:-:|:--|:--|:--|
-| Stage-1 Alignment | 2500 | 冻结 vision+LLM，只训 projector | 1e-4（不收敛再扫 5e-5/2e-4/5e-4） | 224px，196 tokens，无 spatial-merge |
-| Stage-1.5 Mid | 20000 | LoRA r=64（LLM）+ projector | 沿用 `stage15_train.py` 默认 | 8×H100 DDP |
-| Stage-2 Instruct | 3500 | LoRA + projector | LoRA 1e-5 / Proj 5e-6，cosine | LLaVA-NeXT-780k |
-- 数据：558K / 3M / 780k 三套 WebDataset（均在盘），**与 ④ 完全相同**。
-- **成本参考（10-16 实测反推）**：Stage-1 ≈3h、Stage-1.5 = 91.8min（3.63 steps/s）、Stage-2 ≈0.5h、12 集评测 ≈3–5h ⇒ **合计约 7–9h**。**每阶段结束报一次实际耗时**。
-
-**⑤ 评测与交付**
-1. 用 `launch_12benchmarks.sh`（每卡 1 benchmark、`--batch_size 32`、8 GPU、**无 --limit**）→ `consolidated_12benchmarks.json`。
-2. 中文报告：`reports/report_vision_armB_mllm_stage4_zh.html`（自包含）必须含：
-   - 配置表（ArmB 86.2M / 768-dim / projector 768→2560 / Qwen3-4B-instruct-2507）；
-   - **12 集完整表 + 与 ④-4ep 的 Δ + 与 RiCEViT 的 Δ**；
-   - **判据裁定**（强成功/成功/不可分辨/失败）；
-   - **诚实声明**：不与 LLaVA-OV 官方公开榜同框（塔规模 86M、196 tokens 无 anyres、4 epoch）；ProtB 与 MLLM 分数非单调（④ 就是反例）。
-3. 同步 `EXPERIMENTS_VISION.md` 新 §（ArmB-Stage4）+ `MEMORY_VISION.md` 指针；commit 前缀 `vision armB-mllm:`。
-
-**⑥ 纪律**
-- 🚫 不动 cline / pretrain / harness / data 的任何进程；不抢 `.29`；`.12` 独占。
-- 🚫 不因为"分数低"就中途改配方/改判据；低分照实报（低分本身就是结论）。
-- ✅ 每轮只推进一步（前置 → 导出 → smoke → Stage-1 → 1.5 → 2 → 评测 → 报告）；`WAITING=1` 仅在实际训练/评测运行时置位。
-- 体积：任务书 ≤32KB（超了自滚，只搬已闭合块原文）。
-
-
-> **用户令（2026-10-18）**：「vision 回放 1/2/3 epoch 要不要做：之前没有存检查点吗？如果没有存，还需要重新训练，那就不做了。」
-
-**① 结论：不做。** 已核实（机读证据，不是推测）：
-- `run/vision/armB_aimv2_openclip.py:349-354`：`--keep-ckpts 2` ⇒ 每保存一个新 ckpt，就删最老的 → **盘上永远只留最近 2 个 `checkpoint_*.pt`**；
-- 训练日志/流水实证：`keep-ckpts=2 已回收 checkpoint_10000`（10-17 14:5x）、`checkpoint_30000.pt 已自动删(keep-ckpts 2)`（10-18 05:37）、`[ArmB] removed old ckpt checkpoint_30000.pt`；
-- ⇒ **1ep=14313、2ep=28626、3ep=42939 三个步点的权重都已不存在**，要拿只能**从零重训≈27.6h** ⇒ 投入产出不成立，**取消**。
-
-**② 你要做的事（只做收尾，不占 GPU）**
-1. **不做任何回放/重训**；🚫 不启动训练；🚫 不改 `--keep-ckpts`；🚫 不动已有 final 产物。
-2. 若已按上一条指令开始任何动作 ⇒ **立即停止**（`pkill -f armB_aimv2_openclip` 仅限回放进程；若无则 no-op），并在心跳写"未启动/已停止"。
-3. 在 `MEMORY_VISION.md` 状态头写明：**「ArmB 1/2/3 epoch 曲线：取消（ckpt 未保留，重训 27.6h 不划算）」**，并标注"今后若需 epoch 曲线，须在训练前把 `--keep-ckpts` 设为 ≥4 或 `--save-every` 调小"。
-4. `reports/report_vision_armB_openclip_result_zh.html` 里**不要**出现 epoch 曲线/1-2-3ep 占位；若已有相关小节，改成一句说明：**"epoch 1/2/3 检查点未保留（keep-ckpts=2），故本报告只给 final(4ep)"**。
-5. commit 前缀 `vision armB-noep:`；`MEMORY_VISION.md` 保持 ≤32KB（自滚）。
-
-**③ 顺带（同一轮可做，零 GPU）**：把「ArmB 4ep final」这一行正式并进 `zhulong_results` 式的成绩表（在 `EXPERIMENTS_VISION.md §11` 已有的话核对一遍数字）：**lp 62.09±0.01% / 5-NN 58.10%**，并保留"与 ArmA 的 +4.06pp/+4.12pp 是 recipe 综合效应"的诚实注脚。
-
-
-> ⛔ **旧指令已作废（2026-10-18运维裁定）**：原要求测 1/2/3 epoch 的 ProtB，因 `--keep-ckpts 2` 已把这些 `checkpoint_*.pt` 滚动删除，取回需重训 ≈27.6h ⇒ **做罢**。
-> 仅保留事实：ArmB `--save-every 10000 --keep-ckpts 2`；1ep≈14313 / 2ep≈28626 / 3ep≈42939。
 ### 🆕 运维指令 · 2026-10-17 12:4x（⚔️ 立即 kill `.12` pretrain 进程 → 起 ArmB；**改 4 epoch** → 训完评 ProtB）· 用户直令 · 最高优先
 > ⏩ 已执行并归档（杀 pretrain → ArmB 4-epoch）已完成；详情 → `daily-memories-vision/2026-10-17.md`。
 
