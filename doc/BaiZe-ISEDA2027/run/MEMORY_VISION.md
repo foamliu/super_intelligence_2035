@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🚀 **ArmC 训练已启动 · wake #153（2026-10-18 18:0x）**：用户直令「开启 ArmC」+ 追加令「wd 0.1→0.01」⇒ **ArmC = 两个变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01），非单变量消融，报告须如实披露。✅ ①训练已启动：复制 run_armB_openclip.sh→run_armC_openclip.sh（仅改 OUT=armC_20261018_aimv2_openclip_vitb16_224 / --min-lr 1e-5 / --wd 0.01，其余与 ArmB 逐项一致；.py 复用 armB_aimv2_openclip.py）；setsid 起 .12 8×H100，8 DDP worker，log 判据行 `lr=0.001 warmup=2000 cos->min_lr=1e-05 steps=57250 wd=0.01` ✓；step 60/57250 loss 8.99 下降中，0.73 it/s 爬坡→稳态~0.86，8 卡 100%@50.5GB peak 50.3GB 无 OOM，无 error/nan；LPT 0.0% imbalance 11350 shards；ETA 参考 ArmB ~18.4h→约 10-19 12:00 训完。✅ ②ProtB 脚本 run_armC_protb_eval.sh 已备（仅改 ckpt→ArmC dir，待训完起）。⏳ ③MLLM 三阶段 + ④12集 待训完串行。**WAITING=1**（ArmC 训练运行中）。
+> 🔄 **ArmC 训练监控中 · wake #155（2026-10-18 20:5x）**：用户直令「开启 ArmC」+ 追加令「wd 0.1→0.01」⇒ **ArmC = 两个变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01），非单变量消融，报告须如实披露。①训练✅运行中（wake #153 启动，setsid PID 4154284）：复制 run_armB_openclip.sh→run_armC_openclip.sh（仅改 OUT=armC_20261018_*/--min-lr 1e-5/--wd 0.01，.py 复用 armB_aimv2_openclip.py）；8 DDP worker，log 判据行 `lr=0.001 warmup=2000 cos->min_lr=1e-05 steps=57250 wd=0.01` ✓；**step 8600/57250(15.0%)**，loss 0.70 稳定下降，C1~0.51 正常振荡，0.86 it/s 稳态，8 卡 100%@50.5GB peak 50.4GB 无 OOM，grep error/nan/oom=0；ETA~15.7h→约 10-19 12:30 训完。②ProtB 脚本 run_armC_protb_eval.sh ✅就绪（待训完起）。⏳ ③MLLM 三阶段 + ④12集 待训完串行。**WAITING=1**（ArmC 训练运行中）。
  > 📦 2026-10-18 16:38–17:05（wake #152: ArmB→MLLM 12集评测DONE）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB 平均(除MME)=26.10% vs ④-4ep 25.68% Δ+0.42pp，裁定**不可分辨(边界值)**；产物 report_vision_armB_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§12。
  > 📦 2026-10-18 15:12（wake #151 Stage-2 DONE+切ArmB768塔+12集首跑启动）已归档 → daily-memories-vision/2026-10-18.md；**结论**：Stage-2 DONE(15.3min,loss1.4779)；lmms-eval加vision_backend开关；ai2d冒烟PASS；12集首跑@15:12启动(后证实FAILED,见#152)。
  > 📦 2026-10-18 08:25~13:53（wake #146~#150: ArmB训完57250步+ProtB评测+Stage-1 DONE+Stage-1.5 DONE 86.1min+Stage-2启动）已归档 → daily-memories-vision/2026-10-18.md。
@@ -24,9 +24,9 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **ArmC 训练监控（wake #154, .12 8卡独占）**。用户直令 ArmC = min_lr 1e-4→1e-5 + wd 0.1→0.01（**两变量，非单变量消融**）。①训练✅运行中(step 4600/57250=8.0%, 0.89it/s 稳态, 8卡100%@50.5GB peak50.4GB, log lr=1e-3/min_lr=1e-5/wd=0.01 ✓, C1~0.19–0.50 早期振荡正常, ETA~16.5h→~10-19 12:00). ②ProtB 脚本✅就绪(待训完). ③MLLM+④12集 待串行. ArmB 全链路✅(12集26.10% 不可分辨). **WAITING=1**（ArmC 训练运行中）。 || ERROR_COUNT | 20（同前） |
+| PHASE | 🔄 **ArmC 训练监控（wake #155, .12 8卡独占）**。用户直令 ArmC = min_lr 1e-4→1e-5 + wd 0.1→0.01（**两变量，非单变量消融**）。①训练✅运行中(step 8600/57250=15.0%, 0.86it/s 稳态, 8卡100%@50.5GB peak50.4GB, log lr=1e-3/min_lr=1e-5/wd=0.01 ✓, C1~0.51 正常, ETA~15.7h→~10-19 12:30). ②ProtB 脚本✅就绪(待训完). ③MLLM+④12集 待串行. ArmB 全链路✅(12集26.10% 不可分辨). **WAITING=1**（ArmC 训练运行中）。 || ERROR_COUNT | 20（同前） |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-18 19:31 (wake #154)**: 🔄ArmC 训练监控健康。step 4600/57250(8.0%), loss~0.73(contr~0.68 patch~0.042), C1~0.19–0.50(早期振荡), lr=9.95e-04(warmup→1e-3), 0.89it/s, 8×H100 100%/50.5GB peak50.4GB 无OOM。✅log 判据行 lr=1e-3 cos->min_lr=1e-05 wd=0.01 ✓(两变量正确)；✅grep error/nan/oom/traceback=0；✅diff 确认 run_armC_openclip.sh 仅改 OUT/min_lr/wd；✅ArmB OUT dir 未被触碰；✅run_armC_protb_eval.sh 就绪。ETA~16.5h→~10-19 12:00；+ProtB 1h+MLLM 1.8h+12集 1.5h⇒~10-19 16:30 全链路。下一步: 监控→训完 ProtB→MLLM→12集→报告。 || WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
+| 更新 | **2026-10-18 20:52 (wake #155)**: 🔄ArmC 训练监控健康。step 8600/57250(15.0%), loss~0.70(contr~0.66 patch~0.031), C1~0.51(正常振荡), lr=9.66e-04(warmup→1e-3), 0.86it/s, 8×H100 100%/50.5GB peak50.4GB 无OOM, t=166min(2.77h)。✅log 判据行 lr=1e-3 cos->min_lr=1e-05 wd=0.01 ✓(两变量正确)；✅grep error/nan/oom/traceback=0；✅ArmB OUT dir 未被触碰(ckpt 10-18 07:54 完好)；✅run_armC_protb_eval.sh 就绪。📦体积：MEMORY 33534→21618B(归档两节运维问答→ARCHIVE) / TASK=29653B(均≤32KB✓)。ETA~15.7h→~10-19 12:30；+ProtB 1h+MLLM 1.8h+12集 1.5h⇒~10-19 17:00 全链路。下一步: 监控→训完 run_armC_protb_eval.sh→MLLM三阶段→12集→报告。 || WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ### 评测耗时归因（2026-10-15）
 
@@ -38,144 +38,10 @@ WAITING: 1
 | 磁盘满崩溃 + 修复 | ~0.5h | limit50 8卡同时写 `/home`(47G)→崩；修复=迁 HF_HOME→/nas_env + 单进程预建缓存 |
 | git 推送阻塞 | ~6h | `.12` 直连 github 不通(无 proxy)→ 6h 推不上来(运维已配 git config http.proxy=92.23 修复) |
 | generate 输出 bug | ~0.5h | 早期 ai2d 输出解析调试(`HF_TOKEN=hf_dummy` + adapter 输出格式) |
+> 📦 「运维问答·下一步工作建议 · 2026-10-08③」（1-A~1-D / 2-A~2-E / 3 GPU空窗 / 4-A~4-E 论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：旧版下一步建议（w384/336 AIMv2、C1-lp 消融、Stage-iv 前置、论文补 Limitations），多数已被后续 ArmA/ArmB/ArmC 工作覆盖（④-4ep 67.05%、V2全量=ArmB 62.09%、MLLM=ArmB 12集 26.10%）。需要时再读。
+> 📦 「运维问答·下一步工作建议 · 2026-10-10」（④epoch缩放 / V2全量 / MLLM前置 / 论文 / w384 / 336 / C1-lp 排序）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：④epoch→④-4ep(67.05% MODERATE/DIMINISHING)；V2全量→ArmB(62.09%)；MLLM前置→ArmB Stage-iv 完成(12集 26.10% 不可分辨)。需要时再读。
 
-## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
 
-> 回应运维指令 2026-10-08③。纯写作，不占 GPU。每条建议附实验编号/报告/数据路径为依据。
-
-### 1. 未验证的假设 / 遗留疑点
-
-**1-A · AIMv2-style 在更小塔（w384）上可能更优**
-- 依据：R10-③ 实测 w384(71.5M) InfoNCE lp=7.99%@15.36M **全宽度最高**（w512=6.08%），M 边际全区间为负 ≈−2.2pp/参数翻倍（`EXPERIMENTS_VISION.md §R10`，论文 §VI-B）。R11-G 证 AIMv2-style 在 w512 翻盘（7.40%→19.76%，+12.4pp，R²=0.91）（`§R11-G`，Table~XII）。**两者交叉点未验证**。
-- 设计：1 臂 w384 AIMv2-style(`--loss aimv2 --mask-ratio 0.6`)，CC12M+Amshaker 18.5M，30k 步，8 卡。≈2h/~16 GPU·h。判据：lp@30k ≥ 13.49%+1.5=15.0% → w384 更优。
-- 价值：若正面 → 最终编码器选 w384（更小更快，Stage iv 延迟更低），scaling 曲线需重拟合。
-
-**1-B · C1（对比对齐）与 lp（线性可分性）的背离是系统性的**
-- 依据：① mask-ratio arm 0.3（C1=0.3495 < 0.6 的 0.3810，但 lp=12.69% 接近，zs=5.25% > 4.72%）（`§mask-ratio 结论#5`）；② weight-ratio arm 0.5:1（C1_final=0.2816 **最低**，但 lp=13.80% **最高**）（`§weight-ratio 结论#7`）。→ 降低 contrast 权重 → C1↓ 但 lp↑，暗示 InfoNCE 对齐压力与 lp 特征质量有 trade-off。
-- 设计：contrast_weight 精细扫描 {0.1,0.25,0.5,0.75,1.0} × 3 seeds。先跑 0.1/0.25 两点 × 1 seed = ~32 GPU·h 确认趋势。判据：lp 倒 U，峰值点 = 最优 trade-off。
-- 价值：机制理解——若确认，论文可写「InfoNCE 的作用是防坍缩锚点而非 lp 最优化」。
-
-**1-C · R12b「更多 unique 数据 ≠ 更高 lp」归因未隔离**
-- 依据：R12b(69.7M,2ep) 18.81% < R11-G(18.5M,1ep) 19.76% < R12-3ep(58.8M,3ep) 20.27%。matched-N 显示 R12b 始终 ≤ R12-3ep（`EXPERIMENTS_VISION_ROUND12.md §2`）。可能原因：① GPIC short caption 9% 在 77-token 100% 截断→InfoNCE 退化；② epoch 重复=隐式增强。**两因素未隔离**。
-- 设计：取 R12 58.8M 混合数据只跑 1 epoch(~136k 步)，与 R12 3-epoch 同 N 对比。≈6.5h/~52 GPU·h。判据：1-epoch lp ≈ 19.76% → epoch 有效；> 18.81% → GPIC 质量是主因。
-- 价值：指导方向 1(GPIC 全量 100M)是否值得——若 epoch > unique，100M×1ep 不如 58.8M×3ep。
-
-**1-D（低优先）· 更高分辨率的 dense 监督信号更强**
-- 依据：224/16=196 patch，mask 0.6=~118 被遮。336/16=576 patch，mask 0.6=~346 → dense 密度 2.9×。S6(论文 §VI-C)只测 InfoNCE 未测 AIMv2-style。
-- 设计：336/16 AIMv2 30k，对比 224/16 baseline 13.49%。≈3h/~24 GPU·h（吞吐降 ~40%）。判据：lp ≥ 13.49%+1.5 → 高分辨率有益。
-
-### 2. Stage (iv) MLLM 对齐的前置准备（视觉编码器侧）
-
-**2-A · Projector 设计预研**（纯 CPU，~1 天）
-- 编码器输出 196 patch token(512-dim)+1 CLS。候选：① LLaVA 式 linear projection；② 2-layer MLP(LLaVA-1.5)；③ Q-Former/resampler(BLIP-2)。196 token 已较紧凑(CLIP-L/14@336=576)，linear/MLP 可能够用。→ 产出 `VISION_MLLM_PROJECTOR_DESIGN.md`。依据：论文 §VI-C 已声明「Stage~(iv) revisits the visual-token count for detail-dense layout」。
-
-**2-B · 分辨率/patch token 消融预案**（CPU 准备 + GPU 实验）
-- 224/16=196 对版图 VQA 远不够。预案：336/16=576、448/16=784、336/14=576(匹配官方 OV2)。需决定重训 vs pos-emb 插值。→ 先跑假设 1-D(336/16 AIMv2 30k)验证。依据：S6 显示 224/16 InfoNCE 最优但 dense 未测；官方 OV2 用 patch14/336（`VISION_OFFICIAL_REPOS_SURVEY.md §10.4`）。
-
-**2-C · 视觉塔冻结 vs 解冻评测框架**（纯 CPU 代码，~2 天）
-- Stage iv 需决定：① 冻结 trunk+可训 projector；② +LLM LoRA；③ 端到端微调。→ 搭 `vision/eval_mllm_readiness.py`：从最佳 ckpt 提特征→冻结/解冻开关→lp/zs 评测。依据：R11-L2 LoRA 解冻文本塔未翻盘(Δ−0.30~−0.80)（`§R11-L2`）→ 视觉塔解冻也需预验。
-
-**2-D · 特征提取与缓存管线**（CPU+轻 GPU，~0.5 天）
-- 从最佳 ckpt(R12 3-epoch 或 R11-G)提取并缓存 IN-1k/GPIC 特征到磁盘，供 Stage iv 直接读取。脚本 `vision/extract_features_cache.py`，复用已修复的 `extract_features_streaming`。依据：lp protocol bridge 已验证提取管线稳定(3 ckpt×A/B×3 seeds 无 crash)。
-
-**2-E · 数据配对脚本**（纯 CPU，~1 天）
-- GPIC 含 layout/parasitic 标注。Stage iv 需 image→script/script→image/版图 VQA。→ 检查 GPIC json 字段、编写配对脚本、统计可用量。与 data 线协调。依据：E1 实测 GPIC 每 tar ≈12,639 对（`§C1`）。
-
-### 3. GPU 空窗期利用建议（优先级排序）
-
-| 优先级 | 候选 | 成本 | 理由 |
-|:--|:--|:--|:--|
-| **P1** | AIMv2 on w384(假设 1-A) | ~16 GPU·h/~2h | 信息密度最高：1 臂回答「最优编码器是否应更小」+「AIMv2 翻盘在 w384 是否放大」。若正面→直接影响 Stage iv 选型。R10 已证 w384 InfoNCE 最优，AIMv2 交叉点未测是最大空白。 |
-| **P2** | Protocol B 评测消融臂(9 ckpt) | ~6 GPU·h/~1h | 论文消融表(Table~XIII/XIV)全用 Protocol A(比主流低~10pp，`BP-3`)。对 9 臂跑 Protocol B → 补「主流协议」数字，可与 DINOv2/MAE/iBOT 横比。桥接脚本 `lp_protocol_bridge.py` 已就绪，GPU 占用极轻。 |
-| **P3** | 336/16 AIMv2 test(假设 1-D) | ~24 GPU·h/~3h | 同时验证高分辨率 dense 假说 + 为 Stage iv 分辨率选型提供数据。吞吐降~40%+需 pos-emb 插值，风险高于 P1。建议 P1 有正面信号后再做。 |
-
-> **不建议现在做**：假设 1-B(contrast 扫描 ~240 GPU·h)和 1-C(epoch vs unique ~52 GPU·h)——前者太重且已有 2 点数据，后者与方向 1(GPIC 全量)强耦合，等 GPIC 下完一起做更有意义。
-
-### 4. 对论文的补充建议
-
-**4-A · 缺 Limitations 段（应补）**
-- 论文以 §VI-D AR 探索收尾(line 277)，无 Limitations/Future Work。建议加：① 数据规模 ~118M vs AIMv2 ~12B(102× 缺口)(`§C1`)；② 短 alt-text(~20 tok) vs LLaMA-3 长合成 caption(`VISION_AIMV2_OFFICIAL_PLAN.md §6`)；③ 单 seed(除 lp 协议 3 seeds 外消融全 seed 0)(`§mask-ratio/§weight-ratio`)；④ Protocol A 比主流低~10pp(`BP-3`)；⑤ 仅 224/16 未测高分辨率 dense；⑥ 无下游 MLLM 评测。
-
-**4-B · 缺 Protocol B 结果+公开基准横比（应补）**
-- Table~XII 仍用 Protocol A(19.76%)。已有 Protocol B：R11-G=**29.94±0.04%**、R12 1ep=**30.27±0.03%**(3 seeds σ<0.1pp)(`report_vision_lp_protocol.html`)。→ 加一列「Protocol B(mainstream)」或脚注，补与 DINOv2/MAE/iBOT 公开 lp 横比表(需 `cimi_search` 查公开数字)。
-
-**4-C · R12b「更多 unique 数据 ≠ 更高 lp」未写入（应补）**
-- 论文 §VI-C 提到 3-epoch 延伸(20.27%@176M)但未讨论 R12b(69.7M,2ep,18.81% < R11-G 19.76%)。这是 epoch vs unique 的重要发现(`§R12b`，`EXPERIMENTS_VISION_ROUND12.md §2`)，应写入 §VI-C 或 Limitations。
-
-**4-D · C1 vs lp 背离未写入（可选补）**
-- 两组消融均发现 C1↓ 但 lp↑(`§mask-ratio 结论#5/§weight-ratio 结论#7`)。建议加 1-2 句：「contrastive alignment (C₁) and linear separability (lp) can diverge: reducing contrast weight lowers C₁ but raises lp, suggesting the contrastive term's role is collapse prevention rather than lp optimization.」
-
-**4-E · Future Work 段（应补）**
-- ① 高分辨率编码器(336/448) for MLLM；② 更长 caption(LLaMA-3 式)；③ GPIC 全量 100M scaling；④ Stage (iv) MLLM 对齐评测。
-
-## 🗣️ 运维问答 · 2026-10-10（下一步工作建议）
-
-> 回应运维指令 2026-10-10「询问 vision，对于下一步工作，有什么建议」。基于当前状态：E1fair ProtB=62.34±0.01%，scaling fair Δlp=+0.17pp（不可分辨），zs=34.10%，k-NN=37.68%。按价值排序。
-
-### 1. ④ Epoch 缩放（最有决策价值）
-- **问题**：62.34% 是预算不足还是特征质量天花板？
-- **依据**：E1fair 1 epoch ProtB=62.34%；R12 3-epoch→20.27%（但旧 recipe）；k-NN=37.68% vs lp=62.34%→probe 欠拟合不大；zs=34.10% < lp=62.34%→文本对齐有增益但未饱和。
-- **设计**：在 E1fair 基础上补 2 epoch（374,202 步）和 4 epoch（748,404 步），同数据/目标/schedule。8 卡，2ep≈10h，4ep≈20h。
-- **判据**：2ep ≥70% → 预算不足；4ep ~63% 横盘 → 特征/目标函数问题。
-- **成本**：2ep ~80 GPU·h / 4ep ~160 GPU·h。
-- **依赖**：V1 Muon + V2 全量数据完成后排 GPU 档期。
-- **风险**：NFS 波动影响吞吐；多 epoch 可能过拟合（R12b 2ep < R11-G 1ep 先例）。
-
-### 2. V2 全量数据（已排期 · 第二优先）
-- **问题**：GPIC 全量 8000 tar（vs snapshot 7437 tar）+ CC12M + Amshaker 是否提升 lp？
-- **依据**：E1fair 用 total_shards=10787（~95.8M 对）；GPIC 全量 8000 tar→100.3M 对（+4.5M）。R12b「更多 unique 数据 ≠ 更高 lp」（69.7M 2ep=18.81% < R11-G 18.5M 1ep=19.76%）。
-- **设计**：1 臂，全量 GPIC 8000 tar 快照，步数按数据量计算（~230k 步），其余与 E1fair 逐字节相同。8 卡，~12h。
-- **判据**：Δlp vs baseline |Δ|≥1.5pp 可分辨。
-- **成本**：~96 GPU·h / ~12h 墙钟。
-- **依赖**：V1 Muon 完成（共用 .12 8 卡，串行）。
-- **风险**：同时变「数据量+步数」，结论只能表述为「全量配方 vs baseline」。
-
-### 3. (a) Stage (iv) MLLM 对齐前置
-- **问题**：当前最佳 ckpt（E1fair）能否直接用于 MLLM，需要哪些准备？
-- **依据**：论文 §VI-C 已声明「Stage (iv) revisits visual-token count」；R11-L2 LoRA 解冻未翻盘(Δ−0.30~−0.80)。
-- **设计**（纯 CPU/轻 GPU）：① projector 设计文档（linear/MLP/Q-Former 对比）；② 特征缓存管线（`extract_features_cache.py`）；③ 冻结/解冻评测框架（`eval_mllm_readiness.py`）；④ GPIC layout 标注配对脚本。
-- **判据**：产出设计文档 + 可运行脚本（不占 8 卡训练）。
-- **成本**：~2 天纯写作/代码，~0 GPU·h。
-- **依赖**：无（可与 V1/V2 并行）。
-- **风险**：低。
-
-### 4. (e) 论文呈现（纯写作）
-- **问题**：scaling 公平性翻案（Δlp=−5.59pp→+0.17pp）如何在 §VI 呈现？
-- **依据**：`report_vision_scaling_fair.html`（Δlp=+0.17pp 不可分辨）；旧报告 ⛔ 横幅已加。
-- **设计**：① §VI-B 加「schedule 敏感性」教训段（旧 lr=3e-3/warmup20 → 新 5e-4/warmup2000/cosine）；② 重拟合 scaling 曲线（若 ④ 有数据）；③ Limitations 加单预算点声明。
-- **判据**：LaTeX 编译 0 err，数字与报告一致。
-- **成本**：~0 GPU·h，~半天写作。
-- **依赖**：④ epoch 缩放数据（若有）可增强结论。
-- **风险**：低。
-
-### 5. (b) w384 AIMv2-style（可选 · GPU 空窗期）
-- **问题**：AIMv2-style 在更小塔（w384, 71.5M）上是否更优？
-- **依据**：R10 w384 InfoNCE lp=7.99%@15.36M 全宽度最高；R11-G AIMv2 w512 翻盘→19.76%。交叉点未验证。
-- **设计**：1 臂 w384 AIMv2-style，30k 步，8 卡，~2h。
-- **判据**：lp@30k ≥ 15.0% → w384 更优。
-- **成本**：~16 GPU·h / ~2h。
-- **依赖**：GPU 空窗期（V1/V2/④ 之后）。
-- **风险**：若 w384 不优于 w512 → 负结果（仍有价值）。
-
-### 6. (d) 224→336 分辨率（暂缓 · 用户令「明天再说」）
-- **问题**：336/16=576 patch 对版图 VQA 是否必要？
-- **依据**：官方 OV2 用 patch14/336=576 token；我们 224/16=196。BP-3 未测高分辨率 dense。
-- **设计**：1 臂 336/16 AIMv2-style，187k 步，pos-emb 重建，~2.25× 计算。8 卡，~20h。
-- **判据**：Δlp vs baseline ≥1.5pp → 高分辨率有益。
-- **成本**：~160 GPU·h / ~20h。
-- **依赖**：用户批准（暂缓中）。
-- **风险**：pos-emb 插值不稳定；计算量大。
-
-### 7. (c) C1-lp 背离（低优先 · 可选）
-- **问题**：降低 contrast weight 是否系统性提升 lp？
-- **依据**：mask-ratio arm 0.3 C1↓但 lp≈；weight-ratio 0.5:1 C1 最低但 lp 最高。
-- **设计**：contrast_weight {0.1,0.25,0.5} × 1 seed，30k 步。
-- **判据**：lp 倒 U 峰值 = 最优 trade-off。
-- **成本**：~48 GPU·h / ~6h。
-- **依赖**：GPU 空窗期。
-- **风险**：已有 2 点数据，趋势不明朗。
-
-> **总结排序**：④ epoch 缩放 > V2 全量数据 > (a) MLLM 前置（CPU 并行）> (e) 论文（CPU 并行）> (b) w384 > (d) 336 > (c) C1-lp。前 4 项可并行（④/V2 占 GPU，a/e 纯 CPU）。
 
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -231,6 +97,7 @@ WAITING: 1
 - [16:38–17:05 Oct18] **Wake #152**: ✅ **12集评测DONE + 报告** — 12集首跑FAILED(15:12→15:21, 只所4集, 根因=nas_env缓存缺MMStar/MME/blink/CountBench/MMMU_Pro+offline→整组GPU崩溃)。FIX: 改指/tmp缓存(全12集预缓存), 补跑8集16:38→16:42 exit=0。ArmB平均=26.10%, ␖=25.68%, Δ=+0.42pp。**裁定: 不可分辨(边界值)**。产物: report_vision_armB_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§12。详见 daily-memories-vision/2026-10-18.md。
 - [18:0x Oct18] **Wake #153**: 🚀 **ArmC 训练启动** — 用户直令「开启 ArmC」+追加「wd 0.1→0.01」⇒ ArmC=两变量(min_lr 1e-4→1e-5 + wd 0.1→0.01)。✅run_armC_openclip.sh(复制 ArmB, 仅改 OUT=armC_20261018_*/min_lr 1e-5/wd 0.01, .py 复用 armB_aimv2_openclip.py)；✅run_armC_protb_eval.sh 已备(ckpt→ArmC dir)。✅.12 8卡全空(4MiB/0%)→setsid 起 ArmC 训练：8 DDP worker, log 判据行 `lr=0.001 warmup=2000 cos->min_lr=1e-05 steps=57250 wd=0.01` ✓, step60/57250 loss 8.99↓ 0.73it/s 爬坡, 8卡100%@50.5GB peak50.3GB 无OOM/无error, LPT 0.0% imbalance 11350 shards。ETA~18.4h→约 10-19 12:00。📦 体积：TASK 36208→29653B(归档 P0 ArmB→MLLM + epoch-replay 两块→ARCHIVE) / MEMORY 31166B（均≤32KB）。下一步: 监控→训完 ProtB→MLLM→12集。
 - [19:31 Oct18] **Wake #154**: 🔄 **ArmC 训练监控** — git pull up to date, 无新运维指令（顶部 17:1x ArmC 块为当前最高优先, ①训练已由 #153 启动）。✅ ArmC 训练健康: step **4600/57250(8.0%)**, loss~0.73(contr~0.68 patch~0.042, 硬分片抖动非坍缩), C1~0.19–0.50(早期振荡正常), lr=9.95e-04(warmup→1e-3), **0.89 it/s**(稳态), 8×H100 100%/50.5GB(peak=50.4GB 无OOM), t=86min。✅ log 判据行确认 `lr=1e-3 cos->min_lr=1e-05 wd=0.01` ✓（两变量正确）；✅ grep error/nan/oom/traceback=**0**；✅ diff 确认 run_armC_openclip.sh 仅改 OUT/min_lr/wd（无意外改动）；✅ ArmB OUT dir 未被触碰（ckpt 10-18 07:54 完好）；✅ run_armC_protb_eval.sh 就绪(待训完)；③④MLLM+12集 待串行。ETA (57250−4600)/0.86≈**16.5h→~10-19 12:00**；+ProtB 1h+MLLM 1.8h+12集 1.5h⇒**~10-19 16:30 全链路完成**。下一步: 监控→训完`run_armC_protb_eval.sh`→MLLM三阶段→12集→报告。📦 体积：TASK=28.95KB / MEMORY=31.58KB（均≤32KB，无需归档）。
+- [20:52 Oct18] **Wake #155**: 🔄 **ArmC 训练监控 + 体积归档** — git pull up to date, 无新运维指令（顶部 17:1x ArmC 块为最高优先, ①训练已由 #153 启动）。✅ ArmC 训练健康: step **8600/57250(15.0%)**, loss~0.70(contr~0.66 patch~0.031, 硬分片抖动非坍缩), C1~0.51(正常振荡), lr=9.66e-04(warmup→1e-3), **0.86 it/s**(稳态), 8×H100 100%/50.5GB(peak=50.4GB 无OOM), t=166min(2.77h)。✅ log 判据行确认 `lr=1e-3 cos->min_lr=1e-05 wd=0.01` ✓（两变量正确）；✅ grep error/nan/oom/traceback=**0**；✅ ArmB OUT dir 未被触碰（ckpt 10-18 07:54 完好, open_clip_state_dict 598MB）；✅ ArmC OUT dir 存在但空（首 ckpt @10000, step 8600 未到, ~30min 后出现）；✅ run_armC_protb_eval.sh 就绪(待训完)。📦 体积：MEMORY 33534B(>32KB)→**归档两节「运维问答·下一步工作建议」(10-08③+10-10, 137行原文未改)→ARCHIVE_OPERATOR_VISION.md**→21618B / TASK=29653B（均≤32KB✓）。③④MLLM+12集 待串行。ETA (57250−8600)/0.86≈**15.7h→~10-19 12:30**；+ProtB 1h+MLLM 1.8h+12集 1.5h⇒**~10-19 17:00 全链路完成**。下一步: 监控→训完`run_armC_protb_eval.sh`→MLLM三阶段→12集→报告。
 
 
 
