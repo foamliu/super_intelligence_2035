@@ -533,3 +533,67 @@ V3，自探索 ON
 
 
 
+
+
+## ZL — `zhulong`/`zl` CLI build（运维令二十八·2026-10-18）· DeepSeek-V4-Pro-Cloud
+
+> **状态：🔴 eval 未跑（n=0，无分数）— gateway HTTP 403 阻塞 `deepseek-v4-pro-cloud` 模型**
+> 标记：`[blocked, n=0]`（非 provisional，未产生任何 Pass@1 数据，禁入论文表）。
+
+### ① 构建 + 安装（已完成 ✅）
+- **源**：`eda_platform`（36.15，`/nasdata/app.e0031982/code/eda_platform`，`git log -1` = `ee7ec42 add read me`，`master` 与 origin 平齐）→ `apps/cli`（`@cline/cli`，package.json `version=3.0.29`，`bin: cline → src/index.ts`）。`eda_platform` 本身即 cline 仓库改造版，未 clone 别处顶替、未 `git checkout` 别人改动、未改源码。
+- **工具链**：`bun 1.3.14` + `node v20.18.1`（engines 要求 node≥22/bun 1.3.13；用 bun 作运行时绕过 node22 缺失）。
+- **构建命令原文**（在 `eda_platform` 根）：
+  1. `bun install --frozen-lockfile`（2788 包，241.70s，走 npmjs via proxy `http://172.19.92.23:13128`，aliyun/npmmirror 内网镜像不通）
+  2. `bun run build:sdk`（= `bun --production -F './sdk/packages/*' build`，~37s，5 个 sdk 包全 exit 0）
+  3. `bun -F @cline/cli build`（= `bun run bun.mts`，~33s，含 cline-hub webview 构建，exit 0）
+- **产物**：`apps/cli/dist/index.js` = **19,140,548 B (19 MB)** + `dist/extensions/plugin-sandbox-bootstrap.js` + `dist/cline-hub/webview/`。
+- **安装**（独立前缀，不 `bun install -g`、不 `bun link`、不动 `@cline` 包）：
+  - `~/.local/zhulong/dist/` ← `cp -rL apps/cli/dist`（build artifact 复制到位）
+  - `~/.local/zhulong/node_modules` → 符号链接到 `apps/cli/node_modules`（解析 externalized 包：`@opentui/*`、`react`、`react-devtools-core`、`opentui-spinner`）
+  - `~/.local/zhulong/bin/zhulong`（wrapper：`exec bun $ZHULONG_HOME/dist/index.js "$@"`，bun 取 `~/.local/node-20/bin/bun`）
+  - `~/.local/bin/zhulong → ~/.local/zhulong/bin/zhulong`、`~/.local/bin/zl → ~/.local/zhulong/bin/zhulong`（替换旧的 `zhulong → cline` 与 `zl → ~/.local/share/zhulong/zhulong.sh` 两条 Sep-1 旧符号链接）
+  - `du -sh ~/.local/zhulong` = **52 MB**（含 dist 25M + dereferenced externals）
+- **验收原文**：
+  - `zhulong --version` = **3.0.29**；`zl --version` = **3.0.29**
+  - `which -a zhulong zl` = `/home/app.e0031982/.local/bin/zhulong`、`/home/app.e0031982/.local/bin/zl`
+  - `ls -l ~/.local/bin/{zhulong,zl}` = 两条均 `-> /home/app.e0031982/.local/zhulong/bin/zhulong`
+  - **对比**：`zhulong --version` = 3.0.29 vs `cline --version` = 3.0.51（版本不同=被测变量；cline 为被测基线）
+
+### ② cline 3.0.51 未被改动 ✅（取证 → 收尾复核逐字一致）
+- 取证（动手前）：`which -a cline`=`/home/app.e0031982/.local/node-20/bin/cline`；`cline --version`=`3.0.51`；`ls -l $(which cline)`=`lrwxrwxrwx ... -> ../lib/node_modules/@cline/cli-linux-x64/bin/cline`；`readlink -f $(which cline)`=`/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline`（148,957,504 B）；`~/.bun/bin/cline` 不存在；`~/.bun/install/global/node_modules/@cline` 不存在。
+- 收尾复核：`which -a cline` 同上；`cline --version`=`3.0.51`；`readlink -f $(which cline)` 与取证**逐字一致**。
+- 全程未执行 `curl|bash` 官方安装器、未 `bun add/link/install -g @cline/cli`、未覆盖 `~/.bun/bin/cline`、未改 `~/.local/node-20/lib/node_modules/@cline`、未改 `~/.cline`（`~/.cline/data/settings/providers.json` mtime 仍为 2026-10-18 00:55:25，即 glm-5.3-flash 工作，本轮未触碰）。
+
+### ③ 配置 = DeepSeek-V4-Pro-Cloud（与 cline 3.0.51 配置隔离）✅
+- `zhulong auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m deepseek-v4-pro-cloud --data-dir ~/.zhulong` → `Provider configured: openai-compatible (deepseek-v4-pro-cloud)`
+- **生效配置**（`~/.zhulong/settings/providers.json`，updatedAt=`2026-10-18T00:08:55.342Z`）：
+  - `model` = `deepseek-v4-pro-cloud`
+  - `baseUrl` = `http://agi-gateway.cxmt.com/cloud/v1`
+  - `apiKey` 末 8 位 = `88ea2f23`（复用 `eda_fastmcp/providers.json` 同批 cloud/v1 key，glm-5.2 同 key 实测 HTTP 200）
+  - data dir = `~/.zhulong`（独立，**未写进 `~/.cline`**）
+- 端到端 canary（`zhulong --data-dir ~/.zhulong -c /tmp/zl_canary_ws --auto-approve true -t 20 "Reply with: ZL_CANARY_OK"`）→ `error: Forbidden`（= HTTP 403，证明 zhulong 正确读取 ~/.zhulong 配置 → 命中 cloud/v1 → 网关返回 403；配置链路通）。
+
+### ④ 🔴 eval 未跑（n=0）— 网关 HTTP 403 阻塞 `deepseek-v4-pro-cloud`
+- **canary 矩阵**（`curl --noproxy '*' POST .../chat/completions`）：
+  | 模型 | 路径 | key | HTTP |
+  |---|---|---|---|
+  | `deepseek-v4-pro-cloud` | `/cloud/v1` | 全 8 把 `02_088EE...` key（c2759d74/3dd97aea/80a707b0/6903b05e/c43c1f4a/5591ae9f/c406f420/c5280771）| **403** |
+  | `deepseek-v4-pro-cloud` | `/v1` | c43c1f4a | **403** |
+  | 模型名变体 `deepseek-v4-pro` / `DeepSeek-V4-Pro-Cloud` / `deepseek-v4-pro-fp4` / `deepseek-v4-pro-cloud-latest` / `deepseek-pro-cloud` | `/cloud/v1` | c2759d74 | **403** |
+  | `glm-5.2`（对照）| `/cloud/v1` | c2759d74（同 key）| **200** + content |
+  | `deepseek-v4-flash`（对照）| `/v1` | c43c1f4a | **200** + content |
+- **403 响应**：`HTTP/1.1 403 Forbidden` + `www-authenticate: Basic realm=MSE Gateway` + `server: istio-envoy` + `content-length: 0`（空 body）。
+- **根因**：MSE Gateway（istio-envoy）层对 `deepseek-v4-pro*` 模型族的 authz 策略阻塞。**非 key 问题**（同 key 对 glm-5.2 返回 200）、**非 quota**（403≠429）、**非并发**（单请求也 403）、**非路径问题**（/cloud/v1 + /v1 均 403）。整个 `deepseek-v4-pro*` 族当前被网关封禁。
+- **vs MEMORY 06:46–07:20 的 401**：07:40 网关 auth 层从 401 恢复（glm-5.2/flash 恢复 200），但 `deepseek-v4-pro*` 族转为 403（模型级 authz 阻塞，更窄但更硬）。
+- **决策**：403 为硬 authz 阻塞，非任务 ⑤ 所述「401/429 致整批作废」可降 -p 重跑的情形（单请求即 403，降 -p 无意义；跑 158 题必为 0/158 全 403 = 纯浪费，违反「🚫 不擅自作废」纪律）→ **不启动 eval**，标 `[blocked, n=0]`，等运维放行（网关解封 deepseek-v4-pro-cloud / 提供可达 endpoint / 换模型）。
+
+### ⑤ 评测脚本就绪（待网关解封即可跑）
+- `eda_fastmcp/scripts/run_zhulong_script.sh` = `run_cline_script.sh` 副本，唯一改动：`CLI_AGENT` 默认 `cline`→`zhulong`，并设 `CLI_DATA_DIR=${CLI_DATA_DIR:-$HOME/.zhulong}`（worker setup 从 ~/.zhulong 复制 providers.json 到各 worker 隔离目录）。eval 参数（`-p 8 -n`、timeout 2500、4 端口 8650/8651/8652/8654@10.129.32.75、regrade 判定、反作弊 hook）一律不动。
+- `eda_fastmcp/scripts/run_cli.sh` zhulong 分支 invocation 修正：旧的 `zhulong -y -a -t 2500 "$task"`（0.1.3 旗标，3.0.29 已无 `-y/-a`，且无 `-c/--data-dir` → 会读 `~/.cline` 违红线 + 错模型）改为与 cline 分支一致 `zhulong -c "$ws_dir" --data-dir ${CLI_ISOLATION_DIR}/worker_${slot}/data -t 2500 "$task"`。仅影响 `CLI_AGENT=zhulong` 运行（别线不用 zhulong，零影响）。
+- 反作弊 hook 源 `scripts/cline_hooks/PreToolUse`（10,242 B）在位，eval 启动时 `seed_cline_hooks` 部署到 `~/.cline/hooks/PreToolUse`；zhulong `--config` 默认 `~/.cline/data/settings` → hook 发现路径不变，对 zhulong 同样生效（hook canary 需 agent 实际跑工具调用，403 下无法验，待解封后首轮 canary）。
+- `.env` full harness + V3 自探索 ON（`EDA_PHI_BUDGET=0` / `EDA_PHI_LAGGED=0` / `EDA_OMEGA_FIDELITY=high` / `EDA_RUNCODE_READBACK=full` / `EDA_MCP_RUN_CODE_FEEDBACK=full` / `API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V3.json` / `SKILL_DATA_DIR=./docs/skill_data_selfexpl`）✅；4 端口全 OPEN ✅；`/home`=22G（≥8G ✅，95% 需关注）。
+
+### ⑥ 对照（无法给出 Pass@1，n=0）
+- vs `deepseek-v4-flash` 60.1±5.5%（n=5）· `glm-5.2` 83.3±3.1%（n=5）· 主基座 `deepseek-v4-pro-fp4` 82.1±3.0%（n=5）：**`deepseek-v4-pro-cloud` 158 题 Pass@1 = N/A `[blocked, n=0]`**（网关 403，eval 未跑，无通过数/158，无 timeout/gen-fail/quota 计数）。**禁止写成 ±**（n=0）。
+- 待网关解封 `deepseek-v4-pro-cloud`（canary HTTP 200 + content）后：`cd $BASE_DIR && export PYTHON=$PWD/venv/bin/python && setsid bash scripts/run_zhulong_script.sh -p 8 -n > /tmp/ZL_v4procloud_r1.log 2>&1 < /dev/null &` → 打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ZL_v4procloud_r1.log | tail -5`（Step7.1 auto-grade 已知 FileNotFoundError bug → 手动 regrade，模板同 deepseek-v4-flash retest，改 batch + GEN_FILE）→ n=1 单值标 `[provisional,n=1]`。
