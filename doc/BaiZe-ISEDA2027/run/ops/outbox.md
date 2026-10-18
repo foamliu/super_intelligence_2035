@@ -14152,3 +14152,33 @@ Already up to date.
 4:> 🆕 **2026-10-18 16:4x 更正（sudo 实测）**：训练**没有死**——`.29` PID 2597555 从 **10-17 08:44** 一直存活，GPU **8×100%/51763 MiB**，`/tmp/baize_xmodel25_decay_v2_train.log` 当前 **step 9630/19980（48.2%）**、loss 1.3255、0 error。**#548 是误判**：它读的 `$OUTPUT_DIR/...train.log` 是 `.12` 旧 run 的 10-17 10:45 SIGTERM traceback，不是 `.29` 实时日志。**不要重启/不要 resume**；判活只认 `/tmp/baize_xmodel25_decay_v2_train.log` + `pgrep torchrun` + GPU。
 === DONE 130 ===
 ```
+
+---
+
+## RUN_ID 131 · 2026-10-18 17:08:54 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 131 | pull ArmC task book | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main || true
+git log -1 --oneline
+grep -n 'ArmC' doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md | head -3
+echo "=== DONE 131 ==="
+```
+
+**输出**
+```
+=== RUN_ID 131 | pull ArmC task book | 2026-10-18 17:08:54 | host=whag0pgpuap12 ===
+From https://github.com/foamliu/super_intelligence_2035
+ * branch              main       -> FETCH_HEAD
+Already up to date.
+e7bbd936 ops 131: pull ArmC task book on .12
+10:### 🆕 运维指令 · 2026-10-18 17:0x（🚀 **ArmC：只改 min_lr 的 4 阶段完整实验**）· 用户直令 · 最高优先
+12:> 用户令：「vision：开启 ArmC。跟 ArmB 相比，只有一个变量：学习率。LR=1e-3，min_LR=1e-5。1.训练；2.评测 ProtB；3.MLLM 对齐；4.MLLM 12 集评测。」
+14:> **ArmC = 只把 min_lr 1e-4 → 1e-5**；`--lr 1e-3`、warmup、4 epoch/57250、GBS/MBS、数据、目标、seed 全部不变。⚠️ 若发现 ArmB 实际值与上表不符，只允许改 LR/min_lr 到 **1e-3/1e-5**，其余照 ArmB 原值，并在回报里列 diff。
+=== DONE 131 ===
+```
