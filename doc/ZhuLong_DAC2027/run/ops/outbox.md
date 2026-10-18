@@ -9260,3 +9260,52 @@ lrwxrwxrwx 1 app.e0031982 app.adm 45 Oct 18 08:05 /home/app.e0031982/.local/bin/
 3277328       1  605481 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/
 === DONE 69 ===
 ```
+
+---
+
+## RUN_ID 70 · 2026-10-18 11:39:04 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 70 | paper rebuild | $(date '+%F %T') | host=$(hostname) ==="
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027 || { echo "CD FAILED"; exit 1; }
+echo "[1] git sync"
+git pull --rebase --autostash origin main > /tmp/rid70_pull.log 2>&1 || true
+echo "[2] build"
+pdflatex -interaction=nonstopmode -halt-on-error main.tex > /tmp/rid70_build.log 2>&1; rc=$?
+if [ $rc -eq 0 ]; then bibtex main >> /tmp/rid70_build.log 2>&1 || true; fi
+if [ $rc -eq 0 ]; then pdflatex -interaction=nonstopmode -halt-on-error main.tex >> /tmp/rid70_build.log 2>&1; rc=$?; fi
+if [ $rc -eq 0 ]; then pdflatex -interaction=nonstopmode -halt-on-error main.tex >> /tmp/rid70_build.log 2>&1; rc=$?; fi
+echo "rc=$rc"
+grep -E '^!|Output written|LaTeX Error|Undefined control' /tmp/rid70_build.log | tail -12
+ls -l main.pdf 2>&1
+echo "[3] commit pdf"
+if [ $rc -eq 0 ]; then
+  git add main.pdf
+  if ! git diff --cached --quiet; then
+    git commit -m "zhulong paper: rebuild PDF after number/scope fixes" > /tmp/rid70_commit.log 2>&1 || true
+    git push origin main >> /tmp/rid70_commit.log 2>&1 || { git pull --rebase --autostash origin main >> /tmp/rid70_commit.log 2>&1; git push origin main >> /tmp/rid70_commit.log 2>&1; } || true
+  fi
+  tail -4 /tmp/rid70_commit.log 2>/dev/null || true
+fi
+echo "=== DONE 70 ==="
+```
+
+**输出**
+```
+=== RUN_ID 70 | paper rebuild | 2026-10-18 11:39:04 | host=hfeg0tedaap02 ===
+[1] git sync
+[2] build
+rc=0
+Output written on main.pdf (13 pages, 685437 bytes).
+Output written on main.pdf (13 pages, 685437 bytes).
+Output written on main.pdf (13 pages, 685437 bytes).
+-rw-r--r-- 1 app.e0031982 app.adm 685437 Oct 18 11:39 main.pdf
+[3] commit pdf
+[main 2a7cfc03] zhulong paper: rebuild PDF after number/scope fixes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+To https://github.com/foamliu/super_intelligence_2035
+   53eca1b4..2a7cfc03  main -> main
+=== DONE 70 ===
+```
