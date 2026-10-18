@@ -12902,3 +12902,115 @@ curl: (7) Failed to connect to hf-mirror.com port 443 after 8 ms: Network is unr
 10.239.23.31:/vol_CTE0_data01  207T  177T   31T  86% /nas_train
 === DONE 122 ===
 ```
+
+---
+
+## RUN_ID 123 · 2026-10-18 12:15:07 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 123 · loop/GPU read-only probe · $(date '+%F %T') · host=$(hostname) ==="
+echo "[1] .29 loops"
+for p in baize_pretrain_loop.sh baize_harness_loop.sh baize_vision_loop.sh baize_data_loop.sh; do
+  echo "-- $p"
+  ps -eo pid,etime,args | grep "[b]$p" | cut -c1-150 | head -3 || true
+done
+echo "-- ops_relay.sh"
+ps -eo pid,etime,args | grep '[o]ps_relay\.sh' | cut -c1-150 | head -4 || true
+echo "[2] .29 cline procs"
+ps -eo pid,etime,args | grep '[c]line' | cut -c1-150 | head -6 || true
+echo "[3] .29 gpu"
+timeout 15 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "[4] .29 training procs"
+ps -eo pid,etime,args | grep -E '[t]orchrun|[p]retrain_launcher' | cut -c1-150 | head -4 || true
+echo "[5] disk"
+df -h /nas_train 2>/dev/null | tail -1
+echo "[6] .12 via ssh (timeout 12s)"
+timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'hostname; date "+%F %T"; echo "-- data loop"; ps -eo pid,etime,args | grep "[b]aize_data_loop.sh" | cut -c1-130 | head -2 || true; echo "-- vision loop"; ps -eo pid,etime,args | grep "[b]aize_vision_loop.sh" | cut -c1-130 | head -2 || true; echo "-- cline"; ps -eo pid,etime,args | grep "[c]line" | cut -c1-130 | head -4 || true; echo "-- gpu"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8' 2>&1 || echo "   ssh .12 FAILED"
+echo "[7] .12 data git diag (read-only)"
+timeout 15 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035; echo "-- pwd"; pwd; echo "-- remote"; git remote -v; echo "-- status"; git status -sb | head -5; echo "-- proxy env"; env | grep -iE "^(http|https|all|no)_proxy=|^HF_(PROXY|ENDPOINT)=" | cut -c1-120; echo "-- git proxy cfg"; git config --get-regexp ".*proxy" 2>/dev/null | head -5 || true; echo "-- index.lock"; ls -l .git/index.lock 2>/dev/null || echo none; echo "-- ls-remote (env)"; timeout 20 git ls-remote origin HEAD 2>&1 | head -4; echo "-- ls-remote (no proxy)"; timeout 20 env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy git ls-remote origin HEAD 2>&1 | head -4' 2>&1 || echo "   ssh .12 data diag FAILED"
+echo "=== DONE 123 ==="
+```
+
+**输出**
+```
+=== RUN_ID 123 · loop/GPU read-only probe · 2026-10-18 12:15:07 · host=whag0pgpuap29 ===
+[1] .29 loops
+-- baize_pretrain_loop.sh
+-- baize_harness_loop.sh
+-- baize_vision_loop.sh
+-- baize_data_loop.sh
+-- ops_relay.sh
+ 472750       18:10 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-ap
+ 472757       18:10 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_203
+1595127       02:36 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provi
+1779357       00:00 bash ops_relay.sh
+[2] .29 cline procs
+ 472750       18:10 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-ap
+ 472757       18:10 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_203
+ 472816       18:08 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run add --force --pathspec-from-file /tmp/cline-ch
+1595127       02:36 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provi
+2751345 13-18:57:12 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982/code/
+[3] .29 gpu
+0, 97 %, 51763 MiB
+1, 100 %, 51763 MiB
+2, 100 %, 51763 MiB
+3, 100 %, 51763 MiB
+4, 97 %, 51763 MiB
+5, 100 %, 51763 MiB
+6, 100 %, 51763 MiB
+7, 100 %, 51763 MiB
+[4] .29 training procs
+ 472750       18:11 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-ap
+ 472757       18:11 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_203
+1595127       02:37 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provi
+2597555  1-03:31:05 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=1 --n
+[5] disk
+10.239.23.31:/vol_CTE0_data01  207T  177T   31T  86% /nas_train
+[6] .12 via ssh (timeout 12s)
+whag0pgpuap12
+2026-10-18 12:15:09
+-- data loop
+ 216659       50:04 node /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
+ 216666       50:04 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline -c /nas_train/app.e0031982/
+-- vision loop
+1294447  1-18:46:24 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
+-- cline
+ 216659       50:04 node /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
+ 216666       50:04 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline -c /nas_train/app.e0031982/
+1990645       25:41 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0
+1990652       25:41 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e
+-- gpu
+0, 78 %, 15303 MiB
+1, 39 %, 15165 MiB
+2, 72 %, 15439 MiB
+3, 58 %, 15201 MiB
+4, 57 %, 15307 MiB
+5, 45 %, 15299 MiB
+6, 48 %, 15383 MiB
+7, 70 %, 15443 MiB
+[7] .12 data git diag (read-only)
+-- pwd
+/nas_train/app.e0031982/code/super_intelligence_2035
+-- remote
+origin	https://github.com/foamliu/super_intelligence_2035.git (fetch)
+origin	https://github.com/foamliu/super_intelligence_2035.git (push)
+-- status
+## main...origin/main
+ M doc/BaiZe-ISEDA2027/run/ops/inbox.md
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+?? doc/BaiZe-ISEDA2027/run/5245/
+-- proxy env
+-- git proxy cfg
+http.proxy http://172.19.92.23:13128
+https.proxy http://172.19.92.23:13128
+-- index.lock
+none
+-- ls-remote (env)
+5f46a4a173e68b3d82b8dd26bbe59a5733ffc83e	HEAD
+-- ls-remote (no proxy)
+5f46a4a173e68b3d82b8dd26bbe59a5733ffc83e	HEAD
+=== DONE 123 ===
+```
