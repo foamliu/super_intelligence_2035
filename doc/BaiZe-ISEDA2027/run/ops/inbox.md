@@ -51,6 +51,9 @@ echo "[4] recent batches (code-gen done?)"
 ls -1dt /home/app.e0031982/eda_code_eval/2026_1018_* 2>/dev/null | head -5 || true
 echo "[5] mem tail"
 tail -8 $BASE/MEMORY_ZHULONG.md 2>/dev/null | cut -c1-200 || true
+echo "[6] relay health"
+pgrep -af 'ops_relay.sh' | cut -c1-140 || echo 'NO_RELAY_PROC'
+tail -3 /tmp/baize_ops_relay.log 2>/dev/null | cut -c1-200 || true
 echo "=== DONE 137 ==="
 ```
 
