@@ -10400,3 +10400,42 @@ ls -la ZHULONG_TASK_ARCHIVE.md 2>&1 | head -3
 3277328       1  627525 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
 === DONE 79 ===
 ```
+
+---
+
+## RUN_ID 80 · 2026-10-18 14:42:11 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 80 | pro-cloud vs pro-fp4 canary | $(date '+%F %T') | host=$(hostname) ==="
+E=/nasdata/app.e0031982/code/eda_fastmcp
+KEYS=$(grep -rhoE '02_[A-Za-z0-9_-]{20,}' "$E/.env" "$E/providers.json" "$HOME/.zhulong/settings/providers.json" 2>/dev/null | sort -u | head -8)
+echo "keys_found=$(printf '%s\n' "$KEYS" | grep -c .)"
+for spec in "deepseek-v4-pro-cloud|http://agi-gateway.cxmt.com/cloud/v1" "deepseek-v4-pro-fp4|http://agi-gateway.cxmt.com/v1" "glm-5.2|http://agi-gateway.cxmt.com/cloud/v1" "deepseek-v4-flash|http://agi-gateway.cxmt.com/v1"; do
+  m=${spec%%|*}; url=${spec#*|}; best=000
+  for k in $KEYS; do
+    code=$(env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy curl -sS --noproxy '*' --connect-timeout 3 -m 8 -o /tmp/rid80_"$m".json -w '%{http_code}' -X POST "$url/chat/completions" -H "Authorization: Bearer $k" -H 'Content-Type: application/json' -d "{\"model\":\"$m\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":16}" 2>/dev/null)
+    if [ "$code" = "200" ]; then best=200; break; fi
+    if [ "$best" = "000" ] || { [ "$code" != "000" ] && [ "$best" != "200" ]; }; then best=$code; fi
+  done
+  echo "$m -> best HTTP $best"
+  head -c 140 /tmp/rid80_"$m".json 2>/dev/null | tr '\n' ' '; echo
+done
+echo "=== DONE 80 ==="
+```
+
+**输出**
+```
+=== RUN_ID 80 | pro-cloud vs pro-fp4 canary | 2026-10-18 14:42:11 | host=hfeg0tedaap02 ===
+keys_found=8
+deepseek-v4-pro-cloud -> best HTTP 403
+
+deepseek-v4-pro-fp4 -> best HTTP 403
+
+glm-5.2 -> best HTTP 200
+{"id":"20261018144212f5db7059f78846e2","object":"chat.completion","created":1792305732,"model":"glm-5.2","choices":[{"index":0,"message":{"r
+deepseek-v4-flash -> best HTTP 200
+{"id":"chatcmpl-e4d5c89f-4a2d-41f6-be1f-236c22938013","object":"chat.completion","created":1792305732,"model":"deepseek-v4-flash","choices":
+=== DONE 80 ===
+```
