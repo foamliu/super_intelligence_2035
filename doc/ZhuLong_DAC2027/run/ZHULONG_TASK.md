@@ -10,6 +10,32 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
+### 🆕 运维指令 · 2026-10-18（三十二）— 🔀 **GLM-5.3 r2-r5 之后的队列**：pro-fp4/pro-cloud → (N′)；否则 DeepSeek-V4-Flash 第二遍 → Qwen3.8-27B【用户直令 · 最高优先】
+
+> 用户令：「ZhuLong：等 GLM-5.3-Flash r2-r5 测完后，再试试 deepseek-v4-pro-fp4 / pro-cloud，如果通了，就测 (N') 5-run；否则测 DeepSeek-V4-Flash 5-run 第二遍，然后 Qwen3.8-27B 5-run。」
+> **前置**：先完成令三十一的 B.glm-5.3-flash r2-r5（5/5 + mean±std + 更新 results），再进入本队列。**严格串行**，不得并行抢端口。
+
+**① 先探针（r2-r5 收口后立即做）**
+- `deepseek-v4-pro-fp4` @ `/v1` 与 `deepseek-v4-pro-cloud` @ `/cloud/v1`：各用现有 key 做 canary；**HTTP 200 + content = 通**；403 = 封；429 = 等窗口。
+- 优先 **pro-fp4**；pro-fp4 不通再试 **pro-cloud**；两者都不通 → 走 ③。
+- 记录每路 HTTP 原文/响应头（不打印 key）。
+
+**② 若 pro-fp4 / pro-cloud 任一通 → 跑 (N′) 5-run**
+- 严格按 `PLAN_RETEST_READBACK_COST.md` 的 (N′) 规格（readback_none / no observation 成本重测），**不得改配方**；5 次独立 run，同 harness/端口/seed 口径。
+- 若用 **pro-cloud** 而非 pro-fp4，必须在报告里注明「模型部署不同（cloud vs fp4）」，不得当作同一模型。
+- 每轮打分：Step 7.1 auto-grade 已知 FileNotFoundError → **手动 regrade**（照 r1 模板，`unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework`）；记录 `pass (xx.x%)` + timeout/gen-fail/0-token/quota。
+- 5/5 后 mean±std，更新 `zhulong_results.md`；若 429/限流，降 `-p` 或等窗口，不得静默作废。
+
+**③ 若两者都不通 → 按顺序跑**
+1. **B.deepseek-v4-flash 第二遍 5-run**：同第一遍复测配置（`-p 4`、`maxTokens=16384`、full harness、V3+自探索 ON、key `c43c1f4a`），5 次独立 run，标签 `retest2`/`second 5-run`；对比 fresh 11.9±2.7、第一遍 60.1±5.5；5/5 有效后 mean±std，更新 results。
+2. **Qwen3.8-27B 5-run**：先 canary 确认网关模型名/端点/key（**不要猜模型名**；若网关无此模型/403/429 → 停并贴原文报 blocker，不硬跑、不伪造）；确认后同 full harness + V3 自探索，`-p` 先 4；5 次独立 run；5/5 后 mean±std，更新 results。
+- 两段都完成后更新 `zhulong_results.md` + MEMORY + daily；commit `zhulong B:` / `zhulong qwen:`。
+
+**④ 纪律**
+- 只有令三十一 r2-r5 收口后才进入本队列；不得并行、不得抢 4 端口。
+- `(N′)` / DeepSeek-V4-Flash second / Qwen3.8-27B 都按 5-run mean±std；n<5 不得写 ±。
+- 不碰论文口径；不杀 loop/中继；每次只推进一步。
+
 ### 🆕 运维指令 · 2026-10-18（三十一）— ▶️ **启动 B.glm-5.3-flash 复测 5-run**（`-p 4` 起步）【用户直令 · 最高优先】
 
 > 用户令（2026-10-18）：「让 zhulong 启动 B.glm-5.3-flash 复测」。
