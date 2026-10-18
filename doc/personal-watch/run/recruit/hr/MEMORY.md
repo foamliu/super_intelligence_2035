@@ -534,3 +534,18 @@
     - ★ **纪律**：**新标签 `chat/index` 落地非 `chat/index` / 无 `.user-list` ⇒ 判定登录态失效** ⇒ **立即停手**
       （不点会话、不点同意/拒绝、不发消息），记台账 + `MEMORY_RECRUIT.md`，**等人工经 VNC 扫码/短信登录**；
       **不要**自行重启 Chrome（会打断 news/video 线共用的浏览器与 profile）。
+35. ⚙️ **聊天图片简历 = 可用证据，但 `attach` 选择器认不出 —— 要点开预览取 `.image-viewer-img` 大图** ★ 2026-10-18（R26）：
+    - **事实**：朱浩然首条消息写「这是我的简历」，`hr_res_scan` 报 `attach=false`；消息区只有 `<img class="img-tiny">`（300×424 显示 / 200×283 实际）。
+      点击该图后出现 `.image-viewer-img`，`src` 为**同路径去掉 `_s`、带新的 `auth_key`** 的 846×1197 版本 ⇒ 可直接下载核验。
+    - ★ **纪律**：① `attach=false` **不等于**「没发简历」，要检查 `.img-tiny` / `img-tiny-content`；② 先点图，再取 `.image-viewer-img` 的 `src` 下载原图；
+      ③ 图片简历可作推荐附件（PNG），但正文注明「截图版，如需 PDF 再索取」；④ 存 `~/hr_resumes/<date>/`（仓外），不 OCR、不把 PII 入 git。
+
+---
+
+## 十、R26 实习专场达标（2026-10-18 18:00）
+
+| 候选人 | 学校 / 专业 / 在读 | 证据 | 判定 |
+|:--|:--|:--|:--|
+| **朱浩然** | 上海科技大学 · 电子科学与技术 · 硕士 2026.09–2029.06 | 锐明技术 Agent 开发实习（2026.03–2026.07）：20+ 工具 / 12 Skills / 约 30 份 RAG 文档 / 日均万级 SQL；Harness 约束（上下文压缩、SQL 只读、步数上限、超时熔断、输出截断）；EvoAgent 自研 Runtime Harness + Lead/Worker/Critic 多 Agent（PR Review 92.5%，风险检测 F1 81.9→92.5%）；技能栏 LangChain/LangGraph、独立 Agent Loop | **达标** · 已随 MAIL-R26-01 外发（简历为聊天图片，仓外存档） |
+
+- 同批：陈一心（上海大学 · 数据科学本科）**不达标**（LLM 项目偏产品/前端，ZKH 偏数据分析）；杨轶昂（上海应用技术大学 · 电子信息硕士）**待简历**（18:02 已索要，未回传）。
