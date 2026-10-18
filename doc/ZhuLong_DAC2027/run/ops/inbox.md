@@ -1,11 +1,41 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 69 -->
+<!-- RUN_ID: 70 -->
+
+## RUN_ID 70 — 重编译论文 PDF（数字/scope 修订后）
+
+> 用途：在 36.15 上重跑 pdflatex + bibtex，验证数字修订后的论文无编译错误，并更新 `main.pdf`。
+
+```bash
+set -u
+echo "=== RUN_ID 70 | paper rebuild | $(date '+%F %T') | host=$(hostname) ==="
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027 || { echo "CD FAILED"; exit 1; }
+echo "[1] git sync"
+git pull --rebase --autostash origin main > /tmp/rid70_pull.log 2>&1 || true
+echo "[2] build"
+pdflatex -interaction=nonstopmode -halt-on-error main.tex > /tmp/rid70_build.log 2>&1; rc=$?
+if [ $rc -eq 0 ]; then bibtex main >> /tmp/rid70_build.log 2>&1 || true; fi
+if [ $rc -eq 0 ]; then pdflatex -interaction=nonstopmode -halt-on-error main.tex >> /tmp/rid70_build.log 2>&1; rc=$?; fi
+if [ $rc -eq 0 ]; then pdflatex -interaction=nonstopmode -halt-on-error main.tex >> /tmp/rid70_build.log 2>&1; rc=$?; fi
+echo "rc=$rc"
+grep -E '^!|Output written|LaTeX Error|Undefined control' /tmp/rid70_build.log | tail -12
+ls -l main.pdf 2>&1
+echo "[3] commit pdf"
+if [ $rc -eq 0 ]; then
+  git add main.pdf
+  if ! git diff --cached --quiet; then
+    git commit -m "zhulong paper: rebuild PDF after number/scope fixes" > /tmp/rid70_commit.log 2>&1 || true
+    git push origin main >> /tmp/rid70_commit.log 2>&1 || { git pull --rebase --autostash origin main >> /tmp/rid70_commit.log 2>&1; git push origin main >> /tmp/rid70_commit.log 2>&1; } || true
+  fi
+  tail -4 /tmp/rid70_commit.log 2>/dev/null || true
+fi
+echo "=== DONE 70 ==="
+```
 
 ## RUN_ID 69 — 只读：glm-5.2 可用性 + zhulong/cline 版本 + @cline/core SDK 版本
 
 > 用途：令二十九换模型前先核验 —— ① `glm-5.2` @ cloud/v1 是否 200；② `zhulong`(3.0.29) 与 `cline`(3.0.51) 并存且基线未动；③ `eda_platform` 的 `@cline/core` 实际版本（期望 0.0.51）。**只读**，不改配置、不跑评测。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 69 | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] zhulong / cline binaries"
