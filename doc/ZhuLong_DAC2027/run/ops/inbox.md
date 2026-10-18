@@ -1,11 +1,44 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 77 -->
+<!-- RUN_ID: 78 -->
+
+## RUN_ID 78 — 停掉多余 regrade + 查 agent 当前任务（是否 glm-5.3-flash）
+
+> 用户令：r1 已出分 84.2%，不再重复打分。停掉 RUN_ID 76 启动的 `/tmp/regrade_zl_glm52_r1.sh` 及其子进程；同时只读查看 agent/loop 与 glm-5.3 相关进程。
+
+```bash
+set -u
+echo "=== RUN_ID 78 | stop redundant regrade + inspect agent | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] candidates"
+ps -eo pid,ppid,pgid,etimes,args | grep -E '[r]egrade_zl_glm52|[c]ompleted_code_generation_2026_1018_093852|[g]lm-5\.3|[r]un_cline_script|[r]un_zhulong_script|[r]un_eval\.py' | cut -c1-200 || true
+echo "[2] stop redundant"
+for p in $(pgrep -f '^bash /tmp/regrade_zl_glm52_r1.sh$' 2>/dev/null); do
+  pgid=$(ps -o pgid= -p "$p" | tr -d ' ')
+  echo "kill script pid=$p pgid=$pgid"
+  if [ -n "$pgid" ] && [ "$pgid" != "1" ]; then kill -TERM -- -"$pgid" 2>/dev/null || true; else kill -TERM "$p" 2>/dev/null || true; fi
+done
+for p in $(pgrep -f 'completed_code_generation_2026_1018_093852.jsonl' 2>/dev/null); do
+  echo "kill child pid=$p"; kill -TERM "$p" 2>/dev/null || true
+done
+sleep 2
+echo "[3] remaining"
+ps -eo pid,ppid,etimes,args | grep -E '[r]egrade_zl_glm52|[c]ompleted_code_generation_2026_1018_093852|[r]un_eval\.py' | cut -c1-200 || true
+echo "[4] agent loop/relay"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[z]hulong_ops_relay\.sh' | cut -c1-160 || true
+echo "[5] memory"
+grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null; grep -m1 'WAITING' MEMORY_ZHULONG.md 2>/dev/null
+echo "[6] glm-5.3 procs/logs"
+ps -eo pid,ppid,etimes,args | grep -E '[g]lm-5\.3|[g]lm53|[r]un_cline_script' | cut -c1-180 || true
+ls -lt /tmp/*glm*53* 2>/dev/null | head -5 || true
+echo "[7] loop log tail"
+tail -20 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-200 || true
+echo "=== DONE 78 ==="
+```
 
 ## RUN_ID 77 — 只读：pyAether r1 regrade 进度/是否出分
 
 > 用途：RUN_ID 76 已启动 regrade；本块只读查看进程、日志尾部、`pass (xx.x%)` 与输出目录，不 kill、不改配置。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 77 | pyaether regrade progress | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] procs"
