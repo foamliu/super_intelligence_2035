@@ -62,7 +62,6 @@ class HermesTB(TBBaseAgent):
         await self.exec_as_root(
             environment,
             command=(
-                "pip install --break-system-packages --upgrade pip && "
                 "pip install --break-system-packages hermes-agent 2>&1 | tail -5"
             ),
         )
@@ -81,7 +80,8 @@ class HermesTB(TBBaseAgent):
         Uses -z (oneshot) mode: the prompt immediately follows -z with no
         space, so argparse does not swallow subsequent flags.
         """
-        cwd = str(environment.default_working_dir or "/root")
+        _task_cfg = getattr(environment, "task_env_config", None)
+        cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
         # Write a config file for the kimi provider
         config_content = (
             f"provider:\n"

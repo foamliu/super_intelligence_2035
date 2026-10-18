@@ -85,7 +85,8 @@ class CodexTB(TBBaseAgent):
         context: AgentContext,
     ) -> None:
         """Run Codex headlessly with the task instruction."""
-        cwd = str(environment.default_working_dir or "/root")
+        _task_cfg = getattr(environment, "task_env_config", None)
+        cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
         cmd = (
             f"codex exec --cd {shlex.quote(cwd)} "
             f"--model {shlex.quote(self._tb_model)} "

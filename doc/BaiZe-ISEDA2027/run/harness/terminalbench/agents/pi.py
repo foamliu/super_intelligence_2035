@@ -81,7 +81,8 @@ class PiTB(TBBaseAgent):
         context: AgentContext,
     ) -> None:
         """Run Pi headlessly with the task instruction."""
-        cwd = str(environment.default_working_dir or "/root")
+        _task_cfg = getattr(environment, "task_env_config", None)
+        cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
 
         # Write models.json with gw provider pointing at the gateway
         models_config = (

@@ -64,7 +64,6 @@ class DeepseekHarnessTB(TBBaseAgent):
         await self.exec_as_root(
             environment,
             command=(
-                "pip install --break-system-packages --upgrade pip && "
                 "pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5"
             ),
         )
@@ -88,7 +87,8 @@ class DeepseekHarnessTB(TBBaseAgent):
         The SDK is invoked via a Python script that creates a DeepSeekHarness
         instance and calls .run() with the problem statement.
         """
-        cwd = str(environment.default_working_dir or "/root")
+        _task_cfg = getattr(environment, "task_env_config", None)
+        cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
 
         # Write a runner script that uses the SDK
         runner_script = f'''
