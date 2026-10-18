@@ -7,6 +7,15 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-18 10:2x（🔧 **P0：恢复 git push（换代理疑似污染全局 proxy 环境）**）· 用户直令 · 与续传令并行
+
+> **判断**：换 `.23` 代理过程中可能在 shell/服务里全局 export 了 `http_proxy/https_proxy/ALL_PROXY`，导致 `git push` 走不通（尤其远端是 HTTPS 时）。**下载用 HF 代理 ≠ git 走代理**。
+> **要求**：
+> 1. 先只读诊断：`git remote -v`、`git status -sb`、`env | grep -iE 'proxy|HF_'`、`git config --get-regexp '.*proxy'`、`ls .git/index.lock`。
+> 2. `git` 一律**剥离 HF 代理**执行：`env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy git fetch/pull/push origin main`；🚫 不要为 git 永久写 `git config --global http.proxy`。
+> 3. 若远端是 SSH（`git@github.com:`），代理环境本不影响；若仍失败，贴 `GIT_SSH_COMMAND="ssh -v" git ls-remote origin HEAD` 原文。
+> 4. 修好后**立刻执行同日②的续传令**（`.23+hf-mirror`，25 shard）+ 启分词；ops 中继会在恢复后执行 RUN_ID 123 的 `.12` git 只读诊断，可与中继结论互相印证。
+
 ### 🆕 运维指令 · 2026-10-18②（🔴 **P0：立即改用 `172.19.92.23:13128` + hf-mirror 续 `en_v1_4` 最后 25 个 shard**）· 用户直令 · 覆盖同日①的"先探针"
 
 > **背景**：你已经连续多轮报 `.25` → `huggingface.co HTTP=000 timeout`，但 **`.23 + hf-mirror` 已由中继在 `.12`/`.29` 双机实测为 200**：

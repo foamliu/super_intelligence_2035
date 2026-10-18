@@ -3,6 +3,13 @@
 
 ## 🆕 最近操作（2026-10-18）
 
+### 🛠️ 三条运维令下发（用户直令 · 10:2x）：recruit 恢复 / harness 修中继 / data 修 git
+- **recruit**：用户「Boss 登录态已修好」⇒ `WATCH_RECRUIT_TASK.md` 顶部新块：立即复扫 **bobbob / 曲先生 / 闫猛飞**（简历与 LLM/Agent 证据），**18:00 实习专场照常**；R25 口径不变（应届=校招、全职 1–5 年、只推 A/B、不约面）。
+- **harness**：令其修复 **`.29` ops 中继**（同机）。依据：RUN_ID 123 自 09:54 无回执、`.last_run_id` 仍 **122**，而 pretrain（10:08）/harness（10:09）仍能 push ⇒ 中继进程停摆。要求**脚本文件方式**安全重启（🚫 禁止命令行组合 `pkill` + 启动），判据 **`.last_run_id 122→123`**；修好后继续 solo smoke → 7×5 pilot。
+- **data**：判断「换 `.23` 代理时全局 export proxy」污染了 `git push` ⇒ `BAIZE_DATA_TASK.md` 顶部新块：git 一律 `env -u http_proxy -u https_proxy -u ALL_PROXY ...` 执行，🚫 不永久写 `git config` 代理；修好后立即续传 25 shard + 启分词。
+- **中继命令**：RUN_ID 123 增补 `.12` 的 git 只读诊断（remote / status / proxy env / index.lock / `ls-remote` 有代理 vs 无代理对照），中继恢复后一并执行。
+- 详见 `daily-memories/2026-10-18.md`。
+
 ### 📚 news：D-6 放行 —— **Lv.0 可选「连载模式」**，立即建书 + 只发前 3 章
 - 用户答复 D-6：「**可以**」⇒ **Lv.0 允许直接选「连载模式」建书**，不再停在任务书 ①-3。
 - 已改 `personal-watch/run/WATCH_NEWS_TASK.md` 顶部：① 前置检查压缩为 PLAN 指针（R1/R2 已完成，勿重复）；①.5 改为 **D-6 放行**；② 增加「**签约模式 = 连载模式**」；封面改用 R2 已做好的合规成片 `/home/liuyang/Desktop/超级智能2035_封面_600x800.jpg`（600×800、含书名+笔名「刘未央2035」）。

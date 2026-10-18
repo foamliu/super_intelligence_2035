@@ -1,6 +1,31 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
+### 🆕 运维指令 · 2026-10-18 10:2x（🚨 **P0：先修复 `.29` 的 ops 中继，再继续 TB pilot**）· 用户直令 · 最高优先
+
+> **背景**：RUN_ID 123（09:54 推送的只读探针）至今 `ops/.last_run_id` 仍为 **122**、outbox 无回执；而 pretrain（10:08）与 harness（10:09）仍能正常 push ⇒ 判定为 **`.29` 本机 ops 中继进程停摆/冻死**，不是网络。你与它在同一台机器，由你修复。
+> ⚠️ **历史事故**：在命令行里把 `pkill -f "ops_relay.sh"` 与启动命令写在一起 → **自匹配**，把中继和执行重启的 shell 一起杀掉。**必须写进脚本文件再执行。**
+
+**① 安全重启（照抄执行）**
+```bash
+cat > /tmp/fix_relay_1018.sh <<'EOF'
+set -u
+pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill
+sleep 2
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
+sleep 3
+pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-140
+tail -5 /tmp/baize_ops_relay.log
+EOF
+bash /tmp/fix_relay_1018.sh
+```
+- **判据**：≥1 个 `bash ops_relay.sh` 进程 + 日志出现 started；**30–90s 内 `.last_run_id` 应从 122 → 123**（123 已就绪，含 `.29` loop/GPU + `.12` data git 只读诊断）。
+- 若 2 次仍不起 ⇒ 贴 `pgrep -af` / 日志原文报 blocker；🚫 不改 `ops_relay.sh` 本体、🚫 不杀 loop、🚫 不碰训练。
+
+**② 修好后继续 TB**：10:09 已提交 `DockerEnvironment.exec()` 签名修复（`timeout→timeout_sec`、env 走参数，7 适配器 + `_base`）⇒ 直接重跑 **solo smoke（cline-patched × 1）**，通过后进 **7×5 pilot**。
+**③ 红线**：只动 `.29` 本机；🚫 不占 GPU、不重启 `torchrun`；commit 前缀 `harness ops:`。
+
 ### 🆕 运维指令 · 2026-10-18（🚀 P0：从 solo smoke 推进到 **7×5 pilot**（不再只做单适配器验证））· 用户直令 · 最高优先
 
 > **背景**：Oracle 5/5 ✅、7 适配器骨架 ✅、28/28 mock 单测 ✅、`_install_node` 已改 NVM+aliyun、launch 脚本已改本地 `-p` + `minimal2` overlay。**目前卡在"等 smoke"，已静止 1.5h。** 本令要求：**不再逐个逐个验，用一个 pilot 把 7 个适配器一次性打穿。**

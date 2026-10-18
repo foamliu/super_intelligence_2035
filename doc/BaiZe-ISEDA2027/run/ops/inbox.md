@@ -55,6 +55,8 @@ echo "[5] disk"
 df -h /nas_train 2>/dev/null | tail -1
 echo "[6] .12 via ssh (timeout 12s)"
 timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'hostname; date "+%F %T"; echo "-- data loop"; ps -eo pid,etime,args | grep "[b]aize_data_loop.sh" | cut -c1-130 | head -2 || true; echo "-- vision loop"; ps -eo pid,etime,args | grep "[b]aize_vision_loop.sh" | cut -c1-130 | head -2 || true; echo "-- cline"; ps -eo pid,etime,args | grep "[c]line" | cut -c1-130 | head -4 || true; echo "-- gpu"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8' 2>&1 || echo "   ssh .12 FAILED"
+echo "[7] .12 data git diag (read-only)"
+timeout 15 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035; echo "-- pwd"; pwd; echo "-- remote"; git remote -v; echo "-- status"; git status -sb | head -5; echo "-- proxy env"; env | grep -iE "^(http|https|all|no)_proxy=|^HF_(PROXY|ENDPOINT)=" | cut -c1-120; echo "-- git proxy cfg"; git config --get-regexp ".*proxy" 2>/dev/null | head -5 || true; echo "-- index.lock"; ls -l .git/index.lock 2>/dev/null || echo none; echo "-- ls-remote (env)"; timeout 20 git ls-remote origin HEAD 2>&1 | head -4; echo "-- ls-remote (no proxy)"; timeout 20 env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy git ls-remote origin HEAD 2>&1 | head -4' 2>&1 || echo "   ssh .12 data diag FAILED"
 echo "=== DONE 123 ==="
 ```
 
