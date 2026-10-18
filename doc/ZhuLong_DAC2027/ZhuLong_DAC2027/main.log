@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  18 OCT 2026 00:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  18 OCT 2026 11:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -740,10 +740,6 @@ Overfull \hbox (1.22798pt too wide) in paragraph at lines 13--15
 ss|each
  []
 
-
-Package natbib Warning: Citation `baize2027companion' on page 2 undefined on in
-put line 16.
-
 ) (./DAC2027/3_design.tex
 
 pdfTeX warning: pdflatex (file ./figures/zhulong_arch_2.pdf): PDF inclusion: fo
@@ -780,10 +776,7 @@ l-time commitment\OT1/cmr/m/n/9 (-20) ---
 
 Underfull \vbox (badness 1418) has occurred while \output is active []
 
- [3.3 <./figures/zhulong_arch_2.pdf>]
-Underfull \vbox (badness 1527) has occurred while \output is active []
-
- [4.4]
+ [3.3 <./figures/zhulong_arch_2.pdf>] [4.4]
 Overfull \hbox (2.4834pt too wide) in paragraph at lines 129--130
 \OT1/cmr/m/n/9 (-20) bound in-de-pen-dent of model scale. In-vest-ment in obser
 vation---
@@ -822,7 +815,7 @@ cmr/m/n/9 (-20) , \OT1/cmtt/m/n/9 search[]apis[]by[]keyword\OT1/cmr/m/n/9 (-20)
  ,
  []
 
-
+[7.7]
 Overfull \hbox (6.0833pt too wide) in paragraph at lines 155--164
  [][] 
  []
@@ -834,14 +827,9 @@ Overfull \hbox (3.09697pt too wide) in paragraph at lines 167--174
 4$\OMS/cmsy/m/n/9 ^^F$\OT1/cmr/m/n/9 (-20) 1.5%),
  []
 
-
-Underfull \vbox (badness 1043) has occurred while \output is active []
-
- [7.7]
 LaTeX Font Info:    Trying to load font information for OMS+cmtt on input line 
 175.
 LaTeX Font Info:    No file OMScmtt.fd. on input line 175.
-
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
@@ -857,12 +845,15 @@ Overfull \hbox (26.30956pt too wide) in paragraph at lines 186--195
  []
 
 [8.8]
+Underfull \vbox (badness 2073) has occurred while \output is active []
+
+ [9.9]
 Overfull \hbox (1.08543pt too wide) in paragraph at lines 290--291
 \OT1/cmr/m/n/9 (-20) three slices of \OT1/cmr/bx/n/9 (-20) EDA-Scripting-Bench 
 \OT1/cmr/m/n/9 (-20) share one task schema,
  []
 
-[9.9]
+
 Overfull \hbox (8.1361pt too wide) in paragraph at lines 330--348
  [][] 
  []
@@ -879,13 +870,13 @@ Overfull \hbox (6.31137pt too wide) in paragraph at lines 359--360
 20) The agent
  []
 
-
+[10.10]
 Overfull \hbox (16.7984pt too wide) in paragraph at lines 361--362
 \OT1/cmr/m/n/9 (-20) func-tion that re-turns an in-ter-nal type name such as \O
 T1/cmtt/m/n/9 "maskLayout"\OT1/cmr/m/n/9 (-20) ,
  []
 
-[10.10]
+
 Underfull \vbox (badness 2073) has occurred while \output is active []
 
 
@@ -900,17 +891,14 @@ Overfull \hbox (15.72746pt too wide) in paragraph at lines 392--394
 r retrieval---
  []
 
-) (./DAC2027/7_discussion.tex [11.11]) (./DAC2027/8_conclusion.tex
-Underfull \vbox (badness 10000) has occurred while \output is active []
+) (./DAC2027/7_discussion.tex
+Underfull \vbox (badness 3701) has occurred while \output is active []
 
-)
-(./main.bbl
+ [11.11])
+(./DAC2027/8_conclusion.tex) (./main.bbl
 LaTeX Info: Redefining \tempurl on input line 115.
-LaTeX Info: Redefining \tempurl on input line 204.
-
-Underfull \vbox (badness 1558) has occurred while \output is active []
-
  [12.12]
+LaTeX Info: Redefining \tempurl on input line 204.
 LaTeX Info: Redefining \tempurl on input line 255.
 LaTeX Info: Redefining \tempurl on input line 275.
 
@@ -933,10 +921,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 386--395
  []
 
 )
-
-Package natbib Warning: There were undefined citations.
-
-
 Overfull \vbox (1.25pt too high) has occurred while \output is active []
 
 
@@ -955,20 +939,17 @@ L3 programming layer <2024-01-22>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: B8FA57AE697CC1D3DD899B02A246F97A;4278.
  ) 
 Here is how much of TeX's memory you used:
- 18062 strings out of 475589
- 286201 string characters out of 5782859
+ 18060 strings out of 475589
+ 286187 string characters out of 5782859
  1952975 words of memory out of 5000000
  39300 multiletter control sequences out of 15000+600000
- 581398 words of font info for 241 fonts, out of 8000000 for 9000
+ 581290 words of font info for 240 fonts, out of 8000000 for 9000
  470 hyphenation exceptions out of 8191
- 90i,13n,131p,3312b,700s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,131p,3390b,689s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/app.e0031982/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0
 900.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></u
@@ -1001,10 +982,10 @@ ist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist/font
 s/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (13 pages, 685080 bytes).
+Output written on main.pdf (13 pages, 685437 bytes).
 PDF statistics:
- 520 PDF objects out of 1000 (max. 8388607)
- 436 compressed objects within 5 object streams
+ 521 PDF objects out of 1000 (max. 8388607)
+ 437 compressed objects within 5 object streams
  95 named destinations out of 1000 (max. 500000)
  46806 words of extra memory for PDF output out of 51595 (max. 10000000)
 
