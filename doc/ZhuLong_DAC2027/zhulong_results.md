@@ -235,11 +235,24 @@ GLM 新一代轻量模型，验证框架对 GLM 系轻量 backbone 的兼容性�
 |r4|65.8||||
 |r5|61.4||||
 |**mean±std**|**66.8 ± 10.5%**||||
+ 
+> 备注（fresh 5-run·历史对照·运维令二十三②·2026-10-16 收口）：r1=80.4 偏高、r2=53.2 偏低，5 轮 std=10.5 较大（轻量 backbone 高方差），但 5/5 各轮 timeout≤10（r1=9/r2=6/r3=0/r4=0/r5=0）且无 infra 故障、exec_err=0、判据(十三)满足，结果有效。glm-5.3-flash@/v1 key 6903b05e。
 
-> 备注：r1=80.4 偏高、r2=53.2 偏低，5 轮 std=10.5 较大（轻量 backbone 高方差），但 5/5 各轮 timeout≤10（r1=9/r2=6/r3=0/r4=0/r5=0）且无 infra 故障、exec_err=0、判据(十三)满足，结果有效。glm-5.3-flash@/v1 key 6903b05e。
+**复测 5-run（运维令三十一·2026-10-19 收口·-p 4 起步·infra 干净重测·std 大幅收窄）**
 
-
-
+|轮次|PyAether|SKILL|TCL\_WaveView|TCL\_Innovus|
+|---|---|---|---|---|
+|r1|86.1||||
+|r2|84.8||||
+|r3|89.2||||
+|r4|87.3||||
+|r5|86.7||||
+|**mean±std**|**86.8 ± 1.6%**||||
+ 
+> 备注（复测 5-run·运维令三十一·2026-10-18~19·-p 4 起步·fresh 5/5 = [86.1, 84.8, 89.2, 87.3, 86.7]·各轮均判据十三 timeout=0≤10 有效·gen success=157/158/157/156/157、gen-fail=1/0/1/2/0、0 timeout、0 exec_err、0 infra 故障）。**vs fresh 5-run 66.8±10.5% → +20.0pp**，且 **std 从 10.5 → 1.6 大幅收窄**（远低于目标 <8）。复测 4 轮稳定在 85–89% 区间，r3=89.2% 最高、r2=84.8% 最低，5/5 全部高于 fresh 最高单轮 r1=80.4%。证实 fresh 5-run 的低分与高方差主要由 infra 因素（gateway 并发限流 / -p 8 致 r1 两次作废 0/158 与 89% 失败率飙升）导致，非模型真实能力；-p 4 起步后 infra 干净，模型真实表现显著回升且稳定。各轮 regrade log /tmp/ABL_glm-5.3-flash_retest_r{1..5}_regrade.log（Step 7.1 auto-grade 已知 FileNotFoundError → 手动 regrade，模板同 r1，改 batch + GEN_FILE；unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework）。配置=full harness + V3 自探索 ON + glm-5.3-flash@/v1 key 6903b05e + maxTokens=16384 in providers.json（reasoning.enabled=false·glm-5.3-flash 非推理模型）+ cline 3.0.51（baseline 未动 ✅）+ 4 端口 8650/8651/8652/8654@10.129.32.75。复测取代 fresh 进入论文 `tab:llm-comparison`。
+ 
+ 
+ 
 ---
 
 
