@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 125 -->
+<!-- RUN_ID: 126 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,51 @@
 
 ---
 
+## RUN_ID 126 — sudo 只读诊断 `.29` 训练死因（kernel log/dmesg/GPU/ckpt）
+
+> 用途：用 `doc/sudo.txt` 的密码走 `sudo -S`，在 `.29` 上查 15:40 之后的 kernel log、dmesg、GPU、torchrun、step_8000 ckpt 和 train_log。**只读**，不重启、不 kill。密码不打印、不写入本块。
+
+```bash
+set -u
+echo "=== RUN_ID 126 | pretrain sudo diagnosis | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin >/dev/null 2>&1 || true
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+if [ ! -f doc/sudo.txt ]; then echo "SUDO_FILE_MISSING"; exit 1; fi
+PW=$(sed -n '2p' doc/sudo.txt)
+cat > /nas_train/app.e0031982/pretrain_diag.sh <<'EOS'
+#!/bin/bash
+set -u
+echo "=== HOST ==="; hostname; date
+echo "=== KERNEL LOG (since 15:40) ==="
+journalctl -k --since "2026-10-18 15:40" --no-pager 2>&1 | tail -80
+echo "=== DMESG ==="
+dmesg -T 2>&1 | tail -50
+echo "=== GPU ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== TORCHRUN ==="
+pgrep -af 'torchrun|baize_xmodel25_decay_v2' | cut -c1-180 || true
+echo "=== CKPT step_8000 ==="
+ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000/model.safetensors 2>&1
+echo "=== TRAIN LOG TAIL ==="
+tail -20 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/baize_xmodel25_decay_v2_train.log 2>&1 | cut -c1-220
+EOS
+chmod +x /nas_train/app.e0031982/pretrain_diag.sh
+H=$(hostname)
+if [ "$H" = "whag0pgpuap29" ]; then
+  printf '%s\n' "$PW" | sudo -S -p "" bash /nas_train/app.e0031982/pretrain_diag.sh
+else
+  printf '%s\n' "$PW" | ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'sudo -S -p "" bash /nas_train/app.e0031982/pretrain_diag.sh'
+fi
+echo "=== DONE 126 ==="
+```
+
 ## RUN_ID 125 — 只读：确认 pretrain 是否已从 step_8000 resume
 
 > 用途：看 torchrun/GPU/train_log/resume log，确认 16:25 唤醒是否已执行 resume。**只读**，不启动/不 kill。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 125 | pretrain resume status | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] procs"
