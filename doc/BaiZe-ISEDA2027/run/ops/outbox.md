@@ -13228,3 +13228,62 @@ tail: cannot open '/tmp/baize_xmodel25_decay_v2_resume.log' for reading: No such
 3240850 1294147      62 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provider cl
 === DONE 125 ===
 ```
+
+---
+
+## RUN_ID 125 · 2026-10-18 16:28:14 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 125 | pretrain resume status | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[t]orchrun|[b]aize_xmodel25_decay_v2' | cut -c1-190 || true
+echo "[2] gpu"
+timeout 15 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "[3] train log"
+tail -8 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/baize_xmodel25_decay_v2_train.log 2>&1 | cut -c1-220
+echo "[4] resume log"
+tail -8 /tmp/baize_xmodel25_decay_v2_resume.log 2>&1 | cut -c1-220
+echo "[5] loop/agent"
+ps -eo pid,ppid,etimes,args | grep -E '[b]aize_pretrain_loop|[c]line' | cut -c1-160 | head -6 || true
+echo "=== DONE 125 ==="
+```
+
+**输出**
+```
+=== RUN_ID 125 | pretrain resume status | 2026-10-18 16:28:14 | host=whag0pgpuap12 ===
+[1] procs
+  60228 1059617    1023 node /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051A
+  60235   60228    1023 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --a
+ 652401 1294448     536 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/
+ 652408  652401     536 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/
+[2] gpu
+0, 0 %, 4 MiB
+1, 0 %, 4 MiB
+2, 0 %, 4 MiB
+3, 0 %, 4 MiB
+4, 0 %, 4 MiB
+5, 0 %, 4 MiB
+6, 0 %, 4 MiB
+7, 0 %, 4 MiB
+[3] train log
+    result = f(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 715, in run
+    result = self._invoke_run(role)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 879, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 593117 got signal: 15
+[4] resume log
+tail: cannot open '/tmp/baize_xmodel25_decay_v2_resume.log' for reading: No such file or directory
+[5] loop/agent
+  60228 1059617    1023 node /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve tr
+  60235   60228    1023 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_20
+  60349   60235    1022 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run -c core.ignorestat=false -c core.splitIndex=false ad
+ 652401 1294448     536 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intellig
+ 652408  652401     536 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c
+ 652497  652408     534 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run -c core.ignorestat=false -c core.splitIndex=false ad
+=== DONE 125 ===
+```
