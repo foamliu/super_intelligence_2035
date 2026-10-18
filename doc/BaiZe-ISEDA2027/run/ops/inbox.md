@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 131 -->
+<!-- RUN_ID: 132 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,37 @@
 
 ---
 
+## RUN_ID 132 — 同步 `.12` 并检查 ArmC 是否已启动（wd 是否 0.01）
+
+> 用途：pull 最新 ArmC 任务书（含 wd 0.01），只读检查 `.12` 上是否已有 ArmC 进程/日志/输出目录。**不 kill、不启动**。
+
+```bash
+set -u
+echo "=== RUN_ID 132 | ArmC wd check | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main || true
+git log -1 --oneline
+echo "[1] task book"
+grep -n 'weight decay 0.1\|wd 0.01\|armC_20261018' doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md | head -6
+echo "[2] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[a]rmC_20261018|[a]rmC_openclip|[a]rmB_aimv2_openclip' | cut -c1-200 || true
+echo "[3] out dirs"
+ls -lt /nas_train/app.e0031982/datasets/baize-vision/out 2>/dev/null | head -8
+echo "[4] armC log"
+ls -l /tmp/armC_openclip_train.log 2>&1
+tail -8 /tmp/armC_openclip_train.log 2>&1 | cut -c1-220
+echo "[5] gpu"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== DONE 132 ==="
+```
+
 ## RUN_ID 131 — 同步 `.12` 工作副本（让 vision 下一轮读到 ArmC 令）
 
 > 用途：只 `git pull`，把 ArmC 任务书同步到 `.12` 共享工作副本。**不碰 GPU/训练**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 131 | pull ArmC task book | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
