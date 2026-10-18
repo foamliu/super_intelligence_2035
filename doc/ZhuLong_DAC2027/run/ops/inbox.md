@@ -1,11 +1,31 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 78 -->
+<!-- RUN_ID: 79 -->
+
+## RUN_ID 79 — 只读：14:22 轮是否已启动 B.glm-5.3-flash 复测
+
+> 用途：确认 `run_cline_script.sh -p 4` / glm-5.3 进程、`/tmp/ABL_glm-5.3-flash*` 日志、loop 日志与 MEMORY 心跳。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 79 | zhulong retest status | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[r]un_cline_script|[g]lm-5\.3|[r]un_eval\.py|[r]egrade' | cut -c1-190 || true
+echo "[2] logs"
+ls -lt /tmp/ABL_glm-5.3-flash* /tmp/*glm53* 2>/dev/null | head -10 || true
+echo "[3] loop log"
+tail -30 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-220 || true
+echo "[4] memory"
+grep -m1 'heartbeat' MEMORY_ZHULONG.md 2>/dev/null; grep -m1 'WAITING' MEMORY_ZHULONG.md 2>/dev/null
+echo "[5] loop/relay"
+ps -eo pid,ppid,etimes,args | grep -E '[z]hulong_loop\.sh|[z]hulong_ops_relay\.sh' | cut -c1-160 || true
+echo "=== DONE 79 ==="
+```
 
 ## RUN_ID 78 — 停掉多余 regrade + 查 agent 当前任务（是否 glm-5.3-flash）
 
 > 用户令：r1 已出分 84.2%，不再重复打分。停掉 RUN_ID 76 启动的 `/tmp/regrade_zl_glm52_r1.sh` 及其子进程；同时只读查看 agent/loop 与 glm-5.3 相关进程。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 78 | stop redundant regrade + inspect agent | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] candidates"
