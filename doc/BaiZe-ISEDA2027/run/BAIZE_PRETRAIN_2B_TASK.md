@@ -1,58 +1,84 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-18（📘 写《BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5》（Stable 段 1.5T token））· 用户直令 · 最高优先（⚠️ 纯写作，零 GPU）
+
+> **用户令（2026-10-18）**：写《BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5》，主要写 Stable 部分，使用 1.5T tok；warmup=2000 步；S1 每 batch 2M tok 共 500B；S2 每 batch 4M tok 共 1T；学习率 warmup 后恒定 1e-3；数据 S1 用 en_v1_4，S2 混入 20% code、1–2% math 和高质量预训练数据；每 2000 步存 ckpt，用 CS8 评测；估计训练时长。
+> 🚫 **本轮只产出文档，不动 `.29` 在跑的训练**（80B decay 健康，见状态头），不占 GPU、不改 `baize_xmodel25_decay_v2.sh`。
+
+**① 交付物（必须两个文件都出）**
+1. `reports/report_pretrain_formal_v5_plan_zh.html` —— **中文自包含 HTML**（与既有 `reports/*.html` 同风格：`<table>` 数据表 + 结论框，无外链、无 JS 依赖）。
+2. `run/PLAN_V5_STABLE_1.5T.md` —— 纯文本/Markdown 版本（便于 diff 与后续任务书引用）。
+
+**② 用户给定参数 = 逐字植入（不得改名、不得改值）**
+
+| # | 参数 | 值 |
+|:--|:--|:--|
+| 1 | warmup | **2000 步** |
+| 2 | S1 每 batch token | **2M tok/step**，总量 **500B tok** |
+| 3 | S2 每 batch token | **4M tok/step**，总量 **1T tok** |
+| 4 | 学习率 | warmup 后**恒定 1e-3**（S1、S2 全程同一常数，不做 cosine/decay） |
+| 5 | S1 数据 | **en_v1_4 单一来源（100%）** |
+| 6 | S2 数据 | code **20%** + math **1–2%** + 高质量预训练数据（其余 S2 份额） |
+| 7 | ckpt | **每 2000 步**保存 |
+| 8 | 评测 | 每个 ckpt **CS8**（Common8，0-shot；口径见 §最佳实践，`CS8 Avg`） |
+| 9 | 总量 | Stable 段 **1.5T tok** |
+
+派生（必须自己算、把算式写进文档，不要只给结果）：
+- S1 步数 = 500B / 2M = **250,000 步**；S2 步数 = 1T / 4M = **250,000 步**；合计 **500,000 步**（+2000 warmup）
+- ckpt 数 = 500,000 / 2,000 = **250 个**（S1 125 + S2 125）
+- S2 各源 token：code = 20%×1T = **200B**；math = 1%～2% → **10B～20B**；高质量预训练 = 其余 **780B～790B**
+- tokens/param = 1.5T / 2.22B ≈ **676 tok/param**
+- 每 2000 步的 token 量：S1 = 2M×2000 = **4B tok**、S2 = 4M×2000 = **8B tok** ⇒ 按基准吞吐（298.6K tok/s）ckpt 间隔约 **3.7h（S1）/ 7.4h（S2）**
+
+**③ 时长估算（硬性要求：给口径 + 三档情景，禁止只给一个数）**
+- **基准吞吐 = 本机实测 298.6K tok/s**（`.29` 8×H100、2.22B、seq 3712 / GBS 960 / MBS 2 / bf16 / compile 开，2026-10-18 07:34 日志；t_fwd_bwd≈391ms/micro、t_opt≈152–164ms、t_data≈0.5ms）。⚠️ **该吞吐是 seq 3712 × GBS 960（=3.56M tok/step）下测的**；v5 的 2M/4M tok per step 可能换 seq/GBS ⇒ 文档必须写明「吞吐按 token 数折算，与 seq/GBS 组合无关」这个假设，并给出 2M 与 4M 两种 step 的等效 s/step（298.6K 下：**2M ⇒ 6.7s/step、4M ⇒ 13.4s/step**）。
+- 纯训练：S1 500B/298.6K = **465.1h**；S2 1T/298.6K = **930.3h**；合计 **1,395.4h ≈ 58.1 天**。
+- **必须同时给出吞吐敏感性表**（用户会据此排期）：
+
+| 吞吐 | 1.5T 纯训练 | 说明 |
+|:--|:--|:--|
+| 249K tok/s | **69.7 天** | T3 最优配置（TP1·MBS2·bf16）保守值 |
+| **298.6K tok/s（实测基准）** | **58.1 天** | 当前 decay run 实测 |
+| 320K tok/s | 54.3 天 | 若 S1 短序列/纯 web 数据更快 |
+| 350K tok/s | 49.6 天 | 若 S1 纯 web 占比高、packing 更满 |
+| 400K tok/s | 43.4 天 | 需 FP8 / 长序列占比下降 / 更大 GBS |
+
+- **必须给 FLOPs 交叉验证**：总 FLOPs = 6×N×T = 6×2.22e9×1.5e12 ≈ **2.0e22**；8×H100 bf16 dense 989 TFLOPS ⇒ 时长 = FLOPs/(8×989e12×MFU)。
+  - MFU 50%（= 298.6K tok/s 反推）→ 33.0 天；MFU 37% → 79.0 天。
+  - ⚠️ **两个口径差 1.75×，必须在文档里解释**：token 吞吐口径已包含**实际跑的步数/序列分布**，FLOPs 口径是理论上限；差异来自 ① 序列 3712 但有效 token 占比（packing 填充）② 通信/优化器开销 ③ 2.22B 只算 dense 参数而 Mamba2 的 SSM scan 不计入 6ND。**结论以 token 吞吐口径为准，FLOPs 仅作 sanity check。**
+- **另给"含评测的真实日历时间"**：250 个 ckpt × CS8 评测（用既有 8 GPU 并行评测流程的处理时间；若未知，用 3–5 min/ckpt 的区间并标注为假设）+ 启动/重启/故障余量 5% ⇒ 给出 **日历天数区间**。
+
+**④ 必须在文档中正面回答的 4 个可行性问题（这是本计划的核心价值）**
+1. **学习率 1e-3 恒定**：与历史对照（P-8 用 3e-3；decay run 用 1.67e-3→1e-5；R3 BO best 的 LR）——给出「1e-3 恒定」是否会**欠拟合/后期不收敛**的判断，并给出**监控判据**（每 2000 步 recorded loss 若在 S2 后半段仍单调不降 ⇒ 建议在 S2 末端加短 decay，需用户批准，**不得擅改**）。
+2. **batch 从 2M 跳到 4M**：给出切换时是否要改 GBS（如 960→1920 且保持 MBS 2、seq 不变 ⇒ 梯度累积翻倍、每 step 时间翻倍），以及**跳变对 loss 的影响**与需要记录的指标（S1 末 vs S2 初的 loss 断点）。
+3. **数据量核对**：S1 需要 **500B tok** en_v1_4 ⇒ 按 2.2T tok 全量 ≈ 23%；但**当前 en_v1_4 只下完 85/110 shard（≈4.1T bytes）且尚未分词** ⇒ 500B 可行性取决于「剩余 25 shard 续传（`.23+hf-mirror` 已实测 200）+ 分词吞吐」。给出**前置条件表**：需要多少 TB、分词多少 B tok/天、按现速多少天。
+4. **S2 混料供给**：code 需 200B，而 UltraData-Code 全量 ≈411B（够）；math 需 10–20B，UltraData-Math ≈303B（够）；高质量预训练（780–790B）从 `ultraweb_en`(≈1T tok) + `l1_en_hq`(152B) + `zh`(112B) + `UltraX`(31B) 取。**逐项写"需求 vs 可用 vs 余量倍数"，并标出哪个是瓶颈**（以 `DATA_LEDGER.md` 为唯一数据源，🚫 凭印象编造 token 数）。
+
+**⑤ 文档结构（必须齐全）**
+0. 一页结论（总量/时长/风险/所需前置）
+1. 模型与并行配置（2.22B Mamba2-hybrid；TP/PP/DP、MBS、seq、GBS、bf16、compile）
+2. 两阶段配方表（S1/S2 的 tokens/step、总 token、步数、LR、数据配比）
+3. 数据配比与来源（逐项 token 需求/库存/余量）
+4. 时长估算（基准 + 敏感性 + FLOPs 校验 + 日历时间）
+5. ckpt 与评测（每 2000 步、CS8 口径、250 次评测的调度与耗时）
+6. **风险与待拍板项**（至少含：LR 恒定、2M→4M 跳变、en_v1_4 未分词、250 个 ckpt 的存储/评测开销、单机 58 天的故障恢复）
+7. 里程碑表（按周：第 N 周应到 S1/S2 的哪个 checkpoint、期望 CS8 区间）
+
+**⑥ 写作纪律**
+- 🚫 数字必须可追溯：每个 token 数/吞吐/时长后面括号注来源（`MEMORY_PRETRAIN_2B.md` 07:34 实测 / `DATA_LEDGER.md` D10 / 本次计算算式）。
+- 🚫 不把"计划"写成"已完成"；未验证的假设（如 CS8 评测 3–5 min/ckpt）要**标 `[假设]`**。
+- ✅ commit 前缀 `pretrain plan-v5:`；写完在 `MEMORY_PRETRAIN_2B.md` 顶部加一行指针（体积 ≤32KB，超了自滚）。
+- ✅ 本令**不改变**正在跑的 80B decay v2（🚫 不重启、不 kill）；两者独立。
+
+
 ### 🆕 运维指令 · 2026-10-17 20:4x（🚨 P0 抢修：重启 ops 中继）· 用户直令 · 最高优先
 
-> **用户令**：「pretrain 在 .29，现在空闲，让它去修复 ops 中继。」
-> 背景：上一轮重启脚本把启动命令与 `pkill -f` 写在同一行 → **自匹配误杀中继**；`.last_run_id` 停在 117，118 之后无回执。**pretrain 训练不受影响 —— 🚫 不要动 torchrun / 训练进程 / loop。**
-
-**① 执行（必须写成脚本文件再运行，禁止在命令行里组合 pkill 与启动）**
-把下面 4 行写入 `/tmp/fix_relay_2040.sh`（第 1 行先 `cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run`）：
-- `pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill`
-- `sleep 2`
-- `setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &`
-- `sleep 3; pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-120; tail -5 /tmp/baize_ops_relay.log`
-然后 `bash /tmp/fix_relay_2040.sh`。
-
-**② 判据**：after 至少 1 个 `bash ops_relay.sh` 进程；日志无 error；`.last_run_id` 仍 117（无新命令属正常）。
-
-**③ 回报**：`MEMORY_PRETRAIN_2B.md` 心跳写「中继已恢复 + PID + 时间」，commit `pretrain ops-fix:` 后 push。
-
-**④ 红线**：只做中继；🚫 不碰训练/loop/ckpt；🚫 不清 /tmp；🚫 改任何训练配置。
-
-> 📦 2026-10-17 12:2x「停 `.12` 迁 `.29`」原文 → `ARCHIVE_OPERATOR_PRETRAIN.md`「归档块 N」。**仍生效**：`.29` 固定 pretrain / `.12` 固定 vision；未经批准不换机；已在跑不重启；故障就地修；compile 失效须如实报 ETA。
-
-
-> 📦 §运维指令·2026-10-16 22:4x（🔧 MBS 卡 logits 显存 → 分块 CE）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分块 CE 已实现并修双 bug（label double-shift + μP logit scale=1/6），v2 正式训练已起（MBS=4/chunked CE/compile default/no_sync，~299K tok/s）。需要时再读。
-
-> 📦 §运维指令·2026-10-16 22:1x（🛑 停训清卡做 8 卡 A/B 调试）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：A0–A5 对比完成，MBS=4+chunked CE 与 MBS=2 HF 吞吐等价（~299K），最优档已一次性重起正式 v2。需要时再读。
-
-> 📦 §运维指令·2026-10-16（⚡ decay 提速专项：先量化→数据管线/GC/MBS）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：分段计时落地（t_data≈0/opt≈1%/fwd_bwd≈98%），fast_data+GC off+MBS4 已落，seq 3712/ITERS 19980 已对齐 Xmodel-2.5 71.2B。需要时再读。
-
-> 📦 §运维指令·2026-10-16 19:0x（⏱ 加急起训 80B decay）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：已起训（HF + 手写 DDP + TensorParallelMuon，非 Megatron 转换），后升级为 chunked CE v2 正式训练。需要时再读。
-
-> 📦 [已归档] **2026-10-16（🚀 放行执行 80B decay 实验 + 用 NeMo 训 Xmodel）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-16 归档块）。⚠️ **已执行完毕**；**实测修正**：Megatron-Core 0.16.1 **不实现 Xmodel 的 μP 前向缩放**（embed×12 / attn·ffn 残差×1.4/√48 / logits×1/6）⇒ **HF→Megatron 转换会破坏模型**，最终落地为 **HF `AutoModelForCausalLM` + 手写 DDP + Megatron `TensorParallelMuon` 优化器**（见 `baize_xmodel25_decay_train.py` docstring）。
-
-> 📦 [已归档] **2026-10-16（📋 Xmodel-2.5 stable 末 ckpt + BaiZe 80B 配比做 decay · 先出计划书）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-16 归档块之二）。⚠️ **已执行完毕**：计划书 `reports/report_xmodel25_decay_80b_plan_zh.html`（36KB）已交付；**官方对照基准已落在计划书 §4**（Decay token **71.2B** = 20k 步 × **3.56M tok/步**、占总训练 1.4T 的 ~5%、**66.9% 高质量 SFT**、**AdamW→Muon**）；**decay 段用 Muon 的理由**（"stable 段全用 Muon 会发散 → 官方只把 Muon 缩到 decay 段；BaiZe P-8 的 dist_muon 发散不适用于 Xmodel"）亦已落计划书。
-
-> 📦 §运维指令·2026-10-15（📘 v5 预训练计划书）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v5 报告 42.8KB ✅ 交付(commit fc0a292b)，5问速答+三方对照+推荐策略+配比实验+风险+附录，6表1SVG。需要时再读。
+> ⏩ 已完成并归档：中继已恢复（`.29` PID2706247, ppid=1, RUN_ID118-122 exit=0, 0 error）。详情 → `daily-memories/2026-10-17.md` / `2026-10-18.md`。
 
 ### 🆕 运维指令 · 2026-10-17（🔧 修复 80B decay 崩溃 `KeyError: '_orig_mod'` + resume 续跑）· 用户直令 · 最高优先
 
-> **用户令（2026-10-17）**：「下发指令开始修复。不过难道 pretrain 自己看到训练挂了，还能无动于衷吗？」
-
-**① 现象**：Xmodel-2.5 80B decay v2 训练 07:58:27 崩溃（rank0 exit 1），`/tmp/baize_xmodel25_decay_v2_train.log` 尾部 `KeyError: '_orig_mod'`；已训到 step ~1990/19980（~10%），loss 1.5~1.8 健康、~298K tok/s。GPU 已释放。
-
-**② 根因**：模型开了 `torch.compile`（`_orig_mod` = `OptimizedModule` 包装属性），但 checkpoint 保存代码直接 `model.state_dict()`，编译后的模型缺 `_orig_mod` 键 → 保存时崩溃。（22:16 也崩过同一处，v1→v2 重启后复现。）
-
-**③ 修复**：
-1. 改 `baize_xmodel25_decay_v2.py` 的 checkpoint 保存处：`state_dict()` → `getattr(model, '_orig_mod', model).state_dict()`（torch.compile 官方保存姿势）。
-2. 从最近 ckpt `--resume` 续跑（已 ~10%，续跑不从头）。
-3. 续跑后自检：过一个 save interval 确认能正常落 ckpt、不再 `_orig_mod` 崩。
-
-**④ 纪律（用户直令，务必记住）**：
-- 🚫 **以后训练崩溃（GPU 空 + train log 有 traceback/Error），pretrain 巡检时必须主动查根因 + 修复 + resume 续跑，不许等运维下发才动**。训练挂了还无动于衷 = 失职，比崩溃本身更严重。
-- 修复 + 续跑结果写心跳；commit 前缀 `pretrain decay-fix:` · 任务书 >32KB 自滚归档。
+> ⏩ 已完成并归档：`_orig_mod` 修复已验证（verify_save_20 通过，断点续跑至今日 6890/19980 无崩）。详情 → `daily-memories/2026-10-17.md`。
 
 ### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看）
 
