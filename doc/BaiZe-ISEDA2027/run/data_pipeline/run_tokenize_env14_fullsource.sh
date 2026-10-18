@@ -33,13 +33,18 @@ if ! flock -n 9; then
   exit 1
 fi
 
-while pgrep -f 'run_tokenize_env14_resume[.]sh' >/dev/null 2>&1; do
+# NOTE: anchor on '^bash ' so we only match an actual bash launcher of the
+# resume script, NOT this agent's own cline process (whose cmdline contains
+# the task-book text mentioning 'run_tokenize_env14_resume.sh').
+while pgrep -f '^bash .*run_tokenize_env14_resume[.]sh' >/dev/null 2>&1; do
   echo "[$(date '+%F %T')] waiting for run_tokenize_env14_resume.sh ..."
   sleep 60
 done
 
 count_running() {
-  pgrep -cf 'preprocess_data_cm[.]py.*env14' 2>/dev/null || echo 0
+  # Anchor on the python interpreter path to avoid matching cline's cmdline
+  # (which embeds the task-book text containing 'preprocess_data_cm.py').
+  pgrep -cf 'miniforge3/envs/py310/bin/python3.10.*preprocess_data_cm' 2>/dev/null || echo 0
 }
 
 is_running() {
