@@ -51,7 +51,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
 
 <div class="warn"><strong>主要风险</strong>：① LR 恒定后期可能欠拟合 ② 2M→4M batch 跳变 loss 断点 ③ en_v1_4 分词（<span class="green">已实测：16 并发 ≈ 1 天切完 500B，R3 降级为 🟢</span>） ④ 单机连续 ~70 天故障恢复 ⑤ 1M 阶段吞吐塌陷 ⑥ 250 ckpt 存储/评测开销 ⑦ 长上下文阶段 LR。</div>
 
-<div class="info"><strong>前置条件</strong>：① en_v1_4 分词 500B tok（<span class="green">已实测可行：已下 4.08TB ≈ 1.40T tok，余量 2.80×，16 并发 ≈ 1 天</span>，详见 <code>PLAN_V5_DATA_PREREQ.md</code>） ② S2 混料源就绪（code 411B ✅ / math 303B ✅ / HQ 1.415T ✅, 余量 ≥1.82×）。</div>
+<div class="info"><strong>前置条件</strong>：① en_v1_4 分词 500B tok（<span class="green">已实测可行：已下 4.08TB ≈ 1.40T tok，余量 2.80×，16 并发 ≈ 1 天</span>，详见 <code>PLAN_V5_DATA_PREREQ.md</code>） ② S2 混料源就绪（code 411B ✅ / math 303B ✅ / HQ ≥1.12T 可溯源 ✅，含 [待核] 项合计 ≈1.415T，余量 ≥1.42×）。</div>
 
 <h2>§1 模型与并行配置</h2>
 <table>
@@ -104,12 +104,12 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
 <tr><td>math（UltraData-Math）</td><td><strong>10–20B</strong>（1–2%）</td><td>303B（L1 184B + L2p 32B + L3 87B）<br><span class="small">DATA_LEDGER §0：1823 parquet / 552 GB</span></td><td>✅ 已下满</td><td><strong>15–30×</strong></td></tr>
 <tr><td>HQ 预训练（组合）</td><td><strong>780–790B</strong>（~79%）</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>├ ultraweb_en（base）</td><td>—</td><td>≈1.12T tok（2.66T, 2048 文件）<br><span class="small">DATA_LEDGER §0</span></td><td>✅ 已下满</td><td>—</td></tr>
-<tr><td>├ l1_en_hq</td><td>—</td><td>152B tok（478G, 6006 文件）<br><span class="small">DATA_LEDGER §0</span></td><td>✅ 已下满</td><td>—</td></tr>
-<tr><td>├ zh</td><td>—</td><td>112B tok（324G, 256 文件）<br><span class="small">DATA_LEDGER §0</span></td><td>✅ 已下满</td><td>—</td></tr>
-<tr><td>└ UltraX</td><td>—</td><td>31B tok<br><span class="small">v4 report §1.2：487G / 30.97B tok</span></td><td>✅ 已下满</td><td>—</td></tr>
-<tr style="font-weight:bold;background:#d4efdf"><td>HQ 合计</td><td>780–790B</td><td><strong>≈1.415T</strong></td><td>✅</td><td><strong>1.79–1.82×</strong></td></tr>
+<tr><td>├ l1_en_hq</td><td>—</td><td>152B tok <span class="amber">[待核]</span>（478G, 6006 文件）<br><span class="small">字节可溯源 DATA_LEDGER §0；token 数为估值</span></td><td>✅ 已下满</td><td>—</td></tr>
+<tr><td>├ zh</td><td>—</td><td>112B tok <span class="amber">[待核]</span>（324G, 256 文件）<br><span class="small">字节可溯源 DATA_LEDGER §0；token 数为估值</span></td><td>✅ 已下满</td><td>—</td></tr>
+<tr><td>└ UltraX</td><td>—</td><td>31B tok <span class="amber">[待核]</span><br><span class="small">DATA_LEDGER 记 UltraX-Preview ≈100B/487G，与 31B 不符</span></td><td class="amber">🟡 见注</td><td>—</td></tr>
+<tr style="font-weight:bold;background:#d4efdf"><td>HQ 合计</td><td>780–790B</td><td><strong>≥1.12T</strong>（可溯源；含 [待核] 项 ≈1.415T）</td><td>✅</td><td><strong>≥1.42×</strong>（可溯源）；含待核项 1.79–1.82×</td></tr>
 </table>
-<div class="warn"><strong>瓶颈</strong>：HQ 预训练余量最低（1.82×），但充足。code 余量 2.06×，math 极充足。所有 S2 数据源均可追溯至 <code>DATA_LEDGER.md</code>。</div>
+<div class="warn"><strong>瓶颈</strong>：HQ 预训练余量最低，但充足——即便<strong>只算可溯源的 ultraweb_en 1.12T</strong>，对 780–790B 也有 1.42–1.44×；code 余量 2.06×，math 极充足。<br><strong>溯源</strong>：code/math/ultraweb_en 的 token 数在 <code>DATA_LEDGER.md</code>（D10/§0）有出处；<strong>l1_en_hq(152B)/zh(112B)/UltraX(31B) 的 token 数不在 DATA_LEDGER</strong>（台账只有字节 478G/324G/487G），系估值 → 标 [待核]，待 data 线分词核实回填。</div>
 
 <h2>§4 时长估算</h2>
 <h3>4.1 基准</h3>
@@ -262,7 +262,7 @@ seq 课程预算 [假设]：32K(50B) + 128K(100B) + 256K(50B) + 512K(20B) + 1M(1
 <tr><td>P1</td><td>en_v1_4 分词 500B tok</td><td>1.46TB parquet / 24–31 shard</td><td class="green">✅ 已下 4.08TB（余量 2.80×），16 并发 ≈ 1 天</td><td class="mono">~2026-10-20</td></tr>
 <tr><td>P2</td><td>S2 code 数据</td><td>200B tok</td><td class="green">✅ UltraData-Code 411B 已下满</td><td>已就绪</td></tr>
 <tr><td>P3</td><td>S2 math 数据</td><td>10–20B tok</td><td class="green">✅ UltraData-Math 303B 已下满</td><td>已就绪</td></tr>
-<tr><td>P4</td><td>S2 HQ 预训练数据</td><td>780–790B tok</td><td class="green">✅ 1.415T 已下满（余量 1.82×）</td><td>已就绪</td></tr>
+<tr><td>P4</td><td>S2 HQ 预训练数据</td><td>780–790B tok</td><td class="green">✅ ≥1.12T 可溯源（余量 ≥1.42×）；含 [待核] 项 ≈1.415T</td><td>已就绪</td></tr>
 <tr><td>P5</td><td>.29 训练机释放</td><td>8×H100 GPU</td><td class="amber">80B decay 运行中，ETA ~2026-10-20 02:5x</td><td class="mono">~2026-10-20</td></tr>
 <tr><td>P6</td><td>ckpt 存储</td><td>675 GB</td><td class="green">/nas_train 31T free</td><td>已就绪</td></tr>
 </table>
@@ -311,8 +311,8 @@ per-step 时间：<strong>8.0s → 16.1s</strong>（@249K）。<br>
 <div class="success">
 code 200B：UltraData-Code 411B ✅（余量 2.06×）<br>
 math 10–20B：UltraData-Math 303B ✅（余量 15–30×）<br>
-HQ 780–790B：ultraweb_en(1.12T) + l1_en_hq(152B) + zh(112B) + UltraX(31B) = 1.415T ✅（余量 1.82×）<br>
-<strong>瓶颈 = HQ 预训练</strong>（余量最低 1.82×，但充足）。所有数字可追溯至 <code>DATA_LEDGER.md</code>。
+HQ 780–790B：ultraweb_en(1.12T ✅可溯源) + l1_en_hq(152B [待核]) + zh(112B [待核]) + UltraX(31B [待核，台账≈100B]) = 1.415T；仅可溯源项 1.12T 已给 1.42–1.44×；含待核项 1.79–1.82×<br>
+<strong>瓶颈 = HQ 预训练</strong>（余量最低，但充足：仅可溯源 1.12T 已覆盖 780–790B，底线 1.42×）。code/math/ultraweb_en 可溯源 <code>DATA_LEDGER.md</code>；l1_en_hq/zh/UltraX 的 token 数标 [待核]。
 </div>
 
 <hr style="margin:2em 0;border:none;border-top:1px solid #ddd">
