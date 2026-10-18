@@ -14182,3 +14182,69 @@ e7bbd936 ops 131: pull ArmC task book on .12
 14:> **ArmC = 只把 min_lr 1e-4 → 1e-5**；`--lr 1e-3`、warmup、4 epoch/57250、GBS/MBS、数据、目标、seed 全部不变。⚠️ 若发现 ArmB 实际值与上表不符，只允许改 LR/min_lr 到 **1e-3/1e-5**，其余照 ArmB 原值，并在回报里列 diff。
 === DONE 131 ===
 ```
+
+---
+
+## RUN_ID 132 · 2026-10-18 17:14:09 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 132 | ArmC wd check | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin
+git pull --rebase --autostash origin main || true
+git log -1 --oneline
+echo "[1] task book"
+grep -n 'weight decay 0.1\|wd 0.01\|armC_20261018' doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md | head -6
+echo "[2] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[a]rmC_20261018|[a]rmC_openclip|[a]rmB_aimv2_openclip' | cut -c1-200 || true
+echo "[3] out dirs"
+ls -lt /nas_train/app.e0031982/datasets/baize-vision/out 2>/dev/null | head -8
+echo "[4] armC log"
+ls -l /tmp/armC_openclip_train.log 2>&1
+tail -8 /tmp/armC_openclip_train.log 2>&1 | cut -c1-220
+echo "[5] gpu"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== DONE 132 ==="
+```
+
+**输出**
+```
+=== RUN_ID 132 | ArmC wd check | 2026-10-18 17:14:09 | host=whag0pgpuap12 ===
+From https://github.com/foamliu/super_intelligence_2035
+ * branch              main       -> FETCH_HEAD
+Already up to date.
+9b8cd23e ops 132: pull ArmC wd update and check .12 status
+[1] task book
+10:### 🆕 运维指令 · 2026-10-18 17:1x（🚀 **ArmC（2026-10-18）：min_lr 1e-4→1e-5 + weight decay 0.1→0.01 的 4 阶段实验**）· 用户直令 · 最高优先
+13:> **追加令（同日）**：「加个变量：weight decay 0.1 -> 0.01」⇒ **ArmC 现在是两个变量**（min_lr + weight decay），不是单变量消融；报告必须如实披露。
+15:> **ArmC（2026-10-18，注意不是 10-13 的旧 ArmC）** = **min_lr 1e-4 → 1e-5** + **weight decay 0.1 → 0.01**；`--lr 1e-3`、warmup、4 epoch/57250、GBS/MBS、数据、目标、seed 全部不变。**两个变量**：min_lr + wd；报告中不得把 ArmC vs ArmB 的差异归因于单一变量。
+16:> ⚠️ 旧 10-13 ArmC（154500 步，ProtB 68.25%）只作历史参考；**本 run 用独立目录 `armC_20261018_*`，不覆盖、不比较同名目录**。
+20:- 复制 `run_armB_openclip.sh` → `run_armC_openclip.sh`，只改：`OUT=.../armC_20261018_aimv2_openclip_vitb16_224`、`--lr 1e-3 --min-lr 1e-5 --wd 0.01`；其余参数/脚本原样。
+26:- 复制 `run_armB_protb_eval.sh` → `run_armC_protb_eval.sh`，只把 ckpt 指向 `armC_20261018_.../open_clip_state_dict.pt`；3 seeds、同 Protocol B、同 IN-1k 1.28M/50k。
+[2] procs
+[3] out dirs
+total 508
+drwxr-xr-x  2 app.e0031982 app.adm 4096 Oct 18 16:42 mllm_eval_results_armB
+drwxr-xr-x  9 app.e0031982 app.adm 4096 Oct 18 14:10 mllm_stage2_armB
+drwxr-xr-x 12 app.e0031982 app.adm 4096 Oct 18 12:43 mllm_stage15_armB
+drwxr-xr-x  7 app.e0031982 app.adm 4096 Oct 18 10:07 mllm_stage1_armB
+drwxr-x---  2 app.e0031982 app.adm 4096 Oct 18 07:54 armB_aimv2_openclip_vitb16_224
+drwxr-x---  2 app.e0031982 app.adm 4096 Oct 17 08:14 armA_openclip_vitb16_224
+drwxr-xr-x  3 app.e0031982 app.adm 8192 Oct 16 12:10 mllm_eval_results
+[4] armC log
+ls: cannot access '/tmp/armC_openclip_train.log': No such file or directory
+tail: cannot open '/tmp/armC_openclip_train.log' for reading: No such file or directory
+[5] gpu
+0, 100 %, 51761 MiB
+1, 100 %, 51761 MiB
+2, 100 %, 51761 MiB
+3, 100 %, 51761 MiB
+4, 100 %, 51761 MiB
+5, 100 %, 51761 MiB
+6, 98 %, 51761 MiB
+7, 97 %, 51761 MiB
+=== DONE 132 ===
+```
