@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 124 -->
+<!-- RUN_ID: 125 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,31 @@
 
 ---
 
+## RUN_ID 125 — 只读：确认 pretrain 是否已从 step_8000 resume
+
+> 用途：看 torchrun/GPU/train_log/resume log，确认 16:25 唤醒是否已执行 resume。**只读**，不启动/不 kill。
+
+```bash
+set -u
+echo "=== RUN_ID 125 | pretrain resume status | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[t]orchrun|[b]aize_xmodel25_decay_v2' | cut -c1-190 || true
+echo "[2] gpu"
+timeout 15 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "[3] train log"
+tail -8 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/baize_xmodel25_decay_v2_train.log 2>&1 | cut -c1-220
+echo "[4] resume log"
+tail -8 /tmp/baize_xmodel25_decay_v2_resume.log 2>&1 | cut -c1-220
+echo "[5] loop/agent"
+ps -eo pid,ppid,etimes,args | grep -E '[b]aize_pretrain_loop|[c]line' | cut -c1-160 | head -6 || true
+echo "=== DONE 125 ==="
+```
+
 ## RUN_ID 124 — 同步 `.29` 共享工作副本（让 pretrain 16:25 唤醒读到 resume 令）
 
 > 用途：把 `origin/main` 拉到 `.29` 的共享工作副本，确保 pretrain 下一轮读到「立即 resume step_8000」；只做 fetch/pull，不碰训练。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 124 | pull latest task books on .29 | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
