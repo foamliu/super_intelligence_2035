@@ -10192,3 +10192,57 @@ EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
 2026-10-18 13:39:26,890 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
 === DONE 76 ===
 ```
+
+---
+
+## RUN_ID 77 · 2026-10-18 13:42:37 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 77 | pyaether regrade progress | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[r]un_eval\.py|[r]egrade_zl_glm52' | cut -c1-190 || true
+echo "[2] log stat"
+stat -c '%n size=%s mtime=%y' /tmp/ZL_glm52_r1_regrade.log 2>&1
+echo "[3] tail 40"
+tail -40 /tmp/ZL_glm52_r1_regrade.log 2>&1 | cut -c1-220
+echo "[4] score/progress"
+grep -E 'pass \(|PASS_RATE|评估结果汇总|通过率|准确率|REGRADE DONE' /tmp/ZL_glm52_r1_regrade.log 2>/dev/null | tail -10 | cut -c1-220
+echo "[5] output dir"
+ls -lt /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation 2>/dev/null | head -5
+echo "=== DONE 77 ==="
+```
+
+**输出**
+```
+=== RUN_ID 77 | pyaether regrade progress | 2026-10-18 13:42:37 | host=hfeg0tedaap02 ===
+[1] procs
+1653629       1     190 bash /tmp/regrade_zl_glm52_r1.sh
+1653633 1653629     190 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py -g completed_code_generation_2026_1018_093852.jsonl 
+[2] log stat
+/tmp/ZL_glm52_r1_regrade.log size=1831 mtime=2026-10-18 13:39:26.888376935 +0800
+[3] tail 40
+=== ZL.glm-5.2 r1 REGRADE 2026-10-18 13:39:26 ===
+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+-rw-r----- 1 app.e0031982 app.adm 595918 Oct 18 11:31 /home/app.e0031982/eda_code_eval/completed_code_generation_2026_1018_093852.jsonl
+2026-10-18 13:39:26,449 - INFO - --- [阶段2] 开始：组装可执行脚本 ---
+2026-10-18 13:39:26,454 - INFO - 配置 'clean_main_block' 为 True。将从 'completion' 中移除 __main__ 代码块。
+2026-10-18 13:39:26,455 - WARNING - 输出目录 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions 已存在。将清空该目录以确保干净的运行环境。
+2026-10-18 13:39:26,608 - INFO - 已创建并清空输出目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-18 13:39:26,608 - INFO - 从 benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl 读取评测问题...
+2026-10-18 13:39:26,610 - INFO - 成功加载 158 个问题的测试代码。
+2026-10-18 13:39:26,610 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_2026_1018_093852.jsonl 流式读取生成的代码...
+2026-10-18 13:39:26,612 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/158 [00:00<?, ?it/s]组装脚本:  26%|██▌       | 41/158 [00:00<00:00, 409.73it/s]组装脚本:  69%|██████▉   | 109/158 [00:00<00:00, 567.25it/s]组装脚本: 10
+2026-10-18 13:39:26,890 - INFO - 成功组装并保存了 153 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-18 13:39:26,890 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
+[4] score/progress
+[5] output dir
+total 1732
+drwxr-xr-x 2 app.e0031982 app.adm   4096 Oct 18 13:39 tmp
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct 18 12:17 20261018_1217_app.e0031982
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct 18 00:01 20261018_0001_app.e0031982
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct 17 22:34 20261017_2234_app.e0031982
+=== DONE 77 ===
+```
