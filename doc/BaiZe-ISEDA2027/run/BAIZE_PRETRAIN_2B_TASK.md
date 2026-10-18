@@ -1,7 +1,31 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-18（📘 写《BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5》（Stable 段 1.5T token））· 用户直令 · 最高优先（⚠️ 纯写作，零 GPU）
+### 🆕 运维指令 · 2026-10-18②（📄 补交 v5 中文 HTML + 🔧 启动 v5 的数据前置实测：分词吞吐与 500B 可行性）· 用户直令 · 最高优先（纯 CPU，零 GPU）
+
+> **背景**：`run/PLAN_V5_STABLE_1.5T.md` 已交付（69.7 天 / 250 ckpt / ABF 次序采纳 ✅）。但 **① 中文 HTML 还没出**；**② 计划里把 `en_v1_4` 未分词列为 🔴 阻塞项（R3），却写了"分词吞吐未知，需实测后补 ETA"**。本令把这两件补上，**不动 `.29` 正在跑的 80B decay**。
+
+**① 交付中文 HTML（零 GPU，先做）**
+- 路径：`reports/report_pretrain_formal_v5_plan_zh.html`（自包含、与既有 `reports/*.html` 同风格）。
+- 必须与 `PLAN_V5_STABLE_1.5T.md` **数字一致**（宁可少写，不能两处不一致）：S1 500B/23.2 天、S2 1T/46.5 天、合计 **69.7 天**、250 ckpt、2M/4M per-step → 8.0s/16.1s、LR 恒定 1e-3、**吞吐基准 249K（TP1/DP8/MBS2/seq4096/GBS1024/bf16）**、并显式注明"298.6K 是 Xmodel-2.5 80B decay，不可用作本模型基准"。
+- 必须含 **长上下文章**（ABF vs YaRN、推理侧 1M PPL 53–56 无退化、训练侧必须真实长文档、seq 课程、1M 独立 ETA）与 **次序裁定：decay → 1M → SFT/RL 采纳**。
+- 必须含 **风险表**（6 条）+ **前置条件表**。⚠️ `PLAN` 里写"HQ 预训练 1.415T、余量 1.82×"等数字，**必须能在 `DATA_LEDGER.md` 找到出处**，找不到就改成实测值或标 `[待核]`。
+
+**② 启动 v5 数据前置实测（本令核心，纯 CPU）**
+> 目的：把 R3 阻塞项变成**有数字的排期**。分工：**下载/分词由 data 线执行**（已同步下发 10-18② 令），你负责**给出 v5 侧的口径与验收**，避免两边算出两套数。
+
+1. **换算基线（用实测而非估算）**：拿 `en_v1_4` 已下部分（43,520 parquet / 4.1T bytes）做**抽样分词测速**：抽 2–3 个 shard，`preprocess_data.py` 单进程测 **tokens/s（tok/s）** 与 **bytes→tokens 比例**（每字节多少 token）。以此推算：
+   - 全量 6.75T bytes → **总 token 数**（现有台账写 ≈2.2T，需你验证是否成立）；
+   - **500B token 需要多少 bytes / 多少 shard**；
+   - 按实测 tok/s 与给定并发（4/8/16 三档）分别给出 **500B 的分词天数**。
+2. **产出**：`run/PLAN_V5_DATA_PREREQ.md`，含：抽样原文、tok/s 实测、三档并发 ETA、**500B 最早可开工日期**、以及"若分词成为瓶颈，S1 是否可先用已分词部分起跑（如 100B）"的建议（只是建议，不擅自改配方）。
+3. **与 data 线口径对齐**：同一组数字写进 `DATA_LEDGER.md`（你只提交 `PLAN_V5_DATA_PREREQ.md`，不改 data 的文件）。
+
+**③ 纪律**
+- 🚫 不动 `.29` 的 80B decay（不重启、不 kill、不抢卡）；🚫 不改 v5 配方/判据（要改先报批）。
+- 🚫 分词只跑 `nice -19` 小并发抽样（2–3 shard），**不要**在 `.29` 上开全量分词（那是 data 线的活，且会拖慢训练 IO）。
+- ✅ commit 前缀 `pretrain plan-v5:`；`MEMORY_PRETRAIN_2B.md` 加一行指针（≤32KB 自滚）。
+
 
 > **用户令（2026-10-18）**：写《BaiZe 2.22B Mamba2-hybrid 正式训练计划 v5》，主要写 Stable 部分，使用 1.5T tok；warmup=2000 步；S1 每 batch 2M tok 共 500B；S2 每 batch 4M tok 共 1T；学习率 warmup 后恒定 1e-3；数据 S1 用 en_v1_4，S2 混入 20% code、1–2% math 和高质量预训练数据；每 2000 步存 ckpt，用 CS8 评测；估计训练时长。
 > 🚫 **本轮只产出文档，不动 `.29` 在跑的训练**（80B decay 健康，见状态头），不占 GPU、不改 `baize_xmodel25_decay_v2.sh`。
@@ -101,100 +125,7 @@
 > 📦 §2026-10-17 两块（P0 中继抢修 / `_orig_mod` 崩溃修复）均已闭合 → 原文已在 `daily-memories/2026-10-17.md`；结论：中继 PID2706247 健康（RUN_ID118-122 exit=0）；`_orig_mod` 修复验证通过，断点续跑至 6890/19980 无崩。
 
 ### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看）
-
-> 以下为**固定口径**，除非运维再下新令，否则**不得更改**——尤其写进报告/论文时，逐字遵守。
-
-| 项 | 口径 | 依据（源码/台账） |
-|:--|:--|:--|
-| **seq_length** | **4096（非 4094）** | 用户直令（2026-10-14）：**4096 = 2¹²（2 的幂）**是正确的固定口径；P-8 脚本 `SEQ=4094` 系 agent 错误，须改正为 4096 |
-
-> ⚠️ **`4094` 是错误的，须统一为 4096**：① 脚本 `baize_p8_train.sh:30` / `baize_p8_adamw_train.sh:33` = `SEQ=4094`（改 4096）；② `EXPERIMENTS_PRETRAIN_2B.md:4` / `MEMORY_PRETRAIN_2B.md:183` 记录的「4094」亦须改 4096；③ 论文 `3_architecture.tex:31`（tab:config）· `4_llm_pretrain.tex:75` · `4_llm_pretrain.tex:165` 三处 `4094`（改 4096）。🚫 今后报告/论文/脚本**一律 4096**。
-
-> 📦 **P-8 的 `seq=4094` 处置（2026-10-14 用户定，已闭合）** → 原文在 `ARCHIVE_OPERATOR_PRETRAIN.md`。结论：P-8 旧 run 按 4094 跑完不干预；**今后新 run（含 v5）一律 seq=4096**。
-
-> 📋 **评测口径（对齐 Xmodel-2 论文 Table 2/3 · 一律用 lm-eval）**：
-> - **常识推理 8 集**（zero-shot · raw accuracy · 另报 Avg）：`ARC-Challenge` `ARC-Easy` `BoolQ` `HellaSwag` `OpenBookQA` `PiQA` `SciQ` `Winogrande`
-> - **复杂推理 6 集**（n-shot 用 lm-eval 默认值 · 另报 Avg）：`GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP`（HumanEval/MBPP 需代码执行，用 lm-eval 自带沙箱）
-> - ⚠️ Xmodel-2 正文提 `TriviaQA` 但 Table 2 无此列 → **以表为准，只跑 8+6**，报告注明此差异；报绝对值时标 harness 版本 + shot 数。
-
-> 📦 §运维指令·2026-10-15（🌐 下载 proxy 口径）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：proxy 口径 92.23→hf-mirror / 92.25→hf.co（常驻），Xmodel-2/2.5 final+history 均已下载完成。需要时再读。
-
-> 📦 §运维指令·2026-10-15（📥 下载 Xmodel-2/2.5 decay final eval）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Xmodel-2 final CS8=64.82%, Xmodel-2.5 final CS8=65.40%/CX=32.90% 均已实测。需要时再读。
-
-> 📦 §运维指令·2026-10-15（📈 下载 Xmodel-2/2.5 history ckpt scaling）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Xmodel-2 s1 4 ckpt eval ✅ (10K CS8=46.65%, 40K CS8=50.31%), BaiZe 39.6B CS8=49.21% > XM2 s1/10K 39.3B CS8=46.65% (+2.56pp), scaling report 含 15 points + 2 SVG。需要时再读。
-
-> 📦 §运维指令·2026-10-15（📈 P-8 中间 ckpt 14集 scaling）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：P-8 6 中间 ckpt CS8 eval ✅ (4.4B→44.4B, 44.04%→49.21%), BaiZe 44B CS8=49.21% ≈ XM2 s1/40K 157.2B CS8=50.31% (差1.10pp)。需要时再读。
-
-> 📦 §运维指令·2026-10-15（⚡ 评测提速 v2）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：8 GPU 并行评测完成，14集全部跑完，CS8 Avg=49.21%, Complex Avg=6.81%。需要时再读。
-
-> 📦 §运维指令·2026-10-15（📊 P-8 final 14集 eval）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：P-8 final(iter_1149, 44.4B) 14集 eval ✅ 全部完成, CS8=49.21%, CX=6.81%, scaling_report.html 已生成。需要时再读。
-
-> 📦 §运维指令·2026-10-14（📋【v4 重做】正式训练计划）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v4 报告 47KB 已交付(commit 826ae3f7, 14源精确token/int32 dtype/密度归因/D-scan 6档/SVG曲线/全量配比+epoch表)。需要时再读。
-
-> 📦 §运维指令·2026-10-14（🔧 修复 decay 段 LR 未衰减 + 重跑 decay）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：decay fix 完成(#432)，只加载权重+warmup100+WSD线性 1e-3→1.85e-5，final ckpt@1149 已保存，8 GPU 释放。需要时再读。
-
-> 📦 §运维指令·2026-10-14（✍️ 放行刷新论文 —— 执行审视报告修改）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：H1-H4+S1-S10 全修完成（commit 75963f3d, 11pp 0-error ✅）。F2（P-8 结果）待 P-8 完成后再填。需要时再读。
-
-> 📦 §运维指令·2026-10-14（📝 训练空窗期审视论文·LLM侧·中文HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告 26.5KB 已交付(#413, 4🔴+10🟠+3🟢)，随后 #414 执行改稿。需要时再读。
-
-> 📦 §运维指令·2026-10-13（📋【再重做 v3】正式训练计划·实盘盘点口径）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v3 报告已交付 `reports/report_pretrain_formal_train_plan.html`（实盘盘点，在 origin/main）。需要时再读。
-
-
-> 📦 §运维指令·2026-10-13 v2（📋 重做正式训练计划 · 禁 100B 假设）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v2 已交付(commit fa25d488, 30.4KB, 300B token基准) → 被用户再次否决(CSDN二级源无一手依据) → v3 重做(实盘盘点口径)。需要时再读。
-
-
-> 📦 §运维指令·2026-10-13（📋 正式训练 HTML 计划：全量 MiniCPM5 + en_v1_4 · 双机 16 卡 · 超参 + 空窗期试验）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：`report_pretrain_formal_train_plan.html` 27.9KB ✅ 交付（commit 42399927，10 节自包含 HTML：数据/算力/超参/占卡协调/空窗期 5 试验/ckpt/纪律/launcher 模板）。需要时再读。
-
-> 📦 §运维指令·2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：`report_pretrain_lit_ideas.html` 29.8KB ✅ 交付（TOP-5+附表8+§4待验证+§5去重+§6映射+§7口径, 每条6字段齐全）。需要时再读。
-
-> 📦 §运维指令·2026-10-10（⚗️ MBS 2→3 A/B 验证）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：B/A=1.031 < 1.12 → FAIL → MBS=2/GBS=1024 原定稿保留。需要时再读。
-
-> 📦 §运维指令·2026-10-12（🛑 停训 P-8 · Muon→AdamW 重新启动）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：dist_muon step8490 loss=2.623 发散 → 停训换 AdamW 从零重启 ✅。AdamW 训练健康（PID 771300, step~4966/10490, loss~2.66, grad_norm~0.13, LR=1e-3）。需要时再读。
-
-> 📦 §运维指令·2026-10-10（🚀 撤 P-8 暂缓令 · dist_muon 启动）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：dist_muon 44B 跑到 step8490(80.9%) loss 慢速发散(2.62 新高/grad_norm 0.89) → 用户令停训换 AdamW 重启。需要时再读。
-
-> 📦 §2026-10-10（✅dist_muon默认 + ⚗️dist_muon重测 + 📄刷新Muon报告 + 📄昨夜报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：dist_muon=loss3.110/122,415tok/s/37.3GB（plain Muon −26%吞吐/+38%显存 全消除→P-8默认，LR 1e-3 保留）；Muon报告§7补外部基准+overhead归因；昨夜报告11.6KB。
-
-> 📦 §2026-10-09（🔁只用.29+改序 / ✅NeMo支持Muon）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：对比基准+Muon A/B完成，T1/T2/T3留backlog；Megatron-Core 0.16.1含muon.py，三步核查通过。
-
----
-
-> 📦 §运维指令·2026-10-09（⚗️ Muon vs AdamW · 原 `.12` 方案）已被上方「🔁 运维调整」覆盖 → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，原文未改）。
-
----
-
-> 📦 §运维指令·2026-10-09（🌙 夜班填空 T1/T2/T3）已被上方「🔁 运维调整」取消（用户看不出价值） → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，原文未改）。backlog：T1 长上下文 / T2 等参 Dense 训练侧 / T3 R3 配比迁移。
-
----
-
-> 📦 §运维确认·2026-10-09（✅ GO：#252 门控通过）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：对比报告 report_pretrain_baize_vs_dense_fair_zh.html 23.7KB 已生成。需要时再读。
-
----
-
-> 📦 §运维指令·2026-10-09（📊 补测+中文对比报告：参数匹配 Dense vs Hybrid）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：参数匹配 Dense Llama 2.229B vs Hybrid 2.220B SGLang 对比完成，ctx 扫到 hybrid OOM，报告 23.7KB/5表。需要时再读。
-
----
-
-> 📦 §运维指令·2026-10-09（🔎 自查：BaiZe vs MiniCPM5 公平对比盘点）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：C1-C6 逐条自评完成。需要时再读。
-
----
-
-> 📦 §运维指令·2026-10-09（💡 提 3 个实验 idea）已闭合（#251 已交付：①P-8 彩排 ②P-8 44B 下限 ③R3 配比迁移，+ 建议立即起 P-8） → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，原文未改）。
-
----
-
-> 📦 §运维指令·2026-10-09（📄 R3 数据配比搜索收官报告 HTML）已闭合（#246 报告已交付） → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，原文未改）。结论：`report_pretrain_r3_data_mix.html` 52.6KB 已生成 + commit 00682e58 + push。
-
-> 📦 历史运维指令已归档 → `run/ARCHIVE_OPERATOR_PRETRAIN.md`（已执行完 / 已作废的块；需要时再读，不要读进上下文）。
-
-> 本节由外部运维通过 git 修改。agent 禁止修改本节（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
-
-> 📦 §2026-10-06~07（ctx扩展+推理对比+5份报告+提速+裁决，共7块）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：PPL 1M=55.42无退化, hybrid vs dense prefill 2.18×, 5份HTML✅, A/B/D✅(BBH 14.26%, VRAM 5.35GB恒定), T1/T2 warmup-corrected(hybrid快2.8-4.3×), T3=recompute无效+FP8慢9%。需要时再读。
-
-
-> 📦 §2026-10-08~09（R3配比+论文LaTeX+R2收官HTML+T3提速验证，共4块）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：R3 6维搜索✅, LaTeX更新✅, R2报告46KB✅, T3=recompute对Mamba2-hybrid无效(52/56层SSM激活常量级)+FP8慢9%, P-8最优=TP1·MBS2·bf16=249K tok/s。需要时再读。
-
-> 📦 §2026-10-06（裁决+空窗提案，2块）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；结论：NVLink P2P 100%(busbw 164.56GB/s), A 36/36✅(BBH 14.26%), B✅(ABF+2.71pp), D✅(VRAM 5.35GB恒定), C暂不动, E不做。需要时再读。
+> 📦 已归档（R3配比 / LaTeX / R2收官 / T3）→ `ARCHIVE_OPERATOR_PRETRAIN.md`。
 
 ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
 

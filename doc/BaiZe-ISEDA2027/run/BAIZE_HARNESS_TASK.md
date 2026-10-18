@@ -1,16 +1,46 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
-### 🆕 运维指令 · 2026-10-17 20:0x（🚨 P0 抢修：重启 ops 中继 + 重跑 3 个失败 oracle 任务）
+### 🆕 运维指令 · 2026-10-18（🚀 P0：从 solo smoke 推进到 **7×5 pilot**（不再只做单适配器验证））· 用户直令 · 最高优先
 
-> **实测状态**：TB2.0 `oracle -k 5` = **2/5**（✅ adaptive-rejection-sampler / break-filter-js-from-html；❌ **bn-fit-modify / build-cython-ext / build-pmars**，构建期拉包失败，`reward=0.0`）。**5/5 之前禁止 7×5 pilot 与 7×89。**
-> **另**：ops 中继被误杀（重启脚本 `pkill -f` 自匹配），当前无中继。按序只做这三件事：
-> 1) **安全重启中继**（启动命令必须写进脚本文件，禁止与 `pkill` 同行）：
->    `printf '%s\n' '#!/bin/bash' 'cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run' 'pgrep -f "[o]ps_relay[.]sh" | xargs -r kill' 'sleep 2' 'setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &' > /tmp/restart_relay.sh && bash /tmp/restart_relay.sh`
-> 2) **带 overlay 重跑 3 个失败任务**：
->    `harbor run -p ~/terminal-bench/bn-fit-modify -p ~/terminal-bench/build-cython-ext -p ~/terminal-bench/build-pmars --agent oracle -n 3 --extra-docker-compose /tmp/network-host-overlay.yml -o /tmp/oracle_fix118`（R426 实测有效）
-> 3) 3/3 通过 → 全量 `harbor run -d terminal-bench@2.0 --agent oracle -k 5` 直到 **5/5**；per-task reward 写回 `MEMORY_HARNESS.md`；未过记 blocker 原文。
-> 📦 10-17「Docker 权限」「清 /tmp」已归档 → `ARCHIVE_OPERATOR_HARNESS.md`「归档块 M」；Docker 已 OK，`/tmp` 自清。
+> **背景**：Oracle 5/5 ✅、7 适配器骨架 ✅、28/28 mock 单测 ✅、`_install_node` 已改 NVM+aliyun、launch 脚本已改本地 `-p` + `minimal2` overlay。**目前卡在"等 smoke"，已静止 1.5h。** 本令要求：**不再逐个逐个验，用一个 pilot 把 7 个适配器一次性打穿。**
+
+**① 第一小时：solo smoke（只做 1 个，必须留证）**
+- 选 **cline-patched** × **1 个任务**（用 `--pilot` 里的第 1 个任务，或最轻量那个）。
+- 目的只有 4 个：**① NVM/镜像装包通 ② API 通（`wire_api=chat` 或 provider 正确） ③ agent 真跑起来（有 tool_calls） ④ trace 落盘可读**。
+- 通过判据：容器内 `cline` 可执行 + 至少 1 条 API 200 + trace 文件非空 + 有 `tool_calls`。
+- 失败 ⇒ 只修**不通过的那一项**（装包/网络/配置），再重跑**同一个** smoke；最多 3 次，仍不过就贴原文报 blocker（🚫 不要换任务掩盖问题）。
+
+**② 紧接：7×5 pilot（35 trials，这是门禁）**
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench
+bash launch_tb_7way.sh --pilot      # 7 harness × 5 tasks = 35 trials
+```
+- 7 路：cline-patched / codex / hermes / opencode / claude-code / deepseek-harness / pi。
+- 模型：`kimi-k2.6-cloud`（若网关 401/403 ⇒ 按 ⑤ 处理，**不许硬跑**）。
+- 每路必须输出：`install()` 是否成功、`resolved/failed/infra/quota` 四分类计数、trace 路径。
+- **pilot 判据（先定）**：
+  | 结果 | 结论 |
+  |:--|:--|
+  | infra 失败率 **≤ 20%** 且 **≥6 路有可运行 trial** | ✅ 放行 7×89 |
+  | infra 失败率 20–50% | ⚠️ 先修 infra，**不放行全量** |
+  | >50% 或 ≥3 路完全跑不起来 | 🔴 停，报 blocker（附每路失败原文） |
+
+**③ 放行后：7×89 全量（623 trials）**
+- 只在 ② 判据通过后启动；**每路串行、7 路按 429 自适应降并发**。
+- 交付：`terminalbench_kimi_k2.6_results.json` + `reports/report_harness_terminalbench_7way_zh.html`（含 Wilson 95% CI、7×7 McNemar、quota 单列、版本表 + 诚实条款）。
+
+**④ 资源与纪律**
+- 只用 `.29` 的 CPU/磁盘（**不占 GPU**：`.29` 8 卡在跑 pretrain decay，🚫 不碰）；Docker 只在 `.29`。
+- 与 data 错峰重 IO；`/tmp` 使用前先 `df`（`.29` 约 15G，**超 5G 的镜像/日志先清或换 `/nasdata`**）。
+- 每次唤醒只推进一步（smoke → pilot → 全量）；`WAITING=1` 仅在真跑时置位。
+- commit 前缀 `harness tb:`；MEMORY ≤32KB 自滚。
+
+**⑤ 网关异常时**
+- 若 `kimi-k2.6-cloud` 或网关整体 401/403：**立即停**，贴 `curl -i` 原文（含 `www-authenticate`/`server`），报 blocker；🚫 不要用假分数/跳过 trial 凑数，🚫 不要把 infra 失败算成 harness 失败。
+
+### 🆕 运维指令 · 2026-10-17 20:0x（🚨 P0 抢修：重启 ops 中继 + 重跑 3 个失败 oracle 任务）
+> ⏩ 已闭合（oracle 5/5 已达成；中继已恢复）→ `daily-memories-harness/2026-10-17.md`。
 
 ### 🆕 运维指令 · 2026-10-17（🧪 Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud）· 用户直令 · 最高优先（T1；T0 仍是 glm53 收口）
 
@@ -61,68 +91,10 @@
 
 
 ### 🆕 运维指令 · 2026-10-16（▶️ **重启未跑完的 4 路评测，把 188 条补完**）· 最高优先
-
-> **现状（R410 实测）**：glm53 7×300 的评测进程**已自然退出**（非崩溃），累计 **1912/2100 = 485 resolved（25.4%）** vs kimi 574/2100（27.3%）；**188 条 pending 未跑**；未完成的是 **opencode 277/300、cline 271/300、claude 259/300、pi 205/300**。报告已如实标注「已停止」（✅ 诚实声明正确）。
-> **① 重启补完**：用既有**幂等 `--resume`** 重启这 4 路评测进程，把 **188 条**跑完 → 再出**最终版报告**（McNemar 用**全量 2100 配对**）。
-> **② 若重启后再次自然退出**：记录**退出根因**（API 配额 / 超时 / 进程被杀 / 僵尸态），最多重试 3 次；仍不成则以 **1912/2100 定稿**，并在报告里写明「样本 1912/2100、缺口 188（缺口集中在 4 个 harness 的尾部实例，不影响结论）」。
-> **③ 纪律**：不占 GPU · 与 `.29` decay / `.12` ArmA 错峰 IO · commit 前缀 `harness glm53:` · 任务书 >32KB 自滚归档。
-
-
-> 运行时状态写 `MEMORY_HARNESS.md` / `daily-memories-harness/` / `harness/`（产物）。
-
----
-
-## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+> ⏩ 已闭合（188 条已补完，glm53 7×300 2100/2100）→ `daily-memories-harness/2026-10-16.md`。
 
 ### 🆕 运维指令 · 2026-10-16（📊 glm53 7×300 评测结果中文 HTML 报告）· 用户直令 · 最高优先
-
-> **用户令（2026-10-16）**：「harness：glm53 评测结果写 html 中文报告。」
-
-**① 报告内容**（glm-5.3-flash 7×300，当前阶段结果）：
-- 7 harness × 300 的 resolved / passrate（codex 80/300=26.7%、deepseek 71/300=23.7% 已 DONE；hermes/opencode/cline-patched/claude-code/pi 进行中）。
-- 与 **kimi-k2.6-cloud 7×300** 的逐 harness 对比 + **McNemar 配对检验**（实测 99.7% agreement，chi2≈0.33，p≫0.05）。
-- 关键发现：glm53 与 kimi **高度一致 → 换 backbone 未显著提升**，对「passrate 低主因是模型能力」判断的影响。
-- 诚实声明：评测进行中（~1306/2100，515 pending），数字为阶段性；最终待跑完。
-
-**② 交付**：中文自包含 HTML（如 `reports/report_harness_glm53_7x300_zh.html`），含 7 harness 表 + McNemar 对比 + 结论 + 诚实条款。
-
-**③ 纪律**：🚫 不打断 glm53 评测（后台继续）；数字从 `glm53_pilot_results.json` / 现有报告取、贴 文件:行；commit 前缀 `harness rpt:` · 任务书 >32KB 自滚归档。
-
-> 📦 §运维指令 · 2026-10-14（glm-5.3-flash 7×300 两连发：Base URL 更正 `/v1` + 启动重测）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：glm53 7×300 已达 2068/2100（562 resolved, 27.2%），pi 尾部 32 条补跑中，报告 `report_harness_glm53_7x300_zh.html` 已交付。需要时再读。
-
-> 📦 §运维指令·2026-10-13（🔬 通过率为何这么低）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_harness_why_low_passrate_zh.html 已交付 ✅（web 对照 + 能力 vs 环境拆解 + 轨迹细析 + 提升机会点排序表）。需要时再读。
-
-
-> 📦 §运维指令 · 2026-10-13（🔧 P1 剩余项继续修 + 重评/重跑）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：fix3（matplotlib 30 + sklearn 27）、astropy 28、sphinx 8、P1-2 重跑均已完成/收口；后续由 glm53 7×300 与 Terminal-Bench 指令接续。需要时再读。
-
-> 📦 历史运维指令已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`（已执行完 / 已作废的块；需要时再读，不要读进上下文）。
-
-> 本节由外部运维通过 git 修改，用于远程派活 / 改优先级 / 索取状态 / 暂停。
-> agent 禁止修改本节。本节为「无」时，按下方默认顺序自主推进。
-
-> 📦 §运维指令·2026-10-12（🔧 逐项修复 eval 基建缺陷 + 重跑受影响 case）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P0 四项修复全部完成 ✅ · fix1 re-eval 376/376 (34 flipped) · fix2 re-eval 32/32 (9 flipped) · 累计 574→617 resolved (29.4%) · report_harness_eval_fix_rerun.html 已交付。已被 2026-10-13 指令取代。需要时再读。
-
-> 📦 §运维指令·2026-10-12（🔬 eval 基础设施失效根因深挖 + 分数外部对照）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_harness_eval_rootcause.html(44.5KB, 6 sections, 3 SVG) 已交付 ✅。module/env失败=21.5%(451/2100)，其中311有明确infra_failure_reason(missing_module=272+OOM=28+no_tests=11)；真wrong-fix=48.0%(1007/2100，非83%)；5 repo(65实例×7=455条)被系统性压制；可挽回~23题/harness；cline eval-OK口径36.6%。r1_eval.py已有4级patch容错(非单级)。需要时再读。
-
-> 📦 §运维指令·2026-10-12（🔬 cline vs opencode EDA 基座深入对比）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_cline_vs_opencode_eda.html(39.9KB, 8 sections) 已交付 ✅。cline 86/300(28.7%) vs opencode 87/300(29.0%) McNemar b=11/c=12 p≫0.05；EDA 6维加权 Cline 7.75 vs OpenCode 6.05；§7 结论「维持 Cline 为主基座，不建议双轨并行」。需要时再读。
-
-> 📦 §运维指令·2026-10-11（①文献借鉴 ②交互轨迹对比以 cline 为轴）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_harness_lit_ideas.html(26.9KB) + report_harness_trace_vs_cline.html(50.2KB) 均已交付 ✅。需要时再读。
-
----
-
-
-> 📦 §运维指令·2026-10-09⑧（① 7×100 HTML 报告 ② 启动 7×300 + 三条硬约束）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：① 7×100 报告已交付 ✅；② 7×300 已启动（workdir 隔离修复 done, 2047/2100=97.5%, 554 resolved, hermes+claude-code 仍在跑）；②-C blocked=0 判据待完成后检查。需要时再读。
-
-> 📦 §运维指令 · 2026-10-08⑦（R2 口径披露 + 并发变更追认 + 报告落位）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：口径与并发节、`report_harness_interaction_traces.html` 落根目录、复用/新跑标记列、监控表 全部已交付。需要时再读。
-
-> 📦 §运维指令 · 2026-10-08⑤（① 启动第二轮 7×100 横评 ② 深挖 7×30 交互轨迹）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；结论：① 7×100 全完成（236 resolved / 439 pbf / 25 blocked）；② 轨迹报告已交付（仅 `stdout_tail` 存活，已如实声明）。需要时再读。
-
-
-> 📦 §运维指令·2026-10-08④（下一步工作建议 Q&A）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：Q1–Q4 已在 R184 回答（commit 27859f2e），写进 MEMORY_HARNESS.md「运维问答」小节。需要时再读。
-
-
-> 📦 §运维指令·2026-10-08（📄 SWE-bench 横评分析报告 HTML）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：report_harness_swebench_analysis.html 已交付（75647B, 9 sections + §4.5, 10 inline SVG, 自包含 ≤200KB）。需要时再读。
-
+> ✅ 已交付（`report_harness_glm53_7x300_zh.html`）→ 详情 `daily-memories-harness/2026-10-16.md`。
 
 ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
 

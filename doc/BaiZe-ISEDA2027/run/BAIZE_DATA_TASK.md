@@ -7,7 +7,38 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🆕 运维指令 · 2026-10-18（🌐 `en_v1_4` 换 proxy：`172.19.92.23:13128` + hf-mirror 续传）· 用户直令 · 最高优先
+### 🆕 运维指令 · 2026-10-18②（🔴 **P0：立即改用 `172.19.92.23:13128` + hf-mirror 续 `en_v1_4` 最后 25 个 shard**）· 用户直令 · 覆盖同日①的"先探针"
+
+> **背景**：你已经连续多轮报 `.25` → `huggingface.co HTTP=000 timeout`，但 **`.23 + hf-mirror` 已由中继在 `.12`/`.29` 双机实测为 200**：
+> `.23→hf-mirror` **200 / 0.33s**、`.23→hf-mirror API tree` **200 / 0.35–0.57s**（RUN_ID 122，2026-10-18 07:31）。⇒ **不要再等 `.25`**。
+> 现状：**43,520 parquet / 0 incomplete / 4.1T / 85 of 110 shard 完成，只差 25 个**。
+
+**① 立即执行（不再探针、不再等待）**
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline
+export HF_PROXY=http://172.19.92.23:13128
+export HF_ENDPOINT=https://hf-mirror.com
+export https_proxy=$HF_PROXY; export http_proxy=$HF_PROXY
+export HF_HUB_ENABLE_HF_TRANSFER=1; export HF_HUB_DOWNLOAD_TIMEOUT=120
+setsid -f nohup bash download_en_v1_4.sh > /tmp/en_v1_4_dl_dot23.log 2>&1
+```
+- ⚠️ **脚本已由运维改成读 `HF_PROXY`/`HF_ENDPOINT`**（原 L26-27 硬编码 `.25` 已移除）⇒ **必须先 `git pull`**，否则仍会走 `.25`。
+- 若 `.sh` 的 API 列目录失败 ⇒ 改 `setsid -f nohup python3 download_en_v1_4.py > /tmp/en_v1_4_dl_dot23.log 2>&1`（24 workers 并行版）。
+- **已完成的 85 个 shard 自动 SKIP，不要删、不要重下。**
+
+**② 判活（10–15 min 内给结论，🚫 不看进程存活，只看字节增长）**
+- `du -s` 目标目录两次（间隔 120s）必须增长；或 `/proc/<pid>/io` 的 `write_bytes` 增长；或日志出现新的 `downloading/DONE`。
+- **零增长 ⇒ 判假活**：kill wrapper → 换 ① 的 Python 并行版 → 仍零增长则报 blocker（贴报错原文）。
+
+**③ 回报（本轮就要）**
+1. `.23 + hf-mirror` 下的实测：**MB/s**、已完成 shard 数（从 85 起算）、**25 个剩余 shard 的 ETA**（按实测速率算，禁止沿用旧 7–8 天口径）。
+2. 日志路径 `/tmp/en_v1_4_dl_dot23.log` + `pgrep -af download_en_v1_4` 原文。
+3. 完成后自校：`parquet` 数 vs HF 清单、`.incomplete==0`，写入 `DATA_LEDGER.md`。
+
+**④ 紧接着（本令的第二优先，不阻塞 ①）**
+- **en_v1_4 开始分词**（P-8/v5 的 S1 要 500B token）：复用 `preprocess_data.py` + `tokenizer_eod`，`nice -19`，并发 4–8；**先报预计 B tok/天 与到 500B 的天数**。
+- 🚫 85M 维持暂停；🚫 不动 GPIC/WebMix/InternVL/wit_base/cauldron/SFT-2605/RL-2609；🚫 不改 `.12` 上 vision 正在用的 GPU 任务（vision P0 已占用 8 卡，分词只用 CPU）。
+
 
 > **用户令（2026-10-18）**：「data: 既然 172.19.92.25:13128 返回503，那就尝试用 172.19.92.23:13128+hf-mirror 来续传」
 
@@ -66,16 +97,7 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 
 
 ### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .12 /tmp 残留）· 用户直令
-
-> **用户令（2026-10-17）**：「让 data 清理 .12 的 /tmp。」
-
-**① 清理范围**：data 线在 `.12` 的 `/tmp` 下**旧残留**（>1 天未动用的临时文件/目录：旧下载临时、旧 tokenize 临时、旧日志等）。
-
-**② 纪律**：
-- 先 `du -sh /tmp/* 2>/dev/null | sort -rh | head -20` 盘点，**只清本线自己的、确认 >1 天未动**的，把要删清单抄进心跳再删。
-- 🚫 不删：下载中的 `.incomplete`、活跃训练/下载的临时、别线在途文件、<1 天的、`/tmp/systemd-*`。
-- ✅ 清完报 `df -h /tmp` 前后对比 + 释放量。
-- commit 前缀 `data tmp-clean:` · 任务书 >32KB 自滚归档。
+> 📦 已闭合（/tmp 清理已完成，残留=0）→ 原文 `daily-memories-data/2026-10-17.md`。
 
 ### 🆕 运维指令 · 2026-10-15（⬇️ **补下 `UltraData-RL-2609`** + 复核 SFT-2605）· 用户直令 · 最高优先
 
@@ -91,97 +113,7 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 ### 🆕 运维指令 · 2026-10-14（💾 新增下载落盘位置 `/nas_env`）· 用户直令 · 常驻> 📦 **已归档（2026-10-18 运维滚动，原文未改）** → `run/ARCHIVE_OPERATOR_DATA.md`「§2026-10-14（新增落盘位置 `/nas_env`）」。常驻口径不变：`/nas_env` 仍为合法落盘地（仅用于新增下载）。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-13（⏸ 暂停 85M + 📥 下载 HF 图文对 TOP-5 中「未下载」的 4 个 · 落 `/nas_inference` 或 `/nas_user` 的 datasets（🚫 不放 `/nas_train`））· 用户直令 · 最高优先
-
-> 用户令（2026-10-13）：「data：暂停 85M，开始下载推荐的 TOP-5 中还没有下载的其它 4 个数据集。不要放在 `/nas_train`，放在 `/nas_user` 或 `/nas_inference`，我的 datasets 目录下。」
-
-① 暂停 85M：
-1. 停 data 线 85M 的 retry-loop（PID 2420118）+ hf download（PID 2420132）：先杀 wrapper 再杀 hf（`pkill -f` 或 `kill`），`pgrep -af` 复核已退。
-2. 🚫 保留已下内容（不删任何 parquet）；`.incomplete` 默认保留（便于将来续传），仅在确认不再续传时才清。
-3. 心跳把 85M 标 `⏸ 暂停（用户令 2026-10-13）` + 记已下进度（~8385/12124 ≈ 69.2%）。
-
-② 下载 TOP-5 中「未下载」的 4 个（TOP-3 已在本地盘，跳过）：
-| # | HF id | 规模 | 格式 |
-|:--|:--|:--|:--|
-| TOP-1 | `MVRL/WebMix-38M` | 38.8M 对 / ~2 TB | parquet(Image) |
-| TOP-2 | `VedaLabs/wit_base`（= wikimedia/wit_base） | 6.48M 对 / ~200–400 GB | parquet(Image) |
-| TOP-4 | `hanlincs/InternVL-SA1B-Caption-WebDataset` | ~22.4M 对 / ~1–1.5 TB | webdataset tar |
-| TOP-5 | `HuggingFaceM4/the_cauldron` | ~1.9M 对 / 50 子集 | parquet(Image list) |
-- ⚠️ 下载前先核实每个 repo 的实际大小 / 文件数 / 是否 gated（`huggingface_hub` API 或 `hf download --dry-run`），如实回报；不可达/gated 的标「不可达」跳过。
-- 优先序：TOP-1 → TOP-2 → TOP-4 → TOP-5（TOP-5 `the_cauldron` 是 VQA/SFT 格式，非纯预训练，最后下）。
-
-③ 落盘路径（用户硬要求）：
-- 🚫 绝不放 `/nas_train`（其已 ~85%，逼近红线）。
-- ✅ 放 `/nas_inference/app.e0031982/datasets/`（与 GPIC 同一 datasets 根）或 `/nas_user/<你的用户>/datasets/`；建议 `<...>/datasets/<publisher>/<name>/`（如 `.../datasets/MVRL/WebMix-38M/`、`.../datasets/VedaLabs/wit_base/`…）。以实测为准，把实际落盘路径写进心跳。
-- ⚠️ 先 `df -h` 确认目标盘剩余空间 ≥ 预计总量（~2 + 0.4 + 1.5 + 少量 TB）。
-
-④ 纪律：`setsid` 守护 + 断点续传；纳入「死/僵/速率趋零即 kill+restart」看护；与仍在下行的 en_v1_4 报各自速度 + 带宽争用；🚫 不删任何已有数据；commit 前缀 `data dl:`；任务书 >32KB 自滚归档。
-
-
-> 📦 §运维指令·2026-10-13（🔍 HF imagetext 调研报告）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：唤醒404已交付 report_data_hf_imagetext_datasets_zh.html,含TOP-5推荐+bytes/url判定+主表+三分类+下载模板。需要时再读。
-
-
-> 📦 §运维指令·2026-10-13（📥 85M 移交 data 线）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：唤醒405已将85M从用户自管移交data线启动+看护,后因用户令10-13暂停(8436/12124=69.6%)。需要时再读。
-
-> 📦 历史运维指令已归档 → `run/ARCHIVE_OPERATOR_DATA.md`（已执行完 / 已作废的块；需要时再读，不要读进上下文）。
-
-> 本节由外部运维通过 git 修改，用于远程派活 / 改优先级 / 索取状态 / 暂停。
-> agent 禁止修改本节（只写别的区）。本节为「无」时，按下方默认阶段顺序自主推进。
-
-> 📦 §运维指令·昨夜汇报HTML（2026-10-07）已执行完毕 → report_10_07_data_overnight.html 已交付；详细指令已归档 → run/ARCHIVE_OPERATOR_DATA.md。需要时再读。
-
-> 📦 §运维指令·2026-10-08论文更新（§4 Data Mixture Search+§5 SFT/污染, main.pdf 9pp 0err, commit cbe0b641）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：4_llm_pretrain.tex+5_llm_posttrain.tex已更新,main.pdf编译0err,commit cbe0b641→debb3260。需要时再读。
-
-> 📦 §运维指令·2026-10-08数据准备全链路状态报告HTML（report_data_pipeline_status.html 31KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：8节全链路报告已交付,含TL;DR/数据全景/下载/分词/配比/污染/磁盘/下一步。需要时再读。
-
-> 📦 §运维指令·2026-10-07⑥配比实验收官总报告HTML（report_data_mix_summary.html 29KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：R1→s_step→R2→top-K全弧线报告已交付,ρ=−0.80排名反转+0.6pp不可分辨+88:8:4先验。需要时再读。
-
-
-> 📦 §运维指令·2026-10-11文献借鉴报告（report_data_lit_ideas.html 36KB, 25篇→TOP-5+3附录, commit c80c7a74）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：25篇arXiv日报筛出8条可借鉴,TOP-1=Conditional Transfer(2610.11548)三信号配比框架→P-8, TOP-4=Beyond Owls(2610.10657)污染检测盲区, 全25篇ID经papers.jsonl核实✅。需要时再读。
-
----
-
-
-> 📦 §运维指令·2026-10-10（更正85M总量=46.7TB,否7701/27T）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：85M 8子集精确总量12,124files/46.663TB已核实,纠正旧口径。需要时再读。
-
-> 📦 §运维指令·2026-10-10（巡检并发下载85M+en_v1_4,回报各自速度/ETA）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：两路并发巡检已执行,85M+en_v1_4各自速度/ETA已报,持续看护中。需要时再读。
-
-> 📦 §运维指令·2026-10-10（🔄重启en_v1_4下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：en_v1_4已重启(PID2535486,parallel 24+hf_transfer),GPIC✅全完成→放行条件满足。需要时再读。
-
-> 📦 §运维口径·2026-10-10（en_v1_4放行·用户再确认）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：GPIC完成即满足放行条件,data不自行启动(由运维/用户改白名单后下指令)。需要时再读。
-
-> 📦 §运维口径·2026-10-09④（en_v1_4放行时点·用户裁定）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：en_v1_4在GPIC完成后放行(已被10-10块取代执行)。需要时再读。
-
-
-> 📦 §运维指令·2026-10-09③（停②:停掉Code/Math重头来+加Ultra-FineWeb-L3+放开并发）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：全7项完成✅(①kill34旧进程+删46产物 ②R3全量分词110/110 DONE(1483.91B tok/5.94TB) ③并发110进程 ④197GB→2.0TB核实合理(524.43B×4≈2.1TB) ⑤6目录盘点全✅ ⑥污染扫描30/30 DONE(60K docs,0命中) ⑦铁律已遵守)。需要时再读。
-
-
-> 📦 §运维指令·2026-10-07⑤（分词加大并发+.29 8卡空口径+推进顺序）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：分词并发化已完成(zh 8进程→全 web 44 shards 524.42B tok),.29 8卡空已确认,推进顺序被2026-10-09②覆盖。需要时再读。
-
-
-> 📦 §运维指令·2026-10-07④（撤销定时停UltraX+续传下完479/479+GPIC让回）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：UltraX✅479/479全下完,GPIC恢复全速,en_v1_4继续排队。需要时再读。
-
-> 📦 §运维指令·2026-10-07③（GPIC优先序裁定+BO方向核对）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：①GPIC优先序被④块作废(改为UltraX续传到底) ②BO方向bug=报告bug非code bug,TRUE best=t23(0.4155),t75(0.373)=MIN,R1 ρ=−0.43不受影响,已创建query_bo_r2.py。需要时再读。
-
-
-> 📦 §运维指令·2026-10-07②（解除白名单锁定：UltraX-Preview下载+en_v1_4排队+分词）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：UltraX下载已启动(唤醒186)+zh分词已启动+en_v1_4排队；唤醒192续传重启UltraX。白名单新增UltraX-Preview+en_v1_4（用户主动解禁）。需要时再读。
-
-
-> 📦 §运维指令·2026-10-07（P0·两条下载线继续/立即重启）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：该P0块已被2026-10-14用户令暂停全部4路下载取代。base下载已完成(l1_en_hq✅+zh✅256/256),GPIC✅8160tar。永久口径「数据下载失败需主动重启」仍有效但当前为暂停态。需要时再读。
-
----
-> 📦 §运维问询·2026-10-07（三个现状问题）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：三问已答(唤醒185)①GPIC无加速②base下载全满只剩分词③BO变慢=波次锯齿非I/O。需要时再读。
-
-
-> 📦 §📎 运维转发·R1 lm_eval结论更正（2026-10-07）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：名次方向bug+ρ符号+表格错字+结论改"代理无分辨力+证据不足"全部落地✅(唤醒181)。R2收尾操作提醒(§⑤)仍在归档中,收尾时需读。需要时再读。
-
-
-> 📦 §运维指令·2026-10-06三步令（①200trial+top-K ②s_step归因 ③Round2 BO）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：三步全完成✅(①200trial+Spearman ρ=−0.43 ②MBS16→s_step 166ms=8.6×,D=0.5B ③Round2 200/200+top-K lm_eval ρ=−0.80)。需要时再读。
-
-> 📦 §P0 base下载重启（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：base下载已重启(PID 3520692,l1_en_hq 89%+zh✅256/256),proxy=172.19.92.25:13128,白名单不变。需要时再读。
-
-
-> 📦 §目标函数错了（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：6项全执行✅(Round2用lm_eval 8集均分作objective, Spearman ρ=−0.43证实loss≠能力)。需要时再读。
-
+> 📦 已闭合（TOP-5 4 路均下完；85M 仍暂停）→ 原文 `daily-memories-data/2026-10-13.md`。
 
 ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
 
