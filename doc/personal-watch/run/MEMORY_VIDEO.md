@@ -13,9 +13,9 @@ WAITING: 1
 
 ```
 PHASE:        S3 放量 → EP05《临界点》H3 分镜视频批量出片中（55 镜 · R2V 41 + T2V 14 · 后台跑批）；六章已成片（13/18/01/02/03/04）
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅ + 成片 272.84s；EP05 场景参考图 32/32 ✅；EP05 H3 脚本固化 + 55 镜已提交（已回收 R2V 32/55）
-当前动作:     EP05《临界点》H3 分镜视频批量出片中（ComfyUI 队列 running 1/pending 22）；本轮回收 12 镜（R2V 29/30/31/33/34/35/37/39/40/41/42/43）并 ffprobe 核验 + 回写记忆 + commit
-下一步:       逐轮核验+回收 EP05 出片（32→55 镜 · recover_ep05_h3.py）；55 镜全落盘后固化 gen_ep05_subtitles.py + synth_ep05.py 交付成片
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅ + 成片 272.84s；EP05 场景参考图 32/32 ✅；EP05 H3 脚本固化 + 55 镜已提交（已回收 43/55 = R2V 41/41 ✅ + T2V 2/14）；gen_ep05_subtitles.py + synth_ep05.py 已固化并 dry-run 通过
+当前动作:     EP05《临界点》H3 分镜视频批量出片中（ComfyUI 队列 running 1/pending 11）；本轮回收 11 镜（R2V 44/46/47/48/49/52/53/54/55 + T2V 01/05）并 ffprobe 核验 + 固化字幕/合成脚本 + 回写记忆 + commit
+下一步:       逐轮核验+回收 EP05 出片（43→55 镜 · recover_ep05_h3.py · 剩 T2V 12 镜）；55 镜全落盘后跑 gen_ep05_subtitles.py + synth_ep05.py 交付成片
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-18（EP05 出片核验+回收：回收 32/55 镜 · 新回收 R2V 12 镜 ffprobe 全部合规 · 队列 running 1/pending 22 · 回写记忆 + commit）
+- **上次唤醒**：2026-10-18（EP05 出片核验+回收：回收 43/55 镜 · 新回收 11 镜（R2V 9 + T2V 2）ffprobe 全部合规 · 固化字幕/合成脚本 · 队列 running 1/pending 11 · 回写记忆 + commit）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-18 · S3 放量 · EP05《临界点》H3 出片核验+回收（43/55）+ 固化字幕/合成脚本 ✅**：续上轮「下一步」，逐轮核验+回收 EP05 出片；R2V 全 41 镜落盘，顺势固化 EP05 字幕/合成脚本。
+  - **git 同步**：短剧仓 up-to-date（`89d3571`）；记录仓 Fast-forward 至 `94269a5b`（他线 pretrain/zhulong 提交 · 本线无冲突）。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 空闲 7.0GB · 队列 running 1/pending 11）；ffmpeg/ffprobe 在（2025-10-12 build）；MCP comfyui-drama/web-search 可用。
+  - **回收**：`recover_ep05_h3.py` 回收 **43/55 镜**（R2V **41/41 ✅** · T2V 2/14）；本轮新回收 **11 镜**（R2V 44/46/47/48/49/52/53/54/55 + T2V 01/05），ffprobe 全部合规（R2V h264 **864×480** 24fps + aac · 帧数 107/124/158/175/226 = 4.46/5.17/6.58/7.29/9.42s 档；T2V h264 **1056×608** 24fps · 01=4.46s/05=6.58s，R2V@0.4MP / T2V@0.6MP 预期分辨率）。
+  - **固化脚本（提前备好 S4 收尾）**：新建 `scripts/gen_ep05_subtitles.py`（206 条字幕 · 全片 295.50s · SFX_ONLY 8 镜 + 镜 55 收尾字幕 CAPTION）+ `scripts/synth_ep05.py`（55 镜 concat ★音画钉长 + 硬字幕烧录）；两者 `py_compile` exit=0 + `--dry-run` 通过（字幕 206 条 / 合成 42/55 在位 · 缺 13 镜=T2V 剩余）。
+  - **跑批健康**：H3 批量 55 镜后台跑批中（队列 running 1/pending 11）；剩 12 镜 = T2V（11/15/18/21/24/26/32/36/38/45/50/51），全部仍在队列（无失败/卡死）。
+  - **commit**：短剧仓新增 `gen_ep05_subtitles.py` + `synth_ep05.py`；记录仓 MEMORY + daily + PLAN。
+  - **下一步**：逐轮核验+回收 EP05 出片（43→55 镜 · 剩 T2V 12 镜）；55 镜全落盘后跑 `gen_ep05_subtitles.py` + `synth_ep05.py` 交付成片。
 
 - **2026-10-18 · S3 放量 · EP05《临界点》H3 出片核验+回收（32/55）✅**：续上轮「下一步」，逐轮核验+回收 EP05 出片。
   - **git 同步**：短剧仓 up-to-date（`89d3571`）；记录仓 Fast-forward `1ee8e6d4..e416478d`（他线 4 文件 · 本线无冲突）。
