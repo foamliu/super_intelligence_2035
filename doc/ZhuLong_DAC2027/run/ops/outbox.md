@@ -9795,3 +9795,233 @@ drwxr-x--x 11 app.t0002997 app.adm 4096 Oct 10 16:33 /home/app.t0002997
 drwxr-x--- 13 app.e0031982 app.adm 4096 Oct 18 12:17 /nasdata/app.e0031982/code/EDA-Eval-Framework
 === DONE 73 ===
 ```
+
+---
+
+## RUN_ID 74 · 2026-10-18 12:28:43 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 74 | inspect EVAL_FW | $(date '+%F %T') | host=$(hostname) ==="
+F=/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py
+echo "[1] run_eval.py head 110"
+sed -n '1,110p' "$F"
+echo "[2] EVAL_FW refs"
+grep -nE 'EVAL_FW|EVAL_FW_DIR|_eval_fw|t0002997|/home/' "$F" | head -70
+echo "[3] run_zhulong_script env"
+grep -nE 'EVAL_FW_DIR|EVAL_FW|EDA-Eval-Framework|SANDBOX_ENDPOINTS|LANG|export' /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_zhulong_script.sh | head -60
+echo "[4] run_cline_script env"
+grep -nE 'EVAL_FW_DIR|EVAL_FW|EDA-Eval-Framework|SANDBOX_ENDPOINTS|LANG|export' /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh | head -60
+echo "[5] global grep"
+grep -rnE 'EDA-Eval-Framework_1_pyaether|/home/app\.t0002997|EVAL_FW_DIR' /nasdata/app.e0031982/code/eda_fastmcp/scripts /nasdata/app.e0031982/code/eda_fastmcp/*.py 2>/dev/null | head -50
+echo "=== DONE 74 ==="
+```
+
+**输出**
+```
+=== RUN_ID 74 | inspect EVAL_FW | 2026-10-18 12:28:43 | host=hfeg0tedaap02 ===
+[1] run_eval.py head 110
+#!/usr/bin/env python3
+"""
+EDA-Eval-Framework eval_only 评估脚本
+
+用法:
+  # 评估单个生成结果
+  python scripts/run_eval.py --generations completed_code_generation_2026_0708_095422.jsonl
+
+  # 评估多个生成结果（按顺序跑）
+  python scripts/run_eval.py --generations \
+      completed_code_generation_2026_0706_223609.jsonl \
+      completed_code_generation_2026_0707_200635.jsonl \
+      completed_code_generation_2026_0708_095422.jsonl
+
+  # 自动发现 ~/eda_code_eval/ 下最新的 N 个生成结果
+  python scripts/run_eval.py --latest 3
+
+  # 与代码生成衔接: 先跑生成，再跑评估
+  bash scripts/run_cline_script.sh && python scripts/run_eval.py --latest 1
+
+  # 跳过 assemble（已跑过，只需重跑 sandbox + calculate）
+  python scripts/run_eval.py --generations xxx.jsonl --skip-assemble
+
+  # 补测模式: 从上次评估结果中筛选客观原因失败的 case，重新生成+评估
+  python scripts/run_eval.py --retry --latest 1
+  python scripts/run_eval.py --retry -g completed_code_generation_2026_0708_213718.jsonl
+
+流程 (eval_only 模式):
+  1. assemble_for_execution.py  — 拼装 candidate + test → 可执行脚本
+  2. run_on_sandbox.py          — 发送到远程沙箱执行
+  3. calculate_results.py       — 计算 pass_rate
+  4. analyze_evaluation_history — 跨轮对比报告
+
+补测模式 (--retry):
+  从上一次评估结果中，自动筛选出"客观原因"失败的 case:
+    - 生成阶段: Agent 超时(接近完成)、进程崩溃、MCP搜索极慢
+    - 执行阶段: 沙箱超时、会话初始化失败(MdePlatSession/GOA)
+  对这些 case 重新生成代码并评估，其余 case 沿用已有结果合并计算。
+"""
+import argparse
+import json
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+# Load .env before any module imports that read env vars (e.g. reflection.py)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except ImportError:
+    pass  # python-dotenv not installed, rely on shell env
+
+import os
+# 评估并发 = 多沙箱分片数(配合 SANDBOX_ENDPOINTS)。默认 4(4端口并行)。
+# 有 SANDBOX_ENDPOINTS 时: N=分片数, 每片绑一个端口(独立 workdir)→ 无污染真并行。
+# 无 SANDBOX_ENDPOINTS 或 N=1: 回退单进程 --workers 1 串行(旧治标模式)。
+# 历史: 单沙箱并发踩 lib.defs → 被迫串行(±4~16pp 抖动), 见 [[sandbox-concurrency-jitter]]。
+# 多端口隔离后并行不再污染, N=4 安全。设 1 可临时回退串行排查。
+SANDBOX_WORKERS = str(os.getenv("EVAL_SANDBOX_WORKERS", "4"))
+
+# =============================================
+# 路径常量
+# =============================================
+# lang="pyAether"(默认) → EDA-Eval-Framework (assemble .py + run_on_sandbox 看 error_log 判分)
+# lang="skill"          → EDA-Eval-Framework-SKILL (assemble .il + run_on_sandbox 看 SKILL-case-OK 判分)
+# lang="tcl"            → EDA-Eval-Framework-Tcl (assemble .tcl + run_on_sandbox 看 TCL-case-OK 判分)
+EVAL_FW_PYAETHER = Path(os.getenv("EVAL_FW_DIR",
+    str(Path.home() / "20260806" / "EDA-Eval-Framework")))
+EVAL_FW_SKILL = Path(os.getenv("EVAL_FW_DIR_SKILL",
+    str(Path.home() / "20260802" / "EDA-Eval-Framework-SKILL")))
+EVAL_FW_TCL = Path(os.getenv("EVAL_FW_DIR_TCL",
+    str(Path.home() / "EDA-Eval-Framework-Tcl")))
+PYTHON = Path(os.getenv("PYTHON", "python3"))
+EVAL_CODE_DIR = Path(os.getenv("EVAL_ROOT_DIR",
+    str(Path.home() / "eda_code_eval")))
+
+# 当前 lang (由 --lang 参数设置, 默认 pyAether)。模块级常量在 main() 里赋值。
+LANG = "pyAether"
+
+# 评估侧 benchmark 覆盖 (由 --benchmark 设置)。为空则沿用框架 config.yaml 默认值。
+# 用于切换生成侧数据集后, 让评估侧 benchmark(含标准解/测试) 与之对齐。
+BENCHMARK_OVERRIDE = None
+
+def _eval_fw() -> Path:
+    """当前 lang 对应的评测框架根目录。"""
+    if LANG == "skill":
+        return EVAL_FW_SKILL
+    if LANG == "tcl":
+        return EVAL_FW_TCL
+    return EVAL_FW_PYAETHER
+
+# EVAL_FW / CONFIG 为模块级全局, 在 main() 里按 --lang 重新赋值(reassign)。
+# 所有函数引用这两个全局即可自动指向正确框架, 无需逐处改 _eval_fw()。
+EVAL_FW = EVAL_FW_PYAETHER
+CONFIG = EVAL_FW_PYAETHER / "config.yaml"
+
+# assemble 产出的中间脚本目录（candidate + test 拼装的可执行脚本）。
+# 评估跑完即可丢弃：内容可由 generations JSONL + benchmark 确定性重建
+#（assemble_for_execution.py 重新拼装）。两条链路各写一处，都纳入清理：
+#   - run_eval.py 链路 → 框架内 output_code_generation/generated_solutions（assemble.py 默认）
+#   - run_on_sandbox.sh + CUSTOM_TIMESTAMP_DIR 链路 → ~/eda_code_eval/generated_solutions
+GENERATED_SOLUTIONS_DIRS = [
+    EVAL_FW / "output_code_generation" / "generated_solutions",
+    EVAL_CODE_DIR / "generated_solutions",
+]
+# 注意: EVAL_FW 在 main() 按 --lang 重赋值后, 此列表里的 EVAL_FW 引用仍是旧值
+# (列表在模块加载时已求值)。cleanup_generated_solutions 内部按 _eval_fw() 重建路径,
+# 不依赖此列表的 EVAL_FW 项。pyAether 与 SKILL 各自的 generated_solutions 都会被清。
+
+[2] EVAL_FW refs
+68:EVAL_FW_PYAETHER = Path(os.getenv("EVAL_FW_DIR",
+70:EVAL_FW_SKILL = Path(os.getenv("EVAL_FW_DIR_SKILL",
+72:EVAL_FW_TCL = Path(os.getenv("EVAL_FW_DIR_TCL",
+85:def _eval_fw() -> Path:
+88:        return EVAL_FW_SKILL
+90:        return EVAL_FW_TCL
+91:    return EVAL_FW_PYAETHER
+93:# EVAL_FW / CONFIG 为模块级全局, 在 main() 里按 --lang 重新赋值(reassign)。
+94:# 所有函数引用这两个全局即可自动指向正确框架, 无需逐处改 _eval_fw()。
+95:EVAL_FW = EVAL_FW_PYAETHER
+96:CONFIG = EVAL_FW_PYAETHER / "config.yaml"
+104:    EVAL_FW / "output_code_generation" / "generated_solutions",
+107:# 注意: EVAL_FW 在 main() 按 --lang 重赋值后, 此列表里的 EVAL_FW 引用仍是旧值
+108:# (列表在模块加载时已求值)。cleanup_generated_solutions 内部按 _eval_fw() 重建路径,
+109:# 不依赖此列表的 EVAL_FW 项。pyAether 与 SKILL 各自的 generated_solutions 都会被清。
+136:    # 动态计算 EVAL_FW → EVAL_CODE_DIR 的相对路径，避免硬编码 ../../ 随目录深度变化翻车
+137:    gen_file_rel = os.path.relpath(str(EVAL_CODE_DIR / jsonl_name), str(EVAL_FW))
+200:        cwd=EVAL_FW,
+205:        baseline = EVAL_FW / ".config.yaml.baseline"
+209:            print(f"  (restored config.yaml from baseline, no git in {EVAL_FW.name})")
+221:    # GENERATED_SOLUTIONS_DIRS 在模块加载时求值(EVAL_FW 当时=pyAether), 故这里补当前框架。
+223:    cur = _eval_fw() / "output_code_generation" / "generated_solutions"
+239:    result = subprocess.run(cmd, cwd=EVAL_FW, capture_output=False)
+304:    src_dir = EVAL_FW / scripts_dir_rel
+331:    tmp_out = EVAL_FW / output_file_rel  # 最终合并目标
+360:            "--scripts-dir", str(shard_dirs[i].relative_to(EVAL_FW)),
+361:            "--output-file", str(shard_outs[i].relative_to(EVAL_FW)),
+366:        procs.append(subprocess.Popen(cmd, cwd=EVAL_FW, env=env_i, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True))
+425:    tmp_results = EVAL_FW / "output_evaluation" / "tmp" / "execution_results.jsonl"
+492:    reports = sorted((EVAL_FW / "output_evaluation").glob("*/final_report.json"))
+529:    reports = sorted((EVAL_FW / "output_evaluation").glob("*/final_report.json"))
+696:        (EVAL_FW / "output_evaluation").glob("*/execution_results.jsonl"),
+821:    # 按 --lang 重赋值模块级 EVAL_FW / CONFIG / LANG, 所有函数引用自动指向正确框架。
+822:    global EVAL_FW, CONFIG, LANG, BENCHMARK_OVERRIDE
+825:        EVAL_FW = EVAL_FW_SKILL
+827:        EVAL_FW = EVAL_FW_TCL
+829:        EVAL_FW = EVAL_FW_PYAETHER
+830:    CONFIG = EVAL_FW / "config.yaml"
+831:    print(f"  lang={LANG} → 框架: {EVAL_FW.name}")
+834:    bench_dir = EVAL_FW / "benchmarks"
+842:            print(f"  {i:2d}) {f.relative_to(EVAL_FW)}")
+850:        candidates = [_b, EVAL_FW / str(_b), _P.cwd() / str(_b)]
+853:            BENCHMARK_OVERRIDE = os.path.relpath(str(hit.resolve()), str(EVAL_FW))
+857:                BENCHMARK_OVERRIDE = os.path.relpath(str(cands[0]), str(EVAL_FW))
+861:                    print(f"    - {c.relative_to(EVAL_FW)}", file=sys.stderr)
+967:        tmp_results = EVAL_FW / "output_evaluation" / "tmp" / "execution_results.jsonl"
+988:            (EVAL_FW / "output_evaluation").glob("*/execution_results.jsonl"),
+[3] run_zhulong_script env
+26:export CLI_AGENT=${CLI_AGENT:-zhulong}
+28:export CLI_DATA_DIR=${CLI_DATA_DIR:-$HOME/.zhulong}
+31:export EDA_PROMPT_TEMPLATE="${EDA_PROMPT_TEMPLATE_PYAETHER:-eval_sys_prompt_template_old.md}"
+127:    export PARALLEL
+128:    export EDA_EVOLVE_ENABLED="$EVOLVE_ENABLED"
+129:    export EDA_MEMORY_INJECT_ENABLED="$MEMORY_INJECT_ENABLED"
+159:        export BENCHMARK_FILE
+183:    export BENCHMARK_FILE
+286:        export TASK_INPUT_DIR="$filter_dir"
+300:    export BATCH_ID="$TIMESTAMP2"
+301:    export EVAL_ROOT_DIR
+302:    export TASK_INPUT_DIR
+303:    export PARALLEL
+320:    export CLI_OUTPUT_DIR
+331:    export OUTPUT_FILE
+581:# 必须在 step_update_memory_bank 之前: update_memory_bank.py 通过 EVAL_FW_DIR 自动配对 batch→eval,
+[4] run_cline_script env
+23:export CLI_AGENT=${CLI_AGENT:-cline}
+26:export EDA_PROMPT_TEMPLATE="${EDA_PROMPT_TEMPLATE_PYAETHER:-eval_sys_prompt_template_old.md}"
+122:    export PARALLEL
+123:    export EDA_EVOLVE_ENABLED="$EVOLVE_ENABLED"
+124:    export EDA_MEMORY_INJECT_ENABLED="$MEMORY_INJECT_ENABLED"
+154:        export BENCHMARK_FILE
+178:    export BENCHMARK_FILE
+281:        export TASK_INPUT_DIR="$filter_dir"
+295:    export BATCH_ID="$TIMESTAMP2"
+296:    export EVAL_ROOT_DIR
+297:    export TASK_INPUT_DIR
+298:    export PARALLEL
+315:    export CLI_OUTPUT_DIR
+326:    export OUTPUT_FILE
+576:# 必须在 step_update_memory_bank 之前: update_memory_bank.py 通过 EVAL_FW_DIR 自动配对 batch→eval,
+[5] global grep
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/README.md:621:`EVAL_FW_DIR`、`EVAL_FW_DIR_SKILL`、`EVAL_FW_DIR_TCL`、`EVAL_ROOT_DIR`=`$HOME/eda_code_eval`；Prompt 模板按语言拆分：`EDA_PROMPT_TEMPLATE_PYAETHER`=`eval_sys_prompt_template_old.md`、`EDA_PROMPT_TEMPLATE_SKILL`=`eval_sys_prompt_template_skill.md`、`EDA_PROMPT_TEMPLATE_TCL`=`eval_sys_prompt_template_tcl.md`；`API_INFO_MERGED_FILE`、`SKILL_DATA_DIR`、`TCL_API_FILE`、`INNOVUS_API_FILE`、`FUNC_ALL_FILE`。
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/dev/held_out_gate.py:168:        Path(os.getenv("EVAL_FW_DIR",
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:576:# 必须在 step_update_memory_bank 之前: update_memory_bank.py 通过 EVAL_FW_DIR 自动配对 batch→eval,
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py:68:EVAL_FW_PYAETHER = Path(os.getenv("EVAL_FW_DIR",
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py:70:EVAL_FW_SKILL = Path(os.getenv("EVAL_FW_DIR_SKILL",
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py:72:EVAL_FW_TCL = Path(os.getenv("EVAL_FW_DIR_TCL",
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/sediment/mine_validator_gaps.py:44:# Load .env before reading EVAL_FW_DIR / EVAL_ROOT_DIR
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/sediment/mine_validator_gaps.py:53:EVAL_FW = Path(os.getenv("EVAL_FW_DIR",
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_zhulong_script.sh:581:# 必须在 step_update_memory_bank 之前: update_memory_bank.py 通过 EVAL_FW_DIR 自动配对 batch→eval,
+=== DONE 74 ===
+```
