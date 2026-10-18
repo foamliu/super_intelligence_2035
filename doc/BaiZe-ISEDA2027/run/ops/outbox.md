@@ -14248,3 +14248,81 @@ tail: cannot open '/tmp/armC_openclip_train.log' for reading: No such file or di
 7, 97 %, 51761 MiB
 === DONE 132 ===
 ```
+
+---
+
+## RUN_ID 133 · 2026-10-18 17:15:18 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 133 | .12 GPU owner | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+echo "[1] compute apps"
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>&1 | head -20
+echo "[2] cmdlines"
+for p in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | tr -d ' ' | sort -u | head -10); do
+  echo "--- PID $p ---"
+  tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null; echo
+done
+echo "[3] arm dirs"
+find /nas_train/app.e0031982/datasets/baize-vision/out -maxdepth 1 -type d -name 'armC*' -printf '%TY-%Tm-%Td %TH:%TM %p\n' 2>/dev/null | tail -10
+echo "[4] logs"
+ls -lt /tmp/*armC* /tmp/*arm* 2>/dev/null | head -10 || true
+for f in /tmp/armC*.log; do
+  [ -f "$f" ] || continue
+  echo "--- $f ---"; tail -10 "$f" 2>&1 | cut -c1-220
+done
+echo "[5] git"
+git log -1 --oneline
+git log -5 --oneline --grep='armC'
+echo "=== DONE 133 ==="
+```
+
+**输出**
+```
+=== RUN_ID 133 | .12 GPU owner | 2026-10-18 17:15:18 | host=whag0pgpuap12 ===
+[1] compute apps
+3698840, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698846, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698847, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698848, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698849, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698850, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698852, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+3698854, /nas_train/app.e0031982/miniforge3/envs/py310/bin/python, 51752 MiB
+[2] cmdlines
+--- PID 3698840 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698846 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698847 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698848 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698849 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698850 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698852 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+--- PID 3698854 ---
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u baize_xmodel25_decay_v2.py --model_path /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --tokenizer_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000 --data_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data --output_dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay --seq_length 3712 --global_batch_size 960 --micro_batch_size 4 --total_steps 19980 --warmup_steps 100 --lr 1.67e-3 --min_lr 1e-5 --save_interval 500 --fast_data --adamw_fused --compile_model --compile_mode default --chunked_ce --ce_chunk_size 256 --verify_save_step 20 --resume /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/step_8000 
+[3] arm dirs
+[4] logs
+-rw-r----- 1 app.e0031982 app.adm    2780 Oct 18 16:42 /tmp/rerun_8b_armB.log
+-rw-r--r-- 1 app.e0031982 app.adm    3313 Oct 18 15:21 /tmp/launch_12b_armB.log
+-rw-r--r-- 1 app.e0031982 app.adm    4661 Oct 18 15:12 /tmp/smoke_armB_ai2d.log
+-rw-r--r-- 1 app.e0031982 app.adm   63168 Oct 18 14:10 /tmp/stage2_armB.log
+-rw-r--r-- 1 app.e0031982 app.adm   59395 Oct 18 12:43 /tmp/stage15_armB.log
+-rw-r--r-- 1 app.e0031982 app.adm   31849 Oct 18 10:07 /tmp/stage1_armB.log
+-rw-r--r-- 1 app.e0031982 app.adm   10850 Oct 18 08:31 /tmp/armB_protb_eval.log
+-rw-r--r-- 1 app.e0031982 app.adm     416 Oct 18 08:31 /tmp/armB_protb_eval_wrap.log
+-rw-r----- 1 app.e0031982 app.adm  372138 Oct 18 07:55 /tmp/armB_openclip_train.log
+-rw-r--r-- 1 app.e0031982 app.adm   10961 Oct 17 10:23 /tmp/armA_protb_eval.log
+[5] git
+594ed3e2 ops 133: identify .12 GPU owner for ArmC wd check
+e1e41bcb vision ops: ArmC add weight decay 0.1->0.01 (two-variable, armC_20261018)
+=== DONE 133 ===
+```
