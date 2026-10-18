@@ -11,7 +11,7 @@
 | 项 | 值 |
 |:--|:--|
 | 模型 | BaiZe 2.22B Mamba2-hybrid（56 层 = 52 Mamba2 + 4 full_attention）|
-| 总训练量 | **1.5T token**（Stable 段；warmup 2000 步 ≈ 8.4B tok 另计）|
+| 总训练量 | **1.5T token**（Stable 段；warmup 2000 步 ≈ 4B tok 另计）|
 | 阶段 | S1（500B, en_v1_4 单源, 2M tok/step）→ S2（1T, 混料, 4M tok/step）|
 | 步数 | S1 250,000 + S2 250,000 = **500,000 步**（+ 2,000 warmup）|
 | 学习率 | warmup 2000 步后**恒定 1e-3**（S1/S2 全程同一常数，不做 cosine/decay）|
@@ -78,7 +78,7 @@
 
 | 源 | 需求 | 可用 | 状态 | 余量 |
 |:--|:--|:--|:--|:--|
-| en_v1_4 | 500B tok | ≈2.2T tok（6.75T bytes, 56,461 文件）| 🟠 85/110 shard 已下（≈4.1T bytes ≈ 1.3T tok）, **未分词** | 2.6×（全量）/ 2.6×（已下部分）|
+| en_v1_4 | 500B tok | ≈2.31T tok（6.75T bytes, 56,461 文件, 实测 0.343 tok/parquetB）| 🟠 86/110 shard 已下（≈4.08TB ≈ 1.40T tok）, **未分词** | 2.80×（已下部分）|
 
 **前置**：① 续传剩余 25/110 shard（proxy .23→hf-mirror 已实测 200）② 分词 500B tok（`preprocess_data.py` → `.bin/.idx`）。**已实测**：端到端 375K tok/s/进程，16 并发 ≈ 1 天切完 500B（见 `PLAN_V5_DATA_PREREQ.md`）。已下 4.08TB ≈ 1.40T tok，余量 2.80×，不依赖续传即可开工。
 
@@ -258,9 +258,9 @@
 - 切换记录：S1 最后一个 ckpt 的 loss vs S2 第一个 ckpt 的 loss（断点监控）。
 
 **Q3: en_v1_4 数据量够吗？**
-- 需 500B tok，全量 ≈2.2T tok（6.75T bytes）。500B = 全量的 23%。
-- 当前：85/110 shard 已下（≈4.1T bytes ≈ 1.3T tok），**已下部分就够 500B**。
-- 前置：续传 25 shard（proxy .23→hf-mirror 200 ✅）+ 分词 500B tok。**已实测**：端到端 375K tok/s/进程，16 并发 ≈ 1 天（见 `PLAN_V5_DATA_PREREQ.md`）。已下部分余量 2.80×。
+- 需 500B tok，全量 ≈2.31T tok（实测 0.343 tok/parquetB × 6.75TB；台账 ≈2.2T 成立 +5.1%）。500B = 全量的 21.6%。
+- 当前：86/110 shard 已下（≈4.08TB ≈ 1.40T tok），**已下部分就够 500B**（余量 2.80×）。
+- 前置：续传剩余 25 shard（proxy .23→hf-mirror 已实测 200 ✅）+ 分词 500B tok。**已实测**：端到端 375K tok/s/进程，16 并发 ≈ 1 天切完 500B（见 `PLAN_V5_DATA_PREREQ.md`）。已下部分余量 2.80×。
 
 **Q4: S2 混料供给够吗？**
 - code 200B：UltraData-Code 411B ✅（余量 2.06×）
