@@ -1522,3 +1522,24 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS**、`research/test_top_k.py` **25/25 PASS**（离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-18-*r98*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-19 06:00`**（「早 3」轮 · 新一日 AM 轮）：① 复验批次（**周一预期恢复公告，但若美国假日仍可能无新批 ⇒ 必须分源实测并如实记录**）；② 早报 3 篇「借鉴」优先取新批，若无新批则取候选池（**2,968 条**）+ `id_list` 复核并标注「非当日新提交」。
 
+### 9.100 第九十九轮（本地 2026-10-19 06:00 时窗 · **P0 第 4 批「早 3」轮 · 新一日 AM 轮**）：**无新公告批次**（周日 20:00 ET 公告晚于本轮唤醒约 2h，批次仍 `2026-10-15`）→ `--fetch` 用 `window_mode=weekend_batch`（**≤120h**）→ **`kept 0` / `dropped 600`** → 早报 3 篇「借鉴」**取自前轮 201 条窗口内候选池** + 单条权威复核
+
+| 源 | 端点 | 实测 | 判定 |
+|:--|:--|:--|:--|
+| arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=633893`，最新样本 `published=2026-10-15T17:59:59Z` | ✅ 可达（**批次未刷新**，与 10-17/10-18 四轮一致） |
+| HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable`（`Errno 101`） | ❌ 不可达（**如实记 FAIL、不伪造 `hf_daily`**） |
+| arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=0 / 0 / 0` | ⚠️ **周末空 feed**（记「周末/未公告」） |
+
+- **取源复验 R1′**（证据 `raw/2026-10-19-probe-r99.log`）：本轮**无超时告警、无重试**；HF 为确定性不可达（`Errno 101`，非超时）；RSS 三源均 0 条 = 周日特征。**时点说明**：AM 唤醒 = `2026-10-18T22:00Z`（周日 18:00 ET），早于周日 20:00 ET 公告约 2h ⇒ **无新批属预期，非「无数据」**。
+- **关键词增量** `--fetch --seen research/SEEN.md --out research/raw/2026-10-19-fetch-r99-seen.json`（`window_mode=weekend_batch`，`window_hours=120.0`，`generated=2026-10-18T22:00:13Z`）：**15/15 查询 `ok`**（均 `attempts=1`、`retries=[]`、`rate_limit_seconds=3.0`）· **`kept 0` / `dropped 600`**（每查询 `n_entries=40`）。
+- **承接候选池**：合并 `raw/*fetch*.json` 历史候选池，按「首次提交 ≥ `2026-10-13T22:00Z`、未收录、未在 `daily/*.html`」过滤 → 窗口内未收录 **360 条**；按「借鉴」口径（BaiZe 训练/推理效率 + ZhuLong harness/评测）筛 **5 条短名单** → 先复核 `2610.17901,2610.22273,2610.19439`（**3/3**）；去重发现后两者已作为备选出现在 10-16 / 10-18 日报附录 ⇒ 按「一 ID 一次」剔除；补 `2610.22350,2610.19928` 再复核 `2610.17901,2610.22350,2610.19928` → **3/3 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `raw/2026-10-19-idlist-final-r99.{xml,headers}`）：
+  - `2610.17901` *FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention*（`published=2026-10-13T07:55:51Z`，cs.LG，9 位署名，前 3 `Guoxia Wang, Qianyue He, Siming Wu`，`comment` 自述 NeurIPS 2026 主会）→ **BaiZe 长上下文训练**：结构化 mask × CP；零通信边界向量 mask 定位 + 稀疏感知负载均衡 + 计算-通信重叠；单 H100 12 种 mask 4K–128K，TFLOPs +45–141% / +34–71% / +2–44%（对 FlashMask / FlexAttention / MagiAttention）；128×H100 训练 118B-A14B MoE @128K，吞吐 +7.3–11.0%、attention 前反向快 24.5–44.9%（作者自报）；
+  - `2610.22350` *FDE-Gym: The Last Mile of AI Delivery*（`published=2026-10-15T17:57:23Z`，cs.AI，26 位署名，前 3 `Dongxu Yang, Hongda Yan, Renxin Wang`，`comment` 给网站/代码/数据）→ **ZhuLong 评测设计**：95 任务 / 20 客户场景 / 18 行业；脚本化 stakeholder + 可修改系统；业务指标归一化 + 交互成本罚分；13 配置最佳均值 **0.56**、14/95 达标、10/23（已获全部关键事实）业务提升 ≥0.8（作者自报）；
+  - `2610.19928` *MemDuet: Learning Dual-Process Memory for Long-Context Reasoning*（`published=2026-10-14T10:16:13Z`，cs.CL，10 位署名，前 3 `Jiangcheng Song, Haodong Jing, Yulin Mu`，`comment` 空）→ **BaiZe 长上下文推理**：SLM 并行选证据 + LLM 顺序验证/更新记忆；SFT → GRPO → 联合优化；相对 RL-MemAgent 端到端 **9.74×**、输出 token **−73.91%**（作者自报）。
+  - **去重复核**：3 个入账 ID 均**不在**任何 `daily/*.html` 卡片或附录；检出时在 `SEEN.md` 为「候选」⇒ **无重复**。
+- **口径护栏**：3 篇均按**目的 1「借鉴」**，**不与目的 2「科普」混用**；首次提交日 **均早于 2026-10-19**，页面明示「取自前轮候选池」，**不冒充当日新论文**；最老 `2610.17901` 距取数约 **134h**，**超出 120h 窗口约 14h**，已在页面「窗口标注」中显式写明；摘要逐句译自 `id_list` 官方 abstract，**未扩写、未虚构数值与仓库地址**；数字统一标「**作者自报 · 未复现**」；`comment` 为空 ⇒ **不写「已开源 / 有项目页」**；NeurIPS 2026 仅为作者 comment ⇒ **标「本线未核会务」**；**未做全文精读**声明随卡片给出。
+- **产出**：① `research/daily/2026-10-19.html`（**自包含单文件**，**早报 3/5** = 3 篇「借鉴」；页头取数说明 + 附录 A（I→VI）+ 附录 B（15 查询 per-query，均 `kept 0`）+ 附录 C（口径护栏 10 条）；自检 `<div>` 平衡、`<table>` 2/2（附录 A/B）、**零 `<script>`**、外链仅 `arxiv.org/abs/<id>`，**22,286 B**）② `research/daily/index.html`（新增 2026-10-19 行 + footer）③ PDF：`research/pdf/2026-10-19/{2610.17901,2610.22350,2610.19928}.pdf`（`%PDF-` 头，`pdf/` 已在 `.gitignore`，不入库）。
+- **台账**：`SEEN.md` **行数不变 3,691 条**（**3 行状态 候选 → 收录**）→ **收录 219 / 候选 2,965 / 候选（RSS 补充）507**；`research/papers.jsonl` **216 → 219 行**。落盘脚本 `research/raw/update_r99.py`。
+- **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-19-*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-19 18:00`**（「晚 2」轮 · 当日收口）：① 复验批次（**周一公告已到点 ⇒ 预期刷新**）；② 补 2 篇「科普」→ 日报 **5/5**（+ `## 晚报变更说明（AM → PM）`）；③ 分镜 `video/SCENES/10_19.html` + 每日论文日报邮件。
+

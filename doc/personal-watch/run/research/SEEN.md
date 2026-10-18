@@ -3319,7 +3319,7 @@
 | 2026-10-15 | 2610.19981 | Shared Sentiment Evidence from Frozen Multimodal Models for Continuous Sentiment Prediction | cs.MM | 候选 |
 | 2026-10-15 | 2610.19970 | Temporal Adaptive Fine-Tuning for Code Comprehension | cs.SE | 候选 |
 | 2026-10-15 | 2610.19932 | Instruction Mining From Images: Constructing a Synthetic Dataset for Multimodal Learning ILSP DCVLR Competition Submission | cs.CV | 候选 |
-| 2026-10-15 | 2610.19928 | MemDuet: Learning Dual-Process Memory for Long-Context Reasoning | cs.CL | 候选 |
+| 2026-10-15 | 2610.19928 | MemDuet: Learning Dual-Process Memory for Long-Context Reasoning | cs.CL | 收录 |
 | 2026-10-15 | 2610.19915 | Not All Criteria Matter: Importance-Aware Criteria Weighting for Rubric-Based LLM Evaluation | cs.CL | 候选 |
 | 2026-10-15 | 2610.19901 | Multimodal Medical Image Parsing with Task-Specific Low-Rank Adapters | cs.CV | 候选 |
 | 2026-10-15 | 2610.19900 | How GUI Agents Fail: GraceBench for Execution Stability Diagnosis | cs.AI | 候选 |
@@ -3470,7 +3470,7 @@
 | 2026-10-15 | 2610.18004 | SWEPatchTest: Evaluating Software Tests Beyond Reproduction | cs.SE | 候选 |
 | 2026-10-15 | 2610.17959 | Virtual Head Attention | cs.CL | 候选 |
 | 2026-10-15 | 2610.17939 | Sea-Net: A Small and Inherently Interpretable Neural Network for Time Series Classification | cs.LG | 候选 |
-| 2026-10-15 | 2610.17901 | FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention | cs.LG | 候选 |
+| 2026-10-15 | 2610.17901 | FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention | cs.LG | 收录 |
 | 2026-10-15 | 2610.17869 | ECMR: Evidence-Aware Deliberation Control for Multi-Agent LLM Reasoning | cs.AI | 候选 |
 | 2026-10-15 | 2610.17868 | Prefilling-dLLM v2: Learned Chunk Routing for Long-Context Diffusion Language Models | cs.CL | 候选 |
 | 2026-10-15 | 2610.17794 | GIFT-Eval-CTX: A Benchmark For Contextual Forecasting Model Evaluation | cs.LG | 候选 |
@@ -3507,7 +3507,7 @@
 | 2026-10-16 | 2610.22355 | OmniVerifier-C1: Decomposed Graded Verifier for Rule-Governed Generative World Modeling | cs.CL | 候选 |
 | 2026-10-16 | 2610.22353 | Rethinking Routing Exploration in Modern Mixture-of-Experts | cs.LG | 收录 |
 | 2026-10-16 | 2610.22352 | SUPRA-TEX: 3D Generation with Super-Aligned Texture | cs.CV | 候选 |
-| 2026-10-16 | 2610.22350 | FDE-Gym: The Last Mile of AI Delivery | cs.AI | 候选 |
+| 2026-10-16 | 2610.22350 | FDE-Gym: The Last Mile of AI Delivery | cs.AI | 收录 |
 | 2026-10-16 | 2610.22347 | Speculative Forcing for Efficient Autoregressive Video Generation | cs.CV | 候选 |
 | 2026-10-16 | 2610.22344 | MLExpert: Towards a Generalist Agentic Model for Autonomous Machine Learning Engineering | cs.AI | 收录 |
 | 2026-10-16 | 2610.22343 | GeoState: Learning View-Decoupled Geometry States for 3D World Modeling | cs.CV | 候选 |
