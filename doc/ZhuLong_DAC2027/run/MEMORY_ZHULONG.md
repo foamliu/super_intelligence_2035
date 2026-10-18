@@ -1,7 +1,7 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
-<!-- heartbeat 2026-10-19 00:58 -->
+<!-- heartbeat 2026-10-19 01:19 r5 跑中 PID2316971 elapsed 12:27 / git sync 89295d73 已推 -->
 
 
 
