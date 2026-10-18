@@ -141,6 +141,53 @@ class WS:
         except Exception:
             pass
 
+    def call_multi(self, method, params=None, timeout=60):
+        """发一条命令，收帧直到「本 id 的应答」为止；期间收到的所有消息（含事件帧）原样返回列表。
+
+        与 call() 的区别：不丢事件。断点/暂停期间调试器事件很多，调用方需自己挑出 id 应答。
+        """
+        self._id += 1
+        mid = self._id
+        self._send_frame(json.dumps({"id": mid, "method": method, "params": params or {}}))
+        out = []
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            opcode, data = self._recv_frame()
+            if opcode == 0x9:
+                self._send_frame(data, opcode=0xA)
+                continue
+            if opcode != 0x1:
+                continue
+            msg = json.loads(data.decode("utf-8", "replace"))
+            out.append(msg)
+            if msg.get("id") == mid:
+                return out
+        raise TimeoutError("CDP timeout: " + method)
+
+
+class Sub:
+    """会话内「会话者」：转发调用，同时把事件（method，无 id）攒进 self.events。
+
+    为什么存在：WS.call 会吞掉同连接上的事件帧；需要同时「开 Debugger 断点 + 发网络/控制命令」时
+    （断点会暂停 JS，暂停期间 Runtime.evaluate 不返回），必须自己留事件队列。
+    """
+
+    def __init__(self, parent):
+        self.p = parent
+        self.events = []
+
+    def call(self, method, params=None, timeout=60):
+        replies = self.p.call_multi(method, params, timeout=timeout)
+        for msg in replies:
+            if "id" not in msg:
+                self.events.append(msg)
+        return replies[-1].get("result", {}) if "method" not in replies[-1] else None
+
+    def take(self):
+        ev = self.events[:]
+        self.events.clear()
+        return ev
+
 
 def session(target_id):
     t = find(target_id)
