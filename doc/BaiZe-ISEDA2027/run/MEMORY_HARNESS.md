@@ -2,6 +2,13 @@
 
 WAITING: 1
 
+> 🆕 **R441 (2026-10-19 01:02) — RE-VERIFY 5: relay healthy(139) + Docker STILL blocked (6th round) → BLOCKER unchanged (needs operator root)**：
+> **① Relay ✅**：PID 2663131 ppid=1（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID 139 ⇒ 中继健康已追平，P0① 满足，**无需重启**。运维 10:18 重启脚本 `/nasdata/...` 路径本机不存在（实际 `/nas_train/...`）→ 不执行。
+> **② Docker 仍 BLOCKED（01:02 复测，第 6 轮，与 R436-R440 一致）**：`id`=groups=app.adm **不在 docker 组**；`getent group docker`=`docker:x:123:`（zero members）；`/var/run/docker.sock`=0660 root:docker；`docker info`→Server: permission denied；`sudo -n`=需密码；无 podman；`DOCKER_HOST`=unset。**已穷尽 self-service 路径，无解**。
+> **③ 代码 prep 仍 clean**（f2045c54）：default_working_dir 0 残留 ✓；py_compile 8/8 ✓；7 适配器 workdir 在位；Harbor v0.24.0 ✅；launch_tb_7way.sh ✅；API gate ✅ HTTP200（R440 验，正确 kimi key）。
+> **🔴 BLOCKER 不变（需运维 root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`+新登录会话；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好后立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54）→ gate → full 7×89。
+> **Next**：等 Docker 恢复 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY 归档 R438+R439(~2.0KB) → daily-10-18。
+
 > 🆕 **R440 (2026-10-18 23:43) — RE-VERIFY 4: relay healthy(139) + API ✅(correct key) + Docker STILL blocked (5th round) → BLOCKER unchanged (needs operator root)**：
 > **① Relay ✅**：PID 2663131 ppid=1 etimes=28378（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID 139 ⇒ 中继健康已追平，P0① 满足，**无需重启**。⚠️ 运维 10:18 重启脚本里的 `/nasdata/...` 路径在本机不存在（实际 `/nas_train/...`），强行跑会杀掉健康中继且重启失败 → **不执行该脚本**。
 > **② API gate ✅**（用**正确** kimi-k2.6-cloud key `…80a707b0-…`，keys.txt:17，非 glm-5.2 key）：`curl …/cloud/v1/chat/completions`=**HTTP 200**，合法 chat.completion（`model:kimi-k2.6`，`x-ratelimit-remaining:99`）。⚠️ 本轮初测一度报 HTTP 403（`www-authenticate: Basic realm=MSE Gateway`）——真因=**误用 glm-5.2 的 key**（`…c2759d74-…`）打 kimi 模型；换正确 key 即 200。**API 非 blocker**。
@@ -10,20 +17,9 @@ WAITING: 1
 > **🔴 BLOCKER 不变（需运维 root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`+新登录会话；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好后立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54）→ gate → full 7×89。
 > **Next**：等 Docker 恢复 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY 归档 R437 后 ~29.7KB（✓）。
 
-> 🆕 **R439 (2026-10-18 22:21) — RE-VERIFY 3: relay healthy(139) + Docker STILL blocked (4th round) → BLOCKER unchanged (needs operator root)**：
-> **① Relay ✅**：PID 2663131 ppid=1 etimes=23563（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID 139 ⇒ 中继健康已追平，P0① 满足，**无需重启**。⚠️ 运维重启脚本里的 `/nasdata/...` 路径在本机不存在（实际 `/nas_train/...`），强行跑会杀掉健康中继且重启失败 → **不执行该脚本**。
-> **② Docker 仍 BLOCKED（22:21 复测，第 4 轮，与 R436/R437/R438 一致）**：`id`=groups=app.adm **不在 docker 组**；`getent group docker`=`docker:x:123:`（zero members）；`/var/run/docker.sock`=0660 root:docker；`docker info`→Server: permission denied；`sudo -n`=需密码；`sg docker`='Invalid password'；`command -v podman`=空；`DOCKER_HOST`=unset；TCP 2375/2376 无监听。**已穷尽 self-service 路径，无解**。
-> **③ 代码 prep 仍 clean**（f2045c54）：grep default_working_dir=0 残留 ✓；7 适配器 workdir 在位；Harbor v0.24.0 ✅；launch_tb_7way.sh ✅；API gate ✅ HTTP200（R438 验）。
-> **🔴 BLOCKER 不变（需运维 root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`+新登录会话；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好后立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54）→ gate → full 7×89。
-> **Next**：等 Docker 恢复 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY 归档 R433/R434 后 ~28KB（✓）。
+> 📦 R439 (2026-10-18 22:21, RE-VERIFY 3: relay OK + Docker blocked 4th) 已归档 → daily-memories-harness/2026-10-18.md。结论：relay 健康(139)、代码 clean、Docker blocker 由 R440/R441 承接。需要时再读。
 
-> 🆕 **R438 (2026-10-18 21:0x) — RE-VERIFY 2: relay caught up (139) + API gate ✅ HTTP200 + Docker STILL blocked → BLOCKER unchanged (needs operator root)**：
-> **① Relay**：PID 2663131 ppid=1 etimes=18590（真守护进程），`ops/.last_run_id`=**139**=inbox top RUN_ID（137/138/139 已全部执行，中继已恢复并追平）⇒ P0① 满足，无需重启。
-> **② API gate ✅**（pilot 判据 ②，不需 Docker）：`curl http://agi-gateway.cxmt.com/cloud/v1/chat/completions`（kimi-k2.6-cloud, max_tokens=8）= **HTTP 200, 0.79s**，返回合法 chat.completion（`finish_reason:length`，key len 72，内网网关免代理）⇒ 模型可达。
-> **③ 代码 prep 复验**：`grep default_working_dir agents/`=**0 残留** ✓；`py_compile agents/*.py __init__.py`=**8/8 OK** ✓；7 适配器 `task_env_config.workdir` 全在位（f2045c54 holding）；Harbor v0.24.0 ✅；launch_tb_7way.sh ✅（PYTHONPATH bug-A fix 在位）。
-> **④ Docker 仍 BLOCKED**（21:01 复测，与 R437 一致）：`id` groups=app.adm **不在 docker 组**；`getent group docker`=`docker:x:123:`（zero members）；`/var/run/docker.sock`=0660 root:docker；`docker info`=permission denied；`sudo -n`=需密码；`doc/sudo.txt` 不存在。**无 self-service 路径**。
-> **🔴 BLOCKER 不变（需运维 root）**：① `sudo usermod -aG docker app.e0031982`+新登录；或 ② `sudo chmod 666 /var/run/docker.sock`（免新登录，立即生效）。修好后立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54）→ gate → full 7×89。
-> **Next**：等 Docker 恢复 → 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY 本轮归档 R436 ~2.3KB → daily（R436 原文已在 daily line 295）。
+> 📦 R438 (2026-10-18 21:0x, RE-VERIFY 2: relay caught up + API ✅ HTTP200 + Docker blocked) 已归档 → daily-memories-harness/2026-10-18.md。结论：API gate ✅(kimi HTTP200)、Docker blocker 由 R440/R441 承接。需要时再读。
 
 > 📦 R437 (2026-10-18 19:4x, RE-VERIFY: relay OK + Docker blocked + code clean) 已归档 → daily-memories-harness/2026-10-18.md。结论：relay 健康(.last_run_id=137)、代码 prep clean(f2045c54)，Docker blocker 由 R438/R439/R440 承接。需要时再读。
 
@@ -45,15 +41,16 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB T2 7×5 PILOT Gen3 — code+API READY (f2045c54, py_compile 8/8, kimi API ✅ HTTP200 w/ correct key), BLOCKED on Docker access (needs operator root, 5th re-verify R440)
-已完成:       ①-㉘ · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 (cline-patched 0.8) · ㉟ 3 infra bugs FIXED (R435) · ㊱ default_working_dir root-cause FIXED in 6 adapters (f2045c54, R436) · ㊲-㊴ R437-R439 re-verify: relay OK + code clean + API ✅ + Docker blocked · ㊵ R440 re-verify 4: relay(139)+API✅(correct key)+Docker blocked(5th)
-当前动作:     R440 (23:43): re-verified relay healthy (.last_run_id=139=inbox top, PID 2663131 ppid=1) + API gate ✅ (kimi-k2.6-cloud HTTP200 w/ correct key …80a707b0-…; initial 403 was wrong-key=glm-5.2 key, not a real blocker) + Docker STILL blocked (docker:x:123: zero members, /var/run/docker.sock 0660, no sudo, sg/newgrp=Invalid password, no podman, no ~/.docker, no TCP) + code prep clean (default_working_dir 0 residual, py_compile 8/8, f2045c54). P0① relay already satisfied; did NOT run operator's restart script (wrong /nasdata path would kill healthy relay).
+PHASE:        TB T2 7×5 PILOT Gen3 — code+API READY (f2045c54, py_compile 8/8, kimi API ✅ HTTP200 w/ correct key), BLOCKED on Docker access (needs operator root, 6th re-verify R441)
+已完成:       ①-㉘ · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 (cline-patched 0.8) · ㉟ 3 infra bugs FIXED (R435) · ㊱ default_working_dir root-cause FIXED in 6 adapters (f2045c54, R436) · ㊲-㊴ R437-R439 re-verify: relay OK + code clean + API ✅ + Docker blocked · ㊵ R440 re-verify 4: relay(139)+API✅(correct key)+Docker blocked(5th) · ㊶ R441 re-verify 5: relay(139)+Docker blocked(6th)+R438/R439 archived→daily-10-18
+当前动作:     R441 (01:02): re-verified relay healthy (.last_run_id=139=inbox top RUN_ID 139, PID 2663131 ppid=1) + Docker STILL blocked (6th round, id groups=app.adm not in docker group, docker:x:123: zero members, /var/run/docker.sock 0660 root:docker, docker info=Server: permission denied, sudo -n=password required, no podman, DOCKER_HOST unset) + code prep clean (default_working_dir 0 residual, py_compile 8/8, f2045c54). No new operator cmd in inbox (RUN_ID 139 already executed). Archived R438/R439 verbatim → daily-10-18 to keep MEMORY <32KB.
 下一步:       等运维恢复 Docker（`sudo usermod -aG docker app.e0031982`+新登录 / `sudo chmod 666 /var/run/docker.sock`）→ 立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89 → gen_report
 阻塞:         🔴 Docker 访问丢失（docker group zero members, /var/run/docker.sock 0660 root:docker, 无 NOPASSWD sudo, sg/newgrp=Invalid password, 无 podman, 无 TCP docker 端口）。需运维 root：`sudo usermod -aG docker app.e0031982` 或 `sudo chmod 666 /var/run/docker.sock`。⚠️ full-eval 镜像阻塞预警：89 task 仅 ~15 本地镜像，Docker Hub pull 被代理阻断。API 已确认 ✅（非阻塞）。
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
+- 2026-10-19 01:02 —— R441: RE-VERIFY 5（第 6 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1，`ops/.last_run_id`=139=inbox top RUN_ID 139）⇒ P0① 满足，无需重启。inbox 无新运维命令（RUN_ID 139 已执行，只读诊断）。Docker 仍 BLOCKED（01:02 复测，第 6 轮）：`id`=uid6218 gid6002 不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / `/var/run/docker.sock`=0660 root:docker / `docker info`→Server: permission denied / `sudo -n`=需密码 / 无 podman / DOCKER_HOST unset → 已穷尽 self-service，BLOCKER 不变（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。代码 prep clean（f2045c54，API gate ✅ HTTP200 由 R440 验）。归档 R438/R439 原文→daily-10-18（MEMORY 32050→30605B ✓）。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
 - 2026-10-18 23:43 —— R440: RE-VERIFY 4（第 5 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1 etimes=28378，`ops/.last_run_id`=139=inbox top）⇒ P0① 满足，不执行运维重启脚本（`/nasdata/...` 路径本机不存在，强行跑会杀健康中继）。API gate ✅ HTTP200（**正确** kimi key `…80a707b0-…` keys.txt:17；本轮初测 403=误用 glm-5.2 key `…c2759d74-…`，换正确 key 即 200，`/models` 同 key 200 佐证，API 非 blocker）。Docker 仍 BLOCKED（23:43 复测，第 5 轮）：`id`=不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / socket 0660 root:docker / `docker info`→permission denied / `sudo -n`=需密码 / `sg`+`newgrp`=Invalid password / 无 ~/.docker / 无 podman / DOCKER_HOST unset / 无 TCP → 已穷尽 self-service，BLOCKER 不变（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。代码 prep clean（f2045c54，grep=0 残留，py_compile 8/8）。归档 R437 原文→daily。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
 - 2026-10-18 22:21 —— R439: RE-VERIFY 3（第 4 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1 etimes=23563，`ops/.last_run_id`=139=inbox top RUN_ID 139）⇒ P0① 满足，无需重启；运维重启脚本里 `/nasdata/...` 路径本机不存在（实际 `/nas_train/...`）故不执行（强行跑会杀健康中继+重启失败）。Docker 仍 BLOCKED（22:21 复测，与 R436/R437/R438 一致）：`id`=不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / socket 0660 root:docker / `docker info`→permission denied / `sudo -n`=需密码 / `sg docker`=Invalid password / 无 podman / DOCKER_HOST unset / 无 TCP 2375/2376 → 已穷尽 self-service，BLOCKER 不变（需运维 root）。代码 prep clean（f2045c54，grep=0 残留，Harbor v0.24.0，API gate ✅ HTTP200）。归档 R433/R434 原文→daily（MEMORY 30986→29404B ✓）。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
 
