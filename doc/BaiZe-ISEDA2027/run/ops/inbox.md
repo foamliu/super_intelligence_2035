@@ -31,11 +31,38 @@
 
 ---
 
-## RUN_ID 122 — 只读探针：.25 503 时改测 .23 + hf-mirror（不启动 / 不 kill / 不写文件）
+## RUN_ID 123 — 🩺 只读探针：pretrain/data/harness/vision 的 loop 是否存活 + GPU 实况（不启动 / 不 kill / 不写文件）
 
-> 用途：给 data 线 2026-10-18 指令做机读事实（探针原文）。**只读**，无危险模式。
+> 用途：2026-10-18 09:5x 发现 pretrain/data/harness 的巡检提交分别停在 08:14 / 07:59 / 07:33，疑似 loop 停摆。**只读**，无危险模式；每条命令都有界。
 
 ```bash
+set -u
+echo "=== RUN_ID 123 · loop/GPU read-only probe · $(date '+%F %T') · host=$(hostname) ==="
+echo "[1] .29 loops"
+for p in baize_pretrain_loop.sh baize_harness_loop.sh baize_vision_loop.sh baize_data_loop.sh; do
+  echo "-- $p"
+  ps -eo pid,etime,args | grep "[b]$p" | cut -c1-150 | head -3 || true
+done
+echo "-- ops_relay.sh"
+ps -eo pid,etime,args | grep '[o]ps_relay\.sh' | cut -c1-150 | head -4 || true
+echo "[2] .29 cline procs"
+ps -eo pid,etime,args | grep '[c]line' | cut -c1-150 | head -6 || true
+echo "[3] .29 gpu"
+timeout 15 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "[4] .29 training procs"
+ps -eo pid,etime,args | grep -E '[t]orchrun|[p]retrain_launcher' | cut -c1-150 | head -4 || true
+echo "[5] disk"
+df -h /nas_train 2>/dev/null | tail -1
+echo "[6] .12 via ssh (timeout 12s)"
+timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.12 'hostname; date "+%F %T"; echo "-- data loop"; ps -eo pid,etime,args | grep "[b]aize_data_loop.sh" | cut -c1-130 | head -2 || true; echo "-- vision loop"; ps -eo pid,etime,args | grep "[b]aize_vision_loop.sh" | cut -c1-130 | head -2 || true; echo "-- cline"; ps -eo pid,etime,args | grep "[c]line" | cut -c1-130 | head -4 || true; echo "-- gpu"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8' 2>&1 || echo "   ssh .12 FAILED"
+echo "=== DONE 123 ==="
+```
+
+## RUN_ID 122 — 只读探针：.25 503 时改测 .23 + hf-mirror（不启动 / 不 kill / 不写文件）
+
+> 用途：给 data 线 2026-10-18 指令做机读事实（探针原文）。**只读**，无危险模式。（已执行，原文降级为 text）
+
+```text
 set -u
 echo "=== RUN_ID 122 · proxy 探针 · $(date '+%F %T') · host=$(hostname) ==="
 echo "[env] user=$(whoami) HF_ENDPOINT=${HF_ENDPOINT:-<unset>} HF_PROXY=${HF_PROXY:-<unset>}"
