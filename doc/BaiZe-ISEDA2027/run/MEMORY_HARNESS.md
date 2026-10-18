@@ -2,6 +2,14 @@
 
 WAITING: 1
 
+> 🆕 **R437 (2026-10-18 19:4x) — RE-VERIFY: relay healthy (P0① done) + Docker STILL BLOCKED + code prep clean → BLOCKER needs operator root**：
+> **① Ops relay（10:18 P0①）已满足**：`bash ops_relay.sh` PID 2663131 ppid=1 etimes=13763（真守护进程），`ops/.last_run_id`=**137**（远超 10:2x 指令所提的 RUN_ID 123；123→137 共 14 个 RUN 已正常执行）⇒ 中继未冻死，无需重启。
+> **② Docker 仍 BLOCKED（19:4x 复测，与 R436 一致）**：`getent group docker`=`docker:x:123:`（zero members，group 又被 rebuild）；`docker info`=permission denied；`/var/run/docker.sock`=`srw-rw---- root docker`(0660)；`id`=uid=6218 gid=6002 **不在 docker 组**；`sudo -n -l`="a password is required"（无 NOPASSWD，`/etc/sudoers.d/` 仅 README）；`doc/sudo.txt` **全仓库不存在**；无 TCP docker 端口（2375/2376 未监听）；`DOCKER_HOST` unset；`/etc/gshadow` 不可读。**无任何 self-service 路径**。
+> **③ 代码 prep 复验（不需 Docker，pilot 可立即重跑）**：`grep -rn default_working_dir agents/`=**0 残留** ✓；`python3 -m py_compile agents/*.py __init__.py`=**OK**（8 文件）；fix 已 commit **f2045c54**；`git status -- harness/terminalbench/agents`=与 origin 同步、无未提交改动。7 适配器 `task_env_config.workdir` 用法统一（与 cline_patched 一致）。
+> **🔴 需运维（root，本人无 sudo）**：① `sudo usermod -aG docker app.e0031982`（或 `sudo gpasswd -a app.e0031982 docker`）**+ 新登录会话**（usermod 不影响当前 session）；或 ② `sudo chmod 666 /var/run/docker.sock`（临时开 socket，免新登录）；并恢复 `doc/sudo.txt`。**修好后我立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3（f2045c54 修复）→ gate → full 7×89**。
+> **Next**：等 Docker 恢复 → 重跑 7×5 pilot Gen3 → gate（infra≤20%, ≥6/7 runnable）→ full 7×89。📦 体积：TASK=29962B(29.3KB ✓) / MEMORY≈31KB(✓) / 归档 0B（本轮均在 32KB 内，未触发归档）。
+
+
 > 🆕 **R436 (2026-10-18 18:24) — Gen2 pilot re-run STILL 6/7 failed: found REAL root cause `default_working_dir` AttributeError → FIXED in 6 adapters, but Docker access LOST (docker group zero members, sudo.txt gone) → BLOCKER needs operator**：
 > **Gen2 pilot re-run**（17:06–18:13, after R435 fixes committed 17:02 as 60ff7977）结果：
 > - **cline-patched** 5/5 n_errored=1（4 completed, 1 error）— 唯一基本 OK ✅
@@ -58,11 +66,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB T2 7×5 PILOT v2 — 6/7 infra-fail FIXED (npm prefix + pip --break-system-packages + opencode via npm), awaiting re-run
-已完成:       ①-㉘ same · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 COMPLETE (cline-patched 0.8, 6/7 infra-fail) · ㉟ 3 root causes found + FIXED (R435)
-当前动作:     R435 (16:57): pilot v1 结果分析 + 3 类 infra bug 修复（npm RO mount / pip PEP668 / opencode GitHub DL）。4 adapter 文件已改，py_compile + 28/28 mock ✅，npm prefix fix 容器实测 ✅ codex-cli 0.94.0。待 git push + .29 重跑 pilot。
-下一步:       ① git push ② .29 重跑 `launch_tb_7way.sh --pilot` ③ pilot gate（infra ≤20%, ≥6/7 runnable）→ ④ full 7×89 ⑤ gen_report
-阻塞:         无（infra bugs 已修，待验证）。🔴 full-eval 镜像阻塞预警：89 task 仅 ~15 本地镜像，Docker Hub pull 被代理阻断。
+PHASE:        TB T2 7×5 PILOT Gen3 — code READY (default_working_dir fixed f2045c54, py_compile 8/8), BLOCKED on Docker access (needs operator root)
+已完成:       ①-㉘ · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 (cline-patched 0.8) · ㉟ 3 infra bugs FIXED (R435) · ㊱ default_working_dir root-cause FIXED in 6 adapters (f2045c54, R436) · ㊲ R437 re-verify: relay OK + code prep clean
+当前动作:     R437 (19:4x): re-verified relay healthy (P0① done, .last_run_id=137) + Docker STILL blocked (docker:x:123: zero members, permission denied, no sudo.txt, no NOPASSWD, no TCP port) + code prep clean (default_working_dir 0 residual, py_compile 8/8 OK, agents in sync origin). Cannot self-restore Docker (needs root).
+下一步:       等运维恢复 Docker（`sudo usermod -aG docker app.e0031982`+新登录 / `sudo chmod 666 /var/run/docker.sock`）→ 立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89 → gen_report
+阻塞:         🔴 Docker 访问丢失（docker group zero members, /var/run/docker.sock 0660 root:docker, doc/sudo.txt 不存在, 无 NOPASSWD sudo, 无 TCP docker 端口）。需运维 root：`sudo usermod -aG docker app.e0031982` 或 `sudo chmod 666 /var/run/docker.sock`。⚠️ full-eval 镜像阻塞预警：89 task 仅 ~15 本地镜像，Docker Hub pull 被代理阻断。
 ERROR_COUNT:  0
 ```
 
