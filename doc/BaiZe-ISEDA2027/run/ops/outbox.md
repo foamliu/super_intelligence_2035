@@ -14605,3 +14605,130 @@ curl: (7) Failed to connect to huggingface.co port 443 after 9 ms: Network is un
 http=000 t=0.009234s
 === DONE 135 ===
 ```
+
+---
+
+## RUN_ID 136 · 2026-10-18 18:10:02 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 136 | ArmC started? | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] procs"
+ps -eo pid,ppid,etimes,args | grep -E '[a]rmC_20261018|[a]rmC_aimv2|[a]rmC_openclip|[t]orchrun' | cut -c1-200 || true
+echo "[2] out dirs"
+ls -lt /nas_train/app.e0031982/datasets/baize-vision/out | head -8
+echo "[3] log"
+ls -l /tmp/armC_openclip_train.log 2>&1
+tail -8 /tmp/armC_openclip_train.log 2>&1 | cut -c1-220
+echo "[4] gpu"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo "=== DONE 136 ==="
+```
+
+**输出**
+```
+=== RUN_ID 136 | ArmC started? | 2026-10-18 18:10:02 | host=whag0pgpuap12 ===
+[1] procs
+1336891 1294447    2614 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-a
+1337523 1336891    2614 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/code/super_intell
+2041464 1059617    2035 node /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4BF0ABFC
+2041568 2041464    2035 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approv
+2141850 1294448    1952 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto
+2141857 2141850    1952 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_inte
+4154284       1     287 /bin/bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision && setsid bash run_armC_openclip.sh > /tmp/armC_openclip_train.log 2>&1 < /d
+4154286 4154284     287 bash run_armC_openclip.sh
+4154295 4154286     286 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 --master_addr=127.0.0.1 --master_port=29982 armB_aimv2_openclip.
+4156333 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156346 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156352 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156373 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156380 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156388 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156394 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4156406 4154295     284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188292 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188293 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188294 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188295 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188296 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188297 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188298 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188299 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188300 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188301 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188302 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188303 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188304 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188305 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188306 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188307 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188308 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188309 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188310 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188311 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188312 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188313 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188314 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188315 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188316 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188317 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188318 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188319 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188320 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188321 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188322 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188323 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188324 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188325 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188326 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188327 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188328 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188329 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188330 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188331 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188332 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188333 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188334 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188335 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188336 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188337 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188338 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188339 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188340 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188341 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188342 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188343 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188344 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188345 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188346 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188347 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188348 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188349 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188350 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188351 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188352 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188353 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188354 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188355 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188356 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188357 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188358 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188359 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188360 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188361 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188362 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188363 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188364 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188365 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188366 4156352     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188369 4156373     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188376 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188380 4156406     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188383 4156346     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188386 4156394     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188398 4156380     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188400 4156388     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source mixed --caption-type all --output-di
+4188401 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source 
+[relay] ⚠️ 输出超长，已截断到 20000 字符
+```
