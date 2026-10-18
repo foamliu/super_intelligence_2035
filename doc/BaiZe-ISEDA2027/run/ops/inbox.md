@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 126 -->
+<!-- RUN_ID: 127 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,51 @@
 
 ---
 
+## RUN_ID 127 — sudo 只读确认：当前训练是 `--resume step_8000` 还是从头开始
+
+> 用途：查 `.29` 上 torchrun/worker 的**完整 cmdline**（是否含 `--resume`/`--model_path`）与 train_log 头部（是否 `start_step=8000`）。**只读**，不 kill、不启动。
+
+```bash
+set -u
+echo "=== RUN_ID 127 | verify resume args | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" || { echo "CD_FAILED"; exit 1; }
+git fetch origin >/dev/null 2>&1 || true
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+PW=$(sed -n '2p' doc/sudo.txt)
+cat > /nas_train/app.e0031982/pretrain_verify.sh <<'EOS'
+#!/bin/bash
+set -u
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay
+echo "=== HOST ==="; hostname; date
+echo "=== TORCHRUN CMDLINE ==="
+for p in $(pgrep -f '[t]orchrun' | head -2); do echo "--- PID $p ---"; tr '\0' ' ' < /proc/$p/cmdline; echo; done
+echo "=== WORKER CMDLINE ==="
+for p in $(pgrep -f 'baize_xmodel25_decay_v2.py' | head -2); do echo "--- PID $p ---"; tr '\0' ' ' < /proc/$p/cmdline; echo; done
+echo "=== OUTPUT DIR ==="
+ls -lt "$D" | head -15
+echo "=== TRAIN LOG HEAD ==="
+head -40 "$D/baize_xmodel25_decay_v2_train.log" 2>&1
+echo "=== TRAIN LOG KEY ==="
+grep -nE 'RESUME|start_step|step 800|step 900|Traceback|Error|OOM|Saved checkpoint' "$D/baize_xmodel25_decay_v2_train.log" 2>/dev/null | tail -20
+echo "=== GPU ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader | head -8
+EOS
+chmod +x /nas_train/app.e0031982/pretrain_verify.sh
+H=$(hostname)
+if [ "$H" = "whag0pgpuap29" ]; then
+  printf '%s\n' "$PW" | sudo -S -p "" bash /nas_train/app.e0031982/pretrain_verify.sh
+else
+  printf '%s\n' "$PW" | ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'sudo -S -p "" bash /nas_train/app.e0031982/pretrain_verify.sh'
+fi
+echo "=== DONE 127 ==="
+```
+
 ## RUN_ID 126 — sudo 只读诊断 `.29` 训练死因（kernel log/dmesg/GPU/ckpt）
 
 > 用途：用 `doc/sudo.txt` 的密码走 `sudo -S`，在 `.29` 上查 15:40 之后的 kernel log、dmesg、GPU、torchrun、step_8000 ckpt 和 train_log。**只读**，不重启、不 kill。密码不打印、不写入本块。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 126 | pretrain sudo diagnosis | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
