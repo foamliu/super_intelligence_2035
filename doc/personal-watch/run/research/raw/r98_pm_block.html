@@ -1,0 +1,33 @@
+<h2 class="sec">附录 A′ · PM 轮取数与复核证据（与附录 A 并列 · 不覆盖 AM 记录）</h2>
+<table>
+  <tr><th>#</th><th>环节</th><th>命令 / 参数</th><th>结果（实测）</th><th>证据文件</th></tr>
+  <tr><td>I′</td><td>取源复验（R1′）</td><td><code>arxiv_fetch.py --probe</code></td><td>arXiv API <b>✅ HTTP 200</b> + <code>application/atom+xml; charset=utf-8</code>；<code>totalResults=633893</code>；最新样本 <code>published=2026-10-15T17:59:59Z</code>（<b>批次未刷新</b>，与 AM 轮一致）／ HF Daily <b>❌</b> <code>[Errno 101] Network is unreachable</code>（如实记 FAIL）／ RSS cs.CL·CV·LG = <b>0 / 0 / 0</b>（周末空 feed）</td><td><code>research/raw/2026-10-18-probe-r98.log</code></td></tr>
+  <tr><td>II′</td><td>关键词增量</td><td><code>arxiv_fetch.py --fetch --seen research/SEEN.md --out research/raw/2026-10-18-fetch-r98-seen.json</code>；<code>window_mode=weekend_batch</code>（≤120h）</td><td><b>15/15 查询 <code>ok</code></b>（均 <code>attempts=1</code>、<code>retries=[]</code>）· <b><code>kept 0</code> / <code>dropped 600</code></b>；<code>generated=2026-10-18T10:03:00Z</code> ⇒ <b>API 关键词 0 新增</b></td><td><code>research/raw/2026-10-18-fetch-r98-seen.json</code> + <code>.log</code></td></tr>
+  <tr><td>III′</td><td>候选池承接</td><td>解析 <code>research/raw/2026-10-16-fetch-r94-seen.json</code>（201 kept）</td><td>按「科普」口径（大众能懂 / 有传播力）筛出 5 条短名单：机器人玩耍学习、狗声纹、体育多目标跟踪、LLM 设计量子电路、扩散模型 token 合并；<b>候选池 ≠ 证据</b> → 进入第 IV′ 步</td><td><code>research/raw/2026-10-16-fetch-r94-seen.json</code></td></tr>
+  <tr><td>IV′</td><td>单条权威复核</td><td><code>id_list=2610.22340,2610.21011,2610.22306,2610.22367,2610.22370</code></td><td><b>5/5 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>；<code>published</code>：22340 = <code>2026-10-15T17:55:50Z</code> / 21011 = <code>2026-10-14T23:15:47Z</code>（另 3 条 <code>2026-10-15</code>）；22340 与 21011 的 <code>comment</code> 均为空</td><td><code>research/raw/2026-10-18-idlist-shortlist-r98.xml</code> + <code>.headers</code></td></tr>
+  <tr><td>V′</td><td>去重复核</td><td><code>grep</code> 全量 <code>research/daily/*.html</code> + <code>SEEN.md</code></td><td>2 个入账 ID 此前<b>未出现在任何日报正文</b>；检出时在 <code>SEEN.md</code> 状态为「候选」⇒ <b>候选 → 收录</b>，无重复收录</td><td><code>research/SEEN.md</code>（行 3515 / 3679）</td></tr>
+  <tr><td>VI′</td><td>台账落盘</td><td><code>python3 research/raw/update_r98.py</code></td><td><b>2 行状态 候选 → 收录</b>（行数不变 <b>3,691</b>）→ 累计 <b>收录 216 / 候选 2,968 / 候选（RSS 补充）507</b>；<code>papers.jsonl</code> <b>214 → 216</b></td><td><code>research/raw/update_r98.py</code></td></tr>
+</table>
+<h2 class="sec">附录 B′ · PM 轮 15 条查询逐条结果（<code>generated=2026-10-18T10:03:00Z</code>）</h2>
+<table>
+  <tr><th>#</th><th>区域</th><th>查询名</th><th><code>search_query</code></th><th>status / attempts</th><th><code>total_results</code></th><th>kept</th></tr>
+<!--PM_ROWS-->
+  <tr><td colspan="5"><b>合计</b>（15/15 <code>ok</code>，均 <code>attempts=1</code>、<code>retries=[]</code>）</td><td><b>—</b></td><td><b><code>kept 0</code></b></td></tr>
+</table>
+<div class="note">
+  <b>读表说明</b>：<code>total_results</code> 是<b>该查询的全库命中数</b>，不是本轮新增；每查询仅取<b>最新 40 条</b>参与窗口/去重判定。<code>kept 0</code> 的构成 = 「已在 <code>SEEN.md</code>」+「超 120h 窗口（stale）」，合计 <code>dropped 600</code>。<b>0 新增属预期</b>：周末不公告，批次停在 <code>2026-10-15</code>。
+</div>
+
+<h2 class="sec">📝 晚报变更说明（AM → PM）</h2>
+<table>
+  <tr><th>#</th><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>1</td><td>页头：<b>早报 3/5 → 晚报 5/5（收口）</b>；标题、标识、进度、生成时间（<code>06:03</code> → <code>18:05</code> CST）同步更新</td><td>按 P0 第 4 批要求「同一文件当天写两遍」：06:00 生成、18:00 优化收口</td></tr>
+  <tr><td>2</td><td>新增「<b>二、晚报 2 篇 · 科普（序号 4–5）</b>」两张卡片，8 字段齐全（原题 / 中文一句话 / 作者机构 / 日期 / 分类+标签 / abs / 推荐理由）</td><td>补齐当日 5 篇配额；按<b>目的 2「科普」口径</b>（大众能懂 + 传播力）选文，与序号 1–3 的「借鉴」口径<b>不混用</b></td></tr>
+  <tr><td>3</td><td>取数说明框由 AM 版替换为 <b>PM 版</b>（仍保留「周日不公告、<code>kept 0 / dropped 600</code>」的诚实口径，并写明 <code>id_list</code> <b>5/5</b> 复核）</td><td>PM 轮真实发生了第二次取数（<code>generated=2026-10-18T10:03:00Z</code>），须如实记录；<b>不沿用 AM 的旧时间戳冒充 PM 结果</b></td></tr>
+  <tr><td>4</td><td>新增<b>附录 A′（PM 证据 I′–VI′）</b> 与 <b>附录 B′（PM 15 查询逐条）</b>；AM 的附录 A/B <b>原文保留</b></td><td>两轮证据各自可回溯、互不覆盖，便于 supervisor 抽查</td></tr>
+  <tr><td>5</td><td>把 AM 时代的「为什么今天只有 3 篇」note 改为「<b>为什么今天 5 篇里有 2 篇来自『旧批次』</b>」</td><td>收口后 3/5 的旧表述已过时，避免读者误以为仍是 3 篇；同时保留「不冒充当日新论文」的口径</td></tr>
+  <tr><td>6</td><td>附录 C 口径护栏<b>增补 3 条</b>（PM 自查：科普不夸大 / TOP-1 挑选理由 / 两篇 <code>comment</code> 为空）</td><td>本轮新增 2 篇科普，需要单独自查其数字与措辞边界</td></tr>
+  <tr><td>7</td><td>footer 更新：台账 <b>收录 216 / 候选 2,968 / RSS 507（3,691 行）</b>、<code>papers.jsonl</code> <b>216</b>、口径 <code>ARXIV_API.md</code> §9.99、下一轮 <b>2026-10-19 06:00</b></td><td>与台账实数一致（脚本 <code>update_r98.py</code> 实算输出）</td></tr>
+  <tr><td>8</td><td><b>未改动</b>序号 1–3 卡片正文与附录 A/B</td><td>AM 内容复核<b>无错字、无数值错误</b>；仅页头与进度随收口同步（全部差异见 git diff）</td></tr>
+</table>
+

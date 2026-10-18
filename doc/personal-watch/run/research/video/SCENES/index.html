@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-18</td>
+    <td><i>Dexterity from Supervised Play</i><br><code>arXiv:2610.22340</code>（Botao He, Yiming Dou, Yiannis Aloimonos, Jitendra Malik, Akash Sharma, Ruoshi Liu）</td>
+    <td>机器人学手上的细活，<b>先看人「玩」几分钟</b>（行为克隆得到玩耍策略），<b>再自己玩几小时</b>收集数据训练<b>世界模型</b>；干活时玩耍策略为 <b>MPC</b> 提候选动作、世界模型<b>逐个打分</b>挑最好的，最后<b>蒸馏</b>成闭环策略跑得更快。作者称真实世界成功率比 hindsight 行为克隆高 <b>69.6%</b>，并与强化学习效果相当而交互数据<b>少约 490 倍</b>（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="10_18.html">10_18.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-17</td>
     <td><i>Gen4P: Video Generators are 4D Perceivers</i><br><code>arXiv:2610.22371</code>（Yitong Xia, Zeren Jiang, Chuanxia Zheng）</td>
     <td>一个本来是<b>「生成视频」</b>的模型，被<b>直接改造成「测量世界」的工具</b> —— 把预训练视频生成器做成<b>前馈 4D 感知器</b>：<b>不做迭代去噪</b>，视频只过一次编码器，再用轻量 <b>cross-attention 解码器</b>按提问输出；<b>按需查询</b>（想测哪些点就测哪些点）+ <b>连续时刻查询</b>；还把<b>冻结的视频深度 LoRA</b> 当几何先验、<b>不增加可训练参数</b>。作者称在 <b>3D 点跟踪 / 视频深度 / 相机位姿</b>上达到 <b>SOTA 或具竞争力</b>（<b>作者自报 · 本线未复现</b>）</td>

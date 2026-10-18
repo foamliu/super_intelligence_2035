@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/aZKCEBOfhTcO2mZu49hA/oolhSY</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.22340,2610.21011,2610.22306,2610.22367,2610.22370&amp;start=0&amp;max_results=5</title>
+  <updated>2026-10-18T10:04:06Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=5&amp;id_list=2610.22340,2610.21011,2610.22306,2610.22367,2610.22370" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.21011v1</id>
+    <title>Audio-Visual Dog Identification and Tracking in Real-World Videos</title>
+    <updated>2026-10-14T23:15:47Z</updated>
+    <link href="https://arxiv.org/abs/2610.21011v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.21011v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Identifying individual dogs from barks in real-world videos remains challenging and largely unexplored. Solving this problem would enable long-term behavioral analysis, veterinary monitoring, and animal welfare monitoring by attributing vocalizations and behaviors to the correct individual. Real-world videos are challenging because multiple dogs may bark simultaneously, become occluded, or move in and out of view. Prior studies show that canine vocalizations and visual appearance contain discriminative identity information, but these modalities have largely been studied independently. We present a multimodal dog-fingerprinting framework combining visual identification, multiple-object tracking, and canine vocal fingerprinting to associate bark events with individual dogs while maintaining persistent profiles. The framework synchronizes bark events with tracked dogs and updates profiles using visual appearance and vocal characteristics, enabling identification despite occlusion, overlapping vocalizations, and off-screen barking. We also introduce a benchmark of 46 real-world videos containing 213 manually annotated bark events. Our framework correctly localizes the active visible dog in 61.83% of visible events at IoU $\geq 0.30$ and achieves a 91.33% F1 score for visible versus off-screen barking detection.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-14T23:15:47Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Aryahvishwa Babu</name>
+    </author>
+    <author>
+      <name>Kingsley Jin</name>
+    </author>
+    <author>
+      <name>Lillian Wang</name>
+    </author>
+    <author>
+      <name>Tuan M. Dang</name>
+    </author>
+    <author>
+      <name>Theron S. Wang</name>
+    </author>
+    <author>
+      <name>Jeorge Joshi</name>
+    </author>
+    <author>
+      <name>Annie Cao</name>
+    </author>
+    <author>
+      <name>Kenny Q. Zhu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.22370v1</id>
+    <title>Which Tokens to Merge? Diffusion Dynamics for Efficient Image Generation</title>
+    <updated>2026-10-15T17:59:35Z</updated>
+    <link href="https://arxiv.org/abs/2610.22370v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.22370v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Token merging has emerged as an effective training-free strategy for accelerating diffusion models by reducing redundant token computation while minimizing generation degradation. A key challenge is determining which tokens can be safely merged and which should be preserved for subsequent computation. Existing method addresses this by preserving prompt-aligned foreground regions, thereby protecting semantically relevant structures. However, this text-relevance criterion overlooks background objects, local details that are not explicitly mentioned in the prompt, leading to degraded structural coherence. In this work, we propose Dynamics-aware Token Merging (DaTMe), a training-free framework that grounds token merging in the underlying diffusion dynamics. Our key insight is that token importance should reflect whether a token remains unresolved during denoising and whether it carries structural information. To this end, DaTMe constructs a dynamics- aware importance map from the Tweedie denoised estimate. The map combines a temporal signal, measuring inter-step changes in the predicted clean image, with a structural signal, capturing local high-frequency content such as boundaries and fine details. Using this map, DaTMe adaptively assigns tokens into merging roles under a given compression ratio: important tokens are preserved as anchors, while tokens that are both temporally stabilized and structurally homogeneous are selected as safe merge candidates. Experiments on PixArt-a and FLUX demonstrate that DaTMe maintains visual fidelity across the entire image, highlighting diffusion dynamics as an effective token-level merging decision in efficient generation. Our code is available at https://github.com/SeungJuCha/DaTMe.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-15T17:59:35Z</published>
+    <arxiv:comment>Accepted at NeurIPS 2026. Code: https://github.com/SeungJuCha/DaTMe</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>SeungJu Cha</name>
+    </author>
+    <author>
+      <name>Ye-Chan Kim</name>
+    </author>
+    <author>
+      <name>HyunGee Kim</name>
+    </author>
+    <author>
+      <name>Sungho Koh</name>
+    </author>
+    <author>
+      <name>Dong-Jin Kim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.22367v1</id>
+    <title>Discovering state-of-the-art quantum circuits with large language models</title>
+    <updated>2026-10-15T17:59:20Z</updated>
+    <link href="https://arxiv.org/abs/2610.22367v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.22367v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Significant efforts are currently being directed toward the implementation of large-scale quantum information processors, but realizing useful quantum advantage also requires the development of efficient quantum algorithms. While for many practical problems the dominant resource costs are associated with a small set of computational primitives, optimizing them in the quantum setting presents unique challenges, including a reversibility constraint absent from ordinary classical computation. Here we introduce an evolutionary framework in which large language models (LLMs) propose circuit designs and an independent evaluator verifies and scores them. We apply this framework to tasks spanning numerical computation, chemistry, optimization, quantum simulation, and number theory. In seven of the eight tasks, the discovered circuits significantly reduce both Toffoli and qubit counts relative to the state of the art. In the eighth, the search discovers a new reversible architecture for prime-field modular inversion. By handling reversibility differently, the architecture makes divsteps -- a classical algorithm previously impractical for reversible integer arithmetic -- viable and substantially improves the Toffoli-qubit trade-off for modular inversion. These results open the door for evaluator-guided LLM co-design of new algorithmic structures for quantum computation.</summary>
+    <category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-15T17:59:20Z</published>
+    <arxiv:comment>46 pages, 10 figures, 6 tables</arxiv:comment>
+    <arxiv:primary_category term="quant-ph"/>
+    <author>
+      <name>Andi Gu</name>
+    </author>
+    <author>
+      <name>Alek H. Kemeny</name>
+    </author>
+    <author>
+      <name>Susanne F. Yelin</name>
+    </author>
+    <author>
+      <name>Mikhail D. Lukin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.22306v1</id>
+    <title>ARC-SORT: Adaptive, Robust, Compensated Multi-Object Tracking with Interacting Multiple Models</title>
+    <updated>2026-10-15T17:49:09Z</updated>
+    <link href="https://arxiv.org/abs/2610.22306v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.22306v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-object tracking in sports broadcasts is hard for two reasons: athletes move fast and change direction abruptly, and the camera pans and zooms at the same time. We present ARC-SORT (Adaptive, Robust, Compensated SORT), a tracking-by-detection tracker that trains nothing and runs in real time. Its design rule: the tracker measures its own uncertainty, and that measurement decides how it acts. An Interacting Multiple Model (IMM) Kalman filter gives every track a predictive covariance, and we turn it into a per-track search region: the less reliable the motion prediction, the larger the region in which a detection may match (uncertainty-adaptive Expansion IoU, EIoU). On identical inputs, this continuous coupling is what matters: the same covariance used as a hard Mahalanobis gate hurts at every threshold we swept, and richer covariance summaries add nothing measurable. When two tracks cross, the assignment cost itself reports whether the decision was close. ARC-SORT keeps such pairs under review and applies at most one corrective identity swap once post-crossing appearance evidence shows the first decision was wrong; this adds +1.0 HOTA (higher order tracking accuracy) on both the SportsMOT and DanceTrack test sets at under a millisecond per frame. For players who leave the frame for seconds, motion extrapolation carries no information, so our offline re-identification drops the usual motion gate and links tracklets by appearance alone. ARC-SORT reaches 81.82 HOTA on the SportsMOT test set with the fewest identity switches of the 69 leaderboard entries as of August 2026 and tied-third multi-object tracking accuracy (MOTA, 97.09), and 62.1 HOTA on DanceTrack test with the same association settings. On Deep-EIoU's public detections and embeddings it reaches 80.31 HOTA, +3.1 over Deep-EIoU. It runs at about 50 frames per second on a laptop RTX 3060 GPU. Code will be released.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-15T17:49:09Z</published>
+    <arxiv:comment>14 pages, 4 figures, 13 tables; supplementary material included as appendix; qualitative video as ancillary file</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Girish Kumar Adari</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.22340v1</id>
+    <title>Dexterity from Supervised Play</title>
+    <updated>2026-10-15T17:55:50Z</updated>
+    <link href="https://arxiv.org/abs/2610.22340v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.22340v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>How can robots autonomously collect the contact-rich experience needed to learn dexterous manipulation? We present DSP: Dexterity from supervised play, a framework in which a robot learns a play policy from minutes of human play through behavior cloning, then deploys it autonomously to collect hours of interaction data to train a world model. During inference, the same play policy then guides model-predictive control (MPC) by proposing candidate action sequences for evaluation under the learned world model. To accelerate inference, we also introduce a method for distilling a closed-loop, goal-conditioned policy through self-play within the learned world model. We evaluate this framework on underactuated pushing and any-to-any in-hand pose reorientation with a multifingered hand, in simulation and real world. In real world experiment, our method outperforms hindsight behavior cloning by 69.6% in success rate and achieves comparable success to reinforcement learning with 490 times less interaction data. These results demonstrate that supervised play can autonomously collect interaction data, guide model-based planning, and enable policy learning without any task-specific demonstrations or sim-to-real transfer.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-15T17:55:50Z</published>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Botao He</name>
+    </author>
+    <author>
+      <name>Yiming Dou</name>
+    </author>
+    <author>
+      <name>Yiannis Aloimonos</name>
+    </author>
+    <author>
+      <name>Jitendra Malik</name>
+    </author>
+    <author>
+      <name>Akash Sharma</name>
+    </author>
+    <author>
+      <name>Ruoshi Liu</name>
+    </author>
+  </entry>
+</feed>

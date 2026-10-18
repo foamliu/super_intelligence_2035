@@ -3512,7 +3512,7 @@
 | 2026-10-16 | 2610.22344 | MLExpert: Towards a Generalist Agentic Model for Autonomous Machine Learning Engineering | cs.AI | 收录 |
 | 2026-10-16 | 2610.22343 | GeoState: Learning View-Decoupled Geometry States for 3D World Modeling | cs.CV | 候选 |
 | 2026-10-16 | 2610.22341 | 3DCodeVerse: Exploring 3D Worlds as Code | cs.CV | 候选 |
-| 2026-10-16 | 2610.22340 | Dexterity from Supervised Play | cs.RO | 候选 |
+| 2026-10-16 | 2610.22340 | Dexterity from Supervised Play | cs.RO | 收录 |
 | 2026-10-16 | 2610.22339 | Lean Graph Search for Formal Theorem Proving | cs.LG | 候选 |
 | 2026-10-16 | 2610.22336 | Robust Reinforcement Learning for Dynamic Treatment Regimes under Model and Measurement Uncertainty | cs.LG | 候选 |
 | 2026-10-16 | 2610.22333 | Evaluation Awareness Beyond English: Do LLMs Act Differently When Tested in Indic Languages? | cs.AI | 收录 |
@@ -3676,7 +3676,7 @@
 | 2026-10-16 | 2610.21091 | MemComposer: Learning to Assemble Memories for LLM Agents via Reinforcement Learning | cs.AI | 候选 |
 | 2026-10-16 | 2610.21045 | Learning When to Withdraw: Curriculum Coverage and Rule-Specific Failures in Fine-Tuned Language Agents | cs.AI | 候选 |
 | 2026-10-16 | 2610.21029 | SCARCE: Emergent Institutions in Long-Horizon Multi-Agent Coding Systems | cs.MA | 候选 |
-| 2026-10-16 | 2610.21011 | Audio-Visual Dog Identification and Tracking in Real-World Videos | cs.CV | 候选 |
+| 2026-10-16 | 2610.21011 | Audio-Visual Dog Identification and Tracking in Real-World Videos | cs.CV | 收录 |
 | 2026-10-16 | 2610.21007 | Mind the Tail: Data Selection Through Sparse Concepts | cs.CV | 候选 |
 | 2026-10-16 | 2610.20980 | How to Train Your Little Dragon: Teaching a Small Language Model to Construct and Refine GPU Optimization Scripts | cs.LG | 收录 |
 | 2026-10-16 | 2610.20965 | MSP: Modality Self-Play for Training Multimodal LLMs Without Paired Cross-Modal Data | cs.AI | 候选 |
@@ -3916,3 +3916,5 @@
 
 
 > **第九十四轮（本地 2026-10-16 18:00（CST）· P0 第 4 批「晚 2」轮 · 当日收口）**：**公告批次已刷新** —— `2026-10-14` → **`2026-10-15`**（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults 633208 → 633893`，最新样本 `published=2026-10-15T17:59:59Z`）；**15/15 查询 `ok`**（均 `attempts=1` 无重试），**kept 201 / dropped 361**（`window_mode=daily` 72h）→ **201 条全部为新发现**（周三 20:00 ET 公告的批，在 AM 轮 UTC 22:00 尚未落地，PM 轮 UTC 10:00 已可见 —— 时点正常）；R1′ arXiv ✅ / HF ❌（`Network is unreachable`，`Errno 101`）/ **RSS cs.CL·CV·LG = 267 / 253 / 467**（仅作发现不作证据）。**PM 有新批 → 可做新发现** ⇒ 晚报 2 篇「科普」**取自当日新批 201 条** + **单条权威复核**（`id_list=2610.22319,2610.22333,2610.22367,2610.22053,2610.22273` → **5/5 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-16-idlist-shortlist-r94.{xml,headers}`）。**入账 2 篇**（`2610.22319` A team of Gemini 4 Argon agents beats Minecraft / `2610.22333` Evaluation Awareness Beyond English: Do LLMs Act Differently When Tested in Indic Languages?）。台账 **3487 → 3688 行（+201）**（2 行「收录」+ 199 行「候选」）→ 累计（**收录 206 / 候选 2975 / 候选（RSS 补充）507**）；`papers.jsonl` **204 → 206**；证据 `raw/2026-10-16-{probe-r94.log,fetch-r94-seen.json}`（`fetch.generated=2026-10-16T10:01:57Z`）+ 落盘脚本 `raw/update_r94.py`。口径见 `ARXIV_API.md` §9.95。**当日收口 5/5**：早 3（借鉴）+ 晚 2（科普）→ 第 5 批 P0 分镜脚本 `research/video/SCENES/10_16.html`（TOP-1 `2610.22319`）。
+
+> **第九十八轮（本地 2026-10-18 18:00（CST）· P0 第 4 批「晚 2」轮 · 当日收口）**：**无新公告批次** —— **周日 arXiv 仍不公告**，批次仍 `2026-10-15`（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults=633893`，最新样本 `published=2026-10-15T17:59:59Z`，与 AM 轮及 10-17 两轮一致）；**15/15 查询 `ok`**（均 `attempts=1`、`retries=[]`），**`kept 0` / `dropped 600`**（`window_mode=weekend_batch`，**≤120h**，`generated=2026-10-18T10:03:00Z`）→ **API 关键词 0 新增**；R1′ HF ❌（`Network is unreachable`，`Errno 101`，如实记 FAIL）/ **RSS cs.CL·CV·LG = 0 / 0 / 0**（**周末空 feed**）。**晚报 2 篇「科普」取自第九十四轮 PM 已入账的窗口内候选池（201 kept）** + **单条权威复核**（`id_list=2610.22340,2610.21011,2610.22306,2610.22367,2610.22370` → **5/5 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-18-idlist-shortlist-r98.{xml,headers}`）：`2610.22340` *Dexterity from Supervised Play*（**本日 TOP-1**）/ `2610.21011` *Audio-Visual Dog Identification and Tracking in Real-World Videos*。台账 **行数不变 3,691 条**（**2 行状态 候选 → 收录**）→ 累计（**收录 216 / 候选 2,968 / 候选（RSS 补充）507**）；`papers.jsonl` **214 → 216**；证据 `raw/2026-10-18-{probe-r98.log,fetch-r98-seen.json}` + 落盘脚本 `raw/update_r98.py`。口径见 `ARXIV_API.md` §9.99。**日报收口 5/5**（AM 3「借鉴」+ PM 2「科普」）+ 「晚报变更说明（AM → PM）」+ 附录 A′/B′ + 分镜 `video/SCENES/10_18.html`。

@@ -1501,3 +1501,24 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` 与 `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-18-*` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-18 18:00`**（「晚 2」轮 · 当日收口）：① 复验批次（**周日仍不公告** ⇒ 预期 `kept 0`，仍须分源实测并如实记录）；② 晚报 2 篇「科普」→ 日报收口 **5/5**（+ `## 晚报变更说明（AM → PM）`）；③ 分镜脚本 + 每日论文日报邮件（第 5 封）。
 
+### 9.99 第九十八轮（本地 2026-10-18 18:00 时窗 · **P0 第 4 批「晚 2」轮 · 当日收口**）：**无新公告批次**（**周日 arXiv 仍不公告**，批次仍 `2026-10-15`）→ `--fetch` 用 `window_mode=weekend_batch`（**≤120h**）→ **`kept 0` / `dropped 600`** → 晚报 2 篇「科普」**取自第九十四轮 PM 候选池** + 单条权威复核 → 日报**收口 5/5**
+
+| 源 | 端点 | 实测 | 判定 |
+|:--|:--|:--|:--|
+| arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=633893`，最新样本 `published=2026-10-15T17:59:59Z` | ✅ 可达（**批次未刷新**，与 AM 轮及 10-17 两轮一致） |
+| HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable`（`Errno 101`） | ❌ 不可达（**如实记 FAIL、不伪造 `hf_daily`**） |
+| arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=0 / 0 / 0` | ⚠️ **周末空 feed**（记「周末/未公告」，**不写「无新增」**） |
+
+- **取源复验 R1′**（证据 `raw/2026-10-18-probe-r98.log`）：本轮**无超时告警、无重试**；HF 为确定性不可达（`Errno 101`，非超时）；RSS 三源均 0 条 = 周末特征。
+- **关键词增量** `--fetch --seen research/SEEN.md --out research/raw/2026-10-18-fetch-r98-seen.json`（`window_mode=weekend_batch`，`window_hours=120.0`，`generated=2026-10-18T10:03:00Z`）：**15/15 查询 `ok`**（均 `attempts=1`、`retries=[]`、`rate_limit_seconds=3.0`）· **`kept 0` / `dropped 600`**（每查询 `n_entries=40`）。⇒ **0 新增 ≠ 无数据**：周日不公告的时点现象。
+- **承接候选池**：来源 `raw/2026-10-16-fetch-r94-seen.json`（10-15 批 **201 kept**，其中 9 条已收录：10-16 PM 2 + 10-17 PM 2 + 10-18 AM 3，余 **192 条**候选）→ 按「科普」口径（大众能懂 + 传播力）筛 5 条短名单 → **`id_list` 权威复核** `2610.22340,2610.21011,2610.22306,2610.22367,2610.22370` → **5/5 返回**，`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`（证据 `raw/2026-10-18-idlist-shortlist-r98.{xml,headers}`）：
+  - `2610.22340` *Dexterity from Supervised Play*（`published=2026-10-15T17:55:50Z`，cs.RO，6 位署名，前 3 `Botao He, Yiming Dou, Yiannis Aloimonos`，`comment` 空）→ **本日 TOP-1**：分钟级人类玩耍 → 行为克隆得玩耍策略 → 自主部署数小时收数据训世界模型 → 推理时策略为 MPC 提候选动作、世界模型评估 → 模型内自博弈蒸馏闭环策略；真实世界成功率比 hindsight BC 高 **69.6%**、与 RL 效果相当而交互数据少 **490×**（作者自报）；
+  - `2610.21011` *Audio-Visual Dog Identification and Tracking in Real-World Videos*（`published=2026-10-14T23:15:47Z`，cs.CV，8 位署名，前 3 `Aryahvishwa Babu, Kingsley Jin, Lillian Wang`，`comment` 空）→ 视觉身份 + 多目标跟踪 + 犬吠声纹；自建 **46 视频 / 213 事件**基准，可见事件定位 **61.83%**（IoU ≥ 0.30）、画内 vs 画外 **F1 91.33%**（作者自报；定位精度仍偏低、基准规模小）；
+  - **备选 3 篇（同批复核确认，留后续轮次）**：`2610.22306` · `2610.22367` · `2610.22370`（均 `2026-10-15`）。
+  - **去重复核**：2 个入账 ID 均**不在**任何 `daily/*.html`；检出时在 `SEEN.md` 为「候选」⇒ **无重复**。
+- **口径护栏**：2 篇按**目的 2「科普」**挑选，**不与目的 1「借鉴」混用**；首次提交日**均早于 2026-10-18**，页面明示「取自前轮候选池」，**不冒充当日新论文**；数字照抄官方摘要并标「**作者自报 · 未复现**」；`comment` 均空 ⇒ **不写「已开源 / 已录用 / 有项目页」**；第 5 篇**显式写出局限**（定位刚过六成、基准 46 段视频）。
+- **产出**：① `research/daily/2026-10-18.html` **收口 5/5**（新增「二、晚报 2 篇 · 科普」+ PM 版取数说明 + 附录 A′/B′ + `## 晚报变更说明（AM → PM）` 8 条 + 附录 C 增补 3 条 + footer；自检 `<div>` 115/115、`<table>` 5/5、`<tr>` 57/57、`<td>` 300/300、零 `<script>`、33,085 B）② `research/daily/index.html`（首行「晚报（PM · 收口）· 5 / 5」+ 备注 + footer）③ `research/video/SCENES/10_18.html`（自包含单文件 · 9 镜 · 450 字 · 五段固定）④ `research/video/SCENES/index.html`（+1 行）⑤ `research/2026-10-18.md` PM 段 ⑥ PDF `research/pdf/2026-10-18/{2610.22340,2610.21011}.pdf`（`pdf/` 已 ignore，不入 git）。
+- **台账**：`SEEN.md` **行数不变 3,691 条**（**2 行状态 候选 → 收录**）→ **收录 216 / 候选 2,968 / 候选（RSS 补充）507**；`research/papers.jsonl` **214 → 216 行**。落盘脚本 `research/raw/update_r98.py`。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS**、`research/test_top_k.py` **25/25 PASS**（离线）；本轮**无长期工具代码改动**（`research/raw/2026-10-18-*r98*` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-19 06:00`**（「早 3」轮 · 新一日 AM 轮）：① 复验批次（**周一预期恢复公告，但若美国假日仍可能无新批 ⇒ 必须分源实测并如实记录**）；② 早报 3 篇「借鉴」优先取新批，若无新批则取候选池（**2,968 条**）+ `id_list` 复核并标注「非当日新提交」。
+
