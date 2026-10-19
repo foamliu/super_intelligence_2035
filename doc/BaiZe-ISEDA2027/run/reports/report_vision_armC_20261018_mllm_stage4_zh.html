@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ArmC Stage(iv) MLLM 12-集评测报告 (2026-10-18)</title><style>
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;padding:0;line-height:1.7}
+.wrap{max-width:980px;margin:0 auto;padding:32px 24px}
+h1{color:#f0f6fc;font-size:1.7em;border-bottom:1px solid #30363d;padding-bottom:.3em}
+h2{color:#58a6ff;font-size:1.3em;margin-top:2em;border-left:4px solid #58a6ff;padding-left:10px}
+h3{color:#79c0ff;font-size:1.1em;margin-top:1.5em}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:.93em}
+th,td{border:1px solid #30363d;padding:7px 10px;text-align:left}
+th{background:#161b22;color:#f0f6fc} tr:nth-child(even){background:#161b22}
+code{background:#1f2428;padding:2px 6px;border-radius:4px;color:#79c0ff;font-size:.88em}
+.kbox{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 18px;margin:14px 0}
+.ok{color:#3fb950;font-weight:bold}.warn{color:#d29922}.bad{color:#f85149}
+.small{color:#8b949e;font-size:.85em} svg{max-width:100%;height:auto;display:block;margin:14px auto}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px}
+.card .v{font-size:1.5em;font-weight:bold;color:#58a6ff}.card .l{color:#8b949e;font-size:.85em}
+hr{border:0;border-top:1px solid #30363d;margin:2em 0}
+</style></head><body><div class="wrap">
+<h1>ArmC · Stage(iv) MLLM 对齐 + 12-集 lmms-eval 评测报告</h1>
+<p class="small">生成时间: 2026-10-19 19:49 · 实验日期: 2026-10-18 ~ 10-19 · 视觉塔: open_clip ViT-B/16 224 (768-d) · LLM: Qwen3-4B-Instruct</p>
+
+<div class="kbox warn">
+⚠️ <b>两变量实验披露 (必读)</b>：ArmC 相对 ArmB 改了<b>两个变量</b> —— ① min_lr 1e-4→1e-5；② weight decay 0.1→0.01。
+其余配方 (LR 1e-3 / warmup 2000 / 4 epoch 57250 步 / GBS 8192 / AIMv2-style InfoNCE+masked-patch-MSE 1:1, mask 0.6 / seed 1234 / 数据 11350 shards) 全部不变。
+因此 <b>ArmC vs ArmB 的任何差异都不得归因于单一变量</b>；本报告所有 Δ 仅作描述, 不做单变量因果归因。
+</div>
+
+<h2>1. 摘要</h2>
+<div class="summary">
+<div class="card"><div class="l">ArmC 平均(除 MME)</div><div class="v">25.78%</div></div>
+<div class="card"><div class="l">vs ArmB (26.10%)</div><div class="v">-0.32pp</div></div>
+<div class="card"><div class="l">vs ④-4ep (25.68%)</div><div class="v">+0.10pp</div></div>
+<div class="card"><div class="l">vs RiCEViT (60.08%)</div><div class="v">-34.30pp</div></div>
+</div>
+<div class="kbox"><b>预注册判据裁定 (沿用 ArmB, 不事后改):</b>
+<span class="warn"><b>不可分辨 (indistinguishable, 边界值)</b></span><br><span class="small">依据: 平均=25.78% 落在 22-26% 区间(含边界, 对齐 ArmB 26.10%→不可分辨 先例)</span><br>
+<span class="small">判据原文: ≥30% 强成功 / >24% 且 DocVQA/ChartQA/OCRBench 任一 +10pp(vs ArmB) 成功 / 22-26% 不可分辨 / ≤22% 失败。ArmC vs ArmB 的 Δ 只作描述, 不改判据。</span></div>
+
+<h2>2. 实验配置 (ArmC vs ArmB)</h2>
+<table><tr><th>项</th><th>ArmB (基线)</th><th>ArmC (本实验)</th><th>是否变量</th></tr>
+<tr><td>视觉塔</td><td>open_clip ViT-B/16 224 (86.2M)</td><td>同左</td><td>否</td></tr>
+<tr><td>目标</td><td>AIMv2-style (InfoNCE 1.0 + masked-patch-MSE 1.0, mask 0.6)</td><td>同左</td><td>否</td></tr>
+<tr><td>数据</td><td>GPIC 8000 + CC12M 1100 + Amshaker 2250 = 11350 shards</td><td>同左</td><td>否</td></tr>
+<tr><td>LR / warmup / epoch</td><td>1e-3 / 2000 步 / 4 epoch (57250 步)</td><td>同左</td><td>否</td></tr>
+<tr><td>min_lr</td><td>1e-4 (cosine)</td><td><b>1e-5 (cosine)</b></td><td><b>是 (变量①)</b></td></tr>
+<tr><td>weight decay</td><td>0.1</td><td><b>0.01</b></td><td><b>是 (变量②)</b></td></tr>
+<tr><td>GBS / MBS / accum</td><td>8192 / 512 / 2</td><td>同左</td><td>否</td></tr>
+<tr><td>seed / 优化器</td><td>1234 / AdamW betas(0.9,0.98) bf16</td><td>同左</td><td>否</td></tr>
+<tr><td>MLLM 三阶段</td><td>Stage-1 (2500) + 1.5 LoRA (20000) + 2 (3500)</td><td>同左 (仅换视觉塔 ckpt)</td><td>否</td></tr>
+</table>
+
+<h2>3. ProtB 线性探针评测 (Protocol B, IN-1k full/50k, 3 seeds)</h2>
+<table><tr><th>视觉塔</th><th>lp (Protocol B, 3 seeds)</th><th>5-NN</th></tr><tr><td>ArmC (本实验, min_lr1e-5+wd0.01)</td><td>62.332%</td><td>54.718%</td></tr><tr><td>ArmB (基线, min_lr1e-4+wd0.1)</td><td>62.093%</td><td>58.102%</td></tr><tr><td>④-4ep (自研 w512)</td><td>67.050%</td><td>42.350%</td></tr></table>
+<p class="small">ArmC vs ArmB: Δlp = <b>+0.239pp</b> (微升), Δ5-NN = <b>-3.384pp</b> (降)。两变量改动, lp↑/5-NN↓ 方向差异<b>不得归因单一变量</b>。</p>
+
+<h2>4. 12-集 lmms-eval 评测结果</h2>
+<p>Stage-2 step3500 checkpoint, <b>每卡一个 benchmark</b> (batch_size=32, 8 卡并行, 无 limit, 全量)。结果来源: <code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armC_20261018/consolidated_12benchmarks.json</code>。</p>
+<table><tr><th>#</th><th>评测集</th><th>指标</th><th>ArmC</th><th>ArmB</th><th>Δ vs ArmB</th><th>能力维度</th></tr><tr><td>1</td><td>AI2D</td><td>exact_match</td><td>59.03%</td><td>60.69%</td><td><span class='bad'>-1.65pp</span></td><td>图像-&gt;科学图理解</td></tr><tr><td>2</td><td>RealWorldQA</td><td>exact_match</td><td>44.97%</td><td>45.49%</td><td><span class='bad'>-0.52pp</span></td><td>真实世界物理推理</td></tr><tr><td>3</td><td>MMMU (val)</td><td>mmmu_acc</td><td>42.56%</td><td>43.67%</td><td><span class='bad'>-1.11pp</span></td><td>大学级多学科推理</td></tr><tr><td>4</td><td>BLINK</td><td>blink_acc</td><td>38.15%</td><td>38.94%</td><td><span class='bad'>-0.79pp</span></td><td>视觉语言跳变推理</td></tr><tr><td>5</td><td>MMStar</td><td>average</td><td>28.38%</td><td>27.95%</td><td><span class=''>+0.43pp</span></td><td>多模态综合能力</td></tr><tr><td>6</td><td>MMMU-Pro (std)</td><td>mmmu_acc</td><td>22.60%</td><td>22.43%</td><td><span class=''>+0.17pp</span></td><td>MMMU 进阶版</td></tr><tr><td>7</td><td>InfographicVQA</td><td>anls</td><td>17.09%</td><td>16.88%</td><td><span class=''>+0.21pp</span></td><td>信息图 VQA</td></tr><tr><td>8</td><td>ChartQA</td><td>relaxed_overall</td><td>12.48%</td><td>12.52%</td><td><span class=''>-0.04pp</span></td><td>图表问答</td></tr><tr><td>9</td><td>CountBench</td><td>acc</td><td>8.96%</td><td>9.57%</td><td><span class='bad'>-0.61pp</span></td><td>物体计数</td></tr><tr><td>10</td><td>DocVQA (val)</td><td>anls</td><td>7.58%</td><td>7.36%</td><td><span class=''>+0.22pp</span></td><td>文档 VQA</td></tr><tr><td>11</td><td>OCRBench</td><td>ocrbench_acc</td><td>1.80%</td><td>1.60%</td><td><span class=''>+0.20pp</span></td><td>OCR 文字识别</td></tr><tr><td>12</td><td>MME</td><td>perception+cog</td><td>642.1 + 255.7</td><td>583.7 + 212.9</td><td>—</td><td>多模态综合评估</td></tr></table>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="381" viewBox="0 0 760 381" font-family="sans-serif" font-size="12">
+<rect x="200" y="8" width="440.0" height="26" fill="#58a6ff" rx="3"/>
+<text x="194" y="26.2" text-anchor="end" fill="#c9d1d9">AI2D</text>
+<text x="646.0" y="27.5" fill="#8b949e">59.03%</text>
+<rect x="200" y="39" width="335.2" height="26" fill="#58a6ff" rx="3"/>
+<text x="194" y="57.2" text-anchor="end" fill="#c9d1d9">RealWorldQA</text>
+<text x="541.2" y="58.5" fill="#8b949e">44.97%</text>
+<rect x="200" y="70" width="317.2" height="26" fill="#58a6ff" rx="3"/>
+<text x="194" y="88.2" text-anchor="end" fill="#c9d1d9">MMMU (val)</text>
+<text x="523.2" y="89.5" fill="#8b949e">42.56%</text>
+<rect x="200" y="101" width="284.3" height="26" fill="#3fb950" rx="3"/>
+<text x="194" y="119.2" text-anchor="end" fill="#c9d1d9">BLINK</text>
+<text x="490.3" y="120.5" fill="#8b949e">38.15%</text>
+<rect x="200" y="132" width="211.5" height="26" fill="#3fb950" rx="3"/>
+<text x="194" y="150.2" text-anchor="end" fill="#c9d1d9">MMStar</text>
+<text x="417.5" y="151.5" fill="#8b949e">28.38%</text>
+<rect x="200" y="163" width="168.4" height="26" fill="#3fb950" rx="3"/>
+<text x="194" y="181.2" text-anchor="end" fill="#c9d1d9">MMMU-Pro (std)</text>
+<text x="374.4" y="182.5" fill="#8b949e">22.60%</text>
+<rect x="200" y="194" width="127.4" height="26" fill="#d29922" rx="3"/>
+<text x="194" y="212.2" text-anchor="end" fill="#c9d1d9">InfographicVQA</text>
+<text x="333.4" y="213.5" fill="#8b949e">17.09%</text>
+<rect x="200" y="225" width="93.0" height="26" fill="#d29922" rx="3"/>
+<text x="194" y="243.2" text-anchor="end" fill="#c9d1d9">ChartQA</text>
+<text x="299.0" y="244.5" fill="#8b949e">12.48%</text>
+<rect x="200" y="256" width="66.8" height="26" fill="#d29922" rx="3"/>
+<text x="194" y="274.2" text-anchor="end" fill="#c9d1d9">CountBench</text>
+<text x="272.8" y="275.5" fill="#8b949e">8.96%</text>
+<rect x="200" y="287" width="56.5" height="26" fill="#d29922" rx="3"/>
+<text x="194" y="305.2" text-anchor="end" fill="#c9d1d9">DocVQA (val)</text>
+<text x="262.5" y="306.5" fill="#8b949e">7.58%</text>
+<rect x="200" y="318" width="13.4" height="26" fill="#d29922" rx="3"/>
+<text x="194" y="336.2" text-anchor="end" fill="#c9d1d9">OCRBench</text>
+<text x="219.4" y="337.5" fill="#8b949e">1.80%</text>
+</svg>
+<p class="small">MME 为感知分 + 认知分 (满分 2800)；其余均为准确率/ANLS 百分比。Δ vs ArmB = (ArmC − ArmB)×100 pp。</p>
+
+<h2>5. 关键结论与诚实披露</h2>
+<div class="kbox">
+<p><b>① 主裁定</b>: <span class="warn">不可分辨 (indistinguishable, 边界值)</span>。平均=25.78% 落在 22-26% 区间(含边界, 对齐 ArmB 26.10%→不可分辨 先例)。</p>
+<p><b>② 两变量限制</b>: ArmC 同时改了 min_lr 与 weight decay, 任何 Δ 都不能拆出单一变量的因果。如需拆分, 须额外做 min_lr-only 与 wd-only 两个单变量臂 (当前未做)。</p>
+<p><b>③ ProtB→MLLM 传递性</b>: ArmC ProtB lp (62.33%) 与 ArmB (62.09%) 几乎持平 (Δ+0.24pp), MLLM 12 集平均的 Δ 见上表 —— 再次印证线性探针不直接预测 MLLM 下游表现 (同 ArmB 结论)。</p>
+<p><b>④ 诚实条款</b>: 内部 ProtB/MLLM 口径, 非官方榜; 单 backbone/单预算点; MLLM 三阶段单 seed; 224px 单块 (无 anyres), 细粒度任务 (OCR/Doc/Chart/Count) 天然偏低; 与 ArmB 同口径同预算, 可横比; 与外部公开值 (RiCEViT 等) 口径不同, 仅作量级参考。</p>
+</div>
+
+<h2>6. 文件路径</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>ArmC 训练输出</td><td><code>/nas_train/app.e0031982/datasets/baize-vision/out/armC_20261018_aimv2_openclip_vitb16_224/</code></td></tr>
+<tr><td>open_clip 权重</td><td><code>.../armC_20261018_.../open_clip_state_dict.pt</code> (598MB)</td></tr>
+<tr><td>ProtB 结果</td><td><code>vision/armC_20261018_protb_vitb16_224_results.json</code></td></tr>
+<tr><td>MLLM 三阶段</td><td><code>.../mllm_stage(1, 15, 2)_armC_20261018/</code></td></tr>
+<tr><td>12-集原始结果</td><td><code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armC_20261018/eval_*.json</code></td></tr>
+<tr><td>12-集合并</td><td><code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armC_20261018/consolidated_12benchmarks.json</code></td></tr>
+<tr><td>本报告</td><td><code>/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/reports/report_vision_armC_20261018_mllm_stage4_zh.html</code></td></tr>
+<tr><td>实验记录</td><td><code>EXPERIMENTS_VISION.md §13</code></td></tr>
+</table>
+<hr>
+<p class="small">本报告由 <code>vision/generate_armC_mllm_report.py</code> 自动生成 · 所有数字来自落盘产物 (consolidated_12benchmarks.json / armC_20261018_protb_vitb16_224_results.json), 未做外推或臆造。生成时间 2026-10-19 19:49。</p>
+</div></body></html>
