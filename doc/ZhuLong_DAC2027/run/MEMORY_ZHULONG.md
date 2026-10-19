@@ -1,13 +1,16 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-19 22:2x 运维令三十五 **r3 收口路径 A 已获批 + RUN_ID 85 已下发**：
-- **用户令**：「选 **A**」⇒ 等 shard_2/3 自然跑完 → 用 `8655/8656/8657/8658` **只重跑 shard_2/3 未通过任务** → 与 shard_0/1 的 61 passed 拼接 = r3 真实 Pass@1。🚫 不整体重跑 151、不丢 shard_0/1 有效结果。
-- **端口批准**：regrade 统一用 **`8655 8656 8657 8658`**（84 号探测 11–18ms 全 EXEC_OK）。🚫 避开 8650/8652/8654（被 t0002147 占）、8659/8668（7.7s 慢）、**8651**（r3 shard_1 曾用，避免抢同端）。
-- **执行顺序**：①等 shard_2/3 到 38/38（~22:30；未收口只读报数不 kill）②改 `--sandbox-endpoints=8655,8656,8657,8658@10.129.32.75`（只改端点；🚫 不动 READBACK=none/OMEGA/BUDGET/LAGGED/providers.json/模型）③只对 shard_2/3 未通过任务重跑 regrade（照 `/tmp/run_readback_none_retest_r3_regrade.sh` 改端点+shard 过滤+独立输出目录，不覆盖原产物）④拼接 shard_0(31)+shard_1(30)+修复 → 报分母（151）⑤写 `zhulong_results.md` + commit `zhulong retest: r3 regrade path-A fix`。
-- **⚠️ 模型维持 `deepseek-v4-pro-fp4`**：r1/r2/r3 生成同模型，**不得为省事切 `-cloud`**（会混入未记录变量）。fp4 真不可用才可切，并须写明「r3 打分不调 LLM，模型只影响生成」。
-- **RUN_ID 85（ops·只读·22s）**：查 r3 regrade 是否已收口（PID 229615/log tail）+ **重测 8655-8658 此刻是否仍空闲**（84 号已过 40min，占用会变）+ 8650-8654 对照 + t0002147 进程数。
-- **仍未批**：F2 watchdog（推荐 r4 前上线）、r4 启动许可（r3 落定后再启）、论文 `stuck_count` 分列。 -->
+<!-- heartbeat 2026-10-19 22:3x 运维令三十六 **用户已授权 kill r3 regrade 空转进程（RUN_ID 86 已下发·严格白名单）**：
+- **用户令**：「① 现在 kill 它」⇒ 授权终止 r3 regrade（**PID 229615** + 4 个 `run_eval.py`/`run_on_sandbox.py` 子进程）。
+- **依据（85 号 22:16）**：8650/8652/8654 仍 BUSY、8655-8658 全 FREE(11-14ms)、**t0002147 有 74 个 cline**、regrade 空转 **3.4h**、日志停在 18:50:50（组装完 **151** 脚本后无新行）⇒ shard_2/3 必产 0 passed。
+- **🔒 RUN_ID 86 安全边界**：只 kill「cmdline 含 `e0031982` **且** 含 `run_eval|run_on_sandbox`」或 PID=229615；逐个核验 cmdline；**TERM→10s→KILL**；🚫 不碰 t0002147/t0002997/loop/relay/cline 本体/MCP/RAG；不用 `pkill -f`；**kill 前 `cp -a` 备份 `2026_1019_145634`**（保 61 passed）。
+- **验证**：`bash -n` 通过；guard 0；4 种本线路径全 MATCH / 9 种他线进程全 SKIP；实测 6.3s。
+- **kill 后（A 方案）**：①确认无残留 + loop/relay/t0002147 仍活 ②改 `--sandbox-endpoints=8655,8656,8657,8658@10.129.32.75`（只改端点）③只对 shard_2/3 未通过任务重跑（独立目录 `..._r3_regrade_fix`）④拼接 31+30+修复 → **报分母 151** ⑤写 `zhulong_results.md` + commit。
+- **模型维持 `deepseek-v4-pro-fp4`**（r1/r2/r3 生成同模型；r3 打分阶段不调 LLM，模型只影响生成）。
+- **STAGE/ROUND 口径不变**：r1 ✅ 78.5% / r2 ✅ 70.9% / r3 修复中（2/5 完成）。 -->
+
+<!-- 22:2x 心跳（路径 A 批准 + RUN_ID 85）已归档 → daily-memories/2026-10-19.md「归档·22:4x」。要点：A=只用 8655-8658 补打 shard_2/3、模型维持 fp4。 -->
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 
