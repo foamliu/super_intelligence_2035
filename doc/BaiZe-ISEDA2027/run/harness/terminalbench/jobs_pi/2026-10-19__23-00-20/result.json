@@ -1,0 +1,49 @@
+{
+    "id": "8298c40c-aae7-4ca0-80e7-809a13454d74",
+    "started_at": "2026-10-19T23:00:20.984514",
+    "updated_at": "2026-10-19T23:56:28.957749",
+    "finished_at": "2026-10-19T23:56:28.957749",
+    "n_total_trials": 5,
+    "stats": {
+        "n_completed_trials": 5,
+        "n_errored_trials": 1,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "pi__tb_pilot_dataset_KDp3w7": {
+                "n_trials": 5,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.8
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "bn-fit-modify__UoxqL5o",
+                            "break-filter-js-from-html__9juM84r",
+                            "fix-git__biYzkbD",
+                            "log-summary-date-ranges__GEwas5s"
+                        ],
+                        "0.0": [
+                            "chess-best-move__di2Yzy8"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "AgentTimeoutError": [
+                        "chess-best-move__di2Yzy8"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}
