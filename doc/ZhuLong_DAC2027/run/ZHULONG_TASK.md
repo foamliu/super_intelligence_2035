@@ -10,6 +10,88 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
+### 🔄 运维指令 · 2026-10-20 06:3x（**停 r5 → 重启 8090 → 重跑 r4/r5**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「**停 r5 → 重启 8090 → 重跑 r4、r5**」
+> **依据（运维实测对照）**：
+> - 历史：`ABL_full_r2_new.log` **MCP-32001=235 次**，PASS_RATE **73.4% 仍正常**；`r2_new2` 72 次。
+> - r4：**MCP 超时 680 次** ⇒ 结果 **31.0%**，99 个 completion 退化成字面量 `"pass"`。
+> ⇒ 存在「超时比例临界点」，r4 已越过；**r4 数据不可用，不能进 5-run 统计**。
+> - 「680」是**提及次数**，须与「实际 `error: MCP error -32001` 报错次数」分开计（本轮第 ① 步会分开记录）。
+> - 8090 是**无状态 wrapper**（`main.py` + 4 工具透传；重活在 9006 RAG 与 10.129.32.75 沙盒），**重启无副作用**，且是历史常规操作（每次切消融都 `stop.sh && start.sh`）。
+
+#### ① 停 r5 并留证（**先取证再杀**）
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+L4=/tmp/ABL_readback_none_retest_r4.log
+L5=/tmp/ABL_readback_none_retest_r5.log
+# 分开统计：提及 vs 真正报错
+for f in "$L4" "$L5"; do [ -f "$f" ] || continue
+  echo "== $f ($(du -h "$f"|cut -f1)) =="
+  echo "  mention_timeout = $(grep -ac 'timed out after 60s' "$f")"
+  echo "  real_MCP_32001  = $(grep -ac 'MCP error -32001' "$f")"
+  echo "  ACCESS_RESTRICTED = $(grep -ac 'ACCESS RESTRICTED' "$f")"
+  echo "  run_code_calls   = $(grep -ac 'pyAether_MCP_server__run_code' "$f")"
+  echo "  search_apis_calls= $(grep -ac 'pyAether_MCP_server__search_apis' "$f")"
+  echo "  get_details_calls= $(grep -ac 'pyAether_MCP_server__get_api_details' "$f")"
+  echo "  32001 对应工具Top:"
+  grep -a -B3 'MCP error -32001' "$f" | grep -aoE 'pyAether_MCP_server__[a-z_]+' | sort | uniq -c | head -6
+done
+# 停 r5（只杀 run_cline_script 主进程及其子进程，显式 PID）
+pgrep -af 'run_cline_script' | cut -c1-100
+for pid in $(pgrep -f 'run_cline_script\.sh'); do kill -TERM "$pid" 2>/dev/null && echo "TERM $pid"; done
+sleep 10
+pgrep -af 'run_cline_script' | cut -c1-100 || echo "r5 已停"
+```
+
+#### ② 记录 8090 状态 → 重启 → 验证
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+echo "== 重启前 8090 =="
+PID=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "  pid=$PID etime=$(ps -o etimes= -p $PID 2>/dev/null|tr -d ' ')s"
+ps -o pid,nlwp,rss,pcpu,args -p "$PID" 2>/dev/null | cut -c1-120
+echo "  fd_count=$(ls /proc/$PID/fd 2>/dev/null | wc -l)"
+echo "  health=$(curl -s -m 5 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)"
+
+echo "== 重启 =="
+bash scripts/stop.sh; sleep 3
+bash scripts/start.sh; sleep 8
+NEW=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "  新 PID=$NEW（旧 $PID）"
+echo "  health=$(curl -s -m 5 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)"
+echo "  tools=$(curl -s -m 8 http://localhost:8090/tools 2>/dev/null | head -c 300)"
+```
+
+#### ③ 起跑前健康冒烟（**必须 5/5 通过才起 r4**，否则停）
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+OK=0; FAIL=0
+for i in 1 2 3 4 5; do
+  t0=$(date +%s%N)
+  r=$(timeout 70 curl -s -m 65 -X POST http://localhost:8090/mcp \
+      -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' 2>/dev/null | head -c 200)
+  t1=$(date +%s%N); ms=$(( (t1-t0)/1000000 ))
+  if [ -n "$r" ]; then OK=$((OK+1)); echo "  #$i OK ${ms}ms"; else FAIL=$((FAIL+1)); echo "  #$i FAIL ${ms}ms"; fi
+done
+echo "SMOKE: ok=$OK fail=$FAIL"
+# 若 tools/list 端点不对，改用你已知可用的 MCP 调用方式；核心判据是「5 次全部 <5s 返回」
+```
+
+#### ④ 重跑 r4'（替换 r4），收口后接 r5'
+- **先删/隔离 r4 旧结果**（🚫 不要覆盖原始产物）：把 `2026_1019_235040` 相关 completion 在台账中标注 **`INVALID(680 MCP timeout, 99 gen-fail)`**，**不参与 5-run 统计**。
+- **r4' 起跑**：配置与 r1–r3 **完全一致** —— `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3 自探索 ON / full harness / **`-p 4`** / 模型 **`deepseek-v4-pro-fp4`** / 端口 **8666,8667,8669,8670** / `export PYTHON=$PWD/venv/bin/python`（**这次别再漏**）。
+- 日志 `/tmp/ABL_readback_none_retest_r4b.log`；batch 新建。
+- **r4' 跑起来 30 分钟内必须报一次**：`real_MCP_32001` 计数 + `run_code` 调用数，确认新超时率是否回到历史水平（≈235/25万行 量级）。
+- r4' 收口 → 立即起 **r5'**（同配置）→ 5/5 齐（r1,r2,r3,r4',r5'）→ mean±std → 更新 `zhulong_results.md` / `6_exp.tex`。
+
+#### ⑤ 纪律
+- 🚫 不覆盖 r1/r2/r3 产物与 r3 backup；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不启 full@pro-cloud（等 5/5 干净后再做）。
+- kill 一律 **显式 PID**（🚫 `pkill -f` 带子串）；长输出 `cut`。
+- 若重启后冒烟仍大面积超时 → **说明不是 8090 的问题，停手报 blocker**（届时再查 9006/沙盒）。
+- commit：`zhulong S1: r4 INVALID(680 MCP timeouts) -> restart 8090 -> rerun r4/r5`。
+
+
 ### 🔬 运维指令 · 2026-10-20 06:0x（**P0：r4=31% 根因排查 —— 680 次 timeout 到底卡在哪个环节**）· 用户直令 · 最高优先
 
 > 用户令（原文）：「zhulong r4 首先需要排查一下。你给我的只有现象，没有根因。比如 680 次 MCP timeout，到底是哪个环节超时？是 8090 的 MCP 服务呢，还是在 RAG 服务，还是在 run code .75 服务器的端口上。总归可以让 zhulong agent 调研一下啊。」
@@ -176,25 +258,9 @@ ps -eo user,etimes,pcpu,args 2>/dev/null | grep -E 't0002147|t0002997' | grep -v
 - MEMORY 心跳 **≤6 行**（文件已 33KB，每次唤醒先滚 1-2 条旧 📦 块到 daily）。
 
 
-### 📦 已归档（2026-10-19 23:1x，batch 2）：三十二 / 二十七 / 二十六
+### 📦 已归档（06:3x，batch 5）：三十（P1 排队 N′/B 成本）
 
-> 均已闭合或已被新令取代（三十二 的队列由 23:0x「r4/r5 + cloud」承接；二十七 已收口 60.1±5.5%；二十六 已闭合）。原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。需要时再读。
-
-### 📦 已归档（23:2x，batch 3）：三十一（B.glm-5.3-flash 复测）
-
-> **已闭合** 5/5 = 86.8±1.6%（fresh std 10.5 → 收窄成功）。原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。
-
-### 📦 已归档 2 块（2026-10-19 23:0x）：二十九（ZL 改 glm-5.2）/ 二十五（消融中文建议书）
-
-> 均已闭合，原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。需要时再读。
-
-### 🆕 运维指令 · 2026-10-18（三十）— 🧪 P1 排队：(N') 成本重测 + (B) 5-run 成本【不打断当前 ZL eval】
-
-> 详见 `run/PLAN_RETEST_READBACK_COST.md` + `run/PAPER_RETEST_AUDIT.md`（本轮已提交）。
-> **顺序**：① 当前 `ZL.glm-5.2` r1 跑完 → ② 先查 `output_evaluation/2026_1015_*` 的 trace，能提取 `(B)` 5-run 成本就零 GPU 先做 → ③ 再排 `(N')` 5-run（READBACK=none，~7.5h GPU，**必须保留 trace**）→ ④ 更新 `zhulong_results.md` / `6_exp.tex` / 重编译 PDF。
-> **预注册**：不假设成本单调；若 `(N')` 成本低于 `(B)/(F)`，如实报告「无反馈→少搜索/早提交」，把成本结论限定在 `(B)→(F)`。
-> 🚫 不打断 eval、不改 cline 3.0.51、不换主基座 `deepseek-v4-pro-fp4`、不删 trace、不插补。
-
+> **已闭合**：(B) 成本 5-run 零 GPU 完成（22.3±3.3 / 3.73±0.72h / 7.6±3.4）；(N′) 5-run 进行中（本文件 06:3x 块承接）。原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。
 
 ### 0. 🎯 当前状态速览（每次唤醒先看这里）
 
@@ -213,25 +279,9 @@ ps -eo user,etimes,pcpu,args 2>/dev/null | grep -E 't0002147|t0002997' | grep -v
 
 > 均已闭合（echo 数据/消融建议书/paper 编译/SKILL-Tcl 并入/沙盒暂停-恢复撤销等）。**常驻纪律保留**：每次刷新论文前 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；口径=EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）；SKILL/Tcl 数字只认 zhulong_results.md 现存值，未齐标 pending，🚫 凭印象编造。原文（1-line 指针）移至 `run/ARCHIVE_ZHULONG_TASK.md`。
 
-### 🆕 运维指令 · 2026-10-13（十三）— 🔴 紧急修正：75% 下限只适用于 `full` 锚点，消融臂不得用它作废成绩【最高优先 · 用户直令】
+### 📦 已归档（06:4x，batch 7）：十三（75% 下限规则）+ 预留追加块
 
-> **用户令（2026-10-13）**：「谁说 phi k3 一定要大于 75% 了，限制沙盒执行三次必然影响 Pass@1，72% 在正常范围。75% 是 full 的下限，不要混淆。」
-
-**背景**：任务书 `(十二)`④ 和更早的 `(九)`④ 写了「判据 timeout ≤10 且 Pass@1 ≥75% ⇒ 该轮有效」。该判据**最初是针对 `full` 锚点写的**（目的是验证 infra 健康——如果 full 都跑不到 75%，说明沙盒/模型服务有问题，而非 agent 能力问题）。但 agent **错误地将它推广到了所有消融臂**（C2.phi_k10 / phi_k3 / phi_k1 / phi_lagged 以及 S1），导致消融臂的低分被误判为「无效」而重跑。
-
-**🔴 立即生效的修正（逐字遵守）**：
-
-1. **`Pass@1 ≥ 75%` 下限只适用于 `C1.full`（锚点）**。锚点跑不到 75% = infra 不健康（沙盒/模型/license/端口故障），该轮作废、重跑。
-2. **消融臂（C2 的 phi_k10/k3/k1/lagged、S1 的 omega_low/readback_binary/readback_none、C1 的 pure_llm/rag/wo_retrieval/wo_selfexp）的判据 = 仅 `timeout ≤ 10` 且无 infra 故障**（license 耗尽 / 端口宕 / 磁盘 <8G）。**Pass@1 任何值都有效**——低分是消融效应的真实体现，不是 infra 问题。
-3. ~~phi_k3 r1 att1 = 72.8% 历史处理~~（已归档至 `ZHULONG_TASK_ARCHIVE.md`·2026-10-18·phi_k3 已 5/5 收口）。
-4. ~~phi_k10 5/5 重试历史~~（已归档至 `ZHULONG_TASK_ARCHIVE.md`·2026-10-18·phi_k10 已 5/5 收口=77.7±2.2%）。
-5. **后续所有消融臂**：只要 `timeout ≤ 10` 且无 infra 故障（license_error / Connection_error / 端口 CLOSED 全 0 条），**一律记为有效，不重跑**。低分 = 真实消融效应。
-
-**红线**：
-- 🚫 不得以 `Pass@1 < 75%` 为由作废任何非 full 臂的成绩。
-- 🚫 不得以 `Pass@1 < 75%` 为由重跑任何非 full 臂的任何轮次。
-- ✅ 唯一的作废理由 = infra 故障（timeout > 10 / license_error / 端口宕 / 磁盘不足）或 auto-grade bug（PASS_RATE=1.3% 等明显异常值）。
-- ✅ `ERROR_COUNT` 只计 infra 故障和 grade bug，**不计消融臂的正常低分**。
+> 均已闭合/长期未使用，原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。
 
 ### 🧭 运维规程 · 2026-10-06（**【agent 归档 MEMORY + 任务书】** —— 由你自己滚，不再由运维代劳）· 常驻
 
@@ -295,83 +345,6 @@ http_proxy=http://172.19.92.23:13128
 ### 📦 已归档（2026-10-20，batch 5）：运维令 10-08(一) / 10-05(四~八) / 10-04(全)
 
 > 均已闭合（HTML 报告已交、ops 中继稳定、config dir 隔离已落地、试验次序 B→C1→C2→S1 已生效、环境迁移已落地）。原文（1-line 指针）移至 `run/ARCHIVE_ZHULONG_TASK.md`。
-
-### 🆕 运维指令（后续按需追加）
-
-> （预留：运维批准模型消融、调整起始点、或追加 RQ3 SKILL/Tcl 切片时写在这里。）
-
----
-
-## 1. 🎯 你是谁 · 任务总目标
-
-你是推进 ZhuLong（DAC2027）EDA 消融评测的自动化 agent。每次被唤醒**只做一步**：
-
-> 读 `MEMORY_ZHULONG.md` 恢复状态 → 读 `daily-memories/$(date +%F).md` 恢复上下文 → 判断下一步 → 执行 → 更新 `MEMORY_ZHULONG.md` 与当日流水 → 立刻退出。
-
-不要 sleep/等待（外层循环负责间隔）。shell 命令直接调用工具，**不要调用任何 MCP 工具**。
-
-**总目标**：把论文 6 张表里所有 `[TBD]` 换成实测 `mean ± std`（口径 README §4.1），共 **56 个 `[TBD]` / 30 行**。本任务书覆盖需要跑量的 4 个消融轴（见 §4）；`tab:selfdoc-cost`（离线自探索日志，1 次无重复）不在本循环内。
-
-## 2. 🔒 冻结项（所有臂共用，不得变动）
-
-- 数据集 `EDA-Eval-PyAether` **158 任务**；通过判据 = 生成代码在 sandbox 无错执行且全断言通过；`Pass@1 = 通过/158×100%`。
-- 每配置 **5 次独立运行** → `mean ± std`；每次**重排任务顺序** + **全新 agent context**。
-- 单任务单 trace、超时 **2500s**、`-p 8 -n`（8 并发 + 禁 Memory Bank 注入）。
-- 主 backbone `deepseek-v4-pro-fp4`（**只有 STAGE=B 模型消融才换**）。
-- **反作弊 PreToolUse hook 全程启用、所有臂完全一致（冻结变量，不是消融对象）**。
-- `cimi_search` / `cimi_fetch` / `vqa` 永远关闭，不要碰。
-- 检索默认 = name+description 索引向量检索（只有 S1 显式改变该索引保真度）。
-
-## 3. ⛔ 红线（不得违反）
-
-1. 不复活被否决表述；不自造符号/定律；不把「轮次」当 Φ 的操作轴。
-2. 不改 `tab:llm-comparison` 结构（列/行口径已锁定）。
-3. 不承诺开放任务用例（开源只覆盖 harness/schema/protocol，不含 benchmark 任务本体）。
-4. 不填未测数字（未测留 `[TBD]` 或显式 provisional）。
-5. `tab:omega` 口径：`(N)`=Pure LLM（核心 4 全关）；不采用 ICML 的 `(N)=0.0`。
-6. 各 hook `errorMessage` 用唯一前缀区分（反作弊 vs `[PHI-BUDGET-EXHAUSTED]`）。
-7. 反作弊内部数据不入论文正文（只定性，不带数字）。
-
-## 4. 🗺️ 合并消融总计划（4 阶段 · 15 臂 · 75 轮 · 单循环串行）
-
-执行顺序（**已调换**：因 pro-fp4 额度 403 阻塞 C1，现将 Phase B 提到最前）：**B → C1 → C2 → S1**。
-
-| 阶段 STAGE | 流 | 臂（顺序）| 轮 | 回填表 |
-|:--|:--|:--|:-:|:--|
-| `B` 模型 | B | `glm-5.2` → `deepseek-v4-flash` → `kimi-k2.6-cloud` → `doubao-seed-2.0-pro-cloud` | 20 | `tab:llm-comparison`(4 行) |
-| `C1` 组件 | C | `pure_llm` → `rag` → `wo_retrieval` → `full`(锚点) | 20 | `tab:main-ablation`(4 行) + 锚点行 |
-| `C2` S2 Φ | C | `phi_k10` → `phi_k3` → `phi_k1` → `phi_lagged` | 20 | `tab:phi-bound`(k1/3/10/lagged) |
-| `S1` 保真度 | A | `omega_low` → `readback_binary` → `readback_none` | 15 | `tab:omega`(L) · `tab:ablation-harness`(B,N) |
-
-**锚点复用（跑一次、多处引用，禁止重复跑）**：
-- `C1.full` ×5 = `tab:main-ablation`(full) + `tab:omega`(H) + `tab:ablation-harness`(F) + `tab:phi-bound`(unbounded) + `tab:llm-comparison`(DeepSeek-V4-Pro 主基座)。
-- ∴ S1 的 (H)/(F)、C2 的 `phi_unbounded`、B 的主基座臂**全部跳过，不重跑**。
-
-## 5. ⚙️ 统一状态机（字段写 `MEMORY_ZHULONG.md` 顶部）
-
-| 字段 | 取值与含义 |
-|:--|:--|
-| `STAGE` | `S1` → `C1` → `C2` → `B`（顺序，交叉衔接）|
-| `CONFIG` | 当前臂名（见 §4 表）|
-| `ROUND` | 1..5 |
-| `PHASE` | `init` / `running` / `just_finished` / `done_all` |
-| `WAITING` | 0=无异步阻塞（下轮 ~1min 续跑）；1=一轮 eval 正在跑，或 infra 不就绪（下轮 ~30min）|
-| `ERROR_COUNT` | 连续失败计数（≥3 强制推进）|
-
-**臂轮转矩阵（PHASE=just_finished 时查下表切下一臂——已调换为 B→C1→C2→S1）**：
-
-```
-B:  glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cloud → C1.pure_llm
-C1: pure_llm → rag → wo_retrieval → full → C2.phi_k10
-C2: phi_k10 → phi_k3 → phi_k1 → phi_lagged → S1.omega_low
-S1: omega_low → readback_binary → readback_none → done_all
-```
-
-> ⚠️ **Phase B→C1 衔接**：Phase B 使用 full 配置（不切 set_ablation），切到 C1.pure_llm 前**必须先执行** `scripts/set_ablation.py pure_llm` + `stop.sh && start.sh` 将 .env 切为 pure_llm 配置。
-> ⚠️ **C1→C2 衔接**：切 C2 前执行 `scripts/set_s2_phi.py <ARM>` + `stop.sh && start.sh`。
-> ⚠️ **C2→S1 衔接**：切 S1 前执行 `scripts/set_s1_fidelity.py <ARM>` + `stop.sh && start.sh`。
-
-## 6. 🔧 固定命令（所有 `cd` 用 `BASE_DIR` 展开；`<TAG>`=CONFIG 名，`<N>`=轮次 1..5）
 
 ### 切臂（5 轮跑完、算好 mean±std 后，启动下一臂前执行）
 
