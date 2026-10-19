@@ -10674,3 +10674,202 @@ This[0m[2m completes the[0m[2m substantive[0m[2m work.[0m[2m Let me[0m
 [0m[2mI'm[0m[2m done[0m[2m. Let[0m[2m me write[0m[2m the final[0m[2m summary.[0m
 === DONE 82 ===
 ```
+
+---
+
+## RUN_ID 83 · 2026-10-19 18:51:29 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 83 | timeout 2500 根因取证 | $(date '+%F %T') | host=$(hostname) ==="
+S=/nasdata/app.e0031982/code/eda_fastmcp/scripts
+echo "[A1] run_cli.sh 190-240（timeout 是否有 -k / 是否后台+wait / COMMAND 是什么）"
+sed -n '190,240p' "$S/run_cli.sh" 2>/dev/null | cat -n | cut -c1-190 || echo "NOFILE"
+echo "[A2] run_cli.sh 全部 timeout 命中行"
+grep -nE 'timeout|kill|increment_stat' "$S/run_cli.sh" 2>/dev/null | cut -c1-150 | head -30 || true
+echo "[A3] 全项目是否有 SIGKILL 兜底（kill-after / -k N / kill -9 / kill -KILL）"
+grep -rnE 'kill-after|-k [0-9]+ |kill -9|kill -KILL|pkill' "$S" 2>/dev/null | cut -c1-150 | head -20 || echo "NONE"
+echo "[A4] run_cline_script.sh 是否又套一层 timeout + -p/-n 含义"
+grep -nE 'timeout|run_cli|-p |-n |parallel|getopts' "$S/run_cline_script.sh" 2>/dev/null | cut -c1-150 | head -25 || true
+echo "[B] r3 batch 2026_1019_145634 stats（timeout/success/failure/total_time）"
+D3=/home/app.e0031982/eda_code_eval/2026_1019_145634
+ls -l "$D3/stats/" 2>/dev/null | tail -12 || echo "NO_DIR"
+for f in success timeout failure total_time; do printf '%s = ' "$f"; cat "$D3/stats/$f" 2>/dev/null | head -2 || echo NA; done
+echo "[B2] r3 timeout_task.log（逐题耗时/收口方式）"
+sed -n '1,60p' "$D3/timeout_task.log" 2>/dev/null | cut -c1-170 || echo "NO_TIMEOUT_LOG"
+echo "[B3] r3 log 中超时相关行"
+grep -aE '超时|timeout' /tmp/ABL_readback_none_retest_r3.log 2>/dev/null | tail -15 | cut -c1-170 || true
+echo "[B4] r3 批量结束统计行"
+grep -aE '批量任务结束|统计|总耗时|成功\[|超时\[' /tmp/ABL_readback_none_retest_r3.log 2>/dev/null | tail -8 | cut -c1-170 || true
+echo "[C1] 对照 legacy/fresh 的 timeout 计数（判断是否幸存者偏差）"
+for b in 2026_1015_093317 2026_1015_143848 2026_1015_193004 2026_1015_233638 2026_1016_041955; do
+  printf '%s timeout=' "$b"; cat "/home/app.e0031982/eda_code_eval/$b/stats/timeout" 2>/dev/null | head -1 || echo NA
+  printf '  total_time='; cat "/home/app.e0031982/eda_code_eval/$b/stats/total_time" 2>/dev/null | head -1 || echo NA
+done
+echo "[C2] 磁盘（/home 96% 已知·data-dir 在 NAS）"
+df -BG /home /nasdata 2>/dev/null | cut -c1-120
+echo "[C3] 当前无 r3 残留（只读确认）"
+ps -eo pid,ppid,etimes,args 2>/dev/null | grep -E '[r]un_cline_script|[t]imeout 2500' | grep -i e0031982 | cut -c1-150 || echo "无残留"
+echo "=== DONE 83 ==="
+```
+
+**输出**
+```
+=== RUN_ID 83 | timeout 2500 根因取证 | 2026-10-19 18:51:29 | host=hfeg0tedaap02 ===
+[A1] run_cli.sh 190-240（timeout 是否有 -k / 是否后台+wait / COMMAND 是什么）
+     1	    }
+     2	
+     3	    # 为 cline 创建 ws 空 workspace：已存在则删除重建，确保 agent 从空目录开始、
+     4	    # 且 hook 只能将 workspaceRoots[0] 定位到这个空目录，杜绝读到 benchmark dataset。
+     5	    local ws_dir="${target_dir}/ws"
+     6	    rm -rf "$ws_dir"
+     7	    mkdir -p "$ws_dir"
+     8	
+     9	    local task_content=$(cat "$md_file")
+    10	    local timeout_sec=2500
+    11	
+    12	    set +e
+    13	    if [[ "$COMMAND" == "zhulong" ]]; then
+    14	        # 运维令(二十八): zhulong = @cline/cli 3.0.29 build from eda_platform/apps/cli.
+    15	        # 3.0.29 与 cline 3.0.29 同源，invocation 需与 cline 分支一致（-c/--data-dir/-t），
+    16	        # 旧的 -y -a 是 0.1.3 旗标、3.0.29 已无此旗标。--data-dir 指向 worker 隔离目录，
+    17	        # 其 settings/providers.json 由 prepare_cli_env 从 $CLI_DATA_DIR(~/.zhulong) 复制而来
+    18	        # (model=deepseek-v4-pro-cloud @ cloud/v1)。hooks 仍走默认 --config(~/.cline) → ~/.cline/hooks。
+    19	        local data_dir_flag=""
+    20	        if [[ "$PARALLEL" -gt 1 ]]; then
+    21	            data_dir_flag="--data-dir ${CLI_ISOLATION_DIR}/worker_${worker_slot}/data"
+    22	        fi
+    23	        timeout $timeout_sec $COMMAND -c "$ws_dir" $data_dir_flag -t $timeout_sec "$task_content" < /dev/null
+    24	    else
+    25	        # cline 3.0：默认 act+auto-approve，无需 -y -a
+    26	        local data_dir_flag=""
+    27	        if [[ "$PARALLEL" -gt 1 ]]; then
+    28	            data_dir_flag="--data-dir ${CLI_ISOLATION_DIR}/worker_${worker_slot}/data"
+    29	        fi
+    30	        timeout $timeout_sec $COMMAND -c "$ws_dir" $data_dir_flag -t $timeout_sec "$task_content" < /dev/null
+    31	    fi
+    32	    local exit_code=$?
+    33	    set -e
+    34	
+    35	    if [[ $exit_code -eq 0 ]]; then
+    36	        print_info "[worker-${worker_slot}] 任务 $task_name 成功完成"
+    37	        increment_stat "success"
+    38	    elif [[ $exit_code -eq 124 ]]; then
+    39	        print_warning "[worker-${worker_slot}] 任务 $task_name 超时 (${timeout_sec}s)"
+    40	        echo "$task_name" >> "$TIMEOUT_TASKS"
+    41	        increment_stat "timeout"
+    42	    else
+    43	        print_warning "[worker-${worker_slot}] 任务 $task_name 失败 (Exit Code: $exit_code)"
+    44	        echo "$task_name" >> "$FAILED_TASKS"
+    45	        increment_stat "failure"
+    46	    fi
+    47	
+    48	    local task_end_time=$(date +%s)
+    49	    local task_duration=$((task_end_time - task_start_time))
+    50	    print_info "[worker-${worker_slot}] 任务耗时: $task_duration 秒"
+    51	    # 累加耗时（flock 保证原子）
+[A2] run_cli.sh 全部 timeout 命中行
+33:TIMEOUT_TASKS="${LOG_DIR}/timeout_task.log"
+149:increment_stat() {
+169:echo 0 > "${STATS_DIR}/timeout" 2>/dev/null
+199:    local timeout_sec=2500
+212:        timeout $timeout_sec $COMMAND -c "$ws_dir" $data_dir_flag -t $timeout_sec "$task_content" < /dev/null
+219:        timeout $timeout_sec $COMMAND -c "$ws_dir" $data_dir_flag -t $timeout_sec "$task_content" < /dev/null
+226:        increment_stat "success"
+228:        print_warning "[worker-${worker_slot}] 任务 $task_name 超时 (${timeout_sec}s)"
+230:        increment_stat "timeout"
+234:        increment_stat "failure"
+360:        kill "$pid" 2>/dev/null || true
+362:    pkill -P $$ 2>/dev/null || true
+383:TIMEOUT_COUNT=$(get_stat "timeout")
+[A3] 全项目是否有 SIGKILL 兜底（kill-after / -k N / kill -9 / kill -KILL）
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:362:    pkill -P $$ 2>/dev/null || true
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/stop.sh:53:            kill -9 "$PID" 2>/dev/null
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/stop.sh:60:                kill -9 "$PID" 2>/dev/null
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/stop_recall_api.sh:41:kill -9 "$PID" 2>/dev/null
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/stop_recall_local.sh:41:kill -9 "$PID" 2>/dev/null
+[A4] run_cline_script.sh 是否又套一层 timeout + -p/-n 含义
+44:readonly CLI_SCRIPT="${SCRIPT_DIR}/run_cli.sh"
+77:    echo "  -p, --parallel N        并行度（默认 1）"
+93:            -p|--parallel)
+150:    if [[ -n "$BENCHMARK_OVERRIDE" ]]; then
+219:       [[ -n "$(ls -A "${memory_base}/L0_raw/task_artifacts/" 2>/dev/null)" ]]; then
+236:    mkdir -p "$batch_dir"
+243:    if [[ -n "$TASK_FILTER" ]]; then
+246:        mkdir -p "$filter_dir"
+289:step_run_cli() {
+294:    # 导出环境变量供 run_cli.sh 使用
+350:    mkdir -p "$trace_dst"
+381:            if [[ -n "$match" ]]; then
+391:            if [[ -n "$match" ]]; then
+440:            mkdir -p "$worker_trace_dst"
+475:        if [[ -n "$match" ]]; then
+484:            if [[ -n "$cwd" ]]; then
+506:                mkdir -p "$out_dir"
+533:                mkdir -p "$out_dir"
+706:    if [[ -n "$apply_flag" ]]; then
+724:    if [[ -n "$TASK_FILTER" ]]; then
+742:    if [[ -n "$TASK_FILTER" ]]; then
+752:       [[ -n "$(ls -A "${HOME}/Cline/Memory/L0_raw/task_artifacts/" 2>/dev/null)" ]]; then
+758:    step_run_cli
+[B] r3 batch 2026_1019_145634 stats（timeout/success/failure/total_time）
+total 4
+-rw-r----- 1 app.e0031982 app.adm   2 Oct 19 14:56 failure
+-rw-r----- 1 app.e0031982 app.adm 172 Oct 19 14:56 l1_injection.json
+-rw-r----- 1 app.e0031982 app.adm   4 Oct 19 17:38 success
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 19 17:38 success.lock
+-rw-r----- 1 app.e0031982 app.adm   2 Oct 19 18:12 timeout
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 19 18:12 timeout.lock
+-rw-r----- 1 app.e0031982 app.adm   6 Oct 19 18:12 total_time
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 19 18:12 total_time.lock
+success = 153
+timeout = 5
+failure = 0
+total_time = 76326
+[B2] r3 timeout_task.log（逐题耗时/收口方式）
+[B3] r3 log 中超时相关行
+[0m[2mLet me[0m[2m write the[0m[2m validation.[0m[2m I'll[0m[2m be careful[0m[2m to avoid[0m[2m the import[0m[2m-time timeout[0m[2m by using[0m[2m pro
+Actually[0m[2m, my[0m[2m earlier probe[0m[2m=True run[0m[2m returned quickly[0m[2m (not[0m[2m 60[0m[2ms timeout[0m[2m). The[0m[2m previous timeout[0m[
+   [90m⎿ [0m[31merror: {"error":"MCP error -32001: MCP request to \"pyAether_MCP_server\" timed out after 60s. Increase the \"timeout\" field (in seconds) for this s
+Wait[0m[2m — that[0m[2m suggests[0m[2m something about[0m[2m assertion failures[0m[2m causing a[0m[2m hang?[0m[2m Or the[0m[2m sandbox[0m[2m's behavio
+Since[0m[2m my validation[0m[2m returned "[0m[2mexecuted[0m[2m"[0m[2m fast ([0m[2mno timeout[0m[2m), and[0m[2m the negative[0m[2m control ([0m[2mwith 
+[0m[2m2.[0m[2m My full[0m[2m validation ([0m[2mdbCreate[0m[2mLib,[0m[2m dbOpen[0m[2mCV,[0m[2m full create[0m[2m, [0m[2m5 net[0m[2m/term[0m[2m/pin
+[0m[2mThis is[0m[2m actually[0m[2m a clean[0m[2m, interpret[0m[2mable signal[0m[2m: **[0m[2m"exec[0m[2muted"[0m[2m ([0m[2mfast)[0m[2m = success[0m
+Actually[0m[2m wait[0m[2m, let[0m[2m me reconsider[0m[2m #3[0m[2m more[0m[2m. Could[0m[2m the timeout[0m[2m be due[0m[2m to something[0m[2m else?[0m
+-[0m[2m probe=True[0m[2m + exception[0m[2m → timeout[0m[2m.
+-[0m[2m probe=False[0m[2m →[0m[2m timeout ([0m[2mregardless[0m[2m?[0m[2m).
+[1;33m[WARNING][0m [worker-3] 任务 EDA-Eval-PyAether-130 超时 (2500s)
+[0;34m[INFO][0m 统计: 成功[153] / 超时[5] / 失败[0]
+[0;31m[ERROR][0m   端口 8652 执行出错: Request timeout (150s) when calling http://10.129.32.75:8652/v1/run_code
+[0;31m[ERROR][0m   端口 8654 执行出错: Request timeout (150s) when calling http://10.129.32.75:8654/v1/run_code
+[complete_code_generation] 超时任务: 5
+[B4] r3 批量结束统计行
+H[0m[2mmm,[0m[2m maybe the[0m[2m; ls[0m[2m -la[0m[2m` as[0m[2m调用。[0m[2m如果我只[0m[2m在 func[0m[2mCb[0m[2m 中[0m[2m统计[0m[2m，func
+-[0m[2m `db[0m[2mOpenCV[0m[2m_gate[0m[2m_symbol.py[0m_text_via_traversal(top_d[2m`. The[0m[2m working directory[0m[2m is the[0m[2mTip:[0m[2m This parame
+[0m[2m 'tech[0m[2m', None[0m[2mraise Runtime[0m[2m) or[0m[2m pa[0m[2m.ae[0m[2mGetTech[0m[2m()`[0m[2m让它返回[0m[2m一些统计[0m[2m.
+[0m[2mGiven uncertainty[0m[2m `py[0m[2mScript.[0m[2maeOpen[0m[2mDesign(...[0m[2m)`[0m[2m, the[0m[2m safest is[0m[2m to[0m[2m和 em[0m[2myPoint[0m[
+H[0m[2m `[0m[2mArray_p[0m[2m_emy[0m[2mInstHeader[0m[2m - Output[0m[2m instance headers[0m[2m."。[0m[2m这是输出[0m[2m副本，[0m[2massert os[0m
+[0;34m[INFO][0m ===== 批量任务结束 =====
+[0;34m[INFO][0m 总耗时: 11742 秒
+[0;34m[INFO][0m 统计: 成功[153] / 超时[5] / 失败[0]
+[C1] 对照 legacy/fresh 的 timeout 计数（判断是否幸存者偏差）
+2026_1015_093317 timeout=13
+  total_time=109508
+2026_1015_143848 timeout=8
+  total_time=91961
+2026_1015_193004 timeout=7
+  total_time=89733
+2026_1015_233638 timeout=6
+  total_time=91283
+2026_1016_041955 timeout=4
+  total_time=75232
+[C2] 磁盘（/home 96% 已知·data-dir 在 NAS）
+Filesystem                 1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_home      394G  360G       17G  96% /home
+10.251.9.180:/g0tedaap          527G  256G      271G  49% /nasdata
+[C3] 当前无 r3 残留（只读确认）
+ 224010   81827     215 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任�
+ 224011  224010     215 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 🔧 运�
+=== DONE 83 ===
+```
