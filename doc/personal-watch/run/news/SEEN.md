@@ -802,3 +802,13 @@
 | 2026-10-19 | 《最终幻想 14》日服大量异常登录；日本 10 月至少 20 家企业/平台遭非法访问 | IT之家（`014/851`） | 不收(与 AI 无直接关系) | https://www.ithome.com/1/014/851.htm |
 | 2026-10-19 | In Europe's tech capital, Irish labor unions are booming amid AI-driven layoffs | HN → Politico Europe | 不收(feature) | https://www.politico.eu/article/in-europe-tech-capital-ireland-irish-labor-unions-are-booming-amid-ai-layoffs/ |
 | 2026-10-19 | Zotac RTX 5090 显卡在巴西机场失踪（约 47 万美元） | HN → VideoCardz | 不收(非 AI 具体事件) | https://videocardz.com/newz/two-pallets-of-zotac-rtx-5090-graphics-cards-worth-470000-disappear-at-brazilian-airport |
+| 2026-10-19 | 工信部：上半年人形机器人整机突破 400 款、产量超 4 万台，全年预计突破 10 万台（300+ 场景） | IT之家（`015/002`，据国新办发布会） | news | https://www.ithome.com/1/015/002.htm |
+| 2026-10-19 | MiniMax M3.1 Flash 上线：推理提速近 3 倍、成本降 70%（输入 1 元/输出 4 元每百万 Token） | IT之家（`015/013`） | news | https://www.ithome.com/1/015/013.htm |
+| 2026-10-19 | 苹果收购瑞士 AI 音频编辑公司 Samplab（部分资产 + 部分员工） | IT之家（`015/005`，据 AppleInsider） | news | https://www.ithome.com/1/015/005.htm |
+| 2026-10-19 | 工信部《国家车联网技术标准体系建设指南（2026 版）》公开征求意见（公示至 11-18，2030 年建成完善体系） | IT之家（`015/016`，转工信部科技司） | news | https://www.ithome.com/1/015/016.htm |
+| 2026-10-19 | 梅赛德斯-奔驰与英伟达深化战略合作，共研下一代辅助驾驶系统（MB.OS × NVIDIA Hyperion） | IT之家（`014/990`） | news | https://www.ithome.com/1/014/990.htm |
+| 2026-10-19 | SK 海力士联合四家银行出资 2 万亿韩元扶持韩国半导体材料/零部件/设备供应商 | IT之家（`014/993`） | news | https://www.ithome.com/1/014/993.htm |
+| 2026-10-19 | 美国芯片禁运清单再加几百项，中国 1000 家公司连成国产化链条 | 头条「浅黑科技」（`7697849581299565096`） | 不收(自媒体分析稿) | https://www.toutiao.com/article/7697849581299565096/ |
+| 2026-10-19 | Stripe to acquire OpenRouter for $7.5B | HN → startupfortune | 不收(二手财经博客，原文未核) | 不存链接（HN 摘要记录·原链接未留存） |
+| 2026-10-19 | One hacker used AI agents and a few thousand dollars to break into 100 sites | HN → Reuters | 不收(涉未起诉个案) | 不存链接（HN 摘要记录·原链接未留存） |
+| 2026-10-19 | AI Agents Left Alone Spontaneously Split into Polarized Camps | HN → bioengineer.org | 不收(转载/科普稿) | 不存链接（HN 摘要记录·原链接未留存） |
