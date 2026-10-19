@@ -1,20 +1,20 @@
 {
     "id": "d60ed866-0261-4bd0-9db0-e7581e60bba2",
     "started_at": "2026-10-19T14:19:48.738774",
-    "updated_at": "2026-10-19T06:20:16.630885Z",
+    "updated_at": "2026-10-19T06:21:11.072855Z",
     "finished_at": null,
     "n_total_trials": 5,
     "stats": {
-        "n_completed_trials": 1,
-        "n_errored_trials": 1,
+        "n_completed_trials": 3,
+        "n_errored_trials": 3,
         "n_running_trials": 1,
-        "n_pending_trials": 3,
+        "n_pending_trials": 1,
         "n_cancelled_trials": 0,
         "n_retries": 0,
         "evals": {
             "claude-code__tb_pilot_dataset_3AvdVI": {
                 "n_trials": 0,
-                "n_errors": 1,
+                "n_errors": 3,
                 "metrics": [
                     {
                         "mean": 0.0
@@ -24,7 +24,9 @@
                 "reward_stats": {},
                 "exception_stats": {
                     "RuntimeError": [
-                        "bn-fit-modify__VkD4Fi9"
+                        "bn-fit-modify__VkD4Fi9",
+                        "break-filter-js-from-html__LN7sZey",
+                        "chess-best-move__ozfM3xU"
                     ]
                 }
             }
