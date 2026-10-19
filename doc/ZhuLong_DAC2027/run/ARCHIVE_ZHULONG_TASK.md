@@ -222,3 +222,32 @@ retest r1 = 60.1% (95/158) 的 63 个失败分解（batch `2026_1017_091724`，-
 <!-- 二十六 wo_selfexpl 排队（已闭合） -->
 ### 🆕 运维指令 · 2026-10-16（二十六）— 🔜 排队：B.deepseek-v4-flash 之后接 wo_selfexpl 干净 5-run【用户直令·已被二十七①取代·2026-10-18 归档】
 > ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-18 02:57）。被运维令二十七①取代：wo_selfexpl r1=83.5%(132/158) 收口（batch 2026_1017_055109·运维侧手动启动 regrade），**r2-r5 不再跑**（陈熙元 77.3±2.9% 作为对照）。
+
+
+<!-- archived from ZHULONG_TASK.md 2026-10-19 23:2x (batch 3) -->
+
+<!-- 三十一 glm-5.3-flash 复测（已闭合 86.8±1.6%） -->
+### 🆕 运维指令 · 2026-10-18（三十一）— ▶️ **启动 B.glm-5.3-flash 复测 5-run**（`-p 4` 起步）【用户直令 · 最高优先】
+
+> 用户令（2026-10-18）：「让 zhulong 启动 B.glm-5.3-flash 复测」。
+> 背景：fresh 5/5 = **66.8 ± 10.5%**（std 偏大）；此前 r1 两次在 `-p 8` 因 gateway 并发/quota 作废（0/158、89% 失败）。**本次先 `-p 4`**；若仍 429/0-token >10%，再降 `-p 2` 或等 off-peak，**不得静默作废**。
+
+**① 前置（任一不过就停，贴原文）**
+- `glm-5.3-flash` @ `/v1` 单请求 canary：HTTP 200 + 非空 content；`maxTokens=16384`（`providers.json` 已设）。
+- 记录并发用户任务（如 `app.t0002147`）；若 canary 429 ⇒ 等 10–20min 重试，**不启动 5-run**。
+- 确认 backbone 配置未被改成其它模型；`EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`（`.env` 已修正）。
+
+**② 起跑（每轮一条，串行 5 轮）**
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+export PYTHON=$PWD/venv/bin/python
+setsid bash scripts/run_cline_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_retest_r<N>.log 2>&1 < /dev/null &
+```
+- 每轮 158 题；跑完先 `unset http_proxy https_proxy ALL_PROXY; export NO_PROXY=10.129.32.75,localhost,127.0.0.1`，再用 `EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework` 跑 `run_eval.py` 打分（避免 Squid 503）。
+- 判据：`timeout≤10`、无 infra 故障；429/quota 不计有效轮，等窗口重试；401/403 立即停贴响应头。
+- 每轮记录：`pass (xx.x%)`、timeout/gen-fail/0-token/quota，写 `daily-memories/2026-10-18.md`。
+
+**③ 收口**
+- 5/5 有效后算 mean±std；若 std 明显 <10.5，更新 `zhulong_results.md` 的 B.glm-5.3-flash 行（保留 fresh 66.8±10.5 作对照）+ `MEMORY_ZHULONG.md` + commit `zhulong B: glm-5.3-flash retest 5/5 = xx.x±x.x%`。
+- 🚫 不动 ZL.glm-5.2 r1=84.2% 的结论；🚫 不改论文口径；🚫 不重启/不经手其它线。
+- 完成后按常驻规程自滚归档任务书。

@@ -1,5 +1,41 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 89 -->
+<!-- RUN_ID: 90 -->
+
+## RUN_ID 90 — 容器端口可用性全量普查（8650–8670 × 21，用户要看）
+
+> 用户令：「再把可用端口打出来我看看」
+> **本块纯只读**：不 kill、不改配置。三层并行判定（TCP / HTTP / **真实执行**），**23 秒完成**。
+> 判定：`TCP_OPEN + EXEC_OK <2s` = **可用**；`EXEC_TIMEOUT` = 端口活但执行槽被占（不可用）；`TCP_CLOSED` = 未开放。
+
+```bash
+set -u
+echo "=== RUN_ID 90 | port availability 8650-8670 | $(date '+%F %T') | host=$(hostname) ==="
+SB=10.129.32.75
+W=$(mktemp -d /tmp/r90.XXXXXX)
+for p in $(seq 8650 8670); do
+  (
+    if timeout 1 bash -c "cat < /dev/null > /dev/tcp/$SB/$p" 2>/dev/null; then echo TCP_OPEN > "$W/$p.t"; else echo TCP_CLOSED > "$W/$p.t"; fi
+    t0=$(date +%s%N)
+    out=$(timeout 14 curl -s --max-time 12 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 30)
+    t1=$(date +%s%N); ms=$(( (t1-t0)/1000000 ))
+    if [ -z "$out" ]; then echo "BUSY ${ms}" > "$W/$p.e"; else echo "OK ${ms}" > "$W/$p.e"; fi
+  ) &
+done
+wait
+printf "%-6s %-11s %-6s %-8s %s\n" PORT TCP EXEC ms VERDICT
+U=""
+for p in $(seq 8650 8670); do
+  t=$(cat "$W/$p.t" 2>/dev/null); e=$(cat "$W/$p.e" 2>/dev/null | awk '{print $1}'); ms=$(cat "$W/$p.e" 2>/dev/null | awk '{print $2}')
+  if [ "$e" = "OK" ] && [ "${ms:-99999}" -lt 2000 ]; then v="✅ USABLE"; U="$U $p"; else v="❌ busy/down"; fi
+  printf "%-6s %-11s %-6s %-8s %s\n" "$p" "$t" "$e" "$ms" "$v"
+done
+echo ""
+echo "USABLE LIST:$U"
+echo "COUNT: $(echo $U | wc -w)"
+rm -rf "$W"
+echo "=== DONE 90 ==="
+```
 
 ## RUN_ID 89 — 只读核查：harness 是否真有 2 个 loop（.12 + .29）+ zhulong r4 前置状态
 
@@ -7,7 +43,7 @@
 > **本块纯只读**：不 kill、不重启、不改配置。**输出严格 cut**（≤140 字符/行）。
 > 目的：①实证 .12/.29 是否真各有一个 harness loop（含 PID/启动时间/PATH/cline 是否可见）；②顺手确认 zhulong r4 前置（端口、模型 key、Gpu、regrade 是否已清）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 89 | harness dual-loop check + zhulong r4 prereq | $(date '+%F %T') | host=$(hostname) ==="
 

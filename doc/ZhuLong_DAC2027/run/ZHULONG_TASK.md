@@ -10,7 +10,37 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🆕 运维指令 · 2026-10-19 23:0x（🚀 **r4/r5 启动 → (N′) 5-run 收口 → 再测一次 full 用 `deepseek-v4-pro-cloud` 的 key**）· 用户直令 · 最高优先
+### 🔒 运维指令 · 2026-10-19 23:2x（**模型口径锁定：r4/r5 用 fp4；full 用 pro-cloud**）· 用户直令 · 与 23:0x 块同等最高优先
+
+> 用户确认（原文）：「**r4/r5 继续用 fp4，但跑 full 的时候，切换到 deepseek-v4-pro-cloud。**」
+> 这是对 23:0x 块的**最终口径裁定**，覆盖任何歧义。
+
+**① 臂 × 模型对照（严格照此执行，不得自行调换）**
+
+| 阶段 | readback 档 | **模型 / endpoint / key** | 轮数 |
+|:--|:--|:--|:--:|
+| r4, r5 | (N′) `READBACK=none` | **`deepseek-v4-pro-fp4`** @ `/cloud/v1`，key 末 8 = **`8aa0785e`** | 各 1 轮 → 凑满 5/5 |
+| full 复测 | (F) `READBACK=full` | **`deepseek-v4-pro-cloud`** @ `/cloud/v1`，key 末 8 = **`8aa0785e`** | 5 轮 |
+
+> ⚠️ **两臂用的可能是同一个 key `...8aa0785e`**（03:50 探针显示该 key 对 fp4 与 cloud 都返回 200）。**“用 deepseek-v4-pro-cloud 的 apikey” = 换模型名 + 用能访问 pro 族的那个 key**；`88ea2f23`（glm 的）对 pro 族**必 403**，禁用。
+
+**② 起跑前必做「模型落点自检」（防止模板复制带错模型）**
+> 背景：源码注释显示 worker 的 `settings/providers.json` 由 `prepare_cli_env` 从 `$CLI_DATA_DIR(~/.zhulong)` 复制而来，而 `~/.zhulong/settings/providers.json` 当前是 **`glm-5.2`**（那是**编排模型**，给 opencode 用）。RUN_ID 89 实测该字段确实是 `glm-5.2` —— 所以**不能只看它**，必须看 **worker 实际生效的那份**。
+- **r4/r5 起跑前**：`ls -dt ${CLI_ISOLATION_DIR}/worker_*/data/settings/providers.json | head -1 | xargs grep -o '"model"[^,]*'`
+  → **必须是 `deepseek-v4-pro-fp4`**；若是 `glm-5.2` / `pro-cloud` / 其它 → **先修正模板再起跑**，并把 before/after 原文贴进回报。
+- **full 臂起跑前**：同一检查点 → **必须是 `deepseek-v4-pro-cloud`**。
+- 同时贴 `/proc/<cline worker pid>/environ` 里与模型相关的键（若有），双证。
+
+**③ 口令（两臂都要在日志首行写明）**
+- r4/r5：`ARM=(N') MODEL=deepseek-v4-pro-fp4 KEY=...8aa0785e READBACK=none`
+- full：`ARM=(F) MODEL=deepseek-v4-pro-cloud KEY=...8aa0785e READBACK=full`
+
+**④ 报告口径**
+- `(N′) 5/5` 与 `(F)@pro-cloud 5/5` **分表列示**，不得合并计算。
+- full 臂须注明：「**与既有 (F)（fp4）相比，模型部署不同（cloud vs fp4），不可直接混算**」。
+- n<5 不写 ±。
+
+
 
 > 用户令（原文）：「zhulong 启动 r4/r5。跑完 (N′) 5-run后，再测一次 full，这次用 deepseek-v4-pro-cloud 的apikey」
 > 前置已达成：**r3 ✅ 81.5% (123/151)**（Path A 修复，4 shard 31/30/31/31 极一致）；当前 3/5，mean 76.97% provisional。
@@ -46,30 +76,9 @@
 
 > 均已闭合或已被新令取代（三十二 的队列由 23:0x「r4/r5 + cloud」承接；二十七 已收口 60.1±5.5%；二十六 已闭合）。原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。需要时再读。
 
-### 🆕 运维指令 · 2026-10-18（三十一）— ▶️ **启动 B.glm-5.3-flash 复测 5-run**（`-p 4` 起步）【用户直令 · 最高优先】
+### 📦 已归档（23:2x，batch 3）：三十一（B.glm-5.3-flash 复测）
 
-> 用户令（2026-10-18）：「让 zhulong 启动 B.glm-5.3-flash 复测」。
-> 背景：fresh 5/5 = **66.8 ± 10.5%**（std 偏大）；此前 r1 两次在 `-p 8` 因 gateway 并发/quota 作废（0/158、89% 失败）。**本次先 `-p 4`**；若仍 429/0-token >10%，再降 `-p 2` 或等 off-peak，**不得静默作废**。
-
-**① 前置（任一不过就停，贴原文）**
-- `glm-5.3-flash` @ `/v1` 单请求 canary：HTTP 200 + 非空 content；`maxTokens=16384`（`providers.json` 已设）。
-- 记录并发用户任务（如 `app.t0002147`）；若 canary 429 ⇒ 等 10–20min 重试，**不启动 5-run**。
-- 确认 backbone 配置未被改成其它模型；`EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`（`.env` 已修正）。
-
-**② 起跑（每轮一条，串行 5 轮）**
-```bash
-cd /nasdata/app.e0031982/code/eda_fastmcp
-export PYTHON=$PWD/venv/bin/python
-setsid bash scripts/run_cline_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_retest_r<N>.log 2>&1 < /dev/null &
-```
-- 每轮 158 题；跑完先 `unset http_proxy https_proxy ALL_PROXY; export NO_PROXY=10.129.32.75,localhost,127.0.0.1`，再用 `EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework` 跑 `run_eval.py` 打分（避免 Squid 503）。
-- 判据：`timeout≤10`、无 infra 故障；429/quota 不计有效轮，等窗口重试；401/403 立即停贴响应头。
-- 每轮记录：`pass (xx.x%)`、timeout/gen-fail/0-token/quota，写 `daily-memories/2026-10-18.md`。
-
-**③ 收口**
-- 5/5 有效后算 mean±std；若 std 明显 <10.5，更新 `zhulong_results.md` 的 B.glm-5.3-flash 行（保留 fresh 66.8±10.5 作对照）+ `MEMORY_ZHULONG.md` + commit `zhulong B: glm-5.3-flash retest 5/5 = xx.x±x.x%`。
-- 🚫 不动 ZL.glm-5.2 r1=84.2% 的结论；🚫 不改论文口径；🚫 不重启/不经手其它线。
-- 完成后按常驻规程自滚归档任务书。
+> **已闭合** 5/5 = 86.8±1.6%（fresh std 10.5 → 收窄成功）。原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。
 
 ### 📦 已归档 2 块（2026-10-19 23:0x）：二十九（ZL 改 glm-5.2）/ 二十五（消融中文建议书）
 
