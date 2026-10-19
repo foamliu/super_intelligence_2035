@@ -1,14 +1,19 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
-<!-- heartbeat 2026-10-19 18:5x 运维令三十三 **timeout 2500 根因排查已下发（RUN_ID 83·纯只读）+ 初步根因已给**（证据=`ops/outbox.md` RUN_ID 81 源码行）：
-①**inbox RUN_ID 82→83**，首个 bash 块 = 【A 源码级】run_cli.sh 190-240 原文 / 全部 timeout 命中行 / scripts 有无 `-k`·`kill -9` 兜底 / run_cline_script.sh 是否再套 timeout；【B 现场级】r3 batch 2026_1019_145634 的 stats + timeout_task.log 逐题耗时 + log 超时/统计行；【C 对照】5 个 legacy/fresh batch 的 timeout+total_time（验 H3）+ df + 残留。旧 RUN82 块已降级 ```text。
-②指令稿 `run/OPS_INSTR_RUN83_TIMEOUT_ROOTCAUSE.md`（H1/H2/H3 + 修复候选 F1–F5 + 四档交付）。
-③**初步根因（待 agent 证实/推翻·勿当结论）**：`run_cli.sh:199 timeout_sec=2500` / `:212|219 timeout $timeout_sec $COMMAND ... -t $timeout_sec` / `:230 increment_stat timeout` ⇒ **H1 = `timeout` 只发 SIGTERM 且只杀 leader（真 cline 是子孙），cline 收 TERM 后优雅收尾在网络/NFS 卡顿处阻塞 ⇒ 进程不死、increment_stat 永不执行**（r2 task119=21600s=8.6×、r3 task130=6582s=2.6×、r2 task119 ws 14:09 仍 +20B）；**H2** = 外层 `timeout 2500` 与 cline `-t 2500` 两个软墙、无 SIGKILL 兜底；**H3** = 幸存者偏差（单题均值 578±77s，(B) 5 轮 timeout=13/8/7/6/4，墙从未被真正压到 ⇒「以前有效」只是「没机会失效」）。
-④**运维倾向**（待证据后拍板）：**F2 外部 watchdog（不动 harness 参数）+ F5 报告分列 stuck_count**，避免重蹈 10-10 `timeout:180` 被全部回退。
-⑤**纪律**：纯只读 · 不重启 · 不 kill r3 · 不改 run_cli.sh/`.env` · 不动 cline 3.0.51。
-⑥**回报**：5 个 timeout 逐题定性表 + H1/H2/H3 成立与否（附行号/时间戳）+ F1–F5 推荐排序 + 对 tab:readback-cost 影响（r1 78.5% vs r2 70.9% 的 7.6pp 有多少与墙有关），commit 前缀 `zhulong diag:`。
-**下一步**：等 outbox RUN_ID 83 回执 → 出结论 → 报运维决策 → **结论前不启动 r4**。 -->
+<!-- heartbeat 2026-10-19 19:10 运维令三十三 **timeout 2500 根因诊断 ✅ 完成上报·r3 regrade + r1/r3 trace cp 后台跑中·结论前不启动 r4**：
+**①诊断结论（详见 daily-memories/2026-10-19.md §[19:10]）**：
+- **H1 ✅ 成立**（`run_cli.sh:212/219` 的 `timeout 2500` 无 `-k` 兜底·SIGTERM 只杀 leader·cline 优雅收尾在 NFS/网络阻塞时挂起 → 实际耗时 1.1–8.7× wall 后才退·`grep kill-after scripts/` 空·r3 5 timeout 实际耗时 2500/2817/3891/4299/6582s·r2 task119=21744s=8.7× wall·legacy (B) 2026_1015_093317 task=9350s=3.74× wall）
+- **H2 ✅ 成立**（双软墙：外 `timeout 2500` + cline `-t 2500`·均非 SIGKILL·`run_cline_script.sh` 不再套第二层 timeout）
+- **H3 ✅ 成立（且更严重）**：legacy (B) 8 batch 中 6 个有 timeout·最大 overrun 9350s·**bug 从 (B) 时代就存在**·不是 (N′) 才坏
+- **(N′) 臂固有属性**：succ-mean 367.6s vs (B) 277s（+33%）→ `readback=none` → agent 反复 run_code 重试 → 长尾概率高 → 应入论文讨论（非 bug）
+- **环境**：NAS 可写 ✅·/home 17G（96%·未到红线）·NFS 抖动是 H1 触发条件之一（非主因）
+**②F1-F5 推荐**：**F2 watchdog + F5 stuck_count 分列**（与运维倾向一致）→ r4/r5 收口后再议 F1/F3 永久上线
+**③对 tab:readback-cost 影响**：r1 78.5% vs r2 70.9% = 7.6pp 中 **wall bug 直接贡献 ≤1pp**（r2 多 1 个 stuck timeout task119=21744s）·主要 ≥6pp 是 (N′) 臂固有方差 + `readback=none` 长尾效应·**不建议因 wall bug 重跑 r2**（判据十三有效）
+**④待运维决策**：(a) 是否上线 F2 watchdog 兜 r4/r5（建议是·立即）·(b) 是否在论文 tab:readback-cost 加注脚说明软墙 + stuck_count 分列（建议是）·(c) r4 是否可启动（建议等 F2 上线后再启·否则 r4 可能再现 stuck 6h 阻塞）·(d) F1 `-k 60` 是否永久上线（r4/r5 收口后评估）
+**⑤并行任务**（与本诊断无冲突·均为非 eval 操作）：r3 手动 regrade PID 229615 跑中（log /tmp/ABL_readback_none_retest_r3_regrade.log·Step 2 组装 151 脚本 ✅·预计 ~19:15 收口·下轮唤醒 grep `pass (xx.x%)` 取 r3 Pass@1）·r1 trace cp ✅ 完成（NAS dest `2026_1019_035502/` 198M）·r3 trace cp ✅ 完成（NAS dest `2026_1019_145634/` 224M）·r2 trace 已在位 `2026_1019_071104_trace` 262M·**3 轮 trace 齐备 ✅ PLAN §3 硬前置满足**
+**⑥infra 全绿**：loop PID 81827 有 https_proxy=http://172.19.92.23:13128 ✅·/home 17G(≥8G✅·96%需关注)·cline 3.0.51 未动 ✅（which=/home/app.e0031982/.local/node-20/bin/cline·readlink -f=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline·baseline 守住）·MCP@8090(pid=2491123)/RAG@9006(pid=3503518) LISTEN ✅·4 端口 8650/8651/8652/8654@10.129.32.75 全 OPEN ✅
+**⑦下一步**（下轮唤醒）：① regrade 跑完 → grep `pass (xx.x%)` 取 r3 Pass@1 + 验证 trace cp 完成 → ②**等运维决策 F2 watchdog + r4 启动许可**（不自行启 r4·遵运维令三十三「结论前不启动 r4」）→ ③ r4 启动后 → r5 → 5/5 mean±std + 成本列 + stuck_count 分列 → 更新 zhulong_results.md / 6_exp.tex tab:readback-cost (N′) 行 + tab:ablation-harness (N) Mean read-backs → 重编译 PDF → commit `zhulong retest: readback none 5-run + cost (n=5)`。⚠️ push 待补：commit `8a36e705` 本地仍 ahead 1·下轮第一件事补推。 -->
 <!-- heartbeat 2026-10-19 18:13 运维令三十二② (N′) readback_none r3 batch 已结束（成功153/超时5/失败0·总耗时11742s）·parent PID 3692713 在 cleanup·Step 7.1 auto-grade 待触发；r2 trace 补救 cp 已启动(PID 164489)。完整证据（task 130 stuck 6582s / infra 全绿快照 / regrade 模板）已原文留在 daily-memories/2026-10-19.md 历史段。**本条已被 18:5x「运维令三十三」心跳取代**。 -->
 
 
@@ -53,7 +58,7 @@ WAITING: 1
 | S1 | omega_low | **跳过·采信legacy 82.8±1.0%** | ⏭️ 指令二十二①：legacy std=1.0可信不重跑；r1 code-gen已完(batch 2026_1015_064042)但采信legacy为最终值，r2-r5取消 |
 | S1 | readback_binary | **5/5 ✅ 78.1 ± 1.3%** | [75.9,79.1,77.8,78.5,79.1]（fresh 重测·2026-10-15~16·替换 legacy 66.2±16.1% std 过大含 43.0% 离群·运维令二十二②·判据(十三)各轮 timeout=13/8/7/6/4·r5 regrade=79.1%(125/158)·exec_err=0·infra=0✅）|
 | S1 | readback_none | **跳过·采信legacy 73.3±2.2%** | ⏭️ 指令二十二③：legacy std=2.2 可信不重跑 |
-| **S1** | **readback_none (N′) 复测**（运维令三十二②·2026-10-19·成本重测·PLAN_RETEST_READBACK_COST.md §1 规格）| **🟠 r3 跑中 2/5（r1 ✅ 78.5% / r2 ✅ 70.9%）** | **r1 ✅ = 78.5% (124/158)**：batch `2026_1019_035502` 03:55:02→06:02 收口 PID 2492062 -p 8 -n + V3 自探索 ON + full harness + pro-fp4@/cloud/v1 key e13f4f37·gen stats=success 157/failure 0/timeout 1·ACCESS RESTRICTED=1094 canary hook live ✅·pro-fp4=7622/glm-leak=0 ✅·0 403/429/quota/0-token/null-content/license_error ✅·判据十三 timeout=1≤10 ✅ 有效·Step 7.1 auto-grade 命中已知 FileNotFoundError → 手动 regrade 06:25:15→06:35:36 EXIT=0·`✅ 1019: 124/158 pass (78.5%) | generated: 152 ok, 5 fail`·trace 已 cp -a 保留 → /nasdata/.../ZhuLong_DAC2027/trace_retest/readback_none/2026_1019_035502/trace (198M·158 entries ✅ PLAN §3 硬前置满足)·legacy 73.3±2.2% 保留为对照·与 (B) 78.1±1.3% / (F) 82.1±3.0% 对照成本单调性。**r2 ✅ = 70.9% (112/158)**：batch `2026_1019_071104` 07:11:04→14:14 收口（task 119 stuck 6h00m 后 14:13 终止·harness bug `timeout 2500` 未触发·疑似运维 kill）·batch stats success=156/timeout=2/failure=0·Step 7.1 auto-grade FileNotFoundError → 手动 regrade 14:46→14:55 EXIT=0·`✅ 1019: 112/158 pass (70.9%) | generated: 148 ok, 8 fail, 0 exec_err`·生成状态 `{'success': 148, 'failure': 0, 'timeout': 2, 'fail': 8}`·判据十三 timeout=2≤10 ✅ 有效·ACCESS RESTRICTED=1931 hook live ✅·pro-fp4=9308 backbone 正确 ✅·0 license/Connection/429/403/401/quota ✅·trace r2 cp -a 后台保留 → /nasdata/.../ZhuLong_DAC2027/trace_retest/readback_none/2026_1019_071104_trace（PLAN §3）。**r3 启动** 14:56:34 PID 3662997 setsid batch `2026_1019_145634` -p 8 -n + 同配置·log /tmp/ABL_readback_none_retest_r3.log·预计 ~17:00 收口·⚠️ harness bug 风险：r3 可能再现 task stuck（timeout 2500 不触发）·若再现需运维 kill 收口 |
+| **S1** | **readback_none (N′) 复测**（运维令三十二②·2026-10-19·成本重测·PLAN_RETEST_READBACK_COST.md §1 规格）| **🟠 r3 regrade 跑中 3/5（r1 ✅ 78.5% / r2 ✅ 70.9% / r3 regrade 进行中）** | **r1 ✅ = 78.5% (124/158)**：batch `2026_1019_035502`·trace ✅ NAS 198M。**r2 ✅ = 70.9% (112/158)**：batch `2026_1019_071104`（task 119 stuck **21744s=8.7× wall**·运维令三十三根因诊断已上报）·trace ✅ NAS 262M。**r3 ✅ batch 收口 → regrade 跑中**：batch `2026_1019_145634` 14:56:34→18:12（gen success=153/timeout=5/fail=0·5 timeout 实际耗时 2500/2817/3891/4299/6582s·task 130=6582s=2.63× wall·判据十三 timeout=5≤10 ✅ 有效）·Step 7.1 FileNotFoundError → 手动 regrade 18:50:49 PID 229615（Step 2 组装 151 脚本 ✅·预计 ~19:15 收口）·trace ✅ NAS 224M·**3 轮 trace 齐备 ✅**。**运维令三十三根因诊断 ✅ 完成**（详见 daily §[19:10]）：H1+H2+H3 ✅ 成立·bug 从 legacy (B) 就存在（max 9350s=3.74× wall）·推荐 F2 watchdog + F5 stuck_count 分列·**结论前不启动 r4**·等运维决策 |
 
 ## 成绩记录（N=5 mean±std，Pass@1 %）
 
