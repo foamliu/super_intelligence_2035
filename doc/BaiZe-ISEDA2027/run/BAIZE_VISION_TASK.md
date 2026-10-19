@@ -1,6 +1,35 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔥 运维令 · 2026-10-19 22:5x（**立即启动 ArmD，不要再 idle**）· 用户直令「vision：尽快启动」
+
+> 用户令：「vision：尽快启动」（针对 21:26 下发的 ArmD 块，直到 22:35 仍未启动 ⇒ 现予明确催促）。
+> **现状核查（运维侧 22:35 实测）**：`run/vision/` 下**无任何 armD 脚本**；`data.py` 仍是 10-18 07:16 版本未被修改；`MEMORY_VISION.md` 停在 21:26。⇒ **ArmD 完全未开工。**
+> **本轮必须完成（按顺序，全部在 `.12`）**：
+
+**① 先做数据前置（阻塞项，二选一，**默认走 A**）**
+- **A（默认·推荐）**：给 `run/vision/data.py::build_mixed_loader` **加 parquet 直读分支**（按文件扩展名分流：`.parquet` → pyarrow 逐 row-group 读 `image.bytes`+`caption`；`.tar` → 走现有 wds 路径）。**零转码、省 2.2TB**。
+  - 参考已有实现：`run/vision/prep_data.py` 里 `sniff_ext()` + `pf.read_row_group(i)` + `tbl['image'].to_pylist()` 的写法可直接复用。
+  - ⚠️ WebMix-38M 与 wit_base 的列名若是 `image`(struct{bytes,path}) + `caption`，与 LLaVA 一致；**若列名不同，先 `pq.ParquetFile(fn).schema_arrow` 打印前 3 个字段名再适配**，并把实际列名写进日志。
+- **B（仅当 A 实在做不出来）**：`prep_data.py` 转 tar；**必须先 `df -BG` 确认落地盘 ≥2.3TB**（`/home` 96%、`/nas_train` 85%），否则禁用 B。
+- 🚫 **禁止**把 parquet 路径直接塞 `--data`：`empty_check=False` 会把 0 样本静默吞掉。
+
+**② 生成 6 源快照并报数（起训前必做）**
+- 写 `run/vision/data_snapshot_20261019_armD.txt`，逐行绝对路径，6 源 = GPIC(8000 tar) + CC12M(1100 tar) + Amshaker(2250 tar) + WebMix(3886 parquet 或转出的 tar) + wit_base(330 parquet) + InternVL(2000 tar)。
+- **实测并打印**：每源文件数、总 pair 数（parquet 用 `metadata.num_rows` 累加；tar 按已知估计）。
+- **算 3-epoch 步数**：`steps = ceil(3 × 总pairs / 8192)`，**先把数字贴进日志再起训**（不得沿用 57250）。
+
+**③ 起训（`run_armD_openclip.sh`，复制 `run_armC_openclip.sh` 只改 5 处）**
+- `OUT=/nas_train/app.e0031982/datasets/baize-vision/out/armD_20261019_aimv2_openclip_vitb16_224`
+- `--lr 2e-3 --min-lr 2e-5`（cosine 保持）、`--steps <②算出的值>`
+- `--data` = 6 源（快照文件 + 新三源路径）
+- **其余逐字不动**：塔/目标/mask 0.6/**wd 0.01（ArmC 值，不是 0.1）**/GBS 8192/MBS 512/accum 2/**warmup 2000**/seed 1234/save 10k keep 2。
+- 启动：`setsid bash run_armD_openclip.sh > /tmp/armD_openclip_train.log 2>&1 < /dev/null &`
+
+**④ 起训后 ≤30min 回报**：数据解法(A/B) + 各源文件数/pair 数 + **3ep 实际步数** + 首 loss + 显存峰值 + 预计耗时（按 ArmC 0.78 it/s 外推）+ **四变量披露声明**（数据/epoch/LR/min_lr）。
+
+**⑤ 边界**：🚫 不覆盖 `armB_*`/`armC_*` 产物；🚫 不杀 `.29` pretrain（~02:50 收尾）；🚫 不动 harness relay。
+
 ### 🆕 运维指令 · 2026-10-19 21:2x（🚀 **ArmD：数据扩到 6 源 + 3 epoch + LR 2e-3 / min_lr 2e-5**）· 用户直令 · **最高优先**（覆盖 ArmC 块的"idle"状态）
 
 > 用户令（原文）：「vision: 启动 ArmD。数据：ArmC数据+新下载的三个数据集 -> 3 epoches。学习率: LR=2e-3, min_LR = 2e-5, cosine。其它跟 ArmC一致不变。」
@@ -84,56 +113,9 @@
 
 > **已闭合**（ArmC 全链路 DONE 2026-10-19）。原文移至 `run/ARCHIVE_OPERATOR_VISION.md`（2026-10-19 归档）。**结论**：ArmC = 两变量；训练 57250 步 ✓ / ProtB lp 62.332·5-NN 54.718 / MLLM 三阶段 ✓ / 12 集 12/12 DONE avg 25.78%（vs ArmB 26.10%，**不可分辨**）。ArmC 配置已被 ArmD 承接（见顶部 ArmD 块，**wd 0.01 沿用**）。需要时再读。
 
-### 🆕 运维指令 · 2026-10-17 12:4x（⚔️ 立即 kill `.12` pretrain 进程 → 起 ArmB；**改 4 epoch** → 训完评 ProtB）· 用户直令 · 最高优先
-> ⏩ 已执行并归档（杀 pretrain → ArmB 4-epoch）已完成；详情 → `daily-memories-vision/2026-10-17.md`。
+### 📦 运维指令 · 2026-10-17 12:4x/12:2x/12:0x（kill .12 pretrain→起 ArmB / .12 专属 / 启动 ArmB）— 已归档
 
-### 🆕 运维指令 · 2026-10-17 12:2x（🖥️ `.12` 专属 vision；pretrain 迁 `.29`）· 用户直令 · 最高优先
-> ⏩ 已执行并归档（`.12` 专属 vision）已生效；详情 → `daily-memories-vision/2026-10-17.md`。
-
-### 🆕 运维指令 · 2026-10-17 12:0x（🚀 启动 ArmB：open_clip ViT-B/16 + AIMv2-style · 全量 8000 GPIC · 3 epoch）· 用户直令 · 最高优先
-
-> **用户令（原文）**：「vision：启动下边实验 目标=AIMv2-style 数据=全量8000 tar GPIC + CC12M + Amshaker 塔=open_clip ViT-B/16 86.2M warmup=2000步 LR=1e-3，min_lr=1e-4 GBS=8192，MBS=512(如果OOM，则GBS=4096，MBS=256) epoch=3 按照这个配方训练，给个ETA 使用 open_clip接口（便于嵌入LLaVA-OneVision架构用lmms-eval评测）」
-
-**⓪ 与上一条的关系**：本块**取代**上一条（2026-10-17 报告块）的 ③ ArmB 配方与排队；上一条的 **① ArmA 报告 / ② 兼容性附录仍要交**（训练起来后 CPU 补，见 ⑤）。
-
-**① 配方（逐字执行，不改）**：
-- 目标：**AIMv2-style** = `contrast_weight×InfoNCE + patch_loss_weight×MSE(predictor(patches[mask]), target[mask])`；`contrast_weight=1.0, patch_loss_weight=1.0, mask_ratio=0.6`（沿用 `r9_train.py:782-807` 口径；报告写清）。
-- 数据：**GPIC 全量 8000 tar + CC12M 1100 + Amshaker 2250 = 11,350 shards ≈117.3M 对**；新建 `data_snapshot_20261017_gpic8000.txt`；起训前 `ls | wc -l` + `find -name '*.incomplete'` 核，**实际数字写进 log/report**（若不足/路径不同，按实际并声明）。
-- 塔：**open_clip ViT-B/16 224**（visual 86.2M / total 149.6M，双塔随机初始化）。
-- 优化：**warmup=2000 步**；**LR 1e-3 → min 1e-4（cosine）**；AdamW wd=0.1、betas=(0.9,0.98)、grad_clip=1.0、bf16、seed=1234（未指定项沿用 ArmA，报告列明）。
-- 批：**GBS=8192, MBS=512/卡（累加 2）**；**OOM 回退 GBS=4096, MBS=256/卡（累加 2）**；实际档位 + 峰值显存必须记录。
-- 步数：**3 epoch**；N≈117.25M → **GBS8192 ≈42,940 步**（14,313/epoch）；回退 GBS4096 ≈85,876 步；以实际 N 重算并写进报告。
-- save every **10,000** 步 + final；保留 latest + 最近 2 个 ckpt（省盘）。
-
-**② open_clip 接口（硬要求）**：
-- 必须 `open_clip.create_model_and_transforms('ViT-B-16', pretrained=None)`；不得改模型类/换自研塔。
-- **predictor 只作训练辅助头**；取 patch tokens 必须**复用同一次 vision 前向**（forward hook / `forward_intermediates`），**禁止二次 forward**（否则 ETA +35–45%）。
-- 保存：`open_clip_state_dict.pt`（**剥离 predictor**）+ `predictor.pt` + `config.json`；验收 `open_clip.create_model_and_transforms('ViT-B-16', pretrained=<ckpt>)` **strict load 通过**。
-- LLaVA-OV/lmms-eval：新增 `mllm_bridge/open_clip_vitb16_768.py`（注册 `baize-vitb16-768`；`encode_image` → `[B,196,768]`；image_size 224 / patch 16 / 无 spatial merge）+ `export_for_llava_ov.py`；CPU 单测：open_clip 加载 / `encode_image` 形状 / wrapper 与原生 allclose / projector 768→LLM dim 形状。lmms-eval 用 1 个小样本冒烟（不阻塞训练）。
-
-**③ 起训（先探再起；🚫 不 kill pretrain）**：
-- 起训前 `nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv` 原文落盘。
-- `.12` 8×H100 正被 **pretrain 80B decay** 全占（ETA ~10-20 02:30）⇒ **不得 kill/降速/抢卡**。
-- 先试 `.29`（`ssh -o BatchMode=yes -o ConnectTimeout=5 10.239.2.29 'nvidia-smi'`）：若 8 卡空闲且同一 NFS 的 `py310` + open_clip 可用 → **立即在 .29 起训**；SSH 不通/环境缺 ⇒ 记 blocker（原文），**不得擅自装包/改共享 env**。
-- `.29` 不可用 ⇒ 写 `run/vision/run_armB_when_free.sh`：每 5min 轮询 `.12` 8 卡（无 compute apps 且每卡显存 >70GB）→ 满足即 `setsid` 起训；记录 pretrain 实际结束时间。
-- 若用户明确要求「停 pretrain 抢卡」才可停；本指令默认**不抢**。
-
-**④ ETA（按实测公式，起训后用自己的实测值刷新）**：
-- N≈117.3M（GPIC 8000×12,537≈100.3M + CC12M 11.0M + Amshaker 6.0M）；3 epoch = **351.9M samples**。
-- 吞吐：ArmA 实测 **3.37 it/s @ GBS2048 = 6,902 samples/s**；MBS512 预计 +0–5%，AIMv2 头 <1%（前提 = 复用前向）⇒ **6,900–7,300 samples/s**。
-- **纯训练 ≈13.4–14.2h**；+启动/ckpt/最终 ProtB（3 seeds）≈1–2h ⇒ **总 ETA ≈15–16.5h**；GPU·h ≈ **110–120**。
-- 若二次前向（禁止）→ 19–21h；若实测吞吐 6,000 → 16.3h 纯训练。
-- **两条起训情景**：① `.29` 空 → 代码 1–2h 后起（约 13:00–14:00）→ **10-18 04:00–06:30 完成**；② 只能等 `.12` → 10-20 02:30 起 → **10-20 17:00–19:00 完成**。
-- 报告必须给：实际 N / steps / samples/s / 墙钟 / 峰值显存 / 是否 OOM 回退。
-
-**⑤ 交付与次序**：
-1. **P0**：`run/vision/armB_aimv2_openclip.py` + `run/vision/run_armB_openclip.sh` + `run/vision/run_armB_when_free.sh` + CPU 单测（1–2h）。
-2. **P0**：起训（.29 优先，否则排队 .12）。
-3. **P1**：训练起来后用 CPU 补 **ArmA 中文报告 + 兼容性附录**（上一条要求）。
-4. `MEMORY_VISION.md` 状态头 + `daily-memories-vision/2026-10-17.md`；commit `vision armB:`。
-
-**⑥ 纪律**：不改配方；不 kill pretrain；不伪造 ETA/结果；不占 GPU 做 CPU 工作；任务书/MEMORY ≤32KB 自滚。
-
+> **已闭合**：ArmB 已训完并评测（ProtB 62.093/58.102、MLLM 26.10%），ArmC/ArmD 依次承接。原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-17（📄 ArmA 结果中文报告 + 归档 · 🔌 open_clip × AIMv2-style 兼容性工程评估）· 用户直令 · 最高优先
 

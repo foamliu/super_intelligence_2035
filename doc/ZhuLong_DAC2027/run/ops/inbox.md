@@ -1,5 +1,51 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 87 -->
+<!-- RUN_ID: 88 -->
+
+## RUN_ID 88 — ✅ 重启 zhulong_loop（R86 误杀善后·用户已批「当然要重启」）
+
+> 用户令：「1. zhulong_loop 若已被杀，当然要重启」
+> **R87 核查结论**：r3 regrade 的 6 个 PID **全部 GONE（kill 成功）**；**zhulong_loop 确已不在（R86 误杀）**；`ops_relay` / MCP(8090) / RAG(9006) 全活；备份 `..._BACKUP_223148` 完好（352M，success=153/timeout=5/failure=0）；**8651/8655/8656/8657/8658 全 FREE**。
+> **本块动作**：仅重启 loop。**不 kill 任何东西**、不改 `.env`、不启 r4。
+
+```bash
+set -u
+echo "=== RUN_ID 88 | restart zhulong_loop | $(date '+%F %T') | host=$(hostname) ==="
+RUN=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+[ -d "$RUN" ] || RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+echo "RUN dir = $RUN"
+ls -l "$RUN"/zhulong_loop.sh 2>/dev/null | cut -c1-100 || echo "  LOOP SCRIPT MISSING"
+
+echo ""
+echo "[1] 重启前确认：无残留 loop"
+ps -eo pid,args 2>/dev/null | grep '[z]hulong_loop\.sh' | cut -c1-100 || echo "  none (good)"
+
+echo ""
+echo "[2] cline 可用性（重启必须带正确 PATH，否则静默空转）"
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:$PATH"
+WB=$(command -v cline 2>/dev/null || true)
+echo "  which cline = ${WB:-NOT_FOUND}"
+[ -n "$WB" ] && cline --version 2>&1 | head -2 | cut -c1-60 || echo "  cline 不在 PATH（loop 会空转！）"
+
+echo ""
+echo "[3] 启动（setsid + 登录 shell，输出去 /tmp）"
+cd "$RUN" || exit 1
+setsid bash -lc "exec bash '$RUN/zhulong_loop.sh'" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 6
+
+echo ""
+echo "[4] 复核：进程 + 日志头"
+ps -eo pid,ppid,etimes,args 2>/dev/null | grep '[z]hulong_loop\.sh' | cut -c1-100 || echo "  X 未起来"
+echo "  --- log head ---"
+head -8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+echo "  --- log tail ---"
+tail -4 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+
+echo ""
+echo "[5] 保命项复查"
+pgrep -f '[o]ps_relay' >/dev/null && echo "  ops_relay ALIVE OK" || echo "  X ops_relay GONE"
+echo "  t0002147 cline count = $(ps -eo user,args 2>/dev/null | grep -c 't0002147.*cline')"
+echo "=== DONE 88 ==="
+```
 
 ## RUN_ID 87 — 🔴 紧急只读核查：RUN_ID 86 误伤排查（zhulong_loop 是否被杀 + regrade 是否已停）
 
@@ -7,7 +53,7 @@
 > ⚠️ PID 632398 是 **zhulong loop 的 opencode 编排进程**，本不该 MATCH —— 因其 cmdline 拼接了任务书全文（含 `e0031982` 与 `run_eval`/`run_on_sandbox` 字面）导致误命中。
 > **本块纯只读**：不 kill、不重启、不改配置。**输出严格 `cut`**，防再次爆长度。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 87 | post-R86 verification (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
 

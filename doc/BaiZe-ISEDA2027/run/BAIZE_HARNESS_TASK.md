@@ -2,73 +2,51 @@
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 
+### 🆕 运维指令 · 2026-10-19 22:4x（🔧 **P0：hermes 适配器已由运维改好，去验证 + 判 Gen5 门据**）· 用户直令「harness hermes：去修复」· 最高优先
+
+> **运维已直接改代码**：`run/harness/terminalbench/agents/hermes.py`（见 commit `R457`）。**agent 不需要再研究怎么修，只需验证 + 跑通 + 判门据。**
+>
+> **根因（已查明·权威依据）**：hermes-agent **不从 `~/.hermes/config.yaml` 读取自定义 provider**。provider 必须是**插件**：
+> `$HERMES_HOME/plugins/model-providers/<name>/`，内含 `__init__.py`（调 `register_provider(profile)`）+ `plugin.yaml`（manifest）。
+> 原代码把 `provider: kimi-proxy: {base_url, api_key, api_mode}` 写进 config.yaml ⇒ **被静默忽略** ⇒ `hermes --provider kimi-proxy` 报 **`Unknown provider kimi-proxy`**（Gen5 5/5 RuntimeError 的真正原因，与 R452 猜的"py3.14/uv 装不上"无关）。
+> 依据：NousResearch/hermes-agent `plugins/model-providers/README.md`（"Each subdirectory is a self-contained provider profile plugin… `__init__.py` is imported and expected to call `providers.register_provider(profile)`"）。
+>
+> **R457 改了什么（3 处）**：
+> 1. `install()` 新增 `_install_provider_plugin()`：`mkdir -p /root/.hermes/plugins/model-providers/kimi-proxy`，写入 `__init__.py`（`ProviderProfile(name='kimi-proxy', aliases=('kimi','kimi-cloud'), env_vars=('HERMES_KIMI_API_KEY','HERMES_KIMI_BASE_URL'), base_url=<TB_BASE_URL>)` + `register_provider(...)`）与 `plugin.yaml`（`kind: model-provider`）。
+> 2. `run()` 的 config.yaml **删掉无效 provider 段**（只留 `agent.max_turns`）。
+> 3. env 改为 **真实 key + 直连内网网关**（不再走本机 gw_proxy 的 dummy key）：`HERMES_KIMI_API_KEY`/`OPENAI_API_KEY` = 真实 key，`HERMES_KIMI_BASE_URL`/`OPENAI_BASE_URL` = `TB_BASE_URL`；`NO_PROXY` 含 `10.239.*,172.19.*`。
+> 4. 顺带把 `exec_as_root` 换成基类 `_exec_in_container`（原来那个方法在基类里不存在）。
+
+**① 验证（先只跑 1 题，别一上来 7×5）**
+```bash
+# 在 .29（docker 只在 .29）
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench
+# 单题冒烟：只跑 fix-git 这一题，命中缓存镜像
+harbor run -p <单题 dataset 目录> --agent hermes --model kimi-k2.6-cloud 2>&1 | tail -40
+```
+**通过判据**：日志里**不再出现** `Unknown provider kimi-proxy`；容器内 `ls -l /root/.hermes/plugins/model-providers/kimi-proxy/` 能看到 `__init__.py` + `plugin.yaml`；trial 能真正产生 tool_calls。
+
+**② 若冒烟 PASS → 重跑 Gen5 的 hermes 一路（×5）**
+- 其余 6 路**不重跑**（cline-patched 0.6 / codex 0.0 / opencode 0.4 已有效；claude-code/deepseek/pi 等当前 pilot 自己完成）。
+- 汇聚后按判据：**infra ≤20% AND ≥6/7 runnable** → 过则放行 7×89；不过则报 blocker。
+
+**③ 若冒烟 FAIL → 只报 blocker，不要再自己猜**
+- 必须贴出：容器内 `hermes --version`、`hermes model list`（或 `hermes --help` 里 provider 相关段）、`ls -l /root/.hermes/plugins/model-providers/kimi-proxy/`、以及 trial 的 stderr 原文。
+- 🚫 **不要**再改 `hermes.py`（已由运维维护），不要说"hermes 需要 py3.14"（该结论已被证伪）。
+- 🚫 不要动运行中的其他 6 路 pilot。
+
+**④ 纪律**
+- 只碰 hermes 一路；🚫 不重启 .29 docker、不杀其他 trial、不启 7×89。
+- 回报写 `MEMORY_HARNESS.md` 心跳（**≤6 行**，避免超 32KB）+ `daily-memories-harness/2026-10-19.md`，commit 前缀 `harness tb:`。
+
+### 📦 运维指令 · 2026-10-18 10:2x（修 .29 ops 中继 P0）+ 2026-10-18（7×5 pilot 推进）— 已归档
+
+> **已闭合**：中继已修（R440+ 持续健康，.last_run_id 追至 139）；pilot 已由 R446~R457 承接至 Gen5。原文移至 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
+
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
-
-### 🆕 运维指令 · 2026-10-18 10:2x（🚨 **P0：先修复 `.29` 的 ops 中继，再继续 TB pilot**）· 用户直令 · 最高优先
-
-> **背景**：RUN_ID 123（09:54 推送的只读探针）至今 `ops/.last_run_id` 仍为 **122**、outbox 无回执；而 pretrain（10:08）与 harness（10:09）仍能正常 push ⇒ 判定为 **`.29` 本机 ops 中继进程停摆/冻死**，不是网络。你与它在同一台机器，由你修复。
-> ⚠️ **历史事故**：在命令行里把 `pkill -f "ops_relay.sh"` 与启动命令写在一起 → **自匹配**，把中继和执行重启的 shell 一起杀掉。**必须写进脚本文件再执行。**
-
-**① 安全重启（照抄执行）**
-```bash
-cat > /tmp/fix_relay_1018.sh <<'EOF'
-set -u
-pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill
-sleep 2
-cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
-sleep 3
-pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-140
-tail -5 /tmp/baize_ops_relay.log
-EOF
-bash /tmp/fix_relay_1018.sh
-```
-- **判据**：≥1 个 `bash ops_relay.sh` 进程 + 日志出现 started；**30–90s 内 `.last_run_id` 应从 122 → 123**（123 已就绪，含 `.29` loop/GPU + `.12` data git 只读诊断）。
-- 若 2 次仍不起 ⇒ 贴 `pgrep -af` / 日志原文报 blocker；🚫 不改 `ops_relay.sh` 本体、🚫 不杀 loop、🚫 不碰训练。
-
-**② 修好后继续 TB**：10:09 已提交 `DockerEnvironment.exec()` 签名修复（`timeout→timeout_sec`、env 走参数，7 适配器 + `_base`）⇒ 直接重跑 **solo smoke（cline-patched × 1）**，通过后进 **7×5 pilot**。
-**③ 红线**：只动 `.29` 本机；🚫 不占 GPU、不重启 `torchrun`；commit 前缀 `harness ops:`。
-
-### 🆕 运维指令 · 2026-10-18（🚀 P0：从 solo smoke 推进到 **7×5 pilot**（不再只做单适配器验证））· 用户直令 · 最高优先
-
-> **背景**：Oracle 5/5 ✅、7 适配器骨架 ✅、28/28 mock 单测 ✅、`_install_node` 已改 NVM+aliyun、launch 脚本已改本地 `-p` + `minimal2` overlay。**目前卡在"等 smoke"，已静止 1.5h。** 本令要求：**不再逐个逐个验，用一个 pilot 把 7 个适配器一次性打穿。**
-
-**① 第一小时：solo smoke（只做 1 个，必须留证）**
-- 选 **cline-patched** × **1 个任务**（用 `--pilot` 里的第 1 个任务，或最轻量那个）。
-- 目的只有 4 个：**① NVM/镜像装包通 ② API 通（`wire_api=chat` 或 provider 正确） ③ agent 真跑起来（有 tool_calls） ④ trace 落盘可读**。
-- 通过判据：容器内 `cline` 可执行 + 至少 1 条 API 200 + trace 文件非空 + 有 `tool_calls`。
-- 失败 ⇒ 只修**不通过的那一项**（装包/网络/配置），再重跑**同一个** smoke；最多 3 次，仍不过就贴原文报 blocker（🚫 不要换任务掩盖问题）。
-
-**② 紧接：7×5 pilot（35 trials，这是门禁）**
-```bash
-cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench
-bash launch_tb_7way.sh --pilot      # 7 harness × 5 tasks = 35 trials
-```
-- 7 路：cline-patched / codex / hermes / opencode / claude-code / deepseek-harness / pi。
-- 模型：`kimi-k2.6-cloud`（若网关 401/403 ⇒ 按 ⑤ 处理，**不许硬跑**）。
-- 每路必须输出：`install()` 是否成功、`resolved/failed/infra/quota` 四分类计数、trace 路径。
-- **pilot 判据（先定）**：
-  | 结果 | 结论 |
-  |:--|:--|
-  | infra 失败率 **≤ 20%** 且 **≥6 路有可运行 trial** | ✅ 放行 7×89 |
-  | infra 失败率 20–50% | ⚠️ 先修 infra，**不放行全量** |
-  | >50% 或 ≥3 路完全跑不起来 | 🔴 停，报 blocker（附每路失败原文） |
-
-**③ 放行后：7×89 全量（623 trials）**
-- 只在 ② 判据通过后启动；**每路串行、7 路按 429 自适应降并发**。
-- 交付：`terminalbench_kimi_k2.6_results.json` + `reports/report_harness_terminalbench_7way_zh.html`（含 Wilson 95% CI、7×7 McNemar、quota 单列、版本表 + 诚实条款）。
-
-**④ 资源与纪律**
-- 只用 `.29` 的 CPU/磁盘（**不占 GPU**：`.29` 8 卡在跑 pretrain decay，🚫 不碰）；Docker 只在 `.29`。
-- 与 data 错峰重 IO；`/tmp` 使用前先 `df`（`.29` 约 15G，**超 5G 的镜像/日志先清或换 `/nasdata`**）。
-- 每次唤醒只推进一步（smoke → pilot → 全量）；`WAITING=1` 仅在真跑时置位。
-- commit 前缀 `harness tb:`；MEMORY ≤32KB 自滚。
-
-**⑤ 网关异常时**
-- 若 `kimi-k2.6-cloud` 或网关整体 401/403：**立即停**，贴 `curl -i` 原文（含 `www-authenticate`/`server`），报 blocker；🚫 不要用假分数/跳过 trial 凑数，🚫 不要把 infra 失败算成 harness 失败。
 
 ### 🆕 运维指令 · 2026-10-17 20:0x（🚨 P0 抢修：重启 ops 中继 + 重跑 3 个失败 oracle 任务）
 > ⏩ 已闭合（oracle 5/5 已达成；中继已恢复）→ `daily-memories-harness/2026-10-17.md`。

@@ -5,6 +5,20 @@ Uses ``hermes -z <prompt>`` oneshot mode, same as SWE-bench HermesDriver.
 
 Install: uv pip install hermes-agent (from NousResearch/hermes-agent)
 Run:     hermes -z<instruction> --provider kimi-proxy --model kimi-k2.6-cloud --yolo
+
+R457 (2026-10-19) — ROOT CAUSE FIX for "Unknown provider kimi-proxy":
+    hermes-agent does NOT read custom providers from ``~/.hermes/config.yaml``.
+    Providers are **plugins**: ``$HERMES_HOME/plugins/model-providers/<name>/``
+    each containing ``__init__.py`` (which calls ``register_provider(profile)``)
+    and ``plugin.yaml`` (manifest).  Writing ``provider: kimi-proxy: {...}`` into
+    config.yaml is silently ignored => ``--provider kimi-proxy`` fails with
+    ``Unknown provider kimi-proxy`` on all 5 trials.
+    Ref: plugins/model-providers/README.md in NousResearch/hermes-agent.
+
+    Fix: install a provider plugin into the container before running hermes, and
+    point it straight at the internal gateway with the REAL key (the gateway is
+    OpenAI-compatible; no gw_proxy hop needed, which also avoids the
+    role:developer rewrite issue).
 """
 
 from __future__ import annotations
@@ -24,6 +38,14 @@ from terminalbench.agents._base import (
     TB_DUMMY_KEY,
     TB_GW_PROXY_URL,
     TB_MODEL,
+)
+
+#: Name of the provider plugin we register inside the container.
+HERMES_PROVIDER_NAME = "kimi-proxy"
+
+#: Where hermes looks for user plugins (see plugins/model-providers/README.md).
+HERMES_PROVIDER_PLUGIN_DIR = (
+    "/root/.hermes/plugins/model-providers/" + HERMES_PROVIDER_NAME
 )
 
 
@@ -63,16 +85,70 @@ class HermesTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install Hermes-agent inside the Docker container via pip."""
-        # Install Python 3.12+ if not present, then hermes-agent
-        await self.exec_as_root(
+        """Install hermes-agent + register the kimi-proxy provider plugin (R457)."""
+        # 1) install hermes-agent
+        await self._exec_in_container(
             environment,
             command=(
                 "pip install --break-system-packages hermes-agent 2>&1 | tail -5"
             ),
+            timeout=900,
         )
         result = await environment.exec(command="hermes --version 2>&1 || true")
         self._version = result.stdout.strip() or "unknown"
+
+        # 2) R457: providers must be PLUGINS, config.yaml is not read for them
+        await self._install_provider_plugin(environment)
+
+    async def _install_provider_plugin(self, environment: BaseEnvironment) -> None:
+        """Write $HERMES_HOME/plugins/model-providers/kimi-proxy/{__init__.py,plugin.yaml}.
+
+        Per plugins/model-providers/README.md, each subdirectory is a
+        self-contained provider profile plugin; __init__.py must call
+        register_provider(Profile).  We point straight at the internal
+        OpenAI-compatible gateway with the real key.
+        """
+        base_url = self._tb_base_url
+
+        init_py = (
+            "from providers import register_provider\n"
+            "from providers.base import ProviderProfile\n"
+            "\n"
+            "kimi_proxy = ProviderProfile(\n"
+            f"    name={HERMES_PROVIDER_NAME!r},\n"
+            "    aliases=('kimi', 'kimi-cloud'),\n"
+            "    display_name='Kimi (internal gateway)',\n"
+            "    description='Internal agi-gateway OpenAI-compatible endpoint',\n"
+            "    env_vars=('HERMES_KIMI_API_KEY', 'HERMES_KIMI_BASE_URL'),\n"
+            f"    base_url={base_url!r},\n"
+            ")\n"
+            "register_provider(kimi_proxy)\n"
+        )
+        plugin_yaml = (
+            f"name: {HERMES_PROVIDER_NAME}\n"
+            "kind: model-provider\n"
+            "version: 1.0.0\n"
+            "description: Internal agi-gateway provider for the TB 7-way benchmark\n"
+            "author: BaiZe harness\n"
+        )
+
+        await environment.exec(
+            command=f"mkdir -p {shlex.quote(HERMES_PROVIDER_PLUGIN_DIR)}"
+        )
+        await self._upload_agent_config(
+            environment, init_py,
+            f"{HERMES_PROVIDER_PLUGIN_DIR}/__init__.py", "provider_init.py",
+        )
+        await self._upload_agent_config(
+            environment, plugin_yaml,
+            f"{HERMES_PROVIDER_PLUGIN_DIR}/plugin.yaml", "plugin.yaml",
+        )
+
+        # non-fatal diagnostic: prove the files landed
+        check = await environment.exec(
+            command=f"ls -l {shlex.quote(HERMES_PROVIDER_PLUGIN_DIR)} 2>&1 | tail -4"
+        )
+        print(f"[hermes] provider plugin installed:\n{check.stdout or ''}")
 
     @override
     async def run(
@@ -88,15 +164,11 @@ class HermesTB(TBBaseAgent):
         """
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
-        # Write a config file for the kimi provider, routed through the local
-        # gw_proxy (rewrites developer->system, injects the real key).
+
+        # Minimal config.yaml — providers live in the plugin dir now (R457).
+        # (Writing a `provider:` block here is silently ignored by hermes-agent.)
         config_content = (
-            f"provider:\n"
-            f"  kimi-proxy:\n"
-            f"    base_url: {TB_GW_PROXY_URL}\n"
-            f"    api_key: {TB_DUMMY_KEY}\n"
-            f"    api_mode: chat_completions\n"
-            f"agent:\n"
+            "agent:\n"
             f"  max_turns: {self._max_turns}\n"
         )
         await self._upload_agent_config(
@@ -107,17 +179,19 @@ class HermesTB(TBBaseAgent):
         cmd = (
             f"cd {shlex.quote(cwd)} && "
             f"hermes -z{shlex.quote(instruction)} "
-            f"--provider kimi-proxy --model {shlex.quote(self._tb_model)} "
+            f"--provider {HERMES_PROVIDER_NAME} --model {shlex.quote(self._tb_model)} "
             f"--yolo"
         )
+        _key = self._tb_api_key or TB_DUMMY_KEY
         env = self._env_for_harness(extra={
-            # Route through the local gw_proxy: rewrites developer->system and
-            # injects the real key.  hermes may read OPENAI_* env in addition to
-            # the config file, so point both at the proxy.
-            "OPENAI_API_KEY": TB_DUMMY_KEY,
-            "OPENAI_BASE_URL": TB_GW_PROXY_URL,
-            "no_proxy": "127.0.0.1,localhost",
-            "NO_PROXY": "127.0.0.1,localhost",
+            # Plugin reads these (see env_vars in the ProviderProfile, R457).
+            "HERMES_KIMI_API_KEY": _key,
+            "HERMES_KIMI_BASE_URL": self._tb_base_url,
+            # Keep OPENAI_* consistent in case hermes falls back to them.
+            "OPENAI_API_KEY": _key,
+            "OPENAI_BASE_URL": self._tb_base_url,
+            "no_proxy": "127.0.0.1,localhost,10.239.*,172.19.*",
+            "NO_PROXY": "127.0.0.1,localhost,10.239.*,172.19.*",
         })
 
         result = await environment.exec(

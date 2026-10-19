@@ -1049,3 +1049,68 @@ timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -3
 - ✅ 清完报 `df -h /tmp` 前后对比 + 释放量。
 - commit 前缀 `harness tmp-clean:` · 任务书 >32KB 自滚归档。
 
+
+
+<!-- archived from BAIZE_HARNESS_TASK.md 2026-10-19 22:5x (closed 2026-10-18 blocks) -->
+### 🆕 运维指令 · 2026-10-18 10:2x（🚨 **P0：先修复 `.29` 的 ops 中继，再继续 TB pilot**）· 用户直令 · 最高优先
+
+> **背景**：RUN_ID 123（09:54 推送的只读探针）至今 `ops/.last_run_id` 仍为 **122**、outbox 无回执；而 pretrain（10:08）与 harness（10:09）仍能正常 push ⇒ 判定为 **`.29` 本机 ops 中继进程停摆/冻死**，不是网络。你与它在同一台机器，由你修复。
+> ⚠️ **历史事故**：在命令行里把 `pkill -f "ops_relay.sh"` 与启动命令写在一起 → **自匹配**，把中继和执行重启的 shell 一起杀掉。**必须写进脚本文件再执行。**
+
+**① 安全重启（照抄执行）**
+```bash
+cat > /tmp/fix_relay_1018.sh <<'EOF'
+set -u
+pgrep -f 'bash [o]ps_relay[.]sh' | xargs -r kill
+sleep 2
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
+sleep 3
+pgrep -af 'bash [o]ps_relay[.]sh' | cut -c1-140
+tail -5 /tmp/baize_ops_relay.log
+EOF
+bash /tmp/fix_relay_1018.sh
+```
+- **判据**：≥1 个 `bash ops_relay.sh` 进程 + 日志出现 started；**30–90s 内 `.last_run_id` 应从 122 → 123**（123 已就绪，含 `.29` loop/GPU + `.12` data git 只读诊断）。
+- 若 2 次仍不起 ⇒ 贴 `pgrep -af` / 日志原文报 blocker；🚫 不改 `ops_relay.sh` 本体、🚫 不杀 loop、🚫 不碰训练。
+
+**② 修好后继续 TB**：10:09 已提交 `DockerEnvironment.exec()` 签名修复（`timeout→timeout_sec`、env 走参数，7 适配器 + `_base`）⇒ 直接重跑 **solo smoke（cline-patched × 1）**，通过后进 **7×5 pilot**。
+**③ 红线**：只动 `.29` 本机；🚫 不占 GPU、不重启 `torchrun`；commit 前缀 `harness ops:`。
+
+### 🆕 运维指令 · 2026-10-18（🚀 P0：从 solo smoke 推进到 **7×5 pilot**（不再只做单适配器验证））· 用户直令 · 最高优先
+
+> **背景**：Oracle 5/5 ✅、7 适配器骨架 ✅、28/28 mock 单测 ✅、`_install_node` 已改 NVM+aliyun、launch 脚本已改本地 `-p` + `minimal2` overlay。**目前卡在"等 smoke"，已静止 1.5h。** 本令要求：**不再逐个逐个验，用一个 pilot 把 7 个适配器一次性打穿。**
+
+**① 第一小时：solo smoke（只做 1 个，必须留证）**
+- 选 **cline-patched** × **1 个任务**（用 `--pilot` 里的第 1 个任务，或最轻量那个）。
+- 目的只有 4 个：**① NVM/镜像装包通 ② API 通（`wire_api=chat` 或 provider 正确） ③ agent 真跑起来（有 tool_calls） ④ trace 落盘可读**。
+- 通过判据：容器内 `cline` 可执行 + 至少 1 条 API 200 + trace 文件非空 + 有 `tool_calls`。
+- 失败 ⇒ 只修**不通过的那一项**（装包/网络/配置），再重跑**同一个** smoke；最多 3 次，仍不过就贴原文报 blocker（🚫 不要换任务掩盖问题）。
+
+**② 紧接：7×5 pilot（35 trials，这是门禁）**
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench
+bash launch_tb_7way.sh --pilot      # 7 harness × 5 tasks = 35 trials
+```
+- 7 路：cline-patched / codex / hermes / opencode / claude-code / deepseek-harness / pi。
+- 模型：`kimi-k2.6-cloud`（若网关 401/403 ⇒ 按 ⑤ 处理，**不许硬跑**）。
+- 每路必须输出：`install()` 是否成功、`resolved/failed/infra/quota` 四分类计数、trace 路径。
+- **pilot 判据（先定）**：
+  | 结果 | 结论 |
+  |:--|:--|
+  | infra 失败率 **≤ 20%** 且 **≥6 路有可运行 trial** | ✅ 放行 7×89 |
+  | infra 失败率 20–50% | ⚠️ 先修 infra，**不放行全量** |
+  | >50% 或 ≥3 路完全跑不起来 | 🔴 停，报 blocker（附每路失败原文） |
+
+**③ 放行后：7×89 全量（623 trials）**
+- 只在 ② 判据通过后启动；**每路串行、7 路按 429 自适应降并发**。
+- 交付：`terminalbench_kimi_k2.6_results.json` + `reports/report_harness_terminalbench_7way_zh.html`（含 Wilson 95% CI、7×7 McNemar、quota 单列、版本表 + 诚实条款）。
+
+**④ 资源与纪律**
+- 只用 `.29` 的 CPU/磁盘（**不占 GPU**：`.29` 8 卡在跑 pretrain decay，🚫 不碰）；Docker 只在 `.29`。
+- 与 data 错峰重 IO；`/tmp` 使用前先 `df`（`.29` 约 15G，**超 5G 的镜像/日志先清或换 `/nasdata`**）。
+- 每次唤醒只推进一步（smoke → pilot → 全量）；`WAITING=1` 仅在真跑时置位。
+- commit 前缀 `harness tb:`；MEMORY ≤32KB 自滚。
+
+**⑤ 网关异常时**
+- 若 `kimi-k2.6-cloud` 或网关整体 401/403：**立即停**，贴 `curl -i` 原文（含 `www-authenticate`/`server`），报 blocker；🚫 不要用假分数/跳过 trial 凑数，🚫 不要把 infra 失败算成 harness 失败。
