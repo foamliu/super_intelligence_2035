@@ -3697,6 +3697,8 @@
 | 2026-10-17 | 2610.16621 | AgentCue: Statistical Summaries for Guiding Decentralized Multi-Agent Self-Organization | cs.MA | 候选 |
 | 2026-10-17 | 2610.16537 | Learning Graded Sparse Mechanisms: A Representation Theorem and Certified Generalization | cs.LG | 候选 |
 | 2026-10-17 | 2610.16518 | Asymptotic Risk of Learning-Rate Schedules for Least-Squares Regression with Discretely Distributed Features | cs.LG | 候选 |
+| 2026-10-19 | 2610.23438 | No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation? | cs.RO | 收录 |
+| 2026-10-19 | 2610.23813 | MOSS: Multimodal Origami Swamp Robot System | cs.RO | 收录 |
 
 > 累计（2026-10-03，两轮）共 407 条（收录 61 / 候选 346）：首轮 214（收录 34 / 候选 180）+ 本轮 193（收录 27 / 候选 166）。
 >

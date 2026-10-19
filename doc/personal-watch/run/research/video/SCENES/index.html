@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-19</td>
+    <td><i>No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</i><br><code>arXiv:2610.23438</code>（Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar）</td>
+    <td>把机器人的<b>眼睛蒙上</b>：不带摄像头、不知道物体状态，只靠<b>本体感觉 + 二值触觉</b>（只会说「碰到 / 没碰到」），在真实灵巧手上<b>连续 225 次 180° 旋转</b>（≈112.5 整圈）、约 <b>0.36 转/秒</b>；做法是仿真 RL + 触觉标定 + 两类域随机化（动作变化率限幅、模拟卡死触点），再<b>零样本</b>上真机；作者还对比「只有本体感觉」与「本体 + 触觉」看触觉贡献（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="10_19.html">10_19.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-18</td>
     <td><i>Dexterity from Supervised Play</i><br><code>arXiv:2610.22340</code>（Botao He, Yiming Dou, Yiannis Aloimonos, Jitendra Malik, Akash Sharma, Ruoshi Liu）</td>
     <td>机器人学手上的细活，<b>先看人「玩」几分钟</b>（行为克隆得到玩耍策略），<b>再自己玩几小时</b>收集数据训练<b>世界模型</b>；干活时玩耍策略为 <b>MPC</b> 提候选动作、世界模型<b>逐个打分</b>挑最好的，最后<b>蒸馏</b>成闭环策略跑得更快。作者称真实世界成功率比 hindsight 行为克隆高 <b>69.6%</b>，并与强化学习效果相当而交互数据<b>少约 490 倍</b>（<b>作者自报 · 本线未复现</b>）</td>
@@ -91,7 +97,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-17 18:1x CST（新增 <code>10_17.html</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-19 18:1x CST（新增 <code>10_19.html</code> · TOP-1 = No Eyes, No Problem）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>

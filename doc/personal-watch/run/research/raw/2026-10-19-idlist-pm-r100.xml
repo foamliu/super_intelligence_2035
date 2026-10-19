@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/B4QzmN814j3Nb3mw8s7UrHf0e4E</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.23438,2610.23813&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-19T10:08:17Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.23438,2610.23813" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.23813v1</id>
+    <title>MOSS: Multimodal Origami Swamp Robot System</title>
+    <updated>2026-10-16T17:35:24Z</updated>
+    <link href="https://arxiv.org/abs/2610.23813v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.23813v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Robotic systems for environmental monitoring and ecological surveying in wetlands and swamps must operate across diverse terrestrial and aquatic conditions. Conventional fixed-geometry wheels cannot adapt their contact geometry to these varying conditions. This work presents MOSS (Multimodal Origami Swamp Robot System), a compact amphibious robotic platform with 3D-printed origami wheels. The compact crank mechanism switches the wheel between contracted and expanded configurations, changing its width, body diameter, and fin orientation simultaneously. The contracted configuration is better suited to efficient rolling on firmer ground, whereas the expanded configuration provides greater contact and terrain engagement on softer surfaces. MOSS was evaluated on soil, sand, mud with varying water content, and water, in addition to in-motion morphing and terrestrial-aquatic transition tests. The more energy-efficient wheel configuration depended on terrain. The contracted configuration achieved a lower cost of transport on firmer soil and mud, whereas the expanded configuration performed better on wetter mud, sand, and water, reducing the cost of transport by up to 29%. Expanded wheels also reduced slip in wet mud and reduced both slip and hub sinkage in sand. MOSS successfully completed configuration changes in $1.95 \pm 0.11$ s and demonstrated continuous locomotion across soil-mud-water transitions. Outdoor trials further demonstrated operation across natural deformable terrain and water. These results show that adaptive wheel geometry provides terrain-dependent locomotion benefits and enables a single compact platform to traverse substantially different terrestrial and aquatic conditions.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-16T17:35:24Z</published>
+    <arxiv:comment>8 pages, 8 figures, submitted to ICRA 2027</arxiv:comment>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>T. Lan</name>
+    </author>
+    <author>
+      <name>A. Babgei</name>
+    </author>
+    <author>
+      <name>L. Romanello</name>
+    </author>
+    <author>
+      <name>M. Kovac</name>
+    </author>
+    <author>
+      <name>S. F. Armanini</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.23438v1</id>
+    <title>No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</title>
+    <updated>2026-10-16T13:22:03Z</updated>
+    <link href="https://arxiv.org/abs/2610.23438v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.23438v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Humans manipulate objects within their hands through touch alone with remarkable ease, but for robots, achieving sustained real-world manipulation without vision remains an open challenge. Although reinforcement learning (RL) can generate sophisticated blind manipulation policies in simulation, transferring them to a real dexterous hand remains hindered by continuously changing contacts, motion-induced tactile information drift, and the gap between simulated and physical dynamics. We study this problem through Baoding ball rotation on the Shadow Dexterous Hand Lite, using only proprioception and binary tactile feedback as observations. We achieve successful zero-shot transfer through a combination of a sensor-aligned, coupling-aware embodiment in simulation, tactile calibration, and two novel episodic domain randomisations: slew-rate action limits and STuck-AT Taxels. On the physical hand, the policy achieves sustained blind Baoding rotation, completing 225 consecutive $\mathbf{180^\circ}$ rotations (112.5 full rotations) at $\sim0.36 \;\text{rot/s}$ in a single continuous trial without any vision or object-state information. Furthermore, we evaluate the contribution of tactile sensing relative to proprioception alone and identify the hand regions where tactile information is most important. This is the strongest reported hardware result for Baoding ball manipulation in both rotation count and speed, irrespective of the sensing modality used. By effectively bridging the sim-to-real gap, our framework sets a new benchmark for sustained tactile-driven dexterous manipulation on physical hardware.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-16T13:22:03Z</published>
+    <arxiv:comment>9 Pages, 8 Figures</arxiv:comment>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Ayush Deshmukh</name>
+    </author>
+    <author>
+      <name>Nalin Agarwal</name>
+    </author>
+    <author>
+      <name>Elle Miller</name>
+    </author>
+    <author>
+      <name>Sethu Vijayakumar</name>
+    </author>
+  </entry>
+</feed>

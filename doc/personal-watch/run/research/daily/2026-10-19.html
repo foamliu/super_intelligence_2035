@@ -53,15 +53,15 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-19 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 共 3 篇（进度 3/5）</b> · 借鉴 3</div>
+  <h1>论文推荐日报 · 2026-10-19 <span class="badge b-pm">晚报（已收口）</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>晚报 · 共 5 篇（进度 5/5）</b> · 借鉴 3 + 科普 2</div>
   <div class="meta">
-    <span>📅 日期：2026-10-19（CST 本地日；AM = UTC 2026-10-18T22:00 ｜ 周一凌晨）</span>
-    <span>🏷 标识：早报（AM · 3/5）</span>
+    <span>📅 日期：2026-10-19（CST 本地日；AM = UTC 2026-10-18T22:00 ｜ PM = UTC 2026-10-19T10:0x）</span>
+    <span>🏷 标识：晚报（PM · 5/5 · 当日收口）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成时间：2026-10-19 06:03（AM）CST</span>
+    <span>🕒 生成时间：2026-10-19 06:03（AM）→ 18:1x（PM）CST</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早报（AM）<b>3 篇「借鉴」</b>（序号 1–3）；晚报（PM 18:00）补 <b>2 篇「科普」</b> 并收口 5/5。⚠️ <b>AM 轮仍无新公告批次</b>（批次停在 <code>2026-10-15</code>；<code>--fetch</code> <code>kept 0 / dropped 600</code>，<b>15/15 <code>ok</code></b>）⇒ 3 篇<b>取自前轮已入账的候选池</b>（其中 17901 首次提交约在 120h 窗口外 14h，见附录 C-10），逐条经 <code>id_list</code> 权威复核（<b>3/3</b>）。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5（已收口）</b> —— 早报（AM）<b>3 篇「借鉴」</b>（序号 1–3）+ 晚报（PM）<b>2 篇「科普」</b>（序号 4–5）。✅ <b>PM 轮公告批次已刷新</b>：<code>2026-10-15</code> → <b><code>2026-10-16</code></b>（周一 20:00 ET 公告已落地，最新样本 <code>published=2026-10-16T17:59:55Z</code>）⇒ 晚报 2 篇<b>取自新批</b>（单条发现查询 60 条 + <code>id_list</code> 权威复核 <b>2/2</b>）。⚠️ 全量 15 查询 <code>--fetch</code> 本轮遭 arXiv <b>429</b>（如实记 FAIL），改用单条发现查询完成取数，详见附录 A′/B′。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -71,7 +71,10 @@
 </div>
 <div class="wrap">
 <div class="ok-box">
-  <b>本轮取数说明（诚实口径 · AM · 周一凌晨）</b>：本 AM 轮唤醒于 <b>本地 2026-10-19 06:00（CST）</b> = <b>UTC 2026-10-18T22:00（周日 18:00 ET）</b>。<b>arXiv 的周日公告时点为 20:00 ET</b>（= 本地 10-19 08:00 CST），<b>本轮唤醒早于该时点约 2 小时</b> ⇒ 关键词增量（<code>--fetch --seen research/SEEN.md</code>，<code>window_mode=weekend_batch</code> ≤120h，<code>generated=2026-10-18T22:00:13Z</code>）<b>15/15 <code>ok</code></b>（均 <code>attempts=1</code>、<code>retries=[]</code>），<b><code>kept 0</code> / <code>dropped 600</code></b>；<b>公告批次未刷新，仍为 <code>2026-10-15</code></b>（<code>totalResults=633893</code>，最新样本 <code>published=2026-10-15T17:59:59Z</code>）；<b>R1′ 分源实测</b>：arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>）／ HF Daily ❌（<code>[Errno 101] Network is unreachable</code>，如实记 FAIL、不伪造）／ RSS cs.CL·CV·LG = <b>0 / 0 / 0</b>（<b>周末空 feed</b> ⇒ 记「周末/未公告」）。⇒ <b>无新批可采</b>，早报 3 篇「借鉴」取自 <b>前轮候选池</b>（10-16 PM 轮 <code>--fetch</code> 所得 <b>201 条</b>与更早窗口的并集；窗口内未收录 360 条，另含 17901 这一窗口外 14h 的邻近条目），并另经 <b>arXiv API 单条权威复核</b>（<code>id_list=2610.17901,2610.22350,2610.19928</code> → <b>3/3</b>）确认 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 有 <code>published</code>。⚠️ <b>0 新增 ≠ 无数据</b>：纯属「周日公告尚未到点」的时点现象。证据见附录 A/B。
+  <b>早报取数说明（诚实口径 · AM · 周一凌晨）</b>：本 AM 轮唤醒于 <b>本地 2026-10-19 06:00（CST）</b> = <b>UTC 2026-10-18T22:00（周日 18:00 ET）</b>。<b>arXiv 的周日公告时点为 20:00 ET</b>（= 本地 10-19 08:00 CST），<b>本轮唤醒早于该时点约 2 小时</b> ⇒ 关键词增量（<code>--fetch --seen research/SEEN.md</code>，<code>window_mode=weekend_batch</code> ≤120h，<code>generated=2026-10-18T22:00:13Z</code>）<b>15/15 <code>ok</code></b>（均 <code>attempts=1</code>、<code>retries=[]</code>），<b><code>kept 0</code> / <code>dropped 600</code></b>；<b>公告批次未刷新，仍为 <code>2026-10-15</code></b>（<code>totalResults=633893</code>，最新样本 <code>published=2026-10-15T17:59:59Z</code>）；<b>R1′ 分源实测</b>：arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>）／ HF Daily ❌（<code>[Errno 101] Network is unreachable</code>，如实记 FAIL、不伪造）／ RSS cs.CL·CV·LG = <b>0 / 0 / 0</b>（<b>周末空 feed</b> ⇒ 记「周末/未公告」）。⇒ <b>无新批可采</b>，早报 3 篇「借鉴」取自 <b>前轮候选池</b>（10-16 PM 轮 <code>--fetch</code> 所得 <b>201 条</b>与更早窗口的并集；窗口内未收录 360 条，另含 17901 这一窗口外 14h 的邻近条目），并另经 <b>arXiv API 单条权威复核</b>（<code>id_list=2610.17901,2610.22350,2610.19928</code> → <b>3/3</b>）确认 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 有 <code>published</code>。⚠️ <b>0 新增 ≠ 无数据</b>：纯属「周日公告尚未到点」的时点现象。证据见附录 A/B。
+</div>
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM · 周一傍晚 · 批次已刷新）</b>：本 PM 轮唤醒于 <b>本地 2026-10-19 18:00（CST）</b> = <b>UTC 2026-10-19T10:00</b>。<b>周一 20:00 ET 的公告已落地</b> ⇒ 最新样本 <code>published=2026-10-16T17:59:55Z</code>，<b>批次由 <code>2026-10-15</code> 刷新为 <code>2026-10-16</code></b>。⚠️ <b>如实记录一次失败</b>：全量 15 查询的 <code>--fetch</code> 本轮遭 arXiv <b><code>HTTP 429</code></b>（限速；进程在长时间重试后被终止，未产出 <code>--out</code> 文件）⇒ 改用<b>单条发现查询</b> <code>cat:cs.CV OR cat:cs.RO OR cat:cs.MM</code>（<code>max_results=60</code>，<code>sortBy=submittedDate&amp;sortOrder=descending</code>）：<b><code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code></b>，<b>60 条</b>，<b><code>attempts=1</code> / <code>retries=[]</code></b>，<code>total_results=264247</code>（该查询全库命中数，非新增）；随后对 2 篇入账论文做 <b><code>id_list</code> 权威复核</b>（<code>id_list=2610.23438,2610.23813</code> → <b>2/2</b>，<code>HTTP 200</code> + 有 <code>published</code>）。⇒ 晚报 2 篇「科普」<b>取自当日新批（非承接旧池）</b>。⚠️ 因全量关键词扫描未完成，<b>本轮不做「新批总量 / 去重剔除数」的完整性声明</b>；本页只对<b>已复核的 2 个 ID</b> 负责。HF Daily 仍不可达（<code>HTTP 000</code> / 网络不可达，如实记 FAIL）；RSS 请求超时未取到（记 FAIL，不用其它信号替代）。证据见附录 A′/B′。
 </div>
 <h2 class="sec">一、早报 3 篇 · 「借鉴」口径（序号 1–3）</h2>
 
@@ -127,6 +130,46 @@
     <b>建议动作</b>：<b>读原文</b>（重点看三阶段训练与记忆更新顺序）+ <b>试跑</b>（离线长文档 QA 原型，先测召回率与 token 成本）。
   </div>
 </div>
+<h2 class="sec">二、晚报 2 篇 · 「科普」口径（序号 4–5 · 取自 2026-10-16 新批）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation? <span class="badge b-kp">科普</span></h3>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</span></div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">让灵巧手<b>蒙上眼睛</b>，只靠<b>本体感觉 + 二值触觉</b>在手里转<b>保定铁球</b>；在真实手上零样本完成<b>连续 225 次 180° 旋转（112.5 整圈）</b>，约 <b>0.36 转/秒</b>，并比较「只有本体感觉」与「本体 + 触觉」的差距。</div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar（共 4 位；机构见原文）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-16T13:22:03Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom）· 版本 v1 · <code>comment</code>：「9 Pages, 8 Figures」</div></div>
+  <div class="row"><div class="k">分类 · 标签</div><div class="v"><code>cs.RO</code> · <span class="badge b-kp">科普</span> · 关键词：触觉 / 灵巧操作 / 盲操作 / sim-to-real / 强化学习</div></div>
+  <div class="row"><div class="k">abs 链接</div><div class="v"><a href="https://arxiv.org/abs/2610.23438">https://arxiv.org/abs/2610.23438</a></div></div>
+  <div class="reason">
+    <b>推荐理由（科普口径 · 大众看点 + 传播力）</b>：<br>
+    ① <b>一句话钩子</b>：「<b>把机器人的眼睛蒙上，它还能在手里把两个铁球转起来吗？</b>」——「闭眼转健身球」是中国人非常熟悉的画面（保定铁球），一听就懂，天然带画面。<br>
+    ② <b>反直觉结果</b>：没有摄像头、没有物体状态信息，只靠关节感觉与「碰到 / 没碰到」的二值触觉，在真实灵巧手上<b>单次连续转了 225 次 180°</b>（≈112.5 整圈），速度约 <b>0.36 转/秒</b>；作者称这是「不论用哪种传感模态」下保定球操作的<b>最强硬件结果</b>（<b>作者自报 · 本线未复现</b>）。<br>
+    ③ <b>可讲清的三步</b>：仿真里用 RL 学 → 用「触觉标定 + 两类域随机化（动作变化率限幅、模拟卡死触觉点）」补 sim-to-real 差距 → 真机零样本迁移；再回答「触觉到底贡献了什么、手上哪些区域最需要它」。<br>
+    ④ <b>画面好做</b>：机械手特写、球在掌心滚动、触觉点阵列亮灭、225 次计数器 —— 全部可扁平自绘 / 自生成，<b>不需要论文原图</b>。<br>
+    ⑤ <b>边界（片中说）</b>：只验证<b>保定球旋转</b>这一项手中操作，<b>不是通用灵巧操作</b>；<code>comment</code> 未给代码 / 项目页 ⇒ 不提「已开源」；无第三方复现。<br>
+    <b>建议动作</b>：<b>读原文</b>（重点看 STuck-AT Taxels 与触觉标定）+ <b>试跑</b>（作为《论文两分钟》候选脚本，本日 <b>TOP-1</b> 已出分镜）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>MOSS: Multimodal Origami Swamp Robot System <span class="badge b-kp">科普</span></h3>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">MOSS: Multimodal Origami Swamp Robot System</span></div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">给沼泽监测机器人装上<b>3D 打印的折纸轮</b>：曲柄一收一放，轮宽 / 轮径 / 鳍片朝向同时改变 —— 硬地收缩省力，软泥与水面展开增大接触，<b>运输成本最多降 29%</b>，切换只用 <b>1.95 秒</b>。</div></div>
+  <div class="row"><div class="k">作者</div><div class="v">T. Lan, A. Babgei, L. Romanello, M. Kovac, S. F. Armanini（共 5 位；机构见原文）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-16T17:35:24Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom）· 版本 v1 · <code>comment</code> 自述「8 pages, 8 figures, submitted to ICRA 2027」（<b>本线未核会务</b>）</div></div>
+  <div class="row"><div class="k">分类 · 标签</div><div class="v"><code>cs.RO</code> · <span class="badge b-kp">科普</span> · 关键词：两栖机器人 / 折纸结构 / 变形轮 / 湿地监测 / 地形适应</div></div>
+  <div class="row"><div class="k">abs 链接</div><div class="v"><a href="https://arxiv.org/abs/2610.23813">https://arxiv.org/abs/2610.23813</a></div></div>
+  <div class="reason">
+    <b>推荐理由（科普口径 · 大众看点 + 传播力）</b>：<br>
+    ① <b>一句话钩子</b>：「<b>轮子会像折纸一样撑开，机器人从硬地一路滚进沼泽。</b>」折纸 + 机器人 + 沼泽，三个画面元素都很强。<br>
+    ② <b>结果直观</b>：在土、沙、不同含水量泥地、水中评测；收缩态在较硬地面更省能，展开态在湿泥 / 沙 / 水中<b>运输成本最多降低 29%</b>，还减少湿泥打滑与沙中下陷；<b>1.95 ± 0.11 秒</b>完成构型切换，可连续跨越土—泥—水（<b>作者自报 · 本线未复现</b>）。<br>
+    ③ <b>可讲清</b>：核心就是「<b>一种轮子，两种几何</b>」—— 收起来像普通轮子，撑开后变成宽轮 + 鳍片；配一个曲柄机构同时改三个尺寸，不用换轮子。<br>
+    ④ <b>画面好做</b>：折纸轮展开的定格动画、泥地 / 水面的剖面对比、成本曲线下滑 —— 均可自绘 / 自生成，<b>不使用论文原图</b>。<br>
+    ⑤ <b>边界（片中说）</b>：面向<b>湿地 / 沼泽环境监测</b>，不是通用越野平台；评测为作者自建场地与样机，样本量有限；<code>comment</code> 仅为「submitted to ICRA 2027」⇒ <b>不称「已录用」</b>。<br>
+    <b>建议动作</b>：<b>读原文</b>（重点看折纸轮几何与构型切换机构）+ <b>仅备忘</b>（作为科普备选选题，硬件复现成本高）。
+  </div>
+</div>
+
 <h2 class="sec">附录 A · 取数与复核证据（可逐条回溯）</h2>
 <table>
   <tr><th>#</th><th>环节</th><th>命令 / 参数</th><th>结果（实测）</th><th>证据文件</th></tr>
@@ -160,10 +203,31 @@
 <div class="note">
   <b>读表说明</b>：<code>total_results</code> 是<b>该查询的全库命中数</b>，不是本轮新增；每查询仅取<b>最新 40 条</b>（<code>n_entries=40</code>）参与窗口/去重判定。<code>kept 0</code> 的构成 = <b>「已在 <code>SEEN.md</code>」</b> + <b>「超 120h 窗口（stale）」</b>，合计 <code>dropped 600</code>。<b>0 新增属预期</b>：批次停在 <code>2026-10-15</code>，最新 40 条早被历轮收尽。
 </div>
+<h2 class="sec">附录 A′ · 晚报取数与复核证据（PM · 可逐条回溯）</h2>
+<table>
+  <tr><th>#</th><th>环节</th><th>命令 / 参数</th><th>结果（实测）</th><th>证据文件</th></tr>
+  <tr><td>I′</td><td>批次刷新确认</td><td><code>curl 'https://export.arxiv.org/api/query?search_query=cat:cs.CL&amp;max_results=1&amp;sortBy=submittedDate&amp;sortOrder=descending'</code></td><td><b>✅ HTTP 200</b> + <code>application/atom+xml; charset=utf-8</code>；最新样本 <code>published=2026-10-16T17:58:08Z</code> ⇒ <b>批次已由 <code>2026-10-15</code> 刷新为 <code>2026-10-16</code></b></td><td><code>/tmp/arxiv_probe_now.xml</code>（一次性）</td></tr>
+  <tr><td>II′</td><td>全量关键词增量（失败）</td><td><code>arxiv_fetch.py --fetch --seen research/SEEN.md --out research/raw/2026-10-19-fetch-r100-seen.json</code></td><td><b>❌ arXiv <code>HTTP 429</code></b>（限速）；长时间重试后进程被终止，<b>未产出 <code>--out</code> 文件</b> ⇒ <b>如实记 FAIL</b>，本轮<b>不声明「新批总量 / 去重剔除数」</b></td><td><code>/tmp/fetch_r100.log</code>（空）；无 <code>--out</code> 产物</td></tr>
+  <tr><td>III′</td><td>单条发现查询（替代）</td><td><code>arxiv_fetch.py --query 'cat:cs.CV OR cat:cs.RO OR cat:cs.MM' --max-results 60 --json --out research/raw/2026-10-19-pm-query-r100.json</code></td><td><b>✅ HTTP 200</b> + <code>application/atom+xml; charset=utf-8</code>；<b><code>n_entries=60</code></b>、<code>attempts=1</code>、<code>retries=[]</code>；<code>generated=2026-10-19T10:07:34Z</code>；最新条目 <code>2610.23856</code>（<code>published=2026-10-16T17:59:55Z</code>）</td><td><code>research/raw/2026-10-19-pm-query-r100.json</code></td></tr>
+  <tr><td>IV′</td><td><code>id_list</code> 权威复核</td><td><code>curl 'https://export.arxiv.org/api/query?id_list=2610.23438,2610.23813&amp;max_results=10'</code></td><td><b>2/2 返回</b>；<b>HTTP 200</b> + <code>application/atom+xml; charset=utf-8</code>；含 <code>published</code>（<code>2026-10-16T13:22:03Z</code> / <code>2026-10-16T17:35:24Z</code>）</td><td><code>research/raw/2026-10-19-idlist-pm-r100.xml</code> + <code>.headers</code></td></tr>
+  <tr><td>V′</td><td>去重</td><td><code>grep -n '2610.23438\|2610.23813' research/SEEN.md research/papers.jsonl research/daily/*.html</code></td><td><b>无命中</b> ⇒ 2 个 ID 均为首次入账，无重复；<code>SEEN.md</code> 追加 2 行（<b>收录 219 → 221</b>，总行 <b>3,691 → 3,693</b>）</td><td><code>research/raw/update_r100.py</code>；备份 <code>/tmp/SEEN.bak.r100</code></td></tr>
+  <tr><td>VI′</td><td>副源</td><td><code>curl https://huggingface.co/api/daily_papers</code>；<code>curl https://rss.arxiv.org/rss/{cs.CL,cs.CV,cs.LG}</code></td><td>HF <b>❌ <code>HTTP 000</code></b>（网络不可达，如实记 FAIL）／ RSS <b>❌ 请求超时未取到</b>（记 FAIL，不用其它信号替代）</td><td>本轮终端输出；无成功产物</td></tr>
+</table>
+
+<h2 class="sec">附录 B′ · 晚报单条发现查询（per-query）</h2>
+<table>
+  <tr><th>#</th><th>查询</th><th>search_query</th><th>HTTP / attempts</th><th>total_results（全库）</th><th>n_entries</th></tr>
+  <tr><td>1</td><td>视觉 / 机器人 / 多模态广度扫描</td><td><code>cat:cs.CV OR cat:cs.RO OR cat:cs.MM</code></td><td>200 / 1（<code>retries=[]</code>）</td><td>264,247</td><td><b>60</b></td></tr>
+  <tr><td colspan="5"><b>合计</b>（<code>attempts=1</code>、无重试）</td><td><b>60</b></td></tr>
+</table>
+<div class="note">
+  <b>读表说明</b>：<code>total_results</code> 是<b>该查询的全库命中数</b>，不是新增；本轮因全量扫描失败，<b>仅取最新 60 条</b>做人工选题。⚠️ 这 60 条<b>不等于</b> 2026-10-16 批的全部新论文；本页只对<b>经 <code>id_list</code> 复核的 2 个 ID</b> 负责。
+</div>
+
 <h2 class="sec">附录 C · 口径护栏（本轮自查）</h2>
 <ol>
-  <li><b>标签不混用</b>：本轮 3 篇<b>全部</b>标 <span class="badge b-jz">借鉴</span>，未混入 <span class="badge b-kp">科普</span>；科普 2 篇留待 PM 轮，避免「同一天两口径互相稀释」。</li>
-  <li><b>日期不冒充</b>：3 篇首次提交分别为 <code>2026-10-13</code> / <code>2026-10-15</code> / <code>2026-10-14</code>，<b>均非 2026-10-19 当日新论文</b>，卡片与页头均明示「取自前轮候选池」，<b>不写「今日新提交」</b>。</li>
+  <li><b>标签不混用</b>：早报 3 篇<b>全部</b>标 <span class="badge b-jz">借鉴</span>；晚报 2 篇<b>全部</b>标 <span class="badge b-kp">科普</span>；两口径<b>不交叉</b>，避免「同一天两口径互相稀释」。</li>
+  <li><b>日期不冒充</b>：早报 3 篇首次提交为 <code>2026-10-13</code> / <code>2026-10-15</code> / <code>2026-10-14</code>（取自前轮候选池）；晚报 2 篇为 <code>2026-10-16</code>（<b>PM 新批</b>）。<b>均非 2026-10-19 当日新论文</b>，卡片与页头均如实标注，<b>不写「今日新提交」</b>。</li>
   <li><b>数字皆有出处且标「作者自报」</b>：45–141% / 34–71% / 2–44% / 1.80–3.71× / 7.3–11.0% / 24.5–44.9% / 0.56 / 14/95 / 10/23 / 9.74× / 73.91% 等均来自官方摘要原文，<b>未外推、未编造</b>，并统一标注<b>「作者自报 · 本线未复现」</b>。</li>
   <li><b>不做「已 SOTA / 已验证」表述</b>：涉及「优于 FlashMask / FlexAttention / MagiAttention」「最佳配置」等，均转写为<b>作者主张</b>；<b>不</b>据此声称我们已获得同等收益。</li>
   <li><b>不虚构资源</b>：<code>2610.22350</code> 的 <code>comment</code> 给出网站/代码/数据，但<b>本线未打开核验</b> ⇒ 仅记「comment 提供地址」，<b>不写「已复现 / 已可运行」</b>；<code>2610.19928</code> 的 <code>comment</code> 为空 ⇒ 不写「已开源 / 已录用」。</li>
@@ -172,13 +236,27 @@
   <li><b>诚实记录失败</b>：HF Daily Papers <code>Errno 101</code> 与 RSS <code>0/0/0</code> 均<b>如实记录</b>，<b>未用其他信号替代或伪造</b>「社区热度」。</li>
   <li><b>去重从严</b>：初选的 <code>2610.22273</code> / <code>2610.19439</code> 虽未成为任何日报卡片，但因已作为 <code>id_list</code> 备选出现在旧日报附录，仍按「同一 arXiv ID 只出现一次」<b>剔除</b>，改用 <code>2610.22350</code> / <code>2610.19928</code> 并重新走权威复核。</li>
   <li><b>窗口标注</b>：3 篇首次提交在 <code>2026-10-13 ~ 2026-10-15</code>。<code>2610.22350</code> / <code>2610.19928</code> 落在 <code>weekend_batch</code> ≤120h 窗口内；最老 <code>2610.17901</code> 距取数约 <b>134h</b> ⇒ <b>⚠️ 超出 120h 窗口约 14h</b>，属「候选池承接」而非「本轮新发现」。已在卡片日期与取数说明中如实标注，<b>不冒充窗口内新提交</b>。</li>
+  <li><b>PM 失败如实登记</b>：全量 15 查询遭 <code>HTTP 429</code> 未产出结果文件，<b>不写成「无新增」</b>，也不以单条查询结果冒充「全量扫描」；页头明确写「本轮不声明新批总量与去重剔除数」。</li>
+  <li><b>PM 新批边界</b>：晚报 2 篇<b>只对经 <code>id_list</code> 复核的 2 个 ID 负责</b>；单条查询的 60 条<b>不等于</b> 2026-10-16 批的全部论文。两篇 <code>comment</code> 分别只有页数信息 / 「submitted to ICRA 2027」⇒ <b>不写「已开源」「已录用」</b>。</li>
+</ol>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<ol>
+  <li><b>页头与进度</b>：由「早报 · 3/5」改为「<b>晚报（已收口）· 5/5</b>」；副标题改为「借鉴 3 + 科普 2」；生成时间追加 PM 轮。<b>为什么</b>：当日 5 篇已齐，需在页面上明确收口状态。</li>
+  <li><b>新增「二、晚报 2 篇 · 科普口径」</b>：加入序号 4 <code>2610.23438</code>（No Eyes, No Problem / 盲触觉转保定球，<b>本日 TOP-1</b>）与序号 5 <code>2610.23813</code>（MOSS 折纸轮沼泽机器人）。<b>为什么</b>：完成「早 3 + 晚 2」的 P0 配额，且两篇均满足科普口径（大众能懂 + 有画面 + 有传播力）。</li>
+  <li><b>取数说明拆分 AM / PM</b>：原「本轮取数说明」改为「早报取数说明（AM）」，新增「晚报取数说明（PM）」。<b>为什么</b>：两轮的批次状态不同（AM 无新批、PM 已刷新到 <code>2026-10-16</code>），混在一段会误导读者。</li>
+  <li><b>如实登记 429 失败</b>：PM 全量 15 查询 <code>--fetch</code> 遭 arXiv <code>HTTP 429</code>，未产出 <code>--out</code> 文件；改用单条发现查询（<code>cs.CV OR cs.RO OR cs.MM</code>，60 条）+ <code>id_list</code> 复核 2/2。<b>为什么</b>：不能把失败写成「无新增」，也不能假装做了全量扫描；同时明确本轮<b>不声明新批总量与去重剔除数</b>。</li>
+  <li><b>新增附录 A′ / B′</b>：A′ 记录 PM 六步证据（批次刷新确认 / 全量失败 / 单条查询 / <code>id_list</code> 复核 / 去重 / 副源失败）；B′ 给出单条查询的 per-query 结果。<b>为什么</b>：保持「可逐条回溯」的取数纪律，失败也留痕。</li>
+  <li><b>台账更新</b>：<code>SEEN.md</code> 追加 2 行（收录 <b>219 → 221</b>，总行 <b>3,691 → 3,693</b>），<code>papers.jsonl</code> <b>219 → 221</b>；落盘脚本 <code>research/raw/update_r100.py</code>。<b>为什么</b>：入账即记账，主键去重。</li>
+  <li><b>口径补强</b>：新增 2 篇均为 <span class="badge b-kp">科普</span>，<b>不与早报「借鉴」混用</b>；数字统一标「作者自报 · 本线未复现」；<code>2610.23813</code> 的 <code>comment</code> 仅写「submitted to ICRA 2027」⇒ <b>不称已录用</b>；两篇均<b>未精读</b>，属待读线索。<b>为什么</b>：防止把「作者主张」写成「已验证结论」。</li>
+  <li><b>页脚更新</b>：改为 5/5 收口、更新台账计数与生成时间、把「下一轮」改为 <b>2026-10-20 06:00（AM）</b>。<b>为什么</b>：让 supervisor 一眼看到当日已完成与下一步。</li>
 </ol>
 
 <footer>
-  <div>📄 本页为 <b>research 线 · 论文推荐日报 · 2026-10-19 早报（AM · 3/5）</b> · <b>自包含单文件</b>（内联 CSS、零 <code>&lt;script&gt;</code>、外链仅 <code>arxiv.org/abs/&lt;id&gt;</code>）· 离线可开。</div>
-  <div>🔎 台账：<code>research/SEEN.md</code>（<b>收录 219 / 候选 2,965 / 候选（RSS 补充）507</b>，共 3,691 行）· <code>research/papers.jsonl</code>（219 行）· 落盘脚本 <code>research/raw/update_r99.py</code>。</div>
-  <div>🕒 生成：<b>2026-10-19 06:03 CST</b>（AM，<code>generated=2026-10-18T22:00:13Z</code>）· 口径记录：<code>research/ARXIV_API.md</code> §9.100。</div>
-  <div>⏭ 下一轮：<b>本地 2026-10-19 18:00（PM）</b> —— 补 <b>2 篇「科普」</b>收口 5/5 + 追加「晚报变更说明（AM → PM）」+ 第 5 批分镜脚本；若届时新公告批次已落地，优先取新批。</div>
+  <div>📄 本页为 <b>research 线 · 论文推荐日报 · 2026-10-19 晚报（PM · 5/5 · 当日收口）</b> · <b>自包含单文件</b>（内联 CSS、零 <code>&lt;script&gt;</code>、外链仅 <code>arxiv.org/abs/&lt;id&gt;</code>）· 离线可开。</div>
+  <div>🔎 台账：<code>research/SEEN.md</code>（<b>收录 221 / 候选 2,965 / 候选（RSS 补充）507</b>，共 3,693 行）· <code>research/papers.jsonl</code>（221 行）· 落盘脚本 <code>research/raw/update_r99.py</code>（AM）+ <code>update_r100.py</code>（PM）。</div>
+  <div>🕒 生成：<b>2026-10-19 06:03 CST</b>（AM，<code>generated=2026-10-18T22:00:13Z</code>）→ <b>18:1x CST</b>（PM，<code>generated=2026-10-19T10:07:34Z</code>）· 口径记录：<code>research/ARXIV_API.md</code> §9.100 / §9.101。</div>
+  <div>⏭ 下一轮：<b>本地 2026-10-20 06:00（AM）</b> —— 出 3 篇「借鉴」；先复验批次（预期为 <code>2026-10-16</code> 或更新），并补跑本轮因 <code>429</code> 未完成的 15 查询全量扫描。</div>
   <div style="margin-top:8px">⚠️ 再次声明：本页为<b>推荐 / 待读线索</b>，<b>非结论</b>；所有效果数字为<b>作者自报</b>，本线<b>未复现</b>。</div>
 </footer>
 </div>

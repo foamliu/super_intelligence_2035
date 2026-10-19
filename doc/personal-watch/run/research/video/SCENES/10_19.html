@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-19 · 蒙上眼睛，机械手也能把两个铁球转起来</title>
+<style>
+  :root { --primary:#1d5c3a; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1d5c3a 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(29,92,58,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1d5c3a; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1d5c3a; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef6f0; color:#1d5c3a; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1d5c3a; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-19</h1>
+  <div class="sub">今日 TOP-1：<b>蒙上眼睛，机械手也能在掌心里把两个铁球转起来</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>375 字</b></div>
+  <div class="meta">
+    <span>📄 No Eyes, No Problem</span>
+    <span>🆔 arXiv:2610.23438</span>
+    <span>🏷 cs.RO · 科普口径</span>
+    <span>👥 Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar（4 位）</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕<b>只使用 arXiv 摘要可支撑的内容</b>；「225 次 / 112.5 圈 / 0.36 转每秒」为<b>作者自报、本线未复现</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>一句话钩子</b>：「<b>闭上眼睛，把手里的两个铁球转起来</b>——大多数人做不到；而这只机械手，<b>没有眼睛</b>，转了 225 次。」保定铁球是中国人熟悉的画面，一听就懂。</li>
+    <li><b>有传播力</b>：① <b>反直觉</b> —— 不带摄像头、不知道物体状态，只靠关节感觉 + 「碰到 / 没碰到」的二值触觉；② <b>数字好记</b> —— 连续 225 次 180°（≈112.5 整圈）、约 0.36 转/秒；③ <b>画面强</b> —— 机械手特写、球在掌心滚动、触觉点阵列亮灭。</li>
+    <li><b>可讲清 / 画面好做</b>：核心只有三件事 —— <b>盲操作</b>、<b>二值触觉</b>、<b>仿真练完直接上真机</b>；全部扁平自绘（手掌、双球、触点阵列、计数器），<b>无需论文原图</b>。</li>
+    <li><b>边界清楚（片中说）</b>：只验证<b>保定球旋转</b>这一项手中操作，<b>不是通用灵巧操作</b>；<code>comment</code> 仅写「9 Pages, 8 Figures」⇒ 不提「已开源 / 已录用」；<b>无第三方复现</b>。备选为当日第 5 篇（MOSS 折纸轮沼泽机器人）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar（共 4 位；机构见原文）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-16T13:22:03Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom）· v1 · <code>comment</code>：「9 Pages, 8 Figures」</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.RO</code> · 关键词：触觉 / 灵巧操作 / 盲操作 / sim-to-real / 强化学习</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.23438">https://arxiv.org/abs/2610.23438</a>（放视频简介）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-19 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 批次 <code>2026-10-16</code> · 经 <code>id_list</code> 复核</div></div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 固定五段配比 · 合计 120s）</h2>
+<table>
+  <tr><th style="width:52px">镜号</th><th style="width:104px">时间</th><th style="width:78px">段落</th><th style="width:30%">口播（中文字幕同步）</th><th>画面（全部自绘 / 自生成）</th><th style="width:17%">屏幕字幕</th><th style="width:15%">声音</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">闭上眼睛，把手里两个铁球转起来——大多数人都做不到。而这只机械手，没有眼睛，在掌心里连续转了 225 次。</td>
+    <td>黑底，先出现<b>一只张开的手掌剪影</b>与<b>两个圆球剪影</b>（自绘）；一条<b>「眼睛」图标被划掉</b>（斜杠动画），画面转亮：手掌开始<b>缓慢搓动双球</b>，右下角<b>计数器</b>从 0 快速跳到 <b>225</b>。</td>
+    <td>蒙上眼睛<br><b>225 次</b></td>
+    <td>球体摩擦「沙—沙—」；划掉眼睛「嚓」；计数器「哒哒哒」到 225 收住。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–32s（22s）</td>
+    <td class="act">问题</td>
+    <td class="vo">机器人做手上的细活，通常很依赖摄像头：看得见物体在哪，才敢动手指。可掌心一旦挡住视线，画面就废了。那如果干脆不要眼睛，只靠「摸」和「感觉」，还能不能把球转起来？</td>
+    <td>分屏（自绘）：<b>左</b>——机械手 + 上方摄像头，视线锥打到球上，画面标「正常」；<b>右</b>——同一只手把球握进掌心，视线锥被<b>手掌挡住</b>，摄像头画面变<b>雪花 / 问号</b>，标「看不见」。随后两侧合并，摄像头图标<b>被拿走</b>，只留下手与球，中间浮出<b>两个问号</b>：「摸得到吗？」「感觉得到吗？」</td>
+    <td>掌心一挡<br><b>摄像头就失效</b><br>（小字：不看，只摸）</td>
+    <td>摄像头对焦「嘀」；画面失效「嘶—」；拿走图标「咔」；问号出现「叮·叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>32–78s（46s）</td>
+    <td class="act">方法</td>
+    <td class="vo">做法分两步。先在仿真里练：机械手有本体感觉，知道每根手指弯了多少；指尖还有一片触觉点，只回答两个字——碰到、没碰到。练好之后，再做触觉标定，加两类随机化，把策略直接搬到真机上。</td>
+    <td>上半屏「仿真练习」（自绘）：半透明手掌，<b>骨骼线条</b>随手指弯曲而亮（标「本体感觉：知道手指弯了多少」）；指尖<b>点阵</b>接触球面点亮<b>绿</b>、离开变<b>灰</b>（标「二值触觉：碰到 / 没碰到」）；旁边<b>训练进度环</b>转满。<br>下半屏「搬上真机」（自绘）：一个<b>标定</b>刻度盘（触点对齐）；接着<b>两个骰子</b>图标落下 —— 一个标「动作别突变」、一个标「随机让触点卡住」（对应两类随机化）；最后一只箭头把「仿真策略」<b>原样</b>送进「真机手」，中途<b>没有</b>「微调」环节（标「零样本」）。</td>
+    <td>① 仿真里练<br>② <b>标定 + 随机化</b><br>③ <b>零样本上真机</b></td>
+    <td>关节「吱—」；触点「滴」；训练环「嗡」渐满；骰子落桌「嗒·嗒」；箭头「唰」；真机启动「嘀」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>78–104s（26s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果是在真实机械手上：它连续转了 225 次 180 度，相当于 112 圈半，平均每秒 0.36 转，全程没有摄像头。作者还对比了「只有本体感觉」和「本体感觉加触觉」，看触觉到底补上了什么。</td>
+    <td>真机镜头（自绘 / 风格化）：机械手<b>掌心朝上</b>，两球交错滚动；画面右上角<b>大计数器</b> 0 → 225，旁边<b>整圈进度环</b>从 0 走到 112 圈半，底部<b>速度表</b>指针稳定在 0.36 转/秒；左侧始终挂一个<b>被划掉的摄像头图标</b>，标「全程无视觉」。随后切「对照条」（自绘）：<b>两条</b>——「只有本体感觉」与「本体感觉 + 触觉」，后者更稳更长，标「作者对比 · 未给绝对值」。</td>
+    <td><b>225 次 · 112.5 圈</b><br>≈ <b>0.36 转/秒</b><br>（小字：<b>作者自报 · 未复现</b>）</td>
+    <td>球滚动「咕噜—咕噜—」；计数器「哒哒」；整圈进度环「叮」；速度表「嘀」；对照条出现「嘟·嘟」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>104–120s（16s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">它说明：有些精细的手上功夫，未必要靠眼睛。但这项研究只验证了转保定球这一件事，不是通用灵巧操作，数字也都是作者自报。</td>
+    <td>镜头拉远：画面中<b>「眼睛」图标</b>与<b>「手」图标</b>之间，那条依赖箭头<b>淡出</b>，只剩「手 + 触点」；下方浮出三行小字边界：「只验证转保定球」「不是通用灵巧操作」「作者自报 · 未复现」。末尾淡出，浮出<b>英文原题</b>与 <b>arXiv:2610.23438</b>。</td>
+    <td>有些手上功夫<br><b>不一定要靠眼睛</b><br>（小字：研究 ≠ 产品）</td>
+    <td>拉远「呼—」；箭头淡出「嘶」；BGM 收尾留余地；编号落定「叮」。</td>
+  </tr>
+</table>
+
+
+<div class="ok-box">
+  <b>口播合计</b>：随 5 镜分配 = 53 + 80 + 88 + 96 + 58 = <b>375 字</b>（按 190–200 字/分 ≈ <b>1 分 53 秒～1 分 58 秒</b>，<b>刚好落在 120s 内</b>，无需删句；实录音建议先按 195 字/分试读）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–32s</b> ｜ 方法 <b>32–78s</b> ｜ 结果 <b>78–104s</b> ｜ 意义/展望 <b>104–120s</b>（合计 = <b>120s</b>）。<b>若实测超时</b>：优先精压镜 4 的「作者还对比了……」一句（可移到画面字幕），以及镜 3 的「知道每根手指弯了多少」（可只留「知道手指弯了多少」），可省约 25 字。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（手掌剪影 / 双球 / 被划掉的眼睛 / 摄像头视线锥 / 骨骼与触点阵列 / 训练进度环 / 标定刻度盘 / 两颗骰子 / 零样本箭头 / 计数器与整圈进度环 / 速度表 / 对照条 / 拉远图标）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 项目页截图 / 作者 demo 录屏。</li>
+    <li><b>风格建议</b>：深绿主色（<code>#1d5c3a</code> → <code>#2e8b57</code>）+ 冷灰科技底色；<b>触觉点用亮绿</b>、<b>未接触用冷灰</b>；「没有眼睛」这条主线用<b>一条斜杠 + 淡出</b>反复呼应（镜 1 / 镜 4 / 镜 5），形成记忆点。核心信息置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 190–200 字/分；「<b>没有眼睛</b>」「<b>225 次</b>」「<b>0.36 转每秒</b>」三处<b>放慢并加重</b>；镜 5 的「<b>作者自报</b>」语气<b>平稳、不念成免责声明式的敷衍</b>。</li>
+    <li><b>字幕</b>：镜 4 的关键数字一律配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>术语友好化</b>：<b>proprioception</b> → 「知道手指弯了多少的感觉」；<b>binary tactile sensing</b> → 「只会说『碰到 / 没碰到』的触觉」；<b>domain randomization</b> → 「故意把条件弄乱，让策略更抗造」；<b>zero-shot</b> → 「在仿真里练完，直接上真机，不再调」；<b>Baoding balls</b> → 「保定铁球 / 健身球」。首次出现给一句白话字幕。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「颠覆 / 突破 / 碾压 / 已掌握通用灵巧操作 / 可替代人类工人 / 机器人已有触觉意识」；「225 次 180°」「112.5 整圈」「0.36 转/秒」「最强硬件结果」严格照摘要措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用项目页截图、不用他人 demo 录屏。</li>
+    <li>✅ <b>不编造数据</b>：仅使用摘要可支撑的表述 —— 「无视觉、无物体状态信息」「本体感觉 + 二值（STuck-AT）触觉」「仿真 RL 训练」「触觉标定 + 两类域随机化（动作变化率限幅、模拟卡死触觉点）」「真机零样本」「连续 225 次 180°、约 0.36 转/秒」「对比仅本体感觉 vs 本体 + 触觉」；<b>不虚构</b>成功率、数据集名、排行榜名次或未给出的绝对值。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「机器人已理解物理 / 已具备人类手感」等原文未支持的引申；镜 5 直接补一句「<b>这是研究，不是产品</b>」，并说明只验证转保定球一项。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar，共 4 位）<b>不臆测机构归属</b>；<code>comment</code> 仅「9 Pages, 8 Figures」⇒ <b>不补写</b>「已录用 / 已开源 / 有项目页」。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-19</b> ｜ 文件 <code>research/video/SCENES/10_19.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</i>（Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar）｜ <a href="https://arxiv.org/abs/2610.23438">arXiv:2610.23438</a> ｜ 首次提交 2026-10-16 ｜ 分类 <code>cs.RO</code> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-19.html">research/daily/2026-10-19.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_18.html">10_18.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+
