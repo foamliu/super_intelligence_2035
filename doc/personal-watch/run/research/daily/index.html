@@ -39,6 +39,13 @@
 <table>
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
+    <td>2026-10-20</td>
+    <td>早报（AM）</td>
+    <td>3 / 5</td>
+    <td><a href="2026-10-20.html">2026-10-20.html</a></td>
+    <td>早报 3 篇<b>全部「借鉴」</b>：<code>2610.23796</code> FuTransformer（Hopper 上 FP8 prefill + INT4 decode，含 INT4 KV-cache 与 Hadamard 旋转；Llama-3.1-8B batch=1 单步 2.8 ms，困惑度 6.24 → 6.99/7.23）/ <code>2610.23449</code> GatewayBench（首个 MCP gateway 基准：524 任务 / 251 个真实 server / 11,118 工具，扁平 vs 分层 × 7 个网关 × 良性+对抗）/ <code>2610.23787</code> DLite（history-free 投机解码：agent 负载下接受长度掉 80% ⇒ 复用 target hidden states，2–6 接受长度、较 DSpark 最多 +70%）。✅ <b>批次已刷新</b> <code>2026-10-15</code> → <code>2026-10-16</code>（<code>totalResults=634451</code>，最新 <code>published=2026-10-16T17:59:55Z</code>）；⚠️ 72h 首跑 <b><code>kept 0</code></b>（整批约 76h，超窗）→ <code>--window-hours 120</code> 复跑 <b><code>kept 193</code></b>；<code>id_list</code> 复核 <b>5/5</b>。HF 不可达（<code>Errno 101</code>）/ RSS cs.CL 226、cs.CV·cs.LG 0 均如实记录。台账 <b>收录 224 / 候选 3155 / 候选（RSS 补充）507（3,886 行）</b>；<code>papers.jsonl</code> <b>224</b></td>
+  </tr>
+  <tr>
     <td>2026-10-19</td>
     <td>晚报（PM · 收口）</td>
     <td>5 / 5</td>
@@ -132,7 +139,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-10-19 18:1x CST（<b>2026-10-19 晚报 5/5 · 当日收口</b>：早 3「借鉴」= FlashMask-3 / FDE-Gym / MemDuet；晚 2「科普」= No Eyes, No Problem（盲触觉转保定球，本日 TOP-1）/ MOSS 折纸轮沼泽机器人。<b>PM 批次已刷新</b> <code>2026-10-15</code> → <code>2026-10-16</code>（最新 <code>published=2026-10-16T17:59:55Z</code>）；⚠️ 全量 15 查询 <code>--fetch</code> 遭 <code>HTTP 429</code>（如实记 FAIL），改用单条发现查询（60 条）+ <code>id_list</code> 复核 2/2；台账 <b>收录 221 / 候选 2965 / 候选（RSS 补充）507（3,693 行）</b>，<code>papers.jsonl</code> <b>221</b>）
+  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-10-20 06:1x CST（<b>2026-10-20 早报 3/5</b>：<code>2610.23796</code> FuTransformer / <code>2610.23449</code> GatewayBench / <code>2610.23787</code> DLite，3 篇均为「借鉴」；<b>批次已刷新</b> <code>2026-10-15</code> → <code>2026-10-16</code>。<b>72h 首跑 <code>kept 0</code>（整批约 76h 超窗）→ <code>--window-hours 120</code> 复跑 <code>kept 193</code></b>；台账 <b>收录 224 / 候选 3155 / 候选（RSS 补充）507（3,886 行）</b>，<code>papers.jsonl</code> <b>224</b>。⏭️ 晚报（18:00）补 2 篇「科普」收口 5/5）
 </footer>
 </div>
 </body>
