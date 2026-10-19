@@ -19,7 +19,13 @@ from harbor.agents.options import Cli, InstalledAgentOptions
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from terminalbench.agents._base import TBBaseAgent, TB_AGENT_TIMEOUT, TB_MODEL
+from terminalbench.agents._base import (
+    TBBaseAgent,
+    TB_AGENT_TIMEOUT,
+    TB_DUMMY_KEY,
+    TB_GW_PROXY_URL,
+    TB_MODEL,
+)
 
 
 class PiTBOptions(InstalledAgentOptions):
@@ -89,7 +95,7 @@ class PiTB(TBBaseAgent):
             f'{{\n'
             f'  "providers": {{\n'
             f'    "gw": {{\n'
-            f'      "baseURL": "{self._tb_base_url}",\n'
+            f'      "baseURL": "{TB_GW_PROXY_URL}",\n'
             f'      "api": "openai-completions",\n'
             f'      "compat": {{ "supportsDeveloperRole": false }}\n'
             f'    }}\n'
@@ -101,22 +107,29 @@ class PiTB(TBBaseAgent):
         with tempfile.NamedTemporaryFile(mode="w", suffix="_models.json", delete=False) as f:
             f.write(models_config)
             config_local = Path(f.name)
+        # /root/.pi/agent must exist before upload — harbor's upload_file uses
+        # `docker compose cp` which fails on a missing target dir (Gen2 pi bug).
+        await environment.exec(command="mkdir -p /root/.pi/agent")
         await environment.upload_file(config_local, "/root/.pi/agent/models.json")
 
-        # Try pi directly, fall back to node cli.js
+        # Try pi directly, fall back to node cli.js.  --api-key is a DUMMY key;
+        # the real key is injected by gw_proxy (which pi reaches via baseURL).
         cmd = (
             f"cd {shlex.quote(cwd)} && "
             f"(pi -p --provider gw --model {shlex.quote(self._tb_model)} "
-            f"--api-key {shlex.quote(self._tb_api_key)} "
+            f"--api-key {shlex.quote(TB_DUMMY_KEY)} "
             f"{shlex.quote(instruction)}) || "
             f"(node $(npm root -g)/@fleetagent/pi-coding-agent/dist/cli.js "
             f"-p --provider gw --model {shlex.quote(self._tb_model)} "
-            f"--api-key {shlex.quote(self._tb_api_key)} "
+            f"--api-key {shlex.quote(TB_DUMMY_KEY)} "
             f"{shlex.quote(instruction)})"
         )
         env = self._env_for_harness(extra={
             "PI_OFFLINE": "1",
             "PI_SKIP_VERSION_CHECK": "1",
+            # Route through the local gw_proxy (developer->system rewrite + key inject).
+            "OPENAI_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_BASE_URL": TB_GW_PROXY_URL,
             "no_proxy": "127.0.0.1,localhost",
             "NO_PROXY": "127.0.0.1,localhost",
         })

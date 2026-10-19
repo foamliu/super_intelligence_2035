@@ -50,6 +50,26 @@ TB_API_KEY = os.environ.get("TB_API_KEY", "")
 #: Dummy key for harnesses that route through a local proxy (proxy injects real key).
 TB_DUMMY_KEY = "dummy-key-for-proxy"
 
+#: Local gw_proxy base URL (OpenAI chat completions).  gw_proxy
+#: (harness_work/gw_proxy.py) sits in front of the harnesses and (1) rewrites
+#: ``role:"developer"`` -> ``role:"system"`` — the internal gateway only accepts
+#: system/user/assistant and 422s on ``developer`` (codex/opencode/hermes emit
+#: it for reasoning models); (2) injects the real gateway key from GW_API_KEY so
+#: harnesses hold only a dummy secret; (3) translates Anthropic /v1/messages ->
+#: OpenAI chat (for claude-code).  Mirrors the proven SWE-bench 7x300 driver
+#: (run_harness.py: CodexDriver/OpenCodeDriver/... all use DUMMY_KEY + 127.0.0.1).
+#: Started on the host by launch_tb_7way.sh; TB containers use network_mode:
+#: host, so 127.0.0.1:9090 in-container == the host proxy.
+TB_GW_PROXY_URL = os.environ.get("TB_GW_PROXY_URL", "http://127.0.0.1:9090/v1")
+
+#: gw_proxy host root (no /v1) — the Anthropic SDK appends /v1/messages itself.
+TB_GW_PROXY_BASE = os.environ.get("TB_GW_PROXY_BASE", "http://127.0.0.1:9090")
+
+#: gw_proxy_dsh base URL (port 9091) — additionally strips DeepSeek-specific
+#: params (reasoning_effort / thinking / dsh_plugin_packages / ...) that the
+#: gateway rejects, and caps max_tokens at 8192.
+TB_GW_DSH_URL = os.environ.get("TB_GW_DSH_URL", "http://127.0.0.1:9091/v1")
+
 #: Harbor agent working directory inside the container (where the task repo lives).
 TB_AGENT_CWD = PurePosixPath("/root")
 

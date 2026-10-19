@@ -18,7 +18,13 @@ from harbor.agents.options import Cli, InstalledAgentOptions
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from terminalbench.agents._base import TBBaseAgent, TB_AGENT_TIMEOUT, TB_MODEL
+from terminalbench.agents._base import (
+    TBBaseAgent,
+    TB_AGENT_TIMEOUT,
+    TB_DUMMY_KEY,
+    TB_GW_PROXY_URL,
+    TB_MODEL,
+)
 
 
 class OpenCodeTBOptions(InstalledAgentOptions):
@@ -87,15 +93,23 @@ class OpenCodeTB(TBBaseAgent):
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
 
-        # Write opencode config with gw provider pointing at the gateway
+        # Write opencode config with a `gw` provider pointing at the local
+        # gw_proxy.  Schema mirrors the proven ~/.config/opencode/opencode.json
+        # used by the SWE-bench 7x300 (npm @ai-sdk/openai-compatible + options).
+        # gw_proxy rewrites developer->system and injects the real key.
         config_content = (
             f'{{\n'
+            f'  "$schema": "https://opencode.ai/config.json",\n'
             f'  "provider": {{\n'
             f'    "gw": {{\n'
-            f'      "type": "openai-compatible",\n'
-            f'      "baseURL": "{self._tb_base_url}",\n'
+            f'      "npm": "@ai-sdk/openai-compatible",\n'
+            f'      "name": "gw_proxy",\n'
+            f'      "options": {{\n'
+            f'        "baseURL": "{TB_GW_PROXY_URL}",\n'
+            f'        "apiKey": "{TB_DUMMY_KEY}"\n'
+            f'      }},\n'
             f'      "models": {{\n'
-            f'        "{self._tb_model}": {{ "name": "{self._tb_model}" }}\n'
+            f'        "{self._tb_model}": {{ "name": "{self._tb_model}", "tool_call": true }}\n'
             f'      }}\n'
             f'    }}\n'
             f'  }}\n'
@@ -115,7 +129,11 @@ class OpenCodeTB(TBBaseAgent):
             f"--auto "
             f"{shlex.quote(instruction)}"
         )
-        env = self._env_for_harness()
+        # Route through the local gw_proxy (developer->system rewrite + key inject).
+        env = self._env_for_harness(extra={
+            "OPENAI_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_BASE_URL": TB_GW_PROXY_URL,
+        })
 
         result = await environment.exec(
             command=cmd,

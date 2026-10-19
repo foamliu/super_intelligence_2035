@@ -19,7 +19,13 @@ from harbor.agents.options import Cli, InstalledAgentOptions
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from terminalbench.agents._base import TBBaseAgent, TB_AGENT_TIMEOUT, TB_MODEL
+from terminalbench.agents._base import (
+    TBBaseAgent,
+    TB_AGENT_TIMEOUT,
+    TB_DUMMY_KEY,
+    TB_GW_PROXY_URL,
+    TB_MODEL,
+)
 
 
 class CodexTBOptions(InstalledAgentOptions):
@@ -94,7 +100,13 @@ class CodexTB(TBBaseAgent):
             f"--skip-git-repo-check --json "
             f"{shlex.quote(instruction)}"
         )
-        env = self._env_for_harness()
+        # Route through the local gw_proxy (127.0.0.1:9090/v1): it rewrites
+        # codex's `role:"developer"` -> `system` (gateway 422s on developer) and
+        # injects the real key.  Mirrors SWE-bench CodexDriver (run_harness.py).
+        env = self._env_for_harness(extra={
+            "OPENAI_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_BASE_URL": TB_GW_PROXY_URL,
+        })
 
         result = await environment.exec(
             command=cmd,

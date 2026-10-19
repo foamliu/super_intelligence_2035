@@ -109,6 +109,47 @@ echo "model: kimi-k2.6-cloud"
 echo "results: ${RESULTS_FILE}"
 echo ""
 
+# --- Start local gw_proxy (role-rewrite + key-injection + Anthropic->OpenAI) ---
+# Mirrors the proven SWE-bench 7x300 setup (run_harness.py).  The 5 non-cline
+# harnesses (codex/opencode/hermes/claude-code/deepseek-harness/pi) point at
+# 127.0.0.1:9090/v1 (OpenAI chat) / 9090 (Anthropic, claude-code) / 9091 (dsh)
+# with a DUMMY key; gw_proxy injects the real TB_API_KEY and rewrites
+# `developer`->`system` (the gateway 422s on `developer`).  TB containers use
+# network_mode: host, so 127.0.0.1:9090 in-container == this host proxy.
+GW_PROXY_PY="/nas_train/app.e0031982/harness_work/gw_proxy.py"
+GW_PROXY_DSH_PY="/nas_train/app.e0031982/harness_work/gw_proxy_dsh.py"
+GW_UPSTREAM="http://agi-gateway.cxmt.com/cloud/v1"
+GW_PIDS=()
+cleanup_gw() {
+    for _pid in "${GW_PIDS[@]:-}"; do
+        kill "$_pid" 2>/dev/null || true
+    done
+}
+trap cleanup_gw EXIT
+if [[ ! -f "$GW_PROXY_PY" ]]; then
+    echo "ERROR: gw_proxy.py not found at $GW_PROXY_PY" >&2
+    exit 1
+fi
+echo "Starting gw_proxy (9090 chat/anthropic) + gw_proxy_dsh (9091)..."
+GW_API_KEY="$TB_API_KEY" GW_UPSTREAM="$GW_UPSTREAM" GW_PROXY_PORT=9090 \
+    python3 "$GW_PROXY_PY" >/tmp/tb_gw_proxy.log 2>&1 &
+GW_PIDS+=($!)
+GW_API_KEY="$TB_API_KEY" GW_UPSTREAM="$GW_UPSTREAM" GW_PROXY_PORT=9091 \
+    python3 "$GW_PROXY_DSH_PY" >/tmp/tb_gw_proxy_dsh.log 2>&1 &
+GW_PIDS+=($!)
+# Wait for readiness (max ~10s).  Any HTTP response means the proxy is listening.
+for _ in $(seq 1 20); do
+    if curl -s -o /dev/null http://127.0.0.1:9090/ 2>/dev/null; then break; fi
+    sleep 0.5
+done
+if ! curl -s -o /dev/null http://127.0.0.1:9090/ 2>/dev/null; then
+    echo "ERROR: gw_proxy did not start. Log:" >&2
+    cat /tmp/tb_gw_proxy.log >&2
+    exit 1
+fi
+echo "gw_proxy up on 127.0.0.1:9090 + 9091 (upstream ${GW_UPSTREAM})"
+echo ""
+
 # --- Build the dataset path for `harbor run` ---
 # harbor's `-p`/`--path` is SINGLE-VALUE (typed `Path | None`, last-wins —
 # confirmed in harbor/cli/jobs.py: `path: Annotated[Path | None, ...]`, unlike

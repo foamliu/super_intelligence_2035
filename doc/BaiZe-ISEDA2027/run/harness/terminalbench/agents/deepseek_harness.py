@@ -19,7 +19,13 @@ from harbor.agents.options import Cli, InstalledAgentOptions
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from terminalbench.agents._base import TBBaseAgent, TB_AGENT_TIMEOUT, TB_MODEL
+from terminalbench.agents._base import (
+    TBBaseAgent,
+    TB_AGENT_TIMEOUT,
+    TB_DUMMY_KEY,
+    TB_GW_DSH_URL,
+    TB_MODEL,
+)
 
 
 class DeepseekHarnessTBOptions(InstalledAgentOptions):
@@ -98,8 +104,8 @@ from deepseek_harness import DeepSeekHarness
 harness = DeepSeekHarness(
     provider="deepseek-official",
     model={shlex.quote(self._tb_model)},
-    base_url={shlex.quote(self._tb_base_url)},
-    api_key={shlex.quote(self._tb_api_key)},
+    base_url={shlex.quote(TB_GW_DSH_URL)},
+    api_key={shlex.quote(TB_DUMMY_KEY)},
     cwd={shlex.quote(cwd)},
     dsh_home={shlex.quote(self._dsh_home)},
     profile={shlex.quote(self._profile)},
@@ -120,7 +126,13 @@ with harness:
         script_remote = "/tmp/dsh_runner.py"
         await environment.upload_file(script_local, script_remote)
 
-        env = self._env_for_harness()
+        # The SDK gets base_url/api_key from the runner script (gw_proxy_dsh).
+        # Also point OPENAI_* env at the dsh proxy in case the native `dsh`
+        # runtime reads them.
+        env = self._env_for_harness(extra={
+            "OPENAI_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_BASE_URL": TB_GW_DSH_URL,
+        })
 
         result = await environment.exec(
             command=f"python3 {script_remote}",

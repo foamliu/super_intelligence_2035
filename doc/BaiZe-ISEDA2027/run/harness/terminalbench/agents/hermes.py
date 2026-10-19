@@ -18,7 +18,13 @@ from harbor.agents.options import Cli, InstalledAgentOptions
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from terminalbench.agents._base import TBBaseAgent, TB_AGENT_TIMEOUT, TB_MODEL
+from terminalbench.agents._base import (
+    TBBaseAgent,
+    TB_AGENT_TIMEOUT,
+    TB_DUMMY_KEY,
+    TB_GW_PROXY_URL,
+    TB_MODEL,
+)
 
 
 class HermesTBOptions(InstalledAgentOptions):
@@ -82,11 +88,13 @@ class HermesTB(TBBaseAgent):
         """
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
-        # Write a config file for the kimi provider
+        # Write a config file for the kimi provider, routed through the local
+        # gw_proxy (rewrites developer->system, injects the real key).
         config_content = (
             f"provider:\n"
             f"  kimi-proxy:\n"
-            f"    base_url: {self._tb_base_url}\n"
+            f"    base_url: {TB_GW_PROXY_URL}\n"
+            f"    api_key: {TB_DUMMY_KEY}\n"
             f"    api_mode: chat_completions\n"
             f"agent:\n"
             f"  max_turns: {self._max_turns}\n"
@@ -103,6 +111,11 @@ class HermesTB(TBBaseAgent):
             f"--yolo"
         )
         env = self._env_for_harness(extra={
+            # Route through the local gw_proxy: rewrites developer->system and
+            # injects the real key.  hermes may read OPENAI_* env in addition to
+            # the config file, so point both at the proxy.
+            "OPENAI_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_BASE_URL": TB_GW_PROXY_URL,
             "no_proxy": "127.0.0.1,localhost",
             "NO_PROXY": "127.0.0.1,localhost",
         })

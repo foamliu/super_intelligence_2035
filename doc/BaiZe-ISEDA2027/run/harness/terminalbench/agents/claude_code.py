@@ -20,7 +20,14 @@ from harbor.agents.options import Cli, Env, InstalledAgentOptions
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from terminalbench.agents._base import TBBaseAgent, TB_AGENT_TIMEOUT, TB_MODEL
+from terminalbench.agents._base import (
+    TBBaseAgent,
+    TB_AGENT_TIMEOUT,
+    TB_DUMMY_KEY,
+    TB_GW_PROXY_BASE,
+    TB_GW_PROXY_URL,
+    TB_MODEL,
+)
 
 
 class ClaudeCodeTBOptions(InstalledAgentOptions):
@@ -96,7 +103,15 @@ class ClaudeCodeTB(TBBaseAgent):
             f"--permission-mode {shlex.quote(self._permission_mode)} "
             f"{shlex.quote(instruction)}"
         )
+        # Route through the local gw_proxy: claude-code speaks the Anthropic
+        # protocol (/v1/messages); gw_proxy translates Anthropic->OpenAI chat,
+        # rewrites developer->system, and injects the real key.  ANTHROPIC_BASE_URL
+        # is the proxy HOST root (no /v1) — the SDK appends /v1/messages itself.
         env = self._env_for_harness(extra={
+            "ANTHROPIC_BASE_URL": TB_GW_PROXY_BASE,
+            "ANTHROPIC_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_API_KEY": TB_DUMMY_KEY,
+            "OPENAI_BASE_URL": TB_GW_PROXY_URL,
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
             "DISABLE_TELEMETRY": "1",
             "DISABLE_ERROR_REPORTING": "1",
