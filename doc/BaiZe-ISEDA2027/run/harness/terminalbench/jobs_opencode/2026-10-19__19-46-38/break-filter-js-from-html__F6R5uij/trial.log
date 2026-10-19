@@ -2,3 +2,4 @@ Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/no
 Command outputs captured
 Running command: npm install -g opencode-ai 2>&1 | tail -5
 Command outputs captured
+Collecting main service artifacts

@@ -1,0 +1,37 @@
+{
+    "id": "e8c10caf-1a9e-4da7-9ddf-5e77641b707d",
+    "started_at": "2026-10-19T20:56:26.557141",
+    "updated_at": "2026-10-19T13:06:39.135940Z",
+    "finished_at": null,
+    "n_total_trials": 5,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 1,
+        "n_running_trials": 1,
+        "n_pending_trials": 3,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "claude-code__tb_pilot_dataset_KDp3w7": {
+                "n_trials": 0,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {},
+                "exception_stats": {
+                    "AgentSetupTimeoutError": [
+                        "bn-fit-modify__Na5WHDs"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

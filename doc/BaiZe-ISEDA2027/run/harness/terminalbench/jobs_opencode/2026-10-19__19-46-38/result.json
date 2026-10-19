@@ -1,30 +1,44 @@
 {
     "id": "a14e985f-eb2f-4301-a526-2cd385982e79",
     "started_at": "2026-10-19T19:46:39.002834",
-    "updated_at": "2026-10-19T11:56:51.545582Z",
-    "finished_at": null,
+    "updated_at": "2026-10-19T20:56:21.701147",
+    "finished_at": "2026-10-19T20:56:21.701147",
     "n_total_trials": 5,
     "stats": {
-        "n_completed_trials": 1,
-        "n_errored_trials": 1,
-        "n_running_trials": 1,
-        "n_pending_trials": 3,
+        "n_completed_trials": 5,
+        "n_errored_trials": 3,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
         "n_cancelled_trials": 0,
         "n_retries": 0,
         "evals": {
             "opencode__tb_pilot_dataset_KDp3w7": {
-                "n_trials": 0,
-                "n_errors": 1,
+                "n_trials": 3,
+                "n_errors": 3,
                 "metrics": [
                     {
-                        "mean": 0.0
+                        "mean": 0.4
                     }
                 ],
                 "pass_at_k": {},
-                "reward_stats": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "break-filter-js-from-html__F6R5uij",
+                            "fix-git__priwhbK"
+                        ],
+                        "0.0": [
+                            "chess-best-move__AHmCsH9"
+                        ]
+                    }
+                },
                 "exception_stats": {
                     "AgentSetupTimeoutError": [
-                        "bn-fit-modify__S6kHRBs"
+                        "bn-fit-modify__S6kHRBs",
+                        "log-summary-date-ranges__WnQd4ZX"
+                    ],
+                    "AgentTimeoutError": [
+                        "chess-best-move__AHmCsH9"
                     ]
                 }
             }
