@@ -11707,3 +11707,69 @@ echo "=== DONE 89 ==="
 [7] GPU（.29 是否被 pretrain 占满，r4 是 CPU/API 型但确认下）
 === DONE 89 ===
 ```
+
+---
+
+## RUN_ID 90 · 2026-10-19 23:21:05 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 90 | port availability 8650-8670 | $(date '+%F %T') | host=$(hostname) ==="
+SB=10.129.32.75
+W=$(mktemp -d /tmp/r90.XXXXXX)
+for p in $(seq 8650 8670); do
+  (
+    if timeout 1 bash -c "cat < /dev/null > /dev/tcp/$SB/$p" 2>/dev/null; then echo TCP_OPEN > "$W/$p.t"; else echo TCP_CLOSED > "$W/$p.t"; fi
+    t0=$(date +%s%N)
+    out=$(timeout 14 curl -s --max-time 12 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 30)
+    t1=$(date +%s%N); ms=$(( (t1-t0)/1000000 ))
+    if [ -z "$out" ]; then echo "BUSY ${ms}" > "$W/$p.e"; else echo "OK ${ms}" > "$W/$p.e"; fi
+  ) &
+done
+wait
+printf "%-6s %-11s %-6s %-8s %s\n" PORT TCP EXEC ms VERDICT
+U=""
+for p in $(seq 8650 8670); do
+  t=$(cat "$W/$p.t" 2>/dev/null); e=$(cat "$W/$p.e" 2>/dev/null | awk '{print $1}'); ms=$(cat "$W/$p.e" 2>/dev/null | awk '{print $2}')
+  if [ "$e" = "OK" ] && [ "${ms:-99999}" -lt 2000 ]; then v="✅ USABLE"; U="$U $p"; else v="❌ busy/down"; fi
+  printf "%-6s %-11s %-6s %-8s %s\n" "$p" "$t" "$e" "$ms" "$v"
+done
+echo ""
+echo "USABLE LIST:$U"
+echo "COUNT: $(echo $U | wc -w)"
+rm -rf "$W"
+echo "=== DONE 90 ==="
+```
+
+**输出**
+```
+=== RUN_ID 90 | port availability 8650-8670 | 2026-10-19 23:21:05 | host=hfeg0tedaap02 ===
+PORT   TCP         EXEC   ms       VERDICT
+8650   TCP_OPEN    BUSY   12010    ❌ busy/down
+8651   TCP_OPEN    OK     17       ✅ USABLE
+8652   TCP_OPEN    BUSY   12009    ❌ busy/down
+8653   TCP_OPEN    OK     15       ✅ USABLE
+8654   TCP_OPEN    BUSY   12007    ❌ busy/down
+8655   TCP_OPEN    OK     11       ✅ USABLE
+8656   TCP_OPEN    OK     15       ✅ USABLE
+8657   TCP_OPEN    OK     16       ✅ USABLE
+8658   TCP_OPEN    OK     14       ✅ USABLE
+8659   TCP_OPEN    OK     7136     ❌ busy/down
+8660   TCP_OPEN    OK     14       ✅ USABLE
+8661   TCP_OPEN    OK     14       ✅ USABLE
+8662   TCP_OPEN    OK     15       ✅ USABLE
+8663   TCP_OPEN    OK     15       ✅ USABLE
+8664   TCP_OPEN    OK     19       ✅ USABLE
+8665   TCP_OPEN    OK     14       ✅ USABLE
+8666   TCP_OPEN    OK     14       ✅ USABLE
+8667   TCP_OPEN    OK     15       ✅ USABLE
+8668   TCP_OPEN    OK     7266     ❌ busy/down
+8669   TCP_OPEN    OK     15       ✅ USABLE
+8670   TCP_OPEN    OK     14       ✅ USABLE
+
+USABLE LIST: 8651 8653 8655 8656 8657 8658 8660 8661 8662 8663 8664 8665 8666 8667 8669 8670
+COUNT: 16
+=== DONE 90 ===
+```
