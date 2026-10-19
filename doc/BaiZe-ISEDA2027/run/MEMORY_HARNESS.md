@@ -5,11 +5,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB 7×5 pilot Gen4 全 7 路已跑完(R452 纠正 R451 “launcher死/3未跑”误判)。门据不通过(3/7 adapter-bug 秒退)→不放行 7×89。本轮已修 deepseek(R452), 余 hermes/pi/claude-code 待修
-已完成:       oracle 5/5 ✅ · 7 adapters ✅ · 28/28 mock ✅ · smoke ✅ · Gen4 全 7 路已跑(R452 纠正 R451) · deepseek quoting bug 已修+验证(R452)
-当前动作:     R452: 纠正 R451 误判(Gen4 7 路全跑了, 非“3 路未跑”)+ 逐路读 agent_result.stdout 定根因(非猜测) + 已修 deepseek。Gen4 真结果(7 路全跑): ①cline-patched 4/5 resolved ✅ ②codex 0/5(bn-fit 1800s 能力超时,余 reward0) ③opencode 1/5(bn-fit resolved) ④hermes 0/5 全 exit1【根因=PyPI hermes-agent v0.19.0 ≠ host git v0.0.0(cb6ffe6c), provider schema 变→“Unknown provider kimi-proxy”, config.yaml 写 /root/.hermes/ 仍不识别】 ⑤pi 0/5 全 exit1【根因=adapter models.json schema 错: 用 baseURL 但 host 实测应为 baseUrl+inline apiKey+models 数组→“Unknown provider gw”】 ⑥claude-code 0/5 全 exit1【根因=容器以 root 运行, claude --dangerously-skip-permissions 拒绝 root; harbor exec 支持 user= 参数可切非 root】 ⑦deepseek 0/5 全 exit1【根因=shlex.quote 把多行 instruction 嵌进 Python 源码→SyntaxError; 已改 repr() 修复+验证】
-下一步:       ① 容器探针确认 hermes v0.19.0 provider 注册方式(或 pin 回 host git 版本) ② 改 pi models.json 为 host 实测 schema(baseUrl+apiKey+models 数组) ③ claude-code: install 建非 root user + run 用 environment.exec(user=) ④ 重跑 solo smoke(cline×1) 确认管线 → 7×5 Gen5 pilot ⑤ 门据(infra≤20% AND ≥6/7 runnable)判放行 7×89
-阻塞:         3/7 adapter-bug 秒退(hermes/pi/claude-code)→不放行 7×89。deepseek 已修(R452)。.29 load 高=pretrain decay(trial 慢但未阻塞); .29 ops relay 正常(PID 2663131, last_run_id=139)→10-18 P0 确已 superseded。run/ 下有 3 个 4.4GB 未跟踪模型目录(1049/3147/5245, 10-15 创建, 非本线, 按共享副本纪律不动)
+PHASE:        TB 7×5 pilot Gen5 已启动于 .29(R453)。Gen4 门据不通过(3/7 adapter 秒退)→本轮修 pi+claude-code(deepseek R452已修), hermes=诚实 infra blocker(py3.14 不可得)→6/7 可跑→门据应过(1/7=14%≤20%)
+已完成:       oracle 5/5 ✅ · 7 adapters ✅ · 28/28 mock ✅ · smoke ✅ · Gen4 全7路已跑+逐路定根因 · deepseek quoting bug 修+验证(R452) · pi models.json schema 修(baseUrl+inline apiKey+models 数组,对齐 host 实测)(R453) · claude-code 非 root user 修(install useradd agent + run environment.exec(user="agent")+chown workdir+HOME=/home/agent)(R453) · Gen5 pilot 已启动(R453)
+当前动作:     R453: 修 pi.py models.json schema + claude_code.py run() 加 user="agent"(install 已建 user)+chown workdir+HOME=/home/agent。py_compile 8/8 OK + 28/28 mock pass(72 subtests)。Gen5 pilot 已于 .29(whag0pgpuap29) 后台启动: PID 1747306, 17:18:57, 日志 /tmp/tb_pilot_gen5.log, gw_proxy 9090/9091 up。正跑 oracle 预检(~11min)→7 harness×5 task(~5h)。hermes 标 infra-blocked(1/7=14%)
+下一步:       ① 待 Gen5 跑完(预计 ~22:30)读 terminalbench_kimi_k2.6_results.json + traces/ 判门据(infra≤20% AND ≥6/7 runnable) ② 若 pi/claude-code 仍秒退→读 agent_result.stdout 定根因+修+重跑(最多3次) ③ 门据过→放行 7×89 ④ 更新心跳
+阻塞:         hermes=诚实 infra blocker(hermes-agent v0.0.0 pyproject 全 deps gate py>=3.14, 容器仅 3.12, uv python install 3.14 失败 github 不可达)。6/7 可跑→门据应过。.29 load 高=pretrain decay(trial 慢不阻塞); run/ 下 3 个 4.4GB 未跟踪模型目录(非本线,不动)
 ERROR_COUNT:  0
 ```
 

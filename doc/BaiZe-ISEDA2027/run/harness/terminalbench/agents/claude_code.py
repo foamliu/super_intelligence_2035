@@ -75,11 +75,25 @@ class ClaudeCodeTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install Claude-Code CLI inside the Docker container via npm."""
+        """Install Claude-Code CLI inside the Docker container via npm.
+
+        Also creates a non-root user ``agent``: Claude-Code refuses
+        ``--dangerously-skip-permissions`` when run as root/sudo ("cannot be used
+        with root/sudo privileges" — Gen4 root cause, 2026-10-19).  ``run()``
+        then executes the CLI as that user via ``environment.exec(user=...)``
+        (harbor BaseEnvironment.exec supports ``user=`` — confirmed
+        harbor/environments/base.py:1186).
+        """
         await self._install_node(environment)
         await self.exec_as_root(
             environment,
             command="npm install -g @anthropic-ai/claude-code 2>&1 | tail -5",
+        )
+        # Create a non-root user for running claude (idempotent).  -m creates
+        # /home/agent so HOME is a real writable dir for claude's config/cache.
+        await self.exec_as_root(
+            environment,
+            command="useradd -m -s /bin/bash agent 2>/dev/null || true",
         )
         result = await environment.exec(command="claude --version 2>&1 || true")
         self._version = result.stdout.strip() or "unknown"
@@ -91,9 +105,24 @@ class ClaudeCodeTB(TBBaseAgent):
         environment: BaseEnvironment,
         context: AgentContext,
     ) -> None:
-        """Run Claude-Code headlessly with the task instruction."""
+        """Run Claude-Code headlessly with the task instruction.
+
+        Runs as the non-root ``agent`` user (created in ``install``): Claude-Code
+        refuses ``--dangerously-skip-permissions`` under root/sudo.  The task
+        workdir is chowned to ``agent`` first so claude's bash/file tools can
+        read & write the repo, then the CLI is invoked via
+        ``environment.exec(user="agent")``.
+        """
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
+        # Grant the non-root agent user ownership of the workdir so claude's
+        # bash/edit tools can operate on the task repo (otherwise cd/edits fail
+        # with EACCES).  Best-effort: if the path doesn't exist yet, claude will
+        # create what it needs under /home/agent.
+        await self.exec_as_root(
+            environment,
+            command=f"chown -R agent {shlex.quote(cwd)} 2>/dev/null || true",
+        )
         cmd = (
             f"cd {shlex.quote(cwd)} && "
             f"claude --print "
@@ -112,6 +141,9 @@ class ClaudeCodeTB(TBBaseAgent):
             "ANTHROPIC_API_KEY": TB_DUMMY_KEY,
             "OPENAI_API_KEY": TB_DUMMY_KEY,
             "OPENAI_BASE_URL": TB_GW_PROXY_URL,
+            # claude runs as user "agent" -> its $HOME is /home/agent (created by
+            # useradd -m in install).  Pin HOME so config/cache land there.
+            "HOME": "/home/agent",
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
             "DISABLE_TELEMETRY": "1",
             "DISABLE_ERROR_REPORTING": "1",
@@ -126,6 +158,7 @@ class ClaudeCodeTB(TBBaseAgent):
         result = await environment.exec(
             command=cmd,
             env=env,
+            user="agent",
             timeout_sec=self._timeout,
         )
 

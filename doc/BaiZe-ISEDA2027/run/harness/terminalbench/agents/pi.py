@@ -90,14 +90,39 @@ class PiTB(TBBaseAgent):
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
 
-        # Write models.json with gw provider pointing at the gateway
+        # Write models.json with gw provider pointing at the gateway.
+        # Schema MUST match the proven host config (~/.pi/agent/models.json "gw"
+        # provider used for the successful SWE-bench 7x300 — verified 2026-10-19):
+        #   - key is ``baseUrl`` (camelCase), NOT ``baseURL`` (Gen4 used the wrong
+        #     key -> "Unknown provider 'gw'").
+        #   - ``apiKey`` is inline on the provider (the CLI --api-key is a dummy;
+        #     gw_proxy injects the real key upstream, but pi requires the field to
+        #     exist in models.json to register the provider).
+        #   - ``models`` is a REQUIRED array; without it pi does not register the
+        #     provider's model and rejects ``--model kimi-k2.6-cloud``.
+        #   - ``compat.supportsReasoningEffort: false`` mirrors the gateway, which
+        #     422s on reasoning_effort (same as supportsDeveloperRole).
         models_config = (
             f'{{\n'
             f'  "providers": {{\n'
             f'    "gw": {{\n'
-            f'      "baseURL": "{TB_GW_PROXY_URL}",\n'
+            f'      "baseUrl": "{TB_GW_PROXY_URL}",\n'
             f'      "api": "openai-completions",\n'
-            f'      "compat": {{ "supportsDeveloperRole": false }}\n'
+            f'      "apiKey": "{TB_DUMMY_KEY}",\n'
+            f'      "compat": {{\n'
+            f'        "supportsDeveloperRole": false,\n'
+            f'        "supportsReasoningEffort": false\n'
+            f'      }},\n'
+            f'      "models": [\n'
+            f'        {{\n'
+            f'          "id": "{TB_MODEL}",\n'
+            f'          "name": "kimi-k2.6-cloud (via gw_proxy)",\n'
+            f'          "reasoning": false,\n'
+            f'          "input": ["text"],\n'
+            f'          "contextWindow": 131072,\n'
+            f'          "maxTokens": 8192\n'
+            f'        }}\n'
+            f'      ]\n'
             f'    }}\n'
             f'  }}\n'
             f'}}\n'
