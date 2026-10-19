@@ -1,11 +1,51 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 82 -->
+<!-- RUN_ID: 83 -->
+
+## RUN_ID 83 — 切实排查 `timeout 2500` 真实根因（只读诊断·用户直令·不改任何配置）
+
+> 用户令：「安排 zhulong agent 切实排查这次超时的真实根因，上报时带上根因和建议的修复方法，由运维决策」
+> 详细要求见 `run/OPS_INSTR_RUN83_TIMEOUT_ROOTCAUSE.md`（含运维初步假设 H1/H2/H3 + 候选修复 F1–F5）。
+> **本块只做只读取证**：不重启/不 kill/不改 `run_cli.sh`·`run_cline_script.sh`·`.env`·cline 版本。长输出已 `cut`。
+
+```bash
+set -u
+echo "=== RUN_ID 83 | timeout 2500 根因取证 | $(date '+%F %T') | host=$(hostname) ==="
+S=/nasdata/app.e0031982/code/eda_fastmcp/scripts
+echo "[A1] run_cli.sh 190-240（timeout 是否有 -k / 是否后台+wait / COMMAND 是什么）"
+sed -n '190,240p' "$S/run_cli.sh" 2>/dev/null | cat -n | cut -c1-190 || echo "NOFILE"
+echo "[A2] run_cli.sh 全部 timeout 命中行"
+grep -nE 'timeout|kill|increment_stat' "$S/run_cli.sh" 2>/dev/null | cut -c1-150 | head -30 || true
+echo "[A3] 全项目是否有 SIGKILL 兜底（kill-after / -k N / kill -9 / kill -KILL）"
+grep -rnE 'kill-after|-k [0-9]+ |kill -9|kill -KILL|pkill' "$S" 2>/dev/null | cut -c1-150 | head -20 || echo "NONE"
+echo "[A4] run_cline_script.sh 是否又套一层 timeout + -p/-n 含义"
+grep -nE 'timeout|run_cli|-p |-n |parallel|getopts' "$S/run_cline_script.sh" 2>/dev/null | cut -c1-150 | head -25 || true
+echo "[B] r3 batch 2026_1019_145634 stats（timeout/success/failure/total_time）"
+D3=/home/app.e0031982/eda_code_eval/2026_1019_145634
+ls -l "$D3/stats/" 2>/dev/null | tail -12 || echo "NO_DIR"
+for f in success timeout failure total_time; do printf '%s = ' "$f"; cat "$D3/stats/$f" 2>/dev/null | head -2 || echo NA; done
+echo "[B2] r3 timeout_task.log（逐题耗时/收口方式）"
+sed -n '1,60p' "$D3/timeout_task.log" 2>/dev/null | cut -c1-170 || echo "NO_TIMEOUT_LOG"
+echo "[B3] r3 log 中超时相关行"
+grep -aE '超时|timeout' /tmp/ABL_readback_none_retest_r3.log 2>/dev/null | tail -15 | cut -c1-170 || true
+echo "[B4] r3 批量结束统计行"
+grep -aE '批量任务结束|统计|总耗时|成功\[|超时\[' /tmp/ABL_readback_none_retest_r3.log 2>/dev/null | tail -8 | cut -c1-170 || true
+echo "[C1] 对照 legacy/fresh 的 timeout 计数（判断是否幸存者偏差）"
+for b in 2026_1015_093317 2026_1015_143848 2026_1015_193004 2026_1015_233638 2026_1016_041955; do
+  printf '%s timeout=' "$b"; cat "/home/app.e0031982/eda_code_eval/$b/stats/timeout" 2>/dev/null | head -1 || echo NA
+  printf '  total_time='; cat "/home/app.e0031982/eda_code_eval/$b/stats/total_time" 2>/dev/null | head -1 || echo NA
+done
+echo "[C2] 磁盘（/home 96% 已知·data-dir 在 NAS）"
+df -BG /home /nasdata 2>/dev/null | cut -c1-120
+echo "[C3] 当前无 r3 残留（只读确认）"
+ps -eo pid,ppid,etimes,args 2>/dev/null | grep -E '[r]un_cline_script|[t]imeout 2500' | grep -i e0031982 | cut -c1-150 || echo "无残留"
+echo "=== DONE 83 ==="
+```
 
 ## RUN_ID 82 — 复查 r2 收口状态（task 119 已 kill·只读）
 
 > 用途：确认 task 119 worker 被杀后 batch 2680437 是否收口 r2、是否已出 Pass@1 与 summary。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 82 | r2 收口复查 | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] batch 主进程 2680437"
