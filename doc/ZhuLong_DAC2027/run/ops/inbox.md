@@ -1,11 +1,35 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 81 -->
+<!-- RUN_ID: 82 -->
+
+## RUN_ID 82 — 复查 r2 收口状态（task 119 已 kill·只读）
+
+> 用途：确认 task 119 worker 被杀后 batch 2680437 是否收口 r2、是否已出 Pass@1 与 summary。**只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 82 | r2 收口复查 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] batch 主进程 2680437"
+[ -e /proc/2680437 ] && echo "ALIVE [$(tr '\0' ' ' </proc/2680437/cmdline 2>/dev/null | cut -c1-120)]" || echo "GONE"
+echo "[2] 本 run 进程残留（run_cli / run_cline_script / timeout 2500, 仅 e0031982）"
+ps -eo pid,ppid,etimes,user,args | grep -E '[r]un_cli\.sh|[r]un_cline_script|[t]imeout 2500' | grep -i 'e0031982' | cut -c1-170 || echo "无残留"
+echo "[3] r2 log 末尾"
+tail -20 /tmp/ABL_readback_none_retest_r2.log 2>/dev/null | cut -c1-200
+echo "[4] batch 目录 + stats"
+ls -dt /home/app.e0031982/eda_code_eval/2026_1019_071104 2>/dev/null
+D=/home/app.e0031982/eda_code_eval/2026_1019_071104
+ls -l "$D/stats/" 2>/dev/null
+echo "--- stats 内容 ---"
+for f in "$D"/stats/*; do [ -f "$f" ] && echo "== $f ==" && cat "$f" 2>/dev/null | tail -5; done
+echo "--- log 里 pass/summary 关键词 ---"
+grep -aE 'pass \(|generated:|汇总|Pass@1|summary' /tmp/ABL_readback_none_retest_r2.log 2>/dev/null | tail -10
+echo "=== DONE 82 ==="
+```
 
 ## RUN_ID 81 — kill task 119 stuck cline worker（运维决策·用户指令）
 
 > 用途：诊断 run_cline_script.sh 的 timeout 写法 + 手动 kill task 119 卡死 6h 的 cline worker（PID 2743947/2743948，先核验 cmdline 再 TERM→KILL），让 batch 2680437 自动收口 r2。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 81 | kill task 119 stuck cline worker | $(date '+%F %T') | host=$(hostname) ==="
 
