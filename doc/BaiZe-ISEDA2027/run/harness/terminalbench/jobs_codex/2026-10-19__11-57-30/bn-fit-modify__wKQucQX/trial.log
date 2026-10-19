@@ -2,3 +2,5 @@ Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/no
 Command outputs captured
 Running command: npm install -g @openai/codex@0.94.0 2>&1 | tail -5
 Command outputs captured
+Trial bn-fit-modify__wKQucQX failed: Command timed out after 1800 seconds
+Collecting main service artifacts
