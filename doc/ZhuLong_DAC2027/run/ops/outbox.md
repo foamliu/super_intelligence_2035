@@ -11616,3 +11616,94 @@ bash: /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/zhulong_loop.sh: No such fi
   t0002147 cline count = 57
 === DONE 88 ===
 ```
+
+---
+
+## RUN_ID 89 · 2026-10-19 23:16:50 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 89 | harness dual-loop check + zhulong r4 prereq | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 本机身份"
+echo "  hostname=$(hostname) ip=$(hostname -I 2>/dev/null | awk '{print $1}')"
+
+echo ""
+echo "[2] 本机所有 loop 进程（含 ppid/etimes/前 5 个参数）"
+ps -eo pid,ppid,etimes,user,args 2>/dev/null \
+  | grep -iE '[h]arness_loop|[t]b_loop|[z]hulong_loop|[b]aize_.*_loop|[o]ps_relay' \
+  | awk '{printf "  pid=%s ppid=%s et=%ss user=%s |", $1,$2,$3,$4; for(i=5;i<=9&&i<=NF;i++) printf " %s", $i; print ""}' \
+  | cut -c1-150
+
+echo ""
+echo "[3] harness loop 精确定位（只看命令行含 harness 的 bash）"
+H=$(ps -eo pid,ppid,etimes,args 2>/dev/null | grep -E 'bash .*harness.*loop|[h]arness_loop\.sh' | grep -v grep)
+if [ -z "$H" ]; then echo "  NONE on this host"; else echo "$H" | cut -c1-150; fi
+
+echo ""
+echo "[4] 该 loop 的启动上下文（若存在）：cwd + cline 可见性"
+for pid in $(echo "$H" | awk '{print $1}' | head -3); do
+  echo "  --- pid=$pid ---"
+  echo "   cwd=$(readlink -f /proc/$pid/cwd 2>/dev/null | cut -c1-100)"
+  echo "   start=$(ps -o lstart= -p $pid 2>/dev/null | cut -c1-40)"
+done
+
+echo ""
+echo "[5] zhulong r4 前置：端口占用（8650-8670 抽样）"
+for p in 8650 8652 8654 8655 8656 8657 8658 8659 8660; do
+  ( out=$(timeout 6 curl -s --max-time 4 -X POST "http://10.129.32.75:$p/v1/run_code" \
+        -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 10)
+    [ -z "$out" ] && echo "$p BUSY" > /tmp/r89_$p || echo "$p FREE" > /tmp/r89_$p ) &
+done
+wait
+for p in 8650 8652 8654 8655 8656 8657 8658 8659 8660; do echo "  $(cat /tmp/r89_$p 2>/dev/null || echo "$p NA")"; rm -f /tmp/r89_$p; done
+
+echo ""
+echo "[6] zhulong r4 前置：regrade 是否已清 + 模型 key"
+ps -eo pid,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox\.py' | awk '{print "  ",$1}' | head -5
+echo "  (以上为空=已清)"
+grep -oE '"model"[^,]*' /home/app.e0031982/.zhulong/settings/providers.json 2>/dev/null | head -2 | cut -c1-120
+echo "  t0002147 cline count = $(ps -eo user,args 2>/dev/null | grep -c 't0002147.*cline')"
+
+echo ""
+echo "[7] GPU（.29 是否被 pretrain 占满，r4 是 CPU/API 型但确认下）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | cut -c1-60 || echo "  no nvidia-smi"
+echo "=== DONE 89 ==="
+```
+
+**输出**
+```
+=== RUN_ID 89 | harness dual-loop check + zhulong r4 prereq | 2026-10-19 23:16:50 | host=hfeg0tedaap02 ===
+[1] 本机身份
+  hostname=hfeg0tedaap02 ip=172.17.0.1
+
+[2] 本机所有 loop 进程（含 ppid/etimes/前 5 个参数）
+  pid=81827 ppid=1 et=501223s user=app.e00+ | bash zhulong_loop.sh
+  pid=703664 ppid=3277328 et=0s user=app.e00+ | bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+  pid=3277328 ppid=1 et=745115s user=app.e00+ | bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+
+[3] harness loop 精确定位（只看命令行含 harness 的 bash）
+  NONE on this host
+
+[4] 该 loop 的启动上下文（若存在）：cwd + cline 可见性
+
+[5] zhulong r4 前置：端口占用（8650-8670 抽样）
+  8650 BUSY
+  8652 BUSY
+  8654 BUSY
+  8655 FREE
+  8656 FREE
+  8657 FREE
+  8658 FREE
+  8659 BUSY
+  8660 FREE
+
+[6] zhulong r4 前置：regrade 是否已清 + 模型 key
+  (以上为空=已清)
+"model": "glm-5.2"
+  t0002147 cline count = 11
+
+[7] GPU（.29 是否被 pretrain 占满，r4 是 CPU/API 型但确认下）
+=== DONE 89 ===
+```
