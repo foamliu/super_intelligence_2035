@@ -791,3 +791,14 @@
 | 2026-10-19 | 六小龄童谈「圣黛 CP」AI 魔改：创意很好玩，但改编不能逾越政策法规与观众红线 | IT之家（`014/753`，据新黄河） | news | https://www.ithome.com/1/014/753.htm |
 | 2026-10-19 | 斯巴鲁公布软件定义汽车计划（开发周期缩短约 40% · 与 AMD 联合开发集成 ECU） | IT之家（`014/750`，据路透社） | 留档(非 AI 具体事件) | https://www.ithome.com/1/014/750.htm |
 | 2026-10-19 | China Plans to Tighten Export Controls on AI Technologies | HN → 大纪元 | 不收(信源纪律：不引用该刊；未见官方公告) | https://www.theepochtimes.com/china/china-plans-to-tighten-export-controls-on-ai-technologies-6104786 |
+| 2026-10-19 | 韩国外卖平台 Baedal Minjok 约 201 名骑手信息外泄（配送外包公司数据目录未设独立身份验证） | IT之家（`014/834`，据 The Elec） | news | https://www.ithome.com/1/014/834.htm |
+| 2026-10-19 | 大晓机器人发布具身基模型 ACE-Brain-0.6（七项公开基准均分 74.53 vs GPT-6 Astra 73.68） | IT之家（`014/815`） | news | https://www.ithome.com/1/014/815.htm |
+| 2026-10-19 | 国家网信办开展未成年人用户数量巨大/具有显著影响的网络平台认定工作 | IT之家（`014/810`，据网信办公告） | news | https://www.ithome.com/1/014/810.htm |
+| 2026-10-19 | 腾讯 AI 管家 Marvis 上架麒麟软件商店（银河麒麟 V10SP1 · X86/ARM） | IT之家（`014/832`） | news | https://www.ithome.com/1/014/832.htm |
+| 2026-10-19 | Amkor 未来 5 年斥资 3 万亿韩元扩建韩国光州先进封装产能（服务 AI/HPC） | IT之家（`014/850`） | news | https://www.ithome.com/1/014/850.htm |
+| 2026-10-19 | 字节火山引擎「Seedance 精品 AI 剧激励计划」（TOP1–10 单部 20 万元 · 首期截止 2027-01-31） | IT之家（`014/794`） | news | https://www.ithome.com/1/014/794.htm |
+| 2026-10-19 | 游戏公司未成年退款多退三万元、对方 AI 伪造通话录音被当庭训诫 | IT之家（`014/836`，据央视新闻） | 不收(司法个案) | https://www.ithome.com/1/014/836.htm |
+| 2026-10-19 | 苹果开发者文档新增 8 种语言（含简体中文，部分 AI 翻译） | IT之家（`014/849`） | 不收(AI 仅为翻译手段·主体为本地化) | https://www.ithome.com/1/014/849.htm |
+| 2026-10-19 | 《最终幻想 14》日服大量异常登录；日本 10 月至少 20 家企业/平台遭非法访问 | IT之家（`014/851`） | 不收(与 AI 无直接关系) | https://www.ithome.com/1/014/851.htm |
+| 2026-10-19 | In Europe's tech capital, Irish labor unions are booming amid AI-driven layoffs | HN → Politico Europe | 不收(feature) | https://www.politico.eu/article/in-europe-tech-capital-ireland-irish-labor-unions-are-booming-amid-ai-layoffs/ |
+| 2026-10-19 | Zotac RTX 5090 显卡在巴西机场失踪（约 47 万美元） | HN → VideoCardz | 不收(非 AI 具体事件) | https://videocardz.com/newz/two-pallets-of-zotac-rtx-5090-graphics-cards-worth-470000-disappear-at-brazilian-airport |
