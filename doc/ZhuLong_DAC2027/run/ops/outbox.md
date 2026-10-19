@@ -11450,3 +11450,97 @@ retest r1 = 60.1% (95/158) 的 63 个失败分解（batch `2026_1017_091724`，-
 1. **当前 wo_selfexpl r1 regrade 已由运维侧手动启动**�
 [zhulong-relay] ⚠️ 输出超长，已截断到 20000 字符
 ```
+
+---
+
+## RUN_ID 87 · 2026-10-19 22:35:23 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 87 | post-R86 verification (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r3 regrade 目标进程（应全 GONE）"
+for p in 229615 229619 229631 229632 229634 229636; do
+  if [ -e /proc/$p ]; then
+    echo "  pid=$p ALIVE etime=$(ps -o etimes= -p $p 2>/dev/null | tr -d ' ')s cmd=$(tr '\\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-50)"
+  else
+    echo "  pid=$p GONE"
+  fi
+done
+
+echo ""
+echo "[2] 本线 regrade 残留（应为空）"
+ps -eo pid,args 2>/dev/null | grep -E '[r]un_eval\\.py|[r]un_on_sandbox\\.py' | awk '{print "  ", $1, substr($0, index($0,$2), 60)}' | head -6
+
+echo ""
+echo "[3] zhulong_loop 是否存活（关键）"
+LP=$(ps -eo pid,args 2>/dev/null | grep '[z]hulong_loop\\.sh' | awk '{print $1}' | head -3)
+if [ -z "$LP" ]; then echo "  X zhulong_loop 不在（疑被 RUN_ID 86 误杀，需运维重启）"; else
+  for p in $LP; do echo "  OK zhulong_loop pid=$p etime=$(ps -o etimes= -p $p 2>/dev/null | tr -d ' ')s"; done
+fi
+echo "  -- opencode 编排 --"
+ps -eo pid,etimes,args 2>/dev/null | grep '[o]pencode run --auto' | awk '{print "  ", $1, $2, substr($0, index($0,$3), 45)}' | head -3
+if [ -e /proc/632398 ]; then echo "  632398 ALIVE"; else echo "  632398 GONE"; fi
+
+echo ""
+echo "[4] 保命项"
+pgrep -f '[o]ps_relay' >/dev/null && echo "  ops_relay ALIVE OK" || echo "  X ops_relay GONE"
+echo "  8090=$(ss -ltn 2>/dev/null | grep -c ':8090 ') 9006=$(ss -ltn 2>/dev/null | grep -c ':9006 ') (1=LISTEN)"
+
+echo ""
+echo "[5] 备份完好性（61 passed 载体）"
+BK=$(ls -dt /home/app.e0031982/eda_code_eval/2026_1019_145634_BACKUP_* 2>/dev/null | head -1)
+if [ -n "$BK" ]; then echo "  BACKUP=$(basename "$BK")"; du -sh "$BK" 2>/dev/null | cut -c1-40; else echo "  X 无备份"; fi
+for f in success timeout failure total_time; do printf '  %s=' "$f"; cat /home/app.e0031982/eda_code_eval/2026_1019_145634/stats/$f 2>/dev/null | head -1; done
+
+echo ""
+echo "[6] 端口（8655-8658 供 A 方案）"
+for p in 8651 8655 8656 8657 8658; do
+  ( out=$(timeout 8 curl -s --max-time 6 -X POST "http://10.129.32.75:$p/v1/run_code" \
+        -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 10)
+    if [ -z "$out" ]; then echo "$p BUSY" > /tmp/r87_$p; else echo "$p FREE" > /tmp/r87_$p; fi ) &
+done
+wait
+for p in 8651 8655 8656 8657 8658; do echo "  $(cat /tmp/r87_$p 2>/dev/null || echo "$p NA")"; rm -f /tmp/r87_$p; done
+echo "=== DONE 87 ==="
+```
+
+**输出**
+```
+=== RUN_ID 87 | post-R86 verification (READ-ONLY) | 2026-10-19 22:35:23 | host=hfeg0tedaap02 ===
+[1] r3 regrade 目标进程（应全 GONE）
+  pid=229615 GONE
+  pid=229619 GONE
+  pid=229631 GONE
+  pid=229632 GONE
+  pid=229634 GONE
+  pid=229636 GONE
+
+[2] 本线 regrade 残留（应为空）
+
+[3] zhulong_loop 是否存活（关键）
+  X zhulong_loop 不在（疑被 RUN_ID 86 误杀，需运维重启）
+  -- opencode 编排 --
+  632398 GONE
+
+[4] 保命项
+  ops_relay ALIVE OK
+  8090=1 9006=1 (1=LISTEN)
+
+[5] 备份完好性（61 passed 载体）
+  BACKUP=2026_1019_145634_BACKUP_223148
+352M	/home/app.e0031982/eda_code_eval/20
+  success=153
+  timeout=5
+  failure=0
+  total_time=76326
+
+[6] 端口（8655-8658 供 A 方案）
+  8651 FREE
+  8655 FREE
+  8656 FREE
+  8657 FREE
+  8658 FREE
+=== DONE 87 ===
+```
