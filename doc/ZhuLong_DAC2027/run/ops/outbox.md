@@ -11881,3 +11881,178 @@ Mem:            1007         239          82           0         693         767
 1429828 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md 
 === DONE 91 ===
 ```
+
+---
+
+## RUN_ID 92 · 2026-10-20 06:28:25 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 92 | 36.15 CPU/MEM contention check | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 基础身份与 CPU 核数"
+echo "  hostname=$(hostname)  ip=$(hostname -I 2>/dev/null | awk '{print $1}')"
+echo "  cores=$(nproc)  loadavg=$(cat /proc/loadavg | cut -d' ' -f1-3)"
+echo "  => 负载/核数 比: $(awk '{printf "%.2f", $1}' /proc/loadavg) / $(nproc)"
+
+echo ""
+echo "[2] CPU 总体使用率（mpstat，2 次采样）"
+if command -v mpstat >/dev/null 2>&1; then
+  mpstat 2 1 2>/dev/null | tail -2 | cut -c1-160
+else
+  vmstat 1 3 2>/dev/null | cut -c1-130
+fi
+
+echo ""
+echo "[3] 内存（/proc/meminfo 关键项，MB）"
+free -m | head -3 | cut -c1-120
+awk '/MemTotal|MemAvailable|SwapTotal|SwapFree|Dirty|Writeback/{printf "  %-14s %8.1f MB\n", $1, $2/1024}' /proc/meminfo
+
+echo ""
+echo "[4] 按用户聚合 CPU%（Top5 用户，看谁在抢）"
+ps -eo user,pcpu,pmem --no-headers 2>/dev/null | awk '{c[$1]+=$2; m[$1]+=$3} END{for(u in c) printf "  %-16s cpu=%6.1f%%  mem=%5.1f%%\n", u, c[u], m[u]}' | sort -t= -k2 -rn | head -8
+
+echo ""
+echo "[5] Top 12 进程（CPU）"
+ps -eo pid,ppid,etimes,pcpu,pmem,nlwp,user,args --sort=-pcpu 2>/dev/null | head -13 | cut -c1-150
+
+echo ""
+echo "[6] 关键进程详解：8090 MCP / 9006 RAG / 本线 eval"
+for spec in 8090:MCP 9006:RAG; do
+  port=${spec%%:*}; name=${spec##*:}
+  pid=$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+  if [ -n "${pid:-}" ]; then
+    echo "  --- $name (port=$port, pid=$pid) ---"
+    ps -o pid,etimes,pcpu,pmem,nlwp,nlwp,rss,vsz -p "$pid" 2>/dev/null | cut -c1-120
+    echo "    fd=$(ls /proc/$pid/fd 2>/dev/null | wc -l)  threads=$(ls /proc/$pid/task 2>/dev/null | wc -l)"
+    echo "    cpu_affinity=$(taskset -cp $pid 2>/dev/null | cut -c1-90)"
+    echo "    nice=$(ps -o ni= -p $pid 2>/dev/null | tr -d ' ')"
+  else
+    echo "  --- $name port=$port NOT_LISTENING ---"
+  fi
+done
+echo "  --- run_cline_script (r5) ---"
+for pid in $(pgrep -f 'run_cline_script\.sh' 2>/dev/null | head -2); do
+  ps -o pid,etimes,pcpu,pmem,nlwp -p "$pid" 2>/dev/null | tail -1 | cut -c1-100
+done
+
+echo ""
+echo "[7] t0002147 到底在跑什么（107 个进程的归属）"
+echo "  进程数=$(ps -eo user 2>/dev/null | grep -c 't0002147')"
+ps -eo user,pcpu,args --no-headers 2>/dev/null | grep 't0002147' | grep -v grep \
+  | awk '{print $1, $2, substr($0, index($0,$3), 70)}' | sort -k2 -rn | head -8 | cut -c1-120
+echo "  t0002147 CPU 合计: $(ps -eo user,pcpu --no-headers 2>/dev/null | grep 't0002147' | awk '{s+=$2} END{print s"%"}')"
+
+echo ""
+echo "[8] CPU 压力（PSI）+ 上下文切换"
+for f in cpu io memory; do
+  [ -f /proc/pressure/$f ] && echo "  $f: $(cat /proc/pressure/$f | tr '\n' ' ')"
+done
+grep -E '^ctxt|^procs_running|^procs_blocked' /proc/stat | sed 's/^/  /'
+
+echo ""
+echo "[9] 是否被 cgroup 限流（throttle 计数，非 0 即为限流）"
+for cg in /sys/fs/cgroup/cpu.stat /sys/fs/cgroup/cpu/cpu.stat; do
+  [ -f "$cg" ] && { echo "  $cg:"; grep -E 'nr_throttled|throttled_time' "$cg" | sed 's/^/    /'; break; }
+done
+
+echo ""
+echo "[10] r5 进度（只读确认）"
+pgrep -af 'run_cline_script' 2>/dev/null | head -2 | cut -c1-85 || echo "  无"
+ls -l /tmp/ABL_readback_none_retest_r5.log 2>/dev/null | awk '{print "  r5 log="$5" bytes"}'
+echo "=== DONE 92 ==="
+```
+
+**输出**
+```
+=== RUN_ID 92 | 36.15 CPU/MEM contention check | 2026-10-20 06:28:25 | host=hfeg0tedaap02 ===
+[1] 基础身份与 CPU 核数
+  hostname=hfeg0tedaap02  ip=172.17.0.1
+  cores=64  loadavg=6.62 6.42 9.74
+  => 负载/核数 比: 6.62 / 64
+
+[2] CPU 总体使用率（mpstat，2 次采样）
+06:28:27 AM  all    6.79    0.00    4.37    0.00    0.00    0.00    0.00    0.00    0.00   88.84
+Average:     all    6.79    0.00    4.37    0.00    0.00    0.00    0.00    0.00    0.00   88.84
+
+[3] 内存（/proc/meminfo 关键项，MB）
+               total        used        free      shared  buff/cache   available
+Mem:         1031748      234856       94993          59      709718      796891
+Swap:         131071           0      131071
+  MemTotal:      1031748.3 MB
+  MemAvailable:  796891.5 MB
+  SwapTotal:     131072.0 MB
+  SwapFree:      131071.5 MB
+  Dirty:              2.8 MB
+  Writeback:          0.0 MB
+  WritebackTmp:       0.0 MB
+
+[4] 按用户聚合 CPU%（Top5 用户，看谁在抢）
+  app.e00+         cpu= 882.4%  mem=  1.7%
+  app.t00+         cpu=  65.1%  mem= 14.4%
+  app.ven+         cpu=  12.6%  mem=  1.6%
+  root             cpu=   6.6%  mem=  0.0%
+  syslog           cpu=   0.1%  mem=  0.0%
+  zabbix           cpu=   0.0%  mem=  0.0%
+  www-data         cpu=   0.0%  mem=  0.0%
+  systemd+         cpu=   0.0%  mem=  0.0%
+
+[5] Top 12 进程（CPU）
+    PID    PPID ELAPSED %CPU %MEM NLWP USER     COMMAND
+2926788       1 5758567 99.9  0.0    1 app.e00+ python3 -u agent.py
+2928440       1 5758533 99.9  0.0    1 app.e00+ python3 -u agent.py
+2860126       1  486409 99.9  0.0    1 app.e00+ /usr/bin/python3.12 /home/app.e0041392/eda_platform/scripts/find_ask_eda.py
+2921538       1 5758665 99.9  0.0    1 app.e00+ python3 -u agent.py
+2924003       1 5758618 99.9  0.0    1 app.e00+ python3 -c  import os,pty,select,time,fcntl,struct,termios,sys master,slave=pty.openpty() pid=os.fork(
+ 144158       1 5056033 74.0  0.1   51 app.e00+ opencode
+1456348       1      25 35.4  0.0   65 app.e00+ /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/main.py
+2442053       1 1892203 25.6  1.5  375 app.t00+ python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9010 --log-level info
+1456728 1456727      18 24.4  0.0   24 app.e00+ cline -c /home/app.e0031982/eda_code_eval/2026_1020_050005/code/EDA-Eval-PyAether-061/ws --data-dir /h
+1456647 1456646      19 20.7  0.0   23 app.e00+ cline -c /home/app.e0031982/eda_code_eval/2026_1020_050005/code/EDA-Eval-PyAether-060/ws --data-dir /h
+1456548 1456547      21 19.2  0.0   24 app.e00+ cline -c /home/app.e0031982/eda_code_eval/2026_1020_050005/code/EDA-Eval-PyAether-059/ws --data-dir /h
+3503518       1  767864  9.4  0.8  362 app.e00+ /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --
+
+[6] 关键进程详解：8090 MCP / 9006 RAG / 本线 eval
+  --- MCP (port=8090, pid=1456348) ---
+    PID ELAPSED %CPU %MEM NLWP NLWP   RSS    VSZ
+1456348      25 35.2  0.0   65   65 663276 6032368
+    fd=8  threads=65
+    cpu_affinity=pid 1456348's current affinity list: 0-63
+    nice=0
+  --- RAG (port=9006, pid=3503518) ---
+    PID ELAPSED %CPU %MEM NLWP NLWP   RSS    VSZ
+3503518  767864  9.4  0.8  362  362 8566356 33369308
+    fd=30  threads=362
+    cpu_affinity=pid 3503518's current affinity list: 0-63
+    nice=0
+  --- run_cline_script (r5) ---
+
+[7] t0002147 到底在跑什么（107 个进程的归属）
+  进程数=56
+app.t00+ 4.3 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 
+app.t00+ 1.7 python /home/app.t0002147/mcp_0917/eda_fastmcp/main.py
+app.t00+ 1.7 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 
+app.t00+ 1.4 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --aut
+app.t00+ 0.9 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
+app.t00+ 0.8 python3 /home/app.t0002147/444/EDA-Eval-Framework/scripts/run_zhulong_
+app.t00+ 0.5 /home/app.t0002147/.vscode-server/cli/servers/Stable-072586267e68ece9a
+app.t00+ 0.5 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
+  t0002147 CPU 合计: %
+
+[8] CPU 压力（PSI）+ 上下文切换
+  cpu: some avg10=0.00 avg60=0.00 avg300=0.00 total=106907954968 full avg10=0.00 avg60=0.00 avg300=0.00 total=0 
+  io: some avg10=0.00 avg60=0.00 avg300=0.00 total=14849729662 full avg10=0.00 avg60=0.00 avg300=0.00 total=14628067708 
+  memory: some avg10=0.00 avg60=0.00 avg300=0.00 total=8154317 full avg10=0.00 avg60=0.00 avg300=0.00 total=7933894 
+  ctxt 1456033512541
+  procs_running 8
+  procs_blocked 0
+
+[9] 是否被 cgroup 限流（throttle 计数，非 0 即为限流）
+  /sys/fs/cgroup/cpu.stat:
+    nr_throttled 0
+
+[10] r5 进度（只读确认）
+  r5 log=2445487 bytes
+=== DONE 92 ===
+```
