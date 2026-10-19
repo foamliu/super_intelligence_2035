@@ -1466,3 +1466,104 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 | 评测结果 | `datasets/baize-vision/out/mllm_eval_results_armB/consolidated_12benchmarks.json` |
 | **中文报告** | `reports/report_vision_armB_mllm_stage4_zh.html` |
 | 评测日志 | `/tmp/rerun_8b_armB.log` |
+
+## §13 ArmC（open_clip ViT-B/16 + AIMv2-style，2026-10-18→10-19）· ⚠️ 两变量实验
+
+### §13.1 实验概述与两变量披露
+
+> **用户令（2026-10-18）**：「vision：开启 ArmC。跟 ArmB 相比，只有一个变量：学习率。LR=1e-3，min_LR=1e-5。1.训练；2.评测 ProtB；3.MLLM 对齐；4.MLLM 12 集评测。」**追加令（同日）**：「加个变量：weight decay 0.1 -> 0.01」。
+
+⚠️ **ArmC 是两个变量**（min_lr 1e-4→1e-5 + weight decay 0.1→0.01），**不是单变量消融**。ArmC vs ArmB 的任何差异**不得归因于单一变量**；报告中必须同时披露两个改动。其余配置（`--lr 1e-3`、warmup 2000、4 epoch/57250 步、GBS 8192/MBS 512/accum 2、数据 GPIC 8000+CC12M 1100+Amshaker 2250=11350 shards、目标 AIMv2-style InfoNCE 1.0 + masked-patch-MSE 1.0 mask 0.6、AdamW betas(0.9,0.98)、bf16、grad_clip 1.0、seed 1234、save 10k/keep 2、open_clip ViT-B/16 224 双塔）**全部与 ArmB 相同**（launch 脚本经 `diff` 核对除标签外逐字一致）。
+
+| 项 | ArmB | ArmC | 是否变量 |
+|:--|:--|:--|:--|
+| LR | 1e-3 | 1e-3 | 否（不变） |
+| **min_lr** | **1e-4** | **1e-5** | ✅ **变量 1** |
+| **weight decay** | **0.1** | **0.01** | ✅ **变量 2** |
+| 其余全部 | — | — | 否（与 ArmB 一致） |
+
+### §13.2 训练配置
+
+- 脚本：`vision/run_armC_openclip.sh`（复制自 `run_armB_openclip.sh`，仅改 `OUT=.../armC_20261018_aimv2_openclip_vitb16_224`、`--lr 1e-3 --min-lr 1e-5 --wd 0.01`）。
+- 训练脚本：`vision/armB_aimv2_openclip.py`（logger 名硬编码 `[ArmB]`，实为 ArmC run，报告注明）。
+- 输出目录：`/nas_train/app.e0031982/datasets/baize-vision/out/armC_20261018_aimv2_openclip_vitb16_224/`（独立目录，不覆盖 `armB_*`）。
+- `config.json` 复核：`lr=0.001 / min_lr=1e-05 / wd=0.01 / seed=1234 / mask_ratio=0.6 / contrast_weight=1.0 / patch_loss_weight=1.0 / n_visual=86192640(86.2M)` → **确认只有 min_lr + wd 两变量** ✓。
+
+### §13.3 训练 + ProtB 评测结果（✅ DONE）
+
+| 阶段 | 结果 |
+|:--|:--|
+| ① 训练 | ✅ DONE 2026-10-19 14:32，**57250 步 exit 0**，墙钟 ~19.9h，0.78 it/s 稳态，7/8×H100 100%@50559MiB peak 50.4GB 无 OOM，`grep error/nan/oom/traceback=0`，ckpt 10k/20k/…/57250（keep 2 滚动），`open_clip_state_dict.pt`(598MB)+`predictor.pt`(4.7MB)+`config.json` 均在 |
+| ② ProtB | ✅ DONE 14:57，3 seeds：**lp=62.332±0.014% / 5-NN=54.718** |
+
+**ProtB 对比（ArmC vs ArmB vs ④-4ep，同 Protocol B、同 IN-1k 1.28M/50k）**：
+
+| 指标 | ArmC | ArmB | ④-4ep | Δ(ArmC−ArmB) | Δ(ArmC−④-4ep) |
+|:--|--:|--:|--:|--:|--:|
+| lp（mean±σ） | **62.332±0.014** | 62.093 | 67.05 | **+0.239pp** | −4.718pp |
+| 5-NN | 54.718 | 58.102 | 42.35 | **−3.384pp** | +12.368pp |
+
+> ⚠️ **两变量披露**：ArmC vs ArmB 的 Δlp=+0.239pp / Δ5-NN=−3.384pp 是 **min_lr（1e-4→1e-5）+ weight decay（0.1→0.01）两个变量共同作用**的结果，**不得归因单一变量**。lp 微升、5-NN 下降的方向差异无法拆分到单一因子。
+
+### §13.4 MLLM 三阶段对齐（✅ DONE）
+
+复用 ArmB 三阶段脚本，仅把视觉塔 ckpt 换成 ArmC、输出目录改 `*_armC_20261018`（chain `run_armC_full_chain.sh` 自动串行）：
+
+| 阶段 | 步数 | 结果 | 备注 |
+|:--|--:|:--|:--|
+| Stage-1（projector 768→2560） | 2500 | ✅ DONE 15:06（~7.2min, loss 4.29） | 不改 LLaVA-OV1.5 配方 |
+| Stage-1.5（LoRA r=64/α128 + proj） | 20000 | ✅ DONE（~86min, loss ~3.6-3.9 无坍缩） | ckpt@16000/20000 |
+| Stage-2（instruct, LLaVA-NeXT-780k） | 3500 | ✅ DONE 17:0x（~15min, loss ~1.48） | ckpt step3500 在位 |
+
+
+### §13.5 ④ 12 集 lmms-eval 评测（🔄 PARTIAL — 4/12 完成，8/12 因代理宕机 MISSING，已部署 watcher 自动重跑）
+
+- 评测脚本：`vision/mllm_bridge/launch_12benchmarks_armC.sh`（`--vision_backend armC`，batch_size=32，无 --limit，12 集），chain `run_armC_full_chain.sh` PHASE ④ 于 17:17 启动 8 GPU 并行。
+- **chain 17:27:07 完成 exit 0**，但 **8/12 集 MISSING**：
+
+| GPU | 任务 | exit | 结果 |
+|:--|:--|:--|:--|
+| 0 | mmmu_val | 0 | ✅ **0.4256** |
+| 1 | mmmu_pro_standard | **1** | ❌ MISSING |
+| 2 | docvqa_val | 0 | ✅ **0.0758** |
+| 3 | infovqa_val | 0 | ✅ **0.1709** |
+| 4 | chartqa+ocrbench+countbench | **1** | ❌ MISSING（3 集） |
+| 5 | mme+blink | **1** | ❌ MISSING（2 集） |
+| 6 | ai2d+mmstar | **1** | ❌ MISSING（2 集） |
+| 7 | realworldqa | 0 | ✅ **0.4497** |
+
+**根因（已查 4 份失败 log）**：4 个失败 log 末尾均为 `tenacity.RetryError: RetryError[<Future ... raised ConnectionError>]`，发生在 `lmms_eval/api/task.py:814 self.download()` → 数据集加载阶段。这 8 个任务用 tenacity 包装的**直接 URL 下载**（requests/urllib），**不受 `HF_HUB_OFFLINE=1` 约束**，需要走代理。17:17 时**两个代理均宕机**（172.19.92.25:13128 与 172.19.92.23:13128 对 huggingface.co 均超时 HTTP 000）→ 直接 URL 下载失败 → ConnectionError。**非模型/配置问题**：ArmB 用**逐字一致的脚本**（`diff` 核对）在 10-18 代理可用时 12/12 全成功；4 个成功的 ArmC 任务因数据已缓存（无需直接 URL 下载）而通过。8 个失败数据集**已在 HF hub 缓存**（`datasets--MMMU--MMMU_Pro` / `ChartQA` / `OCRBench` / `CountBenchQA` / `MME` / `BLINK` / `ai2d` / `MMStar`），但 `datasets.load_dataset` 在 offline 模式下无法解析无脚本的 dataset module（需联网列仓库文件）→ 仍需代理。
+
+**4 个已完成集 vs ArmB（仅描述，非裁定，8 集 MISSING 不可算平均）**：
+
+| 集 | ArmC | ArmB | Δ(ArmC−ArmB) |
+|:--|--:|--:|--:|
+| mmmu_val | 0.4256 | 0.43667 | −1.11pp |
+| docvqa_val | 0.0758 | 0.07358 | +0.22pp |
+| infovqa_val | 0.1709 | 0.16879 | +0.21pp |
+| realworldqa | 0.4497 | 0.45490 | −0.52pp |
+
+> 4 集 Δ 均很小（±1pp 量级），方向 2 正 2 负，与 ArmB「不可分辨」先例一致，但 **8 集 MISSING ⇒ 无法计算 11 集平均(除MME) ⇒ 暂不下裁定**。沿用 ArmB 预注册判据（≥30% 强成功 / >24% 且 DocVQA/ChartQA/OCRBench 任一 +10pp 成功 / 22–26% 不可分辨 / ≤22% 失败），ArmC vs ArmB 的 Δ 只作描述，不事后改判据。
+
+**处置（已执行）**：部署后台 watcher `vision/rerun_failed_benchmarks_armC.sh`（PID 1153787 @ .12，setsid detach），每 300s 轮询两个代理（.25→.23），**代理恢复即自动重跑 4 个失败 GPU 组**（GPU1/4/5/6，env 同 ArmB 已知可用配置：offline ON + HF_HUB_ENABLE_HF_TRANSFER=1 + 工作代理），保留 4 个已成功 json 不覆盖，重跑后调 `consolidate_12benchmarks.py --results_dir` 合并 4+4=12 集。日志 `/tmp/armC_rerun_benchmarks.log`，重跑子日志 `eval_*_rerun.log`。代理宕机属基础设施问题，超出 agent 控制范围；不伪造任何 MISSING 结果。
+
+### §13.6 状态与下一步（🔄 IN PROGRESS）
+
+- **当前**：①②③ ✅ DONE；④ 4/12 完成 + 8/12 等代理恢复（watcher 运行中）。
+- **下一步（代理恢复后）**：watcher 自动完成 ④ → agent 跑 `vision/generate_armC_mllm_report.py` 生成 `reports/report_vision_armC_20261018_mllm_stage4_zh.html`（含两变量披露框 + 逐集 Δ + 11集平均(除MME) + 预注册判据；④结果缺失则报错退出）→ 补全本节 §13.5 裁定 + §13.7 文件路径 → commit `vision armC:`。
+- **诚实条款**：本节 ④ 4 集为真实评测结果；8 集 MISSING 系代理宕机所致，已部署自动重跑，结果待补；不基于 4 集外推 12 集裁定。
+
+### §13.7 文件路径
+
+| 文件 | 路径 |
+|:--|:--|
+| 训练脚本 | `vision/run_armC_openclip.sh` + `vision/armB_aimv2_openclip.py` |
+| 训练输出 | `datasets/baize-vision/out/armC_20261018_aimv2_openclip_vitb16_224/` |
+| ProtB 评测 | `vision/run_armC_protb_eval.sh` → `vision/armC_20261018_protb_vitb16_224_results.json` |
+| MLLM chain | `vision/run_armC_full_chain.sh` + `vision/mllm_bridge/stage{1,15,2}_train_armC.py` |
+| ④ 12集 launch | `vision/mllm_bridge/launch_12benchmarks_armC.sh` |
+| ④ 重跑 watcher | `vision/rerun_failed_benchmarks_armC.sh`（PID 1153787 @ .12）|
+| ④ 结果 | `datasets/baize-vision/out/mllm_eval_results_armC_20261018/consolidated_12benchmarks.json` |
+| ④ 日志 | `/tmp/armC_full_chain.log` + `/tmp/armC_rerun_benchmarks.log` |
+| **中文报告** | `reports/report_vision_armC_20261018_mllm_stage4_zh.html`（待 ④ 完成后生成）|
+
