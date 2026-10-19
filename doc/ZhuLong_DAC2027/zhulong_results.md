@@ -76,13 +76,13 @@
 
 * [x] **B\.glm\-5\.2** — **83\.3 ± 3\.1%** ✅ 5/5
 
-* [x] **B\.deepseek\-v4\-flash** — **16\.7 ± 12\.3%** ✅ 5/5
+* [x] **B\.deepseek\-v4\-flash** — **60\.1 ± 5\.5%** ✅ 5/5（复测·运维令二十七②·2026-10-18 收口·trace 诊断修复后·取代 fresh 11\.9 ± 2\.7%）
 
 * [x] **B\.kimi\-k2\.6\-cloud** — **77\.0 ± 1\.6%** ✅ 5/5
 
 * [x] **B\.doubao\-seed\-2\.0\-pro\-cloud** — **63\.8 ± 1\.4%** ✅ 5/5
 
-* [x] **B\.glm\-5\.3\-flash** — **66\.8 ± 10\.5%** ✅ 5/5
+* [x] **B\.glm\-5\.3\-flash** — **86\.8 ± 1\.6%** ✅ 5/5（复测·运维令三十一·2026-10-19 收口·\-p 4 起步·std 10\.5→1\.6 大幅收窄·取代 fresh 66\.8 ± 10\.5%）
 
     
 
@@ -113,6 +113,8 @@
 * [x] **S1\.readback\_binary**（B）— **78\.1 ± 1\.3%** ✅ 5/5（fresh 重测·2026-10-15~16·替换 legacy 66\.2 ± 16\.1% std 过大含 43\.0% 离群·运维令二十二②）
 
 * [x] **S1\.readback\_none**（N）— **73\.3 ± 2\.2%** ✅ 5/5（legacy）
+
+    * 🔄 **(N′) 复测进行中**（运维令三十二②·2026-10-19·成本重测·PLAN_RETEST_READBACK_COST §1）：r1 ✅ = **78\.5% (124/158)**（batch 2026_1019_035502·判据十三 timeout=1≤10 有效）·r2 跑中（PID 2680437·batch 2026_1019_071104）·**⚠️ r2 阻塞**：task 119（`create_inverter_schematic`）worker 卡 7h+ 未结束，已发现 harness bug `timeout 2500` 未生效（SIGTERM 被 cline 忽略，worker etime 6h00m ≈ 上限 8\.6x），ws 仍有缓慢写入非完全卡死；agent 按 §7 步骤 A 不动作退出，等运维决策是否 kill。legacy 73\.3 ± 2\.2% 保留为对照，与 (B) 78\.1 ± 1\.3% / (F) 82\.1 ± 3\.0% 对照成本单调性。
 
     
 
@@ -451,6 +453,21 @@ V3，自探索 ON
 |r4|75\.9||||
 |r5|74\.7||||
 |**mean±std**|**73\.3 ± 2\.2%**||||
+
+**legacy 5-run**（采信·指令二十二③·legacy std=2.2 可信不重跑）：[72.2, 70.3, 73.4, 75.9, 74.7]。
+
+**🔄 (N′) 复测进行中**（运维令三十二②·2026-10-19·成本重测·PLAN_RETEST_READBACK_COST §1·配置唯一变量 READBACK=none，OMEGA/BUDGET/LAGGED 与 (B)/(F) fresh 同口径·core4 ON + aux OFF）
+
+|轮次|PyAether|SKILL|TCL\_WaveView|TCL\_Innovus|备注|
+|---|---|---|---|---|---|
+|r1|78\.5|||||✅ batch 2026_1019_035502·124/158·gen success=157/failure=0/timeout=1·判据十三 timeout=1≤10 有效·regrade 06:25:15→06:35:36 EXIT=0·trace 已保留 198M/158 entries|
+|r2|🟠 跑中|||||PID 2680437·batch 2026_1019_071104·07:11:04 起·**⚠️ 阻塞**：task 119（`create_inverter_schematic`）worker PID 2743947/2743948 卡 7h+ 未结束（已 7 次巡检未结束 10:19/10:58/11:36/12:11/12:51/13:32/14:11）·发现 harness bug `timeout 2500` 未生效（SIGTERM 被 cline 忽略，worker etime 6h00m ≈ 上限 8.6x）·ws 仍有缓慢写入（mtime 14:09、+20B/3h）非完全卡死·agent 按 §7 步骤 A 不动作退出，等运维决策是否 kill|
+|r3|⏳待启|||||r2 收口后启动|
+|r4|⏳待启||||||
+|r5|⏳待启||||||
+|**mean±std**|**待 5/5 收口**|||||目标：替换论文 `tab:readback-cost` (N′) 行 + `tab:ablation-harness` (N) Mean read-backs|
+
+> 备注：r1=78.5% vs legacy 73.3±2.2% → +5.2pp，与 (B) 78.1±1.3% 几乎平齐，符合「readback_none ≤ readback_binary」预期方向。配置：providers.json model=deepseek-v4-pro-fp4 / baseUrl=http://agi-gateway.cxmt.com/cloud/v1 / key 末 8=8aa0785e / maxTokens=16384 / reasoning.enabled=false；脚本=run_cline_script.sh（启动前必须 `export PYTHON=$PWD/venv/bin/python`）；cline 3.0.51 未动 ✅（baseline 守住）；4 端口 8650/8651/8652/8654@10.129.32.75 全 OPEN；反作弊 hook canary live（`ACCESS RESTRICTED`>0）。各轮 regrade log /tmp/ABL_readback_none_retest_r{1..5}_regrade.log。
 
 
 
