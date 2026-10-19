@@ -4,9 +4,10 @@ WAITING: 1
 > 🆕 **2026-10-18 17:2x 更正（#550 又是误判 + 其 resume 落成 .12 重复训练已被运维杀掉）**：#550(17:02)「训练死亡→resume from step_8000」是**第二起误判**（同 #548）。实录：.29 主 run **PID 2597555**（`pt_elastic`，10-17 08:44:02 起 etimes≈32.6h，持 29815 端口）从未死，8×GPU 97-100%/51763MiB，`/tmp/...train.log` step 9790→9830/19980（49.2%）loss1.3174 lr1.54e-4 0 error；**0 步丢失**。#550 的 resume PID3698325 并非「不存在」，而是**落成 .12 的重复训练**（.29 卡满），与主 run 同写共享 NFS 输出目录=污染风险；**17:17 运维 ops134 已杀掉**（.12 卡释放供 ArmC）。输出目录完好（仅 step_2000/4000/6000/8000+verify_save_20，无重复写入 ckpt）。→ **无需/不重启/不 resume**（16:4x 正确）。下一 ckpt@step_10000（save_interval=2000，~17:5x）。
 
 ## 当前状态
-- STAGE: **🟢 Xmodel-2.5 80B decay v2 健康运行中 @.29**（07:42 step14170/19980=70.9%, loss1.2551, lr5.82e-5, tok/s298.9K, elapsed2816.1min；0 error）。torchrun master PID**2597555**（10-17 08:44:02 起，持 29815 端口，etimes 169105s≈47.0h）——**本轮在 .29 本地直读**。✅ **step_14000 ckpt 已落盘**（07:06, model.safetensors 2700169168B=2.7GB 完好）。下一 ckpt@step_16000（save_interval=2000，~13:4x）。
-  - PHASE: **decay80b_v2_RUNNING** — 80B decay v2 主 run 持续运行（step 14170/19980=70.9%, loss1.2551, lr5.82e-5）。save_interval=2000 ⇒ 下一 ckpt@step_16000（~13:4x）；step_14000 已于 07:06 落盘完好。ETA(19980-14170)=5810步×~11.9s≈19.2h→10-20 ~02:5x。脚本已备 RESUME_DIR/--resume（16:2x）+ 日志写 /tmp（16:4x）。⚠️ 注：磁盘脚本 SAVE_INTERVAL 现为 500（crash2 安全改），但 live run 仍用启动时 2000；若将来 resume 将用 500。
-  - 轮询状态：**#585（07:42, 在.29=whag0pgpuap29, 本地直查, 零GPU）**：✅ 主 run 健康，勿 resume。torchrun master **PID2597555 存活**（10-17 08:44:02 起, etimes 169105s≈47.0h），8×GPU 100%/51763MiB；/tmp log 增长 step14170/19980（70.9%）loss1.2551 lr5.82e-5 tok/s298.9K；0 error（grep error/traceback/OOM/CUDA/SIGTERM/SIGKILL/exception 全文件=0）。ckpt step_2000/4000/6000/8000/10000/12000/14000 齐，step_14000(07:06)model.safetensors 2.7GB 完好；step_16000 not yet（~13:4x）。→ 按 16:4x「训练活着⇒不重启/不resume」零写训练侧。📦 体积：TASK18.1KB / MEMORY~31.5KB（归档 0KB）。
+- STAGE: **🟢 Xmodel-2.5 80B decay v2 健康运行中 @.29**（08:31 step14420/19980=72.2%, loss1.2645, lr5.53e-5, tok/s298.9K, elapsed2865.8min；0 error）。torchrun master PID**2597555**（10-17 08:44:02 起，持 29815 端口，etimes 172005s≈47.8h）——**本轮在 .29 本地直读**。✅ **step_14000 ckpt 已落盘**（07:06, model.safetensors 2700169168B=2.7GB 完好）。下一 ckpt@step_16000（save_interval=2000，~13:4x）。
+  - PHASE: **decay80b_v2_RUNNING** — 80B decay v2 主 run 持续运行（step 14420/19980=72.2%, loss1.2645, lr5.53e-5）。save_interval=2000 ⇒ 下一 ckpt@step_16000（~13:4x）；step_14000 已于 07:06 落盘完好。ETA(19980-14420)=5560步×~11.9s≈18.4h→10-20 ~02:5x。脚本已备 RESUME_DIR/--resume（16:2x）+ 日志写 /tmp（16:4x）。⚠️ 注：磁盘脚本 SAVE_INTERVAL 现为 500（crash2 安全改），但 live run 仍用启动时 2000；若将来 resume 将用 500。
+  - 轮询状态：**#586（08:31, 在.29=whag0pgpuap29, 本地直查, 零GPU）**：✅ 主 run 健康，勿 resume。torchrun master **PID2597555 存活**（10-17 08:44:02 起, etimes 172005s≈47.8h），8×GPU 98-100%/51763MiB；/tmp log 增长 step14420/19980（72.2%）loss1.2645 lr5.53e-5 tok/s298.9K；0 error（grep error/traceback/OOM/CUDA/SIGTERM/SIGKILL/exception 全文件=0）。ckpt step_2000/4000/6000/8000/10000/12000/14000 齐，step_14000(07:06)model.safetensors 2.7GB 完好；step_16000 not yet（~13:4x）。→ 按 16:4x「训练活着⇒不重启/不resume」零写训练侧 + MEMORY 滚动归档（10-09 运维问答块→ARCHIVE）。📦 体积：TASK18.1KB / MEMORY25.8KB（归档 ~6.8KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
+  - [08:31] #586 🩺 v2 巡检 + 心跳 + MEMORY 滚动归档（在**.29**=whag0pgpuap29, 本地直查, 仅只读零GPU）：① 训练核验：torchrun master PID2597555(10-17 08:44:02起, etimes=172005s≈47.8h)持29815端口 + 8 workers；8×GPU 98-100% util/51763MiB(81559总)；/tmp/baize_xmodel25_decay_v2_train.log 增长 step14420/19980(**72.2%**)(timing至14419) loss1.2645 lr5.53e-05 tok/s298.9K elapsed2865.8min；+250步/49min(#585@07:42=14170)=稳态~11.9s/step；grep error/traceback/OOM/CUDA/SIGTERM/SIGKILL/exception 全文件=0 ✅。② ckpt：step_2000/4000/6000/8000/10000/12000/14000 齐，step_14000(07:06)model.safetensors 2700169168B=2.7GB 完好；step_16000 not yet（~13:4x）；ETA(19980-14420)=5560步×11.9s≈18.4h→10-20 ~02:5x。③ 动作：按 16:4x「训练活着⇒不重启/不resume」→ 零写训练侧。④ 归档：§🗣️ 运维问答·2026-10-09（补测对比报告，"等运维确认"未执行即被 80B decay v2 取代）原文搬入 run/ARCHIVE_OPERATOR_PRETRAIN.md，留 1 行指针；MEMORY 32304B→26393B(25.8KB)。⑤ 红线遵守：未碰训练/loop/ckpt/未清 /tmp/未改脚本，仅只读 + 心跳 + 归档。📦 体积：TASK18.1KB / MEMORY25.8KB（归档 ~6.8KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
   - [07:42] #585 🩺 v2 巡检 + 心跳（在**.29**=whag0pgpuap29, 本地直查, 仅只读零GPU）：① 训练核验：torchrun master PID2597555(10-17 08:44:02起, etimes=169105s≈47.0h)持29815端口 + 8 workers(2605722-29)；8×GPU 100% util/51763MiB(81559总)；/tmp/baize_xmodel25_decay_v2_train.log 增长 step14170/19980(**70.9%**)(timing至14174) loss1.2551 lr5.82e-05 tok/s298.9K elapsed2816.1min；+140步/30min(#584@07:12=14030)=稳态~11.9s/step；grep error/traceback/OOM/CUDA/SIGTERM/SIGKILL/exception=0（全文件）✅。② ckpt：step_2000/4000/6000/8000/10000/12000/14000 齐，step_14000(07:06)model.safetensors 2700169168B=2.7GB 完好；step_16000 not yet（~13:4x）；ETA(19980-14170)=5810步×11.9s≈19.2h→10-20 ~02:5x。③ 动作：按 16:4x「训练活着⇒不重启/不resume」→ 零写训练侧。④ 红线遵守：未碰训练/loop/ckpt/未清 /tmp/未改脚本，仅只读 + 心跳。📦 体积：TASK18.1KB / MEMORY~31.5KB（归档 0KB）。
   - [07:12] #584 🩺 v2 巡检 + 心跳（在**.12**=whag0pgpuap12, SSH→.29 只读, 零GPU）：① 训练核验：SSH .29 (whag0pgpuap29) OK；torchrun master PID2597555(10-17 08:44:02起, etimes=167381s≈46.5h)持29815端口 + 8 workers；8×GPU 98-100% util/51763MiB(81559总)；/tmp/baize_xmodel25_decay_v2_train.log 增长 step14030/19980(**70.2%**) loss1.3078 lr6.00e-05 tok/s298.9K elapsed2788.3min；+20步/2min(#583@07:10=14010)=稳态~11.9s/step；grep error/traceback/OOM/CUDA/SIGTERM/SIGKILL/exception 全文件=0 ✅。② ckpt：step_2000/4000/6000/8000/10000/12000/14000 齐，**step_14000(07:06) model.safetensors 2700169168B=2.7GB 完好**；step_16000 not yet（~13:4x）；ETA(19980-14030)=5950步×11.9s≈19.7h→10-20 ~03:0x。③ 动作：按 16:4x「训练活着⇒不重启/不resume」→ 零写训练侧。④ 红线遵守：未碰训练/loop/ckpt/未清 /tmp/未改脚本/未碰 .12 vision ArmC；仅 SSH 只读 + 心跳。📦 体积：TASK18.1KB / MEMORY~30.5KB（归档 0KB）。
   - [07:10] #583 🩺 v2 巡检 + 心跳（在**.29**=whag0pgpuap29, 本地直查, 仅只读零GPU）：① 训练核验：torchrun master PID2597555(10-17 08:44:02起, etimes=167160s=1d22h26m)持29815端口 + 8 workers；8×GPU 100% util/51763MiB(81559总)；/tmp/baize_xmodel25_decay_v2_train.log 增长 step14010/19980(**70.1%**) loss1.2883 lr6.02e-05 tok/s298.9K elapsed2784.3min；+180步/39min(#582@06:31=13830)=稳态~11.9s/step；grep error/traceback/OOM/CUDA/SIGTERM/SIGKILL/exception 全文件=0（**0 真实错误** ✅）。② ckpt：step_2000/4000/6000/8000/10000/12000/14000 齐，**step_14000(07:06) model.safetensors 2700169168B=2.7GB 完好**；step_16000 not yet（~13:4x）；ETA(19980-14010)=5970步×11.9s≈19.7h→10-20 ~02:5x。③ 动作：按 16:4x「训练活着⇒不重启/不resume」→ 零写训练侧。④ 红线遵守：未碰训练/loop/ckpt/未清 /tmp/未改脚本，仅只读 + 心跳。📦 体积：TASK18.1KB / MEMORY~29.3KB（归档 0KB）。
@@ -36,113 +37,7 @@ WAITING: 1
 
 > 📦 **[已归档] #472~#514 流水（2026-10-17 02:16 ~ 23:20, 🩺 v2 监控 step280→4400 + 🔧_orig_mod修复重启续跑 + 🚨P0 中继恢复 relay-fix）→ daily-memories/2026-10-17.md；结论：v2 全程健康 0error、step_2000/4000 ckpt 已存、_orig_mod 修复 verify_save@step20 通过、ops 中继 PID2706247(22:07)已恢复(RUN_ID118-121 exit=0/.last_run_id=121 无新命令)、两项 P0 运维令均已闭环。需要时再读。**
 
-## 🗣️ 运维问答 · 2026-10-09（补测对比报告 · 先报后跑门控）
-
-> **运维令**：补测 + 中文对比报告：BaiZe-Hybrid 2.220B ⚔ 参数匹配 Dense Llama，SGLang，ctx 持续 ×2 直到 hybrid OOM。门控：先报「参数匹配方案 + 测试矩阵 + ETA + 占用卡」，再开跑。
-
-### ① 参数匹配方案
-
-**主对手臂 = Dense Llama 36L（随机初始化）**
-- 构建：复用 `p3_dense`（MiniCPM5-2B, 42L）的架构配置，**仅减层数 42→36**，使总参数对齐 hybrid。
-- 架构配置（`config.json` 将照此生成）：
-
-| 参数 | 值 | 来源 |
-|:--|:--|:--|
-| `architectures` | `LlamaForCausalLM` | 标准 Llama |
-| `vocab_size` | 129,408 | 与 hybrid/dense 同 tokenizer |
-| `hidden_size` | 2,048 | 同 p3_dense |
-| `intermediate_size` | 6,144 | 同 p3_dense（SwiGLU 3×H） |
-| `num_hidden_layers` | **36**（从 42 减 6） | 调此值对齐参数 |
-| `num_attention_heads` | 16 | 同 p3_dense |
-| `num_key_value_heads` | 2 | 同 p3_dense（GQA） |
-| `head_dim` | 128 | 同 p3_dense |
-| `hidden_act` | silu | SwiGLU |
-| `tie_word_embeddings` | false | 同 p3_dense |
-| `max_position_embeddings` | 4096 | 同 p3_dense（推理时 SGLANG_ALLOW_OVERWRITE 扩展） |
-| `rope_theta` | 5,000,000.0 | 同 p3_dense |
-
-- **精确参数量**（Python 实算）：
-  - Embedding: 129,408 × 2,048 = 265,090,048
-  - LM head: 265,090,048（不 tie）
-  - 每层 attn: q 4,194,304 + k 524,288 + v 524,288 + o 4,194,304 = 9,437,184
-  - 每层 MLP: 3 × 2,048 × 6,144 = 37,748,736
-  - 每层 norms: 2 × 2,048 = 4,096
-  - 每层合计: 47,190,016
-  - 36 层: 1,698,840,576
-  - Final norm: 2,048
-  - **总计: 2,228,897,792 = 2.229B**
-  - **vs hybrid 2,220,268,032 = +0.389%（±1% 内 ✅）**
-- ⚠️ **权重随机初始化**（`torch.randn` × `initializer_range=0.02`）—— 本次比的是**速度/显存**，与权重值无关；报告中将显式标注。
-- tokenizer 文件直接复制 `p3_dense`（同 vocab=129,408）。
-
-**参考臂 = p3_dense（MiniCPM5-2B, 2.512B, 42L）**：附录/脚注用，佐证「未做参数匹配时偏袒 dense 约 +13% 参数」。
-
-**备选方案（若运维要求更紧匹配）**：L=35, kv_heads=4（匹配 hybrid 的 4 KV heads）→ 2,218,407,936 = −0.084%。但 KV cache 翻倍（kv=4 vs kv=2）会使 dense 更早 OOM，可能不是「公平」的解读。
-
-### ② 测试矩阵
-
-| 维度 | 取值 | 说明 |
-|:--|:--|:--|
-| **模型** | {hybrid 2.220B, **dense-matched 2.229B**, p3_dense 2.512B(ref)} | 主对比 = hybrid vs dense-matched |
-| **ctx** | 128K→256K→512K→1M→2M→4M→8M（×2） | 持续 ×2 直到 **hybrid 自己 OOM** 才停 |
-| **mem-frac** | {0.6, 0.85} | ≥0.6（旧 0.3 太低致 dense 假 OOM）；同 ctx 两臂同值 |
-| **bs** | {1, 8} | 至少两档 |
-| **gen_len** | 64 | 同 P-9.11 |
-| **WARMUP** | 1 | 丢弃首请求（消除 CUDA kernel 编译冷启动） |
-| **REPEATS** | 3（取 median） | 公平口径 |
-| **per-B 归一化** | tok/s ÷ B | 报告中每格同时报原始和 per-B |
-
-**SGLang flags（两臂一致，仅 hybrid 额外加 SSM dtype）**：
-```
---mem-fraction-static {0.6|0.85}
---attention-backend flashinfer
---dtype bfloat16
---context-length {ctx}
---disable-radix-cache
-SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
-# hybrid 额外: --mamba-ssm-dtype float32
-```
-- 环境：`vllm` conda env（sglang 0.5.9），与训练 env 隔离。
-- prompt 构造：tokenizer 精确计数（`len(tok(prompt))` = ctx − 128 safety margin），复用 `p911d_sglang_vram_bench.py` 的 `make_prompt_precise()`。
-- 每格记录：prefill tok/s / TTFT / decode tok/s / e2e / 峰值 VRAM / pool tokens / prompt 实 token 数 / status(SERVED/OOM/TIMED_OUT)。
-
-**已有数据可复用**：P-9.11-E 的 mem-frac=0.3 结果（`p911e_results/*.json`）作为**低 mem-frac 对照**附录，不作为主表数据（口径不同）。
-
-**终止条件**：hybrid 在某 ctx × mem-frac 下 OOM/不可服务 → 该 mem-frac 的扫描到此 ctx 为止；但**另一 mem-frac 继续扫**直到也 OOM。两 mem-frac 都 OOM → 全停。
-
-### ③ ETA
-
-| 阶段 | 墙钟 | 说明 |
-|:--|:--|:--|
-| 创建随机 Dense 模型 | ~10 min | Python 脚本生成 config.json + safetensors + 复制 tokenizer |
-| 128K–512K（3 ctx × 2 mf × 3 model × 2 bs） | ~1–2h | 低 ctx 每格 <1min，4–6 GPU 并行 |
-| 1M（2 mf × 3 model × 2 bs） | ~1–2h | hybrid 1M prefill ~7min/req，dense 可能 OOM |
-| 2M（2 mf × 2 model × 2 bs） | ~2–3h | hybrid 2M ~30min/req（P-9.11-F TTFT=427s@mf0.6） |
-| 4M–8M（若 hybrid 存活） | ~2–3h | 4M 已知 TIMED OUT@mf0.85；8M 可能不可服务 |
-| **合计** | **~6–10h** | 可跨多个唤醒分阶段完成 |
-
-### ④ 占用卡
-
-- **.29 GPU 0–7**（8×H100 80GB），**纯推理**（无训练、无重 I/O）。
-- 同时活跃 2–4 个 SGLang server（每个占 1 GPU），其余 GPU 空闲。
-- 🚫 不碰 .12（vision 节点）。
-- 🚫 不启动 P-8、不改 P-5b recipe、不 kill watchdog。
-
-### ⑤ Warmup 24× 归因（证据）
-
-- **现象**：P-9.11-E hybrid 128K bs=1 prefill=1,591 tok/s（TTFT=79.1s）vs bs=8 prefill=447,796 tok/s（TTFT=2.25s）→ **281× 差距**。
-- **归因**：bs=1 是 server 启动后**第一个请求** → SGLang/flashinfer 首次执行时触发 CUDA kernel JIT 编译 + cuBLAS handle 初始化 + memory pool 首次分配 → **冷启动开销 ~77s**。bs=8 紧随其后，kernel 已编译 → 正常速度。
-- **证据**：(a) 2M ctx 的结果（`p911e_hybrid_ctx2097152_gpu5.json`）TTFT=8.49s/prefill=237,575 tok/s → 比 128K bs=1 快 150× → **不是 ctx 越大越慢**，而是首请求冷启动；(b) dense 128K bs=1 TTFT=23.97s 也偏慢（但比 hybrid 好，因 dense 无 SSM kernel 需编译）。
-- **修正**：本次 **WARMUP=1** 丢弃首请求 → REPEATS=3 均为 warm 状态 → 消除冷启动偏差。旧 P-9.11-E 的 bs=1 数据**不应作为公平对比基线**（无 warmup）。
-
-### ⑥ 下一步（等运维确认后执行）
-
-1. 创建随机初始化 Dense Llama 36L → `hf_checkpoints/dense_matched_2.22b/`
-2. 落地 SGLang 基准脚本（复用 `p911d_sglang_vram_bench.py`，加 WARMUP/REPEATS）
-3. 分阶段跑：先 128K–512K（快速验证）→ 1M–2M → 4M+（直到 hybrid OOM）
-4. 生成 `report_pretrain_baize_vs_dense_fair_zh.html`（中文，≤5 表，内联 SVG）
-
----
+> 📦 §🗣️ 运维问答·2026-10-09（补测对比报告·先报后跑门控）（P-9.11 baize-vs-dense 公平对比方案，"等运维确认后执行"未执行即被 80B decay v2 方向取代）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：参数匹配 Dense Llama 36L=2.229B(+0.389%)/测试矩阵 ctx×2 until hybrid OOM/mem-frac{0.6,0.85}/WARMUP=1/ETA 6-10h，方案未执行（方向已转 80B decay v2）。需要时再读。
 
 > 📦 **[已归档] 🗣️ 运维问答「提 3 个实验 idea」（2026-10-09, #251 已交付）→ daily-memories/2026-10-09.md；结论：3 idea 按价值排序（①P-8彩排续跑 ②P-8 44B下限档 ③R3配比迁移A/B），建议「立即起P-8」。需要时再读。**
 
