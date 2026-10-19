@@ -5,11 +5,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB 7×5 pilot Gen5 运行中(5/7 done, deepseek-harness RUNNING 6th, pi 7th待自动接力). .29 launch脚本PID1732377活(ssh确认)+deepseek trial容器Up→pi将自动起,无需干预. hermes代码已由R457(9e5c122c 22:39)修为plugin机制(plugins/model-providers/+register_provider+plugin.yaml),但Gen5启动在fix前→Gen5 hermes结果(5/5 RuntimeError)为pre-fix,须Gen6重测
-已完成:       oracle5/5✅·7adapters✅·28/28mock✅·smoke✅·Gen5 pilot 5/7路完[读result.json可复现]:cline-patched0.6✅(3res,2AgentTimeout)/codex0.0⚠4err(RuntimeError+Timeouts)/hermes0.0❌5RuntimeError(pre-fix)/opencode0.4✅(2res,3setup/agentTimeout)/claude-code0.0⚠3err(npm install setup-timeout=infra);deepseek RUNNING(2/5done,0err);pi pending
-当前动作:     R458 .12只读监控(非干预):ssh .29确认launch PID1732377活+deepseek trial容器Up4min;复核5路result.json(数字可复现);git pull=up-to-date(R457在位). 🚫不杀pilot🚫不启7×89🚫不动hermes.py(R457已修)
-下一步:       ①等Gen5 7路全完(deepseek+pi)→真实数据判门据(infra≤20% AND ≥6/7 runnable)②hermes代码已修→须Gen6重测验证plugin fix生效③门据过→放行7×89;不过→报blocker. 🚫不杀运行中pilot🚫不启7×89
-阻塞:         hermes Gen5结果为pre-fix(须Gen6重测验证R457 plugin fix). claude-code/codex高err率(setup/agent timeout=npm install infra,非adapter逻辑). ops双relay(.12 PID2663131/.29 PID1972249)回执只到136(137/138/139丢=结构性). ⚠️疑似.12+.29双harness loop并发(R457由.29 agent提交),需运维确认是否kill .12 loop避免冲突
+PHASE:        P0完成:.12双harness loop已kill(PID1059617 TERM→10s确认dead,无需KILL).Gen5 7路全完[读result.json可复现],门据FAIL(infra~51%>>20%,hermes pre-fix不可runnable).hermes R457 plugin代码在位(grep确认_install_provider_plugin+register_provider+plugin.yaml),须Gen6重测验证. .29为唯一harness loop(PID1784375活),.29空闲可起smoke
+已完成:       oracle5/5✅·7adapters✅·28/28mock✅·smoke✅·Gen5 pilot 7/7路完:cline-patched0.6/pi0.8/opencode0.4/deepseek0.0(0err=能力非infra)/codex0.0(4err infra)/claude-code0.0(3err infra)/hermes0.0(5err pre-fix). kill .12 loop(1059617)✅运维P0
+当前动作:     R459 运维P0双loop确认→kill:ssh两机ps见.12 PID1059617/.29 PID1784375均ppid1独立(非父子)→/proc/1059617/cmdline=bash ./baize_harness_loop.sh核实→kill -TERM 1059617→10s后dead(本cline1862694存活reparent→ppid1). 验证:.12无baize_harness_loop.sh进程,.29 loop1784375+ops_relay1972249仍活,.12 ops_relay2663131仍活. Gen5全完判门据FAIL
+下一步:       ①hermes Gen6重测:ssh .29 harbor单题smoke(fix-git)验R457 plugin fix(无Unknown provider+plugins/kimi-proxy/{__init__.py,plugin.yaml}在位+trial产tool_calls)②smoke PASS→hermes×5重跑③门据复核(infra≤20% AND ≥6/7 runnable)→过放行7×89,不过报blocker. 🚫不启7×89
+阻塞:         hermes Gen5为pre-fix(须Gen6重测验证R457). codex/claude-code infra(setup/agent timeout=npm install). 双loop已解决(.12 killed). 🚫不启7×89直到门据过
 ERROR_COUNT:  0
 ```
 
@@ -138,6 +138,8 @@ ERROR_COUNT:  0
 - **同级任务线**（🚫 不要碰）：`MEMORY_VISION.md` / `MEMORY_PRETRAIN_2B.md` / `MEMORY_DATA.md`
 
 ## 流水
+
+- 2026-10-20 00:05 —— **第四百五十九轮 R459** —— 🔪 运维P0双loop确认+kill:ssh两机ps见.12 PID1059617/.29 PID1784375均ppid=1独立(非父子)→/proc/1059617/cmdline=`bash ./baize_harness_loop.sh`核实→kill -TERM 1059617→10s确认dead(无需KILL,本cline1862694存活reparent→ppid1). 验证:.12无baize_harness_loop.sh进程,.29 loop1784375+ops_relay1972249仍活,.12 ops_relay2663131仍活. Gen5 7/7路全完[读result.json]:cline-patched0.6/pi0.8/opencode0.4/deepseek0.0(0err)/codex0.0(4err)/claude-code0.0(3err)/hermes0.0(5err pre-fix). 门据FAIL(infra~51%>>20%,hermes pre-fix不可runnable). hermes R457 plugin代码在位(hermes.py grep确认),下一步Gen6重测smoke. 📦体积:TASK=30.3KB/MEMORY=29.6KB(归档0KB,均≤32KB✅). WAITING=1.
 
 > 📦 2026-10-02 的 7 条流水条目（H-B 5 份源码分析 + H-A §1.1 可行性核查的关键证据路径 `文件:行号`）已于第二十一轮滚动归档至 `daily-memories-harness/2026-10-02.md`「从 MEMORY_HARNESS.md 滚动归档」节（原文不改）。
 
