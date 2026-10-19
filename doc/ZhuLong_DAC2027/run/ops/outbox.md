@@ -10991,3 +10991,108 @@ PORT   TCP          HTTP           EXEC       DETAIL
 8650 8651 8652 8653 8654 8657 8659 8664 8665 8667 8668 8669 
 === DONE 84 ===
 ```
+
+---
+
+## RUN_ID 85 · 2026-10-19 22:16:13 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 85 | r3 regrade settle check + port re-probe | $(date '+%F %T') | host=$(hostname) ==="
+SB=10.129.32.75
+W=$(mktemp -d /tmp/r85.XXXXXX)
+
+echo "[1] r3 regrade 是否已收口（PID 229615 + run_eval + 日志尾）"
+if [ -e /proc/229615 ]; then echo "  regrade PID229615 ALIVE etime=$(ps -o etimes= -p 229615 2>/dev/null | tr -d ' ')s"; else echo "  regrade PID229615 GONE(已收口)"; fi
+ps -eo pid,etimes,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox' | grep -v python3.14 | head -6 | cut -c1-130 || echo "  无 regrade 子进程"
+echo "  --- regrade log tail ---"
+tail -6 /tmp/ABL_readback_none_retest_r3_regrade.log 2>/dev/null | cut -c1-160 || echo "  NO_LOG"
+
+echo ""
+echo "[2] 四个推荐端口复测（8655 8656 8657 8658，并行）"
+for p in 8655 8656 8657 8658; do
+  (
+    t0=$(date +%s%N)
+    out=$(timeout 12 curl -s --max-time 10 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' \
+          -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 100)
+    t1=$(date +%s%N)
+    ms=$(( (t1-t0)/1000000 ))
+    if [ -z "$out" ]; then echo "$p BUSY_OR_TIMEOUT ${ms}ms" > "$W/$p"; else echo "$p FREE_OK ${ms}ms" > "$W/$p"; fi
+  ) &
+done
+wait
+for p in 8655 8656 8657 8658; do echo "  $(cat "$W/$p" 2>/dev/null || echo "$p NA")"; done
+
+echo ""
+echo "[3] 当前 r3 的 4 端口（8650/8651/8652/8654）状态对照"
+for p in 8650 8651 8652 8654; do
+  (
+    out=$(timeout 12 curl -s --max-time 10 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' \
+          -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 40)
+    if [ -z "$out" ]; then echo "$p BUSY" > "$W/o$p"; else echo "$p FREE" > "$W/o$p"; fi
+  ) &
+done
+wait
+for p in 8650 8651 8652 8654; do echo "  $(cat "$W/o$p" 2>/dev/null || echo "$p NA")"; done
+
+echo ""
+echo "[4] t0002147 是否仍在跑（决定稍后重跑是否会再被抢）"
+ps -eo user,etimes,args 2>/dev/null | grep -c 't0002147.*cline' | awk '{print "  t0002147 cline proc count =", $1}'
+echo ""
+echo "[5] r3 shard 进度（看 shard_2/3 是否已 38/38）"
+for s in 0 1 2 3; do
+  d=/home/app.e0031982/eda_code_eval/2026_1019_145634
+  echo "  shard_$s: $(ls /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/ 2>/dev/null | grep -c "shard_$s" || echo '?') dirs"
+done 2>/dev/null
+grep -aoE 'shard_[0-9]+[^|]{0,60}' /tmp/ABL_readback_none_retest_r3_regrade.log 2>/dev/null | tail -6 | cut -c1-120 || echo "  (无 shard 汇总行)"
+rm -rf "$W"
+echo "=== DONE 85 ==="
+```
+
+**输出**
+```
+=== RUN_ID 85 | r3 regrade settle check + port re-probe | 2026-10-19 22:16:13 | host=hfeg0tedaap02 ===
+[1] r3 regrade 是否已收口（PID 229615 + run_eval + 日志尾）
+  regrade PID229615 ALIVE etime=12323s
+ 229619   12323 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_eval.py --generations completed_code_generation
+ 229631   12322 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generat
+ 229632   12322 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generat
+ 229634   12322 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generat
+ 229636   12322 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generat
+  --- regrade log tail ---
+2026-10-19 18:50:50,056 - INFO - 成功加载 158 个问题的测试代码。
+2026-10-19 18:50:50,056 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_2026_10
+2026-10-19 18:50:50,057 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/158 [00:00<?, ?it/s]组装脚本:  51%|█████▏    | 81/158 [00:00<00:00, 806.06it/s]组装脚本: 100%|███�
+2026-10-19 18:50:50,250 - INFO - 成功组装并保存了 151 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_soluti
+2026-10-19 18:50:50,250 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
+
+[2] 四个推荐端口复测（8655 8656 8657 8658，并行）
+  8655 FREE_OK 12ms
+  8656 FREE_OK 12ms
+  8657 FREE_OK 14ms
+  8658 FREE_OK 11ms
+
+[3] 当前 r3 的 4 端口（8650/8651/8652/8654）状态对照
+  8650 BUSY
+  8651 FREE
+  8652 BUSY
+  8654 BUSY
+
+[4] t0002147 是否仍在跑（决定稍后重跑是否会再被抢）
+  t0002147 cline proc count = 74
+
+[5] r3 shard 进度（看 shard_2/3 是否已 38/38）
+  shard_0: 0
+? dirs
+  shard_1: 0
+? dirs
+  shard_2: 0
+? dirs
+  shard_3: 0
+? dirs
+=== DONE 85 ===
+```
