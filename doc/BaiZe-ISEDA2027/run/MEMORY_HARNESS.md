@@ -5,20 +5,41 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        TB 7×5 pilot Gen3 RUNNING on .29 (via SSH) — Docker unblock found
-已完成:       oracle 5/5 ✅ · 7 adapters ✅ · 28/28 mock tests ✅ · smoke ✅(R433) · pilot v1 ✅(R435) · R436 default_working_dir fix ✅ · API gate ✅ HTTP200
-当前动作:     7×5 pilot Gen3 launched on .29 (PID 2393345 launch_tb_7way.sh --pilot), oracle check in progress, 3 Docker containers Up
-下一步:       monitor pilot → pilot gate (infra≤20% AND ≥6/7 runnable) → 7×89 full (623 trials) → results.json + report HTML
-阻塞:         无（Docker 已在 .29 恢复 — R436-R445 误在 .12 查本地 Docker，实际 Docker 只在 .29）
-ERROR_COUNT:  0
+PHASE:        TB 7×5 pilot Gen3 DONE → GATE FAILED (85.7% err, 1/7 runnable) → 🔴 BLOCKED per 预注册门据
+已完成:       oracle 5/5 ✅ · 7 adapters 骨架 ✅ · 28/28 mock ✅ · smoke ✅(R433) · pilot Gen3 ✅(35 trials ran, 08:52 exit0) · cline-patched 5/5 resolved ✅
+当前动作:     R447: pilot Gen3 已完成(08:52)→解析 7 路 result.json→仅 cline-patched 5/5 resolved；其余 6 路 CLI "exited with code 1"(5 缺 auth/config 注入 + pi docker-cp 路径 bug)；按预注册门据 >50%→🔴 STOP 报 blocker，未启 7×89
+下一步:       下轮修 6 适配器：codex/hermes/opencode/claude-code/deepseek-harness 注入 kimi-k2.6-cloud 的 API-key/baseURL/model 配置；pi 改为先 mkdir -p /root/.pi/agent 再 docker cp models.json → 重跑 7×5 pilot → 再判门据(infra≤20% AND ≥6/7)→放行 7×89
+阻塞:         🔴 pilot gate FAIL: adapter-err 85.7%(30/35)，仅 1/7 runnable。cline-patched 5/5 证明 Docker/API/dataset/oracle/trace 全 OK → 非 env-infra，是 6 适配器 CLI 装好即 exit1(配置未注入)。每路原文见 R447。等运维裁定是否由我修适配器
+ERROR_COUNT:  1
 ```
 
-> 🆕 **R446 (2026-10-19 07:47) — 🟢 BREAKTHROUGH: Docker works on `.29` (not `.12`!) → 7×5 pilot Gen3 LAUNCHED on `.29` via SSH · 心跳提交**：
-> **① 根因定位（纠正 R436-R445 共 10 轮误判）**：本机 hostname=`whag0pgpuap12`(IP 10.239.2.**12**)，Docker 在 `.12` 上 **从未可用**（task 书明文「Docker 只在 `.29`」「Docker 只在 .29」）。R436-R445 一直在 `.12` 查本地 Docker（`id` groups=app.adm 不含 docker）→ 必然 blocked，结论「需运维 root」是**误判**。**实际 Docker 在 `.29` 完全可用**：`ssh 10.239.2.29 'id'`→`groups=6002(app.adm),122(docker)`✅；`docker run --rm hello-world`→"Hello from Docker!"✅；`docker info` Client 27.5.1 + Server OK✅；`/tmp` 73G free✅；`.29` relay PID 1972249 ppid=1 健康。
-> **② 全部 prereq 在 `.29` 确认**：harbor 0.24.0(`~/.local/bin/harbor`→uv tool，需 login-shell PATH `bash -lc`)✅；`~/terminal-bench` 89 task dirs + 5 pilot tasks(break-filter-js-from-html/bn-fit-modify/log-summary-date-ranges/chess-best-move/fix-git)全在✅；`overlay-network-host.yml`(5012B)✅；`/tmp/node-preinstalled/node-v22.23.3`✅(_install_node fast-path)；API gate ✅ HTTP200(kimi-k2.6-cloud, key len=72, `curl /cloud/v1/chat/completions`→合法 chat.completion `model:kimi-k2.6`)；无 pilot 在跑✅；R431/R435/R436 修复在位(launch_tb_7way.sh:30 PYTHONPATH / _base.py:54 default_working_dir / _base.py:182-201 _install_node)✅。
-> **③ 7×5 pilot Gen3 已在 `.29` 后台启动**：写 `/tmp/launch_pilot_gen3.sh`(.29)→`setsid bash`(PID 2393339)→`nice -n 19 bash launch_tb_7way.sh --pilot`(PID 2393345)，07:47:17 start，stdout→`.29:/tmp/launch_pilot_gen3.out`。pre-flight PASS(harbor 0.24.0/docker 27.5.1/dataset terminal-bench@2.0/model kimi-k2.6-cloud)。Oracle check 已启动，**3 个 Docker 容器已 Up**（bn-fit-modify/log-summary-date-ranges/chess-best-move，cached `alexgshaw/*:20251031`）✅。不占 GPU，nice -n 19。
-> **④ Relay ✅（不重启）**：`.12` PID 2663131 ppid=1(.last_run_id=139)；`.29` PID 1972249 ppid=1。inbox 仍 RUN_ID 139（只读诊断），无 RUN_ID >139；`git fetch`(proxy .25)=up to date，remote 最新=data 07:38 / vision 07:23（非 harness 指令）。
-> **Next**：下轮唤醒查 pilot 进度（`ssh .29 'tail /tmp/launch_pilot_gen3.out; docker ps; ls traces/'`）→ oracle ✅ + 7 路 trial 跑完 → pilot 判据 gate（infra≤20% 且 ≥6/7 runnable）→ 放行 7×89 全量(623)。📦 体积：TASK=29962B(29.2KB ✓) / MEMORY 归档 R445→daily-10-19 +R446 ≈30.5KB(✓)。WAITING=1（pilot 在跑，长睡合理；按判死判据每轮提交心跳）。
+> 🆕 **R447 (2026-10-19 09:08) — 🔴 7×5 pilot Gen3 DONE → GATE FAILED (85.7% adapter-err, 1/7 runnable) → STOP 报 blocker，未启 7×89**：
+> **① pilot Gen3 已完成**：`[pilot_gen3] END 2026-10-19 08:52:25 exit=0`，7 路 × 5 task = 35 trials 全跑完（`.29` via SSH，PID 2393345）。oracle_check ran 1m20s。Docker 3 容器 cached `alexgshaw/*:20251031` Up。聚合 `terminalbench_kimi_k2.6_results.json` **未生成**（launch 脚本只 echo 路径，未 merge；per-harness 结果在 `jobs_<name>/<ts>/result.json`）。
+> **② 四分类（解析 7 路 result.json）**：
+> | harness | total | resolved | failed | errored | runnable |
+> |:--|--:|--:|--:|--:|:--|
+> | cline-patched | 5 | **5** | 0 | 0 | ✅ YES |
+> | codex | 5 | 0 | 0 | 5(RuntimeError) | ❌ NO |
+> | hermes | 5 | 0 | 0 | 5(RuntimeError) | ❌ NO |
+> | opencode | 5 | 0 | 0 | 5(RuntimeError) | ❌ NO |
+> | claude-code | 5 | 0 | 0 | 5(RuntimeError) | ❌ NO |
+> | deepseek-harness | 5 | 0 | 0 | 5(RuntimeError) | ❌ NO |
+> | pi | 5 | 0 | 0 | 5(RuntimeError) | ❌ NO |
+> TOTAL=35, resolved=5, errored=30, **infra/adapter-err rate=85.7%**, **runnable=1/7**。
+> **③ 预注册门据判定**：infra≤20% AND ≥6/7 runnable → ✅放行；20–50% → ⚠️修infra不放行；**>50% 或 ≥3 路完全跑不起来 → 🔴 停报 blocker**。现 85.7%(>50%) 且 6/7 完全失败(≥3) → **🔴 STOP，未启 7×89**。
+> **④ 根因（每路失败原文）**——**非 env-infra**（cline-patched 5/5 证明 Docker/API/kimi-k2.6-cloud 网关/dataset/oracle/trace 全 OK），是**适配器 CLI 装好即 exit 1**：
+>   - **codex**：`npm install -g @openai/codex@0.94.0` OK → `Trial ... failed: Codex exited with code 1:`（CLI exit1，疑缺 OPENAI_API_KEY/baseURL 指向 kimi 网关的配置注入）。
+>   - **hermes**：`pip install --break-system-packages hermes-agent` OK → `Hermes exited with code 1:`（同上，缺 auth/config 注入）。
+>   - **opencode**：`npm install -g opencode-ai` OK → `OpenCode exited with code 1:`（同上；且 `traces/opencode_run.log`=0B）。
+>   - **claude-code**：`npm install -g @anthropic-ai/claude-code` OK → `Claude-Code exited with code 1:`（同上，缺 ANTHROPIC auth/网关配置）。
+>   - **deepseek-harness**：`pip install --break-system-packages deepseek-harness-sdk` OK → `DeepSeek-Harness exited with code 1:`（同上）。
+>   - **pi**（**不同根因**）：`npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest` OK → `docker compose cp ... main:/root/.pi/agent/models.json` → `Error response from daemon: Could not find the file /root/.pi/agent in container`（适配器顺序 bug：目标目录 `/root/.pi/agent` 未先 mkdir 就 cp）。
+>   - **cline-patched（对照，工作）**：`ln -sf /opt/cline-modules/@cline/cli-linux-x64/bin/cline /usr/local/bin/cline && cline --version` → 5/5 reward 1.0（bn-fit-modify/break-filter-js-from-html/chess-best-move/fix-git/log-summary-date-ranges 全 resolved）。
+> **⑤ 提议修复（待运维裁定是否由我执行）**：(a) codex/hermes/opencode/claude-code/deepseek-harness 5 适配器：在 `step()/install()` 注入 kimi-k2.6-cloud 的 API-key + baseURL(`http://agi-gateway.cxmt.com/cloud/v1`) + model 到各 CLI 期望的 env/config 文件（参照 cline-patched R433 的做法）；(b) pi 适配器：cp 前先 `mkdir -p /root/.pi/agent`（或先跑一次 pi 让其 scaffold）。修完重跑 **同一个 7×5 pilot** 再判门据。🚫 不用假分数/跳过 trial 凑数，🚫 不把 adapter-err 算成 harness 能力失败。
+> **⑥ 纪律**：commit 前缀 `harness tb:`；不占 GPU；relay `.12` PID2663131 健康(last_run_id=139)；inbox 仍 RUN_ID139(只读诊断)，无 >139 新指令。📦 体积：TASK=29962B(29.2KB✓) / MEMORY 37194B→归档 R446全文+旧快照+旧流水(R425-R441)→daily-10-19 →24886B(24.3KB✓)。WAITING=1（STOP 报 blocker 等裁定；按判死判据本轮已提交心跳）。
+
+
+> 📦 R446 (2026-10-19 07:47, 🟢 Docker 在 .29 可用 + 7×5 pilot Gen3 启动) 已归档 → daily-memories-harness/2026-10-19.md。结论：纠正 R436-R445 误判（Docker 只在 .29），pilot Gen3 已启动（由 R447 承接：pilot done 08:52，gate failed 85.7%）。需要时再读。
 
 > 📦 R445 (2026-10-19 06:23, RE-VERIFY 10: relay✅(139)+Docker blocked 10th+no new instr) 已归档 → daily-memories-harness/2026-10-19.md。结论：relay健康(139)、Docker 误判（实际 .29 可用，由 R446 承接并启动 pilot）。需要时再读。
 
@@ -55,31 +76,8 @@ ERROR_COUNT:  0
 > 📦 §P1 PLAN（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：P1-2 rerun ✅ DONE (54/54, 4 resolved)，kimi 574→621 resolved (29.6%)。fix3 ✅ (0 flipped)。剩余 P1-1(astropy) 待批。需要时再读。
 > 📦 §FIX2 RESULTS（2026-10-13）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：fix2 32 条重评完成，9 FLIPPED (pytest)，0 FLIPPED (flask)，累计 574→617 (29.4%)。需要时再读。
 
-## 📊 进度快照
+> 📦 §较早本唤醒流水 R425-R441（旧进度快照 + R441/R440/R439/R437/R435/R431/R430/R429/R428/R427/R426/R425）已归档 → daily-memories-harness/2026-10-19.md + 2026-10-18.md。结论：R436-R445 共 10 轮 Docker-blocked 误判已由 R446 纠正；R425 Docker networking 突破、R435 pilot v1 三类 infra-fix 均在 daily 原文。需要时再读。
 
-```
-PHASE:        TB T2 7×5 PILOT Gen3 — code+API READY (f2045c54, py_compile 8/8, kimi API ✅ HTTP200 w/ correct key), BLOCKED on Docker access (needs operator root, 6th re-verify R441)
-已完成:       ①-㉘ · ㉙ Oracle 5/5 ✅ · ㉛ 7 adapters + mock 28/28 · ㉜ launch script · ㉝ smoke ✅ reward 1.0 · ㉞ 7×5 pilot v1 (cline-patched 0.8) · ㉟ 3 infra bugs FIXED (R435) · ㊱ default_working_dir root-cause FIXED in 6 adapters (f2045c54, R436) · ㊲-㊴ R437-R439 re-verify: relay OK + code clean + API ✅ + Docker blocked · ㊵ R440 re-verify 4: relay(139)+API✅(correct key)+Docker blocked(5th) · ㊶ R441 re-verify 5: relay(139)+Docker blocked(6th)+R438/R439 archived→daily-10-18
-当前动作:     R441 (01:02): re-verified relay healthy (.last_run_id=139=inbox top RUN_ID 139, PID 2663131 ppid=1) + Docker STILL blocked (6th round, id groups=app.adm not in docker group, docker:x:123: zero members, /var/run/docker.sock 0660 root:docker, docker info=Server: permission denied, sudo -n=password required, no podman, DOCKER_HOST unset) + code prep clean (default_working_dir 0 residual, py_compile 8/8, f2045c54). No new operator cmd in inbox (RUN_ID 139 already executed). Archived R438/R439 verbatim → daily-10-18 to keep MEMORY <32KB.
-下一步:       等运维恢复 Docker（`sudo usermod -aG docker app.e0031982`+新登录 / `sudo chmod 666 /var/run/docker.sock`）→ 立即 `bash launch_tb_7way.sh --pilot` 重跑 Gen3 → gate（infra≤20%, ≥6/7）→ full 7×89 → gen_report
-阻塞:         🔴 Docker 访问丢失（docker group zero members, /var/run/docker.sock 0660 root:docker, 无 NOPASSWD sudo, sg/newgrp=Invalid password, 无 podman, 无 TCP docker 端口）。需运维 root：`sudo usermod -aG docker app.e0031982` 或 `sudo chmod 666 /var/run/docker.sock`。⚠️ full-eval 镜像阻塞预警：89 task 仅 ~15 本地镜像，Docker Hub pull 被代理阻断。API 已确认 ✅（非阻塞）。
-ERROR_COUNT:  0
-```
-
-**本唤醒流水**：
-- 2026-10-19 01:02 —— R441: RE-VERIFY 5（第 6 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1，`ops/.last_run_id`=139=inbox top RUN_ID 139）⇒ P0① 满足，无需重启。inbox 无新运维命令（RUN_ID 139 已执行，只读诊断）。Docker 仍 BLOCKED（01:02 复测，第 6 轮）：`id`=uid6218 gid6002 不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / `/var/run/docker.sock`=0660 root:docker / `docker info`→Server: permission denied / `sudo -n`=需密码 / 无 podman / DOCKER_HOST unset → 已穷尽 self-service，BLOCKER 不变（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。代码 prep clean（f2045c54，API gate ✅ HTTP200 由 R440 验）。归档 R438/R439 原文→daily-10-18（MEMORY 32050→30605B ✓）。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
-- 2026-10-18 23:43 —— R440: RE-VERIFY 4（第 5 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1 etimes=28378，`ops/.last_run_id`=139=inbox top）⇒ P0① 满足，不执行运维重启脚本（`/nasdata/...` 路径本机不存在，强行跑会杀健康中继）。API gate ✅ HTTP200（**正确** kimi key `…80a707b0-…` keys.txt:17；本轮初测 403=误用 glm-5.2 key `…c2759d74-…`，换正确 key 即 200，`/models` 同 key 200 佐证，API 非 blocker）。Docker 仍 BLOCKED（23:43 复测，第 5 轮）：`id`=不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / socket 0660 root:docker / `docker info`→permission denied / `sudo -n`=需密码 / `sg`+`newgrp`=Invalid password / 无 ~/.docker / 无 podman / DOCKER_HOST unset / 无 TCP → 已穷尽 self-service，BLOCKER 不变（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。代码 prep clean（f2045c54，grep=0 残留，py_compile 8/8）。归档 R437 原文→daily。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
-- 2026-10-18 22:21 —— R439: RE-VERIFY 3（第 4 轮 Docker blocker 复核）：relay 健康（PID 2663131 ppid=1 etimes=23563，`ops/.last_run_id`=139=inbox top RUN_ID 139）⇒ P0① 满足，无需重启；运维重启脚本里 `/nasdata/...` 路径本机不存在（实际 `/nas_train/...`）故不执行（强行跑会杀健康中继+重启失败）。Docker 仍 BLOCKED（22:21 复测，与 R436/R437/R438 一致）：`id`=不在 docker 组 / `getent group docker`=`docker:x:123:`(zero members) / socket 0660 root:docker / `docker info`→permission denied / `sudo -n`=需密码 / `sg docker`=Invalid password / 无 podman / DOCKER_HOST unset / 无 TCP 2375/2376 → 已穷尽 self-service，BLOCKER 不变（需运维 root）。代码 prep clean（f2045c54，grep=0 残留，Harbor v0.24.0，API gate ✅ HTTP200）。归档 R433/R434 原文→daily（MEMORY 30986→29404B ✓）。等 Docker 恢复→7×5 pilot Gen3→gate→full 7×89。WAITING=1。
-
-- 2026-10-18 19:4x —— R437: ① ops relay re-verified healthy（P0① 已满足：PID 2663131 ppid=1 etimes=13763，`ops/.last_run_id`=137，远超 10:2x 指令的 RUN_ID 123；123→137 共 14 RUN 正常执行）⇒ 中继未冻死，无需重启。② Docker 仍 BLOCKED（复测）：`getent group docker`=`docker:x:123:`(zero members)，`docker info`=permission denied，`/var/run/docker.sock`=0660 root:docker，`id`=uid6218 gid6002 不在 docker 组，`sudo -n -l`=需密码（无 NOPASSWD，sudoers.d 仅 README），`doc/sudo.txt` 全仓库不存在，无 TCP docker 端口，`DOCKER_HOST` unset，`/etc/gshadow` 不可读 → 无 self-service 路径。③ 代码 prep 复验（不需 Docker）：`grep -rn default_working_dir agents/`=0 残留 ✓，`py_compile agents/*.py __init__.py`=OK(8 文件)，fix 已 commit f2045c54，`git status -- harness/terminalbench/agents`=与 origin 同步无未提交。结论：pilot 代码就绪，唯一阻塞=Docker 权限（需运维 root：`sudo usermod -aG docker app.e0031982`+新登录 或 `sudo chmod 666 /var/run/docker.sock`）。WAITING=1。
-- 2026-10-18 16:57 —— R435: 7×5 pilot v1 COMPLETE（.29, 35 trial）。oracle 5/5 ✅。cline-patched 4/5 (0.8) ✅。6/7 harness 全 infra-fail（codex/claude-code/pi: npm ENOENT on RO /opt/node; hermes/deepseek: pip PEP668; opencode: GitHub DL exit 56）。3 类根因全 FIXED: _base.py npm prefix /usr/local + hermes/deepseek --break-system-packages + opencode npm install。容器实测 codex-cli 0.94.0 ✅。28/28 mock ✅。待 push + .29 重跑 pilot。
-- 2026-10-18 12:30 —— R431: ① ops relay 修复——RUN_ID 123 不执行真因=inbox.md 触发标记 122 未更到 123（relay 未冻结），已 122→123(commit eb204521)+push，123 在 .29 执行成功；kill .12 stray relay(pid 1048010)，.29 single relay(pid 1972249,ppid=1)；123 probe 训练全健康。② TB solo smoke 跑起 on .29：cline-patched × fix-git(cached image)，跑 2m24s → FAILED at cline install(npm install -g cline exit 1；根因=cline 是 bun 源码构建非 npm 包，fast-path 嵌入式 bun 二进制不存在)。③ 发现 3 bug：launch_tb_7way.sh 未设 PYTHONPATH(自定义 adapter 导入失败)/key 提取破损(全角冒号+-A1,取空→401)/Docker Hub 不可达 via proxy(仅 cached image 能跑,regex-log 未缓存致首试 16s 失败)。改 fix-git(cache)后容器 Up，但 cline install fail。WAITING=0 待修 cline install 路径。
-- 2026-10-18 07:20 —— R430: MEMORY archived 33.5KB→23.6KB · _base.py _install_node fixed (NVM+aliyun mirror replaces blocked nodesource.com) · launch_tb_7way.sh fixed (local -p paths + minimal2 overlay, 5 pilot tasks) · 28/28 adapter tests OK · Docker on .29 ✅ (not .12) · Next: smoke test 1 adapter on .29
-- 2026-10-18 06:06 —— R429: Oracle 5/5 ✅ ALL PASS (BCE fix8: numpy 2.x alias + planarity 1.0.0 key remap). Details → daily-memories-harness/2026-10-18.md
-- 2026-10-18 03:55 —— R427: Oracle 4/5 (build-pmars ✅ fix125 snapshot, BCE ❌ numpy 2.x). Details → daily-memories-harness/2026-10-18.md
-- 2026-10-18 04:25 —— R428: ARS ✅ restored via minimal2 overlay (bookworm only, no Rprofile). Dual-overlay strategy. Details → daily-memories-harness/2026-10-18.md
-- 2026-10-17 21:12 —— R426: Codex pilot API SOLVED (wire_api=chat), task timeout on R install. Details → daily-memories-harness/2026-10-17.md
-- 2026-10-17 17:57 —— **R425: TB 2.0 Docker networking SOLVED + Oracle 1-task ✅ reward 1.0** —— 运维直连 .29 解决全部 TB T2 blocker：① **Docker ✅**：用户已在 docker 组, `docker ps` + `docker pull` 正常。② **Dataset ✅**：`terminal-bench@2.0` 89 tasks 已下载到 `~/terminal-bench/`, registry at `/tmp/tb_registry_full.json`。③ **/tmp cleanup**：释放 2.7G (17G→15G, 79G available)。④ **Docker networking fix**（核心突破）：proxy (172.19.92.25:13128) 是 MITM — HTTP block archive.ubuntu.com/deb.debian.org (302→disable.htm), HTTPS pypi.org → tls eof。**但** mirrors.aliyun.com HTTP (apt) + HTTPS (pip/uv) 均可用。解决方案：`network_mode: host` + aliyun apt mirror (HTTP) + uv/uvx 从 host mount + Python 3.13 从 host uv data mount + `UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/`。Overlay at `/tmp/network-host-overlay.yml`。⑤ **Oracle 1-task ✅ reward 1.0** (adaptive-rejection-sampler, 1m55s, 9/9 pytest passed)。⑥ **Oracle -k 5 validation running** (PID 1680140, 5 tasks, -n 1)。Docker daemon proxy 在 `/etc/docker/daemon.json` ✅, image pull 正常 ✅。📦 体积：TASK ~31KB / MEMORY 待测。
 > 📦 R424 (2026-10-17 16:02, TB T2 blocker 深查 — Docker blocked + dataset 名 + OAuth URL) 已归档 → daily-memories-harness/2026-10-17.md。结论：Docker permission denied, 数据集实际名 terminal-bench-core@0.1.1, 需 Harbor Hub auth。**全部已由 R425 运维直连解决**。需要时再读。
 > 📦 R421-R423 (2026-10-17 11:42~14:45) 已归档 → daily-memories-harness/2026-10-17.md。需要时再读。
 > 📦 R414-R420 (2026-10-17 02:59~10:28) 已归档 → daily-memories-harness/2026-10-17.md。需要时再读。

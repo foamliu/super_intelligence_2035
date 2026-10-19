@@ -1,0 +1,30 @@
+Agent 'hermes' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
+Command outputs captured
+Trial bn-fit-modify__MG4VshT failed: Hermes exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'hermes' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
+Command outputs captured
+Trial break-filter-js-from-html__cesHFuj failed: Hermes exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'hermes' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
+Command outputs captured
+Trial chess-best-move__mumnehy failed: Hermes exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'hermes' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
+Command outputs captured
+Trial fix-git__PVDo2D2 failed: Hermes exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'hermes' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
+Command outputs captured
+Trial log-summary-date-ranges__zyJ6dkD failed: Hermes exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
