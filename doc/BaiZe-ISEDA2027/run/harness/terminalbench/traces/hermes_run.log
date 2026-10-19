@@ -1,5 +1,5 @@
-  5/5 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:08:43 0:00:00
-tb_pilot_dataset_3AvdVI • hermes
+  5/5 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:15:18 0:00:00
+tb_pilot_dataset_KDp3w7 • hermes
 ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
 ┃ Trials ┃ Exceptions ┃  Mean ┃
 ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
@@ -13,16 +13,16 @@ tb_pilot_dataset_3AvdVI • hermes
 └──────────────┴───────┘
 
 Job Info
-Total runtime: 8m 43s
+Total runtime: 15m 18s
 Results written to 
 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
-ness/terminalbench/jobs_hermes/2026-10-19__13-16-52/result.json
+ness/terminalbench/jobs_hermes/2026-10-19__19-31-15/result.json
 Inspect results by running `harbor view 
 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
 ness/terminalbench/jobs_hermes`
 Share results by running `harbor upload 
 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/har
-ness/terminalbench/jobs_hermes/2026-10-19__13-16-52`
+ness/terminalbench/jobs_hermes/2026-10-19__19-31-15`
 
-13:25:37 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 1/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 2.9s
-13:25:37 - LiteLLM:WARNING: get_model_cost_map.py:672 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable. Falling back to local backup.
+19:46:35 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 1/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 2.2s
+19:46:35 - LiteLLM:WARNING: get_model_cost_map.py:672 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable. Falling back to local backup.
