@@ -1,20 +1,13 @@
-# MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
+# MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-19 21:53 运维令三十四 **RUN_ID 84 端口普查结果已回收 + 推荐 r4 用端口**：outbox RUN_ID 84 21:43 落 · 21 端口 × 三层并行探测（TCP/HTTP/真实 POST `/v1/run_code`）矩阵已出。
-- **关键发现**：当前 r3 regrade 的 4 端口 set `8650/8651/8652/8654` 中**3 个被 t0002147 占执行槽**（8650/8652/8654 EXEC_TIMEOUT=18008-18010ms）·仅 **8651 EXEC_OK 15ms** ⇒ 这正是 r3 shard_2/3 全 150s timeout 的根因（不是端口宕·是槽被抢）。
-- **EXEC_OK 且 <20ms 的端口（r4 候选）**：8651(15)·8653(14)·8655(12)·8656(13)·8657(18)·**8658(11·最快)**·8661-8667(12-20)·8669(15)·8670(16)；避开 8659/8668（>1s 慢）。
-- **🟦 推荐 r4 用 4 端口**：**`8655 / 8656 / 8657 / 8658`**（全 EXEC_OK·ms=12/13/18/11·均 <20ms·不与 r3 regrade 冲突·不与 t0002147 冲突）→ **等运维确认后再改 `.env`/启 r4**。
-- r3 regrade 21:52 实测：shard_0 ✅38/38=31p·shard_1 ✅38/38=30p·**shard_2/3 各 23/38 全 0 passed/timeout**（+1 since 21:08·last_write 21:51）·合计 122/151=61 passed·若收口=40.4% 错值；regrade PID 229615 alive·让 shard_2/3 自然跑完（~22:30）后可独立重跑只 30 任务。
-- **r3 收口路径建议**：A（等 shard_2/3 跑完后用新端口只重跑 30 任务）/ B（杀 regrade→改 .env→整体重跑 151）→ 都需运维先批端口变更。
-- **本轮动作**：仅心跳+日报+commit/push；**🚫 不改 .env / 不启 r4 / 不杀 regrade / 不动 t0002147**。等运维批：(a) r4 端口 set (b) r3 收口路径 (c) F2 watchdog (d) r4 启动许可。详见 daily §[21:53]。 -->
-
-<!-- heartbeat 2026-10-19 21:3x 运维令三十四 沙盒端口普查已下发（RUN_ID 84·ops 中继·纯只读）— **已被 21:53 心跳取代（结果已回收 + 推荐端口）**。详情见 daily §[21:5x]。-->
-<!-- heartbeat 2026-10-19 21:08 巡检 #3 · r3 regrade 仍 BLOCKED（shard_2/3 各 17/38 全 timeout·t0002147 抢占 8652/8654）— 已被 21:53 心跳取代，原文搬入 daily §[21:5x] 归档段。 -->
-<!-- heartbeat 2026-10-19 20:30 巡检 #2 · r3 regrade BLOCKED（shard_2/3 12/38 全 timeout）— 已被 21:53 心跳取代。 -->
-<!-- heartbeat 2026-10-19 19:48 r3 regrade BLOCKED + r3 trace cp 补做 — 已被 21:53 心跳取代。 -->
-<!-- heartbeat 2026-10-19 19:10 运维令三十三 timeout 2500 根因诊断 ✅ 已上报·commit 622d1d00·推荐 F2+F5。已归档。 -->
-
+<!-- heartbeat 2026-10-19 22:2x 运维令三十五 **r3 收口路径 A 已获批 + RUN_ID 85 已下发**：
+- **用户令**：「选 **A**」⇒ 等 shard_2/3 自然跑完 → 用 `8655/8656/8657/8658` **只重跑 shard_2/3 未通过任务** → 与 shard_0/1 的 61 passed 拼接 = r3 真实 Pass@1。🚫 不整体重跑 151、不丢 shard_0/1 有效结果。
+- **端口批准**：regrade 统一用 **`8655 8656 8657 8658`**（84 号探测 11–18ms 全 EXEC_OK）。🚫 避开 8650/8652/8654（被 t0002147 占）、8659/8668（7.7s 慢）、**8651**（r3 shard_1 曾用，避免抢同端）。
+- **执行顺序**：①等 shard_2/3 到 38/38（~22:30；未收口只读报数不 kill）②改 `--sandbox-endpoints=8655,8656,8657,8658@10.129.32.75`（只改端点；🚫 不动 READBACK=none/OMEGA/BUDGET/LAGGED/providers.json/模型）③只对 shard_2/3 未通过任务重跑 regrade（照 `/tmp/run_readback_none_retest_r3_regrade.sh` 改端点+shard 过滤+独立输出目录，不覆盖原产物）④拼接 shard_0(31)+shard_1(30)+修复 → 报分母（151）⑤写 `zhulong_results.md` + commit `zhulong retest: r3 regrade path-A fix`。
+- **⚠️ 模型维持 `deepseek-v4-pro-fp4`**：r1/r2/r3 生成同模型，**不得为省事切 `-cloud`**（会混入未记录变量）。fp4 真不可用才可切，并须写明「r3 打分不调 LLM，模型只影响生成」。
+- **RUN_ID 85（ops·只读·22s）**：查 r3 regrade 是否已收口（PID 229615/log tail）+ **重测 8655-8658 此刻是否仍空闲**（84 号已过 40min，占用会变）+ 8650-8654 对照 + t0002147 进程数。
+- **仍未批**：F2 watchdog（推荐 r4 前上线）、r4 启动许可（r3 落定后再启）、论文 `stuck_count` 分列。 -->
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 

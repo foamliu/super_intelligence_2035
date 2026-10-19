@@ -1,5 +1,66 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 84 -->
+<!-- RUN_ID: 85 -->
+
+## RUN_ID 85 — 只读巡查：r3 regrade 是否已自然收口 + 8655-8658 复测可用性（用户已批路径 A）
+
+> 用户决策（2026-10-19 22:2x）：「按照你的建议，选 **A**」= 等 shard_2/3 自然跑完（~22:30，产 0 passed）→ **改用新端口 `8655/8656/8657/8658` 只重跑 shard_2/3 未通过的任务** → 与 shard_0/1 的 61 passed 拼接得 r3 真实 Pass@1。
+> **本块纯只读**：不 kill、不改 `.env`、不启 r4、不动 t0002147。目的 = 让 agent 下一轮唤醒时少烧一轮巡检、且拿到「端口此刻是否仍空闲」的新鲜证据（84 号探测已 40min，t0002147 仍在滚动起 worker，端口占用会变）。
+> ⚠️ 80 秒硬上限（中继 CMD_TIMEOUT=600）。
+
+```bash
+set -u
+echo "=== RUN_ID 85 | r3 regrade settle check + port re-probe | $(date '+%F %T') | host=$(hostname) ==="
+SB=10.129.32.75
+W=$(mktemp -d /tmp/r85.XXXXXX)
+
+echo "[1] r3 regrade 是否已收口（PID 229615 + run_eval + 日志尾）"
+if [ -e /proc/229615 ]; then echo "  regrade PID229615 ALIVE etime=$(ps -o etimes= -p 229615 2>/dev/null | tr -d ' ')s"; else echo "  regrade PID229615 GONE(已收口)"; fi
+ps -eo pid,etimes,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox' | grep -v python3.14 | head -6 | cut -c1-130 || echo "  无 regrade 子进程"
+echo "  --- regrade log tail ---"
+tail -6 /tmp/ABL_readback_none_retest_r3_regrade.log 2>/dev/null | cut -c1-160 || echo "  NO_LOG"
+
+echo ""
+echo "[2] 四个推荐端口复测（8655 8656 8657 8658，并行）"
+for p in 8655 8656 8657 8658; do
+  (
+    t0=$(date +%s%N)
+    out=$(timeout 12 curl -s --max-time 10 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' \
+          -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 100)
+    t1=$(date +%s%N)
+    ms=$(( (t1-t0)/1000000 ))
+    if [ -z "$out" ]; then echo "$p BUSY_OR_TIMEOUT ${ms}ms" > "$W/$p"; else echo "$p FREE_OK ${ms}ms" > "$W/$p"; fi
+  ) &
+done
+wait
+for p in 8655 8656 8657 8658; do echo "  $(cat "$W/$p" 2>/dev/null || echo "$p NA")"; done
+
+echo ""
+echo "[3] 当前 r3 的 4 端口（8650/8651/8652/8654）状态对照"
+for p in 8650 8651 8652 8654; do
+  (
+    out=$(timeout 12 curl -s --max-time 10 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' \
+          -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 40)
+    if [ -z "$out" ]; then echo "$p BUSY" > "$W/o$p"; else echo "$p FREE" > "$W/o$p"; fi
+  ) &
+done
+wait
+for p in 8650 8651 8652 8654; do echo "  $(cat "$W/o$p" 2>/dev/null || echo "$p NA")"; done
+
+echo ""
+echo "[4] t0002147 是否仍在跑（决定稍后重跑是否会再被抢）"
+ps -eo user,etimes,args 2>/dev/null | grep -c 't0002147.*cline' | awk '{print "  t0002147 cline proc count =", $1}'
+echo ""
+echo "[5] r3 shard 进度（看 shard_2/3 是否已 38/38）"
+for s in 0 1 2 3; do
+  d=/home/app.e0031982/eda_code_eval/2026_1019_145634
+  echo "  shard_$s: $(ls /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/ 2>/dev/null | grep -c "shard_$s" || echo '?') dirs"
+done 2>/dev/null
+grep -aoE 'shard_[0-9]+[^|]{0,60}' /tmp/ABL_readback_none_retest_r3_regrade.log 2>/dev/null | tail -6 | cut -c1-120 || echo "  (无 shard 汇总行)"
+rm -rf "$W"
+echo "=== DONE 85 ==="
+```
 
 ## RUN_ID 84 — 只读探测沙盒 8650–8670 共 21 端口：哪些 OPEN / 可用（用户直令·不改任何配置）
 
@@ -8,7 +69,7 @@
 > **本块纯只读**：不 kill、不改 `.env`、不启停沙盒、不动 t0002147。输出已 `cut`，单命令带 `timeout`。
 > ⚠️ 「TCP 通」≠「可用」：需三层判定 —— ①TCP connect ②HTTP `/v1/run_code` 响应 ③**实际能否跑代码（执行槽是否被占）**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 84 | sandbox 8650-8670 port probe | $(date '+%F %T') | host=$(hostname) ==="
 SB=10.129.32.75
