@@ -63,6 +63,10 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export http_proxy=http://172.19.92.25:13128
 export https_proxy=http://172.19.92.25:13128
 export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+# P0-a (2026-10-20 crash复盘): NCCL timeout 现场 dump + 异步错误处理 (下次 resume 生效, 不重启当前 run)
+export TORCH_NCCL_DUMP_ON_TIMEOUT=1
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export NCCL_ASYNC_ERROR_HANDLING=1
 
 "$PY/torchrun" --nnodes=1 --nproc_per_node="$NP" \
     --master_addr=127.0.0.1 --master_port="$PORT" \
