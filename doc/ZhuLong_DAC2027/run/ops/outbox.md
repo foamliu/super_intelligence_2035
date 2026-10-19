@@ -10439,3 +10439,142 @@ deepseek-v4-flash -> best HTTP 200
 {"id":"chatcmpl-e4d5c89f-4a2d-41f6-be1f-236c22938013","object":"chat.completion","created":1792305732,"model":"deepseek-v4-flash","choices":
 === DONE 80 ===
 ```
+
+---
+
+## RUN_ID 81 · 2026-10-19 14:50:51 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 81 | kill task 119 stuck cline worker | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[0] timeout 写法诊断（为何 2500s 超时不生效）"
+grep -nE 'timeout|2500|kill-after|foreground' /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh 2>/dev/null | head -40 || true
+
+echo "[1] worker 目标核验（cmdline + PPID）"
+for p in 2743947 2743948; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-100)
+    ppid=$(awk '/^PPid/{print $2}' /proc/$p/status 2>/dev/null)
+    echo "pid=$p ppid=$ppid cmd=[$cmd]"
+  else
+    echo "pid=$p NOT_ALIVE"
+  fi
+done
+
+echo "[2] kill worker（仅限 cmdline 含 cline/timeout 的 PID；先 TERM 后 KILL）"
+for p in 2743947 2743948; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null)
+    case "$cmd" in
+      *cline*|*timeout*2500*)
+        kill -TERM "$p" 2>/dev/null && echo "TERM -> $p" || echo "TERM-$p-fail"
+        ;;
+      *)
+        echo "pid=$p cmd 不匹配 cline/timeout，跳过（防误杀）"
+        ;;
+    esac
+  fi
+done
+sleep 5
+for p in 2743947 2743948; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null)
+    case "$cmd" in
+      *cline*|*timeout*2500*)
+        kill -KILL "$p" 2>/dev/null && echo "KILL -> $p（TERM 未生效=SIGTERM 被忽略）" || echo "KILL-$p-fail"
+        ;;
+      *) echo "pid=$p 已变/不匹配，跳过";;
+    esac
+  else
+    echo "pid=$p EXITED（TERM 已生效）"
+  fi
+done
+
+echo "[3] 复查 batch 主进程 + 残留 worker"
+sleep 2
+ps -eo pid,ppid,etimes,args | grep -E '[t]imeout 2500|[c]line' | cut -c1-140 || echo "无 timeout/cline worker 残留"
+[ -e /proc/2680437 ] && echo "batch 主进程 2680437 ALIVE（应自动收口 r2）" || echo "batch 2680437 GONE"
+
+echo "=== DONE 81 ==="
+```
+
+**输出**
+```
+=== RUN_ID 81 | kill task 119 stuck cline worker | 2026-10-19 14:50:51 | host=hfeg0tedaap02 ===
+[0] timeout 写法诊断（为何 2500s 超时不生效）
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:33:TIMEOUT_TASKS="${LOG_DIR}/timeout_task.log"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:169:echo 0 > "${STATS_DIR}/timeout" 2>/dev/null
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:199:    local timeout_sec=2500
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:212:        timeout $timeout_sec $COMMAND -c "$ws_dir" $data_dir_flag -t $timeout_sec "$task_content" < /dev/null
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:219:        timeout $timeout_sec $COMMAND -c "$ws_dir" $data_dir_flag -t $timeout_sec "$task_content" < /dev/null
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:228:        print_warning "[worker-${worker_slot}] 任务 $task_name 超时 (${timeout_sec}s)"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:230:        increment_stat "timeout"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:383:TIMEOUT_COUNT=$(get_stat "timeout")
+[1] worker 目标核验（cmdline + PPID）
+pid=2743947 NOT_ALIVE
+pid=2743948 NOT_ALIVE
+[2] kill worker（仅限 cmdline 含 cline/timeout 的 PID；先 TERM 后 KILL）
+pid=2743947 EXITED（TERM 已生效）
+pid=2743948 EXITED（TERM 已生效）
+[3] 复查 batch 主进程 + 残留 worker
+  19820       1 2249593 /bin/bash -c cd /home/app.t0002949/T0002949/zhulong/apps/cline-hub && export http_proxy=http://172.19.92.23:13128 ht
+  20041   19866 2249592 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/src
+  99615       1 6564888 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/devops/e
+ 245597       1 12348176 /home/app.e0030544/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /home/app.e0030544/projec
+ 264846       1 13034163 node /home/app.e0023936/.npm-global/bin/cline config
+ 545406 2071437 2242539 node /home/app.t0002147/.npm-global/bin/cline --id 1790041981481_aealn
+ 545417  545406 2242539 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 1790041981481_aealn
+ 554838  554673  522043 /home/app.e0042624/.local/node/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0042624/eda_plat
+ 610026  609886 6372112 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/devops/e
+ 667060 2904831 2241257 node /home/app.t0002147/.npm-global/bin/cline
+ 667068  667060 2241257 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
+1143358       1 7103579 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/devops/e
+2071674 2071649 7532672 python /home/app.e0023936/devops/eda_cline/apps/examples/desktop-app-centos8-tauri/grpc-demo/server.py
+2241407       1 5785351 node /home/app.t0002441/.local/share/zhulong/cli.mjs --yolo -a --timeout 2500 你是一位精通pyAether文档的pyt
+2859581 2843561   19786 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline
+2859589 2859581   19786 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline
+2872518 2871939   19415 node /home/app.t0002147/.npm-global/bin/cline
+2872528 2872518   19415 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
+2938655 2937789   17986 node /home/app.t0002147/.npm-global/bin/cline --id 1792371538161_kcpt9
+2938664 2938655   17986 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 1792371538161_kcpt9
+3004948       1 2349471 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/src
+3088197 3045799 4144471 /root/node-v22/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /root --host 127.0.0.1 --port 25463 --path
+3163814       1 18419273 tail -f /tmp/cline/background-1773973374973-oh3ymkv.log
+3234036       1 18415269 tail -f /tmp/cline/background-1773977383155-mrlqaet.log
+3308390       1 7273811 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/github/2
+3533085       1 6987433 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/github/2
+3556632 3293016    2486 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/E
+3556640 3556632    2485 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home
+3556894 3293016    2481 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/E
+3556902 3556894    2481 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home
+3557417 3293016    2476 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/E
+3557431 3557417    2476 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home
+3558898 3293016    2463 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/E
+3558910 3558898    2463 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home
+3599260 3599132    1627 node /home/app.t0002965/.npm-global/bin/cline --id 1792373281239_f3p3h
+3599268 3599260    1627 /home/app.t0002965/.npm-global/lib/node_modules/cline/bin/.cline --id 1792373281239_f3p3h
+3624854 3624529     988 node /home/app.t0002965/.npm-global/bin/cline
+3624869 3624854     988 /home/app.t0002965/.npm-global/lib/node_modules/cline/bin/.cline
+3650727 3643677     444 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline
+3650735 3650727     444 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline
+3655058 3646350     352 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline --auto-approve true --timeout 2500 --data-dir /nasdata/
+3655078 3655058     352 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 -
+3655992       1     332 /bin/bash -c echo "=== 清理上次失败输出 ==="; rm -rf ~/EDA-Eval-Framework/output_code_generation/20261019_14
+3662997   81827     200 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 
+3662998 3662997     200 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ##
+3665600 3646350     160 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline --auto-approve true --timeout 2500 --data-dir /nasdata/
+3665611 3665600     160 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 -
+3666056 3646350     151 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline --auto-approve true --timeout 2500 --data-dir /nasdata/
+3666064 3666056     151 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 -
+3666480 3656030     146 cline --auto-approve true --timeout 2500 你是一位精通 SKILL 语言的 EDA 工程师。SKILL 是 Cadence Virtuo
+3669505 3531019      85 /bin/bash -c sleep 180; echo "=== checkpoint 最新状态 ==="; cat ~/EDA-Eval-Framework/output_code_generation/2026
+3672428 3646350      23 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline --auto-approve true --timeout 2500 --data-dir /nasdata/
+3672440 3672428      22 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 -
+4135756       1 7259688 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/github/2
+4182399 4182229 2249972 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/src
+4182953       1 2249969 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/src
+batch 2680437 GONE
+=== DONE 81 ===
+```
