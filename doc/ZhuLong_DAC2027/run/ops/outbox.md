@@ -10873,3 +10873,121 @@ Filesystem                 1G-blocks  Used Available Use% Mounted on
  224011  224010     215 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 🔧 运�
 === DONE 83 ===
 ```
+
+---
+
+## RUN_ID 84 · 2026-10-19 21:43:09 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 84 | sandbox 8650-8670 port probe | $(date '+%F %T') | host=$(hostname) ==="
+SB=10.129.32.75
+W=$(mktemp -d /tmp/probe84.XXXXXX)
+echo "workdir=$W"
+echo "[0] 本机 86xx 监听（若有）"
+ss -ltn 2>/dev/null | grep -E ':86[5-7][0-9]' | cut -c1-120 || echo "  none (sandbox 在 $SB 远端)"
+echo ""
+# ---- 三层探测全部并行（21 端口 × 3 层同时发起），最坏 ~24s，远低于中继 600s ----
+echo "[1][2][3] 并行：TCP connect / HTTP GET / 真实 POST 执行"
+for p in $(seq 8650 8670); do
+  (
+    # 层1: TCP
+    if timeout 1 bash -c "cat < /dev/null > /dev/tcp/$SB/$p" 2>/dev/null; then
+      echo "$p TCP_OPEN" > "$W/$p.tcp"
+    else
+      echo "$p TCP_CLOSED" > "$W/$p.tcp"
+    fi
+    # 层2: HTTP GET（只判服务在线）
+    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 4 "http://$SB:$p/" 2>/dev/null)
+    [ -z "$code" ] && code="TIMEOUT"
+    [ "$code" = "000" ] && code="000_NO_RESP"
+    echo "$p HTTP=$code" > "$W/$p.http"
+    # 层3: 真实执行（判执行槽是否被占）；18s 上限 = 沙盒单任务 150s 的采样窗口
+    t0=$(date +%s%N)
+    out=$(timeout 20 curl -s --max-time 18 -X POST "http://$SB:$p/v1/run_code" \
+          -H 'Content-Type: application/json' \
+          -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 180)
+    rc=$?
+    t1=$(date +%s%N)
+    ms=$(( (t1-t0)/1000000 ))
+    if [ -z "$out" ]; then
+      echo "$p EXEC_TIMEOUT_OR_EMPTY rc=$rc ${ms}ms" > "$W/$p.exec"
+    else
+      echo "$p EXEC_OK ${ms}ms $(echo "$out" | tr '\n' ' ' | cut -c1-110)" > "$W/$p.exec"
+    fi
+  ) &
+done
+wait
+echo ""
+echo "--- 汇总矩阵（port | TCP | HTTP | EXEC）---"
+printf "%-6s %-12s %-14s %-10s %s\n" PORT TCP HTTP EXEC DETAIL
+for p in $(seq 8650 8670); do
+  t=$(cat "$W/$p.tcp" 2>/dev/null | awk '{print $2}')
+  h=$(cat "$W/$p.http" 2>/dev/null | awk '{print $2}')
+  e=$(cat "$W/$p.exec" 2>/dev/null | awk '{print $2}')
+  d=$(cat "$W/$p.exec" 2>/dev/null | cut -d' ' -f3- | cut -c1-70)
+  printf "%-6s %-12s %-14s %-10s %s\n" "$p" "${t:-NA}" "${h:-NA}" "${e:-NA}" "$d"
+done
+rm -rf "$W"
+echo ""
+echo "[4] 谁在跑 t0002147/t0002997（复核占用者）"
+ps -eo pid,etimes,user,args 2>/dev/null | grep -E '[c]line|[r]un_on_sandbox' | grep -iE 't0002147|t0002997' | awk '{print $1, $2, $3}' | head -8 || echo "  无"
+echo ""
+echo "[5] 当前 .env 端口配置（只读）"
+grep -hoE '86[5-7][0-9]' /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | sort -u | tr '\n' ' '; echo ""
+echo "=== DONE 84 ==="
+```
+
+**输出**
+```
+=== RUN_ID 84 | sandbox 8650-8670 port probe | 2026-10-19 21:43:09 | host=hfeg0tedaap02 ===
+workdir=/tmp/probe84.yPgBFO
+[0] 本机 86xx 监听（若有）
+LISTEN 0      2048              0.0.0.0:8667       0.0.0.0:*          
+LISTEN 0      128               0.0.0.0:8668       0.0.0.0:*          
+LISTEN 0      2048              0.0.0.0:8661       0.0.0.0:*          
+LISTEN 0      2048              0.0.0.0:8655       0.0.0.0:*          
+LISTEN 0      128               0.0.0.0:8652       0.0.0.0:*          
+LISTEN 0      5               127.0.0.1:8666       0.0.0.0:*          
+
+[1][2][3] 并行：TCP connect / HTTP GET / 真实 POST 执行
+
+--- 汇总矩阵（port | TCP | HTTP | EXEC）---
+PORT   TCP          HTTP           EXEC       DETAIL
+8650   TCP_OPEN     HTTP=404       EXEC_TIMEOUT_OR_EMPTY rc=0 18008ms
+8651   TCP_OPEN     HTTP=404       EXEC_OK    15ms {"response":"The code execution was successful with output.","err
+8652   TCP_OPEN     HTTP=404       EXEC_TIMEOUT_OR_EMPTY rc=0 18010ms
+8653   TCP_OPEN     HTTP=404       EXEC_OK    14ms {"response":"The code execution was successful with output.","err
+8654   TCP_OPEN     HTTP=404       EXEC_TIMEOUT_OR_EMPTY rc=0 18009ms
+8655   TCP_OPEN     HTTP=404       EXEC_OK    12ms {"response":"The code execution was successful with output.","err
+8656   TCP_OPEN     HTTP=404       EXEC_OK    13ms {"response":"The code execution was successful with output.","err
+8657   TCP_OPEN     HTTP=404       EXEC_OK    18ms {"response":"The code execution was successful with output.","err
+8658   TCP_OPEN     HTTP=404       EXEC_OK    11ms {"response":"The code execution was successful with output.","err
+8659   TCP_OPEN     HTTP=404       EXEC_OK    7722ms {"response":"The code execution was successful with output.","e
+8660   TCP_OPEN     HTTP=404       EXEC_OK    782ms {"response":"The code execution was successful with output.","er
+8661   TCP_OPEN     HTTP=404       EXEC_OK    12ms {"response":"The code execution was successful with output.","err
+8662   TCP_OPEN     HTTP=404       EXEC_OK    12ms {"response":"The code execution was successful with output.","err
+8663   TCP_OPEN     HTTP=404       EXEC_OK    13ms {"response":"The code execution was successful with output.","err
+8664   TCP_OPEN     HTTP=404       EXEC_OK    20ms {"response":"The code execution was successful with output.","err
+8665   TCP_OPEN     HTTP=404       EXEC_OK    14ms {"response":"The code execution was successful with output.","err
+8666   TCP_OPEN     HTTP=404       EXEC_OK    15ms {"response":"The code execution was successful with output.","err
+8667   TCP_OPEN     HTTP=404       EXEC_OK    17ms {"response":"The code execution was successful with output.","err
+8668   TCP_OPEN     HTTP=404       EXEC_OK    7783ms {"response":"The code execution was successful with output.","e
+8669   TCP_OPEN     HTTP=404       EXEC_OK    15ms {"response":"The code execution was successful with output.","err
+8670   TCP_OPEN     HTTP=404       EXEC_OK    16ms {"response":"The code execution was successful with output.","err
+
+[4] 谁在跑 t0002147/t0002997（复核占用者）
+487128 1550 app.t00+
+487138 1550 app.t00+
+500706 1146 app.t00+
+500714 1146 app.t00+
+508017 937 app.t00+
+508025 937 app.t00+
+516815 684 app.t00+
+516823 684 app.t00+
+
+[5] 当前 .env 端口配置（只读）
+8650 8651 8652 8653 8654 8657 8659 8664 8665 8667 8668 8669 
+=== DONE 84 ===
+```
