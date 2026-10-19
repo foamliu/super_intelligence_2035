@@ -1,6 +1,48 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 📄 运维指令 · 2026-10-20 06:1x（**事故复盘报告已由运维编写 → 你去核实数据 + 落地 P0 两项**）· 用户直令
+
+> 用户令：「先让 pretrain 写个中文 html 报告 复盘昨夜发生的问题和解法建议」
+> **报告已由运维全部写完并入库**：`reports/report_pretrain_crash_20261020_zh.html`（15KB，自包含单文件，无外链/无脚本）。
+> **你不需要重写报告**，只需做下面 3 件事：
+
+**① 核实报告中的事实（与你手里的 log/进程对账）**
+逐条核对并在 `daily-memories/2026-10-20.md` 写出「核对结论」：
+- 崩溃时刻 **02:45:25**、错误 `NCCL collective timeout (rank6) → SIGABRT`、最后 step **19,920/19,980**
+- resume 起点 **step_18000（10-19 20:21）**、损失 **1,920 步 ≈ 6.4h**
+- 无人处理窗口 **02:45→04:00 = 75 分钟**
+- resume 后 **~12s/step、8×GPU 96-100%、0 error**（与崩溃前一致，无降频）
+- **代码事实**：`baize_xmodel25_decay_v2.py` 的 `dist.init_process_group(backend='nccl')` **无 timeout 参数**；`.sh` 中 `NCCL_*` / `TORCH_NCCL_*` **0 处**
+- **SAVE_INTERVAL**：脚本现值 500（原 2000）
+> 若任一项与你的证据不符 → **以你的实测为准**，在 daily 里写明差异 + 证据，并回报运维（报告可修正）。
+
+**② 落地 P0 两项（不碰运行中进程，全部为增量）**
+- **P0-a `TORCH_NCCL_DUMP_ON_TIMEOUT`**：**只写进脚本文件供下次 resume 生效**，🚫 **不要为此重启当前 run**（当前 92%+，重启代价远大于收益）。即：在 `.sh` 的 env 段追加
+  ```bash
+  export TORCH_NCCL_DUMP_ON_TIMEOUT=1
+  export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+  export NCCL_ASYNC_ERROR_HANDLING=1
+  ```
+  并**在下次 resume 日志里确认这些变量生效**（`tr '\0' '\n' < /proc/<pid>/environ | grep NCCL`）。
+- **P0-b 崩溃自动重启 watchdog**：新建 `run/baize_decay_watchdog.sh`（**新文件，不改现有脚本**），要求：
+  - 每 **5 分钟** 检查 `pgrep -f 'xmodel25_decay_v2'`；
+  - 进程消失 且 最近 step < ITERS 且 **24h 内崩溃 < 3 次** ⇒ 自动 `RESUME_DIR=<最新完好 ckpt> setsid bash baize_xmodel25_decay_v2.sh`；
+  - **防死循环**：崩溃计数落文件（如 `/tmp/decay_watchdog.crashcnt`），24h ≥3 次则**停止自动重启并写 blocker**；
+  - **判活必须用 `strings /tmp/baize_xmodel25_decay_v2_train.log | grep '^\[step'`**（该 log 是 sparse file，`tail` 不可靠）；
+  - 🚫 **当前 run 未结束时先不要启动该 watchdog**，或启动时加 `--dry-run` 只记录不动作（避免与人工 resume 冲突）。
+
+**③ 回填 P2 数据（硬件是否永久故障）**
+在**训练收尾后**（预计 ~10:30）执行一次只读硬件检查，结论补进报告 §3 与 `MEMORY_PRETRAIN_2B.md`：
+```bash
+nvidia-smi -q | grep -iE 'Xid|ECC|Remapped|Retired'
+nvidia-smi --query-gpu=index,temperature.gpu,clocks_throttle_reasons.active --format=csv
+dmesg -T 2>/dev/null | grep -iE 'xid|nvrm|fallen off' | tail -20
+```
+> 判据：无 Xid 且可纠正 ECC=0 ⇒ 瞬时；有 Xid / ECC 增长 ⇒ 该卡有隐患，报 blocker 建议巡检。
+
+**纪律**：🚫 不重启当前训练（92%+，稳中）· 🚫 不改 ITERS/LR/数据 · 🚫 不动 `.12` 的 vision ArmD · 报告文件**不要改**（如需修正请写差异给运维）。commit 前缀 `pretrain report:`。
+
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。

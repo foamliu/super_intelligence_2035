@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe pretrain 复盘：2026-10-20 凌晨 NCCL 崩溃与 6.4 小时损失</title>
+<style>
+body{font-family:-apple-system,"Noto Sans SC","PingFang SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fafafa;color:#222;line-height:1.65}
+h1{color:#1a1a2e;border-bottom:3px solid #2563eb;padding-bottom:10px;font-size:24px}
+h2{color:#1a1a2e;border-bottom:2px solid #ccc;padding-bottom:5px;margin-top:36px;font-size:20px}
+h3{color:#333;margin-top:24px;font-size:17px}
+h4{color:#444;margin-top:18px;font-size:15px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#f0f4f8;font-weight:600}
+tr:nth-child(even){background:#f9fafb}
+.green{color:#16a34a}.amber{color:#ca8a04}.red{color:#dc2626}.blue{color:#2563eb}.bold{font-weight:bold}
+.mono{font-family:"JetBrains Mono","Courier New",monospace;font-size:12px}
+.small{font-size:11px;color:#666}
+.info{background:#e8f4fd;border-left:4px solid #2563eb;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#fef3cd;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.danger{background:#fee2e2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.formula{background:#f8f9fa;border:1px solid #e9ecef;border-radius:4px;padding:10px 14px;margin:12px 0;font-family:monospace;font-size:14px}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
+</style>
+</head>
+<body>
+
+<h1>BaiZe pretrain 事故复盘：2026-10-20 凌晨 NCCL 崩溃与 6.4 小时损失</h1>
+
+<p class="small">生成时间：2026-10-20 · 范围：Xmodel-2.5 80B decay v2 @ <code>.29</code> · 性质：事故复盘 + 改进方案（本文为分析文档，不改变任何训练配置）</p>
+
+<div class="info">
+<strong>一句话结论</strong>：本次损失 <strong>6.4 小时</strong> 的主因<strong>不是硬件</strong>、<strong>不是模型</strong>，而是<strong>三个工程配置缺陷叠加</strong>——checkpoint 间隔过长（2000 步≈7.4h）、训练脚本未设置任何 NCCL 容错参数、崩溃后<strong>无人自动恢复</strong>（靠巡检发现，白等 75 分钟）。<strong>调大 NCCL timeout 是错误的解法</strong>，反而会让故障暴露更晚、损失更大。
+</div>
+
+<h2>1. 事故时间线（均有日志/进程证据）</h2>
+
+<table>
+<tr><th style="width:150px">时间</th><th style="width:140px">事件</th><th>证据 / 详情</th></tr>
+<tr><td>10-17 08:44:02</td><td>主 run 启动</td><td>torchrun master <code>PID 2597555</code>，持 29815 端口，8×H100</td></tr>
+<tr><td>10-19 20:21</td><td><strong>最后一次成功 ckpt</strong></td><td><code>step_18000</code>，model.safetensors 2.7GB 完好 —— <strong>这是后来 resume 的起点</strong></td></tr>
+<tr><td>10-20 01:12</td><td>巡检 #612</td><td>step 19,460 / 19,980（97.4%），健康，0 error</td></tr>
+<tr><td>10-20 02:27</td><td>巡检 #613</td><td>step 19,830 / 19,980（99.2%），健康，ETA 约 02:57 收尾</td></tr>
+<tr><td class="red bold">02:45:25</td><td class="red bold">💥 崩溃</td><td><code>NCCL collective timeout (rank6) → SIGABRT</code>；最后 step <strong>19,920 / 19,980（99.7%）</strong>；<strong>65.3 小时稳定运行后首次故障</strong></td></tr>
+<tr><td class="amber">02:45 → 04:00</td><td class="amber">⚠️ 无人处理（75 分钟）</td><td>8×GPU 全空（0% / 0 MiB）；<strong>无任何自动恢复机制</strong>，等待下一轮巡检发现</td></tr>
+<tr><td>04:00</td><td>巡检 #614 发现并处置</td><td>确认 PID 消失、无 torchrun；判定「有 ckpt / 非重复崩 / 非持续硬件故障」→ 立即 resume</td></tr>
+<tr><td>04:00</td><td>Resume 成功</td><td><code>RESUME_DIR=step_18000</code> → 新 <code>PID 1604723</code>，8×GPU 96-100% / 51763MiB</td></tr>
+<tr><td>05:20</td><td>巡检 #615 验证</td><td>step 18,420 / 19,980（92.3%），<strong>~12s/step（与崩溃前完全一致）</strong>，0 error</td></tr>
+<tr><td>预计 10:30</td><td>新一轮收尾</td><td>剩余 1,560 步 × 12s ≈ 5.2h</td></tr>
+</table>
+
+<div class="danger">
+<strong>损失核算</strong>：崩溃点 19,920 步 → resume 点 18,000 步 = <strong>损失 1,920 步</strong>；1,920 × 12s ≈ <strong>6.4 小时 GPU 算力</strong>（8 卡满载）。<br>
+另有 <strong>75 分钟</strong>（02:45→04:00）GPU 空转等待，端到端合计约 <strong>7.6 小时</strong>延误（原定 02:57 收尾 → 实际推迟到 10:30）。
+</div>
+
+<h2>2. 根因分析：三个独立缺陷叠加</h2>
+
+<h3>缺陷 ①（直接原因）checkpoint 间隔 2000 步 ≈ 7.4 小时</h3>
+
+<div class="formula">
+SAVE_INTERVAL = 2000 步 × 12s/step ≈ 26,800s ≈ <strong>7.4 小时</strong>才有一次保存<br>
+崩溃在 step 19,920，最近 ckpt 在 step 18,000 ⇒ 回退 1,920 步 ⇒ <strong>6.4 小时白跑</strong>
+</div>
+
+<p>这是<strong>纯工程配置问题</strong>，与硬件/模型无关。<strong>已修复</strong>：脚本现值 <code>SAVE_INTERVAL=500</code>（≈1.7h 一次，下次最多损失约 100 分钟）。</p>
+
+<h3>缺陷 ②（放大因素）训练脚本未设置任何 NCCL 容错参数</h3>
+
+<p>经代码核查（<code>baize_xmodel25_decay_v2.py</code> / <code>.sh</code>）：</p>
+
+<table>
+<tr><th style="width:300px">检查项</th><th style="width:110px">现状</th><th>影响</th></tr>
+<tr><td><code>dist.init_process_group(backend='nccl')</code></td><td class="red">无 timeout 参数</td><td>使用 PyTorch 默认 10min，未显式化</td></tr>
+<tr><td><code>NCCL_*</code> 环境变量</td><td class="red">全脚本 0 处</td><td>未启用异步错误处理</td></tr>
+<tr><td><code>TORCH_NCCL_*</code></td><td class="red">0 处</td><td>超时无现场 dump，事后无法定位</td></tr>
+</table>
+
+<div class="warn">
+<strong>后果</strong>：崩溃只留下「rank6 collective timeout」一行，<strong>无法定位是哪张物理卡、卡在哪个 collective</strong>。这正是本次无法判断「是否硬件隐患」的原因。
+</div>
+
+<h3>缺陷 ③（时间放大器）无自动恢复，靠人工巡检发现</h3>
+
+<p>崩溃发生在 <strong>02:45</strong>，下一次巡检是 <strong>04:00</strong> —— <strong>75 分钟 GPU 全空</strong>。若巡检间隔更长，损失会进一步放大。</p>
+
+<h2>3. 关于「是不是某张卡坏了」——现有证据的边界</h2>
+
+<table>
+<tr><th style="width:230px">判断依据</th><th style="width:110px">实测</th><th>说明</th></tr>
+<tr><td>resume 后 8 卡利用率</td><td class="green">96–100%</td><td>若某卡永久损伤，不可能重新满载</td></tr>
+<tr><td>resume 后步速</td><td class="green">~12s/step</td><td>与崩溃前 11.9–12.1s <strong>完全一致</strong>（无降频迹象）</td></tr>
+<tr><td>error 计数</td><td class="green">0</td><td>resume 后 1,400+ 步无任何错误</td></tr>
+<tr><td>Xid / ECC / Remapped 硬件错误</td><td class="amber">未采集</td><td><strong>这是判断「永久 vs 瞬时」的唯一硬证据，目前缺失</strong></td></tr>
+</table>
+
+<div class="info">
+<strong>诚实结论</strong>：「训练已恢复正常」有充分证据；「该卡无硬件隐患」<strong>尚未证实</strong>。需补一次只读硬件检查（见 §5 P2）。
+</div>
+
+<h2>4. 为什么「调大 NCCL timeout」是错误解法</h2>
+
+<div class="danger">
+<strong>核心逻辑</strong>：NCCL timeout 是<strong>故障检测阈值（fail-fast 保护）</strong>，不是故障预防机制。<br>
+把 10min 调到 30min，意味着崩溃时 <strong>8 张卡要多空转 20 分钟</strong>才报错退出 ⇒ <strong>损失不是变小，而是变大</strong>。
+</div>
+
+<table>
+<tr><th style="width:210px">做法</th><th style="width:100px">效果</th><th>说明</th></tr>
+<tr><td class="red">调大 NCCL timeout</td><td class="red">❌ 有害</td><td>延迟发现故障，GPU 空转更久；不解决任何根因</td></tr>
+<tr><td class="green">加密 checkpoint</td><td class="green">✅ 直接减损</td><td>损失 = 崩溃点到最后 ckpt 的距离，与 timeout 无关</td></tr>
+<tr><td class="green">自动重启 watchdog</td><td class="green">✅ 直接减损</td><td>把 75 分钟无人处理压到 ≤5 分钟</td></tr>
+<tr><td class="amber">开启超时 dump</td><td class="amber">✅ 提升可诊断性</td><td>超时时记录 rank/卡/collective 现场，下次能定位根因</td></tr>
+</table>
+
+<h2>5. 改进方案（按性价比排序）</h2>
+
+<h3>P0 —— 立即实施（零风险，不碰运行中进程）</h3>
+
+<h4>① 崩溃自动重启 watchdog</h4>
+<div class="formula">
+每 5 分钟检查 <code>pgrep -f xmodel25_decay_v2</code>；<br>
+若进程消失 且 最近 step &lt; ITERS 且 24h 内崩溃 &lt; 3 次<br>
+⇒ 自动 <code>RESUME_DIR=&lt;最新完好 ckpt&gt; setsid bash baize_xmodel25_decay_v2.sh</code><br>
+<span class="small">判活须用 <code>strings &lt;log&gt; | grep '^\[step'</code>（该 log 为 sparse file，tail 不可靠）</span>
+</div>
+<p><strong>收益</strong>：无人处理时间 75min → ≤5min。<strong>必须防死循环</strong>：加崩溃计数器，24h 内 ≥3 次则停止并告警（避免"崩-重启-再崩"烧掉更多时间）。</p>
+
+<h4>② 开启 NCCL 超时现场 dump</h4>
+<div class="formula">
+export TORCH_NCCL_DUMP_ON_TIMEOUT=1<br>
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1<br>
+export NCCL_ASYNC_ERROR_HANDLING=1
+</div>
+<p><strong>收益</strong>：下次若再超时，可精确定位 rank / GPU / collective，而不是只知道「rank6 timeout」。<strong>注意：这些是「更快发现问题」，不是「放宽超时」。</strong></p>
+
+<h3>P1 —— 下次启动前（需先验证 NFS 带宽）</h3>
+
+<table>
+<tr><th style="width:180px">项</th><th style="width:190px">现状</th><th>建议</th></tr>
+<tr><td>ckpt 间隔</td><td>500 步（≈1.7h）</td><td>250 步（≈50min）或改<strong>按时间触发</strong>（每 45min）</td></tr>
+<tr><td>保存方式</td><td>同步阻塞</td><td>异步保存（<code>torch.distributed.checkpoint</code>）或「先写本地 + 异步同步 NFS」</td></tr>
+<tr><td>ckpt 内容</td><td>含 optimizer state（2.7GB）</td><td>分档：仅权重（体积约减半）用于高频，全量用于低频</td></tr>
+</table>
+
+<div class="warn">
+<strong>风险提示</strong>：ckpt 写 NFS，频率翻倍会使 NFS I/O 压力翻倍，<strong>可能反而引入新的超时</strong>。必须先实测 NFS 写带宽，或改用「本地写 + 异步同步」。
+</div>
+
+<h3>P2 —— 训练收尾后（回答硬件问题）</h3>
+<div class="formula">
+nvidia-smi -q | grep -iE 'Xid|ECC|Remapped|Retired'<br>
+nvidia-smi --query-gpu=index,temperature.gpu,clocks_throttle_reasons.active --format=csv<br>
+dmesg -T | grep -iE 'xid|nvrm|fallen off'
+</div>
+<p><strong>判据</strong>：无 Xid 且可纠正 ECC 错误为 0 ⇒ 确认为瞬时软件/网络抖动；有 Xid 或 ECC 增长 ⇒ 该卡有隐患，需专项巡检。</p>
+
+<h2>6. 对下一阶段（v5 Stable 1.5T）的强制要求</h2>
+
+<div class="danger">
+<strong>关键换算</strong>：本次 65.3 小时出现 1 次 NCCL 瞬时故障。<br>
+v5 Stable 计划纯训练 <strong>69.7 天</strong> ⇒ 线性外推约 <strong>25 次</strong>同类故障。<br>
+若仍按 2000 步/ckpt + 无自动恢复，<strong>总损失 ≈ 25 × 6.4h ≈ 160 小时（6.7 天）</strong>，且每次都要人工介入。<strong>这是不可接受的。</strong>
+</div>
+
+<p>建议把以下内容作为 <code>PLAN_V5_STABLE_1.5T.md</code> 的<strong>启动前置条件（硬性）</strong>：</p>
+
+<table>
+<tr><th style="width:50px">#</th><th style="width:280px">要求</th><th>验收标准</th></tr>
+<tr><td>1</td><td>崩溃自动恢复 watchdog</td><td>进程消失 &lt;5min 自动 resume；24h 内 &gt;3 次崩溃则停止并告警（防死循环）</td></tr>
+<tr><td>2</td><td>checkpoint 策略</td><td>损失窗口 ≤ 1 小时（按时间或 ≤300 步）；含完整性校验（逐文件大小 / 可加载性）</td></tr>
+<tr><td>3</td><td>NCCL 可诊断性</td><td><code>TORCH_NCCL_DUMP_ON_TIMEOUT=1</code> + 显式 <code>timeout</code> 参数；故障后能定位到 rank/卡</td></tr>
+<tr><td>4</td><td>硬件基线</td><td>启动前采集 Xid/ECC 基线；运行期每日采集一次，异常增长即告警</td></tr>
+<tr><td>5</td><td>断点续训演练</td><td>正式开跑前做一次<strong>主动 kill + 自动恢复</strong>演练，验证 RTO（恢复时间目标）</td></tr>
+</table>
+
+<h2>7. 本次处置评价（做对了什么 / 缺了什么）</h2>
+
+<table>
+<tr><th style="width:250px">动作</th><th style="width:90px">评价</th><th>说明</th></tr>
+<tr><td>从最近完好 ckpt（step_18000）resume</td><td class="green">✅ 正确</td><td>19980 非 2000 整除，18000 是最后 ckpt，选对了</td></tr>
+<tr><td>判定「非 blocker，立即 resume」</td><td class="green">✅ 正确</td><td>有 ckpt + 非重复崩 + 非持续硬件故障 ⇒ 符合既定规则，未浪费时间等许可</td></tr>
+<tr><td>resume 后完整验证</td><td class="green">✅ 正确</td><td>8 卡利用率 / 步速 / error 三查，确认恢复质量</td></tr>
+<tr><td>发现 log 是 sparse file</td><td class="green">✅ 有价值</td><td>改用 <code>strings | grep</code> 判活，避免误判训练「没在跑」</td></tr>
+<tr><td>未采集硬件 Xid/ECC</td><td class="amber">⚠️ 缺失</td><td>导致「是否永久故障」无法定论（已在 §5 P2 补）</td></tr>
+<tr><td>未能提前量化收益</td><td class="amber">⚠️ 缺失</td><td>脚本虽已改 500 步，但未在事故说明中写出「下次最多损失 100min」</td></tr>
+</table>
+
+<h2>8. 关键数据速查</h2>
+
+<table>
+<tr><th style="width:300px">项</th><th>值</th></tr>
+<tr><td>崩溃错误</td><td><code>NCCL collective timeout (rank6) → SIGABRT</code> @ 02:45:25</td></tr>
+<tr><td>崩溃时进度</td><td>19,920 / 19,980（99.7%）</td></tr>
+<tr><td>resume 起点</td><td>step_18000（10-19 20:21 落盘）</td></tr>
+<tr><td>损失步数 / 时长</td><td><strong>1,920 步 / ≈6.4 小时（8 卡）</strong></td></tr>
+<tr><td>无人处理窗口</td><td>02:45 → 04:00 = <strong>75 分钟</strong></td></tr>
+<tr><td>resume 后速度</td><td>~12 s/step（<strong>与崩溃前一致，无降频</strong>）</td></tr>
+<tr><td>原 SAVE_INTERVAL / 现值</td><td>2000（≈7.4h）→ <strong>500（≈1.7h）</strong></td></tr>
+<tr><td>新 ETA</td><td>10-20 约 10:30</td></tr>
+</table>
+
+<hr>
+<p class="small">本报告依据 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/daily-memories/2026-10-20.md</code>（#612/#613/#614/#615）、<code>run/baize_xmodel25_decay_v2.py</code>、<code>run/baize_xmodel25_decay_v2.sh</code> 的实际内容核对生成。所有结论均可溯源到上述文件；未采集项已明确标注。</p>
+
+</body>
+</html>
