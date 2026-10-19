@@ -1,5 +1,89 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 91 -->
+<!-- RUN_ID: 92 -->
+
+## RUN_ID 92 — 36.15 资源争用判定：CPU / 内存 / 负载 / 进程归属（只读·用户直令）
+
+> 用户令：「要知道问题是否 CPU 资源争用，可以让 zhulong 中继看看 CPU 和内存的使用率」
+> **本机 = 36.15**（ZhuLong 跑这里，**与 .29/.12 无关**；上一轮我把标题写成 ".29 负载" 是错的，数据是 36.15 的）。
+> **本块纯只读**：不 kill、不重启、不改配置。r5 继续跑不打扰。
+> 目的：判断 r4 的 677/680 次 `pyAether_MCP_server` 超时，是否由 **36.15 本机 CPU/内存争用**导致。
+
+```bash
+set -u
+echo "=== RUN_ID 92 | 36.15 CPU/MEM contention check | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 基础身份与 CPU 核数"
+echo "  hostname=$(hostname)  ip=$(hostname -I 2>/dev/null | awk '{print $1}')"
+echo "  cores=$(nproc)  loadavg=$(cat /proc/loadavg | cut -d' ' -f1-3)"
+echo "  => 负载/核数 比: $(awk '{printf "%.2f", $1}' /proc/loadavg) / $(nproc)"
+
+echo ""
+echo "[2] CPU 总体使用率（mpstat，2 次采样）"
+if command -v mpstat >/dev/null 2>&1; then
+  mpstat 2 1 2>/dev/null | tail -2 | cut -c1-160
+else
+  vmstat 1 3 2>/dev/null | cut -c1-130
+fi
+
+echo ""
+echo "[3] 内存（/proc/meminfo 关键项，MB）"
+free -m | head -3 | cut -c1-120
+awk '/MemTotal|MemAvailable|SwapTotal|SwapFree|Dirty|Writeback/{printf "  %-14s %8.1f MB\n", $1, $2/1024}' /proc/meminfo
+
+echo ""
+echo "[4] 按用户聚合 CPU%（Top5 用户，看谁在抢）"
+ps -eo user,pcpu,pmem --no-headers 2>/dev/null | awk '{c[$1]+=$2; m[$1]+=$3} END{for(u in c) printf "  %-16s cpu=%6.1f%%  mem=%5.1f%%\n", u, c[u], m[u]}' | sort -t= -k2 -rn | head -8
+
+echo ""
+echo "[5] Top 12 进程（CPU）"
+ps -eo pid,ppid,etimes,pcpu,pmem,nlwp,user,args --sort=-pcpu 2>/dev/null | head -13 | cut -c1-150
+
+echo ""
+echo "[6] 关键进程详解：8090 MCP / 9006 RAG / 本线 eval"
+for spec in 8090:MCP 9006:RAG; do
+  port=${spec%%:*}; name=${spec##*:}
+  pid=$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+  if [ -n "${pid:-}" ]; then
+    echo "  --- $name (port=$port, pid=$pid) ---"
+    ps -o pid,etimes,pcpu,pmem,nlwp,nlwp,rss,vsz -p "$pid" 2>/dev/null | cut -c1-120
+    echo "    fd=$(ls /proc/$pid/fd 2>/dev/null | wc -l)  threads=$(ls /proc/$pid/task 2>/dev/null | wc -l)"
+    echo "    cpu_affinity=$(taskset -cp $pid 2>/dev/null | cut -c1-90)"
+    echo "    nice=$(ps -o ni= -p $pid 2>/dev/null | tr -d ' ')"
+  else
+    echo "  --- $name port=$port NOT_LISTENING ---"
+  fi
+done
+echo "  --- run_cline_script (r5) ---"
+for pid in $(pgrep -f 'run_cline_script\.sh' 2>/dev/null | head -2); do
+  ps -o pid,etimes,pcpu,pmem,nlwp -p "$pid" 2>/dev/null | tail -1 | cut -c1-100
+done
+
+echo ""
+echo "[7] t0002147 到底在跑什么（107 个进程的归属）"
+echo "  进程数=$(ps -eo user 2>/dev/null | grep -c 't0002147')"
+ps -eo user,pcpu,args --no-headers 2>/dev/null | grep 't0002147' | grep -v grep \
+  | awk '{print $1, $2, substr($0, index($0,$3), 70)}' | sort -k2 -rn | head -8 | cut -c1-120
+echo "  t0002147 CPU 合计: $(ps -eo user,pcpu --no-headers 2>/dev/null | grep 't0002147' | awk '{s+=$2} END{print s"%"}')"
+
+echo ""
+echo "[8] CPU 压力（PSI）+ 上下文切换"
+for f in cpu io memory; do
+  [ -f /proc/pressure/$f ] && echo "  $f: $(cat /proc/pressure/$f | tr '\n' ' ')"
+done
+grep -E '^ctxt|^procs_running|^procs_blocked' /proc/stat | sed 's/^/  /'
+
+echo ""
+echo "[9] 是否被 cgroup 限流（throttle 计数，非 0 即为限流）"
+for cg in /sys/fs/cgroup/cpu.stat /sys/fs/cgroup/cpu/cpu.stat; do
+  [ -f "$cg" ] && { echo "  $cg:"; grep -E 'nr_throttled|throttled_time' "$cg" | sed 's/^/    /'; break; }
+done
+
+echo ""
+echo "[10] r5 进度（只读确认）"
+pgrep -af 'run_cline_script' 2>/dev/null | head -2 | cut -c1-85 || echo "  无"
+ls -l /tmp/ABL_readback_none_retest_r5.log 2>/dev/null | awk '{print "  r5 log="$5" bytes"}'
+echo "=== DONE 92 ==="
+```
 
 ## RUN_ID 91 — r4 的 680 次 MCP timeout 环节归因（只读·用户直令）
 
@@ -7,7 +91,7 @@
 > **本块纯只读**：不 kill、不重启 8090/9006/沙盒、不改 .env、不启 eval。r5 继续跑，不打扰。
 > ⚡ **性能关键**：log 可能数百 MB。**只全量扫描一次**（timeout 行先落到小文件），之后全部在该子集上统计。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 91 | r4 MCP-timeout attribution | $(date '+%F %T') | host=$(hostname) ==="
 L=/tmp/ABL_readback_none_retest_r4.log
