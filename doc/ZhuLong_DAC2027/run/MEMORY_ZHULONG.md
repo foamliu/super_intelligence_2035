@@ -1,13 +1,16 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
+<!-- heartbeat 2026-10-20 06:0x 🔬 **P0：r4=31% 根因排查已下发（用户直令·纯诊断）** —— 不许再只报现象：
+- **用户批评**：「你给我的只有现象，没有根因。比如 680 次 MCP timeout，到底是哪个环节超时？是 8090 的 MCP 服务，还是在 RAG 服务，还是在 run code .75 服务器的端口上。」
+- **必交产出**：把 680 次 `MCP request to pyAether_MCP_server timed out after 60s` **拆成环节归因表**（A=8090 MCP 本体 / B=9006 RAG / C=10.129.32.75 沙盒端口 / D=.29 本机负载 / E=邻居争用），**各类计数须可加总到 680**，每类附 2-3 条样例行 + 时间戳。
+- **取证**：`grep -a "timed out after 60s" /tmp/ABL_readback_none_retest_r4.log` 取原文 → 10min 分桶看时间分布 → 工具名(run_code/search_apis/get_api_details)做分母 → 查 8090/9006 `etimes` 是否在 r4 时段(23:50–04:35)重启 → 对照沙盒 4 端口健康 → uptime/free/ps + dmesg OOM。
+- **须给处置建议**：r4 判 INVALID（补跑 r4）还是有效（模型方差），附依据，由运维拍板。
+- **纪律**：纯只读（不 kill/不重启 8090·9006·沙盒、不改 .env、不启 eval）；**r5 PID 1296715 继续跑不打扰**。commit `zhulong diag: r4 680 MCP timeout attribution`。 -->
 <!-- heartbeat 2026-10-20 05:35 🟢 **r5 巡检 #1（运维令 23:2x·(N′) readback_none 4/5→5/5）** — r5 **PID 1296715 alive (etime 35:18 / STAT=Ss)**·batch `2026_1020_050005`·-p 4·fp4·ports 8666-8670·READBACK=none·log `/tmp/ABL_readback_none_retest_r5.log`（954KB·mtime 05:35:06·code-gen 进行中·**尚无 `pass (xx.x%)` 评分行**）→ **§7 步骤 A：pgrep 有输出 → 巡检退出·WAITING=1 不变**（典型 eval ~3h，当前 35min 早期）。
 - **infra 自检全绿**：loop PID 81827 + `https_proxy=http://172.19.92.23:13128` ✅（常驻 proxy 自检通过）/ r5 alive / `/home` 17G(96%) / cline 3.0.51 未动 ✅。
 - **进度**：(N′) readback_none 4/5 done（r1=78.5/r2=70.9/r3=81.5/**r4=31.0%⚠️680 MCP timeout 异常·判据十三有效**·4 轮 mean=65.5% provisional）→ **r5 跑中（35min）** → 5/5 mean±std → 更新 zhulong_results.md/6_exp.tex → full@pro-cloud 5 轮（23:2x ②）。
 - **下一步**：下轮唤醒 pgrep r5；无输出→手动 regrade（照 `/tmp/run_readback_none_retest_r4_regrade.sh` 模板改 GEN_FILE=batch `2026_1020_050005` + 端口 8666-8670）→ 5/5 mean±std+成本 → 更新论文 → 重编译 PDF → full@pro-cloud（canary 200 才开跑）。 -->
-<!-- [已滚出] 2026-10-20 05:00 r4 收口=31.0% + r5 启动心跳 → 原文已搬入 daily-memories/2026-10-20.md §[05:00]。 -->
-<!-- [已滚出] 2026-10-20 04:09 r4 巡检 #7 + 03:34 #6 + 02:58 #5 + 02:21 #4 + 01:47 #3 + 01:09 #2 + 00:29 #1 心跳 → 原文已搬入 daily-memories/2026-10-20.md §[已滚出·05:00]。 -->
-<!-- [已滚出] 23:5x r4 启动心跳 + 23:3x 口径锁定心跳 → 原文已搬入 daily-memories/2026-10-19.md §[23:5x]。 -->
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 

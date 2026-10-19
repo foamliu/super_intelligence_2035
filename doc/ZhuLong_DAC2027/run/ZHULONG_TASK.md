@@ -10,6 +10,104 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
+### 🔬 运维指令 · 2026-10-20 06:0x（**P0：r4=31% 根因排查 —— 680 次 timeout 到底卡在哪个环节**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「zhulong r4 首先需要排查一下。你给我的只有现象，没有根因。比如 680 次 MCP timeout，到底是哪个环节超时？是 8090 的 MCP 服务呢，还是在 RAG 服务，还是在 run code .75 服务器的端口上。总归可以让 zhulong agent 调研一下啊。」
+> **本次唯一目标**：把「680 次 `MCP request to pyAether_MCP_server timed out after 60s`」**拆成按调用点的归因表**，不允许只给现象。
+> **本次不做**：不重跑 r4、不启 5-run、不改配置。**纯诊断**（可写脚本/可抓日志，但不动 `.env` 与运行中进程）。
+
+#### 0. 已知事实（供你验证/推翻）
+- r4 batch `2026_1019_235040`（23:50:40 起，~04:35 收口，约 5h），`-p 4`，端口 8666/8667/8669/8670，模型 fp4。
+- gen-success **59** / gen-fail **99**（99 个 completion 是字面量 `"pass"`），exec_err 0。
+- 已执行 59 题里 **49 通过（83%）** ⇒ 模型能力本身没问题，指向**调用链某一环降级**。
+- eval log 计到 **680 次** `MCP request to pyAether_MCP_server timed out after 60s`。
+- ⚠️ 该 60s 是 **MCP 客户端侧超时**，与会话无关，需定位它落在**哪个 server / 哪个工具 / 哪个端口**。
+
+#### 1. 必须产出的「环节级归因表」（核心交付）
+
+先把 log 里 680 次 timeout 的**原始行**抓出来，再按下列维度**逐条归类计数**（要求给出每类的数量 + 2–3 条样例行 + 行号/时间戳区间）：
+
+| # | 环节 | 判定依据（从 timeout 行及其上下文提取） |
+|:--|:--|:--|
+| **A** | **8090 MCP server 本体**（进程在但无响应/被打满） | timeout 行前后是否有 `EDA_MCP_PORT=8090` 相关；同时查 8090 进程 CPU/线程/连接数随时间曲线 |
+| **B** | **9006 RAG 服务**（检索服务超时，会导致 `search_apis`/`get_api_details` 卡住） | timeout 行是否伴随 `RAG`/`recall`/`search_apis`/`get_api_details` 字样；查 9006 进程状态 |
+| **C** | **10.129.32.75 沙盒端口**（run_code 执行槽被占/慢） | timeout 行是否伴随 `run_code`/`/v1/run_code`/端口号 8666/8667/8669/8670；查是否出现 150s 级等待 |
+| **D** | **本机 CPU/内存/负载**（`.29` 本身被压垮） | 用 r4 时段（23:50–04:35）的 `sar`/`vmstat`/`uptime` 或 dmesg OOM 记录佐证 |
+| **E** | **外部争用**（t0002147 等同机邻居） | r4 时段是否有别的用户进程抢 CPU/端口；`/proc/pressure/*` 若有则贴 |
+
+#### 2. 具体取证步骤（按序，全部只读）
+
+**① log 原文挖掘**
+```bash
+L=/tmp/ABL_readback_none_retest_r4.log
+# 1) timeout 总次数与时间分布（按 10 分钟分桶）
+grep -a "timed out after 60s" "$L" | wc -l
+grep -a "timed out after 60s" "$L" | grep -oE '^[0-9-]+ [0-9]{2}:[0-9]' | sort | uniq -c | tail -40
+# 2) 每条 timeout 的上下文（前后 3 行），抽样 30 条
+grep -a -n -B3 -A3 "timed out after 60s" "$L" | head -200 | cut -c1-180
+# 3) 按工具名归类：timeout 行附近出现的工具名
+grep -a "timed out after 60s" "$L" | grep -oE 'run_code|search_apis|search_apis_by_keyword|get_api_details|query_memory_bank|cimi_[a-z]+|probe_pyAether_code' | sort | uniq -c
+# 4) 全 log 各工具的调用总数与失败数（做分母）
+for t in run_code search_apis search_apis_by_keyword get_api_details; do
+  printf "%-26s calls=%s\n" "$t" "$(grep -ac "$t" "$L")"
+done
+# 5) 是否有 150s / 连接错误 / RAG 字样
+grep -acE '150 ?s|150s|Connection refused|ConnectionError|RAG|recall' "$L"
+```
+
+**② 三个候选环节的组件级健康（r4 时段是否降级）**
+```bash
+# 8090 MCP
+ss -ltnp 2>/dev/null | grep -E ':8090|:9006' | cut -c1-140
+PID8090=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "8090 pid=$PID8090"; ps -o pid,ppid,etimes,pcpu,pmem,nlwp,args -p "$PID8090" 2>/dev/null | cut -c1-160
+# 9006 RAG
+PID9006=$(ss -ltnp 2>/dev/null | grep ':9006' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "9006 pid=$PID9006"; ps -o pid,ppid,etimes,pcpu,pmem,nlwp,args -p "$PID9006" 2>/dev/null | cut -c1-160
+# 关键：这两个进程的「启动时间」是否在 r4 时段内重启过（etimes < 现在-23:50）
+date; echo "--- 若 etimes 小于距 23:50 的秒数 => r4 期间重启过 ---"
+```
+
+**③ 沙盒端口侧证据（区分「端口慢」与「MCP 侧慢」）**
+```bash
+# r4 时段端口是否有 150s 级等待（这正是 r3 被 t0002147 抢占的特征）
+L=/tmp/ABL_readback_none_retest_r4.log
+grep -acE 'run_code.*timed out|Request timeout \(150s\)|/v1/run_code' "$L"
+grep -a -E 'Request timeout \(150s\)|8666|8667|8669|8670' "$L" | tail -10 | cut -c1-160
+# 现在这 4 个端口是否仍健康（对照）
+for p in 8666 8667 8669 8670; do
+  ( out=$(timeout 10 curl -s --max-time 8 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 12)
+    [ -z "$out" ] && echo "$p BUSY" > /tmp/p20_$p || echo "$p OK" > /tmp/p20_$p ) &
+done; wait
+for p in 8666 8667 8669 8670; do echo "  $(cat /tmp/p20_$p 2>/dev/null)"; rm -f /tmp/p20_$p; done
+```
+
+**④ 系统层佐证（r4 那 5 小时 `.29` 是否被压垮）**
+```bash
+uptime; free -g | head -3
+ps -eo pid,etimes,pcpu,pmem,user,args --sort=-pcpu 2>/dev/null | head -12 | cut -c1-150
+dmesg -T 2>/dev/null | grep -iE 'oom|killed process' | tail -10 || echo "dmesg 不可读（正常）"
+cat /proc/pressure/cpu /proc/pressure/io 2>/dev/null | cut -c1-120 || true
+# 同期邻居占用
+ps -eo user,etimes,pcpu,args 2>/dev/null | grep -E 't0002147|t0002997' | grep -v grep | head -6 | cut -c1-130
+```
+
+#### 3. 结论要求（**必须分档，不允许只写"MCP 超时"**）
+
+产出下面这张表并给结论：
+- 680 次中，**A/B/C/D/E 各占多少**（必须能加总到 680，或说明为何有未归类项）
+- **主因是哪个环节** + 证据（贴 log 行号/时间戳 + 进程/端口状态）
+- **是否存在「r4 时段某组件重启/降级」的时间吻合**（例如 8090 在 00:xx 重启，而 timeout 集中在那之后）
+- **可复现性判断**：现在（诊断时）该环节是否已恢复？若已恢复 ⇒ 支持"瞬时降级"而非"配置错误"
+- **对 r4 的处置建议**：**INVALID（infra 降级，应补跑 r4'）** / **有效（属模型方差，保留）** —— 给出你的依据，由运维拍板
+
+#### 4. 纪律
+- **纯只读**：不 kill、不重启 8090/9006/沙盒、不改 `.env`、不启任何 eval。
+- 长输出 `cut -c1-180`；log grep 必须带 `-a`（二进制/长行），并用 `head`/`tail` 限流。
+- 结果写 `MEMORY_ZHULONG.md` 心跳（≤6 行）+ `daily-memories/2026-10-20.md` 详细节，commit `zhulong diag: r4 680 MCP timeout attribution`。
+- 🔴 **r5 继续跑，不要打扰**（PID 1296715）；本诊断与 r5 并行、互不影响。
+
+
 ### 🔒 运维指令 · 2026-10-19 23:2x（**模型口径锁定：r4/r5 用 fp4；full 用 pro-cloud**）· 用户直令 · 与 23:0x 块同等最高优先
 
 > 用户确认（原文）：「**r4/r5 继续用 fp4，但跑 full 的时候，切换到 deepseek-v4-pro-cloud。**」
