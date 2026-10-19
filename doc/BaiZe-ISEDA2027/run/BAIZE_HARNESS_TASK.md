@@ -2,7 +2,21 @@
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 
-### 🆕 运维指令 · 2026-10-19 22:4x（🔧 **P0：hermes 适配器已由运维改好，去验证 + 判 Gen5 门据**）· 用户直令「harness hermes：去修复」· 最高优先
+### 🆕 运维指令 · 2026-10-19 23:1x（🔪 **P0：确认双 harness loop 后 kill `.12` 那个**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「如果确认有两个 harness loop，那么杀掉一个（ .12 的）」
+> **背景**：agent 报阻塞「疑似 .12 PID 2663131 / .29 PID 1972249 双 harness loop 并发」→ 会导致重复唤醒、重复 commit、**ops 中继回执丢失（137/138/139）**。
+> **🔒 执行纪律（吸取 R86 误杀教训·硬要求）**：
+> 1. **先证明再动手**：必须在 **`.12` 与 `.29` 两台机分别**跑 `ps -eo pid,ppid,etimes,lstart,args | grep -iE 'harness.*loop' | grep -v grep`，**贴出两台机的原始输出**；
+> 2. **判据**：只有**两台都确实存在一个 harness loop 进程**（且不是互为父子）才算「确认双 loop」；若只在一台看到 → **不 kill**，改为写清"未见双 loop"并退出；
+> 3. **kill 方式**：🚫 **禁止 `pkill -f` / 禁止 cmdline 子串匹配**（R86 教训：loop 会把整份任务书当参数传进去，含 `e0031982`/`run_eval` 字面 ⇒ 误命中）。**必须**：`ps` 拿到 `.12` 上那个 loop 的**显式 PID** → `cat /proc/<PID>/cmdline` 打印前 80 字符**人工核对确实是 loop 而非 opencode 子进程** → `kill -TERM <PID>` → 等 10s → 仍在才 `kill -KILL <PID>`；
+> 4. **只杀 loop 主进程**（`bash <...>harness_loop.sh` 那一行）；**不要**杀它的 opencode/cline 子进程（由 loop 自己收）；**不要**碰 `.29` 的任何进程；
+> 5. **kill 后必查**：`.12` 上 `pgrep -f 'harness.*loop'` 应为空、`.29` 上应仍在；`ops_relay`（.29）仍活；**Gen5 pilot 不受影响**（pilot 在 `.29`，由 launch PID 1732377 驱动，不在 `.12`）；
+> 6. 输出全部 `cut -c1-140`；结果写 `MEMORY_HARNESS.md` 心跳（≤6 行）+ `daily-memories-harness/`，commit `harness ops: kill .12 duplicate loop`。
+
+**若确认双 loop 且已 kill `.12` 那个 → 继续原计划**：等 Gen5 最后两路（deepseek / pi）跑完 → 判门据（infra ≤20% AND ≥6/7 runnable）→ **hermes 须 Gen6 重测验证 R457 plugin fix**。
+
+
 
 > **运维已直接改代码**：`run/harness/terminalbench/agents/hermes.py`（见 commit `R457`）。**agent 不需要再研究怎么修，只需验证 + 跑通 + 判门据。**
 >

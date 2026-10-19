@@ -1,5 +1,61 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 88 -->
+<!-- RUN_ID: 89 -->
+
+## RUN_ID 89 — 只读核查：harness 是否真有 2 个 loop（.12 + .29）+ zhulong r4 前置状态
+
+> 用户令：「如果确认有两个 harness loop，那么杀掉一个（.12 的）」+「zhulong 启动 r4/r5」
+> **本块纯只读**：不 kill、不重启、不改配置。**输出严格 cut**（≤140 字符/行）。
+> 目的：①实证 .12/.29 是否真各有一个 harness loop（含 PID/启动时间/PATH/cline 是否可见）；②顺手确认 zhulong r4 前置（端口、模型 key、Gpu、regrade 是否已清）。
+
+```bash
+set -u
+echo "=== RUN_ID 89 | harness dual-loop check + zhulong r4 prereq | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 本机身份"
+echo "  hostname=$(hostname) ip=$(hostname -I 2>/dev/null | awk '{print $1}')"
+
+echo ""
+echo "[2] 本机所有 loop 进程（含 ppid/etimes/前 5 个参数）"
+ps -eo pid,ppid,etimes,user,args 2>/dev/null \
+  | grep -iE '[h]arness_loop|[t]b_loop|[z]hulong_loop|[b]aize_.*_loop|[o]ps_relay' \
+  | awk '{printf "  pid=%s ppid=%s et=%ss user=%s |", $1,$2,$3,$4; for(i=5;i<=9&&i<=NF;i++) printf " %s", $i; print ""}' \
+  | cut -c1-150
+
+echo ""
+echo "[3] harness loop 精确定位（只看命令行含 harness 的 bash）"
+H=$(ps -eo pid,ppid,etimes,args 2>/dev/null | grep -E 'bash .*harness.*loop|[h]arness_loop\.sh' | grep -v grep)
+if [ -z "$H" ]; then echo "  NONE on this host"; else echo "$H" | cut -c1-150; fi
+
+echo ""
+echo "[4] 该 loop 的启动上下文（若存在）：cwd + cline 可见性"
+for pid in $(echo "$H" | awk '{print $1}' | head -3); do
+  echo "  --- pid=$pid ---"
+  echo "   cwd=$(readlink -f /proc/$pid/cwd 2>/dev/null | cut -c1-100)"
+  echo "   start=$(ps -o lstart= -p $pid 2>/dev/null | cut -c1-40)"
+done
+
+echo ""
+echo "[5] zhulong r4 前置：端口占用（8650-8670 抽样）"
+for p in 8650 8652 8654 8655 8656 8657 8658 8659 8660; do
+  ( out=$(timeout 6 curl -s --max-time 4 -X POST "http://10.129.32.75:$p/v1/run_code" \
+        -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 10)
+    [ -z "$out" ] && echo "$p BUSY" > /tmp/r89_$p || echo "$p FREE" > /tmp/r89_$p ) &
+done
+wait
+for p in 8650 8652 8654 8655 8656 8657 8658 8659 8660; do echo "  $(cat /tmp/r89_$p 2>/dev/null || echo "$p NA")"; rm -f /tmp/r89_$p; done
+
+echo ""
+echo "[6] zhulong r4 前置：regrade 是否已清 + 模型 key"
+ps -eo pid,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox\.py' | awk '{print "  ",$1}' | head -5
+echo "  (以上为空=已清)"
+grep -oE '"model"[^,]*' /home/app.e0031982/.zhulong/settings/providers.json 2>/dev/null | head -2 | cut -c1-120
+echo "  t0002147 cline count = $(ps -eo user,args 2>/dev/null | grep -c 't0002147.*cline')"
+
+echo ""
+echo "[7] GPU（.29 是否被 pretrain 占满，r4 是 CPU/API 型但确认下）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | cut -c1-60 || echo "  no nvidia-smi"
+echo "=== DONE 89 ==="
+```
 
 ## RUN_ID 88 — ✅ 重启 zhulong_loop（R86 误杀善后·用户已批「当然要重启」）
 
@@ -7,7 +63,7 @@
 > **R87 核查结论**：r3 regrade 的 6 个 PID **全部 GONE（kill 成功）**；**zhulong_loop 确已不在（R86 误杀）**；`ops_relay` / MCP(8090) / RAG(9006) 全活；备份 `..._BACKUP_223148` 完好（352M，success=153/timeout=5/failure=0）；**8651/8655/8656/8657/8658 全 FREE**。
 > **本块动作**：仅重启 loop。**不 kill 任何东西**、不改 `.env`、不启 r4。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 88 | restart zhulong_loop | $(date '+%F %T') | host=$(hostname) ==="
 RUN=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
