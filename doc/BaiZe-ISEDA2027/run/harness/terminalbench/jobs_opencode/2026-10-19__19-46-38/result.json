@@ -1,0 +1,37 @@
+{
+    "id": "a14e985f-eb2f-4301-a526-2cd385982e79",
+    "started_at": "2026-10-19T19:46:39.002834",
+    "updated_at": "2026-10-19T11:56:51.545582Z",
+    "finished_at": null,
+    "n_total_trials": 5,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 1,
+        "n_running_trials": 1,
+        "n_pending_trials": 3,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "opencode__tb_pilot_dataset_KDp3w7": {
+                "n_trials": 0,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {},
+                "exception_stats": {
+                    "AgentSetupTimeoutError": [
+                        "bn-fit-modify__S6kHRBs"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}
