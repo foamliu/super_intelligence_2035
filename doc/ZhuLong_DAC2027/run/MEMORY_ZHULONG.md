@@ -1,6 +1,21 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
+<!-- heartbeat 2026-10-19 21:08 巡检 #3 · 运维令三十二② (N′) r3 regrade **仍 BLOCKED**（shard_2/3 进度 12→17/38·全 timeout·t0002147 已从 run_4 切到 run_5 仍占 8652/8654 执行槽）：
+- **r3 regrade PID 229615 alive（etime 2h18m=8281s）**·shard worker 229631/229632/229634/229636 仍 alive（每任务 150s 超时·约 3.5min/任务）
+- **shard_0 ✅ 38/38 = 31 passed / 1 timeout**（18:58 收口·未变）
+- **shard_1 ✅ 38/38 = 30 passed / 0 timeout**（18:50 收口·未变）
+- **shard_2 ❌ 17/38 done = 0 passed / 17 timeout**（last write 21:04·从 20:24 的 12/38 → 17/38·+5 task 全 timeout·21 任务剩 ~52min 收口）
+- **shard_3 ❌ 17/38 done = 0 passed / 17 timeout**（last write 21:04·同上）
+- **合计 110/151 done = 61 passed**。若现在收口 = 61/151 = 40.4% ❌ 仍是错值（shard_2/3 剩 21+21=42 任务预计 ~22:00 跑完但产 0 passed·最终仍 61/151=40.4%）
+- **app.t0002147 已切到 run_5**：E08-readback run_5 · 21:05 起 ~4min（PID 461931/461932/461992·output_dir=20261019_2105_app.t0002147）· run_4 已结束但 run_5 立即接续 → 沙盒 8652/8654 仍被占·无法判断 t0002147 还要跑几个 run（前有 run_1..run_5）
+- **运维侧无新指令**：inbox.md RUN_ID 83 仍为最新·.last_run_id=83·无 RUN_ID > 83
+- **红线维持**：不杀 regrade（保 shard_0/1 61 valid）·不启 r4（运维令三十三「结论前不启动 r4」）·不动 t0002147（红线不杀健康训练）
+- **infra 全绿**：4 端口 TCP OPEN ✅（8652/8654 执行槽被抢非端口死）·loop PID 81827 有 https_proxy=http://172.19.92.23:13128 ✅·relay PID 3277328 alive ✅·/home 17G(96%需关注·未变)·cline 3.0.51 未动 ✅（readlink -f=$(which cline)=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline·baseline 守住）
+- **等运维决策**（与巡检 #2 相同·未解阻塞）：(a) regrade shard_2/3 收口方式 — 等 t0002147 跑完所有 run 再整体重跑 shard_2/3（但 t0002147 run_5 才刚起·时间不可期）·或换其它空闲沙盒端口（需运维指定）·❌ 不可接受 61/151=40.4% 错值 (b) F2 watchdog 是否上线兜 r4/r5 (c) r4 启动许可（建议仍等沙盒空 + F2 上线）(d) 论文 tab:readback-cost 软墙注脚 + stuck_count 分列
+- **下一步**：下轮唤醒继续巡检 shard_2/3 进度（~22:00 shard_2/3 应已跑完 38/38 全 timeout·届时 regrade 自然收口 → 记录最终错值 61/151=40.4% 并对照判据十三「timeout>10 ⇒ infra 故障 ⇒ 该轮作废」→ 标 r3 为 infra-contaminated INVALID 等运维重跑决策）→ 仍不自行启 r4
+- ⏱️ **判死判据**：本心跳 21:08，上一心跳 20:30（38min 前），仍在 60min 窗口内。下轮 ~21:40 唤醒再巡检一次。
+-->
 <!-- heartbeat 2026-10-19 20:30 巡检 #2 · 运维令三十二② (N′) r3 regrade **仍 BLOCKED**（shard_2/3 进度 6→12/38 但全 timeout·app.t0002147 仍占 8652/8654 执行槽 3h+）：
 - **r3 regrade PID 229615 alive（etime 1h40m）**·shard worker 229631/229632 仍 alive（每任务 150s 超时·约 7min/任务）
 - **shard_0 ✅ 38/38 = 31 passed / 1 timeout**（18:58 收口）
@@ -39,7 +54,7 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `S1`（**运维令三十二②·2026-10-19·(N′) readback_none 5-run 进行中**·r1 ✅ 收口 = 78.5%·r2 跑中）。**已闭合**：运维令三十一 B.glm-5.3-flash 复测 ✅ 5/5=86.8±1.6%·运维令二十九 ZL.glm-5.2 r1=84.2% [provisional,n=1]·运维令三十② (B) readback_binary 成本 5-run ✅ 零 GPU 完成 |
+| STAGE | `S1`（**运维令三十二②·2026-10-19·(N′) readback_none 5-run 进行中**·r1 ✅ 78.5% / r2 ✅ 70.9% / r3 regrade BLOCKED 巡检 #3 21:08 shard_2/3 17/38 全 timeout·t0002147 已切 run_5）。**已闭合**：运维令三十一 B.glm-5.3-flash 复测 ✅ 5/5=86.8±1.6%·运维令二十九 ZL.glm-5.2 r1=84.2% [provisional,n=1]·运维令三十② (B) readback_binary 成本 5-run ✅ 零 GPU 完成 |
 | CONFIG | `S1.readback_none_retest`（运维令三十二②·(N′) 5-run·PLAN_RETEST_READBACK_COST.md §1）：providers.json model=deepseek-v4-pro-fp4 / key 02_...e13f4f37（末8=8aa0785e）/ baseUrl=http://agi-gateway.cxmt.com/cloud/v1 / maxTokens=16384 / reasoning.enabled=false·updatedAt 2026-10-18T19:54:06Z。`.env` S1 字段：EDA_OMEGA_FIDELITY=high / **EDA_RUNCODE_READBACK=none**（(N′) 唯一变量）/ EDA_PHI_BUDGET=0 / EDA_PHI_LAGGED=0 / V3 + 自探索 ON（与 (B)/(F) fresh 同口径）·core4 ON + aux OFF。cline 3.0.51 未动 ✅。脚本=run_cline_script.sh·**启动前必须 `export PYTHON=$PWD/venv/bin/python`** |
 | ROUND | **S1.readback_none (N′) 复测 r3 regrade BLOCKED·多用户沙盒抢占**（r1 ✅ 78.5% / r2 ✅ 70.9% · 2/5 + r3 待定）：r1=78.5% (124/158·batch 2026_1019_035502·03:55:02→06:02·gen success 157/failure 0/timeout 1·regrade 06:25:15→06:35:36 EXIT=0·`1019: 124/158 pass (78.5%) | generated: 152 ok, 5 fail`·判据十三 timeout=1≤10 ✅ 有效)·**r2 ✅ = 70.9% (112/158)**（batch `2026_1019_071104` 07:11:04→14:14 收口·task 119 stuck 6h00m 后 14:13 终止·batch stats success=156/timeout=2/failure=0·Step 7.1 auto-grade FileNotFoundError → 手动 regrade 14:46→14:55 EXIT=0·`✅ 1019: 112/158 pass (70.9%) | generated: 148 ok, 8 fail, 0 exec_err`·生成状态 `{'success': 148, 'failure': 0, 'timeout': 2, 'fail': 8}`·判据十三 timeout=2≤10 ✅ 有效·r2 vs r1 低 7.6pp·主因 task 119 stuck 被终止 → generated -4 + fail +3·消融臂正常方差非 infra）·**r3 启动** 14:56:34 PID 3662997 setsid batch `2026_1019_145634` -p 8 -n + 同配置·log /tmp/ABL_readback_none_retest_r3.log·预计 ~17:00 收口·legacy readback_none = 73.3±2.2% 保留为对照·与 (B) 78.1±1.3% / (F) full_v3 82.1±3.0% 对照成本单调性·预注册不假设成本单调 |
 | PHASE | `running`（**运维令三十二② (N′) readback_none 复测 r2 跑中**·PID 2680437·batch `2026_1019_071104`·PHASE=running/WAITING=1/ERROR_COUNT=0）：r1 ✅ 收口 = 78.5% (124/158·判据十三 timeout=1≤10 有效)·trace 已保留 → /nasdata/.../ZhuLong_DAC2027/trace_retest/readback_none/2026_1019_035502/trace 198M 158 entries ✅ PLAN §3 硬前置满足。配置 (N′) 唯一变量 READBACK=none（OMEGA/BUDGET/LAGGED 与 (B)/(F) fresh 同）·core4 ON + aux OFF。infra 全绿：4 端口 8650/8651/8652/8654@10.129.32.75 全OPEN✅·/home=20G(≥8G✅·95%需关注)·loop PID81827 有 https_proxy ✅·MCP@8090/RAG@9006 LISTEN✅·cline 3.0.51 未动 ✅（readlink -f=$(which cline)=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@cline/cli-linux-x64/bin/cline·baseline 守住）。→ 下一步：pgrep r2 有=巡检退出；无=收口 grep `pass (xx.x%)` → 启 r3 → ... → r5 → 5/5 mean±std + 成本 → 更新 zhulong_results.md / 6_exp.tex / 重编译 PDF |
@@ -110,6 +125,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情、14:56/17:31/18:13 旧心跳 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。关键结论：r1=78.5%(124/158,timeout=1)、r2=70.9%(112/158,timeout=2,task119 stuck 6h)、r3=成功153/超时5/失败0(总11742s,task130 stuck 6582s)；**r2 task119/r3 task130 的 stuck 正是 RUN_ID 83 要查的根因**。
 ## 操作流水
+- [2026-10-19 21:08] 🟠 巡检 #3 · (N′) r3 regrade 仍 BLOCKED — shard_2/3 进度 12→17/38（+5 each·全 150s timeout·0 新 passed·last write 21:04）·shard_0/1 维持 38+38=61 passed（未变）·合计 110/151 done=61 passed·若现在收口仍 40.4% 错值·剩 21+21=42 任务 ~52min 收口（~22:00 全跑完但产 0 passed）·**app.t0002147 已从 run_4 切到 run_5**（21:05 起 PID 461931/461932/461992·output_dir 20261019_2105_app.t0002147·run_1..run_5 5 个 run 已跑/在跑·沙盒 8652/8654 仍被占）·inbox.md RUN_ID 83 仍为最新·无 RUN_ID > 83·infra 全绿（4 端口 TCP OPEN + loop https_proxy + relay PID 3277328 alive + cline 3.0.51 未动 + /home 17G 96%需关注）·红线维持（不杀 regrade/不启 r4/不动 t0002147）·下轮 ~21:40 再巡检。详见 daily §[21:08]。
 - [2026-10-19 20:30] 🟠 巡检 #2 · (N′) r3 regrade 仍 BLOCKED — shard_2/3 进度 6→12/38（+6 each·全 timeout·0 新 passed）·shard_0/1 维持 38+38=61 passed（未变）·合计 100/151 done=61 passed·若现在收口仍 40.4% 错值·app.t0002147 仍 alive（17:31 起 3h+·E08-readback run_4·占 8652/8654 执行槽）·inbox.md 18:51 后无新 RUN_ID（.last_run_id=83）·infra 全绿（4 端口 TCP OPEN + loop https_proxy + relay alive + cline 3.0.51 未动）·红线维持（不杀 regrade/不启 r4/不动 t0002147）·下轮 ~21:00 再巡检。详见 daily §[20:30]。
 - [2026-10-19 19:48] (N′) r3 regrade BLOCKED + r3 trace cp 补做 — regrade PID 229615 shard_0/1 done=61 passed (valid) / shard_2/3 stuck 6+6 ALL 150s timeout (app.t0002147 自 17:31 抢占同 4 端口沙盒) → 若现在收口=61/151=40.4% 错值；r3 trace cp 19:48 补做 224M/158 entries (19:10 心跳误报已 cp 实际未拷) → 3 轮 trace 齐备 (r1 198M/r2 262M/r3 224M)；不杀 regrade/不启 r4/不动 t0002147；等运维决策 regrade shard_2/3 收口方式 + F2 + r4 许可。详见 daily §[19:48]。
 - [2026-10-19 13:32 指针] 运维令三十二② (N′) readback_none r2 巡检 #10 — task 119 stuck 5h22m·BLOCKER 维持·等运维决策**（详情见 daily-memories/2026-10-19.md §[13:32]·**r2 已于 14:14 收口·本条已为历史指针**）
