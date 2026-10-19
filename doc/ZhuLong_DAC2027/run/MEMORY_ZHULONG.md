@@ -1,6 +1,21 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
 WAITING: 1
+<!-- heartbeat 2026-10-19 20:30 巡检 #2 · 运维令三十二② (N′) r3 regrade **仍 BLOCKED**（shard_2/3 进度 6→12/38 但全 timeout·app.t0002147 仍占 8652/8654 执行槽 3h+）：
+- **r3 regrade PID 229615 alive（etime 1h40m）**·shard worker 229631/229632 仍 alive（每任务 150s 超时·约 7min/任务）
+- **shard_0 ✅ 38/38 = 31 passed / 1 timeout**（18:58 收口）
+- **shard_1 ✅ 38/38 = 30 passed / 0 timeout**（18:50 收口）
+- **shard_2 ❌ 12/38 done = 0 passed / 12 timeout**（last write 20:24·从 19:37 的 6/38 → 12/38·+6 task 全 timeout）
+- **shard_3 ❌ 12/38 done = 0 passed / 12 timeout**（last write 20:24·同上）
+- **合计 100/151 done = 61 passed**。若现在收口 = 61/151 = 40.4% ❌ 仍是错值（shard_2/3 共 64 任务，已 done 24 全 timeout，剩 40 任务预计 ~5h 才跑完但产 0 passed）
+- **app.t0002147 仍 alive**：E08-readback run_4 · 17:31 起 3h+ · 多个 cline worker（worker_4/12/14 等）· `--timeout 2500` · 占 8652/8654 执行槽
+- **运维侧无新指令**：inbox.md 18:51 后未更新·.last_run_id=83（RUN_ID 83 已执行 commit 622d1d00）·无 RUN_ID > 83
+- **红线维持**：不杀 regrade（保 shard_0/1 61 valid）·不启 r4（运维令三十三「结论前不启动 r4」）·不动 t0002147（红线不杀健康训练）
+- **infra 全绿**：4 端口 TCP OPEN ✅（8652/8654 执行槽被抢非端口死）·loop PID 81827 有 https_proxy ✅·relay PID 3277328 alive ✅·/home 17G(96%需关注)·cline 3.0.51 未动 ✅·MCP@8090/RAG@9006 LISTEN ✅
+- **等运维决策**：(a) regrade shard_2/3 收口方式 — 等 t0002147 跑完再整体重跑 shard_2/3，或接受 61/151=40.4% 错值❌不可·或换其它空闲沙盒端口（需运维指定）(b) F2 watchdog 是否上线兜 r4/r5 (c) r4 启动许可（建议仍等沙盒空 + F2 上线）(d) 论文 tab:readback-cost 软墙注脚 + stuck_count 分列
+- **下一步**：下轮唤醒继续巡检 shard_2/3 进度（看是否已收口或 t0002147 是否跑完）→ 若 regrade 收口（无论 shard_2/3 跑完或被 kill）记录最终 Pass@1 值并对照判据十三 → 仍按运维决策推进（不自行启 r4）
+- ⏱️ **判死判据**：本心跳 20:30，上一心跳 19:48（42min 前），仍在 60min 窗口内。下轮 ~21:00 唤醒再巡检一次。
+-->
 <!-- heartbeat 2026-10-19 19:48 运维令三十二② (N′) r3 regrade **BLOCKED · 多用户沙盒抢占** + r3 trace cp **补做 ✅**（19:10 心跳的「r3 trace cp 完成」是误报·实际未拷）：
 **①r3 regrade 状态（PID 229615·18:50:49 起·log /tmp/ABL_readback_none_retest_r3_regrade.log·EVAL_FW_DIR 手动跑 151 脚本）**：
 - **shard_0 ✅ 38/38 done = 31 passed / 1 timeout / 6 other**（18:58 收口·健康）
@@ -95,6 +110,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情、14:56/17:31/18:13 旧心跳 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。关键结论：r1=78.5%(124/158,timeout=1)、r2=70.9%(112/158,timeout=2,task119 stuck 6h)、r3=成功153/超时5/失败0(总11742s,task130 stuck 6582s)；**r2 task119/r3 task130 的 stuck 正是 RUN_ID 83 要查的根因**。
 ## 操作流水
+- [2026-10-19 20:30] 🟠 巡检 #2 · (N′) r3 regrade 仍 BLOCKED — shard_2/3 进度 6→12/38（+6 each·全 timeout·0 新 passed）·shard_0/1 维持 38+38=61 passed（未变）·合计 100/151 done=61 passed·若现在收口仍 40.4% 错值·app.t0002147 仍 alive（17:31 起 3h+·E08-readback run_4·占 8652/8654 执行槽）·inbox.md 18:51 后无新 RUN_ID（.last_run_id=83）·infra 全绿（4 端口 TCP OPEN + loop https_proxy + relay alive + cline 3.0.51 未动）·红线维持（不杀 regrade/不启 r4/不动 t0002147）·下轮 ~21:00 再巡检。详见 daily §[20:30]。
 - [2026-10-19 19:48] (N′) r3 regrade BLOCKED + r3 trace cp 补做 — regrade PID 229615 shard_0/1 done=61 passed (valid) / shard_2/3 stuck 6+6 ALL 150s timeout (app.t0002147 自 17:31 抢占同 4 端口沙盒) → 若现在收口=61/151=40.4% 错值；r3 trace cp 19:48 补做 224M/158 entries (19:10 心跳误报已 cp 实际未拷) → 3 轮 trace 齐备 (r1 198M/r2 262M/r3 224M)；不杀 regrade/不启 r4/不动 t0002147；等运维决策 regrade shard_2/3 收口方式 + F2 + r4 许可。详见 daily §[19:48]。
 - [2026-10-19 13:32 指针] 运维令三十二② (N′) readback_none r2 巡检 #10 — task 119 stuck 5h22m·BLOCKER 维持·等运维决策**（详情见 daily-memories/2026-10-19.md §[13:32]·**r2 已于 14:14 收口·本条已为历史指针**）
 - [2026-10-19 07:53→13:32 指针块·已滚出] 运维令三十二② (N′) readback_none r2 巡检 #1-#10（07:53/08:30/09:03/09:41/10:19/10:58/12:11/12:51/13:32·task 119 stuck 6h00m·harness bug timeout 2500 未触发·BLOCKER 等运维决策·**r2 已于 14:14 收口·全部已为历史指针**）已原文搬入 `daily-memories/2026-10-19.md` 各 §HH:MM。关键证据：cline worker etime 6h00m=21600s = timeout 2500 上限 8.6x（单调增长 #9 6.7x→#10 7.8x→#11 8.6x·确认 timeout 永远不触发）·ws 文件 14:09 仍缓慢写入（非完全卡死·慢循环）·ACCESS RESTRICTED 全程 hook live·0 infra 故障·判据十三进行中无红旗。
