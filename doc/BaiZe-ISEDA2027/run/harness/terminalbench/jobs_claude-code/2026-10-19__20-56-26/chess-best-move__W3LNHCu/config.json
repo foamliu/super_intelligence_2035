@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_pilot_dataset_KDp3w7/chess-best-move",
+        "source": "tb_pilot_dataset_KDp3w7"
+    },
+    "trial_name": "chess-best-move__W3LNHCu",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_claude-code/2026-10-19__20-56-26",
+    "agent": {
+        "name": "terminalbench.agents.claude_code:ClaudeCodeTB"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "e8c10caf-1a9e-4da7-9ddf-5e77641b707d"
+}

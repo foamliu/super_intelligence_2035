@@ -1,30 +1,43 @@
 {
     "id": "e8c10caf-1a9e-4da7-9ddf-5e77641b707d",
     "started_at": "2026-10-19T20:56:26.557141",
-    "updated_at": "2026-10-19T13:06:39.135940Z",
-    "finished_at": null,
+    "updated_at": "2026-10-19T22:15:44.012475",
+    "finished_at": "2026-10-19T22:15:44.012475",
     "n_total_trials": 5,
     "stats": {
-        "n_completed_trials": 1,
-        "n_errored_trials": 1,
-        "n_running_trials": 1,
-        "n_pending_trials": 3,
+        "n_completed_trials": 5,
+        "n_errored_trials": 3,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
         "n_cancelled_trials": 0,
         "n_retries": 0,
         "evals": {
             "claude-code__tb_pilot_dataset_KDp3w7": {
-                "n_trials": 0,
-                "n_errors": 1,
+                "n_trials": 4,
+                "n_errors": 3,
                 "metrics": [
                     {
                         "mean": 0.0
                     }
                 ],
                 "pass_at_k": {},
-                "reward_stats": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "break-filter-js-from-html__HwvwbRR",
+                            "chess-best-move__W3LNHCu",
+                            "fix-git__FKBgfF2",
+                            "log-summary-date-ranges__SLZrwhk"
+                        ]
+                    }
+                },
                 "exception_stats": {
                     "AgentSetupTimeoutError": [
                         "bn-fit-modify__Na5WHDs"
+                    ],
+                    "AgentTimeoutError": [
+                        "break-filter-js-from-html__HwvwbRR",
+                        "chess-best-move__W3LNHCu"
                     ]
                 }
             }
