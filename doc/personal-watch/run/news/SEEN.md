@@ -812,3 +812,13 @@
 | 2026-10-19 | Stripe to acquire OpenRouter for $7.5B | HN → startupfortune | 不收(二手财经博客，原文未核) | 不存链接（HN 摘要记录·原链接未留存） |
 | 2026-10-19 | One hacker used AI agents and a few thousand dollars to break into 100 sites | HN → Reuters | 不收(涉未起诉个案) | 不存链接（HN 摘要记录·原链接未留存） |
 | 2026-10-19 | AI Agents Left Alone Spontaneously Split into Polarized Camps | HN → bioengineer.org | 不收(转载/科普稿) | 不存链接（HN 摘要记录·原链接未留存） |
+| 2026-10-20 | 四个谷歌 Gemini 4 Argon 智能体全自主通关《我的世界》，耗时 27 小时 | IT之家（`1/015/048`·10-19 23:03） | news | https://www.ithome.com/1/015/048.htm |
+| 2026-10-20 | Tenstorrent 完成 15 亿美元 E 轮融资，投后估值 62 亿美元 | IT之家（`1/015/045`·10-19 22:44） | news | https://www.ithome.com/1/015/045.htm |
+| 2026-10-20 | 微信发起「公众号小说改编微短剧」激励：双方各享额外 5% 收益、上不封顶 | IT之家（`1/015/044`·10-19 22:42） | news | https://www.ithome.com/1/015/044.htm |
+| 2026-10-20 | 商务部：1—9 月重点平台智能眼镜销售额增长 1.1 倍（科技兴商 9 部门文件） | IT之家（`1/015/038`·10-19 21:57） | news | https://www.ithome.com/1/015/038.htm |
+| 2026-10-20 | 英特尔 CEO 陈立武：中美芯片制造技术差距「没有那么大」 | IT之家（`1/015/039`·10-19 22:00·据《日经亚洲》） | news | https://www.ithome.com/1/015/039.htm |
+| 2026-10-20 | 微软联合百思买回收 Xbox Series X\|S，最高 375 美元礼品卡 | IT之家（`1/015/067`） | 不收(硬件商业动作·非 AI) | https://www.ithome.com/1/015/067.htm |
+| 2026-10-20 | 古尔曼：苹果正研发室内摄像头，依靠 AI 分析环境 | IT之家（`1/015/023`） | 不收(爆料/传闻) | https://www.ithome.com/1/015/023.htm |
+| 2026-10-20 | 《崇祯模拟器 Demo》上架 Steam | IT之家（`1/014/977`） | 不收(游戏上架·AI 仅修辞) | https://www.ithome.com/1/014/977.htm |
+| 2026-10-20 | Who Verifies the Agents? / Why AI is not conscious / Profiling the Attack Surface of AI Agent Skills | HN 近 24h | 不收(博客·观点·arXiv preprint) | 不存链接（HN 摘要记录·原链接未留存） |
+| 2026-10-20 | Universal Basic AI（Bloomberg 观点） | HN 近 24h | 不收(观点/行情) | 不存链接（HN 摘要记录·原链接未留存） |
