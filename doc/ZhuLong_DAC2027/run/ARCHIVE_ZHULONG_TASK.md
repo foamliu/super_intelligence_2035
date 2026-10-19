@@ -251,3 +251,91 @@ setsid bash scripts/run_cline_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_retest_
 - 5/5 有效后算 mean±std；若 std 明显 <10.5，更新 `zhulong_results.md` 的 B.glm-5.3-flash 行（保留 fresh 66.8±10.5 作对照）+ `MEMORY_ZHULONG.md` + commit `zhulong B: glm-5.3-flash retest 5/5 = xx.x±x.x%`。
 - 🚫 不动 ZL.glm-5.2 r1=84.2% 的结论；🚫 不改论文口径；🚫 不重启/不经手其它线。
 - 完成后按常驻规程自滚归档任务书。
+
+
+<!-- archived from ZHULONG_TASK.md 2026-10-20 (consolidated closed 1-line pointers, batches 10-11 ~ 10-04) -->
+
+### [归档·2026-10-20] 🧭 本轮（2026-10-11 上午）执行顺序 —— 换回旧 4 端口 + 修 RAG + 删 hook → 推进 r2–r5【已完成·2026-10-13 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-13）。r2–r5 已完成，当前已推进至 C2.phi_k3。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-11（十二）— r5 收割后补跑 5 轮「真正的 full」（自探索开启）【full_v3 5/5✅ 82.1±3.0% 已交付·2026-10-13 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-13）。full_v3 5/5 = 82.1±3.0% 已交付（三组对照表见 `MEMORY_ZHULONG.md`），未复现 r1=88.0%。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-11（十一）— 📊 Deep dive：为什么 `full` r1=88.0%【⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`·报告已交 `reports/R1_ANOMALY_ANALYSIS_2026-10-11.html` @commit 25b27adb】
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-11（十）— 🔎 RAG(9006) 排查【⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`·已收口·报告 `reports/RAG_AUDIT_2026-10-11.md` @commit 84e66335】
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-11（九）— 换回旧 4 端口 + RAG→9006 + 删 hook + .env 回退 + 重跑 r2–r5【已完成·2026-10-13 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-13）。换回 4 端口 8650/8651/8652/8654 + RAG→9006 + 删 hook + .env 回退均已完成，r2–r5 已交付。
+
+### [归档·2026-10-20] （八）10-10 — 保留 4 端口 + `"timeout": 180` + 重跑 r2–r5【已被 (九) 取代·已归档】
+### [归档·2026-10-20] （七）10-10 — 剔除 8667 + 补 8650–8654 + 调高 MCP timeout【已被 (八) 取代·已归档】
+### [归档·2026-10-20] （六）10-10 — 若 9 端口健康先判别「端口数是否真因」【已被 (七) 取代·已归档】
+### [归档·2026-10-20] （四）10-10 — 根因排查：连续多日 timeout【已完成·已归档】
+### [归档·2026-10-20] （三）10-10 — 先停 zhulong + 实测沙盒端口【已完成·已归档】
+### [归档·2026-10-20] （二）10-10 — 专属沙盒就绪：保 r1 → 重跑 r2–r5【已被 (三)/(四) 取代·已归档】
+### [归档·2026-10-20] （一）10-10 — 切专属沙盒 + C1.full 作废重测【已被 (二) 取代·历史】
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【已被 2026-10-10(一) 取代·已归档】
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-09（四）— 🛑 沙盒坏了，r4 已被运维 kill，待命不要重跑【已被(五)取代·历史】
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-09（三）— 🔄 C1.full r2/r3 复测（模型服务不稳定致大量 timeout）【已归档·被(四)取代】
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【已完成·已归档】
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）【已完成·已归档】
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-08（一）— 📝 HTML 报告【已完成·已归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-08）。产物 `reports/report_2026-10-08_holiday.html`（21870B，8 节齐全，已 commit a4dc5c3c）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-05（八）— ops 中继恢复【已解决·已归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。ops relay alive ✅（每次唤醒复检）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-05（七）— 评测侧隔离 config dir【已落地·已归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。合并线 eval 用 `CLINE_CONFIG_DIR=.cline_eval_zhulong`；编排用 `--config .cline_zhulong`。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-05（六）— 试验次序调换 B→C1→C2→S1【已生效·已归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。当前顺序 B→C1→C2→S1（§4 已同步）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-04（五）— legacy 组件 loop 保活【常驻·已稳定·已归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。legacy loop alive ✅（每次唤醒复检）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-04（四）— 正式起始点 C1.wo_retrieval R2【已越过·已归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。当前已推进至 C1.full r1。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-04（三）— 中继已恢复 / loop RUN_ID 6 重启【已解决·已归档】
+### [归档·2026-10-20] 🚨 运维指令 · 2026-10-04（二）— 抢救 ops 中继【已解决·勿再执行·已归档】
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立【已落地·2026-10-18 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-18 02:57）。合并执行已落地（单任务书 + zhulong_loop.sh 运行中）；起始点已远过 init；ops 中继稳定；infra 端口已更新为 **8650/8651/8652/8654@10.129.32.75**（原 8664/8665/8653/8669 过时）。路径见 §6 + MEMORY 状态头。
+
+
+<!-- archived from ZHULONG_TASK.md 2026-10-20 (consolidated closed 1-line pointers, batch 二十四~十四) -->
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-15（二十四）— 📊 收集 readback 轴 echo 数据强化论文论证【已完成·2026-10-15 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15 17:35）。echo 数据表+语义注记+tab:readback-cost(表7) 已并入论文 6_exp.tex（commit zhulong S1-echo: @ 15:30·编译 0 error 12页）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-15（二十三）— 🔜 S1.readback_binary 后编排：B.glm-5.3-flash → B.deepseek-v4-flash【用户直令·已被二十七取代·2026-10-18 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-18 02:57）。被运维令二十七取代：fresh 5-run 已出（glm-5.3-flash 66.8±10.5% std 偏大 / deepseek-v4-flash 11.9±2.7% 但 73% 失败为 infra）→ 二十七对两臂启动复测（deepseek-v4-flash 复测 5/5✅=60.1±5.5% 已收口；glm-5.3-flash 复测 r1 两次作废·infra 阻塞·等运维决策）。fresh 值保留为历史对照。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-15（二十二）— 🔁 S1 重测调整：跳过 omega_low，改重测 readback_binary【已完成·2026-10-16 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-16 09:01）。readback_binary fresh 5/5=78.1±1.3% [75.9,79.1,77.8,78.5,79.1] 替换 legacy 66.2±16.1%（std 16.1→1.3·43.0%离群消除）；omega_low/readback_none 采信 legacy → S1 done_all。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-15（二十一）— 🧪 结合进展提「15 天窗口消融建议」· 中文 HTML· 用户直令 · 最高优先【已完成·2026-10-15 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15 17:35）。报告 `reports/report_zhulong_next_ablation_plan_zh.html` 已交付（32927B·10节·3必做+2建议+2可选·15天排期表·commit c1a3d177 @ 17:01:57·已push）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-15（二十）— 📝 把最新评测结果填入 zhulong_results.md【已完成·2026-10-15 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15）。phi_k1/phi_lagged/B.deepseek-v4-flash 已填入 zhulong_results.md（commit 见心跳 08:30）。后续新 5/5 收口臂（如 readback_binary）仍需照此口径填入。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-14（十九）— 🖨️ pdflatex 已装好，编译验证论文【已完成·2026-10-15 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15）。编译验证✅ 11页 0 error（commit fb5e92f8）。改稿后重编译照此口径。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-14（十八）— 🧩 评测集全貌 + SKILL/Tcl 结果并入论文【已完成·2026-10-15 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-15）。SKILL/Tcl 已并入论文（commit b61970a8，12页）。**常驻纪律保留**：每次刷新论文前 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；口径=EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）；SKILL/Tcl 数字只认 zhulong_results.md 现存值，未齐标 pending，🚫 凭印象编造。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-14（十七）— ✍️ 放行改进论文（执行审视报告修改）【P0-P3 已执行·2026-10-15 归档】
+> ⏩ 已归档 → `ZHULONG_TASK_ARCHIVE.md`（P0-P3 已执行、论文已编译；锂点 82.1±3.0% 同步、前缀 `zhulong paper-fix:`、不偏造、未测留 `[TBD]`）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-14（十六）— 📝 实验空窗期审视论文，出改进意见 HTML（中文）【已完成·2026-10-14 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-14）。HTML 报告 `reports/report_zhulong_paper_review_zh.html` 已交付（运维令十七据此放行改稿）。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-13（十五）— ✅ 沙盒已重启完成，恢复试验（撤销 (十四) 暂停令）【已完成·2026-10-14 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-14）。沙盒已重启，phi_k3→phi_k1→phi_lagged 已依次推进，撤销 (十四) 暂停令生效。
+
+### [归档·2026-10-20] 🆕 运维指令 · 2026-10-13（十四）— 🛑 立即暂停所有试验（沙盒重启中）【已被(十五)撤销·2026-10-13 归档】
+> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-13）。暂停令已被 (十五) 撤销，phi_k3 已恢复试验。

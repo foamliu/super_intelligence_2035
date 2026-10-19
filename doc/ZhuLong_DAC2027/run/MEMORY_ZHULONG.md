@@ -1,20 +1,13 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-19 23:3x 🔒 **r4/r5 正式口径已锁定（用户直令）** — 可直接开跑：
-- **臂×模型**：r4/r5 = `deepseek-v4-pro-fp4`；(F) full 复测 = `deepseek-v4-pro-cloud`。两臂 key 末8=`8aa0785e`（`88ea2f23` 对 pro 族必 403 禁用）。
-- **端口（用户 23:3x 直令）**：**`8666 / 8667 / 8669 / 8670`** @10.129.32.75 —— RUN_ID 90 普查(23:21) 实测 **14/15/15/14ms** 全 USABLE，远离 t0002147 占的 8650/8652/8654。降级序：8665→8664→8663→8662→8661→8660→8658→8657。🚫 禁用 8650/8652/8654/8659(7.1s)/8668(7.3s)。
-- **起跑前自检（必做）**：`ls -dt ${CLI_ISOLATION_DIR}/worker_*/data/settings/providers.json | head -1 | xargs grep -o '"model"[^,]*'` → r4/r5 须为 fp4、full 须为 cloud；不符先修模板再跑。
-- **进度**：3/5 done（r1 78.5 / r2 70.9 / r3 81.5 · mean 76.97 provisional）· trace 3 轮齐备 · r3 backup `..._BACKUP_223148` 完好 · 无 regrade 残留。
-- **infra**：loop PID 81827 alive(5.8d) / relay alive / cline 3.0.51 未动 / `/home` 17G(96%)。t0002147 已降至 ~11 cline。
-- **F2 watchdog**：仍未部署（推荐 r4 前上线，但不阻塞 r4 —— 若再遇 stuck 用 Path A 兜底）。 -->
-<!-- heartbeat 2026-10-19 23:5x 🟢 **r4 已启动（运维令 23:2x 用户直令）** — (N′) readback_none 4/5 跑中：
-- **r4 PID 748500 alive**·batch `2026_1019_235040`·23:50:40 起·**-p 4 -n**（运维令 23:2x ① 直令；r1-r3 用 -p 8 → **已披露**：5-run 内 parallelism 8→4 切换，r4/r5 单 worker/端口 1:1）·log `/tmp/ABL_readback_none_retest_r4.log`。
-- **口径锁定（23:2x）**：MODEL=`deepseek-v4-pro-fp4`（**不要换**）/ KEY末8=`8aa0785e`（pro 族，glm `88ea2f23` 禁用）/ READBACK=none / OMEGA=high / BUDGET=0 / LAGGED=0 / V3 自探索 ON / cline 3.0.51 不动。
-- **端口 8666/8667/8669/8670 @10.129.32.75**（用户 23:3x 直令·RUN_ID 90 实测 14-19ms）：POST 探活全 HTTP 200 ~2ms ✅·4 workdir t0002997_1..4 清理完成 ✅·远离 t0002147 占的 8650/8652/8654。`.env` 已更新 PROXY_PORTS + SANDBOX_ENDPOINTS。
-- **起跑前自检（双证）**：① 模板 `~/.cline/data/settings/providers.json` model=`deepseek-v4-pro-fp4` ✅（注意：`~/.zhulong` 是 glm-5.2 但那是 opencode 编排用，eval 用 `run_cline_script.sh` 读 `~/.cline/data`）② r4 worker_1/data/settings/providers.json model=`deepseek-v4-pro-fp4` ✅（post-launch 双证）③ ACCESS RESTRICTED canary hook live（log L200/224 实测拦截）④ cline 3.0.51 ✅。
-- **进度**：3/5 done（r1 78.5 / r2 70.9 / r3 81.5 Path A fix·mean 76.97 provisional）→ **r4 跑中** → r5 → 5/5 mean±std → 再测 full@pro-cloud 5 轮（运维令 23:2x ②）。
-- **infra**：loop PID 81827 alive(5.8d) + https_proxy ✅ / relay alive / /home 17G(96%) / t0002147 ~11 cline 占 8650/8652/8654（不冲突 8666-8670）。 -->
+<!-- heartbeat 2026-10-20 00:29 🟢 **r4 巡检 #1（运维令 23:2x 用户直令）** — (N′) readback_none 4/5 跑中，**r4 PID 748500 alive (etime 38m13s / 2293s)**·batch `2026_1019_235040`·23:50:40 起·-p 4·log `/tmp/ABL_readback_none_retest_r4.log`（3.0MB·code-gen 进行中·task pyAether-019 ws 写入活跃）。
+- **§7 步骤 A**：pgrep r4 有输出 → **巡检退出·WAITING=1 不变**（典型 eval ~3h，当前 38min 早期）。
+- **infra 自检全绿**：loop PID 81827 + `https_proxy=http://172.19.92.23:13128` ✅（常驻 proxy 自检通过）/ r4 alive / `/home` 17G / cline 3.0.51 未动 / t0002147 ~11 cline 占 8650/8652/8654（不冲突 8666-8670）。
+- **进度**：3/5 done（r1 78.5 / r2 70.9 / r3 81.5·mean 76.97 provisional）→ **r4 跑中** → r5 → 5/5 mean±std → 再测 full@pro-cloud 5 轮（23:2x ②）。
+- **本唤醒动作**：① r4 巡检（alive，退出）② 任务书归档（40760B→32971B，移 3 批已闭合 1-line 指针至 ARCHIVE_ZHULONG_TASK.md）③ commit+push。
+- **下一步**：下轮唤醒再 pgrep r4；无输出→grep `pass (xx.x%)` 收口→启 r5。 -->
+<!-- [已滚出] 23:5x r4 启动心跳 + 23:3x 口径锁定心跳 → 原文已搬入 daily-memories/2026-10-19.md §[23:5x]。 -->
 <!-- [已滚出] 22:5x r3 Path A 心跳 + 运维令三十七 R86/R87/R88 复盘 → 原文已搬入 daily-memories/2026-10-19.md §[23:5x 归档]。 -->
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
@@ -94,6 +87,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情、14:56/17:31/18:13 旧心跳 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。关键结论：r1=78.5%(124/158,timeout=1)、r2=70.9%(112/158,timeout=2,task119 stuck 6h)、r3=成功153/超时5/失败0(总11742s,task130 stuck 6582s)；**r2 task119/r3 task130 的 stuck 正是 RUN_ID 83 要查的根因**。
 ## 操作流水
+- [2026-10-20 00:29] 🟢 **r4 巡检 #1（运维令 23:2x 用户直令·(N′) readback_none 4/5）** — `ps -p 748500` → **PID 748500 alive (etime 38:13 / 2293s / STAT=Ss)**·batch `2026_1019_235040`·-p 4·log 3.0MB code-gen 进行中（task pyAether-019 ws 写入活跃）→ **§7 步骤 A：pgrep 有输出 → 巡检退出·WAITING=1 不变**（典型 eval ~3h，当前 38min 早期，不打断）。**infra 自检**：loop PID 81827 + `https_proxy=http://172.19.92.23:13128` ✅ / r4 alive / `/home` 17G / cline 3.0.51 未动 / t0002147 ~11 cline 占 8650/8652/8654（不冲突 8666-8670）。**任务书归档**：ZHULONG_TASK.md 40760B（>40KB 红线）→ 移 3 批已闭合 1-line 指针（二十四~十四 / 10-11~10-09 / 10-08一~10-04）至 `ARCHIVE_ZHULONG_TASK.md`（留 1 行合并指针）→ **32971B（≤32KB ✅）**·MEMORY 30253B ✅。**下一步**：下轮唤醒再 pgrep r4；无输出→grep `pass (xx.x%)` 收口→启 r5→5/5 mean±std→再测 full@pro-cloud 5 轮（23:2x ②）。
 - [2026-10-19 23:5x] 🟢 **(N′) readback_none r4 已启动（运维令 23:2x 用户直令）** — 3/5 done → r4 跑中。①**口径锁定自检（双证）**：模板 `~/.cline/data/settings/providers.json` model=`deepseek-v4-pro-fp4` ✅（注意 `~/.zhulong` 是 glm-5.2 但那是 opencode 编排用·eval 用 `run_cline_script.sh` 读 `~/.cline/data`）+ r4 worker_1 providers.json model=`deepseek-v4-pro-fp4` ✅（post-launch 双证）+ cline 3.0.51 ✅。②**端口**：8666/8667/8669/8670@10.129.32.75（用户 23:3x 直令）→ POST 探活全 HTTP 200 ~2ms ✅（8666/8667/8669/8670 全 USABLE·远离 t0002147 占的 8650/8652/8654）→ `.env` 更新 PROXY_PORTS=8666,8667,8669,8670 + SANDBOX_ENDPOINTS=8666:t0002997_1,8667:t0002997_2,8669:t0002997_3,8670:t0002997_4（workdir 复用 r3 的 t0002997_1..4·eval 清理时已 clean ✅）。③**配置核验**：EDA_RUNCODE_READBACK=none ✅ / EDA_OMEGA_FIDELITY=high ✅ / EDA_PHI_BUDGET=0 ✅ / EDA_PHI_LAGGED=0 ✅ / SKILL_DATA_DIR=./docs/skill_data_selfexpl (V3 自探索 ON) ✅。④**启动**：`echo "ARM=(N') MODEL=deepseek-v4-pro-fp4 KEY=...8aa0785e READBACK=none | ports=8666,8667,8669,8670@10.129.32.75 | -p 4 -n | r4 of 5 | 23:50:40 | 23:2x 运维令口径锁定" > /tmp/ABL_readback_none_retest_r4.log` + `setsid bash scripts/run_cline_script.sh -p 4 -n >> log 2>&1 < /dev/null &` → **PID 748500**·batch `2026_1019_235040`·并行度: 4 ✅·执行器: cline ✅·Memory Bank 注入: 禁用 ✅·158 题。⑤**hook + canary**：`已部署沙盒 hook 到 ~/.cline/hooks/` (PreToolUse 10242B) + ACCESS RESTRICTED 实测拦截（log L200/224）✅。⑥**⚠️ parallelism 披露**：r1/r2/r3 用 -p 8（4 端口 2 worker/端口）·**r4/r5 用 -p 4**（4 端口 1 worker/端口·23:2x ① 直令）→ 5-run 内 parallelism 8→4 切换，已如实记录，mean±std 须注明。⑦**infra**：loop PID 81827 alive(5.8d)+https_proxy ✅ / relay alive / /home 17G(96%) / t0002147 ~11 cline 占 8650/8652/8654（不冲突 8666-8670）。⑧**下一步**：pgrep r4 有=巡检退出；无=收口 grep `pass (xx.x%)` → 启 r5 → 5/5 mean±std + 成本 → 更新 zhulong_results.md/6_exp.tex → **再测 full@pro-cloud 5 轮**（23:2x ②·MODEL=deepseek-v4-pro-cloud·KEY末8=8aa0785e·READBACK=full·canary 200 才开跑·cloud vs fp4 部署不同须显式注明不可混算）。详见 daily §[23:5x]。
 - [2026-10-19 06:30–23:0x 指针块] 巡检 #1–#3 / r1 收口 / r3 Path A(81.5%) / RUN_ID 84 端口普查 → 原文已搬入 `daily-memories/2026-10-19.md`「归档·23:3x」。
 - [2026-10-19 13:32 指针] 运维令三十二② (N′) readback_none r2 巡检 #10 — task 119 stuck 5h22m·BLOCKER 维持·等运维决策**（详情见 daily-memories/2026-10-19.md §[13:32]·**r2 已于 14:14 收口·本条已为历史指针**）
