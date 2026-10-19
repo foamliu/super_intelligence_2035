@@ -4,11 +4,22 @@ WAITING: 1
 
 ## 状态头
 
-> ✅ **ArmC 全链路 DONE · wake #172（2026-10-19 19:46）**：ArmC = **两变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01），非单变量消融。①训练✅(57250步,14:32) ②ProtB✅(lp=62.332±0.014/5-NN=54.718 vs ArmB 62.093/58.102：Δlp+0.24pp/Δ5-NN−3.38pp) ③MLLM三阶段✅ ④**12集✅ 12/12 DONE(avg除MME=25.78% vs ArmB 26.10%, Δ−0.32pp, 裁定不可分辨)**。④首跑17:27仅4/12(代理宕机→8集直接URL下载失败)；**wake #172 修复**：根因=ArmC launch 缓存指 nas_env(缺8集) vs ArmB 成功用 /tmp cache(含全12集)→kill代理轮询watcher→新建`rerun_failed_benchmarks_armC_offline.sh`把两缓存指 /tmp、offline无代理→19:42起19:46完 ALL_OK=1。逐集Δ: ai2d−1.65/blink−0.79/chartqa−0.04/docvqa+0.22/infovqa+0.21/mmmu_val−1.11/mmstar+0.43/ocrbench+0.20/realworldqa−0.52/countbench−0.61/mmmu_pro+0.17(5升6降均±2pp内); MME+101.3(不计入平均)。**两变量未带来下游增益，裁定不可分辨**。产物: report_vision_armC_20261018_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§13。.12 8卡全空闲。**WAITING=1**（ArmC 完整闭环，idle 等待下一运维指令）。
- > 📦 2026-10-18 16:38–17:05（wake #152: ArmB→MLLM 12集评测DONE）已归档 → daily-memories-vision/2026-10-18.md；**结论**：ArmB 平均(除MME)=26.10% vs ④-4ep 25.68% Δ+0.42pp，裁定**不可分辨(边界值)**；产物 report_vision_armB_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§12。
+> 🆕 **ArmD 已立案（2026-10-19 21:2x · 用户直令 · 最高优先）**：`BAIZE_VISION_TASK.md` 顶部新块。**ArmD = 四变量**（数据 + epoch + LR + min_lr）：
+> ①**数据** = ArmC 的 6 源之三（GPIC 8000 + CC12M 1100 + Amshaker 2250 = 11,350 shards）**+ 新三套**（WebMix-38M ~38.8M pairs / wit_base ~6.48M / InternVL-SA1B ~22.4M，均 10-16~10-17 下满）；
+> ②**3 epoch**（ArmC 是 4 epoch/57,250 步；步数须按新 pair 总量重算，**须先报数再起训**）；
+> ③**LR 2e-3**（ArmC 1e-3）；④**min_lr 2e-5**（ArmC 1e-5）；cosine 保持；
+> **其余全部沿用 ArmC**：open_clip ViT-B/16 224、AIMv2-style(InfoNCE 1.0 + masked-patch-MSE 1.0, mask 0.6)、**wd 0.01（ArmC 值，不是 ArmB 的 0.1）**、GBS 8192/MBS 512/accum 2、warmup **2000 不变**、AdamW(0.9,0.98) bf16、seed 1234、save-every 10000/keep 2。
+> 输出目录 **`armD_20261019_aimv2_openclip_vitb16_224`**（独立，不覆盖 ArmB/ArmC）。
+> 🔴 **前置阻断（必须先解决）**：**WebMix-38M 与 wit_base 是 parquet，训练脚本只吃 tar**（`data.py::build_mixed_loader` 只认 tar 内 `txt` / `json.caption`）。处置二选一：**A（推荐）** 给 `data.py` 加 parquet 直读分支（省 2.2TB 转码空间，属训练侧改动须列 diff 并披露）；**B** 用**已有** `prep_data.py` 转 tar（但 `/home` 96%、`/nas_train` 85%，须先确认 ≥2.3TB 余量）。🚫 禁止把 parquet 路径直塞 `--data`（`empty_check=False` 会静默跑空）。
+> ⚠️ **warmup 交互须录入报告**：LR 翻倍但 warmup 仍 2000 步（用户令"其它不变"）⇒ warmup 段等效 LR 也翻倍；若 500 步内 loss 爆炸/nan，**停下报 blocker，不自行改 warmup**。
+> ⚠️ **多变量披露**：ArmD vs ArmC 的任何 Δ 不得归因单一变量（同 ArmC 两变量框口径）。
+> 📌 **四阶段链**（串行）：训练 → ②ProtB → ③MLLM 三阶段(Stage-1 2500 / 1.5 LoRA 20000 / 2 3500) → ④12 集；**④必须用离线缓存模式**（两处缓存指 `/tmp` + `HF_HUB_OFFLINE=1` + **不走代理**）—— ArmC 当年 8/12 MISSING 的教训。⑤ 报告 `report_vision_armD_20261019_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §14`。
+> ✅ **落地条件**：`.12` 8 卡已全空（ArmC 闭环确认 0MiB）；pretrain 在 `.29`（预计 10-20 ~02:50 收尾），**与本线无冲突**。
+> 📦 体积：TASK 已滚归档 ArmC 块 → `ARCHIVE_OPERATOR_VISION.md`，**TASK 31,903B（≤32KB ✓）**。
+
+> ✅ **ArmC 全链路 DONE（wake #172, 2026-10-19 19:46）** — 详见 `run/reports/report_vision_armC_20261018_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §13` + `ARCHIVE_OPERATOR_VISION.md`。要点：**两变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01）；①训练 57,250 步 ✓ ②ProtB lp 62.332±0.014 / 5-NN 54.718（vs ArmB 62.093/58.102）③MLLM 三阶段 ✓ ④**12/12 DONE，avg(除 MME) 25.78% vs ArmB 26.10% = Δ−0.32pp，裁定不可分辨**；逐集 Δ 全在 ±2pp 内（5 升 6 降）。⏭ **已被 ArmD 承接**（见上）。
+ > 📦 ArmB 全程（2026-10-17 09:1x ~ 10-18 07:55，wake #128~#145）+ 10-14~16 全天流水已归档 → `daily-memories-vision/2026-10-1{7,8}.md` + `ARCHIVE_OPERATOR_VISION.md`；**结论**：ArmB 训练 57,250 步健康（0.85–0.87 it/s）、ProtB lp 62.093 / 5-NN 58.102、MLLM 12 集 26.10%、报告 `report_vision_armB_mllm_stage4_zh.html` + `§12`。需要时再读。
  > 📦 2026-10-18 15:12（wake #151 Stage-2 DONE+切ArmB768塔+12集首跑启动）已归档 → daily-memories-vision/2026-10-18.md；**结论**：Stage-2 DONE(15.3min,loss1.4779)；lmms-eval加vision_backend开关；ai2d冒烟PASS；12集首跑@15:12启动(后证实FAILED,见#152)。
- > 📦 2026-10-18 08:25~13:53（wake #146~#150: ArmB训完57250步+ProtB评测+Stage-1 DONE+Stage-1.5 DONE 86.1min+Stage-2启动）已归档 → daily-memories-vision/2026-10-18.md。
- > 📦 2026-10-18 00:50~06:5x（wake #141~#145: ArmB训练监控 step35440→53740→57250健康,0.86-0.87 it/s,07:55训完）已归档 → daily-memories-vision/2026-10-18.md。
  > 📦 2026-10-17 23:37（wake #140: ArmB step31480(55%)健康,ETA~07:50 10-18）已归档 → daily-memories-vision/2026-10-17.md。
 > 📦 2026-10-17 21:1x~19:5x（🔄 ArmB 监控 · wake #136~#139）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step15960→27540 健康, 0.85-0.87 it/s, ckpt@20000+10000已存, P1 ArmA 报告交付, ETA~08:00 10-18。
 > 📦 2026-10-17 14:5x~17:27（🔄 ArmB 监控 · wake #133~#135）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step4540→12120 健康, P1 ArmA 中文报告交付(commit 2f15f88e), 0.86 it/s 稳态, checkpoint_10000 已存。

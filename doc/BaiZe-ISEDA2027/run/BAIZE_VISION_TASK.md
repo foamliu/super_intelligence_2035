@@ -1,52 +1,88 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-19 21:2x（🚀 **ArmD：数据扩到 6 源 + 3 epoch + LR 2e-3 / min_lr 2e-5**）· 用户直令 · **最高优先**（覆盖 ArmC 块的"idle"状态）
+
+> 用户令（原文）：「vision: 启动 ArmD。数据：ArmC数据+新下载的三个数据集 -> 3 epoches。学习率: LR=2e-3, min_LR = 2e-5, cosine。其它跟 ArmC一致不变。」
+> 已确认（用户答）：「对，就是 **WebMix-38M + wit_base + InternVL-SA1B** 这三套（纳入 ArmC 的 GPIC8000+CC12M+Amshaker 后一起训）」
+
+#### 0. 配方（ArmD vs ArmC，逐项标注是否变量）
+
+| 项 | ArmC（基线） | **ArmD（本次）** | 变量? |
+|:--|:--|:--|:--|
+| 视觉塔 | open_clip ViT-B/16 224（86.2M） | 同左 | 否 |
+| 目标 | AIMv2-style：InfoNCE 1.0 + masked-patch-MSE 1.0，mask 0.6 | 同左 | 否 |
+| **数据** | GPIC 8000 + CC12M 1100 + Amshaker 2250 = **11,350 shards** | 同左 **+ WebMix-38M + wit_base + InternVL-SA1B** = **变量①** | **是** |
+| **epoch / 步数** | 4 epoch = **57,250 步** | **3 epoch**（步数须按新数据量重算，见 §2） | **是** |
+| LR | 1e-3 | **2e-3** | **是** |
+| scheduler | cosine | **cosine**（保持） | 否 |
+| min_lr | 1e-5 | **2e-5** | **是** |
+| warmup | 2000 | **2000（不变）** ⚠️ 见 §3 | 否 |
+| GBS / MBS / accum | 8192 / 512 / 2（OOM 回退 4096/256） | 同左 | 否 |
+| wd / betas / 精度 | **0.01** / (0.9,0.98) / bf16 / grad_clip 1.0 | **同左（沿用 ArmC，不回退到 ArmB 的 0.1）** | 否 |
+| seed / save | 1234 / save-every 10000 / keep 2 | 同左 | 否 |
+| 输出目录 | `armC_20261018_aimv2_openclip_vitb16_224` | **`armD_20261019_aimv2_openclip_vitb16_224`**（独立，🚫 不覆盖 ArmB/ArmC） | — |
+
+> ⚠️ **ArmD = 四变量改动**（数据 + epoch + LR + min_lr）。**报告中不得把 ArmD vs ArmC 的任何 Δ 归因于单一变量**，与 ArmC 的两变量披露框同等对待。
+> ⚠️ **wd 必须保持 0.01（ArmC 值）**，不是 ArmB 的 0.1 —— "其它跟 ArmC 一致" 的准确读法。
+
+#### 1. 🔴 **前置阻断：两套新数据集是 parquet，训练脚本只吃 tar**（必须先解决，否则起不了）
+
+实测格式（`DATA_LEDGER.md`）：
+
+| 数据集 | 落盘 | 物理格式 | 训练脚本兼容性 |
+|:--|:--|:--|:--|
+| MVRL/WebMix-38M | `/nas_user/app.e0031982/datasets/MVRL/WebMix-38M/` · 3886 parquet / 1.9TB / ~38.8M pairs | **parquet** | ❌ 需转换 |
+| VedaLabs/wit_base | `/nas_user/app.e0031982/datasets/` · 330 parquet / 287GB / ~6.48M pairs | **parquet** | ❌ 需转换 |
+| hanlincs/InternVL-SA1B-Caption-WebDataset | `/nas_user/app.e0031982/datasets/` · 2000 tar / 1.5TB / ~22.4M pairs | **tar (wds)** | ✅ 直读 |
+
+**`data.py::build_mixed_loader` 只认 tar 内 `txt` 或 `json`+`caption` 字段**，不读 parquet。
+
+**处置（A→B 顺序，A 优先，因为磁盘紧张）**：
+- **A（推荐，零转码、省 2.2TB）**：给 `data.py` 加 **parquet 直读分支**（在 `build_mixed_loader` 里按扩展名分流，用 pyarrow 逐 row-group 读 `image.bytes` + `caption` 列）。**属训练侧代码改动，须在回报里列 diff 并在报告披露**。
+- **B**：用 `prep_data.py`（**已有**，正是 parquet→wds tar 工具，`--src/--out/--max/--shard`）转成 tar。⚠️ **`/home` 已 96%、`/nas_train` 85%** ⇒ **必须先确认落地盘有 ≥2.3TB 余量再动手**；余量不足则走 A。
+- **🚫 禁止**：把 parquet 路径直接塞进 `--data` 让训练静默跑空；`empty_check=False` 会把"0 样本"吞掉而不报错。
+
+#### 2. 步数计算（3 epoch，必须先报数再起训）
+- 先用实测 pair 数算出 `总 pairs = 11350 shards 对应 pairs + WebMix 38.8M + wit_base 6.48M + InternVL 22.4M`；**不得沿用 shard 数当 pair 数**。
+- `steps = ceil(3 × 总pairs / GBS)`；GBS=8192；OOM 回退 GBS=4096 时步数 ×2。**报出实际值后才起训**。
+
+#### 3. ⚠️ warmup 与 LR 的交互（须如实记录，不擅自改）
+- LR 翻倍（1e-3→2e-3）但 warmup 仍 2000 步 ⇒ **warmup 期间等效学习率也翻倍**，峰值 2e-3 到达得更陡。用户令「其它跟 ArmC 一致不变」⇒ **保持 2000 不动**，但在报告与回报里**写明这一交互**（若起训 500 步内出现 loss 爆炸/nan，先停下报 blocker，🚫 不自行改 warmup）。
+
+#### 4. 执行顺序（严格串行，与 ArmC chain 同构）
+1. **前置**：`.12` 8 卡确认空闲（ArmC 已闭环，armC #173 idle 已确认 0MiB）→ 查 pretrain 是否在 `.12`（应无，pretrain 在 `.29`）
+2. **数据前置**：解决 §1 → 生成 `data_snapshot_20261019_armD.txt`（6 源合并清单，逐行绝对路径）→ **核验 shard 数 = 11350 + 新三套实际文件数**，并在日志打印
+3. **训练**：`run_armD_openclip.sh`（复制 `run_armC_openclip.sh` 改：OUT 目录名、`--lr 2e-3`、`--min-lr 2e-5`、`--steps <3epoch值>`、`--data` 六源、其余逐字不动）→ `setsid` 后台 + 日志 `/tmp/armD_openclip_train.log`
+4. **② ProtB**：`run_armD_protb_eval.sh`（同 ArmC 口径，输出 `armD_20261019_protb_vitb16_224_results.json`）
+5. **③ MLLM 三阶段**：Stage-1(2500) → Stage-1.5 LoRA(20000) → Stage-2(3500)，**仅换视觉塔 ckpt**
+6. **④ 12 集评测**：**必须离线缓存模式**（`rerun_failed_benchmarks_armC_offline.sh` 同类做法：两处缓存指 `/tmp`、`HF_HUB_OFFLINE=1`、**不走代理**）—— 这是 ArmC 当时 8/12 MISSING 的教训，**别再踩**
+7. **⑤ 报告**：`generate_armD_mllm_report.py` → `report_vision_armD_20261019_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §14`
+
+#### 5. 回报要求（起训后 ≤30min 内）
+- 数据前置解法（A 还是 B）+ 实际 shard/pair 数 + 落地盘余量
+- 3 epoch 实际步数、GBS、warmup、预计耗时（按 ArmC 实测 0.78 it/s 外推）
+- 多变量披露声明（数据/epoch/LR/min_lr 四项）
+- 首 ckpt 时间、8 卡显存峰值
+
+#### 6. 边界
+- ✅ **只**改：`--lr`、`--min-lr`、`--steps`、`--data`、`--output-dir`（+ §1 的数据侧改动）
+- 🚫 不改：视觉塔、目标函数、mask 0.6、GBS/MBS、**wd 0.01**、seed、save 策略
+- 🚫 不覆盖 `armB_*` / `armC_20261018_*` 任何产物
+- 🚫 不杀 `.29` 的 pretrain（decay 预计 10-20 ~02:50 收尾）
+- 🚫 不动 harness 的 `.12` 侧 relay（双 relay 问题待运维裁定）
+
+---
+
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
 
 
-### 🆕 运维指令 · 2026-10-18 17:1x（🚀 **ArmC（2026-10-18）：min_lr 1e-4→1e-5 + weight decay 0.1→0.01 的 4 阶段实验**）· 用户直令 · 最高优先
+### 📦 运维指令 · 2026-10-18 17:1x（ArmC：min_lr 1e-4→1e-5 + wd 0.1→0.01 · 4 阶段）— 已归档
 
-> 用户令：「vision：开启 ArmC。跟 ArmB 相比，只有一个变量：学习率。LR=1e-3，min_LR=1e-5。1.训练；2.评测 ProtB；3.MLLM 对齐；4.MLLM 12 集评测。」
-> **追加令（同日）**：「加个变量：weight decay 0.1 -> 0.01」⇒ **ArmC 现在是两个变量**（min_lr + weight decay），不是单变量消融；报告必须如实披露。
-> **ArmB 实际配置（已核对）**：open_clip ViT-B/16 224；AIMv2-style（InfoNCE 1.0 + masked patch MSE 1.0，mask 0.6）；GPIC 8000 + CC12M 1100 + Amshaker 2250 = 11,350 shards；GBS 8192/MBS 512/accum 2（OOM 回退 4096/256）；warmup 2000；4 epoch/**57,250 步**；AdamW wd0.1 betas(0.9,0.98)、bf16、grad_clip 1.0、seed 1234；save 10k/keep 2；**LR 1e-3 / min_lr 1e-4**。
-> **ArmC（2026-10-18，注意不是 10-13 的旧 ArmC）** = **min_lr 1e-4 → 1e-5** + **weight decay 0.1 → 0.01**；`--lr 1e-3`、warmup、4 epoch/57250、GBS/MBS、数据、目标、seed 全部不变。**两个变量**：min_lr + wd；报告中不得把 ArmC vs ArmB 的差异归因于单一变量。
-> ⚠️ 旧 10-13 ArmC（154500 步，ProtB 68.25%）只作历史参考；**本 run 用独立目录 `armC_20261018_*`，不覆盖、不比较同名目录**。
-> ⚠️ 若发现 ArmB 实际值与上表不符，只允许改 LR/min_lr 到 **1e-3/1e-5**、wd 到 **0.01**，其余照 ArmB 原值，并在回报里列 diff。
-
-**① 训练 ArmC（串行第 1 步）**
-- 复制 `run_armB_openclip.sh` → `run_armC_openclip.sh`，只改：`OUT=.../armC_20261018_aimv2_openclip_vitb16_224`、`--lr 1e-3 --min-lr 1e-5 --wd 0.01`；其余参数/脚本原样。
-- `setsid bash run_armC_openclip.sh > /tmp/armC_openclip_train.log 2>&1 < /dev/null &`
-- 判据：8 卡 100%；log 打印 `lr=1e-3 ... min_lr=1e-5 ... wd=0.01`；57250 步；ckpt 10k/20k/…；ETA 参考 ArmB **~18.4h**。
-- 🚫 不 resume ArmB、不覆盖 `armB_*` 目录、不改数据/目标/GBS/seed。
-
-**② ProtB（训练完立即）**
-- 复制 `run_armB_protb_eval.sh` → `run_armC_protb_eval.sh`，只把 ckpt 指向 `armC_20261018_.../open_clip_state_dict.pt`；3 seeds、同 Protocol B、同 IN-1k 1.28M/50k。
-- 产出 `vision/armC_20261018_protb_vitb16_224_results.json`；报 lp/5-NN；对比 ArmB **62.093/58.102**、④-4ep **67.05**。
-
-**③ MLLM 对齐（ProtB 完成后）**
-- 复用 ArmB 三阶段脚本，只把视觉塔 ckpt 换成 ArmC、输出目录改 `*_armC_20261018`：
-  - Stage-1：projector 768→2560，2500 步（ArmB 6.7min）
-  - Stage-1.5：LoRA r=64/α128 + proj，20,000 步（ArmB 86min）
-  - Stage-2：3500 步，LLaVA-NeXT-780k（ArmB 15.3min）
-- 🚫 不改 LLaVA-OV1.5 配方/LoRA/数据/步数；只换塔。
-
-**④ MLLM 12 集（对齐完成后）**
-- 用 `lmms_eval` ArmC backend（新增 `vision_backend=armC` / `create_baize_vitb16_768` ArmC ckpt），`results_dir=mllm_eval_results_armC_20261018`，12 集同 ArmB：batch32、无 limit。
-- 报平均（除 MME）+ 每集 Δ；对比 **ArmB 26.10%**、④-4ep 25.68%、RiCEViT 60.08%；沿用 ArmB 预注册判据（≥30% 强成功 / >24% 且 DocVQA/ChartQA/OCRBench 任一 +10pp 成功 / 22–26% 不可分辨 / ≤22% 失败），ArmC vs ArmB 的 Δ 只作描述，不事后改判据。
-- 报告 `reports/report_vision_armC_20261018_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §13` + MEMORY；commit `vision armC:`。
-
-**⑤ 纪律**
-- 严格串行：①→②→③→④；每步完成再下一步。
-- **只有 min_lr（1e-4→1e-5）+ weight decay（0.1→0.01）是变量**；其他任何差异都要在报告里列 diff 并说明；**不得写成单变量消融**。
-- 不占 `.29`、不碰 data/pretrain/harness 线；`.12` 8 卡由 ArmC 独占。
-- ETA：训练 ~18.4h + ProtB ~1h + MLLM 三阶段 ~1.8h + 12 集 ~1.5h ≈ **22–24h**。
-
-> 📦 运维指令「P0：`.12` 空档跑 ArmB→MLLM 三阶段→lmms-eval 12 集」（2026-10-18）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：ArmB→MLLM 12集DONE，平均(除MME)=26.10% vs ④-4ep 25.68%，裁定**不可分辨(边界值)**；报告 report_vision_armB_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§12。需要时再读。
-
-> 📦 运维指令「vision 回放 1/2/3 epoch」+ ⛔作废（2026-10-18）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：不做（ArmB `--keep-ckpts 2` 已滚动删除 1/2/3ep ckpt，重训≈27.6h 不划算）；仅保留事实 1ep≈14313/2ep≈28626/3ep≈42939。需要时再读。
+> **已闭合**（ArmC 全链路 DONE 2026-10-19）。原文移至 `run/ARCHIVE_OPERATOR_VISION.md`（2026-10-19 归档）。**结论**：ArmC = 两变量；训练 57250 步 ✓ / ProtB lp 62.332·5-NN 54.718 / MLLM 三阶段 ✓ / 12 集 12/12 DONE avg 25.78%（vs ArmB 26.10%，**不可分辨**）。ArmC 配置已被 ArmD 承接（见顶部 ArmD 块，**wd 0.01 沿用**）。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-17 12:4x（⚔️ 立即 kill `.12` pretrain 进程 → 起 ArmB；**改 4 epoch** → 训完评 ProtB）· 用户直令 · 最高优先
 > ⏩ 已执行并归档（杀 pretrain → ArmB 4-epoch）已完成；详情 → `daily-memories-vision/2026-10-17.md`。

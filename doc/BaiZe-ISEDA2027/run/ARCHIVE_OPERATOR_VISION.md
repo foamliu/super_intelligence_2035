@@ -1868,3 +1868,46 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 - **风险**：已有 2 点数据，趋势不明朗。
 
 > **总结排序**：④ epoch 缩放 > V2 全量数据 > (a) MLLM 前置（CPU 并行）> (e) 论文（CPU 并行）> (b) w384 > (d) 336 > (c) C1-lp。前 4 项可并行（④/V2 占 GPU，a/e 纯 CPU）。
+
+
+<!-- archived from BAIZE_VISION_TASK.md on 2026-10-19 (ArmC block closed; superseded by ArmD block) -->
+### 🆕 运维指令 · 2026-10-18 17:1x（🚀 **ArmC（2026-10-18）：min_lr 1e-4→1e-5 + weight decay 0.1→0.01 的 4 阶段实验**）· 用户直令 · 最高优先
+
+> 用户令：「vision：开启 ArmC。跟 ArmB 相比，只有一个变量：学习率。LR=1e-3，min_LR=1e-5。1.训练；2.评测 ProtB；3.MLLM 对齐；4.MLLM 12 集评测。」
+> **追加令（同日）**：「加个变量：weight decay 0.1 -> 0.01」⇒ **ArmC 现在是两个变量**（min_lr + weight decay），不是单变量消融；报告必须如实披露。
+> **ArmB 实际配置（已核对）**：open_clip ViT-B/16 224；AIMv2-style（InfoNCE 1.0 + masked patch MSE 1.0，mask 0.6）；GPIC 8000 + CC12M 1100 + Amshaker 2250 = 11,350 shards；GBS 8192/MBS 512/accum 2（OOM 回退 4096/256）；warmup 2000；4 epoch/**57,250 步**；AdamW wd0.1 betas(0.9,0.98)、bf16、grad_clip 1.0、seed 1234；save 10k/keep 2；**LR 1e-3 / min_lr 1e-4**。
+> **ArmC（2026-10-18，注意不是 10-13 的旧 ArmC）** = **min_lr 1e-4 → 1e-5** + **weight decay 0.1 → 0.01**；`--lr 1e-3`、warmup、4 epoch/57250、GBS/MBS、数据、目标、seed 全部不变。**两个变量**：min_lr + wd；报告中不得把 ArmC vs ArmB 的差异归因于单一变量。
+> ⚠️ 旧 10-13 ArmC（154500 步，ProtB 68.25%）只作历史参考；**本 run 用独立目录 `armC_20261018_*`，不覆盖、不比较同名目录**。
+> ⚠️ 若发现 ArmB 实际值与上表不符，只允许改 LR/min_lr 到 **1e-3/1e-5**、wd 到 **0.01**，其余照 ArmB 原值，并在回报里列 diff。
+
+**① 训练 ArmC（串行第 1 步）**
+- 复制 `run_armB_openclip.sh` → `run_armC_openclip.sh`，只改：`OUT=.../armC_20261018_aimv2_openclip_vitb16_224`、`--lr 1e-3 --min-lr 1e-5 --wd 0.01`；其余参数/脚本原样。
+- `setsid bash run_armC_openclip.sh > /tmp/armC_openclip_train.log 2>&1 < /dev/null &`
+- 判据：8 卡 100%；log 打印 `lr=1e-3 ... min_lr=1e-5 ... wd=0.01`；57250 步；ckpt 10k/20k/…；ETA 参考 ArmB **~18.4h**。
+- 🚫 不 resume ArmB、不覆盖 `armB_*` 目录、不改数据/目标/GBS/seed。
+
+**② ProtB（训练完立即）**
+- 复制 `run_armB_protb_eval.sh` → `run_armC_protb_eval.sh`，只把 ckpt 指向 `armC_20261018_.../open_clip_state_dict.pt`；3 seeds、同 Protocol B、同 IN-1k 1.28M/50k。
+- 产出 `vision/armC_20261018_protb_vitb16_224_results.json`；报 lp/5-NN；对比 ArmB **62.093/58.102**、④-4ep **67.05**。
+
+**③ MLLM 对齐（ProtB 完成后）**
+- 复用 ArmB 三阶段脚本，只把视觉塔 ckpt 换成 ArmC、输出目录改 `*_armC_20261018`：
+  - Stage-1：projector 768→2560，2500 步（ArmB 6.7min）
+  - Stage-1.5：LoRA r=64/α128 + proj，20,000 步（ArmB 86min）
+  - Stage-2：3500 步，LLaVA-NeXT-780k（ArmB 15.3min）
+- 🚫 不改 LLaVA-OV1.5 配方/LoRA/数据/步数；只换塔。
+
+**④ MLLM 12 集（对齐完成后）**
+- 用 `lmms_eval` ArmC backend（新增 `vision_backend=armC` / `create_baize_vitb16_768` ArmC ckpt），`results_dir=mllm_eval_results_armC_20261018`，12 集同 ArmB：batch32、无 limit。
+- 报平均（除 MME）+ 每集 Δ；对比 **ArmB 26.10%**、④-4ep 25.68%、RiCEViT 60.08%；沿用 ArmB 预注册判据（≥30% 强成功 / >24% 且 DocVQA/ChartQA/OCRBench 任一 +10pp 成功 / 22–26% 不可分辨 / ≤22% 失败），ArmC vs ArmB 的 Δ 只作描述，不事后改判据。
+- 报告 `reports/report_vision_armC_20261018_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §13` + MEMORY；commit `vision armC:`。
+
+**⑤ 纪律**
+- 严格串行：①→②→③→④；每步完成再下一步。
+- **只有 min_lr（1e-4→1e-5）+ weight decay（0.1→0.01）是变量**；其他任何差异都要在报告里列 diff 并说明；**不得写成单变量消融**。
+- 不占 `.29`、不碰 data/pretrain/harness 线；`.12` 8 卡由 ArmC 独占。
+- ETA：训练 ~18.4h + ProtB ~1h + MLLM 三阶段 ~1.8h + 12 集 ~1.5h ≈ **22–24h**。
+
+> 📦 运维指令「P0：`.12` 空档跑 ArmB→MLLM 三阶段→lmms-eval 12 集」（2026-10-18）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：ArmB→MLLM 12集DONE，平均(除MME)=26.10% vs ④-4ep 25.68%，裁定**不可分辨(边界值)**；报告 report_vision_armB_mllm_stage4_zh.html + EXPERIMENTS_VISION.md§12。需要时再读。
+
+> 📦 运维指令「vision 回放 1/2/3 epoch」+ ⛔作废（2026-10-18）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：不做（ArmB `--keep-ckpts 2` 已滚动删除 1/2/3ep ckpt，重训≈27.6h 不划算）；仅保留事实 1ep≈14313/2ep≈28626/3ep≈42939。需要时再读。
