@@ -8,11 +8,11 @@ Handwriting Recognition(Total 50): 0
 Digit String Recognition(Total 50): 0
 Non-Semantic Text Recognition(Total 50): 0
 ----------------------------------------------------------------
-Scene Text-centric VQA(Total 200): 8
+Scene Text-centric VQA(Total 200): 4
 ----------------------------------------------------------------
-Doc-oriented VQA(Total 200): 8
+Doc-oriented VQA(Total 200): 14
 ----------------------------------------------------------------
 Key Information Extraction(Total 200): 0
 Handwritten Mathematical Expression Recognition(Total 100): 0
 --------------------- Final Score ------------------------------
-Final Score(Total 1000): 16
+Final Score(Total 1000): 18
