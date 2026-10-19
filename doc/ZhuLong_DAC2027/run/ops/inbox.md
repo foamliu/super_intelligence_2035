@@ -1,93 +1,68 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 86 -->
+<!-- RUN_ID: 87 -->
 
-## RUN_ID 86 — **kill r3 regrade 空转进程（用户已授权·严格白名单）** + 立即备份已有结果
+## RUN_ID 87 — 🔴 紧急只读核查：RUN_ID 86 误伤排查（zhulong_loop 是否被杀 + regrade 是否已停）
 
-> 用户决策（2026-10-19 22:3x）：「**① 现在 kill 它**」—— 授权终止 r3 regrade（PID 229615 及其 run_eval/run_on_sandbox 子进程）。
-> **理由**：shard_2/3 的 150s timeout 已完全确认是「执行槽被 `app.t0002147` 占用」导致（85 号复测：8650/8652/8654 仍 BUSY、t0002147 有 74 个 cline 进程），继续跑必然 0 passed，纯空转 3.4h+，且白占唯一可用的 8651。
-> 🔒 **安全边界（防误杀）**：
-> - **只 kill** 命令行同时匹配 `e0031982` **且** 匹配 `run_eval.py|run_on_sandbox.py` 或 PID 恰为 `229615` 的进程；
-> - **绝不** kill `t0002147` / `t0002997` / `zhulong_loop` / `ops_relay` / `cline` 本体 / MCP / RAG；
-> - 逐个核验 cmdline 后才发信号；先 TERM，等待 10s，仍在才 KILL；
-> - 用「括号技巧」`[r]un_eval` 避免 pkill 自匹配；
-> - **kill 前先把已有有效结果备份**（shard_0/1 的 61 passed 必须保住）。
+> 背景：RUN_ID 86 输出因 `MATCH pid=632398 [timeout -k 15 2700 opencode run ...]` 把**整份 ZHULONG_TASK.md 打进输出**，触发中继 20000 字符截断 ⇒ TERM/KILL/DONE 段全部看不到。
+> ⚠️ PID 632398 是 **zhulong loop 的 opencode 编排进程**，本不该 MATCH —— 因其 cmdline 拼接了任务书全文（含 `e0031982` 与 `run_eval`/`run_on_sandbox` 字面）导致误命中。
+> **本块纯只读**：不 kill、不重启、不改配置。**输出严格 `cut`**，防再次爆长度。
 
 ```bash
 set -u
-echo "=== RUN_ID 86 | kill r3 regrade (user-authorized) | $(date '+%F %T') | host=$(hostname) ==="
-EW=/home/app.e0031982/eda_code_eval/2026_1019_145634
-BK=/home/app.e0031982/eda_code_eval/2026_1019_145634_BACKUP_$(date +%H%M%S)
+echo "=== RUN_ID 87 | post-R86 verification (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
 
-echo "[1] kill 前：备份 regrade 输出（保 shard_0/1 的 61 passed）"
-if [ -d "$EW" ]; then
-  du -sh "$EW" 2>/dev/null | cut -c1-80
-  cp -a "$EW" "$BK" 2>/dev/null && echo "  BACKUP_OK -> $BK" || echo "  BACKUP_FAIL（继续，但需人工确认）"
-else
-  echo "  NO_DIR $EW"
-fi
-
-echo ""
-echo "[2] 目标进程逐个核验（白名单：e0031982 + run_eval/run_on_sandbox，或 PID 229615）"
-TARGETS=""
-for p in $(ps -eo pid,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox\.py' | awk '{print $1}'); do
-  cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-120)
-  case "$cmd" in
-    *e0031982*run_eval*|*e0031982*run_on_sandbox*|*run_eval*e0031982*|*run_on_sandbox*e0031982*)
-      echo "  MATCH pid=$p [$cmd]"; TARGETS="$TARGETS $p" ;;
-    *) echo "  SKIP  pid=$p [$cmd]（非本线，不动）" ;;
-  esac
-done
-if [ -e /proc/229615 ]; then
-  cmd615=$(tr '\0' ' ' < /proc/229615/cmdline 2>/dev/null | cut -c1-100)
-  echo "  parent pid=229615 [$cmd615]"
-  TARGETS="$TARGETS 229615"
-else
-  echo "  parent pid=229615 已退出"
-fi
-echo "  TARGETS=[$TARGETS]"
-
-echo ""
-echo "[3] TERM（先软杀，给 10s 收尾）"
-if [ -z "${TARGETS// /}" ]; then echo "  无可杀目标（已自行收口）"; else
-  for p in $TARGETS; do kill -TERM "$p" 2>/dev/null && echo "  TERM -> $p" || echo "  TERM-$p-fail"; done
-  for i in 1 2 3 4 5 6 7 8 9 10; do sleep 1; done
-fi
-
-echo ""
-echo "[4] 复查 + 必要 KILL"
-for p in $TARGETS; do
+echo "[1] r3 regrade 目标进程（应全 GONE）"
+for p in 229615 229619 229631 229632 229634 229636; do
   if [ -e /proc/$p ]; then
-    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-100)
-    case "$cmd" in
-      *e0031982*run_eval*|*e0031982*run_on_sandbox*|*run_eval*e0031982*|*run_on_sandbox*e0031982*)
-        kill -KILL "$p" 2>/dev/null && echo "  KILL -> $p（TERM 未生效）" || echo "  KILL-$p-fail" ;;
-      *) echo "  pid=$p cmd 已变，跳过（防误杀）: $cmd" ;;
-    esac
+    echo "  pid=$p ALIVE etime=$(ps -o etimes= -p $p 2>/dev/null | tr -d ' ')s cmd=$(tr '\\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-50)"
   else
-    echo "  pid=$p EXITED（TERM 生效）"
+    echo "  pid=$p GONE"
   fi
 done
 
 echo ""
-echo "[5] 收口后确认（本线 regrade 应全无）"
-ps -eo pid,etimes,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox\.py' | cut -c1-120 || echo "  ✅ 本线 regrade 已无残留"
-echo "  --- 对照组（必须仍活着）---"
-pgrep -f 'zhulong_loop' >/dev/null && echo "  zhulong_loop ALIVE ✅" || echo "  ⚠️ zhulong_loop 不在（本机可能不跑 loop）"
-pgrep -f '[o]ps_relay' >/dev/null && echo "  ops_relay ALIVE ✅" || echo "  ⚠️ ops_relay 不在"
-echo "  t0002147 cline count = $(ps -eo user,args 2>/dev/null | grep -c 't0002147.*cline')（不应被影响）"
+echo "[2] 本线 regrade 残留（应为空）"
+ps -eo pid,args 2>/dev/null | grep -E '[r]un_eval\\.py|[r]un_on_sandbox\\.py' | awk '{print "  ", $1, substr($0, index($0,$2), 60)}' | head -6
 
 echo ""
-echo "[6] 端口状态（kill 后 8651 应释放给后续用）"
-for p in 8650 8651 8652 8654 8655 8656 8657 8658; do
+echo "[3] zhulong_loop 是否存活（关键）"
+LP=$(ps -eo pid,args 2>/dev/null | grep '[z]hulong_loop\\.sh' | awk '{print $1}' | head -3)
+if [ -z "$LP" ]; then echo "  X zhulong_loop 不在（疑被 RUN_ID 86 误杀，需运维重启）"; else
+  for p in $LP; do echo "  OK zhulong_loop pid=$p etime=$(ps -o etimes= -p $p 2>/dev/null | tr -d ' ')s"; done
+fi
+echo "  -- opencode 编排 --"
+ps -eo pid,etimes,args 2>/dev/null | grep '[o]pencode run --auto' | awk '{print "  ", $1, $2, substr($0, index($0,$3), 45)}' | head -3
+if [ -e /proc/632398 ]; then echo "  632398 ALIVE"; else echo "  632398 GONE"; fi
+
+echo ""
+echo "[4] 保命项"
+pgrep -f '[o]ps_relay' >/dev/null && echo "  ops_relay ALIVE OK" || echo "  X ops_relay GONE"
+echo "  8090=$(ss -ltn 2>/dev/null | grep -c ':8090 ') 9006=$(ss -ltn 2>/dev/null | grep -c ':9006 ') (1=LISTEN)"
+
+echo ""
+echo "[5] 备份完好性（61 passed 载体）"
+BK=$(ls -dt /home/app.e0031982/eda_code_eval/2026_1019_145634_BACKUP_* 2>/dev/null | head -1)
+if [ -n "$BK" ]; then echo "  BACKUP=$(basename "$BK")"; du -sh "$BK" 2>/dev/null | cut -c1-40; else echo "  X 无备份"; fi
+for f in success timeout failure total_time; do printf '  %s=' "$f"; cat /home/app.e0031982/eda_code_eval/2026_1019_145634/stats/$f 2>/dev/null | head -1; done
+
+echo ""
+echo "[6] 端口（8655-8658 供 A 方案）"
+for p in 8651 8655 8656 8657 8658; do
   ( out=$(timeout 8 curl -s --max-time 6 -X POST "http://10.129.32.75:$p/v1/run_code" \
-        -H 'Content-Type: application/json' \
-        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 20)
-    if [ -z "$out" ]; then echo "$p BUSY" > /tmp/r86_$p; else echo "$p FREE" > /tmp/r86_$p; fi ) &
+        -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 10)
+    if [ -z "$out" ]; then echo "$p BUSY" > /tmp/r87_$p; else echo "$p FREE" > /tmp/r87_$p; fi ) &
 done
 wait
-for p in 8650 8651 8652 8654 8655 8656 8657 8658; do echo "  $(cat /tmp/r86_$p 2>/dev/null || echo "$p NA")"; rm -f /tmp/r86_$p; done
-echo "=== DONE 86 ==="
+for p in 8651 8655 8656 8657 8658; do echo "  $(cat /tmp/r87_$p 2>/dev/null || echo "$p NA")"; rm -f /tmp/r87_$p; done
+echo "=== DONE 87 ==="
 ```
+
+## RUN_ID 86 — kill r3 regrade 空转进程（用户已授权·严格白名单）— 已执行 22:31:47
+
+> 结果：备份 OK（352M → `..._BACKUP_223148`）；MATCH 229619/229631/229632/229634/229636 + **误 MATCH 632398（loop 的 opencode）**；**输出被截断，TERM/KILL 结果不可见 ⇒ 由 RUN_ID 87 核查**。
+> 🔴 **教训（须写入 AGENTS/任务书）**：kill 白名单不能只看 cmdline 子串 —— loop 的 `opencode run "<任务书全文>"` 会把整份任务书（含 `e0031982`、`run_eval`、`run_on_sandbox` 字面）当参数带入 ⇒ 误命中。**今后一律「显式 PID 白名单 + 人工核验前 80 字符」，且输出必须 `cut`。**
+
+
 
 ## RUN_ID 85 — 只读巡查：r3 regrade 是否已自然收口 + 8655-8658 复测可用性（用户已批路径 A）
 
