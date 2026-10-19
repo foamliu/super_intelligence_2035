@@ -57,7 +57,7 @@ echo "[$(date '+%H:%M:%S')] ARMD_STEPS=$ARMD_STEPS  TOTAL_PAIRS=$TOTAL_PAIRS" | 
 echo "" | tee -a "$LOG"
 echo "[$(date '+%H:%M:%S')] CPU decode smoke test (3 random shards)..." | tee -a "$LOG"
 "$PY" - <<'PYEOF' 2>&1 | tee -a "$LOG"
-import random, sys, tarfile, io
+import random, sys, tarfile, io, json
 from PIL import Image
 snap="data_snapshot_20261019_armD.txt"
 paths=[l.strip() for l in open(snap) if l.strip()]
@@ -68,14 +68,21 @@ for p in picks:
         tf=tarfile.open(p, 'r')
         names=tf.getnames()
         txts=[n for n in names if n.endswith('.txt')]
+        jsons=[n for n in names if n.endswith('.json')]
         imgs=[n for n in names if n.endswith(('.jpg','.png','.img','.jpeg'))]
-        # decode first image + first caption
-        if imgs and txts:
+        # decode first image + first caption (wds uses .txt; GPIC uses .json with
+        # a 'caption' field — data.py::build_mixed_loader handles BOTH, so accept
+        # either; only flag a shard if it has images but NEITHER caption format).
+        if imgs and (txts or jsons):
             im=Image.open(io.BytesIO(tf.extractfile(imgs[0]).read())).convert('RGB')
-            cap=tf.extractfile(txts[0]).read().decode('utf-8','ignore')[:80]
-            print(f"OK {p.split('/')[-1]}: {len(names)} members, {len(txts)} txt, {len(imgs)} img, img={im.size}, cap='{cap}'")
+            if txts:
+                cap=tf.extractfile(txts[0]).read().decode('utf-8','ignore')[:80]
+            else:
+                meta=json.loads(tf.extractfile(jsons[0]).read())
+                cap=(meta.get('caption') or '')[:80]
+            print(f"OK {p.split('/')[-1]}: {len(names)} members, {len(txts)} txt, {len(jsons)} json, {len(imgs)} img, img={im.size}, cap='{cap}'")
         else:
-            print(f"WARN {p}: txts={len(txts)} imgs={len(imgs)}"); ok=False
+            print(f"WARN {p}: txts={len(txts)} jsons={len(jsons)} imgs={len(imgs)}"); ok=False
         tf.close()
     except Exception as e:
         print(f"FAIL {p}: {e}"); ok=False

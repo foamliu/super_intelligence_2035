@@ -10,14 +10,16 @@ WAITING: 1
 > ③**LR 2e-3**（ArmC 1e-3）；④**min_lr 2e-5**（ArmC 1e-5）；cosine 保持；
 > **其余全部沿用 ArmC**：open_clip ViT-B/16 224、AIMv2-style(InfoNCE 1.0 + masked-patch-MSE 1.0, mask 0.6)、**wd 0.01（ArmC 值，不是 ArmB 的 0.1）**、GBS 8192/MBS 512/accum 2、warmup **2000 不变**、AdamW(0.9,0.98) bf16、seed 1234、save-every 10000/keep 2。
 > 输出目录 **`armD_20261019_aimv2_openclip_vitb16_224`**（独立，不覆盖 ArmB/ArmC）。
-> ✅ **前置阻断已解除（选 B · parquet→tar 转码）**：磁盘实测充足（/nas_user 25T+ /nas_train 27T，运维"磁盘紧"笔记已 stale）；两 parquet 源 caption 列不同（WebMix `caption` / wit `caption_attribution_description`）→ 选 B（训练脚本 0 改动最安全）。`prep_data_armD.py` 已写+冒烟全过（WebMix 10000 对 0 跳过；wit 17798 留/1831 空过滤，jpg/png/img 混扩 `sniff_ext` 全收）。
-> 🚀 **转码进行中 + watcher 已派（10-19 22:38, PID 2948993）**：wit_base **DONE 294 tars**；WebMix-38M 8 worker 跑至 ~456 tars（ETA ~40min）→ `converted_armD/{webmix38m,wit_base}/`；InternVL-SA1B 用 `webdataset/` 子目录 1000 tars（`data/` 仅图须忽略）。`run_armD_launch_when_ready.sh` 自动[等转码完→`build_armD_snapshot.sh` 建 6 源快照+数 pair+算 3ep 步→CPU 解码冒烟→`run_armD_openclip.sh` 起训(lr 2e-3/min_lr 2e-5/wd 0.01/warmup 2000/GBS 8192/seed 1234)→`run_armD_full_chain.sh`(②ProtB→③MLLM stage1/15/2_armD.py→④12集 `launch_12benchmarks_armD_offline.sh` 用 /tmp 缓存修 ArmC 8/12 MISSING 教训)]。backend `armD` 已注册入 `run_lmms_eval.py`+`lmms_eval_baize_llava.py`。日志 `/tmp/armD_{launch,openclip_train,full_chain,convert_*}.log`。
-> ⏭ **下次唤醒**：查 `/tmp/armD_openclip_train.log` 是否已起训 + 500 步内 loss 稳否（warmup 段 LR 翻倍须留意，若 nan/爆炸停下报 blocker 不自行改 warmup）；起训后 **≤30min 内回报**（数据方案 B / 实际 shard+pair 数 / 步数 / GBS / warmup / ETA / **四变量披露** data+epoch+LR+min_lr）。⚠️ MEMORY 已逼近 32KB，下次唤醒顺手滚 1-2 条 📦 旧块到 daily-memories-vision/。
+> ✅ **前置阻断已解除（选 B · parquet→tar 转码）**：磁盘实测充足（/nas_user 22T /nas_train 26T 余量）；两 parquet 源 caption 列不同（WebMix `caption` / wit `caption_attribution_description`）→ 选 B（训练脚本 0 改动最安全）。`prep_data_armD.py` 转码全过：WebMix-38M 1945 tars(~38.8M 对,0 skip) / wit_base 294 tars(~5.85M 留,~630k 空过滤)。
+> 🚀 **ArmD TRAINING RUNNING（wake #174, 2026-10-19 23:54:10 起训）**：6 源快照 `data_snapshot_20261019_armD.txt` = 14,589 shards（GPIC8000+CC12M1100+Amshaker2250=11350 + InternVL1000 + WebMix1945 + wit294）；**总 pairs=173,124,248**（ArmC 三源 117,305,600 固定 + 新三源 tar -tf 实数 55,818,648）；**3-epoch steps=63,400**（ceil(3×173,124,248/8192)）。`run_armD_openclip.sh` 直起（PID 129169，绕过 launcher 误报的 smoke 门——GPIC 用 `.json` caption 非 `.txt`，`build_mixed_loader` 本就兼容，已修 launcher smoke 接受 json）。lr=2e-3 min_lr=2e-5 wd=0.01 warmup=2000 mask=0.6 GBS=8192 seed=1234。step 20→80 loss 9.43→8.51 单调降无 nan，0.75 it/s→ETA~23h，peak 50.3GB（8 卡 80GB 无 OOM 风险）。日志 `/tmp/armD_openclip_train.log`。
+> ⏭ **下次唤醒**：监控 `/tmp/armD_openclip_train.log` 至 500 步确认 warmup 段（LR 翻倍）loss 持续稳；step 10000 首 ckpt 时间；后续交 `run_armD_full_chain.sh`（②ProtB→③MLLM stage1/15/2→④12集离线缓存模式修 ArmC 8/12 MISSING 教训）→⑤报告 `report_vision_armD_20261019_mllm_stage4_zh.html`+`EXPERIMENTS_VISION.md §14`。⚠️ **四变量披露**（data 3src→6src + epoch 4→3 + lr 1e-3→2e-3 + min_lr 1e-5→2e-5）：ArmD vs ArmC 任何 Δ 不得归因单一变量。⚠️ MEMORY 33.7KB 略超 32KB，下次唤醒顺手滚 R9/R10 converged 块到归档。
 > ⚠️ **warmup 交互须录入报告**：LR 翻倍但 warmup 仍 2000 步（用户令"其它不变"）⇒ warmup 段等效 LR 也翻倍；若 500 步内 loss 爆炸/nan，**停下报 blocker，不自行改 warmup**。
 > ⚠️ **多变量披露**：ArmD vs ArmC 的任何 Δ 不得归因单一变量（同 ArmC 两变量框口径）。
 > 📌 **四阶段链**（串行）：训练 → ②ProtB → ③MLLM 三阶段(Stage-1 2500 / 1.5 LoRA 20000 / 2 3500) → ④12 集；**④必须用离线缓存模式**（两处缓存指 `/tmp` + `HF_HUB_OFFLINE=1` + **不走代理**）—— ArmC 当年 8/12 MISSING 的教训。⑤ 报告 `report_vision_armD_20261019_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §14`。
 > ✅ **落地条件**：`.12` 8 卡已全空（ArmC 闭环确认 0MiB）；pretrain 在 `.29`（预计 10-20 ~02:50 收尾），**与本线无冲突**。
-> 📦 体积：TASK 已滚归档 ArmC 块 → `ARCHIVE_OPERATOR_VISION.md`，**TASK 31,903B（≤32KB ✓）**。
+> 📦 体积：TASK=29,447B(28.7KB ✓) / MEMORY=32,361B(31.6KB ✓，本轮已滚 R9/R10/R14/E1 converged 块→`ARCHIVE_OPERATOR_VISION.md`「2026-10-19 23:5x 滚动归档」节)。
+>
+> **本唤醒流水 [wake #174, 2026-10-19 23:5x]**：运维令「立即启动 ArmD」。核查发现上一 wake 已建好 6 源快照(14589 shards)+pair 计数(173,124,248)+steps(63,400)与 `run_armD_openclip.sh`，但 launcher 的 CPU smoke 门误判 GPIC `.json` caption 为 `txts=0` → 起训被阻断。实测确认 GPIC 用 json caption 且 `build_mixed_loader` 本就兼容、ArmC 用同批 shard 训成 57250 步 → **直起训练绕过误报门**，并修 launcher smoke 接受 json。`setsid bash run_armD_openclip.sh`（ARMD_STEPS=63400）于 23:54:10 起训；step 20→80 loss 9.43→8.51 单调降无 nan，0.75 it/s ETA~23h，peak 50.3GB/8 卡。**四变量披露：data 3src→6src + epoch 4→3 + lr 1e-3→2e-3 + min_lr 1e-5→2e-5**。
 
 > ✅ **ArmC 全链路 DONE（wake #172, 2026-10-19 19:46）** — 详见 `run/reports/report_vision_armC_20261018_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §13` + `ARCHIVE_OPERATOR_VISION.md`。要点：**两变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01）；①训练 57,250 步 ✓ ②ProtB lp 62.332±0.014 / 5-NN 54.718（vs ArmB 62.093/58.102）③MLLM 三阶段 ✓ ④**12/12 DONE，avg(除 MME) 25.78% vs ArmB 26.10% = Δ−0.32pp，裁定不可分辨**；逐集 Δ 全在 ±2pp 内（5 升 6 降）。⏭ **已被 ArmD 承接**（见上）。
  > 📦 ArmB 全程（2026-10-17 09:1x ~ 10-18 07:55，wake #128~#145）+ 10-14~16 全天流水已归档 → `daily-memories-vision/2026-10-1{7,8}.md` + `ARCHIVE_OPERATOR_VISION.md`；**结论**：ArmB 训练 57,250 步健康（0.85–0.87 it/s）、ProtB lp 62.093 / 5-NN 58.102、MLLM 12 集 26.10%、报告 `report_vision_armB_mllm_stage4_zh.html` + `§12`。需要时再读。
@@ -59,31 +61,19 @@ WAITING: 1
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
-- 阶段一：w512/w768/w1024 lp = 6.10/3.63/1.03% → 选 **w512（126.8M）**。阶段二：w512×108k=55.3M，lp 峰值 7.70%@51.2M。
-- **scaling 拟合**（11 点 R²≈0.94）：幂律 `acc=0.251−0.864·N^−0.090`（渐近 **25.1%**）；外推 20% 需 41 万亿样本 → **本地 ≈118M 上限够不到**。
-- **结论**：瓶颈在数据量与目标函数（AIMv2 ≈120 亿对 vs 我们 649× 少），非架构。
+> 📦 R9 converged 结论（w512 选定 / scaling 幂律 acc=0.251−0.864·N^−0.090 渐近 25.1% / 瓶颈=数据量与目标函数非架构）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`「2026-10-19 23:5x 滚动归档」节。需要时再读。
 
 ## R10 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND10.md）
 
-- 2D 拟合（19 点 R²=0.980）：M 边际效应**全区间为负** ≈ −2.2 lp pp/参数翻倍 → 数据受限区间**加宽塔是负收益**。
-- **w384@15.36M=7.99% 为全部宽度最高**；最优 M 仍在观测下界（71.5M）之下 → 无饱和点、更小塔持续更优。
+> 📦 R10 converged 结论（2D 拟合 M 边际全区间为负 / w384@15.36M=7.99% 全宽最高 / 加宽塔数据受限区间负收益）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`「2026-10-19 23:5x 滚动归档」节。需要时再读。
 
 ## R14 官方仓库调研（✅ 全部完成，2026-10-03）
 
-- CPU-only 源码普查，与 R10-③ denseM 训练并行。产物：`VISION_OFFICIAL_REPOS_SURVEY.md`（①目标②数据③config④结构差异⑤可复用资产⑥LICENSE⑦三清单）。
-- ✅ 两个 ⭐⭐⭐ 仓库源码普查完成（上一 cycle）：**OpenVision**（JAX/TPU，官方 ViT-L/16 = w1024/d24/h16；文本 = BERT-128 + LLaMA3 dense caption + caption decoder + keep_ratio=0.35）；**ml-aim/AIMv2**（仅模型接口，无训练/损失/数据；LICENSE = Apple Sample Code，🔴 不可 COPY）。
-- ✅ 第二阶段（本轮）全部核毕：
-> 📦 [06:45 Oct08] weight-ratio 消融流水已归档 → daily-memories-vision/2026-10-11.md「Archived」节。**结论**：4臂无翻盘，1:1最优，contrast过高显著有害。
-  - **OpenVision2 权重 = ✅ 已放出且真带 caption decoder**：HF `UCSC-VLAA/openvision2-vit-{so400m,large,huge,giant}-patch14-{224,336,384,448}-vision-only`；含 `caption_decoder.safetensors` + `text_decoder_config.json`（concat/prefix-LM，非 CoCa cross-attn）。🔑 官方 = **patch14/d24**，我们 = **patch16/d30**（models.py:170）→ R13 需另建官方结构塔才能 load。
-  - **FastVLM** = ✅ `apple/ml-fastvlm`（FastViTHD 1024² conv-hybrid RepMixer）；LICENSE = Apple Sample Code（research-only，不可抄）。
-  - **MambaEye** = ✅ `usingcolor/MambaEye`（MIT）：纯 Mamba2、**小模型监督分类**（非对比）；**MoE-ViE** = ✅ `facebookresearch/moe_vie`（CC BY-NC 4.0）：CLIP 风格 MoE-ViT，官方权重 HF；**iGVLM(AdaLN)/TuringViT** = 🚫 **未找到官方实现**（iGVLM 同名 IG-VLM 是视频QA；TuringViT 仅项目主页）。
-- 关键产出（对 R13/R12）：官方 MoE-ViE/FastVLM/MambaEye/AIMv2 权重均可作「官方 vs 自研」对照标尺；OpenVision2 官方是 patch14/d24，需建官方结构塔。
+> 📦 R14 官方仓库调研（OpenVision/AIMv2/OpenVision2/FastVLM/MambaEye/MoE-ViE 普查 + LICENSE + patch14/d24 vs 我们 patch16/d30）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`「2026-10-19 23:5x 滚动归档」节；产物 `VISION_OFFICIAL_REPOS_SURVEY.md`。需要时再读。
 
 ## E1 GPIC 规模实测（✅ 完成，2026-10-03）
 
-- 抽 **8 个 tar 均匀抽样**（index 0..1212）实测：**12,537 图文对/tar**（稳定 ±2%）→ **GPIC 全量 ≈ 100.3M**（证官方 100M 卡；旧「5 tar=86M」少计 png 作废）；**已下 1213/8000 tar ≈ 15.2M**。
-- `caption_type` mix：short **45.0%** / medium 45.1% / long 9.0% / tag 1.0% → **可训练 short 子类：全量 ≈45M / 已下 ≈6.8M**。
-- 🔑 **C1 口径定案**：R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态、仍在下载）——与 `r9_scaling.py --local-cap-m default=118.0` 一致；R11-E「同 N」可比区间被压到 ≈6.8M（short 已下 < 18.5M），须如实说明。已回填 `VISION_ARCH_FRONTIER_2026.md §5`。
+> 📦 E1 GPIC 规模实测（12,537 对/tar → 全量≈100.3M / short 45% / C1 口径 18.5M·32M·118M 三类分母）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`「2026-10-19 23:5x 滚动归档」节。需要时再读。
 
 ## R11-L / R11-L2 / caption-weight / R11-F / R11-G / R11-H / R12 / 3-epoch 全部完成
 
