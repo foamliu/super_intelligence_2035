@@ -1,13 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-20 06:4x 🔄 **r4 判 INVALID → 停 r5 → 重启 8090 → 重跑 r4/r5（用户直令）**：
-- **r4 作废依据（运维实测对照）**：`ABL_full_r2_new.log` MCP-32001=**235 次** 时 PASS_RATE 仍 **73.4%**；r4 = **31.0%** 且 99 个 completion 退化成字面量 `"pass"` ⇒ 越过「超时比例临界点」，**数据不可用**。
-- **口径修正**：「680」是**提及次数**（含 agent 自言自语），必须与 `grep -c "MCP error -32001"` 的**真实报错数**分开计。重跑前先采 r4/r5 这两个数与 `ACCESS_RESTRICTED` 数做基线。
-- **8090 = 无状态 wrapper**（main.py + 4 工具透传；重活在 9006 RAG 与 10.129.32.75 沙盒）；`stop.sh && start.sh` 是**历史常规操作**，**无害**（我先前的「有害」判断已撤回）。
-- **执行顺序**：①停 r5（显式 PID TERM）②记录 8090 状态（nlwp/rss/fd/health）→ `bash scripts/stop.sh && bash scripts/start.sh` → 复查新 PID + health + tools ③**起跑前 5 次 MCP 冒烟必须 5/5 通过**（否则停手报 blocker，说明不是 8090 的问题）④起 r4'（配置与 r1–r3 完全一致，**别忘了 `export PYTHON=$PWD/venv/bin/python`**）⑤r4' 跑 30min 内报 `real_MCP_32001` 计数确认回到历史水平 ⑥收口后接 r5'。
-- **5/5 组成**：r1(78.5) + r2(70.9) + r3(81.5) + **r4'** + **r5'**；r4/r5 旧轮次**不进统计**。
-- 🚫 不覆盖 r1–r3 产物与 r3 backup / 不动 t0002147 / 不改 READBACK·OMEGA·BUDGET·LAGGED / **full@pro-cloud 等 5/5 干净后再做**。 -->
+<!-- heartbeat 2026-10-20 06:3x 🔄 **r4 INVALID → 停 r5 → 重启 8090 → r4' 跑中（运维令 06:3x 用户直令）** — 诊断+执行完成：
+- **P0 诊断结论**（详见 daily §[06:1x]）：680 MCP timeout 根因 = **C（沙盒 10.129.32.75 EDA 后端 01:00 崩塌）**。app.log 证实 r4 窗口 443 次 sandbox 执行命中 150s SANDBOX_TIMEOUT(success=False)·cline 60s 先超时→680 次。A(8090)=0·B(9006 RAG max 429ms)=0·D(.29 load 6.45)=0·E(邻居)=0。崩塌持续至 06:18（r5 0.8% success）。
+- **基线**（mention vs real_MCP_32001）：r4 mention=680/real=678/ACCESS_RESTRICTED=659 | r5 mention=268/real=268/ACCESS_RESTRICTED=208。**r4 旧轮次标注 INVALID(680 MCP timeout, 99 gen-fail)·不进 5-run 统计**。
+- **执行 ①-④ 完成**：①停 r5 PID 1296715 + 8 孤儿 cline worker + 5 r5 run_cli.sh 控制器（1297xxx）全清 ②8090 重启 旧 PID 2491123→新 PID 1456348（stop.sh&&start.sh）③MCP 冒烟 5/5 通过（tools/list 8-11ms）+ run_code 冒烟 27ms `executed`（沙盒已恢复！）④**r4' 启动** PID 1462342·batch `2026_1020_063134`·-p 4·fp4·READBACK=none·ports 8666-8670·log `/tmp/ABL_readback_none_retest_r4b.log`·`export PYTHON=$PWD/venv/bin/python`✅。
+- **模板修正**：`~/.zhulong/settings/providers.json` 从 glm-5.2(key 88ea2f23) → deepseek-v4-pro-fp4(key 8aa0785e·maxTokens 16384·baseUrl /cloud/v1)（备份 providers.json.bak-glm5.2-0631）。r4' worker providers.json 确认 model=deepseek-v4-pro-fp4✅。
+- **r4' 早期健康**（06:33）：4 worker 跑中·task-002 已完成 91s·**real_MCP_32001=0**·log 210KB 增长中。**下一步**：下轮唤醒查 r4' 30min real_MCP_32001 计数（须回到历史 ≈235/25万行 量级）→ r4' 收口 → r5' → 5/5 mean±std → 更新论文 → full@pro-cloud。 -->
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
