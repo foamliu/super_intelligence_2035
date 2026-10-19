@@ -1,11 +1,70 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 80 -->
+<!-- RUN_ID: 81 -->
+
+## RUN_ID 81 — kill task 119 stuck cline worker（运维决策·用户指令）
+
+> 用途：诊断 run_cline_script.sh 的 timeout 写法 + 手动 kill task 119 卡死 6h 的 cline worker（PID 2743947/2743948，先核验 cmdline 再 TERM→KILL），让 batch 2680437 自动收口 r2。
+
+```bash
+set -u
+echo "=== RUN_ID 81 | kill task 119 stuck cline worker | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[0] timeout 写法诊断（为何 2500s 超时不生效）"
+grep -nE 'timeout|2500|kill-after|foreground' /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh 2>/dev/null | head -40 || true
+
+echo "[1] worker 目标核验（cmdline + PPID）"
+for p in 2743947 2743948; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-100)
+    ppid=$(awk '/^PPid/{print $2}' /proc/$p/status 2>/dev/null)
+    echo "pid=$p ppid=$ppid cmd=[$cmd]"
+  else
+    echo "pid=$p NOT_ALIVE"
+  fi
+done
+
+echo "[2] kill worker（仅限 cmdline 含 cline/timeout 的 PID；先 TERM 后 KILL）"
+for p in 2743947 2743948; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null)
+    case "$cmd" in
+      *cline*|*timeout*2500*)
+        kill -TERM "$p" 2>/dev/null && echo "TERM -> $p" || echo "TERM-$p-fail"
+        ;;
+      *)
+        echo "pid=$p cmd 不匹配 cline/timeout，跳过（防误杀）"
+        ;;
+    esac
+  fi
+done
+sleep 5
+for p in 2743947 2743948; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null)
+    case "$cmd" in
+      *cline*|*timeout*2500*)
+        kill -KILL "$p" 2>/dev/null && echo "KILL -> $p（TERM 未生效=SIGTERM 被忽略）" || echo "KILL-$p-fail"
+        ;;
+      *) echo "pid=$p 已变/不匹配，跳过";;
+    esac
+  else
+    echo "pid=$p EXITED（TERM 已生效）"
+  fi
+done
+
+echo "[3] 复查 batch 主进程 + 残留 worker"
+sleep 2
+ps -eo pid,ppid,etimes,args | grep -E '[t]imeout 2500|[c]line' | cut -c1-140 || echo "无 timeout/cline worker 残留"
+[ -e /proc/2680437 ] && echo "batch 主进程 2680437 ALIVE（应自动收口 r2）" || echo "batch 2680437 GONE"
+
+echo "=== DONE 81 ==="
+```
 
 ## RUN_ID 80 — 只读 canary：pro-cloud vs pro-fp4 是否都 403
 
 > 用途：用多把已有 key 分别测 `deepseek-v4-pro-cloud`、`deepseek-v4-pro-fp4`、`glm-5.2`、`deepseek-v4-flash`，只打印 HTTP code 与短 body，不打印 key。**只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 80 | pro-cloud vs pro-fp4 canary | $(date '+%F %T') | host=$(hostname) ==="
 E=/nasdata/app.e0031982/code/eda_fastmcp
