@@ -96,24 +96,34 @@ class DeepseekHarnessTB(TBBaseAgent):
         _task_cfg = getattr(environment, "task_env_config", None)
         cwd = str(getattr(_task_cfg, "workdir", None) or "/root")
 
-        # Write a runner script that uses the SDK
+        # Write a runner script that uses the SDK.
+        #
+        # BUG FIX (R452, 2026-10-19): the previous version embedded the
+        # instruction and other string args with shlex.quote(), which produces
+        # SHELL-safe quoting (single-quotes + `'\''` escapes) — NOT valid Python.
+        # For a multi-line instruction containing single quotes this yielded a
+        # Python SyntaxError at `harness.run('...` so every trial exited 1
+        # (Gen4 deepseek-harness 5/5 RuntimeError).  The proven SWE-bench driver
+        # (run_harness.py:DeepseekHarnessDriver.run) passes the problem statement
+        # as a Python *variable*; here we generate source, so we embed each value
+        # with repr() — repr(str) is always a valid Python string literal.
         runner_script = f'''
 import sys
 from deepseek_harness import DeepSeekHarness
 
 harness = DeepSeekHarness(
     provider="deepseek-official",
-    model={shlex.quote(self._tb_model)},
-    base_url={shlex.quote(TB_GW_DSH_URL)},
-    api_key={shlex.quote(TB_DUMMY_KEY)},
-    cwd={shlex.quote(cwd)},
-    dsh_home={shlex.quote(self._dsh_home)},
-    profile={shlex.quote(self._profile)},
+    model={repr(self._tb_model)},
+    base_url={repr(TB_GW_DSH_URL)},
+    api_key={repr(TB_DUMMY_KEY)},
+    cwd={repr(cwd)},
+    dsh_home={repr(self._dsh_home)},
+    profile={repr(self._profile)},
     request_timeout_seconds=float({self._timeout}),
     initialize_timeout_seconds=60.0,
 )
 with harness:
-    result = harness.run({shlex.quote(instruction)}, session_id="tb-deepseek")
+    result = harness.run({repr(instruction)}, session_id="tb-deepseek")
     print(getattr(result, "final_response", "") or "")
 '''
 
