@@ -1,16 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-19 22:3x 运维令三十六 **用户已授权 kill r3 regrade 空转进程（RUN_ID 86 已下发·严格白名单）**：
-- **用户令**：「① 现在 kill 它」⇒ 授权终止 r3 regrade（**PID 229615** + 4 个 `run_eval.py`/`run_on_sandbox.py` 子进程）。
-- **依据（85 号 22:16）**：8650/8652/8654 仍 BUSY、8655-8658 全 FREE(11-14ms)、**t0002147 有 74 个 cline**、regrade 空转 **3.4h**、日志停在 18:50:50（组装完 **151** 脚本后无新行）⇒ shard_2/3 必产 0 passed。
-- **🔒 RUN_ID 86 安全边界**：只 kill「cmdline 含 `e0031982` **且** 含 `run_eval|run_on_sandbox`」或 PID=229615；逐个核验 cmdline；**TERM→10s→KILL**；🚫 不碰 t0002147/t0002997/loop/relay/cline 本体/MCP/RAG；不用 `pkill -f`；**kill 前 `cp -a` 备份 `2026_1019_145634`**（保 61 passed）。
-- **验证**：`bash -n` 通过；guard 0；4 种本线路径全 MATCH / 9 种他线进程全 SKIP；实测 6.3s。
-- **kill 后（A 方案）**：①确认无残留 + loop/relay/t0002147 仍活 ②改 `--sandbox-endpoints=8655,8656,8657,8658@10.129.32.75`（只改端点）③只对 shard_2/3 未通过任务重跑（独立目录 `..._r3_regrade_fix`）④拼接 31+30+修复 → **报分母 151** ⑤写 `zhulong_results.md` + commit。
-- **模型维持 `deepseek-v4-pro-fp4`**（r1/r2/r3 生成同模型；r3 打分阶段不调 LLM，模型只影响生成）。
-- **STAGE/ROUND 口径不变**：r1 ✅ 78.5% / r2 ✅ 70.9% / r3 修复中（2/5 完成）。 -->
+<!-- heartbeat 2026-10-19 22:5x 运维令三十七 **R86/R87/R88 三轮回执复盘（含两处运维判断错误更正）**：
+- ✅ **R86 kill 成功**：R87 实测 6 个 PID（229615/229619/229631/229632/229634/229636）**全 GONE**；备份 `..._BACKUP_223148` 完好 352M（success=153/timeout=5/failure=0）；ops_relay/MCP8090/RAG9006 全活；**8651/8655/8656/8657/8658 全 FREE**。
+- ⚠️ **误杀 1 个**：R86 MATCH 含 **PID 632398 = loop 的 `timeout -k 15 2700 opencode run ...`**（cmdline 拼接任务书全文含 `e0031982`+`run_eval` 字面而误命中）→ 已 GONE。**教训**：kill 白名单不能只看 cmdline 子串，须显式 PID + 人工核验；输出必须 `cut`（R86 被 20000 字符截断）。
+- 🔴 **运维判断错误 #1（已更正）**：R87 报「loop 不在」是**误判** —— R88 实测 **loop PID 81827 一直活着（etimes≈5.8 天，ppid=1）**。R87 的 `grep '[z]hulong_loop\.sh'` 未命中。⇒ **loop 从未停摆，无需重启**。
+- 🔴 **运维判断错误 #2**：R88 重启令用了**不存在的路径** `/nasdata/.../ZhuLong_DAC2027/run` → 报 `No such file or directory`，**未重启任何东西**（幸运失败）。**R88 = no-op**，无需回滚。
+- ⏭ **当前真实状态**：loop **活着**（PID 81827）、relay 活着、r3 regrade **已停**、备份完好、**4 个推荐端口全 FREE** → **可以直接进入 A 方案**（改端点 8655-8658 补打 shard_2/3 的 30 题）。
+- ⚠️ **路径/查法（给下一轮）**：run 目录实为 **`/nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run`**（`/nasdata/...` 不存在）；查 loop 用 `ps -eo pid,ppid,etimes,args | grep -i zhulong | grep -v grep` 看全貌。 -->
 
-<!-- 22:2x 心跳（路径 A 批准 + RUN_ID 85）已归档 → daily-memories/2026-10-19.md「归档·22:4x」。要点：A=只用 8655-8658 补打 shard_2/3、模型维持 fp4。 -->
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 
