@@ -784,3 +784,10 @@
 | 2026-10-19 | 三部门「孝老爱老购物季」：加快智能护理机器人、具身智能照护设备迭代（10-18—11-17） | IT之家（`014/659`，据工信部通知） | news | https://www.ithome.com/1/014/659.htm |
 | 2026-10-19 | 第三方 DLSS-NR 模组更新：为 AMD 显卡解锁英伟达 DLSS 全部核心功能 | IT之家（`014/660`） | news | https://www.ithome.com/1/014/660.htm |
 | 2026-10-19 | Gallup：全球乐观情绪普遍但分布不均 | HN → Gallup | 不收(原文 Errno 101 网络不可达·未读正文) | https://news.gallup.com/poll/714593/optimism-globally-widespread-despite-uneven.aspx |
+| 2026-10-19 | 瑞典 FOI 研究团队：WiFireNet 用 Wi‑Fi 信道状态信息识别隐藏手枪（受控环境平均精确率 72.5% / 提更严定位要求时 53.8%） | IT之家（`014/738`，arXiv 10-13） | news | https://www.ithome.com/1/014/738.htm |
+| 2026-10-19 | 腾讯 WorkBuddy 教育公益版上线：全国教师每月 2000 积分、可连领 12 个月 | IT之家（`014/752`，据腾讯 SSV） | news | https://www.ithome.com/1/014/752.htm |
+| 2026-10-19 | 商务部等 9 部门发布「科技兴商」18 条举措（提升人工智能、具身智能等应用水平） | 央视网 / 央视新闻 | news | https://news.cctv.com/2026/10/19/ARTIi9YD7LPE6bjGmyAVYGAG261019.shtml |
+| 2026-10-19 | 豆包刘星回应「国内超一半算力在造爽剧」：字节总算力约 10% 用于视频生成训练与推理 | IT之家（`014/729`） | news | https://www.ithome.com/1/014/729.htm |
+| 2026-10-19 | 六小龄童谈「圣黛 CP」AI 魔改：创意很好玩，但改编不能逾越政策法规与观众红线 | IT之家（`014/753`，据新黄河） | news | https://www.ithome.com/1/014/753.htm |
+| 2026-10-19 | 斯巴鲁公布软件定义汽车计划（开发周期缩短约 40% · 与 AMD 联合开发集成 ECU） | IT之家（`014/750`，据路透社） | 留档(非 AI 具体事件) | https://www.ithome.com/1/014/750.htm |
+| 2026-10-19 | China Plans to Tighten Export Controls on AI Technologies | HN → 大纪元 | 不收(信源纪律：不引用该刊；未见官方公告) | https://www.theepochtimes.com/china/china-plans-to-tighten-export-controls-on-ai-technologies-6104786 |
