@@ -778,3 +778,9 @@
 | 2026-10-19 | Anthropic AI 安全法案（Politico 原文） | HN → Politico | 不收(403·改取 Tom's Hardware) | https://www.politico.com/news/2026/10/16/anthropic-ai-safety-01124654 |
 | 2026-10-19 | 中国研究者用国产 AI 解 3D Ghys 猜想 | HN → CGTN | 不收(报道 10-15 超 72h·未读正文) | https://news.cgtn.com/news/2026-10-15/Chinese-researchers-solve-3D-Ghys-conjecture-with-homegrown-AI-model-1RgD8zQ3Z3a/p.html |
 | 2026-10-19 | 消息称戴尔显示器本月起上调出货价 3-5% | IT之家（`014/596`） | 不收(爆料·非AI·行情向) | https://www.ithome.com/1/014/596.htm |
+| 2026-10-19 | 「霍尔木兹海峡货轮沉没·海面漂满 iPhone」视频经核查系 AI 生成虚构内容（超 8000 万次观看） | IT之家（`014/665`，据红星新闻 10-18） | news | https://www.ithome.com/1/014/665.htm |
+| 2026-10-19 | Anthropic 向外部监督机构 METR 开放「类员工级」访问权限（6 人入驻·不付费·报告自主发布） | IT之家（`014/651`） | news | https://www.ithome.com/1/014/651.htm |
+| 2026-10-19 | 杭州「格物通智」完成近亿元天使轮（物理反演世界模型预训练） | IT之家（`014/652`，据机器人前瞻 10-18） | news | https://www.ithome.com/1/014/652.htm |
+| 2026-10-19 | 三部门「孝老爱老购物季」：加快智能护理机器人、具身智能照护设备迭代（10-18—11-17） | IT之家（`014/659`，据工信部通知） | news | https://www.ithome.com/1/014/659.htm |
+| 2026-10-19 | 第三方 DLSS-NR 模组更新：为 AMD 显卡解锁英伟达 DLSS 全部核心功能 | IT之家（`014/660`） | news | https://www.ithome.com/1/014/660.htm |
+| 2026-10-19 | Gallup：全球乐观情绪普遍但分布不均 | HN → Gallup | 不收(原文 Errno 101 网络不可达·未读正文) | https://news.gallup.com/poll/714593/optimism-globally-widespread-despite-uneven.aspx |
