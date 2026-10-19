@@ -62,7 +62,7 @@ class BaizeLLaVA(lmms):
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         self.eot_token_id = self.tokenizer.eos_token_id
-        if self.vision_backend in ("armB", "armC"):
+        if self.vision_backend in ("armB", "armC", "armD"):
             # armB/armC: open_clip ViT-B/16, 768-d patch tokens [B,196,768]
             self.vision, _, _ = create_baize_vitb16_768(pretrained=ckpt, device="cpu")
             vision_width = BAIZE_VITB16_WIDTH  # 768

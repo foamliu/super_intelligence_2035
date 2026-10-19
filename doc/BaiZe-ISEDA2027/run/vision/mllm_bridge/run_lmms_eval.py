@@ -56,13 +56,16 @@ print(f"[run_lmms_eval] Registered 'baize_llava' in MODEL_REGISTRY_V2")
 CKPT_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt"
 CKPT_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/armB_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
 CKPT_ARMC = "/nas_train/app.e0031982/datasets/baize-vision/out/armC_20261018_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
+CKPT_ARMD = "/nas_train/app.e0031982/datasets/baize-vision/out/armD_20261019_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
 LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
 STAGE2_BASE_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2"
 STAGE2_BASE_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armB"
 STAGE2_BASE_ARMC = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armC_20261018"
+STAGE2_BASE_ARMD = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armD_20261019"
 RESULTS_DIR_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results"
 RESULTS_DIR_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armB"
 RESULTS_DIR_ARMC = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armC_20261018"
+RESULTS_DIR_ARMD = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armD_20261019"
 
 # 17 benchmarks (standard VLM evaluation suite)
 BENCHMARKS_17 = [
@@ -94,8 +97,8 @@ def main():
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
     parser.add_argument("--batch_size", type=int, default=32, help="Batch size for evaluation (increase for throughput)")
     parser.add_argument("--vision_backend", type=str, default="baize_4ep",
-                        choices=["baize_4ep", "armB", "armC"],
-                        help="baize_4ep=④-4ep BaiZe ViT(512d); armB=open_clip ViT-B/16(768d); armC=ArmC(768d, min_lr1e-5+wd0.01)")
+                        choices=["baize_4ep", "armB", "armC", "armD"],
+                        help="baize_4ep=④-4ep BaiZe ViT(512d); armB=open_clip ViT-B/16(768d); armC=ArmC(768d, min_lr1e-5+wd0.01); armD=ArmD(768d, 6src+3ep+lr2e-3+min_lr2e-5)")
     parser.add_argument("--ckpt", type=str, default=None, help="Override vision tower checkpoint path")
     parser.add_argument("--stage2_base", type=str, default=None, help="Override stage2 ckpt base dir (step appended)")
     args = parser.parse_args()
@@ -109,6 +112,10 @@ def main():
         ckpt = args.ckpt or CKPT_ARMC
         stage2_base = args.stage2_base or STAGE2_BASE_ARMC
         results_dir = RESULTS_DIR_ARMC
+    elif args.vision_backend == "armD":
+        ckpt = args.ckpt or CKPT_ARMD
+        stage2_base = args.stage2_base or STAGE2_BASE_ARMD
+        results_dir = RESULTS_DIR_ARMD
     else:
         ckpt = args.ckpt or CKPT_4EP
         stage2_base = args.stage2_base or STAGE2_BASE_4EP
