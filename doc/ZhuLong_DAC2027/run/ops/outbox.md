@@ -11544,3 +11544,75 @@ echo "=== DONE 87 ==="
   8658 FREE
 === DONE 87 ===
 ```
+
+---
+
+## RUN_ID 88 · 2026-10-19 22:40:35 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 88 | restart zhulong_loop | $(date '+%F %T') | host=$(hostname) ==="
+RUN=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+[ -d "$RUN" ] || RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+echo "RUN dir = $RUN"
+ls -l "$RUN"/zhulong_loop.sh 2>/dev/null | cut -c1-100 || echo "  LOOP SCRIPT MISSING"
+
+echo ""
+echo "[1] 重启前确认：无残留 loop"
+ps -eo pid,args 2>/dev/null | grep '[z]hulong_loop\.sh' | cut -c1-100 || echo "  none (good)"
+
+echo ""
+echo "[2] cline 可用性（重启必须带正确 PATH，否则静默空转）"
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:$PATH"
+WB=$(command -v cline 2>/dev/null || true)
+echo "  which cline = ${WB:-NOT_FOUND}"
+[ -n "$WB" ] && cline --version 2>&1 | head -2 | cut -c1-60 || echo "  cline 不在 PATH（loop 会空转！）"
+
+echo ""
+echo "[3] 启动（setsid + 登录 shell，输出去 /tmp）"
+cd "$RUN" || exit 1
+setsid bash -lc "exec bash '$RUN/zhulong_loop.sh'" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 6
+
+echo ""
+echo "[4] 复核：进程 + 日志头"
+ps -eo pid,ppid,etimes,args 2>/dev/null | grep '[z]hulong_loop\.sh' | cut -c1-100 || echo "  X 未起来"
+echo "  --- log head ---"
+head -8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+echo "  --- log tail ---"
+tail -4 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+
+echo ""
+echo "[5] 保命项复查"
+pgrep -f '[o]ps_relay' >/dev/null && echo "  ops_relay ALIVE OK" || echo "  X ops_relay GONE"
+echo "  t0002147 cline count = $(ps -eo user,args 2>/dev/null | grep -c 't0002147.*cline')"
+echo "=== DONE 88 ==="
+```
+
+**输出**
+```
+=== RUN_ID 88 | restart zhulong_loop | 2026-10-19 22:40:35 | host=hfeg0tedaap02 ===
+RUN dir = /nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+
+[1] 重启前确认：无残留 loop
+  81827 bash zhulong_loop.sh
+
+[2] cline 可用性（重启必须带正确 PATH，否则静默空转）
+  which cline = /home/app.e0031982/.local/bin/cline
+3.0.51
+
+[3] 启动（setsid + 登录 shell，输出去 /tmp）
+
+[4] 复核：进程 + 日志头
+  81827       1  499055 bash zhulong_loop.sh
+  --- log head ---
+bash: /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/zhulong_loop.sh: No such file or directory
+  --- log tail ---
+bash: /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/zhulong_loop.sh: No such file or directory
+
+[5] 保命项复查
+  ops_relay ALIVE OK
+  t0002147 cline count = 57
+=== DONE 88 ===
+```
