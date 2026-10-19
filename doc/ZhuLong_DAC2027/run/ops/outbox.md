@@ -11096,3 +11096,357 @@ echo "=== DONE 85 ==="
 ? dirs
 === DONE 85 ===
 ```
+
+---
+
+## RUN_ID 86 · 2026-10-19 22:31:47 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 86 | kill r3 regrade (user-authorized) | $(date '+%F %T') | host=$(hostname) ==="
+EW=/home/app.e0031982/eda_code_eval/2026_1019_145634
+BK=/home/app.e0031982/eda_code_eval/2026_1019_145634_BACKUP_$(date +%H%M%S)
+
+echo "[1] kill 前：备份 regrade 输出（保 shard_0/1 的 61 passed）"
+if [ -d "$EW" ]; then
+  du -sh "$EW" 2>/dev/null | cut -c1-80
+  cp -a "$EW" "$BK" 2>/dev/null && echo "  BACKUP_OK -> $BK" || echo "  BACKUP_FAIL（继续，但需人工确认）"
+else
+  echo "  NO_DIR $EW"
+fi
+
+echo ""
+echo "[2] 目标进程逐个核验（白名单：e0031982 + run_eval/run_on_sandbox，或 PID 229615）"
+TARGETS=""
+for p in $(ps -eo pid,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox\.py' | awk '{print $1}'); do
+  cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-120)
+  case "$cmd" in
+    *e0031982*run_eval*|*e0031982*run_on_sandbox*|*run_eval*e0031982*|*run_on_sandbox*e0031982*)
+      echo "  MATCH pid=$p [$cmd]"; TARGETS="$TARGETS $p" ;;
+    *) echo "  SKIP  pid=$p [$cmd]（非本线，不动）" ;;
+  esac
+done
+if [ -e /proc/229615 ]; then
+  cmd615=$(tr '\0' ' ' < /proc/229615/cmdline 2>/dev/null | cut -c1-100)
+  echo "  parent pid=229615 [$cmd615]"
+  TARGETS="$TARGETS 229615"
+else
+  echo "  parent pid=229615 已退出"
+fi
+echo "  TARGETS=[$TARGETS]"
+
+echo ""
+echo "[3] TERM（先软杀，给 10s 收尾）"
+if [ -z "${TARGETS// /}" ]; then echo "  无可杀目标（已自行收口）"; else
+  for p in $TARGETS; do kill -TERM "$p" 2>/dev/null && echo "  TERM -> $p" || echo "  TERM-$p-fail"; done
+  for i in 1 2 3 4 5 6 7 8 9 10; do sleep 1; done
+fi
+
+echo ""
+echo "[4] 复查 + 必要 KILL"
+for p in $TARGETS; do
+  if [ -e /proc/$p ]; then
+    cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-100)
+    case "$cmd" in
+      *e0031982*run_eval*|*e0031982*run_on_sandbox*|*run_eval*e0031982*|*run_on_sandbox*e0031982*)
+        kill -KILL "$p" 2>/dev/null && echo "  KILL -> $p（TERM 未生效）" || echo "  KILL-$p-fail" ;;
+      *) echo "  pid=$p cmd 已变，跳过（防误杀）: $cmd" ;;
+    esac
+  else
+    echo "  pid=$p EXITED（TERM 生效）"
+  fi
+done
+
+echo ""
+echo "[5] 收口后确认（本线 regrade 应全无）"
+ps -eo pid,etimes,args 2>/dev/null | grep -E '[r]un_eval\.py|[r]un_on_sandbox\.py' | cut -c1-120 || echo "  ✅ 本线 regrade 已无残留"
+echo "  --- 对照组（必须仍活着）---"
+pgrep -f 'zhulong_loop' >/dev/null && echo "  zhulong_loop ALIVE ✅" || echo "  ⚠️ zhulong_loop 不在（本机可能不跑 loop）"
+pgrep -f '[o]ps_relay' >/dev/null && echo "  ops_relay ALIVE ✅" || echo "  ⚠️ ops_relay 不在"
+echo "  t0002147 cline count = $(ps -eo user,args 2>/dev/null | grep -c 't0002147.*cline')（不应被影响）"
+
+echo ""
+echo "[6] 端口状态（kill 后 8651 应释放给后续用）"
+for p in 8650 8651 8652 8654 8655 8656 8657 8658; do
+  ( out=$(timeout 8 curl -s --max-time 6 -X POST "http://10.129.32.75:$p/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 20)
+    if [ -z "$out" ]; then echo "$p BUSY" > /tmp/r86_$p; else echo "$p FREE" > /tmp/r86_$p; fi ) &
+done
+wait
+for p in 8650 8651 8652 8654 8655 8656 8657 8658; do echo "  $(cat /tmp/r86_$p 2>/dev/null || echo "$p NA")"; rm -f /tmp/r86_$p; done
+echo "=== DONE 86 ==="
+```
+
+**输出**
+```
+=== RUN_ID 86 | kill r3 regrade (user-authorized) | 2026-10-19 22:31:47 | host=hfeg0tedaap02 ===
+[1] kill 前：备份 regrade 输出（保 shard_0/1 的 61 passed）
+352M	/home/app.e0031982/eda_code_eval/2026_1019_145634
+  BACKUP_OK -> /home/app.e0031982/eda_code_eval/2026_1019_145634_BACKUP_223148
+
+[2] 目标进程逐个核验（白名单：e0031982 + run_eval/run_on_sandbox，或 PID 229615）
+  MATCH pid=229619 [/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_eval.py --generations completed_code_generation_2026_]
+  MATCH pid=229631 [/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generation/ge]
+  MATCH pid=229632 [/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generation/ge]
+  MATCH pid=229634 [/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generation/ge]
+  MATCH pid=229636 [/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generation/ge]
+  MATCH pid=632398 [timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合�
+
+## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+
+### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
+- **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/�
+- **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任�
+- **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续
+
+
+> 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memori
+
+### 🆕 运维指令 · 2026-10-18（三十二）— 🔀 **GLM-5.3 r2-r5 之后的队列**：pro-fp4/pro-cloud → (N�
+
+> 用户令：「ZhuLong：等 GLM-5.3-Flash r2-r5 测完后，再试试 deepseek-v4-pro-fp4 / pro-cloud，如果通了�
+> **前置**：先完成令三十一的 B.glm-5.3-flash r2-r5（5/5 + mean±std + 更新 results），再进入本队列
+
+**① 先探针（r2-r5 收口后立即做）**
+- `deepseek-v4-pro-fp4` @ `/v1` 与 `deepseek-v4-pro-cloud` @ `/cloud/v1`：各用现有 key 做 canary；**HTTP 200 + c
+- 优先 **pro-fp4**；pro-fp4 不通再试 **pro-cloud**；两者都不通 → 走 ③。
+- 记录每路 HTTP 原文/响应头（不打印 key）。
+
+**② 若 pro-fp4 / pro-cloud 任一通 → 跑 (N′) 5-run**
+- 严格按 `PLAN_RETEST_READBACK_COST.md` 的 (N′) 规格（readback_none / no observation 成本重测），**不得
+- 若用 **pro-cloud** 而非 pro-fp4，必须在报告里注明「模型部署不同（cloud vs fp4）」，不得当�
+- 每轮打分：Step 7.1 auto-grade 已知 FileNotFoundError → **手动 regrade**（照 r1 模板，`unset proxy + NO
+- 5/5 后 mean±std，更新 `zhulong_results.md`；若 429/限流，降 `-p` 或等窗口，不得静默作废。
+
+**③ 若两者都不通 → 按顺序跑**
+1. **B.deepseek-v4-flash 第二遍 5-run**：同第一遍复测配置（`-p 4`、`maxTokens=16384`、full harness、V3+�
+2. **Qwen3.8-27B 5-run**：先 canary 确认网关模型名/端点/key（**不要猜模型名**；若网关无此模型/
+- 两段都完成后更新 `zhulong_results.md` + MEMORY + daily；commit `zhulong B:` / `zhulong qwen:`。
+
+**④ 纪律**
+- 只有令三十一 r2-r5 收口后才进入本队列；不得并行、不得抢 4 端口。
+- `(N′)` / DeepSeek-V4-Flash second / Qwen3.8-27B 都按 5-run mean±std；n<5 不得写 ±。
+- 不碰论文口径；不杀 loop/中继；每次只推进一步。
+
+**⑤ 网关探针不需要等 ops 中继（2026-10-18 20:5x 备注）**
+- 中继（`ops_relay.sh`）近 1.5h 未消费任何 RUN_ID（137/138/139 均无回执，而 pretrain/zhulong push 正�
+- 你在 `.29` 本机，**可直接在本机用 curl 做 canary**（剥 proxy + `NO_PROXY`，不打印 key），结果�
+- 中继重启属 harness 线 P0，不在本任务内处理；🚫 不要在命令行里直接 `pkill -f ops_relay.sh`�
+
+### 🆕 运维指令 · 2026-10-18（三十一）— ▶️ **启动 B.glm-5.3-flash 复测 5-run**（`-p 4` 起步）�
+
+> 用户令（2026-10-18）：「让 zhulong 启动 B.glm-5.3-flash 复测」。
+> 背景：fresh 5/5 = **66.8 ± 10.5%**（std 偏大）；此前 r1 两次在 `-p 8` 因 gateway 并发/quota 作废（
+
+**① 前置（任一不过就停，贴原文）**
+- `glm-5.3-flash` @ `/v1` 单请求 canary：HTTP 200 + 非空 content；`maxTokens=16384`（`providers.json` 已设）�
+- 记录并发用户任务（如 `app.t0002147`）；若 canary 429 ⇒ 等 10–20min 重试，**不启动 5-run**。
+- 确认 backbone 配置未被改成其它模型；`EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`（`.env` 
+
+**② 起跑（每轮一条，串行 5 轮）**
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+export PYTHON=$PWD/venv/bin/python
+setsid bash scripts/run_cline_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_retest_r<N>.log 2>&1 < /dev/null &
+```
+- 每轮 158 题；跑完先 `unset http_proxy https_proxy ALL_PROXY; export NO_PROXY=10.129.32.75,localhost,127.0.0.1`�
+- 判据：`timeout≤10`、无 infra 故障；429/quota 不计有效轮，等窗口重试；401/403 立即停贴响应�
+- 每轮记录：`pass (xx.x%)`、timeout/gen-fail/0-token/quota，写 `daily-memories/2026-10-18.md`。
+
+**③ 收口**
+- 5/5 有效后算 mean±std；若 std 明显 <10.5，更新 `zhulong_results.md` 的 B.glm-5.3-flash 行（保留 fresh
+- 🚫 不动 ZL.glm-5.2 r1=84.2% 的结论；🚫 不改论文口径；🚫 不重启/不经手其它线。
+- 完成后按常驻规程自滚归档任务书。
+
+### 🆕 运维指令 · 2026-10-18（二十九）— 🔁 **ZL 评测基模改为 `glm-5.2`**（v4-pro-cloud 被网关 
+
+> **用户令（2026-10-18）**：「那就把 eda_platform 评测的基模换成 glm-5.2」
+> ⇒ **令二十八的其他内容全部继续有效**（`eda_platform/apps/cli` 编译、`zhulong`/`zl` 安装、**不
+
+**① 为什么可以换（已核实）**：`glm-5.2` @ `http://agi-gateway.cxmt.com/cloud/v1` 与你给的 key（`02_08
+
+**② 重新配置（只改 zhulong 自己的 data dir）**
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+zhulong auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway
+zhulong --version; zl --version
+```
+- 期望：`Provider configured: openai-compatible (glm-5.2)`；`--data-dir` 仍为 **`~/.zhulong`**；**🚫 不写 `~/
+- 贴出生效的 `model=glm-5.2` / `baseUrl=…/cloud/v1` / key 末 8 位（应为 `88ea2f23`）/ data dir。
+
+**③ 先做两个前置核验（上一轮漏了 SDK 版本，这次必须先补）**
+1. **`@cline/core` 版本三连**（这是"老 SDK 0.0.51 改造版"的实验前提）：
+   `grep -n '"@cline/core"' package.json apps/cli/package.json bun.lock | head` ·
+   `cat node_modules/@cline/core/package.json apps/cli/node_modules/@cline/core/package.json 2>/dev/null | grep -m2 vers
+   `bun pm ls 2>/dev/null | grep -i cline | head`
+   → **期望 `0.0.51`**；若不是（如被解析到 `0.0.71+`），**照实记录并继续跑**，但必须在回�
+2. **cline 3.0.51 未被改动**：`cline --version`（=3.0.51）+ `readlink -f $(which cline)` 与令二十八取证**�
+
+**④ 起跑（口径照旧，只换模型）**
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+export PYTHON=$PWD/venv/bin/python
+setsid bash scripts/run_zhulong_script.sh -p 8 -n > /tmp/ZL_glm52_r1.log 2>&1 < /dev/null &
+```
+- 评测集 `EDA-Eval-pyAether-158`；4 端口 `8650/8651/8652/8654` + `SANDBOX_HOST=10.129.32.75` + V3 文档 + 自探�
+- 若出现 **429/限流**（glm 族历史上有并发限流）⇒ 按令二十七① **降 `-p 4` 重跑一次**（只�
+- 若出现 **401/403** ⇒ 立即停，贴响应头原文，报 blocker（不空转）。
+
+**⑤ 打分与回报（本轮就要）**
+1. 构建产物与安装不变项：`zhulong --version` = **3.0.29** vs `cline --version` = **3.0.51**（版本差异即
+2. 配置三项（model / base / data dir）+ ③ 的两个核验原文。
+3. **`glm-5.2` × `zhulong(3.0.29)` 158 题 Pass@1 = xx.x%（通过数/158）** + `pass (` 原文 + timeout / gen-fail /
+4. **对照必须写清"同模型、不同 CLI/SDK"**：既有 `glm-5.2` 臂 = **83.3±3.1%（n=5，cline 3.0.51 / cline
+5. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`，CONFIG 改为 `ZL.glm-5.2`）+ `zhulong_results.md` 新增一行（标 `[pr
+
+**⑥ 红线（不变）**
+- 🚫 覆盖/删除/重链 cline 3.0.51、改 `~/.cline`、`curl|bash` 官方安装器。
+- 🚫 不改论文口径、不 kill loop / ops 中继 / 别人在跑的任务；n=1 不进论文表。
+- ✅ 每轮只推进一步；`WAITING=1` 仅在评测真正跑起来时置位。
+
+
+> **用户令（2026-10-18）**：「编译 `eda_platform` 目录下的 `cline-cli`，把它安装成命令行工具 `zh
+> **用户补充（同日，必须遵守）**：① `eda_platform` **本身就是 cline 仓库改造而来**，`apps/cli
+> ⚠️ **本条优先级高于令二十七（glm-5.3 复测）**；glm-5.3 复测暂停，等本条跑完或网关恢�
+
+**① 路径与前提**
+- 仓库根：`eda_platform`（36.15 本机，`/nasdata/...`）。目标包 = **`apps/cli`**（`package.json` 里应是 
+- 🔢 **用户提供的关键前提（务必按此解读结果）**：
+  - `eda_platform` 里的 cline 是**老版本**，其 **`cline-core` SDK 版本 = `0.0.51`**；
+  - 被测基线 **cline 3.0.51 的 `cline-core` SDK 版本 = `0.0.71`**。
+  - ⇒ 这条线测的是**"老 SDK 的改造版" vs "新 SDK 的官方版"**，SDK 代差是**结果的主要解释变
+  - 构建后**必须实证**：`eda_platform` 里解析到的 `cline-core` 版本（查 `bun.lock`/`bun.lockb`/`package
+- 工具链：`bun`（cline 上游用 bun，36.15 已装）+ `node`。装依赖走内网镜像（`https://mirrors.aliyun
+- 🚫 不 clone 别处的 cline 顶替、不 `git checkout` 别人的改动、不改 `eda_platform` 源码（本次只�
+
+**② 🔴 硬红线：不碰现有 cline 3.0.51（先取证，再动手）**
+1. 先记录基线（原文贴心跳）：
+   `which -a cline; cline --version; ls -l $(which cline); readlink -f $(which cline); ls -ld ~/.bun/bin/cline ~/.bun/in
+   ——3.0.51 是**被测基线**，本轮任何操作都不得让它失效。
+2. **禁止**：`curl .../install.sh | bash`、`bun add -g @cline/cli`、`bun link`/`bun pm link` 到 `@cline/cli`、`bu
+3. `eda_platform/apps/cli` 里若本来就叫 `@cline/cli`：**改的都是产物名字与安装位置，不改包里 `b
+4. 收尾必须复核一次：`cline --version` 仍为 **3.0.51**、`readlink -f $(which cline)` 与第 1 步一致；�
+
+**③ 编译 + 安装（只出 `zhulong` / `zl`）**
+1. 按 `apps/cli/package.json` 的**原始脚本**构建（如 `bun run build` / `bun build ... --target=bun`），记�
+2. 安装到**独立前缀**：`~/.local/zhulong/`（或 `~/.zhulong/bin/`），入口 = `~/.local/bin/zhulong` + `~/.lo
+3. 验收（原文贴心跳）：`zhulong --version`、`zl --version`、`which -a zhulong zl`、`ls -l ~/.local/bin/{zhu
+4. **SDK 版本三连核验**（原文贴心跳，三处都要）：
+   - `eda_platform`：`grep -rn '"@cline/core"' package.json apps/cli/package.json bun.lock 2>/dev/null | head`
+   - 实装：`cat node_modules/@cline/core/package.json apps/cli/node_modules/@cline/core/package.json 2>/dev/null | gr
+   - 运行期：`zhulong --version`（若 CLI 会带出 SDK 版本就一并贴；不会就明确写"CLI 不暴露"）
+   - 判据：**`@cline/core` 应为 `0.0.51`**（老版）。若因 `bun install` 被解析到 `0.0.71` 或更新 ⇒ *
+
+**④ 配置底模 = DeepSeek-V4-Pro-Cloud（与 cline 3.0.51 配置隔离）**
+- `deepseek-v4-pro-cloud` @ `http://agi-gateway.cxmt.com/cloud/v1`（历史实测 200；**别混 `/v1` 下的 `deepseek-
+- `zhulong` 使用**独立 data dir**（`--data-dir ~/.zhulong` 或该版本等价参数），key 复用 `eda_fastmcp/pr
+- 验收：`curl` 一次 chat/completions 得 HTTP 200 + 有 content（当前网关可能仍 401）；贴出生效 `mode
+
+**⑤ 跑一次评测（口径不变，1 轮）**
+- 评测集 `EDA-Eval-pyAether-158`（`benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl`），`Pass@1 = 通过/1
+- 复用 `eda_fastmcp/scripts/run_cline_script.sh`：**复制一份** `run_zhulong_script.sh`，**只把其中 `cline` �
+- `-p 8 -n`；若 401/429 致整批作废，按令二十七①「0-token>10%」降 `-p 4` 重跑一次（**只降并发*
+- 环境照旧：4 端口 `8650/8651/8652/8654`（`SANDBOX_HOST=10.129.32.75`）+ V3 文档 + 自探索 ON + **反作弊
+- 日志 `/tmp/ZL_v4procloud_r1.log`；打分 `grep -E 'pass \(|评估结果汇总|PASS_RATE'`，**以 `pass (xx.x%)` �
+
+**⑥ 回报（本轮就要，写完再退出）**
+1. `eda_platform` 路径 + `git log -1` + 构建命令原文 + 产物大小 + `zhulong`/`zl` 验收原文。
+2. **版本对照表（必填）**：`zhulong` 的 `@cline/core` 实测版本（应为 **0.0.51**）vs `cline` 3.0.51 �
+3. **cline 3.0.51 未被改动**的证据：`cline --version` + `readlink -f`（与 ②-1 逐字一致）。
+4. 生效配置（model / base / key 末 8 位 / data dir）。
+5. **`DeepSeek-V4-Pro-Cloud` 158 题 Pass@1 = xx.x%（通过数/158）** + `pass (` 原文 + timeout/gen-fail/quota 计�
+6. 对照一句：vs `deepseek-v4-flash` 60.1±5.5%（n=5，SDK 0.0.71）· `glm-5.2` 83.3±3.1%（n=5）· 主基座 `d
+7. 同步 `MEMORY_ZHULONG.md`（STAGE=`ZL`）+ `zhulong_results.md` 新增一行（标 `[provisional,n=1]` + `SDK 0.0.51
+
+**⑦ 纪律（红线）**
+- 🚫 覆盖/删除/重链现有 cline 3.0.51、改 `~/.cline`、跑 `curl|bash` 官方安装器。
+- 🔢 **`@cline/core` 必须是 `0.0.51`**：若 `bun install` 后变成 `0.0.71`/更新（网络解析到最新），*
+- 🚫 不改论文口径、不 kill 本 loop / ops 中继 / 别人在跑的任务。
+- 🚫 不把 n=1 的分数写进论文表（只进 `zhulong_results.md` 并标 provisional）。
+- ✅ 每轮只推进一步（取证 → 构建 → 安装 → 配置 → canary → 跑 → 打分 → 回报），`WAI
+- 体积：任务书 ≤40KB（超了按常驻规程自己滚归档，**只搬已闭合块原文**）。
+
+
+### 🆕 运维指令 · 2026-10-18（三十）— 🧪 P1 排队：(N') 成本重测 + (B) 5-run 成本【不打断当�
+
+> 详见 `run/PLAN_RETEST_READBACK_COST.md` + `run/PAPER_RETEST_AUDIT.md`（本轮已提交）。
+> **顺序**：① 当前 `ZL.glm-5.2` r1 跑完 → ② 先查 `output_evaluation/2026_1015_*` 的 trace，能提取 `(
+> **预注册**：不假设成本单调；若 `(N')` 成本低于 `(B)/(F)`，如实报告「无反馈→少搜索/早�
+> 🚫 不打断 eval、不改 cline 3.0.51、不换主基座 `deepseek-v4-pro-fp4`、不删 trace、不插补。
+
+
+### 0. 🎯 当前状态速览（每次唤醒先看这里）
+
+| 项 | 值（**2026-10-04 运维更新**）|
+|:--|:--|
+| **环境** | ⚠️ **两服务器独立挂载**：当前 2.12 开发机路径前缀为 <code>/nas_train/</code>；最
+| **当前阶段** | ✅ **冻结令已解除；编排模型已切换为 glm-5.2（deepseek-v4-pro-fp4 额度已耗尽�
+| **编排模型** | `glm-5.2`（`02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23` · `http://a
+| **已完成（探路 1-shot）** | ✅ 组件 `pure_llm` 11.4% / `rag` 70.3% / `wo_retrieval` 81.6% / `full` 84.8%；�
+| **旧 5-run 进行到哪** | ⏸ 旧 S1（`omega_low`）r1=81.6 / r2=82.3 ✅；r3 因 **infra 作废**（license 耗�
+| **🚫 不做** | `(H+E)` 档 · `phi_unbounded`（≡ full 锚点）· 主基座 `deepseek-v4-pro-fp4` 的模型消�
+| **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度
+| **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std�
+
+### 🆕 运维指令 · 2026-10-17（二十七）— 🔁 复测 B.glm-5.3-flash 和 B.deepseek-v4-flash（trace 诊断
+
+> **用户令（2026-10-17）**：「DeepSeek-V4-Flash 的跑分比预期低，你去看下 trace。复测 GLM-5.3-Flash
+
+**① 背景·trace 诊断结论**（运维侧已完成分析）：
+
+**DeepSeek-V4-Flash fresh 5-run = 11.9±2.7%**，但 trace 分析发现 **73% 失败是基础设施问题，非模型能
+- **45% (356/790) 0-token 失败**：API gateway 并发限流，请求 6 秒内被拒（inputTokens=0, outputTokens=0）
+- **28% (219/790) null-content 失败**：deepseek-v4-flash 是**推理模型**，先产出 reasoning token 再产出 co
+- **9.4% (74/790) real-code-fail**：模型真正写错代码。
+- **关键**：在模型**实际产出代码**的 178 个任务中，**通过率 = 104/178 = 58.4%**（若算上 gen-suc
+
+**GLM-5.3-Flash 5-run = 66.8±10.5%**，trace 分析：
+- GLM-5.3-flash **非推理模型**（8 并发 API 测试全部 HTTP 200 + 有 content），无 reasoning 耗尽问题�
+- gen-fail 率 23.4%（含少量 0-token 2.9% + 部分 null-content 14.1% + real-fail 6.2%），gen-success 605/790 = 76
+- 在产出代码的任务中通过率 528/605 = 87.3%。
+- **std=10.5 偏大**（r1=80.4 / r2=53.2 / r3=73.4 / r4=65.8 / r5=61.4），复测目标：确认是否为模型真实�
+
+**② 复测规格**：
+
+**B.deepseek-v4-flash 复测（优先·修复基础设施）**：
+- **并行度 8 → 4**（缓解 gateway 并发限流，减少 0-token 失败）
+- **maxTokens 8192 → 16384**（方案 A·2026-10-17 16:32 已 apply 到 `providers.json`·`updatedAt=2026-10-17T08:32:
+- 其余配置不变：backbone=deepseek-v4-flash @ `/v1` key `c43c1f4a`，full harness（OMEGA=high / READBACK=full / B
+- 5-run fresh，判据(十三)：timeout≤10 且无 infra 故障
+- **⚠️ 若 0-token 失败仍 >10%，再降并行度到 2**
+
+**②·bis r1 trace 深度诊断（2026-10-17 16:00·用户令「60% 也偏低，再看看 trace」）**：
+
+retest r1 = 60.1% (95/158) 的 63 个失败分解（batch `2026_1017_091724`，-p 4 + maxTokens=8192）：
+
+| 失败类型 | 数量 | 占比 | 根因 | 可修复？ |
+|---------|------|------|------|---------|
+| 🔴 cancelled + editor=0 | **19** | 12.0% | Agent 用 `run_commands`(shell) 做文件操作，**全部被 anti-leak h
+| 🟠 0-token | 17 | 10.8% | 全部在 batch 末尾（任务 142-158，03:14-03:15 UTC，batch 最后 1 分钟）。**-
+| 🟡 null-content | 11 | 7.0% | Agent **正确使用 MCP 工具**（search 8-154 次 + run_code 4-288 次），但**�
+| ⚪ regrade-fail | 13 | 8.2% | 代码生成成功但 regrade 未通过 | ❌ 模型能力 |
+| ⚪ code-fail | 2 | 1.3% | 代码有误 | ❌ 模型能力 |
+| cancelled + editor>0 | 1 | 0.6% | 用了 editor 但未收敛 | ❌ 模型能力 |
+
+**关键证据**：
+- PASS 任务全部使用 `editor`（1-39 次）保存代码；CANCELLED 任务 19/20 的 `editor` 调用数 = **0**
+- PASS 任务 tool 分布：`pyAether_MCP_server__run_code`=1443 / `search_apis`=767 / `get_api_details`=413 / `editor`=
+- CANCELLED 任务 tool 分布：`search_apis`=539 / `run_code`=371 / `run_commands`=257（全 blocked）/ `editor`=55�
+- task 044 示例（17 msgs 后 cancelled）：正确 search_apis 找到 `dmLibObj`/`dmGetObjType`/`dmSizeLibrary` + get
+
+**可修复空间估算**：当前 60.1% → 修复 #1（editor 引导）+19 → 72.8% → 修复 #2（配额）+17 → 
+
+**r2b regrade = 57.0% (90/158)**（batch `2026_1017_135447`·gen 110 ok / 48 fail / 0 timeout / 18 quota-error·判据�
+
+**B.glm-5.3-flash 复测**：
+- 配置不变：backbone=glm-5.3-flash @ `/v1` key `6903b05e`，full harness，V3 + 自探索 ON
+- 并行度保持 8（API 测试确认 8 并发无问题）
+- 5-run fresh，判据(十三)
+- 目标：确认 std 是否收窄（当前 10.5 → 目标 <8）
+
+**③ 执行顺序**：
+1. **当前 wo_selfexpl r1 regrade 已由运维侧手动启动**�
+[zhulong-relay] ⚠️ 输出超长，已截断到 20000 字符
+```
