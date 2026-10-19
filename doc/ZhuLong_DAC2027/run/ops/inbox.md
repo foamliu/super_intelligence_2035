@@ -1,5 +1,70 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 90 -->
+<!-- RUN_ID: 91 -->
+
+## RUN_ID 91 — r4 的 680 次 MCP timeout 环节归因（只读·用户直令）
+
+> 用户令：「680 次 MCP timeout，到底是哪个环节超时？是 8090 的 MCP 服务，还是在 RAG 服务，还是在 run code .75 服务器的端口上」
+> **本块纯只读**：不 kill、不重启 8090/9006/沙盒、不改 .env、不启 eval。r5 继续跑，不打扰。
+> ⚡ **性能关键**：log 可能数百 MB。**只全量扫描一次**（timeout 行先落到小文件），之后全部在该子集上统计。
+
+```bash
+set -u
+echo "=== RUN_ID 91 | r4 MCP-timeout attribution | $(date '+%F %T') | host=$(hostname) ==="
+L=/tmp/ABL_readback_none_retest_r4.log
+W=$(mktemp -d /tmp/r91.XXXXXX)
+
+echo "[1] log"
+if [ ! -f "$L" ]; then echo "  MISSING $L"; else
+  sz=$(stat -c %s "$L"); echo "  size=$((sz/1024/1024))MB"
+  echo "  >>> 单次全量扫描（180s 保护）"
+  timeout 180 grep -a "timed out after 60s" "$L" > "$W/to.txt" 2>/dev/null
+  rc=$?
+  echo "  scan rc=$rc  timeout_lines=$(wc -l < "$W/to.txt" 2>/dev/null || echo 0)"
+  [ "$rc" = "124" ] && echo "  ⚠️ 扫描超时（log 过大），统计基于已扫部分"
+fi
+
+echo ""
+echo "[2] timeout 时间分布（按小时桶）"
+grep -oE '[0-9]{2}:[0-9]{2}' "$W/to.txt" 2>/dev/null | cut -c1-2 | sort | uniq -c | tail -12
+
+echo ""
+echo "[3] timeout 形态归类（区分下游环节，关键判据）"
+echo -n "  pyAether_MCP_server : "; grep -ac "pyAether_MCP_server" "$W/to.txt" 2>/dev/null || echo 0
+echo -n "  RAG/recall/9006     : "; grep -acE 'RAG|recall|9006' "$W/to.txt" 2>/dev/null || echo 0
+echo -n "  run_code/沙盒端口   : "; grep -acE 'run_code|8666|8667|8669|8670|10[.]129[.]32[.]75' "$W/to.txt" 2>/dev/null || echo 0
+echo -n "  150s 级等待         : "; grep -ac '150s' "$W/to.txt" 2>/dev/null || echo 0
+
+echo ""
+echo "[4] timeout 行样例（5 条）"
+head -5 "$W/to.txt" 2>/dev/null | cut -c1-200
+
+echo ""
+echo "[5] 组件状态 + 是否在 r4 时段重启过"
+NOW=$(date +%s); R4END=$(date -d '2026-10-20 04:35' +%s 2>/dev/null || echo 0)
+for spec in 8090:MCP 9006:RAG; do
+  port=${spec%%:*}; name=${spec##*:}
+  pid=$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+  if [ -n "${pid:-}" ]; then
+    et=$(ps -o etimes= -p "$pid" 2>/dev/null | tr -d ' ')
+    echo "  $name port=$port pid=$pid etimes=${et}s"
+    if [ "$R4END" != "0" ] && [ "$((NOW-R4END))" -lt "${et:-0}" ]; then echo "     -> OK 早于 r4 结束启动（期间未重启）"; else echo "     -> 注意：可能在 r4 之后才启动"; fi
+  else echo "  $name port=$port NOT_LISTENING"; fi
+done
+
+echo ""
+echo "[6] .29 负载 / 邻居 / OOM"
+uptime | cut -c1-110
+free -g | head -2 | cut -c1-90
+echo "  t0002147 procs=$(ps -eo user,args 2>/dev/null | grep -c 't0002147')"
+echo -n "  dmesg OOM 计数: "; dmesg -T 2>/dev/null | grep -icE 'oom|killed process' || echo "不可读"
+
+echo ""
+echo "[7] r5 状态（只确认存活）"
+pgrep -af 'run_cline_script' 2>/dev/null | head -2 | cut -c1-80 || echo "  r5 无进程"
+
+rm -rf "$W"
+echo "=== DONE 91 ==="
+```
 
 ## RUN_ID 90 — 容器端口可用性全量普查（8650–8670 × 21，用户要看）
 
@@ -7,7 +72,7 @@
 > **本块纯只读**：不 kill、不改配置。三层并行判定（TCP / HTTP / **真实执行**），**23 秒完成**。
 > 判定：`TCP_OPEN + EXEC_OK <2s` = **可用**；`EXEC_TIMEOUT` = 端口活但执行槽被占（不可用）；`TCP_CLOSED` = 未开放。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 90 | port availability 8650-8670 | $(date '+%F %T') | host=$(hostname) ==="
 SB=10.129.32.75
