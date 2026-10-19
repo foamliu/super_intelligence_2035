@@ -11773,3 +11773,111 @@ USABLE LIST: 8651 8653 8655 8656 8657 8658 8660 8661 8662 8663 8664 8665 8666 86
 COUNT: 16
 === DONE 90 ===
 ```
+
+---
+
+## RUN_ID 91 · 2026-10-20 06:11:00 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 91 | r4 MCP-timeout attribution | $(date '+%F %T') | host=$(hostname) ==="
+L=/tmp/ABL_readback_none_retest_r4.log
+W=$(mktemp -d /tmp/r91.XXXXXX)
+
+echo "[1] log"
+if [ ! -f "$L" ]; then echo "  MISSING $L"; else
+  sz=$(stat -c %s "$L"); echo "  size=$((sz/1024/1024))MB"
+  echo "  >>> 单次全量扫描（180s 保护）"
+  timeout 180 grep -a "timed out after 60s" "$L" > "$W/to.txt" 2>/dev/null
+  rc=$?
+  echo "  scan rc=$rc  timeout_lines=$(wc -l < "$W/to.txt" 2>/dev/null || echo 0)"
+  [ "$rc" = "124" ] && echo "  ⚠️ 扫描超时（log 过大），统计基于已扫部分"
+fi
+
+echo ""
+echo "[2] timeout 时间分布（按小时桶）"
+grep -oE '[0-9]{2}:[0-9]{2}' "$W/to.txt" 2>/dev/null | cut -c1-2 | sort | uniq -c | tail -12
+
+echo ""
+echo "[3] timeout 形态归类（区分下游环节，关键判据）"
+echo -n "  pyAether_MCP_server : "; grep -ac "pyAether_MCP_server" "$W/to.txt" 2>/dev/null || echo 0
+echo -n "  RAG/recall/9006     : "; grep -acE 'RAG|recall|9006' "$W/to.txt" 2>/dev/null || echo 0
+echo -n "  run_code/沙盒端口   : "; grep -acE 'run_code|8666|8667|8669|8670|10[.]129[.]32[.]75' "$W/to.txt" 2>/dev/null || echo 0
+echo -n "  150s 级等待         : "; grep -ac '150s' "$W/to.txt" 2>/dev/null || echo 0
+
+echo ""
+echo "[4] timeout 行样例（5 条）"
+head -5 "$W/to.txt" 2>/dev/null | cut -c1-200
+
+echo ""
+echo "[5] 组件状态 + 是否在 r4 时段重启过"
+NOW=$(date +%s); R4END=$(date -d '2026-10-20 04:35' +%s 2>/dev/null || echo 0)
+for spec in 8090:MCP 9006:RAG; do
+  port=${spec%%:*}; name=${spec##*:}
+  pid=$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+  if [ -n "${pid:-}" ]; then
+    et=$(ps -o etimes= -p "$pid" 2>/dev/null | tr -d ' ')
+    echo "  $name port=$port pid=$pid etimes=${et}s"
+    if [ "$R4END" != "0" ] && [ "$((NOW-R4END))" -lt "${et:-0}" ]; then echo "     -> OK 早于 r4 结束启动（期间未重启）"; else echo "     -> 注意：可能在 r4 之后才启动"; fi
+  else echo "  $name port=$port NOT_LISTENING"; fi
+done
+
+echo ""
+echo "[6] .29 负载 / 邻居 / OOM"
+uptime | cut -c1-110
+free -g | head -2 | cut -c1-90
+echo "  t0002147 procs=$(ps -eo user,args 2>/dev/null | grep -c 't0002147')"
+echo -n "  dmesg OOM 计数: "; dmesg -T 2>/dev/null | grep -icE 'oom|killed process' || echo "不可读"
+
+echo ""
+echo "[7] r5 状态（只确认存活）"
+pgrep -af 'run_cline_script' 2>/dev/null | head -2 | cut -c1-80 || echo "  r5 无进程"
+
+rm -rf "$W"
+echo "=== DONE 91 ==="
+```
+
+**输出**
+```
+=== RUN_ID 91 | r4 MCP-timeout attribution | 2026-10-20 06:11:00 | host=hfeg0tedaap02 ===
+[1] log
+  size=12MB
+  >>> 单次全量扫描（180s 保护）
+  scan rc=0  timeout_lines=680
+
+[2] timeout 时间分布（按小时桶）
+
+[3] timeout 形态归类（区分下游环节，关键判据）
+  pyAether_MCP_server : 677
+  RAG/recall/9006     : 1
+  run_code/沙盒端口   : 18
+  150s 级等待         : 0
+0
+
+[4] timeout 行样例（5 条）
+[0m[2mbox =[0m[2m pyScript[0m[2m.emy[0m[2mBoxF[0m[2m(0[0m   [90m⎿ [0m[31merror: {"error":"MCP error -32001: MCP request to \"pyAether_MCP_server\" timed out after 60s. Increase the \"t
+[2m[thinking] [0m[2m即使[0m[2m调[0m[2m用了不[0m[2m存在的函数[0m[2m `[0m[2mpyScript[0m[2m.none[0m[2mxistent[0m[2m_function_[0m[2mxyz`[0m[2m，error[0m[2m_log [0m[2
+[0m[2mLet me[0m[2m keep the[0m[2m。error[0m[2m import as[0m[2m_log [0m[2m应该是[0m[2m given[0m[2m空字符串[0m[2m才表示[0m[2m无[0m[2m错误，[0m[2m但这里[0m[2m�
+1[0m[2m. em[0m[2my[0m[2mPointF[0m[2m.x()[0m[2m /[0m   [90m⎿ [0m[31merror: {"error":"MCP error -32001: MCP request to \"pyAether_MCP_server\" timed out after 60s. Increase the \"timeout
+[0m[2m- `[0m[2mpyScript[0m[2m.emy[0m[2mTransformF[0m[2m(([0m[2mx,[0m[2m导致失败[0m[2m，我会[0m[2m y),[0m[2m orient[0m   [90m⎿ [0m[31merror: {"error":"MCP error -32001:
+
+[5] 组件状态 + 是否在 r4 时段重启过
+  MCP port=8090 pid=2491123 etimes=94612s
+     -> OK 早于 r4 结束启动（期间未重启）
+  RAG port=9006 pid=3503518 etimes=766817s
+     -> OK 早于 r4 结束启动（期间未重启）
+
+[6] .29 负载 / 邻居 / OOM
+ 06:11:00 up 349 days, 19:33, 141 users,  load average: 14.89, 16.32, 16.93
+               total        used        free      shared  buff/cache   available
+Mem:            1007         239          82           0         693         767
+  t0002147 procs=107
+  dmesg OOM 计数: 0
+不可读
+
+[7] r5 状态（只确认存活）
+1296715 bash scripts/run_cline_script.sh -p 4 -n
+1429828 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md 
+=== DONE 91 ===
+```
