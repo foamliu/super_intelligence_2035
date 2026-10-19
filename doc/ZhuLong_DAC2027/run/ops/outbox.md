@@ -10578,3 +10578,99 @@ pid=2743948 EXITED（TERM 已生效）
 batch 2680437 GONE
 === DONE 81 ===
 ```
+
+---
+
+## RUN_ID 82 · 2026-10-19 14:54:03 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 82 | r2 收口复查 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] batch 主进程 2680437"
+[ -e /proc/2680437 ] && echo "ALIVE [$(tr '\0' ' ' </proc/2680437/cmdline 2>/dev/null | cut -c1-120)]" || echo "GONE"
+echo "[2] 本 run 进程残留（run_cli / run_cline_script / timeout 2500, 仅 e0031982）"
+ps -eo pid,ppid,etimes,user,args | grep -E '[r]un_cli\.sh|[r]un_cline_script|[t]imeout 2500' | grep -i 'e0031982' | cut -c1-170 || echo "无残留"
+echo "[3] r2 log 末尾"
+tail -20 /tmp/ABL_readback_none_retest_r2.log 2>/dev/null | cut -c1-200
+echo "[4] batch 目录 + stats"
+ls -dt /home/app.e0031982/eda_code_eval/2026_1019_071104 2>/dev/null
+D=/home/app.e0031982/eda_code_eval/2026_1019_071104
+ls -l "$D/stats/" 2>/dev/null
+echo "--- stats 内容 ---"
+for f in "$D"/stats/*; do [ -f "$f" ] && echo "== $f ==" && cat "$f" 2>/dev/null | tail -5; done
+echo "--- log 里 pass/summary 关键词 ---"
+grep -aE 'pass \(|generated:|汇总|Pass@1|summary' /tmp/ABL_readback_none_retest_r2.log 2>/dev/null | tail -10
+echo "=== DONE 82 ==="
+```
+
+**输出**
+```
+=== RUN_ID 82 | r2 收口复查 | 2026-10-19 14:54:03 | host=hfeg0tedaap02 ===
+[1] batch 主进程 2680437
+GONE
+[2] 本 run 进程残留（run_cli / run_cline_script / timeout 2500, 仅 e0031982）
+3662997   81827     385 app.e00+ timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## �
+3662998 3662997     385 app.e00+ opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ## 🔧 运维指令区
+[3] r2 log 末尾
+  ❌ 无可执行脚本(*.py): /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+
+config.yaml restored to original
+
+Done!
+[0;32m[SUCCESS][0m [Step 7.1] 评估完成 (execution_results.jsonl 已产)
+[0;34m[INFO][0m [Step 8] 跳过 Memory Bank 更新 (自进化未开启)
+[0;34m[INFO][0m [Step 8.5] 跳过 Skill 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.55] 跳过 Skill 质量门禁 (自进化未开启)
+[0;34m[INFO][0m [Step 8.6] 跳过 Rules 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.65] 跳过 Rule 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.7] 跳过 Skill 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.9] 跳过 L1 语义合并 (自进化未开启)
+[0;34m[INFO][0m [Step 8.92] 跳过 L1 突触修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.95] 跳过 validator 规则挖掘 (自进化未开启)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 生成代码文件:   code_generation_2026_1019_071104.jsonl
+[0;34m[INFO][0m 原始数据集名:   EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m 输出目录:       /home/app.e0031982/eda_code_eval/2026_1019_071104
+[0;34m[INFO][0m =============================================
+[4] batch 目录 + stats
+/home/app.e0031982/eda_code_eval/2026_1019_071104
+total 4
+-rw-r----- 1 app.e0031982 app.adm   2 Oct 19 07:11 failure
+-rw-r----- 1 app.e0031982 app.adm 172 Oct 19 07:11 l1_injection.json
+-rw-r----- 1 app.e0031982 app.adm   4 Oct 19 09:37 success
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 19 09:37 success.lock
+-rw-r----- 1 app.e0031982 app.adm   2 Oct 19 14:13 timeout
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 19 14:13 timeout.lock
+-rw-r----- 1 app.e0031982 app.adm   6 Oct 19 14:13 total_time
+-rw-r----- 1 app.e0031982 app.adm   0 Oct 19 14:13 total_time.lock
+--- stats 内容 ---
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/failure ==
+0
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/l1_injection.json ==
+  "tasks_got_l1": 0,
+  "l1_has_content": false,
+  "vector_enabled": true,
+  "formatted_at": "2026-10-19 07:11:15"
+}== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/success ==
+156
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/success.lock ==
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/timeout ==
+2
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/timeout.lock ==
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/total_time ==
+81289
+== /home/app.e0031982/eda_code_eval/2026_1019_071104/stats/total_time.lock ==
+--- log 里 pass/summary 关键词 ---
+Let[0m[2m me final[0m[2mize.[0m[2m I'll[0m[2m provide a[0m[2m clear summary[0m[2m of:
+Actually[0m[2m, hold[0m[2m on —[0m[2m let me[0m[2m reconsider if[0m[2m I should[0m[2m also verify[0m[2m the OTHER[0m[2m API calls[0m[2m in the[0m[2m file that[0m[2m I[0m[2m CAN see[0m[2m, in[0m[2m case there[0m[2m are additional[0m[2m bugs the[0m[2m prior agent[0m[2m hadn[0m[2m't flagged[0m[2m. But[0m[2m the context[0m[2m summary's[0m[2m "State[0m[2m" indicates[0m[2m the prior[0m[2m agent focused[0m[2m on enum[0m[2m values and[0m[2m emy[0m[2mAttrDisplay[0m[2m, and[0m[2m the file[0m[2m is otherwise[0m[2m complete.[0m[2m The remaining[0m[2m "Next[0m[2m" items[0m[2m were all[0m[2m about the[0m[2m APIs I[0m[2m've now[0m[2m verified and[0m[2m the one[0m[2m open question[0m[2m I've[0m[2m resolved.
+[0m[2mI'm[0m[2m confident.[0m[2m Let me[0m[2m write the[0m[2m final summary[0m[2m.
+[0m[2mWait,[0m[2m actually there[0m[2m IS value[0m[2m in verifying[0m[2m the[0m[2m crt[0m[2m_attr[0m[2m_display[0m[2m's keyword[0m[2m argument names[0m[2m. If[0m[2m the function[0m[2m uses `[0m[2mlayer=`[0m[2m and `[0m[2mpurpose[0m[2m=` ([0m[2mwrong names[0m[2m) instead[0m[2m of `[0m[2mlayerNum[0m[2m=`/[0m[2m`p[0m[2murposeNum[0m[2m=`,[0m[2m that's[0m[2m a bug[0m[2m. The[0m[2m context[0m[2m summary said[0m[2m "layer[0m[2mNum=[0m[2m1,[0m[2m purposeNum[0m[2m=0[0m[2m" ([0m[2mcorrect names[0m[2m), but[0m[2m let me[0m[2m verify[0m[2m this is[0m[2m actually what[0m[2m's in[0m[2m the code[0m[2m vs[0m[2m. the[0m[2m summary being[0m[2m the RES[0m[2mOLVED[0m[2m knowledge[0m[2m.
+H[0m[2mmm,[0m[2m the context[0m[2m summary's[0m[2m "High[0m[2mlights"[0m[2m says:[0m[2m "Term[0m[2minal-name[0m[2m displays use[0m[2m layerNum[0m[2m=1[0m[2m, purpose[0m[2mNum=[0m[2m0,[0m[2m height=[0m[2m0.[0m[2m5,[0m[2m lower-left[0m[2m text[0m[2m alignment,[0m[2m R0[0m[2m orientation,[0m[2m and stick[0m[2m font."
+[0m[2mI'm[0m[2m now confident[0m[2m. Let[0m[2m me final[0m[2mize[0m[2m with a[0m[2m summary.
+1[0m[2m. The[0m[2m context summary[0m[2m explicitly[0m[2m states the[0m[2m code uses[0m[2m `layer[0m[2mNum=[0m[2m1[0m[2m, purpose[0m[2mNum=[0m[2m0`.
+[0m[2mFinal summary[0m[2m time.
+This[0m[2m completes the[0m[2m substantive[0m[2m work.[0m[2m Let me[0m[2m write[0m[2m the summary[0m[2m.
+[0m[2mI'm[0m[2m done[0m[2m. Let[0m[2m me write[0m[2m the final[0m[2m summary.[0m
+=== DONE 82 ===
+```
