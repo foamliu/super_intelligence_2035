@@ -870,3 +870,18 @@
 | 2026-10-20 | TorchTPU 开源（cloud.google.com 本机不可达 · 无正文可核 · 留档） | HN 转 Google Cloud Blog | https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source |
 | 2026-10-20 | 儿童手表品牌成小学生社交准入门槛（社会话题 · 不收） | IT之家 | https://www.ithome.com/1/015/567.htm |
 | 2026-10-20 | OpenBSD 8.0 正式发布（系统版本更新 · 非 AI · 留档） | IT之家 | https://www.ithome.com/1/015/569.htm |
+| 2026-10-21 | Adobe Lightroom 移动版支持「睁眼」AI 修图，一键修复闭眼照片 | IT之家 | news | https://www.ithome.com/1/015/601.htm |
+| 2026-10-21 | 工信部五项强制性国标征求意见：L2 泊车组合辅助须检测视线脱离、记忆泊车限速 10/15km/h、L3/L4 自动泊车限速 30km/h | IT之家（据工信部） | news | https://www.ithome.com/1/015/606.htm |
+| 2026-10-21 | 用户借 Claude Code 等 AI 工具清理智能电视广告与预装软件（CleanYourTV 禁用 25 个小米软件包 / DumbTV），部分设备改坏 | IT之家（据 TechCrunch） | news | https://www.ithome.com/1/015/598.htm |
+| 2026-10-21 | OpenAI 宣布收购 AI 生物科技初创 Orchestra Bio，并入 Rosalind 项目 | IT之家（据 OpenAI 官网） | news | https://www.ithome.com/1/015/621.htm |
+| 2026-10-21 | 黄仁勋访欧：别只拿监管当大棒，应重点监管 AI 应用而非底层技术（与德国总理默茨对话） | IT之家（据商业内幕） | news | https://www.ithome.com/1/015/603.htm |
+| 2026-10-21 | 京东暂停双 11 期间外部安全测试与漏洞收录（AI 相关性弱 · 留档不收） | IT之家（据 JSRC 公告） | 不收 | https://www.ithome.com/1/015/590.htm |
+| 2026-10-21 | 高通 CEO 内部备忘录：年度评估后全球裁员（人事事件、与 AI 无直接事件关联 · 留档不收） | IT之家（据路透社） | 不收 | https://www.ithome.com/1/015/594.htm |
+| 2026-10-21 | Netflix 2026 财年三季报（财报数据 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/618.htm |
+| 2026-10-21 | SpaceX 2026 财年三季报（财报数据 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/617.htm |
+| 2026-10-21 | 超微电脑 2027 财年 Q1 营收指引（财报数据 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/619.htm |
+| 2026-10-21 | 华为详解 Wi-Fi 7+ 端到端芯片方案（AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/613.htm |
+| 2026-10-21 | 引望、宁德时代首批换电车型暂定五款 2027 年上市（AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/610.htm |
+| 2026-10-21 | 三星马来西亚总裁乐见苹果入局折叠屏（AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/607.htm |
+| 2026-10-21 | 苹果 iOS 27.2 为 HomePod 新增锁定功能（AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/591.htm |
+| 2026-10-21 | 量子位「Claude 新模型曝光」（爆料/媒体解读 · 无官方发布 · 不收） | 量子位 | 不收 | https://www.qbitai.com/2026/10/504314.html |
