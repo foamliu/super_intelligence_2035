@@ -1,12 +1,13 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-21 01:27 🛑 BLOCKER 维持·r4⁗(r4-4) T+208min 退化持续·接近收口·仍等运维决策 —
-- **r4⁗ 跑中**：PID 4004063·etime 12465s(~208min)·batch `2026_1020_215918`·log /tmp/ABL_readback_none_retest_r4d4.log（6.4M/60461 行·+16854/42min=401 行/min）·4 端口 8650/8651/8652/8654 全 OPEN·loop PID 81827 含 https_proxy ✅·relay PID 3277328 活。
-- **退化持续（路径修正·01:27 实测）**：`stats/success`=**124/158**（+28/42min 仍在推进）·`code/` 下 **42 个 .py**（路径=`code/EDA-Eval-PyAether-XXX/ws/pyAether_code/*.py`·全真实代码·0 literal-pass·全有 `import pyAether`·37/42 >1000B）→ **82 个「成功完成」未产出代码（66% loss·较 00:45 的 64% 略恶化）**。128/158 task dirs 已建（~81%·`.task_queue` 尾=154-158·接近收口）。
-- **21:4x ⑤ 书面停手阈值仍未触发**（MCP率 2.67/min<5·literal-pass=0·circuit_breaker=0·licence_unavail=0）**但 missing-.py 退化未止**。MCP-32001=581（+112/42min=2.67/min）。
-- **处置**：**不自杀 r4⁗**（书面阈值未触发·kill 不可逆·r4 家族 kill/restart 历来运维拍板·且 batch 已 81% 接近收口·杀掉浪费 3.5h）·🛑 **维持 BLOCKER 等运维决策**·WAITING=1。21:4x 端口切换(8650/8651/8652/8654)**未根治**·同 r4 家族第 5 次退化。
-- **下一步**：等运维令。batch 预计 ~30-60min 收口（128/158→158/158）→收口后 grep codegen jsonl 字面量 "pass"+regrade（预计 ~42-50/158≈27-32%·INVALID 同 r4'''）→5/5 仍只 r1/r2/r3。若运维提前令 kill→标 r4⁗ INVALID 不进 5-run·留证。 -->
+<!-- heartbeat 2026-10-21 02:08 🛑 BLOCKER 维持·r4⁗(r4-4) T+249min·batch 147/158(93%)·4 worker 跑 144-147·11 题排队(148-158)·即将收口·退化持续·仍等运维决策 —
+- **r4⁗ 跑中**：PID 4004063·etime 14841s(~247min)·batch `2026_1020_215918`·log /tmp/ABL_readback_none_retest_r4d4.log（8.4M/76496 行·+16035/41min=391 行/min）·4 端口 8650/8651/8652/8654 全 OPEN·loop PID 81827 含 https_proxy ✅·relay PID 3277328 活·ops RUN_ID 99 已闭合(outbox)。
+- **退化持续（02:08 实测）**：147 task dirs 已建（93%·`.task_queue` 余 11=148-158·4 worker 活于 144-147）·`code/` 下仅 **45 个 .py**（路径=`code/EDA-Eval-PyAether-XXX/ws/pyAether_code/*.py`·全真实代码·0 literal-pass·全有 `import pyAether`）→ **102 个 task dirs 无 .py（69% loss·较 01:27 的 66% 略恶化）**。**预计收口后 ~45-50/158≈28-32% Pass@1·INVALID 同 r4'''**。
+- **21:4x ⑤ 书面停手阈值仍未触发**（MCP率 2.29/min<5·literal-pass=0·circuit_breaker=0·licence_unavail=0）**但 missing-.py 退化未止**。MCP-32001=675（+94/41min=2.29/min·稳定非加速）·run_code_calls=703。last 5000 行 38 次 32001·last 15000 行 89 次（率 ~2-2.5/min 持稳）。
+- **处置**：**不自杀 r4⁗**（书面阈值未触发·kill 不可逆·r4 家族 kill/restart 历来运维拍板·batch 93% 即将收口·杀掉浪费 ~4h）·🛑 **维持 BLOCKER 等运维决策**·WAITING=1。21:4x 端口切换(8650/8651/8652/8654)**未根治**·同 r4 家族第 5 次退化（r4/r4'/r4''/r4'''/r4⁗ 全 INVALID 轨迹）。
+- **下一步**：等运维令。batch 预计 ~15-30min 收口（147/158→158/158·剩 11 题 + 4 active）→收口后 grep codegen jsonl 字面量 "pass"+regrade（预计 INVALID）→5/5 仍只 r1/r2/r3。若运维提前令 kill→标 r4⁗ INVALID 不进 5-run·留证。 -->
+- [2026-10-21 01:27 指针·已滚出] 🛑 BLOCKER·r4⁗ T+208min 退化持续（45→42→45 .py·66% loss·MCP 2.67/min·21:4x ⑤ 书面阈值未触发·不自杀）→ 原文搬入 daily-memories/2026-10-21.md §[01:27]。
 - [2026-10-21 00:45 指针·已滚出] 🛑 BLOCKER·r4⁗ T+163min 退化复发·新签名「missing .py」（stats/success=96 但仅 35 .py·64% loss·MCP 2.86/min·报运维不自杀）→ 原文搬入 daily-memories/2026-10-21.md §[00:45]。
 - [2026-10-21 00:07 指针·已滚出] 🟢 r4⁗ T+128min 巡检（当时误判健康·stats/success=74 单调增但未核 .py 数·**漏判退化**·下轮 00:45 核 .py 数才发现 61 missing）→ 原文搬入 daily-memories/2026-10-21.md §[00:07]。
 
@@ -88,7 +89,8 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情、14:56/17:31/18:13 旧心跳 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。关键结论：r1=78.5%(124/158,timeout=1)、r2=70.9%(112/158,timeout=2,task119 stuck 6h)、r3=成功153/超时5/失败0(总11742s,task130 stuck 6582s)；**r2 task119/r3 task130 的 stuck 正是 RUN_ID 83 要查的根因**。
 ## 操作流水
-- [2026-10-21 01:27] 🛑 **BLOCKER 维持·r4⁗ T+208min 巡检·退化持续·接近收口·仍等运维决策**：r4⁗ PID 4004063 etime=12465s·batch `2026_1020_215918`·log 6.4M/60461 行·4 端口 8650/8651/8652/8654 全 OPEN·loop PID 81827 含 https_proxy ✅·relay 活。**路径修正**：.py 在 `code/EDA-Eval-PyAether-XXX/ws/pyAether_code/*.py`（非 `code/*.py`·本次 42·00:45 报 35 同路径）。**退化持续**：`stats/success`=124/158（+28/42min 推进中）·42 个 .py（全真实代码·0 literal-pass·全有 import pyAether·37/42 >1000B）→ **82 missing（66% loss·较 00:45 的 64% 略恶化）**。128/158 task dirs 已建（~81%·`.task_queue` 尾=154-158·接近收口）。MCP-32001=581（+112/42min=2.67/min·<5 阈值）·circuit_breaker=0·licence_unavail=0。**21:4x ⑤ 书面停手阈值仍未触发**但 missing-.py 退化未止。**处置**：**不自杀 r4⁗**（书面阈值未触发·kill 不可逆·且 batch 81% 接近收口·杀掉浪费 3.5h）·维持 BLOCKER 等运维决策·WAITING=1。**下一步**：等运维令；batch 预计 30-60min 收口→regrade 预计 ~42-50/158≈27-32% INVALID 同 r4'''→5/5 仍只 r1/r2/r3。**未触发新动作·纯巡检+心跳更新**。
+- [2026-10-21 02:08] 🛑 **BLOCKER 维持·r4⁗ T+249min 巡检·batch 147/158(93%)即将收口·退化持续·仍等运维决策**：r4⁗ PID 4004063 etime=14841s·batch `2026_1020_215918`·log 8.4M/76496 行·4 端口 8650/8651/8652/8654 全 OPEN·loop PID 81827 含 https_proxy ✅·relay PID 3277328 活·ops RUN_ID 99 已闭合。**进度**：147 task dirs（93%）·`.task_queue` 余 11=148-158·4 worker 活于 144-147。**退化持续**：仅 **45 个 .py**（路径 `code/EDA-Eval-PyAether-XXX/ws/pyAether_code/*.py`·全真实代码·0 literal-pass·全有 import pyAether）→ **102 task dirs 无 .py（69% loss·较 01:27 的 66% 略恶化）**·预计收口后 ~45-50/158≈28-32% INVALID 同 r4'''。MCP-32001=675（+94/41min=2.29/min·稳定非加速）·run_code_calls=703·circuit_breaker=0·licence_unavail=0·literal-pass=0。**21:4x ⑤ 书面停手阈值仍未触发**但 missing-.py 退化未止。**处置**：**不自杀 r4⁗**（书面阈值未触发·kill 不可逆·batch 93% 即将收口·杀掉浪费 ~4h）·维持 BLOCKER 等运维决策·WAITING=1。**下一步**：等运维令；batch 预计 15-30min 收口→regrade（预计 INVALID）→5/5 仍只 r1/r2/r3。**未触发新动作·纯巡检+心跳更新**。
+- [2026-10-21 01:27 指针·已滚出] 🛑 BLOCKER·r4⁗ T+208min 退化持续（45→42→45 .py·66% loss·MCP 2.67/min·21:4x ⑤ 书面阈值未触发·不自杀）→ 原文搬入 daily-memories/2026-10-21.md §[01:27]。
 - [2026-10-21 00:45 指针·已滚出] 🛑 BLOCKER·r4⁗ T+163min 退化复发·新签名「missing .py」（stats/success=96 但仅 35 .py·64% loss·MCP 2.86/min·报运维不自杀·21:4x ⑤ 书面阈值未触发）→ 原文搬入 daily-memories/2026-10-21.md §[00:45]。
 - [2026-10-21 00:07 指针·已滚出] 🟢 r4⁗ T+128min 巡检（**当时误判健康**·stats/success=74 单调增但**未核 .py 数**·漏判退化·00:45 核 .py 数才发现 61 missing）→ 原文搬入 daily-memories/2026-10-21.md §[00:07]。
 - [2026-10-20 23:22 指针·已滚出] 🟢 r4⁗ T+82min 巡检（stats/success=47·**当时漏判退化**·未核 .py 数）→ 原文搬入 daily §[23:22]。
