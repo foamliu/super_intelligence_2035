@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BaiZe pretrain 评测报告：Xmodel-2.5 decay v2 final · 14 集 lm-eval</title>
+<title>BaiZe pretrain 评测报告：Xmodel-2.5 decay v2 final · 14 集 lm-eval（对照口径已更正）</title>
 <style>
 body{font-family:-apple-system,"Noto Sans SC","PingFang SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fafafa;color:#222;line-height:1.65}
 h1{color:#1a1a2e;border-bottom:3px solid #2563eb;padding-bottom:10px;font-size:24px}
@@ -17,28 +17,36 @@ tr:nth-child(even){background:#f9fafb}
 .small{font-size:11px;color:#666}
 .info{background:#e8f4fd;border-left:4px solid #2563eb;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
 .warn{background:#fef3cd;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.bad{background:#fee2e2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
 code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
 .num{text-align:right;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 
-<h1>BaiZe pretrain 评测报告：Xmodel-2.5 decay v2 final · 14 集 lm-eval</h1>
+<h1>BaiZe pretrain 评测报告：Xmodel-2.5 decay v2 final · 14 集 lm-eval（对照口径已更正）</h1>
 
-<p class="small">生成时间：2026-10-20 · 范围：Xmodel-2.5 80B decay v2 final ckpt @ <code>.29</code> · 评测口径：CS8 zero-shot + CX6 default n-shot · 对比基准：P-8 / Xmodel-2 / Xmodel-2.5 历史 ckpt</p>
+<p class="small">生成时间：2026-10-20（第二版，<strong>对口径错误已推翻重做</strong>） · 范围：Xmodel-2.5 71.2B decay v2 final ckpt @ <code>.29</code> · 评测口径：CS8 zero-shot + CX6 default n-shot · <strong>主对照：Xmodel-2.5 final（同起点 / 同量 decay / 相近配比）</strong></p>
+
+<div class="bad">
+<strong>版本说明（对照口径更正）</strong>：第一版（2026-10-20 18:32）误以 P-8 / Xmodel-2.5 step_6000 为主对照，据此得出「更多 tokens 未带来提升」的结论，<strong>该对照错误、结论不成立，已废除</strong>。decay v2 final 是<strong>基于 Xmodel-2.5 stable 末检查点 step_532000、以相同方式 decay 了 71.2B tokens</strong>，其唯一公平主对照是 <strong>Xmodel-2.5 final</strong>。P-8（2.22B Mamba2-hybrid，与 decay v2 的 1.3B Dense 架构/参数量均不同）仅作旁注、不可作为归因依据。
+</div>
 
 <div class="info">
-<strong>一句话结论</strong>：decay v2 final（80B tokens / 2.22B 参数 / Mamba2-hybrid 架构）14 集评测完成——<strong>CS8 = 44.97%</strong>、<strong>CX6 = 6.21%</strong>。CS8 低于同参数量的 P-8（49.21%，44.4B tokens，-4.24pp），也低于同 token 量级的 Xmodel-2.5 step_6000（50.20%，79.2B tokens / 1.3B 参数，-5.23pp）；CX6 略低于 P-8（6.81%，-0.60pp），其中 mmlu 反超 P-8（32.22% vs 24.28%），但 bbh_zeroshot 大幅低于 P-8（3.98% vs 14.36%）。本文如实列数字，不臆测归因。
+<strong>一句话结论</strong>：decay v2 final（71.2B tokens / ≈1.3B Dense Transformer / Xmodel 同架构）14 集评测——<strong>CS8 = 44.97%</strong>、<strong>CX6 = 6.21%</strong>。对照其唯一公平基线 <strong>Xmodel-2.5 final（CS8 65.40% / CX6 32.90%）</strong>：<strong class="red">CS8 差 -20.43pp、CX6 差 -26.69pp</strong>。此为近似单变量的公平对照（同起点 step_532000、同 71.2B decay 量、配比相近、均走 Muon），差值属「<strong>decay 段没练出来</strong>」，不是略差。失败归因见 §4；关键判定实验（step_532000 基线 eval）待用户批准后补跑。
 </div>
 
 <h2>1. 评测对象与环境</h2>
 
 <table>
 <tr><th style="width:180px">项目</th><th>详情</th></tr>
-<tr><td>模型</td><td>Xmodel-2.5 decay v2 <strong>final</strong> ckpt</td></tr>
+<tr><td>模型</td><td>Xmodel-2.5 decay v2 <strong>final</strong> ckpt（基于 stable 末检查点 step_532000 继续 decay）</td></tr>
 <tr><td>HF 目录</td><td><code>nemo_experiments/xmodel25_baize_80b_decay/final/</code></td></tr>
-<tr><td>参数量</td><td>2.22B（Mamba2-hybrid 56 层 Nemotron-H 式顺序混合）</td></tr>
-<tr><td>训练 tokens</td><td>~80B（19,980 步 × seq 4096 × GBS 8）</td></tr>
+<tr><td>架构</td><td><strong>XmodelForCausalLM · ≈1.3B Dense Transformer</strong>（48 层 / hidden 1536 / 24 heads / 8 KV heads / intermediate 3840 / vocab 129280）——与 Xmodel-2.5 <strong>同架构</strong></td></tr>
+<tr><td>训练 tokens</td><td><strong>71.2B</strong>（19,980 步 × GBS 960 × seq 3712 = 71.20B，非「~80B」）</td></tr>
+<tr><td>起点</td><td><code>xmodel25_history/step_532000</code>（Xmodel-2.5 stable 末点，~1.41T tokens，本地 <code>pytorch_model.bin</code> 2.70GB 已就绪）</td></tr>
+<tr><td>decay 配比</td><td>SFT 62.7% : L3 23.5% : code 9.8% : math 3.9%（脚本实值，与官方 66.9% SFT 相近）</td></tr>
+<tr><td>优化器</td><td>decay 段 Muon（stable 末点 AdamW→Muon，与官方一致）</td></tr>
 <tr><td>architectures</td><td><code>XmodelForCausalLM</code>（需 <code>trust_remote_code=True</code>）</td></tr>
 <tr><td>attn 修复</td><td><code>_attn_implementation</code> flash→sdpa + 去除 <code>sdpa_kernel(CUDNN_ATTENTION)</code> 强启</td></tr>
 <tr><td>评测脚本</td><td><code>run/baize_xmodel_eval.sh</code>（14 集 = CS8 zero-shot + CX6 default n-shot）</td></tr>
@@ -66,12 +74,11 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
 <tr><td>humaneval</td><td class="num">0</td><td class="num">4</td></tr>
 <tr><td>mbpp</td><td class="num">3</td><td class="num">4</td></tr>
 </table>
-<div class="info"><strong>口径一致性</strong>：14 集 few-shot / batch 与 P-8 完全相同；所有 CX6 任务使用 <code>attn_implementation=sdpa</code>（与 Xmodel-2.5 final 基线同口径）。humaneval/mbpp 因首轮 nohup 未存活，在 #636 用 <code>setsid nohup --confirm_run_unsafe_code</code> 重跑于 GPU6/7。</div>
+<div class="info"><strong>口径一致性</strong>：14 集 few-shot / batch 与 Xmodel-2.5 final 基线完全相同；所有任务使用 <code>attn_implementation=sdpa</code> 同口径。</div>
 
 <h2>2. 评测结果</h2>
 
 <h3>2.1 CS8（Common Sense 8，zero-shot）</h3>
-
 <table>
 <tr><th>任务</th><th class="num">acc</th><th class="num">acc（%）</th></tr>
 <tr><td>hellaswag</td><td class="num">0.3078</td><td class="num">30.78%</td></tr>
@@ -86,7 +93,6 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
 </table>
 
 <h3>2.2 CX6（Complex 6，default n-shot）</h3>
-
 <table>
 <tr><th>任务</th><th class="num">few-shot</th><th class="num">score</th><th class="num">score（%）</th></tr>
 <tr><td>gsm8k</td><td class="num">5</td><td class="num">0.0106</td><td class="num">1.06%</td></tr>
@@ -98,112 +104,126 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
 <tr><td><strong>CX6 Avg（6/6）</strong></td><td></td><td class="num bold">0.0621</td><td class="num bold">6.21%</td></tr>
 </table>
 
-<div class="warn"><strong>关于 humaneval/mbpp = 0</strong>：两任务均经 <code>--confirm_run_unsafe_code</code> 在 GPU6/7 重跑，<code>results_*.json</code> 已落盘（humaneval <code>pass@1,create_test=0.0</code> @16:15；mbpp <code>pass_at_1,none=0.0</code> @16:11）。0 分属实，非评测崩溃——80B tokens 的 2B 模型在代码生成上尚未涌现 pass@1 能力，与 P-8（humaneval 0.61% / mbpp 0%）量级一致。</div>
-<h2>3. 对比分析</h2>
-
-<h3>3.1 总览：decay v2 final vs P-8 vs Xmodel 历史</h3>
-
-<table>
-<tr><th>模型</th><th class="num">Tokens</th><th class="num">Params</th><th class="num">CS8</th><th class="num">CX6</th><th>架构 / 来源</th></tr>
-<tr><td class="bold blue">decay v2 final</td><td class="num">~80B</td><td class="num">2.22B</td><td class="num bold">44.97%</td><td class="num bold">6.21%</td><td>Mamba2-hybrid / BaiZe</td></tr>
-<tr><td>P-8 final</td><td class="num">44.4B</td><td class="num">2.22B</td><td class="num">49.21%</td><td class="num">6.81%</td><td>Mamba2-hybrid / BaiZe AdamW</td></tr>
-<tr><td>Xmodel-2.5 step_2000</td><td class="num">26.4B</td><td class="num">1.3B</td><td class="num">46.12%</td><td class="num">—</td><td>Dense Transformer</td></tr>
-<tr><td>Xmodel-2.5 step_4000</td><td class="num">52.8B</td><td class="num">1.3B</td><td class="num">49.11%</td><td class="num">—</td><td>Dense Transformer</td></tr>
-<tr><td>Xmodel-2.5 step_6000</td><td class="num">79.2B</td><td class="num">1.3B</td><td class="num">50.20%</td><td class="num">—</td><td>Dense Transformer</td></tr>
-<tr><td>Xmodel-2.5 final</td><td class="num">1.4T</td><td class="num">1.3B</td><td class="num">65.40%</td><td class="num">32.90%</td><td>Dense Transformer（充分训练）</td></tr>
-<tr><td>Xmodel-2 s1/10K</td><td class="num">39.3B</td><td class="num">1.2B</td><td class="num">46.65%</td><td class="num">8.49%</td><td>Dense Transformer</td></tr>
-<tr><td>Xmodel-2 final</td><td class="num">1.5T</td><td class="num">1.2B</td><td class="num">64.82%</td><td class="num">30.04%</td><td>Dense Transformer（充分训练）</td></tr>
-</table>
-
-<p class="small">注：Xmodel-2.5 step_2000/4000/6000 的 CX6 仅有 mmlu 单项数据（非 6 集完整），故标"—"。P-8 与 decay v2 final 的 CX6 为完整 6 集均值。</p>
-
-<h3>3.2 同参数量对比：decay v2 final vs P-8（均为 2.22B Mamba2-hybrid）</h3>
-
-<table>
-<tr><th>任务</th><th class="num">decay v2 final</th><th class="num">P-8 final</th><th class="num">Δ（pp）</th></tr>
-<tr><td><strong>CS8 Avg</strong></td><td class="num bold">44.97%</td><td class="num bold">49.21%</td><td class="num red">-4.24</td></tr>
-<tr><td>hellaswag</td><td class="num">30.78%</td><td class="num">40.09%</td><td class="num red">-9.31</td></tr>
-<tr><td>arc_easy</td><td class="num">45.12%</td><td class="num">50.42%</td><td class="num red">-5.30</td></tr>
-<tr><td>boolq</td><td class="num">47.00%</td><td class="num">57.09%</td><td class="num red">-10.09</td></tr>
-<tr><td>arc_challenge</td><td class="num">28.24%</td><td class="num">27.90%</td><td class="num green">+0.34</td></tr>
-<tr><td>sciq</td><td class="num">68.00%</td><td class="num">67.60%</td><td class="num green">+0.40</td></tr>
-<tr><td>piqa</td><td class="num">59.14%</td><td class="num">66.92%</td><td class="num red">-7.78</td></tr>
-<tr><td>winogrande</td><td class="num">51.30%</td><td class="num">51.07%</td><td class="num green">+0.23</td></tr>
-<tr><td>openbookqa</td><td class="num">30.20%</td><td class="num">32.60%</td><td class="num red">-2.40</td></tr>
-<tr><td><strong>CX6 Avg</strong></td><td class="num bold">6.21%</td><td class="num bold">6.81%</td><td class="num red">-0.60</td></tr>
-<tr><td>gsm8k</td><td class="num">1.06%</td><td class="num">1.59%</td><td class="num red">-0.53</td></tr>
-<tr><td>hendrycks_math500</td><td class="num">0.00%</td><td class="num">0.00%</td><td class="num">0.00</td></tr>
-<tr><td>mmlu</td><td class="num">32.22%</td><td class="num">24.28%</td><td class="num green">+7.94</td></tr>
-<tr><td>bbh_zeroshot</td><td class="num">3.98%</td><td class="num">14.36%</td><td class="num red">-10.38</td></tr>
-<tr><td>humaneval</td><td class="num">0.00%</td><td class="num">0.61%</td><td class="num red">-0.61</td></tr>
-<tr><td>mbpp</td><td class="num">0.00%</td><td class="num">0.00%</td><td class="num">0.00</td></tr>
-</table>
-
-<div class="warn">
-<strong>关键观察（事实陈述，不归因）</strong>：
-<ul>
-<li>decay v2 final 用了 <strong>~80B tokens</strong>（P-8 仅 44.4B，约 1.8×），但 CS8 反而低 4.24pp——在相同架构、相同参数量下，更多 tokens 未带来 CS8 提升。</li>
-<li>CS8 降幅最大的三集：boolq（-10.09pp）、hellaswag（-9.31pp）、piqa（-7.78pp）；arc_challenge / sciq / winogrande 基本持平。</li>
-<li>CX6 中 <strong>mmlu 反超 P-8 达 +7.94pp</strong>（32.22% vs 24.28%），但 <strong>bbh_zeroshot 大幅下降 -10.38pp</strong>（3.98% vs 14.36%），两者相互抵消。</li>
-<li>代码生成（humaneval/mbpp）两模型均接近 0，80B tokens 尚未涌现。</li>
-</ul>
-</div>
-
-<h3>3.3 同 token 量级对比：decay v2 final vs Xmodel-2.5 step_6000（均 ~80B tokens）</h3>
-
-<table>
-<tr><th>模型</th><th class="num">Tokens</th><th class="num">Params</th><th class="num">CS8</th><th>架构</th></tr>
-<tr><td class="bold">decay v2 final</td><td class="num">~80B</td><td class="num">2.22B</td><td class="num">44.97%</td><td>Mamba2-hybrid</td></tr>
-<tr><td>Xmodel-2.5 step_6000</td><td class="num">79.2B</td><td class="num">1.3B</td><td class="num">50.20%</td><td>Dense Transformer</td></tr>
-</table>
+<h2>3. 正确对照：decay v2 final vs Xmodel-2.5 final（唯一公平主对照）</h2>
 
 <div class="info">
-decay v2 final 参数量更大（2.22B vs 1.3B）、tokens 相当（~80B vs 79.2B），但 CS8 低 5.23pp。两者架构不同（Mamba2-hybrid vs Dense Transformer）、数据配方不同，差异为多因素混合，不做单一归因。
+<strong>为什么 Xmodel-2.5 final 是唯一公平主对照</strong>：decay v2 = 从 Xmodel-2.5 stable 末检查点 <code>step_532000</code> 起步、以相同方式 decay 71.2B tokens、配比相近、优化器一致（decay 段 Muon）。除「decay 段训练配方」外均为单变量，差值可直接归因到 decay 段本身。
 </div>
-<h2>4. 数据可溯源性</h2>
 
+<h3>3.1 CS8 逐任务 + 均值</h3>
+<table>
+<tr><th>任务</th><th class="num">decay v2 final</th><th class="num">Xmodel-2.5 final</th><th class="num">Δ（pp）</th></tr>
+<tr><td>hellaswag</td><td class="num">30.78%</td><td class="num">65.42%</td><td class="num red">-34.64</td></tr>
+<tr><td>arc_easy</td><td class="num">45.12%</td><td class="num">71.84%</td><td class="num red">-26.72</td></tr>
+<tr><td>boolq</td><td class="num">47.00%</td><td class="num">67.25%</td><td class="num red">-20.25</td></tr>
+<tr><td>arc_challenge</td><td class="num">28.24%</td><td class="num">45.99%</td><td class="num red">-17.75</td></tr>
+<tr><td>sciq</td><td class="num">68.00%</td><td class="num">92.90%</td><td class="num red">-24.90</td></tr>
+<tr><td>piqa</td><td class="num">59.14%</td><td class="num">76.17%</td><td class="num red">-17.03</td></tr>
+<tr><td>winogrande</td><td class="num">51.30%</td><td class="num">63.85%</td><td class="num red">-12.55</td></tr>
+<tr><td>openbookqa</td><td class="num">30.20%</td><td class="num">39.80%</td><td class="num red">-9.60</td></tr>
+<tr><td><strong>CS8 Avg</strong></td><td class="num bold">44.97%</td><td class="num bold">65.40%</td><td class="num red bold">-20.43</td></tr>
+</table>
+
+<h3>3.2 CX6 逐任务 + 均值</h3>
+<table>
+<tr><th>任务</th><th class="num">decay v2 final</th><th class="num">Xmodel-2.5 final</th><th class="num">Δ（pp）</th></tr>
+<tr><td>gsm8k</td><td class="num">1.06%</td><td class="num">59.59%</td><td class="num red">-58.53</td></tr>
+<tr><td>hendrycks_math500</td><td class="num">0.00%</td><td class="num">12.40%</td><td class="num red">-12.40</td></tr>
+<tr><td>mmlu</td><td class="num">32.22%</td><td class="num">51.95%</td><td class="num red">-19.73</td></tr>
+<tr><td>bbh_zeroshot</td><td class="num">3.98%</td><td class="num">25.86%</td><td class="num red">-21.88</td></tr>
+<tr><td>humaneval</td><td class="num">0.00%</td><td class="num">13.41%</td><td class="num red">-13.41</td></tr>
+<tr><td>mbpp</td><td class="num">0.00%</td><td class="num">34.20%</td><td class="num red">-34.20</td></tr>
+<tr><td><strong>CX6 Avg</strong></td><td class="num bold">6.21%</td><td class="num bold">32.90%</td><td class="num red bold">-26.69</td></tr>
+</table>
+
+<div class="bad">
+<strong>判定</strong>：14 集<strong>全面、大幅</strong>落后于自身起点模型 Xmodel-2.5 final（无任何一集持平或反超），CS8 -20.43pp / CX6 -26.69pp。gsm8k 更是从 59.59% 崩到 1.06%（-58.53pp）、mbpp 从 34.20% 崩到 0.00%。这属于 <strong>decay 段「没练出来」——甚至可能把起点模型练退化</strong>，绝非数据/评测噪声可解释。
+</div>
+
+<h2>4. 失败归因（本轮取证结论 · 按估计影响大小排序）</h2>
+
+<p class="small">取证方式：只读（读训练脚本 / HF 建模代码 / 训练日志首尾 / 数据 <code>.bin</code> 字节数与分词 <code>.json</code> / ckpt 权重）。未重训、未改配方、未跑任何训练。</p>
+
+<h3>4.1 🔴 双移位 bug（double-shift）—— 候选最大单项根因（代码级已确认）</h3>
+<ul>
+<li>训练脚本 <code>baize_xmodel25_decay_v2.py</code> 预先移位：<code>input_ids = full[:, :-1]</code>、<code>labels = full[:, 1:]</code>（py:547-548）。</li>
+<li>HF forward 内部<strong>再次</strong>移位：<code>shift_logits = logits[:, :-1]</code>、<code>shift_labels = labels[:, 1:]</code>（modeling_xmodel2.py:1209-1210）。</li>
+<li>chunked CE 路径同样再移位（py:567-568），且代码注释明确承认：<em>"Data is already pre-shifted… so HF model double-shifts. Replicate here for numerical equivalence."</em></li>
+<li><strong>后果</strong>：训练时模型学的是 <strong>2 步预测</strong>（位置 i → 预测 i+2），而评测是标准 1 步预测（i → i+1）→ <strong>train/eval 任务不匹配</strong>，14 集全部退化。官方 decay 不会预移位（标准做法仅在 forward 内移位一次）。</li>
+<li>该 bug 对 CX 类（gsm8k / mbpp / humaneval，需多步推理）打击最重，与 §3 中「CX6 崩得最狠」的现象一致。</li>
+</ul>
+
+<h3>4.2 🔴 peak LR 1.67e-3 过高 + warmup 100 步过短</h3>
+<ul>
+<li>WSD：warmup 100 步 → peak <strong>1.67e-3</strong> → exp(-5.0) decay → min 1e-5（<code>.sh</code> 实值 <code>LR=1.67e-3 / WARMUP=100 / MIN_LR=1e-5</code>）。</li>
+<li>从 1.41T 已收敛末点起步，decay 段应继续用 <strong>1e-5 ~ 3e-4</strong> 的温和 LR，而非重新 warmup 到 <strong>约 5~17×</strong> 典型 decay LR 的 1.67e-3。高 peak LR 在前几百步破坏预训练表征（相对新数据重学），warmup 100 步不足以在破坏前「软着陆」。</li>
+</ul>
+
+<h3>4.3 🟠 code 严重过采样 ≈26 epochs（计划标 23.7）</h3>
+<table>
+<tr><th>类别</th><th class="num">可用 token</th><th class="num">blend</th><th class="num">训练 token</th><th class="num">epoch</th></tr>
+<tr><td>SFT</td><td class="num">—</td><td class="num">62.7%</td><td class="num">44.67B</td><td class="num">—</td></tr>
+<tr><td>L3</td><td class="num">—</td><td class="num">23.5%</td><td class="num">16.75B</td><td class="num">—</td></tr>
+<tr><td><strong>Code</strong></td><td class="num">0.270B</td><td class="num">9.8%</td><td class="num">6.98B</td><td class="num red bold">≈26</td></tr>
+<tr><td>Math</td><td class="num">0.609B</td><td class="num">3.9%</td><td class="num">2.79B</td><td class="num">≈4.6</td></tr>
+</table>
+<ul>
+<li>Code 可用仅 <strong>0.270B tokens</strong>（anneal_code <code>num_tokens=90.3M</code> + r3_ultradata_code <code>180.0M</code>，取自分词 <code>.json</code> 元数据），以 9.8% 配比训练 6.98B → <strong>≈26 epochs</strong>，属严重过采样/过拟合（计划书估算 23.7，实测更高）。</li>
+<li>Math 可用 0.609B（anneal_math2 <code>430.7M</code> + r3_ultradata_math <code>178.4M</code>）→ ≈4.6 epochs，正常（计划标 5.25）。</li>
+</ul>
+
+<h3>4.4 🟡 step 0 loss = 11.72（≈ 随机）—— loss 起点未「接住」stable 末点</h3>
+<ul>
+<li>训练日志首步：<code>step 0 loss=11.7244</code>（lr=0，≈ ln(vocab 129280)=11.77 = 随机量级），step 10=6.49 → step 20=3.45 → step 100≈2.0。</li>
+<li>一个 1.41T 已训练模型加载后首步 loss 应在 ~2.0，而非随机量级 11.72——说明 loss 起点没有「接住」stable 末点。可能成因：①torch.compile 首步热身 ②双移位使首步目标变异 ③数据分布突变（web→SFT/code/math）。50~100 步内回落到 ~2.0 → 权重大概率仍正确、被短暂扰动后恢复。</li>
+<li><em>注：此项为现象记录，非独立根因；需配合 §4.5 基线实验才能判定是「加载/起点」问题还是「decay 配方」问题。</em></li>
+</ul>
+
+<h3>4.5 ⏸ 关键判定实验缺失：起点 step_532000 的 14 集基线（待用户批准）</h3>
+<ul>
+<li><strong>这是判定失败环节的<u>唯一</u>关键实验</strong>：起点 <code>xmodel25_history/step_532000</code>（Xmodel-2.5 stable 末点盘上就绪，<code>pytorch_model.bin</code> 2.70GB + HF 全套）在本地<strong>尚未</strong>用同一 <code>baize_xmodel_eval.sh</code> 跑过 14 集。</li>
+<li>判定逻辑：<ul>
+<li>若 step_532000 基线 ≈ 官方 65.40%（已收敛的 1.41T 模型）→ <strong>评测/加载链路正常，decay 段把模型练坏了</strong>（坐实 §4 前三项）。</li>
+<li>若 step_532000 基线也仅 ~45% → 问题在<strong>起点/加载</strong>（如权重映射、tokenizer、eval 链路），而非 decay 配方。</li>
+</ul></li>
+<li>历史参照（同脚本同口径 CS8 zero-shot）：step_2000=46.12% / step_4000=49.11% / Xmodel-2.5 final=65.40%。我方 decay v2 final（44.97%）甚至比仅训练 4B 的 step_4000（49.11%）还低 4.14pp，强烈提示 decay 段在退化。</li>
+<li>⏸ <strong>待用户批准后在 .29 跑</strong>（~1h，8×H100 已空闲）：<code>bash run/baize_xmodel_eval.sh &lt;step_532000路径&gt; &lt;out&gt; step532000_baseline 0,1,2,3,4,5,6,7</code>。</li>
+</ul>
+
+<h2>5. P-8 旁注（架构/参数量不同，不作归因依据）</h2>
+<div class="warn">
+<strong>P-8 不可作为对照基准</strong>：P-8 是 <strong>2.22B Mamba2-hybrid</strong>（56 层 Nemotron-H 式混合），与 decay v2 final 的 <strong>1.3B Dense Transformer</strong> 架构、参数量均有本质差异，且 P-8 是「从头预训练 44.4B」而非「decay 现成 1.41T 模型」。P-8（CS8 49.21% / CX6 6.81%）与 decay v2（44.97% / 6.21%）之间的 -4.24pp / -0.60pp 差异是<strong>多种因素（架构/参数量/训练曲线/起点）混合</strong>，不能据以判断 decay 配方好坏。本报告仅在第一版中误将 P-8 作主对照，现已更正；P-8 数字仅为完整起见列出，不再作为任何结论的支撑。
+</div>
+
+<h2>6. 数据可溯源性</h2>
 <table>
 <tr><th>数据</th><th>来源文件</th><th>说明</th></tr>
 <tr><td>CS8 / CX6 完整结果</td><td><code>eval_decay_v2_final/eval_summary.txt</code></td><td>Phase3 collect 输出，含 14 集逐项分数 + 均值</td></tr>
 <tr><td>JSON 结构化结果</td><td><code>eval_decay_v2_final/p8_eval_summary.json</code></td><td>含 common_sense / complex / avg / errors 字段</td></tr>
 <tr><td>各 task 原始 log</td><td><code>eval_decay_v2_final/cs_*.log</code> / <code>cx_*.log</code></td><td>14 个子目录 + 14 个 log</td></tr>
 <tr><td>各 task results JSON</td><td><code>eval_decay_v2_final/{cs,cx}_*/results_*.json</code></td><td>lm-eval 原始输出</td></tr>
-<tr><td>P-8 基线</td><td><code>scaling_report/scaling_data.json</code></td><td><code>baize_2b[5]</code> = P-8 final (44.4B)</td></tr>
-<tr><td>Xmodel-2.5 基线</td><td><code>scaling_report/scaling_data.json</code></td><td><code>xmodel_25[0..3]</code></td></tr>
-<tr><td>Xmodel-2 基线</td><td><code>scaling_report/scaling_data.json</code></td><td><code>xmodel_2[0..4]</code></td></tr>
+<tr><td>Xmodel-2.5 final 基线（主对照）</td><td><code>scaling_report/scaling_data.json</code></td><td><code>xmodel_25[3]</code>（cs_avg 0.6540 / complex_avg 0.3290 + 逐任务）</td></tr>
+<tr><td>P-8 基线（旁注）</td><td><code>scaling_report/scaling_data.json</code></td><td><code>baize_2b[5]</code>（cs_avg 0.4921 / complex_avg 0.0681）</td></tr>
+<tr><td>训练配方 / LR / 步数</td><td><code>run/baize_xmodel25_decay_v2.sh</code> + <code>baize_xmodel25_decay_v2.py</code></td><td>SEQ=3712/GBS=960/ITERS=19980/WARMUP=100/LR=1.67e-3；blend 见 py:470-490</td></tr>
+<tr><td>双移位 bug 证据</td><td><code>baize_xmodel25_decay_v2.py:547-568</code> + <code>final/modeling_xmodel2.py:1209-1210</code></td><td>训练预移位 + forward 再移位</td></tr>
+<tr><td>训练日志首尾</td><td><code>nemo_experiments/xmodel25_baize_80b_decay/train_log.txt</code></td><td>step 0 loss=11.72；step 19979 loss=1.1777</td></tr>
+<tr><td>code/math 数据量</td><td><code>data/anneal_code.json</code> / <code>r3_sources/*.json</code> / <code>anneal_math2.json</code></td><td>num_tokens 元数据</td></tr>
 <tr><td>评测脚本</td><td><code>run/baize_xmodel_eval.sh</code></td><td>14 集 = CS8(0-shot) + CX6(default n-shot)</td></tr>
-<tr><td>收集脚本</td><td><code>run/baize_p8_eval_collect.py</code></td><td>Phase3 自动收集 14 集 → summary</td></tr>
 </table>
 
-<h2>5. 评测过程纪要</h2>
-
-<table>
-<tr><th style="width:100px">时间</th><th style="width:120px">事件</th><th>详情</th></tr>
-<tr><td>15:03:29</td><td>评测启动</td><td>Phase1 CS8 8 GPU 并行启动（GPU0-7）</td></tr>
-<tr><td>15:07:00</td><td>CS8 全部完成</td><td>8/8 任务 DONE，耗时 ~3.5min</td></tr>
-<tr><td>15:07:00</td><td>Phase2 启动</td><td>CX6 6 GPU 并行（gsm8k/math500/mmlu/bbh/humaneval/mbpp）</td></tr>
-<tr><td>15:21-15:27</td><td>mmlu/gsm8k/math500 完成</td><td>三个 CX6 任务先后 DONE</td></tr>
-<tr><td>15:35</td><td>attn 修复</td><td><code>config.json</code> flash→sdpa + 去 CUDNN_ATTENTION（CX6 generate_until 不再崩）</td></tr>
-<tr><td>15:49</td><td>humaneval/mbpp 重跑</td><td>首轮 nohup 未存活 → <code>setsid nohup --confirm_run_unsafe_code</code> 重跑 GPU6/7</td></tr>
-<tr><td>16:11</td><td>mbpp 完成</td><td>pass_at_1=0.0</td></tr>
-<tr><td>16:15</td><td>humaneval 完成</td><td>pass@1(create_test)=0.0</td></tr>
-<tr><td>18:15:23</td><td class="green bold">bbh_zeroshot 完成</td><td>6511 generate_until @~1.67s/it，耗时 ~3h；Phase3 collect 自动执行</td></tr>
-<tr><td>18:15:23</td><td class="green bold">评测完成</td><td>14/14 齐，<code>eval_summary.txt</code> + <code>p8_eval_summary.json</code> 落盘</td></tr>
-</table>
-
-<h2>6. 小结</h2>
-
+<h2>7. 小结</h2>
 <div class="info">
 <ul>
-<li><strong>CS8 = 44.97%</strong>：8 集零样本常识推理均值。sciq（68%）为最高单项，arc_challenge（28.24%）最低。</li>
-<li><strong>CX6 = 6.21%</strong>：6 集复杂任务均值。mmlu（32.22%）为唯一有意义的单项，数学/代码任务尚未涌现。</li>
-<li>与 P-8（同架构 / 同参数量 / 44.4B tokens）对比：CS8 低 4.24pp、CX6 低 0.60pp。mmlu 反超 +7.94pp，bbh 大降 -10.38pp。</li>
-<li>与 Xmodel-2.5 step_6000（同 ~80B tokens / 1.3B Dense Transformer）对比：CS8 低 5.23pp。</li>
-<li>所有数字可溯源至 <code>eval_decay_v2_final/eval_summary.txt</code> 及 <code>p8_eval_summary.json</code>。</li>
+<li><strong>本版已更正对照口径</strong>：主对照 = Xmodel-2.5 final（同起点 step_532000 / 同 71.2B decay / 相近配比），弃用 P-8 / step_6000 作主对照。</li>
+<li><strong>结果</strong>：decay v2 final CS8 = 44.97%、CX6 = 6.21%；对比 Xmodel-2.5 final（65.40% / 32.90%）<strong class="red">差 -20.43pp / -26.69pp</strong>，14 集全面大幅落后 → 「decay 段没练出来」。</li>
+<li><strong>归因（按影响排序）</strong>：①双移位 bug（train 2-step / eval 1-step，代码级确认）②peak LR 1.67e-3 过高 + warmup 100 步过短 ③code ≈26 epochs 严重过采样 ④step 0 loss=11.72 起点异常 ⑤step_532000 基线缺失（关键判定实验）。</li>
+<li><strong>修正 #648 笔误</strong>：code 实测 <strong>0.270B / ≈26 epochs</strong>（非 0.17B / 41）；架构为 <strong>1.3B Dense</strong>（非 2.22B Mamba2-hybrid）。</li>
+<li><strong>待办</strong>：⏸ 用户批准后在 .29 补跑 step_532000 基线 eval，即可终判「decay 训坏模型」还是「起点/加载问题」，届时据实补一个码块到 §4.5。</li>
+<li>所有数字可溯源至 <code>eval_decay_v2_final/eval_summary.txt</code>、<code>scaling_report/scaling_data.json</code> 及训练脚本/日志（见 §6）。</li>
 </ul>
 </div>
 
-<p class="small">— 报告结束 · BaiZe pretrain agent · 2026-10-20 —</p>
+<p class="small">— 报告结束 · BaiZe pretrain agent · 2026-10-20（第二版，对照口径已更正） —</p>
 
 </body>
 </html>
