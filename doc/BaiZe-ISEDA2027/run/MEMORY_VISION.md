@@ -4,12 +4,14 @@ WAITING: 1
 
 ## 状态头
 
-> 🔴 **【BLOCKER · wake #180 · 2026-10-20 07:5x】ArmD 训练已停止 — 对比损失发散，请运维裁定恢复方案**
-> **现象**：step 15860 达 loss 最低 **0.452**(contr~0.53, C1~0.589 健康)；**step 16000→20000 contr 从 1.28→9.28 反弹至 log(8192)≈随机水平**，停滞 ~1500 步(step20000→21500 loss 恒 9.3)；**C1 崩塌 0.589→0.0002**(嵌入失去结构)，patch loss 0.04→0.97 同步恶化。**判定对比训练发散**。
-> **纠正前判**：wake #174~#179 报"loss 1.0~3.6 硬分片抖动非坍缩"=**误判**；step17860 loss~2-4 实为发散初期，发散 step20000 完成并锁死。
-> **归因**：疑似 **2× LR(2e-3)** 过高 + warmup 2000 交互(运维 §3 预警命中)；四变量不可拆分归因。
-> **处置**：① kill 训练进程组(129169/129177/129289+)+full_chain watcher(PID2056098)，8 卡全释放(4MiB)，harness relay(ops_relay 2663131/gw_proxy 341580)未动；② **checkpoint_10000.pt(loss0.57,good)已保全**，另存 `checkpoint_10000_GOOD_predivergence.pt`(防 keep-ckpts2 在 step30000 删)；checkpoint_20000/latest/open_clip_state_dict=发散态作废；③ 停 watcher 以防对发散 latest.pt 自动跑②③④产生误导结果。
-> **请运维裁定(三选一)**：(A) 从 checkpoint_10000 resume + 降 LR(如 1e-3)续训；(B) 立即对 checkpoint_10000 跑②ProtB 取真实 lp 数据点；(C) 放弃 ArmD 重起。⚠️ 本轮**未自改超参/未重启**(遵"不自行改 warmup"铁律)，等令。
+> ✅ **【BLOCKER 已裁定 · 2026-10-20 08:2x · 用户直令】ArmD 废弃上一轮（LR 2e-3 发散），重起 ArmD-R2**
+> **用户令**：「vision ArmD 放弃重启。学习率 LR=1e-3 min_LR=1e-5。数据仍保持不变。给出 ETA」
+> **口径**：数据**不变**（6 源 / 14,589 shards / 173,124,248 pairs / **steps 仍 63,400**）；**唯一改动 = LR 轴回退**（2e-3/2e-5 → **1e-3/1e-5**），与 ArmC 档一致。⇒ **ArmD-R2 vs ArmC 的差异只剩 data(3→6源) + epoch(4→3)**，比上一轮更干净（但 LR 轴与 min_lr 仍同步变动，不得归因单一变量）。
+> **ETA（运维算）**：纯训练 63,400 / 0.78 it/s ≈ **22.6 h**（0.75 it/s 时 23.5h）+ 收尾 0.2h ⇒ 训练完成 **T0+23~24h**；再串 ②ProtB(1h) + ③MLLM(1.8h) + ④12集(1.5h) + ⑤报告(0.5h) ⇒ **全链路 T0+27.5~28h**。**若 T0=08:30 ⇒ 训练 ~10-21 07:30-08:30，全链路 ~10-21 12:30-13:00**。
+> **上一轮善后**：`checkpoint_10000.pt` 与 `_GOOD_predivergence` 副本**移到 `armD_20261019_DIVERGED_archive/`** 留档（作为 2e-3 发散证据）；发散态 ckpt_20000/latest/state_dict 一并移入，**不删除**。
+> **新输出目录**：`armD_r2_20261020_aimv2_openclip_vitb16_224`（**新目录，杜绝误 resume 发散 ckpt**）。
+> 🔴 **发散红线（监控必盯）**：`C1 < 0.05` / `contr > 6.5`（log(8192)=9.01 随机水平）/ loss 连续 1000 步不降 / nan → **立即停并报 blocker**。基准：上轮 step15,860 达 best `loss 0.452 / C1 0.589`，本轮 LR 减半应**更早**达到同等水平。
+> 📌 起训前 3 项自检：数据快照仍 14,589 shards / 8 卡全 0MiB / 新目录无 latest.pt。
 >
 > 🆕 **ArmD 已立案（2026-10-19 21:2x · 用户直令 · 最高优先）**：`BAIZE_VISION_TASK.md` 顶部新块。**ArmD = 四变量**（数据 + epoch + LR + min_lr）：
 > ①**数据** = ArmC 的 6 源之三（GPIC 8000 + CC12M 1100 + Amshaker 2250 = 11,350 shards）**+ 新三套**（WebMix-38M ~38.8M pairs / wit_base ~6.48M / InternVL-SA1B ~22.4M，均 10-16~10-17 下满）；
@@ -67,9 +69,6 @@ WAITING: 1
 > 📦 「运维问答·下一步工作建议 · 2026-10-08③」（1-A~1-D / 2-A~2-E / 3 GPU空窗 / 4-A~4-E 论文）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：旧版下一步建议（w384/336 AIMv2、C1-lp 消融、Stage-iv 前置、论文补 Limitations），多数已被后续 ArmA/ArmB/ArmC 工作覆盖（④-4ep 67.05%、V2全量=ArmB 62.09%、MLLM=ArmB 12集 26.10%）。需要时再读。
 > 📦 「运维问答·下一步工作建议 · 2026-10-10」（④epoch缩放 / V2全量 / MLLM前置 / 论文 / w384 / 336 / C1-lp 排序）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：④epoch→④-4ep(67.05% MODERATE/DIMINISHING)；V2全量→ArmB(62.09%)；MLLM前置→ArmB Stage-iv 完成(12集 26.10% 不可分辨)。需要时再读。
 
-
-
-
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
 > 📦 R9 converged 结论（w512 选定 / scaling 幂律 acc=0.251−0.864·N^−0.090 渐近 25.1% / 瓶颈=数据量与目标函数非架构）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`「2026-10-19 23:5x 滚动归档」节。需要时再读。
@@ -126,15 +125,6 @@ WAITING: 1
 - [18:06 Oct19] **Wake #171**: 🔄 ArmC ④ 12集 8/12 MISSING(代理宕机) → 部署代理轮询 watcher。详见 daily-memories-vision/2026-10-19.md。
 - [19:36 Oct19] **Wake #172**: ✅ **ArmC ④ 12集离线缓存重跑 → 全链路 DONE** — git pull up to date，无新运维指令（顶部 17:1x ArmC 块最高优先）。✅ **根因再定位**：ArmC launch 缓存指 nas_env(缺8集) vs ArmB 成功用 `/tmp/lmms_eval_hf_datasets_app.e0031982/`(含全12集, lock 10-18 16:38)⇒**非代理问题, 是缓存路径配错**。✅ **修复**：kill 代理轮询 watcher(1153787) → 新建 `rerun_failed_benchmarks_armC_offline.sh` 把 `HF_DATASETS_CACHE`+`LMMS_EVAL_DATASETS_CACHE` 都指 /tmp、offline 无代理 → 19:42起19:46完 ALL_OK=1, `✅ All 12 benchmarks have results!`(日志确认数据集从 /tmp 缓存加载, 无 ConnectionError)。✅ **12集结果**：avg(除MME)=**25.78%** vs ArmB 26.10%, Δ=**−0.32pp**(5升6降均±2pp内), MME+101.3(不计入); DocVQA/ChartQA/OCRBench 无+10pp ⇒ **裁定不可分辨(22-26%带, 与ArmB同档)**。⚠️ 两变量(min_lr+wd)不得归因单一变量; 两变量未带来下游增益。✅ 产物: `reports/report_vision_armC_20261018_mllm_stage4_zh.html`(12KB) + EXPERIMENTS_VISION.md§13.5/§13.6/§13.7 更新为 DONE。.12 8卡全空闲。📦 体积：TASK=29.0KB / MEMORY≈30.5KB（归档#168/#169→daily-memories, 均≤32KB✓）。**ArmC 完整闭环, WAITING=1 idle 等下一运维指令**。
 - [21:02 Oct19] **Wake #173**: 🔄 **idle 巡检（keep-alive，无新运维指令）** — git fetch up to date（`## main...origin/main`，无 ahead/behind；origin 最近 vision 提交=4ed5151e 19:54 wake#172 ArmC 闭环，其后均为 pretrain/zhulong/harness/data 他线提交，无新 vision 运维指令；顶部 17:1x ArmC 块仍为最高优先且已 100% 完成 ①②③④）。✅ ArmC 产物完好：`reports/report_vision_armC_20261018_mllm_stage4_zh.html`(12056B) + `vision/armC_20261018_protb_vitb16_224_results.json`(339B) + EXPERIMENTS_VISION.md§13。✅ .12 8×H100 **全空闲**（每卡 0% util / 4 MiB / 无 compute-apps）⇒ 无残留进程、无抢卡风险。✅ 工作副本未提交改动均为他线在途文件（harness/data），未触碰。距上次 vision 提交(19:54)≈68min，已过 60min 判死阈值 ⇒ 本轮 keep-alive 心跳。📦 体积：TASK=29.0KB / MEMORY=29.2KB（均≤32KB✓，无需归档）。**WAITING=1，idle 等下一运维指令**。
-
-
-
-
-
-
-
-
-
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
