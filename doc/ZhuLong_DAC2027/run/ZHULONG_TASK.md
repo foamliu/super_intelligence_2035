@@ -2,7 +2,35 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 运维指令 · 2026-10-20 21:2x（**r4''' 疑似停滞，立刻查证；不许再用「进程活着」当健康判据**）· 用户直令 · 最高优先
+### 🔴 运维指令 · 2026-10-20 21:4x（**用户直令：杀 r4/r5/regrade → 端口换 8650/8651/8652/8654 → 重启 r4**）· 最高优先
+
+> 用户原话：「杀掉 r4/r5，regrade 也杀掉，端口换到 8650,8651,8652,8654，重启 r4」。
+> **现状**：r4''' 21:09 已收口但判 INVALID（70/158 字面量 "pass" + breaker OPEN 98 consecutive worker spawn failures@8667）；4 旧端口 8663/8666/8667/8670 全不可达。r4/r4'/r4''/r4''' 全 INVALID ⇒ **本轮 r4 是第 5 次尝试**，编号用 **r4⁗（r4-4）**，batch 自动生成。
+
+**① 执行顺序（运维已下发 RUN_ID 99 做①②，你负责③④⑤）**
+1. **杀残留**：`pkill -f 'run_readback_none_retest_r4d3_regrade'`、`pkill -f 'run_pipeline.py.*evaluation'`、`pkill -f 'run_cline_script.*readback_none'`。⚠️ **不碰** t0002147、loop、ops_relay。
+2. **端口切换**：`SANDBOX_ENDPOINTS=8650,8651,8652,8654@10.129.32.75`。
+   - 🔴 **必须先在 `.env` 或启动脚本中确认这四个端口归本线所有**（历史上 8650/8651/8652/8654 被 **t0002147** 占用，r3 regrade 曾因抢占全 timeout）。若被 t0002147 占用 → **不要抢，报 blocker**。
+   - 4 端口逐个 `timeout 5 bash -c "</dev/tcp/10.129.32.75/$p"` 必须 **4/4 OPEN** 才起跑。
+3. **起 r4⁗**（与 r4''' 同配置同模型同 readback=none，仅换端口）：
+   ```bash
+   cd /nasdata/app.e0031982/code/ZhuLong_DAC2027
+   export PYTHON=$PWD/venv/bin/python        # 🔴 必须，漏了必崩 pydantic ModuleNotFoundError
+   export SANDBOX_ENDPOINTS=8650,8651,8652,8654@10.129.32.75
+   unset http_proxy https_proxy ALL_PROXY
+   export NO_PROXY=10.129.32.75,localhost,127.0.0.1
+   setsid bash scripts/run_cline_script.sh -p 4 -n > /tmp/ABL_readback_none_retest_r4d4.log 2>&1 < /dev/null &
+   ```
+   起跑后 5 分钟内核验：`pgrep -af run_cline_script` 有 1 launcher + 4 worker、log 在增长、首题已开始。
+4. **启动后立刻回报**：PID / batch 号 / 4 端口状态 / 首 5 分钟 log 行数。
+5. **监控口径（强制，纠正此前误判）**：
+   - ✅ **健康判据 = task 完成数单调增长**（从 **codegen jsonl 行数**数，不是 log 行数）。
+   - ✅ **每轮巡检必须 grep codegen jsonl 里字面量 `"pass"` 数量**——这是退化的唯一早期信号（20:30 前四轮巡检都只 grep log，错过 70 条退化的早期发现）。
+   - 停手阈值不变：literal-pass >10 或 MCP 率 ≥5/min → 停手报运维。
+
+**② 若有任何一个前置不满足（端口被占 / 端口不可达 / 启动即崩）→ 立刻报 blocker，不要盲重试。**
+
+### 🔴 运维指令 · 2026-10-20 21:2x（r4''' 疑似停滞…）— 已被 21:4x 令取代，保留备查
 
 > 用户原话：「r4''' 到底是否健康呢，执行了多久」「都四个多小时了，你跟我说这算健康吗」「让 zhulong 去查」。
 > **运维判读（推翻本线 20:38 的"健康"结论）**：r4''' 到 20:38 已 **256min**，而 **19:17 巡检时 worker 已是 task 118/119/122/124，20:38 仍在同一区间**；全程无 completions jsonl；总题量 158。日志仍在长（437 行/min）但**任务编号不推进** ⇒ 疑似空转/反复重试。

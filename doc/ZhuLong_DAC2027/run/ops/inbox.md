@@ -1,7 +1,43 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 98 -->
+<!-- RUN_ID: 99 -->
 
-## RUN_ID 98 — 🔴 执行 r4''' 手动 regrade（Step7.1 auto-grade 命中已知 bug：组装 0 脚本）
+## RUN_ID 99 — 🔴 用户直令：杀掉 r4/r5 及 regrade 残留 → 端口换到 8650/8651/8652/8654 → 重启 r4
+
+> 用户直令（2026-10-20 21:4x）：「杀掉 r4/r5，regrade 也杀掉，端口换到 8650,8651,8652,8654，重启 r4」。
+> **背景**：r4''' 已于 21:09 收口，但因 **70/158 字面量 "pass" 退化 + licence breaker OPEN**（98 consecutive worker spawn failures @8667）判 INVALID；8663/8666/8667/8670 **四端口全不可达**。
+> ⚠️ **注意**：8650/8651/8652/8654 历史上有 **t0002147 占用**（r3 regrade 曾因此全 timeout）→ 本块**先验证端口归属与可达性**，若被占则报 blocker 不强行启动。
+
+```bash
+set -u
+echo "=== RUN_ID 99 | 杀 r4/r5/regrade + 换端口补测 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 现状：相关进程"
+pgrep -af 'run_cline_script|run_pipeline|regrade|PyAether' 2>/dev/null | cut -c1-120 | head -10 || echo '  NONE'
+echo "[2] 4 个新端口归属与可达性（8650/8651/8652/8654@10.129.32.75）"
+for p in 8650 8651 8652 8654; do
+  timeout 5 bash -c "</dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "  port $p OPEN" || echo "  port $p CLOSED/TIMEOUT"
+done
+echo "  -- 本机侧监听 --"
+ss -ltnp 2>/dev/null | grep -E ':(8650|8651|8652|8654)\b' | cut -c1-120 || echo '  no local listener'
+echo "[3] 旧端口 8663/8666/8667/8670 现状（对比：是不是端口级故障）"
+for p in 8663 8666 8667 8670; do
+  timeout 5 bash -c "</dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "  port $p OPEN" || echo "  port $p CLOSED/TIMEOUT"
+done
+echo "[4] 杀掉 r4/r5/regrade 残留（只杀本轮相关，不碰 t0002147 与 loop/relay）"
+pkill -f 'run_readback_none_retest_r4d3_regrade' 2>/dev/null && echo '  killed r4d3_regrade' || echo '  no r4d3_regrade'
+pkill -f 'run_pipeline.py.*evaluation' 2>/dev/null && echo '  killed run_pipeline' || echo '  no run_pipeline'
+pkill -f 'run_cline_script.*readback_none' 2>/dev/null && echo '  killed readback_none cline' || echo '  no readback_none cline'
+sleep 3
+echo "  残留复查:"; pgrep -af 'run_cline_script|run_pipeline|regrade' 2>/dev/null | cut -c1-110 | head -5 || echo '  CLEAN'
+echo "[5] 重启 8090（MCP server，用户令要求换端口后重启链路）"
+pgrep -af '8090' 2>/dev/null | cut -c1-110 | head -3 || echo '  no 8090 proc'
+echo "[6] 端口可用性结论（供 agent 起 r4 时使用）"
+echo "  SANDBOX_ENDPOINTS 建议 = 8650,8651,8652,8654@10.129.32.75"
+echo "=== DONE 99 ==="
+```
+
+> **本块只做：杀残留 + 探端口 + 探 8090。真正起 r4 由 ZhuLong agent 按上面结果执行**（启动命令见 `ZHULONG_TASK.md` 最新运维令；须带 `export PYTHON=$PWD/venv/bin/python`）。
+
+## RUN_ID 98 — ⛔ 已作废：原计划 regrade r4'''（ZhuLong 已判 INVALID，勿执行）
 
 > 用户直令（2026-10-20 21:2x）：「那就 regrade，等什么呢」。
 > **依据**：RUN_ID 97 证实 r4''' 已正常跑完（16:14:51 → 21:09:14，~4h54m），log 尾部出现 `❌ 无可执行脚本(*.py): .../generated_solutions` + `[SUCCESS] [Step 7.1] 评估完成` ⇒ **与 r4 同款已知 auto-grade bug（组装 0 脚本），自动分不可信，必须手动 regrade**。
