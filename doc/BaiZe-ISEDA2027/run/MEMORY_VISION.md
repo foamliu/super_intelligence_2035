@@ -4,10 +4,10 @@ WAITING: 1
 
 ## 状态头
 
-> 🚀 **【ArmD-R2 TRAINING RUNNING · 2026-10-20 09:20:34 · wake #181】LR 轴回退至 ArmC 档（1e-3/1e-5），数据不变（6 源 14,589 shards / 173M pairs / steps 63,400）**
+> 🚀 **【ArmD-R2 TRAINING RUNNING · step 7980/63400 (12.6%) · 2026-10-20 12:0x · wake #182】LR 轴回退至 ArmC 档（1e-3/1e-5），数据不变（6 源 14,589 shards / 173M pairs / steps 63,400）**
 > **口径声明**：**LR 轴已回退至 ArmC 档（1e-3 / 1e-5）**；ArmD-R2 vs ArmC 的差异**仅剩 data(3→6源) + epoch(4→3)** 两项（比上一轮四变量更干净）。LR 与 min_lr 仍同步变动，报告中不得归因单一 LR 变量。
-> **T0=09:20:34**，实测吞吐 ramping 0.29→0.57 it/s（稳态预期 ~0.75-0.78）；ETA=63,400/0.77≈22.8h ⇒ **训练完成 ~10-21 08:15**；全链路 T0+27.5~28h ⇒ **~10-21 12:30-13:00**。
-> **首 180 步（warmup 段）**：loss 9.45→7.48（单调降✓）/ contr 8.35→7.01（降✓，接近 6.5 红线但 warmup 中 lr 仅 9e-5）/ patch 1.10→0.47（降✓）/ C1 0.0002→0.0009（缓升=结构形成✓）/ 0 nan/inf/oom / peak 50.4GB / 8卡100%。**无发散迹象**。
+> **T0=09:20:34**，实测吞吐稳态 0.83-0.86 it/s（优于预期 0.75-0.78）；ETA=63,400/0.84≈21.0h ⇒ **训练完成 ~10-21 06:20**；全链路 T0+27.5~28h ⇒ **~10-21 10:00-10:30**。
+> **step 7980 监控**：loss 0.80（s20=9.45→单调降✓）/ contr 0.77（8.35→0.77，远低于 6.5 红线✓）/ patch 0.030 / C1 0.463（0.0002→0.463 稳升✓，远高于 0.05 红线）/ 0 nan/inf/oom / peak 50.4GB / 8卡100% 39-45°C。**无发散迹象，健康**。里程碑：s1k loss4.08/C1 0.019 · s2k loss2.63/C1 0.079(warmup结束) · s4k loss2.63/C1 0.076(局部抖动✓) · s6k loss1.59/C1 0.212 · s8k loss0.81/C1 0.460。对照：上轮 ArmD(2e-3) s15860 best loss0.452/C1 0.589 后发散；本轮 LR 减半 s8000 已 loss0.81/C1 0.46，轨迹更稳。
 > 🔴 **发散红线**：C1<0.05 / contr>6.5 / loss 连续 1000 步不降 / nan → 立即停并报 blocker。基准：上轮 step15,860 best loss0.452/C1 0.589，本轮 LR 减半应更早达到同等水平。
 > ✅ **善后已完成**：上一轮 7 个发散产物全移入 `armD_20261019_DIVERGED_archive/`（不删除）；新目录 `armD_r2_20261020_*` 为空起步。✅ r2 全链路脚本已建（train/protb/stage1-15-2/12bench/full_chain + run_lmms_eval_r2.py，路径全 r2）。✅ full_chain watcher 已启动 PID 4063278（PHASE0 轮询等训练退出→自动跑②③④⑤）。
 > 📌 **四阶段链**（串行）：训练→②ProtB→③MLLM(Stage-1 2500/1.5 LoRA 20000/2 3500)→④12集(离线缓存)→⑤报告 `report_vision_armD_r2_20261020_mllm_stage4_zh.html`+`EXPERIMENTS_VISION.md §14`。
@@ -17,6 +17,8 @@ WAITING: 1
 > **本唤醒流水 [wake #180, 2026-10-20 07:5x]**：🔴 **ArmD 发现已停止 — 对比训练发散**。实测 loss 轨迹(/tmp/armD_openclip_train.log)：step20 loss9.43(随机)→step10000 loss0.572(C1 0.589)→**step15860 loss0.452(全局最低)**→step16000 loss1.28→step17000 loss2.26(C1 0.12)→step19000 loss6.48(C1 0.003)→**step20000 loss9.28(C1 0.0002,=随机)**→step21500 loss9.32(停滞1500步)。contr 0.53→8.35, patch 0.04→0.97。**发散确认**(#179"非坍缩"误判,彼时为发散初期)。处置：①kill训练(129169/129177/129289+)+watcher(2056098),8卡释放4MiB,harness relay未动;②checkpoint_10000.pt(loss0.57)保全+另存checkpoint_10000_GOOD_predivergence.pt;checkpoint_20000/latest=发散态作废。**未自改超参/未重启**(遵铁律),等运维裁定(见上🔴三选一)。0 nan/oom/traceback。📦 体积：TASK=29.4KB✓/MEMORY≈31.8KB(⚠️贴上限)。详见 daily-memories-vision/2026-10-20.md。
 
 > **本唤醒流水 [wake #181, 2026-10-20 09:2x]**：🚀 **ArmD-R2 起训**（LR 1e-3/min_lr 1e-5, 数据不变 6源14,589shards/173M pairs/steps 63,400）。T0=09:20:34。①善后：上一轮 7 发散产物全移入 armD_20261019_DIVERGED_archive/（不删），原目录清空；②建 r2 全链路脚本（run_armD_r2_openclip.sh + protb/stage1-15-2/12bench/full_chain + run_lmms_eval_r2.py，路径全 r2，sed 从 armD_20261019→armD_r2_20261020）；③自检全过（snapshot 14,589✓ / 8卡0MiB✓ / 新目录空✓）；④起训 setsid PID 3768697→torchrun PID 3768938；⑤full_chain watcher PID 4063278 已启动。首 180 步健康：loss 9.45→7.48(降✓) contr 8.35→7.01(降✓,warmup中) patch 1.10→0.47(降✓) C1 0.0002→0.0009(升✓) 0 nan/oom peak 50.4GB 8卡100% 0.57it/s(ramping)。ETA 63,400/0.77≈22.8h→训练~10-21 08:15, 全链路~10-21 12:30。口径：LR轴回退ArmC档, ArmD-R2 vs ArmC差异仅剩data+epoch。📦 体积：TASK=28.6KB✓/MEMORY=28.2KB✓(归档ArmD立案块+#177/#179流水→pointer)。详见 daily-memories-vision/2026-10-20.md。
+
+> **本唤醒流水 [wake #182, 2026-10-20 12:0x]**：📊 **ArmD-R2 监控巡检**（训练运行中，距 T0 ~160min）。实测 step 7980/63400(12.6%)：loss 0.80 / contr 0.77 / patch 0.030 / C1 0.463 / lr 9.77e-04 / 0.84 it/s / peak 50.4GB / 8卡100% 39-45°C。**红线全过**：C1 0.463≫0.05✓ / contr 0.77≪6.5✓ / loss 降✓ / 0 nan/inf/oom✓。进程：train PID 3768938(torchrun)+8 workers 存活(etimes 9624s) / watcher PID 4063278 存活(ppid=1, 最近 11:59:38 轮询"Training still running") / full_chain log 正常。数据快照 14,589 shards✓。OUT 目录空(首个 ckpt @ step 10000, ~40min 后)。ETA 修正：0.84 it/s→63,400/0.84≈21.0h⇒训练完成~10-21 06:20, 全链路~10-21 10:00-10:30。与上轮 ArmD(2e-3)对比：上轮 s15860 best loss0.452/C1 0.589 后 s16000 发散；本轮 LR 减半 s8000 已 loss0.81/C1 0.46，loss 轨迹无发散迹象，s4000 局部抖动(loss 2.63 回弹)为对比训练正常 batch 抖动，s5000+ 已恢复下降。📦 体积：TASK=28.6KB✓/MEMORY=28.2KB✓（均≤32KB，无需归档）。
 
 > 📦 wake #179 (06:2x, ArmD 监控 keep-alive) 已归档 → daily-memories-vision/2026-10-20.md。
 
