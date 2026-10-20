@@ -16,7 +16,7 @@
 #   setsid -f nohup bash watchdog_code_l3_scaleup.sh > /tmp/watchdog_code_l3_scaleup.log 2>&1 &
 
 CODE_L3_DIR=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_code_l3
-RUN_SCRIPT=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_full_tokenize.sh
+RUN_SCRIPT=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_full_tokenize_scaled.sh
 LOG=/tmp/watchdog_code_l3_scaleup.log
 EXPECTED_IDX=63  # s0–s62 (s63 launched with 0 parquet → crashes, no .idx)
 
@@ -53,18 +53,18 @@ while true; do
     env14_alive=$(pgrep -af 'preprocess_data_cm.*env14_' 2>/dev/null | grep -v grep | wc -l)
     echo "[$ts] en_v1_4 workers still alive: $env14_alive" >> "$LOG"
 
-    # 5) Restart with MAX_CONCURRENT=160.
-    #    Code L3 shards will be skipped via is_done (.bin+.idx+.json all present).
-    #    Math L3 starts fresh with 160 workers.
+    # 5) Restart with MAX_CONCURRENT=160 using scaled script (skips Code L3).
+    #    run_full_tokenize_scaled.sh processes only Math L3 → Code L2 → UFW-L3 → Math L1.
+    #    This avoids re-tokenizing Code L3 with different shard boundaries (160 vs 64).
     MAX_CONCURRENT=160 setsid -f nohup bash "$RUN_SCRIPT" > /tmp/run_full_tokenize_160.log 2>&1 &
     new_pid=$!
-    echo "[$ts] Restarted with MAX_CONCURRENT=160, PID=$new_pid" >> "$LOG"
+    echo "[$ts] Restarted with MAX_CONCURRENT=160 (scaled script), PID=$new_pid" >> "$LOG"
     echo "[$ts] New log: /tmp/run_full_tokenize_160.log" >> "$LOG"
 
     # 6) Wait a moment and verify the new run started
     sleep 10
-    new_alive=$(pgrep -f 'bash run_full_tokenize\.sh' 2>/dev/null | grep -v grep | wc -l)
-    echo "[$ts] New run_full_tokenize.sh alive: $new_alive" >> "$LOG"
+    new_alive=$(pgrep -f 'run_full_tokenize_scaled' 2>/dev/null | grep -v grep | wc -l)
+    echo "[$ts] run_full_tokenize_scaled.sh alive: $new_alive" >> "$LOG"
     break
   fi
   sleep 60
