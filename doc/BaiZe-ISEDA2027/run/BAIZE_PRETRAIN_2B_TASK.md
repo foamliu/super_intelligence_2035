@@ -1,6 +1,33 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🧪 运维指令 · 2026-10-20 14:2x（**评测 decay v2 final 模型 · 14 集 lm-eval**）· 用户直令 · 最高优先
+
+> 用户令：「下发评测指令」（训练已完成，final 模型应跑下游评测）。
+> **目标**：对 Xmodel-2.5 decay v2 的 **final ckpt** 跑 14 集评测，与 P-8 / Xmodel-2.5 历史 ckpt 对比。
+
+**① 评测对象（已就绪，勿重复转换）**
+- HF 模型目录：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/final/`
+  （`model.safetensors` 2.7GB + `config.json` + `modeling_xmodel2.py` + `configuration_xmodel2.py` + tokenizer 全套；architectures=`XmodelForCausalLM`，需 `trust_remote_code=True`）。
+- 起评前先**单题烟测**：确认 auto_map 命中建模代码、logits 可产出（0 nan）。
+
+**② 评测方式**
+- 复用 `run/baize_xmodel_eval.sh`（专为 Xmodel 历史 ckpt 设计，14 集 = CS8 zero-shot + CX6 默认 n-shot，`trust_remote_code=True`）：
+  ```bash
+  bash run/baize_xmodel_eval.sh \
+    /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/xmodel25_baize_80b_decay/final \
+    <输出目录> decay_v2_final 0,1,2,3,4,5,6,7
+  ```
+- **在 `.29` 跑**（8×H100 已空；vision 在 `.12`，勿占）。评测环境 = `py310`（脚本内置）；数据集走 `HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache`，`hf-mirror`/proxy 已在脚本内兜底。
+- 集数：CS8 = hellaswag/arc_easy/boolq/arc_challenge/sciq/piqa/winogrande/openbookqa（0-shot）；CX6 = gsm8k(5)/hendrycks_math500(4)/mmlu(5)/bbh_zeroshot(0)/humaneval(0)/mbpp(3)。**与 P-8 完全同口径**。
+
+**③ 结果与报告**
+- 收集后产出 **CS8 均值 + CX6 均值**（collect 已内置脚本）。
+- 对比基准：**P-8 = CS8 49.21% / CX 6.81%**；Xmodel-2/2.5 s1 历史 ckpt（若史上有值也并列）。
+- 交付：中文报告 `reports/report_pretrain_decay_v2_final_eval_zh.html` + 更新 `EXPERIMENTS_PRETRAIN_2B.md`（decay v2 final 一节）；commit 前缀 `pretrain eval:`。
+
+**纪律**：🚫 不碰 vision/data/harness 线与 `.12` 进程；🚫 只评测不训练；评测完释放 `.29` 8 卡；报告数字可溯源到 `eval_summary.txt`/各 task log `文件:行`。
+
 ### 📄 运维指令 · 2026-10-20 06:1x（**事故复盘报告已由运维编写 → 你去核实数据 + 落地 P0 两项**）· 用户直令
 
 > 用户令：「先让 pretrain 写个中文 html 报告 复盘昨夜发生的问题和解法建议」
