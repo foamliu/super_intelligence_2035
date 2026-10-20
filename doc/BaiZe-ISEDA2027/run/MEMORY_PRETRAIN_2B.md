@@ -1,6 +1,13 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-21 06:3x #659：🩺 L1 训练健康监控 step 410/5611 loss=0.93 + 后续实验串行计划**：
+> **L1 健康确认**（.29 ssh, PID 1430363 torchrun）：step **410/5611**（7.3%），loss=**0.9289**（step0=1.76→step410=0.93 稳步下降），lr=3.80e-04（warmup 100 完成，decay 中），295K tok/s，~12s/step，0 error/OOM/traceback。GPU 8×~50GB/100%（GPU1 偶见 0% 为 data load 间隙，正常）。
+> **Loss 轨迹对比**：v2 step0 loss=11.72（=随机，双移位 bug 破坏学习）→ L1 step0 loss=1.76（正常，修复后模型正确学习）→ **双移位修复确认有效**。loss 100→410 步从 ~1.7 降至 ~0.93，decay 轨迹健康。
+> **ETA**：剩余 5201 步 × 12s = ~17.3h → L1 预计 **10/22 ~00:00** 完成。ckpt save_interval=500（step_500 即将存盘）。输出 `xmodel25_baize_L1_20b/`，HF safetensors 格式，与 `baize_xmodel_eval.sh` 兼容。
+> **后续串行计划**（8 GPU 单线，L1 占满无法并行）：① L1 完成 → 跑 CS8 eval（~20min）② 若 CS8≥55% → 启动 L2（fix+highLR 1.67e-3, ~19h）③ L2 完成 → eval CS8 ④ 启动 L3（bug+lowLR 5e-4, ~19h）⑤ eval CS8 ⑥ 2×2 因子分析：L1/L2/L3/v2 四格定主因。
+> **2×2 判读逻辑**：L1≥55%→方向对；L2≈v2(44%)→LR 是主因；L3≈v2→双移位是主因；L1/L2 都好→双移位是主因（LR 次要）；L1/L3 都好→LR 是主因。
+> ops inbox 无新指令（.last_run_id 缺失=无 ops 中继或无新令）。git origin/main...main=0/0。📦 体积：TASK=30.6KB / MEMORY=26.8KB（均<32KB）。
 > 🆕 **2026-10-21 05:0x #658：🚀 L1 训练已启动（.29, 8×H100）+ 2×2 因子实验设计 + L2/L3 脚本就绪**：
 > **L1 烟测通过**（100 步）：step 0 loss=**1.7574**（vs v2 step 0 loss=11.72=random）→ **双移位修复确认有效**。loss 稳定 1.70~1.78，LR warmup 正确（0→5e-4/100步），吞吐 80K→195K tok/s（compile warmup 中）。
 > **L1 全量训练已启动**（05:04:52, PID 1430363 torchrun）：5611 步=20B tok, LR=5e-4→1e-5, 输出 `xmodel25_baize_L1_20b/`。step 0 loss=1.7510 ✓。~12s/step → 预计 ~19h 完成（step 5611 ≈ 10/22 00:00）。
