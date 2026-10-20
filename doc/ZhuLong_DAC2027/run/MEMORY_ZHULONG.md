@@ -1,12 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-20 16:44 🟢 r4''' 30min 健康报告全绿·licence fix 根治确认 —
-- **r4''' 跑中 ✅**：PID 3112365·batch `2026_1020_161451`·16:14:51 起·29min·log 3M/26691 行·codegen 进行中（无 completions jsonl）。
-- **30min 健康报告全绿**：real_MCP_32001=**2**（率 0.069/min ≪5/min 阈值·r4″ 同期 ~527）·超时率 2/26691=**0.000075/行** ≪0.001/行 基线·licence_unavail=**0**·circuit_breaker=**0**（vs r4″ breaker OPEN 100+）→ **fix 根治确认**。run_code=196·search_apis=205·ACCESS_RESTRICTED=141（canary hook live ✅）。
-- **4 端口全可达**（8663/8666/8667/8670 run_code 全 OK·9-13ms）·8090 PID 3103371 + 9006 PID 3503518 健康。
-- **运维令 15:4x ①②③ 全完成**：4 端口验证 8/8 ✅→8090 重启 PID 3103371 ✅→r4‴ 起跑 ✅。r4/r4'/r4'' 已标 INVALID（680/156/575 MCP timeout + literal-pass 退化·不进 5-run·产物留证）。
-- **下一步**：r4‴ 继续跑至收口 → 手动 regrade（照 r4 模板改 batch `2026_1020_161451`+端口 8663/8666/8667/8670·unset proxy+NO_PROXY=10.129.32.75+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）→ 判有效（判据十三：task timeout≤10·0 infra·0 exec_err）→ 起 r5‴（同配置同端口）→ 5/5 mean±std（r1,r2,r3,r4‴,r5‴）→ 更新 zhulong_results.md/6_exp.tex → full@pro-cloud 5 轮。
+<!-- heartbeat 2026-10-20 17:19 🟢 r4''' 65min 巡检全绿·仍在 codegen·fix 持续稳定 —
+- **r4''' 跑中 ✅**：PID 3112365·batch `2026_1020_161451`·16:14:51 起·~65min·log 6M/56226 行·codegen 进行中（pass_rate_lines=0·无 completions jsonl）。
+- **65min 巡检全绿**：real_MCP_32001=**24**（率 0.37/min ≪5/min 阈值·近 30min 窗 0.61/min 仍≪5）·超时率 24/56226=**0.00043/行** ≪0.001/行 基线·licence_unavail=**0**·circuit_breaker=**0**·literal_pass=**0**（全 ≪停手阈值）→ **fix 持续稳定**。run_code=431（+235 vs 30min·6.7/min 健康增长）·search_apis=375·ACCESS_RESTRICTED=308（canary hook live ✅）。
+- **4 端口存活**：8667/8670 OK·8663/8666 BUSY（被 r4‴ 4 worker 占槽·预期非降级）·8090 PID 3103371 MCP 9ms 响应 ✅·9006 PID 3503518 健康。
+- **运维令 15:4x ①②③ 全完成**：4 端口验证 8/8 ✅→8090 重启 ✅→r4‴ 起跑 ✅。r4/r4'/r4'' 已标 INVALID（680/156/575 MCP timeout + literal-pass 退化·不进 5-run·产物留证）。
+- **下一步**：r4‴ 继续跑至收口（pgrep 无=收口）→ 手动 regrade（照 r4 模板改 batch `2026_1020_161451`+端口 8663/8666/8667/8670·unset proxy+NO_PROXY=10.129.32.75+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）→ 判有效（判据十三：task timeout≤10·0 infra·0 exec_err）→ 起 r5‴（同配置同端口）→ 5/5 mean±std（r1,r2,r3,r4‴,r5‴）→ 更新 zhulong_results.md/6_exp.tex → full@pro-cloud 5 轮。
 - 🚫 纪律：不动 r1/r2/r3 产物与 r3 backup·不动 r4/r4'/r4'' 原始产物日志（留证）·不动 t0002147·不改 .env 的 READBACK/OMEGA/BUDGET/LAGGED。 -->
 
 
