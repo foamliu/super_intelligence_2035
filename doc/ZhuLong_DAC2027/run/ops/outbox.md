@@ -12270,3 +12270,115 @@ echo "=== DONE 94 ==="
 
 === DONE 94 ===
 ```
+
+---
+
+## RUN_ID 95 · 2026-10-20 14:22:19 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 95 | r4'' 进展探针 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4'' 进程状态（PID 1760990）"
+if kill -0 1760990 2>/dev/null; then
+  echo "  PID 1760990 ALIVE"
+  timeout 10 ps -o pid,etimes,stat,pcpu,pmem,nlwp -p 1760990 2>/dev/null
+else
+  echo "  PID 1760990 GONE（r4'' 已收口，待 regrade）"
+fi
+echo "  --- run_cline_script 匹配（核对 cmdline）---"
+timeout 10 pgrep -af "run_cline_script" 2>/dev/null | cut -c1-110 || echo "  无匹配"
+
+echo ""
+echo "[2] 8090 MCP server"
+P8090=$(timeout 8 ss -ltnp 2>/dev/null | grep ':8090 ' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+if [ -n "$P8090" ]; then
+  echo "  8090 PID=$P8090 etime=$(timeout 8 ps -o etimes= -p $P8090 2>/dev/null|tr -d ' ')s"
+else
+  echo "  8090 NOT_LISTENING"
+fi
+
+echo ""
+echo "[3] r4'' log 计数（/tmp/ABL_readback_none_retest_r4c.log）"
+L=/tmp/ABL_readback_none_retest_r4c.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  mention_timeout  = $(timeout 25 grep -ac 'timed out after 60s' "$L")"
+  echo "  real_MCP_32001   = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  run_code_calls   = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  search_apis_calls= $(timeout 25 grep -ac 'pyAether_MCP_server__search_apis' "$L")"
+  echo "  ACCESS_RESTRICTED= $(timeout 25 grep -ac 'ACCESS RESTRICTED' "$L")"
+  echo "  pass_rate_lines  = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  task_timeout_2500= $(timeout 25 grep -ac 'timed out after 2500s' "$L")"
+  echo "  --- gen success/fail/timeout 计数 ---"
+  timeout 25 grep -aoE "'success': [0-9]+|'failure': [0-9]+|'timeout': [0-9]+|'fail': [0-9]+" "$L" | tail -8 | sed 's/^/    /'
+  echo "  --- log 尾 5 行 ---"
+  timeout 10 tail -5 "$L" | cut -c1-140
+else
+  echo "  log 不存在"
+fi
+
+echo ""
+echo "[4] 4 新端口可达性（@10.129.32.75）"
+for P in 8663 8666 8667 8670; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)"}' 2>/dev/null | head -c 80)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -n "$R" ]; then echo "  $P OK ${MS}ms :: $(echo "$R" | cut -c1-60)"
+  else echo "  $P FAIL ${MS}ms"; fi
+done
+
+echo ""
+echo "[5] /home 磁盘"
+echo "  /home: $(timeout 8 df -h /home 2>/dev/null | tail -1 | awk '{print $3,"/",$2,"=",$5,"used, free="$4}')"
+
+echo ""
+echo "[6] 是否已有 r4'' regrade 产物"
+timeout 10 bash -c 'ls -d /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261020_* 2>/dev/null | tail -5' || echo "  无 regrade 产物"
+
+echo ""
+echo "=== DONE 95 ==="
+```
+
+**输出**
+```
+=== RUN_ID 95 | r4'' 进展探针 | 2026-10-20 14:22:19 | host=hfeg0tedaap02 ===
+[1] r4'' 进程状态（PID 1760990）
+  PID 1760990 GONE（r4'' 已收口，待 regrade）
+  --- run_cline_script 匹配（核对 cmdline）---
+2698867 timeout 10 pgrep -af run_cline_script
+
+[2] 8090 MCP server
+  8090 PID=1759396 etime=18838s
+
+[3] r4'' log 计数（/tmp/ABL_readback_none_retest_r4c.log）
+  log_size=14M  lines=120266  mtime=2026-10-20 13:51:59
+  mention_timeout  = 574
+  real_MCP_32001   = 575
+  run_code_calls   = 954
+  search_apis_calls= 1516
+  ACCESS_RESTRICTED= 749
+  pass_rate_lines  = 0
+  task_timeout_2500= 0
+  --- gen success/fail/timeout 计数 ---
+  --- log 尾 5 行 ---
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 生成代码文件:   code_generation_2026_1020_090900.jsonl
+[0;34m[INFO][0m 原始数据集名:   EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m 输出目录:       /home/app.e0031982/eda_code_eval/2026_1020_090900
+[0;34m[INFO][0m =============================================
+
+[4] 4 新端口可达性（@10.129.32.75）
+  8663 OK 9ms :: {"response":"","error_log":"invalid request: body.lang: Fiel
+  8666 OK 8ms :: {"response":"","error_log":"invalid request: body.lang: Fiel
+  8667 OK 9ms :: {"response":"","error_log":"invalid request: body.lang: Fiel
+  8670 OK 8ms :: {"response":"","error_log":"invalid request: body.lang: Fiel
+
+[5] /home 磁盘
+  /home: 365G / 394G = 97% used, free=13G
+
+[6] 是否已有 r4'' regrade 产物
+/nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261020_0453_app.e0031982
+
+=== DONE 95 ===
+```
