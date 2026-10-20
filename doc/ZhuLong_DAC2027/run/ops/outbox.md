@@ -12633,3 +12633,63 @@ SANDBOX_ENDPOINTS=8663,8666,8667,8670@10.129.32.75
 [5] 后续由 ZhuLong agent 接管（判据十三 + 5/5 + 论文），本块不等待结束
 === DONE 98 ===
 ```
+
+---
+
+## RUN_ID 99 · 2026-10-20 21:25:47 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 99 | 杀 r4/r5/regrade + 换端口补测 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 现状：相关进程"
+pgrep -af 'run_cline_script|run_pipeline|regrade|PyAether' 2>/dev/null | cut -c1-120 | head -10 || echo '  NONE'
+echo "[2] 4 个新端口归属与可达性（8650/8651/8652/8654@10.129.32.75）"
+for p in 8650 8651 8652 8654; do
+  timeout 5 bash -c "</dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "  port $p OPEN" || echo "  port $p CLOSED/TIMEOUT"
+done
+echo "  -- 本机侧监听 --"
+ss -ltnp 2>/dev/null | grep -E ':(8650|8651|8652|8654)\b' | cut -c1-120 || echo '  no local listener'
+echo "[3] 旧端口 8663/8666/8667/8670 现状（对比：是不是端口级故障）"
+for p in 8663 8666 8667 8670; do
+  timeout 5 bash -c "</dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "  port $p OPEN" || echo "  port $p CLOSED/TIMEOUT"
+done
+echo "[4] 杀掉 r4/r5/regrade 残留（只杀本轮相关，不碰 t0002147 与 loop/relay）"
+pkill -f 'run_readback_none_retest_r4d3_regrade' 2>/dev/null && echo '  killed r4d3_regrade' || echo '  no r4d3_regrade'
+pkill -f 'run_pipeline.py.*evaluation' 2>/dev/null && echo '  killed run_pipeline' || echo '  no run_pipeline'
+pkill -f 'run_cline_script.*readback_none' 2>/dev/null && echo '  killed readback_none cline' || echo '  no readback_none cline'
+sleep 3
+echo "  残留复查:"; pgrep -af 'run_cline_script|run_pipeline|regrade' 2>/dev/null | cut -c1-110 | head -5 || echo '  CLEAN'
+echo "[5] 重启 8090（MCP server，用户令要求换端口后重启链路）"
+pgrep -af '8090' 2>/dev/null | cut -c1-110 | head -3 || echo '  no 8090 proc'
+echo "[6] 端口可用性结论（供 agent 起 r4 时使用）"
+echo "  SANDBOX_ENDPOINTS 建议 = 8650,8651,8652,8654@10.129.32.75"
+echo "=== DONE 99 ==="
+```
+
+**输出**
+```
+=== RUN_ID 99 | 杀 r4/r5/regrade + 换端口补测 | 2026-10-20 21:25:47 | host=hfeg0tedaap02 ===
+[1] 现状：相关进程
+[2] 4 个新端口归属与可达性（8650/8651/8652/8654@10.129.32.75）
+  port 8650 OPEN
+  port 8651 OPEN
+  port 8652 OPEN
+  port 8654 OPEN
+  -- 本机侧监听 --
+LISTEN 0      128               0.0.0.0:8652       0.0.0.0:*                                              
+[3] 旧端口 8663/8666/8667/8670 现状（对比：是不是端口级故障）
+  port 8663 OPEN
+  port 8666 OPEN
+  port 8667 OPEN
+  port 8670 OPEN
+[4] 杀掉 r4/r5/regrade 残留（只杀本轮相关，不碰 t0002147 与 loop/relay）
+  no r4d3_regrade
+  no run_pipeline
+  no readback_none cline
+  残留复查:
+[5] 重启 8090（MCP server，用户令要求换端口后重启链路）
+[6] 端口可用性结论（供 agent 起 r4 时使用）
+  SANDBOX_ENDPOINTS 建议 = 8650,8651,8652,8654@10.129.32.75
+=== DONE 99 ===
+```
