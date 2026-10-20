@@ -14924,3 +14924,72 @@ echo "=== DONE 141 ==="
 === RUN_ID 141 | 92.25 鐩磋繛 hf.co 娴嬮€?| 2026-10-21 02:40:10 | host=whag0pgpuap12 ===
 /nas_train/app.e0031982/tmp/tmp.VZtBdoa4St: line 6: pid: unbound variable
 ```
+
+---
+
+## RUN_ID 142 · 2026-10-21 03:53:32 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 142 | MiniCPM5 全量分词资源探底 | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "[1] 资源"
+echo "  nproc=$(nproc)"
+free -g | head -3
+df -h /nas_train | tail -1
+echo "  loadavg: $(cat /proc/loadavg)"
+echo "  现有进程:"
+pgrep -af 'fullsource|preprocess_data|resolve.py|hf_transfer' 2>/dev/null | cut -c1-110 | head -8 || echo '  none'
+echo "[2] 待分词源盘点"
+for d in "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3" \
+         "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3"; do
+  if [ -d "$d" ]; then
+    echo "  --- $d ---"; find "$d" -name '*.parquet' 2>/dev/null | wc -l; du -sh "$d" 2>/dev/null
+  else echo "  MISSING: $d"; fi
+done
+echo "  Code 子目录:"; ls -d /nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/*/ 2>/dev/null | head -8
+echo "  Math 子目录:"; ls -d /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/*/ 2>/dev/null | head -8
+echo "[3] 分词器与脚本"
+ls -d /nas_train/app.e0031982/models/* 2>/dev/null | head -5
+ls -l "$B/run/"*tokenize*.sh 2>/dev/null | head -5
+echo "[4] 建输出目录"
+mkdir -p "$B/data/full_ultradata_code_l3" "$B/data/full_ultradata_math_l3" && echo '  ready'
+echo "=== DONE 142 ==="
+```
+
+**输出**
+```
+=== RUN_ID 142 | MiniCPM5 全量分词资源探底 | 2026-10-21 03:53:32 | host=whag0pgpuap29 ===
+[1] 资源
+  nproc=224
+               total        used        free      shared  buff/cache   available
+Mem:            2015          59          96          27        1860        1918
+Swap:              7           2           5
+10.239.23.31:/vol_CTE0_data01  207T  185T   23T  89% /nas_train
+  loadavg: 16.90 17.60 17.96 16/6268 476217
+  现有进程:
+[2] 待分词源盘点
+  --- /nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3 ---
+560
+564G	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3
+  --- /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3 ---
+200
+115G	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3
+  Code 子目录:
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L2/
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3/
+  Math 子目录:
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1/
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L2-preview/
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3/
+[3] 分词器与脚本
+/nas_train/app.e0031982/models/apple
+/nas_train/app.e0031982/models/clip-ckpt-openai
+/nas_train/app.e0031982/models/clip-ckpt-openai-mcore
+/nas_train/app.e0031982/models/clip-ckpt-openai-megatron
+/nas_train/app.e0031982/models/clip-vit-large-patch14-336
+[4] 建输出目录
+  ready
+=== DONE 142 ===
+```
