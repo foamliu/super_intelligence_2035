@@ -10,7 +10,100 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-20 06:3x（**停 r5 → 重启 8090 → 重跑 r4/r5**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-20 08:2x（**停 r4′ → 重启 8090 → 换端口 8663/8666/8667/8670 重跑 r4″**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「**监测到 r4' 有很多沙盒超时。重启，使用下面4个端口：8663,8666,8667,8670**」
+> **背景**：r4′（PID 1462342·batch `2026_1020_063134`）06:3x 起跑，巡检 #1（30min）real_MCP_32001=6 表观正常，但巡检 #2（65min）已升至 62、巡检 #3（100min）升至 110，**率 ~1.33/min 且持续抬头** ⇒ 沙盒后端再次进入降级轨迹（与 r4 旧轮 680 timeout 同型）。用户判定不可继续，令换端口重跑。
+> **端口变更**：原 8666/8667/**8669**/8670 → 新 **8663**/8666/8667/8670（**替换 8669 → 8663**；8669 在历次巡检里多次显示 BUSY/worker 占用，疑似被邻居或自身 worker 拖累）。⚠️ **8663 此前在根 `MEMORY.md` §6 标记"作废"**，**本用户直令显式复活该端口**——按运维总则 2026-10-18「与最新用户令冲突时以最新块为准」，本次以本块为最新口径；agent 不必再核对旧"作废"标记。其余 3 端口（8666/8667/8670）不变。
+> **本次唯一目标**：把 r4′ 干净停掉 → 重启 8090 wrapper（清累积降级）→ 用新 4 端口起 r4″，使 MCP 超时率回到历史基线（≈235/25 万行 量级，即 ≤ ~0.001/行）。
+
+#### ① 先取证再停 r4′（**先留证再杀**）
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+L=/tmp/ABL_readback_none_retest_r4b.log
+echo "== r4' 停前取证 | $(date '+%F %T') =="
+[ -f "$L" ] && {
+  echo "  log_size=$(du -h "$L" | cut -f1)  lines=$(wc -l < "$L")"
+  echo "  mention_timeout  = $(grep -ac 'timed out after 60s' "$L")"
+  echo "  real_MCP_32001   = $(grep -ac 'MCP error -32001' "$L")"
+  echo "  ACCESS_RESTRICTED= $(grep -ac 'ACCESS RESTRICTED' "$L")"
+  echo "  run_code_calls   = $(grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  search_apis_calls= $(grep -ac 'pyAether_MCP_server__search_apis' "$L")"
+  echo "  pass_rate_lines  = $(grep -ac 'pass ([0-9]' "$L")"
+  echo "  32001 对应工具Top:"
+  grep -a -B3 'MCP error -32001' "$L" | grep -aoE 'pyAether_MCP_server__[a-z_]+' | sort | uniq -c | head -6
+}
+echo "== r4' 进程清单（kill 前）=="
+pgrep -af 'run_cline_script' | cut -c1-110
+```
+**停 r4′**：显式 PID 杀主进程 `1462342`，再扫孤儿 worker。⚠️ **教训（10-20 06:3x 已踩）**：`pgrep -f 'run_cline_script\.sh'` 会**误匹配 opencode 进程**（其 cmdline 含 ZHULONG_TASK.md 全文）→ **杀前必须核对 cmdline 是否真的是 `bash scripts/run_cline_script.sh ...`**，不可盲目 `pkill -f`。
+```bash
+# 只杀 cmdline 真正是 run_cline_script.sh 的进程（避开 opencode 误匹配）
+for pid in $(pgrep -f 'run_cline_script\.sh'); do
+  cmd=$(tr '\0' ' ' < /proc/$pid/cmdline 2>/dev/null | cut -c1-100)
+  case "$cmd" in
+    *bash\ scripts/run_cline_script.sh*|*run_cline_script.sh\ -p*)
+      kill -TERM "$pid" && echo "TERM $pid :: $cmd" ;;
+    *) echo "SKIP $pid (非 run_cline_script 主进程) :: $cmd" ;;
+  esac
+done
+sleep 10
+# 复检：剩余 run_cline_script 应只剩 opencode 误匹配（其 PPID 非 1 且 args 含 ZHULONG_TASK）
+pgrep -af 'run_cline_script' | cut -c1-110 || echo "r4' 已停（无任何匹配）"
+# 清孤儿 cline worker（batch 2026_1020_063134 的残留 task）
+for pid in $(pgrep -f '2026_1020_063134'); do kill -TERM "$pid" 2>/dev/null && echo "orphan TERM $pid"; done
+```
+
+#### ② 记录 8090 状态 → 重启 → 验证（与 06:3x 块 ② 同型）
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+echo "== 重启前 8090 =="
+PID=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "  pid=$PID etime=$(ps -o etimes= -p $PID 2>/dev/null|tr -d ' ')s nlwp=$(ps -o nlwp= -p $PID 2>/dev/null|tr -d ' ')"
+echo "  health=$(curl -s -m 5 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)"
+echo "== 重启 =="
+bash scripts/stop.sh; sleep 3
+bash scripts/start.sh; sleep 8
+NEW=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "  新 PID=$NEW（旧 $PID）"
+echo "  health=$(curl -s -m 5 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)"
+```
+
+#### ③ 起跑前健康冒烟（**必须 5/5 通过才起 r4″**，否则停手报 blocker）
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+OK=0; FAIL=0
+for i in 1 2 3 4 5; do
+  t0=$(date +%s%N)
+  r=$(timeout 70 curl -s -m 65 -X POST http://localhost:8090/mcp \
+      -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' 2>/dev/null | head -c 200)
+  t1=$(date +%s%N); ms=$(( (t1-t0)/1000000 ))
+  if [ -n "$r" ]; then OK=$((OK+1)); echo "  #$i OK ${ms}ms"; else FAIL=$((FAIL+1)); echo "  #$i FAIL ${ms}ms"; fi
+done
+echo "SMOKE: ok=$OK fail=$FAIL"
+# 额外：用 run_code 打一次真实 pyAether 代码，确认沙盒端到端秒回
+echo "run_code smoke:"
+timeout 70 curl -s -m 65 -X POST http://localhost:8090/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"pyAether_MCP_server__run_code","arguments":{"code":"print(1)"}}}' 2>/dev/null | head -c 300
+echo ""
+```
+
+#### ④ 用新端口起 r4″（**端口 = 8663,8666,8667,8670**）
+- **先标 r4′ INVALID**（与 r4 旧轮同处置）：把 batch `2026_1020_063134` 在台账标注 **`INVALID(MCP timeout 抬头, 巡检 #3=110 且率持续上行)`**，**不参与 5-run 统计**；🚫 不覆盖其原始产物与日志（留作诊断证据）。
+- **r4″ 起跑**：配置与 r1–r3 **完全一致**，**唯一变更是端口** ——
+  - `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / **V3 自探索 ON** / full harness / **`-p 4`** / 模型 **`deepseek-v4-pro-fp4`** / **端口 `8663,8666,8667,8670`** / `export PYTHON=$PWD/venv/bin/python`（**别再漏**）。
+  - 日志 `/tmp/ABL_readback_none_retest_r4c.log`；batch 新建。
+  - ⚠️ **端口参数传递方式**：照 06:3x 块 r4′ 的起法（`run_cline_script.sh -p 4` + 显式 PORTS 环境变量或脚本参数），**只替换端口列表**；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED。
+- **r4″ 跑起来 30 分钟内必须报一次**：`real_MCP_32001` 计数 + `run_code` 调用数 + 4 个新端口各自的可达性（`curl -s -m 5 http://10.129.32.75:<port>/` 或等价探活），确认新超时率回到历史水平（≤ ~0.001/行）、4 端口全部可达。
+- r4″ 收口 → 立即起 **r5″**（同配置同端口）→ 5/5 齐（r1,r2,r3,r4″,r5″）→ mean±std → 更新 `zhulong_results.md` / `6_exp.tex` → 接 full@pro-cloud 5 轮。
+
+#### ⑤ 纪律
+- 🚫 不覆盖 r1/r2/r3 产物与 r3 backup；🚫 不动 r4/r4′ 原始产物与日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不启 full@pro-cloud（等 5/5 干净后再做）。
+- kill 一律**显式 PID + cmdline 核对**（避开 opencode 误匹配）；长输出 `cut`。
+- 若重启 + 换端口后冒烟仍大面积超时 → **停手报 blocker**（届时再查 9006/沙盒机本身/8663 是否真可用），不要盲目第三次重跑。
+- commit：`zhulong S1: r4' MCP timeout 抬头(110+) -> 停 r4' -> 重启 8090 -> 换端口 8663/8666/8667/8670 起 r4''`。
+
+### 🔄 运维指令 · 2026-10-20 06:3x（**停 r5 → 重启 8090 → 重跑 r4/r5**）· 用户直令 · 最高优先【已被 08:2x 取代·历史】
 
 > 用户令（原文）：「**停 r5 → 重启 8090 → 重跑 r4、r5**」
 > **依据（运维实测对照）**：
