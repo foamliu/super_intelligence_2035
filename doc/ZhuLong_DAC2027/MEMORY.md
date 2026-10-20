@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟠 **r4″ 跑中** | 🆕 **2026-10-20 10:1x 运维令（用户直令）**：09:0x 令作废（基于"r4′ 自收口"误判，实际是 agent 09:10 按 08:2x 令停的 r4′）。**继续按 08:2x**：r4″ 跑中（PID 1760990·新端口 8663/8666/8667/8670·09:09 起·09:34 30min 健康报告 ✅ real_MCP_32001=0 超时率 0/26994 ≪ 基线·4 端口全 OK）→ r4″ 收口 regrade → r5″（同端口）→ 5/5 mean±std → full@pro-cloud 5 轮。**换端口见效**：8669→8663 替换后 MCP 超时从 r4′ 110/80913 行降到 0/26994 行。**当前进度**：S1.readback_none (N′) 复测 3/5 有效（r1=78.5% / r2=70.9% / r3=81.5%）；r4 旧轮 INVALID(680) / r4′ INVALID(110→156) 均作废留证；r4″ + r5″ 待补。 |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟠 **r4‴ 待启** | 🆕 **2026-10-20 15:4x 运维令（用户直令）**：用户已提交并部署 **pyAether licence 泄露 fix** 到 8663/8666/8667/8670 四端口 → **先验证 4 端口健康（run_code 端到端秒回，无 breaker/空响应）→ 重启 8090 → 重跑 r4‴**（同 fp4/READBACK=none/-p 4/V3自探索ON）。**BLOCKER 根因**：14:12 发现 pyAether licence 断路器 OPEN（100+ 连续失败→深度 cooling-off，4 端口全 0 响应 ~2.5h），三轮 r4/r4′/r4″ 共 680/156/575 次 MCP timeout → literal "pass" 退化（r4″ 79/158 gen-fail）。**作废**：r4(31%)/r4′(110→156)/r4″(575+79 literal-pass) 全 INVALID 不进 5-run。**当前进度**：S1.readback_none (N′) 复测 3/5 有效（r1=78.5% / r2=70.9% / r3=81.5%）；r4‴ + r5‴ 待补 → 5/5 mean±std → full@pro-cloud 5 轮。 |
 | 旧 legacy 线（S1 保真度 / 组件 / S2 1-shot 探路） | `MEMORY_s1_full.md` · `MEMORY_component_full.md` · `MEMORY_s2_1shot.md` | 只读历史 | ⬜ 均已由合并线接管或作废。**旧 5-run 可复用**：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2；1-shot 探路：`k10` 75.3 / `k3` 69.0 / `k1` 60.8 / `lagged` 84.2（S2）。⚠️ 其 loop 存活存疑（见 §4「接管 legacy 组件线」）。**三行原文已归档** → `daily-memories/2026-10-11.md`。 |
 | **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | `.last_run_id`≥32。⚠️ **「失联」真因 = GitHub/proxy 断（`push FAILED`）而非进程死**；救援 = **借 BaiZe 中继（跑在 2.29）经 `ssh -p 3333` 进 36.15 重启**（先例 83/84/85/86）⇒ 复用细节见 §7 第 18/19 条。 |
 
@@ -171,6 +171,12 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-20（运维经任务书下发：15:4x licence fix 已部署 → 验证 4 端口 → 重跑 r4‴）** —— 用户令：「我刚提交了一个沙盒license泄露问题的fix并已部署到8663,8666,8667,8670四个端口。请重启r4，用这四个端口。重启之前先验证这四个端口健康。」。用户定位 BLOCKER 根因 = pyAether licence 泄露，已部署 fix。
+  - **落地**：在 `run/ZHULONG_TASK.md` 置顶新增 `### 🔄 运维指令 · 2026-10-20 15:4x（licence fix → 验证 4 端口 → 重启 8090 → 重跑 r4‴）`（10:1x 块标「【已被 15:4x 取代·历史】」）。指令要点：① **先验证 4 端口健康**（真实 run_code 调用，4 端口 × 2 次 = 8 次全返回 `{"response":...}` 且无 breaker/空响应才过，否则停手报运维）；② 重启 8090 + MCP 冒烟 5/5 + run_code 端到端秒回；③ 起 r4‴（端口 8663/8666/8667/8670·fp4/READBACK=none/-p 4/V3自探索ON）；④ 30min 内报 real_MCP_32001 + literal "pass" 计数（判据：超时率 ≤ ~0.001/行 + literal-pass ≈ 0）；⑤ r4‴ 收口 → r5‴ → 5/5 mean±std → full@pro-cloud 5 轮。红线 = r4/r4′/r4″ 全作废不进 5-run / 若验证不健康或 r4‴ 再现 timeout 风暴则停手报运维。
+  - ⏭ **已 push**（commit `a2993b83`）→ agent 下轮 `git pull`（~15:55）取到 → 验证 4 端口 → 重启 8090 → 起 r4‴。
+
+- **2026-10-20（🛑 BLOCKER：r4″ 同退化无效 + licence 断路器 OPEN ~2.5h）** —— r4″ 13:51 收口，14:12 regrade 发现：① r4″ completed jsonl 158 条中 **79 条字面量 `"pass"`**（与 r4 旧 99 literal-pass 同型退化）→ gen-success ≈ 50% → Pass@1 上限 ≤50%；② **pyAether licence 断路器 OPEN**（100+ 连续失败→深度 cooling-off，4 端口全 0 响应）→ regrade 不可行。14:56 复检 breaker=106（恶化），15:33 复检 4 端口全 0 响应（深度 cooling-off，worker 完全无法 spawn）。**故障定位**：pyAether licence 服务本身（10.129.32.75），非 8090/9006/网络/端口。**三轮 r4/r4′/r4″ 共 680/156/575 次 MCP timeout → literal "pass" 退化**，持续 infra 降级。agent 按停手报 blocker（08:2x ⑤ + infra 作废规则）。
 
 - **2026-10-20（运维经任务书下发：10:1x 09:0x 令作废·继续按 08:2x）** —— 用户令：「好的」。09:0x 令（先 regrade r4′）基于"r4′ 自收口"误判——实际是 agent 09:10 拉到 08:2x 令后主动停的 r4′（TERM 1462342 + 清 16 孤儿 worker）+ 重启 8090 + 换端口 8669→8663 + 起 r4″。09:0x 令若被执行会让 agent 去 regrade 已作废的 r4′ 造成混乱。
   - **落地**：在 `run/ZHULONG_TASK.md` 置顶新增 `### 🔄 运维指令 · 2026-10-20 10:1x（09:0x 令作废·继续按 08:2x）`，09:0x 块标「【已被 10:1x 取代·历史·作废·基于误判】」。执行路径：r4″ 跑中 → 收口 regrade → r5″（同新端口）→ 5/5 → full@pro-cloud。红线 = 不 regrade r4′/r4 旧轮（均作废留证）。
