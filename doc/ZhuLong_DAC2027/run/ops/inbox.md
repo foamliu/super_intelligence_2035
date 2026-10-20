@@ -1,5 +1,58 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 97 -->
+<!-- RUN_ID: 98 -->
+
+## RUN_ID 98 — 🔴 执行 r4''' 手动 regrade（Step7.1 auto-grade 命中已知 bug：组装 0 脚本）
+
+> 用户直令（2026-10-20 21:2x）：「那就 regrade，等什么呢」。
+> **依据**：RUN_ID 97 证实 r4''' 已正常跑完（16:14:51 → 21:09:14，~4h54m），log 尾部出现 `❌ 无可执行脚本(*.py): .../generated_solutions` + `[SUCCESS] [Step 7.1] 评估完成` ⇒ **与 r4 同款已知 auto-grade bug（组装 0 脚本），自动分不可信，必须手动 regrade**。
+> ✅ **本块为正式动作**：先**自建 regrade 脚本**（照 r1/r4 模板，改 GEN_FILE + 端口 + 标题），再起 regrade。**不要 kill/重启任何 cline 训练进程**（r4''' 已自行退出，无冲突）。
+
+```bash
+set -u
+echo "=== RUN_ID 98 | r4''' 手动 regrade | $(date '+%F %T') | host=$(hostname) ==="
+B=2026_1020_161451
+OUT=/home/app.e0031982/eda_code_eval/$B
+echo "[0] 前置：产物与端口"
+ls -l "$OUT"/*code_generation*.jsonl 2>/dev/null | head -3
+wc -l "$OUT"/code_generation_$B.jsonl 2>/dev/null
+for p in 8663 8666 8667 8670; do
+  timeout 3 bash -c "</dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "  port $p OPEN" || echo "  port $p CLOSED"
+done
+echo "[1] 空生成比例（预判 gen-fail，对照 r4 的 99/158 literal pass）"
+timeout 30 grep -c '"pass"' "$OUT"/code_generation_$B.jsonl 2>/dev/null || echo '  grep_pass_skipped'
+echo "[2] 自建 regrade 脚本（模板=r1/r4 regrade，改 GEN_FILE/端口/标题）"
+cat > /tmp/run_readback_none_retest_r4d3_regrade.sh <<'EOS'
+#!/bin/bash
+set -u
+unset http_proxy https_proxy ALL_PROXY
+export NO_PROXY=10.129.32.75,localhost,127.0.0.1
+export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+export SANDBOX_ENDPOINTS=8663,8666,8667,8670@10.129.32.75
+cd "$EVAL_FW_DIR" || exit 1
+export PYTHON="$PWD/venv/bin/python"
+GEN_FILE=/home/app.e0031982/eda_code_eval/2026_1020_161451/code_generation_2026_1020_161451.jsonl
+echo "GEN_FILE=$GEN_FILE"
+echo "SANDBOX_ENDPOINTS=$SANDBOX_ENDPOINTS"
+"$PYTHON" run_pipeline.py \
+  --skip-code-generation \
+  --gen-file "$GEN_FILE" \
+  --run-name "readback_none_retest_r4d3_regrade" 2>&1
+EOS
+chmod +x /tmp/run_readback_none_retest_r4d3_regrade.sh
+bash -n /tmp/run_readback_none_retest_r4d3_regrade.sh && echo '  SYNTAX_OK'
+echo "[3] 启动 regrade（setsid 后台，独立于中继）"
+setsid bash /tmp/run_readback_none_retest_r4d3_regrade.sh > /tmp/ABL_readback_none_retest_r4d3_regrade.log 2>&1 < /dev/null &
+RG=$!
+echo "  regrade_pid=$RG"
+sleep 45
+echo "[4] 45s 后状态"
+ps -o pid=,etimes=,pcpu=,args= -p "$RG" 2>/dev/null | cut -c1-140 || echo '  launcher_exited(可能已进入子步骤)'
+pgrep -af 'run_pipeline|evaluation' 2>/dev/null | cut -c1-110 | head -5 || echo '  NO_PIPELINE_PROC'
+echo "  --- log tail ---"
+tail -15 /tmp/ABL_readback_none_retest_r4d3_regrade.log 2>/dev/null | cut -c1-170
+echo "[5] 后续由 ZhuLong agent 接管（判据十三 + 5/5 + 论文），本块不等待结束"
+echo "=== DONE 98 ==="
+```
 
 ## RUN_ID 97 — 🔴 只读诊断：r4''' 是否已停滞（5h 仍在 task ~120/158）
 
