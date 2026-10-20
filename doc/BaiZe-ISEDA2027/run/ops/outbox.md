@@ -14859,3 +14859,68 @@ total 2644800
 /nas_train/app.e0031982/.cache/modules/transformers_modules/step_532000 4096
 [relay] ⚠️ 命令块超时（>600s），已被 timeout 终止
 ```
+
+---
+
+## RUN_ID 141 · 2026-10-21 02:40:10 · host=`whag0pgpuap12` · exit=1
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 141 | 92.25 鐩磋繛 hf.co 娴嬮€?| $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 褰撳墠涓嬭浇杩涚▼鐢ㄧ殑浠ｇ悊锛堜粠 environ 璇伙紝鏈€鍙俊锛?
+for pid in $(pgrep -f 'resolve.py|huggingface_hub|hf_transfer' 2>/dev/null | head -3); do
+  echo "  --- PID $pid ---"
+  ps -o etimes=,args= -p "$pid" 2>/dev/null | cut -c1-140
+  tr '\0' '\n' < /proc/$pid/environ 2>/dev/null | grep -iE 'proxy|HF_ENDPOINT|HF_HOME|HF_HUB' | cut -c1-120 || echo '    no proxy env'
+done
+
+echo "[2] 浠ｇ悊 TCP 鍙揪鎬э紙涓ょ嚎瀵规瘮锛?
+for hp in '172.19.92.25 13128' '172.19.92.23 13128'; do
+  set -- $hp
+  timeout 6 bash -c "exec 3<>/dev/tcp/$1/$2" 2>/dev/null && echo "  $1:$2 TCP OPEN" || echo "  $1:$2 TCP FAIL"
+done
+
+echo "[3] 銆愭牳蹇冦€?2.25 鐩磋繛 hf.co锛堜笉璁?HF_ENDPOINT锛?
+P='http://172.19.92.25:13128'
+env -u HF_ENDPOINT https_proxy=$P http_proxy=$P \
+  curl -sS -o /dev/null -w '  api/whoami=%{http_code} dns=%{time_namelookup}s tls=%{time_appconnect}s total=%{time_total}s\n' \
+  --max-time 15 https://huggingface.co/api/whoami-v2 2>&1 | cut -c1-160
+env -u HF_ENDPOINT https_proxy=$P http_proxy=$P \
+  curl -sS -o /dev/null -w '  api/models=%{http_code} total=%{time_total}s\n' \
+  --max-time 15 'https://huggingface.co/api/models/openbmb/UltraData-SFT-2605' 2>&1 | cut -c1-160
+
+echo "[4] 銆愭牳蹇冦€?2.25 瀹炴祴涓嬭浇鍚炲悙锛圠FS 澶ф枃浠讹紝10s 闄愭椂锛岀湅鐪熷疄 MB/s锛?
+env -u HF_ENDPOINT https_proxy=$P http_proxy=$P \
+  curl -sS -L -o /dev/null --max-time 10 \
+  -w '  download=%{http_code} size=%{size_download}B speed=%{speed_download}B/s total=%{time_total}s\n' \
+  'https://huggingface.co/openbmb/UltraData-Math/resolve/main/README.md' 2>&1 | cut -c1-170
+
+echo "[5] 瀵圭収锛?2.23 + hf-mirror锛堢幇鏈夊彛寰勶級"
+P23='http://172.19.92.23:13128'
+env HF_ENDPOINT=https://hf-mirror.com https_proxy=$P23 http_proxy=$P23 \
+  curl -sS -o /dev/null -w '  hf-mirror=%{http_code} total=%{time_total}s\n' \
+  --max-time 15 'https://hf-mirror.com/api/models/openbmb/UltraData-SFT-2605' 2>&1 | cut -c1-160
+
+echo "[6] 92.25 鐩磋繛 hf.co 澶ф枃浠剁湡瀹炴祴閫燂紙30s锛屽彇 en_v1_4 鍚岀被 parquet 澶撮儴 range锛?
+env -u HF_ENDPOINT https_proxy=$P http_proxy=$P \
+  curl -sS -L -o /dev/null --max-time 30 -r 0-104857600 \
+  -w '  range100MB: code=%{http_code} got=%{size_download}B speed=%{speed_download}B/s\n' \
+  'https://huggingface.co/datasets/openbmb/Ultra-FineWeb/resolve/main/ultrafineweb_en/ultrafineweb-en-part-0001-of-2048.parquet' 2>&1 | cut -c1-170
+
+echo "[7] 褰撳墠涓嬭浇瀹為檯閫熺巼锛?proc/io 10s 閲囨牱锛屼綔瀵圭収鍩虹嚎锛?
+for pid in $(pgrep -f 'resolve.py' 2>/dev/null | head -2); do
+  a=$(awk '/write_bytes/{print $2}' /proc/$pid/io 2>/dev/null); sleep 5
+  b=$(awk '/write_bytes/{print $2}' /proc/$pid/io 2>/dev/null)
+  echo "  PID $pid: $(( (b-a)/5/1048576 )) MB/s (write_bytes delta)"
+done
+
+echo "=== DONE 141 ==="
+```
+
+**输出**
+```
+=== RUN_ID 141 | 92.25 鐩磋繛 hf.co 娴嬮€?| 2026-10-21 02:40:10 | host=whag0pgpuap12 ===
+/nas_train/app.e0031982/tmp/tmp.VZtBdoa4St: line 6: pid: unbound variable
+```
