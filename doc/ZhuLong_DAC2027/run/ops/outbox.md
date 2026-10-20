@@ -12479,3 +12479,80 @@ echo "=== DONE 96 ==="
 
 === DONE 96 ===
 ```
+
+---
+
+## RUN_ID 97 · 2026-10-20 21:19:06 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 97 | r4''' 停滞诊断 | $(date '+%F %T') | host=$(hostname) ==="
+B=2026_1020_161451
+echo "[1] 进程是否还活着 + 真实 etime"
+ps -o pid=,ppid=,etimes=,pcpu=,stat=,args= -p 3112365 2>/dev/null | cut -c1-150 || echo 'PID_3112365_GONE'
+echo "-- 全部 cline worker --"
+pgrep -af 'run_cline_script|PyAether' 2>/dev/null | cut -c1-110 | head -8 || echo 'NO_WORKER'
+echo "[2] 各 task 目录的最新 mtime（判哪个 task 在动、哪个已死）"
+for d in /tmp/*${B}*/ /tmp/readback_none_retest*/ ; do
+  [ -d "$d" ] && echo "  DIR $d"
+done 2>/dev/null | head -6
+find /tmp -maxdepth 3 -type d -name "*${B}*" 2>/dev/null | head -3
+echo "[3] task 进度：已完成 task 数 / 总数（关键指标）"
+for d in $(find /tmp -maxdepth 3 -type d -name "*${B}*" 2>/dev/null | head -2); do
+  echo "  --- $d ---"
+  ls -1 "$d" 2>/dev/null | wc -l
+  ls -lt "$d" 2>/dev/null | head -6
+  echo "  completions jsonl:"; ls -l "$d"/*completions*.jsonl "$d"/*completed_code*.jsonl 2>/dev/null | head -3 || echo '  NONE'
+done
+echo "[4] 主 log 尾部 20 行（看是否在重试同一题）"
+LOG=$(find /tmp -maxdepth 3 -name "*.log" -newermt '-6 hours' 2>/dev/null | grep -iE 'readback|retest|161451|cline' | head -1)
+echo "  LOG=$LOG"
+[ -n "$LOG" ] && tail -20 "$LOG" | cut -c1-160
+[ -n "$LOG" ] && stat -c 'mtime=%y size=%s' "$LOG"
+echo "[5] 最近 10 分钟 log 是否还在增长（真进度 vs 空转）"
+[ -n "$LOG" ] && for i in 1 2; do echo "  t$i size=$(stat -c %s "$LOG" 2>/dev/null) lines=$(wc -l < "$LOG" 2>/dev/null)"; sleep 20; done
+echo "[6] MCP-32001 累计（判断是否仍在风暴）"
+[ -n "$LOG" ] && grep -c 'MCP_32001\|32001' "$LOG" 2>/dev/null || echo 0
+echo "=== DONE 97 ==="
+```
+
+**输出**
+```
+=== RUN_ID 97 | r4''' 停滞诊断 | 2026-10-20 21:19:06 | host=hfeg0tedaap02 ===
+[1] 进程是否还活着 + 真实 etime
+-- 全部 cline worker --
+3891080 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA �
+3891081 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合�
+[2] 各 task 目录的最新 mtime（判哪个 task 在动、哪个已死）
+[3] task 进度：已完成 task 数 / 总数（关键指标）
+[4] 主 log 尾部 20 行（看是否在重试同一题）
+  LOG=/tmp/ABL_readback_none_retest_r4d.log
+  ❌ 无可执行脚本(*.py): /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+
+config.yaml restored to original
+
+Done!
+[0;32m[SUCCESS][0m [Step 7.1] 评估完成 (execution_results.jsonl 已产)
+[0;34m[INFO][0m [Step 8] 跳过 Memory Bank 更新 (自进化未开启)
+[0;34m[INFO][0m [Step 8.5] 跳过 Skill 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.55] 跳过 Skill 质量门禁 (自进化未开启)
+[0;34m[INFO][0m [Step 8.6] 跳过 Rules 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.65] 跳过 Rule 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.7] 跳过 Skill 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.9] 跳过 L1 语义合并 (自进化未开启)
+[0;34m[INFO][0m [Step 8.92] 跳过 L1 突触修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.95] 跳过 validator 规则挖掘 (自进化未开启)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 生成代码文件:   code_generation_2026_1020_161451.jsonl
+[0;34m[INFO][0m 原始数据集名:   EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m 输出目录:       /home/app.e0031982/eda_code_eval/2026_1020_161451
+[0;34m[INFO][0m =============================================
+mtime=2026-10-20 21:09:14.068584826 +0800 size=15397921
+[5] 最近 10 分钟 log 是否还在增长（真进度 vs 空转）
+  t1 size=15397921 lines=134772
+  t2 size=15397921 lines=134772
+[6] MCP-32001 累计（判断是否仍在风暴）
+523
+=== DONE 97 ===
+```
