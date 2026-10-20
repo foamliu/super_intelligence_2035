@@ -14732,3 +14732,64 @@ echo "=== DONE 136 ==="
 4188401 4156333     266 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u armB_aimv2_openclip.py --data data_snapshot_20261017_gpic8000.txt --data-source 
 [relay] ⚠️ 输出超长，已截断到 20000 字符
 ```
+
+---
+
+## RUN_ID 140 · 2026-10-20 21:12:38 · host=`whag0pgpuap29` · exit=124
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 140 | decay v2 归因取证 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+OUT="$R/nemo_experiments/xmodel25_baize_80b_decay"
+echo "[1] final ckpt 真实性"
+ls -l "$OUT/final/" 2>/dev/null | head -12
+echo "-- final config.json 关键字段 --"
+grep -oE '"(lr|min_lr|steps|warmup_steps|seq_length|global_batch_size|tokens|weight_decay|seed|n_visual|vocab_size|hidden_size|num_hidden_layers)"[^,}]*' "$OUT/final/config.json" 2>/dev/null | head -20 || echo NO_CONFIG
+echo "[2] 起训脚本实际参数（最终生效版）"
+grep -nE '^(SEQ|GBS|ITERS|LR|MIN_LR|MBS|WARMUP|NP)=' "$R/run/baize_xmodel25_decay_v2.sh" 2>/dev/null
+echo "[3] 训练日志：blend 行 + 首尾 loss（确认实际配比与 71.2B）"
+strings /tmp/baize_xmodel25_decay_v2_train.log 2>/dev/null | grep -E 'Blend:|Seq|Steps:' | tail -6
+strings /tmp/baize_xmodel25_decay_v2_train.log 2>/dev/null | grep -E '\[step' | sed -n '1p;2p;$p'
+echo "[4] 起点 ckpt（step_532000）是否还在盘 —— 决定能否测 decay 前基线"
+ls -d "$R"/nemo_experiments/*532000* "$R"/data/*532000* 2>/dev/null | head -5 || echo 'NO_532000_DIR'
+find /nas_train/app.e0031982 -maxdepth 4 -name '*532000*' -printf '%p %s\n' 2>/dev/null | head -5 || echo 'NO_532000_ANY'
+echo "[5] 数据：code/math 实际被读了多少 token（epoch 过采样取证）"
+for p in anneal_code r3_sources/r3_ultradata_code anneal_math2 r3_sources/r3_ultradata_math; do
+  b=$(ls -l "$R/data/$p"*.bin 2>/dev/null | awk '{s+=$5} END{print s+0}')
+  echo "  $p bin_bytes=$b  approx_tok(int32)/4=$((b/4))"
+done
+echo "[6] .29 GPU 现状（确认已全空，可排后续 eval）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "=== DONE 140 ==="
+```
+
+**输出**
+```
+=== RUN_ID 140 | decay v2 归因取证 | 2026-10-20 21:12:38 | host=whag0pgpuap29 ===
+[1] final ckpt 真实性
+total 2644800
+-rw-r----- 1 app.e0031982 app.adm       1004 Oct 20 15:00 config.json
+-rw-r----- 1 app.e0031982 app.adm       1017 Oct 20 15:00 config.json.bak_flash
+-rw-r----- 1 app.e0031982 app.adm       9312 Oct 16 15:55 configuration_xmodel2.py
+-rw-r----- 1 app.e0031982 app.adm        111 Oct 16 15:55 generation_config.json
+-rw-r----- 1 app.e0031982 app.adm      67793 Oct 20 15:02 modeling_xmodel2.py
+-rw-r----- 1 app.e0031982 app.adm      67919 Oct 20 15:02 modeling_xmodel2.py.bak_cudnn
+-rw------- 1 app.e0031982 app.adm 2700169168 Oct 20 10:30 model.safetensors
+-rw-r----- 1 app.e0031982 app.adm       3957 Oct 16 15:55 tokenizer_config.json
+-rw-r----- 1 app.e0031982 app.adm    7847602 Oct 16 15:55 tokenizer.json
+-- final config.json 关键字段 --
+"hidden_size": 1536
+"num_hidden_layers": 48
+"vocab_size": 129280
+[2] 起训脚本实际参数（最终生效版）
+[3] 训练日志：blend 行 + 首尾 loss（确认实际配比与 71.2B）
+[4] 起点 ckpt（step_532000）是否还在盘 —— 决定能否测 decay 前基线
+/nas_train/app.e0031982/datasets/ocr_vqa/images/253200016.jpg 22028
+/nas_train/app.e0031982/datasets/ocr_vqa/images/1940532000.jpg 21867
+/nas_train/app.e0031982/datasets/LLaVA-Pretrain/00532/005320007.jpg 33337
+/nas_train/app.e0031982/datasets/LLaVA-Pretrain/00532/005320004.jpg 62620
+/nas_train/app.e0031982/.cache/modules/transformers_modules/step_532000 4096
+[relay] ⚠️ 命令块超时（>600s），已被 timeout 终止
+```
