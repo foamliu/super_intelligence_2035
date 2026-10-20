@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 139 -->
+<!-- RUN_ID: 140 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,44 @@
 
 ---
 
+## RUN_ID 140 — 只读：decay v2 final（CS8 44.97%）vs Xmodel-2.5 final（65.40%）故障归因前置取证
+
+> 用户直令（2026-10-20 21:5x）：**decay v2 的正确对照是 Xmodel-2.5 final（同起点 step_532000 + 同 71.2B + 相近配比），不是 P-8**；实测差 -20.43pp / -26.69pp，须查清根因。
+> ⚠️ **只读取证：不 kill、不重启、不改脚本、不跑训练**。`.29` 现已空闲（decay 已收尾、vision 在 `.12`），可安全做只读检查。
+
+```bash
+set -u
+echo "=== RUN_ID 140 | decay v2 归因取证 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+OUT="$R/nemo_experiments/xmodel25_baize_80b_decay"
+echo "[1] final ckpt 真实性"
+ls -l "$OUT/final/" 2>/dev/null | head -12
+echo "-- final config.json 关键字段 --"
+grep -oE '"(lr|min_lr|steps|warmup_steps|seq_length|global_batch_size|tokens|weight_decay|seed|n_visual|vocab_size|hidden_size|num_hidden_layers)"[^,}]*' "$OUT/final/config.json" 2>/dev/null | head -20 || echo NO_CONFIG
+echo "[2] 起训脚本实际参数（最终生效版）"
+grep -nE '^(SEQ|GBS|ITERS|LR|MIN_LR|MBS|WARMUP|NP)=' "$R/run/baize_xmodel25_decay_v2.sh" 2>/dev/null
+echo "[3] 训练日志：blend 行 + 首尾 loss（确认实际配比与 71.2B）"
+strings /tmp/baize_xmodel25_decay_v2_train.log 2>/dev/null | grep -E 'Blend:|Seq|Steps:' | tail -6
+strings /tmp/baize_xmodel25_decay_v2_train.log 2>/dev/null | grep -E '\[step' | sed -n '1p;2p;$p'
+echo "[4] 起点 ckpt（step_532000）是否还在盘 —— 决定能否测 decay 前基线"
+ls -d "$R"/nemo_experiments/*532000* "$R"/data/*532000* 2>/dev/null | head -5 || echo 'NO_532000_DIR'
+find /nas_train/app.e0031982 -maxdepth 4 -name '*532000*' -printf '%p %s\n' 2>/dev/null | head -5 || echo 'NO_532000_ANY'
+echo "[5] 数据：code/math 实际被读了多少 token（epoch 过采样取证）"
+for p in anneal_code r3_sources/r3_ultradata_code anneal_math2 r3_sources/r3_ultradata_math; do
+  b=$(ls -l "$R/data/$p"*.bin 2>/dev/null | awk '{s+=$5} END{print s+0}')
+  echo "  $p bin_bytes=$b  approx_tok(int32)/4=$((b/4))"
+done
+echo "[6] .29 GPU 现状（确认已全空，可排后续 eval）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "=== DONE 140 ==="
+```
+
 ## RUN_ID 139 — 只读：ops 中继健康诊断（137/138 未执行）
 
 > 背景：RUN_ID 136（18:10）正常执行；之后 137（19:5x）、138（20:5x）均未执行、outbox 无回执，而 pretrain/harness/zhulong 仍能 push ⇒ 疑中继又冻死（历史：123 卡在 122）。
 > ⚠️ **只做诊断，不 kill、不重启**（重启由 harness 按其 P0 安全脚本执行；勿在命令行直接 pkill，会自匹配）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 139 | relay health | $(date '+%F %T') | host=$(hostname) ==="
 R=/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
