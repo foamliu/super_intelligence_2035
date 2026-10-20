@@ -1,11 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-20 18:39 🟡 r4‴ 144min 巡检·仍在 codegen·fix 持续·MCP-32001 率稳定 2.7/min（≪5/min 阈值）—
-- **r4‴ 跑中 ✅**：PID 3112365·batch `2026_1020_161451`·16:14:51 起·~144min·log 8.6M/79264 行·codegen 进行中（pass_rate_lines=0·无 completions jsonl）。
-- **144min 巡检**：real_MCP_32001=**247**（+115 vs 17:57 的 132·42min 窗 **2.74/min**·与 17:19→17:57 的 2.84/min 持平 → **率稳定未加速**）·licence_unavail=**0**·circuit_breaker=**0**·literal_pass=**0**（三项全 0 → **fix 仍稳定**）。run_code=651·search_apis=696·ACCESS_RESTRICTED=510（canary hook live ✅）。
-- **端口探针注记**：直探 4 端口时部分返回 `pyAether licence unavailable` 或 BUSY — **系 r4‴ 4 worker 占槽所致（预期），非 fix 退化**：r4‴ log 本身 0 licence 错误 + 0 "Code execution failed"，MCP-32001 为客户端 60s 超时（与 r2 历史 235 同型·执行慢非 licence 拒绝）。
-- **基础设施**：8090 PID 3103371 etime=8694s 健康·9006 PID 3503518 健康·loop 代理 ✅（https_proxy=172.19.92.23:13128 在位）。
+<!-- heartbeat 2026-10-20 19:17 🟡 r4‴ 182min 巡检·仍在 codegen·fix 持续·MCP-32001 率稳定 2.26/min（≪5/min 阈值）—
+- **r4‴ 跑中 ✅**：PID 3112365·batch `2026_1020_161451`·16:14:51 起·~182min·log 9.8M/92131 行·codegen 进行中（pass_rate_lines=0·literal_pass=0）。4 worker 活跃：PyAether-118/119/122/124。
+- **182min 巡检**：real_MCP_32001=**333**（+86 vs 18:39 的 247·38min 窗 **2.26/min**·与 17:19→18:39 的 2.74/min 持平略降 → **率稳定未加速**）·licence_unavail=**0**·circuit_breaker=**0**·literal_pass=**0**（三项全 0 → **fix 仍稳定**）。run_code=772·search_apis=1005·ACCESS_RESTRICTED=598（canary hook live ✅）。
+- **基础设施**：8090 PID 3103371 etime=11108s 健康（/health 404 系无该端点·/mcp 正常·与历史一致）·loop 代理 ✅（https_proxy=172.19.92.23:13128 在位）。
 - **运维令 15:4x ①②③ 全完成**：4 端口验证 8/8 ✅→8090 重启 ✅→r4‴ 起跑 ✅。r4/r4'/r4'' 已标 INVALID（680/156/575 MCP timeout + literal-pass 退化·不进 5-run·产物留证）。
 - **下一步**：r4‴ 继续跑至收口（pgrep 无=收口·预计 ~21:00，参照 r4 旧轮 ~5h）→ 手动 regrade（照 r4 模板改 batch `2026_1020_161451`+端口 8663/8666/8667/8670·unset proxy+NO_PROXY=10.129.32.75+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）→ 判有效（判据十三）→ 起 r5‴ → 5/5 mean±std → 更新论文 → full@pro-cloud 5 轮。
 - 🚫 纪律：不动 r1/r2/r3 产物与 r3 backup·不动 r4/r4'/r4'' 原始产物日志（留证）·不动 t0002147·不改 .env。 -->
