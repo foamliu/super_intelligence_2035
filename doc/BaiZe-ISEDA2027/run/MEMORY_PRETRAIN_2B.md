@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-20 15:2x #635：🧪 评测 decay v2 final 14 集 lm-eval（进行中）**：任务书 14:2x 令。烟测过（XmodelForCausalLM 命中 auto_map、logits 0 nan/0 inf）。修复 2 处 eval 环境缺陷：①`final/config.json` `_attn_implementation` flash→sdpa + `modeling_xmodel2.py` 去除 `sdpa_kernel(CUDNN_ATTENTION)` 强启（从 xmodel25_final 复制，均有 .bak）→ CX6 generate_until 不再崩；②humaneval/mbpp 需 `--confirm_run_unsafe_code`（nohup 单独重跑 GPU6/7，setsid 在本环境退出即死）。14 集全 sdpa 口径（与 xmodel25_final 基线同）。当前：**CS8≈45.0%**（hellaswag .3078/arc_easy .4512/boolq .4700/arc_challenge .2824/sciq .68/piqa .5914/winogrande .5130/openbookqa .302）；CX6 进行中 gsm8k 67%/math500 94%/mmlu 59%/bbh 5%(ETA~3h)/humaneval+mbpp 载模。待 bbh 完成 collect → CS8/CX6 均值 + 中文报告 `reports/report_pretrain_decay_v2_final_eval_zh.html` + EXPERIMENTS（commit `pretrain eval:`）。🚫 未碰 vision/data/harness 线、未碰 .12、只评测不训练。
 > 🆕 **2026-10-20 14:33 #634：稳态确认 + 心跳（无新令，①②③ 已闭合）**：唤醒复核——任务书 06:1x 令三项（①核实报告 ②P0 两项 ③P2 硬件）均已在 #617~#629 闭合、#630~#633 四次稳态确认；训练终态稳固（.29 via ssh：8×GPU 0%/0MiB 全空、无 torchrun、final ckpt 2.7GB@10:30）；ops .last_run_id=139 / inbox mtime 10-18 20:30 未变 ⇒ 无新 pretrain 指令。P0-a .sh 66-69 NCCL export✓、P0-b watchdog 5166B 未常驻✓、报告 15135B@06:06 未改✓、P2=transient✓。git origin/main...main=0/0。本轮零写训练侧：仅稳态复核+心跳+日报。
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
