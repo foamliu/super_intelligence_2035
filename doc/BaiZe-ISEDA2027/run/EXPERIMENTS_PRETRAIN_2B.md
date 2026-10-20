@@ -423,3 +423,52 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 > **Complex6 完整结果**（P-8 final, 44.4B）：
 > GSM8K=1.52%, MATH=0%, MMLU=23.79%, BBH=14.04%, HumanEval=0.61%, MBPP=0%
 > → Complex6 Avg = **6.66%**（Xmodel-2: 39.62%, 但训练量 34× + 部分任务 few-shot）
+
+
+---
+
+## Decay v2 final（80B tokens · Xmodel-2.5 decay v2）14 集 lm-eval 评测
+
+> 评测时间：2026-10-20 15:03–18:15（.29, 8×H100） · 模型：`xmodel25_baize_80b_decay/final`（2.22B, Mamba2-hybrid）  
+> 评测脚本：`run/baize_xmodel_eval.sh` · 口径与 P-8 完全一致（CS8 zero-shot + CX6 default n-shot, trust_remote_code=True, sdpa）  
+> 结果文件：`eval_decay_v2_final/eval_summary.txt` + `p8_eval_summary.json`  
+> 中文报告：`reports/report_pretrain_decay_v2_final_eval_zh.html`
+
+### CS8（Common Sense 8，zero-shot）
+
+| 任务 | acc | acc（%） |
+|:--|--:|--:|
+| hellaswag | 0.3078 | 30.78% |
+| arc_easy | 0.4512 | 45.12% |
+| boolq | 0.4700 | 47.00% |
+| arc_challenge | 0.2824 | 28.24% |
+| sciq | 0.6800 | 68.00% |
+| piqa | 0.5914 | 59.14% |
+| winogrande | 0.5130 | 51.30% |
+| openbookqa | 0.3020 | 30.20% |
+| **CS8 Avg（8/8）** | **0.4497** | **44.97%** |
+
+### CX6（Complex 6，default n-shot）
+
+| 任务 | few-shot | score | score（%） |
+|:--|--:|--:|--:|
+| gsm8k | 5 | 0.0106 | 1.06% |
+| hendrycks_math500 | 4 | 0.0000 | 0.00% |
+| mmlu | 5 | 0.3222 | 32.22% |
+| bbh_zeroshot | 0 | 0.0398 | 3.98% |
+| humaneval | 0 | 0.0000 | 0.00% |
+| mbpp | 3 | 0.0000 | 0.00% |
+| **CX6 Avg（6/6）** | | **0.0621** | **6.21%** |
+
+### 对比总览
+
+| 模型 | Tokens | Params | CS8 | CX6 | 架构 |
+|:--|--:|--:|--:|--:|:--|
+| **decay v2 final** | ~80B | 2.22B | **44.97%** | **6.21%** | Mamba2-hybrid |
+| P-8 final | 44.4B | 2.22B | 49.21% | 6.81% | Mamba2-hybrid |
+| Xmodel-2.5 step_6000 | 79.2B | 1.3B | 50.20% | — | Dense Transformer |
+| Xmodel-2.5 final | 1.4T | 1.3B | 65.40% | 32.90% | Dense Transformer |
+| Xmodel-2 s1/10K | 39.3B | 1.2B | 46.65% | 8.49% | Dense Transformer |
+| Xmodel-2 final | 1.5T | 1.2B | 64.82% | 30.04% | Dense Transformer |
+
+> **关键观察**：decay v2 final CS8=44.97% 低于同架构 P-8（49.21%，-4.24pp）尽管 tokens ~1.8×；CX6=6.21% 略低于 P-8（-0.60pp），其中 mmlu 反超（+7.94pp）但 bbh 大降（-10.38pp）。与同 ~80B tokens 的 Xmodel-2.5 step_6000（1.3B Dense）比 CS8 低 5.23pp。差异为多因素混合（架构/数据/训练轨迹），不做单一归因。
