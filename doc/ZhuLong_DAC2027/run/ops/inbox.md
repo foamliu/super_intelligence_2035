@@ -1,7 +1,46 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 96 -->
+<!-- RUN_ID: 97 -->
+
+## RUN_ID 97 — 🔴 只读诊断：r4''' 是否已停滞（5h 仍在 task ~120/158）
+
+> 用户直令（2026-10-20 21:2x）：「都四个多小时了，你跟我说这算健康吗」「让 zhulong 去查」。
+> **背景异常**：r4'''（PID 3112365 / batch `2026_1020_161451` / 16:14:51 起）到 20:38 已 **256min**，但 19:17 巡检时 worker 已是 task 118/119/122/124，20:38 仍在同区间；**全程无 completions jsonl**。总题量 158。参照 r4′ 前车之鉴：r4′ 也是"进程在、日志长"，实为卡在 task ~118/158，task 139-158 从未启动 → 整轮 INVALID、无法 regrade。
+> ⚠️ **纯只读：不 kill、不重启、不动 .env、不碰 r1/r2/r3 产物**。诊断结论交 agent 决策。
+
+```bash
+set -u
+echo "=== RUN_ID 97 | r4''' 停滞诊断 | $(date '+%F %T') | host=$(hostname) ==="
+B=2026_1020_161451
+echo "[1] 进程是否还活着 + 真实 etime"
+ps -o pid=,ppid=,etimes=,pcpu=,stat=,args= -p 3112365 2>/dev/null | cut -c1-150 || echo 'PID_3112365_GONE'
+echo "-- 全部 cline worker --"
+pgrep -af 'run_cline_script|PyAether' 2>/dev/null | cut -c1-110 | head -8 || echo 'NO_WORKER'
+echo "[2] 各 task 目录的最新 mtime（判哪个 task 在动、哪个已死）"
+for d in /tmp/*${B}*/ /tmp/readback_none_retest*/ ; do
+  [ -d "$d" ] && echo "  DIR $d"
+done 2>/dev/null | head -6
+find /tmp -maxdepth 3 -type d -name "*${B}*" 2>/dev/null | head -3
+echo "[3] task 进度：已完成 task 数 / 总数（关键指标）"
+for d in $(find /tmp -maxdepth 3 -type d -name "*${B}*" 2>/dev/null | head -2); do
+  echo "  --- $d ---"
+  ls -1 "$d" 2>/dev/null | wc -l
+  ls -lt "$d" 2>/dev/null | head -6
+  echo "  completions jsonl:"; ls -l "$d"/*completions*.jsonl "$d"/*completed_code*.jsonl 2>/dev/null | head -3 || echo '  NONE'
+done
+echo "[4] 主 log 尾部 20 行（看是否在重试同一题）"
+LOG=$(find /tmp -maxdepth 3 -name "*.log" -newermt '-6 hours' 2>/dev/null | grep -iE 'readback|retest|161451|cline' | head -1)
+echo "  LOG=$LOG"
+[ -n "$LOG" ] && tail -20 "$LOG" | cut -c1-160
+[ -n "$LOG" ] && stat -c 'mtime=%y size=%s' "$LOG"
+echo "[5] 最近 10 分钟 log 是否还在增长（真进度 vs 空转）"
+[ -n "$LOG" ] && for i in 1 2; do echo "  t$i size=$(stat -c %s "$LOG" 2>/dev/null) lines=$(wc -l < "$LOG" 2>/dev/null)"; sleep 20; done
+echo "[6] MCP-32001 累计（判断是否仍在风暴）"
+[ -n "$LOG" ] && grep -c 'MCP_32001\|32001' "$LOG" 2>/dev/null || echo 0
+echo "=== DONE 97 ==="
+```
 
 ## RUN_ID 96 — licence fix 部署后 4 端口健康验证（只读·用户直令）
+
 
 > 用户令：「查看进展」。15:4x 令已下发（licence fix 部署 → 验证 4 端口 → 重启 8090 → 重跑 r4‴）。本探针**纯只读**：不重启、不起 r4‴、不改配置，仅查 4 端口是否已恢复健康（licence fix 是否生效）+ agent 是否已开始执行 15:4x 令。
 
