@@ -53,15 +53,15 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-20 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 共 3 篇（进度 3 / 5）</b> · 3 篇均为「借鉴」</div>
+  <h1>论文推荐日报 · 2026-10-20 <span class="badge b-pm">晚报</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>晚报 · 共 5 篇（进度 5 / 5 · 当日收口）</b> · 3 篇「借鉴」+ 2 篇「科普」· <b>今日 TOP-1 = No.4 Game of Phones</b></div>
   <div class="meta">
-    <span>📅 日期：2026-10-20（CST 本地日；AM = UTC 2026-10-19T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3/5）</span>
+    <span>📅 日期：2026-10-20（CST 本地日；AM = UTC 2026-10-19T22:0x / PM = UTC 2026-10-20T10:0x）</span>
+    <span>🏷 标识：晚报（PM · 5/5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成时间：2026-10-20 06:0x CST</span>
+    <span>🕒 生成时间：2026-10-20 06:0x CST（AM）→ 18:0x CST 修订（PM）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早报（AM）<b>3 篇「借鉴」</b>（序号 1–3）；晚报（PM · 18:00 时窗）补 <b>2 篇「科普」</b>后收口 5/5。✅ <b>公告批次已刷新</b>：<code>2026-10-15</code> → <b><code>2026-10-16</code></b>（最新样本 <code>published=2026-10-16T17:59:55Z</code>，<code>totalResults=634451</code>）⇒ 早报 3 篇<b>取自本日新批</b>（120h 批次窗口 <code>--fetch</code> <code>kept 193</code> + <code>id_list</code> 权威复核 <b>5/5</b>）。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5（收口）</b> —— 早报（AM）<b>3 篇「借鉴」</b>（序号 1–3，取自 <code>2026-10-16</code> 批）＋ 晚报（PM）<b>2 篇「科普」</b>（序号 4–5，取自 <b>本 PM 轮新刷新的 <code>2026-10-19</code> 批</b>）。✅ <b>PM 公告批次再次刷新</b>：<code>2026-10-16</code> → <b><code>2026-10-19</code></b>（最新样本 <code>published=2026-10-19T17:59:59Z</code>，<code>totalResults</code> <code>634451</code> → <b><code>635673</code></b>）；PM <code>--fetch</code>（72h）<b><code>kept 219</code> / <code>dropped 347</code></b>，15/15 查询 <code>ok</code>（均 <code>attempts=1</code>）+ <code>id_list</code> 权威复核 <b>5/5</b>。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -75,6 +75,14 @@
   <b>R1′ 分源实测</b>：arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>totalResults=634451</code>，最新样本 <code>published=2026-10-16T17:59:55Z</code> ⇒ <b>批次已由 <code>2026-10-15</code> 刷新为 <code>2026-10-16</code></b>）／ HF Daily ❌（<code>[Errno 101] Network is unreachable</code>，如实记 FAIL、不伪造）／ RSS cs.CL = <b>226</b> 条、cs.CV / cs.LG = <b>0 / 0</b>（<code>status=None</code>，未取到，如实记录）。
   ⚠️ <b>如实记录一次窗口口径修正</b>：首次按默认 <code>window_mode=daily</code>（72h）跑 <code>--fetch</code>，<b>15/15 <code>ok</code> 但 <code>kept 0</code> / <code>dropped 600</code></b> —— 原因是刚刷新的 <code>2026-10-16</code> 批最新条目 <code>published=2026-10-16T17:59:55Z</code> 距本轮取数已约 <b>76h</b>，整体落在 72h 之外（<b>不是「无数据」</b>）；遂以 <code>--window-hours 120</code>（<code>window_mode=override</code>，覆盖最近一次公告批次口径）复跑，<b>15/15 <code>ok</code></b>（14 条 <code>attempts=1</code>；<code>llm-large-language-model</code> 一次脚本级重试后 <code>attempts=2</code> 成功）、<b><code>kept 193</code> / <code>dropped 383</code></b>、<code>generated=2026-10-19T22:04:28Z</code>。
   3 篇入账论文均经 <b>arXiv API <code>id_list</code> 单条权威复核</b>（<code>id_list=2610.23796,2610.23449,2610.23787,2610.23342,2610.22428</code> → <b>5/5 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>）。⚠️ 3 篇首次提交均为 <b>2026-10-16</b>，<b>非「今日新提交」</b>，已按「最近一次公告批次」口径标注实际日期区间。证据见附录 A/B。
+</div>
+
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM · 周二 18:00 CST）</b>：本轮唤醒 = <b>本地 2026-10-20 18:00（CST）</b> = <b>UTC 2026-10-20T10:00（周一 20:00 ET 公告之后约 10h）</b>。
+  <b>R1′ 分源实测</b>：arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>totalResults=635673</code>，最新样本 <code>published=2026-10-19T17:59:59Z</code> ⇒ <b>批次由 AM 轮的 <code>2026-10-16</code> 刷新为 <code>2026-10-19</code></b>，<code>totalResults</code> <b>+1,222</b>）／ HF Daily ❌（<code>[Errno 101] Network is unreachable</code>，如实记 FAIL、不伪造）／ RSS cs.CL / cs.CV / cs.LG = <b>0 / 0 / 0</b>（<code>status=None</code>，未取到，如实记录）。
+  <b>增量取数</b>：<code>--fetch --seen research/SEEN.md</code>（<code>window_mode=daily</code>，72h，<code>generated=2026-10-20T10:02:54Z</code>）→ <b>15/15 查询 <code>ok</code></b>（<b>全部 <code>attempts=1</code>、<code>retries=[]</code></b>）、<b><code>kept 219</code> / <code>dropped 347</code></b> ⇒ 219 条<b>全部为首见</b>（与 AM 轮不同：这次新批就在 72h 窗口内，<b>无需放宽窗口</b>）。
+  晚报 2 篇均经 <b><code>id_list</code> 单条权威复核</b>（<code>id_list=2610.26781,2610.26851,2610.26861,2610.25026,2610.26538</code> → <b>5/5 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>）。
+  ⚠️ 2 篇首次提交均为 <b>2026-10-19</b>（最近的公告批次），<b>不写「今日新论文」</b>。证据见附录 A′ / B′。
 </div>
 
 <h2 class="sec">一、早报 3 篇（均「借鉴」）</h2>
@@ -139,6 +147,52 @@
   </div>
 </div>
 
+<h2 class="sec">二、晚报 2 篇（均「科普」· 取自本 PM 轮新批 <code>2026-10-19</code>）</h2>
+
+<div class="ok-box">
+  <b>今日 TOP-1（科普口径）= 序号 4 · Game of Phones</b> —— 选题判据：① <b>大众能懂</b>（几乎人人都接过诈骗电话）；② <b>有传播力</b>（「让 AI 陪骗子聊天、把骗子耗到没脾气」自带画面与情绪）；③ <b>可讲清</b>（两人博弈 + 纳什均衡 + 300 段对话，两分钟能讲完）；④ <b>来源真实</b>（arXiv ID + 代码/数据开源地址）。该篇已用于《论文两分钟》分镜脚本 <code>research/video/SCENES/10_20.html</code>。
+</div>
+
+<div class="card">
+  <h3><span class="no">4</span>Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</h3>
+  <div class="row"><div class="k">英文原题</div><div class="v orig">Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把「反诈陪聊」当成一场<b>两人博弈</b>来打：用博弈论给出有实证依据的策略与效用函数，让 LLM <b>不微调、只靠上下文经验</b>学会动态换招去消耗骗子；在 <b>300 段模拟对话 · 3 种模型架构</b>上，自适应策略比非自适应基线<b>更接近纳什均衡 28.9–79.7%</b>。</div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v"><i>Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar</i>（<b>共 4 位署名</b>；机构以原文 PDF 为准，本线未核）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-19</b>（<code>published=2026-10-19T17:35:02Z</code>，以 <code>id_list</code> 复核为准）· <code>comment</code>：<i>Accepted at the 2026 Joint European Conference on Machine Learning and Knowledge Discovery in Databases (ECML PKDD 2026)</i>（<b>会务本身本线未核</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CR</code> · <span class="badge b-kp">科普</span> · 关键词：电话诈骗 / scam-baiting / 博弈论 / 纳什均衡 / LLM agent</div></div>
+  <div class="row"><div class="k">原文链接</div><div class="v"><a href="https://arxiv.org/abs/2610.26781">https://arxiv.org/abs/2610.26781</a> · 代码与 300 段标注对话数据：<code>github.com/nardinebasta/GameofPhones_</code>（<b>摘要声明，本线未访问</b>）</div></div>
+  <div class="reason kp">
+    <b>推荐理由（目的 2「科普」口径 · 大众看点 / 传播力）</b>
+    <ol>
+      <li><b>痛点人人有共鸣</b>：诈骗电话是「每个人都接过、每个家庭都吵过」的话题；论文的立场很反直觉 —— <b>现有反制不给骗子造成任何成本</b>，所以作者要让 AI <b>主动陪聊</b>，把骗子的时间与人力「吃掉」。这个反差本身就是好钩子。</li>
+      <li><b>方法一句话能讲清、又有硬骨架</b>：「骗子 vs 陪聊机器人」= 两人博弈；每个策略有<b>效用</b>；<b>纳什均衡</b>是「谁单方面换招都不划算」的稳定点，正好当评分尺 —— 越接近均衡，说明策略越「会打」。不用讲公式也能让观众理解「它在学着怎么让骗子难受」。</li>
+      <li><b>有可展示的实验规模与可核验出处</b>：<b>300 段模拟对话</b>、<b>3 种 LLM 架构</b>、相对提升 <b>28.9–79.7%</b>，且<b>代码 + 带轮级策略标注的数据集已声明开源</b>，适合在视频里给出处、立可信度。</li>
+      <li><b>我们判断的适用边界（必须讲清，避免误导）</b>：① 这是<b>模拟对话</b>，<b>不是</b>真实电话网络部署，也未做真人诈骗者实验（摘要未提）；② 「28.9–79.7%」是<b>「离纳什均衡更近」的距离指标</b>，<b>不等于</b>「诈骗成功率下降 28.9–79.7%」；③ 论文只评估「策略选择」的学习效果，<b>未给</b>通话时长、骗子放弃率等运营指标；④ <b>未做全文精读</b>，数字为作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：作为「AI 用于社会善治」的科普选题优先做（已出分镜）；若要做深，可读原文的<b>策略空间与效用函数定义</b>，再看其开源数据里的轮级标注。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Manga2Animate: An Agentic Framework for Faithful Manga Animation with Script and Storyboard Planning</h3>
+  <div class="row"><div class="k">英文原题</div><div class="v orig">Manga2Animate: An Agentic Framework for Faithful Manga Animation with Script and Storyboard Planning</div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">不把漫画页直接丢给视频模型，而是先让多智能体<b>写动画剧本、画视觉分镜</b>这两个中间表示，每个表示都由 <b>creator agent 生成 + 配对 reviewer agent 对照原漫画审校</b>，双层反馈迭代精修后再合成动画 —— 作者称比 SOTA <b>更忠实原作、镜头间更一致</b>（含用户研究）。</div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v"><i>Sheng-Wei Zhang, Hsi-An Chen, Yan-Ting Liou</i> 等（<b>共 6 位署名</b>；机构以原文 PDF 为准，本线未核）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-19</b>（<code>published=2026-10-19T17:59:46Z</code>，以 <code>id_list</code> 复核为准）· <code>comment</code>：<i>Project page: https://annchenn.github.io/Manga2Animate/</i></div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code> · <span class="badge b-kp">科普</span> · 关键词：漫画动画化 / 多智能体 / 剧本 / 分镜 / 视频生成</div></div>
+  <div class="row"><div class="k">原文链接</div><div class="v"><a href="https://arxiv.org/abs/2610.26851">https://arxiv.org/abs/2610.26851</a> · 项目页（<b>摘要/comment 声明，本线未访问</b>）</div></div>
+  <div class="reason kp">
+    <b>推荐理由（目的 2「科普」口径 · 大众看点 / 传播力）</b>
+    <ol>
+      <li><b>视觉题材天生适合短视频</b>：「漫画 → 会动的动画」是二次元受众的长期痛点；分镜前后对比天然有「前后差异」画面，容易做封面与标题。</li>
+      <li><b>反直觉的工程选择好讲</b>：直觉是「直接喂视频模型」，论文却说这样会<b>误读漫画结构、把剧情搞错</b>；它改成先产出<b>剧本 + 分镜</b>两个中间表示，再由<b>审校 agent 对着原漫画逐格核对</b> —— 相当于给生成过程加了「编剧 + 分镜师 + 场记」。</li>
+      <li><b>结构清晰、好拆成动画</b>：creator / reviewer / 选择机制 / 双层反馈四块，正好对应分镜的四段讲解，不需要碰公式。</li>
+      <li><b>我们判断的适用边界</b>：① 摘要<b>只给定性结论</b>（更忠实、更一致），<b>没有</b>具体指标数值，用户研究的样本与评分细节在正文 ⇒ <b>不得据摘要写「提升 X%」</b>；② 只验证「已有漫画改编」，<b>未证明</b>可稳定处理长篇连载；③ 改编他人漫画涉及<b>版权</b>，科普时须说明这是<b>研究演示</b>、不是可直接商用的工具；④ <b>未做全文精读</b>，本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：作为「AI 创作工具」类选题的第二顺位（本日第 2 篇科普）；若做视频，画面用<b>自绘分镜示意</b>，🚫 不盗用论文或项目页截图。
+  </div>
+</div>
+
 <h2 class="sec">附录 A · 取数与复核过程（I → VII）</h2>
 <table>
   <thead><tr><th style="width:52px">步骤</th><th style="width:190px">动作</th><th>实测结果</th></tr></thead>
@@ -176,6 +230,48 @@
   </tbody>
 </table>
 <p style="font-size:12.5px;color:var(--muted)">注：<code>llm-long-context</code> 与 <code>agent-harness-title</code> 本轮 <code>kept 0</code>（该查询 <code>totalResults</code> 小、窗口内无可转化条目），<b>如实保留 0</b>；<code>llm-large-language-model</code> 的 <code>attempts=2</code> 为脚本级重试（<b>不是唤醒级故障</b>）。120h 窗口下 <b>kept 193 / dropped 383</b>，与 <code>SEEN.md</code> 新增 193 行一致。备选 <code>2610.23342</code>（*Robust Function Calling for LLM Agents Under Interface Drift*）与 <code>2610.22428</code>（*Embeddings Are Overpriced? A Frozen 16 MB Vocabulary for Small Language Models*，<code>2026-10-15</code>）已复核但<b>本轮不入账</b>，留作晚报 / 后续轮候选池。</p>
+<h2 class="sec">附录 A′ · 晚报取数与复核过程（PM · I → VII）</h2>
+<table>
+  <thead><tr><th style="width:52px">步骤</th><th style="width:190px">动作</th><th>实测结果</th></tr></thead>
+  <tbody>
+    <tr><td><b>I</b></td><td>唤醒 / 时点</td><td>本地 <b>2026-10-20 18:00（CST）</b> = <b>UTC 2026-10-20T10:00（周一 20:00 ET 公告后约 10h）</b>；PM 轮（「晚 2」· 当日收口）。</td></tr>
+    <tr><td><b>II</b></td><td>R1′ 分源可达性探测<br><code>--probe</code></td><td>arXiv API ✅ <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>totalResults=635673</code>，最新样本 <code>published=2026-10-19T17:59:59Z</code>（AM 轮 <code>634451 / 2026-10-16T17:59:55Z</code> ⇒ <b>批次刷新为 2026-10-19</b>）／ HF Daily ❌ <code>[Errno 101] Network is unreachable</code>（<b>如实记 FAIL，未伪造</b>）／ RSS cs.CL = <b>0</b>、cs.CV = <b>0</b>、cs.LG = <b>0</b>（<code>status=None</code>，未取到，如实记录）。证据 <code>raw/2026-10-20-probe-r102.log</code>。</td></tr>
+    <tr><td><b>III</b></td><td>关键词增量<br><code>--fetch --seen research/SEEN.md</code></td><td><code>window_mode=daily</code>、<code>window_hours=72.0</code>、<code>generated=2026-10-20T10:02:54Z</code>：<b>15/15 查询 <code>ok</code></b>（<b>全部 <code>attempts=1</code>、<code>retries=[]</code></b>、<code>rate_limit_seconds=3.0</code>）、<b><code>kept 219</code> / <code>dropped 347</code></b>。证据 <code>raw/2026-10-20-fetch-r102-seen.json</code> / <code>raw/2026-10-20-fetch-r102.log</code>。</td></tr>
+    <tr><td><b>IV</b></td><td>候选池筛选（「科普」口径）</td><td>219 条按「<b>大众看得懂 + 有传播力 + 可讲清 + 有真实来源</b>」筛 5 条短名单：<code>2610.26781</code> Game of Phones（电话诈骗 bot wars）/ <code>2610.26851</code> Manga2Animate（漫画自动动画化）/ <code>2610.26861</code> 功能性 CAD 机构合成 / <code>2610.25026</code> 单个注意力头与语言错乱 / <code>2610.26538</code> LLM 从餐盘照片估热量。</td></tr>
+    <tr><td><b>V</b></td><td><code>id_list</code> 单条权威复核</td><td><code>id_list=2610.26781,2610.26851,2610.26861,2610.25026,2610.26538</code> → <b>5/5 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>（<code>2610.26781</code> <code>2026-10-19T17:35:02Z</code> / <code>2610.26851</code> <code>2026-10-19T17:59:46Z</code>；备选 <code>2610.26861</code> <code>2026-10-19T17:59:58Z</code>、<code>2610.25026</code> <code>2026-10-18T05:21:12Z</code>、<code>2610.26538</code> <code>2026-10-19T15:00:20Z</code>）。标题 / 作者 / <code>primary_category</code> <b>以此次 XML 为准</b>。证据 <code>raw/2026-10-20-idlist-r102.{xml,headers}</code>。</td></tr>
+    <tr><td><b>VI</b></td><td>去重（「一 ID 一次」）</td><td>2 个入账 ID <b>均不在</b>任何 <code>research/daily/*.html</code> 卡片或附录；台账中此前<b>从未出现</b> ⇒ <b>无重复</b>。台账追加 <b>219 行</b>（2「收录」+ 217「候选」）→ <b>3,886 → 4,105 行</b>。</td></tr>
+    <tr><td><b>VII</b></td><td>PDF 落地校验</td><td><code>research/pdf/2026-10-20/</code> 新增 2 个：<code>2610.26781</code> 与 <code>2610.26851</code>，均校验 <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + 字节下限 + <code>pdfinfo</code> 页数 + <code>pdftotext</code> 可解析。<code>research/pdf/</code> 已在 <code>.gitignore</code>，<b>不入库</b>。</td></tr>
+  </tbody>
+</table>
+<div class="note">
+  <b>PDF 校验口径（PM 新增 2 篇）</b>：下载脚本 <code>research/raw/pdf_dl_r102.sh</code>（<code>curl -L --retry 2 -m 300</code> + 三轮重试），逐篇校验 <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + 字节下限 + <code>pdfinfo</code> 页数 + <code>pdftotext</code> 可解析。校验失败则删除重下，<b>不把截断文件当成功</b>（2026-10-15 教训）。
+</div>
+
+
+
+<h2 class="sec">附录 B′ · PM 轮 15 条查询逐条结果（<code>--fetch</code>，<code>window_mode=daily</code> 72h）</h2>
+<table>
+  <thead><tr><th style="width:40px">#</th><th style="width:110px">方向</th><th>查询名（<code>research/queries.json</code>）</th><th style="width:80px"><code>total</code></th><th style="width:60px"><code>n</code></th><th style="width:56px"><code>kept</code></th><th style="width:56px"><code>att</code></th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>635673</td><td>40</td><td><b>40</b></td><td>1</td></tr>
+    <tr><td>2</td><td>LLM</td><td><code>llm-large-language-model</code></td><td>39272</td><td>40</td><td><b>36</b></td><td>1</td></tr>
+    <tr><td>3</td><td>LLM</td><td><code>llm-long-context</code></td><td>1854</td><td>40</td><td><b>3</b></td><td>1</td></tr>
+    <tr><td>4</td><td>LLM</td><td><code>llm-scaling-law</code></td><td>1015</td><td>40</td><td><b>1</b></td><td>1</td></tr>
+    <tr><td>5</td><td>SLM</td><td><code>slm-small-language-model</code></td><td>1103</td><td>40</td><td><b>6</b></td><td>1</td></tr>
+    <tr><td>6</td><td>SLM</td><td><code>slm-on-device</code></td><td>11025</td><td>40</td><td><b>9</b></td><td>1</td></tr>
+    <tr><td>7</td><td>多模态</td><td><code>mm-vision-language</code></td><td>17813</td><td>40</td><td><b>39</b></td><td>1</td></tr>
+    <tr><td>8</td><td>多模态</td><td><code>mm-multimodal</code></td><td>16595</td><td>40</td><td><b>26</b></td><td>1</td></tr>
+    <tr><td>9</td><td>多模态</td><td><code>mm-csmm</code></td><td>10250</td><td>40</td><td><b>7</b></td><td>1</td></tr>
+    <tr><td>10</td><td>agent harness</td><td><code>agent-harness-title</code></td><td>140</td><td>40</td><td><b>0</b></td><td>1</td></tr>
+    <tr><td>11</td><td>agent harness</td><td><code>agent-swe-bench</code></td><td>399</td><td>40</td><td><b>1</b></td><td>1</td></tr>
+    <tr><td>12</td><td>agent harness</td><td><code>agent-tool-use</code></td><td>1693</td><td>40</td><td><b>8</b></td><td>1</td></tr>
+    <tr><td>13</td><td>agent harness</td><td><code>agent-csma-multiagent</code></td><td>6011</td><td>40</td><td><b>9</b></td><td>1</td></tr>
+    <tr><td>14</td><td>邻域</td><td><code>nb-retrieval-augmented</code></td><td>3951</td><td>40</td><td><b>3</b></td><td>1</td></tr>
+    <tr><td>15</td><td>邻域</td><td><code>nb-alignment</code></td><td>21990</td><td>40</td><td><b>31</b></td><td>1</td></tr>
+    <tr><td colspan="3"><b>合计</b></td><td>—</td><td><b>600</b></td><td><b>219</b></td><td>—</td></tr>
+  </tbody>
+</table>
+<p style="font-size:12.5px;color:var(--muted)">注：<code>agent-harness-title</code> 本轮 <code>kept 0</code>（<code>totalResults=140</code> 小、窗口内无可转化条目），<b>如实保留 0</b>。72h 下 <b>kept 219 / dropped 347</b>（dropped 主要为「already in SEEN」与「stale &gt; 72h」两类，见 <code>raw/2026-10-20-fetch-r102-seen.json</code> 的 <code>meta.dropped</code>），与 <code>SEEN.md</code> 新增 219 行一致。备选 <code>2610.26861</code>（功能性 CAD 机构合成）、<code>2610.25026</code>（单个注意力头与语言错乱）、<code>2610.26538</code>（餐盘照片估热量）已复核但<b>本轮不入账</b>，留作后续轮候选池。</p>
 
 <h2 class="sec">附录 C · 口径护栏（本轮自检）</h2>
 <ol style="font-size:13.5px">
@@ -188,13 +284,35 @@
   <li><b>数字归属</b>：所有加速比 / 指标后标「<b>作者自报 · 本线未复现</b>」；GatewayBench 摘要无数值 ⇒ 页面<b>不给任何分数</b>，只描述其定性结论。</li>
   <li><b>边界写清</b>：每张卡片第 4 条固定为「我们判断的适用边界」，逐篇点明单卡 kernel ≠ 端到端服务、通用 agent ≠ EDA、接受长度 ≠ wall-clock 等<b>不可直接迁移</b>之处。</li>
   <li><b>来源可审计</b>：<code>probe</code> / <code>fetch</code>（含首跑与复跑）/ <code>id_list</code> 四份证据 + <code>update_r101.py</code> 全部落在 <code>research/raw/</code>，页面按文件名可逐一回查。</li>
-  <li><b>外链最小化</b>：全页仅 3 条 <code>arxiv.org/abs/&lt;id&gt;</code> 外链，<b>无 CSS/JS/字体/图片外链</b>，离线可读。</li>
+  <li><b>外链最小化</b>：全页仅 5 条 <code>arxiv.org/abs/&lt;id&gt;</code> 外链，<b>无 CSS/JS/字体/图片外链</b>，离线可读。</li>
+  <li><b>（PM 增补）批次刷新必须重取、不用 AM 结论顶替</b>：PM 轮实测主源 <code>totalResults 634451 → 635673</code>、最新样本 <code>2026-10-16 → 2026-10-19</code>，因此<b>重新跑</b> <code>--fetch</code> 并用<b>新批</b>选晚报 2 篇；AM 的 3 篇保持不变、<b>不回写</b>。</li>
+  <li><b>（PM 增补）晚报不重复早报口径</b>：晚报 2 篇一律「科普」（大众看点 / 传播力），与早报 3 篇「借鉴」（对齐 BaiZe 推理效率 / ZhuLong MCP 与 agent 服务）<b>分工不重叠</b>；TOP-1 明确写「科普口径」，避免与 AM 的借鉴榜混淆。</li>
+  <li><b>（PM 增补）科普不等于夸大</b>：<code>2610.26781</code> 的 <b>28.9–79.7%</b> 明确标注是「<b>离纳什均衡更近</b>」的相对距离指标，<b>不等于</b>诈骗成功率下降；<code>2610.26851</code> 摘要<b>无任何数值</b>，页面<b>不编造百分比</b>，只写定性结论。</li>
 </ol>
 
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<table>
+  <thead><tr><th style="width:150px">项目</th><th style="width:250px">早报（AM · 06:0x CST）</th><th>晚报（PM · 18:0x CST，本次修订后）</th></tr></thead>
+  <tbody>
+    <tr><td>进度</td><td>3 / 5</td><td><b>5 / 5（当日收口）</b></td></tr>
+    <tr><td>标签构成</td><td>3 篇「借鉴」</td><td>3 篇「借鉴」+ <b>2 篇「科普」</b>（序号 4–5）</td></tr>
+    <tr><td>公告批次</td><td><code>2026-10-16</code>（<code>totalResults=634451</code>）</td><td><b><code>2026-10-19</code></b>（<code>totalResults=635673</code>，<b>+1,222</b>）</td></tr>
+    <tr><td>取数窗口</td><td>72h 首跑 <code>kept 0</code> → <b>120h 复跑</b> <code>kept 193</code> / <code>dropped 383</code></td><td><b>72h 单跑</b> <code>kept 219</code> / <code>dropped 347</code>（新批已在窗口内，<b>无需放宽</b>）</td></tr>
+    <tr><td>查询健康度</td><td>15/15 <code>ok</code>，1 条 <code>attempts=2</code></td><td>15/15 <code>ok</code>，<b>全部 <code>attempts=1</code></b></td></tr>
+    <tr><td>复核</td><td><code>id_list</code> 5/5</td><td><code>id_list</code> <b>5/5</b>（含 3 条备选，本轮不入账）</td></tr>
+    <tr><td>台账</td><td>3,693 → <b>3,886</b> 行</td><td>3,886 → <b>4,105</b> 行（+219：2 收录 / 217 候选）</td></tr>
+    <tr><td>累计</td><td>收录 224 / 候选 3,155（AM 后）</td><td><b>收录 226</b> / 候选 <b>3,372</b> / 候选（RSS 补充）<b>507</b></td></tr>
+    <tr><td><code>papers.jsonl</code></td><td>223 行</td><td><b>226 行</b></td></tr>
+    <tr><td>今日 TOP-1</td><td>（AM 不作 TOP-1 结论）</td><td><b>序号 4 · Game of Phones</b>（科普口径）→ 已出分镜 <code>video/SCENES/10_20.html</code></td></tr>
+    <tr><td>邮件</td><td>—</td><td>晚报邮件 5 篇精选 + PDF 附件（见 <code>mail/发送记录.md</code>）</td></tr>
+    <tr><td>未变项</td><td colspan="2">AM 的 3 篇推荐（序号 1–3）<b>标题 / 作者 / 数字 / 结论均未改写</b>；附录 A / B 保留 AM 原始实测记录，PM 只<b>追加</b> A′ / B′。</td></tr>
+  </tbody>
+</table>
+
 <footer>
-  <p><b>本页状态</b>：早报（AM）· <b>3 / 5</b> · 3 篇「借鉴」 · 台账累计 <b>收录 224</b> / 候选 3,155 / 候选（RSS 补充）507（<code>SEEN.md</code> 共 <b>3,886</b> 行）· <code>papers.jsonl</code> <b>224</b> 行。</p>
-  <p><b>下一轮</b>：本地 <b>2026-10-20 18:00（CST）</b>「晚 2」轮 —— ① 复验公告批次；② 补 <b>2 篇「科普」</b> + 增补 <code>## 晚报变更说明（AM → PM）</code>，日报收口 <b>5/5</b>；③ 出《论文两分钟》分镜脚本 <code>research/video/SCENES/10_20.html</code>（当日 TOP-1）+ <code>SCENES/index.html</code> 同步；④ 每日论文日报邮件。</p>
-  <p><b>免责</b>：本页为研究线索汇总，<b>非结论、非投资/选型建议</b>；所有论文均<b>未逐篇精读</b>，引用数字以原文与作者声明为准。生成：2026-10-20 06:0x CST（research 线 · r101）。</p>
+  <p><b>本页状态</b>：晚报（PM）· <b>5 / 5（收口）</b> · 3 篇「借鉴」+ 2 篇「科普」 · 台账累计 <b>收录 226</b> / 候选 3,372 / 候选（RSS 补充）507（<code>SEEN.md</code> 共 <b>4,105</b> 行）· <code>papers.jsonl</code> <b>226</b> 行。</p>
+  <p><b>下一轮</b>：本地 <b>2026-10-21 06:00（CST）</b>「早 3」轮 —— ① 复验公告批次（预期 <code>2026-10-20</code> 批）；② 早报 3 篇（优先「借鉴」）；③ 更新 <code>daily/index.html</code>；④ 每日论文日报邮件。</p>
+  <p><b>免责</b>：本页为研究线索汇总，<b>非结论、非投资/选型建议</b>；所有论文均<b>未逐篇精读</b>，引用数字以原文与作者声明为准。生成：2026-10-20 06:0x CST（AM · r101）→ 18:0x CST 修订（PM · r102）。</p>
 </footer>
 </div>
 </body>

@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/H0+21NORdkmQNRWvNykH8IXIKxw</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.26781,2610.26851,2610.26861,2610.25026,2610.26538&amp;start=0&amp;max_results=20</title>
+  <updated>2026-10-20T10:07:01Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=20&amp;id_list=2610.26781,2610.26851,2610.26861,2610.25026,2610.26538" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>20</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26781v1</id>
+    <title>Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</title>
+    <updated>2026-10-19T17:35:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.26781v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26781v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Phone scams impose substantial and growing costs on individuals and financial systems worldwide, yet existing countermeasures impose no resource cost on perpetrators. Strategic scam-baiting, in which automated agents engage scammers to deplete their operational capacity, offers a proactive alternative but requires dynamic strategy adaptation that static systems cannot provide. We introduce a game-theoretic framework enabling LLMs to learn effective counter-strategies through in-context experience without fine-tuning. The framework models scammer-baiter interactions as a two-player game with empirically grounded strategies and utility functions, using Nash equilibrium as a formal benchmark for evaluating learned behaviour. Across 300 simulated dialogues and three LLM architectures, adaptive strategy selection achieves 28.9-79.7% closer alignment to Nash equilibrium than non-adaptive baselines. The code and an annotated dataset of 300 dialogues with turn-level strategy labels and utility scores are released at https://github.com/nardinebasta/GameofPhones_/ .</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.GT" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T17:35:02Z</published>
+    <arxiv:comment>Accepted at the 2026 Joint European Conference on Machine Learning and Knowledge Discovery in Databases (ECML PKDD 2026)</arxiv:comment>
+    <arxiv:primary_category term="cs.CR"/>
+    <arxiv:journal_ref>Lecture Notes in Computer Science, vol. 16949 (2027) 395-411</arxiv:journal_ref>
+    <author>
+      <name>Nardine Basta</name>
+    </author>
+    <author>
+      <name>Robin Carpentier</name>
+    </author>
+    <author>
+      <name>Benjamin Zi Hao Zhao</name>
+    </author>
+    <author>
+      <name>Dali Kaafar</name>
+    </author>
+    <arxiv:doi>10.1007/978-3-032-37682-4_23</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1007/978-3-032-37682-4_23" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26861v1</id>
+    <title>Can It Actually Work? Synthesizing Functional CAD Mechanisms</title>
+    <updated>2026-10-19T17:59:58Z</updated>
+    <link href="https://arxiv.org/abs/2610.26861v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26861v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>While LLM agents can generate visually plausible CAD assemblies, these designs often fail to fulfill their intended physical functions. We study functional CAD design, a setting where agents interpret underspecified requests to construct and iteratively revise mechanisms that satisfy functional requirements in physical simulation. Verifying these requirements is nontrivial: different candidate mechanisms may realize the same function through entirely different components, controls, and operating sequences. To bridge this gap, we propose FunCAD-Harness, a framework that translates abstract requirements into candidate-specific physical tests and uses simulation feedback to guide design revisions. To systematically evaluate this capability, we introduce FunCADBench, a benchmark spanning 46 mechanism families with interdependent and multi-step operations. Experiments across frontier LLM agents show that FunCAD-Harness exposes subtle mechanical failures invisible to visual inspection, substantially improving functional success rates over standard simulation-augmented baselines. Ultimately, our work marks a step toward CAD agents capable of translating human intent into working mechanisms.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.GR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T17:59:58Z</published>
+    <arxiv:comment>45 pages, 16 figures, project page: https://thegenlab.ai/funcad/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Wenqian Zhang</name>
+    </author>
+    <author>
+      <name>Yangyi Huang</name>
+    </author>
+    <author>
+      <name>Zigeng Xu</name>
+    </author>
+    <author>
+      <name>Weiyang Liu</name>
+    </author>
+    <author>
+      <name>Zhen Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26538v1</id>
+    <title>Small Average Error, Wide Individual Error: General-Purpose LLMs Estimating Energy Intake from Meal Photos in a Feeding Trial</title>
+    <updated>2026-10-19T15:00:20Z</updated>
+    <link href="https://arxiv.org/abs/2610.26538v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26538v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Photo-based estimation of food energy could ease dietary assessment, and general-purpose multimodal large language models (LLMs) make such estimates easy to obtain. Most evaluations use one photo taken before eating and compare with energy served, while dietary assessment needs energy eaten. We evaluated six models from two vendors (Claude Haiku, Sonnet and Opus 5.5; GPT-6 luna, 6.1 sol and 6 astra) on 802 meals from ACETADA, a controlled feeding trial with weighed intake, with the before photo only, before and after photos in separate calls (subtraction), or both photos in one request. Three results ran against intuition. Subtraction under-estimated intake for five of six models, because the models still report hundreds of kilocalories for a nearly empty tray. Scaling the before-only estimate by the average share eaten (0.87) matched much of the gain from the after photo; beyond that constant, the second photo lowered meal-level error by only 2.2 to 3.4 points, mainly in meals with food left. With one photo, two models had a near-zero intake bias only because they under-estimated the served energy and ignored uneaten food. In ablations, adding the after photo improved accuracy under both prompt formats for five models, while prompt effects varied across models. Over 148 feeding days, three models kept the 90% confidence interval of their mean error within a pre-set 10% margin, but no model reached the pre-set 30% limits of agreement. Protein was under-estimated by every model, most in protein-dense meals; repeated calls changed error by at most 1.4 points; a high reasoning effort helped only the smallest model (4.2 points) and changed the others by less than 1 point. A low average bias is not evidence of accurate individual intake estimation; such estimates should support, not replace, assessment by a dietitian.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.QM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T15:00:20Z</published>
+    <arxiv:comment>20 pages, 1 figure, 12 tables. Code, prompts, pre-registration and per-meal outputs: https://github.com/xtea/llm-intake-validation</arxiv:comment>
+    <arxiv:primary_category term="cs.HC"/>
+    <author>
+      <name>Xiaomeng Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26851v1</id>
+    <title>Manga2Animate: An Agentic Framework for Faithful Manga Animation with Script and Storyboard Planning</title>
+    <updated>2026-10-19T17:59:46Z</updated>
+    <link href="https://arxiv.org/abs/2610.26851v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26851v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Adapting existing manga into coherent animation that stays faithful to the source is a valuable yet challenging task. Existing methods either access the manga mainly through text, losing its characters and art style, or feed manga pages directly into video generation models, which misinterpret the manga's structure and produce incorrect storylines. In this paper, we propose Manga2Animate, a multi-agent framework that grounds every stage of generation in the source manga. We decompose the task into two intermediate representations, an animation script and a visual storyboard. Each representation is produced by a creator agent and reviewed against the source panels by a paired reviewer agent. We tailor representation-specific selection and dual-level feedback to progressively refine both before synthesizing the final animation. Extensive experiments and a user study demonstrate that Manga2Animate produces animations more faithful to the source manga and more consistent across shots than state-of-the-art approaches. Project page: https://annchenn.github.io/Manga2Animate/</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T17:59:46Z</published>
+    <arxiv:comment>Project page: https://annchenn.github.io/Manga2Animate/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Sheng-Wei Zhang</name>
+    </author>
+    <author>
+      <name>Hsi-An Chen</name>
+    </author>
+    <author>
+      <name>Yan-Ting Liou</name>
+    </author>
+    <author>
+      <name>Chih-Hsuan Chen</name>
+    </author>
+    <author>
+      <name>Shih-Chen Tseng</name>
+    </author>
+    <author>
+      <name>Yu-Lun Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.25026v1</id>
+    <title>One Head Away from Language Confusion: Single Attention Heads Across Model Families</title>
+    <updated>2026-10-18T05:21:12Z</updated>
+    <link href="https://arxiv.org/abs/2610.25026v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.25026v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models sometimes reply in an unexpected language, a failure known as language confusion. We ablate individual attention heads in 12 model checkpoints spanning seven model series, using FLORES-200 continuations in five languages and Language Confusion Benchmark (LCB) chat replies. In ten models, zeroing one head causes substantially more departures from the expected language than zeroing any other head in its layer; its LCB pass-rate drop persists, though reduced, under mean ablation. Seven heads move 8.0 to 51.5 percent of all FLORES continuations out of the prompt's language, versus at most 1.4 percent for other same-layer heads; the other three mainly affect explicitly requested languages. These seven heads matter less in base models given plain text. In two models, replacing the values a head reads at the requested-language name with another language's mean makes replies fail and shifts some into that language, unlike a random change of equal size. Replacing a head's output with another language's mean redirects 84 to 99 percent of scored non-English monolingual LCB replies into that language in five models. Yet the requested language's mean improves crosslingual replies beyond every control head only in the two Gemma models, whose baselines are low. Code and results are available in the public repository at https://github.com/christian-hoang-04/anonymous-release.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-18T05:21:12Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jiwon Jeong</name>
+    </author>
+    <author>
+      <name>Anjelo Jann Laroza</name>
+    </author>
+    <author>
+      <name>Chaewoon Yoon</name>
+    </author>
+    <author>
+      <name>Arjun Pillai</name>
+    </author>
+    <author>
+      <name>Pranav Kokati</name>
+    </author>
+    <author>
+      <name>Christian Hoang</name>
+    </author>
+    <author>
+      <name>Seunghyeok Hong</name>
+    </author>
+  </entry>
+</feed>

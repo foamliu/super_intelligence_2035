@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-20 · 让 AI 陪骗子聊天，把他聊到亏本</title>
+<style>
+  :root { --primary:#1d5c3a; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1d5c3a 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(29,92,58,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1d5c3a; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1d5c3a; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef6f0; color:#1d5c3a; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1d5c3a; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-20</h1>
+  <div class="sub">今日 TOP-1：<b>让 AI 陪骗子聊天，把他聊到亏本</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>379 字</b></div>
+  <div class="meta">
+    <span>📄 Game of Phones</span>
+    <span>🆔 arXiv:2610.26781</span>
+    <span>🏷 cs.CR · 科普口径</span>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>一句话钩子</b>：「<b>你接过诈骗电话吧？现在有人专门做了个 AI，陪骗子聊，聊到骗子亏本。</b>」—— 几乎人人有共鸣，且<b>方向反直觉</b>（不是拦截，而是「耗」）。</li>
+    <li><b>有传播力</b>：① <b>反差</b> —— 常规反诈 = 拦截 / 标记 / 提醒，这些<b>不给骗子任何成本</b>；② <b>画面感</b> —— 骗子在电话那头喋喋不休，对面是个不慌不忙的机器人；③ <b>好记的骨架</b> —— 两人博弈 + 纳什均衡，两分钟能讲完。</li>
+    <li><b>可讲清 / 画面好做</b>：核心只有三件事 —— <b>陪聊（scam-baiting）</b>、<b>把对话当博弈</b>、<b>用纳什均衡当尺子</b>；全部扁平自绘（电话图标、对话气泡、收益表、天平、指针），<b>无需论文原图</b>。</li>
+    <li><b>边界清楚（片中说）</b>：只做了<b>模拟对话</b>（300 段），<b>不是</b>真实电话网络部署；「28.9–79.7%」是<b>离纳什均衡更近</b>，<b>不等于</b>诈骗成功率下降；<b>无第三方复现</b>。备选为当日第 5 篇（Manga2Animate 漫画自动动画化）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar（共 4 位；机构见原文）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-19T17:35:02Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom）· v1 · <code>comment</code>：「Accepted at the 2026 Joint European Conference on Machine Learning and Knowledge Discovery in Databases (ECML PKDD 2026)」</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.CR</code> · 关键词：电话诈骗 / scam-baiting / 博弈论 / 纳什均衡 / LLM agent</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.26781">https://arxiv.org/abs/2610.26781</a>（放视频简介）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-20 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 批次 <code>2026-10-19</code> · 经 <code>id_list</code> 复核</div></div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 固定五段配比 · 合计 120s）</h2>
+<table>
+  <tr><th style="width:52px">镜号</th><th style="width:104px">时间</th><th style="width:78px">段落</th><th style="width:30%">口播（中文字幕同步）</th><th>画面（全部自绘 / 自生成）</th><th style="width:17%">屏幕字幕</th><th style="width:15%">声音</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">你接过诈骗电话吧？现在有人做了个 AI，专门陪骗子聊天——聊得越久，骗子越亏。</td>
+    <td>黑底，亮起一部<b>自绘的老式电话</b>，铃声图标闪动；接起后浮出两枚<b>对话气泡</b>（一边急促、一边缓慢），右侧一台<b>小机器人</b>不慌不忙地吐气泡，骗子那侧的气泡<b>不断堆积、变成账单</b>往上长。</td>
+    <td>接过诈骗电话吗<br><b>现在，轮到 AI 陪聊</b></td>
+    <td>电话铃「铃—」两声；接起「咔」；骗子语速快的嗡嗡声；机器人「嘀」一声。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">以前的办法是拦截、标记、提醒你别上当。可这些几乎不给骗子造成成本：打一千个电话被拦掉九百个，他也不心疼。那有没有办法，让骗子自己耗掉时间和人力？</td>
+    <td>三块<b>自绘图标</b>依次出现并被「划掉一角」：<b>盾牌</b>（拦截）、<b>警示牌</b>（标记）、<b>喇叭</b>（提醒），标「骗子成本 ≈ 0」；随后画面切到<b>骗子一侧的工厂传送带</b>（自绘）：一排电话不停被送出，旁边<b>成本表</b>始终停在 <b>0</b>；最后浮出一个<b>问号天平</b>，左盘「我们的成本」压到底，右盘「骗子的成本」高高翘起。</td>
+    <td>拦截 · 标记 · 提醒<br><b>骗子成本 ≈ 0</b><br>（小字：拦掉九百个，他也不心疼）</td>
+    <td>盾牌「铛」；警示牌「叮」；喇叭「嘀—」；传送带「咔嗒咔嗒」；天平失衡「吱——」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">办法是：陪他聊。但不是瞎聊——他们把「骗子对陪聊机器人」当成一场两人博弈。每一种说话策略，顺着说、装傻、拖时间、反问，都有对应的收益和代价；写成效用函数，就能算出「纳什均衡」：谁单方面换招都不划算。再让大模型不微调、只靠对话经验，一轮一轮学着换策略，往这个均衡靠。</td>
+    <td>左半屏「<b>博弈棋盘</b>」（自绘）：行是骗子策略、列是陪聊策略，格子里<b>收益数字</b>逐格亮起，一对格子被<b>圆圈</b>圈住并标「纳什均衡：谁先换招谁吃亏」。右半屏「<b>对话流水线</b>」（自绘）：一条对话气泡链，每轮气泡上贴<b>策略标签</b>（顺着说 / 装傻 / 拖时间 / 反问），标签随轮次<b>自动切换</b>；上方一个<b>旋钮</b>标「不微调、只用上下文经验」，旋钮旁的<b>指针</b>缓慢向「均衡」刻度移动。</td>
+    <td>① 两人博弈<br>② <b>策略 → 收益 → 纳什均衡</b><br>③ 大模型<b>不微调</b>，边聊边学</td>
+    <td>棋盘落子「嗒·嗒」；圈住均衡「叮」；气泡链「咕噜咕噜」；旋钮「咔」；指针对齐「嘀」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">实验是三百段模拟对话，三种模型架构。会换策略的版本，比固定套路的版本，离纳什均衡近了百分之二十九到七十九点七。作者还把代码和三百段带标注的对话数据一起开源。</td>
+    <td><b>自绘仪表盘</b>：左侧<b>对话框计数器</b> 0 → <b>300</b>；中间<b>三根架构柱</b>（三种模型）依次升到各自高度，柱旁统一挂<b>区间括号</b>「28.9% – 79.7%」；右侧一条<b>刻度尺</b>，左端「固定套路」、右端「纳什均衡」，一支<b>箭头</b>从左侧明显向右推进（标「更接近均衡」）。底部浮出<b>开源图标</b>：代码 + 数据集（标「作者声明」）。</td>
+    <td><b>300 段对话 · 3 种架构</b><br>更接近均衡 <b>28.9–79.7%</b><br>（小字：<b>作者自报 · 未复现</b>）</td>
+    <td>计数器「哒哒哒」到 300；柱子升起「嗡·嗡·嗡」；箭头推进「唰」；刻度「叮」。</td>
+  </tr>
+
+  <tr>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（电话与铃声图标 / 两枚对话气泡 / 小机器人 / 成本账单 / 盾牌·警示牌·喇叭 / 传送带 / 问号天平 / 博弈棋盘 / 对话气泡链与策略标签 / 旋钮与刻度指针 / 计数器与三根架构柱 / 刻度尺与推进箭头 / 开源图标）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 代码仓库截图 / 作者 demo 录屏。</li>
+    <li><b>风格建议</b>：深绿主色（<code>#1d5c3a</code> → <code>#2e8b57</code>）+ 冷灰科技底色；<b>骗子一侧用暖橙</b>（急促、堆积）、<b>陪聊一侧用冷绿</b>（稳定、有节奏），形成<b>「越急越亏 vs 越稳越赚」</b>的视觉对立。核心信息置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 190–200 字/分；「<b>骗子成本 ≈ 0</b>」「<b>纳什均衡</b>」「<b>300 段</b>」「<b>28.9–79.7%</b>」四处<b>放慢并加重</b>；镜 5 的「<b>这是研究，不是产品</b>」语气<b>平稳、不要念成敷衍的免责声明</b>。</li>
+    <li><b>字幕</b>：镜 4 的关键数字一律配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>术语友好化</b>：<b>scam-baiting</b> → 「反诈陪聊 / 逗骗子」；<b>two-player game</b> → 「两个人对局的博弈」；<b>utility function</b> → 「每招的收益与代价」；<b>Nash equilibrium</b> → 「谁单方面换招都不划算的稳定点」；<b>in-context learning</b> → 「不微调，只靠对话里攒的经验」。首次出现给一句白话字幕。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「彻底解决电信诈骗 / 骗子被打服 / 已商用 / 反诈神器 / 警方已采用」；「300 段」「3 种架构」「28.9–79.7%」严格照摘要措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>指标不曲解（本片最关键）</b>：28.9–79.7% 是「<b>离纳什均衡更近</b>」的相对距离指标，镜 4 字幕与镜 5 口播<b>双重声明</b>「<b>不等于诈骗成功率下降</b>」，🚫 不得剪成「反诈效果提升 79.7%」。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用代码仓库或数据截图、不用他人 demo 录屏。</li>
+    <li>✅ <b>不编造数据</b>：仅使用摘要可支撑的表述 —— 「现有反制不给骗子造成资源成本」「策略性 scam-baiting 需要动态策略适应」「两人博弈 + 有实证依据的策略与效用」「纳什均衡作为评估学习行为的正式基准」「300 段模拟对话、3 种 LLM 架构」「更接近均衡 28.9–79.7%」「代码与 300 段带轮级标注的数据集开源」；<b>不虚构</b>真实通话时长、骗子放弃率、警方合作、排行榜名次。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 已能反过来骗骗子 / 已上岗反诈」等原文未支持的引申；镜 5 直接补一句「<b>这是研究，不是产品</b>」，并说明只做了模拟对话。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar，共 4 位）<b>不臆测机构归属</b>；<code>comment</code> 为 ECML PKDD 2026 录用声明，页面<b>只写「作者声明」</b>、不代其背书会务。</li>
+    <li>⚠️ <b>伦理提醒（本片特有）</b>：反诈题材涉及真实受害者，🚫 <b>不嘲讽受害者、不演示可操作的诈骗话术</b>；片中「策略枚举」仅作研究概念示意（顺着说 / 装傻 / 拖时间 / 反问），<b>不给出可直接照抄的对话模板</b>。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-20</b> ｜ 文件 <code>research/video/SCENES/10_20.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</i>（Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar）｜ <a href="https://arxiv.org/abs/2610.26781">arXiv:2610.26781</a> ｜ 首次提交 2026-10-19 ｜ 分类 <code>cs.CR</code> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 4 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-20.html">research/daily/2026-10-20.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_19.html">10_19.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">但要说清楚：这是模拟对话，不是真的电话线路；那个百分比，是「更接近均衡」，不等于诈骗成功率下降。这是研究，不是产品。</td>
+    <td>镜头拉远：<b>电话图标</b>与<b>机器人图标</b>之间那条线<b>淡出</b>，画面浮出三行边界小字：「模拟对话 ≠ 真实线路」「更近均衡 ≠ 诈骗率下降」「作者自报 · 未复现」；末尾淡出，浮出<b>英文原题</b>与 <b>arXiv:2610.26781</b>。</td>
+    <td>让骗子亏时间<br><b>但还不是产品</b><br>（小字：研究 ≠ 落地）</td>
+    <td>拉远「呼—」；线淡出「嘶」；BGM 收尾；编号落定「叮」。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 5 镜分配 = 39 + 72 + 132 + 78 + 58 = <b>379 字</b>（按 190–200 字/分 ≈ <b>1 分 54 秒～2 分 00 秒</b>，落在 120s 内）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。<b>若实测超时</b>：优先精压镜 3 的策略枚举（只留「顺着说、装傻、拖时间」），以及镜 2 的「打一千个电话，被拦掉九百个」（可移到画面字幕），约可省 25 字。
+</div>
+
+
+    <span>👥 Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar（4 位）</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕<b>只使用 arXiv 摘要可支撑的内容</b>；「300 段对话 / 3 种架构 / 28.9–79.7%」为<b>作者自报、本线未复现</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
