@@ -1,6 +1,20 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-21 05:0x #658：🚀 L1 训练已启动（.29, 8×H100）+ 2×2 因子实验设计 + L2/L3 脚本就绪**：
+> **L1 烟测通过**（100 步）：step 0 loss=**1.7574**（vs v2 step 0 loss=11.72=random）→ **双移位修复确认有效**。loss 稳定 1.70~1.78，LR warmup 正确（0→5e-4/100步），吞吐 80K→195K tok/s（compile warmup 中）。
+> **L1 全量训练已启动**（05:04:52, PID 1430363 torchrun）：5611 步=20B tok, LR=5e-4→1e-5, 输出 `xmodel25_baize_L1_20b/`。step 0 loss=1.7510 ✓。~12s/step → 预计 ~19h 完成（step 5611 ≈ 10/22 00:00）。
+> **2×2 因子实验设计**（每格 20B tok, 5611 步, ~19h/实验）：
+> | | LR 5e-4（低） | LR 1.67e-3（高=v2） |
+> |---|---|---|
+> | **修复双移位** | **L1** ✅运行中 | **L2** 脚本就绪 |
+> | **保留双移位 bug** | **L3** 脚本就绪 | **v2** 已完成（CS8=44.97%） |
+> - L2 = 修复双移位 + 高 LR → 隔离双移位修复效果（若 L2 仍 ~60%+ → 双移位是主因）
+> - L3 = 保留 bug + 低 LR → 隔离 LR 效果（若 L3 仍崩 → 双移位是主因）
+> - L2 脚本 `baize_xmodel25_decay_L2.sh`（用 L1.py+LR=1.67e-3）；L3 脚本 `baize_xmodel25_decay_L3.sh`（用 v2.py+LR=5e-4）
+> **CX6 基线失败原因**：bbh/gsm8k/math500 崩于 `TypeError: varlen_fwd()` （flash attention generation 兼容性问题）；humaneval/mbpp 需 `confirm_run_unsafe_code=True`。仅 mmlu 能跑但被 kill 以释放 GPU 给 L1。CS8=61.03% 已是关键判据，CX6 可后续补跑。
+> 📦 体积：TASK=29.8KB / MEMORY=待测（均<32KB）。
+
 > 🆕 **2026-10-21 04:5x #657：🔥 step_532000 基线 eval CS8=61.03% → decay 确认训坏模型 + L1 实验脚本就绪**：用户 02:3x 令授权自主实验。.29 8×GPU 全空确认（ssh hostname=whag0pgpuap29）。烟测通过（XmodelForCausalLM 1.350B params, logits 非 nan, 预测 "Paris" 正确）。14 集基线 eval 在 .29 启动（04:48:07），**CS8 Phase1 已完成**：
 > | task | acc | acc_norm | | task | acc | acc_norm |
 > | hellaswag | .4396 | **.5895** | | piqa | .7258 | **.7356** |
