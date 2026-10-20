@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-21 07:5x #660：🩺 L1 训练健康监控 step 820/5611 loss=1.03 + ckpt step_500 已存盘**：L1（.29 ssh, PID 1430363 torchrun, hostname=whag0pgpuap29）step **820/5611**（14.6%），loss=**1.0258**（step0=1.7510→step820≈1.0 稳步下降），lr=2.65e-04（warmup 100 完成、decay 中），296.5K tok/s，~12s/step，elapsed 164.4min，**0 error/OOM/traceback**（grep 仅 5 行 NCCL_ASYNC_ERROR_HANDLING 弃用 warning，无害）。GPU 8×100%/51763MiB 全满载。**ckpt step_500 已存盘**（`xmodel25_baize_L1_20b/step_500/model.safetensors` 2.7GB@06:45）+ verify_save_20 在位。**双移位修复再确认**：step0 loss=1.7510（正常）vs v2 step0 loss=11.72（随机/训坏）→ 修复有效。**ETA**：剩余 4791 步×12s≈16h → L1 预计 **10/22 ~00:00** 完成。**后续串行计划不变**（8 GPU 单线）：L1 完成→CS8 eval(~20min)→若≥55%启 L2→eval→L3→eval→2×2 因子分析。ops inbox 空 + .last_run_id 缺失=无新令。git origin/main...main=0/0。📦 体积：TASK=29.8KB / MEMORY=27.7KB（均<32KB，无需归档）。
+
 > 🆕 **2026-10-21 06:3x #659：🩺 L1 训练健康监控 step 410/5611 loss=0.93 + 后续实验串行计划**：
 > **L1 健康确认**（.29 ssh, PID 1430363 torchrun）：step **410/5611**（7.3%），loss=**0.9289**（step0=1.76→step410=0.93 稳步下降），lr=3.80e-04（warmup 100 完成，decay 中），295K tok/s，~12s/step，0 error/OOM/traceback。GPU 8×~50GB/100%（GPU1 偶见 0% 为 data load 间隙，正常）。
 > **Loss 轨迹对比**：v2 step0 loss=11.72（=随机，双移位 bug 破坏学习）→ L1 step0 loss=1.76（正常，修复后模型正确学习）→ **双移位修复确认有效**。loss 100→410 步从 ~1.7 降至 ~0.93，decay 轨迹健康。
