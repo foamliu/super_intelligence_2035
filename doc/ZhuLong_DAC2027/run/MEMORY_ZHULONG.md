@@ -1,14 +1,13 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-20 15:33 🛑 BLOCKER 恶化(licence 断路器深度 cooling-off·4 端口全 0 响应·r4'' 79 literal-pass) —
-- **r4'' 13:51 codegen 收口**（PID 1760990 GONE·batch `2026_1020_090900`·log 14M/120266 行·real_MCP_32001=575·run_code=954·search_apis=1516·pass_rate=0·0 licence_unavail/circuit_breaker in log）。
-- **🚨 r4'' 同退化签名**：completed jsonl 158 条中 **79 条字面量 `"pass"`**（无 def/import）→ 与 r4 旧 99 literal-pass 同型（MCP timeout 风暴→模型退化）。gen-success≈79/158=50%。
-- **🚨 故障 WORSENED（15:33 复检）**：4 端口 8663/8666/8667/8670 **全 TCP_OPEN 但 40s 零响应**（连 licence breaker 消息都没有）→ 较 14:56（8666 还能返回「106 consecutive failures; cooling off」）**进一步退化**，断路器进入更深 cooling-off / worker 完全无法 spawn。8090 pid=1759396 health=404（正常）/9006 pid=3503518 正常 → **故障确认在 pyAether licence 服务本身**。持续性故障已 ~2.5h，非瞬时抖动。
-- **regrade 仍不可行**（13:59 起→14:12 kill·regrade log `/tmp/ABL_readback_none_retest_r4c_regrade.log` 4K/22行·组装 78 脚本后即卡）。
-- **处置**：🛑 维持停手报 blocker（08:2x ⑤ + infra 作废规则·「冒烟仍大面积超时→停手不盲目第三次重跑」）·r4'' 暂标 `PENDING(INFRA: licence breaker deep cooling-off + 79 literal-pass 同退化)`·**不进 5-run**·WAITING=1 等：① licence 断路器复位（4 端口恢复有内容响应）；② 运维决策 r4'' 处置（INVALID + 补 r4'''/换 backbone/暂停 S1）。
-- **运维侧**：10:1x 令仍最高优先（无新令·ops inbox RUN_ID 95 是最后一条已执行的只读探针）·git pull ✅（带 proxy·Already up to date）·**loop** PID 81827 environ 含 https_proxy ✅。
-- 🚫 纪律：不 regrade r4/r4'（已作废）·不动 r1/r2/r3 产物与 r3 backup·不动 r4/r4'/r4'' 原始产物日志（留证）·不动 t0002147·不改 .env。 -->
+<!-- heartbeat 2026-10-20 16:2x 🟢 licence fix 部署→4端口验证8/8全过→重启8090→r4''' 已起跑 —
+- **运维令 15:4x 执行中**：用户直令「licence fix 已部署到 8663/8666/8667/8670，验证 4 端口→重启 8090→重跑 r4‴」。
+- **① 4 端口验证 ✅ 8/8 全过**：每端口 ×2 次 run_code 全返回 `{"response":"...successful...","print_log":"1\n"}`·9-13ms·**0 licence/breaker/空响应**（vs 15:33 的「40s 零响应」→ fix 生效）。
+- **② 8090 重启 ✅**：旧 PID 1759396(etime 25424s)→新 PID 3103371·冒烟 5/5 OK·tools/list 4 工具(get_api_details/search_apis/search_apis_by_keyword/run_code)·run_code 端到端 `{"response":"executed","isError":false}`。
+- **③ r4''' 已起跑 ✅**：PID 3112365（ppid=1·setsid 脱离 ✅）·batch `2026_1020_161451`·16:14:51 起·`run_cline_script.sh -p 4 -n`·配置同 r1-r3（fp4/READBACK=none/OMEGA=high/BUDGET=0/LAGGED=0/V3自探索ON·SKILL_DATA_DIR=./docs/skill_data_selfexpl ✅/ports 8663,8666,8667,8670）·模型自检 providers.json=`deepseek-v4-pro-fp4` ✅·8090+9006 健康·loop PID 81827 含 https_proxy ✅。
+- **r4/r4'/r4'' 已标 INVALID**（680/156/575 MCP timeout + literal-pass 退化·均不进 5-run·产物日志留证）·3 轮 mean(r1+r2+r3)=76.97% provisional。
+- **下一步**：r4''' 30min 内报健康（real_MCP_32001 + run_code + 4 端口 + literal-pass·确认 fix 根治·率≥5/min 或 literal-pass>10 则停手报运维）→ 收口接 r5''' → 5/5 mean±std → 更新论文 → full@pro-cloud 5 轮。🚫 不动 r1/r2/r3 产物·不动 r4/r4'/r4'' 原始产物日志·不改 .env。 -->
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
@@ -51,7 +50,7 @@ WAITING: 1
 | S1 | omega_low | **跳过·采信legacy 82.8±1.0%** | ⏭️ 指令二十二①：legacy std=1.0可信不重跑；r1 code-gen已完(batch 2026_1015_064042)但采信legacy为最终值，r2-r5取消 |
 | S1 | readback_binary | **5/5 ✅ 78.1 ± 1.3%** | [75.9,79.1,77.8,78.5,79.1]（fresh 重测·2026-10-15~16·替换 legacy 66.2±16.1% std 过大含 43.0% 离群·运维令二十二②·判据(十三)各轮 timeout=13/8/7/6/4·r5 regrade=79.1%(125/158)·exec_err=0·infra=0✅）|
 | S1 | readback_none | **跳过·采信legacy 73.3±2.2%** | ⏭️ 指令二十二③：legacy std=2.2 可信不重跑 |
-| **S1** | **readback_none (N′) 复测**（运维令三十二② + 23:2x 用户直令·2026-10-19~20·成本重测·PLAN_RETEST_READBACK_COST.md §1 规格）| **🛑 3/5 done → r4'' PENDING(INFRA blocker)·停手等运维决策** | **r1 ✅ = 78.5% (124/158)**：batch `2026_1019_035502`·trace ✅。**r2 ✅ = 70.9% (112/158)**：batch `2026_1019_071104`。**r3 ✅ = 81.5% (123/151)**：batch `2026_1019_145634`·Path A fix。**r4 INVALID(680 MCP timeout, 99 gen-fail)**：batch `2026_1019_235040`·旧轮·不进统计。**r4' INVALID(MCP timeout 抬头 110→156)**：batch `2026_1020_063134`·06:3x 起·08:2x 停·不进统计·产物留证。**r4'' PENDING(INFRA)**（09:09 起·13:51 codegen 收口·batch `2026_1020_090900`·real_MCP_32001=575·**79/158 literal "pass" 同退化签名**·regrade 不可行：licence 断路器 open 100+ 连续失败·4 端口全 licence unavailable·14:12 kill regrade）。3 轮 mean(r1+r2+r3)=76.97% provisional。🛑 **BLOCKER**：换端口未解根因·licence 池耗尽·停手等运维决策（详见心跳 + daily 14:12 节）。 |
+| **S1** | **readback_none (N′) 复测**（运维令三十二② + 23:2x 用户直令·2026-10-19~20·成本重测·PLAN_RETEST_READBACK_COST.md §1 规格）| **🟢 3/5 done → r4''' 跑中（licence fix 部署后重跑）** | **r1 ✅ = 78.5% (124/158)**：batch `2026_1019_035502`·trace ✅。**r2 ✅ = 70.9% (112/158)**：batch `2026_1019_071104`。**r3 ✅ = 81.5% (123/151)**：batch `2026_1019_145634`·Path A fix。**r4 INVALID(680 MCP timeout, 99 literal-pass)**：batch `2026_1019_235040`·旧轮·不进统计。**r4′ INVALID(MCP timeout 抬头 110→156)**：batch `2026_1020_063134`·06:3x 起·08:2x 停·不进统计·产物留证。**r4″ INVALID(575 MCP timeout, 79 literal-pass, licence breaker)**：batch `2026_1020_090900`·09:09 起·13:51 收口·不进统计·产物留证。**r4‴ 跑中**（运维令 15:4x·licence fix 部署后重跑·PID 3112365·batch `2026_1020_161451`·16:14:51 起·ports 8663/8666/8667/8670·fp4/READBACK=none/-p 4·配置同 r1-r3）。3 轮 mean(r1+r2+r3)=76.97% provisional。→ r4‴ 收口接 r5‴ → 5/5 mean±std → 更新论文 → full@pro-cloud 5 轮。 |
 
 ## 成绩记录（N=5 mean±std，Pass@1 %）
 
@@ -88,6 +87,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情、14:56/17:31/18:13 旧心跳 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。关键结论：r1=78.5%(124/158,timeout=1)、r2=70.9%(112/158,timeout=2,task119 stuck 6h)、r3=成功153/超时5/失败0(总11742s,task130 stuck 6582s)；**r2 task119/r3 task130 的 stuck 正是 RUN_ID 83 要查的根因**。
 ## 操作流水
+- [2026-10-20 16:2x] 🟢 **运维令 15:4x 执行：licence fix 部署→验证 4 端口→重启 8090→r4‴ 起跑**：用户直令「licence fix 已部署到 8663/8666/8667/8670，重启 r4 用这 4 端口，重启前先验证端口健康」。① 4 端口验证 ✅ 8/8 全过（每端口 ×2 次 run_code 全返回 `{"response":"...successful...","print_log":"1\n"}`·9-13ms·0 licence/breaker/空响应·vs 15:33「40s 零响应」fix 生效）。② 8090 重启 ✅ 旧 PID 1759396(etime 25424s)→新 PID 3103371·冒烟 5/5 OK·tools/list 4 工具·run_code 端到端 `{"response":"executed","isError":false}`。③ r4‴ 起跑 ✅ PID 3112365（ppid=1·setsid 脱离）·batch `2026_1020_161451`·16:14:51·`run_cline_script.sh -p 4 -n`·配置同 r1-r3（fp4/READBACK=none/OMEGA=high/BUDGET=0/LAGGED=0/V3自探索ON·SKILL_DATA_DIR=./docs/skill_data_selfexpl ✅/ports 8663,8666,8667,8670）·模型自检 providers.json=`deepseek-v4-pro-fp4` ✅·8090+9006 健康·loop PID 81827 含 https_proxy ✅。r4/r4'/r4'' 已标 INVALID（680/156/575 MCP timeout + literal-pass 退化·不进 5-run·产物留证）。下一步：r4‴ 30min 健康报告 → 收口接 r5‴ → 5/5 → 更新论文 → full@pro-cloud。
 - [2026-10-20 15:33] 🛑 **BLOCKER 复检·故障 WORSENED**：4 端口 8663/8666/8667/8670 全 TCP_OPEN 但 **40s 零响应**（连 licence breaker 消息都没·较 14:56 的 8666「106 failures; cooling off」进一步退化→断路器深度 cooling-off / worker 完全无法 spawn）。8090 pid=1759396 health=404（正常）/9006 pid=3503518 正常 → 故障确认在 pyAether licence 服务本身。持续性故障 ~2.5h·非瞬时抖动。r4'' codegen 13:51 收口·79/158 literal "pass" 同退化签名。regrade 仍不可行。git pull ✅（带 proxy·Already up to date·10:1x 仍最高优先·无新令·ops inbox RUN_ID 95 是最后已执行只读探针）·loop PID 81827 含 https_proxy ✅。**处置**：维持 🛑 停手报 blocker（08:2x ⑤「冒烟仍大面积超时→停手不盲目第三次重跑」+ infra 作废规则）·r4'' PENDING(INFRA)·不进 5-run·WAITING=1 等：① licence 断路器复位（4 端口恢复有内容响应）；② 运维决策 r4'' 处置。详见 daily §[15:33]。
 - [2026-10-20 14:56 指针·已滚出] 🛑 BLOCKER 复检：licence 断路器仍未复位（106 次·较 14:12 的 100 次又增 6）·维持停手 → 原文搬入 daily §[14:56]。
 - [2026-10-20 14:12 指针·已滚出] 🛑 BLOCKER: r4'' 收口 → regrade 不可行（licence 断路器 OPEN + r4'' 同退化签名 79 literal-pass）→ 原文搬入 daily §[14:12]。关键：r4'' 13:51 收口·79/158 literal "pass" 同退化签名·licence breaker 100 次·regrade 13:59→14:12 kill（4 shard 全 150s-timeout）·停手报 blocker。
