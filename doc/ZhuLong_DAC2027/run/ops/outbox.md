@@ -12556,3 +12556,80 @@ mtime=2026-10-20 21:09:14.068584826 +0800 size=15397921
 523
 === DONE 97 ===
 ```
+
+---
+
+## RUN_ID 98 · 2026-10-20 21:22:53 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 98 | r4''' 手动 regrade | $(date '+%F %T') | host=$(hostname) ==="
+B=2026_1020_161451
+OUT=/home/app.e0031982/eda_code_eval/$B
+echo "[0] 前置：产物与端口"
+ls -l "$OUT"/*code_generation*.jsonl 2>/dev/null | head -3
+wc -l "$OUT"/code_generation_$B.jsonl 2>/dev/null
+for p in 8663 8666 8667 8670; do
+  timeout 3 bash -c "</dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "  port $p OPEN" || echo "  port $p CLOSED"
+done
+echo "[1] 空生成比例（预判 gen-fail，对照 r4 的 99/158 literal pass）"
+timeout 30 grep -c '"pass"' "$OUT"/code_generation_$B.jsonl 2>/dev/null || echo '  grep_pass_skipped'
+echo "[2] 自建 regrade 脚本（模板=r1/r4 regrade，改 GEN_FILE/端口/标题）"
+cat > /tmp/run_readback_none_retest_r4d3_regrade.sh <<'EOS'
+#!/bin/bash
+set -u
+unset http_proxy https_proxy ALL_PROXY
+export NO_PROXY=10.129.32.75,localhost,127.0.0.1
+export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+export SANDBOX_ENDPOINTS=8663,8666,8667,8670@10.129.32.75
+cd "$EVAL_FW_DIR" || exit 1
+export PYTHON="$PWD/venv/bin/python"
+GEN_FILE=/home/app.e0031982/eda_code_eval/2026_1020_161451/code_generation_2026_1020_161451.jsonl
+echo "GEN_FILE=$GEN_FILE"
+echo "SANDBOX_ENDPOINTS=$SANDBOX_ENDPOINTS"
+"$PYTHON" run_pipeline.py \
+  --skip-code-generation \
+  --gen-file "$GEN_FILE" \
+  --run-name "readback_none_retest_r4d3_regrade" 2>&1
+EOS
+chmod +x /tmp/run_readback_none_retest_r4d3_regrade.sh
+bash -n /tmp/run_readback_none_retest_r4d3_regrade.sh && echo '  SYNTAX_OK'
+echo "[3] 启动 regrade（setsid 后台，独立于中继）"
+setsid bash /tmp/run_readback_none_retest_r4d3_regrade.sh > /tmp/ABL_readback_none_retest_r4d3_regrade.log 2>&1 < /dev/null &
+RG=$!
+echo "  regrade_pid=$RG"
+sleep 45
+echo "[4] 45s 后状态"
+ps -o pid=,etimes=,pcpu=,args= -p "$RG" 2>/dev/null | cut -c1-140 || echo '  launcher_exited(可能已进入子步骤)'
+pgrep -af 'run_pipeline|evaluation' 2>/dev/null | cut -c1-110 | head -5 || echo '  NO_PIPELINE_PROC'
+echo "  --- log tail ---"
+tail -15 /tmp/ABL_readback_none_retest_r4d3_regrade.log 2>/dev/null | cut -c1-170
+echo "[5] 后续由 ZhuLong agent 接管（判据十三 + 5/5 + 论文），本块不等待结束"
+echo "=== DONE 98 ==="
+```
+
+**输出**
+```
+=== RUN_ID 98 | r4''' 手动 regrade | 2026-10-20 21:22:53 | host=hfeg0tedaap02 ===
+[0] 前置：产物与端口
+  port 8663 OPEN
+  port 8666 OPEN
+  port 8667 OPEN
+  port 8670 OPEN
+[1] 空生成比例（预判 gen-fail，对照 r4 的 99/158 literal pass）
+  grep_pass_skipped
+[2] 自建 regrade 脚本（模板=r1/r4 regrade，改 GEN_FILE/端口/标题）
+  SYNTAX_OK
+[3] 启动 regrade（setsid 后台，独立于中继）
+  regrade_pid=3921550
+[4] 45s 后状态
+3895543 python3 /home/app.t0002147/444/EDA-Eval-Framework/scripts/run_on_sandbox.py --scripts-dir /home/app.t0
+3895544 python3 /home/app.t0002147/444/EDA-Eval-Framework/scripts/run_on_sandbox.py --scripts-dir /home/app.t0
+  --- log tail ---
+GEN_FILE=/home/app.e0031982/eda_code_eval/2026_1020_161451/code_generation_2026_1020_161451.jsonl
+SANDBOX_ENDPOINTS=8663,8666,8667,8670@10.129.32.75
+/tmp/run_readback_none_retest_r4d3_regrade.sh: line 12: /nasdata/app.e0031982/code/EDA-Eval-Framework/venv/bin/python: No such file or directory
+[5] 后续由 ZhuLong agent 接管（判据十三 + 5/5 + 论文），本块不等待结束
+=== DONE 98 ===
+```
