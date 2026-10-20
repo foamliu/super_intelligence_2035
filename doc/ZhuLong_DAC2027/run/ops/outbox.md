@@ -12382,3 +12382,100 @@ echo "=== DONE 95 ==="
 
 === DONE 95 ===
 ```
+
+---
+
+## RUN_ID 96 · 2026-10-20 16:06:48 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 96 | licence fix 后 4 端口健康验证 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 当前 run_cline_script 进程（agent 是否已起 r4‴）"
+timeout 10 pgrep -af "run_cline_script" 2>/dev/null | cut -c1-110 || echo "  无匹配（agent 尚未起 r4‴）"
+
+echo ""
+echo "[2] 8090 MCP server 状态"
+P8090=$(timeout 8 ss -ltnp 2>/dev/null | grep ':8090 ' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+if [ -n "$P8090" ]; then
+  echo "  8090 PID=$P8090 etime=$(timeout 8 ps -o etimes= -p $P8090 2>/dev/null|tr -d ' ')s"
+  PSTART=$(timeout 5 ps -o lstart= -p $P8090 2>/dev/null)
+  echo "  started=$PSTART  (若 etime<30min = 15:4x 后重启过)"
+else
+  echo "  8090 NOT_LISTENING"
+fi
+
+echo ""
+echo "[3] 4 端口 run_code 健康探针（关键：licence fix 是否生效）"
+for P in 8663 8666 8667 8670; do
+  echo "  === port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 250)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    if [ -n "$R" ]; then
+      echo "    #$i ${MS}ms :: $(echo "$R" | cut -c1-180)"
+    else
+      echo "    #$i ${MS}ms :: <empty/超时>"
+    fi
+  done
+done
+echo "  判读：8 次全返回 {\"response\":... 且无 licence/breaker/空 → fix 生效"
+
+echo ""
+echo "[4] r4‴ log 是否存在（agent 已起 r4‴ 的标志）"
+for L in /tmp/ABL_readback_none_retest_r4d.log /tmp/ABL_readback_none_retest_r4e.log; do
+  if [ -f "$L" ]; then
+    echo "  $L: size=$(timeout 8 du -h "$L" | cut -f1) lines=$(timeout 8 wc -l < "$L") mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+    echo "    real_MCP_32001=$(timeout 20 grep -ac 'MCP error -32001' "$L")"
+    echo "    run_code_calls=$(timeout 20 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+    echo "    mention_timeout=$(timeout 20 grep -ac 'timed out after 60s' "$L")"
+  else
+    echo "  $L: 不存在（agent 尚未起 r4‴ 或用了别的日志名）"
+  fi
+done
+
+echo ""
+echo "[5] /home 磁盘"
+echo "  /home: $(timeout 8 df -h /home 2>/dev/null | tail -1 | awk '{print $3,"/",$2,"=",$5,"used, free="$4}')"
+
+echo ""
+echo "=== DONE 96 ==="
+```
+
+**输出**
+```
+=== RUN_ID 96 | licence fix 后 4 端口健康验证 | 2026-10-20 16:06:48 | host=hfeg0tedaap02 ===
+[1] 当前 run_cline_script 进程（agent 是否已起 r4‴）
+3087359 timeout 10 pgrep -af run_cline_script
+
+[2] 8090 MCP server 状态
+  8090 PID=1759396 etime=25107s
+  started=Tue Oct 20 09:08:20 2026  (若 etime<30min = 15:4x 后重启过)
+
+[3] 4 端口 run_code 健康探针（关键：licence fix 是否生效）
+  === port 8663 ===
+    #1 23ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 10ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  === port 8666 ===
+    #1 31ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 9ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  === port 8667 ===
+    #1 25ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 10ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  === port 8670 ===
+    #1 30ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 10ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  判读：8 次全返回 {"response":... 且无 licence/breaker/空 → fix 生效
+
+[4] r4‴ log 是否存在（agent 已起 r4‴ 的标志）
+  /tmp/ABL_readback_none_retest_r4d.log: 不存在（agent 尚未起 r4‴ 或用了别的日志名）
+  /tmp/ABL_readback_none_retest_r4e.log: 不存在（agent 尚未起 r4‴ 或用了别的日志名）
+
+[5] /home 磁盘
+  /home: 365G / 394G = 97% used, free=13G
+
+=== DONE 96 ===
+```

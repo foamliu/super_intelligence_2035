@@ -1,7 +1,69 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 95 -->
+<!-- RUN_ID: 96 -->
 
-## RUN_ID 95 — r4″ 进展实时探针（只读·用户直令）
+## RUN_ID 96 — licence fix 部署后 4 端口健康验证（只读·用户直令）
+
+> 用户令：「查看进展」。15:4x 令已下发（licence fix 部署 → 验证 4 端口 → 重启 8090 → 重跑 r4‴）。本探针**纯只读**：不重启、不起 r4‴、不改配置，仅查 4 端口是否已恢复健康（licence fix 是否生效）+ agent 是否已开始执行 15:4x 令。
+
+```bash
+echo "=== RUN_ID 96 | licence fix 后 4 端口健康验证 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 当前 run_cline_script 进程（agent 是否已起 r4‴）"
+timeout 10 pgrep -af "run_cline_script" 2>/dev/null | cut -c1-110 || echo "  无匹配（agent 尚未起 r4‴）"
+
+echo ""
+echo "[2] 8090 MCP server 状态"
+P8090=$(timeout 8 ss -ltnp 2>/dev/null | grep ':8090 ' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+if [ -n "$P8090" ]; then
+  echo "  8090 PID=$P8090 etime=$(timeout 8 ps -o etimes= -p $P8090 2>/dev/null|tr -d ' ')s"
+  PSTART=$(timeout 5 ps -o lstart= -p $P8090 2>/dev/null)
+  echo "  started=$PSTART  (若 etime<30min = 15:4x 后重启过)"
+else
+  echo "  8090 NOT_LISTENING"
+fi
+
+echo ""
+echo "[3] 4 端口 run_code 健康探针（关键：licence fix 是否生效）"
+for P in 8663 8666 8667 8670; do
+  echo "  === port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 250)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    if [ -n "$R" ]; then
+      echo "    #$i ${MS}ms :: $(echo "$R" | cut -c1-180)"
+    else
+      echo "    #$i ${MS}ms :: <empty/超时>"
+    fi
+  done
+done
+echo "  判读：8 次全返回 {\"response\":... 且无 licence/breaker/空 → fix 生效"
+
+echo ""
+echo "[4] r4‴ log 是否存在（agent 已起 r4‴ 的标志）"
+for L in /tmp/ABL_readback_none_retest_r4d.log /tmp/ABL_readback_none_retest_r4e.log; do
+  if [ -f "$L" ]; then
+    echo "  $L: size=$(timeout 8 du -h "$L" | cut -f1) lines=$(timeout 8 wc -l < "$L") mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+    echo "    real_MCP_32001=$(timeout 20 grep -ac 'MCP error -32001' "$L")"
+    echo "    run_code_calls=$(timeout 20 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+    echo "    mention_timeout=$(timeout 20 grep -ac 'timed out after 60s' "$L")"
+  else
+    echo "  $L: 不存在（agent 尚未起 r4‴ 或用了别的日志名）"
+  fi
+done
+
+echo ""
+echo "[5] /home 磁盘"
+echo "  /home: $(timeout 8 df -h /home 2>/dev/null | tail -1 | awk '{print $3,"/",$2,"=",$5,"used, free="$4}')"
+
+echo ""
+echo "=== DONE 96 ==="
+```
+
+## RUN_ID 95 — r4″ 进展实时探针（只读·用户直令）·【已执行·历史】
+
 
 > 用户令：「看看进展」。查 r4″ 当前进程状态 + MCP 超时累计 + 评分行 + 4 端口可达性。纯只读。
 
