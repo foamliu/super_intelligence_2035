@@ -12056,3 +12056,106 @@ app.t00+ 0.5 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
   r5 log=2445487 bytes
 === DONE 92 ===
 ```
+
+---
+
+## RUN_ID 93 · 2026-10-20 08:59:23 · host=`hfeg0tedaap02` · exit=1
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 93 | 换端口前只读探针 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4' 进程状态（PID 1462342）"
+timeout 15 bash -c '
+if kill -0 1462342 2>/dev/null; then
+  echo "  PID 1462342 ALIVE"
+  ps -o pid,etimes,stat,pcpu,pmem,nlwp,args -p 1462342 2>/dev/null | cut -c1-130
+  echo "  cmdline: $(tr "\0" " " < /proc/1462342/cmdline 2>/dev/null | cut -c1-120)"
+else
+  echo "  PID 1462342 GONE（r4' 可能已收口）"
+fi
+echo "  --- 所有 run_cline_script 匹配（含 opencode 误匹配，需核对）---"
+pgrep -af "run_cline_script" 2>/dev/null | cut -c1-110 || echo "  无匹配"
+'
+
+echo ""
+echo "[2] 8090 MCP server 状态"
+timeout 15 bash -c '
+PID=$(ss -ltnp 2>/dev/null | grep ":8090 " | grep -oE "pid=[0-9]+" | cut -d= -f2 | head -1)
+if [ -n "$PID" ]; then
+  echo "  8090 PID=$PID etime=$(ps -o etimes= -p $PID 2>/dev/null|tr -d " ")s nlwp=$(ps -o nlwp= -p $PID 2>/dev/null|tr -d " ")"
+  echo "  health=$(timeout 6 curl -s -m 5 -o /dev/null -w "%{http_code}" http://localhost:8090/health 2>/dev/null)"
+else
+  echo "  8090 NOT_LISTENING"
+fi
+'
+
+echo ""
+echo "[3] r4' log 当前 MCP 计数（log=/tmp/ABL_readback_none_retest_r4b.log）"
+timeout 30 bash -c '
+L=/tmp/ABL_readback_none_retest_r4b.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(du -h "$L" | cut -f1)  lines=$(wc -l < "$L")  mtime=$(stat -c "%y" "$L" | cut -d. -f1)"
+  echo "  mention_timeout  = $(grep -ac "timed out after 60s" "$L")"
+  echo "  real_MCP_32001   = $(grep -ac "MCP error -32001" "$L")"
+  echo "  run_code_calls   = $(grep -ac "pyAether_MCP_server__run_code" "$L")"
+  echo "  pass_rate_lines  = $(grep -ac "pass ([0-9]" "$L")"
+  echo "  32001 工具Top:"
+  grep -a -B3 "MCP error -32001" "$L" 2>/dev/null | grep -aoE "pyAether_MCP_server__[a-z_]+" | sort | uniq -c | head -6 | sed "s/^/    /"
+else
+  echo "  log 不存在"
+fi
+'
+
+echo ""
+echo "[4] 新端口 8663/8666/8667/8670 可达性（@10.129.32.75，POST 探活，每个 8s 超时）"
+for port in 8663 8666 8667 8670; do
+  timeout 12 bash -c "
+    t0=\$(date +%s%N)
+    r=\$(timeout 8 curl -s -m 7 -X POST http://10.129.32.75:$port/ -H "Content-Type: text/plain" -d "print(1)" 2>/dev/null | head -c 120)
+    t1=\$(date +%s%N); ms=\$(( (t1-t0)/1000000 ))
+    if [ -n \"\$r\" ]; then
+      echo \"  $port OK \${ms}ms :: \$(echo \$r | cut -c1-80)\"
+    else
+      echo \"  $port FAIL/超时 \${ms}ms\"
+    fi
+  " 2>&1
+done
+
+echo ""
+echo "[5] 旧端口 8669（被替换）可达性对照"
+timeout 12 bash -c "
+  t0=\$(date +%s%N)
+  r=\$(timeout 8 curl -s -m 7 -X POST http://10.129.32.75:8669/ -H "Content-Type: text/plain" -d "print(1)" 2>/dev/null | head -c 120)
+  t1=\$(date +%s%N); ms=\$(( (t1-t0)/1000000 ))
+  if [ -n \"\$r\" ]; then echo \"  8669 OK \${ms}ms :: \$(echo \$r | cut -c1-80)\"
+  else echo \"  8669 FAIL/超时 \${ms}ms\"; fi
+" 2>&1
+
+echo ""
+echo "[6] 沙盒端口监听归属（8663/8666/8667/8669/8670 谁在监听）"
+timeout 10 bash -c '
+for port in 8663 8666 8667 8669 8670; do
+  l=$(ss -ltnp 2>/dev/null | grep ":$port " | head -1 | cut -c1-90)
+  [ -n "$l" ] && echo "  $port: $l" || echo "  $port: 本机未监听（沙盒端口在 10.129.32.75 远端）"
+done
+'
+
+echo ""
+echo "[7] /home 磁盘 + cline 版本"
+timeout 10 bash -c '
+echo "  /home: $(df -h /home 2>/dev/null | tail -1 | awk "{print \$3,\"/\",\$2,\"=\",\$5,\"used,\"}\") free=$(df -h /home 2>/dev/null | tail -1 | awk "{print \$4}")"
+echo "  cline: $(command -v cline 2>/dev/null) $(cline --version 2>/dev/null | head -1 | cut -c1-30)"
+'
+
+echo ""
+echo "=== DONE 93 ==="
+```
+
+**输出**
+```
+=== RUN_ID 93 | 换端口前只读探针 | 2026-10-20 08:59:23 | host=hfeg0tedaap02 ===
+[1] r4' 进程状态（PID 1462342）
+/tmp/tmp.pQxlbKfYgU: line 5: PID: unbound variable
+```
