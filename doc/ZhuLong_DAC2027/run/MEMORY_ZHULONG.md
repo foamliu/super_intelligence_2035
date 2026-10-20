@@ -1,15 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-21 04:06 🛑 BLOCKER 维持·r4⁗ INVALID(108 literal-pass)·无新运维令(inbox RUN_ID 99 未变·last_run_id=99·git fetch 无新 commit)·继续等决策·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 13G·loop 81827 含 https_proxy·relay 3277328·8090 pid 3103371·无 r4/r5/regrade 残留)·上条 02:49 详 —
-- **r4⁗ 收口**：PID 4004063 EXITED·batch `2026_1020_215918`·02:48:30 收口·总耗时 17324s(~4h48m)·log /tmp/ABL_readback_none_retest_r4d4.log(10.4M/92707 行)·4 端口 8650/8651/8652/8654 全 OPEN·loop 81827 含 https_proxy ✅·relay 活。
-- **complete_code_generation**：49 success / 108 fail / 1 timeout → 49/158=31.0%（与 r4 旧轮 31.0% 完全一致）。
-- **🔴 STOP 阈值触发（21:4x ⑤）**：**codegen jsonl 字面量 "pass"=108**（108 fail entry 的 completion 全是字面量 "pass"·即 `{"completion":"pass","status":"fail"}`）·108>>10 → 停手报运维。⚠️ 02:08 心跳误记 literal-pass=0（grep 了 code/ 而非 codegen jsonl·正是 ⑤ 警告的错误·已纠正）。MCP-32001=754（1.93/min<5 未触）·breaker=0·licence=0。
-- **处置**：✅ 标 r4⁗ INVALID(108 literal-pass·754 MCP·r4 家族 5/5 INVALID)·不进 5-run·产物留证。🚫 不 regrade（STOP 已触·必 INVALID）·🚫 不起 r5。🛑 BLOCKER 报运维·WAITING=1·等决策（fix v2 / 换沙盒机 / 采信 3 轮）。21:4x 端口切换 + 15:4x licence fix 均**未根治**。
-- **r4 家族 INVALID**：r4(680,99) / r4'(156) / r4''(575,79) / r4'''(519,70) / r4⁗(754,108)·全同型退化。3 轮 mean(r1+r2+r3)=76.97% provisional·5/5 缺 r4/r5。 -->
+<!-- heartbeat 2026-10-21 04:40 🛑 BLOCKER 维持·r4⁗ INVALID(108 literal-pass·已二次核验)·无新运维令(inbox RUN_ID 99 未变·last_run_id=99·git fetch 无新 commit)·继续等决策·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 13G·loop 81827 含 https_proxy ✅·relay 3277328 活·8090 pid 3103371·无 r4/r5/regrade 残留)·上条 04:06 —
+- **108 literal-pass 二次核验 ✅**：`completed_code_generation_2026_1020_215918.jsonl` 158 行·status={success:49, fail:108, timeout:1}·completion={pass:108, import pyA:50} → 108 fail 全字面量 "pass"·31.0%。⚠️ 注意：raw `code_generation_*.jsonl` 仅 50 行真实代码 0 literal-pass（是补全前产物）·108 在 `completed_*` 里（`complete_code_generation.py` 补全后）·04:06 心跳口径正确。
+- **r4 家族 5/5 INVALID 全同型退化**：r4(680 MCP,99 pass) / r4'(156) / r4''(575,79) / r4'''(519,70) / r4⁗(754,108)。21:4x 端口切换(8650/8651/8652/8654) + 15:4x licence fix 均未根治。
+- **处置**：✅ r4⁗ 标 INVALID 不进 5-run·产物日志留证·🛑 BLOCKER 报运维·WAITING=1。等运维决策：① fix v2 重跑 r4*/r5* ② 换沙盒机重跑 ③ 采信 3 轮(r1+r2+r3=76.97% provisional) 结束 (N′) 臂 → full@pro-cloud 5 轮。 -->
+- [2026-10-21 04:40] 🛑 BLOCKER 维持·唤醒巡检：r4⁗ 已收口(02:48)无残留进程·108 literal-pass 二次核验(completed_code_generation_*.jsonl: 49 succ/108 fail/1 timeout=31.0%)✅·无新运维令(inbox RUN_ID 99 未变·git fetch 无新 commit)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·8090 pid 3103371·/home 13G·loop 81827 含 https_proxy ✅·relay 3277328)·WAITING=1 继续等运维决策。
 - [2026-10-21 02:08 指针·已滚出] 🛑 BLOCKER 维持·r4⁗ T+249min batch 147/158 即将收口·退化持续（⚠️ 误记 literal-pass=0·实为 grep code/ 非 codegen jsonl·下轮 02:49 收口核 jsonl 才发现 108）→ 原文搬入 daily-memories/2026-10-21.md §[02:08]。
-- [2026-10-21 01:27 指针·已滚出] 🛑 BLOCKER·r4⁗ T+208min 退化持续（45→42→45 .py·66% loss·MCP 2.67/min·21:4x ⑤ 书面阈值未触发·不自杀）→ 原文搬入 daily-memories/2026-10-21.md §[01:27]。
-- [2026-10-21 00:45 指针·已滚出] 🛑 BLOCKER·r4⁗ T+163min 退化复发·新签名「missing .py」（stats/success=96 但仅 35 .py·64% loss·MCP 2.86/min·报运维不自杀）→ 原文搬入 daily-memories/2026-10-21.md §[00:45]。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
