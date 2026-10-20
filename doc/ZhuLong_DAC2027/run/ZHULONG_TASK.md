@@ -10,7 +10,25 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-20 09:0x（**先 regrade r4′ 看成绩，再决定是否换端口**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-20 10:1x（**09:0x 令作废·继续按 08:2x 跑 r4″→r5″→5/5**）· 用户直令 · 最高优先
+
+> 用户令（10:1x）：「好的」——确认 09:0x 令（先 regrade r4′）作废，继续按 08:2x 执行。
+> **背景澄清**：09:0x 令是我基于"r4′ 已自己收口"的误判下发的（ops RUN_ID 94 探针 09:03 看到 PID GONE）。实际是 agent 09:10 拉到 08:2x 令后**主动停了 r4′**（TERM 1462342）+ 清 16 孤儿 worker + 重启 8090 + 换端口 + 起 r4″。**r4′ 已按 08:2x 令标 INVALID(MCP 抬头 110→156)，不 regrade、不进 5-run**。r4″ 09:34 30min 健康报告 ✅ 全绿（real_MCP_32001=0，4 新端口全 OK，超时率 0/26994 ≪ 基线 0.001/行）。
+> **本令唯一作用**：作废 09:0x，避免 agent 下轮唤醒时按 09:0x 去 regrade 已作废的 r4′ 造成混乱。
+
+#### 执行路径（继续按 08:2x，不动作）
+- **当前**：r4″ 跑中（PID 1760990·batch 新建·端口 8663/8666/8667/8670·fp4/READBACK=none/-p 4·09:09 起）。
+- **r4″ 收口**（pgrep 无）→ 手动 regrade（照 `/tmp/run_readback_none_retest_r4_regrade.sh` 改 GEN_FILE=r4″ batch + 端口 8663/8666/8667/8670·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）→ 判有效（判据十三：task timeout≤10·0 infra·0 exec_err）。
+- **起 r5″**（同配置同端口 8663/8666/8667/8670·fp4/READBACK=none/OMEGA=high/BUDGET=0/LAGGED=0/V3自探索ON/-p 4/cline 3.0.51·`export PYTHON=$PWD/venv/bin/python`）。
+- **5/5**（r1,r2,r3,r4″,r5″）mean±std → 更新 zhulong_results.md S1.readback_none 节 + 6_exp.tex tab:readback-cost (N′) 行 + tab:ablation-harness (N) Mean read-backs → 重编译 PDF。
+- **full@pro-cloud 5 轮**（23:2x ②·MODEL=deepseek-v4-pro-cloud·KEY末8=8aa0785e·READBACK=full·canary 200 才开跑·cloud vs fp4 部署不同须显式注明不可混算）。
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4/r4′ 原始产物与日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED。
+- 🚫 **不 regrade r4′**（已作废）；🚫 **不 regrade r4 旧轮**（已 INVALID 680 timeout）。
+- commit：`zhulong S1: 09:0x 令作废(误判r4'自收口) -> 继续按 08:2x 跑 r4''→r5''→5/5`。
+
+### 🔄 运维指令 · 2026-10-20 09:0x（**先 regrade r4′ 看成绩，再决定是否换端口**）· 用户直令 · 最高优先【已被 10:1x 取代·历史·作废·基于误判】
 
 > 用户令（09:0x 决策）：r4′ 已自己收口，MCP timeout=156 低于基线 r2 的 235，**先 regrade r4′ 看 Pass@1，若有效则用 r4′，不急着换端口重跑**。
 > **背景**：08:2x 令「停 r4′ → 换端口重跑」基于"r4′ 有很多沙盒超时"的判断。但 ops RUN_ID 94（09:03:29）实测：
