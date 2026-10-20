@@ -10,7 +10,33 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-20 08:2x（**停 r4′ → 重启 8090 → 换端口 8663/8666/8667/8670 重跑 r4″**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-20 09:0x（**先 regrade r4′ 看成绩，再决定是否换端口**）· 用户直令 · 最高优先
+
+> 用户令（09:0x 决策）：r4′ 已自己收口，MCP timeout=156 低于基线 r2 的 235，**先 regrade r4′ 看 Pass@1，若有效则用 r4′，不急着换端口重跑**。
+> **背景**：08:2x 令「停 r4′ → 换端口重跑」基于"r4′ 有很多沙盒超时"的判断。但 ops RUN_ID 94（09:03:29）实测：
+> - r4′ PID 1462342 **已 GONE**（06:31 起跑，09:03 前收口，约 2.5h）—— agent 08:55 那轮 git pull 时机早于 08:50 push，**未拉到 08:2x 令**，r4′ 在旧端口 8666/8667/8669/8670 上自己跑完了。
+> - r4′ 最终 **real_MCP_32001=156**（**低于**历史基线 r2 的 235）·run_code_calls=930（正常，r4 旧轮 928）·pass_rate_lines=0（**尚未评分**）。
+> - 新端口 8663/8666/8667/8670 **全可达**（6-11ms）；旧端口 8669 也 OK（没坏，之前 BUSY 是 worker 轮换）。
+> ⇒ **08:2x 令"停 r4′"动作无意义（r4′ 已不在跑），作废；改为先 regrade r4′ 看成绩再决定**。
+
+#### ① 手动 regrade r4′（batch `2026_1020_063134`）
+- 照 r4 regrade 模板 `/tmp/run_readback_none_retest_r4_regrade.sh`，**改 GEN_FILE=batch `2026_1020_063134`** + 端口 8666-8670 + `unset https_proxy http_proxy` + `NO_PROXY=10.129.32.75` + `EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`。
+- regrade 前先 grep log 确认 r4′ 收口状态：`grep -ac 'pass ([0-9]' /tmp/ABL_readback_none_retest_r4b.log`（应为 0 或评分行）、`tail -5 /tmp/ABL_readback_none_retest_r4b.log`（看收口尾）。
+- regrade 输出到独立目录，**不覆盖 r4′ 原始产物**。
+- 记录：Pass@1（pass/158）、task timeout 数、exec_err、infra error、gen-success/fail。
+
+#### ② 判据（判据十三 + 本令补充）
+- **r4′ 有效** ⟺ Pass@1 ≥ **75%** 且 task timeout ≤ 10 且 0 infra 且 0 exec_err。
+  - ⚠️ 注意：判据十三的 "timeout" 指**任务级 task timeout**（单次执行 2500s 超时），**非** MCP 60s 客户端超时。r4′ 的 156 次 MCP 60s-timeout 是客户端侧，**不计入** task timeout 判据（r1/r2/r3 也有类似量级 MCP timeout 但均判有效）。
+- **r4′ 有效** → 用 r4′，**起 r5′**（同 r4′ 配置：fp4/READBACK=none/OMEGA=high/BUDGET=0/LAGGED=0/V3自探索ON/-p 4/**端口 8666/8667/8669/8670 即可，不必换端口**/cline 3.0.51·`export PYTHON=$PWD/venv/bin/python`）→ 5/5 mean±std（r1,r2,r3,r4′,r5′）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮。
+- **r4′ 无效**（Pass@1 <75% 或异常）→ 按 08:2x 令换端口 **8663/8666/8667/8670** 重跑 r4″（ops RUN_ID 94 已确认 4 端口全可达）。r4′ 标 INVALID 不用。
+
+#### ③ 纪律
+- 🚫 不覆盖 r1/r2/r3 产物与 r3 backup；🚫 不动 r4/r4′ 原始产物与日志（留证）；🚫 不动 t0002147；🚫 不改 `.env`；🚫 不启 full@pro-cloud（等 5/5 干净后再做）。
+- **本令优先级高于 08:2x**：若 r4′ 有效则**不必换端口重跑**（省 3-4h）；仅当 r4′ 无效才回退到 08:2x 换端口方案。
+- commit：`zhulong S1: r4' 收口(MCP 156<基线235) -> 先 regrade 看成绩 -> 有效则用 r4' 起 r5' / 无效则换端口重跑`。
+
+### 🔄 运维指令 · 2026-10-20 08:2x（**停 r4′ → 重启 8090 → 换端口 8663/8666/8667/8670 重跑 r4″**）· 用户直令 · 最高优先【已被 09:0x 取代·历史·仅 r4′ 无效时回退】
 
 > 用户令（原文）：「**监测到 r4' 有很多沙盒超时。重启，使用下面4个端口：8663,8666,8667,8670**」
 > **背景**：r4′（PID 1462342·batch `2026_1020_063134`）06:3x 起跑，巡检 #1（30min）real_MCP_32001=6 表观正常，但巡检 #2（65min）已升至 62、巡检 #3（100min）升至 110，**率 ~1.33/min 且持续抬头** ⇒ 沙盒后端再次进入降级轨迹（与 r4 旧轮 680 timeout 同型）。用户判定不可继续，令换端口重跑。
