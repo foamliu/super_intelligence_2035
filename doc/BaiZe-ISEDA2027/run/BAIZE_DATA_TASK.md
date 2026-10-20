@@ -7,6 +7,23 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### ▶️ 运维指令 · 2026-10-20 15:5x（✅ 恢复 en_v1_4 数据下载）· 用户直令 · 最高优先 · 覆盖暂停块
+
+> 用户原话：「data: 可以恢复下载了」。
+>
+> **动作（本轮唤醒立即执行）**：
+> 1. **重启下载**（从暂停点续传，脚本幂等、自动 SKIP 已完成文件）：
+>    ```bash
+>    cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline
+>    export HF_PROXY=http://172.19.92.23:13128 HF_ENDPOINT=https://hf-mirror.com
+>    export https_proxy=$HF_PROXY http_proxy=$HF_PROXY
+>    setsid -f nohup python3 download_en_v1_4_resolve.py > /tmp/en_v1_4_dl_dot23.log 2>&1 &
+>    ```
+>    （暂停点：**sh95(CC-MAIN-2024-10)@139/512**，95/110 dirs，48267 parquet）；续传从 sh95 起，sh96–110 尚未创建。
+> 2. **恢复旧「下载口径」**（2026-10-07 起生效版）：下载**失败 / 僵死 / 速率趋零 / PID 已死就 kill+重启**，报告标「已重启」+ 新 PID，不必等运维点名。
+> 3. **分词不受影响**：`run_tokenize_env14_fullsource.sh`（PID 749330）继续跑，下载续上的 shard 落盘后自动排队分词。
+> 4. **报告**：报重启后 PID + 续传起点 + 实测 MB/s + 剩余 shard ETA；`DATA_LEDGER.md` 的 en_v1_4 行改回「🟢 下载中」。
+
 ### ⏸️ 运维指令 · 2026-10-20（🔴 暂停 en_v1_4 数据下载）· 用户直令 · 最高优先 · 覆盖旧「下载口径」
 
 > **用户原话**：「让 data 暂停数据下载」。
