@@ -103,8 +103,9 @@ echo "=== DONE 93 ==="
 > **本机 = 36.15**（ZhuLong 跑这里，**与 .29/.12 无关**；上一轮我把标题写成 ".29 负载" 是错的，数据是 36.15 的）。
 > **本块纯只读**：不 kill、不重启、不改配置。r5 继续跑不打扰。
 > 目的：判断 r4 的 677/680 次 `pyAether_MCP_server` 超时，是否由 **36.15 本机 CPU/内存争用**导致。
+> ⚠️ **已降级为 text（RUN_ID 93 在上方）**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 92 | 36.15 CPU/MEM contention check | $(date '+%F %T') | host=$(hostname) ==="
 
