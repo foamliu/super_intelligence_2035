@@ -12159,3 +12159,114 @@ echo "=== DONE 93 ==="
 [1] r4' 进程状态（PID 1462342）
 /tmp/tmp.pQxlbKfYgU: line 5: PID: unbound variable
 ```
+
+---
+
+## RUN_ID 94 · 2026-10-20 09:03:29 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 94 | 换端口前只读探针 v2 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4' 进程状态（PID 1462342）"
+if kill -0 1462342 2>/dev/null; then
+  echo "  PID 1462342 ALIVE"
+  timeout 10 ps -o pid,etimes,stat,pcpu,pmem,nlwp,args -p 1462342 2>/dev/null | cut -c1-130
+  echo "  cmdline: $(timeout 5 tr '\0' ' ' < /proc/1462342/cmdline 2>/dev/null | cut -c1-120)"
+else
+  echo "  PID 1462342 GONE（r4' 可能已收口）"
+fi
+echo "  --- run_cline_script 匹配（核对 cmdline，避 opencode 误匹配）---"
+timeout 10 pgrep -af "run_cline_script" 2>/dev/null | cut -c1-110 || echo "  无匹配"
+
+echo ""
+echo "[2] 8090 MCP server 状态"
+P8090=$(timeout 8 ss -ltnp 2>/dev/null | grep ':8090 ' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+if [ -n "$P8090" ]; then
+  echo "  8090 PID=$P8090 etime=$(timeout 8 ps -o etimes= -p $P8090 2>/dev/null|tr -d ' ')s nlwp=$(timeout 8 ps -o nlwp= -p $P8090 2>/dev/null|tr -d ' ')"
+  echo "  health=$(timeout 7 curl -s -m 5 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)"
+else
+  echo "  8090 NOT_LISTENING"
+fi
+
+echo ""
+echo "[3] r4' log MCP 计数（/tmp/ABL_readback_none_retest_r4b.log）"
+L=/tmp/ABL_readback_none_retest_r4b.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  mention_timeout  = $(timeout 25 grep -ac 'timed out after 60s' "$L")"
+  echo "  real_MCP_32001   = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  run_code_calls   = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  pass_rate_lines  = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  32001 工具Top:"
+  timeout 25 grep -a -B3 'MCP error -32001' "$L" 2>/dev/null | grep -aoE 'pyAether_MCP_server__[a-z_]+' | sort | uniq -c | head -6 | sed 's/^/    /'
+else
+  echo "  log 不存在"
+fi
+
+echo ""
+echo "[4] 新端口 8663/8666/8667/8670 可达性（@10.129.32.75，POST print(1)，每个 8s 超时）"
+for P in 8663 8666 8667 8670; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/" -H 'Content-Type: text/plain' -d 'print(1)' 2>/dev/null | head -c 100)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -n "$R" ]; then echo "  $P OK ${MS}ms :: $(echo "$R" | cut -c1-70)"
+  else echo "  $P FAIL/超时 ${MS}ms"; fi
+done
+
+echo ""
+echo "[5] 旧端口 8669（被替换）可达性对照"
+T0=$(date +%s%N)
+R=$(timeout 8 curl -s -m 7 -X POST 'http://10.129.32.75:8669/' -H 'Content-Type: text/plain' -d 'print(1)' 2>/dev/null | head -c 100)
+T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+if [ -n "$R" ]; then echo "  8669 OK ${MS}ms :: $(echo "$R" | cut -c1-70)"
+else echo "  8669 FAIL/超时 ${MS}ms"; fi
+
+echo ""
+echo "[6] /home 磁盘 + cline 版本"
+echo "  /home: $(timeout 8 df -h /home 2>/dev/null | tail -1 | awk '{print $3,"/",$2,"=",$5,"used, free="$4}')"
+echo "  cline: $(timeout 5 command -v cline 2>/dev/null) $(timeout 5 cline --version 2>/dev/null | head -1 | cut -c1-30)"
+
+echo ""
+echo "=== DONE 94 ==="
+```
+
+**输出**
+```
+=== RUN_ID 94 | 换端口前只读探针 v2 | 2026-10-20 09:03:29 | host=hfeg0tedaap02 ===
+[1] r4' 进程状态（PID 1462342）
+  PID 1462342 GONE（r4' 可能已收口）
+  --- run_cline_script 匹配（核对 cmdline，避 opencode 误匹配）---
+1745783 /bin/bash -c cd /nasdata/app.e0031982/code/eda_fastmcp L=/tmp/ABL_readback_none_retest_r4b.log echo "=
+1746009 timeout 10 pgrep -af run_cline_script
+
+[2] 8090 MCP server 状态
+  8090 PID=1456348 etime=9327s nlwp=69
+  health=404
+
+[3] r4' log MCP 计数（/tmp/ABL_readback_none_retest_r4b.log）
+  log_size=13M  lines=120638  mtime=2026-10-20 09:03:29
+  mention_timeout  = 156
+  real_MCP_32001   = 156
+  run_code_calls   = 930
+  pass_rate_lines  = 0
+  32001 工具Top:
+          5 pyAether_MCP_server__run_code
+          2 pyAether_MCP_server__search_apis
+          1 pyAether_MCP_server__search_apis_by_keyword
+
+[4] 新端口 8663/8666/8667/8670 可达性（@10.129.32.75，POST print(1)，每个 8s 超时）
+  8663 OK 11ms :: {"detail":"Not Found"}
+  8666 OK 7ms :: {"detail":"Not Found"}
+  8667 OK 6ms :: {"detail":"Not Found"}
+  8670 OK 7ms :: {"detail":"Not Found"}
+
+[5] 旧端口 8669（被替换）可达性对照
+  8669 OK 6ms :: {"detail":"Not Found"}
+
+[6] /home 磁盘 + cline 版本
+  /home: 360G / 394G = 96% used, free=17G
+  cline:  3.0.51
+
+=== DONE 94 ===
+```
