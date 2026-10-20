@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计流 Benchmark · 框架改进设计文档（内部）</title>
+<style>
+  :root {
+    --bg: #fafafa; --fg: #1f2328; --muted: #57606a; --accent: #0969da;
+    --border: #d0d7de; --code-bg: #f6f8fa; --code-fg: #24292f;
+    --warn-bg: #fff8c5; --ok-bg: #dafbe1; --err-bg: #ffebe9; --info-bg: #ddf4ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 16px 64px; font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+    color: var(--fg); background: var(--bg); line-height: 1.7; font-size: 16px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 1.9em; border-bottom: 2px solid var(--border); padding-bottom: .3em; margin-top: 0; }
+  h2 { font-size: 1.45em; margin-top: 2em; border-bottom: 1px solid var(--border); padding-bottom: .25em; }
+  h3 { font-size: 1.15em; margin-top: 1.5em; }
+  h4 { font-size: 1em; margin-top: 1.2em; color: var(--muted); }
+  p, li { font-size: 16px; }
+  code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: var(--code-bg); color: var(--code-fg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: var(--code-bg); color: var(--code-fg); padding: 14px 16px; border-radius: 6px;
+    overflow-x: auto; border: 1px solid var(--border); font-size: 0.86em; line-height: 1.55; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.95em; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: #eaeef2; font-weight: 600; }
+  tr:nth-child(even) td { background: #fbfbfc; }
+  .note { padding: 12px 16px; border-radius: 6px; margin: 1em 0; border: 1px solid; }
+  .note-warn { background: var(--warn-bg); border-color: #d4a72c; }
+  .note-ok   { background: var(--ok-bg);   border-color: #1a7f37; }
+  .note-err  { background: var(--err-bg);  border-color: #cf222e; }
+  .note-info { background: var(--info-bg); border-color: #0969da; }
+  .note .tag { font-weight: 700; margin-right: .5em; }
+  .toc { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 12px 20px; margin: 1.5em 0; }
+  .toc ol { margin: .3em 0; padding-left: 1.6em; }
+  .meta-bar { color: var(--muted); font-size: 0.88em; margin-bottom: 2em; }
+  .internal { background: #fff1f0; border:1px solid #cf222e; color:#82071e; padding:6px 12px;
+    border-radius:4px; font-size:.85em; font-weight:600; display:inline-block; margin-bottom:1em; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5em 0; }
+  .footer { color: var(--muted); font-size: 0.85em; margin-top: 3em; border-top: 1px solid var(--border); padding-top: 1em; }
+  .ascii { white-space: pre; font-size: 0.78em; line-height: 1.4; }
+  .q { font-weight: 600; color: var(--accent); }
+  .diagram { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 12px 8px 4px; margin: 1.2em 0; overflow-x: auto; }
+  .diagram .cap { color: var(--muted); font-size: 0.85em; text-align: center; margin-top: 4px; }
+</style>
+<script src="mermaid.min.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    if (window.mermaid) {
+      mermaid.initialize({ startOnLoad: false, theme: 'neutral',
+        flowchart: { useMaxWidth: true, htmlLabels: true }, sequence: { useMaxWidth: true } });
+      mermaid.run({ querySelector: '.mermaid' });
+    }
+  });
+</script>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="internal">🔒 内部文档 · 不对外分发</span>
+  <h1>设计流 Benchmark · 框架改进设计文档</h1>
+  <div class="meta-bar">
+    类型：内部设计 / 改进提案&nbsp;|&nbsp;
+    范围：EDA-Eval-Framework + eda_fastmcp&nbsp;|&nbsp;
+    版本：v1（2026-10）&nbsp;|&nbsp;
+    维护：长鑫存储 · 刘杨
+  </div>
+
+  <div class="toc">
+    <strong>目录</strong>
+    <ol>
+      <li>背景与动机</li>
+      <li>现状分析：两个项目的接口与缺口</li>
+      <li>核心问题：单轮无状态 vs. 多步有状态</li>
+      <li>总体设计：会话化 Agentic 评测</li>
+      <li>改进点 A：沙盒新增 <code>run_commands</code> 工具（含 Hook 重定向）</li>
+      <li>改进点 B：引入显式 Session 概念</li>
+      <li>改进点 C：EDA 服务器接入（eda_sandbox_lite 改造）</li>
+      <li>改进点 D：Case 格式扩展（agentic 模式）</li>
+      <li>改进点 E：判分（deliverable check）</li>
+      <li>改进点 F：评测主驱动改造</li>
+      <li>改进点 G：MCP 工具清单变化</li>
+      <li>对 eda_fastmcp（36.15）的具体改动建议</li>
+      <li>对 eda_sandbox_lite（32.75）的具体改动建议</li>
+      <li>对 EDA-Eval-Framework 的具体改动建议</li>
+      <li>风险与待确认事项</li>
+      <li>分阶段落地计划</li>
+    </ol>
+  </div>
+
+  <!-- ============================== -->
+  <h2>1. 背景与动机</h2>
+  <p>
+    我们正在为 EDA Agent「烛龙」构建<strong>设计流评测集</strong>，按业务分数字 / 模拟 / 验证 / 测试等方向。
+    面向字节驻场人员的《设计流用例编写指南》已定义用例与框架之间的<strong>接口协议</strong>（<code>prompt</code> 任务目标（含文件/PDK 路径）+ <code>entry_point</code> 交付件 + <code>test</code> 交付件校验器）。
+    但真实设计流（如数字后端：load → syn → place → CTS → route → timing → export GDS）本质是
+    <strong>多步、有状态、长周期</strong>的 agent 任务：每一步消费上一步的产物（网表/DEF/报告），
+    agent 需要边跑边看输出、再决定下一步。这与框架当前的"单轮补全 + 一次沙盒调用 + 看末行标记判分"模型不匹配。
+  </p>
+  <p>
+    本文档评估现状、给出框架与 MCP 工具侧的改进设计，重点回答两个问题：
+  </p>
+  <ul>
+    <li><span class="q">Q1：</span>是否需要一个 <code>run_commands</code> 沙盒工具，以便在 EDA 服务器上执行命令？</li>
+    <li><span class="q">Q2：</span>是否需要 Session 概念，使一轮（Turn）交互中多次调用沙盒时保留之前保存的文件 / 进程状态？</li>
+  </ul>
+  <p>结论先行：<strong>两者都需要</strong>。详见 §4–§7。</p>
+
+  <!-- ============================== -->
+  <h2>2. 现状分析：两个项目的接口与缺口</h2>
+
+  <h3>2.1 EDA-Eval-Framework（评测框架）</h3>
+  <p>当前流水线是<strong>单轮、无状态、批处理</strong>：</p>
+  <div class="diagram">
+<div class="mermaid">
+flowchart LR
+  A["case (JSONL)"] --> B["code_generation<br/>模型补全函数体"]
+  B --> C["assemble<br/>prompt补全 + test + 执行入口<br/>= 1 个完整脚本"]
+  C --> D["run_on_sandbox<br/>1 次 HTTP POST<br/>{code, lang, host}"]
+  D --> E["judge<br/>stdout 末行标记<br/>Innovus-case-OK/FAIL"]
+  E --> F["pass@k 汇总"]
+  style D fill:#fff8c5,stroke:#d4a72c
+</div>
+<div class="cap">图 1 · 现状单轮补全流水线（无 session、单次沙盒调用、末行判分）</div>
+  </div>
+  <ul>
+    <li>一条 case = <code>prompt</code>(空函数体) + <code>test</code>(<code>check(candidate)</code>) + 执行入口。</li>
+    <li>沙盒调用是<strong>单次</strong> <code>POST /v1/run_code</code>，payload = <code>{code, lang, host}</code>，无 session_id。</li>
+    <li>判分靠脚本末行打印的标记（<code>judge_execution_passed</code> 取 stdout 末非空行 endswith success_marker）。</li>
+    <li>"状态保持"完全靠 <code>check</code> 内部自做 setup/teardown（幂等 marker 加载设计、临时文件用完即删）——<strong>一次调用内闭环</strong>。</li>
+  </ul>
+  <div class="note note-err">
+    <span class="tag">缺口：</span>没有"多轮交互"的位置：模型只产一次代码，不能"跑一步看结果再跑下一步"；
+    没有"跨调用状态"的位置：所有状态必须在一次 <code>run_code</code> 内完成。无法承载设计流。
+  </div>
+
+  <h3>2.2 eda_fastmcp（MCP 工具服务，生成阶段给 agent 用）</h3>
+  <p>提供 12 个 MCP 工具，核心是 <code>run_code</code>（远程沙盒执行代码）+ <code>search_apis</code>/<code>get_api_details</code>（API 检索）。</p>
+  <div class="diagram">
+<div class="mermaid">
+flowchart TB
+  subgraph Agent["cline / zhulong agent (per-task SSE 连接)"]
+    T1["search_apis / get_api_details"]
+    T2["run_code(code, lang, host)"]
+  end
+  subgraph MCP["eda_fastmcp (main.py)"]
+    Pool["SandboxEndpointPool<br/>4 端口 asyncio.Queue"]
+  end
+  subgraph SB["沙盒后端 10.129.32.75"]
+    P1["port 8656<br/>workdir t0002441_9"]
+    P2["port 8658<br/>workdir t0002441_10"]
+    P3["port 8661<br/>workdir t0002441_11"]
+    P4["port 8662<br/>workdir t0002441_12"]
+  end
+  T1 -->|HTTP RAG recall| MCP
+  T2 --> Pool
+  Pool -->|acquire 独占| P1
+  Pool --> P2
+  Pool --> P3
+  Pool --> P4
+  P1 -. "daemon 长驻<br/>全局变量/workdir 残留<br/>(隐式状态)" .-> P1
+  style Pool fill:#fff8c5,stroke:#d4a72c
+</div>
+<div class="cap">图 2 · eda_fastmcp 现状：端口池做单次调用并发，状态靠 daemon 残留（无显式 session）</div>
+  </div>
+  <ul>
+    <li><code>run_code</code>：把一段 <strong>代码字符串</strong>（pyAether/SKILL/Tcl）送进远程沙盒解释器执行，返回 <code>{response, error_log, print_log, result}</code>。</li>
+    <li>沙盒后端：远程 HTTP 服务（<code>10.129.32.75</code>），4 个隔离端口 + 各自 workdir，<code>SandboxEndpointPool</code> 用 <code>asyncio.Queue</code> 做独占式并发。</li>
+    <li><strong>会话保持是隐式的</strong>：daemon 长驻 → Innovus 全局变量 / 已加载设计跨调用残留；workdir 文件跨调用残留。框架不显式建模，靠"刚好没清"维持。</li>
+    <li>per-task 隔离靠 <code>trace_key = ctx.session</code>（SSE ServerSession 对象，一条 SSE 连接 = 一个 cline 任务），目前仅用于 Φ-lagged 单槽缓冲，<strong>不用于状态隔离</strong>。</li>
+    <li>隔离手段是 <code>clean_workdir</code>（评测前批量清理 4 个端口 workdir），不是按任务 fresh workdir。</li>
+  </ul>
+  <div class="note note-err">
+    <span class="tag">缺口：</span>(1) 只能跑"代码字符串"，不能直接跑 EDA 工具命令 / shell 命令 / 读回产物文件；
+    (2) 没有显式 session，状态残留是"幸存者偏差"而非设计——跨任务污染风险高（README 的 Innovus 预载 FAQ 就是症状）；
+    (3) 4 端口 = 4 路并发，但设计流任务长驻占端口的语义是"占整个任务"而非"占单次调用"，池模型需要演进。
+  </div>
+
+  <h3>2.3 部署拓扑（实测）</h3>
+  <p>经实测确认，当前部署拓扑如下，这是后续所有改进设计的基础约束：</p>
+  <div class="diagram">
+<div class="mermaid">
+flowchart TB
+  subgraph H36["10.251.36.15 (开发环境 / 评测主机)"]
+    Agent["cline agent<br/>(内置 run_commands 已被 hook 禁用)"]
+    MCP["eda_fastmcp<br/>MCP server (port 8090)<br/>run_code / search_apis"]
+    Hook["PreToolUse hook<br/>禁用本地 run_commands<br/>(防泄题)"]
+    NAS36[("/nasdata (开发 NAS)<br/>10.251.9.180:/g0tedaap<br/>仅开发环境可见")]
+  end
+  subgraph H75["10.129.32.75 (EDA 环境 / 测试服务器)"]
+    SB["eda_sandbox_lite<br/>HTTP (port 8656/8657/8669)<br/>/v1/run_code (现有)<br/>/v1/run_commands (待新增)"]
+    NAS75[("EDA NAS<br/>EDA 环境共享 NFS<br/>32.75 与其它 EDA 服务器共享<br/>36.15 不可见")]
+  end
+  Agent -->|MCP 调用| MCP
+  MCP -->|HTTP run_code / run_commands| SB
+  Agent -.->|内置 run_commands<br/>hook 拦截| Hook
+  Hook -.->|当前: no-op 阻断<br/>目标: 重定向到 32.75| SB
+  SB ---|本地挂载| NAS75
+  DE["DE 在其它 EDA 服务器"] -.->|存文件到 EDA NAS<br/>路径嵌入 prompt| NAS75
+  Agent -.->|SSH 不可达| H75
+  H36 -.->|NAS 不互通| H75
+  style Hook fill:#ffebe9,stroke:#cf222e
+  style NAS75 fill:#dafbe1,stroke:#1a7f37
+  style NAS36 fill:#f6f8fa,stroke:#d0d7de
+  style DE fill:#ddf4ff,stroke:#0969da
+</div>
+<div class="cap">图 8 · 部署拓扑：36.15（开发环境）与 32.75（EDA 环境）NAS 不互通；32.75 与其它 EDA 服务器共享 EDA NAS</div>
+  </div>
+  <table>
+    <thead><tr><th>约束</th><th>实测结果</th><th>设计影响</th></tr></thead>
+    <tbody>
+      <tr><td>36.15 → 32.75 SSH</td><td><strong>不通</strong>（超时）</td><td>命令重定向只能走 HTTP，不能走 SSH</td></tr>
+      <tr><td>36.15 ↔ 32.75 HTTP</td><td>可达（8656/8657/8669 均 health OK）</td><td>所有跨机调用走 eda_sandbox_lite HTTP API</td></tr>
+      <tr><td>36.15 /nasdata</td><td>开发 NAS（10.251.9.180），仅开发环境可见</td><td rowspan="2"><strong>两个 NAS 不互通</strong>：36.15 看不到 32.75 的文件，反之亦然。文件跨机传递必须走 HTTP（return_files），不能靠共享路径</td></tr>
+      <tr><td>32.75 EDA NAS</td><td>EDA 环境共享 NFS，32.75 与其它 EDA 服务器共享，36.15 不可见</td></tr>
+      <tr><td>cline 内置 run_commands</td><td>本地执行（36.15），已被 hook 禁用</td><td>需改为重定向到 32.75 执行（见 §5.4）</td></tr>
+    </tbody>
+  </table>
+  <div class="note note-info">
+    <span class="tag">DE 文件传递场景：</span>DE 在 EDA 环境的其它服务器上把文件（网表、库、testbench 等）存到 <strong>EDA NAS</strong>，
+    然后把路径嵌入 prompt 下发给 agent。agent（在 36.15）调 <code>run_commands</code>（HTTP 到 32.75），
+    命令在 32.75 上执行时，32.75 挂的 EDA NAS 上就能找到 DE 存的文件。
+    <strong>36.15 上看不到这些文件</strong>——agent 若要读回文件内容，必须通过 <code>run_commands</code> 的 <code>return_files</code> 走 HTTP 取回。
+  </div>
+
+  <!-- ============================== -->
+  <h2>3. 核心问题：单轮无状态 vs. 多步有状态</h2>
+  <table>
+    <thead><tr><th>维度</th><th>现状（单轮补全）</th><th>设计流需要</th></tr></thead>
+    <tbody>
+      <tr><td>任务形态</td><td>补全一个函数</td><td>驱动一整条 flow，N 个阶段</td></tr>
+      <tr><td>agent 行为</td><td>产出 1 段代码即结束</td><td>多轮：调工具→看输出→决策→再调</td></tr>
+      <tr><td>状态</td><td>单次调用内闭环</td><td>跨调用：阶段 N 产物被阶段 N+1 消费</td></tr>
+      <tr><td>沙盒调用</td><td>1 次 <code>run_code</code></td><td>多次 <code>run_commands</code>/<code>run_code</code></td></tr>
+      <tr><td>判分对象</td><td>stdout 末行标记</td><td>最终交付物（GDS/报告/指标）</td></tr>
+      <tr><td>耗时</td><td>秒级</td><td>分钟~十分钟级，占 license</td></tr>
+      <tr><td>隔离</td><td>共享 daemon + clean_workdir</td><td>每任务独立 workdir / 独立会话</td></tr>
+    </tbody>
+  </table>
+  <p>这不是"加个字段"能解决的，需要一条新的<strong>会话化 agentic 评测</strong>通路，与现有单轮通路<strong>并存</strong>。</p>
+
+  <!-- ============================== -->
+  <h2>4. 总体设计：会话化 Agentic 评测</h2>
+  <p>新增一条与单轮补全并行的评测通路。一条 design-flow case 驱动一个 agent 在受控会话中多轮工作，最终按交付物判分。</p>
+  <div class="diagram">
+<div class="mermaid">
+flowchart TB
+  Start["case (JSONL, design_flow)<br/>prompt(含文件/PDK路径) + entry_point + test + budget"] --> Open["open_session(task_id, host, eval_id, sample)"]
+  Open --> SID["workdir<br/>EDA NAS: sessions/eval_id/task_id/sample/"]
+  SID --> Loop{"budget 未耗尽<br/>且未 declare_done?"}
+  Loop -->|是| RC1["run_commands(session_id, cmds)<br/>跑 EDA 工具/shell/读产物"]
+  Loop -->|是| RC2["run_code(session_id, code)<br/>解释器自测/探针"]
+  Loop -->|是| RF["read_file / list_files<br/>看报告/中间产物"]
+  RC1 --> Loop
+  RC2 --> Loop
+  RF --> Loop
+  Loop -->|declare_done / 超预算| DC["test: check(deliverable, workdir)<br/>校验 entry_point 指向的交付件"]
+  DC --> Close["close_session(session_id)<br/>归档产物 + 释放 license/daemon"]
+  Close --> PassK["pass@k 汇总<br/>(k 个独立 session)"]
+  style Open fill:#dafbe1,stroke:#1a7f37
+  style DC fill:#ddf4ff,stroke:#0969da
+  style Close fill:#ffebe9,stroke:#cf222e
+</div>
+<div class="cap">图 3 · 会话化 agentic 评测总览：open → 多轮工具循环 → test 交付件校验 → close</div>
+  </div>
+  <p>关键点：</p>
+  <ul>
+    <li><strong>Session 是一等公民</strong>：显式 open/run/read/close，状态不再"靠没清"。</li>
+    <li><strong>每任务独立 workdir</strong>（fresh），杜绝跨任务污染；session_id 贯穿一次 attempt。</li>
+    <li><strong>pass@k = k 个独立 session</strong>（k 次 attempt），互不共享状态。</li>
+    <li>单轮补全通路<strong>保持不变</strong>（向后兼容，字节同学已按此写 case）。</li>
+  </ul>
+
+  <!-- ============================== -->
+  <h2>5. 改进点 A：沙盒新增 <code>run_commands</code> 工具</h2>
+
+  <h3>5.1 为什么需要（回答 Q1）</h3>
+  <p>现有 <code>run_code</code> 执行的是<strong>代码字符串</strong>（送进解释器：pyAether/SKILL/Tcl）。设计流还需要：</p>
+  <div class="diagram">
+<div class="mermaid">
+flowchart TB
+  subgraph RC["run_code (解释器级, 现有)"]
+    RC1["code 字符串<br/>pyAether/SKILL/Tcl"] --> RC2["送进解释器 eval"]
+    RC2 --> RC3["print_log / result / error_log"]
+  end
+  subgraph RCM["run_commands (命令级, 新增)"]
+    RCM1["命令序列<br/>innovus -batch / shell"] --> RCM2["在会话 workdir 执行"]
+    RCM2 --> RCM3["每命令 exit_code+stdout+stderr"]
+    RCM2 --> RCM4["回读产物文件<br/>(报告/日志/中间网表)"]
+  end
+  RC1 -.->|"写一段 Tcl 查 dbGet<br/>自测函数"| RC2
+  RCM1 -.->|"启动 EDA 工具跑 flow<br/>看报告 grep 产物"| RCM2
+  style RC fill:#f6f8fa,stroke:#d0d7de
+  style RCM fill:#ddf4ff,stroke:#0969da
+</div>
+<div class="cap">图 7 · run_code（解释器级）与 run_commands（命令级）分工互补</div>
+  </div>
+  <ul>
+    <li>跑 EDA 工具的<strong>批处理命令</strong>：<code>innovus -batch -files run.tcl</code>、<code>innovus -files save.tcl</code>。</li>
+    <li>跑 <strong>shell 命令</strong>：<code>cat timing.rpt</code>、<code>grep NFN def/*.def | wc -l</code>、<code>ls -la outputs/</code>。</li>
+    <li>把产物文件<strong>读回</strong>给 agent 观察（报告、日志、中间网表）。</li>
+  </ul>
+  <p>这些都超出"在解释器里 eval 一段代码"的语义。<code>run_commands</code> 提供<strong>命令级</strong>执行入口，与 <code>run_code</code>（解释器级）分工互补。</p>
+
+  <h3>5.2 接口草案（MCP 工具 + 沙盒端点）</h3>
+  <p><code>run_commands</code> 有两层：eda_fastmcp 的 <strong>MCP 工具</strong>（agent 调用）和 eda_sandbox_lite 的 <strong>HTTP 端点</strong>（MCP 工具转发到此）。</p>
+  <h4>MCP 工具（eda_fastmcp，agent 调用）</h4>
+  <pre><code>run_commands(
+    commands: list[str],        # 必填：按序执行的 shell/EDA 命令
+    workdir: str,               # 必填：NAS 上的会话工作目录(两机可见)
+    cwd: str | None = None,     # 可选：相对 workdir 的子目录
+    env: dict | None = None,    # 可选：追加环境变量
+    timeout_per_cmd: int = 120, # 单命令超时(秒)
+    return_files: list[str] | None = None,  # 执行后读回的文件(相对 workdir)
+) -&gt; dict:
+    {
+      "results": [               # 每条命令一项
+        {"cmd": "...", "exit_code": 0, "stdout": "...", "stderr": "...",
+         "duration_ms": 1234, "timed_out": false}
+      ],
+      "files": {                 # return_files 的内容(文本直返/二进制 base64)
+        "timing.rpt": {"content": "...", "size": 1234, "is_text": true}
+      },
+      "workdir": "/nasdata/.../sessions/&lt;id&gt;",
+      "error_log": ""            # 工具级错误
+    }</code></pre>
+  <h4>HTTP 端点（eda_sandbox_lite，32.75 上）</h4>
+  <pre><code>POST /v1/run_commands
+{
+  "commands": ["innovus -batch -file run.tcl", "cat timing.rpt"],
+  "workdir": "/nasdata/.../sessions/&lt;id&gt;",   # NAS 路径, 32.75 本地可见
+  "timeout_per_cmd": 120,
+  "return_files": ["timing.rpt"]
+}
+→ CodeResponse 兼容的四字段 + results/files 扩展</code></pre>
+  <div class="note note-warn">
+    <span class="tag">关键：</span><code>workdir</code> 是 <strong>32.75 侧的路径</strong>（EDA NAS 上的目录，如 <code>/eda_nas/.../sessions/&lt;id&gt;/</code>），36.15 <strong>看不到</strong>。
+    命令在 32.75 上执行，产物文件落 EDA NAS → 36.15 上的 agent 要看内容，<strong>只能通过 <code>return_files</code> 走 HTTP 取回</strong>（不能直读路径）。
+    DE 下发的文件（嵌入 prompt 的 EDA NAS 路径）同理：32.75 能读，36.15 不能。
+  </div>
+
+  <h3>5.3 与 <code>run_code</code> 的关系</h3>
+  <table>
+    <thead><tr><th></th><th><code>run_code</code></th><th><code>run_commands</code></th></tr></thead>
+    <tbody>
+      <tr><td>执行单元</td><td>代码字符串（解释器 eval）</td><td>命令序列（shell/EDA 工具）</td></tr>
+      <tr><td>典型用途</td><td>写一段 Tcl 探查 dbGet、自测函数</td><td>启动 innovus batch、看报告、跑脚本文件</td></tr>
+      <tr><td>返回</td><td>print_log / result / error_log</td><td>每命令 exit_code+stdout+stderr + 文件回读</td></tr>
+      <tr><td>状态</td><td>沿用解释器会话</td><td>沿用 shell workdir + 长驻 EDA 进程</td></tr>
+    </tbody>
+  </table>
+  <div class="note note-info">
+    <span class="tag">设计取舍：</span><code>run_commands</code> 的命令最终也常通过 <code>innovus -batch</code> 落到 Tcl 解释器，
+    但它把"启动工具进程 + 管道 + 读文件"这些 shell 语义包了起来，agent 不必手搓。两者可叠加：先 <code>run_commands</code> 跑批处理，再 <code>run_code</code> 在残留会话里查 dbGet。
+  </div>
+
+  <h3>5.4 Hook 重定向：cline 内置 run_commands → 32.75</h3>
+  <p>
+    cline 有<strong>内置</strong> <code>run_commands</code> 工具，在 36.15 本机执行 shell 命令。当前为防泄题（agent 读 benchmark 数据集 / 读答案）已由 <code>PreToolUse</code> hook
+    <strong>完全禁用</strong>——hook 将 <code>run_commands</code> 调用 overrideInput 为 <code>echo "ACCESS RESTRICTED"</code> 的 no-op（见 <code>scripts/cline_hooks/PreToolUse</code> 第 127–128 行）。
+  </p>
+  <p>
+    设计流需要 <code>run_commands</code> 在 <strong>32.75 的会话 workdir</strong> 中执行 EDA 命令。由于 <strong>SSH 不通</strong>，重定向只能走 HTTP 到 eda_sandbox_lite。
+    有两种方案：
+  </p>
+
+  <div class="diagram">
+<div class="mermaid">
+flowchart TB
+  subgraph Hook方案A["方案 A（推荐）：MCP run_commands + hook 引导"]
+    A1["agent 调内置 run_commands"] --> A2["hook 拦截"]
+    A2 --> A3["overrideInput 改写为提示:<br/>'请用 mcp__...__run_commands'"]
+    A3 -.->|"agent 改用 MCP 工具"| A4["mcp__...__run_commands<br/>(eda_fastmcp)"]
+    A4 --> A5["HTTP POST<br/>32.75 /v1/run_commands"]
+  end
+  subgraph Hook方案B["方案 B：hook 透明转发"]
+    B1["agent 调内置 run_commands"] --> B2["hook 拦截"]
+    B2 --> B3["overrideInput 改写为:<br/>python3 remote_exec.py<br/>--workdir &lt;NAS path&gt;<br/>--cmds-file &lt;temp.json&gt;"]
+    B3 --> B4["remote_exec.py<br/>读 temp.json → POST 32.75<br/>→ 格式化输出"]
+    B4 --> B5["cline 执行 remote_exec.py<br/>(本地 36.15, 但命令在 32.75 跑)"]
+  end
+  style A4 fill:#dafbe1,stroke:#1a7f37
+  style B3 fill:#fff8c5,stroke:#d4a72c
+</div>
+<div class="cap">图 9 · Hook 重定向两方案：A（MCP 工具 + 引导消息）vs B（透明转发到 32.75）</div>
+  </div>
+
+  <table>
+    <thead><tr><th></th><th>方案 A：MCP + 引导（推荐）</th><th>方案 B：hook 透明转发</th></tr></thead>
+    <tbody>
+      <tr><td>agent 端体验</td><td>需改用 MCP 工具名（system prompt 引导）</td><td>透明，agent 照旧用内置 run_commands</td></tr>
+      <tr><td>hook 改动</td><td>小：overrideInput 改为提示消息</td><td>中：overrideInput 写 temp 文件 + 调 helper 脚本</td></tr>
+      <tr><td>输出格式</td><td>MCP 工具返回结构化 JSON（干净）</td><td>helper 脚本解析 sandbox 响应再格式化</td></tr>
+      <tr><td>session workdir</td><td>MCP 工具参数显式传 workdir</td><td>hook 从环境变量 <code>EDA_SESSION_WORKDIR</code> 读取</td></tr>
+      <tr><td>可靠性</td><td>高（MCP 工具链路已验证）</td><td>中（JSON 转义 / helper 脚本维护）</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note note-ok">
+    <span class="tag">推荐方案 A：</span>eda_fastmcp 新增 <code>run_commands</code> MCP 工具（MCP 工具已被 hook 放行，见 <code>MCP_PREFIXES</code>），system prompt 引导 agent 使用 <code>mcp__pyAether_MCP_server__run_commands</code>。
+    内置 <code>run_commands</code> 仍被 hook 拦截，但 overrideInput 从"ACCESS RESTRICTED"改为引导消息"请使用 MCP run_commands 工具在 EDA 服务器执行命令"。
+    优点：链路最短、输出格式干净、无需 helper 脚本、复用已验证的 MCP 通路。
+  </div>
+  <div class="note note-warn">
+    <span class="tag">方案 B 适用场景：</span>若 agent 顽固使用内置 <code>run_commands</code>（不改用 MCP 工具），则用方案 B 透明转发：
+    hook 将原 commands 写入 <code>$TMPDIR/remote_cmds_&lt;pid&gt;.json</code>，overrideInput 改写为单条命令
+    <code>python3 &lt;repo&gt;/scripts/remote_exec.py --workdir $EDA_SESSION_WORKDIR --cmds-file &lt;temp&gt;</code>；
+    <code>remote_exec.py</code> 读 JSON → POST 到 <code>http://10.129.32.75:&lt;port&gt;/v1/run_commands</code> → 解析响应 → 打印 stdout/stderr。
+    评测驱动在启动 cline 前设 <code>EDA_SESSION_WORKDIR</code> 环境变量指向 NAS 上的 session workdir。
+  </div>
+
+  <!-- ============================== -->
+  <h2>6. 改进点 B：引入显式 Session 概念（回答 Q2）</h2>
+
+  <h3>6.1 为什么需要</h3>
+  <p>设计流在一轮（Turn = 一次 attempt）中会有多次沙盒调用，它们必须共享：</p>
+  <ul>
+    <li><strong>工作目录</strong>：阶段 N 写出的 DEF/报告，阶段 N+1 要读到。</li>
+    <li><strong>EDA 进程 / 会话</strong>：<code>loadDefFile</code> 一次后，后续 <code>dbGet</code> 在同一 Innovus 会话里才有效。</li>
+    <li><strong>env / license 上下文</strong>：工艺库、lib.defs、TECHLIB 挂接。</li>
+  </ul>
+  <p>现状靠"daemon 长驻 + workdir 没清"隐式满足，但<strong>无隔离、无生命周期、无明确归属</strong>，是污染与不可复现的根源。需要显式 Session 抽象。</p>
+
+  <h3>6.2 Session 生命周期</h3>
+  <div class="diagram">
+<div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant Driver as 评测驱动<br/>(run_design_flow_batch)
+  participant Agent as cline/zhulong agent
+  participant MCP as eda_fastmcp
+  participant SB as 沙盒后端<br/>(EDA 服务器)
+  Driver->>SB: open_session(task_id, host, eval_id, sample, budget)
+  SB->>SB: 创建 workdir (EDA NAS: .../sessions/eval_id/task_id/sample/)
+  SB-->>Driver: workdir 路径
+  loop 多轮（受 budget 约束）
+    Agent->>MCP: run_commands(cmds, workdir)
+    MCP->>SB: 在会话 workdir 执行命令序列
+    SB-->>MCP: exit_code / stdout / stderr / 文件内容
+    MCP-->>Agent: results + files
+    Agent->>MCP: run_code(code, lang, host, workdir)
+    MCP->>SB: 绑定会话的解释器执行
+    SB-->>Agent: print_log / result / error_log
+    Agent->>MCP: mcp__...__read_file(path)  # 远程, 走HTTP读32.75
+    MCP-->>Agent: 文件内容（看报告）
+  end
+  Agent->>MCP: declare_done()
+  Driver->>SB: run check(entry_point, workdir)  # 即 test 字段, 含交付件存在性 assert
+  SB-->>Driver: pass / fail + 校验日志
+  Driver->>SB: close_session(workdir)
+  SB->>SB: 归档产物(HTTP回传) + 清理 workdir
+  SB-->>MCP: archived_to
+</div>
+<div class="cap">图 4 · Session 生命周期时序：open → 多轮工具调用（共享 workdir/进程）→ declare_done → check → close</div>
+  </div>
+
+  <h3>6.3 Session 与 Turn / pass@k 的关系</h3>
+  <ul>
+    <li><strong>1 Turn = 1 attempt = 1 session</strong>。一个 task 跑 pass@k 即开 k 个独立 session，各自 fresh workdir、互不污染。</li>
+    <li>session 内多次调用共享状态；session 间完全隔离。</li>
+    <li>session 超时 / 超预算 / agent 主动 <code>declare_done</code> 即关闭并判分。</li>
+  </ul>
+
+  <h3>6.4 Session 接口草案（MCP 工具侧）</h3>
+  <pre><code># 评测驱动调 (HTTP 到 32.75):
+open_session(task_id, host, eval_id, sample, budget) -&gt; {"workdir"}   # 创建 workdir (§7.1)
+# agent 调 (MCP 工具, eda_fastmcp):
+run_commands(commands, workdir, ...)        # 见 §5.2, HTTP 到 32.75
+run_code(code, lang, host, workdir=None)    # 现有 4 核心 MCP 之一, 加 workdir 参数
+mcp__...__read_file(path)                   # 远程读 32.75 侧文件 (区别于内置 read_file)
+mcp__...__list_files(dir, pattern)          # 远程列目录
+declare_done()                              # agent 声明完成, 触发判分
+# 评测驱动调 (HTTP 到 32.75):
+close_session(workdir)                      # 归档产物 + 清理 workdir</code></pre>
+  <div class="note note-warn">
+    <span class="tag">实现注：</span>open_session 不必新起 OS 进程——可复用 eda_fastmcp 现有 4 端口 daemon 池，
+    但<strong>绑定语义从"并发"改为"独占整个 session"</strong>（任务期间持有端口，结束才归还）。
+    池不够大时排队（与现状一致），但排队单位是"任务"而非"单次调用"。需要更大池子或 session 级 license 配额。
+  </div>
+
+  <!-- ============================== -->
+  <h2>7. 改进点 C：EDA 服务器接入（eda_sandbox_lite 改造）</h2>
+  <p>eda_sandbox_lite（32.75）当前只有 <code>POST /v1/run_code</code>（执行代码字符串），需新增 <code>POST /v1/run_commands</code>（执行 shell 命令序列）。<strong>无需 SSH</strong>——所有通信走 HTTP。</p>
+  <ul>
+    <li><strong>新增 <code>/v1/run_commands</code> 端点</strong>：接收 <code>{commands, workdir, timeout_per_cmd, return_files}</code>，在 32.75 上按序执行 shell 命令（<code>subprocess</code>），cwd 设为 <code>workdir</code>，返回每命令 exit_code/stdout/stderr + 请求的文件内容。workdir 是 32.75 侧可见的路径（EDA NAS 或本地盘）。</li>
+    <li><strong>session workdir 在 32.75 侧</strong>：EDA NAS 上的目录（如 <code>/eda_nas/.../sessions/&lt;id&gt;/</code>），<strong>36.15 看不到</strong>。EDA 环境的 DE 在其它服务器存文件到 EDA NAS，把路径嵌入 prompt → agent 调 run_commands（HTTP 到 32.75）→ 32.75 在 EDA NAS 上读写。<code>open_session</code> 时由 32.75 创建 workdir（或 DE 预先建好）；<code>close</code> 时由 32.75 归档+清理。</li>
+    <li><strong>文件读回必须走 HTTP</strong>：36.15 看不到 EDA NAS，agent 要看产物内容（报告、波形、日志）只能通过 <code>run_commands</code> 的 <code>return_files</code> 参数，由 32.75 读文件后通过 HTTP 返回。<strong>不能直读路径</strong>。</li>
+    <li><strong>新增 <code>/v1/read_file</code> 端点（推荐）</strong>：单独的文件读取端点，供 <code>read_file</code> MCP 工具调用——agent 不必每次为看一个文件发一条 <code>cat</code> 命令。参数 <code>{path}</code>（32.75 侧路径），返回文件内容（文本直返 / 二进制 base64）。</li>
+    <li><strong>无需 open/close_session 端点（简化）</strong>：session 的"状态"就是 32.75 侧 EDA NAS 上的 workdir 目录。<code>run_commands</code> 是无状态的（每次指定 workdir），状态全在 EDA NAS 文件里。</li>
+    <li><strong>EDA 进程模型</strong>：<code>run_commands</code> 跑 <code>innovus -batch -file &lt;script.tcl&gt;</code> 等批处理命令——每次起新进程，设计/状态通过 EDA NAS 上的 DEF/LEF 文件传递（不靠 daemon 内存状态）。若需 daemon 常驻（避免冷启动），用 <code>run_code</code> 的 Innovus daemon 路径（已支持 workdir 参数）。</li>
+    <li><strong>License / 资源</strong>：<code>run_commands</code> 并发 = 同时跑的 EDA 进程数 ≤ license 数。用信号量限并发（参照现有 <code>TCL_MAX_CONCURRENCY</code> 模式）。</li>
+    <li><strong>产物归档</strong>：<code>close_session</code> 时 32.75 把 EDA NAS workdir 的关键产物通过 HTTP 返回给评测驱动（36.15），由评测驱动存到 <code>output_evaluation/&lt;eval_id&gt;/sessions/&lt;task_id&gt;/&lt;sample&gt;/</code>（开发 NAS 上）。</li>
+  </ul>
+  <div class="note note-info">
+    <span class="tag">关键约束：</span>两个 NAS 不互通 → <strong>文件跨机传递只能走 HTTP</strong>。<code>return_files</code>（run_commands）和 <code>/v1/read_file</code> 是 agent（36.15）获取 32.75 侧文件内容的<strong>唯一通道</strong>。
+    session workdir 在 32.75 侧 EDA NAS 上，36.15 无法直接访问。
+  </div>
+
+  <h3>7.1 工作目录的建立与冲突避免</h3>
+  <p>每个设计流 attempt 需要一个独立的 workdir（避免跨任务/跨 sample 文件污染）。建立机制：</p>
+  <ul>
+    <li><strong>谁创建</strong>：eda_sandbox_lite（32.75）在收到首次 <code>run_commands</code>（或专用 <code>open_session</code> 端点）时创建。36.15 看不到 EDA NAS，不能自己建。</li>
+    <li><strong>路径规则</strong>：<code>&lt;EDA_NAS_ROOT&gt;/sessions/&lt;eval_id&gt;/&lt;task_id&gt;/&lt;sample&gt;/</code>。
+      <code>eval_id</code> = 评测批次时间戳，<code>sample</code> = pass@k 的第几个样本（0~k-1）。四层目录保证不同批次/不同任务/不同样本<strong>绝不冲突</strong>。</li>
+    <li><strong>workdir 路径传递</strong>：32.75 创建后返回 <code>workdir</code> 路径（绝对路径），评测驱动（36.15）记录下来，后续每次 <code>run_commands</code> / <code>run_code</code> 调用都带上这个路径。agent 也通过 system prompt 得知该路径。</li>
+    <li><strong>幂等创建</strong>：若目录已存在（续跑场景）则复用不报错；<code>mkdir -p</code> 语义。</li>
+    <li><strong>清理</strong>：评测结束后，评测驱动调 <code>close_session</code>（或 <code>run_commands</code> 带 <code>rm -rf</code>）清理 EDA NAS 上的 session 目录；关键产物先通过 HTTP 归档到 36.15 开发 NAS。</li>
+  </ul>
+  <div class="note note-warn">
+    <span class="tag">并发安全：</span>pass@k 的 k 个 sample 可能并发跑，各自 workdir 路径含 <code>sample</code> 维度 → 天然隔离。
+    多批次并发（不同 <code>eval_id</code>）也由 <code>eval_id</code> 维度隔离。<strong>无需文件锁</strong>——路径唯一即不冲突。
+  </div>
+
+  <!-- ============================== -->
+  <h2>8. 改进点 D：Case 格式扩展（agentic 模式）</h2>
+  <p>单轮 case 的 6 字段保留不变。新增 <strong>agentic 模式</strong>字段集，与单轮并存（用一个 <code>mode</code> 字段区分）：</p>
+  <div class="diagram">
+<div class="mermaid">
+flowchart LR
+  subgraph Completion["mode = completion (现有单轮)"]
+    C1["task_id"] --- C2["prompt 空函数体"] --- C3["entry_point"] --- C4["test: check(candidate)"] --- C5["lang/host"]
+  end
+  subgraph Agentic["mode = design_flow (新)"]
+    A1["task_id"] --- A2["prompt 任务目标(含文件/PDK路径)"] --- A3["entry_point 交付件"] --- A4["test 交付件校验器"] --- A5["budget"] --- A6["host"]
+  end
+  Completion ==>|mode 字段分流| Judge1["stdout 末行标记判分"]
+  Agentic ==>|mode 字段分流| Judge2["deliverable check 判分"]
+  style Completion fill:#f6f8fa,stroke:#d0d7de
+  style Agentic fill:#ddf4ff,stroke:#0969da
+  style Judge1 fill:#fff8c5,stroke:#d4a72c
+  style Judge2 fill:#dafbe1,stroke:#1a7f37
+</div>
+<div class="cap">图 5 · 两套 case 格式并存：completion（单轮）与 agentic（多步会话），由 mode 字段路由到对应判分器</div>
+  </div>
+  <pre><code>{
+  "task_id": "EDA-Eval-DesignFlow-Digital-101",
+  "mode": "design_flow",             // 新增；缺省 "completion" = 现有单轮
+  "host": "innovus",                 // 设计流不需要 lang(agent 混合用多语言)
+  "prompt": "在给定设计上完成 place+CTS+route，导出 GDS，并满足 timing(WNS≥0) 与 DRC clean。\n设计文件在 EDA NAS: LEF=/eda_nas/.../sample.lef DEF=/eda_nas/.../sample.def；PDK 目录: /eda_nas/pdk/skywater130/",
+  // 注: 暂不支持 attachments 字段; 所需文件/PDK 路径直接写在 prompt 里, agent 通过 run_commands 在 32.75 上访问
+  "entry_point": "outputs/submit.zip",   // 交付件路径(相对 workdir), test 的校验对象
+  "test": "proc check {deliverable workdir} { ...校验交付件... }",  // check(deliverable, workdir)
+  "budget": {
+    "max_turns": 30, "max_tool_calls": 80, "wall_time_sec": 1200, "license_budget_sec": 900
+  },
+  "metadata": {"domain":"digital","scenario":"...","difficulty":"hard", ...}
+}</code></pre>
+  <table>
+    <thead><tr><th>字段</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>mode</code></td><td><code>completion</code>（现有单轮）/ <code>design_flow</code>（新）</td></tr>
+      <tr><td><code>prompt</code></td><td>自然语言任务目标（重定义：不再是空函数体；含文件位置/PDK 路径等 EDA NAS 路径，agent 通过 run_commands 访问）</td></tr>
+      <tr><td><code>entry_point</code></td><td>交付件路径（重定义：不再是函数名，而是 <code>test</code> 的校验对象，如 <code>outputs/submit.zip</code>）</td></tr>
+      <tr><td><code>test</code></td><td>交付件校验器（重定义：<code>check(deliverable, workdir)</code>，断言交付件满足要求）</td></tr>
+      <tr><td><code>host</code></td><td>EDA 环境（保留，语义微调；设计流不需要 <code>lang</code>）</td></tr>
+      <tr><td><code>budget</code></td><td>轮次/调用数/墙钟/license 预算，超限即关闭并判分</td></tr>
+    </tbody>
+  </table>
+  <div class="note note-info">
+    <span class="tag">字节侧写 case 的影响：</span>设计流 case 的编写门槛高于单轮（要写 prompt + entry_point + test 校验器）。
+    字段协议详见《设计流用例编写指南》；建议先由长鑫出 1~2 个完整范例，字节参照扩写。
+  </div>
+
+  <!-- ============================== -->
+  <h2>9. 改进点 E：判分（test 交付件校验器）</h2>
+  <p>设计流判分与现有 EDA 脚本评测<strong>同构</strong>——两态：assert 全过 → <code>pass</code>，任一抛错 → <code>fail</code>。区别只是判分对象从"函数返回值"换成"交付件"。</p>
+  <ul>
+    <li><strong>判分时机</strong>：agent <code>declare_done</code> 或超预算，框架在<strong>同一 session</strong>内运行 <code>test</code>（即 <code>check(entry_point, workdir)</code>，通过 HTTP 在 32.75 上执行）。</li>
+    <li><strong>判分内容</strong>：由 case 作者在 <code>test</code> 里用断言自定义，<strong>交付件存在性也是其中一个 assert</strong>（如 <code>unless(isFile(zip) error("deliverable missing"))</code>）。常见模式：
+      <ol>
+        <li><strong>交付件存在性</strong>：<code>entry_point</code> 指向的文件/对象是否已生成（如 zip 是否存在、5 个产物是否齐全）。</li>
+        <li><strong>指标断言</strong>：从交付件/报告解析指标（如 timing WNS、DRC count），按真值断言。</li>
+        <li><strong>结构/拓扑校验</strong>：复杂校验（如原理图拓扑、flow 完整性）由 <code>test</code> 脚本自行实现。</li>
+      </ol>
+    </li>
+    <li><strong>判分结果</strong>：两态，与单轮一致——
+      <table>
+        <thead><tr><th>verdict</th><th>条件</th><th>类比单轮评测</th></tr></thead>
+        <tbody>
+          <tr><td><code>pass</code></td><td><code>check</code> 不抛错（所有 assert 通过）</td><td>代码跑通且 stdout 末行是 OK 标记</td></tr>
+          <tr><td><code>fail</code></td><td><code>check</code> 抛错（任一 assert 失败，含交付件不存在）</td><td>代码执行报错/无输出，或 stdout 末行是 FAIL 标记</td></tr>
+        </tbody>
+      </table>
+    </li>
+    <li><strong>判分输出</strong>：<code>{verdict: "pass"|"fail", check_log: "..."}</code>，写入评测结果 JSONL。</li>
+    <li><strong>与单轮判分的兼容</strong>：单轮仍用 stdout 末行标记；设计流用 <code>test</code> 交付件校验器（assert 抛错与否）。两套判分器并存，由 <code>mode</code> 路由，但判分语义同构（两态）。</li>
+  </ul>
+
+  <!-- ============================== -->
+  <h2>10. 改进点 F：评测主驱动改造</h2>
+  <p>现有 <code>scripts/run_zhulong_batch.py</code> 是单轮批处理驱动。新增设计流驱动 <code>scripts/run_design_flow_batch.py</code>：</p>
+  <pre class="ascii">for task in cases where mode == "design_flow":
+  for sample in range(num_samples_per_task):          # pass@k
+    workdir = open_session(task_id, host, eval_id, sample, budget)   # 32.75 创建 workdir
+    try:
+      run_agent(prompt, workdir, budget=task.budget,
+                tools=[mcp__run_commands, run_code, search_apis, get_api_details,
+                       mcp__read_file, mcp__list_files, declare_done])
+      # 判分: 运行 test 校验器 (含交付件存在性 assert), 两态 pass/fail
+      verdict = run_check(workdir, entry_point, test)
+    finally:
+      close_session(workdir)                           # 归档产物(HTTP回传) + 清理
+    record(task_id, sample, verdict)</pre>
+  <ul>
+    <li>agent 侧仍用 cline + eda_fastmcp MCP，但工具集换成会话化版本（带 <code>session_id</code>）。</li>
+    <li>并发度 = min(license 数, session 池大小)，远小于单轮的 8 worker。</li>
+    <li>断点续传粒度从"任务"保持，但状态更重（需归档 session 产物以便续跑复盘）。</li>
+  </ul>
+
+  <!-- ============================== -->
+  <h2>11. 改进点 G：MCP 工具清单变化</h2>
+  <p>设计流评测<strong>保留现有 EDA 脚本评测的 4 个核心 MCP 工具</strong>，新增设计流专用工具：</p>
+  <table>
+    <thead><tr><th>工具</th><th>现状</th><th>设计流改动</th></tr></thead>
+    <tbody>
+      <tr><td><code>search_apis</code> / <code>search_apis_by_keyword</code></td><td>已有（核心）</td><td><strong>保留不变</strong>（agent 仍需查 API 文档）</td></tr>
+      <tr><td><code>get_api_details</code></td><td>已有（核心）</td><td><strong>保留不变</strong></td></tr>
+      <tr><td><code>run_code</code></td><td>已有（核心）</td><td><strong>保留</strong>，增加可选 <code>workdir</code> 参数（绑定会话 workdir）；不传时回退现状（向后兼容单轮评测）</td></tr>
+      <tr><td><code>run_commands</code></td><td>无</td><td><strong>新增</strong>：命令级执行（HTTP 到 32.75）+ 文件回读（§5）</td></tr>
+      <tr><td><code>read_file</code> / <code>list_files</code>（MCP 远程版）</td><td>无</td><td><strong>新增</strong>：走 HTTP 读 32.75 侧文件（见 §11.1 命名区分）</td></tr>
+      <tr><td><code>declare_done</code></td><td>无</td><td><strong>新增</strong>：agent 声明完成，触发判分</td></tr>
+      <tr><td><code>clean_workdir</code></td><td>已有（批量清 4 端口）</td><td><strong>默认关闭</strong>（写入 <code>EDA_MCP_TOOLS_DISABLED</code>）；设计流由评测驱动在 close 时清理</td></tr>
+      <tr><td><code>query_memory_bank</code></td><td>已有（自进化）</td><td><strong>默认关闭</strong>（设计流评测不启用自进化）；需启用时从 <code>EDA_MCP_TOOLS_DISABLED</code> 移除</td></tr>
+    </tbody>
+  </table>
+  <div class="note note-info">
+    <span class="tag">4 核心 MCP 仍存在：</span>设计流 agent 与单轮评测 agent 共用 <code>search_apis</code> / <code>search_apis_by_keyword</code> / <code>get_api_details</code> / <code>run_code</code> 四个核心 MCP 工具——agent 仍需查 API 文档、仍需在解释器里跑代码自测。新增的 <code>run_commands</code> 补的是"跑 EDA 工具命令/shell"的能力缺口。
+  </div>
+
+  <h3>11.1 本机 read_file/list_files vs 远程 read_file/list_files 的命名区分</h3>
+  <p>现有评测允许 cline 内置的<strong>本机</strong> <code>read_file</code> / <code>list_files</code>（读 36.15 上的 ws workspace，已由 hook 限制在 workspace 内）。设计流新增<strong>远程</strong> <code>read_file</code> / <code>list_files</code>（走 HTTP 读 32.75 侧 EDA NAS 文件）。两者<strong>必须避免混淆</strong>：</p>
+  <table>
+    <thead><tr><th></th><th>本机（cline 内置）</th><th>远程（MCP 新增）</th></tr></thead>
+    <tbody>
+      <tr><td>工具名</td><td><code>read_file</code> / <code>list_files</code>（cline 内置）</td><td><code>mcp__pyAether_MCP_server__read_file</code> / <code>mcp__pyAether_MCP_server__list_files</code>（MCP 前缀）</td></tr>
+      <tr><td>执行位置</td><td>36.15 本机</td><td>32.75（通过 HTTP）</td></tr>
+      <tr><td>读哪里</td><td>ws workspace（开发 NAS / 本地盘）</td><td>EDA NAS（32.75 侧）</td></tr>
+      <tr><td>hook 行为</td><td>放行但限制在 workspace 内（现有逻辑）</td><td>放行（<code>mcp__*</code> 前缀已放行）</td></tr>
+    </tbody>
+  </table>
+  <div class="note note-ok">
+    <span class="tag">天然不混淆：</span>MCP 工具名自带 <code>mcp__pyAether_MCP_server__</code> 前缀，与 cline 内置的 <code>read_file</code> / <code>list_files</code> <strong>名字不同</strong>，agent 不会调错。
+    system prompt 明确引导：<strong>"读 EDA 服务器(32.75)上的文件用 <code>mcp__...__read_file</code>；读本机 workspace 用内置 <code>read_file</code>"</strong>。
+  </div>
+  <div class="note note-warn">
+    <span class="tag">hook 无需改动：</span>现有 hook 对内置 <code>read_file</code> / <code>list_files</code> 已放行（限制在 workspace 内）；MCP 工具（<code>mcp__*</code> 前缀）也被放行。两条通路独立，不冲突。
+  </div>
+
+  <!-- ============================== -->
+  <h2>12. 对 eda_fastmcp（36.15）的具体改动建议</h2>
+  <ol>
+    <li><strong>新增 <code>tools/run_commands.py</code></strong>：实现 §5.2 的 MCP 工具接口；HTTP POST 到 32.75 的 <code>/v1/run_commands</code>。复用 <code>SandboxEndpointPool</code> 选端点。</li>
+    <li><strong>新增 <code>tools/read_file.py</code> / <code>list_files.py</code></strong>：<strong>走 HTTP 到 32.75</strong> 读取（<code>/v1/read_file</code> 端点）——两个 NAS 不互通，36.15 看不到 32.75 的文件，不能直读路径。<strong>MCP 工具名带 <code>mcp__</code> 前缀</strong>，与 cline 内置 <code>read_file</code> / <code>list_files</code> 天然区分（见 §11.1）。</li>
+    <li><strong>新增 <code>tools/declare_done.py</code></strong>：agent 声明完成，触发评测驱动判分（写 marker 文件到 workdir 或 SSE 信号）。</li>
+    <li><strong>main.py 注册 <code>run_commands</code> / <code>mcp__read_file</code> / <code>mcp__list_files</code> / <code>declare_done</code></strong>，按 <code>EDA_MCP_TOOLS_DISABLED</code> 门控；system prompt 增加设计流工具使用说明（引导 agent 用 <code>mcp__...__run_commands</code> 而非内置 run_commands；用 <code>mcp__...__read_file</code> 读 32.75 侧文件、内置 <code>read_file</code> 读本机 workspace）。</li>
+    <li><strong><code>clean_workdir</code> 和 <code>query_memory_bank</code> 写入 <code>EDA_MCP_TOOLS_DISABLED</code></strong>：设计流评测默认关闭这两个工具（clean_workdir 由评测驱动在 close 时统一清理；query_memory_bank 不启用自进化）。</li>
+    <li><strong>调整 <code>scripts/cline_hooks/PreToolUse</code></strong>（§5.4）：将内置 <code>run_commands</code> 的 overrideInput 从 <code>echo "ACCESS RESTRICTED"</code> 改为引导消息 <code>"请使用 mcp__pyAether_MCP_server__run_commands 工具在 EDA 服务器(32.75)执行命令"</code>。MCP 工具（<code>mcp__*</code> 前缀）已被 hook 放行，无需改动。</li>
+    <li><strong>调整 <code>scripts/run_cli.sh</code></strong>：启动 cline 前设 <code>EDA_SESSION_WORKDIR</code> 环境变量（指向 NAS 上的 session workdir），供方案 B 的 helper 脚本读取。</li>
+    <li><strong><code>run_code</code> 加 <code>workdir</code> 参数</strong>（已有 <code>endpoint</code> 透传机制）：透传给沙盒端点绑定 workdir；不传时回退现状（向后兼容单轮评测）。</li>
+  </ol>
+
+  <h2>12.5 对 eda_sandbox_lite（32.75）的具体改动建议</h2>
+  <ol>
+    <li><strong>新增 <code>app/routers/run_commands.py</code></strong>：实现 <code>POST /v1/run_commands</code> 端点。接收 <code>{commands, workdir, timeout_per_cmd, return_files}</code>，用 <code>asyncio.create_subprocess_exec</code> 按序执行命令，cwd=<code>workdir</code>（32.75 侧 EDA NAS 路径），返回每命令 exit_code/stdout/stderr + return_files 内容。</li>
+    <li><strong>新增 <code>app/routers/read_file.py</code></strong>：实现 <code>POST /v1/read_file</code> 端点。接收 <code>{path}</code>（32.75 侧路径），返回文件内容（文本直返 / 二进制 base64）。供 36.15 侧 <code>read_file</code> MCP 工具调用。</li>
+    <li><strong>新增 <code>app/models/schemas.py</code> 的 <code>CommandsRequest</code> / <code>CommandsResponse</code> / <code>ReadFileRequest</code> / <code>ReadFileResponse</code></strong>：与现有 <code>CodeRequest</code> / <code>CodeResponse</code> 并存，共用四字段契约。</li>
+    <li><strong>并发控制</strong>：参照现有 <code>_TCL_SEM = asyncio.Semaphore(TCL_MAX_CONCURRENCY)</code> 模式，加 <code>_CMD_SEM</code> 限制并发命令数（≤ license 数）。</li>
+    <li><strong>安全约束</strong>：<code>workdir</code> 必须是 EDA NAS 允许的前缀（白名单配置，防止越权访问其它路径）；命令执行用 <code>start_new_session=True</code> + 超时 kill（参照现有 <code>_capture_output_and_execute</code> 模式）。</li>
+    <li><strong>return_files 实现</strong>：从 workdir 读文件，文本直接返回内容，二进制 base64 编码，附 size/is_text 标记。</li>
+  </ol>
+
+  <!-- ============================== -->
+  <h2>13. 对 EDA-Eval-Framework 的具体改动建议</h2>
+  <ol>
+    <li><strong>case 格式</strong>：data_utils 读取时按 <code>mode</code> 分流；设计流字段校验（prompt / entry_point / test / host 必填；<strong>暂不支持 attachments</strong>，文件/PDK 路径写在 prompt 里）。</li>
+    <li><strong>新增 <code>scripts/run_design_flow_batch.py</code></strong>：会话化驱动（§10），与 <code>run_zhulong_batch.py</code> 并存，由 <code>config.evaluation_mode</code> 或 case 的 <code>mode</code> 路由。</li>
+    <li><strong>新增判分器 <code>code_eval/deliverable_judge.py</code></strong>：实现 §9；与现有 <code>judge_execution_passed</code> 并存。</li>
+    <li><strong>runtime_registry 扩展</strong>：为 agentic 模式补充运行时能力声明（是否支持 long session、可用 EDA 命令集、license 需求）。</li>
+    <li><strong>config.yaml</strong>：新增 <code>design_flow</code> 段（session 池大小、超时、license 预算、归档路径）。</li>
+    <li><strong>报告生成</strong>：<code>report_generator.py</code> 增加 设计流指标维度（轮次利用率、tool 调用分布、budget 命中、产物生成率）。</li>
+    <li><strong>断点续传</strong>：设计流 session 产物归档后可续跑复盘；checkpoint 增加 session 状态字段。</li>
+  </ol>
+
+  <!-- ============================== -->
+  <h2>14. 风险与待确认事项</h2>
+  <table>
+    <thead><tr><th>风险 / 问题</th><th>应对 / 待确认</th></tr></thead>
+    <tbody>
+      <tr><td>eda_sandbox_lite 需新增 <code>/v1/run_commands</code> 端点</td><td>已有 <code>/v1/run_code</code> 基础，新增端点参照现有模式（subprocess + 超时 + 并发信号量）；owner = 长鑫</td></tr>
+      <tr><td>SSH 不通，命令重定向只能走 HTTP</td><td>已确认 36.15→32.75 SSH 超时；所有跨机调用走 eda_sandbox_lite HTTP API</td></tr>
+      <tr><td>两个 NAS 不互通，36.15 看不到 32.75 的文件</td><td>文件跨机传递只能走 HTTP（return_files / read_file 端点）；session workdir 在 32.75 侧 EDA NAS 上</td></tr>
+      <tr><td>agent 顽固使用内置 run_commands 不改用 MCP 工具</td><td>方案 A 引导消息 → 若无效降级方案 B（hook 透明转发 helper 脚本）</td></tr>
+      <tr><td>Innovus license 数有限，长驻 session 并发受限</td><td>session 池大小=license 数；排队+超时熔断；重任务降级 per-session 子进程</td></tr>
+      <tr><td>per-session fresh workdir 带来 I/O 与空间压力</td><td>close 后归档关键产物即清；设保留期；大设计用链接而非复制</td></tr>
+      <tr><td>agent 长程不可靠（跑飞 / 死循环 / 不 declare_done）</td><td>budget 强制截断；超时即判分（多半 fail）；轨迹归档供分析</td></tr>
+      <tr><td>状态污染（daemon 全局变量残留）</td><td>open_session 做 clean slate；close_session 彻底清理；每 session 独立 workdir</td></tr>
+      <tr><td>设计流 case 编写门槛高</td><td>长鑫先出范例；指标真值与设计路径由长鑫统一提供</td></tr>
+      <tr><td>与单轮通路的兼容</td><td>mode 字段分流，单轮完全不动；字节已写 case 不受影响</td></tr>
+      <tr><td>成本：单设计流任务分钟级 × pass@k × task 数</td><td>先用小规模验证集（test16 同款）跑通，再扩</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================== -->
+  <h2>15. 分阶段落地计划</h2>
+  <div class="diagram">
+<div class="mermaid">
+gantt
+  title 设计流 agentic 评测落地计划
+  dateFormat YYYY-MM-DD
+  axisFormat %m-%d
+  section 后端确认
+  P0 确认沙盒 session/run_commands 端点 :crit, p0, 2026-10-19, 7d
+  section 单 session 走通
+  P1 eda_fastmcp 会话化工具 + 范例 case :p1, after p0, 14d
+  section 判分归档
+  P2 deliverable_judge + 产物归档        :p2, after p1, 7d
+  section 批量并发
+  P3 run_design_flow_batch + session 池 + 续传 :p3, after p2, 14d
+  section 范例扩充
+  P4 长鑫范例 + 字节协同扩写            :p4, after p3, 21d
+</div>
+<div class="cap">图 6 · 分阶段落地甘特图（P0 后端能力为关键路径）</div>
+  </div>
+  <ol>
+    <li><strong>P0 · 确认后端能力（1 周）</strong>：与沙盒后端 owner 对齐 session/run_commands/read_file 端点现状与排期；明确 license/并发上限。</li>
+    <li><strong>P1 · 单 session 走通（1~2 周）</strong>：eda_fastmcp 实现 open/run_commands/read_file/close；EDA-Eval-Framework 出 1 个 设计流范例 case，端到端跑通 1 个 session（pass@1，单任务）。</li>
+    <li><strong>P2 · 判分与归档（1 周）</strong>：test 交付件校验器落地（check(deliverable, workdir) + 断言）；session 产物归档到评测结果目录。</li>
+    <li><strong>P3 · 批量与并发（1~2 周）</strong>：run_design_flow_batch.py + session 池 + 排队 + 断点续传；小规模验证集跑通 pass@k。</li>
+    <li><strong>P4 · 范例扩充与字节协同（持续）</strong>：长鑫出 3~5 个数字方向 设计流范例 → 字节参照扩写；模拟 / 验证 / 测试方向按需复用同一通路。</li>
+  </ol>
+  <div class="note note-ok">
+    <span class="tag">对 Q1 / Q2 的最终回答：</span>
+    <strong>Q1 需要 <code>run_commands</code></strong>——设计流要跑 EDA 工具命令/shell/读产物，超出 <code>run_code</code> 的解释器语义，二者互补（§5）。
+    <strong>Q2 需要 Session</strong>——多轮调用必须显式共享 workdir/进程/产物，且需按任务隔离与生命周期管理，不能继续靠 daemon 残留（§6）。
+    两者共同构成"会话化 agentic 评测"通路，与现有单轮补全通路并存（§4）。
+  </div>
+
+  <hr>
+  <div class="footer">
+    <strong>关联文档：</strong>《设计流Benchmark-测试用例编写指南.html》（面向字节，单轮口径）&nbsp;|&nbsp;
+    <code>docs/example/EDA-Eval-DesignFlow-Digital-001.jsonl</code>（单轮示例）<br>
+    <strong>关联代码：</strong>EDA-Eval-Framework <code>scripts/run_on_sandbox.py</code>、<code>code_eval/runtime_registry.py</code>；eda_fastmcp <code>tools/run_code.py</code>、<code>server/sandbox_server/exec_code.py</code>、<code>main.py</code>。
+  </div>
+
+</div>
+</body>
+</html>
