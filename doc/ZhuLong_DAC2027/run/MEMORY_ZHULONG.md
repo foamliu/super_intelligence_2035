@@ -1,11 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-21 04:40 🛑 BLOCKER 维持·r4⁗ INVALID(108 literal-pass·已二次核验)·无新运维令(inbox RUN_ID 99 未变·last_run_id=99·git fetch 无新 commit)·继续等决策·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 13G·loop 81827 含 https_proxy ✅·relay 3277328 活·8090 pid 3103371·无 r4/r5/regrade 残留)·上条 04:06 —
-- **108 literal-pass 二次核验 ✅**：`completed_code_generation_2026_1020_215918.jsonl` 158 行·status={success:49, fail:108, timeout:1}·completion={pass:108, import pyA:50} → 108 fail 全字面量 "pass"·31.0%。⚠️ 注意：raw `code_generation_*.jsonl` 仅 50 行真实代码 0 literal-pass（是补全前产物）·108 在 `completed_*` 里（`complete_code_generation.py` 补全后）·04:06 心跳口径正确。
+<!-- heartbeat 2026-10-21 05:16 🛑 BLOCKER 维持·r4⁗ INVALID(108 literal-pass·三次核验✅)·无新运维令(inbox RUN_ID 99 未变·last_run_id=99·git fetch 无新 commit)·继续等决策·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 13G·loop 81827 含 https_proxy ✅·relay 3277328 活·8090 pid 3103371·无 r4/r5/regrade 残留)·上条 04:40 —
+- **108 literal-pass 三次核验 ✅**：`/home/app.e0031982/eda_code_eval/completed_code_generation_2026_1020_215918.jsonl` 158 行·status={success:49, fail:108, timeout:1}·completion={pass:108, import pyA:50} → 108 fail 全字面量 "pass"·31.0%（与 r4 旧轮 31.0% 一致）。
 - **r4 家族 5/5 INVALID 全同型退化**：r4(680 MCP,99 pass) / r4'(156) / r4''(575,79) / r4'''(519,70) / r4⁗(754,108)。21:4x 端口切换(8650/8651/8652/8654) + 15:4x licence fix 均未根治。
 - **处置**：✅ r4⁗ 标 INVALID 不进 5-run·产物日志留证·🛑 BLOCKER 报运维·WAITING=1。等运维决策：① fix v2 重跑 r4*/r5* ② 换沙盒机重跑 ③ 采信 3 轮(r1+r2+r3=76.97% provisional) 结束 (N′) 臂 → full@pro-cloud 5 轮。 -->
-- [2026-10-21 04:40] 🛑 BLOCKER 维持·唤醒巡检：r4⁗ 已收口(02:48)无残留进程·108 literal-pass 二次核验(completed_code_generation_*.jsonl: 49 succ/108 fail/1 timeout=31.0%)✅·无新运维令(inbox RUN_ID 99 未变·git fetch 无新 commit)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·8090 pid 3103371·/home 13G·loop 81827 含 https_proxy ✅·relay 3277328)·WAITING=1 继续等运维决策。
+- [2026-10-21 05:16] 🛑 BLOCKER 维持·唤醒巡检：无 r4/r5/regrade 残留进程·108 literal-pass 三次核验(completed_code_generation_2026_1020_215918.jsonl: 49 succ/108 fail/1 timeout=31.0%)✅·无新运维令(inbox RUN_ID 99 未变·last_run_id=99·git fetch 无新 commit)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·8090 pid 3103371·/home 13G·loop 81827 含 https_proxy ✅·relay 3277328)·WAITING=1 继续等运维决策。
+- [2026-10-21 04:40 指针·已滚出] 🛑 BLOCKER 维持·108 literal-pass 二次核验 ✅ → 原文搬入 daily-memories/2026-10-21.md §[04:40]。
 - [2026-10-21 02:08 指针·已滚出] 🛑 BLOCKER 维持·r4⁗ T+249min batch 147/158 即将收口·退化持续（⚠️ 误记 literal-pass=0·实为 grep code/ 非 codegen jsonl·下轮 02:49 收口核 jsonl 才发现 108）→ 原文搬入 daily-memories/2026-10-21.md §[02:08]。
 
 
