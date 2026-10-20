@@ -833,3 +833,12 @@
 | 2026-10-20 | 不收 微软修复经典 Outlook 的 Copilot 入口 | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/118.htm |
 | 2026-10-20 | 不收 奇瑞紫微芯片首秀（发布会） | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/216.htm |
 | 2026-10-20 | 不收 吉利 Robotaxi 首台工程样车下线 | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/225.htm |
+| 2026-10-20 | OpenAI 上线 ChatGPT Slides 幻灯片工具，支持团队协作编辑 | IT之家（`1/015/298` · 14:23 CST） | news | https://www.ithome.com/1/015/298.htm |
+| 2026-10-20 | 思科总裁用 AI 智能体盘点并取消无用订阅服务，一年省下上千美元 | IT之家（`1/015/314` · 14:56 CST） | news | https://www.ithome.com/1/015/314.htm |
+| 2026-10-20 | 荣耀 Magic6 系列「AI 随心握」功能推送（端侧算法判握持手，不新增传感器） | IT之家（`1/015/315` · 14:57 CST） | news | https://www.ithome.com/1/015/315.htm |
+| 2026-10-20 | 国家互联网应急中心公布境外自治域 AS 402425 篡改 DNS 解析调查报告（异常跳转博彩） | IT之家（`1/015/252` · 12:52 CST · 转 CNCERT 报告） | news | https://www.ithome.com/1/015/252.htm |
+| 2026-10-20 | 日本经产省计划 2027~2029 财年向 Rapidus 追加投资 4000 亿日元 | IT之家（`1/015/269` · 14:00 CST · 据共同社） | news | https://www.ithome.com/1/015/269.htm |
+| 2026-10-20 | （线索·未入账）OpenAI 官网 low-resource programming languages 页面（原文 403 未取得） | HN Algolia 投递 | 线索(无内容可核验) | https://openai.com/index/low-resource-programming-languages/ |
+| 2026-10-20 | 不收 国家广电总局：微短剧成第四大全球性视听产品新业态 | IT之家 | 不收(行业表态·非具体事件) | https://www.ithome.com/1/015/287.htm |
+| 2026-10-20 | 不收 王坚院士：科技已到分水岭（主旨演讲观点） | IT之家 | 不收(观点/演讲·非新闻) | https://www.ithome.com/1/015/254.htm |
+| 2026-10-20 | 不收 玩家用 AI 基于 UE5.8 重制《恶霸鲁尼》 | IT之家 | 不收(粉丝作品) | https://www.ithome.com/1/015/250.htm |

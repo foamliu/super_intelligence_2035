@@ -210,6 +210,25 @@ def evaluate(target_id, expr, await_promise=True, timeout=90):
 
 
 # ---------------------------------------------------------------- actions
+def nav(tid, url):
+    """切到新页面并等 load 事件（同 cmd_goto 逻辑，供脚本内复用）。"""
+    ws = session(tid)
+    try:
+        ws.call("Page.enable")
+        ws.call("Page.navigate", {"url": url})
+        t0 = time.time()
+        while time.time() - t0 < 45:
+            opcode, data = ws._recv_frame()
+            if opcode != 0x1:
+                continue
+            m = json.loads(data.decode("utf-8", "replace"))
+            if m.get("method") == "Page.loadEventFired":
+                break
+        time.sleep(1.5)
+    finally:
+        ws.close()
+
+
 def cmd_list(argv):
     pat = argv[0] if argv else ""
     for p in pages():
