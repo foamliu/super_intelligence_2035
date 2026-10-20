@@ -73,6 +73,16 @@ check_once() {
     # —— 进程消失 ——
     step=$(latest_step)
     log "DOWN process-gone step=${step:-?}/$ITERS"
+    # 收尾判定①：final/ ckpt 存在且完好 → 训练已正常结束
+    # （防 off-by-one：训练末步常为 ITERS-1，如 step19979 vs ITERS19980；
+    #   且 /tmp log 收尾后可能被截断为空，latest_step 返回空，此处兜底）
+    if [ -f "$CKPT_BASE/final/model.safetensors" ]; then
+        local fsz; fsz=$(stat -c %s "$CKPT_BASE/final/model.safetensors" 2>/dev/null || echo 0)
+        if [ "$fsz" -gt 1073741824 ]; then
+            log "DONE final/ ckpt 完好 (${fsz}B) → 训练已正常收尾，不动作"
+            return 0
+        fi
+    fi
     [ -n "$step" ] || { log "NO-STEP-IN-LOG → 无法判定，不动作"; return 0; }
     if [ "$step" -ge "$ITERS" ]; then
         log "DONE step=$step >= ITERS=$ITERS → 训练已收尾，不动作"
