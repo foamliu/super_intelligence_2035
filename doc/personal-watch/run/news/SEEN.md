@@ -859,3 +859,14 @@
 | 2026-10-20 | 宝马计划明年底前裁撤 8000 个白领岗位（AI 无关 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/450.htm |
 | 2026-10-20 | 马斯克造芯新动作：Terafab 与 10 余家韩国半导体供应商谈判（同主体旧进展 · 仅留档） | IT之家 | 留档(防重) | https://www.ithome.com/1/015/435.htm |
 | 2026-10-20 | 特斯拉本土化再进一步：将接入支付宝车载助手（AI 相关弱 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/468.htm |
+| 2026-10-20 | 小米 MiMo-V2.6-Pro 正式上线 WorkBuddy，支持 1M 超长上下文多智能体分工协作等 | IT之家 | https://www.ithome.com/1/015/533.htm |
+| 2026-10-20 | 宇树科技：人形机器人行业尚处商业化早期，存在估值回归的投资风险 | IT之家 | https://www.ithome.com/1/015/529.htm |
+| 2026-10-20 | 全新央企国家数据集团在雄安新区成立，主责数据资源开发利用、破除「数据孤岛」 | IT之家（据新华社） | https://www.ithome.com/1/015/503.htm |
+| 2026-10-20 | 谷歌云服务在欧洲大面积中断，波及汇丰银行、等多家金融企业 | IT之家（据 neowin） | https://www.ithome.com/1/015/504.htm |
+| 2026-10-20 | 湖南永州开放 34 个 AI 应用场景 打造绿能智算产业高地 | 中新网 | https://www.chinanews.com.cn/cj/2026/10-20/10718121.shtml |
+| 2026-10-20 | 北汽星钽 5X 官宣采用舱内激光雷达，号称首搭华为乾崑智驾 ADS 5 Pro | IT之家（据北京越野官方） | https://www.ithome.com/1/015/547.htm |
+| 2026-10-20 | 网易云音乐鸿蒙版完成主流终端全适配（AI 相关性弱 · 不收） | IT之家 | https://www.ithome.com/1/015/531.htm |
+| 2026-10-20 | Linux Foundation 估计新增 PR 中 25% 为低质量 AI 产物（Phoronix 403 · 无正文可核 · 留档） | HN 转 Phoronix | https://www.phoronix.com/news/Linux-Foundation-25p-AI-Slop |
+| 2026-10-20 | TorchTPU 开源（cloud.google.com 本机不可达 · 无正文可核 · 留档） | HN 转 Google Cloud Blog | https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source |
+| 2026-10-20 | 儿童手表品牌成小学生社交准入门槛（社会话题 · 不收） | IT之家 | https://www.ithome.com/1/015/567.htm |
+| 2026-10-20 | OpenBSD 8.0 正式发布（系统版本更新 · 非 AI · 留档） | IT之家 | https://www.ithome.com/1/015/569.htm |
