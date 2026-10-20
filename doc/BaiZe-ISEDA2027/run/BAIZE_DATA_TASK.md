@@ -7,7 +7,46 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### ▶️ 运维指令 · 2026-10-20 15:5x（✅ 恢复 en_v1_4 数据下载）· 用户直令 · 最高优先 · 覆盖暂停块
+### 🔥 运维指令 · 2026-10-21 04:0x（**MiniCPM5 全量数据完整分词 · 224 核全开**）· 用户直令 · 最高优先
+
+> 用户原话：「那就完整分词啊，交代给 data，CPU核有224个，把已经下载的 MiniCPM5 的数据，完整分词！！」
+> **背景（decay v2 差 20pp 的核心数据侧根因）**：UltraData-Code **411B token 全量仍未分词**，decay 只用了 `anneal_code` 90M + r3 小样本 140M = **0.23B**，导致 **code 被重复 26 个 epoch**；UltraData-Math（303B）同样只有 ~1B 小样本。**这不是配比问题，是"有数据没用"的问题。**
+
+**① 任务：把下列「已下载但未分词」的数据源做完整分词（不做小样本、不切 mix）**
+
+| 数据源 | 路径 | 规模 | 现状 | 目标产物 |
+|:--|:--|--:|:--|:--|
+| **UltraData-Code L3** | `/nas_inference/.../openbmb/UltraData-Code/data/UltraData-Code-L3/` | **56B tok** | ❌ 未分词 | `data/full_ultradata_code_l3/…` |
+| **UltraData-Code L2** | 同上 `L2/` | **355B tok** | ❌ 未分词 | `data/full_ultradata_code_l2/…` |
+| **UltraData-Math L3** | `/nas_inference/.../openbmb/UltraData-Math/data/UltraData-Math-L3/` | **87B tok** | ❌ 未分词 | `data/full_ultradata_math_l3/…` |
+| **UltraData-Math L1** | 同上 `L1/` | **184B tok** | ❌ 未分词 | `data/full_ultradata_math_l1/…` |
+| **Ultra-FineWeb-L3** | `/nas_inference/.../openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa` | **690B tok** | 部分（仅 p5b_l3 20.56B） | `data/full_ufw_l3/…` |
+
+> ⚠️ **优先级**：**Code L3 → Math L3 → Code L2 → UFW-L3 → Math L1**。理由：decay 20B 实验只需 code 1.6B / math 0.8B，**L3 层 56B+87B 足以支撑，且 L3 是最高质量层，decay 本就该用 L3**。先把 L3 两批分完，**20B decay 实验即可解除数据阻塞**。
+
+**② 并发：用满 224 核**
+
+- 现 en_v1_4 全源分词只用了 **32 workers（throttle@32）**，`nproc`=224 ⇒ **绝大部分 CPU 闲置**。
+- 新任务要求：
+  - **按 CPU 核数自动定并发**：`NPROC=$(nproc)`；分词进程 **≤ NPROC × 0.85**（留余量给 I/O 与 en_v1_4 现有 worker），即 **~190 并发**。
+  - 建议先用 **64 并发做 5 分钟测速**（tok/s、MB/s、CPU 利用率、内存），再按线性外推拉到 **160~190**。
+  - `nice -n 10`（不抢 en_v1_4 已有 worker 的交互）。
+  - **内存/IO 是真实瓶颈**：每进程读 parquet 解压需内存，先确认 `free -g` 剩余足够（每并发约 1~2GB），不够就按 `可用内存/2GB` 定并发，**不要盲目拉满导致 OOM**。
+
+**③ 产出规范（必须与现有 decay 脚本兼容）**
+- 输出 **Megatron `.bin` + `.idx`**（int32）到 `data/full_*` 目录，命名 `<src>_train_s{0..N}` 分片（与 `baize_xmodel25_decay_v2.py:472` 的 `sources.append` 格式一致，便于直接改数据源）。
+- tokenizer：**Xmodel-2.5 原生 tokenizer**（vocab 129280，`/nas_train/app.e0031982/models/...`），避免 vocab 不兼容。
+- **入库登记**：每完成一个源，把「源 / 路径 / 实际 token 数 / shard 数 / 耗时」写入 `DATA_LEDGER.md` + `MEMORY_DATA.md`。
+
+**④ 与 en_v1_4 的关系**
+- en_v1_4 下载（PID1875054）+ 全源分词（PID749330）**继续跑，不要 kill**。
+- 新增分词进程**共用机器**，但要 `nice` 降权；若出现 IO 打满导致 en_v1_4 速率跌破 1MB/s，**降低新任务并发**，不要停下载。
+
+**⑤ 回报**
+- 每轮写：`源 / 已完成 shard / 累计 token / 并发数 / tok/s / CPU 与内存占用 / ETA`。
+- **全部 L3 完成后立刻报**（这是 pretrain 20B decay 实验的解锁条件）。
+
+### ▶️ 运维指令 · 2026-10-20 15:5x（✅ 恢复 en_v1_4 数据下载）· 用户直令 · 已执行
 
 > 用户原话：「data: 可以恢复下载了」。
 >

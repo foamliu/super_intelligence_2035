@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 141 -->
+<!-- RUN_ID: 142 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -30,6 +30,43 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
 ---
+## RUN_ID 142 — 🔥 MiniCPM5 全量数据完整分词（224 核全开）· 用户直令
+
+> 用户直令（2026-10-21 04:0x）：「那就完整分词啊，交代给 data，CPU核有224个，把已经下载的 MiniCPM5 的数据，完整分词！！」
+> **根因**：UltraData-Code 411B 全量未分词，decay 只用 0.23B → code 重复 26 epoch → decay v2 CS8 差 20pp。UltraData-Math 同样只有 ~1B 小样本。
+> ✅ **本块为正式动作**：先探资源（核数/内存/磁盘/现有进程），再建输出目录。不 kill en_v1_4 下载与现有分词。
+
+```bash
+set -u
+echo "=== RUN_ID 142 | MiniCPM5 全量分词资源探底 | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "[1] 资源"
+echo "  nproc=$(nproc)"
+free -g | head -3
+df -h /nas_train | tail -1
+echo "  loadavg: $(cat /proc/loadavg)"
+echo "  现有进程:"
+pgrep -af 'fullsource|preprocess_data|resolve.py|hf_transfer' 2>/dev/null | cut -c1-110 | head -8 || echo '  none'
+echo "[2] 待分词源盘点"
+for d in "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3" \
+         "/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3"; do
+  if [ -d "$d" ]; then
+    echo "  --- $d ---"; find "$d" -name '*.parquet' 2>/dev/null | wc -l; du -sh "$d" 2>/dev/null
+  else echo "  MISSING: $d"; fi
+done
+echo "  Code 子目录:"; ls -d /nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/*/ 2>/dev/null | head -8
+echo "  Math 子目录:"; ls -d /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/*/ 2>/dev/null | head -8
+echo "[3] 分词器与脚本"
+ls -d /nas_train/app.e0031982/models/* 2>/dev/null | head -5
+ls -l "$B/run/"*tokenize*.sh 2>/dev/null | head -5
+echo "[4] 建输出目录"
+mkdir -p "$B/data/full_ultradata_code_l3" "$B/data/full_ultradata_math_l3" && echo '  ready'
+echo "=== DONE 142 ==="
+```
+
+> 分词实际启动由 data agent 按 `BAIZE_DATA_TASK.md` 最新令执行：`nproc×0.85` 并发 + `nice -n 10`，先 64 并发测速再拉满；优先级 Code L3 → Math L3。
+
+
 
 ## RUN_ID 141 鈥?鍙娴嬮€燂細92.25 浠ｇ悊鐩磋繛 hf.co 鏄惁淇锛堜慨濂藉垯鍒囨崲涓嬭浇绾挎彁閫燂級
 
