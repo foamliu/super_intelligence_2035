@@ -822,3 +822,14 @@
 | 2026-10-20 | 《崇祯模拟器 Demo》上架 Steam | IT之家（`1/014/977`） | 不收(游戏上架·AI 仅修辞) | https://www.ithome.com/1/014/977.htm |
 | 2026-10-20 | Who Verifies the Agents? / Why AI is not conscious / Profiling the Attack Surface of AI Agent Skills | HN 近 24h | 不收(博客·观点·arXiv preprint) | 不存链接（HN 摘要记录·原链接未留存） |
 | 2026-10-20 | Universal Basic AI（Bloomberg 观点） | HN 近 24h | 不收(观点/行情) | 不存链接（HN 摘要记录·原链接未留存） |
+| 2026-10-20 | N113-1 新石器（Neolix）完成 E 轮近 4 亿美元融资，称今年国内自动驾驶领域最大单笔 | IT之家 | news | https://www.ithome.com/1/015/217.htm |
+| 2026-10-20 | N113-2 奇瑞 CheryMind 垂域基础大模型亮相：公司称「为物理 AI 而生」 | IT之家 | news | https://www.ithome.com/1/015/219.htm |
+| 2026-10-20 | N113-3 英伟达 Vera CPU 拿下 AI 初创 Modal 订单，首次用于托管智能体 | IT之家 | news | https://www.ithome.com/1/015/228.htm |
+| 2026-10-20 | N113-4 苹果收紧 App Store 开发者准则：禁止 AI 生成冒犯性内容、打击过审后变身的脱衣类应用 | IT之家 | news | https://www.ithome.com/1/015/212.htm |
+| 2026-10-20 | N113-5 蚂蚁百灵开源 Ming-3.0 语音系列：TTS / 音频理解与对话 / 语音识别三系列共五款 | IT之家 | news | https://www.ithome.com/1/015/117.htm |
+| 2026-10-20 | N113-6 黄仁勋：AI 不能「急刹车」但要装「安全带」；英伟达五年向英国 AI 安全研究投 2.5 亿美元 | IT之家 | news | https://www.ithome.com/1/015/127.htm |
+| 2026-10-20 | 不收 英特尔向 FCC 申请 AGV 机器人禁令豁免 | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/106.htm |
+| 2026-10-20 | 不收 AI 降低克隆游戏门槛·独立开发者谨慎公开创作内容 | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/126.htm |
+| 2026-10-20 | 不收 微软修复经典 Outlook 的 Copilot 入口 | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/118.htm |
+| 2026-10-20 | 不收 奇瑞紫微芯片首秀（发布会） | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/216.htm |
+| 2026-10-20 | 不收 吉利 Robotaxi 首台工程样车下线 | IT之家 | 不收(非 AI 具体事件/发布会规划) | https://www.ithome.com/1/015/225.htm |
