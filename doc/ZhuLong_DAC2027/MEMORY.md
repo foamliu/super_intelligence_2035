@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟠 **r4″ 待启** | 🆕 **2026-10-20 08:2x 运维令（用户直令）**：r4′ MCP timeout 抬头（巡检 #3=110 且率 ~1.33/min 持续上行，与 r4 旧轮 680 timeout 同型）→ **停 r4′ → 重启 8090 → 换端口 8663/8666/8667/8670 重跑 r4″**（替换 8669 → 8663；⚠️ **8663 系本用户令显式复活**，覆盖 §6「8663 作废」标记，按运维总则以最新令为准）。其余配置不变（fp4/READBACK=none/-p 4/V3自探索ON）。**当前进度**：S1.readback_none (N′) 复测 4/5（r1=78.5% / r2=70.9% / r3=81.5%；r4 旧轮=31.0% INVALID[680 timeout]；r4′ INVALID[110+ 抬头]）；r4″ 待 agent 拉取指令后启动 → r5″ → 5/5 mean±std → full@pro-cloud 5 轮。**整体 75 轮**：B 阶段 5 臂 ✅ / C1 5 臂 ✅ / C2 4 臂 ✅ / S1 2 臂 ✅（采信 legacy）+ readback_binary ✅ + readback_none (N′) 复测中。 |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟠 **r4′ 待 regrade** | 🆕 **2026-10-20 09:0x 运维令（用户直令）**：ops RUN_ID 94 实测 r4′ 已自己收口（PID GONE），MCP timeout=156 **低于**基线 r2 的 235，run_code_calls=930 正常 → **先 regrade r4′ 看 Pass@1，有效则用 r4′ 起 r5′（旧端口），无效才回退 08:2x 换端口方案**（8663/8666/8667/8670 全已确认可达）。08:2x「停 r4′」令作废（r4′ 已不在跑）。**当前进度**：S1.readback_none (N′) 复测 4/5（r1=78.5% / r2=70.9% / r3=81.5%；r4=31.0% INVALID[680 timeout]；r4′ 待 regrade，156 timeout<235 基线）；r4′ regrade → 若有效起 r5′ → 5/5 mean±std → full@pro-cloud 5 轮。 |
 | 旧 legacy 线（S1 保真度 / 组件 / S2 1-shot 探路） | `MEMORY_s1_full.md` · `MEMORY_component_full.md` · `MEMORY_s2_1shot.md` | 只读历史 | ⬜ 均已由合并线接管或作废。**旧 5-run 可复用**：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2；1-shot 探路：`k10` 75.3 / `k3` 69.0 / `k1` 60.8 / `lagged` 84.2（S2）。⚠️ 其 loop 存活存疑（见 §4「接管 legacy 组件线」）。**三行原文已归档** → `daily-memories/2026-10-11.md`。 |
 | **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | `.last_run_id`≥32。⚠️ **「失联」真因 = GitHub/proxy 断（`push FAILED`）而非进程死**；救援 = **借 BaiZe 中继（跑在 2.29）经 `ssh -p 3333` 进 36.15 重启**（先例 83/84/85/86）⇒ 复用细节见 §7 第 18/19 条。 |
 
@@ -171,6 +171,13 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-20（运维经任务书下发：09:0x 先 regrade r4′ 看成绩，再决定是否换端口）** —— 用户决策：ops RUN_ID 94 实测 r4′ 已自己收口（PID GONE），MCP timeout=156 **低于**基线 r2 的 235，run_code_calls=930 正常 → **先 regrade r4′ 看 Pass@1，有效则用 r4′ 不换端口，无效才回退 08:2x 换端口方案**。
+  - **背景转折**：08:2x 令「停 r4′ → 换端口重跑」基于"r4′ 有很多沙盒超时"。但 agent 08:55 那轮 git pull 时机早于 08:50 push **未拉到令**，r4′ 在旧端口 8666/8667/8669/8670 上自己跑完（06:31→09:03，~2.5h）。09:03 ops 探针确认 r4′ 收口 + 156 timeout<235 基线 + 4 新端口（8663/8666/8667/8670）全可达 + 8669 也没坏。
+  - **落地**：在 `run/ZHULONG_TASK.md` 置顶新增 `### 🔄 运维指令 · 2026-10-20 09:0x（先 regrade r4′ 看成绩）`（08:2x 块标「【已被 09:0x 取代·历史·仅 r4′ 无效时回退】」）。判据：r4′ Pass@1≥75% 且 task timeout≤10 且 0 infra/0 exec_err → 有效，用 r4′ 起 r5′（旧端口即可）；否则回退换端口重跑 r4″。⚠️ 判据十三 timeout 指**任务级 task timeout**，非 MCP 60s 客户端超时（r4′ 的 156 次 MCP timeout 不计入）。
+  - ⏭ **已 push**（commit `3a2a18a3`）→ agent 下轮 `git pull`（~09:25）取到 → regrade r4′ → 报成绩。
+
+- **2026-10-20（ops RUN_ID 94 换端口前只读探针：r4′ 已收口 + 4 端口全可达）** —— 09:03:29 实测（host=hfeg0tedaap02）：① r4′ PID 1462342 **GONE**（已收口）；② 8090 PID 1456348 健康；③ r4′ log real_MCP_32001=**156**（<基线 r2 235）、run_code_calls=930、pass_rate_lines=0（未评分）；④ 新端口 8663/8666/8667/8670 **全 OK**（6-11ms，返回 `{"detail":"Not Found"}`=FastAPI 根路径 404，端口活着）；⑤ 旧端口 8669 也 OK（没坏）；⑥ /home 17G free。结论：r4′ 超时在基线范围内，可能成绩正常；8663 可用，换端口方案备用可行。（RUN_ID 93 因 `set -u` 嵌套陷阱 exit=1，已作废。）
 
 - **2026-10-20（运维经任务书下发：停 r4′ → 重启 8090 → 换端口 8663/8666/8667/8670 重跑 r4″）** —— 用户令：「监测到 r4' 有很多沙盒超时。重启，使用下面4个端口：8663,8666,8667,8670」。r4′（PID 1462342·batch `2026_1020_063134`）06:3x 起跑，巡检 #1/#2/#3 显示 real_MCP_32001 由 6→62→110 持续抬头（率 ~1.33/min），与 r4 旧轮 680 timeout 同型降级轨迹，用户判定不可继续。
   - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🔄 运维指令 · 2026-10-20 08:2x（停 r4′ → 重启 8090 → 换端口 8663/8666/8667/8670 重跑 r4″）`（置于 06:3x 块之前，06:3x 块标题加注「【已被 08:2x 取代·历史】」）。指令要点：① 先取证（记 r4′ 当前 timeout 计数）再停；② 停 r4′ 用**显式 PID + cmdline 核对**（避 opencode 误匹配教训）；③ 重启 8090 wrapper；④ MCP 冒烟 5/5 + run_code 端到端秒回；⑤ 用新端口 `8663,8666,8667,8670`（**替换 8669 → 8663**）起 r4″，其余配置同 r1–r3；⑥ 30min 内报 real_MCP_32001 + 4 端口可达性；⑦ r4″ 收口 → r5″ → 5/5 mean±std → full@pro-cloud 5 轮。红线 = 不覆盖 r1/r2/r3/r4/r4′ 产物 / 不动 t0002147 / 不改 .env / 不启 full@pro-cloud / 若换端口后仍大面积超时则停手报 blocker 不盲目三跑。
