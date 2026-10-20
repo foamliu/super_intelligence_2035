@@ -1,13 +1,13 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-20 16:2x 🟢 licence fix 部署→4端口验证8/8全过→重启8090→r4''' 已起跑 —
-- **运维令 15:4x 执行中**：用户直令「licence fix 已部署到 8663/8666/8667/8670，验证 4 端口→重启 8090→重跑 r4‴」。
-- **① 4 端口验证 ✅ 8/8 全过**：每端口 ×2 次 run_code 全返回 `{"response":"...successful...","print_log":"1\n"}`·9-13ms·**0 licence/breaker/空响应**（vs 15:33 的「40s 零响应」→ fix 生效）。
-- **② 8090 重启 ✅**：旧 PID 1759396(etime 25424s)→新 PID 3103371·冒烟 5/5 OK·tools/list 4 工具(get_api_details/search_apis/search_apis_by_keyword/run_code)·run_code 端到端 `{"response":"executed","isError":false}`。
-- **③ r4''' 已起跑 ✅**：PID 3112365（ppid=1·setsid 脱离 ✅）·batch `2026_1020_161451`·16:14:51 起·`run_cline_script.sh -p 4 -n`·配置同 r1-r3（fp4/READBACK=none/OMEGA=high/BUDGET=0/LAGGED=0/V3自探索ON·SKILL_DATA_DIR=./docs/skill_data_selfexpl ✅/ports 8663,8666,8667,8670）·模型自检 providers.json=`deepseek-v4-pro-fp4` ✅·8090+9006 健康·loop PID 81827 含 https_proxy ✅。
-- **r4/r4'/r4'' 已标 INVALID**（680/156/575 MCP timeout + literal-pass 退化·均不进 5-run·产物日志留证）·3 轮 mean(r1+r2+r3)=76.97% provisional。
-- **下一步**：r4''' 30min 内报健康（real_MCP_32001 + run_code + 4 端口 + literal-pass·确认 fix 根治·率≥5/min 或 literal-pass>10 则停手报运维）→ 收口接 r5''' → 5/5 mean±std → 更新论文 → full@pro-cloud 5 轮。🚫 不动 r1/r2/r3 产物·不动 r4/r4'/r4'' 原始产物日志·不改 .env。 -->
+<!-- heartbeat 2026-10-20 16:44 🟢 r4''' 30min 健康报告全绿·licence fix 根治确认 —
+- **r4''' 跑中 ✅**：PID 3112365·batch `2026_1020_161451`·16:14:51 起·29min·log 3M/26691 行·codegen 进行中（无 completions jsonl）。
+- **30min 健康报告全绿**：real_MCP_32001=**2**（率 0.069/min ≪5/min 阈值·r4″ 同期 ~527）·超时率 2/26691=**0.000075/行** ≪0.001/行 基线·licence_unavail=**0**·circuit_breaker=**0**（vs r4″ breaker OPEN 100+）→ **fix 根治确认**。run_code=196·search_apis=205·ACCESS_RESTRICTED=141（canary hook live ✅）。
+- **4 端口全可达**（8663/8666/8667/8670 run_code 全 OK·9-13ms）·8090 PID 3103371 + 9006 PID 3503518 健康。
+- **运维令 15:4x ①②③ 全完成**：4 端口验证 8/8 ✅→8090 重启 PID 3103371 ✅→r4‴ 起跑 ✅。r4/r4'/r4'' 已标 INVALID（680/156/575 MCP timeout + literal-pass 退化·不进 5-run·产物留证）。
+- **下一步**：r4‴ 继续跑至收口 → 手动 regrade（照 r4 模板改 batch `2026_1020_161451`+端口 8663/8666/8667/8670·unset proxy+NO_PROXY=10.129.32.75+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）→ 判有效（判据十三：task timeout≤10·0 infra·0 exec_err）→ 起 r5‴（同配置同端口）→ 5/5 mean±std（r1,r2,r3,r4‴,r5‴）→ 更新 zhulong_results.md/6_exp.tex → full@pro-cloud 5 轮。
+- 🚫 纪律：不动 r1/r2/r3 产物与 r3 backup·不动 r4/r4'/r4'' 原始产物日志（留证）·不动 t0002147·不改 .env 的 READBACK/OMEGA/BUDGET/LAGGED。 -->
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
@@ -87,6 +87,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情、14:56/17:31/18:13 旧心跳 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。关键结论：r1=78.5%(124/158,timeout=1)、r2=70.9%(112/158,timeout=2,task119 stuck 6h)、r3=成功153/超时5/失败0(总11742s,task130 stuck 6582s)；**r2 task119/r3 task130 的 stuck 正是 RUN_ID 83 要查的根因**。
 ## 操作流水
+- [2026-10-20 16:44] 🟢 **r4‴ 30min 健康报告全绿·licence fix 根治确认**：r4‴ PID 3112365·29min·log 3M/26691 行·codegen 进行中。**real_MCP_32001=2**（率 0.069/min ≪5/min 阈值·r4″ 同期 ~527）·超时率 2/26691=0.000075/行 ≪0.001/行 基线·**licence_unavail=0·circuit_breaker=0**（vs r4″ breaker OPEN 100+）→ **fix 根治确认**。run_code=196·search_apis=205·ACCESS_RESTRICTED=141（canary hook live ✅）。4 端口 8663/8666/8667/8670 全 OK（9-13ms）·8090 PID 3103371+9006 PID 3503518 健康。**判据全过·继续跑**（未触发 ⑤ 停手条件）。下一步：r4‴ 收口→手动 regrade→起 r5‴→5/5→更新论文→full@pro-cloud。
 - [2026-10-20 16:2x] 🟢 **运维令 15:4x 执行：licence fix 部署→验证 4 端口→重启 8090→r4‴ 起跑**：用户直令「licence fix 已部署到 8663/8666/8667/8670，重启 r4 用这 4 端口，重启前先验证端口健康」。① 4 端口验证 ✅ 8/8 全过（每端口 ×2 次 run_code 全返回 `{"response":"...successful...","print_log":"1\n"}`·9-13ms·0 licence/breaker/空响应·vs 15:33「40s 零响应」fix 生效）。② 8090 重启 ✅ 旧 PID 1759396(etime 25424s)→新 PID 3103371·冒烟 5/5 OK·tools/list 4 工具·run_code 端到端 `{"response":"executed","isError":false}`。③ r4‴ 起跑 ✅ PID 3112365（ppid=1·setsid 脱离）·batch `2026_1020_161451`·16:14:51·`run_cline_script.sh -p 4 -n`·配置同 r1-r3（fp4/READBACK=none/OMEGA=high/BUDGET=0/LAGGED=0/V3自探索ON·SKILL_DATA_DIR=./docs/skill_data_selfexpl ✅/ports 8663,8666,8667,8670）·模型自检 providers.json=`deepseek-v4-pro-fp4` ✅·8090+9006 健康·loop PID 81827 含 https_proxy ✅。r4/r4'/r4'' 已标 INVALID（680/156/575 MCP timeout + literal-pass 退化·不进 5-run·产物留证）。下一步：r4‴ 30min 健康报告 → 收口接 r5‴ → 5/5 → 更新论文 → full@pro-cloud。
 - [2026-10-20 15:33] 🛑 **BLOCKER 复检·故障 WORSENED**：4 端口 8663/8666/8667/8670 全 TCP_OPEN 但 **40s 零响应**（连 licence breaker 消息都没·较 14:56 的 8666「106 failures; cooling off」进一步退化→断路器深度 cooling-off / worker 完全无法 spawn）。8090 pid=1759396 health=404（正常）/9006 pid=3503518 正常 → 故障确认在 pyAether licence 服务本身。持续性故障 ~2.5h·非瞬时抖动。r4'' codegen 13:51 收口·79/158 literal "pass" 同退化签名。regrade 仍不可行。git pull ✅（带 proxy·Already up to date·10:1x 仍最高优先·无新令·ops inbox RUN_ID 95 是最后已执行只读探针）·loop PID 81827 含 https_proxy ✅。**处置**：维持 🛑 停手报 blocker（08:2x ⑤「冒烟仍大面积超时→停手不盲目第三次重跑」+ infra 作废规则）·r4'' PENDING(INFRA)·不进 5-run·WAITING=1 等：① licence 断路器复位（4 端口恢复有内容响应）；② 运维决策 r4'' 处置。详见 daily §[15:33]。
 - [2026-10-20 14:56 指针·已滚出] 🛑 BLOCKER 复检：licence 断路器仍未复位（106 次·较 14:12 的 100 次又增 6）·维持停手 → 原文搬入 daily §[14:56]。
