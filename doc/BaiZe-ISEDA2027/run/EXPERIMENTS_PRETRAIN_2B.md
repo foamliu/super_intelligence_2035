@@ -427,12 +427,12 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 ---
 
-## Decay v2 final（80B tokens · Xmodel-2.5 decay v2）14 集 lm-eval 评测
+## Decay v2 final（71.2B tokens · Xmodel-2.5 decay v2）14 集 lm-eval 评测
 
-> 评测时间：2026-10-20 15:03–18:15（.29, 8×H100） · 模型：`xmodel25_baize_80b_decay/final`（2.22B, Mamba2-hybrid）  
-> 评测脚本：`run/baize_xmodel_eval.sh` · 口径与 P-8 完全一致（CS8 zero-shot + CX6 default n-shot, trust_remote_code=True, sdpa）  
+> 评测时间：2026-10-20 15:03–18:15（.29, 8×H100） · 模型：`xmodel25_baize_80b_decay/final`（**≈1.3B Dense Transformer / XmodelForCausalLM**，与 Xmodel-2.5 同架构）  
+> 评测脚本：`run/baize_xmodel_eval.sh` · 口径 14 集 = CS8 zero-shot + CX6 default n-shot, trust_remote_code=True, sdpa  
 > 结果文件：`eval_decay_v2_final/eval_summary.txt` + `p8_eval_summary.json`  
-> 中文报告：`reports/report_pretrain_decay_v2_final_eval_zh.html`
+> 中文报告：`reports/report_pretrain_decay_v2_final_eval_zh.html`（第二版，对照口径已更正：主对照 Xmodel-2.5 final）
 
 ### CS8（Common Sense 8，zero-shot）
 
@@ -460,15 +460,15 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 | mbpp | 3 | 0.0000 | 0.00% |
 | **CX6 Avg（6/6）** | | **0.0621** | **6.21%** |
 
-### 对比总览
+### 对比总览（主对照 = Xmodel-2.5 final，同起点 step_532000 / 同 71.2B decay / 相近配比）
 
 | 模型 | Tokens | Params | CS8 | CX6 | 架构 |
 |:--|--:|--:|--:|--:|:--|
-| **decay v2 final** | ~80B | 2.22B | **44.97%** | **6.21%** | Mamba2-hybrid |
-| P-8 final | 44.4B | 2.22B | 49.21% | 6.81% | Mamba2-hybrid |
-| Xmodel-2.5 step_6000 | 79.2B | 1.3B | 50.20% | — | Dense Transformer |
-| Xmodel-2.5 final | 1.4T | 1.3B | 65.40% | 32.90% | Dense Transformer |
-| Xmodel-2 s1/10K | 39.3B | 1.2B | 46.65% | 8.49% | Dense Transformer |
-| Xmodel-2 final | 1.5T | 1.2B | 64.82% | 30.04% | Dense Transformer |
+| Xmodel-2.5 final（主对照·同起点） | 1.4T | 1.3B | 65.40% | 32.90% | Dense Transformer |
+| **decay v2 final** | 71.2B | ≈1.3B | **44.97%** | **6.21%** | Dense Transformer（同架构） |
+| **Δ（decay v2 − final）** | — | — | **-20.43pp** | **-26.69pp** | — |
+| step_532000（起点基线） | 1.41T | 1.3B | ⏸待跑 | ⏸待跑 | Dense Transformer |
+| P-8 final（旁注·架构/参数量不同） | 44.4B | 2.22B | 49.21% | 6.81% | Mamba2-hybrid |
+| Xmodel-2.5 step_6000（旁注） | 79.2B | 1.3B | 50.20% | — | Dense Transformer |
 
-> **关键观察**：decay v2 final CS8=44.97% 低于同架构 P-8（49.21%，-4.24pp）尽管 tokens ~1.8×；CX6=6.21% 略低于 P-8（-0.60pp），其中 mmlu 反超（+7.94pp）但 bbh 大降（-10.38pp）。与同 ~80B tokens 的 Xmodel-2.5 step_6000（1.3B Dense）比 CS8 低 5.23pp。差异为多因素混合（架构/数据/训练轨迹），不做单一归因。
+> **关键观察（口径已更正）**：decay v2 从 Xmodel-2.5 stable 末点 step_532000（1.41T）起步 decay 71.2B，其唯一公平主对照是 **Xmodel-2.5 final（CS8 65.40% / CX6 32.90%）**；实测 **CS8 -20.43pp / CX6 -26.69pp，14 集全面大幅落后** →「decay 段没练出来」（甚至可能把起点模型练退化）。失败归因见报告 §4：①双移位 bug（train 2-step / eval 1-step，代码级确认）②peak LR 1.67e-3 过高+warmup100 过短 ③code ≈26 epochs 过采样 ④step 0 loss=11.72 起点异常 ⑤step_532000 基线缺失（⏸关键判定实验，待用户批准补跑）。**P-8（2.22B Mamba2-hybrid / 从头 44.4B）与 decay v2 架构/参数量均不同，不可作归因依据**。
