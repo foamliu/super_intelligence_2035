@@ -519,7 +519,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 ⇒ 双移位 bug 是 step0 loss 异常的直接原因，修复后起点 loss 回归 ~1.7（与 stable 末点一致）。L1 loss 轨迹：1.75(step0)→1.33(step20)→1.10(step100)→1.03(step500)→0.95(step1000)→0.88(step1670)，稳步下降无 spike。
 
-### L2 进展（截至 2026-10-22 04:5x — 🟢 训练中）
+### L2 进展（截至 2026-10-22 04:4x — 🟢 训练中）
 
 | 项目 | 值 |
 |:--|:--|
