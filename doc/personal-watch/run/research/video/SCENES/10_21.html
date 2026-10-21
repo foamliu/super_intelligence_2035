@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-21 · 让 AI 造一个「真能玩」的游戏世界</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1f3a93 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(31,58,147,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1f3a93; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1f3a93; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#1f3a93; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1f3a93; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-21</h1>
+  <div class="sub">今日 TOP-1：<b>让 AI 造一个「真能玩」的游戏世界</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>410 字</b></div>
+  <div class="meta">
+    <span>📄 Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</span>
+    <span>🆔 arXiv:2610.27999</span>
+    <span>🏷 cs.CV（交叉 cs.GR）· 科普口径</span>
+    <span>👥 Jihai Zhang 等 18 位</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕<b>只使用 arXiv 摘要可支撑的内容</b>；「480p / 60 FPS / 112ms / 83 FPS / 18.2 GiB / 67 / 58 FPS」为<b>作者自报、本线未复现</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与项目页素材。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>一句话钩子</b>：「<b>AI 生成的游戏，画面很真，可你一按跳跃就穿帮。</b>」—— 玩过游戏的人都懂「判定 / 手感」是什么，一句话就能建立「画得像 ≠ 能玩」的悬念。</li>
+    <li><b>有传播力</b>：① <b>反直觉</b> —— 大家以为瓶颈是画面，这篇说瓶颈是<b>规则由谁算</b>；② <b>画面感</b> —— 粗糙低模「一秒变高清」的同机位对照，天然适合分屏；③ <b>好记的骨架</b> —— 引擎管规则、模型管画面、agent 管改关卡，三句话讲完。</li>
+    <li><b>可讲清 / 画面好做</b>：核心只有三件事 —— <b>拆开（规则 vs 画面）</b>、<b>蒸馏（四帧、一两步出图）</b>、<b>延迟（112ms 手感）</b>；全部扁平自绘（低模线框、引擎齿轮、调色盘、秒表、显存条），<b>无需论文原图</b>。</li>
+    <li><b>边界清楚（片中说）</b>：只演示<b>射击与驾驶</b>两类游戏，<b>不是</b>任意开放世界；60 FPS 是<b>单卡 RTX5090 上的作者自报</b>，不含网络与输入设备；渲染器依赖引擎给出的低模代理，真实感上限受几何约束。<b>无第三方复现</b>。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Jihai Zhang, Runjia Qian, Kaiqin Kong, Biao Jiang, Puyi Wang, Siru Chen, Tianle Li, Guanjie Chen, Junyi Wu, Chubin Chen, Yuanhang Li, Kaichen Huang, Haobo Zhang, Yangguang Li, Wei Yu, Guibin Chen, Yu Cheng, Yahui Zhou（共 18 位；机构见原文）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-20T10:41:38Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom）· v1 · <code>comment</code>：「Project page, videos, code and models: https://matrix-game-v4-0.github.io/page/」</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.CV</code>（交叉 <code>cs.GR</code>）· 关键词：世界模型 / 视频生成 / 实时渲染 / 游戏引擎 / 蒸馏 / 低延迟推理</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.27999">https://arxiv.org/abs/2610.27999</a>（放视频简介）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-21 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 公告批次 <code>2026-10-20</code> · 经 <code>id_list</code> 复核</div></div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 固定五段配比 · 合计 120s）</h2>
+<table>
+  <tr><th style="width:52px">镜号</th><th style="width:104px">时间</th><th style="width:78px">段落</th><th style="width:30%">口播（中文字幕同步）</th><th>画面（全部自绘 / 自生成）</th><th style="width:17%">屏幕字幕</th><th style="width:15%">声音</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">AI 生成游戏画面很真，可你一按跳跃就穿帮。今天这篇，让 AI 做出了真能玩的世界。</td>
+    <td>黑底，一段<b>自绘的低模线框</b>角色站在横杆前；按下「跳」后，角色<b>穿过</b>横杆（线框穿模、闪红），画面卡住。随后线框被「上色」成细节画面，同一次跳跃<b>干净越过</b>横杆，落地扬起尘土。</td>
+    <td>画面很真<br><b>但一按就穿帮</b><br>（小字：画得像 ≠ 能玩）</td>
+    <td>按键「咔」；穿模「嗡——」错误音；重来后落地「咚」；上色「唰」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">问题在于：视频模型只会画下一帧，它并不知道你有没有跳过横杆、子弹有没有打中。世界状态、游戏规则、操作延迟，这三件事它一样都保证不了。</td>
+    <td>三块<b>自绘卡片</b>依次翻出并被红叉划掉：<b>世界状态</b>（一张地图，怪物位置每次都变）、<b>游戏规则</b>（判定框与碰撞盒错位）、<b>操作延迟</b>（秒表指针一路飙到 300ms+）。底部一条时间轴：输入 → 生成 → 显示，中间那段<b>越拉越长</b>。</td>
+    <td>它只会「画」<br>状态 · 规则 · 延迟<br><b>一样都保证不了</b></td>
+    <td>翻卡「啪·啪·啪」；红叉「嗤」；秒表「嗒嗒嗒」加速；时间轴拉伸「吱——」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">他们的办法是把两件事拆开。规则交给一个轻量游戏引擎：它记住世界状态，算出你这一跳有没有过杆。画面交给视频模型：引擎先渲染粗糙的低多边形场景，模型再把它画细。中间还有一个多模态编程 agent，你把想法说给它，它写成游戏代码和场景描述。为了跑得快，渲染器先在成对的低模和高清视频上训练，再蒸馏成每次只出四帧、只去一两步噪声的生成器。</td>
+    <td>画面一分为二：左「<b>引擎</b>」——自绘齿轮组咬合，输出一张<b>低模线框场景</b>，旁边状态表跳出「角色 y=1.2 / 已过杆 ✔」；右「<b>渲染器</b>」——同一机位，线框被逐块<b>上色、加光影</b>，变成细节画面。中间浮出<b>编程 agent</b>：一句玩家的话（气泡）→ 代码行 → 新的场景描述，回流到右侧作为条件。底部一条<b>蒸馏流水线</b>：大模型多步去噪 → 收窄成「<b>4 帧 / 1–2 步</b>」的小方块，标「因果生成」。</td>
+    <td>① 规则归<b>引擎</b><br>② 画面归<b>模型</b><br>③ agent 管「改关卡」<br>（小字：4 帧 / 1–2 步去噪）</td>
+    <td>齿轮「咔嗒咔嗒」；上色「唰——」；代码敲击「哒哒」；流水线收窄「咻」；蒸馏完成「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果是：单张 RTX5090，480p、60 帧，按键到画面 112 毫秒。单步生成 83 帧，显存 18.2G。小一号的卡也有 67 和 58 帧。代码、权重、低模素材，全部开源。</td>
+    <td><b>自绘仪表盘</b>：左边一块<b>显卡</b>图标，标「RTX5090 ×1」；中间三根<b>指针表</b>依次摆到 <b>480p / 60 FPS / 112ms</b>；下方<b>显存条</b>涨到 <b>18.2 GiB</b> 停住；再切出两行小表：<b>5080 → 67 FPS</b>、<b>5070Ti → 58 FPS</b>。右下角三枚<b>开源图标</b>：代码 / 权重 / 低模素材（标「作者声明」）。</td>
+    <td><b>单卡 5090</b><br>480p · 60 FPS · <b>112ms</b><br>（小字：83 FPS 稳态 / 18.2 GiB / 作者自报 · 未复现）</td>
+    <td>指针摆动「嘀·嘀·嘀」；显存条「嗡」；切换小表「嗒嗒」；开源图标落位「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">所以关键不是画面更真，而是规则归规则、画面归画面。这是研究演示，不是能上线的大作；但什么该算、什么该画，这条路已经清楚了。</td>
+    <td>镜头拉远：左「引擎」与右「渲染器」两块面板<b>并排定格</b>，中间一条<b>清晰的分界线</b>亮起；线上浮出三行边界小字：「射击 / 驾驶两类演示」「单卡自报，未复现」「低模代理决定真实感上限」。末尾淡出，浮出<b>英文原题</b>与 <b>arXiv:2610.27999</b>。</td>
+    <td>规则归规则<br><b>画面归画面</b><br>（小字：研究演示 ≠ 上线大作）</td>
+    <td>分界线亮起「叮」；拉远「呼——」；三行小字依次「嗒」；BGM 收尾。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 5 镜分配 = <b>39 + 66 + 164 + 80 + 61 = 410 字</b>（按 200 字/分 ≈ <b>2 分 03 秒</b>，落在 120s 档；若按 210 字/分则约 1 分 57 秒）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。<b>若实测超时</b>：优先精压镜 3 的蒸馏那句（「先在成对的低模和高清视频上训练」可压成「先用成对的高低清视频训练」），以及镜 2 的「三百毫秒」比喻，约可省 20 字。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（低模线框与横杆 / 穿模红叉 / 三张问题卡片 / 秒表与时间轴 / 引擎齿轮与状态表 / 上色分屏 / 编程 agent 气泡与代码行 / 蒸馏流水线 / 三根指针表与显存条 / 开源图标 / 分界线）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 项目页演示视频 / 代码仓库截图。</li>
+    <li><b>风格建议</b>：深蓝主色（<code>#1f3a93</code> → <code>#1f6feb</code>）+ 冷灰科技底色；<b>左侧「引擎」用冷蓝线框</b>（精确、硬边）、<b>右侧「渲染器」用暖色实拍感</b>（柔和、有光影），形成<b>「算得准 vs 画得像」</b>的视觉对立。核心信息置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 195–200 字/分；「<b>穿帮</b>」「<b>拆开</b>」「<b>112 毫秒</b>」「<b>全部开源</b>」四处<b>放慢并加重</b>；镜 5 的「<b>这是研究演示，不是能上线的大作</b>」语气<b>平稳、不要念成敷衍的免责声明</b>。</li>
+    <li><b>字幕</b>：镜 4 的关键数字一律配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>术语友好化</b>：<b>world state</b> → 「世界记住的东西（你在哪、怪在哪）」；<b>game engine</b> → 「负责算规则的那部分程序」；<b>low-poly proxy</b> → 「粗糙的低模替身」；<b>distillation</b> → 「把大流程压成小步骤」；<b>causal generator</b> → 「只看过去几帧、按顺序往下画」。首次出现给一句白话字幕。</li>
+    <li><b>节奏</b>：镜 1 的「穿帮 → 越过」对照要在 <b>4 秒内</b>完成一次反差；镜 3 是全片信息密度最高处，<b>每讲一件事就换一次画面</b>（齿轮 → 上色 → agent → 蒸馏），避免一张图讲 20 秒。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「AI 自己做出了 3A 大作 / 游戏公司要失业 / 已商用 / 可上线」；「480p / 60 FPS / 112ms / 83 FPS / 18.2 GiB / 67 / 58 FPS」严格照摘要措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>指标不曲解（本片最关键）</b>：60 FPS 是<b>渲染稳态吞吐</b>、112ms 是<b>按键到显示</b>的端到端延迟、83 FPS 是<b>单步生成稳态</b>——三者量纲不同，🚫 <b>不得</b>混剪成「延迟只有 12ms」「帧率 143」之类的加法。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用项目页 demo 录屏、不用代码仓库截图。</li>
+    <li>✅ <b>不编造数据</b>：仅使用摘要可支撑的表述 —— 「持久世界状态 + 可执行游戏规则 + 低延迟交互」「引擎执行与视觉生成分离」「多模态编程 agent 把玩家想法变成代码与场景描述」「低模-高保真配对训练 + 蒸馏成 4 帧、1–2 步的因果生成器」「单卡 RTX5090 480p 60FPS、112ms」「83FPS / 18.2GiB」「5080 67FPS、5070Ti 58FPS」「开源代码、权重、低模素材」；<b>不虚构</b>游戏销量、玩家测试人数、与商业引擎的对比。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 取代游戏引擎 / 不需要美术了」等原文未支持的引申；镜 5 直接补一句「<b>这是研究演示，不是能上线的大作</b>」，并说明只演示了射击与驾驶两类。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（Jihai Zhang 等 18 位，完整名单见页面论文信息）<b>不臆测机构归属</b>；<code>comment</code> 为项目页声明，页面<b>只写「作者声明」</b>。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-21</b> ｜ 文件 <code>research/video/SCENES/10_21.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</i>（Jihai Zhang 等 18 位）｜ <a href="https://arxiv.org/abs/2610.27999">arXiv:2610.27999</a> ｜ 首次提交 2026-10-20 ｜ 分类 <code>cs.CV</code>（交叉 <code>cs.GR</code>）｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 4 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-21.html">research/daily/2026-10-21.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_20.html">10_20.html</a></div>
+</footer>
+</div>
+</body>
+</html>

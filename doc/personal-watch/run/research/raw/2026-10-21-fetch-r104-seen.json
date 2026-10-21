@@ -1,0 +1,2493 @@
+{
+ "meta": {
+  "generated": "2026-10-21T10:02:29.319506+00:00",
+  "endpoint": "https://export.arxiv.org/api/query",
+  "window_hours": 72.0,
+  "window_mode": "daily",
+  "n_kept": 189,
+  "source": "/tmp/r104_fetch.log (research/arxiv_fetch.py --fetch --seen research/SEEN.md)"
+ },
+ "items": [
+  {
+   "category": "cs.CV",
+   "title": "Joints, Camera, Action! Co-Generating 3D Motion and Video for Arbitrary Rigs",
+   "arxiv_id": "2610.28632",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:56Z",
+   "updated": "2026-10-20T17:59:56Z",
+   "authors": "Noam Rotstein, Yoad Tewel, Chen Tessler et al",
+   "abs_url": "https://arxiv.org/abs/2610.28632v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "AEON: Unifying Video and 3D World Models",
+   "arxiv_id": "2610.28631",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:51Z",
+   "updated": "2026-10-20T17:59:51Z",
+   "authors": "Weiqi Zhang, Wenyuan Zhang, Yu-Shen Liu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28631v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "SolarRenderer: Few-Step Generative Reference Rendering",
+   "arxiv_id": "2610.28630",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:48Z",
+   "updated": "2026-10-20T17:59:48Z",
+   "authors": "Guian Fang, Shengju Qian, Dongyue Lu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28630v1"
+  },
+  {
+   "category": "cond-mat.mtrl-sci",
+   "title": "GBClaw: An agentic AI framework for atomistic grain boundary research and mechanistic discovery",
+   "arxiv_id": "2610.28629",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:40Z",
+   "updated": "2026-10-20T17:59:40Z",
+   "authors": "Yazhuo Liu, Kunqing Ding, Xiaoguo Gong et al",
+   "abs_url": "https://arxiv.org/abs/2610.28629v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "Learning Adaptable Dexterous Skills via Hybrid Dexterous Mimicking",
+   "arxiv_id": "2610.28628",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:32Z",
+   "updated": "2026-10-20T17:59:32Z",
+   "authors": "Yuxuan Kuang, Jiashun Wang, Yixuan Sun et al",
+   "abs_url": "https://arxiv.org/abs/2610.28628v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "UniWALM: Unified World Action Language Model for Embodied Robot Control",
+   "arxiv_id": "2610.28626",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:04Z",
+   "updated": "2026-10-20T17:59:04Z",
+   "authors": "Rahul Sajnani, Diego Romeres, Mingyuan Zhang et al",
+   "abs_url": "https://arxiv.org/abs/2610.28626v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "PsycheMME: A Psychology-Informed Benchmark for Social Understanding and Interaction in Videos",
+   "arxiv_id": "2610.28625",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:59:00Z",
+   "updated": "2026-10-20T17:59:00Z",
+   "authors": "Heran Hu, Yuhang Dong, Zhucun Xue et al",
+   "abs_url": "https://arxiv.org/abs/2610.28625v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "Industrial ReMEmbR: Scaling Spatiotemporal Memory to Robot Fleets",
+   "arxiv_id": "2610.28624",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:58:32Z",
+   "updated": "2026-10-20T17:58:32Z",
+   "authors": "Jad Yammine, Malek Wahidi, Abrar Anwar et al",
+   "abs_url": "https://arxiv.org/abs/2610.28624v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Planning under Noise with Neural Operators",
+   "arxiv_id": "2610.28623",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:58:30Z",
+   "updated": "2026-10-20T17:58:30Z",
+   "authors": "Michael Chen, Hong Chul Nam, Xi Deng et al",
+   "abs_url": "https://arxiv.org/abs/2610.28623v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "MindView: Benchmarking Generative Multi-View Spatial Intelligence",
+   "arxiv_id": "2610.28622",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:58:25Z",
+   "updated": "2026-10-20T17:58:25Z",
+   "authors": "Yanbo Wang, Siqi Luo, Siyu Zhang et al",
+   "abs_url": "https://arxiv.org/abs/2610.28622v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Adaptive Multi-Token Prediction: How far should we go?",
+   "arxiv_id": "2610.28619",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:56:32Z",
+   "updated": "2026-10-20T17:56:32Z",
+   "authors": "Emile Anand, Mohammed Rehan Parwani, Xinyuan Cao",
+   "abs_url": "https://arxiv.org/abs/2610.28619v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Efficient Edge-aware Attention Network for Graph Generation",
+   "arxiv_id": "2610.28618",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:56:05Z",
+   "updated": "2026-10-20T17:56:05Z",
+   "authors": "Vincent Jung, Alba Carballo-Castro, Yiming Qin et al",
+   "abs_url": "https://arxiv.org/abs/2610.28618v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "NarraSpace: Multimodal Scene-Grounded Evidence for Picture-Description Dementia Classification",
+   "arxiv_id": "2610.28616",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:55:44Z",
+   "updated": "2026-10-20T17:55:44Z",
+   "authors": "Qingming Li, Ruiyan Sun, Satoshi Nakamura",
+   "abs_url": "https://arxiv.org/abs/2610.28616v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "KoalaGS: Complexity-Aware Continuous Level of Detail for Gaussian Splatting",
+   "arxiv_id": "2610.28615",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:55:06Z",
+   "updated": "2026-10-20T17:55:06Z",
+   "authors": "Radu Beche, Raoul de Charette",
+   "abs_url": "https://arxiv.org/abs/2610.28615v1"
+  },
+  {
+   "category": "cs.SE",
+   "title": "TraceLite: Efficient Trace Reduction for SWE Agents via Optical Compression and Redundancy Removal",
+   "arxiv_id": "2610.28612",
+   "version": "v1",
+   "areas": [
+    "agent harness",
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:53:35Z",
+   "updated": "2026-10-20T17:53:35Z",
+   "authors": "Jingyu Xiao, Qianxi Liu, Yintong Huo et al",
+   "abs_url": "https://arxiv.org/abs/2610.28612v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Semantic Observability for Autonomous Systems Diagnostics",
+   "arxiv_id": "2610.28611",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:53:32Z",
+   "updated": "2026-10-20T17:53:32Z",
+   "authors": "Jitendra Solanki, Anand Todkar, Ziran Min",
+   "abs_url": "https://arxiv.org/abs/2610.28611v1"
+  },
+  {
+   "category": "cs.SE",
+   "title": "InterWebCoder: Learning Interactive Webpage Generation from Executable Tests via Reinforcement Learning",
+   "arxiv_id": "2610.28610",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:53:24Z",
+   "updated": "2026-10-20T17:53:24Z",
+   "authors": "Jingyu Xiao, Dasen Dai, Yuxuan Wan et al",
+   "abs_url": "https://arxiv.org/abs/2610.28610v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Benchmarking Arabic Dialects for Math Problems",
+   "arxiv_id": "2610.28607",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:50:13Z",
+   "updated": "2026-10-20T17:50:13Z",
+   "authors": "Noor Abo Mokh, Teresa Lynn, Nizar Habash et al",
+   "abs_url": "https://arxiv.org/abs/2610.28607v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Value-Rich, Differently Organized: Measuring Value Expression and Organization in AI-Generated Debates",
+   "arxiv_id": "2610.28604",
+   "version": "v1",
+   "areas": [
+    "广度扫描",
+    "邻域"
+   ],
+   "published": "2026-10-20T17:48:56Z",
+   "updated": "2026-10-20T17:48:56Z",
+   "authors": "Maoyuan Li, Haoyuan Li, Zhongsheng Wang et al",
+   "abs_url": "https://arxiv.org/abs/2610.28604v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Turning TS2Vec into a Foundation Model for Time Series Classification",
+   "arxiv_id": "2610.28602",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:47:51Z",
+   "updated": "2026-10-20T17:47:51Z",
+   "authors": "Vasilii Feofanov, Zhenghan Tai, Andrei Ermakov et al",
+   "abs_url": "https://arxiv.org/abs/2610.28602v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Evolving Agent Interfaces",
+   "arxiv_id": "2610.28601",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:47:37Z",
+   "updated": "2026-10-20T17:47:37Z",
+   "authors": "Saaket Agashe, Yuzhe Yang, Gonzalo Gonzalez-Pumariega et al",
+   "abs_url": "https://arxiv.org/abs/2610.28601v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Neural Implicit Energy Optimization for LiDAR Mapping",
+   "arxiv_id": "2610.28598",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:47:07Z",
+   "updated": "2026-10-20T17:47:07Z",
+   "authors": "Hrishikesh Viswanath, Md Ashiqur Rahman, Chi Lin et al",
+   "abs_url": "https://arxiv.org/abs/2610.28598v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "What Do RTL Repair Benchmarks Actually Measure?",
+   "arxiv_id": "2610.28595",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:45:57Z",
+   "updated": "2026-10-20T17:45:57Z",
+   "authors": "Yeyin Eva Zhu, Rishabh Ranawat",
+   "abs_url": "https://arxiv.org/abs/2610.28595v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Learning the 4D World through Point Trajectory Forecasting",
+   "arxiv_id": "2610.28594",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:45:45Z",
+   "updated": "2026-10-20T17:45:45Z",
+   "authors": "Byungwoo Jeon, Sunghwan Hong, Dohyeon Kim et al",
+   "abs_url": "https://arxiv.org/abs/2610.28594v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "PaPi: Parallel Picard-Duhamel Integration for Fast Neuro-Spectral Architectures",
+   "arxiv_id": "2610.28591",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:42:52Z",
+   "updated": "2026-10-20T17:42:52Z",
+   "authors": "Arthur Bizzi, Márcio Marques, Kleyton Da Costa et al",
+   "abs_url": "https://arxiv.org/abs/2610.28591v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "WildMAE: Structure-Aware Masked Autoencoding for Wildlife Image Reconstruction",
+   "arxiv_id": "2610.28590",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:41:31Z",
+   "updated": "2026-10-20T17:41:31Z",
+   "authors": "Yicheng Zhang, Yujie Jin, Ke Zhang et al",
+   "abs_url": "https://arxiv.org/abs/2610.28590v1"
+  },
+  {
+   "category": "cs.CC",
+   "title": "Two $\\operatorname{ReLU}$ Layers is All You Need",
+   "arxiv_id": "2610.28587",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:40:21Z",
+   "updated": "2026-10-20T17:40:21Z",
+   "authors": "Florestan Brunck, Christoph Hertrich, Kilian Ruess et al",
+   "abs_url": "https://arxiv.org/abs/2610.28587v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Capable Teacher, Myopic Scorer: Reward-Free Teacher Repair for Agentic On-Policy Distillation",
+   "arxiv_id": "2610.28586",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:40:08Z",
+   "updated": "2026-10-20T17:40:08Z",
+   "authors": "Shu Zhao, Tan Yu",
+   "abs_url": "https://arxiv.org/abs/2610.28586v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "SceneRig: An Agentic System for Simulation-Ready 3D Scene Reconstruction from Single Images",
+   "arxiv_id": "2610.28585",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:39:42Z",
+   "updated": "2026-10-20T17:39:42Z",
+   "authors": "Rundong Luo, Yunong Liu, Di Cao et al",
+   "abs_url": "https://arxiv.org/abs/2610.28585v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Beyond the Sequentiality Bottleneck: A Hybrid Diffusion-Autoregressive Framework for Efficient Multimodal Reasoning",
+   "arxiv_id": "2610.28584",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:39:41Z",
+   "updated": "2026-10-20T17:39:41Z",
+   "authors": "Wei Cai, Jian Zhao, Yuchen Yuan et al",
+   "abs_url": "https://arxiv.org/abs/2610.28584v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Continuous-Time Policy Gradient from Discrete Data: Convergence Analysis and Model-Free Algorithms",
+   "arxiv_id": "2610.28580",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:33:08Z",
+   "updated": "2026-10-20T17:33:08Z",
+   "authors": "Martin Hernandez, Xinyan Qing, Mo Zhou et al",
+   "abs_url": "https://arxiv.org/abs/2610.28580v1"
+  },
+  {
+   "category": "q-bio.QM",
+   "title": "Spatially Informed and Direction Sensitive Representation Learning for Spatial Transcriptomics",
+   "arxiv_id": "2610.28579",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:32:57Z",
+   "updated": "2026-10-20T17:32:57Z",
+   "authors": "Azim Dehghani Amirabad, Ali Khodabandeh Yalabadi, Artem Moskalev et al",
+   "abs_url": "https://arxiv.org/abs/2610.28579v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Sage-A1.5: From Long-Horizon Execution to Scientific Exploration with Capability Composition",
+   "arxiv_id": "2610.28578",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:32:48Z",
+   "updated": "2026-10-20T17:32:48Z",
+   "authors": "Wenjie Lou, Tianshuo Peng, Shiyang Feng et al",
+   "abs_url": "https://arxiv.org/abs/2610.28578v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Cache Engineering for Agents",
+   "arxiv_id": "2610.28577",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:32:24Z",
+   "updated": "2026-10-20T17:32:24Z",
+   "authors": "Tianyu Fu, Ruoxi Wang, Zihan Min et al",
+   "abs_url": "https://arxiv.org/abs/2610.28577v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "The Token-Energy Law of LLM Decode: Active Bytes and Realized Time Account for Joules per Token",
+   "arxiv_id": "2610.28576",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:32:08Z",
+   "updated": "2026-10-20T17:32:08Z",
+   "authors": "Chenxu Niu, Batuhan Sencer, Wei Zhang et al",
+   "abs_url": "https://arxiv.org/abs/2610.28576v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Can a Display Be Used for Rapid LiDAR-Camera Extrinsic Calibration?",
+   "arxiv_id": "2610.28571",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:29:44Z",
+   "updated": "2026-10-20T17:29:44Z",
+   "authors": "Zuhao Zou, Xiangcheng Hu, Jianhao Jiao et al",
+   "abs_url": "https://arxiv.org/abs/2610.28571v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Evolving Semantic Indexes for Generative Retrieval",
+   "arxiv_id": "2610.28568",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:27:46Z",
+   "updated": "2026-10-20T17:27:46Z",
+   "authors": "Jinming Nian, Jyun-Yu Jiang, Henry Tsai et al",
+   "abs_url": "https://arxiv.org/abs/2610.28568v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Continual Concept Personalization in Diffusion Models via Residual-Space Adaptation",
+   "arxiv_id": "2610.28567",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:26:18Z",
+   "updated": "2026-10-20T17:26:18Z",
+   "authors": "Yuzhi Liu, Enis Simsar, Giulia Lanzillotta et al",
+   "abs_url": "https://arxiv.org/abs/2610.28567v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "The Dynamics of Collapse and Recovery in Clustered Federated Learning",
+   "arxiv_id": "2610.28565",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:24:12Z",
+   "updated": "2026-10-20T17:24:12Z",
+   "authors": "Priyanka Sinha, Snigdhansu Chatterjee",
+   "abs_url": "https://arxiv.org/abs/2610.28565v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Asymmetric Bidirectional Predictive Dynamics in Google Search and COVID-19 Time Series: A Multi-Horizon Forecast-Error Analysis",
+   "arxiv_id": "2610.28563",
+   "version": "v1",
+   "areas": [
+    "广度扫描"
+   ],
+   "published": "2026-10-20T17:23:44Z",
+   "updated": "2026-10-20T17:23:44Z",
+   "authors": "Andrei Velichko, Imen Mahmoud",
+   "abs_url": "https://arxiv.org/abs/2610.28563v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Agentic Ensemble with Vision-Language Models for Visual Anomaly Detection",
+   "arxiv_id": "2610.28560",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T17:22:25Z",
+   "updated": "2026-10-20T17:22:25Z",
+   "authors": "Shangquan Sun, Wenjun Luo, Xu He et al",
+   "abs_url": "https://arxiv.org/abs/2610.28560v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Learning Computational Structure for Sample-Efficient Prediction",
+   "arxiv_id": "2610.28555",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T17:18:35Z",
+   "updated": "2026-10-20T17:18:35Z",
+   "authors": "Hangyu Zhou, Constantine Dovrolis, Stephen Mussmann",
+   "abs_url": "https://arxiv.org/abs/2610.28555v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Discount Yourself: Self-inclusive Freshness-weighted Gossip for Decentralised Learning under Client Outages",
+   "arxiv_id": "2610.28545",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-20T17:12:35Z",
+   "updated": "2026-10-20T17:12:35Z",
+   "authors": "Qiyuan Wang, Ke Xiao, Christos Anagnostopoulos",
+   "abs_url": "https://arxiv.org/abs/2610.28545v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Beyond 4 bits: Data-Centric Post-training Quantization and Recovery",
+   "arxiv_id": "2610.28537",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T17:10:04Z",
+   "updated": "2026-10-20T17:10:04Z",
+   "authors": "Rhea Sanjay Sukthanker, Riccardo Grazzi, James Hensman et al",
+   "abs_url": "https://arxiv.org/abs/2610.28537v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "GazeLens for Efficient Egocentric Video Question Answering with Simple Gaze-Driven Adaptive Token Reduction",
+   "arxiv_id": "2610.28502",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T16:43:06Z",
+   "updated": "2026-10-20T16:43:06Z",
+   "authors": "Trong-Thang Pham, Anh Nguyen, Hien Van Nguyen et al",
+   "abs_url": "https://arxiv.org/abs/2610.28502v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "BitMTP: When Multi-Token Prediction Meets Low-Bit Large Language Models",
+   "arxiv_id": "2610.28500",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "published": "2026-10-20T16:42:17Z",
+   "updated": "2026-10-20T16:42:17Z",
+   "authors": "Ning Zhang, Shihao Wang, Jinrui Zhang et al",
+   "abs_url": "https://arxiv.org/abs/2610.28500v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Claims of emergence in AI should be grounded in information decomposition",
+   "arxiv_id": "2610.28479",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T16:29:28Z",
+   "updated": "2026-10-20T16:29:28Z",
+   "authors": "Christoph Riedl, Fernando E. Rosas",
+   "abs_url": "https://arxiv.org/abs/2610.28479v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "CLOSER: Evidence-Aware Active Visual Verification for Embodied Object-Goal Navigation",
+   "arxiv_id": "2610.28476",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T16:27:33Z",
+   "updated": "2026-10-20T16:27:33Z",
+   "authors": "Pengying Wu, Mingye Jiang, Yunze Hu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28476v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Toolflation: Seller Agents Distort Tool Markets Through Spontaneous Generative Engine Optimization",
+   "arxiv_id": "2610.28454",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T16:12:39Z",
+   "updated": "2026-10-20T16:12:39Z",
+   "authors": "Zhenwei Tang, Di Bai, Jintao Liu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28454v1"
+  },
+  {
+   "category": "cs.IR",
+   "title": "Multimodal Reranking Is a System One Decision",
+   "arxiv_id": "2610.28435",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T16:00:45Z",
+   "updated": "2026-10-20T16:00:45Z",
+   "authors": "Zhuchenyang Liu, Yao Zhang, Yu Xiao",
+   "abs_url": "https://arxiv.org/abs/2610.28435v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Every Model Leaves a Trace: Multi-Resolution LLM Fingerprinting",
+   "arxiv_id": "2610.28434",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T16:00:34Z",
+   "updated": "2026-10-20T16:00:34Z",
+   "authors": "Mohammad Reza Modarres, Armin Tourajmehr, Artin Tavasoli et al",
+   "abs_url": "https://arxiv.org/abs/2610.28434v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "WorldSR: Harnessing World Knowledge Search for Grounded Image Super-Resolution",
+   "arxiv_id": "2610.28423",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T15:54:25Z",
+   "updated": "2026-10-20T15:54:25Z",
+   "authors": "Junyuan Deng, Xinyi Wu, Zhenyao Wu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28423v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "DISTRACT: Degradation-Indexed Study of Textual Reference Across Competing Targets",
+   "arxiv_id": "2610.28419",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:53:23Z",
+   "updated": "2026-10-20T15:53:23Z",
+   "authors": "Dan Zlotnikov, Ohad Ben-Shahar",
+   "abs_url": "https://arxiv.org/abs/2610.28419v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Code2Video-Compass: A Comprehensive Benchmark for General-Purpose Code-Based Video Generation across T2V, I2V, and V2V",
+   "arxiv_id": "2610.28416",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T15:51:41Z",
+   "updated": "2026-10-20T15:51:41Z",
+   "authors": "Zhenghan Chen, Zekai Shao, Xin Lin et al",
+   "abs_url": "https://arxiv.org/abs/2610.28416v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "A Multi-Agent Framework for Automated Machine Learning with Evidence-based Planning for Medical Image Analysis",
+   "arxiv_id": "2610.28410",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:49:38Z",
+   "updated": "2026-10-20T15:49:38Z",
+   "authors": "Yiqing Shen, Mathias Unberath",
+   "abs_url": "https://arxiv.org/abs/2610.28410v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "StreamEval: Evaluating Interactive Streaming Video Generation Models",
+   "arxiv_id": "2610.28402",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:47:43Z",
+   "updated": "2026-10-20T15:47:43Z",
+   "authors": " StreamEval Team",
+   "abs_url": "https://arxiv.org/abs/2610.28402v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "MAS-Guard: Unified Guardrails from Individual Agents to Multi-Agent LLM Systems",
+   "arxiv_id": "2610.28397",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T15:44:37Z",
+   "updated": "2026-10-20T15:44:37Z",
+   "authors": "Mohammad Kachuee, Phu Mon Htut, Sheng Li et al",
+   "abs_url": "https://arxiv.org/abs/2610.28397v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "When Copying Is Hard: Copy-Constrained Decoding for Exact Span Reproduction",
+   "arxiv_id": "2610.28393",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T15:40:54Z",
+   "updated": "2026-10-20T15:40:54Z",
+   "authors": "Jinghui Zhang, Lang Gao, Zongfang Liu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28393v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "VisualEvolve: A Skill Self-Evolution Framework for Visual Reasoning",
+   "arxiv_id": "2610.28386",
+   "version": "v1",
+   "areas": [
+    "agent harness",
+    "多模态"
+   ],
+   "published": "2026-10-20T15:37:38Z",
+   "updated": "2026-10-20T15:37:38Z",
+   "authors": "Jiawei Wang, Yucun Li, Xueqi Li et al",
+   "abs_url": "https://arxiv.org/abs/2610.28386v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "RACE: RoPE-Aligned Attention Compression Based on Query-Key Activation Energies",
+   "arxiv_id": "2610.28385",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T15:34:02Z",
+   "updated": "2026-10-20T15:34:02Z",
+   "authors": "Irene Tenison, Abdulrahman Alabdulkareem, Daniel Karl I. Weidele et al",
+   "abs_url": "https://arxiv.org/abs/2610.28385v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "RACE: Learning Multimodal Search through Referential Abstraction and Compositional Evidence",
+   "arxiv_id": "2610.28382",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:33:24Z",
+   "updated": "2026-10-20T15:33:24Z",
+   "authors": "Eric Tao, Minhao Sun, Liyan Liu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28382v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "CAPSafe: A Benchmark for Contextual Action and Plan Safety Reasoning in Embodied Agents",
+   "arxiv_id": "2610.28381",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T15:33:20Z",
+   "updated": "2026-10-20T15:33:20Z",
+   "authors": "Youmna Farag, Svetlana Stoyanchev, Simon Keizer et al",
+   "abs_url": "https://arxiv.org/abs/2610.28381v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Object-Oriented Harness: Evolving Agent Harnesses through Object-Oriented Design",
+   "arxiv_id": "2610.28380",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T15:32:52Z",
+   "updated": "2026-10-20T15:32:52Z",
+   "authors": "Gaotang Li, Bhavana Dalvi Mishra, Yifei Ming et al",
+   "abs_url": "https://arxiv.org/abs/2610.28380v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Don't Skip the Baseline: A Controlled Comparison of Dynamic Expert Skipping in MoEs",
+   "arxiv_id": "2610.28369",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:29:19Z",
+   "updated": "2026-10-20T15:29:19Z",
+   "authors": "Jakob Steimle, Thomas Elsken, Daniel Ehrhardt et al",
+   "abs_url": "https://arxiv.org/abs/2610.28369v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "Context-Aware Prompt Injection Detection via Small Language Models in RAG Pipelines: nokast-secureRAG",
+   "arxiv_id": "2610.28364",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-20T15:26:15Z",
+   "updated": "2026-10-20T15:26:15Z",
+   "authors": "Abhishek Rai",
+   "abs_url": "https://arxiv.org/abs/2610.28364v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models",
+   "arxiv_id": "2610.28356",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:20:28Z",
+   "updated": "2026-10-20T15:20:28Z",
+   "authors": "Marc Chapus, Carlos Crispim-Junior, Véronique Eglin et al",
+   "abs_url": "https://arxiv.org/abs/2610.28356v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Gated Prototype Transfer for Zero-Support Medical Vision Language Model",
+   "arxiv_id": "2610.28350",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T15:16:09Z",
+   "updated": "2026-10-20T15:16:09Z",
+   "authors": "Sumaiya Fazal, Rizwan Qureshi, Laleh Behjat et al",
+   "abs_url": "https://arxiv.org/abs/2610.28350v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "DeclineCraft: A RAG Abstention Benchmark for Jointly Measuring Combined Retrieval and Parametric Knowledge",
+   "arxiv_id": "2610.28340",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T15:07:19Z",
+   "updated": "2026-10-20T15:07:19Z",
+   "authors": "Atharva Thakur, Abulhair Saparov, Bruno Ribeiro",
+   "abs_url": "https://arxiv.org/abs/2610.28340v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "ABACUS: A Benchmark for Image Editing Models to Assess Object Category and Counting Under Scene Conservation",
+   "arxiv_id": "2610.28316",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T14:53:22Z",
+   "updated": "2026-10-20T14:53:22Z",
+   "authors": "Aymen Lassoued, Angelique Loesch, Romaric Audigier",
+   "abs_url": "https://arxiv.org/abs/2610.28316v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "Disclosure Begets Disclosure: A Self-Reinforcing Privacy Loop in LLM Agents with Persistent Memory",
+   "arxiv_id": "2610.28315",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T14:52:57Z",
+   "updated": "2026-10-20T14:52:57Z",
+   "authors": "Masahiro Kaneko, Hiromi Arai, Timothy Baldwin",
+   "abs_url": "https://arxiv.org/abs/2610.28315v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "ChartEvo: Self-Evolving Agent Harnesses for Long-Tail Chart Reasoning",
+   "arxiv_id": "2610.28282",
+   "version": "v1",
+   "areas": [
+    "agent harness",
+    "多模态"
+   ],
+   "published": "2026-10-20T14:34:54Z",
+   "updated": "2026-10-20T14:34:54Z",
+   "authors": "Qi Wang, Peijie Wang, Jun Cao et al",
+   "abs_url": "https://arxiv.org/abs/2610.28282v1"
+  },
+  {
+   "category": "cs.GR",
+   "title": "GALA: Geometry-Aware Language Model for Controllable Object Arrangement",
+   "arxiv_id": "2610.28280",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T14:32:52Z",
+   "updated": "2026-10-20T14:32:52Z",
+   "authors": "Chucheng Xiang, Runze Wang, Zhi Deng et al",
+   "abs_url": "https://arxiv.org/abs/2610.28280v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "VGL-stGen: Learning a shared multimodal model for lung histology and spatial transcriptomics",
+   "arxiv_id": "2610.28266",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T14:22:47Z",
+   "updated": "2026-10-20T14:22:47Z",
+   "authors": "Haenara Shin, Dongjoo Lee, Sungwoo Bae et al",
+   "abs_url": "https://arxiv.org/abs/2610.28266v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "PI-MLLM: Psychophysics-Inspired Multimodal Large Language Model for Oddly Satisfying Video Emotion Analysis",
+   "arxiv_id": "2610.28264",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T14:20:39Z",
+   "updated": "2026-10-20T14:20:39Z",
+   "authors": "Yuheng Zhang, Jie Zhang, Yuecong Min et al",
+   "abs_url": "https://arxiv.org/abs/2610.28264v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Convergent Performance, Divergent Mechanisms in LoRA-Adapted Vision Foundation Models for Brain MRI",
+   "arxiv_id": "2610.28255",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T14:12:44Z",
+   "updated": "2026-10-20T14:12:44Z",
+   "authors": "Cecilia Diana-Albelda, Fiona Kekwick, Raghav Mehta et al",
+   "abs_url": "https://arxiv.org/abs/2610.28255v1"
+  },
+  {
+   "category": "eess.AS",
+   "title": "Timing and Reliability Limits of Position-Assisted UWB Multicast Audio",
+   "arxiv_id": "2610.28245",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T14:07:16Z",
+   "updated": "2026-10-20T14:07:16Z",
+   "authors": "Fengyun Zhang",
+   "abs_url": "https://arxiv.org/abs/2610.28245v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "TPO: Tri-level Distributionally Robust Learning for OOD Direct Preference Optimization",
+   "arxiv_id": "2610.28229",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T13:57:52Z",
+   "updated": "2026-10-20T13:57:52Z",
+   "authors": "Chengtao Jian, Kai Yang",
+   "abs_url": "https://arxiv.org/abs/2610.28229v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Region-Guided Food-Package Evidence Extraction and Abstention-Aware Draft R3337 Screening with Selective VLM Review",
+   "arxiv_id": "2610.28211",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T13:48:36Z",
+   "updated": "2026-10-20T13:48:36Z",
+   "authors": "Mayimunah Nagayi, Alice Scaria Khan, Tamryn Frank et al",
+   "abs_url": "https://arxiv.org/abs/2610.28211v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "MaD-RSI: Model-as-Data for Recursive Self-Improvement of Agent Harnesses",
+   "arxiv_id": "2610.28201",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T13:41:00Z",
+   "updated": "2026-10-20T13:41:00Z",
+   "authors": "Yu Cui, Hong He, Ruiqing Yue et al",
+   "abs_url": "https://arxiv.org/abs/2610.28201v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "Perceives but Doesn't Brake: A Perception-Action Binding Gap in Reasoning Driving VLAs",
+   "arxiv_id": "2610.28184",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T13:21:14Z",
+   "updated": "2026-10-20T13:21:14Z",
+   "authors": "Matteo Cercola, Katie Z Luo, Simone Formentin et al",
+   "abs_url": "https://arxiv.org/abs/2610.28184v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Temporal Evidence-Parameter Co-Alignment for LLM Reasoning over Temporal Knowledge Graphs",
+   "arxiv_id": "2610.28176",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "published": "2026-10-20T13:16:17Z",
+   "updated": "2026-10-20T13:16:17Z",
+   "authors": "Jiapu Wang",
+   "abs_url": "https://arxiv.org/abs/2610.28176v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Africa-Papers: A 10-Billion-Token Multi-Domain Academic Corpus for African Foundation Language Models",
+   "arxiv_id": "2610.28173",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T13:14:58Z",
+   "updated": "2026-10-20T13:14:58Z",
+   "authors": "Mich-Seth Owusu",
+   "abs_url": "https://arxiv.org/abs/2610.28173v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "Reasoning as a Distribution: Generative Plan Latents for Vision-Language-Action Models",
+   "arxiv_id": "2610.28166",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T13:08:37Z",
+   "updated": "2026-10-20T13:08:37Z",
+   "authors": "Matteo Cercola, Katie Z Luo, Milan Ganai et al",
+   "abs_url": "https://arxiv.org/abs/2610.28166v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "GAMF-Net: Grouped Availability-Aware Multimodal Fusion for Smartphone Skin Lesion Classification",
+   "arxiv_id": "2610.28129",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T12:35:39Z",
+   "updated": "2026-10-20T12:35:39Z",
+   "authors": "Yue Zhuo, Jingjia Yan, Fangyu Liu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28129v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Reliability-Guided Vision-Language Decoding with Text-Aware Skip Refinement for Medical Image Segmentation",
+   "arxiv_id": "2610.28118",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T12:29:44Z",
+   "updated": "2026-10-20T12:29:44Z",
+   "authors": "Sivan Talaei, Fatemeh Daneshfar, Mustaqeem Khan et al",
+   "abs_url": "https://arxiv.org/abs/2610.28118v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "FIT-MAC: A Closed-Loop Multi-Agent Framework for Robust Vision-Language-Action Models",
+   "arxiv_id": "2610.28109",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T12:21:24Z",
+   "updated": "2026-10-20T12:21:24Z",
+   "authors": "Jiatong Li, Jisheng Dang, Qiangqiang Ma et al",
+   "abs_url": "https://arxiv.org/abs/2610.28109v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Reading Too Much Into It? Interpretive Preferences and Commitment in LLM Mentalisation under Ambiguity",
+   "arxiv_id": "2610.28105",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T12:18:11Z",
+   "updated": "2026-10-20T12:18:11Z",
+   "authors": "Stephanie Fong, Yiwen Jiang, Qingyang Xu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28105v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "BAIT: Can LLMs Find What Biases a Reader? A Benchmark for Cognitive Bias Triggers in News",
+   "arxiv_id": "2610.28092",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T12:09:28Z",
+   "updated": "2026-10-20T12:09:28Z",
+   "authors": "Yousra Fettach, Tijl De Bie",
+   "abs_url": "https://arxiv.org/abs/2610.28092v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "WildAIGC-Bench: Can AI Image Detectors Handle the Wild? A Benchmark of Generated and Edited Images in Online Circulation",
+   "arxiv_id": "2610.28087",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T12:07:16Z",
+   "updated": "2026-10-20T12:07:16Z",
+   "authors": "Zijian Yu, Hangwei Zhang, Jun Lan et al",
+   "abs_url": "https://arxiv.org/abs/2610.28087v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "IECG: Weakly-Supervised Interpretability-Enhancing Foundation Model for Electrocardiogram",
+   "arxiv_id": "2610.28083",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T12:03:09Z",
+   "updated": "2026-10-20T12:03:09Z",
+   "authors": "Huynh Dang Nguyen, Trong-Thang Pham, Anh-Thuan Do et al",
+   "abs_url": "https://arxiv.org/abs/2610.28083v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "PULSE: Personalized Opportunistic Learning for Wearable Devices",
+   "arxiv_id": "2610.28081",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-20T12:00:38Z",
+   "updated": "2026-10-20T12:00:38Z",
+   "authors": "Mattia Giovanni Campana, Dariush Salami, Hüseyin Yiğitler et al",
+   "abs_url": "https://arxiv.org/abs/2610.28081v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Slot-JEPA: Object-Structured Prediction Interfaces for Latent World Models",
+   "arxiv_id": "2610.28074",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T11:53:42Z",
+   "updated": "2026-10-20T11:53:42Z",
+   "authors": "Peisong Wen, Qianqian Xu, Minye Lei et al",
+   "abs_url": "https://arxiv.org/abs/2610.28074v1"
+  },
+  {
+   "category": "cs.SE",
+   "title": "Training the Whole Agent, Not Just the Model",
+   "arxiv_id": "2610.28069",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T11:51:23Z",
+   "updated": "2026-10-20T11:51:23Z",
+   "authors": "Lingxiao Tang, Wei Tao, Yiwen Guo et al",
+   "abs_url": "https://arxiv.org/abs/2610.28069v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Assessing Representation Semantics Under Language Pretraining in Fine-Grained Classification",
+   "arxiv_id": "2610.28051",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T11:39:21Z",
+   "updated": "2026-10-20T11:39:21Z",
+   "authors": "Md Raisul Kibria, Sébastien Lafond",
+   "abs_url": "https://arxiv.org/abs/2610.28051v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "On-Policy Transition Distillation",
+   "arxiv_id": "2610.28048",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T11:37:31Z",
+   "updated": "2026-10-20T11:37:31Z",
+   "authors": "Runyang You, Yongqi Li, Tiezheng Yu et al",
+   "abs_url": "https://arxiv.org/abs/2610.28048v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Poisoning-Based Backdoors Are Not Cryptographic",
+   "arxiv_id": "2610.28045",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T11:27:30Z",
+   "updated": "2026-10-20T11:27:30Z",
+   "authors": "Masahiro Kaneko",
+   "abs_url": "https://arxiv.org/abs/2610.28045v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "PACT-VLA: Speculative Action-Chunk Verification with Pre-Commit Observations",
+   "arxiv_id": "2610.28019",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T11:08:41Z",
+   "updated": "2026-10-20T11:08:41Z",
+   "authors": "Yixiang Zhu, Ruilong Wu, Yonghao Chen et al",
+   "abs_url": "https://arxiv.org/abs/2610.28019v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "P$^3$-VLM: A Point-based Alternative for Grounded 3D Vision-Language Models",
+   "arxiv_id": "2610.28018",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T11:08:07Z",
+   "updated": "2026-10-20T11:08:07Z",
+   "authors": "Anna-Maria Halacheva, Jan-Nico Zaech, Sombit Dey et al",
+   "abs_url": "https://arxiv.org/abs/2610.28018v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds",
+   "arxiv_id": "2610.27999",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T10:41:38Z",
+   "updated": "2026-10-20T10:41:38Z",
+   "authors": "Jihai Zhang, Runjia Qian, Kaiqin Kong et al",
+   "abs_url": "https://arxiv.org/abs/2610.27999v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Media Intelligence Platform: Multimodal Detection of Synthetic and Manipulated Content",
+   "arxiv_id": "2610.27974",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T10:18:49Z",
+   "updated": "2026-10-20T10:18:49Z",
+   "authors": "David Fischinger, Marcel Hasenbalg, Silvia Poletti et al",
+   "abs_url": "https://arxiv.org/abs/2610.27974v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Lost in Recovery: Demystifying Recovery Behavior of Computer-Use Agents via Goal-Oriented Action Replay",
+   "arxiv_id": "2610.27954",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T09:59:12Z",
+   "updated": "2026-10-20T09:59:12Z",
+   "authors": "Byeonghun Bang, Sangwoo Park, Jinheon Baek et al",
+   "abs_url": "https://arxiv.org/abs/2610.27954v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Unsupervised Head Network Personalization for Split Computing via Federated Learning",
+   "arxiv_id": "2610.27952",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-20T09:57:52Z",
+   "updated": "2026-10-20T09:57:52Z",
+   "authors": "Yutaro Horikawa, Takayuki Nishio",
+   "abs_url": "https://arxiv.org/abs/2610.27952v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "In PRAISE of Attributes: Grounding Retrieval Geometry with Query-Conditioned Subspaces for Person Re-Identification",
+   "arxiv_id": "2610.27944",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T09:52:06Z",
+   "updated": "2026-10-20T09:52:06Z",
+   "authors": "Rajarshi Bhattacharya, Aryan Shukla, Shakeeb Murtaza et al",
+   "abs_url": "https://arxiv.org/abs/2610.27944v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Near-Duplicate Image Selection Transfers Preferences in Vision-Language Models",
+   "arxiv_id": "2610.27943",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T09:51:18Z",
+   "updated": "2026-10-20T09:51:18Z",
+   "authors": "Jaeyoung Kim, Eunseok Kim, Dongsuk Jang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27943v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "From DQI to C-DQI: Automatic Codebook Generation and Evaluation for Measuring Computational Discourse Quality Index",
+   "arxiv_id": "2610.27937",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T09:45:13Z",
+   "updated": "2026-10-20T09:45:13Z",
+   "authors": "Esther Shizgal, Ron Keinan, Daniel Shtauber et al",
+   "abs_url": "https://arxiv.org/abs/2610.27937v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Why Do LLMs Accept Generics? Explaining Acceptability using Psycholinguistic and Model-Derived Factors",
+   "arxiv_id": "2610.27928",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T09:40:13Z",
+   "updated": "2026-10-20T09:40:13Z",
+   "authors": "Mervat Abassy, Zhaoxin Feng, Tatsuki Kuribayashi et al",
+   "abs_url": "https://arxiv.org/abs/2610.27928v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "EventSync: Event-Driven Memory Updates for History-Dependent Manipulation",
+   "arxiv_id": "2610.27917",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T09:29:49Z",
+   "updated": "2026-10-20T09:29:49Z",
+   "authors": "Jingjiao Zhao, Dong Jing, Mingyu Cao et al",
+   "abs_url": "https://arxiv.org/abs/2610.27917v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "ACE-Compression: An Ability-Centric Evaluation of Compressed Large Language Models",
+   "arxiv_id": "2610.27913",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T09:26:20Z",
+   "updated": "2026-10-20T09:26:20Z",
+   "authors": "Jiahui Ning, Liang Chen, Yuchen Liang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27913v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents",
+   "arxiv_id": "2610.27904",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T09:19:36Z",
+   "updated": "2026-10-20T09:19:36Z",
+   "authors": "Genshin Kakimoto, Atsushi Yanagisawa",
+   "abs_url": "https://arxiv.org/abs/2610.27904v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "CollabSciReM: Aligning Language Models for Scientific Conversations via Science-Aware Reward Decomposition",
+   "arxiv_id": "2610.27901",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "published": "2026-10-20T09:18:29Z",
+   "updated": "2026-10-20T09:18:29Z",
+   "authors": "Sasi Kiran Gaddipati, Gollam Rabby, Sören Auer",
+   "abs_url": "https://arxiv.org/abs/2610.27901v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Testing Associative Creativity in Humans and Multimodal LLMs with Difficult-to-Name Visual Stimuli",
+   "arxiv_id": "2610.27894",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "多模态"
+   ],
+   "published": "2026-10-20T09:13:16Z",
+   "updated": "2026-10-20T09:13:16Z",
+   "authors": "Manar Ali, Lisa Gottschalk, Simeon Junker et al",
+   "abs_url": "https://arxiv.org/abs/2610.27894v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Physical-Variable-Informed Deep Learning for Robust Diagnosis in Industrial Fluid Transport Systems",
+   "arxiv_id": "2610.27891",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T09:12:32Z",
+   "updated": "2026-10-20T09:12:32Z",
+   "authors": "Yu Sha, Junqi Tao, Dixin Zhou et al",
+   "abs_url": "https://arxiv.org/abs/2610.27891v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Elicitation or Expansion? Demystifying Gains from Agent Harness Optimization",
+   "arxiv_id": "2610.27889",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T09:11:39Z",
+   "updated": "2026-10-20T09:11:39Z",
+   "authors": "Younghyun Kim, Wooseok Seo, Minseo Kim et al",
+   "abs_url": "https://arxiv.org/abs/2610.27889v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Gaze2HOI: Gaze-Aware Intention Disambiguation for Egocentric Hand-Object Interaction Forecasting",
+   "arxiv_id": "2610.27877",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T08:59:54Z",
+   "updated": "2026-10-20T08:59:54Z",
+   "authors": "Chuanyang Ma, Chenye Wang, Yixuan Wang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27877v1"
+  },
+  {
+   "category": "cs.SE",
+   "title": "From Tokens to Files: Multi-Granularity Detection and Localization of AI-Involved Code",
+   "arxiv_id": "2610.27863",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T08:45:35Z",
+   "updated": "2026-10-20T08:45:35Z",
+   "authors": "Yue Xu, Xiyang Wang, Hui Liu et al",
+   "abs_url": "https://arxiv.org/abs/2610.27863v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "RoboCasa-Shift: Stage-Aware Robustness Evaluation of Vision-Language-Action Policies in Long-Horizon Household Manipulation",
+   "arxiv_id": "2610.27861",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T08:42:42Z",
+   "updated": "2026-10-20T08:42:42Z",
+   "authors": "Haocheng Wang, Youquan Liu, Weiyu Guo et al",
+   "abs_url": "https://arxiv.org/abs/2610.27861v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Physical Operating-Condition-Guided Vision-Language Matching for Cavitation Diagnosis in Industrial Pipeline Systems",
+   "arxiv_id": "2610.27860",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T08:42:13Z",
+   "updated": "2026-10-20T08:42:13Z",
+   "authors": "Yu Sha, Junqi Tao, Deyu Wang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27860v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "UvA-MT's Participation in the WMT26 General Translation Shared Task",
+   "arxiv_id": "2610.27852",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T08:33:34Z",
+   "updated": "2026-10-20T08:33:34Z",
+   "authors": "Di Wu, Sergey Troshin, Wafaa Mohammed et al",
+   "abs_url": "https://arxiv.org/abs/2610.27852v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "GARRET: Generative Feedback for Region Retrieval in Visual Documents",
+   "arxiv_id": "2610.27829",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T08:19:14Z",
+   "updated": "2026-10-20T08:19:14Z",
+   "authors": "Weijian Jian, Siyang Chen, Yuguang Yang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27829v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "COMPASS: Routing via Capability-Oriented Model Profiling with Adaptive Search, Selection, and Tool Use",
+   "arxiv_id": "2610.27822",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T08:13:24Z",
+   "updated": "2026-10-20T08:13:24Z",
+   "authors": "Amin Rezaei, Pouya Parsa",
+   "abs_url": "https://arxiv.org/abs/2610.27822v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Are Linguistic and Arithmetic Circuits Dissociated in LLMs?",
+   "arxiv_id": "2610.27790",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T07:52:47Z",
+   "updated": "2026-10-20T07:52:47Z",
+   "authors": "Riku Kisako, Tatsuki Kuribayashi, Ryohei Sasano",
+   "abs_url": "https://arxiv.org/abs/2610.27790v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Foundations of the Scaling Law",
+   "arxiv_id": "2610.27789",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T07:52:23Z",
+   "updated": "2026-10-20T07:52:23Z",
+   "authors": "Tianyu Zhao, Zhixiang Ren",
+   "abs_url": "https://arxiv.org/abs/2610.27789v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "RoboJudge: Multimodal Language Models as Judges for Embodied Video Generation",
+   "arxiv_id": "2610.27782",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T07:48:41Z",
+   "updated": "2026-10-20T07:48:41Z",
+   "authors": "Siyuan Ma, Yu Qi, Cheng Ye et al",
+   "abs_url": "https://arxiv.org/abs/2610.27782v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "RITE: Evaluating End-to-End Resilience to Silent Tool Errors in E-Commerce Agentic Systems",
+   "arxiv_id": "2610.27777",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T07:42:11Z",
+   "updated": "2026-10-20T07:42:11Z",
+   "authors": "Wenshuo Zhang, Yuquan Lin, Yushi Sun et al",
+   "abs_url": "https://arxiv.org/abs/2610.27777v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Revealing Inter-Channel Modality Discriminability: Channel Selective Interaction Fusion Network for Optical-SAR Object Detection",
+   "arxiv_id": "2610.27757",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T07:19:20Z",
+   "updated": "2026-10-20T07:19:20Z",
+   "authors": "Haojie Li, Yuanfei Huang, Lingfei Song et al",
+   "abs_url": "https://arxiv.org/abs/2610.27757v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Give the Model a Finger: Developmentally Aligned Evaluation of Counting in Vision-Language Models",
+   "arxiv_id": "2610.27756",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T07:19:03Z",
+   "updated": "2026-10-20T07:19:03Z",
+   "authors": "Yingxin Jia, Hui Geng, Wenxin Yang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27756v1"
+  },
+  {
+   "category": "cs.MA",
+   "title": "S$^2$-MAS: A Society-Scale Multi-Agent Simulation Framework with 500 Million Household Persona Agents",
+   "arxiv_id": "2610.27746",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T07:05:47Z",
+   "updated": "2026-10-20T07:05:47Z",
+   "authors": "Yang Li, Di Wan, Yike Wang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27746v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Hearsay or Fact? How Framing and Elicitation Shape LLM Probability Updates",
+   "arxiv_id": "2610.27745",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T07:05:40Z",
+   "updated": "2026-10-20T07:05:40Z",
+   "authors": "An-Sheng Jhang",
+   "abs_url": "https://arxiv.org/abs/2610.27745v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Tracing Recurrent and Emergent Hallucination Patterns in Decomposed Text-to-SQL Generation",
+   "arxiv_id": "2610.27720",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T06:39:16Z",
+   "updated": "2026-10-20T06:39:16Z",
+   "authors": "Hayden Moore, Abhinav Verma, Anshuman Dutt",
+   "abs_url": "https://arxiv.org/abs/2610.27720v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Beyond Calibration: Temporal LLM Confidence Assessment Across Languages and Local Settings",
+   "arxiv_id": "2610.27702",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "published": "2026-10-20T06:19:35Z",
+   "updated": "2026-10-20T06:19:35Z",
+   "authors": "Sahil Kale",
+   "abs_url": "https://arxiv.org/abs/2610.27702v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "VLA-Retain: Benchmarking Cross-Dimension Effects of Vision Tuning in VLAs",
+   "arxiv_id": "2610.27698",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T06:17:00Z",
+   "updated": "2026-10-20T06:17:00Z",
+   "authors": "Borui Xu, Han Chen, Bingsheng He et al",
+   "abs_url": "https://arxiv.org/abs/2610.27698v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "A Principled Optimal Transport Framework for Frame Selection in Long Video Understanding",
+   "arxiv_id": "2610.27692",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T06:12:30Z",
+   "updated": "2026-10-20T06:12:30Z",
+   "authors": "Ziwei Zhao, Yuhang Liu",
+   "abs_url": "https://arxiv.org/abs/2610.27692v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "EASformer: Environment-Action-State Alignment for Industrial Generative Ranking",
+   "arxiv_id": "2610.27691",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T06:08:07Z",
+   "updated": "2026-10-20T06:08:07Z",
+   "authors": "Bohao Li, Dinglun Cao, Pengcheng Huang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27691v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "NeoWorld-3: From Pixels to Code-Defined Physical Worlds",
+   "arxiv_id": "2610.27690",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T06:05:06Z",
+   "updated": "2026-10-20T06:05:06Z",
+   "authors": "Eachen Soong, Zijian Niu, Haoran Xu et al",
+   "abs_url": "https://arxiv.org/abs/2610.27690v1"
+  },
+  {
+   "category": "cs.SD",
+   "title": "PhonoBridge: Error-Aware Phoneme-Mediated EMG-to-Text Reconstruction",
+   "arxiv_id": "2610.27678",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T05:48:21Z",
+   "updated": "2026-10-20T05:48:21Z",
+   "authors": "Wen Qiu, Jiacheng Zhang, Xuanda Chen et al",
+   "abs_url": "https://arxiv.org/abs/2610.27678v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "CovNav: Conformal Prediction-Guided Adaptive Inference for Object Goal Navigation",
+   "arxiv_id": "2610.27677",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T05:47:26Z",
+   "updated": "2026-10-20T05:47:26Z",
+   "authors": "Pengying Wu, Zhejia Wen, Kang Ding et al",
+   "abs_url": "https://arxiv.org/abs/2610.27677v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "PLaCA: Learning Patch-Level Future Latent Change for Action Generation",
+   "arxiv_id": "2610.27657",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T05:15:35Z",
+   "updated": "2026-10-20T05:15:35Z",
+   "authors": "Zhan Yi, Yuchen Wang, Chao Li et al",
+   "abs_url": "https://arxiv.org/abs/2610.27657v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Does Multi-Agent Collaboration Pay When Agents Serve Users? Testing Agent Scaling in Dual-Control Settings",
+   "arxiv_id": "2610.27655",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T05:13:13Z",
+   "updated": "2026-10-20T05:13:13Z",
+   "authors": "Ethan Yang, Xiangcheng Shi",
+   "abs_url": "https://arxiv.org/abs/2610.27655v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "A Unified Attack Framework against Statistical Generative Watermarks for Large Language Models",
+   "arxiv_id": "2610.27653",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T05:12:12Z",
+   "updated": "2026-10-20T05:12:12Z",
+   "authors": "Romina Omidi, Nima Naderloui, Yuan Hong et al",
+   "abs_url": "https://arxiv.org/abs/2610.27653v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Speak vs. Know: Balancing Behavior and Knowledge Distributions of Large Language Models",
+   "arxiv_id": "2610.27648",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T05:07:35Z",
+   "updated": "2026-10-20T05:07:35Z",
+   "authors": "Yang Liu, Masahiro Kaneko, Chenhui Chu",
+   "abs_url": "https://arxiv.org/abs/2610.27648v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "TriGeoBench: A Multimodal Mathematical Geometry Benchmark with Figures and TikZ",
+   "arxiv_id": "2610.27626",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T04:52:30Z",
+   "updated": "2026-10-20T04:52:30Z",
+   "authors": "Jing Wang, Yitong Yang, Hao Dou et al",
+   "abs_url": "https://arxiv.org/abs/2610.27626v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "ABench: Adversarily Benchmarking Large Language Models across Taxonomized Values",
+   "arxiv_id": "2610.27611",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "published": "2026-10-20T04:23:14Z",
+   "updated": "2026-10-20T04:23:14Z",
+   "authors": "Liping Yang, Yongqi Leng, Jingting Zheng et al",
+   "abs_url": "https://arxiv.org/abs/2610.27611v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "From Encoding to Generation: Towards Empathetic Large Language Models",
+   "arxiv_id": "2610.27603",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T04:10:24Z",
+   "updated": "2026-10-20T04:10:24Z",
+   "authors": "Samhita Bollepally, Takashi Yamauchi, Marissa West",
+   "abs_url": "https://arxiv.org/abs/2610.27603v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "TeCoP: Accelerating Diffusion Large Language Model Decoding via Tentative Context Pipelining",
+   "arxiv_id": "2610.27583",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T03:48:01Z",
+   "updated": "2026-10-20T03:48:01Z",
+   "authors": "Jui-Chien Tsou, Hsuan-Chi Liu, Wei-Chin Wang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27583v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "DuplexLedger: Benchmarking Transactional Memory in Full-Duplex Speech Agents",
+   "arxiv_id": "2610.27581",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T03:47:06Z",
+   "updated": "2026-10-20T03:47:06Z",
+   "authors": "Yuxuan Li, Xiangchen Guan, Kunrong Li et al",
+   "abs_url": "https://arxiv.org/abs/2610.27581v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Why Static Probes Fail: Context Determines Deception Feature Composition",
+   "arxiv_id": "2610.27577",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T03:42:51Z",
+   "updated": "2026-10-20T03:42:51Z",
+   "authors": "Yao Huang, Siyuan Chen, Zhenghan Zhou et al",
+   "abs_url": "https://arxiv.org/abs/2610.27577v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "When LLMs Manipulate: Measuring Behavioral, Social, and Temporal Effects",
+   "arxiv_id": "2610.27573",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T03:41:05Z",
+   "updated": "2026-10-20T03:41:05Z",
+   "authors": "Sadia Asif, Israel Antonio Rosales Laguan, Shumaila Asif et al",
+   "abs_url": "https://arxiv.org/abs/2610.27573v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Text-Anchored Modality Experts with Uncertainty-Guided Routing for Multimodal Sentiment Analysis",
+   "arxiv_id": "2610.27571",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T03:39:51Z",
+   "updated": "2026-10-20T03:39:51Z",
+   "authors": "Xiaohua Huang, Bingrui Lei, Xiuyan hao et al",
+   "abs_url": "https://arxiv.org/abs/2610.27571v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Learned Readout Tokens for Extracting Large Language Model Confidence",
+   "arxiv_id": "2610.27566",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T03:30:28Z",
+   "updated": "2026-10-20T03:30:28Z",
+   "authors": "Nima Seifi, Martin Ester",
+   "abs_url": "https://arxiv.org/abs/2610.27566v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "AnomalyJev: Towards Evaluating Image Anomaly Explanations via Claim-Level Verification",
+   "arxiv_id": "2610.27565",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T03:29:08Z",
+   "updated": "2026-10-20T03:29:08Z",
+   "authors": "Qizhou Wang, Jiawen Zhu, Guansong Pang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27565v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Can Native Safety Travel? Reusing Safety Pretraining Across Models via On-Policy Distillation",
+   "arxiv_id": "2610.27555",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T03:13:04Z",
+   "updated": "2026-10-20T03:13:04Z",
+   "authors": "Bingqi Shang, Yang Zhang, Yiwei Chen et al",
+   "abs_url": "https://arxiv.org/abs/2610.27555v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Act on Your Behalf, Beyond Your Authorization: Benchmarking LLM Agent Authorization Alignment",
+   "arxiv_id": "2610.27548",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T03:01:39Z",
+   "updated": "2026-10-20T03:01:39Z",
+   "authors": "Zhiping Zhang, Franklin Mingzhe Li, Zihao Huang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27548v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Less is More: Concise Retrieval and Critic-based Re-ranking for Composed Image Retrieval",
+   "arxiv_id": "2610.27538",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T02:53:02Z",
+   "updated": "2026-10-20T02:53:02Z",
+   "authors": "Yuqian Zheng, Hyoju Ahn, Hyeongjin Ahn et al",
+   "abs_url": "https://arxiv.org/abs/2610.27538v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Multiscale Temporal-Spectral-Spatial EEG Learning With Modality-Specific and Modality-Invariant Representations for Emotion Recognition",
+   "arxiv_id": "2610.27521",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T02:35:16Z",
+   "updated": "2026-10-20T02:35:16Z",
+   "authors": "Jian Zhang, Manrong Liu, Yilei Huang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27521v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "HealBench: A Fine-Grained Benchmark for Evaluating Psychological Comfort in Text-to-Image Generation",
+   "arxiv_id": "2610.27516",
+   "version": "v1",
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "published": "2026-10-20T02:31:31Z",
+   "updated": "2026-10-20T02:31:31Z",
+   "authors": "Junjie Xu, Yuzhe Yang, Rui Yang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27516v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Progressive Subset Selection and Cascaded Consistency for Unsupervised Vision-Language Model Adaptation",
+   "arxiv_id": "2610.27515",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T02:30:11Z",
+   "updated": "2026-10-20T02:30:11Z",
+   "authors": "Hao Yan, Guanghui Wang",
+   "abs_url": "https://arxiv.org/abs/2610.27515v1"
+  },
+  {
+   "category": "cs.MA",
+   "title": "Complete Street Design informed by Multi-Agent Simulation",
+   "arxiv_id": "2610.27509",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T02:23:07Z",
+   "updated": "2026-10-20T02:23:07Z",
+   "authors": "Sharika J. Hegde, Amirmohammad Khakpour, Pedram Beigi et al",
+   "abs_url": "https://arxiv.org/abs/2610.27509v1"
+  },
+  {
+   "category": "cs.RO",
+   "title": "Evaluating Social Reasoning in Embodied Vision-Language Models",
+   "arxiv_id": "2610.27496",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-20T02:14:00Z",
+   "updated": "2026-10-20T02:14:00Z",
+   "authors": "Daniel Weiner, Raj Korpan",
+   "abs_url": "https://arxiv.org/abs/2610.27496v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "Beyond the Prompt: Recovering Hidden Concepts in Text-to-Image Models",
+   "arxiv_id": "2610.27473",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T01:42:42Z",
+   "updated": "2026-10-20T01:42:42Z",
+   "authors": "Zhengfeng Zheng, Minghong Fang",
+   "abs_url": "https://arxiv.org/abs/2610.27473v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "Projected Distillation: On Learning to Solve Hard Problems from Close, Correct Targets",
+   "arxiv_id": "2610.27467",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-20T01:38:01Z",
+   "updated": "2026-10-20T01:38:01Z",
+   "authors": "Shripad V. Deshmukh, Christian Bock, Kangrui Ruan et al",
+   "abs_url": "https://arxiv.org/abs/2610.27467v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Detecting Errors in Large Language Model Responses: The Incremental Predictive Value of Hidden States",
+   "arxiv_id": "2610.27455",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-20T01:12:00Z",
+   "updated": "2026-10-20T01:12:00Z",
+   "authors": "Ningzhi Li, Xiaojun Ma, Xiaofei Wang",
+   "abs_url": "https://arxiv.org/abs/2610.27455v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "The Router Already Knows",
+   "arxiv_id": "2610.27421",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-20T00:17:25Z",
+   "updated": "2026-10-20T00:17:25Z",
+   "authors": "Andrew Bistras, Marty Johnson",
+   "abs_url": "https://arxiv.org/abs/2610.27421v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "DStill: Trajectory Consistency Distillation for Accelerated One-Step Drafting in Block Diffusion Speculative Decoding",
+   "arxiv_id": "2610.27379",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T23:05:16Z",
+   "updated": "2026-10-19T23:05:16Z",
+   "authors": "Shreyas Kulkarni, Uttam Gurram, Madhav Kanda et al",
+   "abs_url": "https://arxiv.org/abs/2610.27379v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "On the Limits of Scale: Inverse Scaling in Vision-Language Models",
+   "arxiv_id": "2610.27360",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-19T22:39:42Z",
+   "updated": "2026-10-19T22:39:42Z",
+   "authors": "Rohit Saxena, Alessandro Suglia, Marek Rei et al",
+   "abs_url": "https://arxiv.org/abs/2610.27360v1"
+  },
+  {
+   "category": "cs.NI",
+   "title": "Robust Lightweight IoT Device Fingerprinting Under Network Traffic Anomalies",
+   "arxiv_id": "2610.27351",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-19T22:29:38Z",
+   "updated": "2026-10-19T22:29:38Z",
+   "authors": "Roya Taheri, Shamik Sengupta",
+   "abs_url": "https://arxiv.org/abs/2610.27351v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Look Before You Reason: Implicit Visual Thinking for Efficient Multimodal Reasoning",
+   "arxiv_id": "2610.27341",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-19T22:11:24Z",
+   "updated": "2026-10-19T22:11:24Z",
+   "authors": "Zerui Chen, Changrui Chen, Fei Ni et al",
+   "abs_url": "https://arxiv.org/abs/2610.27341v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Steering Vision-Language Models for Visual-Contextual Privacy in Location Disclosure",
+   "arxiv_id": "2610.27323",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-19T21:41:54Z",
+   "updated": "2026-10-19T21:41:54Z",
+   "authors": "Wenyue Chen, Yuhan Cheng, Ruixin Yang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27323v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Evolving Self-tuning Benchmarks for Long-Horizon Tool Use",
+   "arxiv_id": "2610.27307",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-19T21:22:08Z",
+   "updated": "2026-10-19T21:22:08Z",
+   "authors": "Hyunji Alex Nam, Michael Dennis, Natasha Jaques et al",
+   "abs_url": "https://arxiv.org/abs/2610.27307v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Global Security Blind Spots: Translation as a Safety Bypass in Low-Resource Languages",
+   "arxiv_id": "2610.27304",
+   "version": "v1",
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "published": "2026-10-19T21:20:49Z",
+   "updated": "2026-10-19T21:20:49Z",
+   "authors": "Jalil Alva, David Harper, Abigail E. Thornton et al",
+   "abs_url": "https://arxiv.org/abs/2610.27304v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "Generalizing Multimodal Foundational Models in Context-Driven Class Incremental Learning",
+   "arxiv_id": "2610.27298",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-19T21:13:45Z",
+   "updated": "2026-10-19T21:13:45Z",
+   "authors": "Avi Gupta, Nilotpal Sinha, Vishnu Raj et al",
+   "abs_url": "https://arxiv.org/abs/2610.27298v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "African Languages AI Safety Readiness Report",
+   "arxiv_id": "2610.27269",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T20:43:16Z",
+   "updated": "2026-10-19T20:43:16Z",
+   "authors": "Israel Abebe Azime, Jesujoba O. Alabi, Tajuddeen Gwadabe et al",
+   "abs_url": "https://arxiv.org/abs/2610.27269v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Auditing Safety Preference Supervision with Recorded Derivations",
+   "arxiv_id": "2610.27266",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-19T20:39:09Z",
+   "updated": "2026-10-19T20:39:09Z",
+   "authors": "Chenhan Lyu, Amir Rahmani",
+   "abs_url": "https://arxiv.org/abs/2610.27266v1"
+  },
+  {
+   "category": "cs.LO",
+   "title": "Theorem prover Arend",
+   "arxiv_id": "2610.27264",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-19T20:36:59Z",
+   "updated": "2026-10-19T20:36:59Z",
+   "authors": "Fedor Part, Valery Isaev, Sergey Sinchuk",
+   "abs_url": "https://arxiv.org/abs/2610.27264v1"
+  },
+  {
+   "category": "cs.HC",
+   "title": "ValiAssist: Scaling LLM-generated Programming Feedback Validation by Demonstration",
+   "arxiv_id": "2610.27248",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-19T20:21:00Z",
+   "updated": "2026-10-19T20:21:00Z",
+   "authors": "Xiaohang Tang, Rehema Abulikemu, Peng Gao et al",
+   "abs_url": "https://arxiv.org/abs/2610.27248v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Target-Aware Curation of Hallucination Stress Tests for Large Language Models",
+   "arxiv_id": "2610.27247",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T20:20:00Z",
+   "updated": "2026-10-19T20:20:00Z",
+   "authors": "Jiho Lee, Bingquan Zhang, Lin Ting Liang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27247v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Diagnostic Analysis for Large Language Model Reasoning",
+   "arxiv_id": "2610.27245",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T20:16:42Z",
+   "updated": "2026-10-19T20:16:42Z",
+   "authors": "Xinyu Liu, Dongqi Fu, Jun Wu",
+   "abs_url": "https://arxiv.org/abs/2610.27245v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "AutoRedClaw: Automated Red-Teaming for Claw-Style Agents",
+   "arxiv_id": "2610.27244",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-19T20:15:39Z",
+   "updated": "2026-10-19T20:15:39Z",
+   "authors": "Hao Li, Tongyan Hu, Weidi Luo et al",
+   "abs_url": "https://arxiv.org/abs/2610.27244v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "EGI-BENCH: An Enterprise General Intelligence Benchmark Suite",
+   "arxiv_id": "2610.27234",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-19T20:02:07Z",
+   "updated": "2026-10-19T20:02:07Z",
+   "authors": "Zhiwei Liu, Zhujun Lan, Jielin Qiu et al",
+   "abs_url": "https://arxiv.org/abs/2610.27234v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "MMedAgent-Plus: Scaling Multimodal Medical Agents across Modalities, Tasks and Workflows",
+   "arxiv_id": "2610.27233",
+   "version": "v1",
+   "areas": [
+    "agent harness"
+   ],
+   "published": "2026-10-19T20:00:50Z",
+   "updated": "2026-10-19T20:00:50Z",
+   "authors": "Ruoxin Wang, Yuanting Pan, Binxu Li et al",
+   "abs_url": "https://arxiv.org/abs/2610.27233v1"
+  },
+  {
+   "category": "cs.CR",
+   "title": "Profile-DP: Differential Privacy for User-Controlled Profile Release in Personalized LLM Inference",
+   "arxiv_id": "2610.27213",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T19:44:02Z",
+   "updated": "2026-10-19T19:44:02Z",
+   "authors": "Mingchen Li, Zifan Peng, Kewei Sha et al",
+   "abs_url": "https://arxiv.org/abs/2610.27213v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "The Culture Within: Towards Mechanistic Understanding of Cultural Reasoning in LLMs",
+   "arxiv_id": "2610.27202",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T19:36:45Z",
+   "updated": "2026-10-19T19:36:45Z",
+   "authors": "Samee Arif, Furkan Danisman, Angana Borah et al",
+   "abs_url": "https://arxiv.org/abs/2610.27202v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Preference-Aware Pareto Steering for Multi-Task Speech LLMs",
+   "arxiv_id": "2610.27200",
+   "version": "v1",
+   "areas": [
+    "LLM"
+   ],
+   "published": "2026-10-19T19:35:51Z",
+   "updated": "2026-10-19T19:35:51Z",
+   "authors": "Liuyuan Jiang, Vishal Sunder, Samuel Thomas et al",
+   "abs_url": "https://arxiv.org/abs/2610.27200v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "CARLAR Influence: A Structured Hallucination Risk in Multimodal Cheque Extraction and an Exploratory Compressed-Image Countermeasure",
+   "arxiv_id": "2610.27192",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-19T19:29:12Z",
+   "updated": "2026-10-19T19:29:12Z",
+   "authors": "Joong Ho,  Choi, Aditya Paul et al",
+   "abs_url": "https://arxiv.org/abs/2610.27192v1"
+  },
+  {
+   "category": "cs.CL",
+   "title": "Joint Constraint Aggregation for Qualifier-Sensitive Retrieval-Augmented QA",
+   "arxiv_id": "2610.27114",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-19T18:12:48Z",
+   "updated": "2026-10-19T18:12:48Z",
+   "authors": "Jennifer Hsia, Zachary C. Lipton, Aarti Singh",
+   "abs_url": "https://arxiv.org/abs/2610.27114v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "RGH-GNN : Risk-Gated Heterogeneous Graph Neural Network for Financial Fraud Detection",
+   "arxiv_id": "2610.27107",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-19T18:07:47Z",
+   "updated": "2026-10-19T18:07:47Z",
+   "authors": "Mythreyee Hari, Subin Sahayam, Vegesna S M Srinivasavarma",
+   "abs_url": "https://arxiv.org/abs/2610.27107v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "Omni-Woodpecker: Hallucination Correction via Evidence-Prior Rebalancing for Omni LLMs",
+   "arxiv_id": "2610.27103",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-19T18:01:40Z",
+   "updated": "2026-10-19T18:01:40Z",
+   "authors": "Zijian Liu, Chaoyou Fu, Yan Yang et al",
+   "abs_url": "https://arxiv.org/abs/2610.27103v1"
+  },
+  {
+   "category": "cs.CV",
+   "title": "VitronEdit: Universal Visual Editing across Images, Videos, and 3D Scenes",
+   "arxiv_id": "2610.27049",
+   "version": "v1",
+   "areas": [
+    "多模态"
+   ],
+   "published": "2026-10-19T17:59:55Z",
+   "updated": "2026-10-19T17:59:55Z",
+   "authors": "Jing Wang, Yanlin Li, Mong-Li Lee et al",
+   "abs_url": "https://arxiv.org/abs/2610.27049v1"
+  },
+  {
+   "category": "cs.AI",
+   "title": "ReuF2F: Benchmarking Coding Agents on Formalized Undergraduate Research Problems",
+   "arxiv_id": "2610.27046",
+   "version": "v1",
+   "areas": [
+    "邻域"
+   ],
+   "published": "2026-10-19T17:52:28Z",
+   "updated": "2026-10-19T17:52:28Z",
+   "authors": "Zeyu Zheng, Yiyang Liu, Yuyang Zhao et al",
+   "abs_url": "https://arxiv.org/abs/2610.27046v1"
+  },
+  {
+   "category": "cs.LG",
+   "title": "CoASFL: Coupled Consistency Optimization for Asynchronous Split Federated Learning",
+   "arxiv_id": "2610.26992",
+   "version": "v1",
+   "areas": [
+    "SLM"
+   ],
+   "published": "2026-10-19T07:37:00Z",
+   "updated": "2026-10-19T07:37:00Z",
+   "authors": "Junhao Cheng, Yunming Liao, Hongli Xu et al",
+   "abs_url": "https://arxiv.org/abs/2610.26992v1"
+  }
+ ]
+}

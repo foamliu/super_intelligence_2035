@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-21</td>
+    <td><i>Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</i><br><code>arXiv:2610.27999</code>（Jihai Zhang 等 18 位）</td>
+    <td>让 AI <b>真的做出「能玩」的游戏世界</b>：不指望视频模型「顺手」记住规则，而是<b>拆开</b>——<b>规则交给轻量游戏引擎</b>（持久的<b>世界状态</b> + 可执行的<b>游戏规则</b>），<b>画面交给视频模型</b>（引擎先渲染粗糙<b>低模代理</b>，模型再把它画细）；中间放一个<b>多模态编程 agent</b>，玩家把想法说给它，它写成<b>游戏代码与场景描述</b>；渲染器用<b>成对的低模 / 高保真视频</b>训练，再<b>蒸馏</b>成每次只出 <b>4 帧、1–2 步去噪</b>的<b>因果生成器</b>。作者称单张 <b>RTX5090</b> 上 <b>480p / 60 FPS</b>、按键到画面 <b>112ms</b>、单步生成稳态 <b>83 FPS</b>、峰值显存 <b>18.2 GiB</b>，<b>5080 / 5070Ti 分别为 67 / 58 FPS</b>，并开源代码、权重与低模素材（<b>作者自报 · 本线未复现</b>；<b>仅演示射击与驾驶两类，非任意开放世界</b>）</td>
+    <td><a href="10_21.html">10_21.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-20</td>
     <td><i>Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</i><br><code>arXiv:2610.26781</code>（Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar）</td>
     <td>把<b>反诈陪聊</b>当成一场<b>两人博弈</b>：现有拦截 / 标记 / 提醒几乎<b>不给骗子造成成本</b>，于是让 LLM <b>不微调、只靠上下文经验</b>学会动态换招去消耗骗子的时间与人力；用<b>有实证依据的策略与效用函数</b>把对话建成博弈，并以<b>纳什均衡</b>作为评估学习行为的正式基准。在 <b>300 段模拟对话 · 3 种 LLM 架构</b>上，自适应策略比非自适应基线<b>更接近均衡 28.9–79.7%</b>；作者同时开源代码与 300 段轮级标注对话数据（<b>作者自报 · 本线未复现</b>；<b>为模拟对话、非真实电话部署</b>）</td>

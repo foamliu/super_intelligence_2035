@@ -40,11 +40,12 @@
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
     <td>2026-10-21</td>
-    <td>早报（AM · 首次）</td>
-    <td>3 / 5</td>
+    <td>晚报（PM · 收口）</td>
+    <td>5 / 5</td>
     <td><a href="2026-10-21.html">2026-10-21.html</a></td>
-    <td>早报 3 篇<b>全部「借鉴」</b>：<code>2610.26754</code> TokenGate（可学习 token 剪枝压 prefill：TTFT 快 1.4–11.3×、峰值显存降 1.5–3.4×、精度不降；原生支持 Qwen3 与混合注意力 Qwen3.5）/ <code>2610.26834</code> KronLSTM（Kronecker Delta Rule 线性注意力：单方向修正记忆，马尔可夫链收敛 + 范数一致有界、无需额外归一化；长上下文强于 DeltaNet 家族；代码+模型开源）/ <code>2610.26836</code> Same Simulation, Different Evidence（工具输出落文件检索的代价：GPT-5.1/5.2 掉 11.3/7.9 分，Claude 4.6 无损失；机理 = 证据替换；点名权威输出回升 6.3–7.9 分）。⚠️ <b>批次未刷新</b>（仍 <code>2026-10-19</code>，<code>totalResults=635673</code>）；72h <code>--fetch</code> <b>14/15 <code>ok</code></b>（<code>agent-tool-use</code> 3 次超时 FAIL）、<code>kept 0</code>（整批已在 SEEN）⇒ 3 篇取自上一轮候选池 + <code>id_list</code> 复核 <b>5/5</b>，<b>非当日新提交</b>。台账 <b>收录 229 / 候选 3369 / 候选（RSS 补充）507（4,105 行）</b>；<code>papers.jsonl</code> <b>229</b></td>
+    <td><b>当日收口 5/5</b>：早 3「借鉴」+ 晚 2「科普」。<b>TOP-1</b> <code>2610.27999</code> <b>Matrix-Game 4.0</b>（规则交轻量引擎、画面交视频模型、多模态编程 agent 改关卡；单张 RTX5090 上 480p / 60 FPS、按键到显示 112ms、单步生成稳态 83 FPS、峰值显存 18.2 GiB，5080 / 5070Ti 为 67 / 58 FPS；代码 / 权重 / 低模素材开源）/ <code>2610.28087</code> <b>WildAIGC-Bench</b>（407 张「真在网上跑过」的生成 / 编辑图，保留压缩/截图/翻拍痕迹并逐图人工核验；专门检测器与大模型均现明显召回缺口，摘要仅定性 ⇒ <b>不给百分比</b>）。⚠️ PM 轮<b>批次刷新</b> <code>2026-10-19</code> → <code>2026-10-20</code>（<code>totalResults</code> 635673 → 636364，+691、最新样本 <code>published=2026-10-20T17:59:56Z</code>），72h <code>--fetch</code> <b>15/15 <code>ok</code></b>（<code>agent-tool-use</code> <code>attempts=2</code>）、<code>kept 189</code> / <code>dropped 382</code> ⇒ 晚 2 篇直接取自本批 + <code>id_list</code> 复核 <b>5/5</b>，首次提交均 <b>2026-10-20（UTC）</b> ⇒ 不写「今日新提交」。PDF <b>5/5</b> 校验通过（24 / 53 / 15 / 19 / 19 页；两篇晚报 PDF 连接中断后 <b>HTTP Range 续传</b>补齐）。台账 <b>收录 231 / 候选 3556 / 候选（RSS 补充）507（4,294 行）</b>；<code>papers.jsonl</code> <b>231</b>；分镜 <code>video/SCENES/10_21.html</code>；日报邮件 18:14 ✅ SENT（5 篇 / 5 附件 / 15.49 MB）</td>
   </tr>
+
   <tr>
     <td>2026-10-20</td>
     <td>晚报（PM · 收口）</td>
@@ -153,7 +154,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-10-21 06:1x CST（<b>2026-10-21 早报 3/5</b>：<code>2610.26754</code> TokenGate / <code>2610.26834</code> KronLSTM / <code>2610.26836</code> Same Simulation, Different Evidence，3 篇全部「借鉴」。⚠️ <b>批次未刷新</b>（仍 <code>2026-10-19</code>，<code>totalResults=635673</code>，与上一轮 PM 相同）；72h <code>--fetch</code> <b>14/15 <code>ok</code></b>（<code>agent-tool-use</code> <code>attempts=3</code> 超时 FAIL）、<b><code>kept 0</code> / <code>dropped 560</code></b>（整批已在 <code>SEEN</code>，非「无数据」）；HF 不可达（<code>Errno 101</code>）、RSS cs.CL 435 / cs.CV 505 / cs.LG 817 均如实记录；3 篇取自上一轮候选池 + <code>id_list</code> 复核 <b>5/5</b>，PDF 3/3 校验通过。台账 <b>收录 229 / 候选 3369 / 候选（RSS 补充）507（4,105 行）</b>，<code>papers.jsonl</code> <b>229</b>。⏭️ 下一轮 2026-10-21 18:00 晚报（补 2 篇「科普」收口 5/5 + 出 <code>video/SCENES/10_21.html</code>））
+  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-10-21 18:15 CST（<b>2026-10-21 晚报 5/5</b>：<code>2610.27999</code> <b>Matrix-Game 4.0</b>（本日 TOP-1）/ <code>2610.28087</code> WildAIGC-Bench 为晚报 2 篇「科普」，早 3 篇「借鉴」为 <code>2610.26754</code> / <code>2610.26834</code> / <code>2610.26836</code>。⚠️ PM 轮<b>公告批次已刷新</b> <code>2026-10-19</code> → <code>2026-10-20</code>（<code>totalResults</code> 635673 → <b>636364</b>，+691、最新样本 <code>published=2026-10-20T17:59:56Z</code>）；72h <code>--fetch</code> <b>15/15 <code>ok</code></b>（<code>agent-tool-use</code> <code>attempts=2</code>）、<b><code>kept 189</code> / <code>dropped 382</code></b>（新批入窗 ⇒ 单跑即 189，<b>未放宽窗口</b>）；HF 不可达（<code>Errno 101</code>）如实记 FAIL；晚 2 篇取自本批 + <code>id_list</code> 复核 <b>5/5</b>，首次提交均 <b>2026-10-20（UTC）</b>。PDF <b>5/5</b> 校验通过（24 / 53 / 15 / 19 / 19 页；两篇晚报 PDF 断流后 <b>HTTP Range 续传</b>补齐）。台账 <b>收录 231 / 候选 3556 / 候选（RSS 补充）507（4,294 行）</b>，<code>papers.jsonl</code> <b>231</b>；分镜 <code>video/SCENES/10_21.html</code>；日报邮件 18:14 ✅ SENT（5 篇 / 5 附件 / 15.49 MB）。⏭️ 下一轮 2026-10-22 06:00 早报（3 篇「借鉴」+ 新建 <code>daily/2026-10-22.html</code>））
 </footer>
 </div>
 </body>
