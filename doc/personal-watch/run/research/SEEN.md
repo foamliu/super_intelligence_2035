@@ -4384,7 +4384,7 @@
 | 2026-10-21 | 2610.28545 | Discount Yourself: Self-inclusive Freshness-weighted Gossip for Decentralised Learning under Client Outages | cs.LG | 候选 |
 | 2026-10-21 | 2610.28537 | Beyond 4 bits: Data-Centric Post-training Quantization and Recovery | cs.AI | 候选 |
 | 2026-10-21 | 2610.28502 | GazeLens for Efficient Egocentric Video Question Answering with Simple Gaze-Driven Adaptive Token Reduction | cs.CV | 候选 |
-| 2026-10-21 | 2610.28500 | BitMTP: When Multi-Token Prediction Meets Low-Bit Large Language Models | cs.CL | 候选 |
+| 2026-10-21 | 2610.28500 | BitMTP: When Multi-Token Prediction Meets Low-Bit Large Language Models | cs.CL | 收录 |
 | 2026-10-21 | 2610.28479 | Claims of emergence in AI should be grounded in information decomposition | cs.AI | 候选 |
 | 2026-10-21 | 2610.28476 | CLOSER: Evidence-Aware Active Visual Verification for Embodied Object-Goal Navigation | cs.CV | 候选 |
 | 2026-10-21 | 2610.28454 | Toolflation: Seller Agents Distort Tool Markets Through Spontaneous Generative Engine Optimization | cs.AI | 候选 |
@@ -4398,10 +4398,10 @@
 | 2026-10-21 | 2610.28397 | MAS-Guard: Unified Guardrails from Individual Agents to Multi-Agent LLM Systems | cs.CR | 候选 |
 | 2026-10-21 | 2610.28393 | When Copying Is Hard: Copy-Constrained Decoding for Exact Span Reproduction | cs.CL | 候选 |
 | 2026-10-21 | 2610.28386 | VisualEvolve: A Skill Self-Evolution Framework for Visual Reasoning | cs.CV | 候选 |
-| 2026-10-21 | 2610.28385 | RACE: RoPE-Aligned Attention Compression Based on Query-Key Activation Energies | cs.AI | 候选 |
+| 2026-10-21 | 2610.28385 | RACE: RoPE-Aligned Attention Compression Based on Query-Key Activation Energies | cs.AI | 收录 |
 | 2026-10-21 | 2610.28382 | RACE: Learning Multimodal Search through Referential Abstraction and Compositional Evidence | cs.CV | 候选 |
 | 2026-10-21 | 2610.28381 | CAPSafe: A Benchmark for Contextual Action and Plan Safety Reasoning in Embodied Agents | cs.RO | 候选 |
-| 2026-10-21 | 2610.28380 | Object-Oriented Harness: Evolving Agent Harnesses through Object-Oriented Design | cs.CL | 候选 |
+| 2026-10-21 | 2610.28380 | Object-Oriented Harness: Evolving Agent Harnesses through Object-Oriented Design | cs.CL | 收录 |
 | 2026-10-21 | 2610.28369 | Don't Skip the Baseline: A Controlled Comparison of Dynamic Expert Skipping in MoEs | cs.LG | 候选 |
 | 2026-10-21 | 2610.28364 | Context-Aware Prompt Injection Detection via Small Language Models in RAG Pipelines: nokast-secureRAG | cs.CR | 候选 |
 | 2026-10-21 | 2610.28356 | CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models | cs.CV | 候选 |
@@ -4530,3 +4530,5 @@
 | 2026-10-21 | 2610.26992 | CoASFL: Coupled Consistency Optimization for Asynchronous Split Federated Learning | cs.LG | 候选 |
 
 > **第一百零四轮（本地 2026-10-21 18:00（CST）· P0 第 5 批第 2 轮「晚 2」轮 · 当日收口）**：**公告批次已刷新** —— `2026-10-19` → **`2026-10-20`**（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults` `635673` → **`636364`**，最新样本 `published=2026-10-19T17:59:59Z` → **`2026-10-20T17:59:56Z`**；周二 20:00 ET 公告已落地）；**15/15 查询 `ok`**（`agent-tool-use` `attempts=2` 一次脚本级重试后成功，其余 `attempts=1`）、**`kept 189` / `dropped 382`**（`window_mode=daily` 72h，`generated=2026-10-21T10:02:29Z`）→ **189 条全部首次发现**。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS 见 `raw/2026-10-21-probe-r104.log`。**晚报 2 篇「科普」取自本 PM 轮新批 189 条** + **单条权威复核**（`id_list=2610.27999,2610.28434,2610.28087,2610.28632,2610.27894` → **5/5 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-21-idlist-r104.{xml,headers}`）：`2610.27999` Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds（**本日 TOP-1**）/ `2610.28087` WildAIGC-Bench: Can AI Image Detectors Handle the Wild? A Benchmark of Generated and Edited Images in Online Circulation。台账 **4,105 → 4,294 行（+189）**（2 行「收录」+ 187 行「候选」）→ 累计（**收录 231 / 候选 3,556 / 候选（RSS 补充）507**）；`papers.jsonl` **229 → 231**；PDF 2/2 落地校验通过（并入当日 3 篇共 5 篇）；落盘脚本 `raw/update_r104.py`。口径见 `ARXIV_API.md` §9.104。
+
+> **第一百零五轮（本地 2026-10-22 06:00（CST）· P0 第 5 批第 3 轮「早 3」轮 · 新一日 AM 轮）**：**公告批次未刷新** —— 仍为 `2026-10-20`（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults=636364`、最新样本 `published=2026-10-20T17:59:56Z`，与上一轮 PM **完全相同**；周三 20:00 ET 的 `2026-10-21` 批尚未索引）；**15/15 查询 `ok`**（**全部 `attempts=1`，无重试无超时**）、**`kept 0` / `dropped 600`**（`window_mode=daily` 72h，`generated=2026-10-21T22:01:05Z`；600 = 15 × 40，剔除原因均为 `already in SEEN` 或 `stale > 72h`）。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 435 · cs.CV 287 · cs.LG 817（仅作发现）。**早报 3 篇「借鉴」取自上一轮 PM 已入账的 189 条候选池** + **单条权威复核**（`id_list=2610.28619,2610.28577,2610.28500,2610.28369,2610.28380,2610.28385` → **6/6 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-22-idlist-r105.{xml,headers}`）：`2610.28500` BitMTP: When Multi-Token Prediction Meets Low-Bit Large Language Models / `2610.28385` RACE: RoPE-Aligned Attention Compression Based on Query-Key Activation Energies / `2610.28380` Object-Oriented Harness: Evolving Agent Harnesses through Object-Oriented Design。台账 **4,294 行不变**（3 行「候选」→「收录」）→ 累计（**收录 234 / 候选 3,553 / 候选（RSS 补充）507**）；`papers.jsonl` **231 → 234**；PDF 3/3 落地校验通过；落盘脚本 `raw/update_r105.py`。口径见 `ARXIV_API.md` §9.105。
