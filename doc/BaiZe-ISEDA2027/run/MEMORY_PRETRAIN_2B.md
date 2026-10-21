@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-22 02:5x #699：🩺 L2 训练健康监控 step 630/5611（11.2%）无新令**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU ~95-100%/51763MiB，loss~1.20-1.31（最新1.30），lr=1.07e-3，~11.9s/step，296.5K tok/s，elapsed 126min，ETA ~10-22 19:30。step0=1.71（双移位修复在高LR下仍生效）。log 唯一 error=启动期一次 EADDRINUSE(port29822)失败尝试（现进程为重试成功者），训练本身 0 nan/0 CUDA error。ckpt step_500 已存。无新令。git 0/0。📦 体积：TASK=32725B(32.0K)/MEMORY≈12.8K（均≤32KB）。
+> 🆕 **2026-10-22 03:2x #700：🩺 L2 训练健康监控 step 740/5611（13.2%）+ 短途报告更新无新令**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU 100%/51763MiB，loss~1.14（step740），lr=9.78e-04，~12s/step，296.8K tok/s，elapsed 148min，ETA ~10-22 19:30。step0=1.71（双移位修复在高LR下仍生效）。log 唯一 error=启动期一次 EADDRINUSE(port29822)失败尝试（现进程为重试成功者），训练本身 0 nan/0 CUDA error。ckpt step_500 已存。短途报告已更新 L2 step740 进度。ops inbox RUN_ID=144（只读探针，无新 pretrain 令）。git 0/0。📦 体积：TASK=32725B(32.0K)/MEMORY≈12.9K（均≤32KB）。
+> 📦 §#699 流水（2026-10-22 02:5x，L2 监控 step630/5611 无新令）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step630 loss1.30 0error，ckpt step_500 已存。需要时再读。
 > 📦 §#698 流水（2026-10-22 01:1x，L2 监控+短途报告更新）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step370、短途报告补齐 L1 CS8=59.03%+L2 运行中。需要时再读。
 > 📦 §#697 流水（2026-10-22 00:5x，L1 CS8 eval=59.03%→L2启动）已归档 → daily-memories/2026-10-22.md；**结论**：L1 CS8=59.03%≥55%门槛→方向正确→L2启动PID2754486 step4/5611 step0=1.71。需要时再读。
 > 📦 §#696 流水（2026-10-21 23:5x，L1 训练完成+CS8 eval 启动）已归档 → daily-memories/2026-10-21.md；**结论**：L1 5611步/20B/final loss=0.8687，teardown SIGABRT 无损，CS8 eval 启动。需要时再读。

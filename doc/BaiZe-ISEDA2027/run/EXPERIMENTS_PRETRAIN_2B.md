@@ -498,17 +498,17 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - ITERS=5611（20B token）/ WARMUP=100 / LR=5e-4 → MIN_LR=1e-5（WSD 指数衰减）/ SAVE_INTERVAL=500
 - 开关：adamw_fused + compile_model default + chunked_ce(256) + fast_data + verify_save_step 20
 
-### L1 进展（截至 2026-10-21 23:5x — ✅ 训练完成 + CS8 eval 运行中）
+### L1 进展（截至 2026-10-22 03:2x — ✅ 训练完成 + CS8 eval ✅ 完成 + L2 训练中）
 
 | 项目 | 值 |
 |:--|:--|
-| 状态 | ✅ **训练完成**（5611 步 = 20B tok，18.67h）+ CS8-only eval 运行中（PID2690438） |
+| 状态 | ✅ **训练完成**（5611 步 = 20B tok，18.67h）+ CS8 eval ✅ **完成 = 59.03%**（≥55% 门槛） |
 | final loss | **0.8687**（step 5610/5611，lr=1.33e-5，WSD decay 末段） |
 | final ckpt | `xmodel25_baize_L1_20b/final/`（model.safetensors 2.7GB，@23:45） |
 | 收尾说明 | rc=1 = rank6 teardown 段 SIGABRT（final 保存后 destroy_process_group，无损，无需 resume） |
 | 已存 ckpt | step_500~step_5500（12 个）+ final + verify_save_20 |
-| CS8 eval | `eval_L1_20b_cs8`（8 集 zero-shot × 8 卡，LOG=/tmp/eval_L1_20b_cs8.log，ETA ~00:10） |
-| L2/L3 | ⏸ 待 CS8 出数后串行 |
+| CS8 eval | ✅ **59.03%**（`eval_L1_20b_cs8/eval_summary.txt`，@2026-10-21 23:55） |
+| L2/L3 | L2 🟢 训练中 step 740/5611；L3 ⏸ 待 L2 完成 |
 
 ### 关键观察：双移位修复确效
 
@@ -519,10 +519,23 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 ⇒ 双移位 bug 是 step0 loss 异常的直接原因，修复后起点 loss 回归 ~1.7（与 stable 末点一致）。L1 loss 轨迹：1.75(step0)→1.33(step20)→1.10(step100)→1.03(step500)→0.95(step1000)→0.88(step1670)，稳步下降无 spike。
 
+### L2 进展（截至 2026-10-22 03:2x — 🟢 训练中）
+
+| 项目 | 值 |
+|:--|:--|
+| 状态 | 🟢 **训练中** step 740/5611（13.2%），PID 2754486 |
+| 配置 | 修双移位（用 L1.py）+ LR=1.67e-3 + MIN_LR=1e-4 + warmup 100 + 20B/5611 步 |
+| loss | ~1.14（step 740），step0=1.7138（双移位修复在高 LR 下仍生效，vs v2 11.72） |
+| lr | 9.78e-04（WSD warmup 后衰减中） |
+| 吞吐 | ~12s/step，296.8K tok/s，8×GPU 100%/51763MiB |
+| ckpt | step_500 已存（save_interval=500） |
+| ETA | 剩 ~4871 步 × 12s ≈ 16.3h → ~10-22 19:30 完成 |
+| error | 0 nan / 0 CUDA error（唯一 log error = 启动期 EADDRINUSE port 29822 的失败尝试，无害） |
+
 ### 后续计划
 
-1. ✅ L1 训完（23:45，final loss 0.8687）→ CS8 eval 运行中（~00:10 出数）。
-2. L1 CS8 ≥55% → 启动 L2（仅修双移位，LR=1.67e-3）→ CS8 eval。
-3. 启动 L3（仅降 LR，不动双移位）→ CS8 eval。
-4. L1/L2/L3 三组 CS8 → 2×2 因子分析定主因 → 决定是否用最优配方重跑 71.2B。
+1. ✅ L1 训完 + CS8 eval = **59.03%**（≥55% 门槛✅ → 方向正确）。
+2. 🟢 L2 训练中（step 740/5611，ETA ~19:30）→ 训完 → CS8 eval（~20min）。
+3. L2 CS8 出数 → 启动 L3（仅降 LR 5e-4，不修双移位，20B）→ CS8 eval。
+4. L1/L2/L3 三组 CS8 → 2×2 因子分析定主因（双移位 vs LR）→ 决定是否用最优配方重跑 71.2B。
 
