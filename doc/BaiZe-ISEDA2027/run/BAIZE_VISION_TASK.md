@@ -1,6 +1,24 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔓 运维指令 · 2026-10-21（**Stage-2 改用原版 LLaVA-NeXT-780k 数据**）· 用户直令 · 最高优先
+
+> 用户原话：「让 vision 使用原版」。
+> 背景：Stage-2 FAILED（`LLaVA-NeXT-780k-plus-Instruct-opt47-webdataset` 被删 → 0 样本），改用仍在盘上的原版 `LLaVA-NeXT-780k-webdataset`。
+
+**① 改脚本（`vision/mllm_bridge/stage2_train_armD_r2.py`，两处）**
+1. L53 `DATA_DIR` → `/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-webdataset`
+2. L118 glob `data-*.tar` → `pretrain-*.tar`（原版 78 个 `pretrain-*.tar`，README=Stage-2 Visual Instruction Tuning quick-start 子集）
+
+**② 重跑 Stage-2（不重跑前序）**
+- 从已完成的 Stage-1.5 产物**直接续跑 Stage-2**（3500 步），**不重跑** ①训练/②ProtB/③Stage-1/1.5。
+- 起跑前先索引确认：`pretrain-*.tar` 能被索引到样本（json+img 可读），回报实际样本数（须 >0，理想 >数十万）。
+
+**③ 汇报口径（务必写进最终报告）**
+- Stage-2 instruct 数据版本：**opt47（原 738588）→ 原版 quick-start 子集（现）**；MLLM ④12集 结果与 ArmB/ArmC 对比时**必须标注此数据版本差异**（编码器结论不受影响——ProtB lp/5-NN 已 secured）。
+
+**④ 后续**：Stage-2 ✅ 后按原链继续 ④12集（离线缓存）→ ⑤报告 `report_vision_armD_r2_20261020_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §14`。commit 前缀 `vision armD_r2:`。
+
 ### 🔄 运维指令 · 2026-10-20 08:2x（**ArmD 放弃上一轮 → 重起：LR 1e-3 / min_LR 1e-5 / 数据不变**）· 用户直令 · 最高优先
 
 > 用户令（原文）：「**vision ArmD 放弃重启。学习率 LR=1e-3 min_LR=1e-5。数据仍保持不变。给出 ETA**」
