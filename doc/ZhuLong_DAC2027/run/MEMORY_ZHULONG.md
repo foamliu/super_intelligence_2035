@@ -1,15 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-21 08:45 🛑 BLOCKER 维持·r4⁗ INVALID(108 literal-pass·第5次核验✅)·无新运维令(RUN_ID 99 未变=已 DONE·git fetch 无新 ZhuLong commit)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 12G·loop 81827 含 https_proxy ✅·relay 3277328·8090 pid 3103371·无 r4/r5/regrade 残留·t0002147 活且未碰)·上条 08:09 -->
-- [2026-10-21 08:45] 🛑 BLOCKER 维持·唤醒巡检：无 r4/r5/regrade 残留进程·无新运维令(inbox RUN_ID 99 未变=已 DONE·outbox 仍 DONE 99·git fetch 无新 ZhuLong commit·remote 最后=1d105d76 08:09)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 12G free·loop 81827 含 https_proxy ✅·relay 3277328·8090 pid 3103371·t0002147 活且未碰)·r4⁗ batch 2026_1020_215918 第 5 次核验(python3 json tally)=108 literal-pass/158·status={success:49,fail:108,timeout:1}·31.0% 一致·WAITING=1 继续等运维决策。🚫 不盲重试 r4⁗（21:4x ⑤ STOP 阈值 literal-pass=108>10 已触发·第 6 次尝试无授权）。
+<!-- heartbeat 2026-10-21 09:19 🛑 BLOCKER 维持·r4⁗ INVALID(108 literal-pass)·无新运维令(RUN_ID 99 未变=已 DONE·git fetch 无新 ZhuLong commit·git 同步)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 12G·loop 81827 含 https_proxy ✅·relay 3277328·8090 pid 3103371·无 r4/r5/regrade 残留·t0002147 活且未碰)·上条 08:45 -->
+- [2026-10-21 09:19] 🛑 BLOCKER 维持·唤醒巡检：无 r4/r5/regrade 残留进程·无新运维令(inbox RUN_ID 99 未变=已 DONE·outbox tail 仍 DONE 99 @21:25:47·git fetch 无新 commit·git status 同步无 ahead/behind)·infra 全绿(4 端口 8650/8651/8652/8654 OPEN·/home 12G free 97%·loop 81827 含 https_proxy ✅·relay 3277328 活·8090 pid 3103371·t0002147 PID 545406 活且未碰)·r4⁗ batch 2026_1020_215918 仍 INVALID(108 literal-pass/158·31.0%)·WAITING=1 继续等运维决策。🚫 不盲重试 r4⁗（21:4x ⑤ STOP 阈值 literal-pass=108>10 已触发·第 6 次尝试无授权）。
 - [2026-10-21 08:09 指针·已滚出] 🛑 BLOCKER 维持·108 literal-pass 第 4 次核验 ✅ → 原文搬入 daily-memories/2026-10-21.md §[08:09]。
 - [2026-10-21 06:59 指针·已滚出] 🛑 BLOCKER 维持·唤醒巡检无新运维令·infra 全绿 → 原文搬入 daily-memories/2026-10-21.md §[06:59]。
 - [2026-10-21 06:27 指针·已滚出] 🛑 BLOCKER 维持·唤醒巡检无新运维令·infra 全绿·原文搬入 daily-memories/2026-10-21.md §[06:27]。
 - [2026-10-21 05:55 指针·已滚出] 🛑 BLOCKER 维持·唤醒巡检无新运维令·infra 全绿·原文搬入 daily-memories/2026-10-21.md §[05:55]。
 - [2026-10-21 05:16 指针·已滚出] 🛑 BLOCKER 维持·108 literal-pass 三次核验 ✅·原文搬入 daily-memories/2026-10-21.md §[05:16]。
 - [2026-10-21 04:40 指针·已滚出] 🛑 BLOCKER 维持·108 literal-pass 二次核验 ✅ → 原文搬入 daily-memories/2026-10-21.md §[04:40]。
-- [2026-10-21 02:08 指针·已滚出] 🛑 BLOCKER 维持·r4⁗ T+249min batch 147/158 即将收口·退化持续（⚠️ 误记 literal-pass=0·实为 grep code/ 非 codegen jsonl·下轮 02:49 收口核 jsonl 才发现 108）→ 原文搬入 daily-memories/2026-10-21.md §[02:08]。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
