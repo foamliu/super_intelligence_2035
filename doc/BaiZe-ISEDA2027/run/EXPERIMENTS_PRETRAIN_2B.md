@@ -432,7 +432,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 > 评测时间：2026-10-20 15:03–18:15（.29, 8×H100） · 模型：`xmodel25_baize_80b_decay/final`（**≈1.3B Dense Transformer / XmodelForCausalLM**，与 Xmodel-2.5 同架构）  
 > 评测脚本：`run/baize_xmodel_eval.sh` · 口径 14 集 = CS8 zero-shot + CX6 default n-shot, trust_remote_code=True, sdpa  
 > 结果文件：`eval_decay_v2_final/eval_summary.txt` + `p8_eval_summary.json`  
-> 中文报告：`reports/report_pretrain_decay_v2_final_eval_zh.html`（第二版，对照口径已更正：主对照 Xmodel-2.5 final）
+> 中文报告：`reports/report_pretrain_decay_v2_result_zh.html`（2026-10-21 重做版，主对照 Xmodel-2.5 final，含失败归因 §5）；旧版 `report_pretrain_decay_v2_final_eval_zh.html` 留档（对照口径纠错前的版本）
 
 ### CS8（Common Sense 8，zero-shot）
 
@@ -467,8 +467,63 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 | Xmodel-2.5 final（主对照·同起点） | 1.4T | 1.3B | 65.40% | 32.90% | Dense Transformer |
 | **decay v2 final** | 71.2B | ≈1.3B | **44.97%** | **6.21%** | Dense Transformer（同架构） |
 | **Δ（decay v2 − final）** | — | — | **-20.43pp** | **-26.69pp** | — |
-| step_532000（起点基线） | 1.41T | 1.3B | ⏸待跑 | ⏸待跑 | Dense Transformer |
+| step_532000（起点基线） | 1.41T | 1.3B | **61.03%** | — | Dense Transformer |
 | P-8 final（旁注·架构/参数量不同） | 44.4B | 2.22B | 49.21% | 6.81% | Mamba2-hybrid |
 | Xmodel-2.5 step_6000（旁注） | 79.2B | 1.3B | 50.20% | — | Dense Transformer |
 
-> **关键观察（口径已更正）**：decay v2 从 Xmodel-2.5 stable 末点 step_532000（1.41T）起步 decay 71.2B，其唯一公平主对照是 **Xmodel-2.5 final（CS8 65.40% / CX6 32.90%）**；实测 **CS8 -20.43pp / CX6 -26.69pp，14 集全面大幅落后** →「decay 段没练出来」（甚至可能把起点模型练退化）。失败归因见报告 §4：①双移位 bug（train 2-step / eval 1-step，代码级确认）②peak LR 1.67e-3 过高+warmup100 过短 ③code ≈26 epochs 过采样 ④step 0 loss=11.72 起点异常 ⑤step_532000 基线缺失（⏸关键判定实验，待用户批准补跑）。**P-8（2.22B Mamba2-hybrid / 从头 44.4B）与 decay v2 架构/参数量均不同，不可作归因依据**。
+> **关键观察（口径已更正）**：decay v2 从 Xmodel-2.5 stable 末点 step_532000（1.41T）起步 decay 71.2B，其唯一公平主对照是 **Xmodel-2.5 final（CS8 65.40% / CX6 32.90%）**；实测 **CS8 -20.43pp / CX6 -26.69pp，14 集全面大幅落后** →「decay 段没练出来」（甚至可能把起点模型练退化）。失败归因见报告 §4：①双移位 bug（train 2-step / eval 1-step，代码级确认）②peak LR 1.67e-3 过高+warmup100 过短 ③code ≈26 epochs 过采样 ④step 0 loss=11.72 起点异常 ⑤~~step_532000 基线缺失~~ **已补测：CS8=61.03%**（@2026-10-21 04:48，`eval_step532000_baseline/eval_summary.txt`）⇒ 判定 **decay 把起点模型训退化 16.06pp**（61.03%→44.97%），问题在 decay 配方而非起点/加载。**P-8（2.22B Mamba2-hybrid / 从头 44.4B）与 decay v2 架构/参数量均不同，不可作归因依据**。
+
+## 短途 Decay 实验（20B · L1/L2/L3 三变体 · 进行中）
+
+> 中文报告：`reports/report_pretrain_decay_short_experiment_zh.html` · 授权：任务书 §2026-10-21 02:3x（用户直令：自主排查根因，用 20B decay 看效果）
+> 目标：用 20B 小规模 decay（≈18.7h/变体）做 2×2 因子分析，隔离“双移位 vs LR”两个主因的贡献，判定门槛 CS8 ≥55%。
+
+### 起点基线（已测）
+
+| 模型 | CS8 | 来源 |
+|:--|--:|:--|
+| step_532000（起点基线） | **61.03%** | `eval_step532000_baseline/eval_summary.txt`（@2026-10-21 04:48，8 GPU） |
+
+### 三变体设计
+
+| 变体 | 双移位修复 | LR | warmup | 隔离目标 |
+|:--|:--:|:--|:--:|:--|
+| **L1**（先行） | ✅ | 5e-4 | 100 | 两主因同修 → 验证方向 |
+| **L2** | ✅ | 1.67e-3 | 100 | 仅修双移位 → 隔离 LR 贡献 |
+| **L3** | ❌ | 5e-4 | 100 | 仅降 LR → 隔离双移位贡献 |
+
+### L1 配置（`run/baize_xmodel25_decay_L1.sh`）
+
+- 起点 `xmodel25_history/step_532000` · 输出 `xmodel25_baize_L1_20b/` · seq 3712 / GBS 960 / MBS 4
+- ITERS=5611（20B token）/ WARMUP=100 / LR=5e-4 → MIN_LR=1e-5（WSD 指数衰减）/ SAVE_INTERVAL=500
+- 开关：adamw_fused + compile_model default + chunked_ce(256) + fast_data + verify_save_step 20
+
+### L1 进展（截至 2026-10-21 10:40）
+
+| 项目 | 值 |
+|:--|:--|
+| 状态 | ✅ 运行中（PID 1430363 torchrun, .29 8×H100 全满载） |
+| 当前 step | **1,670/5,611（29.8%）** |
+| 当前 loss | **0.8837**（lr=1.28e-04，decay 中） |
+| 吞吐 | 297.0K tok/s（≈1.07B tok/h），~12.0s/step，elapsed 334.1min |
+| 健康度 | 0 真实 error（16 条 “error” 命中全为启动时 NCCL 弃用 warning） |
+| 已存 ckpt | step_500(06:45) / step_1000(08:25) / step_1500(10:05) + verify_save_20 |
+| ETA | 剩 3,941 步 × 12s ≈ 13.1h → 预计 **10-21 ~23:45** |
+| L2/L3 | ⏸ 待启（串行：L1 训完 + CS8 eval 后决定） |
+
+### 关键观察：双移位修复确效
+
+| 实验 | step0 loss | 说明 |
+|:--|--:|:--|
+| v2（双移位 bug） | **11.7244** | 异常飙高（`baize_xmodel25_decay_v2_train.log [step 0/19980]`） |
+| L1（双移位修复） | **1.7510** | 回归正常（`baize_xmodel25_decay_L1_train.log [step 0/5611]`），降 **6.7×** |
+
+⇒ 双移位 bug 是 step0 loss 异常的直接原因，修复后起点 loss 回归 ~1.7（与 stable 末点一致）。L1 loss 轨迹：1.75(step0)→1.33(step20)→1.10(step100)→1.03(step500)→0.95(step1000)→0.88(step1670)，稳步下降无 spike。
+
+### 后续计划
+
+1. L1 训完（~23:45）→ CS8 eval（~20min）。
+2. L1 CS8 ≥55% → 启动 L2（仅修双移位，LR=1.67e-3）→ CS8 eval。
+3. 启动 L3（仅降 LR，不动双移位）→ CS8 eval。
+4. L1/L2/L3 三组 CS8 → 2×2 因子分析定主因 → 决定是否用最优配方重跑 71.2B。
+

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 预训练 · 短途 Decay 实验设置与进展报告</title>
+<style>
+:root{--c-bg:#0f1419;--c-card:#171c24;--c-border:#2a313c;--c-text:#e4e7eb;--c-muted:#9aa4b2;--c-accent:#4a9eff;--c-good:#2ecc71;--c-warn:#f1c40f;--c-bad:#e74c3c;--c-soft:#1e2530}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--c-bg);color:var(--c-text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;padding:24px;max-width:1080px;margin:0 auto}
+h1{font-size:1.7rem;color:var(--c-accent);border-bottom:2px solid var(--c-border);padding-bottom:10px;margin-bottom:6px}
+h2{font-size:1.3rem;color:var(--c-accent);margin:30px 0 12px;padding-left:10px;border-left:4px solid var(--c-accent)}
+h3{font-size:1.08rem;margin:18px 0 8px}
+.card{background:var(--c-card);border:1px solid var(--c-border);border-radius:8px;padding:16px 20px;margin:12px 0}
+.soft{background:var(--c-soft);border:1px solid var(--c-border);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:.92rem}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:.92rem}
+th,td{border:1px solid var(--c-border);padding:7px 10px;text-align:left}
+th{background:var(--c-soft);color:var(--c-accent);font-weight:600}
+td.r,th.r{text-align:right}
+td.c,th.c{text-align:center}
+.bad{color:var(--c-bad);font-weight:700}
+.good{color:var(--c-good);font-weight:700}
+.warn{color:var(--c-warn);font-weight:700}
+.num{font-variant-numeric:tabular-nums;font-family:"SF Mono",Consolas,monospace}
+.tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.78rem;font-weight:600;margin-right:6px}
+.tag-bad{background:rgba(231,76,60,.16);color:var(--c-bad);border:1px solid rgba(231,76,60,.4)}
+.tag-good{background:rgba(46,204,113,.16);color:var(--c-good);border:1px solid rgba(46,204,113,.4)}
+.tag-warn{background:rgba(241,196,15,.16);color:var(--c-warn);border:1px solid rgba(241,196,15,.4)}
+.tag-accent{background:rgba(74,158,255,.16);color:var(--c-accent);border:1px solid rgba(74,158,255,.4)}
+ul{margin:8px 0 8px 22px}li{margin:4px 0}
+code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem;color:#c792ea}
+.trace{font-size:.84rem;color:var(--c-muted);border-top:1px dashed var(--c-border);margin-top:18px;padding-top:12px}
+.trace code{color:#82aaff}
+.hl{background:rgba(46,204,113,.10);border-left:3px solid var(--c-good);padding:8px 12px;border-radius:4px;margin:10px 0}
+.hl-bad{background:rgba(231,76,60,.10);border-left:3px solid var(--c-bad);padding:8px 12px;border-radius:4px;margin:10px 0}
+.foot{margin-top:30px;color:var(--c-muted);font-size:.82rem;border-top:1px solid var(--c-border);padding-top:12px}
+.sub{color:var(--c-muted);font-size:.9rem;margin-bottom:20px}
+.pulse{color:var(--c-good);font-weight:700}
+</style>
+</head>
+<body>
+<h1>BaiZe 预训练 · 短途 Decay 实验设置与进展报告</h1>
+<div class="sub">报告时间：2026-10-21 10:40 | 实验线：BaiZe Stage(i) 预训练 | 硬件：10.239.2.29（8×H100）<br>授权：任务书 §2026-10-21 02:3x（用户直令：“自行想办法排查根因……用 20B 数据 decay 看看效果”）</div>
+<div class="hl"><strong>一句话进展：</strong>为排查 decay v2 落后 20pp 的根因，设计 20B 小规模 decay 三变体（L1/L2/L3）做 2×2 因子分析。<span class="pulse">L1 已在跑</span> —— step <span class="num">1670/5611（29.8%）</span>、loss <span class="num">0.88</span>；<strong>step0 loss 从 v2 的 11.72 降至 1.75（降 6.7×），双移位修复确效</strong>。起点基线 CS8=61.03% 已测，判定门槛 CS8≥55%。</div>
+<h2>§1 实验背景与动机</h2>
+<div class="card"><p>decay v2 用 71.2B tokens 从 Xmodel-2.5 stable 末点（step_532000，CS8 基线 61.03%）退火，结果 CS8 跌至 44.97%，落后 Xmodel-2.5 官方 final 65.40% 达 <strong>20.43pp</strong>（详见报告一）。根因归因（#648/#649）锁定两个高优先主因：①<strong>双移位 bug</strong>（训练移位两次 / 评测一次）②<strong>peak LR 1.67e-3 过高</strong>。</p>
+<div class="hl-bad">v2 风险：单跑 71.2B 一次 ≈ 1 天且赌注大。用户授权改用 <strong>20B 小规模 decay</strong>（对齐 Xmodel-2 的做法），一轮仅 ~18.7h，可串行跑 2~3 个变体做因子分析，<strong>不必赌 71.2B</strong>。</div></div>
+<h2>§2 实验设计（2×2 因子分析）</h2>
+<div class="card"><table>
+<tr><th>变体</th><th class="c">双移位修复</th><th class="c">LR</th><th class="c">warmup</th><th>隔离目标</th></tr>
+<tr><td><span class="tag tag-accent">L1（先行）</span></td><td class="c good">✅ 修复</td><td class="c">5e-4</td><td class="c">100</td><td>两主因同修 → 验证方向是否正确</td></tr>
+<tr><td><span class="tag tag-warn">L2</span></td><td class="c good">✅ 修复</td><td class="c bad">1.67e-3</td><td class="c">100</td><td>仅修双移位 → 隔离 LR 贡献</td></tr>
+<tr><td><span class="tag tag-warn">L3</span></td><td class="c bad">❌ 不动</td><td class="c">5e-4</td><td class="c">100</td><td>仅降 LR → 隔离双移位贡献</td></tr>
+</table>
+<div class="soft"><strong>判定门槛：</strong>任一变体 CS8 <strong>≥55%</strong> 即说明方向对了（Xmodel-2.5 final 65.40%，起点基线 61.03%）。每变体只评 <strong>CS8（8 集，~20min）</strong>，不必等 CX6。<br><strong>对照基准：</strong>起点基线 CS8=61.03%（已测）+ Xmodel-2.5 final 65.40%。decay v2 final 44.97% 为失败下界。</div></div>
+<h2>§3 L1 配置详情</h2>
+<div class="card"><table>
+<tr><th style="width:32%">参数</th><th>取值</th><th>与 v2 差异</th></tr>
+<tr><td>脚本</td><td><code>run/baize_xmodel25_decay_L1.sh</code> + <code>baize_xmodel25_decay_L1.py</code></td><td>新建（基于 v2 改）</td></tr>
+<tr><td>起点</td><td><code>xmodel25_history/step_532000</code></td><td>同 v2</td></tr>
+<tr><td>序列长 / GBS / MBS</td><td><span class="num">3712 / 960 / 4</span></td><td>同 v2</td></tr>
+<tr><td>总步数</td><td><span class="num">5,611</span>（= 20B / (960×3712)）</td><td>v2=19,980（71.2B）→ 缩至 1/3.6</td></tr>
+<tr><td>warmup / decay</td><td><span class="num">100 / 5,511</span>（WSD 指数衰减）</td><td>warmup 同 v2=100</td></tr>
+<tr><td>peak LR / min LR</td><td><span class="num">5e-4 / 1e-5</span></td><td><strong>v2=1.67e-3 → 降至 0.30×</strong></td></tr>
+<tr><td>双移位</td><td><span class="good">已修复</span>（仅 forward 移位一次）</td><td><strong>v2 移位两次（bug）→ 修复</strong></td></tr>
+<tr><td>save_interval</td><td><span class="num">500</span></td><td>v2=2000→500（更密）</td></tr>
+<tr><td>其它开关</td><td><code>adamw_fused</code> + <code>compile_model default</code> + <code>chunked_ce(256)</code> + <code>fast_data</code> + <code>verify_save_step 20</code></td><td>同 v2</td></tr>
+<tr><td>token 预算</td><td><span class="num">≈20.0B</span>（5611×960×3712）</td><td>v2=71.2B</td></tr>
+<tr><td>输出目录</td><td><code>xmodel25_baize_L1_20b/</code></td><td>—</td></tr>
+</table></div>
+<h2>§4 当前进展（截至 2026-10-21 10:40）</h2>
+<div class="card"><table>
+<tr><th style="width:32%">项目</th><th>状态</th></tr>
+<tr><td>起点基线 CS8</td><td><span class="tag tag-good">已测</span> <strong class="warn">61.03%</strong>（eval @04:48，8 GPU，~4min）</td></tr>
+<tr><td>L1 训练</td><td><span class="tag tag-good">运行中</span> step <span class="num">1,670/5,611（29.8%）</span>，PID 1430363（torchrun，hostname=whag0pgpuap29）</td></tr>
+<tr><td>L1 当前 loss</td><td><span class="num">0.8837</span>（lr=1.28e-04，decay 中）</td></tr>
+<tr><td>L1 吞吐</td><td><span class="num">297.0K tok/s</span>（≈1.07B tok/h），<span class="num">~12.0s/step</span>，elapsed 334.1min</td></tr>
+<tr><td>L1 健康度</td><td><span class="tag tag-good">0 真实 error</span>（grep “error” 16 命中全为启动时 NCCL_ASYNC_ERROR_HANDLING 弃用 warning，一次性）</td></tr>
+<tr><td>GPU 占用</td><td>8×H100 全满载（100%/51763MiB），worker PID 1440365-1440380</td></tr>
+<tr><td>已存 ckpt</td><td><code>step_500</code>(06:45) / <code>step_1000</code>(08:25) / <code>step_1500</code>(10:05) + <code>verify_save_20</code>，均 2.7GB safetensors</td></tr>
+<tr><td>ETA</td><td>剩 3,941 步 × 12s ≈ <strong>13.1h → 预计 10-21 ~23:45 完成</strong></td></tr>
+<tr><td>L2 / L3</td><td><span class="tag tag-warn">待启</span> 串行：待 L1 训完 + CS8 eval 后依结果决定</td></tr>
+</table>
+<div class="soft"><strong>⚠️ ETA 修正：</strong>实测 297K tok/s ≈ 1.07B tok/h ⇒ 20B=5611 步 ≈ <strong>18.7h/变体</strong>（用户初估 3~3.5h 为 6× 高估）。串行 3 变体 ≈ 60h ≈ 2.5 天。</div></div>
+<h2>§5 关键观察：双移位修复确效</h2>
+<div class="card">
+<div class="hl"><strong>step0 loss 对比（最直接的证据）：</strong><br>v2（双移位 bug）：step0 loss = <span class="bad num">11.7244</span><br>L1（双移位修复）：step0 loss = <span class="good num">1.7510</span>（降 <strong>6.7×</strong>）<br>⇒ 双移位 bug 是 step0 loss 异常飙高的直接原因；修复后起点 loss 回归正常区间（~1.7），与 stable 末点一致。</div>
+<h3>L1 loss 轨迹（稳步下降）</h3>
+<table>
+<tr><th class="r">step</th><th class="r">loss</th><th class="r">lr</th><th class="r">elapsed</th></tr>
+<tr><td class="r num">0</td><td class="r num">1.7510</td><td class="r num">0.00e+00</td><td class="r num">0.7min</td></tr>
+<tr><td class="r num">20</td><td class="r num">1.3289</td><td class="r num">1.00e-04</td><td class="r num">4.7min</td></tr>
+<tr><td class="r num">100</td><td class="r num">1.0987</td><td class="r num">5.00e-04</td><td class="r num">20.8min</td></tr>
+<tr><td class="r num">500</td><td class="r num">1.0337</td><td class="r num">3.51e-04</td><td class="r num">100.6min</td></tr>
+<tr><td class="r num">1000</td><td class="r num">≈0.95</td><td class="r num">≈2.5e-04</td><td class="r num">≈200min</td></tr>
+<tr><td class="r num">1670</td><td class="r num">0.8837</td><td class="r num">1.28e-04</td><td class="r num">334.1min</td></tr>
+</table>
+<div class="soft">loss 从 1.75 稳步降至 0.88，无 spike / 无 nan，曲线健康。warmup 100 步内 lr 线性升到 5e-4，之后指数衰减，符合 WSD 设计。</div>
+</div>
+<h2>§6 后续计划</h2>
+<div class="card"><ul>
+<li><strong>L1 训完（~10-21 23:45）</strong> → 立即跑 <strong>CS8 eval（~20min）</strong>。</li>
+<li>若 L1 CS8 <strong>≥55%</strong> → 方向正确，启动 <strong>L2</strong>（仅修双移位，LR=1.67e-3）。</li>
+<li>L2 训完 + CS8 eval → 启动 <strong>L3</strong>（仅降 LR，不动双移位）。</li>
+<li>L1/L2/L3 三组 CS8 → <strong>2×2 因子分析</strong>，定量隔离“双移位 vs LR”各自贡献，锁定主因。</li>
+<li>可选 <strong>L4</strong>：修双移位 + LR 5e-4 + code 配比降到 4%（若 code 过采样被证实有影响）。</li>
+<li>定主因后，再决定是否用最优配方重跑 71.2B 完整 decay。</li>
+</ul>
+<div class="soft"><strong>纪律：</strong>只用 .29 8 卡，不抢 .12（vision ArmD-R2）；每轮落 MEMORY + daily（step/loss/CS8/结论）；实验可复现（脚本/config/seed 全落盘 commit）；不改 v2 原始产物（失败证据留档）。</div>
+</div>
+<div class="trace"><strong>数据溯源（所有数字可核对）：</strong><br>• L1 训练日志 → <code>/tmp/baize_xmodel25_decay_L1_train.log</code>（PID 1430363 fd/1,2 指向）+ <code>xmodel25_baize_L1_20b/train_log.txt</code><br>• L1 step0 loss=1.7510 → 日志 <code>[step 0/5611]</code>；step 1670 loss=0.8837 → <code>[step 1670/5611]</code><br>• v2 step0 loss=11.7244 → <code>baize_xmodel25_decay_v2_train.log</code> <code>[step 0/19980]</code><br>• 起点基线 CS8=61.03% → <code>eval_step532000_baseline/eval_summary.txt</code>（@2026-10-21 04:48）<br>• L1 配置 → <code>run/baize_xmodel25_decay_L1.sh</code>（ITERS=5611, WARMUP=100, LR=5e-4, MIN_LR=1e-5）+ torchrun 命令行<br>• 实验设计 → 任务书 §2026-10-21 02:3x（用户直令）+ §②-a（warmup 100 / 20B 小规模 decay）<br>• decay v2 对照 → 报告一 <code>report_pretrain_decay_v2_result_zh.html</code></div>
+<div class="foot">BaiZe Stage(i) 预训练线 · 自动化 agent 生成 · commit 前缀 <code>pretrain report:</code> · 2026-10-21 10:40</div>
+</body>
+</html>
