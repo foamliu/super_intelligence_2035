@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-22 01:1x #698：🩺 L2 训练健康监控 step 370/5611(6.6%) + 短途报告更新**：L2（修双移位+高LR1.67e-3）训练中，PID2754486，8×GPU 100%/51763MiB，loss=1.35，lr=1.33e-3，~12s/step，0 error，ETA ~10-22 18:30。**短途进展报告已更新**：`reports/report_pretrain_decay_short_experiment_zh.html`（14877B）补充 L1 完成 CS8=59.03% + L2 运行中 + L1/L2 step0 loss 对比 + L1 各集明细 + 对照总结。09:3x 两份报告均已交付且最新。git 0/0。📦 体积：TASK=32.7KB / MEMORY=13.0KB（均<32KB）。
+> 🆕 **2026-10-22 02:5x #699：🩺 L2 训练健康监控 step 630/5611（11.2%）无新令**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU ~95-100%/51763MiB，loss~1.20-1.31（最新1.30），lr=1.07e-3，~11.9s/step，296.5K tok/s，elapsed 126min，ETA ~10-22 19:30。step0=1.71（双移位修复在高LR下仍生效）。log 唯一 error=启动期一次 EADDRINUSE(port29822)失败尝试（现进程为重试成功者），训练本身 0 nan/0 CUDA error。ckpt step_500 已存。无新令。git 0/0。📦 体积：TASK=32725B(32.0K)/MEMORY≈12.8K（均≤32KB）。
+> 📦 §#698 流水（2026-10-22 01:1x，L2 监控+短途报告更新）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step370、短途报告补齐 L1 CS8=59.03%+L2 运行中。需要时再读。
 > 📦 §#697 流水（2026-10-22 00:5x，L1 CS8 eval=59.03%→L2启动）已归档 → daily-memories/2026-10-22.md；**结论**：L1 CS8=59.03%≥55%门槛→方向正确→L2启动PID2754486 step4/5611 step0=1.71。需要时再读。
 > 📦 §#696 流水（2026-10-21 23:5x，L1 训练完成+CS8 eval 启动）已归档 → daily-memories/2026-10-21.md；**结论**：L1 5611步/20B/final loss=0.8687，teardown SIGABRT 无损，CS8 eval 启动。需要时再读。
 > 📦 §#677~#695 流水（2026-10-21 16:1x~23:38，19 条 L1 健康监控 step 3330→5570/5611 + 09:3x 报告交付复核）已归档 → daily-memories/2026-10-21.md；**结论**：L1 全程健康 0 error、loss 0.86→0.82 平稳降、ckpt step_500~5500 已存 12 个、09:3x 两份报告在盘已推远端（commit c44ef1fea）。需要时再读。
@@ -29,9 +30,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **✅ decay v2 根因排查进行中 + 09:3x 报告令已交付** —— Xmodel-2.5 80B decay v2 已完成（CS8=44.97% vs 官方 65.40%，差 20pp）。起点基线 **step_532000 CS8=61.03%** ⇒ 判定 **decay 训坏模型**。02:3x 令授权自主排查，**L1 实验**（修双移位 + LR 5e-4 + 20B decay = 5611 步）**✅ 训练完成**（18.67h，final loss 0.8687，step0 1.75 vs v2 11.72 双移位修复确效），**CS8-only eval 运行中（ETA ~00:10）**。09:3x 令「两份中文 HTML 报告」**已全部交付并推远端**（commit c44ef1fea）。⚠️吞吐 297.5K tok/s ⇒ 18.7h/变体，串行 3 变体 ≈ 2.5 天。L2/L3 脚本就绪待 CS8 出数。
-  - PHASE: **decay80b_v2_scrootcause_L1（L1 训练完成 + CS8 eval 运行中 + 报告已交付）** — 02:3x 令：①起点基线 CS8=61.03%（decay 训坏）②L1=修双移位+LR5e-4+warmup100 ✅ 训练完成（18.67h）③L2/L3 脚本就绪。09:3x 令：两份中文 HTML 报告已交付并推远端（v2 结果 + 短途实验进展）。只评 CS8 快速判（≥55% 即方向对；官方 final 65.40%）。
-  - 轮询状态：**#696（23:5x，L1 训练完成 + CS8 eval 启动）**：09:3x 报告令已全交付并推远端（commit c44ef1fea, git 0/0）。02:3x 归因令已全动——起点基线 CS8=61.03%（#657）→ L1 训练完成（final loss 0.8687，step0 1.75 vs 11.72 双移位修复确效，final ckpt 2.7GB）；CS8-only eval 运行中（PID2690438，OUT=eval_L1_20b_cs8，ETA ~00:10）。下一步：CS8 出数→(≥55%)L2→L3→2×2 因子定主因。任务书 mtime 10:22 + ops .last_run_id=142（data 线）未变 ⇒ 无新 pretrain 令。loop 存活。git 0/0。
+- STAGE: **✅ decay v2 根因排查进行中 + 09:3x 报告令已交付** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。**L1（修双移位+LR5e-4）✅ CS8=59.03%≥55% → 方向正确**；**L2（只修双移位+高LR1.67e-3）训练中 step 630/5611**；L3（bug+低LR）待启。09:3x 两份中文 HTML 报告已交付。吞吐 297.5K tok/s ⇒ 18.7h/变体，L2/L3 剩 ≈ 1.5 天。
+  - PHASE: **decay80b_v2_scrootcause_L2（L1 完成 CS8=59.03% / L2 训练中 / L3 待启）** — 2×2 因子：L1(fix+lowLR)=59.03% 基准，L2(fix+highLR) 隔离 LR 贡献，L3(bug+lowLR) 隔离双移位贡献。判定门槛 CS8≥55%（L1 已过 → 方向对）。
+  - 轮询状态：**#699（02:5x，L2 健康监控）**：L1 CS8=59.03%（#697）、L2 训练中 step 630/5611 health 0 error（#698/#699）。下一步：L2 ~19:30 训完 → CS8 eval(~20min) → L3 → 2×2 因子定主因。任务书 mtime 10:22 未变 ⇒ 无新 pretrain 令。loop 存活。git 0/0。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
