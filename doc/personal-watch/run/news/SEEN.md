@@ -896,3 +896,13 @@
 | 2026-10-21 | OpenAI 模型 COBOL 迁移 97.9% 评测（厂商自评 · 留档不收） | IT之家 | 不收 | https://www.ithome.com/1/015/633.htm |
 | 2026-10-21 | Hugging Face CEO 吐槽 Netflix《AI 失控》纪录片（个人社交媒体言论 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/637.htm |
 | 2026-10-21 | 美团「红灯停表」杭州落地（平台运营政策 · AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/641.htm |
+| 2026-10-21 | 腾讯云宣布元宝搜索对外开放：千亿级索引、每千次 14 元起 | IT之家 | news | https://www.ithome.com/1/015/711.htm |
+| 2026-10-21 | 消息 NVIDIA 下代 Groq LPU 芯片转向 3D 堆叠 DRAM，放弃大 SRAM 方案 | IT之家（引 ZDNET Korea） | news | https://www.ithome.com/1/015/760.htm |
+| 2026-10-21 | Adobe 大改 Photoshop 滤镜逻辑：修图不再“一改就毁” | IT之家（引 Digital Camera World） | news | https://www.ithome.com/1/015/726.htm |
+| 2026-10-21 | 雷军宣布北京小米汽车设计中心启用，迎来首次对外开放 | IT之家 | news | https://www.ithome.com/1/015/762.htm |
+| 2026-10-21 | 国家能源局：9 月份全社会用电量 8997 亿千瓦时，同比增长 1.2% | IT之家 | news | https://www.ithome.com/1/015/763.htm |
+| 2026-10-21 | 佳能计划到 2029 年将后端光刻机产能提升 50%（AI 相关性间接 · 留档不收） | IT之家 | 不收 | https://www.ithome.com/1/015/780.htm |
+| 2026-10-21 | 印度最大运营商 Jio 启动 IPO 拟融资 32 亿美元（AI 相关性弱 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/754.htm |
+| 2026-10-21 | 奥尔特曼被妹妹指控性虐待案遭法官驳回（司法个案 + 人身指控 · 红线不收） | IT之家 | 不收 | https://www.ithome.com/1/015/710.htm |
+| 2026-10-21 | 《GTA 6》真人预告传闻：迈阿密“罪恶都市”车队（社交媒体猜测 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/790.htm |
+| 2026-10-21 | （台湾写真）AI浪潮驱动两岸供应链紧密嵌合（述评体裁 · 非具体事件 · 不收） | 中新网 | 不收 | https://www.chinanews.com.cn/ |
