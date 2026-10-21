@@ -12793,3 +12793,82 @@ SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/wor
 
 === DONE 100 ===
 ```
+
+---
+
+## RUN_ID 101 · 2026-10-21 15:08:24 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 101 | r5 备用端口验证 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 8663/8666/8667/8670 run_code 端到端（@10.129.32.75）"
+for P in 8663 8666 8667 8670; do
+  echo "  === port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 200)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    if [ -n "$R" ]; then
+      echo "    #$i ${MS}ms :: $(echo "$R" | cut -c1-150)"
+    else
+      echo "    #$i ${MS}ms :: <empty/超时>"
+    fi
+  done
+done
+echo "  判读：8 次全返回 {\"response\":... 且无 licence/breaker/空 → 可用"
+
+echo ""
+echo "[2] 对照：r4e 当前端口 8650/8651/8652/8654（确认仍健康）"
+for P in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 80)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -n "$R" ]; then echo "  $P OK ${MS}ms"; else echo "  $P FAIL ${MS}ms"; fi
+done
+
+echo ""
+echo "[3] r4e 进程状态（确认仍跑中·不打扰）"
+if kill -0 1519090 2>/dev/null; then
+  echo "  PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  PID 1519090 GONE（r4e 已收口）"
+fi
+
+echo ""
+echo "=== DONE 101 ==="
+```
+
+**输出**
+```
+=== RUN_ID 101 | r5 备用端口验证 | 2026-10-21 15:08:25 | host=hfeg0tedaap02 ===
+[1] 8663/8666/8667/8670 run_code 端到端（@10.129.32.75）
+  === port 8663 ===
+    #1 25008ms :: <empty/超时>
+    #2 25009ms :: <empty/超时>
+  === port 8666 ===
+    #1 25009ms :: <empty/超时>
+    #2 25011ms :: <empty/超时>
+  === port 8667 ===
+    #1 25009ms :: <empty/超时>
+    #2 25009ms :: <empty/超时>
+  === port 8670 ===
+    #1 25010ms :: <empty/超时>
+    #2 25009ms :: <empty/超时>
+  判读：8 次全返回 {"response":... 且无 licence/breaker/空 → 可用
+
+[2] 对照：r4e 当前端口 8650/8651/8652/8654（确认仍健康）
+  8650 OK 14ms
+  8651 OK 13ms
+  8652 OK 15ms
+  8654 OK 14ms
+
+[3] r4e 进程状态（确认仍跑中·不打扰）
+  PID 1519090 ALIVE (etime=16033s)
+
+=== DONE 101 ===
+```
