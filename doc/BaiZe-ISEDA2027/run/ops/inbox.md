@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 143 -->
+<!-- RUN_ID: 144 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,48 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 144 — 🔴 只读：全库 68min 零提交，查三条线实时状态
+
+> 运维判读（2026-10-21 22:44）：`origin/main` 自 **21:36:55**（ops-relay result）后 **68 分钟无任何提交**。pretrain 应每 30min 心跳、zhulong 应每 30min 巡检、vision 应在跑 ArmE → **三者同时静默 = 疑似共因**（git push 失败？loop 同批卡死？网络？）。
+> ⚠️ **纯只读：不 kill、不重启、不动任何训练**。
+
+```bash
+set -u
+echo "=== RUN_ID 144 | 全库静默排查 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "[1] 三条线 loop 进程"
+for s in baize_pretrain_loop baize_vision_loop baize_data_loop zhulong_loop ops_relay baize_harness_loop; do
+  p=$(pgrep -f "$s.sh" 2>/dev/null | head -1)
+  if [ -n "$p" ]; then echo "  $s = PID $p (etime $(ps -o etimes= -p $p 2>/dev/null | tr -d ' ')s)"; else echo "  $s = **NOT_RUNNING**"; fi
+done
+echo "[2] 各自 loop 日志 mtime（近 5 行）"
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_vision_loop.log /tmp/baize_data_loop.log /tmp/zhulong_loop.log /tmp/baize_ops_relay.log; do
+  [ -f "$f" ] && echo "  --- $f $(stat -c '%y' "$f" 2>/dev/null)" && tail -4 "$f" 2>/dev/null | cut -c1-150
+done
+echo "[3] git 同步是否卡住（各线工作区）"
+cd "$R" && git -c core.pager=cat status -sb 2>/dev/null | head -3
+git -c core.pager=cat log --oneline -1 2>/dev/null
+ls -la .git/*.lock .git/index.lock 2>/dev/null && echo '  ⚠️ GIT LOCK 存在' || echo '  no git lock'
+echo "[4] 各线是否有未提交改动（pull 后没提交=loop 卡在 push）"
+for d in doc/BaiZe-ISEDA2027/run doc/ZhuLong_DAC2027/run; do
+  n=$(git -c core.pager=cat status --porcelain -- "$d" 2>/dev/null | wc -l)
+  echo "  $d : $n 个未提交文件"
+done
+echo "[5] 当前活动的 agent / 训练进程"
+pgrep -af 'cline --data-dir|opencode run|torchrun|run_cline_script' 2>/dev/null | cut -c1-120 | head -8 || echo '  NONE'
+echo "[6] .12 + .29 GPU（.29 走 ssh）"
+echo "  --- .12 (local) ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "  --- .29 (ssh) ---"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .29 FAILED'
+echo "[7] pretrain / zhulong / vision 关键日志 mtime"
+for f in /tmp/baize_xmodel25_decay_L1_train.log /tmp/ABL_readback_none_retest_r5e.log /tmp/armE_openclip_train.log; do
+  [ -f "$f" ] && echo "  $f -> $(stat -c '%y size=%s' "$f" 2>/dev/null)" || echo "  $f MISSING"
+done
+echo "=== DONE 144 ==="
+```
+
 
 ## RUN_ID 143 — 🔴 只读探针：vision loop 是否还活着（2h16m 无提交，ArmE 指令未执行）
 
