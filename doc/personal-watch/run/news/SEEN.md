@@ -929,3 +929,11 @@
 | 2026-10-21 | 东风：新一代快充型混合固液电池 2027 规模化应用（车企规划） | IT之家 | 不收 | https://www.ithome.com/1/016/113.htm |
 | 2026-10-21 | 《我的世界》×达美乐方形披萨联名（营销联名） | IT之家（据 CNET） | 不收 | https://www.ithome.com/1/016/112.htm |
 | 2026-10-21 | 雷军：智能网联汽车「下半场」比生态（同一场发言另句 · 不重复入账） | IT之家 | 不收 | https://www.ithome.com/1/016/110.htm |
+| 2026-10-22 | OpenAI：GPT-5.6 Sol 挖出 PHP 两个未认证 RCE 漏洞「PHP2Shell」· PHP 官方发 8.5.12/8.4.27/8.3.36/8.2.35 | 头条（据机器之心 / 新浪财经） | news | https://www.toutiao.com/article/7699258004260028954/ |
+| 2026-10-22 | 宾汉姆顿大学演示后门攻击 MuTRAP：触发词「CF」让机器人把刀转向模型手 | 头条（人工智能学家） | news | https://www.toutiao.com/article/7699149151702942242/ |
+| 2026-10-21 | 黄仁勋柏林 GTC：开放模型组合扩充（Nemotron 3.5 / Kumo / Cosmos / Alpamayo 2 Edge / BioNeMo RFD4-Proteina / Ising） | 头条（财闻） | news | https://www.toutiao.com/article/7699064185354764851/ |
+| 2026-10-22 | Anthropic 研究预览版 Claude Duet（Opus 5.5 · 独立 VM + 浏览器 · 6000+ 连接器 · 敏感动作需审批） | IT之家 | 头条选题源（不计入 news） | 头条微头条 https://www.toutiao.com/w/1879702222708743/ |
+| 2026-10-21 | 三星西安厂 200 层 NAND 升 286 层 V9、SK 海力士大连转 240 层以上（据悉 / 消息人士） | 头条（财闻） | 不收 | https://www.toutiao.com/article/7699020417016660523/ |
+| 2026-10-21 | 6G 承载网创新技术论坛在南京召开（10-15 举办 · 会议通稿） | 头条（中国通信学会） | 不收 | https://www.toutiao.com/article/7699008518406111785/ |
+| 2026-10-21 | 盛天网络「AI+」出海三大赛道（企业宣传稿） | 头条（项乾） | 不收 | https://www.toutiao.com/article/7699083196868166144/ |
+| 2026-10-22 | 把好中高职贯通培养转段质量关（教育政策 · AI 无关） | 头条（大众日报） | 不收 | https://www.toutiao.com/article/7699245707764515338/ |
