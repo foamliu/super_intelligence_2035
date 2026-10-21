@@ -1,7 +1,67 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 103 -->
+<!-- RUN_ID: 104 -->
 
-## RUN_ID 103 — r4e 收口+regrade 进度实测（只读·用户直令）
+## RUN_ID 104 — r4e 收口+regrade+r5e 起跑实测（只读·用户问进展）
+
+> 用户令：「查看进展」。agent 心跳 16:31 仍显示 r4e 未收口，实测当前状态。
+
+```bash
+echo "=== RUN_ID 104 | 进展实测 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e 主进程"
+if kill -0 1519090 2>/dev/null; then
+  echo "  r4e PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r4e PID 1519090 GONE（已收口）"
+fi
+
+echo ""
+echo "[2] 所有相关进程"
+pgrep -af 'run_cline_script|run_pipeline|regrade|cline.*batch' 2>/dev/null | cut -c1-160 | head -12 || echo '  NONE'
+
+echo ""
+echo "[3] r4e batch 产物"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+echo "  r4e task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  r4e .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+echo "  --- r4e codegen jsonl（收口标志）---"
+timeout 10 ls -la $DIR/completed_code_generation_$BATCH.jsonl 2>/dev/null || echo "  尚未生成（仍在 code-gen）"
+echo "  --- r4e regrade/graded 产物 ---"
+timeout 10 ls -la $DIR/graded_* $DIR/regrade_* $DIR/*score* 2>/dev/null | head -5 || echo "  无 regrade 产物"
+
+echo ""
+echo "[4] r4e log 收口特征"
+L=/tmp/ABL_readback_none_retest_r4e.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  pass_summary = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  -32001 = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  run_code_calls = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  last 3 lines:"
+  timeout 8 tail -3 "$L" | sed 's/^/    /' | cut -c1-120
+fi
+
+echo ""
+echo "[5] r5e batch 是否已起"
+ls -la /tmp/ABL_readback_none_retest_r5e.log 2>/dev/null && echo "  r5e log 已存在" || echo "  r5e log 尚未创建"
+for D in /home/app.e0031982/eda_code_eval/2026_1021_1[5-9]*; do
+  [ -d "$D" ] && echo "  batch: $D  task_dirs=$(timeout 5 ls -d $D/code/*/ 2>/dev/null | wc -l)"
+done
+
+echo ""
+echo "[6] 当前 .env 端口"
+grep -E "^PROXY_PORTS=" /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null
+
+echo ""
+echo "[7] 8090 进程"
+pgrep -af 'eda_fastmcp|uvicorn.*8090' 2>/dev/null | cut -c1-120 | head -3 || echo "  8090 未起"
+
+echo ""
+echo "=== DONE 104 ==="
+```
+
+## RUN_ID 103 — r4e 收口+regrade 进度实测（只读·用户直令）·【已执行·历史】
 
 > 用户令：「r4e 不是已经 regrade 完了吗，看看当前进展」。agent 心跳 15:17 仍显示 r4e 跑中未收口，实测 r4e 是否收口 + regrade 是否完成 + r5e 是否起跑。
 

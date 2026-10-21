@@ -13065,3 +13065,115 @@ SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/wor
 
 === DONE 103 ===
 ```
+
+---
+
+## RUN_ID 104 · 2026-10-21 16:38:24 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 104 | 进展实测 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e 主进程"
+if kill -0 1519090 2>/dev/null; then
+  echo "  r4e PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r4e PID 1519090 GONE（已收口）"
+fi
+
+echo ""
+echo "[2] 所有相关进程"
+pgrep -af 'run_cline_script|run_pipeline|regrade|cline.*batch' 2>/dev/null | cut -c1-160 | head -12 || echo '  NONE'
+
+echo ""
+echo "[3] r4e batch 产物"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+echo "  r4e task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  r4e .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+echo "  --- r4e codegen jsonl（收口标志）---"
+timeout 10 ls -la $DIR/completed_code_generation_$BATCH.jsonl 2>/dev/null || echo "  尚未生成（仍在 code-gen）"
+echo "  --- r4e regrade/graded 产物 ---"
+timeout 10 ls -la $DIR/graded_* $DIR/regrade_* $DIR/*score* 2>/dev/null | head -5 || echo "  无 regrade 产物"
+
+echo ""
+echo "[4] r4e log 收口特征"
+L=/tmp/ABL_readback_none_retest_r4e.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  pass_summary = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  -32001 = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  run_code_calls = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  last 3 lines:"
+  timeout 8 tail -3 "$L" | sed 's/^/    /' | cut -c1-120
+fi
+
+echo ""
+echo "[5] r5e batch 是否已起"
+ls -la /tmp/ABL_readback_none_retest_r5e.log 2>/dev/null && echo "  r5e log 已存在" || echo "  r5e log 尚未创建"
+for D in /home/app.e0031982/eda_code_eval/2026_1021_1[5-9]*; do
+  [ -d "$D" ] && echo "  batch: $D  task_dirs=$(timeout 5 ls -d $D/code/*/ 2>/dev/null | wc -l)"
+done
+
+echo ""
+echo "[6] 当前 .env 端口"
+grep -E "^PROXY_PORTS=" /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null
+
+echo ""
+echo "[7] 8090 进程"
+pgrep -af 'eda_fastmcp|uvicorn.*8090' 2>/dev/null | cut -c1-120 | head -3 || echo "  8090 未起"
+
+echo ""
+echo "=== DONE 104 ==="
+```
+
+**输出**
+```
+=== RUN_ID 104 | 进展实测 | 2026-10-21 16:38:24 | host=hfeg0tedaap02 ===
+[1] r4e 主进程
+  r4e PID 1519090 ALIVE (etime=21232s)
+
+[2] 所有相关进程
+1519090 bash scripts/run_cline_script.sh -p 4 -n
+2694743 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework/output_code_genera
+2694776 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework/output_code_genera
+2694828 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework/output_code_genera
+2694875 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework/output_code_genera
+2694881 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework/output_code_genera
+2694952 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework
+2694959 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework/output_code_genera
+2695000 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework
+2695016 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework
+2695026 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework
+2695029 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framework
+
+[3] r4e batch 产物
+  r4e task dirs = 158 / 158
+  r4e .py 文件 = 154
+  --- r4e codegen jsonl（收口标志）---
+  尚未生成（仍在 code-gen）
+  --- r4e regrade/graded 产物 ---
+
+[4] r4e log 收口特征
+  log_size=34M  lines=288252  mtime=2026-10-21 16:38:25
+  pass_summary = 0
+  -32001 = 0
+  run_code_calls = 1366
+  last 3 lines:
+    [0m[2m让我先[0m[2m查看工作[0m[2m clearly document[0m[2m. And[0m[2m目录结构[0m[2m。[0m[2m I
+    
+    [0m[2mActually,[0m[2m let me[0m[2m make a[0m[2m cleaner final[0m[2m decision:[0m[2m I'll[0m[2m derive
+
+[5] r5e batch 是否已起
+  r5e log 尚未创建
+
+[6] 当前 .env 端口
+PROXY_PORTS=8650,8651,8652,8654
+
+[7] 8090 进程
+490382 /home/app.t0002596/miniforge3/envs/py310_env/bin/python /home/app.t0002596/devops/eda_fastmcp/main.py
+1136643 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.t0002643/devops/eda_fastmcp/main.py
+1504991 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/main.py
+
+=== DONE 104 ===
+```
