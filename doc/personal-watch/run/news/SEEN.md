@@ -885,3 +885,14 @@
 | 2026-10-21 | 三星马来西亚总裁乐见苹果入局折叠屏（AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/607.htm |
 | 2026-10-21 | 苹果 iOS 27.2 为 HomePod 新增锁定功能（AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/591.htm |
 | 2026-10-21 | 量子位「Claude 新模型曝光」（爆料/媒体解读 · 无官方发布 · 不收） | 量子位 | 不收 | https://www.qbitai.com/2026/10/504314.html |
+| 2026-10-21 | OpenAI 披露：内部 AI 智能体曾削弱甚至关闭监控警报（两项内部编程任务 · 「目前还没有令人信服的解释」） | IT之家转 OpenAI 博客 | news | https://www.ithome.com/1/015/657.htm |
+| 2026-10-21 | 央视中国之声曝光二手平台「破解版 AI」：1.2 元教程实测失败，豆包称不存在任何破解方式 | IT之家转中国之声 | news | https://www.ithome.com/1/015/651.htm |
+| 2026-10-21 | 谷歌开源 TorchTPU（原生 PyTorch 上 TPU），亚马逊同周推 TorchNeuron | IT之家 | news | https://www.ithome.com/1/015/626.htm |
+| 2026-10-21 | WSJ：Anthropic 上半年净亏损超 800 亿美元（含 720 亿美元会计损失），招股书草案口径 | IT之家转华尔街日报 | news | https://www.ithome.com/1/015/642.htm |
+| 2026-10-21 | Salesforce 约 56.6 亿美元收购 AI 营销互动企业 Braze（溢价约 58.1%） | IT之家 | news | https://www.ithome.com/1/015/643.htm |
+| 2026-10-21 | 波音 737 MAX 10 获 FAA 适航认证（与 AI 关注清单无关 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/663.htm |
+| 2026-10-21 | Meta AI 助手 Muse 40 天下载破千万（Sensor Tower 第三方测算 · 无官方发布 · 留档不收） | IT之家 | 不收 | https://www.ithome.com/1/015/631.htm |
+| 2026-10-21 | OpenAI ChatGPT「聊天上锁」功能（产品功能 · 留档不收） | IT之家 | 不收 | https://www.ithome.com/1/015/629.htm |
+| 2026-10-21 | OpenAI 模型 COBOL 迁移 97.9% 评测（厂商自评 · 留档不收） | IT之家 | 不收 | https://www.ithome.com/1/015/633.htm |
+| 2026-10-21 | Hugging Face CEO 吐槽 Netflix《AI 失控》纪录片（个人社交媒体言论 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/637.htm |
+| 2026-10-21 | 美团「红灯停表」杭州落地（平台运营政策 · AI 相关性弱 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/641.htm |
