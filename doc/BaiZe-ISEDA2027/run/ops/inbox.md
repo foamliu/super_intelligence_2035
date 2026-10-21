@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 146 -->
+<!-- RUN_ID: 147 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,73 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 147 — 🔴 用户直令：评估「改用官方 Megatron 代码跑 decay」可行性（8 卡 H100 单机 + FP8 可用）
+
+> 用户直令（2026-10-22 07:3x）：「让 pretrain 评估 A 的可行性。**官方也是 8 卡（H100）单机，我原来能用 FP8，你现在也可以**」。
+> **背景（RUN 146 已确认）**：官方 `examples/xmodel/train_decay_fp8_1120.sh` = Megatron-Core + **`--use-mup`（input-scale 12.0 / output-scale 1.0 / attn-residual 1.4 / ffn-residual 1.4）** + **`--lr 1.0e-5 --lr-decay-style constant`** + `--seq-length 32768` + `--global-batch-size 120` + **AdamW + FP8(TransformerEngine)** + `--no-decay-norm-bias`。我们用 HF+手写DDP+Muon+lr 1.67e-3，**μP 不存在于 HF 模型** → 无法用调参追平。
+> ✅ **本块为可行性评估（只读+冒烟，不启动长训）**。**不 kill L2**。
+
+```bash
+set -u
+echo "=== RUN_ID 147 | official Megatron path feasibility | $(date '+%F %T') | host=$(hostname) ==="
+XF=/nas_train/app.e0031982/ref/Xmodel-2.5
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+
+echo "[1] 官方脚本完整依赖清单（decay）"
+grep -nE 'CHECKPOINT_PATH|TOKENIZER_MODEL|DATA_PATH|--load|--save|--seq-length|--global-batch-size|--train-iters|--use-mup|--lr|--tensor-model-parallel|--pipeline-model-parallel|--context-parallel|--micro-batch-size|transformer-impl|fp8' "$XF/examples/xmodel/train_decay_fp8_1120.sh" | cut -c1-190 | head -40
+
+echo "[2] 并行度配置（官方在 8 卡上怎么切）"
+grep -nE 'MODEL_PARALLEL_ARGS|tensor-model-parallel|pipeline-model-parallel|context-parallel|num-layers-per|sequence-parallel|use-distributed-optimizer|recompute' "$XF/examples/xmodel/train_decay_fp8_1120.sh" -A2 | cut -c1-190 | head -30
+
+echo "[3] TransformerEngine / FP8 / Megatron 是否已装"
+$PY -c "import transformer_engine, sys; print('  TE', transformer_engine.__version__)" 2>&1 | head -3
+$PY -c "import megatron.core as m; print('  mcore', getattr(m,'__version__','?'))" 2>&1 | head -3
+$PY -c "import torch; print('  torch', torch.__version__, 'cuda', torch.version.cuda)" 2>&1 | head -2
+nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null | head -2
+
+echo "[4] 官方仓库自带 megatron 目录（是否 fork 版，需用它的而非 pip 版）"
+ls "$XF/megatron" | head -12
+$PY -c "import sys; sys.path.insert(0,'$XF'); import megatron; print('  repo-megatron OK', megatron.__file__)" 2>&1 | head -3
+
+echo "[5] 数据格式兼容性：我们的 .bin/.idx 是否 Megatron 原生"
+D=/nas_train/app.e0031982/code/Baize-ISEDA2027/data
+ls -1 $D/full_ultradata_code_l3/ 2>/dev/null | head -6
+$PY - <<'PY'
+import glob,os
+for pat in ['/nas_train/app.e0031982/code/Baize-ISEDA2027/data/full_ultradata_code_l3/*.bin',
+            '/nas_train/app.e0031982/code/Baize-ISEDA2027/data/full_ultradata_math_l3/*.bin']:
+    fs=sorted(glob.glob(pat))
+    print('  ',pat.split('/')[-2],'shards=',len(fs),'first=',os.path.basename(fs[0]) if fs else None)
+PY
+
+echo "[6] tokenizer 兼容（官方用 tokenizers/deepseekv3，vocab 129280）"
+ls "$XF/tokenizers" 2>/dev/null | head -5
+$PY - <<'PY'
+import json,glob
+for p in glob.glob('/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json'):
+    d=json.load(open(p)); print('  our ckpt vocab=',d.get('vocab_size'),'hidden=',d.get('hidden_size'),'layers=',d.get('num_hidden_layers'))
+PY
+
+echo "[7] 起点 ckpt 格式（HF safetensors → Megatron 需要转换？）"
+ls -l /nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/ 2>/dev/null | head -8
+echo "  官方 decay 用的是 --load（Megatron torch ckpt），我们是 HF 目录 → 需转换"
+
+echo "[8] 官方是否有 HF→Megatron 转换脚本"
+find "$XF/tools" "$XF/utils" -maxdepth 2 -type f -name '*.py' 2>/dev/null | grep -iE 'convert|ckpt|hf|weight' | head -10
+
+echo "[9] L2 状态（不 kill）"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-100 | head -1 || echo '  L2 not running'
+echo "=== DONE 147 ==="
+```
+
+> **必须回答（写入 MEMORY，做成「可行性判定表」）**：
+> ① **环境**：TE / mcore / torch 版本是否满足官方脚本？8×H100 是否支持 FP8（Hopper 原生支持）？仓库自带 `megatron/` 是否需整体替换 pip 版？
+> ② **数据**：我们的 `full_*` `.bin/.idx` 是否直接可喂官方脚本（Megatron IndexedDataset 格式）、tokenizer 是否一致（129280）？若不一致，转换工作量多大？
+> ③ **起点**：官方 `--load` 需要 Megatron torch ckpt，我们只有 HF safetensors → **是否有官方转换脚本**？没有的话自己写的工作量？
+> ④ **并行度**：官方 8 卡用什么 TP/PP/CP 切分？我们 8 卡能否复现（`--seq-length 32768` + 48 层 + GBS 120）？显存估算？
+> ⑤ **冒烟计划**：给出「最小可行冒烟」命令（如 load 官方 step_532000 的 megatron ckpt 或随机初始化 + 100 步 + FP8），列出需要的文件与预计耗时。
+> ⑥ **结论**：A 方案（改用官方代码）**可行 / 有条件可行（列出前置）/ 不可行**，并给出**最短路径的步骤清单 + 每步 ETA**。
 
 ## RUN_ID 146 — 🔴 用户直令：逐行比对官方三个训练脚本（decay/S1/S2）+ 官方 mup/Muon 实现
 
