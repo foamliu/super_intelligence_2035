@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 142 -->
+<!-- RUN_ID: 143 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,37 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 143 — 🔴 只读探针：vision loop 是否还活着（2h16m 无提交，ArmE 指令未执行）
+
+> 用户直令（2026-10-21 21:4x）：「发 ops 探针查 vision loop 是否还活着」。
+> **背景**：20:4x 下发 ArmE 运维令（commit `94687c00`）后，vision 线**至今无任何提交**（最后一次 19:18 auto-commit），`MEMORY_VISION.md` 仍停在 ArmD-R2 DONE（wake #206）。`WAITING: 1` 应每 30 分钟唤醒一次 → **异常，需查 loop 死活**。
+> ⚠️ **纯只读：不 kill、不重启 loop、不动 GPU**。
+
+```bash
+set -u
+echo "=== RUN_ID 143 | vision loop 死活探针 | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+echo "[1] vision loop 进程"
+pgrep -af 'baize_vision_loop.sh' 2>/dev/null | cut -c1-120 || echo '  LOOP_NOT_FOUND'
+echo "[2] 当前正在跑的 cline/编排进程（vision 用 --data-dir + glm-5.2）"
+pgrep -af 'cline --data-dir|opencode run' 2>/dev/null | cut -c1-130 | head -6 || echo '  NO_AGENT_PROC'
+echo "[3] vision loop 日志（末 15 行 + mtime）"
+ls -l /tmp/baize_vision_loop.log 2>/dev/null
+stat -c 'mtime=%y size=%s' /tmp/baize_vision_loop.log 2>/dev/null
+tail -15 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-170
+echo "[4] 是否有其他 vision 相关日志在动（近 3h 修改过）"
+find /tmp -maxdepth 1 -name '*vision*' -newermt '-3 hours' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | head -8
+echo "[5] .12 本机 GPU 现状（ArmE 是否偷偷跑起来了）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "[6] 仓库是否已拉到我下的 ArmE 令"
+cd "$B" && git -c core.pager=cat log --oneline -1 2>/dev/null
+grep -c 'ArmE' "$B/run/BAIZE_VISION_TASK.md" 2>/dev/null || echo '  0（未拉到或未生效）'
+echo "[7] 是否有 armE 输出目录（说明开始跑了）"
+ls -d /nas_train/app.e0031982/datasets/baize-vision/out/armE* 2>/dev/null || echo '  NO_armE_DIR'
+echo "=== DONE 143 ==="
+```
+
 
 ---
 ## RUN_ID 142 — 🔥 MiniCPM5 全量数据完整分词（224 核全开）· 用户直令
