@@ -39,8 +39,8 @@ code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem
 </style>
 </head>
 <body>
-<div class="hl"><strong>一句话进展：</strong>L1 <span class="good">已完成并通过门槛</span> —— 20B decay（修双移位 + LR 5e-4 + warmup 100）CS8 = <span class="good num">59.03%</span>（≥55% 门槛✅），仅比起始基线 61.03% 低 2pp，远优于 v2 的 44.97%。<strong>修复方向确认为正确</strong>。L2（修双移位 + 高 LR 1.67e-3）<span class="pulse">训练中</span> —— step <span class="num">1460/5611（26.0%）</span>、loss <span class="num">1.11</span>、lr 5.57e-04；step0 loss=1.71（双移位修复在高 LR 下仍生效），ETA ~10-22 19:30。</div>
-<div class="sub">报告时间：2026-10-22 05:45（更新版，初版 10-21 10:40） | 实验线：BaiZe Stage(i) 预训练 | 硬件：10.239.2.29（8×H100）<br>授权：任务书 §2026-10-21 02:3x（用户直令：“自行想办法排查根因……用 20B 数据 decay 看看效果”）</div>
+<div class="hl"><strong>一句话进展：</strong>L1 <span class="good">已完成并通过门槛</span> —— 20B decay（修双移位 + LR 5e-4 + warmup 100）CS8 = <span class="good num">59.03%</span>（≥55% 门槛✅），仅比起始基线 61.03% 低 2pp，远优于 v2 的 44.97%。<strong>修复方向确认为正确</strong>。L2（修双移位 + 高 LR 1.67e-3）<span class="pulse">训练中</span> —— step <span class="num">1650/5611（29.4%）</span>、loss <span class="num">1.01</span>、lr 4.85e-04；step0 loss=1.71（双移位修复在高 LR 下仍生效），ETA ~10-22 19:25。</div>
+<div class="sub">报告时间：2026-10-22 06:20（更新版，初版 10-21 10:40） | 实验线：BaiZe Stage(i) 预训练 | 硬件：10.239.2.29（8×H100）<br>授权：任务书 §2026-10-21 02:3x（用户直令：“自行想办法排查根因……用 20B 数据 decay 看看效果”）</div>
 <h2>§1 实验背景与动机</h2>
 <div class="card"><p>decay v2 用 71.2B tokens 从 Xmodel-2.5 stable 末点（step_532000，CS8 基线 61.03%）退火，结果 CS8 跌至 44.97%，落后 Xmodel-2.5 官方 final 65.40% 达 <strong>20.43pp</strong>（详见报告一）。根因归因（#648/#649）锁定两个高优先主因：①<strong>双移位 bug</strong>（训练移位两次 / 评测一次）②<strong>peak LR 1.67e-3 过高</strong>。</p>
 <div class="hl-bad">v2 风险：单跑 71.2B 一次 ≈ 1 天且赌注大。用户授权改用 <strong>20B 小规模 decay</strong>（对齐 Xmodel-2 的做法），一轮仅 ~18.7h，可串行跑 2~3 个变体做因子分析，<strong>不必赌 71.2B</strong>。</div></div>
@@ -67,7 +67,7 @@ code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem
 <tr><td>token 预算</td><td><span class="num">≈20.0B</span>（5611×960×3712）</td><td>v2=71.2B</td></tr>
 <tr><td>输出目录</td><td><code>xmodel25_baize_L1_20b/</code></td><td>—</td></tr>
 </table></div>
-<h2>§4 当前进展（截至 2026-10-22 04:35）</h2>
+<h2>§4 当前进展（截至 2026-10-22 06:20）</h2>
 <div class="card"><table>
 <tr><th style="width:32%">项目</th><th>状态</th></tr>
 <tr><td>起点基线 CS8</td><td><span class="tag tag-good">已测</span> <strong class="warn">61.03%</strong>（eval @10-21 04:48，8 GPU，~4min）</td></tr>
@@ -75,10 +75,10 @@ code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem
 <tr><td><strong>L1 CS8 评测</strong></td><td><span class="tag tag-good">✅ 59.03%</span>（eval @10-21 23:51~23:55，CS8-only，8 GPU 并行，~4min）</td></tr>
 <tr><td>L1 各集明细</td><td>hellaswag .5106 / arc_easy .6448 / boolq .6768 / arc_challenge .3669 / sciq .8840 / piqa .6953 / winogrande .5841 / openbookqa .3600</td></tr>
 <tr><td>L1 ckpt</td><td><code>final/</code>（model.safetensors 2.7GB @10-21 23:45）+ step_500~5500 共 12 个 checkpoint</td></tr>
-<tr><td><strong>L2 训练</strong></td><td><span class="tag tag-good">运行中</span> step <span class="num">1100/5,611（19.6%）</span>，PID 2754486（torchrun），loss=<span class="num">1.05</span>，lr=<span class="num">7.34e-04</span></td></tr>
+<tr><td><strong>L2 训练</strong></td><td><span class="tag tag-good">运行中</span> step <span class="num">1650/5,611（29.4%）</span>，PID 2754486（torchrun），loss=<span class="num">1.01</span>，lr=<span class="num">4.85e-04</span></td></tr>
 <tr><td>L2 step0 loss</td><td><span class="good num">1.7138</span>（双移位修复在高 LR 下仍生效，vs v2 的 11.72）</td></tr>
-<tr><td>L2 健康度</td><td><span class="tag tag-good">0 error</span>，8×H100 100%/51763MiB，~12s/step，elapsed 220.0min，ckpt step_500+step_1000 已存</td></tr>
-<tr><td>L2 ETA</td><td>剩 4,511 步 × 12s ≈ <strong>15.0h → 预计 10-22 ~19:30 完成</strong></td></tr>
+<tr><td>L2 健康度</td><td><span class="tag tag-good">0 error</span>，8×H100 100%/51763MiB，~11.94s/step，elapsed 329.5min（5.5h），ckpt step_500+step_1000+step_1500 已存</td></tr>
+<tr><td>L2 ETA</td><td>剩 3,961 步 × ~11.94s ≈ <strong>13.1h → 预计 10-22 ~19:25 完成</strong></td></tr>
 <tr><td>L3</td><td><span class="tag tag-warn">待启</span> 串行：待 L2 训完 + CS8 eval 后启动</td></tr>
 </table>
 <div class="soft"><strong>⚠️ ETA 修正：</strong>实测 297K tok/s ≈ 1.07B tok/h ⇒ 20B=5611 步 ≈ <strong>18.7h/变体</strong>（用户初估 3~3.5h 为 6× 高估）。串行 3 变体 ≈ 60h ≈ 2.5 天。</div></div>
@@ -115,7 +115,7 @@ code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem
 <h2>§6 后续计划</h2>
 <div class="card"><ul>
 <li><strong>L1 已完成</strong>（CS8=59.03% ≥ 55% 门槛✅）→ 方向正确，L2 已启动。</li>
-<li><strong>L2 训练中</strong>（修双移位 + 高 LR 1.67e-3，step 1460/5611，26.0%）→ loss 1.11 稳步降，预计 10-22 ~19:30 完成 → CS8 eval。</li>
+<li><strong>L2 训练中</strong>（修双移位 + 高 LR 1.67e-3，step 1650/5611，29.4%）→ loss 1.01 稳步降，预计 10-22 ~19:25 完成 → CS8 eval。</li>
 <li>L2 训完 + CS8 eval → 启动 <strong>L3</strong>（仅降 LR，不动双移位）。</li>
 <li>L1/L2/L3 三组 CS8 → <strong>2×2 因子分析</strong>，定量隔离“双移位 vs LR”各自贡献，锁定主因。</li>
 <li>可选 <strong>L4</strong>：修双移位 + LR 5e-4 + code 配比降到 4%（若 code 过采样被证实有影响）。</li>
@@ -123,7 +123,7 @@ code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem
 </ul>
 <div class="soft"><strong>纪律：</strong>只用 .29 8 卡，不抢 .12（vision ArmD-R2）；每轮落 MEMORY + daily（step/loss/CS8/结论）；实验可复现（脚本/config/seed 全落盘 commit）；不改 v2 原始产物（失败证据留档）。</div>
 </div>
-<div class="trace"><strong>数据溯源（所有数字可核对）：</strong><br>• L1 训练日志 → <code>/tmp/baize_xmodel25_decay_L1_train.log</code> + <code>xmodel25_baize_L1_20b/train_log.txt</code><br>• L1 final loss=0.8687 → <code>[step 5610/5611]</code>；L1 step0 loss=1.7510 → <code>[step 0/5611]</code><br>• L1 CS8=59.03% → <code>eval_L1_20b_cs8/eval_summary.txt</code>（@2026-10-21 23:55）<br>• L2 训练日志 → <code>/tmp/baize_xmodel25_decay_L2_train.log</code>（PID 2754486）<br>• L2 step0 loss=1.7138 → <code>[step 0/5611]</code>；L2 step 1460 loss=1.1107 → <code>[step 1460/5611]</code><br>• v2 step0 loss=11.7244 → <code>baize_xmodel25_decay_v2_train.log</code> <code>[step 0/19980]</code><br>• 起点基线 CS8=61.03% → <code>eval_step532000_baseline/eval_summary.txt</code>（@2026-10-21 04:48）<br>• L1/L2 配置 → <code>run/baize_xmodel25_decay_L1.sh</code> + torchrun 命令行<br>• 实验设计 → 任务书 §2026-10-21 02:3x（用户直令）<br>• decay v2 对照 → 报告一 <code>report_pretrain_decay_v2_result_zh.html</code></div>
-<div class="foot">BaiZe Stage(i) 预训练线 · 自动化 agent 生成 · commit 前缀 <code>pretrain report:</code> · 2026-10-22 05:45（更新版）</div>
+<div class="trace"><strong>数据溯源（所有数字可核对）：</strong><br>• L1 训练日志 → <code>/tmp/baize_xmodel25_decay_L1_train.log</code> + <code>xmodel25_baize_L1_20b/train_log.txt</code><br>• L1 final loss=0.8687 → <code>[step 5610/5611]</code>；L1 step0 loss=1.7510 → <code>[step 0/5611]</code><br>• L1 CS8=59.03% → <code>eval_L1_20b_cs8/eval_summary.txt</code>（@2026-10-21 23:55）<br>• L2 训练日志 → <code>/tmp/baize_xmodel25_decay_L2_train.log</code>（PID 2754486）<br>• L2 step0 loss=1.7138 → <code>[step 0/5611]</code>；L2 step 1650 loss=1.0104 → <code>[step 1650/5611]</code><br>• v2 step0 loss=11.7244 → <code>baize_xmodel25_decay_v2_train.log</code> <code>[step 0/19980]</code><br>• 起点基线 CS8=61.03% → <code>eval_step532000_baseline/eval_summary.txt</code>（@2026-10-21 04:48）<br>• L1/L2 配置 → <code>run/baize_xmodel25_decay_L1.sh</code> + torchrun 命令行<br>• 实验设计 → 任务书 §2026-10-21 02:3x（用户直令）<br>• decay v2 对照 → 报告一 <code>report_pretrain_decay_v2_result_zh.html</code></div>
+<div class="foot">BaiZe Stage(i) 预训练线 · 自动化 agent 生成 · commit 前缀 <code>pretrain report:</code> · 2026-10-22 06:20（更新版）</div>
 </body>
 </html>
