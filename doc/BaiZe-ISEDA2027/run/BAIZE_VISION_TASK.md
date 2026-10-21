@@ -1,7 +1,54 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔓 运维指令 · 2026-10-21（**Stage-2 改用原版 LLaVA-NeXT-780k 数据**）· 用户直令 · 最高优先
+### 🚀 运维指令 · 2026-10-21 20:4x（**启动 ArmE：唯一变量 = 视觉塔换 open_clip ViT-L/14-224 (430M)**）· 用户直令 · 最高优先
+
+> 用户原话：「vision 开启 ArmE，跟 ArmD 只有一点差别：视觉塔使用 open_clip ViT-L/14 224 (430M)」。
+> **口径：严格单变量**。ArmE vs **ArmD-R2** 的**唯一差别 = 视觉塔架构（ViT-B/16 86.2M → ViT-L/14-224 ≈303M 视觉 / ≈430M total）**。数据、LR、轮数、loss、其他全部照搬 ArmD-R2，🚫 不得顺手改任何其它量。
+
+**① 口径表（必须逐字对齐，写进 MEMORY 与最终报告）**
+
+| 项 | ArmD-R2（已完成） | **ArmE（本轮）** | 变量 |
+|:--|:--|:--|:--|
+| 视觉塔 | open_clip **ViT-B/16** 224px（86.2M visual / 149.6M total） | **open_clip ViT-L/14-224**（≈303M visual / ≈430M total） | ✅ **唯一** |
+| 初始化 | `pretrained=None`（随机） | `pretrained=None`（随机，**不用预训练权重**） | 同 |
+| 数据 | `data_snapshot_20261019_armD.txt`（6 源 / 14,589 shards / 173,124,248 pairs） | **完全同** | 同 |
+| steps | 63,400（3 epoch） | **同 63,400** | 同 |
+| LR / min_lr | 1e-3 / 1e-5 | **同 1e-3 / 1e-5** | 同 |
+| warmup | 2000 | **同 2000** | 同 |
+| GBS | 8192（MBS 512×8×accum2），OOM 回退 4096 | **同** | 同 |
+| loss | 1.0 InfoNCE + 1.0 masked-patch-MSE，mask 0.6 | **同** | 同 |
+| wd / betas / clip / seed | 0.01 / (0.9,0.98) / 1.0 / 1234 | **同** | 同 |
+| 输出目录 | `armD_r2_20261020_*` | **`armE_20261021_aimv2_openclip_vitl14_224`**（新目录，🚫 不覆盖任何 armB/C/D 产物） | 新 |
+
+**② 执行步骤**
+1. **复制脚本**：`cp run/vision/run_armD_r2_openclip.sh run_vision/run_armE_openclip.sh`（连同 `armB_aimv2_openclip.py` → 复制为 `armE_aimv2_openclip_vitl14.py`，**不改原文件**）
+2. **改两处**：
+   - `MODEL_NAME = 'ViT-B-16'` → **`'ViT-L-14-224'`**（open_clip 3.2.0 官方名，224px 输入）
+   - `OUT=.../armE_20261021_aimv2_openclip_vitl14_224`、`LOG=/tmp/armE_openclip_train.log`
+3. **先做 5 分钟冒烟**（强烈建议）：`STEPS=100` 短跑，确认：
+   - 模型能建起来、参数量与预期一致（**≈303M visual / ≈430M total**，打印实际值）
+   - `patch tokens` hook 正常（ViT-L/14 patch14 → 224/14=16×16=**256 tokens/图**，与 B/16 的 196 不同，**检查 patch 分支维度是否适配**）
+   - 显存峰值（**ViT-L 更大**，MBS 512 可能 OOM → 按既有回退逻辑降到 256 并 STEPS×2）
+   - 前 100 步 loss 下降、0 nan
+4. 冒烟通过后 **正式起训**（63,400 步），ETA 按实测 it/s 回报。
+
+**③ 必须提前回答的风险点（冒烟时验证并写 MEMORY）**
+- **显存**：ViT-L/14 视觉塔约为 B/16 的 3.5×，MBS=512 大概率 OOM。**先按 256 试，OOM 再降到 128 并同步 STEPS 保持 3 epoch**。
+- **patch-token 数变化**：196 → 256，mask 0.6 与 patch-MSE 的形状要跟着走，确认代码是**按实际 token 数算**而非硬编码 196。
+- **文本塔**：保持冻结 CLIP-ViT-L/14-336（768-d），**不动**。
+- **吞吐/ETA**：ViT-L 前向更慢，预计 it/s 下降 30~50%，**如实报 ETA，不要套用 ArmD 的**。
+
+**④ 全链路（与 ArmD-R2 同规格）**
+训练 → ②ProtB（lp / 5-NN，**主对照 = ArmD-R2 的 lp 64.3373 / 5-NN 55.956**）→ ③MLLM 三阶段（Stage-1 2500 / 1.5 LoRA 20000 / 2 3500，**Stage-2 用原版 LLaVA-NeXT-780k**）→ ④12 集（**对照 ArmD-R2 的 avg 26.12%**）→ ⑤报告 `reports/report_vision_armE_20261021_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §15`。
+
+**⑤ 纪律**
+- 🚫 不覆盖、不移动 armB / armC / armD_r2 任何产物（ArmD-R2 已 DONE 并已出报告，是 ArmE 的对照基线）。
+- 🚫 不抢 `.29`（pretrain L1 跑到 23:45）；vision 在 **`.12`**。
+- ⚠️ **报告必须写明**：ArmE 比 ArmD-R2 参数量大 ~2.9×，若 ArmE 胜出**不得单独归因于"架构更好"**，须并列说明"容量+架构"复合变量；若持平/落后则说明"容量不是瓶颈"。
+- 每次唤醒落 MEMORY + daily，禁止静默。
+
+### 🔓 运维指令 · 2026-10-21（**Stage-2 改用原版 LLaVA-NeXT-780k 数据**）· 已闭环
 
 > 用户原话：「让 vision 使用原版」。
 > 背景：Stage-2 FAILED（`LLaVA-NeXT-780k-plus-Instruct-opt47-webdataset` 被删 → 0 样本），改用仍在盘上的原版 `LLaVA-NeXT-780k-webdataset`。
