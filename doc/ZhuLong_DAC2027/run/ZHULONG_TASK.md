@@ -14,7 +14,28 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-21 10:4x（**参考 t0002147 配置修复 cline settings + .env → 重跑 r4⁗**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-21 14:0x（**r5e 换端口 8663/8666/8667/8670**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「现在使用的是哪些端口，r5 使用 8663,8666,8667,8670 吧」
+> **背景**：r4e 当前用 8650/8651/8652/8654（健康跑中，76% 进度，-32001=0，fix 根治）。用户要求 **r5e 换到 8663/8666/8667/8670**（r4‴ 曾用这组，换走后应空出）。ops RUN_ID 101 已下发验证这 4 端口可达性。
+> **本令核心**：r4e 收口 regrade 判有效后，起 r5e 时**端口从 8650/8651/8652/8654 换到 8663/8666/8667/8670**，其余配置不变。
+
+#### r4e 收口后执行路径
+1. **r4e 收口**（pgrep 无）→ 手动 regrade（照 r4 模板改 GEN_FILE=batch `2026_1021_104432` + 端口 **8650/8651/8652/8654**·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）
+2. 判 r4e 有效（判据十三：task timeout≤10·0 infra·0 exec_err·literal-pass≈0）
+3. **改 .env 端口**：`PROXY_PORTS=8650,8651,8652,8654` → `PROXY_PORTS=8663,8666,8667,8670`；`SANDBOX_ENDPOINTS` 对应改为 `8663:...,8666:...,8667:...,8670:...`（workdir 仍用 t0002997_1..4 或按现有绑定）
+4. **重启 8090**（pick up 新端口）+ MCP 冒烟 5/5 + 4 端口健康探针（8663/8666/8667/8670 × 2，确认全 OK）
+5. **起 r5e**：配置同 r4e **仅换端口** —— `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / `-p 4` / 模型 `deepseek-v4-pro-fp4` / **端口 `8663,8666,8667,8670`** / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+6. r5e 30min 健康报告（real_MCP_32001 + literal-pass + 4 端口可达性）
+7. r5e 收口 → regrade → 5/5 mean±std（r1,r2,r3,r4e,r5e）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4 家族原始产物日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings 的 timeout=600（10:4x 修复保持）。
+- **若 8663/8666/8667/8670 验证不健康（breaker/空响应）→ 停手报运维**，不强行起 r5e（继续用 8650/8651/8652/8654 或等运维另指定）。
+- **若 r5e 30min 内再现 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**。
+- commit：`zhulong S1: r4e 收口 regrade -> r5e 换端口 8663/8666/8667/8670 起 (用户直令)`。
+
+### 🔄 运维指令 · 2026-10-21 10:4x（**参考 t0002147 配置修复 cline settings + .env → 重跑 r4⁗**）· 用户直令 · 最高优先【r4e 跑中·r5e 部分被 14:0x 取代】
 
 > 用户令（原文）：「请你分析一下代码，看看问题能否修复」+「好的 按照 t0002147（陈熙元）的做法改 cline settings 好了。其它的配置也可以参考他们」
 > **根因分析结论**（代码层面，带行号证据）：r4 家族 5/5 全 INVALID 的根因 = **cline 客户端 MCP 60s 缺省超时**（`~/.cline/data/settings/cline_mcp_settings.json` 无 `timeout` 字段 → 回退 60s）× **t0002147 的 64 worker 在同一台 10.129.32.75 + 同一 FlexLM 并发争用** → run_code P95 从 <60s 抬到 >60s → cline 单方面 abort 产生 -32001 风暴 → 模型在持续 tool-call 失败后退化为输出 literal "pass"。
