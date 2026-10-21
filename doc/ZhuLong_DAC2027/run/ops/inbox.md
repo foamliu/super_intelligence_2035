@@ -68,8 +68,9 @@ echo "=== DONE 100 ==="
 > 用户直令（2026-10-20 21:4x）：「杀掉 r4/r5，regrade 也杀掉，端口换到 8650,8651,8652,8654，重启 r4」。
 > **背景**：r4''' 已于 21:09 收口，但因 **70/158 字面量 "pass" 退化 + licence breaker OPEN**（98 consecutive worker spawn failures @8667）判 INVALID；8663/8666/8667/8670 **四端口全不可达**。
 > ⚠️ **注意**：8650/8651/8652/8654 历史上有 **t0002147 占用**（r3 regrade 曾因此全 timeout）→ 本块**先验证端口归属与可达性**，若被占则报 blocker 不强行启动。
+> ⚠️ **已降级为 text（RUN_ID 100 在上方）**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 99 | 杀 r4/r5/regrade + 换端口补测 | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] 现状：相关进程"
