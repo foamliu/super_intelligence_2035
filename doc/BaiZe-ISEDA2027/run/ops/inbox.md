@@ -42,18 +42,32 @@ WORK=/nas_train/app.e0031982/ref
 mkdir -p "$WORK"
 P="http://172.19.92.25:13128"
 
-echo "[1] 定位官方仓库（多候选逐个试）"
+echo "[1] clone 官方仓库（用户指定地址）"
 cd "$WORK" || exit 1
-for repo in   https://github.com/XiaoduoAILab/Xmodel-2.5.git   https://github.com/XiaoduoAILab/Xmodel-2.git   https://github.com/XiaoduoAILab/Xmodel.git ; do
-  name=$(basename "$repo" .git)
-  [ -d "$name" ] && { echo "  $name already exists"; continue; }
-  echo "  try $repo ..."
-  if GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 180 git clone --depth 1 "$repo" 2>&1 | tail -3; then
-    echo "  OK -> $WORK/$name"
-  else
-    echo "  FAIL $repo"
-  fi
-done
+REPO=https://github.com/XiaoduoAILab/Xmodel-2.5.git
+if [ -d Xmodel-2.5/.git ]; then
+  echo "  exists, pulling"; cd Xmodel-2.5 && GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 120 git pull --ff-only 2>&1 | tail -2; cd "$WORK"
+else
+  GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 300 git clone --depth 1 "$REPO" 2>&1 | tail -3
+fi
+ls -d "$WORK"/Xmodel-2.5 2>/dev/null && echo '  clone OK'
+
+echo "[1.5] ★重点：examples/xmodel（用户明确指定的官方训练代码目录）"
+XF="$WORK/Xmodel-2.5/examples/xmodel"
+if [ -d "$XF" ]; then
+  echo "  --- 目录树（2 层）---"
+  find "$XF" -maxdepth 2 -type d 2>/dev/null | head -25
+  echo "  --- 关键文件 ---"
+  find "$XF" -maxdepth 3 -type f \( -name '*.py' -o -name '*.sh' -o -name '*.yaml' -o -name '*.yml' -o -name '*.json' -o -name '*.md' \) 2>/dev/null | head -40
+  echo "  --- README（前 50 行）---"
+  head -50 "$XF/README.md" 2>/dev/null | cut -c1-170
+  echo "  --- 是否 Megatron / muP ---"
+  grep -ril 'megatron\|mup\|maximal.update' "$XF" 2>/dev/null | head -12
+else
+  echo "  MISSING: $XF  (目录可能不同，列出仓库顶层与 examples/)"
+  ls "$WORK/Xmodel-2.5" 2>/dev/null | head -20
+  find "$WORK/Xmodel-2.5" -maxdepth 3 -type d -name 'example*' 2>/dev/null | head -10
+fi
 
 echo "[2] 仓库内容概览"
 for d in "$WORK"/*/; do
