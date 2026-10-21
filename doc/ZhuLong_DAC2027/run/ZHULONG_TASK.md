@@ -14,7 +14,27 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-21 14:0x（**r5e 换端口 8663/8666/8667/8670**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-21 15:3x（**r5e 改 8 并发**）· 用户直令 · 取代 14:0x 的 -p 4 部分
+
+> 用户令（原文）：「r4e 是4并发对吧，r5e除了换端口外，改成8并发」
+> **本令核心**：r5e **`-p 4` → `-p 8`**（8 cline 并发），端口仍按 14:0x 令换到 **8663/8666/8667/8670**（4 端口，8 cline 共享 4 sandbox，每端口 2 cline 排队，timeout=600 下应扛得住）。
+> ⚠️ **口径备注**：r1/r2/r3/r4e 都是 `-p 4`，r5e 改 `-p 8` 会与 r1-r4 口径不完全一致 → 5-run mean±std 时**单独标注 r5e=-p 8**，若 r5e 分数与 r1-r4 离群过大需在论文里说明或考虑剔除。
+> ⚠️ **风险监控**：8 cline 共享 4 sandbox + 同一台 10.129.32.75 + 同一 FlexLM → 若 r5e 30min 内出现 -32001 抬头（率 ≥5/min）或 literal-pass >10 → **停手报运维**（可能需降到 -p 6 或加端口）。
+
+#### r5e 起跑参数（取代 14:0x 令第 5 步的 -p 4）
+- **`-p 8`**（8 并发，关键改动）
+- 端口 `8663,8666,8667,8670`（14:0x 令已指定，RUN_ID 102 验证全 OK 12-16ms）
+- 其余配置同 r4e：`READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / 模型 `deepseek-v4-pro-fp4` / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+- 日志 `/tmp/ABL_readback_none_retest_r5e.log`；batch 新建（r5e = r5 的第 5 次尝试编号）
+- r5e 30min 健康报告：real_MCP_32001 + literal-pass + 4 端口可达性 + **8 cline 调度情况**（是否所有 8 worker 都拿到 task）
+- r5e 收口 → regrade（用 r5e 端口 8663/8666/8667/8670）→ 5/5 mean±std（r1,r2,r3,r4e,r5e，**r5e=-p 8 单独标注**）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物；🚫 不动 r4 家族原始产物日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings timeout=600。
+- **若 r5e 30min 内 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**（降并发或加端口）。
+- commit：`zhulong S1: r4e 收口 regrade -> r5e -p 8 + 换端口 8663/8666/8667/8670 起 (用户直令)`。
+
+### 🔄 运维指令 · 2026-10-21 14:0x（**r5e 换端口 8663/8666/8667/8670**）· 用户直令 · 最高优先【r5e -p 4 部分被 15:3x 取代】
 
 > 用户令（原文）：「现在使用的是哪些端口，r5 使用 8663,8666,8667,8670 吧」
 > **背景**：r4e 当前用 8650/8651/8652/8654（健康跑中，76% 进度，-32001=0，fix 根治）。用户要求 **r5e 换到 8663/8666/8667/8670**（r4‴ 曾用这组，换走后应空出）。ops RUN_ID 101 已下发验证这 4 端口可达性。
