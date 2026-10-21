@@ -64,8 +64,9 @@ echo "=== DONE 104 ==="
 ## RUN_ID 103 — r4e 收口+regrade 进度实测（只读·用户直令）·【已执行·历史】
 
 > 用户令：「r4e 不是已经 regrade 完了吗，看看当前进展」。agent 心跳 15:17 仍显示 r4e 跑中未收口，实测 r4e 是否收口 + regrade 是否完成 + r5e 是否起跑。
+> ⚠️ **已降级为 text（RUN_ID 104 在上方）**。
 
-```bash
+```text
 echo "=== RUN_ID 103 | r4e/regrade/r5e 实测 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r4e 主进程"
