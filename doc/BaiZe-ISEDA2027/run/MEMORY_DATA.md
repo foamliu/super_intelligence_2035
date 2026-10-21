@@ -12,18 +12,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔥全量分词5源@160并发(scaled PID3440101,Code L2 140shards running idx=1)+✅Code L3 DONE(128.62B)+✅Math L3 DONE(77.95B)=L3合计206.57B→decay解锁!+🟢en_v1_4下载(99/110dirs)+▶️en_v1_4全源分词(done=92/110)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=92/110); ✅Code L3全量分词DONE(63shards,128.62B,481GB); ✅Math L3全量分词DONE(67shards,77.95B,292GB); ✅L3合计206.57B→decay解锁!
-当前动作:     唤醒577(2026-10-21 12:1x)巡检全量分词:Code L2 🔄 running(141shards launched@09:25,141.bin written 1.1TB,idx=1 done s140,140procs active,.bin mtime12:09=active,ETA~1-2h);Code L3✅DONE(128.62B)+Math L3✅DONE(77.95B)=L3合计206.57B→decay解锁!;scaled PID3440101 alive@160workers;en_v1_4 download alive(PID1875054,99dirs,~50500parquet);en_v1_4 fullsource done=92/110(PID749330);CPU load184/224,mem1429GB avail,disk37T free.📦体积归档3块→TASK=24.6KB/MEMORY=28.6KB✅
-下一步:       ①Code L2完成(~1-2h)→scaled自动进入UFW-L3(616parquet,~160shards)→Math L1(1485parquet,~160shards);②每源完成后manifest.tsv自动追加+DATA_LEDGER更新;③全部5源ETA~10-21晚;④en_v1_4下载+分词继续不动;⑤85M维持暂停
-阻塞:         无(scaled@160并发自动推进;L3双源已解锁decay;内存1429GB/CPU load184/disk37T均有余量)
+PHASE:        🔥全量分词5源@160并发(scaled PID3440101,UFW-L3 running 28procs ramping)+✅Code L3 DONE(128.62B)+✅Math L3 DONE(77.95B)+✅Code L2 DONE(421.45B)=3源合计628.02B+🟢en_v1_4下载(99/110dirs)+▶️en_v1_4全源分词(done=92/110)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=92/110); ✅Code L3全量分词DONE(63shards,128.62B,481GB); ✅Math L3全量分词DONE(67shards,77.95B,292GB); ✅Code L2全量分词DONE(141shards,421.45B,1.53TiB); ✅3源合计628.02B
+当前动作:     唤醒578(2026-10-21 13:3x)巡检:✅Code L2 DONE(421.45B,141shards,1.53TiB,s91最后完成@13:34/14960s);🔄UFW-L3 started@13:34(160shards,28procs ramping→160,22.bin started);en_v1_4 download alive(PID1875054,21h,99dirs,~50500parquet);en_v1_4 fullsource done=92/110(PID749330,25procs);CPU load43/224(仅28 env14+0 code_l2+28 ufw_l3),mem1708GB avail,disk36T free.📦TASK=24.6KB/MEMORY=28.9KB均✅
+下一步:       ①UFW-L3完成(~4h,160shards@4parquet/shard)→Math L1(1485parquet,~160shards@9/shard,~6-8h);②全部5源ETA~10-22 01:00;③每源完成后manifest.tsv自动追加+DATA_LEDGER更新;④en_v1_4下载+分词继续不动;⑤85M维持暂停
+阻塞:         无(scaled@160并发自动推进UFW-L3;3源628.02B已远超decay需求;内存1708GB/CPU load43/disk36T均有大量余量)
 ERROR_COUNT:  8
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> 唤醒577（2026-10-21 12:1x）巡检全量分词：Code L2 🔄 running（141 shards launched 09:25, 141 .bin written 1.1TB, idx=1 done s140, 140 procs active, .bin mtime 12:09 = actively streaming, ETA~1-2h）。Code L3 ✅ DONE（128.62B, 479GB）+ Math L3 ✅ DONE（77.95B, 290GB）= L3 合计 206.57B → decay 解锁！scaled PID3440101 alive@160workers, log /tmp/run_full_tokenize_160.log。manifest.tsv=131行(code_l3 63+math_l3 67+header)。en_v1_4 download alive(PID1875054,99dirs,~50500parquet,0incomplete);en_v1_4 fullsource done=92/110(PID749330,26procs)。CPU load184/224,mem1429GB,disk37T free。📦体积归档：TASK 34.3KB→24.6KB（归档10-20恢复下载+10-18 10:2x git push+10-18② 25shard续传 3个已闭合块→ARCHIVE,各留1行指针）/MEMORY=28.6KB，均≤32KB✅
+> 唤醒578（2026-10-21 13:3x）巡检全量分词：✅ **Code L2 DONE**（141 shards, **421,450,419,455 tok = 421.45B**, 1.53 TiB bin, s91最后完成@13:34/14960.7s, manifest 141行已写入）。→ 3源合计 **628.02B**（Code L3 128.62B + Math L3 77.95B + Code L2 421.45B）。🔄 **UFW-L3 started@13:34**（616 parquet → 160 shards × 4/shard, 28 procs ramping→160, 22 .bin started, PID3440101 alive 5.4h）。en_v1_4 download alive(PID1875054,21h,99dirs,~50500parquet,0incomplete);en_v1_4 fullsource done=92/110(PID749330 alive 63h,25procs)。CPU load43/224(28 env14+28 ufw_l3 ramping),mem1708GB avail,disk36T free(83%used)。📦体积：TASK=24.6KB/MEMORY=28.9KB，均≤32KB✅（无需归档）
+> 📦 唤醒577 原文已归档 → `daily-memories-data/2026-10-21.md`（含Code L2 141shards running+idx=1+manifest 131行+en_v1_4 99dirs+fullsource done=92/110+体积归档3块，详见日文件）
 > 📦 唤醒576 原文已归档 → `daily-memories-data/2026-10-21.md`（含Math L3 DONE+Code L2 141shards running+idx=1+manifest 131行+en_v1_4 98dirs+fullsource done=91/110，详见日文件）
 > 📦 唤醒575 原文已归档 → `daily-memories-data/2026-10-21.md`（含Math L3 running+watchdog执行+Code L3 DONE+scaled启动@160workers,详见日文件）
 > 📦 唤醒574 原文已归档 → `daily-memories-data/2026-10-21.md`（含全量分词启动+测速@64workers+watchdog部署:Code L3 63shards running+14M tok/s+CPU 104/224+mem 1205GB+en_v1_4 sh97@400/512+分词done=86/110，详见日文件）
