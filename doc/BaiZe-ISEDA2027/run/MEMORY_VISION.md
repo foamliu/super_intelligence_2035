@@ -4,11 +4,11 @@ WAITING: 1
 
 ## 状态头
 
-> 🚀 **【ArmD-R2 ②ProtB DONE · lp 64.3373±0.0034 / 5-NN 55.956（10:49:44, wake #200）→ ③MLLM Stage-1 DONE(11:02) / Stage-1.5 LoRA RUNNING step6800/20000(34%,1.98it/s,ETA~13:50)】· full_chain watcher PID 4063278 自动串行②③④⑤**
+> 🚀 **【ArmD-R2 ②ProtB DONE · lp 64.3373±0.0034 / 5-NN 55.956（10:49:44, wake #200）→ ③MLLM Stage-1 DONE(11:02) / Stage-1.5 LoRA RUNNING step17400/20000(87%,2.17it/s,ETA~13:37, wake#201 13:17)】· full_chain watcher PID 4063278 自动串行②③④⑤**
 > **口径声明**：**LR 轴已回退至 ArmC 档（1e-3 / 1e-5）**；ArmD-R2 vs ArmC 的差异**仅剩 data(3→6源) + epoch(4→3)** 两项。LR 与 min_lr 同步变动，报告中不得归因单一 LR 变量。
 > **训练结果**：T0=09:20:34(10-20)→完成 10:02:49(10-21)，**总耗时 ~24.7h**，稳态 0.71–0.75 it/s。**最终 step 63400**：loss 0.6750 / contr 0.6611 / patch 0.0139 / C1~0.5163 / lr 1.00e-05（=min_lr）。⭐ **全局 JOINT best = s43700 loss0.1360 / C1 0.8902**（全 log awk 确认）。**全程 0 nan/inf/oom**（grep loss=nan/inf 命中 0）。末段硬分片抖动（s58000–63400 loss 0.14–1.07 振荡、C1 0.29–0.89），同 ArmC/ArmB 模式非发散。里程碑：s2k loss2.63/C1 0.079 → s11160 loss0.4305/C1 0.6684 → s22400 loss0.2621/C1 0.7918 → s37580 loss0.2512/C1 0.7935 → ⭐s43700 loss0.1360/C1 0.8902(best) → s58800 loss0.1427/C1 0.8807(逼近) → s63400 loss0.675/C1 0.52(末段抖动)。
 > **产物**：OUT=`armD_r2_20261020_aimv2_openclip_vitb16_224/`：checkpoint_60000.pt + checkpoint_63400.pt + latest.pt(=s63400) + open_clip_state_dict.pt(599MB) + predictor.pt(4.7MB) + config.json。keep_ckpts2 保留 50000+60000(已滚动删 40000)。✅ config 复核：lr=0.001/min_lr=1e-05/wd=0.01/seed=1234/mask_ratio=0.6/contrast=1.0/patch=1.0/n_visual=86192640(86.2M) 全对。⚠️ ProtB 用 open_clip_state_dict.pt(=latest=s63400 末段抖动态，同 ArmB/ArmC 口径)；末段抖动或使 final lp 略低于 best 段——属协议已知特征。
-> **②ProtB 实测 DONE 10:49（lp64.3373/5-NN55.956）vs ArmC 62.332/54.718 = Δlp+2.005/Δ5-NN+1.238（双双升，ArmD-R2 干净对照仅 data3→6源+epoch4→3 两变量→正向）**。**ETA（全链路修正）**：③MLLM Stage-1.5 ~13:50 → Stage-2 ~14:05 → ④12集 ~15:35(+1.5h) → ⑤报告 ~16:00(+0.5h，**手动**，full_chain 不自动)。⇒ **全链路完成 ~10-21 16:00**。
+> **②ProtB 实测 DONE 10:49（lp64.3373/5-NN55.956）vs ArmC 62.332/54.718 = Δlp+2.005/Δ5-NN+1.238（双双升，ArmD-R2 干净对照仅 data3→6源+epoch4→3 两变量→正向）**。**ETA（全链路修正·wake#201 13:17）**：③MLLM Stage-1.5 ~13:37(87%实测2.17it/s) → Stage-2 ~14:03 → ④12集 ~15:33(+1.5h) → ⑤报告 ~16:00(+0.5h，**手动**，full_chain 不自动)。⇒ **全链路完成 ~10-21 16:00**。
 > ✅ **善后**：上一轮 7 个发散产物全在 `armD_20261019_DIVERGED_archive/`；r2 全链路脚本就绪；full_chain watcher PID 4063278(ppid=1) 自动串行②③④。⑤报告需手动生成 `report_vision_armD_r2_20261020_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §14`。
 > 📌 **四阶段链**（串行）：训练→②ProtB→③MLLM(Stage-1 2500/1.5 LoRA 20000/2 3500)→④12集(离线缓存)→⑤报告 `report_vision_armD_r2_20261020_mllm_stage4_zh.html`+`EXPERIMENTS_VISION.md §14`。
 >
@@ -119,6 +119,7 @@ WAITING: 1
 
 ## 本唤醒流水
 
+- [13:17] **wake#201**：③MLLM Stage-1.5 LoRA 监控 step17400/20000(87%, 2.17it/s, loss~3.7稳定, lr_lora 1.79e-06 cosine衰减中, ETA~13:37)。8卡各~15GB/29-71%util 健康。`.nfs*` OSError[Errno 16] Device busy（NFS silly-rename 于 DataLoader tempdir cleanup，非数值异常，同前轮已知，无害）。full_chain watcher PID 4063278 alive（etimes 100375s≈27.9h）。ETA 修正全链路~16:00。📦 体积：TASK=28.6KB / MEMORY=28.1KB（均≤32KB✓，本轮无需归档）。
 > 📦 [Oct 13~14] 本唤醒流水旧条目（Wake #45~#84, 含 ArmC 监控/MLLM bridge/报告刷新/④-4ep eval/外部编码器, ~15条）已归档 → daily-memories-vision/2026-10-{13,14}.md。**关键结论**：ArmC 154500步完成(ProtB 68.25%), ④-4ep ProtB 67.05%, MLLM bridge 5/5 PASSED, 外部编码器 SigLIP2 87.46% 最高。需要时再读。
 > 📦 10-06~10-12 早期流水（R12b/scaling/fair-rerun/V3/②probe/④-2ep/④-4ep, ~40条）已归档 → daily-memories-vision/2026-10-{06..12}.md。**关键结论**：E1fair vs E2fair Δlp=+0.17pp indistinguishable; ④-4ep ProtB 67.05% MODERATE/DIMINISHING; ④-2ep ProtB 65.37%。需要时再读。
 > 📦 [Oct 16] 本唤醒流水旧条目（Wake #108~#115, 含 precache 监控/Part B 验收/limit50 abort/12集 eval 完成/keepalive, 5条）已归档 → daily-memories-vision/2026-10-16.md。**关键结论**：✅ Part B 三项验收全通过(ai2d=0.60)；✅ 12/12 benchmarks 全量 eval 完成(ai2d 60.04%/mmmu 42.89%/realworldqa 43.01%)；consolidated_12benchmarks.json 交付。需要时再读。
