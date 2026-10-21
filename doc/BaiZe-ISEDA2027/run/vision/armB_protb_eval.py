@@ -67,16 +67,19 @@ def decode_img(image_dict):
     return Image.open(BytesIO(raw)).convert('RGB')
 
 
-def load_armB_visual(ckpt_path, device, feature='projected'):
+def load_armB_visual(ckpt_path, device, feature='projected', model_name=None):
     """Load the ArmB open_clip visual tower from a training checkpoint.
 
     Handles both ArmB checkpoint formats:
       1. open_clip_state_dict.pt — raw CLIP state_dict (preferred, no predictor)
       2. latest.pt / checkpoint_*.pt — {'model_state_dict': ArmBModel.state_dict()}
          where keys are prefixed 'clip.' (CLIP model) and 'predictor.' (aux head)
+
+    model_name: open_clip model name (default: MODEL_NAME='ViT-B-16').
+                Pass 'ViT-L-14' for ArmE checkpoints.
     """
     model, _, _ = open_clip.create_model_and_transforms(
-        MODEL_NAME, pretrained=None)
+        model_name or MODEL_NAME, pretrained=None)
     ckpt = torch.load(ckpt_path, map_location='cpu')
 
     if isinstance(ckpt, dict) and 'model_state_dict' in ckpt:
@@ -304,7 +307,7 @@ def main():
         Xva, yva = vd['feats'], vd['labels']
         print(f'[gather] Xtr {list(Xtr.shape)} Xva {list(Xva.shape)}', flush=True)
     else:
-        vision = load_armB_visual(args.ckpt, device, args.feature)
+        vision = load_armB_visual(args.ckpt, device, args.feature, args.model)
         if args.shard == 0 or args.num_shards == 1:
             val_files = sorted(glob.glob(IN1K_VAL_GLOB))
             print(f'[extract] val: {len(val_files)} parquet files', flush=True)
