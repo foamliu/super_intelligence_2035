@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 144 -->
+<!-- RUN_ID: 145 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,59 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 145 — 🔴 用户直令：clone Xmodel-2.5 官方训练代码 + 核查 muP 完整性
+
+> 用户直令（2026-10-22 05:2x）：「你可以让 pretrain git clone xmodel-2.5 的训练代码，地址可以用 web search 找到，直接用原来的训练代码更快更正确，何必自己写」。
+> **背景**：现有 `baize_xmodel25_decay_v2.py` 是自写的 HF + 手写 DDP + Megatron-Core TensorParallelMuon，**不是 Megatron-LM 框架**；已发现 μP 优化器 LR 缩放**完全没做**（所有参数组同一 lr），且 `chunked_ce` 自造了双移位 bug。L1 修双移位后 CS8=59.03%（起点 61.03%，仍 -2pp），怀疑剩余差距来自 μP/LR 口径错误。
+> ✅ **本块为正式动作**：clone 官方 repo + 全面核查 μP，**不 kill L2、不改训练**（L2 继续跑作对照）。
+
+```bash
+set -u
+echo "=== RUN_ID 145 | clone official Xmodel repo + muP audit | $(date '+%F %T') | host=$(hostname) ==="
+WORK=/nas_train/app.e0031982/ref
+mkdir -p "$WORK"
+P="http://172.19.92.25:13128"
+
+echo "[1] 定位官方仓库（多候选逐个试）"
+cd "$WORK" || exit 1
+for repo in   https://github.com/XiaoduoAILab/Xmodel-2.5.git   https://github.com/XiaoduoAILab/Xmodel-2.git   https://github.com/XiaoduoAILab/Xmodel.git ; do
+  name=$(basename "$repo" .git)
+  [ -d "$name" ] && { echo "  $name already exists"; continue; }
+  echo "  try $repo ..."
+  if GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 180 git clone --depth 1 "$repo" 2>&1 | tail -3; then
+    echo "  OK -> $WORK/$name"
+  else
+    echo "  FAIL $repo"
+  fi
+done
+
+echo "[2] 仓库内容概览"
+for d in "$WORK"/*/; do
+  echo "  --- $d ---"
+  ls "$d" 2>/dev/null | head -20 | tr '\n' ' '; echo
+  # 是否含训练代码
+  echo -n "    train-scripts: "; find "$d" -maxdepth 3 -type f \( -name '*train*.py' -o -name '*.sh' \) 2>/dev/null | head -5 | tr '\n' ' '; echo
+  echo -n "    mup-mentions: "; grep -ril 'mup\|muP\|maximal.update' "$d" --include='*.py' --include='*.md' --include='*.sh' 2>/dev/null | head -5 | tr '\n' ' '; echo
+done
+
+echo "[3] 现有起点 ckpt 的 muP 配置（决定我们缺什么）"
+CFG=/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json
+[ -f "$CFG" ] && python3 -c "import json;d=json.load(open('$CFG'));print({k:v for k,v in d.items() if 'mup' in k.lower() or k in ('hidden_size','num_hidden_layers','vocab_size')})" 2>/dev/null || echo '  config not readable'
+
+echo "[4] 我们模型 forward 里的 muP 缩放"
+MF=/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/modeling_xmodel2.py
+grep -n 'mup\|muP\|input_mult\|embed_mult\|output_mult\|width_multiplier' "$MF" 2>/dev/null | head -20 | cut -c1-170 || echo '  no match'
+
+echo "[5] 我们优化器：LR 是否分组"
+grep -n 'lr=' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_xmodel25_decay_v2.py 2>/dev/null | head -10 | cut -c1-160
+echo "[6] L2 仍在跑？(不 kill)"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-110 | head -2 || echo '  L2 not running'
+ls -l --time-style=+%F_%T /tmp/baize_xmodel25_decay_L2_train.log 2>/dev/null
+echo "=== DONE 145 ==="
+```
+
+> **必须回答（写入 MEMORY）**：① 官方仓是否含 decay/pretrain 训练代码？框架是什么？② 官方是否用 μP、参数化在哪几个点（init/forward/optimizer）？③ 我们的 `TensorParallelMuon(lr=1.67e-3)` + `AdamW(lr=1.67e-3)` 与官方口径差几倍？④ 若官方有可复用代码，给出「最小替换方案」（哪些文件可直替、哪些要改数据接入）。
 
 ## RUN_ID 144 — 🔴 只读：全库 68min 零提交，查三条线实时状态
 
