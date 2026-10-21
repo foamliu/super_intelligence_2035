@@ -906,3 +906,17 @@
 | 2026-10-21 | 奥尔特曼被妹妹指控性虐待案遭法官驳回（司法个案 + 人身指控 · 红线不收） | IT之家 | 不收 | https://www.ithome.com/1/015/710.htm |
 | 2026-10-21 | 《GTA 6》真人预告传闻：迈阿密“罪恶都市”车队（社交媒体猜测 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/790.htm |
 | 2026-10-21 | （台湾写真）AI浪潮驱动两岸供应链紧密嵌合（述评体裁 · 非具体事件 · 不收） | 中新网 | 不收 | https://www.chinanews.com.cn/ |
+| 2026-10-21 | 万钢：2026 上半年 L2 辅助驾驶渗透率破 70%，预期 2030 年 L3 超 35% | IT之家（据财联社 · 世界智能网联汽车大会） | news | https://www.ithome.com/1/015/852.htm |
+| 2026-10-21 | 亚马逊英国「青年承诺」：2030 年前提供 3 万个岗位，不要简历与经验 | IT之家（据 Neowin） | news | https://www.ithome.com/1/015/812.htm |
+| 2026-10-21 | 星闪 3.0 无源 SLZ 技术有望 10 月 22 日在深圳首秀（拟新增第四种空口模式 · 对标 RFID） | IT之家（据国际星闪联盟） | news | https://www.ithome.com/1/015/800.htm |
+| 2026-10-21 | 小米 MiMo-V2.5-Pro / V2.5 于 10-21 10:00 下线，请求自 10-14 起自动路由至 V2.6 系列 | IT之家（据 MiMo 文档） | news | https://www.ithome.com/1/015/709.htm |
+| 2026-10-21 | Spotify 一年从推荐流移除超 5000 万首低质 AI 音乐，推荐系统优先真人创作者 | IT之家（据 Spotify 公告） | news | https://www.ithome.com/1/015/804.htm |
+| 2026-10-21 | 全球首个多芯光纤国际标准在武汉发布（APC 牵头 · 烽火通信 + 上海大学） | IT之家（据湖北日报） | news | https://www.ithome.com/1/015/847.htm |
+| 2026-10-21 | 微软放宽 OneDrive 同步上限：30 万 → 100 万个项目，并推 sync CLI（预览版） | IT之家（据 10-20 微软活动） | news | https://www.ithome.com/1/015/809.htm |
+| 2026-10-21 | 微软 OneDrive 引入 Hero Links：共享链接改唯一主链接、分享后可随时改权限 | IT之家（据 10-20 微软活动） | news | https://www.ithome.com/1/015/811.htm |
+| 2026-10-21 | 四川能源核产业有限公司揭牌：聚焦先进微型核反应堆（≤10MW）研发与产业化 | IT之家（据央视新闻） | news | https://www.ithome.com/1/015/808.htm |
+| 2026-10-21 | 微软 XBOX 计划再进行三轮裁员 / Game Pass「模块化」改革（据传 · 官方未确认） | IT之家 | 不收 | https://www.ithome.com/1/015/707.htm |
+| 2026-10-21 | SpaceX 三季报电话会：Q3 盈利 44 亿美元、商讨与特斯拉合并（财报 + 并购传闻 · 留档） | IT之家 | 不收 | https://www.ithome.com/1/015/806.htm |
+| 2026-10-21 | Evil Geniuses 电竞组织宣布 11 月 2 日起停运（AI 相关性弱 · 不收） | IT之家 | 不收 | https://www.ithome.com/1/015/857.htm |
+| 2026-10-21 | 《使命召唤：黑色行动》1/2 移植版热销，原开发者称拿不到收益（游戏版权分成 · AI 相关性弱） | IT之家（据 VGC / Alinea） | 不收 | https://www.ithome.com/1/015/791.htm |
+| 2026-10-21 | 苹果门店为 iPhone Duo 首销部署 MagSafe 展示支架（零售陈列传闻 · 不收） | IT之家（据 digitaltrends） | 不收 | https://www.ithome.com/1/015/816.htm |
