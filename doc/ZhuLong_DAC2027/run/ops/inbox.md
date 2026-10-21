@@ -1,7 +1,75 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 102 -->
+<!-- RUN_ID: 103 -->
 
-## RUN_ID 102 — 8663/8666/8667/8670 重启后复验（只读·用户直令）
+## RUN_ID 103 — r4e 收口+regrade 进度实测（只读·用户直令）
+
+> 用户令：「r4e 不是已经 regrade 完了吗，看看当前进展」。agent 心跳 15:17 仍显示 r4e 跑中未收口，实测 r4e 是否收口 + regrade 是否完成 + r5e 是否起跑。
+
+```bash
+echo "=== RUN_ID 103 | r4e/regrade/r5e 实测 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e 主进程"
+if kill -0 1519090 2>/dev/null; then
+  echo "  PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  PID 1519090 GONE（r4e 已收口）"
+fi
+
+echo ""
+echo "[2] 所有相关进程（r4e/regrade/r5e/run_cline/run_pipeline）"
+pgrep -af 'run_cline_script|run_pipeline|regrade|PyAether|claude.*batch' 2>/dev/null | cut -c1-160 | head -10 || echo '  NONE'
+
+echo ""
+echo "[3] r4e batch 产物落盘"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+echo "  batch dir: $DIR"
+echo "  task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+echo "  --- codegen jsonl（r4e 收口标志）---"
+timeout 10 ls -la $DIR/completed_code_generation_$BATCH.jsonl 2>/dev/null || echo "  尚未生成"
+echo "  --- regrade 产物 ---"
+timeout 10 ls -la $DIR/graded_* 2>/dev/null | head -5 || echo "  无 graded_* 产物"
+timeout 10 ls -la $DIR/regrade_* 2>/dev/null | head -5 || echo "  无 regrade_* 产物"
+timeout 10 ls -la $DIR/*score* 2>/dev/null | head -5 || echo "  无 *score* 产物"
+
+echo ""
+echo "[4] r4e log 收口特征"
+L=/tmp/ABL_readback_none_retest_r4e.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  pass_summary_lines = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  'pass_rate' mentions = $(timeout 25 grep -ac 'pass_rate' "$L")"
+  echo "  last 5 lines:"
+  timeout 8 tail -5 "$L" | sed 's/^/    /'
+fi
+
+echo ""
+echo "[5] 是否已切换到 8663/8666/8667/8670（r5e 起？）"
+grep -E "^PROXY_PORTS=|^SANDBOX_ENDPOINTS=" /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | head -2
+
+echo ""
+echo "[6] r5e batch 目录是否存在"
+for D in /home/app.e0031982/eda_code_eval/2026_1021_1[5-9]*; do
+  [ -d "$D" ] && echo "  $D  task_dirs=$(timeout 5 ls -d $D/code/*/ 2>/dev/null | wc -l)"
+done
+
+echo ""
+echo "[7] 8663/8666/8667/8670 + 8650/8651/8652/8654 全部可达性"
+for P in 8663 8666 8667 8670 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 60)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if echo "$R" | grep -q successful; then echo "  $P OK ${MS}ms"; else echo "  $P ? ${MS}ms :: $R"; fi
+done
+
+echo ""
+echo "=== DONE 103 ==="
+```
+
+## RUN_ID 102 — 8663/8666/8667/8670 重启后复验（只读·用户直令）·【已执行·历史·全恢复】
 
 > 用户令：「这四个端口重启过了，你再试试」。RUN_ID 101 探针时 8663/8666/8667/8670 全 25s 超时，用户已重启这 4 端口，复验是否恢复。
 

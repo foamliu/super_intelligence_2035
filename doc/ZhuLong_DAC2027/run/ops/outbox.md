@@ -12942,3 +12942,126 @@ echo "=== DONE 102 ==="
 
 === DONE 102 ===
 ```
+
+---
+
+## RUN_ID 103 · 2026-10-21 15:27:32 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 103 | r4e/regrade/r5e 实测 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e 主进程"
+if kill -0 1519090 2>/dev/null; then
+  echo "  PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  PID 1519090 GONE（r4e 已收口）"
+fi
+
+echo ""
+echo "[2] 所有相关进程（r4e/regrade/r5e/run_cline/run_pipeline）"
+pgrep -af 'run_cline_script|run_pipeline|regrade|PyAether|claude.*batch' 2>/dev/null | cut -c1-160 | head -10 || echo '  NONE'
+
+echo ""
+echo "[3] r4e batch 产物落盘"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+echo "  batch dir: $DIR"
+echo "  task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+echo "  --- codegen jsonl（r4e 收口标志）---"
+timeout 10 ls -la $DIR/completed_code_generation_$BATCH.jsonl 2>/dev/null || echo "  尚未生成"
+echo "  --- regrade 产物 ---"
+timeout 10 ls -la $DIR/graded_* 2>/dev/null | head -5 || echo "  无 graded_* 产物"
+timeout 10 ls -la $DIR/regrade_* 2>/dev/null | head -5 || echo "  无 regrade_* 产物"
+timeout 10 ls -la $DIR/*score* 2>/dev/null | head -5 || echo "  无 *score* 产物"
+
+echo ""
+echo "[4] r4e log 收口特征"
+L=/tmp/ABL_readback_none_retest_r4e.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  pass_summary_lines = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  'pass_rate' mentions = $(timeout 25 grep -ac 'pass_rate' "$L")"
+  echo "  last 5 lines:"
+  timeout 8 tail -5 "$L" | sed 's/^/    /'
+fi
+
+echo ""
+echo "[5] 是否已切换到 8663/8666/8667/8670（r5e 起？）"
+grep -E "^PROXY_PORTS=|^SANDBOX_ENDPOINTS=" /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | head -2
+
+echo ""
+echo "[6] r5e batch 目录是否存在"
+for D in /home/app.e0031982/eda_code_eval/2026_1021_1[5-9]*; do
+  [ -d "$D" ] && echo "  $D  task_dirs=$(timeout 5 ls -d $D/code/*/ 2>/dev/null | wc -l)"
+done
+
+echo ""
+echo "[7] 8663/8666/8667/8670 + 8650/8651/8652/8654 全部可达性"
+for P in 8663 8666 8667 8670 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 60)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if echo "$R" | grep -q successful; then echo "  $P OK ${MS}ms"; else echo "  $P ? ${MS}ms :: $R"; fi
+done
+
+echo ""
+echo "=== DONE 103 ==="
+```
+
+**输出**
+```
+=== RUN_ID 103 | r4e/regrade/r5e 实测 | 2026-10-21 15:27:32 | host=hfeg0tedaap02 ===
+[1] r4e 主进程
+  PID 1519090 ALIVE (etime=16980s)
+
+[2] 所有相关进程（r4e/regrade/r5e/run_cline/run_pipeline）
+1519090 bash scripts/run_cline_script.sh -p 4 -n
+1855845 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-105/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1
+1855846 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-105/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1021_104432/cl
+2400979 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-131/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1
+2400980 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-131/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1021_104432/cl
+2406164 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-132/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1
+2406165 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-132/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1021_104432/cl
+2449290 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-134/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1
+2449291 cline -c /home/app.e0031982/eda_code_eval/2026_1021_104432/code/EDA-Eval-PyAether-134/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1021_104432/cl
+
+[3] r4e batch 产物落盘
+  batch dir: /home/app.e0031982/eda_code_eval/2026_1021_104432
+  task dirs = 134 / 158
+  .py 文件 = 128
+  --- codegen jsonl（r4e 收口标志）---
+  尚未生成
+  --- regrade 产物 ---
+
+[4] r4e log 收口特征
+  log_size=28M  lines=235612  mtime=2026-10-21 15:27:33
+  pass_summary_lines = 0
+  'pass_rate' mentions = 0
+  last 5 lines:
+    Actually[0m[2m,[0m[2m对象。[0m[2m如果不[0m[2m支持迭代[0m[2m，`[0m[2m the key[0m[2m question:[0m[2m is my[0m[2m code actually[0m[2m running?[0m[2m Let[0m[2mfor pt[0m[2m in path[0m[2m.points[0m[2m` [0m[2m会报[0m[2m错。[0m[2m我用 try[0m[2m me test[0m[2m something that[0m[2m would change[0m[2m observable behavior[0m[2m. For[0m[2m instance[0m[2m-except[0m[2m 包裹[0m[2m。
+    
+    [0m[2m让我也[0m[2m添加一个[0m[2m fallback[0m[2m：如果[0m[2m path.p[0m[2moints [0m[2m返回的[0m[2m不能迭代[0m[2m，尝试[0m[2m path[0m[2m.getPoints[0m[2m(emy[0m[2mPointArray[0m[2m, if[0m[2m) [0m[2m `import[0m[2m pyA[0m[2mether[0m[2m再 get[0m[2mElements。
+    
+    [0m[2m这会[0m[2m` failed[0m
+[5] 是否已切换到 8663/8666/8667/8670（r5e 起？）
+PROXY_PORTS=8650,8651,8652,8654
+SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+
+[6] r5e batch 目录是否存在
+
+[7] 8663/8666/8667/8670 + 8650/8651/8652/8654 全部可达性
+  8663 OK 13ms
+  8666 OK 12ms
+  8667 OK 12ms
+  8670 OK 16ms
+  8650 OK 12ms
+  8651 OK 14ms
+  8652 OK 11ms
+  8654 OK 44ms
+
+=== DONE 103 ===
+```
