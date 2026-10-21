@@ -2072,3 +2072,99 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 - 🚫 不动 harness 的 `.12` 侧 relay（双 relay 问题待运维裁定）
 
 ---
+
+## 📦 [归档 2026-10-21] ArmD-R2 运维指令块（2026-10-20 08:2x）— 已闭合（ArmD-R2 全链路 DONE）
+
+### 🔄 运维指令 · 2026-10-20 08:2x（**ArmD 放弃上一轮 → 重起：LR 1e-3 / min_LR 1e-5 / 数据不变**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「**vision ArmD 放弃重启。学习率 LR=1e-3 min_LR=1e-5。数据仍保持不变。给出 ETA**」
+
+#### 0. 本次口径（相对上一轮 ArmD 的唯一改动）
+
+| 项 | 上一轮 ArmD（发散，废弃） | **本轮 ArmD-R2** | 变量? |
+|:--|:--|:--|:--|
+| **数据** | 6 源 / 14,589 shards / **173,124,248 pairs** | **完全相同，不变** | 否 |
+| **3 epoch** | steps **63,400** | **仍 63,400**（数据未变，步数不变） | 否 |
+| **LR** | 2e-3 ❌ 发散 | **1e-3** | ✅ **唯一改动** |
+| **min_LR** | 2e-5 | **1e-5** | 同属 LR 轴（随 LR 同步缩放） |
+| cosine / warmup | cosine / 2000 | 不变 | 否 |
+| 塔 / 目标 / mask / wd / GBS / seed | ViT-B16 / AIMv2 1:1 mask0.6 / wd0.01 / 8192 / 1234 | **全部不变** | 否 |
+
+> ⚠️ **归因口径**：LF 轴与 min_lr 轴仍**同步变动**（2e-3/2e-5 → 1e-3/1e-5），报告中不得把结果归因于"单一 LR 变量"，应表述为「**LR 轴整体回退到 ArmC 档（1e-3 / 1e-5）**」。
+> ⚠️ 因此 **ArmD-R2 vs ArmC 的差异只剩「数据 3→6 源 + epoch 4→3」两项**（LR 轴已回退与 ArmC 一致）—— 这是一个**更干净的对照**，报告要点明这一点。
+
+#### 1. **ETA（运维计算，供你核对）**
+
+```
+steps = 63,400（数据未变，与上一轮相同）
+实测吞吐 = 0.75–0.78 it/s（上一轮 step 0→17,860 的实测值）
+纯训练 = 63,400 / 0.78 ≈ 22.6 h  （0.75 it/s 时 ≈ 23.5 h）
+
+起训时刻 T0（待你回报精确时间）
+  → 纯训练结束 ≈ T0 + 22.6 ~ 23.5 h
+  + 收尾（最终 ckpt + open_clip_state_dict + predictor + config，约 10–15 min）
+  ⇒ 训练完成 ≈ T0 + 23 ~ 24 h
+```
+
+**参考：若 T0 = 08:30 ⇒ 训练完成约 10-21 07:30–08:30。**
+（若 LR 降低导致吞吐变化，以实测 it/s 修正 ETA 并回报。）
+
+**后续全链路（串行，沿用上一轮实测耗时）**：
+| 阶段 | 实测耗时（ArmC 参考） | 累计 |
+|:--|:--|:--|
+| ② ProtB 线性探针 | ~1 h | T0+24h |
+| ③ MLLM 三阶段（Stage-1 2500 / 1.5 LoRA 20000 / 2 3500） | ~1.8 h | T0+26h |
+| ④ 12 集离线评测（/tmp 缓存，不走代理） | ~1.5 h | **T0+27.5h** |
+| ⑤ 报告 + §14 | 0.5 h | **T0+28h** |
+
+⇒ **全链路完成 ≈ T0 + 27.5 ~ 28 h**（若 T0=08:30 ⇒ 约 **10-21 12:30–13:00**）。
+
+#### 2. 执行步骤
+
+**① 清理上一轮（只动 ArmD 自己的目录，🚫 不碰 ArmB/ArmC）**
+- 上一轮产物：`/nas_train/.../baize-vision/out/armD_20261019_aimv2_openclip_vitb16_224`
+- **保留**：`checkpoint_10000.pt` 与 `checkpoint_10000_GOOD_predivergence.pt`（作为发散证据留档，**移到 `armD_20261019_DIVERGED_archive/`**）
+- **废弃**：`checkpoint_20000.pt` / `latest.pt` / `open_clip_state_dict.pt`（发散态）→ 一并移入同一 archive 目录，**不删除**
+- **本轮输出目录改为**：`armD_r2_20261020_aimv2_openclip_vitb16_224`（**新目录，杜绝误 resume 发散 ckpt**）
+
+**② 复制脚本并只改 LR 相关的 3 处**
+```bash
+cp run_armD_openclip.sh run_armD_r2_openclip.sh
+# 改：OUT=.../armD_r2_20261020_aimv2_openclip_vitb16_224
+# 改：--lr 2e-3  → --lr 1e-3        （两处：主 run + OOM fallback）
+# 改：--min-lr 2e-5 → --min-lr 1e-5 （两处）
+# 其余（--steps 63400 / warmup 2000 / wd 0.01 / GBS 8192 / seed 1234 / mask 0.6）逐字不动
+```
+- ⚠️ **必须同时检查 `run_armD_launch_when_ready.sh` / `run_armD_full_chain.sh` 里是否有硬编码的旧路径/旧 LR**，一并改成 r2 版本（或直接用 `run_armD_r2_*` 系列）。
+
+**③ 起训前自检（3 项，全过才起）**
+1. **数据快照不变**：`data_snapshot_20261019_armD.txt` 仍 14,589 shards（`wc -l` 复核）
+2. **8 卡空闲**：`nvidia-smi` 全 0 MiB（上一轮已 kill）
+3. **新目录为空**：`ls armD_r2_20261020_*` 无 `latest.pt`（防止误 resume）
+
+**④ 起训**
+```bash
+setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /dev/null &
+```
+
+**⑤ 监控要点（**重点盯发散**）**
+- **首 500 步**（warmup 段）：`contr` 应从 9.x 快速下降，**不得反弹**
+- **每 2000 步**：记录 `loss / contr / patch / C1`
+- 🔴 **红线判据（任何一条命中立即停并报 blocker）**：
+  - `C1 < 0.05`（嵌入去结构）
+  - `contr > 6.5`（接近 log(8192)=9.01 的随机水平）
+  - loss 连续 1000 步不降
+  - 出现 nan/inf
+- **对照基准**：上一轮 step 15,860 达 best `loss 0.452 / C1 0.589`；本轮 LR 减半，**应在更早步数达到同等或更好水平**
+
+**⑥ 汇报（起训后 ≤30min）**
+必须报：T0 精确时间、实测 it/s、**据此修正的 ETA**、首 500 步 loss/contr/C1、四卡显存峰值、以及「**LR 轴已回退至 ArmC 档，ArmD-R2 vs ArmC 差异仅剩 data+epoch**」的口径声明。
+
+#### 3. 纪律
+- 🚫 不动 `armB_*` / `armC_20261018_*` 任何产物与 ckpt
+- 🚫 不改数据快照（仍 6 源 173M pairs）
+- 🚫 不杀 `.29` 的 pretrain（96%+，ETA ~10:35）
+- 🚫 不动 harness 的 relay
+- 上一轮全部产物**移入 archive 目录保留**，不删除（作为"2e-3 发散"的证据）
+
+--- End archived ArmD-R2 block (2026-10-20 08:2x) ---
