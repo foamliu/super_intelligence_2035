@@ -15176,3 +15176,154 @@ The operator instruction ③ specified the tokenizer as "Xmodel-2.5 原生 token
   /tmp/armE_openclip_train.log -> 2026-10-21 22:45:23.433654104 +0800 size=13680
 === DONE 144 ===
 ```
+
+---
+
+## RUN_ID 145 · 2026-10-22 05:28:32 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 145 | clone official Xmodel repo + muP audit | $(date '+%F %T') | host=$(hostname) ==="
+WORK=/nas_train/app.e0031982/ref
+mkdir -p "$WORK"
+P="http://172.19.92.25:13128"
+
+echo "[1] clone 官方仓库（用户指定地址）"
+cd "$WORK" || exit 1
+REPO=https://github.com/XiaoduoAILab/Xmodel-2.5.git
+if [ -d Xmodel-2.5/.git ]; then
+  echo "  exists, pulling"; cd Xmodel-2.5 && GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 120 git pull --ff-only 2>&1 | tail -2; cd "$WORK"
+else
+  GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 300 git clone --depth 1 "$REPO" 2>&1 | tail -3
+fi
+ls -d "$WORK"/Xmodel-2.5 2>/dev/null && echo '  clone OK'
+
+echo "[1.5] ★重点：examples/xmodel（用户明确指定的官方训练代码目录）"
+XF="$WORK/Xmodel-2.5/examples/xmodel"
+if [ -d "$XF" ]; then
+  echo "  --- 目录树（2 层）---"
+  find "$XF" -maxdepth 2 -type d 2>/dev/null | head -25
+  echo "  --- 关键文件 ---"
+  find "$XF" -maxdepth 3 -type f \( -name '*.py' -o -name '*.sh' -o -name '*.yaml' -o -name '*.yml' -o -name '*.json' -o -name '*.md' \) 2>/dev/null | head -40
+  echo "  --- README（前 50 行）---"
+  head -50 "$XF/README.md" 2>/dev/null | cut -c1-170
+  echo "  --- 是否 Megatron / muP ---"
+  grep -ril 'megatron\|mup\|maximal.update' "$XF" 2>/dev/null | head -12
+else
+  echo "  MISSING: $XF  (目录可能不同，列出仓库顶层与 examples/)"
+  ls "$WORK/Xmodel-2.5" 2>/dev/null | head -20
+  find "$WORK/Xmodel-2.5" -maxdepth 3 -type d -name 'example*' 2>/dev/null | head -10
+fi
+
+echo "[2] 仓库内容概览"
+for d in "$WORK"/*/; do
+  echo "  --- $d ---"
+  ls "$d" 2>/dev/null | head -20 | tr '\n' ' '; echo
+  # 是否含训练代码
+  echo -n "    train-scripts: "; find "$d" -maxdepth 3 -type f \( -name '*train*.py' -o -name '*.sh' \) 2>/dev/null | head -5 | tr '\n' ' '; echo
+  echo -n "    mup-mentions: "; grep -ril 'mup\|muP\|maximal.update' "$d" --include='*.py' --include='*.md' --include='*.sh' 2>/dev/null | head -5 | tr '\n' ' '; echo
+done
+
+echo "[3] 现有起点 ckpt 的 muP 配置（决定我们缺什么）"
+CFG=/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json
+[ -f "$CFG" ] && python3 -c "import json;d=json.load(open('$CFG'));print({k:v for k,v in d.items() if 'mup' in k.lower() or k in ('hidden_size','num_hidden_layers','vocab_size')})" 2>/dev/null || echo '  config not readable'
+
+echo "[4] 我们模型 forward 里的 muP 缩放"
+MF=/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/modeling_xmodel2.py
+grep -n 'mup\|muP\|input_mult\|embed_mult\|output_mult\|width_multiplier' "$MF" 2>/dev/null | head -20 | cut -c1-170 || echo '  no match'
+
+echo "[5] 我们优化器：LR 是否分组"
+grep -n 'lr=' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_xmodel25_decay_v2.py 2>/dev/null | head -10 | cut -c1-160
+echo "[6] L2 仍在跑？(不 kill)"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-110 | head -2 || echo '  L2 not running'
+ls -l --time-style=+%F_%T /tmp/baize_xmodel25_decay_L2_train.log 2>/dev/null
+echo "=== DONE 145 ==="
+```
+
+**输出**
+```
+=== RUN_ID 145 | clone official Xmodel repo + muP audit | 2026-10-22 05:28:32 | host=whag0pgpuap29 ===
+[1] clone 官方仓库（用户指定地址）
+  exists, pulling
+ * [new branch]      main       -> origin/main
+Updating files:  40% (708/1751)Updating files:  41% (718/1751)Updating files:  42% (736/1751)Updating files:  43% (753/1751)Updating files:  44% (771/1751)Updating files:  45% (788/1751)Updating files:  46% (806/1751)Updating files:  47% (823/1751)Updating files:  48% (841/1751)Updating files:  49% (858/1751)Updating files:  50% (876/1751)Updating files:  51% (894/1751)Updating files:  52% (911/1751)Updating files:  53% (929/1751)Updating files:  54% (946/1751)Updating files:  55% (964/1751)Updating files:  56% (981/1751)Updating files:  57% (999/1751)Updating files:  58% (1016/1751)Updating files:  59% (1034/1751)Updating files:  60% (1051/1751)Updating files:  61% (1069/1751)Updating files:  62% (1086/1751)Updating files:  63% (1104/1751)Updating files:  64% (1121/1751)Updating files:  65% (1139/1751)Updating files:  66% (1156/1751)Updating files:  67% (1174/1751)Updating files:  68% (1191/1751)Updating files:  69% (1209/1751)Updating files:  70% (1226/1751)Updating files:  71% (1244/1751)Updating files:  72% (1261/1751)Updating files:  73% (1279/1751)Updating files:  74% (1296/1751)Updating files:  75% (1314/1751)Updating files:  76% (1331/1751)Updating files:  76% (1336/1751)Updating files:  77% (1349/1751)Updating files:  78% (1366/1751)Updating files:  79% (1384/1751)Updating files:  80% (1401/1751)Updating files:  81% (1419/1751)Updating files:  82% (1436/1751)Updating files:  83% (1454/1751)Updating files:  84% (1471/1751)Updating files:  85% (1489/1751)Updating files:  86% (1506/1751)Updating files:  87% (1524/1751)Updating files:  88% (1541/1751)Updating files:  89% (1559/1751)Updating files:  90% (1576/1751)Updating files:  91% (1594/1751)Updating files:  92% (1611/1751)Updating files:  93% (1629/1751)Updating files:  94% (1646/1751)Updating files:  95% (1664/1751)Updating files:  96% (1681/1751)Updating files:  97% (1699/1751)Updating files:  98% (1716/1751)Updating files:  99% (1734/1751)Updating files:  99% (1746/1751)Updating files: 100% (1751/1751)Updating files: 100% (1751/1751), done.
+/nas_train/app.e0031982/ref/Xmodel-2.5
+  clone OK
+[1.5] ★重点：examples/xmodel（用户明确指定的官方训练代码目录）
+  --- 目录树（2 层）---
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel
+  --- 关键文件 ---
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/baseline.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/data_config.json
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/fp8.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/mla.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/mtp.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/muon.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/muon_mup_devc.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1109.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1112.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1113.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1115.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1117.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1118.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1120.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_depth_mup.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_llama2_devc_137m.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_llama2_devc_386m.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_llama2_devc_60m.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_moe.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_moe_devc_137m.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_moe_devc_386m.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_moe_devc_60m.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devb.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_attention_logits.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_baseline.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_d_model.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_d_model_adamw.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_d_model_muon.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_embedding_fwd.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_init_std.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_log_layer_grad_norm.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_output_logit_fwd.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_residual_connection_scaling.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_mup_devc_residual_connection_scaling_v2.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_s1_bf16.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_s1_fp8.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_s1_fp8_0905.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_s1_fp8_0906.sh
+  --- README（前 50 行）---
+  --- 是否 Megatron / muP ---
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/baseline.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/fp8.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/mla.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/mtp.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/muon.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/muon_mup_devc.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1109.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1112.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1113.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1115.sh
+/nas_train/app.e0031982/ref/Xmodel-2.5/examples/xmodel/train_decay_fp8_1117.sh
+[2] 仓库内容概览
+  --- /nas_train/app.e0031982/ref/Xmodel-2.5/ ---
+data_preprocess docs examples experiments hpo images LICENSE long_context megatron models mup pretrain_gpt.py README.en.md README.md tasks tests tokenizers tools utils val_loss 
+    train-scripts: /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/dolma_wo_cc/delete_special_files.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/dolma_wo_cc/prepare.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/institutional-books/to_json.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/ultrafineweb/delete_special_files.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/ultrafineweb/prepare_en.sh 
+    mup-mentions: /nas_train/app.e0031982/ref/Xmodel-2.5/README.en.md /nas_train/app.e0031982/ref/Xmodel-2.5/README.md /nas_train/app.e0031982/ref/Xmodel-2.5/examples/academic_paper_scripts/sc21/CONFIG.sh /nas_train/app.e0031982/ref/Xmodel-2.5/examples/bert/train_bert_340m_distributed.sh /nas_train/app.e0031982/ref/Xmodel-2.5/examples/gpt3/train_gpt3_175b_distributed.sh 
+[3] 现有起点 ckpt 的 muP 配置（决定我们缺什么）
+  config not readable
+[4] 我们模型 forward 里的 muP 缩放
+[5] 我们优化器：LR 是否分组
+86:        lr=lr, momentum_beta=momentum, use_nesterov=True,
+93:        adamw_params, lr=lr, betas=(0.9, 0.95), eps=1e-8,
+466:        muon_params, adamw_params, lr=args.lr, weight_decay=args.weight_decay,
+602:            msg = (f"[step {step:5d}/{total_steps}] loss={avg_loss:.4f} lr={lr:.2e} "
+[6] L2 仍在跑？(不 kill)
+2754483 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash
+2754484 bash baize_xmodel25_decay_L2.sh
+-rw-r--r-- 1 app.e0031982 app.adm 77994 2026-10-22_05:28:37 /tmp/baize_xmodel25_decay_L2_train.log
+=== DONE 145 ===
+```
