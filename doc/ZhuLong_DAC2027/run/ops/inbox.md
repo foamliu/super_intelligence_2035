@@ -1,7 +1,69 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 99 -->
+<!-- RUN_ID: 100 -->
 
-## RUN_ID 99 — 🔴 用户直令：杀掉 r4/r5 及 regrade 残留 → 端口换到 8650/8651/8652/8654 → 重启 r4
+## RUN_ID 100 — r4e 进度 + 端口确认（只读·用户直令）
+
+> 用户令：「现在r4e进度如何，158个题生成完多少了。用的哪4个端口？」纯只读查 r4e 进度。
+
+```bash
+echo "=== RUN_ID 100 | r4e 进度 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e 进程"
+if kill -0 1519090 2>/dev/null; then
+  echo "  PID 1519090 ALIVE"
+  timeout 10 ps -o pid,etimes,stat -p 1519090 2>/dev/null
+else
+  echo "  PID 1519090 GONE（已收口）"
+fi
+
+echo ""
+echo "[2] r4e 进度（task dir 数 / 158）"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+if [ -d "$DIR" ]; then
+  echo "  batch dir: $DIR"
+  echo "  task dirs total = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+  echo "  .py 文件数 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+  echo "  --- stats/success 计数 ---"
+  timeout 10 cat $DIR/stats/success 2>/dev/null | wc -l
+  echo "  --- codegen jsonl 是否生成（收口标志）---"
+  timeout 10 ls -la $DIR/completed_code_generation_$BATCH.jsonl 2>/dev/null || echo "  尚未生成（仍在 code-gen）"
+else
+  echo "  batch dir 不存在: $DIR"
+fi
+
+echo ""
+echo "[3] r4e log 计数"
+L=/tmp/ABL_readback_none_retest_r4e.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  real_MCP_32001   = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  run_code_calls   = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  mention_timeout  = $(timeout 25 grep -ac 'timed out after 60s' "$L")"
+  echo "  pass_rate_lines  = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+fi
+
+echo ""
+echo "[4] 当前用的 4 端口（.env PROXY_PORTS + SANDBOX_ENDPOINTS）"
+grep -E "^PROXY_PORTS=|^SANDBOX_ENDPOINTS=|^SANDBOX_HOST=" /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | head -5
+
+echo ""
+echo "[5] 4 端口可达性（实时）"
+for P in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 80)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -n "$R" ]; then echo "  $P OK ${MS}ms"; else echo "  $P FAIL ${MS}ms"; fi
+done
+
+echo ""
+echo "=== DONE 100 ==="
+```
+
+## RUN_ID 99 — 🔴 用户直令：杀掉 r4/r5 及 regrade 残留 → 端口换到 8650/8651/8652/8654 → 重启 r4 ·【已执行·历史】
+
 
 > 用户直令（2026-10-20 21:4x）：「杀掉 r4/r5，regrade 也杀掉，端口换到 8650,8651,8652,8654，重启 r4」。
 > **背景**：r4''' 已于 21:09 收口，但因 **70/158 字面量 "pass" 退化 + licence breaker OPEN**（98 consecutive worker spawn failures @8667）判 INVALID；8663/8666/8667/8670 **四端口全不可达**。

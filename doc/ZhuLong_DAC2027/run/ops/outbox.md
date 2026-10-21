@@ -12693,3 +12693,103 @@ LISTEN 0      128               0.0.0.0:8652       0.0.0.0:*
   SANDBOX_ENDPOINTS 建议 = 8650,8651,8652,8654@10.129.32.75
 === DONE 99 ===
 ```
+
+---
+
+## RUN_ID 100 · 2026-10-21 13:59:28 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 100 | r4e 进度 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e 进程"
+if kill -0 1519090 2>/dev/null; then
+  echo "  PID 1519090 ALIVE"
+  timeout 10 ps -o pid,etimes,stat -p 1519090 2>/dev/null
+else
+  echo "  PID 1519090 GONE（已收口）"
+fi
+
+echo ""
+echo "[2] r4e 进度（task dir 数 / 158）"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+if [ -d "$DIR" ]; then
+  echo "  batch dir: $DIR"
+  echo "  task dirs total = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+  echo "  .py 文件数 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+  echo "  --- stats/success 计数 ---"
+  timeout 10 cat $DIR/stats/success 2>/dev/null | wc -l
+  echo "  --- codegen jsonl 是否生成（收口标志）---"
+  timeout 10 ls -la $DIR/completed_code_generation_$BATCH.jsonl 2>/dev/null || echo "  尚未生成（仍在 code-gen）"
+else
+  echo "  batch dir 不存在: $DIR"
+fi
+
+echo ""
+echo "[3] r4e log 计数"
+L=/tmp/ABL_readback_none_retest_r4e.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  real_MCP_32001   = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  run_code_calls   = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  mention_timeout  = $(timeout 25 grep -ac 'timed out after 60s' "$L")"
+  echo "  pass_rate_lines  = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+fi
+
+echo ""
+echo "[4] 当前用的 4 端口（.env PROXY_PORTS + SANDBOX_ENDPOINTS）"
+grep -E "^PROXY_PORTS=|^SANDBOX_ENDPOINTS=|^SANDBOX_HOST=" /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | head -5
+
+echo ""
+echo "[5] 4 端口可达性（实时）"
+for P in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 80)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -n "$R" ]; then echo "  $P OK ${MS}ms"; else echo "  $P FAIL ${MS}ms"; fi
+done
+
+echo ""
+echo "=== DONE 100 ==="
+```
+
+**输出**
+```
+=== RUN_ID 100 | r4e 进度 | 2026-10-21 13:59:28 | host=hfeg0tedaap02 ===
+[1] r4e 进程
+  PID 1519090 ALIVE
+    PID ELAPSED STAT
+1519090   11696 Ss
+
+[2] r4e 进度（task dir 数 / 158）
+  batch dir: /home/app.e0031982/eda_code_eval/2026_1021_104432
+  task dirs total = 120 / 158
+  .py 文件数 = 114
+  --- stats/success 计数 ---
+1
+  --- codegen jsonl 是否生成（收口标志）---
+  尚未生成（仍在 code-gen）
+
+[3] r4e log 计数
+  log_size=20M  lines=179413  mtime=2026-10-21 13:59:28
+  real_MCP_32001   = 0
+  run_code_calls   = 971
+  mention_timeout  = 0
+  pass_rate_lines  = 0
+
+[4] 当前用的 4 端口（.env PROXY_PORTS + SANDBOX_ENDPOINTS）
+SANDBOX_HOST=10.129.32.75
+PROXY_PORTS=8650,8651,8652,8654
+SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+
+[5] 4 端口可达性（实时）
+  8650 OK 12ms
+  8651 OK 12ms
+  8652 OK 13ms
+  8654 OK 12ms
+
+=== DONE 100 ===
+```
