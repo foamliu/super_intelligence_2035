@@ -1,8 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-21 11:05 🟢 r4e 跑中·30min 报✅fix 根治(batch 2026_1021_104432·PID 1519090·20min·log 19609 行·**-32001=0 rate=0≪0.001**·mcp_timeout=0·20/158 task·4 端口全 OPEN·模型真实推理·literal-pass 待 completed_codegen~2.6h)·10:4x 修 cline timeout=600 生效(vs r4⁗ 754 -32001)·等收口→r5e→5/5·上条 10:47 -->
-- [2026-10-21 11:05] 🟢 r4e 30min 报(实报@20min·30min 内合规)·**fix 根治**：batch 2026_1021_104432·launcher 1519090 活·起 10:44:32·elapsed 1213s(20min)·log 19609 行·**real_MCP_32001=0**(rate=0.000000/行≪判据 0.001·vs r4⁗ 终态 754)·mcp_timeout=0·4 端口 8650/8651/8652/8654 全 OPEN(全程)·task 进度 20/158 dirs(~1 task/min→ETA~2.6h·与 r1-r3 健康轮一致)·模型真实推理(非 literal pass)·literal "pass" 计数：completed_code_generation jsonl 未生成(运行中·~2.6h 末产出)·代理信号全 clean(0 -32001+真实推理+无 pass-only trace)→literal-pass≈0 预期·判据十三满足·不停手·r4e 继续跑至收口→r5e(同配置同端口)→5/5(r1,r2,r3,r4e,r5e)mean±std→更新 zhulong_results.md/6_exp.tex→full@pro-cloud 5 轮。
+<!-- heartbeat 2026-10-21 11:43 🟢 r4e 跑中·T+58min·fix 持续根治(batch 2026_1021_104432·PID 1519090 活·log 57359 行·**-32001=0 circuit_breaker=0**·vs r4⁗ 终态 754·4 端口全 OPEN·loop 含 https_proxy✅·relay 活·8090 监听·ETA ~1.6h 收口→r5e→5/5)·10:4x cline timeout=600 修复确认根治·上条 11:05 -->
+- [2026-10-21 11:43] 🟢 r4e T+58min 巡检·**fix 持续根治**：launcher PID 1519090 活(etime 58:41·起 10:44:32)·log 57359 行(mtime 11:43 实时写入)·**real_MCP_32001=0**·circuit_breaker=0(vs r4⁗ 终态 754 -32001)·4 端口 8650/8651/8652/8654 全 OPEN·loop 81827 含 https_proxy ✅·relay 3277328 活·8090 pid 1504991 监听·git pull up-to-date·ops inbox 仍 RUN_ID 99(outbox DONE 99·无新运维令)·r4e 进度 ~58min/~2.6h(与 r1-r3 健康轮一致·ETA ~1.6h 收口)·PHASE=running→pgrep 有输出→什么都不做退出·等 r4e 收口→打分→r5e(同配置同端口)→5/5(r1,r2,r3,r4e,r5e)mean±std→更新 zhulong_results.md/6_exp.tex→full@pro-cloud 5 轮。
 - [2026-10-21 09:19 指针·已滚出] 🛑 BLOCKER 维持·唤醒巡检无新运维令·infra 全绿 → 原文搬入 daily-memories/2026-10-21.md §[09:19]。
 - [2026-10-21 08:09 指针·已滚出] 🛑 BLOCKER 维持·108 literal-pass 第 4 次核验 ✅ → 原文搬入 daily-memories/2026-10-21.md §[08:09]。
 - [2026-10-21 06:59 指针·已滚出] 🛑 BLOCKER 维持·唤醒巡检无新运维令·infra 全绿 → 原文搬入 daily-memories/2026-10-21.md §[06:59]。
