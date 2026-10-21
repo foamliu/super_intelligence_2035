@@ -10,8 +10,8 @@
 #   - Output: armE_20261021_protb_vitl14_224_results.json (lp mean ± sigma + 5-NN)
 #   - PRIMARY comparison: ArmD-R2 lp 64.3373 / 5-NN 55.956 (single-variable baseline).
 #
-# Launch (ONLY after ArmD training done, .12 GPUs free):
-#   setsid bash run_armD_protb_eval.sh > /tmp/armE_protb_eval.log 2>&1 < /dev/null &
+# Launch (ONLY after ArmE training done, .12 GPUs free):
+#   setsid bash run_armE_protb_eval.sh > /tmp/armE_protb_eval.log 2>&1 < /dev/null &
 # ==============================================================================
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"

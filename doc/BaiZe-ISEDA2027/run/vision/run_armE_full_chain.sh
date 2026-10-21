@@ -10,8 +10,10 @@
 # This script WAITS for the ArmE training process to exit, verifies the final
 # checkpoint exists, then runs the chain. Each step must succeed before the next.
 #
-# Variables: data 3src->6src + epoch 4->3 + lr 1e-3->2e-3 + min_lr 1e-5->2e-5
-#            (FOUR vars, NOT single-var ablation).
+# Variables: SINGLE VARIABLE = vision tower ViT-B/16(86.2M) -> ViT-L/14(304.0M) ONLY.
+#            Data/steps/LR/loss identical to ArmD-R2.
+#            Unavoidable confound: per-micro-batch contrastive batch 4096->2048
+#            (MBS 512->256, OOM-forced; GBS=8192 + steps=63400 PRESERVED).
 #
 # Launch (on .12):
 #   setsid bash run_armE_full_chain.sh > /tmp/armE_full_chain.log 2>&1 < /dev/null &
@@ -27,7 +29,7 @@ source /nas_train/app.e0031982/miniforge3/etc/profile.d/conda.sh
 conda activate py310
 echo "============================================================"
 echo "  ArmE Full Chain started: $(date '+%Y-%m-%d %H:%M:%S')"
-echo "  Variables: data 3src->6src + epoch 4->3 + lr 1e-3->2e-3 + min_lr 1e-5->2e-5 (FOUR vars)"
+echo "  Variables: SINGLE VAR = vision tower ViT-B/16(86.2M)->ViT-L/14(304.0M) ONLY (+MBS confound)"
 echo "============================================================"
 # ============================================================
 # PHASE 0: Wait for ArmE training to finish
