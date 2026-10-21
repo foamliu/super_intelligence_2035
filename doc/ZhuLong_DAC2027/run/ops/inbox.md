@@ -1,7 +1,51 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 101 -->
+<!-- RUN_ID: 102 -->
 
-## RUN_ID 101 — r5 备用端口 8663/8666/8667/8670 可达性验证（只读·用户直令）
+## RUN_ID 102 — 8663/8666/8667/8670 重启后复验（只读·用户直令）
+
+> 用户令：「这四个端口重启过了，你再试试」。RUN_ID 101 探针时 8663/8666/8667/8670 全 25s 超时，用户已重启这 4 端口，复验是否恢复。
+
+```bash
+echo "=== RUN_ID 102 | 8663/8666/8667/8670 重启后复验 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 8663/8666/8667/8670 run_code 端到端（@10.129.32.75）"
+for P in 8663 8666 8667 8670; do
+  echo "  === port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 200)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    if [ -n "$R" ]; then
+      echo "    #$i ${MS}ms :: $(echo "$R" | cut -c1-150)"
+    else
+      echo "    #$i ${MS}ms :: <empty/超时>"
+    fi
+  done
+done
+echo "  判读：8 次全返回 {\"response\":... 且无 licence/breaker/空 → 可用"
+
+echo ""
+echo "[2] r4e 进度快照（不打扰）"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+if [ -d "$DIR" ]; then
+  echo "  task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+  echo "  .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+fi
+if kill -0 1519090 2>/dev/null; then
+  echo "  r4e PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r4e PID 1519090 GONE（已收口）"
+fi
+
+echo ""
+echo "=== DONE 102 ==="
+```
+
+## RUN_ID 101 — r5 备用端口 8663/8666/8667/8670 可达性验证（只读·用户直令）·【已执行·历史·8/8 超时】
+
 
 > 用户令：「r5 使用 8663,8666,8667,8670 吧」。r4e 当前用 8650/8651/8652/8654（76% 进度·健康跑中）。本探针**纯只读**：验证 8663/8666/8667/8670 四端口当前是否可用（run_code 端到端），为 r5 换端口做前置确认。不起 r5、不改配置。
 

@@ -12872,3 +12872,73 @@ echo "=== DONE 101 ==="
 
 === DONE 101 ===
 ```
+
+---
+
+## RUN_ID 102 · 2026-10-21 15:21:20 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 102 | 8663/8666/8667/8670 重启后复验 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 8663/8666/8667/8670 run_code 端到端（@10.129.32.75）"
+for P in 8663 8666 8667 8670; do
+  echo "  === port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 200)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    if [ -n "$R" ]; then
+      echo "    #$i ${MS}ms :: $(echo "$R" | cut -c1-150)"
+    else
+      echo "    #$i ${MS}ms :: <empty/超时>"
+    fi
+  done
+done
+echo "  判读：8 次全返回 {\"response\":... 且无 licence/breaker/空 → 可用"
+
+echo ""
+echo "[2] r4e 进度快照（不打扰）"
+BATCH=2026_1021_104432
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+if [ -d "$DIR" ]; then
+  echo "  task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+  echo "  .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+fi
+if kill -0 1519090 2>/dev/null; then
+  echo "  r4e PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r4e PID 1519090 GONE（已收口）"
+fi
+
+echo ""
+echo "=== DONE 102 ==="
+```
+
+**输出**
+```
+=== RUN_ID 102 | 8663/8666/8667/8670 重启后复验 | 2026-10-21 15:21:20 | host=hfeg0tedaap02 ===
+[1] 8663/8666/8667/8670 run_code 端到端（@10.129.32.75）
+  === port 8663 ===
+    #1 25ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 10ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  === port 8666 ===
+    #1 23ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 12ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  === port 8667 ===
+    #1 23ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 28ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  === port 8670 ===
+    #1 22ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+    #2 10ms :: {"response":"The code execution was successful with output.","error_log":"","print_log":"1\n","result":""}
+  判读：8 次全返回 {"response":... 且无 licence/breaker/空 → 可用
+
+[2] r4e 进度快照（不打扰）
+  task dirs = 133 / 158
+  .py 文件 = 127
+  r4e PID 1519090 ALIVE (etime=16608s)
+
+=== DONE 102 ===
+```
