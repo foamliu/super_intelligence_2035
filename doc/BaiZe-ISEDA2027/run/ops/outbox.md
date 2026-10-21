@@ -14993,3 +14993,79 @@ Swap:              7           2           5
   ready
 === DONE 142 ===
 ```
+
+---
+
+## RUN_ID 143 · 2026-10-21 21:36:54 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 143 | vision loop 死活探针 | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+echo "[1] vision loop 进程"
+pgrep -af 'baize_vision_loop.sh' 2>/dev/null | cut -c1-120 || echo '  LOOP_NOT_FOUND'
+echo "[2] 当前正在跑的 cline/编排进程（vision 用 --data-dir + glm-5.2）"
+pgrep -af 'cline --data-dir|opencode run' 2>/dev/null | cut -c1-130 | head -6 || echo '  NO_AGENT_PROC'
+echo "[3] vision loop 日志（末 15 行 + mtime）"
+ls -l /tmp/baize_vision_loop.log 2>/dev/null
+stat -c 'mtime=%y size=%s' /tmp/baize_vision_loop.log 2>/dev/null
+tail -15 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-170
+echo "[4] 是否有其他 vision 相关日志在动（近 3h 修改过）"
+find /tmp -maxdepth 1 -name '*vision*' -newermt '-3 hours' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | head -8
+echo "[5] .12 本机 GPU 现状（ArmE 是否偷偷跑起来了）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "[6] 仓库是否已拉到我下的 ArmE 令"
+cd "$B" && git -c core.pager=cat log --oneline -1 2>/dev/null
+grep -c 'ArmE' "$B/run/BAIZE_VISION_TASK.md" 2>/dev/null || echo '  0（未拉到或未生效）'
+echo "[7] 是否有 armE 输出目录（说明开始跑了）"
+ls -d /nas_train/app.e0031982/datasets/baize-vision/out/armE* 2>/dev/null || echo '  NO_armE_DIR'
+echo "=== DONE 143 ==="
+```
+
+**输出**
+```
+=== RUN_ID 143 | vision loop 死活探针 | 2026-10-21 21:36:54 | host=whag0pgpuap12 ===
+[1] vision loop 进程
+1294447 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
+[2] 当前正在跑的 cline/编排进程（vision 用 --data-dir + glm-5.2）
+1568778 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/code/su
+1568880 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e0031982/.cli
+[3] vision loop 日志（末 15 行 + mtime）
+-rw-r----- 1 app.e0031982 app.adm 8704934 Oct 21 21:05 /tmp/baize_vision_loop.log
+mtime=2026-10-21 21:05:23.430623729 +0800 size=8704934
+4. **Commit + push**: `4f5973cd9` "vision armD_r2: wake#206 全链路状态复核…" (2 files, 14 insertions) — pushed to `origin/main`
+5. **Self-check**: `main...origin/main` synced, latest commit timestamp 20:34 = this wake ✓
+
+### Current state
+- **ArmD-R2 full chain: ✅ DONE** — verdict = **indistinguishable (borderline)**: avg 26.12% vs ArmC 25.78% (+0.34pp) / vs ArmB 26.10% (+0.02pp), within the 22–26.5%
+- **Encoder pure-comparison conclusion secured**: ArmD-R2 vs ArmC (LR axis matched, only data 3→6 sources + epoch 4→3 differ) ProtB Δlp +2.005pp / Δ5-NN +1.238pp bo
+- **`WAITING: 1`** — agent idle, awaiting new operator instructions. No active training or evaluation running on the vision line.
+[loop] 2026-10-21 20:35:18 cline returned (exit 0), checking git push ...
+[push] 2026-10-21 20:35:18 push interval reached, committing + pushing ...
+[push] nothing to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-21 20:35:20 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-21 21:05:20 wake up, invoking cline ...
+[llmrot] 2026-10-21 21:05:23 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+[4] 是否有其他 vision 相关日志在动（近 3h 修改过）
+2026-10-21 21:05          2 /tmp/baize_vision_llm_idx
+2026-10-21 21:05    8704934 /tmp/baize_vision_loop.log
+2026-10-21 20:35         11 /tmp/baize_vision_last_push
+[5] .12 本机 GPU 现状（ArmE 是否偷偷跑起来了）
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[6] 仓库是否已拉到我下的 ArmE 令
+5d1333e0b ops RUN_ID 143: 只读探针 vision loop 死活(ArmE 令 20:4x 下发后 2h16m 无提交) - loop进程/cline进程/loop日志mtime/.12 GPU/仓库是否拉到ArmE令/armE输出目录
+6
+[7] 是否有 armE 输出目录（说明开始跑了）
+  NO_armE_DIR
+=== DONE 143 ===
+```
