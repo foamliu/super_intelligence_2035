@@ -1562,3 +1562,66 @@ AIMv2-1B@336 原始评测 ProtB = 52.35%，远低于论文报告的 ~87.6%。经
 | ④ 日志 | `/tmp/armC_full_chain.log` + `/tmp/armC_rerun_offline.log` |
 | **中文报告** | `reports/report_vision_armC_20261018_mllm_stage4_zh.html`（✅ 已生成，12KB）|
 
+
+## §14 ArmD-R2（open_clip ViT-B/16 + AIMv2-style，2026-10-20→10-21）· ⚠️ 两变量实验（LR 轴回退至 ArmC 档）
+
+### §14.1 实验概述与变量披露
+
+> **用户令（2026-10-20 08:2x）**：「vision ArmD 放弃重启。学习率 LR=1e-3 min_LR=1e-5。数据仍保持不变。给出 ETA」
+
+ArmD 首轮（LR 2e-3）于 step~21820 发散（loss 0.45→9.3, C1 0.589→0.0002），wake#180 停止保全 ckpt_10000，7 个发散产物移入 `datasets/baize-vision/out/armD_20261019_DIVERGED_archive/`（发散证据留档，不删除）。本轮 ArmD-R2 放弃发散轮、重起，输出新目录 `armD_r2_20261020_*`（杜绝误 resume 发散 ckpt）。
+
+⚠️ **变量披露**：相对 ArmC，ArmD-R2 的 **LR 轴整体回退到 ArmC 档**（LR 2e-3→1e-3、min_lr 2e-5→1e-5，**同步变动，不得归因单一 LR 变量**）。因此 **ArmD-R2 vs ArmC 的差异仅剩两项**：① 预训练数据 3 源→6 源（GPIC 8000 + CC12M 1100 + Amshaker 2250 + WebMix 3886 parquet + wit_base 330 parquet + InternVL 2000 = 14,589 shards / 173,124,248 pairs，快照 `vision/data_snapshot_20261019_armD.txt`）；② epoch 4→3（步数 57,250 → 63,400）。这是比首轮更干净的对照。其余（ViT-B/16 224、AIMv2-style InfoNCE 1.0 + masked-patch-MSE 1.0 mask 0.6、wd 0.01、GBS 8192/MBS 512/accum 2、warmup 2000、cosine、seed 1234、save 10k/keep 2、bf16）全部与 ArmC 相同（`diff run_armC_openclip.sh run_armD_r2_openclip.sh` 经核对仅 OUT/LR/min_lr 三处不同）。
+
+### §14.2 训练结果（✅ DONE）
+
+- T0 = 2026-10-20 09:20:34 → 完成 2026-10-21 10:02:49，总耗时 ~24.7h，稳态 0.71–0.75 it/s，63,400 步全程 0 nan/inf/oom。
+- 最终 step 63,400：loss 0.6750 / contr 0.6611 / patch 0.0139 / C1~0.5163 / lr 1.00e-05（=min_lr）。
+- ⭐ 全局 JOINT best = step 43,700：loss 0.1360 / C1 0.8902（全 log awk 确认）。末段硬分片抖动（s58000–63400 loss 0.14–1.07、C1 0.29–0.89），同 ArmC/ArmB 模式非发散。
+- 里程碑：s2k loss2.63/C1 0.079 → s11160 loss0.4305/C1 0.6684 → s22400 loss0.2621/C1 0.7918 → s43700 loss0.1360/C1 0.8902(best) → s58800 loss0.1427/C1 0.8807(逼近) → s63400 loss0.675/C1 0.52(末段抖动)。
+- LR 减半后越过首轮发散点（s16000）零发散，且更早达同等/better 水平（s11160 C1 0.6684 已超上轮 best s15860 C1 0.589）。
+- config.json 复核：lr=0.001 / min_lr=1e-05 / wd=0.01 / seed=1234 / mask_ratio=0.6 / contrast=1.0 / patch=1.0 / n_visual=86,192,640(86.2M) 全对。
+- 产物：`datasets/baize-vision/out/armD_r2_20261020_aimv2_openclip_vitb16_224/`：checkpoint_60000.pt + checkpoint_63400.pt + latest.pt + open_clip_state_dict.pt(599MB) + predictor.pt(4.7MB) + config.json。
+
+### §14.3 ProtB 评测结果（✅ DONE · Protocol B，主流对齐）
+
+`vision/armD_r2_20261020_protb_vitb16_224_results.json`：lp 64.3339 / 64.3360 / 64.3420（seeds 0/1/2）→ **lp 64.3373 ± 0.0034%** / **5-NN 55.956%**。ckpt = open_clip_state_dict.pt（=latest=s63400 末段抖动态，同 ArmB/ArmC 口径）。
+
+**ProtB 对比（ArmD-R2 vs ArmC vs ArmB，同 Protocol B、同 IN-1k 1.28M train / 50k val）**：
+
+| 指标 | ArmD-R2 | ArmC | ArmB | Δ(ArmD-R2−ArmC) | Δ(ArmD-R2−ArmB) |
+|:--|--:|--:|--:|--:|--:|
+| ProtB lp (%) | **64.3373** | 62.332 | 62.093 | **+2.005** | +2.244 |
+| 5-NN (%) | **55.956** | 54.718 | 58.102 | **+1.238** | −2.146 |
+
+> ⚠️ **两变量披露**：ArmD-R2 vs ArmC 的 Δlp=+2.005pp / Δ5-NN=+1.238pp 是 **预训练数据(3→6源) + epoch(4→3) 两项共同作用**，**不得归因单一变量**；LR 轴已与 ArmC 一致。lp 与 5-NN 双双上升 → 在更大数据（6 源 173M 对）与更少 epoch（3）下，编码器线性可分性与检索表征均改善。**编码器质量核心结论已 secured。**
+
+### §14.4 MLLM 三阶段对齐（③Stage-1/1.5 ✅ · ③Stage-2 ❌ FAILED · ④⑤ ⏸ BLOCKED）
+
+复用 ArmC 三阶段脚本，视觉塔 ckpt 换成 ArmD-R2、输出目录改 `*_armD_r2_20261020`（chain `run_armD_r2_full_chain.sh` 自动串行②③④）：
+- ③Stage-1 projector（768→2560，2500 步）✅ DONE 11:02（`mllm_stage1_armD_r2_20261020/step2500/projector.pt`）。
+- ③Stage-1.5 LoRA(r=64)+projector（20000 步）✅ DONE 13:31（`mllm_stage15_armD_r2_20261020/step20000/`：adapter_model.safetensors 528MB + projector.pt 17MB）。
+- ③Stage-2 instruct（3500 步）❌ **FAILED @ 13:32:23**（torchrun exit=1，rank7）。`/tmp/armD_r2_stage2.log`：`Data: LLaVA-NeXT-780k Instruct (0 samples)` → 首个 `next(data_iter)` 即 `StopIteration`（line 357/363）。
+- 🔴 **根因（BLOCKER）**：Stage-2 instruct 数据 `DATA_DIR=/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-plus-Instruct-opt47-webdataset` **目录已从 NFS 删除**。ArmC 10-19 同路径实测 **738,588 样本** ✅；今 `ls` = `No such file or directory`，数据集类 `Path(data_dir).glob('data-*.tar')` 空 → 静默返回 0 样本（无 crash，直接 StopIteration）。`diff stage2_train_armC.py stage2_train_armD_r2.py` 仅 CKPT/STAGE15_DIR/OUTPUT_DIR/注释不同、**无逻辑差异** → 排除脚本 bug，确认是数据缺失。
+- **数据副本排查**：mvp-lab 仅余 raw `LLaVA-NeXT-780k-webdataset`（`pretrain-*.tar`，命名/格式不同，glob `data-*.tar` 亦空）+ `llava_conversion_work`（`mllm_mix_fixed.json` 97MB + `images/`，无 `data-*.tar`）；baize-data / /nas_inference/app.e0031982 / NFS `.snapshot` 均无 opt47 副本；仓库无 opt47 生成脚本。`mvp-lab/` 目录 mtime=2026-10-21 10:24（删除发生在今日，具体操作者未明；data 线当前在跑 LLM 分词，未涉 mvp-lab）。Stage-1/1.5 用 `LLaVA-558K-Webdataset`（`pretrain-*.tar`，仍在）→ 不受影响。
+- ④12集 lmms-eval、⑤中文报告：依赖 Stage-2 终态 ckpt，故 **⏸ BLOCKED，待 instruct 数据恢复**。
+
+### §14.5 状态与结论（⏸ 部分完成 · ④⑤待数据恢复）
+
+- **已 secured**：①训练 ✅（63400 步，24.7h，零发散）+ ②ProtB ✅（lp 64.3373 / 5-NN 55.956）+ ③Stage-1/1.5 ✅。**编码器质量核心结论已得**：ArmD-R2 vs ArmC（仅 data 3→6源 + epoch 4→3 两变量）ProtB lp **+2.005pp** / 5-NN **+1.238pp**，双双正向。
+- **BLOCKED**：③Stage-2 / ④12集 / ⑤报告 —— instruct opt47 数据被删，无副本/无生成脚本。
+- **处置建议（待运维裁决）**：(a) 从备份/快照恢复 `LLaVA-NeXT-780k-plus-Instruct-opt47-webdataset`（最优，保持与 ArmC 同集干净对照）；或 (b) 授权用可记录的替代集 + 同步重跑 ArmC Stage-2 作新对照（引入额外变量需在报告披露）；或 (c) 若无法恢复，则 ArmD-R2 以「编码器 ProtB 结果」交付，MLLM 下游评测标注 N/A。🚫 本线不擅自替代数据（会破坏预注册的干净对照）。
+- **产物**（已 commit `ecd2aa2a6`/`365c79f8a`）：`vision/armD_r2_20261020_protb_vitb16_224_results.json` + r2 全链路脚本 + 本节 §14 + `MEMORY_VISION.md`。⑤完整 HTML 报告 `reports/report_vision_armD_r2_20261020_mllm_stage4_zh.html` 待 ④ 完成后生成。
+
+### §14.6 文件路径
+
+| 文件 | 路径 |
+|:--|:--|
+| 训练脚本 | `vision/run_armD_r2_openclip.sh` + `vision/armB_aimv2_openclip.py` |
+| 训练输出 | `datasets/baize-vision/out/armD_r2_20261020_aimv2_openclip_vitb16_224/` |
+| 发散证据(首轮) | `datasets/baize-vision/out/armD_20261019_DIVERGED_archive/` |
+| ProtB 评测 | `vision/run_armD_r2_protb_eval.sh` → `vision/armD_r2_20261020_protb_vitb16_224_results.json` |
+| MLLM chain | `vision/run_armD_r2_full_chain.sh` + `vision/mllm_bridge/stage{1,15,2}_train_armD_r2.py` |
+| ④ 12集 launch | `vision/mllm_bridge/launch_12benchmarks_armD_r2_offline.sh`（未执行） |
+| 关键日志 | `/tmp/armD_r2_openclip_train.log` + `/tmp/armD_r2_protb_eval.log` + `/tmp/armD_r2_stage1.log` + `/tmp/armD_r2_stage15.log` + `/tmp/armD_r2_stage2.log`(FAILED) + `/tmp/armD_r2_full_chain.log` |
+
