@@ -40,7 +40,110 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-20 15:4x（**licence fix 已部署 → 验证 4 端口 → 重启 8090 → 重跑 r4‴**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-21 10:4x（**参考 t0002147 配置修复 cline settings + .env → 重跑 r4⁗**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「请你分析一下代码，看看问题能否修复」+「好的 按照 t0002147（陈熙元）的做法改 cline settings 好了。其它的配置也可以参考他们」
+> **根因分析结论**（代码层面，带行号证据）：r4 家族 5/5 全 INVALID 的根因 = **cline 客户端 MCP 60s 缺省超时**（`~/.cline/data/settings/cline_mcp_settings.json` 无 `timeout` 字段 → 回退 60s）× **t0002147 的 64 worker 在同一台 10.129.32.75 + 同一 FlexLM 并发争用** → run_code P95 从 <60s 抬到 >60s → cline 单方面 abort 产生 -32001 风暴 → 模型在持续 tool-call 失败后退化为输出 literal "pass"。
+> - **对照 t0002147**：他们的 `cline_mcp_settings.json` 有 `"timeout": 600`（10min）→ 所以他们的 64 worker 不中招。**这就是现成的成功案例。**
+> - **服务端无 60s 超时**：eda_fastmcp `SANDBOX_TIMEOUT=150s` + eda_sandbox_lite `EXEC_TIMEOUT` 都 >60s → 客户端先放弃。
+> - **换端口无效**：8650/8651/8652/8654 都在同一台 10.129.32.75 + 同一 FlexLM → 端口隔离不了 CPU/licence。
+> - **licence fix（15:4x）已压住 breaker**：r4‴/r4⁗ 的 circuit_breaker=0 → 剩下的纯粹是 client-side 60s timeout。
+> - **退化签名**：literal "pass" 不是 eda_fastmcp 返回的（`tools/run_code.py:62` 成功路径只回 `{"response":"executed"}`），是 cline 在 60s abort 后把 -32001 喂回模型 → 模型退化为输出文本 "pass" 结束 turn。
+
+#### ① 参考 t0002147 改 cline_mcp_settings.json（核心修复）
+
+t0002147 的配置（`/home/app.t0002147/.cline/data/settings/cline_mcp_settings.json`，已实测读取）：
+```json
+{
+  "mcpServers": {
+    "EDA_MCP_server": {
+      "url": "http://10.251.36.15:18889/mcp",
+      "type": "streamableHttp",
+      "timeout": 600,
+      "disabled": false,
+      "autoApprove": [
+        "search_apis",
+        "get_api_details",
+        "search_apis_by_keyword",
+        "run_code"
+      ]
+    }
+  }
+}
+```
+
+**ZhuLong 当前配置**（`/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json`）缺 `timeout` 字段 + autoApprove 用旧工具名 `run_pyAether_code_tool`（0731 已改名 `run_code`）。
+
+**改成**（对齐 t0002147，但 url 指向 ZhuLong 自己的 8090）：
+```json
+{
+  "mcpServers": {
+    "pyAether_MCP_server": {
+      "url": "http://10.251.36.15:8090/mcp",
+      "type": "streamableHttp",
+      "timeout": 600,
+      "disabled": false,
+      "autoApprove": [
+        "search_apis",
+        "get_api_details",
+        "search_apis_by_keyword",
+        "run_code"
+      ]
+    }
+  }
+}
+```
+
+**改动点**：
+1. **加 `"timeout": 600`**（对齐 t0002147，10min，>服务端 150s HTTP timeout，让服务端先返回真实结果）
+2. **autoApprove 改 `run_pyAether_code_tool` → `run_code`**（0731 改名后的正确工具名，t0002147 用的是 `run_code`）
+3. **autoApprove 加 `search_apis_by_keyword`**（t0002147 有，ZhuLong 缺）
+
+**备份**：改前 `cp ~/.cline/data/settings/cline_mcp_settings.json ~/.cline/data/settings/cline_mcp_settings.json.bak.20261021_104x`。
+
+#### ② 参考 t0002147 改 .env（辅助配置对齐）
+
+t0002147 的 `.env`（`/home/app.t0002147/mcp_0917/eda_fastmcp/.env`，已实测）与 ZhuLong 对比，**以下对齐**（仅加缺失项，不动已有值）：
+
+| 配置项 | t0002147 | ZhuLong 当前 | 操作 |
+|:--|:--|:--|:--|
+| `RAG_RECALL_TIMEOUT` | `25` | **未设** | 加 `RAG_RECALL_TIMEOUT=25` |
+| `EDA_RUNCODE_GUARDRAILS` | `false` | **未设** | 加 `EDA_RUNCODE_GUARDRAILS=false` |
+| `EDA_RUNCODE_READBACK` | **未设**（t0002147 不做 readback 消融）| `none` | **不动**（ZhuLong (N′) 唯一变量，保留）|
+| `PROXY_PORTS` | `8656,8658,8661,8662`（他们的）| `8650,8651,8652,8654` | **不动**（ZhuLong 自己的端口，与 t0002147 不冲突）|
+| `SANDBOX_ENDPOINTS` | `8656:t0002441_9,...`（他们的）| `8650:t0002997_1,...` | **不动**（同上）|
+| `EDA_OMEGA_FIDELITY` | `high` | `high` | 已一致 ✅ |
+| `EDA_PHI_BUDGET` | `0` | `0` | 已一致 ✅ |
+| `EDA_PHI_LAGGED` | `0` | `0` | 已一致 ✅ |
+| `SKILL_DATA_DIR` | `./docs/skill_data_selfexpl` | `./docs/skill_data_selfexpl` | 已一致 ✅ |
+| `SANDBOX_TIMEOUT` | `150` | `150` | 已一致 ✅ |
+| `EVAL_SANDBOX_WORKERS` | `4` | `4` | 已一致 ✅ |
+
+**注意**：
+- t0002147 用 cline 3.0.66，ZhuLong 用 cline 3.0.51。**不升级 cline 版本**（3.0.51 是 ZhuLong 锚点臂的复用基线，升级会破坏与 r1/r2/r3 的口径一致性）。
+- t0002147 用自己的端口 8656/8658/8661/8662（workdir t0002441_9..12），ZhuLong 用 8650/8651/8652/8654（workdir t0002997_1..4）→ **端口不冲突，各用各的**。
+
+#### ③ 重启 8090 + 验证 4 端口健康
+- 改完 .env 后重启 8090（pick up 新配置）。
+- 4 端口 run_code 健康探针（8650/8651/8652/8654 × 2 次，确认返回 `{"response":...}` 且无 breaker/空响应）。
+- MCP 冒烟 5/5。
+
+#### ④ 重跑 r4⁗（第 6 次，配置同 r1-r3 + 新 cline settings）
+- **先标 r4 家族 5/5 全 INVALID**（r4/r4′/r4″/r4‴/r4⁗ 均作废不进 5-run，产物日志留证）。
+- **r4⁗ 起跑**：配置与 r1-r3 完全一致 + 新 cline settings（timeout=600）—— `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / `-p 4` / 模型 `deepseek-v4-pro-fp4` / 端口 `8650,8651,8652,8654` / `export PYTHON=$PWD/venv/bin/python`。
+- 日志 `/tmp/ABL_readback_none_retest_r4e.log`（r4⁗ 已用 r4d4，本次用 r4e）；batch 新建。
+- **r4⁗ 30min 内必报**：real_MCP_32001 计数 + literal "pass" 计数 + 4 端口可达性。
+  - **判据**：超时率 ≤ ~0.001/行 + literal-pass ≈ 0 → fix 根治。
+  - **若 30min 内仍 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**（client timeout 修复无效，需考虑换沙盒机）。
+- r4⁗ 收口 → r5⁗（同配置同端口）→ 5/5 mean±std（r1,r2,r3,r4⁗,r5⁗）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮。
+
+#### ⑤ 纪律
+- 🚫 不覆盖 r1/r2/r3 产物与 r3 backup；🚫 不动 r4/r4′/r4″/r4‴/r4⁗ 原始产物与日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不升级 cline 版本（保持 3.0.51）。
+- 改 cline settings + .env 前**先备份**。
+- **若 r4⁗ 30min 仍退化 → 停手报运维**，不盲目第 7 次重跑（考虑换沙盒机/错峰）。
+- commit：`zhulong S1: 参考 t0002147 修复 cline settings(timeout=600) + .env 对齐 -> 重跑 r4''''`。
+
+### 🔄 运维指令 · 2026-10-20 15:4x（**licence fix 已部署 → 验证 4 端口 → 重启 8090 → 重跑 r4‴**）· 用户直令 · 最高优先【已被 10:4x 取代·历史·未根治】
 
 > 用户令（原文）：「**我刚提交了一个沙盒license泄露问题的fix并已部署到8663,8666,8667,8670四个端口。请重启r4，用这四个端口。重启之前先验证这四个端口健康。**」
 > **背景**：14:12 BLOCKER 根因 = pyAether licence 断路器 OPEN（100+ 连续失败→深度 cooling-off，4 端口全 0 响应 ~2.5h）。三轮 r4/r4′/r4″ 共 680/156/575 次 MCP timeout → literal "pass" 退化（r4″ 79/158 gen-fail）。**用户已定位根因为 licence 泄露并部署 fix**。本令取代 08:2x 的"停手报 blocker"处置，恢复重跑。
