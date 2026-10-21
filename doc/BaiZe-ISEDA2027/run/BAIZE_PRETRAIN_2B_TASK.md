@@ -1,6 +1,23 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 📄 运维指令 · 2026-10-21 09:3x（**写两份中文 HTML 报告**）· 用户直令 · 最高优先
+
+> 用户原话：「请 pretrain 写两个中文 html 报告：1.昨天完成的 decay 实验结果；2.昨晚开启的短途 decay 实验设置和进展。」
+
+**报告一：`reports/report_pretrain_decay_v2_result_zh.html`（decay v2 实验结果 · 已完成）**
+- 实验设置：起点 step_532000（~1.41T tok）· 71.2B tok decay（19,980 步）· 配比 SFT 64% : L3 24% : code 8% : math 4%。
+- 训练过程：起训 → 10-20 02:45 crash@step19920（NCCL timeout rank6）→ resume step_18000 → 10-20 10:30 收尾 step 19979/19980。
+- **评测结果（核心）**：CS8 **44.97%** / CX6 **6.21%** vs Xmodel-2.5 官方 CS8 65.40% / CX6 32.90%（Δ **−20.43 / −26.69 pp**）；起点基线 CS8 **61.03%** ⇒ 判定 **decay 段训坏模型**。
+- 归因（引用 #648/#649 已交付结论）：双移位 bug（py:547-548 预移位 + py:567-568 chunked-CE 再移位）、peak LR 1.67e-3 过高、code 26 epochs 过采样、step0 loss 11.72 异常。
+
+**报告二：`reports/report_pretrain_decay_short_experiment_zh.html`（短途 decay 实验设置 · 进展）**
+- 实验设计（10-21 02:3x 令）：20B token 小规模 decay，三变体 —— **L1** 修双移位 + LR 5e-4 + warmup 100；**L2** 只修双移位（LR 保持 1.67e-3）；**L3** 只降 LR（不动双移位）；判定门槛 **CS8 ≥55%**；每变体只评 CS8（~20min）。
+- 当前进展：起点基线 CS8=61.03% 已测；**L1 训练中** step 1560/5611（27.8%）、loss≈0.90（step0=1.75 vs v2 起步 11.72 ⇒ 双移位修复确效）、~12s/step、ETA 10-21 ~23:50；L2/L3 待 L1 完成后串行。
+- 后续计划：L1 训完 → CS8 eval(~20min) → ≥55% 起 L2 → L3 → 2×2 因子分析定主因。
+
+**纪律**：两份均自包含中文 HTML（内联样式、无外链、无脚本）；所有数字可溯源（`eval_summary.txt` / 任务书对照表 / 各 task log `文件:行`）；commit 前缀 `pretrain report:`；🚫 不改 v2 原始产物与既有报告（v2 是失败证据留档）。两个报告 + EXPERIMENTS_PRETRAIN_2B 对应章节一起提交。
+
 ### 🟢 运维指令 · 2026-10-21 02:3x（**授权自主排查根因：不要再等批准，自己设计并跑实验**）· 用户直令 · 最高优先
 
 > 用户原话：「可以，自行想办法排查根因。甚至可以用更少量的数据去 decay，比如像 Xmodel-2 一样，用 20B 数据 decay 看看效果。也可以在 decay 前少量 warmup 比如 100 步。总之要自己排查一下，为什么出现这种问题，不要干等着。」
