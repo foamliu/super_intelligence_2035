@@ -498,18 +498,17 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - ITERS=5611（20B token）/ WARMUP=100 / LR=5e-4 → MIN_LR=1e-5（WSD 指数衰减）/ SAVE_INTERVAL=500
 - 开关：adamw_fused + compile_model default + chunked_ce(256) + fast_data + verify_save_step 20
 
-### L1 进展（截至 2026-10-21 10:40）
+### L1 进展（截至 2026-10-21 23:5x — ✅ 训练完成 + CS8 eval 运行中）
 
 | 项目 | 值 |
 |:--|:--|
-| 状态 | ✅ 运行中（PID 1430363 torchrun, .29 8×H100 全满载） |
-| 当前 step | **1,670/5,611（29.8%）** |
-| 当前 loss | **0.8837**（lr=1.28e-04，decay 中） |
-| 吞吐 | 297.0K tok/s（≈1.07B tok/h），~12.0s/step，elapsed 334.1min |
-| 健康度 | 0 真实 error（16 条 “error” 命中全为启动时 NCCL 弃用 warning） |
-| 已存 ckpt | step_500(06:45) / step_1000(08:25) / step_1500(10:05) + verify_save_20 |
-| ETA | 剩 3,941 步 × 12s ≈ 13.1h → 预计 **10-21 ~23:45** |
-| L2/L3 | ⏸ 待启（串行：L1 训完 + CS8 eval 后决定） |
+| 状态 | ✅ **训练完成**（5611 步 = 20B tok，18.67h）+ CS8-only eval 运行中（PID2690438） |
+| final loss | **0.8687**（step 5610/5611，lr=1.33e-5，WSD decay 末段） |
+| final ckpt | `xmodel25_baize_L1_20b/final/`（model.safetensors 2.7GB，@23:45） |
+| 收尾说明 | rc=1 = rank6 teardown 段 SIGABRT（final 保存后 destroy_process_group，无损，无需 resume） |
+| 已存 ckpt | step_500~step_5500（12 个）+ final + verify_save_20 |
+| CS8 eval | `eval_L1_20b_cs8`（8 集 zero-shot × 8 卡，LOG=/tmp/eval_L1_20b_cs8.log，ETA ~00:10） |
+| L2/L3 | ⏸ 待 CS8 出数后串行 |
 
 ### 关键观察：双移位修复确效
 
@@ -522,7 +521,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 ### 后续计划
 
-1. L1 训完（~23:45）→ CS8 eval（~20min）。
+1. ✅ L1 训完（23:45，final loss 0.8687）→ CS8 eval 运行中（~00:10 出数）。
 2. L1 CS8 ≥55% → 启动 L2（仅修双移位，LR=1.67e-3）→ CS8 eval。
 3. 启动 L3（仅降 LR，不动双移位）→ CS8 eval。
 4. L1/L2/L3 三组 CS8 → 2×2 因子分析定主因 → 决定是否用最优配方重跑 71.2B。
