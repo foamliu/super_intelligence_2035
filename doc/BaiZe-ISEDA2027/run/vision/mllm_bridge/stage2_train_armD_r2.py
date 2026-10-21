@@ -50,7 +50,7 @@ from mllm_bridge.modeling_llava_baize import BaizeMultiModalProjector
 CKPT = "/nas_train/app.e0031982/datasets/baize-vision/out/armD_r2_20261020_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
 LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
 STAGE15_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage15_armD_r2_20261020/step20000"
-DATA_DIR = "/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-plus-Instruct-opt47-webdataset"
+DATA_DIR = "/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-webdataset"
 OUTPUT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armD_r2_20261020"
 IMAGE_TOKEN_ID = 151655
 NUM_IMAGE_TOKENS = 196
@@ -115,7 +115,7 @@ class LLaVANeXTInstructDataset(Dataset):
             tars_count = len(set(t for t, _, _ in self.index))
         else:
             # Rank 0 (or single-GPU): build the index
-            tars = sorted(Path(data_dir).glob('data-*.tar'))
+            tars = sorted(Path(data_dir).glob('pretrain-*.tar'))
             for tar_path in tars:
                 try:
                     with tarfile.open(str(tar_path), 'r') as tf:
