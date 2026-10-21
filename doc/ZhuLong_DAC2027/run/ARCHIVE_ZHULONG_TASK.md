@@ -799,3 +799,111 @@ ps -eo user,etimes,pcpu,args 2>/dev/null | grep -E 't0002147|t0002997' | grep -v
 - 结果写 `MEMORY_ZHULONG.md` 心跳（≤6 行）+ `daily-memories/2026-10-20.md` 详细节，commit `zhulong diag: r4 680 MCP timeout attribution`。
 - 🔴 **r5 继续跑，不要打扰**（PID 1296715）；本诊断与 r5 并行、互不影响。
 
+
+## 归档 batch 9 · 2026-10-21 · 运维令 15:4x（licence fix → r4‴·已被 10:4x 取代·历史·未根治）
+
+> 由 ZHULONG_TASK.md §运维指令区滚出（2026-10-21，r4e 跑中归档）。原文不改。
+
+### 🔄 运维指令 · 2026-10-20 15:4x（**licence fix 已部署 → 验证 4 端口 → 重启 8090 → 重跑 r4‴**）· 用户直令 · 最高优先【已被 10:4x 取代·历史·未根治】
+
+> 用户令（原文）：「**我刚提交了一个沙盒license泄露问题的fix并已部署到8663,8666,8667,8670四个端口。请重启r4，用这四个端口。重启之前先验证这四个端口健康。**」
+> **背景**：14:12 BLOCKER 根因 = pyAether licence 断路器 OPEN（100+ 连续失败→深度 cooling-off，4 端口全 0 响应 ~2.5h）。三轮 r4/r4′/r4″ 共 680/156/575 次 MCP timeout → literal "pass" 退化（r4″ 79/158 gen-fail）。**用户已定位根因为 licence 泄露并部署 fix**。本令取代 08:2x 的"停手报 blocker"处置，恢复重跑。
+> **端口**：8663/8666/8667/8670（与 08:2x 同，fix 已部署到这 4 个）。
+
+#### ① 先验证 4 端口健康（**必须全过才重启 8090**）
+- 用**真实 pyAether run_code 调用**（带 lang=pyAether, host=aether 或你已知正确参数格式）探 4 端口，每个至少 2 次，确认返回 `{"response":...}` 且**无** `licence unavailable` / `circuit breaker` / 空响应。
+- 对照 14:56/15:33 的故障态（breaker open / 0 字节空响应），确认 fix 生效。
+- **若任一端口仍返回 breaker/空响应 → 停手报运维**（fix 可能未完全生效），不重启 8090、不起 r4‴。
+```bash
+# 4 端口 run_code 健康探针（lang/host 参数照你已知正确格式）
+for P in 8663 8666 8667 8670; do
+  echo "=== port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 200)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    echo "  #$i ${MS}ms :: $(echo "$R" | cut -c1-150)"
+  done
+done
+# 判据：4 端口 × 2 次 = 8 次全返回 {"response":... 且无 licence/breaker/空 → 健康通过
+```
+
+#### ② 重启 8090 wrapper（清累积状态，pick up fix 后的端口）
+```bash
+cd /nasdata/app.e0031982/code/eda_fastmcp
+echo "== 重启前 8090 =="
+P8090=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "  pid=$P8090 etime=$(ps -o etimes= -p $P8090 2>/dev/null|tr -d ' ')s"
+echo "== 重启 =="
+bash scripts/stop.sh; sleep 3
+bash scripts/start.sh; sleep 8
+PNEW=$(ss -ltnp 2>/dev/null | grep ':8090' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+echo "  新 PID=$PNEW（旧 $P8090）"
+echo "== 8090 MCP 冒烟 5/5 =="
+OK=0; FAIL=0
+for i in 1 2 3 4 5; do
+  r=$(timeout 70 curl -s -m 65 -X POST http://localhost:8090/mcp \
+      -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' 2>/dev/null | head -c 100)
+  if [ -n "$r" ]; then OK=$((OK+1)); echo "  #$i OK"; else FAIL=$((FAIL+1)); echo "  #$i FAIL"; fi
+done
+echo "SMOKE: ok=$OK fail=$FAIL"
+# 额外：8090 透传 run_code 端到端秒回
+echo "run_code via 8090:"
+timeout 30 curl -s -m 25 -X POST http://localhost:8090/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"pyAether_MCP_server__run_code","arguments":{"code":"print(1)","lang":"pyAether","host":"aether"}}}' 2>/dev/null | head -c 300
+echo ""
+```
+
+#### ③ 起 r4‴（端口 8663/8666/8667/8670，配置同 r1–r3）
+- **先标 r4/r4′/r4″ 全部 INVALID**（680/156/575 MCP timeout → literal "pass" 退化，均不进 5-run）：
+  - r4 旧轮 `2026_1019_235040` INVALID(680 timeout, 99 literal-pass, 31.0%)
+  - r4′ `2026_1020_063134` INVALID(110→156 timeout 抬头)
+  - r4″ `2026_1020_090900` INVALID(575 timeout, 79 literal-pass, licence breaker)
+  - 🚫 不覆盖原始产物与日志（留证）。
+- **r4‴ 起跑**：配置与 r1–r3 完全一致 —— `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / **V3 自探索 ON** / full harness / **`-p 4`** / 模型 **`deepseek-v4-pro-fp4`** / **端口 `8663,8666,8667,8670`** / `export PYTHON=$PWD/venv/bin/python`。
+- 日志 `/tmp/ABL_readback_none_retest_r4d.log`；batch 新建。
+- **r4‴ 跑起来 30 分钟内必须报一次**：`real_MCP_32001` 计数 + `run_code` 调用数 + 4 端口各自可达性 + **literal "pass" 计数**（grep completed jsonl 中字面量 `"pass"` 数量），确认 fix 生效（超时率 ≤ ~0.001/行 + literal-pass ≈ 0）。
+- r4‴ 收口 → 立即起 **r5‴**（同配置同端口）→ 5/5 齐（r1,r2,r3,r4‴,r5‴）→ mean±std → 更新 `zhulong_results.md` / `6_exp.tex` → full@pro-cloud 5 轮。
+
+#### ④ 纪律
+- 🚫 不覆盖 r1/r2/r3 产物与 r3 backup；🚫 不动 r4/r4′/r4″ 原始产物与日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED。
+- kill 一律显式 PID + cmdline 核对（避 opencode 误匹配）。
+- **若 4 端口验证仍不健康（breaker/空响应）→ 停手报运维**，不重启 8090、不起 r4‴（fix 可能未完全生效）。
+- **若 r4‴ 30min 内再现 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**（fix 可能未根治）。
+- commit：`zhulong S1: licence fix 部署 → 验证 4 端口 → 重启 8090 → 重跑 r4''' (端口 8663/8666/8667/8670)`。
+
+
+## 归档 batch 9 · 2026-10-21 · 运维令 21:4x（杀 r4/r5/regrade → 端口换 8650-8654 → 重启 r4⁗·r4⁗ 已收口 INVALID·已被 10:4x 取代）
+
+> 由 ZHULONG_TASK.md §运维指令区滚出（2026-10-21，r4e 跑中归档）。r4⁗(r4d4)=batch 2026_1020_215918 已于 10-21 02:48 收口 INVALID(108 literal-pass)。原文不改。
+
+### 🔴 运维指令 · 2026-10-20 21:4x（**用户直令：杀 r4/r5/regrade → 端口换 8650/8651/8652/8654 → 重启 r4**）· 最高优先
+
+> 用户原话：「杀掉 r4/r5，regrade 也杀掉，端口换到 8650,8651,8652,8654，重启 r4」。
+> **现状**：r4''' 21:09 已收口但判 INVALID（70/158 字面量 "pass" + breaker OPEN 98 consecutive worker spawn failures@8667）；4 旧端口 8663/8666/8667/8670 全不可达。r4/r4'/r4''/r4''' 全 INVALID ⇒ **本轮 r4 是第 5 次尝试**，编号用 **r4⁗（r4-4）**，batch 自动生成。
+
+**① 执行顺序（运维已下发 RUN_ID 99 做①②，你负责③④⑤）**
+1. **杀残留**：`pkill -f 'run_readback_none_retest_r4d3_regrade'`、`pkill -f 'run_pipeline.py.*evaluation'`、`pkill -f 'run_cline_script.*readback_none'`。⚠️ **不碰** t0002147、loop、ops_relay。
+2. **端口切换**：`SANDBOX_ENDPOINTS=8650,8651,8652,8654@10.129.32.75`。
+   - 🔴 **必须先在 `.env` 或启动脚本中确认这四个端口归本线所有**（历史上 8650/8651/8652/8654 被 **t0002147** 占用，r3 regrade 曾因抢占全 timeout）。若被 t0002147 占用 → **不要抢，报 blocker**。
+   - 4 端口逐个 `timeout 5 bash -c "</dev/tcp/10.129.32.75/$p"` 必须 **4/4 OPEN** 才起跑。
+3. **起 r4⁗**（与 r4''' 同配置同模型同 readback=none，仅换端口）：
+   ```bash
+   cd /nasdata/app.e0031982/code/ZhuLong_DAC2027
+   export PYTHON=$PWD/venv/bin/python        # 🔴 必须，漏了必崩 pydantic ModuleNotFoundError
+   export SANDBOX_ENDPOINTS=8650,8651,8652,8654@10.129.32.75
+   unset http_proxy https_proxy ALL_PROXY
+   export NO_PROXY=10.129.32.75,localhost,127.0.0.1
+   setsid bash scripts/run_cline_script.sh -p 4 -n > /tmp/ABL_readback_none_retest_r4d4.log 2>&1 < /dev/null &
+   ```
+   起跑后 5 分钟内核验：`pgrep -af run_cline_script` 有 1 launcher + 4 worker、log 在增长、首题已开始。
+4. **启动后立刻回报**：PID / batch 号 / 4 端口状态 / 首 5 分钟 log 行数。
+5. **监控口径（强制，纠正此前误判）**：
+   - ✅ **健康判据 = task 完成数单调增长**（从 **codegen jsonl 行数**数，不是 log 行数）。
+   - ✅ **每轮巡检必须 grep codegen jsonl 里字面量 `"pass"` 数量**——这是退化的唯一早期信号（20:30 前四轮巡检都只 grep log，错过 70 条退化的早期发现）。
+   - 停手阈值不变：literal-pass >10 或 MCP 率 ≥5/min → 停手报运维。
+
+**② 若有任何一个前置不满足（端口被占 / 端口不可达 / 启动即崩）→ 立刻报 blocker，不要盲重试。**
+
