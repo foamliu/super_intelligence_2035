@@ -13177,3 +13177,96 @@ PROXY_PORTS=8650,8651,8652,8654
 
 === DONE 104 ===
 ```
+
+---
+
+## RUN_ID 105 · 2026-10-22 00:11:08 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 105 | kill r5e + port back 8650-8654 + restart -p 8 | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/eda_fastmcp
+OLD_BATCH=2026_1021_173249
+echo "[1] stop r5e"
+pkill -TERM -f "run_cline_script.*${OLD_BATCH}" 2>/dev/null && echo '  TERM batch-matched' || echo '  no batch match'
+kill -TERM 2921136 2>/dev/null && echo '  TERM 2921136' || echo '  2921136 gone'
+sleep 10
+left=$(pgrep -f 'run_cline_script' 2>/dev/null | head -5)
+if [ -n "$left" ]; then echo "  still alive: $left -> KILL"; pkill -KILL -f 'run_cline_script' 2>/dev/null; sleep 3; fi
+echo "  remaining=$(pgrep -cf 'run_cline_script' 2>/dev/null || echo 0)"
+echo "[2] edit .env ports -> 8650,8651,8652,8654"
+cd "$BASE" || exit 1
+cp -a .env ".env.bak.r5e2.$(date +%s)" && echo '  backed up'
+sed -i 's/^PROXY_PORTS=.*/PROXY_PORTS=8650,8651,8652,8654/' .env
+sed -i 's#^SANDBOX_ENDPOINTS=.*#SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4#' .env
+grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST)' .env | cut -c1-220
+grep -E '^(EDA_RUNCODE_READBACK|EDA_OMEGA_FIDELITY|EDA_PHI_BUDGET|EDA_PHI_LAGGED)' .env | cut -c1-100
+echo "[3] probe 4 ports (need 4/4 OPEN)"
+ok=0
+for p in 8650 8651 8652 8654; do
+  timeout 5 bash -c "exec 3<>/dev/tcp/10.129.32.75/$p" 2>/dev/null && { echo "  $p OPEN"; ok=$((ok+1)); } || echo "  $p FAIL"
+done
+echo "  open=$ok/4"
+if [ "$ok" -ne 4 ]; then echo '  ABORT: ports not all open'; echo '=== DONE 105 (ABORT) ==='; exit 1; fi
+echo "[4] restart r5e -p 8"
+export PYTHON=$PWD/venv/bin/python
+unset http_proxy https_proxy ALL_PROXY
+export NO_PROXY=10.129.32.75,localhost,127.0.0.1
+NEWLOG=/tmp/ABL_readback_none_retest_r5e2.log
+setsid bash scripts/run_cline_script.sh -p 8 -n > "$NEWLOG" 2>&1 < /dev/null &
+sleep 25
+echo "  launcher=$(pgrep -f 'run_cline_script' | head -1)  workers=$(pgrep -cf 'run_cli' 2>/dev/null)"
+head -15 "$NEWLOG" 2>/dev/null | cut -c1-170
+ls -dt /home/app.e0031982/eda_code_eval/2026_1022_* 2>/dev/null | head -2
+echo "[5] disk"; df -h /home | tail -1
+echo "=== DONE 105 ==="
+```
+
+**输出**
+```
+=== RUN_ID 105 | kill r5e + port back 8650-8654 + restart -p 8 | 2026-10-22 00:11:08 | host=hfeg0tedaap02 ===
+[1] stop r5e
+  no batch match
+  TERM 2921136
+  still alive: 4010410
+4010411 -> KILL
+  remaining=0
+0
+[2] edit .env ports -> 8650,8651,8652,8654
+  backed up
+70:SANDBOX_HOST=10.129.32.75
+79:PROXY_PORTS=8650,8651,8652,8654
+113:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+EDA_PHI_BUDGET=0
+EDA_PHI_LAGGED=0
+EDA_OMEGA_FIDELITY=high
+EDA_RUNCODE_READBACK=none
+[3] probe 4 ports (need 4/4 OPEN)
+  8650 OPEN
+  8651 OPEN
+  8652 OPEN
+  8654 OPEN
+  open=4/4
+[4] restart r5e -p 8
+  launcher=4026302  workers=10
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 启动自动化代码生成流水线: 2026-10-22 00:11:22
+[0;34m[INFO][0m 执行器: cline
+[0;34m[INFO][0m 并行度: 8
+[0;34m[INFO][0m 自进化: 关闭
+[0;34m[INFO][0m Memory Bank 注入: 禁用 (--no-memory-inject)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m [Step 0] 读取yaml配置文件...
+[0;34m[INFO][0m 文件路径: /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml
+[0;34m[INFO][0m Benchmark: EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m [Step 1] 检查原始数据集...
+[0;32m[SUCCESS][0m 原始数据集检查完成
+[0;34m[INFO][0m 任务范围: 全量 158 题
+[0;34m[INFO][0m [Step 1.5] 跳过 Memory Bank 预热 (无 L0 artifacts，冷启动正常)
+[0;34m[INFO][0m [Step 2] 执行python脚本, 格式化评估任务...
+/home/app.e0031982/eda_code_eval/2026_1022_001122
+[5] disk
+/dev/mapper/vgroot-lv_home  394G  372G  5.0G  99% /home
+=== DONE 105 ===
+```
