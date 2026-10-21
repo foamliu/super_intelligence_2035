@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 145 -->
+<!-- RUN_ID: 146 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,52 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 146 — 🔴 用户直令：逐行比对官方三个训练脚本（decay/S1/S2）+ 官方 mup/Muon 实现
+
+> 用户直令（2026-10-22 06:2x）：「这是最后一次 decay 的脚本 `examples/xmodel/train_decay_fp8_1120.sh`；S1：`train_s1_fp8_0921.sh`；S2：`train_s2_fp8_1008.sh`。**因为我都是我写的。这个仓库里 Muon 和 muP 的也是我自己写的**」。
+> **含义**：官方仓库里的 `mup/` 与 Muon 实现是**用户本人所写** → **authoritative ground truth**。我们自写的 `baize_xmodel25_decay_v2.py`（HF + 手写 DDP + TensorParallelMuon，**无 μP 优化器 LR 分组**）必须逐项对齐。
+> ⚠️ **只读取证 + 对照表**。**不 kill L2**（继续跑作 L2 数据点）、不改训练。
+
+```bash
+set -u
+echo "=== RUN_ID 146 | official decay/s1/s2 vs ours | $(date '+%F %T') | host=$(hostname) ==="
+XF=/nas_train/app.e0031982/ref/Xmodel-2.5
+echo "[1] 三个官方脚本"
+ls -l "$XF/examples/xmodel/train_decay_fp8_1120.sh" "$XF/examples/xmodel/train_s1_fp8_0921.sh" "$XF/examples/xmodel/train_s2_fp8_1008.sh" 2>/dev/null
+
+echo "[2] ===== decay 脚本全文 ====="
+sed -n '1,200p' "$XF/examples/xmodel/train_decay_fp8_1120.sh" 2>/dev/null | cut -c1-200
+
+echo "[3] 官方 decay 超参提取"
+grep -nE 'lr|iters|warmup|decay|batch|seq|mup|muon|weight-deca|clip|optimi' "$XF/examples/xmodel/train_decay_fp8_1120.sh" 2>/dev/null | cut -c1-200 | head -60
+
+echo "[4] mup 目录 + LR/width 缩放实现"
+find "$XF/mup" -maxdepth 2 -type f 2>/dev/null | head -20
+grep -rnE 'def .*lr|width_multiplier|output_mult|input_mult|embed_mult|init_method|base_shape' "$XF/mup" --include='*.py' 2>/dev/null | head -25 | cut -c1-180
+
+echo "[5] Muon 位置 + LR 分组"
+grep -rln 'muon\|Muon' "$XF" --include='*.py' 2>/dev/null | head -10
+grep -rnE 'param_groups|add_param_group|use_mup' "$XF/megatron" --include='*.py' 2>/dev/null | grep -iE 'mup|width|mult' | head -15 | cut -c1-180
+
+echo "[6] 我们 v2 对照项"
+V2=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_xmodel25_decay_v2.sh
+grep -nE '^(SEQ|GBS|MBS|ITERS|LR|MIN_LR|WARMUP|NP)=' "$V2" 2>/dev/null
+
+echo "[7] 起点 ckpt config 的 mup 字段"
+for CFG in /nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json \
+           /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json; do
+  [ -f "$CFG" ] && { echo "  FOUND $CFG"; grep -oE '"[a-z_]*mup[a-z_]*"[: ]*[^,}]*' "$CFG" | head -20; }
+done
+
+echo "[8] L2 状态（不 kill）"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-110 | head -2 || echo '  L2 not running'
+echo "=== DONE 146 ==="
+```
+
+> **必须产出（写入 MEMORY，做成对照表）**：官方 decay 的 `lr / min-lr / iters / GBS / seq / warmup / lr-decay-style / weight-decay / clip / μP 参数 / Muon 配置` 逐项 vs 我们 v2，**标「一致 / 差 X 倍 / 缺失」**，并明确指出**哪一项是 20pp→2pp 剩余的怀疑主因**。
+
+
 
 ## RUN_ID 145 — 🔴 用户直令：clone Xmodel-2.5 官方训练代码 + 核查 muP 完整性
 
