@@ -15069,3 +15069,110 @@ Everything up-to-date
   NO_armE_DIR
 === DONE 143 ===
 ```
+
+---
+
+## RUN_ID 144 · 2026-10-21 22:45:33 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 144 | 全库静默排查 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "[1] 三条线 loop 进程"
+for s in baize_pretrain_loop baize_vision_loop baize_data_loop zhulong_loop ops_relay baize_harness_loop; do
+  p=$(pgrep -f "$s.sh" 2>/dev/null | head -1)
+  if [ -n "$p" ]; then echo "  $s = PID $p (etime $(ps -o etimes= -p $p 2>/dev/null | tr -d ' ')s)"; else echo "  $s = **NOT_RUNNING**"; fi
+done
+echo "[2] 各自 loop 日志 mtime（近 5 行）"
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_vision_loop.log /tmp/baize_data_loop.log /tmp/zhulong_loop.log /tmp/baize_ops_relay.log; do
+  [ -f "$f" ] && echo "  --- $f $(stat -c '%y' "$f" 2>/dev/null)" && tail -4 "$f" 2>/dev/null | cut -c1-150
+done
+echo "[3] git 同步是否卡住（各线工作区）"
+cd "$R" && git -c core.pager=cat status -sb 2>/dev/null | head -3
+git -c core.pager=cat log --oneline -1 2>/dev/null
+ls -la .git/*.lock .git/index.lock 2>/dev/null && echo '  ⚠️ GIT LOCK 存在' || echo '  no git lock'
+echo "[4] 各线是否有未提交改动（pull 后没提交=loop 卡在 push）"
+for d in doc/BaiZe-ISEDA2027/run doc/ZhuLong_DAC2027/run; do
+  n=$(git -c core.pager=cat status --porcelain -- "$d" 2>/dev/null | wc -l)
+  echo "  $d : $n 个未提交文件"
+done
+echo "[5] 当前活动的 agent / 训练进程"
+pgrep -af 'cline --data-dir|opencode run|torchrun|run_cline_script' 2>/dev/null | cut -c1-120 | head -8 || echo '  NONE'
+echo "[6] .12 + .29 GPU（.29 走 ssh）"
+echo "  --- .12 (local) ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "  --- .29 (ssh) ---"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .29 FAILED'
+echo "[7] pretrain / zhulong / vision 关键日志 mtime"
+for f in /tmp/baize_xmodel25_decay_L1_train.log /tmp/ABL_readback_none_retest_r5e.log /tmp/armE_openclip_train.log; do
+  [ -f "$f" ] && echo "  $f -> $(stat -c '%y size=%s' "$f" 2>/dev/null)" || echo "  $f MISSING"
+done
+echo "=== DONE 144 ==="
+```
+
+**输出**
+```
+=== RUN_ID 144 | 全库静默排查 | 2026-10-21 22:45:33 | host=whag0pgpuap12 ===
+[1] 三条线 loop 进程
+  baize_pretrain_loop = PID 1294448 (etime 451008s)
+  baize_vision_loop = PID 1294447 (etime 451009s)
+  baize_data_loop = PID 1827417 (etime 1484793s)
+  zhulong_loop = **NOT_RUNNING**
+  ops_relay = PID 477676 (etime 1s)
+  baize_harness_loop = **NOT_RUNNING**
+[2] 各自 loop 日志 mtime（近 5 行）
+  --- /tmp/baize_pretrain_loop.log 2026-10-21 22:30:03.913628399 +0800
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-21 22:30:03 WAITING=1（异步任务 running）→ sleep 1800s
+  --- /tmp/baize_vision_loop.log 2026-10-21 22:32:19.639831493 +0800
+[2m[abort] aborted[0m
+
+[loop] 2026-10-21 22:32:18 wake up, invoking cline ...
+[llmrot] 2026-10-21 22:32:19 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+  --- /tmp/baize_data_loop.log 2026-10-21 22:40:25.693396542 +0800
+### One thing to note (flagged, not blocking)
+The operator instruction ③ specified the tokenizer as "Xmodel-2.5 原生 tokenizer (vocab 129280)", but the actual products were made with `DeepSeek
+[loop] 2026-10-21 22:40:25 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-21 22:40:25 WAITING=1 (async task running) → sleep 1800s
+  --- /tmp/baize_ops_relay.log 2026-10-18 13:33:12.768175059 +0800
+[relay] 2026-10-18 13:33:12 started. repo=/nas_train/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+[3] git 同步是否卡住（各线工作区）
+## main...origin/main
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+92e90f20f ops RUN_ID 144: 全库68min零提交排查(21:36后 pretrain/zhulong/vision 三条线同时静默) - 各loop进程/日志mtime/git lock/未提交文件/活动进程/.12+.29 GPU
+  no git lock
+[4] 各线是否有未提交改动（pull 后没提交=loop 卡在 push）
+  doc/BaiZe-ISEDA2027/run : 15 个未提交文件
+  doc/ZhuLong_DAC2027/run : 0 个未提交文件
+[5] 当前活动的 agent / 训练进程
+3711272 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e00319
+3711366 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e00
+[6] .12 + .29 GPU（.29 走 ssh）
+  --- .12 (local) ---
+0, 76031 MiB, 100 %
+1, 76071 MiB, 100 %
+2, 76091 MiB, 100 %
+3, 76011 MiB, 100 %
+4, 76071 MiB, 100 %
+5, 76031 MiB, 100 %
+6, 76031 MiB, 100 %
+7, 76051 MiB, 100 %
+  --- .29 (ssh) ---
+0, 51763 MiB, 98 %
+1, 51763 MiB, 100 %
+2, 51763 MiB, 100 %
+3, 51763 MiB, 98 %
+4, 51763 MiB, 98 %
+5, 51763 MiB, 100 %
+6, 51763 MiB, 100 %
+7, 51763 MiB, 100 %
+[7] pretrain / zhulong / vision 关键日志 mtime
+  /tmp/baize_xmodel25_decay_L1_train.log MISSING
+  /tmp/ABL_readback_none_retest_r5e.log MISSING
+  /tmp/armE_openclip_train.log -> 2026-10-21 22:45:23.433654104 +0800 size=13680
+=== DONE 144 ===
+```
