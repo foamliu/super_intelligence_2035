@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# run_armD_protb_eval.sh — ArmD (2026-10-19) open_clip ViT-B/16 Protocol-B eval
+# run_armE_protb_eval.sh — ArmE (2026-10-21) open_clip ViT-L/14 Protocol-B eval
 #
 # Operator instruction 2026-10-19 (step ②, after ArmD training completes):
 #   - Same Protocol B as ArmB/ArmC: full IN-1k 1.28M train + 50k val, SGD 90ep,
