@@ -1597,3 +1597,126 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 > 4. **记录暂停位置**：在 `MEMORY_DATA.md` 进度快照 + `DATA_LEDGER.md` 记下暂停点（当前 sh94 / 总 parquet 数 / 已下载 dir 数），便于将来续传。
 >
 > **报告**：本轮唤醒回报「下载已暂停」+ 暂停位置 + 分词仍进行的 done/110 快照。
+
+---
+
+### ▶️ 运维指令 · 2026-10-20 15:5x（✅ 恢复 en_v1_4 数据下载）· 用户直令 · 已执行
+
+> 用户原话：「data: 可以恢复下载了」。
+>
+> **动作（本轮唤醒立即执行）**：
+> 1. **重启下载**（从暂停点续传，脚本幂等、自动 SKIP 已完成文件）：
+>    ```bash
+>    cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline
+>    export HF_PROXY=http://172.19.92.23:13128 HF_ENDPOINT=https://hf-mirror.com
+>    export https_proxy=$HF_PROXY http_proxy=$HF_PROXY
+>    setsid -f nohup python3 download_en_v1_4_resolve.py > /tmp/en_v1_4_dl_dot23.log 2>&1 &
+>    ```
+>    （暂停点：**sh95(CC-MAIN-2024-10)@139/512**，95/110 dirs，48267 parquet）；续传从 sh95 起，sh96–110 尚未创建。
+> 2. **恢复旧「下载口径」**（2026-10-07 起生效版）：下载**失败 / 僵死 / 速率趋零 / PID 已死就 kill+重启**，报告标「已重启」+ 新 PID，不必等运维点名。
+> 3. **分词不受影响**：`run_tokenize_env14_fullsource.sh`（PID 749330）继续跑，下载续上的 shard 落盘后自动排队分词。
+> 4. **报告**：报重启后 PID + 续传起点 + 实测 MB/s + 剩余 shard ETA；`DATA_LEDGER.md` 的 en_v1_4 行改回「🟢 下载中」。
+
+> 📦 §⏸️运维指令·2026-10-20（暂停 en_v1_4 下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：已被同日 15:5x「✅恢复下载」块覆盖/取代；下载已恢复（PID1875054 alive,2.80MB/s）。需要时再读。
+
+---
+
+### 🆕 运维指令 · 2026-10-18 10:2x（🔧 **P0：恢复 git push（换代理疑似污染全局 proxy 环境）**）· 用户直令 · 与续传令并行
+
+> **判断**：换 `.23` 代理过程中可能在 shell/服务里全局 export 了 `http_proxy/https_proxy/ALL_PROXY`，导致 `git push` 走不通（尤其远端是 HTTPS 时）。**下载用 HF 代理 ≠ git 走代理**。
+> **要求**：
+> 1. 先只读诊断：`git remote -v`、`git status -sb`、`env | grep -iE 'proxy|HF_'`、`git config --get-regexp '.*proxy'`、`ls .git/index.lock`。
+> 2. `git` 一律**剥离 HF 代理**执行：`env -u http_proxy -u https_proxy -u ALL_PROXY -u all_proxy git fetch/pull/push origin main`；🚫 不要为 git 永久写 `git config --global http.proxy`。
+> 3. 若远端是 SSH（`git@github.com:`），代理环境本不影响；若仍失败，贴 `GIT_SSH_COMMAND="ssh -v" git ls-remote origin HEAD` 原文。
+> 4. 修好后**立刻执行同日②的续传令**（`.23+hf-mirror`，25 shard）+ 启分词；ops 中继会在恢复后执行 RUN_ID 123 的 `.12` git 只读诊断，可与中继结论互相印证。
+
+---
+
+### 🆕 运维指令 · 2026-10-18②（🔴 **P0：立即改用 `172.19.92.23:13128` + hf-mirror 续 `en_v1_4` 最后 25 个 shard**）· 用户直令 · 覆盖同日①的"先探针"
+
+> **背景**：你已经连续多轮报 `.25` → `huggingface.co HTTP=000 timeout`，但 **`.23 + hf-mirror` 已由中继在 `.12`/`.29` 双机实测为 200**：
+> `.23→hf-mirror` **200 / 0.33s**、`.23→hf-mirror API tree` **200 / 0.35–0.57s**（RUN_ID 122，2026-10-18 07:31）。⇒ **不要再等 `.25`**。
+> 现状：**43,520 parquet / 0 incomplete / 4.1T / 85 of 110 shard 完成，只差 25 个**。
+
+**① 立即执行（不再探针、不再等待）**
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline
+export HF_PROXY=http://172.19.92.23:13128
+export HF_ENDPOINT=https://hf-mirror.com
+export https_proxy=$HF_PROXY; export http_proxy=$HF_PROXY
+export HF_HUB_ENABLE_HF_TRANSFER=1; export HF_HUB_DOWNLOAD_TIMEOUT=120
+setsid -f nohup bash download_en_v1_4.sh > /tmp/en_v1_4_dl_dot23.log 2>&1
+```
+- ⚠️ **脚本已由运维改成读 `HF_PROXY`/`HF_ENDPOINT`**（原 L26-27 硬编码 `.25` 已移除）⇒ **必须先 `git pull`**，否则仍会走 `.25`。
+- 若 `.sh` 的 API 列目录失败 ⇒ 改 `setsid -f nohup python3 download_en_v1_4.py > /tmp/en_v1_4_dl_dot23.log 2>&1`（24 workers 并行版）。
+- **已完成的 85 个 shard 自动 SKIP，不要删、不要重下。**
+
+**② 判活（10–15 min 内给结论，🚫 不看进程存活，只看字节增长）**
+- `du -s` 目标目录两次（间隔 120s）必须增长；或 `/proc/<pid>/io` 的 `write_bytes` 增长；或日志出现新的 `downloading/DONE`。
+- **零增长 ⇒ 判假活**：kill wrapper → 换 ① 的 Python 并行版 → 仍零增长则报 blocker（贴报错原文）。
+
+**③ 回报（本轮就要）**
+1. `.23 + hf-mirror` 下的实测：**MB/s**、已完成 shard 数（从 85 起算）、**25 个剩余 shard 的 ETA**（按实测速率算，禁止沿用旧 7–8 天口径）。
+2. 日志路径 `/tmp/en_v1_4_dl_dot23.log` + `pgrep -af download_en_v1_4` 原文。
+3. 完成后自校：`parquet` 数 vs HF 清单、`.incomplete==0`，写入 `DATA_LEDGER.md`。
+
+**④ 紧接着（本令的第二优先，不阻塞 ①）**
+- **en_v1_4 开始分词**（P-8/v5 的 S1 要 500B token）：复用 `preprocess_data.py` + `tokenizer_eod`，`nice -19`，并发 4–8；**先报预计 B tok/天 与到 500B 的天数**。
+- 🚫 85M 维持暂停；🚫 不动 GPIC/WebMix/InternVL/wit_base/cauldron/SFT-2605/RL-2609；🚫 不改 `.12` 上 vision 正在用的 GPU 任务（vision P0 已占用 8 卡，分词只用 CPU）。
+
+
+> **用户令（2026-10-18）**：「data: 既然 172.19.92.25:13128 返回503，那就尝试用 172.19.92.23:13128+hf-mirror 来续传」
+
+**① 范围（只动 `en_v1_4` 一路）**
+- 目标：`openbmb/Ultra-FineWeb · data/ultrafineweb_en_v1_4/`（56,461 文件 / 6.75TB），落盘 `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/` 不变。
+- 现状（唤醒 522）：**43,520 parquet / 0 `.incomplete` / 4.1T / 85 of 110 snapshot 目录完成**；wrapper 已退出（03:59，`completed=14 skipped=71 failed=25`）⇒ **只需续 25 个失败 shard**，已有的 85 个目录自动 SKIP（🚫 不要删、不要重下）。
+- 🚫 **不动**：85M（维持用户令 10-13 暂停）、GPIC、WebMix-38M、InternVL-SA1B、wit_base、the_cauldron、SFT-2605、RL-2609；不动 `.25` 上任何已完数据。
+
+**② proxy 口径（本令覆盖 10-15「.12 下数据一律 .25 直连 hf.co」——仅限 `en_v1_4` 这一路）**
+```bash
+export HF_PROXY=http://172.19.92.23:13128     # ⚠️ 不是 .25
+export HF_ENDPOINT=https://hf-mirror.com      # 92.23 恒配 hf-mirror（用户 10-15 口径）
+export https_proxy="$HF_PROXY"; export http_proxy="$HF_PROXY"
+export HF_HUB_DOWNLOAD_TIMEOUT=120
+export HF_HUB_ENABLE_HF_TRANSFER=1
+```
+- 若 `.23` 恢复后改用 `.25`：`HF_PROXY=http://172.19.92.25:13128` 且 **unset HF_ENDPOINT**（直连 hf.co）。
+- ⚠️ **脚本已改（运维 2026-10-18 直接提交）**：`run/data_pipeline/download_en_v1_4.py` 原先在 **L26-27 硬编码 `.25`**、`.sh` 在 L11-12 硬编码 `.25` ⇒ **只 export 环境变量无效**。现两脚本均改为读 `HF_PROXY` / `HF_ENDPOINT`（未设时默认 `.23` + hf-mirror）。**先 `git pull` 拿到新版再起**；若你本地有未提交改动，以本令为准合并，别把硬编码 `.25` 带回来。
+
+**③ 第一步：连通性探针（必须先做；单行命令，可直接复制到 `.12` 的 bash）**
+```bash
+curl -sS -m 20 -o /dev/null -w '.25 baseline -> hf.co: %{http_code} %{time_total}s\n' -x http://172.19.92.25:13128 https://huggingface.co
+curl -sS -m 20 -o /dev/null -w '.23 -> hf-mirror: %{http_code} %{time_total}s\n' -x http://172.19.92.23:13128 https://hf-mirror.com
+curl -sS -m 25 -o /dev/null -w '.23 -> hf-mirror API: %{http_code}\n' -x http://172.19.92.23:13128 https://hf-mirror.com/api/datasets/openbmb/Ultra-FineWeb/tree/main/data/ultrafineweb_en_v1_4
+curl -sS -m 20 -o /dev/null -w '.23 -> 无 mirror: %{http_code}\n' -x http://172.19.92.23:13128 https://huggingface.co
+```
+- **过闸判据**：`.23→hf-mirror` 与 `.23→hf-mirror API` **都返回 200/3xx**。任一非 200/3xx ⇒ **不要把 wrapper 起满**，按 ④ 的 B/C 处理并回报原文。
+
+**④ 起训（按探针结果选一条；同样单行，避免续行符被 Markdown 吞掉）**
+```bash
+# A 默认（探针全通）——脚本已改读 HF_PROXY/HF_ENDPOINT，默认即 .23 + hf-mirror
+export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.com; setsid -f nohup bash download_en_v1_4.sh > /tmp/en_v1_4_dl_dot23.log 2>&1
+# B `.23` 通但 hf download 列目录失败——改 Python 并行版（24 workers，per-snapshot 非递归 listing）
+export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.com; setsid -f nohup python3 download_en_v1_4.py > /tmp/en_v1_4_dl_dot23.log 2>&1
+```
+- 日志用**新文件名** `en_v1_4_dl_dot23.log`，保留旧 `en_v1_4_dl.log` 作证据；起 wrapper 前确认 `pgrep -af download_en_v1_4` 无残留旧进程。
+- **C（`.23` 也不通）**：**不许空转重试**——停手，把探针四条原文 + `.25` 恢复时的重启用命令写进心跳，报 blocker 等运维。
+
+**⑤ 保活 / 判活（10–15 min 内必须给一次结论）**
+- 进程：`pgrep -af 'download_en_v1_4'`（应见 wrapper PID + hf/python 子进程）。
+- **真推进（硬判据，🚫 不看进程存活）**：日志里出现 `[n/110] CC-MAIN-XXXX: downloading/DONE` **且** 目标目录 `du` 或 `/proc/<hf-pid>/io write_bytes` **在 120s 内增长**；或 `.incomplete` 字节增长。
+- 若 10 min 内 0 字节增长 ⇒ 视为假活：kill 该 wrapper → 换 ④-B 或 ④-C。
+
+**⑥ 回报（这一轮就要）**
+1. 探针 4 行原文（`.25` / `.23→mirror` / `.23→mirror API` / `.23→无 mirror`）。
+2. 用的哪条路径（A/B/C）+ wrapper PID + 日志路径 + 实际 `HF_PROXY` / `HF_ENDPOINT` 值。
+3. 25 个待续 shard 名单（从旧日志 `failed` 行取），完成后逐 shard 的 parquet 计数。
+4. **速率 + ETA**：先报 **MB/s（或 files/min）实测**，再给「25 shard 剩余 GB ÷ 速率」的 ETA；不许沿用旧的 7–8 天口径。
+5. 完成后自校：`parquet` 计数 vs HF 清单、`.incomplete == 0`，写入 `DATA_LEDGER.md`。
+6. 写 `MEMORY_DATA.md` 进度快照（PHASE/当前动作/下一步/阻塞 四行必须提到「`.23`+hf-mirror」）+ `daily-memories-data/2026-10-18.md`；commit 前缀 `data dl:`。
+
+**⑦ 纪律**
+- 只在这条线上换 proxy；**别线（vision 的 HF 评测、harness 安装包、git push）仍按 `run/ops/README.md §7` 口径**，🚫 不要顺手改全局 `~/.bashrc` / `git config`。
+- `git pull --rebase --autostash` 后如遇 `.25` 与 `.23` 记录冲突：**保留双方**（两条探针结果都要留档）。
+- 任务书 >32KB 自滚归档（只搬已闭合块原文 + 1 行指针）。
+
