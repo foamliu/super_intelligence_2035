@@ -508,7 +508,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 | 收尾说明 | rc=1 = rank6 teardown 段 SIGABRT（final 保存后 destroy_process_group，无损，无需 resume） |
 | 已存 ckpt | step_500~step_5500（12 个）+ final + verify_save_20 |
 | CS8 eval | ✅ **59.03%**（`eval_L1_20b_cs8/eval_summary.txt`，@2026-10-21 23:55） |
-| L2/L3 | L2 🟢 训练中 step 800/5611；L3 ⏸ 待 L2 完成 |
+| L2/L3 | L2 🟢 训练中 step 1100/5611；L3 ⏸ 待 L2 完成 |
 
 ### 关键观察：双移位修复确效
 
@@ -519,23 +519,23 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 ⇒ 双移位 bug 是 step0 loss 异常的直接原因，修复后起点 loss 回归 ~1.7（与 stable 末点一致）。L1 loss 轨迹：1.75(step0)→1.33(step20)→1.10(step100)→1.03(step500)→0.95(step1000)→0.88(step1670)，稳步下降无 spike。
 
-### L2 进展（截至 2026-10-22 03:3x — 🟢 训练中）
+### L2 进展（截至 2026-10-22 04:3x — 🟢 训练中）
 
 | 项目 | 值 |
 |:--|:--|
-| 状态 | 🟢 **训练中** step 800/5611（14.3%），PID 2754486 |
+| 状态 | 🟢 **训练中** step 1100/5611（19.6%），PID 2754486 |
 | 配置 | 修双移位（用 L1.py）+ LR=1.67e-3 + MIN_LR=1e-4 + warmup 100 + 20B/5611 步 |
-| loss | ~1.09（step 800），step0=1.7138（双移位修复在高 LR 下仍生效，vs v2 11.72） |
-| lr | 9.32e-04（WSD warmup 后衰减中） |
-| 吞吐 | ~12s/step，296.9K tok/s，8×GPU 100%/51763MiB |
-| ckpt | step_500 已存（save_interval=500） |
-| ETA | 剩 ~4811 步 × 12s ≈ 16.0h → ~10-22 19:30 完成 |
+| loss | ~1.05（step 1100），step0=1.7138（双移位修复在高 LR 下仍生效，vs v2 11.72） |
+| lr | 7.34e-04（WSD warmup 后衰减中） |
+| 吞吐 | ~12s/step，297.2K tok/s，8×GPU 100%/51763MiB |
+| ckpt | step_500 + step_1000 已存（save_interval=500） |
+| ETA | 剩 ~4511 步 × 12s ≈ 15.0h → ~10-22 19:30 完成 |
 | error | 0 nan / 0 CUDA error（唯一 log error = 启动期 EADDRINUSE port 29822 的失败尝试，无害） |
 
 ### 后续计划
 
 1. ✅ L1 训完 + CS8 eval = **59.03%**（≥55% 门槛✅ → 方向正确）。
-2. 🟢 L2 训练中（step 800/5611，ETA ~19:30）→ 训完 → CS8 eval（~20min）。
+2. 🟢 L2 训练中（step 1100/5611，ETA ~19:30）→ 训完 → CS8 eval（~20min）。
 3. L2 CS8 出数 → 启动 L3（仅降 LR 5e-4，不修双移位，20B）→ CS8 eval。
 4. L1/L2/L3 三组 CS8 → 2×2 因子分析定主因（双移位 vs LR）→ 决定是否用最优配方重跑 71.2B。
 

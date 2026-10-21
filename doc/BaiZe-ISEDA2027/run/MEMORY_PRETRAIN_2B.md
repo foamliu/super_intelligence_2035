@@ -1,7 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-22 04:0x #702：🩺 L2 训练健康监控 step 970/5611（17.3%）无新令**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU 100%/51763MiB，loss=1.07（step970），lr=8.13e-04，~12s/step，297.1K tok/s，elapsed 194min，ETA ~10-22 19:30。step0=1.71（双移位修复在高LR下仍生效）。0 nan/0 CUDA error（唯一 log error 仍仅为启动期 EADDRINUSE 失败尝试，现进程为重试成功者）。ckpt step_500 已存。ops inbox RUN_ID=144（只读探针，无新 pretrain 令），任务书 mtime 10-21 10:22 未变 ⇒ 无新令。git 0/0。📦 体积：TASK=32725B(32.0K)/MEMORY≈13.2K（均≤32KB）。
-> 📦 §#701 流水（2026-10-22 03:3x，L2 监控 step 800/5611 + 短途报告更新）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step800 loss1.09 0error，短途报告更新 L2 step800。需要时再读。
+> 🆕 **2026-10-22 04:3x #703：🩺 L2 训练健康监控 step 1100/5611（19.6%）+ 短途报告更新**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU 100%/51763MiB，loss=1.05（step1100），lr=7.34e-04，~12s/step，297.2K tok/s，elapsed 220min，ETA ~10-22 19:30。step0=1.71（双移位修复在高LR下仍生效）。0 nan/0 CUDA error。ckpt step_500+step_1000 已存。短途报告 `report_pretrain_decay_short_experiment_zh.html` 已更新至 step1100。ops inbox 无新令，任务书 mtime 10-21 10:22 未变。git 0/0。📦 体积：TASK=32725B(32.0K)/MEMORY≈13.3K（均≤32KB）。
+> 📦 §#702 流水（2026-10-22 04:0x，L2 监控 step 970/5611 无新令）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step970 loss1.07 0error。需要时再读。
 > 📦 §#700 流水（2026-10-22 03:2x，L2 监控 step740/5611 无新令）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step740 loss1.14 0error，ckpt step_500 已存。需要时再读。
 > 📦 §#699 流水（2026-10-22 02:5x，L2 监控 step630/5611 无新令）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step630 loss1.30 0error，ckpt step_500 已存。需要时再读。
 > 📦 §#698 流水（2026-10-22 01:1x，L2 监控+短途报告更新）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step370、短途报告补齐 L1 CS8=59.03%+L2 运行中。需要时再读。
