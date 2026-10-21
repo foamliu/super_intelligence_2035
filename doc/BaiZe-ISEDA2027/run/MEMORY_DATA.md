@@ -5,25 +5,26 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~23.8h,ppid=1)，**50873parquet**，0incomplete，**100/110dirs**，10dirs未创建，正在下载CC-MAIN-2024-33(150/512)，实测~7.0MB/s，ETA~30h→~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
+> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~26.4h,ppid=1)，**51289parquet**，0incomplete，**101/110dirs**，9dirs未创建，正在下载剩余 shards，实测~7.0MB/s，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB bin)+🟢en_v1_4下载(100/110dirs)+▶️en_v1_4全源分词(done=92/110,1653.46B,26procs)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=92/110,1653.46B); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B,481G)+Math L3(67sh,77.95B,292G)+Code L2(141sh,421.45B,1.6T)+UFW-L3(154sh,263.90B,990G)+Math L1(149sh,164.44B,615G)=574shards/1056.36B/3.91TB(manifest 575行+summary JSON)
-当前动作:     唤醒581(2026-10-21 17:38)巡检:✅Math L1 s122完成@~17:35(1,560,696,343 tok,6.24GB bin,716690文档,6249s)→全部5源DONE;launcher PID3440101已退出;manifest 575行(574数据+1表头)已写入;summary JSON已产出;DATA_LEDGER已更新;en_v1_4 download alive(PID1875054,100dirs)+fullsource done=92/110(PID749330,26procs,5源释放CPU后恢复满并发);CPU load~30/224,mem1758GB avail,disk35T free.📦TASK=24.6KB/MEMORY=~30KB均✅
-下一步:       ①en_v1_4下载(100→110dirs,ETA~10-23)+全源分词(92→110/110)继续监控;②5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录);③85M维持暂停;④en_v1_4全源完成后产出fullsource manifest+summary
-阻塞:         无(5源分词全部完成,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进)
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB bin,盘上已验证574/574/574)+🟢en_v1_4下载(101/110dirs)+▶️en_v1_4全源分词(done=92/110,100bin,33procs)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=92/110,~1.699T); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B,481G)+Math L3(67sh,77.95B,292G)+Code L2(141sh,421.45B,1.6T)+UFW-L3(154sh,263.90B,990G)+Math L1(149sh,164.44B,615G)=574shards/1056.36B/3.91TB(manifest 575行+summary JSON,盘上验证574/574/574)
+当前动作:     唤醒582(2026-10-21 18:56)巡检验证:✅5源产物盘上验证通过(code_l3=63/63/63+code_l2=141/141/141+math_l3=67/67/67+math_l1=149/149/149+ufw_l3=154/154/154 共574 shards.bin/.idx/.json三件套齐全,3.91TB);manifest 575行+summary JSON valid(5源全DONE)确认;launcher PID3440101已退出;🟢en_v1_4 download alive(PID1875054,~26.4h,101dirs,51289parquet,0incomplete,9dirs未建)+▶️fullsource done=92/110(PID749330 alive~68.8h,33procs,最近完成shard@18:32,~1.699T tok);CPU load低,mem1734GB avail,disk35T free.📦TASK=24.6KB/MEMORY=~29.9KB均✅
+下一步:       ①en_v1_4下载(101→110dirs,ETA~10-23)+全源分词(92→110/110)继续监控;②5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录);③85M维持暂停;④en_v1_4全源完成后产出fullsource manifest+summary
+阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中)
 ERROR_COUNT:  8
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> 唤醒581（2026-10-21 17:38）✅ **全部5源全量分词完成！** Math L1 最后一个 shard s122 完成@~17:35（716690文档/1,560,696,343 tok/6.24GB bin/耗时6249s）。launcher PID3440101 已退出（全部 SOURCES 处理完毕）。manifest 575行（1表头+574数据）已写入 `/nas_train/.../logs/full_tokenize/full_tokenize_manifest.tsv`。summary JSON 已产出 `full_tokenize_5source_summary.json`（含5源逐源 tokens/shards/bin_size + grand total）。**最终汇总**：Code L3(63sh,128.62B,481G)+Math L3(67sh,77.95B,292G)+Code L2(141sh,421.45B,1.6T)+UFW-L3(154sh,263.90B,990G)+Math L1(149sh,164.44B,615G) = **574 shards / 1,056,359,481,968 tok = 1056.36B / 3.91TB bin**。tokenizer 确认 vocab=129280（log原文「源词表 129280 →追加EOD后129281→padding到129408」）。所有 .bin/.idx/.json 三件套齐备（574/574/574）。DATA_LEDGER.md Math L1 行已更新为 ✅DONE。en_v1_4 download alive(PID1875054,100dirs,50873parquet,0incomplete)+fullsource done=92/110(PID749330,26procs,5源释放CPU后恢复满并发,1653.46B tok)。CPU load~30/224,mem1758GB,disk35T。📦体积：TASK=24.6KB/MEMORY=~30KB，均≤32KB✅（无需归档）
+> 唤醒582（2026-10-21 18:56）巡检验证轮：✅ **5源全量分词产物盘上验证通过**——逐源计数 .bin/.idx/.json 三件套：code_l3=63/63/63(481G) + code_l2=141/141/141(1.6T) + math_l3=67/67/67(292G) + math_l1=149/149/149(615G) + ufw_l3=154/154/154(990G) = **574 shards 全齐 / 3.91TB**。manifest 575行（`.../baize-data/text/logs/full_tokenize/full_tokenize_manifest.tsv`）+ summary JSON（`full_tokenize_5source_summary.json`，5源全 status=DONE，valid JSON）确认无误。launcher PID3440101 已退出。🟢en_v1_4 download alive（PID1875054,~26.4h,101dirs,51289parquet,0incomplete,9dirs未建）+▶️fullsource done=92/110（PID749330 alive~68.8h,33procs,最近完成shard@18:32 CC-MAIN-2021-17,~1.699T tok,100个.bin已落盘）。CPU load低,mem1734GB avail,disk35T free。无新运维令、无新工作——本轮为监控巡检。📦体积：TASK=24.6KB/MEMORY=~29.9KB，均≤32KB✅（无需归档）
+> 📦 唤醒581 原文已归档 → `daily-memories-data/2026-10-21.md`（含5源全量分词ALL DONE最终报告+Math L1 s122完成+manifest/summary产出+en_v1_4 100dirs+fullsource 92/110，详见日文件）
 > 📦 唤醒580 原文已归档 → `daily-memories-data/2026-10-21.md`（含Math L1 running@28%+4源891.92B+UFW-L3 DONE+en_v1_4 100dirs+fullsource 92/110，详见日文件）
 > 📦 唤醒578 原文已归档 → `daily-memories-data/2026-10-21.md`（含Code L2 DONE 421.45B+UFW-L3 started@13:34 28procs ramping+en_v1_4 99dirs+fullsource done=92/110，详见日文件）
 > 📦 唤醒577 原文已归档 → `daily-memories-data/2026-10-21.md`（含Code L2 141shards running+idx=1+manifest 131行+en_v1_4 99dirs+fullsource done=92/110+体积归档3块，详见日文件）
