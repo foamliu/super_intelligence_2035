@@ -5,25 +5,26 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~37.5h,ppid=1)，0incomplete，**102/110dirs**，正在下载剩余 8 shards，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
+> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~38.7h,ppid=1)，0incomplete，**103/110dirs**，正在下载剩余 7 shards，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(102/110dirs,0incomplete)+▶️en_v1_4全源分词(done=90/110 idx,101bin,11procs运行中@1proc/shard无重复,bin~20.8GB growing,PID3624240)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=90/110,~1.65T,11shards在跑); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B)+Math L3(67sh,77.95B)+Code L2(141sh,421.45B)+UFW-L3(154sh,263.90B)+Math L1(149sh,164.44B)=574shards/1056.36B/3.91TB(产物在code/BaiZe-ISEDA2027/data/full_*/,盘上验证574/574/574)
-当前动作:     唤醒591(2026-10-22 06:01)巡检轮：fullsource PID3624240 alive ~3.7h(etimes=13217s),11procs运行中(etimes~13188-13241s,state=RNl,11unique shards CC-MAIN-2022-21/40/49/2023-40/2024-10/18/22/26/30/33/38,1proc-per-shard,zero duplicates✅)。5源产物再验证574/574/574 intact。fullsource done=90/110 idx,101bin(90done+11in-progress,bin~20.8GB each still growing,completed shards same era=60-150GB,ETA~10-15h),1pending_download,1.65T tokens done-only。en_v1_4 download alive(PID1875054~37.5h,102dirs,0incomplete)。CPU52/224,mem1514GB avail。📦TASK=25.2KB/MEMORY=31.2KB均✅
-下一步:       ①继续监控fullsource(done=90→110,11shards在处理,ETA~10-23)②en_v1_4下载(102→110dirs,ETA~10-23)③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
-阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中,11procs确认alive)
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(103/110dirs,0incomplete)+▶️en_v1_4全源分词(done=90/110 idx,102bin,12procs运行中@1proc/shard无重复,bin~26GB growing,PID3624240)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=90/110,~1.65T,12shards在跑); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B)+Math L3(67sh,77.95B)+Code L2(141sh,421.45B)+UFW-L3(154sh,263.90B)+Math L1(149sh,164.44B)=574shards/1056.36B/3.91TB(产物在code/BaiZe-ISEDA2027/data/full_*/,盘上验证574/574/574)
+当前动作:     唤醒592(2026-10-22 07:14)巡检轮：fullsource PID3624240 alive ~4.9h(etimes=17523s),12procs运行中(etimes~17460-17513s,12unique shards CC-MAIN-2024-42(新06:47)+2022-21/40/49/2023-40/2024-10/18/22/26/30/33/38,1proc-per-shard,zero duplicates✅)。bin文件~26GB each still growing(10s内2024-42 2.3→2.4G验证),completed shards=26-138G,ETA~5-15h。5源产物再验证574/574/574 intact。fullsource done=90/110 idx,102bin(90done+12in-progress),1pending_download,available=103,1.65T tokens done-only。en_v1_4 download alive(PID1875054~38.7h,103dirs,0incomplete)。CPU~12/224,mem1507GB avail。📦TASK=25.2KB/MEMORY=31.3KB均✅
+下一步:       ①继续监控fullsource(done=90→110,12shards在处理,ETA~10-22晚~10-23)②en_v1_4下载(103→110dirs,ETA~10-23)③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
+阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中,12procs确认alive)
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> 唤醒591（2026-10-22 06:01）巡检轮：fullsource PID3624240 alive ~3.7h(etimes=13217s),11procs运行中(etimes~13188-13241s,state=RNl,11unique shards,1proc-per-shard,zero duplicates✅)。bin文件~20.8GB each still growing(vs completed shards same era=60-150GB→ETA~10-15h)。5源产物再验证574/574/574 .bin/.idx/.json intact。fullsource done=90/110 idx,101bin(90done+11in-progress),1pending_download,1.65T tokens done-only。en_v1_4 download alive(PID1875054~37.5h,102dirs,0incomplete)。CPU52/224,mem1514GB。📦体积：TASK=25.2KB/MEMORY=31.2KB均≤32KB✅
+> 唤醒592（2026-10-22 07:14）巡检轮：fullsource PID3624240 alive ~4.9h(etimes=17523s),12procs运行中(etimes~17460-17513s,12unique shards含新launch CC-MAIN-2024-42@06:47,1proc-per-shard,zero duplicates✅)。bin文件~26GB each still growing(10s内2024-42 2.3→2.4G验证),completed shards=26-138G。5源产物再验证574/574/574 intact。fullsource done=90/110 idx,102bin(90done+12in-progress),1pending_download,available=103,1.65T tokens done-only。en_v1_4 download alive(PID1875054~38.7h,103dirs,0incomplete)。CPU~12/224,mem1507GB。📦体积：TASK=25.2KB/MEMORY=31.3KB均≤32KB✅
+> 📦 唤醒591 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 11procs确认+bin~20.8GB+5源574/574/574验证,详见日文件）
 > 📦 唤醒590 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 11procs确认+5源574/574/574验证+bin~13-14GB,详见日文件）
 > 📦 唤醒589 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource bug修复持续验证+11procs确认+5源574/574/574验证,详见日文件）
 > 📦 唤醒588 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource is_running SIGPIPE bug修复全流程:32procs重复→kill+删10corrupted .bin(910GB)+修复is_running/count_running+重启PID3624240+验证11procs无重复,详见日文件）
