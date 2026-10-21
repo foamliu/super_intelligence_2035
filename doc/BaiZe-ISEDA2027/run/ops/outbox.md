@@ -15806,3 +15806,148 @@ xmodel
 2754483 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && s
 === DONE 147 ===
 ```
+
+---
+
+## RUN_ID 147 · 2026-10-22 07:24:42 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 147 | official Megatron path feasibility | $(date '+%F %T') | host=$(hostname) ==="
+XF=/nas_train/app.e0031982/ref/Xmodel-2.5
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+
+echo "[1] 官方脚本完整依赖清单（decay）"
+grep -nE 'CHECKPOINT_PATH|TOKENIZER_MODEL|DATA_PATH|--load|--save|--seq-length|--global-batch-size|--train-iters|--use-mup|--lr|--tensor-model-parallel|--pipeline-model-parallel|--context-parallel|--micro-batch-size|transformer-impl|fp8' "$XF/examples/xmodel/train_decay_fp8_1120.sh" | cut -c1-190 | head -40
+
+echo "[2] 并行度配置（官方在 8 卡上怎么切）"
+grep -nE 'MODEL_PARALLEL_ARGS|tensor-model-parallel|pipeline-model-parallel|context-parallel|num-layers-per|sequence-parallel|use-distributed-optimizer|recompute' "$XF/examples/xmodel/train_decay_fp8_1120.sh" -A2 | cut -c1-190 | head -30
+
+echo "[3] TransformerEngine / FP8 / Megatron 是否已装"
+$PY -c "import transformer_engine, sys; print('  TE', transformer_engine.__version__)" 2>&1 | head -3
+$PY -c "import megatron.core as m; print('  mcore', getattr(m,'__version__','?'))" 2>&1 | head -3
+$PY -c "import torch; print('  torch', torch.__version__, 'cuda', torch.version.cuda)" 2>&1 | head -2
+nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null | head -2
+
+echo "[4] 官方仓库自带 megatron 目录（是否 fork 版，需用它的而非 pip 版）"
+ls "$XF/megatron" | head -12
+$PY -c "import sys; sys.path.insert(0,'$XF'); import megatron; print('  repo-megatron OK', megatron.__file__)" 2>&1 | head -3
+
+echo "[5] 数据格式兼容性：我们的 .bin/.idx 是否 Megatron 原生"
+D=/nas_train/app.e0031982/code/Baize-ISEDA2027/data
+ls -1 $D/full_ultradata_code_l3/ 2>/dev/null | head -6
+$PY - <<'PY'
+import glob,os
+for pat in ['/nas_train/app.e0031982/code/Baize-ISEDA2027/data/full_ultradata_code_l3/*.bin',
+            '/nas_train/app.e0031982/code/Baize-ISEDA2027/data/full_ultradata_math_l3/*.bin']:
+    fs=sorted(glob.glob(pat))
+    print('  ',pat.split('/')[-2],'shards=',len(fs),'first=',os.path.basename(fs[0]) if fs else None)
+PY
+
+echo "[6] tokenizer 兼容（官方用 tokenizers/deepseekv3，vocab 129280）"
+ls "$XF/tokenizers" 2>/dev/null | head -5
+$PY - <<'PY'
+import json,glob
+for p in glob.glob('/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json'):
+    d=json.load(open(p)); print('  our ckpt vocab=',d.get('vocab_size'),'hidden=',d.get('hidden_size'),'layers=',d.get('num_hidden_layers'))
+PY
+
+echo "[7] 起点 ckpt 格式（HF safetensors → Megatron 需要转换？）"
+ls -l /nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/ 2>/dev/null | head -8
+echo "  官方 decay 用的是 --load（Megatron torch ckpt），我们是 HF 目录 → 需转换"
+
+echo "[8] 官方是否有 HF→Megatron 转换脚本"
+find "$XF/tools" "$XF/utils" -maxdepth 2 -type f -name '*.py' 2>/dev/null | grep -iE 'convert|ckpt|hf|weight' | head -10
+
+echo "[9] L2 状态（不 kill）"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-100 | head -1 || echo '  L2 not running'
+echo "=== DONE 147 ==="
+```
+
+**输出**
+```
+=== RUN_ID 147 | official Megatron path feasibility | 2026-10-22 07:24:42 | host=whag0pgpuap12 ===
+[1] 官方脚本完整依赖清单（decay）
+26:CHECKPOINT_PATH=out/i_line_s1_fp8_1117
+27:TENSORBOARD_LOGS_PATH=runs/i_line_s1_fp8_1117
+28:TOKENIZER_MODEL=tokenizers/deepseekv3
+29:DATA_PATH="0.18725 /data1/i_line_data/ultrafineweb-en_content_document \
+58:    --seq-length 32768
+70:    --use-mup
+78:    --micro-batch-size 1
+79:    --global-batch-size 120
+80:    --train-iters 563000
+85:    --lr 1.0e-5
+86:    --lr-decay-style constant
+87:    --lr-warmup-init 1e-6
+88:    --lr-warmup-iters 200
+108:    --tensor-model-parallel-size 1
+109:    --pipeline-model-parallel-size 1
+113:    --data-path $DATA_PATH
+115:    --tokenizer-model $TOKENIZER_MODEL
+124:    --save-interval 1000
+128:    --save $CHECKPOINT_PATH
+129:    --load $CHECKPOINT_PATH
+134:    --transformer-impl "transformer_engine"
+135:    --fp8-format hybrid
+136:    --fp8-amax-history-len 128
+137:    --fp8-amax-compute-algo max
+[2] 并行度配置（官方在 8 卡上怎么切）
+93:    --recompute-activations
+94:    --recompute-granularity full
+95-)
+96-
+--
+100:    --use-distributed-optimizer
+101-    --overlap-grad-reduce
+102-    --overlap-param-gather
+--
+107:MODEL_PARALLEL_ARGS=(
+108:    --tensor-model-parallel-size 1
+109:    --pipeline-model-parallel-size 1
+110-)
+111-
+--
+143:    ${MODEL_PARALLEL_ARGS[@]} \
+144-    ${DATA_ARGS[@]} \
+145-    ${EVAL_AND_LOGGING_ARGS[@]} \
+[3] TransformerEngine / FP8 / Megatron 是否已装
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/transformer_engine/__init__.py:59: RuntimeWarning: Detected a Jax installation but could not find the shared object file for the Transformer Engine Jax extension library. If this is not intentional, please reinstall Transformer Engine with `pip install transformer_engine[jax]` or build from source with `NVTE_FRAMEWORK=jax`.
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/transformer_engine/__init__.py:59: RuntimeWarning: Detected a Jax installation but could not find the shared object file for the Transformer Engine Jax extension library. If this is not intentional, please reinstall Transformer Engine with `pip install transformer_engine[jax]` or build from source with `NVTE_FRAMEWORK=jax`.
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+NVIDIA H100 80GB HBM3, 81559 MiB
+NVIDIA H100 80GB HBM3, 81559 MiB
+[4] 官方仓库自带 megatron 目录（是否 fork 版，需用它的而非 pip 版）
+core
+inference
+legacy
+post_training
+training
+  repo-megatron OK None
+[5] 数据格式兼容性：我们的 .bin/.idx 是否 Megatron 原生
+   full_ultradata_code_l3 shards= 0 first= None
+   full_ultradata_math_l3 shards= 0 first= None
+[6] tokenizer 兼容（官方用 tokenizers/deepseekv3，vocab 129280）
+deepseekv3
+kimi
+minicpm4
+qwen3
+xmodel
+[7] 起点 ckpt 格式（HF safetensors → Megatron 需要转换？）
+  官方 decay 用的是 --load（Megatron torch ckpt），我们是 HF 目录 → 需转换
+[8] 官方是否有 HF→Megatron 转换脚本
+/nas_train/app.e0031982/ref/Xmodel-2.5/tools/checkpoint/convert.py
+/nas_train/app.e0031982/ref/Xmodel-2.5/tools/checkpoint/loader_mixtral_hf.py
+/nas_train/app.e0031982/ref/Xmodel-2.5/tools/checkpoint/megatron_to_hf.py
+/nas_train/app.e0031982/ref/Xmodel-2.5/tools/checkpoint/megatron_to_hf_mup.py
+/nas_train/app.e0031982/ref/Xmodel-2.5/tools/checkpoint/saver_hf_llava.py
+/nas_train/app.e0031982/ref/Xmodel-2.5/tools/llama/hf2mcore.py
+[9] L2 状态（不 kill）
+=== DONE 147 ===
+```
