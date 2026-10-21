@@ -5,25 +5,26 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~30.9h,ppid=1)，**51723parquet**，0incomplete，**102/110dirs**，8dirs未创建，正在下载剩余 shards，实测~7.0MB/s，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
+> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~33.9h,ppid=1)，**51870parquet**，0incomplete，**102/110dirs**，8dirs未创建，正在下载剩余 shards，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB bin,盘上已验证574/574/574,manifest575行@baize-data/text/logs/full_tokenize/)+🟢en_v1_4下载(102/110dirs,51798parquet)+▶️en_v1_4全源分词(done=93/110 idx,100bin,7shards有bin无idx处理中,35procs throttle@32,1.735T,bin6.79TB)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=93/110,~1.735T); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B,481G)+Math L3(67sh,77.95B,292G)+Code L2(141sh,421.45B,1.6T)+UFW-L3(154sh,263.90B,990G)+Math L1(149sh,164.44B,615G)=574shards/1056.36B/3.91TB(manifest575行@/nas_train/.../baize-data/text/logs/full_tokenize/full_tokenize_manifest.tsv+scaled launcher已退出,盘上验证574/574/574)
-当前动作:     唤醒587(2026-10-22 01:00)监控巡检:✅5源产物盘上再验证通过(574/574/574三件套齐,3.91TB不变)+manifest575行确认;🟢en_v1_4 download alive(PID1875054,~32.4h,102dirs,51798parquet,0incomplete)+▶️fullsource done=93/110 idx/100bin(PID749330 alive~74.9h,35procs throttle@32,7shards有bin无idx正在处理:2023-50/2024-10/18/22/26/30/33,1.735T tok,bin_bytes=6.79TB增长~3.0MB/s,available=101,pending_download=1);CPU load76.6/224,mem1454GB avail,disk34T free.无新运维令.📦TASK=24.6KB/MEMORY=29.8KB均✅
-下一步:       ①en_v1_4下载(102→110dirs,ETA~10-23)+全源分词(93→110/110,剩17shard,7个有bin无idx待完成+8dirs待下载,ETA~10-22)继续监控;②5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录);③85M维持暂停;④en_v1_4全源完成后产出fullsource manifest+summary
-阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中)
-ERROR_COUNT:  8
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(102/110dirs,51870parquet)+▶️en_v1_4全源分词(done=90/110 idx,11procs运行中@1proc/shard无重复,fullsource脚本已修复is_running SIGPIPE bug并重启,PID3624240)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=90/110,~1.65T,10corrupted .bin已删待重跑); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B,481G)+Math L3(67sh,77.95B,292G)+Code L2(141sh,421.45B,1.6T)+UFW-L3(154sh,263.90B,990G)+Math L1(149sh,164.44B,615G)=574shards/1056.36B/3.91TB(产物在code/BaiZe-ISEDA2027/data/full_*/,盘上验证574/574/574)
+当前动作:     唤醒588(2026-10-22 02:10)🔴修复fullsource脚本严重bug:is_running()因grep -q提前退出→pgrep收到SIGPIPE(exit141)+set -o pipefail→pipeline返回141(非0="not running")→脚本对同一shard重复launch多进程→多进程同时写同一.bin文件致corruption+idx永远无法生成。发现10个shard受影响(4个"done"的.bin被重写致idx不匹配:2023-40/2022-21/2022-40/2022-49+6个"stuck"有bin无idx:2024-10/18/22/26/30/33)。处置:①kill launcher PID749330+全部32个preprocess进程②删除10个corrupted .bin/.idx/.json(~910GB)③修复is_running(用{pgrep...||true}|grep -qF)④修复count_running(pgrep -c "0"+exit1+||echo0="0\n0"integer error)⑤重启fullsource(PID3624240,MAX_CONCURRENT=32)⑥验证:11procs/11unique shards/1proc-per-shard/zero duplicates✅。5源产物再验证574/574/574 intact。en_v1_4 download alive(PID1875054,~33.9h,102dirs,51870parquet)。CPU load71/224,mem1460GB avail,disk34T free。📦TASK=25.2KB/MEMORY=30.8KB均✅
+下一步:       ①监控fullsource修复后运行(done=90→110,11shards正在处理,ETA~10-23)确认无重复进程②en_v1_4下载(102→110dirs,ETA~10-23)继续监控③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
+阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource(已修复bug)自动推进中)
+ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> 唤醒587（2026-10-22 01:00）监控巡检轮：✅5源产物盘上再验证通过（code_l3=63/63/63+code_l2=141/141/141+math_l3=67/67/67+math_l1=149/149/149+ufw_l3=154/154/154=574 shards三件套齐/3.91TB不变）+manifest575行确认。🟢en_v1_4 download alive（PID1875054,~32.4h,102dirs,51798parquet,0incomplete,8dirs未建）。▶️fullsource done=93/110 idx/100bin（PID749330 alive~74.9h,35procs throttle@32,7shards有bin无idx正在处理:2023-50/2024-10/18/22/26/30/33,1.735T tok,bin_bytes=6.79TB增长~3.0MB/s,available=101,pending_download=1）。CPU load76.6/224,mem1454GB avail,disk34T free。无新运维令、无新工作——本轮为监控巡检。📦体积：TASK=24.6KB/MEMORY=29.8KB，均≤32KB✅（无需归档）
+> 唤醒588（2026-10-22 02:10）🔴修复fullsource脚本严重bug轮：发现`is_running()`函数因`grep -q`提前退出→`pgrep`收到SIGPIPE(exit141)→`set -o pipefail`使pipeline返回141(非0="not running")→脚本对同一shard重复launch多进程。32个进程中大量重复(2023-40有7个、2024-10/18/33各4个)，多进程同时写同一.bin→corruption+idx永远无法生成。10个shard受影响(4"done"被重写:2023-40/2022-21/2022-40/2022-49 + 6"stuck"有bin无idx:2024-10/18/22/26/30/33)。处置：①kill launcher PID749330+全部32 preprocess进程 ②删除10个corrupted .bin/.idx/.json(~910GB freed) ③修复is_running:`{pgrep...||true}|grep -qF` ④修复count_running:capture var避免"0\n0" ⑤重启fullsource PID3624240 MAX_CONCURRENT=32 ⑥验证:11procs/11unique shards/1proc-per-shard/zero duplicates✅。✅5源产物再验证574/574/574 intact(3.91TB不变)。🟢en_v1_4 download alive(PID1875054,~33.9h,102dirs,51870parquet,0incomplete)。📦体积：TASK=25.2KB/MEMORY=30.8KB均≤32KB✅（无需归档）
+> 📦 唤醒587 原文已归档 → `daily-memories-data/2026-10-22.md`（含5源产物盘上验证574/574/574+en_v1_4 102dirs+fullsource 93/110 idx/100bin+7shards有bin无idx,详见日文件）
 > 📦 唤醒586 原文已归档 → `daily-memories-data/2026-10-21.md`（含5源产物盘上验证574/574/574+en_v1_4 102dirs+fullsource 93/110 idx/100bin,详见日文件）
 > 📦 唤醒585 原文已归档 → `daily-memories-data/2026-10-21.md`（含5源产物盘上验证574/574/574+en_v1_4 101dirs+fullsource 93/110 idx/100bin,详见日文件）
 > 📦 唤醒584 原文已归档 → `daily-memories-data/2026-10-21.md`（含5源产物盘上验证574/574/574+en_v1_4 101dirs+fullsource 93/110 idx/100bin,详见日文件）

@@ -44,12 +44,21 @@ done
 count_running() {
   # Anchor on the python interpreter path to avoid matching cline's cmdline
   # (which embeds the task-book text containing 'preprocess_data_cm.py').
-  pgrep -cf 'miniforge3/envs/py310/bin/python3.10.*preprocess_data_cm' 2>/dev/null || echo 0
+  # FIX 2026-10-22: pgrep -c prints "0" AND exits 1 on no-match; `|| echo 0`
+  # then prints a second "0" → "0\n0" → `[ -ge ]` integer error.
+  # Fix: capture in var, default to 0 on failure.
+  local n
+  n=$(pgrep -cf 'miniforge3/envs/py310/bin/python3.10.*preprocess_data_cm' 2>/dev/null) || n=0
+  echo "$n"
 }
 
 is_running() {
   local shard="$1"
-  pgrep -af 'preprocess_data_cm[.]py' 2>/dev/null | grep -qF "$shard"
+  # FIX 2026-10-22: grep -q exits early on match → pgrep gets SIGPIPE (exit 141).
+  # With `set -o pipefail`, the pipeline returns 141 (non-zero = "not running"),
+  # causing the script to launch DUPLICATE processes for the same shard.
+  # Fix: wrap pgrep in `{ ... || true; }` so pipefail only sees grep's exit code.
+  { pgrep -af 'preprocess_data_cm[.]py' 2>/dev/null || true; } | grep -qF "$shard"
 }
 
 is_done() {
