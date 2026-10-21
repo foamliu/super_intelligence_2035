@@ -1,11 +1,61 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 100 -->
+<!-- RUN_ID: 101 -->
 
-## RUN_ID 100 — r4e 进度 + 端口确认（只读·用户直令）
+## RUN_ID 101 — r5 备用端口 8663/8666/8667/8670 可达性验证（只读·用户直令）
 
-> 用户令：「现在r4e进度如何，158个题生成完多少了。用的哪4个端口？」纯只读查 r4e 进度。
+> 用户令：「r5 使用 8663,8666,8667,8670 吧」。r4e 当前用 8650/8651/8652/8654（76% 进度·健康跑中）。本探针**纯只读**：验证 8663/8666/8667/8670 四端口当前是否可用（run_code 端到端），为 r5 换端口做前置确认。不起 r5、不改配置。
 
 ```bash
+echo "=== RUN_ID 101 | r5 备用端口验证 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 8663/8666/8667/8670 run_code 端到端（@10.129.32.75）"
+for P in 8663 8666 8667 8670; do
+  echo "  === port $P ==="
+  for i in 1 2; do
+    T0=$(date +%s%N)
+    R=$(timeout 30 curl -s -m 25 -X POST "http://10.129.32.75:$P/v1/run_code" \
+        -H 'Content-Type: application/json' \
+        -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 200)
+    T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+    if [ -n "$R" ]; then
+      echo "    #$i ${MS}ms :: $(echo "$R" | cut -c1-150)"
+    else
+      echo "    #$i ${MS}ms :: <empty/超时>"
+    fi
+  done
+done
+echo "  判读：8 次全返回 {\"response\":... 且无 licence/breaker/空 → 可用"
+
+echo ""
+echo "[2] 对照：r4e 当前端口 8650/8651/8652/8654（确认仍健康）"
+for P in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 80)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -n "$R" ]; then echo "  $P OK ${MS}ms"; else echo "  $P FAIL ${MS}ms"; fi
+done
+
+echo ""
+echo "[3] r4e 进程状态（确认仍跑中·不打扰）"
+if kill -0 1519090 2>/dev/null; then
+  echo "  PID 1519090 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1519090 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  PID 1519090 GONE（r4e 已收口）"
+fi
+
+echo ""
+echo "=== DONE 101 ==="
+```
+
+## RUN_ID 100 — r4e 进度 + 端口确认（只读·用户直令）·【已执行·历史】
+
+
+> 用户令：「现在r4e进度如何，158个题生成完多少了。用的哪4个端口？」纯只读查 r4e 进度。
+> ⚠️ **已降级为 text（RUN_ID 101 在上方）**。
+
+```text
 echo "=== RUN_ID 100 | r4e 进度 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r4e 进程"
