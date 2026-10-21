@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-22 06:5x #709：🩺 L2 训练健康监控 step 1820/5611（32.4%）**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU 97-100%/51763MiB，loss=0.9557，lr=4.30e-04，~11.94s/step，297.6K tok/s，elapsed 363.4min（6.1h），ETA ~10-22 19:30。step0=1.7138（双移位修复在高LR下仍生效）。0 nan/0 CUDA error（日志顶部仅 1 条 00:51 首启 port29822 EADDRINUSE traceback，重试后即正常，非本轮崩溃）。ckpt step_500+step_1000+step_1500 已存（step_2000 即将落盘）。任务书 mtime 10-21 10:22 未变 ⇒ 无新 pretrain 令。git 0/0。📦 体积：TASK=32725B(31.96K)/MEMORY≈14.1K（均≤32KB）。
+> 📦 §#709 流水（2026-10-22 06:5x，L2 健康监控 step 1820）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1820 loss0.96 0error。需要时再读。
+
+> 🆕 **2026-10-22 06:57 #710：🩺 L2 训练健康监控 step 1830/5611（32.6%）**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU 97-100%/51763MiB，loss=0.9239，lr=4.27e-04，~11.94s/step，297.6K tok/s，elapsed 365.4min（6.1h），ETA ~10-22 19:30。step0=1.7138（双移位修复在高LR下仍生效）。0 nan/0 CUDA error。ckpt step_500+step_1000+step_1500 已存（step_2000 即将落盘）。任务书 mtime 10-21 10:22 未变 ⇒ 无新 pretrain 令。git 0/0。📦 体积：TASK=32725B(31.96K)/MEMORY≈14.1K（均≤32KB）。
 > 📦 §#708 流水（2026-10-22 06:2x，L2 健康监控 step 1650）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1650 loss1.01 0error。需要时再读。
 > 📦 §#707 流水（2026-10-22 05:5x，L2 健康监控 step 1490）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1490 loss1.02 0error。需要时再读。
 > 📦 §#706 流水（2026-10-22 05:4x，L2 健康监控 step 1460 + 短途报告更新）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1460 loss1.11 0error，短途报告+EXPERIMENTS 同步至 step1460。需要时再读。
