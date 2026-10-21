@@ -15327,3 +15327,86 @@ data_preprocess docs examples experiments hpo images LICENSE long_context megatr
 -rw-r--r-- 1 app.e0031982 app.adm 77994 2026-10-22_05:28:37 /tmp/baize_xmodel25_decay_L2_train.log
 === DONE 145 ===
 ```
+
+---
+
+## RUN_ID 145 · 2026-10-22 05:28:10 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 145 | clone official Xmodel repo + muP audit | $(date '+%F %T') | host=$(hostname) ==="
+WORK=/nas_train/app.e0031982/ref
+mkdir -p "$WORK"
+P="http://172.19.92.25:13128"
+
+echo "[1] 定位官方仓库（多候选逐个试）"
+cd "$WORK" || exit 1
+for repo in   https://github.com/XiaoduoAILab/Xmodel-2.5.git   https://github.com/XiaoduoAILab/Xmodel-2.git   https://github.com/XiaoduoAILab/Xmodel.git ; do
+  name=$(basename "$repo" .git)
+  [ -d "$name" ] && { echo "  $name already exists"; continue; }
+  echo "  try $repo ..."
+  if GIT_TERMINAL_PROMPT=0 https_proxy=$P http_proxy=$P timeout 180 git clone --depth 1 "$repo" 2>&1 | tail -3; then
+    echo "  OK -> $WORK/$name"
+  else
+    echo "  FAIL $repo"
+  fi
+done
+
+echo "[2] 仓库内容概览"
+for d in "$WORK"/*/; do
+  echo "  --- $d ---"
+  ls "$d" 2>/dev/null | head -20 | tr '\n' ' '; echo
+  # 是否含训练代码
+  echo -n "    train-scripts: "; find "$d" -maxdepth 3 -type f \( -name '*train*.py' -o -name '*.sh' \) 2>/dev/null | head -5 | tr '\n' ' '; echo
+  echo -n "    mup-mentions: "; grep -ril 'mup\|muP\|maximal.update' "$d" --include='*.py' --include='*.md' --include='*.sh' 2>/dev/null | head -5 | tr '\n' ' '; echo
+done
+
+echo "[3] 现有起点 ckpt 的 muP 配置（决定我们缺什么）"
+CFG=/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/config.json
+[ -f "$CFG" ] && python3 -c "import json;d=json.load(open('$CFG'));print({k:v for k,v in d.items() if 'mup' in k.lower() or k in ('hidden_size','num_hidden_layers','vocab_size')})" 2>/dev/null || echo '  config not readable'
+
+echo "[4] 我们模型 forward 里的 muP 缩放"
+MF=/nas_train/app.e0031982/code/Baize-ISEDA2027/nemo_experiments/xmodel25_history/step_532000/modeling_xmodel2.py
+grep -n 'mup\|muP\|input_mult\|embed_mult\|output_mult\|width_multiplier' "$MF" 2>/dev/null | head -20 | cut -c1-170 || echo '  no match'
+
+echo "[5] 我们优化器：LR 是否分组"
+grep -n 'lr=' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_xmodel25_decay_v2.py 2>/dev/null | head -10 | cut -c1-160
+echo "[6] L2 仍在跑？(不 kill)"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-110 | head -2 || echo '  L2 not running'
+ls -l --time-style=+%F_%T /tmp/baize_xmodel25_decay_L2_train.log 2>/dev/null
+echo "=== DONE 145 ==="
+```
+
+**输出**
+```
+=== RUN_ID 145 | clone official Xmodel repo + muP audit | 2026-10-22 05:28:10 | host=whag0pgpuap12 ===
+[1] 定位官方仓库（多候选逐个试）
+  try https://github.com/XiaoduoAILab/Xmodel-2.5.git ...
+Cloning into 'Xmodel-2.5'...
+  OK -> /nas_train/app.e0031982/ref/Xmodel-2.5
+  try https://github.com/XiaoduoAILab/Xmodel-2.git ...
+Cloning into 'Xmodel-2'...
+fetch-pack: unexpected disconnect while reading sideband packet
+  OK -> /nas_train/app.e0031982/ref/Xmodel-2
+  try https://github.com/XiaoduoAILab/Xmodel.git ...
+Cloning into 'Xmodel'...
+remote: Repository not found.
+fatal: repository 'https://github.com/XiaoduoAILab/Xmodel.git/' not found
+  OK -> /nas_train/app.e0031982/ref/Xmodel
+[2] 仓库内容概览
+  --- /nas_train/app.e0031982/ref/Xmodel-2.5/ ---
+data_preprocess docs examples experiments hpo images LICENSE long_context megatron models mup pretrain_gpt.py README.en.md README.md tasks tests tokenizers tools utils val_loss 
+    train-scripts: /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/dolma_wo_cc/delete_special_files.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/dolma_wo_cc/prepare.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/institutional-books/to_json.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/ultrafineweb/delete_special_files.sh /nas_train/app.e0031982/ref/Xmodel-2.5/data_preprocess/ultrafineweb/prepare_en.sh 
+    mup-mentions: /nas_train/app.e0031982/ref/Xmodel-2.5/README.en.md /nas_train/app.e0031982/ref/Xmodel-2.5/README.md /nas_train/app.e0031982/ref/Xmodel-2.5/examples/academic_paper_scripts/sc21/CONFIG.sh /nas_train/app.e0031982/ref/Xmodel-2.5/examples/bert/train_bert_340m_distributed.sh /nas_train/app.e0031982/ref/Xmodel-2.5/examples/gpt3/train_gpt3_175b_distributed.sh 
+[3] 现有起点 ckpt 的 muP 配置（决定我们缺什么）
+  config not readable
+[4] 我们模型 forward 里的 muP 缩放
+[5] 我们优化器：LR 是否分组
+86:        lr=lr, momentum_beta=momentum, use_nesterov=True,
+93:        adamw_params, lr=lr, betas=(0.9, 0.95), eps=1e-8,
+466:        muon_params, adamw_params, lr=args.lr, weight_decay=args.weight_decay,
+602:            msg = (f"[step {step:5d}/{total_steps}] loss={avg_loss:.4f} lr={lr:.2e} "
+[6] L2 仍在跑？(不 kill)
+=== DONE 145 ===
+```
