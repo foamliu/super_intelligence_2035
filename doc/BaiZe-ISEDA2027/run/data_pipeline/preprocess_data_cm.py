@@ -25,7 +25,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import multiprocessing as mp
 import os
+import queue as _queue
 import time
 from pathlib import Path
 from typing import Iterator, List, Optional
@@ -55,11 +57,122 @@ def _add_eod_token(tokenizer, eod_token: str = "<|endoftext|>"):
 
 
 def _tokenize_document(
-    text: str, tokenizer, eod_id: int, add_special_tokens: bool = False
+    text: str, tokenizer, eod_id: int, add_special_tokens: bool = False,
+    max_chars: Optional[int] = None
 ) -> List[int]:
-    """单条文档 -> token id 序列，末尾附 EOD token。"""
+    """单条文档 -> token id 序列，末尾附 EOD token。
+
+    若 max_chars 不为 None，则先将 text 截断到 max_chars 个字符再分词。
+    这是为了防止 CC-MAIN 等原始网页爬取数据中极少数超长/病态文档
+    导致 BPE 分词器陷入 CPU 死循环（2026-10-22 实测 13 个 en_v1_4
+    worker 100% CPU 0 I/O 空转 8h+ 的根因）。
+    """
+    if max_chars is not None and len(text) > max_chars:
+        text = text[:max_chars]
     ids = tokenizer(text, add_special_tokens=add_special_tokens, truncation=False)["input_ids"]
     return ids + [eod_id]
+
+
+# ── 子进程 tokenization worker（用于硬超时保护） ──────────────────────────
+def _worker_tokenize(input_q: mp.Queue, output_q: mp.Queue,
+                     tokenizer_path: str, eod_token: str,
+                     max_chars: Optional[int]):
+    """持久子进程：加载 tokenizer，循环从 input_q 取文本，分词后放 output_q。
+
+    收到 None 时退出。若分词抛异常，放 ("error", msg)。
+    """
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+        tokenizer.add_special_tokens({"eos_token": eod_token})
+        eod_id = tokenizer.eos_token_id
+    except Exception as e:
+        output_q.put(("fatal", f"tokenizer load failed: {e}"))
+        return
+    while True:
+        try:
+            text = input_q.get()
+        except Exception:
+            break
+        if text is None:
+            break
+        try:
+            if max_chars is not None and len(text) > max_chars:
+                text = text[:max_chars]
+            ids = tokenizer(text, add_special_tokens=False, truncation=False)["input_ids"]
+            output_q.put(("ok", ids + [eod_id]))
+        except Exception as e:
+            output_q.put(("error", str(e)))
+
+
+class TokenizerWorker:
+    """封装子进程 tokenizer，提供带超时的 tokenize 方法。
+
+    若文档分词超过 doc_timeout 秒，杀掉子进程并重启，返回 None（跳过该文档）。
+    这是应对 Rust-based fast tokenizer 在某些 CC-MAIN 网页上陷入死循环
+    的终极手段——signal.alarm 无法中断 Rust 代码，只能用进程级 kill。
+    """
+
+    def __init__(self, tokenizer_path: str, eod_token: str,
+                 max_chars: Optional[int], doc_timeout: int = 120):
+        self.tokenizer_path = tokenizer_path
+        self.eod_token = eod_token
+        self.max_chars = max_chars
+        self.doc_timeout = doc_timeout
+        self._start_worker()
+
+    def _start_worker(self):
+        self.input_q = mp.Queue(maxsize=1)
+        self.output_q = mp.Queue(maxsize=1)
+        self.process = mp.Process(
+            target=_worker_tokenize,
+            args=(self.input_q, self.output_q,
+                  self.tokenizer_path, self.eod_token, self.max_chars),
+        )
+        self.process.daemon = True
+        self.process.start()
+
+    def tokenize(self, text: str) -> Optional[List[int]]:
+        """提交文本并等待分词结果，超时则杀进程返回 None。"""
+        if not self.process.is_alive():
+            self._start_worker()
+        try:
+            self.input_q.put(text, timeout=5)
+        except _queue.Full:
+            # Worker stuck from previous doc — restart
+            self._restart()
+            return None
+        try:
+            status, payload = self.output_q.get(timeout=self.doc_timeout)
+            if status == "ok":
+                return payload
+            elif status == "fatal":
+                raise RuntimeError(f"worker fatal: {payload}")
+            else:
+                print(f"[WARN] tokenization error: {payload}", flush=True)
+                return None
+        except _queue.Empty:
+            print(f"[WARN] tokenization timeout after {self.doc_timeout}s "
+                  f"(doc ~{len(text)} chars), killing worker", flush=True)
+            self._restart()
+            return None
+
+    def _restart(self):
+        if self.process.is_alive():
+            self.process.terminate()
+            self.process.join(timeout=5)
+            if self.process.is_alive():
+                self.process.kill()
+                self.process.join(timeout=5)
+        self._start_worker()
+
+    def close(self):
+        try:
+            self.input_q.put(None, timeout=2)
+        except Exception:
+            pass
+        if self.process.is_alive():
+            self.process.terminate()
+            self.process.join(timeout=5)
 
 
 def iter_parquet_texts(input_dir: str, max_docs: Optional[int] = None,
@@ -154,6 +267,11 @@ def main() -> None:
     parser.add_argument("--dtype", default="int32", choices=["int16", "int32", "int64"],
                         help="token id 存储精度；vocab=129281 用 int32 足够")
     parser.add_argument("--eod-token", default="<|endoftext|>", help="追加的 EOD 特殊 token")
+    parser.add_argument("--max-chars", type=int, default=None,
+                        help="截断每条文档到最多 N 个字符再分词（防止超长/病态网页导致 BPE 死循环；CC-MAIN 原始爬取建议 50000）")
+    parser.add_argument("--doc-timeout", type=int, default=0,
+                        help="每条文档分词超时秒数；>0 时启用子进程硬超时保护（超时杀子进程、跳过该文档）。"
+                             "应对 Rust-based fast tokenizer 在病态 CC-MAIN 网页上死循环。建议 120")
     args = parser.parse_args()
 
     t0 = time.time()
@@ -183,8 +301,42 @@ def main() -> None:
     else:
         iterator = iter_parquet_texts(args.input_dir, max_docs=args.max_docs,
                                       text_column=args.text_column)
+    n_truncated = 0
+    n_timeouts = 0
+    n_errors = 0
+
+    # ── 子进程硬超时保护 ──────────────────────────────────────────────
+    # 当 --doc-timeout > 0 时，用 TokenizerWorker 在子进程中分词，
+    # 超时则杀子进程并跳过该文档。这是应对 Rust-based fast tokenizer
+    # 在某些 CC-MAIN 网页上陷入死循环的终极手段。
+    use_worker = args.doc_timeout and args.doc_timeout > 0
+    if use_worker:
+        worker = TokenizerWorker(
+            tokenizer_path=args.tokenizer,
+            eod_token=args.eod_token,
+            max_chars=args.max_chars,
+            doc_timeout=args.doc_timeout,
+        )
+        print(f"[tokenize] 子进程硬超时保护已启用：doc_timeout={args.doc_timeout}s, "
+              f"max_chars={args.max_chars}", flush=True)
+    else:
+        worker = None
+
     for text in iterator:
-        ids = _tokenize_document(text, tokenizer, eod_id)
+        raw_len = len(text) if text else 0
+        if use_worker:
+            ids = worker.tokenize(text or "")
+            if ids is None:
+                n_timeouts += 1
+                if n_timeouts % 10 == 1:
+                    print(f"[tokenize] 超时跳过累计 {n_timeouts} 文档 "
+                          f"({n_docs} 已写入 / {n_tokens} tokens / "
+                          f"{time.time() - t0:.1f}s)", flush=True)
+                continue
+        else:
+            ids = _tokenize_document(text, tokenizer, eod_id, max_chars=args.max_chars)
+        if args.max_chars is not None and raw_len > args.max_chars:
+            n_truncated += 1
         builder.add_item(torch.tensor(ids, dtype=torch.long))
         builder.end_document()
         n_docs += 1
@@ -192,6 +344,8 @@ def main() -> None:
         if n_docs % 50000 == 0:
             print(f"[tokenize] 已处理 {n_docs} 文档 / {n_tokens} tokens "
                   f"({time.time() - t0:.1f}s)")
+    if use_worker:
+        worker.close()
     builder.finalize(idx_path=f"{args.output_prefix}.idx")
 
     # 3) 写轻量元信息 JSON，供 launch 端核对
@@ -204,6 +358,11 @@ def main() -> None:
         "padded_vocab_size": padded_vocab,
         "num_documents": n_docs,
         "num_tokens": n_tokens,
+        "num_truncated_docs": n_truncated,
+        "num_timeout_skips": n_timeouts,
+        "num_errors": n_errors,
+        "max_chars": args.max_chars,
+        "doc_timeout": args.doc_timeout,
         "dtype": args.dtype,
         "input_dir": args.input_dir,
     }

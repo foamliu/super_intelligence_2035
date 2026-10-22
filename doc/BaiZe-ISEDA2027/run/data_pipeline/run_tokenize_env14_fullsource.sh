@@ -175,6 +175,7 @@ PY
       --output-prefix "$out_prefix" \
       --tokenizer "$TOKENIZER" --tokenizer-output-dir "$TOK_OUT" \
       --mode content --text-column content --dtype int32 \
+      --max-chars 50000 --doc-timeout 120 \
       > "$LOG_DIR/env14_${shard}.log" 2>&1 &
     sleep 5
   done
