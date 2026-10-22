@@ -1,19 +1,19 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-22 22:0x #723：🩺 decay 5000 步训练健康监控 step 2070/5000（41.4%）· loss 1.100 持续下降 · val@2000=1.062(PPL 2.89) · 0 NaN/0 skip · ckpt@2000 · ETA~9.6h**：
-> - **训练状态**（step 2070/5000 @21:59，ssh .29 确认 8×H100 99-100% util / ~77GB/GPU）：
->   - loss 轨迹：1.608(s10)→1.288(s130)→1.219(s470)→1.176(s720)→1.163(s1000)→1.140(s1390)→1.114(s1750)→**1.100(s2070)**↓ — 平滑无发散
+> 🆕 **2026-10-22 23:0x #724：🩺 decay 5000 步训练健康监控 step 2420/5000（48.4%）· loss 1.087 持续下降 · val@2000=1.062(PPL 2.89) · 0 NaN/0 skip · ckpt@2000 · ETA~8.5h**：
+> - **训练状态**（step 2420/5000 @23:09，ssh .29 确认 8×H100 96-100% util / ~77GB/GPU）：
+>   - loss 轨迹：1.608(s10)→1.288(s130)→1.219(s470)→1.176(s720)→1.163(s1000)→1.140(s1390)→1.114(s1750)→1.100(s2070)→**1.087(s2420)**↓ — 平滑无发散
 >   - **val@1000=1.1016(PPL 3.009) → val@2000=1.0622(PPL 2.893)** ✅ 持续改善；next val@3000（eval-interval=1000）
->   - throughput ~372-376 TFLOP/s/GPU, ~11.8s/step（稳态）, 1.35B params
->   - **0 NaN / 0 skipped** 全程（2070 步全零）, grad norm 0.039~0.076, params norm 3566→3422（缓降）
->   - LR 8.871e-4（WSD exponential 衰减中, 从 1.667e-3 → target min-lr 1.042e-4）, decoupled LR 5.323e-3
+>   - throughput ~370-376 TFLOP/s/GPU, ~11.8s/step（稳态）, 1.35B params
+>   - **0 NaN / 0 skipped** 全程（2420 步全零）, grad norm 0.036~0.089, params norm 3421→3362（缓降）
+>   - LR 7.760e-4（WSD exponential 衰减中, 从 1.667e-3 → target min-lr 1.042e-4）, decoupled LR 4.656e-3
 >   - max reserved ~77GB/GPU（MBS=5 + selective recompute, ~4GB headroom, 稳定运行）
 >   - **ckpt `iter_0000500`+`iter_0001000`+`iter_0001500`+`iter_0002000` 已保存 ✅**；next ckpt@2500（save-interval=500）
->   - ETA: (5000−2070)×11.8s ≈ **9.6h**（预计 10/23 ~07:36 完成）
-> - **下一步**：下次唤醒检查 step 2500+ loss + val@3000 + iter_2500 ckpt → 训练完成后评测。
-> 📦 体积：TASK=19.2KB / MEMORY=20.1KB（均≤32KB✓）。
+>   - ETA: (5000−2420)×11.8s ≈ **8.5h**（预计 10/23 ~07:36 完成）
+> - **下一步**：下次唤醒检查 step 2700+ loss + val@3000 + iter_2500/3000 ckpt → 训练完成后评测。
+> 📦 体积：TASK=19.2KB / MEMORY=20.9KB（均≤32KB✓）。
 
-> 📦 §#722 流水（2026-10-22 20:5x，decay 5000 步训练健康监控 step 1750/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step1750 loss1.114 val@1000=1.102 0NaN/0skip，ckpt@1500已存，训练健康。被 #723 监控更新取代。需要时再读。
+> 📦 §#723 流水（2026-10-22 22:0x，decay 5000 步训练健康监控 step 2070/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step2070 loss1.100 val@2000=1.062 0NaN/0skip，ckpt@2000已存，训练健康。被 #724 监控更新取代。需要时再读。
 
 > 📦 §#721 流水（2026-10-22 19:3x，decay 5000 步训练健康监控 step 1390/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step1390 loss1.140 0NaN/0skip，ckpt@1000已存，训练健康。被 #722 监控更新取代。需要时再读。
 
