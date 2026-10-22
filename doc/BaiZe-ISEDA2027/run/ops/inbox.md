@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 147 -->
+<!-- RUN_ID: 148 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,60 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 148 — 🔴 用户直令：kill L2 + 执行 A 方案（改用官方 Megatron 代码跑 decay）
+
+> 用户直令（2026-10-22 08:2x）：「好的 把 L2 kill 掉 执行 A 方案」。
+> **依据 RUN 147 可行性结论**：TE 已装 / **8×H100 80GB（FP8 可用）** / 官方 megatron fork 可 import / tokenizer deepseekv3 在仓 / **官方 decay 是 TP=1 PP=1 纯 DP8（与我们 8 卡完全一致）** / 有 `tools/checkpoint/convert.py` + `megatron_to_hf_mup.py`。
+> ✅ **本块为正式动作**：① kill L2（释放 .29 8 卡）② 定位 5 源分词真实路径 ③ 转换起点 ckpt HF→Megatron ④ 构造 DATA_PATH ⑤ 100 步冒烟。
+
+```bash
+set -u
+echo "=== RUN_ID 148 | kill L2 + official Megatron path bring-up | $(date '+%F %T') | host=$(hostname) ==="
+XF=/nas_train/app.e0031982/ref/Xmodel-2.5
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+BASE=/nas_train/app.e0031982/code/Baize-ISEDA2027
+
+echo "[1] kill L2（用户直令）"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-110 | head -3 || echo '  L2 not found'
+pkill -TERM -f 'baize_xmodel25_decay_L2' 2>/dev/null && echo '  TERM sent' || echo '  nothing to TERM'
+sleep 10
+left=$(pgrep -f 'baize_xmodel25_decay_L2|torch.distributed.run.*L2' 2>/dev/null | head -5)
+[ -n "$left" ] && { echo "  still: $left -> KILL"; pkill -KILL -f 'baize_xmodel25_decay_L2' 2>/dev/null; sleep 5; }
+echo "  remaining=$(pgrep -cf 'baize_xmodel25_decay_L2' 2>/dev/null || echo 0)"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "  L2 最后 step:"; strings /tmp/baize_xmodel25_decay_L2_train.log 2>/dev/null | grep -oE '\[step +[0-9]+/[0-9]+\]' | tail -1
+
+echo "[2] 定位 5 源分词真实路径（上次路径写错）"
+find "$BASE/data" -maxdepth 2 -type d -name 'full*' 2>/dev/null | head -10
+for d in $(find "$BASE/data" -maxdepth 2 -type d -name 'full*' 2>/dev/null | head -10); do
+  n=$(ls "$d"/*.bin 2>/dev/null | wc -l); echo "  $d : $n .bin"
+done
+
+echo "[3] 官方脚本需要的数据命名格式（text_document 后缀）"
+grep -n 'DATA_PATH' -A14 "$XF/examples/xmodel/train_decay_fp8_1120.sh" | head -18 | cut -c1-170
+
+echo "[4] 起点 ckpt 现状"
+ls -l "$BASE/nemo_experiments/xmodel25_history/step_532000/" 2>/dev/null | head -10
+
+echo "[5] 官方转换脚本用法"
+$PY "$XF/tools/checkpoint/convert.py" --help 2>&1 | head -25
+
+echo "[6] megatron_to_hf_mup.py / loader_* 可用性"
+ls -l "$XF/tools/checkpoint/" 2>/dev/null | head -12
+
+echo "[7] 官方 decay 脚本改造成本评估：需要替换的变量"
+grep -nE '^(CHECKPOINT_PATH|TOKENIZER_MODEL|DATA_PATH)=' "$XF/examples/xmodel/train_decay_fp8_1120.sh" | cut -c1-140
+echo "  → 需替换：CHECKPOINT_PATH(起点+输出) / TOKENIZER_MODEL / DATA_PATH(6源权重)"
+
+echo "[8] 官方 decay 的输出目录与 ckpt 命名"
+grep -nE 'save|load|ckpt-format|dist-ckpt' "$XF/examples/xmodel/train_decay_fp8_1120.sh" | cut -c1-140 | head -8
+
+echo "=== DONE 148 ==="
+```
+
+> **本块只做**：kill L2 + 路径定位 + 转换工具确认。**下一步 RUN 149 才做 ckpt 转换与冒烟**（转换可能耗时 10-30min，且需确认映射脚本正确）。
+> **必须回报**：① L2 是否已停干净、8 卡是否全空 ② 5 源 `.bin` 真实路径与 shard 数 ③ `convert.py` 的参数格式（HF→Megatron 方向的具体写法）④ 起点 ckpt 有哪些文件（是否已是 Megatron 格式）。
 
 ## RUN_ID 147 — 🔴 用户直令：评估「改用官方 Megatron 代码跑 decay」可行性（8 卡 H100 单机 + FP8 可用）
 
