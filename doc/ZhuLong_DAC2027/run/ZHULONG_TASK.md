@@ -14,7 +14,35 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-21 15:3x（**r5e 改 8 并发**）· 用户直令 · 取代 14:0x 的 -p 4 部分
+### 🔄 运维指令 · 2026-10-22 09:0x（**r5e3 回到 -p 4 + 端口 8650/8651/8652/8654**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「好的 r5e3 回到端口 8650/8651/8652/8654 和 p=4」
+> **背景**：r5e2（-p8 + 8650-8654）收口 INVALID —— 136 literal-pass / 593 sandbox "operation timed out" / gen-success 仅 8.2% → **-p8 是退化根因**（8 cline 共享 4 sandbox，2×/port 争用打穿服务端 SANDBOX_TIMEOUT=150s）。15:3x 令预警的 -p8 离群风险实测命中。
+> **对照 r4e（-p4 + 8650-8654 + timeout=600）**：151 success / 0 literal-pass / 0 sandbox-timeout / **75.9%** → **-p4 是已验证的健康口径**。
+> **本令核心**：r5e3 **回到 `-p 4`**（与 r1/r2/r3/r4e 完全一致口径），端口 **8650/8651/8652/8654**（r4e 同端口，已验证 -p4 健康；r5e2 退化是 -p8 导致，非端口问题，残留风险低）。
+
+#### r5e3 起跑参数
+- **`-p 4`**（4 并发，回到 r1-r4 口径，**关键改动**）
+- 端口 `8650,8651,8652,8654`（.env 已是这组，r5e2 用过但 -p8 退化非端口问题；若需可重启 4 端口沙盒 worker 确保干净）
+- 其余配置同 r4e：`READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / 模型 `deepseek-v4-pro-fp4` / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+- 日志 `/tmp/ABL_readback_none_retest_r5e3.log`；batch 新建（r5e3 编号）
+- **r5e3 30min 健康报告**：real_MCP_32001 + literal-pass（**查 codegen jsonl 非 log**，r4⁗/r5e2 盲点纠正）+ 4 端口可达性 + sandbox-timeout 计数
+  - **判据**：-32001=0 + literal-pass≈0 + sandbox-timeout≈0 → -p4 口径健康（与 r4e 一致）
+  - **若 30min 内 sandbox-timeout 抬头（率 ≥5/min）或 literal-pass >10 → 停手报运维**（-p4 也退化则需换沙盒机/错峰）
+- r5e3 收口 → regrade（端口 8650/8651/8652/8654·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR）→ 判据十三 → **5/5 mean±std（r1=78.5, r2=70.9, r3=81.5, r4e=75.9, r5e3）** → 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 执行前清理
+- 确认 r5e2 残留进程已清（PID 4026302 GONE·9 孤儿 worker r5e2 起跑时已清过；再核一遍 pgrep 无 r5e2 残留）
+- 4 端口 8650/8651/8652/8654 探活（若不全 OPEN 则重启沙盒 worker；r5e2 收口后仅 1 LISTEN，需重启 4 端口）
+- 8090 健康确认（PID 1504991 仍活则不重启；若 GONE 则重启）
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4 家族 + r5e/r5e2 原始产物日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings timeout=600。
+- 🚫 **不再用 -p 8**（实测打穿服务端 sandbox timeout·136 literal-pass·15:3x 令作废）。
+- **若 r5e3 -p4 仍退化 → 停手报运维**（-p4 也退化说明 8650-8654 端口/沙盒机有问题，需换端口 8663/8666/8667/8670 或换沙盒机/错峰）。
+- commit：`zhulong S1: r5e3 回到 -p4 + 8650/8651/8652/8654 起 (用户直令·r5e2 -p8 退化作废)`。
+
+### 🔄 运维指令 · 2026-10-21 15:3x（**r5e 改 8 并发**）· 用户直令【r5e2 -p8 实测退化·作废】
 
 > 用户令（原文）：「r4e 是4并发对吧，r5e除了换端口外，改成8并发」
 > **本令核心**：r5e **`-p 4` → `-p 8`**（8 cline 并发），端口仍按 14:0x 令换到 **8663/8666/8667/8670**（4 端口，8 cline 共享 4 sandbox，每端口 2 cline 排队，timeout=600 下应扛得住）。
