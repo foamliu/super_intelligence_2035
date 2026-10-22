@@ -5,18 +5,18 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~46h,ppid=1)，0incomplete，**105/110dirs**（103full@512parquet + 2 partial），~7MB/s，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
+> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~50h,ppid=1)，0incomplete，**106/110dirs**（104full@512parquet + 2 partial: CC-MAIN-2024-51@452/512 + CC-MAIN-2025-08@66/512），~7MB/s，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(105/110dirs,53427parquet,0incomplete,~7MB/s)+▶️en_v1_4全源分词(BPE死循环已修复:--max-chars 50000+--doc-timeout 120,13workers全部越过362MB stall point,增长60-90MB/min,ETA~9-11h,done=90/110)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=90/110,BPE死循环已修复重启中); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B)+Math L3(67sh,77.95B)+Code L2(141sh,421.45B)+UFW-L3(154sh,263.90B)+Math L1(149sh,164.44B)=574shards/1056.36B/3.91TB(产物在code/BaiZe-ISEDA2027/data/full_*/,盘上验证574/574/574)
-当前动作:     唤醒600(2026-10-22 17:26)修复轮：13 en_v1_4 workers 100%CPU/0IO 空转8h+(Rust fast tokenizer BPE死循环)。修复：--max-chars 500000→50000 + 新增--doc-timeout 120(multiprocessing子进程硬超时) + TokenizerWorker类。删13 partial .bin，验证90/110完整，smoke test✅，重启PID2557971。监控10+min：全部13 workers越过362MB stall point(2022-49@449MB/90MB/min)，无WARN timeout。5源574/574/574 intact。download alive(PID1875054,105dirs,53427parquet,0incomplete)。ETA~9-11h完成13 shards。📦体积：TASK=25.2KB/MEMORY=待测
-下一步:       ①监控13 restarting workers完成(ETA~9-11h,每shard~50GB@75MB/min)②en_v1_4下载(105→110dirs)③完成后检查timeout skip counts④验证110/110 shards完整(.bin+.idx+.json)⑤更新MEMORY_DATA/DATA_LEDGER/daily memory⑥5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录)
-阻塞:         无(BPE死循环根因已修复:--max-chars 50000足防stall,doc-timeout 120后备保护,全部13 workers越过362MB stall point正常增长;5源574/574/574 intact;en_v1_4 download+fullsource自动推进中)
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(106/110dirs,53765parquet,0incomplete)+▶️en_v1_4全源分词(done=90/110,14workers运行中,BPE修复有效@73MB/min,ETA~07:00-08:00 10-23)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; ✅5源全量分词ALL DONE: Code L3(63sh,128.62B)+Math L3(67sh,77.95B)+Code L2(141sh,421.45B)+UFW-L3(154sh,263.90B)+Math L1(149sh,164.44B)=574shards/1056.36B/3.91TB; en_v1_4下载已恢复+全源分词(done=90/110,14workers运行中,BPE修复有效)
+当前动作:     唤醒601(2026-10-22 18:48)巡检轮：5源574/574/574 intact✅;en_v1_4 download alive(PID1875054,106dirs,53765parquet,0incomplete,2partial:2024-51@452/512+2025-08@66/512);fullsource PID2557971 alive,done=90/110,14workers运行中.bin增长正常(2022-21@6.09GB/2024-46@6.06GB/2025-05@2.28GB,73MB/min),avg done .bin=59.2GB,无WARN/timeout;系统load64/224,72%idle,1591GB RAM,34TB disk free;tokenizer eod_id=129280=vocab✅.📦体积：TASK=24.6KB/MEMORY=29.9KB
+下一步:       ①监控14 workers完成(ETA~07:00-08:00 10-23,每shard~59GB@73MB/min)②en_v1_4下载(106→110dirs,2partial+4未创建)③完成后验证110/110(.bin+.idx+.json)④更新DATA_LEDGER/MEMORY⑤5源产物交接pretrain(修改decay_v2.py数据源→full_*)
+阻塞:         无(14workers正常增长无stall,5源574/574/574 intact,download+fullsource自动推进中,系统资源充足)
 ERROR_COUNT:  9
 ```
 
@@ -29,7 +29,8 @@ ERROR_COUNT:  9
 > 📦 唤醒597 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins~58-59GB+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒598 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins~63-64GB+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒599 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins 70-76GB+5源574/574/574验证+done=90/110,详见日文件）
-> 唤醒600（2026-10-22 17:26）**BPE死循环根因修复+重启**：13 en_v1_4 workers 100%CPU/0IO 空转8h+（Rust fast tokenizer 在病态CC-MAIN网页上BPE死循环，signal.alarm无法中断Rust代码）。修复：①`--max-chars` 500000→50000 ②新增`--doc-timeout 120`基于multiprocessing子进程硬超时（超时kill子进程+跳过文档）③新增`TokenizerWorker`类到preprocess_data_cm.py。删除13 partial .bin(389-521MB)，验证90/110完整，smoke test 100docs/1.4s✅，重启fullsource PID2557971。监控10+min：**全部13 workers越过362MB stall point**（CC-MAIN-2022-49@449MB/90MB/min），**无WARN timeout**。`--max-chars 50000`足防stall，doc-timeout后备未触发。ETA~9-11h完成13 shards。
+> 📦 唤醒600 原文已归档 → `daily-memories-data/2026-10-22.md`（含BPE死循环根因修复全流程+13 partial .bin删除+smoke test+重启PID2557971+全部workers越过stall point,详见日文件）
+> 唤醒601（2026-10-22 18:48）**巡检轮·一切健康**：①5源574/574/574 intact✅（Code L3 63/Math L3 67/Code L2 141/UFW-L3 154/Math L1 149）②en_v1_4 download alive(PID1875054,~50h,ppid=1),106/110dirs,53765parquet,0incomplete,2partial(2024-51@452/512+2025-08@66/512)③fullsource PID2557971 alive,done=90/110,14workers运行中,bin增长正常@73MB/min(2022-21@6.09GB/2024-46@6.06GB/2025-05@2.28GB),avg done .bin=59.2GB,无WARN/timeout/error④系统load64/224,72%idle CPU,1591GB RAM,34TB disk free⑤tokenizer .json确认eod_id=129280=vocab✅(DeepSeek-V4.1-Flash=Xmodel-2.5 tokenizer)⑥ETA:14 running shards@59GB/73MB/min≈13.5h→~07:00-08:00 10-23;剩余6 shards(4未下载+2partial)待download完成后自动排队分词.**5源全量分词已全部完成=pretrain 20B decay实验数据解锁**.📦体积：TASK=24.6KB/MEMORY=29.9KB
 > 📦 唤醒593 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs确认+bin~32-33G+5源574/574/574验证,详见日文件）
 > 📦 唤醒592 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs确认+bin~26-32G+5源574/574/574验证,详见日文件）
 > 📦 唤醒591 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 11procs确认+bin~20.8GB+5源574/574/574验证,详见日文件）
