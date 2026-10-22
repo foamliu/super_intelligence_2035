@@ -1,6 +1,29 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🔴 运维指令 · 2026-10-23 00:3x（**停 r5e3 → agent 换 zl/zhulong → glm-5.3-flash 重跑 → 端口 8663/8666/8667/8670**）· 用户直令 · 最高优先
+
+> 用户原话：「1.zhulong 评测停下 2.重启一轮评测。使用模型 glm-5.3-flash 3.修改 eda_fastmcp/.env，将 cli agent 改成 zl 或 zhulong；重启8090端口的mcp服务.确保评测通过 zl 调用智能体 4.沙盒端口使用 8663/8666/8667/8670」
+> **停跑理由**：r5e3 跑 T+12h 仅 77.8%（9.7 tasks/h，r4 是 ~32/h），效率只有 1/3。
+
+**① 已由运维 RUN_ID 110 完成（勿重复）**：停 r5e3、备份 `.env`、探 4 端口、列出 agent 相关键名与 8090 启动脚本。
+
+**② 你要做的（按序）**
+1. **改 `.env` 的 cli agent 键** → 值改成 **`zl`** 或 **`zhulong`**（以 `eda_fastmcp` 实际注册名为准；不确定就查 tools 注册表/`sandbox_server` 源码，把键名+候选值写进 MEMORY）。
+2. **端口改 8663/8666/8667/8670**：`PROXY_PORTS=8663,8666,8667,8670`；**`SANDBOX_ENDPOINTS` 必须按 `port:workdir` 格式重写**（保留原 workdir 映射，只换端口号）。4 端口必须 **4/4 OPEN**。
+3. **重启 8090 MCP 服务**：用 RUN 110 [7] 找到的启动脚本；重启后 `ss -ltnp | grep 8090` 有监听 + `run_code` 冒烟通过。
+4. **切换模型为 `glm-5.3-flash`**：参考 2026-10-19「运维令三十一 B.glm-5.3-flash 复测」跑法（providers.json / `cline auth -m`），**MEMORY 写明改了哪个文件**。
+5. **起新一轮评测**：`-p 4`（🚫 不要 -p 8，历史证明退化）；启动前 `export PYTHON=$PWD/venv/bin/python`；`unset http_proxy https_proxy` + `NO_PROXY=10.129.32.75,localhost,127.0.0.1`。
+6. **关键验证：确认评测确实经 zl 调用** —— 检查 8090 日志出现 zl/zhulong 的 tool 调用记录（不是 cline 直连）。**这条必须贴证据。**
+
+**③ 监控口径（不变）**
+- 健康 = **task 完成数单调增长**（从 codegen jsonl / task dir 数），不是 log 行数。
+- 每轮 grep codegen jsonl 里字面量 `"pass"` 数（退化早期信号）。
+- 停手阈值：literal-pass >10 或 MCP 率 ≥5/min。
+
+**④ 回报**：新 batch 号 / agent 实际值 / 8090 PID / 4 端口状态 / 头 10 分钟进度 / **zl 调用证据**。
+
+
 
 ### 🔴 运维指令 · 2026-10-20 21:4x（**用户直令：杀 r4/r5/regrade → 端口换 8650/8651/8652/8654 → 重启 r4⁗**）· 最高优先【已归档·历史·r4⁗ 已收口 INVALID·已被 10:4x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 9。
 

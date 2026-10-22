@@ -1,5 +1,69 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 109 -->
+<!-- RUN_ID: 110 -->
+
+## RUN_ID 110 — 🔴 用户直令：停 r5e3 → 改 .env 用 zl/zhulong agent → 重启 8090 → 用 glm-5.3-flash 重跑 → 端口 8663/8666/8667/8670
+
+> 用户直令（2026-10-23 00:3x）：「1.zhulong 评测停下 2.重启一轮评测。使用模型 glm-5.3-flash 3.修改 eda_fastmcp/.env，将 cli agent 改成 zl 或 zhulong；重启8090端口的mcp服务.确保评测通过 zl 调用智能体 4.沙盒端口使用 8663/8666/8667/8670」
+> **背景**：r5e3 已跑 T+12h+ 仅 77.8%（9.7 tasks/h，远低于 r4 的 ~32/h），用户判定不可接受，停掉重跑。
+> ⚠️ **本块只做①停 + ②改配置 + ③重启 8090 + ④报状态**；真正起新一轮评测由 ZhuLong agent 按 MEMORY 接力（含 PYTHON 等前置校验）。
+
+```bash
+set -u
+echo "=== RUN_ID 110 | stop r5e3 + switch agent to zl/zhulong + restart 8090 | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "[1] 停 r5e3（用户直令）"
+pgrep -af 'run_cline_script' 2>/dev/null | cut -c1-110 | head -3 || echo '  not running'
+pkill -TERM -f 'run_cline_script' 2>/dev/null && echo '  TERM sent' || echo '  nothing'
+sleep 12
+left=$(pgrep -f 'run_cline_script' 2>/dev/null | head -5)
+[ -n "$left" ] && { echo "  still: $left -> KILL"; pkill -KILL -f 'run_cline_script' 2>/dev/null; sleep 5; }
+echo "  remaining=$(pgrep -cf 'run_cline_script' 2>/dev/null || echo 0)"
+echo "  r5e3 最后进度留证:"
+ls -dt /home/app.e0031982/eda_code_eval/2026_1022_105416 2>/dev/null && find /home/app.e0031982/eda_code_eval/2026_1022_105416/code -name '*.py' 2>/dev/null | wc -l
+
+echo "[2] 现有 .env 里 agent 相关字段（找 cli agent 键名）"
+cd "$BASE" || exit 1
+cp -a .env ".env.bak.agent.$(date +%s)" && echo '  .env backed up'
+grep -nEi 'agent|cli_|ZL|ZHULONG|tools_?whitelist' .env | head -30 | cut -c1-200
+
+echo "[3] 8090 现状"
+pgrep -af '8090' 2>/dev/null | cut -c1-120 | head -3 || echo '  8090 not running'
+ss -ltnp 2>/dev/null | grep ':8090' | cut -c1-120 || echo '  no listener on 8090'
+
+echo "[4] 沙盒端口改成 8663/8666/8667/8670（用户指定）"
+grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST)' .env | cut -c1-200
+sed -i 's/^PROXY_PORTS=.*/PROXY_PORTS=8663,8666,8667,8670/' .env
+grep -nE '^SANDBOX_ENDPOINTS' .env | cut -c1-260
+echo "  ⚠️ SANDBOX_ENDPOINTS 需按 port:workdir 格式；若原值含 workdir 映射，agent 需按同样 workdir 换端口重写"
+
+echo "[5] 4 端口探活"
+ok=0
+for p in 8663 8666 8667 8670; do
+  timeout 5 bash -c "exec 3<>/dev/tcp/10.129.32.75/$p" 2>/dev/null && { echo "  $p OPEN"; ok=$((ok+1)); } || echo "  $p FAIL"
+done
+echo "  open=$ok/4"
+
+echo "[6] 可用 agent 列表（zl / zhulong 是否已注册）"
+ls "$BASE" 2>/dev/null | head -20
+find "$BASE" -maxdepth 3 -type d \( -name '*zl*' -o -name '*zhulong*' \) 2>/dev/null | head -10
+python3 - <<'PY'
+import json,glob
+try:
+    import yaml
+except Exception:
+    yaml=None
+for f in glob.glob('/nasdata/app.e0031982/code/eda_fastmcp/**/tools*.json', recursive=True)[:5]:
+    print('  tools:', f)
+PY
+
+echo "[7] 8090 重启方式（找启动脚本）"
+find "$BASE" -maxdepth 2 -type f \( -name '*sandbox_server*' -o -name '*mcp*.py' -o -name 'start*.sh' \) 2>/dev/null | head -10
+
+echo "=== DONE 110 ==="
+```
+
+> **后续（ZhuLong agent 接力）**：① 按 [2] 找到的键名把 cli agent 改成 **zl** 或 **zhulong**（以实际注册名为准，不确定就两个都试）；② 重启 8090（用 [7] 找到的启动脚本）；③ 用 **glm-5.3-flash** 起评测（clients/providers 里切换模型，参考 2026-10-19 「B.glm-5.3-flash 复测」跑法）；④ **必须验证评测确实经 zl 调用**（8090 日志中出现 zl/zhulong 的 tool 调用记录）；⑤ 端口确认 8663/8666/8667/8670 全 OPEN。
 
 ## RUN_ID 109 — r5e3 收口进度实测（只读·用户问进展）
 
