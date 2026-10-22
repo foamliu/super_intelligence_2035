@@ -1,16 +1,19 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-22 16:0x #718：🩺 decay 5000 步训练健康监控 step 370/5000 · loss 平滑下降 · 0 NaN/0 skip**：
-> - **训练状态**（step 370/5000 @16:05，ssh .29 确认 8×H100 100% util / ~77GB/GPU）：
->   - loss 轨迹：1.608(s10)→1.446(s20)→1.313(s100)→1.235(s300)→**1.227(s370)**↓ — 平滑无发散
->   - throughput ~374 TFLOP/s/GPU, ~11.85s/step（稳态）, 1.35B params
->   - **0 NaN / 0 skipped** 全程, grad norm 0.06~0.17（稳定低值）, params norm 3654（缓降）
->   - LR 1.510e-3（WSD exponential 衰减中, 从 1.667e-3 → target min-lr 1.042e-4）
+> 🆕 **2026-10-22 17:1x #719：🩺 decay 5000 步训练健康监控 step 720/5000 · loss 持续下降 · ckpt@500 已存 · 0 NaN/0 skip**：
+> - **训练状态**（step 720/5000 @17:16，ssh .29 确认 8×H100 100% util / ~77GB/GPU）：
+>   - loss 轨迹：1.608(s10)→1.288(s130)→1.226(s370)→1.219(s470)→**1.176(s720)**↓ — 平滑无发散
+>   - throughput ~365-377 TFLOP/s/GPU, ~11.8s/step（稳态）, 1.35B params
+>   - **0 NaN / 0 skipped** 全程（720 步全零）, grad norm 0.04~0.13（稳定低值）, params norm 3654→3628（缓降）
+>   - LR 1.370e-3（WSD exponential 衰减中, 从 1.667e-3 → target min-lr 1.042e-4）, decoupled LR 8.22e-3
 >   - max reserved 70.5GB（~11GB headroom, MBS=5 + selective recompute 确认安全）
->   - ckpt 目录 `out/decay_5000_fp8_mbs5/` 暂空（首次 save@step500, ~26min 后）, TensorBoard events 正常写入
->   - ETA: (5000−370)×11.85s ≈ **15.25h**（预计 10/23 ~07:20 完成）
-> - **下一步**：下次唤醒检查 step 500+ loss 趋势 + ckpt 保存确认 → 训练完成后评测。
+>   - **ckpt `iter_0000500` 已保存 ✅**（16:31, mp_rank_00, latest_checkpointed_iteration.txt=500）
+>   - num zeros 偶跳 ~7688（Muon 周期性归零 momentum buffer 条目, 正常非异常）
+>   - ETA: (5000−720)×11.85s ≈ **14.1h**（预计 10/23 ~07:20 完成）
+> - **下一步**：下次唤醒检查 step 1000+ loss 趋势 + iter_1000 ckpt → 训练完成后评测。
 > 📦 体积：TASK=19.2KB / MEMORY=19.7KB（均≤32KB✓）。
+
+> 📦 §#718 流水（2026-10-22 16:0x，decay 5000 步训练健康监控 step 370/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step370 loss1.227 0NaN/0skip，训练健康。被 #719 监控更新取代。需要时再读。
 
 > 📦 §#717 流水（2026-10-22 14:5x，decay 5000 步启动 MBS=5+recompute）已归档 → daily-memories/2026-10-22.md；**结论**：MBS=5 OOM 排障→selective recompute→max 70.5GB，训练已启动 step20 loss1.446 0NaN/0skip。被 #718 监控更新取代。需要时再读。
 
@@ -76,9 +79,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **✅ decay 根因已定 + 🔄 A方案（官方 Megatron 1113.sh）前置调查中** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。L1 CS8=59.03%（缺 μP 残余 -2pp）。L2 kill@step2370。方向：用户 08:5x 令改用官方 `train_decay_fp8_1113.sh`（**以 1113 为准，覆盖 1120**）+ 20B 数据。
-  - PHASE: **A方案_1113sh_前置调查** — repo 已克隆 ✅、1113.sh 已读 ✅、起点 ckpt ✅、数据 ✅（4 源 text_document）、HF→Megatron 转换 ⚠️ 需写自定义 converter（无现成 Xmodel loader，可逆向 megatron_to_hf_mup.py）。下一步：① 写 HF→Megatron 转换脚本 ② 搭 DATA_PATH ③ 改 1113.sh（train-iters=5560）④ 100 步冒烟 ⑤ 20B decay。
-- 轮询状态：**#715（09:1x，A方案 1113.sh 前置调查）**：08:5x 新令已收（以 1113.sh 为准）。repo 克隆 + 脚本/数据/转换全部定位完成。.29 8×GPU 全空。任务书归档 33.6KB→17.1KB。下一步：写 HF→Megatron 转换脚本。loop 存活。📦 体积：TASK=17516B(17.1K)/MEMORY=待测（均≤32KB✓）。
+- STAGE: **🔄 decay 5000 步训练中（A方案 官方 Megatron 1113.sh）** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup。HF→Megatron 转换 ✅、冒烟 ✅、MBS=5 OOM 排障→selective recompute→70.5GB ✅、训练已启动。
+  - PHASE: **decay_5000_训练中** — step 720/5000 @17:16，loss 1.176↓，0 NaN/0 skip，ckpt@500 ✅，ETA ~10/23 07:20。脚本 `train_decay_fp8_1113_5000_mbs5.sh`（.29 `Xmodel-2.5-code/examples/xmodel/`），PID 196495，log `/tmp/baize_decay_5000_mbs5.log`。
+- 轮询状态：**#719（17:1x，decay 5000 步训练健康监控 step 720/5000）**：训练健康运行中。loss 平滑下降 1.608→1.176，0 NaN/0 skip，ckpt@500 已存，8×H100 100% util ~77GB/GPU。ETA ~14.1h。loop 存活。📦 体积：TASK=19.2KB/MEMORY=19.7KB（均≤32KB✓）。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
