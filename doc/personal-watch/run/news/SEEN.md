@@ -937,3 +937,16 @@
 | 2026-10-21 | 6G 承载网创新技术论坛在南京召开（10-15 举办 · 会议通稿） | 头条（中国通信学会） | 不收 | https://www.toutiao.com/article/7699008518406111785/ |
 | 2026-10-21 | 盛天网络「AI+」出海三大赛道（企业宣传稿） | 头条（项乾） | 不收 | https://www.toutiao.com/article/7699083196868166144/ |
 | 2026-10-22 | 把好中高职贯通培养转段质量关（教育政策 · AI 无关） | 头条（大众日报） | 不收 | https://www.toutiao.com/article/7699245707764515338/ |
+| 2026-10-22 | Anthropic CEO 达里奥长文回击「安全即敛财遮羞布」，首曝 Mythos 级模型雪藏约四个月（36氪 转述 X 论战） | 头条（36氪） | news | https://www.toutiao.com/article/7699277521161830952/ |
+| 2026-10-22 | 英伟达柏林 GTC：DSX POD 让 AI 工厂集装箱化、部署最短 14 天（+ OpenShell / MicroDuck / AI-RAN / Agile ONE SN） | 头条（36氪） | news | https://www.toutiao.com/article/7699269886219960832/ |
+| 2026-10-22 | 欧盟委员会对 Booking.com 启动 DSA 调查（欺诈房源 / 数据共享安全 / 未成年人保护） | IT之家 | news | https://www.ithome.com/1/016/268.htm |
+| 2026-10-22 | 宇树王兴兴：物理 AI「已看到被击穿的苗头」，1–2 年或 2–3 年；G1 累计下线约 1–2 万台（企业口径） | IT之家（据科创板日报） | news | https://www.ithome.com/1/016/326.htm |
+| 2026-10-22 | 特朗普：AI 数据中心应向所在社区分红、自发电并把多余电力送社区 | IT之家 | news | https://www.ithome.com/1/016/257.htm |
+| 2026-10-22 | DeepSeek 最新一轮融资据报约 1000 亿元人民币（彭博社引知情人士 · 目标至少两次上调） | IT之家（据彭博社） | news | https://www.ithome.com/1/016/263.htm |
+| 2026-10-22 | 内地供港澳大闸蟹中断近 12 年后恢复（首批经港珠澳大桥口岸运抵香港）· 仅有微头条帖、无官方通稿 | 头条（用户内容） | 线索（不入账） | https://www.toutiao.com/w/1879618438943756/ |
+| 2026-10-22 | Anthropic 最快本周五公开提交 S-1（雅虎财经引三名知情人士）· 正文未复核 | IT之家 | 留档（下轮优先补） | https://www.ithome.com/1/016/243.htm |
+| 2026-10-22 | Anthropic 招股书草案披露营收迅增（WSJ）· 正文未复核 | IT之家 | 留档（下轮优先补） | https://www.ithome.com/1/016/251.htm |
+| 2026-10-22 | eBay 全球裁员约 1000 人（≈9%，据 AFP · 与 AI 无直接关系） | IT之家 | 不收 | https://www.ithome.com/1/016/241.htm |
+| 2026-10-22 | 马斯克：为 Optimus 建「机器人学校」+ Terafab（财报会规划性表述） | IT之家 | 留档（缺独立证据） | https://www.ithome.com/1/016/249.htm |
+| 2026-10-22 | MiniMax 港股跌破 IPO 发行价 165 港元（盘中最低 159.3） | IT之家 | 不收（行情 / 个股价格 · L3 冻结） | https://www.ithome.com/1/016/269.htm |
+| 2026-10-22 | 「SpaceX / Anthropic / 英伟达助力科技股摆脱低迷」（WSJ） | IT之家 | 不收（行情叙述） | https://www.ithome.com/1/016/251.htm |
