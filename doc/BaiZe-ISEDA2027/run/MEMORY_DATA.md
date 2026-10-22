@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(104/110dirs,103full+1partial@85/512,0incomplete)+▶️en_v1_4全源分词(done=90/110 idx,103bin,13procs运行中@1proc/shard无重复,bin~45G growing,6.5TB total,PID3624240)+✅git sync
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(104/110dirs,0incomplete)+▶️en_v1_4全源分词(done=90/110 idx,103bin,13procs@100%CPU healthy,bin~51G growing→target~63G,ETA~2-3h,PID3624240)+✅git sync
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=90/110,1.65T,13shards在跑); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B)+Math L3(67sh,77.95B)+Code L2(141sh,421.45B)+UFW-L3(154sh,263.90B)+Math L1(149sh,164.44B)=574shards/1056.36B/3.91TB(产物在code/BaiZe-ISEDA2027/data/full_*/,盘上验证574/574/574)
-当前动作:     唤醒595(2026-10-22 10:51)巡检轮：fullsource PID3624240 alive ~8.5h(etimes=30549s),13procs运行中(11procs~30500s+CC-MAIN-2024-42~14595s+CC-MAIN-2024-46~1141s刚launch,13unique shards,1proc-per-shard,zero duplicates✅)。in-progress bin~45G each(11shards)+2024-42=22G+2024-46=1.8G,completed avg~63G→~70%done,ETA~2-3h。5源产物再验证574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),1pending_download(CC-MAIN-2024-51@85/512),available=103full+1partial,1.65T tokens done-only,6.5TB total bin。en_v1_4 download alive(PID1875054~45h,104dirs,0incomplete)。CPU load~53/224,mem1485GB avail。📦TASK=25.2KB/MEMORY=32.0KB(归档3旧fulltext→~30KB)
-下一步:       ①继续监控fullsource(done=90→103→110,13shards在处理ETA~10-22 14:00,剩余7待下载)②en_v1_4下载(104→110dirs,ETA~10-23)③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
-阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中,13procs确认alive)
+当前动作:     唤醒596(2026-10-22 12:07)巡检轮：fullsource PID3624240 alive ~9.75h(etimes=35124s),13procs@100%CPU(11procs~35150s+CC-MAIN-2024-42~19212s+CC-MAIN-2024-46~5758s,13unique shards,zero duplicates✅)。in-progress bin:11oldest@~51GB(→target~63GB→~81%done,ETA~2-3h)+2024-42@27.6GB+2024-46@8.2GB。5源574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),1pending_download(CC-MAIN-2024-51@301/512),1.65T done-only,12TB total baize-data/text。download alive(PID1875054~43.6h,104dirs,0incomplete)。load~57/224,mem1486GB。📦体积：TASK=25.2KB/MEMORY=29.8KB
+下一步:       ①继续监控fullsource(13shards在处理,11oldest~81%done ETA~14:00-15:00,done=90→103→110)②en_v1_4下载(104→110dirs,CC-MAIN-2024-51@301/512,ETA~10-23)③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
+阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中,13procs@100%CPU确认healthy)
 ERROR_COUNT:  9
 ```
 
@@ -24,7 +24,8 @@ ERROR_COUNT:  9
 
 ## 📋 本唤醒流水
 > 📦 唤醒594 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs+bin~38G+5源574/574/574验证+done=90/110,详见日文件）
-> 唤醒595（2026-10-22 10:51）巡检轮：fullsource PID3624240 alive ~8.5h(etimes=30549s),13procs运行中(11procs~30500s+2024-42~14595s+2024-46~1141s刚launch,13unique shards,1proc-per-shard✅)。in-progress bin~45G(11shards)+2024-42=22G+2024-46=1.8G,avg completed~63G→~70%done,ETA~2-3h。5源574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),pending_download=1(CC-MAIN-2024-51@85/512),available=103full+1partial,1.65T done-only,6.5TB bin。download alive(PID1875054~45h,104dirs,0incomplete)。load~53/224,mem1485GB。📦体积：TASK=25.2KB/MEMORY=32.0KB(归档3旧fulltext558/557/556→~30KB)
+> 📦 唤醒595 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~45G+5源574/574/574验证+done=90/110,详见日文件）
+> 唤醒596（2026-10-22 12:07）巡检轮：fullsource PID3624240 alive ~9.75h(etimes=35124s),13procs@100%CPU all healthy(11procs~35150s+2024-42~19212s+2024-46~5758s,13unique shards✅)。in-progress bin:11oldest@~51GB(target~63GB→~81%done,ETA~2-3h)+2024-42@27.6GB+2024-46@8.2GB。5源574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),1pending_download(CC-MAIN-2024-51@301/512),1.65T done-only,12TB baize-data/text。download alive(PID1875054~43.6h,104dirs,0incomplete)。load~57/224,mem1486GB。无error。📦体积：TASK=25.2KB/MEMORY=29.8KB
 > 📦 唤醒593 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs确认+bin~32-33G+5源574/574/574验证,详见日文件）
 > 📦 唤醒592 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs确认+bin~26-32G+5源574/574/574验证,详见日文件）
 > 📦 唤醒591 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 11procs确认+bin~20.8GB+5源574/574/574验证,详见日文件）
