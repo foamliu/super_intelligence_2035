@@ -1,6 +1,25 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 运维指令 · 2026-10-22 14:2x（**停止 ArmE → 降 LR 重跑 ArmE-R2：5e-4 + warmup 3000**）· 用户直令 · 最高优先
+
+> 用户决策：方案 2 —— 停止当前 ArmE，降 LR 重跑 ArmE-R2（peak LR 5e-4 + warmup 3000）。根因 = ViT-L/14(304M) 比 ViT-B/16(86M) 大 3.5×，却沿用 LR 1e-3，更新幅度过大 → spike 反复、C1 恢复慢。
+
+**① 停止当前 ArmE**
+- kill 训练（`run_armE_openclip.sh`）+ full_chain watcher（PID 339919），释放 8 卡。
+- 保全 ArmE ckpt 留档：`checkpoint_10000/20000 + latest` 移入 `armE_20261021_DIVERGED_archive/`（不删除，作「大塔+原LR spike 反复」证据；checkpoint_10000 已有 .backup）。
+
+**② 重跑 ArmE-R2（相对 ArmE 仅改 LR + warmup）**
+- 塔：ViT-L/14（304M，同 ArmE）
+- **peak LR：1e-3 → 5e-4**；**min_lr 1e-5（保持）**
+- **warmup：2000 → 3000**
+- 其余全同 ArmE：GBS 8192 / MBS 256 + accum 4（显存约束，非变量）/ wd 0.01 / mask 0.6 / loss 1:1 / seed 1234 / steps 63400 / 3 epoch / cosine
+- 输出新目录 `armE_r2_20261022_aimv2_openclip_vitl14_224/`（不覆盖 armE / armD_r2）；新脚本 `run_armE_r2_openclip.sh` + `armE_r2_aimv2_openclip_vitl14.py`（复制 ArmE 改 lr/warmup/OUT）。
+
+**③ 口径披露**：ArmE-R2 vs ArmE = 仅 LR(1e-3→5e-4)+warmup(2000→3000) 两变量（塔/数据/GBS 全同）→ 干净对照「降 LR+warmup 是否消除 spike」；ArmE-R2 vs ArmD-R2 = 塔(B→L)+LR+warmup 三变量，报告须分开表述。
+
+**④ 监控**：发散红线不变（C1<0.05 / contr>6.5 / loss 连续 1000 步不降 / nan）。重点观察 spike 峰值/频次/恢复速度是否较 ArmE 明显改善。commit 前缀 `vision armE_r2:`。
+
 ### 🚀 运维指令 · 2026-10-21 20:4x（**启动 ArmE：唯一变量 = 视觉塔换 open_clip ViT-L/14-224 (430M)**）· 用户直令 · 最高优先
 
 > 用户原话：「vision 开启 ArmE，跟 ArmD 只有一点差别：视觉塔使用 open_clip ViT-L/14 224 (430M)」。
