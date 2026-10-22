@@ -981,3 +981,13 @@
 | 2026-10-22 | 腾讯张军：超 10 万名老师申领 WorkBuddy 教育公益版 | IT之家 | 不收（企业公益运营数据 + 自身推广） | https://www.ithome.com/1/016/690.htm |
 | 2026-10-22 | 周小川：中国现有金融工具应对 AI 风险仍有效（金融街论坛闭幕式） | 中新网 | 不收（论坛演讲/峰会综述 · 留档可作书稿素材） | https://www.chinanews.com.cn/cj/2026/10-22/10719365.shtml |
 | 2026-10-22 | 自动驾驶时间表表态合集（何小鹏 L4 2028H2 / 长安赵非 2027 L3 · 2028 L4 / 马斯克承认 FSD 在华无优势） | IT之家 | 不收（预测性表态 · 非已发生事件 · 留档） | https://www.ithome.com/1/016/685.htm |
+| 2026-10-22 | OpenAI × Google Cloud：前沿模型与 Codex 进入 Google Cloud Model Garden（Marketplace 购买 · 可用 GCP 承诺消费抵扣 · 几周内 GA；原文注明 Microsoft 仍为主要云伙伴） | OpenAI（官方） | news（第 129 轮 · §5） | https://openai.com/index/openai-models-google-cloud/ |
+| 2026-10-22 | Anthropic 给 METR 一个 6 人团队「类雇员级访问」；METR 公开风险评估、Anthropic 不能否决发布（保留删改特定类别信息的权利） | Anthropic（官方） | news（第 129 轮 · §2） | https://www.anthropic.com/news/an-update-on-independent-evaluators |
+| 2026-10-22 | 樱井政博：AI 会催生大量克隆游戏，但「决定未来艺术方向」的只有人（Steam 2010 年新增约 275 款 / 日本市场现近 1.9 万款） | IT之家（据 VGC） | news（第 129 轮 · §4） | https://www.ithome.com/1/016/654.htm |
+| 2026-10-22 | （未入账 · 正文不可达）What FDE means at OpenAI | OpenAI RSS | 不收（CDP 两次「This page couldn't load」+ curl 403 ⇒ 无正文可核；下轮复核或按源文不可达结案） | https://openai.com/index/forward-deployed-engineering-means |
+| 2026-10-22 | 甲骨文 Java SE 安全警报 CVE-2026-91403（CVSS 9.1 · JSSE · 8u511/11.0.33/17.0.21/21.0.13/25.0.5/27.0.1） | IT之家 | 不收（漏洞通告 · 非 AI 本体 · 留档） | https://www.ithome.com/1/016/697.htm |
+| 2026-10-22 | 微信 OpenSDK 适配提醒：iOS 27 / Xcode 27 下 LSApplicationQueriesSchemes 由 50 项减到 25 项 | IT之家 | 不收（开发者适配通告） | https://www.ithome.com/1/016/629.htm |
+| 2026-10-22 | 小鹏 MONA L05 发布会产品经理「老登」用词道歉 | IT之家 | 不收（商业活动舆情个案 · 涉群体称谓争议 · 仅作书稿素材） | https://www.ithome.com/1/016/698.htm |
+| 2026-10-22 | AMD HIP-RT 3.2.0 新增 GFX1170 / 1171 / 115E（被指为 Medusa APU 铺路 · 据 Phoronix） | IT之家 | 不收（开源库版本更新） | https://www.ithome.com/1/016/702.htm |
+| 2026-10-22 | （线索 · 无日期摘要）Anthropic News 导航首条 `/news/public-benefit-fund` | anthropic.com | 线索（列表页无日期与摘要 ⇒ 不凭链接入账，下轮读正文再定） | https://www.anthropic.com/news/public-benefit-fund |
+| 2026-10-22 | （候选 · 仅登记）头条热榜 22:0x：31 iPhone Duo 折痕 / 44 地铁看书扣费 / 45 顺风车 / 48 严重网络漏洞 / 49 AI 抬头率 / 50 粮食画纪念（含纪念主题 · 一触即走） | 头条热榜 JSON | 候选（只给标题无正文事实点 ⇒ 不入账；供引流评论选题用） | https://www.toutiao.com/hot-event/hot-board/ |
