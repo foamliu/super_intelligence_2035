@@ -69,8 +69,9 @@ echo "=== DONE 109 ==="
 ## RUN_ID 108 — r5e3 30min 健康报告·【已执行·历史·全绿】
 
 > 用户令：「查看进展」。r5e3 10:54 起跑，agent 10:55 报早期健康全绿。实测 30min 健康报告（.py 落盘率 + sandbox-timeout + -32001，10:2x 令判据）。
+> ⚠️ **已降级为 text（RUN_ID 109 在上方）**。
 
-```bash
+```text
 echo "=== RUN_ID 108 | r5e3 健康报告 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r5e3 进程"
