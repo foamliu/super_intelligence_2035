@@ -1,17 +1,18 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-23 05:1x #733：🩺 decay 5000 步训练健康监控 step 4180/5000（84%）· loss ~1.010 续降 · val@4000=1.0124(PPL 2.752) 确认 · 0 NaN/0 skip 全程 · ETA~2.7h**：
-> - **训练状态**（step 4180/5000 @05:14，ssh .29 8×H100 95-100% ~77GB/GPU，torchrun PID196495 活跃）：
->   - loss 轨迹：1.0087(s4140)→1.0127(s4150)→1.0114(s4160)→1.0163(s4170)→1.0103(s4180) — 平滑波动，总体续降
+> 🔍 **2026-10-23 05:5x #734：🩺 decay 5000 步训练健康监控 step 4340/5000（86.8%）· loss ~1.009 续降 · val@4000=1.0124(PPL 2.752) 确认 · 0 NaN/0 skip · ETA~2.2h**：
+> - **训练状态**（step 4340/5000 @05:46，ssh .29 8×H100 98-100% ~77GB/GPU，torchrun PID196495 活跃）：
+>   - loss 轨迹：1.0103(s4180)→1.0142(4190)→1.0099(4250)→1.0079(4300)→1.0088(4340) — 平滑波动，总体续降
 >   - **val@4000=1.0124(PPL 2.752)** ✅（4 点单调下降：1.1016→1.0622→1.0346→1.0124）；last val@5000（训练终点）
->   - throughput ~371-379 TFLOP/s/GPU, ~11.8s/step（稳态）, 1.35B params
->   - **0 NaN / 0 skipped** 全程（grep 全 0）；grad norm 0.027~0.031；params norm 3122(s4020)→**3103(s4180)**（缓降）
->   - LR 2.923e-4（WSD exponential 衰减中→min-lr 1.042e-4）, decoupled LR 1.754e-3
+>   - throughput ~370-378 TFLOP/s/GPU, ~11.75s/step（稳态）, 1.35B params
+>   - **0 NaN / 0 skipped** 全程（grep 全 0）；grad norm 0.028~0.031；params norm 3103(s4180)→**3086(s4340)**（缓降）
+>   - LR 2.539e-4（WSD exponential 衰减中→min-lr 1.042e-4）, decoupled LR 1.523e-3
 >   - max reserved ~77GB/GPU（MBS=5 + selective recompute, ~4GB headroom 稳定）
 >   - **ckpt iter_0000500~iter_0004000 已保存 ✅**（latest=4000）；next ckpt@4500
->   - ETA: (5000−4180)×11.8s ≈ **2.7h**（预计 10/23 ~07:55 完成）
-> - **下一步**：下次唤醒检查 step 4500+ loss + ckpt@4500 → 训练完成后评测 final ckpt iter_0005000。
-> 📦 体积：TASK=19252B / MEMORY=待测（均≤32KB✓）。
+>   - ETA: (5000−4340)×11.8s ≈ **2.2h**（预计 10/23 ~08:00 完成）
+> - **下一步**：下次唤醒检查 step 4550+ loss + ckpt@4500 → 训练完成后评测 final ckpt iter_0005000。
+> 📦 §#733 流水（2026-10-23 05:1x，decay 5000 步训练健康监控 step 4180/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4180 loss1.010 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #734 监控更新取代。需要时再读。
+> 📦 体积：TASK=19252B / MEMORY=23414B（均≤32KB✓）。
 > 📦 §#732 流水（2026-10-23 05:0x，decay 5000 步训练健康监控 step 4120/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4120 loss1.0258 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #733 监控更新取代。需要时再读。
 > 📦 §#730 流水（2026-10-23 04:1x，decay 5000 步训练健康监控 step 3890/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3890 loss1.0245 val@3000=1.0346 0NaN/0skip，ckpt@3500已存，训练健康。被 #731 监控更新取代。需要时再读。
 > 📦 §#729 流水（2026-10-23 03:5x，decay 5000 步训练健康监控 step 3800/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3800 loss1.027 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3500已存，训练健康。被 #730 监控更新取代。需要时再读。
@@ -96,8 +97,8 @@ WAITING: 1
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
 - STAGE: **🔄 decay 5000 步训练中（A方案 官方 Megatron 1113.sh）** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup。HF→Megatron 转换 ✅、冒烟 ✅、MBS=5 OOM 排障→selective recompute→70.5GB ✅、训练已启动。
-  - PHASE: **decay_5000_训练中** — step 4180/5000 @05:14，loss 1.0103↓，0 NaN/0 skip，ckpt@4000 ✅，val@4000=1.0124(PPL2.752)，ETA ~10/23 07:55。脚本 `train_decay_fp8_1113_5000_mbs5.sh`（.29 `Xmodel-2.5-code/examples/xmodel/`），PID 196495，log `/tmp/baize_decay_5000_mbs5.log`。
-- 轮询状态：**#733（05:1x，decay 5000 步训练健康监控 step 4180/5000）**：训练健康运行中。loss 平滑下降 1.608→1.010，0 NaN/0 skip，ckpt@4000 已存，val@4000=1.0124（4 点单调↓），8×H100 100% util ~77GB/GPU。ETA ~2.7h。loop 存活。📦 体积：TASK=18.8KB/MEMORY=22.9KB（均≤32KB✓）。
+  - PHASE: **decay_5000_训练中** — step 4340/5000 @05:46，loss 1.0088↓，0 NaN/0 skip，ckpt@4000 ✅，val@4000=1.0124(PPL2.752)，ETA ~10/23 08:00。脚本 `train_decay_fp8_1113_5000_mbs5.sh`（.29 `Xmodel-2.5-code/examples/xmodel/`），PID 196495，log `/tmp/baize_decay_5000_mbs5.log`。
+- 轮询状态：**#734（05:5x，decay 5000 步训练健康监控 step 4340/5000）**：训练健康运行中。loss 平滑下降 1.608→1.009，0 NaN/0 skip，ckpt@4000 已存，val@4000=1.0124（4 点单调↓），8×H100 100% util ~77GB/GPU。ETA ~2.2h。loop 存活。📦 体积：TASK=18.8KB/MEMORY=22.9KB（均≤32KB✓）。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
