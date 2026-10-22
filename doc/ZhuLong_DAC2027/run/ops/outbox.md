@@ -13270,3 +13270,87 @@ EDA_RUNCODE_READBACK=none
 /dev/mapper/vgroot-lv_home  394G  372G  5.0G  99% /home
 === DONE 105 ===
 ```
+
+---
+
+## RUN_ID 106 · 2026-10-22 08:44:42 · host=`hfeg0tedaap02` · exit=126
+
+**命令**
+```bash
+echo "=== RUN_ID 106 | r4e regrade + r5e2 进度 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e regrade 产物 + 分数"
+BATCH4=2026_1021_104432
+DIR4=/home/app.e0031982/eda_code_eval/$BATCH4
+echo "  r4e batch: $DIR4"
+echo "  --- r4e codegen jsonl ---"
+timeout 10 ls -la $DIR4/completed_code_generation_$BATCH4.jsonl 2>/dev/null || echo "  无 codegen jsonl"
+echo "  --- r4e graded/score 文件 ---"
+timeout 10 ls -la $DIR4/graded_* $DIR4/*score* $DIR4/regrade_* 2>/dev/null | head -10 || echo "  无 graded/score/regrade"
+echo "  --- r4e 评分汇总（若 graded_results.jsonl 存在）---"
+timeout 10 ls $DIR4/graded_results*.jsonl 2>/dev/null && timeout 15 python3 -c "
+import json,sys
+try:
+  f='$DIR4/graded_results.jsonl'
+  n=0; ok=0
+  with open(f) as fh:
+    for ln in fh:
+      n+=1
+      try:
+        d=json.loads(ln)
+        if d.get('pass') or d.get('score',0)>0: ok+=1
+      except: pass
+  print(f'  graded_results: total={n} pass={ok} rate={100*ok/n:.1f}%' if n else '  graded_results 空')
+except Exception as e:
+  print(f'  读取失败: {e}')
+" 2>/dev/null || echo "  无 graded_results.jsonl"
+
+echo ""
+echo "[2] r5e2 进程"
+if kill -0 4026302 2>/dev/null; then
+  echo "  r5e2 PID 4026302 ALIVE (etime=$(timeout 5 ps -o etimes= -p 4026302 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r5e2 PID 4026302 GONE（已收口）"
+fi
+echo "  --- 当前 worker ---"
+pgrep -af 'cline.*2026_1022_001122' 2>/dev/null | cut -c1-140 | head -10
+
+echo ""
+echo "[3] r5e2 batch 产物"
+BATCH5=2026_1022_001122
+DIR5=/home/app.e0031982/eda_code_eval/$BATCH5
+echo "  r5e2 batch: $DIR5"
+echo "  r5e2 task dirs = $(timeout 10 ls -d $DIR5/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  r5e2 .py 文件 = $(timeout 10 find $DIR5/code -name '*.py' 2>/dev/null | wc -l)"
+echo "  --- r5e2 codegen jsonl（收口标志）---"
+timeout 10 ls -la $DIR5/completed_code_generation_$BATCH5.jsonl 2>/dev/null || echo "  尚未生成（仍在 code-gen）"
+echo "  --- r5e2 task_queue 剩余（真实进度口径）---"
+timeout 10 ls $DIR5/.task_queue* 2>/dev/null && timeout 10 wc -l < $DIR5/.task_queue* 2>/dev/null | head -3 || echo "  无 .task_queue"
+
+echo ""
+echo "[4] r5e2 log 收口特征"
+L=/tmp/ABL_readback_none_retest_r5e2.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  -32001       = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  literal-pass = $(timeout 25 grep -ac '\"completion\":\"pass\"' "$L")"
+  echo "  run_code     = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  pass_summary = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  last 3 lines:"
+  timeout 8 tail -3 "$L" | sed 's/^/    /' | cut -c1-120
+fi
+
+echo ""
+echo "[5] 5/5 锚点轮分数对照"
+echo "  r1/r2/r3: 已知 r1=78.5% r2=70.9% r3=81.5%（provisional）"
+echo "  r4e: 见 [1]"
+echo "  r5e2: 见 [3][4]（未收口则待）"
+
+echo ""
+echo "=== DONE 106 ==="
+```
+
+**输出**
+```
+REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
+```
