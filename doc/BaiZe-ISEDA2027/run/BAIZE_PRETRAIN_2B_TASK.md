@@ -1,6 +1,23 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-22 08:5x（**decay 参考官方 train_decay_fp8_1113.sh + 20B 数据**）· 用户直令 · 最高优先
+
+> 用户原话：「pretrain 的 xmodel decay 参考这个 https://github.com/XiaoduoAILab/Xmodel-2.5/blob/main/examples/xmodel/train_decay_fp8_1113.sh，使用20B数据」
+
+**① 参考脚本（官方 `examples/xmodel/train_decay_fp8_1113.sh`，已核内容，照此落地，勿用自写脚本）**
+- 模型：48L / hidden1536 / 24head / GQA8 / ffn3840 / rope / swiglu / RMSNorm / **use-mup（12.0 / 1.0 / 1.4 / 1.4）**
+- 训练：GBS **960** / MBS 5 / seq **3776** / **optimizer muon**（muon-matched-adamw-rms 0.2）/ lr **1.66667e-3**（decoupled 1e-2）/ min-lr 1.04e-4 / **WSD** exponential / **lr-decay-iters 20000** / warmup 0 / wd 0.1 / clip 1.0 / bf16
+- FP8：`--transformer-impl transformer_engine` / fp8-format hybrid / amax-history 128 / amax-compute-algo max
+- 并行：TP1/PP1 纯 DP8 + `--use-distributed-optimizer` + overlap-grad-reduce/param-gather
+- tokenizer deepseekv3 / vocab 129280
+
+**② 数据量 = 20B**：`--train-iters` 重算 = 20e9 / (960 × 3776) ≈ **5560 步**（覆盖脚本原 550000）；decay 从起点 step_532000 ckpt 加载（HF→Megatron 转换后）。
+
+**③ 前置（顺序）**：① 起点 HF ckpt → Megatron 转换（官方 convert.py + loader）；② DATA_PATH 用 `full_*` 6 源权重（若实测 0 shard 立即定位，报差异）；③ 100 步冒烟确认 loss 接得住 stable 末点 → 再起 20B decay。
+
+**④ 纪律**：不抢 .12；每轮报 step/loss/0error；commit `pretrain decay:`；若此前 A 方案 1120.sh 与 1113.sh 冲突，**以 1113 为准**。⚠️ 写入前先归档旧闭合块，保证 TASK ≤ 32KB。
+
 ### 📄 运维指令 · 2026-10-21 09:3x（**写两份中文 HTML 报告**）· 用户直令 · 最高优先
 
 > 用户原话：「请 pretrain 写两个中文 html 报告：1.昨天完成的 decay 实验结果；2.昨晚开启的短途 decay 实验设置和进展。」
