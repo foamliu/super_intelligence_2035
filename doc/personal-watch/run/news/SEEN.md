@@ -991,3 +991,22 @@
 | 2026-10-22 | AMD HIP-RT 3.2.0 新增 GFX1170 / 1171 / 115E（被指为 Medusa APU 铺路 · 据 Phoronix） | IT之家 | 不收（开源库版本更新） | https://www.ithome.com/1/016/702.htm |
 | 2026-10-22 | （线索 · 无日期摘要）Anthropic News 导航首条 `/news/public-benefit-fund` | anthropic.com | 线索（列表页无日期与摘要 ⇒ 不凭链接入账，下轮读正文再定） | https://www.anthropic.com/news/public-benefit-fund |
 | 2026-10-22 | （候选 · 仅登记）头条热榜 22:0x：31 iPhone Duo 折痕 / 44 地铁看书扣费 / 45 顺风车 / 48 严重网络漏洞 / 49 AI 抬头率 / 50 粮食画纪念（含纪念主题 · 一触即走） | 头条热榜 JSON | 候选（只给标题无正文事实点 ⇒ 不入账；供引流评论选题用） | https://www.toutiao.com/hot-event/hot-board/ |
+| 2026-10-23 | 微软 AI 诊断系统 Diagnostic Orchestrator 登上《科学》：多智能体会诊，NEJM 病例集准确率约 83%（对照全科医生约 36% / 无资料约 22%；底层 GPT-5，作用在编排机制；SDBench 基准） | 今日头条（转 cnBeta） | news（第 130 轮 · §2） | https://www.toutiao.com/article/7699573845077869090/ |
+| 2026-10-23 | Anthropic 把 Agent Skills 标准捐给 Linux 基金会下 Agentic AI Foundation（AAIF）：交出名称/logo、GitHub 组织、agentskills.io 域名；发布约一年 100 万个技能、近 2.8 亿次安装、70+ 平台集成 | Anthropic（官方） | news（第 130 轮 · §3 · **前轮线索补核**，发布日 2026-10-22） | https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation |
+| 2026-10-23 | 英特尔 CTO 普什卡·拉纳德（Dwarkesh 播客）：前沿晶圆产量「不是 10 倍，但可能 2 倍」；ASML 年供 EUV 不足 100 台、设备交付约 18 个月 ⇒ 产能 2028 年前后落地 | IT之家 | news（第 130 轮 · §1） | https://www.ithome.com/1/016/761.htm |
+| 2026-10-23 | 陶哲轩、邓煜 SAIR 播客对谈呼吁数学「慢科研」：AI 能给出证明 ≠ 人类理解了题；繁琐推导可交给 AI，提问/规划/判断仍归研究者；Open Math Model 计划与 Open Math OS | 今日头条（36氪 整理） | news（第 130 轮 · §4 · 发布日 2026-10-21） | https://www.toutiao.com/article/7698917014118597174/ |
+| 2026-10-23 | （未入账 · 正文不可达）Build more responsive apps with the Decisions API | OpenAI RSS | 不收（`openai.com/index/*` curl 403 + CDP 渲染失败 ⇒ 仅标题与一句描述，无可核事实） | https://openai.com/index/decisions-api/ |
+| 2026-10-23 | （未入账 · 源文不可达结案）What FDE means at OpenAI | OpenAI RSS | 不收（第 129 轮已两次不可取，本轮为第三次 ⇒ 按「源文不可达」结案） | https://openai.com/index/forward-deployed-engineering-means |
+| 2026-10-23 | （未入账 · 待补核，**下轮优先**）Uber brings ChatGPT Work to all employees with OpenAI（描述：30,000+ 员工用于研究/分析数据/做演示/复杂工作流） | OpenAI RSS | 不收（有数字但仅一句摘要、无正文，范围与时间口径无法核对 ⇒ 不入账，登记下轮优先补核） | https://openai.com/index/uber-chatgpt-work/ |
+| 2026-10-23 | 黑石总裁乔恩·格雷反驳 AI 泡沫论「需求近乎抛物线式增长」；与 Anthropic 共同成立 AI 咨询公司 Ode（据彭博社） | IT之家 | 不收（高管表态 + 观点论证 · 无新增可核事件 · 留档） | https://www.ithome.com/1/016/752.htm |
+| 2026-10-23 | 比尔·盖茨接受 The Verge 采访：为 AI 带来的「二十年颠覆性变革」做准备 | IT之家 | 不收（人物观点访谈 · 非事件） | https://www.ithome.com/1/016/742.htm |
+| 2026-10-23 | 商务部：将出台加快智能产品在消费领域应用工作方案（国新办「十五五」发布会 · 方案未发布） | IT之家 | 不收（政策表态「将出台」· 无细则与时间 ⇒ **跟踪项**，发布后按事件收） | https://www.ithome.com/1/016/743.htm |
+| 2026-10-23 | 日本兵库县警方逮捕一对外国籍夫妇：酒店客房藏电脑发约 48 万条钓鱼邮件、涉 240 万邮箱 | IT之家（据 TomsHardware） | 不收（司法个案 · 与 AI 无直接关系 · 留档可作犯罪手法素材） | https://www.ithome.com/1/016/735.htm |
+| 2026-10-23 | 前 8 个月我国手术机器人出口 6.72 亿元、同比 +272.92%（海关总署 · 据央视财经） | IT之家 | 不收（产业统计 · 非 AI 事件 · 留档为具身智能产业化背景） | https://www.ithome.com/1/016/738.htm |
+| 2026-10-23 | 极米记得 AI 记忆手环 L1 / 记忆眼镜 G1 上架（全天候录音、自动纪要、原始音频即删 · 价格未公布） | IT之家 | 不收（消费电子上架 · 商品页口径无独立评测 · 留档） | https://www.ithome.com/1/016/753.htm |
+| 2026-10-23 | HarmonyOS 7「超空间存储 + 超空间内存」技术详解（16GB 最多多 3GB 保活 · 跨 App 文件去重） | IT之家 | 不收（厂商技术通稿 · 无第三方实测） | https://www.ithome.com/1/016/755.htm |
+| 2026-10-23 | Linux 7.4 合入 AMD Zen 6 安全缓解调整（BTB 上下文隔离 · 可关闭 SafeRET） | IT之家 | 不收（内核补丁合入 · 工具/代码事件） | https://www.ithome.com/1/016/720.htm |
+| 2026-10-23 | 中国一汽—广汽集团联合工作组成立启动会 | IT之家 | 不收（企业会议通稿） | https://www.ithome.com/1/016/748.htm |
+| 2026-10-23 | MiniMax M3.1 Flash 拿下 Agent 任务第一（AI科技评论实测 · AA 智能指数 43 分 / 上代 M3 29 分 · Automation-Bench 第一） | 今日头条 | analysis（媒体实测 · 模型发布日 10-19 已入账 ⇒ 不重复计入 news · 数据留档） | https://www.toutiao.com/article/7699269235975844386/ |
+| 2026-10-23 | 谁在养活 Anthropic？（钛媒体/脑极体 · 转引路透社收入与云收入占比） | 今日头条 | analysis（专栏分析 · 转引数据未取得原文 ⇒ 不采信、不转写） | https://www.toutiao.com/article/7699364257556075035/ |
+| 2026-10-23 | （标题级线索 · 正文未核）AI 把互联网埋了 14 年的雷挖出来了 | 今日头条 | 线索（疑与已入账 N124-1 PHP2Shell 重叠 ⇒ 不开新条，核后判断） | https://www.toutiao.com/ |
