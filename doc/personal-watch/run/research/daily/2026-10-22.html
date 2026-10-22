@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-22（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-22（晚报收口 · 5/5）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -52,23 +52,24 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-22 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 3 篇（进度 3 / 5）</b> · 早报 3 篇<b>全部「借鉴」</b>（对齐 BaiZe 训练/推理效率 与 ZhuLong agent harness）</div>
+  <h1>论文推荐日报 · 2026-10-22 <span class="badge b-pm">晚报收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>已收口 · 5 篇（进度 5 / 5）</b> · 早报 3 篇<b>全部「借鉴」</b>（对齐 BaiZe 训练/推理效率 与 ZhuLong agent harness）+ 晚报 2 篇<b>全部「科普」</b>（面向《论文两分钟》）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-22（CST 本地日；AM = UTC 2026-10-21T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3/5）</span>
+    <span>📅 日期：2026-10-22（CST 本地日；AM = UTC 2026-10-21T22:0x，PM = UTC 2026-10-22T10:0x）</span>
+    <span>🏷 标识：晚报收口（AM 3/5 + PM 2/5 = 5/5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成时间：2026-10-22 06:0x CST</span>
+    <span>🕒 生成时间：AM 2026-10-22 06:0x CST ／ PM 2026-10-22 18:0x CST</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 18:00 晚报再补 2 篇「科普」收口 5/5。
-  ⚠️ <b>公告批次未刷新</b>：仍为 <code>2026-10-20</code>（<code>totalResults=636364</code>、最新样本 <code>published=2026-10-20T17:59:56Z</code>，与上一轮 PM <b>完全相同</b>）。3 篇取自<b>上一轮 PM 已入账的 189 条候选池</b>，首次提交均为 <b>2026-10-20（UTC）</b>，页面<b>不写成「今日新提交」</b>。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5（已收口）</b> —— 晚报补 2 篇「科普」。
+  ✅ <b>公告批次已刷新</b>：<code>2026-10-20</code> → <b><code>2026-10-21</code></b>（<code>totalResults</code> <code>636364</code> → <code>636926</code>，最新样本 <code>published=2026-10-21T17:59:14Z</code>）；晚报 2 篇<b>直接取自本轮 PM 新批 <code>kept 158</code> 条</b>，首次提交均为 <b>2026-10-21（UTC）</b>。
+  ⚠️ 早报 3 篇成文时批次<b>尚未刷新</b>（当时 <code>totalResults=636364</code>），故其首次提交为 <b>2026-10-20（UTC）</b>，页面<b>保留原文不改</b>，差异见文末〈晚报变更说明〉。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
 <div class="wrap">
 <div class="note">
   <b>入围与标签口径</b>：<span class="badge b-jz">借鉴</span> = 与在研工作相关（<b>BaiZe</b>：从零训练 ~2B / Mamba-2×attention 混合 / 规模律 / 数据配比 / 后训练 SFT·RL / 多模态 / 高效推理；<b>ZhuLong</b>：execution-grounded EDA coding agent / MCP 工具 / generate–execute–refine / code agent harness / 评测基准；含<b>存储/芯片</b>视角）。
-  <span class="badge b-kp">科普</span> = 面向《两分钟论文》科普视频：<b>大众看得懂 + 有传播力</b>（可与我们工作无关）。<b>两口径不混用</b>——早报 3 篇全按「借鉴」选，晚报 2 篇将全按「科普」选，<b>互不占位</b>。
+  <span class="badge b-kp">科普</span> = 面向《两分钟论文》科普视频：<b>大众看得懂 + 有传播力</b>（可与我们工作无关）。<b>两口径不混用</b>——早报 3 篇全按「借鉴」选，晚报 2 篇<b>全按「科普」选</b>（见〈二〉），<b>互不占位</b>。
 </div>
 
 <h2 class="sec">一、早报 3 篇（均「借鉴」）</h2>
@@ -134,6 +135,49 @@
 </div>
 
 
+<h2 class="sec">二、晚报 2 篇（均「科普」· 取自 PM 新批 <code>2026-10-21</code>）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets</h3>
+  <div class="row"><div class="k">英文原题</div><div class="v orig">Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets</div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">拍一张照片就报出「这盘菜多少克」，是图像化饮食记录的核心能力。<b>本文的答案是：换个场景就不准了。</b>作者用 Nutrition5k 的 <b>2,253 个已称重餐盘</b>微调 <b>DINOv2-base</b> 从单张 RGB 图回归质量：<b>域内 MAE 24.8 g</b>，不到零样本 <b>Qwen3-VL-32B</b> 的一半；但换到三个外部数据集（ASA24 studio portions / ECUSTFD whole foods / Food Portion Benchmark 餐盘）<b>并没有赢过 Qwen</b>。对<b>没见过的食物</b>它会按大小排序，但<b>不比「数食物像素」更强</b>；克数尺度错在两处——<b>随照片里场景占比变化</b>，且<b>每种食物的偏移因子不同</b>。用同数据集里的<b>其他食物 / 餐盘</b>训练可把外部误差<b>降 38–65%</b>；更大的 DINOv2-large <b>没有</b>降低外部误差；同一食物加<b>一张有标注照片</b>可把 ASA24 误差降到 <b>28.3 g</b>（好于该照片单用）。在 Nutrition5k 上覆盖 <b>90%</b> 真值的预测区间，在外部照片上<b>至多覆盖一半</b>；且 Nutrition5k 常对同一餐盘多拍，<b>随机切分会与训练集共享近似重复照片、夸大精度</b>。结论：<b>单图质量估计需要来自实际使用场景的标注照片</b>（作者自报）。</div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v"><i>Yongsheng Lian</i>（<b>单一作者</b>；PDF 首页<b>未标注机构</b>，本线未额外核实）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-21</b>（<code>published=2026-10-21T00:59:03Z</code>，以 <code>id_list</code> 复核为准）· <code>comment</code>：<i>19 pages, 6 figures, 13 tables. Code, set lists and model weights: https://github.com/yongshenglian/foodmass-transfer</i>（<b>声明代码 / 权重</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code> · <span class="badge b-kp">科普</span> · 关键词：食物质量估计 / 域偏移 / 外部验证 / 不确定性 / 视觉语言模型 / 饮食评估</div></div>
+  <div class="row"><div class="k">原文链接</div><div class="v"><a href="https://arxiv.org/abs/2610.29025">https://arxiv.org/abs/2610.29025</a></div></div>
+  <div class="reason">
+    <b>推荐理由（按《论文两分钟》「科普」口径：大众看得懂 + 有传播力）</b>
+    <ol>
+      <li><b>选题自带生活钩子</b>：「拍张照算热量」是几乎所有健康 App 的宣传话术，而这篇直接给出<b>反例</b>——同一盘菜换个盘子、换个拍摄距离、换种没见过的食物，克数可以差到没有参考价值。观众有<b>被冒犯的熟悉感</b>，前 10 秒就能立住。</li>
+      <li><b>因果讲得清、可视化成片</b>：克数错法被拆成两条可画出来的机制（<b>场景占比</b> → 尺度漂移；<b>每种食物各自的偏移因子</b> → 系统性偏差），再加上「90% 区间只剩一半覆盖」与「同盘多拍导致随机切分泄漏」，四个点各配一张示意图即可撑满 120 秒。</li>
+      <li><b>有正向出口、不是纯泼冷水</b>：加<b>一张该场景的标注照片</b>就把误差压到 28.3 g；补<b>本地食物 / 餐盘</b>样本降 38–65% —— 结论落到「<b>AI 不是不行，是你得用自己厨房的数据教它</b>」，适合收尾。</li>
+      <li><b>我们判断的适用边界（先读再试）</b>：① <b>单一作者</b>、未见同行评审标识，属<b>独立研究</b>，引用时须标注；② 只测<b>质量（克）</b>，<b>不含热量与营养成分</b>，科普里<b>不能</b>说成「算热量不准」；③ 外部数据集是 ASA24 / ECUSTFD / Food Portion Benchmark 三个，<b>不代表所有场景</b>，更没覆盖中餐混合菜品；④ 对比基线只有一个零样本 VLM（Qwen3-VL-32B），<b>未与其他专用估计器比</b>；⑤ 数字均为<b>作者自报、本线未复现</b>；⑥ <b>未做全文精读</b>（仅读官方摘要 + PDF 首页）。</li>
+    </ol>
+    <b>建议动作</b>：作为《论文两分钟》<b>本期候选 TOP-1</b> 备选（已列为今日<b>科普第一优先</b>），分镜见 <code>research/video/SCENES/10_22.html</code>；若要引用，先读正文第 IV–VI 节的跨数据集表格，确认「38–65%」对应的是哪几个迁移设置。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Plausible but Unimplantable: A Trustworthiness Audit of Shape Completion Foundation Models for Cranial Defect Reconstruction</h3>
+  <div class="row"><div class="k">英文原题</div><div class="v orig">Plausible but Unimplantable: A Trustworthiness Audit of Shape Completion Foundation Models for Cranial Defect Reconstruction</div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">缺了一块颅骨、要补一块<b>严丝合缝</b>的植入物，目前仍靠专家在 CAD 里<b>手工画</b>，慢且贵。作者把这件事看成 <b>shape completion（形状补全）</b>，于是审计了 <b>3 个公开预训练补全模型（其中 2 个是 foundation model）</b>，零样本用在 <b>239 个颅骨缺损</b>上（<b>210 个</b>从公开颅骨数据集人工「挖」出 + <b>29 个真实去骨瓣术后病例</b>）。每个输出都与一个<b>「什么都不做」基线</b>（直接返回患者剩下的骨）比较，并检验预测材料能否<b>在不与现存骨相交</b>的前提下放置。结果：<b>210 个挖出缺损上，3 个模型没有一个超过「什么都不做」</b>；<b>29 个真实病例上只有一个超过随机水平</b>；而且<b>没有任何一个输出是可植入的</b>——没有一个同时做到「避开现存骨」且「比什么都不做放置更多材料」。对照之下，一个<b>为此任务专门训练、并在这些病例上选型</b>的体素模型<b>除 1 例外全部可植入</b>。<b>最像颅骨的那个输出并不比其它更可放置</b>；在这些点密度下<b>植入物厚度无法从输出点云读出</b>——这是<b>输出表示本身</b>的属性，不是某个模型的毛病。结论：这些模型<b>按发布状态不可信、不可用于临床</b>（作者自报）。</div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v"><i>Marek Wodzinski, Kamil Kwarciak, Daria Hemmerling</i> 等（<b>共 4 位署名</b>，含 <i>Mateusz Daniol</i>）· <b>AGH University of Krakow</b>（波兰 克拉科夫）＋ <b>Sano Centre for Computational Medicine</b>（克拉科夫）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-21</b>（<code>published=2026-10-21T16:59:30Z</code>，以 <code>id_list</code> 复核为准）· <code>comment</code>：<i>ACCV 2026 TrustFMI accepted</i>（<b>已被 ACCV 2026 Workshop 接收</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code> · <span class="badge b-kp">科普</span> · 关键词：形状补全 / 基础模型审计 / 医疗可信度 / 零样本 / 可植入性 / 表示局限</div></div>
+  <div class="row"><div class="k">原文链接</div><div class="v"><a href="https://arxiv.org/abs/2610.30035">https://arxiv.org/abs/2610.30035</a></div></div>
+  <div class="reason">
+    <b>推荐理由（按《论文两分钟》「科普」口径：大众看得懂 + 有传播力）</b>
+    <ol>
+      <li><b>标题就是最好的钩子</b>：「看起来像、但装不上去（Plausible but Unimplantable）」——一句话讲清<b>「像」与「能用」之间的鸿沟</b>，比任何抽象宣传都更有冲击力，且天然适用于所有「生成式 AI 进医疗」的讨论。</li>
+      <li><b>评测设计本身就是可讲的方法论</b>：不用 FID / Chamfer 这类「像不像」的指标，而是<b>直接问能不能装</b>——① 是否超过「什么都不做」；② 是否<b>不与现存骨相交</b>。普通人一听就懂「像不像 ≠ 能不能用」，这一条能直接搬去任何 AI 医疗讨论。</li>
+      <li><b>有强对照、结论不含糊</b>：同一个任务，<b>专门训练的体素模型几乎全部可植入</b>，而通用 foundation model 全军覆没 —— 说明<b>问题不在「AI 不行」，而在「通用预训练 + 零样本」不适用于强几何约束的临床任务</b>；并且给出了机理（<b>点云密度不足 ⇒ 厚度不可读</b>），不是只报个分数。</li>
+      <li><b>我们判断的适用边界（先读再试）</b>：① 结论<b>只针对作者能拿到并审计的 3 个模型</b>，<b>不能</b>推广成「所有 shape completion 基础模型都不可用」；② 29 个真实病例样本量小，<b>「只有一个超过随机」的统计功效有限</b>；③ 「可植入」是<b>几何判据</b>（不侵入现存骨 + 材料量），<b>不等于</b>临床可用（未含力学、感染、长期随访）；④ 已投 ACCV 2026 Workshop（<b>workshop 论文</b>），非顶会主刊；⑤ 数字作者自报、本线未复现；⑥ <b>未做全文精读</b>。</li>
+    </ol>
+    <b>建议动作</b>：列为《论文两分钟》<b>备选脚本 No.2</b>（若本期想走「AI 进医疗的边界」主题可直接替换）；如与我们工作结合，价值在于<b>「把可用性判据写进评测」</b>这一范式 —— 任何生成式产出（含代码、布局、PDK 约束下的版图）都该问「能不能直接用」，而不只是「像不像」。
+  </div>
+</div>
+
+
 <h2 class="sec">附录 A · 取数与复核过程（I → VII）</h2>
 <table>
   <thead><tr><th style="width:52px">步骤</th><th style="width:190px">动作</th><th>实测结果</th></tr></thead>
@@ -145,6 +189,20 @@
     <tr><td><b>V</b></td><td><code>id_list</code> 单条权威复核</td><td><code>id_list=2610.28619,2610.28577,2610.28500,2610.28369,2610.28380,2610.28385</code> → <b>6/6 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>（入账 3 篇：<code>2610.28500</code> <code>2026-10-20T16:42:17Z</code> / <code>2610.28385</code> <code>2026-10-20T15:34:02Z</code> / <code>2610.28380</code> <code>2026-10-20T15:32:52Z</code>；备选 <code>2610.28619</code> <code>17:56:32Z</code>、<code>2610.28577</code> <code>17:32:24Z</code>、<code>2610.28369</code> <code>15:29:19Z</code>）。标题、作者、<code>primary_category</code> 一律<b>以此次 XML 为准</b>。证据 <code>raw/2026-10-22-idlist-r105.{xml,headers}</code>。</td></tr>
     <tr><td><b>VI</b></td><td>去重（「一 ID 一次」）</td><td>3 个入账 ID <b>均不在</b>任何 <code>research/daily/*.html</code> 卡片或附录中；在 <code>SEEN.md</code> 中此前<b>各只出现一次</b>（2026-10-21 以「候选」入账）⇒ <b>无重复</b>。本轮 <b>SEEN 行数不变（4,294）</b>，只把 3 行状态由「候选」改为「收录」；<code>papers.jsonl</code> <b>231 → 234</b>。</td></tr>
     <tr><td><b>VII</b></td><td>PDF 落地校验</td><td><code>research/pdf/2026-10-22/</code>：3 个文件均通过 <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 页数 + <code>pdftotext</code> 可解析 —— <code>2610.28500</code> <b>16 页</b> / 14,487,864 B（与其 <code>comment</code>「16 pages」一致）；<code>2610.28385</code> <b>28 页</b> / 4,753,123 B；<code>2610.28380</code> <b>20 页</b> / 5,351,168 B（与其 <code>comment</code>「20 pages, 10 figures」一致）。<code>research/pdf/</code> 已在 <code>.gitignore</code>，<b>不入库</b>，仅在 <code>INDEX.md</code> 记账。</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec">附录 A′ · 晚报（PM）取数与复核过程（I′ → VII′）</h2>
+<table>
+  <thead><tr><th style="width:52px">步骤</th><th style="width:190px">动作</th><th>实测结果</th></tr></thead>
+  <tbody>
+    <tr><td><b>I′</b></td><td>唤醒 / 时点</td><td>本地 <b>2026-10-22 18:00（CST）</b> = <b>UTC 2026-10-22T10:00</b>（周四 08:00 ET）；PM 轮（「晚 2」· 当日收口）。周三 20:00 ET 的 <code>2026-10-21</code> 批此时<b>应已索引</b>。</td></tr>
+    <tr><td><b>II′</b></td><td>R1′ 复验<br><code>--probe</code></td><td>arXiv ✅ <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>；<b>批次已刷新</b>：<code>2026-10-20</code> → <b><code>2026-10-21</code></b>，<code>totalResults</code> <code>636364</code> → <b><code>636926</code></b>（<b>+562</b>），最新样本 <code>published</code> <code>2026-10-20T17:59:56Z</code> → <b><code>2026-10-21T17:59:14Z</code></b>（与 AM 轮「批次未刷新」互为对照）／ HF Daily ❌ <code>[Errno 101] Network is unreachable</code>（<b>如实记 FAIL，未伪造 <code>hf_daily</code></b>）／ RSS cs.CL = <b>221</b>、cs.CV = <b>212</b>、cs.LG = <b>379</b> item（均 <code>HTTP 200</code> + <code>application/rss+xml</code>，<b>仅作发现、不作证据</b>）。证据 <code>raw/2026-10-22-probe-r106.json</code>。</td></tr>
+    <tr><td><b>III′</b></td><td>关键词增量<br><code>--fetch</code>（默认 72h）</td><td><code>window_mode=daily</code>、<code>window_hours=72.0</code>、<code>generated=2026-10-22T10:01:39Z</code>：<b>15/15 查询 <code>ok</code></b>（14 条 <code>attempts=1</code>；<code>sweep-cs-5cats</code> <b><code>attempts=2</code></b>——首次 <code>ConnectTimeout</code>、<code>backoff 20s</code> 后脚本级重试成功，<b>如实记录不隐藏</b>）、<b><code>kept 158</code> / <code>dropped 415</code></b>（15 查询 × 每查询 40 条 = 600 条原始条目，含跨查询重复；去重后唯一 ID <b>555</b> 个）。<code>dropped</code> 归因：<b><code>already in SEEN</code> 365</b> + <b><code>stale &gt; 72h</code> 50</b>。新批距取数约 <b>16h</b>、<b>天然在窗内</b> ⇒ <b>kept 158 全部为首次发现</b>，<b>未放宽窗口</b>。证据 <code>raw/2026-10-22-fetch-r106-seen.json</code>（<code>meta.n_kept=158</code>）。</td></tr>
+    <tr><td><b>IV′</b></td><td>是否放宽窗口</td><td><b>不放宽</b>：批次已刷新且 158 条均为首次发现，<b>无「无新批」情形</b>；按 §0.1（72h）口径执行。</td></tr>
+    <tr><td><b>V′</b></td><td><code>id_list</code> 单条权威复核</td><td><code>id_list=2610.29025,2610.30086,2610.30035,2610.30125,2610.30089</code> → <b>5/5 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>（入账 2 篇：<code>2610.29025</code> <code>2026-10-21T00:59:03Z</code> / <code>2610.30035</code> <code>2026-10-21T16:59:30Z</code>；备选 <code>2610.30086</code>、<code>2610.30125</code>、<code>2610.30089</code> 已复核、本轮<b>不入账</b>）。标题、作者、<code>primary_category</code>、<code>comment</code> 一律<b>以此次 XML 与 PDF 首页为准</b>。证据 <code>raw/2026-10-22-idlist-r106.{xml,headers}</code>。</td></tr>
+    <tr><td><b>VI′</b></td><td>去重（「一 ID 一次」）</td><td>2 个入账 ID <b>均不在</b>任何 <code>research/daily/*.html</code> 卡片或附录中；在 <code>SEEN.md</code> 中此前<b>从未出现</b>（本轮 fetch 首见）⇒ <b>无重复</b>。本轮 <b>SEEN 行数 4,294 → 4,452（+158：收录 2 / 候选 156）</b>；<code>papers.jsonl</code> <b>234 → 236</b>。</td></tr>
+    <tr><td><b>VII′</b></td><td>PDF 落地校验</td><td><code>research/pdf/2026-10-22/</code>：2 个新文件均通过 <b>content-type=<code>application/pdf</code> + 字节数 = <code>content-length</code> + <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 页数 + <code>pdftotext</code> 抽取字符数 &gt; 2,000</b>（脚本 <code>raw/pdf_dl_r106.py</code>，校验失败即删文件、不记成功）—— <code>2610.29025</code> <b>19 页</b> / 709,350 B / 76,329 字符（与其 <code>comment</code>「19 pages」一致）；<code>2610.30035</code> <b>11 页</b> / 921,114 B / 30,601 字符。均 <code>attempt=1</code> 一次成功、<b>无需 Range 续传</b>。并入早报 3 篇后当日 <b>5/5</b>。日志 <code>raw/pdf_dl_r106.log</code>；<code>research/pdf/</code> 已在 <code>.gitignore</code>，<b>不入库</b>。</td></tr>
   </tbody>
 </table>
 
@@ -172,10 +230,35 @@
 </table>
 <p style="font-size:12.5px;color:#59636e;">合计：<b>15/15 <code>ok</code></b>、<code>kept 0</code> / <code>dropped 600</code>；<code>Content-Type</code> 全部为 <code>application/atom+xml; charset=utf-8</code>。<b>200 ≠ 有料</b>：同时校验了 <code>Content-Type</code> 与 <code>published</code>（<code>id_list</code> 复核），未把空结果当「无新增」记录。</p>
 
+<h2 class="sec">附录 B′ · 15 条查询逐条结果（PM 轮 · <code>--fetch</code>，<code>window_mode=daily</code> 72h）</h2>
+<table>
+  <thead><tr><th style="width:34px">#</th><th style="width:110px">领域</th><th style="width:180px">查询名</th><th style="width:86px">HTTP / 条数</th><th style="width:110px"><code>totalResults</code></th><th style="width:110px"><code>kept</code></th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200 / 40</td><td>636,926</td><td><b>40</b></td><td><b><code>attempts=2</code></b>：首次 <code>ConnectTimeout</code> → <code>backoff 20s</code> 重试成功（<b>如实记录</b>）</td></tr>
+    <tr><td>2</td><td>LLM</td><td><code>llm-large-language-model</code></td><td>200 / 40</td><td>39,355</td><td><b>35</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>3</td><td>LLM</td><td><code>llm-long-context</code></td><td>200 / 40</td><td>1,858</td><td><b>1</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>4</td><td>LLM</td><td><code>llm-scaling-law</code></td><td>200 / 40</td><td>1,017</td><td><b>1</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>5</td><td>SLM</td><td><code>slm-small-language-model</code></td><td>200 / 40</td><td>1,107</td><td><b>2</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>6</td><td>SLM</td><td><code>slm-on-device</code></td><td>200 / 40</td><td>11,036</td><td><b>6</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>7</td><td>多模态</td><td><code>mm-vision-language</code></td><td>200 / 40</td><td>17,893</td><td><b>27</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>8</td><td>多模态</td><td><code>mm-multimodal</code></td><td>200 / 40</td><td>16,634</td><td><b>9</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>9</td><td>多模态</td><td><code>mm-csmm</code></td><td>200 / 40</td><td>10,261</td><td><b>5</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>10</td><td>agent harness</td><td><code>agent-harness-title</code></td><td>200 / 40</td><td>147</td><td><b>2</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>11</td><td>agent harness</td><td><code>agent-swe-bench</code></td><td>200 / 40</td><td>404</td><td><b>2</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>12</td><td>agent harness</td><td><code>agent-tool-use</code></td><td>200 / 40</td><td>1,707</td><td><b>3</b></td><td><code>attempts=1</code>（AM 轮曾 FAIL，<b>本轮恢复</b>）</td></tr>
+    <tr><td>13</td><td>agent harness</td><td><code>agent-csma-multiagent</code></td><td>200 / 40</td><td>6,024</td><td><b>6</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>14</td><td>邻域</td><td><code>nb-retrieval-augmented</code></td><td>200 / 40</td><td>3,961</td><td><b>2</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td>15</td><td>邻域</td><td><code>nb-alignment</code></td><td>200 / 40</td><td>22,053</td><td><b>17</b></td><td><code>attempts=1</code></td></tr>
+    <tr><td colspan="5"><b>合计</b>（15/15 <code>ok</code>；600 条原始条目，含跨查询重复）</td><td><b>158</b></td><td>去重后唯一 ID <b>555</b> 个：<code>kept 158</code> / <code>dropped</code> 397（条目计 415，含 18 条跨查询重复）</td></tr>
+  </tbody>
+</table>
+<p class="note"><b>说明</b>：<code>kept</code> 取自脚本 <code>meta.per_query[].kept</code>（<b>非人工估算</b>），15 个数值之和 <b>= 158 = <code>meta.n_kept</code></b>（脚本内已对跨查询重复 ID 去重，同一 ID 只在首次出现处计 <code>kept</code>）。<code>dropped</code> 明细（397 个唯一 ID、条目计 415）见 <code>raw/2026-10-22-fetch-r106-seen.json</code> 的 <code>meta.dropped</code>。<b>注</b>：第 1 行 <code>sweep-cs-5cats</code> 的 40 条<b>全部</b> <code>kept</code>（新批刚入窗），故其 <code>totalResults=636,926</code> 与 AM 轮附录 B 的 <code>636,364</code> 不同 —— 这正是<b>批次已刷新</b>的直接证据。</p>
+
+
 <h2 class="sec">附录 C · 口径护栏（本轮自检）</h2>
 <ol>
-  <li><b>一手来源</b>：3 篇均为 <b>arXiv 一手预印本</b>，均给 <code>arXiv ID</code> + <code>abs</code> 链接 + <code>published</code> + <code>primary_category</code> + 作者，字段齐全（§0.1）。</li>
-  <li><b>时效口径写清</b>：3 篇首次提交均为 <b>2026-10-20（UTC）</b>，距今约 <b>30h</b>（在 72h 内），但<b>不是</b>「10-22 今日新提交」；页面写「公告批次 <code>2026-10-20</code>」，<b>不写「今日新提交」</b>。CST 日期 2026-10-22 仅为<b>本线出报日</b>。</li>
+  <li><b>一手来源</b>：5 篇均为 <b>arXiv 一手预印本</b>，均给 <code>arXiv ID</code> + <code>abs</code> 链接 + <code>published</code> + <code>primary_category</code> + 作者，字段齐全（§0.1）。</li>
+  <li><b>时效口径写清</b>：<b>早报 3 篇</b>首次提交均为 <b>2026-10-20（UTC）</b>（成文时公告批次为 <code>2026-10-20</code>，批次<b>当日未刷新</b>）；<b>晚报 2 篇</b>首次提交均为 <b>2026-10-21（UTC）</b>（成文时批次已刷新为 <code>2026-10-21</code>，距取数约 16h）。两组<b>都不写成「10-22 今日新提交」</b>；CST 日期 2026-10-22 仅为<b>本线出报日</b>。</li>
   <li><b><code>kept 0</code> 归因精确</b>：写成「<b>整批已在上一轮 PM 入账 SEEN</b>」，并与「无数据」「窗口越界」「<code>agent-tool-use</code> FAIL」三种成因分开表述（对照 §9.101 / §9.103）。</li>
   <li><b>摘要不扩写</b>：中文一句话与推荐理由中的每个数字（2.2× / 2.1–2.4× / 2.0× / 3.3× / −47.8% / 1.79× / −43.2% / −28.1% / 50% / 256K / 15%）均<b>直接来自 arXiv 官方 abstract</b>，<b>未虚构</b>机构、对比基线或代码地址。</li>
   <li><b>代码声明按原文</b>：<code>2610.28500</code> <code>comment</code> <b>明写</b> NeurIPS 2026 + GitHub 地址（照抄域名）；<code>2610.28385</code> / <code>2610.28380</code> <code>comment</code> 未声明代码 ⇒ 页面写「<b>未声明代码</b>」，不写「已开源」。</li>
@@ -183,14 +266,38 @@
   <li><b>数字归属</b>：所有加速比 / 质量结论后标「<b>作者自报 · 本线未复现</b>」；「最好」「绝对提升最高 15%」保留原文口径，<b>不当作平均增益</b>。</li>
   <li><b>边界写清</b>：每张卡片第 4 条固定为「我们判断的适用边界」，逐篇点明 QAT ≠ 后训练量化、只压 attention KV ≠ 覆盖 Mamba 支路、非 EDA 基准 ≠ 可直接迁移等<b>不可直接外推</b>之处。</li>
   <li><b>来源可审计</b>：<code>probe</code> / <code>fetch</code> / <code>id_list</code> 三份证据 + PDF 校验日志全部落在 <code>research/raw/</code> 与 <code>research/pdf/2026-10-22/</code>，页面按文件名可逐一回查。</li>
-  <li><b>外链最小化</b>：全页仅 <b>3</b> 条 <code>arxiv.org/abs/&lt;id&gt;</code> 外链，<b>无 CSS/JS/字体/图片外链</b>，离线可读。</li>
-  <li><b>标签不混用</b>：早报 3 篇<b>全部「借鉴」</b>（对齐 BaiZe / ZhuLong 的具体步骤）；晚报 2 篇将<b>全部「科普」</b>，两口径互不占位。</li>
+  <li><b>外链最小化</b>：全页仅 <b>5</b> 条 <code>arxiv.org/abs/&lt;id&gt;</code> 外链（3 早报 + 2 晚报），<b>无 CSS/JS/字体/图片外链</b>，离线可读。</li>
+  <li><b>标签不混用</b>：早报 3 篇<b>全部「借鉴」</b>（对齐 BaiZe / ZhuLong 的具体步骤）；晚报 2 篇<b>全部「科普」</b>（面向《论文两分钟》），两口径互不占位、<b>未用科普篇凑借鉴名额</b>。</li>
+  <li><b>「科普」不等于「不严谨」</b>：晚报 2 篇的每个数字同样标注来源与边界（<code>2610.29025</code> 标明<b>单一作者 / 只测质量不含热量</b>；<code>2610.30035</code> 标明<b>只审 3 个模型 / 29 例真实样本 / 几何判据≠临床可用</b>），并统一加「作者自报 · 本线未复现」。<b>未为传播力牺牲事实边界</b>。</li>
+  <li><b>PM 轮 <code>kept 158</code> 未逐篇入账</b>：158 条中仅 <b>2 条</b>进入日报正文，其余 <b>156 条只记 <code>SEEN.md</code> 状态=「候选」</b>（防重复评估），<b>不计入「收录」</b> —— 与 <code>INDEX.md</code> 计数口径（R4）一致。</li>
+  <li><b>数字核对到原始文件</b>：<code>totalResults</code> / <code>attempts</code> / <code>kept</code> / <code>dropped</code> 全部来自 <code>raw/2026-10-22-fetch-r106-seen.json</code> 的 <code>meta</code> 字段（脚本输出，非人工填写）；PDF 页数 / 字节 / 字符数来自 <code>raw/pdf_dl_r106.log</code>（<code>pdfinfo</code> + <code>pdftotext</code> 实测）。</li>
 </ol>
 
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <b>一句话</b>：<b>AM 轮的 3 篇正文一字未改</b>（保留「当时批次未刷新」的真实状态），PM 轮<b>只做增量</b> —— 补 2 篇「科普」、补 PM 取数附录、并把页头的「进行中」状态改为「已收口」。
+</div>
+<table>
+  <thead><tr><th style="width:34px">#</th><th style="width:150px">变更项</th><th style="width:230px">AM 轮原状</th><th style="width:250px">PM 轮处理后</th><th>原因 / 依据</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>进度</td><td><b>3 / 5</b>（早报，标注「18:00 再补 2 篇」）</td><td><b>5 / 5（已收口）</b></td><td>PM 轮补齐晚报 2 篇</td></tr>
+    <tr><td>2</td><td>页头徽标 / 标题</td><td><span class="badge b-am">早报</span> · <code>&lt;title&gt;</code> 写「早报 · 3/5」</td><td><span class="badge b-pm">晚报收口</span> · <code>&lt;title&gt;</code> 写「晚报收口 · 5/5」</td><td>读者第一眼应看到<b>最终状态</b>，而非过程状态</td></tr>
+    <tr><td>3</td><td>公告批次</td><td><b><code>2026-10-20</code></b>（<code>totalResults=636364</code>、最新 <code>published=2026-10-20T17:59:56Z</code>，<b>未刷新</b>）</td><td><b><code>2026-10-21</code></b>（<code>totalResults=636926</code>、最新 <code>published=2026-10-21T17:59:14Z</code>，<b>已刷新 +562</b>）</td><td>周三 20:00 ET 公告在 PM 时点已被索引（<b>AM 时点确实没有</b>，两轮记录均如实）</td></tr>
+    <tr><td>4</td><td>取数结果</td><td><b><code>kept 0</code> / <code>dropped 600</code></b>（整批已在 r104 PM 入账 <code>SEEN</code>）</td><td><b><code>kept 158</code> / <code>dropped 415</code></b>（<code>already in SEEN</code> 365 + <code>stale</code> 50）</td><td>新批入窗 ⇒ 158 条<b>全部首次发现</b>；<b>未放宽窗口</b></td></tr>
+    <tr><td>5</td><td>新增正文</td><td>无（仅早报 3 篇）</td><td><b>序号 4 / 5</b> 两张「科普」卡（<code>2610.29025</code>、<code>2610.30035</code>）</td><td>晚报 2 篇按「科普」口径选自<b>本轮新批</b>；两口径互不占位</td></tr>
+    <tr><td>6</td><td>新增附录</td><td>附录 A（I→VII）/ B（15 查询）/ C（11 条护栏）</td><td>新增 <b>附录 A′（I′→VII′）</b>、<b>附录 B′（PM 15 查询逐条 + per-query <code>kept</code>）</b>；附录 C 由 <b>11 条扩到 15 条</b></td><td>PM 轮<b>另起一组证据</b>，<b>不覆盖</b> AM 的取数记录（两份 <code>probe</code>/<code>fetch</code> 并存可对照）</td></tr>
+    <tr><td>7</td><td>PDF</td><td>3 篇（16 / 28 / 20 页）</td><td><b>5 篇</b>（另 +19 页 / +11 页），全部通过头尾 + 字节 + 页数 + 可解析校验</td><td>日报附件口径 = 当日 5 篇全带</td></tr>
+    <tr><td>8</td><td>台账</td><td><code>SEEN.md</code> 4,294 行（<b>行数不变</b>，3 行状态翻转）；<code>papers.jsonl</code> 231 → 234</td><td><code>SEEN.md</code> <b>4,294 → 4,452（+158）</b>；<code>papers.jsonl</code> <b>234 → 236</b></td><td>PM 新批 158 条首次入账（收录 2 / 候选 156）</td></tr>
+    <tr><td>9</td><td>未改动的部分</td><td>早报 3 篇的<b>标题、中文一句话、作者、首次提交、分类、链接、推荐理由</b></td><td><b>逐字保留</b></td><td>已发布内容<b>不做事后美化</b>；如需修正应显式记录在此节，而非静默改写</td></tr>
+  </tbody>
+</table>
+<p class="note"><b>为什么早报 3 篇不换成 10-21 的新论文？</b>① 早报是<b>当轮时点的真实产出</b>，事后替换会让「取数记录」与「正文」对不上；② 那 3 篇与我们工作（BaiZe / ZhuLong）的相关性并未因批次刷新而下降；③ 日报的价值在于<b>可追溯</b>，本节即为追溯入口。</p>
+
 <footer>
-  <p><b>research 线 · 论文推荐日报</b> · 2026-10-22 早报（AM · 3/5）· 自包含单文件（内联 CSS、零外链、可离线打开）。</p>
-  <p>生成：本地 2026-10-22 06:0x CST（= UTC 2026-10-21T22:0x）｜取数：arXiv <code>export.arxiv.org/api/query</code>（15 查询 15 <code>ok</code>，<code>kept 0</code>）+ <code>id_list</code> 6/6 复核｜台账：<code>SEEN.md</code> 4,294 行（收录 234 / 候选 3,553 / 候选（RSS补充）507）、<code>papers.jsonl</code> 234 行。</p>
-  <p>⚠️ 推荐 = 待读线索，<b>非结论</b>；标题为英文原题照抄，未改写。数字均为<b>作者自报 · 本线未复现</b>；本页为<b>论文解读</b>，非原文翻译，亦未做全文精读。⏭ 晚报 18:00 补 2 篇「科普」收口 5/5，并从当日 5 篇中挑 TOP-1 出《论文两分钟》分镜脚本。</p>
+  <p><b>research 线 · 论文推荐日报</b> · 2026-10-22 <b>已收口 5/5</b>（早报 3 + 晚报 2）· 自包含单文件（内联 CSS、零外链、可离线打开）。</p>
+  <p>生成：本地 2026-10-22 06:0x CST（AM）= UTC 2026-10-21T22:0x ／ <b>2026-10-22 18:0x CST（PM）= UTC 2026-10-22T10:0x</b>｜取数：arXiv <code>export.arxiv.org/api/query</code>（<b>AM</b> 15 查询 15 <code>ok</code>、<code>kept 0</code>；<b>PM</b> 15 查询 15 <code>ok</code>、<code>kept 158</code>）+ <code>id_list</code> 复核（AM 6/6、PM 5/5）｜台账：<code>SEEN.md</code> <b>4,452</b> 行（收录 <b>236</b> / 候选 <b>3,709</b> / 候选（RSS补充）<b>507</b>）、<code>papers.jsonl</code> <b>236</b> 行。</p>
+  <p>⚠️ 推荐 = 待读线索，<b>非结论</b>；标题为英文原题照抄，未改写。数字均为<b>作者自报 · 本线未复现</b>；本页为<b>论文解读</b>，非原文翻译，亦未做全文精读。</p>
+  <p>📄 当日 PDF <b>5/5</b> 已验证（<b>16 / 28 / 20 / 19 / 11</b> 页；<code>research/pdf/2026-10-22/</code>，已 <code>.gitignore</code>、不入库）。🎬 今日 TOP-1（科普口径）= <code>2610.29025</code>（单图食物质量估计不跨数据集迁移），《论文两分钟》分镜见 <code>research/video/SCENES/10_22.html</code>。</p>
 </footer>
 </div>
 </body>

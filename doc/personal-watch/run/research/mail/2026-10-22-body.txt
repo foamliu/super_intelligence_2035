@@ -1,0 +1,50 @@
+paul 您好，
+
+今日（2026-10-22）arXiv 筛选中精选 5 篇，当日收口 5/5。5 个 PDF 合计 26,222,619 B ≈ 25.01 MB，超单封 20 MB 上限 ⇒ 按规格分包为 2 封：本封 1/2 附前 2 篇（19.24 MB），另一封 2/2 附后 3 篇（6.98 MB）。
+
+一、本轮取数说明（如实）
+- 本日两轮：早报（AM，本地 06:00）= 3 篇「借鉴」；晚报（PM，本地 18:00）= 2 篇「科普」。AM 时 arXiv 批次尚未刷新（仍为 2026-10-20，totalResults 636364，与上一轮 PM 完全相同）⇒ 15/15 查询 ok、kept 0 / dropped 600，按先例取上一轮已入账候选池，页面显式标注「非当日新提交」。
+- PM 轮批次已刷新：2026-10-20 → 2026-10-21（totalResults 636364 → 636926，+562；最新样本 published=2026-10-21T17:59:14Z）。PM `--fetch --seen`（window_mode=daily，72h）→ 15/15 查询 ok，kept 158 / dropped 415（剔除 = 已在 SEEN 365 + 超 72h 50）；158 条全部首次发现，未放宽窗口。
+- 副源 HF Daily Papers 本机不可达（Network is unreachable，Errno 101），如实登记 FAIL；RSS cs.CL / cs.CV / cs.LG 仅作发现、不作证据。
+- 5 篇均已用 arXiv API id_list 逐条复核（HTTP 200 + application/atom+xml + published 有效）：AM 3 见 raw/2026-10-22-idlist-r105.xml，PM 2 见 raw/2026-10-22-idlist-r106.xml。
+- 原文标题照抄未改写；文中数字均为「论文作者自报」，我们未复现；机构一律「以原文 PDF 为准，本线未核」。
+- ⚠️ 本日 5 篇的首次提交均为 2026-10-20 / 10-21（UTC），页面写「公告批次 2026-10-20 / 2026-10-21」，不写「10-22 今日新提交」。
+
+二、精选清单（3 篇「借鉴」+ 2 篇「科普 / 选题参考」）
+
+【借鉴｜与 BaiZe / ZhuLong 强相关】
+
+1. BitMTP: When Multi-Token Prediction Meets Low-Bit Large Language Models
+   arXiv:2610.28500 ｜ 附件：是（16 页 / 14,487,864 B）
+   为何值得读：低比特主干与多 token 预测（MTP）本应互补，但直接拼接在同等质量下并不加速（masked drafting 缺少中间 token 输入；更宽计算与因果 KV 更新吃掉步数收益）。作者做算法–系统协同设计：联合 NTP + MTP 目标让单模型兼具自回归生成与 block-causal drafting；给 confidence-only / speculative-only / hybrid 三种解码工作点；用 accepted-prefix alignment 保持「已提交前缀 / 因果 KV 边界 / CUDA Graph 重放状态」一致；再选宽度特化的低比特执行并复用已捕获的图。NVIDIA H20 上 hybrid 解码：BitNet b1.58-2B 五任务平均 2.2×、1.7B–4B Bonsai 2.1–2.4×；RTX 3090 / Jetson Orin 五任务平均吞吐最高 2.0×、MBPP+ 最高 3.3×。对口 BaiZe 的 ~2B / 高效推理 / 端侧路线。⚠️ 需超低比特主干（QAT 路线，非后贴即可）；加速比为五任务平均、作者自报，未给逐任务与困惑度；硬件仅 H20 / 3090 / Orin；未复现。
+
+2. RACE: RoPE-Aligned Attention Compression Based on Query-Key Activation Energies
+   arXiv:2610.28385 ｜ 附件：是（28 页 / 4,753,123 B）
+   为何值得读：KV cache 的 head-dimension 压缩常需推理时重建全维表示，反而增加 decode FLOPs。作者先形式化「转成原生降维」的三个条件，再证明：若免重建而把降维限制为坐标选择，则 RoPE 兼容 ⇔ 保留完整 rotary pair；据此用 Q–K 联合激活能量挑 rotary pair，降维折进权重、无需运行时重建与专用 kernel。50% KV 保留 + 256K 上下文：总推理 FLOPs −47.8%、吞吐 1.79×、TTFT −43.2%、分配显存 −28.1%。对口 BaiZe 长上下文 KV 显存与首 token 时延。⚠️ 只压 attention 层 KV，Mamba-2 状态支路不在覆盖范围；摘要只给 50% 一个工作点；依赖校准集；comment 未声明代码；数字作者自报，未复现。
+
+3. Object-Oriented Harness: Evolving Agent Harnesses through Object-Oriented Design
+   arXiv:2610.28380 ｜ 附件：是（20 页 / 5,351,168 B）
+   为何值得读：把 harness 从「一份 prompt + 一套工具」升级为「可继承的类族 + 路由器」——训练时 evolution agent 依据执行记录派生专用 harness（基类 / 子类继承），测试时 harness router 用训练期积累的路由经验为每个任务挑一个具体 harness。三个 long-horizon 基准（业务流程 / 工作区任务 / 工具使用）上对比方法中最好，相对 base 绝对提升最高 15%，并给了核心组件消融。对 ZhuLong 的 EDA 异构任务与 generate–execute–refine 同构（执行日志即进化信号）。⚠️「最高 15%」不能当平均增益引用；基准不含 EDA；进化成本与所需执行记录规模未给；未声明代码；未复现。
+
+【科普｜选题 / 跨域参考】
+
+4. Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets（本日 TOP-1 · 已出《论文两分钟》分镜脚本）
+   arXiv:2610.29025 ｜ 附件：是（19 页 / 709,350 B）
+   为何值得读：「拍张照就知道这盘菜多少克」是几乎所有健康 App 的话术，这篇给出反例。用 Nutrition5k 的 2,253 个已称重餐盘微调 DINOv2-base 从单张 RGB 回归质量：域内 MAE 24.8 g，不到零样本 Qwen3-VL-32B 的一半；但换到三个外部数据集（ASA24 studio portions / ECUSTFD whole foods / Food Portion Benchmark 餐盘）并没有赢过 Qwen。没见过的食物只按大小排序、不比「数食物像素」更强；克数尺度错在两处——随场景占比变化 + 每种食物各自偏移因子不同；用同数据集其他食物 / 餐盘训练可把外部误差降 38–65%；DINOv2-large 没降低外部误差；同一食物加一张标注照片把 ASA24 误差降到 28.3 g。Nutrition5k 上覆盖 90% 真值的区间，在外部照片上至多覆盖一半；且该数据集常对同一餐盘多拍，随机切分会与训练集共享近似重复照片、夸大精度。⚠️ 单一作者、PDF 首页未标注机构、未见评审标识；只测质量（克），不含热量与营养成分；三个外部集不含中餐混合菜品；对比基线只有一个零样本 VLM；数字作者自报，未复现。
+
+5. Plausible but Unimplantable: A Trustworthiness Audit of Shape Completion Foundation Models for Cranial Defect Reconstruction
+   arXiv:2610.30035 ｜ 附件：是（11 页 / 921,114 B）
+   为何值得读：缺一块颅骨要补一块严丝合缝的植入物，目前仍靠专家在 CAD 里手工画。作者把它当 shape completion，零样本审计 3 个公开预训练补全模型（2 个是 foundation model）在 239 个颅骨缺损上（210 个人工挖出 + 29 个真实术后病例），每个输出都与「什么都不做」基线比较，并检验能否在不与现存骨相交的前提下放置。结果：210 个挖出缺损上 3 个模型没有一个超过「什么都不做」；29 个真实病例上只有一个超过随机；没有任何一个输出可植入；而为此任务专门训练并选型的体素模型除 1 例外全部可植入。最像颅骨的输出并不更可放置，且这些点密度下厚度无法从点云读出（表示本身的属性）。⚠️ 只针对被审计的 3 个模型；29 例样本量小；「可植入」是几何判据，不含力学 / 感染 / 随访；ACCV 2026 Workshop 论文；数字作者自报，未复现。
+
+三、附件（分包）
+- 本封 1/2：2610.28500（16 页 / 14,487,864 B）+ 2610.28385（28 页 / 4,753,123 B）= 19,240,987 B ≈ 18.35 MB（≤ 20 MB）。
+- 另一封 2/2：2610.28380（20 页 / 5,351,168 B）+ 2610.29025（19 页 / 709,350 B）+ 2610.30035（11 页 / 921,114 B）= 6,981,632 B ≈ 6.66 MB。
+- 5 篇合计 26,222,619 B ≈ 25.01 MB ⇒ 按 `WATCH_RESEARCH_TASK.md` 运维指令 ④「超 20MB ⇒ 分包（标 1/2…）」执行。
+- 下载校验：逐文件 `%PDF-` 头 + `%%EOF` 尾 + `pdfinfo` 页数 + `pdftotext` 正文可解析 + 字节数与服务端一致；本轮 5 篇均 attempt=1 一次通过，无截断、无需续传。PDF 落地 research/pdf/2026-10-22/（按仓库口径不入 git）。
+
+四、线上位置
+- 日报网页：research/daily/2026-10-22.html（晚报 · 5/5 收口）
+- 分镜脚本：research/video/SCENES/10_22.html（TOP-1 单图食物质量估计，5 镜 / 120s / 口播 419 字）
+- 索引：research/daily/index.html、research/video/SCENES/index.html、research/INDEX.md；台账 research/SEEN.md（收录 236 / SEEN 4,452）
+
+—— 研究线（research）自动日报

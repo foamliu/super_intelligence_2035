@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-22</td>
+    <td><i>Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets</i><br><code>arXiv:2610.29025</code>（Yongsheng Lian，单一作者）</td>
+    <td>拍张照算这盘菜多少克，<b>一换盘子、一拉远就翻倍</b>：用 Nutrition5k 的 <b>2,253 个已称重餐盘</b>微调 DINOv2-base，域内误差 <b>24.8 g</b>（不到零样本 Qwen3-VL-32B 一半），但三个外部数据集<b>全输</b>；克数尺度错在 <b>「占画面多大」随场景漂</b> + <b>每种食物各偏一个系数</b>；补本地样本降 <b>38–65%</b>、加一张同场景标注照片降到 <b>28.3 g</b>；号称覆盖 <b>90%</b> 的区间到外部<b>至多一半</b>。结论：<b>得用你自己厨房的照片教它</b></td>
+    <td><a href="10_22.html">10_22.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-21</td>
     <td><i>Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</i><br><code>arXiv:2610.27999</code>（Jihai Zhang 等 18 位）</td>
     <td>让 AI <b>真的做出「能玩」的游戏世界</b>：不指望视频模型「顺手」记住规则，而是<b>拆开</b>——<b>规则交给轻量游戏引擎</b>（持久的<b>世界状态</b> + 可执行的<b>游戏规则</b>），<b>画面交给视频模型</b>（引擎先渲染粗糙<b>低模代理</b>，模型再把它画细）；中间放一个<b>多模态编程 agent</b>，玩家把想法说给它，它写成<b>游戏代码与场景描述</b>；渲染器用<b>成对的低模 / 高保真视频</b>训练，再<b>蒸馏</b>成每次只出 <b>4 帧、1–2 步去噪</b>的<b>因果生成器</b>。作者称单张 <b>RTX5090</b> 上 <b>480p / 60 FPS</b>、按键到画面 <b>112ms</b>、单步生成稳态 <b>83 FPS</b>、峰值显存 <b>18.2 GiB</b>，<b>5080 / 5070Ti 分别为 67 / 58 FPS</b>，并开源代码、权重与低模素材（<b>作者自报 · 本线未复现</b>；<b>仅演示射击与驾驶两类，非任意开放世界</b>）</td>
@@ -109,7 +115,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-20 18:1x CST（新增 <code>10_20.html</code> · TOP-1 = Game of Phones）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-22 18:1x CST（新增 <code>10_22.html</code> · TOP-1 = Single-Image Food Mass Estimators / <code>arXiv:2610.29025</code>）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>
