@@ -13458,3 +13458,107 @@ echo "=== DONE 106b ==="
 
 === DONE 106b ===
 ```
+
+---
+
+## RUN_ID 108 · 2026-10-22 11:04:22 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 108 | r5e3 健康报告 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r5e3 进程"
+if kill -0 1760194 2>/dev/null; then
+  echo "  r5e3 PID 1760194 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1760194 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r5e3 PID 1760194 GONE"
+fi
+echo "  --- 当前 worker ---"
+pgrep -af 'cline.*2026_1022_105416' 2>/dev/null | cut -c1-140 | head -8
+
+echo ""
+echo "[2] r5e3 进度（.py 落盘率 = 10:2x 令判据）"
+BATCH=2026_1022_105416
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+echo "  batch: $DIR"
+echo "  task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+PY=$(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)
+TD=$(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l)
+if [ "$TD" -gt 0 ]; then
+  echo "  .py 落盘率 = $(echo "scale=1; $PY*100/$TD" | bc 2>/dev/null || echo 'N/A')% (r4e 对照=98.7%·r5e2 退化=13.3%)"
+fi
+echo "  --- task_queue 剩余 ---"
+timeout 10 wc -l < $DIR/.task_queue 2>/dev/null || echo "  无 .task_queue"
+
+echo ""
+echo "[3] r5e3 log 健康计数"
+L=/tmp/ABL_readback_none_retest_r5e3.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  -32001            = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  sandbox-timeout   = $(timeout 25 grep -ac 'operation timed out' "$L")"
+  echo "  run_code calls    = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  pass_summary      = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+fi
+
+echo ""
+echo "[4] 4 端口可达性"
+for P in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 60)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if echo "$R" | grep -q successful; then echo "  $P OK ${MS}ms"; else echo "  $P ? ${MS}ms :: $R"; fi
+done
+
+echo ""
+echo "[5] 磁盘 /home"
+df -h /home 2>/dev/null | tail -1 | sed 's/^/  /'
+
+echo ""
+echo "=== DONE 108 ==="
+```
+
+**输出**
+```
+=== RUN_ID 108 | r5e3 健康报告 | 2026-10-22 11:04:22 | host=hfeg0tedaap02 ===
+[1] r5e3 进程
+  r5e3 PID 1760194 ALIVE (etime=606s)
+  --- 当前 worker ---
+1764089 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-002/ws --data-dir /home/app.e0031982/
+1764092 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-002/ws --data-dir /home/app.e0031982/eda_code_eval
+1764093 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-001/ws --data-dir /home/app.e0031982/
+1764094 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-003/ws --data-dir /home/app.e0031982/
+1764096 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-001/ws --data-dir /home/app.e0031982/eda_code_eval
+1764097 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-003/ws --data-dir /home/app.e0031982/eda_code_eval
+1764106 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-004/ws --data-dir /home/app.e0031982/
+1764107 cline -c /home/app.e0031982/eda_code_eval/2026_1022_105416/code/EDA-Eval-PyAether-004/ws --data-dir /home/app.e0031982/eda_code_eval
+
+[2] r5e3 进度（.py 落盘率 = 10:2x 令判据）
+  batch: /home/app.e0031982/eda_code_eval/2026_1022_105416
+  task dirs = 4 / 158
+  .py 文件 = 0
+  .py 落盘率 = 0% (r4e 对照=98.7%·r5e2 退化=13.3%)
+  --- task_queue 剩余 ---
+154
+
+[3] r5e3 log 健康计数
+  log_size=132K  lines=1190  mtime=2026-10-22 11:04:22
+  -32001            = 0
+  sandbox-timeout   = 0
+  run_code calls    = 15
+  pass_summary      = 0
+
+[4] 4 端口可达性
+  8650 OK 14ms
+  8651 OK 14ms
+  8652 OK 2998ms
+  8654 OK 13ms
+
+[5] 磁盘 /home
+  /dev/mapper/vgroot-lv_home  394G  374G  3.9G  99% /home
+
+=== DONE 108 ===
+```

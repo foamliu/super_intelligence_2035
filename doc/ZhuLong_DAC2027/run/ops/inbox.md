@@ -1,7 +1,68 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 107 -->
+<!-- RUN_ID: 108 -->
 
-## RUN_ID 107 — r4e regrade 分数 + r5e2 收口进度实测 v2（只读·用户问进展·RUN_ID 106 被 relay 拒绝）
+## RUN_ID 108 — r5e3 30min 健康报告（只读·用户问进展）
+
+> 用户令：「查看进展」。r5e3 10:54 起跑，agent 10:55 报早期健康全绿。实测 30min 健康报告（.py 落盘率 + sandbox-timeout + -32001，10:2x 令判据）。
+
+```bash
+echo "=== RUN_ID 108 | r5e3 健康报告 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r5e3 进程"
+if kill -0 1760194 2>/dev/null; then
+  echo "  r5e3 PID 1760194 ALIVE (etime=$(timeout 5 ps -o etimes= -p 1760194 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r5e3 PID 1760194 GONE"
+fi
+echo "  --- 当前 worker ---"
+pgrep -af 'cline.*2026_1022_105416' 2>/dev/null | cut -c1-140 | head -8
+
+echo ""
+echo "[2] r5e3 进度（.py 落盘率 = 10:2x 令判据）"
+BATCH=2026_1022_105416
+DIR=/home/app.e0031982/eda_code_eval/$BATCH
+echo "  batch: $DIR"
+echo "  task dirs = $(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  .py 文件 = $(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)"
+PY=$(timeout 10 find $DIR/code -name '*.py' 2>/dev/null | wc -l)
+TD=$(timeout 10 ls -d $DIR/code/*/ 2>/dev/null | wc -l)
+if [ "$TD" -gt 0 ]; then
+  echo "  .py 落盘率 = $(echo "scale=1; $PY*100/$TD" | bc 2>/dev/null || echo 'N/A')% (r4e 对照=98.7%·r5e2 退化=13.3%)"
+fi
+echo "  --- task_queue 剩余 ---"
+timeout 10 wc -l < $DIR/.task_queue 2>/dev/null || echo "  无 .task_queue"
+
+echo ""
+echo "[3] r5e3 log 健康计数"
+L=/tmp/ABL_readback_none_retest_r5e3.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  -32001            = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  sandbox-timeout   = $(timeout 25 grep -ac 'operation timed out' "$L")"
+  echo "  run_code calls    = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  pass_summary      = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+fi
+
+echo ""
+echo "[4] 4 端口可达性"
+for P in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 8 curl -s -m 7 -X POST "http://10.129.32.75:$P/v1/run_code" \
+      -H 'Content-Type: application/json' \
+      -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null | head -c 60)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if echo "$R" | grep -q successful; then echo "  $P OK ${MS}ms"; else echo "  $P ? ${MS}ms :: $R"; fi
+done
+
+echo ""
+echo "[5] 磁盘 /home"
+df -h /home 2>/dev/null | tail -1 | sed 's/^/  /'
+
+echo ""
+echo "=== DONE 108 ==="
+```
+
+## RUN_ID 107 — r4e regrade 分数 + r5e2 收口进度实测 v2·【已执行·历史】
 
 > 用户令：「查看进展」。r5e2 已跑 7h54m，agent 报"极末段收口在即"。实测 r4e regrade 分数（5/5 的第 4 轮）+ r5e2 当前真实进度。
 
