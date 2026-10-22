@@ -1,7 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
 WAITING: 1
-<!-- heartbeat 2026-10-22 22:28 🟢 r5e3 T+11h34m 巡检·健康全绿(与r4e一致)·117 task_dirs/114 .py(落盘率97.4%·达判据≥80%)·-32001=0/sandbox-timeout=0·41/158剩余(117/158出队·74.1%)·codegen jsonl 未生成(仍在 code-gen)·PID 1760194活(etime 11:33:48·STAT=Ss·-p4 -n)·log 16MB/143615行(22:28刚写)·loop https_proxy✅·/home 27G·4端口8650/8651/8652/8654全OPEN·判据通过→-p4口径健康·ETA~7.5h(~06:00次日·41tasks·5.5tasks/h·速率回落)·pgrep有输出→什么都不做·等收口·上条 21:55 -->
+<!-- heartbeat 2026-10-22 23:02 🟢 r5e3 T+12h08m 巡检·健康全绿(与r4e一致)·121 code_dirs/116 .py(落盘率95.9%·达判据≥80%)·-32001=0/sandbox-timeout=0·37/158剩余(121/158出队·76.6%)·codegen jsonl 未生成(仍在 code-gen)·PID 1760194活(etime 12:07:06·STAT=Ss·-p4 -n)·log 16.4MB/152315行(23:01刚写)·loop https_proxy✅·/home 27G·4端口8650/8651/8652/8654全OPEN(10.129.32.75)·8090=PID 2913754(原1504991已重启·健康)·判据通过→-p4口径健康·ETA~5h(~04:00次日·37tasks·7.3tasks/h)·pgrep有输出→什么都不做·等收口·上条 22:28 -->
+- [2026-10-22 23:02] 🟢 r5e3 T+12h08m 巡检·健康全绿·什么都不做退出：PID 1760194活(etime 12:07:06·-p4 -n)·121 code_dirs/116 .py(落盘率95.9%≥80%)·-32001=0/sandbox-timeout=0·37/158剩余(76.6%)·4端口全OPEN·/home 27G·loop https_proxy✅·8090=PID2913754·ETA~5h(~04:00)·pgrep有输出→等收口
 - [2026-10-22 00:43–03:51 指针·5 条已滚出] 🟢 r5e2 T+31min~3h40m 巡检·健康全绿·什么都不做退出（进度 17→98/158·-32001=0/literal-pass=0/4端口 OPEN/8 worker 活·ETA 逐次修正 ~06:00）→ 原文已搬入 daily-memories/2026-10-22.md §[03:51 归档]。
 - [2026-10-21 23:32 指针·已滚出] 🟢 r5e T+5h59m 巡检·健康全绿·什么都不做退出（log 12.88MB/118743行·74 .py(47%)·4 端口全 OPEN·loop 代理 ✅·/home 5.0G）→ 原文搬入 daily-memories/2026-10-21.md §[归档·23:32]。
 - [2026-10-22 00:08 指针·被 RUN_ID 105 取代] 🟢 r5e T+6h34m 巡检·健康全绿·**进度修正=.task_queue 81% 出队(剩30/158)·ETA ~1.5h**（.py 47% 口径误导·find 嵌套=77）→ 但 00:11 用户直令 RUN_ID 105 判「6h仅47%不值」kill 重起 → 本条结论被取代·原文搬入 daily-memories/2026-10-22.md §[00:08]。
