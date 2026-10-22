@@ -1,6 +1,20 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 📦 §#709 流水（2026-10-22 06:5x，L2 健康监控 step 1820）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1820 loss0.96 0error。需要时再读。
+> 🆕 **2026-10-22 13:3x #716：✅ 1113 decay 冒烟测试通过 → 全量 20B 脚本就绪待启**：
+> - **HF→Megatron 转换** ✅：`hf_to_megatron_mup.py` 已修（vocab pad 129408 匹配数据 tokenizer、去 output_layer.weight、加 final_layernorm._extra_state、TE TransformerConfig 去 unsupported kwargs）。ckpt `out/hf_converted_532000/` 3.10GB，531 keys，embedding [129408,1536]。
+> - **冒烟测试** ✅ 9/100 步通过（13:31 起，.29 8×GPU，PID 见 `/tmp/baize_1113_smoke.log`）：
+>   - loss: 1.47→1.54→1.40→1.33→1.28→1.27→1.25→1.25→1.22（稳步降，接住 stable 末点 ~1.35）
+>   - throughput: ~250 TFLOP/s/GPU（稳态），MBS=2/GBS=960/seq3776/FP8 hybrid/muon
+>   - memory: 42GB/GPU peak reserved（MBS=2；MBS=5 OOM 81GB→改 MBS=2）
+>   - 0 NaN / 0 skipped iterations，grad norm 0.13~0.20 稳定
+>   - **vocab 关键发现**：数据 tokenizer 有 129281 tokens（EOD=129280），但模型 tokenizer 只有 128815（padded 128896）→ **必须 `--make-vocab-size-divisible-by 129408` + embedding pad 到 129408**，否则 CUDA assert。
+>   - **pybind11 修复**：`make` 用系统 python3 找不到 pybind11 → 脚本加 `export PATH=/nas_train/app.e0031982/miniforge3/envs/py310/bin:$PATH`。
+> - **全量 20B 脚本** ✅ 就绪：`train_decay_fp8_1113_20B.sh`（train-iters=5560, lr-decay-iters=5560, lr-wsd-decay-iters=5560, MBS=2, save-interval=500, log-interval=10, --finetune, --load out/hf_converted_532000, --save out/decay_20B_fp8）。ETA ~26h（5560×17s/iter）。
+> - **下一步**：等冒烟 100 步完成 → 启动全量 `train_decay_fp8_1113_20B.sh` → 监控 loss 稳定性。
+> 📦 体积：TASK=17.1KB / MEMORY=待测（均≤32KB✓）。
+
+> 📦 §#715 流水（2026-10-22 09:1x，#715 A方案前置调查）详见上方 🆕 #716 更新；**结论**：repo+ckpt+数据+转换全部定位完成。需要时再读。
+
 
 > 📦 §#710 流水（2026-10-22 06:57，L2 健康监控 step 1830）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1830 loss0.92 0error，短途报告/EXPERIMENTS 同步。需要时再读。
 > 📦 §#711 流水（2026-10-22 07:30，L2 健康监控 step 2000）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2000 loss0.9652 0error，短途报告/EXPERIMENTS 同步至 step2000。需要时再读。
