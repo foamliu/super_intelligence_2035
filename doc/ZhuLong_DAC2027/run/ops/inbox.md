@@ -65,8 +65,9 @@ echo "=== DONE 108 ==="
 ## RUN_ID 107 — r4e regrade 分数 + r5e2 收口进度实测 v2·【已执行·历史】
 
 > 用户令：「查看进展」。r5e2 已跑 7h54m，agent 报"极末段收口在即"。实测 r4e regrade 分数（5/5 的第 4 轮）+ r5e2 当前真实进度。
+> ⚠️ **已降级为 text（RUN_ID 108 在上方）**。
 
-```bash
+```text
 echo "=== RUN_ID 106b | r4e regrade + r5e2 进度 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r4e regrade 产物 + 分数"
