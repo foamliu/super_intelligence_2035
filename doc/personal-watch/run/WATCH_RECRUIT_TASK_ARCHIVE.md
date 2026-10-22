@@ -384,3 +384,68 @@
 
 **② 交付**：`MEMORY_RECRUIT.md` 心跳 + `daily-memories-recruit/2026-10-18.md` + commit `recruit:`；登录恢复后先补记「R26 登录恢复」一行。
 
+---
+
+## 归档块 N · 2026-10-17 R25 令（应届=校招 / ≥1 年经验）· 原文（2026-10-22 由 agent 搬出，**已被 2026-10-22「放开所有筛选规则」令作废**）
+
+### 🆕 运维指令 · 2026-10-17（R25 · 最高优先）· **应届=校招 ⇒ 全职不推；≥1 年经验**
+
+> 用户令（原文）：「recruit：应届就是校招，不要校招，因为要明年才入职。至少1年工作经验。」
+
+**① 判据变更（立即生效，覆盖 R24 的「博士应届边界报备」）**
+- **应届生（含博士应届 / 硕士应届 / 26–27 届在校）= 校招 ⇒ 全职岗一律「不推进」**；不再有「博士应届按边界项报备」的例外。
+- **全职硬门槛新增：≥1 年正式工作经验**（≥12 个月，按简历/卡片时间轴核；**实习/兼职不计**）。
+- 经验区间仍 **1–5 年**（>5 年 `overqualified` 不变）⇒ 全职岗 = **1–5 年社招**。
+- 其余不变：亮点门槛（学校或工作 ≥1 项 + 证据）、能力证据（LLM/MLLM/Agent ≥1 项）、**只推 A/B**、06:00 全职窗口 3–5 封、**18:00 不发全职推荐**。
+
+**② 立即执行（本轮唤醒）**
+1. R24 的「边界 9 人 / 在校 17 人」按新令重判：**博士应届（0 年）与在校生 → 全部 `not-eligible`（校招）**，写入短名单 **§十二 R25**。
+2. 已发 5 封（R23）**不撤回、不补解释**；台账照旧标 `overqualified`。
+3. 权威口径已同步 `recruit/hr/JD-AI-EDA-研究员-DRAM.md`（**以 JD 为准**）。
+4. 06:00 全职窗口只在「1–5 年 + 非应届 + 证据齐」的 A/B 里选；0 达标须写明原因，🚫 静默跳过。
+
+**③ 边界**：本令**只约束全职（助理研究员）岗**；**实习岗不受影响**（18:00 实习专场照常 —— 实习就是在校生通道）。明年才毕业/入职者 = 校招 ⇒ 不推（可入「校招储备」，2027 校招再触达）。
+
+> 📦 R24 原文/清单 → 「归档块 L」；结果见 `MEMORY_RECRUIT.md` 第 24 轮 / 短名单 §十一。
+
+---
+
+## 归档块 O · §0.2 长期记忆摘要 + §0.3 能力摘要（2026-10-22 按体积规程搬出；**权威原文 = `recruit/hr/MEMORY.md` / `recruit/hr/AGENTS.md`**）
+
+### 0.2 继承的长期记忆摘要（权威 = 仓内 `recruit/hr/MEMORY.md` · 本节为速览）
+
+> `recruit/hr/MEMORY.md` 是仓内唯一权威（原 `C:\...` 目录不再参与）。本节是更快读完的速览；⚠️ 冲突时以 `recruit/hr/MEMORY.md` 为准，并回来同步本速览。
+
+身份 / 岗位：招聘方 长鑫存储（Boss 招聘端 = 刘先生 userId `273356`）；沟通者 刘杨 = AI+EDA 预研负责人 / PI（不是 HR）。🎯 目标岗位 = 仓内 `recruit/hr/JD-AI-EDA-实习生-DRAM.md`（2026-10-11 用户提供，唯一目标岗位，以此为准）。base 上海 / 合肥 / 北京（仅合肥提供住宿 → 上海本地优先级最高）；实习 400–1000 元/天、正式 40–60K·14–16 薪；面试由 HR 统一约（对外话术「合适我直接安排面试」）；简历走 Boss 站内附件（不引导外部邮箱）。
+
+判定口径（★ 刘杨口径 · 权威 = `recruit/hr/MEMORY.md §二`）
+- 达标 = 一作 + 已录用 + 论文属「四大 EDA 顶会」或「AI 顶会」，不看 CCF 等级。
+  - 四大 EDA 顶会：DAC · ICCAD · ASP-DAC · DATE（后两个是 CCF-B，照样算）。
+  - AI 顶会：NeurIPS · ICML · ICLR · CVPR · ICCV · ECCV · AAAI · IJCAI · ACL · EMNLP · NAACL · MICCAI · ACM MM · KDD · SIGIR 等。
+  - ❌ 不算：ICASSP · CCF-B/C 期刊 · 在投 / 在审 · 导师一作本人二作。
+- 分级（学校只在「还没录用」时才看）：已录用 = S（不看学校）；顶会已投 + C9 = A；+ 985 = B；+ 211/双非/港澳/中科院系 = ⏳ 未给（不自行填）。
+- ⚠️ `screen.py` 的 `S/A/A-/B/B-/C` 是打招呼文本关键词初筛，≠ 达标判定，两套别混。
+- 判定依据优先级：简历 publication list > 本人原话；不信自述的「已发表 / 顶会」，必须追问「录用还是在投」。
+
+平台事实 / 教训（权威 = `recruit/hr/MEMORY.md §五/§九` + `recruit/hr/AGENTS.md`，本节不再展开）。❗仅留 5 条仍在用的：
+- 🚫 不批量拉简历接口 `/wapi/zpgeek/resume/...`（风控+配额，返回 `code 7`）→ 只能从会话「点击预览附件简历」抓直链 `/wflow/zpgeek/download/preview4boss/{geekId}`。
+- 采集数据 `degree`/`lastWorkExpr`/`expectSalary` 恒为 null → 学历/经历必须问本人或看简历。
+- 人名严格前缀匹配 `startsWith(name+"_")`（否则「王海」命中「王海洋」）。
+- ⚠️ 筛选阶段的「地区」不可靠 —— 发信前必须打开会话核对卡片上的学校 / 城市。
+- 🚨 不在「刘杨的规则」上凭记忆 / 推断下笔（规则类结论必须找到用户亲笔原文，找不到就问）；旧标签页会骗人 · 坐标点击不可靠（改 JS `el.click()` + 点后核对 `.conversation-main`）· 列表摘要会漏消息（必须点进 `.chat-message-list`）· 选择器写宽会误触 · 分档表没拿到宁可留空。
+
+### 0.3 继承的能力摘要（Boss 操作 SOP 精简 · 权威 = 仓内 `recruit/hr/AGENTS.md` · 细读以它为准）
+
+环境：脚本一律 UTF-8；`screen.py` / `city_scan.py` = 纯标准库 Python。⚠️ 本线在 VM 上走 CDP + 持久 profile（见 §0.4 ④）—— 旧 Playwright-MCP 的 cookie 注入路径已不用（细节见 `recruit/hr/AGENTS.md`）。
+
+登录/验证铁律（沿用）：必须新开标签访问 `https://www.zhipin.com/web/chat/index`；成功标志 = 出现沟通列表且 `.conversation-main` / `.chat-message-list` 齐全；只看新标签里的 `.chat-message-list`，不要只看 URL（旧标签会骗人）。
+
+关键选择器（实测）：会话列表 `.user-list`（虚拟滚动）· 会话项 `.geek-item-wrap` / 可点 `.geek-item` · 会话头 `.conversation-main` · 消息区 `.chat-message-list` · 输入框 `#boss-chat-editor-input` · 发送 `.submit-content .submit` · 弹窗 `.boss-popup__wrapper` · 附件简历入口（文本「点击预览附件简历」）。
+
+SOP · 切会话：别用坐标点击 —— 在页面里 JS 滚动查找 + `el.click()`；切完必须核对 `.conversation-main` 的姓名再说话。
+SOP · 读消息：只读 `.chat-message-list` 的结构化文本（不看列表摘要）；区分「我 / 对方」与「已读」。
+SOP · 发消息：切会话 → 核对头 → `click #boss-chat-editor-input` → `keyboard.insertText(文本)`（不要逐字符 type）→ `click .submit-content .submit` → 回消息区确认「送达」。
+SOP · 下载简历：`waitForEvent('response', ct=>ct.includes('application/pdf'))` → 点「点击预览附件简历」→ 取直链 → 注入 `<a download>` 并点击 → `waitForEvent('download')` → `saveAs(简历\<Boss日期>\简历_<姓名>.pdf)` → 校验 `%PDF-` 开头。
+SOP · 采集候选人：页面上下文 `fetch`（需 `POST /wapi/zppassport/set/zpToken` 生成 `__zp_stoken__`）→ `filterByLabel` / `getBossFriendListV2.json` / `userLastMsg` → 导 `boss_candidates.csv/.json` → `python screen.py`。
+
+---

@@ -50,26 +50,8 @@
 > agent 禁止修改本节。本节为「无」时，按下方默认顺序（§1）自主推进。
 
 > 📦 [已归档] **2026-10-18 10:2x 运维令（Boss 登录恢复 · 立即恢复招聘动作）** → 原文见 `WATCH_RECRUIT_TASK_ARCHIVE.md`「归档块 M」（已闭合：R26 已完成登录复核 + 恢复动作）。⚠️ **仍生效**：**登录失效 ⇒ 停手报 blocker，不猜不绕/不自行过验证/不重启 Chrome**；全职口径以 R25 块 + `recruit/hr/JD-AI-EDA-研究员-DRAM.md` 为准。
-### 🆕 运维指令 · 2026-10-17（R25 · 最高优先）· **应届=校招 ⇒ 全职不推；≥1 年经验**
-
-> 用户令（原文）：「recruit：应届就是校招，不要校招，因为要明年才入职。至少1年工作经验。」
-
-**① 判据变更（立即生效，覆盖 R24 的「博士应届边界报备」）**
-- **应届生（含博士应届 / 硕士应届 / 26–27 届在校）= 校招 ⇒ 全职岗一律「不推进」**；不再有「博士应届按边界项报备」的例外。
-- **全职硬门槛新增：≥1 年正式工作经验**（≥12 个月，按简历/卡片时间轴核；**实习/兼职不计**）。
-- 经验区间仍 **1–5 年**（>5 年 `overqualified` 不变）⇒ 全职岗 = **1–5 年社招**。
-- 其余不变：亮点门槛（学校或工作 ≥1 项 + 证据）、能力证据（LLM/MLLM/Agent ≥1 项）、**只推 A/B**、06:00 全职窗口 3–5 封、**18:00 不发全职推荐**。
-
-**② 立即执行（本轮唤醒）**
-1. R24 的「边界 9 人 / 在校 17 人」按新令重判：**博士应届（0 年）与在校生 → 全部 `not-eligible`（校招）**，写入短名单 **§十二 R25**。
-2. 已发 5 封（R23）**不撤回、不补解释**；台账照旧标 `overqualified`。
-3. 权威口径已同步 `recruit/hr/JD-AI-EDA-研究员-DRAM.md`（**以 JD 为准**）。
-4. 06:00 全职窗口只在「1–5 年 + 非应届 + 证据齐」的 A/B 里选；0 达标须写明原因，🚫 静默跳过。
-
-**③ 边界**：本令**只约束全职（助理研究员）岗**；**实习岗不受影响**（18:00 实习专场照常 —— 实习就是在校生通道）。明年才毕业/入职者 = 校招 ⇒ 不推（可入「校招储备」，2027 校招再触达）。
-
-> 📦 R24 原文/清单 → 「归档块 L」；结果见 `MEMORY_RECRUIT.md` 第 24 轮 / 短名单 §十一。
-
+> 📦 [已归档] **2026-10-17 R25 令（应届=校招不推 · ≥1 年经验）** → 原文见 `WATCH_RECRUIT_TASK_ARCHIVE.md`「归档块 N」。
+> ⚠️ **该块已被 2026-10-22「放开所有筛选规则」令整体作废**（应届/年限/学历/专业/地域等一律不再作筛人依据）；现行唯一硬指标见本区第一条。
 > 📦 **2026-10-16 排期令（仍生效）**：**早 06:00 只推全职 · 晚 18:00 只推实习**；两池照常索简历/判定；每窗「优中选优 3–5 封」，0 达标须写明原因+待办（🚫 静默跳过）；⛔ 约面永不碰 · 批间隔 ≥60min · 台账 append-only · commit `recruit mail:`；原文见「归档块 K」。**年限口径已被 R24/R25 取代：1–5 年社招（≥1 年 · 非应届）**；顶会仍为加分。
 
 > 📦 [已归档] **2026-10-15 21:45 上下文卫生（治 R19 `Auto compacting → abort`）** → 原文见 `WATCH_RECRUIT_TASK_ARCHIVE.md`「归档块 J」。⚠️ **仍生效（每轮必守）**：**A** 🚫 禁止整份读大表（`候选表-*.csv/md` · `发送记录.md` · `候选人筛选结果.md` · `hr/MEMORY.md`）⇒ 一律**定点读**（`grep -n` / `sed -n` / `head -n 40`），🚫 不整段贴进回复；**B** 一旦出现 `[status] Auto compacting messages` ⇒ **立即**产物落盘 → 回写 `MEMORY_RECRUIT.md` + 台账 → **干净退出本轮**（🚫 硬撑）；**C** 每轮体积自检 `WATCH_RECRUIT_TASK.md` / `MEMORY_RECRUIT.md` ≤32KB，大表按滚动纪律归档。
@@ -128,43 +110,11 @@
 - 📦 单文件 ≥ 5MB（简历 PDF 常见）：🚫 不 `git add`（含本仓库任何位置，含 `recruit/hr/`）；只登记 路径/字节数/sha256（同 research 线铁律）。
 - ✅ 已在仓内（可读）：上表 ①② 的记忆 / 任务 / 能力 / 候选表（均无凭据）。
 
-### 0.2 继承的长期记忆摘要（权威 = 仓内 `recruit/hr/MEMORY.md` · 本节为速览）
+### 0.2 / 0.3 长期记忆与能力摘要（📦 已归档）
 
-> `recruit/hr/MEMORY.md` 是仓内唯一权威（原 `C:\...` 目录不再参与）。本节是更快读完的速览；⚠️ 冲突时以 `recruit/hr/MEMORY.md` 为准，并回来同步本速览。
-
-身份 / 岗位：招聘方 长鑫存储（Boss 招聘端 = 刘先生 userId `273356`）；沟通者 刘杨 = AI+EDA 预研负责人 / PI（不是 HR）。🎯 目标岗位 = 仓内 `recruit/hr/JD-AI-EDA-实习生-DRAM.md`（2026-10-11 用户提供，唯一目标岗位，以此为准）。base 上海 / 合肥 / 北京（仅合肥提供住宿 → 上海本地优先级最高）；实习 400–1000 元/天、正式 40–60K·14–16 薪；面试由 HR 统一约（对外话术「合适我直接安排面试」）；简历走 Boss 站内附件（不引导外部邮箱）。
-
-判定口径（★ 刘杨口径 · 权威 = `recruit/hr/MEMORY.md §二`）
-- 达标 = 一作 + 已录用 + 论文属「四大 EDA 顶会」或「AI 顶会」，不看 CCF 等级。
-  - 四大 EDA 顶会：DAC · ICCAD · ASP-DAC · DATE（后两个是 CCF-B，照样算）。
-  - AI 顶会：NeurIPS · ICML · ICLR · CVPR · ICCV · ECCV · AAAI · IJCAI · ACL · EMNLP · NAACL · MICCAI · ACM MM · KDD · SIGIR 等。
-  - ❌ 不算：ICASSP · CCF-B/C 期刊 · 在投 / 在审 · 导师一作本人二作。
-- 分级（学校只在「还没录用」时才看）：已录用 = S（不看学校）；顶会已投 + C9 = A；+ 985 = B；+ 211/双非/港澳/中科院系 = ⏳ 未给（不自行填）。
-- ⚠️ `screen.py` 的 `S/A/A-/B/B-/C` 是打招呼文本关键词初筛，≠ 达标判定，两套别混。
-- 判定依据优先级：简历 publication list > 本人原话；不信自述的「已发表 / 顶会」，必须追问「录用还是在投」。
-
-平台事实 / 教训（权威 = `recruit/hr/MEMORY.md §五/§九` + `recruit/hr/AGENTS.md`，本节不再展开）。❗仅留 5 条仍在用的：
-- 🚫 不批量拉简历接口 `/wapi/zpgeek/resume/...`（风控+配额，返回 `code 7`）→ 只能从会话「点击预览附件简历」抓直链 `/wflow/zpgeek/download/preview4boss/{geekId}`。
-- 采集数据 `degree`/`lastWorkExpr`/`expectSalary` 恒为 null → 学历/经历必须问本人或看简历。
-- 人名严格前缀匹配 `startsWith(name+"_")`（否则「王海」命中「王海洋」）。
-- ⚠️ 筛选阶段的「地区」不可靠 —— 发信前必须打开会话核对卡片上的学校 / 城市。
-- 🚨 不在「刘杨的规则」上凭记忆 / 推断下笔（规则类结论必须找到用户亲笔原文，找不到就问）；旧标签页会骗人 · 坐标点击不可靠（改 JS `el.click()` + 点后核对 `.conversation-main`）· 列表摘要会漏消息（必须点进 `.chat-message-list`）· 选择器写宽会误触 · 分档表没拿到宁可留空。
-
-### 0.3 继承的能力摘要（Boss 操作 SOP 精简 · 权威 = 仓内 `recruit/hr/AGENTS.md` · 细读以它为准）
-
-环境：脚本一律 UTF-8；`screen.py` / `city_scan.py` = 纯标准库 Python。⚠️ 本线在 VM 上走 CDP + 持久 profile（见 §0.4 ④）—— 旧 Playwright-MCP 的 cookie 注入路径已不用（细节见 `recruit/hr/AGENTS.md`）。
-
-登录/验证铁律（沿用）：必须新开标签访问 `https://www.zhipin.com/web/chat/index`；成功标志 = 出现沟通列表且 `.conversation-main` / `.chat-message-list` 齐全；只看新标签里的 `.chat-message-list`，不要只看 URL（旧标签会骗人）。
-
-关键选择器（实测）：会话列表 `.user-list`（虚拟滚动）· 会话项 `.geek-item-wrap` / 可点 `.geek-item` · 会话头 `.conversation-main` · 消息区 `.chat-message-list` · 输入框 `#boss-chat-editor-input` · 发送 `.submit-content .submit` · 弹窗 `.boss-popup__wrapper` · 附件简历入口（文本「点击预览附件简历」）。
-
-SOP · 切会话：别用坐标点击 —— 在页面里 JS 滚动查找 + `el.click()`；切完必须核对 `.conversation-main` 的姓名再说话。
-SOP · 读消息：只读 `.chat-message-list` 的结构化文本（不看列表摘要）；区分「我 / 对方」与「已读」。
-SOP · 发消息：切会话 → 核对头 → `click #boss-chat-editor-input` → `keyboard.insertText(文本)`（不要逐字符 type）→ `click .submit-content .submit` → 回消息区确认「送达」。
-SOP · 下载简历：`waitForEvent('response', ct=>ct.includes('application/pdf'))` → 点「点击预览附件简历」→ 取直链 → 注入 `<a download>` 并点击 → `waitForEvent('download')` → `saveAs(简历\<Boss日期>\简历_<姓名>.pdf)` → 校验 `%PDF-` 开头。
-SOP · 采集候选人：页面上下文 `fetch`（需 `POST /wapi/zppassport/set/zpToken` 生成 `__zp_stoken__`）→ `filterByLabel` / `getBossFriendListV2.json` / `userLastMsg` → 导 `boss_candidates.csv/.json` → `python screen.py`。
-
----
+> 原文见 `WATCH_RECRUIT_TASK_ARCHIVE.md`「归档块 O」（2026-10-22 按体积规程搬出，未改）。
+> **权威 = 仓内 `recruit/hr/MEMORY.md`（口径/判定/教训）与 `recruit/hr/AGENTS.md`（Boss 操作 SOP）**；每轮唤醒只读这两份的**相关小节**（定点读，🚫 整份读大表）。
+> 速记：口径以 `recruit/hr/JD-*.md` 为准 → **2026-10-22 起筛选规则全放开，只留「真实简历在手」+ 每日 全职 ≥2 封 / 实习 ≥2 封**。
 
 ### 0.4 执行环境（腾讯云 Ubuntu · 桌面 / VNC / Chrome / CDP）— 2026-10-11 建
 
