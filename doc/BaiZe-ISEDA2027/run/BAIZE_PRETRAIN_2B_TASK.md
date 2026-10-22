@@ -1,6 +1,34 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-22 13:5x（**decay 5000 步 + 复用官方 MBS=5 排障**）· 用户直令 · 最高优先 · 覆盖 08:5x 的 train-iters/decay-iters/MBS 口径
+
+> 用户原话要点：① 训练效率不高，为何不能复用官方脚本（MBS=5、FP8 等）；② decay steps 设 **5000 步取整**；③ 用下方指定 LR/decay 参数；④ 用 Muon（0.2）；⑤ 不用 warmup。
+
+**① decay = 5000 步**：`--train-iters 5000`（≈18.1B token，取整接受）；`--lr-decay-iters 5000` + `--lr-wsd-decay-iters 5000`（覆盖之前 5560 / 20000）。
+
+**② LR / decay / optimizer 参数（照抄，勿改）**：
+```
+--lr 1.66667e-3
+--decoupled-lr 1e-2
+--lr-decay-style WSD
+--lr-wsd-decay-style exponential
+--min-lr 1.041667e-4
+--decoupled-min-lr 6.25e-4
+--lr-decay-iters 5000
+--lr-wsd-decay-iters 5000
+--lr-warmup-iters 0
+--optimizer muon
+--muon-matched-adamw-rms 0.2
+```
+
+**③ MBS 复用官方 5（先排障，勿懒省事降 2）**：官方 1113.sh 就是 MBS=5/GBS=960/seq3776/FP8 hybrid 跑 8×H100-80GB；我们 MBS=5 仅报 ~81GB（超 ~1GB）。**先排查根因再谈降 MBS**：
+- 检查缺 activation recompute（Megatron `--recompute-granularity selective|full`、`--recompute-method uniform`、`--recompute-num-layers`）；
+- 检查 FP8 TE 的 amax/history buffer 与 distributed-optimizer 的显存占比；
+- 优先靠「开 recompute / 关冗余 buffer」腾出 1–2GB 保住 MBS=5；**仅在 80GB 内确实无法跑通时才降 MBS**，并在报告写明降级原因与可行区间（如 4）。
+
+**④ 其余**：配置沿用 1113.sh（use-mup/muon/FP8 hybrid/TP1 PP1 DP8/distributed-optimizer/tokenizer dsv3），`--load` 转换后 ckpt、`--finetune`。commit `pretrain decay:`。
+
 ### 🆕 运维指令 · 2026-10-22 08:5x（**decay 参考官方 train_decay_fp8_1113.sh + 20B 数据**）· 用户直令 · 最高优先
 
 > 用户原话：「pretrain 的 xmodel decay 参考这个 https://github.com/XiaoduoAILab/Xmodel-2.5/blob/main/examples/xmodel/train_decay_fp8_1113.sh，使用20B数据」
