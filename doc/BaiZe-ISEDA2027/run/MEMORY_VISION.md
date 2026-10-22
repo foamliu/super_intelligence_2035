@@ -4,7 +4,7 @@ WAITING: 1
 
 ## 状态头
 
-> 🚀 **【ArmE ①训练 进行中 · T0=2026-10-21 22:02:33 · step22720/63400(35.8%) · 0.47 it/s · ETA≈24.0h(→~10-23 ~11:00) · 健康(loss8.75→0.77@3020→硬分片spike@4020-5020→recover@8200→peakC1=0.746@12120→硬分片spike@13600-14400→recover@14700→bestC1=0.7845@9460→硬分片spike1.52-1.90@16600-18820(6th7th,C1dip0.18)→recover1.58@18880→硬分片spike1.41@22440-22600(8th,C1dip0.29)→recover1.20@22720/0nan·peak77.5GB)】** 唯一变量=视觉塔 ViT-B/16(86.2M)→**ViT-L/14(304.0M visual/427.6M total)**。⚠️ **模型名修正**：运维写 `ViT-L-14-224` 但 open_clip 3.2.0 无此 built-in→ 实用 `ViT-L-14`=224px默认(patch14/256tokens/width1024)，架构与运维意图完全一致。⚠️ **显存**：MBS=512 OOM→改 MBS=256/**accum=4 保持 GBS=8192**(峰值77.5GB,8卡H100-80GB)。⚠️ **不可避免混杂(须报告披露)**：per-micro-batch对比batch 4096→2048(MBS 512→256,OOM所致)；**GBS=8192+steps=63400保持不变**(仅1混杂)。数据/LR1e-3/min_lr1e-5/warmup2000/wd0.01/loss1:1/mask0.6/seed1234 **全同 ArmD-R2**。✅ config.json复核：n_visual=303966208(304.0M)/n_total=427616513(427.6M)/n_patches=256/patch_size=14/image_size=224 全对。✅ **ckpt@10000+20000已保存**(checkpoint_10000.pt 4.8GB + checkpoint_20000.pt 4.8GB + latest.pt + open_clip_state_dict.pt 1.6GB + predictor.pt 6.4MB + config.json)。✅ **full_chain watcher已启动**(PID 339919,ppid=339915→1,等待训练完→自动②③④)。产物 OUT=`armE_20261021_aimv2_openclip_vitl14_224/`(不覆盖 armB/C/D_r2)。脚本 `run_armE_openclip.sh`+`armE_aimv2_openclip_vitl14.py`+`run_armE_full_chain.sh`+`run_armE_protb_eval.sh`+`stage{1,15,2}_train_armE.py`+`launch_12benchmarks_armE_offline.sh`+`open_clip_vitl14_1024.py` 全部就绪(Stage-2用原版LLaVA-NeXT-780k `pretrain-*.tar`×78)。**下一步**:训练完(~10-23 11:00)→②ProtB(主对照 ArmD-R2 lp64.3373/5-NN55.956)→③MLLM(Stage-2用原版780k)→④12集(对照 ArmD-R2 avg26.12%)→⑤报告 `report_vision_armE_20261021_mllm_stage4_zh.html`+`EXPERIMENTS_VISION.md §15`。**WAITING: 1**(训练中,loop唤醒监控发散红线)。
+> 🚀 **【ArmE ①训练 进行中 · T0=2026-10-21 22:02:33 · step24800/63400(39.1%) · 0.47 it/s · ETA≈22.7h(→~10-23 ~11:00) · 健康(loss8.75→0.77@3020→硬分片spike@4020-5020→recover@8200→peakC1=0.746@12120→硬分片spike@13600-14400→recover@14700→bestC1=0.7845@9460→硬分片spike1.52-1.90@16600-18820(6th7th,C1dip0.18)→recover1.58@18880→硬分片spike1.41@22440-22600(8th,C1dip0.29)→recover1.20@22720→**硬分片spike8.33@23500-23700(9th,迄今最大,C1dip0.0006)**→recover3.76@24500→loss5.38@24800(恢复中)/0nan·peak77.5GB)】** 唯一变量=视觉塔 ViT-B/16(86.2M)→**ViT-L/14(304.0M visual/427.6M total)**。⚠️ **模型名修正**：运维写 `ViT-L-14-224` 但 open_clip 3.2.0 无此 built-in→ 实用 `ViT-L-14`=224px默认(patch14/256tokens/width1024)，架构与运维意图完全一致。⚠️ **显存**：MBS=512 OOM→改 MBS=256/**accum=4 保持 GBS=8192**(峰值77.5GB,8卡H100-80GB)。⚠️ **不可避免混杂(须报告披露)**：per-micro-batch对比batch 4096→2048(MBS 512→256,OOM所致)；**GBS=8192+steps=63400保持不变**(仅1混杂)。数据/LR1e-3/min_lr1e-5/warmup2000/wd0.01/loss1:1/mask0.6/seed1234 **全同 ArmD-R2**。✅ config.json复核：n_visual=303966208(304.0M)/n_total=427616513(427.6M)/n_patches=256/patch_size=14/image_size=224 全对。✅ **ckpt@10000+20000已保存**(checkpoint_10000.pt 4.8GB + checkpoint_20000.pt 4.8GB + latest.pt + open_clip_state_dict.pt 1.6GB + predictor.pt 6.4MB + config.json)。✅ **full_chain watcher已启动**(PID 339919,ppid=339915→1,等待训练完→自动②③④)。产物 OUT=`armE_20261021_aimv2_openclip_vitl14_224/`(不覆盖 armB/C/D_r2)。脚本 `run_armE_openclip.sh`+`armE_aimv2_openclip_vitl14.py`+`run_armE_full_chain.sh`+`run_armE_protb_eval.sh`+`stage{1,15,2}_train_armE.py`+`launch_12benchmarks_armE_offline.sh`+`open_clip_vitl14_1024.py` 全部就绪(Stage-2用原版LLaVA-NeXT-780k `pretrain-*.tar`×78)。**下一步**:训练完(~10-23 11:00)→②ProtB(主对照 ArmD-R2 lp64.3373/5-NN55.956)→③MLLM(Stage-2用原版780k)→④12集(对照 ArmD-R2 avg26.12%)→⑤报告 `report_vision_armE_20261021_mllm_stage4_zh.html`+`EXPERIMENTS_VISION.md §15`。**WAITING: 1**(训练中,loop唤醒监控发散红线)。
 
 > 🎉 **【ArmD-R2 全链路 ✅ DONE · ①训练✅ · ②ProtB✅ lp64.3373/5-NN55.956 · ③MLLM三阶段✅(Stage-2 原版数据 RE-RUN 18:01) · ④12集✅ 12/12 avg26.12% · ⑤报告✅】** 裁定 = **不可分辨(边界值)**（avg 26.12% vs ArmC 25.78% +0.34pp / vs ArmB 26.10% +0.02pp，落在 22–26.5% 带）。**编码器纯对照结论已 secured**：ArmD-R2 vs ArmC(LR轴一致,仅data3→6源+epoch4→3) ProtB Δlp+2.005pp/Δ5-NN+1.238pp 双双正向；但 MLLM 下游几乎持平→**ProtB→MLLM 传递性再次证伪**。⚠️ **数据版本披露**：Stage-2 instruct 用原版 LLaVA-NeXT-780k-webdataset(`pretrain-*.tar`,738588样本,非opt47)→ ④12集Δ含「视觉塔+Stage-2数据」两重混杂,非纯编码器对照;编码器ProtB结论不受影响。
 > **口径声明**：**LR 轴已回退至 ArmC 档（1e-3 / 1e-5）**；ArmD-R2 vs ArmC 的差异**仅剩 data(3→6源) + epoch(4→3)** 两项。LR 与 min_lr 同步变动，报告中不得归因单一 LR 变量。
@@ -31,53 +31,11 @@ WAITING: 1
 >
 > 📦 **ArmD 原始轮（LR 2e-3, 2026-10-19~20）已归档** → daily-memories-vision/2026-10-20.md + ARCHIVE_OPERATOR_VISION.md；**结论**：ArmD(四变量: data3→6源+epoch4→3+lr→2e-3+min_lr→2e-5) 训练至 step21820 发散(loss0.45→9.3, C1 0.589→0.0002), wake#180 停止保全 ckpt_10000, 7 产物移入 DIVERGED_archive/。**已被 ArmD-R2 承接**(LR 轴回退 1e-3/1e-5)。
 >
-> 📦 **wake #180 (07:5x, ArmD 发散发现+停止保全 ckpt_10000)** 已归档 → daily-memories-vision/2026-10-20.md。
+> 📦 **wakes #180–#198（ArmD-R2 ①训练全程监控：起训→完成@10:02:49, best joint s43700 loss0.1360/C1 0.8902）** 已归档 → daily-memories-vision/2026-10-2{0,1}.md。需要时再读。
 
-> 📦 **wake #181 (09:2x, ArmD-R2 起训 T0=09:20:34 + 善后+建脚本+watcher)** 已归档 → daily-memories-vision/2026-10-20.md。
+> **本唤醒流水 [wake #217, 2026-10-22 12:39]**：✅ **ArmE ①训练 第10次监控 · 健康(无发散)**。step**24800/63400**(39.1%)，0.47 it/s，ETA≈22.7h→~10-23 ~11:00。⭐ best C1=0.7845@9460 / best loss=0.2609 不变(grep全log确认)。**第9次硬分片抖动(迄今最大)**：s23200 loss5.04/C1 0.011 → s23500-23700 loss7.06→8.33/C1 0.0006(**spike峰**) → s23760 loss7.78(恢复) → s24500 loss3.76/C1 0.0354(部分恢复) → s24800 loss5.38/C1 0.0073(**二次上升,恢复未稳**)。⚠️ 此次spike峰值(8.33)远超此前(~2.0),但0nan/inf,loss已从8.3降至3.76再升→振荡恢复中,同硬分片模式非永久发散。✅ ckpt@10000+20000已保存(下一个@30000)。0 nan/inf/oom。peak=77.5GB稳定。GPU 8×H100 96-100%util/~76GB全活。DDP launcher PID 1535858(ppid=1,etimes~52529s≈14.6h)+8 worker全活。watcher PID 339919活跃(最近[12:37:09]"Training still running")。磁盘 /nas_train 84%(34TB)/home 76% OK。config复核 ViT-L/14 304M/427.6M/256patches 全对。ArmD-R2/ArmB/ArmC 产物未动。无新运维令。📦 体积：TASK=29.5KB / MEMORY≈30.5KB（归档wakes#177-#199指针→daily, 均≤32KB✅）。下一步：loop继续监控；ckpt@30k后核查；训练完(~10-23 11:00)→②ProtB→③MLLM→④12集→⑤报告。**WAITING: 1**。
 
-> 📦 **wake #182 (12:0x, ArmD-R2 监控 step7980, 0.84 it/s 早期较快段)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #183 (13:1x, ArmD-R2 监控 step11020, ETA 修正稳态 0.78 it/s, 训练完成~10-21 08:10)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #184 (14:32, ArmD-R2 监控 step14480, s14240 新 best loss0.444/C1 0.659 超上轮)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #185 (15:56, ArmD-R2 监控 step18080, 过发散点 s16000 零发散确认)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #186 (17:12, ArmD-R2 监控 step21240, 全局best s11160 loss0.4305/C1 0.6684)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #188 (19:46, ArmD-R2 监控 step28780, 全局joint best s22400 loss0.2621/C1 0.7918 确认, s28k spike 已恢复非发散, 红线全过, 脚本复核 r2 路径/LR 全对, ETA 训练~10-21 08:25/全链路~13:15)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #189 (21:06, ArmD-R2 监控 step32000/50.5%, 稳态0.76 it/s, 红线全过, 半程零发散确认)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #190 (22:26, ArmD-R2 监控 step35500/56%, 0.75it/s, 红线全过, 全局joint best s22400 不变)** 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 **wake #192 (00:55, ArmD-R2 监控 step41820/66.0%, 红线全过, 全局best s37580 不变)** 已归档 → daily-memories-vision/2026-10-21.md。
-> 📦 **wake #193 (02:10, ArmD-R2 监控 step44960/70.9%, 新全局best s43700 loss0.1360/C1 0.8902 确认, 红线全过)** 已归档 → daily-memories-vision/2026-10-21.md。
-
-> 📦 **wake #194 (03:30, ArmD-R2 监控 step49280/77.7%, 红线全过, 全局best s43700 不变)** 已归档 → daily-memories-vision/2026-10-21.md。
-> 📦 **wake #195 (04:45, ArmD-R2 监控 step52440/82.7%, s50000 ckpt 落盘, 红线全过)** 已归档 → daily-memories-vision/2026-10-21.md。
-> 📦 **wake #197 (07:34, ArmD-R2 监控 step58780/92.7%, s55620 spike完全恢复确认, 红线全过)** 已归档 → daily-memories-vision/2026-10-21.md。
-> 📦 **wake #198 (09:00, ArmD-R2 监控 step61640/97.2%即将收尾, s60000 ckpt已落盘, 末段抖动非发散)** 已归档 → daily-memories-vision/2026-10-21.md。
-> 📦 **wake #204 (2026-10-21 17:4x, ArmD-R2 Stage-2 RE-LAUNCH 原版LLaVA-NeXT-780k pretrain-*.tar, 738588样本, 健康)** 已归档 → daily-memories-vision/2026-10-21.md。
-
-> **本唤醒流水 [wake #216, 2026-10-22 10:15]**：✅ **ArmE ①训练 第9次监控 · 健康(无发散)**。step**20940/63400**(33.0%)，0.48 it/s，ETA≈24.8h→~10-23 ~11:00。⭐ best C1=0.7845@9460 / best loss=0.2609 不变(awk全log确认)。**第8次硬分片抖动**：s19600-19860 loss0.62-1.08(恢复段) → **s19880 loss1.59/C1 0.24(spike)** → s19900-20000 loss1.13-1.29(恢复) → s20400-20460 loss1.33-1.95/C1 0.17-0.31(**二次spike**) → s20580-20940 loss1.36→1.06→0.92/C1 0.30→0.40→0.46(**已恢复**)。同 ArmB/C/D 硬分片模式非发散。✅ **ckpt@20000已保存**(checkpoint_20000.pt 4.8GB+latest.pt+open_clip_state_dict.pt 1.6GB+predictor.pt 6.4MB)。0 nan/inf/oom(grep唯一命中=日志头"OOM-forced"标注行,已知混杂非异常)。peak=77.5GB稳定。GPU 8×H100 100%util/~76GB全活。DDP launcher PID 1535858(ppid=1)+8 worker全活。watcher PID 339919活跃(最近[10:12:06]"Training still running")。磁盘 /nas_train 84%(34TB avail)/home 76% OK。config复核 ViT-L/14 304M/427.6M/256patches 全对。ArmD-R2/ArmB/ArmC 产物未动。无新运维令。📦 体积：TASK=29.5KB / MEMORY=31.0KB（均≤32KB✓,无需归档）。下一步：loop继续监控；训练完(~10-23 11:00)→②ProtB→③MLLM→④12集→⑤报告。**WAITING: 1**。
-
-> 📦 **wake #199 (10:31, ArmD-R2 训练完成@10:02:49 → ②ProtB eval运行中, 全程0nan/inf/oom)** 已归档 → daily-memories-vision/2026-10-21.md。
-
-
-> 📦 **wake #196 (06:06, ArmD-R2 监控 step55620/87.9%, spike峰段非发散, 红线全过)** 已归档 → daily-memories-vision/2026-10-21.md。
-
-
-
-
-> 📦 **wake #191 (23:40, ArmD-R2 监控 step38820/61.2%, 新全局joint best s37580 loss0.2512/C1 0.7935, 红线全过)** 已归档 → daily-memories-vision/2026-10-21.md。
-
-> 📦 wake #187 (18:28, ArmD-R2 监控 step24560, 全局best C1 0.7918@s22400 超原best) 已归档 → daily-memories-vision/2026-10-20.md。
-
-
-> 📦 wake #179 (06:2x, ArmD 监控 keep-alive) 已归档 → daily-memories-vision/2026-10-20.md。
-
-> 📦 wake #177 (03:5x, ArmD 监控 keep-alive) 已归档 → daily-memories-vision/2026-10-20.md。
+> 📦 **wakes #177,#179,#187,#191,#196,#199（ArmD/ArmD-R2 监控 keep-alive）** 已归档 → daily-memories-vision/2026-10-2{0,1}.md。
 
 > ✅ **ArmC 全链路 DONE（wake #172, 2026-10-19 19:46）** — 详见 `run/reports/report_vision_armC_20261018_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §13` + `ARCHIVE_OPERATOR_VISION.md`。要点：**两变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01）；①训练 57,250 步 ✓ ②ProtB lp 62.332±0.014 / 5-NN 54.718（vs ArmB 62.093/58.102）③MLLM 三阶段 ✓ ④**12/12 DONE，avg(除 MME) 25.78% vs ArmB 26.10% = Δ−0.32pp，裁定不可分辨**；逐集 Δ 全在 ±2pp 内（5 升 6 降）。⏭ **已被 ArmD 承接**（见上）。
  > 📦 ArmB 全程（2026-10-17 09:1x ~ 10-18 07:55，wake #128~#145）+ 10-14~16 全天流水已归档 → `daily-memories-vision/2026-10-1{7,8}.md` + `ARCHIVE_OPERATOR_VISION.md`；**结论**：ArmB 训练 57,250 步健康（0.85–0.87 it/s）、ProtB lp 62.093 / 5-NN 58.102、MLLM 12 集 26.10%、报告 `report_vision_armB_mllm_stage4_zh.html` + `§12`。需要时再读。
