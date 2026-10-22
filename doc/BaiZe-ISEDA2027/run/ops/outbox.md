@@ -16228,3 +16228,94 @@ total 416
 129:    --load $CHECKPOINT_PATH
 === DONE 148 ===
 ```
+
+---
+
+## RUN_ID 149 · 2026-10-22 08:29:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 149 | migrate tokenized data to /nas_env | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nas_train/app.e0031982/code/Baize-ISEDA2027
+DSTROOT=/nas_env/app.e0031982/datasets/baize-llm-tokenized
+
+echo "[1] 磁盘余量确认"
+df -h /nas_train /nas_env 2>/dev/null | tail -3
+AVAIL=$(df -BG --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' G')
+echo "  /nas_env avail = ${AVAIL}G"
+
+ echo "[2] 待迁移数据清单（5 源分词产物）"
+for d in full_ultradata_code_l3 full_ultradata_math_l3 full_ultradata_code_l2 full_ufw_l3 full_ultradata_math_l1; do
+  [ -d "$BASE/data/$d" ] && echo "  $d : $(ls $BASE/data/$d/*.bin 2>/dev/null | wc -l) bin, $(du -sh $BASE/data/$d 2>/dev/null | cut -f1)"
+done
+find "$BASE/data" -maxdepth 1 -type d -name 'full*' 2>/dev/null | head -10
+echo "  --- 5 源总大小 ---"
+du -sch $BASE/data/full_* 2>/dev/null | tail -1
+
+echo "[3] 前置校验：余量是否足够（需要 > 3.91T * 1.1 ≈ 4.3T）"
+if [ "${AVAIL:-0}" -lt 4400 ]; then echo "  ABORT: /nas_env 余量不足 ${AVAIL}G < 4400G"; echo "=== DONE 149 (ABORT) ==="; exit 1; fi
+echo "  OK"
+
+ echo "[4] 建目标目录 + rsync（保留结构，可续传）"
+mkdir -p "$DSTROOT"
+for d in "$BASE"/data/full_*; do
+  [ -d "$d" ] || continue
+  n=$(basename "$d")
+  echo "  --- rsync $n ---"
+  rsync -a --info=progress2 --no-inc-recursive "$d/" "$DSTROOT/$n/" 2>&1 | tail -2
+  echo "    src: $(ls $d/*.bin 2>/dev/null | wc -l) bin / $(du -sb $d | cut -f1) bytes"
+  echo "    dst: $(ls $DSTROOT/$n/*.bin 2>/dev/null | wc -l) bin / $(du -sb $DSTROOT/$n | cut -f1) bytes"
+done
+
+echo "[5] 校验：shard 数 + 总字节数 必须一致"
+for d in "$BASE"/data/full_*; do
+  [ -d "$d" ] || continue
+  n=$(basename "$d")
+  s1=$(ls $d/*.bin 2>/dev/null | wc -l); s2=$(ls $DSTROOT/$n/*.bin 2>/dev/null | wc -l)
+  b1=$(du -sb $d | cut -f1); b2=$(du -sb $DSTROOT/$n | cut -f1)
+  if [ "$s1" = "$s2" ] && [ "$b1" = "$b2" ]; then echo "  OK  $n  shards=$s1 bytes=$b1"; else echo "  MISMATCH $n  src($s1/$b1) dst($s2/$b2)"; fi
+done
+
+echo "[6] 建软链接（旧路径仍可访问，先不删源）"
+for d in "$BASE"/data/full_*; do
+  [ -d "$d" ] || continue
+  n=$(basename "$d")
+  if [ -d "$DSTROOT/$n" ] && [ ! -L "$d" ]; then
+    echo "  注意：$d 仍是真实目录（不删源，仅记录）。切换方式：mv $d $d.orig && ln -s $DSTROOT/$n $d"
+  fi
+done
+
+echo "[7] 迁移后磁盘"
+df -h /nas_train /nas_env 2>/dev/null | tail -3
+echo "[8] en_v1_4 下载/分词未受影响确认"
+pgrep -cf 'resolve.py' 2>/dev/null; pgrep -cf 'fullsource|preprocess_data' 2>/dev/null
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-80 | head -1 || echo '  L2 已停 ✅'
+echo "=== DONE 149 ==="
+```
+
+**输出**
+```
+=== RUN_ID 149 | migrate tokenized data to /nas_env | 2026-10-22 08:29:29 | host=whag0pgpuap29 ===
+[1] 磁盘余量确认
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01  207T  174T   34T  84% /nas_train
+10.239.23.32:/vol_CTE0_data04   10T  344G  9.6T   4% /nas_env
+  /nas_env avail = 9795G
+[2] 待迁移数据清单（5 源分词产物）
+  --- 5 源总大小 ---
+0	total
+[3] 前置校验：余量是否足够（需要 > 3.91T * 1.1 ≈ 4.3T）
+  OK
+[4] 建目标目录 + rsync（保留结构，可续传）
+[5] 校验：shard 数 + 总字节数 必须一致
+[6] 建软链接（旧路径仍可访问，先不删源）
+[7] 迁移后磁盘
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01  207T  174T   34T  84% /nas_train
+10.239.23.32:/vol_CTE0_data04   10T  344G  9.6T   4% /nas_env
+[8] en_v1_4 下载/分词未受影响确认
+0
+0
+=== DONE 149 ===
+```
