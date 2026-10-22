@@ -5,18 +5,18 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~45h,ppid=1)，0incomplete，**104/110dirs**（103full@512parquet + CC-MAIN-2024-51 partial@85/512），正在下载剩余 6 shards，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
+> 🟢 **下载口径（2026-10-20 恢复）**：**en_v1_4 下载已恢复**（用户直令 2026-10-20「data: 可以恢复下载了」）。恢复旧「失败/僵死/速率趋零/PID已死就 kill+重启」口径（2026-10-07 起生效版），不必等运维点名。**分词不受影响，继续跑**。当前：PID1875054 resolve.py alive(~46h,ppid=1)，0incomplete，**105/110dirs**（103full@512parquet + 2 partial），~7MB/s，ETA~10-23。细则见 `BAIZE_DATA_TASK.md` 运维指令区（10-20恢复下载块已归档→ARCHIVE，见指针）。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(104/110dirs,0incomplete)+▶️en_v1_4全源分词(done=90/110 idx,103bin,13procs@100%CPU healthy,bin~58G growing→target~63G,ETA~1-2h,PID3624240)+✅git sync
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.91TB,盘上已验证574/574/574@code/BaiZe-ISEDA2027/data/full_*/)+🟢en_v1_4下载(105/110dirs,0incomplete,~7MB/s)+▶️en_v1_4全源分词(done=90/110 idx,103bin,13procs healthy,oldest bins~63-64GB nearing completion,ETA imminent,PID3624240)+✅git sync
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; GPIC/85M⏸/cauldron/wit_base/SFT-2605/RL-2609/InternVL/WebMix全就绪; en_v1_4下载已恢复+分词(done=90/110,1.65T,13shards在跑); ✅5源全量分词ALL DONE: Code L3(63sh,128.62B)+Math L3(67sh,77.95B)+Code L2(141sh,421.45B)+UFW-L3(154sh,263.90B)+Math L1(149sh,164.44B)=574shards/1056.36B/3.91TB(产物在code/BaiZe-ISEDA2027/data/full_*/,盘上验证574/574/574)
-当前动作:     唤醒597(2026-10-22 13:20)巡检轮：fullsource PID3624240 alive ~11h(etimes=39487s),13procs@100%CPU all healthy(verified bin growing: env14_CC-MAIN-2022-21.bin 61324845592→61329520852 in 3s✅)。in-progress bin:11oldest@~58-59GB(→target~63GB→~93%done,ETA~1-2h)+2024-42@34GB+2024-46@15GB。5源574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),1pending_download(CC-MAIN-2024-51@429/512),1.65T done-only,6.08TB bin_bytes(done-only),12TB total baize-data/text。download alive(PID1875054~44.8h,104dirs,0incomplete)。load~57/224,mem1480GB。📦体积：TASK=25.2KB/MEMORY=29.8KB
-下一步:       ①继续监控fullsource(13shards在处理,11oldest~93%done ETA~14:00-15:00,done=90→103→110)②en_v1_4下载(104→110dirs,CC-MAIN-2024-51@429/512→512,ETA~10-23)③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录,pretrain 10-22指令已要求用full_* 6源)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
-阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中,13procs@100%CPU确认healthy,bin文件增长已验证)
+当前动作:     唤醒598(2026-10-22 14:33)巡检轮：fullsource PID3624240 alive ~12.2h(etimes=43861s),13procs all healthy(bin增长已验证:env14_CC-MAIN-2024-38.bin 69091160064→69095964172 in 3s✅,proc write_bytes 22250958848→22255562752 in 3s✅)。oldest in-progress bins now~63-64GB(2022-21@63.5G,2022-40@63.9G,2022-49@63.8G,2023-40@64.3G,2024-38@64.4G)→nearing completion imminently。5源574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),pending_download=2,1.65T done-only,6.53TB bin_bytes(done-only)。download alive(PID1875054~46h,105dirs,53301parquet,0incomplete,~7MB/s)。load~56/224,mem1490GB,disk 33T free/85%。📦体积：TASK=25.2KB/MEMORY=30.1KB
+下一步:       ①继续监控fullsource(13shards在处理,oldest batch~63-64GB→即将完成,done=90→91+imminent)②en_v1_4下载(105→110dirs,5dirs未建,ETA~10-23)③5源分词产物交接pretrain(修改baize_xmodel25_decay_v2.py数据源→full_*目录,pretrain 10-22指令已要求用full_* 6源)④85M维持暂停⑤en_v1_4全源完成后产出fullsource manifest+summary
+阻塞:         无(5源分词全部完成并盘上验证,1056.36B远超decay需求;L3两源Code+Math=206.57B已解锁20B decay实验;en_v1_4 download+fullsource自动推进中,13procs确认healthy,bin文件增长已验证,oldest bins~63-64GB即将完成)
 ERROR_COUNT:  9
 ```
 
@@ -26,7 +26,8 @@ ERROR_COUNT:  9
 > 📦 唤醒594 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs+bin~38G+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒595 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~45G+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒596 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~51G+5源574/574/574验证+done=90/110,详见日文件）
-> 唤醒597（2026-10-22 13:20）巡检轮：fullsource PID3624240 alive ~11h(etimes=39487s),13procs@100%CPU all healthy(bin增长已验证:env14_CC-MAIN-2022-21.bin 61324845592→61329520852 in 3s✅,proc fd=77→.bin fd=79→parquet part264/512)。in-progress bin:11oldest@~58-59GB(target~63GB→~93%done,ETA~1-2h)+2024-42@34GB+2024-46@15GB。5源574/574/574 intact。fullsource done=90/110 idx,103bin(90done+13in-progress),1pending_download(CC-MAIN-2024-51@429/512),1.65T done-only,6.08TB bin_bytes(done-only)。download alive(PID1875054~44.8h,104dirs,0incomplete)。load~57/224,mem1480GB,disk 34TB free/84%。无error。📦体积：TASK=25.2KB/MEMORY=29.8KB
+> 📦 唤醒597 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins~58-59GB+5源574/574/574验证+done=90/110,详见日文件）
+> 唤醒598（2026-10-22 14:33）巡检轮：fullsource PID3624240 alive ~12.2h(etimes=43861s),13procs all healthy(bin增长已验证:env14_CC-MAIN-2024-38.bin 69091160064→69095964172 in 3s✅,proc write_bytes PID1629427 22250958848→22255562752 in 3s✅)。oldest in-progress bins now~63-64GB(2022-21@63.5G,2022-40@63.9G,2022-49@63.8G,2023-40@64.3G,2024-38@64.4G)→nearing completion imminently。5源574/574/574 intact(code_l3=63/code_l2=141/math_l3=67/math_l1=149/ufw_l3=154,3.91TB)。fullsource done=90/110 idx,103bin(90done+13in-progress),pending_download=2,1.65T done-only,6.53TB bin_bytes(done-only)。download alive(PID1875054~46h,105dirs,53301parquet,0incomplete,~7MB/s)。load~56/224,mem1490GB,disk 33T free/85%。无error。📦体积：TASK=25.2KB/MEMORY=30.1KB
 > 📦 唤醒593 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs确认+bin~32-33G+5源574/574/574验证,详见日文件）
 > 📦 唤醒592 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs确认+bin~26-32G+5源574/574/574验证,详见日文件）
 > 📦 唤醒591 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 11procs确认+bin~20.8GB+5源574/574/574验证,详见日文件）
