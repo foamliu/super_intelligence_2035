@@ -16088,3 +16088,143 @@ total 416
 129:    --load $CHECKPOINT_PATH
 === DONE 148 ===
 ```
+
+---
+
+## RUN_ID 148 · 2026-10-22 08:24:27 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 148 | kill L2 + official Megatron path bring-up | $(date '+%F %T') | host=$(hostname) ==="
+XF=/nas_train/app.e0031982/ref/Xmodel-2.5
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+BASE=/nas_train/app.e0031982/code/Baize-ISEDA2027
+
+echo "[1] kill L2（用户直令）"
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-110 | head -3 || echo '  L2 not found'
+pkill -TERM -f 'baize_xmodel25_decay_L2' 2>/dev/null && echo '  TERM sent' || echo '  nothing to TERM'
+sleep 10
+left=$(pgrep -f 'baize_xmodel25_decay_L2|torch.distributed.run.*L2' 2>/dev/null | head -5)
+[ -n "$left" ] && { echo "  still: $left -> KILL"; pkill -KILL -f 'baize_xmodel25_decay_L2' 2>/dev/null; sleep 5; }
+echo "  remaining=$(pgrep -cf 'baize_xmodel25_decay_L2' 2>/dev/null || echo 0)"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "  L2 最后 step:"; strings /tmp/baize_xmodel25_decay_L2_train.log 2>/dev/null | grep -oE '\[step +[0-9]+/[0-9]+\]' | tail -1
+
+echo "[2] 定位 5 源分词真实路径（上次路径写错）"
+find "$BASE/data" -maxdepth 2 -type d -name 'full*' 2>/dev/null | head -10
+for d in $(find "$BASE/data" -maxdepth 2 -type d -name 'full*' 2>/dev/null | head -10); do
+  n=$(ls "$d"/*.bin 2>/dev/null | wc -l); echo "  $d : $n .bin"
+done
+
+echo "[3] 官方脚本需要的数据命名格式（text_document 后缀）"
+grep -n 'DATA_PATH' -A14 "$XF/examples/xmodel/train_decay_fp8_1120.sh" | head -18 | cut -c1-170
+
+echo "[4] 起点 ckpt 现状"
+ls -l "$BASE/nemo_experiments/xmodel25_history/step_532000/" 2>/dev/null | head -10
+
+echo "[5] 官方转换脚本用法"
+$PY "$XF/tools/checkpoint/convert.py" --help 2>&1 | head -25
+
+echo "[6] megatron_to_hf_mup.py / loader_* 可用性"
+ls -l "$XF/tools/checkpoint/" 2>/dev/null | head -12
+
+echo "[7] 官方 decay 脚本改造成本评估：需要替换的变量"
+grep -nE '^(CHECKPOINT_PATH|TOKENIZER_MODEL|DATA_PATH)=' "$XF/examples/xmodel/train_decay_fp8_1120.sh" | cut -c1-140
+echo "  → 需替换：CHECKPOINT_PATH(起点+输出) / TOKENIZER_MODEL / DATA_PATH(6源权重)"
+
+echo "[8] 官方 decay 的输出目录与 ckpt 命名"
+grep -nE 'save|load|ckpt-format|dist-ckpt' "$XF/examples/xmodel/train_decay_fp8_1120.sh" | cut -c1-140 | head -8
+
+echo "=== DONE 148 ==="
+```
+
+**输出**
+```
+=== RUN_ID 148 | kill L2 + official Megatron path bring-up | 2026-10-22 08:24:27 | host=whag0pgpuap29 ===
+[1] kill L2（用户直令）
+2754483 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash
+2754484 bash baize_xmodel25_decay_L2.sh
+  TERM sent
+  remaining=0
+0
+0, 51763 MiB, 100 %
+1, 51763 MiB, 100 %
+2, 51763 MiB, 100 %
+3, 51763 MiB, 100 %
+4, 51763 MiB, 100 %
+5, 51763 MiB, 100 %
+6, 51763 MiB, 98 %
+7, 51763 MiB, 100 %
+  L2 最后 step:
+[step  2270/5611]
+[2] 定位 5 源分词真实路径（上次路径写错）
+[3] 官方脚本需要的数据命名格式（text_document 后缀）
+29:DATA_PATH="0.18725 /data1/i_line_data/ultrafineweb-en_content_document \
+30-           0.03716 /data1/i_line_data/ultrafineweb-zh_content_document \
+31-           0.02209 /data1/i_line_data/starcoder_text_document \
+32-           0.00287 /data1/i_line_data/books_text_document \
+33-           0.01722 /data1/i_line_data/algebraic-stack-train_text_document \
+34-           0.01722 /data1/i_line_data/open-web-math-train_text_document \
+35-           0.01147 /data1/i_line_data/wiki_text_document \
+36-           0.00900 /data1/i_line_data/stackexchange_text_document \
+37-           0.00900 /data1/i_line_data/reddit_text_document \
+38-           0.01801 /data1/i_line_data/megawika_text_document \
+39-           0.66870 /data1/i_line_data/sft_mixed_v2_deduped_v4_text-document"
+40-
+41-
+42-DISTRIBUTED_ARGS=(
+43-    --nproc_per_node $GPUS_PER_NODE
+--
+113:    --data-path $DATA_PATH
+114-    --split 949,50,1
+[4] 起点 ckpt 现状
+[5] 官方转换脚本用法
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+usage: convert.py [-h] --model-type {GPT,BERT} [--loader LOADER]
+                  [--saver SAVER] --load-dir LOAD_DIR --save-dir SAVE_DIR
+                  [--max-queue-size MAX_QUEUE_SIZE] [--no-checking]
+
+Megatron Checkpoint Converter Arguments
+
+options:
+  -h, --help            show this help message and exit
+  --model-type {GPT,BERT}
+                        Type of the model
+  --loader LOADER       Module name to load checkpoint, should be on python
+                        path
+  --saver SAVER         Module name to save checkpoint, should be on python
+                        path
+  --load-dir LOAD_DIR   Directory to load model checkpoint from
+  --save-dir SAVE_DIR   Directory to save model checkpoint to
+  --max-queue-size MAX_QUEUE_SIZE
+                        Maximum number of tensors in the queue
+  --no-checking         Do not perform checking on the name and ordering of
+                        weights
+[6] megatron_to_hf_mup.py / loader_* 可用性
+total 416
+-rw-r----- 1 app.e0031982 app.adm  5329 Oct 22 05:28 convert.py
+-rw-r----- 1 app.e0031982 app.adm 16932 Oct 22 05:28 hybrid_conversion.py
+-rw-r----- 1 app.e0031982 app.adm 20627 Oct 22 05:28 loader_base.py
+-rw-r----- 1 app.e0031982 app.adm  3213 Oct 22 05:28 loader_core.py
+-rw-r----- 1 app.e0031982 app.adm 16064 Oct 22 05:28 loader_legacy.py
+-rw-r----- 1 app.e0031982 app.adm 27157 Oct 22 05:28 loader_llama_mistral.py
+-rw-r----- 1 app.e0031982 app.adm 19012 Oct 22 05:28 loader_llava.py
+-rw-r----- 1 app.e0031982 app.adm 13027 Oct 22 05:28 loader_mixtral_hf.py
+-rw-r----- 1 app.e0031982 app.adm  7690 Oct 22 05:28 megatron_to_hf_mup.py
+-rw-r----- 1 app.e0031982 app.adm  6158 Oct 22 05:28 megatron_to_hf.py
+-rw-r----- 1 app.e0031982 app.adm 30095 Oct 22 05:28 saver_base.py
+[7] 官方 decay 脚本改造成本评估：需要替换的变量
+26:CHECKPOINT_PATH=out/i_line_s1_fp8_1117
+28:TOKENIZER_MODEL=tokenizers/deepseekv3
+29:DATA_PATH="0.18725 /data1/i_line_data/ultrafineweb-en_content_document \
+  → 需替换：CHECKPOINT_PATH(起点+输出) / TOKENIZER_MODEL / DATA_PATH(6源权重)
+[8] 官方 decay 的输出目录与 ckpt 命名
+92:    --no-load-optim
+124:    --save-interval 1000
+127:    --ckpt-format torch
+128:    --save $CHECKPOINT_PATH
+129:    --load $CHECKPOINT_PATH
+=== DONE 148 ===
+```
