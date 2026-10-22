@@ -4,7 +4,21 @@ WAITING: 1
 
 > 📦 §#710 流水（2026-10-22 06:57，L2 健康监控 step 1830）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1830 loss0.92 0error，短途报告/EXPERIMENTS 同步。需要时再读。
 > 📦 §#711 流水（2026-10-22 07:30，L2 健康监控 step 2000）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2000 loss0.9652 0error，短途报告/EXPERIMENTS 同步至 step2000。需要时再读。
-> 🆕 **2026-10-22 08:44 #714：🛑 L2 用户直令 kill 闭环（step 2370/5611，42.3%）→ 方向转 A方案（官方 Megatron）**：用户 08:2x 令（ops RUN_ID 148）「把 L2 kill 掉 执行 A 方案」。ops relay 08:24 只杀了 bash wrapper（2754483/2754484），孤儿 torchrun master（PID2754486，comm pt_elastic，ppid=1）+ 8×L1.py worker + 88×pt_data_worker 存活继续 headless 训练。我 08:44:31 `kill -TERM 2754486` → 级联杀净，`.29` 8×GPU 全空（0MiB/0%）。L2 止于 step 2370/5611（loss=0.9420，elapsed 472.8min=7.9h，未评 CS8 弃置），ckpt step_500/1000/1500/2000 留档 `xmodel25_baize_L2_20b/`。L3 不启动、2×2 因子分析作废。A方案（RUN_ID 147 可行性✅）：官方 `train_decay_fp8_1120.sh`=纯 DP8(TP1/PP1=我们8卡)+μP(12.0/1.0/1.4/1.4)+FP8 TE+lr1e-5 const+seq32768+分布式优化器；缺 μP 正是自写脚本 L1 59.03% vs 起点 61.03% 残余 -2pp 主因。前置：起点 HF→Megatron 转换（repo convert.py+loader_*）、DATA_PATH 6源权重（`full_*` 实测 0 shard 需定位）、100 步冒烟。📦 体积：TASK=32725B(31.96K)/MEMORY 待测。
+> 🆕 **2026-10-22 09:1x #715：📋 A方案前置调查（08:5x 新令 1113.sh + 20B）→ repo 克隆 + 脚本/数据/转换全部定位**：用户 08:5x 新令「pretrain 的 xmodel decay 参考官方 `train_decay_fp8_1113.sh`，使用 20B 数据」（**以 1113.sh 为准，覆盖 1120.sh**）。1113.sh 关键参数：48L/h1536/24head/GQA8/ffn3840/rope/swiglu/RMSNorm/use-mup(12.0/1.0/1.4/1.4)/GBS960/MBS5/seq3776/optimizer=muon(muon-matched-adamw-rms 0.2)/lr=1.66667e-3/decoupled-lr=1e-2/min-lr=1.04e-4/WSD exponential/lr-decay-iters=20000/warmup=0/wd=0.1/bf16/FP8 TE hybrid/amax-history=128/DP8(TP1/PP1)+distributed-optimizer/tokenizer deepseekv3/vocab=129280。train-iters=20e9/(960×3776)≈5560 步。
+>
+> **前置调查结果**：
+> - **repo 克隆** ✅：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/`（含 megatron/ fork、pretrain_gpt.py、tools/checkpoint/convert.py、tokenizers/deepseekv3/、models/modeling_xmodel2.py）。
+> - **起点 ckpt** ✅：`xmodel25_history/step_532000/pytorch_model.bin`（2.7GB, HF format, XmodelForCausalLM = Llama-style: 48L/h1536/GQA8/ffn3840/rope_theta=500000/RMSNorm/swiglu/use_mup, vocab=129280）。
+> - **数据** ✅ 全部在 Megatron `text_document` 格式（`.bin`+`.idx`）：SFT=`data/mix_sft_tok/mix_sft_train_s{0,1,2,3}`、UFW L3=`data/full_ufw_l3/`(990G,154 shards)、Code=`data/full_ultradata_code_l3/`(481G,63 shards)、Math=`data/full_ultradata_math_l3/`(292G,67 shards)。**1113.sh 原 11 源在 `/data1/i_line_data/`（Xmodel 机器，我们没有）→ 需用现有 4 源配比（SFT 64%:L3 24%:code 8%:math 4%，与 v2 同口径）**。
+> - **HF→Megatron 转换** ⚠️ **无现成 Xmodel loader**：repo `tools/checkpoint/` 有 `loader_llama_mistral.py`（支持 HF llama2/llama3/mistral/yi/qwen2.5，但**不支持 xmodel**）。但有 `megatron_to_hf_mup.py`（Megatron→HF，含完整权重映射 + XmodelConfig/XmodelForCausalLM import）→ **可逆向写 HF→Megatron converter**。
+> - **.29 8×GPU** ✅ 全空（0MiB/0%），无 torchrun。
+>
+> **下一步（按序）**：① 写 HF→Megatron 转换脚本（逆向 `megatron_to_hf_mup.py` 的权重映射）→ 验证转换后 ckpt 可被 Megatron 加载；② 搭 DATA_PATH（现有 4 源 text_document 路径 + 权重）；③ 改 1113.sh（CHECKPOINT_PATH→我们路径、train-iters=5560、lr-decay-iters=5560、DATA_PATH→现有 4 源、--load→转换后 Megatron ckpt）；④ 100 步冒烟确认 loss 接住 stable 末点 → ⑤ 起 20B decay。
+>
+> **归档**：TASK 从 33.6KB→17.1KB（7 个已闭合运维指令块原文移入 ARCHIVE_OPERATOR_PRETRAIN.md，留 1 行指针）。
+> 📦 体积：TASK=17516B(17.1K)/MEMORY=待测（均≤32KB✓）。
+
+> 📦 §#714 流水（2026-10-22 08:44，L2 用户直令 kill 闭环）已归档 → daily-memories/2026-10-22.md；**结论**：L2 kill@step2370，.29 8卡空，方向转 A方案官方 Megatron。需要时再读。
 > 📦 §#713 流水（2026-10-22 08:15，L2 健康监控 step 2200）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2200 loss0.87 0error。需要时再读。
 > 📦 §#712 流水（2026-10-22 08:05，L2 健康监控 step 2170）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2170 loss0.97 0error。需要时再读。
 > 📦 §#708 流水（2026-10-22 06:2x，L2 健康监控 step 1650）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1650 loss1.01 0error。需要时再读。
@@ -45,9 +59,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **✅ decay 根因已定 + 🛑 转 A方案（官方 Megatron 代码）** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。L1（修双移位+LR5e-4）✅ CS8=59.03%（仍 -2pp 残余，主因=自写脚本缺 μP/LR 口径）。L2 用户直令 kill（step 2370/5611，未评 CS8，弃置）。方向：用户 08:2x 令改用官方 `train_decay_fp8_1120.sh`（A方案）。
-  - PHASE: **decay → A方案_official_megatron（L1 完成 59.03% / L2 已 kill / L3 作废）** — 用户裁决：自写 HF+手写DDP+Muon 脚本缺 μP 不可追平 → 改官方 Megatron 代码 decay（DP8+μP+FP8）。下一步：起点 HF→Megatron 转换 + DATA_PATH 定位（full_* 0 shard）+ 100 步冒烟。
-- 轮询状态：**#714（08:44，L2 用户直令 kill 闭环）**：L1 CS8=59.03%（#697）、L2 kill@step2370/5611（未评 CS8）、.29 8×GPU 全空。方向转 A方案（Ops RUN_ID 147/148/149）。下一步：起点 ckpt HF→Megatron 转换 + 数据 6 源权重定位 + 100 步冒烟。任务书 mtime 10-21 10:22 未变（新令走 Ops inbox RUN_ID）。loop 存活。📦 体积：TASK=32725B(31.96K)/MEMORY=待测（均≤32KB）。
+- STAGE: **✅ decay 根因已定 + 🔄 A方案（官方 Megatron 1113.sh）前置调查中** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。L1 CS8=59.03%（缺 μP 残余 -2pp）。L2 kill@step2370。方向：用户 08:5x 令改用官方 `train_decay_fp8_1113.sh`（**以 1113 为准，覆盖 1120**）+ 20B 数据。
+  - PHASE: **A方案_1113sh_前置调查** — repo 已克隆 ✅、1113.sh 已读 ✅、起点 ckpt ✅、数据 ✅（4 源 text_document）、HF→Megatron 转换 ⚠️ 需写自定义 converter（无现成 Xmodel loader，可逆向 megatron_to_hf_mup.py）。下一步：① 写 HF→Megatron 转换脚本 ② 搭 DATA_PATH ③ 改 1113.sh（train-iters=5560）④ 100 步冒烟 ⑤ 20B decay。
+- 轮询状态：**#715（09:1x，A方案 1113.sh 前置调查）**：08:5x 新令已收（以 1113.sh 为准）。repo 克隆 + 脚本/数据/转换全部定位完成。.29 8×GPU 全空。任务书归档 33.6KB→17.1KB。下一步：写 HF→Megatron 转换脚本。loop 存活。📦 体积：TASK=17516B(17.1K)/MEMORY=待测（均≤32KB✓）。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
