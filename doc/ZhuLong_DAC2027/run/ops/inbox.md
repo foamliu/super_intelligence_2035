@@ -84,8 +84,9 @@ echo "=== DONE 106 ==="
 > 用户直令（2026-10-22 00:0x）：「ZhuLong 的 r5e 已经跑了 6 小时才47%？停掉吧。重启 r5e，端口恢复为 8650,8651,8652,8654，并发仍然设为8」。
 > **背景**：r5e（batch `2026_1021_173249`，PID 2921136，`-p 8`，端口 8663/8666/8667/8670）T+5h59m 仅 **74/158（47%）**，后段推进缓慢，用户判定不值。
 > ✅ **本块为正式动作**：kill 当前 r5e → 改 `.env` 端口回 8650-8654 → 重启 `-p 8`。**不碰 loop/relay/t0002147。**
+> ⚠️ **已降级为 text（RUN_ID 106 在上方）**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 105 | kill r5e + port back 8650-8654 + restart -p 8 | $(date '+%F %T') | host=$(hostname) ==="
 BASE=/nasdata/app.e0031982/code/eda_fastmcp
