@@ -58,17 +58,20 @@ CKPT_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/armB_aimv2_opencl
 CKPT_ARMC = "/nas_train/app.e0031982/datasets/baize-vision/out/armC_20261018_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
 CKPT_ARMD = "/nas_train/app.e0031982/datasets/baize-vision/out/armD_r2_20261020_aimv2_openclip_vitb16_224/open_clip_state_dict.pt"
 CKPT_ARME = "/nas_train/app.e0031982/datasets/baize-vision/out/armE_20261021_aimv2_openclip_vitl14_224/open_clip_state_dict.pt"
+CKPT_ARME_R2 = "/nas_train/app.e0031982/datasets/baize-vision/out/armE_r2_20261022_aimv2_openclip_vitl14_224/open_clip_state_dict.pt"
 LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
 STAGE2_BASE_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2"
 STAGE2_BASE_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armB"
 STAGE2_BASE_ARMC = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armC_20261018"
 STAGE2_BASE_ARMD = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armD_r2_20261020"
 STAGE2_BASE_ARME = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armE_20261021"
+STAGE2_BASE_ARME_R2 = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_stage2_armE_r2_20261022"
 RESULTS_DIR_4EP = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results"
 RESULTS_DIR_ARMB = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armB"
 RESULTS_DIR_ARMC = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armC_20261018"
 RESULTS_DIR_ARMD = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armD_r2_20261020"
 RESULTS_DIR_ARME = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armE_20261021"
+RESULTS_DIR_ARME_R2 = "/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022"
 
 # 17 benchmarks (standard VLM evaluation suite)
 BENCHMARKS_17 = [
@@ -100,8 +103,8 @@ def main():
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
     parser.add_argument("--batch_size", type=int, default=32, help="Batch size for evaluation (increase for throughput)")
     parser.add_argument("--vision_backend", type=str, default="baize_4ep",
-                        choices=["baize_4ep", "armB", "armC", "armD", "armE"],
-                        help="baize_4ep=④-4ep BaiZe ViT(512d); armB=open_clip ViT-B/16(768d); armC=ArmC(768d, min_lr1e-5+wd0.01); armD=ArmD(768d, 6src+3ep); armE=ArmE(1024d, ViT-L/14, single-var vs ArmD-R2)")
+                        choices=["baize_4ep", "armB", "armC", "armD", "armE", "armE_r2"],
+                        help="baize_4ep=④-4ep BaiZe ViT(512d); armB=open_clip ViT-B/16(768d); armC=ArmC(768d, min_lr1e-5+wd0.01); armD=ArmD(768d, 6src+3ep); armE=ArmE(1024d, ViT-L/14, single-var vs ArmD-R2); armE_r2=ArmE-R2(1024d, ViT-L/14, lr5e-4+warmup3000 vs ArmE)")
     parser.add_argument("--ckpt", type=str, default=None, help="Override vision tower checkpoint path")
     parser.add_argument("--stage2_base", type=str, default=None, help="Override stage2 ckpt base dir (step appended)")
     args = parser.parse_args()
@@ -123,6 +126,10 @@ def main():
         ckpt = args.ckpt or CKPT_ARME
         stage2_base = args.stage2_base or STAGE2_BASE_ARME
         results_dir = RESULTS_DIR_ARME
+    elif args.vision_backend == "armE_r2":
+        ckpt = args.ckpt or CKPT_ARME_R2
+        stage2_base = args.stage2_base or STAGE2_BASE_ARME_R2
+        results_dir = RESULTS_DIR_ARME_R2
     else:
         ckpt = args.ckpt or CKPT_4EP
         stage2_base = args.stage2_base or STAGE2_BASE_4EP

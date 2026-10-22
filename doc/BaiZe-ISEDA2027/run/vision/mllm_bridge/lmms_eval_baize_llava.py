@@ -63,11 +63,11 @@ class BaizeLLaVA(lmms):
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         self.eot_token_id = self.tokenizer.eos_token_id
-        if self.vision_backend == "armE":
-            # armE: open_clip ViT-L/14, 1024-d patch tokens [B,256,1024]
+        if self.vision_backend in ("armE", "armE_r2"):
+            # armE/armE_r2: open_clip ViT-L/14, 1024-d patch tokens [B,256,1024]
             self.vision, _, _ = create_baize_vitl14_1024(pretrained=ckpt, device="cpu")
             vision_width = BAIZE_VITL14_WIDTH  # 1024
-            print(f"[BaizeLLaVA] vision_backend=armE (open_clip ViT-L/14, 1024-d) ckpt={ckpt}")
+            print(f"[BaizeLLaVA] vision_backend={self.vision_backend} (open_clip ViT-L/14, 1024-d) ckpt={ckpt}")
         elif self.vision_backend in ("armB", "armC", "armD"):
             # armB/armC/armD: open_clip ViT-B/16, 768-d patch tokens [B,196,768]
             self.vision, _, _ = create_baize_vitb16_768(pretrained=ckpt, device="cpu")
