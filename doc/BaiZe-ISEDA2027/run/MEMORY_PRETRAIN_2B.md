@@ -4,7 +4,8 @@ WAITING: 1
 
 > 📦 §#710 流水（2026-10-22 06:57，L2 健康监控 step 1830）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1830 loss0.92 0error，短途报告/EXPERIMENTS 同步。需要时再读。
 > 📦 §#711 流水（2026-10-22 07:30，L2 健康监控 step 2000）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2000 loss0.9652 0error，短途报告/EXPERIMENTS 同步至 step2000。需要时再读。
-> 🆕 **2026-10-22 08:15 #713：🩺 L2 训练健康监控 step 2200/5611（39.2%）**：L2（修双移位+高LR1.67e-3）训练中 PID2754486，8×GPU 98-100%/51763MiB，loss=0.8654，lr=3.34e-04，~11.9s/step，297.8K tok/s，elapsed 439.0min（7.3h），ETA ~10-22 19:30。step0=1.7138（双移位修复在高LR下仍生效 vs v2 11.72）。0 nan/0 CUDA error。ckpt step_500/1000/1500/2000 已存。任务书 mtime 10-21 10:22 未变 ⇒ 无新 pretrain 令。git 0/0。短途报告已同步至 step2200。📦 体积：TASK=32725B(31.96K)/MEMORY=~15.3K（均≤32KB）。
+> 🆕 **2026-10-22 08:44 #714：🛑 L2 用户直令 kill 闭环（step 2370/5611，42.3%）→ 方向转 A方案（官方 Megatron）**：用户 08:2x 令（ops RUN_ID 148）「把 L2 kill 掉 执行 A 方案」。ops relay 08:24 只杀了 bash wrapper（2754483/2754484），孤儿 torchrun master（PID2754486，comm pt_elastic，ppid=1）+ 8×L1.py worker + 88×pt_data_worker 存活继续 headless 训练。我 08:44:31 `kill -TERM 2754486` → 级联杀净，`.29` 8×GPU 全空（0MiB/0%）。L2 止于 step 2370/5611（loss=0.9420，elapsed 472.8min=7.9h，未评 CS8 弃置），ckpt step_500/1000/1500/2000 留档 `xmodel25_baize_L2_20b/`。L3 不启动、2×2 因子分析作废。A方案（RUN_ID 147 可行性✅）：官方 `train_decay_fp8_1120.sh`=纯 DP8(TP1/PP1=我们8卡)+μP(12.0/1.0/1.4/1.4)+FP8 TE+lr1e-5 const+seq32768+分布式优化器；缺 μP 正是自写脚本 L1 59.03% vs 起点 61.03% 残余 -2pp 主因。前置：起点 HF→Megatron 转换（repo convert.py+loader_*）、DATA_PATH 6源权重（`full_*` 实测 0 shard 需定位）、100 步冒烟。📦 体积：TASK=32725B(31.96K)/MEMORY 待测。
+> 📦 §#713 流水（2026-10-22 08:15，L2 健康监控 step 2200）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2200 loss0.87 0error。需要时再读。
 > 📦 §#712 流水（2026-10-22 08:05，L2 健康监控 step 2170）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2170 loss0.97 0error。需要时再读。
 > 📦 §#708 流水（2026-10-22 06:2x，L2 健康监控 step 1650）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1650 loss1.01 0error。需要时再读。
 > 📦 §#707 流水（2026-10-22 05:5x，L2 健康监控 step 1490）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1490 loss1.02 0error。需要时再读。
@@ -44,9 +45,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **✅ decay v2 根因排查进行中 + 09:3x 报告令已交付** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。**L1（修双移位+LR5e-4）✅ CS8=59.03%≥55% → 方向正确**；**L2（只修双移位+高LR1.67e-3）训练中 step 2200/5611**；L3（bug+低LR）待启。09:3x 两份中文 HTML 报告已交付。吞吐 297.7K tok/s ⇒ 18.7h/变体，L2 剩 ≈ 11.3h。
-  - PHASE: **decay80b_v2_scrootcause_L2（L1 完成 CS8=59.03% / L2 训练中 / L3 待启）** — 2×2 因子：L1(fix+lowLR)=59.03% 基准，L2(fix+highLR) 隔离 LR 贡献，L3(bug+lowLR) 隔离双移位贡献。判定门槛 CS8≥55%（L1 已过 → 方向对）。
-- 轮询状态：**#713（08:15，L2 健康监控）**：L1 CS8=59.03%（#697）、L2 训练中 step 2200/5611（39.2%）loss=0.87 lr=3.34e-04 health 0 error。下一步：L2 ~19:30 训完 → CS8 eval(~20min) → L3 → 2×2 因子定主因。任务书 mtime 10-21 10:22 未变 ⇒ 无新 pretrain 令。loop 存活。git 0/0。📦 体积：TASK=32725B(31.96K)/MEMORY=~15.3K（均≤32KB）。
+- STAGE: **✅ decay 根因已定 + 🛑 转 A方案（官方 Megatron 代码）** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。L1（修双移位+LR5e-4）✅ CS8=59.03%（仍 -2pp 残余，主因=自写脚本缺 μP/LR 口径）。L2 用户直令 kill（step 2370/5611，未评 CS8，弃置）。方向：用户 08:2x 令改用官方 `train_decay_fp8_1120.sh`（A方案）。
+  - PHASE: **decay → A方案_official_megatron（L1 完成 59.03% / L2 已 kill / L3 作废）** — 用户裁决：自写 HF+手写DDP+Muon 脚本缺 μP 不可追平 → 改官方 Megatron 代码 decay（DP8+μP+FP8）。下一步：起点 HF→Megatron 转换 + DATA_PATH 定位（full_* 0 shard）+ 100 步冒烟。
+- 轮询状态：**#714（08:44，L2 用户直令 kill 闭环）**：L1 CS8=59.03%（#697）、L2 kill@step2370/5611（未评 CS8）、.29 8×GPU 全空。方向转 A方案（Ops RUN_ID 147/148/149）。下一步：起点 ckpt HF→Megatron 转换 + 数据 6 源权重定位 + 100 步冒烟。任务书 mtime 10-21 10:22 未变（新令走 Ops inbox RUN_ID）。loop 存活。📦 体积：TASK=32725B(31.96K)/MEMORY=待测（均≤32KB）。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**

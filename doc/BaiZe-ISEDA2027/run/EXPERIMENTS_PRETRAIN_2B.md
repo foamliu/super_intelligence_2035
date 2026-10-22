@@ -498,7 +498,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - ITERS=5611（20B token）/ WARMUP=100 / LR=5e-4 → MIN_LR=1e-5（WSD 指数衰减）/ SAVE_INTERVAL=500
 - 开关：adamw_fused + compile_model default + chunked_ce(256) + fast_data + verify_save_step 20
 
-### L1 进展（截至 2026-10-22 03:2x — ✅ 训练完成 + CS8 eval ✅ 完成 + L2 训练中）
+### L1 进展（✅ 训练完成 + CS8 eval = 59.03% 完成）
 
 | 项目 | 值 |
 |:--|:--|
@@ -508,7 +508,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 | 收尾说明 | rc=1 = rank6 teardown 段 SIGABRT（final 保存后 destroy_process_group，无损，无需 resume） |
 | 已存 ckpt | step_500~step_5500（12 个）+ final + verify_save_20 |
 | CS8 eval | ✅ **59.03%**（`eval_L1_20b_cs8/eval_summary.txt`，@2026-10-21 23:55） |
-| L2/L3 | L2 🟢 训练中 step 2170/5611（38.7%）；L3 ⏸ 待 L2 完成 |
+| L2/L3 | L2 🛑 用户直令 kill@step 2370/5611（42.3%，未评 CS8，弃置）；L3 ❌ 不启动（2×2 作废） |
 
 ### 关键观察：双移位修复确效
 
@@ -519,22 +519,20 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 ⇒ 双移位 bug 是 step0 loss 异常的直接原因，修复后起点 loss 回归 ~1.7（与 stable 末点一致）。L1 loss 轨迹：1.75(step0)→1.33(step20)→1.10(step100)→1.03(step500)→0.95(step1000)→0.88(step1670)，稳步下降无 spike。
 
-### L2 进展（截至 2026-10-22 08:05 — 🟢 训练中）
+### L2 结果（🛑 用户直令 kill — 2026-10-22 08:44 闭环，未评 CS8，弃置）
 | 项目 | 值 |
 |:--|:--|
-| 状态 | 🟢 **训练中** step 2170/5611（38.7%），PID 2754486 |
+| 状态 | 🛑 **用户 08:2x 直令 kill**（Ops RUN_ID 148「把 L2 kill 掉 执行 A 方案」）。ops relay 08:24 只杀 bash wrapper，孤儿 torchrun master 2754486 继续 headless；我 08:44:31 `kill -TERM 2754486` 级联杀净 |
+| 终态 | step **2370/5611**（42.3%），loss=0.9420，lr=3.00e-04，elapsed 472.8min（7.9h）；8×GPU 已全空（0MiB/0%） |
 | 配置 | 修双移位（用 L1.py）+ LR=1.67e-3 + MIN_LR=1e-4 + warmup 100 + 20B/5611 步 |
-| loss | ~0.97（step 2170），step0=1.7138（双移位修复在高 LR 下仍生效，vs v2 11.72） |
-| lr | 3.40e-04（WSD warmup 后衰减中） |
-| 吞吐 | ~11.9s/step，297.7K tok/s，elapsed 433.1min（7.2h），8×GPU 97-100%/51763MiB |
-| ckpt | step_500 + step_1000 + step_1500 + step_2000 已存（save_interval=500） |
-| ETA | 剩 ~3441 步 × 11.9s ≈ 11.4h → ~10-22 19:30 完成 |
-| error | 0 nan / 0 CUDA error（唯一 log error = 启动期 EADDRINUSE port 29822 的失败尝试，无害） |
+| step0 loss | 1.7138（**双移位修复在高 LR 下仍生效**，vs v2 11.72）——已作为证据留档 |
+| ckpt | `xmodel25_baize_L2_20b/` 下 step_500/1000/1500/2000 + verify_save_20（全部留档） |
+| 结论 | **未评 CS8（弃置）**；L2/L3 2×2 因子分析作废 |
 
-### 后续计划
+### 后续计划（方向已变：A方案 = 官方 Megatron 代码）
 
-1. ✅ L1 训完 + CS8 eval = **59.03%**（≥55% 门槛✅ → 方向正确）。
-2. 🟢 L2 训练中（step 2170/5611，38.7%，ETA ~19:30）→ 训完 → CS8 eval（~20min）。
-3. L2 CS8 出数 → 启动 L3（仅降 LR 5e-4，不修双移位，20B）→ CS8 eval。
-4. L1/L2/L3 三组 CS8 → 2×2 因子分析定主因（双移位 vs LR）→ 决定是否用最优配方重跑 71.2B。
+1. ✅ L1 训完 + CS8 eval = **59.03%**（修双移位后仍 -2pp，残余主因=自写脚本缺 μP/LR 口径）。
+2. 🛑 L2 用户直令 kill@step2370（未评 CS8）；L3 不启动；2×2 因子分析作废。
+3. 用户裁决：改用官方 `examples/xmodel/train_decay_fp8_1120.sh`（DP8+μP+FP8+lr1e-5 const，RUN_ID 147 可行性✅）。
+4. 前置三步：① 起点 step_532000 HF→Megatron 转换（repo convert.py+loader_*）；② DATA_PATH 6 源权重定位（`full_*` 实测 0 shard）；③ 100 步冒烟。
 
