@@ -13674,3 +13674,122 @@ echo "=== DONE 109 ==="
 
 === DONE 109 ===
 ```
+
+---
+
+## RUN_ID 110 · 2026-10-23 00:09:23 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 110 | stop r5e3 + switch agent to zl/zhulong + restart 8090 | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "[1] 停 r5e3（用户直令）"
+pgrep -af 'run_cline_script' 2>/dev/null | cut -c1-110 | head -3 || echo '  not running'
+pkill -TERM -f 'run_cline_script' 2>/dev/null && echo '  TERM sent' || echo '  nothing'
+sleep 12
+left=$(pgrep -f 'run_cline_script' 2>/dev/null | head -5)
+[ -n "$left" ] && { echo "  still: $left -> KILL"; pkill -KILL -f 'run_cline_script' 2>/dev/null; sleep 5; }
+echo "  remaining=$(pgrep -cf 'run_cline_script' 2>/dev/null || echo 0)"
+echo "  r5e3 最后进度留证:"
+ls -dt /home/app.e0031982/eda_code_eval/2026_1022_105416 2>/dev/null && find /home/app.e0031982/eda_code_eval/2026_1022_105416/code -name '*.py' 2>/dev/null | wc -l
+
+echo "[2] 现有 .env 里 agent 相关字段（找 cli agent 键名）"
+cd "$BASE" || exit 1
+cp -a .env ".env.bak.agent.$(date +%s)" && echo '  .env backed up'
+grep -nEi 'agent|cli_|ZL|ZHULONG|tools_?whitelist' .env | head -30 | cut -c1-200
+
+echo "[3] 8090 现状"
+pgrep -af '8090' 2>/dev/null | cut -c1-120 | head -3 || echo '  8090 not running'
+ss -ltnp 2>/dev/null | grep ':8090' | cut -c1-120 || echo '  no listener on 8090'
+
+echo "[4] 沙盒端口改成 8663/8666/8667/8670（用户指定）"
+grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST)' .env | cut -c1-200
+sed -i 's/^PROXY_PORTS=.*/PROXY_PORTS=8663,8666,8667,8670/' .env
+grep -nE '^SANDBOX_ENDPOINTS' .env | cut -c1-260
+echo "  ⚠️ SANDBOX_ENDPOINTS 需按 port:workdir 格式；若原值含 workdir 映射，agent 需按同样 workdir 换端口重写"
+
+echo "[5] 4 端口探活"
+ok=0
+for p in 8663 8666 8667 8670; do
+  timeout 5 bash -c "exec 3<>/dev/tcp/10.129.32.75/$p" 2>/dev/null && { echo "  $p OPEN"; ok=$((ok+1)); } || echo "  $p FAIL"
+done
+echo "  open=$ok/4"
+
+echo "[6] 可用 agent 列表（zl / zhulong 是否已注册）"
+ls "$BASE" 2>/dev/null | head -20
+find "$BASE" -maxdepth 3 -type d \( -name '*zl*' -o -name '*zhulong*' \) 2>/dev/null | head -10
+python3 - <<'PY'
+import json,glob
+try:
+    import yaml
+except Exception:
+    yaml=None
+for f in glob.glob('/nasdata/app.e0031982/code/eda_fastmcp/**/tools*.json', recursive=True)[:5]:
+    print('  tools:', f)
+PY
+
+echo "[7] 8090 重启方式（找启动脚本）"
+find "$BASE" -maxdepth 2 -type f \( -name '*sandbox_server*' -o -name '*mcp*.py' -o -name 'start*.sh' \) 2>/dev/null | head -10
+
+echo "=== DONE 110 ==="
+```
+
+**输出**
+```
+=== RUN_ID 110 | stop r5e3 + switch agent to zl/zhulong + restart 8090 | 2026-10-23 00:09:23 | host=hfeg0tedaap02 ===
+[1] 停 r5e3（用户直令）
+1760194 bash scripts/run_cline_script.sh -p 4 -n
+  TERM sent
+  remaining=0
+0
+  r5e3 最后进度留证:
+/home/app.e0031982/eda_code_eval/2026_1022_105416
+120
+[2] 现有 .env 里 agent 相关字段（找 cli agent 键名）
+  .env backed up
+206:# CLI 执行器选择: cline (默认，官方最新版) | zhulong (旧版定制 fork)
+208:# CLI_AGENT=cline
+209:CLI_AGENT=cline
+[3] 8090 现状
+LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=2913754,fd=3))       
+[4] 沙盒端口改成 8663/8666/8667/8670（用户指定）
+70:SANDBOX_HOST=10.129.32.75
+79:PROXY_PORTS=8650,8651,8652,8654
+113:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+113:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+  ⚠️ SANDBOX_ENDPOINTS 需按 port:workdir 格式；若原值含 workdir 映射，agent 需按同样 workdir 换端口重写
+[5] 4 端口探活
+  8663 OPEN
+  8666 OPEN
+  8667 OPEN
+  8670 OPEN
+  open=4/4
+[6] 可用 agent 列表（zl / zhulong 是否已注册）
+CLAUDE.md
+cleanup_tmp_gt.sh
+daily-memories
+Dockerfile
+docs
+kb
+logs
+main.py
+memory_bank
+MEMORY.md
+monday_eval.log
+prompts
+pyAether-eval
+__pycache__
+pyproject.toml
+README.md
+requirements.txt
+Rules
+run_deepseek-v4-flash_r1_regrade.sh
+run_deepseek-v4-flash_r2_regrade.sh
+[7] 8090 重启方式（找启动脚本）
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/start.sh
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/start_recall_api.sh
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/start_recall_local.sh
+=== DONE 110 ===
+```
