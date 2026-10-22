@@ -14,7 +14,48 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
 
-### 🔄 运维指令 · 2026-10-22 09:0x（**r5e3 回到 -p 4 + 端口 8650/8651/8652/8654**）· 用户直令 · 最高优先
+### 🔄 运维指令 · 2026-10-22 10:2x（**r5e3 回到 -p 4 + 端口 8650/8651/8652/8654**）· 用户直令 · 最高优先 · 取代 09:0x
+
+> 用户令（原文）：「好的 r5e3 回到端口 8650/8651/8652/8654 和 p=4」
+> **背景**：r5e2（-p8 + 8650-8654）收口 **INVALID** —— agent 09:25 核验：**21 .py（vs r4e 156 .py）+ 593 sandbox "operation timed out" + stats success=149/timeout=9/failure=0** → **-p8 是退化根因**（8 cline 共享 4 sandbox，2×/port 争用打穿服务端 SANDBOX_TIMEOUT=150s；模型反复收 tool-error "The operation timed out" → 无法完成 code-gen → 不写 .py）。
+> ⚠️ **数据完整性纠正**：08:43 心跳称"136 literal-pass"是**捏造**（codegen jsonl 从未生成）—— r5e2 退化**真实**但签名是 **.py 缺失**（21/158）非 literal-pass。STOP 阈值以 **.py 落盘率 13.3% << r4e 98.7%** 判 INVALID。
+> **对照 r4e（-p4 + 8650-8654 + timeout=600）**：156 .py / 0 sandbox-timeout / **75.9%** → **-p4 是已验证的健康口径**。
+> **本令核心**：r5e3 **回到 `-p 4`**（与 r1/r2/r3/r4e 完全一致口径），端口 **8650/8651/8652/8654**。
+>
+> ⚠️ **agent 注意：这是任务书 ZHULONG_TASK.md 运维指令区，不是 ops inbox。请立即执行本令，不要再等 ops inbox 的 ACTION 令。ops inbox RUN_ID 107 是只读探针（已执行完），与本令无关。**
+
+#### 执行前清理（必做）
+1. **清磁盘**：⚠️ /home 仅 4.5G（<8G infra 前置阈值）。r5e3 起跑前**先清磁盘**：
+   - 清 r5e2 batch 残留（`/home/app.e0031982/eda_code_eval/2026_1022_001122/` 可删——r5e2 已判 INVALID 留证，但 .py 仅 21 个无 regrade 价值；**先 tar 压缩备份到 /nasdata/ 再删原目录**，或直接删——由你判断）
+   - 清 r5e batch 残留（`/home/app.e0031982/eda_code_eval/2026_1021_173249/` 同理，r5e 被杀 47% 无价值）
+   - 清 /tmp 旧 log（`/tmp/ABL_readback_none_retest_r5e.log`、`/tmp/ABL_readback_none_retest_r5e2.log` 可删——r5e/r5e2 已作废）
+   - 清其它可回收空间（旧 batch、worker ws 临时文件等）
+   - **目标**：/home free ≥ 8G（r5e3 起跑前置条件）
+2. **清 r5e2 残留进程**：pgrep 确认无 r5e2/r5e 孤儿 worker（r5e2 PID 4026302 GONE·9 孤儿已清过；再核一遍）
+3. **重启 4 端口沙盒 worker**：r5e2 收口后 8650/8651/8652/8654 仅 1 LISTEN → 需重启 4 端口确保全 OPEN（run_code 端到端探活 4/4 OK）
+4. **8090 健康**：PID 1504991 若活则不重启；若 GONE 则重启
+
+#### r5e3 起跑参数
+- **`-p 4`**（4 并发，回到 r1-r4 口径，**关键改动**）
+- 端口 `8650,8651,8652,8654`（.env 已是这组）
+- 其余配置同 r4e：`READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / 模型 `deepseek-v4-pro-fp4` / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+- 日志 `/tmp/ABL_readback_none_retest_r5e3.log`；batch 新建（r5e3 编号）
+- **r5e3 30min 健康报告**：
+  - **.py 落盘率**（r5e2 盲点纠正——用 .py 落盘数/task_dirs，非 log grep，非 codegen jsonl）
+  - **sandbox-timeout 计数**（grep log "operation timed out"）
+  - **-32001 计数**（grep log "MCP error -32001"）
+  - 4 端口可达性
+  - **判据**：-32001=0 + sandbox-timeout≈0 + .py 落盘率 ≥80% → -p4 口径健康（与 r4e 一致）
+  - **若 30min 内 sandbox-timeout 抬头（率 ≥5/min）或 .py 落盘率 <50% → 停手报运维**（-p4 也退化则需换端口 8663/8666/8667/8670 或换沙盒机/错峰）
+- r5e3 收口 → regrade（端口 8650/8651/8652/8654·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR）→ 判据十三 → **5/5 mean±std（r1=78.5, r2=70.9, r3=81.5, r4e=75.9, r5e3）** → 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4 家族 + r5e/r5e2 原始产物日志（留证——r5e2 batch 目录若删前必须 tar 备份到 /nasdata/）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings timeout=600。
+- 🚫 **不再用 -p 8**（实测打穿服务端 sandbox timeout·21/158 .py·15:3x 令作废）。
+- **若 r5e3 -p4 仍退化 → 停手报运维**（-p4 也退化说明 8650-8654 端口/沙盒机有问题，需换端口 8663/8666/8667/8670 或换沙盒机/错峰）。
+- commit：`zhulong S1: r5e3 回到 -p4 + 8650/8651/8652/8654 起 (用户直令·r5e2 -p8 退化作废)`。
+
+### 🔄 运维指令 · 2026-10-22 09:0x（**r5e3 回到 -p 4 + 端口 8650/8651/8652/8654**）· 用户直令 · 最高优先【被 10:2x 取代·历史·08:43 "136 literal-pass" 捏造已纠正】
 
 > 用户令（原文）：「好的 r5e3 回到端口 8650/8651/8652/8654 和 p=4」
 > **背景**：r5e2（-p8 + 8650-8654）收口 INVALID —— 136 literal-pass / 593 sandbox "operation timed out" / gen-success 仅 8.2% → **-p8 是退化根因**（8 cline 共享 4 sandbox，2×/port 争用打穿服务端 SANDBOX_TIMEOUT=150s）。15:3x 令预警的 -p8 离群风险实测命中。
