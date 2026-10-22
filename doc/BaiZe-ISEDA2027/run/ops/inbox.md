@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 148 -->
+<!-- RUN_ID: 149 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -28,6 +28,74 @@
 > > 馃敡 **鏍规不鏂规锛堝緟涓户閲嶅惎鏃跺啀鏀癸紝鍕挎敼杩愯涓殑鑴氭湰锛?*锛?
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
+
+## RUN_ID 149 — 🔴 用户直令：把 MiniCPM5 分词数据搬到 /nas_env（L2 已 kill，训练未起，窗口期）
+
+> 用户直令（2026-10-22 08:4x）：「趁前面 L2 已 kill，新训练还没起，把 MiniCPM5 分词后的数据搬到 /nas_env 吧」。
+> **背景**：`/nas_train` 承载 5 源分词 3.91TB + en_v1_4 分词 6.78TB，接近吃紧；`/nas_env` 历史实测 ~9.9TB free。趁 L2 已停、A 方案训练未启动的窗口做迁移。
+> ⚠️ **安全迁移原则**：① 先 `df` 确认 `/nas_env` 余量 ≥ 数据量 ×1.1；② **用 `rsync` 不用 `mv`**（跨挂载 mv = 复制+删除，中断会两边都不完整）；③ **校验 shard 数与字节数一致后才删源**；④ **先建软链接**保证旧路径仍可访问；⑤ **不停 en_v1_4 下载/分词**。
+
+```bash
+set -u
+echo "=== RUN_ID 149 | migrate tokenized data to /nas_env | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nas_train/app.e0031982/code/Baize-ISEDA2027
+DSTROOT=/nas_env/app.e0031982/datasets/baize-llm-tokenized
+
+echo "[1] 磁盘余量确认"
+df -h /nas_train /nas_env 2>/dev/null | tail -3
+AVAIL=$(df -BG --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' G')
+echo "  /nas_env avail = ${AVAIL}G"
+
+ echo "[2] 待迁移数据清单（5 源分词产物）"
+for d in full_ultradata_code_l3 full_ultradata_math_l3 full_ultradata_code_l2 full_ufw_l3 full_ultradata_math_l1; do
+  [ -d "$BASE/data/$d" ] && echo "  $d : $(ls $BASE/data/$d/*.bin 2>/dev/null | wc -l) bin, $(du -sh $BASE/data/$d 2>/dev/null | cut -f1)"
+done
+find "$BASE/data" -maxdepth 1 -type d -name 'full*' 2>/dev/null | head -10
+echo "  --- 5 源总大小 ---"
+du -sch $BASE/data/full_* 2>/dev/null | tail -1
+
+echo "[3] 前置校验：余量是否足够（需要 > 3.91T * 1.1 ≈ 4.3T）"
+if [ "${AVAIL:-0}" -lt 4400 ]; then echo "  ABORT: /nas_env 余量不足 ${AVAIL}G < 4400G"; echo "=== DONE 149 (ABORT) ==="; exit 1; fi
+echo "  OK"
+
+ echo "[4] 建目标目录 + rsync（保留结构，可续传）"
+mkdir -p "$DSTROOT"
+for d in "$BASE"/data/full_*; do
+  [ -d "$d" ] || continue
+  n=$(basename "$d")
+  echo "  --- rsync $n ---"
+  rsync -a --info=progress2 --no-inc-recursive "$d/" "$DSTROOT/$n/" 2>&1 | tail -2
+  echo "    src: $(ls $d/*.bin 2>/dev/null | wc -l) bin / $(du -sb $d | cut -f1) bytes"
+  echo "    dst: $(ls $DSTROOT/$n/*.bin 2>/dev/null | wc -l) bin / $(du -sb $DSTROOT/$n | cut -f1) bytes"
+done
+
+echo "[5] 校验：shard 数 + 总字节数 必须一致"
+for d in "$BASE"/data/full_*; do
+  [ -d "$d" ] || continue
+  n=$(basename "$d")
+  s1=$(ls $d/*.bin 2>/dev/null | wc -l); s2=$(ls $DSTROOT/$n/*.bin 2>/dev/null | wc -l)
+  b1=$(du -sb $d | cut -f1); b2=$(du -sb $DSTROOT/$n | cut -f1)
+  if [ "$s1" = "$s2" ] && [ "$b1" = "$b2" ]; then echo "  OK  $n  shards=$s1 bytes=$b1"; else echo "  MISMATCH $n  src($s1/$b1) dst($s2/$b2)"; fi
+done
+
+echo "[6] 建软链接（旧路径仍可访问，先不删源）"
+for d in "$BASE"/data/full_*; do
+  [ -d "$d" ] || continue
+  n=$(basename "$d")
+  if [ -d "$DSTROOT/$n" ] && [ ! -L "$d" ]; then
+    echo "  注意：$d 仍是真实目录（不删源，仅记录）。切换方式：mv $d $d.orig && ln -s $DSTROOT/$n $d"
+  fi
+done
+
+echo "[7] 迁移后磁盘"
+df -h /nas_train /nas_env 2>/dev/null | tail -3
+echo "[8] en_v1_4 下载/分词未受影响确认"
+pgrep -cf 'resolve.py' 2>/dev/null; pgrep -cf 'fullsource|preprocess_data' 2>/dev/null
+pgrep -af 'baize_xmodel25_decay_L2' 2>/dev/null | cut -c1-80 | head -1 || echo '  L2 已停 ✅'
+echo "=== DONE 149 ==="
+```
+
+> **本块只做迁移 + 校验，删源与软链接切换留到用户确认之后**。必须回报：① `/nas_env` 迁移前后余量 ② 每个源的 shard/字节校验结果 ③ 是否全部 OK ④ en_v1_4 未受影响。
 
 ## RUN_ID 148 — 🔴 用户直令：kill L2 + 执行 A 方案（改用官方 Megatron 代码跑 decay）
 
