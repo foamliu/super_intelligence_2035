@@ -4582,7 +4582,7 @@
 | 2026-10-22 | 2610.29905 | ViBMR: A Large-Scale Multi-Sequence Brain MRI Dataset and Comprehensive Evaluation for Vietnamese Radiology Report Generation | cs.CV | 候选 |
 | 2026-10-22 | 2610.29896 | Investigating the Impact of Learner Errors on Social Bias in Large Language Models | cs.CL | 候选 |
 | 2026-10-22 | 2610.29881 | Expandable Modality Experts for Medical Vision-Language Learning | cs.CV | 候选 |
-| 2026-10-22 | 2610.29870 | PAUSE: Search-Free Steering of Coding Agents Before Their First Source-Code Edit | cs.SE | 候选 |
+| 2026-10-22 | 2610.29870 | PAUSE: Search-Free Steering of Coding Agents Before Their First Source-Code Edit | cs.SE | 收录 |
 | 2026-10-22 | 2610.29866 | GeoMem-VLA: Internalizing 3D Scene Understanding into Temporal Memory for Vision-Language-Action Models | cs.CV | 候选 |
 | 2026-10-22 | 2610.29843 | Every Part Has Its Role: Part-of-Speech Effects in LLM Post-Training | cs.CL | 候选 |
 | 2026-10-22 | 2610.29832 | S-EDL: Eliciting Self-Evidence from Sequence Likelihoods for Semantic Calibration of LLMs | cs.CL | 候选 |
@@ -4628,7 +4628,7 @@
 | 2026-10-22 | 2610.29426 | BIRD-RL: Scaling Agentic Reinforcement Learning over Stateful Data-Centric Environments | cs.LG | 候选 |
 | 2026-10-22 | 2610.29409 | LLMSeg: Training-Free Text-Prompted Image Segmentation with B-Splines | cs.CV | 候选 |
 | 2026-10-22 | 2610.29378 | Right On Q: Recovering Reasoning under Quantization via Self-Generated Trajectories | cs.CL | 候选 |
-| 2026-10-22 | 2610.29352 | Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law | cs.CL | 候选 |
+| 2026-10-22 | 2610.29352 | Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law | cs.CL | 收录 |
 | 2026-10-22 | 2610.29329 | Plan First, Act Later: Streaming Reasoning for Executable Memory in Robot Control | cs.RO | 候选 |
 | 2026-10-22 | 2610.29327 | OACap: Caption-Guided Active Observation for Detailed Video Captioning | cs.CV | 候选 |
 | 2026-10-22 | 2610.29320 | BrainCodes: A Lightweight EEG Foundation Model over Discrete Neural Codes | cs.LG | 候选 |
@@ -4652,7 +4652,7 @@
 | 2026-10-22 | 2610.29183 | Resuming Vision-Language Inference across Onboard Interruptions | cs.DC | 候选 |
 | 2026-10-22 | 2610.29176 | Multi-Scale Latent Temporal Compression Attention and Video-Text Cross Attention Fusion for Video Action Detection | cs.CV | 候选 |
 | 2026-10-22 | 2610.29174 | LocalAgent: Collaborative Agentic Verification for Fine-Grained Instance-Level Consistency | cs.CV | 候选 |
-| 2026-10-22 | 2610.29171 | TrainBridge: Agentic NPU Training Optimization Guided by GPU Compilation Evidence | cs.CL | 候选 |
+| 2026-10-22 | 2610.29171 | TrainBridge: Agentic NPU Training Optimization Guided by GPU Compilation Evidence | cs.CL | 收录 |
 | 2026-10-22 | 2610.29161 | SimPT: An Automated Simulation Framework for Intervention-Based VLA Post-Training | cs.RO | 候选 |
 | 2026-10-22 | 2610.29145 | ORSMT: Unleashing the Potential of Satisfiability Modulo Theories for Semantic Verification and Repair in LLM-Based Optimization | math.OC | 候选 |
 | 2026-10-22 | 2610.29138 | Progressive Learning from Content to Relevance to Personalization for CTR Prediction | cs.IR | 候选 |
@@ -4692,3 +4692,5 @@
 | 2026-10-22 | 2610.28679 | VerifierBench: Benchmarking the Generation of Executable Verifiers for LLM Agents | cs.SE | 候选 |
 
 > **第一百零六轮（本地 2026-10-22 18:00（CST）· P0 第 5 批第 3 轮「晚 2」轮 · 当日收口）**：**公告批次已刷新** —— `2026-10-20` → **`2026-10-21`**（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults` `636364` → **`636926`**（+562），最新样本 `published=2026-10-20T17:59:56Z` → **`2026-10-21T17:59:14Z`**；周三 20:00 ET 公告已落地）；**15/15 查询 `ok`**（`sweep-cs-5cats` `attempts=2` 一次脚本级重试后成功，其余 `attempts=1`）、**`kept 158` / `dropped 415`**（`window_mode=daily` 72h，`generated=2026-10-22T10:01:39Z`）→ **158 条全部首次发现**。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 221 · cs.CV 212 · cs.LG 379（仅作发现）。**晚报 2 篇「科普」取自本 PM 轮新批 158 条** + **单条权威复核**（`id_list=2610.29025,2610.30086,2610.30035,2610.30125,2610.30089` → **5/5 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-22-idlist-r106.{xml,headers}`）：`2610.29025` Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets（**本日 TOP-1**）/ `2610.30035` Plausible but Unimplantable: A Trustworthiness Audit of Shape Completion Foundation Models for Cranial Defect Reconstruction。台账 **4,294 → 4,452 行（+158）**（2 行「收录」+ 156 行「候选」）→ 累计（**收录 236 / 候选 3,709 / 候选（RSS 补充）507**）；`papers.jsonl` **234 → 236**；PDF 2/2 落地校验通过（并入当日 3 篇共 5 篇）；落盘脚本 `raw/update_r106.py`。口径见 `ARXIV_API.md` §9.106。
+
+> **第一百零七轮（本地 2026-10-23 06:00（CST）· P0 第 5 批第 5 轮「早 3」轮 · 新一日 AM 轮）**：**公告批次未刷新** —— 仍为 `2026-10-21`（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`totalResults=636928`（上一轮 `636926`，+2 为元数据变动、非新批）、最新样本 `published=2026-10-21T17:59:14Z`，与 r106 PM **完全相同**；周四 20:00 ET 的 `2026-10-22` 批尚未索引）；**15/15 查询 `ok`**（**全部 `attempts=1`**）、**`kept 0` / `dropped 600`**（`window_mode=daily` 72h，`generated=2026-10-22T22:03:19Z`；600 = 15 × 40，剔除原因均为 `already in SEEN` 或 `stale > 72h`）。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 221 · cs.CV 超时 · cs.LG 超时（仅作发现）。**早报 3 篇「借鉴」取自上一轮 PM 已入账的 156 条候选池** + **单条权威复核**（`id_list=2610.29171,2610.29352,2610.30132,2610.28815,2610.30042,2610.29870,2610.30105,2610.29013` → **8/8 返回**，均 `HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-23-idlist-r107.{xml,headers}`）：`2610.29352` Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law / `2610.29171` TrainBridge: Agentic NPU Training Optimization Guided by GPU Compilation Evidence / `2610.29870` PAUSE: Search-Free Steering of Coding Agents Before Their First Source-Code Edit。台账 **4,452 行不变**（3 行「候选」→「收录」）→ 累计（**收录 239 / 候选 3,706 / 候选（RSS 补充）507**）；`papers.jsonl` **236 → 239**；PDF 3/3 落地校验通过；落盘脚本 `raw/update_r107.py`。口径见 `ARXIV_API.md` §9.107。
