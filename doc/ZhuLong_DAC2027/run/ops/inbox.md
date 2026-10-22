@@ -1,12 +1,12 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 106 -->
+<!-- RUN_ID: 107 -->
 
-## RUN_ID 106 — r4e regrade 分数 + r5e2 收口进度实测（只读·用户问进展）
+## RUN_ID 107 — r4e regrade 分数 + r5e2 收口进度实测 v2（只读·用户问进展·RUN_ID 106 被 relay 拒绝）
 
 > 用户令：「查看进展」。r5e2 已跑 7h54m，agent 报"极末段收口在即"。实测 r4e regrade 分数（5/5 的第 4 轮）+ r5e2 当前真实进度。
 
 ```bash
-echo "=== RUN_ID 106 | r4e regrade + r5e2 进度 | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 106b | r4e regrade + r5e2 进度 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r4e regrade 产物 + 分数"
 BATCH4=2026_1021_104432
@@ -16,23 +16,14 @@ echo "  --- r4e codegen jsonl ---"
 timeout 10 ls -la $DIR4/completed_code_generation_$BATCH4.jsonl 2>/dev/null || echo "  无 codegen jsonl"
 echo "  --- r4e graded/score 文件 ---"
 timeout 10 ls -la $DIR4/graded_* $DIR4/*score* $DIR4/regrade_* 2>/dev/null | head -10 || echo "  无 graded/score/regrade"
-echo "  --- r4e 评分汇总（若 graded_results.jsonl 存在）---"
-timeout 10 ls $DIR4/graded_results*.jsonl 2>/dev/null && timeout 15 python3 -c "
-import json,sys
-try:
-  f='$DIR4/graded_results.jsonl'
-  n=0; ok=0
-  with open(f) as fh:
-    for ln in fh:
-      n+=1
-      try:
-        d=json.loads(ln)
-        if d.get('pass') or d.get('score',0)>0: ok+=1
-      except: pass
-  print(f'  graded_results: total={n} pass={ok} rate={100*ok/n:.1f}%' if n else '  graded_results 空')
-except Exception as e:
-  print(f'  读取失败: {e}')
-" 2>/dev/null || echo "  无 graded_results.jsonl"
+echo "  --- r4e graded_results.jsonl 行数 + pass 计数 ---"
+GR=$DIR4/graded_results.jsonl
+if [ -f "$GR" ]; then
+  echo "  total = $(timeout 10 wc -l < "$GR")"
+  echo "  pass  = $(timeout 15 grep -ac '\"pass\":true\|\"pass\": true\|\"score\":[1-9]\|\"score\": [1-9]' "$GR")"
+else
+  echo "  无 $GR"
+fi
 
 echo ""
 echo "[2] r5e2 进程"
@@ -70,13 +61,7 @@ if [ -f "$L" ]; then
 fi
 
 echo ""
-echo "[5] 5/5 锚点轮分数对照"
-echo "  r1/r2/r3: 已知 r1=78.5% r2=70.9% r3=81.5%（provisional）"
-echo "  r4e: 见 [1]"
-echo "  r5e2: 见 [3][4]（未收口则待）"
-
-echo ""
-echo "=== DONE 106 ==="
+echo "=== DONE 106b ==="
 ```
 
 ## RUN_ID 105 — 🔴 用户直令：停 r5e（6h 仅 47%）→ 端口换回 8650/8651/8652/8654 → 重启 r5e（仍 -p 8）·【已执行·历史】

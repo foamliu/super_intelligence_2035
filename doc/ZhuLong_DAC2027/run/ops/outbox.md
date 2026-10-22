@@ -13354,3 +13354,107 @@ echo "=== DONE 106 ==="
 ```
 REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
 ```
+
+---
+
+## RUN_ID 107 · 2026-10-22 08:47:50 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 106b | r4e regrade + r5e2 进度 | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] r4e regrade 产物 + 分数"
+BATCH4=2026_1021_104432
+DIR4=/home/app.e0031982/eda_code_eval/$BATCH4
+echo "  r4e batch: $DIR4"
+echo "  --- r4e codegen jsonl ---"
+timeout 10 ls -la $DIR4/completed_code_generation_$BATCH4.jsonl 2>/dev/null || echo "  无 codegen jsonl"
+echo "  --- r4e graded/score 文件 ---"
+timeout 10 ls -la $DIR4/graded_* $DIR4/*score* $DIR4/regrade_* 2>/dev/null | head -10 || echo "  无 graded/score/regrade"
+echo "  --- r4e graded_results.jsonl 行数 + pass 计数 ---"
+GR=$DIR4/graded_results.jsonl
+if [ -f "$GR" ]; then
+  echo "  total = $(timeout 10 wc -l < "$GR")"
+  echo "  pass  = $(timeout 15 grep -ac '\"pass\":true\|\"pass\": true\|\"score\":[1-9]\|\"score\": [1-9]' "$GR")"
+else
+  echo "  无 $GR"
+fi
+
+echo ""
+echo "[2] r5e2 进程"
+if kill -0 4026302 2>/dev/null; then
+  echo "  r5e2 PID 4026302 ALIVE (etime=$(timeout 5 ps -o etimes= -p 4026302 2>/dev/null|tr -d ' ')s)"
+else
+  echo "  r5e2 PID 4026302 GONE（已收口）"
+fi
+echo "  --- 当前 worker ---"
+pgrep -af 'cline.*2026_1022_001122' 2>/dev/null | cut -c1-140 | head -10
+
+echo ""
+echo "[3] r5e2 batch 产物"
+BATCH5=2026_1022_001122
+DIR5=/home/app.e0031982/eda_code_eval/$BATCH5
+echo "  r5e2 batch: $DIR5"
+echo "  r5e2 task dirs = $(timeout 10 ls -d $DIR5/code/*/ 2>/dev/null | wc -l) / 158"
+echo "  r5e2 .py 文件 = $(timeout 10 find $DIR5/code -name '*.py' 2>/dev/null | wc -l)"
+echo "  --- r5e2 codegen jsonl（收口标志）---"
+timeout 10 ls -la $DIR5/completed_code_generation_$BATCH5.jsonl 2>/dev/null || echo "  尚未生成（仍在 code-gen）"
+echo "  --- r5e2 task_queue 剩余（真实进度口径）---"
+timeout 10 ls $DIR5/.task_queue* 2>/dev/null && timeout 10 wc -l < $DIR5/.task_queue* 2>/dev/null | head -3 || echo "  无 .task_queue"
+
+echo ""
+echo "[4] r5e2 log 收口特征"
+L=/tmp/ABL_readback_none_retest_r5e2.log
+if [ -f "$L" ]; then
+  echo "  log_size=$(timeout 8 du -h "$L" | cut -f1)  lines=$(timeout 8 wc -l < "$L")  mtime=$(timeout 8 stat -c '%y' "$L" | cut -d. -f1)"
+  echo "  -32001       = $(timeout 25 grep -ac 'MCP error -32001' "$L")"
+  echo "  literal-pass = $(timeout 25 grep -ac '\"completion\":\"pass\"' "$L")"
+  echo "  run_code     = $(timeout 25 grep -ac 'pyAether_MCP_server__run_code' "$L")"
+  echo "  pass_summary = $(timeout 25 grep -ac 'pass ([0-9]' "$L")"
+  echo "  last 3 lines:"
+  timeout 8 tail -3 "$L" | sed 's/^/    /' | cut -c1-120
+fi
+
+echo ""
+echo "=== DONE 106b ==="
+```
+
+**输出**
+```
+=== RUN_ID 106b | r4e regrade + r5e2 进度 | 2026-10-22 08:47:50 | host=hfeg0tedaap02 ===
+[1] r4e regrade 产物 + 分数
+  r4e batch: /home/app.e0031982/eda_code_eval/2026_1021_104432
+  --- r4e codegen jsonl ---
+  无 codegen jsonl
+  --- r4e graded/score 文件 ---
+  --- r4e graded_results.jsonl 行数 + pass 计数 ---
+  无 /home/app.e0031982/eda_code_eval/2026_1021_104432/graded_results.jsonl
+
+[2] r5e2 进程
+  r5e2 PID 4026302 GONE（已收口）
+  --- 当前 worker ---
+
+[3] r5e2 batch 产物
+  r5e2 batch: /home/app.e0031982/eda_code_eval/2026_1022_001122
+  r5e2 task dirs = 158 / 158
+  r5e2 .py 文件 = 21
+  --- r5e2 codegen jsonl（收口标志）---
+  尚未生成（仍在 code-gen）
+  --- r5e2 task_queue 剩余（真实进度口径）---
+/home/app.e0031982/eda_code_eval/2026_1022_001122/.task_queue
+/home/app.e0031982/eda_code_eval/2026_1022_001122/.task_queue.lock
+/tmp/tmp.qJSg2jiy77: line 40: $DIR5/.task_queue*: ambiguous redirect
+
+[4] r5e2 log 收口特征
+  log_size=7.7M  lines=77745  mtime=2026-10-22 08:14:49
+  -32001       = 0
+  literal-pass = 0
+  run_code     = 669
+  pass_summary = 0
+  last 3 lines:
+    [0;34m[INFO][0m 原始数据集名:   EDA-Eval-PyAether-v20260311.jsonl
+    [0;34m[INFO][0m 输出目录:       /home/app.e0031982/eda_code_eval/2026_1022_001122
+    [0;34m[INFO][0m =============================================
+
+=== DONE 106b ===
+```
