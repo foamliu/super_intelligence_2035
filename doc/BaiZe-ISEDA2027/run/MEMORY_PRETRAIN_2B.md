@@ -1,19 +1,25 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🔍 **2026-10-23 06:5x #737：🩺 decay 5000 步训练健康监控 step 4660/5000（93.2%）· loss ~1.003 续降 · val@4000=1.0124(PPL 2.752) · 0 NaN/0 skip · ckpt@4500 已存 · ETA~1.1h**：
-> - **训练状态**（step 4660/5000 @06:49，ssh .29 8×H100 100% ~77GB/GPU，torchrun PID196495 活跃）：
->   - loss 轨迹：1.0055(4510)→1.0021(4520)→1.0031(4550)→0.9992(4560)→1.0031(4600)→0.9975(4610)→0.9946(4650)→1.0033(4660) — 平滑波动，总体续降
->   - **val@4000=1.0124(PPL 2.752)**（4 点单调下降：1.1016→1.0622→1.0346→1.0124）；val@5000（训练终点最后一评）
->   - throughput ~370-377 TFLOP/s/GPU, ~11.8s/step, 1.35B params
->   - **0 NaN / 0 skipped** 全程（466 条 0nan 记录，nan>0=0 / skipped>0=0）；grad norm 0.027~0.088；params norm 3063(s4580)→**3056(s4660)**（缓降）
->   - LR 1.796e-4（WSD exponential 衰减中→min-lr 1.042e-4），decoupled LR 1.077e-3
+> 🔍 **2026-10-23 07:2x #738：🩺 decay 5000 步训练健康监控 step 4820/5000（96.4%）· loss ~0.998 续降 · val@4000=1.0124(PPL 2.752) · 0 NaN/0 skip · ckpt@4500 已存 · ETA~35min（~07:57）· 评测路径已查明**：
+> - **训练状态**（step 4820/5000 @07:21，ssh .29 8×H100 95-100% ~77GB/GPU，torchrun PID196495 活跃，已跑~16.5h）：
+>   - loss 轨迹：0.9946(4650)→1.0033(4660)→0.9908(4680)→0.9987(4690)→1.0025(4700)→0.9993(4710)→0.9983(4740)→0.9952(4750)→0.9971(4780)→0.9918(4800)→**0.9980(4820)** — 平滑波动，总体续降至 <1.0
+>   - **val loss 4 点单调下降**：val@1000=1.1016 → val@2000=1.0622(PPL 2.89) → val@3000=1.0346(PPL 2.81) → val@4000=1.0124(PPL 2.752)；**val@5000 待出**（训练终点最后一评）
+>   - throughput ~373-376 TFLOP/s/GPU, ~11.85s/step, 1.35B params
+>   - **0 NaN / 0 skipped** 全程（482 条 0nan 记录）；grad norm 0.027~0.061；params norm 3057(s4650)→**3045(s4820)**（缓降）
+>   - LR 1.436e-4（WSD exponential 衰减中→min-lr 1.042e-4），decoupled LR 8.619e-4
 >   - **ckpt iter_0000500~iter_0004500 已存 ✅**（latest=4500）；next ckpt@5000（终点，训练完成时保存）
->   - ETA: (5000−4660)×11.8s ≈ **1.1h**（预计 10/23 ~08:00 完成）
-> - **下一步**：下次唤醒检查 step 4800+ loss + final ckpt@5000 → 训练完成后评测 final ckpt iter_0005000。
+>   - ETA: (5000−4820)×11.85s ≈ **35min**（预计 10/23 ~07:57 完成）
+> - **评测路径（已查明，训练完成后执行）**：
+>   - ckpt 路径：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/out/decay_5000_fp8_mbs5/iter_0005000`
+>   - 转换 mcore→HF：用 Xmodel-2.5 官方 `tools/checkpoint/convert.py` 或 `tools/llama/hf2mcore_convertor.sh`（反向模式）
+>   - 架构：48L/hidden1536/24head/GQA8/ffn3840/rope/RMSNorm/SwiGLU（Llama-style，vocab 129280 deepseekv3）
+>   - 14 集 eval：`bash baize_p8_eval_14.sh <hf_model_path> <output_dir>`（CS8 零射 + CX6 多射，8×H100 并行）
+> - **下一步**：下次唤醒检查训练是否完成 → 确认 final ckpt@5000 + val@5000 → 转换 HF → 跑 14 集 eval。
+> 📦 §#737 流水（2026-10-23 06:5x，decay 5000 步监控 step 4660/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4660 loss1.003 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #738 监控更新取代。需要时再读。
 > 📦 §#736 流水（2026-10-23 06:2x，decay 5000 步监控 step 4500/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4500 loss1.004 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #737 监控更新取代。需要时再读。
 > 📦 §#735 流水（2026-10-23 06:1x，decay 5000 步监控 step 4470/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4470 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #736 监控更新取代。需要时再读。
 > 📦 §#734 流水（2026-10-23 05:5x，decay 5000 步训练健康监控 step 4340/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4340 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #735 监控更新取代。需要时再读。
-> 📦 体积：TASK=19252B / MEMORY=23983B（均≤32KB✓）。
+> 📦 体积：TASK=19252B / MEMORY=24963B（均≤32KB✓）。
 > 📦 §#732 流水（2026-10-23 05:0x，decay 5000 步训练健康监控 step 4120/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4120 loss1.0258 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #733 监控更新取代。需要时再读。
 > 📦 §#730 流水（2026-10-23 04:1x，decay 5000 步训练健康监控 step 3890/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3890 loss1.0245 val@3000=1.0346 0NaN/0skip，ckpt@3500已存，训练健康。被 #731 监控更新取代。需要时再读。
 > 📦 §#729 流水（2026-10-23 03:5x，decay 5000 步训练健康监控 step 3800/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3800 loss1.027 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3500已存，训练健康。被 #730 监控更新取代。需要时再读。
