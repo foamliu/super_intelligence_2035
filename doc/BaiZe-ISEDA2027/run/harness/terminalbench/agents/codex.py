@@ -5,7 +5,7 @@ Uses ``codex exec`` for headless execution, same as SWE-bench CodexDriver.
 
 Install: npm install -g @openai/codex@0.94.0 (pinned for chat API compat)
 Run:     codex exec --cd <cwd> --model kimi-k2.6-cloud \
-             --sandbox workspace-write --skip-git-repo-check --json <instruction>
+             --sandbox danger-full-access --skip-git-repo-check --json <instruction>
 """
 
 from __future__ import annotations
@@ -42,8 +42,8 @@ class CodexTBOptions(InstalledAgentOptions):
         str | None,
         Cli("--sandbox"),
     ] = Field(
-        default="workspace-write",
-        description="Codex sandbox mode.",
+        default="danger-full-access",
+        description="Codex sandbox mode (danger-full-access: no bwrap, Docker is the sandbox).",
     )
     timeout: Annotated[
         int | None,
@@ -62,7 +62,7 @@ class CodexTB(TBBaseAgent):
         super().__init__(**kwargs)
         opts = self._opts(CodexTBOptions, kwargs)
         self._codex_version = opts.codex_version or "0.94.0"
-        self._sandbox = opts.sandbox or "workspace-write"
+        self._sandbox = opts.sandbox or "danger-full-access"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
 
     @staticmethod
