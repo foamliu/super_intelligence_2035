@@ -1,22 +1,18 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-24 07:20 #761：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#758~#759控体积**：
+> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
+> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
+> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
+> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=26.9KB / MEMORY=~30.7KB（均≤32KB✓，本轮归档 ~0.9KB #758~#759 → daily-memories/2026-10-24.md）。
 > 🆕 **2026-10-24 06:08 #760：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#747~#748控体积**：
 > - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
 > - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
 > - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
 > - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
 > 📦 体积：TASK=26.9KB / MEMORY=~31.0KB（均≤32KB✓，本轮归档 ~1.3KB #747~#748 → daily-memories/2026-10-23.md）。
-> 🆕 **2026-10-24 04:57 #759：⏸ 例行唤醒·idle heartbeat·三份10-23报告均已在盘·.29 8×H100全空闲·无新指令**：
-> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
-> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
-> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
-> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=26.9KB / MEMORY=~30.6KB（均≤32KB✓，本轮归档 0KB）。
-> 🆕 **2026-10-24 03:4x #758：⏸ 例行唤醒·idle heartbeat·三份10-23报告均已在盘+committed·无新指令·.29空闲**：
-> - 复核确认三份报告均在 `doc/BaiZe-ISEDA2027/reports/`：① throughput `report_pretrain_2b_throughput_optim_zh.html`（13861B, commit 74ef3e523）② longctx `report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B, commit a04b4503b）③ decay `report_pretrain_decay_repair_zh.html`（23878B, commit ae9e1e780）。全部 git tracked + pushed。
-> - 环境：本机=.12（vision机）。git fetch 无 ahead/behind/无新远端提交。loop PID=1294448 运行中。.29 未登录（无任务在跑）。
-> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=26.9KB / MEMORY=~30.0KB（均≤32KB✓，本轮归档 ~1.3KB #754~#755 → daily-memories/2026-10-23.md）。
+> 📦 §#758~#759 流水（2026-10-24 03:4x~04:57，2 条 idle heartbeat 复核三份报告无误）已归档 → daily-memories/2026-10-24.md；**结论**：三份10-23报告均在盘+committed，无新指令。需要时再读。
 > 🆕 **2026-10-24 02:3x #757：✅ 吞吐优化实验全部完成·10/10·新纪录 297K tok/s(+19.4% vs 249K目标)·HTML报告已交付**：
 > - **运维令**：2026-10-23 22:1x「优化 BaiZe-2B 训练吞吐：目标 > 249K tok/s」（最高优先）→ **已超额完成**。
 > - **全部 10 组实验已完成**（`ALL DONE @ 2026-10-24 01:54:51`），.29 GPU 已全空闲。
