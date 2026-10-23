@@ -1,11 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-23 19:2x #753：⏸ 例行唤醒·idle heartbeat·两份2026-10-23报告均已交付·无新指令·在.12(GPU满载vision)**：
-> - 复核确认：① 长上下文推理成本评测报告 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B）已提交 `a04b4503b`；② decay 修复报告 `reports/report_pretrain_decay_repair_zh.html`（23878B）已提交 `ae9e1e780`。两文件均 git tracked + pushed。
-> - 结果复核：BaiZe-2B max 512K/OOM@1M, MiniCPM5-2B max 512K/OOM@1M, Qwen3.5-2B max 1M success/2M skipped。Qwen3.5-2B prefill 全程领先（64K 70.8K vs 24.7K/24.8K tok/s, 512K 20.6K vs 3.6K/4.0K）。
-> - 环境：本机=10.239.2.12（vision机），8×H100 全满载 100% 跑 vision armE_r2（step43240+），**不可做任何GPU实验**。.29 状态未知（未登录）。
+> 🆕 **2026-10-23 20:5x #754：⏸ 例行唤醒·idle heartbeat·两份2026-10-23报告均已交付·无新指令·在.12(GPU满载vision)**：
+> - 复核确认：① 长上下文评测报告 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B, commit `a04b4503b`）；② decay 修复报告 `reports/report_pretrain_decay_repair_zh.html`（23878B, commit `ae9e1e780`）。两文件均在盘+git tracked+pushed。
+> - 环境：本机=10.239.2.12（vision机），8×H100 全满载 96-100% 跑 vision armE_r2。git fetch 无 ahead/behind/无新远端提交。.29 未查（不登录）。
 > - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=23500B / MEMORY=~31.1KB（均≤32KB✓，本轮归档 0KB）。
+> 📦 体积：TASK=23500B / MEMORY=~29.5KB（均≤32KB✓，本轮归档 ~2.2KB #749~#751 → daily-memories/2026-10-23.md）。
 > 🆕 **2026-10-23 18:2x #752：✅ 长上下文推理成本评测·3模型全部完成·HTML报告已生成**：
 > - **Qwen3.5-2B 1M benchmark 成功**：TTFT=89.09s, prefill=11314 tok/s, decode=130.6 tok/s, VRAM=73.16GB。2M 未测（跳过）。
 > - **Qwen3.5-2B 全部上下文结果**：64K(TTFT=0.89s,70.8K tok/s)→128K(2.40s,52.4K)→256K(7.20s,35.0K)→512K(24.45s,20.6K)→1M(89.09s,11.3K)。VRAM 全程 ~73GB。
@@ -18,21 +17,7 @@ WAITING: 1
 > - 产物：`longctx_eval_results/results_qwen35-2b.json`（合并 64K~1M+2M skipped）、per-context JSON ×5、报告脚本 `gen_longctx_report.py`（已修正 Qwen3.5 架构描述）。
 > - SGLang 服务器已清理。.29 GPU 应已空闲。
 > 📦 体积：MEMORY=~30.5KB（≤32KB✓）。
-> 🆕 **2026-10-23 14:0x #751：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
-> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
-> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程。git fetch 后无 ahead/behind、无新远端提交。
-> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=23500B / MEMORY=~28.6KB（均≤32KB✓，本轮归档 0KB）。
-> 🆕 **2026-10-23 13:3x #750：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
-> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
-> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程。git fetch 后无 ahead/behind、无新远端提交。
-> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=21272B / MEMORY=27549B（均≤32KB✓，本轮归档 0KB）。
-> 🆕 **2026-10-23 13:0x #749：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
-> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
-> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程。git fetch 后无 ahead/behind、无新远端提交。
-> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=21272B / MEMORY=27549B（均≤32KB✓，本轮归档 0KB）。
+> 📦 §#749~#751 流水（2026-10-23 13:0x~14:0x，3 条 idle heartbeat 复核 decay 修复报告无误）已归档 → daily-memories/2026-10-23.md；**结论**：decay 修复报告复核无误（v2 44.97/6.21→decay-5000 58.97/28.02），无新指令。需要时再读。
 
 > 🆕 **2026-10-23 12:2x #747：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
 > - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
