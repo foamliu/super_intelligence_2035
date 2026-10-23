@@ -1,5 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 10:3x #743：⏸ 例行唤醒·decay-5000 全部完成·GPU 空闲·待新指令（idle heartbeat）**：
+> - decay-5000 训练+评测全部完成（CS8=58.97%/CX6=28.02%），.29 GPU 8 卡全空闲（0 MiB used），无 torchrun/lm_eval 进程（仅本 agent 进程）。
+> - git sync ✓（`git fetch` 后无 ahead/behind、无新远端提交），无新运维指令。30 min 轮询例行唤醒，确认 idle 状态健康。
+> 📦 体积：TASK=19252B / MEMORY=27260B（均≤32KB✓，本轮归档 0KB）。
+
 > 🆕 **2026-10-23 10:0x #741：✅ CX6 6/6 全完成 → decay-5000 最终评测 CS8=58.97% / CX6=28.02%**：
 > - **bbh_zeroshot 完成**（.29 GPU6，09:57 收尾）：exact_match(flexible-extract)=**0.3001**（30.01%），sdpa 下无 flash_attn varlen 崩、6511/6511 健康跑完。
 > - **CX6 最终 6/6**：gsm8k=**0.4655**(46.55%) / math500=**0.128**(12.80%) / mmlu=**0.4897**(48.97%) / bbh=**0.3001**(30.01%) / humaneval=**0.1037**(10.37%) / mbpp=**0.194**(19.40%) → **CX6 均分 = 28.02%**。
