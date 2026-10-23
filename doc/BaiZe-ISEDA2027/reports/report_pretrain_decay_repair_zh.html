@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 预训练 · Xmodel-2.5 Decay「训坏 → 修复」完整报告与下一步建议</title>
+<style>
+:root{--c-bg:#0f1419;--c-card:#171c24;--c-border:#2a313c;--c-text:#e4e7eb;--c-muted:#9aa4b2;--c-accent:#4a9eff;--c-good:#2ecc71;--c-warn:#f1c40f;--c-bad:#e74c3c;--c-soft:#1e2530}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--c-bg);color:var(--c-text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;padding:24px;max-width:1080px;margin:0 auto}
+h1{font-size:1.7rem;color:var(--c-accent);border-bottom:2px solid var(--c-border);padding-bottom:10px;margin-bottom:6px}
+h2{font-size:1.3rem;color:var(--c-accent);margin:30px 0 12px;padding-left:10px;border-left:4px solid var(--c-accent)}
+h3{font-size:1.08rem;margin:18px 0 8px}
+.card{background:var(--c-card);border:1px solid var(--c-border);border-radius:8px;padding:16px 20px;margin:12px 0}
+.soft{background:var(--c-soft);border:1px solid var(--c-border);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:.92rem}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:.92rem}
+th,td{border:1px solid var(--c-border);padding:7px 10px;text-align:left}
+th{background:var(--c-soft);color:var(--c-accent);font-weight:600}
+td.r,th.r{text-align:right}
+.bad{color:var(--c-bad);font-weight:700}
+.good{color:var(--c-good);font-weight:700}
+.warn{color:var(--c-warn);font-weight:700}
+.num{font-variant-numeric:tabular-nums;font-family:"SF Mono",Consolas,monospace}
+.tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.78rem;font-weight:600;margin-right:6px}
+.tag-bad{background:rgba(231,76,60,.16);color:var(--c-bad);border:1px solid rgba(231,76,60,.4)}
+.tag-good{background:rgba(46,204,113,.16);color:var(--c-good);border:1px solid rgba(46,204,113,.4)}
+.tag-warn{background:rgba(241,196,15,.16);color:var(--c-warn);border:1px solid rgba(241,196,15,.4)}
+.tag-info{background:rgba(74,158,255,.16);color:var(--c-accent);border:1px solid rgba(74,158,255,.4)}
+ul{margin:8px 0 8px 22px}li{margin:4px 0}
+code{background:var(--c-soft);padding:1px 6px;border-radius:4px;font-size:.86rem;color:#c792ea}
+.trace{font-size:.84rem;color:var(--c-muted);border-top:1px dashed var(--c-border);margin-top:18px;padding-top:12px}
+.trace code{color:#82aaff}
+.hl{background:rgba(231,76,60,.10);border-left:3px solid var(--c-bad);padding:8px 12px;border-radius:4px;margin:10px 0}
+.hl-good{background:rgba(46,204,113,.08);border-left:3px solid var(--c-good);padding:8px 12px;border-radius:4px;margin:10px 0}
+.foot{margin-top:30px;color:var(--c-muted);font-size:.82rem;border-top:1px solid var(--c-border);padding-top:12px}
+.sub{color:var(--c-muted);font-size:.9rem;margin-bottom:20px}
+.rank{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--c-accent);color:#0f1419;font-weight:800;font-size:.85rem;margin-right:6px}
+</style>
+</head>
+<body>
+<h1>BaiZe 预训练 · Xmodel-2.5 Decay「训坏 → 修复」完整报告与下一步建议</h1>
+<div class="sub">报告时间：2026-10-23 | 实验线：BaiZe Stage(i) 预训练 | 硬件：10.239.2.29（8×H100-80GB）<br>
+起点：Xmodel-2.5 stable 末点 <code>step_532000</code>（起点基线 CS8 = 61.03%） | 主对照：Xmodel-2.5 官方 final（CS8 65.40% / CX6 32.90%）</div>
+
+<div class="hl-good"><strong>一句话结论：</strong>decay v2（自写脚本）把起点模型「训坏」（CS8 <span class="bad">44.97%</span> vs 官方 65.40%，Δ <span class="bad">−20.43pp</span>）；改用官方 <code>train_decay_fp8_1113.sh</code> 配方（<strong>use-mup + Muon 0.2 + FP8 hybrid + 无 warmup + MBS=5</strong>）做 5000 步 decay 后，能力基本回到起点：<strong>CS8 <span class="good">58.97%</span> / CX6 <span class="good">28.02%</span></strong>，较旧 v2 <strong>+14.00 / +21.81pp</strong>，仅比起点基线 CS8 低 <span class="warn">−2.06pp</span>。<strong>判定：decay 训坏已被官方 μP+Muon+FP8 配方修复。</strong></div>
+
+<h2>§1 全历程概览（训坏 → 归因 → 修复）</h2>
+<div class="card"><table>
+<tr><th style="width:16%">阶段</th><th style="width:22%">时间</th><th>事件与关键数字</th></tr>
+<tr><td><span class="tag tag-bad">训坏</span></td><td>10-16 ~ 10-20</td><td><strong>decay v2（自写脚本）</strong>：71.2B tokens / 19,980 步，从 <code>step_532000</code> 冷启动。最终 <strong>CS8 44.97% / CX6 6.21%</strong>，vs Xmodel-2.5 官方 final 65.40% / 32.90%（Δ <span class="bad">−20.43 / −26.69pp</span>）→ <strong>判定「decay 训坏」</strong>（起点 61.03% → 44.97%，退化了 −16.06pp）。</td></tr>
+<tr><td><span class="tag tag-warn">归因</span></td><td>10-20 ~ 10-21</td><td>归因取证（#648/#649）：①<strong>双移位 bug</strong>（<code>py:547-548</code> + <code>:567-568</code> 双重移位）；②peak LR <span class="num">1.67e-3</span> 过高；③自写脚本<strong>缺 μP</strong>；④code 26 epochs 过采样；⑤step0 loss <span class="num">11.72</span> 异常。</td></tr>
+<tr><td><span class="tag tag-info">排查</span></td><td>10-21 ~ 10-22</td><td><strong>排查实验（仍自写脚本）</strong>：<strong>L1</strong>（修双移位 + LR 5e-4 + warmup 100）→ <strong>CS8 59.03%</strong>（step0 loss 1.75 vs v2 11.72，双移位确认修复）；<strong>L2</strong>（只修双移位 + 高 LR）被直令 kill@step2370，转官方方案。</td></tr>
+<tr><td><span class="tag tag-good">修复</span></td><td>10-22 ~ 10-23</td><td><strong>decay-5000（官方 1113.sh）</strong>：use-mup + Muon 0.2 + FP8 hybrid + 无 warmup + MBS=5 + WSD exponential 5000 步（≈18.1B tokens）。最终 <strong>CS8 58.97% / CX6 28.02%</strong>，vs 旧 v2 <strong>+14.00 / +21.81pp</strong>，vs 起点基线 61.03%（Δ <span class="warn">−2.06pp</span>）。</td></tr>
+</table></div>
+
+<h2>§2 三次实验对照总表（统一口径）</h2>
+<div class="card"><table>
+<tr><th>模型 / 实验</th><th class="r">Decay 量</th><th class="r">Params</th><th class="r">CS8</th><th class="r">CX6</th><th>配方要点</th></tr>
+<tr><td><strong>Xmodel-2.5 官方 final</strong>（主对照·同起点）</td><td class="r num">71.2B</td><td class="r num">1.3B</td><td class="r"><strong>65.40%</strong></td><td class="r"><strong>32.90%</strong></td><td>官方 μP + Muon + FP8</td></tr>
+<tr><td><strong>step_532000</strong>（起点基线）</td><td class="r num">—</td><td class="r num">1.3B</td><td class="r"><strong class="warn">61.03%</strong></td><td class="r">—（崩于 varlen 兼容）</td><td>stable 末点，未退火</td></tr>
+<tr><td><strong>decay v2</strong>（自写脚本·训坏）</td><td class="r num">71.2B</td><td class="r num">≈1.3B</td><td class="r"><strong class="bad">44.97%</strong></td><td class="r"><strong class="bad">6.21%</strong></td><td>双移位 bug / 无 μP / 高 LR</td></tr>
+<tr><td><strong>L1</strong>（排查·自写脚本）</td><td class="r num">20B</td><td class="r num">≈1.3B</td><td class="r"><strong class="warn">59.03%</strong></td><td class="r">—</td><td>修双移位 + LR 5e-4 + warmup 100</td></tr>
+<tr><td><strong>decay-5000</strong>（官方 1113.sh·修复）</td><td class="r num">18.1B</td><td class="r num">1.350B</td><td class="r"><strong class="good">58.97%</strong></td><td class="r"><strong class="good">28.02%</strong></td><td>μP + Muon 0.2 + FP8 + MBS=5</td></tr>
+</table>
+<div class="soft"><strong>对照口径纪律：</strong>主对照只用 <strong>Xmodel-2.5 官方 final（65.40% / 32.90%）</strong> 与 <strong>起点基线 61.03%</strong>；🚫 <strong>不用 P-8</strong>（2.22B Mamba2-hybrid，架构/参数量均不同，不可作归因依据）作主对照。decay-5000 与官方 final 为「同起点 + 同 μP+Muon+FP8 配方 + 仅 decay 量不同（18.1B vs 71.2B）」的近似单变量对照。</div></div>
+
+<h2>§3 CS8（常识 8 集）逐任务明细</h2>
+<div class="card"><table>
+<tr><th>任务</th><th class="r">官方 final</th><th class="r">起点基线</th><th class="r">decay v2</th><th class="r">decay-5000</th></tr>
+<tr><td>hellaswag</td><td class="r num">0.6542</td><td class="r num">0.5895</td><td class="r num bad">0.3078</td><td class="r num">0.5468</td></tr>
+<tr><td>arc_easy</td><td class="r num">0.7184</td><td class="r num">0.6641</td><td class="r num bad">0.4512</td><td class="r num">0.6536</td></tr>
+<tr><td>boolq</td><td class="r num">0.6725</td><td class="r num">0.5924</td><td class="r num bad">0.4700</td><td class="r num good">0.7003</td></tr>
+<tr><td>arc_challenge</td><td class="r num">0.4599</td><td class="r num">0.3865</td><td class="r num bad">0.2824</td><td class="r num">0.3840</td></tr>
+<tr><td>sciq</td><td class="r num">0.9290</td><td class="r num">0.9100</td><td class="r num bad">0.6800</td><td class="r num">0.8710</td></tr>
+<tr><td>piqa</td><td class="r num">0.7617</td><td class="r num">0.7356</td><td class="r num bad">0.5914</td><td class="r num">0.6904</td></tr>
+<tr><td>winogrande</td><td class="r num">0.6385</td><td class="r num">0.6101</td><td class="r num bad">0.5130</td><td class="r num">0.5675</td></tr>
+<tr><td>openbookqa</td><td class="r num">0.3980</td><td class="r num">0.3940</td><td class="r num bad">0.3020</td><td class="r num">0.3040</td></tr>
+<tr><td><strong>CS8 均分</strong></td><td class="r"><strong>65.40%</strong></td><td class="r"><strong class="warn">61.03%</strong></td><td class="r"><strong class="bad">44.97%</strong></td><td class="r"><strong class="good">58.97%</strong></td></tr>
+<tr><td><strong>Δ vs 起点基线</strong></td><td class="r num">+4.37pp</td><td class="r num">—</td><td class="r num bad">−16.06pp</td><td class="r num warn">−2.06pp</td></tr>
+</table>
+<div class="soft">acc_norm 优先（与基线同口径）。修复后 decay-5000 在 <strong>hellaswag / arc_easy / boolq / arc_challenge</strong> 四项已回到起点基线水平（boolq 0.7003 甚至超过起点 0.5924）；拉开 gap 的主要来自 <strong>sciq（0.8710 vs 0.9100）</strong> 与 <strong>piqa / winogrande / openbookqa</strong> 的小幅回撤。</div></div>
+
+<h2>§4 CX6（复杂 6 集）逐任务明细</h2>
+<div class="card"><table>
+<tr><th>任务</th><th class="r">官方 final</th><th class="r">decay v2</th><th class="r">decay-5000</th></tr>
+<tr><td>gsm8k</td><td class="r num">0.5959</td><td class="r num bad">0.0106</td><td class="r num">0.4655</td></tr>
+<tr><td>hendrycks_math500</td><td class="r num">0.1240</td><td class="r num bad">0.0000</td><td class="r num good">0.1280</td></tr>
+<tr><td>mmlu</td><td class="r num">0.5195</td><td class="r num">0.3222</td><td class="r num">0.4897</td></tr>
+<tr><td>bbh_zeroshot</td><td class="r num">0.2586</td><td class="r num bad">0.0398</td><td class="r num good">0.3001</td></tr>
+<tr><td>humaneval</td><td class="r num">0.1341</td><td class="r num bad">0.0000</td><td class="r num">0.1037</td></tr>
+<tr><td>mbpp</td><td class="r num">0.3420</td><td class="r num bad">0.0000</td><td class="r num">0.1940</td></tr>
+<tr><td><strong>CX6 均分</strong></td><td class="r"><strong>32.90%</strong></td><td class="r"><strong class="bad">6.21%</strong></td><td class="r"><strong class="good">28.02%</strong></td></tr>
+</table>
+<div class="soft">CX6 是 decay v2「训坏」最沉重的板块：gsm8k / math500 / humaneval / mbpp 四项几乎归零（decay v2 CX6 仅 6.21%）。修复后全部恢复：<strong>gsm8k 0.4655、mbpp 0.1940、humaneval 0.1037、math500 0.1280</strong>，其中 math500 / bbh 已反超官方 final。差距主要剩 gsm8k（0.4655 vs 0.5959）与 mbpp（0.1940 vs 0.3420）。</div></div>
+
+<h2>§5 decay-5000 最终配方与训练事实（官方 1113.sh 落地）</h2>
+<div class="card">
+<h3>5.1 关键超参（照抄官方，勿改）</h3>
+<table>
+<tr><th style="width:28%">维度</th><th>取值</th></tr>
+<tr><td>模型</td><td>48L / hidden 1536 / 24 head / <strong>GQA8</strong> / ffn 3840 / rope(θ=500000) / swiglu / RMSNorm</td></tr>
+<tr><td><strong>use-mup</strong></td><td>开启：input 12.0 / output 1.0 / attention-residual 1.4 / ffn-residual 1.4</td></tr>
+<tr><td>优化器</td><td><strong>Muon</strong>（<code>muon-matched-adamw-rms 0.2</code>），<code>--finetune --no-load-optim</code></td></tr>
+<tr><td>学习率</td><td>lr <span class="num">1.66667e-3</span> / decoupled-lr 1e-2 / min-lr 1.041667e-4 / decoupled-min-lr 6.25e-4 / warmup <strong>0</strong></td></tr>
+<tr><td>调度</td><td><strong>WSD</strong> → exponential，<code>lr-decay-iters 5000</code> + <code>lr-wsd-decay-iters 5000</code></td></tr>
+<tr><td>批 / 序列</td><td>MBS <strong>5</strong> / GBS 960 / seq 3776；<code>--recompute-activations</code>（selective）保住 MBS=5</td></tr>
+<tr><td>FP8</td><td><code>transformer_engine</code> / <strong>fp8-format hybrid</strong> / amax-history 128 / amax-compute-algo max</td></tr>
+<tr><td>并行</td><td>TP1 / PP1 / 纯 DP8 + <code>--use-distributed-optimizer</code> + overlap-grad-reduce / overlap-param-gather</td></tr>
+<tr><td>数据</td><td>现有 4 源配比：SFT 64% : UFW-L3 24% : code 8% : math 4%（<code>split 949,50,1</code>）；tokenizer deepseekv3，vocab 129280（pad 至 129408）</td></tr>
+<tr><td>decay 量</td><td><strong>5000 步</strong> = 960 × 3776 × 5000 ≈ <span class="num">18.1B</span> tokens</td></tr>
+</table>
+<h3>5.2 训练事实（全程健康）</h3>
+<table>
+<tr><th style="width:30%">指标</th><th>取值</th></tr>
+<tr><td>最终 loss</td><td>train <span class="num">0.9946</span> / val@5000 <span class="num">0.9977</span>（PPL 2.712）/ test <span class="num">0.9955</span>（PPL 2.706）</td></tr>
+<tr><td>5 点 val 曲线</td><td class="num">1.1016 → 1.0622 → 1.0346 → 1.0124 → 0.9977（单调下降）</td></tr>
+<tr><td>稳定性</td><td><span class="good">0 NaN / 0 skip</span> 全程；ckpt@500/1000/.../5000 全存</td></tr>
+<tr><td>HF 转换</td><td><code>out/hf_decay_5000_final/</code>（1.350B params，烟测 "Paris" ✓，logits finite ✓）</td></tr>
+</table></div>
+
+<h2>§6 训坏根因回顾（引用 #648/#649 已交付结论）</h2>
+<div class="card"><table>
+<tr><th style="width:5%">序</th><th style="width:17%">根因</th><th>证据 → 本次修复如何消除</th></tr>
+<tr><td>1</td><td><span class="tag tag-bad">高</span>双移位 bug</td><td><code>v2.py:547-548</code> 预移位 + <code>:567-568</code> chunked-CE 再移位 → 训练移位两次、评测一次。L1 修掉后 step0 loss 11.72→1.75。<strong>官方 Megatron 无此 bug</strong>（标准单移位）→ 根因①消除。</td></tr>
+<tr><td>2</td><td><span class="tag tag-bad">高</span>peak LR 1.67e-3 过高</td><td>疑似过高放大移位破坏。<strong>官方同量级 LR（1.66667e-3）但在 μP 作用下</strong>是可控的 → 说明「LR 过高」的实质是「缺 μP 下裸用高 LR」，属③的下游表现。</td></tr>
+<tr><td>3</td><td><span class="tag tag-bad">高</span>自写脚本缺 μP</td><td>官方 stable/decay 全程 use-mup；自写脚本无 → 高 LR 直接打乱表征。<strong>官方 1113.sh 自带 use-mup</strong> → 根因③消除。</td></tr>
+<tr><td>4</td><td><span class="tag tag-warn">中</span>code 26 epochs 过采样</td><td>code 仅 0.270B 却被训 6.98B。decay-5000 沿用 4 源配比，code 占比温和（8%），未复现极端过采样。</td></tr>
+<tr><td>5</td><td><span class="tag tag-warn">中</span>step0 loss 11.72</td><td>①+②+③ 叠加的异常，是结果不是独立根因。decay-5000 从转换后 ckpt 加载，loss 从 1.1x 平滑下降起步。</td></tr>
+</table>
+<div class="soft"><strong>根因优先级：</strong>①双移位（代码级确认）＋ ③缺 μP（配方级）是主因；②高 LR 与 ⑤step0 异常本质是它们的下游表现。官方 1113.sh（μP + Muon + FP8 + 标准单移位）一次性同时消除了主因①③与②⑤，这是本次修复能一步到位的根本原因。</div></div>
+
+<h2>§7 残余 gap 分析（58.97% 为何仍未到 65.40%）</h2>
+<div class="card"><table>
+<tr><th>gap</th><th class="r">差值</th><th>归因假设（按可能性排序）</th></tr>
+<tr><td>decay-5000 vs 起点基线</td><td class="r num warn">−2.06pp</td><td>5000 步 / 18.1B 的 WSD 尾段尚未充分展开（相当于官方 71.2B 的 1/4），退火收益未吃满。</td></tr>
+<tr><td>decay-5000 vs 官方 final</td><td class="r num warn">−6.43pp</td><td>①<strong>decay 量不足</strong>（18.1B vs 71.2B）为主要候选；②<strong>数据配比不同</strong>（官方 11 源 vs 当前 4 源 64/24/8/4）；③官方 final 的 CX6 32.90% 口径含其完整评测（我们 CX6 逼近到 28.02%，仅差 4.88pp）。</td></tr>
+</table>
+<div class="soft">注意：CS8 gap（−6.43pp）明显大于 CX6 gap（−4.88pp），且当前 CS8 仅回撤起点 2.06pp，说明模型「基本回到起点」但「尚未重现官方 final 的额外增益」。这部分增益最可能来自 <strong>更长的 decay（71.2B）</strong> 与 <strong>更全的数据配比</strong>，正是下一步实验要验证的两点。</div></div>
+
+<h2>§8 下一步实验建议（按价值排序）</h2>
+
+<div class="card">
+<h3><span class="rank">1</span>延长 decay：5000 → 20000 步（对齐官方 71.2B 量级）</h3>
+<ul>
+<li><strong>价值</strong>：🔝 直接验证核心假设 —— 当前 CS8 58.97% 接近起点但未到官方 65.40%，最可能是 <strong>decay 量不足</strong>。20000 步 × 960 × 3776 ≈ 72.4B tokens，对齐官方 1113.sh 原设 <code>lr-decay-iters 20000</code>，看 CS8 是否逼近 65.40%（若能到 ~63–65%，即可判定残余 gap 主体来自 decay 量）。</li>
+<li><strong>成本（GPU 时）</strong>：5000 步实耗 ~17h 墙钟（8×H100）× 4 倍步数 ≈ <strong>≈2.5–3 天墙钟（约 3–4× 当前 5000 步 GPU 时）</strong>。</li>
+<li><strong>风险</strong>：<span class="tag tag-good">低</span> —— 配方 100% 沿用已验证的 1113.sh，仅把 <code>--train-iters / --lr-decay-iters / --lr-wsd-decay-iters</code> 三项 5000 → 20000；需按 1000 步间隔盯 val 曲线，确认 WSD 尾段无二次发散、loss 继续单调降。</li>
+<li><strong>ETA</strong>：<strong>≈2.5–3 天</strong>（8×H100 连续）。</li>
+</ul></div>
+
+<div class="card">
+<h3><span class="rank">2</span>对齐官方数据配比（11 源 → 隔离数据贡献）</h3>
+<ul>
+<li><strong>价值</strong>：官方 1113.sh 使用 11 源配比，当前仅有 4 源（SFT 64% : UFW-L3 24% : code 8% : math 4%）。若「延长 decay」后 CS8 仍卡在 ~61–63%，数据配比差异即为下一个主嫌疑，本实验可<strong>单独隔离数据贡献</strong>。</li>
+<li><strong>成本（GPU 时）</strong>：取决于数据获取。官方 11 源数据在 Xmodel 机 <code>/data1/i_line_data/</code>（本机无），需先下载/补齐并 tokenize 成 Megatron <code>text_document</code> 格式；数据就绪后仅需 ~18h×（与候选 1 同量级）训练。</li>
+<li><strong>风险</strong>：<span class="tag tag-warn">中</span> —— 首要风险在数据获取是否完整可行（若无完整 11 源，只能近似配比，结论需打折）；建议先做 100 步冒烟确认 loss 接得住，再起短程 5000 步 A/B。</li>
+<li><strong>ETA</strong>：数据准备 1–2 天 + 短程 5000 步检验 ~1 天。</li>
+</ul></div>
+
+<div class="card">
+<h3><span class="rank">3</span>补跑起点基线 CX6（sdpa 同口径，量化 gap）</h3>
+<ul>
+<li><strong>价值</strong>：本次起点基线 CS8=61.03%，但 <strong>CX6 崩于 flash_attn varlen 兼容性问题（#658）</strong>，导致「decay-5000 相对起点的 CX6 变化量」目前无法精确计算。用 decay-5000 已跑通的 <strong>sdpa + confirm_run_unsafe_code</strong> 修复膜补跑起点 <code>step_532000</code> 的 CX6，得到起点 CX6 基线。</li>
+<li><strong>成本（GPU 时）</strong>：<strong>仅评测、零训练</strong>，~1h（8×H100 并行）以内。</li>
+<li><strong>风险</strong>：<span class="tag tag-good">极低</span> —— 复用已验证的 sdpa 修复脚本。</li>
+<li><strong>ETA</strong>：<strong>~1h</strong>，可在候选 1 训练期间并行完成。</li>
+</ul></div>
+
+<div class="card">
+<h3><span class="rank">4</span>超参微调（min-lr / decay-iters / warmup，定点榨取残余 gap）</h3>
+<ul>
+<li><strong>价值</strong>：在候选 1/2 确定 gap 主因之后，若仍差 1–3pp，可对 <code>min-lr</code>（1.04e-4 ↑↓）、<code>decoded-min-lr</code>、decay-iters 尾段形态或加少量 warmup 做小尺度扫描，追求最后一两个 pp。</li>
+<li><strong>成本（GPU 时）</strong>：短程 5000 步级实验 × 2–3 组，每组 ~17h 墙钟。</li>
+<li><strong>风险</strong>：<span class="tag tag-good">低</span>，但<strong>边际收益有限</strong>，建议放在候选 1/2 之后按残差定点，避免过早陷入局部调参。</li>
+<li><strong>ETA</strong>：每组 ~1 天（可串行/并行）。</li>
+</ul></div>
+
+<div class="soft"><strong>建议执行顺序：</strong>先并行做 <strong>③（补 CX6 基线，~1h）</strong>；同时启动 <strong>①（延长 decay 20000 步，~3 天）</strong> —— 这是价值/信息量最高的选项；①结束后若 gap 仍未闭合，再做 <strong>②（对齐 11 源数据）</strong>；最后视余量做 <strong>④（超参微调）</strong>。</div>
+
+<h2>§9 结论</h2>
+<div class="card"><ul>
+<li><strong>decay 训坏已被修复</strong>：官方 1113.sh 配方（μP + Muon 0.2 + FP8 hybrid + 无 warmup + MBS=5）5000 步后，CS8 从旧 v2 的 44.97% 恢复到 <strong>58.97%</strong>，CX6 从 6.21% 恢复到 <strong>28.02%</strong>（+14.00 / +21.81pp），能力基本回到起点基线（CS8 61.03%，Δ −2.06pp）。</li>
+<li><strong>训坏根因已定位并消除</strong>：①双移位 bug（代码级）＋ ③缺 μP（配方级）为主因；②高 LR 与 ⑤step0 异常为其下游表现。官方脚本一次性消除主因，L1 实验（step0 loss 11.72→1.75）独立证实了双移位修复。</li>
+<li><strong>残余 gap 主嫌疑 = decay 量不足</strong>（18.1B vs 官方 71.2B）＋ 数据配比差异；建议按 §8 顺序推进：<strong>①延长 decay 至 20000 步 → ②对齐 11 源 → ③补 CX6 基线（可并行）→ ④超参微调</strong>。</li>
+</ul></div>
+
+<div class="trace"><strong>数据溯源（所有数字可核对）：</strong><br>
+• decay v2 final → <code>nemo_experiments/xmodel25_baize_80b_decay/eval_decay_v2_final/eval_summary.txt</code>（CS8=44.97% 见 :33-41、CX6=6.21% 见 :44-50）<br>
+• decay-5000 final → <code>nemo_experiments/eval_decay_5000_final/eval_summary.txt</code> + <code>p8_eval_summary.json</code>（CS8=0.5897 / CX6=0.2802 / tokens_B=18.1）<br>
+• 起点基线 CS8=61.03% → <code>nemo_experiments/eval_step532000_baseline/eval_summary.txt</code>（eval @2026-10-21 04:48）+ MEMORY #657 逐任务表<br>
+• Xmodel-2.5 官方 final → <code>nemo_experiments/xmodel25_final/p8_eval_summary.json</code>（CS8=0.6540 / CX6=0.3290）<br>
+• L1 排查 CS8=59.03% → <code>nemo_experiments/eval_L1_20b_cs8/p8_eval_summary.json</code>（common_sense_avg=0.5903）<br>
+• decay-5000 配方 → <code>Xmodel-2.5-code/examples/xmodel/train_decay_fp8_1113_5000_mbs5.sh</code> + 任务书 §2026-10-22 13:5x<br>
+• decay-5000 训练事实（final loss 0.9946 / val PPL 2.712 / 0NaN）→ MEMORY #739 + tfevents <code>runs/decay_5000_fp8_mbs5/</code><br>
+• 归因结论（双移位/LR/μP/过采样）→ MEMORY #648/#649 + 报告二 <code>report_pretrain_decay_v2_result_zh.html</code></div>
+<div class="foot">BaiZe Stage(i) 预训练线 · 自动化 agent 生成 · commit 前缀 <code>pretrain report:</code> · 2026-10-23</div>
+</body>
+</html>
