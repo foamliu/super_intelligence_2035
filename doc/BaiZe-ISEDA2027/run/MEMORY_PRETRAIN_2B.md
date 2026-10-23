@@ -1,5 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 13:3x #750：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
+> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
+> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程。git fetch 后无 ahead/behind、无新远端提交。
+> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=21272B / MEMORY=27549B（均≤32KB✓，本轮归档 0KB）。
 > 🆕 **2026-10-23 13:0x #749：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
 > - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
 > - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程。git fetch 后无 ahead/behind、无新远端提交。
@@ -115,7 +120,7 @@ WAITING: 1
 
 - STAGE: **✅ decay 5000 步训练 + 14 集评测全完成，且「decay 修复完整中文 HTML 报告 + 下一步建议」已交付** —— **CS8=58.97% / CX6=28.02%**（vs 官方 final 65.40%/32.90%；vs 基线 CS8 61.03% Δ−2.06pp）。decay 修复成功（旧 v2=44.97%/6.21% 训坏）。报告 @ `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup 已全部落地；23 日直令写 HTML 报告已交付。
   - PHASE: **decay_5000_已完成_报告已交付** — 训练完成（final loss 0.9946, val PPL 2.712, 0 NaN/0 skip），HF 转换✅，CS8=58.97%(8/8)✅，CX6=28.02%(6/6)✅。全部结果落盘 `nemo_experiments/eval_decay_5000_final/`；中文修复报告 `report_pretrain_decay_repair_zh.html` 已提交。loop 存活，.29 GPU 已释放。
-- 轮询状态：**#744（11:1x，decay 修复报告已交付 + 下一步建议）**：报告含「训坏→修复」全历程 + 4 条按价值排序的下一步建议（①延长 decay 20000 步≈3天 ②对齐11源 ③补CX6基线 ④超参微调）。待运维新指令，30 min 轮询。
+- 轮询状态：**#750（13:3x，例行唤醒·idle heartbeat）**：decay 修复报告 `report_pretrain_decay_repair_zh.html` 复核无误（commit ae9e1e780 已推远端），含「训坏→修复」全历程 + 4 条按价值排序的下一步建议（①延长 decay 20000 步≈3天 ②对齐11源 ③补CX6基线 ④超参微调）。.29 8×H100 空闲，无新运维指令，30 min 长轮询。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
