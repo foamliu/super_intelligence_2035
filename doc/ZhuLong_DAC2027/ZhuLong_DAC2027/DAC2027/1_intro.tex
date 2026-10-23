@@ -11,38 +11,11 @@ The main contributions are:
 
 \begin{itemize}
     \item \textbf{An account of \emph{which} factor sets the ceiling, with measurements that distinguish them (RQ1).}
-    We formalize the \emph{grounding gap}: EDA correctness is a situated (L4) property that no
-    offline knowledge can guarantee, and a Bayesian argument shows the resulting gap is
-    bounded by \emph{observation fidelity} rather than by the capacity of the model
-    (Section~\ref{sec:grounding-theory}). We answer RQ1 from both sides---laddering the
-    observation channel with the LLM fixed, and changing the prior with the harness
-    fixed---and the framework is stated \emph{before} the measurements, so that its claims are
-    predictions the experiments could refute rather than explanations fitted afterwards.
+    We formalize the \emph{grounding gap}: EDA correctness is a situated (L4) property that no offline knowledge can guarantee, bounded by \emph{observation fidelity} not model capacity (Section~\ref{sec:grounding-theory}). We answer RQ1 from both sides---laddering $\Omega$ with the LLM fixed, and changing $\mathcal{K}$ with the harness fixed---stated \emph{before} the measurements as predictions the experiments could refute.
 
     \item \textbf{A harness whose necessary components we isolate (RQ2).}
-    ZhuLong couples three unified MCP tools---\texttt{search\_apis}, \texttt{get\_api\_details},
-    and \texttt{run\_code}---so that API retrieval and documentation inspection (the
-    \emph{observation channel}), sandbox execution (the \emph{effector}), and the
-    generate--execute--refine loop (the \emph{belief update}) form one closed loop, driven by a
-    single \texttt{lang} parameter so the same agent logic covers PyAether, SKILL, and Tcl
-    (Section~\ref{sec:system}). In a commercial Empyrean Aether environment, ZhuLong attains
-    \textbf{81.4\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} for a pure
-    LLM and \textbf{72.2\%} for a retrieval-augmented static baseline. The same component
-    ordering reproduces across the SKILL and Tcl slices of EDA-Scripting-Bench
-    (Section~\ref{sec:cross-language}).
-    Ablation shows that the three components are \emph{jointly necessary and not
-    interchangeable}: adding sandbox execution to RAG yields \textbf{+9.2~pp}, while removing
-    execution ($-9.2$~pp) or retrieval ($-0.4$~pp) reduces accuracy, and
-    bounding the belief update degrades it monotonically (Section~\ref{sec:experiments}).
+    ZhuLong couples three MCP tools---\texttt{search\_apis}, \texttt{get\_api\_details}, \texttt{run\_code}---so that retrieval (observation), sandbox execution (effector), and the generate--execute--refine loop (belief update) form one closed loop, driven by a single \texttt{lang} parameter covering PyAether, SKILL, and Tcl (Section~\ref{sec:system}). ZhuLong attains \textbf{81.4\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} (pure LLM) and \textbf{72.2\%} (RAG). Ablation shows the components are jointly necessary and not interchangeable: adding execution to RAG yields \textbf{+9.2~pp}, removing it ($-9.2$~pp) or retrieval ($-0.4$~pp) reduces accuracy, and bounding $\Phi$ degrades it monotonically.
 
     \item \textbf{A cross-language benchmark on which the same structure can be re-measured per toolchain (RQ3).}
-    \textbf{EDA-Scripting-Bench} places PyAether, SKILL and Tcl under one task schema, one
-    assertion criterion and one harness, so that the structure of RQ1--RQ2 can be re-measured
-    slice by slice with nothing changed but the toolchain (Section~\ref{sec:benchmark}). Its
-    completed PyAether slice, \textbf{EDA-Eval-PyAether} (158 tasks from four sources,
-    expert-reviewed), serves as the first standardized PyAether benchmark; the SKILL and
-    Tcl slices complete the suite for reproducible comparison of LLM-based scripting agents.
-    What we release is the \textbf{harness, the task schema and the evaluation protocol}; the
-    task cases themselves derive from vendor documentation and customer designs and cannot be
-    redistributed.
+    \textbf{EDA-Scripting-Bench} places PyAether, SKILL and Tcl under one task schema, one assertion criterion and one harness (Section~\ref{sec:benchmark}). The completed PyAether slice (\textbf{EDA-Eval-PyAether}, 158 expert-reviewed tasks) is the first standardized PyAether benchmark. We release the harness, task schema and evaluation protocol; task cases derive from vendor documentation and customer designs and cannot be redistributed.
 \end{itemize}

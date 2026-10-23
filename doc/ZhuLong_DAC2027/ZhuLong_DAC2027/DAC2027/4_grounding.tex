@@ -92,7 +92,7 @@ This divergence is bounded by observation fidelity, not model capacity. If $I(\T
 \subsection{ZhuLong as an Instance of the Agent Harness}
 \label{sec:zhuLong-harness}
 
-The formulation maps onto ZhuLong's architecture. The frozen LLM supplies the prior $\mathcal{K}$ (L1--L3), the transition model $\mathcal{T}$, and an approximation to the policy $\Pi$. The Harness supplies what the LLM lacks---observation, belief update, and execution---and ZhuLong's three MCP tools instantiate it: \texttt{search\_apis} and \texttt{get\_api\_details} are the \emph{observation modules} $\Omega$, reading documented API facts out of the environment; \texttt{run\_code} is the \emph{effector} that acts on the live design database, whose resulting state is transduced into textual observations (stdout, errors, assertion outcomes). The re-planning loop (Section~\ref{sec:agent-workflow}) implements the belief update $\Phi$: each observation $o_t$ revises the agent's belief about which API contracts and compositions actually hold. The closed loop $b_t \to a_t \to o_{t+1} \to b_{t+1}$ is what turns one-shot generation into grounded search; grounding is a property of the coupled system, not of the model alone.
+The formulation maps onto ZhuLong's architecture: the frozen LLM supplies $\mathcal{K}$ (L1--L3), $\mathcal{T}$, and $\Pi$; the Harness supplies observation, belief update, and execution. \texttt{search\_apis}/\texttt{get\_api\_details} are the observation modules $\Omega$; \texttt{run\_code} is the effector acting on the live design database; the re-planning loop implements $\Phi$. The closed loop $b_t \to a_t \to o_{t+1} \to b_{t+1}$ turns one-shot generation into grounded search.
 
 % 该形式化直接映射到ZhuLong架构。冻结的LLM提供先验$\mathcal{K}$（L1–L3）、转移模型$\mathcal{T}$以及策略$\Pi$的近似。
 % 框架提供LLM所缺乏的观测、信念更新与执行，ZhuLong的三个MCP工具将其实例化：
@@ -104,36 +104,9 @@ The formulation maps onto ZhuLong's architecture. The frozen LLM supplies the pr
 \subsection{Design Principles}
 \label{sec:prediction}
 
-The formalization yields three architectural principles: \emph{freeze} $\mathcal{K}$, \emph{maximize} the fidelity of $\Omega$, and \emph{run} $\Phi$ \emph{continuously}.
+Three principles follow: \emph{freeze} $\mathcal{K}$, \emph{maximize} $\Omega$'s fidelity, and \emph{run} $\Phi$ \emph{continuously}. (1)~Decouple knowledge from belief: $\mathcal{K}$ is the static L1--L3 prior in the LLM; $b_t$ is the dynamic posterior maintained by the Harness. Freezing $\mathcal{K}$ and absorbing adaptation in $b_t$ yields stability and flexibility. (2)~Optimize observation over the prior: the gap is bounded by $\Omega$'s fidelity, not model scale; observation investment has direct bounded effect, while model scaling has diminishing returns once the prior is rich. (3)~Design for continuous belief updating: $\Phi$'s update rate must exceed L4 dynamics, and in an ICL-type autonomous agent the quantity to bound is how much evidence $b_t$ may accumulate---a graded execution budget or a lagged read-back.
 
-\textbf{Decouple knowledge from belief.} Knowledge $\mathcal{K}$ is the static L1--L3 prior encoded in the LLM's parameters---general and context-free; belief $b_t(\theta)$ is the dynamic posterior maintained by the Harness---specific and context-dependent. Updating $\mathcal{K}$ with the limited observations available during deployment is inefficient and risks catastrophic forgetting, and even a prior enriched offline cannot substitute for observation; freezing $\mathcal{K}$ and absorbing adaptation in $b_t$ yields stability and flexibility at once.
-
-\textbf{Optimize observation over the prior.} The gap is bounded by the fidelity of the likelihood $\Omega$, not by the expressiveness of the prior: $D_{\text{grounding}}(t)$ is bounded by $\|\tilde{p} - p_{\text{real}}\|$, a bound independent of model scale. Investment in observation---retrieval and documentation quality, execution read-back, state estimation---therefore has a direct and bounded effect, whereas investment in model scale has diminishing returns once the prior is sufficiently rich, because it cannot push the gap below the floor imposed by observation.
-
-\textbf{Design for continuous belief updating.} $\Phi$ operates online: every observation yields a recursive update $b_t \mapsto b_{t+1}$. Two implications follow. First, $\Phi$'s update rate must exceed the timescale of L4 dynamics, otherwise $b_t$ goes stale. Second, $b_t$ must be a structured representation that captures uncertainty and history, so that the agent can recover from unexpected changes. In the ICL-type autonomous agent of Section~\ref{sec:system}, $\Phi$ has no explicit posterior: it is approximated by in-context learning, since each returned observation is appended and conditions the next decision, while the agent decides for itself when the result is good enough to submit. Because such an agent is autonomous, the quantity to bound is not a count of ``rounds''---it has none---but how much evidence its belief state may ever accumulate: a graded budget on the executions it may observe, or a read-back that lags the action it reports.
-
-% 形式化给出三条架构原则：冻结$\mathcal{K}$、最大化$\Omega$保真度、持续运行$\Phi$。
-% （一）解耦知识与信念：$\mathcal{K}$是LLM参数中编码的静态L1–L3先验，$b_t$是框架维护的动态后验；
-% 用部署期有限的观测去更新$\mathcal{K}$既低效又有灾难性遗忘风险，且离线增强的先验也无法替代观测。
-% （二）优先优化观测而非先验：鸿沟受似然$\Omega$保真度约束（上界$\|\tilde{p}-p_{\text{real}}\|$与模型规模无关）；
-% 观测投入有直接有界的效果，模型规模投入在先验足够丰富后收益递减。
-% （三）为持续信念更新而设计：$\Phi$的更新率必须超过L4动态的时间尺度，且$b_t$须是捕获不确定性与历史的结构化表征。
-
-These principles \emph{account for} our ablation findings rather than merely restating them. Removing the observation channel (``ZhuLong w/o Sandbox'') leaves $b_t$ uninformative: with no $\Omega$, L4 violations such as hidden type contracts and internal selection state (Section~\ref{sec:error-analysis}) are unobservable by construction, and Pass@1 drops by 9.2~pp. A retrieval-only system (RAG, 72.2\%) improves the L1--L3 prior but still cannot observe L4, so its ceiling is bounded by what offline knowledge can guarantee.
-
-% 这些原则\emph{解释}而非仅仅复述了消融结果：移除观测通道使$b_t$失去信息，L4违规在构造上不可观测，
-% Pass@1下降9.2个百分点；仅检索系统（RAG）改善L1–L3先验但无法观测L4，其上界受离线知识所能保证的范围约束。
-
-Three diagnostic questions follow for any candidate system: (1)~does it implement $\Omega$ with sufficient fidelity to track L4 dynamics? (2)~does it maintain $b_t$ as a structured state, updated through $\Phi$ after each observation? (3)~does it approximate $\Pi$ from offline knowledge and execute $a_t$ through a causal interface? Section~\ref{sec:experiments} answers them for ZhuLong, on the benchmark constructed in Section~\ref{sec:benchmark}.
-
-% 由此得到三个诊断性问题：(1) 是否以足够保真度实现$\Omega$以追踪L4动态；
-% (2) 是否将$b_t$维护为经$\Phi$更新的结构化状态；(3) 是否用离线知识近似$\Pi$并通过因果接口执行$a_t$。
-% 下一节针对ZhuLong回答这三点。
-
-These principles and questions organize the evaluation into three research questions (Section~\ref{sec:exp-setup}): whether the ceiling is set by observation or by the prior (RQ1), which components are necessary and whether they are interchangeable (RQ2), and whether the structure follows from the domain class rather than from one toolchain (RQ3).
-% 这些原则与诊断问题把评估组织为三个研究问题（第~\ref{sec:exp-setup}节）：
-% 天花板由观测还是先验设定（RQ1）；哪些组件是必要的以及它们可否互换（RQ2）；
-% 以及该结构是否源于领域类而非某个工具链（RQ3）。
+These principles \emph{account for} our ablation findings: removing $\Omega$ (w/o Sandbox) makes L4 violations unobservable ($-9.2$~pp); RAG improves the L1--L3 prior but cannot observe L4 (ceiling 72.2\%). Three diagnostic questions follow for any candidate system: (1)~does it implement $\Omega$ with sufficient fidelity? (2)~does it maintain $b_t$ through $\Phi$? (3)~does it execute $a_t$ through a causal interface? These organize the evaluation into RQ1--RQ3 (Section~\ref{sec:exp-setup}).
 
 
 

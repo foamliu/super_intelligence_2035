@@ -2,38 +2,9 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-    EDA scripting with tool-specific, often undocumented APIs remains a long-tail 
-    bottleneck that existing LLM-based tooling fails to address. This paper presents 
-    \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl 
-    that combines API retrieval, documentation inspection, and sandbox execution via 
-    unified MCP tools into a closed generate--execute--refine loop. We further provide 
-    a \textbf{theoretical grounding} for why runtime observation is necessary: EDA correctness 
-    is a \emph{situated} property that cannot be guaranteed from static knowledge, 
-    and we formalize this ``grounding gap'' with a Bayesian argument showing it is 
-    bounded by observation fidelity---not model scale. The Harness supplies precisely 
-    that observation, by reading the environment's documented API facts and by reading 
-    back what executing code does to the live design.
-    % 使用工具特定且常无文档的EDA API进行脚本编写，仍是现有LLM工具无法解决的长尾瓶颈。
-    % 本文提出ZhuLong，一个面向PyAether和SKILL的执行驱动LLM代码智能体，通过统一MCP工具将
-    % API检索、文档查阅和沙盒执行组合为"生成-执行-修正"闭环。我们进一步给出执行必要性的
-    % 理论论证：EDA正确性是情境化属性，无法从静态知识保证；我们用贝叶斯论证形式化这一
-    % "落地鸿沟"，说明它受观测保真度而非模型规模约束，沙盒执行正是弥合该鸿沟的观测通道。
-
-    We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world 
-    tasks with assertion-based execution, where the complete system achieves 
-    \textbf{81.4\%} Pass@1 ($\pm$1.5, 5-run mean) in the commercial Empyrean Aether environment, substantially 
-    outperforming a pure LLM baseline (\textbf{10.5\%}). Ablation studies show the 
-    execution loop is decisive: adding sandbox execution to retrieval yields +9.2 pp, 
-    while removing either execution ($-9.2$ pp) or retrieval ($-0.4$ pp) reduces 
-    accuracy---consistent with the theoretical prediction.
-    % 我们在EDA-Eval-PyAether（158个真实任务、断言式执行验证）上评估ZhuLong，完整系统在
-    % 商业Empyrean Aether环境中达到81.4\%的Pass@1（±1.5，5轮均值），显著优于纯LLM基线（10.5\%）。消融表明
-    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+9.2个百分点，而移除执行（-9.2pp）
-    % 或检索（-0.4pp）都会使准确率坍塌——与理论预测一致。
-The main quantitative results are measured on the 158-task PyAether slice; a cross-language reproduction of the component ablation on the SKILL (158) and Tcl (133) slices of the unified \textbf{EDA-Scripting-Bench} (449 tasks total) reproduces the same structure---the complete system is the top and the prior-only baseline the bottom on every language---and the fidelity ($\Omega$) and belief-update ($\Phi$) axes are reported on PyAether only.
-    % 主定量结果在158题PyAether切片上测得；在统一评测集EDA-Scripting-Bench（449题：PyAether 158 + SKILL 158 + Tcl 133）的SKILL与Tcl切片上，
-    % 组件消融的跨语言复现重现了同一结构——完整系统在每个语言上均为top，纯先验基线均为bottom；保真度（Ω）与信念更新（Φ）轴仅在 PyAether 上报告。
-
+    EDA scripting with tool-specific, often undocumented APIs remains a long-tail bottleneck. We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl that combines API retrieval, documentation inspection, and sandbox execution via unified MCP tools into a closed generate--execute--refine loop. We formalize the ``grounding gap'': EDA correctness is a \emph{situated} property that cannot be guaranteed from static knowledge, bounded by observation fidelity---not model scale.
+    
+    On \textbf{EDA-Eval-PyAether} (158 real-world tasks), the complete system achieves \textbf{81.4\%} Pass@1 ($\pm$1.5), outperforming a pure LLM baseline (\textbf{10.5\%}). Ablation shows the execution loop is decisive: adding sandbox execution to retrieval yields +9.2~pp, while removing it ($-9.2$~pp) or retrieval ($-0.4$~pp) reduces accuracy---consistent with the theoretical prediction. A cross-language reproduction on the SKILL and Tcl slices of \textbf{EDA-Scripting-Bench} (449 tasks total) reproduces the same structure---the complete system is the top and the prior-only baseline the bottom on every language.
 \end{abstract}
 
 \keywords{LLM Agents for EDA, EDA Scripting, Code Generation, Sandbox Execution, Execution Grounding}
