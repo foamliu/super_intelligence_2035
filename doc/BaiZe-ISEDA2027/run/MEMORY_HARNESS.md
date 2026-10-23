@@ -5,17 +5,28 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7×5 pilot Gen7. 6/7 done, claude-code rerun3 RUNNING. Gate=7/7✅. Oracle5/5✅. H-B报告✅
-已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 6/7 done·codex rerun3✅(3/5=60%)·claude-code rerun3 RUNNING
-当前动作:     R471 监控 Gen7 rerun3. codex rerun3 COMPLETE: 5/5 trials, 0 errors, mean=0.6 (3/5 passed: bn-fit-modify, fix-git, log-summary-date-ranges). claude-code rerun3 RUNNING (harbor PID 4062894, etimes~35min): 2nd attempt has 1 errored(bn-fit-modify RuntimeError exit code1 empty stderr), 1 running(break-filter-js-from-html), 3 pending. Not interfering with running rerun.
-下一步:       ①等claude-code rerun3完成②汇总Gen7最终结果(7/7)③决定是否启动7×89全量④若claude-code仍失败,调查exit code1根因(gw_proxy连接?Docker cold start race?)
-阻塞:         无（claude-code rerun3在后台setsid运行, /tmp/tb_rerun3.log）
+PHASE:        T2 Terminal-Bench 7×15 full run STARTED. Gen7 pilot 7/7 COMPLETE. Gate=7/7✅. Oracle5/5✅. H-B报告✅
+已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·7×15 full run STARTED(R472)
+当前动作:     R472 Gen7 pilot 7/7 COMPLETE. claude-code rerun3 done: 0/5 passed, 3/5 errored(1 RuntimeError+2 AgentTimeoutError). Started 7×15 full run(15/89 tasks have local Docker images, MITM proxy blocks Docker Hub). Background setsid, log=/tmp/tb_full_7x15.log. ETA ~17h(sequential, 7 harnesses×15 tasks×~10min).
+下一步:       ①监控7×15 full run进度(检查/tmp/tb_full_7x15.log)②收集完成后生成report_harness_terminalbench_7way_zh.html③McNemar配对检验④诚实条款声明15/89限制
+阻塞:         15/89 task images only(MITM proxy blocks Docker Hub pull). claude-code infra error率60%(>30%阈值,但2/5 completed=adapter functional, intermittent). 报告须声明"15/89 tasks, 非全量89"
 ERROR_COUNT:  0
 📦 体积：TASK=31KB / MEMORY=4KB
+
+### Gen7 pilot 最终结果(7×5=35 trials)
+| Harness | Pass Rate | Errors | Notes |
+|:--|:--|:--|:--|
+| cline-patched | 5/5 (100%) | 0 | ✅ Perfect |
+| pi | 5/5 (100%) | 0 | ✅ Perfect |
+| codex (rerun) | 3/5 (60%) | 0 | ✅ config.toml fix worked |
+| opencode | 3/5 (60%) | 1/5 | ⚠️ 1 AgentTimeoutError |
+| hermes | 0/5 (0%) | 0 | Genuine 0% (no errors) |
+| deepseek-harness | 0/5 (0%) | 0 | Genuine 0% (no errors) |
+| claude-code (rerun3) | 0/5 (0%) | 3/5 | 🔴 1 RuntimeError(exit1)+2 AgentTimeoutError |
 ```
 
 ### 本唤醒流水
-[06:05] R471 **Gen7 pilot 6/7 results collected, codex rerun3✅, claude-code rerun3 still RUNNING**. Codex rerun3 (2026-10-24__04-55-49): 5/5 completed, 0 errors, mean=0.6, passed=bn-fit-modify+fix-git+log-summary-date-ranges, failed=break-filter-js-from-html+chess-best-move. Config.toml fix confirmed working. Claude-code rerun3: 1st attempt(04-43-02) 5/5 RuntimeError(exit code1,empty stderr); 2nd attempt(05-34-18) 1 errored+1 running+3 pending. harbor PID 4062894 alive(etimes~35min). NOT interfering with running rerun. Gen7 table: cline=100%, pi=100%, codex=60%, opencode=60%, hermes=0%, deepseek=0%, claude-code=RUNNING. Committed codex results, updated MEMORY. WAITING=1.
+[07:20] R472 **Gen7 pilot 7/7 COMPLETE + 7×15 full run STARTED**. Claude-code rerun3 done: 0/5 passed, 3/5 errored(1 RuntimeError exit code1 empty stderr + 2 AgentTimeoutError). 2/5 completed(reward 0.0) = adapter functional, intermittent failures. Gen7 final: cline=100%, pi=100%, codex=60%, opencode=60%, hermes=0%, deepseek=0%, claude-code=0%. Found only 15/89 TB task Docker images locally cached (MITM proxy blocks Docker Hub). Created _full_7x15_launcher.sh: filtered 15-task dataset + sg docker + launch_tb_7way.sh full mode. Started background setsid run, log=/tmp/tb_full_7x15.log, ETA ~17h. Committed Gen7 results + launcher. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。

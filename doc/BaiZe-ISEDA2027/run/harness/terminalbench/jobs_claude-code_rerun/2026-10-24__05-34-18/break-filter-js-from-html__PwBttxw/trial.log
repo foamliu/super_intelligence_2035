@@ -6,3 +6,4 @@ Running command: useradd -m -s /bin/bash agent 2>/dev/null || true
 Command outputs captured
 Running command: chown -R agent /root 2>/dev/null || true
 Command outputs captured
+Collecting main service artifacts
