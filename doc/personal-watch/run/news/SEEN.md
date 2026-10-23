@@ -1030,3 +1030,23 @@
 | 2026-10-23 | 美国太空军选定 6 家商业公司做太空态势感知（CASR） | IT之家 | 不收（军事） | https://www.ithome.com/1/016/794.htm |
 | 2026-10-23 | Valve 开发者 GameSoundCon 首次公开提及 HLX 代号 | IT之家（据 pcgamer） | 不收（游戏传闻） | https://www.ithome.com/1/016/783.htm |
 | 2026-10-23 | 湖南中医药大学原党委书记戴爱国接受审查调查 · 年轻人谎报 120 | 央视网 / 中新网 | 不收（司法个案） | https://news.cctv.com/2026/10/23/ARTI9FodQI3sWfRfC4NqcLSl261023.shtml |
+| 2026-10-23 | 谷歌云 Agent Compute Engine（ACE）：每智能体一台硬件隔离 microVM、空闲挂起、20 万并发下暂停/恢复 <500ms（官方 10-22 公告） | IT之家（`1/016/853` · 10:55 CST） | news | https://www.ithome.com/1/016/853.htm |
+| 2026-10-23 | 微软测试 Project Pantheon / Context Vault：Recall 的不录屏版、只存用户主动保存内容、支持 MCP | IT之家（据 Windows Latest · `1/016/873` · 11:44 CST） | news | https://www.ithome.com/1/016/873.htm |
+| 2026-10-23 | BCG：英国 18–24 岁信息通信业受雇 -30%、金融 -10%，合计 -4.5 万人（数据截至 2025 年底） | IT之家（据彭博社 · `1/016/808` · 09:21 CST） | news | https://www.ithome.com/1/016/808.htm |
+| 2026-10-23 | 商务部《禁止出口限制出口技术目录》修订征求意见：AI 拟列管 23 项；玉渊谭天称 DeepSeek、MiniMax 已履行登记并完成开源与海外授权 | IT之家（商务部 / 玉渊谭天 · `1/016/796` · 08:58 CST） | news | https://www.ithome.com/1/016/796.htm |
+| 2026-10-23 | SpaceX Super Intelligence Partner Network：130+ 家公司（英伟达/阿波罗/Snowflake/Databricks/贝恩）；Grok Bot 周付费 80 万+ | IT之家（据彭博社 · `1/016/814`） | 候选(下轮首选) | https://www.ithome.com/1/016/814.htm |
+| 2026-10-23 | 商务部：前三季度智能眼镜 +1.1 倍、外骨骼助力器 +46.4%、具身智能机器人 +22.6% | IT之家（`1/016/821`） | 候选(总结性统计) | https://www.ithome.com/1/016/821.htm |
+| 2026-10-23 | 微软 Reactor 框架 / Xbox Helix OS 澄清 | IT之家（`1/016/863`、`1/016/858`） | 不收（方向性/澄清） | https://www.ithome.com/1/016/863.htm |
+| 2026-10-23 | Meta 因涉嫌欺诈性广告被罗德岛州总检察长起诉 | IT之家（`1/016/817`） | 不收（司法个案） | https://www.ithome.com/1/016/817.htm |
+| 2026-10-23 | 在么在么升级智能养老平台 2.0（199 元/年） | IT之家（`1/016/834`） | 不收（产品上架） | https://www.ithome.com/1/016/834.htm |
+| 2026-10-23 | 马斯克被曝 10 亿美元投资「天舞」/ 星舰加油次数回应 | IT之家（`1/016/841`、`1/016/816`） | 不收（传闻/太空） | https://www.ithome.com/1/016/841.htm |
+| 2026-10-23 | 李想谈理想 i6 续航达成率 104% / 蔚来 firefly 60kWh / 阿维塔 OS 6.1.0 | IT之家（`1/016/849`、`1/016/840`、`1/016/844`） | 不收（车企产品） | https://www.ithome.com/1/016/849.htm |
+| 2026-10-23 | 何刚新晋华为公司董事 / 盖茨称 Ctrl+Alt+Del 是错误 | IT之家（`1/016/851`、`1/016/843`） | 不收（人事/访谈） | https://www.ithome.com/1/016/843.htm |
+| 2026-10-23 | SOCAMM3 模组前期准备（内存厂） | IT之家（`1/016/861`） | 不收（供应链传闻） | https://www.ithome.com/1/016/861.htm |
+| 2026-10-23 | 西藏那曲 7.0 级地震 + 苹果宣布捐款 | IT之家（`1/016/871`） | 不收（突发伤亡 · 排除评论） | https://www.ithome.com/1/016/871.htm |
+| 2026-10-23 | 苹果 iPhone Duo 磨砂膜 / 微信适配 / iOS 27.2 角标 | IT之家（`1/016/870`、`1/016/859`、`1/016/805`） | 不收（消费电子/爆料） | https://www.ithome.com/1/016/870.htm |
+| 2026-10-23 | GEO 服务商指南 / 智能外呼机器人品牌横评 / 讯飞医疗大模型 V3.7 | IT之家（`1/016/828`、`1/016/822`、`1/016/830`） | 不收（软文/通稿） | https://www.ithome.com/1/016/828.htm |
+| 2026-10-23 | OpenAI Decisions API / FDE / Uber×ChatGPT Work（3 万+ 员工） | OpenAI RSS | 未入账（正文 403 · Uber 拟结案） | https://openai.com/index/uber-chatgpt-work-rollout |
+| 2026-10-23 | 美财长贝森特：AI 不会重演互联网泡沫 | IT之家（`1/016/795`） | 不收（官员表态） | https://www.ithome.com/1/016/795.htm |
+| 2026-10-23 | 一加 Ace 7 配色官图 / 荣耀平板 X10 Mini / 索尼 LinkBuds Clip | IT之家（`1/016/855`、`1/016/845`、`1/016/857`） | 不收（消费电子） | https://www.ithome.com/1/016/855.htm |
+| 2026-10-23 | 总台中国之声：网传「家电国补正在退场」是假的 | IT之家（`1/016/833`） | 不收（辟谣/民生） | https://www.ithome.com/1/016/833.htm |
