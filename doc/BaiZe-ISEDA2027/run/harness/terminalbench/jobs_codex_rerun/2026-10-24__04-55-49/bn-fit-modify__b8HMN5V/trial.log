@@ -15,3 +15,4 @@ requires_openai_auth = false
 supports_websockets = false
 CODEX_EOF
 Command outputs captured
+Collecting main service artifacts

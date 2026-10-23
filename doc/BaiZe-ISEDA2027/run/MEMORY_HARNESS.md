@@ -5,17 +5,17 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7×5 pilot Gen7 RERUN-3(codex+claude-code). Gate=7/7✅. Oracle5/5✅. H-B报告✅
-已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 5/7 done(R467)·codex/claude-code infra fix(R468-R469)·codex config.toml fix(R470)
-当前动作:     R470 codex adapter fix: write ~/.codex/config.toml with custom model_provider→gw_proxy. Root cause: codex 0.164.0 ignores OPENAI_BASE_URL, uses Responses API, goes to api.openai.com→401. Fix tested✅(codex exec→gw_proxy→LLM response,exit=0). Rerun3 launched(setsid),codex trial1 RUNNING.
-下一步:       ①等codex rerun3完成(5 trials)②等claude-code rerun3完成③汇总Gen7最终结果(7/7)④决定是否启动7×89全量
-阻塞:         无（rerun3在后台setsid运行,/tmp/tb_rerun3.log）
+PHASE:        T2 Terminal-Bench 7×5 pilot Gen7. 6/7 done, claude-code rerun3 RUNNING. Gate=7/7✅. Oracle5/5✅. H-B报告✅
+已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 6/7 done·codex rerun3✅(3/5=60%)·claude-code rerun3 RUNNING
+当前动作:     R471 监控 Gen7 rerun3. codex rerun3 COMPLETE: 5/5 trials, 0 errors, mean=0.6 (3/5 passed: bn-fit-modify, fix-git, log-summary-date-ranges). claude-code rerun3 RUNNING (harbor PID 4062894, etimes~35min): 2nd attempt has 1 errored(bn-fit-modify RuntimeError exit code1 empty stderr), 1 running(break-filter-js-from-html), 3 pending. Not interfering with running rerun.
+下一步:       ①等claude-code rerun3完成②汇总Gen7最终结果(7/7)③决定是否启动7×89全量④若claude-code仍失败,调查exit code1根因(gw_proxy连接?Docker cold start race?)
+阻塞:         无（claude-code rerun3在后台setsid运行, /tmp/tb_rerun3.log）
 ERROR_COUNT:  0
 📦 体积：TASK=31KB / MEMORY=4KB
 ```
 
 ### 本唤醒流水
-[04:50] R470 **codex 0.164.0 config.toml fix + rerun3 launched**. R469 nohup rerun died with session→setsid fix. Codex 0.164.0 root cause: ignores OPENAI_BASE_URL, only supports wire_api="responses"(chat removed), goes to wss://api.openai.com→401. Fix: adapter writes ~/.codex/config.toml with [model_providers.kimi_gateway] base_url=gw_proxy, wire_api=responses, env_key=OPENAI_API_KEY, supports_websockets=false. **Tested✅**: `codex exec --model kimi-k2.6-cloud ... say_hello`→gw_proxy→"Hey there! Hello!"→exit=0. Claude-code was actually working(exit137=my SIGKILL not real failure). Rerun3 launched(setsid,/tmp/tb_rerun3.log), codex trial1 bn-fit-modify RUNNING(Docker container up). WAITING=1.
+[06:05] R471 **Gen7 pilot 6/7 results collected, codex rerun3✅, claude-code rerun3 still RUNNING**. Codex rerun3 (2026-10-24__04-55-49): 5/5 completed, 0 errors, mean=0.6, passed=bn-fit-modify+fix-git+log-summary-date-ranges, failed=break-filter-js-from-html+chess-best-move. Config.toml fix confirmed working. Claude-code rerun3: 1st attempt(04-43-02) 5/5 RuntimeError(exit code1,empty stderr); 2nd attempt(05-34-18) 1 errored+1 running+3 pending. harbor PID 4062894 alive(etimes~35min). NOT interfering with running rerun. Gen7 table: cline=100%, pi=100%, codex=60%, opencode=60%, hermes=0%, deepseek=0%, claude-code=RUNNING. Committed codex results, updated MEMORY. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。
