@@ -30,36 +30,17 @@ We evaluate ZhuLong on \textbf{EDA-Eval-PyAether} (158 tasks) using \textbf{Pass
 
 \subsubsection{Baselines and ZhuLong Variants}
 
-To isolate each component's contribution, we use two baselines and two ablations (Table~\ref{tab:configurations}). Retrieval and documentation form $\Omega$; the sandbox is the effector. Each capability is toggled by a tool-registration switch---a single disabled-list in the server environment---so a disabled tool vanishes from the agent's tool set while every enabled tool keeps a byte-identical implementation across all arms. The sandbox is removed by unregistering \texttt{run\_code}; retrieval by unregistering the three retrieval tools; the anti-leak hook stays loaded in every arm.
-
-\begin{table}[htbp]
-\centering
-\caption{Configurations and their components}
-\label{tab:configurations}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Configuration} & \textbf{Retrieval} & \textbf{Sandbox} \\
-\midrule
-Baseline 1 (Pure LLM) & \ding{55} & \ding{55} \\
-Baseline 2 (RAG) & \ding{51} & \ding{55} \\
-ZhuLong w/o Retrieval & \ding{55} & \ding{51} \\
-\textbf{ZhuLong} (Full) & \ding{51} & \ding{51} \\
-\bottomrule
-\end{tabular}
-\end{table}
-% 表：配置及其组件。ZhuLong（完整）为完整系统，其余为消融变体。
+To isolate each component's contribution, we use four configurations: \textbf{Baseline 1 (Pure LLM)} (no retrieval, no sandbox), \textbf{Baseline 2 (RAG)} (retrieval only), \textbf{ZhuLong w/o Retrieval} (sandbox only), and \textbf{ZhuLong (Full)} (both). Retrieval and documentation form $\Omega$; the sandbox is the effector. Each capability is toggled by a tool-registration switch---a single disabled-list in the server environment---so a disabled tool vanishes from the agent's tool set while every enabled tool keeps a byte-identical implementation across all arms. The sandbox is removed by unregistering \texttt{run\_code}; retrieval by unregistering the three retrieval tools; the anti-leak hook stays loaded in every arm.
 
 \subsubsection{LLM Backbones}
 
-All main experiments use DeepSeek-V4-Pro as the primary backbone. To understand the impact of different LLMs, we additionally evaluate GLM-5.2, DeepSeek-V4-Flash, Kimi-K2.6, and Doubao-Seed-2.0-Pro.
+All main experiments use DeepSeek-V4-Pro (FP4) as the primary backbone; GLM-5.2, DeepSeek-V4-Flash, Kimi-K2.6, and Doubao-Seed-2.0-Pro are additionally evaluated (Section~\ref{sec:k-axis}).
 % LLM主干。所有主要实验使用DeepSeek-V4-Pro作为主要主干。为了解不同LLM的影响，我们还评估了GLM-5.2、DeepSeek-V4-Flash、Kimi-K2.6和Doubao-Seed-2.0-Pro。
 
 \subsection{Results and Ablations}
 \label{sec:exp-results}
 
-The framework of Section~\ref{sec:grounding-theory} fixes what each study must vary. Table~\ref{tab:main-ablation} gives the progressive build-up and the component ablation as an overview; the studies below then change one component at a time, with the LLM frozen unless stated otherwise.
-% 结果与消融。第~\ref{sec:grounding-theory}节的框架规定了每项研究必须改变什么。
-% 表~\ref{tab:main-ablation}给出渐进构建与组件消融作为总览；以下研究每次只改变一个组件，除特别说明外固定LLM。
+Table~\ref{tab:main-ablation} gives the progressive build-up and component ablation as an overview; the studies below change one component at a time, with the LLM frozen unless stated otherwise.
 
 \begin{table}[htbp]
 \centering
@@ -81,7 +62,7 @@ ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & $-0.4$ pp$^{\text{ns}}$ \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-\footnotesize{Significance from McNemar test on pooled per-task pass/fail across 5 runs (790 paired observations per arm) and paired bootstrap (10\,000 resamples, 95\% percentile CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, $^{*}$p{<}0.05, ns = not significant. w/o Sandbox: $p{<}10^{-8}$, CI $[-13.1, -5.4]$~pp. w/o Self-Expl.: $p{<}0.05$, CI $[-7.0, -1.2]$~pp. w/o Retrieval: $p{=}0.81$, CI $[-3.5, +2.9]$~pp (not significant).}
+\footnotesize{McNemar + paired bootstrap (10\,000 resamples, 95\% CI) on 790 paired observations per arm: $^{***}$p{<}0.001, $^{*}$p{<}0.05, ns = not significant. w/o Sandbox: $p{<}10^{-8}$, CI $[-13.1, -5.4]$. w/o Self-Expl.: $p{<}0.05$, CI $[-7.0, -1.2]$. w/o Retrieval: $p{=}0.81$ (ns).}
 \end{table}
 % 表：渐进构建与组件消融研究。上块为渐进构建，"Gain"表示
 % 相对于前一行的增量；下块为组件消融，"Drop"均表示相对于
@@ -90,12 +71,9 @@ ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & $-0.4$ pp$^{\text{ns}}$ \\
 \subsubsection{S1: Observation fidelity (RQ1)}
 \label{sec:omega-fidelity}
 
-Principle 2 predicts that with the model fixed, accuracy is bounded by the fidelity of the observation channel $\Omega$. We vary $\Omega$ along the two axes through which it receives information, holding the LLM fixed in both.
+Principle 2 predicts that with the model fixed, accuracy is bounded by $\Omega$'s fidelity. We vary $\Omega$ along two axes, holding the LLM fixed.
 
-\textbf{Documentation axis.} Table~\ref{tab:omega} holds the agent loop and the LLM fixed, and changes the documentation channel together with the presence of the effector: no observation at all; a low-fidelity index built from API names alone, coupled with the full execution loop; and a high-fidelity index that adds descriptions, BM25 term matching, abbreviation expansion and synonym redirect, used without an effector as the RAG baseline.
-% 文档轴。表~\ref{tab:omega}固定智能体循环与LLM；文档通道与执行器有无同时改变：
-% 无观测；仅由API名称构建的低保真索引（带执行器）；加入描述、BM25词项匹配、缩写展开与同义词重定向的高保真索引（无执行器，RAG基线）；
-
+\textbf{Documentation axis.} Table~\ref{tab:omega} changes the documentation channel together with the effector's presence: (N) no observation; (L) a low-fidelity name-only index \emph{with} the execution loop; (H) a high-fidelity index (adding descriptions, BM25, abbreviations, synonyms) used \emph{without} the effector as the RAG baseline.
 
 \begin{table}[htbp]
 \centering
@@ -108,24 +86,14 @@ Principle 2 predicts that with the model fixed, accuracy is bounded by the fidel
 \midrule
 (N) No observation & Baseline 1 (Pure LLM) & 10.5 $\pm$ 1.9 \\
 (L) Low fidelity & name-only index & 82.8 $\pm$ 1.0 \\
-(H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & 72.2 $\pm$ 1.6 \\
+(H) High fidelity & + description, BM25, abbrev., synonyms & 72.2 $\pm$ 1.6 \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 表：Ω保真度阶梯（文档轴）。固定LLM与循环；L 带执行器，H 为无执行器的 RAG 基线。
 
-The documentation axis is non-monotone: (L) at 82.8\% exceeds (H) at 72.2\%. This reflects the effector, not the index---(L) couples a name-only index with the full execution loop, whereas (H) is retrieval-only without execution. A coarse index with execution outperforms a rich index used only for static retrieval.
-% 文档轴呈现非单调排序：低保真档(L)82.8±1.0%高于高保真档(H)72.2±1.6%。
-% 这并非索引问题，而是执行器在场与否的差异：(L)的name-only索引配完整执行闭环，
-% (H)为RAG基线（高保真检索但无执行器）。该对比混淆了文档保真度与执行器有无；作为两个已部署配置的对比：
-% 在本对比中，粗糙索引配执行器优于仅用于静态检索的丰富索引。
+The documentation axis is non-monotone: (L) at 82.8\% exceeds (H) at 72.2\%---but this reflects the effector, not the index. (L) couples a coarse index with the full execution loop; (H) is retrieval-only. A coarse index \emph{with} execution outperforms a rich index used only for static retrieval.
 
-\textbf{Read-back axis.} We compare three closed-loop variants differing only in how much live state execution returns: (N$'$) \emph{no observation}---prior only; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state (the default). The three rungs compress the \emph{same} executed state to different bandwidths: (F) returns the full \texttt{error\_log}/\texttt{print\_log}/\texttt{result}; (B) collapses it to one bit (\texttt{PASS} = no exception, not that assertions held); (N$'$) returns only \texttt{executed}. Principle~2 predicts a monotone gain (N$'$)$<$(B)$<$(F).
-% 回读轴。第二条轴是执行返回多少实时状态信息。第~\ref{sec:bayesian}节预测固定LLM时准确率随该保真度变化，
-% 因此我们比较仅在此处不同的三个闭环变体：(N) 无观测、(B) 二值反馈、(F) 全观测。框架预测从(N)到(F)单调增益，
-% fresh 5-run 实测排序为 N' < B < F；早期 legacy 探路曾出现相反排序，下文分析。
-
-Table~\ref{tab:readback} reports Pass@1 together with the convergence cost (mean \texttt{run\_code} calls, wall-clock, timed-out tasks) per variant.
+\textbf{Read-back axis.} Three closed-loop variants differ only in how much live state execution returns: (N$'$) prior only; (B) binary pass/fail; (F) full observation (stdout, exception traces, per-assertion outcomes, queried state---the default). The three rungs compress the \emph{same} executed state to different bandwidths. Principle~2 predicts a monotone gain (N$'$)$<$(B)$<$(F). Table~\ref{tab:readback} reports Pass@1 together with convergence cost.
 
 \begin{table}[htbp]
 \centering
@@ -158,22 +126,22 @@ Principle 3 requires actions to reach the design through a causal interface, and
 
 \begin{table}[htbp]
 \centering
-\caption{Effect of bounding the evidence available to $\Phi$ (LLM, $\Omega$ and effector fixed). $k$ = max \texttt{run\_code} calls per trace; ``lagged'' = read-back returns the \emph{previous} execution's state. ``Converged'' = share of traces where the agent self-terminated.}
+\caption{Bounding the evidence available to $\Phi$ (LLM, $\Omega$, effector fixed). $k$ = max \texttt{run\_code} calls per trace; ``lagged'' = read-back returns the \emph{previous} execution's state.}
 \label{tab:phi-bound}
-\resizebox{\columnwidth}{!}{%
+\small
 \begin{tabular}{lccc}
 \toprule
-\textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} & \textbf{Mean gen-fail} \\
+\textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Conv.\ (\%)} & \textbf{Gen-fail} \\
 \midrule
 $\Phi$ $k{=}1$ & 63.8 $\pm$ 3.2$^{***}$ & 76.3 & 34.6 \\
 $\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5$^{***}$ & 80.4 & 27.6 \\
 $\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2$^{**}$ & 90.4 & 17.4 \\
 $\Phi$ lagged & 73.0 $\pm$ 3.2$^{***}$ & 97.5 & 9.0 \\
-$\Phi$ unbounded (default) & 81.4 $\pm$ 1.5 & 99.1 & 10.4 \\
+$\Phi$ unbounded & 81.4 $\pm$ 1.5 & 99.1 & 10.4 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 
-\footnotesize{5-run means (Pass@1 $\pm$ std, $n{=}5$); unbounded anchor = full-system baseline (Table~\ref{tab:main-ablation}). \emph{Mean gen-fail} = per-run count of tasks producing no executable code. Significance vs.\ unbounded (McNemar, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01.}
+\footnotesize{5-run means; unbounded = full-system anchor. \emph{Gen-fail} = per-run count of tasks producing no executable code. $^{***}$p{<}0.001, $^{**}$p{<}0.01 vs.\ unbounded (McNemar + bootstrap).}
 \end{table}
 % 表：给$\Phi$可用证据加界的影响（固定LLM、$\Omega$与执行器）。
 % $k$为单条trace允许的\texttt{run\_code}调用次数（执行预算，而非"设计轮数"）；
@@ -211,11 +179,11 @@ Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -17.6 pp$^{***}$ \\
 \subsubsection{RQ3: re-measuring the structure per toolchain}
 \label{sec:cross-language}
 
-The three slices of \textbf{EDA-Scripting-Bench} share one task schema, one assertion criterion, and one harness, so S1--S2 can be re-run slice by slice with nothing changed but the toolchain. Table~\ref{tab:cross-language} reports the component ablation on SKILL (157 tasks) and Tcl (134 tasks, aggregating WaveView and Innovus), alongside the PyAether anchor; the \emph{Overall} column pools all 449 tasks. The comparison of interest is the \emph{within-language} ordering, not cross-table absolute rates.
+The three slices of \textbf{EDA-Scripting-Bench} share one task schema, one assertion criterion, and one harness, so S1--S2 can be re-run slice by slice with nothing changed but the toolchain. Table~\ref{tab:cross-language} reports the component ablation on SKILL (157) and Tcl (134, aggregating WaveView and Innovus), alongside the PyAether anchor; the \emph{Overall} column pools all 449 tasks. The comparison of interest is the \emph{within-language} ordering.
 
 \begin{table}[htbp]
 \centering
-\caption{Cross-language reproduction of the component ablation (RQ3). Pass@1 (\%), 5-run mean$\pm$std on PyAether (158 tasks) and SKILL (157 tasks); \textbf{Tcl} aggregates the Custom WaveView (77) and Innovus (57) runtimes into a single 134-task column (task-weighted). The \textbf{Overall} column pools all 449 tasks into one task-weighted Pass@1 per configuration (single value, no run-level dispersion). The PyAether column is the main-table anchor (Table~\ref{tab:main-ablation}). The full system is the top configuration on every language; the prior-only baseline is the bottom on every language.}
+\caption{Cross-language reproduction (RQ3). Pass@1 (\%), 5-run mean$\pm$std on PyAether/SKILL; \textbf{Tcl} aggregates Custom WaveView (77) + Innovus (57) into a 134-task column; \textbf{Overall} pools all 449 tasks. The full system is the top configuration on every language; the prior-only baseline is the bottom on every language.}
 \label{tab:cross-language}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
@@ -230,7 +198,7 @@ ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & 39.0 $\pm$ 12.6 & 73.2 & 64.0 \\
 \end{tabular}}
 \end{table}
 
-The qualitative structure reproduces across all three languages: the full system is the \emph{top} configuration and the prior-only baseline the \emph{bottom} on every language---the dominance of observation-plus-execution is domain-structural, not toolchain-specific (RQ3). The intermediate ordering is less stable: on PyAether the sandbox-only variant beats RAG, whereas on Tcl the reverse holds and on SKILL the two are close, reflecting that different toolchains expose different amounts of usable documentation relative to executable feedback. The two extremes are invariant, and the \emph{Overall} column reproduces the same ordering at the pooled level. The ($\Omega$) and ($\Phi$) axes are reported on PyAether only.
+The qualitative structure reproduces across all three languages: the full system is the \emph{top} and the prior-only baseline the \emph{bottom} on every language---the dominance of observation-plus-execution is domain-structural, not toolchain-specific (RQ3). The intermediate ordering is less stable (sandbox-only beats RAG on PyAether, the reverse on Tcl, close on SKILL), reflecting that different toolchains expose different amounts of usable documentation relative to executable feedback. The $\Omega$ and $\Phi$ axes are reported on PyAether only.
 % RQ3：按工具链分别重测该结构。表~\ref{tab:cross-language}给出组件消融在SKILL(157)与Tcl(134,WaveView+Innovus)切片上的
 % 独立复现，连同复现自身的PyAether列（四列来自同一自洽5-run集）。PyAether列即主表锚点；
 % 此处关注的是切片内排序而非跨表绝对一致。定性结构在三种语言上复现：完整系统在每个语言上均为top，纯先验基线均为bottom。

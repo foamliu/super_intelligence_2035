@@ -1,7 +1,7 @@
 \section{Theoretical Grounding: The Grounding Gap}
 \label{sec:grounding-theory}
 
-Our empirical results show that the execution loop is decisive: adding sandbox execution to retrieval yields +9.2~pp ($p{<}10^{-8}$), while removing execution ($-9.2$~pp) or retrieval ($-0.4$~pp, n.s.) reduces accuracy. This section explains \emph{why} this is structural rather than implementation-specific. We condense the \emph{grounding gap}: EDA scripting correctness is a \emph{situated} property that cannot be guaranteed from offline knowledge, and execution is the only channel that observes the current design state. The gap is bounded by observation fidelity, not model scale.
+Our empirical results show that the execution loop is decisive: adding sandbox execution to retrieval yields +9.2~pp ($p{<}10^{-8}$), while removing execution ($-9.2$~pp) or retrieval ($-0.4$~pp, n.s.) reduces accuracy. This section explains \emph{why} this is structural rather than implementation-specific: EDA scripting correctness is a \emph{situated} property that cannot be guaranteed from offline knowledge, and execution is the only channel that observes the current design state. The gap is bounded by observation fidelity, not model scale.
 
 % 我们的实证结果表明执行闭环是决定性的（在检索之上加入沙盒执行带来+9.2个百分点，而移除执行或检索都会使准确率坍塌）。
 % 本节解释为什么这不是实现的偶然，而是EDA脚本编写的结构性属性。
@@ -11,39 +11,14 @@ Our empirical results show that the execution loop is decisive: adding sandbox e
 \subsection{A Four-Level Hierarchy of Information}
 \label{sec:four-levels}
 
-To make precise what can be learned offline versus what must be observed online, we distinguish four levels of information (Table~\ref{tab:four-levels}):
+To make precise what can be learned offline versus what must be observed online, we distinguish four levels of information:
 \begin{itemize}
-\item \textbf{L1--Syntactic Correctness}: well-formedness of symbols per formal rules; acquirable offline.
-\item \textbf{L2--Physical Plausibility}: robust statistical patterns of how the world typically behaves; acquirable offline as the agent's \emph{prior}.
-\item \textbf{L3--Historical Factuality}: what has actually occurred or is documented; past-oriented, acquirable offline, but with no connection to what is true \emph{now}.
-\item \textbf{L4--Situated Truthfulness}: what is true \emph{right now} in this specific environment. Three characteristics: \emph{indexicality} (truth depends on context and changes over time), \emph{non-guaranteeability from offline data}, and \emph{real-time commitment}.
+\item \textbf{L1--Syntactic Correctness}: well-formedness of symbols; acquirable offline.
+\item \textbf{L2--Physical Plausibility}: robust statistical patterns of how the world behaves; acquirable offline as the agent's \emph{prior}.
+\item \textbf{L3--Historical Factuality}: what has occurred or is documented; past-oriented, acquirable offline, but with no connection to what is true \emph{now}.
+\item \textbf{L4--Situated Truthfulness}: what is true \emph{right now} in this specific environment---\emph{indexical} (truth depends on context and changes over time), \emph{non-guaranteeable from offline data}, and requiring \emph{real-time commitment}. \textbf{Not learnable offline.}
 \end{itemize}
-
-% 为了精确区分什么可以离线学习、什么必须在线观测，我们区分四个信息层次（表~\ref{tab:four-levels}）：
-% L1语法正确性、L2物理合理性、L3历史事实性、L4情境真实性。前三层可离线获取，构成智能体关于世界通常如何运作的先验；
-% L4由三个特征定义：指示性（真值依赖语境并随时间变化）、无法由离线数据保证（但可诱导强先验）、实时承诺（须持续获取并迅速行动）。
-
-Two clarifications: L4 is not a semantic category but a \emph{grounding requirement} imposed by indexical reference (the same proposition may be L3 at one moment, L4 at another); and the four levels separate what can be \emph{known in advance} from what must be \emph{observed now}---L4 is read from the environment, not recalled from memory.
-
-% 两点澄清：第一，L4不是命题的语义类别，而是指示性所指强加的\emph{落地要求}——同一命题在不同时刻可能属于L3或L4。
-% 第二，四层区分不是知识的分类法，它区分"可预先知道"与"必须此刻观测"；L4是必须从环境中\emph{读取}而非从记忆中\emph{回忆}的东西。
-
-\begin{table*}[htbp]
-\centering
-\caption{The four levels of information}
-\label{tab:four-levels}
-\begin{tabular}{clp{5.2cm}c}
-\toprule
-\textbf{Level} & \textbf{Name} & \textbf{Core Question} & \textbf{Learnable Offline?} \\
-\midrule
-L1 & Syntactic Correctness & Is this string well-formed? & Yes \\
-L2 & Physical Plausibility & Could this event happen? & Yes \\
-L3 & Historical Factuality & Did this event happen? & Yes \\
-L4 & Situated Truthfulness & Is this true \emph{right now}? & \textbf{No} \\
-\bottomrule
-\end{tabular}
-\end{table*}
-% 表：四个信息层次。"能否离线学习"一列是操作性的判据：L1–L3 可以，L4 不可以。
+L4 is not a semantic category but a \emph{grounding requirement} imposed by indexical reference; the four levels separate what can be \emph{known in advance} from what must be \emph{observed now}---L4 is read from the environment, not recalled from memory.
 
 For EDA scripting, the situated state is the live design database: which cell and view are selected, what the layout contains at this moment. The correctness criterion---generated code executes without error and all assertions over the mutated design pass---is an L4 property: a script that is well-formed (L1), plausible (L2), and invokes documented functions (L3) can nonetheless violate an undocumented binding contract or depend on an internal selection state. Such failures must be \emph{observed} by acting on the live design and reading back the result.
 
@@ -56,23 +31,11 @@ For EDA scripting, the situated state is the live design database: which cell an
 \subsection{A Bayesian Formalization of the Grounding Gap}
 \label{sec:bayesian}
 
-We cast grounding as decision-making under partial observability. The formulation is diagnostic---it makes precise \emph{what} is missing: the observation likelihood $\Omega$ and the recursive update $\Phi$.
-
-% 我们把落地建模为部分可观测下的决策，类比POMDP与贝叶斯滤波；以下形式化是诊断性而非算法性的——
-% 它不是高维状态空间中可处理推理的蓝图，而是一个规范性标准，精确指出\emph{什么}是缺失的：观测似然Ω与递归更新Φ。
-
-Let $\Theta$ denote the space of L4 states, $o_t$ a runtime observation, $a_t$ a code action, and $\mathcal{K}$ the offline knowledge in the LLM's frozen parameters (L1--L3). The agent maintains a belief
+We cast grounding as decision-making under partial observability. Let $\Theta$ denote the space of L4 states, $o_t$ a runtime observation, $a_t$ a code action, and $\mathcal{K}$ the offline knowledge in the LLM's frozen parameters (L1--L3). The agent maintains a belief $b_t(\theta) \triangleq p(\theta_t \mid o_{1:t}, a_{1:t-1}, \mathcal{K})$, updated by Bayes' rule:
 \begin{equation}
-b_t(\theta) \triangleq p(\theta_t \mid o_{1:t},\, a_{1:t-1},\, \mathcal{K}),
+b_t(\theta) \propto \underbrace{p(o_t \mid \theta_t)}_{\Omega}\, \int_{\Theta} \underbrace{p(\theta_t \mid \theta_{t-1}, a_{t-1})}_{\mathcal{T}}\, b_{t-1}(\theta_{t-1})\, d\theta_{t-1},
 \end{equation}
-updated by Bayes' rule:
-\begin{equation}
-b_t(\theta) \propto p(o_t \mid \theta_t)\, \int_{\Theta} p(\theta_t \mid \theta_{t-1}, a_{t-1})\, b_{t-1}(\theta_{t-1})\, d\theta_{t-1},
-\end{equation}
-where $p(o_t \mid \theta_t)$ is the \emph{observation likelihood} $\Omega$ (the Harness's observation modules) and $p(\theta_t \mid \theta_{t-1}, a_{t-1})$ the \emph{transition model} $\mathcal{T}$ (the LLM's prior over how EDA operations transform the design). Actions minimize expected cost:
-\begin{equation}
-a_t^* = \arg\min_{a \in \mathcal{A}}\; \mathbb{E}_{\theta_t \sim b_t}\!\big[\mathcal{C}(\theta_t, a, G) + \gamma\, V(b_{t+1})\big].
-\end{equation}
+where $\Omega$ is the \emph{observation likelihood} (the Harness's observation modules) and $\mathcal{T}$ the \emph{transition model} (the LLM's prior over how EDA operations transform the design). Actions minimize expected cost $a_t^* = \arg\min_{a} \mathbb{E}_{\theta_t \sim b_t}[\mathcal{C}(\theta_t, a, G) + \gamma V(b_{t+1})]$.
 
 % 令$\Theta$为L4状态空间（在线EDA设计数据库），$o_t$为运行时观测，$a_t$为生成的代码动作，
 % $\mathcal{K}$为编码在LLM冻结参数中的离线知识（L1–L3）。智能体维护关于当前L4状态的信念$b_t(\theta)$，
@@ -83,7 +46,7 @@ The \emph{grounding gap} is the divergence between the posterior with runtime ob
 \begin{equation}
 D_{\text{grounding}}(t) \triangleq D_{\mathrm{KL}}\!\left(p(\cdot \mid o_{1:t},\, \mathcal{K},\, \text{env}) \;\middle\|\; p_{\mathcal{K}}(\cdot \mid o_{1:t})\right).
 \end{equation}
-This divergence is bounded by observation fidelity, not model capacity. If $I(\Theta_t; O_t \mid \mathcal{K}) = 0$---the observation channel is silent---no prior improvement can recover the current state. Scaling $\mathcal{K}$ improves L1--L3 but cannot push the gap below the floor imposed by $\Omega$. The source is causal: parameters are fixed before deployment, and the environment at time $t$ is not a function of the training corpus. This separates grounding from learning-based adaptation: fine-tuning improves the prior over L1--L3 during \emph{training}; grounding requires the likelihood and a posterior update from observing $o_t$ during \emph{deployment}. A better prior does not eliminate the need for observation.
+This divergence is bounded by observation fidelity, not model capacity. If $I(\Theta_t; O_t \mid \mathcal{K}) = 0$---the observation channel is silent---no prior improvement can recover the current state. Scaling $\mathcal{K}$ improves L1--L3 but cannot push the gap below the floor imposed by $\Omega$. The source is causal: parameters are fixed before deployment, and the environment at time $t$ is not a function of the training corpus. This separates grounding from learning-based adaptation: fine-tuning improves the prior over L1--L3 during \emph{training}; grounding requires the likelihood and a posterior update from observing $o_t$ during \emph{deployment}.
 
 % 这把落地与基于学习的适应区分开：微调与元学习是\emph{训练}期获得的能力，改善的是关于L1–L3分布的先验；
 % 落地发生在\emph{部署}期，需要似然与基于观测$o_t$的后验更新。更好的先验并不能消除对观测的需要；
