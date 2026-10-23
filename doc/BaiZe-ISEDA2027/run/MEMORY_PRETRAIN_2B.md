@@ -1,5 +1,11 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-24 06:08 #760：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#747~#748控体积**：
+> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
+> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
+> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
+> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=26.9KB / MEMORY=~31.0KB（均≤32KB✓，本轮归档 ~1.3KB #747~#748 → daily-memories/2026-10-23.md）。
 > 🆕 **2026-10-24 04:57 #759：⏸ 例行唤醒·idle heartbeat·三份10-23报告均已在盘·.29 8×H100全空闲·无新指令**：
 > - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
 > - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
@@ -39,18 +45,7 @@ WAITING: 1
 > 📦 体积：MEMORY=~30.5KB（≤32KB✓）。
 > 📦 §#749~#751 流水（2026-10-23 13:0x~14:0x，3 条 idle heartbeat 复核 decay 修复报告无误）已归档 → daily-memories/2026-10-23.md；**结论**：decay 修复报告复核无误（v2 44.97/6.21→decay-5000 58.97/28.02），无新指令。需要时再读。
 
-> 🆕 **2026-10-23 12:2x #747：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
-> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
-> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程（pgrep 仅本 agent+ssh）。git fetch + pull --rebase 后无 ahead/behind、无新远端提交。
-> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=21272B / MEMORY=29765B（均≤32KB✓，本轮归档 0KB）。
-
-> 🆕 **2026-10-23 12:5x #748：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令·归档 #740~#746**：
-> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp。
-> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval 进程。git fetch 后无 ahead/behind、无新远端提交。
-> - 归档 #740~#746 → daily-memories/2026-10-23.md（7 条心跳/CX6 完成流水原文搬迁，留 1 行指针）。
-> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=21272B / MEMORY=~28KB（均≤32KB✓，本轮归档 ~2.7KB → daily-memories/2026-10-23.md）。
+> 📦 §#747~#748 流水（2026-10-23 12:2x~12:5x，2 条 idle heartbeat 复核 decay 修复报告无误 + 归档 #740~#746）已归档 → daily-memories/2026-10-23.md；**结论**：decay 修复报告复核无误，无新指令。需要时再读。
 > 📦 §#740~#746 流水（2026-10-23 09:4x~12:2x，7 条：CX6 sdpa 修复 5/6 → CX6 6/6 完成 → decay 修复 HTML 报告交付 #744 → 3 条 idle heartbeat）已归档 → daily-memories/2026-10-23.md；**结论**：decay-5000 全部评测完成（CS8=58.97%/CX6=28.02%），HTML 报告已交付 commit `ae9e1e780`。需要时再读。
 > 🎉 **2026-10-23 08:4x #739：✅ decay 5000 步训练完成 + HF 转换 + CS8 首评 58.97%（vs 基线 61.03%，Δ−2.06pp）→ decay 修复成功**：
 > - **训练完成**：step 5000/5000 ✅，final loss **0.9946**，val@5000=**0.9977(PPL 2.712)**、test=0.9955(PPL 2.706)，**0 NaN / 0 skip 全程**，ckpt@5000 已存 ✅（latest=5000）。5 点 val 单调降 1.1016→1.0622→1.0346→1.0124→0.9977。
