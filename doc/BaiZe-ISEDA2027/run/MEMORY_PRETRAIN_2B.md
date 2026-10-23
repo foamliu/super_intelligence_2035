@@ -1,5 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 09:4x #740：CX6 sdpa 修复重跑 5/6 完成（gsm8k/math500/代码已就绪，bbh 仍在跑）**：
+> - **已完成 CX6 5/6**：gsm8k=**0.4655**（exact_match）/ math500=**0.128** / humaneval=**0.1037**(pass@1) / mbpp=**0.194**(pass_at_1) ＋ 首轮 mmlu=**0.4897** 有效。
+> - **bbh_zeroshot 运行中**（PID 3807060 @ .29 GPU6，log cx_sdpa_bbh2.log）：6511 请求 @ ~2.2it/s，已 ~23%（~1505/6511），ETA ~38min，sdpa 下无 flash_attn varlen 崩、健康推进。完成后下一轮汇总 CX6 最终均分。
+> - **排障复盘**：cx6_fix main1-3 全 FAILED（flash 仍崩/unsafe-code）；main4 gsm8k+math500 DONE、bbh 被 Killed→09:08 单卡重拉 bbh2 成功、humaneval/mbpp 用 confirm_run_unsafe_code 补跑 DONE。
 > 🎉 **2026-10-23 08:4x #739：✅ decay 5000 步训练完成 + HF 转换 + CS8 首评 58.97%（vs 基线 61.03%，Δ−2.06pp）→ decay 修复成功**：
 > - **训练完成**：step 5000/5000 ✅，final loss **0.9946**，val@5000=**0.9977(PPL 2.712)**、test=0.9955(PPL 2.706)，**0 NaN / 0 skip 全程**，ckpt@5000 已存 ✅（latest=5000）。5 点 val 单调降 1.1016→1.0622→1.0346→1.0124→0.9977。
 > - **HF 转换完成**：`tools/checkpoint/megatron_to_hf_mup.py`（补 vocab truncate 129408→129280 修复）→ `out/decay_5000_hf/`（1.350B params，烟测 "Paris" ✓，logits finite ✓）。
@@ -10,7 +14,7 @@ WAITING: 1
 > 📦 §#736 流水（2026-10-23 06:2x，decay 5000 步监控 step 4500/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4500 loss1.004 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #737 监控更新取代。需要时再读。
 > 📦 §#735 流水（2026-10-23 06:1x，decay 5000 步监控 step 4470/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4470 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #736 监控更新取代。需要时再读。
 > 📦 §#734 流水（2026-10-23 05:5x，decay 5000 步训练健康监控 step 4340/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4340 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #735 监控更新取代。需要时再读。
-> 📦 体积：TASK=19252B / MEMORY=24963B（均≤32KB✓）。
+> 📦 体积：TASK=19252B / MEMORY=25038B（均≤32KB✓，本轮归档 0KB）。
 > 📦 §#732 流水（2026-10-23 05:0x，decay 5000 步训练健康监控 step 4120/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4120 loss1.0258 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #733 监控更新取代。需要时再读。
 > 📦 §#730 流水（2026-10-23 04:1x，decay 5000 步训练健康监控 step 3890/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3890 loss1.0245 val@3000=1.0346 0NaN/0skip，ckpt@3500已存，训练健康。被 #731 监控更新取代。需要时再读。
 > 📦 §#729 流水（2026-10-23 03:5x，decay 5000 步训练健康监控 step 3800/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3800 loss1.027 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3500已存，训练健康。被 #730 监控更新取代。需要时再读。
