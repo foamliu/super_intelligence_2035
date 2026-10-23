@@ -5,17 +5,18 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-B源码分析报告✅完成(report_harness_context_compression_7way_zh.html,58KB,7节,30子节,逐条file:line证据). Gen5 pilot门据FAIL待hermes Gen6重测. .29为唯一harness loop(PID1784375活)
-已完成:       H-B 7-way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·smoke✅·Gen5 pilot 7/7路完:cline-patched0.6/pi0.8/opencode0.4/deepseek0.0/codex0.0/claude-code0.0/hermes0.0. kill .12 loop✅
-当前动作:     R460 完成H-B上下文压缩7way报告:验证7harness源码(cline/claude-code/codex/deepseek/hermes/opencode/pi)逐条file:line证据→写HTML(7节:TL;DR+对比总表+策略详解+触发阈值+保留策略+提示词模板+缺陷防护+本项目教训)→commit e8f2da3e3 push✅. 报告58KB自包含内联样式
-下一步:       ①hermes Gen6重测:ssh .29 harbor单题smoke(fix-git)验R457 plugin fix②smoke PASS→hermes×5重跑③门据复核(infra≤20% AND ≥6/7 runnable)→过放行7×89. 🚫不启7×89直到门据过
-阻塞:         hermes Gen5为pre-fix(须Gen6重测验证R457). codex/claude-code infra(setup/agent timeout=npm install). 🚫不启7×89直到门据过
+PHASE:        H-B报告✅完成. Gen6 hermes smoke✅PASS(R457 fix verified:0 error,0 exception,reward0.0=capability非infra). Gate=5/7 runnable(缺codex+claude-code npm timeout). .29 harness loop活(PID2585867)
+已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gen5 pilot 7/7完·Gen6 hermes smoke PASS✅(fix-git,8m33s,0error). kill .12 loop✅
+当前动作:     R461 hermes Gen6 smoke:sg docker harbor run fix-git×hermes→pip install hermes-agent(6min)→provider plugin install(R457)→hermes -z... --provider kimi-proxy→trial完成0error0exception reward0.0(verifier:2 test failed=capability非infra). R457 fix CONFIRMED WORKING
+下一步:       ①修codex npm install timeout(AgentSetupTimeoutError,4/5 errored)②修claude-code npm install timeout(3/5 errored)③门据复核(≥6/7 runnable)→过则放行7×89. 当前5/7:cline✅pi✅opencode✅deepseek✅hermes✅(Gen6)codex❌claude-code❌
+阻塞:         codex/claude-code infra(AgentSetupTimeoutError=npm install -g timeout). 需增setup_timeout或预装. 🚫不启7×89直到6/7 runnable
 ERROR_COUNT:  0
-📦 体积：TASK=28KB / MEMORY=31KB（归档 10-19 P0+R457 块 → ARCHIVE）
+📦 体积：TASK=28KB / MEMORY=31KB（本轮无归档）
 ```
 
 ### 本唤醒流水
 [15:40] R460 完成H-B 7-way上下文压缩报告:验证7harness源码file:line证据(cline compaction-shared.ts:17 COMPACTION_TRIGGER_RATIO=0.9 / claude-code autoCompact.ts:62 AUTOCOMPACT_BUFFER_TOKENS=13000 / codex config/mod.rs:629 / deepseek config.ts:20 DEFAULT_THRESHOLD_RATIO=0.8 / hermes context_compressor.py:2726 _ANTI_THRASH_RECOVERY_SECONDS=300 / opencode compaction.ts:13 / pi compaction.ts:126-129)→写HTML 7节58KB→commit e8f2da3e3 push✅
+[17:27] R461 hermes Gen6 smoke test:sg docker→harbor run fix-git×hermes→container pip install hermes-agent(6min,65pkgs)→R457 provider plugin install(kimi-proxy/__init__.py+plugin.yaml)→hermes -z"..." --provider kimi-proxy --model kimi-k2.6-cloud --yolo→trial完成(8m33s):0error,0exception,reward0.0(verifier 2test failed=capability非infra). Gen5对比:5/5 RuntimeError"Unknown provider"→Gen6:0/1 error. **R457 fix CONFIRMED**. Gate:5/7 runnable(cline✅pi✅opencode✅deepseek✅hermes✅ codex❌claude-code❌)
 
 > 📦 R447 (2026-10-19 09:08, Gen3 gate FAIL 85.7%) 已归档 → daily-memories-harness/2026-10-19.md。结论：Gen3 pilot 1/7 runnable, 6 adapter CLI exit1(缺 auth/config 注入), 由 R448 gw_proxy 修复承接 → R452 逐路定根因。需要时再读。
 
