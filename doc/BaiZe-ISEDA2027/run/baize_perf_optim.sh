@@ -13,6 +13,9 @@ echo "START @ $(date '+%F %T')" >> "$SUM"
 nvidia-smi --query-gpu=index,memory.used --format=csv,noheader >> "$SUM" 2>&1
 echo "" >> "$SUM"
 
+# cleanup any leftover perf processes
+pkill -f 'perf_e' 2>/dev/null; sleep 3
+
 run_exp() {
     local LABEL="$1"; shift
     local EXTRA="$@"
@@ -30,7 +33,7 @@ run_exp() {
     local SP=$!
     cd "$BASE" || exit 1
     "$PY/torchrun" --nnodes=1 --nproc_per_node=8 \
-        --master_addr=127.0.0.1 --master_port=29960 \
+        --master_addr=127.0.0.1 --master_port=29970 \
         pretrain_launcher.py \
         --arch mamba2 --name "$NAME" --dir "$BASE/nemo_experiments" \
         --tokenizer-path "$BASE/data/tokenizer_eod" \
@@ -73,6 +76,8 @@ run_exp() {
     fi
     grep -E '^\s*\[.*iteration\s+' "$LOG" | head -3 >> "$SUM"
     echo "===== END ${LABEL} rc=${RC} =====" >> "$SUM"
+    # wait for GPU memory to be freed before next experiment
+    sleep 10
 }
 
 # === EXPERIMENTS ===
