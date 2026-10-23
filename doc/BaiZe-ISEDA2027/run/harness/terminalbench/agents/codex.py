@@ -72,8 +72,42 @@ class CodexTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install Codex CLI inside the Docker container via npm."""
+        """Install Codex CLI inside the Docker container.
+
+        Priority 1 — use a pre-mounted @openai/codex npm package at
+        ``/opt/codex-modules/@openai/codex`` (read-only volume from the host's
+        npm-global, injected by the Docker overlay).  codex.js is a Node.js ES
+        module that needs only the already-mounted /opt/node.  We symlink it to
+        /usr/local/bin/codex and set NODE_PATH so codex.js can resolve its
+        bundled node_modules.  This avoids the 6+ min npm install timeout.
+
+        Priority 2 — fall back to ``npm install -g @openai/codex@<version>``
+        (slow, may time out via MITM proxy).
+        """
         await self._install_node(environment)
+
+        # Fast path: overlay already mounted the codex npm package.
+        check = await environment.exec(
+            command="test -f /opt/codex-modules/@openai/codex/bin/codex.js && echo yes || echo no"
+        )
+        if check.return_code == 0 and "yes" in (check.stdout or ""):
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "ln -sf /opt/codex-modules/@openai/codex/bin/codex.js /usr/local/bin/codex && "
+                    # codex.js imports from its own node_modules; set NODE_PATH so
+                    # the module resolver finds them despite the read-only mount.
+                    "chmod +x /opt/codex-modules/@openai/codex/bin/codex.js && "
+                    "codex --version"
+                ),
+            )
+            result = await environment.exec(command="codex --version")
+            if result.return_code != 0:
+                raise RuntimeError(f"Codex pre-mounted install failed: {result.stderr}")
+            self._version = result.stdout.strip()
+            return
+
+        # Fallback: npm install (slow, may time out).
         await self.exec_as_root(
             environment,
             command=f"npm install -g @openai/codex@{self._codex_version} 2>&1 | tail -5",

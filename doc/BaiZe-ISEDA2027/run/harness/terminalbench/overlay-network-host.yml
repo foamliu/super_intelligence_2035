@@ -76,3 +76,15 @@ services:
       # verifier errors "env: No such file" then "uvx: command not found" and
       # every task scores reward 0 regardless of agent quality (R433 root cause).
       - /nas_train/app.e0031982/download/tb-overlay/env:/root/.local/bin/env:ro
+      # Pre-mounted @openai/codex npm package (R466, 2026-10-23).  Installed on
+      # the host via `env http_proxy=... npm install -g @openai/codex` then
+      # copied to NFS.  The codex adapter's install() fast path symlinks
+      # /opt/codex-modules/@openai/codex/bin/codex.js → /usr/local/bin/codex,
+      # avoiding the 6+ min npm install timeout inside the container.
+      - /nas_train/app.e0031982/download/codex-npm/@openai:/opt/codex-modules/@openai:ro
+      # Pre-mounted @anthropic-ai/claude-code npm package (R466, 2026-10-23).
+      # claude.exe is a native ELF (245 MB, needs only glibc).  The claude-code
+      # adapter's install() fast path symlinks
+      # /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe →
+      # /usr/local/bin/claude, avoiding the npm install timeout.
+      - /nas_train/app.e0031982/download/claude-code-npm/@anthropic-ai:/opt/claude-modules/@anthropic-ai:ro

@@ -75,7 +75,17 @@ class ClaudeCodeTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install Claude-Code CLI inside the Docker container via npm.
+        """Install Claude-Code CLI inside the Docker container.
+
+        Priority 1 — use a pre-mounted @anthropic-ai/claude-code npm package at
+        ``/opt/claude-modules/@anthropic-ai/claude-code`` (read-only volume from
+        the host's npm-global, injected by the Docker overlay).  claude.exe is a
+        native ELF binary (245 MB, needs only glibc — no Node.js required).  We
+        symlink it to /usr/local/bin/claude.  This avoids the npm install
+        timeout that blocked Gen5 (R458, 2026-10-19).
+
+        Priority 2 — fall back to ``npm install -g @anthropic-ai/claude-code``
+        (slow, may time out via MITM proxy).
 
         Also creates a non-root user ``agent``: Claude-Code refuses
         ``--dangerously-skip-permissions`` when run as root/sudo ("cannot be used
@@ -85,18 +95,37 @@ class ClaudeCodeTB(TBBaseAgent):
         harbor/environments/base.py:1186).
         """
         await self._install_node(environment)
-        await self.exec_as_root(
-            environment,
-            command="npm install -g @anthropic-ai/claude-code 2>&1 | tail -5",
+
+        # Fast path: overlay already mounted the claude-code npm package.
+        check = await environment.exec(
+            command="test -f /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe && echo yes || echo no"
         )
+        if check.return_code == 0 and "yes" in (check.stdout or ""):
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "ln -sf /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe /usr/local/bin/claude && "
+                    "chmod +x /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe && "
+                    "claude --version 2>&1 || true"
+                ),
+            )
+            result = await environment.exec(command="claude --version 2>&1 || true")
+            self._version = result.stdout.strip() or "unknown"
+        else:
+            # Fallback: npm install (slow, may time out).
+            await self.exec_as_root(
+                environment,
+                command="npm install -g @anthropic-ai/claude-code 2>&1 | tail -5",
+            )
+            result = await environment.exec(command="claude --version 2>&1 || true")
+            self._version = result.stdout.strip() or "unknown"
+
         # Create a non-root user for running claude (idempotent).  -m creates
         # /home/agent so HOME is a real writable dir for claude's config/cache.
         await self.exec_as_root(
             environment,
             command="useradd -m -s /bin/bash agent 2>/dev/null || true",
         )
-        result = await environment.exec(command="claude --version 2>&1 || true")
-        self._version = result.stdout.strip() or "unknown"
 
     @override
     async def run(
