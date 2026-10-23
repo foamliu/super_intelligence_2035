@@ -7,6 +7,11 @@ WAITING: 1
 > - **收尾**：`collect_eval_summary.py` 重跑 → `p8_eval_summary.json` 已更新（CS8=58.97% / CX6=28.02%）；CX6 六任务全部落盘 `nemo_experiments/eval_decay_5000_final/`（cx_sdpa_gsm8k/math500/bbh/humaneval/mbpp + cx_mmlu），.29 GPU 已释放。
 > 📦 体积：TASK=18800B / MEMORY=25565B（均≤32KB✓，本轮归档 0KB）。
 
+> 🆕 **2026-10-23 10:29 #742：⏸ 例行唤醒·decay-5000 全部完成·待新指令（idle heartbeat）**：
+> - decay-5000 训练+评测全部完成（CS8=58.97%/CX6=28.02%），.29 GPU 8 卡全空闲（0 MiB），无 torchrun/lm_eval 进程。
+> - git sync ✓（无 ahead/behind），无新运维指令。30 min 轮询例行唤醒，确认 idle 状态健康。
+> 📦 体积：TASK=19252B / MEMORY=26272B（均≤32KB✓，本轮归档 0KB）。
+
 > 🆕 **2026-10-23 09:4x #740：CX6 sdpa 修复重跑 5/6 完成（gsm8k/math500/代码已就绪，bbh 仍在跑）**：
 > - **已完成 CX6 5/6**：gsm8k=**0.4655**（exact_match）/ math500=**0.128** / humaneval=**0.1037**(pass@1) / mbpp=**0.194**(pass_at_1) ＋ 首轮 mmlu=**0.4897** 有效。
 > - **bbh_zeroshot 运行中**（PID 3807060 @ .29 GPU6，log cx_sdpa_bbh2.log）：6511 请求 @ ~2.2it/s，已 ~23%（~1505/6511），ETA ~38min，sdpa 下无 flash_attn varlen 崩、健康推进。完成后下一轮汇总 CX6 最终均分。
