@@ -1,5 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 12:0x #745：⏸ 例行唤醒·decay 修复报告已交付·待新指令（idle heartbeat）**：
+> - decay 修复 HTML 报告已交付（commit `ae9e1e780`，`doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`，23.9KB）。本轮验证报告内容完整（198 行，§1–§9 全覆盖，数字溯源核对无误）。
+> - git sync ✓（`git fetch` 后无 ahead/behind），无新运维指令。.29 GPU 空闲。30 min 轮询例行唤醒。
+> 📦 体积：TASK=21272B / MEMORY=28600B（均≤32KB✓，本轮归档 0KB）。
+
 > 🆕 **2026-10-23 11:1x #744：📄 decay 修复完整中文 HTML 报告已交付 + 下一步建议（用户直令「写HTML中文报告+下一步建议」，最高优先）**：
 > - 报告 `reports/report_pretrain_decay_repair_zh.html` 已落盘提交（23.9KB，自包含中文 HTML，内联样式/无外链/无脚本）。主线：decay v2(自写脚本) CS8 44.97%/CX6 6.21%「训坏」→ 归因(双移位/缺μP/LR过高/过采样/step0=11.72) → L1排查 59.03% → decay-5000(官方1113.sh μP+Muon0.2+FP8 hybrid+MBS5) CS8 58.97%/CX6 28.02%（+14.0/+21.8pp，vs 起点基线61.03% Δ−2.06pp）= 修复成功。
 > - 下一步建议(按价值)：①延长 decay 5000→20000步(对齐官方71.2B，≈2.5–3天) ②对齐官方11源配比 ③补起点CX6基线(sdpa口径，~1h) ④超参微调(min-lr/decay-iters/warmup)。
