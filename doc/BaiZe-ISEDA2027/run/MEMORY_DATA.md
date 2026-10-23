@@ -5,18 +5,19 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ en_v1_4 下载已全部完成（2026-10-23 20:55确认）**：**110/110 dirs 全部 512/512 parquet ✅**，0 .incomplete。下载 PID1875054 已退出（全部完成）。en_v1_4 全源分词继续跑（fullsource PID2557971 alive）。分词不受影响，继续跑。细则见 `BAIZE_DATA_TASK.md` 运维指令区。
+> 🟢 **✅ en_v1_4 下载已全部完成（2026-10-23 20:55确认）**：**110/110 dirs 全部 512/512 parquet ✅**，0 .incomplete。下载 PID1875054 已退出（全部完成）。en_v1_4 全源分词继续跑（fullsource PID2557971 alive, done=104/110）。分词不受影响，继续跑。细则见 `BAIZE_DATA_TASK.md` 运维指令区。
+> 🟢 **✅ 2026-10-23 运维指令4项执行完毕**：①proxy92.25复测=RESTORED(200OK,0.53MB/s单文件,85M下载active)②85M下载恢复确认(PID171031 alive,8500/12124parquet=70.1%,30T,obelics/EN/part65)③5源分词产物体积=4,242,373,551,982B=3.86TiB/574shards(du验证)④迁移NOT READY(en_v1_4 done=104/110<110/110,ETA~6-12h;nas_env 9.6T>4.25TiB needed→fits✅)
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4,242,373,551,982B=3.92TiB,盘上已验证574/574/574,tokenizer=deepseekv3/vocab129280)+✅en_v1_4下载全完(110/110dirs,110×512parquet,0incomplete,PID已退出)+▶️en_v1_4全源分词(done=103/110,2023.10B tok,7workers all active no stall)+▶️85M下载恢复(PID171031,nice10,proxy92.25,断点续传obelics/EN/part65)+✅proxy92.25复测恢复(200OK@2.07s)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; ✅5源全量分词ALL DONE(574shards/1056.36B/3.92TiB); ✅en_v1_4下载全完(110/110dirs); ✅proxy92.25复测恢复; ▶️en_v1_4全源分词(done=103/110,7workers); ▶️85M下载恢复(8478/12124parquet,29T,obelics79.1%)
-当前动作:     唤醒626(2026-10-24 01:54)监控巡检轮：en_v1_4分词done=103/110(7workers ALL active last_mod=0m,no stall);WIP bins:2025-05=129.5G+2025-08=107G(2near done)→2025-13=74.3G+2024-51=47.5G+2025-18=45.3G+2025-21=35G+2025-26=25G;85M下载=8478/12124parquet(69.9%),29T,obelics/EN/part65 train-00025-of-00063 in progress(1 .incomplete active);5源产物=574/574/574 verified 4,242,373,551,982B=3.92TiB;④迁移NOT READY(103<110),/nas_env 9.6T>3.92T×1.1=4.31T fits✅.fullsource(01:51):done=103/110 running=7 pending=0 tokens=2023.10B.📦体积：TASK=28.1KB/MEMORY=29.3KB(归档0KB)
-下一步:       ①监控en_v1_4分词done→110/110(当前103/110,7workers,2near completion@107-129G ETA~4-7h)②done=110/110后→执行④迁移MiniCPM5分词产物3.92TiB→/nas_env(rsync-a+校验shard/字节+软链接+删源)③监控85M下载进度(obelics→sa1b→zero250m)④全部完成后产出env14 manifest+summary⑤5源产物交接pretrain
-阻塞:         ④迁移阻塞=en_v1_4分词done=103/110<110/110(7workers running,ETA~4-7h);85M落/nas_env=blocker(9.6T<15.2T)→继续落/nas_train(31T够);系统资源充足load46/224,1499G RAM,31T disk(86%)
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4,242,373,551,982B=3.86TiB,盘上已验证574/574/574,tokenizer=deepseekv3/vocab129280)+✅en_v1_4下载全完(110/110dirs)+▶️en_v1_4全源分词(done=104/110,2059.06B tok,6workers active)+▶️85M下载恢复(PID171031 alive,8500/12124parquet=70.1%,30T,obelics/EN/part65)+✅proxy92.25复测RESTORED(200OK,0.53MB/s单文件,download active)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; ✅5源全量分词ALL DONE(574shards/1056.36B/3.86TiB); ✅en_v1_4下载全完(110/110dirs); ✅proxy92.25复测RESTORED; ▶️en_v1_4全源分词(done=104/110,6workers); ▶️85M下载恢复(8500/12124parquet=70.1%,30T,obelics)
+当前动作:     唤醒627(2026-10-24 03:08)运维指令4项执行轮：①proxy92.25复测=RESTORED(port OK,200OK@0.64s API,0.53MB/s单文件tokenizer.json,direct=000失败符合预期);②85M下载=PID171031 alive(etimes13438s),8500/12124parquet=70.1%(+22自上次),30T,1 .incomplete,obelics/EN/part65 train-00047-of-00063,落/nas_train(/nas_env 9.6T<15.2T剩余);③5源du验证=CodeL3=481G/63shards,CodeL2=1.6T/141,MathL3=292G/67,MathL1=615G/149,UFW-L3=990G/154,总=4,242,373,551,982B=3.86TiB/574shards;④迁移NOT READY(en_v1_4 done=104/110<110/110,6WIP bins@30-112G,ETA~6-12h;/nas_env 9.6T>4.25TiB needed→fits✅).fullsource(03:02):done=104/110 running=6 tokens=2059.06B.📦体积：TASK=28.1KB/MEMORY=30.4KB(归档0KB)
+下一步:       ①监控en_v1_4分词done→110/110(当前104/110,6workers,6WIP bins@30-112G ETA~6-12h)②done=110/110后→执行④迁移5源分词产物3.86TiB→/nas_env(rsync-a+校验shard/字节+软链接+删源)③监控85M下载进度(obelics→sa1b→zero250m)④全部完成后产出env14 manifest+summary⑤5源产物交接pretrain
+阻塞:         ④迁移阻塞=en_v1_4分词done=104/110<110/110(6workers running,ETA~6-12h);85M落/nas_env=blocker(9.6T<15.2T剩余)→继续落/nas_train(31T够);系统资源充足load46/224,1484G RAM,31T disk(86%)
 ERROR_COUNT:  9
 ```
 
@@ -55,7 +56,8 @@ ERROR_COUNT:  9
 > 📦 唤醒623 原文已归档 → `daily-memories-data/2026-10-23.md`（含done=101/110+9WIP bins@10-130G+3near completion,详见日文件）
 > 📦 唤醒624 原文已归档 → `daily-memories-data/2026-10-23.md`（含运维令4任务全执行：proxy复测恢复+85M下载恢复+MiniCPM5产物体积3.935TB+迁移条件NOT READY(102/110),详见日文件）
 > 📦 唤醒625 原文已归档 → `daily-memories-data/2026-10-24.md`（含done=102/110+8workers+85M=8456+5源3.9T+迁移NOT READY,详见日文件）
-> 唤醒626（2026-10-24 01:54）**监控巡检轮**：①proxy92.25复验=**200OK@2.07s**✅;②85M下载=**8478/12124**parquet(69.9%),29T,PID171031 alive(2.5h),obelics/EN/**part65**/train-00025-of-00063下载中,1 .incomplete active;③5源产物du实测(**精确字节**):CodeL3=63bin/481G/516,175,730,284B,CodeL2=141bin/1.6T/1,691,139,372,199B,MathL3=67bin/292G/313,462,723,570B,MathL1=149bin/615G/659,469,521,715B,UFWL3=154bin/990G/1,062,126,204,214B,**总4,242,373,551,982B=3.92TiB**,574/574/574 verified✅;④迁移NOT READY(done=**103/110**<110/110,7workers ALL active last_mod=0m no stall,WIP:2025-05=129.5G+2025-08=107G near done),/nas_env 9.6T>3.92T×1.1=4.31T fits✅;en_v1_4分词done=**103/110**,tokens=2023.10B,bin=8.0TB;disk:/nas_train 31T(86%)/nas_env 9.6T(4%);load46/224,1499G RAM.📦体积：TASK=28.1KB/MEMORY=29.3KB(归档0KB)
+> 📦 唤醒626 原文已归档 → `daily-memories-data/2026-10-24.md`（含proxy200OK+85M=8478+5源3.92TiB+done=103/110+迁移NOT READY,详见日文件）
+> 唤醒627（2026-10-24 03:08）**运维指令4项执行轮**：①proxy92.25复测=**RESTORED**(探针1:port OK/succeeded;探针1b:200@1.68s;探针2:API MiniCPM5-2B=**200@0.64s**全文JSON;探针3:tokenizer.json 9.4MB下载=200@**0.53MB/s**/18.6s;探针4:直连无代理=**000失败**(符合预期));②85M下载=PID171031 alive(etimes13438s≈3.7h)+PID171042 hf child alive,**8500/12124parquet=70.1%**(+22自上次),30T,1 .incomplete,obelics/EN/part65/**train-00047-of-00063**下载中,落/nas_train(/nas_env 9.6T<15.2T剩余=blocker);③5源du实测(**精确字节**):CodeL3=481G/516,175,730,284B/63bin,CodeL2=1.6T/1,691,139,372,199B/141bin,MathL3=292G/313,462,723,570B/67bin,MathL1=615G/659,469,521,715B/149bin,UFWL3=990G/1,062,126,204,214B/154bin,**总4,242,373,551,982B=3.86TiB**,574/574/574 verified✅;④迁移NOT READY(en_v1_4 done=**104/110**<110/110,fullsource PID2557971 alive,6workers,6WIP bins:2025-08=112.3G+2025-13=79.5G+2024-51=52.9G+2025-18=50.6G+2025-21=40.3G+2025-26=30.2G,ETA~6-12h);/nas_env 9.6T>3.86TiB×1.1=4.25TiB→**fits✅**;disk:/nas_train 31T(86%)/nas_env 9.6T(4%);load46/224,1484G RAM.📦体积：TASK=28.1KB/MEMORY=30.4KB(归档0KB)
 
 > 📦 唤醒581~593 原文已归档 → `daily-memories-data/2026-10-21.md`/`2026-10-22.md`（含fullsource bug修复全流程+5源574/574/574验证+done=86→90/110推进,详见日文件）
 > 📦 唤醒574~580 原文已归档 → `daily-memories-data/2026-10-21.md`（含全量分词启动+测速@64workers+Code L3/L2 DONE+Math L3/L1 DONE+UFW-L3 DONE+5源ALL DONE,详见日文件）
