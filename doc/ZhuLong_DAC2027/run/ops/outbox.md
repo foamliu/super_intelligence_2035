@@ -13793,3 +13793,90 @@ run_deepseek-v4-flash_r2_regrade.sh
 /nasdata/app.e0031982/code/eda_fastmcp/scripts/start_recall_local.sh
 === DONE 110 ===
 ```
+
+---
+
+## RUN_ID 111 · 2026-10-23 09:20:16 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 111 | probe 8663 group run_code | $(date '+%F %T') | host=$(hostname) ==="
+echo ""
+echo "=== 8663 组 4 端口 run_code 探活（timeout 15s/端口）==="
+for p in 8663 8666 8667 8670; do
+  T0=$(date +%s%N)
+  R=$(timeout 15 curl -s -m 14 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -z "$R" ]; then
+    echo "PORT $p: FAIL ${MS}ms empty_response"
+  elif echo "$R" | grep -q "breaker\|licence\|unavailable\|consecutive"; then
+    echo "PORT $p: FAIL ${MS}ms breaker_open $(echo "$R" | head -c 100)"
+  elif echo "$R" | grep -q '"response"'; then
+    echo "PORT $p: OK ${MS}ms $(echo "$R" | head -c 60)"
+  else
+    echo "PORT $p: UNKNOWN ${MS}ms $(echo "$R" | head -c 100)"
+  fi
+done
+echo ""
+echo "=== 对照 8650 组 ==="
+for p in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 10 curl -s -m 8 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -z "$R" ]; then
+    echo "PORT $p: FAIL ${MS}ms empty"
+  elif echo "$R" | grep -q '"response"'; then
+    echo "PORT $p: OK ${MS}ms"
+  else
+    echo "PORT $p: FAIL ${MS}ms $(echo "$R" | head -c 80)"
+  fi
+done
+echo ""
+echo "=== VERDICT ==="
+N8663=0
+for p in 8663 8666 8667 8670; do
+  T0=$(date +%s%N)
+  R=$(timeout 15 curl -s -m 14 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  echo "$R" | grep -q '"response"' && N8663=$((N8663+1))
+done
+if [ "$N8663" -eq 4 ]; then
+  echo "8663_GROUP: ALL_4_OK_use_for_r4"
+else
+  echo "8663_GROUP: ONLY_${N8663}_OF_4_OK_fallback_8650_group"
+fi
+echo ""
+echo "=== r3 status (batch 2026_1023_072528) ==="
+DIR=/home/app.e0031982/eda_code_eval/2026_1023_072528
+echo "task_dirs=$(ls -d $DIR/code/*/ 2>/dev/null | wc -l) py_total=$(find $DIR/code -name '*.py' 2>/dev/null | wc -l) queue=$(wc -l < $DIR/.task_queue 2>/dev/null) workers=$(pgrep -af 2026_1023_072528 2>/dev/null | grep timeout | grep -v grep | wc -l)"
+echo "regrade_log=$(ls -la /tmp/ABL_glm-5.3-flash_zl_r3_regrade.log 2>/dev/null | awk '{print $5,$6,$7,$8}')"
+echo ""
+echo "=== DONE 111 ==="
+```
+
+**输出**
+```
+=== RUN_ID 111 | probe 8663 group run_code | 2026-10-23 09:20:16 | host=hfeg0tedaap02 ===
+
+=== 8663 组 4 端口 run_code 探活（timeout 15s/端口）===
+PORT 8663: FAIL 14008ms empty_response
+PORT 8666: FAIL 14009ms empty_response
+PORT 8667: FAIL 14009ms empty_response
+PORT 8670: FAIL 14008ms empty_response
+
+=== 对照 8650 组 ===
+PORT 8650: OK 13ms
+PORT 8651: OK 14ms
+PORT 8652: OK 13ms
+PORT 8654: OK 12ms
+
+=== VERDICT ===
+8663_GROUP: ONLY_1_OF_4_OK_fallback_8650_group
+
+=== r3 status (batch 2026_1023_072528) ===
+task_dirs=158 py_total=136 queue=0 workers=0
+regrade_log=2217 Oct 23 09:18
+
+=== DONE 111 ===
+```
