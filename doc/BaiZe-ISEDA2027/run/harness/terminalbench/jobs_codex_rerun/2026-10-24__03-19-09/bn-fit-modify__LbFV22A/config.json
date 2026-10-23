@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_rerun_dataset_qVJfBI/bn-fit-modify",
+        "source": "tb_rerun_dataset_qVJfBI"
+    },
+    "trial_name": "bn-fit-modify__LbFV22A",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_codex_rerun/2026-10-24__03-19-09",
+    "agent": {
+        "name": "terminalbench.agents.codex:CodexTB"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "b8a2e685-63dd-42ea-9aa0-b43d4e1d3bce"
+}

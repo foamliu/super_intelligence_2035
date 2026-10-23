@@ -1,0 +1,10 @@
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: ln -sf /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe /usr/local/bin/claude && claude --version 2>&1 || true
+Command outputs captured
+Running command: useradd -m -s /bin/bash agent 2>/dev/null || true
+Command outputs captured
+Running command: chown -R agent /root 2>/dev/null || true
+Command outputs captured
+Trial chess-best-move__raiCoJ9 failed: Claude-Code exited with code 127: 
+Collecting main service artifacts
