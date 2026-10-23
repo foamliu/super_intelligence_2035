@@ -105,7 +105,8 @@ class ClaudeCodeTB(TBBaseAgent):
                 environment,
                 command=(
                     "ln -sf /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe /usr/local/bin/claude && "
-                    "chmod +x /opt/claude-modules/@anthropic-ai/claude-code/bin/claude.exe && "
+                    # claude.exe is already executable from the npm install; the NFS
+                    # mount is read-only so chmod +x would fail with EROFS.
                     "claude --version 2>&1 || true"
                 ),
             )

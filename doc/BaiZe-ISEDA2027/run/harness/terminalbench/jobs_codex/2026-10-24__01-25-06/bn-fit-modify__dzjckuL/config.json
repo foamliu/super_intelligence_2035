@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_pilot_dataset_mPE7ON/bn-fit-modify",
+        "source": "tb_pilot_dataset_mPE7ON"
+    },
+    "trial_name": "bn-fit-modify__dzjckuL",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_codex/2026-10-24__01-25-06",
+    "agent": {
+        "name": "terminalbench.agents.codex:CodexTB"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "4b7aa39e-0ecc-4562-9090-4a15532d9bc6"
+}

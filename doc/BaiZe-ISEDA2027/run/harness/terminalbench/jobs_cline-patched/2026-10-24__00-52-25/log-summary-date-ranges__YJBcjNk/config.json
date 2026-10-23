@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_pilot_dataset_mPE7ON/log-summary-date-ranges",
+        "source": "tb_pilot_dataset_mPE7ON"
+    },
+    "trial_name": "log-summary-date-ranges__YJBcjNk",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_cline-patched/2026-10-24__00-52-25",
+    "agent": {
+        "name": "terminalbench.agents.cline_patched:ClinePatched"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "625d6f20-a23c-471f-8435-68802efc1aa7"
+}

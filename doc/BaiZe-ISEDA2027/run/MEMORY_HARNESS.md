@@ -5,17 +5,17 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7×5 pilot Gen7 RUNNING(bg). Gate=7/7✅. Oracle5/5✅. H-B报告✅
+PHASE:        T2 Terminal-Bench 7×5 pilot Gen7 RUNNING(bg opencode phase). Gate=7/7✅. Oracle5/5✅. H-B报告✅
 已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gen6 hermes smoke✅·Gate 7/7✅(R466)·Gen7 pilot LAUNCHED(R467)
-当前动作:     R467 启动7×5 pilot Gen7(运维令"≥6/7→启动pilot"). oracle 5/5 PASS(2m30s,reward=1.0). cline-patched RUNNING(bg PID=302224,log=/tmp/tb_gen7_pilot.log). 验证codex+claude-code pre-mounted fast path在容器内生效
-下一步:       ①监控Gen7 pilot 7路结果(每轮回报pass/run)②Gen7全pass→启动7×89全量③任一路infra fail→排障后重跑该路
-阻塞:         无（pilot在后台运行，预计3-6h完成35 trials）
+当前动作:     R468 监控Gen7 pilot. 4/7 harness已完成: oracle5/5✅·cline-patched5/5=100%✅·codex0/5(chmod EROFS FIXED)·hermes5/5=0%(capability). opencode RUNNING(chess-best-move). codex+claude-code adapter chmod+x bug fixed(EROFS on ro NFS mount). fix已提交待push.
+下一步:       ①等待opencode/claude-code/deepseek/pi完成②claude-code将自动使用修复后的adapter(去掉chmod)③全部完成→汇总Gen7 pilot结果→决定是否启动7×89全量
+阻塞:         无（pilot在后台运行，PID=302224,~73min elapsed,当前opencode phase）
 ERROR_COUNT:  0
-📦 体积：TASK=31KB / MEMORY=4KB（R35-R466旧流水已归档→daily）
+📦 体积：TASK=31KB / MEMORY=4KB（R35-R467旧流水已归档→daily）
 ```
 
 ### 本唤醒流水
-[00:49] R467 **启动7×5 pilot Gen7**（运维令"达到≥6/7→按既有计划启动pilot"）. 创建`_pilot_gen7_launcher.sh`(sg docker包裹). pre-check全OK(5 task dirs+5 local images+codex/claude NFS fast path). gw_proxy up(9090+9091). **Oracle 5/5 PASS**(2m30s,all reward=1.0,0 errors). cline-patched开始跑(bg). 7路顺序:cline→codex→hermes→opencode→claude-code→deepseek→pi. log=/tmp/tb_gen7_pilot.log. 预计3-6h. WAITING=1(异步后台).
+[02:05] R468 **监控Gen7 pilot + 修复codex/claude-code chmod EROFS bug**. pilot进度: oracle5/5✅(2m30s)→cline-patched5/5=**100%**(32m35s,all 5 tasks pass!)→codex0/5(**NonZeroAgentExitCodeError**×5,根因=`chmod +x` on ro NFS mount→EROFS)→hermes5/5=0%(capability,0 errors)→**opencode RUNNING**(chess-best-move). **修复**: codex.py:100+claude_code.py:108去掉`chmod +x`(文件已executable from npm install). py_compile OK. claude-code phase尚未开始→将自动使用修复后版本. git fetch需显式proxy(503 without). WAITING=1(pilot仍在跑).
 > 📦 R460-R465 (2026-10-23, H-B报告完成+复验×4+Gen6 hermes smoke) 已归档 → daily-memories-harness/2026-10-23.md。结论：H-B 7way上下文压缩报告58KB已push(e8f2da3e3), Gen6 hermes smoke PASS(R457 fix confirmed), gate was 5/7. 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。

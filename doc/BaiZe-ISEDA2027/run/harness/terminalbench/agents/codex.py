@@ -95,9 +95,8 @@ class CodexTB(TBBaseAgent):
                 environment,
                 command=(
                     "ln -sf /opt/codex-modules/@openai/codex/bin/codex.js /usr/local/bin/codex && "
-                    # codex.js imports from its own node_modules; set NODE_PATH so
-                    # the module resolver finds them despite the read-only mount.
-                    "chmod +x /opt/codex-modules/@openai/codex/bin/codex.js && "
+                    # codex.js is already executable from the npm install; the NFS
+                    # mount is read-only so chmod +x would fail with EROFS.
                     "codex --version"
                 ),
             )
