@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文推荐日报 · 2026-10-24（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>论文推荐日报 · 2026-10-24 <span class="badge b-am">早报</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 今日进度 3 / 5</b> · 本轮 3 篇<b>全部「借鉴」</b>（agent harness 演化 / 长上下文零数据 RL / 投机解码评测口径）</div>
+  <div class="meta">
+    <span>📅 日期：2026-10-24（CST 本地日；本轮 = UTC 2026-10-23T22:0x）</span>
+    <span>🏷 标识：早报（AM · 3/5）</span>
+    <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
+    <span>🕒 生成：2026-10-24 06:0x CST</span>
+  </div>
+  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 3 篇均标 <span class="badge b-jz">借鉴</span>，<b>批次 <code>2026-10-22</code>（未刷新）</b>。晚报 2 篇「科普」留待 18:00，<b>不占用「借鉴」名额</b>。</div>
+  <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
+</header>
+
+<div class="wrap">
+<div class="note">
+  <b>入围与标签口径</b>：<span class="badge b-jz">借鉴</span> = 与在研工作相关（<b>BaiZe</b>：从零训练 ~2B / Mamba-2×attention 混合 / 规模律 / 数据配比 / 后训练 SFT·RL / 多模态 / 高效推理；<b>ZhuLong</b>：execution-grounded EDA coding agent / MCP 工具 / generate–execute–refine / code agent harness / 评测基准；含<b>存储/芯片</b>视角）。
+  <span class="badge b-kp">科普</span> = 面向《两分钟论文》科普视频：<b>大众看得懂 + 有传播力</b>（可与我们工作无关）。<b>两口径不混用</b> —— 早报 3 篇全按「借鉴」选，晚报 2 篇全按「科普」选。
+</div>
+<div class="ok-box">
+  <b>早报取数说明（诚实口径 · AM · 周六凌晨）</b>：本轮唤醒于 <b>本地 2026-10-24 06:00（CST）</b> = <b>UTC 2026-10-23T22:00（周五 18:00 ET）</b>。
+  <b>R1′ 分源实测</b>：arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>totalResults=637451</code>
+  <b>与上一轮 PM 完全相同</b>，最新样本 <code>published=2026-10-22T17:59:53Z</code>（<code>2610.31671</code>，cs.CV）
+  ⇒ <b>批次仍为 <code>2026-10-22</code>，未刷新</b>（周五 20:00 ET 批尚未索引；周末不公告）／
+  HF Daily ❌（<code>[Errno 101] Network is unreachable</code>，如实记 FAIL、不伪造）／
+  RSS cs.CL = <b>183</b> 条 · cs.CV = <b>192</b> 条；<b>cs.LG 本轮读取超时</b>（<code>status=None</code>，如实记 FAIL）。RSS <b>仅作发现，不作证据</b>。
+  <br>⚠️ <b>本轮新增记录「DNS 边缘故障」（工具链问题，非 arXiv 故障）</b>：<code>export.arxiv.org</code> 解析到 Fastly 边缘 <code>146.75.115.42</code>，
+  该 IP <b>连续 12s 超时不可达</b>；同域其它边缘（<code>151.101.67.42</code>）<b>&lt;0.8s 返回 200</b>。
+  处置：<b>不改工具代码</b>，新增运行期包装脚本 <code>research/raw/run_arxiv_r109.py</code>，仅在进程内把该域名的
+  <code>socket.getaddrinfo</code> 结果覆盖为 <code>151.101.67.42</code>（<b>TLS / SNI / Host 均不变</b>，证书校验照旧通过），再 <code>runpy</code> 执行 <code>arxiv_fetch.py</code>。
+  <br>⚠️ <b>如实记录「空取」</b>：默认 <code>window_mode=daily</code>（72h）跑 <code>--fetch --seen</code>（<code>generated=2026-10-23T22:08:15Z</code>）
+  → <b>15/15 条查询 <code>ok</code></b>（<b>全部 <code>attempts=1</code></b>，无重试无超时）、<b><code>kept 0</code> / <code>dropped 600</code></b>
+  —— 原因是 <b><code>2026-10-22</code> 整批已在上一轮 PM 全部入账 <code>SEEN</code></b>（<code>kept 0</code> 是「已收过」，<b>不是「无数据」</b>，
+  也<b>不是</b>窗口越界、<b>不是</b>单查询 FAIL）。
+  <br>3 篇入账论文取自<b>上一轮 PM 已入账的 158 条候选池</b>（上轮 <code>id_list</code> 已返回过元数据、当轮未入账的 3 篇），
+  本轮再做 <b>arXiv API <code>id_list</code> 单条权威复核</b>（两批 <code>id_list</code>：6 + 7 = 13 条请求 → 去重 <b>11 条唯一</b>，
+  <b>全部返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>；
+  证据 <code>raw/2026-10-24-idlist-r109{,b}.{xml,headers}</code>）。
+  ⚠️ 3 篇首次提交均为 <b>2026-10-21</b>，<b>非「今日新提交」</b>；本轮<b>复核但未入账</b>的 8 篇：
+  <code>2610.28815</code> SSR（harness 进化）／<code>2610.28577</code> ／<code>2610.28576</code> ／<code>2610.28798</code> ／<code>2610.29426</code> ／<code>2610.30105</code> ASTEROID（非对称）／<code>2610.28834</code> ／<code>2610.29276</code>（按「与 BaiZe / ZhuLong 的贴合度」排序后让位，非质量问题）。
+  <br>本轮<b>自我纠错</b>：上一轮 <code>--fetch</code> 走同为 <code>146.75.115.42</code> 的解析路径，却<b>未复现</b>超时（边缘 IP 会漂移）。本轮全程留证（<code>raw/*.log</code>），并把处置写成<b>可复用的运行时兜底</b>而非一次性 curl。
+</div>
+
+<h2 class="sec">早报 · 3 篇「借鉴」（AM · 3 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">1</span>HGM-Dual: Lineage-Aware Guided Agent Harness Optimization for Long-Horizon Planning</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">agent harness 优化（改 prompt / 工具 / 工作流）是在<b>冻结或闭源 LLM</b> 之上提升 agent 的常用手段；但 Darwin–Gödel Machine / HGM 这类「递归自改」方法是为<b>代码任务</b>设计的 —— 那里「改 harness 所需的能力」与「要被提升的能力」恰好重合。规划任务要求产出一串<b>联合满足相互约束</b>的工具调用，重合被打破，开放式自改就会反复做无效修改、烧掉大量评测预算。作者给出 <b>HGM-Dual</b>：把 agent 演化写成<b>谱系感知上下文</b>（记录每个祖先改了什么、哪些行为变好/变差、哪些修改无效），并做<b>错误条件化的双路子代生成</b>（通用探索子代 + 针对「父代排名最高的约束违反」的专用子代）。结果：相对最强基线 case accuracy 最多 <b>+14.45%</b>，且以 <b>2×–4× 更少</b>的评测预算达到 HGM 变体的最终性能。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">HGM-Dual: Lineage-Aware Guided Agent Harness Optimization for Long-Horizon Planning</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Sudipta Paul<sup>*</sup>, Pengrui Quan<sup>*</sup>, Aounon Kumar, Nicholas Tzou, Vivek Kulkarni, Srinivas Chappidi（<sup>*</sup>共同一作；<b>Samsung Research America</b>，据 PDF 首页核对）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-21</b>（<code>published=2026-10-21T17:02:28Z</code>；<code>updated</code> 同为 2026-10-21）· 无 comment · PDF 实测 <b>16 页</b> / 55,774 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code>（主分类）· <span class="badge b-jz">借鉴</span> · 关键词：agent harness / 自我改进 / 谱系归因 / 长程规划 / 评测预算</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.30042">https://arxiv.org/abs/2610.30042</a>（PDF 已落地：<code>research/pdf/2026-10-24/2610.30042.pdf</code>，511,421 B，sha256 见附录 D）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · ZhuLong agent harness）</b>
+    <ol>
+      <li><b>正落在「harness 层」而非「权重层」</b>：方法只改 prompt / 工具 / 工作流的组合，不改模型参数 —— 与 ZhuLong 在 execution-grounded EDA coding agent 上「generate–execute–refine」的调优空间同构，<b>可直接借它的搜索框架</b>。</li>
+      <li><b>「谱系感知」解决我们实际踩过的坑</b>：harness 迭代到第 N 版时，人（和 agent）都会忘记「上一版为什么改、改了之后哪条指标掉了」；它把<b>编辑 → 结果</b>的归因显式写进上下文，等价于给 harness 版本管理加了一张<b>可检索的变更-效果表</b>（我们判断：这一条比 +14.45% 更有迁移价值）。</li>
+      <li><b>「错误条件化的双路子代」是预算分配策略</b>：一半预算留给开放探索、一半精准打「当前最疼的约束违反」，比纯开放式自改少<b>2×–4×</b> 评测调用 —— 对我们这种<b>评测本身要跑 EDA 流程、单次很贵</b>的场景，预算项比精度项更关键。</li>
+      <li><b>边界（我们判断）</b>：任务域是「带相互约束的工具调用序列规划」，<b>不是</b> SWE-bench 式改仓库；+14.45% 是<b>相对最强基线</b>的 case accuracy 相对提升（摘要口径），基准名与所用 LLM 摘要未给，需读原文；<b>无 EDA 实验</b>，跨域迁移未验证；数字作者自报、本线未复现；未精读。</li>
+    </ol>
+    <b>建议动作</b>：读原文 §方法（谱系上下文的字段设计、约束违反的排序方式）→ 在 ZhuLong 上先<b>照抄「变更-效果台账」</b>这一最小件（不改搜索算法）做 1 周记录，再评估是否引入双路子代。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">2</span>LongZero: Enhancing Long-Context Reasoning in LLMs from Zero Data</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">用 RL 强化 LLM 的长上下文推理，卡在<b>训练数据</b>：人工标注贵、自然语料撑不起 RL、已有合成方法要么依赖外部语料、要么依赖<b>更强的教师模型</b>（模型越强越难找教师）。已有「零数据 RL」（模型自己出题自己做）<b>只在短上下文</b>任务上奏效。LongZero 把它推到长上下文：不让模型在已有文档上写问答，而是<b>先自写「问题 + 答案 + 支撑证据」的紧凑结构</b>，再把证据<b>单独展开</b>成长篇多文档上下文；把这种自写多跳推理任务与自写多轮检索任务结合，用 <b>GRPO</b> 训练。在 2 个 LLM、5 个长上下文推理基准上，LongZero 能泛化到真实任务，并优于「用外部语料合成数据做 RL」的基线。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">LongZero: Enhancing Long-Context Reasoning in LLMs from Zero Data</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Zhennan Wan, Jianfei Chen<sup>†</sup>（<sup>†</sup>通讯；<b>清华大学</b> 计算机系 / 人工智能研究院 / BNRist / THBI Lab / 清华-博世联合机器学习中心，据 PDF 首页核对）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-21</b>（<code>published=2026-10-21T17:59:14Z</code>；<code>updated</code> 同为 2026-10-21）· 无 comment · PDF 实测 <b>17 页</b> / 71,727 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code>（主分类）· <span class="badge b-jz">借鉴</span> · 关键词：长上下文 / 强化学习 / 零数据 / 自写任务 / GRPO</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.30132">https://arxiv.org/abs/2610.30132</a>（PDF 已落地：<code>research/pdf/2026-10-24/2610.30132.pdf</code>，574,366 B，sha256 见附录 D）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · BaiZe 长上下文后训练）</b>
+    <ol>
+      <li><b>「零数据」直接对上我们的算力/数据约束</b>：BaiZe 是从零训练 ~2B、数据配比敏感的小模型线；长上下文后训练若要外部语料或教师蒸馏，等于<b>再引一条依赖</b>。这条路只需<b>自己的模型 + 可验证的答案</b>就能起 RL，是成本最低的长上下文能力补充方案。</li>
+      <li><b>「先写证据再展开」是个可复用工程技巧</b>：把<b>答案正确性</b>与<b>上下文长度</b>解耦 —— 先在短形式里保证可验证（答案 + 证据），再把证据铺成长多文档上下文。对我们「造长上下文评测/训练样本」同样适用，且<b>不需要长文档原文</b>。</li>
+      <li><b>两类任务合练</b>：多跳推理（要串证据）+ 多轮检索（要决定何时再查）—— 这正是长上下文里<b>最容易只训一半</b>的两件事，作者把它们放在同一个 RL 里（我们判断：这个组合比单看某个基准分数更有参考价值）。</li>
+      <li><b>边界（我们判断）</b>：上限受<b>模型自出题与自验证质量</b>约束，弱模型可能自造出「假可验证」的题；摘要<b>未给</b>模型规模、上下文长度上限、训练算力；「优于外部语料基线」是作者自报、本线未复现；<b>未精读</b>（GRPO 的奖励设计、去重与难度筛选是关键，需读原文）。</li>
+    </ol>
+    <b>建议动作</b>：读原文 §任务合成与奖励 → 在 BaiZe 现有 SFT 检查点上先跑<b>小规模 GRPO 冒烟</b>（固定 1 个长上下文基准 + 1 个短上下文对照，确认「不掉短上下文」）再谈规模化。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">3</span>Target Regeneration Shrinks the Gains of Draft-Training Objectives in Speculative Decoding</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">投机解码靠<b>并行验证</b> draft token 来加速 LLM；新的 draft 训练目标通常把「相对<b>外部撰写回答</b>上的交叉熵所提升的接受率」记作功劳 —— 但很多流水线会让 <b>target 模型重写</b>这些回答。作者用视觉语言 target + block drafter，在同一语料的 4 个版本上训练 3 种目标（语料 token 上的交叉熵 / 来自 target 的 token 级蒸馏 / 只在「能通过验证的位置」上做门控的蒸馏），分别在<b>外部回答</b>与<b>target 贪心重生成之后</b>测增益。结果：<b>蒸馏与门控在外部回答上增益很大，重生成后蒸馏只剩较小增益、门控几乎没有</b>；这种收缩在数据顺序、位置权重、验证器、解码温度、蒸馏的初始化与学习率下都成立，在匹配监督长度、各目标最佳训练长度下也仍成立，第二个视觉语料与纯文本复现同样观察到。作者的结论是<b>评测口径问题</b>：收益应在「target 重生成的基线」上、并跨训练长度测量。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Target Regeneration Shrinks the Gains of Draft-Training Objectives in Speculative Decoding</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Jungseob Lee<sup>1</sup>, Hogun Seong<sup>2</sup>, Euijun Choi<sup>2</sup>, Sugyeong Eo<sup>2†</sup>（<sup>1</sup>高丽大学 / <sup>2</sup>延世大学未来校区；<sup>†</sup>通讯，据 PDF 首页核对）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-21</b>（<code>published=2026-10-21T00:26:37Z</code>；<code>updated</code> 同为 2026-10-21）· 无 comment · PDF 实测 <b>19 页</b> / 82,637 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code>（主分类）· <span class="badge b-jz">借鉴</span> · 关键词：投机解码 / draft 训练目标 / 蒸馏 / 评测口径 / 推理加速</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.29013">https://arxiv.org/abs/2610.29013</a>（PDF 已落地：<code>research/pdf/2026-10-24/2610.29013.pdf</code>，543,617 B，sha256 见附录 D）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · BaiZe 高效推理）</b>
+    <ol>
+      <li><b>它质疑的是「怎么算收益」，不是「怎么训」</b>：投机解码论文常报「接受率提升 X 点」，但若 target 会重写这些回答，<b>基线本身就变强了</b>，增益被重复计入。这类<b>口径</b>问题一旦成立，会直接影响我们选 draft 目标时的判断（我们判断：这是本轮最容易被低估的一篇）。</li>
+      <li><b>收缩是稳健的，不是一次实验的偶然</b>：数据顺序、位置权重、验证器、解码温度、蒸馏的初始化与学习率、监督长度匹配 —— 逐项扫过仍收缩，并做了<b>第二个视觉语料 + 纯文本复现</b>。这种「把结论往死里打」的做法，正是我们对内部结论的要求。</li>
+      <li><b>门控蒸馏在重生成后几乎归零</b>：说明「只在能通过验证的位置上学」更多是在<b>拟合外部回答的分布</b>，而非提升对 target 的匹配 —— 对「我们要不要上 gated distillation」是一个明确的<b>负面线索</b>（可省一次试错）。</li>
+      <li><b>边界（我们判断）</b>：主实验是 <b>block drafter + 视觉语言 target</b>，纯文本只是复现口径之一，<b>不能直接外推到我们的文本 LLM 投机解码</b>；摘要<b>不给加速比 / 接受率绝对值</b>，只给「增益收缩」的相对结论；作者自报、本线未复现；未精读（4 个语料版本与 3 个目标的定义需看原文）。</li>
+    </ol>
+    <b>建议动作</b>：读原文 §实验设置（4 个语料版本怎么造、重生成用什么解码）→ 我们自己的 draft 目标对比实验<b>默认加一行「target 重生成基线」</b>，并把评测长度扫到 2–3 个点，避免单点最优造成的假增益。
+  </div>
+</div>
+
+<h2 class="sec">附录 A · 本轮执行流程（I → VII）</h2>
+<div class="card">
+  <ol>
+    <li><b>I 时间锚点</b>：本地 <b>2026-10-24 06:00 CST</b> = UTC <code>2026-10-23T22:00</code> = <b>周五 18:00 ET</b>（周五 20:00 ET 批尚未生成；周末无公告）。</li>
+    <li><b>II 分源探活（R1′）</b>：arXiv API ✅（<code>totalResults=637451</code>，<b>与 r108 PM 相同</b>）／ HF Daily ❌ <code>Errno 101</code> ／ RSS cs.CL 183 · cs.CV 192 · cs.LG 超时。判据：<code>200 ≠ 有料</code>，故同时核 <code>totalResults</code>、<code>content-type</code>、<b>最新样本 <code>published</code></b>。</li>
+    <li><b>III 工具链修复（DNS 边缘）</b>：<code>export.arxiv.org</code> → <code>146.75.115.42</code> 超时 12s；新增 <code>raw/run_arxiv_r109.py</code> 在进程内覆盖 <code>getaddrinfo</code> 到 <code>151.101.67.42</code>（<b>不改工具代码、不改 TLS/SNI</b>），首次 <code>--fetch</code> 仍卡住 → 用 <code>pkill -f '[a]rxiv_fetch.py --fetch'</code>（方括号防自杀）清场后重跑成功。</li>
+    <li><b>IV 增量扫描</b>：<code>--fetch --seen</code>（<code>window_mode=daily</code> 72h，<code>rate_limit=3.0s</code>）→ <b>15/15 <code>ok</code>（全部 <code>attempts=1</code>）</b>、<code>kept 0</code> / <code>dropped 600</code>；<b>空取如实入账</b>，不把「未刷新」写成「无数据」。</li>
+    <li><b>V 候选池 + 权威复核</b>：从上一轮 158 条候选池按「BaiZe / ZhuLong 贴合度」取 3 篇 → 两批 <code>id_list</code>（6 + 7，去重 11 唯一）<b>全部返回</b>，逐条核 <code>HTTP 200</code> + <code>application/atom+xml</code> + <code>published</code>；8 篇复核但本轮不入账（让位记录见上）。</li>
+    <li><b>VI 台账与 PDF</b>：<code>raw/update_r109.py</code>（断言 <code>kept==0</code>、15 查询全 <code>attempts=1</code>、3 行「候选」→「收录」、<b>行数不变</b>）→ <code>SEEN.md</code> 4,612 行 / <code>papers.jsonl</code> 244；<code>raw/pdf_dl_r109.py</code> 严格校验（content-type + <code>content-length</code> 等长 + <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 页数 + <code>pdftotext</code> 字符数）→ <b>3/3 OK</b>。</li>
+    <li><b>VII 落页</b>：本页（8 字段 × 3 篇）+ <code>daily/index.html</code> 加 1 行；18:00 再补 2 篇「科普」并选 TOP-1 出分镜。</li>
+  </ol>
+</div>
+
+<h2 class="sec">附录 B · 15 条查询实测（<code>generated=2026-10-23T22:08:15Z</code>）</h2>
+<table>
+  <tr><th>#</th><th>area</th><th>name</th><th>HTTP</th><th><code>totalResults</code></th><th>entries</th><th>attempts</th><th>kept</th></tr>
+  <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>637451</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>2</td><td>LLM</td><td><code>llm-large-language-model</code></td><td>200</td><td>39391</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>3</td><td>LLM</td><td><code>llm-long-context</code></td><td>200</td><td>1860</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>4</td><td>LLM</td><td><code>llm-scaling-law</code></td><td>200</td><td>1017</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>5</td><td>SLM</td><td><code>slm-small-language-model</code></td><td>200</td><td>1109</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>6</td><td>SLM</td><td><code>slm-on-device</code></td><td>200</td><td>11042</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>7</td><td>多模态</td><td><code>mm-vision-language</code></td><td>200</td><td>17928</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>8</td><td>多模态</td><td><code>mm-multimodal</code></td><td>200</td><td>16643</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>9</td><td>多模态</td><td><code>mm-csmm</code></td><td>200</td><td>10263</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>10</td><td>agent harness</td><td><code>agent-harness-title</code></td><td>200</td><td>147</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>11</td><td>agent harness</td><td><code>agent-swe-bench</code></td><td>200</td><td>404</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>12</td><td>agent harness</td><td><code>agent-tool-use</code></td><td>200</td><td>1718</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>13</td><td>agent harness</td><td><code>agent-csma-multiagent</code></td><td>200</td><td>6033</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>14</td><td>邻域</td><td><code>nb-retrieval-augmented</code></td><td>200</td><td>3968</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>15</td><td>邻域</td><td><code>nb-alignment</code></td><td>200</td><td>22075</td><td>40</td><td>1</td><td>0</td></tr>
+</table>
+<div class="note">
+  <b>合计</b>：<code>n_entries</code> = 600，<code>kept 0</code> / <code>dropped 600</code>，<code>dropped</code> 原因全为
+  <code>already in SEEN</code> 或 <code>stale &gt; 72h</code>（见 <code>raw/2026-10-24-fetch-r109-seen.json</code> 的 <code>meta.dropped</code>）。
+  <b>判读</b>：<code>200</code> + <code>attempts=1</code> 只说明<b>查询链路健康</b>；<code>kept 0</code> 说明<b>这批内容已收过</b>，<b>不是</b>「今天没有论文」。
+</div>
+
+<h2 class="sec">附录 C · <code>id_list</code> 权威复核（13 请求 / 11 唯一 · 全部返回）</h2>
+<table>
+  <tr><th>arXiv ID</th><th><code>published</code>（UTC）</th><th>主分类</th><th>本轮</th></tr>
+  <tr><td><code>2610.30042</code></td><td>2026-10-21T17:02:28Z</td><td><code>cs.AI</code></td><td><b>✅ 入账 #1</b></td></tr>
+  <tr><td><code>2610.30132</code></td><td>2026-10-21T17:59:14Z</td><td><code>cs.CL</code></td><td><b>✅ 入账 #2</b></td></tr>
+  <tr><td><code>2610.29013</code></td><td>2026-10-21T00:26:37Z</td><td><code>cs.CL</code></td><td><b>✅ 入账 #3</b></td></tr>
+  <tr><td><code>2610.28815</code></td><td>2026-10-20T18:36:33Z</td><td><code>cs.AI</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.28577</code></td><td>2026-10-20T17:32:24Z</td><td><code>cs.CL</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.28576</code></td><td>2026-10-20T17:32:08Z</td><td><code>cs.LG</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.28798</code></td><td>2026-10-20T18:24:29Z</td><td><code>cs.LG</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.28834</code></td><td>2026-10-20T18:59:01Z</td><td><code>cs.SE</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.29276</code></td><td>2026-10-21T06:31:27Z</td><td><code>cs.LG</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.29426</code></td><td>2026-10-21T08:50:39Z</td><td><code>cs.LG</code></td><td>复核 · 让位</td></tr>
+  <tr><td><code>2610.30105</code></td><td>2026-10-21T17:50:31Z</td><td><code>cs.RO</code></td><td>复核 · 让位</td></tr>
+</table>
+<div class="note">
+  <b>证据</b>：<code>raw/2026-10-24-idlist-r109.xml</code>（6 条）+ <code>raw/2026-10-24-idlist-r109b.xml</code>（7 条），
+  两批 <code>2610.30042</code> / <code>2610.29426</code> 重复 ⇒ <b>11 条唯一</b>；
+  响应头 <code>raw/2026-10-24-idlist-r109{,b}.headers</code> 均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>。
+  ⚠️ 3 篇入账论文首次提交均 <b>2026-10-21</b>，<b>不写「今日新提交」</b>。
+</div>
+
+<h2 class="sec">附录 D · PDF 落地与校验（3 / 3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>文件</th><th>字节</th><th>页数</th><th><code>pdftotext</code> 字符</th><th>校验</th></tr>
+  <tr><td><code>2610.30042</code></td><td><code>research/pdf/2026-10-24/2610.30042.pdf</code></td><td>511,421</td><td>16</td><td>55,774</td><td>✅ <code>%PDF-</code> / <code>%%EOF</code> / 等长</td></tr>
+  <tr><td><code>2610.30132</code></td><td><code>research/pdf/2026-10-24/2610.30132.pdf</code></td><td>574,366</td><td>17</td><td>71,727</td><td>✅ 同上</td></tr>
+  <tr><td><code>2610.29013</code></td><td><code>research/pdf/2026-10-24/2610.29013.pdf</code></td><td>543,617</td><td>19</td><td>82,637</td><td>✅ 同上</td></tr>
+</table>
+<div class="note">
+  <b>sha256</b>：<br>
+  <code>2610.30042</code> → <code>6aff5b2e1fcdd0494211fcf336523e36b1bc806638d60a0d38e3bbfd4ae273f6</code><br>
+  <code>2610.30132</code> → <code>5b5663b2a179277b2b3e18f075b7f9b04ee6862fa42ab08bc7f93e284da897ac</code><br>
+  <code>2610.29013</code> → <code>5f328a4f2ae9d1b11a692c93dfb95931d6f0f49b34e443de98848586d7d29b2d</code><br>
+  校验脚本 <code>raw/pdf_dl_r109.py</code>，日志 <code>raw/pdf_dl_r109.log</code>（3 篇均 <code>attempt=1</code> 一次拉齐，未触发续传）。
+  <b>注意</b>：<code>research/pdf/</code> 在 <code>.gitignore</code> 中，PDF <b>不进 git</b>，仅本地留存用于抽读/发信。
+</div>
+
+<footer>
+  <b>research 线 · 论文推荐日报</b> · 2026-10-24 早报（AM · 3/5）· 生成 2026-10-24 06:1x CST ·
+  台账 <b>收录 244 / 候选 3,861 / 候选（RSS 补充）507（4,612 行）</b> · <code>papers.jsonl</code> 244 条 ·
+  数据源 arXiv（<code>export.arxiv.org</code> API + <code>id_list</code> 复核）· 口径与踩坑见 <code>research/ARXIV_API.md</code> §9.109。
+  <br>⚠️ 本页仅为<b>推荐 / 待读线索</b>，非结论；未精读；不构成任何已验证的性能主张。
+</footer>
+</div>
+</body>
+</html>
+

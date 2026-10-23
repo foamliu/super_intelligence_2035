@@ -39,6 +39,15 @@
 <table>
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
+    <td>2026-10-24</td>
+    <td>早报（AM · 3/5）</td>
+    <td>3 / 5</td>
+    <td><a href="2026-10-24.html">2026-10-24.html</a></td>
+    <td>早报 3 篇<b>全「借鉴」</b>（晚报 2 篇「科普」待 18:00）：<code>2610.30042</code> <b>HGM-Dual</b>（把 agent harness 演化写成<b>谱系感知上下文</b>（每个祖先改了什么 / 哪些变好变差 / 哪些无效）+ <b>错误条件化双路子代</b>（通用探索 + 针对「父代排名最高的约束违反」的专用子代）；长程规划下 case accuracy 相对最强基线最多 <b>+14.45%</b>，评测预算 <b>2×–4× 更少</b>；Samsung Research America，16 页）/ <code>2610.30132</code> <b>LongZero</b>（<b>零数据</b>长上下文 RL：先自写「问题 + 答案 + 支撑证据」紧凑结构，再把证据单独展开成长篇多文档上下文，多跳推理 + 多轮检索两类自写任务合练，<b>GRPO</b>；2 个 LLM / 5 个长上下文基准，优于「外部语料合成数据」基线；清华大学，17 页）/ <code>2610.29013</code> <b>Target Regeneration Shrinks the Gains of Draft-Training Objectives</b>（投机解码<b>评测口径</b>：若 target 会重写外部回答，蒸馏 / 门控蒸馏的接受率增益<b>大幅收缩</b>（门控几乎归零），且对数据顺序 / 位置权重 / 验证器 / 解码温度 / 初始化 / 学习率 / 监督长度稳健，第二视觉语料 + 纯文本复现同样成立；结论是应在「target 重生成基线」上跨训练长度测；高丽大学 + 延世大学未来校区，19 页）。⚠️ <b>公告批次未刷新</b>：仍 <code>2026-10-22</code>（<code>totalResults=637451</code> <b>与 r108 PM 相同</b>、最新样本 <code>published=2026-10-22T17:59:53Z</code>；周五 20:00 ET 批未索引 / 周末不公告）→ 72h <code>--fetch --seen</code> <b>15/15 <code>ok</code>（全部 <code>attempts=1</code>）</b>、<b><code>kept 0</code> / <code>dropped 600</code></b>（<b>整批已入 SEEN，非无数据</b>）；3 篇取自上一轮 158 条候选池 + <code>id_list</code> 权威复核（13 请求 / <b>11 唯一全返回</b>），首次提交均 <b>2026-10-21</b> ⇒ 不写「今日新提交」。🔧 <b>工具链</b>：<code>export.arxiv.org</code> 解析到 Fastly 边缘 <code>146.75.115.42</code> <b>12s 超时</b>（同域 <code>151.101.67.42</code> &lt;0.8s）→ 新增运行期兜底 <code>raw/run_arxiv_r109.py</code>（仅进程内覆盖 <code>getaddrinfo</code>，TLS/SNI 不变，工具代码未改）。PDF <b>3/3</b> 校验通过（16 / 17 / 19 页）。台账 <b>收录 244 / 候选 3,861 / 候选（RSS 补充）507（4,612 行，行数不变）</b>；<code>papers.jsonl</code> <b>241 → 244</b></td>
+  </tr>
+
+
+  <tr>
     <td>2026-10-23</td>
     <td>晚报（PM · 5/5 · 当日收口）</td>
     <td>5 / 5（收口）</td>
