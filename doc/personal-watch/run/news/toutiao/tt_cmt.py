@@ -24,6 +24,9 @@ def state(t):
     return t.ev(r'''(()=>{const ta=document.querySelector(%s);const b=document.querySelector('.ttp-comment-input button.submit-btn');const t2=document.body.innerText.replace(/\s+/g,' ');return JSON.stringify({len:ta?(ta.innerText||'').length:-1,txt:ta?(ta.innerText||'').trim():'',cls:b?b.className:'NF',op:b?getComputedStyle(b).opacity:'-',items:document.querySelectorAll('.ttp-comment-item').length,cmt:(t2.match(/评论\s*\d+/)||[])[0]})})()''' % TA)
 
 def main():
+    if len(sys.argv) < 5:
+        print(__doc__)
+        sys.exit(2)
     tid, url, text, tag = sys.argv[1:5]
     dry = '--dry' in sys.argv
     t = T(tid)
