@@ -1,5 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 21:5x #755：⏸ 例行唤醒·idle heartbeat·两份10-23报告复核无误·无新指令·.29全空闲**：
+> - 复核确认：① 长上下文评测报告 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B, commit `a04b4503b`）；② decay 修复报告 `reports/report_pretrain_decay_repair_zh.html`（23878B, commit `ae9e1e780`）。两文件均在盘+git tracked+pushed。
+> - 环境：本机=10.239.2.12（vision机），8×H100 全满载 97-100% 跑 vision armE_r2。.29 8×H100 全空闲（0 MiB/0%）。git fetch 无 ahead/behind/无新远端提交。
+> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=23500B / MEMORY=~29.5KB（均≤32KB✓，本轮归档 0KB）。
 > 🆕 **2026-10-23 20:5x #754：⏸ 例行唤醒·idle heartbeat·两份2026-10-23报告均已交付·无新指令·在.12(GPU满载vision)**：
 > - 复核确认：① 长上下文评测报告 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B, commit `a04b4503b`）；② decay 修复报告 `reports/report_pretrain_decay_repair_zh.html`（23878B, commit `ae9e1e780`）。两文件均在盘+git tracked+pushed。
 > - 环境：本机=10.239.2.12（vision机），8×H100 全满载 96-100% 跑 vision armE_r2。git fetch 无 ahead/behind/无新远端提交。.29 未查（不登录）。
