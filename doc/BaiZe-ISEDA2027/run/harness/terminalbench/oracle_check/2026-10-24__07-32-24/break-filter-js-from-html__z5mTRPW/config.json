@@ -1,0 +1,15 @@
+{
+    "task": {
+        "path": "/tmp/tb_full_dataset_Sqp6W8/break-filter-js-from-html",
+        "source": "tb_full_dataset_Sqp6W8"
+    },
+    "trial_name": "break-filter-js-from-html__z5mTRPW",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/oracle_check/2026-10-24__07-32-24",
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "ba7ce5b1-32ec-498a-b86d-d2d63695ca02"
+}

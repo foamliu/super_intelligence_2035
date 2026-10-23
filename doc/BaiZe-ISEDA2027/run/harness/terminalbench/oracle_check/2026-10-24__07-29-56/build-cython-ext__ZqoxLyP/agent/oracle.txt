@@ -1,0 +1,141 @@
+Cloning into '/app/pyknotid'...
+Note: switching to '441c807dbec2ee32e1da572e24e58d52a4eb7afa'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+numpy 2.x fixes applied to 12 files
+planarity key remapping applied to representation.py
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+Collecting setuptools==80.9.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl (1.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 13.7 MB/s  0:00:00
+Collecting cython==3.1.3
+  Downloading https://mirrors.aliyun.com/pypi/packages/a8/e0/ef1a44ba765057b04e99cf34dcc1910706a666ea66fcd2b92175ab645416/cython-3.1.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 18.0 MB/s  0:00:00
+Installing collected packages: setuptools, cython
+
+Successfully installed cython-3.1.3 setuptools-80.9.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip
+Compiling pyknotid/spacecurves/chelpers.pyx because it changed.
+Compiling pyknotid/spacecurves/ccomplexity.pyx because it changed.
+Compiling pyknotid/simplify/coctree.pyx because it changed.
+Compiling pyknotid/cinvariants.pyx because it changed.
+[1/4] Cythonizing pyknotid/cinvariants.pyx
+[2/4] Cythonizing pyknotid/simplify/coctree.pyx
+[3/4] Cythonizing pyknotid/spacecurves/ccomplexity.pyx
+[4/4] Cythonizing pyknotid/spacecurves/chelpers.pyx
+running build_ext
+building 'pyknotid.spacecurves.chelpers' extension
+creating build/temp.linux-x86_64-cpython-313/pyknotid/spacecurves
+gcc -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall -fPIC -I/usr/local/lib/python3.13/site-packages/numpy/_core/include -I/usr/local/include/python3.13 -c pyknotid/spacecurves/chelpers.c -o build/temp.linux-x86_64-cpython-313/pyknotid/spacecurves/chelpers.o
+creating build/lib.linux-x86_64-cpython-313/pyknotid/spacecurves
+gcc -shared build/temp.linux-x86_64-cpython-313/pyknotid/spacecurves/chelpers.o -L/usr/local/lib -lm -o build/lib.linux-x86_64-cpython-313/pyknotid/spacecurves/chelpers.cpython-313-x86_64-linux-gnu.so
+building 'pyknotid.spacecurves.ccomplexity' extension
+gcc -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall -fPIC -I/usr/local/lib/python3.13/site-packages/numpy/_core/include -I/usr/local/include/python3.13 -c pyknotid/spacecurves/ccomplexity.c -o build/temp.linux-x86_64-cpython-313/pyknotid/spacecurves/ccomplexity.o
+gcc -shared build/temp.linux-x86_64-cpython-313/pyknotid/spacecurves/ccomplexity.o -L/usr/local/lib -lm -o build/lib.linux-x86_64-cpython-313/pyknotid/spacecurves/ccomplexity.cpython-313-x86_64-linux-gnu.so
+building 'pyknotid.simplify.coctree' extension
+creating build/temp.linux-x86_64-cpython-313/pyknotid/simplify
+gcc -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall -fPIC -I/usr/local/lib/python3.13/site-packages/numpy/_core/include -I/usr/local/include/python3.13 -c pyknotid/simplify/coctree.c -o build/temp.linux-x86_64-cpython-313/pyknotid/simplify/coctree.o
+pyknotid/simplify/coctree.c:20285:13: warning: ‘__pyx_f_8pyknotid_8simplify_7coctree_multiply’ defined but not used [-Wunused-function]
+20285 | static void __pyx_f_8pyknotid_8simplify_7coctree_multiply(__Pyx_memviewslice __pyx_v_arr, double __pyx_v_val) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+creating build/lib.linux-x86_64-cpython-313/pyknotid/simplify
+gcc -shared build/temp.linux-x86_64-cpython-313/pyknotid/simplify/coctree.o -L/usr/local/lib -lm -o build/lib.linux-x86_64-cpython-313/pyknotid/simplify/coctree.cpython-313-x86_64-linux-gnu.so
+building 'pyknotid.cinvariants' extension
+gcc -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall -fPIC -I/usr/local/lib/python3.13/site-packages/numpy/_core/include -I/usr/local/include/python3.13 -c pyknotid/cinvariants.c -o build/temp.linux-x86_64-cpython-313/pyknotid/cinvariants.o
+gcc -shared build/temp.linux-x86_64-cpython-313/pyknotid/cinvariants.o -L/usr/local/lib -lm -o build/lib.linux-x86_64-cpython-313/pyknotid/cinvariants.cpython-313-x86_64-linux-gnu.so
+copying build/lib.linux-x86_64-cpython-313/pyknotid/spacecurves/chelpers.cpython-313-x86_64-linux-gnu.so -> pyknotid/spacecurves
+copying build/lib.linux-x86_64-cpython-313/pyknotid/spacecurves/ccomplexity.cpython-313-x86_64-linux-gnu.so -> pyknotid/spacecurves
+copying build/lib.linux-x86_64-cpython-313/pyknotid/simplify/coctree.cpython-313-x86_64-linux-gnu.so -> pyknotid/simplify
+copying build/lib.linux-x86_64-cpython-313/pyknotid/cinvariants.cpython-313-x86_64-linux-gnu.so -> pyknotid
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+Obtaining file:///app/pyknotid
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy in /usr/local/lib/python3.13/site-packages (from pyknotid==0.5.3) (2.3.0)
+Collecting networkx (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl (2.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 14.0 MB/s  0:00:00
+Collecting planarity (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/9b/04/2321173a19ac665382b7165f89d1da3c162ae4f8802f6d9efbea7237d544/planarity-1.0.0.tar.gz (682 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 682.5/682.5 kB 17.5 MB/s  0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting peewee (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/76/e3/1f3847b62db730a58c6f6d689c060d7228721f3a66e612a27cda297e875a/peewee-4.5.3-py3-none-any.whl (194 kB)
+Collecting vispy (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/f3/50/d1f5b5da39484aa250d31944195f25109bd5c36ae9d6be0f0f8db77558f9/vispy-0.17.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 16.8 MB/s  0:00:00
+Collecting sympy (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl (6.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 17.5 MB/s  0:00:00
+Collecting appdirs (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Collecting requests (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl (73 kB)
+Collecting tqdm (from pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl (80 kB)
+Collecting charset_normalizer<4,>=2 (from requests->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/4b/85/41d27f234b82e47c167a5f6c0f62501dc0c640585ff4aba79e08a390336a/charset_normalizer-3.5.2-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (254 kB)
+Collecting idna<4,>=2.5 (from requests->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl (69 kB)
+Collecting urllib3<3,>=1.26 (from requests->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl (135 kB)
+Collecting certifi>=2023.5.7 (from requests->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl (135 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl (536 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 31.7 MB/s  0:00:00
+Collecting freetype-py (from vispy->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/b6/36/853cad240ec63e21a37a512ee19c896b655ce1772d803a3dd80fccfe63fe/freetype_py-2.5.1-py3-none-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (1.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 14.8 MB/s  0:00:00
+Collecting hsluv (from vispy->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/6e/f2/84ae3176b3ccbc26ed470d599499c85170d378bf27bfd2db6aa9eaff7d98/hsluv-5.0.5-py3-none-any.whl (5.7 kB)
+Collecting kiwisolver (from vispy->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/ab/43/86aacc027959108b4c66eeae8b73cedb057dfa6eb3a335d05ad65197081c/kiwisolver-1.5.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 15.9 MB/s  0:00:00
+Collecting packaging (from vispy->pyknotid==0.5.3)
+  Downloading https://mirrors.aliyun.com/pypi/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl (129 kB)
+Building wheels for collected packages: pyknotid, planarity
+  Building editable for pyknotid (pyproject.toml): started
+  Building editable for pyknotid (pyproject.toml): finished with status 'done'
+  Created wheel for pyknotid: filename=pyknotid-0.5.3-0.editable-py3-none-any.whl size=4493 sha256=7be7328c136a2dbe2a6072631be6ecb14530071c3aad6b73aeb922e5d9350349
+  Stored in directory: /tmp/pip-ephem-wheel-cache-d81ik84m/wheels/5e/f2/cb/b3080784954f43467934ff337ba823c57a3e1db3303f8227db
+  Building wheel for planarity (pyproject.toml): started
+  Building wheel for planarity (pyproject.toml): finished with status 'done'
+  Created wheel for planarity: filename=planarity-1.0.0-cp313-cp313-linux_x86_64.whl size=1958187 sha256=2b1a07c4c62cf26195f5c3e03e192567dab5933f2f43f68c9a1def6b6596aaa9
+  Stored in directory: /root/.cache/pip/wheels/cf/10/e7/4062f0fbd18b2cdf7f1aa328b47bd711b0942f8e5d30946f6d
+Successfully built pyknotid planarity
+Installing collected packages: mpmath, appdirs, urllib3, tqdm, sympy, planarity, peewee, packaging, networkx, kiwisolver, idna, hsluv, freetype-py, charset_normalizer, certifi, vispy, requests, pyknotid
+
+Successfully installed appdirs-1.4.4 certifi-2026.10.23 charset_normalizer-3.5.2 freetype-py-2.5.1 hsluv-5.0.5 idna-3.20 kiwisolver-1.5.1 mpmath-1.3.0 networkx-3.7 packaging-26.3 peewee-4.5.3 planarity-1.0.0 pyknotid-0.5.3 requests-2.34.2 sympy-1.14.0 tqdm-4.70.1 urllib3-2.8.0 vispy-0.17.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip
