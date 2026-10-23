@@ -5,18 +5,18 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7×5 pilot Gen7 RERUN(codex+claude-code). Gate=7/7✅. Oracle5/5✅. H-B报告✅
-已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 5/7 done(R467)·codex/claude-code infra fix(R468-R469)
-当前动作:     R469 Gen7 pilot rerun codex+claude-code. codex rerun RUNNING(bn-fit-modify trial,codex--version=0.164.0 confirmed in-container✅). claude-code PENDING(after codex). NFS perms fixed:chmod 755 on @anthropic-ai/+claude-code/+@openai/+codex/ dirs(were 750,agent user exit127).
-下一步:       ①等codex rerun完成(5 trials)②等claude-code rerun完成③汇总Gen7最终结果(7/7)④决定是否启动7×89全量
-阻塞:         无（rerun在后台nohup运行,/tmp/tb_rerun_codex_claude.log）
+PHASE:        T2 Terminal-Bench 7×5 pilot Gen7 RERUN-3(codex+claude-code). Gate=7/7✅. Oracle5/5✅. H-B报告✅
+已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 5/7 done(R467)·codex/claude-code infra fix(R468-R469)·codex config.toml fix(R470)
+当前动作:     R470 codex adapter fix: write ~/.codex/config.toml with custom model_provider→gw_proxy. Root cause: codex 0.164.0 ignores OPENAI_BASE_URL, uses Responses API, goes to api.openai.com→401. Fix tested✅(codex exec→gw_proxy→LLM response,exit=0). Rerun3 launched(setsid),codex trial1 RUNNING.
+下一步:       ①等codex rerun3完成(5 trials)②等claude-code rerun3完成③汇总Gen7最终结果(7/7)④决定是否启动7×89全量
+阻塞:         无（rerun3在后台setsid运行,/tmp/tb_rerun3.log）
 ERROR_COUNT:  0
 📦 体积：TASK=31KB / MEMORY=4KB
 ```
 
 ### 本唤醒流水
-[03:15] R469 **Gen7 pilot完成5/7→诊断codex/claude-code失败→修复NFS权限→启动rerun**. Gen7完整结果: oracle5/5✅·cline-patched5/5=**100%**✅·codex0/5❌(NonZeroAgentExitCodeError,chmod EROFS,R468已修adapter但codex用旧adapter跑的)·hermes0/5(capability,0err)·opencode3/5=**60%**(1 timeout chess)·claude-code0/5❌(RuntimeError exit127,根因=NFS dirs 750→agent user无法traverse)·deepseek0/5(capability,0err)·pi5/5=**100%**✅. **R469修复**: chmod 755 on claude-code-npm/@anthropic-ai/{,claude-code/}+codex-npm/@openai/{,codex/,bin/,codex.js}(NFS chmod OK,exit=0). **验证**: `docker exec ... codex --version`→`codex-cli 0.164.0`✅,`which codex`→`/usr/local/bin/codex`✅. **rerun启动**: `_rerun_codex_claude.sh`(nohup bg,gw_proxy restarted on 9090/9091). codex trial1 bn-fit-modify RUNNING(Docker container up 4min). WAITING=1.
-> 📦 R460-R465 (2026-10-23, H-B报告完成+复验×4+Gen6 hermes smoke) 已归档 → daily-memories-harness/2026-10-23.md。结论：H-B 7way上下文压缩报告58KB已push(e8f2da3e3), Gen6 hermes smoke PASS(R457 fix confirmed), gate was 5/7. 需要时再读。
+[04:50] R470 **codex 0.164.0 config.toml fix + rerun3 launched**. R469 nohup rerun died with session→setsid fix. Codex 0.164.0 root cause: ignores OPENAI_BASE_URL, only supports wire_api="responses"(chat removed), goes to wss://api.openai.com→401. Fix: adapter writes ~/.codex/config.toml with [model_providers.kimi_gateway] base_url=gw_proxy, wire_api=responses, env_key=OPENAI_API_KEY, supports_websockets=false. **Tested✅**: `codex exec --model kimi-k2.6-cloud ... say_hello`→gw_proxy→"Hey there! Hello!"→exit=0. Claude-code was actually working(exit137=my SIGKILL not real failure). Rerun3 launched(setsid,/tmp/tb_rerun3.log), codex trial1 bn-fit-modify RUNNING(Docker container up). WAITING=1.
+> 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。
 
