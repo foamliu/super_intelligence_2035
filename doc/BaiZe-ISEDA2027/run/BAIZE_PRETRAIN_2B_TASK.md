@@ -1,6 +1,26 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 📄 运维指令 · 2026-10-23（**写 decay 修复完整中文 HTML 报告 + 下一步建议**）· 用户直令 · 最高优先
+
+> 用户原话：「pretrain：写个HTML中文报告，包含对下一步实验的建议。」
+
+**报告文件**：`reports/report_pretrain_decay_repair_zh.html`（自包含中文 HTML，内联样式、无外链/无脚本）。
+
+**① 内容主线（decay「训坏 → 修复」全历程）**
+1. **decay v2（自写脚本 · 失败）**：71.2B decay → CS8 **44.97%** / CX6 **6.21%**，vs Xmodel-2.5 官方 final 65.40%/32.90%（Δ **−20.43 / −26.69pp**）→ 判定「decay 训坏」。
+2. **归因**：双移位 bug（py:547-548 + 567-568 双重移位）、peak LR 1.67e-3 过高、自写脚本缺 **μP**、code 过采样、step0 loss 11.72 异常。
+3. **排查实验（自写脚本）**：L1（修双移位+LR5e-4+warmup100）→ CS8 **59.03%**；L2（只修双移位+高LR）被直令 kill 转官方方案。
+4. **decay-5000（官方 1113.sh · 修复）**：官方 `train_decay_fp8_1113.sh`（use-mup + **Muon 0.2** + FP8 hybrid + 无 warmup + MBS=5 + WSD exponential 5000 步）→ **CS8 58.97% / CX6 28.02%**，vs 旧 decay v2 **+14.0 / +21.8pp**，vs 起点基线 61.03%（Δ −2.06pp）。
+5. **结论**：官方 μP+Muon+FP8 修复了 decay 训坏，能力基本回到起点；残余 gap 归因写入。
+
+**② 下一步建议（必写，给 ≥3 个候选，按价值排序，各附预期成本/风险/ETA）**
+1. **延长 decay**：5000 → 20000 步（对齐官方 71.2B），看 CS8 是否逼近 65.40%（成本 ~3× 当前 GPU 时）。
+2. **对齐数据配比**：官方 1113.sh 的 11 源配比（当前仅 4 源 64/24/8/4），隔离数据贡献。
+3. 其他（可选）：min-lr / decay-iters 微调、更长 warmup、或更大 decay 数据量。
+
+**③ 纪律**：对比口径统一用 Xmodel-2.5 官方 final（65.40%/32.90%）+ 起点基线 61.03%，**不用 P-8 作主对照**；数字溯源 `eval_summary.txt`/各 log；commit `pretrain report:`。
+
 ### 🆕 运维指令 · 2026-10-22 13:5x（**decay 5000 步 + 复用官方 MBS=5 排障**）· 用户直令 · 最高优先 · 覆盖 08:5x 的 train-iters/decay-iters/MBS 口径
 
 > 用户原话要点：① 训练效率不高，为何不能复用官方脚本（MBS=5、FP8 等）；② decay steps 设 **5000 步取整**；③ 用下方指定 LR/decay 参数；④ 用 Muon（0.2）；⑤ 不用 warmup。
