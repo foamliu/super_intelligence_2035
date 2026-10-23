@@ -47,21 +47,22 @@ curl.exe -s -o NUL -w "http=%{http_code}`n" http://127.0.0.1:8188/system_stats
 ```
 
 **未做的事（有意保留）**
-- 未动短剧仓工作区与任何已出片视频（`OUTPUT/06_情绪/videos/` 原样）。
-- 未清理 ComfyUI 队列（如需一并暂停渲染，见下方「恢复/追加操作」）。
+- 未动短剧仓工作区与任何已出片视频（`OUTPUT/06_情绪/videos/` 29 镜原样）。
+- 未删 `E:\code\ComfyUI\output\video\` 里本次新出的 13 个 mp4（是有效产出，恢复时回收）。
 - 未改 `watch_video_loop.ps1` 与 `WATCH_VIDEO_TASK.md`。
 
-**恢复方式（人工，一条即可）**
+**恢复方式（两条都要做，顺序不能反）**
 ```powershell
+# ① 先起 ComfyUI（video 线干活依赖它），等 8188 就绪
+Enable-ScheduledTask -TaskName 'ComfyUI' | Out-Null
+Start-ScheduledTask  -TaskName 'ComfyUI'
+# ② 再起 video agent
 Enable-ScheduledTask -TaskName 'WatchVideoLoop' | Out-Null
 Start-ScheduledTask  -TaskName 'WatchVideoLoop'
 ```
 （或手动前台跑一次：`powershell -NoProfile -ExecutionPolicy Bypass -File <run>\watch_video_loop.ps1`）
 
-**追加操作（可选）**
-- 只要停渲染、不删结果：`POST http://127.0.0.1:8188/interrupt`（停当前）＋ `POST /queue` with `{"clear":true}`（清 pending）。
-- 停 ComfyUI 服务本身：计划任务 `ComfyUI`（SYSTEM 自启）→ `Stop-ScheduledTask -TaskName 'ComfyUI'`。
-
-**暂停时的进度快照（取自 MEMORY_VIDEO.md）**
-- EP06《情绪》54 镜：本轮唤醒时 29/54 落盘，补投 25 镜；至暂停时队列剩 **running 1 / pending 12**（即约 **41/54** 镜已出，剩 ~13 镜在渲染）。
+**暂停时的进度快照（以磁盘为准复核过）**
+- **EP06《情绪》= 42/54**：短剧仓 `OUTPUT/06_情绪/videos/` **29** 镜（最新 mtime 2026-10-18）+ ComfyUI 输出 `E:\code\ComfyUI\output\video\` 新出 **13** 镜（2026-10-23 20:3x–22:00，**未回收**）。
+- **未渲染 12 镜**：`41, 43, 44, 45, 47, 48, 49, 50, 51, 52, 53, 54`。
 - 已成片七章：13_外骨骼 48/48、18_暖阳 54/54、01_晨钟 54/54、02_经验 55/55、03_种子 52/52、04_棋子 55/55、05_临界点 55/55（成片 295.51s）。
