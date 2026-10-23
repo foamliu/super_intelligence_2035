@@ -1,6 +1,37 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-23 22:1x（**优化 BaiZe-2B 训练吞吐：目标 > 249K tok/s**）· 用户直令 · 最高优先
+
+> 用户原话：「pretrain：尝试各种方法优化 BaiZe-2B 的训练吞吐 目前最大值是 249K tok/sec，想办法超过这个值。」
+
+**① 基线口径（先钉住，后面所有对比都靠它）**
+- 用**当前已知最优配置**复跑 1 次基线：warmup ≥20 step 后取 **≥50 step 稳态**的 `tok/s`（中位数，别取峰值）+ 峰值显存 + s/step + grad_norm + loss。
+- 记录到 `MEMORY_PRETRAIN_2B.md`：**baseline = 249K tok/s @ <配置指纹>**（TP/PP/DP、MBS×accum、GBS、seq_len、FP8 开否、compile 开否、模型并行组合）。**之后每次实验只改 1 个变量。**
+
+**② 候选优化轴（按性价比顺序推进，逐条试，别一次改俩）**
+1. **FP8 配方**：blockwise vs tensorwise scaling；first/last layer 排除 FP8；`--fp8-amax-history-len`/`amax-epsilon` 微调。
+2. **计算图**：`torch.compile`（`--use-torch-compile` / fullgraph）· **CUDA graphs** · `--use-flash-attn-v3` · TransformerEngine 融合算子（LayerNorm/RoPE/SwiGLU）。
+3. **并行度**：TP ∈ {1,2,4,8} × **SP** 开关；`--sequence-parallel`；DP/ZeRO-1（`--use-distributed-optimizer`）；`--overlap-grad-reduce` / `--overlap-param-gather`。
+4. **批次**：MBS × accum 网格（固定 GBS），找 **tokens/step 最大且不 OOM** 的点；显存够就把 activation recompute 关掉。
+5. **数据侧**：bin 读取预取 / `num_workers` / mmap / 避免 host 侧成瓶颈（`nproc`、`OMP_NUM_THREADS`、pin memory）。
+6. **通信**：`NCCL_ALGO`/`NCCL_PROTO`/NVLink 亲和、`NCCL_IB_DISABLE`、网卡绑定（8 卡单机优先 P2P）。
+7. **其它**：fused Adam / emerging-optimizers 的 fused 版、loss 计算融合、`--seq-length` 与 packed 序列对齐（避免 padding 浪费）。
+
+**③ 每轮实验协议（严格，防「跑快了但训坏了」）**
+- 单次实验 **≥50 step 稳态**（warmup 20 步不计），单次总时长 **≤30min**，**每改一个变量就 commit 一次**。
+- 必须同时记录：**tok/s（中位数）/ 峰值显存 / s/step / grad_norm / 前 200 步 loss**。
+- **正确性闸门**：与基线相比，同 step 的 loss 偏差 **≤5%**、`grad_norm` 无数量级跳变、**0 NaN/inf**；任一不满足 ⇒ 该配置判「快但不可用」，只记录不采用。
+- OOM / 卡死 ⇒ 记下配置即放弃，🚫 不反复调参死磕。
+
+**④ 交付**
+- **至少 8 个候选**跑完（总量 ≤6h，分多轮唤醒做，每轮做完先落盘再继续）。
+- 产出一张表（配置指纹 × tok/s × 相对基线增益 × 显存 × 是否通过正确性闸门）写进 `MEMORY_PRETRAIN_2B.md`，并生成中文 HTML：`reports/report_pretrain_2b_throughput_optim_zh.html`（自包含；含基线复现命令、每个候选的命令与数字、结论与「下一步还能挖什么」）。
+- **超过 249K 就明确写「新纪录 = X K tok/s（+Y%）@ <配置>」**；若全都超不过，也要给「瓶颈归因」（算力/通信/数据/显存）+ 2–3 个更激进方案（如换并行度到头、换 attention 实现、改 GBS/seq）。
+- commit 前缀 `pretrain perf:`。
+
+**⑤ 纪律**：只在 **`.29` 8×H100** 上做；🚫 不碰 `.12`（vision 训练中）/ data / harness；每个数字必须能追到 log 或脚本输出；🚫 编造 tok/s。
+
 ### 🧪 运维指令 · 2026-10-23（**长上下文推理成本评测：BaiZe-2B / MiniCPM5-2B / Qwen3.5-2B**）· 用户直令 · 最高优先
 
 > 用户原话：「pretrain：再做一次长上下文推理成本评测，对比模型 BaiZe-2B、MiniCPM5-2B、Qwen3.5-2B。推理框架统一用SGLang，上下文长度从64K开始翻倍，直到全部OOM。实验后写实验报告（中文HTML），列表对比各模型显存、推理速度等详细信息。」

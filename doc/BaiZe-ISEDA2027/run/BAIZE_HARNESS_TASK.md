@@ -2,6 +2,35 @@
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 
+### 🆕 运维指令 · 2026-10-23 22:1x（**用 `http_proxy` 装 `npm install -g`，装完退回无代理环境**）· 用户直令 · 最高优先
+
+> 用户原话：「Harness: harness 想要 npm install -g 需要使用 http_proxy, 地址跟 https_proxy一样，但要小心这个代理会让agent无法访问大模型API，因此需要开新的环境，设置环境变量，安装后，退回到没有http_proxy的环境。」
+
+**① 取代理值（只读，不改）**
+- `echo "$https_proxy"`（或 `$HTTPS_PROXY`）→ **`http_proxy` 用它同一个地址**；记下原文（形如 `http://172.19.92.23:13128`）。
+
+**② 在「独立环境」里装（关键：🚫 污染 agent 自身环境）**
+- 🚫 **禁止**在 `~/.bashrc` / `/etc/profile` / 当前 loop 的 parent shell 里 `export http_proxy`（会让 cline/harness 自身的 LLM API 调用被代理 → 直接 403/超时/静默失败）。
+- 正确做法（任选，推荐 A）：
+  - **A（单命令隔离，首选）**：`env http_proxy="<同https_proxy>" https_proxy="<同>" NO_PROXY="10.129.32.75,localhost,127.0.0.1" npm install -g <pkg>`
+  - **B（子 shell）**：`bash -c 'export http_proxy=... https_proxy=... NO_PROXY=...; npm install -g <pkg>'`（子 shell 退出后环境自动恢复）
+  - **C（npm 原生参数，零环境变量）**：`npm install -g --proxy "<同>" --https-proxy "<同>" <pkg>`
+- 若用了 `npm config set proxy/https-proxy`（临时手段），**装完必须 `npm config delete proxy && npm config delete https-proxy`**，并 `cat ~/.npmrc` 复核**不留 proxy 行**。
+
+**③ 装完立刻「回到无代理环境」并验证**
+- 在**不带** `http_proxy/https_proxy` 的新 shell 里验证（`env | grep -i proxy` 只应剩 loop 原有的 `https_proxy`，**不应有 `http_proxy`**）：
+  - `npm ls -g --depth=0 | grep -E 'codex|claude'`
+  - `codex --version` / `claude --version`（或该包官方二进制名）
+- 再各跑 1 次**最小 smoke**（`--version` 之外的一次真实调用，例如 `codex --help` + 一次 API 往返），**必须证明 LLM API 仍可访问**（HTTP 200 / 正常响应）。
+
+**④ 门据推进**
+- 目标：把 gate 从 **5/7 → 6/7 或 7/7**（缺的正是 `codex` + `claude-code`，此前均为 `npm install -g` 超时）。
+- 逐个修、逐个验证、逐个写进 gate 表（每修好 1 个就 commit 一次，前缀 `harness`）。
+- **达到 ≥6/7 ⇒ 按既有计划启动 7×89 pilot**（每轮回报 pass/run 数），并回报门据变化；未达标只报 blocker（附 npm 报错原文 ≤20 行）。
+- 同一包装失败 **≤2 次**，超过就换 C 方案（`--proxy` 参数）或报 blocker，🚫 死磕烧时间。
+
+**⑤ 纪律**：🚫 不改上游 harness 源码；🚫 不把代理写进任何持久化配置；装完必须回到「无 `http_proxy`」的状态并在回复里贴 `env | grep -i proxy` 的原文为证。
+
 ### 🔧 运维指令 · 2026-10-23（**分阶段落盘：逐 harness 写报告，每段 ≤2500 token**）· 用户直令 · 最高优先
 
 > 已确认你在「读源码分析」阶段干活正常，但 3600s 内完不成「7 个 harness 全部分析 + 写整份报告」→ 每轮超时、未落盘内容丢失。**必须分阶段落盘，禁止一口气写整份报告。**

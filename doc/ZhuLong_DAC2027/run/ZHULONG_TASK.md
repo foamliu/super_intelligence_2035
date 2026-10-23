@@ -1,6 +1,27 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+
+### 🆕 运维指令 · 2026-10-23 22:1x（**本 5-run 收口后 → 起 `cline × deepseek-v4-pro × full` 5-run**）· 用户直令 · 最高优先
+
+> 用户原话：「Zhulong：zl+glm-5.3-flash+full 5-run结束后，跑cline+deepseek-v4-pro 5-run+full」
+
+**① 前置（顺序不可跳）**
+1. 先把在跑的 `zl × glm-5.3-flash × full` **r5** 收口：手动 regrade → 记 `full-r5 = x/158` → 出 **5/5 mean±std**（现有 r1=69.0 / r2=77.2 / r3=76.6 / r4=81.0）→ 更新 `zhulong_results.md` 本轮实验块。
+2. 收口后 **确认 4 端口与 8090 都空**（上一轮 worker 全退、`pgrep -af run_zhulong_script` 为空），再起新线；🚫 两条线并行（会互相抢端口/污染 batch）。
+
+**② 新线配置（与上一条线只换 agent + 模型，其余保持 full 口径）**
+- `CLI_AGENT = cline`、**模型 = `deepseek-v4-pro`**、**`READBACK=full`** / `OMEGA=high` / `BUDGET=0` / `LAGGED=0`。
+- 端口 = **8650/8651/8652/8654**（沿用，保持口径一致）；`-p 4`；`unset http_proxy https_proxy`；`NO_PROXY=10.129.32.75,localhost,127.0.0.1`；`PYTHON=$PWD/venv/bin/python`。
+- 数据目录用 cline 线自己的 `CLI_DATA_DIR`（`~/.cline`；**🚫 不要复用 `~/.zhulong`**，否则等于换汤不换药）。
+- **起跑前先做 1 次「模型可用性冒烟」**：单次 `run_code` 走通（拿到四字段 readback）+ 记录模型 id / base / key 来源；**403 / 404 / 额度不足 ⇒ 立即停手报 blocker（附原文）**，🚫 不静默换模型、不换 provider 凑数。
+- batch 命名沿用 `2026_MMDD_HHMMSS`；每轮 **r1→regrade→r2→…→r5**，每轮都跑判据十三（`timeout ≤10` / `0 infra` / `0 exec_err`）。
+
+**③ 回报（每轮 + 收口各一次）**
+- 每轮：batch / Pass@1(N/158) / literal-pass 数 / 耗时 / 端口状态 / 5-run 累计。
+- 收口：`5/5 mean±std` + 与两条对照线的对比（`zl × glm-5.3-flash × full` 本轮 5/5、`zl × glm-5.3-flash` 旧 N′ 线 86.8±1.6%）。
+- 口径：**新线不纳入论文**（独立探索），论文锚点不动；commit 前缀 `zhulong`。
+
 ### 🟢 运维指令 · 2026-10-23 09:4x（**作废 r1-r3 → 改 full 配置 → 重跑 5 轮**）· 用户直令 · 最高优先
 
 > 用户原话：「作废 r1-r3，改 full 重跑 5 轮」+ 之前「新线不纳入论文。启动 r4 时尝试使用端口 8663/8666/8667/8670」

@@ -7,6 +7,37 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🆕 运维指令 · 2026-10-23 22:1x（**① 复测 `92.25` 代理+hf.co 直连 ② 恢复 85M 下载 ③ MiniCPM5 分词产物体积 ④ 搬 `/nas_env` 腾 `/nas_train`**）· 用户直令 · 最高优先
+
+> 用户原话：「data: 1.尝试 92.25 代理+hf.co直连是否恢复；2.恢复 85M下载；3.看看MiniCPM5分词后的数据有多大；4.如果够放，在en_v1_4 分词完成后把MiniCPM5分词的数据搬到/nas_env去给/nas_train省空间。」
+
+**① 代理复测（先做，≤10 分钟出结论，别等分词）**
+- 口径（2026-10-15 用户令不变）：**下数据 = `http://172.19.92.25:13128` 直连 `huggingface.co`；🚫 不用 hf-mirror**。
+- 探针 4 条，逐条贴原文输出（`timeout 20` 包住）：
+  1. 端口：`nc -zv 172.19.92.25 13128`（或 `curl -m 5 -x http://172.19.92.25:13128 -o /dev/null -s -w '%{http_code}' https://huggingface.co`）；
+  2. `curl -x ... https://huggingface.co/api/models/openbmb/MiniCPM5-2B` → 期望 **200**；
+  3. 实测下载 1 个 ≤20MB 文件取速（MB/s）；
+  4. 与 `hf.co` 直连（不挂代理）对照，各 1 次。
+- **判据**：② 200 且 ③ ≥1 MB/s ⇒ 「已恢复」→ **立刻做 ②**；若仍 5xx/超时 ⇒ 记「未恢复」+ 附 4 条原文，**不要反复重试烧时间**，转去做 ③④。
+
+**② 恢复 85M 下载（用户直令，解除 10-13 的暂停）**
+- 目标：`LLaVA-OneVision-1.5-Mid-Training-85M`（历史路径 `/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`，**先 `ls` 核实真实路径**），暂停时进度 **8,436 / 12,124 parquet（69.6%）**。
+- **必须断点续传**（不重下已完成的 parquet）：复用既有 `hf download` 封装/wrapper，`--resume`（或 `.incomplete` 保留）；**建议落 `/nas_env`**（用户令要腾 `/nas_train`）——若改落点，先 `df` 报余量再动，且写进 `DATA_LEDGER.md`。
+- **前置**：`df -h /nas_train /nas_env` + 剩余 parquet 体积估算 + ETA，**先报数字再起下载**；放不下 ⇒ 报 blocker（说明差多少 TB）而不是硬下。
+- **错峰**：分词的 10 个 worker 正在写盘，下载并发 ≤8，`nice -n 10`；🚫 不停 en_v1_4 分词、不删任何已有 parquet。
+
+**③ MiniCPM5 分词产物体积（要机器可核的数字）**
+- 输出：`du -sh`（**只对已知目录做有界 du，带 `timeout`，🚫 不对 `/nas_train` 整树 du**）+ `find … -name '*.bin' | wc -l` + `find … -name '*.idx' | wc -l` + 字节总和。
+- 至少给：**总大小 / shard 数 / 各源拆分大小**（Code L3、Code L2、Math L3、Math L1、UFW-L3 五项）。
+- 同时给 `/nas_train`、`/nas_env` 的 `df -h` 现状与余量。
+
+**④ 迁移到 `/nas_env`（前置硬条件：en_v1_4 分词 done=110/110 之后才做）**
+- 安全铁律（沿用 10-22 RUN_ID 149 口径）：① `df` 确认 `/nas_env` 余量 ≥ 数据量 ×1.1；② **`rsync -a` 不用 `mv`**（跨挂载 mv = 复制+删除）；③ **校验 shard 数 + 总字节一致后**才删源；④ 先建**软链接**保证旧路径可访问；⑤ 不停 en_v1_4 分词以外的任何工作。
+- 删除前**必须在本轮回复里报「将删哪些目录 + 校验结果」**，未校验同号不得 `rm`。
+- 完成写 `DATA_LEDGER.md`（源/新路径/字节/shard/校验和）+ `MEMORY_DATA.md`；commit 前缀 `data migrate:`。
+
+**回报格式（本轮必须给）**：① 代理 4 探针原文+结论 ② 85M 磁盘余量/ETA/已起或 blocker ③ 五个源的 du 明细 ④ 迁移是否具备条件（余量对比）+ 若已迁则校验结果。
+
 ### 🔥 运维指令 · 2026-10-21 04:0x（**MiniCPM5 全量数据完整分词 · 224 核全开**）· 用户直令 · 最高优先
 
 > 用户原话：「那就完整分词啊，交代给 data，CPU核有224个，把已经下载的 MiniCPM5 的数据，完整分词！！」
