@@ -1,6 +1,31 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🧪 运维指令 · 2026-10-23（**长上下文推理成本评测：BaiZe-2B / MiniCPM5-2B / Qwen3.5-2B**）· 用户直令 · 最高优先
+
+> 用户原话：「pretrain：再做一次长上下文推理成本评测，对比模型 BaiZe-2B、MiniCPM5-2B、Qwen3.5-2B。推理框架统一用SGLang，上下文长度从64K开始翻倍，直到全部OOM。实验后写实验报告（中文HTML），列表对比各模型显存、推理速度等详细信息。」
+
+**① 三个模型（报告须写明各自 HF 版本/commit + 参数量 + 架构）**
+- **BaiZe-2B**（自有）：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/out/decay_5000_hf`（XmodelForCausalLM，即 decay-5000 产物）。
+- **MiniCPM5-2B**：`openbmb/MiniCPM5-2B`（Llama 架构，max_pos 131072）—— 无权重先 HF 下载（工作目录已有 `MiniCPM5-2B.config.json` 可作参考）。
+- **Qwen3.5-2B**：Qwen3.5 系列 2B —— 无权重先 HF 下载（本机现只有 Qwen3.5-4B / Qwen3-VL-2B 等，缺纯文本 2B）。
+
+**② 评测方法（统一 SGLang）**
+- 框架**统一 SGLang**（勿混 vllm）；每模型独立起服、独立测。
+- 上下文长度**从 64K 翻倍**：64K → 128K → 256K → 512K → 1M → 2M → …，**直到该模型 OOM**（记录 OOM 点 = 实测上下文上限）。
+- 每档记录（列表可溯源）：
+  - **显存**：峰值/稳态 VRAM(GB)、KV cache 占用；
+  - **推理速度**：prefill 吞吐(tok/s)、decode 速度(tok/s)、端到端延时；
+  - **成功/OOM**。
+- 复用/参考 `run/` 下既有 SGLang 长上下文脚本（`benchmark_p911_sglang.py`、`p911d_sglang_vram_bench.py`、`start_sglang_*.sh` 等），不足再新建。
+
+**③ 报告（中文 HTML）**
+- `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（自包含）。
+- **对比表**：三模型 × 各上下文档 的显存/速度/延时/OOM 点；突出「最大可服务上下文长度」与「同长度最快的模型」。
+- 附：实验环境（GPU/驱动/SGLang 版本）、每模型复现命令、结论与建议。commit `pretrain eval:`。
+
+**④ 纪律**：评测在 .29（8×H100 已空）；🚫 不碰 vision(.12)/data/harness；每个数字溯源到脚本输出/log；不伪造。
+
 ### 📄 运维指令 · 2026-10-23（**写 decay 修复完整中文 HTML 报告 + 下一步建议**）· 用户直令 · 最高优先
 
 > 用户原话：「pretrain：写个HTML中文报告，包含对下一步实验的建议。」
