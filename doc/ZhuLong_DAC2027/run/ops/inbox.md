@@ -1,13 +1,79 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 110 -->
+<!-- RUN_ID: 111 -->
 
-## RUN_ID 110 — 🔴 用户直令：停 r5e3 → 改 .env 用 zl/zhulong agent → 重启 8090 → 用 glm-5.3-flash 重跑 → 端口 8663/8666/8667/8670
+## RUN_ID 111 — 🔴 用户直令：探活 8663 组 4 端口 run_code（r4 起跑前端口决策）
+
+> 用户直令（2026-10-23 09:1x）：「启动 r4 时尝试使用端口 8663/8666/8667/8670。」
+> **目的**：快速探 8663 组 4 端口 run_code 可用性，结果写 outbox 供 agent 读任务书 09:1x 令决策用哪组端口起 r4。
+> ⚠️ **纯探活，不改 .env、不起 r4、不 regrade**——那些由 agent 按任务书 09:1x 令执行。
+
+```bash
+set -u
+echo "=== RUN_ID 111 | probe 8663 group run_code | $(date '+%F %T') | host=$(hostname) ==="
+echo ""
+echo "=== 8663 组 4 端口 run_code 探活（timeout 15s/端口）==="
+for p in 8663 8666 8667 8670; do
+  T0=$(date +%s%N)
+  R=$(timeout 15 curl -s -m 14 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -z "$R" ]; then
+    echo "PORT $p: FAIL ${MS}ms empty_response"
+  elif echo "$R" | grep -q "breaker\|licence\|unavailable\|consecutive"; then
+    echo "PORT $p: FAIL ${MS}ms breaker_open $(echo "$R" | head -c 100)"
+  elif echo "$R" | grep -q '"response"'; then
+    echo "PORT $p: OK ${MS}ms $(echo "$R" | head -c 60)"
+  else
+    echo "PORT $p: UNKNOWN ${MS}ms $(echo "$R" | head -c 100)"
+  fi
+done
+echo ""
+echo "=== 对照 8650 组 ==="
+for p in 8650 8651 8652 8654; do
+  T0=$(date +%s%N)
+  R=$(timeout 10 curl -s -m 8 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  if [ -z "$R" ]; then
+    echo "PORT $p: FAIL ${MS}ms empty"
+  elif echo "$R" | grep -q '"response"'; then
+    echo "PORT $p: OK ${MS}ms"
+  else
+    echo "PORT $p: FAIL ${MS}ms $(echo "$R" | head -c 80)"
+  fi
+done
+echo ""
+echo "=== VERDICT ==="
+N8663=0
+for p in 8663 8666 8667 8670; do
+  T0=$(date +%s%N)
+  R=$(timeout 15 curl -s -m 14 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  T1=$(date +%s%N); MS=$(( (T1-T0)/1000000 ))
+  echo "$R" | grep -q '"response"' && N8663=$((N8663+1))
+done
+if [ "$N8663" -eq 4 ]; then
+  echo "8663_GROUP: ALL_4_OK_use_for_r4"
+else
+  echo "8663_GROUP: ONLY_${N8663}_OF_4_OK_fallback_8650_group"
+fi
+echo ""
+echo "=== r3 status (batch 2026_1023_072528) ==="
+DIR=/home/app.e0031982/eda_code_eval/2026_1023_072528
+echo "task_dirs=$(ls -d $DIR/code/*/ 2>/dev/null | wc -l) py_total=$(find $DIR/code -name '*.py' 2>/dev/null | wc -l) queue=$(wc -l < $DIR/.task_queue 2>/dev/null) workers=$(pgrep -af 2026_1023_072528 2>/dev/null | grep timeout | grep -v grep | wc -l)"
+echo "regrade_log=$(ls -la /tmp/ABL_glm-5.3-flash_zl_r3_regrade.log 2>/dev/null | awk '{print $5,$6,$7,$8}')"
+echo ""
+echo "=== DONE 111 ==="
+```
+
+> ⛔ *历史命令往后追加，RUN_ID +1 后把旧块降级为 ```text。*
+
+---
+
+## RUN_ID 110 — 🔴 用户直令：停 r5e3 → 改 .env 用 zl/zhulong agent → 重启 8090 → 用 glm-5.3-flash 重跑 → 端口 8663/8666/8667/8670【历史·已执行】
 
 > 用户直令（2026-10-23 00:3x）：「1.zhulong 评测停下 2.重启一轮评测。使用模型 glm-5.3-flash 3.修改 eda_fastmcp/.env，将 cli agent 改成 zl 或 zhulong；重启8090端口的mcp服务.确保评测通过 zl 调用智能体 4.沙盒端口使用 8663/8666/8667/8670」
 > **背景**：r5e3 已跑 T+12h+ 仅 77.8%（9.7 tasks/h，远低于 r4 的 ~32/h），用户判定不可接受，停掉重跑。
 > ⚠️ **本块只做①停 + ②改配置 + ③重启 8090 + ④报状态**；真正起新一轮评测由 ZhuLong agent 按 MEMORY 接力（含 PYTHON 等前置校验）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 110 | stop r5e3 + switch agent to zl/zhulong + restart 8090 | $(date '+%F %T') | host=$(hostname) ==="
 BASE=/nasdata/app.e0031982/code/eda_fastmcp
@@ -69,7 +135,7 @@ echo "=== DONE 110 ==="
 
 > 用户令：「查看进展」。r5e3 跑了 3h41m，agent 报 41dirs/40.py(97.6%)。实测真实进度 + 磁盘 + 健康计数。
 
-```bash
+```text
 echo "=== RUN_ID 109 | r5e3 进度 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r5e3 进程"
@@ -308,7 +374,7 @@ echo "=== DONE 105 ==="
 
 > 用户令：「查看进展」。agent 心跳 16:31 仍显示 r4e 未收口，实测当前状态。
 
-```bash
+```text
 echo "=== RUN_ID 104 | 进展实测 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo "[1] r4e 主进程"
