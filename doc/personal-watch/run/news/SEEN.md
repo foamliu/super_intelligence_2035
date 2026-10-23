@@ -1010,3 +1010,23 @@
 | 2026-10-23 | MiniMax M3.1 Flash 拿下 Agent 任务第一（AI科技评论实测 · AA 智能指数 43 分 / 上代 M3 29 分 · Automation-Bench 第一） | 今日头条 | analysis（媒体实测 · 模型发布日 10-19 已入账 ⇒ 不重复计入 news · 数据留档） | https://www.toutiao.com/article/7699269235975844386/ |
 | 2026-10-23 | 谁在养活 Anthropic？（钛媒体/脑极体 · 转引路透社收入与云收入占比） | 今日头条 | analysis（专栏分析 · 转引数据未取得原文 ⇒ 不采信、不转写） | https://www.toutiao.com/article/7699364257556075035/ |
 | 2026-10-23 | （标题级线索 · 正文未核）AI 把互联网埋了 14 年的雷挖出来了 | 今日头条 | 线索（疑与已入账 N124-1 PHP2Shell 重叠 ⇒ 不开新条，核后判断） | https://www.toutiao.com/ |
+| 2026-10-23 | MiniMax 开源 M3.1 Flash 权重（总参数 428B / 激活 23B · 10-19 上线 72h 处理超 100 万亿 Token · 开源首日接入 10 家芯片厂 + 7 个推理云平台） | IT之家（厂商口径） | news | https://www.ithome.com/1/016/800.htm |
+| 2026-10-23 | TrendForce：2027 年服务器 CPU 出货预计年增逾 40%、Arm 市占可望 30%（CPU:GPU 配比由 1:8 走向 1:2 甚至 1:1 · 2026 年增 31% · Arm 2026 破 20%） | TrendForce 集邦咨询（一手） | news | https://www.trendforce.cn/presscenter/news/20261022-13278.html |
+| 2026-10-23 | TrendForce 同事件转述（IT之家 `1/016/801`） | IT之家 | news（同事件 · 不重复计数） | https://www.ithome.com/1/016/801.htm |
+| 2026-10-23 | METR 与 Redwood Research 首次「嵌入式」评估 OpenAI 内部监控：一项漏洞致智能体数百次操作逃过监控、Codex 存在绕过限制潜在途径（7-21~8-11 · 61 页报告仅公开概要 · 修复有效性未核实） | IT之家（据路透社 10-22） | news | https://www.ithome.com/1/016/781.htm |
+| 2026-10-23 | Anthropic、OpenAI、SpaceX 被报酝酿近 3000 亿美元「财富捐赠」（Anthropic 捐 5% 股份 / 创始人捐 80% 个人财富 · 多为未上市股权与未来承诺） | IT之家（据《华盛顿邮报》10-22） | news | https://www.ithome.com/1/016/799.htm |
+| 2026-10-23 | DeepSeek、MiniMax 已顺利履行登记手续，完成开源和海外授权使用 | IT之家（引玉渊谭天） | 线索（主信息为新媒体账号转述 · 下轮优先补核商务部原文） | https://www.ithome.com/1/016/796.htm |
+| 2026-10-23 | 黄仁勋：2029 年不太可能出现内存过剩，英伟达仍会大量使用 | IT之家（据 CNBC） | 不收（高管前景表态 · 无新增可核事件） | https://www.ithome.com/1/016/779.htm |
+| 2026-10-23 | Uber 向 3 万名以上员工开放 ChatGPT Work | OpenAI RSS | 线索（正文 403 第 2 次 · 下轮改走第三方转载） | https://openai.com/index/uber-chatgpt-work-rollout |
+| 2026-10-23 | 苹果 iOS 27.2 Messages 未读角标可排除已静音会话 | IT之家 | 不收（爆料级 · 未发布） | https://www.ithome.com/1/016/805.htm |
+| 2026-10-23 | 苹果 App Store 冬季上线「群组订阅」多席位购买 | IT之家 | 不收（平台功能公告 · 非 AI） | https://www.ithome.com/1/016/791.htm |
+| 2026-10-23 | SpaceX 洽谈租用至少 8 万个通信基站、拟做美国第四大无线运营商 | IT之家（据彭博社） | 不收（知情人士 · 洽谈中） | https://www.ithome.com/1/016/790.htm |
+| 2026-10-23 | 通用汽车：目标让最畅销皮卡与 SUV 实现「脱眼」自动驾驶 | IT之家（据路透社） | 不收（企业目标 · 无车型/时间表） | https://www.ithome.com/1/016/784.htm |
+| 2026-10-23 | OpenAI 融资磋商进入尾声，目标估值下调至 1.25 万亿美元 | IT之家（据彭博社） | 不收（融资传闻 · L3 冻结） | https://www.ithome.com/1/016/782.htm |
+| 2026-10-23 | 美财长贝森特：AI 行业不会重演互联网泡沫破裂 | IT之家（据 FT） | 不收（官员表态 · 私人会议转述） | https://www.ithome.com/1/016/795.htm |
+| 2026-10-23 | Arc 浏览器 12 月 22 日停运，团队转向 AI 浏览器 Dia | IT之家 | 不收（产品生命周期 · 与 AI 弱相关） | https://www.ithome.com/1/016/780.htm |
+| 2026-10-23 | 工信部：我国已初步构建智能网联汽车政策管理体系 | IT之家（据央视新闻） | 不收（会议表态 + 既有成绩汇总） | https://www.ithome.com/1/016/787.htm |
+| 2026-10-23 | 西藏那曲巴青县 7.0 级地震（已致 16 人遇难 54 人受伤 · 应急响应三级）+ 习近平重要指示 + 青海玉树 3.4 级 + 台风蔷琵 | 央视网 / 中新网 | 不收（突发伤亡 + 时政 · 同时排除评论候选） | https://www.chinanews.com.cn/sh/2026/10-23/10719507.shtml |
+| 2026-10-23 | 美国太空军选定 6 家商业公司做太空态势感知（CASR） | IT之家 | 不收（军事） | https://www.ithome.com/1/016/794.htm |
+| 2026-10-23 | Valve 开发者 GameSoundCon 首次公开提及 HLX 代号 | IT之家（据 pcgamer） | 不收（游戏传闻） | https://www.ithome.com/1/016/783.htm |
+| 2026-10-23 | 湖南中医药大学原党委书记戴爱国接受审查调查 · 年轻人谎报 120 | 央视网 / 中新网 | 不收（司法个案） | https://news.cctv.com/2026/10/23/ARTI9FodQI3sWfRfC4NqcLSl261023.shtml |
