@@ -6,30 +6,17 @@
 
 \subsubsection{Research Questions}
 
-The framework of Section~\ref{sec:grounding-theory} makes three testable claims: that the grounding gap is bounded by observation fidelity rather than by the prior; that bridging it requires a runtime architecture supplying observation, belief update and execution; and that this follows from the domain's structure rather than from one toolchain. We ask one research question per claim.
-% 第~\ref{sec:grounding-theory}节的框架给出三条可检验主张：落地鸿沟受观测保真度而非先验约束；
-% 弥合它需要一个同时提供观测、信念更新与执行的运行时架构；这一点源于领域结构而非某个工具链。
-% 我们针对每条主张提出一个研究问题。
-
+The framework of Section~\ref{sec:grounding-theory} makes three testable claims, one per research question:
 \begin{itemize}
-\item \textbf{RQ1 (Ceiling: observation or prior?).} Is the achievable accuracy bounded by the fidelity of the observation channel $\Omega$, or by the strength of the frozen prior $\mathcal{K}$? We answer from both sides: the observation-fidelity ladders (S1) vary $\Omega$ with the LLM fixed, and the prior-axis contrast (S3) varies $\mathcal{K}$ with the harness fixed.
-\item \textbf{RQ2 (Which components are necessary, and are they interchangeable?).} Does bridging the gap require observation, execution through a causal interface, and continuous belief update---and can one of the three substitute for another? S2 varies the effector's presence and the belief-update budget.
-\item \textbf{RQ3 (Domain class or toolchain?).} Does the same structure reproduce on a structurally different toolchain? The protocol of S1--S2 is re-run on the SKILL and Tcl slices of \textbf{EDA-Scripting-Bench}, so the comparison is made \emph{within} one benchmark rather than across separate artifacts.
+\item \textbf{RQ1 (Ceiling: observation or prior?).} Is accuracy bounded by $\Omega$'s fidelity or by $\mathcal{K}$'s strength? S1 varies $\Omega$ (LLM fixed); S3 varies $\mathcal{K}$ (harness fixed).
+\item \textbf{RQ2 (Which components are necessary, and interchangeable?).} Does bridging the gap require observation, a causal effector, and continuous $\Phi$? S2 varies the effector and the belief-update budget.
+\item \textbf{RQ3 (Domain class or toolchain?).} Does the same structure reproduce on a structurally different toolchain? S1--S2 are re-run on the SKILL and Tcl slices of \textbf{EDA-Scripting-Bench}.
 \end{itemize}
-% RQ1（天花板：观测还是先验？）可达准确率受观测通道$\Omega$的保真度约束，还是受冻结先验$\mathcal{K}$的强度约束？
-% 我们从两侧回答：保真度阶梯（S1）固定LLM改变$\Omega$；先验轴对照（S3）固定框架改变$\mathcal{K}$。
-% RQ2（哪些组件是必要的？它们可互换吗？）弥合鸿沟是否同时需要观测、经由因果接口的执行、以及持续的信念更新？
-% 三者能否相互替代？S2改变执行器是否在场与信念更新预算。
-% RQ3（领域类还是工具链？）同一结构能否在结构不同的工具链上复现？
-% S1–S2的协议在EDA-Scripting-Bench的SKILL与Tcl切片上重跑，因此比较发生在同一评测集内部，而非跨不同工件。
-
-RQ1 and RQ2 test the framework's structural claims; RQ3 tests whether they follow from the domain's structure rather than from one toolchain. Because RQ1's two arms sit in different studies, we read them against each other rather than in isolation.
-% RQ1与RQ2检验框架的结构性主张；RQ3检验这些主张是否源于领域结构而非某个工具链。
-% 由于RQ1的两个臂分布在不同研究中，我们将其相互对照而非单独解读。
+RQ1 and RQ2 test the structural claims; RQ3 tests whether they follow from the domain's structure rather than from one toolchain.
 
 \subsubsection{Benchmark and Evaluation Protocol}
 
-We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, 158 real-world PyAether scripting tasks, using \textbf{Pass@1} as the primary metric. Each task runs in a single trace with per-execution timeout 2500\,s; the agent may iterate within a trace via $\Phi$ but is never restarted. A file-based \texttt{PreToolUse} hook enforces a tool whitelist, blocks shell/code-search, and confines file access to a fresh empty workspace, so neither task assertions nor solution copies are reachable; the hook is identical across all arms (details in Appendix). Each configuration is evaluated over five independent runs with reshuffled task order; accuracy is mean$\pm$std. Trace-aggregated quantities (read-back counts, tool-call totals) are single pooled values; effect sizes ($\Delta$) use table means. Generation-stage failures (no executable code produced) are reported separately from execution-stage failures. Runs suffering infrastructure faults (license exhaustion, port unreachable, insufficient disk) are discarded and re-run. The full-system anchor must reach $\geq$75\% Pass@1 as a health floor; ablation arms have no such floor. All figures are on the PyAether slice; cross-language results in Section~\ref{sec:cross-language}.
+We evaluate ZhuLong on \textbf{EDA-Eval-PyAether} (158 tasks) using \textbf{Pass@1} as the primary metric. Each task runs in a single trace with per-execution timeout 2500\,s; the agent may iterate within a trace via $\Phi$ but is never restarted. A file-based \texttt{PreToolUse} hook enforces a tool whitelist, blocks shell/code-search, and confines file access to a fresh empty workspace (identical across all arms). Each configuration is evaluated over five independent runs with reshuffled task order; accuracy is mean$\pm$std. Generation-stage failures (no executable code) are reported separately from execution-stage failures. Runs with infrastructure faults are discarded and re-run; the full-system anchor must reach $\geq$75\% Pass@1 as a health floor. All figures are on the PyAether slice; cross-language results in Section~\ref{sec:cross-language}.
 % 评测集与评估协议。我们在\textbf{EDA-Eval-PyAether}上评估ZhuLong，该评测集包含158个真实PyAether脚本任务。
 % 遵循第\ref{sec:benchmark}节定义的评估协议，我们采用\textbf{Pass@1}（执行成功率）作为主要指标。
 % 每个任务只在单条trace上评测：智能体可在该trace内通过信念更新$\Phi$（第\ref{sec:agent-workflow}节）反复迭代，
@@ -144,58 +131,27 @@ The documentation axis is non-monotone: (L) at 82.8\% exceeds (H) at 72.2\%. Thi
 % 因此我们比较仅在此处不同的三个闭环变体：(N) 无观测、(B) 二值反馈、(F) 全观测。框架预测从(N)到(F)单调增益，
 % fresh 5-run 实测排序为 N' < B < F；早期 legacy 探路曾出现相反排序，下文分析。
 
-Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution read-backs per variant.
-% 表~\ref{tab:ablation-harness}报告各变体的 Pass@1 与平均信念更新轮数。
+Table~\ref{tab:readback} reports Pass@1 together with the convergence cost (mean \texttt{run\_code} calls, wall-clock, timed-out tasks) per variant.
 
 \begin{table}[htbp]
 \centering
-\caption{Observation-fidelity ablation along the read-back axis (RQ: Principle 2)}
-\label{tab:ablation-harness}
-\small
-\begin{tabular}{@{}lcc@{}}
-\toprule
-\textbf{Observation channel ($\Omega$)} & \textbf{Pass@1 (\%)} & \textbf{Mean read-backs} \\
-\midrule
-(N$'$) None (prior only) & 73.3 $\pm$ 2.2 & ---$^{\dagger}$ \\
-(B) Binary pass/fail & 78.1 $\pm$ 1.3 & 22.3 \\
-(F) Full observation & 81.4 $\pm$ 1.5 & 12.1 \\
-\bottomrule
-\end{tabular}
-\end{table}
-% 表：回读轴上的观测保真度消融（原则2）。(N$'$) Pass@1 = 73.3$\pm$2.2 为 legacy 5-run 值（std=2.2 可信，未重测）；(B) Pass@1 = 78.1$\pm$1.3 为 fresh 5-run 重测值（2026-10-15~16，替换 legacy 66.2$\pm$16.1 std 过大含 43.0% 离群）；(F) Pass@1 = 81.4$\pm$1.5 为 5-run 锚点。$^{\dagger}$ echo measurements aggregated from retained execution traces (see Table~\ref{tab:readback-cost}): (F) and (B) are each the mean of 5 runs with retained traces; (N$'$) traces were discarded during an earlier storage crisis and are not recoverable. (N$'$) denotes the read-back axis (no observation of live state), distinct from (N) in Table~\ref{tab:omega} (no observation channel at all).
-
-The results recover the predicted monotone ordering: (N$'$) $73.3\pm2.2\%$ $<$ (B) $78.1\pm1.3\%$ $<$ (F) $81.4\pm1.5\%$. N$'$\,$\to$\,B (+4.8~pp) is the gain from learning whether a run passes at all; B\,$\to$\,F (+3.3~pp) is the further gain from seeing the concrete error that turns a categorical verdict into actionable evidence.\footnote{An earlier legacy probe of the (B) arm showed an N$'$-over-B inversion (66.2$\pm$16.1\%, one anomalous run at 43.0\%); the fresh 5-run re-measurement collapses the spread to $\pm$1.3 and restores the predicted ordering, confirming the dip was an instability artifact.}
-% 结果恢复回读轴的预期单调排序：(N')无反馈(73.3±2.2%) < (B)二值pass/fail(78.1±1.3%) < (F)全观测(81.4±1.5%)，
-% 每增加一档观测带宽都提升 Pass@1，符合原则2。早期 legacy (B) 探路曾显示 N'优于B 的反转(66.2±16.1%，含43.0%离群)；
-% fresh 5-run 重测将离散压至±1.3 并恢复预期排序，证实 legacy 低谷为不稳定假象而非稳定上限。
-% N'→B(+4.8pp)=获知运行是否通过的价值；B→F(+4.0pp)=进一步看到具体错误(类型不匹配/状态缺失/返回值错误)的价值；
-% N'→F(+8.8pp)衡量"信息性"观测的完整实操价值。(B) 表明部分反馈已捕获大部分价值——
-% 二值 pass/fail 足以剪枝错误假设，但只有全观测才暴露需应用的修正。
-
-Beyond accuracy, the read-back rungs differ sharply in \emph{convergence cost} (Table~\ref{tab:readback-cost}). Dropping from (F) to (B) inflates mean \texttt{run\_code} calls from 12.1 to 22.3 ($\sim$1.8$\times$), wall-clock from 2.22~h to 3.73~h ($\sim$1.7$\times$), and timed-out tasks from 3.4 to 7.6 ($\sim$2.2$\times$): under (B) the agent learns only pass/fail with empty error logs, so it must hypothesize corrections blind and re-execute---one (B) trace issues 287 \texttt{run\_code} calls on a single task. This is the cost-side counterpart of the accuracy result: poorer observation inflates the search effort needed to converge, exactly the ``fidelity down $\to$ convergence cost up'' trade-off Principle~2 implies.
-% 收敛成本：回读保真度下降不只压低准确率，更抬高收敛所需执行量。(F)→(B)：平均 run_code 12.1→22.3(~1.8×)、
-% code-gen 墙钟 2.22h→3.73h(~1.7×)、超时任务 3.4→7.6(~2.2×)。(B) 下每次执行只回 PASS/FAIL 且 error_log 为空，
-% agent 必须盲猜修正再执行；单条 (B) trace 在一个任务上调用 287 次 run_code（5-run 中最大达 299）。(N') 成本数据因早期存储迁移
-% 丢失且其墙钟受同期 infra 故障混淆，不可恢复；5-run 复测将用干净 trace 补齐。
-
-\begin{table}[htbp]
-\centering
-\caption{Convergence cost along the read-back axis (LLM and effector fixed). (N$'$) cost is not recoverable (traces discarded in a storage migration); comparison restricted to (F) vs.\ (B).}
-\label{tab:readback-cost}
+\caption{Read-back axis: accuracy and convergence cost (LLM and effector fixed). (N$'$) cost is not recoverable (traces discarded in a storage migration); (F)/(B) cost columns are 5-run means $\pm$ sample std.}
+\label{tab:readback}
 \small
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 \textbf{Read-back} & \textbf{Pass@1 (\%)} & \textbf{Mean \texttt{run\_code}} & \textbf{Wall (h)} & \textbf{Timeout} \\
 \midrule
-(F) Full & 81.4 $\pm$ 1.5 & 12.1 & 2.22 & 3.4$^{\ast}$ \\
-(B) Binary & 78.1 $\pm$ 1.3 & 22.3 $\pm$ 3.3 & 3.73 $\pm$ 0.72 & 7.6 $\pm$ 3.4 \\
-(N$'$) None & 73.3 $\pm$ 2.2 & \multicolumn{3}{c}{not recoverable$^{\dagger}$} \\
+(N$'$) None (prior only) & 73.3 $\pm$ 2.2 & \multicolumn{3}{c}{not recoverable$^{\dagger}$} \\
+(B) Binary pass/fail & 78.1 $\pm$ 1.3 & 22.3 $\pm$ 3.3 & 3.73 $\pm$ 0.72 & 7.6 $\pm$ 3.4 \\
+(F) Full observation & 81.4 $\pm$ 1.5 & 12.1 & 2.22 & 3.4$^{\ast}$ \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-\footnotesize $^{\ast}$ mean of 5 runs (range 1--6).\quad $^{\dagger}$ (N$'$) traces discarded; cost not imputed.\quad (B) columns are 5-run means $\pm$ sample std.
+\footnotesize $^{\ast}$ mean of 5 runs (range 1--6).\quad $^{\dagger}$ (N$'$) traces discarded; cost not imputed.
 \end{table}
-% 表：回读轴收敛成本。(F) 成本为 5 轮 full 均值；(B) 成本为 fresh 5-run（保留 trace）均值±样本 std，Pass@1 同为 5-run 均值±std；(N') Pass@1 为 legacy 5-run 均值，但 trace 随存储迁移丢失、墙钟受同期 infra 故障混淆，故成本不插补、不报告。
+
+The results recover the predicted monotone ordering (N$'$)$<$(B)$<$(F): N$'$\,$\to$\,B (+4.8~pp) is the gain from learning whether a run passes at all; B\,$\to$\,F (+3.3~pp) is the further gain from seeing the concrete error.\footnote{An earlier legacy probe of the (B) arm showed an N$'$-over-B inversion (66.2$\pm$16.1\%, one anomalous run at 43.0\%); the fresh 5-run re-measurement collapses the spread to $\pm$1.3 and restores the predicted ordering.} Convergence cost moves oppositely: dropping (F)$\to$(B) inflates mean \texttt{run\_code} calls $\sim$1.8$\times$ (12.1$\to$22.3), wall-clock $\sim$1.7$\times$ (2.22$\to$3.73\,h), and timed-out tasks $\sim$2.2$\times$ (3.4$\to$7.6)---the ``fidelity down $\to$ convergence cost up'' trade-off Principle~2 implies.
 
 \subsubsection{S2: The closed loop (RQ2)}
 \label{sec:closed-loop}
@@ -319,62 +275,11 @@ The qualitative structure reproduces across all three languages: the full system
 \label{sec:error-analysis}
 % 错误分析
 
-To characterize failure modes, we inspected a representative trace from the full-system 5-run set---the run whose Pass@1 (81.6\%, 129/158) is closest to the 5-run mean (81.4$\pm$1.5\%, Table~\ref{tab:main-ablation}). The 29 failures comprise 17 generation-stage failures (no executable code produced) and 12 execution-stage failures (code ran but assertions failed). We classify the 12 execution-stage failures by the L1--L4 information hierarchy of Section~\ref{sec:grounding-theory}: L1 (syntactic/API-name errors), L2 (parameter/signature errors), L3 (semantic/logic errors), and L4 (situated truthfulness violations---hidden type contracts, internal selection state, layout-dependent preconditions that no offline knowledge can resolve).
-% 为刻画失败模式，我们检查了 full-system 5-run 集合中的一条代表性 trace——Pass@1 (81.6%, 129/158) 最接近 5-run 均值 (81.4±1.5%) 的那轮。29 个失败包含 17 个生成阶段失败（未产出可执行代码）和 12 个执行阶段失败（代码运行但断言未通过）。我们按 §4 的 L1–L4 信息层次对 12 个执行阶段失败分类。
+To characterize failure modes, we inspected a representative trace from the full-system 5-run set---the run whose Pass@1 (81.6\%, 129/158) is closest to the 5-run mean (81.4$\pm$1.5\%). The 29 failures comprise 17 generation-stage failures (no executable code produced) and 12 execution-stage failures, classified by the L1--L4 hierarchy of Section~\ref{sec:grounding-theory}.
 
-\begin{table}[t]
-\centering
-\caption{Failure classification for the representative trace (129/158 pass, 29 fail). Execution-stage failures are classified by the L1--L4 hierarchy of Section~\ref{sec:grounding-theory}. Generation-stage failures are broken down by cause.}
-\label{tab:error-categories}
-\small
-\begin{tabular}{lcc}
-\toprule
-\textbf{Category} & \textbf{Count} & \textbf{Example Tasks} \\
-\midrule
-\multicolumn{3}{l}{\textit{Execution-stage failures (12)}} \\
-\quad L1: Syntactic / API-name & 0 & --- \\
-\quad L2: Parameter / signature & 0 & --- \\
-\quad L3: Semantic / logic & 4 & 017, 052, 058, 144 \\
-\quad L4: Situated / design-state & 8 & 010, 063, 068, 074, \\
- & & 109, 142, 146, 155 \\
-\midrule
-\multicolumn{3}{l}{\textit{Generation-stage failures (17)}} \\
-\quad Timeout ($>$2500\,s) & 4 & 105, 123, 124, 129 \\
-\quad Wrong save path & 10 & 104, 106, 118, 119, \\
- & & 128, 131, 145, 152, 158 \\
-\quad No code produced & 3 & 013, 072, 120 \\
-\bottomrule
-\end{tabular}
-\end{table}
-% 表：代表性 trace 的失败分类（129/158 通过，29 失败）。执行阶段失败按 §4 的 L1–L4 层次分类；生成阶段失败按原因分解。
+The dominant execution-stage failure mode is \textbf{L4} (8/12, 67\%): situated truthfulness violations that no offline knowledge can prevent---the code is syntactically correct (L1), uses documented APIs with plausible arguments (L2--L3), yet fails because it violates an \emph{undocumented} binding contract, depends on an internal selection state, or assumes a runtime context that does not hold. For example, Task 010 (\texttt{add\_instance\_to\_schematic}) executes and passes the agent's own assertions, yet the official harness rejects it: \texttt{target\_cv must be an opened cellview object}---an L4 property of the live design state, not of the API signature. Tasks 063, 074, 146, 155 follow analogous patterns (hidden type names, attributes absent in the test path, GUI-dependent return values). The remaining execution-stage failures are \textbf{L3} (4/12, 33\%): valid APIs composed with incorrect logic (Task 052 substitutes a custom validator for the mandated call; Task 058 uses substring matching instead of equality). \textbf{L1/L2 = 0\%}.
 
-The dominant failure mode is L4: 8 of 12 execution-stage failures (67\%) are situated truthfulness violations that no amount of offline knowledge can prevent---the code is syntactically correct (L1), uses documented APIs with plausible arguments (L2--L3), yet fails because it violates an undocumented binding contract, depends on an internal selection state, or assumes a runtime context that does not hold. This directly supports the grounding-gap framework: the correctness criterion is an L4 property, and execution is the only channel that can observe the current design state.
-% 主导失败模式为 L4：12 个执行阶段失败中 8 个（67%）为情境真实性违反，离线知识无法防止——代码语法正确（L1）、使用已文档化 API 且参数合理（L2–L3），但因违反未文档化的绑定契约、依赖内部选中状态、或假设了不成立的运行时上下文而失败。这直接支持落地鸿沟框架。
+The 17 generation-stage failures are timeout (4), wrong save path (10, saving to \texttt{ws/} instead of \texttt{ws/pyAether\_code/}---a procedural error amenable to harness-level mitigation), and no code produced (3).
 
-\subsubsection{L4: Situated truthfulness violations.}
-% L4：情境真实性违反
-
-The agent selects the correct API family and the code executes, but the result violates an undocumented contract that the bindings enforce or the test oracle checks---hidden type expectations, internal state dependencies, or runtime-context preconditions invisible in documentation.
-
-\textit{Case study: Task 010 (add\_instance\_to\_schematic).} The agent's code creates a schematic instance and its own \texttt{run\_code} tests report ``ALL ASSERTIONS PASSED,'' yet the official harness fails: \texttt{target\_cv must be an opened cellview object.} The agent passed a handle valid in its own context but not satisfying the ``opened'' precondition---an L4 property of the live design state, not of the API signature (L3).
-
-\textit{Tasks 063, 146, 074, 155} follow analogous patterns: correct API calls that return internal type names depending on which binding representation is exposed, attributes that exist in documentation but not in the test's execution path, self-invented wrappers for C++ types documentation doesn't show how to construct, and return values that depend on whether a GUI draw area is active---all situated properties observable only through execution.
-\subsubsection{L3: Semantic and logic errors.}
-
-The agent selects valid APIs and the code executes without runtime errors, but the composition logic---parameter propagation, post-processing, or control flow---fails the oracle. \textit{Task 052}: the agent replaced the mandated \texttt{EmyNtlUtil.checkViewList} call with a custom Python validator that returned an error on the harness's configuration. \textit{Task 058}: substring matching (\texttt{"high" in queue\_name}) was used instead of the required equality check. Tasks 017 (instance-counting returns 0) and 144 (property set to \texttt{None}) follow the same pattern: valid API calls composed with incorrect logic.
-
-
-% L3 案例：任务 052 用自定义校验器替代强制库调用；任务 058 用子串匹配替代相等性检查。其余 L3：任务 017（实例计数逻辑返回 0）、任务 144（属性设为 None）——有效 API 调用组合了错误逻辑。
-
-\subsubsection{Generation-stage failures.}
-% 生成阶段失败
-
-The 17 generation-stage failures fall into three categories (Table~\ref{tab:error-categories}): \emph{timeout} (4 tasks exceeding 2500\,s on complex multi-step tasks), \emph{wrong save path} (10 tasks saving to \texttt{ws/} instead of \texttt{ws/pyAether\_code/}), and \emph{no code produced} (3 tasks). The wrong-save-path failures are notable: the code is likely correct but lost the point on a procedural (L1) error, amenable to harness-level mitigation rather than knowledge improvement.
-% 17 个生成阶段失败分为三类：超时（4个，24–41 API 复杂任务超 2500s）、错误保存路径（10个，存到 ws/ 而非 ws/pyAether_code/）、未产出代码（3个）。错误保存路径值得注意：代码可能正确但因程序性错误失分——L1 级失败而非 L4，可通过框架层面缓解。
-
-\subsubsection{Implications.}
-% 启示
-
-The L1--L4 classification makes the grounding-gap framework concrete: 67\% of execution-stage failures are L4 (situated truthfulness), 33\% are L3, and 0\% are L1/L2. No offline knowledge can prevent L4 failures---the violated contracts are invisible until the agent acts on the live design and reads back the result. This is why the execution loop is decisive: the sandbox is the only channel through which the agent can observe hidden type contracts, internal selection states, and runtime-context dependencies. These findings motivate type-aware API documentation and case-level knowledge distillation for agent self-evolution.
-% L1–L4 分类使落地鸿沟框架具体化：执行阶段失败中 67% 为 L4，33% 为 L3，0% 为 L1 或 L2。无论多少离线知识都无法防止 L4 失败。这正是执行闭环决定性的原因：沙盒是观测隐藏类型契约、内部选中状态、运行时上下文依赖的唯一通道。生成阶段失败多为程序性或预算受限，可通过框架层面修复。这些发现推动了类型感知 API 文档和案例级知识蒸馏。
+The L1--L4 classification makes the grounding-gap framework concrete: 67\% of execution-stage failures are L4, invisible until the agent acts on the live design and reads back the result. This is why the execution loop is decisive: the sandbox is the only channel through which the agent can observe hidden type contracts, internal selection states, and runtime-context dependencies. These findings motivate type-aware API documentation and case-level knowledge distillation.
 
