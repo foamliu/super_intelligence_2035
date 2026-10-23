@@ -517,3 +517,28 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 **产出**：写入 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 的 P-3 节 + 更新「论文回填建议」，
 明确指出 `tab:archcomp` 该改成什么。**时间盒 ≤1h。**
 
+
+
+## 📦 唤醒流水指针搬迁（2026-10-17 从 MEMORY 归档 #349~#416）
+
+  > 📦 **[已归档] #416 流水（2026-10-14 ~11:23, P-8 监控·step9130 · loss 新低 2.470327）→ daily-memories/2026-10-14.md；结论：step9130 loss min=2.470327@9070 新低, decay 切换≈1.5h, decay脚本就绪。需要时再读。**
+  > 📦 **[已归档] #415 流水（2026-10-14 ~10:45, P-8 监控·step8990 + TASK归档 + 4094→4096记录修正）→ daily-memories/2026-10-14.md；结论：step8990 loss min=2.473512新低, TASK归档至30.6KB, 4094→4096口径修正完成。需要时再读。**
+  > 📦 **[已归档] #414 流水（2026-10-14 ~10:05, ✍️ 论文改稿执行 H1-H4+S1-S10 + P-8 监控·step8850）→ daily-memories/2026-10-14.md；结论：论文改稿全完成 H1-H4+S1-S10 (commit 75963f3d, 11pp 0-error ✅)。需要时再读。**
+  > 📦 **[已归档] #413 流水（2026-10-14 ~09:00, 📝 论文审视 HTML + P-8 监控·step8510）→ daily-memories/2026-10-14.md；结论：4项🔴硬伤+10项🟠建议+3项🟢可回填报告已交付(26.5KB)，未改.tex。需要时再读。**
+  > 📦 **[已归档] #412 流水（2026-10-14 ~08:26, P-8 AdamW 监控·step8510 · loss 2.4911 min=2.481677 81%完成）→ daily-memories/2026-10-14.md；结论：step8510 loss=2.486300, last10 avg=2.4911, min=2.481677@8400, ckpt@8392 latest, v3报告在origin/main。需要时再读。**
+  > 📦 **[已归档] #411 流水（2026-10-14 ~07:50, P-8 AdamW 监控·step8380 · loss last10 avg=2.4925 min=2.485127 新低 79.9% 完成）→ daily-memories/2026-10-14.md；结论：step8380 loss=2.493447, last10 avg=2.4925, min=2.485127@8330, ckpt@7343→8392 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #410 流水（2026-10-14 ~07:17, P-8 AdamW 监控·step8260 · loss last10 avg=2.4979 min=2.489893 新低 78.7% 完成）→ daily-memories/2026-10-14.md；结论：step8260 loss=2.497740, last10 avg=2.4979, min=2.489893@8220, ckpt@7343 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #409 流水（2026-10-14 ~06:41, P-8 AdamW 监控·step8140 · loss last10 avg=2.5015 min=2.494125 新低 77.7% 完成）→ daily-memories/2026-10-14.md；结论：step8140 loss=2.506750, last10 avg=2.5015, min=2.494125@8120, ckpt@7343 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #407 流水（2026-10-14 ~05:32, P-8 AdamW 监控·step7890 · loss last10 avg=2.512 min=2.5048 新低 75.1% 完成）→ daily-memories/2026-10-14.md；结论：step7890 loss=2.508890, last10 avg=2.512, min=2.504840@7870, ckpt@7343 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #406 流水（2026-10-14 ~04:59, P-8 AdamW 监控·step7770 · loss last10 avg=2.514 min=2.5081 新低 74.1% 完成）→ daily-memories/2026-10-14.md；结论：step7770 loss=2.5098, last10 avg=2.514, min=2.5081@7710, ckpt@7343 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #405 流水（2026-10-14 ~04:23, P-8 AdamW 监控·step7650 · loss last10 avg=2.520 min=2.5132 新低 73.0% 完成）→ daily-memories/2026-10-14.md；结论：step7650 loss=2.5132, last10 avg=2.520, min=2.5132, ckpt@7343 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #403 流水（2026-10-14 ~03:17, P-8 AdamW 监控·step7410 · loss last10 avg=2.525 min=2.5186 新低 70.6% 完成）→ daily-memories/2026-10-14.md；结论：step7410 loss=2.5268, last10 avg=2.525, ckpt@7343 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #402 流水（2026-10-14 ~02:42, P-8 AdamW 监控·step7290 · loss last10 avg=2.529 min=2.519 69.4% 完成）→ daily-memories/2026-10-14.md；结论：step7290 loss=2.5318, last10 avg=2.529, ckpt@6294 latest, v3 报告在 origin/main。需要时再读。**
+  > 📦 **[已归档] #401 流水（2026-10-14 ~02:10, P-8 AdamW 监控·step7172 · loss last10 avg=2.526 min=2.504 新低 68.4% 完成）→ daily-memories/2026-10-14.md；结论：step7172 loss=2.5441, last10 avg=2.526, v3 报告确认在 origin/main。需要时再读。**
+  > 📦 **[已归档] #399 流水（2026-10-14 ~01:00, P-8 AdamW 监控·step6920 · loss last10 avg=2.543 min10=2.5375 新低 65.97% 完成）→ daily-memories/2026-10-14.md；结论：step6920 loss=2.5375, last10 avg=2.543, min10=2.5375, v3 报告确认在 origin/main。需要时再读。**
+  > 📦 **[已归档] #398 流水（2026-10-14 ~00:25, P-8 AdamW 监控·step6800 · loss last10 avg=2.553 持续缓降 64.8% 完成）→ daily-memories/2026-10-14.md；结论：step6800 loss=2.5444, last10 avg=2.553, min10=2.540, v3 报告确认在 origin/main。需要时再读。**
+  > 📦 **[已归档] #397 流水（2026-10-13 ~23:49, P-8 AdamW 监控·step6680 · loss last10 avg=2.552 持续缓降 63.7% 完成）→ daily-memories/2026-10-13.md；结论：step6680 loss=2.5488, last10 avg=2.552, v3 报告 commit 280adeac 确认在 origin/main。需要时再读。**
+  > 📦 **[已归档] #396 流水（2026-10-13 ~23:12, P-8 AdamW 监控·step6550 · loss last10 avg=2.560 持续缓降 62.4% 完成）→ daily-memories/2026-10-13.md；结论：step6550 loss=2.5542, last10 avg=2.5600, v3 报告 commit 280adeac 确认在 origin/main。需要时再读。**
+  > 📦 **[已归档] #394 流水（2026-10-13 ~21:00, 📋 v3 正式训练计划重做(实盘盘点口径) · 20.1KB · P-8 AdamW step6251）→ daily-memories/2026-10-13.md；结论：v3 报告 20.1KB ✅ commit 280adeac, 弃300B改实盘9.81TB/2232B token。需要时再读。**
+  > 📦 **[已归档] #393 流水（2026-10-13 ~19:30, v2 正式训练计划 300B · 被否决→v3）→ daily-memories/2026-10-13.md；结论：v2 30.4KB(300B基准) 被用户否决(CSDN无一手依据)。需要时再读。**
+  > 📦 **[已归档] #392 流水（2026-10-13 ~18:35, P-8 监控·step5568 · loss min50=2.566 新低 53.1%）→ daily-memories/2026-10-13.md；结论：step5568 loss=2.578, min50=2.566, ckpt@5245, next@6294。需要时再读。**

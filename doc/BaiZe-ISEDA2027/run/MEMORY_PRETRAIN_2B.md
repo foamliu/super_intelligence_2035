@@ -1,5 +1,11 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 19:2x #753：⏸ 例行唤醒·idle heartbeat·两份2026-10-23报告均已交付·无新指令·在.12(GPU满载vision)**：
+> - 复核确认：① 长上下文推理成本评测报告 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B）已提交 `a04b4503b`；② decay 修复报告 `reports/report_pretrain_decay_repair_zh.html`（23878B）已提交 `ae9e1e780`。两文件均 git tracked + pushed。
+> - 结果复核：BaiZe-2B max 512K/OOM@1M, MiniCPM5-2B max 512K/OOM@1M, Qwen3.5-2B max 1M success/2M skipped。Qwen3.5-2B prefill 全程领先（64K 70.8K vs 24.7K/24.8K tok/s, 512K 20.6K vs 3.6K/4.0K）。
+> - 环境：本机=10.239.2.12（vision机），8×H100 全满载 100% 跑 vision armE_r2（step43240+），**不可做任何GPU实验**。.29 状态未知（未登录）。
+> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=23500B / MEMORY=~31.1KB（均≤32KB✓，本轮归档 0KB）。
 > 🆕 **2026-10-23 18:2x #752：✅ 长上下文推理成本评测·3模型全部完成·HTML报告已生成**：
 > - **Qwen3.5-2B 1M benchmark 成功**：TTFT=89.09s, prefill=11314 tok/s, decode=130.6 tok/s, VRAM=73.16GB。2M 未测（跳过）。
 > - **Qwen3.5-2B 全部上下文结果**：64K(TTFT=0.89s,70.8K tok/s)→128K(2.40s,52.4K)→256K(7.20s,35.0K)→512K(24.45s,20.6K)→1M(89.09s,11.3K)。VRAM 全程 ~73GB。
