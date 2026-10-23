@@ -2,6 +2,22 @@
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 
+### 🆕 运维指令 · 2026-10-23（📄 **比较 7 个 harness 的上下文压缩机制 → 中文 HTML 报告**）· 用户直令 · 最高优先
+
+> 用户原话：「给 harness 下任务：看代码 /nas_train/app.e0031982/harness 比较7个harness的上下文压缩机制，写成html中文报告。」
+
+**① 任务（H-B 源码分析，只读，不跑评测/不占 GPU）**
+- 目标目录：`/nas_train/app.e0031982/harness/`（只读参考，🚫 勿改上游代码）。
+- 7 个 harness（对应 TB 横评 7 路）：`cline` / `codex` / `hermes-agent` / `opencode` / `claude-code` / `deepseek-harness` / `pi`。
+- 主题：**上下文压缩机制（context compaction / compression）**——包括但不限于：摘要(summarization)、截断(truncation)、token budget 管理、auto-compact 触发条件与阈值、压缩后保留/丢弃策略、历史消息折叠、工具调用轨迹裁剪、崩溃/超时恢复。**每条结论贴 `文件:行号` 原文证据，不许猜。**
+
+**② 输出（中文自包含 HTML）**
+- 文件：`reports/report_harness_context_compression_7way_zh.html`（内联样式，无外链/无脚本）。
+- 结构：TL;DR → **对比总表**（每 harness 一行：压缩策略 / 触发阈值 / 保留策略 / 缺陷）→ 逐 harness 详述（带代码证据）→ **结合本项目教训**（我们 harness cline 的 Auto-compacting 超时问题）→ 总结与建议。
+- commit 前缀 `harness hb:`。
+
+**③ 纪律**：只读源码、不跑评测、不占 GPU；报告数字/结论可溯源 `文件:行`；MEMORY/任务书 ≤32KB 自滚归档。
+
 ### 🆕 运维指令 · 2026-10-19 23:1x（🔪 **P0：确认双 harness loop 后 kill `.12` 那个**）· 用户直令 · 最高优先
 
 > 用户令（原文）：「如果确认有两个 harness loop，那么杀掉一个（ .12 的）」
