@@ -72,6 +72,13 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
 - **教训**：① 每轮唤醒先查 `/history` + `/queue` 与落盘数是否一致（`recover_*.py` 报「已回收 X/54」若骤降即为重启迹象）；② 跑批用 `--skip-existing` 幂等可续跑，重启后可一键补投；③ 长跑批中断是常态，判活靠「落盘 mp4 数」而非「队列数」。
 - **状态**：🟠 已补投恢复（本轮）；长期建议（可选）→ 报告运维评估 ComfyUI 队列/历史持久化。
 
+### #9 · ComfyUI 疑似双进程（观察项）—— 🟡 未处置（2026-10-23）
+
+- **现象**：进程表见两个 `main.py --listen 0.0.0.0 --port 8188` —— `E:\code\ComfyUI\venv\Scripts\python.exe`（PID 7148）+ `D:\Python310\python.exe`（PID 7084）。`/system_stats` 返回正常（200 · v0.33.0 · 队列 0/0），至少一个在正常服务。
+- **影响**：暂无（ComfyUI 可达、MCP 可用、本轮补投 25 镜正常入队）；双进程若一为僵尸/重复，后续可能有端口/显存竞争。
+- **处置**：🚫 不 kill / 不重启（§3 不碰 ComfyUI，全项目共用）；已记为观察项，建议 supervisor 核查是否需清理多余进程。
+- **状态**：🟡 观察中。
+
 ### #7 · 13_外骨骼 R2V 缺 14 张场景参考图（补资产）—— ✅ 已闭环（2026-10-13）
 
 - **现象**：`scripts/gen_ep13_h3_r2v.py --dry-run` 报 29 镜缺 `ref2` 场景图：`ASSETS/CHARACTERS/_scene/13_*.png`（backstage/openmic/interview/testcar/annualparty/cafe/office/lab/subway/street/phone/screen_ui/virtual_audience/theatre_door，共 14 张）全缺。

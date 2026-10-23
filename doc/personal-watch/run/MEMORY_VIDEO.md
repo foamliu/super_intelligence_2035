@@ -3,20 +3,24 @@
 WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05）· EP06《情绪》补投跑批中）。
+> 语义：`0` = 有近期待办；`1` = 常态（**本线当前状态**：S3 放量中 · 七章已成片（13/18/01/02/03/04/05）· EP06《情绪》缺 25 镜已补投）。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
+
+> ⏸ **【2026-10-23 21:45 用户直令 · 本线已暂停】** 计划任务 `WatchVideoLoop` → **Disabled**；loop 进程（PID 3272）已终止；心跳停在 21:14:24，22:00 整点未再唤醒（已验证）。**ComfyUI 未停**（running 1 / pending 12，EP06 剩余镜头继续渲染，不再有新投递）。
+> **恢复**：`Enable-ScheduledTask -TaskName 'WatchVideoLoop'` + `Start-ScheduledTask -TaskName 'WatchVideoLoop'`。详见 `video/PAUSE_STATUS.md`。
+> ⚠️ 暂停期间**不要**再往队列投镜头；恢复后第一轮请先**以磁盘 glob 为准**核验 EP06 实际落盘数（loop 已停一轮，可能与本记忆的 29/54 不一致）。
 
 ---
 
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）补投跑批中 · 19/54 落盘
-已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅；05_临界点 55/55 ✅ + 成片 295.51s；EP06 资产全位 + 脚本固化（r2v/t2v/recover/subtitles/synth）
-当前动作:     逐轮核验+回收 EP06 出片：本轮回收 6 镜（R2V 20/21/23 + T2V 09/10/13）→ 19/54 落盘（R2V 10 + T2V 9）；补投跑批仍 running 1/pending ~34
-下一步:       逐轮核验+回收 EP06 出片（19→54 镜）；54 镜全落盘后跑 gen_ep06_subtitles.py（131 条）+ synth_ep06.py 交付成片
-阻塞:         无（⚠️ recover 脚本依赖 /history，重启后对重启前已落盘 13 镜「不可见」，54 镜全落盘判定以磁盘 glob 为准）
+PHASE:        S3 放量 → 七章已成片（13/18/01/02/03/04/05）；EP06《情绪》（54 镜）缺 25 镜已补投 · 29/54 落盘 + 25 在队列
+已完成:       S1 ✅；S2 ✅；13_外骨骼 48/48 ✅；18_暖阳 54/54 ✅；01_晨钟 54/54 ✅；02_经验 55/55 ✅；03_种子 52/52 ✅；04_棋子 55/55 ✅；05_临界点 55/55 ✅ + 成片 295.51s；EP06 资产 7/7 + 脚本固化（r2v/t2v/recover/subtitles/synth）
+当前动作:     唤醒时队列已空、EP06 仅 29/54 落盘（R2V 15 + T2V 14）→ 补投缺 25 镜（R2V 14 + T2V 11）→ 队列 running 1/pending 24
+下一步:       逐轮核验+回收 EP06 出片（29→54 镜）；54 镜全落盘后跑 gen_ep06_subtitles.py（131 条）+ synth_ep06.py 交付成片
+阻塞:         无（⚠️ 记录仓 partial clone blob:none 懒拉 blob，838 commits fast-forward 慢；recover 依赖 /history，全落盘判定以磁盘 glob 为准）
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +37,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-18（EP06《情绪》补投跑批回收 6 镜 → 19/54 ✅：逐轮核验+回收，本轮新回收 R2V 20/21/23 + T2V 09/10/13，ffprobe 全合规；补投跑批仍 running 1/pending ~34 → 回写记忆 + commit + push）
+- **上次唤醒**：2026-10-23（EP06《情绪》缺 25 镜补投 ✅：唤醒时队列空、29/54 落盘 → 补投 R2V 14 + T2V 11 → 队列 25；记录仓 838 commits fast-forward 后台完成 → 回写记忆 + commit + push）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +49,16 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-23 · S3 放量 · EP06《情绪》缺 25 镜补投（29/54 → 队列 +25）✅**：续上轮「下一步」，唤醒时 ComfyUI 队列已空、EP06 仅 29/54 落盘（较上轮 19/54 又推进 10 镜），补投缺失 25 镜。
+  - **git 同步**：短剧仓 up-to-date（`c57dcbb`）；记录仓 838 commits 落后（`39764ba5`→`262c3a03`），`pull --rebase --autostash` 撞 30s 超时（partial clone `blob:none` 懒拉 blob 慢）→ 清陈旧 index.lock 后后台 `git merge --ff-only origin/main` 完成。
+  - **自检**：ComfyUI 可达（v0.33.0 · RTX 4090 16GB · 空闲 14.7GB · 队列 0/0）；ffmpeg/ffprobe 在（2025-10-12 build）；MCP comfyui-drama/web-search 可用。⚠️ 见两个 `main.py --port 8188`（venv PID 7148 + D:\Python310 PID 7084），疑似重复/僵尸，未处置（§3 不碰 ComfyUI），记 BLOCKERS #9。
+  - **落盘核验**：`OUTPUT/06_情绪/videos/` **29/54 落盘**（R2V 15 + T2V 14），新增 10 镜（R2V 24/25/27/29/30 + T2V 15/17/18/22/26）；缺 25 镜 = R2V 14（31/32/34/35/36/37/41/43/44/45/48/50/52/53）+ T2V 11（28/33/38/39/40/42/46/47/49/51/54）。
+  - **参考图**：7/7 在位；`--dry-run` 两脚本「已出片」标记与磁盘 29 镜逐一对齐。
+  - **补投**：后台 Start-Process `gen_ep06_h3_r2v.py --skip-existing`（PID 6588）+ `gen_ep06_h3_t2v.py --skip-existing`（PID 20440）→ 跳过 29 已盘、提交 25 缺镜 → 队列 **running 1/pending 24 = 25**；两脚本自然退出、err 空。
+  - **prompt hazard 闸门**：无新 prompt（复用已固化已验收脚本，25 缺镜 prompt 与已出 29 镜同源、未改），闸门等效通过。
+  - **commit**：短剧仓无新增（复用既有脚本 + gitignored 视频）；记录仓 MEMORY + daily + PLAN + BLOCKERS。
+  - **下一步**：逐轮核验+回收 EP06 出片（29→54 镜）；54 全落盘后跑 `gen_ep06_subtitles.py` + `synth_ep06.py` 交付成片。
 
 - **2026-10-18 · S3 放量 · EP06《情绪》补投跑批回收 6 镜（13→19/54）✅**：续上轮「下一步」，逐轮核验+回收 EP06 出片。
   - **git 同步**：短剧仓 up-to-date（`c57dcbb`）；记录仓 Fast-forward `368c2652..e5479569`（他线 BaiZe/ZhuLong/pretrain/news/recruit/research 提交 · 本线无冲突）。⚠️ 记录仓 git pull 撞 index.lock（上轮超时遗留）+ 30s 超时，改为后台 `git merge --ff-only` 完成。
