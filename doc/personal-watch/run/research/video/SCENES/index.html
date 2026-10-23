@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-23</td>
+    <td><i>BrickWright: Agentic Creation of Physically Feasible Brick Builds</i><br><code>arXiv:2610.31651</code>（Ava Pun 等 10 位）</td>
+    <td>让 AI <b>用写代码的方式搭乐高</b>：给它一套拼装工具箱 <b>BrickLayer</b>，配一个<b>物理可行性校验器</b>，每轮查<b>真零件 / 不穿模 / 不悬空 / 连成一体</b>，不合格就把原因回传给 agent <b>自己改代码</b>；<b>不训练新模型</b>。基线 agent 在 <b>512 条</b>文字或图片提示上的可行率只有 <b>9%–69%</b>，接上 BrickWright 后<b>全部 100%</b>，弱模型的<b>提示遵循度</b>还提升、强模型<b>不降</b>，文本→积木也<b>超过专用模型</b>（<b>作者自报 · 本线未复现</b>；<b>「可行」≠ 承重/拼装顺序</b>）</td>
+    <td><a href="10_23.html">10_23.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-22</td>
     <td><i>Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets</i><br><code>arXiv:2610.29025</code>（Yongsheng Lian，单一作者）</td>
     <td>拍张照算这盘菜多少克，<b>一换盘子、一拉远就翻倍</b>：用 Nutrition5k 的 <b>2,253 个已称重餐盘</b>微调 DINOv2-base，域内误差 <b>24.8 g</b>（不到零样本 Qwen3-VL-32B 一半），但三个外部数据集<b>全输</b>；克数尺度错在 <b>「占画面多大」随场景漂</b> + <b>每种食物各偏一个系数</b>；补本地样本降 <b>38–65%</b>、加一张同场景标注照片降到 <b>28.3 g</b>；号称覆盖 <b>90%</b> 的区间到外部<b>至多一半</b>。结论：<b>得用你自己厨房的照片教它</b></td>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-23（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-23（晚报 · 5/5 · 当日收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -52,17 +52,17 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-23 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 3 篇（进度 3 / 5）</b> · <b>3 篇全部「借鉴」</b>（对齐 BaiZe 长上下文/训练效率 与 ZhuLong coding agent harness）</div>
+  <h1>论文推荐日报 · 2026-10-23 <span class="badge b-pm">晚报</span> <span class="badge b-am">早报</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>晚报 · 当日收口 5 / 5</b> · 早报 3 篇<b>全部「借鉴」</b>（对齐 BaiZe 长上下文/训练效率 与 ZhuLong coding agent harness）+ 晚报 2 篇<b>全部「科普」</b>（AI 搭乐高要「立得住」/ AI 群体也会从众失控）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-23（CST 本地日；AM = UTC 2026-10-22T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3/5）</span>
+    <span>📅 日期：2026-10-23（CST 本地日；AM = UTC 2026-10-22T22:0x · PM = UTC 2026-10-23T10:0x）</span>
+    <span>🏷 标识：早报（AM · 3/5）→ 晚报（PM · 5/5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成时间：2026-10-23 06:0x CST</span>
+    <span>🕒 生成 / 更新：2026-10-23 06:0x / 18:0x CST</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早报 3 篇<b>全部「借鉴」</b>；晚报 2 篇「科普」将在 <b>18:00</b> 轮补齐（收口 5/5）。
-  ⚠️ <b>AM 轮公告批次未刷新</b>：仍为 <code>2026-10-21</code>（<code>totalResults</code> <code>636926</code> → <code>636928</code>，+2 为元数据变动、非新批；最新样本 <code>published=2026-10-21T17:59:14Z</code>，与上一轮 PM <b>完全相同</b>）；72h 增量 <b><code>kept 0</code></b>（整批已在上一轮 PM 入账 <code>SEEN</code>）。
-  ⇒ 3 篇<b>取自上一轮 PM 的 156 条候选池</b>，首次提交<b>均为 2026-10-21（UTC）</b>，本页<b>不写成「今日新提交」</b>。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5（收口）</b> —— 早报 3 篇「借鉴」（<code>2610.29352</code> 长上下文续训规模律 / <code>2610.29171</code> TrainBridge / <code>2610.29870</code> PAUSE，<b>批次 <code>2026-10-21</code></b>）+ 晚报 2 篇「科普」（<code>2610.31651</code> BrickWright / <code>2610.30769</code> LLM 群体羊群效应，<b>批次 <code>2026-10-22</code></b>）。
+  ✅ <b>PM 轮公告批次已刷新</b>：<code>2026-10-21</code> → <b><code>2026-10-22</code></b>（<code>totalResults</code> <code>636928</code> → <code>637451</code>，+523；最新样本 <code>published=2026-10-22T17:59:53Z</code>）；72h 增量 <b><code>kept 160</code></b> / <code>dropped 429</code>。
+  ⚠️ <b>AM 轮当时批次未刷新</b>（仍 <code>2026-10-21</code>、<code>kept 0</code>，3 篇取自上一轮候选池）—— 该事实<b>原样保留</b>在下方「早报取数说明」，<b>未回改</b>。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment + PDF 首页。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -78,7 +78,14 @@
   <br>3 篇入账论文取自<b>上一轮 PM 已入账的 156 条候选池</b>，均经 <b>arXiv API <code>id_list</code> 单条权威复核</b>（<code>id_list=2610.29171,2610.29352,2610.30132,2610.28815,2610.30042,2610.29870,2610.30105,2610.29013</code> → <b>8/8 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>）。⚠️ 3 篇首次提交均为 <b>2026-10-21</b>，<b>非「今日新提交」</b>。本轮<b>复核但未入账</b>的 5 篇：<code>2610.30132</code> LongZero（零数据长上下文 RL）/ <code>2610.28815</code> SSR（harness 进化）/ <code>2610.30042</code> HGM-Dual（谱系感知 harness 优化）/ <code>2610.30105</code> ASTEROID（非对称在线蒸馏）/ <code>2610.29013</code> Target Regeneration（投机解码草稿目标）。证据见附录 A/B/C。
 </div>
 
-<h2 class="sec">早报 · 3 篇「借鉴」（3 / 5）</h2>
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM · 周五 18:00 CST）</b>：本轮唤醒于 <b>本地 2026-10-23 18:00（CST）</b> = <b>UTC 2026-10-23T10:00</b>。
+  <b>R1′ 分源实测</b>：arXiv API ✅（首次 <code>ConnectTimeout</code>、重试后 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>totalResults=637451</code>，最新样本 <code>published=2026-10-22T17:59:53Z</code>（<code>2610.31671</code>，cs.CV）⇒ <b>批次已刷新为 <code>2026-10-22</code></b>）／ HF Daily ❌（<code>[Errno 101] Network is unreachable</code>，如实记 FAIL）／ RSS cs.CL <b>超时</b>（如实记 FAIL）、cs.CV <b>192</b>、cs.LG <b>339</b>（仅作发现、不作证据）。
+  <br>✅ <b>本轮有真实增量（与 AM 轮 <code>kept 0</code> 形成对照）</b>：<code>--fetch --seen</code>（<code>window_mode=daily</code> 72h，<code>generated=2026-10-23T10:01:53Z</code>）→ <b>15/15 条查询 <code>ok</code></b>（<b>全部 <code>attempts=1</code></b>，无重试无超时）、<b><code>kept 160</code> / <code>dropped 429</code></b>；160 条的 <code>published</code> 分布 = <b>2026-10-22：137 条 / 2026-10-21：23 条</b>（后者为上一批尾部，未重复入账）。
+  <br>2 篇入账论文<b>直接取自本批</b>，均经 <b><code>id_list</code> 单条权威复核</b>（两批 3 + 3 → <b>6/6 返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>；证据 <code>raw/2026-10-23-idlist-r108a/b.{xml,headers}</code>）。<b>复核但未入账</b>的 4 篇（留候选池，供后续轮）：<code>2610.30740</code> 投影阴影推理（WACV2027）/ <code>2610.30900</code> LLM 合成受访者的覆盖缺口 / <code>2610.31671</code> 可变粒度图像→3D 部件（NeurIPS 2026）/ <code>2610.31579</code> 谄媚与人类信任校准。证据见附录 A′/B′/C′/D′。
+</div>
+
+<h2 class="sec">早报 · 3 篇「借鉴」（AM · 3 / 5）</h2>
 
 <div class="card">
   <h3><span class="no">1</span>Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law</h3>
@@ -141,6 +148,46 @@
 
 
 
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 5 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>BrickWright: Agentic Creation of Physically Feasible Brick Builds</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">让前沿 coding agent 用<b>写代码</b>的方式搭乐高：作者给出 Python 工具包 <b>BrickLayer</b>（面向积木的拼装 API + <b>物理可行性校验器</b>），agent 写拼装程序、校验器回传「悬空 / 穿模 / 不连通 / 非真实零件」，agent 据此改代码；在 <b>512 条文本或图片提示</b>上，基线 agent 的物理可行率只有 <b>9%（GPT-6 Luna）到 69%（GPT-6 Astra）</b>，BrickWright 引导下达到 <b>100%</b>，同时提升轻量模型的提示遵循度、对强模型保持不降，并在文本→积木任务上超过专用模型。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">BrickWright: Agentic Creation of Physically Feasible Brick Builds</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Ava Pun, Kevin Dai, Sally Chen, Maxwell Jones, Ruixuan Liu, Kangle Deng, Changliu Liu, Maneesh Agrawala, Deva Ramanan, Jun-Yan Zhu（10 位署名；机构以原文 PDF 首页为准，本线未核）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-22</b>（<code>published=2026-10-22T17:57:20Z</code>）· 无 comment · 项目页 <code>avalovelace1.github.io/brickwright/</code></div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code>（主分类）· <span class="badge b-kp">科普</span> · 关键词：coding agent / 3D 建模 / LEGO / 物理可行性 / 工具 + 校验器闭环</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.31651">https://arxiv.org/abs/2610.31651</a>（PDF 已落地：<code>research/pdf/2026-10-23/2610.31651.pdf</code>，sha256 / 页数见附录 D′）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 本日 TOP-1 候选）</b>
+    <ol>
+      <li><b>画面天然强</b>：一堆积木从「悬空乱飞」到「整块立住」，<b>不用解释就能看懂</b>；9% → 100% 这个跨度本身就是钩子，且是「同一批模型、只加工具与校验」的对照。</li>
+      <li><b>结论反直觉、可一句话讲清</b>：瓶颈不是模型不会想，而是<b>没人告诉它「这块砖悬空了」</b>；给它一个能判物理可行性的工具，agent 自己就把结构修好。</li>
+      <li><b>科普不跑偏</b>：论文只主张「工具 + 校验器足够」，没有声称 agent 理解力学；片中会明确说「可行性 = 只用真实零件 / 无穿模 / 无悬空 / 尽可能连通」，<b>不等于承重与拼装顺序</b>。</li>
+      <li><b>边界（我们判断）</b>：只在 LEGO 这一域验证；512 条提示的可行性判定由程序完成（非人工验收）；prompt adherence 的提升幅度需看原表；数字作者自报、本线未复现；未精读。</li>
+    </ol>
+    <b>建议动作</b>：读原文（重点看 BrickLayer 的 API 粒度与校验器返回的反馈形式）→ 作为「工具 + 校验器闭环」的干净样例留存；<b>本日选作《论文两分钟》TOP-1</b>（见 <code>video/SCENES/10_23.html</code>）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>LLM Multi-Agent Systems Are Vulnerable to Herding and Runaway Cascades</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把经典「Music Lab」从众实验搬到 LLM 群体：让<b>大规模 LLM 智能体</b>给不熟悉的新歌打分，一组能看到别人的累计推荐数、一组看不到；结果可见他人选择会触发<b>失控级联</b>，让集体推荐变得极端、不可预测、越来越偏离歌曲本身的质量；与人类相比，LLM 群体<b>对从众更敏感</b>，且级联发生后<b>更难自我纠偏</b>——作者指出这会影响推荐系统、自动评测、复杂问题求解，甚至「未授权的合谋」。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">LLM Multi-Agent Systems Are Vulnerable to Herding and Runaway Cascades</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Farnoosh Hashemi, Shiyu Ji, Joice Chen, Michael W. Macy（4 位署名；机构以原文 PDF 首页为准，本线未核）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-22</b>（<code>published=2026-10-22T05:42:55Z</code>）· 无 comment</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code>（主分类）· <span class="badge b-kp">科普</span> · 关键词：多智能体 / 羊群效应 / 信息级联 / 社会影响实验 / 评测</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.30769">https://arxiv.org/abs/2610.30769</a>（PDF 已落地：<code>research/pdf/2026-10-23/2610.30769.pdf</code>，sha256 / 页数见附录 D′）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 备选 TOP-1）</b>
+    <ol>
+      <li><b>用人类经典实验讲机器</b>：Music Lab 是社会科学里的名实验，观众容易代入「你会不会被别人的下载量带跑」；换成 AI 群体后，<b>「AI 也会跟风」</b>是天然的反差钩子。</li>
+      <li><b>结论有公共价值</b>：推荐系统、自动评测、多智能体协作都可能被这种级联污染；「AI 群体比人更容易从众、且不会自我纠偏」是能落到产品设计的提醒。</li>
+      <li><b>画面可自绘</b>：一排排智能体读取「累计推荐数」的柱状条、级联像多米诺一样冲高，<b>无需论文原图</b>；对比人类组的收敛曲线即可讲清。</li>
+      <li><b>边界（我们判断）</b>：结论绑定 Music Lab 范式与所选模型族/提示（换任务、换模型可能变弱）；「比人类更易从众」的比较依赖该范式的人类基线；数字作者自报、本线未复现；未精读。</li>
+    </ol>
+    <b>建议动作</b>：读原文（重点看级联的度量与「自纠偏」的操作化定义）→ 若 ZhuLong 做多智能体评审/自动评测，需把「互相看分数」列为风险项并做对照实验。
+  </div>
+</div>
+
 <h2 class="sec">附录 A · 本轮流程（I → VII）</h2>
 <table>
   <tr><th>步</th><th>动作</th><th>结果 / 证据</th></tr>
@@ -198,11 +245,79 @@
 <p style="font-size:13px;color:var(--muted);margin:6px 0 0">校验链：<code>content-type=application/pdf</code> → 本地字节 == 服务端 <code>content-length</code> → 头部 <code>%PDF-</code> → 尾部 <code>%%EOF</code> → <code>pdfinfo</code> 页数 &gt; 0 → <code>pdftotext</code> 字符 &gt; 2000。任一不满足即删除文件并记 FAIL（本轮无 FAIL）。<b>PDF 目录已 gitignore</b>，仅清单进版本库。</p>
 
 <div class="note" style="margin-top:24px">
-  <b>下一轮（PM · 18:00）待办</b>：
-  ① 补 2 篇「<b>科普</b>」条目（面向《两分钟论文》视频，与「借鉴」口径互不占位）→ 进度收口 <b>5/5</b>；
-  ② 同日重取 arXiv（届时 <code>2026-10-22</code> 批应已索引），届时若出现 <code>2026-10-22</code> 新批，<b>优先用新批</b>并在此页追加「<b>晚报变更说明（AM → PM）</b>」段，说明 3 篇早报条目的批次归属（<code>2026-10-21</code>）与是否被替换；
-  ③ 分镜 / 日报邮件 / 心跳照常。
+  <b>AM 轮「下一轮待办」已全部闭环</b>：① 晚报 2 篇「科普」已补（收口 5/5）② 已重取 arXiv 并确认 <code>2026-10-22</code> 新批、已在页头与下方注明批次归属 ③ 分镜 / 日报邮件 / 心跳照常执行。
 </div>
+
+<h2 class="sec">附录 A′ · 晚报流程（I → VII，PM 轮）</h2>
+<table>
+  <tr><th>步</th><th>动作</th><th>结果 / 证据</th></tr>
+  <tr><td>I</td><td>唤醒 + 读任务书 / MEMORY / 规范</td><td>确认唤醒时点 = <b>2026-10-23 18:00 PM（晚 2 · 当日收口）</b>；先读 AM 轮产物 <code>research/daily/2026-10-23.html</code>（3/5）与 <code>MEMORY_RESEARCH.md</code> 快照「下一步 ①」</td></tr>
+  <tr><td>II</td><td>R1′ 分源探活（<code>--probe</code>）</td><td>arXiv ✅（首次 <code>ConnectTimeout</code>、重试后 <code>200</code>，最新 <code>published=2026-10-22T17:59:53Z</code>）/ HF ❌ <code>Errno 101</code> / RSS cs.CL 超时、cs.CV 192、cs.LG 339（证据 <code>raw/2026-10-23-probe-r108.log</code>）</td></tr>
+  <tr><td>III</td><td>增量取数（<code>--fetch --seen</code>，72h daily）</td><td><b>15/15 <code>ok</code>、全部 <code>attempts=1</code></b>；<b><code>kept 160</code></b> / <code>dropped 429</code>；<code>totalResults 637451</code>（上轮 636928，+523）；<code>generated=2026-10-23T10:01:53Z</code>；证据 <code>raw/2026-10-23-fetch-r108-seen.json</code></td></tr>
+  <tr><td>IV</td><td>候选 <b>单条权威复核</b>（<code>id_list</code>）</td><td><b>6/6 返回</b>（两批 3 + 3），均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>；证据 <code>raw/2026-10-23-idlist-r108a/b.{xml,headers}</code></td></tr>
+  <tr><td>V</td><td>去重（对照 <code>SEEN.md</code> 4,452 行）</td><td>160 条<b>全部为新 ID</b> → <code>SEEN</code> <b>4,452 → 4,612</b>（2 行「收录」+ 158 行「候选」）；<code>papers.jsonl</code> <b>239 → 241</b></td></tr>
+  <tr><td>VI</td><td>定标签（借鉴 / 科普）</td><td>晚报 2 篇<b>全「科普」</b>（LEGO 实体可行搭建 / LLM 群体从众），与早报 3 篇「借鉴」<b>互不占位</b>；<b>TOP-1 = <code>2610.31651</code></b>（可视化最强）</td></tr>
+  <tr><td>VII</td><td>PDF 落地 + 严格校验（5 篇全套）</td><td>早报 3 篇沿用 AM 轮已校验文件（32 / 14 / 21 页）；晚报 2 篇新下载并校验（<code>content-type=application/pdf</code>、本地字节 == <code>content-length</code>、<code>%PDF-</code> 头、<code>%%EOF</code> 尾、<code>pdfinfo</code> 页数、<code>pdftotext</code> 字符数）；日志 <code>raw/pdf_dl_r108.log</code>，见附录 D′</td></tr>
+</table>
+
+<h2 class="sec">附录 B′ · 15 条取数查询（PM 轮逐条实测）</h2>
+<table>
+  <tr><th>#</th><th>查询名</th><th>区域</th><th>search_query</th><th>totalResults</th><th>n_entries</th><th>attempts</th><th>kept</th></tr>
+  <tr><td>1</td><td><code>sweep-cs-5cats</code></td><td>广度扫描</td><td><code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code></td><td>637,451</td><td>40</td><td>1</td><td>40</td></tr>
+  <tr><td>2</td><td><code>llm-large-language-model</code></td><td>LLM</td><td><code>cat:cs.CL AND all:&quot;large language model&quot;</code></td><td>39,391</td><td>40</td><td>1</td><td>29</td></tr>
+  <tr><td>3</td><td><code>llm-long-context</code></td><td>LLM</td><td><code>cat:cs.CL AND all:&quot;long context&quot;</code></td><td>1,860</td><td>40</td><td>1</td><td>2</td></tr>
+  <tr><td>4</td><td><code>llm-scaling-law</code></td><td>LLM</td><td><code>cat:cs.LG AND all:&quot;scaling law&quot;</code></td><td>1,017</td><td>40</td><td>1</td><td>1</td></tr>
+  <tr><td>5</td><td><code>slm-small-language-model</code></td><td>SLM</td><td><code>abs:&quot;small language model&quot;</code></td><td>1,109</td><td>40</td><td>1</td><td>1</td></tr>
+  <tr><td>6</td><td><code>slm-on-device</code></td><td>SLM</td><td><code>cat:cs.LG AND all:&quot;on-device&quot;</code></td><td>11,042</td><td>40</td><td>1</td><td>6</td></tr>
+  <tr><td>7</td><td><code>mm-vision-language</code></td><td>多模态</td><td><code>all:&quot;vision-language&quot;</code></td><td>17,928</td><td>40</td><td>1</td><td>33</td></tr>
+  <tr><td>8</td><td><code>mm-multimodal</code></td><td>多模态</td><td><code>cat:cs.CV AND all:&quot;multimodal&quot;</code></td><td>16,643</td><td>40</td><td>1</td><td>10</td></tr>
+  <tr><td>9</td><td><code>mm-csmm</code></td><td>多模态</td><td><code>cat:cs.MM</code></td><td>10,263</td><td>40</td><td>1</td><td>1</td></tr>
+  <tr><td>10</td><td><code>agent-harness-title</code></td><td>agent harness</td><td><code>ti:&quot;agent harness&quot;</code></td><td>147</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>11</td><td><code>agent-swe-bench</code></td><td>agent harness</td><td><code>cat:cs.SE AND all:&quot;SWE-bench&quot;</code></td><td>404</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>12</td><td><code>agent-tool-use</code></td><td>agent harness</td><td><code>cat:cs.AI AND all:&quot;tool use&quot;</code></td><td>1,718</td><td>40</td><td>1</td><td>6</td></tr>
+  <tr><td>13</td><td><code>agent-csma-multiagent</code></td><td>agent harness</td><td><code>cat:cs.MA AND all:&quot;multi-agent&quot;</code></td><td>6,033</td><td>40</td><td>1</td><td>8</td></tr>
+  <tr><td>14</td><td><code>nb-retrieval-augmented</code></td><td>邻域</td><td><code>cat:cs.CL AND all:&quot;retrieval augmented&quot;</code></td><td>3,968</td><td>40</td><td>1</td><td>3</td></tr>
+  <tr><td>15</td><td><code>nb-alignment</code></td><td>邻域</td><td><code>cat:cs.AI AND all:&quot;alignment&quot;</code></td><td>22,075</td><td>40</td><td>1</td><td>20</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);margin:6px 0 0">合计：15 × 40 = <b>600</b> 条条目，<b><code>kept 160</code></b>（<code>dropped 429</code> = 已在 <code>SEEN</code> 或 <code>stale &gt; 72h</code>；kept 去重后按 arXiv ID 计）；全部查询 <code>status=200</code> / <code>content_type=application/atom+xml; charset=utf-8</code> / <code>attempts=1</code>。</p>
+
+<h2 class="sec">附录 C′ · <code>id_list</code> 权威复核（2 批 · 6/6 返回）</h2>
+<table>
+  <tr><th>#</th><th>arXiv ID</th><th>主分类</th><th>首次提交（UTC）</th><th>标题</th><th>本轮处置</th></tr>
+  <tr><td>1</td><td><code>2610.31651</code></td><td>cs.CV</td><td>2026-10-22T17:57:20Z</td><td><i>BrickWright: Agentic Creation of Physically Feasible Brick Builds</i></td><td><b>收录</b>（晚报 #4 · <b>本日 TOP-1</b> · 科普）</td></tr>
+  <tr><td>2</td><td><code>2610.30769</code></td><td>cs.AI</td><td>2026-10-22T05:42:55Z</td><td><i>LLM Multi-Agent Systems Are Vulnerable to Herding and Runaway Cascades</i></td><td><b>收录</b>（晚报 #5 · 科普）</td></tr>
+  <tr><td>3</td><td><code>2610.30740</code></td><td>cs.CV</td><td>2026-10-22T05:11:07Z</td><td><i>Where Did the Light Come From? Diagnosing Cast-Shadow Reasoning in VLMs and Borrowing the…</i></td><td>复核通过 · <b>未入账</b>（留候选池）</td></tr>
+  <tr><td>4</td><td><code>2610.30900</code></td><td>cs.CL</td><td>2026-10-22T08:22:50Z</td><td><i>Silicon Samples Match the Answers but Not the Respondents</i></td><td>复核通过 · <b>未入账</b>（留候选池）</td></tr>
+  <tr><td>5</td><td><code>2610.31579</code></td><td>cs.AI</td><td>2026-10-22T17:15:59Z</td><td><i>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</i></td><td>复核通过 · <b>未入账</b>（留候选池）</td></tr>
+  <tr><td>6</td><td><code>2610.31671</code></td><td>cs.CV</td><td>2026-10-22T17:59:53Z</td><td><i>A Unified Framework for Image-to-3D Part Generation via Variable Granularity</i></td><td>复核通过 · <b>未入账</b>（留候选池）</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);margin:6px 0 0">两批 <code>id_list</code> = <code>2610.31651,2610.30769,2610.30740</code>（r108a）与 <code>2610.30900,2610.31579,2610.31671</code>（r108b），均 <b>HTTP 200</b> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>&lt;published&gt;</code>；证据 <code>raw/2026-10-23-idlist-r108a/b.{xml,headers}</code>。<b>6 条全部 <code>published=2026-10-22</code></b>，与 PM 轮批次一致。</p>
+
+<h2 class="sec">附录 D′ · PDF 落地清单（5/5 通过）</h2>
+<table>
+  <tr><th>#</th><th>arXiv ID</th><th>文件</th><th>字节</th><th>页数</th><th>pdftotext 字符</th><th>校验结论</th></tr>
+  <tr><td>1</td><td><code>2610.29352</code></td><td><code>2610.29352.pdf</code></td><td>2,173,445</td><td>32</td><td>109,536</td><td>✅ AM 轮一次通过</td></tr>
+  <tr><td>2</td><td><code>2610.29171</code></td><td><code>2610.29171.pdf</code></td><td>768,391</td><td>14</td><td>36,735</td><td>✅ AM 轮一次通过</td></tr>
+  <tr><td>3</td><td><code>2610.29870</code></td><td><code>2610.29870.pdf</code></td><td>3,271,312</td><td>21</td><td>81,586</td><td>✅ AM 轮一次通过</td></tr>
+  <tr><td>4</td><td><code>2610.31651</code></td><td><code>2610.31651.pdf</code></td><td>5,639,346</td><td>20</td><td>78,638</td><td>✅ 本地字节 == <code>content-length</code> · <code>%PDF-</code> / <code>%%EOF</code> 齐</td></tr>
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <ol>
+    <li><b>公告批次：<code>2026-10-21</code> → <code>2026-10-22</code>（已刷新）</b> —— AM 轮（本地 06:00）时 API 仍停在 <code>2026-10-21</code>（<code>totalResults</code> 636926 → 636928，+2 为元数据变动，最新样本 <code>published=2026-10-21T17:59:14Z</code> 与 r106 PM 完全相同）；PM 轮（本地 18:00）<code>totalResults=637451</code>（+523）、最新样本 <code>published=2026-10-22T17:59:53Z</code>（<code>2610.31671</code>，cs.CV）。</li>
+    <li><b>早报 3 篇不替换、不回改</b> —— <code>2610.29352</code> / <code>2610.29171</code> / <code>2610.29870</code> 的批次归属仍为 <b><code>2026-10-21</code></b>（首次提交 2026-10-21 UTC，取自上一轮 PM 的 156 条候选池）。<b>理由</b>：① 三篇已按「借鉴」口径逐条摘要并落盘 <code>papers.jsonl</code>，替换会造成台账与日报不一致；② 本次新批（<code>2026-10-22</code>）在 AM 轮取数时尚不存在，用「事后新批」替换「当时可得最优」会<b>伪造当日决策过程</b>；③ 任务书要求「当日收口 5 篇」而非「用最新批重排」。⇒ 本页保留 AM 原文与 <code>kept 0</code> 的如实记录，**只做追加，不做覆盖**。</li>
+    <li><b>晚报 2 篇取自 <code>2026-10-22</code> 新批</b> —— <code>2610.31651</code>（BrickWright）与 <code>2610.30769</code>（LLM 群体羊群效应）的首次提交<b>均为 2026-10-22（UTC）</b>，是「当天真正的新论文」；口径为<b>「科普」</b>，与早报 3 篇「借鉴」<b>互不占位</b>。</li>
+    <li><b>进度：3/5 → 5/5（收口）</b> —— 早报 3 篇 + 晚报 2 篇；本页页头 <code>今日进度</code>、<code>标识</code>、<code>生成/更新时间</code> 三处同步改写，<code>daily/index.html</code> 该行同步改为「晚报（PM · 5/5 · 当日收口）」。</li>
+    <li><b>TOP-1（科普口径）改为 <code>2610.31651</code></b> —— AM 轮未选 TOP-1（当时 3 篇全「借鉴」，不出分镜）；PM 轮在 2 篇科普中选 BrickWright 作当日 TOP-1（<b>画面可视性 + 反差</b>：9%→100%、砖块悬空 vs 立住），分镜见 <code>research/video/SCENES/10_23.html</code>；备选 <code>2610.30769</code> 结论更偏社会科学、视觉性弱，故列 No.2。</li>
+    <li><b>台账变化（本轮唯一改动方向 = 只增不改旧）</b> —— <code>SEEN.md</code> <b>4,452 → 4,612 行（+160：收录 +2 / 候选 +158）</b>；<code>papers.jsonl</code> <b>239 → 241</b>；早报 3 行状态仍为「收录」，未改动其时间戳与摘要。</li>
+    <li><b>PDF 与取数证据不覆盖</b> —— AM 轮 <code>raw/pdf_dl_r107.*</code>、<code>raw/fetch-r107.json</code>、<code>raw/2026-10-23-idlist-r107.*</code> 全部保留；PM 轮新增 <code>raw/pdf_dl_r108.*</code>、<code>raw/2026-10-23-fetch-r108-seen.json</code>、<code>raw/2026-10-23-idlist-r108a/b.*</code>，<b>两轮证据并存、可分别复核</b>。</li>
+  </ol>
+</div>
+
+
+  <tr><td>5</td><td><code>2610.30769</code></td><td><code>2610.30769.pdf</code></td><td>10,837,617</td><td>32</td><td>104,472</td><td>✅ 本地字节 == <code>content-length</code> · <code>%PDF-1.7</code> / <code>%%EOF</code> 齐（分段续传后一次校验通过）</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);margin:6px 0 0">目录 <code>research/pdf/2026-10-23/</code>（按 §4-9 <b>不入 git</b>）；脚本 <code>raw/pdf_dl_r108.py</code>、日志 <code>raw/pdf_dl_r108.log</code>。<code>sha256</code>（前 16 位）：<code>2610.30769</code> = <code>ab247cd1916ce8fe</code> · <code>2610.31651</code> = <code>6285cceb7b3a0aa3</code>（AM 轮 3 篇见附录 D）。<b>如实记录</b>：<code>2610.30769</code>（10.8 MB）在 <b><code>curl --max-time</code></b> 下被反复截断（每次约 5 分钟只拉到 1.5–2 MB），改为<b>不设上限的 HTTP Range 分段续传</b>后才取全 <b>10,837,617 B</b>；<b>校验口径不放松</b> —— 字节数 == <code>content-length</code>、<code>%PDF-1.7</code> 头 / <code>%%EOF</code> 尾、<code>pdfinfo</code> 页数、<code>pdftotext</code> 字符数四项全过才算通过（截断文件一律删除、不记成功）。5 篇合计 22,690,111 B ≈ 21.64 MB。</p>
+
 
 <footer>
   <p><b>research 线 · 论文推荐日报 · 2026-10-23 早报（3/5）</b> —— 本页自包含（无外部 CSS/JS/字体），仅 arXiv 条目链接为外链。</p>

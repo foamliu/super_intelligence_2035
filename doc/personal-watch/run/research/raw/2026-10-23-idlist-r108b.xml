@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/IrcWhgwIMx95Ep2UxPzhzCyZD3k</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.30900,2610.31671,2610.31579&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-23T10:04:34Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.30900,2610.31671,2610.31579" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30900v1</id>
+    <title>Silicon Samples Match the Answers but Not the Respondents</title>
+    <updated>2026-10-22T08:22:50Z</updated>
+    <link href="https://arxiv.org/abs/2610.30900v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30900v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Silicon sampling generates survey respondents by having a large language model (LLM) answer a survey as a person with given demographic attributes, and the resulting synthetic populations are increasingly used in place of human ones. Existing evaluations focus on individual-answer accuracy, per-question answer distributions, and correlations across questions. None of these compares the respondents themselves, so a generator whose respondents have combinations of answers found in no human respondent can still score well if it reproduces every answer distribution. We propose the respondent coverage gap (RCG), which represents each respondent as a point defined by their complete answer profile and measures how far each human respondent is from the nearest generated one, relative to the distance between human samples. On two US social surveys, all six LLMs we evaluate leave human respondents uncovered, and under our main settings, they fall behind a baseline that samples each answer independently from the human marginals. Across the prompting and inference settings we test, every LLM has a higher RCG than a Gaussian copula fitted to the human data.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T08:22:50Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yusuke Kumagae</name>
+    </author>
+    <author>
+      <name>Masahiro Kaneko</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31579v1</id>
+    <title>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</title>
+    <updated>2026-10-22T17:15:59Z</updated>
+    <link href="https://arxiv.org/abs/2610.31579v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31579v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Research on sycophancy asks whether large language models (LLMs) bend towards what their users want to hear. We ask the reverse question: when an LLM is confident, consistent, and wrong, do users bend towards it? In a within-subjects experiment, 32 participants learned up to five science topics by chatting with five assistants built on the same model (GPT-5-mini). Unknown to participants, each assistant's briefing had 0, 25, 50, 75, or 100% of its facts replaced by plausible falsehoods, and every assistant spoke with full confidence. A surprise quiz after each topic offered the correct fact, the planted falsehood, and two distractors, with a confidence rating for every answer. Across 104 quizzes and 1,040 answers, scores fell from 7.4 to 2.9 out of 10, and the planted option was chosen on 60% of falsified items against 11% of correctly taught ones (odds ratio 12.5). Transcript coding showed that whenever the assistant stated a falsehood, it was adopted about 65% of the time at every falsification level. Absorbed falsehoods were held with high confidence (8.4/10), the modeled confidence advantage of right over wrong answers vanished, and the discrimination of confidence for correctness fell from an AUROC of 0.70 to chance, while post-task trust ratings barely moved. Participants tended to return to the chat more when the assistant was worse, but returning went with more absorption, not less, and 30% of all turns pasted quiz questions back to the source being checked. The assistant itself was almost never sycophantic and never conceded under pushback. We introduce a baseline-corrected Human Deference Index to quantify this human-side sycophancy and argue that trustworthiness is a property of the human-AI pair, that sycophancy evaluations should measure both directions, and that learning interfaces must make reliability legible claim by claim.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T17:15:59Z</published>
+    <arxiv:comment>49 pages; 32 figures; 7 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Deepthika S</name>
+    </author>
+    <author>
+      <name>Pawni Yadav</name>
+    </author>
+    <author>
+      <name>B. Sankar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31671v1</id>
+    <title>A Unified Framework for Image-to-3D Part Generation via Variable Granularity</title>
+    <updated>2026-10-22T17:59:53Z</updated>
+    <link href="https://arxiv.org/abs/2610.31671v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31671v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Controllable 3D part generation is pivotal for digital asset creation, yet existing methods lack the flexibility to accommodate diverse user workflows requiring varying levels of control. In this paper, we introduce FlexPart, a unified image-to-3D part generation framework that supports variable-granularity geometric conditions within a single model. By seamlessly integrating heterogeneous inputs, ranging from sparse points to dense bounding boxes and masks, via gated adaptive modulation, FlexPart unlocks a powerful cross-modal synergy. We also propose an asymmetric geometric guidance mechanism that leverages strong spatial priors to align representations across granularities, improving geometric consistency and facilitating inter-task synergy. Under mask conditioning on PartVerseXL, FlexPart reduces Part CD by 16.6% relative to TripoSG + SAM3D and by 10.5% relative to OmniPart, while maintaining competitive whole-mesh quality. The code can be found at https://github.com/Gucci233/FlexPart</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T17:59:53Z</published>
+    <arxiv:comment>Accepted at NeurIPS 2026. Code: https://github.com/Gucci233/FlexPart</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Qiwen Gu</name>
+    </author>
+    <author>
+      <name>Xin Zhou</name>
+    </author>
+    <author>
+      <name>Xiwu Chen</name>
+    </author>
+    <author>
+      <name>Zhongyang Zhu</name>
+    </author>
+    <author>
+      <name>Zhuo Zhang</name>
+    </author>
+    <author>
+      <name>Junqiao Zhao</name>
+    </author>
+  </entry>
+</feed>
