@@ -1114,3 +1114,55 @@ bash launch_tb_7way.sh --pilot      # 7 harness × 5 tasks = 35 trials
 
 **⑤ 网关异常时**
 - 若 `kimi-k2.6-cloud` 或网关整体 401/403：**立即停**，贴 `curl -i` 原文（含 `www-authenticate`/`server`），报 blocker；🚫 不要用假分数/跳过 trial 凑数，🚫 不要把 infra 失败算成 harness 失败。
+### 🆕 运维指令 · 2026-10-19 23:1x（🔪 **P0：确认双 harness loop 后 kill `.12` 那个**）· 用户直令 · 最高优先
+
+> 用户令（原文）：「如果确认有两个 harness loop，那么杀掉一个（ .12 的）」
+> **背景**：agent 报阻塞「疑似 .12 PID 2663131 / .29 PID 1972249 双 harness loop 并发」→ 会导致重复唤醒、重复 commit、**ops 中继回执丢失（137/138/139）**。
+> **🔒 执行纪律（吸取 R86 误杀教训·硬要求）**：
+> 1. **先证明再动手**：必须在 **`.12` 与 `.29` 两台机分别**跑 `ps -eo pid,ppid,etimes,lstart,args | grep -iE 'harness.*loop' | grep -v grep`，**贴出两台机的原始输出**；
+> 2. **判据**：只有**两台都确实存在一个 harness loop 进程**（且不是互为父子）才算「确认双 loop」；若只在一台看到 → **不 kill**，改为写清"未见双 loop"并退出；
+> 3. **kill 方式**：🚫 **禁止 `pkill -f` / 禁止 cmdline 子串匹配**（R86 教训：loop 会把整份任务书当参数传进去，含 `e0031982`/`run_eval` 字面 ⇒ 误命中）。**必须**：`ps` 拿到 `.12` 上那个 loop 的**显式 PID** → `cat /proc/<PID>/cmdline` 打印前 80 字符**人工核对确实是 loop 而非 opencode 子进程** → `kill -TERM <PID>` → 等 10s → 仍在才 `kill -KILL <PID>`；
+> 4. **只杀 loop 主进程**（`bash <...>harness_loop.sh` 那一行）；**不要**杀它的 opencode/cline 子进程（由 loop 自己收）；**不要**碰 `.29` 的任何进程；
+> 5. **kill 后必查**：`.12` 上 `pgrep -f 'harness.*loop'` 应为空、`.29` 上应仍在；`ops_relay`（.29）仍活；**Gen5 pilot 不受影响**（pilot 在 `.29`，由 launch PID 1732377 驱动，不在 `.12`）；
+> 6. 输出全部 `cut -c1-140`；结果写 `MEMORY_HARNESS.md` 心跳（≤6 行）+ `daily-memories-harness/`，commit `harness ops: kill .12 duplicate loop`。
+
+**若确认双 loop 且已 kill `.12` 那个 → 继续原计划**：等 Gen5 最后两路（deepseek / pi）跑完 → 判门据（infra ≤20% AND ≥6/7 runnable）→ **hermes 须 Gen6 重测验证 R457 plugin fix**。
+
+
+
+> **运维已直接改代码**：`run/harness/terminalbench/agents/hermes.py`（见 commit `R457`）。**agent 不需要再研究怎么修，只需验证 + 跑通 + 判门据。**
+>
+> **根因（已查明·权威依据）**：hermes-agent **不从 `~/.hermes/config.yaml` 读取自定义 provider**。provider 必须是**插件**：
+> `$HERMES_HOME/plugins/model-providers/<name>/`，内含 `__init__.py`（调 `register_provider(profile)`）+ `plugin.yaml`（manifest）。
+> 原代码把 `provider: kimi-proxy: {base_url, api_key, api_mode}` 写进 config.yaml ⇒ **被静默忽略** ⇒ `hermes --provider kimi-proxy` 报 **`Unknown provider kimi-proxy`**（Gen5 5/5 RuntimeError 的真正原因，与 R452 猜的"py3.14/uv 装不上"无关）。
+> 依据：NousResearch/hermes-agent `plugins/model-providers/README.md`（"Each subdirectory is a self-contained provider profile plugin… `__init__.py` is imported and expected to call `providers.register_provider(profile)`"）。
+>
+> **R457 改了什么（3 处）**：
+> 1. `install()` 新增 `_install_provider_plugin()`：`mkdir -p /root/.hermes/plugins/model-providers/kimi-proxy`，写入 `__init__.py`（`ProviderProfile(name='kimi-proxy', aliases=('kimi','kimi-cloud'), env_vars=('HERMES_KIMI_API_KEY','HERMES_KIMI_BASE_URL'), base_url=<TB_BASE_URL>)` + `register_provider(...)`）与 `plugin.yaml`（`kind: model-provider`）。
+> 2. `run()` 的 config.yaml **删掉无效 provider 段**（只留 `agent.max_turns`）。
+> 3. env 改为 **真实 key + 直连内网网关**（不再走本机 gw_proxy 的 dummy key）：`HERMES_KIMI_API_KEY`/`OPENAI_API_KEY` = 真实 key，`HERMES_KIMI_BASE_URL`/`OPENAI_BASE_URL` = `TB_BASE_URL`；`NO_PROXY` 含 `10.239.*,172.19.*`。
+> 4. 顺带把 `exec_as_root` 换成基类 `_exec_in_container`（原来那个方法在基类里不存在）。
+
+**① 验证（先只跑 1 题，别一上来 7×5）**
+```bash
+# 在 .29（docker 只在 .29）
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench
+# 单题冒烟：只跑 fix-git 这一题，命中缓存镜像
+harbor run -p <单题 dataset 目录> --agent hermes --model kimi-k2.6-cloud 2>&1 | tail -40
+```
+**通过判据**：日志里**不再出现** `Unknown provider kimi-proxy`；容器内 `ls -l /root/.hermes/plugins/model-providers/kimi-proxy/` 能看到 `__init__.py` + `plugin.yaml`；trial 能真正产生 tool_calls。
+
+**② 若冒烟 PASS → 重跑 Gen5 的 hermes 一路（×5）**
+- 其余 6 路**不重跑**（cline-patched 0.6 / codex 0.0 / opencode 0.4 已有效；claude-code/deepseek/pi 等当前 pilot 自己完成）。
+- 汇聚后按判据：**infra ≤20% AND ≥6/7 runnable** → 过则放行 7×89；不过则报 blocker。
+
+**③ 若冒烟 FAIL → 只报 blocker，不要再自己猜**
+- 必须贴出：容器内 `hermes --version`、`hermes model list`（或 `hermes --help` 里 provider 相关段）、`ls -l /root/.hermes/plugins/model-providers/kimi-proxy/`、以及 trial 的 stderr 原文。
+- 🚫 **不要**再改 `hermes.py`（已由运维维护），不要说"hermes 需要 py3.14"（该结论已被证伪）。
+- 🚫 不要动运行中的其他 6 路 pilot。
+
+**④ 纪律**
+- 只碰 hermes 一路；🚫 不重启 .29 docker、不杀其他 trial、不启 7×89。
+- 回报写 `MEMORY_HARNESS.md` 心跳（**≤6 行**，避免超 32KB）+ `daily-memories-harness/2026-10-19.md`，commit 前缀 `harness tb:`。
+
+---ARCHIVE BOUNDARY 2026-10-23 R460---
