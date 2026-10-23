@@ -536,3 +536,52 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 3. 用户裁决：改用官方 `examples/xmodel/train_decay_fp8_1120.sh`（DP8+μP+FP8+lr1e-5 const，RUN_ID 147 可行性✅）。
 4. 前置三步：① 起点 step_532000 HF→Megatron 转换（repo convert.py+loader_*）；② DATA_PATH 6 源权重定位（`full_*` 实测 0 shard）；③ 100 步冒烟。
 
+---
+
+## Decay 5000 步（A方案 · 官方 Megatron train_decay_fp8_1113.sh · 18.1B tokens）14 集评测 ✅
+
+> 评测时间：2026-10-23（.29, 8×H100） · 模型：`Xmodel-2.5-code/out/hf_decay_5000_final`（**1.35B Dense Transformer / XmodelForCausalLM**，HF 转换自 Megatron ckpt@5000）
+> 评测脚本：`run/baize_decay5000_eval_14.sh` · 口径 14 集 = CS8 zero-shot + CX6 default n-shot, trust_remote_code=True, sdpa
+> 结果文件：`nemo_experiments/eval_decay_5000_final/p8_eval_summary.json` + `eval_summary.txt`
+> 训练：5000 步 / 18.1B tok（GBS 960 × seq 3776）/ final loss 0.9946 / val PPL 2.712 / 0 NaN / 0 skip / optimizer Muon(muon-matched-adamw-rms 0.2) / LR 1.66667e-3 / WSD exponential / warmup 0 / MBS 5 / FP8 hybrid
+
+### CS8（Common Sense 8，zero-shot）
+
+| 任务 | acc_norm/acc | % |
+|:--|--:|--:|
+| hellaswag | 0.5468 | 54.68% |
+| arc_easy | 0.6536 | 65.36% |
+| boolq | 0.7003 | 70.03% |
+| arc_challenge | 0.3840 | 38.40% |
+| sciq | 0.8710 | 87.10% |
+| piqa | 0.6904 | 69.04% |
+| winogrande | 0.5675 | 56.75% |
+| openbookqa | 0.3040 | 30.40% |
+| **CS8 Avg（8/8）** | **0.5897** | **58.97%** |
+
+### CX6（Complex 6，default n-shot）
+
+| 任务 | few-shot | score | % |
+|:--|--:|--:|--:|
+| gsm8k | 5 | 0.4655 | 46.55% |
+| hendrycks_math500 | 4 | 0.1280 | 12.80% |
+| mmlu | 5 | 0.4897 | 48.97% |
+| bbh_zeroshot | 0 | 0.3001 | 30.01% |
+| humaneval | 0 | 0.1037 | 10.37% |
+| mbpp | 3 | 0.1940 | 19.40% |
+| **CX6 Avg（6/6）** | | **0.2802** | **28.02%** |
+
+### 对比总览（主对照 = Xmodel-2.5 final，同起点 step_532000 / 相近配比）
+
+| 模型 | Tokens | Params | CS8 | CX6 | 架构 |
+|:--|--:|--:|--:|--:|:--|
+| Xmodel-2.5 final（官方） | 1.4T+ | 1.3B | 65.40% | 32.90% | Dense Transformer |
+| step_532000（起点基线） | 1.41T | 1.3B | **61.03%** | — | Dense Transformer |
+| **decay-5000（本实验）** | 18.1B | 1.35B | **58.97%** | **28.02%** | Dense Transformer（同架构） |
+| decay v2（自写脚本·71.2B） | 71.2B | ≈1.3B | 44.97% | 6.21% | Dense Transformer（同架构） |
+| **Δ（decay-5000 − 官方 final）** | — | — | **-6.43pp** | **-4.88pp** | — |
+| **Δ（decay-5000 − 起点基线）** | — | — | **-2.06pp** | — | — |
+| **Δ（decay-5000 − decay v2）** | — | — | **+14.00pp** | **+21.81pp** | — |
+
+> **关键结论**：decay-5000 用官方 `train_decay_fp8_1113.sh`（DP8 + μP + FP8 hybrid + optimizer Muon 0.2 + WSD exponential + warmup 0 + MBS 5 + LR 1.66667e-3），18.1B token / 5000 步后 **CS8=58.97% / CX6=28.02%**：
+> ① 相对起点基线 CS8 仅 **-2.06pp**（61.03%→58.97%）——能力基本保持，未出现 decay v2 的暴跌；② 相对官方 final（32.90%）CX6 差 **-4.88pp**，属小间距（官方 final 训练量大 78×）；③ 相对自写脚本 decay v2 的 **44.97%/6.21% 大幅修复（+14.00/+21.81pp）**，证明根因在于自写脚本缺 μP/LR 口径 + 双移位，而非 decay 概念本身。

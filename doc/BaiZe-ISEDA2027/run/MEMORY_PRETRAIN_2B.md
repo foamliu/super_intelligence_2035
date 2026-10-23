@@ -1,5 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 10:0x #741：✅ CX6 6/6 全完成 → decay-5000 最终评测 CS8=58.97% / CX6=28.02%**：
+> - **bbh_zeroshot 完成**（.29 GPU6，09:57 收尾）：exact_match(flexible-extract)=**0.3001**（30.01%），sdpa 下无 flash_attn varlen 崩、6511/6511 健康跑完。
+> - **CX6 最终 6/6**：gsm8k=**0.4655**(46.55%) / math500=**0.128**(12.80%) / mmlu=**0.4897**(48.97%) / bbh=**0.3001**(30.01%) / humaneval=**0.1037**(10.37%) / mbpp=**0.194**(19.40%) → **CX6 均分 = 28.02%**。
+> - **对比**：decay-5000 **CS8 58.97% / CX6 28.02%** vs Xmodel-2.5 官方 final **65.40% / 32.90%**（Δ −6.43 / −4.88pp）；vs 起点基线 CS8 61.03%（Δ −2.06pp）；vs 旧 decay v2 **44.97% / 6.21%**（**+14.00 / +21.81pp**）。**结论：decay 5000 步（官方 1113.sh + Muon 0.2 + 无 warmup + MBS=5）成功，能力基本保持，较自写脚本 decay v2 大幅修复**。
+> - **收尾**：`collect_eval_summary.py` 重跑 → `p8_eval_summary.json` 已更新（CS8=58.97% / CX6=28.02%）；CX6 六任务全部落盘 `nemo_experiments/eval_decay_5000_final/`（cx_sdpa_gsm8k/math500/bbh/humaneval/mbpp + cx_mmlu），.29 GPU 已释放。
+> 📦 体积：TASK=18800B / MEMORY=25565B（均≤32KB✓，本轮归档 0KB）。
+
 > 🆕 **2026-10-23 09:4x #740：CX6 sdpa 修复重跑 5/6 完成（gsm8k/math500/代码已就绪，bbh 仍在跑）**：
 > - **已完成 CX6 5/6**：gsm8k=**0.4655**（exact_match）/ math500=**0.128** / humaneval=**0.1037**(pass@1) / mbpp=**0.194**(pass_at_1) ＋ 首轮 mmlu=**0.4897** 有效。
 > - **bbh_zeroshot 运行中**（PID 3807060 @ .29 GPU6，log cx_sdpa_bbh2.log）：6511 请求 @ ~2.2it/s，已 ~23%（~1505/6511），ETA ~38min，sdpa 下无 flash_attn varlen 崩、健康推进。完成后下一轮汇总 CX6 最终均分。
@@ -98,9 +105,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **✅ decay 5000 步训练完成 + HF 转换 + CS8 首评（A方案 官方 Megatron 1113.sh）** —— CS8=58.97%（vs 基线 61.03%，Δ−2.06pp），decay 修复成功（旧 v2=44.97% 训坏）。HF 模型 @ `Xmodel-2.5-code/out/decay_5000_hf/`。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup 已全部落地。
-  - PHASE: **decay_5000_评估中** — 训练完成（final loss 0.9946, val PPL 2.712, 0 NaN/0 skip），HF 转换✅，CS8=58.97%(8/8)✅，CX6 重跑 5 任务中（mmlu 已得 0.4897）。ckpt@5000 ✅，loop 存活，.29 评估中（CX6 重跑占用 GPU0-4）。
-- 轮询状态：**#739（08:4x，decay 5000 训练完成 + CS8 首评 58.97%）**：训练 step5000 完成 final loss 0.9946，0NaN/0skip，ckpt@5000 已存；HF 转换✅（vocab truncate 修复）；CS8=58.97% vs 基线 61.03%（Δ−2.06pp）→ decay 成功；CX6 5 任务（gsm8k/math500/bbh/humaneval/mbpp）sdpa+unsafe-code 重跑中。loop 存活。
+- STAGE: **✅ decay 5000 步训练 + 14 集评测全完成（A方案 官方 Megatron 1113.sh）** —— **CS8=58.97% / CX6=28.02%**（vs 官方 final 65.40%/32.90%；vs 基线 CS8 61.03% Δ−2.06pp）。decay 修复成功（旧 v2=44.97%/6.21% 训坏）。HF 模型 @ `Xmodel-2.5-code/out/hf_decay_5000_final/`。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup 已全部落地。
+  - PHASE: **decay_5000_已完成** — 训练完成（final loss 0.9946, val PPL 2.712, 0 NaN/0 skip），HF 转换✅，CS8=58.97%(8/8)✅，CX6=28.02%(6/6)✅。全部结果落盘 `nemo_experiments/eval_decay_5000_final/`。loop 存活，.29 GPU 已释放。
+- 轮询状态：**#741（10:0x，CX6 6/6 完成 → decay-5000 最终 CS8=58.97%/CX6=28.02%）**：bbh 09:57 完成 0.3001；CX6 六任务全齐 28.02%；vs 官方 final 65.40/32.90、vs 基线 CS8 61.03（Δ−2.06pp）、vs 旧 v2 44.97/6.21 大幅修复。loop 存活。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
