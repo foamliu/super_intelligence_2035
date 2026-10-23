@@ -4,8 +4,7 @@
 \subsection{Overall Architecture}
 \label{sec:overall-architecture}
 
-ZhuLong is built on Cline-CLI \cite{cline2024cline}, an open-source framework for autonomous coding agents, extended with EDA-specific retrieval, documentation, and execution capabilities. Throughout, we call the resulting runtime an \textbf{ICL-type autonomous agent}: an agent that decides its own next action, keeps no explicit posterior, and maintains its belief state implicitly by in-context learning, as formalized in Section~\ref{sec:grounding-theory}. We choose Cline-CLI for its mature permission controls, human-in-the-loop support, and enterprise readiness. As shown in Figure~\ref{fig:architecture}, the system comprises three components: the LLM-based agent runtime, the API knowledge base, and the EDA execution environment. The agent interacts with these components through three MCP tools.
-% ZhuLong基于Cline-CLI \cite{cline2024cline}构建，这是一个开源自主代码智能体框架，我们扩展了EDA特定的检索、文档查阅和执行能力。选择Cline-CLI是因为其成熟的权限控制、人在闭环支持和企业级就绪能力。如图~\ref{fig:architecture}所示，系统包括三个组件：基于LLM的智能体运行时、API知识库和EDA执行环境。智能体通过三个MCP工具与这些组件交互。
+ZhuLong is built on Cline-CLI \cite{cline2024cline}, extended with EDA-specific retrieval, documentation, and execution capabilities. We call the resulting runtime an \textbf{ICL-type autonomous agent}: it decides its own next action, keeps no explicit posterior, and maintains its belief state implicitly by in-context learning (formalized in Section~\ref{sec:grounding-theory}). As shown in Figure~\ref{fig:architecture}, the system comprises three components---the LLM-based agent runtime, the API knowledge base, and the EDA execution environment---interacting through three MCP tools.
 
 \begin{figure*}[t]
 \centering
@@ -36,6 +35,5 @@ ZhuLong extends three MCP tools \cite{mcp2024protocol}, each accepting a unified
 \subsection{Agent Workflow}
 \label{sec:agent-workflow}
 
-The agent iteratively refines its output through execution feedback \cite{cline2024cline}. A typical trajectory begins with reasoning over the user instruction, followed by API retrieval via \texttt{search\_apis} when needed. Candidate APIs are then inspected via \texttt{get\allowbreak\_api\allowbreak\_details}, and code is generated accordingly. The agent executes the code via \texttt{run\_code}, observes the result, and re-plans—revising the code, retrieving alternative APIs, or terminating. This loop continues until success or the agent determines further attempts are unlikely to succeed. The agent is not constrained to a fixed sequence; it may skip retrieval when it already knows the required API, or conduct multiple rounds of retrieval when initial results lack confidence.
-% 智能体通过执行反馈迭代优化其输出 \cite{cline2024cline}。典型轨迹始于对用户指令的推理，需要时通过\texttt{search\_apis}检索API，然后通过\texttt{get\_api\_details}查阅候选API的文档，据此生成代码。智能体通过\texttt{run\_code}执行代码、观察结果并重规划——修改代码、检索替代API或终止。此循环持续至成功或智能体判断继续尝试不太可能成功。智能体不受固定序列约束——已知所需API时可跳过检索，初始结果置信度不足时可进行多轮检索。
+The agent iteratively refines its output through execution feedback \cite{cline2024cline}. A typical trajectory reasons over the user instruction, retrieves APIs via \texttt{search\_apis}, inspects candidates via \texttt{get\_api\_details}, generates code, executes it via \texttt{run\_code}, observes the result, and re-plans---revising code, retrieving alternatives, or terminating---until success or further attempts are deemed unlikely. The agent is not constrained to a fixed sequence: it may skip retrieval when it already knows the required API, or conduct multiple retrieval rounds when initial results lack confidence.
 

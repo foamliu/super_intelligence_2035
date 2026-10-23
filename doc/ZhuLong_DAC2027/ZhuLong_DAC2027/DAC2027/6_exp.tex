@@ -182,18 +182,12 @@ $\Phi$ unbounded (default) & 81.4 $\pm$ 1.5 & 99.1 & 10.4 \\
 % "Converged"为结束原因为\emph{completed}的trace占比（原生 finish reason，见Cline agent runtime）。
 % 前四档在工具边界实现，无需改动智能体源码，也不强制提交时机；unbounded 即 ZhuLong（Full）。
 
-Reading Table~\ref{tab:phi-bound} with the \emph{Mean gen-fail} column reveals the mechanism: as $k$ shrinks, tasks failing to produce executable code rise (17.4 at $k{=}10$, 27.6 at $k{=}3$, 34.6 at $k{=}1$), driving Pass@1 downward. The budget is exhausted at the tool boundary, but the agent keeps running; with no further \texttt{run\_code} calls it cannot finish or validate its generation. This $k\!\downarrow \to \text{gen-fail}\!\uparrow \to \text{Pass@1}\!\downarrow$ chain is the observable signature of $\Phi$ being bounded, consistent with Principle~3.
-% 结合 Pass@1 与 Mean gen-fail 两列可看出单调下降的机制：执行预算 k 越小，无法产出可执行代码的任务越多
-% （k=10: 17.4, k=3: 27.6, k=1: 34.6），从而拉低 Pass@1。预算在工具边界耗尽，但智能体仍自主运行；
-% 无法再调用 run_code，便无法完成或验证生成，失败表现在生成阶段而非执行错误。
-% 这一 k↓→gen-fail↑→Pass@1↓ 链条是 Φ 被界的可观测特征，与原则3一致。
+Reading Table~\ref{tab:phi-bound} with the \emph{Mean gen-fail} column reveals the mechanism: as $k$ shrinks, tasks producing no executable code rise (17.4 at $k{=}10$, 27.6 at $k{=}3$, 34.6 at $k{=}1$), driving Pass@1 downward. The budget is exhausted at the tool boundary, but the agent keeps running; with no further \texttt{run\_code} calls it cannot finish or validate its generation---the $k\!\downarrow \to \text{gen-fail}\!\uparrow \to \text{Pass@1}\!\downarrow$ signature of $\Phi$ being bounded, consistent with Principle~3.
 
 \subsubsection{S3: The prior axis, the contrast arm of RQ1}
 \label{sec:k-axis}
 
-Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM---with the harness fixed. We use DeepSeek-V4-Pro (FP4) as the primary backbone for its cost--capability trade-off; GLM-5.2 attains marginally higher Pass@1 (83.3\%) but overlaps within one standard deviation. The spread is what the $\mathcal{K}$ axis can move---and it is smaller than what S1's fidelity ladder and S2's effector ablation move, confirming Principle~2: the prior does not substitute for the observation channel.
-% S3：$\mathcal{K}$轴（原则1）。原则1把知识与信念解耦：冻结先验应当界定框架能达到的上限，而不替代观测。
-% 表~\ref{tab:llm-comparison}仅改变$\mathcal{K}$（即LLM本身），框架保持不变。
+Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM---with the harness fixed. We use DeepSeek-V4-Pro (FP4) as the primary backbone for its cost--capability trade-off; GLM-5.2 attains marginally higher Pass@1 (83.3\%) but overlaps within one standard deviation. Read against Principle 2, this spread is what $\mathcal{K}$ can move---smaller than the observation-channel effects in S1--S2, confirming that the prior does not substitute for observation.
 
 \begin{table}[htbp]
 \centering
@@ -211,13 +205,8 @@ Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -17.6 pp$^{***}$ \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-\footnotesize{Significance vs.\ DeepSeek-V4-Pro (McNemar on 790 paired observations, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, ns = not significant. GLM-5.2: $p{=}0.38$, CI $[-2.7, +5.4]$~pp. Kimi-K2.6: $p{=}0.003$, CI $[+1.5, +8.4]$~pp. Doubao: $p{=}9{\times}10^{-23}$, CI $[+13.3, +23.3]$~pp. Flash$^{\dagger}$: retest 5-run under reduced gateway parallelism (-p 4) and enlarged token budget (max\_tokens 16384); the initial 5-run (11.9 $\pm$ 2.7\%, $\Delta{=}-69.5$~pp) was depressed by an infrastructure confound (API-gateway concurrency cap and a reasoning-token budget exhausted before content emission), not by model capability. McNemar $p$ and CI on the retest set are not re-computed; the $^{***}$ marker is inherited from the initial pooled analysis and should be read descriptively.}
+\footnotesize{Significance vs.\ DeepSeek-V4-Pro (McNemar, paired bootstrap 95\% CI): $^{***}$p{<}0.001, $^{**}$p{<}0.01, ns = not significant. Flash$^{\dagger}$: retest 5-run under reduced gateway parallelism ($-p$ 4) and enlarged token budget; the initial 5-run (11.9\%, depressed by an infrastructure confound) is superseded.}
 \end{table}
-% 表：LLM主干的影响（ZhuLong）。
-
-Read against Principle 2, this spread is what $\mathcal{K}$ can move---smaller than the observation-channel effects in S1--S2, confirming that the prior does not substitute for observation.
-% 对照原则2，该跨度就是$\mathcal{K}$轴能够移动的量，也是领域适配所针对的轴。
-% 原则2预测它不能替代观测通道——这正是S1的保真度阶梯与S2的执行器消融的效应大于任何先验变化的原因。
 
 \subsubsection{RQ3: re-measuring the structure per toolchain}
 \label{sec:cross-language}
