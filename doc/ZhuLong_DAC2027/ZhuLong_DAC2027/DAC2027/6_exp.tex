@@ -30,13 +30,7 @@ We evaluate ZhuLong on \textbf{EDA-Eval-PyAether} (158 tasks) using \textbf{Pass
 
 \subsubsection{Baselines and ZhuLong Variants}
 
-To isolate each component's contribution, we use two baselines and two ablations (Table~\ref{tab:configurations}). Retrieval and documentation form the observation channel $\Omega$; the sandbox is the effector. Each capability is toggled by a tool-registration switch---a single disabled-list in the server environment spanning the four core tools---so a disabled tool vanishes from the agent's tool set while every enabled tool keeps a byte-identical implementation across all arms.
-% 基线与ZhuLong变体。按第~\ref{sec:grounding-theory}节的框架解读，表中两列就是框架所提供的两个组件：
-% 检索与文档是观测通道$\Omega$，沙盒是使动作抵达实时设计的执行器。
-% ZhuLong变体默认使用名称+描述索引进行向量检索；S1显式改变该索引的保真度，S2则对信念更新$\Phi$加界——这是本表未涉及的组件。
-
-These columns name components realized at the harness boundary. The sandbox is removed by unregistering \texttt{run\_code}; retrieval by unregistering the three retrieval tools; the anti-leak hook stays loaded in every arm.
-% 这些列命名的组件在框架边界实现，而非智能体内部。每个可观测能力的有无由一个"工具注册开关"切换——服务器环境里的单一禁用清单，覆盖核心 4 工具（search_apis / search_apis_by_keyword / get_api_details / run_code）：被禁用的工具从智能体工具集中消失，而每个启用的工具在各臂之间保持逐字一致的实现。关沙盒=取消注册 run_code；关检索=取消注册三个检索工具；反作弊 PreToolUse hook 每个臂始终装载。
+To isolate each component's contribution, we use two baselines and two ablations (Table~\ref{tab:configurations}). Retrieval and documentation form $\Omega$; the sandbox is the effector. Each capability is toggled by a tool-registration switch---a single disabled-list in the server environment---so a disabled tool vanishes from the agent's tool set while every enabled tool keeps a byte-identical implementation across all arms. The sandbox is removed by unregistering \texttt{run\_code}; retrieval by unregistering the three retrieval tools; the anti-leak hook stays loaded in every arm.
 
 \begin{table}[htbp]
 \centering
@@ -156,26 +150,11 @@ The results recover the predicted monotone ordering (N$'$)$<$(B)$<$(F): N$'$\,$\
 \subsubsection{S2: The closed loop (RQ2)}
 \label{sec:closed-loop}
 
-Principle 3 requires two things: that actions reach the design through a causal interface, and that the belief update $\Phi$ run continuously.
+Principle 3 requires actions to reach the design through a causal interface, and $\Phi$ to run continuously.
 
-\textbf{Effector: does the action reach the live design?} Removing the sandbox drops Pass@1 from 81.4\% to 72.2\% ($-9.2$~pp; McNemar $p{<}10^{-8}$, 95\% CI $[-13.1, -5.4]$~pp); adding it to the RAG baseline raises it by the same amount. Without an effector, $b_t$ receives no evidence about the live state and the agent is reduced to a prior-only predictor. Execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search~\cite{kumar2026agentforge, jiang2024seed}.
-% 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从81.4\%降至72.2\%（-9.2pp）；
-% 把沙盒加入RAG基线使其从72.2\%升至81.4\%（+9.2pp）。没有执行器，$a_t$未被作用于设计，
-% $b_t$得不到任何关于实时状态的证据，智能体退化为仅凭先验的预测器。
+\textbf{Effector.} Removing the sandbox drops Pass@1 from 81.4\% to 72.2\% ($-9.2$~pp; McNemar $p{<}10^{-8}$, 95\% CI $[-13.1, -5.4]$~pp); adding it to the RAG baseline raises it by the same amount. Without an effector, $b_t$ receives no evidence about the live state and the agent is reduced to a prior-only predictor. Execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search~\cite{kumar2026agentforge, jiang2024seed}.
 
-\textbf{Belief update: how much evidence may $\Phi$ accumulate?} ZhuLong is autonomous: the agent decides when to submit, so we do not shorten the loop or force early submission. Instead we bound how often the loop \emph{may execute}---the number of \texttt{run\_code} calls per trace---which determines how much state evidence $b_t$ receives. Once the budget is spent, the call is denied at the tool boundary; the agent keeps running under its own control until it submits. Table~\ref{tab:phi-bound} also includes a \emph{lagged} channel: a single-slot ($L{=}1$) buffer whose read-back returns the state from the \emph{previous} execution, leaving the agent permanently one action behind the design. Both axes leave the LLM, observation content, and effector untouched. Principle~3 predicts accuracy rises with the execution budget but saturates once updates outpace the design's dynamics.
-% 信念更新：$\Phi$可累积多少证据？ZhuLong是自主智能体：任务下达后自行规划、查询API知识库、
-% 执行并调试代码，并由智能体（而非框架）决定结果何时足够好可以提交。
-% 因此我们不缩短循环、也不强制提前提交，而是给"循环可执行的次数"加界——
-% 这决定了$b_t$究竟能收到多少状态证据。操作上该界就是单条trace允许的\texttt{run\_code}调用次数：
-% 预算耗尽后，调用在工具边界被"第二个共存的 PreToolUse hook"（按 trace 计数 run_code 调用）拒绝，并返回带唯一前缀 \texttt{{[PHI-BUDGET-EXHAUSTED]}} 的说明性错误（Cline hook 引擎对 cancel 做 OR 合并、对原因做换行拼接，无前缀就无法与反作弊 hook 的拒绝区分）；智能体仍在自主控制下继续运行，直到自行提交。
-% 由于终止权仍归智能体，我们在准确率旁报告框架自身的结束原因——
-% \emph{completed}（智能体自认完成）对比\emph{max iterations}或预算被拒——
-% 以便紧预算不会被误读为提前收敛。对于没有显式后验的智能体，$\Phi$由上下文留存的内容实现，
-% 因此表~\ref{tab:phi-bound}另含一条"滞后"通道：其回读返回的是"上一次执行"产生的状态，
-% 使智能体永远落后于设计一步；首次回读不含状态，其余设置全部不变。
-% 两条轴都不动LLM、观测内容与执行器。原则3预测准确率随执行预算上升，
-% 但当更新足够快于设计自身动态后即饱和——因为上一次动作之前取得的证据在下一次决策时已部分失效。
+\textbf{Belief update.} ZhuLong is autonomous, so we do not shorten the loop or force early submission. Instead we bound how often the loop \emph{may execute}---the number of \texttt{run\_code} calls per trace---which determines how much state evidence $b_t$ receives. Once the budget is spent, the call is denied at the tool boundary; the agent keeps running under its own control until it submits. Table~\ref{tab:phi-bound} also includes a \emph{lagged} channel: a single-slot ($L{=}1$) buffer whose read-back returns the state from the \emph{previous} execution, leaving the agent permanently one action behind the design. Principle~3 predicts accuracy rises with the execution budget but saturates once updates outpace the design's dynamics.
 
 \begin{table}[htbp]
 \centering
