@@ -7,8 +7,9 @@ WAITING: 1
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
-> ⏸ **【2026-10-23 21:45 用户直令 · 本线已暂停】** 计划任务 `WatchVideoLoop` → **Disabled**；loop 进程（PID 3272）已终止；心跳停在 21:14:24，22:00 整点未再唤醒（已验证）。**ComfyUI 未停**（running 1 / pending 12，EP06 剩余镜头继续渲染，不再有新投递）。
-> **恢复**：`Enable-ScheduledTask -TaskName 'WatchVideoLoop'` + `Start-ScheduledTask -TaskName 'WatchVideoLoop'`。详见 `video/PAUSE_STATUS.md`。
+> ⏸ **【2026-10-23 21:45 用户直令 · 本线已暂停】** 计划任务 `WatchVideoLoop` → **Disabled**；loop 进程（PID 3272）已终止；心跳停在 21:14:24，22:00 整点未再唤醒（已验证）。
+> **22:0x 追加**：ComfyUI 渲染任务也已停（`/interrupt` + `queue.clear`，running 0 / pending 0）。**中断时 EP06 = 42/54**（仓内 29 + `E:\code\ComfyUI\output\video` 新出 13 未回收）；**未渲染 12 镜 = 41,43,44,45,47,48,49,50,51,52,53,54**。
+> **恢复**：`Enable-ScheduledTask -TaskName 'WatchVideoLoop'` + `Start-ScheduledTask -TaskName 'WatchVideoLoop'`。**恢复第一轮必须先回收那 13 个 mp4、再补投 12 镜**（否则重复投）。详见 `video/PAUSE_STATUS.md`。
 > ⚠️ 暂停期间**不要**再往队列投镜头；恢复后第一轮请先**以磁盘 glob 为准**核验 EP06 实际落盘数（loop 已停一轮，可能与本记忆的 29/54 不一致）。
 
 ---
