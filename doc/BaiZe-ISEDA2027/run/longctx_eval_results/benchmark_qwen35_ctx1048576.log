@@ -1,0 +1,17 @@
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (1008001 > 262144). Running this sequence through the model will result in indexing errors
+[health] server models: ['Qwen3.5-2B']
+[init] loading tokenizer from /nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc ...
+
+============================================================
+=== Context = 1048576 (1024K) ===
+============================================================
+  [warmup 1/1] ctx=1048576 ...
+  [run 1/2] ctx=1048576 ...
+    OK TTFT=89.0801s  prefill=11315.7 tok/s  decode=132.2 tok/s  e2e=90.0481s  VRAM_peak=73.16GB  VRAM_steady=73.12GB
+  [run 2/2] ctx=1048576 ...
+    OK TTFT=89.1063s  prefill=11312.3 tok/s  decode=129.0 tok/s  e2e=90.0987s  VRAM_peak=73.16GB  VRAM_steady=73.16GB
+
+  MEDIAN: TTFT=89.0932s  prefill=11314.0 tok/s  decode=130.6 tok/s  VRAM_peak=73.16GB
+
+[done] results saved to /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/longctx_eval_results/results_qwen35-2b_ctx1048576.json
+[summary] 1 context lengths tested

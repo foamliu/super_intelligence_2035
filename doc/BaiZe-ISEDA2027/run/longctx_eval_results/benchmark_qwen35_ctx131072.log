@@ -1,0 +1,16 @@
+[health] server models: ['Qwen3.5-2B']
+[init] loading tokenizer from /nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc ...
+
+============================================================
+=== Context = 131072 (128K) ===
+============================================================
+  [warmup 1/1] ctx=131072 ...
+  [run 1/2] ctx=131072 ...
+    OK TTFT=2.4036s  prefill=52332.8 tok/s  decode=307.7 tok/s  e2e=2.8196s  VRAM_peak=73.16GB  VRAM_steady=73.11GB
+  [run 2/2] ctx=131072 ...
+    OK TTFT=2.393s  prefill=52562.9 tok/s  decode=307.9 tok/s  e2e=2.8087s  VRAM_peak=73.16GB  VRAM_steady=73.16GB
+
+  MEDIAN: TTFT=2.3983s  prefill=52447.85 tok/s  decode=307.8 tok/s  VRAM_peak=73.16GB
+
+[done] results saved to /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/longctx_eval_results/results_qwen35-2b_ctx131072.json
+[summary] 1 context lengths tested

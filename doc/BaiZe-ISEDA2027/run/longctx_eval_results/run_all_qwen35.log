@@ -1,0 +1,16 @@
+\n========== CTX=131072 ==========
+Server PID=567744, waiting for startup...
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/run_qwen35_all_ctx.sh: line 37: 567744 Killed                  CUDA_VISIBLE_DEVICES=0 $PY -m sglang.launch_server --model-path "$MODEL_PATH" --served-model-name "Qwen3.5-2B" --port 30000 --host 127.0.0.1 --context-length $CTX --mem-fraction-static 0.88 --dtype bfloat16 --attention-backend flashinfer --disable-radix-cache --log-level info > "$LOG" 2>&1
+Server failed during startup
+Server not ready, marking as OOM/error
+\n========== CTX=262144 ==========
+Server PID=612885, waiting for startup...
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/run_qwen35_all_ctx.sh: line 37: 612885 Killed                  CUDA_VISIBLE_DEVICES=0 $PY -m sglang.launch_server --model-path "$MODEL_PATH" --served-model-name "Qwen3.5-2B" --port 30000 --host 127.0.0.1 --context-length $CTX --mem-fraction-static 0.88 --dtype bfloat16 --attention-backend flashinfer --disable-radix-cache --log-level info > "$LOG" 2>&1
+Server failed during startup
+Server not ready, marking as OOM/error
+\n========== CTX=524288 ==========
+Server PID=657771, waiting for startup...
+Server failed during startup
+Server not ready, marking as OOM/error
+\n========== CTX=1048576 ==========
+Server PID=684431, waiting for startup...

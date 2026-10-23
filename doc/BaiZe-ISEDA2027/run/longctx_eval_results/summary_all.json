@@ -1,0 +1,453 @@
+{
+  "baize-2b": {
+    "experiment": "longctx_infer_cost",
+    "framework": "SGLang 0.5.9",
+    "model_name": "baize-2b",
+    "model_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/out/decay_5000_hf_llama",
+    "serve_name": "baize-2b",
+    "gpu": "H100-80GB #0",
+    "gen_len": 128,
+    "contexts_tested": [
+      65536,
+      131072,
+      262144,
+      524288,
+      1048576,
+      2097152
+    ],
+    "results": [
+      {
+        "context": 65536,
+        "prompt_tokens_actual": 63302,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": 2.5616,
+        "prefill_tok_s": 24711.9,
+        "decode_tok_s": 202.7,
+        "e2e_latency_s": 3.193,
+        "peak_vram_gb": 72.66,
+        "steady_vram_gb": 72.66,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 65536,
+            "prompt_tokens_actual": 63302,
+            "gen_len": 128,
+            "ttft_s": 2.5575,
+            "prefill_tok_s": 24751.3,
+            "decode_tok_s": 202.7,
+            "e2e_latency_s": 3.1889,
+            "peak_vram_gb": 72.66,
+            "steady_vram_gb": 72.66,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 65536,
+            "prompt_tokens_actual": 63302,
+            "gen_len": 128,
+            "ttft_s": 2.5657,
+            "prefill_tok_s": 24672.5,
+            "decode_tok_s": 202.7,
+            "e2e_latency_s": 3.1972,
+            "peak_vram_gb": 72.66,
+            "steady_vram_gb": 72.66,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 131072,
+        "prompt_tokens_actual": 126852,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": 9.3401,
+        "prefill_tok_s": 13581.4,
+        "decode_tok_s": 141.75,
+        "e2e_latency_s": 10.2431,
+        "peak_vram_gb": 73.12,
+        "steady_vram_gb": 73.12,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 131072,
+            "prompt_tokens_actual": 126852,
+            "gen_len": 128,
+            "ttft_s": 9.3356,
+            "prefill_tok_s": 13588.0,
+            "decode_tok_s": 141.6,
+            "e2e_latency_s": 10.2393,
+            "peak_vram_gb": 73.12,
+            "steady_vram_gb": 73.12,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 131072,
+            "prompt_tokens_actual": 126852,
+            "gen_len": 128,
+            "ttft_s": 9.3446,
+            "prefill_tok_s": 13574.8,
+            "decode_tok_s": 141.9,
+            "e2e_latency_s": 10.2469,
+            "peak_vram_gb": 73.12,
+            "steady_vram_gb": 73.12,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 262144,
+        "prompt_tokens_actual": 253953,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": 35.6482,
+        "prefill_tok_s": 7123.85,
+        "decode_tok_s": 89.65,
+        "e2e_latency_s": 37.076,
+        "peak_vram_gb": 73.93,
+        "steady_vram_gb": 73.93,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 262144,
+            "prompt_tokens_actual": 253953,
+            "gen_len": 128,
+            "ttft_s": 35.6639,
+            "prefill_tok_s": 7120.7,
+            "decode_tok_s": 89.6,
+            "e2e_latency_s": 37.0919,
+            "peak_vram_gb": 73.93,
+            "steady_vram_gb": 73.93,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 262144,
+            "prompt_tokens_actual": 253953,
+            "gen_len": 128,
+            "ttft_s": 35.6325,
+            "prefill_tok_s": 7127.0,
+            "decode_tok_s": 89.7,
+            "e2e_latency_s": 37.0601,
+            "peak_vram_gb": 73.93,
+            "steady_vram_gb": 73.93,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 524288,
+        "prompt_tokens_actual": 508153,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": 139.2363,
+        "prefill_tok_s": 3649.55,
+        "decode_tok_s": 51.1,
+        "e2e_latency_s": 141.7418,
+        "peak_vram_gb": 76.31,
+        "steady_vram_gb": 76.31,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 524288,
+            "prompt_tokens_actual": 508153,
+            "gen_len": 128,
+            "ttft_s": 139.2687,
+            "prefill_tok_s": 3648.7,
+            "decode_tok_s": 51.1,
+            "e2e_latency_s": 141.7741,
+            "peak_vram_gb": 76.31,
+            "steady_vram_gb": 76.31,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 524288,
+            "prompt_tokens_actual": 508153,
+            "gen_len": 128,
+            "ttft_s": 139.2039,
+            "prefill_tok_s": 3650.4,
+            "decode_tok_s": 51.1,
+            "e2e_latency_s": 141.7095,
+            "peak_vram_gb": 76.31,
+            "steady_vram_gb": 76.31,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 1048576,
+        "status": "oom",
+        "error": "server_failed_to_start"
+      }
+    ],
+    "timestamp": "2026-10-23 16:10:41"
+  },
+  "minicpm5-2b": {
+    "experiment": "longctx_infer_cost",
+    "framework": "SGLang 0.5.9",
+    "model_name": "minicpm5-2b",
+    "model_path": "/nas_train/app.e0031982/hf_cache/hub/models--openbmb--MiniCPM5-2B/snapshots/f97400052a43d642bbc6e9975e2397e3ae6a6b52",
+    "serve_name": "MiniCPM5-2B",
+    "gpu": "H100-80GB #0",
+    "gen_len": 128,
+    "contexts_tested": [
+      65536,
+      131072,
+      262144,
+      524288,
+      1048576,
+      2097152
+    ],
+    "results": [
+      {
+        "context": 65536,
+        "prompt_tokens_actual": 62770,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": null,
+        "prefill_tok_s": null,
+        "decode_tok_s": 41.25,
+        "e2e_latency_s": 3.1019,
+        "peak_vram_gb": 72.84,
+        "steady_vram_gb": 72.825,
+        "kv_cache_gb": 0.01,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 65536,
+            "prompt_tokens_actual": 62770,
+            "gen_len": 128,
+            "ttft_s": null,
+            "prefill_tok_s": null,
+            "decode_tok_s": 41.6,
+            "e2e_latency_s": 3.0759,
+            "peak_vram_gb": 72.83,
+            "steady_vram_gb": 72.82,
+            "kv_cache_gb": 0.01,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 65536,
+            "prompt_tokens_actual": 62770,
+            "gen_len": 128,
+            "ttft_s": null,
+            "prefill_tok_s": null,
+            "decode_tok_s": 40.9,
+            "e2e_latency_s": 3.128,
+            "peak_vram_gb": 72.85,
+            "steady_vram_gb": 72.83,
+            "kv_cache_gb": 0.01,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 131072,
+        "prompt_tokens_actual": 125785,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": null,
+        "prefill_tok_s": null,
+        "decode_tok_s": 13.4,
+        "e2e_latency_s": 9.5478,
+        "peak_vram_gb": 73.93,
+        "steady_vram_gb": 73.93,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 131072,
+            "prompt_tokens_actual": 125785,
+            "gen_len": 128,
+            "ttft_s": null,
+            "prefill_tok_s": null,
+            "decode_tok_s": 13.4,
+            "e2e_latency_s": 9.5392,
+            "peak_vram_gb": 73.93,
+            "steady_vram_gb": 73.93,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 131072,
+            "prompt_tokens_actual": 125785,
+            "gen_len": 128,
+            "ttft_s": null,
+            "prefill_tok_s": null,
+            "decode_tok_s": 13.4,
+            "e2e_latency_s": 9.5564,
+            "peak_vram_gb": 73.93,
+            "steady_vram_gb": 73.93,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 262144,
+        "prompt_tokens_actual": 251816,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": 32.9883,
+        "prefill_tok_s": 7633.5,
+        "decode_tok_s": 141.4,
+        "e2e_latency_s": 33.8934,
+        "peak_vram_gb": 75.2,
+        "steady_vram_gb": 75.2,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 262144,
+            "prompt_tokens_actual": 251816,
+            "gen_len": 128,
+            "ttft_s": 32.974,
+            "prefill_tok_s": 7636.8,
+            "decode_tok_s": 140.8,
+            "e2e_latency_s": 33.883,
+            "peak_vram_gb": 75.2,
+            "steady_vram_gb": 75.2,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 262144,
+            "prompt_tokens_actual": 251816,
+            "gen_len": 128,
+            "ttft_s": 33.0026,
+            "prefill_tok_s": 7630.2,
+            "decode_tok_s": 142.0,
+            "e2e_latency_s": 33.9038,
+            "peak_vram_gb": 75.2,
+            "steady_vram_gb": 75.2,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 524288,
+        "prompt_tokens_actual": 503877,
+        "gen_len": 128,
+        "status": "success",
+        "ttft_s": 126.982,
+        "prefill_tok_s": 3968.1,
+        "decode_tok_s": 92.6,
+        "e2e_latency_s": 128.3644,
+        "peak_vram_gb": 76.42,
+        "steady_vram_gb": 76.42,
+        "kv_cache_gb": 0.0,
+        "completion_tokens": 128,
+        "n_runs": 2,
+        "all_runs": [
+          {
+            "context": 524288,
+            "prompt_tokens_actual": 503877,
+            "gen_len": 128,
+            "ttft_s": 126.982,
+            "prefill_tok_s": 3968.1,
+            "decode_tok_s": 92.7,
+            "e2e_latency_s": 128.3635,
+            "peak_vram_gb": 76.42,
+            "steady_vram_gb": 76.42,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          },
+          {
+            "context": 524288,
+            "prompt_tokens_actual": 503877,
+            "gen_len": 128,
+            "ttft_s": 126.982,
+            "prefill_tok_s": 3968.1,
+            "decode_tok_s": 92.5,
+            "e2e_latency_s": 128.3654,
+            "peak_vram_gb": 76.42,
+            "steady_vram_gb": 76.42,
+            "kv_cache_gb": 0.0,
+            "completion_tokens": 128,
+            "status": "success",
+            "error": null
+          }
+        ]
+      },
+      {
+        "context": 1048576,
+        "status": "oom",
+        "error": "server_failed_to_start"
+      }
+    ],
+    "timestamp": "2026-10-23 16:30:13"
+  },
+  "qwen35-2b": {
+    "experiment": "longctx_infer_cost",
+    "framework": "SGLang 0.5.9",
+    "model_name": "qwen35-2b",
+    "model_path": "/nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+    "serve_name": "Qwen3.5-2B",
+    "gpu": "H100-80GB #0",
+    "gen_len": 128,
+    "contexts_tested": [
+      65536,
+      131072,
+      262144,
+      524288,
+      1048576,
+      2097152
+    ],
+    "results": [
+      {
+        "context": 65536,
+        "status": "oom",
+        "error": "server_failed_to_start"
+      }
+    ],
+    "timestamp": "2026-10-23 16:35:17"
+  }
+}

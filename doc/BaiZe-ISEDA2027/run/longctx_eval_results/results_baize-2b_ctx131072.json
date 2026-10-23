@@ -1,0 +1,60 @@
+{
+  "experiment": "longctx_infer_cost",
+  "framework": "SGLang",
+  "model_name": "baize-2b",
+  "model_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/out/decay_5000_hf_llama",
+  "base_url": "http://127.0.0.1:30000",
+  "gpu_id": 0,
+  "gen_len": 128,
+  "start_ctx": 131072,
+  "results": [
+    {
+      "context": 131072,
+      "prompt_tokens_actual": 126852,
+      "gen_len": 128,
+      "status": "success",
+      "ttft_s": 9.3401,
+      "prefill_tok_s": 13581.4,
+      "decode_tok_s": 141.75,
+      "e2e_latency_s": 10.2431,
+      "peak_vram_gb": 73.12,
+      "steady_vram_gb": 73.12,
+      "kv_cache_gb": 0.0,
+      "completion_tokens": 128,
+      "n_runs": 2,
+      "all_runs": [
+        {
+          "context": 131072,
+          "prompt_tokens_actual": 126852,
+          "gen_len": 128,
+          "ttft_s": 9.3356,
+          "prefill_tok_s": 13588.0,
+          "decode_tok_s": 141.6,
+          "e2e_latency_s": 10.2393,
+          "peak_vram_gb": 73.12,
+          "steady_vram_gb": 73.12,
+          "kv_cache_gb": 0.0,
+          "completion_tokens": 128,
+          "status": "success",
+          "error": null
+        },
+        {
+          "context": 131072,
+          "prompt_tokens_actual": 126852,
+          "gen_len": 128,
+          "ttft_s": 9.3446,
+          "prefill_tok_s": 13574.8,
+          "decode_tok_s": 141.9,
+          "e2e_latency_s": 10.2469,
+          "peak_vram_gb": 73.12,
+          "steady_vram_gb": 73.12,
+          "kv_cache_gb": 0.0,
+          "completion_tokens": 128,
+          "status": "success",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-10-23 15:54:25"
+}

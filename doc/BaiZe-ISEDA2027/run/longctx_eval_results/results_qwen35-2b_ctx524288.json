@@ -1,0 +1,60 @@
+{
+  "experiment": "longctx_infer_cost",
+  "framework": "SGLang",
+  "model_name": "Qwen3.5-2B",
+  "model_path": "/nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+  "base_url": "http://127.0.0.1:30000",
+  "gpu_id": 0,
+  "gen_len": 128,
+  "start_ctx": 524288,
+  "results": [
+    {
+      "context": 524288,
+      "prompt_tokens_actual": 503877,
+      "gen_len": 128,
+      "status": "success",
+      "ttft_s": 24.4479,
+      "prefill_tok_s": 20610.25,
+      "decode_tok_s": 194.25,
+      "e2e_latency_s": 25.1067,
+      "peak_vram_gb": 73.16,
+      "steady_vram_gb": 73.14,
+      "kv_cache_gb": 0.02,
+      "completion_tokens": 128,
+      "n_runs": 2,
+      "all_runs": [
+        {
+          "context": 524288,
+          "prompt_tokens_actual": 503877,
+          "gen_len": 128,
+          "ttft_s": 24.4513,
+          "prefill_tok_s": 20607.4,
+          "decode_tok_s": 194.6,
+          "e2e_latency_s": 25.1089,
+          "peak_vram_gb": 73.16,
+          "steady_vram_gb": 73.12,
+          "kv_cache_gb": 0.04,
+          "completion_tokens": 128,
+          "status": "success",
+          "error": null
+        },
+        {
+          "context": 524288,
+          "prompt_tokens_actual": 503877,
+          "gen_len": 128,
+          "ttft_s": 24.4445,
+          "prefill_tok_s": 20613.1,
+          "decode_tok_s": 193.9,
+          "e2e_latency_s": 25.1045,
+          "peak_vram_gb": 73.16,
+          "steady_vram_gb": 73.16,
+          "kv_cache_gb": 0.0,
+          "completion_tokens": 128,
+          "status": "success",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-10-23 18:17:10"
+}

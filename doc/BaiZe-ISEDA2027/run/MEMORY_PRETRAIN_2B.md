@@ -1,5 +1,17 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-23 18:2x #752：✅ 长上下文推理成本评测·3模型全部完成·HTML报告已生成**：
+> - **Qwen3.5-2B 1M benchmark 成功**：TTFT=89.09s, prefill=11314 tok/s, decode=130.6 tok/s, VRAM=73.16GB。2M 未测（跳过）。
+> - **Qwen3.5-2B 全部上下文结果**：64K(TTFT=0.89s,70.8K tok/s)→128K(2.40s,52.4K)→256K(7.20s,35.0K)→512K(24.45s,20.6K)→1M(89.09s,11.3K)。VRAM 全程 ~73GB。
+> - **3模型对比 HTML 报告已生成**：`reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18.3KB）。
+> - **关键发现**：Qwen3.5-2B（混合线性注意力,18线性+6全注意力,每4层1全注意力）在所有上下文长度均显著优于 BaiZe-2B 和 MiniCPM5-2B：
+>   - 64K prefill: 70.8K vs 24.7K/24.8K tok/s（2.9x）
+>   - 512K prefill: 20.6K vs 3.6K/4.0K tok/s（5.2x/5.1x）
+>   - 最大上下文: 1M vs 512K/512K（Qwen3.5 独享 1M）
+>   - VRAM: 全程 ~73GB（混合注意力 KV cache 极小,显存由 SSM state 主导）
+> - 产物：`longctx_eval_results/results_qwen35-2b.json`（合并 64K~1M+2M skipped）、per-context JSON ×5、报告脚本 `gen_longctx_report.py`（已修正 Qwen3.5 架构描述）。
+> - SGLang 服务器已清理。.29 GPU 应已空闲。
+> 📦 体积：MEMORY=~30.5KB（≤32KB✓）。
 > 🆕 **2026-10-23 14:0x #751：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
 > - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
 > - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程。git fetch 后无 ahead/behind、无新远端提交。

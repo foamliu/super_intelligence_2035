@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>长上下文推理成本评测报告 — BaiZe-2B / MiniCPM5-2B / Qwen3.5-2B</title>
+<style>
+:root{--bg:#0f1419;--card:#1a2332;--border:#2a3a4a;--text:#e0e6ed;--text2:#8b9bb0;--accent:#4fc3f7;--green:#66bb6a;--red:#ef5350;--orange:#ffa726;--th:#243447;--tr:#1e2d3d;--tra:#1a2636;--best:#2e7d32}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;line-height:1.6;padding:20px;max-width:1400px;margin:0 auto}
+h1{color:var(--accent);font-size:1.8em;margin-bottom:8px}
+h2{color:var(--accent);font-size:1.3em;margin:28px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+h3{color:var(--text);font-size:1.1em;margin:18px 0 8px}
+.sub{color:var(--text2);font-size:.9em;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:16px}
+.eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.ei{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)}
+.ei .k{color:var(--text2)}.ei .v{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:.85em}
+th,td{padding:8px 10px;text-align:center;border:1px solid var(--border)}
+th{background:var(--th);color:var(--accent);font-weight:600}
+td.ctx{font-weight:700;color:var(--accent);background:var(--tr)}
+tr:nth-child(even) td:not(.ctx){background:var(--tra)}
+tr:nth-child(odd) td:not(.ctx){background:var(--tr)}
+.ok{color:var(--green)}.oom{color:var(--red)}.nt{color:var(--text2)}
+.best{font-weight:700;color:var(--best)}
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.mg .i{padding:3px 0}.mg .i .k{color:var(--text2);font-size:.85em}.mg .i .v{color:var(--text)}
+code,.cmd{background:#0d1117;border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:"JetBrains Mono",monospace;font-size:.85em;color:var(--accent)}
+.cb{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:12px 16px;font-family:monospace;font-size:.82em;color:var(--text);overflow-x:auto;margin:8px 0;white-space:pre;line-height:1.5}
+.sb{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:16px}
+.si{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px}
+.si .l{color:var(--text2);font-size:.85em;margin-bottom:4px}
+.si .va{color:var(--accent);font-size:1.2em;font-weight:700}
+.si .d{color:var(--text2);font-size:.8em;margin-top:4px}
+.note{background:#1a2a1a;border-left:3px solid var(--green);padding:10px 14px;border-radius:0 6px 6px 0;margin:10px 0;font-size:.9em}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.8em;font-weight:600}
+.tg{background:#1b3a1b;color:var(--green)}.tr{background:#3a1b1b;color:var(--red)}.tb{background:#1b2a3a;color:var(--accent)}
+</style>
+</head>
+<body>
+<h1>长上下文推理成本评测报告</h1>
+<div class="sub">BaiZe-2B · MiniCPM5-2B · Qwen3.5-2B | SGLang 0.5.9 | H100-80GB | 生成时间：2026-10-23 18:26:38</div>
+<h2>1. 评测概述</h2>
+<div class="card">
+<p>本报告对比三个 ~2B 参数量大语言模型在 <strong>SGLang 0.5.9</strong> 推理框架下的长上下文推理成本。
+上下文长度从 <strong>64K</strong> 开始翻倍（64K → 128K → 256K → 512K → 1M → 2M），直至模型因显存不足（OOM）无法服务。</p>
+<p style="margin-top:8px">每档上下文记录：<strong>峰值显存</strong>(GB)、<strong>首Token延时</strong>(TTFT, s)、
+<strong>Prefill吞吐</strong>(tok/s)、<strong>Decode吞吐</strong>(tok/s)、<strong>端到端延时</strong>(s)。</p>
+<div class="note" style="margin-top:10px">
+<strong>评测方法</strong>：每模型独立起SGLang服务，每档1次预热+2次正式测量取中位数。生成长度128 tokens。
+环境变量 <code>SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</code> 允许超出 max_position_embeddings 限制。
+</div>
+</div>
+<h2>2. 实验环境</h2>
+<div class="card"><div class="eg">
+<div class="ei"><span class="k">GPU</span><span class="v">NVIDIA H100 80GB HBM3 × 1 (GPU #0)</span></div>
+<div class="ei"><span class="k">驱动版本</span><span class="v">570.195.03</span></div>
+<div class="ei"><span class="k">SGLang</span><span class="v">0.5.9 (BaiZe/MiniCPM5) / 0.5.10 (Qwen3.5)</span></div>
+<div class="ei"><span class="k">PyTorch</span><span class="v">2.9.1+cu128</span></div>
+<div class="ei"><span class="k">FlashInfer</span><span class="v">0.6.3</span></div>
+<div class="ei"><span class="k">sgl_kernel</span><span class="v">0.3.21</span></div>
+<div class="ei"><span class="k">注意力后端</span><span class="v">flashinfer</span></div>
+<div class="ei"><span class="k">显存占比</span><span class="v">0.88</span></div>
+<div class="ei"><span class="k">数据类型</span><span class="v">bfloat16</span></div>
+<div class="ei"><span class="k">Python环境</span><span class="v">3.10 (sglang conda env)</span></div>
+<div class="ei"><span class="k">Radix Cache</span><span class="v">禁用 (--disable-radix-cache)</span></div>
+<div class="ei"><span class="k">上下文覆盖</span><span class="v">SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</span></div>
+</div></div>
+<h2>3. 模型信息</h2>
+<div class="card"><h3>BaiZe-2B <span class="tag tb">~1.35B</span></h3><div class="mg">
+<div class="i"><span class="k">架构</span><br><span class="v">LlamaForCausalLM (由 XmodelForCausalLM 转换)</span></div>
+<div class="i"><span class="k">层数</span><br><span class="v">48</span></div>
+<div class="i"><span class="k">隐藏维度</span><br><span class="v">1536</span></div>
+<div class="i"><span class="k">注意力头</span><br><span class="v">24 (GQA: 8 KV heads)</span></div>
+<div class="i"><span class="k">词表大小</span><br><span class="v">129,280</span></div>
+<div class="i"><span class="k">max_pos_emb</span><br><span class="v">131,072</span></div>
+<div class="i"><span class="k">rope_theta</span><br><span class="v">500,000</span></div>
+<div class="i"><span class="k">权重共享</span><br><span class="v">是</span></div>
+<div class="i"><span class="k">来源</span><br><span class="v">自有模型 decay-5000 (Xmodel-2.5-code)</span></div>
+</div></div>
+<div class="card"><h3>MiniCPM5-2B <span class="tag tb">~2.0B</span></h3><div class="mg">
+<div class="i"><span class="k">架构</span><br><span class="v">LlamaForCausalLM</span></div>
+<div class="i"><span class="k">层数</span><br><span class="v">42</span></div>
+<div class="i"><span class="k">隐藏维度</span><br><span class="v">2048</span></div>
+<div class="i"><span class="k">注意力头</span><br><span class="v">16 (GQA: 2 KV heads)</span></div>
+<div class="i"><span class="k">词表大小</span><br><span class="v">130,560</span></div>
+<div class="i"><span class="k">max_pos_emb</span><br><span class="v">131,072</span></div>
+<div class="i"><span class="k">rope_theta</span><br><span class="v">5,000,000</span></div>
+<div class="i"><span class="k">权重共享</span><br><span class="v">否</span></div>
+<div class="i"><span class="k">来源</span><br><span class="v">HuggingFace: openbmb/MiniCPM5-2B</span></div>
+</div></div>
+<div class="card"><h3>Qwen3.5-2B <span class="tag tb">~2.0B (文本模型, 含MTP头)</span></h3><div class="mg">
+<div class="i"><span class="k">架构</span><br><span class="v">Qwen3_5ForCausalLM (混合: 18层线性注意力 + 6层全注意力, 每4层1全注意力)</span></div>
+<div class="i"><span class="k">层数</span><br><span class="v">24</span></div>
+<div class="i"><span class="k">隐藏维度</span><br><span class="v">2048</span></div>
+<div class="i"><span class="k">注意力头</span><br><span class="v">全注意力: 8 (GQA: 2 KV), 线性: 16K/16V</span></div>
+<div class="i"><span class="k">词表大小</span><br><span class="v">248,320</span></div>
+<div class="i"><span class="k">max_pos_emb</span><br><span class="v">262,144</span></div>
+<div class="i"><span class="k">rope_theta</span><br><span class="v">10,000,000</span></div>
+<div class="i"><span class="k">权重共享</span><br><span class="v">是</span></div>
+<div class="i"><span class="k">来源</span><br><span class="v">HuggingFace: Qwen/Qwen3.5-2B</span></div>
+</div></div>
+<h2>4. 核心对比表</h2>
+<div class="card" style="overflow-x:auto"><table>
+<tr><th rowspan="2">上下文</th><th colspan="6">BaiZe-2B</th><th colspan="6">MiniCPM5-2B</th><th colspan="6">Qwen3.5-2B</th></tr>
+<tr><th>状态</th><th>显存(GB)</th><th>TTFT(s)</th><th>Prefill</th><th>Decode</th><th>延时(s)</th><th>状态</th><th>显存(GB)</th><th>TTFT(s)</th><th>Prefill</th><th>Decode</th><th>延时(s)</th><th>状态</th><th>显存(GB)</th><th>TTFT(s)</th><th>Prefill</th><th>Decode</th><th>延时(s)</th></tr>
+<tr>
+<td class="ctx">64K</td>
+<td class="ok">✅成功</td>
+<td>72.66</td>
+<td>2.56</td>
+<td>24711.9</td>
+<td>202.7</td>
+<td>3.19</td>
+<td class="ok">✅成功</td>
+<td>72.85</td>
+<td>2.53</td>
+<td>24805.3</td>
+<td>233.3</td>
+<td>3.08</td>
+<td class="ok">✅成功</td>
+<td>72.84</td>
+<td>0.89</td>
+<td class="best">70776.4</td>
+<td class="best">340.9</td>
+<td>1.26</td>
+</tr>
+<tr>
+<td class="ctx">128K</td>
+<td class="ok">✅成功</td>
+<td>73.12</td>
+<td>9.34</td>
+<td>13581.4</td>
+<td>141.8</td>
+<td>10.24</td>
+<td class="ok">✅成功</td>
+<td>73.93</td>
+<td>8.86</td>
+<td>14201.0</td>
+<td>192.6</td>
+<td>9.52</td>
+<td class="ok">✅成功</td>
+<td>73.16</td>
+<td>2.40</td>
+<td class="best">52447.8</td>
+<td class="best">307.8</td>
+<td>2.81</td>
+</tr>
+<tr>
+<td class="ctx">256K</td>
+<td class="ok">✅成功</td>
+<td>73.93</td>
+<td>35.65</td>
+<td>7123.9</td>
+<td>89.7</td>
+<td>37.08</td>
+<td class="ok">✅成功</td>
+<td>75.20</td>
+<td>32.99</td>
+<td>7633.5</td>
+<td>141.4</td>
+<td>33.89</td>
+<td class="ok">✅成功</td>
+<td>73.20</td>
+<td>7.20</td>
+<td class="best">34976.1</td>
+<td class="best">259.1</td>
+<td>7.69</td>
+</tr>
+<tr>
+<td class="ctx">512K</td>
+<td class="ok">✅成功</td>
+<td>76.31</td>
+<td>139.24</td>
+<td>3649.6</td>
+<td>51.1</td>
+<td>141.74</td>
+<td class="ok">✅成功</td>
+<td>76.42</td>
+<td>126.98</td>
+<td>3968.1</td>
+<td>92.6</td>
+<td>128.36</td>
+<td class="ok">✅成功</td>
+<td>73.16</td>
+<td>24.45</td>
+<td class="best">20610.2</td>
+<td class="best">194.2</td>
+<td>25.11</td>
+</tr>
+<tr>
+<td class="ctx">1M</td>
+<td class="oom">❌OOM</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="oom">❌OOM</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="ok">✅成功</td>
+<td>73.16</td>
+<td>89.09</td>
+<td class="best">11314.0</td>
+<td class="best">130.6</td>
+<td>90.07</td>
+</tr>
+<tr>
+<td class="ctx">2M</td>
+<td class="nt">未测试</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="nt">未测试</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="oom">❌OOM</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</table>
+<div style="margin-top:8px;color:var(--text2);font-size:.8em"><span class="best">绿色加粗</span>=该档最优；<span class="ok">✅成功</span>=正常服务；<span class="oom">❌OOM</span>=显存不足</div></div>
+<h2>5. OOM 点与最大可服务上下文</h2>
+<div class="sb">
+<div class="si"><div class="l">BaiZe-2B</div><div class="va">最大上下文: 512K</div><div class="d">OOM点: 1M | config max_pos: 128K</div></div>
+<div class="si"><div class="l">MiniCPM5-2B</div><div class="va">最大上下文: 512K</div><div class="d">OOM点: 1M | config max_pos: 128K</div></div>
+<div class="si"><div class="l">Qwen3.5-2B</div><div class="va">最大上下文: 1M</div><div class="d">OOM点: 2M | config max_pos: 256K</div></div>
+</div>
+<h2>6. 各模型详细结果</h2>
+<h3>BaiZe-2B</h3>
+<div class="card" style="overflow-x:auto"><table>
+<tr><th>上下文</th><th>状态</th><th>输入(tokens)</th><th>显存峰值(GB)</th><th>显存稳态(GB)</th><th>TTFT(s)</th><th>Prefill(tok/s)</th><th>Decode(tok/s)</th><th>端到端(s)</th><th>次数</th></tr>
+<tr>
+<td class="ctx">64K</td>
+<td class="ok">✅成功</td>
+<td>63302</td>
+<td>72.66</td>
+<td>72.66</td>
+<td>2.56</td>
+<td>24711.9</td>
+<td>202.7</td>
+<td>3.19</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">128K</td>
+<td class="ok">✅成功</td>
+<td>126852</td>
+<td>73.12</td>
+<td>73.12</td>
+<td>9.34</td>
+<td>13581.4</td>
+<td>141.8</td>
+<td>10.24</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">256K</td>
+<td class="ok">✅成功</td>
+<td>253953</td>
+<td>73.93</td>
+<td>73.93</td>
+<td>35.65</td>
+<td>7123.9</td>
+<td>89.7</td>
+<td>37.08</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">512K</td>
+<td class="ok">✅成功</td>
+<td>508153</td>
+<td>76.31</td>
+<td>76.31</td>
+<td>139.24</td>
+<td>3649.6</td>
+<td>51.1</td>
+<td>141.74</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">1M</td>
+<td class="oom">❌oom</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</table></div>
+<h3>MiniCPM5-2B</h3>
+<div class="card" style="overflow-x:auto"><table>
+<tr><th>上下文</th><th>状态</th><th>输入(tokens)</th><th>显存峰值(GB)</th><th>显存稳态(GB)</th><th>TTFT(s)</th><th>Prefill(tok/s)</th><th>Decode(tok/s)</th><th>端到端(s)</th><th>次数</th></tr>
+<tr>
+<td class="ctx">64K</td>
+<td class="ok">✅成功</td>
+<td>62770</td>
+<td>72.85</td>
+<td>72.85</td>
+<td>2.53</td>
+<td>24805.3</td>
+<td>233.3</td>
+<td>3.08</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">128K</td>
+<td class="ok">✅成功</td>
+<td>125785</td>
+<td>73.93</td>
+<td>73.93</td>
+<td>8.86</td>
+<td>14201.0</td>
+<td>192.6</td>
+<td>9.52</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">256K</td>
+<td class="ok">✅成功</td>
+<td>251816</td>
+<td>75.20</td>
+<td>75.20</td>
+<td>32.99</td>
+<td>7633.5</td>
+<td>141.4</td>
+<td>33.89</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">512K</td>
+<td class="ok">✅成功</td>
+<td>503877</td>
+<td>76.42</td>
+<td>76.42</td>
+<td>126.98</td>
+<td>3968.1</td>
+<td>92.6</td>
+<td>128.36</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">1M</td>
+<td class="oom">❌oom</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</table></div>
+<h3>Qwen3.5-2B</h3>
+<div class="card" style="overflow-x:auto"><table>
+<tr><th>上下文</th><th>状态</th><th>输入(tokens)</th><th>显存峰值(GB)</th><th>显存稳态(GB)</th><th>TTFT(s)</th><th>Prefill(tok/s)</th><th>Decode(tok/s)</th><th>端到端(s)</th><th>次数</th></tr>
+<tr>
+<td class="ctx">64K</td>
+<td class="ok">✅成功</td>
+<td>62770</td>
+<td>72.84</td>
+<td>72.83</td>
+<td>0.89</td>
+<td>70776.4</td>
+<td>340.9</td>
+<td>1.26</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">128K</td>
+<td class="ok">✅成功</td>
+<td>125785</td>
+<td>73.16</td>
+<td>73.14</td>
+<td>2.40</td>
+<td>52447.8</td>
+<td>307.8</td>
+<td>2.81</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">256K</td>
+<td class="ok">✅成功</td>
+<td>251816</td>
+<td>73.20</td>
+<td>73.18</td>
+<td>7.20</td>
+<td>34976.1</td>
+<td>259.1</td>
+<td>7.69</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">512K</td>
+<td class="ok">✅成功</td>
+<td>503877</td>
+<td>73.16</td>
+<td>73.14</td>
+<td>24.45</td>
+<td>20610.2</td>
+<td>194.2</td>
+<td>25.11</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">1M</td>
+<td class="ok">✅成功</td>
+<td>1008001</td>
+<td>73.16</td>
+<td>73.14</td>
+<td>89.09</td>
+<td>11314.0</td>
+<td>130.6</td>
+<td>90.07</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="ctx">2M</td>
+<td class="oom">❌skipped</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</table></div>
+<h2>7. 复现命令</h2>
+<div class="card">
+<h3>环境准备</h3>
+<div class="cb">conda activate sglang
+export CUDA_VISIBLE_DEVICES=0
+export SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</div>
+<h3>启动 SGLang 服务（示例：BaiZe-2B @ 64K）</h3>
+<div class="cb">python -m sglang.launch_server \
+  --model-path /path/to/decay_5000_hf_llama \
+  --served-model-name baize-2b \
+  --port 30000 --host 127.0.0.1 \
+  --context-length 65536 \
+  --mem-fraction-static 0.88 \
+  --dtype bfloat16 \
+  --attention-backend flashinfer \
+  --disable-radix-cache --log-level info</div>
+<h3>运行基准测试</h3>
+<div class="cb">python benchmark_longctx_sglang.py \
+  --base-url http://127.0.0.1:30000 \
+  --model-name baize-2b --model-path /path/to/model \
+  --gpu-id 0 --output results.json \
+  --start-ctx 65536 --max-ctx 65536 \
+  --gen-len 128 --warmup 1 --repeats 2</div>
+<h3>一键编排（三模型 × 六上下文）</h3>
+<div class="cb">python orchestrate_longctx_eval.py \
+  --models baize-2b minicpm5-2b qwen35-2b --gpu 0</div>
+<h3>生成报告</h3>
+<div class="cb">python gen_longctx_report.py</div>
+</div>
+<h2>8. 结论与建议</h2>
+<div class="card">
+<p style="margin-bottom:8px">1. <strong>最大可服务上下文</strong>：BaiZe-2B=512K / MiniCPM5-2B=512K / Qwen3.5-2B=1M</p>
+<p style="margin-bottom:8px">2. <strong>64K速度对比</strong>：BaiZe-2B=24712tok/s(prefill),203tok/s(decode)；MiniCPM5-2B=24805tok/s(prefill),233tok/s(decode)；Qwen3.5-2B=70776tok/s(prefill),341tok/s(decode)</p>
+<p style="margin-bottom:8px">3. <strong>64K显存对比</strong>：BaiZe-2B=72.66GB / MiniCPM5-2B=72.85GB / Qwen3.5-2B=72.84GB</p>
+<div class="note" style="margin-top:12px"><strong>注意事项</strong>：<ul style="margin-left:20px;margin-top:4px">
+<li>Qwen3.5-2B 为混合线性注意力架构（每4层1层全注意力），KV cache 占用更少，长上下文更有优势。</li>
+<li>BaiZe-2B 和 MiniCPM5-2B 的 config max_position_embeddings 均为 128K，超出后通过环境变量强制覆盖。</li>
+<li>Qwen3.5-2B 原生为多模态模型，本次仅测试纯文本推理。</li>
+<li>所有测试在单张 H100-80GB 上进行，--mem-fraction-static 0.88，注意力后端 flashinfer。</li>
+<li>BaiZe-2B 原始架构为 XmodelForCausalLM，已转换为 Llama 格式以兼容 SGLang。</li>
+</ul></div></div>
+<div style="text-align:center;color:var(--text2);font-size:.8em;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)">BaiZe-ISEDA2027 · Pretrain Eval · 长上下文推理成本评测<br>报告由 gen_longctx_report.py 自动生成 · 数据来源：longctx_eval_results/</div>
+</body>
+</html>

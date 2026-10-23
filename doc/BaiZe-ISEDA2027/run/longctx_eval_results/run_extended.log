@@ -1,0 +1,23 @@
+\n========== CTX=524288 ==========
+Server PID=1245362, waiting for startup...
+Server ready after 15x2s
+Benchmark for CTX=524288 done
+{
+  "experiment": "longctx_infer_cost",
+  "framework": "SGLang",
+  "model_name": "Qwen3.5-2B",
+  "model_path": "/nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+grep: error: No such file or directory
+\n========== CTX=1048576 ==========
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/run_qwen35_ctx_extended.sh: line 11: 1245362 Killed                  CUDA_VISIBLE_DEVICES=0 $PY -m sglang.launch_server --model-path "$MODEL_PATH" --served-model-name "Qwen3.5-2B" --port 30000 --host 127.0.0.1 --context-length $CTX --mem-fraction-static 0.90 --dtype bfloat16 --attention-backend flashinfer --disable-radix-cache --max-running-requests 2 --cuda-graph-max-bs 16 --log-level info > "$LOG" 2>&1  (wd: ~)
+Server PID=1424651, waiting for startup...
+Server ready after 15x2s
+Benchmark for CTX=1048576 done
+{
+  "experiment": "longctx_infer_cost",
+  "framework": "SGLang",
+  "model_name": "Qwen3.5-2B",
+  "model_path": "/nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+grep: error: No such file or directory
+\n========== Extended context lengths done ==========
+Done

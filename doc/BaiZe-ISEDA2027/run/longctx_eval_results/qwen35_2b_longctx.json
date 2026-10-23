@@ -1,0 +1,66 @@
+{
+  "experiment": "longctx_infer_cost",
+  "framework": "SGLang",
+  "model_name": "Qwen3.5-2B",
+  "model_path": "/nas_train/app.e0031982/hf_cache/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+  "base_url": "http://127.0.0.1:30000",
+  "gpu_id": 0,
+  "gen_len": 128,
+  "start_ctx": 65536,
+  "results": [
+    {
+      "context": 65536,
+      "prompt_tokens_actual": 62770,
+      "gen_len": 128,
+      "status": "success",
+      "ttft_s": 0.8877,
+      "prefill_tok_s": 70776.4,
+      "decode_tok_s": 340.9,
+      "e2e_latency_s": 1.2631,
+      "peak_vram_gb": 72.84,
+      "steady_vram_gb": 72.83,
+      "kv_cache_gb": 0.01,
+      "completion_tokens": 128,
+      "n_runs": 2,
+      "all_runs": [
+        {
+          "context": 65536,
+          "prompt_tokens_actual": 62770,
+          "gen_len": 128,
+          "ttft_s": 0.9143,
+          "prefill_tok_s": 68651.4,
+          "decode_tok_s": 341.3,
+          "e2e_latency_s": 1.2894,
+          "peak_vram_gb": 72.84,
+          "steady_vram_gb": 72.82,
+          "kv_cache_gb": 0.02,
+          "completion_tokens": 128,
+          "status": "success",
+          "error": null
+        },
+        {
+          "context": 65536,
+          "prompt_tokens_actual": 62770,
+          "gen_len": 128,
+          "ttft_s": 0.861,
+          "prefill_tok_s": 72901.4,
+          "decode_tok_s": 340.5,
+          "e2e_latency_s": 1.2369,
+          "peak_vram_gb": 72.84,
+          "steady_vram_gb": 72.84,
+          "kv_cache_gb": 0.0,
+          "completion_tokens": 128,
+          "status": "success",
+          "error": null
+        }
+      ]
+    },
+    {
+      "context": 131072,
+      "status": "error",
+      "error": "HTTPError: 400 Client Error: Bad Request for url: http://127.0.0.1:30000/v1/completions",
+      "peak_vram_gb": 72.84
+    }
+  ],
+  "timestamp": "2026-10-23 18:03:36"
+}
