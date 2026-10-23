@@ -1,6 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-23 12:2x #747：⏸ 例行唤醒·idle heartbeat·decay 修复报告复核无误·无新指令**：
+> - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197 行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送。数字与运维令一致：v2 44.97/6.21 → decay-5000 58.97/28.02（+14.0/+21.8pp），vs 基线 61.03 Δ−2.06pp；§8 给 4 候选（①延长 decay 20000 步 ②对齐 11 源配比 ③补 CX6 基线 ④超参微调），各附成本/风险/ETA，满足「≥3 候选」要求。
+> - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain 进程（pgrep 仅本 agent+ssh）。git fetch + pull --rebase 后无 ahead/behind、无新远端提交。
+> - 无新运维指令 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=21272B / MEMORY=29765B（均≤32KB✓，本轮归档 0KB）。
+
 > 🆕 **2026-10-23 11:5x #746：⏸ 例行唤醒·idle heartbeat·无新指令·待运维下发（decay 修复报告已交付）**：
 > - 复核确认：decay 修复报告 `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B/197行，§1–§9+溯源）在盘，commit `ae9e1e780` 已推送（`git log -- <report>` 命中）。数字核对无误（v2 44.97/6.21 → decay-5000 58.97/28.02，+14.0/+21.8pp，vs 基线 61.03 Δ−2.06pp）。
 > - 状态确认：.29 8×H100 全空闲（0 MiB/0%），无 torchrun/lm_eval/pretrain_launcher 进程（pgrep 仅本 agent+ssh）。git fetch 后无 ahead/behind、无新远端提交。
