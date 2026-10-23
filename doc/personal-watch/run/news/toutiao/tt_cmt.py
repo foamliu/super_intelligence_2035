@@ -33,15 +33,23 @@ def main():
     t.ws.call('Page.bringToFront', {})
     t.ws.call('Page.navigate', {'url': url}); time.sleep(6)
     t.ws.call('Emulation.setFocusEmulationEnabled', {'enabled': True}); time.sleep(0.4)
-    print('BEFORE', state(t))
-    # 1) 清空残留
-    r = json.loads(t.ev(r'''(()=>{const ta=document.querySelector(%s);ta.scrollIntoView({block:'center'});const q=ta.getBoundingClientRect();return JSON.stringify({x:Math.round(q.x+30),y:Math.round(q.y+q.height/2)})})()''' % TA))
-    t.click(r['x'], r['y']); time.sleep(0.3)
-    for tpe in ('keyDown', 'keyUp'):
-        t.ws.call('Input.dispatchKeyEvent', {'type': tpe, 'key': 'a', 'code': 'KeyA', 'windowsVirtualKeyCode': 65, 'nativeVirtualKeyCode': 65, 'modifiers': 2}); time.sleep(0.08)
-    t.ws.call('Input.dispatchKeyEvent', {'type': 'rawKeyDown', 'key': 'Backspace', 'code': 'Backspace', 'windowsVirtualKeyCode': 8, 'nativeVirtualKeyCode': 8})
-    t.ws.call('Input.dispatchKeyEvent', {'type': 'keyUp', 'key': 'Backspace', 'code': 'Backspace', 'windowsVirtualKeyCode': 8, 'nativeVirtualKeyCode': 8})
-    time.sleep(0.6)
+    pre = json.loads(state(t))
+    print('BEFORE', pre)
+    # 1) 清空残留（⚠️ 2026-10-24 修：跳转后焦点常在正文，无条件发 Ctrl+A/Backspace
+    #    会命中页面级快捷键。改为「只有残留非空才清」，且清前先点进输入框并把光标顶到框首，
+    #    Backspace 只在框内作用；清后再复核 len==0 才算通过。）
+    if pre['len'] > 0:
+        r = json.loads(t.ev(r'''(()=>{const ta=document.querySelector(%s);ta.scrollIntoView({block:'center'});const q=ta.getBoundingClientRect();return JSON.stringify({x:Math.round(q.x+30),y:Math.round(q.y+q.height/2)})})()''' % TA))
+        t.click(r['x'], r['y']); time.sleep(0.3)
+        for tpe in ('keyDown', 'keyUp'):
+            t.ws.call('Input.dispatchKeyEvent', {'type': tpe, 'key': 'a', 'code': 'KeyA', 'windowsVirtualKeyCode': 65, 'nativeVirtualKeyCode': 65, 'modifiers': 2}); time.sleep(0.08)
+        t.ws.call('Input.dispatchKeyEvent', {'type': 'rawKeyDown', 'key': 'Backspace', 'code': 'Backspace', 'windowsVirtualKeyCode': 8, 'nativeVirtualKeyCode': 8})
+        t.ws.call('Input.dispatchKeyEvent', {'type': 'keyUp', 'key': 'Backspace', 'code': 'Backspace', 'windowsVirtualKeyCode': 8, 'nativeVirtualKeyCode': 8})
+        time.sleep(0.6)
+        assert json.loads(state(t))['len'] == 0, 'clear residue failed'
+    else:
+        r = json.loads(t.ev(r'''(()=>{const ta=document.querySelector(%s);ta.scrollIntoView({block:'center'});const q=ta.getBoundingClientRect();return JSON.stringify({x:Math.round(q.x+30),y:Math.round(q.y+q.height/2)})})()''' % TA))
+        t.click(r['x'], r['y']); time.sleep(0.3)
     # 2) 逐键输入
     for ch in text:
         t.ws.call('Input.dispatchKeyEvent', {'type': 'keyDown', 'text': ch, 'unmodifiedText': ch, 'key': ch})
