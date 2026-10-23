@@ -1,13 +1,70 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 111 -->
+<!-- RUN_ID: 112 -->
 
-## RUN_ID 111 — 🔴 用户直令：探活 8663 组 4 端口 run_code（r4 起跑前端口决策）
+## RUN_ID 112 — 🔴 用户直令：作废 r1-r3 → .env 已改 full + 8090 已重启 → 确认并起 r1（full 配置）
+
+> 用户直令（2026-10-23 09:4x）：「作废 r1-r3，改 full 重跑 5 轮」
+> **运维已完成**：停 r3 regrade + .env READBACK=none→full + 8090 重启（PID 2535923）+ 冒烟 full readback 四字段 ✅。
+> **本块**：确认 .env full + 8650 组 4/4 OK + 起 r1。**不 regrade r3**（已作废）。
+
+```bash
+set -u
+echo "=== RUN_ID 112 | confirm full config + launch r1 | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "[1] 确认 .env 是 full 配置"
+grep 'EDA_RUNCODE_READBACK' "$BASE/.env" | grep -v '^#'
+grep -E 'OMEGA|BUDGET|LAGGED|CLI_AGENT|PROXY_PORTS' "$BASE/.env" | grep -v '^#' | head -8
+
+echo ""
+echo "[2] 8090 health"
+curl -s -m 3 http://localhost:8090/health 2>/dev/null || echo "  8090 health FAIL"
+echo ""
+
+echo "[3] 8650 组冒烟（确认 full readback 四字段）"
+for p in 8650 8651 8652 8654; do
+  R=$(timeout 10 curl -s -m 8 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  if echo "$R" | grep -q '"response"'; then
+    NF=$(echo "$R" | grep -oE '"(response|error_log|print_log|result)"' | wc -l)
+    echo "  PORT $p: OK fields=$NF/4"
+  else
+    echo "  PORT $p: FAIL"
+  fi
+done
+
+echo ""
+echo "[4] 确认无残留评测进程"
+pgrep -af 'run_zhulong_script|run_cline_script|run_on_sandbox' 2>/dev/null | grep -v grep | head -5 || echo "  (none)"
+
+echo ""
+echo "[5] 起 r1（full × glm-5.3-flash × zhulong × 8650 组 × -p 4）"
+cd "$BASE"
+export PYTHON="$PWD/venv/bin/python"
+unset http_proxy https_proxy ALL_PROXY
+export NO_PROXY="10.129.32.75,localhost,127.0.0.1"
+setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_full_r1.log 2>&1 < /dev/null &
+echo "  r1 launcher PID=$!"
+sleep 8
+echo ""
+echo "[6] r1 起跑确认"
+pgrep -af 'run_zhulong_script' 2>/dev/null | grep -v grep | head -2
+tail -5 /tmp/ABL_glm-5.3-flash_zl_full_r1.log 2>/dev/null | cut -c1-120
+
+echo ""
+echo "=== DONE 112 ==="
+```
+
+> ⛔ *历史命令往后追加，RUN_ID +1 后把旧块降级为 ```text。*
+
+---
+
+## RUN_ID 111 — 🔴 用户直令：探活 8663 组 4 端口 run_code（r4 起跑前端口决策）【历史·已执行】
 
 > 用户直令（2026-10-23 09:1x）：「启动 r4 时尝试使用端口 8663/8666/8667/8670。」
 > **目的**：快速探 8663 组 4 端口 run_code 可用性，结果写 outbox 供 agent 读任务书 09:1x 令决策用哪组端口起 r4。
 > ⚠️ **纯探活，不改 .env、不起 r4、不 regrade**——那些由 agent 按任务书 09:1x 令执行。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 111 | probe 8663 group run_code | $(date '+%F %T') | host=$(hostname) ==="
 echo ""

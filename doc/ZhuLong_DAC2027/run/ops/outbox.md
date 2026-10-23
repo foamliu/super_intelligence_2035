@@ -13880,3 +13880,90 @@ regrade_log=2217 Oct 23 09:18
 
 === DONE 111 ===
 ```
+
+---
+
+## RUN_ID 112 · 2026-10-23 09:36:14 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 112 | confirm full config + launch r1 | $(date '+%F %T') | host=$(hostname) ==="
+BASE=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "[1] 确认 .env 是 full 配置"
+grep 'EDA_RUNCODE_READBACK' "$BASE/.env" | grep -v '^#'
+grep -E 'OMEGA|BUDGET|LAGGED|CLI_AGENT|PROXY_PORTS' "$BASE/.env" | grep -v '^#' | head -8
+
+echo ""
+echo "[2] 8090 health"
+curl -s -m 3 http://localhost:8090/health 2>/dev/null || echo "  8090 health FAIL"
+echo ""
+
+echo "[3] 8650 组冒烟（确认 full readback 四字段）"
+for p in 8650 8651 8652 8654; do
+  R=$(timeout 10 curl -s -m 8 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  if echo "$R" | grep -q '"response"'; then
+    NF=$(echo "$R" | grep -oE '"(response|error_log|print_log|result)"' | wc -l)
+    echo "  PORT $p: OK fields=$NF/4"
+  else
+    echo "  PORT $p: FAIL"
+  fi
+done
+
+echo ""
+echo "[4] 确认无残留评测进程"
+pgrep -af 'run_zhulong_script|run_cline_script|run_on_sandbox' 2>/dev/null | grep -v grep | head -5 || echo "  (none)"
+
+echo ""
+echo "[5] 起 r1（full × glm-5.3-flash × zhulong × 8650 组 × -p 4）"
+cd "$BASE"
+export PYTHON="$PWD/venv/bin/python"
+unset http_proxy https_proxy ALL_PROXY
+export NO_PROXY="10.129.32.75,localhost,127.0.0.1"
+setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_full_r1.log 2>&1 < /dev/null &
+echo "  r1 launcher PID=$!"
+sleep 8
+echo ""
+echo "[6] r1 起跑确认"
+pgrep -af 'run_zhulong_script' 2>/dev/null | grep -v grep | head -2
+tail -5 /tmp/ABL_glm-5.3-flash_zl_full_r1.log 2>/dev/null | cut -c1-120
+
+echo ""
+echo "=== DONE 112 ==="
+```
+
+**输出**
+```
+=== RUN_ID 112 | confirm full config + launch r1 | 2026-10-23 09:36:14 | host=hfeg0tedaap02 ===
+[1] 确认 .env 是 full 配置
+EDA_RUNCODE_READBACK=full
+PROXY_PORTS=8650,8651,8652,8654
+CLI_AGENT=zhulong
+EDA_PHI_BUDGET=0
+EDA_PHI_LAGGED=0
+EDA_OMEGA_FIDELITY=high
+
+[2] 8090 health
+Not Found
+[3] 8650 组冒烟（确认 full readback 四字段）
+  PORT 8650: OK fields=4/4
+  PORT 8651: OK fields=4/4
+  PORT 8652: OK fields=4/4
+  PORT 8654: OK fields=4/4
+
+[4] 确认无残留评测进程
+
+[5] 起 r1（full × glm-5.3-flash × zhulong × 8650 组 × -p 4）
+  r1 launcher PID=2542009
+
+[6] r1 起跑确认
+2542009 bash scripts/run_zhulong_script.sh -p 4 -n
+[0;32m[SUCCESS][0m 原始数据集检查完成
+[0;34m[INFO][0m 任务范围: 全量 158 题
+[0;34m[INFO][0m [Step 1.5] 跳过 Memory Bank 预热 (无 L0 artifacts，冷启动正常)
+[0;34m[INFO][0m [Step 2] 执行python脚本, 格式化评估任务...
+[0;34m[INFO][0m 执行: /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python pyAether-eval/script/format_eval_task.p
+
+=== DONE 112 ===
+```

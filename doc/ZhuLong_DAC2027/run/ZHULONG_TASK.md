@@ -1,7 +1,41 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
-### 🟢 运维指令 · 2026-10-23 09:1x（**r4 起跑：尝试 8663 组，不可用则回退 8650 组**）· 用户直令 · 最高优先
+### 🟢 运维指令 · 2026-10-23 09:4x（**作废 r1-r3 → 改 full 配置 → 重跑 5 轮**）· 用户直令 · 最高优先
+
+> 用户原话：「作废 r1-r3，改 full 重跑 5 轮」+ 之前「新线不纳入论文。启动 r4 时尝试使用端口 8663/8666/8667/8670」
+> **背景**：r1-r3 跑的是 **N′ 配置**（READBACK=none），用户要的是 **full 配置**（READBACK=full）。这是运维疏忽——00:3x 令只写了换模型/agent/端口，没写改配置，agent 沿用了 .env 当时的 N′ 值。现纠正。
+
+**① 已由运维完成（勿重复）**
+1. **停 r3 regrade**（已 kill）。
+2. **改 .env**：`EDA_RUNCODE_READBACK` 从 `none` → **`full`**（其余不变：OMEGA=high/BUDGET=0/LAGGED=0/CLI_AGENT=zhulong/PROXY_PORTS=8650,8651,8652,8654）。
+3. **重启 8090 MCP 服务**（PID 2535923，已 pick up full readback）。
+4. **冒烟验证**：8650 run_code 返回四字段（response/error_log/print_log/result）→ **full readback 生效 ✅**。
+
+**② 你要做的（按序）**
+1. **确认 .env 是 full 配置**：grep `EDA_RUNCODE_READBACK` 应为 `full`；8090 `/health` OK。
+2. **确认 8663 组状态**：RUN_ID 111 已探 = 4/4 不可用（breaker cooling）→ **用 8650 组**（4/4 OK·12-14ms）。
+3. **起 r1**（full 配置 × glm-5.3-flash × zhulong × 8650 组 × `-p 4`）：
+   - `run_zhulong_script.sh -p 4 -n`（CLI_AGENT=zhulong 自动·CLI_DATA_DIR=~/.zhulong 自动）
+   - `export PYTHON=$PWD/venv/bin/python`；`unset http_proxy https_proxy`；`NO_PROXY=10.129.32.75,localhost,127.0.0.1`
+   - 模型 = glm-5.3-flash（~/.zhulong/settings/providers.json 不变）
+4. **r1 → regrade → r2 → ... → r5 → 5/5 mean±std**。
+5. **每轮回报**：batch / Pass@1(N/158) / literal-pass 数 / 耗时 / 端口状态 / 5-run 累计。
+
+**③ 判据（05:0x 令不变）**：`literal-pass >10 → 只记录+标退化+继续跑`；停手仅 = MCP 率 ≥5/min **且** 4 端口全不可用。
+
+**④ 口径备注**：
+- **本轮配置 = full**（READBACK=full/OMEGA=high/BUDGET=0/LAGGED=0），即 C1.full 档。
+- 新线（glm-5.3-flash × zhulong）**不纳入论文**，是独立探索线。论文锚点仍用旧线 (N′) fp4×cline 4 轮 mean=76.7% provisional。
+- r1-r3 的 N′ 数据**作废**，不进 5-run。
+
+**⑤ r1-r3 作废标记**（留证不删）：
+- r1: batch `2026_1023_002456`·N′·67.1%(106/158)·16 literal-pass → ❌ 作废（配置错误）
+- r2: batch `2026_1023_052506`·N′·68.4%(108/158)·17 literal-pass → ❌ 作废（配置错误）
+- r3: batch `2026_1023_072528`·N′·regrade 未完成 → ❌ 作废（配置错误）
+
+
+### 🟡 运维指令 · 2026-10-23 09:1x（**r4 起跑：尝试 8663 组，不可用则回退 8650 组**）· 用户直令 ·【已被 09:4x 取代·历史·r1-r3 作废·配置从 N′ 改 full】
 
 > 用户原话：「新线不纳入论文。启动 r4 时尝试使用端口 8663/8666/8667/8670。」
 > **背景**：r1-r3 已用 8650 组跑完（r1=67.1%/r2=68.4%/r3 收口待 regrade）。r3 收口于 08:52（158 dirs/136 .py/task_queue 空）。8663 组 09:07 实测：8663/8666/8667 run_code 14-18s 超时（breaker 仍 cooling）、8670 服务未起 → **4/4 不可用**。8650 组 4/4 健康（14ms 秒回）。
