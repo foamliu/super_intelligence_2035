@@ -10,7 +10,7 @@
 | loop 进程 `watch_video_loop.ps1` | **已终止**（PID 3272，20:36:53 启动；无子进程） |
 | 心跳 `video/logs/watch_video_loop.hb` | 停在 **21:14:24**（原定 22:00 整点唤醒，22:00 后未再唤醒 ⇒ 已验证暂停生效） |
 | 上一轮 | 21:14:24 收口（round done in 2250s），当时已睡到 22:00 |
-| ComfyUI（127.0.0.1:8188） | 渲染任务**已全部停止**（见下节；服务进程本身未停，空载 ~5.3GB VRAM） |
+| ComfyUI（127.0.0.1:8188） | 渲染任务**已全部停止**；服务进程与计划任务**已一并停止/禁用**（见下节） |
 
 ## ⏹ 2026-10-23 22:0x（用户追加令）— ComfyUI 渲染任务已停
 
@@ -27,6 +27,24 @@
 - EP06 落盘盘点（以磁盘为准）：短剧仓 `OUTPUT/06_情绪/videos/` **29** 镜 ＋ ComfyUI 输出 `E:\code\ComfyUI\output\video\` 本次新出 **13** 镜（**尚未回收进短剧仓**）＝ **42/54**。
 - **未渲染（需要重投）12 镜**：`41, 43, 44, 45, 47, 48, 49, 50, 51, 52, 53, 54`。
 - 恢复第一轮顺序：① 先把 `E:\code\ComfyUI\output\video\EP06_*.mp4` 里这 13 个回收/改名进 `OUTPUT/06_情绪/videos/`（否则会被判「未出片」重复投）→ ② 用 `--skip-existing` 只补投上面 12 镜 → ③ 54 镜齐后跑字幕 + 合成。
+
+## ⏹ 2026-10-23 22:1x（用户追加令）— ComfyUI 服务本身也已停止
+
+| 项 | 状态 |
+|:---|:---|
+| 计划任务 `ComfyUI`（SYSTEM · 开机自启） | `Stop-ScheduledTask` → **`Disable-ScheduledTask`**，State = **Disabled**（重启也不会自动拉起） |
+| ComfyUI 进程 | 已终止：venv launcher **PID 7148** + 其子进程 **PID 7084**（二者是同一实例，**非** BLOCKERS #9 说的「重复进程」） |
+| 端口 8188 | 已关闭（`TcpTestSucceeded = False`） |
+| GPU（RTX 4090 Laptop） | 5294 MiB → **~2210 MiB**（余量为 Chrome/游戏等无关进程；ComfyUI 显存已全部释放） |
+| 输出文件 | `E:\code\ComfyUI\output\video\EP06_*.mp4` **13 个新片原样保留**，未删未动 |
+
+**恢复 ComfyUI（video 线恢复前必须做）**
+```powershell
+Enable-ScheduledTask -TaskName 'ComfyUI' | Out-Null
+Start-ScheduledTask  -TaskName 'ComfyUI'
+# 等 ~40–90s 让 8188 起来并加载模型
+curl.exe -s -o NUL -w "http=%{http_code}`n" http://127.0.0.1:8188/system_stats
+```
 
 **未做的事（有意保留）**
 - 未动短剧仓工作区与任何已出片视频（`OUTPUT/06_情绪/videos/` 原样）。

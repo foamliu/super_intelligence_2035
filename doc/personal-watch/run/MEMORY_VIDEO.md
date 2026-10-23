@@ -9,7 +9,8 @@ WAITING: 1
 
 > ⏸ **【2026-10-23 21:45 用户直令 · 本线已暂停】** 计划任务 `WatchVideoLoop` → **Disabled**；loop 进程（PID 3272）已终止；心跳停在 21:14:24，22:00 整点未再唤醒（已验证）。
 > **22:0x 追加**：ComfyUI 渲染任务也已停（`/interrupt` + `queue.clear`，running 0 / pending 0）。**中断时 EP06 = 42/54**（仓内 29 + `E:\code\ComfyUI\output\video` 新出 13 未回收）；**未渲染 12 镜 = 41,43,44,45,47,48,49,50,51,52,53,54**。
-> **恢复**：`Enable-ScheduledTask -TaskName 'WatchVideoLoop'` + `Start-ScheduledTask -TaskName 'WatchVideoLoop'`。**恢复第一轮必须先回收那 13 个 mp4、再补投 12 镜**（否则重复投）。详见 `video/PAUSE_STATUS.md`。
+> **22:1x 追加**：**ComfyUI 服务本身也已停**（计划任务 `ComfyUI` → Disabled；PID 7148/7084 已终止；8188 端口关闭；显存 5294→2210 MiB）。
+> **恢复顺序（硬要求）**：① `Enable-ScheduledTask -TaskName 'ComfyUI'` + `Start-ScheduledTask -TaskName 'ComfyUI'` 并等 8188 就绪 → ② `Enable-ScheduledTask -TaskName 'WatchVideoLoop'` + `Start-ScheduledTask` → ③ 第一轮先回收那 13 个 mp4、再补投 12 镜（否则重复投）。
 > ⚠️ 暂停期间**不要**再往队列投镜头；恢复后第一轮请先**以磁盘 glob 为准**核验 EP06 实际落盘数（loop 已停一轮，可能与本记忆的 29/54 不一致）。
 
 ---
