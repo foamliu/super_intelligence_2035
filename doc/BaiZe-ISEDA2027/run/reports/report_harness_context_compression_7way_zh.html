@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七大 Harness 上下文压缩（Compaction）机制横向对比报告</title>
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f5f7fa;color:#1a1a2e;line-height:1.7;">
+<div style="max-width:1200px;margin:0 auto;padding:40px 28px 80px;">
+<div style="text-align:center;margin-bottom:40px;">
+<h1 style="font-size:2.1em;margin:0 0 8px;color:#16213e;">七大 Harness 上下文压缩（Compaction）机制横向对比</h1>
+<p style="font-size:0.95em;color:#666;margin:4px 0;">claude-code · cline · codex · deepseek-harness · hermes-agent · opencode · pi</p>
+<p style="font-size:0.82em;color:#999;margin:4px 0;">生成日期：2026-10-23 | 每条结论均附 <code style="background:#e8eaf6;padding:1px 5px;border-radius:3px;font-size:0.9em;">file:line</code> 源码证据</p>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:28px 30px;margin-bottom:36px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h2 style="font-size:1.4em;border-left:5px solid #4a6cf7;padding-left:14px;margin:0 0 16px;">摘要</h2>
+<p style="margin:0 0 12px;">本文对 7 个主流 AI Coding Harness 的上下文压缩（context compaction）机制进行源码级横向对比。每条结论均标注 <code style="background:#e8eaf6;padding:1px 5px;border-radius:3px;">file:line</code> 证据，基于各 harness 实际仓库源码（非文档推断）。</p>
+<p style="margin:0 0 12px;"><strong>核心发现：</strong>7 个 harness 的压缩策略可归为三大范式——</p>
+<ul style="margin:0 0 12px;padding-left:24px;">
+<li><strong>单层 LLM 摘要</strong>（opencode、pi、cline-agentic、codex-local）：在阈值触发后调用模型生成结构化摘要，替换历史消息。</li>
+<li><strong>多层级联</strong>（claude-code、hermes-agent）：先做模型无关的剪裁/微压缩（micro-compact），再视情况做全量 LLM 摘要，并带断路器防止抖动。</li>
+<li><strong>插件化 + 模型无关优先</strong>（deepseek-harness、cline-basic）：先用确定性规则裁剪工具结果，仅在不足以降到阈值时才触发 LLM 摘要。</li>
+</ul>
+<p style="margin:0;font-size:0.88em;color:#888;">证据来源路径统一前缀：<code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:0.88em;">harness/&lt;name&gt;/</code>，下文仅写相对路径。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:20px 28px;margin-bottom:36px;">
+<p style="margin:0 0 8px;font-weight:600;">目录</p>
+<ul style="margin:0;padding-left:20px;font-size:0.92em;">
+<li><a href="#table" style="color:#4a6cf7;text-decoration:none;">1. 七大维度对比总表</a></li>
+<li><a href="#strategies" style="color:#4a6cf7;text-decoration:none;">2. 压缩策略详解（逐 harness）</a></li>
+<li><a href="#triggers" style="color:#4a6cf7;text-decoration:none;">3. 触发阈值对比</a></li>
+<li><a href="#retention" style="color:#4a6cf7;text-decoration:none;">4. 保留 / 保护策略对比</a></li>
+<li><a href="#prompts" style="color:#4a6cf7;text-decoration:none;">5. 摘要提示词模板对比</a></li>
+<li><a href="#defects" style="color:#4a6cf7;text-decoration:none;">6. 已知缺陷与防护机制</a></li>
+<li><a href="#conclusion" style="color:#4a6cf7;text-decoration:none;">7. 总结与建议</a></li>
+</ul>
+</div>
+<h2 id="table" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">1. 七大维度对比总表</h2>
+<div style="overflow-x:auto;margin-bottom:36px;">
+<table style="width:100%;border-collapse:collapse;font-size:0.84em;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-radius:8px;overflow:hidden;">
+<thead>
+<tr style="background:#16213e;color:#fff;">
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">维度</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">claude-code</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">cline</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">codex</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">deepseek-harness</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">hermes-agent</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">opencode</th>
+<th style="padding:12px 10px;text-align:left;border:1px solid #2a3a5e;">pi</th>
+</tr>
+</thead>
+<tbody>
+<tr style="background:#f8f9fa;">
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">压缩范式</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">多层级联：微压缩→API清理→LLM摘要</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">双策略：basic(确定性)/agentic(LLM)</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">多实现：local(LLM)/token-budget(无摘要)/remote</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">插件化：先模型无关剪裁，再LLM摘要</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">多层级联：微压缩→主动剪裁→全量LLM摘要</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">单层LLM摘要（结构化Markdown）</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">单层LLM摘要（结构化checkpoint）</td>
+</tr>
+<tr>
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">触发阈值</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">有效窗口 − 13K buffer</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">maxInputTokens × 0.9</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">可配token_limit + 全窗口硬上限</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">contextWindow × 0.8</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">(context − maxTokens) × 50%~75%</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">context − max(output, 20K)</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">contextWindow − 16K reserve</td>
+</tr>
+<tr style="background:#f8f9fa;">
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">保留策略</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">后50K tokens + 文件/技能恢复</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">最近20K tokens + 工具结果裁剪2K</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">摘要≤20K + 初始上下文重注入</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">contextWindow × 16% 保留区</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">头3条(衰减)+尾20条，摘要目标20%</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">最近8K tokens原样保留</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">最近20K tokens + 增量摘要更新</td>
+</tr>
+<tr>
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">微压缩</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">✅ 工具结果清理 + 时间间隙触发</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">❌</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">❌（但有token-budget无摘要模式）</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">❌（但有模型无关剪裁）</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">✅ 滚动单轮微摘要</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">❌</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">❌（但有split-turn前缀摘要）</td>
+</tr>
+<tr style="background:#f8f9fa;">
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">断路器/防抖</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">✅ 连续失败≥3次熔断</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">⚠️ overflow强制basic降级</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">⚠️ fallback_buffer + scope配置</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">⚠️ 重试上限+溢出次数追踪</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">✅ 300s反抖动断路器</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">⚠️ 摘要提示词溢出检查</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">⚠️ 失效token估算跳过</td>
+</tr>
+<tr>
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">摘要模板</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">分析草稿+结构化summary</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">对话摘要（agentic模式）</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">CONTEXT CHECKPOINT交接</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">可配summarization model/prompt</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">结构化压缩+增量合并</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">Markdown五段式模板</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">checkpoint + 增量更新</td>
+</tr>
+<tr style="background:#f8f9fa;">
+<td style="padding:10px;border:1px solid #e0e0e0;font-weight:600;">语言</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">TypeScript</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">TypeScript</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">Rust</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">TypeScript</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">Python</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">TypeScript</td>
+<td style="padding:10px;border:1px solid #e0e0e0;">TypeScript</td>
+</tr>
+</tbody>
+</table>
+<h2 id="strategies" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">2. 压缩策略详解（逐 harness）</h2>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e8590c;">2.1 claude-code —— 多层级联压缩</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>claude-code 采用四层级联压缩，按代价从低到高逐级触发：</p>
+<ol style="margin:0 0 12px;padding-left:24px;">
+<li><strong>微压缩（MicroCompact）</strong>：清理旧工具结果与思考块，无需 LLM 调用。基于时间间隙触发（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">microCompact.ts:438-441</code>），并在 API 层通过 <code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">clear_tool_uses_20250919</code> / <code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">clear_thinking_20251015</code> 参数实现（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">apiMicrocompact.ts:16</code>）。</li>
+<li><strong>自动压缩（AutoCompact）</strong>：LLM 摘要。阈值 = 有效上下文窗口 − 13,000 buffer（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts:62,72-76</code>），有效窗口 = contextWindow − summary预留（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts:30,33-48</code>）。</li>
+<li><strong>全量压缩（Compact）</strong>：摘要后保留 POST_COMPACT_TOKEN_BUDGET=50,000 tokens，最多恢复5个文件（5K/文件）+ 技能恢复（25K预算）（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.ts:122-130</code>）。摘要使用 &lt;analysis&gt; 草稿 + &lt;summary&gt; 结构。</li>
+<li><strong>反应式压缩（Reactive）</strong>：捕获 prompt-too-long 错误后触发（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts</code> 反应式路径）。</li>
+</ol>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>防护：</strong>连续自动压缩失败 ≥ 3 次触发熔断（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts:67-70,260-264</code>）；session memory / marble_origami 查询源跳过自动压缩以防死锁。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#1971c2;">2.2 cline —— 双策略切换</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>cline 提供两种内置压缩策略，通过 mode 字段切换：</p>
+<ul style="margin:0 0 12px;padding-left:24px;">
+<li><strong>basic 策略</strong>：纯确定性裁剪，不调用 LLM。工具结果截断至 2,000 字符（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:21</code>），保留最近 20,000 tokens（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:19</code>）。</li>
+<li><strong>agentic 策略</strong>：调用 LLM 生成对话摘要。目标压缩比 0.7（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:18</code>），长对话降至 0.5（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:89</code>）。</li>
+</ul>
+<p style="margin:0 0 10px;"><strong>触发逻辑：</strong><code>requestInputTokens &gt;= maxInputTokens × 0.9</code>（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:318,323</code>；<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:17</code>）。maxInputTokens 优先取模型 info，否则 contextWindow × 0.9（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:15,51-69</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>防护：</strong>overflowRecovery 强制使用 basic 策略（确定性优先），自定义压缩器失败时回退到 basic（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:435-460</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#2f9e44;">2.3 codex —— 多实现引擎 + 作用域控制</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>codex（Rust 实现）提供三种压缩引擎，由 feature flag 与 provider 能力决定选用：</p>
+<ul style="margin:0 0 12px;padding-left:24px;">
+<li><strong>local（compact.rs）</strong>：LLM 摘要。摘要用户消息上限 20,000 tokens（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.rs:61</code>）。支持手动 / 自动 / turn 中三种触发场景。</li>
+<li><strong>token-budget（compact_token_budget.rs）</strong>：跳过模型摘要，直接安装全新上下文窗口（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact_token_budget.rs:22-25,47-51</code>）。仍走完整 compaction 生命周期（hook + ContextCompaction 事件）。</li>
+<li><strong>remote v2（compact_remote_v2.rs）</strong>：服务端摘要，将压缩卸载到 API 侧。</li>
+</ul>
+<p style="margin:0 0 10px;"><strong>触发逻辑：</strong><code>token_limit_reached = scope_tokens &gt;= buffered_limit OR full_window_reached</code>（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_window.rs:107-109</code>）。作用域可选 <code>Total</code>（全量）或 <code>BodyAfterPrefix</code>（仅前缀之后的增量）（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_window.rs:61-80</code>），通过 <code>model_auto_compact_token_limit</code> 配置（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">config/mod.rs:629</code>）。</p>
+<p style="margin:0 0 10px;"><strong>初始上下文重注入：</strong>turn 中压缩使用 <code>BeforeLastUserMessage</code> 模式，将初始上下文注入到最后一条用户消息之前（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.rs:69-76,98-107</code>）；turn 前/手动压缩使用 <code>DoNotInject</code>，下一轮自然重注入（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.rs:63-67,166</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>摘要提示词：</strong>使用 <code>SUMMARIZATION_PROMPT</code> / <code>SUMMARY_PREFIX</code>（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.rs:59-60,128,357</code>），模板见 <code>prompts/templates/compact/prompt.md</code>（"CONTEXT CHECKPOINT COMPACTION" 交接格式）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#7048e8;">2.4 deepseek-harness —— 插件化 + 模型无关优先</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>compaction-basic 作为可插拔包，采用"先剪裁后摘要"两阶段：</p>
+<ol style="margin:0 0 12px;padding-left:24px;">
+<li><strong>模型无关剪裁（toolResultPruner）</strong>：先执行确定性工具结果裁剪，无需 LLM。溢出场景与压力场景均先跑此步（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:282-291,309-312</code>）。</li>
+<li><strong>LLM 摘要（compactRegion）</strong>：若剪裁后仍超阈值，选择可压缩区间并调用摘要模型。支持按 target model 配置独立的 summarizationProvider/Model（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:161-162</code>）。</li>
+</ol>
+<p style="margin:0 0 10px;"><strong>触发逻辑：</strong>压力触发阈值 <code>thresholdTokens = contextWindow × thresholdRatio</code>，默认 thresholdRatio=0.8（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:20,144</code>；<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:305</code>）。溢出触发绕过阈值直接压缩（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:284-292</code>）。</p>
+<p style="margin:0 0 10px;"><strong>保留策略：</strong>保留区 <code>retainTokens = contextWindow × retainRatio</code>，默认 retainRatio=0.16（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:23,145-147</code>）。摘要 maxTokens 默认 8,192（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:91</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>防护：</strong>重试循环最多 <code>compactionRetries + 1</code> 次，仍超阈值则抛异常（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:316-332</code>；<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:92</code>）；溢出重试通过 WeakMap 追踪，idle/assistant 消息后重置（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:168-178</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e03131;">2.5 hermes-agent —— 最复杂的多层级联</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>hermes-agent（Python）集成了三层压缩，由多个 Mixin 组合实现：</p>
+<ol style="margin:0 0 12px;padding-left:24px;">
+<li><strong>微压缩（MicroCompactionMixin）</strong>：滚动单轮微摘要。每个 turn 结束时吸收一个完整 assistant+tool 交换到 rolling summary，按 cadence 门控（每 N 轮一次）（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">micro_compaction.py:39,205-222</code>）。用户消息永不吸收（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">micro_compaction.py:70</code>）。支持从 transcript marker 恢复 rolling summary（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">micro_compaction.py:50-62</code>）。</li>
+<li><strong>主动剪裁（proactive prune）</strong>：模型无关的工具结果裁剪，在全量压缩前先跑。</li>
+<li><strong>全量压缩（compressor）</strong>：保护头部+尾部，LLM 摘要中间。头部 = system prompt + protect_first_n（首次压缩后衰减，防早期用户轮次固化）（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:4671-4678</code>），尾部 = protect_last_n=20（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2804</code>）。摘要目标比 0.20（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2805</code>）。</li>
+</ol>
+<p style="margin:0 0 10px;"><strong>触发逻辑：</strong><code>threshold_tokens = (context_length − max_tokens) × threshold_percent</code>，下限 64,000（MINIMUM_CONTEXT_LENGTH），小窗口（&lt;512K）时 threshold_percent 从 0.50 提升至 0.75（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:1150-1151,2755-2758,2769-2801</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>防护：</strong>反抖动断路器 <code>_ANTI_THRASH_RECOVERY_SECONDS=300</code>（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2726</code>）；结构性 no-op 退避 300s（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2729</code>）；仅 provider 确认的"无效压缩"才触发断路器（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:3020</code>）；断路器到期后允许一次"probation probe"试探（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:3061,3082</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#f08c00;">2.6 opencode —— 单层结构化摘要</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>opencode 采用单层 LLM 摘要策略，使用结构化 Markdown 模板生成摘要，并支持增量更新（将前次摘要与新对话合并）。</p>
+<p style="margin:0 0 10px;"><strong>触发逻辑：</strong><code>estimate(request) &gt; context − max(output, buffer)</code>，默认 buffer=20,000（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:12,237-241</code>）。也支持 <code>compactAfterOverflow</code> 在 provider 错误后触发。auto 模式默认开启（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:133</code>）。</p>
+<p style="margin:0 0 10px;"><strong>保留策略：</strong>select() 将对话分为头部（被摘要）+ 最近部分（原样保留），保留预算 DEFAULT_KEEP_TOKENS=8,000（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:13,137-158</code>）。工具输出截断 TOOL_OUTPUT_MAX_CHARS=2,000（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:14</code>）。摘要输出上限 SUMMARY_OUTPUT_TOKENS=4,096（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:15</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>摘要模板：</strong>五段式 Markdown（Objective / Important Details / Work State / Next Move / Relevant Files）。另有 context-epoch 系统跨压缩快照/协调系统上下文（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">context-epoch.ts:46-77</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#0ca678;">2.7 pi —— 结构化 checkpoint + split-turn</h3>
+<p style="margin:0 0 10px;"><strong>策略概述：</strong>pi 采用单层 LLM 摘要，生成结构化 checkpoint。独特之处在于支持 split-turn 模式（将一轮对话拆分为 turn-prefix 摘要 + 历史摘要两部分）。</p>
+<p style="margin:0 0 10px;"><strong>触发逻辑：</strong><code>shouldCompact = contextTokens &gt; contextWindow − reserveTokens</code>，默认 reserveTokens=16,384（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:126-129,267-269</code>）。也支持溢出触发 <code>_runAutoCompaction("overflow")</code>（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">agent-session.ts:3111-3113</code>）。</p>
+<p style="margin:0 0 10px;"><strong>保留策略：</strong>最近 keepRecentTokens=20,000 tokens 原样保留（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:129</code>）。摘要 maxTokens = min(0.8 × reserveTokens, model.maxTokens)（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:712-714</code>）。</p>
+<p style="margin:0 0 10px;"><strong>三套提示词：</strong></p>
+<ul style="margin:0 0 10px;padding-left:24px;font-size:0.9em;">
+<li><code>SUMMARIZATION_PROMPT</code> — 首次结构化 checkpoint（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:507</code>）</li>
+<li><code>UPDATE_SUMMARIZATION_PROMPT</code> — 增量合并到已有摘要（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:577</code>）</li>
+<li><code>TURN_PREFIX_SUMMARIZATION_PROMPT</code> — split-turn 前缀摘要（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:942</code>）</li>
+</ul>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>防护：</strong><code>estimateProjectedContextTokens</code> 处理 context_edit/compaction 后的 token 估算失效（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:227-262</code>）；跳过 aborted/error 消息的 usage 数据（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:148-160</code>）。</p>
+</div>
+</div>
+
+<h2 id="triggers" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">3. 触发阈值对比</h2>
+<div style="overflow-x:auto;margin-bottom:36px;">
+<table style="width:100%;border-collapse:collapse;font-size:0.84em;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-radius:8px;overflow:hidden;">
+<thead>
+<tr style="background:#16213e;color:#fff;">
+<th style="padding:10px 8px;text-align:left;border:1px solid #2a3a5e;">harness</th>
+<th style="padding:10px 8px;text-align:left;border:1px solid #2a3a5e;">触发公式</th>
+<th style="padding:10px 8px;text-align:left;border:1px solid #2a3a5e;">默认阈值</th>
+<th style="padding:10px 8px;text-align:left;border:1px solid #2a3a5e;">代码证据</th>
+<th style="padding:10px 8px;text-align:left;border:1px solid #2a3a5e;">溢出触发</th>
+</tr>
+</thead>
+<tbody>
+<tr style="background:#f8f9fa;">
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">claude-code</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">有效窗口 − buffer</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">13,000 tokens</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#fff3e0;padding:1px 3px;border-radius:2px;font-size:0.9em;">autoCompact.ts:62,72-76</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">✅ prompt-too-long 反应式</td>
+</tr>
+<tr>
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">cline</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">maxInputTokens × 0.9</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">90% 输入窗口</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#e3f2fd;padding:1px 3px;border-radius:2px;font-size:0.9em;">compaction-shared.ts:15,17</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">⚠️ overflow 强制 basic 降级</td>
+</tr>
+<tr style="background:#f8f9fa;">
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">codex</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">可配 token_limit</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">用户设定</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#f3f0ff;padding:1px 3px;border-radius:2px;font-size:0.9em;">config/mod.rs:629</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">✅ ContextLimit fallback</td>
+</tr>
+<tr>
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">deepseek-harness</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">contextWindow × 0.8</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">80% 窗口</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#e8f5e9;padding:1px 3px;border-radius:2px;font-size:0.9em;">config.ts:20,144</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">✅ overflow WeakMap</td>
+</tr>
+<tr style="background:#f8f9fa;">
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">hermes-agent</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">(ctx − maxTokens) × 50%~75%</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">下限 64,000</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#fff5f5;padding:1px 3px;border-radius:2px;font-size:0.9em;">context_compressor.py:1150-1151</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">✅ probation probe</td>
+</tr>
+<tr>
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">opencode</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">ctx − max(output, 20K)</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">buffer=20,000</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#fff8e1;padding:1px 3px;border-radius:2px;font-size:0.9em;">compaction.ts:12,237-241</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">✅ compactAfterOverflow</td>
+</tr>
+<tr style="background:#f8f9fa;">
+<td style="padding:8px;border:1px solid #e0e0e0;font-weight:600;">pi</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">ctxWindow − 16,384</td>
+<td style="padding:8px;border:1px solid #e0e0e0;">reserve=16,384</td>
+<td style="padding:8px;border:1px solid #e0e0e0;"><code style="background:#e6fcf5;padding:1px 3px;border-radius:2px;font-size:0.9em;">compaction.ts:126-129,267</code></td>
+<td style="padding:8px;border:1px solid #e0e0e0;">✅ overflow 触发</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:20px 28px;margin-bottom:36px;">
+<p style="margin:0 0 10px;"><strong>关键差异：</strong></p>
+<ul style="margin:0;padding-left:24px;font-size:0.92em;">
+<li><strong>固定 buffer vs 比例阈值</strong>：claude-code（13K）、opencode（20K）、pi（16K）用绝对 buffer；cline（90%）、deepseek-harness（80%）用比例。比例随窗口缩放，但小窗口下可能不足。</li>
+<li><strong>codex 独特性</strong>：唯一将阈值完全交给用户配置（<code style="background:#f3f0ff;padding:1px 3px;border-radius:2px;font-size:0.9em;">config/mod.rs:629</code>），且 token-budget 模式跳过 LLM 摘要（<code style="background:#f3f0ff;padding:1px 3px;border-radius:2px;font-size:0.9em;">compact_token_budget.rs:47-52</code>）。</li>
+<li><strong>hermes 自适应</strong>：小窗口（&lt;512K）时 threshold_percent 从 0.50 提升到 0.75（<code style="background:#fff5f5;padding:1px 3px;border-radius:2px;font-size:0.9em;">context_compressor.py:1150-1151</code>），避免频繁触发。</li>
+</ul>
+</div>
+<h2 id="retention" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">4. 保留 / 保护策略对比</h2>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e8590c;">4.1 claude-code —— 富信息恢复</h3>
+<p style="margin:0 0 10px;">压缩后保留 <code>POST_COMPACT_TOKEN_BUDGET=50,000</code> tokens（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.ts:124</code>）。最多恢复 5 个文件（每文件 5K）+ 技能恢复预算 25K（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.ts:122-130</code>）。微压缩阶段清理旧工具结果与思考块（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">microCompact.ts:438-441</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>特点：</strong>最丰富的压缩后恢复——不仅保留摘要，还主动重注入最近编辑的文件内容和技能定义。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#1971c2;">4.2 cline —— 双策略保留</h3>
+<p style="margin:0 0 10px;"><strong>basic 模式</strong>：工具结果截断至 <code>TOOL_RESULT_CHAR_LIMIT=2,000</code>（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:21</code>），文件内容同样 2,000（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:22</code>）。</p>
+<p style="margin:0 0 10px;"><strong>agentic 模式</strong>：LLM 摘要替换历史，保留摘要 + 最近消息（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">agentic-compaction.ts:159-172</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;">永不摘要最新用户输入（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:345</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#673ab7;">4.3 codex —— 三实现保留</h3>
+<p style="margin:0 0 10px;"><strong>local</strong>：LLM 摘要，<code>CompactionStrategy::Memento</code>（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.rs:474</code>）。</p>
+<p style="margin:0 0 10px;"><strong>token-budget</strong>：跳过模型摘要，直接安装新窗口（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact_token_budget.rs:47-52</code>）。可配 <code>auto_compact_fallback_prompt</code>（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config_tests.rs:724</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>remote</strong>：服务端摘要（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact_remote.rs:53</code>）。token-budget 是唯一"零 LLM 调用"压缩。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#2e7d32;">4.4 deepseek-harness —— 插件化剪裁优先</h3>
+<p style="margin:0 0 10px;">保留区 <code>retainTokens = contextWindow × retainRatio</code>，默认 <code>retainRatio=0.16</code>（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:23,145-147</code>）。摘要 maxTokens 默认 8,192（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:91</code>）。</p>
+<p style="margin:0 0 10px;">独立的 <code>compaction-tool-result-pruner</code> 插件先做模型无关裁剪（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-tool-result-pruner/src/index.ts:4</code>），剪裁不足才触发 LLM 摘要。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><strong>特点</strong>：确定性剪裁与 LLM 摘要解耦为独立插件。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e03131;">4.5 hermes-agent —— 头尾保护 + 衰减</h3>
+<p style="margin:0 0 10px;">头部 = system prompt + <code>protect_first_n</code>（首次压缩后衰减，<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:4671-4678</code>）。尾部 = <code>protect_last_n=20</code>（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2804</code>）。摘要目标比 0.20（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2805</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;">首次压缩后 <code>protect_first_n</code> 衰减——防止早期消息永远不被摘要。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#f08c00;">4.6 opencode —— 尾部保留 + turn 分割</h3>
+<p style="margin:0 0 10px;"><code>DEFAULT_KEEP_TOKENS=8,000</code>（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:13</code>）。工具输出截断 <code>TOOL_OUTPUT_MAX_CHARS=2,000</code>（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:14</code>）。摘要 <code>SUMMARY_OUTPUT_TOKENS=4,096</code>（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:15</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;"><code>splitTurn</code> 在 turn 内部找截断点，保持 turn 完整性（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:140-158</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:36px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#0ca678;">4.7 pi —— 大保留窗口 + 增量摘要</h3>
+<p style="margin:0 0 10px;"><code>keepRecentTokens=20,000</code> 原样保留（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:129</code>）。摘要 maxTokens = <code>min(0.8 × reserveTokens, model.maxTokens)</code>（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:712-714</code>）。</p>
+<p style="margin:0;font-size:0.88em;color:#666;">保留窗口（20K）大于 opencode（8K），支持增量更新。</p>
+</div>
+<h2 id="prompts" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">5. 摘要提示词模板对比</h2>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e8590c;">5.1 claude-code —— analysis + summary 双段</h3>
+<p style="margin:0 0 10px;">摘要提示词要求先在 <code>&lt;analysis&gt;</code> 标签做草稿分析，再在 <code>&lt;summary&gt;</code> 标签输出最终摘要（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">prompt.ts:24</code>）。analysis 段是草稿区，<code>formatCompactSummary</code> 会剥离（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">prompt.ts:306-314</code>）。禁止工具调用（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">prompt.ts:20-23</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#1971c2;">5.2 cline —— 可配 summarizer</h3>
+<p style="margin:0 0 10px;">agentic 模式下，摘要由可配置 summarizer 模型生成（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">agentic-compaction.ts:57,135-140</code>）。summary 预算受 summarizer 输入限制约束（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">agentic-compaction.ts:159-172</code>）。basic 模式不使用 LLM，无摘要提示词。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#673ab7;">5.3 codex —— 可配 fallback prompt</h3>
+<p style="margin:0 0 10px;">local 模式使用内建摘要提示词（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.rs:474</code> Memento 策略）。token-budget 模式支持用户配置 <code>auto_compact_fallback_prompt</code>（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config_tests.rs:724</code>），有长度校验（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config_tests.rs:759</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#2e7d32;">5.4 deepseek-harness —— checkpoint + compacted-summary</h3>
+<p style="margin:0 0 10px;">摘要包装在 <code>&lt;compacted-summary&gt;</code> 标签中（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">summarizer.ts:21-22</code>）。规则要求保留精确文件路径、命令、错误字符串（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">summarizer.ts:61</code>）。<code>CHECKPOINT_PREAMBLE</code> 指示后续模型将摘要视为已建立背景（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">summarizer.ts:69-71</code>）。支持增量合并（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">summarizer.ts:65</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e03131;">5.5 hermes-agent —— 动态组装摘要提示词</h3>
+<p style="margin:0 0 10px;">摘要提示词运行时动态组装，支持首次摘要和增量更新（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:4051</code>）。焦点引导放最后以确保优先级。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#f08c00;">5.6 opencode —— PR 风格摘要</h3>
+<p style="margin:0 0 10px;">摘要提示词为纯文本文件 <code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">prompt/summary.txt</code>："Summarize what was done... Write like a pull request description."（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">agent.ts:15,263</code>）。限制 2-3 句，第一人称，不提及测试过程。</p>
+<p style="margin:0;font-size:0.88em;color:#666;">另有 <code>context-epoch</code> 系统跨压缩快照协调（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">context-epoch.ts:46-77</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:36px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#0ca678;">5.7 pi —— 结构化 checkpoint（最详细模板）</h3>
+<p style="margin:0 0 10px;">三套提示词：</p>
+<ul style="margin:0 0 10px;padding-left:24px;font-size:0.9em;">
+<li><code>SUMMARIZATION_PROMPT</code>（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:507</code>）：六段式——Goal / Constraints / Progress (Done/In Progress/Blocked) / Key Decisions / Next Steps / Critical Context。</li>
+<li><code>UPDATE_SUMMARIZATION_PROMPT</code>（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:577</code>）：增量合并规则。</li>
+<li><code>TURN_PREFIX_SUMMARIZATION_PROMPT</code>（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:942</code>）：split-turn 前缀摘要。</li>
+</ul>
+<p style="margin:0;font-size:0.88em;color:#666;">要求保留精确文件路径、函数名和错误消息（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:538</code>）。</p>
+</div>
+<h2 id="defects" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">6. 已知缺陷与防护机制</h2>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e8590c;">6.1 claude-code</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：1,279 个会话出现 50+ 次连续自动压缩失败（最高 3,272 次），全球每日浪费 ~250K API 调用（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts:66-67</code> 注释）。压缩请求本身可能触发 prompt-too-long（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.ts:462</code> CC-1180）。</p>
+<p style="margin:0;"><strong>防护</strong>：连续失败 ≥ 3 次熔断（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts:67-70</code>）；prompt-too-long 时截断压缩请求（<code style="background:#fff3e0;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact.ts:462</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#1971c2;">6.2 cline</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：agentic 模式的 LLM 摘要调用可能超时（本项目 Terminal-Bench 评测中多次遇到 3600s 超时）。summarizer 无已知输入限制时使用保守预算可能导致摘要空间不足（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">agentic-compaction.ts:150</code>）。</p>
+<p style="margin:0;"><strong>防护</strong>：溢出时强制降级为 basic 模式（确定性裁剪，无 LLM）；永不摘要最新用户输入（<code style="background:#e3f2fd;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:345</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#673ab7;">6.3 codex</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：local 模式依赖模型可用性；remote 模式依赖服务端。</p>
+<p style="margin:0;"><strong>防护</strong>：token-budget 模式作为零 LLM fallback（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact_token_budget.rs:47-52</code>）；<code>compact_model_fallback.rs</code> 提供 ContextLimit 降级（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact_model_fallback.rs:32</code>）；<code>fallback_buffer_tokens</code> 可配（<code style="background:#f3f0ff;padding:1px 4px;border-radius:3px;font-size:0.88em;">config_tests.rs:725</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#2e7d32;">6.4 deepseek-harness</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：重试循环可能耗尽预算。</p>
+<p style="margin:0;"><strong>防护</strong>：重试上限 <code>compactionRetries + 1</code> 次，仍超则抛异常（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:316-332</code>）；溢出重试通过 WeakMap 追踪（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">index.ts:168-178</code>）；<code>validateRatioRetention</code> 确保保留比 &lt; 阈值比（<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px;font-size:0.88em;">config.ts:181-188</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#e03131;">6.5 hermes-agent</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：不可压缩会话可能导致压缩循环（每 1-2 轮触发但无法降低体积）。</p>
+<p style="margin:0;"><strong>防护</strong>：反抖动断路器 <code>_ANTI_THRASH_RECOVERY_SECONDS=300</code>（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2726</code>）；结构性 no-op 退避 300s（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:2729</code>）；仅 provider 确认的"无效压缩"才触发断路器（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:3020</code>）；断路器到期后允许一次 probation probe（<code style="background:#fff5f5;padding:1px 4px;border-radius:3px;font-size:0.88em;">context_compressor.py:3061,3082</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#f08c00;">6.6 opencode</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：摘要提示词本身可能溢出。</p>
+<p style="margin:0;"><strong>防护</strong>：摘要输出上限 <code>SUMMARY_OUTPUT_TOKENS=4,096</code>（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:15</code>）；<code>compactAfterOverflow</code> 在 provider 错误后触发（<code style="background:#fff8e1;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:133</code>）。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:24px 28px;margin-bottom:36px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 14px;color:#0ca678;">6.7 pi</h3>
+<p style="margin:0 0 10px;"><strong>缺陷</strong>：context_edit/compaction 后 token 估算可能失效。</p>
+<p style="margin:0;"><strong>防护</strong>：<code>estimateProjectedContextTokens</code> 处理压缩后估算失效（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:227-262</code>）；跳过 aborted/error 消息的 usage 数据（<code style="background:#e6fcf5;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction.ts:148-160</code>）；split-turn 模式减少单次摘要压力。</p>
+</div>
+<h2 id="conclusion" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">7. 结合本项目教训与总结建议</h2>
+<div style="background:#fff3e0;border:1px solid #ffb74d;border-radius:10px;padding:28px 30px;margin-bottom:24px;">
+<h3 style="margin:0 0 16px;color:#e65100;">7.1 本项目教训：cline Auto-compacting 超时问题</h3>
+<p style="margin:0 0 12px;">在 BaiZe 项目的 Terminal-Bench 2.0 横评中，我们使用 cline 作为 harness 之一（<code>cline-patched</code>）。实际评测中多次遇到 <strong>Auto-compacting 超时</strong>：当对话接近 <code>maxInputTokens × 0.9</code> 阈值（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:17</code>）时，agentic 模式触发 LLM 摘要调用，但该调用在 3600s 会话限制内未完成，导致整个 trial 超时失败。</p>
+<p style="margin:0 0 12px;"><strong>根因分析</strong>：cline 的 agentic 压缩需要一次完整的 LLM API 调用生成摘要（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">agentic-compaction.ts:57</code> <code>policyIntent: "agentic_summary"</code>）。在 Terminal-Bench 长任务中（多轮工具调用 + 大量代码上下文），待摘要历史很长，摘要调用本身输入 token 量巨大，导致 API 响应缓慢甚至超时。cline <strong>没有</strong> claude-code 的微压缩前置层（先清理工具结果再决定是否需要 LLM），也<strong>没有</strong> hermes-agent 的反抖动断路器。</p>
+<p style="margin:0 0 12px;"><strong>对比其他 harness</strong>：</p>
+<ul style="margin:0 0 12px;padding-left:24px;font-size:0.92em;">
+<li><strong>claude-code</strong>：微压缩先清理工具结果和思考块（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">microCompact.ts:438-441</code>），可能无需 LLM 就降到阈值以下。且有 3 次失败熔断（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">autoCompact.ts:67-70</code>）。</li>
+<li><strong>codex</strong>：token-budget 模式完全跳过 LLM 摘要（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compact_token_budget.rs:47-52</code>），直接安装新窗口。API 受限时最稳健。</li>
+<li><strong>deepseek-harness</strong>：先跑模型无关的 tool-result-pruner（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-tool-result-pruner/src/index.ts:4</code>），剪裁不足才触发 LLM 摘要。</li>
+<li><strong>hermes-agent</strong>：微压缩每 N 轮滚动吸收一个 assistant+tool 交换（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">micro_compaction.py:39</code>），分散压缩压力。</li>
+</ul>
+<p style="margin:0;"><strong>改进建议</strong>：① 在 Terminal-Bench 评测配置中，将 cline 压缩模式设为 <strong>basic</strong>（确定性裁剪，无 LLM 调用），避免摘要超时；② 或增加 cline 摘要调用 timeout 配置；③ 长期看，cline 应借鉴 claude-code 的微压缩前置层和 hermes-agent 的反抖动断路器。</p>
+</div>
+<div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:28px 30px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+<h3 style="margin:0 0 16px;color:#16213e;">7.2 总结</h3>
+<p style="margin:0 0 12px;"><strong>三大范式回顾</strong>：</p>
+<ul style="margin:0 0 12px;padding-left:24px;font-size:0.92em;">
+<li><strong>单层 LLM 摘要</strong>（opencode、pi）：实现简单，但每次压缩都需要一次完整 LLM 调用，长任务下可能成为瓶颈。pi 的 split-turn 模式和增量更新是有效缓解措施。</li>
+<li><strong>多层级联</strong>（claude-code、hermes-agent）：先做低成本操作（微压缩/剪裁），再视情况做 LLM 摘要。claude-code 的微压缩 + 富信息恢复 + 熔断器最完善；hermes-agent 的滚动微压缩 + 反抖动断路器最精细。</li>
+<li><strong>模型无关优先</strong>（deepseek-harness、cline-basic、codex-token-budget）：先用确定性规则裁剪，仅在不够时才调用 LLM。codex token-budget 模式完全跳过 LLM，是 API 受限场景的最稳健选择。</li>
+</ul>
+<p style="margin:0 0 12px;"><strong>选型建议</strong>：</p>
+<ul style="margin:0 0 12px;padding-left:24px;font-size:0.92em;">
+<li><strong>长任务自动化评测</strong>（如 Terminal-Bench）：优先选 basic/token-budget 模式（cline-basic、codex-token-budget、deepseek-harness tool-result-pruner），避免 LLM 摘要超时。</li>
+<li><strong>交互式编码</strong>：claude-code 的微压缩 + 富信息恢复体验最佳；hermes-agent 的滚动微压缩对长会话最平滑。</li>
+<li><strong>API 受限 / 离线场景</strong>：codex token-budget 模式（零 LLM 调用）或 cline basic 模式（纯确定性裁剪）。</li>
+<li><strong>结构化摘要需求</strong>：pi 的六段式 checkpoint 模板最详细，适合需要精确恢复任务状态的场景。</li>
+</ul>
+<p style="margin:0;font-size:0.88em;color:#888;">报告基于 2026-10-23 各 harness 仓库源码分析，代码路径前缀 <code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:0.88em;">harness/&lt;name&gt;/</code>。各 harness 版本以仓库实际 checkout 为准。</p>
+</div>
+</div>
+</body>
+</html>
