@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>BaiZe-2B 训练吞吐优化实验报告</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#16213e;margin-top:30px;border-left:4px solid #e94560;padding-left:10px}
+h3{color:#0f3460}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}
+th{background:#16213e;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f9f9f9}
+tr:hover{background:#e8f0fe}
+.best{background:#d4edda!important;font-weight:bold}
+.fail{background:#f8d7da!important}
+.warn{background:#fff3cd!important}
+.metric{font-family:'Courier New',monospace;font-weight:bold}
+.gain-pos{color:#28a745;font-weight:bold}
+.gain-neg{color:#dc3545}
+.gain-neutral{color:#6c757d}
+code{background:#e8e8e8;padding:2px 6px;border-radius:3px;font-size:12px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:15px;border-radius:8px;overflow-x:auto;font-size:12px}
+.summary-box{background:#fff;border:2px solid #e94560;border-radius:10px;padding:20px;margin:20px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold;margin:2px}
+.tag-pass{background:#d4edda;color:#155724}
+.tag-fail{background:#f8d7da;color:#721c24}
+.tag-skip{background:#fff3cd;color:#856404}
+</style></head><body>
+<h1>🚀 BaiZe-2B 训练吞吐优化实验报告</h1>
+<p><b>日期:</b>2026-10-23/24　<b>平台:</b>8×H100 80GB (10.239.2.29)　<b>目标:</b>超过 249K tok/s</p>
+<div class="summary-box"><h3>📋 实验摘要</h3><p><b>模型:</b>BaiZe-2B (Mamba2-hybrid, 3.00B total)</p><p><b>基线配置:</b>TP1·DP8·MBS2·seq4096·GBS1024·BF16·distributed-optimizer</p><p><b>基线吞吐:</b>252K tok/s(历史249K,本次252K)</p><p><b>最佳:</b>CUDA Graphs=259K tok/s(+2.7% vs基线)</p><p><b>实验数:</b>10组(1基线+9候选)</p><p style="font-size:18px;color:#28a745;font-weight:bold">🎉 新纪录=259K tok/s(+4.0% vs历史249K) @ CUDA Graphs</p></div>
+<h2>1. 实验环境</h2>
+<table>
+<tr><th>项目</th><th>详情</th></tr>
+<tr><td>GPU</td><td>8× NVIDIA H100 80GB SXM5 (NVSwitch full-mesh)</td></tr>
+<tr><td>框架</td><td>Megatron-Bridge (NeMo 2.0) + TransformerEngine 2.12.0</td></tr>
+<tr><td>PyTorch</td><td>2.8.0+cu128 / CUDA 12.8</td></tr>
+<tr><td>模型</td><td>Mamba2-hybrid: 56层(28 SSM+28 Attention), hidden=2048, heads=16</td></tr>
+<tr><td>数据</td><td>p5b_l3 (16 shards), DeepSeek BPE (vocab=129281)</td></tr>
+<tr><td>训练参数</td><td>80 steps, lr=1e-3, WSD, warmup=5, seed=1234</td></tr>
+<tr><td>不变量</td><td>seq=4096, GBS=1024(4.19M tok/step), MBS=2, TP=1, DP=8</td></tr>
+<tr><td>稳态选取</td><td>warmup 20步不计,取step 30-80中位step时间</td></tr>
+</table>
+<h2>2. 实验结果总表</h2>
+<table><tr><th>#</th><th>实验名</th><th>状态</th><th>中位step(ms)</th><th>吞吐(tok/s)</th><th>相对基线</th><th>峰值显存(GB)</th><th>TFLOP/s</th><th>Loss</th><th>GradNorm</th><th>NaN</th><th>正确性</th></tr>
+<tr class=""><td>e00_baseline</td><td style="text-align:left"><b>基线 (BF16)</b><br><small>TP1·DP8·MBS2·seq4096·GBS1024·BF16</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">16633</td><td class="metric">252K</td><td class="gain-neutral">—</td><td>53.4</td><td class="metric">0.0</td><td>7.6232</td><td>0.6305</td><td>13</td><td><span class="tag tag-pass">✅Δloss=0.0%</span></td></tr>
+<tr class="best"><td>e01_cuda_graph</td><td style="text-align:left"><b>CUDA Graphs</b><br><small>基线 + --enable-cuda-graph</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">16199</td><td class="metric">259K</td><td class="gain-pos">+2.7%</td><td>63.8</td><td class="metric">0.0</td><td>7.5791</td><td>0.5203</td><td>6</td><td><span class="tag tag-pass">✅Δloss=0.6%</span></td></tr>
+<tr class=""><td>e02_fp8_tensorwise</td><td style="text-align:left"><b>FP8 Tensorwise</b><br><small>基线 + --fp8-recipe tensorwise</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">18489</td><td class="metric">227K</td><td class="gain-neg">-10.0%</td><td>52.7</td><td class="metric">0.0</td><td>7.5740</td><td>0.5153</td><td>13</td><td><span class="tag tag-pass">✅Δloss=0.6%</span></td></tr>
+<tr class="fail"><td>e03_fp8_blockwise</td><td style="text-align:left"><b>FP8 Blockwise</b><br><small>基线 + --fp8-recipe blockwise --first-last-layers-bf16</small></td><td><span class="tag tag-fail">❌FAIL</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>23.2</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e04_fp8_delayed</td><td style="text-align:left"><b>FP8 Delayed</b><br><small>基线 + --fp8-recipe delayed</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">18392</td><td class="metric">228K</td><td class="gain-neg">-9.6%</td><td>53.7</td><td class="metric">0.0</td><td>7.4911</td><td>0.2876</td><td>13</td><td><span class="tag tag-pass">✅Δloss=1.7%</span></td></tr>
+<tr class="fail"><td>e05_overlap_optim</td><td style="text-align:left"><b>Overlap Optim</b><br><small>基线 + --overlap-param-gather-with-optimizer-step</small></td><td><span class="tag tag-fail">❌FAIL</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>19.6</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e06_ce_fusion</td><td style="text-align:left"><b>CE Loss Fusion</b><br><small>基线 + --cross-entropy-loss-fusion</small></td><td><span class="tag tag-skip">⏳待跑</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>—</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e07_fp8_tw_overlap</td><td style="text-align:left"><b>FP8 TW+Overlap</b><br><small>基线 + --fp8-recipe tensorwise --overlap-param-gather-with-optimizer-step</small></td><td><span class="tag tag-skip">⏳待跑</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>—</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e08_fp8_bw_cg</td><td style="text-align:left"><b>FP8 BW+CG</b><br><small>基线 + --fp8-recipe blockwise --first-last-layers-bf16 --enable-cuda-graph</small></td><td><span class="tag tag-skip">⏳待跑</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>—</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e09_fp8_tw_cg</td><td style="text-align:left"><b>FP8 TW+CG</b><br><small>基线 + --fp8-recipe tensorwise --enable-cuda-graph</small></td><td><span class="tag tag-skip">⏳待跑</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>—</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+</table>
+<p><small>注:NaN计数=grep'NaN|inf'匹配行数(含配置打印),实际训练0 NaN。正确性闸门=与基线loss偏差≤5%。</small></p>
+<h2>3. 各实验详细分析</h2>
+<h3>e00_baseline: 基线 (BF16)</h3><p><b>配置:</b><code>(基线)</code></p><p><b>结果:</b>吞吐 252K(— vs基线)·中位step 16633ms·峰值 53.4GB·loss 7.6232·gnorm 0.6305</p>
+<h3>e01_cuda_graph: CUDA Graphs</h3><p><b>配置:</b><code>--enable-cuda-graph</code></p><p><b>结果:</b>吞吐 259K(+2.7% vs基线)·中位step 16199ms·峰值 63.8GB·loss 7.5791·gnorm 0.5203</p>
+<h3>e02_fp8_tensorwise: FP8 Tensorwise</h3><p><b>配置:</b><code>--fp8-recipe tensorwise</code></p><p><b>结果:</b>吞吐 227K(-10.0% vs基线)·中位step 18489ms·峰值 52.7GB·loss 7.5740·gnorm 0.5153</p>
+<h3>e03_fp8_blockwise: FP8 Blockwise ❌</h3><p><b>配置:</b><code>--fp8-recipe blockwise --first-last-layers-bf16</code></p><p><b>失败原因:</b>[rank4]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.
+[rank7]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.
+[rank2]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.</p>
+<h3>e04_fp8_delayed: FP8 Delayed</h3><p><b>配置:</b><code>--fp8-recipe delayed</code></p><p><b>结果:</b>吞吐 228K(-9.6% vs基线)·中位step 18392ms·峰值 53.7GB·loss 7.4911·gnorm 0.2876</p>
+<h3>e05_overlap_optim: Overlap Optim ❌</h3><p><b>配置:</b><code>--overlap-param-gather-with-optimizer-step</code></p><p><b>失败原因:</b>[rank2]: IndexError: list index out of range
+[rank7]: IndexError: list index out of range
+[rank3]: IndexError: list index out of range</p>
+<h3>e06_ce_fusion: CE Loss Fusion ⏳</h3><p>尚未运行。</p>
+<h3>e07_fp8_tw_overlap: FP8 TW+Overlap ⏳</h3><p>尚未运行。</p>
+<h3>e08_fp8_bw_cg: FP8 BW+CG ⏳</h3><p>尚未运行。</p>
+<h3>e09_fp8_tw_cg: FP8 TW+CG ⏳</h3><p>尚未运行。</p>
+<h2>4. 瓶颈归因与下一步建议</h2>
+<div class="summary-box"><h3>瓶颈分析</h3><p><b>基线:</b>252K tok/s</p><p><b>最佳:</b>CUDA Graphs=259K tok/s(+2.7%)</p><ul><li><b>CUDA Graphs</b>(e01)+2.7%：消除kernel launch开销，对Mamba2频繁小kernel有效</li><li><b>FP8(tensorwise/delayed)反而慢~10%</b>：Mamba2 SSM层GEMM占比低，量化开销>节省</li><li><b>FP8 blockwise不可用</b>：TE要求CUDA≥12.9，当前12.8</li><li><b>overlap-param-gather崩溃</b>：框架IndexError，与Mamba2自定义层不兼容</li><li><b>显存:</b>基线54.7GB→CG 65.3GB(+10.6GB)→FP8 ~54GB，80GB充足</li><li><b>NaN计数</b>：grep误匹配，实际训练0 NaN(iteration log均显示"number of nan iterations: 0")</li></ul><h3>下一步建议</h3><ul><li><b>组合优化</b>:CUDA Graphs+CE Fusion+更大MBS(当前54.7GB,可试MBS=4)</li><li><b>升级CUDA 12.9+</b>:解锁FP8 blockwise</li><li><b>序列并行(SP)</b>:--sequence-parallel减activation显存</li><li><b>数据侧</b>:num_workers/pin_memory/mmap预取</li><li><b>NCCL调优</b>:NCCL_ALGO/NCCL_PROTO+NVSwitch拓扑</li><li><b>更大GBS</b>:减optimizer step频率提有效吞吐</li></ul></div>
+<h2>5. 复现命令</h2>
+<pre># 基线复现(在.29执行)
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+$PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=29970 \
+  pretrain_launcher.py --arch mamba2 --name perf_baseline --dir nemo_experiments \
+  --tokenizer-path data/tokenizer_eod --train-data-path $BLEND \
+  --train-iters 80 --global-batch-size 1024 --micro-batch-size 2 --seq-length 4096 \
+  --tensor-parallel 1 --eval-interval 99999 --eval-iters 0 --save-interval 0 \
+  --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 5 --lr-decay-iters 5 --lr-decay-style WSD \
+  --seed 1234 --precision bf16_mixed
+# 最佳配置: 末尾加 --enable-cuda-graph
+# 完整脚本: bash baize_perf_optim.sh</pre>
+<footer style="margin-top:40px;padding-top:15px;border-top:1px solid #ddd;color:#999;font-size:12px"><p>Generated by BaiZe pretrain agent (Cline) · 2026-10-24 01:16 · <code>pretrain perf:</code></p></footer>
+</body></html>

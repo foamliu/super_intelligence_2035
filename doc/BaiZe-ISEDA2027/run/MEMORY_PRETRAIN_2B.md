@@ -1,5 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-24 01:1x #756：🔄 吞吐优化实验在.29运行中·6/10完成·基线252K·最佳CUDA Graphs 259K(+4.0% vs 249K目标)**：
+> - **运维令**：2026-10-23 22:1x「优化 BaiZe-2B 训练吞吐：目标 > 249K tok/s」（最高优先）。
+> - **实验脚本** `baize_perf_optim.sh` 在 .29 运行中（PID 1778134），10 组实验（1基线+9候选），每组 80 step / warmup 5。
+> - **已完成 6/10**：e00 baseline 252K · e01 cuda_graph **259K(+2.7%)** · e02 fp8_tw 227K(-10%) · e03 fp8_bw **FAIL**(CUDA12.8<12.9) · e04 fp8_delayed 228K(-9.6%) · e05 overlap_optim **FAIL**(IndexError)。
+> - **运行中**：e06 ce_fusion (iter 30/80, ~2min to finish) · **待跑**：e07 fp8_tw+overlap(预计FAIL) · e08 fp8_bw+cg(预计FAIL) · e09 fp8_tw+cg(预计OK ~20min)。
+> - **关键发现**：CUDA Graphs 是唯一超基线的单项优化(+2.7%)；FP8 对 Mamba2-hybrid 反而变慢(~10%)——SSM 层 GEMM 占比低，量化开销>节省。
+> - **产物**：`gen_perf_report.py`（报告生成脚本，已测试通过）· `reports/report_pretrain_2b_throughput_optim_zh.html`（当前为 6/10 部分数据，10.7KB）。
+> - **下次唤醒动作**：① SSH .29 检查 `grep "ALL DONE" /tmp/baize_perf_results/summary.txt`；② 若完成→`python3 gen_perf_report.py` 生成最终报告；③ commit `pretrain perf:` + push。
+> - 环境：本机=.12（vision机，8×H100 满载 94-100%）。.29 8×H100 跑 perf 实验（~54GB/卡，93-100%）。
+> 📦 体积：TASK=26.9KB / MEMORY=~30.5KB（均≤32KB✓，本轮归档 0KB）。
 > 🆕 **2026-10-23 21:5x #755：⏸ 例行唤醒·idle heartbeat·两份10-23报告复核无误·无新指令·.29全空闲**：
 > - 复核确认：① 长上下文评测报告 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18341B, commit `a04b4503b`）；② decay 修复报告 `reports/report_pretrain_decay_repair_zh.html`（23878B, commit `ae9e1e780`）。两文件均在盘+git tracked+pushed。
 > - 环境：本机=10.239.2.12（vision机），8×H100 全满载 97-100% 跑 vision armE_r2。.29 8×H100 全空闲（0 MiB/0%）。git fetch 无 ahead/behind/无新远端提交。
