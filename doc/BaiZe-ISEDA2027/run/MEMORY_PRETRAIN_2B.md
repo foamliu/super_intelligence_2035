@@ -1,20 +1,11 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🔍 **2026-10-23 07:2x #738：🩺 decay 5000 步训练健康监控 step 4820/5000（96.4%）· loss ~0.998 续降 · val@4000=1.0124(PPL 2.752) · 0 NaN/0 skip · ckpt@4500 已存 · ETA~35min（~07:57）· 评测路径已查明**：
-> - **训练状态**（step 4820/5000 @07:21，ssh .29 8×H100 95-100% ~77GB/GPU，torchrun PID196495 活跃，已跑~16.5h）：
->   - loss 轨迹：0.9946(4650)→1.0033(4660)→0.9908(4680)→0.9987(4690)→1.0025(4700)→0.9993(4710)→0.9983(4740)→0.9952(4750)→0.9971(4780)→0.9918(4800)→**0.9980(4820)** — 平滑波动，总体续降至 <1.0
->   - **val loss 4 点单调下降**：val@1000=1.1016 → val@2000=1.0622(PPL 2.89) → val@3000=1.0346(PPL 2.81) → val@4000=1.0124(PPL 2.752)；**val@5000 待出**（训练终点最后一评）
->   - throughput ~373-376 TFLOP/s/GPU, ~11.85s/step, 1.35B params
->   - **0 NaN / 0 skipped** 全程（482 条 0nan 记录）；grad norm 0.027~0.061；params norm 3057(s4650)→**3045(s4820)**（缓降）
->   - LR 1.436e-4（WSD exponential 衰减中→min-lr 1.042e-4），decoupled LR 8.619e-4
->   - **ckpt iter_0000500~iter_0004500 已存 ✅**（latest=4500）；next ckpt@5000（终点，训练完成时保存）
->   - ETA: (5000−4820)×11.85s ≈ **35min**（预计 10/23 ~07:57 完成）
-> - **评测路径（已查明，训练完成后执行）**：
->   - ckpt 路径：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/out/decay_5000_fp8_mbs5/iter_0005000`
->   - 转换 mcore→HF：用 Xmodel-2.5 官方 `tools/checkpoint/convert.py` 或 `tools/llama/hf2mcore_convertor.sh`（反向模式）
->   - 架构：48L/hidden1536/24head/GQA8/ffn3840/rope/RMSNorm/SwiGLU（Llama-style，vocab 129280 deepseekv3）
->   - 14 集 eval：`bash baize_p8_eval_14.sh <hf_model_path> <output_dir>`（CS8 零射 + CX6 多射，8×H100 并行）
-> - **下一步**：下次唤醒检查训练是否完成 → 确认 final ckpt@5000 + val@5000 → 转换 HF → 跑 14 集 eval。
+> 🎉 **2026-10-23 08:4x #739：✅ decay 5000 步训练完成 + HF 转换 + CS8 首评 58.97%（vs 基线 61.03%，Δ−2.06pp）→ decay 修复成功**：
+> - **训练完成**：step 5000/5000 ✅，final loss **0.9946**，val@5000=**0.9977(PPL 2.712)**、test=0.9955(PPL 2.706)，**0 NaN / 0 skip 全程**，ckpt@5000 已存 ✅（latest=5000）。5 点 val 单调降 1.1016→1.0622→1.0346→1.0124→0.9977。
+> - **HF 转换完成**：`tools/checkpoint/megatron_to_hf_mup.py`（补 vocab truncate 129408→129280 修复）→ `out/decay_5000_hf/`（1.350B params，烟测 "Paris" ✓，logits finite ✓）。
+> - **14 集 eval CS8 = 58.97% (8/8)**：hellaswag .5468 / arc_easy .6536 / boolq .7003 / arc_challenge .3840 / sciq .8710 / piqa .6904 / winogrande .5675 / openbookqa .3040（acc_norm 优先，与基线同口径）。
+>   - 对比：基线 step_532000 CS8=**61.03%** → **Δ−2.06pp**；旧 decay v2=44.97%（−16pp 训坏）。**结论：decay 5000 步成功（能力基本保持，非暴跌）**。
+> - **CX6 1/6**（mmlu=0.4897）：gsm8k/math500/bbh 崩于 flash_attn varlen_fwd（预存 harness 兼容问题，基线同样崩 #658），humaneval/mbpp 报 unsafe-code。已把 config 改 sdpa + confirm_run_unsafe_code，**5 任务重跑中**（.29，cx6_fix_eval.sh）。
 > 📦 §#737 流水（2026-10-23 06:5x，decay 5000 步监控 step 4660/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4660 loss1.003 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #738 监控更新取代。需要时再读。
 > 📦 §#736 流水（2026-10-23 06:2x，decay 5000 步监控 step 4500/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4500 loss1.004 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #737 监控更新取代。需要时再读。
 > 📦 §#735 流水（2026-10-23 06:1x，decay 5000 步监控 step 4470/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4470 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #736 监控更新取代。需要时再读。
@@ -103,9 +94,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **🔄 decay 5000 步训练中（A方案 官方 Megatron 1113.sh）** —— v2 训坏模型（CS8 44.97% vs 官方 65.40%）。起点基线 CS8=61.03%。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup。HF→Megatron 转换 ✅、冒烟 ✅、MBS=5 OOM 排障→selective recompute→70.5GB ✅、训练已启动。
-  - PHASE: **decay_5000_训练中** — step 4660/5000 @06:49，loss 1.0033↓，0 NaN/0 skip，ckpt@4500 ✅，val@4000=1.0124(PPL2.752)，ETA ~10/23 08:00。脚本 `train_decay_fp8_1113_5000_mbs5.sh`（.29 `Xmodel-2.5-code/examples/xmodel/`），PID 196495，log `/tmp/baize_decay_5000_mbs5.log`。
-- 轮询状态：**#737（06:5x，decay 5000 步训练健康监控 step 4660/5000）**：训练健康运行中。loss 平滑下降 1.608→1.003，0 NaN/0 skip，ckpt@4500 已存，val@4000=1.0124（4 点单调↓），8×H100 100% util ~77GB/GPU。ETA ~1.1h。loop 存活。📦 体积：TASK=19.3KB/MEMORY=23.7KB（均≤32KB✓）。
+- STAGE: **✅ decay 5000 步训练完成 + HF 转换 + CS8 首评（A方案 官方 Megatron 1113.sh）** —— CS8=58.97%（vs 基线 61.03%，Δ−2.06pp），decay 修复成功（旧 v2=44.97% 训坏）。HF 模型 @ `Xmodel-2.5-code/out/decay_5000_hf/`。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup 已全部落地。
+  - PHASE: **decay_5000_评估中** — 训练完成（final loss 0.9946, val PPL 2.712, 0 NaN/0 skip），HF 转换✅，CS8=58.97%(8/8)✅，CX6 重跑 5 任务中（mmlu 已得 0.4897）。ckpt@5000 ✅，loop 存活，.29 评估中（CX6 重跑占用 GPU0-4）。
+- 轮询状态：**#739（08:4x，decay 5000 训练完成 + CS8 首评 58.97%）**：训练 step5000 完成 final loss 0.9946，0NaN/0skip，ckpt@5000 已存；HF 转换✅（vocab truncate 修复）；CS8=58.97% vs 基线 61.03%（Δ−2.06pp）→ decay 成功；CX6 5 任务（gsm8k/math500/bbh/humaneval/mbpp）sdpa+unsafe-code 重跑中。loop 存活。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**
