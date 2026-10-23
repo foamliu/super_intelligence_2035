@@ -2,6 +2,18 @@
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 
+### 🔧 运维指令 · 2026-10-23（**分阶段落盘：逐 harness 写报告，每段 ≤2500 token**）· 用户直令 · 最高优先
+
+> 已确认你在「读源码分析」阶段干活正常，但 3600s 内完不成「7 个 harness 全部分析 + 写整份报告」→ 每轮超时、未落盘内容丢失。**必须分阶段落盘，禁止一口气写整份报告。**
+
+1. **逐 harness 推进**：按 `cline → codex → hermes-agent → opencode → claude-code → deepseek-harness → pi` 顺序，**一次只分析 1 个 harness**。
+2. **每分析完 1 个 harness 立即落盘**：把该 harness 的「压缩策略 / 触发阈值 / 保留策略 / 缺陷 + 代码证据(文件:行)」写成一段 HTML，**立即 append 写入** `reports/report_harness_context_compression_7way_zh.html`（或先写 `reports/_ctx_comp/<harness>.md` 中间件，最后合并）。
+3. **每段 ≤ 2500 token（≈1800 汉字）**，控制篇幅；写完一个 harness **立即 commit/push**，再开始下一个。
+4. 🚫 **禁止**一次性生成 7 个 harness 的分析文本再写文件（这正是超时根因）。
+5. 7 个全写完后，最后合并出「对比总表 + TL;DR + 结论」。
+
+commit 前缀 `harness hb:`。
+
 ### 🆕 运维指令 · 2026-10-23（📄 **比较 7 个 harness 的上下文压缩机制 → 中文 HTML 报告**）· 用户直令 · 最高优先
 
 > 用户原话：「给 harness 下任务：看代码 /nas_train/app.e0031982/harness 比较7个harness的上下文压缩机制，写成html中文报告。」
