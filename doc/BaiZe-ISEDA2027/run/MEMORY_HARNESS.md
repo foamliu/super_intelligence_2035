@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-B报告✅完成(已复验). Gen6 hermes smoke✅PASS. Gate=5/7 runnable(缺codex+claude-code npm timeout). 等运维指示T2下一步
+PHASE:        H-B报告✅完成(已复验×4). Gen6 hermes smoke✅PASS. Gate=5/7 runnable(缺codex+claude-code npm timeout). 等运维指示T2下一步
 已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gen5 pilot 7/7完·Gen6 hermes smoke PASS✅(fix-git,8m33s,0error). kill .12 loop✅
-当前动作:     R464 再确认H-B报告完整+git状态clean+体积自检. report=58309B/420行/8H2,commit e8f2da3e3已push origin/main(HEAD=origin/main). TASK=28KB/MEMORY=32KB均≤32KB✅. 无新指令→保持WAITING
+当前动作:     R465 再确认H-B报告完整+git状态clean+体积自检. report=58309B/419行/8H2,commit e8f2da3e3已push origin/main(HEAD=origin/main). TASK=28470B/MEMORY=32172B均≤32KB✅. 无新指令→保持WAITING
 下一步:       ①修codex npm install timeout②修claude-code npm install timeout③门据复核(≥6/7)→放行7×89. 5/7:cline✅pi✅opencode✅deepseek✅hermes✅codex❌claude-code❌
 阻塞:         codex/claude-code infra(npm install -g timeout). 需增setup_timeout或预装. 🚫不启7×89直到6/7 runnable
 ERROR_COUNT:  0
-📦 体积：TASK=28KB / MEMORY=32KB（本轮无归档）
+📦 体积：TASK=28470B / MEMORY=32172B（本轮无归档）
 ```
 
 ### 本唤醒流水
@@ -20,6 +20,7 @@ ERROR_COUNT:  0
 [18:49] R462 复验H-B报告:report_harness_context_compression_7way_zh.html=58309B,8个H2(摘要/总表/策略详解/触发阈值/保留策略/摘要提示词/缺陷防护/总结建议),7harness×4维度+本项目教训(cline Auto-compacting超时)+选型建议. commit e8f2da3e3已push到origin/main(merge-base --is-ancestor确认). 报告完整,无需补充
 [19:59] R463 唤醒确认:git status clean(无ahead/behind),报告commit e8f2da3e3在origin/main. 无新运维指令. 保持WAITING等下一步
 [21:08] R464 唤醒确认:git status clean(HEAD=origin/main=6cc9e9923). 报告report_harness_context_compression_7way_zh.html=58309B/420行/8H2已push. 体积自检:TASK=28470B/MEMORY=31871B均≤32KB✅. 无新指令→保持WAITING
+[22:17] R465 唤醒确认:git pull up-to-date. 报告report_harness_context_compression_7way_zh.html=58309B/419行/8H2(TL;DR+总表+7harness策略详解+触发阈值+保留策略+提示词+缺陷防护+总结建议)已push(e8f2da3e3). 体积自检:TASK=28470B/MEMORY=32172B均≤32KB✅. 无新运维指令→保持WAITING
 
 > 📦 R447 (2026-10-19 09:08, Gen3 gate FAIL 85.7%) 已归档 → daily-memories-harness/2026-10-19.md。结论：Gen3 pilot 1/7 runnable, 6 adapter CLI exit1(缺 auth/config 注入), 由 R448 gw_proxy 修复承接 → R452 逐路定根因。需要时再读。
 
