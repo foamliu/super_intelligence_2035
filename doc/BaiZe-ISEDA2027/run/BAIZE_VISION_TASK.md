@@ -5,6 +5,8 @@
 
 > 用户原话：「vision：**下一步如何提升 ProtB 和 MLLM 成绩，写个报告。**」
 
+> ✅ **DONE (wake #250, 2026-10-24 16:57)**：报告已交付 `reports/report_vision_next_steps_protb_mllm_zh.html`（21.1KB, 8 节, 0 script/0 外链, 生成器 `vision/generate_next_steps_protb_mllm_report.py`）。核心结论：12 集已饱和（4 臂 ProtB 跨度 6.15pp 但 MLLM 跨度 0.34pp，逐集最大跨度 1.66pp，多数 <1σ）→ 单一建议 = 先做 B4（MMBench/MMVet/MathVista + 336anyres 在已有 ArmB/ArmE-R2 ckpt 重测, ~0 GPU·h）判定「评测盲区 vs 真失效」；顺带 A3（ckpt_60000 跑 ProtB, ~0.3 GPU·h）。ProtB 仍有 ~14–19pp 理论空间（vs CLIP@336 82.66%）但主因是预训练。本轮未启动训练/未动产物。**WAITING: 0**。
+
 **① 交付物**：`reports/report_vision_next_steps_protb_mllm_zh.html`（自包含单文件中文 HTML）
 
 **② 先摆清现状（这是分析的起点，必须写准）**
