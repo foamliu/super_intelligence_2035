@@ -18616,3 +18616,69 @@ Let me[0m[2m rewrite the script to[0m[2m be more robust.[0m[2m The[0m[2m
   jobs_pi: 19/87
 === DONE 169 ===
 ```
+
+---
+
+## RUN_ID 170 · 2026-10-24 20:08:49 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 170 | migration liveness | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+
+echo "[1] 迁移脚本/rsync 进程（本机）"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep -E 'migrate_to_nas_env|rsync' | grep -v grep | cut -c1-120 | head -5 || echo '  NONE(local)'
+echo "[2] .12 上是否有"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,ppid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync" | grep -v grep | cut -c1-120 | head -5 || echo "  NONE(.12)"' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] 迁移日志尾部"
+ls -l --time-style=+%F_%T /tmp/migrate_to_nas_env_fast.log /tmp/migrate_to_nas_env.log 2>/dev/null | cut -c1-110
+tail -12 /tmp/migrate_to_nas_env_fast.log 2>/dev/null | cut -c1-160
+tail -6 /tmp/migrate_to_nas_env.log 2>/dev/null | cut -c1-160
+
+echo "[4] code_l2 体积 10 秒内是否增长"
+a=$(du -sb "$D" 2>/dev/null | cut -f1); sleep 10; b=$(du -sb "$D" 2>/dev/null | cut -f1)
+echo "  t0=$a  t1=$b  delta=$(( ${b:-0} - ${a:-0} )) bytes / 10s"
+echo "  bin=$(find "$D" -maxdepth 1 -name '*.bin' 2>/dev/null | wc -l) / 141"
+
+echo "[5] /nas_env 余量"
+df -h /nas_env | tail -2
+
+echo "[6] pretrain：.12 的 agent 进展（loop 日志尾部 + 是否有 torchrun）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 1200 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -12 | cut -c1-150; echo "-- torchrun --"; pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3 || echo "  none"' 2>/dev/null || echo '  ssh .12 failed'
+echo "=== DONE 170 ==="
+```
+
+**输出**
+```
+=== RUN_ID 170 | migration liveness | 2026-10-24 20:08:49 | host=whag0pgpuap29 ===
+[1] 迁移脚本/rsync 进程（本机）
+[2] .12 上是否有
+2810729       1    4025 bash ./migrate_to_nas_env_fast.sh
+3071323 2810729     408 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_train/app.e0031982/
+3071324 3071323     408 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_train/app.e0031982/
+3071325 3071324     408 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_train/app.e0031982/
+[3] 迁移日志尾部
+[4] code_l2 体积 10 秒内是否增长
+  t0=116750294398  t1=119419968894  delta=2669674496 bytes / 10s
+  bin=8 / 141
+[5] /nas_env 余量
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.32:/vol_CTE0_data04   10T  2.8T  7.2T  28% /nas_env
+[6] pretrain：.12 的 agent 进展（loop 日志尾部 + 是否有 torchrun）
+. No[0m[2m zombie[0m[2m monitors[0m[2m, syntax[0m[2m OK[0m[2m, both[0m[2m /tmp directories[0m[2m cleaned. Now[0m[2m let me re[0m[2m-run the test.[0m[2
+
+Let me launch[0m[2m the test again[0m[2m.[0m
+一切就绪。让我重新运行测试。
+[36m[run_commands][0m cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && nohup bash /nas_train/app.e0031982/code/super_intelligence_2035/do...
+   [90m⎿ [0m[2mPID=3568147  [Command completed with background processes still running; thei...[0m
+[2m[thinking] [0m[2mThe[0m[2m test is[0m[2m running again ([0m[2mPID [0m[2m356814[0m[2m7). Let me[0m[2m wait ~[0m[2m20s[0m[2m and check if[0m[2m it[0m
+测试已重新启动 (PID 3568147)。让我等几秒钟，检查一下这次是否能通过 monitor 设置。
+[36m[run_commands][0m sleep 20 && echo '--- summary tail ---'; tail -6 /tmp/baize_dualnode_16gpu/summary.txt 2>&1; echo '--- files ---'; ls...
+-- torchrun --
+204970 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train
+205013 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_trai
+3580069 /bin/bash -c sleep 20 && echo '--- summary tail ---'; tail -6 /tmp/baize_dualnode_16gpu/summary.txt 2>
+=== DONE 170 ===
+```
