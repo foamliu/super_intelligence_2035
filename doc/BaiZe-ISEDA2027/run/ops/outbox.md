@@ -19815,3 +19815,138 @@ total 636
 1280734 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data
 === DONE 183 ===
 ```
+
+---
+
+## RUN_ID 184 · 2026-10-24 23:46:46 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 184 | dual-node summary from .12 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] summary.txt 全文"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'cat /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null' 2>/dev/null | tr -d '\033' | cut -c1-200 || echo '  ssh .12 failed'
+
+echo "[2] launch15 / launch16"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'echo "-- launch15 --"; cat /tmp/baize_dualnode_16gpu/launch15.log 2>/dev/null; echo "-- launch16 --"; cat /tmp/baize_dualnode_16gpu/launch16.log 2>/dev/null' 2>/dev/null || true
+
+echo "[3] master.log 迭代行（最近 8 条）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'grep -aE "iteration +[0-9]+|tokens/sec|tokens per|elapsed time per" /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -8 | cut -c1-170' 2>/dev/null || true
+
+echo "[4] master/worker 是否报错（尾 6 行）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'echo "-- master --"; tail -6 /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tr -d "\033" | cut -c1-170; echo "-- worker --"; tail -6 /tmp/baize_dualnode_16gpu/worker.log 2>/dev/null | tr -d "\033" | cut -c1-170' 2>/dev/null || true
+
+echo "[5] 现在还在跑吗"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'pgrep -af "pretrain_launcher|torchrun" | cut -c1-95 | head -3 || echo "  none(.12)"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -3 | tr "\n" " "; echo' 2>/dev/null || true
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -3 | tr '\n' ' '; echo
+echo "=== DONE 184 ==="
+```
+
+**输出**
+```
+=== RUN_ID 184 | dual-node summary from .12 | 2026-10-24 23:46:46 | host=whag0pgpuap29 ===
+[1] summary.txt 全文
+===== Dual-node 16-GPU throughput test @ 2026-10-24 23:22:40 =====
+Config: e18 identical (MBS3 + FP8 TW + CG), DP=16 (2 nodes x 8 GPU)
+Baseline: single-node 8-GPU = 305098 tok/s (e18)
+MBS=3 GBS=1008 SEQ=4096 ITERS=80
+GBS/(MBS*DP16) = 1008/48 = 21 accum steps
+Ideal linear = 610196; 85% = 518666; 70% = 427137
+
+=== PRE-FLIGHT GPU CHECK ===
+--- .12 (master, local) ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+--- .29 (master, remote) ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+
+=== STARTING MASTER on 10.239.2.29 @ 23:22:47 ===
+  master SSH PID=1070855
+=== STARTING WORKER on 10.239.2.12 @ 23:22:52 ===
+  worker rc=0 @ 23:37:03
+
+=== RESULT PARSING (manual — script hung on SSH cleanup) ===
+  pts=7 med_ms=8051.4 med_toks=512801 tflop=610.9 loss=3.6946e-01 gnorm=0.7191 nan=0
+  peak_mem_master=64431MiB peak_mem_worker=64435MiB
+  per_gpu_tok/s=32050 scaling_eff=84.0%
+
+===== SUMMARY TABLE =====
+| Metric | Value |
+|--------|-------|
+| Config | MBS3+GBS1008+BF16 mixed, DP16 (2x8 H100) |
+| Baseline (8 GPU, FP8) | 305,098 tok/s |
+| 16 GPU throughput (median) | 512,801 tok/s |
+| 16 GPU throughput (mean) | 508,860 tok/s |
+| Scaling efficiency (median) | 84.0% |
+| Scaling efficiency (mean) | 83.4% |
+| Per-GPU throughput | 32,050 tok/s |
+| Median step time | 8,051 ms (8.05s) |
+| Mean step time | 8,114 ms (8.11s) |
+| GPU utilization | ~611 TFLOP/s/GPU (BF16) |
+| Peak VRAM master (.29) | 64,435 MiB |
+| Peak VRAM worker (.12) | 64,431 MiB |
+| Loss (step 20-80 mean) | 3.69e-01 |
+| Grad norm (step 20-80 mean) | 0.72 |
+| NaN count | 0 |
+| Skipped iterations | 0 |
+
+Step time per iteration (ms):
+  iter 10: 22718.1 (warmup)
+  iter 20: 8045.2
+  iter 30: 8274.7
+  iter 40: 8051.4
+  iter 50: 8176.2
+  iter 60: 8047.7
+  iter 70: 8152.5
+  iter 80: 8048.6
+
+NOTE: This test used --mock data and bf16_mixed precision (not FP8).
+The baseline 305K was measured with FP8 tensorwise + CUDA Graphs.
+Apples-to-apples BF16 single-node baseline was not measured.
+Regardless, 84% scaling efficiency proves IB interconnect is healthy.
+
+=== NCCL TRANSPORT CHECK ===
+IB/RoCE: 12 mlx5 RoCE devices (mlx5_0..mlx5_14) per node
+Cross-node: rank 0→8 via NET/IB/0, rank 3→11 via NET/IB/2, rank 4→12 via NET/IB/6
+Multi-channel IB spread confirmed (NET/IB/0, /2, /6, ...) — healthy interconnect
+No busbw measurement (requires nccl-tests separately)
+[2] launch15 / launch16
+-- launch15 --
+baize_dualnode_16gpu_test.sh: line 114: WORKER_SSH_PID: unbound variable
+-- launch16 --
+baize_dualnode_16gpu_test.sh: line 115: WORKER_SSH_PID: unbound variable
+[3] master.log 迭代行（最近 8 条）
+[4] master/worker 是否报错（尾 6 行）
+-- master --
+whag0pgpuap29:2656728:3687042 [3] NCCL INFO comm 0x5638eebfbed0 rank 3 nranks 16 cudaDev 3 busId 41000 - Abort COMPLETE
+whag0pgpuap29:2656732:2669253 [7] NCCL INFO [Service thread] Connection closed by localRank 0
+whag0pgpuap29:2656726:2669248 [0] NCCL INFO [Service thread] Connection closed by localRank 0
+whag0pgpuap29:2656728:2669249 [3] NCCL INFO [Service thread] Connection closed by localRank 2
+whag0pgpuap29:2656732:2669253 [0] NCCL INFO [Service thread] Connection closed by localRank 6
+whag0pgpuap29:2656728:2669249 [0] NCCL INFO [Service thread] Connection closed by localRank 4
+-- worker --
+whag0pgpuap12:1082916:1095242 [0] NCCL INFO [Service thread] Connection closed by localRank 6
+whag0pgpuap12:1082918:1095244 [0] NCCL INFO [Service thread] Connection closed by localRank 6
+whag0pgpuap12:1082916:1095242 [0] NCCL INFO [Service thread] Connection closed by localRank 4
+whag0pgpuap12:1082914:1095253 [0] NCCL INFO [Service thread] Connection closed by localRank 4
+whag0pgpuap12:1082918:1095244 [0] NCCL INFO [Service thread] Connection closed by localRank 0
+whag0pgpuap12:1082912:1095254 [0] NCCL INFO [Service thread] Connection closed by localRank 0
+[5] 现在还在跑吗
+2857901 bash -c pgrep -af "pretrain_launcher|torchrun" | cut -c1-95 | head -3 || echo "  none(.
+0, 0 MiB 1, 0 MiB 2, 0 MiB 
+0, 0 MiB 1, 0 MiB 2, 0 MiB 
+=== DONE 184 ===
+```
