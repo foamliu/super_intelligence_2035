@@ -39,14 +39,14 @@
 \citation{kaelbling1998planning,thrun2005probabilistic}
 \citation{kaelbling1998planning}
 \citation{kaelbling1998planning,thrun2005probabilistic}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ZhuLong system architecture. The agent interacts with API retrieval, enhanced documentation, and EDA execution via four unified MCP tools. Offline self-exploration augments the knowledge base before runtime, and execution feedback supports iterative refinement.}}{3}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ZhuLong system architecture. The LLM agent runtime, the API knowledge base, and the EDA execution sandbox are linked through \emph  {four} unified MCP tools (\texttt  {search\_apis}, \texttt  {search\_apis\_by\_keyword}, \texttt  {get\_api\_details}, \texttt  {run\_code}) that dispatch on a single \texttt  {lang}--\texttt  {host} pair to \emph  {three} platforms/languages (PyAether, SKILL, Tcl). Offline API self-exploration pre-augments the knowledge base (dashed), and execution feedback is looped back for iterative refinement.}}{3}{figure.caption.5}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:architecture}{{1}{3}{ZhuLong system architecture. The agent interacts with API retrieval, enhanced documentation, and EDA execution via four unified MCP tools. Offline self-exploration augments the knowledge base before runtime, and execution feedback supports iterative refinement}{figure.caption.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The four levels of information}}{3}{table.caption.6}\protected@file@percent }
-\newlabel{tab:four-levels}{{1}{3}{The four levels of information}{table.caption.6}{}}
+\newlabel{fig:architecture}{{1}{3}{ZhuLong system architecture. The LLM agent runtime, the API knowledge base, and the EDA execution sandbox are linked through \emph {four} unified MCP tools (\texttt {search\_apis}, \texttt {search\_apis\_by\_keyword}, \texttt {get\_api\_details}, \texttt {run\_code}) that dispatch on a single \texttt {lang}--\texttt {host} pair to \emph {three} platforms/languages (PyAether, SKILL, Tcl). Offline API self-exploration pre-augments the knowledge base (dashed), and execution feedback is looped back for iterative refinement}{figure.caption.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}A Bayesian Formalization of the Grounding Gap}{3}{subsection.4.2}\protected@file@percent }
 \newlabel{sec:bayesian}{{4.2}{3}{A Bayesian Formalization of the Grounding Gap}{subsection.4.2}{}}
 \citation{chen2021evaluating}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The four levels of information}}{4}{table.caption.6}\protected@file@percent }
+\newlabel{tab:four-levels}{{1}{4}{The four levels of information}{table.caption.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}ZhuLong as an Instance of the Agent Harness}{4}{subsection.4.3}\protected@file@percent }
 \newlabel{sec:zhuLong-harness}{{4.3}{4}{ZhuLong as an Instance of the Agent Harness}{subsection.4.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Design Principles}{4}{subsection.4.4}\protected@file@percent }
@@ -100,23 +100,15 @@
 \bibcite{pu2024rag}{{11}{2024}{{Pu et~al\mbox  {.}}}{{}}}
 \bibcite{rui2025chatcl}{{12}{2025}{{Rui et~al\mbox  {.}}}{{}}}
 \bibcite{cadence2024virtuoso}{{13}{2024}{{Systems}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Per-task cost across ablation configurations}{7}{appendix.A}\protected@file@percent }
-\newlabel{app:cost}{{A}{7}{Per-task cost across ablation configurations}{appendix.A}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Per-task cost across ablation configurations (291-task subset, five runs, mean $\pm $ s.d.)}}{7}{table.caption.10}\protected@file@percent }
-\newlabel{tab:cost}{{5}{7}{Per-task cost across ablation configurations (291-task subset, five runs, mean $\pm $ s.d.)}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {B}Effect of bounding the evidence available to $\Phi $}{7}{appendix.B}\protected@file@percent }
-\newlabel{app:phi-bound}{{B}{7}{Effect of bounding the evidence available to \texorpdfstring {$\Phi $}{Phi}}{appendix.B}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Effect of bounding the evidence available to $\Phi $ (LLM, $\Omega $ and effector fixed). $k$ = \texttt  {run\_code} calls per trace (an execution budget); ``lagged'' returns the \emph  {previous} execution's state; ``Converged'' = share of traces with finish reason \emph  {completed}.}}{7}{table.caption.11}\protected@file@percent }
-\newlabel{tab:phi-bound}{{6}{7}{Effect of bounding the evidence available to $\Phi $ (LLM, $\Omega $ and effector fixed). $k$ = \texttt {run\_code} calls per trace (an execution budget); ``lagged'' returns the \emph {previous} execution's state; ``Converged'' = share of traces with finish reason \emph {completed}}{table.caption.11}{}}
-\@writefile{toc}{\contentsline {section}{References}{7}{section*.13}\protected@file@percent }
 \bibcite{thrun2005probabilistic}{{14}{2005}{{Thrun et~al\mbox  {.}}}{{}}}
 \bibcite{wang2025mcp4eda}{{15}{2025}{{Wang et~al\mbox  {.}}}{{}}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
-\newlabel{tocindent1}{6.93605pt}
+\newlabel{tocindent1}{4.62497pt}
 \newlabel{tocindent2}{11.81937pt}
 \newlabel{tocindent3}{19.01376pt}
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
-\newlabel{TotPages}{{8}{8}{}{page.8}{}}
-\gdef \@abspage@last{8}
+\@writefile{toc}{\contentsline {section}{References}{7}{section*.11}\protected@file@percent }
+\newlabel{TotPages}{{7}{7}{}{page.7}{}}
+\gdef \@abspage@last{7}
