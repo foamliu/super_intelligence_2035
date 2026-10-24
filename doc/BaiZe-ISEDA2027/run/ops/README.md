@@ -65,6 +65,38 @@ setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
 
 ---
 
+## 9. 双机中继（2026-10-24 起）：每台服务器一个，**任务按机器投递**
+
+两台机各跑一个 `ops_relay_v2.sh`（v1 `ops_relay.sh` 共用 `.last_run_id`，会**双执行**，已废弃）。
+
+**投递语法**（写在 `inbox.md` 第 3 行的注释里）：
+
+| 写法 | 谁执行 |
+|---|---|
+| `<!-- RUN_ID: 163 -->` | **both** —— 两台机各执行一次 |
+| `<!-- RUN_ID: 164 \| TARGET: 29 -->` | **只在 `.29`** |
+| `<!-- RUN_ID: 165 \| TARGET: 12 -->` | **只在 `.12`** |
+
+**游标**：每台机各一份 `ops/.last_run_id.<TAG>`（TAG = hostname 末尾两位，如 `29` / `12`）。
+- 不是投给本机的 RUN_ID **不会推进**本机游标 ⇒ 之后的 `both` 或投给本机的更大 RUN_ID 仍会执行。
+- 因此 `TARGET` 只影响"这一条给谁"，不会漏掉后续任务。
+
+**启动 / 停止**
+
+```bash
+# 启动（每台机各执行一次；TAG 自动从 hostname 取）
+setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops_relay_v2.sh \
+  > /tmp/baize_ops_relay.<TAG>.log 2>&1 < /dev/null &
+# 停止
+pkill -f ops_relay_v2.sh
+```
+
+**注意**：两台机**共享同一个 NFS 工作副本**，所以 `inbox.md`/`outbox.md`/`state` 都是同一份文件；
+v2 用"每机一份 state"消除了 v1 的抢单竞态，但 **`git push` 仍可能撞车**（v2 已内置 3 次重试 + rebase）。
+
+---
+
+
 ## 7. 已知环境事实：节点外网 / 代理（2026-10-15 实测）
 
 | 节点 | 直连外网 | github 需要 | HF 数据需要 |

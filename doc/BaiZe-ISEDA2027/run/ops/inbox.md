@@ -1,12 +1,69 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 161 -->
+<!-- RUN_ID: 162 -->
+## RUN_ID 162 — 🔀 切换到双机中继 v2（**每台一个中继 + 按机器投递**）· 两台机都执行
+
+> 用户令（2026-10-24 19:3x）：「保留两个 ops 中继，每台服务器一个，下任务时指定机器」
+> 现状问题：v1 两台共用 `ops/.last_run_id` ⇒ 同一 RUN_ID **会被两台机各执行一次**（今天 160 就是双执行，把两台机的 pretrain loop 各重启了一遍）。
+> 本块做**无缝切换**：写一个 switcher 到共享 NFS，在本机与对端各 `setsid` 拉起 → `sleep 6` 后 **种子新 state**（`ops/.last_run_id.<TAG>`）→ 起 `ops_relay_v2.sh` → 确认新中继在跑后再杀 v1。
+
+```bash
+set -u
+RID=162
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$G/doc/BaiZe-ISEDA2027
+SW=$R/run/ops/.switch_to_relay_v2.sh
+
+cat > "$SW" <<'EOS'
+#!/bin/bash
+set -u
+RID=${RID:-162}
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$G/doc/BaiZe-ISEDA2027
+OPS=$R/run/ops
+TAG=$(hostname | sed -n 's/.*\([0-9][0-9]\)$/\1/p')
+LOG=/tmp/baize_ops_relay.$TAG.log
+echo "[switch] $(date '+%F %T') tag=$TAG rid=$RID"
+sleep 6                                   # 等旧中继把本轮的 outbox/state 写完
+echo "$RID" > "$OPS/.last_run_id.$TAG"    # 种子：新 state 不重放 162
+cd "$R/run" || exit 1
+[ -f ./ops_relay_v2.sh ] || { echo "[switch] ERROR ops_relay_v2.sh missing"; exit 1; }
+setsid -f nohup bash ./ops_relay_v2.sh >> "$LOG" 2>&1 < /dev/null
+sleep 8
+NEW=$(pgrep -f 'ops_relay_v2\.sh' | head -1)
+if [ -z "$NEW" ]; then echo "[switch] ERROR v2 not running -> keep v1"; exit 1; fi
+for p in $(pgrep -f 'ops_relay\.sh'); do
+  case "$p" in "$NEW") ;; *) kill -TERM "$p" 2>/dev/null && echo "[switch] killed v1 relay $p" ;; esac
+done
+sleep 2
+echo "[switch] OK v2 pid=$NEW state=$(cat "$OPS/.last_run_id.$TAG" 2>/dev/null) relays=$(pgrep -f 'ops_relay' | tr '\n' ' ')"
+EOS
+chmod +x "$SW"
+
+TAG=$(hostname | sed -n 's/.*\([0-9][0-9]\)$/\1/p')
+echo "[1] 本机 tag=$TAG（6s 后自动切换）"
+setsid -f nohup bash "$SW" >> /tmp/switch_relay_$TAG.log 2>&1 < /dev/null
+
+if [ "$TAG" = "29" ]; then PEER=10.239.2.12; else PEER=10.239.2.29; fi
+echo "[2] 对端 $PEER（共享 NFS，同一份脚本）"
+timeout 30 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 "$PEER" "RID=$RID setsid -f nohup bash '$SW' >> /tmp/switch_relay_peer.log 2>&1 < /dev/null; echo launched" 2>&1 | tail -2
+
+echo "[3] 切换将在各机 sleep 6s 后完成；20s 后可发 RUN_ID 163 验证 TARGET 投递"
+echo "=== DONE 162 ==="
+```
+
+> **切完后的用法**（务必按新口径下发）：
+> - `<!-- RUN_ID: N -->` → **both**（两台各执行一次）
+> - `<!-- RUN_ID: N | TARGET: 29 -->` → 只在 `.29`
+> - `<!-- RUN_ID: N | TARGET: 12 -->` → 只在 `.12`
+> 每台机各自的游标在 `ops/.last_run_id.<TAG>`；不投给本机的 RUN_ID 不会推进本机游标。
+
 ## RUN_ID 161 — ⏱ 延时 210s 后只读取证：16 卡双机测试是否真的起跑
 
 > 前置：RUN_ID 160 已于 19:23 安全重启 pretrain loop（新 PID 204951 → cline 子进程 204970，19:23:20 `invoking cline`）。
 > 本探针**先睡 210s** 给 agent 读任务书/起测的时间，然后只读取证（不干预）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 161 | delayed verification of 16-GPU run | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
