@@ -4,6 +4,7 @@
 > ① 删 `7_discussion.tex` 的 `\enlargethispage{8\baselineskip}`（原把 p6 正文**压出下边距 8 行**）；② `main.tex` 增 `\Bbbk`/`\hslash`/`\varkappa`/`\digamma` 冲突护栏 —— **TL2026 + newtxmath 下 `\usepackage{amssymb}` 会报 `Command \Bbbk already defined`**（本机已复现并修好）；③ `\newpage`→`\clearpage`，refs 独占 p7。**正文措辞未做任何删改。**
 > **验收（本机 TeX Live 2026 + newtxmath，三遍编译实测）**：**7 页 / 正文收于 p6（text_y 85–725，无越界）/ refs 独占 p7（16 条）/ 0 undefined**；无 `Overfull \vbox`。
 > 🚫 不要恢复 `\enlargethispage`、不要删 `\Bbbk` 护栏；若重编译，必须复核以上 4 条，不达标就回退。
+> ④ **构建告警已清零**（`main.log` 无 Overfull/Underfull/Font shape；`bibtex` 仅剩 `pu2024rag` 缺页码——数据缺失，**不可编造**）：arXiv 条目改 `@misc{}+eprint/archivePrefix`（bst 原生支持，渲染为 `arXiv:XXXX`），`thrun2005probabilistic` 补 `address={Cambridge, MA, USA}`，并加 `\emergencystretch=1.5em` / `\raggedbottom` / 姓名断字。🚫 **不要把这些条目改回 `@article`**（会重新产生 12 条 bibtex 告警）。
 
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
