@@ -1,8 +1,37 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 116 -->
-## RUN_ID 116 — 🔎 只读：找出两轮**实际使用的**配置（model / maxTokens / data-dir / turns）
+<!-- RUN_ID: 117 -->
+## RUN_ID 117 — 🔎 只读：`~/.zhulong` 的真实 providers.json（ZL 跑用的是这个还是 .cline_zhulong？）
 
 ```bash
+set -u
+echo "=== RUN_ID 117 | zhulong home config | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] ~/.zhulong 下的配置"
+ls -la "$HOME/.zhulong/settings/" 2>/dev/null | head -8
+for f in "$HOME/.zhulong/settings/providers.json" "$HOME/.zhulong/providers.json"; do
+  [ -f "$f" ] && { echo "  == $f"; cat "$f" | head -c 600; echo; }
+done
+
+echo "[2] ZL 跑批日志里的模型证据"
+for L in /tmp/ABL_glm-5.3-flash_zl_full_r1.log /tmp/ABL_glm-5.3-flash_zl_full_r5.log; do
+  [ -f "$L" ] || continue
+  echo "  == $(basename "$L")"
+  grep -aoc 'glm-5.3-flash' "$L" 2>/dev/null | sed 's/^/     glm-5.3-flash 出现次数: /'
+  grep -aoE 'glm-5\.[0-9]?[a-z\-]*' "$L" 2>/dev/null | sort | uniq -c | head -5 | sed 's/^/     /'
+  grep -aE 'maxTokens|max_tokens' "$L" 2>/dev/null | head -3 | cut -c1-140 | sed 's/^/     /'
+done
+
+echo "[3] 该批次的 worker data-dir（含 providers.json）"
+ls -d /nasdata/app.e0031982/eda_code_eval/2026_1023_103036/worker_*/data 2>/dev/null | head -5
+for p in $(ls /nasdata/app.e0031982/eda_code_eval/2026_1023_103036/worker_*/data/settings/providers.json 2>/dev/null | head -2); do
+  echo "  == $p"; head -c 400 "$p"; echo
+done
+echo "=== DONE 117 ==="
+```
+
+## RUN_ID 116 — 🔎 只读：找出两轮**实际使用的**配置（model / maxTokens / data-dir / turns）
+
+```text
 set -u
 echo "=== RUN_ID 116 | actual run configs | $(date '+%F %T') | host=$(hostname) ==="
 D=/nasdata/app.e0031982/code/eda_fastmcp
