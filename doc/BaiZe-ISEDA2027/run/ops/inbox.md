@@ -1,9 +1,32 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 183 | TARGET: 29 -->
-## RUN_ID 183 — 🔎 只读：双机 launcher 脚本 + 最近一次失败的原始日志（定位早退原因）
+<!-- RUN_ID: 184 | TARGET: 29 -->
+## RUN_ID 184 — 📊 只读：读 `.12` 上的双机 summary / 迭代吞吐（23:37 launch16 那次）
 
 ```bash
+set -u
+echo "=== RUN_ID 184 | dual-node summary from .12 | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] summary.txt 全文"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'cat /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null' 2>/dev/null | tr -d '\033' | cut -c1-200 || echo '  ssh .12 failed'
+
+echo "[2] launch15 / launch16"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'echo "-- launch15 --"; cat /tmp/baize_dualnode_16gpu/launch15.log 2>/dev/null; echo "-- launch16 --"; cat /tmp/baize_dualnode_16gpu/launch16.log 2>/dev/null' 2>/dev/null || true
+
+echo "[3] master.log 迭代行（最近 8 条）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'grep -aE "iteration +[0-9]+|tokens/sec|tokens per|elapsed time per" /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -8 | cut -c1-170' 2>/dev/null || true
+
+echo "[4] master/worker 是否报错（尾 6 行）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'echo "-- master --"; tail -6 /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tr -d "\033" | cut -c1-170; echo "-- worker --"; tail -6 /tmp/baize_dualnode_16gpu/worker.log 2>/dev/null | tr -d "\033" | cut -c1-170' 2>/dev/null || true
+
+echo "[5] 现在还在跑吗"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'pgrep -af "pretrain_launcher|torchrun" | cut -c1-95 | head -3 || echo "  none(.12)"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -3 | tr "\n" " "; echo' 2>/dev/null || true
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -3 | tr '\n' ' '; echo
+echo "=== DONE 184 ==="
+```
+
+## RUN_ID 183 — 🔎 只读：双机 launcher 脚本 + 最近一次失败的原始日志（定位早退原因）
+
+```text
 set -u
 echo "=== RUN_ID 183 | dual-node launcher inspection | $(date '+%F %T') | host=$(hostname) ==="
 G=/nas_train/app.e0031982/code/super_intelligence_2035
