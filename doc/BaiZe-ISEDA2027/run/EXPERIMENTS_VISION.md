@@ -1747,7 +1747,8 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 | MLLM chain | `vision/run_armE_r2_full_chain.sh` + `vision/mllm_bridge/stage{1,15,2}_train_armE_r2.py` |
 | eval bridge (修复) | `vision/mllm_bridge/lmms_eval_baize_llava.py`（3 处动态 num_image_tokens 修复） |
 | ④ 12集 launch | `vision/mllm_bridge/launch_12benchmarks_armE_r2_offline.sh` + `consolidate_12benchmarks.py`（✅ 已执行, 12/12） |
-| ⑤ 报告生成器 | `vision/generate_armE_r2_mllm_report.py` → `reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html` |
+| ⑤ 报告（**完整版 7 节**） | `vision/generate_armE_r2_full_report.py` → `reports/report_vision_armE_r2_20261024_zh.html`（25.9KB，含①训练+③MLLM三阶段） |
+| ⑤ 报告（旧版 6 节） | `vision/generate_armE_r2_mllm_report.py` → `reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html`（17KB，**旧版**，缺①训练/③MLLM三阶段，保留备查） |
 | 12集原始结果 | `datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/eval_*.json` + `consolidated_12benchmarks.json` |
 | 实验记录 | `EXPERIMENTS_VISION.md §15`（本节） |
 

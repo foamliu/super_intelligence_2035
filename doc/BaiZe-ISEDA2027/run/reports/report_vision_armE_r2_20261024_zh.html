@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe ArmE-R2 vision encoder full experiment report (2026-10-22 to 10-24)</title>
+<style>body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1140px; margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; }
+h1 { color: #1a3a5c; border-bottom: 3px solid #1a3a5c; padding-bottom: 8px; }
+h2 { color: #2a5a8c; margin-top: 30px; border-left: 5px solid #2a5a8c; padding-left: 10px; }
+h3 { color: #345; margin-top: 18px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
+th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: center; }
+th { background: #eef4fa; font-weight: 600; }
+tr:nth-child(even) { background: #f8fafc; }
+td { text-align: right; }
+td.l { text-align: left; }
+.ok { color: #1a7a1a; font-weight: 600; } .bad { color: #c00; font-weight: 600; } .warn { color: #b80; font-weight: 600; }
+.small { font-size: 12px; color: #666; }
+code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 12px; }
+.kbox { background: #fffbe6; border: 1px solid #e0d090; border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+.nbox { background: #f0f6fc; border: 1px solid #b0d0e8; border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+.summary { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+.card { background: #f0f6fc; border: 1px solid #b0d0e8; border-radius: 8px; padding: 10px 16px; min-width: 150px; text-align: center; }
+.card .l { font-size: 12px; color: #556; } .card .v { font-size: 22px; font-weight: 700; color: #1a3a5c; }
+pre { background: #f5f5f5; border: 1px solid #ddd; border-radius: 5px; padding: 10px; overflow-x: auto; font-size: 12px; }
+</style></head><body>
+<h1>BaiZe ArmE-R2 视觉编码器 · 完整实验报告</h1>
+<p class="small">实验代号 ArmE-R2 · 时间 2026-10-22 17:52:54 → 2026-10-24 06:57:43 · 生成于 2026-10-24 11:39:12 · 单文件自包含 (无外链 CDN / 无 &lt;script&gt;) · 所有数字来自落盘产物</p>
+<div class="kbox"><b>⚠️ 变量披露 (必须逐字对齐)</b><br>ArmE-R2 = <b>ArmE 降 LR 重跑</b>。ArmE(原 LR 1e-3) 于 step~29,400 发散 (loss=8.1037, C1~0.0007)，根因 = ViT-L/14(304M) 比 ViT-B/16(86M) 大 3.5× 却沿用 LR 1e-3，更新幅度过大 → spike 反复、C1 恢复慢。<br><b>ArmE-R2 vs ArmE = 仅两变量</b>：peak LR 1e-3→<b>5e-4</b> + warmup 2000→<b>3000</b>（塔/数据/GBS/steps/loss/mask/wd/seed 全同）→ 干净对照「降 LR+warmup 是否消除 spike」。<br><b>ArmE-R2 vs ArmD-R2 = 三变量</b>：塔(B/16 86.2M → L/14 304M) + LR(1e-3→5e-4) + warmup(2000→3000) → <b>报告中不得单归因</b>。<br><b>容量混杂 (运维令⑤)</b>：ArmE-R2 塔(304M) 比 ArmD-R2(86.2M) 大 ~3.5×，若 MLLM 胜出<b>不得单独归因"架构更好"</b>，须并列说明"容量+架构"复合变量；若持平/落后则说明"容量不是瓶颈"。<br><b>Stage-2 instruct 数据</b>：同 ArmD-R2，用原版 LLaVA-NeXT-780k quick-start 子集 (pretrain-*.tar, 738588 样本, 非 opt47)。</div>
+<h2>1. 摘要</h2>
+<div class="summary"><div class="card"><div class="l">ProtB lp 🏆 全实验最高</div><div class="v">68.236%</div></div><div class="card"><div class="l">ProtB 5-NN 🏆</div><div class="v">58.904%</div></div><div class="card"><div class="l">12 集 avg(除 MME)</div><div class="v">26.10%</div></div><div class="card"><div class="l">vs ArmD-R2 (26.12%)</div><div class="v">-0.02pp</div></div></div>
+<div class="kbox"><b>摘要 (≤6 条)</b><ol><li><b>ProtB 历史最高</b>：ArmE-R2 lp <b>68.236±0.0182%</b> / 5-NN <b>58.904%</b>，全实验最高。vs ArmD-R2 Δlp=+3.899pp / Δ5-NN=+2.948pp（三变量复合：塔+LR+warmup，不得单归因）。</li><li><b>12 集 vs ArmD-R2</b>：avg(除 MME) <b>26.10% vs 26.12% = -0.02pp</b>，6 升 5 降 均 ±1.5pp 内 → <span class="warn">不可分辨（边界值）</span>，落在预注册 22–26.5% 带。</li><li><b>容量 ≠ MLLM 下游瓶颈</b>：视觉塔增大 3.5×（86→304M），MLLM 下游完全持平 → 在 224px 单块 + 当前 MLLM 架构下，容量不是 MLLM 下游瓶颈。</li><li><b>ProtB→MLLM 传递性再次证伪（最强烈一例）</b>：编码器 +3.9pp 的 ProtB 优势完全未转化为 MLLM 下游优势。</li><li><b>降 LR 成功消除发散</b>：ArmE(LR 1e-3) step 29,400 永久发散 (C1~0.0007, 285 步 C1&lt;0.01)；ArmE-R2(LR 5e-4) 全程稳定，0 步 C1&lt;0.01（warmup 后），C1 历史最高 0.9664@s45240。</li><li><b>eval bridge 修复</b>：ViT-L/14 产出 256 patch tokens（vs B/16 的 196），原硬编码导致 8 卡 eval 全崩，已修 3 处动态计算，冒烟 <code>[inject] img_mask sum=256</code> ✅。</li></ol></div>
+<h2>2. 配置与口径</h2>
+<div class="nbox"><b>ArmE-R2 vs ArmD-R2 = 三变量（不得单归因）</b><table><tr><th>项</th><th>ArmD-R2 (基线)</th><th>ArmE-R2 (本轮)</th><th>变量</th></tr><tr><td class="l">视觉塔</td><td>open_clip ViT-B/16 224 (86.2M visual / 149.6M total)</td><td><b>open_clip ViT-L/14 224 (304.0M visual / 427.6M total)</b></td><td class="ok">✅ ①</td></tr><tr><td class="l">peak LR / min_lr</td><td>1e-3 / 1e-5</td><td><b>5e-4</b> / 1e-5</td><td class="ok">✅ ②</td></tr><tr><td class="l">warmup</td><td>2000</td><td><b>3000</b></td><td class="ok">✅ ③</td></tr><tr><td class="l">初始化</td><td>pretrained=None (随机)</td><td>同 (随机)</td><td>同</td></tr><tr><td class="l">数据</td><td colspan="2">data_snapshot_20261019_armD.txt · 6 源 · 14,589 shards · 173,124,248 对</td><td>同</td></tr><tr><td class="l">steps / epoch</td><td colspan="2">63,400 / 3 epoch</td><td>同</td></tr><tr><td class="l">GBS</td><td colspan="2">8,192 (MBS 256 × 8 GPU × accum 4)</td><td>同</td></tr><tr><td class="l">loss</td><td colspan="2">1.0×InfoNCE + 1.0×masked-patch-MSE, mask_ratio 0.6</td><td>同</td></tr><tr><td class="l">wd / betas / clip / seed</td><td colspan="2">0.01 / (0.9,0.98) / 1.0 / 1234</td><td>同</td></tr><tr><td class="l">文本塔</td><td colspan="2">冻结 CLIP-ViT-L/14-336 (768-d)</td><td>同</td></tr><tr><td class="l">输出目录</td><td>armD_r2_20261020_*</td><td><b>armE_r2_20261022_aimv2_openclip_vitl14_224</b></td><td>新</td></tr></table><p class="small"><b>对照边界</b>：ArmE-R2 vs ArmC = 四变量（塔 B→L + LR + warmup + ArmC→ArmD 数据轴）；vs ArmB = 四变量（塔 + LR + warmup + 数据/epoch）。编码器纯对照看 ②ProtB（同 Protocol B / 同 IN-1k）。<br><b>MBS 非变量</b>：512→256 是 ViT-L/14 显存约束的强制回退（GBS=8192 + steps=63400 保持，非消融变量），且带来 per-microbatch 对比 batch 4096→2048 的不可避混杂。<br><b>config.json 复核</b>：lr=0.0005 / min_lr=1e-05 / warmup=3000 / wd=0.01 / seed=1234 / mask_ratio=0.6 / contrast_weight=1.0 / patch_loss_weight=1.0 / n_visual=303,966,208(304M) / n_total=427,616,513 / n_patches=256 / patch_size=14 / image_size=224 / model_name=ViT-L-14 —— 全对。</p></div>
+<h2>3. ① 训练（编码器预训练）</h2>
+<p class="small">数据来源：<code>/tmp/armE_r2_openclip_train.log</code>（538 KB, 3,178 条 step 日志, 次 20 步一条）+ <code>/nas_train/app.e0031982/datasets/baize-vision/out/armE_r2_20261022_aimv2_openclip_vitl14_224/config.json</code>。</p>
+<div class="nbox"><p><b>总览</b>：T0 = 2026-10-22 17:52:54 → DONE 2026-10-24 06:57:43，总耗时 <b>37.07 h</b>（log DONE 行：<code>time=37.07h peak=77.5GB</code>）。稳态吞吐 <b>0.47-0.48 it/s</b>（ViT-L/14 比 B/16 前向更慢，ETA 由起步 59.6h 收敛到 34h 档）。63,400 步全程 <b>0 nan / 0 oom</b>（grep 原文见下）。GPU 显存峰值 <b>77.5 GB</b>（8×H100 80GB，MBS 256/accum 4，峰值出现在首步且全程不变）。最终 step 63,400：<code>loss=0.1612 contr=0.1570 patch=0.0042 lr=1.00e-05(=min_lr) C1~0.8547</code>。</p></div>
+<h3>3.1 里程碑点（loss / contr / patch / lr / it/s / C1 / 累计分钟）</h3>
+<table><tr><th>step</th><th>loss</th><th>contr</th><th>patch</th><th>lr</th><th>it/s</th><th>C1~</th><th>t (min)</th></tr><tr><td style='text-align:left'>20</td><td>8.7869</td><td>7.6463</td><td>1.1406</td><td>3.17e-06</td><td>0.30</td><td>0.0005</td><td>1.1</td></tr>
+<tr><td style='text-align:left'>1,000</td><td>4.0128</td><td>3.9302</td><td>0.0826</td><td>1.67e-04</td><td>0.47</td><td>0.0196</td><td>35.4</td></tr>
+<tr><td style='text-align:left'>3,000 (warmup end)</td><td>2.7150</td><td>2.6644</td><td>0.0506</td><td>5.00e-04</td><td>0.47</td><td>0.0696</td><td>105.4</td></tr>
+<tr><td style='text-align:left'>5,000</td><td>1.0159</td><td>0.9894</td><td>0.0265</td><td>4.99e-04</td><td>0.48</td><td>0.3718</td><td>175.4</td></tr>
+<tr><td style='text-align:left'>10,000</td><td>0.5444</td><td>0.5284</td><td>0.0160</td><td>4.84e-04</td><td>0.48</td><td>0.5895</td><td>350.4</td></tr>
+<tr><td style='text-align:left'>20,000</td><td>0.3577</td><td>0.3429</td><td>0.0148</td><td>4.10e-04</td><td>0.48</td><td>0.7097</td><td>700.5</td></tr>
+<tr><td style='text-align:left'>30,000</td><td>0.4248</td><td>0.4138</td><td>0.0110</td><td>2.96e-04</td><td>0.47</td><td>0.6611</td><td>1052.9</td></tr>
+<tr><td style='text-align:left'>40,000</td><td>0.2162</td><td>0.2076</td><td>0.0086</td><td>1.70e-04</td><td>0.48</td><td>0.8125</td><td>1402.6</td></tr>
+<tr><td style='text-align:left'>45,240 (C1 historical max)</td><td>0.0410</td><td>0.0342</td><td>0.0067</td><td>1.11e-04</td><td>0.47</td><td>0.9664</td><td>1588.8</td></tr>
+<tr><td style='text-align:left'>50,000 (spike)</td><td>0.8143</td><td>0.8079</td><td>0.0064</td><td>6.71e-05</td><td>0.47</td><td>0.4458</td><td>1755.1</td></tr>
+<tr><td style='text-align:left'>60,000</td><td>0.1478</td><td>0.1425</td><td>0.0053</td><td>1.38e-05</td><td>0.48</td><td>0.8672</td><td>2104.7</td></tr>
+<tr><td style='text-align:left'>63,400 (endpoint)</td><td>0.1612</td><td>0.1570</td><td>0.0042</td><td>1.00e-05</td><td>0.48</td><td>0.8547</td><td>2223.7</td></tr>
+</table>
+<p class="small">C1 = 对比对齐度指标（图文 InfoNCE 收敛判据，越高越好）；patch = masked-patch-MSE（越低越好，全程单调下降）。warmup 3,000 步内 lr 线性升到 5e-4；step 3000 后进入 cosine 衰减。<b>C1 历史最高 = 0.9664@s45240</b>（全 log 确认）。</p>
+<h3>3.2 spike 统计（与 ArmE 发散对比）</h3>
+<div class="nbox"><p><b>spike 性质</b>：对比损失 (contr) 的周期性跳升，<b>patch 损失全程平稳（~0.005–0.015）</b> → spike 由 InfoNCE 批次统计噪声驱动（per-microbatch 对比 batch = 2048，因 MBS 256 显存回退，非 4096）。每个 spike 后均<b>自恢复</b>，未演变为发散。</p><table><tr><th>指标</th><th>ArmE-R2 (LR 5e-4)</th><th>ArmE (LR 1e-3, 发散)</th></tr><tr><td class="l">contr&gt;0.6 的独立 spike 区段数</td><td><b>26</b>（全部恢复）</td><td>—（spike 升级为发散）</td></tr><tr><td class="l">最高 loss（step≥20000）</td><td><b>1.4299</b> @ s28520</td><td>8.1037 @ s29400（发散点）</td></tr><tr><td class="l">谷底 loss（最优点）</td><td><b>0.1019</b> @ s52500</td><td>—</td></tr><tr><td class="l">恢复步数（典型 spike）</td><td>~760 步（s50040 loss 0.9026 → s50800 loss 0.1279）</td><td class="bad">永不恢复</td></tr><tr><td class="l">C1 历史最高</td><td><b>0.9664</b> @ s45240</td><td>~0.37（s29000 前）→ 崩到 0.0007</td></tr><tr><td class="l">warmup 后 C1&lt;0.01 步数</td><td><b>0</b>（无发散）</td><td class="bad">285（永久发散）</td></tr><tr><td class="l">同一点 (s29000) 对比</td><td>loss=0.548, C1~0.5841（从自身 spike 恢复中）</td><td class="bad">loss=5.8721, C1~0.0049（崩溃中）</td></tr></table><p class="small"><b>结论</b>：降 LR(1e-3→5e-4)+warmup(2000→3000) <b>未消除 spike 的发生</b>（contr 批次噪声客观存在），但<b>把 spike 从"不可逆发散"降级为"可自恢复的短暂跳升"</b>。ArmE 在 s29200–29400 的 spike 升级为 loss 8.1 / C1 0.0007 且永久不归；ArmE-R2 同期 spike 仍在 0.5–1.4 量级且数百步内恢复。这是两变量干净对照的核心结论。</p></div>
+<h3>3.3 ckpt 落盘清单</h3>
+<p class="small">save_every=10000, keep_ckpts=2（滚动删除旧 ckpt）。log 原文：<code>saved ckpt step=10000/20000/30000/40000/50000/60000/63400</code>。</p>
+<table><tr><th>落盘文件</th></tr><tr><td class="l"><code>checkpoint_60000.pt (4.79 GB)</code></td></tr><tr><td class="l"><code>checkpoint_63400.pt (4.79 GB)</code></td></tr><tr><td class="l"><code>latest.pt (4.79 GB, =step 63400)</code></td></tr><tr><td class="l"><code>open_clip_state_dict.pt (1.59 GB, export)</code></td></tr><tr><td class="l"><code>predictor.pt (6.31 MB, training-time aux head)</code></td></tr><tr><td class="l"><code>config.json (957 B)</code></td></tr></table>
+<p class="small">已滚动删除：checkpoint_10000/20000/30000/40000/50000.pt（keep-2 策略）。ArmE 发散证据留档：<code>/nas_train/app.e0031982/datasets/baize-vision/out/armE_20261021_DIVERGED_archive/ (kept, not deleted)</code>。</p>
+<h3>3.4 0 nan / 0 oom 的 grep 原文</h3>
+<pre>grep -inE &#x27;nan|out of memory|oom&#x27; /tmp/armE_r2_openclip_train.log (exclude &#x27;OOM-forced&#x27; config note) -&gt; 0 lines matched
+$ grep -inE 'nan|out of memory|oom' /tmp/armE_r2_openclip_train.log | grep -v 'OOM-forced'
+(无输出 → 0 命中)
+$ grep -cE 'loss=' /tmp/armE_r2_openclip_train.log
+3178</pre>
+<p class="small">唯一含 "OOM" 的行是脚本启动时的配置注记 <code>[ArmE-R2] UNAVOIDABLE confound ... (MBS 512-&gt;256, OOM-forced)</code>，非运行时错误。终态行：<code>[ArmE-R2] DONE step=63400 loss=0.1612 contr=0.1570 patch=0.0042 time=37.07h peak=77.5GB</code>，exit 0。</p>
+<h2>4. ② ProtB（线性探针 / 近邻）评测</h2>
+<p class="small">数据来源：<code>vision/armE_r2_20261022_protb_vitl14_224_results.json</code>。协议 = Protocol B（SGD+momentum 0.9+cosine, mini-batch 1024, 90 epochs, IN-1k full train 1.28M / 官方 val 50k, 3 seeds 0/1/2, feature=projected, ckpt=open_clip_state_dict.pt）。</p>
+<div class="summary"><div class="card"><div class="l">lp mean</div><div class="v">68.236%</div></div><div class="card"><div class="l">lp σ</div><div class="v">±0.0182</div></div><div class="card"><div class="l">5-NN</div><div class="v">58.904%</div></div></div>
+<table><tr><th>臂</th><th>lp (%)</th><th>lp σ</th><th>5-NN (%)</th><th>逐 seed (lp)</th></tr><tr><td style='text-align:left'>ArmE-R2 (champion)</td><td><b>68.236</b></td><td>±0.0182</td><td>58.904</td><td class='small'>68.212 / 68.256 / 68.240</td></tr>
+<tr><td style='text-align:left'>ArmD-R2 (main control)</td><td><b>64.337</b></td><td>±0.0034</td><td>55.956</td><td class='small'>64.334 / 64.336 / 64.342</td></tr>
+<tr><td style='text-align:left'>ArmC</td><td><b>62.332</b></td><td>±0.0140</td><td>54.718</td><td class='small'>62.352 / 62.322 / 62.322</td></tr>
+<tr><td style='text-align:left'>ArmB</td><td><b>62.093</b></td><td>±0.0120</td><td>58.102</td><td class='small'>62.084 / 62.086 / 62.110</td></tr>
+</table>
+<table><tr><th>Δ vs</th><th>Δlp (pp)</th><th>Δ5-NN (pp)</th></tr><tr><td class="l">ArmD-R2 (主对照)</td><td class="ok">+3.899</td><td class="ok">+2.948</td></tr><tr><td class="l">ArmC</td><td class="ok">+5.904</td><td class="ok">+4.186</td></tr><tr><td class="l">ArmB</td><td class="ok">+6.143</td><td class="ok">+0.802</td></tr></table>
+<p class="small"><b>🏆 全实验历史最高</b>：ArmE-R2 在 lp 与 5-NN 上均为全实验最高。⚠️ <b>三变量 + 容量混杂</b>：Δlp=+3.899pp / Δ5-NN=+2.948pp 是 塔(B→L, 86→304M) + LR(1e-3→5e-4) + warmup(2000→3000) 三项共同作用，<b>不得归因单一变量</b>。容量增大 3.5× 是主要混杂因子。编码器质量核心结论已 secured。</p>
+<h2>5. ③ MLLM 三阶段对齐</h2>
+<p class="small">数据来源：<code>/tmp/armE_r2_stage1.log</code> + <code>/tmp/armE_r2_stage15.log</code> + <code>/tmp/armE_r2_stage2.log</code> + <code>/tmp/armE_r2_full_chain.log</code>。脚本：<code>vision/mllm_bridge/stage{1,15,2}_train_armE_r2.py</code>，chain = <code>vision/run_armE_r2_full_chain.sh</code>。视觉塔 ckpt 换成 ArmE-R2（projector 1024→2560）。</p>
+<table><tr><th>阶段</th><th>步数</th><th>时间</th><th>loss (起→终)</th><th>lr 调度</th><th>GPU</th><th>中间点</th></tr><tr><td style='text-align:left'><b>Stage-1</b><br><span class='small'>Projector align (1024-&gt;2560)</span></td><td>2,500</td><td class='small'>07:23:38→07:32:19<br>7.0 min</td><td>8.9952 (s10)<br>→ <b>4.1602</b> (s2500)</td><td class='small'>1.0e-4 -&gt; 1.0e-6 (cosine)</td><td>11.0 GB</td><td class='small'> - </td></tr>
+<tr><td style='text-align:left'><b>Stage-1.5</b><br><span class='small'>LoRA(r=64) + Projector mid-train</span></td><td>20,000</td><td class='small'>07:32:19→09:12:30<br>99.1 min</td><td>4.0140 (s50)<br>→ <b>3.6814</b> (s20000)</td><td class='small'>lr_lora 2.0e-5 -&gt; 1.0e-6 / lr_proj 1.0e-5 -&gt; 1.0e-6 (cosine)</td><td>14.6 GB</td><td class='small'>s5000=3.7696 · s10000=3.5458 · s15000=3.7773</td></tr>
+<tr><td style='text-align:left'><b>Stage-2</b><br><span class='small'>Instruct tuning (orig LLaVA-NeXT-780k, 738588 samples)</span></td><td>3,500</td><td class='small'>09:12:30→09:35:03<br>16.7 min</td><td>5.2419 (s50)<br>→ <b>1.5636</b> (s3500)</td><td class='small'>lr_lora 1.0e-5 -&gt; 1.0e-7 / lr_proj 5.0e-6 -&gt; 1.0e-7 (cosine)</td><td>17.2 -&gt; 19.4 GB</td><td class='small'> - </td></tr>
+</table>
+<p class="small">三阶段串行（PHASE 3: 07:23:38 起）。Stage-1.5 LoRA r=64，projector 9.18M 参数；Stage-2 用原版 LLaVA-NeXT-780k quick-start 子集（pretrain-*.tar, 738588 样本, 非 opt47，同 ArmD-R2）。Stage-2 loss 从 5.24 降到 1.56，健康收敛。LLM = Qwen3-4B-Instruct。</p>
+<h3>5.1 🔧 eval bridge bug（修复）</h3>
+<div class="nbox"><p><b>根因</b>：lmms_eval_baize_llava.py hardcoded NUM_IMAGE_TOKENS=196 (ViT-B/16: 224/16=14x14=196); ViT-L/14 patch14 -&gt; 224/14=16x16=256 patch tokens -&gt; projector/LLM embed dim mismatch -&gt; 8-GPU eval all crashed.</p><p><b>现象</b>：12-集评测首次运行时 8 卡全部崩溃（embedding 维度不匹配，256≠196）。</p><p><b>修法（3 处动态计算）</b>：3 places changed to dynamic calc: (1) self.num_image_tokens = 256 if vision_backend in (&#x27;armE&#x27;,&#x27;armE_r2&#x27;) else 196; (2) _expand_image_tokens expands by actual token count; (3) feature buffer allocated by actual shape.</p><p><b>冒烟验证</b>：ai2d --limit 32 smoke test: [inject] img_mask sum=256 OK (see /tmp/smoke_armE_r2_ai2d.log)</p><pre>[inject] inputs_embeds shape=torch.Size([32, 327, 2560]), img_mask sum=256
+[inject] img_feat stats: min=-3.828, max=4.188, mean=0.013</pre><p class="small">修复文件：<code>vision/mllm_bridge/lmms_eval_baize_llava.py</code>。此 bug 为 ViT-L/14（patch14, 256 tokens）与 ViT-B/16（patch16, 196 tokens）的 patch 数差异所致，属本次 ArmE-R2 特有工程问题（ArmB/C/D-R2 用 B/16，无此问题）。</p></div>
+<h2>6. ④ 12 集逐集评测</h2>
+<p class="small">数据来源：<code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json</code>。Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32, 8 卡并行, 无 limit, 全量, ~10 min, 12/12 exit 0）。</p>
+<table><tr><th>集</th><th>ArmE-R2 (%)</th><th>ArmD-R2 (%)</th><th>Δ (pp)</th><th>指标</th></tr><tr><td style='text-align:left'>AI2D</td><td>60.65</td><td>60.49</td><td class='ok'>+0.16</td><td class='small'>exact_match</td></tr>
+<tr><td style='text-align:left'>RealWorldQA</td><td>45.36</td><td>46.41</td><td class='bad'>-1.05</td><td class='small'>exact_match</td></tr>
+<tr><td style='text-align:left'>MMMU (val)</td><td>44.00</td><td>42.67</td><td class='ok'>+1.33</td><td class='small'>mmmu_acc</td></tr>
+<tr><td style='text-align:left'>BLINK</td><td>38.88</td><td>39.59</td><td class='bad'>-0.71</td><td class='small'>blink_acc</td></tr>
+<tr><td style='text-align:left'>MMStar</td><td>27.17</td><td>27.07</td><td class='ok'>+0.10</td><td class='small'>average</td></tr>
+<tr><td style='text-align:left'>MMMU-Pro (std)</td><td>23.12</td><td>22.60</td><td class='ok'>+0.52</td><td class='small'>mmmu_acc</td></tr>
+<tr><td style='text-align:left'>InfographicVQA</td><td>16.18</td><td>16.59</td><td class='bad'>-0.41</td><td class='small'>anls</td></tr>
+<tr><td style='text-align:left'>ChartQA</td><td>12.16</td><td>12.92</td><td class='bad'>-0.76</td><td class='small'>relaxed_overall</td></tr>
+<tr><td style='text-align:left'>CountBench</td><td>10.59</td><td>9.98</td><td class='ok'>+0.61</td><td class='small'>acc</td></tr>
+<tr><td style='text-align:left'>DocVQA (val)</td><td>7.35</td><td>7.44</td><td class='bad'>-0.09</td><td class='small'>anls</td></tr>
+<tr><td style='text-align:left'>OCRBench</td><td>1.60</td><td>1.60</td><td class=''>+0.00</td><td class='small'>ocrbench_acc</td></tr>
+<tr><td style='text-align:left'>MME <span class='small'>(not in avg)</span></td><td>718.04</td><td>806.45</td><td class='bad'>-88.41</td><td class='small'>perception+cognition</td></tr>
+<tr style='font-weight:700;background:#eef4fa'><td style='text-align:left'>avg (excl MME)</td><td>26.10</td><td>26.12</td><td class='bad'>-0.02</td><td class='small'>11-bench arithmetic mean</td></tr>
+</table>
+<p class="small"><b>裁定</b>：ArmE-R2 avg(除 MME) = <b>26.10%</b>，vs ArmD-R2 = <b>-0.02pp</b>（6 升 5 降, 均 ±1.5pp 内），落在预注册 22–26.5% 「不可分辨」带。DocVQA/ChartQA/OCRBench vs ArmD-R2 无任一 +10pp（−0.09/−0.76/+0.00）⇒ 不触发「&gt;24% 且单集 +10pp 成功」分支。沿用 ArmB/ArmC/ArmD-R2 预注册判据，<b>裁定 = 不可分辨（边界值）</b>。<br>MME 为感知分 + 认知分（满分 2800），不计入准确率平均；ArmE-R2 MME 718.04 低于 ArmD-R2 806.45（Δ-88.4），但 MME 两臂均处低位、且非预注册主指标。<br>⚠️ ArmE-R2 与 ArmD-R2 的 Stage-2 instruct 数据同源（原版 quick-start），故 ④Δ 不含 Stage-2 数据混杂，但含「塔+LR+warmup」三变量混杂。</p>
+<h2>7. 结论与局限 + 复现命令</h2>
+<div class="kbox"><p><b>① 编码器（最可靠，ProtB，🏆 历史最高）</b>：lp 68.236% / 5-NN 58.904%，全实验最高。vs ArmD-R2 Δlp=+3.899pp / Δ5-NN=+2.948pp。⚠️ 三变量(塔+LR+warmup)+容量混杂，不得归因单一变量。<b>编码器质量核心结论已 secured。</b></p><p><b>② MLLM 下游（不可分辨）</b>：12 集 avg 26.10%，vs ArmD-R2 -0.02pp / vs ArmC +0.32pp / vs ArmB −0.00pp。视觉塔增大 3.5×，MLLM 下游完全持平 → <b>容量不是 MLLM 下游瓶颈</b>（在 224px 单块 + 当前 MLLM 架构下）。</p><p><b>③ ProtB→MLLM 传递性再次证伪（最强烈一例）</b>：编码器 +3.9pp 的 ProtB 优势完全未转化为 MLLM 下游优势。这是所有实验中 ProtB 差距最大而 MLLM 持平最明确的一例。</p><p><b>④ 降 LR 效果（ArmE-R2 vs ArmE，两变量干净对照）</b>：ArmE(LR 1e-3) s29400 永久发散(C1~0.0007)；ArmE-R2(LR 5e-4) 全程稳定，0 步 C1&lt;0.01（warmup 后），C1 最高 0.9664 → <b>降 LR+warmup 把 spike 从"不可逆发散"降级为"可自恢复跳升"</b>。</p><p><b>⑤ 诚实条款</b>：内部 ProtB/MLLM 口径，非官方榜；单 backbone/单预算点；MLLM 三阶段单 seed；224px 单块（无 anyres），细粒度任务天然偏低；Stage-2 数据为原版 quick-start（同 ArmD-R2）；MBS 512→256 是显存强制回退非消融变量。</p></div>
+<h3>7.1 复现命令（训练 / ProtB / 12 集）</h3>
+<pre># ① 编码器训练 (63,400 步, ~37h, 8×H100)
+setsid bash vision/run_armE_r2_openclip.sh &gt; /tmp/armE_r2_openclip_train.log 2&gt;&amp;1 &lt; /dev/null &amp;
+
+# ② Protocol B 线性探针评测 (3 seeds)
+bash vision/run_armE_r2_protb_eval.sh
+
+# ④ 12 集 lmms-eval (8 卡并行, Stage-2 step3500)
+bash vision/mllm_bridge/launch_12benchmarks_armE_r2_offline.sh</pre>
+<h3>7.2 文件路径</h3>
+<table><tr><th>产物</th><th>路径</th></tr><tr><td class="l">训练脚本</td><td class="l"><code>vision/run_armE_r2_openclip.sh</code> + <code>vision/armE_r2_aimv2_openclip_vitl14.py</code></td></tr><tr><td class="l">训练输出</td><td class="l"><code>/nas_train/app.e0031982/datasets/baize-vision/out/armE_r2_20261022_aimv2_openclip_vitl14_224/</code></td></tr><tr><td class="l">open_clip 权重</td><td class="l"><code>.../open_clip_state_dict.pt</code> (1.59 GB)</td></tr><tr><td class="l">训练日志</td><td class="l"><code>/tmp/armE_r2_openclip_train.log</code></td></tr><tr><td class="l">ArmE 发散证据</td><td class="l"><code>/nas_train/app.e0031982/datasets/baize-vision/out/armE_20261021_DIVERGED_archive/ (kept, not deleted)</code></td></tr><tr><td class="l">ProtB 结果</td><td class="l"><code>vision/armE_r2_20261022_protb_vitl14_224_results.json</code></td></tr><tr><td class="l">MLLM chain</td><td class="l"><code>vision/run_armE_r2_full_chain.sh</code> + <code>vision/mllm_bridge/stage{1,15,2}_train_armE_r2.py</code></td></tr><tr><td class="l">eval bridge (修复)</td><td class="l"><code>vision/mllm_bridge/lmms_eval_baize_llava.py</code>（3 处动态 num_image_tokens）</td></tr><tr><td class="l">12 集原始结果</td><td class="l"><code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/eval_*.json</code></td></tr><tr><td class="l">12 集合并</td><td class="l"><code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json</code></td></tr><tr><td class="l">本报告</td><td class="l"><code>/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/reports/report_vision_armE_r2_20261024_zh.html</code></td></tr><tr><td class="l">实验记录</td><td class="l"><code>EXPERIMENTS_VISION.md §15</code></td></tr></table>
+<hr><p class="small">本报告由 <code>vision/generate_armE_r2_full_report.py</code> 生成 · 所有数字来自落盘产物（训练日志 / ProtB json / 12集 consolidated json / 三阶段日志 / config.json），未做外推或臆造。生成时间 2026-10-24 11:39:12。<br>旧版（17 KB, 仅 6 节, 缺①训练与③MLLM三阶段）：<code>reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html</code>（保留，标注"旧版"）。</p>
+</body></html>
