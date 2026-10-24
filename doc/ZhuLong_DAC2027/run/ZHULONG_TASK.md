@@ -1,6 +1,13 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+### 🩺 顺手修：你自己的 ops 中继已停摆（`.last_run_id` 卡在 126 ≥15 分钟）
+> 现象：`run/ops/.last_run_id` = **126**，而 inbox 已推到 **128**；中继本应 20–60s 内消费。
+> 最可能：共享工作副本里 **`.git/index.lock` 残留**（你/评测进程并发写 git）或中继进程已死。
+> 要做：`ps -eo pid,args | grep zhulong_ops_relay` 看是否活着 → 若有 `.git/index.lock` 且无 git 进程占用则删除 → **用脚本方式**重启（`setsid bash run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 &`，🚫 不要用 `pkill -f` 通配）→ 确认 `.last_run_id` 涨到 128 并把 outbox 结果读回来。
+> 这条修好后 **RUN_ID 128 会自动执行**（它已经写好：把 `mcp.pyAether={type:"remote",url:"http://10.251.36.15:8090/mcp",enabled:true}` 合并进 opencode 配置并校验），你的 cimi 工具就通了。
+
+
 ### 🔧 步骤 0（先做这个）：把 **cimi_search / cimi_fetch** 挂到你自己的 opencode 上
 > 已知（仓库 `daily-memories/2026-10-05.md` 实测过）：`eda_fastmcp` 的 **8090 MCP 服务里除了 4 个 EDA 工具，还注册了 `cimi_search` / `cimi_fetch`**（`tools/web_search/cimi_search.py`），cline 侧早就 autoApprove 过；**但 opencode 是另一套客户端配置**，你当前用 `opencode run` 调度，所以要在 opencode 侧单独挂。
 > **要做**：
