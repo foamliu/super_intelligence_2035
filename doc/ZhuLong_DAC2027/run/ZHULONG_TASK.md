@@ -1,6 +1,18 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+### 🔬 已核实事实 · 2026-10-24 22:15（RUN_ID 115/117 实测，用于配置对齐）
+> **cline-full r2 已停止**：PID 497054 `TERM`→5s 退出（22:10:57）；停前 `code dirs 158 / .py 153 / task_queue 0`；日志 `/tmp/ABL_dsv4pro_cline_full_r2.log` 29.2 MB **保留**，batch `2026_1024_141148` 产物**未删**。⇒ 需要时仍可对该批做 regrade 留档。
+> **MCP settings 两侧已完全一致**（同一份内容）：`url=http://10.251.36.15:8090/mcp`、`type=streamableHttp`、`timeout=600`、`autoApprove=[search_apis, get_api_details, search_apis_by_keyword, run_code]` —— **这条不是差异来源了**。
+> **ZL 跑确实用的是 glm-5.3-flash**：`~/.zhulong/settings/providers.json` 为 `model=glm-5.3-flash / maxTokens=16384 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false`；r1/r5 日志里 `glm-5.3-flash` 出现 3413/2922 次。
+> **仍需对齐的项（待查 cline 侧 glm-5.3-flash 那批的真实值）**：
+> 1. `maxTokens`：zhulong=**16384**；cline 侧 10-20 曾为修 null-content 降到 **8192** ⇒ **按 cline 那批的实际值统一**；
+> 2. `baseUrl`：zhulong=`http://agi-gateway.cxmt.com/v1`，而 cline 的 deepseek 批用 `http://agi-gateway.cxmt.com/cloud/v1` ⇒ **路由不同，必须统一**；
+> 3. `reasoning.enabled` / temperature / top_p / max-turns / 系统提示：逐字段抄 cline；
+> 4. `CLI_AGENT`、`EDA_RUNCODE_READBACK=full`、`-p 4`、worker data-dir 结构：保持现状。
+> **做法**：先从 cline 的 glm-5.3-flash 批次（10-18，`/tmp/ABL_glm-5.3-flash_retest_r*.log`、`/nasdata/app.e0031982/.cline*`）确认上面 1–3 的真实值 → 写入 `~/.zhulong/settings/providers.json` → **打印 diff 作为证据** → 再起 5-run。
+
+
 ### 🔴 运维令 · 2026-10-24 22:1x（**停 cline-full 评测 → zhulong 配置对齐 cline → 用 zhulong 重跑 5-run**）· 用户直令 · 覆盖一切
 > 依据：`reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html` —— 已证明两轮差异 **≈80% 来自"未生成代码(literal-pass)"**，且 zhulong 侧存在 **`maxTokens=16384`（cline 是 8192）** 等配置混杂，必须去掉才能做"只差 CLI"的干净对比。
 
