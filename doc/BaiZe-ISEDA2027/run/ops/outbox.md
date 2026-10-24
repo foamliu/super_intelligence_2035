@@ -16981,3 +16981,91 @@ Actually[0m[2m, the[0m[2m most efficient approach:[0m[2m the[0m[2m task
   34a7e5316 2026-10-24 11:24:08 harness R475: image pull retry started (42/89), 28 transient auth.docker.io failures retried, v2 codex 3/11 pass, TASK archived to 32KB
 === DONE 153 ===
 ```
+
+---
+
+## RUN_ID 154 · 2026-10-24 13:03:07 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 154 | /nas_env capacity for 5-source tokenized data | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] 文件系统余量"
+df -h /nas_env /nas_train 2>/dev/null | tail -3
+echo "  /nas_env avail_bytes=$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')"
+echo "  /nas_env size_bytes =$(df -B1 --output=size  /nas_env 2>/dev/null | tail -1 | tr -d ' ')"
+echo
+echo "[2] 5 源分词产物的候选路径（找到哪个用哪个）"
+for p in \
+  /nas_train/app.e0031982/code/Baize-ISEDA2027/data \
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/data \
+  /nas_train/app.e0031982/datasets/baize-data/text ; do
+  [ -d "$p" ] || continue
+  echo "  == $p"
+  ls -d "$p"/full_* 2>/dev/null | head -8
+done
+echo
+echo "[3] 逐源体积（有界 du，带 timeout）"
+TOT=0
+for p in \
+  /nas_train/app.e0031982/code/Baize-ISEDA2027/data \
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/data ; do
+  [ -d "$p" ] || continue
+  for d in "$p"/full_*; do
+    [ -d "$d" ] || continue
+    B=$(timeout 120 du -sb "$d" 2>/dev/null | awk '{print $1}')
+    [ -n "${B:-}" ] || B=0
+    TOT=$((TOT + B))
+    printf "  %-28s %8s GB  bin=%s idx=%s\n" "$(basename "$d")" "$(awk -v b="$B" 'BEGIN{printf "%.1f", b/1e9}')" \
+      "$(ls "$d"/*.bin 2>/dev/null | wc -l)" "$(ls "$d"/*.idx 2>/dev/null | wc -l)"
+  done
+done
+echo "  ---- 合计 = $(awk -v b="$TOT" 'BEGIN{printf "%.2f TB (%d bytes)", b/1e12, b}') ----"
+echo
+echo "[4] 容量判定（需要 ×1.1 双份窗口）"
+AVAIL=$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')
+NEED=$((TOT + TOT/10))
+echo "  avail=$(awk -v b="$AVAIL" 'BEGIN{printf "%.2f TB", b/1e12}')  need(×1.1)=$(awk -v b="$NEED" 'BEGIN{printf "%.2f TB", b/1e12}')"
+if [ "$AVAIL" -ge "$NEED" ]; then echo "  结论: ✅ 足够（余量 $(awk -v a="$AVAIL" -v n="$NEED" 'BEGIN{printf "%.2f TB", (a-n)/1e12}')）"; else echo "  结论: ❌ 不足，差 $(awk -v a="$AVAIL" -v n="$NEED" 'BEGIN{printf "%.2f TB", (n-a)/1e12}')"; fi
+echo
+echo "[5] harness 静默核查（附）"
+pgrep -af 'git .*add --fo' | cut -c1-170 | head -5
+echo "  harness loop log: $(ls -l --time-style=+%F' '%T /tmp/baize_harness_loop.log 2>/dev/null | awk '{print $6,$7}')"
+tail -n 5 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-180
+echo "  alexgshaw images: $(docker images 2>/dev/null | grep -c alexgshaw || echo NA)"
+echo "=== DONE 154 ==="
+```
+
+**输出**
+```
+=== RUN_ID 154 | /nas_env capacity for 5-source tokenized data | 2026-10-24 13:03:07 | host=whag0pgpuap29 ===
+
+[1] 文件系统余量
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.32:/vol_CTE0_data04   10T  344G  9.6T   4% /nas_env
+10.239.23.31:/vol_CTE0_data01  207T  178T   30T  86% /nas_train
+  /nas_env avail_bytes=10516647903232
+  /nas_env size_bytes =10885165219840
+
+[2] 5 源分词产物的候选路径（找到哪个用哪个）
+  == /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/data
+  == /nas_train/app.e0031982/datasets/baize-data/text
+
+[3] 逐源体积（有界 du，带 timeout）
+  ---- 合计 = 0.00 TB (0 bytes) ----
+
+[4] 容量判定（需要 ×1.1 双份窗口）
+  avail=10.52 TB  need(×1.1)=0.00 TB
+  结论: ✅ 足够（余量 10.52 TB）
+
+[5] harness 静默核查（附）
+  harness loop log: 2026-10-24 12:41:42
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-24 12:41:42 WAITING=1 (async task running) → sleep 1800s
+  alexgshaw images: 57
+=== DONE 154 ===
+```
