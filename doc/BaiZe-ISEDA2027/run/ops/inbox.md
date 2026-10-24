@@ -1,9 +1,39 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 169 | TARGET: 29 -->
-## RUN_ID 169 — 🔍 只读：pretrain 是否起测 / data 迁移 / harness 7×89（20:0x 快照）
+<!-- RUN_ID: 170 | TARGET: 29 -->
+## RUN_ID 170 — 🚨 只读：`code_l2` 迁移是否卡住（无 rsync 进程）+ pretrain 进展
 
 ```bash
+set -u
+echo "=== RUN_ID 170 | migration liveness | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+
+echo "[1] 迁移脚本/rsync 进程（本机）"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep -E 'migrate_to_nas_env|rsync' | grep -v grep | cut -c1-120 | head -5 || echo '  NONE(local)'
+echo "[2] .12 上是否有"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,ppid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync" | grep -v grep | cut -c1-120 | head -5 || echo "  NONE(.12)"' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] 迁移日志尾部"
+ls -l --time-style=+%F_%T /tmp/migrate_to_nas_env_fast.log /tmp/migrate_to_nas_env.log 2>/dev/null | cut -c1-110
+tail -12 /tmp/migrate_to_nas_env_fast.log 2>/dev/null | cut -c1-160
+tail -6 /tmp/migrate_to_nas_env.log 2>/dev/null | cut -c1-160
+
+echo "[4] code_l2 体积 10 秒内是否增长"
+a=$(du -sb "$D" 2>/dev/null | cut -f1); sleep 10; b=$(du -sb "$D" 2>/dev/null | cut -f1)
+echo "  t0=$a  t1=$b  delta=$(( ${b:-0} - ${a:-0} )) bytes / 10s"
+echo "  bin=$(find "$D" -maxdepth 1 -name '*.bin' 2>/dev/null | wc -l) / 141"
+
+echo "[5] /nas_env 余量"
+df -h /nas_env | tail -2
+
+echo "[6] pretrain：.12 的 agent 进展（loop 日志尾部 + 是否有 torchrun）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 1200 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -12 | cut -c1-150; echo "-- torchrun --"; pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3 || echo "  none"' 2>/dev/null || echo '  ssh .12 failed'
+echo "=== DONE 170 ==="
+```
+
+## RUN_ID 169 — 🔍 只读：pretrain 是否起测 / data 迁移 / harness 7×89（20:0x 快照）
+
+```text
 set -u
 echo "=== RUN_ID 169 | status snapshot | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
