@@ -1,12 +1,84 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 159 -->
+<!-- RUN_ID: 160 -->
+## RUN_ID 160 — 🩺 pretrain loop 体检 → 不健康则安全重启 → 立刻跑 16:2x 双机 16 卡吞吐
+
+> 用户令（2026-10-24 19:2x）：「让 ops 中继看看 pretrain loop 是否健康，如否则重启，让它立刻执行 16:2x 的双机 16 卡吞吐测试」
+> **健康判据**（写死）：loop 进程在 **且** loop 日志 mtime ≤45min **且** `MEMORY_PRETRAIN_2B.md` mtime ≤120min。任一不满足 = 不健康。
+> **安全护栏**：① 若检测到 `torchrun|pretrain_launcher` 正在跑 → **只报不重启**；② 只按 **PPID 精确**杀 loop 自己的子进程，🚫 **不用 `pkill -f`**（任务书里含脚本名，会误杀 cline）；③ 启动用**脚本文件方式**，不用 `pkill + 启动` 组合。
+
+```bash
+set -u
+echo "=== RUN_ID 160 | pretrain loop health -> restart -> 16-GPU test | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+RUN=$R/run
+LOG=/tmp/baize_pretrain_loop.log
+MEM=$RUN/MEMORY_PRETRAIN_2B.md
+TASK=$RUN/BAIZE_PRETRAIN_2B_TASK.md
+
+loop_pid() { ps -eo pid=,comm=,args= 2>/dev/null | awk '$2=="bash" && /baize_pretrain_loop\.sh/ {print $1}' | head -1; }
+
+echo "[0] 护栏：是否有训练在跑"
+TP=$(ps -eo pid=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher' | grep -v grep | cut -c1-110 | head -3)
+if [ -n "$TP" ]; then echo "  TRAINING RUNNING:"; echo "$TP"; else echo "  no training -> safe"; fi
+
+LP=$(loop_pid)
+AGE=$(( ( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ) / 60 ))
+MAGE=$(( ( $(date +%s) - $(stat -c %Y "$MEM" 2>/dev/null || echo 0) ) / 60 ))
+echo "[1] loop pid=${LP:-NONE}  log_age=${AGE}min  mem_age=${MAGE}min   (healthy: log<=45 & mem<=120)"
+echo "[2] loop 日志尾部"; tail -3 "$LOG" 2>/dev/null | cut -c1-150
+echo "[3] loop 子进程（是否卡在 pi/cline 调用）"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" 2>/dev/null | cut -c1-150
+echo "[4] MEMORY 前 2 行"; head -2 "$MEM" 2>/dev/null | cut -c1-120
+
+HEALTHY=0
+[ -n "${LP:-}" ] && [ "$AGE" -le 45 ] && [ "$MAGE" -le 120 ] && HEALTHY=1
+echo "[5] HEALTHY=$HEALTHY"
+
+if [ "$HEALTHY" -eq 1 ]; then
+  echo "  => 健康：不重启，仅核对顶部 16:2x 令"
+else
+  if [ -n "$TP" ]; then echo "  !! 有训练在跑 -> 拒绝重启，留待人工裁决"; else
+    echo "  => 不健康：开始安全重启"
+    KIDS=$(ps -o pid= --ppid "$LP" 2>/dev/null | tr -d ' ')
+    echo "    将终止 loop=$LP 及其子进程: ${KIDS:-none}"
+    kill -9 "$LP" 2>/dev/null && echo "    KILL9 loop $LP（先断 loop，防止它再拉起新 agent）"
+    for k in $KIDS; do kill -TERM "$k" 2>/dev/null && echo "    TERM child $k"; done
+    sleep 6
+    for k in $KIDS; do kill -0 "$k" 2>/dev/null && { kill -9 "$k" 2>/dev/null && echo "    KILL9 child $k"; }; done
+    sleep 2
+    echo "[6] 停止后 loop pid=$(loop_pid || true)"
+    cd "$RUN" || exit 1
+    [ -f "$LOG" ] && mv "$LOG" "$LOG.bak.$(date +%H%M)" && echo "    旧日志轮转 -> $LOG.bak.$(date +%H%M)"
+    setsid -f nohup bash ./baize_pretrain_loop.sh >> "$LOG" 2>&1 < /dev/null
+    sleep 20
+    NLP=$(loop_pid)
+    echo "[7] 新 loop pid=${NLP:-NONE}"
+    echo "[8] 新日志前 12 行"; head -12 "$LOG" 2>/dev/null | cut -c1-150
+    echo "[8b] 新 loop 子进程"; [ -n "${NLP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$NLP" 2>/dev/null | cut -c1-140
+  fi
+fi
+
+echo "[9] TASK 顶部（确认 16:2x / 应急令 在最前面）"
+sed -n '1,14p' "$TASK" 2>/dev/null | cut -c1-140 | grep -n '应急令\|16:2x\|双机' || echo '  (未匹配到，需人工检查)'
+
+echo "[10] GPU 两机"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+echo "=== DONE 160 ==="
+```
+
+> **判读**：
+> - `[5] HEALTHY=1` → 说明刚才只是长睡，**不重启**；若 16:2x 令还没跑，等下轮唤醒（≤30min）。
+> - 重启成功 → `[7]` 有 PID、`[8]` 出现 `[loop] ... wake up, invoking pi`，`[8b]` 出现新的 pi 子进程 ⇒ agent 已开始读任务书，**第一件事应是双机 16 卡测试**。
+> - `[10]` 若 16 卡仍全空超过 20 分钟 ⇒ agent 没按令执行，需人工介入。
+
 ## RUN_ID 159 — 🔍 只读：harness 7×89 进度 + pretrain loop 存活（**不重启、不改任何东西**）
 
 > 背景：harness 最后提交 16:26（启动 7×89 于 16:21，ETA 2.5–3h），pretrain 的 MEMORY 停在 **15:0x #766**，而 16:2x 的「双机 16 卡吞吐」令至今无执行痕迹。现 19:2x，两条线均 **2.8–4h 无提交**，需判断是「正常长跑/睡觉」还是「卡死」。
 > ⚠️ 纯只读：`kill`/重启/写文件 一律不做。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 159 | read-only: harness 7x89 + pretrain loop | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
