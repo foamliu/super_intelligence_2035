@@ -1,11 +1,49 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 163 | TARGET: 29 -->
+<!-- RUN_ID: 164 | TARGET: 29 -->
+## RUN_ID 164 — 🧹 中继去重：每台机只保留**最老的一个** v2 中继（本机 + 对端）
+
+> 背景：RUN_ID 163 的 `[2]` 显示 `.29` 上有 **两个** `ops_relay_v2.sh`（原因：切换前 `.29` 上本来就有两个 v1 实例，各拉起一次）。
+> 两个中继共用同一个 state ⇒ 会把 `both` 任务执行两遍。本令在**本机与对端各**做一次去重（保留 etimes 最大的那个），用 detached 方式执行，避免杀掉自己导致 outbox 写不进去。
+
+```bash
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+CL=$R/run/ops/.dedupe_relays.sh
+
+cat > "$CL" <<'EOS'
+#!/bin/bash
+set -u
+sleep 8                                  # 让本轮回执先写完
+TAG=$(hostname | sed -n 's/.*\([0-9][0-9]\)$/\1/p')
+list=$(ps -eo pid=,etimes=,args= | grep 'ops_relay' | grep -v grep)
+echo "[dedupe] $(date '+%F %T') tag=$TAG before:"; echo "$list" | sed 's/^/    /'
+# 保留 etimes 最大（最老）的 ops_relay_v2.sh；其余 v2 杀掉；v1 一律杀掉
+KEEP=$(echo "$list" | grep 'ops_relay_v2\.sh' | sort -k2 -nr | awk 'NR==1{print $1}')
+for p in $(echo "$list" | awk '{print $1}'); do
+  [ "$p" = "$KEEP" ] && continue
+  kill -TERM "$p" 2>/dev/null && echo "    killed $p"
+done
+sleep 3
+echo "[dedupe] after:"; ps -eo pid=,etimes=,args= | grep 'ops_relay' | grep -v grep | sed 's/^/    /'
+EOS
+chmod +x "$CL"
+
+TAG=$(hostname | sed -n 's/.*\([0-9][0-9]\)$/\1/p')
+echo "[1] 本机 tag=$TAG -> detached dedupe"
+setsid -f nohup bash "$CL" >> /tmp/dedupe_relay_$TAG.log 2>&1 < /dev/null
+if [ "$TAG" = "29" ]; then PEER=10.239.2.12; else PEER=10.239.2.29; fi
+echo "[2] 对端 $PEER -> detached dedupe"
+timeout 30 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 "$PEER" "setsid -f nohup bash '$CL' >> /tmp/dedupe_relay_peer.log 2>&1 < /dev/null; echo launched" 2>&1 | tail -1
+echo "[3] 当前（去重前快照）"; ps -eo pid=,etimes=,args= | grep ops_relay | grep -v grep | cut -c1-110
+echo "=== DONE 164 ==="
+```
+
 ## RUN_ID 163 — 🧪 验证 TARGET 投递（**只投 `.29`**）+ 顺带看 pretrain
 
 > 本块 **只应由 `whag0pgpuap29` 执行**。若 outbox 里出现 `host=whag0pgpuap12` 的同号记录 ⇒ v2 的 TARGET 解析没生效。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 163 | TARGET:29 dispatch test | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
