@@ -1,9 +1,35 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 174 | TARGET: 29 -->
-## RUN_ID 174 — 🔍 只读：21:0x 快照（NCCL 排障进展 / data 尾段 / harness）
+<!-- RUN_ID: 175 | TARGET: 29 -->
+## RUN_ID 175 — 🔍 只读：21:1x 快照（data 收尾 / 双机 GPU / agent 轮次是否结束）
 
 ```bash
+set -u
+echo "=== RUN_ID 175 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+
+echo "[1] data code_l2"
+a=$(du -sb "$D" 2>/dev/null | cut -f1)
+echo "  $(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB / 1691 GB   bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-95 | head -2 || echo "   no rsync/migrate"' 2>/dev/null || true
+df -h /nas_env | tail -1
+
+echo "[2] 双机 GPU + launcher"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-100 | head -2 || echo '  none(.29)'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] pretrain loop：最近状态行（是否已结束本轮）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -3 | cut -c1-120; echo "-- tail --"; tail -c 500 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -5 | cut -c1-130' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[4] harness 合计"
+s=0; for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; n=$(find "$d" -name result.json 2>/dev/null | wc -l); s=$((s+n)); done; echo "  total=$s/609"
+echo "=== DONE 175 ==="
+```
+
+## RUN_ID 174 — 🔍 只读：21:0x 快照（NCCL 排障进展 / data 尾段 / harness）
+
+```text
 set -u
 echo "=== RUN_ID 174 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
 
