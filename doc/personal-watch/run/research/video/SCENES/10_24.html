@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-24 · 当 AI 满口假话却信心十足，人会不会跟着错</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1f3a93 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(31,58,147,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1f3a93; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1f3a93; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#1f3a93; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1f3a93; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-24</h1>
+  <div class="sub">今日 TOP-1：<b>AI 满口假话却信心十足，人会不会跟着错</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>374 字</b></div>
+  <div class="meta">
+    <span>📄 Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</span>
+    <span>🆔 arXiv:2610.31579</span>
+    <span>🏷 cs.AI（+cs.HC）· 科普口径</span>
+    <span>👥 Deepthika S 等 3 位</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕<b>只使用 arXiv 摘要可支撑的内容</b>；「7.4 → 2.9 / 60% / 65% / 8.4 / 0.70」等为<b>作者自报、本线未复现</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与论文中的图表。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>钩子天生反直觉</b>：「AI 谄媚人」大家都听过；这篇把方向<b>反过来</b>—— <b>人也会谄媚 AI</b>。一句话就能立住：「三十二个人，向一个满口假话、却信心十足的 AI 学习，成绩从 7.4 掉到 2.9。」</li>
+    <li><b>画面自己会说话</b>：横轴是「假话比例 0 → 100%」，纵轴是「人吸收的比例」，而<b>曲线是平的</b>（每档都约 65%）；一个动图就能讲完「人几乎不看剂量，只要助手够自信就照收」。</li>
+    <li><b>结论能落到每个人手机上</b>：<b>信心不再能区分对错</b>（AUROC 0.70 → 随机）、<b>事后信任评分几乎没变</b>（人不觉得自己被骗）、<b>30% 的对话轮次是把测验题粘回被检查的助手</b>（把裁判交给被告）—— 三条都是可以立刻给建议的行为。</li>
+    <li><b>边界清楚（片中说）</b>：样本仅 <b>32 人</b>、<b>单一底层模型</b>（GPT-5-mini）、<b>单一主题域</b>（科学事实）；「Human Deference Index」是本文<b>新提出</b>的指标、尚无他人复用；助手在实验里「几乎从不谄媚」也是<b>该模型在该设定下</b>的性质，不能外推到所有 LLM；<b>无第三方复现</b>。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</span></div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Deepthika S, Pawni Yadav, B. Sankar（<b>3 位署名</b>；arXiv 元数据<b>未给机构字段</b>，本线<b>未核</b> PDF 首页机构，片中<b>不念机构、不臆测</b>）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-22T17:15:59Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom）· v1 · <code>comment</code>：<b>49 pages; 32 figures; 7 tables</b></div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.AI</code>（主分类）+ <code>cs.HC</code> · 关键词：谄媚（双向）/ 信心校准 / 用户实验 / 信任 / 指标与口径</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.31579">https://arxiv.org/abs/2610.31579</a>（放视频简介）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-24 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 公告批次 <code>2026-10-22</code>（<b>周六未刷新</b>）· 经 <code>id_list</code> 权威复核（<code>raw/2026-10-24-pm-idlist-r110a.xml</code>）</div></div>
+</div>
+
+
+<h2 class="sec">🎞 五段分镜（0–10 / 10–30 / 30–80 / 80–105 / 105–120s）</h2>
+<table>
+  <tr><th style="width:44px">镜</th><th style="width:96px">时间</th><th style="width:88px">段落</th><th style="width:34%">口播（中文 · 约 200 字/分）</th><th>画面（一律自绘 / AI 生成）</th><th style="width:18%">字幕（屏上大字）</th><th style="width:16%">音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">AI 会不会把人教错？三十二个人向五个说话极有底气的助手学科学，其中四个在编造事实 —— 结果几乎没人察觉。</td>
+    <td>近景：<b>一个人低头对着屏幕</b>，回答气泡一条条冒出，每个气泡右上角都挂着<b>绿色「高置信」小标</b>；镜头推到其中一个气泡，气泡里「<b>事实</b>」两字被一只看不见的手<b>换成橙色的「假」</b>，而画面里的人<b>点头</b>。最后一帧压暗，浮两行白字：「<b>32 人 · 5 个助手</b>」。</td>
+    <td>会把人教错的 AI<br><b>32 人 × 5 个助手</b><br>（小字：作者自报 · 未复现）</td>
+    <td>气泡「叮」×3；替换「咔」；点头「咚」；压暗处低频「嗡」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">研究者把问题反过来问：不是 AI 会不会顺着人说，而是人会不会顺着 AI 走。五个助手来自同一个模型，分别有 0、25、50、75、100% 的事实被换成听起来很合理的假话，语气一样笃定。</td>
+    <td>画一根<b>横轴</b>从 <b>0 → 100%</b>，轴上依次立起<b>五个小人图标</b>，脚下标签分别是 <b>0 / 25 / 50 / 75 / 100%</b>。五个小人头顶浮出<b>同一张「老师脸」</b>，复制时连语气波形都<b>一模一样</b>（波形条同步跳动）。右上角小字：「<b>同一底座模型</b>」。镜头最后停在最右那个 <b>100%</b> 上。</td>
+    <td>问题反过来问<br><b>人会不会顺着 AI</b><br>（小字：五档假话 · 一样自信）</td>
+    <td>复制「哒哒哒」；波形同步「嗡——」；镜头转向「唰」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">每个主题讲完，来一次突袭测验。选项只有四个：正确事实、被植入的假话、两个干扰项。每答一题，还要给自己的信心打分。全部对话再逐轮编码，看人到底在哪一句话上被带偏。测验之后还会再评一次「你信这个助手吗」，用来对照人自己说的信任、和实际被带偏的程度是不是一致。五个助手同一个底座模型、同样的语气，只有假话比例这一个变量不同；谁在骗自己，参与者在实验结束前并不知道。</td>
+    <td>左右分屏。左：<b>四张选项卡</b>排开（<b>正确事实</b> / <b>橙色「植入的假话」</b> / 干扰 A / 干扰 B），选完浮出 <b>0–10 的信心滑杆</b>，滑块被推到高位。右：<b>对话时间轴</b>一行行滚动，逐轮被打上<b>绿标 / 橙标</b>（橙标 = 该句含假话），一条橙色光带顺着轴往上长。此后切到<b>五条平行泳道</b>（五个助手）并排同屏，证明「只有假话比例不同」。末尾小窗：「<b>信不信这个助手？0–10</b>」再评一次。</td>
+    <td>四个选项 + 一个信心分<br><b>逐轮编码 · 谁被带偏</b><br>（小字：参与者事先不知情）</td>
+    <td>翻卡「嗒」×4；滑杆「嗤」；时间轴滚动「唰唰」；橙标「嘟」。</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果：满分十分，成绩从 7.4 掉到 2.9。被篡改的条目上，六成的人选了假话；没被篡改的只有一成。而且不管假话占四分之一还是全部，吸收率都差不多，约 65%。</td>
+    <td>左侧 <b>两根大柱</b>：<b>0% 假话 → 7.4</b>（绿）／<b>100% 假话 → 2.9</b>（橙红），纵轴刻度 0–10。右侧切到 <b>五根等高的柱子</b>（0/25/50/75/100%），顶端被一条<b>橙色水平虚线</b>穿过，标「<b>≈65% 吸收</b>」—— 强调「剂量变了，比例没变」。右下角两张小卡对照：<b>被篡改 60%</b> vs <b>未篡改 11%</b>。</td>
+    <td>7.4 → 2.9<br><b>六成选了假话</b><br>（小字：作者自报 · 未复现）</td>
+    <td>柱落「嗒·嗒」；虚线拉过「咻」；两张卡「嗒·嗒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">假话还被记得很牢，信心分 8.4；可信心已经分不清对错，事后也没人觉得自己被骗。论文解读，非官方结论；数字作者自报，未复现。</td>
+    <td>一条<b>信心曲线</b>从左上 <b>0.70</b> 坠到中间一条<b>虚线「随机」</b>；旁边一枚<b>「事后信任评分」指针</b>几乎不动，只抖了一下。画面下方浮三行边界小字：「<b>32 人 · 单一模型 · 单一领域</b>」「<b>指标为本文新提出</b>」「<b>作者自报 · 未见复现</b>」。末尾淡出，浮出<b>英文原题</b>与 <b>arXiv:2610.31579</b>。</td>
+    <td>信心不再分得清对错<br><b>AUROC 0.70 → 随机</b><br>（小字：人也不觉得自己被骗）</td>
+    <td>曲线坠落「咻——咚」；指针「咔」；三行小字「嗒·嗒·嗒」；BGM 收尾。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 5 镜分配 = <b>44 + 63 + 159 + 58 + 50 = 374 个汉字</b>（含 <code>AI</code> / <code>AUROC</code> / 数字后约 <b>455 字符</b>；按 200 字/分 ≈ <b>1 分 52 秒</b>，留 8s 给片头片尾呼吸，正落在 120s 档）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。若不配音也可作为<b>图文版长图</b>逐镜使用。
+  <br><b>若实测超时</b>：优先精压镜 3 的「测验之后还会再评一次『你信这个助手吗』，用来对照人自己说的信任、和实际被带偏的程度是不是一致」整句（约 50 字，可移作弹幕/评论区补充），其次是镜 4 的「而且不管假话占四分之一还是全部」压缩为「不管假话多少」。
+  <br><b>若实测偏短</b>：镜 5 可加半句「三成的对话里，人还把测验题粘回去问那个正在被检查的助手 —— 等于把裁判交给被告」（约 40 字），仍不超 120s。
+</div>
+
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（高置信气泡被替换成「假」 / 五档假话小人 + 同一张老师脸 / 四张选项卡 + 信心滑杆 + 对话逐轮编码 + 五条平行泳道 / 7.4 vs 2.9 柱状 + 五根等高吸收率柱 / 信心曲线坠到随机虚线 + 信任指针不动）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 实验界面截图（论文的图 32 幅，本线<b>未核</b>其授权与可复用性，片中<b>不作声称</b>）。</li>
+    <li><b>风格建议</b>：深蓝主色（<code>#1f3a93</code> → <code>#1f6feb</code>）+ 冷灰底；<b>「假话」统一用橙色</b>、<b>「正确事实 / 可信」统一用绿色</b>，全片不改色义（观众靠颜色就能跟上）。核心数字（<b>7.4 / 2.9 / 60% / 65% / 0.70</b>）一律置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 195–200 字/分；「<b>没人察觉</b>」「<b>一样笃定</b>」「<b>约 65%</b>」三处<b>放慢并加重</b>；镜 5 的「<b>也没人觉得自己被骗</b>」语气<b>平稳、不要念成嘲讽</b>（这不是「人傻」，而是校准失效）。</li>
+    <li><b>字幕</b>：镜 4 的全部数字配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行，照抄不改写）</b>。</li>
+    <li><b>术语友好化</b>：<b>sycophancy</b> → 「顺着你说」；<b>within-subjects</b> → 「同一批人轮流用五个助手」；<b>confidence calibration</b> → 「信心能不能对上对错」；<b>AUROC</b> → 首次出现念「用信心分辨对错的准确度」，屏上小字保留 <code>AUROC</code>；<b>Human Deference Index</b> → 「人对 AI 的让步指数」；<b>odds ratio</b> → 片中<b>不念</b>（改说「六成 vs 一成」）。</li>
+    <li><b>节奏</b>：镜 1 的「替换 + 点头」要在 <b>4 秒内</b>完成，反差靠画面而不是解说；镜 3 是全片信息密度最高处，<b>每讲一件事就换一次画面</b>（选项卡 → 滑杆 → 时间轴 → 泳道 → 再评一次），避免一张图讲 20 秒。</li>
+    <li><b>可选加料（不进 120s 主片）</b>：① 「<b>30% 的对话轮次是把测验题粘回被检查的助手</b>」可做成 5s 竖屏切片（传播性强）；② 「<b>人越觉得助手差，越会回来继续聊</b>」可做成第二集钩子。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「AI 把人变笨了 / 人类已经无法分辨真假 / 大模型都在骗人 / GPT-5-mini 不可信」；「7.4 → 2.9」「60% / 11%」「≈65%」「8.4」「0.70 → 随机」严格照摘要措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>指标不曲解（本片最关键）</b>：<b>AUROC 0.70 → 随机</b> 指的是「<b>用信心分数区分答对/答错的能力</b>掉到随机」，<b>不是</b>「模型正确率只有 50%」；<b>≈65% 吸收率</b> 是「助手每说一次假话、被人采纳的比例」，<b>不是</b>「65% 的答案都是错的」；<b>8.4/10</b> 是被吸收假话的<b>信心分</b>，<b>不是</b>正确率。片中须逐条说清。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用实验界面截图。</li>
+    <li>✅ <b>不编造数据</b>：仅使用摘要可支撑的表述 —— 「32 名参与者」「最多 5 个科学主题」「5 个助手 = 同一 GPT-5-mini」「假话比例 0/25/50/75/100%」「104 次测验 / 1,040 个答案」「得分 7.4 → 2.9（满分 10）」「被篡改 60% vs 未篡改 11%（odds ratio 12.5）」「吸收率各档约 65%」「信心 8.4/10」「AUROC 0.70 → chance」「事后信任评分几乎不变」「30% 轮次把测验题粘回助手」；<b>不虚构</b>参与者年龄/性别、实验时长、报酬、模型版本号细节。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 洗脑 / 人类集体降智」等原文未支持的引申；镜 5 明确边界（32 人 / 单一模型 / 单一领域 / 指标新提出 / 未见复现）。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（<b>3 位署名</b>：Deepthika S, Pawni Yadav, B. Sankar），<b>不臆测机构</b>（arXiv 元数据未给机构字段，PDF 首页本线未核，页面如实写「不念机构、不臆测」）。</li>
+    <li>✅ <b>预印本状态如实标注</b>：镜 5 有「<b>作者自报 · 未见复现</b>」小字；<code>comment</code> 只写「49 pages; 32 figures; 7 tables」，<b>不声称</b>已被会议/期刊接收，<b>不声称</b>代码与数据已开源。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-24</b> ｜ 文件 <code>research/video/SCENES/10_24.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</i>（Deepthika S 等 3 位）｜ <a href="https://arxiv.org/abs/2610.31579">arXiv:2610.31579</a> ｜ 首次提交 2026-10-22 ｜ 分类 <code>cs.AI</code>（+<code>cs.HC</code>）｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-24.html">research/daily/2026-10-24.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_23.html">10_23.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+

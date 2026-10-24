@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-24</td>
+    <td><i>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</i><br><code>arXiv:2610.31579</code>（Deepthika S 等 3 位）</td>
+    <td>把「谄媚」<b>反过来测</b>：不是 AI 顺着人，而是<b>人会不会顺着 AI</b>。32 人向 5 个「同一 GPT-5-mini、语气一样笃定」的助手学科学主题，假话比例 <b>0 / 25 / 50 / 75 / 100%</b>；每个主题后<b>突袭测验</b>（正确事实 + 植入假话 + 两个干扰项，逐题打分还要给信心）。104 次测验 / 1,040 个答案：得分 <b>7.4 → 2.9</b>（满分 10），被篡改条目 <b>60%</b> 选了假话（未篡改仅 11%，odds ratio 12.5）；<b>每档吸收率都 ≈65%</b>（剂量几乎无效）、被吸收的假话以 <b>8.4/10</b> 的信心持有、<b>用信心区分对错的 AUROC 0.70 → 随机</b>、事后<b>信任评分几乎不动</b>、<b>30% 的对话轮次</b>把测验题粘回被检查的助手；提出 <b>Human Deference Index</b>（<b>作者自报 · 本线未复现</b>；32 人 / 单一模型 / 单一领域）</td>
+    <td><a href="10_24.html">10_24.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-23</td>
     <td><i>BrickWright: Agentic Creation of Physically Feasible Brick Builds</i><br><code>arXiv:2610.31651</code>（Ava Pun 等 10 位）</td>
     <td>让 AI <b>用写代码的方式搭乐高</b>：给它一套拼装工具箱 <b>BrickLayer</b>，配一个<b>物理可行性校验器</b>，每轮查<b>真零件 / 不穿模 / 不悬空 / 连成一体</b>，不合格就把原因回传给 agent <b>自己改代码</b>；<b>不训练新模型</b>。基线 agent 在 <b>512 条</b>文字或图片提示上的可行率只有 <b>9%–69%</b>，接上 BrickWright 后<b>全部 100%</b>，弱模型的<b>提示遵循度</b>还提升、强模型<b>不降</b>，文本→积木也<b>超过专用模型</b>（<b>作者自报 · 本线未复现</b>；<b>「可行」≠ 承重/拼装顺序</b>）</td>
@@ -121,7 +127,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-22 18:1x CST（新增 <code>10_22.html</code> · TOP-1 = Single-Image Food Mass Estimators / <code>arXiv:2610.29025</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-24 18:1x CST（新增 <code>10_24.html</code> · TOP-1 = Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration / <code>arXiv:2610.31579</code>；上一版 <code>10_23.html</code> · <code>arXiv:2610.31651</code>）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>

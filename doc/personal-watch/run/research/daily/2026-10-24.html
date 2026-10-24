@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-24（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-24（早报 3 + 晚报 2 · 5/5 收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -52,15 +52,15 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-24 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 今日进度 3 / 5</b> · 本轮 3 篇<b>全部「借鉴」</b>（agent harness 演化 / 长上下文零数据 RL / 投机解码评测口径）</div>
+  <h1>论文推荐日报 · 2026-10-24 <span class="badge b-am">早报</span> <span class="badge b-pm">晚报</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5（当日收口）</b> · 早报 3 篇<b>全「借鉴」</b>（agent harness 演化 / 长上下文零数据 RL / 投机解码评测口径）+ 晚报 2 篇<b>全「科普」</b>（人对 AI 的双向谄媚 / VLM 的影子推断与生成模型先验）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-24（CST 本地日；本轮 = UTC 2026-10-23T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3/5）</span>
+    <span>📅 日期：2026-10-24（CST 本地日；AM = UTC 2026-10-23T22:0x · PM = UTC 2026-10-24T10:0x）</span>
+    <span>🏷 标识：早报 3 + 晚报 2（5/5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成：2026-10-24 06:0x CST</span>
+    <span>🕒 生成：2026-10-24 06:1x CST（AM）／18:0x CST（PM）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 3 篇均标 <span class="badge b-jz">借鉴</span>，<b>批次 <code>2026-10-22</code>（未刷新）</b>。晚报 2 篇「科普」留待 18:00，<b>不占用「借鉴」名额</b>。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span> + 晚 2 <span class="badge b-kp">科普</span>；<b>批次 <code>2026-10-22</code> 两轮均未刷新</b>（周六无公告）。科普 <b>TOP-1 = <code>2610.31579</code></b> → 分镜 <code>video/SCENES/10_24.html</code>。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -152,6 +152,59 @@
   </div>
 </div>
 
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 5 / 5 · 当日收口）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">谄媚（sycophancy）研究一直在问「LLM 会不会顺着用户想听的说」；这篇把方向反过来问：<b>当 LLM 自信、前后一致、却是错的，用户会不会顺着它弯？</b>被试内实验：32 人通过与 5 个助手（<b>同一个 GPT-5-mini</b>）聊天学最多 5 个科学主题，每个助手的讲解里分别有 <b>0 / 25 / 50 / 75 / 100%</b> 的事实被换成「看起来合理的假话」，且全部助手都以十足把握的口气说话。每个主题后来一次<b>突袭测验</b>（正确事实 + 植入假话 + 两个干扰项，每个答案再打信心分）。104 次测验 / 1,040 个答案：<b>得分从 7.4 掉到 2.9</b>（满分 10）；在被篡改的条目上 <b>60% 选了植入的假话</b>（未被篡改条目只有 11%，<b>odds ratio 12.5</b>）。逐轮编码显示：<b>助手每说一次假话约 65% 被吸收，且在 5 档篡改比例下都一样</b>；被吸收的假话以<b>高信心</b>持有（8.4/10），「答对更自信」的优势消失，<b>用信心区分对错的 AUROC 从 0.70 掉到随机水平</b>；而<b>任务后的信任评分几乎没变</b>。人越觉得助手差越会回来继续聊，但回来带来的是<b>更多吸收而不是更少</b>；<b>30% 的对话轮次是把测验题粘回被检验的助手</b>。助手本身几乎从不谄媚、被反驳时从不退让。作者提出经基线校正的 <b>Human Deference Index</b> 量化这种「人类侧的谄媚」，并主张可信度是<b>人-AI 配对</b>的属性、谄媚评测应<b>双向测量</b>、学习界面要<b>逐条</b>声明可靠性。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Deepthika S, Pawni Yadav, B. Sankar（arXiv 元数据仅 3 位作者、<b>未给机构字段</b>；PDF 首页机构待复核后补，<b>本页不臆测</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-22</b>（<code>published=2026-10-22T17:15:59Z</code>；<code>updated</code> 同为 2026-10-22）· comment：<b>49 pages; 32 figures; 7 tables</b> · PDF 实测见附录 D′</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code>（主分类）+ <code>cs.HC</code> · <span class="badge b-kp">科普</span> · 关键词：谄媚 / 双向（人对 AI）/ 信心校准 / 用户实验 / 信任</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.31579">https://arxiv.org/abs/2610.31579</a>（PDF 已落地：<code>research/pdf/2026-10-24/2610.31579.pdf</code>，见附录 D′ 字节 / 页数 / sha256）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 本日 TOP-1 → 已出分镜 <code>video/SCENES/10_24.html</code>）</b>
+    <ol>
+      <li><b>钩子天生反直觉</b>：「AI 谄媚人」大家都听过，这篇把它反过来 —— <b>人也会谄媚 AI</b>；开场一句「32 个人向一个满嘴假话、但语气十足的 AI 学习，成绩从 7.4 掉到 2.9」就能把人按在椅子上。</li>
+      <li><b>画面天然</b>：5 档篡改比例（0→100%）是一条横轴，纵轴是吸收率，而<b>曲线是平的（每档都约 65%）</b>；「人几乎不看剂量，只要助手够自信就照收」一个动图就能讲完。</li>
+      <li><b>结论能落到每个人手机上</b>：信心不再能区分对错（AUROC 0.70 → 随机）、事后信任评分几乎没变（<b>人不觉得自己被骗</b>）、30% 的轮次是把测验题粘回被检查的助手（<b>把裁判交给被告</b>）—— 三条都是可直接给建议的行为。</li>
+      <li><b>边界（我们判断）</b>：样本仅 <b>32 人</b>、<b>单一底层模型</b>（GPT-5-mini）与<b>单一主题域</b>（科学事实），摘要<b>未给</b>实验时长、人口学构成、练习题量与统计检验细节；<b>Human Deference Index 为本文新提出、尚无他人复用</b>；助手在实验里「几乎从不谄媚」本身也是特定模型的性质，<b>不能外推</b>到所有 LLM。作者自报、本线未复现、未精读。</li>
+    </ol>
+    <b>建议动作</b>：① 科普侧 —— 已按此篇做 <code>video/SCENES/10_24.html</code>（首三作者 + 原题 + abs 链接 + 免责随片）。② 研究侧 —— 把「<b>双向谄媚</b>」写进我们自己的评测口径：既测<b>模型顺从用户</b>，也测<b>人被模型带偏</b>（高置信错误讲解 → 评审/标注员是否吸收）；最便宜的最小实验是<b>把「无置信度审阅」和「带置信度审阅」做对照</b>，看信心分是否反而降低纠错率。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">5</span>Where Did the Light Come From? Diagnosing Cast-Shadow Reasoning in VLMs and Borrowing the Missing Shadow Prior from Image Generation Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">影子是「<b>光照—物体几何—场景结构</b>」交互的<b>可观测结果</b>；真正懂影子的模型不仅要能读出影子朝哪，还要能在<b>影子缺失时推断它该落在哪</b>，并能判断影子与场景<b>是否物理自洽</b>。作者构建 <b>ShadowBench</b>（取自<b>真实照片</b>）：每个场景给出「正确影子 / 去掉影子 / 人工标注的错方向」三种状态，正好对应这三个问题。评测 <b>19 个开源 VLM（2B–78B）</b>与前沿闭源模型：VLM <b>读可见影子的方向明显高于随机、并随规模改善</b>，但<b>推断「缺失时该朝哪」只有很弱的水平</b>，<b>判断物理自洽直接落到随机水平</b> —— 即使换成<b>去掉 yes 偏差的二选一</b>测试也一样。只有 <b>Gemini-3.1-pro</b> 在「有效性」判断上高于随机，幅度不大、且<b>远低于人类</b>。<b>Chain-of-Thought 没有帮助</b>。作者判断：缺的不是<b>推理</b>，而是<b>图像生成模型（IGM）已经具备的知识</b> —— 把 VLM <b>路由经过一个 IGM</b>，能把它对缺失影子方向的推断<b>明显抬到其直接作答之上</b>，并帮它<b>标出原本会接受的错方向影子</b>。投影方向只是光照理解的一个侧面，但 VLM 与 IGM 之间这道<b>明显落差</b>提示：<b>图像生成 / 重建目标可能是通向「光照感知 VLM」的一条路</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Where Did the Light Come From? Diagnosing Cast-Shadow Reasoning in VLMs and Borrowing the Missing Shadow Prior from Image Generation Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Ryugo Morita, Shunsuke Kitada, Stanislav Frolov, Brian Bernhard Moser, Ko Watanabe, Riku Takahashi, Jinjia Zhou, Andreas Dengel（共 8 位；arXiv 元数据<b>未给机构字段</b>，本页<b>不臆测</b>机构）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-22</b>（<code>published=2026-10-22T05:11:07Z</code>；<code>updated</code> 同为 2026-10-22）· comment：<b>Accepted to WACV2027</b>（作者自述录用；本线<b>未核会议录用页</b>）· PDF 实测见附录 D′</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code>（主分类，唯一分类）· <span class="badge b-kp">科普</span> · 关键词：视觉语言模型 / 影子与光照理解 / 物理一致性 / 基准与偏差控制 / 生成模型先验</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.30740">https://arxiv.org/abs/2610.30740</a>（PDF 已落地：<code>research/pdf/2026-10-24/2610.30740.pdf</code>，见附录 D′ 字节 / 页数 / sha256）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 备用选题）</b>
+    <ol>
+      <li><b>一张图就能把问题讲清</b>：同一张真实照片的三种状态（正确影子 / 影子被擦掉 / 影子方向被改错），观众<b>不需要任何前置知识</b>就明白「模型要答的是什么」。</li>
+      <li><b>结果打脸且有层次</b>：读可见影子<b>随规模变好</b>（看起来「懂了」）→ 影子一消失<b>几乎不会推断</b> → 判断自洽<b>掉到随机</b>；三层递进，正好是两分钟视频的骨架。</li>
+      <li><b>机制解释有「啊哈」</b>：CoT 无效 ⇒ 缺的不是推理；缺的是<b>图像生成模型已有的知识</b>；把 VLM 路由过 IGM 就能抬上去 —— 一句话：<b>「会画画的模型，比会看图的模型更懂光」</b>。</li>
+      <li><b>边界（我们判断）</b>：只覆盖 <b>cast-shadow（投影）方向</b>一个侧面，不等于完整光照理解；摘要<b>不给</b>各模型逐项准确率、人工基线数值与 IGM 路由的<b>实现细节 / 推理成本</b>；「Accepted to WACV2027」为作者 comment 声明；对比的闭源模型<b>版本与调用时间未述</b>（评测可能随服务端更新漂移）。作者自报、本线未复现、未精读。</li>
+    </ol>
+    <b>建议动作</b>：① 科普侧 —— 作为<b>备用选题</b>（本日科普 TOP-1 已给 <code>2610.31579</code>）；若真实照片三态对比素材能清权，它比 TOP-1 更「一眼懂」。② 研究侧 —— 多模态数据可把「<b>阴影 / 光照一致性</b>」当<b>合成数据质检项</b>：影方向与光源不一致的样本应剔除或标注，否则等于给模型喂「物理错但自然」的监督信号。
+  </div>
+</div>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="card">
+  <ol>
+    <li><b>篇数</b>：3 / 5 → <b>5 / 5（当日收口）</b>。晚报 2 篇<b>全按「科普」口径</b>选（早报 3 篇全「借鉴」），两口径不混用；<b>早报 3 篇一字未改</b>（含当时的「批次未刷新 / <code>kept 0</code>」记录，<b>不回改</b>）。</li>
+    <li><b>批次：仍未刷新</b> —— PM 轮实测 <code>totalResults=637451</code>（<b>与 r109 AM 相同</b>）、最新样本 <code>published=2026-10-22T17:59:53Z</code>；<b>周六无公告</b>（arXiv 周末不发布）。故晚报 2 篇<b>不是今日新提交</b>，而是<b>首次提交 2026-10-22（UTC）</b>、取自<b>上一轮 PM 已入台账但未入日报的候选池</b>。</li>
+    <li><b>窗口</b>：本轮 <code>window_mode=auto</code> 因<b>周六</b>自动切到 <b><code>weekend_batch</code>（120h）</b>（<b>非人工放宽</b>）⇒ <b>15/15 查询 <code>200</code></b>（14 条 <code>attempts=1</code>；<code>slm-small-language-model</code> <code>attempts=2</code>：首次 <code>ConnectTimeout</code> → backoff 20s 后成功，<b>如实记录</b>）、<b><code>kept 1</code> / <code>dropped 599</code></b>（<code>already in SEEN</code> 557 + <code>stale &gt; 120h</code> 42）。唯一新增候选 <code>2610.30181</code> Deep Search in Real-World Web Environments（cs.IR，<code>published=2026-10-19T18:59:21Z</code>，距本轮 <b>≈111h</b>）<b>入台账「候选」、本轮不入日报</b>（晚报名额给科普）。</li>
+    <li><b>数字变化</b>：台账 4,612 → <b>4,613 行</b>（+1 新候选；另 2 行「候选」→「收录」）⇒ <b>收录 246 / 候选 3,860 / 候选（RSS 补充）507</b>；<code>papers.jsonl</code> 244 → <b>246</b>；本日 PDF <b>3 → 5</b> 篇（新增 2 篇均通过严格校验，见附录 D′）。</li>
+    <li><b>TOP-1 归属</b>：早报 3 篇按「借鉴」选、不出科普 TOP-1；本日 <b>科普 TOP-1 = <code>2610.31579</code></b>（已出分镜 <code>video/SCENES/10_24.html</code>）。</li>
+    <li><b>未做 / 失败项（如实记）</b>：HF Daily 本轮<b>未再探活</b>（AM 已 <code>Errno 101</code> FAIL，PM 未重试，<b>不记「通过」</b>）；RSS 本轮未读；两篇晚报<b>均未精读</b>，摘要基于 arXiv 官方摘要 + comment；日报邮件以 <code>mail/发送记录.md</code> 为准（本页不预写）。</li>
+  </ol>
+</div>
+
 <h2 class="sec">附录 A · 本轮执行流程（I → VII）</h2>
 <div class="card">
   <ol>
@@ -228,10 +281,74 @@
   <b>注意</b>：<code>research/pdf/</code> 在 <code>.gitignore</code> 中，PDF <b>不进 git</b>，仅本地留存用于抽读/发信。
 </div>
 
+<h2 class="sec">附录 A′ · 晚报（PM）执行流程（I′ → VII′）</h2>
+<div class="card">
+  <ol>
+    <li><b>I′ 时间锚点</b>：本地 <b>2026-10-24 18:00 CST</b> = UTC <code>2026-10-24T10:00</code> = <b>周六 06:00 ET</b>。arXiv 周末<b>不公告</b>，故本轮<b>不期待</b>新批次。</li>
+    <li><b>II′ 批次复验（关键判据）</b>：<code>totalResults=637451</code> <b>与 r109 AM 完全相同</b>；最新样本仍 <code>published=2026-10-22T17:59:53Z</code>（<code>2610.31671</code>，<code>cs.CV</code>）⇒ <b>批次未刷新（仍 <code>2026-10-22</code>）</b>。三项独立证据同向（<code>200</code> 但无新内容 ≠ 有料，也 ≠ 无数据）。</li>
+    <li><b>III′ 窗口口径</b>：<code>window_mode=weekend_batch</code>、<code>window_hours=120.0</code>（含周末，覆盖最近一次公告批次），<code>rate_limit_seconds=3.0</code>。<b>未为凑数放宽窗口</b>。</li>
+    <li><b>IV′ 增量扫描</b>：<code>--fetch --seen</code>（<code>generated=2026-10-24T10:01:12.630562+00:00</code>）→ <b>15/15 <code>ok</code></b>；<b>14 条 <code>attempts=1</code></b>、<b>1 条 <code>attempts=2</code></b>（<code>slm-small-language-model</code> 首次 <code>ConnectTimeout 30s</code> → 退避 20s 后成功）；<b><code>kept 1</code> / <code>dropped 599</code></b> = <b>557</b> 条「already in SEEN」+ <b>42</b> 条「stale &gt;120h」。<b>唯一新条目</b>：<code>2610.30181</code>（<code>cs.IR</code>，<code>published=2026-10-19T18:59:21Z</code>，≈111h）—— 按口径<b>入候选</b>、<b>不入日报</b>（与 BaiZe/ZhuLong 无贴合度，且非今日）。</li>
+    <li><b>V′ 选题（不新增抓取）</b>：晚报 2 篇「<b>科普</b>」取自 <b>r108 PM 的 158 条候选池</b>；不做「今日新提交」宣称，正文与卡片均写 <b>首次提交 2026-10-22</b>。<code>id_list</code> 权威复核 <b>2/2 全部返回</b>（<code>raw/2026-10-24-pm-idlist-r110a.xml</code>，HTTP 200 + <code>application/atom+xml</code> + 含 <code>published</code>），标题 / 作者 / 分类 / <code>comment</code> <b>一律以该 XML 为准</b>。</li>
+    <li><b>VI′ 台账与 PDF</b>：<code>raw/update_r110.py</code>（断言 <code>kept==1</code>、<code>n_queries==15</code>、<code>weekend_batch</code>、全 <code>ok/200</code>、14× <code>attempts=1</code>、<code>items==[2610.30181]</code>，再改 2 行「候选」→「收录」+ 插 1 行新候选 + 追加 SUMMARY_LINE，并从官方 XML 追加 <code>papers.jsonl</code>）→ <code>SEEN.md</code> <b>4,613 行</b>（收录 <b>246</b> / 候选 <b>3,860</b> / RSS 补充 <b>507</b>）、<code>papers.jsonl</code> <b>246</b>；<code>raw/pdf_dl_r110.py</code> 严格校验（<code>content-type</code> + <code>content-length</code> 等长 + <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 页数 + <code>pdftotext</code> 字符数）→ <b>2/2 OK</b>（见附录 D′）。</li>
+    <li><b>VII′ 落页</b>：本页补 2 张 8 字段卡片 + 「晚报变更说明（AM → PM）」+ 附录 A′/B′/C′/D′；<code>daily/index.html</code> 改为晚报 5/5；TOP-1（<code>2610.31579</code>）出 <code>video/SCENES/10_24.html</code>（5 镜 / 120s / 口播 374 字）+ <code>SCENES/index.html</code> 加行。</li>
+  </ol>
+</div>
+
+<h2 class="sec">附录 B′ · 晚报 15 条查询实测（<code>generated=2026-10-24T10:01:12.630562+00:00</code> · <code>weekend_batch</code> 120h）</h2>
+<table>
+  <tr><th>#</th><th>area</th><th>name</th><th>HTTP</th><th><code>totalResults</code></th><th>entries</th><th>attempts</th><th>kept</th></tr>
+  <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>637451</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>2</td><td>LLM</td><td><code>llm-large-language-model</code></td><td>200</td><td>39391</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>3</td><td>LLM</td><td><code>llm-long-context</code></td><td>200</td><td>1860</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>4</td><td>LLM</td><td><code>llm-scaling-law</code></td><td>200</td><td>1017</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>5</td><td>SLM</td><td><code>slm-small-language-model</code></td><td>200</td><td>1109</td><td>40</td><td>2</td><td>0</td></tr>
+  <tr><td>6</td><td>SLM</td><td><code>slm-on-device</code></td><td>200</td><td>11042</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>7</td><td>多模态</td><td><code>mm-vision-language</code></td><td>200</td><td>17928</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>8</td><td>多模态</td><td><code>mm-multimodal</code></td><td>200</td><td>16643</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>9</td><td>多模态</td><td><code>mm-csmm</code></td><td>200</td><td>10263</td><td>40</td><td>1</td><td>1</td></tr>
+  <tr><td>10</td><td>agent harness</td><td><code>agent-harness-title</code></td><td>200</td><td>147</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>11</td><td>agent harness</td><td><code>agent-swe-bench</code></td><td>200</td><td>404</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>12</td><td>agent harness</td><td><code>agent-tool-use</code></td><td>200</td><td>1718</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>13</td><td>agent harness</td><td><code>agent-csma-multiagent</code></td><td>200</td><td>6033</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>14</td><td>邻域</td><td><code>nb-retrieval-augmented</code></td><td>200</td><td>3968</td><td>40</td><td>1</td><td>0</td></tr>
+  <tr><td>15</td><td>邻域</td><td><code>nb-alignment</code></td><td>200</td><td>22075</td><td>40</td><td>1</td><td>0</td></tr>
+</table>
+<div class="note">
+  <b>读法</b>：<code>totalResults</code> 是<b>该查询命中的历史总量</b>（不是本轮新增）；<code>entries=40</code> 是<b>本轮按 <code>submittedDate</code> 降序取的样本数</b>。
+  <b>15/15 <code>ok</code></b> 且 <code>content_type=application/atom+xml</code> ⇒ <b>查询链路健康</b>；<code>totalResults</code> 与 r109 AM <b>逐条相同</b> ⇒ <b>批次确实未刷新</b>（周六不公告）。
+  ⚠️ <code>kept 1</code> <b>不代表</b>「今天只有 1 篇论文」，只代表「<b>本轮采样里 1 条既不在 SEEN、也未超过 120h</b>」；其余 599 条为 <b>557 already-in-SEEN + 42 stale</b>。
+</div>
+
+<h2 class="sec">附录 C′ · 晚报 <code>id_list</code> 权威复核（2 请求 / 2 返回）</h2>
+<table>
+  <tr><th>arXiv ID</th><th><code>published</code>（UTC）</th><th>主分类</th><th><code>comment</code>（照抄）</th><th>本轮</th></tr>
+  <tr><td><code>2610.31579</code></td><td>2026-10-22T17:15:59Z</td><td><code>cs.AI</code></td><td>49 pages; 32 figures; 7 tables</td><td><b>✅ 入账 #4</b>（TOP-1）</td></tr>
+  <tr><td><code>2610.30740</code></td><td>2026-10-22T05:11:07Z</td><td><code>cs.CV</code></td><td>Accepted to WACV2027</td><td><b>✅ 入账 #5</b></td></tr>
+</table>
+<div class="note">
+  <b>证据</b>：<code>raw/2026-10-24-pm-idlist-r110a.xml</code> + <code>raw/2026-10-24-pm-idlist-r110a.headers</code>（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>）。
+  两篇<b>首次提交均为 2026-10-22</b>（UTC）⇒ <b>不写「今日新提交」</b>；<code>2610.30740</code> 的 <code>comment</code> 为<b>作者自述录用 WACV2027</b>，本线<b>未核</b>会议录用页，页面如实标注。
+</div>
+
+<h2 class="sec">附录 D′ · 晚报 2 篇 PDF 落地与校验（2 / 2）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>文件</th><th>字节</th><th>页数</th><th><code>pdftotext</code> 字符</th><th>校验</th></tr>
+  <tr><td><code>2610.31579</code></td><td><code>research/pdf/2026-10-24/2610.31579.pdf</code></td><td>5,146,096</td><td>49</td><td>130,670</td><td>✅ <code>%PDF-</code> / <code>%%EOF</code> / 等长</td></tr>
+  <tr><td><code>2610.30740</code></td><td><code>research/pdf/2026-10-24/2610.30740.pdf</code></td><td>15,056,978</td><td>17</td><td>80,425</td><td>✅ 同上</td></tr>
+</table>
+<div class="note">
+  <b>sha256</b>：<br>
+  <code>2610.31579</code> → <code>705eb27414c30b6781ebc961a05707c2c2888fdda5488888818a0cbf5ef43b2d</code><br>
+  <code>2610.30740</code> → <code>958289a869da698fdfab5c48a282e9d19170a7daf3be614c320a295c632d1145</code><br>
+  <b>页数与 <code>comment</code> 对得上</b>：<code>2610.31579</code> 实测 <b>49 页</b> == <code>comment</code>「49 pages」；<code>2610.30740</code> 实测 <b>17 页</b>（该篇 <code>comment</code> 只写「Accepted to WACV2027」，无页数可比）。
+  <br><b>本轮踩坑（已解）</b>：本机 arXiv 单连接带宽仅 <b>≈10–12 KB/s</b> ⇒ 第 2 篇 <b>15.1 MB</b> 按单连接要跑 <b>≈25 分钟</b>。实测<b>并行 Range 分片可提速约 10–11×</b>（4 连接 12s 拉 1.57 MB ≈ 130 KB/s）⇒ 新增 <code>raw/pdf_range_r110.py</code>（12 片并发 + 每片断点续传 + 汇总后校验字节数 / <code>%PDF-</code> / <code>%%EOF</code>），<b>15.1 MB 用时约 2 分钟</b>；页数 / 字符数仍走 <code>pdfinfo</code> + <code>pdftotext</code> 复核。⚠️ <b>不改工具 <code>pdf_dl</code> 本身</b>，本脚本只作慢链补救。
+  <br><b>注意</b>：<code>research/pdf/</code> 在 <code>.gitignore</code> 中，PDF <b>不进 git</b>，仅本地留存用于抽读 / 发信。
+</div>
+
 <footer>
-  <b>research 线 · 论文推荐日报</b> · 2026-10-24 早报（AM · 3/5）· 生成 2026-10-24 06:1x CST ·
-  台账 <b>收录 244 / 候选 3,861 / 候选（RSS 补充）507（4,612 行）</b> · <code>papers.jsonl</code> 244 条 ·
-  数据源 arXiv（<code>export.arxiv.org</code> API + <code>id_list</code> 复核）· 口径与踩坑见 <code>research/ARXIV_API.md</code> §9.109。
+  <b>research 线 · 论文推荐日报</b> · 2026-10-24 <b>5 / 5 收口</b>（早报 3「借鉴」+ 晚报 2「科普」）· 生成 2026-10-24 06:1x CST（AM）／18:0x CST（PM）·
+  台账 <b>收录 246 / 候选 3,860 / 候选（RSS 补充）507（4,613 行）</b> · <code>papers.jsonl</code> 246 条 ·
+  数据源 arXiv（<code>export.arxiv.org</code> API + <code>id_list</code> 复核）· 口径与踩坑见 <code>research/ARXIV_API.md</code> §9.109（AM）/ §9.110（PM）。
   <br>⚠️ 本页仅为<b>推荐 / 待读线索</b>，非结论；未精读；不构成任何已验证的性能主张。
 </footer>
 </div>
