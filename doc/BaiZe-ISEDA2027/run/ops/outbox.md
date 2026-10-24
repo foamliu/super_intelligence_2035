@@ -18984,3 +18984,72 @@ The pkill command got terminated. Let me clean up properly and examine the full 
   jobs_pi                  24/87
 === DONE 174 ===
 ```
+
+---
+
+## RUN_ID 175 · 2026-10-24 21:14:49 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 175 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+
+echo "[1] data code_l2"
+a=$(du -sb "$D" 2>/dev/null | cut -f1)
+echo "  $(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB / 1691 GB   bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-95 | head -2 || echo "   no rsync/migrate"' 2>/dev/null || true
+df -h /nas_env | tail -1
+
+echo "[2] 双机 GPU + launcher"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-100 | head -2 || echo '  none(.29)'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] pretrain loop：最近状态行（是否已结束本轮）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -3 | cut -c1-120; echo "-- tail --"; tail -c 500 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -5 | cut -c1-130' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[4] harness 合计"
+s=0; for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; n=$(find "$d" -name result.json 2>/dev/null | wc -l); s=$((s+n)); done; echo "  total=$s/609"
+echo "=== DONE 175 ==="
+```
+
+**输出**
+```
+=== RUN_ID 175 | snapshot | 2026-10-24 21:14:49 | host=whag0pgpuap29 ===
+[1] data code_l2
+  1256.9 GB / 1691 GB   bin=109/141
+2810729    7985 bash ./migrate_to_nas_env_fast.sh
+3071323    4368 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_tr
+10.239.23.32:/vol_CTE0_data04   10T  3.8T  6.2T  39% /nas_env
+[2] 双机 GPU + launcher
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+0, 0 MiB
+1, 0 MiB
+2, 0 MiB
+3, 0 MiB
+4, 0 MiB
+5, 0 MiB
+6, 4 MiB
+7, 4 MiB
+[3] pretrain loop：最近状态行（是否已结束本轮）
+[loop] 2026-10-24 20:23:59 cline returned (exit 0), checking git push ...
+[loop] 2026-10-24 20:24:01 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-24 20:54:01 wake up, invoking cline ...
+-- tail --
+- Worker showed "Connected all rings/trees" but NOT "Init COMPLETE" — **NCCL init was stuck in finalization on the worker**
+
+The pkill command got terminated. Let me clean up properly and examine the full worker.log for the gap between "Connected" and the
+[36m[run_commands][0m pkill -9 -f 'pretrain_launcher' 2>/dev/null; pkill -9 -f 'torchrun.*dualnode' 2>/dev/null; pkill -9 -f 'baiz
+[loop] 2026-10-24 20:54:01 wake up, invoking cline ...
+[4] harness 合计
+  total=251/609
+=== DONE 175 ===
+```
