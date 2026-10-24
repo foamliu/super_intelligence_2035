@@ -18902,3 +18902,85 @@ The pkill command got terminated. Let me clean up properly and examine the full 
   jobs_pi                  23/87
 === DONE 173 ===
 ```
+
+---
+
+## RUN_ID 174 · 2026-10-24 21:02:00 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 174 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 双机 GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] pretrain launcher 进程"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-105 | head -3 || echo '  none(.29)'
+
+echo "[3] agent 最新判断（loop 日志尾 12 行，去 ANSI）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 1600 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -12 | cut -c1-150' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[4] data：code_l2"
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+a=$(du -sb "$D" 2>/dev/null | cut -f1); echo "  $(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB  bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-95 | head -2 || echo "   no rsync"' 2>/dev/null || true
+df -h /nas_env | tail -1
+
+echo "[5] harness 计数"
+for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; printf "  %-24s %s/87\n" "$(basename "$d")" "$(find "$d" -name result.json 2>/dev/null | wc -l)"; done 2>/dev/null | head -8
+echo "=== DONE 174 ==="
+```
+
+**输出**
+```
+=== RUN_ID 174 | snapshot | 2026-10-24 21:02:00 | host=whag0pgpuap29 ===
+[1] 双机 GPU
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[2] pretrain launcher 进程
+2155104 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /n
+2155194 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train
+[3] agent 最新判断（loop 日志尾 12 行，去 ANSI）
+
+Let[0m[2m me also look[0m[2m at the worker.log[0m[2m between[0m[2m the[0m[2m "Connected" messages[0m[2m and the timeout to[0m[2m see if there are[0m[2
+Now I understand the full picture. The error is clear:
+
+- **First ALLREDUCE** (SeqNum=1, NumelIn=1, NumelOut=1) — this is a tiny barrier/sync, NOT a gradient allreduce
+- **Master ranks**: enqueued the ALLREDUCE (last enqueued: 1) but it never completed (last completed: -1) → **10-minute timeout (600000ms)**
+- **Worker ranks**: never enqueued ANY NCCL work (last enqueued: -1, last completed: -1) → **worker NCCL init never finalized**
+- Worker showed "Connected all rings/trees" but NOT "Init COMPLETE" — **NCCL init was stuck in finalization on the worker**
+
+The pkill command got terminated. Let me clean up properly and examine the full worker.log for the gap between "Connected" and the timeout.
+[36m[run_commands][0m pkill -9 -f 'pretrain_launcher' 2>/dev/null; pkill -9 -f 'torchrun.*dualnode' 2>/dev/null; pkill -9 -f 'baize_dualnod...
+[loop] 2026-10-24 20:54:01 wake up, invoking cline ...
+[4] data：code_l2
+  1031.3 GB  bin=90/141
+2810729    7217 bash ./migrate_to_nas_env_fast.sh
+3071323    3600 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_tr
+10.239.23.32:/vol_CTE0_data04   10T  3.6T  6.4T  37% /nas_env
+[5] harness 计数
+  jobs_claude-code         18/87
+  jobs_cline-patched       25/87
+  jobs_codex               20/87
+  jobs_deepseek-harness    69/87
+  jobs_hermes              65/87
+  jobs_opencode            22/87
+  jobs_pi                  24/87
+=== DONE 174 ===
+```
