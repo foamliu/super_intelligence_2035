@@ -1,5 +1,45 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 114 -->
+<!-- RUN_ID: 115 -->
+## RUN_ID 115 — 🛑 用户直令：**停掉 cline-full r2（PID 497054）** + dump 两侧配置供对齐
+
+```bash
+set -u
+echo "=== RUN_ID 115 | stop cline r2 + dump configs | $(date '+%F %T') | host=$(hostname) ==="
+P=497054
+B=/nasdata/app.e0031982/eda_code_eval/2026_1024_141148
+
+echo "[1] 停前状态"
+ps -o pid=,etimes=,stat=,args= -p $P 2>/dev/null | cut -c1-120 || echo '  not running'
+echo "  code dirs: $(ls -d $B/code/* 2>/dev/null | wc -l)   .py: $(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+[ -f "$B/.task_queue" ] && echo "  task_queue: $(wc -c < "$B/.task_queue") bytes"
+
+echo "[2] 停止（TERM→60s→KILL），保留日志与产物"
+kill -TERM $P 2>/dev/null && echo '  TERM sent'
+for i in $(seq 1 12); do sleep 5; kill -0 $P 2>/dev/null || { echo "  exited after $((i*5))s"; break; }; done
+kill -0 $P 2>/dev/null && { kill -9 $P 2>/dev/null; echo '  KILL9 sent'; }
+sleep 2
+ps -o pid=,stat= -p $P 2>/dev/null && echo '  STILL ALIVE' || echo '  confirmed stopped'
+ls -l /tmp/ABL_dsv4pro_cline_full_r2.log 2>/dev/null | awk '{print "  log kept: "$5" bytes"}'
+
+echo "[3] MCP settings 对照"
+for f in "$HOME/.cline/data/settings/cline_mcp_settings.json" "$HOME/.cline/cline_mcp_settings.json" "$HOME/.zhulong/settings/cline_mcp_settings.json"; do
+  [ -f "$f" ] && { echo "  == $f"; head -c 700 "$f"; echo; }
+done
+
+echo "[4] providers.json（两侧）"
+for p in $(find /nasdata/app.e0031982 -maxdepth 4 -name 'providers.json' 2>/dev/null | head -6); do
+  echo "  == $p"; head -c 500 "$p" 2>/dev/null; echo
+done
+
+echo "[5] 两个 run 脚本的关键差异"
+D=$(ls -d /nasdata/app.e0031982/code/eda_fastmcp 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+for s in $(ls "$D"/scripts/run_cline_script.sh "$D"/scripts/run_zhulong_script.sh 2>/dev/null); do
+  echo "  == $(basename "$s")"
+  grep -nE 'maxTokens|max_tokens|CLI_AGENT|MODEL|TEMPERATURE|top_p|READBACK|--turns|-p [0-9]|timeout' "$s" 2>/dev/null | head -14 | cut -c1-140
+done
+echo "=== DONE 115 ==="
+```
+
 
 <!-- RUN_ID: 113 (已下发, 未执行) -->
 ## RUN_ID 114 — 🔍 只读：ops 中继是否活着 + zhulong loop 真实情况
@@ -7,8 +47,10 @@
 > 背景：`run/ops/.last_run_id` = **112**，最后一次执行 **2026-10-23 09:36**（**31 小时前**）；此后 RUN 113 等新块**都没执行** ⇒ **疑中继已死**。
 > 同时 `MEMORY_ZHULONG.md` 自述 **"loop 未运行"**；论文 3 项改动（refs 另起第7页 / Lemma→Claim / delage 引用）自 15:4x–16:1x 下发后**无任何响应**。
 > ⚠️ **纯只读：不 kill、不重启、不写文件。**
+>
+> （RUN 114 已执行完毕，块内容降级为 text，避免遮蔽最新块。）
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 114 | relay + loop liveness | $(date '+%F %T') | host=$(hostname) ==="
 
