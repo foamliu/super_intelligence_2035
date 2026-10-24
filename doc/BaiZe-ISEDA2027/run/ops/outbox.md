@@ -17484,3 +17484,139 @@ Filesystem                     Size  Used Avail Use% Mounted on
 10.239.22.32:/vol_CTE0_data04   10T  1.2T  8.8T  12% /nas_env
 === DONE 158 ===
 ```
+
+---
+
+## RUN_ID 158 · 2026-10-24 18:12:33 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 158 | migrate speedup (85M deprioritized) | $(date '+%F %T') | host=$(hostname) ==="
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+R="$G/doc/BaiZe-ISEDA2027"
+NEW="$R/run/data_pipeline/migrate_to_nas_env_fast.sh"
+BL="${BWLIMIT_OVERRIDE:-300000}"
+
+# [0] 新脚本是否已随 git pull 到位（中继每 ~60s fetch 一次，可能慢一拍）
+if [ ! -f "$NEW" ]; then
+  echo "[0] missing -> git pull"
+  ( cd "$G" && timeout 90 git pull --rebase --autostash origin main >/dev/null 2>&1 ) || true
+fi
+if [ ! -f "$NEW" ]; then echo "[0] ABORT: $NEW 仍不存在（push 未到？）"; exit 1; fi
+echo "[0] script=$(wc -c < "$NEW")B  bwlimit=${BL}KiB/s (~$((BL/1024)) MB/s)"
+
+# [1] 定位（只认 comm=bash/rsync；排除 cline/bun/node，避开"任务书当 argv"误匹配）
+findmig() {
+  ps -eo pid=,ppid=,comm=,args= 2>/dev/null | grep migrate_to_nas_env \
+    | grep -Ev 'grep|cline|bun|node|awk|bash -c' | cut -c1-150
+}
+echo "[1] local:"; findmig
+HOST=local
+if [ -z "$(findmig)" ]; then
+  echo "[1] local none -> probe .12"
+  R12=$(timeout 25 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 \
+        "ps -eo pid=,ppid=,comm=,args= | grep migrate_to_nas_env | grep -Ev 'grep|cline|bun|node|awk|bash -c' | cut -c1-150" 2>/dev/null || true)
+  echo "${R12:-(none)}"
+  [ -n "${R12:-}" ] && HOST=.12
+fi
+echo "[1] HOST=$HOST"
+if [ "$HOST" = local ] && [ -z "$(findmig)" ]; then
+  echo "[1] 未发现迁移进程（可能已全部迁完）。什么都不做。"; exit 0
+fi
+
+run_on() {
+  if [ "$1" = local ]; then bash -s; else timeout 260 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -s; fi
+}
+
+run_on "$HOST" <<'EOS'
+set -u
+SRC=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data
+DST=/nas_env/app.e0031982/baize-data
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+NEW="$G/doc/BaiZe-ISEDA2027/run/data_pipeline/migrate_to_nas_env_fast.sh"
+BL="${BWLIMIT_OVERRIDE:-300000}"
+migs() { ps -eo pid=,ppid=,comm=,args= 2>/dev/null | grep migrate_to_nas_env | grep -Ev 'grep|cline|bun|node|awk|bash -c' | cut -c1-150; }
+
+echo "[2] before: $(migs | tr '\n' '|')"
+SP=$(ps -eo pid=,comm=,args= | grep migrate_to_nas_env | grep -Ev 'grep|cline|bun|node|awk|bash -c' | awk '$2=="bash"{print $1}')
+RP=$(ps -eo pid=,comm=,args= | grep migrate_to_nas_env | grep -Ev 'grep|cline|bun|node|awk|bash -c' | awk '$2=="rsync"{print $1}')
+echo "[2] script=${SP:-none} rsync=${RP:-none}"
+# 先 STOP 脚本（防它 rsync rc!=0 后 continue 到下一源），再优雅停 rsync（SIGINT 让它清理/flush）
+for p in $SP; do kill -STOP "$p" 2>/dev/null && echo "  STOP $p"; done
+for p in $RP; do kill -INT  "$p" 2>/dev/null && echo "  INT  $p"; done
+sleep 8
+for p in $SP; do kill -TERM "$p" 2>/dev/null && echo "  TERM $p"; done
+sleep 4
+for p in $SP $RP; do kill -0 "$p" 2>/dev/null && { kill -9 "$p" 2>/dev/null && echo "  KILL9 $p"; }; done
+echo "[2] after : $(migs | tr '\n' '|')"
+echo "[2] dst hidden temp (前 5 个，保留给 --partial 复用，不删):"
+find "$DST" -maxdepth 2 -name '.*' -type f 2>/dev/null | head -5
+
+# [3] 起新脚本（setsid 脱离中继的 timeout；flock 防第二实例）
+cd "$G/doc/BaiZe-ISEDA2027/run/data_pipeline" || exit 1
+BWLIMIT="$BL" setsid -f nohup bash ./migrate_to_nas_env_fast.sh > /tmp/migrate_to_nas_env_fast.log 2>&1 < /dev/null
+sleep 6
+echo "[3] launched: $(migs | tr '\n' '|')"
+
+# [4] 60s 实测速率（du -sb 差值）+ 剩余量 + ETA
+B0=$(du -sb "$DST" 2>/dev/null | cut -f1)
+sleep 60
+B1=$(du -sb "$DST" 2>/dev/null | cut -f1)
+DELTA=$(( ${B1:-0} - ${B0:-0} ))
+MBS=$(( DELTA / 1048576 / 60 ))
+echo "[4] dst bytes: $B0 -> $B1  (+${DELTA}B in 60s) => ${MBS} MB/s"
+REM=0
+for n in full_ultradata_math_l3 full_ultradata_code_l3 full_ultradata_math_l1 full_ufw_l3 full_ultradata_code_l2; do
+  d="$SRC/$n"
+  if [ -L "$d" ]; then echo "    [done] $n (symlink)"; continue; fi
+  sb=$(du -sb "$d" 2>/dev/null | cut -f1); db=$(du -sb "$DST/$n" 2>/dev/null | cut -f1)
+  r=$(( ${sb:-0} - ${db:-0} )); [ "$r" -lt 0 ] && r=0
+  REM=$(( REM + r ))
+  echo "    [todo] $n  src=${sb:-0} dst=${db:-0} rem=$r"
+done
+echo "[4] remaining=$REM bytes"
+if [ "$MBS" -gt 0 ]; then echo "[4] ETA ~ $(( REM / 1048576 / MBS / 3600 ))h $(( (REM / 1048576 / MBS % 3600) / 60 ))m"; else echo "[4] ETA n/a (rate=0)"; fi
+
+echo "[5] new log tail:"; tail -n 10 /tmp/migrate_to_nas_env_fast.log 2>/dev/null | cut -c1-160
+echo "[5] 85M download alive?"; ps -eo pid=,etimes=,args= | grep -E 'download_85m|hf download' | grep -v grep | cut -c1-120 | head -3
+echo "[5] df:"; df -h /nas_train /nas_env | tail -3
+EOS
+echo "=== DONE 158 ==="
+```
+
+**输出**
+```
+=== RUN_ID 158 | migrate speedup (85M deprioritized) | 2026-10-24 18:12:33 | host=whag0pgpuap12 ===
+[0] script=5971B  bwlimit=300000KiB/s (~292 MB/s)
+[1] local:
+ 112559       1 bash            bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/migrate_to_nas_env.sh
+[1] HOST=local
+[2] before:  112559       1 bash            bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/migrate_to_nas_env.sh|
+[2] script=112559 rsync=none
+  STOP 112559
+[2] after : 3400576       1 bash            bash ./migrate_to_nas_env_fast.sh|
+[2] dst hidden temp (前 5 个，保留给 --partial 复用，不删):
+/nas_env/app.e0031982/baize-data/full_ultradata_math_l1/.math_l1_train_s1.bin.QZKSKg
+/nas_env/app.e0031982/baize-data/full_ultradata_math_l1/.math_l1_train_s1.bin.xGPJga
+[3] launched: 3400576       1 bash            bash ./migrate_to_nas_env_fast.sh|
+[4] dst bytes: 839471290964 -> 853134832928  (+13663541964B in 60s) => 217 MB/s
+    [done] full_ultradata_math_l3 (symlink)
+    [done] full_ultradata_code_l3 (symlink)
+    [todo] full_ultradata_math_l1  src=659469521715 dst=23507647170 rem=635961874545
+    [todo] full_ufw_l3  src=1062126204214 dst=0 rem=1062126204214
+    [todo] full_ultradata_code_l2  src=1691139372199 dst=0 rem=1691139372199
+[4] remaining=3389227450958 bytes
+[4] ETA ~ 4h 8m
+[5] new log tail:
+[ABORT] another migration instance holds /tmp/migrate_to_nas_env.lock — 不启第二个实例（串行才可控）
+  2,173,272,064   0%  291.25MB/s    0:36:43    2,451,963,904   0%  287.76MB/s    0:37:09    2,746,777,600   0%  284.07MB/s    0:37:37    3,050,668,032   0% 
+[5] 85M download alive?
+ 236391   12936 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 /nas_train/app.e0031982/miniforge3/envs/py3
+ 581946   26361 bash download_85m_parallel16.sh
+[5] df:
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.22.31:/vol_CTE0_data01  207T  178T   30T  86% /nas_train
+10.239.22.32:/vol_CTE0_data04   10T  1.2T  8.8T  12% /nas_env
+=== DONE 158 ===
+```
