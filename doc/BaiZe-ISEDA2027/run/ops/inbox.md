@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 149 -->
+<!-- RUN_ID: 150 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,13 +29,64 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 150 — 🔎 只读诊断：pretrain 线为何 2.5h 无提交 / loop 是否活着（用户令）
+
+> 用户令（2026-10-24 11:0x）：「让 ops 中继看看 pretrain 什么情况」。
+> 背景：`MEMORY_PRETRAIN_2B.md` 最后提交 08:33（#762 idle，.29 全空闲），08:49 已下发「按报告 §4 继续优化吞吐」令，此后 **2.5h 无任何提交**。loop 设计上 `CLINE_TIMEOUT=1500s` + `SLEEP_WAIT=1800s`，单轮上限约 55min ⇒ 已至少错过 2 轮。
+> **本块纯只读**：不 kill、不重启、不改任何文件。判据：① loop 进程在不在 ② loop log 尾部有没有卡住/报错 ③ 有没有 cline 子进程挂着 ④ GPU 上有没有实验在跑。
+
+```bash
+set -u
+echo "=== RUN_ID 150 | pretrain status probe (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] loop process (期望 1 条: baize_pretrain_loop.sh)"
+pgrep -af 'baize_pretrain_loop[.]sh' | cut -c1-160
+echo "    count=$(pgrep -cf 'baize_pretrain_loop[.]sh' 2>/dev/null || echo 0)"
+echo
+echo "[2] loop log 尾部 30 行（关键：最后一行时间戳 / 是否有 timeout、Forbidden、Error）"
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[3] loop log + last_push 时间戳（>60min 即按卡死）"
+ls -l --time-style=+%F' '%T /tmp/baize_pretrain_loop.log /tmp/baize_pretrain_last_push 2>/dev/null
+echo "    last_push_epoch=$(cat /tmp/baize_pretrain_last_push 2>/dev/null) now=$(date +%s)"
+echo
+echo "[4] cline / opencode 子进程（卡住的 cline 会在，且 etime 很长）"
+ps -eo pid,etime,stat,cmd 2>/dev/null | grep -E 'cline|opencode' | grep -v grep | cut -c1-170 | head -10
+echo
+echo "[5] GPU 占用（在跑实验则该有 util/显存）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,memory.total --format=csv,noheader 2>/dev/null | head -8
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>/dev/null | head -10
+echo
+echo "[6] 训练/实验相关进程（torchrun / baize_perf / lm_eval）"
+pgrep -af 'torchrun|baize_perf|lm_eval|baize_xmodel|decay' | cut -c1-170 | head -20
+echo
+echo "[7] /tmp 最近 10 个日志（找 09:00 之后新生成的实验日志）"
+ls -lt --time-style=+%F' '%T /tmp/*.log 2>/dev/null | head -10 | cut -c1-170
+echo
+echo "[8] 仓库状态（本机是否落后 / 有无未提交改动）"
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+[ -d "$REPO" ] || REPO=/nas_train/app.e0031982/code/Baize-ISEDA2027
+echo "    repo=$REPO"
+if [ -d "$REPO/.git" ]; then
+  git -C "$REPO" status -sb 2>/dev/null | head -6
+  git -C "$REPO" log -1 --date=format:'%F %T' --pretty='    HEAD: %h %ad %s' 2>/dev/null
+fi
+echo
+echo "[9] MEMORY / TASK 文件 mtime（本机是否真的没写盘）"
+ls -l --time-style=+%F' '%T "$REPO/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md" "$REPO/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+echo
+echo "[10] 磁盘（.29 侧实验产物是否在增长）"
+df -h /tmp /nas_train 2>/dev/null | tail -3
+echo "=== DONE 150 ==="
+```
+
 ## RUN_ID 149 — 🔴 用户直令：把 MiniCPM5 分词数据搬到 /nas_env（L2 已 kill，训练未起，窗口期）
 
 > 用户直令（2026-10-22 08:4x）：「趁前面 L2 已 kill，新训练还没起，把 MiniCPM5 分词后的数据搬到 /nas_env 吧」。
 > **背景**：`/nas_train` 承载 5 源分词 3.91TB + en_v1_4 分词 6.78TB，接近吃紧；`/nas_env` 历史实测 ~9.9TB free。趁 L2 已停、A 方案训练未启动的窗口做迁移。
 > ⚠️ **安全迁移原则**：① 先 `df` 确认 `/nas_env` 余量 ≥ 数据量 ×1.1；② **用 `rsync` 不用 `mv`**（跨挂载 mv = 复制+删除，中断会两边都不完整）；③ **校验 shard 数与字节数一致后才删源**；④ **先建软链接**保证旧路径仍可访问；⑤ **不停 en_v1_4 下载/分词**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 149 | migrate tokenized data to /nas_env | $(date '+%F %T') | host=$(hostname) ==="
 BASE=/nas_train/app.e0031982/code/Baize-ISEDA2027
