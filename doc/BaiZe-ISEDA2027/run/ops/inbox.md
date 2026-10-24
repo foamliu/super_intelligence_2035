@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 151 -->
+<!-- RUN_ID: 152 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,12 +29,54 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 152 — 🎯 定位：round2b 卡在哪 / `.29` 的僵尸 loop 与空转 git add（只读）
+
+> 承接 151：`.29` 8 卡 **0%/0MiB**、`baize_perf_optim_round2b.sh`(2802077) 起了 3min 但 runner log **0B**；`git add --pathspec-from-file`(920049) **99.9% CPU 空转 29min**（PPID=cline hub daemon 2751345）；`pi`(328936) 已挂 **21h**、其 loop(1294147) 日志停在 10-23 14:09；而 `.12` 的 pretrain loop **仍在写**（log 11:08:02）。
+> 目标：① 看 `.12` loop 最新输出（它到底在等什么）② 看 round2b 脚本头部（是否第一步就 git/等锁）③ 看三个可疑进程的 `wchan`/子进程。**仍纯只读。**
+
+```bash
+set -u
+echo "=== RUN_ID 152 | pretrain probe-3 (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$REPO/doc/BaiZe-ISEDA2027/run
+echo
+echo "[1] 本机 pretrain loop 日志尾部 30 行（关键：最后一行 + 是否在等 git/实验）"
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[2] MEMORY_PRETRAIN_2B.md 顶部 10 行（未提交的最新写入）"
+sed -n '1,10p' "$R/MEMORY_PRETRAIN_2B.md" 2>/dev/null | cut -c1-220
+echo
+echo "[3] round2b 脚本头部 45 行（看第一步是否 git / 等锁 / 需要空闲 GPU）"
+sed -n '1,45p' "$R/baize_perf_optim_round2b.sh" 2>/dev/null | cut -c1-200
+echo
+echo "[4] 本机相关进程（含 wchan：D=IO 等、R=CPU 空转）"
+ps -eo pid,ppid,stat,etime,pcpu,wchan:24,cmd 2>/dev/null | grep -E 'baize_pretrain_loop|baize_perf_optim|cline-hub|cline-checkpoint|bin/\.cline|pi-coding-agent' | grep -v grep | cut -c1-190 | head -12
+echo
+echo "[5] 逐个 PID 详情（存在的才打印）"
+for p in 2802077 920049 2751345 919926 919933 328936 1294147 2408672 3981049; do
+  if [ -d "/proc/$p" ]; then
+    printf "  PID %s: " "$p"
+    cat "/proc/$p/wchan" 2>/dev/null; echo
+    ps -o pid,ppid,stat,etime,pcpu,cmd -p "$p" 2>/dev/null | tail -1 | cut -c1-180
+    echo "    children: $(pgrep -P "$p" 2>/dev/null | tr '\n' ' ')"
+  fi
+done
+echo
+echo "[6] round2b 的输出目录/临时目录（是否已有实验产物或报错）"
+ls -lt --time-style=+%F' '%T /tmp/baize_perf_r2* 2>/dev/null | head -8
+ls -lt /tmp/baize_perf_r2/ 2>/dev/null | head -8
+echo
+echo "[7] 本机 GPU（再确认一次）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "=== DONE 152 ==="
+```
+
 ## RUN_ID 151 — 🔎 补探：round2b 是否真在训练 / 提交链为何堵（只读）
 
 > 承接 RUN_ID 150（`.29`，11:04:58）：loop 进程在、但 loop log 停在 **10-23 14:09**、`pi` 已挂 21h、`cline` 于 10:38 起、其 `git add --force --pathspec-from-file` 已挂 26min；同时 `baize_perf_optim_round2b.sh` 存在且 `/tmp/baize_perf_r2b_runner.log` 刚创建（0B）。GPU 当时 0%/0MiB。
 > **本块仍纯只读**：目的 = ① round2b 有没有真跑起来 ② 卡住的 git add 是不是 `index.lock` 争用 ③ 当前 loop 到底是谁在驱动。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 151 | pretrain probe-2 (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
 REPO=/nas_train/app.e0031982/code/super_intelligence_2035
