@@ -1,6 +1,17 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🧪 运维令 · 2026-10-24 21:0x（**双机 NCCL 卡在 worker 初始化 → 停盲目重试，按最小复现定位**）· 用户直令 · 最高优先
+> 事实（RUN_ID 171/172/173 实测）：20:08 与 20:23 两次双机起训**都挂在 `NCCL init`**——master 首个 ALLREDUCE 等 600s 超时（`last completed: -1`），worker **从未 enqueue 任何 NCCL 工作**，日志只到 `Connected all rings/trees`、**没有 `Init COMPLETE`**。清理后 16 卡已空闲。
+> **本轮动作（按序，不得跳步）**：
+> 1. **最小复现**：只起 **2 rank（每机 1 卡）跑 20 步**，加 `NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET`，两边日志落 `/tmp/nccl_dbg/`；**验收 = 出现 `NCCL INFO Init COMPLETE`**。
+> 2. **显式指定网络面**（RoCE 跨机 hang 的第一嫌疑）：先 `ibv_devinfo -v | grep -E 'GID|state|link_layer'` + `ip -br addr` 查清口名/GID，再设 `NCCL_IB_HCA=<RoCE 口>`、`NCCL_IB_GID_INDEX=<实测>`、`NCCL_IB_TC=106`、`NCCL_IB_MTU=4096`、`NCCL_SOCKET_IFNAME=<管理口>`。
+> 3. **对照实验**：同一最小复现再跑一次 `NCCL_IB_DISABLE=1`（走 TCP）。TCP 过 / IB 不过 ⇒ 锁 RoCE（MTU/GID/TC/`rp_filter`）；两者都不过 ⇒ launcher/rank 编排问题。
+> 4. **只做实验，不动单机配方**：`--train-iters 20` 通了再回到 80 步量吞吐；🚫 不得改 e18（MBS3+FP8TW+CG）。
+> 5. **落盘**：两边 `NCCL_DEBUG` 日志 + `ibv_devinfo` + 结论写进 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「双机 NCCL 排障」，MEMORY 记一行。
+> 🚫 **不要再把 16 卡全量起一次然后等 10 分钟超时**（已浪费约 25 分钟）——先 2 rank 打出 `Init COMPLETE`。
+
+
 ### ⚡ 应急令 · 2026-10-24 19:2x（**loop 曾卡死 29h，已由运维重启 —— 本轮唤醒第一件事就是跑 16:2x 双机测试**）· 用户直令 · 覆盖一切
 > 事实：`/tmp/baize_pretrain_loop.log` 停在 **10-23 14:09「wake up, invoking pi」**（29h 未再唤醒），MEMORY 停在 **15:07 #766**，而 **`.29` 与 `.12` 的 16 张 H100 全空（0 MiB / 0%）**。
 > **本轮唤醒顺序（不得跳过）**：① 先做 16:2x 的前置三验（`.12`/`.29` 空闲、两机互通、`ibstat`/`topo -m` 确认走 IB 而非 TCP）；② **立即起 DP16 双机训练**（其余超参不变：MBS3 / FP8 TW / CG / GBS1024 / 同数据 / 80 步口径）；③ 报**聚合 tok/s、线性扩展效率、每卡 tok/s、NCCL 带宽、loss 一致性**；④ 测完**立即释放 16 卡**并落 MEMORY + daily；⑤ 再回头做常规巡检。
