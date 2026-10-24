@@ -18316,3 +18316,83 @@ launched
 2582949       1 bash ./ops_relay_v2.sh
 === DONE 164 ===
 ```
+
+---
+
+## RUN_ID 165 · 2026-10-24 19:40:50 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 165 | who spawns relay v2 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] 中继进程（含 PPID / 启动时长）"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep ops_relay | grep -v grep | cut -c1-120
+
+echo "[2] 每个 v2 的父进程是谁"
+for p in $(pgrep -f 'ops_relay_v2\.sh'); do
+  pp=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+  echo "  v2 pid=$p ppid=$pp"
+  [ -n "$pp" ] && ps -o pid=,etimes=,args= -p "$pp" 2>/dev/null | cut -c1-130 | sed 's/^/     parent: /'
+done
+
+echo "[3] 中继日志（看启动横幅时间戳 = 被拉起的时刻）"
+ls -lt /tmp/baize_ops_relay*.log /tmp/switch_relay*.log /tmp/dedupe_relay*.log 2>/dev/null | head -6
+echo "  --- tail baize_ops_relay.29.log ---"
+tail -8 /tmp/baize_ops_relay.29.log 2>/dev/null | cut -c1-150
+
+echo "[4] 定时任务 / 看门狗"
+crontab -l 2>/dev/null | grep -i -E 'relay|loop' | head -5 || echo '  no user crontab'
+ls /etc/cron.d 2>/dev/null | head -5
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'watchdog|keepalive|supervis' | grep -v grep | cut -c1-120 | head -4 || echo '  no watchdog proc'
+
+echo "[5] 哪些脚本里引用了 ops_relay"
+timeout 40 grep -rl 'ops_relay' "$R/run" 2>/dev/null | head -8
+
+echo "[6] pretrain 现状"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep -E 'baize_pretrain_loop|torchrun|pretrain_launcher' | grep -v grep | cut -c1-130 | head -4 || echo '  NONE'
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" | cut -c1-110
+tail -4 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-150
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8
+echo "=== DONE 165 ==="
+```
+
+**输出**
+```
+=== RUN_ID 165 | who spawns relay v2 | 2026-10-24 19:40:50 | host=whag0pgpuap29 ===
+[1] 中继进程（含 PPID / 启动时长）
+2259598       1     386 bash ./ops_relay_v2.sh
+2753486 2259598       0 bash ./ops_relay_v2.sh
+[2] 每个 v2 的父进程是谁
+  v2 pid=2259598 ppid=1
+     parent:       1 23092213 /sbin/init
+  v2 pid=2753486 ppid=2259598
+     parent: 2259598     387 bash ./ops_relay_v2.sh
+[3] 中继日志（看启动横幅时间戳 = 被拉起的时刻）
+-rw-r----- 1 app.e0031982 app.adm  146 Oct 24 19:38 /tmp/dedupe_relay_29.log
+-rw-r----- 1 app.e0031982 app.adm  340 Oct 24 19:38 /tmp/baize_ops_relay.29.log
+-rw-r----- 1 app.e0031982 app.adm  130 Oct 24 19:34 /tmp/switch_relay_29.log
+-rw-r----- 1 app.e0031982 app.adm 5030 Oct 24 19:34 /tmp/baize_ops_relay_29.log
+-rw-r----- 1 app.e0031982 app.adm  463 Oct 18 12:15 /tmp/baize_ops_relay.log
+  --- tail baize_ops_relay.29.log ---
+[relay-29] 2026-10-24 19:34:24 v2 started. repo=/nas_train/app.e0031982/code/super_intelligence_2035 tag=29 state=/nas_train/app.e0031982/code/super_i
+[relay-29] RUN_ID=163 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=164 executed, exit=0, appended to outbox.
+[4] 定时任务 / 看门狗
+   1648 23092205 [watchdogd]
+[5] 哪些脚本里引用了 ops_relay
+[6] pretrain 现状
+1401353       1    1111 bash ./baize_pretrain_loop.sh
+-rw-r----- 1 app.e0031982 app.adm 28881 2026-10-24_15:07:08 /nas_train/app.e0031982/code/super_intelligence_20
+[loop] 2026-10-24 19:23:00 wake up, invoking cline ...
+0, 0 MiB
+1, 0 MiB
+2, 0 MiB
+3, 0 MiB
+4, 0 MiB
+5, 0 MiB
+6, 0 MiB
+7, 0 MiB
+=== DONE 165 ===
+```
