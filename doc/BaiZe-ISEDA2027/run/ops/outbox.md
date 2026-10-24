@@ -16319,3 +16319,154 @@ Filesystem                     Size  Used Avail Use% Mounted on
 0
 === DONE 149 ===
 ```
+
+---
+
+## RUN_ID 150 · 2026-10-24 11:04:58 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 150 | pretrain status probe (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] loop process (期望 1 条: baize_pretrain_loop.sh)"
+pgrep -af 'baize_pretrain_loop[.]sh' | cut -c1-160
+echo "    count=$(pgrep -cf 'baize_pretrain_loop[.]sh' 2>/dev/null || echo 0)"
+echo
+echo "[2] loop log 尾部 30 行（关键：最后一行时间戳 / 是否有 timeout、Forbidden、Error）"
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[3] loop log + last_push 时间戳（>60min 即按卡死）"
+ls -l --time-style=+%F' '%T /tmp/baize_pretrain_loop.log /tmp/baize_pretrain_last_push 2>/dev/null
+echo "    last_push_epoch=$(cat /tmp/baize_pretrain_last_push 2>/dev/null) now=$(date +%s)"
+echo
+echo "[4] cline / opencode 子进程（卡住的 cline 会在，且 etime 很长）"
+ps -eo pid,etime,stat,cmd 2>/dev/null | grep -E 'cline|opencode' | grep -v grep | cut -c1-170 | head -10
+echo
+echo "[5] GPU 占用（在跑实验则该有 util/显存）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,memory.total --format=csv,noheader 2>/dev/null | head -8
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>/dev/null | head -10
+echo
+echo "[6] 训练/实验相关进程（torchrun / baize_perf / lm_eval）"
+pgrep -af 'torchrun|baize_perf|lm_eval|baize_xmodel|decay' | cut -c1-170 | head -20
+echo
+echo "[7] /tmp 最近 10 个日志（找 09:00 之后新生成的实验日志）"
+ls -lt --time-style=+%F' '%T /tmp/*.log 2>/dev/null | head -10 | cut -c1-170
+echo
+echo "[8] 仓库状态（本机是否落后 / 有无未提交改动）"
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+[ -d "$REPO" ] || REPO=/nas_train/app.e0031982/code/Baize-ISEDA2027
+echo "    repo=$REPO"
+if [ -d "$REPO/.git" ]; then
+  git -C "$REPO" status -sb 2>/dev/null | head -6
+  git -C "$REPO" log -1 --date=format:'%F %T' --pretty='    HEAD: %h %ad %s' 2>/dev/null
+fi
+echo
+echo "[9] MEMORY / TASK 文件 mtime（本机是否真的没写盘）"
+ls -l --time-style=+%F' '%T "$REPO/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md" "$REPO/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+echo
+echo "[10] 磁盘（.29 侧实验产物是否在增长）"
+df -h /tmp /nas_train 2>/dev/null | tail -3
+echo "=== DONE 150 ==="
+```
+
+**输出**
+```
+=== RUN_ID 150 | pretrain status probe (READ-ONLY) | 2026-10-24 11:04:58 | host=whag0pgpuap29 ===
+
+[1] loop process (期望 1 条: baize_pretrain_loop.sh)
+328936 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provider cloud --model deeps
+1294147 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+    count=2
+
+[2] loop log 尾部 30 行（关键：最后一行时间戳 / 是否有 timeout、Forbidden、Error）
+
+## 结论
+
+**报告已就绪并复核通过**：`doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`（23878B / 197 行 / 自包含中文、内联样式、无外链无脚本），commit `ae9e1e780`
+
+**报告内容与运维令逐条核对一致**：
+- 主线 ①decay v2 训坏（CS8 44.97%/CX6 6.21%，vs 官方 65.40%/32.90%，Δ −20.43/−26.69pp）→ ②归因（双移位 bug `py:547-548`+`:567-568`、peak LR 1.67e-3、缺 μP、code 过采�
+- §8 下一步建议给 **4 个候选**（≥3 满足），按价值排序各附成本/风险/ETA：①延长 decay 5000→20000 步 ≈2.5–3 天 ②对齐官方 11 源配比 ③补 CX6 基线 ~1h 
+- 纪律遵守：主对照只用官方 final + 起点基线 61.03%（未用 P-8）；§9 数据溯源逐项给 `eval_summary.txt`/`p8_eval_summary.json` 路径。
+
+## 收尾铁律闭环
+
+| 项 | 结果 |
+|---|---|
+| 体积自检 | TASK=21272B / MEMORY=~28.1KB（均 ≤32KB ✓，归档 0KB） |
+| 心跳 | MEMORY #750 idle heartbeat + 快照已更新 |
+| 日报 | daily-memories/2026-10-23.md 追加 #750 |
+| 提交推送 | `eb81a2da3`（仅显式 add 2 文件，未用 `git add -A`） |
+| 闭环自检 | 无 ahead/behind ✓，时间戳 13:39 = 本轮 |
+
+`.29` 8×H100 全空闲（0 MiB），无 torchrun/lm_eval/pretrain 进程；`baize_pretrain_loop.sh` 存活，`WAITING: 1` 保持 30 分钟长轮询，无新运维指令。
+
+> 注：工作区存在 `M ARCHIVE_PRETRAIN_ROUND1_AND_DONE_R2.md`（pretrain 归档指针搬迁内容，非本轮产物，属在途改动）——按纪律未纳入本轮提交，未动它。
+[loop] 2026-10-23 13:39:30 pi returned (exit 0), checking git push ...
+[push] 2026-10-23 13:39:30 push interval reached, syncing ...
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-23 13:39:32 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-23 14:09:32 wake up, invoking pi ...
+
+[3] loop log + last_push 时间戳（>60min 即按卡死）
+-rw-r----- 1 app.e0031982 app.adm     11 2026-10-23 13:39:32 /tmp/baize_pretrain_last_push
+-rw-r----- 1 app.e0031982 app.adm 329604 2026-10-23 14:09:32 /tmp/baize_pretrain_loop.log
+    last_push_epoch=1792733972 now=1792811099
+
+[4] cline / opencode 子进程（卡住的 cline 会在，且 etime 很长）
+ 328936    20:55:27 Sl   /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provider cloud --mod
+ 920049       26:03 R    git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run add --force --pathspec-from-file /tmp/cline-checkpoint-l0SU20
+2751345 19-17:47:04 Ssl  /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982/code/super_intellige
+3930768  4-20:10:23 Sl+  opencode
+
+[5] GPU 占用（在跑实验则该有 util/显存）
+0, 0 %, 0 MiB, 81559 MiB
+1, 0 %, 0 MiB, 81559 MiB
+2, 0 %, 0 MiB, 81559 MiB
+3, 0 %, 0 MiB, 81559 MiB
+4, 0 %, 0 MiB, 81559 MiB
+5, 0 %, 0 MiB, 81559 MiB
+6, 0 %, 0 MiB, 81559 MiB
+7, 0 %, 0 MiB, 81559 MiB
+
+[6] 训练/实验相关进程（torchrun / baize_perf / lm_eval）
+328936 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provider cloud --model deepseek-v4-pro
+919926 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE
+919933 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-
+2802077 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2b.sh
+
+[7] /tmp 最近 10 个日志（找 09:00 之后新生成的实验日志）
+-rw-r--r-- 1 app.e0031982 app.adm        0 2026-10-24 11:04:57 /tmp/baize_perf_r2b_runner.log
+-rw-r--r-- 1 app.e0031982 app.adm 86761247 2026-10-24 11:04:43 /tmp/gw_proxy_debug.log
+-rw-r----- 1 app.e0031982 app.adm    31127 2026-10-24 10:52:10 /tmp/tb_pull_all_bg.log
+-rw-r----- 1 app.e0031982 docker     31127 2026-10-24 10:52:10 /tmp/tb_pull_all_images.log
+-rw-r----- 1 app.e0031982 app.adm  1713683 2026-10-24 10:38:53 /tmp/baize_harness_loop.log
+-rw-r--r-- 1 app.e0031982 app.adm       56 2026-10-24 10:29:47 /tmp/baize_perf_r2_loop.log
+-rw-r----- 1 app.e0031982 app.adm      874 2026-10-24 10:02:29 /tmp/tb_pull_test.log
+-rw------- 1 app.e0031982 app.adm        0 2026-10-24 09:46:31 /tmp/tmpz70dihdk.log
+-rw-r----- 1 app.e0031982 app.adm     2702 2026-10-24 08:59:23 /tmp/tb_full_7x15_v2.log
+-rw-r--r-- 1 app.e0031982 app.adm       84 2026-10-24 08:45:17 /tmp/tb_gw_proxy.log
+
+[8] 仓库状态（本机是否落后 / 有无未提交改动）
+    repo=/nas_train/app.e0031982/code/super_intelligence_2035
+## main...origin/main
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+?? doc/BaiZe-ISEDA2027/run/5245/
+?? doc/BaiZe-ISEDA2027/run/7343/
+?? doc/BaiZe-ISEDA2027/run/9441/
+    HEAD: 9b813c1e7 2026-10-24 11:05:03 ops RUN_ID 150: pretrain 只读诊断（loop 进程/log 尾部/GPU/实验进程/仓库与文件 mtime）· 旧 149 块降为 text
+
+[9] MEMORY / TASK 文件 mtime（本机是否真的没写盘）
+-rw-r----- 1 app.e0031982 app.adm 30136 2026-10-24 08:49:33 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md
+-rw-r----- 1 app.e0031982 app.adm 28696 2026-10-24 08:33:12 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+
+[10] 磁盘（.29 侧实验产物是否在增长）
+Filesystem                     Size  Used Avail Use% Mounted on
+/dev/mapper/vgroot-lv_tmp       98G   21G   73G  23% /tmp
+10.239.23.31:/vol_CTE0_data01  207T  178T   30T  86% /nas_train
+=== DONE 150 ===
+```
