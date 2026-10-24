@@ -35,7 +35,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:12px 16px;border-radius:6px;overflo
 </head>
 <body>
 <h1>BaiZe 数据迁移报告：5源分词产物 <code>/nas_train</code> → <code>/nas_env</code></h1>
-<p><strong>生成时间</strong>：2026-10-24 16:15 | <strong>报告类型</strong>：正在进行的迁移（实时快照） | <strong>数据线</strong>：BaiZe data</p>
+<p><strong>生成时间</strong>：2026-10-24 17:39 | <strong>报告类型</strong>：正在进行的迁移（实时快照） | <strong>数据线</strong>：BaiZe data</p>
 <div class="summary-box">
 <div class="summary-card"><div class="num">5</div><div class="label">迁移源数</div></div>
 <div class="summary-card"><div class="num">4.24 TB</div><div class="label">总量</div></div>
@@ -61,7 +61,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:12px 16px;border-radius:6px;overflo
 <p>目标路径：<code>/nas_env/app.e0031982/baize-data/</code>，各源保持原目录名：</p>
 <pre>/nas_env/app.e0031982/baize-data/
 ├── full_ultradata_math_l3/    ← ✅ 已迁入（67 .bin / 67 .idx / 67 .json）
-├── full_ultradata_code_l3/    ← 🔄 迁入中（19/63 .bin）
+├── full_ultradata_code_l3/    ← 🔄 迁入中（50/63 .bin）
 ├── full_ultradata_math_l1/    ← ⬜ 待迁
 ├── full_ufw_l3/               ← ⬜ 待迁
 └── full_ultradata_code_l2/    ← ⬜ 待迁</pre>
@@ -70,19 +70,19 @@ pre{background:#2c3e50;color:#ecf0f1;padding:12px 16px;border-radius:6px;overflo
 <h3>2.1 磁盘现状（df 实测）</h3>
 <pre>Filesystem                     Size  Used  Avail  Use%  Mounted on
 10.239.22.31:/vol_CTE0_data01  207T  178T   30T   86%   /nas_train
-10.239.22.32:/vol_CTE0_data04   10T  780G  9.2T    8%   /nas_env</pre>
-<p>精确值（<code>df -B1</code>）：<code>/nas_train</code> 可用 = 32,339,707,559,936 B = 32.34 TB；<code>/nas_env</code> 可用 = 10,046,054,596,608 B = 10.05 TB。</p>
+10.239.22.32:/vol_CTE0_data04   10T 1023G  9.0T   11%   /nas_env</pre>
+<p>精确值（<code>df -B1</code>）：<code>/nas_train</code> 可用 = ~30 TB；<code>/nas_env</code> 可用 = 9,786,877,542,400 B = 9.79 TB（注：math_l3 已迁入 313 GB + code_l3 部分迁入 ~423 GB 已占用 /nas_env 空间）。</p>
 <h3>2.2 为什么只迁 5 源而不是全部</h3>
 <div class="note">
-<strong>关键约束</strong>：硬盘实测清单 = <strong>19.14 TB / 4778.41B tokens / 794 shards / 2383 文件</strong>，而 <code>/nas_env</code> 只有 <strong>10.05 TB</strong>。
+<strong>关键约束</strong>：硬盘实测清单 = <strong>19.14 TB / 4778.41B tokens / 794 shards / 2383 文件</strong>，而 <code>/nas_env</code> 总容量仅 <strong>10 TB</strong>。
 <ul>
-<li>5 源合计 4.24 TB × 1.1（双份窗口）= <strong>4.67 TB &lt; 10.05 TB</strong> → <strong>够放</strong> ✓</li>
-<li>en_v1_4 主体 14.90 TB × 1.1 = <strong>16.39 TB &gt; 10.05 TB</strong> → <strong>放不下</strong> ✗</li>
+<li>5 源合计 4.24 TB × 1.1（双份窗口）= <strong>4.67 TB &lt; 9.79 TB</strong> → <strong>够放</strong> ✓</li>
+<li>en_v1_4 主体 14.90 TB × 1.1 = <strong>16.39 TB &gt; 10 TB</strong> → <strong>放不下</strong> ✗</li>
 </ul>
 因此<strong>迁移范围 = 5 源分词产物（4.24 TB），不含 en_v1_4（14.90 TB）</strong>。en_v1_4 留在 <code>/nas_train</code>。
 </div>
 <h3>2.3 迁移目的</h3>
-<p><code>/nas_train</code> 使用率已达 86%（178/207 TB），持续增长有风险。将 5 源退火数据迁到 <code>/nas_env</code>（仅用 8%），可释放 ~4.24 TB 空间给 <code>/nas_train</code>，同时 <code>/nas_env</code> 仍有 10.05 - 4.67 = <strong>5.38 TB 缓冲</strong>。</p>
+<p><code>/nas_train</code> 使用率已达 86%（178/207 TB），持续增长有风险。将 5 源退火数据迁到 <code>/nas_env</code>（仅用 11%），可释放 ~4.24 TB 空间给 <code>/nas_train</code>，同时 <code>/nas_env</code> 迁完后仍有 9.79 - 4.24 = <strong>5.55 TB 缓冲</strong>。</p>
 
 <h2>3. 迁移怎么做（方法学，可复现）</h2>
 <h3>3.1 工具：rsync（不用 mv）</h3>
@@ -137,32 +137,32 @@ ln -s /nas_env/.../full_ultradata_math_l3 /nas_train/.../data/full_ultradata_mat
 <p>迁移脚本的流程是 <strong>rsync → 校验 → rm 源 → ln -s</strong>，即校验通过后<strong>立即删除源目录并建软链接</strong>。这是因为在 NFS 上保留两份相同数据会浪费 ~4.24 TB 空间。如果校验失败，脚本<strong>不会删除源</strong>（保留两份，等待人工排查）。</p>
 
 <h2>5. 当前进度与 ETA</h2>
-<h3>5.1 实时进度（2026-10-24 16:15 快照）</h3>
+<h3>5.1 实时进度（2026-10-24 17:39 快照）</h3>
 <table>
-<tr><th>源</th><th>大小</th><th>状态</th><th>进度</th><th>已传字节</th><th>rsync 耗时</th><th>速率</th></tr>
+<tr><th>源</th><th>大小</th><th>状态</th><th>进度</th><th>已传字节 (du -sb)</th><th>rsync 耗时</th><th>速率</th></tr>
 <tr><td>math_l3</td><td>292 GB</td><td><span class="done">✅ 完成</span></td><td>67/67</td><td>313,462,723,570</td><td>102 min</td><td>51.2 MB/s</td></tr>
-<tr><td>code_l3</td><td>481 GB</td><td><span class="progress">🔄 进行中</span></td><td>19/63 .bin</td><td>165,803,396,016</td><td>~51 min</td><td>~54.2 MB/s</td></tr>
+<tr><td>code_l3</td><td>481 GB</td><td><span class="progress">🔄 进行中</span></td><td>50/63 .bin (79%)</td><td>422,633,383,430</td><td>~138 min</td><td>~51.1 MB/s</td></tr>
 <tr><td>math_l1</td><td>615 GB</td><td><span class="pending">⬜ 待迁移</span></td><td>0/149</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>ufw_l3</td><td>990 GB</td><td><span class="pending">⬜ 待迁移</span></td><td>0/154</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>code_l2</td><td>1.57 TB</td><td><span class="pending">⬜ 待迁移</span></td><td>0/141</td><td>—</td><td>—</td><td>—</td></tr>
 </table>
 <h3>5.2 ETA 估算</h3>
-<p>基于 math_l3 实测 ~51 MB/s 和 code_l3 当前 ~54 MB/s，取保守值 <strong>50 MB/s（= 3 GB/min）</strong>：</p>
+<p>基于 math_l3 实测 51.2 MB/s 和 code_l3 实测 51.1 MB/s（均接近 50 MB/s 限速上限），取 <strong>50 MB/s（= 3 GB/min）</strong>：</p>
 <table>
 <tr><th>源</th><th>剩余字节</th><th>预计耗时</th><th>预计完成</th></tr>
-<tr><td>code_l3（剩余）</td><td>~350 GB</td><td>~1h57m</td><td>今天 ~18:12</td></tr>
-<tr><td>math_l1</td><td>615 GB</td><td>~3h25m</td><td>今天 ~21:37</td></tr>
-<tr><td>ufw_l3</td><td>990 GB</td><td>~5h30m</td><td>明天 ~03:07</td></tr>
-<tr><td>code_l2</td><td>1.57 TB</td><td>~8h45m</td><td>明天 ~11:52</td></tr>
-<tr style="font-weight:bold"><td>合计剩余</td><td>~3.52 TB</td><td>~19h37m</td><td><strong>明天 ~11:52</strong></td></tr>
+<tr><td>code_l3（剩余）</td><td>~93.5 GB</td><td>~31 min</td><td>今天 ~18:10</td></tr>
+<tr><td>math_l1</td><td>615 GB</td><td>~3h25m</td><td>今天 ~21:35</td></tr>
+<tr><td>ufw_l3</td><td>990 GB</td><td>~5h30m</td><td>明天 ~03:05</td></tr>
+<tr><td>code_l2</td><td>1.57 TB</td><td>~8h45m</td><td>明天 ~11:50</td></tr>
+<tr style="font-weight:bold"><td>合计剩余</td><td>~3.27 TB</td><td>~18h11m</td><td><strong>明天 ~11:50</strong></td></tr>
 </table>
-<div class="info"><strong>ETA 汇总</strong>：全部 5 源迁移预计在 <strong>2026-10-25 中午 ~12:00</strong> 前完成（含校验 + 软链接）。基于 50 MB/s 限速，实际可能因 NFS 负载波动 ±20%。</div>
+<div class="info"><strong>ETA 汇总</strong>：全部 5 源迁移预计在 <strong>2026-10-25 中午 ~11:50</strong> 前完成（含校验 + 软链接）。基于 50 MB/s 限速，实际可能因 NFS 负载波动 ±20%。</div>
 
 <h2>6. 风险与应对</h2>
 <table>
 <tr><th>风险</th><th>影响</th><th>应对</th></tr>
 <tr><td>NFS 带宽争用（85M 下载同时进行）</td><td>迁移和下载速度均可能下降</td><td>rsync 限速 50 MB/s，为 85M 留带宽；85M 写 /nas_train，迁移写 /nas_env（不同 NFS 服务器），物理隔离</td></tr>
-<tr><td>磁盘写满</td><td>/nas_env 写满导致 rsync 失败</td><td>/nas_env 可用 10.05 TB，5 源 ×1.1 = 4.67 TB，缓冲 5.38 TB，<strong>够用</strong></td></tr>
+<tr><td>磁盘写满</td><td>/nas_env 写满导致 rsync 失败</td><td>/nas_env 可用 9.79 TB，5 源 ×1.1 = 4.67 TB，缓冲 5.12 TB，<strong>够用</strong></td></tr>
 <tr><td>rsync 中断</td><td>某源迁移不完整</td><td>rsync 幂等——重跑自动续传；脚本检查目标 shard 数，不完整继续传</td></tr>
 <tr><td>校验失败</td><td>数据不一致</td><td>脚本校验失败时<strong>不删源、不建软链接</strong>，保留两份等待排查</td></tr>
 <tr><td>pretrain 正在读旧路径</td><td>迁移期间数据路径变化</td><td>rsync 期间源数据不动（只读复制）；校验通过后才 rm + ln -s，切换瞬间完成；软链接保证旧路径透明可用</td></tr>
@@ -182,8 +182,8 @@ data/full_ultradata_code_l2/   → 软链接 → /nas_env/.../full_ultradata_cod
 <div class="info">
 <p><strong>85M 多模态下载</strong>与<strong>5 源数据迁移</strong>是<strong>并行的、不冲突的</strong>两件事：</p>
 <ul>
-<li><strong>85M 下载</strong>：落在 <code>/nas_train</code>（不是 <code>/nas_env</code>，因为 <code>/nas_env</code> 仅 10.05 TB 不够放 85M 剩余 ~16 TB）。走 <strong>92.25 代理 + hf.co 直连</strong>（<code>https_proxy=http://172.19.92.25:13128</code>，无 <code>HF_ENDPOINT</code>），当前 <strong>8729/12124 parquet = 71.9%</strong>，ETA ~7-8 天。</li>
-<li><strong>5 源迁移</strong>：从 <code>/nas_train</code> → <code>/nas_env</code>（不同 NFS 服务器），限速 50 MB/s，ETA ~19.6h。</li>
+<li><strong>85M 下载</strong>：落在 <code>/nas_train</code>（不是 <code>/nas_env</code>，因为 <code>/nas_env</code> 仅 9.0 TB 不够放 85M 剩余 ~16 TB）。走 <strong>92.25 代理 + hf.co 直连</strong>（<code>https_proxy=http://172.19.92.25:13128</code>，无 <code>HF_ENDPOINT</code>），当前 <strong>8752/12124 parquet = 72.2%</strong>（coyo 1940✓ + datacomp1b 575✓ + imagenet 82✓ + laioncn 562✓ + mint 705✓ + obelics 4887/5803 + sa1b 0/1147 + zero250m 0/1310），ETA ~7-8 天。</li>
+<li><strong>5 源迁移</strong>：从 <code>/nas_train</code> → <code>/nas_env</code>（不同 NFS 服务器），限速 50 MB/s，ETA ~18h。</li>
 <li><strong>不冲突原因</strong>：① 目标磁盘不同（85M 写 /nas_train，迁移写 /nas_env）；② rsync 限速留带宽给下载；③ 迁移释放 /nas_train 空间，反而有利于 85M 继续落盘。</li>
 </ul>
 </div>
@@ -191,11 +191,11 @@ data/full_ultradata_code_l2/   → 软链接 → /nas_env/.../full_ultradata_cod
 <h2>9. 迁移脚本与日志</h2>
 <p><strong>脚本</strong>：<code>doc/BaiZe-ISEDA2027/run/data_pipeline/migrate_to_nas_env.sh</code>（已 commit）</p>
 <p><strong>日志</strong>：<code>/tmp/migrate_to_nas_env.log</code>（实时更新）</p>
-<p><strong>进程</strong>：PID 112559（<code>bash migrate_to_nas_env.sh</code>，etimes ~9230s）</p>
-<p><strong>已验证数据一致性</strong>：math_l3 源 67 .bin / 313,462,723,570 bytes = 目标 67 .bin / 313,462,723,570 bytes（<strong>精确到 byte 一致</strong>）</p>
+<p><strong>进程</strong>：迁移脚本 PID 112559（<code>bash migrate_to_nas_env.sh</code>，etimes ~14417s ≈ 4h）；rsync 子进程 PID 3444694/3444695/3444696（<code>rsync -a --bwlimit=50000</code>，正在传 code_l3）</p>
+<p><strong>已验证数据一致性</strong>：math_l3 源 67 .bin / 67 .idx / 67 .json / 313,462,723,570 bytes = 目标 67 .bin / 67 .idx / 67 .json / 313,462,723,570 bytes（<strong>精确到 byte 一致</strong>，VERIFY OK @15:21:25，软链接 @15:21:57）</p>
 
 <div class="footer">
-<p>本报告由 BaiZe data 线自动生成 | 数据可溯源：所有数字来自 <code>du -sb</code> / <code>find | wc -l</code> / <code>df -B1</code> / <code>full_tokenize_5source_summary.json</code> / <code>/tmp/migrate_to_nas_env.log</code> 的真实输出</p>
+<p>本报告由 BaiZe data 线自动生成 | 数据可溯源：所有数字来自 <code>du -sb</code> / <code>find | wc -l</code> / <code>df -B1</code> / <code>df -h</code> / <code>/tmp/migrate_to_nas_env.log</code> / <code>ps -eo</code> 的真实输出（2026-10-24 17:39 采集）</p>
 </div>
 </body>
 </html>

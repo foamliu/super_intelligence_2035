@@ -5,26 +5,27 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ 迁移报告HTML已生成（唤醒636@16:15）**：reports/report_data_migration_nas_env_zh.html(200行/17.5KB,9节全覆盖)；math_l3✅DONE(67/67,313GB,校验一致,软链接已建)；code_l3🔄19/63(32%)。
-> 🟢 **▶️ 迁移+下载并行进行中（唤醒636@16:15）**：code_l3 rsync 19/63(32%,166G/516G),PID112559;85M 8729/12124(71.9%),PID236391,92.25+hf.co直连✓;全迁ETA~19.6h(明天~12:00)。
+> 🟢 **✅ 迁移报告HTML已更新（唤醒637@17:39）**：reports/report_data_migration_nas_env_zh.html(200行/18KB,9节全覆盖,数据17:39快照)；math_l3✅DONE(67/67,313GB,校验一致,软链接已建)；code_l3🔄50/63(79%,423G/516G)。
+> 🟢 **▶️ 迁移+下载并行进行中（唤醒637@17:39）**：code_l3 rsync 50/63(79%,423G/516G),PID112559+rsync3444694;85M 8752/12124(72.2%),PID236391,92.25+hf.co直连✓;全迁ETA~18h(明天~11:50)。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4.24TB)+✅en_v1_4全源分词110/110DONE(2238.14B,8.88TB)+✅硬盘实测清单报告DONE+✅迁移报告HTML DONE(report_data_migration_nas_env_zh.html)+▶️迁移5源→/nas_env(math_l3✅DONE/code_l3🔄19/63=32%)+▶️85M下载(8729/12124=71.9%,92.25+hf.co直连)+✅git sync
-已完成:       ✅5源全量分词ALL DONE(574shards/1056.36B/4.24TB); ✅en_v1_4全源分词110/110DONE(2238.14B/8.88TB); ✅硬盘实测清单(HTML+TSV,commit 050f4af74); ✅运维质询回答+提速达标; ✅迁移报告HTML(reports/report_data_migration_nas_env_zh.html,9节200行); ✅math_l3迁移DONE(67/67,313GB,校验一致,软链接✓); ✅TASK.md归档(33.0KB→31.0KB); ▶️code_l3迁移(19/63=32%); ▶️85M下载(8729/12124=71.9%)
-当前动作:     唤醒636(2026-10-24 16:15)：①迁移报告HTML已生成(report_data_migration_nas_env_zh.html,200行,9节:迁移什么/为何/怎么做/校验/进度ETA/风险/谁用/85M关系/脚本日志) ②迁移math_l3✅DONE(67/67,313GB,校验byte一致,软链接已建);code_l3🔄19/63(32%,166G/516G),rsync PID112559 alive,bwlimit=50MB/s,ETA~2h ③85M 8729/12124(71.9%,+26自上轮),PID236391,92.25+hf.co直连✓ ④磁盘/nas_env 10.05TB可用/nas_train 32.34TB可用 ⑤体积TASK=31.0KB/MEMORY=27.7KB(均≤32KB✓) ⑥WAITING=1.📦体积：TASK=31.0KB/MEMORY=27.7KB（归档~2KB→ARCHIVE_OPERATOR_DATA.md）
-下一步:       ①监控迁移(code_l3→math_l1→ufw_l3→code_l2,全迁ETA~19.6h=明天~12:00)②监控85M(8729/12124=71.9%,ETA~7-8天)③commit+push(data 636: 迁移报告+心跳)④迁移完成后交接pretrain(信号=5源全迁完+软链接建好)
-阻塞:         无新阻塞;迁移进行中(4.24TB×1.1=4.67TB<10.05TB✓);85M ETA~7-8天(proxy带宽~20MB/s);text/14.90TB无法迁/nas_env需留/nas_train
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4.24TB)+✅en_v1_4全源分词110/110DONE(2238.14B,8.88TB)+✅硬盘实测清单报告DONE+✅迁移报告HTML DONE(report_data_migration_nas_env_zh.html)+▶️迁移5源→/nas_env(math_l3✅DONE/code_l3🔄50/63=79%)+▶️85M下载(8752/12124=72.2%,92.25+hf.co直连)+✅git sync
+已完成:       ✅5源全量分词ALL DONE(574shards/1056.36B/4.24TB); ✅en_v1_4全源分词110/110DONE(2238.14B/8.88TB); ✅硬盘实测清单(HTML+TSV,commit 050f4af74); ✅运维质询回答+提速达标; ✅迁移报告HTML(reports/report_data_migration_nas_env_zh.html,200行18KB,9节,17:39快照); ✅math_l3迁移DONE(67/67,313GB,校验一致,软链接✓); ✅TASK.md归档(33.0KB→31.0KB); ▶️code_l3迁移(50/63=79%,423G/516G); ▶️85M下载(8752/12124=72.2%)
+当前动作:     唤醒637(2026-10-24 17:39)：①迁移报告HTML已更新(report_data_migration_nas_env_zh.html,200行/18KB,9节,数据17:39快照:迁移什么/为何/怎么做/校验/进度ETA/风险/谁用/85M关系/脚本日志) ②迁移math_l3✅DONE(67/67,313,462,723,570B,校验4项全过,软链接已建,13:39→15:21=102min@51.2MB/s);code_l3🔄50/63(79%,422,633,383,430B/516,175,730,284B),rsync PID3444694 alive,bwlimit=50MB/s,ETA~31min ③85M 8752/12124(72.2%,+23自上轮),PID236391,92.25+hf.co直连✓ ④磁盘/nas_env 9.79TB可用(11%)/nas_train 30TB可用(86%) ⑤体积TASK=31.8KB/MEMORY=28.6KB(均≤32KB✓) ⑥WAITING=1.📦体积：TASK=31.8KB/MEMORY=28.6KB（归档0KB，本轮无需归档）
+下一步:       ①监控迁移(code_l3→math_l1→ufw_l3→code_l2,全迁ETA~18h=明天~11:50)②监控85M(8752/12124=72.2%,ETA~7-8天)③commit+push(data 637: 迁移报告更新+心跳)④迁移完成后交接pretrain(信号=5源全迁完+软链接建好)
+阻塞:         无新阻塞;迁移进行中(4.24TB×1.1=4.67TB<9.79TB✓);85M ETA~7-8天(proxy带宽~20MB/s);text/14.90TB无法迁/nas_env需留/nas_train
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [16:15] 唤醒636：①运维令16:1x=迁移报告HTML已生成(reports/report_data_migration_nas_env_zh.html,200行/17.5KB,9节:迁移什么/为何/怎么做/校验/进度ETA/风险/谁用/85M关系/脚本日志,数据全可溯源) ②迁移math_l3✅DONE(67/67,313,462,723,570B,校验4项全过,软链接已建,13:39→15:21=102min@51.2MB/s);code_l3🔄19/63(32%,165.8G/516G),rsync PID112559 alive,bwlimit=50MB/s,ETA~2h;后续math_l1(615G)→ufw_l3(990G)→code_l2(1.57T),全迁ETA~19.6h=明天~12:00 ③85M 8729/12124(71.9%,+26),obelics4865/5803,sa1b+zero250m未开始,PID236391,92.25+hf.co直连✓ ④磁盘/nas_env 10.05TB可用(8%)/nas_train 32.34TB可用(86%) ⑤TASK.md归档08:4x块(33.0KB→31.0KB,→ARCHIVE_OPERATOR_DATA.md) ⑥体积TASK=31.0KB/MEMORY=27.7KB(均≤32KB✓) ⑦WAITING=1
+> [17:39] 唤醒637：①迁移报告HTML已更新(reports/report_data_migration_nas_env_zh.html,200行/18KB,9节,数据17:39快照:code_l3 50/63(79%)进度+df 9.0T+85M 8752/12124+ETA~18h) ②code_l3 rsync 50/63 .bin(79%,422,633,383,430B/516,175,730,284B),PID3444694,etimes~8215s,~51.1MB/s,ETA~31min;后续math_l1(615G)→ufw_l3(990G)→code_l2(1.57T),全迁ETA~18h=明天~11:50 ③85M 8752/12124(72.2%,+23),coyo1940+datacomp575+imagenet82+laioncn562+mint705全完,obelics4887/5803,sa1b+zero250m未开始,PID236391 ④磁盘/nas_env 9.79TB可用(11%)/nas_train 30TB可用(86%) ⑤体积TASK=31.8KB/MEMORY=28.6KB(均≤32KB✓) ⑥WAITING=1
+> 📦 唤醒636 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移报告生成+math_l3 DONE+code_l3 19/63+85M 71.9%,详见日文件）
 > 📦 唤醒635 原文已归档 → `daily-memories-data/2026-10-24.md`（巡检：清单报告commit确认+math_l3迁移82%+85M 71.8%+92.25确认,详见日文件）
 > 📦 唤醒634 原文已归档 → `daily-memories-data/2026-10-24.md`（硬盘实测清单：6目录19.14TB/4778.41B/794shards/2383文件+HTML+TSV+空间判定+迁移启动,详见日文件）
 > 📦 唤醒633 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询复核：分词110/110 DONE证实+85M线路复核92.25+hf.co直连✓+迁移READY但未启动,详见日文件）
