@@ -19530,3 +19530,90 @@ whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB : Made virtual device [2] nam
   (下一条令读完整日志)
 === DONE 179 ===
 ```
+
+---
+
+## RUN_ID 180 · 2026-10-24 21:42:47 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 180 | read 2-rank logs | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_train/app.e0031982/nccl_dbg
+
+for f in rank0.log rank1.log; do
+  echo "===== $f ($(stat -c %s "$D/$f" 2>/dev/null || echo 0) bytes) ====="
+  echo "  -- 关键行 --"
+  grep -aE 'init OK|iter [0-9]+ ok|busbw|Error|error|timeout|WARN|Init COMPLETE' "$D/$f" 2>/dev/null | tail -14 | cut -c1-150
+  echo "  -- 尾部 6 行 --"
+  tail -6 "$D/$f" 2>/dev/null | cut -c1-150
+done
+
+echo "[2] 进程是否还在"
+pgrep -af 'tc.py' | cut -c1-90 | head -3 || echo '  none(.12)'
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.29 'pgrep -af "tc.py" | cut -c1-90 | head -3 || echo "  none(.29)"' 2>/dev/null || echo '  ssh .29 failed'
+
+echo "[3] GPU 显存（有分配说明真跑了）"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2' 2>/dev/null || true
+echo "=== DONE 180 ==="
+```
+
+**输出**
+```
+=== RUN_ID 180 | read 2-rank logs | 2026-10-24 21:42:47 | host=whag0pgpuap12 ===
+===== rank0.log (16746 bytes) =====
+  -- 关键行 --
+iter 8 ok
+iter 9 ok
+iter 10 ok
+iter 11 ok
+iter 12 ok
+iter 13 ok
+iter 14 ok
+iter 15 ok
+iter 16 ok
+iter 17 ok
+iter 18 ok
+iter 19 ok
+busbw ~ 46.3 GB/s (10 iters 0.06s)
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO ncclCommInitRankConfig comm 0x5611c88832b0 rank 0 nranks 2 cudaDev 0 nvmlDev 0 busId 16000 commId 0x2a53a7
+  -- 尾部 6 行 --
+whag0pgpuap12:1842566:1846306 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 2365 mtu 5 GID 3 (0/C08EF0AFFFF0000) fifoRkey=0x170bc9 fifoLkey=0x17
+whag0pgpuap12:1842566:1846306 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2365 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x
+whag0pgpuap12:1842566:1846306 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2362 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+whag0pgpuap12:1842566:1846306 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2365 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+whag0pgpuap12:1842566:1846308 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 1
+whag0pgpuap12:1842566:1842566 [0] NCCL INFO comm 0x5611c88832b0 rank 0 nranks 2 cudaDev 0 busId 16000 - Destroy COMPLETE
+===== rank1.log (16086 bytes) =====
+  -- 关键行 --
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap29:3287984:3300593 [0] NCCL INFO ncclCommInitRankConfig comm 0x5644e9383a20 rank 1 nranks 2 cudaDev 0 nvmlDev 0 busId 16000 commId 0x2a53a7
+  -- 尾部 6 行 --
+whag0pgpuap29:3287984:3302447 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2650 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x
+whag0pgpuap29:3287984:3302447 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2650 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+whag0pgpuap29:3287984:3302447 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2648 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+whag0pgpuap29:3287984:3302447 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 2649 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+whag0pgpuap29:3287984:3302449 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 1
+whag0pgpuap29:3287984:3287984 [0] NCCL INFO comm 0x5644e9383a20 rank 1 nranks 2 cudaDev 0 busId 16000 - Destroy COMPLETE
+[2] 进程是否还在
+3534996 bash -c pgrep -af "tc.py" | cut -c1-90 | head -3 || echo "  none(.29)"
+[3] GPU 显存（有分配说明真跑了）
+0, 0 MiB
+1, 0 MiB
+0, 0 MiB
+1, 0 MiB
+=== DONE 180 ===
+```
