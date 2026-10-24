@@ -1,0 +1,20 @@
+Get:1 http://deb.debian.org/debian stable InRelease [140 kB]
+Get:2 http://deb.debian.org/debian trixie InRelease [140 kB]
+Get:3 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:4 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages.diff/Index [6117 B]
+Get:6 http://deb.debian.org/debian stable/main Sources [10.5 MB]
+Get:7 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+Get:8 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [270 kB]
+Get:9 http://deb.debian.org/debian trixie-updates/main amd64 Packages T-2026-10-22-2004.53-F-2026-07-14-1401.03.pdiff [662 B]
+Get:9 http://deb.debian.org/debian trixie-updates/main amd64 Packages T-2026-10-22-2004.53-F-2026-07-14-1401.03.pdiff [662 B]
+Fetched 20.9 MB in 1min 48s (193 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Package dpkg-dev is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Version '1.22.21' for 'dpkg-dev' was not found
