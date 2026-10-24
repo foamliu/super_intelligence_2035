@@ -1,9 +1,44 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 176 | TARGET: 29 -->
-## RUN_ID 176 — 🔍 只读：data 是否收尾（5/5）+ 双机 GPU / pretrain 轮次
+<!-- RUN_ID: 177 | TARGET: 12 -->
+## RUN_ID 177 — 🔎 只读：定位双机 launcher 接口 + RoCE 口/GID 实况（为 2-rank 最小复现做准备）
 
 ```bash
+set -u
+echo "=== RUN_ID 177 | dual-node launcher + IB inventory | $(date '+%F %T') | host=$(hostname) ==="
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo "[1] 候选 launcher 脚本"
+ls -lt "$G"/*.sh 2>/dev/null | head -8 | cut -c1-110
+ls -lt "$G"/doc/BaiZe-ISEDA2027/run/*dual* "$G"/doc/BaiZe-ISEDA2027/run/*.sh 2>/dev/null | head -8 | cut -c1-110
+
+echo "[2] 双机相关脚本清单（按名）"
+find "$G" -maxdepth 3 -name '*dual*' -o -maxdepth 3 -name '*16gpu*' 2>/dev/null | head -10
+
+echo "[3] 最可能的 launcher 前 50 行（找它的环境变量/参数）"
+F=$(ls -t "$G"/do*dula*.sh "$G"/*dual*.sh 2>/dev/null | head -1)
+echo "  F=$F"
+[ -n "${F:-}" ] && head -50 "$F" | cut -c1-150
+
+echo "[4] IB/RoCE 设备"
+ibv_devinfo -l 2>/dev/null | head -12 || echo '  ibv_devinfo not available'
+for d in $(ibv_devinfo -l 2>/dev/null | awk 'NR>1{print $1}' | head -6); do
+  echo "  --- $d ---"
+  ibv_devinfo -d "$d" -v 2>/dev/null | grep -E 'link_layer|state:|phys_state|active_mtu|GID\[' | head -10
+done
+
+echo "[5] 网卡地址"
+ip -br addr 2>/dev/null | grep -vE '^lo' | head -12
+
+echo "[6] NCCL 版本 + 现有调试目录"
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -c "import torch;print('torch',torch.__version__,'nccl',torch.cuda.nccl.version())" 2>/dev/null || echo '  python/nccl probe failed'
+ls -d /tmp/nccl_dbg /tmp/baize_dualnode_16gpu 2>/dev/null; ls -l /tmp/baize_dualnode_16gpu 2>/dev/null | head -5
+echo "=== DONE 177 ==="
+```
+
+## RUN_ID 176 — 🔍 只读：data 是否收尾（5/5）+ 双机 GPU / pretrain 轮次
+
+```text
 set -u
 echo "=== RUN_ID 176 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
 D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
