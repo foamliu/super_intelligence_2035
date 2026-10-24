@@ -102,7 +102,9 @@ BaiZe-2B ~1.35B
 **这是 Xmodel-2.5 的 Dense 架构（decay 后转换），不是 BaiZe-2B。**
 
 **BaiZe-2B 的真实规格**（必须以此为准）：
-- **架构：Mamba2-hybrid**（56 层 = 28 SSM + 28 Attention，hidden=2048，heads=16，3.00B total）
+- **架构：Mamba2-hybrid**（56 层 = 28 SSM + 28 Attention，hidden=2048，heads=16，**真实参数量 2.220B**）
+  - ⚠️ **口径订正（历史遗留错误）**：**不是 3.00B**。`3.00B` 来自 mcore 打印 `transformer layers 2.47 + embedding 0.53`，该打印**对 Mamba/hybrid 误把 56 层全按 full attention+MLP 计**。真实值以 `sum(numel())` = **2,220,268,032 = 2.220B** 为准（见 `EXPERIMENTS_2B.md` L7、`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L79）。
+  - **对比参照**：MiniCPM5-2B 实测 **2.512B**（transformer 1.98B + embedding 0.53B，tie=False 双嵌入）⇒ **BaiZe 反而更小**（2.220B < 2.512B）。**报告中若做对比，必须写"BaiZe 参数量更小的前提下达到/超过"**，这是加分点，不要写反。
 - **不是 Dense Transformer，不是 XmodelForCausalLM**
 - 模型路径请从 Baize-ISEDA2027 里**实际训好的 BaiZe-2B 权重**取（`nemo_experiments/` 下与 pretrain_launcher `--arch mamba2` 对应的产物）
 
