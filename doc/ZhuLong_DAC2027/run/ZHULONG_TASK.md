@@ -1,6 +1,16 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+### ✅ 配置已对齐（22:23 运维执行，**不要再改**）· 直接起 5-run
+> 实测三方对照（RUN_ID 119）：`cline 10-17 备份(glm 时代)=maxTokens 8192 / baseUrl /v1 / reasoning false`；`zhulong 原值=16384 / /v1 / false` ⇒ **唯一差异 = maxTokens**。
+> 已执行（RUN_ID 120）：`~/.zhulong/settings/providers.json` 的 **`maxTokens: 16384 → 8192`**，备份 `providers.json.bak.20261024_2223`；`model=glm-5.3-flash`、`baseUrl=http://agi-gateway.cxmt.com/v1`、`reasoning.enabled=false` **保持不变**；MCP settings 与 cline **逐字节相同**（`identical: True`）。
+> **你（agent）本轮只做一件事：用 zhulong 起 5-run**，不要再动 providers.json / MCP settings。
+> - 启动（与 r2 同法，只是 `CLI_AGENT=zhulong`）：`cd /nasdata/app.e0031982/code/eda_fastmcp && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid -f nohup bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_realign_r1.log 2>&1 < /dev/null`
+> - 每轮收口后**手动 regrade**（Step7.1 auto-grade 有已知 bug），记录 `pass/158`、**gen-fail**、耗时、-32001、sandbox-timeout；
+> - r1→r5 串行，最后算 **5/5 mean±std**，与 cline 基线 **86.8±1.6%** 对比，并更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"配置对齐后重测"一节）。
+> **判据**：单轮 gen-fail ≤5/158（对齐前 12–27）；5 轮判据十三有效；配置 diff 除 CLI 名/路径外为空。
+
+
 ### 🔬 已核实事实 · 2026-10-24 22:15（RUN_ID 115/117 实测，用于配置对齐）
 > **cline-full r2 已停止**：PID 497054 `TERM`→5s 退出（22:10:57）；停前 `code dirs 158 / .py 153 / task_queue 0`；日志 `/tmp/ABL_dsv4pro_cline_full_r2.log` 29.2 MB **保留**，batch `2026_1024_141148` 产物**未删**。⇒ 需要时仍可对该批做 regrade 留档。
 > **MCP settings 两侧已完全一致**（同一份内容）：`url=http://10.251.36.15:8090/mcp`、`type=streamableHttp`、`timeout=600`、`autoApprove=[search_apis, get_api_details, search_apis_by_keyword, run_code]` —— **这条不是差异来源了**。
