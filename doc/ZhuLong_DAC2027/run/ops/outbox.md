@@ -14442,3 +14442,79 @@ CLI_AGENT=cline
 EDA_RUNCODE_READBACK=full
 === DONE 116 ===
 ```
+
+---
+
+## RUN_ID 117 · 2026-10-24 22:15:11 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 117 | zhulong home config | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] ~/.zhulong 下的配置"
+ls -la "$HOME/.zhulong/settings/" 2>/dev/null | head -8
+for f in "$HOME/.zhulong/settings/providers.json" "$HOME/.zhulong/providers.json"; do
+  [ -f "$f" ] && { echo "  == $f"; cat "$f" | head -c 600; echo; }
+done
+
+echo "[2] ZL 跑批日志里的模型证据"
+for L in /tmp/ABL_glm-5.3-flash_zl_full_r1.log /tmp/ABL_glm-5.3-flash_zl_full_r5.log; do
+  [ -f "$L" ] || continue
+  echo "  == $(basename "$L")"
+  grep -aoc 'glm-5.3-flash' "$L" 2>/dev/null | sed 's/^/     glm-5.3-flash 出现次数: /'
+  grep -aoE 'glm-5\.[0-9]?[a-z\-]*' "$L" 2>/dev/null | sort | uniq -c | head -5 | sed 's/^/     /'
+  grep -aE 'maxTokens|max_tokens' "$L" 2>/dev/null | head -3 | cut -c1-140 | sed 's/^/     /'
+done
+
+echo "[3] 该批次的 worker data-dir（含 providers.json）"
+ls -d /nasdata/app.e0031982/eda_code_eval/2026_1023_103036/worker_*/data 2>/dev/null | head -5
+for p in $(ls /nasdata/app.e0031982/eda_code_eval/2026_1023_103036/worker_*/data/settings/providers.json 2>/dev/null | head -2); do
+  echo "  == $p"; head -c 400 "$p"; echo
+done
+echo "=== DONE 117 ==="
+```
+
+**输出**
+```
+=== RUN_ID 117 | zhulong home config | 2026-10-24 22:15:11 | host=hfeg0tedaap02 ===
+[1] ~/.zhulong 下的配置
+total 24
+drwx------ 2 app.e0031982 app.adm 4096 Oct 23 00:19 .
+drwxr-x--- 5 app.e0031982 app.adm 4096 Oct 18 09:01 ..
+-rw-r----- 1 app.e0031982 app.adm  319 Oct 23 00:19 cline_mcp_settings.json
+-rw-r----- 1 app.e0031982 app.adm  277 Oct 18 09:05 cline_mcp_settings.json.bak.20261023_003x
+-rw------- 1 app.e0031982 app.adm  845 Oct 23 00:19 providers.json
+-rw------- 1 app.e0031982 app.adm  444 Oct 20 06:31 providers.json.bak-glm5.2-0631
+  == /home/app.e0031982/.zhulong/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f",
+        "model": "glm-5.3-flash",
+        "maxTokens": 16384,
+        "baseUrl": "http://agi-gateway.cxmt.com/v1",
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "updatedAt": "2026-10-22T16:19:11.502Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "provider": "sapaicore
+[2] ZL 跑批日志里的模型证据
+  == ABL_glm-5.3-flash_zl_full_r1.log
+     glm-5.3-flash 出现次数: 3413
+        3413 glm-5.3-flash
+  == ABL_glm-5.3-flash_zl_full_r5.log
+     glm-5.3-flash 出现次数: 2922
+        2922 glm-5.3-flash
+[3] 该批次的 worker data-dir（含 providers.json）
+=== DONE 117 ===
+```
