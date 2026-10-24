@@ -7,18 +7,14 @@ WAITING: 1
 > - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
 > 📦 体积：TASK=26.9KB / MEMORY=~29.0KB（均≤32KB✓，本轮归档 ~2.5KB #757/#752 → daily-memories/）。
 
-> 🆕 **2026-10-24 07:20 #761：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#758~#759控体积**：
-> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
-> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
-> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
-> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=26.9KB / MEMORY=~30.7KB（均≤32KB✓，本轮归档 ~0.9KB #758~#759 → daily-memories/2026-10-24.md）。
-> 🆕 **2026-10-24 06:08 #760：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#747~#748控体积**：
-> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
-> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
-> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
-> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=26.9KB / MEMORY=~31.0KB（均≤32KB✓，本轮归档 ~1.3KB #747~#748 → daily-memories/2026-10-23.md）。
+> 🆕 **2026-10-24 11:0x #763：▶ 放行吞吐优化R2·收到10-24 09:3x新指令（基于自己报告§4建议继续优化）·R2已跑完5组·R2b已启动**：
+> - **新指令**：用户放行 pretrain 基于自己报告 §4 的 7 条建议继续优化 BaiZe-2B 预训练吞吐（当前最佳 e09_fp8_tw_cg=297K tok/s，峰值65.4GB/80GB余14GB）。
+> - **R2 已跑完**（09:45-10:29，/tmp/baize_perf_r2/summary.txt）：① e10 MBS4=OOM(72GB+7.9GB>79.2,8.5GB碎片) ② e11 MBS3=OOM(77.8GB) ③ e12 CE-fusion=296K(=e09无变化,loss非瓶颈) ④ e13 NCCL-Ring=297K(=e09无变化,单节点NVSwitch已最优) ⑤ e14 recompute=AssertionError(full recompute需full-iter CG,launcher仅暴露full granularity,selective不可用)。
+> - **R2b 已启动**（11:04 .29 PID2802077 后台，/tmp/baize_perf_r2b/）：① e10b MBS4+expandable_segments(碎片整理) ② e11b MBS3+expandable_segments ③ e15 GBS2048(大GBS语义边界) ④ e16 --sequence-parallel(TP1,测SP) ⑤ e17 MBS4+first-last-bf16。预计~1.5h跑完。
+> - **未试建议评估**：#2 CUDA12.9升级(需风险评估TE2.12/torch2.8兼容+回滚方案,未动) | #4 数据侧(num_workers=8硬编码recipe,需改代码,且e12/e13证明非host瓶颈) | #7 torch.compile(launcher无flag,需加代码,Mamba2自定义算子compile风险高)。
+> - .29 核验：R2b 跑前 8×H100 全空(0 MiB)，e10b 启动中。脚本 baize_perf_optim_round2b.sh（新增）。
+> 📦 体积：TASK=29.4KB / MEMORY=~28.7KB（均≤32KB✓，本轮归档 #760/#761 idle → daily-memories/2026-10-24.md）。
+> 📦 §#760~#761 流水（2026-10-24 06:08~07:20，2 条 idle heartbeat）已归档 → daily-memories/2026-10-24.md；**结论**：三份10-23报告均在盘，无新指令。需要时再读。
 > 📦 §#758~#759 流水（2026-10-24 03:4x~04:57，2 条 idle heartbeat 复核三份报告无误）已归档 → daily-memories/2026-10-24.md；**结论**：三份10-23报告均在盘+committed，无新指令。需要时再读。
 > 📦 §#757（2026-10-24 02:3x）已归档 → daily-memories/2026-10-24.md；**结论**：吞吐优化10/10完成，新纪录297K tok/s(+19.4% vs 249K) @ FP8 TW+CG协同效应，HTML报告已交付(commit 74ef3e523)。需要时再读。
 > 📦 §#754~#755 流水（2026-10-23 20:5x~21:5x，2 条 idle heartbeat 复核两份报告无误）已归档 → daily-memories/2026-10-23.md；**结论**：两份10-23报告复核无误，无新指令。需要时再读。
