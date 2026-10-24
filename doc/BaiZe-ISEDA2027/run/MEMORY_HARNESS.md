@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~10.3h elapsed, 5/7 harbor alive) + SWE-bench Verified 后台下载进行中(152/500 pulled). 两线并列.
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480)·下载脚本+后台启动✅(R480)·TASK归档✅(R481)·hermes+deepseek 87/87 FINISHED✅(R484)·R485双线监控✅
-当前动作:     R486: 双线并列监控. ①TB 7×89 并发~10.3h(16:21起,现02:42),5 harbor alive(hermes+deepseek已FINISHED 87/87). 精确统计(verifier/reward.txt口径,/tmp/tb_7x89/jobs_*): cline-patched 46dirs/43done(25P/18F=58.1%,2err), codex 72dirs/30done(13P/17F=43.3%,41err!), opencode 41dirs/35done(20P/15F=57.1%,5err), pi 45dirs/40done(19P/21F=47.5%,5err), claude-code 32dirs/15done(0P/15F=0%,16err), hermes 87/87 FIN(0P/50F,37err), deepseek 87/87 FIN(0P/50F,37err). 5 containers running,load 11.53(TB未受下载影响). ⚠️codex 41err/71attempted(58%错误率,适配器问题);hermes/deepseek 0%+37err(疑似适配器bug);claude-code最慢32/87(0%+16err);cline/opencode/pi三路健康47-58%. ②SWE-bench Verified 下载: 152/500 pulled,0 failed,PID 1199724 alive(~7.3h=26366s). 实测~20.8/h,ETA~17h→10-25 19:30. Docker 263 images(152 swebench),/data 764G used/6.3T free(11%). ③体积估算(R480已交付):500镜像,dedup~30-60GB,sum(raw)~575GB,磁盘6.3T free→✅够;瓶颈=Docker Hub匿名限速(100 manifest/h/共享IP),非磁盘/带宽.
-下一步:       ①TB 5存活harness待完成(claude-code 32/87最慢约18h,codex 72/87近完成,cline/opencode/pi ~41-46/87),全量完成后→McNemar配对报告(中文HTML),codex/hermes/deepseek/claude-code高err需标注"疑似适配器bug" ②SWE-bench 下载持续(~20.8/h,ETA~10-25 19:30),监控pull_progress.txt ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评
-阻塞:         无. TB 在跑(5路存活,claude-code拖长至~18h); SWE-bench 下载受 Docker Hub 匿名限速(100 manifest/h,共享IP 203.127.181.131),实测~20.8/h. ⚠️codex 41err(适配器问题); hermes/deepseek 37err(RuntimeError/NonZeroAgentExit,适配器bug);claude-code 16err.
+PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~11.6h elapsed, 5/7 harbor alive) + SWE-bench Verified 后台下载进行中(174/500 pulled). 两线并列.
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480)·下载脚本+后台启动✅(R480)·TASK归档✅(R481)·hermes+deepseek 87/87 FINISHED✅(R484)·R485/R486双线监控✅
+当前动作:     R487: 双线并列监控. ①TB 7×89 并发~11.6h(16:21起,现03:56),5 harbor alive(hermes+deepseek已FINISHED 87/87). 精确统计(verifier/reward.txt口径,/tmp/tb_7x89/jobs_*): cline-patched 45done(25P=55.6%), codex 32done(14P=43.8%), opencode 40done(24P=60.0%), pi 49done(24P=49.0%), claude-code 19done(0P=0%,最慢), hermes FIN 50done(0P), deepseek FIN 50done(0P). load 6.58(TB未受下载影响). ⚠️codex高err(适配器问题);hermes/deepseek 0%+37err(疑似适配器bug);claude-code最慢19/87(0%);cline/opencode/pi三路健康49-60%. ②SWE-bench Verified 下载: 174/500 pulled,0 failed,PID 1199724 alive(~8.6h=30953s). 实测~20.2/h,ETA~16h→10-25 20:00. Docker 285 images(174 swebench,system df=430GB 98%共享层),/data 778G used/6.3T free(11%). ③体积估算(R480已交付):500镜像,dedup~30-60GB,sum(raw)~575GB,磁盘6.3T free→✅够;瓶颈=Docker Hub匿名限速(100 manifest/h/共享IP),非磁盘/带宽.
+下一步:       ①TB 5存活harness待完成(claude-code 19/87最慢,codex 32/87,cline 45/opencode 40/pi 49),全量完成后→McNemar配对报告(中文HTML),codex/hermes/deepseek/claude-code高err需标注"疑似适配器bug" ②SWE-bench 下载持续(~20.2/h,ETA~10-25 20:00),监控pull_progress.txt ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评
+阻塞:         无. TB 在跑(5路存活,claude-code拖长); SWE-bench 下载受 Docker Hub 匿名限速(100 manifest/h,共享IP 203.127.181.131),实测~20.2/h. ⚠️codex高err(适配器问题); hermes/deepseek 37err(RuntimeError/NonZeroAgentExit,适配器bug);claude-code err.
 ERROR_COUNT:  1
-📦 体积：TASK=29KB / MEMORY=24KB（归档 0KB）
+📦 体积：TASK=29KB / MEMORY=25KB（归档 0KB）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
