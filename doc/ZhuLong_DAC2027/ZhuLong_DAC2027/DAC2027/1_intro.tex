@@ -1,19 +1,52 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Large language models (LLMs) have demonstrated strong capabilities in general-purpose code generation \cite{vaswani2017attention, openai2023gpt4, yang2025qwen3}. However, applying LLMs to EDA scripting---where engineers manipulate in-memory design databases, create layout instances, route schematics, and query netlists---remains challenging: EDA APIs are long-tailed and tool-specific (many rarely appear in public training corpora); correctness cannot be verified statically (it depends on observable side effects in a real EDA environment); and without execution feedback, static generation cannot diagnose errors or iteratively refine \cite{chen2024dawning, blocklove2024eda}. Existing LLM-based EDA work has mainly focused on HDL generation \cite{thakur2023verigen, liu2023rtlcoder}, while scripting with real tool APIs---especially with incomplete documentation and sandbox execution---remains underexplored.
+Large language models (LLMs) have demonstrated strong capabilities in general-purpose code generation \cite{vaswani2017attention, openai2023gpt4, yang2025qwen3}. However, applying LLMs to EDA scripting---where engineers routinely manipulate in-memory design databases, create layout instances, route schematics, and query netlists---remains challenging. First, EDA APIs are long-tailed and tool-specific; many rarely appear in public training corpora. Second, correctness cannot be verified statically: it depends on observable side effects in a real EDA environment, such as modified layouts or updated schematics. Third, without execution feedback, static generation cannot diagnose errors or iteratively refine incorrect code \cite{chen2024dawning, blocklove2024eda}. Existing LLM-based EDA work has mostly targeted the digital flow---RTL/Verilog generation \cite{thakur2023verigen, liu2023rtlcoder} and, more recently, execution-grounded Tcl automation of the RTL-to-GDSII flow (Section~\ref{sec:background}). What remains underexplored is scripting for custom/analog design---PyAether, SKILL, and waveform-measurement Tcl---where correctness must be read back from the live layout, schematic, or waveform database, and where the APIs are longest-tailed and least documented.
+% 大语言模型在通用代码生成方面表现强大，但应用于EDA脚本——工程师日常操作内存中的设计数据库、创建版图实例、布线原理图、查询网表——仍面临挑战。第一，EDA API具有长尾性和工具特定性，许多很少出现在公开训练语料中。第二，正确性无法静态验证：它取决于真实EDA环境中的可观察副作用，如版图修改或原理图更新。第三，没有执行反馈，静态生成无法诊断错误或迭代修正代码。已有LLM-for-EDA工作大多面向数字流程——RTL/Verilog生成，以及近年出现的RTL-to-GDSII流程的执行接地Tcl自动化（见第~\ref{sec:background}节）。仍研究不足的是定制/模拟设计脚本——PyAether、SKILL与波形测量Tcl——其正确性必须从实时版图、原理图或波形数据库中读回，且其API最为长尾、文档最不全。
 
-This paper presents \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl. Built on Cline-CLI \cite{cline2024cline}, ZhuLong extends three MCP tools \cite{lee2025autoeda}---\texttt{search\_apis}, \texttt{get\_api\_details}, and \texttt{run\_code}---that form a closed loop: retrieve candidate APIs, inspect their documentation, execute code in the EDA environment, and iteratively refine based on observed errors. All tools accept a unified \texttt{lang} parameter, so the same agent logic covers all three languages. We further provide a \textbf{theoretical foundation} (Section~\ref{sec:grounding-theory}): EDA scripting correctness is a \emph{situated} property that cannot be guaranteed from static knowledge, and the resulting ``grounding gap'' is bounded by observation fidelity---not model scale.
+This paper presents \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl. Named after a mythical creature whose opened eyes bring light, ZhuLong aims to illuminate opaque EDA APIs and automate tool-specific scripting workflows. Built on Cline-CLI \cite{cline2024cline}, ZhuLong extends four MCP tools \cite{lee2025autoeda}---semantic search (\texttt{search\_apis}), keyword search (\texttt{search\_apis\_by\_keyword}), documentation lookup (\texttt{get\_api\_details}), and sandbox execution (\texttt{run\_code})---that form a closed loop: retrieve candidate APIs by semantics or by name, inspect their documentation, execute code in the EDA environment with execution feedback, and iteratively refine based on observed errors or outputs. All tools accept a unified \texttt{lang} and \texttt{host} parameter pair that jointly selects the target runtime, so the same agent logic covers all four commercial runtimes---Tcl alone spans two hosts.
+% 本文提出\textbf{ZhuLong}，一个面向PyAether、SKILL和Tcl的执行驱动LLM代码智能体。其名源自中国神话中睁眼带来光明的神兽，寓意照亮不透明的EDA API并自动化工具特定的脚本流程。ZhuLong基于Cline-CLI构建，扩展四个MCP工具——语义检索\texttt{search\_apis}、关键词检索\texttt{search\_apis\_by\_keyword}、文档查阅\texttt{get\_api\_details}和沙盒执行\texttt{run\_code}——形成闭环：按语义或名称检索候选API、查阅文档、在沙盒EDA环境中执行代码、基于观察到的错误或输出迭代修正。所有工具接受统一的\texttt{lang}与\texttt{host}参数对，共同选定目标运行时，以相同智能体逻辑覆盖全部四个商业运行时——Tcl一个语言对应两个host。
+
+To further address incomplete or outdated documentation, ZhuLong introduces an offline \textbf{API self-exploration mechanism} that proactively explores undocumented API behaviors in the sandbox via \textbf{counterfactual experimentation}---deliberately testing alternative parameter values, observing execution outcomes, inferring constraints and usage patterns, and storing the discovered information as enhanced API documentation for future queries.
+% 为了进一步解决文档不完整或过时的问题，ZhuLong引入了离线\textbf{API自探索机制}，通过沙盒中的\textbf{反事实实验}主动探索未文档化的API行为——有意识地测试不同参数取值、观察执行结果、推断约束和使用模式、将发现的信息存储为增强的API文档供后续查询使用。
+
+Beyond the engineering, we provide a \textbf{theoretical foundation} (Section~\ref{sec:grounding-theory}): EDA scripting correctness is a \emph{situated} property that cannot be guaranteed from static knowledge, and a Bayesian analysis shows the resulting ``grounding gap'' is bounded by observation fidelity---not model scale---explaining why runtime observation is essential, and why the Harness must supply both halves of it: reading the environment's documented API facts, and reading back what executing code does to the live design.
+% 超越工程层面，我们提供\textbf{理论基础}（第~\ref{sec:grounding-theory}节）：EDA脚本正确性是情境化属性，无法从静态知识保证；贝叶斯分析表明由此产生的"落地鸿沟"受观测保真度而非模型规模约束——这解释了为何运行时观测不可或缺，以及为何harness必须提供观测的两半：读取环境已文档化的API事实，并回读执行中的代码对实时设计做了什么。
 
 The main contributions are:
+% 主要贡献如下：
 
 \begin{itemize}
     \item \textbf{An account of \emph{which} factor sets the ceiling, with measurements that distinguish them (RQ1).}
-    We formalize the \emph{grounding gap}: EDA correctness is a situated (L4) property that no offline knowledge can guarantee, bounded by \emph{observation fidelity} not model capacity (Section~\ref{sec:grounding-theory}). We answer RQ1 from both sides---laddering $\Omega$ with the LLM fixed, and changing $\mathcal{K}$ with the harness fixed---stated \emph{before} the measurements as predictions the experiments could refute.
+    We formalize the \emph{grounding gap}: EDA correctness is a situated (L4) property that no
+    offline knowledge can guarantee, and a Bayesian argument shows the resulting gap is
+    bounded by \emph{observation fidelity} rather than by the capacity of the model
+    (Section~\ref{sec:grounding-theory}). We answer RQ1 from both sides---laddering the
+    observation channel with the LLM fixed, and changing the prior with the harness
+    fixed---and the framework is stated \emph{before} the measurements, so that its claims are
+    predictions the experiments could refute rather than explanations fitted afterwards.
+    % 对"哪个因素设定上限"的刻画，及区分二者的测量（RQ1）。我们形式化落地鸿沟：EDA正确性是情境化（L4）属性，任何离线知识都无法保证；贝叶斯论证表明该鸿沟受观测保真度约束，而非模型容量（第~\ref{sec:grounding-theory}节）。我们从两侧回答RQ1——固定LLM给观测通道做阶梯、固定框架更换先验——且框架表述先于测量，使其主张成为实验可反驳的预测，而非事后拟合的解释。
 
-    \item \textbf{A harness whose necessary components we isolate (RQ2).}
-    ZhuLong couples three MCP tools---\texttt{search\_apis}, \texttt{get\_api\_details}, \texttt{run\_code}---so that retrieval (observation), sandbox execution (effector), and the generate--execute--refine loop (belief update) form one closed loop, driven by a single \texttt{lang} parameter covering PyAether, SKILL, and Tcl (Section~\ref{sec:system}). ZhuLong attains \textbf{81.4\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} (pure LLM) and \textbf{72.2\%} (RAG). Ablation shows the components are jointly necessary and not interchangeable: adding execution to RAG yields \textbf{+9.2~pp}, removing it ($-9.2$~pp) or retrieval ($-0.4$~pp) reduces accuracy, and bounding $\Phi$ degrades it monotonically.
+    \item \textbf{A harness whose necessary components we isolate (RQ2).}{\sloppy
+    ZhuLong couples four unified MCP tools---API retrieval and documentation inspection (the
+    \emph{observation channel}), sandbox execution (the \emph{effector}), and the
+    generate--execute--refine loop (the \emph{belief update})---into one closed loop driven by a
+    single \texttt{lang}--\texttt{host} pair covering all four runtimes (Section~\ref{sec:system}).
+    Ablation shows the three components are \emph{jointly necessary and not interchangeable}:
+    removing either execution or retrieval reduces pooled Pass@1, and bounding the belief update
+    degrades it monotonically (Section~\ref{sec:experiments}); offline \textbf{API self-exploration}
+    is a bounded complement to---not a substitute for---observation (Section~\ref{sec:selfdoc}).\par}
+    % 一个分离出必要组件的harness（RQ2）。ZhuLong耦合四个统一MCP工具，使API检索与文档查阅（观测通道）、沙盒执行（执行器）、生成-执行-修正循环（信念更新）构成单一闭环，由统一\texttt{lang}-\texttt{host}参数对驱动，同一智能体逻辑覆盖全部四个运行时（第~\ref{sec:system}节）。在这些运行时上，ZhuLong在449任务EDA-Scripting-Bench上取得按449任务合并汇总的\textbf{75.7\%} Pass@1，对比\textbf{18.3\%}（纯LLM）与\textbf{62.5\%}（静态RAG）。消融表明三组件\emph{联合必要且不可互换}：移除执行或检索都会降低合并Pass@1，约束信念更新使其单调退化（第~\ref{sec:experiments}节）；离线\textbf{API自探索}机制是观测的有界补充，不能替代观测（第~\ref{sec:selfdoc}节）。
 
     \item \textbf{A cross-language benchmark on which the same structure can be re-measured per toolchain (RQ3).}
-    \textbf{EDA-Scripting-Bench} places PyAether, SKILL and Tcl under one task schema, one assertion criterion and one harness (Section~\ref{sec:benchmark}). The completed PyAether slice (\textbf{EDA-Eval-PyAether}, 158 expert-reviewed tasks) is the first standardized PyAether benchmark. We release the harness, task schema and evaluation protocol; task cases derive from vendor documentation and customer designs and cannot be redistributed.
+    \textbf{EDA-Scripting-Bench} places all three languages under one task schema, one
+    assertion criterion and one harness, so that the structure of RQ1--RQ2 can be re-measured
+    slice by slice with nothing changed but the toolchain (Section~\ref{sec:benchmark}). Its
+    PyAether slice, \textbf{EDA-Eval-PyAether} (158 tasks from four sources,
+    expert-reviewed), serves as the first standardized PyAether benchmark; the SKILL and
+    Tcl slices complete the suite for reproducible comparison of LLM-based scripting agents.
+    What we release is the \textbf{harness, the task schema and the evaluation protocol}; the
+    task cases themselves derive from vendor documentation and customer designs and cannot be
+    redistributed.
+    % 一个使同一结构可按工具链重测的跨语言基准（RQ3）。\textbf{EDA-Scripting-Bench}将三种语言置于同一任务模式、同一断言判据与同一框架之下，使RQ1–RQ2的结构可逐切片重测、唯一改变的是工具链（第~\ref{sec:benchmark}节）。其PyAether切片\textbf{EDA-Eval-PyAether}（158个任务、四个来源、经专家评审）是首个标准化PyAether基准；SKILL与Tcl切片补齐全套，支持LLM脚本智能体的可复现比较。可发布的是\textbf{harness、任务模式与评测协议}；任务用例本身源自厂商文档与客户设计，不可再分发。
 \end{itemize}
