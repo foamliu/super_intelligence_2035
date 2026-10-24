@@ -1,6 +1,37 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+### 🔴 运维令 · 2026-10-24 22:1x（**停 cline-full 评测 → zhulong 配置对齐 cline → 用 zhulong 重跑 5-run**）· 用户直令 · 覆盖一切
+> 依据：`reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html` —— 已证明两轮差异 **≈80% 来自"未生成代码(literal-pass)"**，且 zhulong 侧存在 **`maxTokens=16384`（cline 是 8192）** 等配置混杂，必须去掉才能做"只差 CLI"的干净对比。
+
+**① 立即停掉现有 cline-full 评测（batch `2026_1024_141148`，PID 497054）**
+- `kill -TERM 497054`，60s 不退再 `kill -9`；**保留** log 与 batch 目录（`/tmp/ABL_dsv4pro_cline_full_r2.log`、`/nasdata/.../2026_1024_141148`），**不得删产物**。
+- 若停前发现 `code dirs == 158/158` 且 `.task_queue` 为空 ⇒ 先花 ≤5 min 手动 regrade 留档（r2 结果别浪费），再停。
+
+**② 把 zhulong 侧配置对齐到 cline（只保留"CLI 二进制"为唯一变量）**
+必须**先把两侧真实配置并排 dump 出来**（作为证据提交），再逐项对齐：
+| 项 | cline（基准） | zhulong（改前） | 目标 |
+|---|---|---|---|
+| `providers.json` `maxTokens` | **8192** | 16384 | **8192** |
+| temperature / top_p / reasoning | 以 cline 实际值为准 | `reasoning=false` 等 | **逐字段抄 cline** |
+| MCP settings | `~/.cline/.../cline_mcp_settings.json`：url=8090/mcp、`timeout=600`、`autoApprove` 含 `run_code`+`search_apis` | `~/.zhulong/settings/...`（曾缺 timeout、autoApprove 旧名） | **与 cline 完全一致**（timeout/autoApprove/url 三项核对） |
+| turn/step 上限、系统提示、工具白名单 | cline 实际值 | 以 zhulong 现行 | **抄 cline** |
+| 启动环境 | `unset http_proxy https_proxy`、`NO_PROXY=10.129.32.75`、`PYTHON=$PWD/venv/bin/python` | 同 | 保持一致 |
+| 其它 | READBACK=full、benchmark、`-p 4`、模型 glm-5.3-flash | 同 | 保持不变 |
+> 交付物：`reports/report_zhulong_config_align_cline_zh.html` 或 MEMORY 内 **`diff` 表**（改前/改后/依据），证明除 CLI 外无差异。
+
+**③ 用 zhulong 重跑 5-run（full，PyAether 158）**
+- r1→r5 串行，每轮：起 batch → 收口 → **手动 regrade**（Step7.1 auto-grade 有已知 bug）→ 记 pass/158 与 **gen-fail**。
+- 每轮落盘：pass、gen-fail（literal-pass 数）、耗时、-32001、sandbox-timeout。
+- 收口后算 **5/5 mean±std**，并与 **cline 基线 86.8±1.6%** 对比（Δ）。
+
+**④ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）；
+2. 单轮 **gen-fail ≤ 5/158**（此前 12–27）—— 这是本次对齐最该改善的指标；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. 若对齐后 zhulong 仍显著低于 cline，**必须**在报告里给出"已排除配置混杂"的结论。
+
+
 > ① 删 `7_discussion.tex` 的 `\enlargethispage{8\baselineskip}`（原把 p6 正文**压出下边距 8 行**）；② `main.tex` 增 `\Bbbk`/`\hslash`/`\varkappa`/`\digamma` 冲突护栏 —— **TL2026 + newtxmath 下 `\usepackage{amssymb}` 会报 `Command \Bbbk already defined`**（本机已复现并修好）；③ `\newpage`→`\clearpage`，refs 独占 p7。**正文措辞未做任何删改。**
 > **验收（本机 TeX Live 2026 + newtxmath，三遍编译实测）**：**7 页 / 正文收于 p6（text_y 85–725，无越界）/ refs 独占 p7（16 条）/ 0 undefined**；无 `Overfull \vbox`。
 > 🚫 不要恢复 `\enlargethispage`、不要删 `\Bbbk` 护栏；若重编译，必须复核以上 4 条，不达标就回退。
