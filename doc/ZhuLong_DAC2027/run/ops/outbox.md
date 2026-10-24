@@ -15104,3 +15104,42 @@ drwxr-xr-x   2 app.e0031982 app.adm  4096 Oct 24 22:36 trace
   进程: 2190256 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLon
 === DONE 125 ===
 ```
+
+---
+
+## RUN_ID 126 · 2026-10-24 22:45:58 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 126 | new batch progress | $(date '+%F %T') | host=$(hostname) ==="
+for B in /nasdata/app.e0031982/eda_code_eval/2026_1024_224219 /nasdata/app.e0031982/eda_code_eval/2026_1024_223138; do
+  [ -d "$B" ] || continue
+  echo "== $(basename "$B")  mtime=$(date -r "$B" '+%H:%M' 2>/dev/null)"
+  echo "   code dirs=$(ls -d $B/code/* 2>/dev/null | wc -l)  .py=$(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+  [ -f "$B/.task_queue" ] && echo "   task_queue=$(wc -c < "$B/.task_queue") bytes"
+done
+echo "[2] 运行中的评测进程"
+pgrep -af 'run_zhulong_script|run_cline_script|run_eval.py' | grep -v opencode | cut -c1-110 | head -3 || echo '  none'
+echo "[3] 最新 batch"
+ls -1dt /nasdata/app.e0031982/eda_code_eval/2026_* 2>/dev/null | head -3
+echo "=== DONE 126 ==="
+```
+
+**输出**
+```
+=== RUN_ID 126 | new batch progress | 2026-10-24 22:45:58 | host=hfeg0tedaap02 ===
+== 2026_1024_224219  mtime=22:44
+   code dirs=5  .py=2
+   task_queue=13158 bytes
+== 2026_1024_223138  mtime=22:36
+   code dirs=158  .py=0
+   task_queue=0 bytes
+[2] 运行中的评测进程
+2206166 bash scripts/run_zhulong_script.sh -p 4 -n
+[3] 最新 batch
+/nasdata/app.e0031982/eda_code_eval/2026_1024_224219
+/nasdata/app.e0031982/eda_code_eval/2026_1024_223138
+/nasdata/app.e0031982/eda_code_eval/2026_1024_222846
+=== DONE 126 ===
+```
