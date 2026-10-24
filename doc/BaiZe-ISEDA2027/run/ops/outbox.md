@@ -19680,3 +19680,57 @@ echo "=== DONE 181 ==="
 [5] 21:45 之后的 summary
 === DONE 181 ===
 ```
+
+---
+
+## RUN_ID 182 · 2026-10-24 22:41:47 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 182 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 双机 GPU（>30GB 说明在真算）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr '\n' ' '; echo
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr "\n" " "; echo' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] launcher 进程"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-95 | head -3 || echo '  none(.29)'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'pgrep -af "pretrain_launcher|torchrun" | cut -c1-95 | head -2 || echo "  none(.12)"' 2>/dev/null || true
+
+echo "[3] 双机测试产物"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null | head -8
+echo "  -- summary tail --"; tail -12 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-160
+echo "  -- master 迭代行 --"; grep -aiE 'iteration +[0-9]+|tokens/sec|tok/s|elapsed' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -6 | cut -c1-160
+
+echo "[4] pretrain MEMORY / loop"
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-100
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -2 | cut -c1-100' 2>/dev/null || true
+
+echo "[5] harness 合计"
+s=0; for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; s=$((s+$(find "$d" -name result.json 2>/dev/null | wc -l))); done; echo "  total=$s/609"
+echo "=== DONE 182 ==="
+```
+
+**输出**
+```
+=== RUN_ID 182 | snapshot | 2026-10-24 22:41:47 | host=whag0pgpuap29 ===
+[1] 双机 GPU（>30GB 说明在真算）
+0, 0 MiB, 0 % 1, 0 MiB, 0 % 2, 0 MiB, 0 % 3, 0 MiB, 0 % 4, 0 MiB, 0 % 5, 0 MiB, 0 % 6, 0 MiB, 0 % 7, 0 MiB, 0 % 
+0, 0 MiB, 0 % 1, 0 MiB, 0 % 2, 0 MiB, 0 % 3, 0 MiB, 0 % 4, 0 MiB, 0 % 5, 0 MiB, 0 % 6, 4 MiB, 0 % 7, 4 MiB, 0 % 
+[2] launcher 进程
+2247334 bash -c pgrep -af "pretrain_launcher|torchrun" | cut -c1-95 | head -2 || echo "  none(.
+2695824 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretra
+[3] 双机测试产物
+total 4
+-rw-r--r-- 1 app.e0031982 app.adm 5 2026-10-24_22:41:47 worker.peakmem
+  -- summary tail --
+  -- master 迭代行 --
+[4] pretrain MEMORY / loop
+-rw-r----- 1 app.e0031982 app.adm 28881 2026-10-24_15:07:08 /nas_train/app.e0031982/code/super_intel
+[loop] 2026-10-24 20:24:01 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-24 20:54:01 wake up, invoking cline ...
+[5] harness 合计
+  total=284/609
+=== DONE 182 ===
+```
