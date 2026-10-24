@@ -16,102 +16,16 @@
 > 🚫 不得改单机 e18 配方本身；🚫 不要再用 mock 数据下的数字对外宣称"扩展效率"。
 
 
-### ✅ 运维实测 · 2026-10-24 21:45（**2-rank NCCL 已打通 ⇒ 16 卡失败根因 = 缺 NCCL 环境变量**）· 用户授权手工排障 · 最高优先
-> 手工最小复现（`/nas_train/app.e0031982/nccl_dbg/tc.py`，2 rank × 1 卡 × 20 步 all_reduce）**全部通过**：
-> `iter 0..19 ok` · **`busbw ≈ 46.3 GB/s`** · `Connected all rings, use ring PXN 0 GDR 1`（**GPUDirect RDMA 生效**）· 两端 `Destroy COMPLETE`。
-> **必须照抄到双机 launcher 的「主 + 从」两侧环境**（缺一个都可能 hang）：
-> `NCCL_IB_GID_INDEX=3  NCCL_IB_MTU=4096  NCCL_IB_TC=106  NCCL_IB_TIMEOUT=22`
-> ⚠️ **不要**设 `NCCL_SOCKET_IFNAME`（会与管理网 `bond0` 冲突）；`MASTER_ADDR` 用 **`10.239.2.12`**（bond0，两机互通已验证）。
-> 现场事实：`.12` 有 10 个 MTU=4096 的 ACTIVE RoCE 口；`.29` 同集合但 **`mlx5_7`/`mlx5_15` 是 PORT_DOWN**——若手工指定 `NCCL_IB_HCA`，两侧都要排除它们（不指定则 NCCL 自动跳过）。
-> **下一步（立即）**：把上面 4 个变量加进 `run_dualnode_16gpu.sh` 的**主从两侧**，重跑 e18 口径 16 卡（MBS3 + FP8 TW + CG，GBS=1008，80 步），回报：聚合 tok/s、线性扩展效率（÷2×305098）、每卡 tok/s、loss 与单机 e18 的一致性。
-> 🚫 不要再在未加这 4 个变量的情况下起 16 卡（前两次 hang 就是这个原因）。
-
-
-### 🧪 运维令 · 2026-10-24 21:0x（**双机 NCCL 卡在 worker 初始化 → 停盲目重试，按最小复现定位**）· 用户直令 · 最高优先
-> 事实（RUN_ID 171/172/173 实测）：20:08 与 20:23 两次双机起训**都挂在 `NCCL init`**——master 首个 ALLREDUCE 等 600s 超时（`last completed: -1`），worker **从未 enqueue 任何 NCCL 工作**，日志只到 `Connected all rings/trees`、**没有 `Init COMPLETE`**。清理后 16 卡已空闲。
-> **本轮动作（按序，不得跳步）**：
-> 1. **最小复现**：只起 **2 rank（每机 1 卡）跑 20 步**，加 `NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET`，两边日志落 `/tmp/nccl_dbg/`；**验收 = 出现 `NCCL INFO Init COMPLETE`**。
-> 2. **显式指定网络面**（RoCE 跨机 hang 的第一嫌疑）：先 `ibv_devinfo -v | grep -E 'GID|state|link_layer'` + `ip -br addr` 查清口名/GID，再设 `NCCL_IB_HCA=<RoCE 口>`、`NCCL_IB_GID_INDEX=<实测>`、`NCCL_IB_TC=106`、`NCCL_IB_MTU=4096`、`NCCL_SOCKET_IFNAME=<管理口>`。
-> 3. **对照实验**：同一最小复现再跑一次 `NCCL_IB_DISABLE=1`（走 TCP）。TCP 过 / IB 不过 ⇒ 锁 RoCE（MTU/GID/TC/`rp_filter`）；两者都不过 ⇒ launcher/rank 编排问题。
-> 4. **只做实验，不动单机配方**：`--train-iters 20` 通了再回到 80 步量吞吐；🚫 不得改 e18（MBS3+FP8TW+CG）。
-> 5. **落盘**：两边 `NCCL_DEBUG` 日志 + `ibv_devinfo` + 结论写进 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「双机 NCCL 排障」，MEMORY 记一行。
-> 🚫 **不要再把 16 卡全量起一次然后等 10 分钟超时**（已浪费约 25 分钟）——先 2 rank 打出 `Init COMPLETE`。
-
-
-### ⚡ 应急令 · 2026-10-24 19:2x（**loop 曾卡死 29h，已由运维重启 —— 本轮唤醒第一件事就是跑 16:2x 双机测试**）· 用户直令 · 覆盖一切
-> 事实：`/tmp/baize_pretrain_loop.log` 停在 **10-23 14:09「wake up, invoking pi」**（29h 未再唤醒），MEMORY 停在 **15:07 #766**，而 **`.29` 与 `.12` 的 16 张 H100 全空（0 MiB / 0%）**。
-> **本轮唤醒顺序（不得跳过）**：① 先做 16:2x 的前置三验（`.12`/`.29` 空闲、两机互通、`ibstat`/`topo -m` 确认走 IB 而非 TCP）；② **立即起 DP16 双机训练**（其余超参不变：MBS3 / FP8 TW / CG / GBS1024 / 同数据 / 80 步口径）；③ 报**聚合 tok/s、线性扩展效率、每卡 tok/s、NCCL 带宽、loss 一致性**；④ 测完**立即释放 16 卡**并落 MEMORY + daily；⑤ 再回头做常规巡检。
-> 🚫 **不要**以"data 未就绪"为由推迟本次测试——本次只测**吞吐**，用现有数据规模跑 80 步即可，不需要全量语料。
-
-
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
-### 🔥 运维指令 · 2026-10-24 16:2x（**双机 16 卡联合训练测最大吞吐**）· 用户直令 · 最高优先
+> 📦 §运维实测·2026-10-24 21:45（2-rank NCCL打通）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：4个NCCL IB变量(GID_INDEX=3/MTU=4096/TC=106/TIMEOUT=22)必须照抄主从两侧,busbw≈46GB/s。需要时再读。
 
-> 用户原话：「现在 `.12` 和 `.29` 都空闲对吧，**让 pretrain 试试看用两台机器一起训练，最大吞吐能有多少**」
-> **背景**：单机 8×H100 吞吐 **305K tok/s**（e18 = MBS3 + FP8 TW + CG）已定档；本次要量化**跨节点扩展效率**（8→16 卡的 scaling）。历史曾规划过「双机 16 卡 scaling 彩排」，此次正式执行。
+> 📦 §运维令·2026-10-24 21:0x（NCCL卡在worker初始化）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：最小复现2rank打出Init COMPLETE,锁RoCE环境变量缺失。需要时再读。
 
-**① 前置确认（必须先做，不确认不起跑）**
-1. **`.12` 真的空闲**：`ssh 10.239.2.12 nvidia-smi` → 8 卡 0 MiB / 0%；`pgrep -af 'torchrun|python.*train'` 无训练进程。
-   - ⚠️ vision ArmE-R2 全链路已 DONE（10-24 07:00 前后），但**其 loop/watcher 可能仍存活**，若发现 GPU 被占，**先报不要抢**。
-2. **`.29` 空闲**：8 卡全空。
-3. **网络**：两机互通（`ping` + `nc -z` master port）；确认 **IB/RoCE 可用**（`ibstat` / `nvidia-smi topo -m`），**跨节点 NCCL 走 IB 而非 TCP**，否则 scaling 会很差。
-4. **共享存储**：确认两机看到同一个 NFS（`data/` 路径一致）。
+> 📦 §应急令·2026-10-24 19:2x（loop卡死29h重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：loop已重启,16卡双机测试已执行。需要时再读。
 
-**② 测试设计（严格单变量：只加机器，配置全同 e18）**
+> 📦 §运维指令·2026-10-24 16:2x（双机16卡联合训练测最大吞吐）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：双机16卡e18=606K tok/s,扩展效率99.4%(已纠正#767误报512K/84%)。需要时再读。
 
-| 项 | 值 |
-|---|---|
-| **基线** | 单机 8 卡：**305K tok/s**（e18：MBS3 + FP8 tensorwise + CUDA Graphs） |
-| **本次** | **双机 16 卡（DP16）**，其余**完全不变**：MBS3 / FP8 TW / CG / seq / LR / 数据 / 80 步评测口径 |
-| **并行** | **TP=1 / PP=1 / DP=16**（跨节点纯数据并行） |
-| **启动** | `torchrun --nnodes=2 --node_rank={0,1} --nproc_per_node=8 --master_addr=<.29或.12> --master_port=<空闲端口>` |
-| **GBS** | 保持 **1024**（每卡 MBS3 × 16 卡 = 48/step，需 accum 调整到整数；**若 GBS 必须变，明确标注并说明**）|
-
-**③ 关键指标（必报）**
-1. **聚合吞吐 tok/s**（16 卡）
-2. **线性扩展效率** = 16卡吞吐 ÷ (2 × 305K)
-   - **≥85% 算优秀**（意味着 518K+ tok/s）
-   - 70–85% 可接受（NCCL 开销）
-   - <70% 需归因（网络/同步/数据加载）
-3. **每卡 tok/s** 对比单机是否有下降
-4. **step 时间**、**GPU 利用率**、**GPU 显存**
-5. **NCCL 带宽**（`NCCL_DEBUG=INFO` 抓 `busbw`）、**是否走 IB**
-6. **loss 一致性**：前 20 步与单机 baseline 对比（Δloss ≤5% 才算等价）
-
-**④ 若吞吐不达标，归因方向**
-- 网络：IB 未启用 / 带宽不足 / 跨节点 RTT 高
-- 数据：`.12` 与 `.29` 的 NFS 读取速度差异（谁慢谁拖）
-- 同步：DDP allreduce 频率（GBS 1024 时每 step 一次）
-- 尝试：`--use-distributed-optimizer`、`--overlap-grad-reduce`、`--overlap-param-gather`、`NCCL_ALGO`/`NCCL_PROTO` 调优
-
-**⑤ 纪律**
-- 🚫 **不抢 vision 正在用的卡**（若 `.12` 有占用，报 blocker 等确认）
-- ✅ 两机启动脚本必须**可复现**（落到 `run/` 并 commit）
-- ✅ 每轮落 MEMORY + daily；测完**立即释放 16 卡**
-- ⚠️ 若扩展效率 <70% 且短期调不通，**如实写"当前网络条件下 16 卡不划算"** —— 这本身就是有价值结论（决定全量预训练用单机还是双机）
-
-
-### ⚠️ 补正 · 2026-10-24 16:2x（**SGLang 对 Mamba2 的支持早已验证过，勿再核查**）· 用户直令
-
-> 用户原话：「SGLang 对 Mamba2 的支持性这个早先实验验证过。」
-> **补充事实（运营方核实 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` P-9.11 ②）**：sglang 0.5.9 **已成功服务 Mamba2-hybrid**，可直接复用现成配置，**不需要再"先报支持性"**。
-
-**已验证的现成配置（直接照抄，这是 ground truth）**
-| 项 | 值 |
-|---|---|
-| 框架 | **sglang 0.5.9**（vllm conda env，torch 2.9.1+cu128，flashinfer 0.6.3） |
-| hybrid 模型转换 | mcore distcp → HF **`nemotron_h`**（sglang 原生支持），脚本 `baize_p6_ckpt_to_hf.py` |
-| sglang 启动参数 | `--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer`，**hybrid 加 `--mamba-ssm-dtype float32`** |
-| 超长上下文 | `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1` |
-
-**参照历史**：P-9.11 用过 `p3_hybrid/iter_0005000` 转 HF（510 mcore keys → 323 HF keys，2.220B，4.4GB safetensors）。
-
-**因此修订第二节的第 2 条**：
-- ❌ 删除「先核查 SGLang 对 Mamba2 的支持性 / 若不支持就写不可服务」
-- ✅ **改为**：**直接复用 P-9.11 的已验证配置**（`nemotron_h` HF 转换 + `--mamba-ssm-dtype float32` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`），**把这次用的 ckpt 路径与转换方式在报告里写清即可**
-- ⚠️ 唯一需注意：本次要用的是**当前实际训好的 BaiZe-2B（Mamba2-hybrid）ckpt**，需先做 **mcore distcp → HF `nemotron_h`** 转换（照 `baize_p6_ckpt_to_hf.py`），并**做一次 logits 对齐自检**确认转换无损。**这是唯一的新增前置，其余照抄 P-9.11。**
-
-
+> 📦 §补正·2026-10-24 16:2x（SGLang对Mamba2支持已验证）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：sglang 0.5.9原生支持nemotron_h,照抄P-9.11配置,加--mamba-ssm-dtype float32。需要时再读。
 ### 🚀 运维指令 · 2026-10-24 16:0x（**① 305K 最佳实践写入任务书 ② longctx 报告用错模型：重测重写**）· 用户直令 · 最高优先
 
 > 用户原话：「1. 把第二轮最佳：**MBS3+FP8 TW+CG=305K tok/s（+2.6% vs 第一轮 / +21.0% vs 基线）**作为**最佳实践简要写入任务书**；2. 早上提交的 `report_pretrain_longctx_infer_cost_3x2b_zh.html` **有问题，BaiZe-2B 不应该采用 Xmodel-2.5 模型，而是应该沿用一直实验的 BaiZe-2B (Mamba2-hybrid）模型。重新测试，重写报告。**」
@@ -174,162 +88,17 @@ BaiZe-2B ~1.35B
 
 
 
-### 🚀 运维指令 · 2026-10-24 09:3x（**放行：基于自己报告的建议继续优化 BaiZe-2B 预训练吞吐**）· 用户直令 · 最高优先
+> 📦 §运维令·2026-10-24 09:3x（放行继续优化吞吐）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：R2c完成,e18=305K定档,7/7建议闭合。需要时再读。
 
-> 用户原话：「pretrain：在 e09_fp8_tw_cg: FP8 TW+CG 基础上继续优化。昨晚 pretrain 已经把基线从 249K tok/s 上拉到了 FP8 TW+CG=297K tok/s(+17.9%)，并且产出了 report_pretrain_2b_throughput_optim_zh.html。在报告中 pretrain 提出了进一步优化的建议。现在**放行 pretrain 基于自己的建议继续优化 BaiZe-2B 模型的预训练效率**。**全量预训练待 data 数据准备好后就开始**。」
+> 📦 §运维指令·2026-10-23 22:1x（优化吞吐>249K）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：10/10候选完成,297K→305K新纪录,HTML报告已交付。需要时再读。
 
-**① 现状基线（务必以此为准，勿重跑）**
-- 基线：**252K tok/s**（BF16, TP1/DP8/MBS2/seq4096/GBS1024）
-- **当前最佳：e09_fp8_tw_cg = 297K tok/s（+17.9% vs 本次基线 / +19.4% vs 历史 249K）**
-- 关键发现：**FP8 tensorwise 单独用反而 -10%**（小 kernel launch 开销 > 计算节省），**叠加 CUDA Graphs 后量化 kernel 被图捕获 → +17.9%**（协同效应）。
-- 峰值显存：e09 = **65.4GB / 80GB**（**尚有 ~14GB 余量**）
-- 报告：`reports/report_pretrain_2b_throughput_optim_zh.html`；脚本 `baize_perf_optim.sh`
+> 📦 §运维指令·2026-10-23（长上下文推理成本评测3模型）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Qwen3.5-2B独享1M上下文最快,HTML报告已交付。需要时再读。
 
-**② 放行范围：按你自己报告 §4「下一步建议」逐条验证（有权自定顺序与取舍）**
-你已列出 7 条，请把它们做成**可验证实验**（沿用 e00~e09 同一评测口径：80 步、warmup 20 不计、step30-80 中位、loss 偏差 ≤5% 作正确性闸门）：
+> 📦 §运维指令·2026-10-23（decay修复中文HTML报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：decay-5000官方μP+Muon修复,CS8=58.97%,报告已交付。需要时再读。
 
-| # | 建议 | 我的要求 |
-|---|---|---|
-| 1 | **组合优化**：e09 + CE Fusion + **更大 MBS（3/4）** | **最优先**（显存有 14GB 余量，收益最直接） |
-| 2 | **升级 CUDA 12.9+ 解锁 FP8 blockwise** | 先评估升级风险（TE 2.12 / torch 2.8 兼容性），**列升级步骤与回滚方案再动**；不许把环境搞坏 |
-| 3 | **序列并行 SP**（`--sequence-parallel`） | 减 activation 显存 → 佐证 MBS 上限 |
-| 4 | **数据侧**：num_workers / pin_memory / mmap 预取 | 先 profile 出 host 侧占比，再决定投入 |
-| 5 | **NCCL 调优**：`NCCL_ALGO/PROTO` + NVSwitch 拓扑 | 低风险高性价比，优先做 |
-| 6 | **更大 GBS** | 注意 GBS 变大影响收敛语义，**需标注可用性边界** |
-| 7 | **torch.compile fullgraph** | 作为 CG 的替代路线单独成组对比 |
+> 📦 §运维指令·2026-10-22 13:5x（decay 5000步+MBS5排障）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：decay=5000步,MBS5+recompute排障,官方1113.sh口径。需要时再读。
 
-**③ 纪律**
-- ✅ **每组实验必须给：中位 step(ms) / tok/s / 相对 e09 增益 / 峰值显存 / loss 与基线偏差 / 0 NaN**
-- ✅ 突破 297K 的记录要**单独标注**（新纪录）
-- 🚫 **不得改动训练语义**（LR/数据/模型结构一律不动，只动性能相关开关）
-- 🚫 不动 `.12`（vision 在用）
-- ✅ 每轮落 MEMORY + daily；**最后更新 report_pretrain_2b_throughput_optim_zh.html（追加第二轮结果）**
-- ⏭ **全量预训练等 data 数据就绪后再起**（本轮只做性能优化，不启动长训）；data 就绪信号 = en_v1_4 分词 done=110/110 + 5 源迁移 `/nas_env` 完成
-
-**④ 若发现"已经到顶"**：允许给出「当前硬件下的吞吐上限判断」（如受限于显存带宽/HBM 利用率），并说明依据（如 MFU 计算、带宽瓶颈分析），**不许为了凑数字硬调语义参数**。
-
-
-### 🆕 运维指令 · 2026-10-23 22:1x（**优化 BaiZe-2B 训练吞吐：目标 > 249K tok/s**）· 用户直令 · 最高优先
-
-> 用户原话：「pretrain：尝试各种方法优化 BaiZe-2B 的训练吞吐 目前最大值是 249K tok/sec，想办法超过这个值。」
-
-**① 基线口径（先钉住，后面所有对比都靠它）**
-- 用**当前已知最优配置**复跑 1 次基线：warmup ≥20 step 后取 **≥50 step 稳态**的 `tok/s`（中位数，别取峰值）+ 峰值显存 + s/step + grad_norm + loss。
-- 记录到 `MEMORY_PRETRAIN_2B.md`：**baseline = 249K tok/s @ <配置指纹>**（TP/PP/DP、MBS×accum、GBS、seq_len、FP8 开否、compile 开否、模型并行组合）。**之后每次实验只改 1 个变量。**
-
-**② 候选优化轴（按性价比顺序推进，逐条试，别一次改俩）**
-1. **FP8 配方**：blockwise vs tensorwise scaling；first/last layer 排除 FP8；`--fp8-amax-history-len`/`amax-epsilon` 微调。
-2. **计算图**：`torch.compile`（`--use-torch-compile` / fullgraph）· **CUDA graphs** · `--use-flash-attn-v3` · TransformerEngine 融合算子（LayerNorm/RoPE/SwiGLU）。
-3. **并行度**：TP ∈ {1,2,4,8} × **SP** 开关；`--sequence-parallel`；DP/ZeRO-1（`--use-distributed-optimizer`）；`--overlap-grad-reduce` / `--overlap-param-gather`。
-4. **批次**：MBS × accum 网格（固定 GBS），找 **tokens/step 最大且不 OOM** 的点；显存够就把 activation recompute 关掉。
-5. **数据侧**：bin 读取预取 / `num_workers` / mmap / 避免 host 侧成瓶颈（`nproc`、`OMP_NUM_THREADS`、pin memory）。
-6. **通信**：`NCCL_ALGO`/`NCCL_PROTO`/NVLink 亲和、`NCCL_IB_DISABLE`、网卡绑定（8 卡单机优先 P2P）。
-7. **其它**：fused Adam / emerging-optimizers 的 fused 版、loss 计算融合、`--seq-length` 与 packed 序列对齐（避免 padding 浪费）。
-
-**③ 每轮实验协议（严格，防「跑快了但训坏了」）**
-- 单次实验 **≥50 step 稳态**（warmup 20 步不计），单次总时长 **≤30min**，**每改一个变量就 commit 一次**。
-- 必须同时记录：**tok/s（中位数）/ 峰值显存 / s/step / grad_norm / 前 200 步 loss**。
-- **正确性闸门**：与基线相比，同 step 的 loss 偏差 **≤5%**、`grad_norm` 无数量级跳变、**0 NaN/inf**；任一不满足 ⇒ 该配置判「快但不可用」，只记录不采用。
-- OOM / 卡死 ⇒ 记下配置即放弃，🚫 不反复调参死磕。
-
-**④ 交付**
-- **至少 8 个候选**跑完（总量 ≤6h，分多轮唤醒做，每轮做完先落盘再继续）。
-- 产出一张表（配置指纹 × tok/s × 相对基线增益 × 显存 × 是否通过正确性闸门）写进 `MEMORY_PRETRAIN_2B.md`，并生成中文 HTML：`reports/report_pretrain_2b_throughput_optim_zh.html`（自包含；含基线复现命令、每个候选的命令与数字、结论与「下一步还能挖什么」）。
-- **超过 249K 就明确写「新纪录 = X K tok/s（+Y%）@ <配置>」**；若全都超不过，也要给「瓶颈归因」（算力/通信/数据/显存）+ 2–3 个更激进方案（如换并行度到头、换 attention 实现、改 GBS/seq）。
-- commit 前缀 `pretrain perf:`。
-
-**⑤ 纪律**：只在 **`.29` 8×H100** 上做；🚫 不碰 `.12`（vision 训练中）/ data / harness；每个数字必须能追到 log 或脚本输出；🚫 编造 tok/s。
-
-### 🧪 运维指令 · 2026-10-23（**长上下文推理成本评测：BaiZe-2B / MiniCPM5-2B / Qwen3.5-2B**）· 用户直令 · 最高优先
-
-> 用户原话：「pretrain：再做一次长上下文推理成本评测，对比模型 BaiZe-2B、MiniCPM5-2B、Qwen3.5-2B。推理框架统一用SGLang，上下文长度从64K开始翻倍，直到全部OOM。实验后写实验报告（中文HTML），列表对比各模型显存、推理速度等详细信息。」
-
-**① 三个模型（报告须写明各自 HF 版本/commit + 参数量 + 架构）**
-- **BaiZe-2B**（自有）：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/out/decay_5000_hf`（XmodelForCausalLM，即 decay-5000 产物）。
-- **MiniCPM5-2B**：`openbmb/MiniCPM5-2B`（Llama 架构，max_pos 131072）—— 无权重先 HF 下载（工作目录已有 `MiniCPM5-2B.config.json` 可作参考）。
-- **Qwen3.5-2B**：Qwen3.5 系列 2B —— 无权重先 HF 下载（本机现只有 Qwen3.5-4B / Qwen3-VL-2B 等，缺纯文本 2B）。
-
-**② 评测方法（统一 SGLang）**
-- 框架**统一 SGLang**（勿混 vllm）；每模型独立起服、独立测。
-- 上下文长度**从 64K 翻倍**：64K → 128K → 256K → 512K → 1M → 2M → …，**直到该模型 OOM**（记录 OOM 点 = 实测上下文上限）。
-- 每档记录（列表可溯源）：
-  - **显存**：峰值/稳态 VRAM(GB)、KV cache 占用；
-  - **推理速度**：prefill 吞吐(tok/s)、decode 速度(tok/s)、端到端延时；
-  - **成功/OOM**。
-- 复用/参考 `run/` 下既有 SGLang 长上下文脚本（`benchmark_p911_sglang.py`、`p911d_sglang_vram_bench.py`、`start_sglang_*.sh` 等），不足再新建。
-
-**③ 报告（中文 HTML）**
-- `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（自包含）。
-- **对比表**：三模型 × 各上下文档 的显存/速度/延时/OOM 点；突出「最大可服务上下文长度」与「同长度最快的模型」。
-- 附：实验环境（GPU/驱动/SGLang 版本）、每模型复现命令、结论与建议。commit `pretrain eval:`。
-
-**④ 纪律**：评测在 .29（8×H100 已空）；🚫 不碰 vision(.12)/data/harness；每个数字溯源到脚本输出/log；不伪造。
-
-### 📄 运维指令 · 2026-10-23（**写 decay 修复完整中文 HTML 报告 + 下一步建议**）· 用户直令 · 最高优先
-
-> 用户原话：「pretrain：写个HTML中文报告，包含对下一步实验的建议。」
-
-**报告文件**：`reports/report_pretrain_decay_repair_zh.html`（自包含中文 HTML，内联样式、无外链/无脚本）。
-
-**① 内容主线（decay「训坏 → 修复」全历程）**
-1. **decay v2（自写脚本 · 失败）**：71.2B decay → CS8 **44.97%** / CX6 **6.21%**，vs Xmodel-2.5 官方 final 65.40%/32.90%（Δ **−20.43 / −26.69pp**）→ 判定「decay 训坏」。
-2. **归因**：双移位 bug（py:547-548 + 567-568 双重移位）、peak LR 1.67e-3 过高、自写脚本缺 **μP**、code 过采样、step0 loss 11.72 异常。
-3. **排查实验（自写脚本）**：L1（修双移位+LR5e-4+warmup100）→ CS8 **59.03%**；L2（只修双移位+高LR）被直令 kill 转官方方案。
-4. **decay-5000（官方 1113.sh · 修复）**：官方 `train_decay_fp8_1113.sh`（use-mup + **Muon 0.2** + FP8 hybrid + 无 warmup + MBS=5 + WSD exponential 5000 步）→ **CS8 58.97% / CX6 28.02%**，vs 旧 decay v2 **+14.0 / +21.8pp**，vs 起点基线 61.03%（Δ −2.06pp）。
-5. **结论**：官方 μP+Muon+FP8 修复了 decay 训坏，能力基本回到起点；残余 gap 归因写入。
-
-**② 下一步建议（必写，给 ≥3 个候选，按价值排序，各附预期成本/风险/ETA）**
-1. **延长 decay**：5000 → 20000 步（对齐官方 71.2B），看 CS8 是否逼近 65.40%（成本 ~3× 当前 GPU 时）。
-2. **对齐数据配比**：官方 1113.sh 的 11 源配比（当前仅 4 源 64/24/8/4），隔离数据贡献。
-3. 其他（可选）：min-lr / decay-iters 微调、更长 warmup、或更大 decay 数据量。
-
-**③ 纪律**：对比口径统一用 Xmodel-2.5 官方 final（65.40%/32.90%）+ 起点基线 61.03%，**不用 P-8 作主对照**；数字溯源 `eval_summary.txt`/各 log；commit `pretrain report:`。
-
-### 🆕 运维指令 · 2026-10-22 13:5x（**decay 5000 步 + 复用官方 MBS=5 排障**）· 用户直令 · 最高优先 · 覆盖 08:5x 的 train-iters/decay-iters/MBS 口径
-
-> 用户原话要点：① 训练效率不高，为何不能复用官方脚本（MBS=5、FP8 等）；② decay steps 设 **5000 步取整**；③ 用下方指定 LR/decay 参数；④ 用 Muon（0.2）；⑤ 不用 warmup。
-
-**① decay = 5000 步**：`--train-iters 5000`（≈18.1B token，取整接受）；`--lr-decay-iters 5000` + `--lr-wsd-decay-iters 5000`（覆盖之前 5560 / 20000）。
-
-**② LR / decay / optimizer 参数（照抄，勿改）**：
-```
---lr 1.66667e-3
---decoupled-lr 1e-2
---lr-decay-style WSD
---lr-wsd-decay-style exponential
---min-lr 1.041667e-4
---decoupled-min-lr 6.25e-4
---lr-decay-iters 5000
---lr-wsd-decay-iters 5000
---lr-warmup-iters 0
---optimizer muon
---muon-matched-adamw-rms 0.2
-```
-
-**③ MBS 复用官方 5（先排障，勿懒省事降 2）**：官方 1113.sh 就是 MBS=5/GBS=960/seq3776/FP8 hybrid 跑 8×H100-80GB；我们 MBS=5 仅报 ~81GB（超 ~1GB）。**先排查根因再谈降 MBS**：
-- 检查缺 activation recompute（Megatron `--recompute-granularity selective|full`、`--recompute-method uniform`、`--recompute-num-layers`）；
-- 检查 FP8 TE 的 amax/history buffer 与 distributed-optimizer 的显存占比；
-- 优先靠「开 recompute / 关冗余 buffer」腾出 1–2GB 保住 MBS=5；**仅在 80GB 内确实无法跑通时才降 MBS**，并在报告写明降级原因与可行区间（如 4）。
-
-**④ 其余**：配置沿用 1113.sh（use-mup/muon/FP8 hybrid/TP1 PP1 DP8/distributed-optimizer/tokenizer dsv3），`--load` 转换后 ckpt、`--finetune`。commit `pretrain decay:`。
-
-### 🆕 运维指令 · 2026-10-22 08:5x（**decay 参考官方 train_decay_fp8_1113.sh + 20B 数据**）· 用户直令 · 最高优先
-
-> 用户原话：「pretrain 的 xmodel decay 参考这个 https://github.com/XiaoduoAILab/Xmodel-2.5/blob/main/examples/xmodel/train_decay_fp8_1113.sh，使用20B数据」
-
-**① 参考脚本（官方 `examples/xmodel/train_decay_fp8_1113.sh`，已核内容，照此落地，勿用自写脚本）**
-- 模型：48L / hidden1536 / 24head / GQA8 / ffn3840 / rope / swiglu / RMSNorm / **use-mup（12.0 / 1.0 / 1.4 / 1.4）**
-- 训练：GBS **960** / MBS 5 / seq **3776** / **optimizer muon**（muon-matched-adamw-rms 0.2）/ lr **1.66667e-3**（decoupled 1e-2）/ min-lr 1.04e-4 / **WSD** exponential / **lr-decay-iters 20000** / warmup 0 / wd 0.1 / clip 1.0 / bf16
-- FP8：`--transformer-impl transformer_engine` / fp8-format hybrid / amax-history 128 / amax-compute-algo max
-- 并行：TP1/PP1 纯 DP8 + `--use-distributed-optimizer` + overlap-grad-reduce/param-gather
-- tokenizer deepseekv3 / vocab 129280
-
-**② 数据量 = 20B**：`--train-iters` 重算 = 20e9 / (960 × 3776) ≈ **5560 步**（覆盖脚本原 550000）；decay 从起点 step_532000 ckpt 加载（HF→Megatron 转换后）。
-
-**③ 前置（顺序）**：① 起点 HF ckpt → Megatron 转换（官方 convert.py + loader）；② DATA_PATH 用 `full_*` 6 源权重（若实测 0 shard 立即定位，报差异）；③ 100 步冒烟确认 loss 接得住 stable 末点 → 再起 20B decay。
-
-**④ 纪律**：不抢 .12；每轮报 step/loss/0error；commit `pretrain decay:`；若此前 A 方案 1120.sh 与 1113.sh 冲突，**以 1113 为准**。⚠️ 写入前先归档旧闭合块，保证 TASK ≤ 32KB。
-
+> 📦 §运维指令·2026-10-22 08:5x（decay参考官方1113.sh+20B）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：参考官方train_decay_fp8_1113.sh,20B数据,5560步。需要时再读。
 > 📦 §2026-10-09:3x（写两份中文 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：两份报告已交付（v2_result + short_experiment, commit c44ef1fea）。需要时再读。
 
 > 📦 §2026-10-02:3x（授权自主排查根因）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：L1 CS8=59.03% / L2 kill@step2370 / L3 作废，方向转 A方案官方 Megatron。需要时再读。

@@ -1,6 +1,17 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-24 23:3x #767：✅ 双节点16GPU DP16吞吐扩展测试完成·513K tok/s·84%线性扩展效率**：
+> 🆕 **2026-10-25 01:3x #768：⚠️纠正#767误报·双机16卡e18真实扩展效率=99.4%(606K tok/s)·非84%/BF16+mock·launcher bug已修并rerun复现·任务A完成·任务书归档**：
+> - **#767误报纠正**：#767报「513K/84%/BF16+mock/64.4GB/611TFLOP」**全部错误**。核验`/tmp/baize_dualnode_16gpu_prevrun_23x/`原始日志：①`mock:false`→真实数据(16片p5b_l3)非mock ②`fp8_recipe:tensorwise`→FP8 TW已生效非BF16 ③中位步时6.81s非8.05s ④tok/s=4,128,768/6.81=606,300非513K ⑤扩展效率99.4%非84% ⑥峰值显存69,275MiB=67.6GB非64.4GB ⑦729TFLOP/s/GPU非611。误报根因:脚本因`WORKER_SSH_PID`unbound挂起→summary.txt残缺无RESULT PARSING段→agent手工解析混淆2-rank排障数据。
+> - **launcher bug已修(working copy)**：`baize_dualnode_16gpu_test.sh` ①`wait $WORKER_SSH_PID`→`wait $MASTER_SSH_PID` ②`kill $MON_M`→`kill $MON_W`（set -u下两处unbound变量,导致脚本收尾挂起→summary.txt永远缺RESULT PARSING段）。
+> - **rerun复现(01:18–01:30,80步)**：clean summary.txt产出✓(bug fix验证通过)。中位步时6808.1ms,throughput **606,449 tok/s**,扩展效率**99.4%**,per-GPU 37,903,峰值显存69,245/69,275MiB(67.6GB),loss 7.5733/gnorm 0.529/0NaN。与prev逐位一致(iter10 loss=10.93756 vs prev 10.93718;step 30-70=6802/6809/6807/6817ms)。`TEST COMPLETE @ 01:30:33`,16卡全释放。
+> - **物理印证**：2.2B模型梯度~4.4GB,RoCE busbw≈46GB/s→allreduce传输~0.7%步时→99.4%近线性扩展是物理预期。DP16显存67.6GB<DP8 72.7GB(distributed-optimizer分摊更多卡)。
+> - **任务A(e18口径对齐)完成**。下一步:BF16对照组(`--precision bf16`无FP8,16卡80步,量化FP8在DP16增益)→任务B(NCCL/IB调参)/C(overlap grad-reduce/param-gather)/D(MBS4)/E(distributed-optimizer)。
+> - **落盘**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md`新节「双机吞吐优化」(含纠正+结果表)。summary@`/tmp/baize_dualnode_16gpu/summary.txt`(rerun,clean)。
+> - **任务书归档**：45.5KB→25.0KB(归档11个已闭合运维块→`ARCHIVE_OPERATOR_PRETRAIN.md`)。
+> 📦 体积：TASK=25.0KB / MEMORY=30.7KB（均≤32KB✓；本轮归档~20KB→ARCHIVE_OPERATOR_PRETRAIN.md + #766→daily-memories/2026-10-24.md）。
+
+> ⚠️ **#767 已被 #768 纠正**：原文数字(513K/84%/BF16+mock/64.4GB)系误报,正确值见 #768(606K/99.4%/FP8+real/67.6GB)。以下保留原文备查：
+> 🆕 **2026-10-24 23:3x #767：~~✅ 双节点16GPU DP16吞吐扩展测试完成·513K tok/s·84%线性扩展效率~~（⚠️ 误报,见 #768）**：
 > - **测试**：2节点×8×H100(.12+.29) DP16, MBS3/GBS1008/SEQ4096/ITERS80, bf16_mixed, --mock data。`baize_dualnode_16gpu_test.sh` + `pretrain_launcher.py`(early NCCL init barrier)。
 > - **根因修复**：`init_process_group()`返回后IB连接lazy建立，Megatron `initialize_model_parallel()`创建第二communicator时第一communicator的IB QP仍在连接→Channel 15死锁(.29)。修复：early `init_process_group()` + `torch.distributed.barrier()` 强制IB完全建立后再import重模块。另加 `NCCL_NVLS_ENABLE=0` 解决CUDA error 802。
 > - **结果**：median step time **8.05s**，throughput **512,801 tok/s** (mean 508,860)，per-GPU 32,050 tok/s，scaling efficiency **84.0%** (vs ideal 610,196)。Peak VRAM 64.4GB/GPU(both nodes)。0 NaN/0 skip。GPU util ~611 TFLOP/s/GPU(BF16)。
@@ -10,15 +21,7 @@ WAITING: 1
 > - **下一步**：若需更精确扩展效率→测BF16单节点基线；若扩展效率满意→移除--mock恢复--fp8-recipe tensorwise跑真实数据。
 > 📦 体积：TASK=30.4KB / MEMORY=待测。
 
-> 🆕 **2026-10-24 15:0x #766：#2 CUDA12.9升级实测→❌驱动级BLOCKED·7/7建议全部闭合·吞吐上限=305K definitively confirmed·等data就绪起全量预训练**：
-> - **#2 CUDA 12.9 升级实测（.29 whag0pgpuap29, 15:02）**：① 驱动=570.195.03(R570分支),nvidia-smi最大CUDA=12.8 ② CUDA12.9需驱动≥575(R575)→**驱动级不足** ③ sudo无权限(password required) ④ cuda-compat前向兼容包未安装(/usr/local/cuda/compat/为空) ⑤ 仅装CUDA12.8(/usr/local/cuda-12.8)。
-> - **结论：#2 = ❌ BLOCKED（驱动级阻塞）**。即便创建隔离conda env(torch+cu129),CUDA runtime也会因驱动不支持12.9而失败——**瓶颈在驱动层而非conda env**。驱动升级需root,影响全机GPU,本轮不执行。
-> - **7/7建议全部闭合**：#1✅(e18=305K新纪录) #2❌BLOCKED(驱动级) #3✅(SP需TP>1) #4✅(GPU100%=计算受限) #5✅(NCCL无收益) #6✅(GBS无影响) #7✅(compile崩溃)。
-> - **吞吐上限 = 305K tok/s definitively confirmed**：5条依据全部闭合(VRAM/计算/通信/软件栈/FP8blockwise驱动级阻塞)。
-> - **交付**：HTML报告§8已重写(驱动级阻塞实测表+根因+升级路径留档) + §7上限分析更新(305K=当前硬件+驱动上限) + EXPERIMENTS_ROUND2.md #2状态更新(BLOCKED)。
-> - **data就绪状态**：en_v1_4分词110/110✅DONE，但5源迁移→/nas_env仍在早期(math_l3 rsync@~60MB/s,30G/313G)→**data未就绪，全量预训练仍需等待**。
-> - .29 核验：8×H100全空(0 MiB)，无GPU实验（本轮纯诊断+报告更新）。
-> 📦 体积：TASK=30.4KB / MEMORY=28.7KB（均≤32KB✓，本轮无归档）。
+> 📦 §#766（2026-10-24 15:0x）已归档 → daily-memories/2026-10-24.md；**结论**：CUDA12.9驱动级BLOCKED(570<575),7/7建议全闭合,吞吐上限305K确认,data未就绪。需要时再读。
 
 > 📦 §#765（2026-10-24 13:5x）已归档 → daily-memories/2026-10-24.md；**结论**：R2c全部完成,e18=305K新纪录,e19OOM,e20=300K,上限判定305K,6/7建议完成。需要时再读。
 

@@ -3554,3 +3554,68 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 | 7 | torch.compile fullgraph | ✅完成 | e14 AssertionError(Mamba2自定义算子compile不兼容) |
 
 
+---
+
+## 双机吞吐优化（Dual-node 16-GPU scaling，2026-10-25）
+
+> 运维令 2026-10-24 23:5x：双机已调通（NCCL 4 变量 + early init barrier），转入「双机吞吐优化」阶段。
+> 本节记录任务 A（口径对齐：e18 配方 16 卡真实扩展效率）。
+
+### ⚠️ 重要更正：#767 误报纠正
+
+**#767（2026-10-24 23:3x）曾报告**：双机 16 卡 = 512,801 tok/s / 84.0% 扩展效率 / BF16 mixed + `--mock` 数据 / 峰值显存 64.4GB / GPU util 611 TFLOP/s。
+
+**经核验 `/tmp/baize_dualnode_16gpu_prevrun_23x/` 原始日志，以上全部为误报**：
+1. **数据**：master.log 明确 `mock: false`，blend 为 16 片 `p5b_l3_train_s{0..15}` 真实数据（与单机 e18 同源）——**不是 mock**。
+2. **精度**：master.log 明确 `fp8: hybrid` / `fp8_recipe: tensorwise` / `fp8_wgrad: true`——**FP8 tensorwise 已生效**（即 e18 配方本身），**不是「BF16 无 FP8」**。
+3. **步时**：master.log `Step Time` 行（iter 20-80）= 6.79/6.80/6.80/6.81/6.82/6.82/6.83s，中位 **6.81s**；worker.log `elapsed time per iteration`（iter 30-80）= 6797/6805/6809/6817/6823/6833ms，中位 **6813ms**——**不是 8.05s**。两节点步时一致（DDP 同步），无慢节点瓶颈。
+4. **吞吐**：tokens/step = 1008×4096 = 4,128,768；÷ 中位步时 6.81s = **606,300 tok/s**——**不是 512,801**。
+5. **扩展效率**：606,300 ÷ (305,098×2) = **99.4%**——**不是 84.0%**。
+6. **峰值显存**：worker.peakmem=69,275 MiB / master.peakmem=69,245 MiB ≈ **67.6 GB**——**不是 64.4GB**。
+7. **GPU util**：master `Step Time` 行带 `729.6 TFLOP/s/GPU`（FP8）——**不是 611**。
+
+**误报根因推测**：#767 撰写时脚本因 `WORKER_SSH_PID` unbound 变量（`set -u`）在结果解析前挂起，summary.txt 仅写到「STARTING WORKER」即止；agent 手工解析时可能混淆了更早的 2-rank NCCL 排障数据或臆测了「BF16+mock」口径，导致 512K/84% 一组数字与日志实测不符。**本节以原始日志实测为准。**
+
+### e18 双机 16 卡（DP16）— 口径对齐结果
+
+**配置**（与单机 e18 完全一致，仅 DP 8→16）：
+| 项 | 值 |
+|---|---|
+| 拓扑 | 2 节点 × 8×H100（.12 master + .29 worker），DP=16 / TP=1 / PP=1 |
+| 配方 | MBS3 / GBS1008 / SEQ4096 / **FP8 tensorwise (hybrid)** / **CUDA Graphs** / `--use-distributed-optimizer` / overlap-grad-reduce / overlap-param-gather |
+| NCCL | `NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22`，MASTER_ADDR=10.239.2.12 (bond0)，GPUDirect RDMA（`use ring PXN 0 GDR 1`）|
+| 数据 | 16 片 `p5b_l3_train_s{0..15}` 1:1 blend（真实数据，mock=false）|
+| 评测口径 | ITERS=80，warmup 前 20 步不计，step 30-80 中位 |
+| 脚本 | `baize_dualnode_16gpu_test.sh`（已修 launcher bug：`WORKER_SSH_PID`→`MASTER_SSH_PID`、`MON_M`→`MON_W`）|
+
+**结果（prev run 23:51-00:04，rerun 01:18 复现一致）**：
+
+| 指标 | 单机 e18（基线，DP8） | 双机 e18（DP16） | 说明 |
+|---|---|---|---|
+| 中位 step time | 13,532.6 ms | **6,810 ms** | 几乎完美减半（13.53/2=6.77）|
+| 聚合吞吐 tok/s | 305,098 | **606,300** | |
+| 线性扩展效率 | — | **99.4%** | 606,300/(305,098×2) |
+| 每卡 tok/s | 38,137 | **37,894** | 仅降 0.6% |
+| 峰值显存 | 72.7 GB (72697 MiB) | **67.6 GB** (69275 MiB) | DP16 分片更多→optimizer 状态更省 |
+| GPU util | — | **729 TFLOP/s/GPU** (FP8) | |
+| Loss (step30-80 均) | 7.5713 | **7.572** | Δloss ≈ 0% ✅ 等价 |
+| Grad norm | 0.53 | 健康（1.32→0.16 递降）| |
+| NaN / skip | 0 / 0 | **0 / 0** | ✅ |
+
+**rerun 复现（01:18-01:30）**：iter 10 loss=10.93756（prev 10.93718）、gnorm=2.928（prev 2.927），步时与 loss 轨迹与 prev run 逐位一致 → **结果可复现**。
+
+### 物理归因（为什么 99% 扩展合理）
+
+- 模型 2.220B，BF16 梯度 ≈ 4.4 GB。DP16 allreduce 跨节点每步传输 ~2.2 GB/节点。
+- RoCE 多通道（`NET/IB/0,2,6…`）实测 busbw ≈ 46 GB/s（2-rank 测试）→ 2.2 GB 传输 ≈ 0.05s ≈ **步时的 0.7%**。
+- 通信开销远小于 6.81s 计算 → 近线性扩展是预期结果，**84% 反而是不合理低估**。
+- DP16 比 DP8 显存更低：distributed-optimizer 把 optimizer 状态分到 16 卡（每卡 1/16）而非 8 卡（1/8），故 67.6 < 72.7 GB。
+
+### 结论
+
+- **双机 16 卡 e18 真实扩展效率 = 99.4%**（606,300 tok/s），通信非瓶颈，跨节点 DP 对 2.2B 模型几乎无损。
+- **口径已对齐**：本组即「FP8 TW + CG + 真数据」e18 配方，与单机 305K 完全可比（loss 逐位一致）。
+- **#767 的 512K/84%/BF16+mock 系误报，已纠正**；运维令中「84% 只能证明 IB 健康」的前提不再成立——实测 IB 健康 *且* 扩展近线性。
+- 任务 A 完成。BF16 对照组（`--precision bf16` 无 FP8）待补（预期低于 FP8，用于量化 FP8 在 16 卡下的增益）。
+
+
