@@ -2,6 +2,65 @@
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
+### 🚀 运维指令 · 2026-10-24 16:0x（**① 305K 最佳实践写入任务书 ② longctx 报告用错模型：重测重写**）· 用户直令 · 最高优先
+
+> 用户原话：「1. 把第二轮最佳：**MBS3+FP8 TW+CG=305K tok/s（+2.6% vs 第一轮 / +21.0% vs 基线）**作为**最佳实践简要写入任务书**；2. 早上提交的 `report_pretrain_longctx_infer_cost_3x2b_zh.html` **有问题，BaiZe-2B 不应该采用 Xmodel-2.5 模型，而是应该沿用一直实验的 BaiZe-2B (Mamba2-hybrid）模型。重新测试，重写报告。**」
+
+---
+
+**① 最佳实践（写入本任务书「💡 最佳实践 / 硬口径」区，常驻）**
+
+> **BaiZe-2B 训练吞吐最佳配置（2026-10-24 第二轮定档，勿再重复扫描）**
+> - **配置**：`MBS3 + FP8 tensorwise + CUDA Graphs`（即 e18）
+> - **吞吐**：**305K tok/s**
+>   - **+2.6%** vs 第一轮最佳 e09（297K）
+>   - **+21.0%** vs 基线 252K / **+22.5%** vs 历史 249K
+> - **关键机理**：FP8 tensorwise **单独用反而 -10%**（Mamba2 SSM 小 GEMM 的量化 kernel launch 开销 > 计算节省）；**必须叠加 CUDA Graphs** 让量化 kernel 被图捕获，FP8 带宽收益才释放。
+> - **显存**：MBS3 下需确认峰值；80GB 内已知可行。
+> - **上限已确认 = 305K**（5 条依据闭合：VRAM / 计算（GPU 100%）/ 通信（NCCL 无收益）/ 软件栈（compile 崩溃）/ FP8 blockwise 驱动级阻塞）。
+> - **CUDA 12.9 不可用**：驱动 570.195.03 最高支持 12.8，12.9 需驱动 ≥575 → **驱动级 BLOCKED**（即使新建 conda env 也不行），升级需 root。
+> - 🚫 后续全量预训练**直接用 e18 配置**，不必再扫吞吐。
+
+---
+
+**② longctx 报告重测重写（核心问题）**
+
+**问题定位（运营方已核实报告内容）**：当前报告的"BaiZe-2B"写的是：
+```
+BaiZe-2B ~1.35B
+架构 LlamaForCausalLM (由 XmodelForCausalLM 转换)   ← ❌ 错
+层数 48 / hidden 1536 / 24 heads / GQA 8 KV / vocab 129,280 / 权重共享
+来源 自有模型 decay-5000 (Xmodel-2.5-code)          ← ❌ 错
+```
+**这是 Xmodel-2.5 的 Dense 架构（decay 后转换），不是 BaiZe-2B。**
+
+**BaiZe-2B 的真实规格**（必须以此为准）：
+- **架构：Mamba2-hybrid**（56 层 = 28 SSM + 28 Attention，hidden=2048，heads=16，3.00B total）
+- **不是 Dense Transformer，不是 XmodelForCausalLM**
+- 模型路径请从 Baize-ISEDA2027 里**实际训好的 BaiZe-2B 权重**取（`nemo_experiments/` 下与 pretrain_launcher `--arch mamba2` 对应的产物）
+
+**重测要求**
+1. **确认模型**：加载前打印 `arch` / 层类型统计（SSM vs Attention 层数）/ 参数量，**贴在报告里**，证明是 Mamba2-hybrid。
+2. **SGLang 支持性核查**：Mamba2-hybrid 在 SGLang 0.5.9 下是否有专门支持（mamba backend / `--mamba-ssm-dtype`）？**若需特定 flag 或版本，先报再测**；若确实不支持，如实写"该架构在 SGLang 下不可服务"而不是拿 Dense 模型顶替。
+3. **三模型同口径重测**：BaiZe-2B(Mamba2-hybrid) / MiniCPM5-2B / Qwen3.5-2B，**同样的上下文阶梯 64K→2M、同样的测量协议**（1 预热 + 2 次取中位、生成 128 tok、`--disable-radix-cache`、mem-fraction 0.88）。
+4. **关键对比维度（Mamba2 的意义就在这）**：
+   - **KV cache 增长曲线**：Mamba2 只有 Attention 层有 KV（28/56 层），**显存增长应显著慢于 Dense**
+   - **TTFT / Decode 吞吐随上下文的退化斜率**
+   - **能服务的最大上下文**（谁先 OOM）
+5. **必须加一节"架构差异说明"**：讲清 Mamba2-hybrid 的 SSM 层是**常数状态**（不随上下文增长），这是它与 Dense 在长上下文成本上的**结构性差异**——这正是本报告的价值所在。
+
+**③ 交付**
+- 重写 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（**覆盖旧版，旧版先备份为 `.bak`**）
+- 报告中**必须写明**："旧版误用 Xmodel-2.5 Dense ckpt，本版改用 BaiZe-2B (Mamba2-hybrid) 重测"
+- 数据可溯源：每个数字对应 `logs/` 或 `/tmp` 中的原始测量文件
+- commit 前缀 `pretrain report:`
+
+**④ 纪律**
+- 🚫 不再扫吞吐（305K 已定档）
+- 🚫 不动 vision（`.12`）/ 不改 5 源分词产物
+- ✅ 每轮落 MEMORY + daily
+
+
 
 ### 🚀 运维指令 · 2026-10-24 09:3x（**放行：基于自己报告的建议继续优化 BaiZe-2B 预训练吞吐**）· 用户直令 · 最高优先
 
