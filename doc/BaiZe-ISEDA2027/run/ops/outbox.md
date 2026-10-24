@@ -17069,3 +17069,86 @@ Everything up-to-date
   alexgshaw images: 57
 === DONE 154 ===
 ```
+
+---
+
+## RUN_ID 155 · 2026-10-24 13:04:17 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 155 | locate 5-source tokenized dirs + size | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] /nas_env 余量（字节）"
+df -h /nas_env 2>/dev/null | tail -2
+echo "  avail_bytes=$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')"
+echo
+echo "[2] datasets/baize-data 的两层目录树"
+for root in /nas_train/app.e0031982/datasets/baize-data /nas_train/app.e0031982/datasets/baize-data/text /nas_train/app.e0031982/code/Baize-ISEDA2027/data; do
+  [ -d "$root" ] || continue
+  echo "  == $root"
+  timeout 60 find "$root" -maxdepth 2 -type d 2>/dev/null | head -20
+done
+echo
+echo "[3] 按 *.bin 数量排序的目录（maxdepth 4，Top10）"
+timeout 180 find /nas_train/app.e0031982/datasets/baize-data /nas_train/app.e0031982/code/Baize-ISEDA2027 -maxdepth 4 -name '*.bin' -printf '%h\n' 2>/dev/null | sort | uniq -c | sort -rn | head -10
+echo
+echo "[4] 前 12 个候选目录的体积（有界 du）"
+timeout 240 find /nas_train/app.e0031982/datasets/baize-data /nas_train/app.e0031982/code/Baize-ISEDA2027 -maxdepth 4 -name '*.bin' -printf '%h\n' 2>/dev/null | sort -u | head -12 | while read -r d; do
+  b=$(timeout 90 du -sb "$d" 2>/dev/null | awk '{print $1}')
+  [ -n "${b:-}" ] || b=0
+  printf "  %9.1f GB  %s\n" "$(awk -v x="$b" 'BEGIN{print x/1e9}')" "$d"
+done
+echo
+echo "[5] en_v1_4 产物目录（对照，确认命名规律）"
+timeout 60 find /nas_train/app.e0031982/datasets/baize-data -maxdepth 2 -type d -name '*en_v1_4*' 2>/dev/null | head -5
+echo "=== DONE 155 ==="
+```
+
+**输出**
+```
+=== RUN_ID 155 | locate 5-source tokenized dirs + size | 2026-10-24 13:04:17 | host=whag0pgpuap12 ===
+
+[1] /nas_env 余量（字节）
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.22.32:/vol_CTE0_data04   10T  344G  9.6T   4% /nas_env
+  avail_bytes=10516647903232
+
+[2] datasets/baize-data 的两层目录树
+  == /nas_train/app.e0031982/datasets/baize-data
+/nas_train/app.e0031982/datasets/baize-data
+/nas_train/app.e0031982/datasets/baize-data/text
+/nas_train/app.e0031982/datasets/baize-data/text/logs
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3
+/nas_train/app.e0031982/datasets/baize-data/text/staging_full
+  == /nas_train/app.e0031982/datasets/baize-data/text
+/nas_train/app.e0031982/datasets/baize-data/text
+/nas_train/app.e0031982/datasets/baize-data/text/logs
+/nas_train/app.e0031982/datasets/baize-data/text/logs/full_tokenize
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s0
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s1
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s2
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s3
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s4
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s5
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s6
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s7
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s8
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s9
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s10
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s11
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s12
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s13
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s14
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s15
+
+[3] 按 *.bin 数量排序的目录（maxdepth 4，Top10）
+    220 /nas_train/app.e0031982/datasets/baize-data/text
+
+[4] 前 12 个候选目录的体积（有界 du）
+    14897.3 GB  /nas_train/app.e0031982/datasets/baize-data/text
+
+[5] en_v1_4 产物目录（对照，确认命名规律）
+=== DONE 155 ===
+```
