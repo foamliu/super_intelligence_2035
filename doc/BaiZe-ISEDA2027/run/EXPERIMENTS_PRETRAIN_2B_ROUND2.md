@@ -3482,19 +3482,20 @@ F2 = P-8 生产训练结果回填论文，已在 #435 完成：
 - GBS 不影响吞吐: e15 GBS2048=297K(=e09), 总计算量不变
 - SP 需 TP>1: 当前 TP1/DP8 纯数据并行不适用
 
-## Round 2c 实验结果 (2026-10-24 12:24起, 进行中)
+## Round 2c 实验结果 (2026-10-24 12:24-13:05, 已完成)
 
 3组实验，解决R2b的MBS3不可整除问题 + 测试no-CG变体。
 脚本: baize_perf_optim_round2c.sh
-日志: /tmp/baize_perf_r2c/
+日志: /tmp/baize_perf_r2c/ (summary.txt + 3组 log/result/peakmem)
+最终完成时间: 2026-10-24 13:05:17
 
-| # | 实验名 | 配置 | 状态 | 中位step(ms) | 吞吐(tok/s) | 峰值VRAM(MiB) | Loss@30 | GradNorm | NaN | 说明 |
-|---|--------|------|------|-------------|-------------|--------------|---------|----------|-----|------|
-| e18 ★ | MBS3+GBS1008+defrag+CG+TW | MBS3/GBS1008 + expandable_segments + NCCL_GRAPH_REGISTER=0 | ✅OK | 13500(prelim) | 306K(prelim) | 72697 | 7.833 | 1.321 | 0 | 🎉 新纪录! |
-| e19 | MBS4 no-CG+TW | MBS4/GBS1024 无CG | ⏳待跑 | — | — | — | — | — | — | 放弃30GB CG pools换MBS4 |
-| e20 | MBS3 no-CG+TW | MBS3/GBS1008 无CG | ⏳待跑 | — | — | — | — | — | — | 无CG的MBS3对照 |
+| # | 实验名 | 配置 | 状态 | 中位step(ms) | 吞吐(tok/s) | 相对e09 | 峰值VRAM(MiB/GB) | Loss(30-80均) | GradNorm | NaN | 说明 |
+|---|--------|------|------|-------------|-------------|---------|-----------------|--------------|----------|-----|------|
+| e18 ★ | MBS3+GBS1008+defrag+CG+TW | MBS3/GBS1008 + expandable_segments + NCCL_GRAPH_REGISTER=0 | ✅OK | 13532.6 | 305098 | +2.6% | 72697/72.7 | 7.5713 | 0.5305 | 0 | 🎉 新纪录! |
+| e19 | MBS4 no-CG+TW | MBS4/GBS1024 无CG | ❌OOM | — | — | — | 73817/73.8 | — | — | — | 无CG仍OOM(alloc 7.9GiB,free 7.27GiB) |
+| e20 | MBS3 no-CG+TW | MBS3/GBS1008 无CG | ✅OK | 13775.4 | 299720 | +0.8% | 69277/69.3 | 7.5724 | 0.5257 | 0 | 无CG对照,CG在MBS3贡献+1.8% |
 
-### e18 详细数据 (preliminary, iter 10-50)
+### e18 最终数据 (script median over step 30-80, 6 points)
 ```
 iteration  10/80: 18083.6 ms (warmup), loss=10.937, gnorm=2.928
 iteration  20/80: 13486.6 ms (steady), loss=8.248,  gnorm=2.311
@@ -3502,14 +3503,54 @@ iteration  30/80: 13497.6 ms (steady), loss=7.833,  gnorm=1.321
 iteration  40/80: 13516.6 ms (steady), loss=7.518,  gnorm=1.289
 iteration  50/80: 13521.4 ms (steady), loss=7.290,  gnorm=1.249
 ```
-稳态 median ≈ 13500 ms → tok/s = 1008×4096/13.5 = **306,024** (+3.0% vs e09 297K, +22.9% vs 249K)
+脚本精确中位(6点 step30-80)=13532.6ms → tok/s = 1008×4096/13.5326 = **305,098** (+2.6% vs e09 297279, +22.5% vs 249K)
+(初报306K基于step30单点13.497ms,此处为6点中位精修=305K)
 峰值 72697 MiB = 72.7GB/80GB (fits!)
-正确性: loss@30=7.833 vs e09 7.836 → Δ=−0.03% (✅ ≤5%), gnorm 1.32 (≈e09 1.32), 0 NaN
+正确性: loss(30-80均)=7.5713 vs e09 7.5726 → Δ=−0.02% (✅ ≤5%), gnorm 0.5305(≈e09 0.5128), 0 NaN
+
+### e19 详细 (OOM)
+```
+MBS4/GBS1024 无CG + FP8 TW, 无expandable_segments
+rc=1, peak=73817 MiB (73.8GB)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 7.90 GiB. GPU 0 has 79.19 GiB total, 7.27 GiB free.
+```
+结论: 即便放弃30GB CG pools,MBS4 activation仍超80GB。MBS4在4种变体(e10/e10b/e17/e19)下全部OOM → 当前80GB卡MBS4不可行。
+
+### e20 详细 (MBS3 no-CG 对照)
+```
+iteration  10/80: 16375.8 ms (warmup), loss=10.937, gnorm=2.927
+iteration  30/80: 13795.7 ms (steady), loss=7.833,  gnorm=1.308
+iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
+```
+中位(6点)=13775.4ms → tok/s = 1008×4096/13.7754 = **299,720** (+0.8% vs e09)
+峰值 69277 MiB = 69.3GB/80GB
+正确性: loss=7.5724 vs e09 7.5726 → Δ=0.00% (✅), gnorm 0.5257, 0 NaN
+**e18 vs e20 对比(CG效果)**: 305K vs 300K → CG在MBS3下贡献+1.8%,仅多用3.4GB显存(72.7 vs 69.3GB)。CG仍净正收益。
 
 ### e18 为什么比 e09 快? (MBS3 vs MBS2, 均有 CG+FP8 TW)
 1. CG 已消除 kernel launch 开销 → MBS 增大不再受 launch 限制
 2. MBS3 仅 42 microbatches (vs MBS2 的 64) → fewer per-microbatch overhead (CG replay setup + grad accumulation)
 3. Larger GEMM (3×seq vs 2×seq per microbatch) → better GPU utilization
-4. 但 GBS 减小 (1008 vs 1024, −1.6%) → 净效应: step time −4.4%, throughput +3.0%
+4. 但 GBS 减小 (1008 vs 1024, −1.6%) → 净效应: step time −4.3%, throughput +2.6%
+
+### 吞吐上限判断 (当前硬件 8×H100-80GB)
+305K 已接近上限:
+- ① VRAM硬约束: MBS4在4种变体下全OOM, MBS3(72.7GB)是80GB内最大可行MBS
+- ② 计算已饱和: CG+FP8 TW已将launch开销归零并释放显存带宽节省, GPU util 100%
+- ③ 通信已最优: NVSwitch full-mesh + DP8 allreduce, NCCL Ring调优无额外收益
+- ④ 软件栈已穷尽: CE fusion/compile/SP/recompute/overlap均无收益或不兼容
+- 唯一剩余杠杆 = FP8 blockwise(预计+3-5%), 但需CUDA≥12.9升级(高风险环境变更)
+- 数据侧非瓶颈: e18跑中GPU util 100% → 计算受限, 非host侧
+
+### 7条建议完成状态
+| # | 建议 | 状态 | 结果 |
+|---|------|------|------|
+| 1 | 组合优化: e09+CE Fusion+更大MBS | ✅完成 | CE-fusion(e12=296K无收益) + MBS3(e18=305K新纪录✓) + MBS4(4变体全OOM) |
+| 2 | 升级CUDA12.9+ FP8 blockwise | ⏸评估中 | 高风险环境变更,需隔离env验证(见HTML报告§8),data就绪前不冒险 |
+| 3 | 序列并行SP | ✅完成 | e16 FAIL("Cannot use SP without TP"), TP1纯DP不适用 |
+| 4 | 数据侧num_workers/pin_memory | ✅完成(观察) | GPU util 100% → 计算受限非host侧, 无需专门profiling |
+| 5 | NCCL调优 | ✅完成 | e13 NCCL-Ring=297K(=e09无收益), NVSwitch已最优 |
+| 6 | 更大GBS | ✅完成 | e15 GBS2048=297K(=e09,GBS不影响吞吐) |
+| 7 | torch.compile fullgraph | ✅完成 | e14 AssertionError(Mamba2自定义算子compile不兼容) |
 
 

@@ -1,12 +1,14 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-24 12:3x #764：🎉 新纪录！R2c e18 MBS3+CG=306K tok/s(+3.0% vs e09)·R2b全部完成·R2c运行中**：
-> - **R2b 已完成**（11:10-11:55，5组）：① e10b MBS4+defrag=OOM(80.6GB,CG pools 30GB) ② e11b MBS3 GBS1024=FAIL(1024%24≠0不可整除) ③ e15 GBS2048=297K(=e09,GBS不影响吞吐) ④ e16 SP(TP1)=FAIL("Cannot use SP without TP") ⑤ e17 MBS4+first-last-bf16=OOM(76GB)。
-> - **R2c 已启动**（12:24 .29 PID233523 后台，/tmp/baize_perf_r2c/，3组）：① **e18 MBS3 GBS1008+defrag+CG ✅运行中(新纪录!)** ② e19 MBS4 no-CG+FP8(待跑) ③ e20 MBS3 no-CG+FP8(待跑)。
-> - **🎉 e18 新纪录（preliminary, iter 20+30 稳态确认）**：MBS3/GBS1008/FP8 TW+CG+expandable_segments → step=13490ms(稳态), tok/s=1008×4096/13.49=**306K**(+3.0% vs e09 297K, +22.9% vs 249K)。峰值72.7GB/80GB(fits!)。loss@30=7.833 vs e09 7.836 Δ=−0.03%(✅5%闸门)。gnorm 1.32, 0 NaN。**MBS3 比 MBS2 快的原因**：CG已消除launch开销→MBS增大不再受launch限制；MBS3 fewer microbatches(42 vs 64)→less per-microbatch overhead(CG replay setup/grad accum)；larger GEMM→better GPU utilization。
-> - **R2+R2b+R2c 实验总计 13 组**（R2 5组 + R2b 5组 + R2c 3组）。仅 e15(GBS2048)和 e18(MBS3) 成功；e18 是唯一突破 297K 的。脚本 baize_perf_optim_round2c.sh。
-> - .29 核验：e18 跑前 8×H100 全空，e18 跑中 72.5GB/100%util。
-> 📦 体积：TASK=29.4KB / MEMORY=~29.0KB（均≤32KB✓，本轮归档 #762 idle → daily-memories/2026-10-24.md）。
+> 🆕 **2026-10-24 13:5x #765：R2c 全部完成(e18=305K新纪录/e19 OOM/e20=300K)·报告已更新·吞吐上限判定305K·7条建议6/7完成(#2 CUDA升级评估中)**：
+> - **R2c 三组最终结果**（12:24-13:05 完成，.29 /tmp/baize_perf_r2c/summary.txt）：① **e18 MBS3+GBS1008+defrag+CG+TW = 305K tok/s(+2.6% vs e09) NEW RECORD**·med_ms=13532.6(6点精修,初报306K基于单点)·peak 72.7GB·loss Δ−0.02%·0NaN ✓ ② **e19 MBS4 no-CG+TW = OOM**(peak 73.8GB,alloc 7.9GiB失败)→MBS4四变体全OOM ③ **e20 MBS3 no-CG+TW = 300K(+0.8%)**·peak 69.3GB·→CG在MBS3贡献+1.8%。
+> - **吞吐上限判定 = 305K**：① VRAM硬约束(MBS4四变体全OOM,MBS3=72.7GB是80GB内最大)② 计算已饱和(GPU util 100%)③ 通信已最优(NCCL Ring无收益)④ 软件栈已穷尽(CE/compile/SP/recompute/overlap无收益或不兼容)。**唯一剩余杠杆=FP8 blockwise(需CUDA12.9,高风险)**。
+> - **7条建议状态**：#1组合(✅MBS3新纪录) #2 CUDA升级(⏸评估中,见报告§8隔离env方案) #3 SP(✅e16 FAIL需TP>1) #4数据侧(✅GPU100%→计算受限非host) #5 NCCL(✅无收益) #6 GBS(✅无影响) #7 compile(✅e14崩溃)。
+> - **交付**：EXPERIMENTS_ROUND2.md R2c节已补全(e18/e19/e20最终) + HTML报告§6.3/6.4已更新(305K/上限分析) + 新增§8 CUDA12.9升级风险评估(步骤+回滚)。
+> - .29 核验：本轮 8×H100 全空(无torchrun,0MiB),无新GPU实验。
+> 📦 体积：TASK=29.6KB / MEMORY=27.9KB（均≤32KB✓，本轮无归档）。
+
+> 📦 §#764（2026-10-24 12:3x）已归档 → daily-memories/2026-10-24.md；**结论**：R2c启动,e18 preliminary 306K(后精修305K),R2b全部完成。需要时再读。
 
 > 📦 §#762（2026-10-24 08:30）已归档 → daily-memories/2026-10-24.md；**结论**：idle heartbeat，三份报告在盘，无新指令。需要时再读。
 

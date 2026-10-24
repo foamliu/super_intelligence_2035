@@ -27,7 +27,7 @@ pre{background:#1e1e1e;color:#d4d4d4;padding:15px;border-radius:8px;overflow-x:a
 </style></head><body>
 <h1>🚀 BaiZe-2B 训练吞吐优化实验报告</h1>
 <p><b>日期:</b>2026-10-23/24　<b>平台:</b>8×H100 80GB (10.239.2.29)　<b>目标:</b>超过 249K tok/s</p>
-<div class="summary-box"><h3>📋 实验摘要</h3><p><b>模型:</b>BaiZe-2B (Mamba2-hybrid, 3.00B total)</p><p><b>基线配置:</b>TP1·DP8·MBS2·seq4096·GBS1024·BF16·distributed-optimizer</p><p><b>基线吞吐:</b>252K tok/s(历史249K,本次252K)</p><p><b>第一轮最佳:</b>FP8 TW+CG=297K tok/s(+17.9% vs基线)</p><p><b>第二轮最佳:</b>MBS3+FP8 TW+CG=306K tok/s(+3.0% vs第一轮 / +21.4% vs基线)</p><p><b>实验数:</b>23组(第一轮10组 + 第二轮13组)</p><p style="font-size:18px;color:#28a745;font-weight:bold">🎉 新纪录=306K tok/s(+22.9% vs历史249K) @ MBS3+FP8 TW+CG+expandable_segments</p></div>
+<div class="summary-box"><h3>📋 实验摘要</h3><p><b>模型:</b>BaiZe-2B (Mamba2-hybrid, 3.00B total)</p><p><b>基线配置:</b>TP1·DP8·MBS2·seq4096·GBS1024·BF16·distributed-optimizer</p><p><b>基线吞吐:</b>252K tok/s(历史249K,本次252K)</p><p><b>第一轮最佳:</b>FP8 TW+CG=297K tok/s(+17.9% vs基线)</p><p><b>第二轮最佳:</b>MBS3+FP8 TW+CG=305K tok/s(+2.6% vs第一轮 / +21.0% vs基线)</p><p><b>实验数:</b>23组(第一轮10组 + 第二轮13组)</p><p style="font-size:18px;color:#28a745;font-weight:bold">🎉 新纪录=305K tok/s(+22.5% vs历史249K) @ MBS3+FP8 TW+CG+expandable_segments</p></div>
 <h2>1. 实验环境</h2>
 <table>
 <tr><th>项目</th><th>详情</th></tr>
@@ -108,21 +108,23 @@ $PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port
 </table>
 <h3>6.3 R2c 结果 (3组, 12:24起)</h3>
 <table><tr><th>#</th><th>实验名</th><th>状态</th><th>中位step(ms)</th><th>吞吐(tok/s)</th><th>相对e09</th><th>峰值显存(GB)</th><th>Loss</th><th>正确性</th></tr>
-<tr class="best"><td>e18 ★</td><td style="text-align:left"><b>MBS3+GBS1008+defrag+TW+CG</b><br><small>expandable_segments+NCCL_GRAPH_REGISTER=0</small></td><td>✅OK</td><td class="metric">13490</td><td class="metric">306K</td><td class="gain-pos">+3.0%</td><td>72.7</td><td>7.83</td><td><span class="tag tag-pass">✅Δloss=0.03%</span></td></tr>
-<tr class="warn"><td>e19</td><td style="text-align:left"><b>MBS4 no-CG+FP8 TW</b></td><td>⏳待跑</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-<tr class="warn"><td>e20</td><td style="text-align:left"><b>MBS3 no-CG+FP8 TW</b></td><td>⏳待跑</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="best"><td>e18 ★</td><td style="text-align:left"><b>MBS3+GBS1008+defrag+TW+CG</b><br><small>expandable_segments+NCCL_GRAPH_REGISTER=0</small></td><td>✅OK</td><td class="metric">13533</td><td class="metric">305K</td><td class="gain-pos">+2.6%</td><td>72.7</td><td>7.571</td><td><span class="tag tag-pass">✅Δloss=0.03%</span></td></tr>
+<tr class="fail"><td>e19</td><td style="text-align:left"><b>MBS4 no-CG+FP8 TW</b><br><small>无CG释放30GB pool,但仍OOM</small></td><td>❌OOM</td><td>—</td><td>—</td><td>—</td><td>73.8</td><td>—</td><td>—</td></tr>
+<tr class=""><td>e20</td><td style="text-align:left"><b>MBS3 no-CG+FP8 TW</b><br><small>无CG的MBS3对照</small></td><td>✅OK</td><td class="metric">13775</td><td class="metric">300K</td><td class="gain-pos">+0.8%</td><td>69.3</td><td>7.572</td><td><span class="tag tag-pass">✅Δloss=0.04%</span></td></tr>
 </table>
+<p><small>注:e18 最终中位(step30-80,6点)=13532.6ms→305,098 tok/s(初报306K基于step30单点,此处为脚本精确中位)。e20 无CG=300K,CG在MBS3下贡献+1.8%。e19 MBS4无CG仍OOM(峰值73.8GB后尝试分配7.9GiB失败)。</small></p>
 <h3>6.4 第二轮关键发现</h3>
 <div class="summary-box">
-<p><b>🎉 新纪录: e18 = 306K tok/s (+3.0% vs e09, +22.9% vs 249K)</b></p>
+<p><b>🎉 新纪录: e18 = 305K tok/s (+2.6% vs e09, +22.5% vs 249K)</b> <small>(初报 306K 基于 step30 单点,最终 6 点中位精修为 305K)</small></p>
 <ul>
 <li><b>MBS3+CG 是关键突破</b>：R2 无 defrag 时 OOM(79.7GB)，加 <code>expandable_segments:True</code> 后峰值降至 72.7GB。GBS 改为 1008(=3×8×42) 修复 e11b 的不可整除问题。</li>
 <li><b>MBS3 比 MBS2 快的原因</b>：① CG 已消除 launch 开销 → MBS 增大不再受限；② MBS3 仅 42 microbatches(vs 64)→ fewer per-microbatch overhead；③ larger GEMM → better GPU utilization。</li>
-<li><b>MBS4 全部 OOM</b>：CG pools 30GB + MBS4 act 8GB > 80GB。</li>
-<li><b>CE Fusion / NCCL Ring / GBS 无效</b>：loss 非瓶颈；NVSwitch 已最优；GBS 不影响吞吐。</li>
-<li><b>SP 需 TP>1</b> / <b>Recompute 与 CG 不兼容</b>。</li>
+<li><b>CG 在 MBS3 下仍有收益(e18 vs e20)</b>：e18(MBS3+CG)=305K vs e20(MBS3 no-CG)=300K → CG 贡献 +1.8%,且 CG 仅多用 3.4GB 显存(72.7 vs 69.3GB)。说明 MBS3 下 launch 开销虽小于 MBS2,但 CG 仍净正收益。</li>
+<li><b>MBS4 全部 OOM(4 种变体均失败)</b>：e10(74.8GB)/e10b(80.6GB)/e17(76GB)/e19(73.8GB 无CG)。即便放弃 30GB CG pools,MBS4 activation +8GB 仍超 80GB。MBS4 在当前 80GB 卡上不可行。</li>
+<li><b>CE Fusion / NCCL Ring / GBS 无效</b>：loss 非瓶颈(e12=296K)；NVSwitch 已最优(e13=297K)；GBS 不影响吞吐(e15 GBS2048=297K)。</li>
+<li><b>SP 需 TP>1</b>(e16 FAIL) / <b>torch.compile 崩溃</b>(e14 AssertionError) / <b>数据侧非瓶颈</b>(e18 跑中 nvidia-smi 显示 100% GPU util → 计算受限,非 host 侧)。</li>
 </ul>
-<p><b>吞吐上限分析</b>：306K 接近 8×H100 上限 —— VRAM 限制(MBS4 全 OOM)、CG+FP8 已饱和、通信已最优。剩余空间: CUDA 12.9(+3-5% FP8 blockwise) 需环境评估。</p>
+<p><b>吞吐上限判断(当前硬件 8×H100-80GB)</b>：305K 已接近上限 —— ① <b>VRAM 硬约束</b>:MBS4 在 4 种变体下全 OOM,MBS3(72.7GB)是 80GB 内最大可行 MBS;② <b>计算已饱和</b>:CG+FP8 TW 已将 launch 开销归零并释放显存带宽节省,GPU util 100%;③ <b>通信已最优</b>:NVSwitch full-mesh + DP8 allreduce,NCCL Ring 调优无额外收益;④ <b>软件栈已穷尽</b>:CE fusion/compile/SP/recompute/overlap 均无收益或不兼容。<b>唯一剩余杠杆 = FP8 blockwise</b>(更精细 per-block 缩放,预计 +3-5%),但 TE 要求 CUDA≥12.9,当前 12.8 → 需升级 CUDA+torch+TE,属<b>高风险环境变更</b>(详见 §8)。</p>
 </div>
 <h2>7. 第二轮复现命令</h2>
 <pre># e18 最佳配置: MBS3 + FP8 TW + CG + expandable_segments
@@ -133,5 +135,16 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 \
   --fp8-recipe tensorwise --enable-cuda-graph
 # 完整脚本: bash baize_perf_optim_round2c.sh</pre>
 
-<footer style="margin-top:40px;padding-top:15px;border-top:1px solid #ddd;color:#999;font-size:12px"><p>Generated by BaiZe pretrain agent (Cline) · 2026-10-24 12:35 (Round 2 更新) · <code>pretrain perf:</code></p></footer>
+<h2>8. CUDA 12.9 升级风险评估(FP8 blockwise 前置)</h2>
+<div class="summary-box"><h3>为何需要升级</h3><p>FP8 blockwise scaling 对每个 block 独立计算 amax/缩放因子,比 tensorwise(整 tensor 一个缩放)更精确,可减少精度损失带来的 loss 偏差,并可能再 +3-5% 吞吐(更少 dequant 回退)。当前 TE 2.12.0 在 CUDA 12.8 下 blockwise 不可用(e03/e08 直接 FAIL)。</p>
+<h3>升级步骤与回滚方案</h3>
+<ol>
+<li><b>评估兼容性</b>:TE 2.12+ 需 torch≥2.8+cu129;Megatron-core 0.16.1 + mamba-ssm 2.2.6 需重编 CUDA 扩展。先在隔离 conda env(如 <code>py310_cu129</code>)验证,不动现有 <code>py310</code>(cu128)。</li>
+<li><b>克隆环境</b>:<code>conda create --clone py310 py310_cu129</code> → 升级 torch 到 cu129 wheel → pip install transformer-engine[pytorch]==2.12 → 重装 mamba-ssm/flash-attn。</li>
+<li><b>冒烟测试</b>:先跑 e09 复现配置确认无回归(目标 297K±2%),再跑 FP8 blockwise(e03 配置 + CG)。</li>
+<li><b>回滚</b>:若任一步失败,直接 <code>conda activate py310</code>(cu128 原环境)恢复,cu129 env 可删除。NFS 上权重/数据不受影响。</li>
+</ol>
+<p><b>风险等级:中-高</b>(CUDA 大版本变更可能影响 NCCL/cuBLAS/flash-attn 行为);<b>建议</b>:在全量预训练启动前评估,若 data 尚未就绪可并行做;若 data 已就绪则优先起全量训练,blockwise 留作后续。</p>
+</div>
+<footer style="margin-top:40px;padding-top:15px;border-top:1px solid #ddd;color:#999;font-size:12px"><p>Generated by BaiZe pretrain agent (Cline) · 2026-10-24 13:5x (R2c 最终结果 + 上限分析 + CUDA 升级评估) · <code>pretrain perf:</code></p></footer>
 </body></html>
