@@ -1,7 +1,65 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 112 -->
+<!-- RUN_ID: 114 -->
 
-<!-- RUN_ID: 113 -->
+<!-- RUN_ID: 113 (已下发, 未执行) -->
+## RUN_ID 114 — 🔍 只读：ops 中继是否活着 + zhulong loop 真实情况
+
+> 背景：`run/ops/.last_run_id` = **112**，最后一次执行 **2026-10-23 09:36**（**31 小时前**）；此后 RUN 113 等新块**都没执行** ⇒ **疑中继已死**。
+> 同时 `MEMORY_ZHULONG.md` 自述 **"loop 未运行"**；论文 3 项改动（refs 另起第7页 / Lemma→Claim / delage 引用）自 15:4x–16:1x 下发后**无任何响应**。
+> ⚠️ **纯只读：不 kill、不重启、不写文件。**
+
+```bash
+set -u
+echo "=== RUN_ID 114 | relay + loop liveness | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] ops 中继进程（ppid + etimes）"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'ops_relay' | grep -v grep | cut -c1-140 || echo '  NO_RELAY_PROC'
+echo "-- 全部 bash 脚本进程概览 --"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep -E 'bash .*\.sh' | grep -v grep | cut -c1-120 | head -10
+
+echo "[2] 中继日志（末 15 行 + mtime）"
+for f in /tmp/zhulong_ops_relay.log /tmp/ops_relay.log /tmp/baize_ops_relay.log /tmp/zhulong_relay.log; do
+  [ -f "$f" ] && { echo "  --- $f ---"; ls -l --time-style=+%F_%T "$f"; tail -15 "$f" | cut -c1-170; }
+done
+
+echo "[3] last_run_id vs inbox RUN_ID"
+R=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+[ -f "$R/ops/.last_run_id" ] && echo "  last_run_id = $(cat "$R/ops/.last_run_id")"
+grep -m1 'RUN_ID: ' "$R/ops/inbox.md" 2>/dev/null
+
+echo "[4] ★zhulong loop 真实情况"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-140 || echo '  NO_ZHULONG_LOOP'
+f=/tmp/zhulong_loop.log
+[ -f "$f" ] && { ls -l --time-style=+%F_%T "$f"; echo "  末 20 行:"; tail -20 "$f" | cut -c1-170; } || echo "  NO $f"
+
+echo "[5] 当前是否有 cline/opencode agent 在跑"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'cline|opencode' | grep -v grep | grep -vE 'tail|grep' | head -5 | cut -c1-130 || echo '  NONE'
+
+echo "[6] r2 评测是否还在跑（PID 497054）+ 进度"
+ps -o pid=,etimes=,stat=,args= -p 497054 2>/dev/null | cut -c1-130 || echo '  PID497054 GONE'
+ls -dt /home/app.e0031982/eda_code_eval/2026_1024_141148 2>/dev/null && find /home/app.e0031982/eda_code_eval/2026_1024_141148/code -name '*.py' 2>/dev/null | wc -l
+ls -l --time-style=+%F_%T /tmp/ABL_dsv4pro_cline_full_r2.log 2>/dev/null
+
+echo "[7] 论文是否被改过"
+D=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027
+[ -d "$D" ] && ls -l --time-style=+%F_%T "$D/main.pdf" "$D/main.tex" "$D/DAC2027/4_grounding.tex" 2>/dev/null
+echo "  clearpage-in-main.tex = $(grep -c 'clearpage' "$D/main.tex" 2>/dev/null || echo 0)"
+echo "  delage-in-4_grounding = $(grep -c 'delage' "$D/DAC2027/4_grounding.tex" 2>/dev/null || echo 0)"
+
+echo "[8] 系统负载"
+cat /proc/loadavg 2>/dev/null
+
+echo "=== DONE 114 ==="
+```
+
+> **判读**：
+> - [1] 无 `ops_relay` → **中继已死**（31 小时没执行的根本原因）
+> - [4] 无 `zhulong_loop` → **loop 确实没运行**（论文指令无人读）
+> - [5] 有 cline/opencode → 说明有手动唤醒在跑
+> - [6] PID497054 在 → r2 评测还活着（**别 kill**）
+> **本块只报结论，不重启任何东西。**
+
+
 
 ## RUN_ID 113 — ⛔ 用户直令：r1 硬切 + 取证（为手动 regrade 准备）
 
