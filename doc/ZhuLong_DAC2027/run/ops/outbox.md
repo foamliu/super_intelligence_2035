@@ -14986,3 +14986,44 @@ echo "=== DONE 123 ==="
   batch: /nasdata/app.e0031982/eda_code_eval/2026_1024_223138
 === DONE 123 ===
 ```
+
+---
+
+## RUN_ID 124 · 2026-10-24 22:41:41 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 124 | zhulong r1 progress | $(date '+%F %T') | host=$(hostname) ==="
+B=/nasdata/app.e0031982/eda_code_eval/2026_1024_223138
+echo "[1] 进程"; pgrep -af 'run_zhulong_script|run_eval.py' | cut -c1-105 | head -3 || echo '  none'
+echo "[2] 进度"; echo "  code dirs: $(ls -d $B/code/* 2>/dev/null | wc -l)   .py: $(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+[ -f "$B/.task_queue" ] && echo "  task_queue: $(wc -c < "$B/.task_queue") bytes"
+echo "[3] 日志"; ls -l --time-style=+%F_%T /tmp/ABL_glm-5.3-flash_zl_realign_r1.log 2>/dev/null | cut -c1-100
+grep -aE '任务|Step [0-9]|完成|pass|ERROR|Traceback' /tmp/ABL_glm-5.3-flash_zl_realign_r1.log 2>/dev/null | tail -6 | tr -d '\033' | cut -c1-150
+echo "[4] GPU"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr '\n' ' '; echo
+echo "=== DONE 124 ==="
+```
+
+**输出**
+```
+=== RUN_ID 124 | zhulong r1 progress | 2026-10-24 22:41:41 | host=hfeg0tedaap02 ===
+[1] 进程
+2190256 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）E
+2190257 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 
+[2] 进度
+  code dirs: 158   .py: 0
+  task_queue: 0 bytes
+[3] 日志
+-rw-r--r-- 1 app.e0031982 app.adm 67105 2026-10-24_22:36:21 /tmp/ABL_glm-5.3-flash_zl_realign_r1.log
+[0;34m[INFO][0m [Step 8.6] 跳过 Rules 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.65] 跳过 Rule 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.7] 跳过 Skill 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.9] 跳过 L1 语义合并 (自进化未开启)
+[0;34m[INFO][0m [Step 8.92] 跳过 L1 突触修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.95] 跳过 validator 规则挖掘 (自进化未开启)
+[4] GPU
+/tmp/tmp.yyB8gsVNiH: line 9: nvidia-smi: command not found
+
+=== DONE 124 ===
+```
