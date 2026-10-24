@@ -18459,3 +18459,38 @@ echo "=== DONE 166 ==="
 [5] 显式搜 zhulong CLI 的痕迹（CLI_AGENT=zhulong / cline）
 === DONE 166 ===
 ```
+
+---
+
+## RUN_ID 167 · 2026-10-24 19:59:18 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 167 | locate eda_code_eval | $(date '+%F %T') | host=$(hostname) ==="
+P=/nasdata/app.e0031982/eda_code_eval
+
+echo "[1] 本机（.29）"
+ls -d "$P" 2>/dev/null && ls -1dt "$P"/2026_* 2>/dev/null | head -5 || echo "  NO $P"
+mount 2>/dev/null | grep -E 'nasdata|10\.129\.32' | head -5 || true
+echo "[2] .12"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 "ls -d $P 2>/dev/null && ls -1dt $P/2026_* 2>/dev/null | head -5 || echo '  NO $P'; mount | grep -E 'nasdata|10\\.129\\.32' | head -5" 2>/dev/null || echo '  ssh .12 FAILED'
+echo "[3] 10.129.32.75（EDA 沙盒机）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.129.32.75 "hostname; ls -d $P 2>/dev/null && { ls -1dt $P/2026_* 2>/dev/null | head -6; echo '-- 最近 3 个 batch 的 py 数 --'; for d in \$(ls -1dt $P/2026_* 2>/dev/null | head -3); do echo \"  \$(basename \$d) py=\$(find \$d -maxdepth 3 -name '*.py' | wc -l)\"; done; } || echo '  NO $P'" 2>/dev/null || echo '  ssh 32.75 FAILED'
+echo "[4] 本机是否有别的 eval 根"
+timeout 20 find / -maxdepth 3 -type d -name 'eda_code_eval' 2>/dev/null | head -5 || true
+echo "=== DONE 167 ==="
+```
+
+**输出**
+```
+=== RUN_ID 167 | locate eda_code_eval | 2026-10-24 19:59:18 | host=whag0pgpuap29 ===
+[1] 本机（.29）
+  NO /nasdata/app.e0031982/eda_code_eval
+[2] .12
+  NO /nasdata/app.e0031982/eda_code_eval
+[3] 10.129.32.75（EDA 沙盒机）
+  ssh 32.75 FAILED
+[4] 本机是否有别的 eval 根
+=== DONE 167 ===
+```
