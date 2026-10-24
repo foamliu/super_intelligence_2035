@@ -124,7 +124,7 @@ $PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port
 <li><b>CE Fusion / NCCL Ring / GBS 无效</b>：loss 非瓶颈(e12=296K)；NVSwitch 已最优(e13=297K)；GBS 不影响吞吐(e15 GBS2048=297K)。</li>
 <li><b>SP 需 TP>1</b>(e16 FAIL) / <b>torch.compile 崩溃</b>(e14 AssertionError) / <b>数据侧非瓶颈</b>(e18 跑中 nvidia-smi 显示 100% GPU util → 计算受限,非 host 侧)。</li>
 </ul>
-<p><b>吞吐上限判断(当前硬件 8×H100-80GB)</b>：305K 已接近上限 —— ① <b>VRAM 硬约束</b>:MBS4 在 4 种变体下全 OOM,MBS3(72.7GB)是 80GB 内最大可行 MBS;② <b>计算已饱和</b>:CG+FP8 TW 已将 launch 开销归零并释放显存带宽节省,GPU util 100%;③ <b>通信已最优</b>:NVSwitch full-mesh + DP8 allreduce,NCCL Ring 调优无额外收益;④ <b>软件栈已穷尽</b>:CE fusion/compile/SP/recompute/overlap 均无收益或不兼容。<b>唯一剩余杠杆 = FP8 blockwise</b>(更精细 per-block 缩放,预计 +3-5%),但 TE 要求 CUDA≥12.9,当前 12.8 → 需升级 CUDA+torch+TE,属<b>高风险环境变更</b>(详见 §8)。</p>
+<p><b>吞吐上限判断(当前硬件 8×H100-80GB)</b>：305K 已达上限 —— ① <b>VRAM 硬约束</b>:MBS4 在 4 种变体下全 OOM,MBS3(72.7GB)是 80GB 内最大可行 MBS;② <b>计算已饱和</b>:CG+FP8 TW 已将 launch 开销归零并释放显存带宽节省,GPU util 100%;③ <b>通信已最优</b>:NVSwitch full-mesh + DP8 allreduce,NCCL Ring 调优无额外收益;④ <b>软件栈已穷尽</b>:CE fusion/compile/SP/recompute/overlap 均无收益或不兼容;⑤ <b>唯一剩余杠杆 = FP8 blockwise 已 BLOCKED</b>:TE 要求 CUDA≥12.9,但驱动 570.x(R570)仅支持 12.8,CUDA 12.9 需驱动≥575(R575),无 sudo 权限+无 cuda-compat 包 → 驱动级阻塞,不可升级(详见 §8 实测)。<b>结论：305K tok/s 是当前硬件+驱动条件下的吞吐上限</b>。</p>
 </div>
 <h2>7. 第二轮复现命令</h2>
 <pre># e18 最佳配置: MBS3 + FP8 TW + CG + expandable_segments
@@ -135,16 +135,30 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 \
   --fp8-recipe tensorwise --enable-cuda-graph
 # 完整脚本: bash baize_perf_optim_round2c.sh</pre>
 
-<h2>8. CUDA 12.9 升级风险评估(FP8 blockwise 前置)</h2>
-<div class="summary-box"><h3>为何需要升级</h3><p>FP8 blockwise scaling 对每个 block 独立计算 amax/缩放因子,比 tensorwise(整 tensor 一个缩放)更精确,可减少精度损失带来的 loss 偏差,并可能再 +3-5% 吞吐(更少 dequant 回退)。当前 TE 2.12.0 在 CUDA 12.8 下 blockwise 不可用(e03/e08 直接 FAIL)。</p>
-<h3>升级步骤与回滚方案</h3>
+<h2>8. CUDA 12.9 升级风险评估(FP8 blockwise 前置) — ❌ 驱动级阻塞</h2>
+<div class="summary-box">
+<h3>为何需要升级</h3>
+<p>FP8 blockwise scaling 对每个 block 独立计算 amax/缩放因子,比 tensorwise(整 tensor 一个缩放)更精确,可减少精度损失带来的 loss 偏差,并可能再 +3-5% 吞吐(更少 dequant 回退)。当前 TE 2.12.0 在 CUDA 12.8 下 blockwise 不可用(e03/e08 直接 FAIL)。</p>
+<h3>🔴 实测结论：驱动级阻塞，当前无法升级</h3>
+<p><b>2026-10-24 15:0x 实测（.29 whag0pgpuap29）</b>：</p>
+<table style="border-collapse:collapse;width:100%;font-size:13px;margin:10px 0">
+<tr style="background:#f0f0f0"><th style="border:1px solid #ccc;padding:6px;text-align:left">项目</th><th style="border:1px solid #ccc;padding:6px;text-align:left">实测值</th><th style="border:1px solid #ccc;padding:6px;text-align:left">要求值</th><th style="border:1px solid #ccc;padding:6px">判定</th></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">NVIDIA 驱动版本</td><td style="border:1px solid #ccc;padding:6px"><b>570.195.03</b> (R570 分支)</td><td style="border:1px solid #ccc;padding:6px">≥ 575 (R575 分支)</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不足</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">nvidia-smi 最大 CUDA</td><td style="border:1px solid #ccc;padding:6px">12.8</td><td style="border:1px solid #ccc;padding:6px">12.9</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不足</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">sudo 权限</td><td style="border:1px solid #ccc;padding:6px">无 (password required)</td><td style="border:1px solid #ccc;padding:6px">需 root 升级驱动</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不可用</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">cuda-compat 前向兼容包</td><td style="border:1px solid #ccc;padding:6px">未安装 (/usr/local/cuda/compat/ 为空)</td><td style="border:1px solid #ccc;padding:6px">需安装 cuda-compat-12-9</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不可用</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">已装 CUDA Toolkit</td><td style="border:1px solid #ccc;padding:6px">仅 12.8 (/usr/local/cuda-12.8)</td><td style="border:1px solid #ccc;padding:6px">需 12.9</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不足</span></td></tr>
+</table>
+<p><b>根因</b>：根据 NVIDIA 官方文档，CUDA 12.9.0 要求 NVIDIA 驱动 ≥ 575（R575 分支）。当前驱动 570.195.03 属 R570 分支，原生支持上限为 CUDA 12.8。即便创建隔离 conda env（torch+cu129），CUDA runtime 也会因驱动不支持 12.9 而失败——<b>瓶颈在驱动层而非 conda env</b>。前向兼容（forward compatibility）需安装 cuda-compat 包，但该包未安装且无 root 权限安装。</p>
+<p><b>结论：#2（CUDA 12.9 升级）= ❌ BLOCKED（驱动级阻塞）</b>。在不升级 NVIDIA 驱动到 575+ 的前提下，FP8 blockwise 在本机不可用。驱动升级需系统管理员（root）执行，且影响全机所有 GPU 工作——风险不可控，本轮<b>不执行</b>。</p>
+<h3>若未来获 root 支持的升级路径（留档）</h3>
 <ol>
-<li><b>评估兼容性</b>:TE 2.12+ 需 torch≥2.8+cu129;Megatron-core 0.16.1 + mamba-ssm 2.2.6 需重编 CUDA 扩展。先在隔离 conda env(如 <code>py310_cu129</code>)验证,不动现有 <code>py310</code>(cu128)。</li>
-<li><b>克隆环境</b>:<code>conda create --clone py310 py310_cu129</code> → 升级 torch 到 cu129 wheel → pip install transformer-engine[pytorch]==2.12 → 重装 mamba-ssm/flash-attn。</li>
-<li><b>冒烟测试</b>:先跑 e09 复现配置确认无回归(目标 297K±2%),再跑 FP8 blockwise(e03 配置 + CG)。</li>
-<li><b>回滚</b>:若任一步失败,直接 <code>conda activate py310</code>(cu128 原环境)恢复,cu129 env 可删除。NFS 上权重/数据不受影响。</li>
+<li><b>驱动升级</b>（需 root）：安装 R575 分支驱动 → 重启 GPU 节点 → 验证 nvidia-smi 显示 CUDA 12.9。</li>
+<li><b>创建隔离 conda env</b>：<code>conda create --clone py310 py310_cu129</code> → pip install torch==2.8.0+cu129 → pip install transformer-engine[pytorch]==2.12 → 重编 mamba-ssm/flash-attn。</li>
+<li><b>冒烟测试</b>：先跑 e09 复现（目标 305K±2%），再跑 FP8 blockwise（e03 配置 + CG）。</li>
+<li><b>回滚</b>：<code>conda activate py310</code>（cu128 原环境）恢复；驱动回滚需 root 降级到 R570。</li>
 </ol>
-<p><b>风险等级:中-高</b>(CUDA 大版本变更可能影响 NCCL/cuBLAS/flash-attn 行为);<b>建议</b>:在全量预训练启动前评估,若 data 尚未就绪可并行做;若 data 已就绪则优先起全量训练,blockwise 留作后续。</p>
+<p><b>风险等级：高</b>（驱动升级影响全机 GPU；CUDA 大版本变更可能影响 NCCL/cuBLAS/flash-attn 行为）。<b>建议</b>：在全量预训练完成后再由系统管理员评估驱动升级；当前吞吐已达 305K 上限，FP8 blockwise 的 +3-5% 增益不足以抵消驱动升级风险。</p>
 </div>
-<footer style="margin-top:40px;padding-top:15px;border-top:1px solid #ddd;color:#999;font-size:12px"><p>Generated by BaiZe pretrain agent (Cline) · 2026-10-24 13:5x (R2c 最终结果 + 上限分析 + CUDA 升级评估) · <code>pretrain perf:</code></p></footer>
+<footer style="margin-top:40px;padding-top:15px;border-top:1px solid #ddd;color:#999;font-size:12px"><p>Generated by BaiZe pretrain agent (Cline) · 2026-10-24 15:0x (R2c 最终结果 + 上限分析 + CUDA 升级驱动级阻塞实测) · <code>pretrain perf:</code></p></footer>
 </body></html>

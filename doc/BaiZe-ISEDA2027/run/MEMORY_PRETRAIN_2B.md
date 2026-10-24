@@ -1,12 +1,16 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-24 13:5x #765：R2c 全部完成(e18=305K新纪录/e19 OOM/e20=300K)·报告已更新·吞吐上限判定305K·7条建议6/7完成(#2 CUDA升级评估中)**：
-> - **R2c 三组最终结果**（12:24-13:05 完成，.29 /tmp/baize_perf_r2c/summary.txt）：① **e18 MBS3+GBS1008+defrag+CG+TW = 305K tok/s(+2.6% vs e09) NEW RECORD**·med_ms=13532.6(6点精修,初报306K基于单点)·peak 72.7GB·loss Δ−0.02%·0NaN ✓ ② **e19 MBS4 no-CG+TW = OOM**(peak 73.8GB,alloc 7.9GiB失败)→MBS4四变体全OOM ③ **e20 MBS3 no-CG+TW = 300K(+0.8%)**·peak 69.3GB·→CG在MBS3贡献+1.8%。
-> - **吞吐上限判定 = 305K**：① VRAM硬约束(MBS4四变体全OOM,MBS3=72.7GB是80GB内最大)② 计算已饱和(GPU util 100%)③ 通信已最优(NCCL Ring无收益)④ 软件栈已穷尽(CE/compile/SP/recompute/overlap无收益或不兼容)。**唯一剩余杠杆=FP8 blockwise(需CUDA12.9,高风险)**。
-> - **7条建议状态**：#1组合(✅MBS3新纪录) #2 CUDA升级(⏸评估中,见报告§8隔离env方案) #3 SP(✅e16 FAIL需TP>1) #4数据侧(✅GPU100%→计算受限非host) #5 NCCL(✅无收益) #6 GBS(✅无影响) #7 compile(✅e14崩溃)。
-> - **交付**：EXPERIMENTS_ROUND2.md R2c节已补全(e18/e19/e20最终) + HTML报告§6.3/6.4已更新(305K/上限分析) + 新增§8 CUDA12.9升级风险评估(步骤+回滚)。
-> - .29 核验：本轮 8×H100 全空(无torchrun,0MiB),无新GPU实验。
-> 📦 体积：TASK=29.6KB / MEMORY=27.9KB（均≤32KB✓，本轮无归档）。
+> 🆕 **2026-10-24 15:0x #766：#2 CUDA12.9升级实测→❌驱动级BLOCKED·7/7建议全部闭合·吞吐上限=305K definitively confirmed·等data就绪起全量预训练**：
+> - **#2 CUDA 12.9 升级实测（.29 whag0pgpuap29, 15:02）**：① 驱动=570.195.03(R570分支),nvidia-smi最大CUDA=12.8 ② CUDA12.9需驱动≥575(R575)→**驱动级不足** ③ sudo无权限(password required) ④ cuda-compat前向兼容包未安装(/usr/local/cuda/compat/为空) ⑤ 仅装CUDA12.8(/usr/local/cuda-12.8)。
+> - **结论：#2 = ❌ BLOCKED（驱动级阻塞）**。即便创建隔离conda env(torch+cu129),CUDA runtime也会因驱动不支持12.9而失败——**瓶颈在驱动层而非conda env**。驱动升级需root,影响全机GPU,本轮不执行。
+> - **7/7建议全部闭合**：#1✅(e18=305K新纪录) #2❌BLOCKED(驱动级) #3✅(SP需TP>1) #4✅(GPU100%=计算受限) #5✅(NCCL无收益) #6✅(GBS无影响) #7✅(compile崩溃)。
+> - **吞吐上限 = 305K tok/s definitively confirmed**：5条依据全部闭合(VRAM/计算/通信/软件栈/FP8blockwise驱动级阻塞)。
+> - **交付**：HTML报告§8已重写(驱动级阻塞实测表+根因+升级路径留档) + §7上限分析更新(305K=当前硬件+驱动上限) + EXPERIMENTS_ROUND2.md #2状态更新(BLOCKED)。
+> - **data就绪状态**：en_v1_4分词110/110✅DONE，但5源迁移→/nas_env仍在早期(math_l3 rsync@~60MB/s,30G/313G)→**data未就绪，全量预训练仍需等待**。
+> - .29 核验：8×H100全空(0 MiB)，无GPU实验（本轮纯诊断+报告更新）。
+> 📦 体积：TASK=30.4KB / MEMORY=28.7KB（均≤32KB✓，本轮无归档）。
+
+> 📦 §#765（2026-10-24 13:5x）已归档 → daily-memories/2026-10-24.md；**结论**：R2c全部完成,e18=305K新纪录,e19OOM,e20=300K,上限判定305K,6/7建议完成。需要时再读。
 
 > 📦 §#764（2026-10-24 12:3x）已归档 → daily-memories/2026-10-24.md；**结论**：R2c启动,e18 preliminary 306K(后精修305K),R2b全部完成。需要时再读。
 
@@ -116,9 +120,9 @@ WAITING: 1
 >
 > 📦 **[已归档] #614 crash→resume 流水（2026-10-20 04:00, .29 主 run 02:45 crash@step19920 NCCL timeout→resume from step_18000, PID1604723, step18020+）→ daily-memories/2026-10-20.md；结论：crash 确认+resume 成功+8×GPU 满载+0error，ETA~10:30。需要时再读。**
 
-- STAGE: **✅ decay 5000 步训练 + 14 集评测全完成，且「decay 修复完整中文 HTML 报告 + 下一步建议」已交付** —— **CS8=58.97% / CX6=28.02%**（vs 官方 final 65.40%/32.90%；vs 基线 CS8 61.03% Δ−2.06pp）。decay 修复成功（旧 v2=44.97%/6.21% 训坏）。报告 @ `doc/BaiZe-ISEDA2027/reports/report_pretrain_decay_repair_zh.html`。方向：用户 13:5x 令 decay 5000 步 + MBS=5 + Muon 0.2 + 无 warmup 已全部落地；23 日直令写 HTML 报告已交付。
-  - PHASE: **decay_5000_已完成_报告已交付** — 训练完成（final loss 0.9946, val PPL 2.712, 0 NaN/0 skip），HF 转换✅，CS8=58.97%(8/8)✅，CX6=28.02%(6/6)✅。全部结果落盘 `nemo_experiments/eval_decay_5000_final/`；中文修复报告 `report_pretrain_decay_repair_zh.html` 已提交。loop 存活，.29 GPU 已释放。
-- 轮询状态：**#750（13:3x，例行唤醒·idle heartbeat）**：decay 修复报告 `report_pretrain_decay_repair_zh.html` 复核无误（commit ae9e1e780 已推远端），含「训坏→修复」全历程 + 4 条按价值排序的下一步建议（①延长 decay 20000 步≈3天 ②对齐11源 ③补CX6基线 ④超参微调）。.29 8×H100 空闲，无新运维指令，30 min 长轮询。
+- STAGE: **✅ decay 5000 步训练 + 14 集评测全完成 + ✅ 吞吐优化 7/7 建议全部闭合（305K tok/s 上限确认）** —— decay: CS8=58.97% / CX6=28.02%；吞吐: 249K→305K(+22.5%), e18=MBS3+CG+FP8 TW 新纪录, #2 CUDA12.9=❌驱动级BLOCKED(570.x需575+)。报告 @ `reports/report_pretrain_2b_throughput_optim_zh.html` + `reports/report_pretrain_decay_repair_zh.html`。**等 data 就绪（5源迁移→/nas_env 完成）起全量预训练**。
+  - PHASE: **吞吐优化全部完成_等data就绪起全量预训练** — 7/7 建议闭合：#1✅(e18=305K) #2❌BLOCKED(驱动570.x<575,无sudo) #3✅ #4✅ #5✅ #6✅ #7✅。吞吐上限=305K tok/s(8×H100-80GB, 当前驱动条件)。.29 8×H100 空闲。data: en_v1_4分词110/110✅, 5源迁移→/nas_env早期进行中。loop 存活，30 min 长轮询。
+- 轮询状态：**#766（15:0x，#2 CUDA12.9驱动级BLOCKED实测→7/7建议全闭合→吞吐上限305K definitively confirmed→等data就绪起全量预训练）**：本轮纯诊断+报告更新（无GPU实验）。.29 8×H100 空闲，无新运维指令，30 min 长轮询。
 > 📦 **[已归档] 🩺 v2 巡检+crash+收尾流水 #610~#634（2026-10-20 01:12~14:33：crash@02:45:25→resume step_18000→P0-a NCCL export+P0-b watchdog 落地→P2 硬件=transient 无永久故障→训练 10:30 收尾 step19979/19980、final ckpt 2.7GB）→ daily-memories/2026-10-20.md；**结论**：v2 全程健康 0error、崩溃前无先兆、硬件瞬时故障无永久隐患。需要时再读。**
 > 📦 **[已归档] 🩺 v2 巡检流水 #566~#609（2026-10-19 00:11~23:51, step11904→19050 + hostname/节点澄清 .12→.29）→ daily-memories/2026-10-19.md；**结论**：v2 全程健康 0error、ckpt step_12000~step_18000 完好、稳态~12s/step、#588 push 失败由 #589 补推闭环。需要时再读。**
 > 📦 **[已归档] v2 巡检+修复流水 #472~#565（2026-10-17 02:16~10-18 23:24, step280→12770 + _orig_mod 修复 + P0 中继恢复 + 误判三连#548/#550/#551 纠偏 + v5 三交付物）→ daily-memories/2026-10-17.md & 2026-10-18.md；**结论**：v2 全程健康 0error、_orig_mod 修复 verify_save@step20 通过、中继恢复、v5 三交付物 committed。需要时再读。**

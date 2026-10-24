@@ -3546,7 +3546,7 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 | # | 建议 | 状态 | 结果 |
 |---|------|------|------|
 | 1 | 组合优化: e09+CE Fusion+更大MBS | ✅完成 | CE-fusion(e12=296K无收益) + MBS3(e18=305K新纪录✓) + MBS4(4变体全OOM) |
-| 2 | 升级CUDA12.9+ FP8 blockwise | ⏸评估中 | 高风险环境变更,需隔离env验证(见HTML报告§8),data就绪前不冒险 |
+| 2 | 升级CUDA12.9+ FP8 blockwise | ❌BLOCKED(驱动级) | 驱动570.195.03(R570)仅支持CUDA12.8;CUDA12.9需驱动≥575(R575);无sudo权限+无cuda-compat包→无法升级(见HTML报告§8实测) |
 | 3 | 序列并行SP | ✅完成 | e16 FAIL("Cannot use SP without TP"), TP1纯DP不适用 |
 | 4 | 数据侧num_workers/pin_memory | ✅完成(观察) | GPU util 100% → 计算受限非host侧, 无需专门profiling |
 | 5 | NCCL调优 | ✅完成 | e13 NCCL-Ring=297K(=e09无收益), NVSwitch已最优 |
