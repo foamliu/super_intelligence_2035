@@ -5,13 +5,14 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7×15 full run STARTED. Gen7 pilot 7/7 COMPLETE. Gate=7/7✅. Oracle5/5✅. H-B报告✅
-已完成:       H-B 7way ctx compression report✅·oracle5/5✅·7adapters✅·28/28mock✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·7×15 full run STARTED(R472)
-当前动作:     R472 Gen7 pilot 7/7 COMPLETE. claude-code rerun3 done: 0/5 passed, 3/5 errored(1 RuntimeError+2 AgentTimeoutError). Started 7×15 full run(15/89 tasks have local Docker images, MITM proxy blocks Docker Hub). Background setsid, log=/tmp/tb_full_7x15.log. ETA ~17h(sequential, 7 harnesses×15 tasks×~10min).
-下一步:       ①监控7×15 full run进度(检查/tmp/tb_full_7x15.log)②收集完成后生成report_harness_terminalbench_7way_zh.html③McNemar配对检验④诚实条款声明15/89限制
-阻塞:         15/89 task images only(MITM proxy blocks Docker Hub pull). claude-code infra error率60%(>30%阈值,但2/5 completed=adapter functional, intermittent). 报告须声明"15/89 tasks, 非全量89"
+PHASE:        T2 Terminal-Bench 7×15 full run v2 RUNNING. Gen7 pilot 7/7 COMPLETE. Gate=7/7✅. Oracle 15/15(mean 0.733)✅. H-B报告✅
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·7×15 v1 crashed(NFS Stale handle)·7×15 v2 STARTED(R473)
+当前动作:     R473 7×15 full run v2 RUNNING in background. v1 crashed with NFS "Stale file handle"(Errno 116) during oracle cleanup — harbor --jobs-dir was on NFS. v2 fix: redirect --jobs-dir to /tmp/tb_full_v2/(local disk). cline-patched running first task(adaptive-rejection-sampler). log=/tmp/tb_full_7x15_v2.log, ETA ~17h.
+下一步:       ①监控7×15 v2进度(tail /tmp/tb_full_7x15_v2.log)②每个harness完成后检查result.json③全部完成后收集结果生成report_harness_terminalbench_7way_zh.html④McNemar配对检验⑤诚实条款声明15/89限制
+阻塞:         15/89 task images only(MITM proxy blocks Docker Hub pull). 报告须声明"15/89 tasks, 非全量89"
 ERROR_COUNT:  0
-📦 体积：TASK=31KB / MEMORY=4KB
+📦 体积：TASK=31KB / MEMORY=5KB
+```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
 | Harness | Pass Rate | Errors | Notes |
@@ -23,10 +24,13 @@ ERROR_COUNT:  0
 | hermes | 0/5 (0%) | 0 | Genuine 0% (no errors) |
 | deepseek-harness | 0/5 (0%) | 0 | Genuine 0% (no errors) |
 | claude-code (rerun3) | 0/5 (0%) | 3/5 | 🔴 1 RuntimeError(exit1)+2 AgentTimeoutError |
-```
+
+### Oracle check (15 tasks, R473)
+- 15/15 completed, mean reward 0.733 (11/15 solvable by oracle)
+- Failed by oracle: build-pmars, caffe-cifar-10(AgentTimeoutError), configure-git-webserver, git-multibranch
 
 ### 本唤醒流水
-[07:20] R472 **Gen7 pilot 7/7 COMPLETE + 7×15 full run STARTED**. Claude-code rerun3 done: 0/5 passed, 3/5 errored(1 RuntimeError exit code1 empty stderr + 2 AgentTimeoutError). 2/5 completed(reward 0.0) = adapter functional, intermittent failures. Gen7 final: cline=100%, pi=100%, codex=60%, opencode=60%, hermes=0%, deepseek=0%, claude-code=0%. Found only 15/89 TB task Docker images locally cached (MITM proxy blocks Docker Hub). Created _full_7x15_launcher.sh: filtered 15-task dataset + sg docker + launch_tb_7way.sh full mode. Started background setsid run, log=/tmp/tb_full_7x15.log, ETA ~17h. Committed Gen7 results + launcher. WAITING=1.
+[08:40] R473 **7×15 full run v1 crashed → v2 started with NFS fix**. v1(R472) crashed with OSError: [Errno 116] Stale file handle — harbor wrote --jobs-dir to NFS, NFS gave stale handle during log handler cleanup. Oracle check completed(15/15 mean 0.733) but crash prevented harness runs from starting. Root cause: all harbor --jobs-dir and trace tee paths were on NFS. Fix: created _full_7x15_v2_launcher.sh redirecting --jobs-dir to /tmp/tb_full_v2/(local disk, 73GB free). v2 started via `setsid sg docker -c "bash _full_7x15_v2_launcher.sh"`, cline-patched running first task. gw_proxy up on 9090/9091. ETA ~17h. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。
