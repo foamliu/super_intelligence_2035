@@ -45,7 +45,7 @@
 <h1>ZhuLong 论文精简意见（DAC 2027 · 正文 6 页）</h1>
 <div class="meta">
 <b>交付物</b>：<code>reports/report_zhulong_paper_trim_advice_zh.html</code>（自包含单文件）<br>
-<b>指令</b>：运维令 2026-10-24 08:3x（用户直令）+ 09:0x 补正（"长鑫落地"融入口径修正）<br>
+<b>指令</b>：运维令 2026-10-24 08:3x（用户直令）+ 09:0x 补正（"长鑫落地"融入口径修正）+ <b style="color:#cf222e">09:2x 补正（论文核心价值主张重定位：从"EDA scripting"升维到"design flow 编排 + 补全断链"·最高优先）</b><br>
 <b>论文当前</b>：12 页（commit <code>cccc49c2</code> 自 13p 压到 12p）｜DAC 正文限 <b>6 页</b> ⇒ 需再砍 <b>≈50%</b><br>
 <b>本轮纪律</b>：🚫 不改 <code>.tex</code> 源文件（只出建议）｜⏭ 不打断 <code>dsv4pro-cline-full r1</code> 评测（PID 1800419，已确认在跑，未触碰）<br>
 <b>统计口径</b>：源文件 <code>wc -l</code> 含中英双语注释（英文正文 + 中文翻译注释），故"非注释行"才逼近渲染产出。下表两列并陈。
@@ -53,6 +53,12 @@
 
 <div class="callout">
 <b>一句话结论</b>：论文 12 页膨胀的主因不是"内容多"，而是 <b>实验章 6_exp.tex 占全文 48%</b>（248 非注释行）+ <b>9 张表 + 1 张通栏图挤在同一章附近</b>。6 页方案 = <span class="b-cut badge">砍/移</span> 实验章 5 张表 + 压缩理论章冗余论述 + <span class="b-keep badge">保</span> 主表/核心结论/4 级信息表/架构图，可压到 6.0–6.2 页。
+</div>
+
+<div class="callout-warn callout">
+<b>🔴 2026-10-24 09:2x 补正令 · 最高优先 · 论文核心价值主张重定位</b><br>
+用户原话：「zhulong 设计初衷是 EDA scripting，但 DE 用户使用最多的场景还是 <b>design flow 的编排</b>。这是 coding agent <b>天生具备的能力</b>，而 EDA scripting 能力可以支持 design flow 编排是<b>补全断链</b>（有些现成工具无法覆盖的断链，可以被 EDA scripting 轻易接上）。」<br>
+<b>这是论文叙事主干，必须体现在摘要/引言/结论</b>，不只是"落地一句话"。<b>下方 ⑦ 节为本次补正的核心交付</b>，提供重定位后的 paper pitch / 摘要 / 引言动机段 / 结论草稿（中英各一），并对 ⑤ 节既有草稿的<b>叙事方向形成升维覆盖</b>（⑤ 的"执行落地"卖点保留为方法层支撑，⑦ 的"编排 + 补断链"置于更上层的价值定位）。标题 <code>ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting</code> <b>不改</b>，在摘要/引言把"编排 + 补断链"作为 scripting 的更高价值表现，形成"从 scripting 到 flow"的递进。
 </div>
 
 <h2>① 逐章诊断表</h2>
@@ -264,6 +270,141 @@ post-hoc explanation.
 <b>有帮助</b>。理由有二：① <b>工业落地正是 DAC 评审最看重的"实用性 / impact"维度</b>——DAC 是 EDA 顶会而非纯学术会议，"在量产级 EDA 流程中跑起来"比"在 benchmark 上高几个点"更有分量；② <b>真实生产部署是方法可信度的天然背书</b>——它表明结果不仅在 449 个 curated 任务上成立，也在数百名工程师的真实设计数据流、多脚本接口（Tcl / waveview / SKILL）、长时间稳定运行的压力下成立，这对审稿人常质疑的"benchmark 是否过拟合 / 是否只在玩具任务上有效"是最直接的回击。
 </div>
 
+<h2>⑦ 论文核心价值主张重定位：从「EDA scripting」升维到「design flow 编排 + 补全断链」</h2>
+
+<p class="small"><b>指令</b>：运维令 2026-10-24 09:2x 补正（用户直令 · 最高优先）。<b>本节对 ⑤ 节既有摘要/引言草稿的<b>叙事方向形成升维覆盖</b></b>——⑤ 的"执行落地"卖点保留为<b>方法层支撑</b>，⑦ 的"编排 + 补断链"置于更上层的<b>价值定位</b>。标题不改，摘要/引言/结论按"从 scripting 到 flow"的递进改写。本节所有草稿<b>中英各一</b>，可直接替换对应章节（改稿等用户确认后动手，本轮不改 <code>.tex</code>）。</p>
+
+<h3>⑦-A 重定位后的价值链条（写入报告，作为论文立论）</h3>
+<div class="callout">
+<pre>
+coding agent 的通用能力  →  直接可做 design flow 编排（写 Makefile / tcl 驱动 / 调度脚本，
+                             串起现有 EDA 工具）—— 这是"天生具备"，不需要特殊训练
+        +
+EDA scripting 专业能力  →  补全断链（现有工具覆盖不到、或需要手写胶水的地方，
+                             agent 用 pyAether / SKILL / Tcl 现场写代码接上）
+        ↓
+    真正的用户价值 = design flow 能被完整跑通
+    （断链是 flow 跑不通的头号原因，而接断链正是 LLM 最擅长的事：写一小段新代码）
+</pre>
+</div>
+
+<h3>⑦-B 为什么这个论点对 DAC 有说服力（报告里要论证清楚）</h3>
+<ol>
+<li><b>DE 的真实工作分布</b>：不是天天写全新脚本，而是<b>编排 + 补洞</b>（flow 串不起来时现场补一段）。这一点决定"通用 coding 能力 &gt; 纯 EDA 专用模型"——专用模型可能在脚本准确率上更高，但 DE 的痛点不在"写不出脚本"，而在"flow 跑不通"，而后者更需要通用编排 + 现场补链。</li>
+<li><b>"补全断链"是本工作的独特切入点</b>：现成商用工具是<b>闭合的</b>（不给你改），断链只能靠<b>现场生成胶水代码</b>；而 LLM 恰好能把"自然语言意图 → 可执行脚本"这段补上。这是纯学术模型或封闭商用工具都覆盖不到的中间地带，正是 ZhuLong 的差异化。</li>
+<li><b>解释了为什么 benchmark 要这样设计</b>：EDA-Scripting-Bench 不只是"写脚本题"，而是<b>模拟真实 flow 中的断链场景</b>——每个任务对应一个"工具链到这里跑不通、需要现场补一段脚本"的真实切片（PyAether / SKILL / Tcl 跨四商业运行时）。
+<span class="warn">⚠️ 报告建议</span>：若现有 benchmark 已隐含此设计，在引言/benchmark 章明确指出并引用 RQ1–RQ3；若未明说，建议补 1 段（≤ 4 行）说明"任务 = 真实 flow 断链的微缩切片"，把 benchmark 与价值主张对齐。</li>
+<li><b>与落地规模自洽</b>：数百名工程师的价值不在于"人人写脚本"，而在于<b>每个人的 flow 都有跑不通的时刻</b>，agent 在那里补位。这解释了为什么 500 级用户规模可信、且与"编排 + 补断链"的定位吻合（而非与"人人写新脚本"吻合）。</li>
+</ol>
+
+<h3>⑦-C 一句话价值主张（paper pitch，≤30 词）· 中英各一</h3>
+<table>
+<thead><tr><th>语言</th><th>pitch</th><th>词/字数</th></tr></thead>
+<tbody>
+<tr><td><b>中文</b></td><td>通用 coding agent 天生承担 design flow 编排，ZhuLong 用 EDA scripting 在工具断链处现场补胶水——正是 DE 最耗时却被忽视的一环。</td><td class="qty">≈ 28 字</td></tr>
+<tr><td><b>英文</b></td><td class="en">ZhuLong lets a general coding agent orchestrate design flows and, where existing tools leave gaps, synthesizes the missing glue in domain scripts — precisely where DEs lose the most time.</td><td class="qty">30 词</td></tr>
+</tbody>
+</table>
+
+<h3>⑦-D 摘要重写草稿（6 页版，150–180 词，按「问题→洞察→方法→结果→意义」组织）</h3>
+<h4>英文（建议直接替换 <code>0_abstract.tex</code> 主体，~170 词）</h4>
+<pre>
+Design engineers lose the most time not writing fresh scripts but orchestrating
+design flows and patching the gaps where closed EDA tools refuse to interoperate —
+a flow that cannot run end-to-end is the top reason a design stalls. We argue that
+this is exactly where a general coding agent fits: it orchestrates flows natively
+(Makefile targets, Tcl drivers, scheduling scripts), and where tools leave gaps,
+its EDA-scripting ability synthesizes the missing glue — the kind of small,
+intent-to-code task at which LLMs excel. We present ZhuLong, an execution-grounded
+LLM coding agent for PyAether, SKILL, and Tcl that couples API retrieval,
+documentation inspection, and sandbox execution via unified MCP tools into a closed
+generate–execute–refine loop, with a theoretical grounding showing EDA correctness
+is a situated property whose gap is bounded by observation fidelity, not model
+scale. On EDA-Scripting-Bench (449 real-world tasks, three languages, four
+commercial runtimes), ZhuLong reaches 75.7% pooled Pass@1 vs. 18.3% (pure LLM) and
+62.5% (retrieval-only); execution and retrieval are jointly necessary. ZhuLong is
+deployed in production EDA flows serving hundreds of engineers at a leading memory
+design house. This reframes EDA scripting as the connective tissue that makes design
+flows runnable, not an end in itself.
+</pre>
+<h4>中文（对照翻译，供团队对齐语义，不入正文）</h4>
+<pre>
+设计工程师最耗时的不是写全新脚本，而是编排 design flow 并补上封闭 EDA 工具之间无法互通的
+断链——flow 跑不到端到端，是设计卡住的头号原因。我们论证这正是通用 coding agent 的用武
+之地：它天生能编排 flow（Makefile 目标、Tcl 驱动、调度脚本），而在工具留白处，其 EDA
+scripting 能力现场合成缺失的胶水——正是 LLM 最擅长的小型"意图→代码"任务。我们提出
+ZhuLong，一个面向 PyAether / SKILL / Tcl 的执行驱动 LLM 代码智能体，通过统一 MCP 工具将
+API 检索、文档查阅、沙盒执行组成"生成–执行–修正"闭环，并给出理论论证：EDA 正确性是
+情境化属性，其落地鸿沟受观测保真度而非模型规模约束。在 EDA-Scripting-Bench（449 个真实
+任务、三种语言、四个商业运行时）上，ZhuLong 取得 75.7% 合并 Pass@1，对比纯 LLM 18.3%、
+仅检索 62.5%；执行与检索联合必要。ZhuLong 已在一家头部存储芯片设计公司服务数百名工程师
+的量产级 EDA 流程中部署。这把 EDA scripting 重新定位为让 design flow 跑通的结缔组织，
+而非目的本身。
+</pre>
+<p class="small"><b>改动要点</b>：① 开篇从"long-tail bottleneck"改为"flow 编排 + 断链"的 DE 真实痛点；② 新增"洞察"句（coding agent 天生编排 + scripting 补断链），作为方法动机；③ 方法/理论/结果保留 ⑤ 的执行落地支撑，但压缩为单句；④ 末句"reframes ... connective tissue"回扣价值定位；⑤ 落地句用 ⑥ 版本 A（19 词，最克制）。词数 ≈170，落在 150–180 区间。</p>
+
+<h3>⑦-E 引言动机段（3–4 句，建议替换 <code>1_intro.tex</code> 第 1 段前半）</h3>
+<h4>英文</h4>
+<pre>
+Design engineers' daily work is less about writing fresh scripts than about
+orchestrating design flows and patching the gaps between EDA tools that refuse to
+interoperate — a flow that cannot run end-to-end is the single largest source of
+lost design time. Commercial EDA tools are closed: where they leave a gap, the only
+recourse is hand-written glue (a Makefile target, a Tcl driver, a SKILL wrapper),
+which is precisely the small, intent-to-code synthesis at which large language
+models excel. This reframes the role of EDA scripting: it is not an end in itself
+but the connective tissue that lets a general coding agent orchestrate flows
+natively and fill the breaks where tools stop. ZhuLong is built around this
+insight, and this paper asks which factor sets the ceiling of such an agent.
+</pre>
+<h4>中文（对照）</h4>
+<pre>
+设计工程师的日常工作与其说是写全新脚本，不如说是编排 design flow、补上 EDA 工具之间拒绝
+互通的断链——flow 跑不到端到端，是设计耗时单一最大来源。商用 EDA 工具是封闭的：它留白
+之处唯一的办法是手写胶水（一个 Makefile 目标、一段 Tcl 驱动、一个 SKILL 封装），而这恰是
+大语言模型最擅长的小型"意图→代码"合成。这重新界定了 EDA scripting 的角色：它不是目的
+本身，而是让通用 coding agent 天生编排 flow、并在工具停步处补上断链的结缔组织。ZhuLong
+即围绕此洞察构建，本文追问：决定这类智能体上限的究竟是哪个因素。
+</pre>
+<p class="small"><b>衔接</b>：该段直接引出既有 RQ1（"which factor sets the ceiling"），与现有贡献清单无缝对接；其后接现有第 2 段（ZhuLong 四工具闭环）即可。原"Named after a mythical creature"典故 6 页无暇，建议删（与 ⑤ 一致）。</p>
+
+<h3>⑦-F 结论段（建议替换 <code>8_conclusion.tex</code> 第 1 段）</h3>
+<h4>英文</h4>
+<pre>
+Beyond the benchmark numbers, ZhuLong reframes EDA scripting as the connective
+tissue of design-flow orchestration: a general coding agent orchestrates flows
+natively — writing the Makefile targets, Tcl drivers, and scheduling scripts that
+chain existing tools — and where closed tools leave gaps, its EDA-scripting ability
+synthesizes the missing glue, precisely where design engineers lose the most time.
+The execution-grounded loop, the observation-fidelity bound on the grounding gap,
+and the 449-task EDA-Scripting-Bench together explain why this works: EDA
+correctness is situated, so the agent must read the environment's API facts and
+read back what its code does to the live design. The complete system reaches 75.7%
+pooled Pass@1, and is deployed in production EDA flows serving hundreds of engineers
+at a leading memory design house — evidence that the value lies not in writing more
+scripts but in making design flows runnable end-to-end.
+</pre>
+<h4>中文（对照）</h4>
+<pre>
+不止于基准数字，ZhuLong 把 EDA scripting 重新定位为 design flow 编排的结缔组织：通用
+coding agent 天生编排 flow——写串起现有工具的 Makefile 目标、Tcl 驱动、调度脚本——而在
+封闭工具留白处，其 EDA scripting 能力现场合成缺失的胶水，正是设计工程师最耗时之处。执行
+驱动闭环、落地鸿沟的观测保真度上界、以及 449 任务的 EDA-Scripting-Bench 共同解释了它为何
+有效：EDA 正确性是情境化的，智能体必须读取环境的 API 事实并回读其代码对实时设计做了什么。
+完整系统达到 75.7% 合并 Pass@1，并已在一家头部存储芯片设计公司服务数百名工程师的量产级
+EDA 流程中部署——这印证价值不在于写更多脚本，而在于让 design flow 端到端跑通。
+</pre>
+<p class="small"><b>改动要点</b>：原结论以"执行驱动是关键"收尾，⑦ 改为以"编排 + 补断链让 flow 跑通"收尾，回扣价值定位；执行驱动/理论/benchmark 降为支撑句；落地句用 ⑥ 版本 C（可信度背书，22 词）。</p>
+
+<h3>⑦-G 与既有内容的衔接（不要冲突）</h3>
+<ul>
+<li><b>标题不改</b>：<code>ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting</code> 保留——"EDA Scripting"在 ⑦ 的叙事里升维为"flow 编排的结缔组织 / 补断链的手段"，标题反而成为这个递进的起点。</li>
+<li><b>6 页预算紧张</b>：优先保 <b>摘要 + 引言</b>的"编排 + 补断链"叙事（⑦-D / ⑦-E），实验章可更精简（按 ② 清单砍表）。结论用 ⑦-F 替换第 1 段即可（第 2、3 段 future work 保留或压缩）。</li>
+<li><b>RQ 衔接</b>：⑦-E 末句直接接 RQ1（"which factor sets the ceiling"），现有贡献清单与 4 级信息表无需改动，只是被赋予了"编排 + 补断链"的上层动机。</li>
+<li><b>benchmark 章建议补 1 段</b>（见 ⑦-B③）：把"任务 = 真实 flow 断链的微缩切片"说清楚，让 benchmark 与价值主张对齐，避免审稿人质疑"为什么这些脚本题能代表 DE 价值"。</li>
+<li><b>落地句</b>：⑦-D 摘要用 ⑥ 版本 A，⑦-F 结论用 ⑥ 版本 C，<b>不重复</b>（摘要 + 结论各一处，符合 09:0x"择一不必都写"的口径放宽——此处两处分别承担"分量"与"背书"不同功能，不算炫耀）。</li>
+</ul>
+
 <hr>
 
 <div class="callout-warn callout">
@@ -273,13 +414,14 @@ post-hoc explanation.
 <li>再做 #7–#10（理论章 + 重复段，省 ≈ 0.75 页）；</li>
 <li>接着 #11–#16（引言/设计/benchmark/讨论/结论，省 ≈ 1.3 页）；</li>
 <li>清掉所有中文翻译注释（不减页、但净化源码便于后续维护）；</li>
-<li>嵌入 ⑥ 的某一版落地句（建议 <b>版本 A 摘要末句</b>，最克制、单点命中）；</li>
+<li><b style="color:#cf222e">叙事重定位（09:2x · 最高优先）</b>：用 ⑦-D 替换摘要、⑦-E 替换引言第 1 段前半、⑦-F 替换结论第 1 段；benchmark 章按 ⑦-B③ 补 1 段"任务 = flow 断链微缩切片"；</li>
+<li>嵌入 ⑥ 的落地句（⑦-D 用版本 A、⑦-F 用版本 C，不重复）；</li>
 <li>编译验页：目标 6.0–6.2 页；若超 0.2 页，先动 ② #3（删第 5 backbone）+ #1（cost 表全移附录）。</li>
 </ol>
 </div>
 
 <div class="footer">
-本报告由 ZhuLong 推进 agent 于 2026-10-24 生成｜指令：运维令 2026-10-24 08:3x + 09:0x 补正（用户直令）｜<b>未修改任何 .tex 源文件</b>｜<b>未触碰在跑评测</b>（cline×deepseek-v4-pro×full r1·PID 1800419·batch 2026_1023_231253）｜口径：EDA-Scripting-Bench 449（PyAether 158 + SKILL 157 + Tcl 134）｜论文锚点 75.7% pooled Pass@1。
+本报告由 ZhuLong 推进 agent 于 2026-10-24 生成（09:2x 补正后增补 ⑦ 节）｜指令：运维令 2026-10-24 08:3x + 09:0x 补正 + <b>09:2x 补正（论文核心价值主张重定位 · 最高优先）</b>（均用户直令）｜<b>未修改任何 .tex 源文件</b>｜<b>未触碰在跑评测</b>（cline×deepseek-v4-pro×full r1·PID 1800419·batch 2026_1023_231253）｜口径：EDA-Scripting-Bench 449（PyAether 158 + SKILL 157 + Tcl 134）｜论文锚点 75.7% pooled Pass@1。
 </div>
 
 </body>
