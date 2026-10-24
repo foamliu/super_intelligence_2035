@@ -11,7 +11,15 @@
 - 判据：实测 <80 MB/s ⇒ 瓶颈在 NFS/网卡而非限速，**如实记录、不得宣称"已提速"**。
 
 
-## 🆕 最近操作（2026-10-24）
+## 🆕 最近操作（2026-10-25）
+
+### 📊 pretrain 运维令（用户直令 · 07:4x）：写「双机 16 卡吞吐优化与测试」报告
+- 用户原话：「pretrain：关于16机吞吐量优化和测试，写个报告。」⇒ 按 SOP 写进 `run/BAIZE_PRETRAIN_2B_TASK.md` 运维指令区**顶部新块**（最高优先），commit `7c855ebc` 已 push。
+- **为什么现在能写**：Task A 已完整闭合 —— 单机 e18 305,098 → **双机 e18 606,300 tok/s（扩展效率 99.4%）**；BF16 对照 528,016（**FP8 +14.8%**，Δloss 0.08%，显存≈持平）；Task B（NCCL/IB）已闭合 qps4(+0.0%)、qps8(+0.2%)，maxnch64 在测。
+- **令的要求**（四段）：① 先判 Task B 是否在跑、**不盲目重跑**；在跑就并行写作，先出 `rev1（在测）`、闭合后 `rev2`；② 数据**只许引落盘日志**（master `Step Time` / worker `elapsed`，median 取 step 30–80），**#767 误报（512,801/84%/BF16+mock/64.4GB）必须写进 §6 纠错记录并作废**；③ 10 节结构（摘要/环境口径/扩展性主结果/精度消融/NCCL 全表/机制解释 99.4% 成因/与单机线对照/剩余优化排序/复现命令/数据溯源表）；④ 产出 `reports/report_pretrain_dualnode_throughput_zh.html`（中文 HTML 自包含）+ 可重生成脚本 `run/gen_dualnode_throughput_report.py`。
+- **铁律**：纯写作零 GPU、测完即释放 16 卡、禁 mock 数字当扩展效率、未验证机制标「推测·未验证」、**报告禁 N/A/空单元格**（未测写原因）。任务书体积 31.1KB ≤32KB ✓。
+- 预计下轮 pretrain 唤醒（loop 30min 节奏）读到并执行。
+
 
 ### pretrain eval: BaiZe-2B Mamba2-hybrid 长上下文推理成本基准（重测 + 报告）
 - 用正确的 **BaiZe-2B Mamba2-hybrid**（NemotronH, 2.22B, 56层=24 SSM+4 Attn+28 MLP, 7.1%注意力）重测，替换旧 Xmodel Dense 数据
