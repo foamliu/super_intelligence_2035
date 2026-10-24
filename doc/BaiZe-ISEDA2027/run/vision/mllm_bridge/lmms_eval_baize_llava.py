@@ -48,6 +48,9 @@ class BaizeLLaVA(lmms):
         """
         super().__init__()
         self.vision_backend = vision_backend
+        # patch-token count depends on vision tower input @224px:
+        #   ViT-B/16 → 224/16=14² = 196 ;  ViT-L/14 → 224/14=16² = 256
+        self.num_image_tokens = 256 if vision_backend in ("armE", "armE_r2") else 196
         # ---- Multi-GPU support via accelerate (LOCAL_RANK) ----
         local_rank = int(os.environ.get("LOCAL_RANK", -1))
         if local_rank >= 0:
@@ -153,7 +156,9 @@ class BaizeLLaVA(lmms):
             img = Image.fromarray(visual).convert("RGB")
         return self.transform(img).unsqueeze(0).to(device=self._device, dtype=self.dtype)
 
-    def _expand_image_tokens(self, ids, num_expansion=NUM_IMAGE_TOKENS):
+    def _expand_image_tokens(self, ids, num_expansion=None):
+        if num_expansion is None:
+            num_expansion = self.num_image_tokens
         result = []
         for tid in ids:
             if tid == IMAGE_TOKEN_ID: result.extend([IMAGE_TOKEN_ID] * num_expansion)
@@ -317,7 +322,7 @@ class BaizeLLaVA(lmms):
             if has_any_img:
                 ref = next(f for f in batch_img_feats if f is not None)
                 D = ref.shape[-1]
-                batched_feat = torch.zeros(B, NUM_IMAGE_TOKENS, D,
+                batched_feat = torch.zeros(B, self.num_image_tokens, D,
                                            device=self._device, dtype=self.dtype)
                 for b, f in enumerate(batch_img_feats):
                     if f is not None:

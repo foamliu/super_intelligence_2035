@@ -1654,3 +1654,104 @@ ArmD 首轮（LR 2e-3）于 step~21820 发散（loss 0.45→9.3, C1 0.589→0.00
 | 12集原始结果 | `datasets/baize-vision/out/mllm_eval_results_armD_r2_20261020/eval_*.json` + `consolidated_12benchmarks.json` |
 | 关键日志 | `/tmp/armD_r2_openclip_train.log` + `/tmp/armD_r2_protb_eval.log` + `/tmp/armD_r2_stage1.log` + `/tmp/armD_r2_stage15.log` + `/tmp/armD_r2_stage2.log`(✅ RE-RUN 原版数据) + `/tmp/armD_r2_full_chain.log` |
 
+## §15 ArmE-R2（open_clip ViT-L/14 + AIMv2-style，2026-10-22→10-24）· ⚠️ 三变量实验（塔+LR+warmup）· ✅ 全链路 DONE
+
+### §15.1 实验概述与变量披露
+
+ArmE-R2 = **ArmE 降 LR 重跑**。ArmE（原 LR 1e-3）于 step~29200 发散（C1=0.0014≈随机），根因 = ViT-L/14（304M）比 ViT-B/16（86M）大 3.5× 却沿用 LR 1e-3，更新幅度过大 → spike 反复、C1 恢复慢。ArmE-R2 降 LR 重跑，输出新目录 `armE_r2_20261022_aimv2_openclip_vitl14_224/`。
+
+⚠️ **变量披露（必须逐字对齐）**：
+- **ArmE-R2 vs ArmE = 仅两变量**：peak LR 1e-3→**5e-4** + warmup 2000→**3000**（塔/数据/GBS/steps/loss/mask/wd/seed 全同）→ 干净对照「降 LR+warmup 是否消除 spike」。
+- **ArmE-R2 vs ArmD-R2 = 三变量**：① 视觉塔 B/16(86.2M)→L/14(304M) ② LR 1e-3→5e-4 ③ warmup 2000→3000 → **报告中不得归因单一变量**。
+- ⚠️ **容量混杂（运维令⑤）**：ArmE-R2 塔(304M) 比 ArmD-R2(86.2M) 大 ~3.5×，若 MLLM 胜出**不得单独归因"架构更好"**，须并列说明"容量+架构"复合变量；若持平/落后则说明"容量不是瓶颈"。
+- **Stage-2 instruct 数据**：同 ArmD-R2，用原版 LLaVA-NeXT-780k quick-start 子集（`pretrain-*.tar`, 738588 样本, 非 opt47）。
+- **MBS 非变量**：512→256 是 ViT-L/14 显存约束的强制回退（GBS=8192 + steps=63400 保持，非消融变量）。
+
+
+
+
+### §15.2 训练结果（✅ DONE）
+
+- T0 = 2026-10-22 17:52 → DONE 2026-10-24 06:57:43，总耗时 ~37h，稳态 0.48 it/s，63,400 步全程 0 nan/inf/oom。
+- 最终 step 63,400：loss ~0.66 / C1~0.80 / lr 1.00e-05（=min_lr）。
+- ⭐ **C1 历史最高 = 0.9664 @ s45240**（全 log awk 确认，全实验最高）。spike25 全闭合，末段 C1~0.80 振荡（同 ArmD-R2 末段抖动模式，非发散）。
+- vs ArmE 强优：ArmE s29200 C1=0.0014≈发散；ArmE-R2 在同一点 C1~0.86 = **690×于 ArmE 发散点**。
+- 里程碑：s2k C1~0.09 → s11k C1~0.67 → s22k C1~0.79 → s33k C1~0.86 → ⭐s45k C1 0.9664(best) → s63k C1~0.80(末段)。
+- config.json 复核：lr=5e-4 / min_lr=1e-5 / wd=0.01 / seed=1234 / mask_ratio=0.6 / contrast=1.0 / patch=1.0 / n_visual=304,000,000(304M) / warmup=3000 全对。
+- 产物：`datasets/baize-vision/out/armE_r2_20261022_aimv2_openclip_vitl14_224/`：checkpoint_60000.pt + checkpoint_63400.pt + latest.pt + open_clip_state_dict.pt(1.7GB) + predictor.pt(6.6MB) + config.json。
+- ArmE 发散证据留档：`datasets/baize-vision/out/armE_20261021_DIVERGED_archive/`（不删除）。
+
+### §15.3 ProtB 评测结果（✅ DONE · 🏆 全实验历史最高）
+
+`vision/armE_r2_20261022_protb_vitl14_224_results.json`：lp 68.2356 / 68.2373 / 68.2355（seeds 0/1/2）→ **lp 68.236 ± 0.0182%** / **5-NN 58.904%**。ckpt = open_clip_state_dict.pt（=latest=s63400）。
+
+**ProtB 对比（ArmE-R2 vs ArmD-R2 vs ArmC vs ArmB，同 Protocol B、同 IN-1k 1.28M train / 50k val）**：
+
+| 指标 | ArmE-R2 | ArmD-R2 | ArmC | ArmB | Δ(vs ArmD-R2) | Δ(vs ArmC) | Δ(vs ArmB) |
+|:--|--:|--:|--:|--:|--:|--:|--:|
+| ProtB lp (%) | **68.236** 🏆 | 64.337 | 62.332 | 62.093 | **+3.899** | +5.904 | +6.143 |
+| 5-NN (%) | **58.904** 🏆 | 55.956 | 54.718 | 58.102 | **+2.948** | +4.186 | +0.802 |
+
+> ⚠️ **三变量 + 容量混杂**：ArmE-R2 vs ArmD-R2 的 Δlp=+3.899pp / Δ5-NN=+2.948pp 是 **塔(B→L, 86→304M) + LR(1e-3→5e-4) + warmup(2000→3000) 三项共同作用**，**不得归因单一变量**。容量增大 3.5× 是主要混杂因子。**编码器质量核心结论已 secured：ViT-L/14 + 降 LR 双因子使线性可分性与近邻检索均大幅改善，全实验历史最高。**
+
+### §15.4 MLLM 三阶段对齐（③Stage-1 ✅ · ③Stage-1.5 ✅ · ③Stage-2 ✅ · ④ ✅ DONE）
+
+复用 ArmD-R2 三阶段脚本，视觉塔 ckpt 换成 ArmE-R2（projector 1024→2560），输出目录 `*_armE_r2_20261022`（chain `run_armE_r2_full_chain.sh` 自动串行②③④）：
+- ③Stage-1 projector（1024→2560，2500 步）✅ DONE 07:32。
+- ③Stage-1.5 LoRA(r=64)+projector（20000 步）✅ DONE ~09:12（loss 4.1→3.6 健康下降）。
+- ③Stage-2 instruct（3500 步，原版 LLaVA-NeXT-780k, 738588 样本）✅ DONE ~09:50（loss 4.71→1.56，~15min）。
+- 🔧 **eval bridge 修复**：`lmms_eval_baize_llava.py` 原硬编码 `NUM_IMAGE_TOKENS=196`（ViT-B/16），ViT-L/14 产出 **256** patch tokens → 8 GPU eval 全崩。已修 3 处：`self.num_image_tokens = 256 if vision_backend in ("armE","armE_r2") else 196` + `_expand_image_tokens` + feature buffer。冒烟测试 `ai2d --limit 32` 确认 `[inject] img_mask sum=256` ✅。
+- ④12集 ✅ DONE 10:05:44（8 GPU 并行，无 limit，全量，~10min，12/12 exit 0）。
+
+
+### §15.5 12集 lmms-eval 评测结果（✅ 12/12）
+
+Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并行，无 limit，全量）。结果来源：`mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json`。
+
+**12集 ArmE-R2 vs ArmD-R2（主对照）vs ArmC vs ArmB 完整对比（✅ 12/12）**：
+
+| 集 | ArmE-R2 | ArmD-R2 | Δ(−ArmD-R2) | ArmC | Δ(−ArmC) | ArmB | Δ(−ArmB) |
+|:--|--:|--:|--:|--:|--:|--:|--:|
+| ai2d | 60.65 | 60.49 | +0.16 | 59.03 | +1.62 | 60.69 | −0.04 |
+| realworldqa | 45.36 | 46.41 | −1.05 | 44.97 | +0.39 | 45.49 | −0.13 |
+| mmmu_val | 44.00 | 42.67 | +1.33 | 42.56 | +1.44 | 43.67 | +0.33 |
+| blink | 38.88 | 39.59 | −0.71 | 38.15 | +0.73 | 38.94 | −0.06 |
+| mmstar | 27.17 | 27.07 | +0.10 | 28.38 | −1.21 | 27.95 | −0.78 |
+| mmmu_pro_standard | 23.12 | 22.60 | +0.52 | 22.60 | +0.52 | 22.43 | +0.69 |
+| infovqa_val | 16.18 | 16.59 | −0.41 | 17.09 | −0.91 | 16.88 | −0.70 |
+| chartqa | 12.16 | 12.92 | −0.76 | 12.48 | −0.32 | 12.52 | −0.36 |
+| countbench | 10.59 | 9.98 | +0.61 | 8.96 | +1.63 | 9.57 | +1.02 |
+| docvqa_val | 7.35 | 7.44 | −0.09 | 7.58 | −0.23 | 7.36 | −0.01 |
+| ocrbench | 1.60 | 1.60 | +0.00 | 1.80 | −0.20 | 1.60 | +0.00 |
+| **平均(除MME)** | **26.10** | **26.12** | **−0.02** | **25.78** | **+0.32** | **26.10** | **−0.00** |
+
+### §15.6 状态与结论（✅ 全链路 DONE）
+
+- **全链路完成**：①训练 ✅(63400步, 10-24 06:57, ~37h) → ②ProtB ✅(lp 68.236/5-NN 58.904, 🏆历史最高) → ③MLLM三阶段 ✅(Stage-2 原版数据, 09:50) → ④12集 ✅(12/12, avg 26.10%, 10:05) → ⑤报告 ✅。
+- **结论**：
+  1. **编码器（最可靠，ProtB）**：ArmE-R2 ProtB **lp 68.236% / 5-NN 58.904%** = 🏆全实验历史最高。vs ArmD-R2 Δlp=+3.899pp / Δ5-NN=+2.948pp，vs ArmC Δlp=+5.904pp，vs ArmB Δlp=+6.143pp。ViT-L/14(304M)+降LR(5e-4)双因子 → 线性可分性与近邻检索均大幅改善。⚠️ 三变量(塔+LR+warmup)+容量混杂，不得归因单一变量。**编码器质量核心结论已 secured。**
+  2. **MLLM 下游**：ArmE-R2 12集平均 26.10%，vs ArmD-R2 −0.02pp / vs ArmC +0.32pp / vs ArmB −0.00pp → **不可分辨（边界值）**。ViT-L/14(304M) 比 ViT-B/16(86M) 大 3.5×，MLLM 下游却完全持平 → **容量不是 MLLM 下游瓶颈**（在 224px 单块 + 当前 MLLM 架构下）。
+  3. **ProtB→MLLM 传递性再次证伪（最强烈一例）**：ArmE-R2 ProtB lp(68.24%) 比 ArmD-R2(64.34%) 高 **+3.9pp**、比 ArmC(62.33%) 高 **+5.9pp**，但 MLLM 12集平均几乎持平（−0.02/+0.32pp）→ **编码器 4-6pp 的 ProtB 优势完全未转化为 MLLM 下游优势**。这是所有实验中 ProtB 差距最大而 MLLM 持平最明确的一例。
+  4. **降 LR 效果（ArmE-R2 vs ArmE, 两变量干净对照）**：ArmE(LR 1e-3) s29200 发散(C1=0.0014)；ArmE-R2(LR 5e-4) 全程稳定，C1 最高 0.9664 → **降 LR(1e-3→5e-4)+warmup(2000→3000) 成功消除 ViT-L/14 的 spike 反复与发散**。
+- **诚实条款**：内部 ProtB/MLLM 口径，非官方榜；单 backbone/单预算点；MLLM 三阶段单 seed；224px 单块（无 anyres），细粒度任务天然偏低；Stage-2 数据为原版 quick-start（同 ArmD-R2）；MBS 512→256 是显存强制回退非消融变量。
+
+### §15.7 文件路径
+
+| 文件 | 路径 |
+|:--|:--|
+| 训练脚本 | `vision/run_armE_r2_openclip.sh` + `vision/armB_aimv2_openclip.py` |
+| 训练输出 | `datasets/baize-vision/out/armE_r2_20261022_aimv2_openclip_vitl14_224/` |
+| open_clip 权重 | `.../armE_r2_20261022_.../open_clip_state_dict.pt` (1.7GB) |
+| ArmE 发散证据(原 LR 1e-3) | `datasets/baize-vision/out/armE_20261021_DIVERGED_archive/` (留档不删) |
+| ProtB 评测 | `vision/armE_r2_20261022_protb_vitl14_224_results.json` |
+| MLLM chain | `vision/run_armE_r2_full_chain.sh` + `vision/mllm_bridge/stage{1,15,2}_train_armE_r2.py` |
+| eval bridge (修复) | `vision/mllm_bridge/lmms_eval_baize_llava.py`（3 处动态 num_image_tokens 修复） |
+| ④ 12集 launch | `vision/mllm_bridge/launch_12benchmarks_armE_r2_offline.sh` + `consolidate_12benchmarks.py`（✅ 已执行, 12/12） |
+| ⑤ 报告生成器 | `vision/generate_armE_r2_mllm_report.py` → `reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html` |
+| 12集原始结果 | `datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/eval_*.json` + `consolidated_12benchmarks.json` |
+| 实验记录 | `EXPERIMENTS_VISION.md §15`（本节） |
+
+| mme（不计入平均） | 718.0 (perc 513.75 + cog 204.29) | 806.5 (perc 559.7 + cog 246.8) | −88.5 | 897.8 (perc 642.1 + cog 255.7) | −179.8 | 796.5 (perc 583.7 + cog 212.9) | −78.5 |
+
+**裁定**：ArmE-R2 平均(除MME) = **26.10%**，vs ArmD-R2 = **−0.02pp**（6 升 5 降，均 ±1.5pp 内），vs ArmC = **+0.32pp**，vs ArmB = **−0.00pp**（几乎完全持平）。落在预注册 22–26.5%「不可分辨」带。DocVQA/ChartQA/OCRBench vs ArmD-R2 无任一 +10pp（−0.09/−0.76/+0.00）⇒ 不触发「>24% 且单集 +10pp 成功」分支。沿用 ArmB/ArmC/ArmD-R2 预注册判据，**裁定 = 不可分辨（边界值）**。⚠️ **三变量 + 容量混杂**：ArmE-R2 vs ArmD-R2 的 ④Δ 是 塔(B→L, 86→304M) + LR(1e-3→5e-4) + warmup(2000→3000) 三重混杂，**不是纯编码器对照**；编码器纯对照看 ②ProtB（Δlp+3.899pp / Δ5-NN+2.948pp，双双正向，🏆全实验最高，已 secured）。
+

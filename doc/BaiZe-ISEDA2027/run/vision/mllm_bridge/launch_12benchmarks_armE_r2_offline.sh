@@ -45,7 +45,7 @@ echo "  launch_12benchmarks_armE_r2 started: $(date '+%Y-%m-%d %H:%M:%S')"
 echo "  ArmE: open_clip ViT-L/14 1024-d, Stage-2 step3500, batch_size=32"
 echo "  HF_DATASETS_CACHE=$HF_DATASETS_CACHE (FIX: /tmp cache, not nas_env)"
 echo "  Output dir: $LOG_DIR"
-echo "  Variables: data 3src->6src + epoch 4->3 + lr 1e-3->2e-3 + min_lr 1e-5->2e-5 (FOUR vars)"
+echo "  Variables: ArmE-R2 vs ArmE = LR(1e-3->5e-4)+warmup(2000->3000) TWO vars; vs ArmD-R2 = tower(B/16->L/14)+LR+warmup THREE vars"
 echo "============================================================"
 AVAIL_KB=$(df -P "$LMMS_EVAL_DATASETS_CACHE" | tail -1 | awk '{print $4}')
 AVAIL_GB=$((AVAIL_KB / 1024 / 1024))
