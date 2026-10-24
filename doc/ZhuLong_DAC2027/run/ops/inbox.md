@@ -1,8 +1,75 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 127 -->
-## RUN_ID 127 — 🔎 只读：定位 cimi-search MCP 定义 + opencode 的 MCP 配置位置（为给 opencode 挂 cimi 做准备）
+<!-- RUN_ID: 128 -->
+## RUN_ID 128 — 🛠 给 opencode 挂上 `cimi_search`/`cimi_fetch`（自动定位配置 → 合并 MCP → 校验，幂等）
 
 ```bash
+set -u
+echo "=== RUN_ID 128 | attach cimi MCP to opencode | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+URL_MCP="http://10.251.36.15:8090/mcp"
+MASK='s/(sk-|[A-Za-z0-9_]*key"?[[:space:]]*[:=][[:space:]]*")[A-Za-z0-9_.\-]{8,}/\1***/g'
+
+echo "[1] 现有 opencode 配置位置"
+ls -la "$HOME/.config/opencode" 2>/dev/null | head -8
+for f in "$HOME/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.jsonc" "$D/opencode.json" "$D/opencode.jsonc" "$(pwd)/opencode.json"; do
+  [ -f "$f" ] && { echo "  FOUND: $f ($(wc -c < "$f") B)"; }
+done
+echo "  opencode bin: $(which opencode 2>/dev/null || echo none)  ver: $(opencode --version 2>/dev/null | head -1)"
+
+echo "[2] 选目标文件（有项目配置用项目，否则全局）"
+T=""
+for f in "$D/opencode.json" "$D/opencode.jsonc" "$HOME/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.jsonc"; do
+  [ -f "$f" ] && { T="$f"; break; }
+done
+if [ -z "$T" ]; then T="$HOME/.config/opencode/opencode.json"; mkdir -p "$(dirname "$T")"; echo '{"$schema":"https://opencode.ai/config.json"}' > "$T"; echo "  created $T"; fi
+echo "  TARGET=$T"
+
+echo "[3] 改前内容（脱敏）"
+head -c 800 "$T" | sed -E "$MASK"; echo
+
+echo "[4] 备份 + 合并 mcp.pyAether（保留所有既有键/服务器）"
+cp -a "$T" "$T.bak.$(date +%Y%m%d_%H%M)" && echo "  backup ok"
+python3 - "$T" "$URL_MCP" <<'PY'
+import json,re,sys
+p,url=sys.argv[1],sys.argv[2]
+raw=open(p,encoding="utf-8").read()
+try:
+    d=json.loads(raw)
+except Exception:
+    # JSONC: 去注释（保守：只去整行 // 与 /* */）
+    s=re.sub(r"/\*.*?\*/","",raw,flags=re.S)
+    s=re.sub(r"^\s*//.*$","",s,flags=re.M)
+    d=json.loads(s)
+d.setdefault("$schema","https://opencode.ai/config.json")
+mcp=d.setdefault("mcp",{})
+ent=mcp.get("pyAether",{})
+ent.update({"type":"remote","url":url,"enabled":True})
+mcp["pyAether"]=ent
+json.dump(d,open(p,"w",encoding="utf-8"),ensure_ascii=False,indent=2)
+print("  merged mcp.pyAether ->",json.dumps(ent,ensure_ascii=False))
+print("  servers now:",list(mcp.keys()))
+PY
+
+echo "[5] 校验 JSON + 回显 mcp 段"
+python3 -c "import json;d=json.load(open('$T'));print('  JSON OK; mcp =',json.dumps(d.get('mcp',{}),ensure_ascii=False)[:400])"
+
+echo "[6] opencode 侧是否认到（mcp list）"
+timeout 60 opencode mcp list 2>&1 | head -12 | sed -E "$MASK" || echo '  (mcp list 不支持/超时，见下)'
+
+echo "[7] 服务端是否真的注册了 cimi_search"
+timeout 20 grep -rn "cimi_search\|cimi_fetch" "$D/tools" 2>/dev/null | head -4
+timeout 20 grep -nE 'CIMI|WEB_SEARCH|ENABLE_.*WEB|search' "$D/.env" 2>/dev/null | head -6
+echo "  -- 8090 健康 --"; timeout 8 bash -c "exec 3<>/dev/tcp/10.251.36.15/8090" 2>/dev/null && echo '  TCP 8090 OPEN' || echo '  TCP 8090 CLOSED'
+
+echo "[8] 结论提示"
+echo "  若 [6] 看到 pyAether 且 [7] 显示 cimi_search 已注册 → 直接可用；"
+echo "  若 [7] 无 cimi_search → 需在 .env 打开 web 工具开关并重启 8090 服务（见 README）。"
+echo "=== DONE 128 ==="
+```
+
+## RUN_ID 127 — 🔎 只读：定位 cimi-search MCP 定义 + opencode 的 MCP 配置位置（为给 opencode 挂 cimi 做准备）
+
+```text
 set -u
 echo "=== RUN_ID 127 | find cimi MCP + opencode config | $(date '+%F %T') | host=$(hostname) ==="
 D=/nasdata/app.e0031982/code/eda_fastmcp
