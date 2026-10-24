@@ -16892,3 +16892,92 @@ run_exp() {
 7, 0 %, 4 MiB
 === DONE 152 ===
 ```
+
+---
+
+## RUN_ID 153 · 2026-10-24 11:40:51 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 153 | status probe: vision checkpoint / round2b | $(date '+%F %T') | host=$(hostname) ==="
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$REPO/doc/BaiZe-ISEDA2027/run
+echo
+echo "[1] vision 心跳与任务书 mtime"
+ls -l --time-style=+%F' '%T "$R/MEMORY_VISION.md" "$R/BAIZE_VISION_TASK.md" 2>/dev/null
+echo "  新报告是否存在：$(ls -l --time-style=+%F' '%T "$REPO/doc/BaiZe-ISEDA2027/reports/report_vision_armE_r2_20261024_zh.html" 2>/dev/null || echo NO)"
+echo
+echo "[2] vision loop 日志尾部 15 行"
+tail -n 15 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-200
+echo "  log mtime: $(ls -l --time-style=+%F' '%T /tmp/baize_vision_loop.log 2>/dev/null | awk '{print $6,$7}')"
+echo
+echo "[3] vision 相关进程（cline_vision / 空转的 git add / loop）"
+ps -eo pid,ppid,stat,etime,pcpu,wchan:20,cmd 2>/dev/null | grep -E 'cline_vision|git .*add --fo|baize_vision_loop' | grep -v grep | cut -c1-190 | head -10
+echo
+echo "[4] round2b / pretrain 实验进程"
+pgrep -af 'baize_perf_optim_round2b|perf_r2b_|torchrun' | cut -c1-170 | head -12
+echo "  summary 尾部 12 行:"
+tail -n 12 /tmp/baize_perf_r2b/summary.txt 2>/dev/null | cut -c1-200
+echo
+echo "[5] GPU（谁在算）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>/dev/null | head -10
+echo
+echo "[6] pretrain loop 与最近提交"
+ps -eo pid,etime,stat,cmd 2>/dev/null | grep 'baize_pretrain_loop[.]sh' | cut -c1-160
+git -C "$REPO" log -3 --date=format:'%F %T' --pretty='  %h %ad %s' 2>/dev/null | cut -c1-170
+echo "=== DONE 153 ==="
+```
+
+**输出**
+```
+=== RUN_ID 153 | status probe: vision checkpoint / round2b | 2026-10-24 11:40:51 | host=whag0pgpuap12 ===
+
+[1] vision 心跳与任务书 mtime
+-rw-r----- 1 app.e0031982 app.adm 33912 2026-10-24 10:25:26 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md
+-rw-r----- 1 app.e0031982 app.adm 31163 2026-10-24 10:11:59 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md
+  新报告是否存在：NO
+
+[2] vision loop 日志尾部 15 行
+The[0m[2m task[0m[2m instruction ([0m[2mline 23)[0m[2m says: "把[0m[2m已闭合的 Arm[0m[2mE/ArmD[0m[2m 旧块搬[0m[2m run/ARCHIVE[0m[2m_OPERATOR_VISION.md[0m[2m，留 1[0m[2m
+
+[0m[2mSo I need to[0m[2m move the closed[0m[2m Arm[0m[2mE/ArmD[0m[2m blocks.[0m[2m The current task book[0m[2m is[0m[2m 33,9[0m[2m12 bytes. Let[0m[2m me be[0m[2m careful —[0m
+
+Let[0m[2m me think[0m[2m about what to move[0m[2m:
+- Line [0m[2m25-42[0m[2m ([0m[2m🔴[0m[2m [0m[2m2026-10[0m[2m-22[0m[2m 停止 Arm[0m[2mE → Arm[0m[2mE-R2):[0m[2m This[0m[2m is[0m[2m closed now[0m[2m (ArmE-R[0m[2m2 done
+-[0m[2m Line 44-[0m[2m89 ([0m[2m🚀 2026[0m[2m-10-21[0m[2m 启动[0m[2m ArmE): Closed[0m[2m (ArmE diver[0m[2mged). Move to[0m[2m archive.
+- Line[0m[2m 91-107[0m[2m (🔓 202[0m[2m6-10-[0m[2m21 Stage-2[0m[2m 原版[0m[2m数据): Already 已[0m[2m闭环. Move to[0m[2m archive.
+- Line[0m[2m 109-111[0m[2m (📦 202[0m[2m6-10-[0m[2m20 ArmD-R[0m[2m2): Already a[0m[2m pointer ([0m[2m已[0m[2m归档). Keep[0m[2m or[0m[2m it[0m[2m's already minimal[0m[2m.
+- Line [0m[2m112+ (🔥[0m[2m 2026-[0m[2m10-19[0m[2m 启动 ArmD[0m[2m): Closed[0m[2m. Move to archive[0m[2m.
+
+Actually[0m[2m, I[0m[2m need to see[0m[2m the full task[0m[2m book[0m[2m to know[0m[2m where each[0m[2m block ends. Let[0m[2m me read more of[0m[2m the task book[0m[2m to find all
+
+Actually[0m[2m, the[0m[2m most efficient approach:[0m[2m the[0m[2m task[0m[2m book[0m[2m has[0m[2m operator[0m[2m blocks[0m[2m from[0m[2m line[0m[2m 4[0m[2m onwards[0m[2m. Th
+1. Line[0m[2m 4-23[0m[2m:[0m[2m 📄 202[0m[2m6-10-[0m[2m24 ArmE-R[0m[2m2[0m[2m 报告 (ACTIVE[0m[2m -[0m[2m this is what I[0m[2m'm doing now;[0m[2m after[0m[2m completion it[
+  log mtime: 2026-10-24 11:40:51
+
+[3] vision 相关进程（cline_vision / 空转的 git add / loop）
+1294447       1 Ss    7-18:12:06  0.0 do_wait              bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
+3440456 3430458 R          07:21  100 -                    git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run -c core.ignorestat=false -c core.splitIndex=fal
+
+[4] round2b / pretrain 实验进程
+  summary 尾部 12 行:
+
+[5] GPU（谁在算）
+0, 0 %, 4 MiB
+1, 0 %, 4 MiB
+2, 0 %, 4 MiB
+3, 0 %, 4 MiB
+4, 0 %, 4 MiB
+5, 0 %, 4 MiB
+6, 0 %, 4 MiB
+7, 0 %, 4 MiB
+
+[6] pretrain loop 与最近提交
+1294448  7-18:12:07 Ss   bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  1bdcd52bf 2026-10-24 11:40:40 ops RUN_ID 153: vision 是否仍卡 checkpoint / round2b 是否真在训（只读）
+  0d1af1afb 2026-10-24 11:36:41 zhulong 商榷令(用户): 6p稿 4 问（标题出处/开源承诺措辞/附录顺序与DAC页数配额/Fig-1缺第4工具与Tcl）· 本�
+  34a7e5316 2026-10-24 11:24:08 harness R475: image pull retry started (42/89), 28 transient auth.docker.io failures retried, v2 codex 3/11 pass, TASK archived to 32KB
+=== DONE 153 ===
+```
