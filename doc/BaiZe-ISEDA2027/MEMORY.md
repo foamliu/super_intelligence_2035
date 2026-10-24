@@ -2,6 +2,15 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 🆕 最近操作（2026-10-24）
+
+### pretrain eval: BaiZe-2B Mamba2-hybrid 长上下文推理成本基准（重测 + 报告）
+- 用正确的 **BaiZe-2B Mamba2-hybrid**（NemotronH, 2.22B, 56层=24 SSM+4 Attn+28 MLP, 7.1%注意力）重测，替换旧 Xmodel Dense 数据
+- 修复 SGLang `nemotron_h.py` L424 (`self.n_groups`→`self.mamba_n_groups`) + `config.json` `mamba_dt_limit`
+- **64K→1M 全部成功**，2M OOM；64K prefill 41598 tok/s(+68%), decode 318(+57%)；单 H100 可服务至 1M
+- 显存亚线性增长（73.15→76.71GB），SSM 状态 30.23GB 常量
+- 报告：`reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（3模型对比）
+- commit `1a304f509`，详见 `daily-memories/2026-10-24.md`
 
 ## 🆕 最近操作（2026-10-18）
 
