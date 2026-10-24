@@ -1,8 +1,26 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 125 -->
-## RUN_ID 125 — 🔎 只读：zhulong r1 为什么 0 个 .py（抓 Step3/CLI 调用与错误）
+<!-- RUN_ID: 126 -->
+## RUN_ID 126 — 🔎 只读：新批次 `2026_1024_224219` 的进度（我这轮的 223138 已 0 .py 中止）
 
 ```bash
+set -u
+echo "=== RUN_ID 126 | new batch progress | $(date '+%F %T') | host=$(hostname) ==="
+for B in /nasdata/app.e0031982/eda_code_eval/2026_1024_224219 /nasdata/app.e0031982/eda_code_eval/2026_1024_223138; do
+  [ -d "$B" ] || continue
+  echo "== $(basename "$B")  mtime=$(date -r "$B" '+%H:%M' 2>/dev/null)"
+  echo "   code dirs=$(ls -d $B/code/* 2>/dev/null | wc -l)  .py=$(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+  [ -f "$B/.task_queue" ] && echo "   task_queue=$(wc -c < "$B/.task_queue") bytes"
+done
+echo "[2] 运行中的评测进程"
+pgrep -af 'run_zhulong_script|run_cline_script|run_eval.py' | grep -v opencode | cut -c1-110 | head -3 || echo '  none'
+echo "[3] 最新 batch"
+ls -1dt /nasdata/app.e0031982/eda_code_eval/2026_* 2>/dev/null | head -3
+echo "=== DONE 126 ==="
+```
+
+## RUN_ID 125 — 🔎 只读：zhulong r1 为什么 0 个 .py（抓 Step3/CLI 调用与错误）
+
+```text
 set -u
 echo "=== RUN_ID 125 | zhulong r1 diagnosis | $(date '+%F %T') | host=$(hostname) ==="
 L=/tmp/ABL_glm-5.3-flash_zl_realign_r1.log
