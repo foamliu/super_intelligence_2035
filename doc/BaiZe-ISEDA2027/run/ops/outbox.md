@@ -17750,3 +17750,235 @@ Everything up-to-date
 19:07 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
 === DONE 159 ===
 ```
+
+---
+
+## RUN_ID 160 · 2026-10-24 19:22:51 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 160 | pretrain loop health -> restart -> 16-GPU test | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+RUN=$R/run
+LOG=/tmp/baize_pretrain_loop.log
+MEM=$RUN/MEMORY_PRETRAIN_2B.md
+TASK=$RUN/BAIZE_PRETRAIN_2B_TASK.md
+
+loop_pid() { ps -eo pid=,comm=,args= 2>/dev/null | awk '$2=="bash" && /baize_pretrain_loop\.sh/ {print $1}' | head -1; }
+
+echo "[0] 护栏：是否有训练在跑"
+TP=$(ps -eo pid=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher' | grep -v grep | cut -c1-110 | head -3)
+if [ -n "$TP" ]; then echo "  TRAINING RUNNING:"; echo "$TP"; else echo "  no training -> safe"; fi
+
+LP=$(loop_pid)
+AGE=$(( ( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ) / 60 ))
+MAGE=$(( ( $(date +%s) - $(stat -c %Y "$MEM" 2>/dev/null || echo 0) ) / 60 ))
+echo "[1] loop pid=${LP:-NONE}  log_age=${AGE}min  mem_age=${MAGE}min   (healthy: log<=45 & mem<=120)"
+echo "[2] loop 日志尾部"; tail -3 "$LOG" 2>/dev/null | cut -c1-150
+echo "[3] loop 子进程（是否卡在 pi/cline 调用）"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" 2>/dev/null | cut -c1-150
+echo "[4] MEMORY 前 2 行"; head -2 "$MEM" 2>/dev/null | cut -c1-120
+
+HEALTHY=0
+[ -n "${LP:-}" ] && [ "$AGE" -le 45 ] && [ "$MAGE" -le 120 ] && HEALTHY=1
+echo "[5] HEALTHY=$HEALTHY"
+
+if [ "$HEALTHY" -eq 1 ]; then
+  echo "  => 健康：不重启，仅核对顶部 16:2x 令"
+else
+  if [ -n "$TP" ]; then echo "  !! 有训练在跑 -> 拒绝重启，留待人工裁决"; else
+    echo "  => 不健康：开始安全重启"
+    KIDS=$(ps -o pid= --ppid "$LP" 2>/dev/null | tr -d ' ')
+    echo "    将终止 loop=$LP 及其子进程: ${KIDS:-none}"
+    kill -9 "$LP" 2>/dev/null && echo "    KILL9 loop $LP（先断 loop，防止它再拉起新 agent）"
+    for k in $KIDS; do kill -TERM "$k" 2>/dev/null && echo "    TERM child $k"; done
+    sleep 6
+    for k in $KIDS; do kill -0 "$k" 2>/dev/null && { kill -9 "$k" 2>/dev/null && echo "    KILL9 child $k"; }; done
+    sleep 2
+    echo "[6] 停止后 loop pid=$(loop_pid || true)"
+    cd "$RUN" || exit 1
+    [ -f "$LOG" ] && mv "$LOG" "$LOG.bak.$(date +%H%M)" && echo "    旧日志轮转 -> $LOG.bak.$(date +%H%M)"
+    setsid -f nohup bash ./baize_pretrain_loop.sh >> "$LOG" 2>&1 < /dev/null
+    sleep 20
+    NLP=$(loop_pid)
+    echo "[7] 新 loop pid=${NLP:-NONE}"
+    echo "[8] 新日志前 12 行"; head -12 "$LOG" 2>/dev/null | cut -c1-150
+    echo "[8b] 新 loop 子进程"; [ -n "${NLP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$NLP" 2>/dev/null | cut -c1-140
+  fi
+fi
+
+echo "[9] TASK 顶部（确认 16:2x / 应急令 在最前面）"
+sed -n '1,14p' "$TASK" 2>/dev/null | cut -c1-140 | grep -n '应急令\|16:2x\|双机' || echo '  (未匹配到，需人工检查)'
+
+echo "[10] GPU 两机"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+echo "=== DONE 160 ==="
+```
+
+**输出**
+```
+=== RUN_ID 160 | pretrain loop health -> restart -> 16-GPU test | 2026-10-24 19:22:52 | host=whag0pgpuap29 ===
+[0] 护栏：是否有训练在跑
+  no training -> safe
+[1] loop pid=1294147  log_age=1753min  mem_age=255min   (healthy: log<=45 & mem<=120)
+[2] loop 日志尾部
+[push] push OK.
+[loop] 2026-10-23 13:39:32 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-23 14:09:32 wake up, invoking pi ...
+[3] loop 子进程（是否卡在 pi/cline 调用）
+ 328936 1294147  105200 Sl   /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -
+[4] MEMORY 前 2 行
+# MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
+WAITING: 1
+[5] HEALTHY=0
+  => 不健康：开始安全重启
+    将终止 loop=1294147 及其子进程: 328936
+    KILL9 loop 1294147（先断 loop，防止它再拉起新 agent）
+    TERM child 328936
+[6] 停止后 loop pid=
+    旧日志轮转 -> /tmp/baize_pretrain_loop.log.bak.1923
+[7] 新 loop pid=1401353
+[8] 新日志前 12 行
+[loop] 2026-10-24 19:23:00 wake up, invoking cline ...
+[8b] 新 loop 子进程
+1401364 1401353      20 Sl   node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e
+[9] TASK 顶部（确认 16:2x / 应急令 在最前面）
+11:### 🔥 运维指令 · 2026-10-24 16:2x（**双机 16 卡联合训练测最大吞吐**）· 用户直令 · 最高优先
+grep: (standard input): binary file matches
+[10] GPU 两机
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+=== DONE 160 ===
+```
+
+---
+
+## RUN_ID 160 · 2026-10-24 19:23:11 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 160 | pretrain loop health -> restart -> 16-GPU test | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+RUN=$R/run
+LOG=/tmp/baize_pretrain_loop.log
+MEM=$RUN/MEMORY_PRETRAIN_2B.md
+TASK=$RUN/BAIZE_PRETRAIN_2B_TASK.md
+
+loop_pid() { ps -eo pid=,comm=,args= 2>/dev/null | awk '$2=="bash" && /baize_pretrain_loop\.sh/ {print $1}' | head -1; }
+
+echo "[0] 护栏：是否有训练在跑"
+TP=$(ps -eo pid=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher' | grep -v grep | cut -c1-110 | head -3)
+if [ -n "$TP" ]; then echo "  TRAINING RUNNING:"; echo "$TP"; else echo "  no training -> safe"; fi
+
+LP=$(loop_pid)
+AGE=$(( ( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ) / 60 ))
+MAGE=$(( ( $(date +%s) - $(stat -c %Y "$MEM" 2>/dev/null || echo 0) ) / 60 ))
+echo "[1] loop pid=${LP:-NONE}  log_age=${AGE}min  mem_age=${MAGE}min   (healthy: log<=45 & mem<=120)"
+echo "[2] loop 日志尾部"; tail -3 "$LOG" 2>/dev/null | cut -c1-150
+echo "[3] loop 子进程（是否卡在 pi/cline 调用）"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" 2>/dev/null | cut -c1-150
+echo "[4] MEMORY 前 2 行"; head -2 "$MEM" 2>/dev/null | cut -c1-120
+
+HEALTHY=0
+[ -n "${LP:-}" ] && [ "$AGE" -le 45 ] && [ "$MAGE" -le 120 ] && HEALTHY=1
+echo "[5] HEALTHY=$HEALTHY"
+
+if [ "$HEALTHY" -eq 1 ]; then
+  echo "  => 健康：不重启，仅核对顶部 16:2x 令"
+else
+  if [ -n "$TP" ]; then echo "  !! 有训练在跑 -> 拒绝重启，留待人工裁决"; else
+    echo "  => 不健康：开始安全重启"
+    KIDS=$(ps -o pid= --ppid "$LP" 2>/dev/null | tr -d ' ')
+    echo "    将终止 loop=$LP 及其子进程: ${KIDS:-none}"
+    kill -9 "$LP" 2>/dev/null && echo "    KILL9 loop $LP（先断 loop，防止它再拉起新 agent）"
+    for k in $KIDS; do kill -TERM "$k" 2>/dev/null && echo "    TERM child $k"; done
+    sleep 6
+    for k in $KIDS; do kill -0 "$k" 2>/dev/null && { kill -9 "$k" 2>/dev/null && echo "    KILL9 child $k"; }; done
+    sleep 2
+    echo "[6] 停止后 loop pid=$(loop_pid || true)"
+    cd "$RUN" || exit 1
+    [ -f "$LOG" ] && mv "$LOG" "$LOG.bak.$(date +%H%M)" && echo "    旧日志轮转 -> $LOG.bak.$(date +%H%M)"
+    setsid -f nohup bash ./baize_pretrain_loop.sh >> "$LOG" 2>&1 < /dev/null
+    sleep 20
+    NLP=$(loop_pid)
+    echo "[7] 新 loop pid=${NLP:-NONE}"
+    echo "[8] 新日志前 12 行"; head -12 "$LOG" 2>/dev/null | cut -c1-150
+    echo "[8b] 新 loop 子进程"; [ -n "${NLP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$NLP" 2>/dev/null | cut -c1-140
+  fi
+fi
+
+echo "[9] TASK 顶部（确认 16:2x / 应急令 在最前面）"
+sed -n '1,14p' "$TASK" 2>/dev/null | cut -c1-140 | grep -n '应急令\|16:2x\|双机' || echo '  (未匹配到，需人工检查)'
+
+echo "[10] GPU 两机"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+echo "=== DONE 160 ==="
+```
+
+**输出**
+```
+=== RUN_ID 160 | pretrain loop health -> restart -> 16-GPU test | 2026-10-24 19:23:11 | host=whag0pgpuap12 ===
+[0] 护栏：是否有训练在跑
+  no training -> safe
+[1] loop pid=1294448  log_age=1min  mem_age=256min   (healthy: log<=45 & mem<=120)
+[2] loop 日志尾部
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-24 19:21:54 WAITING=1（异步任务 running）→ sleep 1800s
+[3] loop 子进程（是否卡在 pi/cline 调用）
+  98534 1294448      78 S    sleep 1800
+[4] MEMORY 前 2 行
+# MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
+WAITING: 1
+[5] HEALTHY=0
+  => 不健康：开始安全重启
+    将终止 loop=1294448 及其子进程: 98534
+    KILL9 loop 1294448（先断 loop，防止它再拉起新 agent）
+    TERM child 98534
+[6] 停止后 loop pid=
+    旧日志轮转 -> /tmp/baize_pretrain_loop.log.bak.1923
+[7] 新 loop pid=204951
+[8] 新日志前 12 行
+[loop] 2026-10-24 19:23:20 wake up, invoking cline ...
+[8b] 新 loop 子进程
+ 204970  204951      20 Sl   node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e00
+[9] TASK 顶部（确认 16:2x / 应急令 在最前面）
+11:### 🔥 运维指令 · 2026-10-24 16:2x（**双机 16 卡联合训练测最大吞吐**）· 用户直令 · 最高优先
+grep: (standard input): binary file matches
+[10] GPU 两机
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+=== DONE 160 ===
+```
