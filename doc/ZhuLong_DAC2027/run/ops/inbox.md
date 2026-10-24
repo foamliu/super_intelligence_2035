@@ -1,8 +1,35 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 118 -->
-## RUN_ID 118 — 🔎 只读：取 **cline 的 glm-5.3-flash 批次** 的真实 providers.json（maxTokens / baseUrl）
+<!-- RUN_ID: 119 -->
+## RUN_ID 119 — 🔎 只读：读 cline 的 **glm 时代备份**（`providers.json.bak.maxTokens8192`）拿到精确基准值
 
 ```bash
+set -u
+echo "=== RUN_ID 119 | cline glm-era baseline | $(date '+%F %T') | host=$(hostname) ==="
+B="$HOME/.cline/data/settings/providers.json.bak.maxTokens8192"
+C="$HOME/.cline/data/settings/providers.json"
+Z="$HOME/.zhulong/settings/providers.json"
+
+echo "[1] cline glm 时代备份（10-17 16:32）"
+[ -f "$B" ] && cat "$B" || echo '  missing'
+echo "[2] cline 当前（10-23 起，deepseek-v4-pro）"
+[ -f "$C" ] && cat "$C" || echo '  missing'
+echo "[3] zhulong 当前（ZL 跑用的）"
+[ -f "$Z" ] && cat "$Z" || echo '  missing'
+echo "[4] 三方关键字段并排"
+python3 - "$B" "$C" "$Z" <<'PY' 2>/dev/null || echo '  python3 unavailable'
+import json,sys
+for tag,p in zip(("cline_1017_bak","cline_now","zhulong_now"), sys.argv[1:]):
+    try: d=json.load(open(p))
+    except Exception as e: print(f"  {tag}: <{e}>"); continue
+    s=d.get("providers",{}).get("openai-compatible",{}).get("settings",{})
+    print(f"  {tag:15s} model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')} temp={s.get('temperature')} top_p={s.get('topP') or s.get('top_p')}")
+PY
+echo "=== DONE 119 ==="
+```
+
+## RUN_ID 118 — 🔎 只读：取 **cline 的 glm-5.3-flash 批次** 的真实 providers.json（maxTokens / baseUrl）
+
+```text
 set -u
 echo "=== RUN_ID 118 | cline glm run config | $(date '+%F %T') | host=$(hostname) ==="
 A=/nasdata/app.e0031982/eda_code_eval
