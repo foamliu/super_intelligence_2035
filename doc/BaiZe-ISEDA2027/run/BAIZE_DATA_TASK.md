@@ -13,6 +13,7 @@
 - 🚫 **不得就地编辑正在跑的 `migrate_to_nas_env.sh`**（bash 按字节偏移读脚本，会读串行）⇒ 必须先停旧进程。
 - 🚫 **不得起第二个迁移实例**（串行总量才可控；双实例=双倍带宽=预算失效）。
 - 切换由运维经 ops **RUN_ID 158** 执行（SIGINT 停旧 → 起新脚本 → 实测 60s 速率 + ETA）。
+  - **兜底**：若中继无回执（`run/ops/.last_run_id` 仍为 `157`），则**本轮唤醒由你亲自执行同一套动作**（先 `kill -STOP` 旧脚本再 `kill -INT` rsync → `BWLIMIT=300000 setsid -f nohup bash migrate_to_nas_env_fast.sh > /tmp/migrate_to_nas_env_fast.log 2>&1 &` → `du -sb` 60s 实测），并在回报里写清"中继未执行、由 agent 代执行"。
 
 **② 85M 降级**：**不再是任何前置条件**，不再为它预留 NFS 带宽；继续后台跑即可（8752/12124≈72.2%）。
 
