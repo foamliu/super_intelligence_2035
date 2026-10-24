@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/wDI0+aMj28T4eHfN9ZDMtwf4pEs</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.31633,2610.31098,2610.30499,2610.30231,2610.30644,2610.28815,2610.28834,2610.31338&amp;start=0&amp;max_results=8</title>
+  <updated>2026-10-24T22:02:09Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=8&amp;id_list=2610.31633,2610.31098,2610.30499,2610.30231,2610.30644,2610.28815,2610.28834,2610.31338" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>8</opensearch:itemsPerPage>
+  <opensearch:totalResults>8</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30644v1</id>
+    <title>Speculative Acceptance Does Not Decay with Position: A Full-Length Diagnostic on Long Chain-of-Thought with Independent Drafts</title>
+    <updated>2026-10-22T03:05:29Z</updated>
+    <link href="https://arxiv.org/abs/2610.30644v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30644v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The claim that speculative-decoding acceptance rate decays as a chain-of-thought grows longer has become a de facto industry narrative, motivating draft-model co-design and position-aware training. Nearly all direct evidence comes from trained drafters whose offline training length is far shorter than inference, so a purely positional law has never been isolated. We present the first systematic, full-length measurement of acceptance rate as a function of generation position on MATH-500 (all 500 problems), under greedy and sampling decoding, with two independent drafts against DeepSeek-R1-Distill-Qwen-7B: a same-family draft (DeepSeek-R1-Distill-Qwen-1.5B) and a cross-family draft (Qwen2.5-1.5B-Instruct), yielding about 1.78M verification rounds. Using within-problem paired tests, we find that after isolating a greedy-decoding repetition pathology, acceptance rate does not decay with position in any of the four configurations within the supported ranges (greedy 0-8K, sampling 0-12K); the second half of each trajectory is slightly but significantly higher than the first. A controlled temperature sweep shows that the apparent sampling-mode degradation of high-entropy reflection tokens is a visibility artifact of argmax agreement, not a drop in expected acceptance probability. Rejections concentrate with high precision on reflection trigger tokens such as "wait", "however" and "check", an entropy-selective failure that a lightweight three-arm LoRA trajectory-alignment intervention (uniform, reflection-marked, entropy-weighted) fails to improve in mean accepted length. We thus supply the positional baseline that independent draft-target pairs were missing, and localize the residual failure to decision-point entropy rather than position.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T03:05:29Z</published>
+    <arxiv:comment>10 pages, 9 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Zhiming Meng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28815v1</id>
+    <title>Forging More Tasks into Better Harnesses: Agentic Harness Evolution via Successive Scale Racing</title>
+    <updated>2026-10-20T18:36:33Z</updated>
+    <link href="https://arxiv.org/abs/2610.28815v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28815v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic harness evolution optimizes an agent's instructions, tools, and control flow by using its task execution experiences as evolving evidence. While more evolution tasks should intuitively improve performance, our preliminary study reveals a paradoxical failure mode: the performance of existing methods degrades as the task pool expands. Our further analysis demonstrates that this degradation stems from suboptimal evidence selection during optimization, as different evidence combinations lead to substantially different evolution outcomes. To address this issue, we propose Successive Scale Racing (SSR), a framework that adaptively searches for optimal evidence combinations in each evolution round. SSR constructs diverse evidence combinations based on the corresponding task quality and coverage, and efficiently races the resulting candidate harnesses under a small compute budget. Empirically, across three distinct benchmarks, SSR achieves state-of-the-art results in all six configurations. Notably, as the task pool grows from 40 to 200, SSR steadily improves the pass rate from 64.3% to 68.3%, while the baselines' performances all drop. Furthermore, its racing mechanism identifies near-optimal candidates while reducing validation executions by 60%.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T18:36:33Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jingzhe Liu</name>
+    </author>
+    <author>
+      <name>Jiliang Tang</name>
+    </author>
+    <author>
+      <name>Tong Zhao</name>
+    </author>
+    <author>
+      <name>Neil Shah</name>
+    </author>
+    <author>
+      <name>Clark Mingxuan Ju</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31633v1</id>
+    <title>BeNice! Closing Looping's Inference-Memory Gap via KV-Sharing</title>
+    <updated>2026-10-22T17:49:44Z</updated>
+    <link href="https://arxiv.org/abs/2610.31633v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31633v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Looped architectures scale quality while keeping parameter count fixed by repeatedly passing activations through the same block of layers. During inference, each recurrence generates independent KV-caches, causing memory to grow linearly. To address this challenge, prior work has proposed KV-sharing (i.e., sharing KV-caches across depth), finding that, in some cases, the KV-cache of the final recurrence can be shared with the earlier recurrences without quality loss, a property we denote as KV-shareability. However, the mechanisms underlying KV-shareability remain poorly understood, with even identically trained looped architectures not consistently exhibiting it. In this paper, we study how KV-shareability can be enabled in looped models. We propose a two-stage method: in the first stage, we use stochastic depth during pretraining, which induces contractive residual dynamics that drive representations toward a common limit across recurrences. In the second stage, we propose BeNice!, a post-training method that broadcasts the final recurrence's KV-cache into the first recurrence, training it to produce compatible residuals while preserving the original model's quality. As a result, BeNice! enables KV-shareability while matching standard finetuning's unshared validation perplexity. Using BeNice!, we show that KV-sharing is complementary to alternative KV-compression methods, composing with memory-efficient sequence mixers (e.g., multi-latent attention, Kimi delta attention) and low-precision KV-cache quantization (e.g., fp8, mxfp8, nvfp4). Finally, in simulated low-memory, long-context inference, KV-sharing improves cache hit rates by up to 31.4%, increases throughput by up to 23.6%, and reduces p90 time-to-first-token by up to 83.6%.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T17:49:44Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Hayden Prairie</name>
+    </author>
+    <author>
+      <name>Jacob M. Ryan</name>
+    </author>
+    <author>
+      <name>Taylor Berg-Kirkpatrick</name>
+    </author>
+    <author>
+      <name>Daniel Y. Fu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31098v1</id>
+    <title>RIFT: KV Cache Compression for Draft Models with Complementary Compressibility Training</title>
+    <updated>2026-10-22T11:12:23Z</updated>
+    <link href="https://arxiv.org/abs/2610.31098v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31098v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Speculative decoding is a popular decode acceleration method. As such, it is particularly relevant to long-output generation, which requires an increasingly large KV cache. KV cache compression offers a way to constrain costs in long-context drafting. However, compression methods that focus on prefill information can lose relevance as the output length grows. We term this phenomenon decode staleness and show that it degrades draft model accuracy under selection-based KV cache compression. We introduce RIFT, a family of selection-based KV cache compression strategies that balance prefill information and recent generated tokens. We show that refreshing the KV cache selection during token generation significantly improves the drafter's quality at the cost of additional decode latency. To alleviate the refresh costs, we propose an adaptive KV refresh strategy that reduces the number of score calculations while retaining the drafter's quality. We further demonstrate how a compressibility-driven drafter training phase, based on sparse attention masks, can improve the drafter's quality under a compressed KV cache. Combined with compressibility training, RIFT enables Qwen3.5-4B, drafting for Qwen3.5-122B, to retain over 98% of its full-cache acceptance length on 32K-token inputs, 4K-token outputs, and an 8K-token KV cache budget.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T11:12:23Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Dor Tsur</name>
+    </author>
+    <author>
+      <name>Maor Ashkenazi</name>
+    </author>
+    <author>
+      <name>Maximilian Golub</name>
+    </author>
+    <author>
+      <name>Peter Hicks</name>
+    </author>
+    <author>
+      <name>Yaniv Galron</name>
+    </author>
+    <author>
+      <name>Talor Abramovich</name>
+    </author>
+    <author>
+      <name>Yoav Miron</name>
+    </author>
+    <author>
+      <name>Tiyasa Mitra</name>
+    </author>
+    <author>
+      <name>Bita Darvish Rouhani</name>
+    </author>
+    <author>
+      <name>Ran Zilberstein</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30231v1</id>
+    <title>Edit, Don't Imitate: Minimal-Edit On-Policy Distillation for Multimodal Reasoning</title>
+    <updated>2026-10-21T17:59:28Z</updated>
+    <link href="https://arxiv.org/abs/2610.30231v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30231v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Visual mathematical reasoning can fail before reasoning begins: when a vision-language model (VLM) misreads a diagram, subsequent reasoning proceeds from false premises. This perceptual bottleneck is especially pronounced in smaller models, while accurate textual descriptions can substantially narrow the gap to larger models. Because obtaining such descriptions at inference requires additional annotation or model calls, we propose minimal-edit corrective on-policy distillation. Using reference figure descriptions and verified reference solutions as training-only information, a teacher scores incorrect student rollouts under a minimal-edit objective, and only teacher-disfavored tokens contribute to the corrective loss. Correct rollouts receive task-reward reinforcement learning. This preserves on-policy supervision while avoiding full-response imitation. Across model scales, the method requires no descriptions at test time and meets or exceeds the corresponding base model supplied with a reference figure description at inference. It also improves perception-oriented performance, particularly low-level geometric perception, and transfers to external mathematics and perception benchmarks. Because the minimal-edit teacher evaluates corrections rather than generating its own solution, the method remains effective with a frozen same-size teacher, although its gains are smaller than with a larger teacher on most metrics.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:59:28Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Wen Ye</name>
+    </author>
+    <author>
+      <name>Ailin Deng</name>
+    </author>
+    <author>
+      <name>Zirui Wang</name>
+    </author>
+    <author>
+      <name>Shixing Yu</name>
+    </author>
+    <author>
+      <name>Han Zhang</name>
+    </author>
+    <author>
+      <name>Tian Yun</name>
+    </author>
+    <author>
+      <name>Nikhil Mehta</name>
+    </author>
+    <author>
+      <name>Tarun Kalluri</name>
+    </author>
+    <author>
+      <name>Xuefei Cao</name>
+    </author>
+    <author>
+      <name>Xuezhe Ma</name>
+    </author>
+    <author>
+      <name>Hengduo Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30499v1</id>
+    <title>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</title>
+    <updated>2026-10-21T22:29:47Z</updated>
+    <link href="https://arxiv.org/abs/2610.30499v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30499v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A generally intelligent system acquires new skills efficiently without requiring humans to redesign its software scaffold for every new task. Yet language models rarely act alone. A harness is a symbolic program that orchestrates calls to the model, handling perception, memory, tool use, recovery, and inference allocation on the model's behalf. ARC-AGI-3 is an interactive benchmark in which agents must explore unfamiliar environments, figure out their goals on the fly, and keep learning as they go. On it, human-steered systems already report ceiling scores across the public games, so we know effective designs exist. We ask whether frontier models can build and improve such a harness on their own. Through a fixed coding bootstrap, each model constructs a complete task harness, acts through that harness on five development games, and revises the entire codebase twice. Every version is evaluated on twenty games that never influence adaptation. We measure task performance with Relative Human Action Efficiency (RHAE), which combines level completion with action efficiency relative to human baselines, and record dollar-denominated inference cost as a practical resource measure. Across 27 lineages, harness performance ranges from zero to near-ceiling scores. Two revisions raise mean held-out RHAE by only 2.80 points (95% interval [-1.44,7.35]). Development gains overstate held-out improvement, and reductions in inference cost can come at the expense of task performance. Human-steered systems demonstrate further headroom. These findings reveal a gap between autonomous harness construction and reliable adaptation under this two-revision protocol: even strong task performance does not ensure that subsequent revisions generalize or preserve existing capabilities.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T22:29:47Z</published>
+    <arxiv:comment>25 pages, 5 figures. Includes appendices and a supplementary code/data archive</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jens Lehmann</name>
+    </author>
+    <author>
+      <name>Sahar Vahdati</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28834v1</id>
+    <title>Where Should a Stuck Agent Spend Its Next Tokens? Causal Attribution of Inference-Time Resources</title>
+    <updated>2026-10-20T18:59:01Z</updated>
+    <link href="https://arxiv.org/abs/2610.28834v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28834v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Inference-time scaling is often treated as a token-budget problem, but a failed coding agent can seek qualitatively different resources: computation, information, or feedback. We introduce Banzhaf Resource Attribution (BRA), a controlled factorial framework that measures each resource's marginal contribution to repair and its interactions while holding the failed state and revision protocol fixed. We evaluate six models on 194 function-level failures from MBPP+ and HumanEval+ and 126 repository-level failures from SWE-bench Verified. Task-relevant specifications consistently improve repair, whereas public-test feedback provides small gains and retrieved code little to none. The value of additional computation declines with model capability, while information remains useful; resource channels largely exhibit diminishing returns, although complementary information can reinforce itself. Yet three of four frontier models select feedback in 95-100% of cases and obtain lower gains than uniform random resource selection. BRA thus exposes a gap between the resources agents prefer and those that measurably improve repair.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T18:59:01Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Saiyue Lyu</name>
+    </author>
+    <author>
+      <name>Jerrold Huang</name>
+    </author>
+    <author>
+      <name>Yunbei Zhang</name>
+    </author>
+    <author>
+      <name>Janet Wang</name>
+    </author>
+    <author>
+      <name>Zhenting Wang</name>
+    </author>
+    <author>
+      <name>Yingqiang Ge</name>
+    </author>
+    <author>
+      <name>Haibo Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31338v1</id>
+    <title>ValuSpec: Plug-and-Play Candidate Valuation before Target Verification for Tree-Based Speculative Decoding</title>
+    <updated>2026-10-22T14:23:26Z</updated>
+    <link href="https://arxiv.org/abs/2610.31338v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31338v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Tree-based speculative decoding accelerates large language model inference by verifying multiple candidate branches in parallel. However, in practical serving scenarios, similar requests repeatedly induce overlapping candidate branches. While retrieval-based methods mitigate this by reusing historical drafts, the resulting candidate trees often contain many low-quality branches as the candidate tree grows, which reduces verification efficiency and wastes target-side computation. To address this, we propose ValuSpec, a plug-and-play candidate valuation mechanism that filters low-quality branches from a supplied candidate tree before expensive target-side verification. ValuSpec introduces transfer-based supervision to align filtering with the target model's behavior. A filtering threshold is estimated from the target model's greedy trajectories on a calibration split, without any parameter training. The target model then verifies the filtered tree under the output-identical greedy rule, so accepted tokens are guaranteed to match standard autoregressive decoding exactly. Experimental results on HumanEval, GSM8K, Dolly, and SpecBench show that, in our main evaluation, ValuSpec achieves up to 2.38x end-to-end speedup in retrieval-based tree settings. Furthermore, integrating ValuSpec into the EAGLE-3 dynamic tree framework yields up to 2.78x end-to-end speedup without modifying its tree construction strategy, demonstrating that ValuSpec serves as a generally applicable and plug-and-play candidate valuation module.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T14:23:26Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Liang He</name>
+    </author>
+    <author>
+      <name>SiYuan Ma</name>
+    </author>
+    <author>
+      <name>Qishi Zhan</name>
+    </author>
+    <author>
+      <name>Yongqi Fan</name>
+    </author>
+    <author>
+      <name>Mingyu Cao</name>
+    </author>
+    <author>
+      <name>Qizhen Lan</name>
+    </author>
+    <author>
+      <name>Zhaolu Kang</name>
+    </author>
+    <author>
+      <name>Xilu Wang</name>
+    </author>
+  </entry>
+</feed>
