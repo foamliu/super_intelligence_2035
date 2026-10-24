@@ -14570,3 +14570,142 @@ echo "=== DONE 118 ==="
   cline  : （见 [2] 输出）
 === DONE 118 ===
 ```
+
+---
+
+## RUN_ID 119 · 2026-10-24 22:20:26 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 119 | cline glm-era baseline | $(date '+%F %T') | host=$(hostname) ==="
+B="$HOME/.cline/data/settings/providers.json.bak.maxTokens8192"
+C="$HOME/.cline/data/settings/providers.json"
+Z="$HOME/.zhulong/settings/providers.json"
+
+echo "[1] cline glm 时代备份（10-17 16:32）"
+[ -f "$B" ] && cat "$B" || echo '  missing'
+echo "[2] cline 当前（10-23 起，deepseek-v4-pro）"
+[ -f "$C" ] && cat "$C" || echo '  missing'
+echo "[3] zhulong 当前（ZL 跑用的）"
+[ -f "$Z" ] && cat "$Z" || echo '  missing'
+echo "[4] 三方关键字段并排"
+python3 - "$B" "$C" "$Z" <<'PY' 2>/dev/null || echo '  python3 unavailable'
+import json,sys
+for tag,p in zip(("cline_1017_bak","cline_now","zhulong_now"), sys.argv[1:]):
+    try: d=json.load(open(p))
+    except Exception as e: print(f"  {tag}: <{e}>"); continue
+    s=d.get("providers",{}).get("openai-compatible",{}).get("settings",{})
+    print(f"  {tag:15s} model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')} temp={s.get('temperature')} top_p={s.get('topP') or s.get('top_p')}")
+PY
+echo "=== DONE 119 ==="
+```
+
+**输出**
+```
+=== RUN_ID 119 | cline glm-era baseline | 2026-10-24 22:20:26 | host=hfeg0tedaap02 ===
+[1] cline glm 时代备份（10-17 16:32）
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3",
+        "model": "deepseek-v4-flash",
+        "maxTokens": 8192,
+        "baseUrl": "http://agi-gateway.cxmt.com/v1",
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "updatedAt": "2026-10-17T01:17:07.550Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "provider": "sapaicore",
+        "model": "anthropic--claude-3.5-sonnet",
+        "timeout": 30000,
+        "sap": {
+          "useOrchestrationMode": true
+        }
+      },
+      "updatedAt": "2026-09-29T05:48:14.023Z",
+      "tokenSource": "migration"
+    }
+  }
+}
+[2] cline 当前（10-23 起，deepseek-v4-pro）
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e",
+        "model": "deepseek-v4-pro",
+        "maxTokens": 16384,
+        "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "updatedAt": "2026-10-20T05:08:01.018Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "provider": "sapaicore",
+        "model": "anthropic--claude-3.5-sonnet",
+        "timeout": 30000,
+        "sap": {
+          "useOrchestrationMode": true
+        }
+      },
+      "updatedAt": "2026-09-29T05:48:14.023Z",
+      "tokenSource": "migration"
+    }
+  }
+}
+[3] zhulong 当前（ZL 跑用的）
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f",
+        "model": "glm-5.3-flash",
+        "maxTokens": 16384,
+        "baseUrl": "http://agi-gateway.cxmt.com/v1",
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "updatedAt": "2026-10-22T16:19:11.502Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "provider": "sapaicore",
+        "model": "anthropic--claude-3.5-sonnet",
+        "timeout": 30000,
+        "sap": {
+          "useOrchestrationMode": true
+        }
+      },
+      "updatedAt": "2026-09-29T05:48:14.023Z",
+      "tokenSource": "migration"
+    }
+  }
+}
+[4] 三方关键字段并排
+  cline_1017_bak  model=deepseek-v4-flash maxTokens=8192 baseUrl=http://agi-gateway.cxmt.com/v1 reasoning={'enabled': False} temp=None top_p=None
+  cline_now       model=deepseek-v4-pro maxTokens=16384 baseUrl=http://agi-gateway.cxmt.com/cloud/v1 reasoning={'enabled': False} temp=None top_p=None
+  zhulong_now     model=glm-5.3-flash maxTokens=16384 baseUrl=http://agi-gateway.cxmt.com/v1 reasoning={'enabled': False} temp=None top_p=None
+=== DONE 119 ===
+```
