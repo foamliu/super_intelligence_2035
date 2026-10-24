@@ -16727,3 +16727,168 @@ total 12
   待提交条目数=21
 === DONE 151 ===
 ```
+
+---
+
+## RUN_ID 152 · 2026-10-24 11:10:19 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 152 | pretrain probe-3 (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$REPO/doc/BaiZe-ISEDA2027/run
+echo
+echo "[1] 本机 pretrain loop 日志尾部 30 行（关键：最后一行 + 是否在等 git/实验）"
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[2] MEMORY_PRETRAIN_2B.md 顶部 10 行（未提交的最新写入）"
+sed -n '1,10p' "$R/MEMORY_PRETRAIN_2B.md" 2>/dev/null | cut -c1-220
+echo
+echo "[3] round2b 脚本头部 45 行（看第一步是否 git / 等锁 / 需要空闲 GPU）"
+sed -n '1,45p' "$R/baize_perf_optim_round2b.sh" 2>/dev/null | cut -c1-200
+echo
+echo "[4] 本机相关进程（含 wchan：D=IO 等、R=CPU 空转）"
+ps -eo pid,ppid,stat,etime,pcpu,wchan:24,cmd 2>/dev/null | grep -E 'baize_pretrain_loop|baize_perf_optim|cline-hub|cline-checkpoint|bin/\.cline|pi-coding-agent' | grep -v grep | cut -c1-190 | head -12
+echo
+echo "[5] 逐个 PID 详情（存在的才打印）"
+for p in 2802077 920049 2751345 919926 919933 328936 1294147 2408672 3981049; do
+  if [ -d "/proc/$p" ]; then
+    printf "  PID %s: " "$p"
+    cat "/proc/$p/wchan" 2>/dev/null; echo
+    ps -o pid,ppid,stat,etime,pcpu,cmd -p "$p" 2>/dev/null | tail -1 | cut -c1-180
+    echo "    children: $(pgrep -P "$p" 2>/dev/null | tr '\n' ' ')"
+  fi
+done
+echo
+echo "[6] round2b 的输出目录/临时目录（是否已有实验产物或报错）"
+ls -lt --time-style=+%F' '%T /tmp/baize_perf_r2* 2>/dev/null | head -8
+ls -lt /tmp/baize_perf_r2/ 2>/dev/null | head -8
+echo
+echo "[7] 本机 GPU（再确认一次）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "=== DONE 152 ==="
+```
+
+**输出**
+```
+=== RUN_ID 152 | pretrain probe-3 (READ-ONLY) | 2026-10-24 11:10:20 | host=whag0pgpuap12 ===
+
+[1] 本机 pretrain loop 日志尾部 30 行（关键：最后一行 + 是否在等 git/实验）
+
+Let[0m[2m me use sed to[0m[2m do this replacement[0m[2m on .[0m[2m29[0m[2m's[0m[2m copy...[0m[2m but[0m[2m the script is on[0m[2m NFS ([0m[2mshared), so editing[0m[2m the local[
+Found the root cause! Megatron-Core's `CudaGraphManager` requires `NCCL_GRAPH_REGISTER=0` when using `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` together with CUDA Graphs — otherwise it asser
+[36m[run_commands][0m cd /nas_train/app.e0031982/code/super_intelligence_2035 && sed -i 's/PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True...
+   [90m⎿ [0m[2m---VERIFY_FIX--- 83:PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRA...[0m
+[2m[thinking] [0m[2mAll[0m[2m 5 lines fixed[0m[2m with[0m[2m `[0m[2mNCCL_GRAPH_REGISTER[0m[2m=0`. Now[0m[2m I[0m[2m need to rel[0m[2maunch on[0m[2m .29. But[0m[2m first, let me
+
+Actually[0m[2m, I[0m[2m should also bump[0m[2m the master[0m[2m_port to avoid any[0m[2m lingering[0m[2m socket binding[0m[2m,[0m[2m and[0m[2m maybe[0m[2m clear the old[0m[2m /tmp
+
+Let[0m[2m me rel[0m[2maunch with[0m[2m a fresh[0m[2m /[0m[2mtmp dir[0m[2m.[0m
+所有 5 行已修复。现在清理 .29 上旧的失败结果，并重新启动更正后的 round 2b。
+[36m[run_commands][0m ssh -o StrictHostKeyChecking=no 10.239.2.29 'pkill -f perf_r2b_ 2>/dev/null; sleep 2; mv /tmp/baize_perf_r2b /tmp/bai...
+   [90m⎿ [0m[2m[Command exited with code 255][0m
+[2m[thinking] [0m[2mSSH[0m[2m exited[0m[2m 255 again ([0m[2mbackground detach[0m[2m). Let me verify[0m[2m it[0m[2m's running.[0m
+SSH 255 (后台分离)。让我来验证一下运行情况。
+[36m[run_commands][0m ssh -o StrictHostKeyChecking=no 10.239.2.29 'pgrep -af baize_perf_optim_round2b | grep -v pgrep | head -2; echo ---SU...
+   [90m⎿ [0m[2m---SUM--- ROUND2b START @ 2026-10-24 11:04:57 REF: e09_fp8_tw_cg = 297279 tok...[0m
+[2m[thinking] [0m[2mHmm[0m[2m, the summary.txt[0m[2m still shows the OLD[0m[2m start time (11[0m[2m:04:57[0m[2m) and the GPU[0m[2m is at[0m[2m 0 MiB[0m[2m. The pg[0m[2mrep found[
+
+Wait —[0m[2m the `[0m[2mmv /[0m[2mtmp/baize[0m[2m_perf_r2b[0m[2m /tmp/ba[0m[2mize_perf_r2[0m[2mb_failed_run1[0m[2m` should[0m[2m have moved[0m[2m the old dir[0m[2m. But the sum
+1.[0m[2m The mv didn[0m[2m't happen (maybe[0m[2m the dir was[0m[2m in use by[0m[2m a process)
+[0m[2m2. The new[0m[2m script recreated[0m[2m /[0m[2mtmp/baize[0m[2m_perf_r2b[0m[2m and wrote[0m[2m a[0m[2m new summary, but[0m[2m it shows[0m[2m [0m[2m11:04:[0m[2m57?
+
+[0m[2mNo[0m[2m, [0m[2m11:04:[0m[2m57 was the FIRST[0m[2m run's[0m[2m start time[0m[2m. If[0m[2m the mv[0m[2m succeeded, the new[0m[2m run[0m[2m would write[0m[2m a NEW[0m[2m 
+
+Actually[0m[2m wait — pg[0m[2mrep found[0m[2m NO process. So[0m[2m the rel[0m[2maunch didn't start[0m[2m,[0m[2m OR[0m[2m it started[0m[2m and already[0m[2m finished ([0m[2mfail
+
+[0m[2mActually[0m[2m, the SSH command[0m[2m exited[0m[2m 255 which[0m[2m is the detach[0m[2m. But[0m[2m maybe[0m[2m the no[0m[2mhup didn[0m[2m't actually launch[0m[2m because[0m
+
+Let me check[0m[2m the[0m
+
+[2] MEMORY_PRETRAIN_2B.md 顶部 10 行（未提交的最新写入）
+# MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
+WAITING: 1
+> 🆕 **2026-10-24 08:30 #762：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#757/#752控体积**：
+> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
+> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
+> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
+> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=26.9KB / MEMORY=~29.0KB（均≤32KB✓，本轮归档 ~2.5KB #757/#752 → daily-memories/）。
+
+> 🆕 **2026-10-24 11:0x #763：▶ 放行吞吐优化R2·收到10-24 09:3x新指令（基于自己报告§4建议继续优化）·R2已跑完5组·R2b已启动**：
+
+[3] round2b 脚本头部 45 行（看第一步是否 git / 等锁 / 需要空闲 GPU）
+#!/bin/bash
+# BaiZe-2B throughput optim ROUND 2b (2026-10-24): fixes for round-2 OOMs + untried suggestions
+# REF: e09_fp8_tw_cg = 297279 tok/s (best). Round-2: MBS4/3 OOM, CE-fusion & NCCL-Ring no change.
+# Round-2b: #1 defrag(expandable_segments) to fit MBS4/3 | #6 larger GBS | #3 SP(TP1) test
+set -uo pipefail
+BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+OUT="$BASE/data/p5b_l3"
+export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230
+BLEND="1 ${OUT}/p5b_l3_train_s0 1 ${OUT}/p5b_l3_train_s1 1 ${OUT}/p5b_l3_train_s2 1 ${OUT}/p5b_l3_train_s3 1 ${OUT}/p5b_l3_train_s4 1 ${OUT}/p5b_l3_train_s5 1 ${OUT}/p5b_l3_train_s6 1 ${OUT}/p5b_l3_tr
+ITERS=80; SEQ=4096
+R="/tmp/baize_perf_r2b"; mkdir -p "$R"; SUM="$R/summary.txt"
+echo "ROUND2b START @ $(date '+%F %T')" >> "$SUM"
+echo "REF: e09_fp8_tw_cg = 297279 tok/s med_ms=14109 peak=66923MiB MBS2/GBS1024" >> "$SUM"
+echo "R2 recap: e10 MBS4 OOM | e11 MBS3 OOM | e12 CE-fusion 296K | e13 NCCL-Ring 297K | e14 recompute AssertionError" >> "$SUM"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader >> "$SUM" 2>&1
+echo "" >> "$SUM"
+pkill -f 'perf_r2b_' 2>/dev/null; sleep 3
+
+run_exp() {
+    local LABEL="$1"; local MBS="$2"; local GBS="$3"; local ENVV="$4"; shift 4
+    local EXTRA="$@"
+    local NAME="perf_r2b_${LABEL}"
+    local LOG="$R/${NAME}.log"; local PF="$R/${NAME}.peakmem"; local RF="$R/${NAME}.result"
+    : > "$PF"
+    echo "" >> "$SUM"
+    echo "===== EXP ${LABEL} @ $(date '+%F %T') MBS=${MBS} GBS=${GBS} env=[${ENVV}] args=[${EXTRA}] =====" >> "$SUM"
+    ( MAX=0; while :; do
+        U=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | sort -n | tail -1)
+        [ -n "$U" ] && [ "$U" -gt "$MAX" ] && MAX=$U; echo "$MAX" > "$PF"; sleep 2
+      done ) &
+    local SP=$!
+    cd "$BASE" || exit 1
+    env $ENVV "$PY/torchrun" --nnodes=1 --nproc_per_node=8 \
+        --master_addr=127.0.0.1 --master_port=29972 \
+        pretrain_launcher.py \
+        --arch mamba2 --name "$NAME" --dir "$BASE/nemo_experiments" \
+        --tokenizer-path "$BASE/data/tokenizer_eod" \
+        --train-data-path $BLEND \
+        --train-iters "$ITERS" --global-batch-size "$GBS" --micro-batch-size "$MBS" --seq-length "$SEQ" \
+        --tensor-parallel 1 --eval-interval 99999 --eval-iters 0 --save-interval 0 \
+        --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 5 --lr-decay-iters 5 --lr-decay-style WSD \
+        --seed 1234 --precision bf16_mixed $EXTRA > "$LOG" 2>&1
+    local RC=$?
+    kill "$SP" 2>/dev/null; wait "$SP" 2>/dev/null
+
+[4] 本机相关进程（含 wchan：D=IO 等、R=CPU 空转）
+1294448       1 Ss    7-17:41:35  0.0 do_wait                  bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+2408672 1294448 Sl         47:56  0.0 ep_poll                  node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super
+2408679 2408672 Sl         47:56  0.9 ep_poll                  /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_train/app.e0031982/.cline_pr
+3041408       1 Ssl  49-17:51:54  2.0 ep_poll                  /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 --host 127.0.
+
+[5] 逐个 PID 详情（存在的才打印）
+  PID 2408672: ep_poll
+2408672 1294448 Sl         47:56  0.0 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2
+    children: 2408679 
+  PID 3981049: 0
+3981049 3977038 R          26:43 99.8 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run -c core.ignorestat=false -c core.splitIndex=false add --fo
+    children: 
+
+[6] round2b 的输出目录/临时目录（是否已有实验产物或报错）
+
+[7] 本机 GPU（再确认一次）
+0, 0 %, 4 MiB
+1, 0 %, 4 MiB
+2, 0 %, 4 MiB
+3, 0 %, 4 MiB
+4, 0 %, 4 MiB
+5, 0 %, 4 MiB
+6, 0 %, 4 MiB
+7, 0 %, 4 MiB
+=== DONE 152 ===
+```
