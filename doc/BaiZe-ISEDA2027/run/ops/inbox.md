@@ -1,13 +1,57 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 160 -->
+<!-- RUN_ID: 161 -->
+## RUN_ID 161 — ⏱ 延时 210s 后只读取证：16 卡双机测试是否真的起跑
+
+> 前置：RUN_ID 160 已于 19:23 安全重启 pretrain loop（新 PID 204951 → cline 子进程 204970，19:23:20 `invoking cline`）。
+> 本探针**先睡 210s** 给 agent 读任务书/起测的时间，然后只读取证（不干预）。
+
+```bash
+set -u
+echo "=== RUN_ID 161 | delayed verification of 16-GPU run | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+LOG=/tmp/baize_pretrain_loop.log
+echo "[0] 先等 210s 让 agent 读任务书并起测 ..."
+sleep 210
+
+echo "[1] 时间/loop/agent"
+date '+%F %T'
+LP=$(ps -eo pid=,comm=,args= 2>/dev/null | awk '$2=="bash" && /baize_pretrain_loop\.sh/ {print $1}' | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" 2>/dev/null | cut -c1-140
+
+echo "[2] 训练进程（torchrun / launcher / python train）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher|megatron|train\.py' | grep -v grep | cut -c1-150 | head -6 || echo '  NONE'
+
+echo "[3] loop 日志尾部（19:23 之后写了什么）"
+tail -12 "$LOG" 2>/dev/null | cut -c1-160
+
+echo "[4] 新出现的 pretrain/dual 相关文件"
+find /tmp -maxdepth 1 -newermt '-15 minutes' \( -name '*pretrain*' -o -name '*dual*' -o -name '*16gpu*' -o -name '*dp16*' \) -printf '%TH:%TM %10s %p\n' 2>/dev/null | head -8
+
+echo "[5] MEMORY / TASK mtime"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" "$R/run/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null | cut -c1-120
+
+echo "[6] GPU：.29（本机）与 .12"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "  --- .12 ---"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[7] 两机网络（跨节点 NCCL 前置）"
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ibstat 2>/dev/null | grep -m2 "State:" ; nvidia-smi topo -m 2>/dev/null | head -3' 2>/dev/null | cut -c1-120 || echo '  ib probe failed'
+echo "=== DONE 161 ==="
+```
+
+> **判读**：`[2]` 出现 `torchrun ... --nnodes 2` ⇒ 双机测试已起跑；`[6]` 两台机各 8 卡显存明显上涨（>30GB）⇒ 训练真的在跑。
+> 若 `[2]` 为空且 `[6]` 仍全空 ⇒ agent 还没起测（可能仍在读任务书/写脚本），需人工或再等一轮。
+
 ## RUN_ID 160 — 🩺 pretrain loop 体检 → 不健康则安全重启 → 立刻跑 16:2x 双机 16 卡吞吐
 
 > 用户令（2026-10-24 19:2x）：「让 ops 中继看看 pretrain loop 是否健康，如否则重启，让它立刻执行 16:2x 的双机 16 卡吞吐测试」
 > **健康判据**（写死）：loop 进程在 **且** loop 日志 mtime ≤45min **且** `MEMORY_PRETRAIN_2B.md` mtime ≤120min。任一不满足 = 不健康。
 > **安全护栏**：① 若检测到 `torchrun|pretrain_launcher` 正在跑 → **只报不重启**；② 只按 **PPID 精确**杀 loop 自己的子进程，🚫 **不用 `pkill -f`**（任务书里含脚本名，会误杀 cline）；③ 启动用**脚本文件方式**，不用 `pkill + 启动` 组合。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 160 | pretrain loop health -> restart -> 16-GPU test | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
