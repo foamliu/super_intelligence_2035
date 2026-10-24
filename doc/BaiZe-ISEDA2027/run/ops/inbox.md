@@ -1,9 +1,36 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 171 | TARGET: 29 -->
-## RUN_ID 171 — ⏱ 延时 120s 只读：双机 16 卡测试是否真的在算（GPU 显存 + torchrun + summary）
+<!-- RUN_ID: 172 | TARGET: 29 -->
+## RUN_ID 172 — ⏱ 延时 90s 只读：抓双机训练的**迭代吞吐**（tok/s）与两机 GPU
 
 ```bash
+set -u
+echo "=== RUN_ID 172 | dual-node throughput | $(date '+%F %T') | host=$(hostname) ==="
+sleep 90
+
+echo "[1] GPU：.29 本机"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[2] GPU：.12"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] master 日志：迭代行"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/*.log 2>/dev/null | head -5
+grep -iE 'iteration +[0-9]+' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -8 | cut -c1-170
+echo "[3b] 若在 worker 日志"
+for f in /tmp/baize_dualnode_16gpu/*.log; do echo "  == $(basename "$f")"; grep -iE 'iteration +[0-9]+' "$f" 2>/dev/null | tail -3 | cut -c1-170; done 2>/dev/null | head -20
+
+echo "[4] summary / peakmem"
+tail -6 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-160 || echo '  no summary'
+cat /tmp/baize_dualnode_16gpu/worker.peakmem 2>/dev/null | head -3
+
+echo "[5] 进程"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-110 | head -4
+echo "=== DONE 172 ==="
+```
+
+## RUN_ID 171 — ⏱ 延时 120s 只读：双机 16 卡测试是否真的在算（GPU 显存 + torchrun + summary）
+
+```text
 set -u
 echo "=== RUN_ID 171 | dual-node test verification | $(date '+%F %T') | host=$(hostname) ==="
 echo "[0] 等 120s ..."; sleep 120
