@@ -22,11 +22,14 @@
 - 同步更新 `3_design.tex`：`\includegraphics` 路径 → `figures/zhulong_arch_3.pdf`；caption 与 `\Description` 保持「four MCP tools + three platforms」；🚫 **不得把 caption 改成 three**。
 - 重编译后确认**页数不回涨（仍 7 页）**。
 
-**⏱ r1（重要，运维已代为硬切）**
-- 运维已按用户令用中继 **kill PID 1800419**（含子进程）。你下一轮 `pgrep` 为空 ⇒ **不要按"收口"空跑**，直接：
-  1. 用已组装的 **155 个 `.py`** 手动 regrade（模板同 r5：`unset proxy` + `NO_PROXY` + `EVAL_FW_DIR` + 8650 组；GEN_FILE = `completed_code_generation_2026_1023_231253.jsonl`）；
-  2. 按判据十三记账（timeout 7 ≤10 ⇒ 有效，标退化）；
-  3. 记 r1 成绩 → 继续 r2…r5。
+**⏱ r1（重要：**运维中继已停摆，需你自己动手**）**
+- ⚠️ 运维侧的 ZhuLong 中继自 **2026-10-23 09:36（RUN_ID 112）起已停摆**（`.last_run_id` 仍 112，RUN_ID 113 未执行）⇒ **kill 没有发生，r1 仍在你那边跑着**。
+- 按用户令「r1 硬切，手动 regrade」，**请你自己执行**：
+  1. `ps -o pid,stat,etime,cmd -p 1800419` 确认仍是 r1 主进程 → 先 `kill` 其子进程，再 `kill 1800419`；10s 后若仍在则 `kill -9`（**只动该进程树**，不碰 8090 / 8650-8654）；
+  2. 用已组装的 **155 个 `.py`** 手动 regrade（模板同 r5：`unset proxy` + `NO_PROXY` + `EVAL_FW_DIR` + 8650 组；GEN_FILE = `completed_code_generation_2026_1023_231253.jsonl`）；
+  3. 按判据十三记账（timeout 7 ≤10 ⇒ 有效，标退化）；
+  4. 记 r1 成绩 → 继续 r2…r5。
+- 附带：顺手确认你的中继为何停（`pgrep -af zhulong_ops_relay` / 日志），恢复不了就在 MEMORY 里登记，**以后别依赖它**。
 
 **交付**：贴 ①7 页/字节 ②`git diff --stat` ③编译 exit 0/0 undefined ④r1 regrade 结果；commit 前缀 `zhulong paper:` / `zhulong r1:`；push 后 `git status -sb` 无 ahead/behind。
 📦 任务书现有 31.3KB，加本块会越 32KB ⇒ **先按体积规程归档已闭合块**（10:3x 定稿令、10:2x/10:0x/09:5x 讨论块）到 `ZHULONG_TASK_ARCHIVE.md` 再提交。

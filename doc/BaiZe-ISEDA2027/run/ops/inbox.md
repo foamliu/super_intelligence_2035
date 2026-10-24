@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 154 -->
+<!-- RUN_ID: 155 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,12 +29,46 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 155 — 📦 补探：定位 5 源分词产物的**真实目录**并量体积（RUN_ID 154 未找到 `full_*`）
+
+> 154 的教训：`/nas_train/app.e0031982/code/Baize-ISEDA2027/data` 下**没有** `full_*` 目录 ⇒ 产物路径已变。本块改为**按 `*.bin` 分布反查目录**，再对候选目录做有界 `du`。**纯只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 155 | locate 5-source tokenized dirs + size | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] /nas_env 余量（字节）"
+df -h /nas_env 2>/dev/null | tail -2
+echo "  avail_bytes=$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')"
+echo
+echo "[2] datasets/baize-data 的两层目录树"
+for root in /nas_train/app.e0031982/datasets/baize-data /nas_train/app.e0031982/datasets/baize-data/text /nas_train/app.e0031982/code/Baize-ISEDA2027/data; do
+  [ -d "$root" ] || continue
+  echo "  == $root"
+  timeout 60 find "$root" -maxdepth 2 -type d 2>/dev/null | head -20
+done
+echo
+echo "[3] 按 *.bin 数量排序的目录（maxdepth 4，Top10）"
+timeout 180 find /nas_train/app.e0031982/datasets/baize-data /nas_train/app.e0031982/code/Baize-ISEDA2027 -maxdepth 4 -name '*.bin' -printf '%h\n' 2>/dev/null | sort | uniq -c | sort -rn | head -10
+echo
+echo "[4] 前 12 个候选目录的体积（有界 du）"
+timeout 240 find /nas_train/app.e0031982/datasets/baize-data /nas_train/app.e0031982/code/Baize-ISEDA2027 -maxdepth 4 -name '*.bin' -printf '%h\n' 2>/dev/null | sort -u | head -12 | while read -r d; do
+  b=$(timeout 90 du -sb "$d" 2>/dev/null | awk '{print $1}')
+  [ -n "${b:-}" ] || b=0
+  printf "  %9.1f GB  %s\n" "$(awk -v x="$b" 'BEGIN{print x/1e9}')" "$d"
+done
+echo
+echo "[5] en_v1_4 产物目录（对照，确认命名规律）"
+timeout 60 find /nas_train/app.e0031982/datasets/baize-data -maxdepth 2 -type d -name '*en_v1_4*' 2>/dev/null | head -5
+echo "=== DONE 155 ==="
+```
+
 ## RUN_ID 154 — 📦 用户令：`/nas_env` 空间是否装得下 MiniCPM5 已分词数据（+ harness 静默核查）
 
 > 用户令（2026-10-24 13:0x）：「data：看看目录 /nas_env 空间是否足够放下 MiniCPM5 已分好词的数据」。
 > 判据：`/nas_env` 可用字节 ≥ 5 源分词产物总字节 × **1.1**（rsync 期间双份占用）。**纯只读**（只 `df`/`du`/`ls`，不移动不删除）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 154 | /nas_env capacity for 5-source tokenized data | $(date '+%F %T') | host=$(hostname) ==="
 echo
