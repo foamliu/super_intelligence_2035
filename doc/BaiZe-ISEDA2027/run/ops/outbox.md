@@ -19053,3 +19053,63 @@ The pkill command got terminated. Let me clean up properly and examine the full 
   total=251/609
 === DONE 175 ===
 ```
+
+---
+
+## RUN_ID 176 · 2026-10-24 21:30:24 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 176 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+
+echo "[1] code_l2"
+a=$(du -sb "$D" 2>/dev/null | cut -f1)
+echo "  $(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB / 1691   bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+echo "[2] 迁移脚本是否还在（.12）"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-95 | head -2 || echo "   DONE: no migrate/rsync"' 2>/dev/null || true
+echo "[3] 5 源软链接状态（源路径是否已变成 symlink）"
+S=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data
+for n in full_ultradata_math_l3 full_ultradata_code_l3 full_ultradata_math_l1 full_ufw_l3 full_ultradata_code_l2; do
+  if [ -L "$S/$n" ]; then echo "  ✓ $n -> $(readlink "$S/$n")"; elif [ -d "$S/$n" ]; then echo "  … $n (real dir, not yet linked)"; else echo "  ? $n (missing)"; fi
+done
+df -h /nas_env | tail -1
+
+echo "[4] 双机 GPU"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8 | tr '\n' ' '; echo
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8 | tr "\n" " "; echo' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[5] pretrain loop 状态"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -2 | cut -c1-110' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[6] harness"
+s=0; for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; s=$((s+$(find "$d" -name result.json 2>/dev/null | wc -l))); done; echo "  total=$s/609"
+echo "=== DONE 176 ==="
+```
+
+**输出**
+```
+=== RUN_ID 176 | snapshot | 2026-10-24 21:30:24 | host=whag0pgpuap29 ===
+[1] code_l2
+  1530.2 GB / 1691   bin=129/141
+[2] 迁移脚本是否还在（.12）
+2810729    8920 bash ./migrate_to_nas_env_fast.sh
+3071323    5303 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_tr
+[3] 5 源软链接状态（源路径是否已变成 symlink）
+  ✓ full_ultradata_math_l3 -> /nas_env/app.e0031982/baize-data/full_ultradata_math_l3
+  ✓ full_ultradata_code_l3 -> /nas_env/app.e0031982/baize-data/full_ultradata_code_l3
+  ✓ full_ultradata_math_l1 -> /nas_env/app.e0031982/baize-data/full_ultradata_math_l1
+  ✓ full_ufw_l3 -> /nas_env/app.e0031982/baize-data/full_ufw_l3
+  … full_ultradata_code_l2 (real dir, not yet linked)
+10.239.23.32:/vol_CTE0_data04   10T  4.1T  5.9T  41% /nas_env
+[4] 双机 GPU
+0, 0 MiB 1, 0 MiB 2, 0 MiB 3, 0 MiB 4, 0 MiB 5, 0 MiB 6, 0 MiB 7, 0 MiB 
+0, 0 MiB 1, 0 MiB 2, 0 MiB 3, 0 MiB 4, 0 MiB 5, 0 MiB 6, 4 MiB 7, 4 MiB 
+[5] pretrain loop 状态
+[loop] 2026-10-24 20:24:01 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-24 20:54:01 wake up, invoking cline ...
+[6] harness
+  total=264/609
+=== DONE 176 ===
+```
