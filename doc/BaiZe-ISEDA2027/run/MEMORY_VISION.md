@@ -1,6 +1,6 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
@@ -13,6 +13,8 @@ WAITING: 0
 > **本唤醒流水 [wake #247, 2026-10-24 12:57]**：✅ **ArmE-R2 ⑤报告复核（运维令 10-24）· 全部交付项已闭合，无新增改动**。①**报告** `reports/report_vision_armE_r2_20261024_zh.html`(26.5KB,7节)：grep 验证 0 `<script>` / 0 CDN / 0 外链 http，div 30/30 配平；7 节齐全(摘要/配置口径/①训练/②ProtB/③MLLM三阶段/④12集/结论+复现)；①训练含 12 里程碑+spike 统计+ckpt 清单+0nan0oom grep，③MLLM 含 Stage1/1.5/2 loss+eval bridge 196→256 修复，均为落盘实数无 N/A。②**§15** `EXPERIMENTS_VISION.md` §15.1–§15.7 链新报告，旧 17KB 版标"旧版"。③**任务书**已归档(33.9→24.0KB≤32KB)。④**git**：commit e8dc74489 `vision report:`，`git status -sb` 无 ahead/behind。⑤运维令全部子项✅。无新令。**WAITING: 1**。📦 体积：TASK=24.0KB / MEMORY=30.9KB（归档 wake#220→daily-10-22，均≤32KB✓）。
 > **本唤醒流水 [wake #248, 2026-10-24 14:12]**：✅ **ArmE-R2 运维令 10-24 二次复核 · 全链路已闭合，数据纪律交叉验证通过**。①**报告** `report_vision_armE_r2_20261024_zh.html`(26.5KB,7节) 已于 wake#246 生成(commit e8dc74489)，wake#247 验收。本轮逐数溯源：ProtB lp68.236/per_seed[68.212,68.256,68.240]/5-NN58.904 ↔ `armE_r2_...results.json`✅；ArmD-R2 lp64.3373 ↔ `armD_r2_...results.json`✅(Δlp+3.899pp)；12集 11 benchmark 全 ↔ `consolidated_12benchmarks.json`✅(avg除MME=26.10%)；训练 log `/tmp/armE_r2_openclip_train.log` 确认 T0=10-22 17:52:54/done 10-24 06:57:43/spike峰s28520 loss1.4299✅；eval bridge `lmms_eval_baize_llava.py:53` 256/196 动态✅。②**无 N/A、无编造**。③git 同步(无 ahead/behind)。无新令。**WAITING: 1**。📦 体积：TASK=24.2KB / MEMORY=30.7KB（归档 wake#242→daily-10-24，均≤32KB✓）。
 > **本唤醒流水 [wake #249, 2026-10-24 15:1x]**：✅ **ArmE-R2 运维令 10-24 三次复核 · 闭合运维令④残留项（旧版标注）**。前两轮(wake#247/#248)已完成报告(26.5KB,7节)+§15链接+任务书归档+commit/push。本轮发现运维令④「旧 17KB 版保留，标注"旧版"」残留：旧报告 `report_vision_armE_r2_20261022_mllm_stage4_zh.html` 自身无"旧版"标注(仅新报告footer与MEMORY引用)。已补：<body>后插入红底 kbox 横幅「⚠️ 旧版（已被完整版取代）· 6节简版·缺①训练与③MLLM三阶段·完整版见 report_vision_armE_r2_20261024_zh.html」。grep 验证新报告 0 `<script>`/0外链✅；HTMLParser 标签配平✅。体积自检 TASK=24.2KB/MEMORY=31.1KB 均≤32KB✓。commit `vision report:` 前缀。无新令。**WAITING: 1**。📦 体积：TASK=24.2KB / MEMORY=31.1KB（无归档，均≤32KB✓）。
+> **本唤醒流水 [wake #251, 2026-10-24 17:41]**：🔄 **空唤醒复核 · 顶部运维令(16:1x)已 DONE(wake#250)，无新令到达**。①复核交付物：`reports/report_vision_next_steps_protb_mllm_zh.html`(实测 29419B ≈28.7KB；注：MEMORY/任务书旧记作21.1KB，实为28.7KB，本轮据实更正) grep 0 `<script>`/0 外链 ✅，生成器 `vision/generate_next_steps_protb_mllm_report.py` 在位 ✅。②git：vision 线工作树无未提交改动(仅见他线 baize_p8/harness/zhulong 在途文件，未触碰)；上次 vision commit f5f4825a5@17:02(wake#250)。③状态修正：wake#250 将 WAITING 置 0 → 会使 loop 每 1min 空转烧 token；现无训练运行，纠正为 **WAITING: 1**（待运维下一令，30min 轮询）。④体积自检 TASK=29283B/MEMORY≈30.8KB 均 ≤32KB✓，无需归档。本轮未启动训练/未动产物。无新令。**WAITING: 1**。📦 体积：TASK=28.6KB / MEMORY=30.8KB（无归档，均≤32KB✓）。
+
 
 
 > 📦 **wake #206 (2026-10-21 20:31, ArmD-R2 全链路状态复核)** 已归档 → daily-memories-vision/2026-10-21.md；**结论**：2026-10-21 运维令(Stage-2改原版780k)全完成并已提交(commit 9dce3f3d0)；④12集 avg26.12%✓；git 同步。需要时再读。
@@ -61,7 +63,7 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=0**（16:1x方案报告已交付,待运维下一令）。 |
+| PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（16:1x方案报告已交付,无训练运行,待运维下一令）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
 | 更新 | **2026-10-24 16:57 (wake #250)**: ✅运维令16:1x「下一步如何提升ProtB与MLLM成绩」方案报告交付=`reports/report_vision_next_steps_protb_mllm_zh.html`(21.1KB,8节,0 script/0外链,生成器`vision/generate_next_steps_protb_mllm_report.py`)。核心结论:①12集已饱和(4臂ProtB跨度6.15pp但MLLM跨度0.34pp,逐集最大1.66pp,多数<1σ)→②单一建议=先做B4(用MMBench/MMVet/MathVista+336anyres在已有ArmB/ArmE-R2 ckpt重测,~0 GPU·h)判定「评测盲区vs真失效」;顺带A3(ckpt_60000跑ProtB,~0.3 GPU·h)。③ProtB仍有~14-19pp理论空间(vs CLIP@336 82.66%)但主因是预训练;从头+224约束下现实空间+3-8pp。④已消融项(mask0.6/weight1:1)维持。本轮未启动训练/未动产物。📦体积:TASK=28.6KB✓/MEMORY≈31.5KB(本轮PHASE表精简后回落≤32KB✓)。**WAITING=0**。 |
 
