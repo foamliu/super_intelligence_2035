@@ -1,9 +1,45 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 182 | TARGET: 29 -->
-## RUN_ID 182 — 🔍 只读：22:4x 快照（16 卡是否跑出吞吐 / harness）
+<!-- RUN_ID: 183 | TARGET: 29 -->
+## RUN_ID 183 — 🔎 只读：双机 launcher 脚本 + 最近一次失败的原始日志（定位早退原因）
 
 ```bash
+set -u
+echo "=== RUN_ID 183 | dual-node launcher inspection | $(date '+%F %T') | host=$(hostname) ==="
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo "[1] 仓库根目录里的双机脚本"
+ls -lt "$G"/*.sh 2>/dev/null | head -10 | awk '{print $6,$7,$8,$9}'
+echo "  -- grep dual/16gpu --"
+grep -l -E 'nnodes|dualnode|16gpu' "$G"/*.sh 2>/dev/null | head -6
+
+echo "[2] launcher 关键行（env / torchrun / 日志路径）"
+F=$(grep -l -E 'nnodes=2|nnodes 2|dualnode' "$G"/*.sh 2>/dev/null | head -1)
+echo "  F=$F"
+[ -n "${F:-}" ] && { wc -l "$F"; grep -nE 'NCCL|torchrun|nnodes|nproc|master_addr|MASTER|log|tee|set -e|exit' "$F" | head -24 | cut -c1-150; }
+
+echo "[3] 最近一次双机运行的日志（/tmp 与 workdir）"
+ls -lt /tmp/baize_dualnode* /tmp/*dualnode* 2>/dev/null | head -8
+for f in /tmp/baize_dualnode_16gpu/*.log /tmp/baize_dualnode_16gpu_run.log; do
+  [ -f "$f" ] && { echo "  == $f ($(wc -c < "$f") B, $(date -r "$f" '+%H:%M'))"; tail -12 "$f" | tr -d '\033' | cut -c1-160; }
+done
+
+echo "[4] 22:4x 之后的 summary / peakmem"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null
+cat /tmp/baize_dualnode_16gpu/worker.peakmem 2>/dev/null | head -2
+
+echo "[5] .12 侧同一目录"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null | head -8; echo "-- latest log --"; ls -lt /tmp/*dualnode* 2>/dev/null | head -4' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[6] 当前 GPU / launcher"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2 | tr '\n' ' '; echo
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-90 | head -2 || echo '  none'
+echo "=== DONE 183 ==="
+```
+
+## RUN_ID 182 — 🔍 只读：22:4x 快照（16 卡是否跑出吞吐 / harness）
+
+```text
 set -u
 echo "=== RUN_ID 182 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
 
