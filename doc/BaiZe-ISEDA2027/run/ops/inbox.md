@@ -1,11 +1,51 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 165 | TARGET: 29 -->
+<!-- RUN_ID: 166 | TARGET: 12 -->
+## RUN_ID 166 — 🔍 只读：定位「B.glm-5.3-flash（cline）」与「ZL-flash full（zhulong CLI）」两批 5-run 的原始轨迹目录
+
+> 目的：为「为什么 cline 86.8±1.6% vs zhulong CLI 75.6±4.4%（同 glm-5.3-flash / 同 full 配置）」的差异分析取证。
+> 只要**目录清单 + 每批的配置元数据（cli_agent / model / readback / 任务数）**，不要跑任何评测。
+
+```bash
+set -u
+echo "=== RUN_ID 166 | locate zhulong eval batches | $(date '+%F %T') | host=$(hostname) ==="
+A=/nasdata/app.e0031982/eda_code_eval
+echo "[0] 根目录"; ls -d "$A" 2>/dev/null || echo "  NO /nasdata"; ls "$A" 2>/dev/null | wc -l
+
+echo "[1] 最近 25 个 batch（按时间倒序）"
+ls -1dt "$A"/2026_* 2>/dev/null | head -25 | while read -r d; do
+  n=$(find "$d" -maxdepth 3 -name '*.py' 2>/dev/null | wc -l)
+  echo "  $(basename "$d")  py=$n  mtime=$(date -r "$d" '+%m-%d_%H:%M' 2>/dev/null)"
+done
+
+echo "[2] 各 batch 的配置线索（含 glm-5.3-flash / cli_agent 的文件）"
+for d in $(ls -1dt "$A"/2026_* 2>/dev/null | head -25); do
+  hit=$(timeout 6 grep -rl -E 'glm-5\.3-flash|cli_agent|CLI_AGENT' "$d" --include='*.json' --include='*.sh' --include='*.yaml' --include='*.txt' 2>/dev/null | head -3)
+  [ -n "$hit" ] && { echo "  --- $(basename "$d")"; echo "$hit" | sed 's/^/      /'; }
+done
+
+echo "[3] 目录结构样例（取最新一个 batch）"
+D=$(ls -1dt "$A"/2026_* 2>/dev/null | head -1)
+echo "  sample=$D"
+ls -1 "$D" 2>/dev/null | head -10
+ls -1 "$D"/* 2>/dev/null | head -8
+
+echo "[4] 找 run 级 manifest（含 model / cli / readback）"
+for f in $(timeout 15 find "$A" -maxdepth 3 \( -name 'config*.json' -o -name 'manifest*.json' -o -name '*meta*.json' -o -name 'run*.sh' \) -newermt '2026-10-16' 2>/dev/null | head -12); do
+  echo "  == $f"
+  head -c 300 "$f" 2>/dev/null | tr '\n' ' '; echo
+done
+
+echo "[5] 显式搜 zhulong CLI 的痕迹（CLI_AGENT=zhulong / cline）"
+timeout 40 grep -rl 'CLI_AGENT' /nasdata/app.e0031982/eda_code_eval 2>/dev/null | head -8
+echo "=== DONE 166 ==="
+```
+
 ## RUN_ID 165 — 🔎 诊断：是谁在反复拉起 `ops_relay_v2.sh`（+ pretrain 现状）
 
 > 现象：19:36 与 19:38 两次快照都是「一个老 v2 + 一个 etimes≤1 的新 v2」⇒ 每 ~2 分钟就多一个新实例。本令只读排查来源。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 165 | who spawns relay v2 | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
