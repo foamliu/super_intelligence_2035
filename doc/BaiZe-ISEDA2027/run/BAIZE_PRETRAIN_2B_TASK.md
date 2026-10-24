@@ -2,6 +2,27 @@
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
+### ⚠️ 补正 · 2026-10-24 16:2x（**SGLang 对 Mamba2 的支持早已验证过，勿再核查**）· 用户直令
+
+> 用户原话：「SGLang 对 Mamba2 的支持性这个早先实验验证过。」
+> **补充事实（运营方核实 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` P-9.11 ②）**：sglang 0.5.9 **已成功服务 Mamba2-hybrid**，可直接复用现成配置，**不需要再"先报支持性"**。
+
+**已验证的现成配置（直接照抄，这是 ground truth）**
+| 项 | 值 |
+|---|---|
+| 框架 | **sglang 0.5.9**（vllm conda env，torch 2.9.1+cu128，flashinfer 0.6.3） |
+| hybrid 模型转换 | mcore distcp → HF **`nemotron_h`**（sglang 原生支持），脚本 `baize_p6_ckpt_to_hf.py` |
+| sglang 启动参数 | `--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer`，**hybrid 加 `--mamba-ssm-dtype float32`** |
+| 超长上下文 | `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1` |
+
+**参照历史**：P-9.11 用过 `p3_hybrid/iter_0005000` 转 HF（510 mcore keys → 323 HF keys，2.220B，4.4GB safetensors）。
+
+**因此修订第二节的第 2 条**：
+- ❌ 删除「先核查 SGLang 对 Mamba2 的支持性 / 若不支持就写不可服务」
+- ✅ **改为**：**直接复用 P-9.11 的已验证配置**（`nemotron_h` HF 转换 + `--mamba-ssm-dtype float32` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`），**把这次用的 ckpt 路径与转换方式在报告里写清即可**
+- ⚠️ 唯一需注意：本次要用的是**当前实际训好的 BaiZe-2B（Mamba2-hybrid）ckpt**，需先做 **mcore distcp → HF `nemotron_h`** 转换（照 `baize_p6_ckpt_to_hf.py`），并**做一次 logits 对齐自检**确认转换无损。**这是唯一的新增前置，其余照抄 P-9.11。**
+
+
 ### 🚀 运维指令 · 2026-10-24 16:0x（**① 305K 最佳实践写入任务书 ② longctx 报告用错模型：重测重写**）· 用户直令 · 最高优先
 
 > 用户原话：「1. 把第二轮最佳：**MBS3+FP8 TW+CG=305K tok/s（+2.6% vs 第一轮 / +21.0% vs 基线）**作为**最佳实践简要写入任务书**；2. 早上提交的 `report_pretrain_longctx_infer_cost_3x2b_zh.html` **有问题，BaiZe-2B 不应该采用 Xmodel-2.5 模型，而是应该沿用一直实验的 BaiZe-2B (Mamba2-hybrid）模型。重新测试，重写报告。**」
