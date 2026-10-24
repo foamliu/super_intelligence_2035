@@ -14518,3 +14518,55 @@ drwxr-x--- 5 app.e0031982 app.adm 4096 Oct 18 09:01 ..
 [3] 该批次的 worker data-dir（含 providers.json）
 === DONE 117 ===
 ```
+
+---
+
+## RUN_ID 118 · 2026-10-24 22:18:20 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 118 | cline glm run config | $(date '+%F %T') | host=$(hostname) ==="
+A=/nasdata/app.e0031982/eda_code_eval
+
+echo "[1] 10-18 的 glm-5.3-flash 批次目录"
+ls -1dt "$A"/2026_1018_* 2>/dev/null | head -8
+
+echo "[2] 这些批次的 worker data-dir 里的 providers.json"
+for d in $(ls -1dt "$A"/2026_1018_* 2>/dev/null | head -4); do
+  echo "  == $(basename "$d")"
+  ls -d "$d"/worker_*/data 2>/dev/null | head -4
+  for p in $(ls "$d"/worker_*/data/settings/providers.json 2>/dev/null | head -2); do
+    echo "     -- $p"
+    python3 - "$p" <<'PY' 2>/dev/null || head -c 350 "$p"
+import json,sys
+d=json.load(open(sys.argv[1]))
+for k,v in d.get("providers",{}).items():
+    s=v.get("settings",{})
+    print(f"        {k}: model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')} temp={s.get('temperature')} top_p={s.get('topP') or s.get('top_p')}")
+PY
+  done
+done
+
+echo "[3] 全局 .cline 目录历史（当前=deepseek-v4-pro）"
+ls -l "$HOME/.cline/data/settings/providers.json"* 2>/dev/null | head -5
+
+echo "[4] 结论用：把两侧关键字段并排打印"
+echo "  zhulong: model=glm-5.3-flash maxTokens=16384 baseUrl=http://agi-gateway.cxmt.com/v1"
+echo "  cline  : （见 [2] 输出）"
+echo "=== DONE 118 ==="
+```
+
+**输出**
+```
+=== RUN_ID 118 | cline glm run config | 2026-10-24 22:18:20 | host=hfeg0tedaap02 ===
+[1] 10-18 的 glm-5.3-flash 批次目录
+[2] 这些批次的 worker data-dir 里的 providers.json
+[3] 全局 .cline 目录历史（当前=deepseek-v4-pro）
+-rw------- 1 app.e0031982 app.adm 853 Oct 23 23:11 /home/app.e0031982/.cline/data/settings/providers.json
+-rw------- 1 app.e0031982 app.adm 848 Oct 17 16:32 /home/app.e0031982/.cline/data/settings/providers.json.bak.maxTokens8192
+[4] 结论用：把两侧关键字段并排打印
+  zhulong: model=glm-5.3-flash maxTokens=16384 baseUrl=http://agi-gateway.cxmt.com/v1
+  cline  : （见 [2] 输出）
+=== DONE 118 ===
+```
