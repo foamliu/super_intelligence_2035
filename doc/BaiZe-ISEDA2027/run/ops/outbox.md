@@ -19113,3 +19113,145 @@ echo "=== DONE 176 ==="
   total=264/609
 === DONE 176 ===
 ```
+
+---
+
+## RUN_ID 177 · 2026-10-24 21:35:40 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 177 | dual-node launcher + IB inventory | $(date '+%F %T') | host=$(hostname) ==="
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo "[1] 候选 launcher 脚本"
+ls -lt "$G"/*.sh 2>/dev/null | head -8 | cut -c1-110
+ls -lt "$G"/doc/BaiZe-ISEDA2027/run/*dual* "$G"/doc/BaiZe-ISEDA2027/run/*.sh 2>/dev/null | head -8 | cut -c1-110
+
+echo "[2] 双机相关脚本清单（按名）"
+find "$G" -maxdepth 3 -name '*dual*' -o -maxdepth 3 -name '*16gpu*' 2>/dev/null | head -10
+
+echo "[3] 最可能的 launcher 前 50 行（找它的环境变量/参数）"
+F=$(ls -t "$G"/do*dula*.sh "$G"/*dual*.sh 2>/dev/null | head -1)
+echo "  F=$F"
+[ -n "${F:-}" ] && head -50 "$F" | cut -c1-150
+
+echo "[4] IB/RoCE 设备"
+ibv_devinfo -l 2>/dev/null | head -12 || echo '  ibv_devinfo not available'
+for d in $(ibv_devinfo -l 2>/dev/null | awk 'NR>1{print $1}' | head -6); do
+  echo "  --- $d ---"
+  ibv_devinfo -d "$d" -v 2>/dev/null | grep -E 'link_layer|state:|phys_state|active_mtu|GID\[' | head -10
+done
+
+echo "[5] 网卡地址"
+ip -br addr 2>/dev/null | grep -vE '^lo' | head -12
+
+echo "[6] NCCL 版本 + 现有调试目录"
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python -c "import torch;print('torch',torch.__version__,'nccl',torch.cuda.nccl.version())" 2>/dev/null || echo '  python/nccl probe failed'
+ls -d /tmp/nccl_dbg /tmp/baize_dualnode_16gpu 2>/dev/null; ls -l /tmp/baize_dualnode_16gpu 2>/dev/null | head -5
+echo "=== DONE 177 ==="
+```
+
+**输出**
+```
+=== RUN_ID 177 | dual-node launcher + IB inventory | 2026-10-24 21:35:40 | host=whag0pgpuap12 ===
+[1] 候选 launcher 脚本
+-rwxr-x--- 1 app.e0031982 app.adm 9373 Oct 24 20:08 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rwxr-x--- 1 app.e0031982 app.adm 9373 Oct 24 20:08 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rw-r----- 1 app.e0031982 app.adm 6924 Oct 24 19:34 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rwxr-x--- 1 app.e0031982 app.adm 6049 Oct 24 12:24 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rwxr-x--- 1 app.e0031982 app.adm 6404 Oct 24 11:10 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rwxr-x--- 1 app.e0031982 app.adm 5844 Oct 24 09:44 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rwxr-x--- 1 app.e0031982 app.adm 5216 Oct 23 23:31 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rwxr-xr-x 1 app.e0031982 app.adm 3051 Oct 23 18:14 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+[2] 双机相关脚本清单（按名）
+[3] 最可能的 launcher 前 50 行（找它的环境变量/参数）
+  F=
+[4] IB/RoCE 设备
+16 HCAs found:
+	mlx5_0
+	mlx5_1
+	mlx5_2
+	mlx5_3
+	mlx5_4
+	mlx5_5
+	mlx5_6
+	mlx5_7
+	mlx5_8
+	mlx5_9
+	mlx5_10
+  --- mlx5_0 ---
+			state:			PORT_ACTIVE (4)
+			active_mtu:		4096 (5)
+			link_layer:		Ethernet
+			phys_state:		LINK_UP (5)
+			GID[  0]:		fe80:0000:0000:0000:966d:aeff:fef6:b7fe, RoCE v1
+			GID[  1]:		fe80::966d:aeff:fef6:b7fe, RoCE v2
+			GID[  2]:		0000:0000:0000:0000:0000:ffff:0aef:080c, RoCE v1
+			GID[  3]:		::ffff:10.239.8.12, RoCE v2
+  --- mlx5_1 ---
+			state:			PORT_ACTIVE (4)
+			active_mtu:		4096 (5)
+			link_layer:		Ethernet
+			phys_state:		LINK_UP (5)
+			GID[  0]:		fe80:0000:0000:0000:966d:aeff:fef6:bb26, RoCE v1
+			GID[  1]:		fe80::966d:aeff:fef6:bb26, RoCE v2
+			GID[  2]:		0000:0000:0000:0000:0000:ffff:0aef:090c, RoCE v1
+			GID[  3]:		::ffff:10.239.9.12, RoCE v2
+  --- mlx5_2 ---
+			state:			PORT_ACTIVE (4)
+			active_mtu:		4096 (5)
+			link_layer:		Ethernet
+			phys_state:		LINK_UP (5)
+			GID[  0]:		fe80:0000:0000:0000:966d:aeff:fef3:c092, RoCE v1
+			GID[  1]:		fe80::966d:aeff:fef3:c092, RoCE v2
+			GID[  2]:		0000:0000:0000:0000:0000:ffff:0aef:0a0c, RoCE v1
+			GID[  3]:		::ffff:10.239.10.12, RoCE v2
+  --- mlx5_3 ---
+			state:			PORT_ACTIVE (4)
+			active_mtu:		4096 (5)
+			link_layer:		Ethernet
+			phys_state:		LINK_UP (5)
+			GID[  0]:		fe80:0000:0000:0000:966d:aeff:fef3:bf8a, RoCE v1
+			GID[  1]:		fe80::966d:aeff:fef3:bf8a, RoCE v2
+			GID[  2]:		0000:0000:0000:0000:0000:ffff:0aef:0b0c, RoCE v1
+			GID[  3]:		::ffff:10.239.11.12, RoCE v2
+  --- mlx5_4 ---
+			state:			PORT_DOWN (1)
+			active_mtu:		1024 (3)
+			link_layer:		Ethernet
+			phys_state:		DISABLED (3)
+			GID[  0]:		fe80:0000:0000:0000:3673:79ff:fe9c:10d6, RoCE v1
+			GID[  1]:		fe80::3673:79ff:fe9c:10d6, RoCE v2
+  --- mlx5_5 ---
+			state:			PORT_ACTIVE (4)
+			active_mtu:		1024 (3)
+			link_layer:		Ethernet
+			phys_state:		LINK_UP (5)
+			GID[  0]:		fe80:0000:0000:0000:88bd:5eff:febb:5a00, RoCE v1
+			GID[  1]:		fe80::88bd:5eff:febb:5a00, RoCE v2
+			GID[  2]:		0000:0000:0000:0000:0000:ffff:0aef:020c, RoCE v1
+			GID[  3]:		::ffff:10.239.2.12, RoCE v2
+[5] 网卡地址
+enp24s0np0       UP             10.239.8.12/24 fe80::966d:aeff:fef6:b7fe/64 
+enp25s0np0       UP             10.239.9.12/24 fe80::966d:aeff:fef6:bb26/64 
+enp66s0np0       UP             10.239.10.12/24 fe80::966d:aeff:fef3:c092/64 
+ens5np0          UP             10.239.11.12/24 fe80::966d:aeff:fef3:bf8a/64 
+ens6f0np0        DOWN           
+ens6f1np1        UP             
+ens3f0np0        UP             10.239.22.12/24 fe80::a288:c2ff:fe8d:7702/64 
+ens3f1np1        DOWN           
+ens7np0          UP             10.239.12.12/24 fe80::966d:aeff:fef6:c13e/64 
+ens8np0          UP             10.239.13.12/24 fe80::966d:aeff:fef6:bf86/64 
+ens10np0         UP             10.239.14.12/24 fe80::966d:aeff:fef3:c09a/64 
+ens11np0         UP             10.239.15.12/24 fe80::966d:aeff:fef3:bf42/64 
+[6] NCCL 版本 + 现有调试目录
+torch 2.8.0+cu128 nccl (2, 27, 3)
+/tmp/baize_dualnode_16gpu
+total 260
+-rw-r----- 1 app.e0031982 app.adm 142065 Oct 24 20:21 master.log
+-rw-r----- 1 app.e0031982 app.adm      2 Oct 24 21:35 master.peakmem
+-rw-r----- 1 app.e0031982 app.adm    156 Oct 24 20:24 run.log
+-rw-r----- 1 app.e0031982 app.adm    621 Oct 24 21:33 summary.txt
+=== DONE 177 ===
+```
