@@ -5,14 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~6.7h elapsed) + SWE-bench Verified 后台下载进行中(65/500 pulled). 两线并列.
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480)·下载脚本+后台启动✅(R480)·TASK归档✅(R481)
-当前动作:     R483: 双线并列监控. ①TB 7×87 并发~6.7h(16:21起),7 harbor alive. cline-patched 31/87(16P=51.6%), codex 27/87(9P=33.3%), opencode 28/87(12P=42.9%), pi 31/87(13P=41.9%), hermes 82/87(0P=0%), deepseek-harness 82/87(0P=0%), claude-code 24/87(0P=0%). ⚠️ hermes/deepseek 近完成(82/87)但0% pass+35 exc(快速空提交); claude-code 最慢24/87且0P+19 exc; cline/opencode/pi/codex 四路健康33-52%. ②SWE-bench Verified 下载: 65/500 pulled(astropy22+django43),0 failed, PID 1199724 alive(3h43m). 实测~17/h(含首张429退避40min),稳定后~20/h. Docker 175 images/407.5GB, /data 6.3TB free. load avg 17/224CPU(TB未受下载影响). ③kill了2个重复pull进程(loop可能重复启动,只留原始PID 1199724).
-下一步:       ①TB 慢harness(claude-code 24/87)还需~4-6h,hermes/deepseek近完成需验收是否真0% vs 适配器bug,完成后收集全量→McNemar配对报告(中文HTML) ②SWE-bench 下载持续(~17/h,ETA ~26h→10-26 01:00),监控pull_progress.txt ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评
-阻塞:         无. TB 在跑(慢harness拖长); SWE-bench 下载受 Docker Hub 匿名限速(100 manifest/h,共享IP 203.127.181.131),实测~17/h. ⚠️hermes/deepseek 0%+35 exc 需排查是否适配器问题.
+PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~7.9h elapsed) + SWE-bench Verified 后台下载进行中(94/500 pulled). 两线并列.
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480)·下载脚本+后台启动✅(R480)·TASK归档✅(R481)·R483 push已补推✅
+当前动作:     R484: 双线并列监控. ①TB 7×87 并发~7.9h(16:21起),5 harbor alive(hermes+deepseek已FINISHED). cline-patched 33/87(17P=51.5%), codex 60/87(10P=16.7%,46err!), opencode 30/87(14P=46.7%), pi 33/87(14P=42.4%), claude-code 26/87(0P=0%,22err), hermes 87/87 FINISHED(0P=0%,37err), deepseek 87/87 FINISHED(0P=0%,37err). ⚠️codex 60done但46err(76%错误率!仅23 eval trial),claude-code最慢26/87且0%+22err; cline/opencode/pi三路健康42-52%. ②SWE-bench Verified 下载: 94/500 pulled(astropy22+django72),0 failed, PID 1199724 alive(~4.9h). 实测~19/h,ETA~21h→10-25 21:00. Docker 207 images,/data 752G used/6.3TB free. load avg 11.8/224CPU(TB未受下载影响). ③R483 push已通过(loop auto-commit fe4c147a9@23:07已推).
+下一步:       ①TB 慢harness(claude-code 26/87,codex 60/87)还需~3-5h,hermes/deepseek已DONE需验收是否真0% vs 适配器bug,全量完成后→McNemar配对报告(中文HTML) ②SWE-bench 下载持续(~19/h,ETA~10-25 21:00),监控pull_progress.txt ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评
+阻塞:         无. TB 在跑(慢harness拖长); SWE-bench 下载受 Docker Hub 匿名限速(100 manifest/h,共享IP 203.127.181.131),实测~19/h. ⚠️codex 46err/60done(76%错误率!)需排查; hermes/deepseek 0%+37err 需排查是否适配器问题.
 ERROR_COUNT:  1
-📦 体积：TASK=29KB / MEMORY=20KB（归档 0KB）
-⚠️ PUSH_PENDING: R483 commit 84a63780e ahead 1, push failed 2x (503 from proxy 172.19.92.25:13128). 下一轮唤醒第一件事=补推.
+📦 体积：TASK=29KB / MEMORY=21KB（归档 0KB）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -154,6 +153,8 @@ ERROR_COUNT:  1
 - v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
 
 ### 本唤醒流水
+[00:18] R484 **双线并列监控(TB 7.9h + SWE-bench 94/500)**. ①TB 7×87 并发~7.9h(16:21起),5 harbor alive(hermes+deepseek已FINISHED 87/87). 精确统计(top-level result.json→stats.evals.metrics[0].mean): cline-patched 33/87 done(17P/14F=51.5%,8err), codex 60/87 done(10P/13F=16.7%,46err!), opencode 30/87(14P/13F=46.7%,11err), pi 33/87(14P/16F=42.4%,9err), claude-code 26/87(0P/13F=0.0%,22err), hermes 87/87 FIN(0P/50F=0.0%,37err), deepseek 87/87 FIN(0P/50F=0.0%,37err). ⚠️codex 60done但46err(76%错误率!仅23 eval trial=非error完成);claude-code最慢26/87且0%+22err; cline/opencode/pi三路健康42-52%. ②SWE-bench Verified下载: 94/500 pulled(astropy22+django72),0 failed, PID 1199724 alive(etimes=17622s~4.9h). 实测~19/h,ETA~21h→10-25 21:00. Docker 207 images,/data 752G used/6.3TB free(11%). load avg 11.8/224CPU(TB未受下载影响). ③R483 push已通过(loop auto-commit fe4c147a9@23:07已推,git status无ahead). ④体积:TASK=29KB/MEMORY=21KB. WAITING=1.
+
 [23:01] R483 **双线并列监控(TB 6.7h + SWE-bench 65/500)**. ①TB 7×87 并发~6.7h(16:21起),7 harbor alive. 实测完成(reward=verifier_result.rewards.reward>0): cline-patched 31/87(16P=51.6%), opencode 28/87(12P=42.9%), pi 31/87(13P=41.9%), codex 27/87(9P=33.3%), hermes 82/87(0P=0%,35exc), deepseek-harness 82/87(0P=0%,35exc), claude-code 24/87(0P=0%,19exc). ⚠️hermes/deepseek近完成(82/87)但全fail+35exc(快速空提交/适配器bug?),claude-code最慢且全fail; cline/opencode/pi/codex四路健康33-52%. ②SWE-bench Verified下载: 65/500 pulled(astropy22+django43),0 failed, PID 1199724 alive(3h43m,原始进程). 实测~17/h(含首张429退避),稳定后~20/h,ETA~26h→10-26 01:00. Docker 175 images/407.5GB,/data 6.3TB free. ③load avg 17/224CPU(TB未受下载影响). ④kill了2个重复pull进程(PID 758911@22:58 + 882408@23:00,疑似loop重复启动;只留原始PID 1199724). ⑤体积:TASK=29KB/MEMORY=20KB. WAITING=1.
 
 [21:50] R482 **双线并列监控(TB 5.5h + SWE-bench 30/500)**. ①TB 7×87 并发~5.5h(16:21起),7 harbor alive. 实测完成: cline-patched 27/87(13P=48%), opencode 24/87(11P=46%), pi 25/87(10P=40%), codex 21/87(9P=43%), hermes 74/87(0P=0%), deepseek-harness 74/87(0P=0%), claude-code 21/87(0P=0%). ⚠️hermes/deepseek近完成但全fail(快速空提交),claude-code慢且全fail; cline/opencode/pi/codex四路健康40-48%. ②SWE-bench Verified下载: 30/500 pulled(astropy22+django8),0 failed, PID 1199724 alive(etimes~8900s). 首张429退避40min后恢复,image10/30各遇1-2次Service Unavailable(30s退避恢复). 实测~17/h,ETA~28h→10-26 02:00. Docker 140 images/400.6GB,/data 6.3TB free. ③load avg 124/224CPU,TB未受下载影响(TB 89张已全拉完,不竞争Docker Hub限速). ④体积:TASK=29KB/MEMORY=19KB. WAITING=1.
