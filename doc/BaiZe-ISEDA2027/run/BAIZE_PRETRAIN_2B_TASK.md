@@ -1,6 +1,41 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🚀 运维指令 · 2026-10-24 09:3x（**放行：基于自己报告的建议继续优化 BaiZe-2B 预训练吞吐**）· 用户直令 · 最高优先
+
+> 用户原话：「pretrain：在 e09_fp8_tw_cg: FP8 TW+CG 基础上继续优化。昨晚 pretrain 已经把基线从 249K tok/s 上拉到了 FP8 TW+CG=297K tok/s(+17.9%)，并且产出了 report_pretrain_2b_throughput_optim_zh.html。在报告中 pretrain 提出了进一步优化的建议。现在**放行 pretrain 基于自己的建议继续优化 BaiZe-2B 模型的预训练效率**。**全量预训练待 data 数据准备好后就开始**。」
+
+**① 现状基线（务必以此为准，勿重跑）**
+- 基线：**252K tok/s**（BF16, TP1/DP8/MBS2/seq4096/GBS1024）
+- **当前最佳：e09_fp8_tw_cg = 297K tok/s（+17.9% vs 本次基线 / +19.4% vs 历史 249K）**
+- 关键发现：**FP8 tensorwise 单独用反而 -10%**（小 kernel launch 开销 > 计算节省），**叠加 CUDA Graphs 后量化 kernel 被图捕获 → +17.9%**（协同效应）。
+- 峰值显存：e09 = **65.4GB / 80GB**（**尚有 ~14GB 余量**）
+- 报告：`reports/report_pretrain_2b_throughput_optim_zh.html`；脚本 `baize_perf_optim.sh`
+
+**② 放行范围：按你自己报告 §4「下一步建议」逐条验证（有权自定顺序与取舍）**
+你已列出 7 条，请把它们做成**可验证实验**（沿用 e00~e09 同一评测口径：80 步、warmup 20 不计、step30-80 中位、loss 偏差 ≤5% 作正确性闸门）：
+
+| # | 建议 | 我的要求 |
+|---|---|---|
+| 1 | **组合优化**：e09 + CE Fusion + **更大 MBS（3/4）** | **最优先**（显存有 14GB 余量，收益最直接） |
+| 2 | **升级 CUDA 12.9+ 解锁 FP8 blockwise** | 先评估升级风险（TE 2.12 / torch 2.8 兼容性），**列升级步骤与回滚方案再动**；不许把环境搞坏 |
+| 3 | **序列并行 SP**（`--sequence-parallel`） | 减 activation 显存 → 佐证 MBS 上限 |
+| 4 | **数据侧**：num_workers / pin_memory / mmap 预取 | 先 profile 出 host 侧占比，再决定投入 |
+| 5 | **NCCL 调优**：`NCCL_ALGO/PROTO` + NVSwitch 拓扑 | 低风险高性价比，优先做 |
+| 6 | **更大 GBS** | 注意 GBS 变大影响收敛语义，**需标注可用性边界** |
+| 7 | **torch.compile fullgraph** | 作为 CG 的替代路线单独成组对比 |
+
+**③ 纪律**
+- ✅ **每组实验必须给：中位 step(ms) / tok/s / 相对 e09 增益 / 峰值显存 / loss 与基线偏差 / 0 NaN**
+- ✅ 突破 297K 的记录要**单独标注**（新纪录）
+- 🚫 **不得改动训练语义**（LR/数据/模型结构一律不动，只动性能相关开关）
+- 🚫 不动 `.12`（vision 在用）
+- ✅ 每轮落 MEMORY + daily；**最后更新 report_pretrain_2b_throughput_optim_zh.html（追加第二轮结果）**
+- ⏭ **全量预训练等 data 数据就绪后再起**（本轮只做性能优化，不启动长训）；data 就绪信号 = en_v1_4 分词 done=110/110 + 5 源迁移 `/nas_env` 完成
+
+**④ 若发现"已经到顶"**：允许给出「当前硬件下的吞吐上限判断」（如受限于显存带宽/HBM 利用率），并说明依据（如 MFU 计算、带宽瓶颈分析），**不许为了凑数字硬调语义参数**。
+
+
 ### 🆕 运维指令 · 2026-10-23 22:1x（**优化 BaiZe-2B 训练吞吐：目标 > 249K tok/s**）· 用户直令 · 最高优先
 
 > 用户原话：「pretrain：尝试各种方法优化 BaiZe-2B 的训练吞吐 目前最大值是 249K tok/sec，想办法超过这个值。」
