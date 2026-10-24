@@ -10,10 +10,10 @@ REPORT_FILE = os.path.join(REPORT_DIR, "report_pretrain_longctx_infer_cost_3x2b_
 MODEL_INFO = {
     "baize-2b": {
         "display": "BaiZe-2B", "serve_name": "baize-2b",
-        "arch": "LlamaForCausalLM (由 XmodelForCausalLM 转换)",
-        "params": "~1.35B", "layers": 48, "hidden": 1536, "heads": "24 (GQA: 8 KV heads)",
-        "vocab": 129280, "max_pos": 131072, "rope_theta": 500000, "tie_emb": "是",
-        "source": "自有模型 decay-5000 (Xmodel-2.5-code)",
+        "arch": "NemotronHForCausalLM (Mamba2-hybrid: 24 SSM + 4 Attn + 28 MLP-only, 7.1%注意力层)",
+        "params": "~2.22B", "layers": 56, "hidden": 2048, "heads": "Attn: 16 (GQA: 4 KV heads, head_dim=128), SSM: 64 heads × 64 dim",
+        "vocab": 129408, "max_pos": 4096, "rope_theta": "N/A (Mamba层无RoPE; 仅4层注意力含RoPE)", "tie_emb": "否",
+        "source": "自有模型 p3_hybrid (Mamba2-hybrid, mcore→HF NemotronH转换)",
     },
     "minicpm5-2b": {
         "display": "MiniCPM5-2B", "serve_name": "MiniCPM5-2B",
@@ -36,7 +36,7 @@ CTX_LABELS = {65536: "64K", 131072: "128K", 262144: "256K", 524288: "512K", 1048
 
 ENV_INFO = {
     "gpu": "NVIDIA H100 80GB HBM3 × 1 (GPU #0)", "driver": "570.195.03",
-    "sglang": "0.5.9 (BaiZe/MiniCPM5) / 0.5.10 (Qwen3.5)", "torch": "2.9.1+cu128", "flashinfer": "0.6.3", "sgl_kernel": "0.3.21",
+    "sglang": "0.5.10 (BaiZe-2B Mamba2-hybrid / Qwen3.5) / 0.5.9 (MiniCPM5)", "torch": "2.9.1+cu128", "flashinfer": "0.6.3", "sgl_kernel": "0.3.21",
     "attention_backend": "flashinfer", "mem_fraction": "0.88", "dtype": "bfloat16",
     "python": "3.10 (sglang conda env)", "radix_cache": "禁用 (--disable-radix-cache)",
     "env_override": "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1",
@@ -203,12 +203,12 @@ def generate_html(results):
     h.append(f'<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>长上下文推理成本评测报告 — BaiZe-2B / MiniCPM5-2B / Qwen3.5-2B</title>\n<style>{CSS}</style>\n</head>\n<body>\n')
     import datetime
     ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    h.append(f'<h1>长上下文推理成本评测报告</h1>\n<div class="sub">BaiZe-2B · MiniCPM5-2B · Qwen3.5-2B | SGLang 0.5.9 | H100-80GB | 生成时间：{ts}</div>\n')
+    h.append(f'<h1>长上下文推理成本评测报告</h1>\n<div class="sub">BaiZe-2B (Mamba2-hybrid) · MiniCPM5-2B · Qwen3.5-2B | SGLang 0.5.10/0.5.9 | H100-80GB | 生成时间：{ts}</div>\n')
 
     # Section 1
     h.append("""<h2>1. 评测概述</h2>
 <div class="card">
-<p>本报告对比三个 ~2B 参数量大语言模型在 <strong>SGLang 0.5.9</strong> 推理框架下的长上下文推理成本。
+<p>本报告对比三个 ~2B 参数量大语言模型在 <strong>SGLang 0.5.9/0.5.10</strong> 推理框架下的长上下文推理成本。
 上下文长度从 <strong>64K</strong> 开始翻倍（64K → 128K → 256K → 512K → 1M → 2M），直至模型因显存不足（OOM）无法服务。</p>
 <p style="margin-top:8px">每档上下文记录：<strong>峰值显存</strong>(GB)、<strong>首Token延时</strong>(TTFT, s)、
 <strong>Prefill吞吐</strong>(tok/s)、<strong>Decode吞吐</strong>(tok/s)、<strong>端到端延时</strong>(s)。</p>
@@ -238,7 +238,7 @@ def generate_html(results):
             v = mi[k]
             if k == "vocab": v = f"{v:,}"
             elif k == "max_pos": v = f"{v:,}"
-            elif k == "rope_theta": v = f"{v:,}"
+            elif k == "rope_theta" and isinstance(v, (int, float)): v = f"{v:,}"
             h.append(f'<div class="i"><span class="k">{label}</span><br><span class="v">{html.escape(str(v))}</span></div>\n')
         h.append('</div></div>\n')
 
@@ -316,14 +316,15 @@ def generate_html(results):
 <div class="cb">conda activate sglang
 export CUDA_VISIBLE_DEVICES=0
 export SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</div>
-<h3>启动 SGLang 服务（示例：BaiZe-2B @ 64K）</h3>
+<h3>启动 SGLang 服务（示例：BaiZe-2B Mamba2-hybrid @ 64K）</h3>
 <div class="cb">python -m sglang.launch_server \\
-  --model-path /path/to/decay_5000_hf_llama \\
+  --model-path /path/to/p3_hybrid \\
   --served-model-name baize-2b \\
-  --port 30000 --host 127.0.0.1 \\
+  --port 30050 --host 127.0.0.1 \\
   --context-length 65536 \\
   --mem-fraction-static 0.88 \\
   --dtype bfloat16 \\
+  --mamba-ssm-dtype float32 \\
   --attention-backend flashinfer \\
   --disable-radix-cache --log-level info</div>
 <h3>运行基准测试</h3>
@@ -364,11 +365,11 @@ export SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</div>
     for i, c in enumerate(conclusions):
         h.append(f'<p style="margin-bottom:8px">{i+1}. {c}</p>\n')
     h.append("""<div class="note" style="margin-top:12px"><strong>注意事项</strong>：<ul style="margin-left:20px;margin-top:4px">
-<li>Qwen3.5-2B 为混合线性注意力架构（每4层1层全注意力），KV cache 占用更少，长上下文更有优势。</li>
-<li>BaiZe-2B 和 MiniCPM5-2B 的 config max_position_embeddings 均为 128K，超出后通过环境变量强制覆盖。</li>
+<li><strong>BaiZe-2B 为 Mamba2-hybrid 架构</strong>（NemotronH: 56层 = 24 SSM + 4 Attention + 28 MLP-only），仅 4/56 层（7.1%）携带 KV cache，SSM 状态为常量不随上下文增长 → 长上下文显存增长极缓，结构上远优于 Dense 模型。</li>
+<li>Qwen3.5-2B 为混合线性注意力架构（每4层1层全注意力），KV cache 占用更少，长上下文也有优势。</li>
+<li>BaiZe-2B 的 config max_position_embeddings 仅为 4K（预训练阶段短序列），本次通过环境变量 <code>SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</code> 强制扩展至 64K–2M 以测试架构极限。MiniCPM5-2B 的 max_pos 为 128K。</li>
 <li>Qwen3.5-2B 原生为多模态模型，本次仅测试纯文本推理。</li>
-<li>所有测试在单张 H100-80GB 上进行，--mem-fraction-static 0.88，注意力后端 flashinfer。</li>
-<li>BaiZe-2B 原始架构为 XmodelForCausalLM，已转换为 Llama 格式以兼容 SGLang。</li>
+<li>所有测试在单张 H100-80GB 上进行，--mem-fraction-static 0.88，注意力后端 flashinfer。BaiZe-2B 额外使用 <code>--mamba-ssm-dtype float32</code> 保证 SSM 状态精度。</li>
 </ul></div></div>
 """)
     h.append('<div style="text-align:center;color:var(--text2);font-size:.8em;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)">BaiZe-ISEDA2027 · Pretrain Eval · 长上下文推理成本评测<br>报告由 gen_longctx_report.py 自动生成 · 数据来源：longctx_eval_results/</div>\n</body>\n</html>\n')
