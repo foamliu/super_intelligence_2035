@@ -1,12 +1,31 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 166 | TARGET: 12 -->
+<!-- RUN_ID: 167 | TARGET: 29 -->
+## RUN_ID 167 — 🔍 只读：`/nasdata/app.e0031982/eda_code_eval` 在哪台机（.29 / .12 / 10.129.32.75）
+
+```bash
+set -u
+echo "=== RUN_ID 167 | locate eda_code_eval | $(date '+%F %T') | host=$(hostname) ==="
+P=/nasdata/app.e0031982/eda_code_eval
+
+echo "[1] 本机（.29）"
+ls -d "$P" 2>/dev/null && ls -1dt "$P"/2026_* 2>/dev/null | head -5 || echo "  NO $P"
+mount 2>/dev/null | grep -E 'nasdata|10\.129\.32' | head -5 || true
+echo "[2] .12"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 "ls -d $P 2>/dev/null && ls -1dt $P/2026_* 2>/dev/null | head -5 || echo '  NO $P'; mount | grep -E 'nasdata|10\\.129\\.32' | head -5" 2>/dev/null || echo '  ssh .12 FAILED'
+echo "[3] 10.129.32.75（EDA 沙盒机）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.129.32.75 "hostname; ls -d $P 2>/dev/null && { ls -1dt $P/2026_* 2>/dev/null | head -6; echo '-- 最近 3 个 batch 的 py 数 --'; for d in \$(ls -1dt $P/2026_* 2>/dev/null | head -3); do echo \"  \$(basename \$d) py=\$(find \$d -maxdepth 3 -name '*.py' | wc -l)\"; done; } || echo '  NO $P'" 2>/dev/null || echo '  ssh 32.75 FAILED'
+echo "[4] 本机是否有别的 eval 根"
+timeout 20 find / -maxdepth 3 -type d -name 'eda_code_eval' 2>/dev/null | head -5 || true
+echo "=== DONE 167 ==="
+```
+
 ## RUN_ID 166 — 🔍 只读：定位「B.glm-5.3-flash（cline）」与「ZL-flash full（zhulong CLI）」两批 5-run 的原始轨迹目录
 
 > 目的：为「为什么 cline 86.8±1.6% vs zhulong CLI 75.6±4.4%（同 glm-5.3-flash / 同 full 配置）」的差异分析取证。
 > 只要**目录清单 + 每批的配置元数据（cli_agent / model / readback / 任务数）**，不要跑任何评测。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 166 | locate zhulong eval batches | $(date '+%F %T') | host=$(hostname) ==="
 A=/nasdata/app.e0031982/eda_code_eval
