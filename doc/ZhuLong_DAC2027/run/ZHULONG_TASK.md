@@ -1,5 +1,11 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 📐 运维直改 · 2026-10-24 18:5x（**论文排版已由运维修正并重编译** · commit `fd4f0e88`）· 用户直令
+> 删 `7_discussion.tex` 的 `\enlargethispage{8\baselineskip}`（原把 p6 正文**压出下边距 8 行**）；表 3/表 4 `arraystretch` 0.76→0.68；精简 §6.2.3/§6.2.4/§6.3/§7/§8 五处措辞（**无任何数字改动**）；`main.tex` `\newpage`→`\clearpage`。
+> **验收（同源 TeX 三遍编译实测）**：**7 页 / 正文收于 p6（text_y 85–725，无越界）/ refs 独占 p7（16 条）/ 0 undefined**；仅余 acmart 固有 `Overfull \vbox 1.75pt`（<0.6 mm，不可见）。
+> 🚫 **不要恢复 `\enlargethispage`**；若你重编译，必须复核以上 4 条，不达标就回退。
+
+
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 ### 📐 引用修正令 · 2026-10-24 15:4x（**Lemma→Claim + 新增 Delage&Mannor 2010 用在"模型失配是真实问题"**）· 用户确认 · 最高优先
 ### 📄 排版指令 · 2026-10-24 16:1x（**参考文献单独起页（第7页），不要接在第6页后面**）· 用户直令 · 最高优先
