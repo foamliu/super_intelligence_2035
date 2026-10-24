@@ -19950,3 +19950,43 @@ whag0pgpuap12:1082912:1095254 [0] NCCL INFO [Service thread] Connection closed b
 0, 0 MiB 1, 0 MiB 2, 0 MiB 
 === DONE 184 ===
 ```
+
+---
+
+## RUN_ID 185 · 2026-10-24 23:49:01 · host=`whag0pgpuap29` · exit=124
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 185 | read dual-node launcher | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 脚本位置"
+for h in . 12; do
+  if [ "$h" = . ]; then C="bash -lc"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 bash -lc"; fi
+  echo "  --- $h ---"
+  $C 'find /nas_train/app.e0031982 /tmp -maxdepth 4 -name "baize_dualnode*test.sh" 2>/dev/null | head -3; ls -l /tmp/baize_dualnode_16gpu_test.sh 2>/dev/null' 2>/dev/null || true
+done
+
+echo "[2] 主脚本前 60 行（看参数区）"
+F=$(ls /tmp/baize_dualnode_16gpu_test.sh /nas_train/app.e0031982/code/super_intelligence_2035/baize_dualnode_16gpu_test.sh 2>/dev/null | head -1)
+[ -z "${F:-}" ] && F=$(timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls /tmp/baize_dualnode_16gpu_test.sh 2>/dev/null' | head -1)
+echo "  F=$F"
+
+echo "[3] 关键开关（mock / fp8 / cuda graph / data / iters / torchrun）"
+for h in . 12; do
+  if [ "$h" = . ]; then C="bash -lc"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 bash -lc"; fi
+  echo "  --- $h ---"
+  $C 'F=/tmp/baize_dualnode_16gpu_test.sh; [ -f "$F" ] || F=/nas_train/app.e0031982/code/super_intelligence_2035/baize_dualnode_16gpu_test.sh; [ -f "$F" ] && { echo "    file=$F  lines=$(wc -l < $F)"; grep -nE "mock|MOCK|fp8|FP8|cuda.graph|CG|DATA|blend|--train-data|ITERS|GBS|MBS|torchrun|nnodes|WORKER_SSH_PID|set -u" "$F" | head -30 | cut -c1-150; }' 2>/dev/null || true
+done
+
+echo "[4] 该脚本里 mock 与真数据的切换点（上下文）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'F=/tmp/baize_dualnode_16gpu_test.sh; [ -f "$F" ] && grep -n -B2 -A6 -E "mock|Mock|MockData" "$F" | head -30 | cut -c1-150' 2>/dev/null || true
+echo "=== DONE 185 ==="
+```
+
+**输出**
+```
+=== RUN_ID 185 | read dual-node launcher | 2026-10-24 23:49:01 | host=whag0pgpuap29 ===
+[1] 脚本位置
+  --- . ---
+[relay] ⚠️ 命令块超时（>600s），已被 timeout 终止
+```
