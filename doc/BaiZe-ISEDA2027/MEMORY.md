@@ -2,6 +2,15 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## ⚡ 2026-10-24 18:1x — data 迁移提速（85M 降优先级 · 用户令）
+
+- 用户原话：「**85M 下载优先级不高。**」⇒ 不再为 85M 预留 NFS 带宽：迁移 `--bwlimit` **50000 → 300000 KiB/s**（≈51 MB/s → ≈307 MB/s，可调）。
+- 新增 **`run/data_pipeline/migrate_to_nas_env_fast.sh`**（`BWLIMIT` 环境变量可覆盖、`0`=不限速；新增 `--partial` + `flock` 单实例锁；校验 shard+字节、先软链接后删源、源顺序均**与 v1 一致**）。
+- 🚫 **不得就地编辑运行中的 `migrate_to_nas_env.sh`**：bash 按字节偏移增量读脚本，运行中改文件会读串行 ⇒ 必须"停旧 → 起新"。🚫 不得起第二个迁移实例（串行总量才可控）。
+- 切换走 ops **RUN_ID 158**（STOP 脚本→SIGINT rsync→`setsid` 起新脚本→`du -sb` 60s 实测速率 + 剩余量/ETA）；`BAIZE_DATA_TASK.md` 顶部已下发（30,923B ✓，16:1x 报告令已归档）。
+- 判据：实测 <80 MB/s ⇒ 瓶颈在 NFS/网卡而非限速，**如实记录、不得宣称"已提速"**。
+
+
 ## 🆕 最近操作（2026-10-24）
 
 ### pretrain eval: BaiZe-2B Mamba2-hybrid 长上下文推理成本基准（重测 + 报告）
