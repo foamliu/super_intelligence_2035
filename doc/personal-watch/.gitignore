@@ -1,0 +1,25 @@
+# Screenshots must NOT be committed (user rule 2026-10-24).
+# news-line screenshots/evidence images are large (~65MB / 255 files) and keep growing.
+# Keep them locally only; describe evidence in text (path + timestamp + key numbers).
+# To force-add a specific image: git add -f <path>
+
+# Toutiao publish/verify screenshots
+run/news/toutiao/**/*.png
+run/news/toutiao/**/*.jpg
+run/news/toutiao/**/*.jpeg
+run/news/toutiao/shots/
+
+# Fanqie evidence screenshots
+run/news/fanqie/evidence/
+run/news/fanqie/**/*.png
+run/news/fanqie/**/*.jpg
+
+# Any other news images
+run/news/**/shots/
+run/news/**/evidence/
+
+# Catch-all: all bitmaps under personal-watch/run
+run/**/*.png
+run/**/*.jpg
+run/**/*.jpeg
+run/**/*.webp
