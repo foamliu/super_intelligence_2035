@@ -1,6 +1,51 @@
-﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 156 -->
+<!-- RUN_ID: 157 -->
+## RUN_ID 157 — 🔍 只读：pretrain loop 是否卡死（还是正常在睡）
+
+> 背景：pretrain 的 MEMORY 停在 **#766（15:0x）**，现 **16:40**，**>1.5h 无新唤醒**。而 loop 设计是 `WAITING=1 → sleep 1800s（30min）`，理应 15:3x、16:0x、16:3x 各醒一次。**需判断是"正常睡"还是"loop 卡死"**。
+> ⚠️ 纯只读：不 kill、不重启、不写任何文件。
+
+```bash
+set -u
+echo "=== RUN_ID 157 | pretrain loop liveness | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] pretrain loop 进程"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_pretrain_loop\.sh' | grep -v grep | cut -c1-140 || echo '  LOOP_NOT_FOUND'
+
+echo "[2] loop 日志最后 20 行 + mtime（看最后一次 wake / sleep 声明）"
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null || echo '  NO_LOOP_LOG'
+tail -20 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-180
+
+echo "[3] 是否有 cline agent 正在跑（说明这轮唤醒中）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'cline' | grep -v grep | grep -vE 'grep|tail' | head -5 | cut -c1-140 || echo '  NO_CLINE_PROC'
+
+echo "[4] MEMORY_PRETRAIN_2B.md mtime + 顶部 WAITING 值"
+ls -l --time-style=+%F_%T "$R/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+grep -n '^WAITING:' "$R/MEMORY_PRETRAIN_2B.md" 2>/dev/null | head -2
+
+echo "[5] .29 GPU 状态（确认是否真空闲）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .29 FAILED'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3' 2>/dev/null || true
+
+echo "[6] 最近 3 小时内 pretrain 相关文件是否有改动"
+find "$R" -maxdepth 1 -name 'MEMORY_*.md' -newermt '-3 hours' -printf '%TY-%Tm-%Td %TH:%TM %p\n' 2>/dev/null | head -5
+find /tmp -maxdepth 1 -name 'baize_pretrain*' -newermt '-3 hours' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | head -5
+
+echo "[7] 系统负载与长睡迹象"
+cat /proc/loadavg 2>/dev/null
+
+echo "=== DONE 157 ==="
+```
+
+> **判读标准**：
+> - loop 进程在 + 日志显示 `sleep 1800` + `cline` 进程无 → **正常在睡**，等唤醒即可
+> - loop 进程在 + 日志 mtime 停在很久以前 + 无 sleep 记录 → **卡在 cline 调用里**（可能 agent 超时）
+> - loop 进程不在 → **loop 已死，需重启**
+> - **不许在探针里重启任何东西**，只报结论。
+
+
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
