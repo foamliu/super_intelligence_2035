@@ -27,7 +27,7 @@ LOCAL_ROOT="/tmp/tb_full_v2"
 mkdir -p "$LOCAL_ROOT/traces"
 
 # --- Get API key (keys.txt uses FULL-WIDTH colon ：) ---
-TB_API_KEY="$(grep -A2 'kimi-k2.6-cloud' "$REPO/doc/keys.txt" | grep 'API Key' | awk -F'：' '{print $2}' | tr -d '[:space:]')"
+export TB_API_KEY="$(grep -A2 'kimi-k2.6-cloud' "$REPO/doc/keys.txt" | grep 'API Key' | awk -F'：' '{print $2}' | tr -d '[:space:]')"
 echo "[v2] HOST=$(hostname) TB_API_KEY_len=${#TB_API_KEY} harbor=$(command -v harbor || echo MISSING)"
 if [[ -z "${TB_API_KEY}" ]]; then echo "[v2] FATAL: TB_API_KEY empty"; exit 1; fi
 
