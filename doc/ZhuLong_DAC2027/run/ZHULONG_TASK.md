@@ -36,65 +36,8 @@
 **交付**：贴 ①7 页/字节 ②`git diff --stat` ③编译 exit 0/0 undefined ④r1 regrade 结果；commit 前缀 `zhulong paper:` / `zhulong r1:`；push 后 `git status -sb` 无 ahead/behind。
 📦 任务书现有 31.3KB，加本块会越 32KB ⇒ **先按体积规程归档已闭合块**（10:3x 定稿令、10:2x/10:0x/09:5x 讨论块）到 `ZHULONG_TASK_ARCHIVE.md` 再提交。
 
-### 🗣 商榷令 · 2026-10-24 11:3x（**用户读 6p 稿后 4 问 → 本轮只出意见，不动 `.tex`**）· 用户直令 · 最高优先
+- 📦 **已归档 batch 12（2026-10-24）**：🗣 11:3x 商榷令（用户读 6p 稿后 4 问·已闭合于 13:0x 执行令 ②A+③删附录B+④TikZ 重画）+ ✅ 10:3x 定稿令（6p 精简基线=陈熙元版本 `47519292`·闭合于 commit `d2d9bb7a`）—— 原文移至 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 12。
 
-> 用户原话：「我看了下 zhulong 精简后的论文，整体不错，几个问题想商榷一下…… 把讨论发给 zhulong agent，看看它的想法。」
-> ⚠️ **本轮不提交任何论文改动**（唯一例外：你判断是"一眼可见的硬伤"且改动 ≤3 行，可在回复里标「建议立即修」，但**先不要 commit**，等用户点头）。
-> ⚠️ **不打断在跑的 r1**（PID 1800419，判据十三）。
-
-**① 标题（Q1）**
-- 用户记忆中的旧标题：`ZhuLong: Execution Grounding versus Prior Enrichment in EDA Scripting`；现标题：`ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting`（`main.tex:27`）。
-- 运维侧已核实：现标题自 **`431b4918`（09-27 首次入库）** 起 27 天未改；**`d2d9bb7a` 未触碰 `main.tex`**；全仓 2941 文件搜 `Prior Enrichment` **0 命中**。
-- **请回答**：你是否有意改过标题？若没有，就说明用户看到的是更早的草稿。另外：现标题 vs 旧标题，哪个更贴 6p 版「编排 design flow + 补 EDA scripting 断链」的定位？**给 1 句理由**。
-
-**② 贡献句 "we release the harness, schema, and protocol"（Q2）**
-- 位置：`1_intro.tex:46-47`（全文唯一一处 release 承诺）。
-- 背景：**暂不能开源**；论文是 `anonymous` 模式。
-- 运维给的候选：**A** `; we specify the harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}) so that the benchmark can be re-instantiated on other toolchains.` / **B** `; we will release ... with the camera-ready version ...` / **C** `; ... are described ... at a level sufficient for reproduction.`
-- **请回答**：哪个最稳？有没有更好的写法（≤1 句）？若选 A，是否需要在 §5 补一句「同一 schema 可在其他工具链上实例化」？
-
-**③ 附录顺序 + 页数（Q3，最关键）**
-- 现状：`main.tex` 里 `\input{DAC2027/9_appendix}` **在** `\bibliography{reference}` **之前** ⇒ 附录排在参考文献前；ACM 默认是 **refs → appendix**。
-- **DAC 2027 官方**：*six-page limit, with one additional page for references only*（`dac.com/2027/program/research-manuscript-submissions`）。现在是 **8 页 = 正文 6 + 附录 1 + refs 1** ⇒ **附录那 1 页没有配额**。
-- **请回答**：① 排序是否改为 refs → appendix？（注意：只改顺序可能让"第 7 页正文内容"更显眼，请判断利弊）② 页数走哪条：**A** 把 `tab:cost` / `tab:phi-bound` 回填正文并再压 1 页；**B** 删附录、正文留 1–2 句「见补充材料」；**C** 你的第三方案。每条给 **成本（砍多少行 / 省多少 p）+ 推荐**。
-
-**④ Figure-1（Q4）**
-- 运维解 `figures/zhulong_arch_2.pdf` 文本层实测：只有 **3 个工具**（`search_apis` / `run_code` / `get_api_details`），**缺 `search_apis_by_keyword`**；平台写 **`PyAether / SKILL`**，**缺 Tcl**。
-- 这与 `3_design.tex:13` caption「**four** unified MCP tools」和 `:15` `\Description` 逐列的四个工具 **自相矛盾**。
-- **请回答**：① 这是不是当前使用的图？有没有**已更新的源文件**（`.drawio` / `.pptx` / `.svg`）？② 若确需重画，你倾向 **TikZ**（运维推荐：纯 LaTeX、字体与 acmart 一致、可写数学符号）还是 mermaid-cli / matplotlib？给理由 + 预计工时 + 对 6 页预算的影响（建议 `figure*` 用 `\textwidth`）。
-
-**⑤ 回复格式（本轮不提交代码）**
-- 逐条 ①②③④ 给「**结论 + 理由 + 建议动作 + 成本估计**（分钟 / 行数 / 页数）」。
-- 明确标注：哪几条是 **硬伤必须改**、哪几条可 **留到终稿**。
-- 若不同意运维判断，**直接指出并给 file:line 证据**。
-- commit 前缀 `zhulong discuss:`。
-
-### ✅ 定稿令 · 2026-10-24 10:3x（**6p 精简基线 = 陈熙元版本 `47519292`，不另做备份**）· 用户直令 · 最高优先
-
-> 用户原话：「ZhuLong：在陈熙元版本上做 6p 精简，在 git 历史中已经有备份，不需要额外备份。」
-
-**① 基线（唯一，不再讨论）**
-- 以 **commit `47519292`（「陈熙元改进论文，填充实验数据」，2026-10-24 08:29，9 个 `.tex`，+563/−191）** 为**唯一基线**做 6p 精简。
-- 🚫 **不要**退回 `e7de188d`（10-23 的 6 页版）或更早版本重写；🚫 **不要**在 `e7de188d` 与 `47519292` 之间"择优混编"（两版实验章结构不同，混编会出现数字与表格对不上）。
-- 🚫 **不做任何额外备份**：不建 `*.bak` / `*_v2*` / `backup/` / `old/` 等副本。基线已在 git 历史里，回滚直接用 `git checkout 47519292 -- doc/ZhuLong_DAC2027/ZhuLong_DAC2027/DAC2027/<file>.tex`。**提交前 `git status` 里不得出现备份文件。**
-
-**② 与既有令的叠加关系（全部有效，按此顺序执行）**
-1. **结构精简**（09:35 令）：以当前编译页数为起点收敛到 **正文 ≤6.0p**；Exp `6_exp.tex` 压到 ≈95 行、正文只留 **3 张主表**（其余移附录）。
-2. **🚫 不许删 backbone**（09:38 否决令）：`tab:llm-comparison` 保留 **6 个模型**；省版面走紧凑排版，并从 `tab:cost` / error-categories / phi-bound 处补。
-3. **价值主张重定位**（08:43 / 09:2x 令）：摘要 / 引言 / 结论统一为「**编排 design flow + 补 EDA scripting 断链**」；长鑫句按 09:0x 口径（**数百** / 匿名版 `a leading memory design house` / 中英各 ≤25 词）。
-4. **理论章走 A 路线**（10:2x 最终裁定，见下方块）：§4.2 = 场景论证 + 引用支撑引理 + 实验对应，**3–4 行**；**修 Eq.2 右边为纯先验 `p_K(·)`**；🚫 不自行推导。
-5. **数字口径不许变**：**75.7 / 18.3 / 62.5 / 57.4 pp / 22.0 pp** 必须能由正文保留的表格直接算出（改完自行复核一遍）。
-
-**③ 交付与自检**
-- 编译后贴：**正文页数（≤6.0p，不含 refs）** + 总页数 + `main.pdf` 字节数；并**贴出 §4.2 全文**（含引理与引用文献）。
-- **本轮先归档任务书**：本文件现 **47KB > 40KB 红线** ⇒ 按「🧭 运维规程 · 2026-10-06（agent 归档 MEMORY + 任务书）」先把**活跃块之下**的已闭合块原文搬入 `run/ZHULONG_TASK_ARCHIVE.md`（留 1 行指针），降到 **≤32KB** 再提交。
-- commit 前缀 `zhulong paper:`；push 后 `git status -sb` **无 ahead / 无 behind**。
-
-**④ 纪律**
-- 🚫 **不打断在跑的 r1 评测**（`cline × deepseek-v4-pro × full`，PID 1800419，判据十三健康）。
-- 论文改动只落 `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/DAC2027/*.tex` + `main.pdf`；🚫 不改 `ZhuLong_DAC2027/zhulong_results.md` 的历史数字。
-
-- 📦 **已归档 batch 11（2026-10-24）**：10:2x A 路线最终裁定 / 10:0x 理论章重写令 / 09:5x 用户否决(保 6 backbone) / 09:3x 执行令 / 09:2x 价值主张重定位 / 09:0x 长鑫落地口径 / 08:3x 论文审视报告 —— **7 块均闭合于 commit `d2d9bb7a`（6p 精简 + §4.2 重写 + 编排/补断链叙事 + 数百名工程师）**。原文移至 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 11。
 
 ### 🆕 运维指令 · 2026-10-23 22:1x（**本 5-run 收口后 → 起 `cline × deepseek-v4-pro × full` 5-run**）· 用户直令 · 最高优先
 
