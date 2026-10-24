@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 分词数据硬盘实测清单 — 2026-10-24</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Microsoft YaHei", "PingFang SC", sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+h1 { font-size: 24px; color: #1a1a2e; margin-bottom: 5px; }
+h2 { font-size: 20px; color: #1a1a2e; margin: 25px 0 12px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
+h3 { font-size: 16px; color: #333; margin: 15px 0 8px; }
+.meta { color: #666; font-size: 13px; margin-bottom: 20px; }
+.summary-cards { display: flex; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
+.card { flex: 1; min-width: 220px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border-radius: 10px; padding: 20px; text-align: center; }
+.card .num { font-size: 28px; font-weight: bold; margin: 5px 0; }
+.card .label { font-size: 13px; opacity: 0.9; }
+.card.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+.card.orange { background: linear-gradient(135deg, #f12711 0%, #f5af19 100%); }
+.card.blue { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+th { background: #1a1a2e; color: #fff; padding: 10px 8px; text-align: left; font-weight: 600; }
+td { padding: 8px; border-bottom: 1px solid #e8e8e8; }
+tr:hover { background: #f9f9ff; }
+tr.total { font-weight: bold; background: #e8eaf6; color: #1a1a2e; }
+tr.subgroup { background: #f5f5f5; font-style: italic; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 12px; color: #c62828; }
+.warn { background: #fff3e0; border-left: 4px solid #ff9800; padding: 12px 15px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+.ok { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 12px 15px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+.bad { background: #ffebee; border-left: 4px solid #f44336; padding: 12px 15px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+pre { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-size: 12px; overflow-x: auto; margin: 10px 0; }
+.naming-rule { background: #f0f4ff; border: 1px solid #d0d8f0; border-radius: 6px; padding: 15px; margin: 10px 0; }
+.footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #e0e0e0; color: #999; font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>BaiZe 分词数据硬盘实测清单</h1>
+<div class="meta">生成时间：2026-10-24 13:50 · 数据来源：<code>du -sb</code> / <code>find</code> / <code>.json</code> manifest · 机器：10.239.2.29 · 所有数字均为硬盘实测值</div>
+<h2>① 四个核心数字</h2>
+<div class="summary-cards">
+<div class="card blue"><div class="label">占多少硬盘（总字节）</div><div class="num">19.14 TB</div><div class="label">19,139,396,153,145 B</div></div>
+<div class="card green"><div class="label">多少 Token（实测累计）</div><div class="num">4,778.41 B</div><div class="label">4,778,409,012,576 tok</div></div>
+<div class="card orange"><div class="label">多少 Shard（.bin 总数）</div><div class="num">794</div><div class="label">.idx 同数 = 794</div></div>
+<div class="card"><div class="label">文件总数（.bin+.idx+.json）</div><div class="num">2,383</div><div class="label">详见 TSV 清单</div></div>
+</div>
+
+<h2>② 命名规则与目录结构</h2>
+<div class="naming-rule">
+<p>所有分词产物均为 <strong>Megatron 格式</strong>：每个 shard 由三个文件组成 —— <code>&lt;name&gt;.bin</code>（int32 token 序列）、<code>&lt;name&gt;.idx</code>（索引）、<code>&lt;name&gt;.json</code>（元数据，含 <code>num_tokens</code> 字段）。</p>
+<table>
+<tr><th>前缀</th><th>数据源</th><th>所在目录</th></tr>
+<tr><td><code>env14_CC-MAIN-*</code></td><td>Ultra-FineWeb en_v1_4（110 个 CC-MAIN snapshot）</td><td>baize-data/text/</td></tr>
+<tr><td><code>code_s*</code></td><td>历史 code anneal 分词</td><td>baize-data/text/</td></tr>
+<tr><td><code>l3_s*</code></td><td>历史 L3 分词</td><td>baize-data/text/</td></tr>
+<tr><td><code>math_s*</code></td><td>历史 math anneal 分词</td><td>baize-data/text/</td></tr>
+<tr><td><code>ufw_l3_train_s*</code></td><td>UFW-L3 全量分词</td><td>data/full_ufw_l3/</td></tr>
+<tr><td><code>code_l3_train_s*</code></td><td>UltraData-Code L3 全量分词</td><td>data/full_ultradata_code_l3/</td></tr>
+<tr><td><code>code_l2_train_s*</code></td><td>UltraData-Code L2 全量分词</td><td>data/full_ultradata_code_l2/</td></tr>
+<tr><td><code>math_l3_train_s*</code></td><td>UltraData-Math L3 全量分词</td><td>data/full_ultradata_math_l3/</td></tr>
+<tr><td><code>math_l1_train_s*</code></td><td>UltraData-Math L1 全量分词</td><td>data/full_ultradata_math_l1/</td></tr>
+</table>
+<p>tokenizer = DeepSeek-V4.1-Flash (vocab 129280, int32)，所有产物统一。</p>
+</div>
+<h2>③ 文件清单（前 20 行样例）</h2>
+<p>完整清单已落盘到：<code>doc/BaiZe-ISEDA2027/run/data/tokenized_files_20261024.tsv</code>（2,384 行 = 1 表头 + 2,383 文件，列：<code>abs_path&lt;TAB&gt;bytes</code>）</p>
+<pre>abs_path	bytes
+/nas_train/.../text/code_s0.bin	117869157768
+/nas_train/.../text/code_s1.bin	116946289256
+/nas_train/.../text/code_s10.bin	137773530656
+/nas_train/.../text/code_s11.bin	105578752544
+/nas_train/.../text/code_s12.bin	102726984568
+/nas_train/.../text/code_s13.bin	102803186988
+/nas_train/.../text/code_s14.bin	79186944724
+/nas_train/.../text/code_s15.bin	35912385196
+/nas_train/.../text/code_s16.bin	35925964848
+/nas_train/.../text/code_s17.bin	35962586476
+/nas_train/.../text/code_s18.bin	35950476560
+/nas_train/.../text/code_s19.bin	34122561496
+/nas_train/.../text/code_s2.bin	105696082080
+/nas_train/.../text/code_s20.bin	35217762416
+/nas_train/.../text/code_s21.bin	35329555528
+/nas_train/.../text/code_s22.bin	35311843108
+/nas_train/.../text/code_s23.bin	35310670632
+/nas_train/.../text/code_s24.bin	35252801464
+/nas_train/.../text/code_s25.bin	34027507892
+/nas_train/.../text/code_s26.bin	33562305536
+n（完整 2,383 行见 TSV 文件）</pre>
+<h2>④ 逐源汇总表</h2>
+<table>
+<tr><th>数据源</th><th>目录</th><th>.bin</th><th>.idx</th><th>字节 (du -sb)</th><th>TB</th><th>Token (实测)</th><th>完成</th></tr>
+<tr><td>en_v1_4 全源 (env14)</td><td>baize-data/text/</td><td>110</td><td>110</td><td>8929853014061</td><td>8.93</td><td>2238140710284 (2238.14B)</td><td>10-24 11:48</td></tr>
+<tr class="subgroup"><td>├ code_s* (历史)</td><td>同上</td><td>30</td><td>30</td><td>2207256428312</td><td>2.21</td><td>550073686046 (550.07B)</td><td>10-10</td></tr>
+<tr class="subgroup"><td>├ l3_s* (历史)</td><td>同上</td><td>40</td><td>40</td><td>2656829079984</td><td>2.66</td><td>658914589539 (658.91B)</td><td>10-09</td></tr>
+<tr class="subgroup"><td>└ math_s* (历史)</td><td>同上</td><td>40</td><td>40</td><td>1103305927338</td><td>1.10</td><td>274920544739 (274.92B)</td><td>10-09</td></tr>
+<tr class="total"><td>text/ 小计</td><td>baize-data/text/</td><td>220</td><td>220</td><td>14897244449695</td><td>14.90</td><td>3722049530608 (3722.05B)</td><td>—</td></tr>
+<tr><td>UFW-L3 全量</td><td>data/full_ufw_l3/</td><td>154</td><td>154</td><td>1062000123988</td><td>1.06</td><td>263899449229 (263.90B)</td><td>10-24 15:50</td></tr>
+<tr><td>Code L3 全量</td><td>data/full_ultradata_code_l3/</td><td>63</td><td>63</td><td>516117199509</td><td>0.52</td><td>128623266591 (128.62B)</td><td>10-24 08:07</td></tr>
+<tr><td>Code L2 全量</td><td>data/full_ultradata_code_l2/</td><td>141</td><td>141</td><td>1691139314855</td><td>1.69</td><td>421450419455 (421.45B)</td><td>10-24 13:34</td></tr>
+<tr><td>Math L3 全量</td><td>data/full_ultradata_math_l3/</td><td>67</td><td>67</td><td>313425604823</td><td>0.31</td><td>77949162709 (77.95B)</td><td>10-24 09:20</td></tr>
+<tr><td>Math L1 全量</td><td>data/full_ultradata_math_l1/</td><td>149</td><td>149</td><td>659469460275</td><td>0.66</td><td>164437183984 (164.44B)</td><td>10-24 17:35</td></tr>
+<tr class="total"><td>full_* 小计</td><td>5 个目录</td><td>574</td><td>574</td><td>4242151703450</td><td>4.24</td><td>1056359481968 (1056.36B)</td><td>—</td></tr>
+<tr class="total"><td>合计</td><td>6 个目录</td><td>794</td><td>794</td><td>19139396153145</td><td>19.14</td><td>4778409012576 (4778.41B)</td><td>—</td></tr>
+</table>
+<h2>⑤ 空间判定</h2>
+<table>
+<tr><th>项目</th><th>字节</th><th>TB</th></tr>
+<tr><td>/nas_env 可用 (df -B1)</td><td>10509259898880</td><td>10.51</td></tr>
+<tr><td>全部分词数据合计</td><td>19139396153145</td><td>19.14</td></tr>
+<tr><td>全量 x 1.1（双份窗口）</td><td>21053335768460</td><td>21.05</td></tr>
+<tr><td>5 个 full_* 合计</td><td>4242151703450</td><td>4.24</td></tr>
+<tr><td>5 个 full_* x 1.1</td><td>4666366873795</td><td>4.67</td></tr>
+</table>
+<div class="bad"><strong>全部 19.14TB 迁移到 /nas_env → 不够</strong>。/nas_env 仅 10.51TB，全量 x1.1 需 21.05TB，差 <strong>10.54TB</strong>。</div>
+<div class="ok"><strong>5 个 full_* 目录（4.24TB）迁移 → 够</strong>。4.24x1.1=4.67TB < 10.51TB，余 5.84TB。baize-data/text/（14.90TB）无法迁移（14.90x1.1=16.39TB > 10.51TB），需保留 /nas_train。</div>
+
+<h2>⑥ 未分词/未下载数据（对照，不计入总量）</h2>
+<table>
+<tr><th>数据</th><th>状态</th><th>备注</th></tr>
+<tr><td>base-en / l1_en_hq / zh 原始 parquet</td><td>已下满</td><td>未分词（base 族不在分词范围）</td></tr>
+<tr><td>UltraData-Math L2p</td><td>已下载</td><td>未分词</td></tr>
+<tr><td>SFT-2605 / Agent-2609</td><td>已下满</td><td>jsonl，SFT 用途</td></tr>
+<tr><td>RL-2609</td><td>已下满</td><td>jsonl，RL 用途</td></tr>
+<tr><td>LLaVA-85M 多模态</td><td>下载中 71.6%</td><td>多模态，非文本分词</td></tr>
+</table>
+
+<h2>⑦ 补充说明</h2>
+<div class="warn"><ul>
+<li><strong>迁移进行中</strong>：5 个 full_* 目录正在 rsync -a 迁移到 /nas_env（13:39 启动，nice=10，bwlimit=50MB/s）。完成后原路径建软链接。</li>
+<li><strong>text/ 的 14.90TB</strong>：env14（8.93TB）+ code_s（2.21TB）+ l3_s（2.66TB）+ math_s（1.10TB）。env14 的 110 个 .bin 平均 ~81GB/个。</li>
+<li><strong>85M 下载</strong>：PID 581957，92.25+hf.co 直连，parallel-16，~20MB/s，8680/12124=71.6%。</li>
+</ul></div>
+
+<div class="footer">BaiZe Data Agent · 唤醒 634 · 2026-10-24 13:50 · 硬盘实测 · TSV 2,383 行已 commit</div>
+</div>
+</body>
+</html>

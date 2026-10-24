@@ -5,26 +5,27 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ en_v1_4 下载全完（110/110 dirs, 512/512 parquet, 2026-10-23 20:55）+ ✅ en_v1_4 全源分词 110/110 DONE（2026-10-24 11:48:33, +148.7B tok, 0 fail）**。提速达标：ETA 22:30 → 实际 11:48（parallel-finish 5×13=65 并发, PID3450586 已正常退出, 全 worker 退出, load 7/224）。
-> 🟢 **✅ 2026-10-24 运维质询回答+提速（唤醒632@10:50 起 + 唤醒633@12:12 复核确认）**：①分词5worker根因=旧fullsource串行1shard/进程,剩5shard→5进程→load26/224;已升级65并发→**110/110 DONE@11:48**（ETA 22:30→11:48 达标）②85M下载**确认走92.25+hf.co直连**(PID581957 environ:https_proxy=92.25:13128,无HF_ENDPOINT✓);parallel-16(hf_transfer=0)实测**~20MB/s**(21parquet/75min);proxy健康(3/3探针200,日志503为瞬态重试均成功)③分词未重启(保399GB partial)④迁移**NOW READY**(110/110✓,5源3.98T,/nas_env 9.6T>4.38T✓)——本轮未启动(避让85M下载I/O,留专用窗口)
+> 🟢 **✅ 硬盘实测清单报告完成（唤醒634@13:50）**：6目录全量扫描→19.14TB/4778.41B tokens/794 shards/2383文件；HTML报告(`reports/report_data_tokenized_inventory_zh.html`)+TSV清单(`run/data/tokenized_files_20261024.tsv` 2384行)已生成；空间判定：/nas_env 10.51TB<全量21.05TB(不够)但>5源4.67TB(够)。
+> 🟢 **✅ 迁移已启动（PID112557@13:39）**：5源4.24TB→/nas_env，math_l3 rsync@~60MB/s进行中(30G/313G)，顺序math_l3→code_l3→math_l1→ufw_l3→code_l2，每源校验shard+字节后建软链接删源。85M下载继续(PID581957,8680/12126=71.6%)。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.86TiB)+✅en_v1_4下载全完(110/110dirs)+✅en_v1_4全源分词110/110DONE(2026-10-24 11:48,+148.7B tok)+▶️85M下载parallel-16(PID581957,8663/12126parquet=71.5%,~20MB/s,obelics/EN/part68-69,proxy92.25+hf.co直连✓健康)+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; ✅5源全量分词ALL DONE(574shards/1056.36B/3.86TiB); ✅en_v1_4下载全完(110/110dirs); ✅en_v1_4全源分词110/110DONE(2026-10-24 11:48,+148.7B tok,0fail); ✅proxy92.25复测RESTORED; ✅运维质询回答(分词5worker根因+85M线路确认+提速达标ETA22:30→11:48); ▶️85M下载parallel-16(8663/12126=71.5%,~20MB/s)
-当前动作:     唤醒633(2026-10-24 12:12)复核运维质询执行结果：①**分词110/110 DONE已证实**(parallel-finish.log: COMPLETE 11:48:33 WIP_done=5 total=110/110 new_tokens=148724236579 fail=0; OUT_DIR .bin=110 env14+110 l3_s=220; 全worker退出,load 7/224)——提速达标ETA22:30→11:48②**85M线路复核**=/proc/581957/environ:https_proxy=http://172.19.92.25:13128+无HF_ENDPOINT=92.25+hf.co直连✓(符合10-15用户令);HF_HUB_MAX_WORKERS=16,hf_transfer=0;proxy探针3/3=200(0.6-3.1s健康),日志503为瞬态重试(均成功);实测~20MB/s(21parquet/75min,obelics~4.2GB/个);8663/12126=71.5%,剩余~3463,ETA~8天(proxy带宽瓶颈)③**迁移READY**:5源产物=ufw_l3 990G+code_l3 481G+code_l2 1.6T+math_l3 292G+math_l1 615G=3.98T,/nas_env 9.6T>4.38T(×1.1)✓fits;本轮未启动(避让85M下载I/O,留专用窗口).📦体积：TASK=31.1KB/MEMORY=26.8KB(无归档)
-下一步:       ①启动迁移5源产物3.98T→/nas_env(rsync-a+校验shard/字节+软链接+删源,需避让85M下载I/O→建议nice10+限速或下载暂停窗口)②监控85M parallel-16(8663/12126=71.5%,~20MB/s,ETA~8天)③产出env14_fullsource_summary.json(manifest.tsv已存)④5源产物+env14产物交接pretrain
-阻塞:         迁移已就绪(110/110✓,余量9.6T>4.38T✓)但需避让85M下载I/O(同写/nas_train);85M落/nas_env=blocker(9.6T<14.3T剩余)→继续落/nas_train(30T够);85M ETA~8天(proxy带宽瓶颈,已parallel-16,无法再提速除非换线路—但92.25+hf.co直连为10-15用户令指定);系统资源load7/224(3%),1808G RAM,30T disk(86%)
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4.24TB)+✅en_v1_4全源分词110/110DONE(2238.14B,8.88TB)+✅硬盘实测清单报告DONE(HTML+TSV 2383行)+▶️迁移5源→/nas_env(PID112557,math_l3 rsync@~60MB/s,30G/313G)+▶️85M下载parallel-16(PID581957,8680/12126=71.6%,~20MB/s)+✅git sync
+已完成:       ✅5源全量分词ALL DONE(574shards/1056.36B/4.24TB); ✅en_v1_4全源分词110/110DONE(2238.14B/8.88TB); ✅硬盘实测清单(reports/report_data_tokenized_inventory_zh.html+run/data/tokenized_files_20261024.tsv 2383行,19.14TB/4778.41B/794shards); ✅运维质询回答+提速达标; ✅proxy92.25复测RESTORED; ✅env14_fullsource_summary.json; ✅TASK.md归档(34.3KB→30.9KB); ▶️迁移5源→/nas_env(4.24TB,math_l3进行中); ▶️85M下载(8680/12126=71.6%)
+当前动作:     唤醒634(2026-10-24 13:50)执行运维令「硬盘实测清单」：①du-sb+find+json.load全量扫描6目录→19.14TB/4778.41B tokens/794shards/2383文件②生成TSV(tokenized_files_20261024.tsv,abs_path<TAB>bytes,2384行)③生成HTML报告(report_data_tokenized_inventory_zh.html,7节:核心数字+命名规则+清单样例+逐源汇总+空间判定+未分词对照+补充)④空间判定:/nas_env 10.51TB<全量21.05TB(差10.54TB不够)但>5源4.67TB(够,余5.84TB)⑤迁移已启动(PID112557,math_l3 rsync@~60MB/s,30G/313G)⑥85M下载继续(PID581957 alive,8680/12126=71.6%)⑦TASK.md归档2026-10-21块→ARCHIVE_OPERATOR_DATA.md(34.3KB→30.9KB).📦体积：TASK=30.9KB/MEMORY=~29KB
+下一步:       ①监控迁移(migrate_to_nas_env.log,math_l3→code_l3→math_l1→ufw_l3→code_l2,每个校验shard+字节后建软链接删源,更新DATA_LEDGER.md)②监控85M(8680/12126=71.6%,ETA~18天)③commit+push(data report: HTML+TSV+TASK归档+MEMORY更新)④迁移完成后交接pretrain
+阻塞:         无新阻塞;迁移进行中(4.24TB×1.1=4.67TB<10.51TB✓);85M ETA~18天(proxy带宽瓶颈,92.25+hf.co直连为用户令指定,无法换线);text/14.90TB无法迁/nas_env(14.90×1.1=16.39TB>10.51TB)需留/nas_train
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [12:12] 唤醒633 复核10-24运维质询执行结果：①分词110/110 DONE证实(parallel-finish.log: COMPLETE 11:48:33 total=110/110 new_tokens=148724236579 fail=0; .bin=110 env14+110 l3_s=220; 全worker退出 load 7/224) ②85M线路复核 /proc/581957/environ=https_proxy=92.25:13128+无HF_ENDPOINT=92.25+hf.co直连✓; HF_HUB_MAX_WORKERS=16 hf_transfer=0; proxy探针3/3=200健康; 实测~20MB/s(21parquet/75min); 8663/12126=71.5% ③迁移READY(5源3.98T,/nas_env 9.6T>4.38T✓)本轮未启动避让下载I/O
+> [13:50] 唤醒634 执行运维令「硬盘实测清单」：①du-sb+find+json.load扫描6目录=19.14TB/4778.41B/794shards/2383文件 ②生成TSV(run/data/tokenized_files_20261024.tsv,2384行) ③生成HTML(reports/report_data_tokenized_inventory_zh.html,7节自包含) ④空间判定:/nas_env 10.51TB<全量21.05TB(不够,差10.54TB)但>5源4.67TB(够,余5.84TB) ⑤迁移启动(PID112557,math_l3 rsync@~60MB/s,30G/313G) ⑥85M继续(8680/12126=71.6%) ⑦TASK.md归档(34.3KB→30.9KB) ⑧60s测速:92.25+hf.co=0.65MB/s vs 92.23+hf-mirror=1.53MB/s(2.3×但用户令指定92.25+hf.co)
+> 📦 唤醒633 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询复核：分词110/110 DONE证实+85M线路复核92.25+hf.co直连✓+迁移READY但未启动,详见日文件）
 > 📦 唤醒632 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询回答+提速：5worker根因+65并发升级+85M线路确认+parallel-16切换,详见日文件）
 > 📦 唤醒594 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs+bin~38G+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒595 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~45G+5源574/574/574验证+done=90/110,详见日文件）
