@@ -1,6 +1,41 @@
 # BAIZE_HARNESS_TASK.md
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
+### 📥 运维指令 · 2026-10-24 16:3x（**TB 7 并发跑着的同时，后台下载 SWE-bench Verified 容器**）· 用户直令 · 最高优先
+
+> 用户原话：「harness：启动 Terminal Bench 7 并发评测后，**开始下载 SWE-bench Verified 的容器**吧，以后把 SWE-bench 也刷一遍（**不是 Lite 而是更常用的 Verified**）」
+
+**① 目标**
+- 数据集：**SWE-bench Verified**（官方 500 题；`princeton-nlp/SWE-bench_Verified`）
+- **🚫 不是 Lite**（之前跑的是 Lite 300，Verified 才是主流引用口径）
+- 用途：TB 这轮跑完后，**7 harness × 500 题**刷一遍
+
+**② 执行方式：后台并行，不阻塞 TB**
+1. **TB 7×87 正在跑，优先级最高** —— 下载**必须限速**（参考 data 线的 `rsync --bwlimit` 做法），不能抢 TB 的 Docker 拉取带宽。
+2. 下载走 **92.25 代理直连**（已验证可用；Docker Hub pull 已通过 dockerd 代理配通）。
+3. **关键：先做去重体积估算**（2026-10-03 的老教训）：
+   - 查 500 条对应镜像的 manifest → 报 **sum(size)** 与 **按 layer digest 去重后的实际下载量**
+   - **500 张 ≠ 500 倍体积**（大量共享 base layer，尤其 python/node 基础镜像）
+4. **查磁盘**：`docker info | grep 'Docker Root Dir'` + `df -h`。**镜像落本地盘不是 NFS**。若空间不足，**先报，别拉一半撑爆**。
+
+**③ 下载策略**
+- **分批**（每批 50 个），批间查**剩余磁盘 + 当前 TB 是否受影响**
+- **断点续跑**：`docker pull` 天然幂等，失败重试 2 次后记录
+- **进度可观测**：写一个 `harness/swebench_verified_pull_progress.txt`（每批更新：已拉 / 总数 / 累计 GB / 失败清单）
+- **先拉基础层共享度高的**（如 `python:3.9`、`ubuntu` 系列），能最大化层复用
+
+**④ 交付**
+1. **体积估算报告**（小结即可，不用 HTML）：总镜像数 / sum(size) / 去重后实际下载量 / Docker Root Dir 剩余 / 是否够
+2. 下载脚本落 `harness/`（可复现，含断点续跑）
+3. MEMORY 里记：`SWE-bench Verified 镜像下载启动 @时间 / 预计总量 / ETA`
+
+**⑤ 纪律**
+- 🚫 **不许影响 TB 7×87 的进度**（若发现 TB 变慢，立即降速或暂停下载）
+- 🚫 不 kill TB 的 7 个 harbor 进程
+- ✅ 每轮唤醒报：TB 进度 + SWE-bench 下载进度（两条线并列）
+- ⚠️ 若磁盘/带宽不足，**明确说"当前条件下 500 题镜像拉不全"**，并给替代方案（如只拉子集 / 换盘 / 分批跨天）
+
+
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 ### 🔴 补充令 · 2026-10-24 09:2x（**用户提供关键线索：同事已通过 92.25 代理成功拉过 Docker 镜像；备选 92.23**）· 用户直令 · 最高优先
