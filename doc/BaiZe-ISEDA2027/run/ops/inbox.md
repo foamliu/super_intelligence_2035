@@ -1,9 +1,41 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 168 | TARGET: 29 -->
-## RUN_ID 168 — 🔍 找 26.15 评测机（承载 `/nasdata/.../eda_code_eval`）的可达路径
+<!-- RUN_ID: 169 | TARGET: 29 -->
+## RUN_ID 169 — 🔍 只读：pretrain 是否起测 / data 迁移 / harness 7×89（20:0x 快照）
 
 ```bash
+set -u
+echo "=== RUN_ID 169 | status snapshot | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] pretrain：本机(.29) + .12"
+for h in local 12; do
+  echo "  --- $h ---"
+  if [ "$h" = local ]; then C=""; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12"; fi
+  $C bash -lc 'ps -eo pid=,ppid=,etimes=,args= | grep -E "baize_pretrain_loop|torchrun|pretrain_launcher" | grep -v grep | cut -c1-125 | head -4; echo "  gpu:"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -3' 2>/dev/null || echo "    ssh/host failed"
+done
+
+echo "[2] pretrain MEMORY mtime（共享 NFS）"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" | cut -c1-110
+echo "[2b] .12 上的 loop 日志尾部"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -3 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-140; ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-100' 2>/dev/null || echo '  .12 ssh failed'
+
+echo "[3] data 迁移：/nas_env 各源体积"
+for n in full_ultradata_math_l3 full_ultradata_code_l3 full_ultradata_math_l1 full_ufw_l3 full_ultradata_code_l2; do
+  d=/nas_env/app.e0031982/baize-data/$n
+  if [ -d "$d" ]; then printf "  %-28s %7.1f GB  bin=%s\n" "$n" "$(du -sb "$d" 2>/dev/null | awk '{printf "%.1f",$1/1e9}')" "$(find "$d" -maxdepth 1 -name '*.bin' | wc -l)"; else echo "  $n  (missing)"; fi
+done
+echo "  rsync 进程:"; ps -eo pid=,etimes=,args= | grep 'migrate_to_nas_env\|rsync -a' | grep -v grep | cut -c1-110 | head -3 || echo '   none'
+
+echo "[4] harness 7×89"
+ps -eo pid=,etimes=,args= | grep -E 'harbor run' | grep -v grep | wc -l | sed 's/^/  harbor procs: /'
+for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; echo "  $(basename "$d"): $(find "$d" -name result.json 2>/dev/null | wc -l)/87"; done 2>/dev/null | head -8
+echo "=== DONE 169 ==="
+```
+
+## RUN_ID 168 — 🔍 找 26.15 评测机（承载 `/nasdata/.../eda_code_eval`）的可达路径
+
+```text
 set -u
 echo "=== RUN_ID 168 | reach 26.15 eval host | $(date '+%F %T') | host=$(hostname) ==="
 
