@@ -1,6 +1,55 @@
 # BAIZE_HARNESS_TASK.md
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
+### 🔴 补充令 · 2026-10-24 09:2x（**用户提供关键线索：同事已通过 92.25 代理成功拉过 Docker 镜像；备选 92.23**）· 用户直令 · 最高优先
+
+> 用户原话：「另外**有同事通过 92.25 代理成功拉取过 docker 镜像**，另外可能得代理则是 92.23」。
+> **这直接推翻"MITM proxy blocks Docker Hub pull = 不可解"的结论** —— 之前 09:0x 令里的"阻塞"是**没配 dockerd 代理**造成的，不是网络不可达。
+
+**① 优先级重排（这几条比 7 并发更重要，先做）**
+
+| 优先 | 任务 |
+|:--:|---|
+| **P0** | **查清 15 个镜像的来源**（是 pull 来的还是 `docker load` 来的？`docker images` + `docker history` + 创建时间） |
+| **P0** | **查 `dockerd` 是否配了代理**：`systemctl show docker --property=Environment`、`/etc/systemd/system/docker.service.d/*.conf`、`/etc/docker/daemon.json` |
+| **P0** | **实测 `docker pull` 当前能否通**（用最小镜像 `hello-world` 试，贴**完整报错原文**） |
+| **P1** | **按用户线索给 dockerd 配代理并验证**：先试 **`http://172.19.92.25:13128`**，不通再试 **`http://172.19.92.23:13128`** |
+| **P1** | 通了之后 **pull 剩余 74 个镜像**（先查体积 + Docker Root Dir 剩余空间） |
+| **P2** | 再谈 **7 并发**（09:0x 令已下发，镜像补齐后再切并发才有意义） |
+
+**② dockerd 配代理的标准做法（按此执行，注意风险）**
+```bash
+# 1) 建 drop-in 配置（不直接改 docker.service）
+sudo mkdir -p /etc/systemd/system/docker.service.d
+sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf > /dev/null <<'EOF'
+[Service]
+Environment="HTTP_PROXY=http://172.19.92.25:13128"
+Environment="HTTPS_PROXY=http://172.19.92.25:13128"
+Environment="NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,172.19.0.0/16"
+EOF
+
+# 2) 重载并重启（⚠️ 会短暂中断 docker，先确认没有正在跑的容器/评测）
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+# 3) 验证
+sudo systemctl show docker --property=Environment | tr ' ' '\n' | grep -i proxy
+docker pull hello-world          # 必须成功
+```
+- ⚠️ **重启 docker 会杀掉所有运行中容器** → **必须先确认 harness 的 7×15 v2（R473）是否在跑**；若在跑，**等它跑完或先记录进度再重启**，不许直接打断。
+- ⚠️ 若 `docker.service` 被 systemd drop-in 忽略（有的发行版要用 `daemon.json` 的 `proxies` 字段），**两种方式都试并贴出哪种生效**。
+- ⚠️ **92.25 不通就换 92.23**；两个都不通再报阻塞（附两次的完整报错）。
+
+**③ 验证通过后：补齐镜像**
+1. `docker images` 现有 15 个 + Terminal-Bench 89 题对应镜像：**列出缺哪 74 个**（取 task 的 Dockerfile / image 名）。
+2. 查体积：**总下载量 + 按 layer digest 去重后的实际量**（很多题共享 base layer，别被"89 倍"吓到）。
+3. 查 `docker info | grep 'Docker Root Dir'` + `df -h <该目录>`：**镜像落本地盘不是 NFS**，空间不够就先报，别拉一半撑爆。
+4. **分批 pull**（每批 10 个，批间查剩余空间），失败的重试 2 次后记录。
+5. **补满后**：7×89 才真正可跑，此时再切 7 并发。
+
+**④ 回报**：15 个镜像来源 / dockerd 代理配置前后对比 / `hello-world` pull 结果 / 缺的 74 个清单 + 体积 / Docker Root Dir 剩余空间 / 补齐进度。
+
+
 ### 🔴 运维指令 · 2026-10-24 09:0x（**改成 7 并发跑（对齐 SWE-bench 做法）+ 回答"为何只有 15 题"**）· 用户直令 · 最高优先
 
 > 用户原话：「harness：让他起**7 并发**评测（以前 SWE-bench 就是 7 并发），另外为啥 7×15，terminal bench 只有 15 道题吗？」
