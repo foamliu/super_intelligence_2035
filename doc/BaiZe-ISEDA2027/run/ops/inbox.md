@@ -1,9 +1,37 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 181 | TARGET: 29 -->
-## RUN_ID 181 — 🔍 只读：22:0x 快照（data 是否全绿 / 16 卡是否带 NCCL 环境重跑）
+<!-- RUN_ID: 182 | TARGET: 29 -->
+## RUN_ID 182 — 🔍 只读：22:4x 快照（16 卡是否跑出吞吐 / harness）
 
 ```bash
+set -u
+echo "=== RUN_ID 182 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 双机 GPU（>30GB 说明在真算）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr '\n' ' '; echo
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr "\n" " "; echo' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] launcher 进程"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-95 | head -3 || echo '  none(.29)'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'pgrep -af "pretrain_launcher|torchrun" | cut -c1-95 | head -2 || echo "  none(.12)"' 2>/dev/null || true
+
+echo "[3] 双机测试产物"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null | head -8
+echo "  -- summary tail --"; tail -12 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-160
+echo "  -- master 迭代行 --"; grep -aiE 'iteration +[0-9]+|tokens/sec|tok/s|elapsed' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -6 | cut -c1-160
+
+echo "[4] pretrain MEMORY / loop"
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-100
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -2 | cut -c1-100' 2>/dev/null || true
+
+echo "[5] harness 合计"
+s=0; for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; s=$((s+$(find "$d" -name result.json 2>/dev/null | wc -l))); done; echo "  total=$s/609"
+echo "=== DONE 182 ==="
+```
+
+## RUN_ID 181 — 🔍 只读：22:0x 快照（data 是否全绿 / 16 卡是否带 NCCL 环境重跑）
+
+```text
 set -u
 echo "=== RUN_ID 181 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
 

@@ -1,8 +1,23 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 123 -->
-## RUN_ID 123 — 🔧 用 **venv 的 python**（修 pydantic 缺失）重起 zhulong r1
+<!-- RUN_ID: 124 -->
+## RUN_ID 124 — 🔍 只读：zhulong r1（对齐配置）进度
 
 ```bash
+set -u
+echo "=== RUN_ID 124 | zhulong r1 progress | $(date '+%F %T') | host=$(hostname) ==="
+B=/nasdata/app.e0031982/eda_code_eval/2026_1024_223138
+echo "[1] 进程"; pgrep -af 'run_zhulong_script|run_eval.py' | cut -c1-105 | head -3 || echo '  none'
+echo "[2] 进度"; echo "  code dirs: $(ls -d $B/code/* 2>/dev/null | wc -l)   .py: $(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+[ -f "$B/.task_queue" ] && echo "  task_queue: $(wc -c < "$B/.task_queue") bytes"
+echo "[3] 日志"; ls -l --time-style=+%F_%T /tmp/ABL_glm-5.3-flash_zl_realign_r1.log 2>/dev/null | cut -c1-100
+grep -aE '任务|Step [0-9]|完成|pass|ERROR|Traceback' /tmp/ABL_glm-5.3-flash_zl_realign_r1.log 2>/dev/null | tail -6 | tr -d '\033' | cut -c1-150
+echo "[4] GPU"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr '\n' ' '; echo
+echo "=== DONE 124 ==="
+```
+
+## RUN_ID 123 — 🔧 用 **venv 的 python**（修 pydantic 缺失）重起 zhulong r1
+
+```text
 set -u
 echo "=== RUN_ID 123 | relaunch with venv python | $(date '+%F %T') | host=$(hostname) ==="
 D=/nasdata/app.e0031982/code/eda_fastmcp
