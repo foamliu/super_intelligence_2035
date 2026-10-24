@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 150 -->
+<!-- RUN_ID: 151 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,13 +29,63 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 151 — 🔎 补探：round2b 是否真在训练 / 提交链为何堵（只读）
+
+> 承接 RUN_ID 150（`.29`，11:04:58）：loop 进程在、但 loop log 停在 **10-23 14:09**、`pi` 已挂 21h、`cline` 于 10:38 起、其 `git add --force --pathspec-from-file` 已挂 26min；同时 `baize_perf_optim_round2b.sh` 存在且 `/tmp/baize_perf_r2b_runner.log` 刚创建（0B）。GPU 当时 0%/0MiB。
+> **本块仍纯只读**：目的 = ① round2b 有没有真跑起来 ② 卡住的 git add 是不是 `index.lock` 争用 ③ 当前 loop 到底是谁在驱动。
+
+```bash
+set -u
+echo "=== RUN_ID 151 | pretrain probe-2 (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$REPO/doc/BaiZe-ISEDA2027/run
+echo
+echo "[1] GPU（若 round2b 在跑，应有 util>0 或 compute app）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>/dev/null | head -10
+echo
+echo "[2] round2b / perf 相关进程与日志"
+pgrep -af 'baize_perf|torchrun|baize_xmodel' | cut -c1-170 | head -15
+ls -l --time-style=+%F' '%T /tmp/baize_perf_r2b_runner.log /tmp/baize_perf_r2_loop.log 2>/dev/null
+echo "  --- r2b_runner tail ---"
+tail -n 15 /tmp/baize_perf_r2b_runner.log 2>/dev/null | cut -c1-200
+echo "  --- r2_loop tail ---"
+tail -n 10 /tmp/baize_perf_r2_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[3] 近 1 小时 run/ 下新增的 perf 脚本与日志"
+find "$R" -maxdepth 2 -name '*perf*' -newermt '-90 minutes' 2>/dev/null | head -10
+ls -lt --time-style=+%F' '%T "$R"/*.sh 2>/dev/null | head -5 | cut -c1-170
+echo
+echo "[4] 关键进程树（loop / pi / cline / 挂住的 git add / round2b）"
+ps -o pid,ppid,stat,etime,pcpu,cmd -p 1294147,328936,919926,919933,920049,2802077 2>/dev/null | cut -c1-180
+echo
+echo "[5] cline checkpoint 临时文件"
+ls -lt --time-style=+%F' '%T /tmp/cline-checkpoint-* 2>/dev/null | head -5
+echo
+echo "[6] index.lock / 多进程 git 争用"
+ls -l --time-style=+%F' '%T "$REPO/.git/index.lock" 2>/dev/null || echo "  no index.lock"
+echo "  git 进程数: $(pgrep -cf '^git ' 2>/dev/null || echo 0)"
+pgrep -af 'git .*add|git .*commit|git .*checkout' | cut -c1-150 | head -6
+echo
+echo "[7] 当前 loop 的日志到底在哪（找 10-24 有写入的 loop 日志）"
+ls -lt --time-style=+%F' '%T /tmp/*loop*.log 2>/dev/null | head -6 | cut -c1-170
+echo
+echo "[8] MEMORY/TASK mtime（是否仍停在 08:33/08:49）"
+ls -l --time-style=+%F' '%T "$R/MEMORY_PRETRAIN_2B.md" "$R/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+echo
+echo "[9] 仓库改动面（是否有大量未提交实验产物在拖慢 git）"
+git -C "$REPO" status --porcelain 2>/dev/null | head -12
+echo "  待提交条目数=$(git -C "$REPO" status --porcelain 2>/dev/null | wc -l)"
+echo "=== DONE 151 ==="
+```
+
 ## RUN_ID 150 — 🔎 只读诊断：pretrain 线为何 2.5h 无提交 / loop 是否活着（用户令）
 
 > 用户令（2026-10-24 11:0x）：「让 ops 中继看看 pretrain 什么情况」。
 > 背景：`MEMORY_PRETRAIN_2B.md` 最后提交 08:33（#762 idle，.29 全空闲），08:49 已下发「按报告 §4 继续优化吞吐」令，此后 **2.5h 无任何提交**。loop 设计上 `CLINE_TIMEOUT=1500s` + `SLEEP_WAIT=1800s`，单轮上限约 55min ⇒ 已至少错过 2 轮。
 > **本块纯只读**：不 kill、不重启、不改任何文件。判据：① loop 进程在不在 ② loop log 尾部有没有卡住/报错 ③ 有没有 cline 子进程挂着 ④ GPU 上有没有实验在跑。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 150 | pretrain status probe (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
 echo
