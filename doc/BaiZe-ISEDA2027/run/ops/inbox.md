@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 152 -->
+<!-- RUN_ID: 153 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,12 +29,49 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 153 — 🔎 状态探针：vision 是否仍被 checkpoint 卡住 / round2b 是否真在训（只读）
+
+> 背景：vision 最后提交 **10:12**（88 分钟前），10:25 下发的「ArmE-R2 完整报告」令未见落盘；RUN_ID 152 在 `.12` 抓到 vision 的 `git add --force --pathspec-from-file`（PID 3981049）**99.8% CPU 空转 26:43**。pretrain 已于 11:12 自行恢复并提交（`0f1ac72e`），但 R2b 是否真正跑起来尚未核实。
+> **纯只读**：不 kill、不改文件。
+
+```bash
+set -u
+echo "=== RUN_ID 153 | status probe: vision checkpoint / round2b | $(date '+%F %T') | host=$(hostname) ==="
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$REPO/doc/BaiZe-ISEDA2027/run
+echo
+echo "[1] vision 心跳与任务书 mtime"
+ls -l --time-style=+%F' '%T "$R/MEMORY_VISION.md" "$R/BAIZE_VISION_TASK.md" 2>/dev/null
+echo "  新报告是否存在：$(ls -l --time-style=+%F' '%T "$REPO/doc/BaiZe-ISEDA2027/reports/report_vision_armE_r2_20261024_zh.html" 2>/dev/null || echo NO)"
+echo
+echo "[2] vision loop 日志尾部 15 行"
+tail -n 15 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-200
+echo "  log mtime: $(ls -l --time-style=+%F' '%T /tmp/baize_vision_loop.log 2>/dev/null | awk '{print $6,$7}')"
+echo
+echo "[3] vision 相关进程（cline_vision / 空转的 git add / loop）"
+ps -eo pid,ppid,stat,etime,pcpu,wchan:20,cmd 2>/dev/null | grep -E 'cline_vision|git .*add --fo|baize_vision_loop' | grep -v grep | cut -c1-190 | head -10
+echo
+echo "[4] round2b / pretrain 实验进程"
+pgrep -af 'baize_perf_optim_round2b|perf_r2b_|torchrun' | cut -c1-170 | head -12
+echo "  summary 尾部 12 行:"
+tail -n 12 /tmp/baize_perf_r2b/summary.txt 2>/dev/null | cut -c1-200
+echo
+echo "[5] GPU（谁在算）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>/dev/null | head -10
+echo
+echo "[6] pretrain loop 与最近提交"
+ps -eo pid,etime,stat,cmd 2>/dev/null | grep 'baize_pretrain_loop[.]sh' | cut -c1-160
+git -C "$REPO" log -3 --date=format:'%F %T' --pretty='  %h %ad %s' 2>/dev/null | cut -c1-170
+echo "=== DONE 153 ==="
+```
+
 ## RUN_ID 152 — 🎯 定位：round2b 卡在哪 / `.29` 的僵尸 loop 与空转 git add（只读）
 
 > 承接 151：`.29` 8 卡 **0%/0MiB**、`baize_perf_optim_round2b.sh`(2802077) 起了 3min 但 runner log **0B**；`git add --pathspec-from-file`(920049) **99.9% CPU 空转 29min**（PPID=cline hub daemon 2751345）；`pi`(328936) 已挂 **21h**、其 loop(1294147) 日志停在 10-23 14:09；而 `.12` 的 pretrain loop **仍在写**（log 11:08:02）。
 > 目标：① 看 `.12` loop 最新输出（它到底在等什么）② 看 round2b 脚本头部（是否第一步就 git/等锁）③ 看三个可疑进程的 `wchan`/子进程。**仍纯只读。**
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 152 | pretrain probe-3 (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
 REPO=/nas_train/app.e0031982/code/super_intelligence_2035
