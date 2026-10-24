@@ -30,33 +30,44 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 📊 运维指令 · 2026-10-24 13:2x（**分词产物清单报告：实际字节 / shards / token / 路径，逐项实测**）· 用户直令 · 最高优先
+### 📊 运维指令 · 2026-10-24 13:2x（**MiniCPM5 全量已分词数据：硬盘实测清单**）· 用户直令 · 最高优先
 
-> 用户原话：「你要是看不到，就下指令给 data 出报告，不要自己揽干不了的活。」
-> 背景：运维侧只读记忆与台账，**拿不到 en_v1_4 分词产物的实测体积**；且台账把「原始 parquet 体积」与「分词产物体积」混写，导致口径不清。**本报告只许写实测值，不许估算、不许拼凑。**
+> 用户原话：「我现在要的是 MiniCPM5 全量数据，分词后的数据，列表，占多少硬盘，分词后多少 tok，在硬盘的文件全名是什么。让 data 在硬盘上查。」
+> **只许写硬盘实测值**：每个数字必须能追到 `du -sb` / `find` / `wc -l` / manifest 的原文行。🚫 不许估算、不许拼凑、🚫 不许把未分词/未下载的数据混进来。
 
-**① 交付形态**：本轮回复给一张表 + **原始命令输出**（每个数字都要能追到 `du/find/wc` 的原文行），并生成中文 HTML `reports/report_data_tokenized_inventory_zh.html`（自包含）。
+**① 对象定义（严格）**
+- 范围 = **已经分词落盘的 MiniCPM5 全量数据**（即 `/nas_train/app.e0031982/datasets/baize-data/text/` 下的全部分词产物 + 历史 `full_*` 目录）。
+- **不含**：未分词的原始 parquet（base-en / l1_en_hq / zh / Math L2p）、SFT/RL jsonl、85M 多模态。
+- 上述"不含"的部分只在报告末尾单列一节做**对照**，🚫 不得计入总量。
 
-**② 表格必需列（一行 = 一个分词产物目录）**
+**② 必须回答的四个数（正文里直接给）**
+1. **占多少硬盘**：总字节（`du -sb`，给 bytes + TB 两位小数）
+2. **多少 token**：总 token（**取 manifest / summary 的实测累计值**；若某目录没有 manifest ⇒ 该目录标 `N/A`，并单列"无 token 记录"）
+3. **多少 shard**：`.bin` 总数（并给 `.idx` 总数）
+4. **文件全名**：见 ③
 
-`路径 | 状态 | .bin 数 | .idx 数 | 字节数(du -sb) | GB | token 数 | 完成时间`
+**③ 文件清单（这是本轮重点）**
+- 先给**命名规则 + 目录结构**（例：`l3_s00.bin` / `l3_s00.idx` / `env14_000.bin` …），说明每个前缀对应哪个数据源。
+- 再**逐文件列出完整路径与文件名**（每行：`绝对路径 | 字节`）。
+- 文件数多时：正文只放**前 20 行样例 + 汇总**，完整清单落盘到
+  `doc/BaiZe-ISEDA2027/run/data/tokenized_files_20261024.tsv`（列：`abs_path<TAB>bytes`），**commit 进仓库**并在正文给出该文件的路径与行数。
 
-**必须覆盖**：
-- **en_v1_4 全源分词（110 shards）** ← 本轮重点：**它的分词产物体积到底多大**
-- 5 源：UFW-L3 / UltraData-Code L3 / Code L2 / Math L3 / Math L1
-- **原始下载 parquet 体积**与**分词产物体积**必须**分成两列**，🚫 不许混成一个数
+**④ 逐源汇总表（一行一个分词产物目录）**
 
-**③ 口径（硬）**
-- 只用 `timeout 120 du -sb <单个目录>`，**🚫 禁止整树 du**
-- token 数取 manifest / summary 的实测值；取不到写 `N/A`，🚫 不许估算
-- 表末给 **合计行**：∑字节 + ∑shards
-- 🚫 **不要把内部轮次代号（如 "R3"）当成数据源列出来** —— 它只是内部批次记录，不是数据集
+`数据源 | 目录绝对路径 | .bin 数 | .idx 数 | 字节数(du -sb) | TB | token 数(实测) | 完成时间`
 
-**④ 空间判定**：用 `df -B1 /nas_env` 的可用字节，回答「上表分词产物**全量**能否放进 `/nas_env`（×1.1 双份窗口）」，给出 **够 / 不够 + 差多少 TB**。
+必须覆盖：en_v1_4 全源分词、UFW-L3、UltraData-Code L3、UltraData-Code L2、UltraData-Math L3、UltraData-Math L1，以及 `text/` 下其它任何 `*.bin` 所在目录（有就列，没有就说明）。
+表末给**合计行**（∑字节 / ∑shards）。
 
-**⑤ 未分词数据单列一节**（不得并入分词合计）：Ultra-FineWeb base-en 2.66T / l1_en_hq 478G / zh 324G / UltraData-Math L2p —— 全部标「已下载·未分词」。
+**⑤ 空间判定**：`df -B1 /nas_env` 可用字节 vs 上表合计（×1.1 双份窗口）⇒ **够 / 不够 + 差多少 TB**。
 
-**⑥ 纪律**：纯只读（不移动、不删除、不起下载）；commit 前缀 `data report:`；push 后无 ahead/behind。
+**⑥ 口径（硬）**
+- 只用 `timeout 120 du -sb <单个目录>`；🚫 禁止整树 du。
+- 🚫 不要把内部轮次代号（如 "R3"）当数据源列出。
+- token 数一律取 manifest/summary 实测值；取不到写 `N/A`。
+- 纯只读：不移动、不删除、不起下载。
+
+**⑦ 交付**：中文 HTML `reports/report_data_tokenized_inventory_zh.html`（自包含）+ 本轮回复给同样的表 + `tokenized_files_20261024.tsv`；commit 前缀 `data report:`；push 后无 ahead/behind。
 
 ### 🆕 运维指令 · 2026-10-23 22:1x（**① 复测 `92.25` 代理+hf.co 直连 ② 恢复 85M 下载 ③ MiniCPM5 分词产物体积 ④ 搬 `/nas_env` 腾 `/nas_train`**）· 用户直令 · 最高优先
 
