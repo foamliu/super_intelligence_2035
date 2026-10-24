@@ -17152,3 +17152,106 @@ Filesystem                     Size  Used Avail Use% Mounted on
 [5] en_v1_4 产物目录（对照，确认命名规律）
 === DONE 155 ===
 ```
+
+---
+
+## RUN_ID 156 · 2026-10-24 13:06:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 156 | split text/ by source | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_train/app.e0031982/datasets/baize-data/text
+echo
+echo "[1] 顶层条目"
+ls -la "$D" 2>/dev/null | head -25
+echo
+echo "[2] *.bin 按前缀分组（count）"
+timeout 120 find "$D" -maxdepth 6 -name '*.bin' -printf '%f\n' 2>/dev/null | sed -E 's/[._-]?[0-9]+\.bin$//' | sort | uniq -c | sort -rn | head -25
+echo
+echo "[3] 各子目录体积（顶层目录，逐个 du）"
+for d in "$D"/*/; do
+  [ -d "$d" ] || continue
+  b=$(timeout 120 du -sb "$d" 2>/dev/null | awk '{print $1}'); [ -n "${b:-}" ] || b=0
+  printf "  %9.1f GB  %s\n" "$(awk -v x="$b" 'BEGIN{print x/1e9}')" "$d"
+done
+echo
+echo "[4] 5 源候选（按名）合计"
+for pat in 'full_ultradata_code_l3' 'full_ultradata_math_l3' 'full_ultradata_code_l2' 'full_ufw_l3' 'full_ultradata_math_l1'; do
+  n=$(find "$D" -maxdepth 6 -name "*.bin" -path "*${pat}*" 2>/dev/null | wc -l)
+  s=$(find "$D" -maxdepth 6 -name "*.bin" -path "*${pat}*" -printf '%s\n' 2>/dev/null | awk '{t+=$1} END{printf "%.1f", t/1e9}')
+  printf "  %-24s bin=%-4s %8s GB\n" "$pat" "$n" "${s:-0}"
+done
+echo
+echo "[5] /nas_env 余量"
+df -h /nas_env 2>/dev/null | tail -1
+echo "  avail_TB=$(awk -v b="$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')" 'BEGIN{printf "%.2f", b/1e12}')"
+echo "=== DONE 156 ==="
+```
+
+**输出**
+```
+=== RUN_ID 156 | split text/ by source | 2026-10-24 13:06:19 | host=whag0pgpuap29 ===
+
+[1] 顶层条目
+total 14548097172
+drwxr-xr-x   5 app.e0031982 app.adm        90112 Oct 24 11:48 .
+drwxr-xr-x   3 app.e0031982 app.adm         4096 Oct  9 08:45 ..
+-rw-r--r--   1 app.e0031982 app.adm 117869157768 Oct 10 07:19 code_s0.bin
+-rw-r--r--   1 app.e0031982 app.adm    537988582 Oct 10 07:19 code_s0.idx
+-rw-r--r--   1 app.e0031982 app.adm          442 Oct 10 07:19 code_s0.json
+-rw-r--r--   1 app.e0031982 app.adm 137773530656 Oct 10 08:58 code_s10.bin
+-rw-r--r--   1 app.e0031982 app.adm    189831282 Oct 10 08:58 code_s10.idx
+-rw-r--r--   1 app.e0031982 app.adm          442 Oct 10 08:58 code_s10.json
+-rw-r--r--   1 app.e0031982 app.adm 105578752544 Oct 10 07:02 code_s11.bin
+-rw-r--r--   1 app.e0031982 app.adm    443482402 Oct 10 07:02 code_s11.idx
+-rw-r--r--   1 app.e0031982 app.adm          443 Oct 10 07:02 code_s11.json
+-rw-r--r--   1 app.e0031982 app.adm 102726984568 Oct 10 05:20 code_s12.bin
+-rw-r--r--   1 app.e0031982 app.adm    465221182 Oct 10 05:20 code_s12.idx
+-rw-r--r--   1 app.e0031982 app.adm          443 Oct 10 05:20 code_s12.json
+-rw-r--r--   1 app.e0031982 app.adm 102803186988 Oct 10 05:09 code_s13.bin
+-rw-r--r--   1 app.e0031982 app.adm    465226942 Oct 10 05:09 code_s13.idx
+-rw-r--r--   1 app.e0031982 app.adm          443 Oct 10 05:09 code_s13.json
+-rw-r--r--   1 app.e0031982 app.adm  79186944724 Oct 10 01:34 code_s14.bin
+-rw-r--r--   1 app.e0031982 app.adm    360769662 Oct 10 01:34 code_s14.idx
+-rw-r--r--   1 app.e0031982 app.adm          443 Oct 10 01:34 code_s14.json
+-rw-r--r--   1 app.e0031982 app.adm  35912385196 Oct  9 18:37 code_s15.bin
+-rw-r--r--   1 app.e0031982 app.adm    102853102 Oct  9 18:37 code_s15.idx
+-rw-r--r--   1 app.e0031982 app.adm          441 Oct  9 18:37 code_s15.json
+-rw-r--r--   1 app.e0031982 app.adm  35925964848 Oct  9 18:34 code_s16.bin
+
+[2] *.bin 按前缀分组（count）
+     40 math_s
+     40 l3_s
+     30 code_s
+     12 env14_CC-MAIN-2019
+     12 env14_CC-MAIN-2018
+     12 env14_CC-MAIN-2017
+     10 env14_CC-MAIN-2024
+     10 env14_CC-MAIN-2015
+      9 env14_CC-MAIN-2021
+      9 env14_CC-MAIN-2020
+      9 env14_CC-MAIN-2016
+      8 env14_CC-MAIN-2014
+      6 env14_CC-MAIN-2025
+      6 env14_CC-MAIN-2022
+      5 env14_CC-MAIN-2023
+      2 env14_CC-MAIN-2013
+
+[3] 各子目录体积（顶层目录，逐个 du）
+        0.0 GB  /nas_train/app.e0031982/datasets/baize-data/text/logs/
+        0.0 GB  /nas_train/app.e0031982/datasets/baize-data/text/staging_full/
+        0.0 GB  /nas_train/app.e0031982/datasets/baize-data/text/staging_r3/
+
+[4] 5 源候选（按名）合计
+  full_ultradata_code_l3   bin=0         0.0 GB
+  full_ultradata_math_l3   bin=0         0.0 GB
+  full_ultradata_code_l2   bin=0         0.0 GB
+  full_ufw_l3              bin=0         0.0 GB
+  full_ultradata_math_l1   bin=0         0.0 GB
+
+[5] /nas_env 余量
+10.239.23.32:/vol_CTE0_data04   10T  344G  9.6T   4% /nas_env
+  avail_TB=10.52
+=== DONE 156 ===
+```
