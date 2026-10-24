@@ -3675,7 +3675,8 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 |---|---|---|---|---|---|---|---|---|---|
 | 基线(Task A) | (默认 QPS=1) | 606,449 | 99.4% | — | 6,808 | 69,245/69,275 MiB | 7.5733 | — | 0 |
 | qps4 | NCCL_IB_QPS_PER_CONNECTION=4 | 606,672 | 99.4% | +0.0% | 6,805.6 | 69,249/69,275 MiB | 7.5701 | 0.04% | 0 |
-| qps8 | NCCL_IB_QPS_PER_CONNECTION=8 | (跑测中) | | | | | | | |
+| qps8 | NCCL_IB_QPS_PER_CONNECTION=8 | 607,708 | 99.6% | +0.2% | 6,794.0 | 69,229/69,255 MiB | 7.5720 | 0.02% | 0 |
+| maxnch64 | NCCL_MAX_NCHANNELS=64 | (跑测中) | | | | | | | |
 
 **QPS=4 判读**：tok/s 与基线逐位持平（+0.0%，606,672 vs 606,449），step ms 6805.6≈6808，显存/loss/gnorm 全等价 → **NCCL IB QPS 数对吞吐无影响**。物理印证：allreduce 传输仅占步时 <1%（2.2B 梯度 ~4.4GB / busbw≈46GB/s ≈ 0.1s vs 6.8s 步时），增加 QPS 无法压缩已非瓶颈的通信。NCCL 自动选用 12 个 RoCE 端口（mlx5_0/1/2/3/5/6/8/9/10/11/13/14），已自动排除 PORT_DOWN 的 mlx5_4/12/15。
 
