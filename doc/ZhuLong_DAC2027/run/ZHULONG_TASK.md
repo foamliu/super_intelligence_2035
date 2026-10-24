@@ -1,6 +1,16 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+### 🔧 步骤 0（先做这个）：把 **cimi_search / cimi_fetch** 挂到你自己的 opencode 上
+> 已知（仓库 `daily-memories/2026-10-05.md` 实测过）：`eda_fastmcp` 的 **8090 MCP 服务里除了 4 个 EDA 工具，还注册了 `cimi_search` / `cimi_fetch`**（`tools/web_search/cimi_search.py`），cline 侧早就 autoApprove 过；**但 opencode 是另一套客户端配置**，你当前用 `opencode run` 调度，所以要在 opencode 侧单独挂。
+> **要做**：
+> 1. `opencode --help` / 查 `~/.config/opencode/`（或项目 `opencode.json`）确认 MCP 配置文件的真实位置与 schema；
+> 2. 加入与 cline 相同的 server 条目：`url=http://10.251.36.15:8090/mcp`、`type=streamableHttp`、`timeout=600`，并把 `cimi_search` / `cimi_fetch` 放进 autoApprove（**保留原有 4 个 EDA 工具**，不要覆盖）；
+> 3. **验证**：`opencode mcp list`（或等价命令）能看到该 server 且工具含 `cimi_search`；再实跑一次 `cimi_search`（例如查 "LLM agent for EDA scripting benchmark"）→ 拿到真实结果即算通；
+> 4. 若服务端根本没暴露 `cimi_search`（工具清单里没有）：查 `eda_fastmcp/.env` 里 web 工具的启用开关（README 记为"默认关闭"），启用后重启 8090 服务，再验一次；
+> 5. 把「配置文件路径 + 改了哪几行（脱敏）+ 验证输出」写进 MEMORY。**不要修改 pyAether 的 4 个 EDA 工具配置**（会污染正在跑的 5-run）。
+
+
 ### 📝 任务令 · 2026-10-24 23:0x（**以 DAC 标准审稿 + 出改稿方案（中文 HTML）**）· 用户直令 · 与 5-run 并行
 > 用户原话：「仔细审视当前论文，距离 DAC 这种顶会的要求还有差距。提出改进意见，写成报告……内容要详实有物，以提升论文质量为目标。」
 > **执行方式（重要）**：
