@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 153 -->
+<!-- RUN_ID: 154 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,12 +29,67 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 154 — 📦 用户令：`/nas_env` 空间是否装得下 MiniCPM5 已分词数据（+ harness 静默核查）
+
+> 用户令（2026-10-24 13:0x）：「data：看看目录 /nas_env 空间是否足够放下 MiniCPM5 已分好词的数据」。
+> 判据：`/nas_env` 可用字节 ≥ 5 源分词产物总字节 × **1.1**（rsync 期间双份占用）。**纯只读**（只 `df`/`du`/`ls`，不移动不删除）。
+
+```bash
+set -u
+echo "=== RUN_ID 154 | /nas_env capacity for 5-source tokenized data | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] 文件系统余量"
+df -h /nas_env /nas_train 2>/dev/null | tail -3
+echo "  /nas_env avail_bytes=$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')"
+echo "  /nas_env size_bytes =$(df -B1 --output=size  /nas_env 2>/dev/null | tail -1 | tr -d ' ')"
+echo
+echo "[2] 5 源分词产物的候选路径（找到哪个用哪个）"
+for p in \
+  /nas_train/app.e0031982/code/Baize-ISEDA2027/data \
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/data \
+  /nas_train/app.e0031982/datasets/baize-data/text ; do
+  [ -d "$p" ] || continue
+  echo "  == $p"
+  ls -d "$p"/full_* 2>/dev/null | head -8
+done
+echo
+echo "[3] 逐源体积（有界 du，带 timeout）"
+TOT=0
+for p in \
+  /nas_train/app.e0031982/code/Baize-ISEDA2027/data \
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/data ; do
+  [ -d "$p" ] || continue
+  for d in "$p"/full_*; do
+    [ -d "$d" ] || continue
+    B=$(timeout 120 du -sb "$d" 2>/dev/null | awk '{print $1}')
+    [ -n "${B:-}" ] || B=0
+    TOT=$((TOT + B))
+    printf "  %-28s %8s GB  bin=%s idx=%s\n" "$(basename "$d")" "$(awk -v b="$B" 'BEGIN{printf "%.1f", b/1e9}')" \
+      "$(ls "$d"/*.bin 2>/dev/null | wc -l)" "$(ls "$d"/*.idx 2>/dev/null | wc -l)"
+  done
+done
+echo "  ---- 合计 = $(awk -v b="$TOT" 'BEGIN{printf "%.2f TB (%d bytes)", b/1e12, b}') ----"
+echo
+echo "[4] 容量判定（需要 ×1.1 双份窗口）"
+AVAIL=$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')
+NEED=$((TOT + TOT/10))
+echo "  avail=$(awk -v b="$AVAIL" 'BEGIN{printf "%.2f TB", b/1e12}')  need(×1.1)=$(awk -v b="$NEED" 'BEGIN{printf "%.2f TB", b/1e12}')"
+if [ "$AVAIL" -ge "$NEED" ]; then echo "  结论: ✅ 足够（余量 $(awk -v a="$AVAIL" -v n="$NEED" 'BEGIN{printf "%.2f TB", (a-n)/1e12}')）"; else echo "  结论: ❌ 不足，差 $(awk -v a="$AVAIL" -v n="$NEED" 'BEGIN{printf "%.2f TB", (n-a)/1e12}')"; fi
+echo
+echo "[5] harness 静默核查（附）"
+pgrep -af 'git .*add --fo' | cut -c1-170 | head -5
+echo "  harness loop log: $(ls -l --time-style=+%F' '%T /tmp/baize_harness_loop.log 2>/dev/null | awk '{print $6,$7}')"
+tail -n 5 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-180
+echo "  alexgshaw images: $(docker images 2>/dev/null | grep -c alexgshaw || echo NA)"
+echo "=== DONE 154 ==="
+```
+
 ## RUN_ID 153 — 🔎 状态探针：vision 是否仍被 checkpoint 卡住 / round2b 是否真在训（只读）
 
 > 背景：vision 最后提交 **10:12**（88 分钟前），10:25 下发的「ArmE-R2 完整报告」令未见落盘；RUN_ID 152 在 `.12` 抓到 vision 的 `git add --force --pathspec-from-file`（PID 3981049）**99.8% CPU 空转 26:43**。pretrain 已于 11:12 自行恢复并提交（`0f1ac72e`），但 R2b 是否真正跑起来尚未核实。
 > **纯只读**：不 kill、不改文件。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 153 | status probe: vision checkpoint / round2b | $(date '+%F %T') | host=$(hostname) ==="
 REPO=/nas_train/app.e0031982/code/super_intelligence_2035

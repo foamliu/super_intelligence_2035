@@ -1,6 +1,36 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### ✅ 执行令 · 2026-10-24 13:0x（**用户已批准 12:20 讨论结论：②A + ③删附录 B + ④TikZ 重画 → 立即执行并 push**）· 用户直令 · 最高优先
+
+> 用户原话：「ZhuLong 论文：按约定执行。」
+> 即按你 12:20 的意见矩阵落地：**① 标题不动；②③④ 全部执行**。本轮**允许改 `.tex` 并提交**。
+
+**② release 句（`1_intro.tex:46-47`）—— 按 A 改写**
+- 改为：`; we specify the harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}) so that the benchmark can be re-instantiated on other toolchains.`
+- 改完 grep 全文 `release|we will make|publicly available`，确保**再无任何开源/交付承诺**。
+
+**③ 删附录（方案 B）—— 目标 total = 7 页（body 6 + refs 1）**
+- 删除 `9_appendix.tex` 的两节（`app:cost` / `app:phi-bound` 两张表 + 正文），并从 `main.tex` 移除 `\input{DAC2027/9_appendix}`（`\bibliography` 保持在最后）。
+- `6_exp.tex:61` 与 `:67` 中「(Appendix)」类引用 → 改成**内联陈述 + see supplementary material**；确认这些数字在正文仍完整：**27.0% / 2.3× / 99.1→76.3 / k=10 单调**。
+- 校验：`pdflatex×3 + bibtex` → **总页数必须 = 7（正文 6p，refs 1p）**，0 undefined ref/citation；贴 `main.pdf` 字节数。
+
+**④ Figure-1 用 TikZ 重画 —— 除图文矛盾**
+- 新文件 `figures/zhulong_arch_3.pdf`（**不覆盖 `zhulong_arch_2.pdf`**）。
+- 内容必须与正文一致：**4 个 MCP 工具**（`search_apis` / `search_apis_by_keyword` / `get_api_details` / `run_code`）+ **3 个平台/语言（PyAether / SKILL / Tcl）** + 3 组件（LLM agent runtime / API knowledge base / EDA execution sandbox）+ Offline API Self-Exploration（虚线回边）+ Execution Feedback 回环。
+- 版式：`figure*`，`width=\textwidth`，字号 ≥ `\scriptsize`，字体随 acmart（不要另引字体包）；可写 `$\Omega$ / $\Phi$`。
+- 同步更新 `3_design.tex`：`\includegraphics` 路径 → `figures/zhulong_arch_3.pdf`；caption 与 `\Description` 保持「four MCP tools + three platforms」；🚫 **不得把 caption 改成 three**。
+- 重编译后确认**页数不回涨（仍 7 页）**。
+
+**⏱ r1（重要，运维已代为硬切）**
+- 运维已按用户令用中继 **kill PID 1800419**（含子进程）。你下一轮 `pgrep` 为空 ⇒ **不要按"收口"空跑**，直接：
+  1. 用已组装的 **155 个 `.py`** 手动 regrade（模板同 r5：`unset proxy` + `NO_PROXY` + `EVAL_FW_DIR` + 8650 组；GEN_FILE = `completed_code_generation_2026_1023_231253.jsonl`）；
+  2. 按判据十三记账（timeout 7 ≤10 ⇒ 有效，标退化）；
+  3. 记 r1 成绩 → 继续 r2…r5。
+
+**交付**：贴 ①7 页/字节 ②`git diff --stat` ③编译 exit 0/0 undefined ④r1 regrade 结果；commit 前缀 `zhulong paper:` / `zhulong r1:`；push 后 `git status -sb` 无 ahead/behind。
+📦 任务书现有 31.3KB，加本块会越 32KB ⇒ **先按体积规程归档已闭合块**（10:3x 定稿令、10:2x/10:0x/09:5x 讨论块）到 `ZHULONG_TASK_ARCHIVE.md` 再提交。
+
 ### 🗣 商榷令 · 2026-10-24 11:3x（**用户读 6p 稿后 4 问 → 本轮只出意见，不动 `.tex`**）· 用户直令 · 最高优先
 
 > 用户原话：「我看了下 zhulong 精简后的论文，整体不错，几个问题想商榷一下…… 把讨论发给 zhulong agent，看看它的想法。」

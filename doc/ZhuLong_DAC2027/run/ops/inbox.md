@@ -1,13 +1,62 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 112 -->
 
+<!-- RUN_ID: 113 -->
+
+## RUN_ID 113 — ⛔ 用户直令：r1 硬切 + 取证（为手动 regrade 准备）
+
+> 用户令（2026-10-24 13:0x）：「r1 硬切，手动 regrade」。
+> 背景：r1 `cline×deepseek-v4-pro×full` batch `2026_1023_231253` 自 23:12 跑到现在 **T+13h+**，**155/158 自 08:07 起 ~5h 未动**（3 个尾巴任务挂住），判据十三仍绿（timeout=7 ≤10）。
+> 做法：先 TERM 进程树 → 10s → 仍活则 KILL；**只动 PID 1800419 及其子进程**，不碰 8090 / 8650-8654 端口服务。随后由 zhulong agent 按任务书手动 regrade。
+
+```bash
+set -u
+echo "=== RUN_ID 113 | hard-cut r1 (PID 1800419) + evidence | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] before"
+ps -o pid,ppid,stat,etime,cmd -p 1800419 2>/dev/null | cut -c1-170
+echo "  children: $(pgrep -P 1800419 2>/dev/null | tr '\n' ' ')"
+echo
+echo "[2] TERM tree (children first, then parent)"
+for c in $(pgrep -P 1800419 2>/dev/null); do kill "$c" 2>/dev/null || true; done
+kill 1800419 2>/dev/null || true
+sleep 10
+echo
+echo "[3] after TERM"
+ps -o pid,stat,etime,cmd -p 1800419 2>/dev/null | cut -c1-170 || true
+left=$(pgrep -cf 'run_zhulong_script[.]sh' 2>/dev/null || echo 0)
+echo "  leftover run_zhulong_script = $left"
+if [ "$left" -gt 0 ]; then ps -eo pid,ppid,etime,cmd 2>/dev/null | grep 'run_zhulong_script[.]sh' | grep -v grep | cut -c1-160 | head -5; fi
+echo
+echo "[4] escalate to KILL if still alive"
+if kill -0 1800419 2>/dev/null; then
+  pkill -KILL -P 1800419 2>/dev/null || true
+  kill -9 1800419 2>/dev/null || true
+  sleep 3
+  if kill -0 1800419 2>/dev/null; then echo "  STILL ALIVE (需人工)"; else echo "  now GONE"; fi
+else
+  echo "  already GONE after TERM"
+fi
+echo
+echo "[5] regrade inputs"
+ls -l --time-style=+%F' '%T /tmp/completed_code_generation_2026_1023_231253.jsonl 2>/dev/null || echo "  GEN_FILE not in /tmp"
+wc -l /tmp/completed_code_generation_2026_1023_231253.jsonl 2>/dev/null || true
+echo "  regrade templates:"
+ls -lt --time-style=+%F' '%T /tmp/run_*regrade*.sh 2>/dev/null | head -3 | cut -c1-170
+echo
+echo "[6] GPU / 端口（确认未误伤）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -4
+for p in 8090 8650 8651 8652 8654; do printf "  %s=%s" "$p" "$(curl -s -o /dev/null -w '%{http_code}' -m 3 http://127.0.0.1:$p/health 2>/dev/null || echo NA)"; done; echo
+echo "=== DONE 113 ==="
+```
+
 ## RUN_ID 112 — 🔴 用户直令：作废 r1-r3 → .env 已改 full + 8090 已重启 → 确认并起 r1（full 配置）
 
 > 用户直令（2026-10-23 09:4x）：「作废 r1-r3，改 full 重跑 5 轮」
 > **运维已完成**：停 r3 regrade + .env READBACK=none→full + 8090 重启（PID 2535923）+ 冒烟 full readback 四字段 ✅。
 > **本块**：确认 .env full + 8650 组 4/4 OK + 起 r1。**不 regrade r3**（已作废）。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 112 | confirm full config + launch r1 | $(date '+%F %T') | host=$(hostname) ==="
 BASE=/nasdata/app.e0031982/code/eda_fastmcp
