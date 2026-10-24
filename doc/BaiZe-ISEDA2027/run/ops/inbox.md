@@ -1,12 +1,52 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 164 | TARGET: 29 -->
+<!-- RUN_ID: 165 | TARGET: 29 -->
+## RUN_ID 165 — 🔎 诊断：是谁在反复拉起 `ops_relay_v2.sh`（+ pretrain 现状）
+
+> 现象：19:36 与 19:38 两次快照都是「一个老 v2 + 一个 etimes≤1 的新 v2」⇒ 每 ~2 分钟就多一个新实例。本令只读排查来源。
+
+```bash
+set -u
+echo "=== RUN_ID 165 | who spawns relay v2 | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] 中继进程（含 PPID / 启动时长）"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep ops_relay | grep -v grep | cut -c1-120
+
+echo "[2] 每个 v2 的父进程是谁"
+for p in $(pgrep -f 'ops_relay_v2\.sh'); do
+  pp=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+  echo "  v2 pid=$p ppid=$pp"
+  [ -n "$pp" ] && ps -o pid=,etimes=,args= -p "$pp" 2>/dev/null | cut -c1-130 | sed 's/^/     parent: /'
+done
+
+echo "[3] 中继日志（看启动横幅时间戳 = 被拉起的时刻）"
+ls -lt /tmp/baize_ops_relay*.log /tmp/switch_relay*.log /tmp/dedupe_relay*.log 2>/dev/null | head -6
+echo "  --- tail baize_ops_relay.29.log ---"
+tail -8 /tmp/baize_ops_relay.29.log 2>/dev/null | cut -c1-150
+
+echo "[4] 定时任务 / 看门狗"
+crontab -l 2>/dev/null | grep -i -E 'relay|loop' | head -5 || echo '  no user crontab'
+ls /etc/cron.d 2>/dev/null | head -5
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'watchdog|keepalive|supervis' | grep -v grep | cut -c1-120 | head -4 || echo '  no watchdog proc'
+
+echo "[5] 哪些脚本里引用了 ops_relay"
+timeout 40 grep -rl 'ops_relay' "$R/run" 2>/dev/null | head -8
+
+echo "[6] pretrain 现状"
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep -E 'baize_pretrain_loop|torchrun|pretrain_launcher' | grep -v grep | cut -c1-130 | head -4 || echo '  NONE'
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" | cut -c1-110
+tail -4 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-150
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8
+echo "=== DONE 165 ==="
+```
+
 ## RUN_ID 164 — 🧹 中继去重：每台机只保留**最老的一个** v2 中继（本机 + 对端）
 
 > 背景：RUN_ID 163 的 `[2]` 显示 `.29` 上有 **两个** `ops_relay_v2.sh`（原因：切换前 `.29` 上本来就有两个 v1 实例，各拉起一次）。
 > 两个中继共用同一个 state ⇒ 会把 `both` 任务执行两遍。本令在**本机与对端各**做一次去重（保留 etimes 最大的那个），用 detached 方式执行，避免杀掉自己导致 outbox 写不进去。
 
-```bash
+```text
 set -u
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
 CL=$R/run/ops/.dedupe_relays.sh
