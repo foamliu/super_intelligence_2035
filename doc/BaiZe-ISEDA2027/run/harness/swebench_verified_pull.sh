@@ -1,90 +1,59 @@
-#!/bin/bash
-# SWE-bench Verified -- Batch Docker image puller with rate limiting
-# Pulls 500 swebench/sweb.eval.x86_64.* images in batches of 50.
-# Idempotent: docker pull is naturally resumable.
-# Progress: doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pull_progress.txt
-#
-# Usage:  bash swebench_verified_pull.sh
-# The script uses 'sg docker' for docker access and the daemon.json proxy.
-
-set -euo pipefail
-
-HARNESS_DIR="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness"
-IMAGES_FILE="/tmp/swebench_verified_images.json"
-PROGRESS_FILE="$HARNESS_DIR/swebench_verified_pull_progress.txt"
-BATCH_SIZE=50
-MAX_RETRIES=2
+#!/usr/bin/env bash
+# swebench_verified_pull.sh — 后台批量拉取 SWE-bench Verified 500 镜像（限速、不抢 TB）
+# 限制：Docker Hub 匿名限速 100 manifest 请求/小时/共享IP(203.127.181.131)
+#   - layer 下载不计入限速；瓶颈是 manifest 请求（每张 ~2 次）
+#   - docker pull 遇 429 立即失败（daemon 不重试）→ 本脚本检测 toomanyrequests 后长退避 300s
+#   - 串行 pull，批间查磁盘，TB 在跑时加 pause
+#   - 已存在本地则跳过；进度写 swebench_verified_pull_progress.txt
+# 用法: setsid sg docker -c "bash swebench_verified_pull.sh" > /tmp/swebench_verified_pull.log 2>&1 < /dev/null &
+set -uo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+LIST="$HERE/swebench_verified_image_list.txt"
+PROG="$HERE/swebench_verified_pull_progress.txt"
+LOG="/tmp/swebench_verified_pull_detail.log"
 DOCKER_ROOT="/data/docker"
-
-# Read image list (JSON array)
-mapfile -t ALL_IMAGES < <(python3 -c "import json; [print(i) for i in json.load(open('$IMAGES_FILE'))]")
-TOTAL=${#ALL_IMAGES[@]}
-
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] SWE-bench Verified image pull started. Total=$TOTAL" | tee "$PROGRESS_FILE"
-echo "Batch size=$BATCH_SIZE, Max retries=$MAX_RETRIES" | tee -a "$PROGRESS_FILE"
-
-PULLED=0
-FAILED_LIST=()
-CUMULATIVE_GB=0
-BATCH_NUM=0
-
-for ((i=0; i<TOTAL; i+=BATCH_SIZE)); do
-    BATCH_NUM=$((BATCH_NUM + 1))
-    END=$((i + BATCH_SIZE))
-    [ $END -gt $TOTAL ] && END=$TOTAL
-    
-    echo "" | tee -a "$PROGRESS_FILE"
-    echo "[$(date '+%H:%M:%S')] Batch $BATCH_NUM: images $((i+1))-$END / $TOTAL" | tee -a "$PROGRESS_FILE"
-    
-    for ((j=i; j<END; j++)); do
-        IMG="${ALL_IMAGES[$j]}"
-        SUCCESS=false
-        
-        for attempt in $(seq 1 $((MAX_RETRIES + 1))); do
-            if sg docker -c "docker pull '$IMG' > /tmp/_pull_output.txt 2>&1"; then
-                SUCCESS=true
-                # Get image size
-                SIZE=$(sg docker -c "docker image inspect '$IMG' --format '{{.Size}}' 2>/dev/null" || echo "0")
-                SIZE_GB=$(python3 -c "print(f'{$SIZE / 1e9:.2f}')" 2>/dev/null || echo "?")
-                CUMULATIVE_GB=$(python3 -c "print($CUMULATIVE_GB + $SIZE / 1e9)" 2>/dev/null || echo "$CUMULATIVE_GB")
-                PULLED=$((PULLED + 1))
-                echo "  [OK] $IMG (${SIZE_GB}GB) - attempt $attempt" | tee -a "$PROGRESS_FILE"
-                break
-            else
-                ERR=$(tail -3 /tmp/_pull_output.txt 2>/dev/null | tr '\n' ' ' | head -c 200)
-                echo "  [FAIL attempt $attempt] $IMG: $ERR" | tee -a "$PROGRESS_FILE"
-                sleep 5
-            fi
-        done
-        
-        if [ "$SUCCESS" = false ]; then
-            FAILED_LIST+=("$IMG")
-            echo "  [GIVE UP] $IMG after $((MAX_RETRIES + 1)) attempts" | tee -a "$PROGRESS_FILE"
+BATCH=50; MAX_ATTEMPT=15; RATE_BACKOFF=300; ERR_BACKOFF=30; DISK_MIN_GB=50
+echo "[swebench-pull] started $(date '+%F %T')" | tee "$PROG"
+[ ! -f "$LIST" ] && { echo "[swebench-pull] FATAL: $LIST not found" | tee -a "$PROG"; exit 1; }
+total=$(wc -l < "$LIST"); echo "[swebench-pull] total=$total list=$LIST" | tee -a "$PROG"
+pulled=0; failed=0; skipped=0; failed_list=""; idx=0
+tb_running(){ pgrep -f 'harbor run -p /tmp/tb_7x89_dataset' >/dev/null 2>&1; }
+disk_free_gb(){ df -BG "$DOCKER_ROOT" 2>/dev/null | awk 'NR==2{gsub("G","",$4);print $4}'; }
+while IFS=$'\t' read -r iid img; do
+    [ -z "$iid" ] && continue; idx=$((idx+1))
+    if docker image inspect "$img" >/dev/null 2>&1; then
+        skipped=$((skipped+1))
+        echo "[swebench-pull] [$idx/$total] SKIP $iid (present) pulled=$pulled failed=$failed skipped=$skipped" | tee -a "$PROG"; continue; fi
+    ok=0
+    for attempt in $(seq 1 $MAX_ATTEMPT); do
+        out=$(docker pull "$img" 2>&1); rc=$?
+        if [ $rc -eq 0 ]; then ok=1; break; fi
+        if echo "$out" | grep -qiE 'toomanyrequests|rate.limit|429'; then
+            echo "[swebench-pull] [$idx/$total] 429 $iid attempt=$attempt sleep=${RATE_BACKOFF}s" | tee -a "$LOG"
+            sleep "$RATE_BACKOFF"
+        else
+            echo "[swebench-pull] [$idx/$total] ERR $iid attempt=$attempt: $(echo "$out"|tail -1|head -c 150)" | tee -a "$LOG"
+            sleep "$ERR_BACKOFF"
         fi
     done
-    
-    # Batch checkpoint: disk check
-    DISK_FREE=$(df -BG /data | tail -1 | awk '{print $4}' | tr -d 'G')
-    echo "[$(date '+%H:%M:%S')] Batch $BATCH_NUM done. Pulled=$PULLED/$TOTAL, Failed=${#FAILED_LIST[@]}, Disk free=${DISK_FREE}G, Cumulative=${CUMULATIVE_GB}GB" | tee -a "$PROGRESS_FILE"
-    
-    # Safety: stop if disk < 100GB
-    if [ "$DISK_FREE" -lt 100 ]; then
-        echo "[WARNING] Disk below 100GB, stopping!" | tee -a "$PROGRESS_FILE"
-        break
+    if [ "$ok" -eq 1 ]; then
+        pulled=$((pulled+1))
+        echo "[swebench-pull] [$idx/$total] OK $iid pulled=$pulled failed=$failed skipped=$skipped" | tee -a "$PROG"
+    else
+        failed=$((failed+1)); failed_list="$failed_list $iid"
+        echo "[swebench-pull] [$idx/$total] FAIL $iid after $MAX_ATTEMPT attempts" | tee -a "$PROG"
     fi
-    
-    # Brief pause between batches to let TB breathe
-    sleep 10
-done
-
-echo "" | tee -a "$PROGRESS_FILE"
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] PULL COMPLETE" | tee -a "$PROGRESS_FILE"
-echo "  Pulled: $PULLED / $TOTAL" | tee -a "$PROGRESS_FILE"
-echo "  Failed: ${#FAILED_LIST[@]}" | tee -a "$PROGRESS_FILE"
-if [ ${#FAILED_LIST[@]} -gt 0 ]; then
-    echo "  Failed images:" | tee -a "$PROGRESS_FILE"
-    for f in "${FAILED_LIST[@]}"; do
-        echo "    $f" | tee -a "$PROGRESS_FILE"
-    done
-fi
-echo "  Cumulative pulled: ${CUMULATIVE_GB}GB" | tee -a "$PROGRESS_FILE"
+    if [ $((idx % BATCH)) -eq 0 ]; then
+        free=$(disk_free_gb)
+        echo "[swebench-pull] === BATCH idx=$idx pulled=$pulled failed=$failed skipped=$skipped disk_free=${free}GB ===" | tee -a "$PROG"
+        if [ -n "$free" ] && [ "$free" -lt "$DISK_MIN_GB" ]; then
+            echo "[swebench-pull] ⚠️ disk ${free}GB<${DISK_MIN_GB}GB pause 120s" | tee -a "$PROG"; sleep 120; fi
+        sleep 10
+    else
+        if tb_running; then sleep 5; else sleep 1; fi
+    fi
+done < "$LIST"
+echo "[swebench-pull] DONE $(date '+%F %T') total=$total pulled=$pulled failed=$failed skipped=$skipped" | tee -a "$PROG"
+[ -n "$failed_list" ] && echo "[swebench-pull] FAILED:$failed_list" | tee -a "$PROG"
+present=$(docker images --filter "reference=swebench/*" --format '{{.Repository}}' | sort -u | wc -l)
+echo "[swebench-pull] swebench/* present: $present / $total" | tee -a "$PROG"

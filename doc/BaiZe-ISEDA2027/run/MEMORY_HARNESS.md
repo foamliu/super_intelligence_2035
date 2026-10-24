@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench. 7x89 CONCURRENT RUNNING (7 harnesses × 87 tasks = 609 trials, 7-way concurrent). 87/89 images (2 still pulling: mteb-leaderboard, mteb-retrieve). v2 serial killed (partial results saved). H-B报告✅
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created+FIXED✅(R476/R477/R479)·v2 partial results saved✅(R478/R479)·v2 serial killed✅(R479)·7x89 concurrent LAUNCHED✅(R479)·v2 cline-patched 0/15(bug)✅·v2 codex 6/15 PASS✅·v2 hermes 0/15✅·v2 opencode 6/15 PASS✅
-当前动作:     R479: ①Killed v2 serial run (partial results saved: cline-patched 0/15, codex 6/15, hermes 0/15, opencode 6/15). ②Launched 7x89 concurrent at 16:21: 7 harnesses × 87 tasks = 609 trials, 7-way concurrent. All 7 harbor processes alive, 7 Docker containers running. ③Modified 7x89 launcher to skip missing images (filtered dataset of 87 tasks). ④cline-patched TB_API_KEY fix verified (agent setting up properly, no RuntimeError). ⑤gw_proxy healthy on 9090/9091. ⑥Resources: 224 CPUs, 2TB RAM, load 9.15, 92% CPU idle — ample. ⑦2 images still pulling in background.
-下一步:       ①Monitor 7x89 concurrent run (ETA ~2.5-3h, check /tmp/tb_7x89_concurrent.log) ②Pull 2 missing images (mteb-leaderboard, mteb-retrieve) — running in background ③Collect results from /tmp/tb_7x89/jobs_*/ when done ④McNemar 7×7, Wilson CI, 87/89 coverage report (note: 2/89 non-full-coverage) ⑤Generate report_harness_terminalbench_7way_zh.html
-阻塞:         无. 7x89 concurrent running. 2 images still downloading (non-blocking — 87/89 tasks running).
+PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~2.7h elapsed) + SWE-bench Verified 镜像后台下载启动(R480). 两线并列.
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480,75/500 manifest)·下载脚本+后台启动✅(R480)
+当前动作:     R480: ①TB 7×87 并发仍在跑(16:21启动,~2.7h,7 harbor alive). ②SWE-bench Verified 500 题镜像: 查清命名(swebench/sweb.eval.x86_64.<id_1776>:latest)+去重体积估算(75/500 manifest 实测:85.3%层共享,raw 86GB/75张,dedup 12GB/75张,外推500张dedup~30-60GB,磁盘6.3TB充足). ③🔴发现真正瓶颈=Docker Hub 匿名限速 100 manifest请求/小时/共享IP(203.127.181.131,当前Remaining=0);docker pull遇429立即失败. ④写限速下载脚本(swebench_verified_pull.sh,429退避300s,串行,TB感知pause)+后台启动(PID 1199724,当前在429退避等窗口滑动). ⑤交付体积估算报告+估算脚本+镜像清单.
+下一步:       ①继续监控 TB 7×89(预计~3h,快完成)收集结果→McNemar报告 ②监控 SWE-bench 下载进度(pull_progress.txt),窗口滑动后开始成功拉取(~50张/小时,ETA 12-18h) ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评 ④若需加速下载:考虑国内镜像加速器(daocloud)或Docker Hub登录
+阻塞:         无. TB 在跑; SWE-bench 下载受 Docker Hub 限速(100 manifest/h,共享IP),预计 12-18h 拉完全部 500 张(磁盘/带宽不是瓶颈).
 ERROR_COUNT:  0
-📦 体积：TASK=32KB / MEMORY=17KB
+📦 体积：TASK=34KB / MEMORY=18KB
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -153,6 +153,8 @@ ERROR_COUNT:  0
 - v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
 
 ### 本唤醒流水
+[19:20] R480 **SWE-bench Verified 镜像下载启动(后台)+体积估算交付**. ①TB 7×87 并发仍在跑(16:21启动,~2.7h,7 harbor alive,load 7.6). ②查清 SWE-bench Verified 镜像命名=swebench/sweb.eval.x86_64.<instance_id,__→_1776_>:latest(swebench harness expected_image/namespace=swebench;实测 docker manifest inspect OK). ③去重体积估算: 抓 75/500 manifest(受 Docker Hub 限速,见下),实测 85.3% 层共享,raw 86.1GB/75张,dedup 12.0GB/75张,单张 avg 1.15GB,外推500张 raw~575GB/dedup~30-60GB. 磁盘 /data 6.3TB free → 充足. ④🔴关键发现: Docker Hub 匿名限速 Ratelimit-Limit=100;w=3600(100 manifest请求/1h滑动窗口),出口IP=203.127.181.131(92.25代理共享),当前 Remaining=0. layer 下载不计入限速(TB 89张2.5h拉完=吻合). docker pull 遇 429 立即失败(daemon不重试). ⑤写限速下载脚本 swebench_verified_pull.sh(429→退避300s×15次,串行,TB在跑pause 5s,批间查磁盘<50GB暂停,幂等跳过已存在)+后台启动(PID 1199724,当前 429 退避中,等窗口滑动). ⑥交付: swebench_verified_volume_estimate.txt(报告)+estimate.py(脚本)+manifests.json(75缓存)+image_list.txt(500清单)+pull.sh(下载脚本). ⑦体积: TASK=34KB(>32KB目标但<40KB红线,3个活跃运维块不可归档)/MEMORY=18KB. WAITING=1.
+
 [16:25] R479 **v2串行已kill+7x89并发已启动(7-way concurrent, 609 trials)**. ①Auto-transition timed out (60min, only 87/89). ②Updated v2 partial results: cline-patched 0/15, codex 6/15 PASS, hermes 0/15, opencode 6/15 PASS (13/15 completed, 5 AgentTimeoutError). ③Killed v2 serial (PID 1068001) + gw_proxy + all leftover containers. ④Modified _full_7x89_concurrent_launcher.sh: skip missing images (filtered dataset of 87 tasks, not hard-exit). ⑤Launched 7x89 concurrent at 16:21: 7 harnesses × 87 tasks = 609 trials, 7-way concurrent. All 7 harbor processes alive (PIDs 536814-578125), 7 Docker containers running. cline-patched TB_API_KEY fix verified (agent setting up, no RuntimeError). gw_proxy healthy on 9090/9091. ⑥Resources: 224 CPUs, 2TB RAM, load 9.15, 92% CPU idle — ample. ⑦2 images still pulling in background (mteb-leaderboard, mteb-retrieve). ⑧Volume: TASK=32KB/MEMORY=17KB. WAITING=1.
 
 [15:06] R478 **镜像87/89+v2部分结果已保存+auto-transition脚本已启动**. ①Images 81→87/89. ②v2 serial: 4/7 harnesses have results. ③Saved v2 partial results. ④Created+launched auto-transition script. ⑤Resources ample. WAITING=1.
