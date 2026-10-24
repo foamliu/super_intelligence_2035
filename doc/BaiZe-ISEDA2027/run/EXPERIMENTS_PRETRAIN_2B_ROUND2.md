@@ -3664,4 +3664,21 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 
 **Task A 完整闭合**：e18(FP8) + BF16 对照均已测。FP8 在 DP16 下增益 +14.8% 确认，两种精度均近线性扩展（通信 <1% 步时）。下一步 → Task B（NCCL/IB 调参）。
 
+### Task B · NCCL/IB 调参（2026-10-25，进行中）
+
+> 基线 = Task A e18 双机 DP16（默认 NCCL，QPS=1）：**606,449 tok/s / 99.4% / med 6808ms / 67.6GB / loss 7.5733**。
+> 4 个固定 NCCL 变量始终保留（GID_INDEX=3 / MTU=4096 / TC=106 / TIMEOUT=22），调参变量在其上叠加。
+> 每项 80 步，median 取 step 30–80（6 点），脚本 `baize_dualnode_tune.sh <TAG> "<EXTRA_NCCL>"`，原始日志 `/tmp/baize_dualnode_tune/<TAG>/`。
+> ⚠️ 复现注记：首跑 QPS=4 时 master 侧 SSH 连接瞬断（非 setsid）导致远端 torchrun 被 SIGHUP 杀死、无报错；重跑即过 → 系**瞬时网络抖动**，非 QPS=4 不兼容。
+
+| TAG | EXTRA_NCCL | tok/s | 扩展效率 | vs 基线 | step ms | 显存(master/worker) | loss | Δloss | NaN |
+|---|---|---|---|---|---|---|---|---|---|
+| 基线(Task A) | (默认 QPS=1) | 606,449 | 99.4% | — | 6,808 | 69,245/69,275 MiB | 7.5733 | — | 0 |
+| qps4 | NCCL_IB_QPS_PER_CONNECTION=4 | 606,672 | 99.4% | +0.0% | 6,805.6 | 69,249/69,275 MiB | 7.5701 | 0.04% | 0 |
+| qps8 | NCCL_IB_QPS_PER_CONNECTION=8 | (跑测中) | | | | | | | |
+
+**QPS=4 判读**：tok/s 与基线逐位持平（+0.0%，606,672 vs 606,449），step ms 6805.6≈6808，显存/loss/gnorm 全等价 → **NCCL IB QPS 数对吞吐无影响**。物理印证：allreduce 传输仅占步时 <1%（2.2B 梯度 ~4.4GB / busbw≈46GB/s ≈ 0.1s vs 6.8s 步时），增加 QPS 无法压缩已非瓶颈的通信。NCCL 自动选用 12 个 RoCE 端口（mlx5_0/1/2/3/5/6/8/9/10/11/13/14），已自动排除 PORT_DOWN 的 mlx5_4/12/15。
+
+> 📌 旁注（供 Task C 参考）：e18 默认 config 已开启 `overlap_grad_reduce=True` + `overlap_param_gather=True` + `use_distributed_optimizer=True`（见 qps4 master.log DDPConfig）→ Task C 的 overlap 项可能已是默认态，需单独核查再决定是否实测。
+
 
