@@ -1,6 +1,39 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🗣 商榷令 · 2026-10-24 11:3x（**用户读 6p 稿后 4 问 → 本轮只出意见，不动 `.tex`**）· 用户直令 · 最高优先
+
+> 用户原话：「我看了下 zhulong 精简后的论文，整体不错，几个问题想商榷一下…… 把讨论发给 zhulong agent，看看它的想法。」
+> ⚠️ **本轮不提交任何论文改动**（唯一例外：你判断是"一眼可见的硬伤"且改动 ≤3 行，可在回复里标「建议立即修」，但**先不要 commit**，等用户点头）。
+> ⚠️ **不打断在跑的 r1**（PID 1800419，判据十三）。
+
+**① 标题（Q1）**
+- 用户记忆中的旧标题：`ZhuLong: Execution Grounding versus Prior Enrichment in EDA Scripting`；现标题：`ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting`（`main.tex:27`）。
+- 运维侧已核实：现标题自 **`431b4918`（09-27 首次入库）** 起 27 天未改；**`d2d9bb7a` 未触碰 `main.tex`**；全仓 2941 文件搜 `Prior Enrichment` **0 命中**。
+- **请回答**：你是否有意改过标题？若没有，就说明用户看到的是更早的草稿。另外：现标题 vs 旧标题，哪个更贴 6p 版「编排 design flow + 补 EDA scripting 断链」的定位？**给 1 句理由**。
+
+**② 贡献句 "we release the harness, schema, and protocol"（Q2）**
+- 位置：`1_intro.tex:46-47`（全文唯一一处 release 承诺）。
+- 背景：**暂不能开源**；论文是 `anonymous` 模式。
+- 运维给的候选：**A** `; we specify the harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}) so that the benchmark can be re-instantiated on other toolchains.` / **B** `; we will release ... with the camera-ready version ...` / **C** `; ... are described ... at a level sufficient for reproduction.`
+- **请回答**：哪个最稳？有没有更好的写法（≤1 句）？若选 A，是否需要在 §5 补一句「同一 schema 可在其他工具链上实例化」？
+
+**③ 附录顺序 + 页数（Q3，最关键）**
+- 现状：`main.tex` 里 `\input{DAC2027/9_appendix}` **在** `\bibliography{reference}` **之前** ⇒ 附录排在参考文献前；ACM 默认是 **refs → appendix**。
+- **DAC 2027 官方**：*six-page limit, with one additional page for references only*（`dac.com/2027/program/research-manuscript-submissions`）。现在是 **8 页 = 正文 6 + 附录 1 + refs 1** ⇒ **附录那 1 页没有配额**。
+- **请回答**：① 排序是否改为 refs → appendix？（注意：只改顺序可能让"第 7 页正文内容"更显眼，请判断利弊）② 页数走哪条：**A** 把 `tab:cost` / `tab:phi-bound` 回填正文并再压 1 页；**B** 删附录、正文留 1–2 句「见补充材料」；**C** 你的第三方案。每条给 **成本（砍多少行 / 省多少 p）+ 推荐**。
+
+**④ Figure-1（Q4）**
+- 运维解 `figures/zhulong_arch_2.pdf` 文本层实测：只有 **3 个工具**（`search_apis` / `run_code` / `get_api_details`），**缺 `search_apis_by_keyword`**；平台写 **`PyAether / SKILL`**，**缺 Tcl**。
+- 这与 `3_design.tex:13` caption「**four** unified MCP tools」和 `:15` `\Description` 逐列的四个工具 **自相矛盾**。
+- **请回答**：① 这是不是当前使用的图？有没有**已更新的源文件**（`.drawio` / `.pptx` / `.svg`）？② 若确需重画，你倾向 **TikZ**（运维推荐：纯 LaTeX、字体与 acmart 一致、可写数学符号）还是 mermaid-cli / matplotlib？给理由 + 预计工时 + 对 6 页预算的影响（建议 `figure*` 用 `\textwidth`）。
+
+**⑤ 回复格式（本轮不提交代码）**
+- 逐条 ①②③④ 给「**结论 + 理由 + 建议动作 + 成本估计**（分钟 / 行数 / 页数）」。
+- 明确标注：哪几条是 **硬伤必须改**、哪几条可 **留到终稿**。
+- 若不同意运维判断，**直接指出并给 file:line 证据**。
+- commit 前缀 `zhulong discuss:`。
+
 ### ✅ 定稿令 · 2026-10-24 10:3x（**6p 精简基线 = 陈熙元版本 `47519292`，不另做备份**）· 用户直令 · 最高优先
 
 > 用户原话：「ZhuLong：在陈熙元版本上做 6p 精简，在 git 历史中已经有备份，不需要额外备份。」
