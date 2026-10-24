@@ -14101,3 +14101,228 @@ References
 12.14 13.10 12.92 25/21755 1034081
 === DONE 114 ===
 ```
+
+---
+
+## RUN_ID 115 · 2026-10-24 22:10:48 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 115 | stop cline r2 + dump configs | $(date '+%F %T') | host=$(hostname) ==="
+P=497054
+B=/nasdata/app.e0031982/eda_code_eval/2026_1024_141148
+
+echo "[1] 停前状态"
+ps -o pid=,etimes=,stat=,args= -p $P 2>/dev/null | cut -c1-120 || echo '  not running'
+echo "  code dirs: $(ls -d $B/code/* 2>/dev/null | wc -l)   .py: $(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+[ -f "$B/.task_queue" ] && echo "  task_queue: $(wc -c < "$B/.task_queue") bytes"
+
+echo "[2] 停止（TERM→60s→KILL），保留日志与产物"
+kill -TERM $P 2>/dev/null && echo '  TERM sent'
+for i in $(seq 1 12); do sleep 5; kill -0 $P 2>/dev/null || { echo "  exited after $((i*5))s"; break; }; done
+kill -0 $P 2>/dev/null && { kill -9 $P 2>/dev/null; echo '  KILL9 sent'; }
+sleep 2
+ps -o pid=,stat= -p $P 2>/dev/null && echo '  STILL ALIVE' || echo '  confirmed stopped'
+ls -l /tmp/ABL_dsv4pro_cline_full_r2.log 2>/dev/null | awk '{print "  log kept: "$5" bytes"}'
+
+echo "[3] MCP settings 对照"
+for f in "$HOME/.cline/data/settings/cline_mcp_settings.json" "$HOME/.cline/cline_mcp_settings.json" "$HOME/.zhulong/settings/cline_mcp_settings.json"; do
+  [ -f "$f" ] && { echo "  == $f"; head -c 700 "$f"; echo; }
+done
+
+echo "[4] providers.json（两侧）"
+for p in $(find /nasdata/app.e0031982 -maxdepth 4 -name 'providers.json' 2>/dev/null | head -6); do
+  echo "  == $p"; head -c 500 "$p" 2>/dev/null; echo
+done
+
+echo "[5] 两个 run 脚本的关键差异"
+D=$(ls -d /nasdata/app.e0031982/code/eda_fastmcp 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+for s in $(ls "$D"/scripts/run_cline_script.sh "$D"/scripts/run_zhulong_script.sh 2>/dev/null); do
+  echo "  == $(basename "$s")"
+  grep -nE 'maxTokens|max_tokens|CLI_AGENT|MODEL|TEMPERATURE|top_p|READBACK|--turns|-p [0-9]|timeout' "$s" 2>/dev/null | head -14 | cut -c1-140
+done
+echo "=== DONE 115 ==="
+```
+
+**输出**
+```
+=== RUN_ID 115 | stop cline r2 + dump configs | 2026-10-24 22:10:48 | host=hfeg0tedaap02 ===
+[1] 停前状态
+ 497054   28740 Ss   bash scripts/run_zhulong_script.sh -p 4 -n
+  code dirs: 158   .py: 153
+  task_queue: 0 bytes
+[2] 停止（TERM→60s→KILL），保留日志与产物
+  TERM sent
+  exited after 5s
+  confirmed stopped
+  log kept: 29207205 bytes
+[3] MCP settings 对照
+  == /home/app.e0031982/.cline/data/settings/cline_mcp_settings.json
+{
+  "mcpServers": {
+    "pyAether_MCP_server": {
+      "url": "http://10.251.36.15:8090/mcp",
+      "type": "streamableHttp",
+      "timeout": 600,
+      "disabled": false,
+      "autoApprove": [
+        "search_apis",
+        "get_api_details",
+        "search_apis_by_keyword",
+        "run_code"
+      ]
+    }
+  }
+}
+
+  == /home/app.e0031982/.zhulong/settings/cline_mcp_settings.json
+{
+  "mcpServers": {
+    "pyAether_MCP_server": {
+      "url": "http://10.251.36.15:8090/mcp",
+      "type": "streamableHttp",
+      "timeout": 600,
+      "disabled": false,
+      "autoApprove": [
+        "search_apis",
+        "get_api_details",
+        "search_apis_by_keyword",
+        "run_code"
+      ]
+    }
+  }
+}
+
+[4] providers.json（两侧）
+  == /nasdata/app.e0031982/.cline/data/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e",
+        "model": "deepseek-v4-pro",
+        "maxTokens": 16384,
+        "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "updatedAt": "2026-10-20T05:08:01.018Z",
+ 
+  == /nasdata/app.e0031982/.cline_zhulong/data/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23",
+        "model": "glm-5.2",
+        "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1"
+      },
+      "updatedAt": "2026-10-12T05:47:38.852Z",
+      "tokenSource": "manual"
+    }
+  }
+}
+
+  == /nasdata/app.e0031982/.cline_glm_eval/data/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23",
+        "model": "glm-5.2",
+        "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1"
+      },
+      "updatedAt": "2026-10-05T07:01:43.260Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "provider":
+  == /nasdata/app.e0031982/.cline_dsv4flash_eval/data/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3",
+        "model": "deepseek-v4-flash",
+        "baseUrl": "http://agi-gateway.cxmt.com/v1"
+      },
+      "updatedAt": "2026-10-05T07:01:43.260Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "provid
+  == /nasdata/app.e0031982/.cline_kimi_eval/data/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f",
+        "model": "kimi-k2.6-cloud",
+        "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1"
+      },
+      "updatedAt": "2026-10-05T07:01:43.260Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+        "pr
+  == /nasdata/app.e0031982/.cline_doubao_eval/data/settings/providers.json
+{
+  "version": 1,
+  "lastUsedProvider": "openai-compatible",
+  "providers": {
+    "openai-compatible": {
+      "settings": {
+        "provider": "openai-compatible",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f",
+        "model": "doubao-seed-2.0-pro-cloud",
+        "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1"
+      },
+      "updatedAt": "2026-10-07T01:00:00.000Z",
+      "tokenSource": "migration"
+    },
+    "sapaicore": {
+      "settings": {
+ 
+[5] 两个 run 脚本的关键差异
+  == run_cline_script.sh
+4:# 执行器: cline / zhulong (由 CLI_AGENT 环境变量控制)
+16:# 加载 .env 配置（含 CLI_AGENT 等变量）
+23:export CLI_AGENT=${CLI_AGENT:-cline}
+130:    print_info "执行器: $CLI_AGENT"
+290:    print_info "[Step 3] 启动 ${CLI_AGENT} 批量处理..."
+292:    check_file "$CLI_SCRIPT" "${CLI_AGENT} 执行脚本" || exit 1
+301:    print_success "${CLI_AGENT} 批量处理完成"
+347:    print_info "[Step 7] 拷贝 ${CLI_AGENT} trace..."
+355:    if [[ "$CLI_AGENT" == "zhulong" ]]; then
+  == run_zhulong_script.sh
+4:# 执行器: cline / zhulong (由 CLI_AGENT 环境变量控制)
+16:# 加载 .env 配置（含 CLI_AGENT 等变量）
+26:export CLI_AGENT=${CLI_AGENT:-zhulong}
+135:    print_info "执行器: $CLI_AGENT"
+295:    print_info "[Step 3] 启动 ${CLI_AGENT} 批量处理..."
+297:    check_file "$CLI_SCRIPT" "${CLI_AGENT} 执行脚本" || exit 1
+306:    print_success "${CLI_AGENT} 批量处理完成"
+352:    print_info "[Step 7] 拷贝 ${CLI_AGENT} trace..."
+360:    if [[ "$CLI_AGENT" == "zhulong" ]]; then
+=== DONE 115 ===
+```
