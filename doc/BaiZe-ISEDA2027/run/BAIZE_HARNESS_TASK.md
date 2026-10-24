@@ -78,63 +78,9 @@ docker pull hello-world          # 必须成功
 
 
 
-### 🆕 运维指令 · 2026-10-23 22:1x（**用 `http_proxy` 装 `npm install -g`，装完退回无代理环境**）· 用户直令 · 最高优先
-
-> 用户原话：「Harness: harness 想要 npm install -g 需要使用 http_proxy, 地址跟 https_proxy一样，但要小心这个代理会让agent无法访问大模型API，因此需要开新的环境，设置环境变量，安装后，退回到没有http_proxy的环境。」
-
-**① 取代理值（只读，不改）**
-- `echo "$https_proxy"`（或 `$HTTPS_PROXY`）→ **`http_proxy` 用它同一个地址**；记下原文（形如 `http://172.19.92.23:13128`）。
-
-**② 在「独立环境」里装（关键：🚫 污染 agent 自身环境）**
-- 🚫 **禁止**在 `~/.bashrc` / `/etc/profile` / 当前 loop 的 parent shell 里 `export http_proxy`（会让 cline/harness 自身的 LLM API 调用被代理 → 直接 403/超时/静默失败）。
-- 正确做法（任选，推荐 A）：
-  - **A（单命令隔离，首选）**：`env http_proxy="<同https_proxy>" https_proxy="<同>" NO_PROXY="10.129.32.75,localhost,127.0.0.1" npm install -g <pkg>`
-  - **B（子 shell）**：`bash -c 'export http_proxy=... https_proxy=... NO_PROXY=...; npm install -g <pkg>'`（子 shell 退出后环境自动恢复）
-  - **C（npm 原生参数，零环境变量）**：`npm install -g --proxy "<同>" --https-proxy "<同>" <pkg>`
-- 若用了 `npm config set proxy/https-proxy`（临时手段），**装完必须 `npm config delete proxy && npm config delete https-proxy`**，并 `cat ~/.npmrc` 复核**不留 proxy 行**。
-
-**③ 装完立刻「回到无代理环境」并验证**
-- 在**不带** `http_proxy/https_proxy` 的新 shell 里验证（`env | grep -i proxy` 只应剩 loop 原有的 `https_proxy`，**不应有 `http_proxy`**）：
-  - `npm ls -g --depth=0 | grep -E 'codex|claude'`
-  - `codex --version` / `claude --version`（或该包官方二进制名）
-- 再各跑 1 次**最小 smoke**（`--version` 之外的一次真实调用，例如 `codex --help` + 一次 API 往返），**必须证明 LLM API 仍可访问**（HTTP 200 / 正常响应）。
-
-**④ 门据推进**
-- 目标：把 gate 从 **5/7 → 6/7 或 7/7**（缺的正是 `codex` + `claude-code`，此前均为 `npm install -g` 超时）。
-- 逐个修、逐个验证、逐个写进 gate 表（每修好 1 个就 commit 一次，前缀 `harness`）。
-- **达到 ≥6/7 ⇒ 按既有计划启动 7×89 pilot**（每轮回报 pass/run 数），并回报门据变化；未达标只报 blocker（附 npm 报错原文 ≤20 行）。
-- 同一包装失败 **≤2 次**，超过就换 C 方案（`--proxy` 参数）或报 blocker，🚫 死磕烧时间。
-
-**⑤ 纪律**：🚫 不改上游 harness 源码；🚫 不把代理写进任何持久化配置；装完必须回到「无 `http_proxy`」的状态并在回复里贴 `env | grep -i proxy` 的原文为证。
-
-### 🔧 运维指令 · 2026-10-23（**分阶段落盘：逐 harness 写报告，每段 ≤2500 token**）· 用户直令 · 最高优先
-
-> 已确认你在「读源码分析」阶段干活正常，但 3600s 内完不成「7 个 harness 全部分析 + 写整份报告」→ 每轮超时、未落盘内容丢失。**必须分阶段落盘，禁止一口气写整份报告。**
-
-1. **逐 harness 推进**：按 `cline → codex → hermes-agent → opencode → claude-code → deepseek-harness → pi` 顺序，**一次只分析 1 个 harness**。
-2. **每分析完 1 个 harness 立即落盘**：把该 harness 的「压缩策略 / 触发阈值 / 保留策略 / 缺陷 + 代码证据(文件:行)」写成一段 HTML，**立即 append 写入** `reports/report_harness_context_compression_7way_zh.html`（或先写 `reports/_ctx_comp/<harness>.md` 中间件，最后合并）。
-3. **每段 ≤ 2500 token（≈1800 汉字）**，控制篇幅；写完一个 harness **立即 commit/push**，再开始下一个。
-4. 🚫 **禁止**一次性生成 7 个 harness 的分析文本再写文件（这正是超时根因）。
-5. 7 个全写完后，最后合并出「对比总表 + TL;DR + 结论」。
-
-commit 前缀 `harness hb:`。
-
-### 🆕 运维指令 · 2026-10-23（📄 **比较 7 个 harness 的上下文压缩机制 → 中文 HTML 报告**）· 用户直令 · 最高优先
-
-> 用户原话：「给 harness 下任务：看代码 /nas_train/app.e0031982/harness 比较7个harness的上下文压缩机制，写成html中文报告。」
-
-**① 任务（H-B 源码分析，只读，不跑评测/不占 GPU）**
-- 目标目录：`/nas_train/app.e0031982/harness/`（只读参考，🚫 勿改上游代码）。
-- 7 个 harness（对应 TB 横评 7 路）：`cline` / `codex` / `hermes-agent` / `opencode` / `claude-code` / `deepseek-harness` / `pi`。
-- 主题：**上下文压缩机制（context compaction / compression）**——包括但不限于：摘要(summarization)、截断(truncation)、token budget 管理、auto-compact 触发条件与阈值、压缩后保留/丢弃策略、历史消息折叠、工具调用轨迹裁剪、崩溃/超时恢复。**每条结论贴 `文件:行号` 原文证据，不许猜。**
-
-**② 输出（中文自包含 HTML）**
-- 文件：`reports/report_harness_context_compression_7way_zh.html`（内联样式，无外链/无脚本）。
-- 结构：TL;DR → **对比总表**（每 harness 一行：压缩策略 / 触发阈值 / 保留策略 / 缺陷）→ 逐 harness 详述（带代码证据）→ **结合本项目教训**（我们 harness cline 的 Auto-compacting 超时问题）→ 总结与建议。
-- commit 前缀 `harness hb:`。
-
-**③ 纪律**：只读源码、不跑评测、不占 GPU；报告数字/结论可溯源 `文件:行`；MEMORY/任务书 ≤32KB 自滚归档。
-
+### 📦 §运维指令·2026-10-23 22:1x（npm install -g 代理安装）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：Gate 7/7 已达成(R466)，codex+claude-code 均已 npm install -g 成功。需要时再读。
+### 📦 §运维指令·2026-10-23（分阶段落盘写报告）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：H-B 7way 上下文压缩报告已分阶段落盘并交付。需要时再读。
+### 📦 §运维指令·2026-10-23（📄 比较7个harness上下文压缩机制→HTML报告）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：report_harness_context_compression_7way_zh.html 已交付。需要时再读。
 ### 📦 运维指令 · 2026-10-19 23:1x（🔪 P0：kill .12 双 loop + R457 hermes plugin fix 详述）— 已归档 → ARCHIVE_OPERATOR_HARNESS.md（2026-10-23 R460 归档）
 ### 📦 运维指令 · 2026-10-18 10:2x（修 .29 ops 中继 P0）+ 2026-10-18（7×5 pilot 推进）— 已归档
 
