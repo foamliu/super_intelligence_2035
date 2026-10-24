@@ -1,6 +1,6 @@
 ﻿# OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 155 -->
+<!-- RUN_ID: 156 -->
 
 > **鐢ㄦ硶**锛氭妸鍛戒护鍐欒繘涓嬮潰鐨?```bash 鍧?鈫?鎶?`RUN_ID` 鍔?1 鈫?`git push`銆?
 > 涓户锛坄ops_relay.sh`锛夎疆璇㈠埌 `RUN_ID` 澧炲ぇ鍚庢墽琛岋紝缁撴灉杩藉姞鍒?`ops/outbox.md`锛堝彧澧炰笉鏀癸級銆?
@@ -29,11 +29,46 @@
 > > 鎶?`inbox_cmd_block()` 鏀规垚鎸夋渶鏂?RUN_ID 鍙栧潡锛屼緥濡?
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`銆?
 
+## RUN_ID 156 — 📦 补探 2：把 `text/` 14.9TB 拆成 5 源 / en_v1_4 / staging，回答"够不够放 5 源"
+
+> 155 结果：所有分词产物**平铺在一个目录** `/nas_train/app.e0031982/datasets/baize-data/text`，整目录 **14,897 GB ≈ 14.9TB**（含 en_v1_4 6.8T + 5 源 + staging），而 `/nas_env` 只剩 **10.52TB** ⇒ 整目录搬不下。用户只问 **MiniCPM5 5 源**（约 3.86–3.98TB），本块把子集拆出来单独量。**纯只读**。
+
+```bash
+set -u
+echo "=== RUN_ID 156 | split text/ by source | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_train/app.e0031982/datasets/baize-data/text
+echo
+echo "[1] 顶层条目"
+ls -la "$D" 2>/dev/null | head -25
+echo
+echo "[2] *.bin 按前缀分组（count）"
+timeout 120 find "$D" -maxdepth 6 -name '*.bin' -printf '%f\n' 2>/dev/null | sed -E 's/[._-]?[0-9]+\.bin$//' | sort | uniq -c | sort -rn | head -25
+echo
+echo "[3] 各子目录体积（顶层目录，逐个 du）"
+for d in "$D"/*/; do
+  [ -d "$d" ] || continue
+  b=$(timeout 120 du -sb "$d" 2>/dev/null | awk '{print $1}'); [ -n "${b:-}" ] || b=0
+  printf "  %9.1f GB  %s\n" "$(awk -v x="$b" 'BEGIN{print x/1e9}')" "$d"
+done
+echo
+echo "[4] 5 源候选（按名）合计"
+for pat in 'full_ultradata_code_l3' 'full_ultradata_math_l3' 'full_ultradata_code_l2' 'full_ufw_l3' 'full_ultradata_math_l1'; do
+  n=$(find "$D" -maxdepth 6 -name "*.bin" -path "*${pat}*" 2>/dev/null | wc -l)
+  s=$(find "$D" -maxdepth 6 -name "*.bin" -path "*${pat}*" -printf '%s\n' 2>/dev/null | awk '{t+=$1} END{printf "%.1f", t/1e9}')
+  printf "  %-24s bin=%-4s %8s GB\n" "$pat" "$n" "${s:-0}"
+done
+echo
+echo "[5] /nas_env 余量"
+df -h /nas_env 2>/dev/null | tail -1
+echo "  avail_TB=$(awk -v b="$(df -B1 --output=avail /nas_env 2>/dev/null | tail -1 | tr -d ' ')" 'BEGIN{printf "%.2f", b/1e12}')"
+echo "=== DONE 156 ==="
+```
+
 ## RUN_ID 155 — 📦 补探：定位 5 源分词产物的**真实目录**并量体积（RUN_ID 154 未找到 `full_*`）
 
 > 154 的教训：`/nas_train/app.e0031982/code/Baize-ISEDA2027/data` 下**没有** `full_*` 目录 ⇒ 产物路径已变。本块改为**按 `*.bin` 分布反查目录**，再对候选目录做有界 `du`。**纯只读**。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 155 | locate 5-source tokenized dirs + size | $(date '+%F %T') | host=$(hostname) ==="
 echo
