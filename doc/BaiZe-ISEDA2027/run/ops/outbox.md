@@ -16470,3 +16470,135 @@ Filesystem                     Size  Used Avail Use% Mounted on
 10.239.23.31:/vol_CTE0_data01  207T  178T   30T  86% /nas_train
 === DONE 150 ===
 ```
+
+---
+
+## RUN_ID 151 · 2026-10-24 11:08:12 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 151 | pretrain probe-2 (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+REPO=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$REPO/doc/BaiZe-ISEDA2027/run
+echo
+echo "[1] GPU（若 round2b 在跑，应有 util>0 或 compute app）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader 2>/dev/null | head -10
+echo
+echo "[2] round2b / perf 相关进程与日志"
+pgrep -af 'baize_perf|torchrun|baize_xmodel' | cut -c1-170 | head -15
+ls -l --time-style=+%F' '%T /tmp/baize_perf_r2b_runner.log /tmp/baize_perf_r2_loop.log 2>/dev/null
+echo "  --- r2b_runner tail ---"
+tail -n 15 /tmp/baize_perf_r2b_runner.log 2>/dev/null | cut -c1-200
+echo "  --- r2_loop tail ---"
+tail -n 10 /tmp/baize_perf_r2_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[3] 近 1 小时 run/ 下新增的 perf 脚本与日志"
+find "$R" -maxdepth 2 -name '*perf*' -newermt '-90 minutes' 2>/dev/null | head -10
+ls -lt --time-style=+%F' '%T "$R"/*.sh 2>/dev/null | head -5 | cut -c1-170
+echo
+echo "[4] 关键进程树（loop / pi / cline / 挂住的 git add / round2b）"
+ps -o pid,ppid,stat,etime,pcpu,cmd -p 1294147,328936,919926,919933,920049,2802077 2>/dev/null | cut -c1-180
+echo
+echo "[5] cline checkpoint 临时文件"
+ls -lt --time-style=+%F' '%T /tmp/cline-checkpoint-* 2>/dev/null | head -5
+echo
+echo "[6] index.lock / 多进程 git 争用"
+ls -l --time-style=+%F' '%T "$REPO/.git/index.lock" 2>/dev/null || echo "  no index.lock"
+echo "  git 进程数: $(pgrep -cf '^git ' 2>/dev/null || echo 0)"
+pgrep -af 'git .*add|git .*commit|git .*checkout' | cut -c1-150 | head -6
+echo
+echo "[7] 当前 loop 的日志到底在哪（找 10-24 有写入的 loop 日志）"
+ls -lt --time-style=+%F' '%T /tmp/*loop*.log 2>/dev/null | head -6 | cut -c1-170
+echo
+echo "[8] MEMORY/TASK mtime（是否仍停在 08:33/08:49）"
+ls -l --time-style=+%F' '%T "$R/MEMORY_PRETRAIN_2B.md" "$R/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+echo
+echo "[9] 仓库改动面（是否有大量未提交实验产物在拖慢 git）"
+git -C "$REPO" status --porcelain 2>/dev/null | head -12
+echo "  待提交条目数=$(git -C "$REPO" status --porcelain 2>/dev/null | wc -l)"
+echo "=== DONE 151 ==="
+```
+
+**输出**
+```
+=== RUN_ID 151 | pretrain probe-2 (READ-ONLY) | 2026-10-24 11:08:12 | host=whag0pgpuap29 ===
+
+[1] GPU（若 round2b 在跑，应有 util>0 或 compute app）
+0, 0 %, 0 MiB
+1, 0 %, 0 MiB
+2, 0 %, 0 MiB
+3, 0 %, 0 MiB
+4, 0 %, 0 MiB
+5, 0 %, 0 MiB
+6, 0 %, 0 MiB
+7, 0 %, 0 MiB
+
+[2] round2b / perf 相关进程与日志
+2802077 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2b.sh
+-rw-r--r-- 1 app.e0031982 app.adm  0 2026-10-24 11:04:57 /tmp/baize_perf_r2b_runner.log
+-rw-r--r-- 1 app.e0031982 app.adm 56 2026-10-24 10:29:47 /tmp/baize_perf_r2_loop.log
+  --- r2b_runner tail ---
+  --- r2_loop tail ---
+SUM=/tmp/baize_perf_r2/summary.txt R=/tmp/baize_perf_r2
+
+[3] 近 1 小时 run/ 下新增的 perf 脚本与日志
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2.sh
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2b.sh
+-rwxr-x--- 1 app.e0031982 app.adm 6294 2026-10-24 11:04:45 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2b.sh
+-rwxr-x--- 1 app.e0031982 app.adm 5844 2026-10-24 09:44:57 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2.sh
+-rwxr-x--- 1 app.e0031982 app.adm 5216 2026-10-23 23:31:01 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim.sh
+-rwxr-xr-x 1 app.e0031982 app.adm 3051 2026-10-23 18:14:13 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/run_qwen35_ctx_extended.sh
+-rwxr-xr-x 1 app.e0031982 app.adm 3297 2026-10-23 18:09:17 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/run_qwen35_all_ctx_v2.sh
+
+[4] 关键进程树（loop / pi / cline / 挂住的 git add / round2b）
+    PID    PPID STAT     ELAPSED %CPU CMD
+ 328936 1294147 Sl      20:58:40  0.1 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provider cloud --
+ 919926 2585867 Sl         29:18  0.0 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -
+ 919933  919926 Sl         29:18  1.5 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-
+ 920049 2751345 R          29:16 99.9 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run add --force --pathspec-from-file /tmp/cline-checkpoint-l0S
+1294147       1 Ss    7-18:57:48  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+2802077       1 S          03:15  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_perf_optim_round2b.sh
+
+[5] cline checkpoint 临时文件
+/tmp/cline-checkpoint-l0SU20:
+total 4
+-rw-r----- 1 app.e0031982 app.adm   0 2026-10-24 10:38:56 index.lock
+-rw-r----- 1 app.e0031982 app.adm 926 2026-10-24 10:38:56 pathspec
+
+
+[6] index.lock / 多进程 git 争用
+  no index.lock
+  git 进程数: 1
+328936 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p --provider cloud --m
+919926 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m
+919933 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-I
+920049 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run add --force --pathspec-from-file /tmp/cline-checkpoint-l0SU
+
+[7] 当前 loop 的日志到底在哪（找 10-24 有写入的 loop 日志）
+-rw-r----- 1 app.e0031982 app.adm 1713683 2026-10-24 10:38:53 /tmp/baize_harness_loop.log
+-rw-r--r-- 1 app.e0031982 app.adm      56 2026-10-24 10:29:47 /tmp/baize_perf_r2_loop.log
+-rw-r----- 1 app.e0031982 app.adm  329604 2026-10-23 14:09:32 /tmp/baize_pretrain_loop.log
+-rw-r----- 1 app.e0031982 app.adm    1019 2026-10-15 23:58:40 /tmp/pipe_loop.log
+
+[8] MEMORY/TASK mtime（是否仍停在 08:33/08:49）
+-rw-r----- 1 app.e0031982 app.adm 30136 2026-10-24 08:49:33 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md
+-rw-r----- 1 app.e0031982 app.adm 28917 2026-10-24 11:08:12 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+
+[9] 仓库改动面（是否有大量未提交实验产物在拖慢 git）
+ M doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+ M doc/BaiZe-ISEDA2027/run/daily-memories/2026-10-24.md
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+?? doc/BaiZe-ISEDA2027/run/5245/
+?? doc/BaiZe-ISEDA2027/run/7343/
+?? doc/BaiZe-ISEDA2027/run/9441/
+?? doc/BaiZe-ISEDA2027/run/baize_p8_eval_14.sh
+?? doc/BaiZe-ISEDA2027/run/baize_p8_intermediate_collect.py
+?? doc/BaiZe-ISEDA2027/run/baize_p8_intermediate_cs8.sh
+?? doc/BaiZe-ISEDA2027/run/baize_p8_intermediate_cs8_simple.sh
+?? doc/BaiZe-ISEDA2027/run/baize_p8_intermediate_cs8_v2.sh
+  待提交条目数=21
+=== DONE 151 ===
+```
