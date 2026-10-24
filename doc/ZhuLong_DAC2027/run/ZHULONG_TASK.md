@@ -6,6 +6,12 @@
 > 🚫 不要恢复 `\enlargethispage`、不要删 `\Bbbk` 护栏；若重编译，必须复核以上 4 条，不达标就回退。
 > ④ **构建告警已清零**（`main.log` 无 Overfull/Underfull/Font shape；`bibtex` 仅剩 `pu2024rag` 缺页码——数据缺失，**不可编造**）：arXiv 条目改 `@misc{}+eprint/archivePrefix`（bst 原生支持，渲染为 `arXiv:XXXX`），`thrun2005probabilistic` 补 `address={Cambridge, MA, USA}`，并加 `\emergencystretch=1.5em` / `\raggedbottom` / 姓名断字。🚫 **不要把这些条目改回 `@article`**（会重新产生 12 条 bibtex 告警）。
 
+### 📊 报告 · 2026-10-24 20:2x（**cline vs zhulong CLI 在 full 配置下的差异归因**）· 用户直令
+> 交付物：`reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（16KB，7 节，自包含无外链）。
+> 核心：**86.8±1.6%（cline）vs 75.6±4.4%（zhulong CLI）= −11.2pp**，其中 **≈8.9pp（80%）来自"未生成代码（literal-pass）"**、**≈2.2pp（20%）来自条件通过率**；r3–r5 条件通过率 89.6/87.7/89.3% 已与 cline ≈88% 持平。
+> **下一步（优先）**：修 literal-pass —— ① 提交前硬校验（非空 `.py`；**禁止以字符串 `pass` 作为最终答案**）；② 跑前自检 MCP `timeout=600` 与 `autoApprove` 工具名（不一致直接拒跑）。**验收判据：单轮 gen-fail ≤5/158**（当前 12–27）。
+
+
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 ### 📐 引用修正令 · 2026-10-24 15:4x（**Lemma→Claim + 新增 Delage&Mannor 2010 用在"模型失配是真实问题"**）· 用户确认 · 最高优先

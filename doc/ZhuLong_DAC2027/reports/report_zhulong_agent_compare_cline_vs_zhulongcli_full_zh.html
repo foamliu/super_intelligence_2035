@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>ZhuLong 消融：cline 与 zhulong CLI 在 full 配置下的分数差异归因（2026-10-24）</title>
+<style>
+  :root{--fg:#1f2328;--muted:#57606a;--line:#d0d7de;--bg:#fff;--soft:#f6f8fa;--warn:#fff8c5;--bad:#ffebe9;--good:#dafbe1;--blue:#ddf4ff}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px 20px 64px;background:var(--bg);color:var(--fg);
+       font:15px/1.75 -apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",Helvetica,Arial,sans-serif}
+  main{max-width:1040px;margin:0 auto}
+  h1{font-size:26px;line-height:1.3;margin:0 0 6px}
+  h2{font-size:19px;margin:34px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 8px}
+  .meta{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .kbox{border:1px solid var(--line);background:var(--blue);border-radius:8px;padding:14px 16px;margin:16px 0}
+  .warn{border:1px solid #d4a72c;background:var(--warn);border-radius:8px;padding:12px 14px;margin:14px 0}
+  .bad{border:1px solid #ff8182;background:var(--bad);border-radius:8px;padding:12px 14px;margin:14px 0}
+  .good{border:1px solid #4ac26b;background:var(--good);border-radius:8px;padding:12px 14px;margin:14px 0}
+  table{border-collapse:collapse;width:100%;margin:12px 0 8px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:13px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:13px;line-height:1.5}
+  .sm{font-size:13px;color:var(--muted)}
+  ul,ol{padding-left:22px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>cline 与 zhulong CLI 在 <code>full</code> 配置下的分数差异：证据与归因</h1>
+<div class="meta">
+  对象：ZhuLong EDA-Scripting-Bench（PyAether 切片，158 题）· glm-5.3-flash · READBACK=full · 各 5 轮<br>
+  生成时间：2026-10-24 20:xx ｜ 依据：zhulong 线 MEMORY / daily-memories / zhulong_results.md 的落盘记录
+</div>
+
+<div class="kbox">
+  <b>一句话结论：差距主要不是"模型/框架能力"造成的，而是"约 12% 的题目根本没生成代码"。</b><br>
+  两轮同为 glm-5.3-flash、同为 <code>full</code> 回读、同为 158 题 PyAether 切片，唯一设计变量是 CLI agent
+  （<b>cline 3.0.51</b> vs <b>zhulong CLI</b>）。5-run 均值 <b>86.8 ± 1.6%</b> vs <b>75.6 ± 4.4%</b>（<b>−11.2pp</b>）。
+  定量分解后：<b>≈8.9pp（约 80%）来自"未生成代码（literal-pass）"</b>，<b>≈2.2pp（约 20%）来自"生成后的条件通过率略低"</b>。
+  而条件通过率在 5 轮里有 3 轮（89.6% / 87.7% / 89.3%）已与 cline（≈88%）持平 —— 说明这批轨迹的"质量"并不差，
+  <b>差的是"有没有跑完并落下 .py"</b>。
+</div>
+
+<h2>1. 口径核对：这是不是一次公平对比？</h2>
+<table>
+  <tr><th>维度</th><th>cline 线（B.glm-5.3-flash / F 臂）</th><th>zhulong CLI 线（ZL-flash full）</th><th>是否一致</th></tr>
+  <tr><td>主干 LLM</td><td>glm-5.3-flash（@ /v1, maxTokens=8192）</td><td>glm-5.3-flash（@ /v1, maxTokens=16384, reasoning=off）</td><td>模型相同；<b>maxTokens 不同</b></td></tr>
+  <tr><td>框架</td><td>pyAether MCP 4 工具（search_apis / search_apis_by_keyword / get_api_details / run_code）</td><td>同左</td><td>✅</td></tr>
+  <tr><td>回读档</td><td>READBACK=full</td><td>READBACK=full</td><td>✅</td></tr>
+  <tr><td>评测集</td><td>PyAether 158 题</td><td>PyAether 158 题</td><td>✅</td></tr>
+  <tr><td>轮数 / 并发</td><td>5 轮 / -p 4</td><td>5 轮 / -p 4</td><td>✅</td></tr>
+
+<h2>2. 原始分数：逐轮对照</h2>
+<table>
+  <tr>
+    <th>轮次</th>
+    <th class="num">zhulong CLI：pass</th><th class="num">通过率</th>
+    <th class="num">生成失败(lp)</th><th class="num">生成成功</th><th class="num">条件通过率*</th>
+    <th>batch</th>
+  </tr>
+  <tr><td>r1</td><td class="num">109/158</td><td class="num">69.0%</td><td class="num">16</td><td class="num">142</td><td class="num">76.8%</td><td><code>2026_1023_103036</code></td></tr>
+  <tr><td>r2</td><td class="num">122/158</td><td class="num">77.2%</td><td class="num">16</td><td class="num">142</td><td class="num">85.9%</td><td><code>2026_1023_125220</code></td></tr>
+  <tr><td>r3</td><td class="num">121/158</td><td class="num">76.6%</td><td class="num">23</td><td class="num">135</td><td class="num">89.6%</td><td><code>2026_1023_155612</code></td></tr>
+  <tr><td>r4</td><td class="num">128/158</td><td class="num">81.0%</td><td class="num">12</td><td class="num">146</td><td class="num">87.7%</td><td><code>2026_1023_183402</code></td></tr>
+  <tr><td>r5</td><td class="num">117/158</td><td class="num">74.1%</td><td class="num">27</td><td class="num">131</td><td class="num">89.3%</td><td><code>2026_1023_203835</code></td></tr>
+  <tr><th>均值</th><th class="num">119.4/158</th><th class="num">75.6%</th><th class="num">18.8</th><th class="num">139.2</th><th class="num">85.9%</th><th>std=4.4</th></tr>
+</table>
+<p class="sm">* 条件通过率 = 通过数 ÷ 生成成功数，即"只要落了 .py，有多少通过"。</p>
+
+<table>
+  <tr><th>对照臂</th><th class="num">r1</th><th class="num">r2</th><th class="num">r3</th><th class="num">r4</th><th class="num">r5</th><th class="num">5-run 均值</th><th class="num">生成失败</th></tr>
+  <tr><td>cline（B.glm-5.3-flash，full）</td><td class="num">86.1</td><td class="num">84.8</td><td class="num">89.2</td><td class="num">87.3</td><td class="num">86.7</td><td class="num">86.8 ± 1.6</td><td class="num">约 1–4/轮</td></tr>
+  <tr><td>zhulong CLI（full）</td><td class="num">69.0</td><td class="num">77.2</td><td class="num">76.6</td><td class="num">81.0</td><td class="num">74.1</td><td class="num">75.6 ± 4.4</td><td class="num">12–27/轮</td></tr>
+  <tr><th>差值</th><th class="num">−17.1</th><th class="num">−7.6</th><th class="num">−12.6</th><th class="num">−6.3</th><th class="num">−12.6</th><th class="num"><b>−11.2</b></th><th class="num">+15~+25</th></tr>
+</table>
+
+<div class="bad">
+<b>表格里最刺眼的一列是"生成失败"</b>：cline 每轮 1–4 题没有产出代码，zhulong CLI 是 <b>12–27 题</b>（均值 18.8，占 11.9%）。
+在 Pass@1 口径下，没产出 .py = 直接判失败，与"模型会不会做"无关。
+</div>
+
+<h2>3. 差距的定量分解</h2>
+<p>设生成成功数 <i>G</i>、条件通过率 <i>p</i>，则 pass = <i>G</i>·<i>p</i>。</p>
+<table>
+  <tr><th>项</th><th class="num">zhulong CLI</th><th class="num">cline</th><th>说明</th></tr>
+  <tr><td>平均生成成功 G</td><td class="num">139.2 / 158（88.1%）</td><td class="num">≈155.6 / 158（98.5%）</td><td>cline 取 r1 实测 154 ok + 其余轮 ~1–4 fail 估</td></tr>
+  <tr><td>平均条件通过率 p</td><td class="num">85.9%</td><td class="num">≈88.1%</td><td>由 86.8% × 158 / 155.6 反推</td></tr>
+  <tr><td><b>① 生成失败造成的损失</b></td><td class="num" colspan="2"><b>(155.6 − 139.2) × 85.9% ÷ 158 ≈ 8.9pp</b></td><td>把"没生成"补成 cline 的水平、质量保持不变</td></tr>
+  <tr><td><b>② 条件质量造成的损失</b></td><td class="num" colspan="2"><b>155.6 × (88.1% − 85.9%) ÷ 158 ≈ 2.2pp</b></td><td>生成齐了之后，轨迹质量的差距</td></tr>
+  <tr><th>合计</th><th class="num" colspan="2"><b>≈ 11.1pp ≈ 实测 11.2pp</b></th><th>分解闭合，误差 &lt;0.2pp</th></tr>
+</table>
+<div class="good">
+<b>结论：80% 的差距是"没跑完/没落盘"，20% 是"跑完了但轨迹略差"。</b>
+而且 ② 这一项在 r3/r4/r5 三轮已经几乎消失（条件通过率 89.6% / 87.7% / 89.3%，与 cline 的 ≈88% 同量级）。
+</div>
+
+  <tr><td>CLI agent</td><td>cline 3.0.51（@cline/core 0.0.71）</td><td>zhulong CLI（<code>CLI_AGENT=zhulong</code>）</td><td><b>唯一设计变量</b></td></tr>
+</table>
+<p class="sm">
+  说明：<code>86.8±1.6</code> 为 B.glm-5.3-flash 复测 5-run 的 PyAether 列均值（zhulong_results.md「Phase B」表）；
+  <code>75.6±4.4</code> 为 ZL-flash full 5-run 的 PyAether 158 题口径。两者同切片、同题数，可直接比。
+</p>
+
+<h2>4. 机制：什么是 literal-pass，为什么 zhulong CLI 会掉进去</h2>
+
+<h3>4.1 直接证据：失败条目里写的是字符串 "pass"</h3>
+<p>zhulong 线 2026-10-23 02:24 的心跳对当时批次的 codegen 输出做了逐条核查：</p>
+<pre>completed_code_generation_2026_1023_002456.jsonl
+status = {success: 142, fail: 16}
+16 个 fail 条目的 completion 全 = 'pass'（comp_len = 4）   ← literal-pass 退化签名</pre>
+<p>即：这些题 agent 没有写代码，而是把 <code>pass</code> 当作"最终答案"交上去了。最终 5 轮的同类失败数为
+r1=16、r2=16、r3=23、r4=12、r5=27（r5 心跳明确写"27 fail = literal-pass / 无 .py"）。</p>
+
+<h3>4.2 已排除的解释（同批心跳做过交叉验证）</h3>
+<table>
+  <tr><th>候选解释</th><th>实测</th><th>判定</th></tr>
+  <tr><td>沙盒执行超时（sandbox-timeout）</td><td>各轮均为 <b>0</b></td><td>排除</td></tr>
+  <tr><td>MCP 工具超时风暴（-32001）</td><td>r1 全程 48 次（≈0.6/min，远低于 5/min 停手阈值）；r5 仅 11 次</td><td>排除"风暴"，但存在零星工具超时</td></tr>
+  <tr><td>执行错误（exec_err）</td><td>各轮 <b>0</b></td><td>排除</td></tr>
+  <tr><td>.py 落盘率低（管线丢文件）</td><td>r1 142/158=89.9%、r5 131/158=82.9%；cline r1 为 154/158=97.5%</td><td>落盘率差异即 literal-pass 差异本身</td></tr>
+</table>
+
+<h3>4.3 配置层面的可疑点（有记录，非推测）</h3>
+<ul>
+  <li><b>MCP 超时只配到了 cline、没配到 zhulong</b>：2026-10-23 10:4x 的记录写明
+    「<code>~/.zhulong/settings/cline_mcp_settings.json</code> <b>缺 <code>timeout:600</code></b>（会回退 60s → -32001 风暴），
+    且 <code>autoApprove</code> 用的是旧工具名 <code>run_pyAether_code_tool</code>」→ 已补 600s 并改为新工具名。
+    修复前，<code>run_code</code> 这类长调用极易在 60s 被掐断或等待人工批准；</li>
+  <li><b>autoApprove 工具名不匹配</b>的后果很直接：调 <code>run_code</code> 得不到自动放行 → 拿不到回读 →
+    "看起来做完了" → 交 <code>pass</code>。与 literal-pass 形态高度一致；</li>
+  <li><b>maxTokens 不同</b>：cline 线 8192，zhulong 线 providers.json 为 16384。它不直接解释"0 长度输出"，
+    但会改变长脚本的截断行为，补证时应一并核对。</li>
+</ul>
+<div class="warn">
+<b>时间线要读准：</b>最终采用的 5 轮批次是 10:30 / 12:52 / 15:56 / 18:34 / 20:38，而 settings 修复在 <b>10:4x</b>。
+因此 r1（10:30 起跑）很可能仍带旧设置，r2–r5 才是修复后。这与"条件通过率 r1 最低（76.8%）、r3–r5 追平 cline"的走势一致，
+但<b>目前只是时间相关，尚不能作为因果定论</b>——需要逐题 trace 才能把"配置 → 工具失败 → 交 pass"这条链坐实。
+</div>
+
+<h2>5. 轨迹层面的已知观测</h2>
+<table>
+  <tr><th>观测</th><th>zhulong CLI</th><th>cline</th><th>来源</th></tr>
+  <tr><td>单轮耗时 / 落盘</td><td>r5 ≈ 3627s（1h4min，131 .py）</td><td>r1 ≈ 42min（154 .py）</td><td>daily-2026-10-23 §22:04；daily-2026-10-18 §16:22</td></tr>
+  <tr><td>工具调用规模（采样）</td><td>r1 T+40min：<code>run_code=1355 / search_apis=502</code>（92 dirs，≈14.7 次 run_code/任务）</td><td>3 分钟采样：search_apis 29 / get_api_details 29 / run_code 21</td><td>口径不同，仅作量级参考</td></tr>
+  <tr><td>MCP -32001</td><td>r1 48 次、r2 32 次、r5 11 次</td><td>未单独统计</td><td>daily-2026-10-23 心跳</td></tr>
+  <tr><td>判据十三（timeout≤10 / infra 0 / exec_err 0）</td><td>5 轮全部"有效"</td><td>有效</td><td>各轮收口记录</td></tr>
+</table>
+<p class="sm">两边"工具调用量"口径不同（累计日志行数 vs 3 分钟采样），<b>不能直接相减</b>，仅说明两边都在大量调用工具、不是空转。</p>
+
+
+<h2>6. 还缺哪一块证据（以及怎么补）</h2>
+<div class="warn">
+要诚实说明：<b>逐题 trace 的原始文件在 26.15 评测机</b>（<code>/nasdata/app.e0031982/eda_code_eval/&lt;batch&gt;</code>），
+<code>.29</code>/<code>.12</code> 上<b>没有该挂载</b>（ops RUN_ID 166/167/168 实测），也 ssh 不通。
+所以本报告的证据级别是<b>"分数 + 生成状态 + 心跳统计"</b>，还没到"逐条工具调用时间线"。
+</div>
+<table>
+  <tr><th>待补证据</th><th>用途</th><th>获取方式</th></tr>
+  <tr><td>两批 158×2 题的 <code>completed_code_generation_*.jsonl</code></td><td>确认 literal-pass 是"同一批难题"还是"随机掉"（若集中在同几题，则是难度效应而非 agent 缺陷）</td><td>26.15 导出为 TSV 提交仓库</td></tr>
+  <tr><td>逐题 trace（工具调用序列 / turn 数 / token 数）</td><td>把"配置 → 工具失败 → 交 pass"链条坐实；量出 zhulong CLI 的提前终止点</td><td>同上，按差异题抽样 20 题</td></tr>
+  <tr><td>两批的 <code>run_*_script.sh</code> / <code>providers.json</code> / MCP settings 快照</td><td>确认 maxTokens / timeout / autoApprove 的真实生效值</td><td>同上</td></tr>
+</table>
+
+<h2>7. 结论与行动项</h2>
+<ol>
+  <li><b>不要把 −11.2pp 解读成"zhulong CLI 能力差"。</b>按条件通过率算，两边只差 ≈2.2pp；差的主要是"没产出代码"。</li>
+  <li><b>优先修 literal-pass</b>（预计回收 ≈9pp）：agent 侧加硬校验——提交前必须有非空 <code>.py</code>，
+      且**不得以字符串 <code>pass</code> 作为最终答案**；同时把 MCP <code>timeout=600</code> 与 <code>autoApprove</code> 工具名做<b>启动自检</b>（不一致直接拒跑）。</li>
+  <li><b>再谈质量</b>（≈2pp）：r3–r5 的条件通过率已与 cline 持平，说明模型+框架没问题，不必急着换模型或改 prompt。</li>
+  <li><b>口径建议</b>：以后同时报 <code>pass/158</code> 与 <code>pass/gen_ok</code>，
+      否则"生成失败"会伪装成"能力下降"，把结论带偏。</li>
+  <li><b>可复现性</b>：若要写进论文，必须把 26.15 上两批 trace 归档进仓库（当前 git 里只有汇总数字）。</li>
+</ol>
+
+<h2>附录：数据来源（可逐条核对）</h2>
+<table>
+  <tr><th>#</th><th>数据</th><th>出处</th></tr>
+  <tr><td>1</td><td>ZL-flash full 5 轮的 pass / batch / literal-pass / 75.6±4.4 收口</td><td><code>run/daily-memories/2026-10-23.md</code> §[22:04] 表（69.0/16、77.2/16、76.6/23、81.0/12、74.1/27）</td></tr>
+  <tr><td>2</td><td>16 个 fail 条目 completion = "pass"（comp_len=4）</td><td><code>run/daily-memories/2026-10-23.md</code> §[02:24]「literal-pass=16 &gt;10 STOP 阈值」</td></tr>
+  <tr><td>3</td><td>zhulong MCP settings 缺 timeout / autoApprove 旧工具名</td><td><code>run/daily-memories/2026-10-23.md</code> 顶部第 5 条（10:4x 修复记录）</td></tr>
+  <tr><td>4</td><td>cline B.glm-5.3-flash 5/5 = 86.8±1.6；r1 <code>统计: 成功[157]/失败[1]</code>、<code>136/158 (86.1%)</code></td><td><code>zhulong_results.md</code>「Phase B / B.glm-5.3-flash」；<code>run/daily-memories/2026-10-18.md</code> §[16:22]/§[17:34]</td></tr>
+  <tr><td>5</td><td>CLI / 回读 / maxTokens 口径</td><td><code>run/MEMORY_ZHULONG.md</code> CONFIG 行；<code>zhulong_results.md</code> 头部（Cline-CLI 3.0.51 / core 0.0.71）</td></tr>
+  <tr><td>6</td><td>26.15 不可达（本机无 /nasdata、ssh 不通）</td><td>ops RUN_ID 166（.12）/ 167（.29）/ 168（候选 IP 探测）的 outbox 记录</td></tr>
+</table>
+
+<p class="sm" style="margin-top:26px">
+  本报告为单一 HTML 自包含文件（无外链、无脚本）。数字均来自上表出处；凡属推断（如 cline 其余轮的生成失败数、条件通过率的反推）均已标注"≈"。
+</p>
+
+</main>
+</body>
+</html>
+
