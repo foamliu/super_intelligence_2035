@@ -1,9 +1,36 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 173 | TARGET: 29 -->
-## RUN_ID 173 — 🔍 只读：20:5x 全面快照（双机训练 / data code_l2 / harness）
+<!-- RUN_ID: 174 | TARGET: 29 -->
+## RUN_ID 174 — 🔍 只读：21:0x 快照（NCCL 排障进展 / data 尾段 / harness）
 
 ```bash
+set -u
+echo "=== RUN_ID 174 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 双机 GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] pretrain launcher 进程"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-105 | head -3 || echo '  none(.29)'
+
+echo "[3] agent 最新判断（loop 日志尾 12 行，去 ANSI）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 1600 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -12 | cut -c1-150' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[4] data：code_l2"
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+a=$(du -sb "$D" 2>/dev/null | cut -f1); echo "  $(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB  bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-95 | head -2 || echo "   no rsync"' 2>/dev/null || true
+df -h /nas_env | tail -1
+
+echo "[5] harness 计数"
+for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; printf "  %-24s %s/87\n" "$(basename "$d")" "$(find "$d" -name result.json 2>/dev/null | wc -l)"; done 2>/dev/null | head -8
+echo "=== DONE 174 ==="
+```
+
+## RUN_ID 173 — 🔍 只读：20:5x 全面快照（双机训练 / data code_l2 / harness）
+
+```text
 set -u
 echo "=== RUN_ID 173 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
 
