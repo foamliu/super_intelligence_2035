@@ -1,6 +1,17 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### ✅ 运维实测 · 2026-10-24 21:45（**2-rank NCCL 已打通 ⇒ 16 卡失败根因 = 缺 NCCL 环境变量**）· 用户授权手工排障 · 最高优先
+> 手工最小复现（`/nas_train/app.e0031982/nccl_dbg/tc.py`，2 rank × 1 卡 × 20 步 all_reduce）**全部通过**：
+> `iter 0..19 ok` · **`busbw ≈ 46.3 GB/s`** · `Connected all rings, use ring PXN 0 GDR 1`（**GPUDirect RDMA 生效**）· 两端 `Destroy COMPLETE`。
+> **必须照抄到双机 launcher 的「主 + 从」两侧环境**（缺一个都可能 hang）：
+> `NCCL_IB_GID_INDEX=3  NCCL_IB_MTU=4096  NCCL_IB_TC=106  NCCL_IB_TIMEOUT=22`
+> ⚠️ **不要**设 `NCCL_SOCKET_IFNAME`（会与管理网 `bond0` 冲突）；`MASTER_ADDR` 用 **`10.239.2.12`**（bond0，两机互通已验证）。
+> 现场事实：`.12` 有 10 个 MTU=4096 的 ACTIVE RoCE 口；`.29` 同集合但 **`mlx5_7`/`mlx5_15` 是 PORT_DOWN**——若手工指定 `NCCL_IB_HCA`，两侧都要排除它们（不指定则 NCCL 自动跳过）。
+> **下一步（立即）**：把上面 4 个变量加进 `run_dualnode_16gpu.sh` 的**主从两侧**，重跑 e18 口径 16 卡（MBS3 + FP8 TW + CG，GBS=1008，80 步），回报：聚合 tok/s、线性扩展效率（÷2×305098）、每卡 tok/s、loss 与单机 e18 的一致性。
+> 🚫 不要再在未加这 4 个变量的情况下起 16 卡（前两次 hang 就是这个原因）。
+
+
 ### 🧪 运维令 · 2026-10-24 21:0x（**双机 NCCL 卡在 worker 初始化 → 停盲目重试，按最小复现定位**）· 用户直令 · 最高优先
 > 事实（RUN_ID 171/172/173 实测）：20:08 与 20:23 两次双机起训**都挂在 `NCCL init`**——master 首个 ALLREDUCE 等 600s 超时（`last completed: -1`），worker **从未 enqueue 任何 NCCL 工作**，日志只到 `Connected all rings/trees`、**没有 `Init COMPLETE`**。清理后 16 卡已空闲。
 > **本轮动作（按序，不得跳步）**：
