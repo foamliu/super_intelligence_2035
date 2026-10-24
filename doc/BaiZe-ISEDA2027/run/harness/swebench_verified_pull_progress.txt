@@ -1,2 +1,9 @@
 [swebench-pull] started 2026-10-24 19:20:32
 [swebench-pull] total=500 list=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_image_list.txt
+[swebench-pull] [1/500] OK astropy__astropy-12907 pulled=1 failed=0 skipped=0
+[swebench-pull] [2/500] OK astropy__astropy-13033 pulled=2 failed=0 skipped=0
+[swebench-pull] [3/500] OK astropy__astropy-13236 pulled=3 failed=0 skipped=0
+[swebench-pull] [4/500] OK astropy__astropy-13398 pulled=4 failed=0 skipped=0
+[swebench-pull] [5/500] OK astropy__astropy-13453 pulled=5 failed=0 skipped=0
+[swebench-pull] [6/500] OK astropy__astropy-13579 pulled=6 failed=0 skipped=0
+[swebench-pull] [7/500] OK astropy__astropy-13977 pulled=7 failed=0 skipped=0

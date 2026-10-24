@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~2.7h elapsed) + SWE-bench Verified 镜像后台下载启动(R480). 两线并列.
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480,75/500 manifest)·下载脚本+后台启动✅(R480)
-当前动作:     R480: ①TB 7×87 并发仍在跑(16:21启动,~2.7h,7 harbor alive). ②SWE-bench Verified 500 题镜像: 查清命名(swebench/sweb.eval.x86_64.<id_1776>:latest)+去重体积估算(75/500 manifest 实测:85.3%层共享,raw 86GB/75张,dedup 12GB/75张,外推500张dedup~30-60GB,磁盘6.3TB充足). ③🔴发现真正瓶颈=Docker Hub 匿名限速 100 manifest请求/小时/共享IP(203.127.181.131,当前Remaining=0);docker pull遇429立即失败. ④写限速下载脚本(swebench_verified_pull.sh,429退避300s,串行,TB感知pause)+后台启动(PID 1199724,当前在429退避等窗口滑动). ⑤交付体积估算报告+估算脚本+镜像清单.
-下一步:       ①继续监控 TB 7×89(预计~3h,快完成)收集结果→McNemar报告 ②监控 SWE-bench 下载进度(pull_progress.txt),窗口滑动后开始成功拉取(~50张/小时,ETA 12-18h) ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评 ④若需加速下载:考虑国内镜像加速器(daocloud)或Docker Hub登录
-阻塞:         无. TB 在跑; SWE-bench 下载受 Docker Hub 限速(100 manifest/h,共享IP),预计 12-18h 拉完全部 500 张(磁盘/带宽不是瓶颈).
+PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~4.1h elapsed) + SWE-bench Verified 后台下载进行中(4/500 pulled). 两线并列.
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480)·下载脚本+后台启动✅(R480)·TASK归档✅(R481,09:2x+09:0x→ARCHIVE)
+当前动作:     R481: 两条线并列监控. ①TB 7×87 并发~4.1h(16:21起),7 harbor alive(PID 536814-578125). 已完成: cline-patched 20/87(10 pass=50%), opencode 19/87(10 pass=52.6%), pi 20/87(10 pass=50%), codex 14/87(6 pass=42.9%), claude-code 8/87(0 pass=0%), hermes 36/87(0 pass=0%), deepseek-harness 37/87(0 pass=0%). ⚠️ hermes/deepseek 快但 0% pass(疑似快速空提交); claude-code 慢且 0%. ②SWE-bench Verified 下载: 4/500 pulled(astropy 4张), 脚本 PID 1199724 运行中, 限速窗口已滑动(首张429退避8×300s后成功). /data 剩余 6424GB, Docker Root=/data/docker, 116 images. ③TASK归档: 09:2x+09:0x 块移入ARCHIVE(TASK 35KB→29KB).
+下一步:       ①TB 预计还需~4-8h(慢harness),完成后收集全量结果→McNemar配对报告(中文HTML) ②SWE-bench 下载持续(~50张/h,ETA 10-15h),监控pull_progress.txt ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评 ④归档已完成的R480流水
+阻塞:         无. TB 在跑(慢harness拖长); SWE-bench 下载受 Docker Hub 匿名限速(100 manifest/h,共享IP 203.127.181.131),~50张/h,ETA 10-15h.
 ERROR_COUNT:  0
-📦 体积：TASK=34KB / MEMORY=18KB
+📦 体积：TASK=29KB / MEMORY=19KB（归档 ~5KB → ARCHIVE_OPERATOR_HARNESS.md）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -153,6 +153,8 @@ ERROR_COUNT:  0
 - v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
 
 ### 本唤醒流水
+[20:33] R481 **双线并列监控+TASK归档**. ①TB 7×87 并发~4.1h(16:21起),7 harbor alive. 实测完成进度(verify reward.txt): cline-patched 20/87(10P=50%), opencode 19/87(10P=52.6%), pi 20/87(10P=50%), codex 14/87(6P=42.9%), claude-code 8/87(0P=0%), hermes 36/87(0P=0%), deepseek-harness 37/87(0P=0%). ⚠️hermes/deepseek 快但全 fail(疑似快速空提交),claude-code 慢且全 fail. ②SWE-bench Verified 下载: 4/500 pulled(astropy 4张),脚本PID 1199724运行中,限速窗口已滑动(首张429退避8×300s=40min后成功,后续3张连续成功). /data 6424GB free,Docker Root=/data/docker,116 images. ③TASK归档: 09:2x+09:0x两块原文移入ARCHIVE_OPERATOR_HARNESS.md(留指针),TASK 35KB→29KB. ④sg docker -c 可用(无需sudo). ⑤体积:TASK=29KB/MEMORY=19KB. WAITING=1.
+
 [19:20] R480 **SWE-bench Verified 镜像下载启动(后台)+体积估算交付**. ①TB 7×87 并发仍在跑(16:21启动,~2.7h,7 harbor alive,load 7.6). ②查清 SWE-bench Verified 镜像命名=swebench/sweb.eval.x86_64.<instance_id,__→_1776_>:latest(swebench harness expected_image/namespace=swebench;实测 docker manifest inspect OK). ③去重体积估算: 抓 75/500 manifest(受 Docker Hub 限速,见下),实测 85.3% 层共享,raw 86.1GB/75张,dedup 12.0GB/75张,单张 avg 1.15GB,外推500张 raw~575GB/dedup~30-60GB. 磁盘 /data 6.3TB free → 充足. ④🔴关键发现: Docker Hub 匿名限速 Ratelimit-Limit=100;w=3600(100 manifest请求/1h滑动窗口),出口IP=203.127.181.131(92.25代理共享),当前 Remaining=0. layer 下载不计入限速(TB 89张2.5h拉完=吻合). docker pull 遇 429 立即失败(daemon不重试). ⑤写限速下载脚本 swebench_verified_pull.sh(429→退避300s×15次,串行,TB在跑pause 5s,批间查磁盘<50GB暂停,幂等跳过已存在)+后台启动(PID 1199724,当前 429 退避中,等窗口滑动). ⑥交付: swebench_verified_volume_estimate.txt(报告)+estimate.py(脚本)+manifests.json(75缓存)+image_list.txt(500清单)+pull.sh(下载脚本). ⑦体积: TASK=34KB(>32KB目标但<40KB红线,3个活跃运维块不可归档)/MEMORY=18KB. WAITING=1.
 
 [16:25] R479 **v2串行已kill+7x89并发已启动(7-way concurrent, 609 trials)**. ①Auto-transition timed out (60min, only 87/89). ②Updated v2 partial results: cline-patched 0/15, codex 6/15 PASS, hermes 0/15, opencode 6/15 PASS (13/15 completed, 5 AgentTimeoutError). ③Killed v2 serial (PID 1068001) + gw_proxy + all leftover containers. ④Modified _full_7x89_concurrent_launcher.sh: skip missing images (filtered dataset of 87 tasks, not hard-exit). ⑤Launched 7x89 concurrent at 16:21: 7 harnesses × 87 tasks = 609 trials, 7-way concurrent. All 7 harbor processes alive (PIDs 536814-578125), 7 Docker containers running. cline-patched TB_API_KEY fix verified (agent setting up, no RuntimeError). gw_proxy healthy on 9090/9091. ⑥Resources: 224 CPUs, 2TB RAM, load 9.15, 92% CPU idle — ample. ⑦2 images still pulling in background (mteb-leaderboard, mteb-retrieve). ⑧Volume: TASK=32KB/MEMORY=17KB. WAITING=1.

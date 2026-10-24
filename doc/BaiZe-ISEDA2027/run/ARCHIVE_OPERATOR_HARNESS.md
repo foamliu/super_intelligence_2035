@@ -1224,3 +1224,79 @@ commit 前缀 `harness hb:`。
 **③ 纪律**：只读源码、不跑评测、不占 GPU；报告数字/结论可溯源 `文件:行`；MEMORY/任务书 ≤32KB 自滚归档。
 
 ---ARCHIVE BOUNDARY 2026-10-24 R475---
+
+### 🔴 补充令 · 2026-10-24 09:2x（**用户提供关键线索：同事已通过 92.25 代理成功拉过 Docker 镜像；备选 92.23**）· 用户直令 · 最高优先
+
+> 用户原话：「另外**有同事通过 92.25 代理成功拉取过 docker 镜像**，另外可能得代理则是 92.23」。
+> **这直接推翻"MITM proxy blocks Docker Hub pull = 不可解"的结论** —— 之前 09:0x 令里的"阻塞"是**没配 dockerd 代理**造成的，不是网络不可达。
+
+**① 优先级重排（这几条比 7 并发更重要，先做）**
+
+| 优先 | 任务 |
+|:--:|---|
+| **P0** | **查清 15 个镜像的来源**（是 pull 来的还是 `docker load` 来的？`docker images` + `docker history` + 创建时间） |
+| **P0** | **查 `dockerd` 是否配了代理**：`systemctl show docker --property=Environment`、`/etc/systemd/system/docker.service.d/*.conf`、`/etc/docker/daemon.json` |
+| **P0** | **实测 `docker pull` 当前能否通**（用最小镜像 `hello-world` 试，贴**完整报错原文**） |
+| **P1** | **按用户线索给 dockerd 配代理并验证**：先试 **`http://172.19.92.25:13128`**，不通再试 **`http://172.19.92.23:13128`** |
+| **P1** | 通了之后 **pull 剩余 74 个镜像**（先查体积 + Docker Root Dir 剩余空间） |
+| **P2** | 再谈 **7 并发**（09:0x 令已下发，镜像补齐后再切并发才有意义） |
+
+**② dockerd 配代理的标准做法（按此执行，注意风险）**
+```bash
+# 1) 建 drop-in 配置（不直接改 docker.service）
+sudo mkdir -p /etc/systemd/system/docker.service.d
+sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf > /dev/null <<'EOF'
+[Service]
+Environment="HTTP_PROXY=http://172.19.92.25:13128"
+Environment="HTTPS_PROXY=http://172.19.92.25:13128"
+Environment="NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,172.19.0.0/16"
+EOF
+
+# 2) 重载并重启（⚠️ 会短暂中断 docker，先确认没有正在跑的容器/评测）
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+# 3) 验证
+sudo systemctl show docker --property=Environment | tr ' ' '\n' | grep -i proxy
+docker pull hello-world          # 必须成功
+```
+- ⚠️ **重启 docker 会杀掉所有运行中容器** → **必须先确认 harness 的 7×15 v2（R473）是否在跑**；若在跑，**等它跑完或先记录进度再重启**，不许直接打断。
+- ⚠️ 若 `docker.service` 被 systemd drop-in 忽略（有的发行版要用 `daemon.json` 的 `proxies` 字段），**两种方式都试并贴出哪种生效**。
+- ⚠️ **92.25 不通就换 92.23**；两个都不通再报阻塞（附两次的完整报错）。
+
+**③ 验证通过后：补齐镜像**
+1. `docker images` 现有 15 个 + Terminal-Bench 89 题对应镜像：**列出缺哪 74 个**（取 task 的 Dockerfile / image 名）。
+2. 查体积：**总下载量 + 按 layer digest 去重后的实际量**（很多题共享 base layer，别被"89 倍"吓到）。
+3. 查 `docker info | grep 'Docker Root Dir'` + `df -h <该目录>`：**镜像落本地盘不是 NFS**，空间不够就先报，别拉一半撑爆。
+4. **分批 pull**（每批 10 个，批间查剩余空间），失败的重试 2 次后记录。
+5. **补满后**：7×89 才真正可跑，此时再切 7 并发。
+
+**④ 回报**：15 个镜像来源 / dockerd 代理配置前后对比 / `hello-world` pull 结果 / 缺的 74 个清单 + 体积 / Docker Root Dir 剩余空间 / 补齐进度。
+
+### 🔴 运维指令 · 2026-10-24 09:0x（**改成 7 并发跑（对齐 SWE-bench 做法）+ 回答"为何只有 15 题"**）· 用户直令 · 最高优先
+
+> 用户原话：「harness：让他起**7 并发**评测（以前 SWE-bench 就是 7 并发），另外为啥 7×15，terminal bench 只有 15 道题吗？」
+
+**① 立即回答（先答，写在 MEMORY 顶部，不许绕）**
+- **Terminal-Bench 一共多少题？** 贴出数据集实际条数（`ls` tasks 目录 / 读 dataset 文件），并说明 **89 是不是全量**。
+- **为什么只有 15 题参与？** 现在 MEMORY 里写的是「**15/89 task images only（MITM proxy blocks Docker Hub pull）**」——请核实并明确回答：
+  - 是**本地只有 15 个镜像**（其余 74 个拉不下来）？还是**任务集本身只有 15 题**？
+  - **能不能把剩下 74 个镜像拉下来？**（MITM proxy 挡 Docker Hub → 有没有替代源、离线 tar、或允许走代理 `docker pull` 的路径）—— 给出**可行/不可行 + 具体办法 + 预计耗时**。
+  - 这是**当前最大的口径限制**，报告里必须写清"15/89 非全量"。
+
+**② 改成 7 并发（用户明确要求）**
+- 当前是**串行**（7 harness × 15 tasks 串行，ETA ~17h）。
+- 改为 **7 并发**：**每个 harness 一个并发槽**（7 个 harness 同时跑，各自 15 题内部按需串行或再并行）。
+  - 若 harbor 支持 `--parallel` / `--jobs` / `--max-workers`，**设 7**；
+  - 若 harness 之间要隔离（端口/工作目录/容器），**务必做到互不干扰**：各自独立 `--jobs-dir`（**必须放 `/tmp`，不要 NFS**，R473 已踩过 Stale handle）、独立端口、独立 trace 目录。
+- **执行前先做 30 秒资源评估**：7 并发同时跑 Terminal-Bench 容器，**CPU/内存/磁盘 IO 是否够**（每容器可能吃 2-4 核 + 数 GB）。不够就降到 N（给依据），**不要盲目开 7 导致全部 OOM/timeout**。
+- **口径声明**：7 并发会引入资源竞争，**结果需注明"7-way concurrent"，与之前串行结果不可直接比**；若某 harness 因竞争超时，在报告里单独标注。
+
+**③ 预期收益**：ETA 从 ~17h 压到 **~2.5-3h**（7 harness 并行，每 harness 15 题 × ~10min ≈ 2.5h）。
+
+**④ 纪律**
+- 🚫 不 kill v2（若已跑出部分结果，先让它跑完或记录已完成部分，再切 7 并发）
+- ✅ 切换后必须报：并发数 / 每 harness 的 jobs-dir / 端口分配 / 前 10 分钟资源占用
+- ✅ 报告里必须同时给出：**每 harness 逐题结果 + 汇总 + McNemar 配对检验 + "15/89 非全量"声明**
+
+---ARCHIVE BOUNDARY 2026-10-24 R481---
