@@ -1,13 +1,38 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 162 -->
+<!-- RUN_ID: 163 | TARGET: 29 -->
+## RUN_ID 163 — 🧪 验证 TARGET 投递（**只投 `.29`**）+ 顺带看 pretrain
+
+> 本块 **只应由 `whag0pgpuap29` 执行**。若 outbox 里出现 `host=whag0pgpuap12` 的同号记录 ⇒ v2 的 TARGET 解析没生效。
+
+```bash
+set -u
+echo "=== RUN_ID 163 | TARGET:29 dispatch test | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+TAG=$(hostname | sed -n 's/.*\([0-9][0-9]\)$/\1/p')
+echo "[1] TAG=$TAG (期望 29)"
+
+echo "[2] 中继进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep ops_relay | grep -v grep | cut -c1-120
+
+echo "[3] 每机 state"
+for f in "$R/run/ops"/.last_run_id*; do [ -f "$f" ] && echo "  $(basename "$f") = $(cat "$f")"; done
+
+echo "[4] pretrain loop / 训练进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_pretrain_loop|torchrun|pretrain_launcher' | grep -v grep | cut -c1-130 | head -4 || echo '  NONE'
+echo "[5] MEMORY mtime"; ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" | cut -c1-110
+
+echo "[6] 本机 GPU"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "=== DONE 163 ==="
+```
+
 ## RUN_ID 162 — 🔀 切换到双机中继 v2（**每台一个中继 + 按机器投递**）· 两台机都执行
 
 > 用户令（2026-10-24 19:3x）：「保留两个 ops 中继，每台服务器一个，下任务时指定机器」
 > 现状问题：v1 两台共用 `ops/.last_run_id` ⇒ 同一 RUN_ID **会被两台机各执行一次**（今天 160 就是双执行，把两台机的 pretrain loop 各重启了一遍）。
 > 本块做**无缝切换**：写一个 switcher 到共享 NFS，在本机与对端各 `setsid` 拉起 → `sleep 6` 后 **种子新 state**（`ops/.last_run_id.<TAG>`）→ 起 `ops_relay_v2.sh` → 确认新中继在跑后再杀 v1。
 
-```bash
+```text
 set -u
 RID=162
 G=/nas_train/app.e0031982/code/super_intelligence_2035
