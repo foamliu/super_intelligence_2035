@@ -18494,3 +18494,49 @@ echo "=== DONE 167 ==="
 [4] 本机是否有别的 eval 根
 === DONE 167 ===
 ```
+
+---
+
+## RUN_ID 168 · 2026-10-24 20:01:16 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 168 | reach 26.15 eval host | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 直接试几个候选 IP 的 22/8090"
+for ip in 10.129.26.15 10.129.32.75 10.239.26.15 10.239.32.75; do
+  r=$(timeout 4 bash -c "exec 3<>/dev/tcp/$ip/22" 2>/dev/null && echo ssh-open || echo ssh-closed)
+  m=$(timeout 4 bash -c "exec 3<>/dev/tcp/$ip/8090" 2>/dev/null && echo mcp-open || echo mcp-closed)
+  echo "  $ip : $r / $m"
+done
+
+echo "[2] ssh 配置与已知主机里的线索"
+sed -n '1,40p' ~/.ssh/config 2>/dev/null | grep -v -i 'private' | head -20 || echo '  no ~/.ssh/config'
+grep -o -E '10\.[0-9]+\.[0-9]+\.[0-9]+' ~/.ssh/known_hosts 2>/dev/null | sort -u | head -12 || echo '  no known_hosts'
+grep -i -E '26\.15|32\.75|eda' /etc/hosts 2>/dev/null | head -5 || true
+
+echo "[3] 从 .12 侧试（它跑过 eval，可能通）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 "for ip in 10.129.26.15 10.129.32.75; do (timeout 4 bash -c \"exec 3<>/dev/tcp/\$ip/22\" 2>/dev/null && echo \"  \$ip ssh-open\" || echo \"  \$ip ssh-closed\"); done; ls -d /nasdata 2>/dev/null || echo '  .12 no /nasdata'; grep -i -E 'nasdata' /etc/fstab 2>/dev/null | head -3" 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[4] 本地是否有该批次的任何副本"
+timeout 25 find /nas_train/app.e0031982 -maxdepth 4 -type d -name '2026_10*' 2>/dev/null | head -8 || true
+echo "=== DONE 168 ==="
+```
+
+**输出**
+```
+=== RUN_ID 168 | reach 26.15 eval host | 2026-10-24 20:01:16 | host=whag0pgpuap29 ===
+[1] 直接试几个候选 IP 的 22/8090
+  10.129.26.15 : ssh-closed / mcp-closed
+  10.129.32.75 : ssh-closed / mcp-closed
+  10.239.26.15 : ssh-closed / mcp-closed
+  10.239.32.75 : ssh-closed / mcp-closed
+[2] ssh 配置与已知主机里的线索
+[3] 从 .12 侧试（它跑过 eval，可能通）
+  10.129.26.15 ssh-closed
+  10.129.32.75 ssh-closed
+  .12 no /nasdata
+[4] 本地是否有该批次的任何副本
+=== DONE 168 ===
+```
