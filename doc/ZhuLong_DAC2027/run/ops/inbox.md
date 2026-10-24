@@ -1,8 +1,65 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 119 -->
-## RUN_ID 119 — 🔎 只读：读 cline 的 **glm 时代备份**（`providers.json.bak.maxTokens8192`）拿到精确基准值
+<!-- RUN_ID: 120 -->
+## RUN_ID 120 — 🛠 用户直令：把 zhulong 的 `maxTokens` 对齐成 cline 的 **8192**（改前备份 + 打印 diff）
 
 ```bash
+set -u
+echo "=== RUN_ID 120 | align zhulong maxTokens -> 8192 | $(date '+%F %T') | host=$(hostname) ==="
+Z="$HOME/.zhulong/settings/providers.json"
+
+echo "[1] 改前"
+python3 - "$Z" <<'PY'
+import json,sys
+s=json.load(open(sys.argv[1]))["providers"]["openai-compatible"]["settings"]
+print(f"  model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')}")
+PY
+
+echo "[2] 备份 + 改 maxTokens=8192（其余字段一字不动）"
+BAK="$Z.bak.$(date +%Y%m%d_%H%M)"
+cp -a "$Z" "$BAK" && echo "  backup -> $BAK"
+python3 - "$Z" <<'PY'
+import json,sys
+p=sys.argv[1]
+d=json.load(open(p))
+s=d["providers"]["openai-compatible"]["settings"]
+s["maxTokens"]=8192
+json.dump(d,open(p,"w"),ensure_ascii=False,indent=2)
+print("  written")
+PY
+
+echo "[3] 改后 + JSON 合法性"
+python3 - "$Z" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+s=d["providers"]["openai-compatible"]["settings"]
+print(f"  model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')}")
+print("  JSON OK")
+PY
+
+echo "[4] 与 cline glm 时代基准的逐字段对照"
+python3 - "$HOME/.cline/data/settings/providers.json" "$Z" <<'PY'
+import json,sys
+a=json.load(open(sys.argv[1]))["providers"]["openai-compatible"]["settings"]
+b=json.load(open(sys.argv[2]))["providers"]["openai-compatible"]["settings"]
+keys=["maxTokens","baseUrl","reasoning"]
+print("  field        cline_now                 zhulong_now")
+for k in keys:
+    print(f"  {k:12s} {str(a.get(k)):25s} {str(b.get(k))}")
+print("  注：model 按实验设计不同（cline 当前是 deepseek-v4-pro 那批；本轮 zhulong 仍用 glm-5.3-flash）")
+PY
+
+echo "[5] MCP settings 仍一致？"
+python3 - "$HOME/.cline/data/settings/cline_mcp_settings.json" "$HOME/.zhulong/settings/cline_mcp_settings.json" <<'PY'
+import json,sys
+a=json.load(open(sys.argv[1])); b=json.load(open(sys.argv[2]))
+print("  identical:", a==b)
+PY
+echo "=== DONE 120 ==="
+```
+
+## RUN_ID 119 — 🔎 只读：读 cline 的 **glm 时代备份**（`providers.json.bak.maxTokens8192`）拿到精确基准值
+
+```text
 set -u
 echo "=== RUN_ID 119 | cline glm-era baseline | $(date '+%F %T') | host=$(hostname) ==="
 B="$HOME/.cline/data/settings/providers.json.bak.maxTokens8192"
