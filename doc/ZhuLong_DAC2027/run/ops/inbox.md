@@ -1,8 +1,43 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 120 -->
-## RUN_ID 120 — 🛠 用户直令：把 zhulong 的 `maxTokens` 对齐成 cline 的 **8192**（改前备份 + 打印 diff）
+<!-- RUN_ID: 121 -->
+## RUN_ID 121 — ▶️ 用户直令：配置已对齐，**立即起 zhulong 的 r1**（full / glm-5.3-flash / maxTokens=8192）
 
 ```bash
+set -u
+echo "=== RUN_ID 121 | launch zhulong r1 (aligned config) | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+LOG=/tmp/ABL_glm-5.3-flash_zl_realign_r1.log
+
+echo "[0] 护栏：确认没有其它 eval 在跑"
+pgrep -af 'run_zhulong_script|run_cline_script|run_eval.py' | cut -c1-110 | head -4 || echo '  none -> safe'
+if pgrep -f 'run_zhulong_script|run_cline_script' >/dev/null 2>&1; then echo '  ABORT: 已有评测在跑'; exit 0; fi
+
+echo "[1] 配置复核（必须 maxTokens=8192 + glm-5.3-flash + READBACK=full）"
+python3 - "$HOME/.zhulong/settings/providers.json" <<'PY'
+import json,sys
+s=json.load(open(sys.argv[1]))["providers"]["openai-compatible"]["settings"]
+print(f"  model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')}")
+PY
+grep -E '^EDA_RUNCODE_READBACK|^CLI_AGENT' "$D/.env" | sed 's/^/  /'
+
+echo "[2] 起 r1"
+cd "$D" || exit 1
+CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid -f nohup bash scripts/run_zhulong_script.sh -p 4 -n > "$LOG" 2>&1 < /dev/null
+sleep 20
+PID=$(pgrep -f 'run_zhulong_script.sh' | head -1)
+echo "  PID=${PID:-NONE}"
+
+echo "[3] 60s 后健康检查"
+sleep 40
+ps -o pid=,etimes=,stat=,args= -p "${PID:-0}" 2>/dev/null | cut -c1-120 || echo '  process gone!'
+grep -aE '执行器|CLI_AGENT|model|batch|ERROR|Traceback' "$LOG" 2>/dev/null | head -8 | cut -c1-150
+ls -1dt /nasdata/app.e0031982/eda_code_eval/2026_* 2>/dev/null | head -2
+echo "=== DONE 121 ==="
+```
+
+## RUN_ID 120 — 🛠 用户直令：把 zhulong 的 `maxTokens` 对齐成 cline 的 **8192**（改前备份 + 打印 diff）
+
+```text
 set -u
 echo "=== RUN_ID 120 | align zhulong maxTokens -> 8192 | $(date '+%F %T') | host=$(hostname) ==="
 Z="$HOME/.zhulong/settings/providers.json"
