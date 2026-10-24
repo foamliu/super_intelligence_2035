@@ -1,6 +1,25 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+### 📝 任务令 · 2026-10-24 23:0x（**以 DAC 标准审稿 + 出改稿方案（中文 HTML）**）· 用户直令 · 与 5-run 并行
+> 用户原话：「仔细审视当前论文，距离 DAC 这种顶会的要求还有差距。提出改进意见，写成报告……内容要详实有物，以提升论文质量为目标。」
+> **执行方式（重要）**：
+> 1. **与 5-run 并行**：实验照跑、每轮照常 regrade 记录；本任务在**等待实验的空档**推进，不要为了写报告停实验。
+> 2. **可用 cimi search 调研**：它已作为 MCP 工具挂到你的 opencode 上（见 `RUN_ID 128` 的配置说明）；用它查 DAC/ICCAD 同类论文的写作范式、相关工作、benchmark 现状、统计检验惯例等。**引用要给出处（标题/年份/链接）**。
+> 3. **若某个改进点值得立刻验证**（例如补一个关键对照），**可以打断正在跑的 rN**，但必须：先落盘已完成产物 → 在 MEMORY 记「为验证 X 主动中断 rN」→ 记录被中断轮的 pass/gen-fail（可 regrade）→ 再补跑。
+> **交付物**：`reports/report_zhulong_dac_readiness_review_zh.html`（单文件自包含中文 HTML，无外链 CDN、无 `<script>`）。
+> **报告必须覆盖（逐节，缺一不可）**：
+> - ① **总体判断**：当前稿在 DAC 主会处于什么档位（弱/边缘/可接受/强），依据是"审稿人最可能给的 3 条主要意见"；
+> - ② **创新性与定位**：与 3–5 篇最接近的工作（EDA agent / code agent / agent harness）逐项对比，回答"为什么必须发在 DAC 而不是软件工程会议"；
+> - ③ **证据强度**：现有 5-run 消融（Phase B 5 臂 / C1 5 臂 / S1 3 臂 / S2 4 臂）× 449 题，**逐臂核对论文表 3/表 4 是否与 `zhulong_results.md` 一致**；缺 **置信区间/McNemar/多重比较校正** 的地方要指出并给公式与做法；
+> - ④ **实验缺口清单**（最重要）：按"补了能提升多少可信度"排序，每条给：缺什么 → 为什么审稿人会问 → **最小可行实验设计**（臂数/轮数/题量/指标/预计 GPU·h）→ 若已跑过则给数据位置；
+> - ⑤ **写作与呈现**：逐节挑刺（摘要是否给出可复现数字、Related Work 是否只有 6 条、图 1 是否自解释、表 3/4 是否过密、术语是否统一、`claim` vs `theorem` 的措辞是否站得住）；
+> - ⑥ **可复现与伦理**：artifact/代码/数据可得性、anonymity、LLM 使用声明、benchmark 泄漏风险；
+> - ⑦ **改稿路线图**：P0（投稿前必须做）/P1（能显著加分）/P2（有时间再做），每条给预计工作量与依赖。
+> **纪律**：每个批评都要**锚定证据**（论文节号/表号/页码 或 实验数据文件名+行号）；**推测必须标"推测"**；不得编造文献与数字；中文 HTML，页内可有表格但不是 md。
+> **已知事实（可直接引用，不用重新调研）**：论文现状 7 页（正文 6 + refs 1）、0 LaTeX 告警；cline vs zhulong-CLI 同模型 full 对比 = **86.8±1.6% vs 75.6±4.4%**，其中 **≈80% 差距来自"未生成代码(literal-pass)"**（见 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`）；配置混杂已于 22:23 对齐（`maxTokens 16384→8192`，MCP 两侧逐字节相同）。
+
+
 ### ✅ 配置已对齐（22:23 运维执行，**不要再改**）· 直接起 5-run
 > 实测三方对照（RUN_ID 119）：`cline 10-17 备份(glm 时代)=maxTokens 8192 / baseUrl /v1 / reasoning false`；`zhulong 原值=16384 / /v1 / false` ⇒ **唯一差异 = maxTokens**。
 > 已执行（RUN_ID 120）：`~/.zhulong/settings/providers.json` 的 **`maxTokens: 16384 → 8192`**，备份 `providers.json.bak.20261024_2223`；`model=glm-5.3-flash`、`baseUrl=http://agi-gateway.cxmt.com/v1`、`reasoning.enabled=false` **保持不变**；MCP settings 与 cline **逐字节相同**（`identical: True`）。
