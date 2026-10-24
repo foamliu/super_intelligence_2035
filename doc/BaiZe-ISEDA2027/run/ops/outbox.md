@@ -19734,3 +19734,84 @@ total 4
   total=284/609
 === DONE 182 ===
 ```
+
+---
+
+## RUN_ID 183 · 2026-10-24 23:44:36 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 183 | dual-node launcher inspection | $(date '+%F %T') | host=$(hostname) ==="
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo "[1] 仓库根目录里的双机脚本"
+ls -lt "$G"/*.sh 2>/dev/null | head -10 | awk '{print $6,$7,$8,$9}'
+echo "  -- grep dual/16gpu --"
+grep -l -E 'nnodes|dualnode|16gpu' "$G"/*.sh 2>/dev/null | head -6
+
+echo "[2] launcher 关键行（env / torchrun / 日志路径）"
+F=$(grep -l -E 'nnodes=2|nnodes 2|dualnode' "$G"/*.sh 2>/dev/null | head -1)
+echo "  F=$F"
+[ -n "${F:-}" ] && { wc -l "$F"; grep -nE 'NCCL|torchrun|nnodes|nproc|master_addr|MASTER|log|tee|set -e|exit' "$F" | head -24 | cut -c1-150; }
+
+echo "[3] 最近一次双机运行的日志（/tmp 与 workdir）"
+ls -lt /tmp/baize_dualnode* /tmp/*dualnode* 2>/dev/null | head -8
+for f in /tmp/baize_dualnode_16gpu/*.log /tmp/baize_dualnode_16gpu_run.log; do
+  [ -f "$f" ] && { echo "  == $f ($(wc -c < "$f") B, $(date -r "$f" '+%H:%M'))"; tail -12 "$f" | tr -d '\033' | cut -c1-160; }
+done
+
+echo "[4] 22:4x 之后的 summary / peakmem"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null
+cat /tmp/baize_dualnode_16gpu/worker.peakmem 2>/dev/null | head -2
+
+echo "[5] .12 侧同一目录"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null | head -8; echo "-- latest log --"; ls -lt /tmp/*dualnode* 2>/dev/null | head -4' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[6] 当前 GPU / launcher"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2 | tr '\n' ' '; echo
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-90 | head -2 || echo '  none'
+echo "=== DONE 183 ==="
+```
+
+**输出**
+```
+=== RUN_ID 183 | dual-node launcher inspection | 2026-10-24 23:44:36 | host=whag0pgpuap29 ===
+[1] 仓库根目录里的双机脚本
+  -- grep dual/16gpu --
+[2] launcher 关键行（env / torchrun / 日志路径）
+  F=
+[3] 最近一次双机运行的日志（/tmp 与 workdir）
+-rwxr-xr-x 1 app.e0031982 app.adm  243 Oct 24 19:21 /tmp/cleanup_dualnode.sh
+-rw-r--r-- 1 app.e0031982 app.adm    0 Oct 24 19:19 /tmp/baize_dualnode_16gpu_run.log
+-rw-r--r-- 1 app.e0031982 app.adm    0 Oct 24 19:19 /tmp/baize_dualnode_16gpu_run.log
+
+/tmp/baize_dualnode_16gpu:
+total 4
+-rw-r--r-- 1 app.e0031982 app.adm 6 Oct 24 23:44 worker.peakmem
+
+  == /tmp/baize_dualnode_16gpu_run.log (0 B, 19:19)
+[4] 22:4x 之后的 summary / peakmem
+total 4
+-rw-r--r-- 1 app.e0031982 app.adm 6 2026-10-24_23:44:34 worker.peakmem
+64435
+[5] .12 侧同一目录
+total 636
+-rw-r----- 1 app.e0031982 app.adm     73 2026-10-24_23:19:33 launch15.log
+-rw-r----- 1 app.e0031982 app.adm     73 2026-10-24_23:37:03 launch16.log
+-rw-r----- 1 app.e0031982 app.adm 294920 2026-10-24_23:36:50 master.log
+-rw-r----- 1 app.e0031982 app.adm      6 2026-10-24_23:39:55 master.peakmem
+-rw-r----- 1 app.e0031982 app.adm    156 2026-10-24_20:24:01 run.log
+-rw-r----- 1 app.e0031982 app.adm   2471 2026-10-24_23:42:56 summary.txt
+-rw-r----- 1 app.e0031982 app.adm 320344 2026-10-24_23:36:51 worker.log
+-- latest log --
+-rw-r----- 1 app.e0031982 app.adm    0 Oct 24 23:05 /tmp/baize_dualnode_16gpu_script14.log
+-rw-r----- 1 app.e0031982 app.adm  150 Oct 24 23:02 /tmp/baize_dualnode_16gpu_script13.log
+-rw-r----- 1 app.e0031982 app.adm    0 Oct 24 22:52 /tmp/baize_dualnode_16gpu_script12.log
+-rw-r----- 1 app.e0031982 app.adm    0 Oct 24 22:47 /tmp/baize_dualnode_16gpu_script11.log
+[6] 当前 GPU / launcher
+0, 0 MiB 1, 0 MiB 
+1280535 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline
+1280734 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data
+=== DONE 183 ===
+```
