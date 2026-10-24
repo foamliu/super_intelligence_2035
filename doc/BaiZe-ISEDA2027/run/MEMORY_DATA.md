@@ -5,25 +5,27 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ en_v1_4 下载已全部完成（2026-10-23 20:55确认）**：**110/110 dirs 全部 512/512 parquet ✅**，0 .incomplete。en_v1_4 全源分词 done=105/110，**5 WIP shards 并行分词中**（run_tokenize_env14_parallel_finish.sh, 5×13workers=65并发, PID3450586, 09:39启动, ETA~1-1.5h）。
-> 🟢 **▶️ 2026-10-24 运维质询回答+提速（唤醒632@10:50）**：①分词为何5worker=旧fullsource脚本串行跑1shard/进程,剩5shard→5进程;**已升级为5shard×13worker=65并发**(load26→71)②85M下载**确认走92.25+hf.co直连**(environ:https_proxy=92.25:13128,无HF_ENDPOINT→默认huggingface.co✓);旧hf_transfer=1串行~19MB/s→**已切换parallel-16(hf_transfer=0,16workers)→~24MB/s**(+26%,8文件并行下载,PID581957);③分词不重启(会丢399GB partial,ETA已满足)④迁移仍NOT READY(105/110)
+> 🟢 **✅ en_v1_4 下载全完（110/110 dirs, 512/512 parquet, 2026-10-23 20:55）+ ✅ en_v1_4 全源分词 110/110 DONE（2026-10-24 11:48:33, +148.7B tok, 0 fail）**。提速达标：ETA 22:30 → 实际 11:48（parallel-finish 5×13=65 并发, PID3450586 已正常退出, 全 worker 退出, load 7/224）。
+> 🟢 **✅ 2026-10-24 运维质询回答+提速（唤醒632@10:50 起 + 唤醒633@12:12 复核确认）**：①分词5worker根因=旧fullsource串行1shard/进程,剩5shard→5进程→load26/224;已升级65并发→**110/110 DONE@11:48**（ETA 22:30→11:48 达标）②85M下载**确认走92.25+hf.co直连**(PID581957 environ:https_proxy=92.25:13128,无HF_ENDPOINT✓);parallel-16(hf_transfer=0)实测**~20MB/s**(21parquet/75min);proxy健康(3/3探针200,日志503为瞬态重试均成功)③分词未重启(保399GB partial)④迁移**NOW READY**(110/110✓,5源3.98T,/nas_env 9.6T>4.38T✓)——本轮未启动(避让85M下载I/O,留专用窗口)
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.86TiB)+✅en_v1_4下载全完(110/110dirs)+▶️en_v1_4全源分词(done=105/110,5shards×13workers=65并发,ETA~1-1.5h)+▶️85M下载parallel-16(PID581957,8637/12124parquet=71.3%,~24MB/s,obelics/EN/part68)+✅proxy92.25+hf.co直连确认+✅git sync
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; ✅5源全量分词ALL DONE(574shards/1056.36B/3.86TiB); ✅en_v1_4下载全完(110/110dirs); ✅proxy92.25复测RESTORED; ✅运维质询回答(分词5worker根因+85M线路确认); ▶️en_v1_4全源分词(done=105/110,65并发); ▶️85M下载parallel-16(8637/12124parquet=71.3%,~24MB/s)
-当前动作:     唤醒632(2026-10-24 10:50)运维质询回答+提速：①**分词为何5worker**=旧fullsource脚本(PID2557971,已退出)串行跑1shard/进程,剩5shard→5进程→load26/224;**已升级**run_tokenize_env14_parallel_finish.sh(PID3450586,09:39启动):5shard×13workers=**65并发**(74pyprocs),load→71/224;各shard进度:2024-51=500/512(98%→~2min)2025-13=250/512(49%)2025-18=250/512(49%)2025-21=300/512(59%)2025-26=300/512(59%);.bin=78-84G;ETA~1-1.5h(慢shard@250/512);不重启(会丢~399GB partial,ETA已满足3-4h目标).②**85M走哪条线**=/proc/171042/environ原文:https_proxy=http://172.19.92.25:13128+http_proxy=http://172.19.92.25:13128+**无HF_ENDPOINT**(→默认huggingface.co)+HF_HUB_ENABLE_HF_TRANSFER=1+HF_HUB_MAX_WORKERS=8=**92.25+hf.co直连✓**(符合10-15用户令).③**85M提速**:旧hf_transfer=1串行~19MB/s(1file/3.5min)→kill+重启download_85m_parallel16.sh(hf_transfer=0,16workers,PID581957):8文件并行下载,实测**~24MB/s**(+26%),瓶颈=proxy带宽;8637/12124=71.3%,剩余~3489parquet/~14.3TB,ETA~6.9天.④迁移NOT READY(105/110).📦体积：TASK=31.1KB/MEMORY=26.5KB(无归档)
-下一步:       ①监控en_v1_4分词done→110/110(当前105/110,65并发,ETA~1-1.5h→~12:00-12:30)②done=110/110后→执行迁移5源分词产物3.86TiB→/nas_env(rsync-a+校验+软链接+删源)③监控85M parallel-16下载(8637/12124=71.3%,~24MB/s,ETA~6.9天)④全部完成后产出env14 manifest+summary⑤5源产物交接pretrain
-阻塞:         ④迁移阻塞=en_v1_4分词done=105/110<110/110(65并发running,ETA~1-1.5h);85M落/nas_env=blocker(9.6T<14.3T剩余)→继续落/nas_train(30T够);系统资源load71/224(32%),1785G RAM,30T disk(86%)
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,3.86TiB)+✅en_v1_4下载全完(110/110dirs)+✅en_v1_4全源分词110/110DONE(2026-10-24 11:48,+148.7B tok)+▶️85M下载parallel-16(PID581957,8663/12126parquet=71.5%,~20MB/s,obelics/EN/part68-69,proxy92.25+hf.co直连✓健康)+✅git sync
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128+recipe；held-out bin+held_out_eval; BO R1/R2全完成; R3全量分词110/110DONE(1483.91B); R3污染扫描全0命中; ✅5源全量分词ALL DONE(574shards/1056.36B/3.86TiB); ✅en_v1_4下载全完(110/110dirs); ✅en_v1_4全源分词110/110DONE(2026-10-24 11:48,+148.7B tok,0fail); ✅proxy92.25复测RESTORED; ✅运维质询回答(分词5worker根因+85M线路确认+提速达标ETA22:30→11:48); ▶️85M下载parallel-16(8663/12126=71.5%,~20MB/s)
+当前动作:     唤醒633(2026-10-24 12:12)复核运维质询执行结果：①**分词110/110 DONE已证实**(parallel-finish.log: COMPLETE 11:48:33 WIP_done=5 total=110/110 new_tokens=148724236579 fail=0; OUT_DIR .bin=110 env14+110 l3_s=220; 全worker退出,load 7/224)——提速达标ETA22:30→11:48②**85M线路复核**=/proc/581957/environ:https_proxy=http://172.19.92.25:13128+无HF_ENDPOINT=92.25+hf.co直连✓(符合10-15用户令);HF_HUB_MAX_WORKERS=16,hf_transfer=0;proxy探针3/3=200(0.6-3.1s健康),日志503为瞬态重试(均成功);实测~20MB/s(21parquet/75min,obelics~4.2GB/个);8663/12126=71.5%,剩余~3463,ETA~8天(proxy带宽瓶颈)③**迁移READY**:5源产物=ufw_l3 990G+code_l3 481G+code_l2 1.6T+math_l3 292G+math_l1 615G=3.98T,/nas_env 9.6T>4.38T(×1.1)✓fits;本轮未启动(避让85M下载I/O,留专用窗口).📦体积：TASK=31.1KB/MEMORY=26.8KB(无归档)
+下一步:       ①启动迁移5源产物3.98T→/nas_env(rsync-a+校验shard/字节+软链接+删源,需避让85M下载I/O→建议nice10+限速或下载暂停窗口)②监控85M parallel-16(8663/12126=71.5%,~20MB/s,ETA~8天)③产出env14_fullsource_summary.json(manifest.tsv已存)④5源产物+env14产物交接pretrain
+阻塞:         迁移已就绪(110/110✓,余量9.6T>4.38T✓)但需避让85M下载I/O(同写/nas_train);85M落/nas_env=blocker(9.6T<14.3T剩余)→继续落/nas_train(30T够);85M ETA~8天(proxy带宽瓶颈,已parallel-16,无法再提速除非换线路—但92.25+hf.co直连为10-15用户令指定);系统资源load7/224(3%),1808G RAM,30T disk(86%)
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [12:12] 唤醒633 复核10-24运维质询执行结果：①分词110/110 DONE证实(parallel-finish.log: COMPLETE 11:48:33 total=110/110 new_tokens=148724236579 fail=0; .bin=110 env14+110 l3_s=220; 全worker退出 load 7/224) ②85M线路复核 /proc/581957/environ=https_proxy=92.25:13128+无HF_ENDPOINT=92.25+hf.co直连✓; HF_HUB_MAX_WORKERS=16 hf_transfer=0; proxy探针3/3=200健康; 实测~20MB/s(21parquet/75min); 8663/12126=71.5% ③迁移READY(5源3.98T,/nas_env 9.6T>4.38T✓)本轮未启动避让下载I/O
+> 📦 唤醒632 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询回答+提速：5worker根因+65并发升级+85M线路确认+parallel-16切换,详见日文件）
 > 📦 唤醒594 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs+bin~38G+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒595 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~45G+5源574/574/574验证+done=90/110,详见日文件）
 > 📦 唤醒596 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~51G+5源574/574/574验证+done=90/110,详见日文件）
@@ -121,6 +123,14 @@ ERROR_COUNT:  9
 | ⑥-⑦ | D-CLEAN-4 + LLaVA ckpt | ✅ 盘点：本用户可回收 ≈11.4TiB(含 LLaVA-OV 22TiB iter ckpt)，待运维拍板 | 10-04 |
 | ⑧ | LIT_IDEAS HTML | ✅ 产出 `LIT_IDEAS_2026-10-05.html`（52 entries/0 unverified/62% turnover），含成本专章+ISEDA投稿要求(4-6页) | 10-04 |
 > 📦 §⑨ 配比实验可行性核查 + §⑩ 运维三问 + 旧状态头（2026-10-05~07）已归档 → `daily-memories-data/2026-10-10.md`（唤醒305归档）；**结论**：⑨GPU2-7当时被P-9.8/9.9占满(现已释放)⑩三问已答(GPIC无加速/base下载全满/BO波次锯齿非I/O)。需要时再读。
+
+### ⑪ 分词为何只用 5 worker + 85M 是否走 92.25/hf.co 直连（2026-10-24 用户质询）
+
+**Q1：en_v1_4 分词为什么只用 5 worker（224 核闲置）？**
+**A**：根因 = 旧 fullsource 脚本（PID 2557971，`run_tokenize_env14_fullsource.sh`）**串行跑 1 shard/进程**；唤醒 632 时只剩 5 个 WIP shard → 自然只有 5 个进程 → load 26/224（CPU 几乎闲置）。**不是硬编码小并发，是"剩余 shard 少 + 串行"叠加**。处置：升级为 `run_tokenize_env14_parallel_finish.sh`（PID 3450586，09:39 启动），5 shard × 13 workers = **65 并发**（74 py 进程），load 升至 71/224。**结果：110/110 DONE @ 11:48:33，+148.7B tok，0 fail**——ETA 从 22:30 压到 11:48（达标，3-4h 目标内）。
+
+**Q2：85M 下载走的哪条线？是不是 92.25 + hf.co 直连？**
+**A**：**是**。`/proc/581957/environ` 原文：`https_proxy=http://172.19.92.25:13128` + `http_proxy=http://172.19.92.25:13128` + **无 `HF_ENDPOINT`**（→ 默认 `huggingface.co`）+ `HF_HUB_ENABLE_HF_TRANSFER=0` + `HF_HUB_MAX_WORKERS=16` = **92.25 代理 + hf.co 直连 ✓**（符合 2026-10-15 用户令；🚫 未用 hf-mirror）。proxy 健康探针 3/3 = 200（0.6-3.1s）；下载日志里的 503 是 proxy 瞬态重试（最终均成功）。实测 ~20 MB/s（21 parquet/75min，obelics ~4.2GB/个），瓶颈 = proxy 带宽。8663/12126 = 71.5%，ETA ~8 天。
 
 ## 看板（按推荐执行顺序）
 

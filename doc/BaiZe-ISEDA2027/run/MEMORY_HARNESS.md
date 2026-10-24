@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench. IMAGE PULL RETRY IN PROGRESS (40/89 present, 49 missing, retry script running). 7×15 v2 codex RUNNING (3/11 pass). H-B报告✅
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·7×15 v2 RUNNING(R474)·Docker pull WORKS✅(R474)·cline-patched bug found+fixed✅(R474)·Pull retry script started(R475)
-当前动作:     R475: ①Monitoring image pull retry (_retry_pull_tb_images.sh, PID 3788007) — 28 images failed due to transient auth.docker.io "Service Unavailable" outage, retrying with 3 attempts each ②Original pull script still running (PID 2611629, on pytorch-model-recovery) ③7×15 v2 codex harness running (3/11 pass: adaptive-rejection-sampler, build-pov-ray, configure-git-webserver)
-下一步:       ①Wait for both pull scripts to finish (~49 images, ETA ~1-2h with shared layers) ②Monitor v2 codex run completion (~3 tasks left) ③After all 89 images present: launch 7×89 full run with 7 concurrency ④Report with McNemar + "15/89→89/89 full coverage" declaration
-阻塞:         无. 28 transient auth.docker.io failures being retried. /data has 6.4TB free (Docker Root Dir=/data/docker).
+PHASE:        T2 Terminal-Bench. IMAGE PULL IN PROGRESS (55/89 present, 34 missing, both pull scripts running). v2 serial: cline 0/15(bug), codex 6/14 PASS, hermes RUNNING. 7x89 concurrent launcher READY. H-B报告✅
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created✅(R476)·v2 codex done 6/14✅(R476)
+当前动作:     R476: ①Verified 09:2x directive P0 tasks (images origin, dockerd proxy, hello-world pull) — all already resolved by R474/R475 ②Image pull progressing: 55/89 (up from 49), both scripts running, retry has 0 failures ③v2 serial: codex DONE (6/14 PASS=42.9%), hermes RUNNING, 4 harnesses remain ④Created _full_7x89_concurrent_launcher.sh (7-way parallel, syntax OK) ⑤Resource check: 224 CPU, 2TB RAM, 6.4TB disk — 7 concurrency very feasible
+下一步:       ①Wait for pull scripts to finish (~34 images, ETA ~1h) ②Let v2 finish OR record progress & stop (per directive: 不kill v2, but can record+switch) ③Once 89 images present: stop v2, launch 7x89 concurrent (script ready) ④Report with McNemar + "89/89 full coverage" + "7-way concurrent" declaration
+阻塞:         无. Pull scripts actively downloading. /data 6.4TB free. Retry script 0 failures (auth.docker.io outage resolved).
 ERROR_COUNT:  0
-📦 体积：TASK=31KB / MEMORY=7KB
+📦 体积：TASK=32KB / MEMORY=11KB
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -92,8 +92,41 @@ ERROR_COUNT:  0
 - Current v2 run is serial (7 harness × 15 tasks), ETA ~17h total
 - After 89 images: launch 7×89=623 full run with 7 concurrency (each harness 1 slot, independent /tmp jobs-dir)
 
+### 🔴 R476 关键发现：09:2x指令P0全部已解 + 7x89并发启动器已就绪 + 镜像55/89
+
+**① 09:2x 补充令 P0 回报（全部已被 R474/R475 解决，本轮复核确认）**
+- **P0-镜像来源**：89个镜像均为 `alexgshaw/*:20251031`（Docker Hub pull）。`docker history` 确认 buildkit 层（COPY/WORKDIR/CMD），**非 docker load**。15个已有镜像 = pull来的，非tar导入。
+- **P0-dockerd代理**：`/etc/docker/daemon.json` 已配 `proxies` 字段（http/https-proxy=`http://172.19.92.25:13128`，no-proxy=localhost,127.0.0.1,::1）。无 systemd drop-in（`/etc/systemd/system/docker.service.d/` 不存在）。`systemctl show docker --property=Environment`=空。**daemon.json proxies 方式生效**（Docker 27.5.1支持）。
+- **P0-hello-world pull**：`sg docker -c 'docker pull hello-world'` → **SUCCESS**（Image is up to date）。两个pull脚本持续下载证明 pull 稳定可用。
+- **结论**：09:2x 指令中的"MITM proxy blocks = 不可解"已被 R474 推翻。92.25 代理通过 daemon.json proxies 已配置并验证通过。无需切换 92.23。
+
+**② 镜像拉取进度（55/89 present, 34 missing）**
+- 主pull脚本 (_pull_all_tb_images.sh, PID 2611629, ~2.5h): 持续下载中
+- 重试脚本 (_retry_pull_tb_images.sh, PID 3788007, ~1.3h): **0 failures**，已拉10个（auth.docker.io 恢复）
+- 从49→55在数分钟内增长，预计~1h完成剩余34个
+- /data: 7.0T total, 678G used, **6.4T free (10%)** — 空间充足
+
+**③ v2 串行运行状态**
+- cline-patched: DONE 0/15 (15 RuntimeError — bug已修, launcher line 30 已有 export TB_API_KEY)
+- codex: DONE **6/14 PASS (42.9%)** — PASS: adaptive-rejection-sampler, build-pov-ray, configure-git-webserver, fix-git, git-multibranch, log-summary-date-ranges; FAIL: bn-fit-modify, break-filter-js-from-html, build-cython-ext, build-pmars, caffe-cifar-10, cancel-async-tasks, chess-best-move, count-dataset-tokens; Exceptions: 6 AgentTimeoutError + 1 VerifierTimeoutError; runtime 3h6m
+- hermes: RUNNING (started 12:05:25)
+- 剩余: opencode, claude-code, deepseek-harness, pi
+
+**④ 7×89 并发启动器已创建（R476）**
+- `_full_7x89_concurrent_launcher.sh` (147行, syntax OK, chmod+x)
+- 7个harbor进程并行启动，各独立 `/tmp/tb_7x89/jobs_<harness>` (非NFS)
+- 共享 gw_proxy (9090/9091), nice -n 19, 5s stagger
+- 前置检查：89镜像全齐才启动（否则exit 3）
+- 资源评估已写入脚本：224 CPU / 2TB RAM / 6.4TB disk → 7并发充裕
+
+**⑤ 资源评估（30秒）**
+- CPU: 224核, load avg 19.63/17.12/13.45 → 每harness可分~30核（需2-4）
+- RAM: 2.0TB total, 1.8TB available → 每harness ~250GB（需数GB）
+- Disk: /data 6.4TB free → 7容器同时跑充裕
+- 当前运行容器: 5个（v2 hermes的env容器）
+
 ### 本唤醒流水
-[11:14] R475 **Image pull retry + v2 monitoring**. ①Checked pull progress: 40/89 alexgshaw images present (up from 15) ②Found 28 failures all due to transient auth.docker.io "Service Unavailable" (503) — NOT proxy/network issue ③Created+started _retry_pull_tb_images.sh (PID 3788007) with 3-attempt retry logic ④Verified retry working: extract-moves-from-video downloading ⑤Checked v2 codex: 3/11 pass (adaptive-rejection-sampler, build-pov-ray, configure-git-webserver) ⑥daemon.json proxy confirmed (172.19.92.25:13128) ⑦Disk: /data 6.4TB free. WAITING=1.
+[12:34] R476 **09:2x指令P0复核+7x89启动器创建+镜像55/89**. ①docker pull hello-world=SUCCESS ②daemon.json proxies=172.19.92.25:13128 confirmed ③docker history confirms alexgshaw/*:20251031 are Docker Hub pull (buildkit layers) ④Images 49→55/89, both pull scripts running, retry=0 failures ⑤v2 codex DONE 6/14 PASS(42.9%), hermes RUNNING ⑥Created _full_7x89_concurrent_launcher.sh (7-way parallel, syntax OK) ⑦Resources: 224CPU/2TB RAM/6.4TB disk→7 concurrency feasible ⑧Volume: TASK=32KB/MEMORY=11KB. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。
