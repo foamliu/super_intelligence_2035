@@ -19617,3 +19617,66 @@ whag0pgpuap29:3287984:3287984 [0] NCCL INFO comm 0x5644e9383a20 rank 1 nranks 2 
 1, 0 MiB
 === DONE 180 ===
 ```
+
+---
+
+## RUN_ID 181 · 2026-10-24 22:00:48 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 181 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] data：5 源软链接 + code_l2 体积"
+S=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data
+for n in full_ultradata_math_l3 full_ultradata_code_l3 full_ultradata_math_l1 full_ufw_l3 full_ultradata_code_l2; do
+  if [ -L "$S/$n" ]; then echo "  ✓ $n (symlink)"; elif [ -d "$S/$n" ]; then echo "  … $n (real dir)"; else echo "  ? $n missing"; fi
+done
+a=$(du -sb /nas_env/app.e0031982/baize-data/full_ultradata_code_l2 2>/dev/null | cut -f1)
+echo "  code_l2=$(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB  bin=$(find /nas_env/app.e0031982/baize-data/full_ultradata_code_l2 -maxdepth 1 -name '*.bin' 2>/dev/null | wc -l)/141"
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-90 | head -2 || echo "   no migrate/rsync (DONE?)"' 2>/dev/null || true
+
+echo "[2] 双机 GPU（有分配=16 卡在跑）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr '\n' ' '; echo
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | tr "\n" " "; echo' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] launcher 进程 + NCCL 环境是否带上"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-95 | head -3 || echo '  none(.29)'
+for p in $(pgrep -f pretrain_launcher | head -1); do echo "  env of $p:"; tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -E '^NCCL_IB_(GID_INDEX|MTU|TC|TIMEOUT)' | sed 's/^/    /'; done
+
+echo "[4] pretrain loop 最近 3 行"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -3 | cut -c1-110' 2>/dev/null || echo '  ssh .12 failed'
+echo "[5] 21:45 之后的 summary"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-100
+tail -5 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-150
+echo "=== DONE 181 ==="
+```
+
+**输出**
+```
+=== RUN_ID 181 | snapshot | 2026-10-24 22:00:48 | host=whag0pgpuap29 ===
+[1] data：5 源软链接 + code_l2 体积
+  ✓ full_ultradata_math_l3 (symlink)
+  ✓ full_ultradata_code_l3 (symlink)
+  ✓ full_ultradata_math_l1 (symlink)
+  ✓ full_ufw_l3 (symlink)
+  ✓ full_ultradata_code_l2 (symlink)
+  code_l2=1691.1 GB  bin=141/141
+[2] 双机 GPU（有分配=16 卡在跑）
+0, 1429 MiB, 0 % 1, 1429 MiB, 0 % 2, 1429 MiB, 0 % 3, 1429 MiB, 0 % 4, 1429 MiB, 0 % 5, 1429 MiB, 0 % 6, 1429 MiB, 0 % 7, 1429 MiB, 0 % 
+0, 1711 MiB, 100 % 1, 1711 MiB, 100 % 2, 1711 MiB, 100 % 3, 1711 MiB, 100 % 4, 1711 MiB, 100 % 5, 1711 MiB, 100 % 6, 1711 MiB, 100 % 7, 1711 MiB, 100 % 
+[3] launcher 进程 + NCCL 环境是否带上
+528545 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/minifor
+540371 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch 
+540372 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch 
+  env of 528545:
+    NCCL_IB_TC=160
+    NCCL_IB_GID_INDEX=3
+    NCCL_IB_TIMEOUT=22
+[4] pretrain loop 最近 3 行
+[loop] 2026-10-24 20:23:59 cline returned (exit 0), checking git push ...
+[loop] 2026-10-24 20:24:01 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-24 20:54:01 wake up, invoking cline ...
+[5] 21:45 之后的 summary
+=== DONE 181 ===
+```
