@@ -1154,3 +1154,14 @@
 | 2026-10-24 | 香港举办中国书法体验活动（34 个省级行政区简称主题 · 梁君度主讲） | 中新网 `dwq/2026/10-24/10720503`（10-24 21:26） | 不收（文化活动 · 可作评论素材） | https://www.chinanews.com.cn/dwq/2026/10-24/10720503.shtml |
 | 2026-10-24 | 水电基础局驰援西藏巴青地震灾区板房搭建 16 小时完成 | 中新网 `gn/2026/10-24/10720508`（10-24 21:26） | 🔴 不收（灾害救援 · 不进互动候选） | https://www.chinanews.com.cn/gn/2026/10-24/10720508.shtml |
 | 2026-10-24 | 「欧盟 AI 法案 2026 年 10 月监管新规」泛指检索 | 免费 `web_search`（bing） | ⚠️ 不收（返回百科/官网首页等**无日期无事件**泛结果 ⇒ 不据泛结果写条目） | —（无可用原文） |
+| 2026-10-25 | Meta AI 助手 Muse 的「分享对话」页标题写入子域名 ⇒ 被被动 DNS 收录，一次查询捞出 6,800+ 分享页；Meta 已暂停该功能（Claroc 10-18 报告 / 10-08 赏金提交 / 10-20 复查 40 页失效） | IT之家 `1/017/517`（10-24 22:39） | news（§2 AI 安全 · 第 142 轮）· **已作微头条选题** | https://www.ithome.com/1/017/517.htm |
+| 2026-10-25 | 中国信通院《大模型词元服务性能监测报告（2026 年）》：6 月日均词元约 500 万亿（近 4 倍）· TPS 78.23 · 同模型跨平台 TPS 差近一倍 | IT之家 `1/017/518`（10-24 22:41） | news（§1）· ⚠️ **与 10-23 第 133 轮 N133-1 同一报告**（`1/016/876`）⇒ 不重复计新事件，仅补全口径 | https://www.ithome.com/1/017/518.htm |
+| 2026-10-25 | Block（Dorsey）发布全双工语音模型 Dessa（本地 MacBook M4 Max 可跑 · 单机架 GPU 训练 · 自称纯人类语音训练） | TechCrunch（10-24 23:00 PDT） | news（§1 · 第 142 轮） | https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/ |
+| 2026-10-25 | Sam Altman：沙箱只能撑一阵、最终只有对齐能兜住；模型已在找硬件级漏洞；报道并称 FTC 已对多家实验室智能体失控展开调查 | THE DECODER（10-23） | news（§2 · 第 142 轮 · FTC 部分为报道方转述） | https://the-decoder.com/openai-ceo-sam-altman-says-advanced-ai-will-inevitably-escape-its-sandbox-and-only-alignment-can-save-us/ |
+| 2026-10-25 | Convo 研究：被迫二选一时 Grok 4.7 有 92% 选共和党、GPT-6.1 Sol 有 97% 选民主党；近 500 场选举一致率 <10% | TechCrunch（10-24 08:00 PDT） | news（§4 AI 与社会 · 第 142 轮） | https://techcrunch.com/2026/10/24/forced-to-pick-groks-ai-model-chooses-republicans-openais-picks-democrats/ |
+| 2026-10-25 | 《三体·大史》定档 2026 Q4 开机（12 集 · 刘慈欣监制 / 杨磊执导 · 三体首部真人衍生剧） | IT之家 `1/017/522`（10-24 23:16） | news（§5 · 第 142 轮） | https://www.ithome.com/1/017/522.htm |
+| 2026-10-25 | No signs of AI payoff outside the tech sector | Apollo / HN | analysis（不进摘要 · **疑似与 10-06 同名条目重逢**，勿重复引用） | https://www.apollo.com/wealth/insights-news/insights/daily-spark/no-signs-of-ai-payoff-outside-the-tech-sector |
+| 2026-10-25 | Why is AI generated language so hard to understand?（arXiv 2610.29162） | arXiv / HN | paper（不进摘要 · 未读摘要，仅登记） | https://arxiv.org/abs/2610.29162 |
+| 2026-10-25 | Mistral 发布首个时间序列基础模型 Timestral（头条 `article/7699095233329381938` · 事件日 10-15） | 头条站内 / deephub | 不收（**超 72h 窗口**） | https://www.toutiao.com/article/7699095233329381938/ |
+| 2026-10-25 | 500 元「卖脸」做 AI 兼职，生物信息漏洞谁来堵？（光明网评论员 10-25 05:30） | 头条站内 `article/7699799086052033043` | 不收（评论员文章 · **已用作引流评论目标 #1**） | https://www.toutiao.com/article/7699799086052033043/ |
+| 2026-10-25 | 人类审稿被 AI 一波团灭！哈佛派出最强专家，错误率高达 3 倍（新智元 · 10-25 06:35） | 头条站内 `article/7700366566369640994` | 不收（二手转述，本线未核原论文 · **已用作引流评论目标 #2**） | https://www.toutiao.com/article/7700366566369640994/ |
