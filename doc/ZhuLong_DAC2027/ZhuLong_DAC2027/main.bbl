@@ -39,9 +39,9 @@
 \bibitem[Austin et~al\mbox{.}(2021)]%
         {austin2021program}
 \bibfield{author}{\bibinfo{person}{Jacob Austin}, \bibinfo{person}{Augustus Odena}, \bibinfo{person}{Maxwell Nye}, \bibinfo{person}{Maarten Bosma}, \bibinfo{person}{Henryk Michalewski}, \bibinfo{person}{David Dohan}, \bibinfo{person}{Ellen Jiang}, \bibinfo{person}{Carrie Cai}, \bibinfo{person}{Michael Terry}, \bibinfo{person}{Quoc Le}, {et~al\mbox{.}}} \bibinfo{year}{2021}\natexlab{}.
-\newblock \showarticletitle{Program Synthesis with Large Language Models}.
-\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2108.07732}} (\bibinfo{year}{2021}).
+\newblock \bibinfo{title}{Program Synthesis with Large Language Models}.
 \newblock
+\showeprint[arxiv]{2108.07732}
 
 
 \bibitem[Chen et~al\mbox{.}(2024)]%
@@ -59,9 +59,9 @@
 \bibitem[Chen et~al\mbox{.}(2021)]%
         {chen2021evaluating}
 \bibfield{author}{\bibinfo{person}{Mark Chen}, \bibinfo{person}{Jerry Tworek}, \bibinfo{person}{Heewoo Jun}, \bibinfo{person}{Qiming Yuan}, \bibinfo{person}{Henrique Ponde de~Oliveira Pinto}, \bibinfo{person}{Jared Kaplan}, \bibinfo{person}{Harri Edwards}, \bibinfo{person}{Yuri Burda}, \bibinfo{person}{Nicholas Joseph}, \bibinfo{person}{Greg Brockman}, {et~al\mbox{.}}} \bibinfo{year}{2021}\natexlab{}.
-\newblock \showarticletitle{Evaluating Large Language Models Trained on Code}.
-\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2107.03374}} (\bibinfo{year}{2021}).
+\newblock \bibinfo{title}{Evaluating Large Language Models Trained on Code}.
 \newblock
+\showeprint[arxiv]{2107.03374}
 
 
 \bibitem[Contributors(2024)]%
@@ -84,8 +84,7 @@
 \bibitem[Douze et~al\mbox{.}(2024)]%
         {douze2024faiss}
 \bibfield{author}{\bibinfo{person}{Matthijs Douze}, \bibinfo{person}{Alexandr Guzhva}, \bibinfo{person}{Chengqi Deng}, \bibinfo{person}{Jeff Johnson}, \bibinfo{person}{Gergely Szilvasy}, \bibinfo{person}{Pierre-Emmanuel Mazaré}, \bibinfo{person}{Maria Lomeli}, \bibinfo{person}{Lucas Hosseini}, {and} \bibinfo{person}{Hervé Jégou}.} \bibinfo{year}{2024}\natexlab{}.
-\newblock \showarticletitle{The Faiss library}.
-\newblock  (\bibinfo{year}{2024}).
+\newblock \bibinfo{title}{The Faiss library}.
 \newblock
 \showeprint[arxiv]{2401.08281}~[cs.LG]
 
@@ -103,9 +102,9 @@
 \bibitem[He et~al\mbox{.}(2024)]%
         {he2024chateda}
 \bibfield{author}{\bibinfo{person}{Wei He}, \bibinfo{person}{Yibo Ren}, \bibinfo{person}{Hang Zhu}, \bibinfo{person}{Yuyang Wang}, \bibinfo{person}{Yibo Pan}, \bibinfo{person}{Yuxuan Zhou}, \bibinfo{person}{Yibang Lin}, \bibinfo{person}{Rui Diao}, \bibinfo{person}{Haizhi Ye}, \bibinfo{person}{Jianye Hu}, {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
-\newblock \showarticletitle{{ChatEDA}: A Large Language Model Powered Autonomous Agent for {EDA}}.
-\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2401.00754}} (\bibinfo{year}{2024}).
+\newblock \bibinfo{title}{{ChatEDA}: A Large Language Model Powered Autonomous Agent for {EDA}}.
 \newblock
+\showeprint[arxiv]{2401.00754}
 
 
 \bibitem[Kaelbling et~al\mbox{.}(1998)]%
@@ -128,11 +127,11 @@
 \bibitem[Lu et~al\mbox{.}(2025)]%
         {lee2025autoeda}
 \bibfield{author}{\bibinfo{person}{Yiyi Lu}, \bibinfo{person}{Hoi~Ian Au}, \bibinfo{person}{Junyao Zhang}, \bibinfo{person}{Jingyu Pan}, \bibinfo{person}{Yiting Wang}, \bibinfo{person}{Ang Li}, \bibinfo{person}{Jianyi Zhang}, {and} \bibinfo{person}{Yiran Chen}.} \bibinfo{year}{2025}\natexlab{}.
-\newblock \showarticletitle{AutoEDA: Enabling EDA Flow Automation through Microservice-Based LLM Agents}.
-\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2508.01012}} (\bibinfo{year}{2025}).
+\newblock \bibinfo{title}{AutoEDA: Enabling EDA Flow Automation through Microservice-Based LLM Agents}.
 \newblock
 \shownote{Uses MCP protocol for EDA automation}.
 \newblock
+\showeprint[arxiv]{2508.01012}
 \urldef\tempurl%
 \url{https://arxiv.org/abs/2508.01012}
 \showURL{%
@@ -169,16 +168,16 @@
         {thrun2005probabilistic}
 \bibfield{author}{\bibinfo{person}{Sebastian Thrun}, \bibinfo{person}{Wolfram Burgard}, {and} \bibinfo{person}{Dieter Fox}.} \bibinfo{year}{2005}\natexlab{}.
 \newblock \bibinfo{booktitle}{\emph{Probabilistic Robotics}}.
-\newblock \bibinfo{publisher}{MIT Press}.
+\newblock \bibinfo{publisher}{MIT Press}, \bibinfo{address}{Cambridge, MA, USA}.
 \newblock
 
 
 \bibitem[Wang et~al\mbox{.}(2025)]%
         {wang2025mcp4eda}
 \bibfield{author}{\bibinfo{person}{Ziyuan Wang}, \bibinfo{person}{Bangyu Liu}, \bibinfo{person}{Jiandong Chen}, \bibinfo{person}{Yuyang Wu}, {and} \bibinfo{person}{Haoyu Hu}.} \bibinfo{year}{2025}\natexlab{}.
-\newblock \showarticletitle{{MCP4EDA}: Bridging Large Language Models to {EDA} Tools via the Model Context Protocol}.
-\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2502.18436}} (\bibinfo{year}{2025}).
+\newblock \bibinfo{title}{{MCP4EDA}: Bridging Large Language Models to {EDA} Tools via the Model Context Protocol}.
 \newblock
+\showeprint[arxiv]{2502.18436}
 
 
 \end{thebibliography}
