@@ -1,8 +1,42 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 126 -->
-## RUN_ID 126 — 🔎 只读：新批次 `2026_1024_224219` 的进度（我这轮的 223138 已 0 .py 中止）
+<!-- RUN_ID: 127 -->
+## RUN_ID 127 — 🔎 只读：定位 cimi-search MCP 定义 + opencode 的 MCP 配置位置（为给 opencode 挂 cimi 做准备）
 
 ```bash
+set -u
+echo "=== RUN_ID 127 | find cimi MCP + opencode config | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+MASK='s/(sk-|key"?[[:space:]]*[:=][[:space:]]*")[A-Za-z0-9_.\-]{8,}/\1***MASKED***/g'
+
+echo "[1] eda_fastmcp 里 cimi 相关文件"
+timeout 25 grep -rliE 'cimi' "$D" --include='*.json' --include='*.yaml' --include='*.yml' --include='*.py' --include='*.md' 2>/dev/null | head -12
+
+echo "[2] cimi 配置内容（脱敏）"
+for f in $(timeout 25 grep -rliE 'cimi' "$D" --include='*.json' --include='*.yaml' --include='*.yml' 2>/dev/null | head -4); do
+  echo "  == $f"; head -c 900 "$f" | sed -E "$MASK"; echo
+done
+
+echo "[3] eda 自己的 MCP server 清单（mcp.json / settings）"
+for f in "$D/mcp.json" "$D/.mcp.json" "$D/config/mcp.json" "$HOME/.cline/data/settings/cline_mcp_settings.json" "$HOME/.zhulong/settings/cline_mcp_settings.json"; do
+  [ -f "$f" ] && { echo "  == $f"; head -c 700 "$f" | sed -E "$MASK"; echo; }
+done
+
+echo "[4] opencode 配置位置"
+ls -la "$HOME/.config/opencode" 2>/dev/null | head -10
+ls -la "$HOME/.opencode" 2>/dev/null | head -10
+find "$HOME" -maxdepth 4 -name 'opencode*.json*' 2>/dev/null | head -8
+echo "  -- which opencode --"; which opencode 2>/dev/null; opencode --version 2>/dev/null | head -2
+
+echo "[5] opencode 现有 MCP 配置（脱敏）"
+for f in $(find "$HOME" -maxdepth 4 \( -name 'opencode.json' -o -name 'config.json' \) -path '*opencode*' 2>/dev/null | head -3); do
+  echo "  == $f"; python3 -c "import json,sys;d=json.load(open('$f'));print(json.dumps({k:v for k,v in d.items() if k in ('mcp','mcpServers','provider','model')},ensure_ascii=False)[:900])" 2>/dev/null | sed -E "$MASK" || head -c 700 "$f" | sed -E "$MASK"
+done
+echo "=== DONE 127 ==="
+```
+
+## RUN_ID 126 — 🔎 只读：新批次 `2026_1024_224219` 的进度（我这轮的 223138 已 0 .py 中止）
+
+```text
 set -u
 echo "=== RUN_ID 126 | new batch progress | $(date '+%F %T') | host=$(hostname) ==="
 for B in /nasdata/app.e0031982/eda_code_eval/2026_1024_224219 /nasdata/app.e0031982/eda_code_eval/2026_1024_223138; do
