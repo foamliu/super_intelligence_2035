@@ -18396,3 +18396,66 @@ echo "=== DONE 165 ==="
 7, 0 MiB
 === DONE 165 ===
 ```
+
+---
+
+## RUN_ID 166 · 2026-10-24 19:57:56 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 166 | locate zhulong eval batches | $(date '+%F %T') | host=$(hostname) ==="
+A=/nasdata/app.e0031982/eda_code_eval
+echo "[0] 根目录"; ls -d "$A" 2>/dev/null || echo "  NO /nasdata"; ls "$A" 2>/dev/null | wc -l
+
+echo "[1] 最近 25 个 batch（按时间倒序）"
+ls -1dt "$A"/2026_* 2>/dev/null | head -25 | while read -r d; do
+  n=$(find "$d" -maxdepth 3 -name '*.py' 2>/dev/null | wc -l)
+  echo "  $(basename "$d")  py=$n  mtime=$(date -r "$d" '+%m-%d_%H:%M' 2>/dev/null)"
+done
+
+echo "[2] 各 batch 的配置线索（含 glm-5.3-flash / cli_agent 的文件）"
+for d in $(ls -1dt "$A"/2026_* 2>/dev/null | head -25); do
+  hit=$(timeout 6 grep -rl -E 'glm-5\.3-flash|cli_agent|CLI_AGENT' "$d" --include='*.json' --include='*.sh' --include='*.yaml' --include='*.txt' 2>/dev/null | head -3)
+  [ -n "$hit" ] && { echo "  --- $(basename "$d")"; echo "$hit" | sed 's/^/      /'; }
+done
+
+echo "[3] 目录结构样例（取最新一个 batch）"
+D=$(ls -1dt "$A"/2026_* 2>/dev/null | head -1)
+echo "  sample=$D"
+ls -1 "$D" 2>/dev/null | head -10
+ls -1 "$D"/* 2>/dev/null | head -8
+
+echo "[4] 找 run 级 manifest（含 model / cli / readback）"
+for f in $(timeout 15 find "$A" -maxdepth 3 \( -name 'config*.json' -o -name 'manifest*.json' -o -name '*meta*.json' -o -name 'run*.sh' \) -newermt '2026-10-16' 2>/dev/null | head -12); do
+  echo "  == $f"
+  head -c 300 "$f" 2>/dev/null | tr '\n' ' '; echo
+done
+
+echo "[5] 显式搜 zhulong CLI 的痕迹（CLI_AGENT=zhulong / cline）"
+timeout 40 grep -rl 'CLI_AGENT' /nasdata/app.e0031982/eda_code_eval 2>/dev/null | head -8
+echo "=== DONE 166 ==="
+```
+
+**输出**
+```
+=== RUN_ID 166 | locate zhulong eval batches | 2026-10-24 19:57:56 | host=whag0pgpuap12 ===
+[0] 根目录
+  NO /nasdata
+0
+[1] 最近 25 个 batch（按时间倒序）
+[2] 各 batch 的配置线索（含 glm-5.3-flash / cli_agent 的文件）
+[3] 目录结构样例（取最新一个 batch）
+  sample=
+/swap.img
+
+/bin:
+[
+411toppm
+7z
+7za
+7zr
+[4] 找 run 级 manifest（含 model / cli / readback）
+[5] 显式搜 zhulong CLI 的痕迹（CLI_AGENT=zhulong / cline）
+=== DONE 166 ===
+```
