@@ -27,45 +27,45 @@ Warning--page numbers missing in both pages and numpages fields in pu2024rag
 Warning--empty address in thrun2005probabilistic
 Warning--no number and no volume in wang2025mcp4eda
 Warning--page numbers missing in both pages and numpages fields in wang2025mcp4eda
-You've used 15 entries,
+You've used 16 entries,
             6273 wiz_defined-function locations,
-            1754 strings with 23664 characters,
-and the built_in function-call counts, 17016 in all, are:
-= -- 2099
-> -- 839
+            1762 strings with 23849 characters,
+and the built_in function-call counts, 18281 in all, are:
+= -- 2310
+> -- 870
 < -- 0
-+ -- 290
-- -- 285
-* -- 1428
-:= -- 1836
-add.period$ -- 76
-call.type$ -- 15
-change.case$ -- 151
-chr.to.int$ -- 15
-cite$ -- 30
-duplicate$ -- 1284
-empty$ -- 923
-format.name$ -- 333
-if$ -- 4016
++ -- 301
+- -- 299
+* -- 1509
+:= -- 1948
+add.period$ -- 81
+call.type$ -- 16
+change.case$ -- 157
+chr.to.int$ -- 16
+cite$ -- 31
+duplicate$ -- 1386
+empty$ -- 995
+format.name$ -- 351
+if$ -- 4349
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 44
-newline$ -- 175
-num.names$ -- 105
-pop$ -- 568
+missing$ -- 48
+newline$ -- 184
+num.names$ -- 112
+pop$ -- 599
 preamble$ -- 1
-purify$ -- 268
+purify$ -- 282
 quote$ -- 0
-skip$ -- 444
+skip$ -- 481
 stack$ -- 0
-substring$ -- 961
-swap$ -- 93
+substring$ -- 1067
+swap$ -- 105
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 323
+type$ -- 339
 warning$ -- 15
-while$ -- 66
+while$ -- 76
 width$ -- 0
-write$ -- 330
+write$ -- 350
 (There were 15 warnings)

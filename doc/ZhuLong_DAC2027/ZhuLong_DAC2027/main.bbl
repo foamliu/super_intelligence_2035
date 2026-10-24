@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{15}
+\begin{thebibliography}{16}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -87,6 +87,18 @@
 \newblock \bibinfo{title}{Cline: Autonomous AI Coding Assistant}.
 \newblock \bibinfo{howpublished}{\url{https://github.com/cline/cline}}.
 \newblock
+
+
+\bibitem[Delage and Mannor(2010)]%
+        {delage2010percentile}
+\bibfield{author}{\bibinfo{person}{Erick Delage} {and} \bibinfo{person}{Shie
+  Mannor}.} \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{Percentile Optimization for Markov Decision
+  Processes with Parameter Uncertainty}.
+\newblock \bibinfo{journal}{\emph{Operations Research}} \bibinfo{volume}{58},
+  \bibinfo{number}{1} (\bibinfo{year}{2010}), \bibinfo{pages}{203--213}.
+\newblock
+\href{https://doi.org/10.1287/opre.1090.0711}{doi:\nolinkurl{10.1287/opre.1090.0711}}
 
 
 \bibitem[Douze et~al\mbox{.}(2024)]%
