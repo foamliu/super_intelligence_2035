@@ -1,6 +1,43 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🎯 补正 · 2026-10-24 09:2x（**论文核心价值主张重定位：从 "EDA scripting" 升维到 "design flow 编排"**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong 设计初衷是 EDA scripting，但 DE 用户使用最多的场景还是 **design flow 的编排**。这是 coding agent **天生具备的能力**，而 EDA scripting 能力可以支持 design flow 编排是**补全断链**（有些现成工具无法覆盖的断链，可以被 EDA scripting 轻易接上）。」
+> **⚠️ 这是论文的叙事主干，必须体现在摘要/引言/结论**，不只是"落地一句话"。
+
+**① 重新定义的价值链条（写入报告，作为论文立论）**
+
+```
+coding agent 的通用能力  →  直接可做 design flow 编排（写 Makefile/tcl 驱动/调度脚本，
+                             串起现有 EDA 工具）—— 这是"天生具备"，不需要特殊训练
+        +
+EDA scripting 专业能力  →  补全断链（现有工具覆盖不到、或需要手写胶水的地方，
+                             agent 用 pyAether/SKILL/Tcl 现场写代码接上）
+        ↓
+    真正的用户价值 = design flow 能被完整跑通
+    （断链是 flow 跑不通的头号原因，而接断链正是 LLM 最擅长的事：写一小段新代码）
+```
+
+**② 为什么这个论点对 DAC 有说服力（报告里要论证清楚）**
+- **DE 的真实工作分布**：不是天天写全新脚本，而是**编排 + 补洞**（flow 串不起来时现场补一段）。这一点决定"通用 coding 能力 > 纯 EDA 专用模型"。
+- **"补全断链"是本工作的独特切入点**：现成商用工具是**闭合的**（不给你改），断链只能靠**现场生成胶水代码**；而 LLM 恰好能把"自然语言意图 → 可执行脚本"这段补上。
+- **解释了为什么 benchmark 要这样设计**：我们的 benchmark 不只是"写脚本题"，而是**模拟真实 flow 中的断链场景**（如果现有 benchmark 是这样设计的，请明确指出并引用 RQ；如果不是，在报告里建议补一节说明）。
+- **与落地规模自洽**：数百名工程师的价值不在于"人人写脚本"，而在于**每个人的 flow 都有跑不通的时刻**，agent 在那里补位。
+
+**③ 报告里必须给出（中英各一）**
+1. **一句话价值主张（paper pitch，≤30 词）**：
+   - 中文草稿方向："ZhuLong 让通用 coding agent 直接承担 design flow 编排，并用 EDA scripting 能力补全工具间的断链——这正是 DE 日常工作中最耗时、最被忽视的一环。"
+   - 英文草稿方向："ZhuLong lets a general coding agent orchestrate design flows and, where existing tools leave gaps, synthesizes the missing glue in domain scripts — precisely where DEs lose the most time."
+2. **摘要重写草稿（6 页版，150-180 词）**：按「问题（flow 编排 + 断链）→ 洞察（coding agent 天生会编排，EDA 能力补断链）→ 方法 → 结果（benchmark + 落地）→ 意义」组织。
+3. **引言动机段（3-4 句）**：把"DE 天天补断链"的痛点写实，再引出"为什么通用 coding agent 是正确选择"。
+4. **结论段**：回扣"编排 + 补断链"这个定位，而不是只谈脚本准确率。
+
+**④ 与既有内容的衔接（不要冲突）**
+- 现有论文若以 "EDA scripting" 为标题/主线，**不必改标题**（`ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting` 可保留），但在摘要与引言里**把"编排 + 补断链"作为 scripting 的更高价值表现**写出来，形成"从 scripting 到 flow"的递进。
+- 6 页预算紧张，**优先保摘要 + 引言的这个叙事**，实验章可以更精简。
+
+
 ### 🟢 补正 · 2026-10-24 09:0x（**"长鑫落地"融入口径修正：轻描淡写提分量、留余地，不写具体 500**）· 用户直令
 
 > 用户原话：「领导已经在跟外部厂商沟通时介绍了 ZhuLong 落地的情况，但在论文需要轻描淡写留有余地，比如不说 500（因为一直变化），而写成**数百**（就算全量 2000 人都使用数百也说得过去）」。
