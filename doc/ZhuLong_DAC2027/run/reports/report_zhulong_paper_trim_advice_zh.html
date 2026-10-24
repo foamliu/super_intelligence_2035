@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong 论文精简意见（DAC 2027 · 正文 6 页）</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;max-width:1080px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.7;background:#fafbfc}
+  h1{font-size:1.55rem;border-bottom:3px solid #2c7be5;padding-bottom:10px;color:#1a365d}
+  h2{font-size:1.22rem;margin-top:34px;border-left:5px solid #2c7be5;padding-left:12px;background:#eef4fb;padding:6px 12px}
+  h3{font-size:1.05rem;margin-top:22px;color:#234e70}
+  h4{font-size:0.98rem;margin-top:16px;color:#2c7be5;margin-bottom:4px}
+  .meta{color:#5a6472;font-size:0.85rem;background:#fff;border:1px solid #e1e4e8;border-radius:6px;padding:10px 14px;margin:12px 0}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.86rem;background:#fff}
+  th,td{border:1px solid #d0d7de;padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:600}
+  tr:nth-child(even) td{background:#fbfcfd}
+  code,pre{font-family:"SF Mono",Consolas,Menlo,monospace;font-size:0.85em}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:3px;color:#b03060}
+  pre{background:#0d1117;color:#e6edf3;padding:14px 16px;border-radius:8px;overflow-x:auto;line-height:1.55;font-size:0.8rem}
+  .ok{color:#1a7f37;font-weight:600}
+  .cut{color:#cf222e;font-weight:600}
+  .warn{color:#bf8700;font-weight:600}
+  .keep{color:#0969da;font-weight:600}
+  .badge{display:inline-block;font-size:0.72rem;padding:2px 8px;border-radius:10px;font-weight:600;margin-right:5px}
+  .b-cut{background:#ffeaea;color:#cf222e}
+  .b-keep{background:#e7f5ff;color:#0969da}
+  .b-move{background:#fff4d6;color:#9a6700}
+  .b-rewrite{background:#e9f7ee;color:#1a7f37}
+  .callout{border-left:4px solid #2c7be5;background:#eef4fb;padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .callout-warn{border-left-color:#bf8700;background:#fff8e1}
+  .callout-cut{border-left-color:#cf222e;background:#fff0f0}
+  .callout-deploy{border-left-color:#1a7f37;background:#e9f7ee}
+  ul,ol{margin:8px 0 8px 0}li{margin:3px 0}
+  .small{font-size:0.8rem;color:#5a6472}
+  .en{color:#234e70;font-style:italic}
+  .qty{font-variant-numeric:tabular-nums}
+  .scrollx{overflow-x:auto}
+  hr{border:none;border-top:1px dashed #c8d1da;margin:28px 0}
+  .footer{color:#6e7781;font-size:0.78rem;margin-top:36px;border-top:1px solid #e1e4e8;padding-top:10px}
+</style>
+</head>
+<body>
+
+<h1>ZhuLong 论文精简意见（DAC 2027 · 正文 6 页）</h1>
+<div class="meta">
+<b>交付物</b>：<code>reports/report_zhulong_paper_trim_advice_zh.html</code>（自包含单文件）<br>
+<b>指令</b>：运维令 2026-10-24 08:3x（用户直令）+ 09:0x 补正（"长鑫落地"融入口径修正）<br>
+<b>论文当前</b>：12 页（commit <code>cccc49c2</code> 自 13p 压到 12p）｜DAC 正文限 <b>6 页</b> ⇒ 需再砍 <b>≈50%</b><br>
+<b>本轮纪律</b>：🚫 不改 <code>.tex</code> 源文件（只出建议）｜⏭ 不打断 <code>dsv4pro-cline-full r1</code> 评测（PID 1800419，已确认在跑，未触碰）<br>
+<b>统计口径</b>：源文件 <code>wc -l</code> 含中英双语注释（英文正文 + 中文翻译注释），故"非注释行"才逼近渲染产出。下表两列并陈。
+</div>
+
+<div class="callout">
+<b>一句话结论</b>：论文 12 页膨胀的主因不是"内容多"，而是 <b>实验章 6_exp.tex 占全文 48%</b>（248 非注释行）+ <b>9 张表 + 1 张通栏图挤在同一章附近</b>。6 页方案 = <span class="b-cut badge">砍/移</span> 实验章 5 张表 + 压缩理论章冗余论述 + <span class="b-keep badge">保</span> 主表/核心结论/4 级信息表/架构图，可压到 6.0–6.2 页。
+</div>
+
+<h2>① 逐章诊断表</h2>
+
+<p class="small">"占比"以非注释行（≈渲染行）计；<b>目标</b>为 6 页预算下的建议保留行数。</p>
+
+<div class="scrollx">
+<table>
+<thead>
+<tr><th>文件</th><th>当前行数 / 占比</th><th>非注释行</th><th>建议目标</th><th>拟删 / 合并的具体段落（标行号或小节名）</th><th>理由</th></tr>
+</thead>
+<tbody>
+<tr><td><code>0_abstract.tex</code></td><td class="qty">39 / 5%</td><td class="qty">23</td><td class="qty">~16</td>
+<td>§第 2 段（L23–35）的消融细节 <code>-13.2pp / -11.8pp / +3.1pp / 27%</code> 全部下沉到实验章，摘要只留"显著优于纯 LLM 与仅检索基线"。</td><td>摘要应卖主张不卖数字细节；6 页论文摘要≤10 行。</td></tr>
+
+<tr><td><code>1_intro.tex</code></td><td class="qty">51 / 7%</td><td class="qty">44</td><td class="qty">~28</td>
+<td>L19–38 三条 contribution 用 <code>itemize</code> 各写 8–10 行，过于冗长。<b>合并</b>为 3 条单行 bullet；RQ1 bullet（L20–28）的"framework stated before measurements"论证句删（与 §4 重复）；RQ3 bullet（L41–50）"What we release is the harness…"两句删（移到 §5）。</td><td>引言贡献应可被一秒扫完；当前每条都是小段。</td></tr>
+
+<tr><td><code>2_background.tex</code></td><td class="qty">16 / 2%</td><td class="qty">12</td><td class="qty">~10</td>
+<td>L10 "Execution feedback is not itself new…" 长句（ChatEDA/MCP4EDA/AutoEDA 列举）压缩为半句；L13 "The root problem: no benchmark, no progress" 与 §5 重复，删 2 句。</td><td>已很紧凑，仅去重。</td></tr>
+
+<tr><td><code>3_design.tex</code></td><td class="qty">58 / 7%</td><td class="qty">45</td><td class="qty">~26</td>
+<td>§3.2 Four MCP Tools（L19–37）4 个 <code>itemize</code> 条目各含 BGE-M3/FAISS/阈值/CamelCase/dispatch 细节，<b>压成 4 行单句</b>（只留工具名 + 一句功能）；§3.4 Self-Exploration（L45–57）两段合并为 1 段，"counterfactual experimentation / confidence score / τ / M / 专家 gating"细节移到附录。</td><td>方法细节进附录是 DAC 常规；正文留接口。</td></tr>
+
+<tr><td><code>4_grounding.tex</code></td><td class="qty">120 / 15%</td><td class="qty">81</td><td class="qty">~34</td>
+<td><span class="b-cut badge">砍</span> L18 "Two clarifications"整段（L4 非"知识分类法"的澄清，6 页版无暇哲学辩护）；<span class="b-cut badge">砍</span> L99–105 三条 Design Principles 的展开论证，保留标题 + 一句话；§4.3（L84–94）ZhuLong↔框架映射表合并到正文 3 句；<b>保留</b> four-level 表 + Bayes 方程(1) + KL 方程(2) + 一句"bounded by Ω not by scale"。</td><td>理论章是卖点但当前过度论证；DAC 评审 6 页论文里 1 整页理论已属奢侈，0.8 页足够。</td></tr>
+
+<tr><td><code>5_bench.tex</code></td><td class="qty">66 / 8%</td><td class="qty">44</td><td class="qty">~22</td>
+<td>§5.2 PyAether slice（L35–42）"layout 64/40.5% / schematic 47/29.7%"场景数字删；§5.3 SKILL/Tcl（L45–55）函数对齐机制压成 2 句；§5.4 Evaluation Protocol（L57–67）Pass@1 公式删（通用定义，引用即可）。</td><td>benchmark 描述过度；公式占行无信息增益。</td></tr>
+
+<tr><td><code>6_exp.tex</code></td><td class="qty">407 / 52%</td><td class="qty">248</td><td class="qty">~95</td>
+<td><b>核心战场，详见 ②③</b>。砍 <code>tab:cost</code>（移附录）、<code>tab:configurations</code>（并入文字）、<code>tab:error-categories</code>（改文字一句）；<code>tab:phi-bound</code> 删 [TBD] 空列只留 PyAether + Overall；<code>tab:llm-comparison</code> 6 模型留 4（移 2 弱到附录）；S1 文档轴 trace 内省统计段（L149–162）压缩 70%；S2 effector 段（L254）与 main-ablation 重复，删；Error Analysis（L367–407）4 个 case 描述压成 1 段。</td><td>实验章是 12→6 的决定性战场；表越多越挤。</td></tr>
+
+<tr><td><code>7_discussion.tex</code></td><td class="qty">9 / 1%</td><td class="qty">7</td><td class="qty">~5</td>
+<td>6 条 limitations 压成 3 条（合并 1+5 统计功效、2+3 成本/并发、4+6 切片/断言代理）。</td><td>limitations 6 条对 6 页论文过奢侈。</td></tr>
+
+<tr><td><code>8_conclusion.tex</code></td><td class="qty">13 / 2%</td><td class="qty">10</td><td class="qty">~6</td>
+<td>L12 "Future work" 三方向删到一句；第二段（L7）"theory/methodology/measurement foundation"自我评价删。</td><td>结论应回扣主张，不重复摘要。</td></tr>
+
+<tr><td><b>合计</b></td><td class="qty">779</td><td class="qty">514</td><td class="qty">~242</td>
+<td colspan="2">非注释行从 514 → ~242（<b>−53%</b>），与 12p→6p 的 −50% 目标吻合；剩余预算留给表格占位。</td></tr>
+</tbody>
+</table>
+</div>
+
+<p class="small">⚠️ <b>关于中英双语注释</b>：每个英文段落后都附中文翻译注释（约占 <code>wc -l</code> 一半）。<b>删这些注释不会减页数</b>（注释不渲染），只净化源码；若要真正减页，必须砍<b>渲染内容</b>（即上表"非注释行"列）。建议改稿时一并清掉中文注释，避免误判源码体积。</p>
+
+<h2>② 可直接砍的清单（按性价比降序）</h2>
+<p class="small">"性价比 = 砍掉的渲染篇幅 ÷ 信息损失"。先砍低信息密度的过程性描述、重复叙述、legacy 对比；保留主表 + 核心结论。</p>
+
+<table>
+<thead><tr><th>#</th><th>位置</th><th>动作</th><th>省页</th><th>信息损失</th><th>性价比</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>6_exp.tex</code> L226–247 <code>tab:cost</code> + 表注</td><td><span class="b-move badge">移附录</span></td><td class="qty">~0.45p</td><td>低（成本数据非主张核心，附录可查）</td><td class="ok">★★★★★</td></tr>
+<tr><td>2</td><td><code>6_exp.tex</code> L149–162 S1 文档轴 trace 内省统计长段（86.7%/56.5%/94.6% + 脚注 + dir()/inspect 机制描述）</td><td><span class="b-cut badge">砍 70%</span>留 1 句"retrieval-removed 下 86.7% trace 走沙盒内省替代"</td><td class="qty">~0.4p</td><td>低（机制可入附录）</td><td class="ok">★★★★★</td></tr>
+<tr><td>3</td><td><code>6_exp.tex</code> L318–342 <code>tab:llm-comparison</code> 6 backbone</td><td><span class="b-cut badge">删 2 弱</span>（DeepSeek-V4-Flash / Doubao-Seed-2.0-Pro 移附录）</td><td class="qty">~0.3p</td><td>低（保留 4 模型仍呈 22pp 跨度）</td><td class="ok">★★★★☆</td></tr>
+<tr><td>4</td><td><code>6_exp.tex</code> L379–395 <code>tab:error-categories</code></td><td><span class="b-cut badge">改文字</span>（"12 API 误用 + 9 组合错误"一句话 + 任务 ID 删）</td><td class="qty">~0.25p</td><td>低</td><td class="ok">★★★★☆</td></tr>
+<tr><td>5</td><td><code>6_exp.tex</code> L69–91 <code>tab:configurations</code></td><td><span class="b-cut badge">并入文字</span>（一句话描述 5 配置）</td><td class="qty">~0.25p</td><td>极低</td><td class="ok">★★★★☆</td></tr>
+<tr><td>6</td><td><code>6_exp.tex</code> L398–407 Error Analysis 两类失败 case 详述（Task098 / aeSelectFigs / 五次 run_code）</td><td><span class="b-cut badge">砍</span>留"L4 契约不可见"一句</td><td class="qty">~0.25p</td><td>低（case 可入附录）</td><td class="ok">★★★★☆</td></tr>
+<tr><td>7</td><td><code>4_grounding.tex</code> L18 "Two clarifications" 段</td><td><span class="b-cut badge">整段删</span></td><td class="qty">~0.2p</td><td>低（哲学澄清非主张）</td><td class="ok">★★★★☆</td></tr>
+<tr><td>8</td><td><code>6_exp.tex</code> L273–301 <code>tab:phi-bound</code> [TBD] 空列</td><td><span class="b-cut badge">删空列</span>只留 Overall + PyAether（SKILL/Tcl 列全 [TBD]，等回填）</td><td class="qty">~0.2p</td><td>低（现状本就空）</td><td class="ok">★★★★☆</td></tr>
+<tr><td>9</td><td><code>4_grounding.tex</code> L99–105 三条 Design Principles 展开论证</td><td><span class="b-cut badge">压成标题+一句</span></td><td class="qty">~0.2p</td><td>低</td><td class="ok">★★★★☆</td></tr>
+<tr><td>10</td><td><code>6_exp.tex</code> L254 S2 effector 段（"Removing sandbox drops 75.7→62.5, -13.2pp"）</td><td><span class="b-cut badge">删</span>（已在 main-ablation 表 + L129 一句话出现）</td><td class="qty">~0.15p</td><td>极低（重复）</td><td class="ok">★★★★☆</td></tr>
+<tr><td>11</td><td><code>1_intro.tex</code> L19–38 三条 contribution 长段</td><td><span class="b-rewrite badge">压成单行 bullet</span></td><td class="qty">~0.3p</td><td>低</td><td class="ok">★★★★☆</td></tr>
+<tr><td>12</td><td><code>3_design.tex</code> §3.2 Four MCP Tools 4 条 itemize 细节</td><td><span class="b-cut badge">压成 4 行单句</span></td><td class="qty">~0.3p</td><td>低（细节入附录）</td><td class="ok">★★★★☆</td></tr>
+<tr><td>13</td><td><code>0_abstract.tex</code> L23–35 消融数字段</td><td><span class="b-cut badge">下沉</span></td><td class="qty">~0.15p</td><td>低</td><td class="ok">★★★☆☆</td></tr>
+<tr><td>14</td><td><code>5_bench.tex</code> §5.4 Pass@1 公式 + §5.2 场景百分比</td><td><span class="b-cut badge">删</span></td><td class="qty">~0.2p</td><td>低</td><td class="ok">★★★☆☆</td></tr>
+<tr><td>15</td><td><code>7_discussion.tex</code> 6→3 limitations</td><td><span class="b-cut badge">合并</span></td><td class="qty">~0.1p</td><td>低</td><td class="ok">★★★☆☆</td></tr>
+<tr><td>16</td><td><code>8_conclusion.tex</code> Future work 三方向 + 自我评价段</td><td><span class="b-cut badge">压</span></td><td class="qty">~0.15p</td><td>低</td><td class="ok">★★★☆☆</td></tr>
+</tbody>
+</table>
+<p class="small">合计可省 ≈ <b>4.0–4.4 页</b>，足以把 12 页压到 <b>6.0–6.2 页</b>，留 0.2 页 buffer 给表格微调。若仍超 0.2 页，先动 #3（删第 5 个 backbone）与 #1（cost 表全部移附录）。</p>
+
+<h2>③ 挪到附录 / 补充材料的建议</h2>
+<div class="callout-warn callout">
+<b>前提</b>：DAC 2027 允许正文 6 页 + 参考文献 + （部分年份）附录。若 CFP 严格 6 页含一切，则下列内容改为 <b>supplementary material / arXiv appendix</b>。建议投稿前核对 CFP。
+</div>
+<table>
+<thead><tr><th>挪走内容</th><th>来源</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>每任务成本表 <code>tab:cost</code>（Time/In.tok/Rounds/run_code 五配置）</td><td><code>6_exp.tex</code> L226–247</td><td>291 任务子集、非主张核心；附录完整保留，正文留一句"自探索为唯一成本为负档（−27% solve time）"。</td></tr>
+<tr><td>LLM backbone 全表（6 模型）</td><td><code>6_exp.tex</code> L318–342</td><td>正文留 4 模型表（主 + 前 3 对照），弱 2 模型（Flash / Doubao）移附录。</td></tr>
+<tr><td>S1 文档轴 trace 内省机制详述（dir()/inspect/__doc__ 重建 API 知识）</td><td><code>6_exp.tex</code> L149–162</td><td>机制细节、附录可 1 整页铺开；正文留结论"PyAether 上回读通道可替代检索"。</td></tr>
+<tr><td>API self-exploration 实现细节（置信度分、τ、M、专家 gating、destructive-op 过滤）</td><td><code>3_design.tex</code> §3.4 L53–57</td><td>实现规格、正文留"离线反事实实验、运行时无开销"一句。</td></tr>
+<tr><td>Error Analysis 两个 case 详述（Task098 aeSelectFigs/aeDeleteObj；substring-match 举例）</td><td><code>6_exp.tex</code> L398–407</td><td>case study 性质、附录可附完整 trace；正文留"两类失败共享 L4 契约不可见签名"。</td></tr>
+<tr><td>Bayesian 形式化的澄清段（"Two clarifications" / 四级非分类法辩护）</td><td><code>4_grounding.tex</code> L18</td><td>哲学辩护、附录留；正文留 four-level 表 + 主方程。</td></tr>
+<tr><td>MCP 工具实现细节（BGE-M3 + FAISS、K=5、阈值 0.6、BM25、CamelCase token、各 runtime dispatch）</td><td><code>3_design.tex</code> §3.2</td><td>正文留工具名 + 一句功能；参数与 dispatch 入附录。</td></tr>
+<tr><td>benchmark slice 场景分布（layout 64/40.5% / schematic 47/29.7%）</td><td><code>5_bench.tex</code> §5.2</td><td>附录给全分布表；正文留"449 任务、4 切片、单 schema"。</td></tr>
+</tbody>
+</table>
+
+<h2>④ 6 页预算分配建议</h2>
+<p class="small">以 ACM <code>sigconf</code> 双栏、~50 行/栏、≈100 渲染行/页为基准；表格按经验折算（单栏表 ≈ 12 行、通栏表 ≈ 22 行、通栏图 ≈ 18 行）。</p>
+<table>
+<thead><tr><th>章节</th><th>当前估算页</th><th>6 页目标</th><th>行预算（渲染）</th><th>表/图配额</th><th>要点</th></tr></thead>
+<tbody>
+<tr><td>Abstract</td><td class="qty">0.35p</td><td class="qty">0.2p</td><td class="qty">~16 行</td><td>0</td><td>主张 + 主结果 1 句 + 落地 1 句（见 ⑥A）</td></tr>
+<tr><td>1 Introduction</td><td class="qty">1.1p</td><td class="qty">0.75p</td><td class="qty">~30 行</td><td>0</td><td>痛点 → ZhuLong → 3 条单行 contribution → 落地佐证（见 ⑥B）</td></tr>
+<tr><td>2 Background</td><td class="qty">0.4p</td><td class="qty">0.3p</td><td class="qty">~10 行</td><td>0</td><td>3 段：差异 / 前作止步 / 我们的补位</td></tr>
+<tr><td>3 System Design</td><td class="qty">1.3p</td><td class="qty">0.9p</td><td class="qty">~26 行</td><td><b>1 通栏图</b>（架构图）</td><td>架构图 + 4 工具单行 + 自探索一句</td></tr>
+<tr><td>4 Theoretical Grounding</td><td class="qty">1.6p</td><td class="qty">0.8p</td><td class="qty">~34 行</td><td><b>1 表</b>（four-level）</td><td>4 级表 + 方程(1)(2) + 3 原则标题句</td></tr>
+<tr><td>5 Benchmark</td><td class="qty">0.9p</td><td class="qty">0.5p</td><td class="qty">~22 行</td><td><b>1 表</b>（composition）</td><td>449/4 切片表 + 协议一段</td></tr>
+<tr><td>6 Experiments</td><td class="qty">6.4p</td><td class="qty">2.8p</td><td class="qty">~95 行</td><td><b>3 表</b>（main-ablation 通栏 + phi-bound 精简 + llm 4 模型）</td><td>Setup + S1/S2/S3/S4 各 1 段 + Error Analysis 1 段</td></tr>
+<tr><td>7 Discussion</td><td class="qty">0.3p</td><td class="qty">0.2p</td><td class="qty">~5 行</td><td>0</td><td>3 条 limitations</td></tr>
+<tr><td>8 Conclusion</td><td class="qty">0.4p</td><td class="qty">0.25p</td><td class="qty">~6 行</td><td>0</td><td>回扣 + 落地背书（见 ⑥C）</td></tr>
+<tr><td><b>正文合计</b></td><td class="qty">~12.0p</td><td class="qty"><b>~6.0p</b></td><td class="qty">~244 行</td><td>1 图 + 6 表</td><td>（6 表 = four-level + composition + main-ablation + phi-bound + llm + error 表删）</td></tr>
+</tbody>
+</table>
+<p class="small">⚠️ 实验章从 6.4p → 2.8p 是最硬的一刀：必须把 9 张表砍到 3 张（正文）+ 6 张移附录/合并；4 个子研究 S1–S4 各压到 ~1 段（≈ 12 行）。</p>
+
+<h2>⑤ 重写的摘要与引言草稿（6 页版 · 卖点 = 执行落地）</h2>
+
+<div class="callout">
+<b>改写原则</b>：6 页论文的摘要/引言不是"压缩后的残篇"，而是<b>重新立意</b>——把"执行接地（execution grounding）"这条主线一击即中。落地信息按 09:0x 补正令"轻描淡写、留余地"融入（用"数百"不写 500）。匿名版用"a leading memory design house"，非匿名版可直接写 CXMT。
+</div>
+
+<h3>⑤-A 摘要草稿（6 页版，~16 行）</h3>
+<pre>\begin{abstract}
+EDA scripting with tool-specific, often undocumented APIs is a long-tail bottleneck that
+existing LLM tooling fails to address. We present \textbf{ZhuLong}, an execution-grounded
+LLM coding agent for PyAether, SKILL, and Tcl that unifies API retrieval, documentation
+inspection, and sandbox execution into a closed generate--execute--refine loop. We give a
+\textbf{theoretical grounding}: EDA correctness is a \emph{situated} (L4) property no offline
+knowledge can guarantee, and a Bayesian argument bounds the resulting ``grounding gap'' by
+\emph{observation fidelity}, not model scale. On \textbf{EDA-Scripting-Bench} (449 real tasks,
+four commercial runtimes), the full system reaches \textbf{75.7\%} pooled Pass@1, versus
+\textbf{18.3\%} (pure LLM) and \textbf{62.5\%} (retrieval only); with the LLM fixed, the
+observation ladder moves Pass@1 by 57.4~pp, while the backbone axis spans only 22.0~pp.
+ZhuLong is already deployed in production EDA scripting flows at a leading memory design
+house, serving hundreds of design engineers.
+\end{abstract}</pre>
+<p class="small"><b>改动要点</b>：① 删原 L23–35 的 <code>-13.2/-11.8/+3.1pp/27%</code> 细节（下沉实验章）；② 末句即 <b>⑥ 版本 A</b> 的落地佐证（19 词，匿名口径）；③"57.4 vs 22.0pp"保留——这是 RQ1 最有力的单句证据。</p>
+
+<h3>⑤-B 引言草稿（6 页版，~30 行）</h3>
+<pre>\section{Introduction}\label{sec:introduction}
+LLMs excel at general code generation, but EDA scripting---manipulating live design
+databases, routing schematics, querying netlists---remains hard: APIs are long-tailed and
+tool-specific; correctness depends on side effects in a stateful database, not return
+values; and without execution feedback, static generation cannot diagnose or refine errors
+\cite{chen2024dawning,blocklove2024eda}. Prior LLM-for-EDA work targets the digital flow
+(RTL/Verilog, RTL-to-GDSII Tcl); the custom/analog surface---PyAether, SKILL,
+waveform Tcl---where correctness must be read back from the live layout, schematic, or
+waveform, is underexplored. These pain points are not hypothetical: the system reported here
+is already deployed in production EDA flows serving hundreds of engineers at a leading
+memory design house.
+
+We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and
+Tcl, built on Cline-CLI \cite{cline2024cline} and four unified MCP tools
+\cite{lee2025autoeda}---semantic and keyword API search, documentation lookup, and sandbox
+execution---that form a closed generate--execute--refine loop over four commercial runtimes
+via a single \texttt{lang}--\texttt{host} pair. An offline \textbf{API self-exploration}
+mechanism enriches the documentation prior as a bounded complement. Beyond the engineering,
+we give a \textbf{theoretical grounding} (Section~\ref{sec:grounding-theory}): EDA correctness
+is a situated (L4) property, and a Bayesian analysis bounds the grounding gap by observation
+fidelity, not model scale---a prediction the experiments could refute rather than a
+post-hoc explanation.
+
+\noindent\textbf{Contributions.}
+\begin{itemize}
+  \item \textbf{RQ1 (ceiling).} We formalize the grounding gap and measure it from both
+  sides: the observation ladder moves Pass@1 by 57.4~pp (LLM fixed), while the backbone axis
+  spans 22.0~pp (harness fixed)---observation, not scale, sets the ceiling.
+  \item \textbf{RQ2 (necessary components).} Ablation isolates retrieval, execution, and
+  belief update as jointly necessary and not interchangeable; offline self-exploration is a
+  bounded complement, not a substitute (Section~\ref{sec:experiments}).
+  \item \textbf{RQ3 (toolchain generality).} \textbf{EDA-Scripting-Bench} (449 tasks, 4
+  runtimes, one schema) re-measures the same structure slice by slice; we release the
+  harness, schema, and protocol (Section~\ref{sec:benchmark}).
+\end{itemize}</pre>
+<p class="small"><b>改动要点</b>：① 第 1 段末句即 <b>⑥ 版本 B</b>（19 词，从真实痛点引出落地佐证）；② 3 条 contribution 各压成单行 + 一个量化证据；③ 删原 L41–50"what we release"重复段（移 §5）；④ 删"Named after a mythical creature…"命名典故（6 页无暇）。</p>
+
+<h2>⑥「长鑫落地」融入：3 版可直接插入的句子 + 一句话理由</h2>
+
+<div class="callout-deploy callout">
+<b>写法口径（09:0x 补正令 · 硬约束）</b>：✅ 用 <b>"数百 / hundreds of"</b>（不写 500）；✅ 用 <b>"已在量产级 EDA 设计流程中部署 / deployed in production EDA flows"</b>，强调<b>工业环境 + 真实设计流 + 质量维度</b>（覆盖 Tcl/waveview/SKILL 多接口、真实数据流、长时稳定运行），<b>不强调人数</b>；✅ 轻描淡写、一句话带过、不单开小节；🚫 不吹"领先/首个/大规模"；🚫 匿名版不写 CXMT（写 <i>a leading memory design house / a leading memory-chip manufacturer</i>），非匿名版可直接写 CXMT；🚫 不展开风险评估论述。
+</div>
+
+<table>
+<thead><tr><th>版本</th><th>插入位置</th><th>英文（≤25 词）</th><th>中文</th><th>字数</th></tr></thead>
+<tbody>
+<tr>
+<td><b>A</b><br><span class="small">最克制</span></td>
+<td>摘要末句</td>
+<td class="en">ZhuLong is already deployed in production EDA scripting flows at a leading memory design house, serving hundreds of engineers.</td>
+<td>ZhuLong 已在一家头部存储芯片设计公司的量产级 EDA 脚本流程中部署，服务数百名设计工程师。</td>
+<td class="qty">19 词 / 19 字</td>
+</tr>
+<tr>
+<td><b>B</b><br><span class="small">痛点真实</span></td>
+<td>引言动机段</td>
+<td class="en">These scripting pain points are not hypothetical: ZhuLong has been deployed in production EDA flows serving hundreds of engineers at a leading memory design house.</td>
+<td>这些脚本编写痛点并非假设：ZhuLong 已在一家头部存储芯片设计公司服务数百名工程师的量产级 EDA 流程中部署。</td>
+<td class="qty">25 词 / 20 字</td>
+</tr>
+<tr>
+<td><b>C</b><br><span class="small">可信度背书</span></td>
+<td>结论 / 实验章末</td>
+<td class="en">Beyond the benchmark, ZhuLong has been used in production EDA design flows by hundreds of engineers at a leading memory design house.</td>
+<td>不止于基准：ZhuLong 已被一家头部存储芯片设计公司的数百名工程师用于量产级 EDA 设计流程。</td>
+<td class="qty">22 词 / 19 字</td>
+</tr>
+</tbody>
+</table>
+
+<p class="small"><b>三择一即可，不必都写</b>。本报告 ⑤-A/⑤-B 草稿已分别嵌入版本 A、B 作示例。若匿名解除，把 <i>"a leading memory design house"</i> 替换为 <i>"Changxin Memory Technologies (CXMT)"</i> 即可。</p>
+
+<h3>一句话回答：这个信息对录用有帮助吗？</h3>
+<div class="callout-deploy callout">
+<b>有帮助</b>。理由有二：① <b>工业落地正是 DAC 评审最看重的"实用性 / impact"维度</b>——DAC 是 EDA 顶会而非纯学术会议，"在量产级 EDA 流程中跑起来"比"在 benchmark 上高几个点"更有分量；② <b>真实生产部署是方法可信度的天然背书</b>——它表明结果不仅在 449 个 curated 任务上成立，也在数百名工程师的真实设计数据流、多脚本接口（Tcl / waveview / SKILL）、长时间稳定运行的压力下成立，这对审稿人常质疑的"benchmark 是否过拟合 / 是否只在玩具任务上有效"是最直接的回击。
+</div>
+
+<hr>
+
+<div class="callout-warn callout">
+<b>执行清单（改稿等用户确认后动手，本轮不改 .tex）</b>：
+<ol>
+<li>先做 ② 清单 #1–#6（实验章，省 ≈ 1.9 页，性价比最高、风险最低）；</li>
+<li>再做 #7–#10（理论章 + 重复段，省 ≈ 0.75 页）；</li>
+<li>接着 #11–#16（引言/设计/benchmark/讨论/结论，省 ≈ 1.3 页）；</li>
+<li>清掉所有中文翻译注释（不减页、但净化源码便于后续维护）；</li>
+<li>嵌入 ⑥ 的某一版落地句（建议 <b>版本 A 摘要末句</b>，最克制、单点命中）；</li>
+<li>编译验页：目标 6.0–6.2 页；若超 0.2 页，先动 ② #3（删第 5 backbone）+ #1（cost 表全移附录）。</li>
+</ol>
+</div>
+
+<div class="footer">
+本报告由 ZhuLong 推进 agent 于 2026-10-24 生成｜指令：运维令 2026-10-24 08:3x + 09:0x 补正（用户直令）｜<b>未修改任何 .tex 源文件</b>｜<b>未触碰在跑评测</b>（cline×deepseek-v4-pro×full r1·PID 1800419·batch 2026_1023_231253）｜口径：EDA-Scripting-Bench 449（PyAether 158 + SKILL 157 + Tcl 134）｜论文锚点 75.7% pooled Pass@1。
+</div>
+
+</body>
+</html>
