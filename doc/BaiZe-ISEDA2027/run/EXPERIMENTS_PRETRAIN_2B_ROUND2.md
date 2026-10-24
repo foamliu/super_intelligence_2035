@@ -3462,3 +3462,54 @@ F2 = P-8 生产训练结果回填论文，已在 #435 完成：
 - **编译**: pdflatex+bibtex+pdflatex×3 → 13 pages, 0 error, 0 undefined ref/citation ✅
 - commit: pretrain #435
 
+## Round 2b 实验结果 (2026-10-24 11:10-11:55)
+
+5组实验，基于R2结果修正后重跑。全部在 .29 8×H100 上执行。
+脚本: baize_perf_optim_round2b.sh
+日志: /tmp/baize_perf_r2b/
+
+| # | 实验名 | 配置 | 状态 | 中位step(ms) | 吞吐(tok/s) | 峰值VRAM(MiB) | Loss@30 | 说明 |
+|---|--------|------|------|-------------|-------------|--------------|---------|------|
+| e10b | MBS4+defrag+TW+CG | MBS4/GBS1024 + expandable_segments | ❌OOM | — | — | 80569 | — | CG pools 29.63GB + MBS4 activation 7.9GB > 79GB |
+| e11b | MBS3+defrag+TW+CG | MBS3/GBS1024 + expandable_segments | ❌FAIL | — | — | — | — | 1024%(3×8)=1024%24≠0 不可整除 |
+| e15 | GBS2048+TW+CG | MBS2/GBS2048 | ✅OK | 28218 | 297275 | 59027 | 7.58 | =e09无变化,GBS不影响吞吐 |
+| e16 | SP(TP1)+TW+CG | MBS2 + --sequence-parallel | ❌FAIL | — | — | — | — | "Cannot use sequence parallelism without tensor parallelism" |
+| e17 | MBS4+first-last-bf16+TW+CG | MBS4 + --fp8-first-last-layers-bf16 | ❌OOM | — | — | 75959 | — | 仅排除2层FP8,MBS4仍OOM |
+
+### R2b 关键结论
+- MBS4 所有变体均 OOM: CG pools 30GB 是硬约束, MBS4 activation 需 +8GB, 无法在80GB内容纳
+- MBS3 需 GBS 整除 MBS×DP=24: GBS1024不整除, 需改为1008(=24×42)
+- GBS 不影响吞吐: e15 GBS2048=297K(=e09), 总计算量不变
+- SP 需 TP>1: 当前 TP1/DP8 纯数据并行不适用
+
+## Round 2c 实验结果 (2026-10-24 12:24起, 进行中)
+
+3组实验，解决R2b的MBS3不可整除问题 + 测试no-CG变体。
+脚本: baize_perf_optim_round2c.sh
+日志: /tmp/baize_perf_r2c/
+
+| # | 实验名 | 配置 | 状态 | 中位step(ms) | 吞吐(tok/s) | 峰值VRAM(MiB) | Loss@30 | GradNorm | NaN | 说明 |
+|---|--------|------|------|-------------|-------------|--------------|---------|----------|-----|------|
+| e18 ★ | MBS3+GBS1008+defrag+CG+TW | MBS3/GBS1008 + expandable_segments + NCCL_GRAPH_REGISTER=0 | ✅OK | 13500(prelim) | 306K(prelim) | 72697 | 7.833 | 1.321 | 0 | 🎉 新纪录! |
+| e19 | MBS4 no-CG+TW | MBS4/GBS1024 无CG | ⏳待跑 | — | — | — | — | — | — | 放弃30GB CG pools换MBS4 |
+| e20 | MBS3 no-CG+TW | MBS3/GBS1008 无CG | ⏳待跑 | — | — | — | — | — | — | 无CG的MBS3对照 |
+
+### e18 详细数据 (preliminary, iter 10-50)
+```
+iteration  10/80: 18083.6 ms (warmup), loss=10.937, gnorm=2.928
+iteration  20/80: 13486.6 ms (steady), loss=8.248,  gnorm=2.311
+iteration  30/80: 13497.6 ms (steady), loss=7.833,  gnorm=1.321
+iteration  40/80: 13516.6 ms (steady), loss=7.518,  gnorm=1.289
+iteration  50/80: 13521.4 ms (steady), loss=7.290,  gnorm=1.249
+```
+稳态 median ≈ 13500 ms → tok/s = 1008×4096/13.5 = **306,024** (+3.0% vs e09 297K, +22.9% vs 249K)
+峰值 72697 MiB = 72.7GB/80GB (fits!)
+正确性: loss@30=7.833 vs e09 7.836 → Δ=−0.03% (✅ ≤5%), gnorm 1.32 (≈e09 1.32), 0 NaN
+
+### e18 为什么比 e09 快? (MBS3 vs MBS2, 均有 CG+FP8 TW)
+1. CG 已消除 kernel launch 开销 → MBS 增大不再受 launch 限制
+2. MBS3 仅 42 microbatches (vs MBS2 的 64) → fewer per-microbatch overhead (CG replay setup + grad accumulation)
+3. Larger GEMM (3×seq vs 2×seq per microbatch) → better GPU utilization
+4. 但 GBS 减小 (1008 vs 1024, −1.6%) → 净效应: step time −4.4%, throughput +3.0%
+
+

@@ -1,19 +1,16 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-24 08:30 #762：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#757/#752控体积**：
-> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
-> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
-> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
-> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
-> 📦 体积：TASK=26.9KB / MEMORY=~29.0KB（均≤32KB✓，本轮归档 ~2.5KB #757/#752 → daily-memories/）。
+> 🆕 **2026-10-24 12:3x #764：🎉 新纪录！R2c e18 MBS3+CG=306K tok/s(+3.0% vs e09)·R2b全部完成·R2c运行中**：
+> - **R2b 已完成**（11:10-11:55，5组）：① e10b MBS4+defrag=OOM(80.6GB,CG pools 30GB) ② e11b MBS3 GBS1024=FAIL(1024%24≠0不可整除) ③ e15 GBS2048=297K(=e09,GBS不影响吞吐) ④ e16 SP(TP1)=FAIL("Cannot use SP without TP") ⑤ e17 MBS4+first-last-bf16=OOM(76GB)。
+> - **R2c 已启动**（12:24 .29 PID233523 后台，/tmp/baize_perf_r2c/，3组）：① **e18 MBS3 GBS1008+defrag+CG ✅运行中(新纪录!)** ② e19 MBS4 no-CG+FP8(待跑) ③ e20 MBS3 no-CG+FP8(待跑)。
+> - **🎉 e18 新纪录（preliminary, iter 20+30 稳态确认）**：MBS3/GBS1008/FP8 TW+CG+expandable_segments → step=13490ms(稳态), tok/s=1008×4096/13.49=**306K**(+3.0% vs e09 297K, +22.9% vs 249K)。峰值72.7GB/80GB(fits!)。loss@30=7.833 vs e09 7.836 Δ=−0.03%(✅5%闸门)。gnorm 1.32, 0 NaN。**MBS3 比 MBS2 快的原因**：CG已消除launch开销→MBS增大不再受launch限制；MBS3 fewer microbatches(42 vs 64)→less per-microbatch overhead(CG replay setup/grad accum)；larger GEMM→better GPU utilization。
+> - **R2+R2b+R2c 实验总计 13 组**（R2 5组 + R2b 5组 + R2c 3组）。仅 e15(GBS2048)和 e18(MBS3) 成功；e18 是唯一突破 297K 的。脚本 baize_perf_optim_round2c.sh。
+> - .29 核验：e18 跑前 8×H100 全空，e18 跑中 72.5GB/100%util。
+> 📦 体积：TASK=29.4KB / MEMORY=~29.0KB（均≤32KB✓，本轮归档 #762 idle → daily-memories/2026-10-24.md）。
 
-> 🆕 **2026-10-24 11:0x #763：▶ 放行吞吐优化R2·收到10-24 09:3x新指令（基于自己报告§4建议继续优化）·R2已跑完5组·R2b已启动**：
-> - **新指令**：用户放行 pretrain 基于自己报告 §4 的 7 条建议继续优化 BaiZe-2B 预训练吞吐（当前最佳 e09_fp8_tw_cg=297K tok/s，峰值65.4GB/80GB余14GB）。
-> - **R2 已跑完**（09:45-10:29，/tmp/baize_perf_r2/summary.txt）：① e10 MBS4=OOM(72GB+7.9GB>79.2,8.5GB碎片) ② e11 MBS3=OOM(77.8GB) ③ e12 CE-fusion=296K(=e09无变化,loss非瓶颈) ④ e13 NCCL-Ring=297K(=e09无变化,单节点NVSwitch已最优) ⑤ e14 recompute=AssertionError(full recompute需full-iter CG,launcher仅暴露full granularity,selective不可用)。
-> - **R2b 已启动**（11:10 .29 PID3227797 后台，/tmp/baize_perf_r2b/，**修正后重跑**）：首轮因 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`+CG 缺 `NCCL_GRAPH_REGISTER=0` 触发 Megatron CudaGraphManager AssertionError（全5组秒挂）→ 脚本已加 `NCCL_GRAPH_REGISTER=0` 修复并重跑。e10b MBS4+defrag 已过初始化在训练(~65.5GB)。5组：① e10b MBS4+expandable_segments ② e11b MBS3+expandable_segments ③ e15 GBS2048 ④ e16 SP(TP1) ⑤ e17 MBS4+first-last-bf16。预计~1.5h跑完。
-> - **未试建议评估**：#2 CUDA12.9升级(需风险评估TE2.12/torch2.8兼容+回滚方案,未动) | #4 数据侧(num_workers=8硬编码recipe,需改代码,且e12/e13证明非host瓶颈) | #7 torch.compile(launcher无flag,需加代码,Mamba2自定义算子compile风险高)。
-> - .29 核验：R2b 跑前 8×H100 全空(0 MiB)，e10b 启动中。脚本 baize_perf_optim_round2b.sh（新增）。
-> 📦 体积：TASK=29.4KB / MEMORY=~28.7KB（均≤32KB✓，本轮归档 #760/#761 idle → daily-memories/2026-10-24.md）。
+> 📦 §#762（2026-10-24 08:30）已归档 → daily-memories/2026-10-24.md；**结论**：idle heartbeat，三份报告在盘，无新指令。需要时再读。
+
+> 🆕 **2026-10-24 11:0x #763：R2已跑完5组·R2b结果见#764**：R2 ① e10 MBS4=OOM ② e11 MBS3=OOM(77.8GB) ③ e12 CE-fusion=296K ④ e13 NCCL-Ring=297K ⑤ e14 recompile=AssertionError。R2b 5组结果详见 #764。
 > 📦 §#760~#761 流水（2026-10-24 06:08~07:20，2 条 idle heartbeat）已归档 → daily-memories/2026-10-24.md；**结论**：三份10-23报告均在盘，无新指令。需要时再读。
 > 📦 §#758~#759 流水（2026-10-24 03:4x~04:57，2 条 idle heartbeat 复核三份报告无误）已归档 → daily-memories/2026-10-24.md；**结论**：三份10-23报告均在盘+committed，无新指令。需要时再读。
 > 📦 §#757（2026-10-24 02:3x）已归档 → daily-memories/2026-10-24.md；**结论**：吞吐优化10/10完成，新纪录297K tok/s(+19.4% vs 249K) @ FP8 TW+CG协同效应，HTML报告已交付(commit 74ef3e523)。需要时再读。
