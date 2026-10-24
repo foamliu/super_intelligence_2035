@@ -14326,3 +14326,119 @@ echo "=== DONE 115 ==="
 360:    if [[ "$CLI_AGENT" == "zhulong" ]]; then
 === DONE 115 ===
 ```
+
+---
+
+## RUN_ID 116 · 2026-10-24 22:13:03 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 116 | actual run configs | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+[ -d "$D" ] || D=/nasdata/app.e0031982/code/super_intelligence_2035
+
+echo "[1] .env（两套脚本共用）"
+for e in "$D"/.env "$D"/scripts/.env; do [ -f "$e" ] && { echo "  == $e"; grep -E 'CLI_AGENT|MODEL|MAX_TOKEN|READBACK|PROXY|TEMPERATURE|TURN|MAX_' "$e" | cut -c1-120; }; done
+
+echo "[2] 两批 launcher 脚本（cline 的 B.glm-5.3-flash 与 zhulong 的 ZL-flash full）"
+ls -lt /tmp/run_glm-5.3-flash_retest_r1_regrade.sh /tmp/run_glm-5.3-flash_zl_full_r1*.sh /tmp/ABL_glm-5.3-flash* 2>/dev/null | head -8 | cut -c1-110
+for f in /tmp/run_glm-5.3-flash_retest_r1.sh /tmp/run_glm-5.3-flash_zl_full_r1.sh /tmp/ABL_glm-5.3-flash_retest_r1.sh /tmp/ABL_glm-5.3-flash_zl_full_r1.sh; do
+  [ -f "$f" ] && { echo "  == $f"; grep -nE 'MODEL|model|maxTokens|CLI_AGENT|CLI_DATA_DIR|data-dir|-p |READBACK|max-turns|turns' "$f" | head -14 | cut -c1-140; }
+done
+echo "  -- 从历史 log 里找启动命令行 --"
+for L in /tmp/ABL_glm-5.3-flash_retest_r1.log /tmp/ABL_glm-5.3-flash_zl_full_r1.log; do
+  [ -f "$L" ] && { echo "  == $(basename "$L")"; grep -aE '执行器|CLI_AGENT|data-dir|model|MODEL|worker_[0-9]' "$L" | head -8 | cut -c1-150; }
+done
+
+echo "[3] 各 data-dir 的 providers.json 摘要（model/maxTokens）"
+for p in $(find /nasdata/app.e0031982 -maxdepth 4 -name providers.json 2>/dev/null | grep -E 'cline_zhulong|\.cline/|worker_' | head -8); do
+  echo "  == $p"
+  python3 - "$p" <<'PY' 2>/dev/null || head -c 300 "$p"
+import json,sys
+d=json.load(open(sys.argv[1]))
+for k,v in d.get("providers",{}).items():
+    s=v.get("settings",{})
+    print(f"     {k}: model={s.get('model')} maxTokens={s.get('maxTokens')} reasoning={s.get('reasoning')} baseUrl={s.get('baseUrl')}")
+PY
+done
+
+echo "[4] 目录里的 .env（per-run）"
+find /nasdata/app.e0031982 -maxdepth 3 -name '.env' -newermt '2026-10-16' 2>/dev/null | head -6 | while read -r f; do
+  echo "  == $f"; grep -E 'CLI_AGENT|MODEL|READBACK' "$f" | cut -c1-110
+done
+echo "=== DONE 116 ==="
+```
+
+**输出**
+```
+=== RUN_ID 116 | actual run configs | 2026-10-24 22:13:03 | host=hfeg0tedaap02 ===
+[1] .env（两套脚本共用）
+  == /nasdata/app.e0031982/code/eda_fastmcp/.env
+DEEPSEEK_MODEL="deepseek-v4-flash"
+QWEN_MODEL="qwen3.6-35b-a3b"
+DOUBAO_MODEL="doubao-seed-2.0-pro-cloud"
+KIMI_MODEL="kimi-k2.6-cloud"
+GLM_MODEL="glm-5.2"
+GLM_FLASH_MODEL="glm-5.3-flash"
+QWEN2_MODEL="qwen3.8-27b"
+VQA_MODEL="kimi-k2.6-cloud"
+VQA_MAX_IMAGE_MB=20
+T2I_MODEL="doubao-seedream-5.0-lite-cloud"
+# PROXY_PORTS=8664,8665,8653,8669,8668,8652
+# PROXY_PORTS=8650,8651,8652,8654
+# PROXY_PORTS=8666,8667,8669,8670  # 运维令 2026-10-19 23:3x 直令 (r4/r5 + full@cloud)
+# PROXY_PORTS=8663,8666,8667,8670  # 运维令 2026-10-21 14:0x/15:3x 直令 (r5e -p 8; 取代 r4e 的 8650/8651/8652/86
+PROXY_PORTS=8650,8651,8652,8654
+# 不设下面这行即全并行。设 RUN_CODE_MAX_CONCURRENT=1 可临时回退串行排查
+#RUN_CODE_MAX_CONCURRENT=4
+LOG_MAX_BYTES=10485760
+REFLECTION_MAX_RETRIES=2
+#REFLECTION_MODEL=qwen3.6-35b-a3b
+# CLI_AGENT=cline
+CLI_AGENT=cline
+QUERY_REWRITE_MAX_TOKENS=128
+REFLEXION_MAX_ROUNDS=3
+EDA_RUNCODE_READBACK=full
+[2] 两批 launcher 脚本（cline 的 B.glm-5.3-flash 与 zhulong 的 ZL-flash full）
+-rw-r----- 1 app.e0031982 app.adm     7361 Oct 23 22:04 /tmp/ABL_glm-5.3-flash_zl_full_r5_regrade.log
+-rw-r----- 1 app.e0031982 app.adm  9093970 Oct 23 21:42 /tmp/ABL_glm-5.3-flash_zl_full_r5.log
+-rw-r----- 1 app.e0031982 app.adm     7353 Oct 23 20:35 /tmp/ABL_glm-5.3-flash_zl_full_r4_regrade.log
+-rw-r----- 1 app.e0031982 app.adm 10391019 Oct 23 20:04 /tmp/ABL_glm-5.3-flash_zl_full_r4.log
+-rw-r----- 1 app.e0031982 app.adm     7359 Oct 23 18:31 /tmp/ABL_glm-5.3-flash_zl_full_r3_regrade.log
+-rw-r----- 1 app.e0031982 app.adm  9976074 Oct 23 18:01 /tmp/ABL_glm-5.3-flash_zl_full_r3.log
+-rw-r----- 1 app.e0031982 app.adm     7438 Oct 23 15:53 /tmp/ABL_glm-5.3-flash_zl_full_r2_regrade.log
+-rw-r----- 1 app.e0031982 app.adm 10280680 Oct 23 15:35 /tmp/ABL_glm-5.3-flash_zl_full_r2.log
+  -- 从历史 log 里找启动命令行 --
+  == ABL_glm-5.3-flash_zl_full_r1.log
+[0;34m[INFO][0m 执行器: zhulong
+    This[0m[2m function models[0m[2m such[0m[2m a process. It takes a bitmask where[0m[2m '1' represents the
+     sweep[0m[2m[thinking] [0m[2mLet[0m[2mVar.mode = ae.MDE_SW[0m[2mEEP_VARIABLE_MODEL[0m[2m me analyze[0m[2m_PARAMETER
+     sweepVar.model[0m[2mName = "C[0m[2m the task:
+     sweepVar.modelParameterName[0m[2m = "I0[0m[2m"
+| 3. API get_api[2m_COMPONENT_PARAMETER`, `MDE_SWEEP[0m[2m_VARIABLE_MODEL_PARAMETER[0m[2m`, `MDE_SWEEP_VARIABLE_NONE[0m[2m`
+[0m[2m only if[0m[2m1. The user wants me[0m[2m output >[0m[2m to create[0m[2m pipe[0m[2m a function[0m[2m capacity[0m[2m `config_ac_mo
+   - Config[0m[2mures the sweep variable[0m[2m for `[0m[2mas[0m[2m to target a model parameter ([0m[2mmodel[0m[2mOut -help`,[0m[2m sugge
+[3] 各 data-dir 的 providers.json 摘要（model/maxTokens）
+  == /nasdata/app.e0031982/.cline/data/settings/providers.json
+     openai-compatible: model=deepseek-v4-pro maxTokens=16384 reasoning={'enabled': False} baseUrl=http://agi-gateway.cxmt.com/cloud/v1
+     sapaicore: model=anthropic--claude-3.5-sonnet maxTokens=None reasoning=None baseUrl=None
+  == /nasdata/app.e0031982/.cline_zhulong/data/settings/providers.json
+     openai-compatible: model=glm-5.2 maxTokens=None reasoning=None baseUrl=http://agi-gateway.cxmt.com/cloud/v1
+[4] 目录里的 .env（per-run）
+  == /nasdata/app.e0031982/code/eda_fastmcp/.env
+DEEPSEEK_MODEL="deepseek-v4-flash"
+QWEN_MODEL="qwen3.6-35b-a3b"
+DOUBAO_MODEL="doubao-seed-2.0-pro-cloud"
+KIMI_MODEL="kimi-k2.6-cloud"
+GLM_MODEL="glm-5.2"
+GLM_FLASH_MODEL="glm-5.3-flash"
+QWEN2_MODEL="qwen3.8-27b"
+VQA_MODEL="kimi-k2.6-cloud"
+T2I_MODEL="doubao-seedream-5.0-lite-cloud"
+#REFLECTION_MODEL=qwen3.6-35b-a3b
+# CLI_AGENT=cline
+CLI_AGENT=cline
+EDA_RUNCODE_READBACK=full
+=== DONE 116 ===
+```
