@@ -14709,3 +14709,85 @@ echo "=== DONE 119 ==="
   zhulong_now     model=glm-5.3-flash maxTokens=16384 baseUrl=http://agi-gateway.cxmt.com/v1 reasoning={'enabled': False} temp=None top_p=None
 === DONE 119 ===
 ```
+
+---
+
+## RUN_ID 120 · 2026-10-24 22:23:32 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 120 | align zhulong maxTokens -> 8192 | $(date '+%F %T') | host=$(hostname) ==="
+Z="$HOME/.zhulong/settings/providers.json"
+
+echo "[1] 改前"
+python3 - "$Z" <<'PY'
+import json,sys
+s=json.load(open(sys.argv[1]))["providers"]["openai-compatible"]["settings"]
+print(f"  model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')}")
+PY
+
+echo "[2] 备份 + 改 maxTokens=8192（其余字段一字不动）"
+BAK="$Z.bak.$(date +%Y%m%d_%H%M)"
+cp -a "$Z" "$BAK" && echo "  backup -> $BAK"
+python3 - "$Z" <<'PY'
+import json,sys
+p=sys.argv[1]
+d=json.load(open(p))
+s=d["providers"]["openai-compatible"]["settings"]
+s["maxTokens"]=8192
+json.dump(d,open(p,"w"),ensure_ascii=False,indent=2)
+print("  written")
+PY
+
+echo "[3] 改后 + JSON 合法性"
+python3 - "$Z" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+s=d["providers"]["openai-compatible"]["settings"]
+print(f"  model={s.get('model')} maxTokens={s.get('maxTokens')} baseUrl={s.get('baseUrl')} reasoning={s.get('reasoning')}")
+print("  JSON OK")
+PY
+
+echo "[4] 与 cline glm 时代基准的逐字段对照"
+python3 - "$HOME/.cline/data/settings/providers.json" "$Z" <<'PY'
+import json,sys
+a=json.load(open(sys.argv[1]))["providers"]["openai-compatible"]["settings"]
+b=json.load(open(sys.argv[2]))["providers"]["openai-compatible"]["settings"]
+keys=["maxTokens","baseUrl","reasoning"]
+print("  field        cline_now                 zhulong_now")
+for k in keys:
+    print(f"  {k:12s} {str(a.get(k)):25s} {str(b.get(k))}")
+print("  注：model 按实验设计不同（cline 当前是 deepseek-v4-pro 那批；本轮 zhulong 仍用 glm-5.3-flash）")
+PY
+
+echo "[5] MCP settings 仍一致？"
+python3 - "$HOME/.cline/data/settings/cline_mcp_settings.json" "$HOME/.zhulong/settings/cline_mcp_settings.json" <<'PY'
+import json,sys
+a=json.load(open(sys.argv[1])); b=json.load(open(sys.argv[2]))
+print("  identical:", a==b)
+PY
+echo "=== DONE 120 ==="
+```
+
+**输出**
+```
+=== RUN_ID 120 | align zhulong maxTokens -> 8192 | 2026-10-24 22:23:32 | host=hfeg0tedaap02 ===
+[1] 改前
+  model=glm-5.3-flash maxTokens=16384 baseUrl=http://agi-gateway.cxmt.com/v1 reasoning={'enabled': False}
+[2] 备份 + 改 maxTokens=8192（其余字段一字不动）
+  backup -> /home/app.e0031982/.zhulong/settings/providers.json.bak.20261024_2223
+  written
+[3] 改后 + JSON 合法性
+  model=glm-5.3-flash maxTokens=8192 baseUrl=http://agi-gateway.cxmt.com/v1 reasoning={'enabled': False}
+  JSON OK
+[4] 与 cline glm 时代基准的逐字段对照
+  field        cline_now                 zhulong_now
+  maxTokens    16384                     8192
+  baseUrl      http://agi-gateway.cxmt.com/cloud/v1 http://agi-gateway.cxmt.com/v1
+  reasoning    {'enabled': False}        {'enabled': False}
+  注：model 按实验设计不同（cline 当前是 deepseek-v4-pro 那批；本轮 zhulong 仍用 glm-5.3-flash）
+[5] MCP settings 仍一致？
+  identical: True
+=== DONE 120 ===
+```
