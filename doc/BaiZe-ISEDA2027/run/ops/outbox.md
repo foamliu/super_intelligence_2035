@@ -19255,3 +19255,151 @@ total 260
 -rw-r----- 1 app.e0031982 app.adm    621 Oct 24 21:33 summary.txt
 === DONE 177 ===
 ```
+
+---
+
+## RUN_ID 178 · 2026-10-24 21:38:09 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 178 | 2-rank NCCL repro | $(date '+%F %T') | host=$(hostname) ==="
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+D=/nas_train/app.e0031982/nccl_dbg
+mkdir -p "$D"
+
+echo "[0] 上一次（21:33）的结果"
+cat /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-170
+echo "  --- run.log ---"; cat /tmp/baize_dualnode_16gpu/run.log 2>/dev/null | cut -c1-170
+echo "  --- master.log 关键行 ---"
+grep -aiE 'Init COMPLETE|NCCL WARN|NCCL INFO Bootstrap|timeout|error|Exception' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -8 | cut -c1-170
+
+echo "[1] 两台机的 RoCE 口对照（MTU 4096 的才用于 RDMA）"
+for h in 12 29; do
+  echo "  --- $h ---"
+  if [ "$h" = 12 ]; then timeout 15 bash -lc 'for d in $(ibv_devinfo -l 2>/dev/null | awk "NR>1{print \$1}"); do m=$(ibv_devinfo -d $d 2>/dev/null | grep active_mtu | awk "{print \$2}"); s=$(ibv_devinfo -d $d 2>/dev/null | grep -m1 "state:" | awk "{print \$2}"); [ "$m" = "4096" ] && echo "    $d mtu=$m $s"; done' ; else timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'for d in $(ibv_devinfo -l 2>/dev/null | awk "NR>1{print \$1}"); do m=$(ibv_devinfo -d $d 2>/dev/null | grep active_mtu | awk "{print \$2}"); s=$(ibv_devinfo -d $d 2>/dev/null | grep -m1 "state:" | awk "{print \$2}"); [ "$m" = "4096" ] && echo "    $d mtu=$m $s"; done' 2>/dev/null; fi
+done
+
+echo "[2] 写最小复现脚本（2 rank × 1 卡 × 20 步 all_reduce）"
+cat > "$D/tc.py" <<'EOS'
+import os, socket, time, torch, torch.distributed as dist
+dist.init_process_group("nccl")
+r = dist.get_rank(); w = dist.get_world_size()
+lr = int(os.environ.get("LOCAL_RANK", "0")); torch.cuda.set_device(lr)
+print(f"[rank {r}/{w}] init_process_group OK host={socket.gethostname()} dev={torch.cuda.get_device_name(lr)}", flush=True)
+x = torch.ones(64*1024*1024, dtype=torch.float32, device="cuda")
+for i in range(20):
+    dist.all_reduce(x); torch.cuda.synchronize()
+    if r == 0: print(f"iter {i} ok", flush=True)
+t = time.time()
+for _ in range(10):
+    dist.all_reduce(x)
+torch.cuda.synchronize(); dt = time.time() - t
+if r == 0:
+    print(f"busbw ~ {2*(w-1)/w*x.numel()*4*10/dt/1e9:.1f} GB/s (10 iters {dt:.2f}s)", flush=True)
+dist.destroy_process_group()
+EOS
+echo "  script: $(wc -l < "$D/tc.py") lines"
+
+echo "[3] 起 rank0（本机 .12）"
+cd "$D"
+NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET \
+NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 \
+NCCL_SOCKET_IFNAME=ens3f0np0 \
+MASTER_ADDR=10.239.2.12 MASTER_PORT=29533 RANK=0 WORLD_SIZE=2 LOCAL_RANK=0 \
+setsid -f nohup "$PY" tc.py > rank0.log 2>&1 < /dev/null
+echo "  rank0 launched"
+
+echo "[4] 起 rank1（远端 .29）"
+timeout 30 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 \
+ "cd $D && NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 MASTER_ADDR=10.239.2.12 MASTER_PORT=29533 RANK=1 WORLD_SIZE=2 LOCAL_RANK=0 setsid -f nohup $PY tc.py > rank1.log 2>&1 < /dev/null; echo rank1-launched" 2>&1 | tail -2
+
+sleep 8
+echo "[5] 8s 后：两边 GPU"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2' 2>/dev/null || true
+echo "  (日志稍后由下一条令读取：$D/rank0.log rank1.log)"
+echo "=== DONE 178 ==="
+```
+
+**输出**
+```
+=== RUN_ID 178 | 2-rank NCCL repro | 2026-10-24 21:38:09 | host=whag0pgpuap12 ===
+[0] 上一次（21:33）的结果
+===== Dual-node 16-GPU throughput test @ 2026-10-24 21:33:39 =====
+Config: e18 identical (MBS3 + FP8 TW + CG), DP=16 (2 nodes x 8 GPU)
+Baseline: single-node 8-GPU = 305098 tok/s (e18)
+MBS=3 GBS=1008 SEQ=4096 ITERS=80
+GBS/(MBS*DP16) = 1008/48 = 21 accum steps
+Ideal linear = 610196; 85% = 518666; 70% = 427137
+
+=== PRE-FLIGHT GPU CHECK ===
+--- .12 (master, local) ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+--- .29 (worker, remote) ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+
+  --- run.log ---
+SUM=/tmp/baize_dualnode_16gpu/summary.txt LOG_M=/tmp/baize_dualnode_16gpu/master.log LOG_W=/tmp/baize_dualnode_16gpu/worker.log R=/tmp/baize_dualnode_16gpu
+  --- master.log 关键行 ---
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x7f045f17eeb0 in /nas_train/app
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x247 (0x7f04026a0147 in /nas_train/app.e0
+Exception raised from run at /pytorch/torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2074 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x7f045f17eeb0 in /nas_train/app
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+  error_file: <N/A>
+[1] 两台机的 RoCE 口对照（MTU 4096 的才用于 RDMA）
+  --- 12 ---
+    mlx5_0 mtu=4096 PORT_ACTIVE
+    mlx5_1 mtu=4096 PORT_ACTIVE
+    mlx5_2 mtu=4096 PORT_ACTIVE
+    mlx5_3 mtu=4096 PORT_ACTIVE
+    mlx5_6 mtu=4096 PORT_ACTIVE
+    mlx5_8 mtu=4096 PORT_ACTIVE
+    mlx5_9 mtu=4096 PORT_ACTIVE
+    mlx5_10 mtu=4096 PORT_ACTIVE
+    mlx5_11 mtu=4096 PORT_ACTIVE
+    mlx5_14 mtu=4096 PORT_ACTIVE
+  --- 29 ---
+    mlx5_0 mtu=4096 PORT_ACTIVE
+    mlx5_1 mtu=4096 PORT_ACTIVE
+    mlx5_2 mtu=4096 PORT_ACTIVE
+    mlx5_3 mtu=4096 PORT_ACTIVE
+    mlx5_6 mtu=4096 PORT_ACTIVE
+    mlx5_7 mtu=4096 PORT_DOWN
+    mlx5_8 mtu=4096 PORT_ACTIVE
+    mlx5_9 mtu=4096 PORT_ACTIVE
+    mlx5_10 mtu=4096 PORT_ACTIVE
+    mlx5_11 mtu=4096 PORT_ACTIVE
+    mlx5_14 mtu=4096 PORT_ACTIVE
+    mlx5_15 mtu=4096 PORT_DOWN
+[2] 写最小复现脚本（2 rank × 1 卡 × 20 步 all_reduce）
+  script: 16 lines
+[3] 起 rank0（本机 .12）
+  rank0 launched
+[4] 起 rank1（远端 .29）
+rank1-launched
+[5] 8s 后：两边 GPU
+0, 0 MiB
+1, 0 MiB
+0, 0 MiB
+1, 0 MiB
+  (日志稍后由下一条令读取：/nas_train/app.e0031982/nccl_dbg/rank0.log rank1.log)
+=== DONE 178 ===
+```
