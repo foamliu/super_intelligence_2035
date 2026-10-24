@@ -17255,3 +17255,94 @@ drwxr-xr-x   3 app.e0031982 app.adm         4096 Oct  9 08:45 ..
   avail_TB=10.52
 === DONE 156 ===
 ```
+
+---
+
+## RUN_ID 157 · 2026-10-24 16:43:56 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 157 | pretrain loop liveness | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] pretrain loop 进程"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_pretrain_loop\.sh' | grep -v grep | cut -c1-140 || echo '  LOOP_NOT_FOUND'
+
+echo "[2] loop 日志最后 20 行 + mtime（看最后一次 wake / sleep 声明）"
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null || echo '  NO_LOOP_LOG'
+tail -20 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-180
+
+echo "[3] 是否有 cline agent 正在跑（说明这轮唤醒中）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'cline' | grep -v grep | grep -vE 'grep|tail' | head -5 | cut -c1-140 || echo '  NO_CLINE_PROC'
+
+echo "[4] MEMORY_PRETRAIN_2B.md mtime + 顶部 WAITING 值"
+ls -l --time-style=+%F_%T "$R/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+grep -n '^WAITING:' "$R/MEMORY_PRETRAIN_2B.md" 2>/dev/null | head -2
+
+echo "[5] .29 GPU 状态（确认是否真空闲）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .29 FAILED'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3' 2>/dev/null || true
+
+echo "[6] 最近 3 小时内 pretrain 相关文件是否有改动"
+find "$R" -maxdepth 1 -name 'MEMORY_*.md' -newermt '-3 hours' -printf '%TY-%Tm-%Td %TH:%TM %p\n' 2>/dev/null | head -5
+find /tmp -maxdepth 1 -name 'baize_pretrain*' -newermt '-3 hours' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | head -5
+
+echo "[7] 系统负载与长睡迹象"
+cat /proc/loadavg 2>/dev/null
+
+echo "=== DONE 157 ==="
+```
+
+**输出**
+```
+=== RUN_ID 157 | pretrain loop liveness | 2026-10-24 16:43:56 | host=whag0pgpuap29 ===
+[1] pretrain loop 进程
+ 328936 1294147   95664 Sl   /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dis
+1294147       1  693212 Ss   bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+[2] loop 日志最后 20 行 + mtime（看最后一次 wake / sleep 声明）
+-rw-r----- 1 app.e0031982 app.adm 329604 2026-10-23_14:09:32 /tmp/baize_pretrain_loop.log
+## 收尾铁律闭环
+
+| 项 | 结果 |
+|---|---|
+| 体积自检 | TASK=21272B / MEMORY=~28.1KB（均 ≤32KB ✓，归档 0KB） |
+| 心跳 | MEMORY #750 idle heartbeat + 快照已更新 |
+| 日报 | daily-memories/2026-10-23.md 追加 #750 |
+| 提交推送 | `eb81a2da3`（仅显式 add 2 文件，未用 `git add -A`） |
+| 闭环自检 | 无 ahead/behind ✓，时间戳 13:39 = 本轮 |
+
+`.29` 8×H100 全空闲（0 MiB），无 torchrun/lm_eval/pretrain 进程；`baize_pretrain_loop.sh` 存活，`WAITING: 1` 保持 30 分钟长轮询，无新运维指令。
+
+> 注：工作区存在 `M ARCHIVE_PRETRAIN_ROUND1_AND_DONE_R2.md`（pretrain 归档指针搬迁内容，非本轮产物，属在途改动）——按纪律未纳入本轮提交，
+[loop] 2026-10-23 13:39:30 pi returned (exit 0), checking git push ...
+[push] 2026-10-23 13:39:30 push interval reached, syncing ...
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-23 13:39:32 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-23 14:09:32 wake up, invoking pi ...
+[3] 是否有 cline agent 正在跑（说明这轮唤醒中）
+ 328936   95664 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p -
+ 536814    1359 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 579734    1323 docker compose --project-name adaptive-rejection-sampler__n7o8glj__env --project-directory /home/app.e0031982/terminal-bench
+ 579760    1323 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name adaptive-rejection-sampler__n7o8glj__env --project-dir
+2136792      61 docker compose --project-name break-filter-js-from-html__xso6zfp__env --project-directory /home/app.e0031982/terminal-bench/
+[4] MEMORY_PRETRAIN_2B.md mtime + 顶部 WAITING 值
+[5] .29 GPU 状态（确认是否真空闲）
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+2214826 timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 pgrep -af "torchrun|pretrai
+2214827 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 pgrep -af "torchrun|pretrain_launcher"
+2214887 bash -c pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3
+[6] 最近 3 小时内 pretrain 相关文件是否有改动
+[7] 系统负载与长睡迹象
+9.82 8.49 8.02 2/7015 2214897
+=== DONE 157 ===
+```
