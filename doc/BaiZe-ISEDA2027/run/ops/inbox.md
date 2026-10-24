@@ -1,9 +1,35 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 167 | TARGET: 29 -->
-## RUN_ID 167 — 🔍 只读：`/nasdata/app.e0031982/eda_code_eval` 在哪台机（.29 / .12 / 10.129.32.75）
+<!-- RUN_ID: 168 | TARGET: 29 -->
+## RUN_ID 168 — 🔍 找 26.15 评测机（承载 `/nasdata/.../eda_code_eval`）的可达路径
 
 ```bash
+set -u
+echo "=== RUN_ID 168 | reach 26.15 eval host | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 直接试几个候选 IP 的 22/8090"
+for ip in 10.129.26.15 10.129.32.75 10.239.26.15 10.239.32.75; do
+  r=$(timeout 4 bash -c "exec 3<>/dev/tcp/$ip/22" 2>/dev/null && echo ssh-open || echo ssh-closed)
+  m=$(timeout 4 bash -c "exec 3<>/dev/tcp/$ip/8090" 2>/dev/null && echo mcp-open || echo mcp-closed)
+  echo "  $ip : $r / $m"
+done
+
+echo "[2] ssh 配置与已知主机里的线索"
+sed -n '1,40p' ~/.ssh/config 2>/dev/null | grep -v -i 'private' | head -20 || echo '  no ~/.ssh/config'
+grep -o -E '10\.[0-9]+\.[0-9]+\.[0-9]+' ~/.ssh/known_hosts 2>/dev/null | sort -u | head -12 || echo '  no known_hosts'
+grep -i -E '26\.15|32\.75|eda' /etc/hosts 2>/dev/null | head -5 || true
+
+echo "[3] 从 .12 侧试（它跑过 eval，可能通）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 "for ip in 10.129.26.15 10.129.32.75; do (timeout 4 bash -c \"exec 3<>/dev/tcp/\$ip/22\" 2>/dev/null && echo \"  \$ip ssh-open\" || echo \"  \$ip ssh-closed\"); done; ls -d /nasdata 2>/dev/null || echo '  .12 no /nasdata'; grep -i -E 'nasdata' /etc/fstab 2>/dev/null | head -3" 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[4] 本地是否有该批次的任何副本"
+timeout 25 find /nas_train/app.e0031982 -maxdepth 4 -type d -name '2026_10*' 2>/dev/null | head -8 || true
+echo "=== DONE 168 ==="
+```
+
+## RUN_ID 167 — 🔍 只读：`/nasdata/app.e0031982/eda_code_eval` 在哪台机（.29 / .12 / 10.129.32.75）
+
+```text
 set -u
 echo "=== RUN_ID 167 | locate eda_code_eval | $(date '+%F %T') | host=$(hostname) ==="
 P=/nasdata/app.e0031982/eda_code_eval
