@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench. IMAGE PULL IN PROGRESS (55/89 present, 34 missing, both pull scripts running). v2 serial: cline 0/15(bug), codex 6/14 PASS, hermes RUNNING. 7x89 concurrent launcher READY. H-B报告✅
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created✅(R476)·v2 codex done 6/14✅(R476)
-当前动作:     R476: ①Verified 09:2x directive P0 tasks (images origin, dockerd proxy, hello-world pull) — all already resolved by R474/R475 ②Image pull progressing: 55/89 (up from 49), both scripts running, retry has 0 failures ③v2 serial: codex DONE (6/14 PASS=42.9%), hermes RUNNING, 4 harnesses remain ④Created _full_7x89_concurrent_launcher.sh (7-way parallel, syntax OK) ⑤Resource check: 224 CPU, 2TB RAM, 6.4TB disk — 7 concurrency very feasible
-下一步:       ①Wait for pull scripts to finish (~34 images, ETA ~1h) ②Let v2 finish OR record progress & stop (per directive: 不kill v2, but can record+switch) ③Once 89 images present: stop v2, launch 7x89 concurrent (script ready) ④Report with McNemar + "89/89 full coverage" + "7-way concurrent" declaration
-阻塞:         无. Pull scripts actively downloading. /data 6.4TB free. Retry script 0 failures (auth.docker.io outage resolved).
+PHASE:        T2 Terminal-Bench. IMAGE PULL 81/89 (8 missing, both pull scripts running). v2 serial: cline 0/15(bug), codex 6/14 PASS, hermes 0/9, opencode RUNNING(~68min). 7x89 launcher FIXED+READY. H-B报告✅
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created+FIXED✅(R476/R477)·v2 codex done 6/14✅·v2 hermes done 0/9✅·v2 cline-patched done 0/15(bug)✅
+当前动作:     R477: ①Image pull 81/89 (8 missing: make-mips-interpreter, mcmc-sampling-stan, merge-diff-arc-agi-task, model-extraction-relu-logits, modernize-scientific-stack, mteb-leaderboard, mteb-retrieve, multi-source-data-merger) — retry script + helper pull script both running ②v2 serial: opencode RUNNING (~68min on build-pmars), 3 harnesses remain (claude-code, deepseek-harness, pi) ③FIXED critical bug in 7x89 launcher: FULL_DATASET was defined AFTER the harbor loop that uses it — moved to before loop ④Collected v2 results: cline-patched 0/15(RuntimeError), codex 6/14 PASS(42.9%), hermes 0/9(6 RuntimeError)
+下一步:       ①Wait for 8 remaining images (ETA ~30min, both scripts pulling) ②Once 89 images present: record v2 progress, stop v2 (or let opencode finish), launch 7x89 concurrent (launcher fixed+ready) ③7x89 = 623 trials, 7-way concurrent, ETA ~2.5-3h ④Report with McNemar + "89/89 full coverage" + "7-way concurrent" declaration
+阻塞:         无. Pull scripts actively downloading remaining 8. /data 6.4TB free. Retry script 0 failures.
 ERROR_COUNT:  0
-📦 体积：TASK=32KB / MEMORY=11KB
+📦 体积：TASK=32KB / MEMORY=14KB
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -125,8 +125,35 @@ ERROR_COUNT:  0
 - Disk: /data 6.4TB free → 7容器同时跑充裕
 - 当前运行容器: 5个（v2 hermes的env容器）
 
+### 🔴 R477 关键发现：7x89启动器关键BUG修复 + 镜像81/89 + v2 opencode运行中
+
+**① 7x89 并发启动器关键BUG修复（R477）**
+- **BUG**: `_full_7x89_concurrent_launcher.sh` 中 `FULL_DATASET` 和 `N_TASKS` 变量在脚本**末尾**定义（原line 141-147），但harbor run循环在**中间**就引用了它们（line 103/112）→ 启动后所有harbor进程会拿到空`-p ""`参数导致失败
+- **修复**: 将`FULL_DATASET`创建块（mktemp+symlink farm+N_TASKS计数）移到harbor循环**之前**（新line 88-94），确保`-p "${FULL_DATASET}"`引用有效
+- 验证: `bash -n` syntax OK，grep确认FULL_DATASET在line 88（harbor loop在line 112之前）
+- **这是R476创建脚本时遗留的顺序错误，若不修复7x89并发会全部失败**
+
+**② 镜像拉取进度（81/89 present, 8 missing）**
+- 从R476的55/89增长到81/89（+26个，retry脚本pulled=18 + 主脚本 + helper）
+- 8个仍缺失: make-mips-interpreter, mcmc-sampling-stan, merge-diff-arc-agi-task, model-extraction-relu-logits, modernize-scientific-stack, mteb-leaderboard, mteb-retrieve, multi-source-data-merger
+- 两个脚本并行拉取: ①retry脚本(PID 3788007)在make-mips-interpreter ②helper pull脚本(PID 2248679)在multi-source-data-merger（已拉nginx-request-logging+openssl-selfsigned-cert）
+- ETA: ~30min完成剩余8个
+
+**③ v2 串行运行状态（3/7 harness DONE, opencode RUNNING）**
+- cline-patched: DONE 0/15 (15 RuntimeError — TB_API_KEY未export bug, 已修)
+- codex: DONE 6/14 PASS (42.9%) — PASS: adaptive-rejection-sampler, build-pov-ray, configure-git-webserver, fix-git, git-multibranch, log-summary-date-ranges; 7 exceptions (6 AgentTimeout + 1 VerifierTimeout); runtime 3h6m
+- hermes: DONE 0/9 (6 RuntimeError exceptions, 9 completed all 0.0); runtime 37m46s
+- opencode: RUNNING (~68min, on build-pmars task)
+- 剩余: claude-code, deepseek-harness, pi
+- **v2只跑15题（镜像不全时的子集），7x89将覆盖全量89题**
+
+**④ 切换计划（镜像补齐后）**
+- 镜像89/89后: 记录v2进度（3 DONE + opencode partial），可停v2或等opencode完成
+- 启动7x89并发（launcher已修复）: 623 trials, 7-way concurrent, ETA ~2.5-3h
+- v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
+
 ### 本唤醒流水
-[12:34] R476 **09:2x指令P0复核+7x89启动器创建+镜像55/89**. ①docker pull hello-world=SUCCESS ②daemon.json proxies=172.19.92.25:13128 confirmed ③docker history confirms alexgshaw/*:20251031 are Docker Hub pull (buildkit layers) ④Images 49→55/89, both pull scripts running, retry=0 failures ⑤v2 codex DONE 6/14 PASS(42.9%), hermes RUNNING ⑥Created _full_7x89_concurrent_launcher.sh (7-way parallel, syntax OK) ⑦Resources: 224CPU/2TB RAM/6.4TB disk→7 concurrency feasible ⑧Volume: TASK=32KB/MEMORY=11KB. WAITING=1.
+[13:51] R477 **7x89启动器BUG修复+镜像81/89+v2 opencode运行中**. ①FIXED critical bug: FULL_DATASET defined after harbor loop → moved before loop ②Images 55→81/89, 8 missing, both pull scripts running ③v2: cline 0/15(bug), codex 6/14 PASS(42.9%), hermes 0/9(6 RuntimeError), opencode RUNNING(~68min) ④Helper pull script started for remaining images ⑤Volume: TASK=32KB/MEMORY=14KB. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。

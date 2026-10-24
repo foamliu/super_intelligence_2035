@@ -84,6 +84,15 @@ TB_OVERLAY="${TB_DIR}/overlay-network-host.yml"
 export PYTHONPATH="${HARNESS_DIR}:${PYTHONPATH:-}"
 HARNESSES=("cline-patched" "codex" "hermes" "opencode" "claude-code" "deepseek-harness" "pi")
 
+# --- Create full 89-task dataset (symlink farm) ---
+FULL_DATASET="$(mktemp -d -t tb_7x89_dataset_XXXXXX)"
+echo "[7x89] creating full 89-task dataset at ${FULL_DATASET}"
+for d in ~/terminal-bench/*/; do
+    t=$(basename "$d"); ln -sf "${HOME}/terminal-bench/${t}" "${FULL_DATASET}/${t}"
+done
+N_TASKS=$(ls -d "${FULL_DATASET}"/*/ 2>/dev/null | wc -l)
+echo "[7x89] ${N_TASKS} tasks in dataset"
+
 echo "[7x89] === Running ${#HARNESSES[@]} harnesses x ${N_TASKS} tasks = $(( ${#HARNESSES[@]} * N_TASKS )) trials ==="
 echo "[7x89] Mode: 7-WAY CONCURRENT (each harness --n-concurrent 1)"
 echo "[7x89] starting at $(date '+%F %T') ..."
@@ -137,11 +146,3 @@ echo "[7x89] Next: collect results, McNemar, 89/89 full coverage report"
 pkill -f 'gw_proxy.*9090' 2>/dev/null || true
 pkill -f 'gw_proxy.*9091' 2>/dev/null || true
 sleep 2
-
-FULL_DATASET="$(mktemp -d -t tb_7x89_dataset_XXXXXX)"
-echo "[7x89] creating full 89-task dataset at ${FULL_DATASET}"
-for d in ~/terminal-bench/*/; do
-    t=$(basename "$d"); ln -sf "${HOME}/terminal-bench/${t}" "${FULL_DATASET}/${t}"
-done
-N_TASKS=$(ls -d "${FULL_DATASET}"/*/ 2>/dev/null | wc -l)
-echo "[7x89] ${N_TASKS} tasks in dataset"
