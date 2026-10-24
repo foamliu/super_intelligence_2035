@@ -1,6 +1,54 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🔨 执行令 · 2026-10-24 09:3x（**按精简报告改一版论文 → 编译 → 提交并推送，供用户审阅**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong 精简论文的报告我看了，**安排他按此改一版，提交 & 推送我看看**。」
+
+**① 依据**：`run/reports/report_zhulong_paper_trim_advice_zh.html`（28,389B，commit `c32342e4`）
+按它的 **① 逐章诊断表 + ② 可删清单（16 条）+ ④ 6 页预算 + ⑤ 摘要/引言草稿** 执行。
+
+**② 硬指标**
+| 项 | 目标 |
+|---|---|
+| **正文页数** | **≤ 6.0 页**（当前 12.0 页）——编译后必须实测页数并贴出 |
+| 行预算 | 按报告 §④：Abstract ~16 / Intro ~30 / Bg ~10 / Design ~26 / Grounding ~34 / Bench ~22 / **Exp ~95** / Disc ~5 / Concl ~6 ≈ **244 行** |
+| 表/图 | 正文 **1 图 + 3 主表**（main-ablation + phi-bound 精简 + llm 4 模型）；其余移附录或合并 |
+
+**③ 关键改动（按报告执行，不得走样）**
+1. **实验章 6_exp.tex 从 248 非注释行 → ~95 行**（最硬一刀）：
+   - `tab:cost` → 移附录；`tab:configurations` → 并入正文文字；`tab:error-categories` → 改一句文字
+   - `tab:phi-bound` → 删 [TBD] 空列；`tab:llm-comparison` → 6 模型留 4
+   - S1–S4 各压到 ~1 段；Error Analysis 4 case → 1 段
+2. **摘要用 §⑤-A 草稿**（含末句落地佐证"hundreds of design engineers"）
+3. **引言用 §⑤-B 草稿**（3 条 contribution 各一行）
+4. **理论章 4_grounding 81 → ~34 行**：砍 "Two clarifications" 整段 + L99–105 设计原则展开
+5. **discussion 6 条 limitations → 3 条**
+
+**④ ⚠️ 必须同时并入 09:2x 令的价值主张（这条比报告更新）**
+摘要与引言要体现：
+> **coding agent 天生会做 design flow 编排**（写 Makefile/tcl 驱动/调度，串起现有 EDA 工具）
+> **+ EDA scripting 能力补全工具断链**（现成工具覆盖不到、要手写胶水处，现场生成代码接上）
+> **= 真实 DE 价值：flow 能完整跑通**
+
+即：在报告的 "execution grounding" 主线之外，**把"编排 + 补断链"作为更高层的价值表现写进去**，形成「scripting → flow 编排」的递进。报告是 09:2x 之前生成的，摘要/引言草稿需按此再调整一遍。
+
+**⑤ 交付与验证**
+1. **改完后编译**（`pdflatex`/`latexmk`，与现有构建方式一致），**必须贴最终页数**（`pdfinfo` 或 pdf 页数）。
+2. **若仍 > 6.0 页**：继续按报告 §② 清单再砍（每轮只砍最长的 2 条），**直到 ≤6.0 页**；每轮贴页数变化。
+3. **不要破坏参考文献/图表编号**（`\ref`/`\cite` 编译无 undefined）。
+4. **commit + push**：
+   ```
+   zhulong paper: 按精简报告改 6 页版（12p→6p）· Exp 248→95 行 / 摘要+引言重写(含编排+补断链 与 落地"数百") / 3 主表
+   ```
+5. **推送后回报**：页数 / 各章实际行数 / 砍掉的 16 条中执行了哪些 / 编译告警（undefined ref 等）
+
+**⑥ 纪律**
+- ✅ 原 12 页版本**先备份**（`git tag paper_12p_backup` 或复制到 `paper_12p_backup/`），不要覆盖丢失
+- 🚫 不打断正在跑的评测（`dsv4pro-cline-full r1` 若仍在跑，评测不受影响，改稿是纯文件操作）
+- 🚫 不改实验数据与结论数字（只精简表述，不删关键数字：75.7% / 18.3% / 62.5% / 57.4pp / 22.0pp 必须保留）
+
+
 ### 🎯 补正 · 2026-10-24 09:2x（**论文核心价值主张重定位：从 "EDA scripting" 升维到 "design flow 编排"**）· 用户直令 · 最高优先
 
 > 用户原话：「zhulong 设计初衷是 EDA scripting，但 DE 用户使用最多的场景还是 **design flow 的编排**。这是 coding agent **天生具备的能力**，而 EDA scripting 能力可以支持 design flow 编排是**补全断链**（有些现成工具无法覆盖的断链，可以被 EDA scripting 轻易接上）。」
