@@ -1133,3 +1133,20 @@
 | 2026-10-24 | 全国民航冬春航季（216 航司 · 周 11.6 万班）/ 207 金亚残运会收官 / 开封方言大会 / 桂林艺术节 / 东南亚中国图书巡回展 / 全球治理论坛（雄安） | 央视网 + 中新网 | 不收（民生 · 体育 · 文化活动） | https://www.chinanews.com.cn/ |
 | 2026-10-24 | 联通千余驻店员协助 iPhone Duo 开 eSIM / 比亚迪秦 PLUS DM-i / Brax Wink 全键盘手机 / 小米 18T 与 11 月新机爆料 / 大众安徽与众 09 / 沃尔沃 EX60 / 奇瑞 LEPAS Aura / Steam 喜加一 / WATCH FIT 5 促销 | IT之家 `1/017/397·396·400·391·389·393·381·376·379·377` | 不收（消费电子新品 · 爆料 · 促销） | https://www.ithome.com/ |
 | 2026-10-24 | AMD Zen 6 首测（同频单核最高 +24%）/ 英特尔 Arc 非官方 FSR 4.1.2 / Win11 预览版两则 | IT之家 `1/017/390·378·373·369` | 不收（硬件跑分 · 非 AI 系统更新） | https://www.ithome.com/ |
+| 2026-10-24 | 腾讯 WorkBuddy 接入 Kimi-K3.1-Pro（3 万亿参数 / 100 万上下文）+ Highspeed 版；仅企业旗舰版与个人订阅优先开放 | IT之家 `1/017/412`（10-24 07:59） | news（§1 前沿模型与能力） | https://www.ithome.com/1/017/412.htm |
+| 2026-10-24 | 消费级显卡短缺：英伟达高管归因内存供应（GDDR7 与 HBM 争抢产能，三大原厂 70%–90% 先进产能给 HBM；2026 AI 数据中心约占全球内存产能 70%）；5090 渠道价 5.5–6 万元 | IT之家 `1/017/440`（10-24 10:00，据 21 财经·EET-China·英伟达发布会） | news（§1 · 稀缺约束） | https://www.ithome.com/1/017/440.htm |
+| 2026-10-24 | 小鹏欧洲四国累计销量破万（海外累计 10 万台·欧洲约 60%·Q2 海外 2 万台/+81%）；代表 OICA 任 UNECE TF-ESRI 秘书长（原称「中国企业首次」） | IT之家 `1/017/422`（10-24 08:38，据小鹏官方） | news（§5 · 销量读数 + 国际组织任职） | https://www.ithome.com/1/017/422.htm |
+| 2026-10-23 | 黄仁勋把玩 Microduck 机器人玩具，20,000 只售出（「圣诞节最热玩具？」） | TechCrunch（10-23 21:59 UTC） | news（§5 · **仅标题层**） | https://techcrunch.com/2026/10/23/hottest-toy-for-christmas-nvidia-ceo-plays-with-adorable-microduck-robots-20000-sell/ |
+| 2026-10-23 | 智能体云初创 Daytona 估值 10 亿美元（FirstMark + 多名天使） | TechCrunch（10-23 16:26 UTC） | news（§5 · **仅标题层**） | https://techcrunch.com/2026/10/23/agent-cloud-startup-daytona-hits-1b-valuation-backed-by-firstmark-and-a-whos-who-of-angels/ |
+| 2026-10-23 | 英特尔因「外国制造机器人禁令」措辞模糊可能波及晶圆厂而获豁免 | Ars Technica AI（10-23 17:18 UTC） | news（§6 · **仅标题层**，详情页 405/Cloudflare） | https://arstechnica.com/ai/2026/10/intel-gets-waiver-after-worries-fuzzy-us-ban-on-foreign-made-robots-may-hit-fabs/ |
+| 2026-10-23 | 谷歌隐私政策更新：Gmail 内容可能用于广告 | Ars Technica tech-policy（10-23 20:19 UTC） | ⚠️ 不收（正文 405 不可读 ⇒ 不据标题下结论 · 留档待复核） | https://arstechnica.com/gadgets/2026/10/updated-google-privacy-policy-says-your-gmail-might-be-used-for-advertising/ |
+| 2026-10-24 | 北京警方打掉多个虚假「名画销售直播间」（几元打印画包装成几十万名家真迹，P 图/AI 生成伪造合影） | IT之家 `1/017/401`（10-24 07:34） | 不收（**司法个案 + 诈骗案件**） | https://www.ithome.com/1/017/401.htm |
+| 2026-10-24 | 安克官方客服账号深夜发黑灰产链接，官方称遭攻击已报案 | IT之家 `1/017/416`（10-24 08:04） | 不收（网络安全事件 · 无 AI 环节） | https://www.ithome.com/1/017/416.htm |
+| 2026-10-24 | 开发者向小米 8 刷入 iOS 16.5 伪装 iPhone X（称大模型辅助） | IT之家 `1/017/429`（10-24 09:16） | 不收（个人折腾视频 · 无机构发布）· **已用作评论目标** | https://www.ithome.com/1/017/429.htm |
+| 2026-10-24 | 周鸿祎拟 2.19 亿元转让奇飞翔艺 12.89929% 股权 | IT之家 `1/017/437` | 不收（股权转让个案） | https://www.ithome.com/1/017/437.htm |
+| 2026-10-24 | 英特尔 CTO：与台积电制程差距缩到几个百分点 | IT之家 `1/017/411`（据 10-22 采访） | 不收（高管表态 · 无新增可核事件） | https://www.ithome.com/1/017/411.htm |
+| 2026-10-24 | 鸿蒙 7.0.0.111 SP12 / XREAL 1 Pro+ 3,499 元 / AOC U32U4D / 飞利浦 32E3N3800L / 米家花洒 / Steam 个人日历 / ColorOS 琴岛通 / Galaxy Buds On / RTX Remix 1.6 / GTA6 评测解禁传闻 / Brax Wink / XBOX COO 离职 / 华为日本售后中心 | IT之家 `1/017/430·439·427·420·404·410·409·408·403·428·400·407·414` | 不收（消费电子 · 游戏 · 人事 · 渠道） | https://www.ithome.com/ |
+| 2026-10-23 | SpaceX / Warhound 2 亿美元 / CFS 8,500 万美元 / Carta×NewView / Zuckerberg 税案 / a16z Crypto 更名 / OpenAI 拟 300 亿美元融资@1.25 万亿 / Oura 诉讼 / Quest 泄露 / 创业不靠病毒式增长 | TechCrunch（10-22~10-23） | 不收（航天·军工·聚变·融资·税制·更名·**未证实融资传闻**·司法·医疗泄露） | https://techcrunch.com/ |
+| 2026-10-23 | 乌鸦评估视觉信息速度约为哺乳动物两倍 | Ars Technica science（10-23 17:32 UTC） | 不收（动物认知 · 与关注清单无关） | https://arstechnica.com/ |
+| 2026-10-24 | 腾讯元宝搜索对外开放深读（极客公园：50+ 产品 / 数千亿索引 / 157 信源 / 日调用数亿次） | 头条站内 `article/7699374401447297570` | 不收（与 10-21 `IT之家 1/015/711` **同事件** · 用作评论目标与选题源） | https://www.toutiao.com/article/7699374401447297570/ |
+| 2026-10-24 | VentureBeat Intelligence 三季度调研：79% 企业 GPU 至少一半时间闲置（三月稳在 77%–81%），其中 70% 仍计划 12 个月内加购算力（385 名受访者 · ≥100 人机构） | 头条站内 `article/7700156062067540480`（机器之心Pro 10-24 17:00） | 不收（媒体转调研 · 与 10-24 `N134-4` 工信部算力政策不构成同事件）· **已作 18:5x 微头条选题核心** | https://www.toutiao.com/article/7700156062067540480/ |
