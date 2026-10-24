@@ -18214,3 +18214,56 @@ launched
 [3] 切换将在各机 sleep 6s 后完成；20s 后可发 RUN_ID 163 验证 TARGET 投递
 === DONE 162 ===
 ```
+
+---
+
+## RUN_ID 163 · 2026-10-24 19:36:30 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 163 | TARGET:29 dispatch test | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+TAG=$(hostname | sed -n 's/.*\([0-9][0-9]\)$/\1/p')
+echo "[1] TAG=$TAG (期望 29)"
+
+echo "[2] 中继进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep ops_relay | grep -v grep | cut -c1-120
+
+echo "[3] 每机 state"
+for f in "$R/run/ops"/.last_run_id*; do [ -f "$f" ] && echo "  $(basename "$f") = $(cat "$f")"; done
+
+echo "[4] pretrain loop / 训练进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_pretrain_loop|torchrun|pretrain_launcher' | grep -v grep | cut -c1-130 | head -4 || echo '  NONE'
+echo "[5] MEMORY mtime"; ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" | cut -c1-110
+
+echo "[6] 本机 GPU"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "=== DONE 163 ==="
+```
+
+**输出**
+```
+=== RUN_ID 163 | TARGET:29 dispatch test | 2026-10-24 19:36:30 | host=whag0pgpuap29 ===
+[1] TAG=29 (期望 29)
+[2] 中继进程
+2259598     126 bash ./ops_relay_v2.sh
+2415704       0 bash ./ops_relay_v2.sh
+[3] 每机 state
+  .last_run_id = 162
+  .last_run_id.12 = 162
+  .last_run_id.29 = 162
+[4] pretrain loop / 训练进程
+1401353     810 bash ./baize_pretrain_loop.sh
+[5] MEMORY mtime
+-rw-r----- 1 app.e0031982 app.adm 28881 2026-10-24_15:07:08 /nas_train/app.e0031982/code/super_intelligence_20
+[6] 本机 GPU
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+=== DONE 163 ===
+```
