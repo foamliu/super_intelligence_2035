@@ -5,11 +5,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench. IMAGE PULL 87/89 (2 missing: mteb-leaderboard, mteb-retrieve — fresh pulls in progress). v2 serial 4/7 done. Auto-transition RUNNING (waits 89/89→stops v2→launches 7x89). H-B报告✅
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created+FIXED✅(R476/R477)·v2 partial results saved✅(R478)·auto-transition script created✅(R478)·v2 codex 6/15 PASS✅·v2 hermes 0/15✅·v2 cline-patched 0/15(bug)✅·v2 opencode 4/8 PASS(in progress)✅
-当前动作:     R478: ①Image pull 87/89 (2 missing: mteb-leaderboard+mteb-retrieve). Old stuck pulls killed, fresh pulls running (layers downloading OK). ②v2 serial: opencode 9/15 in progress (4 PASS so far). 4/7 harnesses have results. ③Auto-transition script RUNNING (PID 3507521): polls every 30s for 89/89 images → kills v2+gw_proxy → launches 7x89 concurrent. ④Saved v2 partial results to v2_serial_partial_results.json. ⑤Resources confirmed: 224 CPUs, 2TB RAM, load 8 — ample for 7 concurrent.
-下一步:       ①Auto-transition handles everything: wait for 2 images → stop v2+gw_proxy → launch 7x89 ②7x89 = 623 trials, 7-way concurrent, ETA ~2.5-3h ③Collect results, McNemar, 89/89 full coverage + 7-way concurrent report ④Check /tmp/tb_auto_transition.log + /tmp/tb_7x89_concurrent.log for progress
-阻塞:         无. 2 images downloading (mteb-leaderboard, mteb-retrieve). Auto-transition proceeds automatically once 89/89.
+PHASE:        T2 Terminal-Bench. 7x89 CONCURRENT RUNNING (7 harnesses × 87 tasks = 609 trials, 7-way concurrent). 87/89 images (2 still pulling: mteb-leaderboard, mteb-retrieve). v2 serial killed (partial results saved). H-B报告✅
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created+FIXED✅(R476/R477/R479)·v2 partial results saved✅(R478/R479)·v2 serial killed✅(R479)·7x89 concurrent LAUNCHED✅(R479)·v2 cline-patched 0/15(bug)✅·v2 codex 6/15 PASS✅·v2 hermes 0/15✅·v2 opencode 6/15 PASS✅
+当前动作:     R479: ①Killed v2 serial run (partial results saved: cline-patched 0/15, codex 6/15, hermes 0/15, opencode 6/15). ②Launched 7x89 concurrent at 16:21: 7 harnesses × 87 tasks = 609 trials, 7-way concurrent. All 7 harbor processes alive, 7 Docker containers running. ③Modified 7x89 launcher to skip missing images (filtered dataset of 87 tasks). ④cline-patched TB_API_KEY fix verified (agent setting up properly, no RuntimeError). ⑤gw_proxy healthy on 9090/9091. ⑥Resources: 224 CPUs, 2TB RAM, load 9.15, 92% CPU idle — ample. ⑦2 images still pulling in background.
+下一步:       ①Monitor 7x89 concurrent run (ETA ~2.5-3h, check /tmp/tb_7x89_concurrent.log) ②Pull 2 missing images (mteb-leaderboard, mteb-retrieve) — running in background ③Collect results from /tmp/tb_7x89/jobs_*/ when done ④McNemar 7×7, Wilson CI, 87/89 coverage report (note: 2/89 non-full-coverage) ⑤Generate report_harness_terminalbench_7way_zh.html
+阻塞:         无. 7x89 concurrent running. 2 images still downloading (non-blocking — 87/89 tasks running).
 ERROR_COUNT:  0
 📦 体积：TASK=32KB / MEMORY=17KB
 ```
@@ -153,7 +153,9 @@ ERROR_COUNT:  0
 - v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
 
 ### 本唤醒流水
-[15:06] R478 **镜像87/89+v2部分结果已保存+auto-transition脚本已启动**. ①Images 81→87/89 (6 more pulled since R477). 2 missing: mteb-leaderboard, mteb-retrieve. Old stuck pulls (65min on same layer) killed, fresh pulls started — layers downloading OK. ②v2 serial: 4/7 harnesses have results (cline-patched 0/15 RuntimeError=TB_API_KEY bug, codex 6/15 PASS=40%, hermes 0/15=0%, opencode 9/15 in progress 4 PASS). 3 harnesses not started (claude-code, deepseek-harness, pi). ③Saved v2 partial results to v2_serial_partial_results.json. ④Created+launched _auto_transition_7x89.sh (PID 3507521): polls 30s for 89/89 images → kills v2+gw_proxy (port conflict) → launches 7x89 concurrent. ⑤Resources: 224 CPUs, 2TB RAM, load avg 8, /data 6.3TB free — ample for 7 concurrent. ⑥Volume: TASK=32KB/MEMORY=17KB. WAITING=1.
+[16:25] R479 **v2串行已kill+7x89并发已启动(7-way concurrent, 609 trials)**. ①Auto-transition timed out (60min, only 87/89). ②Updated v2 partial results: cline-patched 0/15, codex 6/15 PASS, hermes 0/15, opencode 6/15 PASS (13/15 completed, 5 AgentTimeoutError). ③Killed v2 serial (PID 1068001) + gw_proxy + all leftover containers. ④Modified _full_7x89_concurrent_launcher.sh: skip missing images (filtered dataset of 87 tasks, not hard-exit). ⑤Launched 7x89 concurrent at 16:21: 7 harnesses × 87 tasks = 609 trials, 7-way concurrent. All 7 harbor processes alive (PIDs 536814-578125), 7 Docker containers running. cline-patched TB_API_KEY fix verified (agent setting up, no RuntimeError). gw_proxy healthy on 9090/9091. ⑥Resources: 224 CPUs, 2TB RAM, load 9.15, 92% CPU idle — ample. ⑦2 images still pulling in background (mteb-leaderboard, mteb-retrieve). ⑧Volume: TASK=32KB/MEMORY=17KB. WAITING=1.
+
+[15:06] R478 **镜像87/89+v2部分结果已保存+auto-transition脚本已启动**. ①Images 81→87/89. ②v2 serial: 4/7 harnesses have results. ③Saved v2 partial results. ④Created+launched auto-transition script. ⑤Resources ample. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。
@@ -176,7 +178,7 @@ ERROR_COUNT:  0
 > **A**: **能！** 实测 `docker pull alexgshaw/circuit-fibsqrt:20251031` 成功（392MB）。已启动 `_pull_all_tb_images.sh`（PID 2611629）批量拉取 73 个缺失镜像。共享 base layer 已缓存，预计 ~1-2h 完成。/data 剩余 6.4TB，空间充足。
 
 > **Q4 (09:0x令): 改成 7 并发？**
-> **A**: 当前 v2 run 是串行（7 harness × 15 tasks）。用户要求 7 并发。但**镜像还没补齐**（73 个正在拉），且 v2 正在跑（不 kill）。计划：①等镜像拉完 ②v2 跑完（或记录进度后停） ③用 89 个镜像启动 7×89 并发 run（每 harness 1 并发槽，独立 jobs-dir 在 /tmp）。
+> **A**: **已完成！** R479 (16:21) 启动 7x89 并发：7 harnesses × 87 tasks = 609 trials, 7-way concurrent。每 harness 独立 jobs-dir 在 /tmp（避免 NFS stale handle），共享 gw_proxy (9090/9091)。v2 串行已 kill（部分结果已保存）。ETA ~2.5-3h。口径声明：7-way concurrent（与之前串行结果不可直接比）。
 
 > **Q5 (09:2x令): 同事通过 92.25 代理成功拉过 Docker 镜像？**
 > **A**: **确认！** daemon.json `proxies` 字段已配 `http://172.19.92.25:13128`，Docker 27.5.1 支持。实测 pull 成功。**无需额外配 systemd drop-in**（daemon.json proxies 已足够）。

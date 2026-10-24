@@ -243,28 +243,45 @@
     ]
   },
   "opencode": {
-    "n_tasks": 8,
-    "n_pass": 4,
+    "n_tasks": 15,
+    "n_pass": 6,
+    "n_completed": 13,
+    "n_errors": 5,
     "results": [
-      {
-        "task": "adaptive-rejection-sampler",
-        "reward": 0.0,
-        "exception": "AgentTimeoutError"
-      },
       {
         "task": "bn-fit-modify",
         "reward": 1.0,
-        "exception": ""
+        "exception": null
       },
       {
         "task": "break-filter-js-from-html",
         "reward": 1.0,
-        "exception": "AgentTimeoutError"
+        "exception": null
       },
       {
         "task": "build-cython-ext",
         "reward": 1.0,
-        "exception": ""
+        "exception": null
+      },
+      {
+        "task": "build-pov-ray",
+        "reward": 1.0,
+        "exception": null
+      },
+      {
+        "task": "count-dataset-tokens",
+        "reward": 1.0,
+        "exception": null
+      },
+      {
+        "task": "fix-git",
+        "reward": 1.0,
+        "exception": null
+      },
+      {
+        "task": "adaptive-rejection-sampler",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
       },
       {
         "task": "build-pmars",
@@ -272,19 +289,24 @@
         "exception": "AgentTimeoutError"
       },
       {
-        "task": "build-pov-ray",
-        "reward": 1.0,
-        "exception": ""
+        "task": "cancel-async-tasks",
+        "reward": 0.0,
+        "exception": null
       },
       {
-        "task": "caffe-cifar-10",
-        "reward": null,
+        "task": "chess-best-move",
+        "reward": 0.0,
         "exception": "AgentTimeoutError"
       },
       {
-        "task": "cancel-async-tasks",
+        "task": "configure-git-webserver",
         "reward": 0.0,
-        "exception": ""
+        "exception": null
+      },
+      {
+        "task": "filter-js-from-html",
+        "reward": 0.0,
+        "exception": null
       }
     ]
   }

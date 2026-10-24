@@ -32,8 +32,8 @@ if [[ -z "${TB_API_KEY}" ]]; then echo "[7x89] FATAL: TB_API_KEY empty"; exit 1;
 
 cd "$TB_DIR" || { echo "[7x89] FATAL: cd failed"; exit 2; }
 
-# --- Check all 89 images present ---
-echo "[7x89] Checking all 89 task images ..."
+# --- Check available images (skip missing — run with whatever is present) ---
+echo "[7x89] Checking task images ..."
 MISSING=0; MISSING_LIST=""
 for d in ~/terminal-bench/*/; do
     t=$(basename "$d")
@@ -41,10 +41,11 @@ for d in ~/terminal-bench/*/; do
         MISSING=$((MISSING + 1)); MISSING_LIST="${MISSING_LIST} ${t}"; }
 done
 if [[ $MISSING -gt 0 ]]; then
-    echo "[7x89] FATAL: $MISSING images still missing:$MISSING_LIST"
-    exit 3
+    echo "[7x89] WARNING: $MISSING images still missing:$MISSING_LIST"
+    echo "[7x89] Proceeding with available images only (will skip missing tasks)."
+else
+    echo "[7x89] All 89 images present."
 fi
-echo "[7x89] All 89 images present. Proceeding."
 
 # --- 30-second resource assessment ---
 echo "[7x89] === Resource Assessment ==="
@@ -84,14 +85,15 @@ TB_OVERLAY="${TB_DIR}/overlay-network-host.yml"
 export PYTHONPATH="${HARNESS_DIR}:${PYTHONPATH:-}"
 HARNESSES=("cline-patched" "codex" "hermes" "opencode" "claude-code" "deepseek-harness" "pi")
 
-# --- Create full 89-task dataset (symlink farm) ---
+# --- Create filtered dataset (only tasks with local Docker images) ---
 FULL_DATASET="$(mktemp -d -t tb_7x89_dataset_XXXXXX)"
-echo "[7x89] creating full 89-task dataset at ${FULL_DATASET}"
+echo "[7x89] creating filtered dataset at ${FULL_DATASET}"
 for d in ~/terminal-bench/*/; do
-    t=$(basename "$d"); ln -sf "${HOME}/terminal-bench/${t}" "${FULL_DATASET}/${t}"
+    t=$(basename "$d")
+    docker image inspect "alexgshaw/$t:20251031" >/dev/null 2>&1 && ln -sf "${HOME}/terminal-bench/${t}" "${FULL_DATASET}/${t}"
 done
 N_TASKS=$(ls -d "${FULL_DATASET}"/*/ 2>/dev/null | wc -l)
-echo "[7x89] ${N_TASKS} tasks in dataset"
+echo "[7x89] ${N_TASKS} tasks with local images (out of 89)"
 
 echo "[7x89] === Running ${#HARNESSES[@]} harnesses x ${N_TASKS} tasks = $(( ${#HARNESSES[@]} * N_TASKS )) trials ==="
 echo "[7x89] Mode: 7-WAY CONCURRENT (each harness --n-concurrent 1)"
