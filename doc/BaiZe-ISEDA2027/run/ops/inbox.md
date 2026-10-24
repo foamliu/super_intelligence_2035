@@ -1,9 +1,40 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 175 | TARGET: 29 -->
-## RUN_ID 175 — 🔍 只读：21:1x 快照（data 收尾 / 双机 GPU / agent 轮次是否结束）
+<!-- RUN_ID: 176 | TARGET: 29 -->
+## RUN_ID 176 — 🔍 只读：data 是否收尾（5/5）+ 双机 GPU / pretrain 轮次
 
 ```bash
+set -u
+echo "=== RUN_ID 176 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+
+echo "[1] code_l2"
+a=$(du -sb "$D" 2>/dev/null | cut -f1)
+echo "  $(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB / 1691   bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+echo "[2] 迁移脚本是否还在（.12）"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-95 | head -2 || echo "   DONE: no migrate/rsync"' 2>/dev/null || true
+echo "[3] 5 源软链接状态（源路径是否已变成 symlink）"
+S=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data
+for n in full_ultradata_math_l3 full_ultradata_code_l3 full_ultradata_math_l1 full_ufw_l3 full_ultradata_code_l2; do
+  if [ -L "$S/$n" ]; then echo "  ✓ $n -> $(readlink "$S/$n")"; elif [ -d "$S/$n" ]; then echo "  … $n (real dir, not yet linked)"; else echo "  ? $n (missing)"; fi
+done
+df -h /nas_env | tail -1
+
+echo "[4] 双机 GPU"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8 | tr '\n' ' '; echo
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8 | tr "\n" " "; echo' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[5] pretrain loop 状态"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'grep -a "\[loop\]" /tmp/baize_pretrain_loop.log 2>/dev/null | tail -2 | cut -c1-110' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[6] harness"
+s=0; for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; s=$((s+$(find "$d" -name result.json 2>/dev/null | wc -l))); done; echo "  total=$s/609"
+echo "=== DONE 176 ==="
+```
+
+## RUN_ID 175 — 🔍 只读：21:1x 快照（data 收尾 / 双机 GPU / agent 轮次是否结束）
+
+```text
 set -u
 echo "=== RUN_ID 175 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
 D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
