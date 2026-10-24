@@ -20,6 +20,17 @@
 % acmart.cls only loads amssymb in the xetex/luatex branches; under pdflatex
 % the newtxmath branch omits it, leaving \triangleq (used in 4_grounding.tex)
 % undefined. Load explicitly for pdflatex compatibility.
+%
+% BUT: recent newtxmath (TeX Live 2025/2026) already defines \Bbbk, and
+% amssymb's \DeclareMathSymbol aborts with "Command \Bbbk already defined".
+% \@ifundefined treats \relax as "undefined", so neutralise the few symbols
+% newtxmath may have pre-defined before loading amssymb (order-independent).
+\makeatletter
+\@ifundefined{Bbbk}{\relax}{\let\Bbbk\relax}
+\@ifundefined{hslash}{\relax}{\let\hslash\relax}
+\@ifundefined{varkappa}{\relax}{\let\varkappa\relax}
+\@ifundefined{digamma}{\relax}{\let\digamma\relax}
+\makeatother
 \usepackage{amssymb}
 
 \begin{document}

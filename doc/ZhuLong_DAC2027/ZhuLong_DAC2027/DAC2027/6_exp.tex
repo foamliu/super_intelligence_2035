@@ -3,11 +3,11 @@
 
 \begin{table*}[!t]
 \centering
-\caption{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm$ s.d.), pooled over 449 tasks and per slice. The lower block varies the \emph{read-back} $\Omega$ alone (retrieval and effector fixed); (F) coincides with the Full row.}
+\caption{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm$ s.d.), pooled over all 449 tasks and per slice. The lower block varies the \emph{read-back} $\Omega$ alone (retrieval and effector fixed); (F) coincides with the Full row.}
 \label{tab:main-ablation}
 \label{tab:omega}
 \footnotesize
-\renewcommand{\arraystretch}{0.68}
+\renewcommand{\arraystretch}{0.76}
 \setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
@@ -75,7 +75,7 @@ Principle 3 requires that actions reach the design through a causal interface an
 \caption{Impact of LLM backbone (ZhuLong, full harness).}
 \label{tab:llm-comparison}
 \scriptsize
-\renewcommand{\arraystretch}{0.68}
+\renewcommand{\arraystretch}{0.76}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
@@ -95,17 +95,17 @@ Doubao-Seed-2.0-Pro & 63.8$\pm$1.4 & 42.5$\pm$3.4 & 55.1$\pm$3.4 & 53.7$\pm$1.6 
 \end{table}
 % 表：LLM backbone 影响（单栏 table，\scriptsize 以释放正文空间）。保留全部 6 backbone（09:5x 否决：禁删，22.0pp 跨度需表格支撑）。最强-最弱跨度 = 75.7−53.7 = 22.0pp（表注显式给出）。
 
-Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$ (the LLM) with the harness fixed; DeepSeek-V4-Pro is the primary backbone, yet the backbone remains decisive---even with retrieval, sandbox, and self-exploration in place, the strongest-to-weakest spread is 22.0~pp pooled. Read against Principle 2, this spread is what the $\mathcal{K}$ axis can move, and it does not substitute for observation: the observation ladder moves the result by more than the entire backbone range ($57.4$ vs.\ $22.0$~pp pooled), exactly the prediction of the claim in Section~\ref{sec:bayesian}. Notably, GLM-5.3-Flash beats the primary on PyAether yet loses $1.0$~pp pooled---slice-level snapshots can invert backbone rankings, an argument for the pooled protocol.
+Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$ (the LLM) with the harness fixed; DeepSeek-V4-Pro is the primary backbone, yet the backbone remains decisive---even with retrieval, sandbox, and self-exploration in place, the strongest-to-weakest spread is 22.0~pp pooled. Read against Principle 2, this spread is what the $\mathcal{K}$ axis can move, and it does not substitute for observation: the observation ladder moves the result by more than the entire backbone range ($57.4$ vs.\ $22.0$~pp pooled), exactly the prediction of the claim in Section~\ref{sec:bayesian}. Notably, GLM-5.3-Flash is the only backbone to beat the primary on PyAether yet loses $1.0$~pp pooled---slice-level snapshots can invert backbone rankings, itself an argument for the pooled protocol.
 % S3 先验轴（RQ1 先验侧对照）。原则 1 解耦知识与信念：冻结先验界定框架上限而不替代观测。表~\ref{tab:llm-comparison} 仅变 K（LLM）固定框架；DeepSeek-V4-Pro 主干，但 backbone 仍决定性——检索/沙盒/自探索齐备时最强与最弱仍跨 22.0pp（合并）。对照原则 2，此跨度即 K 轴可移动量，且不替代观测：观测阶梯移动量大于整个 backbone 跨度（57.4 vs 22.0pp），正是 §4.2 引理预测。GLM-5.3-Flash 是唯一在 PyAether 上超主 backbone 的，但合并仍低 1.0pp——切片快照可颠倒 backbone 排序，这本身是合并协议的论据。
 
 \subsubsection{S4: The toolchain axis (RQ3)}
 \label{sec:cross-language}
 
-The four slices share one schema, assertion criterion, and harness, so S1--S2 re-runs with nothing changed but the toolchain. Table~\ref{tab:main-ablation} carries the comparison: the pure-LLM floor and the advantage of closed-loop configurations reproduce on every slice (the one exception being SKILL, where the full system trails its w/o-Self-Exploration variant by $1.2$~pp), and the read-back ordering N$'$ $<$ B $<$ F holds on the two largest slices and pooled (the Tcl inversion is disclosed in Section~\ref{sec:omega-fidelity}). The component magnitudes are toolchain-specific (execution: $+26.4$~pp on SKILL vs.\ $+2.6$ on Tcl; retrieval: redundant on PyAether, worth $21.3$ and $14.1$~pp on SKILL and Tcl), but the structure (observation and execution jointly closing the loop) is shared.
+The four slices share one schema, one assertion criterion, and one harness, so S1--S2 re-runs slice by slice with nothing changed but the toolchain. Table~\ref{tab:main-ablation} carries the comparison: the pure-LLM floor and the advantage of closed-loop configurations reproduce on every slice (the one exception being SKILL, where the full system trails its w/o-Self-Exploration variant by $1.2$~pp), and the read-back ordering N$'$ $<$ B $<$ F holds on the two largest slices and pooled (the Tcl inversion is disclosed in Section~\ref{sec:omega-fidelity}). The component magnitudes are toolchain-specific---execution buys $+26.4$~pp on SKILL but only $+2.6$ on Tcl, and retrieval is redundant on PyAether yet worth $21.3$ and $14.1$~pp on SKILL and Tcl---but the structure (observation and execution jointly closing the loop) is shared.
 % S4 工具链轴（RQ3）。四切片共享 schema/断言/框架，S1–S2 逐切片重跑除工具链外不变。表~\ref{tab:main-ablation}：纯 LLM 下限与闭环优势每切片复现（唯一例外 SKILL 完整系统比 w/o-Self-Exploration 低 1.2pp）；回读排序 N′<B<F 在两最大切片与合并成立（Tcl 倒挂见 §6.2 S1）。组件量级工具链特定——执行 SKILL +26.4pp、Tcl 仅 +2.6pp；检索 PyAether 冗余、SKILL/Tcl 价值 21.3/14.1pp——但结构（观测+执行共同闭环）共享。
 
 \subsection{Error Analysis}
 \label{sec:error-analysis}
 
-On PyAether, ZhuLong reaches 81.4\% Pass@1 (129/158). Generation-stage failures are a harness-budget, not a grounding, phenomenon---mostly timeouts on multi-step tasks or message-budget exhaustion cycling through \texttt{search\_apis}. Manual inspection of execution-stage failures yields two classes: 12 \textbf{API-misuse} cases (correct API family, but a C++-binding contract documentation omits is violated---hidden types, internal state, or context preconditions), and 9 \textbf{API-composition and workflow errors} (valid calls composed incorrectly, or a mandated call replaced by a plausible approximation, e.g., a substring match for equality). Both share one signature: the violated constraint is invisible in documentation and only weakly exposed by execution---the L4 invisibility Section~\ref{sec:grounding-theory} predicts.
+On PyAether, ZhuLong reaches 81.4\% Pass@1 (129/158). Generation-stage failures are a harness-budget rather than a grounding phenomenon---mostly timeouts on multi-step tasks, or message-budget exhaustion cycling through \texttt{search\_apis} without locating the correct API. Manual inspection of execution-stage failures yields two root causes: 12 \textbf{API-misuse} cases (correct API family, but a C++-binding contract documentation omits is violated---hidden types, internal state, or context preconditions), and 9 \textbf{API-composition and workflow errors} (valid calls composed incorrectly, or a mandated call replaced by a plausible approximation, e.g., a substring match for equality). Both share one signature: the violated constraint is invisible in documentation and only weakly exposed by execution---the L4 invisibility Section~\ref{sec:grounding-theory} predicts situated correctness hinges on.
 % 错误分析（16:1x 微调正文压缩 ~4 行以让结论回 p6；事实保真：81.4%/129/158、12 API 误用、9 组合错误、L4 不可见性）。PyAether 81.4%（129/158）。生成阶段失败=框架预算现象非落地现象（多步任务超时 / 消息预算耗尽于 search_apis 循环）。执行阶段失败两类：12 例 API 误用（选对 API 族但违反 C++ 绑定强制而文档未揭示的契约——隐藏类型/内部状态/上下文前置条件）；9 例 API 组合与工作流错误（各自有效调用错误组合，或强制调用被似是而非近似替换如子串匹配代相等性）。两类共享同一签名：被违反约束文档不可见、执行仅弱暴露——即 §4 预测情境正确性所系的 L4 契约不可见性。
