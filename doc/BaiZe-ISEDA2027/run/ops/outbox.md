@@ -18069,3 +18069,89 @@ GPU0	 X 	NV18	NV18	NV18	NV18	NV18	NV18	NV18	PIX	PIX	NODE	NODE	NODE	NODE	NODE	NOD
 GPU1	NV18	 X 	NV18	NV18	NV18	NV18	NV18	NV18	PIX	PIX	NODE	NODE	NODE	NODE	NODE	NODE	SYS	SYS	SYS	SYS	SYS	SYS	SYS	SYS	0-55,1
 === DONE 161 ===
 ```
+
+---
+
+## RUN_ID 161 · 2026-10-24 19:25:45 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 161 | delayed verification of 16-GPU run | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+LOG=/tmp/baize_pretrain_loop.log
+echo "[0] 先等 210s 让 agent 读任务书并起测 ..."
+sleep 210
+
+echo "[1] 时间/loop/agent"
+date '+%F %T'
+LP=$(ps -eo pid=,comm=,args= 2>/dev/null | awk '$2=="bash" && /baize_pretrain_loop\.sh/ {print $1}' | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" 2>/dev/null | cut -c1-140
+
+echo "[2] 训练进程（torchrun / launcher / python train）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher|megatron|train\.py' | grep -v grep | cut -c1-150 | head -6 || echo '  NONE'
+
+echo "[3] loop 日志尾部（19:23 之后写了什么）"
+tail -12 "$LOG" 2>/dev/null | cut -c1-160
+
+echo "[4] 新出现的 pretrain/dual 相关文件"
+find /tmp -maxdepth 1 -newermt '-15 minutes' \( -name '*pretrain*' -o -name '*dual*' -o -name '*16gpu*' -o -name '*dp16*' \) -printf '%TH:%TM %10s %p\n' 2>/dev/null | head -8
+
+echo "[5] MEMORY / TASK mtime"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" "$R/run/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null | cut -c1-120
+
+echo "[6] GPU：.29（本机）与 .12"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+echo "  --- .12 ---"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[7] 两机网络（跨节点 NCCL 前置）"
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ibstat 2>/dev/null | grep -m2 "State:" ; nvidia-smi topo -m 2>/dev/null | head -3' 2>/dev/null | cut -c1-120 || echo '  ib probe failed'
+echo "=== DONE 161 ==="
+```
+
+**输出**
+```
+=== RUN_ID 161 | delayed verification of 16-GPU run | 2026-10-24 19:25:45 | host=whag0pgpuap12 ===
+[0] 先等 210s 让 agent 读任务书并起测 ...
+[1] 时间/loop/agent
+2026-10-24 19:29:15
+  loop_pid=204951
+ 204970  204951     355 Sl   node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e00
+[2] 训练进程（torchrun / launcher / python train）
+[3] loop 日志尾部（19:23 之后写了什么）
+[loop] 2026-10-24 19:23:20 wake up, invoking cline ...
+[4] 新出现的 pretrain/dual 相关文件
+19:23         55 /tmp/baize_pretrain_loop.log
+19:21         11 /tmp/baize_pretrain_last_push
+19:21   15144199 /tmp/baize_pretrain_loop.log.bak.1923
+[5] MEMORY / TASK mtime
+-rw-r----- 1 app.e0031982 app.adm 41268 2026-10-24_19:22:51 /nas_train/app.e0031982/code/super_intelligence_2035/doc/Bai
+-rw-r----- 1 app.e0031982 app.adm 28881 2026-10-24_15:07:08 /nas_train/app.e0031982/code/super_intelligence_2035/doc/Bai
+[6] GPU：.29（本机）与 .12
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+  --- .12 ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[7] 两机网络（跨节点 NCCL 前置）
+		State: Active
+		State: Active
+	[4mGPU0	GPU1	GPU2	GPU3	GPU4	GPU5	GPU6	GPU7	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	NIC9	NIC10	NIC11	NIC12	NIC13	N
+GPU0	 X 	NV18	NV18	NV18	NV18	NV18	NV18	NV18	PIX	PIX	NODE	NODE	NODE	NODE	NODE	NODE	SYS	SYS	SYS	SYS	SYS	SYS	SYS	SYS	0-55,1
+GPU1	NV18	 X 	NV18	NV18	NV18	NV18	NV18	NV18	PIX	PIX	NODE	NODE	NODE	NODE	NODE	NODE	SYS	SYS	SYS	SYS	SYS	SYS	SYS	SYS	0-55,1
+=== DONE 161 ===
+```
