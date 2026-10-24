@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench. IMAGE PULL 81/89 (8 missing, both pull scripts running). v2 serial: cline 0/15(bug), codex 6/14 PASS, hermes 0/9, opencode RUNNING(~68min). 7x89 launcher FIXED+READY. H-B报告✅
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created+FIXED✅(R476/R477)·v2 codex done 6/14✅·v2 hermes done 0/9✅·v2 cline-patched done 0/15(bug)✅
-当前动作:     R477: ①Image pull 81/89 (8 missing: make-mips-interpreter, mcmc-sampling-stan, merge-diff-arc-agi-task, model-extraction-relu-logits, modernize-scientific-stack, mteb-leaderboard, mteb-retrieve, multi-source-data-merger) — retry script + helper pull script both running ②v2 serial: opencode RUNNING (~68min on build-pmars), 3 harnesses remain (claude-code, deepseek-harness, pi) ③FIXED critical bug in 7x89 launcher: FULL_DATASET was defined AFTER the harbor loop that uses it — moved to before loop ④Collected v2 results: cline-patched 0/15(RuntimeError), codex 6/14 PASS(42.9%), hermes 0/9(6 RuntimeError)
-下一步:       ①Wait for 8 remaining images (ETA ~30min, both scripts pulling) ②Once 89 images present: record v2 progress, stop v2 (or let opencode finish), launch 7x89 concurrent (launcher fixed+ready) ③7x89 = 623 trials, 7-way concurrent, ETA ~2.5-3h ④Report with McNemar + "89/89 full coverage" + "7-way concurrent" declaration
-阻塞:         无. Pull scripts actively downloading remaining 8. /data 6.4TB free. Retry script 0 failures.
+PHASE:        T2 Terminal-Bench. IMAGE PULL 87/89 (2 missing: mteb-leaderboard, mteb-retrieve — fresh pulls in progress). v2 serial 4/7 done. Auto-transition RUNNING (waits 89/89→stops v2→launches 7x89). H-B报告✅
+已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·Gen7 pilot 7/7 done✅·Oracle 15/15✅·Docker pull WORKS✅(R474)·daemon.json proxy confirmed✅(R474/R476)·cline-patched bug fixed✅(R474)·7x89 concurrent launcher created+FIXED✅(R476/R477)·v2 partial results saved✅(R478)·auto-transition script created✅(R478)·v2 codex 6/15 PASS✅·v2 hermes 0/15✅·v2 cline-patched 0/15(bug)✅·v2 opencode 4/8 PASS(in progress)✅
+当前动作:     R478: ①Image pull 87/89 (2 missing: mteb-leaderboard+mteb-retrieve). Old stuck pulls killed, fresh pulls running (layers downloading OK). ②v2 serial: opencode 9/15 in progress (4 PASS so far). 4/7 harnesses have results. ③Auto-transition script RUNNING (PID 3507521): polls every 30s for 89/89 images → kills v2+gw_proxy → launches 7x89 concurrent. ④Saved v2 partial results to v2_serial_partial_results.json. ⑤Resources confirmed: 224 CPUs, 2TB RAM, load 8 — ample for 7 concurrent.
+下一步:       ①Auto-transition handles everything: wait for 2 images → stop v2+gw_proxy → launch 7x89 ②7x89 = 623 trials, 7-way concurrent, ETA ~2.5-3h ③Collect results, McNemar, 89/89 full coverage + 7-way concurrent report ④Check /tmp/tb_auto_transition.log + /tmp/tb_7x89_concurrent.log for progress
+阻塞:         无. 2 images downloading (mteb-leaderboard, mteb-retrieve). Auto-transition proceeds automatically once 89/89.
 ERROR_COUNT:  0
-📦 体积：TASK=32KB / MEMORY=14KB
+📦 体积：TASK=32KB / MEMORY=17KB
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -153,7 +153,7 @@ ERROR_COUNT:  0
 - v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
 
 ### 本唤醒流水
-[13:51] R477 **7x89启动器BUG修复+镜像81/89+v2 opencode运行中**. ①FIXED critical bug: FULL_DATASET defined after harbor loop → moved before loop ②Images 55→81/89, 8 missing, both pull scripts running ③v2: cline 0/15(bug), codex 6/14 PASS(42.9%), hermes 0/9(6 RuntimeError), opencode RUNNING(~68min) ④Helper pull script started for remaining images ⑤Volume: TASK=32KB/MEMORY=14KB. WAITING=1.
+[15:06] R478 **镜像87/89+v2部分结果已保存+auto-transition脚本已启动**. ①Images 81→87/89 (6 more pulled since R477). 2 missing: mteb-leaderboard, mteb-retrieve. Old stuck pulls (65min on same layer) killed, fresh pulls started — layers downloading OK. ②v2 serial: 4/7 harnesses have results (cline-patched 0/15 RuntimeError=TB_API_KEY bug, codex 6/15 PASS=40%, hermes 0/15=0%, opencode 9/15 in progress 4 PASS). 3 harnesses not started (claude-code, deepseek-harness, pi). ③Saved v2 partial results to v2_serial_partial_results.json. ④Created+launched _auto_transition_7x89.sh (PID 3507521): polls 30s for 89/89 images → kills v2+gw_proxy (port conflict) → launches 7x89 concurrent. ⑤Resources: 224 CPUs, 2TB RAM, load avg 8, /data 6.3TB free — ample for 7 concurrent. ⑥Volume: TASK=32KB/MEMORY=17KB. WAITING=1.
 > 📦 R460-R469 (2026-10-23~24, H-B报告完成+Gen7 pilot+codex/claude-code infra fix+rerun) 已归档 → daily-memories-harness/2026-10-23.md + 2026-10-24.md。结论：H-B报告58KB已push, Gen7 pilot 5/7(cline+pi=100%,opencode=60%), codex 0.164.0 API兼容性修复(config.toml), claude-code NFS perms修复(chmod755). 需要时再读。
 
 > 📦 R431-R447 (2026-10-18~19, TB pilot Gen2-Gen3 + Docker blockers + relay checks, ~20 rounds) 已归档 → daily-memories-harness/2026-10-18.md + 2026-10-19.md。结论：Docker 只在 .29 可用, pilot Gen3 1/7→gw_proxy 修复→逐路定根因→Gen5 7/7 完。需要时再读。

@@ -1,0 +1,291 @@
+{
+  "cline-patched": {
+    "n_tasks": 15,
+    "n_pass": 0,
+    "results": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "bn-fit-modify",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "build-cython-ext",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "build-pmars",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "build-pov-ray",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "caffe-cifar-10",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "cancel-async-tasks",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "chess-best-move",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "configure-git-webserver",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "count-dataset-tokens",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "filter-js-from-html",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "fix-git",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "git-multibranch",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "reward": null,
+        "exception": "RuntimeError"
+      }
+    ]
+  },
+  "codex": {
+    "n_tasks": 15,
+    "n_pass": 6,
+    "results": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "reward": 1.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "bn-fit-modify",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "build-cython-ext",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "build-pmars",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "build-pov-ray",
+        "reward": 1.0,
+        "exception": ""
+      },
+      {
+        "task": "caffe-cifar-10",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "cancel-async-tasks",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "chess-best-move",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "configure-git-webserver",
+        "reward": 1.0,
+        "exception": ""
+      },
+      {
+        "task": "count-dataset-tokens",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "filter-js-from-html",
+        "reward": null,
+        "exception": "VerifierTimeoutError"
+      },
+      {
+        "task": "fix-git",
+        "reward": 1.0,
+        "exception": ""
+      },
+      {
+        "task": "git-multibranch",
+        "reward": 1.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "reward": 1.0,
+        "exception": ""
+      }
+    ]
+  },
+  "hermes": {
+    "n_tasks": 15,
+    "n_pass": 0,
+    "results": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "bn-fit-modify",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "build-cython-ext",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "build-pmars",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "build-pov-ray",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "caffe-cifar-10",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "cancel-async-tasks",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "chess-best-move",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "configure-git-webserver",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "count-dataset-tokens",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "filter-js-from-html",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "fix-git",
+        "reward": 0.0,
+        "exception": ""
+      },
+      {
+        "task": "git-multibranch",
+        "reward": null,
+        "exception": "RuntimeError"
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "reward": 0.0,
+        "exception": ""
+      }
+    ]
+  },
+  "opencode": {
+    "n_tasks": 8,
+    "n_pass": 4,
+    "results": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "bn-fit-modify",
+        "reward": 1.0,
+        "exception": ""
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "reward": 1.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "build-cython-ext",
+        "reward": 1.0,
+        "exception": ""
+      },
+      {
+        "task": "build-pmars",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "build-pov-ray",
+        "reward": 1.0,
+        "exception": ""
+      },
+      {
+        "task": "caffe-cifar-10",
+        "reward": null,
+        "exception": "AgentTimeoutError"
+      },
+      {
+        "task": "cancel-async-tasks",
+        "reward": 0.0,
+        "exception": ""
+      }
+    ]
+  }
+}
