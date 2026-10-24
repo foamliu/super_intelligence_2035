@@ -5,26 +5,27 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ 硬盘实测清单报告完成（唤醒634@13:50）**：6目录全量扫描→19.14TB/4778.41B tokens/794 shards/2383文件；HTML报告(`reports/report_data_tokenized_inventory_zh.html`)+TSV清单(`run/data/tokenized_files_20261024.tsv` 2384行)已生成；空间判定：/nas_env 10.51TB<全量21.05TB(不够)但>5源4.67TB(够)。
-> 🟢 **✅ 迁移已启动（PID112557@13:39）**：5源4.24TB→/nas_env，math_l3 rsync@~60MB/s进行中(30G/313G)，顺序math_l3→code_l3→math_l1→ufw_l3→code_l2，每源校验shard+字节后建软链接删源。85M下载继续(PID581957,8680/12126=71.6%)。
+> 🟢 **✅ 硬盘实测清单报告完成+已commit（唤醒634@13:50,commit 050f4af74）**：19.14TB/4778.41B tokens/794 shards/2383文件；HTML+TSV(2384行)已入库；空间判定：/nas_env 10.51TB<全量21.05TB(不够)但>5源4.67TB(够)。
+> 🟢 **▶️ 迁移进行中（唤醒635@15:00巡检）**：math_l3 rsync 55/67 .bin(82%,237G/292G)，PID112559 alive；顺序math_l3→code_l3→math_l1→ufw_l3→code_l2。85M下载继续(PID236391,8703/12124=71.8%,92.25+hf.co直连✓)。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4.24TB)+✅en_v1_4全源分词110/110DONE(2238.14B,8.88TB)+✅硬盘实测清单报告DONE(HTML+TSV 2383行)+▶️迁移5源→/nas_env(PID112557,math_l3 rsync@~60MB/s,30G/313G)+▶️85M下载parallel-16(PID581957,8680/12126=71.6%,~20MB/s)+✅git sync
-已完成:       ✅5源全量分词ALL DONE(574shards/1056.36B/4.24TB); ✅en_v1_4全源分词110/110DONE(2238.14B/8.88TB); ✅硬盘实测清单(reports/report_data_tokenized_inventory_zh.html+run/data/tokenized_files_20261024.tsv 2383行,19.14TB/4778.41B/794shards); ✅运维质询回答+提速达标; ✅proxy92.25复测RESTORED; ✅env14_fullsource_summary.json; ✅TASK.md归档(34.3KB→30.9KB); ▶️迁移5源→/nas_env(4.24TB,math_l3进行中); ▶️85M下载(8680/12126=71.6%)
-当前动作:     唤醒634(2026-10-24 13:50)执行运维令「硬盘实测清单」：①du-sb+find+json.load全量扫描6目录→19.14TB/4778.41B tokens/794shards/2383文件②生成TSV(tokenized_files_20261024.tsv,abs_path<TAB>bytes,2384行)③生成HTML报告(report_data_tokenized_inventory_zh.html,7节:核心数字+命名规则+清单样例+逐源汇总+空间判定+未分词对照+补充)④空间判定:/nas_env 10.51TB<全量21.05TB(差10.54TB不够)但>5源4.67TB(够,余5.84TB)⑤迁移已启动(PID112557,math_l3 rsync@~60MB/s,30G/313G)⑥85M下载继续(PID581957 alive,8680/12126=71.6%)⑦TASK.md归档2026-10-21块→ARCHIVE_OPERATOR_DATA.md(34.3KB→30.9KB).📦体积：TASK=30.9KB/MEMORY=~29KB
-下一步:       ①监控迁移(migrate_to_nas_env.log,math_l3→code_l3→math_l1→ufw_l3→code_l2,每个校验shard+字节后建软链接删源,更新DATA_LEDGER.md)②监控85M(8680/12126=71.6%,ETA~18天)③commit+push(data report: HTML+TSV+TASK归档+MEMORY更新)④迁移完成后交接pretrain
-阻塞:         无新阻塞;迁移进行中(4.24TB×1.1=4.67TB<10.51TB✓);85M ETA~18天(proxy带宽瓶颈,92.25+hf.co直连为用户令指定,无法换线);text/14.90TB无法迁/nas_env(14.90×1.1=16.39TB>10.51TB)需留/nas_train
+PHASE:        ✅全量分词5源全部DONE(574shards,1056.36B,4.24TB)+✅en_v1_4全源分词110/110DONE(2238.14B,8.88TB)+✅硬盘实测清单报告DONE+已commit(HTML+TSV 2384行,commit 050f4af74)+▶️迁移5源→/nas_env(math_l3 55/67 .bin=82%,rsync PID112559)+▶️85M下载(PID236391,8703/12124=71.8%,92.25+hf.co直连)+✅git sync
+已完成:       ✅5源全量分词ALL DONE(574shards/1056.36B/4.24TB); ✅en_v1_4全源分词110/110DONE(2238.14B/8.88TB); ✅硬盘实测清单(reports/report_data_tokenized_inventory_zh.html+run/data/tokenized_files_20261024.tsv 2383行,19.14TB/4778.41B/794shards,commit 050f4af74); ✅运维质询回答+提速达标; ✅proxy92.25复测RESTORED; ✅env14_fullsource_summary.json; ✅TASK.md归档(34.3KB→30.9KB); ▶️迁移5源→/nas_env(4.24TB,math_l3 55/67=82%); ▶️85M下载(8703/12124=71.8%)
+当前动作:     唤醒635(2026-10-24 15:00)巡检：①清单报告已commit(050f4af74,被pretrain auto-commit卷入,git sync✓) ②迁移math_l3 55/67 .bin(82%,237G/292G),rsync PID112588-590 alive,bwlimit=50MB/s ③85M下载8703/12124(71.8%),PID236391,/proc/environ确认92.25+hf.co直连✓ ④磁盘/nas_env 9.4TB可用/nas_train 30TB可用 ⑤体积TASK=30.9KB/MEMORY=28.4KB(均≤32KB✓) ⑥WAITING=1(迁移+下载异步进行中).📦体积：TASK=30.9KB/MEMORY=28.4KB
+下一步:       ①监控迁移(migrate_to_nas_env.log,math_l3→code_l3→math_l1→ufw_l3→code_l2,每个校验shard+字节后建软链接删源,更新DATA_LEDGER.md)②监控85M(8703/12124=71.8%,ETA~8天,proxy带宽瓶颈)③commit+push(data 635: 巡检心跳更新)④迁移完成后交接pretrain(信号=5源全迁完+软链接建好)
+阻塞:         无新阻塞;迁移进行中(4.24TB×1.1=4.67TB<9.4TB✓);85M ETA~8天(proxy带宽~20MB/s,92.25+hf.co直连为用户令指定);text/14.90TB无法迁/nas_env(14.90×1.1=16.39TB>9.4TB)需留/nas_train
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [13:50] 唤醒634 执行运维令「硬盘实测清单」：①du-sb+find+json.load扫描6目录=19.14TB/4778.41B/794shards/2383文件 ②生成TSV(run/data/tokenized_files_20261024.tsv,2384行) ③生成HTML(reports/report_data_tokenized_inventory_zh.html,7节自包含) ④空间判定:/nas_env 10.51TB<全量21.05TB(不够,差10.54TB)但>5源4.67TB(够,余5.84TB) ⑤迁移启动(PID112557,math_l3 rsync@~60MB/s,30G/313G) ⑥85M继续(8680/12126=71.6%) ⑦TASK.md归档(34.3KB→30.9KB) ⑧60s测速:92.25+hf.co=0.65MB/s vs 92.23+hf-mirror=1.53MB/s(2.3×但用户令指定92.25+hf.co)
+> [15:00] 唤醒635 巡检：①清单报告已commit(050f4af74,被pretrain auto-commit卷入,git sync✓,TSV 2383行+HTML 138行已入库) ②迁移math_l3 55/67 .bin(82%,237G/292G),rsync PID112588-590 alive,bwlimit=50MB/s,源313G/已完成237G ③85M下载8703/12124(71.8%,+23parquet自上次),PID236391,/proc/236391/environ确认https_proxy=172.19.92.25:13128+无HF_ENDPOINT=92.25+hf.co直连✓ ④磁盘/nas_env 9.4TB可用(已用580G)/nas_train 30TB可用 ⑤体积TASK=30.9KB/MEMORY=28.4KB(均≤32KB✓,无需归档) ⑥commit+push(data 635: 巡检心跳) ⑦WAITING=1(迁移+下载异步进行中,无阻塞)
+> 📦 唤醒634 原文已归档 → `daily-memories-data/2026-10-24.md`（硬盘实测清单：6目录19.14TB/4778.41B/794shards/2383文件+HTML+TSV+空间判定+迁移启动,详见日文件）
 > 📦 唤醒633 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询复核：分词110/110 DONE证实+85M线路复核92.25+hf.co直连✓+迁移READY但未启动,详见日文件）
 > 📦 唤醒632 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询回答+提速：5worker根因+65并发升级+85M线路确认+parallel-16切换,详见日文件）
 > 📦 唤醒594 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs+bin~38G+5源574/574/574验证+done=90/110,详见日文件）
