@@ -1,8 +1,32 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 124 -->
-## RUN_ID 124 — 🔍 只读：zhulong r1（对齐配置）进度
+<!-- RUN_ID: 125 -->
+## RUN_ID 125 — 🔎 只读：zhulong r1 为什么 0 个 .py（抓 Step3/CLI 调用与错误）
 
 ```bash
+set -u
+echo "=== RUN_ID 125 | zhulong r1 diagnosis | $(date '+%F %T') | host=$(hostname) ==="
+L=/tmp/ABL_glm-5.3-flash_zl_realign_r1.log
+B=/nasdata/app.e0031982/eda_code_eval/2026_1024_223138
+
+echo "[1] 关键步骤"
+grep -anE 'Step 3|Step 4|Step 5|Step 6|Step 7|Step 8' "$L" 2>/dev/null | head -14 | tr -d '\033' | cut -c1-150
+
+echo "[2] CLI / zhulong 相关"
+grep -anE 'zhulong|CLI_SCRIPT|cline |not found|No such|command not found|Permission|失败|error' "$L" 2>/dev/null | head -16 | tr -d '\033' | cut -c1-160
+
+echo "[3] 尾部 25 行"
+tail -25 "$L" 2>/dev/null | tr -d '\033' | cut -c1-160
+
+echo "[4] 产物"
+echo "  code dirs=$(ls -d $B/code/* 2>/dev/null | wc -l)  .py=$(find $B/code -name '*.py' 2>/dev/null | wc -l)"
+ls -l "$B" 2>/dev/null | head -8
+echo "  进程: $(pgrep -af 'run_zhulong_script' | cut -c1-90 | head -1 || echo none)"
+echo "=== DONE 125 ==="
+```
+
+## RUN_ID 124 — 🔍 只读：zhulong r1（对齐配置）进度
+
+```text
 set -u
 echo "=== RUN_ID 124 | zhulong r1 progress | $(date '+%F %T') | host=$(hostname) ==="
 B=/nasdata/app.e0031982/eda_code_eval/2026_1024_223138
