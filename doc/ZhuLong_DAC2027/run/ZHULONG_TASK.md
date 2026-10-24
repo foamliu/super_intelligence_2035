@@ -1,6 +1,64 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 📐 引用修正令 · 2026-10-24 15:4x（**Lemma→Claim + 新增 Delage&Mannor 2010 用在"模型失配是真实问题"**）· 用户确认 · 最高优先
+
+> 背景：运营方核实发现 **`D_grounding ≤ g(ε)` 现有引用不成立** —— `kaelbling1998planning`（POMDP 规划奠基）与 `thrun2005probabilistic`（教科书）**都没有给出"模型失配→后验偏差"的界**，审稿人追问"哪一页"会站不住。
+> 用户已核实一篇真实文献（JSTOR 40605970），但**内容不匹配**：Delage & Mannor 讲的是 **percentile 鲁棒 MDP 优化**，不是后验 TV 界。
+> ✅ **结论：按"双轨"改 —— 引用改用在准确位置 + 把界降级为本文 Claim（可检验命题）。**
+
+**① bib 新增（**已核实，可直接用**，信息来自 JSTOR 原文）**
+```bibtex
+@article{delage2010percentile,
+  title   = {Percentile Optimization for Markov Decision Processes with Parameter Uncertainty},
+  author  = {Delage, Erick and Mannor, Shie},
+  journal = {Operations Research},
+  volume  = {58},
+  number  = {1},
+  pages   = {203--213},
+  year    = {2010},
+  doi     = {10.1287/opre.1090.0711}
+}
+```
+
+**② 场景论证处：用它支撑"模型失配是公认问题"（引用位置要准）**
+在 `\textbf{Scenario: the transition is deterministic.}` 段末补一句（或改写现有句）：
+```latex
+Model mismatch is a recognized obstacle in sequential decision making under
+estimated parameters, where realized performance can diverge substantially
+from the designer's expectation \cite{delage2010percentile}; our setting is the
+milder case in which only $\Omega$, not $\mathcal{T}$, may be mismatched.
+```
+> 要点：**只声称它支撑"模型失配是公认问题"**，不声称它给了我们的界。
+
+**③ 核心修正：`Lemma` → `Claim`，去掉"by standard results"**
+把当前 L57-59 的 Lemma 段改写为（**措辞必须体现"提出"而非"已证"**）：
+```latex
+\textbf{Claim (observation-fidelity bound).} With $\epsilon$ defined as above, we
+posit that the grounding gap is governed by a function $g(\epsilon)$ of
+observation fidelity alone: $D_{\text{grounding}} \le g(\epsilon)$, with
+$g(\epsilon)\to 0$ as $\epsilon\to 0$, and $g$ \emph{independent of the
+complexity of the prior} $\mathcal{K}$. This is the formal content of our
+central claim: \emph{the grounding gap is bounded by observation fidelity,
+not model scale}. We state it as a \emph{prediction the experiments can test}
+rather than a theorem derived here, and the next paragraph tests it from
+both sides.
+```
+
+**④ Kaelbling / Thrun 的保留用法（改窄）**
+- 仍可引用，但**只用于 POMDP 框架与信念更新本身**（Eq.1 附近），**不得**用于支撑 `D ≤ g(ε)`。
+- 检查 Eq.1 附近是否已有它们；若无，在 Eq.1 后加一句 `POMDP belief update follows \cite{kaelbling1998planning,thrun2005probabilistic}.`
+
+**⑤ 必须同步检查（防正文其它位置仍有旧措辞）**
+全文 grep 以下字样，**凡是暗示"已证定理"的都要改**：
+- `bounded by the fidelity` / `is bounded by`（在 Ω 语境）
+- `model-approximation results` / `standard results` / `we prove` / `Theorem`
+- 摘要与 Intro 里的 `bounds the resulting "grounding gap" by observation fidelity`
+  → 保持 `bounds` 可以（作为 claim 的陈述），但**不得**写成 "we prove/theorem"。
+
+**⑥ 交付**：改完重新编译 → **确认页数仍 ≤6 页正文**、`0 undefined` → 贴**改后的整段 §4.2 全文** → commit+push（信息写明 `Lemma→Claim + delage2010percentile`）。
+
+
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 ### ✅ 执行令 · 2026-10-24 13:0x（**用户已批准 12:20 讨论结论：②A + ③删附录 B + ④TikZ 重画 → 立即执行并 push**）· 用户直令 · 最高优先
