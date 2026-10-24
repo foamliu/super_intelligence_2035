@@ -1,9 +1,41 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 172 | TARGET: 29 -->
-## RUN_ID 172 — ⏱ 延时 90s 只读：抓双机训练的**迭代吞吐**（tok/s）与两机 GPU
+<!-- RUN_ID: 173 | TARGET: 29 -->
+## RUN_ID 173 — 🔍 只读：20:5x 全面快照（双机训练 / data code_l2 / harness）
 
 ```bash
+set -u
+echo "=== RUN_ID 173 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 双机 GPU + launcher"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "  -- .29 procs --"; pgrep -af 'pretrain_launcher|torchrun' | cut -c1-105 | head -3 || echo '   none'
+echo "  -- .12 --"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8; pgrep -af "pretrain_launcher|torchrun" | cut -c1-105 | head -3 || echo "   none"' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] 双机训练目录 / 日志"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null | head -10
+for f in master.log launcher.log summary.txt; do [ -f "/tmp/baize_dualnode_16gpu/$f" ] && { echo "  == $f (tail)"; tail -5 "/tmp/baize_dualnode_16gpu/$f" | cut -c1-160; }; done
+
+echo "[3] .12 的 agent 在做什么（loop 日志尾）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 700 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -6 | cut -c1-140' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[4] data：code_l2 进度 + rsync"
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+a=$(du -sb "$D" 2>/dev/null | cut -f1); echo "  size=$(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB  bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+ps -eo pid=,etimes=,args= | grep -E 'migrate_to_nas_env|rsync -a' | grep -v grep | cut -c1-100 | head -2 || echo '   no rsync(local)'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-100 | head -2 || echo "   no rsync(.12)"' 2>/dev/null || true
+df -h /nas_env | tail -1
+
+echo "[5] harness"
+echo "  harbor procs: $(pgrep -af 'harbor run' | wc -l)"
+for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; printf "  %-24s %s/87\n" "$(basename "$d")" "$(find "$d" -name result.json 2>/dev/null | wc -l)"; done 2>/dev/null | head -8
+echo "=== DONE 173 ==="
+```
+
+## RUN_ID 172 — ⏱ 延时 90s 只读：抓双机训练的**迭代吞吐**（tok/s）与两机 GPU
+
+```text
 set -u
 echo "=== RUN_ID 172 | dual-node throughput | $(date '+%F %T') | host=$(hostname) ==="
 sleep 90
