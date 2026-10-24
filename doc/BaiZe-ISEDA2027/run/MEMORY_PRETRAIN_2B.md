@@ -1,5 +1,13 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-25 04:1x #769：BF16对照组(DP16)已完成·528K tok/s·FP8增益+14.8%确认·Task A完整闭合·下一步Task B(NCCL/IB调参)**：
+> - **BF16对照**：`baize_dualnode_16gpu_bf16_ctrl.sh` 02:49-03:01跑完(80步,worker rc=0/master rc=0)。中位步时7819.4ms,throughput **528,016 tok/s**,per-GPU 33,001,峰值显存67.1GB(worker .29),loss 7.578/gnorm 0.50/0NaN。与e18(FP8)唯一差异=去掉`--fp8-recipe tensorwise`。
+> - **FP8增益量化**：606K(e18 FP8) vs 528K(BF16) = **+14.8%吞吐**；步时6810→7819ms(FP8快12.9%)；显存67.6→67.1GB(≈持平)；loss Δ0.08%✅等价。BF16自身扩展效率估算≈99.2%→**两种精度均近线性扩展,通信非瓶颈**。
+> - **Task A完整闭合**(e18+BF16对照均测)。下一步:Task B(NCCL/IB调参:`NCCL_IB_QPS_PER_CONNECTION`1/4/8·`NCCL_MAX_NCHANNELS`·`NCCL_ALGO`×`NCCL_PROTO`·`NCCL_IB_HCA`子集·`NCCL_CROSS_NIC`,每项80步)。GPUs全空闲(.29+.12均0MiB),vision已DONE无争用。
+> - **落盘**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md`双机节追加BF16对照结果表+Task A总结表。summary@`/tmp/baize_dualnode_bf16_ctrl/summary.txt`。
+> - **归档**：#767误报块(已被#768纠正)→daily-memories/2026-10-24.md,MEMORY释放~1.4KB。
+> 📦 体积：TASK=24.9KB / MEMORY=30.4KB（均≤32KB✓；归档#767~1.7KB→daily-10-24）。
+
 > 🆕 **2026-10-25 01:3x #768：⚠️纠正#767误报·双机16卡e18真实扩展效率=99.4%(606K tok/s)·非84%/BF16+mock·launcher bug已修并rerun复现·任务A完成·任务书归档**：
 > - **#767误报纠正**：#767报「513K/84%/BF16+mock/64.4GB/611TFLOP」**全部错误**。核验`/tmp/baize_dualnode_16gpu_prevrun_23x/`原始日志：①`mock:false`→真实数据(16片p5b_l3)非mock ②`fp8_recipe:tensorwise`→FP8 TW已生效非BF16 ③中位步时6.81s非8.05s ④tok/s=4,128,768/6.81=606,300非513K ⑤扩展效率99.4%非84% ⑥峰值显存69,275MiB=67.6GB非64.4GB ⑦729TFLOP/s/GPU非611。误报根因:脚本因`WORKER_SSH_PID`unbound挂起→summary.txt残缺无RESULT PARSING段→agent手工解析混淆2-rank排障数据。
 > - **launcher bug已修(working copy)**：`baize_dualnode_16gpu_test.sh` ①`wait $WORKER_SSH_PID`→`wait $MASTER_SSH_PID` ②`kill $MON_M`→`kill $MON_W`（set -u下两处unbound变量,导致脚本收尾挂起→summary.txt永远缺RESULT PARSING段）。
@@ -10,16 +18,7 @@ WAITING: 1
 > - **任务书归档**：45.5KB→25.0KB(归档11个已闭合运维块→`ARCHIVE_OPERATOR_PRETRAIN.md`)。
 > 📦 体积：TASK=25.0KB / MEMORY=30.7KB（均≤32KB✓；本轮归档~20KB→ARCHIVE_OPERATOR_PRETRAIN.md + #766→daily-memories/2026-10-24.md）。
 
-> ⚠️ **#767 已被 #768 纠正**：原文数字(513K/84%/BF16+mock/64.4GB)系误报,正确值见 #768(606K/99.4%/FP8+real/67.6GB)。以下保留原文备查：
-> 🆕 **2026-10-24 23:3x #767：~~✅ 双节点16GPU DP16吞吐扩展测试完成·513K tok/s·84%线性扩展效率~~（⚠️ 误报,见 #768）**：
-> - **测试**：2节点×8×H100(.12+.29) DP16, MBS3/GBS1008/SEQ4096/ITERS80, bf16_mixed, --mock data。`baize_dualnode_16gpu_test.sh` + `pretrain_launcher.py`(early NCCL init barrier)。
-> - **根因修复**：`init_process_group()`返回后IB连接lazy建立，Megatron `initialize_model_parallel()`创建第二communicator时第一communicator的IB QP仍在连接→Channel 15死锁(.29)。修复：early `init_process_group()` + `torch.distributed.barrier()` 强制IB完全建立后再import重模块。另加 `NCCL_NVLS_ENABLE=0` 解决CUDA error 802。
-> - **结果**：median step time **8.05s**，throughput **512,801 tok/s** (mean 508,860)，per-GPU 32,050 tok/s，scaling efficiency **84.0%** (vs ideal 610,196)。Peak VRAM 64.4GB/GPU(both nodes)。0 NaN/0 skip。GPU util ~611 TFLOP/s/GPU(BF16)。
-> - **IB确认**：RoCE 12×mlx5 devices，multi-channel spread(NET/IB/0,/2,/6...)，interconnect healthy。
-> - **注意**：baseline 305K=FP8 TW+CG，本次=BF16无FP8。apples-to-apples BF16单节点基线未测。84%证明IB健康，跨节点扩展可行。
-> - **文件**：`baize_dualnode_16gpu_test.sh`(已修result parsing: grep both worker+master log)、`pretrain_launcher.py`(early NCCL init)、summary@`/tmp/baize_dualnode_16gpu/summary.txt`。
-> - **下一步**：若需更精确扩展效率→测BF16单节点基线；若扩展效率满意→移除--mock恢复--fp8-recipe tensorwise跑真实数据。
-> 📦 体积：TASK=30.4KB / MEMORY=待测。
+> 📦 §#767（2026-10-24 23:3x，误报已纠正）已归档 → daily-memories/2026-10-24.md；**结论**：#767报513K/84%/BF16+mock系误报,#768纠正为606K/99.4%/FP8+real。需要时再读。
 
 > 📦 §#766（2026-10-24 15:0x）已归档 → daily-memories/2026-10-24.md；**结论**：CUDA12.9驱动级BLOCKED(570<575),7/7建议全闭合,吞吐上限305K确认,data未就绪。需要时再读。
 

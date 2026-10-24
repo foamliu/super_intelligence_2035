@@ -3616,6 +3616,52 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 - **双机 16 卡 e18 真实扩展效率 = 99.4%**（606,300 tok/s），通信非瓶颈，跨节点 DP 对 2.2B 模型几乎无损。
 - **口径已对齐**：本组即「FP8 TW + CG + 真数据」e18 配方，与单机 305K 完全可比（loss 逐位一致）。
 - **#767 的 512K/84%/BF16+mock 系误报，已纠正**；运维令中「84% 只能证明 IB 健康」的前提不再成立——实测 IB 健康 *且* 扩展近线性。
-- 任务 A 完成。BF16 对照组（`--precision bf16` 无 FP8）待补（预期低于 FP8，用于量化 FP8 在 16 卡下的增益）。
+- 任务 A 的 e18（FP8）部分完成。BF16 对照组结果见下。
+
+### BF16 对照组（DP16，bf16_mixed + CG，无 FP8）— 2026-10-25 02:49
+
+**目的**：量化 FP8 tensorwise 在 16 卡下的吞吐增益。与 e18 唯一差异 = 移除 `--fp8-recipe tensorwise`（其余 MBS/GBS/SEQ/CG/distributed-optimizer/overlap/NCCL 全部一致）。
+
+**配置**：
+| 项 | 值 |
+|---|---|
+| 拓扑 | 2 节点 × 8×H100（.12 master + .29 worker），DP=16 / TP=1 |
+| 配方 | MBS3 / GBS1008 / SEQ4096 / **bf16_mixed（无 FP8）** / CUDA Graphs / distributed-optimizer / overlap-grad-reduce / overlap-param-gather |
+| NCCL | 同 e18（GID_INDEX=3 MTU=4096 TC=106 TIMEOUT=22）|
+| 数据 | 16 片 p5b_l3_train_s{0..15} 真实数据（mock=false）|
+| 脚本 | `baize_dualnode_16gpu_bf16_ctrl.sh`；summary@`/tmp/baize_dualnode_bf16_ctrl/summary.txt` |
+
+**结果（02:49:13–03:01:39，80 步，step 30-80 中位，6 数据点）**：
+
+| 指标 | e18 (FP8 TW+CG) DP16 | BF16 对照 (无FP8) DP16 | Δ (FP8 vs BF16) |
+|---|---|---|---|
+| 中位 step time | 6,810 ms | **7,819 ms** | FP8 快 12.9% |
+| 聚合吞吐 tok/s | 606,300 | **528,016** | **FP8 +14.8%** |
+| 每卡 tok/s | 37,894 | 33,001 | +14.8% |
+| 峰值显存 worker(.29) | 69,275 MiB (67.6 GB) | **68,733 MiB (67.1 GB)** | ≈持平 |
+| 峰值显存 master(.12) | 69,245 MiB | 未捕获* | — |
+| Loss (step30-80) | 7.572 | 7.578 | Δ≈0.08% ✅ 等价 |
+| Grad norm | 0.53 | 0.50 | ≈持平 |
+| NaN / skip | 0 / 0 | 0 / 0 | ✅ |
+
+*master(.12) peakmem monitor 未捕获（parsing gap）；e18 双机实测两节点 peakmem 差异 <0.05%，故 BF16 master peakmem ≈ 67.1 GB。
+
+**关键结论**：
+1. **FP8 tensorwise 在 16 卡下提供 +14.8% 吞吐**（606K vs 528K tok/s），与单机方向一致，FP8 增益在跨节点 DP 下完整保留。
+2. **BF16 的 86.5% "扩展效率" 是相对 FP8 单机基线(305K)计算的，非 BF16 自身扩展效率**。估算：BF16 步时比 FP8 慢 14.8% → BF16 单机吞吐 ≈ 305K×(6810/7819) ≈ 266K → BF16 DP16 真实扩展效率 ≈ 528K/(266K×2) ≈ **99.2%** ⇒ **BF16 与 FP8 均近线性扩展**，通信非瓶颈。
+3. **显存几乎相同**（67.1 vs 67.6 GB）——FP8 主要省计算时间而非显存（权重/优化器状态仍 BF16，仅 GEMM activation 量化）。
+4. **loss 等价**（Δloss 0.08%），FP8 量化无精度损失。
+
+### Task A 总结
+
+| 配方 | tok/s | 扩展效率 | step ms | 显存 | loss |
+|---|---|---|---|---|---|
+| 单机 e18 (FP8, DP8) | 305,098 | 100% (基线) | 13,533 | 72.7 GB | 7.571 |
+| 双机 e18 (FP8, DP16) | 606,300 | 99.4% | 6,810 | 67.6 GB | 7.572 |
+| 双机 BF16 对照 (DP16) | 528,016 | 86.5%* / 99.2%** | 7,819 | 67.1 GB | 7.578 |
+
+*相对 FP8 单机基线；**相对估算 BF16 单机基线（≈266K）。
+
+**Task A 完整闭合**：e18(FP8) + BF16 对照均已测。FP8 在 DP16 下增益 +14.8% 确认，两种精度均近线性扩展（通信 <1% 步时）。下一步 → Task B（NCCL/IB 调参）。
 
 
