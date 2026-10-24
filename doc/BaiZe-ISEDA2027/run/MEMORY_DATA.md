@@ -5,7 +5,7 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ 迁移5/5源全DONE（唤醒641@22:3x确认/唤醒642@23:5x复核）**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删,迁移日志21:42:28 END)；85M降优先级后台跑(8864/12124=73.1%)。
+> 🟢 **✅ 迁移5/5源全DONE（唤醒641@22:3x确认/唤醒642@23:5x复核）**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删,迁移日志21:42:28 END)；85M降优先级后台跑(8881/12124=73.3%)。
 > 🟢 **✅ /nas_env: 4.24TB已用/5.8T可用(43%)；/nas_train: 175T已用/33T可用(85%)**。
 
 ---
@@ -13,18 +13,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅硬盘实测清单+✅迁移报告HTML+✅迁移5/5源全DONE(574bins/4.24TB→/nas_env,软链接✓)+▶️85M下载(8841/12124=72.9%)+✅git sync
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅硬盘实测清单(HTML+TSV); ✅迁移报告HTML; ✅math_l3迁移DONE(67/67,313GB,软链接✓); ✅code_l3迁移DONE(63/63,516GB,软链接✓); ✅math_l1迁移DONE(149/149,614GB,软链接✓); ✅ufw_l3迁移DONE(154/154,990GB,软链接✓); ✅code_l2迁移DONE(141/141,1691GB,软链接✓); ✅迁移提速生效(50→271MB/s); ✅迁移全部完成(5/5源,574bins/4.24TB→/nas_env); ▶️85M下载(8841/12124=72.9%)
-当前动作:     唤醒642(2026-10-24 23:5x)：①复核迁移=5/5源全DONE确认(migrate_fast.log END@21:42:28,5软链接ls -la确认→/nas_env/baize-data/,无rsync/migrate进程) ②/nas_env baize-data du -sb=4,242,373,556,078B=4.24TB ③85M 8864/12124(73.1%,+23自641,8incomplete,PID236391 alive etimes=33197s≈9.2h) ④磁盘/nas_env 5.8T可用(43%)/nas_train 33T可用(85%) ⑤运维令18:1x已由中继执行(run_id=162≠157,迁移提速+全完成,无需agent代执行) ⑥体积TASK=30.2KB/MEMORY=28.2KB(均≤32KB✓).📦体积：TASK=30.2KB/MEMORY=28.2KB（归档0KB，本轮无需归档）
-下一步:       ①迁移全部完成→已交接pretrain(软链接可访问/nas_env数据) ②监控85M(8864/12124=73.1%,ETA~7-8天,低优先级) ③text/14.90TB留/nas_train(en_v1_4分词产物,太大无法迁/nas_env) ④commit+push(data 642: 巡检迁移全DONE+85M 73.1%)
-阻塞:         无新阻塞;迁移全部完成;85M ETA~7-8天;text/14.90TB无法迁/nas_env需留/nas_train
+PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅硬盘实测清单+✅迁移报告HTML+✅迁移5/5源全DONE(574bins/4.24TB→/nas_env,软链接✓)+▶️85M下载(8881/12124=73.3%)+✅git sync
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅硬盘实测清单(HTML+TSV); ✅迁移报告HTML; ✅math_l3迁移DONE(67/67,313GB,软链接✓); ✅code_l3迁移DONE(63/63,516GB,软链接✓); ✅math_l1迁移DONE(149/149,614GB,软链接✓); ✅ufw_l3迁移DONE(154/154,990GB,软链接✓); ✅code_l2迁移DONE(141/141,1691GB,软链接✓); ✅迁移提速生效(50→271MB/s); ✅迁移全部完成(5/5源,574bins/4.24TB→/nas_env); ▶️85M下载(8881/12124=73.3%)
+当前动作:     唤醒643(2026-10-25 01:0x)：①跨日巡检：迁移=5/5源全DONE确认(无rsync/migrate进程,migrate_fast.log END@21:42:28) ②85M 8881/12124(73.3%,+17自642,8incomplete,PID236391 alive etimes=37363s≈10.4h+PID581946 parallel16 alive≈14.1h,log显示正在下obelics/EN/part73,4.12s/it,landed parquet率~19/h→ETA~7天,低优先级) ③磁盘/nas_env 5.8T可用(43%)/nas_train 33T可用(85%) ④git sync正常(无ahead/behind,本线文件无改动,他线在途文件不动) ⑤体积TASK=30.2KB/MEMORY=28.4KB(均≤32KB✓) ⑥距上次data commit 23:53已~68min→超60min判死阈值→本轮必commit续命.📦体积：TASK=30.2KB/MEMORY=28.4KB（归档0KB，本轮无需归档）
+下一步:       ①迁移全部完成→已交接pretrain(软链接可访问/nas_env数据) ②监控85M(8881/12124=73.3%,ETA~7天,低优先级,后台跑即可) ③text/14.90TB留/nas_train(en_v1_4分词产物,太大无法迁/nas_env) ④commit+push(data 643: 跨日巡检迁移全DONE+85M 73.3%续命)
+阻塞:         无新阻塞;迁移全部完成;85M ETA~7天;text/14.90TB无法迁/nas_env需留/nas_train
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [23:5x] 唤醒642：①运维令18:1x复核=中继已执行(run_id=162≠157→兜底条件不触发,无需agent代执行);迁移提速50→300000KiB/s已生效,迁移全部5/5源DONE@21:42:28 ②migrate_fast.log tail确认:code_l2 rsync rc=0/5936s,dest 141/141bin+141/141idx+1691139372199B,VERIFY OK,SYMLINK建好,===MIGRATION(FAST) END=== ③5软链接全确认(ls -la code/BaiZe-ISEDA2027/data/:full_ufw_l3+full_ultradata_code_l2+code_l3+math_l1+math_l3→/nas_env/baize-data/) ④/nas_env baize-data du -sb=4,242,373,556,078B=4.24TB ⑤85M 8864/12124(73.1%,+23自641,8incomplete,PID236391 alive≈9.2h) ⑥磁盘/nas_env 5.8T可用(43%)/nas_train 33T可用(85%) ⑦无rsync/migrate进程(DONE) ⑧体积TASK=30.2KB/MEMORY=28.2KB(均≤32KB✓) ⑨WAITING=1
+> [01:0x] 唤醒643：跨日巡检（距上次data commit 23:53已~68min→超60min判死阈值→本轮必commit续命）①迁移=5/5源全DONE确认(无rsync/migrate进程,ps grep=0行) ②85M 8881/12124(73.3%,+17自642,8incomplete;PID236391 hf download alive etimes=37363s≈10.4h+PID581946 download_85m_parallel16.sh alive etimes=50788s≈14.1h;/tmp/85M_dl_parallel.log tail显示正在下obelics/EN/part73,8884/12126 files 73%,4.12s/it;landed parquet率~19/h→ETA~7天,低优先级符合用户令) ③磁盘/nas_env 4.2T已用/5.8T可用(43%)/nas_train 175T已用/33T可用(85%) ④git sync正常(git status -sb无ahead/behind;本线文件无改动,他线在途文件baize_dualnode_16gpu_test.sh/harness/p8脚本等不动) ⑤体积TASK=30957B(30.2KB)/MEMORY=29139B(28.4KB)均≤32KB✓ ⑥无新运维令(顶部运维令18:1x迁移提速已由中继执行+迁移全DONE,无需agent代执行) ⑦WAITING=1
+> 📦 唤醒642 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移5/5全DONE复核+运维令已执行+85M 73.1%,详见日文件）
 > 📦 唤醒641 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移5/5全DONE确认+85M 72.9%,详见日文件）
 > 📦 唤醒640 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移提速生效+code_l2@88%+85M 72.7%,详见日文件）
 > 📦 唤醒638 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移提速bwlimit 300000+math_l1修复+ufw_l3启动@286MB/s+85M 72.4%,详见日文件）
