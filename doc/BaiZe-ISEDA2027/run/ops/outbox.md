@@ -17620,3 +17620,133 @@ Filesystem                     Size  Used Avail Use% Mounted on
 10.239.22.32:/vol_CTE0_data04   10T  1.2T  8.8T  12% /nas_env
 === DONE 158 ===
 ```
+
+---
+
+## RUN_ID 159 · 2026-10-24 19:16:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 159 | read-only: harness 7x89 + pretrain loop | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] harness / 7x89 进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'harbor run|tb_7x89' | grep -v grep | cut -c1-140 | head -6 || echo '  NONE'
+
+echo "[2] 7x89 各 harness 结果计数（result.json）"
+for d in /tmp/tb_7x89/jobs_*; do
+  [ -d "$d" ] || continue
+  echo "  $(basename "$d"): $(find "$d" -name result.json 2>/dev/null | wc -l) result.json"
+done 2>/dev/null | head -10
+
+echo "[3] 7x89 主日志"
+ls -l --time-style=+%F_%T /tmp/tb_7x89_concurrent.log /tmp/tb_7x89*.log 2>/dev/null | head -5
+tail -6 /tmp/tb_7x89_concurrent.log 2>/dev/null | cut -c1-170
+
+echo "[4] 容器数"
+command -v docker >/dev/null 2>&1 && { sg docker -c 'docker ps --format "{{.Names}}"' 2>/dev/null | grep -c env || echo '  docker query failed'; } || echo '  no docker'
+
+echo "[5] harness agent 文件新鲜度"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_HARNESS.md" "$R/run/daily-memories-harness/2026-10-24.md" 2>/dev/null
+find /tmp -maxdepth 1 -name 'baize_harness*' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | head -3
+
+echo "[6] pretrain loop 进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'baize_pretrain_loop\.sh' | grep -v grep | cut -c1-140 || echo '  LOOP_NOT_FOUND'
+echo "[7] pretrain loop 日志（最后唤醒时间）"
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -4 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo "[8] pretrain MEMORY / TASK mtime"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" "$R/run/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+
+echo "[9] GPU：本机 + .12"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[10] 当前 agent 进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'cline|pi-coding-agent' | grep -v grep | cut -c1-120 | head -6 || echo '  none'
+
+echo "[11] 近 3h 各线 MEMORY mtime"
+find "$R/run" -maxdepth 1 -name 'MEMORY_*.md' -newermt '-3 hours' -printf '%TH:%TM %p\n' 2>/dev/null | head -8
+echo "=== DONE 159 ==="
+```
+
+**输出**
+```
+=== RUN_ID 159 | read-only: harness 7x89 + pretrain loop | 2026-10-24 19:16:29 | host=whag0pgpuap29 ===
+[1] harness / 7x89 进程
+ 536814   10512 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 538094   10507 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 550244   10502 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 551482   10497 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 564462   10492 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 565395   10487 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+[2] 7x89 各 harness 结果计数（result.json）
+  jobs_claude-code: 12 result.json
+  jobs_cline-patched: 17 result.json
+  jobs_codex: 13 result.json
+  jobs_deepseek-harness: 45 result.json
+  jobs_hermes: 45 result.json
+  jobs_opencode: 13 result.json
+  jobs_pi: 14 result.json
+[3] 7x89 主日志
+-rw-r----- 1 app.e0031982 app.adm  1447 2026-10-24_16:21:52 /tmp/tb_7x89_concurrent.log
+-rw-r----- 1 app.e0031982 app.adm  1447 2026-10-24_16:21:52 /tmp/tb_7x89_concurrent.log
+-rw-r----- 1 app.e0031982 docker     78 2026-10-24_16:21:13 /tmp/tb_7x89_gw_proxy_dsh.log
+-rw-r----- 1 app.e0031982 docker  24654 2026-10-24_19:07:26 /tmp/tb_7x89_gw_proxy.log
+[7x89] Launched deepseek-harness PID=565395 -> /tmp/tb_7x89/traces/deepseek-harness_run.log
+[7x89] Launched pi PID=578125 -> /tmp/tb_7x89/traces/pi_run.log
+
+[7x89] All 7 launched. PIDs: 536814 538094 550244 551482 564462 565395 578125
+[7x89] Waiting for completion ...
+
+[4] 容器数
+7
+[5] harness agent 文件新鲜度
+-rw-r----- 1 app.e0031982 app.adm 26812 2026-10-24_16:25:38 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/daily-memories-harness/2026-10-24.md
+-rw-r----- 1 app.e0031982 app.adm 17444 2026-10-24_16:25:08 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+2026-10-24 18:27          2 /tmp/baize_harness_llm_idx
+2026-10-24 17:57         11 /tmp/baize_harness_last_push
+2026-10-24 19:16    2283382 /tmp/baize_harness_loop.log
+[6] pretrain loop 进程
+ 328936  104817 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-agent/dist/cli.js -p -
+1294147  702365 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+[7] pretrain loop 日志（最后唤醒时间）
+-rw-r----- 1 app.e0031982 app.adm 329604 2026-10-23_14:09:32 /tmp/baize_pretrain_loop.log
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-23 13:39:32 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-23 14:09:32 wake up, invoking pi ...
+[8] pretrain MEMORY / TASK mtime
+-rw-r----- 1 app.e0031982 app.adm 40254 2026-10-24_16:23:45 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md
+-rw-r----- 1 app.e0031982 app.adm 28881 2026-10-24_15:07:08 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+[9] GPU：本机 + .12
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[10] 当前 agent 进程
+ 311594     460 docker compose --project-name configure-git-webserver__m6lch2k__env --project-directory /home/app.e00319
+ 311619     460 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name configure-git-webserver__m6lch2k__
+ 311651     460 bash -c cd /root && (pi -p --provider gw --model kimi-k2.6-cloud --api-key dummy-key-for-proxy 'Configur
+ 328936  104819 /home/app.e0031982/.bun/bin/bun /home/app.e0031982/.npm-global/lib/node_modules/@fleetagent/pi-coding-ag
+ 348025     433 docker compose --project-name crack-7z-hash__pgn2drk__env --project-directory /home/app.e0031982/termina
+ 348050     433 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name crack-7z-hash__pgn2drk__env --proj
+[11] 近 3h 各线 MEMORY mtime
+16:25 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+18:54 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md
+19:07 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+=== DONE 159 ===
+```
