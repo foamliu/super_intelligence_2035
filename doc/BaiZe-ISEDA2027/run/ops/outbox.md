@@ -18815,3 +18815,90 @@ echo "=== DONE 172 ==="
 2155194 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.
 === DONE 172 ===
 ```
+
+---
+
+## RUN_ID 173 · 2026-10-24 20:50:30 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 173 | snapshot | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 双机 GPU + launcher"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "  -- .29 procs --"; pgrep -af 'pretrain_launcher|torchrun' | cut -c1-105 | head -3 || echo '   none'
+echo "  -- .12 --"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8; pgrep -af "pretrain_launcher|torchrun" | cut -c1-105 | head -3 || echo "   none"' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] 双机训练目录 / 日志"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ 2>/dev/null | head -10
+for f in master.log launcher.log summary.txt; do [ -f "/tmp/baize_dualnode_16gpu/$f" ] && { echo "  == $f (tail)"; tail -5 "/tmp/baize_dualnode_16gpu/$f" | cut -c1-160; }; done
+
+echo "[3] .12 的 agent 在做什么（loop 日志尾）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 700 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -6 | cut -c1-140' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[4] data：code_l2 进度 + rsync"
+D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+a=$(du -sb "$D" 2>/dev/null | cut -f1); echo "  size=$(awk -v x=${a:-0} 'BEGIN{printf "%.1f",x/1e9}') GB  bin=$(find "$D" -maxdepth 1 -name '*.bin' | wc -l)/141"
+ps -eo pid=,etimes=,args= | grep -E 'migrate_to_nas_env|rsync -a' | grep -v grep | cut -c1-100 | head -2 || echo '   no rsync(local)'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "migrate_to_nas_env|rsync -a" | grep -v grep | cut -c1-100 | head -2 || echo "   no rsync(.12)"' 2>/dev/null || true
+df -h /nas_env | tail -1
+
+echo "[5] harness"
+echo "  harbor procs: $(pgrep -af 'harbor run' | wc -l)"
+for d in /tmp/tb_7x89/jobs_*; do [ -d "$d" ] || continue; printf "  %-24s %s/87\n" "$(basename "$d")" "$(find "$d" -name result.json 2>/dev/null | wc -l)"; done 2>/dev/null | head -8
+echo "=== DONE 173 ==="
+```
+
+**输出**
+```
+=== RUN_ID 173 | snapshot | 2026-10-24 20:50:30 | host=whag0pgpuap29 ===
+[1] 双机 GPU + launcher
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+  -- .29 procs --
+2155104 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /n
+2155194 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train
+  -- .12 --
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+2438405 bash -c nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8;
+[2] 双机训练目录 / 日志
+total 4
+-rw-r--r-- 1 app.e0031982 app.adm 5 2026-10-24_20:23:59 worker.peakmem
+[3] .12 的 agent 在做什么（loop 日志尾）
+- **Master ranks**: enqueued the ALLREDUCE (last enqueued: 1) but it never completed (last completed: -1) → **10-minute timeout (600000ms)
+- **Worker ranks**: never enqueued ANY NCCL work (last enqueued: -1, last completed: -1) → **worker NCCL init never finalized**
+- Worker showed "Connected all rings/trees" but NOT "Init COMPLETE" — **NCCL init was stuck in finalization on the worker**
+
+The pkill command got terminated. Let me clean up properly and examine the full worker.log for the gap between "Connected" and the timeout.
+[36m[run_commands][0m pkill -9 -f 'pretrain_launcher' 2>/dev/null; pkill -9 -f 'torchrun.*dualnode' 2>/dev/null; pkill -9 -f 'baize_dualnod.
+[4] data：code_l2 进度 + rsync
+  size=828.7 GB  bin=72/141
+2810729    6527 bash ./migrate_to_nas_env_fast.sh
+3071323    2910 rsync -a --partial --no-inc-recursive --info=progress2 --bwlimit=300000 /nas_train/a
+10.239.23.32:/vol_CTE0_data04   10T  3.4T  6.6T  35% /nas_env
+[5] harness
+  harbor procs: 7
+  jobs_claude-code         18/87
+  jobs_cline-patched       24/87
+  jobs_codex               18/87
+  jobs_deepseek-harness    65/87
+  jobs_hermes              64/87
+  jobs_opencode            21/87
+  jobs_pi                  23/87
+=== DONE 173 ===
+```
