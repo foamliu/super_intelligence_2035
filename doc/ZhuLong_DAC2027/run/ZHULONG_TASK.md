@@ -1,9 +1,9 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 📐 运维直改 · 2026-10-24 18:5x（**论文排版已由运维修正并重编译** · commit `fd4f0e88`）· 用户直令
-> 删 `7_discussion.tex` 的 `\enlargethispage{8\baselineskip}`（原把 p6 正文**压出下边距 8 行**）；表 3/表 4 `arraystretch` 0.76→0.68；精简 §6.2.3/§6.2.4/§6.3/§7/§8 五处措辞（**无任何数字改动**）；`main.tex` `\newpage`→`\clearpage`。
-> **验收（同源 TeX 三遍编译实测）**：**7 页 / 正文收于 p6（text_y 85–725，无越界）/ refs 独占 p7（16 条）/ 0 undefined**；仅余 acmart 固有 `Overfull \vbox 1.75pt`（<0.6 mm，不可见）。
-> 🚫 **不要恢复 `\enlargethispage`**；若你重编译，必须复核以上 4 条，不达标就回退。
+### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
+> ① 删 `7_discussion.tex` 的 `\enlargethispage{8\baselineskip}`（原把 p6 正文**压出下边距 8 行**）；② `main.tex` 增 `\Bbbk`/`\hslash`/`\varkappa`/`\digamma` 冲突护栏 —— **TL2026 + newtxmath 下 `\usepackage{amssymb}` 会报 `Command \Bbbk already defined`**（本机已复现并修好）；③ `\newpage`→`\clearpage`，refs 独占 p7。**正文措辞未做任何删改。**
+> **验收（本机 TeX Live 2026 + newtxmath，三遍编译实测）**：**7 页 / 正文收于 p6（text_y 85–725，无越界）/ refs 独占 p7（16 条）/ 0 undefined**；无 `Overfull \vbox`。
+> 🚫 不要恢复 `\enlargethispage`、不要删 `\Bbbk` 护栏；若重编译，必须复核以上 4 条，不达标就回退。
 
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
