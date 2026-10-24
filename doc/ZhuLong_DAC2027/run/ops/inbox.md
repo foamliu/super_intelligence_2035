@@ -1,8 +1,44 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 122 -->
-## RUN_ID 122 — 🔧 修 `.env` 的 `CLI_AGENT=zhulong` 并重起 r1（上一次被 .env 覆盖成 cline 且 format 脚本报错）
+<!-- RUN_ID: 123 -->
+## RUN_ID 123 — 🔧 用 **venv 的 python**（修 pydantic 缺失）重起 zhulong r1
 
 ```bash
+set -u
+echo "=== RUN_ID 123 | relaunch with venv python | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+LOG=/tmp/ABL_glm-5.3-flash_zl_realign_r1.log
+
+echo "[0] 护栏"
+pgrep -af 'run_zhulong_script|run_cline_script|run_eval.py' | cut -c1-105 | head -3 || echo '  none'
+
+echo "[1] venv 与 pydantic 自检"
+ls -d "$D/venv/bin" 2>/dev/null || echo '  NO venv'
+"$D/venv/bin/python" -c "import pydantic,sys;print('  venv python OK, pydantic', pydantic.VERSION if hasattr(pydantic,'VERSION') else pydantic.__version__)" 2>&1 | head -2
+
+echo "[2] 清理上一轮残留"
+pkill -f 'run_zhulong_script.sh' 2>/dev/null && echo '  killed stale runner' || echo '  none to kill'
+
+echo "[3] 用 venv 重起（PATH 前置 venv/bin，PYTHON 同）"
+cd "$D" || exit 1
+export PATH="$D/venv/bin:$PATH"
+export PYTHON="$D/venv/bin/python"
+unset http_proxy https_proxy || true
+export NO_PROXY=10.129.32.75
+setsid -f nohup bash scripts/run_zhulong_script.sh -p 4 -n > "$LOG" 2>&1 < /dev/null
+sleep 50
+PID=$(pgrep -f 'run_zhulong_script.sh' | head -1)
+echo "  PID=${PID:-NONE}"
+ps -o pid=,etimes=,stat=,args= -p "${PID:-0}" 2>/dev/null | cut -c1-110 || echo '  process gone'
+
+echo "[4] 关键日志"
+grep -aE '执行器|Benchmark|任务范围|Step 2|Step 3|ERROR|Traceback|pydantic' "$LOG" 2>/dev/null | head -10 | tr -d '\033' | cut -c1-150
+echo "  batch: $(ls -1dt /nasdata/app.e0031982/eda_code_eval/2026_* 2>/dev/null | head -1)"
+echo "=== DONE 123 ==="
+```
+
+## RUN_ID 122 — 🔧 修 `.env` 的 `CLI_AGENT=zhulong` 并重起 r1（上一次被 .env 覆盖成 cline 且 format 脚本报错）
+
+```text
 set -u
 echo "=== RUN_ID 122 | fix .env + relaunch zhulong r1 | $(date '+%F %T') | host=$(hostname) ==="
 D=/nasdata/app.e0031982/code/eda_fastmcp
