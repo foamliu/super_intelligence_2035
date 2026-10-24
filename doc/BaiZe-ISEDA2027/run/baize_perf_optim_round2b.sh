@@ -80,15 +80,15 @@ run_exp() {
 }
 # === ROUND 2b EXPERIMENTS ===
 # #1 defrag: MBS=4 + expandable_segments (R2 e10 OOM'd w/ 8.5GB fragmented -> defrag may fit)
-PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True run_exp "e10b_mbs4_defrag" 4 1024 "" --fp8-recipe tensorwise --enable-cuda-graph
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 run_exp "e10b_mbs4_defrag" 4 1024 "" --fp8-recipe tensorwise --enable-cuda-graph
 # #1 defrag: MBS=3 + expandable_segments (R2 e11 OOM'd @77.8GB -> defrag may fit)
-PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True run_exp "e11b_mbs3_defrag" 3 1024 "" --fp8-recipe tensorwise --enable-cuda-graph
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 run_exp "e11b_mbs3_defrag" 3 1024 "" --fp8-recipe tensorwise --enable-cuda-graph
 # #6 larger GBS: GBS=2048 MBS=2 (accum=128/rank; fewer optimizer steps; NOTE semantic boundary)
-PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True run_exp "e15_gbs2048" 2 2048 "" --fp8-recipe tensorwise --enable-cuda-graph
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 run_exp "e15_gbs2048" 2 2048 "" --fp8-recipe tensorwise --enable-cuda-graph
 # #3 sequence-parallel w/ TP1 (may no-op or error; tests if SP reduces activation mem)
-PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True run_exp "e16_sp_tw_cg" 2 1024 "" --fp8-recipe tensorwise --enable-cuda-graph --sequence-parallel
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 run_exp "e16_sp_tw_cg" 2 1024 "" --fp8-recipe tensorwise --enable-cuda-graph --sequence-parallel
 # #1 combo: MBS=4 defrag + first-last-bf16 (exclude FP8 on boundary layers)
-PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True run_exp "e17_mbs4_flbf16" 4 1024 "" --fp8-recipe tensorwise --enable-cuda-graph --first-last-layers-bf16
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 run_exp "e17_mbs4_flbf16" 4 1024 "" --fp8-recipe tensorwise --enable-cuda-graph --first-last-layers-bf16
 
 # === FINAL SUMMARY ===
 echo "" >> "$SUM"

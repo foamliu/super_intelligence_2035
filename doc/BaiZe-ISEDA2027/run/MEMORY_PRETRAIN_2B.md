@@ -10,7 +10,7 @@ WAITING: 1
 > 🆕 **2026-10-24 11:0x #763：▶ 放行吞吐优化R2·收到10-24 09:3x新指令（基于自己报告§4建议继续优化）·R2已跑完5组·R2b已启动**：
 > - **新指令**：用户放行 pretrain 基于自己报告 §4 的 7 条建议继续优化 BaiZe-2B 预训练吞吐（当前最佳 e09_fp8_tw_cg=297K tok/s，峰值65.4GB/80GB余14GB）。
 > - **R2 已跑完**（09:45-10:29，/tmp/baize_perf_r2/summary.txt）：① e10 MBS4=OOM(72GB+7.9GB>79.2,8.5GB碎片) ② e11 MBS3=OOM(77.8GB) ③ e12 CE-fusion=296K(=e09无变化,loss非瓶颈) ④ e13 NCCL-Ring=297K(=e09无变化,单节点NVSwitch已最优) ⑤ e14 recompute=AssertionError(full recompute需full-iter CG,launcher仅暴露full granularity,selective不可用)。
-> - **R2b 已启动**（11:04 .29 PID2802077 后台，/tmp/baize_perf_r2b/）：① e10b MBS4+expandable_segments(碎片整理) ② e11b MBS3+expandable_segments ③ e15 GBS2048(大GBS语义边界) ④ e16 --sequence-parallel(TP1,测SP) ⑤ e17 MBS4+first-last-bf16。预计~1.5h跑完。
+> - **R2b 已启动**（11:10 .29 PID3227797 后台，/tmp/baize_perf_r2b/，**修正后重跑**）：首轮因 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`+CG 缺 `NCCL_GRAPH_REGISTER=0` 触发 Megatron CudaGraphManager AssertionError（全5组秒挂）→ 脚本已加 `NCCL_GRAPH_REGISTER=0` 修复并重跑。e10b MBS4+defrag 已过初始化在训练(~65.5GB)。5组：① e10b MBS4+expandable_segments ② e11b MBS3+expandable_segments ③ e15 GBS2048 ④ e16 SP(TP1) ⑤ e17 MBS4+first-last-bf16。预计~1.5h跑完。
 > - **未试建议评估**：#2 CUDA12.9升级(需风险评估TE2.12/torch2.8兼容+回滚方案,未动) | #4 数据侧(num_workers=8硬编码recipe,需改代码,且e12/e13证明非host瓶颈) | #7 torch.compile(launcher无flag,需加代码,Mamba2自定义算子compile风险高)。
 > - .29 核验：R2b 跑前 8×H100 全空(0 MiB)，e10b 启动中。脚本 baize_perf_optim_round2b.sh（新增）。
 > 📦 体积：TASK=29.4KB / MEMORY=~28.7KB（均≤32KB✓，本轮归档 #760/#761 idle → daily-memories/2026-10-24.md）。
