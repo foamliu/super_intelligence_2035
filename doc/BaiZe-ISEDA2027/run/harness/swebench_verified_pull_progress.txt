@@ -67,3 +67,4 @@
 [swebench-pull] [64/500] OK django__django-11848 pulled=64 failed=0 skipped=0
 [swebench-pull] [65/500] OK django__django-11880 pulled=65 failed=0 skipped=0
 [swebench-pull] [66/500] OK django__django-11885 pulled=66 failed=0 skipped=0
+[swebench-pull] [67/500] OK django__django-11951 pulled=67 failed=0 skipped=0
