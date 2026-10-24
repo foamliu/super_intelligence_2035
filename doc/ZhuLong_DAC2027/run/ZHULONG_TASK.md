@@ -2,6 +2,54 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 ### 📐 引用修正令 · 2026-10-24 15:4x（**Lemma→Claim + 新增 Delage&Mannor 2010 用在"模型失配是真实问题"**）· 用户确认 · 最高优先
+### 📄 排版指令 · 2026-10-24 16:1x（**参考文献单独起页（第7页），不要接在第6页后面**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong：现在 reference 的排版难看，让它**单开一页（第7页，不要放在第6页后边）**。」
+
+**① 改法**：`ZhuLong_DAC2027/main.tex` 第 84 行 `\bibliographystyle{ACM-Reference-Format}` **之前**插入强制分页：
+
+```latex
+\clearpage          % ← 新增：参考文献强制另起一页（第7页）
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{reference}
+```
+
+- 用 **`\clearpage`**（而不是 `\newpage`）：`\clearpage` 会把浮动体（表/图）全部冲刷完再分页，避免最后一张表被挤到参考文献页。
+- 若 ACM 模板下 `\clearpage` 产生**空白页**，改用 `\newpage`；**两种情况都要实测页数**后择优。
+
+**② 验收标准**
+1. **正文仍为 6 页**（不要因为分页把正文挤成 7 页）
+2. **参考文献整体落在第 7 页**，且**第 6 页底部不残留任何参考文献条目**
+3. 全文档 **共 7 页**（正文 6 + refs 1）
+4. **`0 undefined`**（ref/citation）
+5. 检查**第 6 页最后一页的排版**：不能有大片空白或被强行拉开的段落（若出现，说明 `\clearpage` 太早，需微调正文）
+
+**③ 顺带把理论章的两处未落地项补上（15:4x 引用修正令，尚未执行）**
+当前 `4_grounding.tex` 仍是旧写法：
+- L56 `\textbf{Lemma (observation-fidelity bound).}` → **改 `\textbf{Claim (observation-fidelity bound).}`**
+- L58 `By standard POMDP model-approximation results \cite{kaelbling1998planning, thrun2005probabilistic}` → **删除此归因**，改为 `we posit that ...`（**不声称文献已证该界**）
+- **在场景论证段新增**（支撑"模型失配是公认问题"）：
+  ```latex
+  Model mismatch is a recognized obstacle in sequential decision making under
+  estimated parameters, where realized performance can diverge substantially
+  from the designer's expectation \cite{delage2010percentile}; our setting is
+  the milder case in which only $\Omega$, not $\mathcal{T}$, may be mismatched.
+  ```
+- **`reference.bib` 新增**（已核实，JSTOR 40605970）：
+  ```bibtex
+  @article{delage2010percentile,
+    title   = {Percentile Optimization for Markov Decision Processes with Parameter Uncertainty},
+    author  = {Delage, Erick and Mannor, Shie},
+    journal = {Operations Research},
+    volume  = {58}, number = {1}, pages = {203--213}, year = {2010},
+    doi     = {10.1287/opre.1090.0711}
+  }
+  ```
+- ⚠️ Kaelbling/Thrun **可保留**，但只用于 POMDP 框架/信念更新（Eq.1 附近），**不得**用于支撑 `D ≤ g(ε)`。
+
+**④ 交付**：重新编译 → 贴**实际页数**（正文/refs/总计）+ 第6页与第7页的截图或文字说明 → commit+push（信息写 `refs to page 7 + Lemma→Claim + delage2010percentile`）。
+
+
 
 > 背景：运营方核实发现 **`D_grounding ≤ g(ε)` 现有引用不成立** —— `kaelbling1998planning`（POMDP 规划奠基）与 `thrun2005probabilistic`（教科书）**都没有给出"模型失配→后验偏差"的界**，审稿人追问"哪一页"会站不住。
 > 用户已核实一篇真实文献（JSTOR 40605970），但**内容不匹配**：Delage & Mannor 讲的是 **percentile 鲁棒 MDP 优化**，不是后验 TV 界。
