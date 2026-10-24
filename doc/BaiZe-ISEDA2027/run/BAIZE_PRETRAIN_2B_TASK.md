@@ -1,6 +1,21 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🚀 运维令 · 2026-10-24 23:5x（**双机已调通 ⇒ 转入「双机吞吐优化」阶段**）· 用户直令 · 最高优先
+> **已调通（23:22–23:37，16 卡 DP=2×8，`baize_dualnode_16gpu_test.sh`）**：median **512,801 tok/s** / mean 508,860 / **扩展效率 84.0%** / 每卡 32,050 / 峰值显存 **64.4 GB** / loss 0.3695 / gnorm 0.72 / **0 NaN、0 skip**；NCCL 走 `NET/IB/0,2,6…` 多通道。
+> ⚠️ **口径陷阱**：这次是 **BF16 mixed + `--mock` 数据**，而单机基线 305,098 是 **FP8 tensorwise + CUDA Graphs + 真数据** ⇒ 84% 只能证明"IB 健康"，**不能**直接当扩展效率结论。
+> ⚠️ **launcher bug**：`baize_dualnode_16gpu_test.sh:114/115  WORKER_SSH_PID: unbound variable`（`set -u` 下 worker 收尾即报错，导致脚本"挂在 SSH 清理"）→ **先修**（`WORKER_SSH_PID=${WORKER_SSH_PID:-}`，或在 worker 分支前置空）。
+>
+> **优化任务（按序执行，每项固定 80 步；每次跑完立刻释放 16 卡）**
+> - **A. 口径对齐（必做第一步）**：16 卡跑 **e18 配方（MBS3 + FP8 TW + CUDA Graphs + 真数据）** ⇒ 得到与 305K 可比的真实扩展效率（预期 ~0.84）；同时留 BF16 组作对照。
+> - **B. NCCL/IB 调参**（每项单独跑）：`NCCL_IB_QPS_PER_CONNECTION` 1/4/8 · `NCCL_MAX_NCHANNELS` 32/64 · `NCCL_ALGO`(Ring/Tree)×`NCCL_PROTO`(LL/LL128/Simple) · `NCCL_NET_GDR_LEVEL` 2/3 · `NCCL_IB_HCA` 子集（**排除 `.29` 的 `mlx5_7`/`mlx5_15` 两个 PORT_DOWN**）· `NCCL_CROSS_NIC=1`
+> - **C. 通信/计算重叠**：`--overlap-grad-reduce` / `--overlap-param-gather`（DP=16、TP=1 下是否有收益）
+> - **D. MBS/GBS**：MBS3→**4**（64.4 GB 尚有 ~15 GB 余量）· GBS 1008→2016
+> - **E. 分布式优化器**：`--use-distributed-optimizer`（用显存换更大 MBS）
+> **判据**：每项报 `tok/s`、`扩展效率`、`median step ms`、`峰值显存`、`loss/gnorm`（与 e18 对齐，Δloss ≤5%）；最优组合写进 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「双机吞吐优化」+ 中文 HTML 报告 `reports/report_pretrain_dualnode_throughput_zh.html`（含每项对比表与结论）。
+> 🚫 不得改单机 e18 配方本身；🚫 不要再用 mock 数据下的数字对外宣称"扩展效率"。
+
+
 ### ✅ 运维实测 · 2026-10-24 21:45（**2-rank NCCL 已打通 ⇒ 16 卡失败根因 = 缺 NCCL 环境变量**）· 用户授权手工排障 · 最高优先
 > 手工最小复现（`/nas_train/app.e0031982/nccl_dbg/tc.py`，2 rank × 1 卡 × 20 步 all_reduce）**全部通过**：
 > `iter 0..19 ok` · **`busbw ≈ 46.3 GB/s`** · `Connected all rings, use ring PXN 0 GDR 1`（**GPUDirect RDMA 生效**）· 两端 `Destroy COMPLETE`。
