@@ -1,9 +1,38 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 184 | TARGET: 29 -->
-## RUN_ID 184 — 📊 只读：读 `.12` 上的双机 summary / 迭代吞吐（23:37 launch16 那次）
+<!-- RUN_ID: 185 | TARGET: 29 -->
+## RUN_ID 185 — 🔎 只读：定位并读 `baize_dualnode_16gpu_test.sh`（搞清 mock/精度/数据/迭代开关，才能做 A/B 口径对齐）
 
 ```bash
+set -u
+echo "=== RUN_ID 185 | read dual-node launcher | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 脚本位置"
+for h in . 12; do
+  if [ "$h" = . ]; then C="bash -lc"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 bash -lc"; fi
+  echo "  --- $h ---"
+  $C 'find /nas_train/app.e0031982 /tmp -maxdepth 4 -name "baize_dualnode*test.sh" 2>/dev/null | head -3; ls -l /tmp/baize_dualnode_16gpu_test.sh 2>/dev/null' 2>/dev/null || true
+done
+
+echo "[2] 主脚本前 60 行（看参数区）"
+F=$(ls /tmp/baize_dualnode_16gpu_test.sh /nas_train/app.e0031982/code/super_intelligence_2035/baize_dualnode_16gpu_test.sh 2>/dev/null | head -1)
+[ -z "${F:-}" ] && F=$(timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls /tmp/baize_dualnode_16gpu_test.sh 2>/dev/null' | head -1)
+echo "  F=$F"
+
+echo "[3] 关键开关（mock / fp8 / cuda graph / data / iters / torchrun）"
+for h in . 12; do
+  if [ "$h" = . ]; then C="bash -lc"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 bash -lc"; fi
+  echo "  --- $h ---"
+  $C 'F=/tmp/baize_dualnode_16gpu_test.sh; [ -f "$F" ] || F=/nas_train/app.e0031982/code/super_intelligence_2035/baize_dualnode_16gpu_test.sh; [ -f "$F" ] && { echo "    file=$F  lines=$(wc -l < $F)"; grep -nE "mock|MOCK|fp8|FP8|cuda.graph|CG|DATA|blend|--train-data|ITERS|GBS|MBS|torchrun|nnodes|WORKER_SSH_PID|set -u" "$F" | head -30 | cut -c1-150; }' 2>/dev/null || true
+done
+
+echo "[4] 该脚本里 mock 与真数据的切换点（上下文）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'F=/tmp/baize_dualnode_16gpu_test.sh; [ -f "$F" ] && grep -n -B2 -A6 -E "mock|Mock|MockData" "$F" | head -30 | cut -c1-150' 2>/dev/null || true
+echo "=== DONE 185 ==="
+```
+
+## RUN_ID 184 — 📊 只读：读 `.12` 上的双机 summary / 迭代吞吐（23:37 launch16 那次）
+
+```text
 set -u
 echo "=== RUN_ID 184 | dual-node summary from .12 | $(date '+%F %T') | host=$(hostname) ==="
 echo "[1] summary.txt 全文"
