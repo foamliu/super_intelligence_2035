@@ -1,5 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-24 23:3x #767：✅ 双节点16GPU DP16吞吐扩展测试完成·513K tok/s·84%线性扩展效率**：
+> - **测试**：2节点×8×H100(.12+.29) DP16, MBS3/GBS1008/SEQ4096/ITERS80, bf16_mixed, --mock data。`baize_dualnode_16gpu_test.sh` + `pretrain_launcher.py`(early NCCL init barrier)。
+> - **根因修复**：`init_process_group()`返回后IB连接lazy建立，Megatron `initialize_model_parallel()`创建第二communicator时第一communicator的IB QP仍在连接→Channel 15死锁(.29)。修复：early `init_process_group()` + `torch.distributed.barrier()` 强制IB完全建立后再import重模块。另加 `NCCL_NVLS_ENABLE=0` 解决CUDA error 802。
+> - **结果**：median step time **8.05s**，throughput **512,801 tok/s** (mean 508,860)，per-GPU 32,050 tok/s，scaling efficiency **84.0%** (vs ideal 610,196)。Peak VRAM 64.4GB/GPU(both nodes)。0 NaN/0 skip。GPU util ~611 TFLOP/s/GPU(BF16)。
+> - **IB确认**：RoCE 12×mlx5 devices，multi-channel spread(NET/IB/0,/2,/6...)，interconnect healthy。
+> - **注意**：baseline 305K=FP8 TW+CG，本次=BF16无FP8。apples-to-apples BF16单节点基线未测。84%证明IB健康，跨节点扩展可行。
+> - **文件**：`baize_dualnode_16gpu_test.sh`(已修result parsing: grep both worker+master log)、`pretrain_launcher.py`(early NCCL init)、summary@`/tmp/baize_dualnode_16gpu/summary.txt`。
+> - **下一步**：若需更精确扩展效率→测BF16单节点基线；若扩展效率满意→移除--mock恢复--fp8-recipe tensorwise跑真实数据。
+> 📦 体积：TASK=30.4KB / MEMORY=待测。
+
 > 🆕 **2026-10-24 15:0x #766：#2 CUDA12.9升级实测→❌驱动级BLOCKED·7/7建议全部闭合·吞吐上限=305K definitively confirmed·等data就绪起全量预训练**：
 > - **#2 CUDA 12.9 升级实测（.29 whag0pgpuap29, 15:02）**：① 驱动=570.195.03(R570分支),nvidia-smi最大CUDA=12.8 ② CUDA12.9需驱动≥575(R575)→**驱动级不足** ③ sudo无权限(password required) ④ cuda-compat前向兼容包未安装(/usr/local/cuda/compat/为空) ⑤ 仅装CUDA12.8(/usr/local/cuda-12.8)。
 > - **结论：#2 = ❌ BLOCKED（驱动级阻塞）**。即便创建隔离conda env(torch+cu129),CUDA runtime也会因驱动不支持12.9而失败——**瓶颈在驱动层而非conda env**。驱动升级需root,影响全机GPU,本轮不执行。
