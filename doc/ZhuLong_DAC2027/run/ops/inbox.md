@@ -1,8 +1,42 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 121 -->
-## RUN_ID 121 — ▶️ 用户直令：配置已对齐，**立即起 zhulong 的 r1**（full / glm-5.3-flash / maxTokens=8192）
+<!-- RUN_ID: 122 -->
+## RUN_ID 122 — 🔧 修 `.env` 的 `CLI_AGENT=zhulong` 并重起 r1（上一次被 .env 覆盖成 cline 且 format 脚本报错）
 
 ```bash
+set -u
+echo "=== RUN_ID 122 | fix .env + relaunch zhulong r1 | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+E="$D/.env"
+LOG=/tmp/ABL_glm-5.3-flash_zl_realign_r1.log
+
+echo "[0] 护栏"
+pgrep -af 'run_zhulong_script|run_cline_script|run_eval.py' | cut -c1-105 | head -4 || echo '  none'
+
+echo "[1] 上一次失败的 traceback（取尾部）"
+tail -25 "$LOG" 2>/dev/null | tr -d '\033' | tail -18 | cut -c1-160
+
+echo "[2] 备份并改 .env -> CLI_AGENT=zhulong"
+cp -a "$E" "$E.bak.$(date +%Y%m%d_%H%M)"
+sed -i 's/^CLI_AGENT=cline$/CLI_AGENT=zhulong/; s/^# CLI_AGENT=cline$/CLI_AGENT=zhulong/' "$E"
+grep -nE '^CLI_AGENT|^EDA_RUNCODE_READBACK' "$E" | sed 's/^/  /'
+
+echo "[3] 重起 r1（不再覆盖 CLI_AGENT，让其读 .env）"
+cd "$D" || exit 1
+setsid -f nohup bash scripts/run_zhulong_script.sh -p 4 -n > "$LOG" 2>&1 < /dev/null
+sleep 45
+PID=$(pgrep -f 'run_zhulong_script.sh' | head -1)
+echo "  PID=${PID:-NONE}"
+ps -o pid=,etimes=,stat=,args= -p "${PID:-0}" 2>/dev/null | cut -c1-110 || echo '  process gone'
+
+echo "[4] 执行器 + batch + 错误"
+grep -aE '执行器|CLI_AGENT|batch|ERROR|Traceback|format_eval_task' "$LOG" 2>/dev/null | head -10 | cut -c1-150
+ls -1dt /nasdata/app.e0031982/eda_code_eval/2026_* 2>/dev/null | head -2
+echo "=== DONE 122 ==="
+```
+
+## RUN_ID 121 — ▶️ 用户直令：配置已对齐，**立即起 zhulong 的 r1**（full / glm-5.3-flash / maxTokens=8192）
+
+```text
 set -u
 echo "=== RUN_ID 121 | launch zhulong r1 (aligned config) | $(date '+%F %T') | host=$(hostname) ==="
 D=/nasdata/app.e0031982/code/eda_fastmcp
