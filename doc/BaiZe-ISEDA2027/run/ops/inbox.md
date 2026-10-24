@@ -1,9 +1,30 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 170 | TARGET: 29 -->
-## RUN_ID 170 — 🚨 只读：`code_l2` 迁移是否卡住（无 rsync 进程）+ pretrain 进展
+<!-- RUN_ID: 171 | TARGET: 29 -->
+## RUN_ID 171 — ⏱ 延时 120s 只读：双机 16 卡测试是否真的在算（GPU 显存 + torchrun + summary）
 
 ```bash
+set -u
+echo "=== RUN_ID 171 | dual-node test verification | $(date '+%F %T') | host=$(hostname) ==="
+echo "[0] 等 120s ..."; sleep 120
+
+for h in 29 12; do
+  if [ "$h" = 29 ]; then C="bash -lc"; P=local; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -lc"; P=10.239.2.12; fi
+  echo "  === $h ==="
+  $C 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8; echo "  -- procs --"; pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3 || echo "   none"' 2>/dev/null || echo "   host failed"
+done
+
+echo "[1] summary / 日志"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ /tmp/baize_dualnode_16gpu_run.log 2>/dev/null | head -8
+tail -8 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-160 || echo '  no summary yet'
+echo "[2] .12 的 loop 日志尾部（agent 在做什么）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 900 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -8 | cut -c1-150' 2>/dev/null || echo '  ssh .12 failed'
+echo "=== DONE 171 ==="
+```
+
+## RUN_ID 170 — 🚨 只读：`code_l2` 迁移是否卡住（无 rsync 进程）+ pretrain 进展
+
+```text
 set -u
 echo "=== RUN_ID 170 | migration liveness | $(date '+%F %T') | host=$(hostname) ==="
 D=/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
