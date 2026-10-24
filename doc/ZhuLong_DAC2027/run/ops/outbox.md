@@ -14848,3 +14848,80 @@ Traceback (most recent call last):
 /nasdata/app.e0031982/eda_code_eval/2026_1024_141148
 === DONE 121 ===
 ```
+
+---
+
+## RUN_ID 122 · 2026-10-24 22:28:46 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 122 | fix .env + relaunch zhulong r1 | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+E="$D/.env"
+LOG=/tmp/ABL_glm-5.3-flash_zl_realign_r1.log
+
+echo "[0] 护栏"
+pgrep -af 'run_zhulong_script|run_cline_script|run_eval.py' | cut -c1-105 | head -4 || echo '  none'
+
+echo "[1] 上一次失败的 traceback（取尾部）"
+tail -25 "$LOG" 2>/dev/null | tr -d '\033' | tail -18 | cut -c1-160
+
+echo "[2] 备份并改 .env -> CLI_AGENT=zhulong"
+cp -a "$E" "$E.bak.$(date +%Y%m%d_%H%M)"
+sed -i 's/^CLI_AGENT=cline$/CLI_AGENT=zhulong/; s/^# CLI_AGENT=cline$/CLI_AGENT=zhulong/' "$E"
+grep -nE '^CLI_AGENT|^EDA_RUNCODE_READBACK' "$E" | sed 's/^/  /'
+
+echo "[3] 重起 r1（不再覆盖 CLI_AGENT，让其读 .env）"
+cd "$D" || exit 1
+setsid -f nohup bash scripts/run_zhulong_script.sh -p 4 -n > "$LOG" 2>&1 < /dev/null
+sleep 45
+PID=$(pgrep -f 'run_zhulong_script.sh' | head -1)
+echo "  PID=${PID:-NONE}"
+ps -o pid=,etimes=,stat=,args= -p "${PID:-0}" 2>/dev/null | cut -c1-110 || echo '  process gone'
+
+echo "[4] 执行器 + batch + 错误"
+grep -aE '执行器|CLI_AGENT|batch|ERROR|Traceback|format_eval_task' "$LOG" 2>/dev/null | head -10 | cut -c1-150
+ls -1dt /nasdata/app.e0031982/eda_code_eval/2026_* 2>/dev/null | head -2
+echo "=== DONE 122 ==="
+```
+
+**输出**
+```
+=== RUN_ID 122 | fix .env + relaunch zhulong r1 | 2026-10-24 22:28:46 | host=hfeg0tedaap02 ===
+[0] 护栏
+[1] 上一次失败的 traceback（取尾部）
+[0;34m[INFO][0m 并行度: 4
+[0;34m[INFO][0m 自进化: 关闭
+[0;34m[INFO][0m Memory Bank 注入: 禁用 (--no-memory-inject)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m [Step 0] 读取yaml配置文件...
+[0;34m[INFO][0m 文件路径: /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml
+[0;34m[INFO][0m Benchmark: EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m [Step 1] 检查原始数据集...
+[0;32m[SUCCESS][0m 原始数据集检查完成
+[0;34m[INFO][0m 任务范围: 全量 158 题
+[0;34m[INFO][0m [Step 1.5] 跳过 Memory Bank 预热 (无 L0 artifacts，冷启动正常)
+[0;34m[INFO][0m [Step 2] 执行python脚本, 格式化评估任务...
+[0;34m[INFO][0m 执行: python pyAether-eval/script/format_eval_task.py --task_file=/nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Ev
+Traceback (most recent call last):
+  File "/nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/script/format_eval_task.py", line 6, in <module>
+    from pydantic import BaseModel, Field
+ModuleNotFoundError: No module named 'pydantic'
+[0;31m[ERROR][0m pyAether-eval/script/format_eval_task.py 执行失败
+[2] 备份并改 .env -> CLI_AGENT=zhulong
+  210:CLI_AGENT=zhulong
+  213:CLI_AGENT=zhulong
+  297:EDA_RUNCODE_READBACK=full
+[3] 重起 r1（不再覆盖 CLI_AGENT，让其读 .env）
+  PID=NONE
+[4] 执行器 + batch + 错误
+[0;34m[INFO][0m 执行器: zhulong
+[0;34m[INFO][0m 执行: python pyAether-eval/script/format_eval_task.py --task_file=/nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/original_da
+Traceback (most recent call last):
+  File "/nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/script/format_eval_task.py", line 6, in <module>
+[0;31m[ERROR][0m pyAether-eval/script/format_eval_task.py 执行失败
+/nasdata/app.e0031982/eda_code_eval/2026_1024_222846
+/nasdata/app.e0031982/eda_code_eval/2026_1024_222540
+=== DONE 122 ===
+```
