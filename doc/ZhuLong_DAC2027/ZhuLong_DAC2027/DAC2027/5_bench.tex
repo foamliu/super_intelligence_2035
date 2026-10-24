@@ -3,13 +3,8 @@
 
 \subsection{Dataset: EDA-Scripting-Bench}
 
-\textbf{EDA-Scripting-Bench} is the instrument for both of this paper's comparisons: within one toolchain, the effect of each grounding component, and across toolchains, the effect of language structure. It covers PyAether, SKILL, and Tcl on four commercial runtimes, \textbf{449 tasks} in four slices (Table~\ref{tab:benchmark-composition}), all specified by one schema---a target language and runtime, a natural-language prompt, a function signature, and language-appropriate assertions---so that a single harness (Section~\ref{sec:agent-workflow}) scores all four platforms uniformly. Two properties carry the validity of these comparisons: scoring is execution-based, so a task passes only when the generated code acts correctly in the live runtime; and the cross-language slices are difficulty-controlled by construction (Section~\ref{sec:benchmark-slices}), so a score gap between slices reflects the toolchain rather than the tasks.
-% EDA-Scripting-Bench 是本文两组比较的测量仪器：工具链内部——各grounding组件的作用；跨工具链——语言结构的影响。
-% 覆盖PyAether/SKILL/Tcl三语言、四种商业运行时、四切片共449个任务（表~\ref{tab:benchmark-composition}），
-% 全部由单一schema规定——目标语言与运行时、自然语言提示、函数签名、语言适配断言——使单一框架
-% （Section~\ref{sec:agent-workflow}）统一评分。两点性质支撑比较的效度：评分基于执行，代码必须在实时
-% 运行时中正确动作才算通过；跨语言切片在构造上控制了难度（Section~\ref{sec:benchmark-slices}），
-% 切片间分差反映工具链而非任务本身。
+\textbf{EDA-Scripting-Bench} is the instrument for both of this paper's comparisons: within one toolchain, the effect of each grounding component, and across toolchains, the effect of language structure. It covers PyAether, SKILL, and Tcl on four commercial runtimes, \textbf{449 tasks} in four slices (Table~\ref{tab:benchmark-composition}), all specified by one schema---a target language and runtime, a natural-language prompt, a function signature, and language-appropriate assertions---so a single harness (Section~\ref{sec:agent-workflow}) scores all four platforms uniformly. Scoring is execution-based (a task passes only when the generated code acts correctly in the live runtime), and the cross-language slices are difficulty-controlled by construction (Section~\ref{sec:benchmark-slices}). Each task is a real break in a design flow where a closed tool stops and glue must be hand-written---a microcosm of the flow-orchestration gap this paper targets.
+% EDA-Scripting-Bench：449 任务、四切片、单一 schema（语言/运行时/提示/签名/断言），单一框架统一评分。执行式评分；跨语言切片构造上控难度。每任务是设计流中"封闭工具停步、需手写胶水"的真实断链——本文所瞄 flow 编排断链的微缩切片。
 
 \begin{table}[htbp]
 \centering
@@ -30,38 +25,20 @@ EDA-Eval-InnovusTcl & Cadence Innovus & 57 \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 表：EDA-Scripting-Bench组成（切片 / 运行时 / 任务数）。PyAether 切片的场景分布已并入正文文字描述。
+% 表：EDA-Scripting-Bench 组成（切片/运行时/任务数）。
 
 \subsection{The PyAether slice (EDA-Eval-PyAether)}
 
-The reference slice, \textbf{EDA-Eval-PyAether} (158 tasks), anchors every task to a concrete PyAether API; EDA experts curated each assertion to be self-contained and executable in a clean sandbox without vendor-internal context. Tasks go beyond isolated single-API examples: they span layout, schematic, and design-management workflows---layout (64 tasks, 40.5\%) and schematic (47, 29.7\%) dominate the scenario mix, reflecting PyAether's role in physical design---compose several distinct APIs, and sometimes depend on a technology library, so passing reflects genuine command of the tool's behavior rather than surface-level retrieval.
-% 参照切片EDA-Eval-PyAether（158任务）每个任务锚定一个具体PyAether API；EDA专家确保每条断言
-% 自包含、可在无厂商内部上下文的干净沙盒中执行。任务超出孤立单API示例：覆盖layout/schematic/
-% design-management工作流（layout 64任务/40.5%与schematic 47任务/29.7%主导场景，反映PyAether在物理设计中的核心角色），
-% 组合多个不同API，部分依赖工艺库，故通过反映对工具行为的
-% 真正掌握而非浅层检索。
-
+The reference slice, \textbf{EDA-Eval-PyAether} (158 tasks), anchors every task to a concrete PyAether API; EDA experts curated each assertion to be self-contained and executable in a clean sandbox without vendor-internal context. Tasks span layout, schematic, and design-management workflows, compose several distinct APIs, and sometimes depend on a technology library, so passing reflects genuine command of the tool's behavior rather than surface-level retrieval.
+% 参照切片 EDA-Eval-PyAether（158 任务）：每任务锚定一个 PyAether API，专家确保断言自包含可在干净沙盒执行。覆盖 layout/schematic/design-management 工作流，组合多 API，部分依赖工艺库——通过反映对工具行为的真正掌握。
 
 \subsection{SKILL and Tcl slices}
 \label{sec:benchmark-slices}
 
-The remaining slices are built so that cross-language scores are comparable. \textbf{EDA-Eval-Skill} (157 SKILL tasks on Cadence Virtuoso) is \emph{function-aligned} with PyAether: each task re-implements, in Lisp style, the same entry point and functional specification as its PyAether counterpart (e.g., \texttt{create\_inverter\_schematic} builds the same transistor-level cell in both), holding task difficulty fixed; PyAether alone adds one pure-Python utility task with no EDA API. The \textbf{Tcl} slices are graded by difficulty and span two further toolchains: waveform measurement and signal querying on WaveView (\textbf{EDA-Eval-WaveViewTcl}, 77 tasks) and floorplanning, placement, and routing on Innovus (\textbf{EDA-Eval-InnovusTcl}, 57 tasks). Together these controls let the cross-language comparison (Section~\ref{sec:cross-language}) attribute score differences to language structure rather than task hardness.
-% 其余切片为跨语言可比性而构建。EDA-Eval-Skill（157个Virtuoso上的SKILL任务）与PyAether
-% 函数级对齐：每个SKILL任务以Lisp风格重实现对应PyAether任务的入口点与功能规范
-% （如create_inverter_schematic在两者中构建同一晶体管级单元），固定任务难度；PyAether多出
-% 1个无EDA API的纯Python工具任务。Tcl切片按难度分级，覆盖另外两种工具链：WaveView上的波形
-% 测量与信号查询（EDA-Eval-WaveViewTcl，77任务）与Innovus上的floorplan/placement/routing
-% （EDA-Eval-InnovusTcl，57任务）。这些控制使跨语言比较（Section~\ref{sec:cross-language}）
-% 将分差归因于语言结构而非任务难度。
+The remaining slices are built so cross-language scores are comparable. \textbf{EDA-Eval-Skill} (157 SKILL tasks on Cadence Virtuoso) is \emph{function-aligned} with PyAether: each task re-implements the same entry point and functional specification as its PyAether counterpart, holding difficulty fixed. The \textbf{Tcl} slices are graded by difficulty across two further toolchains: waveform measurement on WaveView (\textbf{EDA-Eval-WaveViewTcl}, 77 tasks) and floorplanning, placement, and routing on Innovus (\textbf{EDA-Eval-InnovusTcl}, 57 tasks), so the cross-language comparison (Section~\ref{sec:cross-language}) attributes score differences to language structure rather than task hardness.
+% 其余切片为跨语言可比性而建。EDA-Eval-Skill（157 SKILL）与 PyAether 函数级对齐，固定难度。Tcl 切片按难度分级跨两工具链：WaveView 波形测量（77）、Innovus floorplan/place/route（57），使跨语言比较将分差归因于语言结构而非难度。
 
 \subsection{Evaluation Protocol}
 
-A task passes if the generated code executes in its target runtime sandbox without errors and all assertions hold; the primary metric is Pass@1 \cite{chen2021evaluating}:
-% 若生成的代码在其目标运行时沙盒中无错误执行且所有断言成立，则该任务通过；主要指标为Pass@1 \cite{chen2021evaluating}：
-
-\[
-\text{Pass@1} = \frac{\text{\# tasks with all assertions passed}}{\text{Total tasks}} \times 100\%
-\]
-% \[
-% \text{Pass@1} = \frac{\text{所有断言均通过的任务数}}{\text{总任务数}} \times 100\%
-% \]
+A task passes if the generated code executes in its target runtime sandbox without errors and all assertions hold; the primary metric is Pass@1 \cite{chen2021evaluating}, reported as mean $\pm$ s.d.\ over five independent runs (reshuffled task orderings, fresh agent contexts), per slice and pooled over all 449 tasks.
+% 评测协议：代码在目标运行时沙盒无错执行且所有断言通过即 pass；主指标 Pass@1，5 次独立运行均值±标准差，分切片与 449 合并。

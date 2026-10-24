@@ -2,24 +2,23 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{vaswani2017attention,openai2023gpt4,yang2025qwen3}
-\citation{chen2024dawning,blocklove2024eda}
-\citation{thakur2023verigen,liu2023rtlcoder}
 \citation{cline2024cline}
 \citation{lee2025autoeda}
 \citation{empyrean_pyaether}
 \citation{cadence2024virtuoso}
+\citation{chen2021evaluating,austin2021program}
+\citation{liu2025layoutcopilot}
+\citation{rui2025chatcl}
+\citation{pu2024rag}
+\citation{he2024chateda}
+\citation{wang2025mcp4eda}
+\citation{lee2025autoeda}
 \@writefile{toc}{\contentsline {section}{Abstract}{1}{section*.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \newlabel{sec:introduction}{{1}{1}{Introduction}{section.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Background and Motivation}{1}{section.2}\protected@file@percent }
 \newlabel{sec:background}{{2}{1}{Background and Motivation}{section.2}{}}
-\citation{liu2025layoutcopilot}
-\citation{rui2025chatcl}
-\citation{pu2024rag}
-\citation{xu2026iscript,li2026pdagent}
 \citation{cline2024cline}
-\citation{mcp2024protocol}
 \citation{bge2024}
 \citation{douze2024faiss}
 \citation{cline2024cline}
@@ -27,98 +26,97 @@
 \newlabel{sec:system}{{3}{2}{System Design}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Overall Architecture}{2}{subsection.3.1}\protected@file@percent }
 \newlabel{sec:overall-architecture}{{3.1}{2}{Overall Architecture}{subsection.3.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Three MCP Tools}{2}{subsection.3.2}\protected@file@percent }
-\newlabel{sec:mcp-tools}{{3.2}{2}{Three MCP Tools}{subsection.3.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Four MCP Tools}{2}{subsection.3.2}\protected@file@percent }
+\newlabel{sec:mcp-tools}{{3.2}{2}{Four MCP Tools}{subsection.3.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Agent Workflow}{2}{subsection.3.3}\protected@file@percent }
 \newlabel{sec:agent-workflow}{{3.3}{2}{Agent Workflow}{subsection.3.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Offline API Self-Exploration (Complementary)}{2}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:selfdoc}{{3.4}{2}{Offline API Self-Exploration (Complementary)}{subsection.3.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Theoretical Grounding: The Grounding Gap}{2}{section.4}\protected@file@percent }
 \newlabel{sec:grounding-theory}{{4}{2}{Theoretical Grounding: The Grounding Gap}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}A Four-Level Hierarchy of Information}{2}{subsection.4.1}\protected@file@percent }
 \newlabel{sec:four-levels}{{4.1}{2}{A Four-Level Hierarchy of Information}{subsection.4.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ZhuLong system architecture. The agent interacts with API retrieval, documentation, and EDA execution via three unified MCP tools. Execution feedback supports iterative refinement.}}{3}{figure.caption.5}\protected@file@percent }
+\citation{kaelbling1998planning,thrun2005probabilistic}
+\citation{kaelbling1998planning}
+\citation{kaelbling1998planning,thrun2005probabilistic}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ZhuLong system architecture. The agent interacts with API retrieval, enhanced documentation, and EDA execution via four unified MCP tools. Offline self-exploration augments the knowledge base before runtime, and execution feedback supports iterative refinement.}}{3}{figure.caption.5}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:architecture}{{1}{3}{ZhuLong system architecture. The agent interacts with API retrieval, documentation, and EDA execution via three unified MCP tools. Execution feedback supports iterative refinement}{figure.caption.5}{}}
+\newlabel{fig:architecture}{{1}{3}{ZhuLong system architecture. The agent interacts with API retrieval, enhanced documentation, and EDA execution via four unified MCP tools. Offline self-exploration augments the knowledge base before runtime, and execution feedback supports iterative refinement}{figure.caption.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The four levels of information}}{3}{table.caption.6}\protected@file@percent }
+\newlabel{tab:four-levels}{{1}{3}{The four levels of information}{table.caption.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}A Bayesian Formalization of the Grounding Gap}{3}{subsection.4.2}\protected@file@percent }
 \newlabel{sec:bayesian}{{4.2}{3}{A Bayesian Formalization of the Grounding Gap}{subsection.4.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}ZhuLong as an Instance of the Agent Harness}{3}{subsection.4.3}\protected@file@percent }
-\newlabel{sec:zhuLong-harness}{{4.3}{3}{ZhuLong as an Instance of the Agent Harness}{subsection.4.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Design Principles}{3}{subsection.4.4}\protected@file@percent }
-\newlabel{sec:prediction}{{4.4}{3}{Design Principles}{subsection.4.4}{}}
 \citation{chen2021evaluating}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}ZhuLong as an Instance of the Agent Harness}{4}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:zhuLong-harness}{{4.3}{4}{ZhuLong as an Instance of the Agent Harness}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Design Principles}{4}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:prediction}{{4.4}{4}{Design Principles}{subsection.4.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Benchmark Construction}{4}{section.5}\protected@file@percent }
 \newlabel{sec:benchmark}{{5}{4}{Benchmark Construction}{section.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Experiments}{4}{section.6}\protected@file@percent }
-\newlabel{sec:experiments}{{6}{4}{Experiments}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Experimental Setup}{4}{subsection.6.1}\protected@file@percent }
-\newlabel{sec:exp-setup}{{6.1}{4}{Experimental Setup}{subsection.6.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}Research Questions}{4}{subsubsection.6.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}Benchmark and Evaluation Protocol}{4}{subsubsection.6.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.3}Baselines and ZhuLong Variants}{4}{subsubsection.6.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.4}LLM Backbones}{4}{subsubsection.6.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Results and Ablations}{4}{subsection.6.2}\protected@file@percent }
-\newlabel{sec:exp-results}{{6.2}{4}{Results and Ablations}{subsection.6.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Ablation study results}}{4}{table.caption.6}\protected@file@percent }
-\newlabel{tab:main-ablation}{{1}{4}{Ablation study results}{table.caption.6}{}}
-\newlabel{sec:omega-fidelity}{{6.2.1}{4}{S1: Observation fidelity (RQ1)}{subsubsection.6.2.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}S1: Observation fidelity (RQ1)}{4}{subsubsection.6.2.1}\protected@file@percent }
-\citation{kumar2026agentforge,jiang2024seed}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Documentation fidelity with and without the effector (LLM and loop fixed; (L) includes the effector, (H) is the retrieval-only RAG baseline without it)}}{5}{table.caption.7}\protected@file@percent }
-\newlabel{tab:omega}{{2}{5}{Documentation fidelity with and without the effector (LLM and loop fixed; (L) includes the effector, (H) is the retrieval-only RAG baseline without it)}{table.caption.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Read-back axis: accuracy and convergence cost (LLM and effector fixed). (N$'$) cost is not recoverable (traces discarded in a storage migration); (F)/(B) cost columns are 5-run means $\pm $ sample std.}}{5}{table.caption.8}\protected@file@percent }
-\newlabel{tab:readback}{{3}{5}{Read-back axis: accuracy and convergence cost (LLM and effector fixed). (N$'$) cost is not recoverable (traces discarded in a storage migration); (F)/(B) cost columns are 5-run means $\pm $ sample std}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Dataset: EDA-Scripting-Bench}{4}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Composition of EDA-Scripting-Bench}}{4}{table.caption.7}\protected@file@percent }
+\newlabel{tab:benchmark-composition}{{2}{4}{Composition of EDA-Scripting-Bench}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}The PyAether slice (EDA-Eval-PyAether)}{4}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SKILL and Tcl slices}{4}{subsection.5.3}\protected@file@percent }
+\newlabel{sec:benchmark-slices}{{5.3}{4}{SKILL and Tcl slices}{subsection.5.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Evaluation Protocol}{4}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Experiments}{5}{section.6}\protected@file@percent }
+\newlabel{sec:experiments}{{6}{5}{Experiments}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Experimental Setup}{5}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:exp-setup}{{6.1}{5}{Experimental Setup}{subsection.6.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Results and Ablations}{5}{subsection.6.2}\protected@file@percent }
+\newlabel{sec:exp-results}{{6.2}{5}{Results and Ablations}{subsection.6.2}{}}
+\newlabel{sec:omega-fidelity}{{6.2.1}{5}{S1: Observation fidelity (RQ1)}{subsubsection.6.2.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}S1: Observation fidelity (RQ1)}{5}{subsubsection.6.2.1}\protected@file@percent }
 \newlabel{sec:closed-loop}{{6.2.2}{5}{S2: The closed loop (RQ2)}{subsubsection.6.2.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}S2: The closed loop (RQ2)}{5}{subsubsection.6.2.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Bounding the evidence available to $\Phi $ (LLM, $\Omega $, effector fixed). $k$ = max \texttt  {run\_code} calls per trace; ``lagged'' = read-back returns the \emph  {previous} execution's state.}}{5}{table.caption.9}\protected@file@percent }
-\newlabel{tab:phi-bound}{{4}{5}{Bounding the evidence available to $\Phi $ (LLM, $\Omega $, effector fixed). $k$ = max \texttt {run\_code} calls per trace; ``lagged'' = read-back returns the \emph {previous} execution's state}{table.caption.9}{}}
-\newlabel{sec:k-axis}{{6.2.3}{5}{S3: The prior axis, the contrast arm of RQ1}{subsubsection.6.2.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}S3: The prior axis, the contrast arm of RQ1}{5}{subsubsection.6.2.3}\protected@file@percent }
-\newlabel{sec:cross-language}{{6.2.4}{5}{RQ3: re-measuring the structure per toolchain}{subsubsection.6.2.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.4}RQ3: re-measuring the structure per toolchain}{5}{subsubsection.6.2.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Impact of LLM backbone (ZhuLong)}}{6}{table.caption.10}\protected@file@percent }
-\newlabel{tab:llm-comparison}{{5}{6}{Impact of LLM backbone (ZhuLong)}{table.caption.10}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Cross-language reproduction (RQ3). Pass@1 (\%), 5-run mean$\pm $std on PyAether/SKILL; \textbf  {Tcl} aggregates Custom WaveView (77) + Innovus (57) into a 134-task column; \textbf  {Overall} pools all 449 tasks. The full system is the top configuration on every language; the prior-only baseline is the bottom on every language.}}{6}{table.caption.11}\protected@file@percent }
-\newlabel{tab:cross-language}{{6}{6}{Cross-language reproduction (RQ3). Pass@1 (\%), 5-run mean$\pm $std on PyAether/SKILL; \textbf {Tcl} aggregates Custom WaveView (77) + Innovus (57) into a 134-task column; \textbf {Overall} pools all 449 tasks. The full system is the top configuration on every language; the prior-only baseline is the bottom on every language}{table.caption.11}{}}
+\newlabel{sec:k-axis}{{6.2.3}{5}{S3: The prior axis (the prior-side contrast of RQ1)}{subsubsection.6.2.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}S3: The prior axis (the prior-side contrast of RQ1)}{5}{table.caption.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The lower block varies the \emph  {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row.}}{6}{table.caption.8}\protected@file@percent }
+\newlabel{tab:main-ablation}{{3}{6}{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The lower block varies the \emph {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row}{table.caption.8}{}}
+\newlabel{tab:omega}{{3}{6}{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The lower block varies the \emph {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row}{table.caption.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Impact of LLM backbone (ZhuLong, full harness).}}{6}{table.caption.9}\protected@file@percent }
+\newlabel{tab:llm-comparison}{{4}{6}{Impact of LLM backbone (ZhuLong, full harness)}{table.caption.9}{}}
+\newlabel{sec:cross-language}{{6.2.4}{6}{S4: The toolchain axis (RQ3)}{subsubsection.6.2.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.4}S4: The toolchain axis (RQ3)}{6}{subsubsection.6.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Error Analysis}{6}{subsection.6.3}\protected@file@percent }
 \newlabel{sec:error-analysis}{{6.3}{6}{Error Analysis}{subsection.6.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{6}{section.7}\protected@file@percent }
 \newlabel{sec:discussion}{{7}{6}{Discussion}{section.7}{}}
-\newlabel{sec:limitations}{{7}{6}{Limitations}{section*.12}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{6}{section.8}\protected@file@percent }
 \newlabel{sec:conclusion}{{8}{6}{Conclusion and Future Work}{section.8}{}}
 \bibstyle{ACM-Reference-Format}
 \bibdata{reference}
-\bibcite{mcp2024protocol}{{1}{2024}{{Anthropic}}{{}}}
-\bibcite{austin2021program}{{2}{2021}{{Austin et~al\mbox  {.}}}{{}}}
-\bibcite{blocklove2024eda}{{3}{2024}{{Blocklove et~al\mbox  {.}}}{{}}}
-\bibcite{bge2024}{{4}{2024b}{{Chen et~al\mbox  {.}}}{{}}}
-\bibcite{chen2024dawning}{{5}{2024a}{{Chen et~al\mbox  {.}}}{{}}}
-\bibcite{chen2021evaluating}{{6}{2021}{{Chen et~al\mbox  {.}}}{{}}}
-\bibcite{cline2024cline}{{7}{2024}{{Contributors}}{{}}}
-\bibcite{douze2024faiss}{{8}{2024}{{Douze et~al\mbox  {.}}}{{}}}
-\bibcite{empyrean_pyaether}{{9}{2026}{{Empyrean Technology}}{{}}}
-\bibcite{jiang2024seed}{{10}{2024}{{Jiang et~al\mbox  {.}}}{{}}}
-\bibcite{kaelbling1998planning}{{11}{1998}{{Kaelbling et~al\mbox  {.}}}{{}}}
-\bibcite{kumar2026agentforge}{{12}{2026}{{Kumar et~al\mbox  {.}}}{{}}}
-\bibcite{li2026pdagent}{{13}{2026}{{Li et~al\mbox  {.}}}{{}}}
-\bibcite{liu2025layoutcopilot}{{14}{2025}{{Liu et~al\mbox  {.}}}{{}}}
-\bibcite{liu2023rtlcoder}{{15}{2024}{{Liu et~al\mbox  {.}}}{{}}}
-\bibcite{lee2025autoeda}{{16}{2025}{{Lu et~al\mbox  {.}}}{{}}}
-\bibcite{openai2023gpt4}{{17}{2023}{{OpenAI}}{{}}}
-\bibcite{pu2024rag}{{18}{2024}{{Pu et~al\mbox  {.}}}{{}}}
-\bibcite{rui2025chatcl}{{19}{2025}{{Rui et~al\mbox  {.}}}{{}}}
-\bibcite{cadence2024virtuoso}{{20}{2024}{{Systems}}{{}}}
-\bibcite{thakur2023verigen}{{21}{2023}{{Thakur et~al\mbox  {.}}}{{}}}
-\bibcite{thrun2005probabilistic}{{22}{2005}{{Thrun et~al\mbox  {.}}}{{}}}
-\bibcite{vaswani2017attention}{{23}{2017}{{Vaswani et~al\mbox  {.}}}{{}}}
-\bibcite{xu2026iscript}{{24}{2026}{{Xu et~al\mbox  {.}}}{{}}}
-\bibcite{yang2025qwen3}{{25}{2025}{{Yang et~al\mbox  {.}}}{{}}}
+\bibcite{austin2021program}{{1}{2021}{{Austin et~al\mbox  {.}}}{{}}}
+\bibcite{bge2024}{{2}{2024}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{chen2021evaluating}{{3}{2021}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{cline2024cline}{{4}{2024}{{Contributors}}{{}}}
+\bibcite{douze2024faiss}{{5}{2024}{{Douze et~al\mbox  {.}}}{{}}}
+\bibcite{empyrean_pyaether}{{6}{2026}{{Empyrean Technology}}{{}}}
+\bibcite{he2024chateda}{{7}{2024}{{He et~al\mbox  {.}}}{{}}}
+\bibcite{kaelbling1998planning}{{8}{1998}{{Kaelbling et~al\mbox  {.}}}{{}}}
+\bibcite{liu2025layoutcopilot}{{9}{2025}{{Liu et~al\mbox  {.}}}{{}}}
+\bibcite{lee2025autoeda}{{10}{2025}{{Lu et~al\mbox  {.}}}{{}}}
+\bibcite{pu2024rag}{{11}{2024}{{Pu et~al\mbox  {.}}}{{}}}
+\bibcite{rui2025chatcl}{{12}{2025}{{Rui et~al\mbox  {.}}}{{}}}
+\bibcite{cadence2024virtuoso}{{13}{2024}{{Systems}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Per-task cost across ablation configurations}{7}{appendix.A}\protected@file@percent }
+\newlabel{app:cost}{{A}{7}{Per-task cost across ablation configurations}{appendix.A}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Per-task cost across ablation configurations (291-task subset, five runs, mean $\pm $ s.d.)}}{7}{table.caption.10}\protected@file@percent }
+\newlabel{tab:cost}{{5}{7}{Per-task cost across ablation configurations (291-task subset, five runs, mean $\pm $ s.d.)}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Effect of bounding the evidence available to $\Phi $}{7}{appendix.B}\protected@file@percent }
+\newlabel{app:phi-bound}{{B}{7}{Effect of bounding the evidence available to \texorpdfstring {$\Phi $}{Phi}}{appendix.B}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Effect of bounding the evidence available to $\Phi $ (LLM, $\Omega $ and effector fixed). $k$ = \texttt  {run\_code} calls per trace (an execution budget); ``lagged'' returns the \emph  {previous} execution's state; ``Converged'' = share of traces with finish reason \emph  {completed}.}}{7}{table.caption.11}\protected@file@percent }
+\newlabel{tab:phi-bound}{{6}{7}{Effect of bounding the evidence available to $\Phi $ (LLM, $\Omega $ and effector fixed). $k$ = \texttt {run\_code} calls per trace (an execution budget); ``lagged'' returns the \emph {previous} execution's state; ``Converged'' = share of traces with finish reason \emph {completed}}{table.caption.11}{}}
+\@writefile{toc}{\contentsline {section}{References}{7}{section*.13}\protected@file@percent }
+\bibcite{thrun2005probabilistic}{{14}{2005}{{Thrun et~al\mbox  {.}}}{{}}}
+\bibcite{wang2025mcp4eda}{{15}{2025}{{Wang et~al\mbox  {.}}}{{}}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
-\newlabel{tocindent1}{4.62497pt}
+\newlabel{tocindent1}{6.93605pt}
 \newlabel{tocindent2}{11.81937pt}
 \newlabel{tocindent3}{19.01376pt}
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
-\@writefile{toc}{\contentsline {section}{References}{7}{section*.14}\protected@file@percent }
-\newlabel{TotPages}{{7}{7}{}{page.7}{}}
-\gdef \@abspage@last{7}
+\newlabel{TotPages}{{8}{8}{}{page.8}{}}
+\gdef \@abspage@last{8}

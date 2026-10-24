@@ -2,39 +2,34 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-    EDA scripting with tool-specific, often undocumented APIs remains a long-tail 
-    bottleneck that existing LLM-based tooling fails to address. We present 
-    \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl 
-    that combines API retrieval, documentation inspection, and sandbox execution via 
-    unified MCP tools into a closed generate--execute--refine loop. We further provide 
-    a \textbf{theoretical grounding} for why runtime observation is necessary: EDA correctness 
-    is a \emph{situated} property that cannot be guaranteed from static knowledge, 
-    and we formalize this ``grounding gap'' with a Bayesian argument showing it is 
-    bounded by observation fidelity---not model scale. We test this claim from both sides: with the LLM fixed, the observation ladder moves Pass@1 by 57.4~pp from the pure-LLM floor to the full system, while the backbone axis spans only 22.0~pp with the harness fixed. ZhuLong's harness supplies precisely that observation: it reads the environment's documented API facts, and reads back what executing code does to the live design.
-    % 使用工具特定且常无文档的EDA API进行脚本编写，仍是现有LLM工具无法解决的长尾瓶颈。
-    % 本文提出ZhuLong，一个面向PyAether、SKILL与Tcl的执行驱动LLM代码智能体，通过统一MCP工具将
-    % API检索、文档查阅和沙盒执行组合为"生成-执行-修正"闭环。我们进一步给出执行必要性的
-    % 理论论证：EDA正确性是情境化属性，无法从静态知识保证；我们用贝叶斯论证形式化这一
-    % "落地鸿沟"，说明它受观测保真度而非模型规模约束。
-    % 我们从两侧检验这一主张：固定LLM、逐级增强观测通道，Pass@1从纯LLM下限到完整系统
-    % 移动57.4pp；而固定框架、更换backbone，跨度仅22.0pp。
-    % ZhuLong 的 harness 恰好提供这一观测：它读取环境已文档化的API事实，并回读执行中的代码对实时设计做了什么。
-
-    We evaluate ZhuLong on \textbf{EDA-Scripting-Bench}, 449 real-world tasks with assertion-based execution, spanning PyAether, SKILL, and Tcl on four commercial runtimes, where the complete system achieves \textbf{75.7\%} pooled Pass@1 over 
-    five runs, substantially outperforming a pure LLM baseline (\textbf{18.3\%}) and 
-    a retrieval-only baseline (\textbf{62.5\%}). Ablation studies show the execution 
-    loop is decisive: removing either execution ($-13.2$~pp) or retrieval ($-11.8$~pp) 
-    reduces accuracy. A complementary offline 
-    \textbf{API self-exploration} mechanism contributes a further $+3.1$~pp accuracy 
-    while cutting online per-task solve time by 27\% (excluding one-time offline exploration).
-    % 我们在EDA-Scripting-Bench（449个跨PyAether/SKILL/Tcl四商业运行时的真实任务、断言式执行验证）上评估
-    % ZhuLong，完整系统5次运行取均值、按449任务合并汇总，Pass@1达到75.7%，
-    % 显著优于纯LLM基线（18.3%）与仅检索基线（62.5%）。消融表明执行闭环是决定性的：
-    % 移除执行（-13.2pp）或检索（-11.8pp）都会降低准确率。
-    % 互补的离线API自探索机制进一步带来+3.1个百分点准确率，同时将在线每任务求解时间降低27%
-    % （不含一次性离线探索成本）。
-
-
+    Design engineers lose the most time not writing fresh scripts but orchestrating
+    design flows and patching the gaps where closed EDA tools refuse to interoperate---a
+    flow that cannot run end-to-end is the top reason a design stalls. We argue that
+    this is exactly where a general coding agent fits: it orchestrates flows natively
+    (Makefile targets, Tcl drivers, scheduling scripts), and where tools leave gaps,
+    its EDA-scripting ability synthesizes the missing glue---the kind of small,
+    intent-to-code task at which LLMs excel. We present \textbf{ZhuLong}, an
+    execution-grounded LLM coding agent for PyAether, SKILL, and Tcl that couples API
+    retrieval, documentation inspection, and sandbox execution via unified MCP tools
+    into a closed generate--execute--refine loop, with a theoretical grounding showing
+    EDA correctness is a \emph{situated} property whose ``grounding gap'' a Bayesian
+    argument bounds by \emph{observation fidelity}, not model scale. On
+    \textbf{EDA-Scripting-Bench} (449 real-world tasks, three languages, four
+    commercial runtimes), ZhuLong reaches \textbf{75.7\%} pooled Pass@1 vs.
+    \textbf{18.3\%} (pure LLM) and \textbf{62.5\%} (retrieval-only); with the LLM fixed,
+    the observation ladder moves Pass@1 by 57.4~pp, while the backbone axis spans only
+    22.0~pp. ZhuLong is already deployed in production EDA flows serving hundreds of
+    engineers at a leading memory design house. This reframes EDA scripting as the
+    connective tissue that makes design flows runnable, not an end in itself.
 \end{abstract}
+% 摘要（6 页版，~170 词，按 09:2x 重定位：编排 + 补断链）。
+% 设计工程师最耗时的不是写全新脚本，而是编排 design flow 并补上封闭 EDA 工具之间无法互通的断链——
+% flow 跑不到端到端是设计卡住的头号原因。我们论证这正是通用 coding agent 的用武之地：它天生能编排 flow，
+% 而在工具留白处其 EDA scripting 能力现场合成缺失的胶水。ZhuLong 通过统一 MCP 工具将 API 检索、文档查阅、
+% 沙盒执行组成"生成–执行–修正"闭环，并以贝叶斯论证表明落地鸿沟受观测保真度而非模型规模约束。
+% 在 EDA-Scripting-Bench（449 任务、三语言、四商业运行时）上达 75.7% 合并 Pass@1，对比纯 LLM 18.3%、仅检索 62.5%；
+% 固定 LLM 时观测阶梯移动 57.4pp，而 backbone 轴仅跨 22.0pp。
+% ZhuLong 已在一家头部存储芯片设计公司服务数百名工程师的量产级 EDA 流程中部署。
+% 末句把 EDA scripting 重新定位为让 design flow 跑通的结缔组织，而非目的本身。
 
 \keywords{LLM Agents for EDA, EDA Scripting, Code Generation, Sandbox Execution, Execution Grounding}

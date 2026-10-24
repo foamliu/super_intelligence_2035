@@ -1,0 +1,58 @@
+\appendix
+
+\section{Per-task cost across ablation configurations}
+\label{app:cost}
+
+Table~\ref{tab:cost} reports per-task cost on the 291-task audited subset (SKILL and the two Tcl hosts; PyAether is pending audit), so these figures compare configurations on a fixed task set rather than against the pooled 449-task accuracy. Execution dominates cost, and retrieval pays for itself: with retrieval removed the agent falls back on blind sandbox probing, making it the most expensive configuration---2.3$\times$ the full system's solve time at nearly identical token counts. Self-exploration is the one cost-negative rung: enriched documentation cuts \texttt{search\_apis} calls by 11.0\%, \texttt{run\_code} by 12.7\%, and rounds by 10.1\%, reducing net-active solve time by 27.0\% and input tokens by 8.7\%, while \texttt{get\_api\_details} is essentially unchanged ($-3.3\%$)---better documentation means fewer exploratory queries, not more reading.
+% 附录：每任务成本（291 任务审计子集：SKILL+两 Tcl 宿主，PyAether 待审计）。表~\ref{tab:cost} 从正文移入附录（09:3x/10:2x：tab:cost 移附录省 ~0.45p）。执行主导成本，检索反而省钱（移除后退化为盲探沙盒，2.3 倍完整系统时间）；自探索唯一成本为负档（search_apis -11.0%、run_code -12.7%、轮数 -10.1%、求解时间 -27.0%、输入 token -8.7%、get_api_details -3.3%）。
+
+\begin{table}[htbp]
+\centering
+\caption{Per-task cost across ablation configurations (291-task subset, five runs, mean $\pm$ s.d.)}
+\label{tab:cost}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{Time (s)} & \textbf{In.\ tok.\,(k)} & \textbf{Rounds} & \textbf{\texttt{run\_code}} \\
+\midrule
+Pure LLM & 163 $\pm$ 9 & 71 $\pm$ 2 & 4.4 $\pm$ 0.1 & 0 \\
+RAG & 174 $\pm$ 7 & 226 $\pm$ 12 & 8.5 $\pm$ 0.1 & 0 \\
+w/o Retrieval & 904 $\pm$ 123 & 670 $\pm$ 75 & 23.3 $\pm$ 2.4 & 23.0 $\pm$ 2.2 \\
+w/o Self-Expl. & 535 $\pm$ 77 & 732 $\pm$ 75 & 20.3 $\pm$ 1.2 & 13.1 $\pm$ 1.0 \\
+ZhuLong (Full) & 390 $\pm$ 114 & 669 $\pm$ 63 & 18.2 $\pm$ 0.4 & 11.5 $\pm$ 0.5 \\
+\bottomrule
+\end{tabular}
+
+\footnotesize{Time = net-active solve time (per-session message-span sum, excluding startup/quota-wait); input tokens cumulative (no cache accounting); \texttt{run\_code} = calls per task; RAG = w/o Sandbox. Audited 291-task subset (SKILL + two Tcl hosts); PyAether pending audit, excluded.}
+\end{table}
+% 表：各消融配置每任务成本（291 任务子集，5 次均值±标准差）。从正文移入附录。
+
+\section{Effect of bounding the evidence available to \texorpdfstring{$\Phi$}{Phi}}
+\label{app:phi-bound}
+
+Table~\ref{tab:phi-bound} isolates the belief-update budget $\Phi$ (LLM, $\Omega$, and effector fixed) on the PyAether slice. Accuracy rises monotonically with the execution budget $k$ (unsaturated at $k{=}10$); a \emph{lagged} channel that returns the previous execution's state lands between $k{=}3$ and $k{=}10$, confirming that stale evidence is worth markedly less than fresh (Principle~3); and tighter budgets leave traces unfinished (Converged drops from $99.1$ to $76.3$ at $k{=}1$). The SKILL/Tcl/Overall cells for the budget arms await the cross-slice runs.
+% 附录：给 Φ 可用证据加界（固定 LLM/Ω/执行器，PyAether 切片）。准确率随执行预算 k 单调上升（k=10 未饱和）；lagged 通道落在 k=3 与 k=10 之间，过时证据价值显著低于新鲜（原则 3）；更紧预算留 trace 未完成（Converged 99.1→76.3@k=1）。SKILL/Tcl/Overall 预算臂待跨切片运行。
+
+\begin{table}[htbp]
+\centering
+\caption{Effect of bounding the evidence available to $\Phi$ (LLM, $\Omega$ and effector fixed). $k$ = \texttt{run\_code} calls per trace (an execution budget); ``lagged'' returns the \emph{previous} execution's state; ``Converged'' = share of traces with finish reason \emph{completed}.}
+\label{tab:phi-bound}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} \\
+\textbf{Update budget} & \textbf{PyAether} & \textbf{PyAether} \\
+\midrule
+$\Phi$ $k{=}1$ & 63.8 $\pm$ 3.2 & 76.3 \\
+$\Phi$ $k{=}3$ & 69.1 $\pm$ 2.5 & 80.4 \\
+$\Phi$ $k{=}10$ & 77.7 $\pm$ 2.2 & 90.4 \\
+$\Phi$ lagged & 73.0 $\pm$ 3.2 & 97.5 \\
+$\Phi$ unbounded (default) & 82.1 $\pm$ 3.0 & 99.1 \\
+\bottomrule
+\end{tabular}
+
+\footnotesize{Pass@1 (\%), five runs (mean $\pm$ s.d.); ``Converged'' measured on PyAether. The unbounded row coincides with the Full configuration of Table~\ref{tab:main-ablation} (its PyAether cell an independent replication, $82.1 \pm 3.0$ vs.\ $81.4 \pm 1.5$, within run-to-run spread).}
+\end{table}
+% 表：给 Φ 可用证据加界。从正文 §6.2.2 移入附录以释放正文空间（PyAether-only，跨切片臂待补）。
