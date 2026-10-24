@@ -18753,3 +18753,65 @@ re[0m[2m at 100%[0m[2m util (NC[0m[2mCL probing[0m[2m), remote[0m[2m GPUs at 0[0
 [36m[run_commands][0m sleep 25 && echo '--- master.log: iteration lines ---'; grep -i 'iteration' /tmp/baize_dualnode_16gpu/master.log 2>&1...
 === DONE 171 ===
 ```
+
+---
+
+## RUN_ID 172 · 2026-10-24 20:36:34 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 172 | dual-node throughput | $(date '+%F %T') | host=$(hostname) ==="
+sleep 90
+
+echo "[1] GPU：.29 本机"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[2] GPU：.12"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[3] master 日志：迭代行"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/*.log 2>/dev/null | head -5
+grep -iE 'iteration +[0-9]+' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -8 | cut -c1-170
+echo "[3b] 若在 worker 日志"
+for f in /tmp/baize_dualnode_16gpu/*.log; do echo "  == $(basename "$f")"; grep -iE 'iteration +[0-9]+' "$f" 2>/dev/null | tail -3 | cut -c1-170; done 2>/dev/null | head -20
+
+echo "[4] summary / peakmem"
+tail -6 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-160 || echo '  no summary'
+cat /tmp/baize_dualnode_16gpu/worker.peakmem 2>/dev/null | head -3
+
+echo "[5] 进程"
+pgrep -af 'pretrain_launcher|torchrun' | cut -c1-110 | head -4
+echo "=== DONE 172 ==="
+```
+
+**输出**
+```
+=== RUN_ID 172 | dual-node throughput | 2026-10-24 20:36:34 | host=whag0pgpuap29 ===
+[1] GPU：.29 本机
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+[2] GPU：.12
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[3] master 日志：迭代行
+[3b] 若在 worker 日志
+  == *.log
+[4] summary / peakmem
+1429
+[5] 进程
+2155104 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_tr
+2155194 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.
+=== DONE 172 ===
+```
