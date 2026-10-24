@@ -1,6 +1,8 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+> 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
+
 ### 🚀 运维指令 · 2026-10-24 09:3x（**放行：基于自己报告的建议继续优化 BaiZe-2B 预训练吞吐**）· 用户直令 · 最高优先
 
 > 用户原话：「pretrain：在 e09_fp8_tw_cg: FP8 TW+CG 基础上继续优化。昨晚 pretrain 已经把基线从 249K tok/s 上拉到了 FP8 TW+CG=297K tok/s(+17.9%)，并且产出了 report_pretrain_2b_throughput_optim_zh.html。在报告中 pretrain 提出了进一步优化的建议。现在**放行 pretrain 基于自己的建议继续优化 BaiZe-2B 模型的预训练效率**。**全量预训练待 data 数据准备好后就开始**。」
