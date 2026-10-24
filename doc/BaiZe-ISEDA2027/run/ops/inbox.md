@@ -1,9 +1,34 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 179 | TARGET: 12 -->
-## RUN_ID 179 — 🧪 手工 2-rank NCCL 最小复现（修正版：不指定 SOCKET_IFNAME，让 NCCL 自选）
+<!-- RUN_ID: 180 | TARGET: 12 -->
+## RUN_ID 180 — 📖 只读：读 2-rank 最小复现的完整日志（是否跑完 20 步 + busbw）
 
 ```bash
+set -u
+echo "=== RUN_ID 180 | read 2-rank logs | $(date '+%F %T') | host=$(hostname) ==="
+D=/nas_train/app.e0031982/nccl_dbg
+
+for f in rank0.log rank1.log; do
+  echo "===== $f ($(stat -c %s "$D/$f" 2>/dev/null || echo 0) bytes) ====="
+  echo "  -- 关键行 --"
+  grep -aE 'init OK|iter [0-9]+ ok|busbw|Error|error|timeout|WARN|Init COMPLETE' "$D/$f" 2>/dev/null | tail -14 | cut -c1-150
+  echo "  -- 尾部 6 行 --"
+  tail -6 "$D/$f" 2>/dev/null | cut -c1-150
+done
+
+echo "[2] 进程是否还在"
+pgrep -af 'tc.py' | cut -c1-90 | head -3 || echo '  none(.12)'
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.29 'pgrep -af "tc.py" | cut -c1-90 | head -3 || echo "  none(.29)"' 2>/dev/null || echo '  ssh .29 failed'
+
+echo "[3] GPU 显存（有分配说明真跑了）"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2' 2>/dev/null || true
+echo "=== DONE 180 ==="
+```
+
+## RUN_ID 179 — 🧪 手工 2-rank NCCL 最小复现（修正版：不指定 SOCKET_IFNAME，让 NCCL 自选）
+
+```text
 set -u
 echo "=== RUN_ID 179 | 2-rank NCCL repro | $(date '+%F %T') | host=$(hostname) ==="
 PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
