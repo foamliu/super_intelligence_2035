@@ -1,8 +1,48 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 115 -->
-## RUN_ID 115 — 🛑 用户直令：**停掉 cline-full r2（PID 497054）** + dump 两侧配置供对齐
+<!-- RUN_ID: 116 -->
+## RUN_ID 116 — 🔎 只读：找出两轮**实际使用的**配置（model / maxTokens / data-dir / turns）
 
 ```bash
+set -u
+echo "=== RUN_ID 116 | actual run configs | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+[ -d "$D" ] || D=/nasdata/app.e0031982/code/super_intelligence_2035
+
+echo "[1] .env（两套脚本共用）"
+for e in "$D"/.env "$D"/scripts/.env; do [ -f "$e" ] && { echo "  == $e"; grep -E 'CLI_AGENT|MODEL|MAX_TOKEN|READBACK|PROXY|TEMPERATURE|TURN|MAX_' "$e" | cut -c1-120; }; done
+
+echo "[2] 两批 launcher 脚本（cline 的 B.glm-5.3-flash 与 zhulong 的 ZL-flash full）"
+ls -lt /tmp/run_glm-5.3-flash_retest_r1_regrade.sh /tmp/run_glm-5.3-flash_zl_full_r1*.sh /tmp/ABL_glm-5.3-flash* 2>/dev/null | head -8 | cut -c1-110
+for f in /tmp/run_glm-5.3-flash_retest_r1.sh /tmp/run_glm-5.3-flash_zl_full_r1.sh /tmp/ABL_glm-5.3-flash_retest_r1.sh /tmp/ABL_glm-5.3-flash_zl_full_r1.sh; do
+  [ -f "$f" ] && { echo "  == $f"; grep -nE 'MODEL|model|maxTokens|CLI_AGENT|CLI_DATA_DIR|data-dir|-p |READBACK|max-turns|turns' "$f" | head -14 | cut -c1-140; }
+done
+echo "  -- 从历史 log 里找启动命令行 --"
+for L in /tmp/ABL_glm-5.3-flash_retest_r1.log /tmp/ABL_glm-5.3-flash_zl_full_r1.log; do
+  [ -f "$L" ] && { echo "  == $(basename "$L")"; grep -aE '执行器|CLI_AGENT|data-dir|model|MODEL|worker_[0-9]' "$L" | head -8 | cut -c1-150; }
+done
+
+echo "[3] 各 data-dir 的 providers.json 摘要（model/maxTokens）"
+for p in $(find /nasdata/app.e0031982 -maxdepth 4 -name providers.json 2>/dev/null | grep -E 'cline_zhulong|\.cline/|worker_' | head -8); do
+  echo "  == $p"
+  python3 - "$p" <<'PY' 2>/dev/null || head -c 300 "$p"
+import json,sys
+d=json.load(open(sys.argv[1]))
+for k,v in d.get("providers",{}).items():
+    s=v.get("settings",{})
+    print(f"     {k}: model={s.get('model')} maxTokens={s.get('maxTokens')} reasoning={s.get('reasoning')} baseUrl={s.get('baseUrl')}")
+PY
+done
+
+echo "[4] 目录里的 .env（per-run）"
+find /nasdata/app.e0031982 -maxdepth 3 -name '.env' -newermt '2026-10-16' 2>/dev/null | head -6 | while read -r f; do
+  echo "  == $f"; grep -E 'CLI_AGENT|MODEL|READBACK' "$f" | cut -c1-110
+done
+echo "=== DONE 116 ==="
+```
+
+## RUN_ID 115 — 🛑 用户直令：**停掉 cline-full r2（PID 497054）** + dump 两侧配置供对齐
+
+```text
 set -u
 echo "=== RUN_ID 115 | stop cline r2 + dump configs | $(date '+%F %T') | host=$(hostname) ==="
 P=497054
