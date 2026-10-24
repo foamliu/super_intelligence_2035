@@ -19403,3 +19403,130 @@ rank1-launched
   (日志稍后由下一条令读取：/nas_train/app.e0031982/nccl_dbg/rank0.log rank1.log)
 === DONE 178 ===
 ```
+
+---
+
+## RUN_ID 179 · 2026-10-24 21:39:26 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 179 | 2-rank NCCL repro | $(date '+%F %T') | host=$(hostname) ==="
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+D=/nas_train/app.e0031982/nccl_dbg
+mkdir -p "$D"
+
+echo "[0] 上一次（21:33）的产物"
+cat /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-170
+grep -aiE 'Init COMPLETE|NCCL WARN|timeout|Exception' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -6 | cut -c1-165
+
+echo "[1] 确认两机管理网互通（决定 MASTER_ADDR）"
+ip -br addr 2>/dev/null | grep -E '10\.239\.2\.' | head -3 || echo '  local no 10.239.2.x'
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.29 'hostname; ip -br addr | grep -E "10\.239\.2\." | head -2' 2>/dev/null || echo '  ssh .29 failed'
+
+echo "[2] 写最小复现脚本"
+cat > "$D/tc.py" <<'EOS'
+import os, socket, time, torch, torch.distributed as dist
+dist.init_process_group("nccl")
+r = dist.get_rank(); w = dist.get_world_size()
+lr = int(os.environ.get("LOCAL_RANK", "0")); torch.cuda.set_device(lr)
+print(f"[rank {r}/{w}] init OK host={socket.gethostname()} dev={torch.cuda.get_device_name(lr)}", flush=True)
+x = torch.ones(64*1024*1024, dtype=torch.float32, device="cuda")
+for i in range(20):
+    dist.all_reduce(x); torch.cuda.synchronize()
+    if r == 0: print(f"iter {i} ok", flush=True)
+t = time.time()
+for _ in range(10):
+    dist.all_reduce(x)
+torch.cuda.synchronize(); dt = time.time() - t
+if r == 0:
+    print(f"busbw ~ {2*(w-1)/w*x.numel()*4*10/dt/1e9:.1f} GB/s (10 iters {dt:.2f}s)", flush=True)
+dist.destroy_process_group()
+EOS
+
+echo "[3] 起 rank0（本机 .12）"
+cd "$D"
+NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET \
+NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 \
+MASTER_ADDR=10.239.2.12 MASTER_PORT=29544 RANK=0 WORLD_SIZE=2 LOCAL_RANK=0 \
+setsid -f nohup "$PY" tc.py > rank0.log 2>&1 < /dev/null
+echo "  rank0 launched"
+
+echo "[4] 起 rank1（远端 .29）"
+timeout 30 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 \
+ "cd $D && NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 MASTER_ADDR=10.239.2.12 MASTER_PORT=29544 RANK=1 WORLD_SIZE=2 LOCAL_RANK=0 setsid -f nohup $PY tc.py > rank1.log 2>&1 < /dev/null; echo rank1-launched" 2>&1 | tail -2
+
+sleep 10
+echo "[5] 10s 后 GPU"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2' 2>/dev/null || true
+echo "[6] rank0.log 前 15 行"
+head -15 "$D/rank0.log" 2>/dev/null | cut -c1-165
+echo "  (下一条令读完整日志)"
+echo "=== DONE 179 ==="
+```
+
+**输出**
+```
+=== RUN_ID 179 | 2-rank NCCL repro | 2026-10-24 21:39:26 | host=whag0pgpuap12 ===
+[0] 上一次（21:33）的产物
+===== Dual-node 16-GPU throughput test @ 2026-10-24 21:39:10 =====
+Config: e18 identical (MBS3 + FP8 TW + CG), DP=16 (2 nodes x 8 GPU)
+Baseline: single-node 8-GPU = 305098 tok/s (e18)
+MBS=3 GBS=1008 SEQ=4096 ITERS=80
+GBS/(MBS*DP16) = 1008/48 = 21 accum steps
+Ideal linear = 610196; 85% = 518666; 70% = 427137
+
+=== PRE-FLIGHT GPU CHECK ===
+--- .12 (master, local) ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+--- .29 (worker, remote) ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+
+[1] 确认两机管理网互通（决定 MASTER_ADDR）
+bond0            UP             10.239.2.12/24 fe80::88bd:5eff:febb:5a00/64 
+whag0pgpuap29
+bond0            UP             10.239.2.29/24 fe80::5c6d:69ff:feff:18c6/64 
+[2] 写最小复现脚本
+[3] 起 rank0（本机 .12）
+  rank0 launched
+[4] 起 rank1（远端 .29）
+rank1-launched
+[5] 10s 后 GPU
+0, 0 MiB
+1, 0 MiB
+0, 0 MiB
+1, 0 MiB
+[6] rank0.log 前 15 行
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install
+  import pynvml  # type: ignore[import]
+[rank 0/2] init OK host=whag0pgpuap12 dev=NVIDIA H100 80GB HBM3
+whag0pgpuap12:1842566:1842566 [0] NCCL INFO cudaDriverVersion 12080
+whag0pgpuap12:1842566:1842566 [0] NCCL INFO NCCL version 2.27.3+cuda12.9
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/Plugin: Could not find: libnccl-net.so. 
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB: [0] mlx5_0:uverbs0:1/RoCE provider=Mlx5 speed=400000 context=0x7fb5a3618bb0 pciPath=/sys/devices/pci0000:13/0000:
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB : Made virtual device [0] name=mlx5_0 speed=400000 ndevs=1
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB: [1] mlx5_1:uverbs1:1/RoCE provider=Mlx5 speed=400000 context=0x7fb5a365a280 pciPath=/sys/devices/pci0000:13/0000:
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB : Made virtual device [1] name=mlx5_1 speed=400000 ndevs=1
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO Call to mlx5dv_get_data_direct_sysfs_path failed with error No such device errno 19
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB: [2] mlx5_2:uverbs2:1/RoCE provider=Mlx5 speed=400000 context=0x7fb5a369b950 pciPath=/sys/devices/pci0000:3d/0000:
+whag0pgpuap12:1842566:1846260 [0] NCCL INFO NET/IB : Made virtual device [2] name=mlx5_2 speed=400000 ndevs=1
+  (下一条令读完整日志)
+=== DONE 179 ===
+```
