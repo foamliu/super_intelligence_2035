@@ -1,9 +1,72 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 177 | TARGET: 12 -->
-## RUN_ID 177 — 🔎 只读：定位双机 launcher 接口 + RoCE 口/GID 实况（为 2-rank 最小复现做准备）
+<!-- RUN_ID: 178 | TARGET: 12 -->
+## RUN_ID 178 — 🧪 手工 2-rank NCCL 最小复现（1 卡/机，纯 all_reduce，显式 RoCE 参数）+ 读 21:33 那次的结果
 
 ```bash
+set -u
+echo "=== RUN_ID 178 | 2-rank NCCL repro | $(date '+%F %T') | host=$(hostname) ==="
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+D=/nas_train/app.e0031982/nccl_dbg
+mkdir -p "$D"
+
+echo "[0] 上一次（21:33）的结果"
+cat /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-170
+echo "  --- run.log ---"; cat /tmp/baize_dualnode_16gpu/run.log 2>/dev/null | cut -c1-170
+echo "  --- master.log 关键行 ---"
+grep -aiE 'Init COMPLETE|NCCL WARN|NCCL INFO Bootstrap|timeout|error|Exception' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -8 | cut -c1-170
+
+echo "[1] 两台机的 RoCE 口对照（MTU 4096 的才用于 RDMA）"
+for h in 12 29; do
+  echo "  --- $h ---"
+  if [ "$h" = 12 ]; then timeout 15 bash -lc 'for d in $(ibv_devinfo -l 2>/dev/null | awk "NR>1{print \$1}"); do m=$(ibv_devinfo -d $d 2>/dev/null | grep active_mtu | awk "{print \$2}"); s=$(ibv_devinfo -d $d 2>/dev/null | grep -m1 "state:" | awk "{print \$2}"); [ "$m" = "4096" ] && echo "    $d mtu=$m $s"; done' ; else timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'for d in $(ibv_devinfo -l 2>/dev/null | awk "NR>1{print \$1}"); do m=$(ibv_devinfo -d $d 2>/dev/null | grep active_mtu | awk "{print \$2}"); s=$(ibv_devinfo -d $d 2>/dev/null | grep -m1 "state:" | awk "{print \$2}"); [ "$m" = "4096" ] && echo "    $d mtu=$m $s"; done' 2>/dev/null; fi
+done
+
+echo "[2] 写最小复现脚本（2 rank × 1 卡 × 20 步 all_reduce）"
+cat > "$D/tc.py" <<'EOS'
+import os, socket, time, torch, torch.distributed as dist
+dist.init_process_group("nccl")
+r = dist.get_rank(); w = dist.get_world_size()
+lr = int(os.environ.get("LOCAL_RANK", "0")); torch.cuda.set_device(lr)
+print(f"[rank {r}/{w}] init_process_group OK host={socket.gethostname()} dev={torch.cuda.get_device_name(lr)}", flush=True)
+x = torch.ones(64*1024*1024, dtype=torch.float32, device="cuda")
+for i in range(20):
+    dist.all_reduce(x); torch.cuda.synchronize()
+    if r == 0: print(f"iter {i} ok", flush=True)
+t = time.time()
+for _ in range(10):
+    dist.all_reduce(x)
+torch.cuda.synchronize(); dt = time.time() - t
+if r == 0:
+    print(f"busbw ~ {2*(w-1)/w*x.numel()*4*10/dt/1e9:.1f} GB/s (10 iters {dt:.2f}s)", flush=True)
+dist.destroy_process_group()
+EOS
+echo "  script: $(wc -l < "$D/tc.py") lines"
+
+echo "[3] 起 rank0（本机 .12）"
+cd "$D"
+NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET \
+NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 \
+NCCL_SOCKET_IFNAME=ens3f0np0 \
+MASTER_ADDR=10.239.2.12 MASTER_PORT=29533 RANK=0 WORLD_SIZE=2 LOCAL_RANK=0 \
+setsid -f nohup "$PY" tc.py > rank0.log 2>&1 < /dev/null
+echo "  rank0 launched"
+
+echo "[4] 起 rank1（远端 .29）"
+timeout 30 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 \
+ "cd $D && NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 MASTER_ADDR=10.239.2.12 MASTER_PORT=29533 RANK=1 WORLD_SIZE=2 LOCAL_RANK=0 setsid -f nohup $PY tc.py > rank1.log 2>&1 < /dev/null; echo rank1-launched" 2>&1 | tail -2
+
+sleep 8
+echo "[5] 8s 后：两边 GPU"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2' 2>/dev/null || true
+echo "  (日志稍后由下一条令读取：$D/rank0.log rank1.log)"
+echo "=== DONE 178 ==="
+```
+
+## RUN_ID 177 — 🔎 只读：定位双机 launcher 接口 + RoCE 口/GID 实况（为 2-rank 最小复现做准备）
+
+```text
 set -u
 echo "=== RUN_ID 177 | dual-node launcher + IB inventory | $(date '+%F %T') | host=$(hostname) ==="
 G=/nas_train/app.e0031982/code/super_intelligence_2035
