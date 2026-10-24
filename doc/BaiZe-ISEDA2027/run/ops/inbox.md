@@ -1,9 +1,68 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 178 | TARGET: 12 -->
-## RUN_ID 178 — 🧪 手工 2-rank NCCL 最小复现（1 卡/机，纯 all_reduce，显式 RoCE 参数）+ 读 21:33 那次的结果
+<!-- RUN_ID: 179 | TARGET: 12 -->
+## RUN_ID 179 — 🧪 手工 2-rank NCCL 最小复现（修正版：不指定 SOCKET_IFNAME，让 NCCL 自选）
 
 ```bash
+set -u
+echo "=== RUN_ID 179 | 2-rank NCCL repro | $(date '+%F %T') | host=$(hostname) ==="
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+D=/nas_train/app.e0031982/nccl_dbg
+mkdir -p "$D"
+
+echo "[0] 上一次（21:33）的产物"
+cat /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-170
+grep -aiE 'Init COMPLETE|NCCL WARN|timeout|Exception' /tmp/baize_dualnode_16gpu/master.log 2>/dev/null | tail -6 | cut -c1-165
+
+echo "[1] 确认两机管理网互通（决定 MASTER_ADDR）"
+ip -br addr 2>/dev/null | grep -E '10\.239\.2\.' | head -3 || echo '  local no 10.239.2.x'
+timeout 10 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.29 'hostname; ip -br addr | grep -E "10\.239\.2\." | head -2' 2>/dev/null || echo '  ssh .29 failed'
+
+echo "[2] 写最小复现脚本"
+cat > "$D/tc.py" <<'EOS'
+import os, socket, time, torch, torch.distributed as dist
+dist.init_process_group("nccl")
+r = dist.get_rank(); w = dist.get_world_size()
+lr = int(os.environ.get("LOCAL_RANK", "0")); torch.cuda.set_device(lr)
+print(f"[rank {r}/{w}] init OK host={socket.gethostname()} dev={torch.cuda.get_device_name(lr)}", flush=True)
+x = torch.ones(64*1024*1024, dtype=torch.float32, device="cuda")
+for i in range(20):
+    dist.all_reduce(x); torch.cuda.synchronize()
+    if r == 0: print(f"iter {i} ok", flush=True)
+t = time.time()
+for _ in range(10):
+    dist.all_reduce(x)
+torch.cuda.synchronize(); dt = time.time() - t
+if r == 0:
+    print(f"busbw ~ {2*(w-1)/w*x.numel()*4*10/dt/1e9:.1f} GB/s (10 iters {dt:.2f}s)", flush=True)
+dist.destroy_process_group()
+EOS
+
+echo "[3] 起 rank0（本机 .12）"
+cd "$D"
+NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET \
+NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 \
+MASTER_ADDR=10.239.2.12 MASTER_PORT=29544 RANK=0 WORLD_SIZE=2 LOCAL_RANK=0 \
+setsid -f nohup "$PY" tc.py > rank0.log 2>&1 < /dev/null
+echo "  rank0 launched"
+
+echo "[4] 起 rank1（远端 .29）"
+timeout 30 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 \
+ "cd $D && NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 MASTER_ADDR=10.239.2.12 MASTER_PORT=29544 RANK=1 WORLD_SIZE=2 LOCAL_RANK=0 setsid -f nohup $PY tc.py > rank1.log 2>&1 < /dev/null; echo rank1-launched" 2>&1 | tail -2
+
+sleep 10
+echo "[5] 10s 后 GPU"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -2' 2>/dev/null || true
+echo "[6] rank0.log 前 15 行"
+head -15 "$D/rank0.log" 2>/dev/null | cut -c1-165
+echo "  (下一条令读完整日志)"
+echo "=== DONE 179 ==="
+```
+
+## RUN_ID 178 — 🧪 手工 2-rank NCCL 最小复现（1 卡/机，纯 all_reduce，显式 RoCE 参数）+ 读 21:33 那次的结果
+
+```text
 set -u
 echo "=== RUN_ID 178 | 2-rank NCCL repro | $(date '+%F %T') | host=$(hostname) ==="
 PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
