@@ -1,13 +1,67 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 158 -->
+<!-- RUN_ID: 159 -->
+## RUN_ID 159 — 🔍 只读：harness 7×89 进度 + pretrain loop 存活（**不重启、不改任何东西**）
+
+> 背景：harness 最后提交 16:26（启动 7×89 于 16:21，ETA 2.5–3h），pretrain 的 MEMORY 停在 **15:0x #766**，而 16:2x 的「双机 16 卡吞吐」令至今无执行痕迹。现 19:2x，两条线均 **2.8–4h 无提交**，需判断是「正常长跑/睡觉」还是「卡死」。
+> ⚠️ 纯只读：`kill`/重启/写文件 一律不做。
+
+```bash
+set -u
+echo "=== RUN_ID 159 | read-only: harness 7x89 + pretrain loop | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] harness / 7x89 进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'harbor run|tb_7x89' | grep -v grep | cut -c1-140 | head -6 || echo '  NONE'
+
+echo "[2] 7x89 各 harness 结果计数（result.json）"
+for d in /tmp/tb_7x89/jobs_*; do
+  [ -d "$d" ] || continue
+  echo "  $(basename "$d"): $(find "$d" -name result.json 2>/dev/null | wc -l) result.json"
+done 2>/dev/null | head -10
+
+echo "[3] 7x89 主日志"
+ls -l --time-style=+%F_%T /tmp/tb_7x89_concurrent.log /tmp/tb_7x89*.log 2>/dev/null | head -5
+tail -6 /tmp/tb_7x89_concurrent.log 2>/dev/null | cut -c1-170
+
+echo "[4] 容器数"
+command -v docker >/dev/null 2>&1 && { sg docker -c 'docker ps --format "{{.Names}}"' 2>/dev/null | grep -c env || echo '  docker query failed'; } || echo '  no docker'
+
+echo "[5] harness agent 文件新鲜度"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_HARNESS.md" "$R/run/daily-memories-harness/2026-10-24.md" 2>/dev/null
+find /tmp -maxdepth 1 -name 'baize_harness*' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | head -3
+
+echo "[6] pretrain loop 进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'baize_pretrain_loop\.sh' | grep -v grep | cut -c1-140 || echo '  LOOP_NOT_FOUND'
+echo "[7] pretrain loop 日志（最后唤醒时间）"
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -4 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo "[8] pretrain MEMORY / TASK mtime"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_PRETRAIN_2B.md" "$R/run/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+
+echo "[9] GPU：本机 + .12"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[10] 当前 agent 进程"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'cline|pi-coding-agent' | grep -v grep | cut -c1-120 | head -6 || echo '  none'
+
+echo "[11] 近 3h 各线 MEMORY mtime"
+find "$R/run" -maxdepth 1 -name 'MEMORY_*.md' -newermt '-3 hours' -printf '%TH:%TM %p\n' 2>/dev/null | head -8
+echo "=== DONE 159 ==="
+```
+
+> **判读**：`[2]` 若各 harness 的 result.json 已满 87 → 长跑已结束，agent 该收口却没收口；`[1]` 无 harbor 进程且 `[2]` 不足 → 跑崩了。
+> `[6]` loop 在 + `[7]` 日志 mtime 很旧 → 卡在 cline 调用里；`[6]` 无 → loop 已死（**本探针不重启**，等运维决定）。
+> `[9]` 若 `.29`/`.12` 全空 → pretrain 的双机 16 卡令随时可以起跑。
+
 ## RUN_ID 158 — ⚡ 迁移提速：停旧脚本 → 起 `migrate_to_nas_env_fast.sh`（bwlimit 50000→300000）
 
 > 用户令（2026-10-24 18:1x）：「**85M 下载优先级不高。**」⇒ 不再为 85M 预留 NFS 带宽，迁移限速从 50 MiB/s 提到 ~307 MB/s。
 > **为什么必须重启**：`--bwlimit` 在进程启动时固定，改脚本文件对运行中的 bash 无效；且**绝不能就地改运行中的脚本**（bash 按字节偏移读文件，会读串行）。
 > ⚠️ 只动迁移：不碰 85M 下载（让它继续后台跑）、不碰任何训练/评测。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 158 | migrate speedup (85M deprioritized) | $(date '+%F %T') | host=$(hostname) ==="
 G=/nas_train/app.e0031982/code/super_intelligence_2035
