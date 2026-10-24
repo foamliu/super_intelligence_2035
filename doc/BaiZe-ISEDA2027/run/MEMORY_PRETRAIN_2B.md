@@ -1,5 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-24 08:30 #762：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#757/#752控体积**：
+> - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
+> - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
+> - 三份报告复核在盘：① throughput 13861B(commit 74ef3e523) ② longctx 18341B(commit a04b4503b) ③ decay 23878B(commit ae9e1e780)。
+> - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
+> 📦 体积：TASK=26.9KB / MEMORY=~29.0KB（均≤32KB✓，本轮归档 ~2.5KB #757/#752 → daily-memories/）。
+
 > 🆕 **2026-10-24 07:20 #761：⏸ 例行唤醒·idle heartbeat·三份10-23报告均在盘·.29 8×H100全空闲·无新指令·归档#758~#759控体积**：
 > - git fetch 无 ahead/behind（同步✓）。loop PID=1294448 运行中。本机=.12（vision机）。
 > - .29 核验：8×H100 全空（0 MiB/0%），无 torchrun。
@@ -13,32 +20,9 @@ WAITING: 1
 > - 任务书顶部运维指令仍为 10-23 22:1x 吞吐优化（已完成 #757），无新增指令块 → 30 min 长轮询例行唤醒，WAITING 保持 1。
 > 📦 体积：TASK=26.9KB / MEMORY=~31.0KB（均≤32KB✓，本轮归档 ~1.3KB #747~#748 → daily-memories/2026-10-23.md）。
 > 📦 §#758~#759 流水（2026-10-24 03:4x~04:57，2 条 idle heartbeat 复核三份报告无误）已归档 → daily-memories/2026-10-24.md；**结论**：三份10-23报告均在盘+committed，无新指令。需要时再读。
-> 🆕 **2026-10-24 02:3x #757：✅ 吞吐优化实验全部完成·10/10·新纪录 297K tok/s(+19.4% vs 249K目标)·HTML报告已交付**：
-> - **运维令**：2026-10-23 22:1x「优化 BaiZe-2B 训练吞吐：目标 > 249K tok/s」（最高优先）→ **已超额完成**。
-> - **全部 10 组实验已完成**（`ALL DONE @ 2026-10-24 01:54:51`），.29 GPU 已全空闲。
-> - **最终结果表**（baseline=252K tok/s）：
->   - e00 baseline **252K** · e01 cuda_graph **259K(+2.7%)** · e02 fp8_tw 227K(-10%) · e03 fp8_bw **FAIL**(CUDA12.8<12.9) · e04 fp8_delayed 228K(-9.6%) · e05 overlap_optim **FAIL**(IndexError) · e06 ce_fusion 251K(-0.4%) · e07 fp8_tw+overlap **FAIL** · e08 fp8_bw+cg **FAIL** · e09 fp8_tw+cg **297K(+17.9%)** ← 🏆最佳。
-> - **🎉 新纪录 = 297K tok/s（+19.4% vs 历史 249K）@ FP8 tensorwise + CUDA Graphs**。
-> - **🔥 关键发现 — FP8+CUDA Graphs 协同效应**：FP8 tensorwise 单独使用反而慢10%（量化引入大量小kernel，launch开销>计算节省），但叠加 CUDA Graphs 后全部量化kernel被图捕获、launch开销归零，FP8的显存带宽节省得以释放 → 协同提速+18%，远超两者单独效果之和。这是 Mamba2-hybrid 架构特有瓶颈：SSM层GEMM小而碎，kernel launch是主要开销，CUDA Graphs 是解锁 FP8 收益的前提。
-> - **正确性闸门**：e09 loss=7.5726 vs baseline 7.6232（Δ=0.66% ≤5% ✓），grad_norm 0.5128 无数量级跳变 ✓，实际训练 0 NaN ✓。
-> - **显存**：e09 peak 66.9GB/80GB（基线54.7GB + CG图池10.6GB + FP8 buffer），充足。
-> - **产物**：`reports/report_pretrain_2b_throughput_optim_zh.html`（13.9KB，自包含中文HTML，含实验总表+协同效应分析+瓶颈归因+下一步建议+复现命令）· `gen_perf_report.py`（报告生成脚本）· `baize_perf_optim.sh`（实验脚本）。
-> - 环境：本机=.12（vision机）。.29 8×H100 已全空闲（实验已完成）。
-> - **所有运维指令均已交付**：① 吞吐优化报告 ✓ ② 长上下文评测报告 ✓(#752) ③ decay修复报告 ✓(#747)。
-> 📦 体积：TASK=26.9KB / MEMORY=~30.7KB（均≤32KB✓，本轮归档 0KB）。
+> 📦 §#757（2026-10-24 02:3x）已归档 → daily-memories/2026-10-24.md；**结论**：吞吐优化10/10完成，新纪录297K tok/s(+19.4% vs 249K) @ FP8 TW+CG协同效应，HTML报告已交付(commit 74ef3e523)。需要时再读。
 > 📦 §#754~#755 流水（2026-10-23 20:5x~21:5x，2 条 idle heartbeat 复核两份报告无误）已归档 → daily-memories/2026-10-23.md；**结论**：两份10-23报告复核无误，无新指令。需要时再读。
-> 🆕 **2026-10-23 18:2x #752：✅ 长上下文推理成本评测·3模型全部完成·HTML报告已生成**：
-> - **Qwen3.5-2B 1M benchmark 成功**：TTFT=89.09s, prefill=11314 tok/s, decode=130.6 tok/s, VRAM=73.16GB。2M 未测（跳过）。
-> - **Qwen3.5-2B 全部上下文结果**：64K(TTFT=0.89s,70.8K tok/s)→128K(2.40s,52.4K)→256K(7.20s,35.0K)→512K(24.45s,20.6K)→1M(89.09s,11.3K)。VRAM 全程 ~73GB。
-> - **3模型对比 HTML 报告已生成**：`reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（18.3KB）。
-> - **关键发现**：Qwen3.5-2B（混合线性注意力,18线性+6全注意力,每4层1全注意力）在所有上下文长度均显著优于 BaiZe-2B 和 MiniCPM5-2B：
->   - 64K prefill: 70.8K vs 24.7K/24.8K tok/s（2.9x）
->   - 512K prefill: 20.6K vs 3.6K/4.0K tok/s（5.2x/5.1x）
->   - 最大上下文: 1M vs 512K/512K（Qwen3.5 独享 1M）
->   - VRAM: 全程 ~73GB（混合注意力 KV cache 极小,显存由 SSM state 主导）
-> - 产物：`longctx_eval_results/results_qwen35-2b.json`（合并 64K~1M+2M skipped）、per-context JSON ×5、报告脚本 `gen_longctx_report.py`（已修正 Qwen3.5 架构描述）。
-> - SGLang 服务器已清理。.29 GPU 应已空闲。
-> 📦 体积：MEMORY=~30.5KB（≤32KB✓）。
+> 📦 §#752（2026-10-23 18:2x）已归档 → daily-memories/2026-10-23.md；**结论**：长上下文3模型评测完成，Qwen3.5-2B独享1M上下文且全程最快(64K 70.8K→1M 11.3K tok/s)，HTML报告已交付(commit a04b4503b)。需要时再读。
 > 📦 §#749~#751 流水（2026-10-23 13:0x~14:0x，3 条 idle heartbeat 复核 decay 修复报告无误）已归档 → daily-memories/2026-10-23.md；**结论**：decay 修复报告复核无误（v2 44.97/6.21→decay-5000 58.97/28.02），无新指令。需要时再读。
 
 > 📦 §#747~#748 流水（2026-10-23 12:2x~12:5x，2 条 idle heartbeat 复核 decay 修复报告无误 + 归档 #740~#746）已归档 → daily-memories/2026-10-23.md；**结论**：decay 修复报告复核无误，无新指令。需要时再读。
