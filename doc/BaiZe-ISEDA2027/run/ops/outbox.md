@@ -18682,3 +18682,74 @@ Let me launch[0m[2m the test again[0m[2m.[0m
 3580069 /bin/bash -c sleep 20 && echo '--- summary tail ---'; tail -6 /tmp/baize_dualnode_16gpu/summary.txt 2>
 === DONE 170 ===
 ```
+
+---
+
+## RUN_ID 171 · 2026-10-24 20:10:25 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 171 | dual-node test verification | $(date '+%F %T') | host=$(hostname) ==="
+echo "[0] 等 120s ..."; sleep 120
+
+for h in 29 12; do
+  if [ "$h" = 29 ]; then C="bash -lc"; P=local; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -lc"; P=10.239.2.12; fi
+  echo "  === $h ==="
+  $C 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8; echo "  -- procs --"; pgrep -af "torchrun|pretrain_launcher" | cut -c1-110 | head -3 || echo "   none"' 2>/dev/null || echo "   host failed"
+done
+
+echo "[1] summary / 日志"
+ls -l --time-style=+%F_%T /tmp/baize_dualnode_16gpu/ /tmp/baize_dualnode_16gpu_run.log 2>/dev/null | head -8
+tail -8 /tmp/baize_dualnode_16gpu/summary.txt 2>/dev/null | cut -c1-160 || echo '  no summary yet'
+echo "[2] .12 的 loop 日志尾部（agent 在做什么）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'tail -c 900 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d "\033" | tail -8 | cut -c1-150' 2>/dev/null || echo '  ssh .12 failed'
+echo "=== DONE 171 ==="
+```
+
+**输出**
+```
+=== RUN_ID 171 | dual-node test verification | 2026-10-24 20:10:25 | host=whag0pgpuap29 ===
+[0] 等 120s ...
+  === 29 ===
+0, 1429 MiB, 0 %
+1, 1429 MiB, 0 %
+2, 1429 MiB, 0 %
+3, 1429 MiB, 0 %
+4, 1429 MiB, 0 %
+5, 1429 MiB, 0 %
+6, 1429 MiB, 0 %
+7, 1429 MiB, 0 %
+  -- procs --
+716276 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/
+724658 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name d
+724659 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name d
+  === 12 ===
+Sat Oct 24 20:12:27 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.195.03             Driver Version: 570.195.03     CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+  -- procs --
+204970 node /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train
+205013 /home/app.e0031982/.bun/install/global/node_modules/@cline/cli-linux-x64/bin/cline --data-dir /nas_trai
+3657286 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 10.239.2.29      cd /nas_train/app.e00319
+[1] summary / 日志
+-rw-r--r-- 1 app.e0031982 app.adm    0 2026-10-24_19:19:55 /tmp/baize_dualnode_16gpu_run.log
+
+/tmp/baize_dualnode_16gpu/:
+total 4
+-rw-r--r-- 1 app.e0031982 app.adm 5 2026-10-24_20:12:26 worker.peakmem
+[2] .12 的 loop 日志尾部（agent 在做什么）
+re[0m[2m at 100%[0m[2m util (NC[0m[2mCL probing[0m[2m), remote[0m[2m GPUs at 0[0m[2m% (still[0m[2m setting[0m[2m up).
+
+[0m[2mLet[0m[2m me wait a bit[0m[2m more for the training[0m[2m iterations[0m[2m to start. The[0m[2m NC[0m[2mCL[0m[2m init is done,[0m[2m so the model
+
+[0m[2mLet me wait[0m[2m ~60[0m[2ms and check for[0m[2m iteration logs.[0m
+太棒了！NCCL 初始化已完成 — **跨节点流量使用 NET/IB/8/GDRDMA (RoCE + GPUDirect RDMA)**，这正是我们想要的（而不是 TCP�
+[36m[run_commands][0m sleep 25 && echo '--- master.log: iteration lines ---'; grep -i 'iteration' /tmp/baize_dualnode_16gpu/master.log 2>&1...
+=== DONE 171 ===
+```
