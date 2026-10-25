@@ -21541,3 +21541,79 @@ echo "=== DONE 204 ==="
 10.239.23.31:/vol_CTE0_data01  207T  171T   37T  83% /nas_train
 === DONE 204 ===
 ```
+
+---
+
+## RUN_ID 205 · 2026-10-25 13:50:15 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 205 | tokenize died -> diagnose + restart | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+PLAN=$R/run/data/plan.tsv
+
+echo "[1] 现状"
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)  load=$(cat /proc/loadavg)"
+for p in ufw_en_train ufw_l1_en_hq_train ufw_zh_train ultrax_aicc_train; do
+  printf "  %-22s bin=%s\n" "$p" "$(ls $B/text/${p}*.bin 2>/dev/null | wc -l)"
+done
+echo "  text/ 总 bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)（env14=110）"
+
+echo "[2] 日志定位（全盘找最近 3h）"
+find /tmp "$R/run/data" "$R/run/data_pipeline" -maxdepth 2 -name '*untoken*' -newermt '-3 hours' 2>/dev/null | head -10
+for l in $(ls -t /tmp/*untoken*.log 2>/dev/null | head -3); do
+  echo "  --- $l ($(stat -c '%y' "$l" | cut -c1-19), $(stat -c %s "$l") B) ---"
+  tail -12 "$l" | cut -c1-150
+done
+
+echo "[3] 失败/重试痕迹"
+ls -lt "$R/run/data/"*failed* "$R/run/data/"*.attempts 2>/dev/null | head -5
+tail -5 "$R/run/data/plan.tsv" 2>/dev/null | cut -c1-140
+echo "  计划行数: $(wc -l < "$PLAN" 2>/dev/null || echo 0)"
+
+echo "[4] 最后产物时间（判断死在几点）"
+ls -lt --time-style=+%F_%T "$B/text"/*.bin 2>/dev/null | head -3 | awk '{print "  "$6" "$7}'
+
+echo "[5] 重启（无进程且有剩余 shard 才动）"
+LEFT=$(awk -F'\t' 'NR>1' "$PLAN" 2>/dev/null | wc -l)
+RUNS=$(ps -eo args= | grep -c '[p]reprocess_data' || true)
+if [ "$RUNS" -eq 0 ] && [ "$LEFT" -gt 0 ]; then
+  cd "$R/run/data_pipeline" || exit 1
+  TS=$(date +%H%M%S)
+  setsid -f nohup bash ./run_tokenize_untokenized.sh >> "/tmp/tokenize_untokenized_restart_${TS}.log" 2>&1 < /dev/null
+  sleep 25
+  echo "  restarted, preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)"
+  echo "  launcher: $(ps -eo pid=,args= | grep '[r]un_tokenize_untokenized' | grep -v grep | cut -c1-90 | head -2)"
+  echo "  --- restart log head ---"; head -12 "/tmp/tokenize_untokenized_restart_${TS}.log" 2>/dev/null | cut -c1-140
+else
+  echo "  跳过重启（runs=$RUNS left=$LEFT）"
+fi
+echo "=== DONE 205 ==="
+```
+
+**输出**
+```
+=== RUN_ID 205 | tokenize died -> diagnose + restart | 2026-10-25 13:50:15 | host=whag0pgpuap29 ===
+[1] 现状
+  preprocess=0  load=7.97 7.41 7.61 38/7759 3370815
+  ufw_en_train           bin=32
+  ufw_l1_en_hq_train     bin=32
+  ufw_zh_train           bin=0
+  ultrax_aicc_train      bin=0
+  text/ 总 bin=174（env14=110）
+[2] 日志定位（全盘找最近 3h）
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/untokenized_v1_20261025.tsv
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_tokenize_untokenized.sh
+[3] 失败/重试痕迹
+/tmp/tmp.z5kGZodq2q: line 24: /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/plan.tsv: No such file or directory
+  计划行数: 0
+[4] 最后产物时间（判断死在几点）
+  2026-10-25_13:50:15 /nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s11.bin
+  2026-10-25_13:50:15 /nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s15.bin
+  2026-10-25_13:50:15 /nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s7.bin
+[5] 重启（无进程且有剩余 shard 才动）
+  跳过重启（runs=0 left=0）
+=== DONE 205 ===
+```
