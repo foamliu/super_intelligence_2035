@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Vision: OCR 能力偏低 · 合成数据补强调研报告</title>
+<style>
+    body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1080px;margin:24px auto;padding:0 20px;color:#222;line-height:1.6}
+    h1{font-size:22px;border-bottom:3px solid #c0392b;padding-bottom:8px}
+    h2{font-size:18px;margin-top:28px;border-left:5px solid #c0392b;padding-left:10px}
+    h3{font-size:15px;margin-top:18px;color:#922}
+    table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px}
+    th,td{border:1px solid #ccc;padding:5px 8px;text-align:left;vertical-align:top}
+    th{background:#f4ecea}
+    table.m th{width:120px;background:#faf2f0}
+    .small{color:#777;font-size:12px;font-weight:normal}
+    .kbox{background:#fdf6f3;border:1px solid #e6c9c0;padding:12px 16px;border-radius:6px;margin:10px 0}
+    code{background:#f5f5f5;padding:1px 4px;border-radius:3px;font-size:12px}
+    .tag{display:inline-block;background:#c0392b;color:#fff;padding:1px 7px;border-radius:3px;font-size:12px}
+    ul{margin:6px 0}
+    </style></head><body><div>
+<h1>BaiZe Vision: OCR 类评测偏低 — 合成数据补强方法调研报告</h1>
+<p class="small">生成器 <code>vision/generate_ocr_synthdata_report.py</code> · 所有实测数字来自四臂 consolidated_12benchmarks.json · 检索于 2026-10-25 · 生成 2026-10-25 19:19</p>
+
+<h2>1. 摘要</h2>
+<div class="kbox">
+<ul>
+<li>本项目四臂 (ArmB/C/D-R2/E-R2) 在 OCR 相关四集均极低: OCRBench <b>1.6-1.8%</b>、DocVQA(val) <b>7.35-7.58%</b>、ChartQA <b>12.16-12.92%</b>、InfoVQA(val) <b>16.18-17.09%</b>; 四臂之间差异 ≤1pp, 与编码器容量/ProtB 无关 (ArmE-R2 ProtB 68.2% 最强但 OCRBench 仍 1.6%)。</li>
+<li>证据指向: 问题位于 <b>数据/任务缺位</b> 而非编码器容量; 现有训练数据 (图文对比/AIMv2-style) 几乎不含专项 OCR/文档/图表识别监督。</li>
+<li>调研覆盖 7 类 18 个方法 (文字识别合成/文档合成/文档 MLLM/图表数据/OCR 引擎/RL 可验证奖励/公式), 来源为经代理检索的 arXiv 摘要 (2026-10-25)。</li>
+<li><b>单一建议</b>: 优先执行 <span class="tag">路线①</span> — 用 trdg/SynthTIGER 低成本合成 50-200 万 OCR 识别对, 在现有 ckpt 上加一轮专项 SFT; 预注册判据 = OCRBench 提升 ≥ 2pp。</li>
+<li>本轮仅调研 + 写报告, 不启训练、不动已落盘产物、不伪造 API key。</li>
+<li>诚实条款: 外部效果数字均为论文自报、未在本项目复现; 成本为估算; 本项目数字全部实测可溯源。</li>
+</ul>
+</div>
+
+<h2>2. 现状: OCR 相关四集实测 (四臂)</h2>
+<p>数据来源: <code>/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_arm{B,C}/consolidated_12benchmarks.json</code> 及 <code>mllm_eval_results_armD_r2_20261020</code> / <code>mllm_eval_results_armE_r2_20261022</code> 同名文件。四集均无需 LLM judge (exact-match / ANLS / relaxed), 与 MMVet/MathVista 的 OPENAI_API_KEY 阻塞无关, 可直接测。</p>
+<table><tr><th>集合</th><th>指标</th><th>ArmB</th><th>ArmC</th><th>ArmD-R2</th><th>ArmE-R2</th></tr>
+<tr><td><b>OCRBench</b></td><td>ocrbench_accuracy</td><td>1.60%</td><td>1.80%</td><td>1.60%</td><td>1.60%</td></tr>
+<tr><td><b>DocVQA (val)</b></td><td>anls</td><td>7.36%</td><td>7.58%</td><td>7.44%</td><td>7.35%</td></tr>
+<tr><td><b>ChartQA</b></td><td>relaxed_overall</td><td>12.52%</td><td>12.48%</td><td>12.92%</td><td>12.16%</td></tr>
+<tr><td><b>InfoVQA (val)</b></td><td>anls</td><td>16.88%</td><td>17.09%</td><td>16.59%</td><td>16.18%</td></tr>
+</table>
+<p class="small">四臂配置: ArmB=ViT-B/16,3源/4epoch; ArmC=ViT-B/16,min_lr1e-5+wd0.01; ArmD-R2=ViT-B/16,6源/3epoch,lr1e-3; ArmE-R2=ViT-L/14,6源/3epoch,lr5e-4,63400步。Stage-2 step3500 ckpt, 8卡全量评测。</p>
+<h3>外部参考 (同规模开源 MLLM / 人类上限)</h3>
+<table><tr><th>参考</th><th>引用</th><th>年</th><th>说明</th></tr>
+<tr><td><b>OCRBench 基准</b></td><td>arXiv:2305.07895</td><td>2023</td><td>含 29 个数据集的综合 OCR 评测; 评估 GPT4V/Gemini 等大模型. 摘要未给具体模型分数 → 未查到具体同规模开源 MLLM 数字</td></tr>
+<tr><td><b>DocVQA 人类上限</b></td><td>arXiv:2007.00398</td><td>2020</td><td>人类准确率 94.36%; 现有模型与人类有较大差距, 结构理解型问题尤差. 本项目 ANLS 7.35-7.58% vs 人类 94.36% (口径不同, 仅量级参考)</td></tr>
+<tr><td><b>ChartQA 基准</b></td><td>arXiv:2203.10244</td><td>2022</td><td>9.6K 人写 + 23.1K 增广; relaxed accuracy 指标. 摘要未给具体开源 MLLM 数字 → 未查到</td></tr>
+<tr><td><b>LLaVA-1.5 / Qwen-VL</b></td><td>arXiv:2310.03744 / 2308.12966</td><td>2023</td><td>同规模开源 MLLM; 摘要均未列 OCRBench/DocVQA/ChartQA 具体数字 → 未查到 (需另查官方技术报告/u699c单)</td></tr>
+<tr><td><b>olmOCR (7B)</b></td><td>arXiv:2502.18443</td><td>2025</td><td>微调 7B VLM, olmOCR-Bench 上超越 GPT-4o/Gemini Flash 2/Qwen-2.5-VL; 百万页 $176. 为同规模 OCR 能力上限参考</td></tr>
+</table>
+<p class="small">诚实披露: 本次检索仅取得 arXiv 摘要; LLaVA-1.5/Qwen-VL/OCRBench/ChartQA 摘要均未列具体模型分数, 故具体同规模开源 MLLM 在 OCRBench/DocVQA 的公开值标注 <b>未查到</b> (需另查官方技术报告/榜单); 仅给出可核实的锚点 (DocVQA 人类 94.36%、olmOCR 7B 超越 GPT-4o)。</p>
+
+<h2>3. 差距定位 (文字识别 / 版面结构 / 图表数值 / 长文档)</h2>
+<table><tr><th>能力维度</th><th>代表集</th><th>本项目四臂范围</th><th>差距定位</th></tr>
+<tr><td>文字识别</td><td>OCRBench</td><td>1.60% – 1.80%</td><td>近于随机 (1.6-1.8%); 即使最强编码器 ArmE-R2 (ProtB 68.2%) 也未改善 → 不是编码器容量问题, 是数据/任务缺位</td></tr>
+<tr><td>版面结构</td><td>DocVQA(val)</td><td>7.35% – 7.58%</td><td>ANLS 7.35-7.58%, 与人类 94.36% 量级差距巨大; 编码器不识别版面结构, 需文档型数据</td></tr>
+<tr><td>图表数值</td><td>ChartQA</td><td>12.16% – 12.92%</td><td>12.16-12.92%; 需图表→数值/文本对齐数据</td></tr>
+<tr><td>长文档/信息图</td><td>InfoVQA(val)</td><td>16.18% – 17.09%</td><td>16.18-17.09%; 需密集文本+结构的信息图数据</td></tr>
+</table>
+<p class="small">关键观察: 四臂跨度 ≤1pp 的一致差距, 与 ArmE-R2 编码器 ProtB 远超 ArmB (68.2 vs 62.1) 形成鲜明对比 → 再增加编码器容量/ProtB 不会提升 OCR; 缺位在专项数据与任务对齐。</p>
+
+<h2>4. 合成数据方法总览</h2>
+<p>按类别划分 7 类 18 个方法。每条主来源 = arXiv 摘要 (经代理检索于 2026-10-25), 第二来源 = 同域互引论文。</p>
+<table><tr><th>类别</th><th>方法</th><th>引用</th><th>年</th></tr>
+<tr><td>A 文字识别合成</td><td><b>SynthTIGER</b></td><td>arXiv:2107.09313</td><td>2021</td></tr>
+<tr><td></td><td><b>SynthText</b></td><td>arXiv:1604.06646</td><td>2016</td></tr>
+<tr><td></td><td><b>trdg (TextRecognitionDataGenerator)</b></td><td>GitHub 工具, 无单一 arXiv</td><td>2018</td></tr>
+<tr><td>B 文档合成/OCR-free</td><td><b>Donut / SynthDoG</b></td><td>arXiv:2111.15664</td><td>2021</td></tr>
+<tr><td></td><td><b>UDOP</b></td><td>arXiv:2212.02623</td><td>2022</td></tr>
+<tr><td></td><td><b>Pix2Struct</b></td><td>arXiv:2210.03347</td><td>2022</td></tr>
+<tr><td></td><td><b>Nougat</b></td><td>arXiv:2308.13418</td><td>2023</td></tr>
+<tr><td>C 文档 MLLM/指令调优</td><td><b>mPLUG-DocOwl</b></td><td>arXiv:2307.02499</td><td>2023</td></tr>
+<tr><td>C 文档 MLLM/数据引擎</td><td><b>dots.ocr</b></td><td>arXiv:2512.02498</td><td>2025</td></tr>
+<tr><td>D 图表数据</td><td><b>ChartQA (增广集)</b></td><td>arXiv:2203.10244</td><td>2022</td></tr>
+<tr><td></td><td><b>Chart-to-Text</b></td><td>arXiv:2203.06486</td><td>2022</td></tr>
+<tr><td>E OCR 引擎/识别管线</td><td><b>olmOCR</b></td><td>arXiv:2502.18443</td><td>2025</td></tr>
+<tr><td></td><td><b>PaddleOCR</b></td><td>工业工具包 (无单一 arXiv)</td><td>2020</td></tr>
+<tr><td>F RL 可验证奖励</td><td><b>Visual-RFT</b></td><td>arXiv:2503.01785</td><td>2025</td></tr>
+<tr><td>F 自训练/伪标注</td><td><b>内部冗余自训练 OCR</b></td><td>arXiv:2508.14557</td><td>2025</td></tr>
+<tr><td>G 公式/手写</td><td><b>im2latex</b></td><td>u9879目/u6570据集 (im2latex-100K), 未查到 arXiv 标题页</td><td>2017</td></tr>
+<tr><td>E OCR 引擎</td><td><b>GOT-OCR2.0</b></td><td>未查到 arXiv 标题页 (编号/u540d称存疑, 本次检索未命中)</td><td>2024</td></tr>
+</table>
+<h3>逐法详情</h3>
+
+<h3>SynthTIGER <span class="small">(arXiv:2107.09313, 2021 · A 文字识别合成)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>分析现有文字图像合成技巧并集成于单一算法; 引入两项技术缓解训练数据长尾与字符分布; 多样背景/字体/文字形状渲染</td></tr>
+<tr><th>要什么输入</th><td>字体库, 语料词表, 背景图/纹理, 透视/模糊/光照等退化参数</td></tr>
+<tr><th>论文报告的效果</th><td>在 STR 上优于 MJSynth+SynthText 合成集组合 (原文未给具体数字; 摘要明述 better STR performance)</td></tr>
+<tr><th>接入点</th><td>编码器预训练领域可加 OCR 识别对比监督; 或 Stage-2 SFT 添加 OCR 文字读取样本</td></tr>
+<tr><th>成本(估算)</th><td>估算: 单 CPU 可渲染数百万到千万对; 渲染 CPU 小时量级低</td></tr>
+<tr><th>第二来源</th><td>被 Donut (2111.15664) 等文档作为合成数据基线引用与对比</td></tr>
+</table>
+<h3>SynthText <span class="small">(arXiv:1604.06646, 2016 · A 文字识别合成)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>将合成文本叠加到真实背景图, 依据局部 3D 场景几何自然贴合 (颜色/缩放/透明度); 用于训练文字检测 FCRN</td></tr>
+<tr><th>要什么输入</th><td>背景自然图像集 + 语料 + 字体; 需语义分割以依据区域贴合</td></tr>
+<tr><th>论文报告的效果</th><td>ICDAR 2013 文字检测 F-measure 84.2% (当时 SOTA); 15 img/s/GPU</td></tr>
+<tr><th>接入点</th><td>作为场景文字检测/识别预训练数据; 可生成 OCR 检测监督</td></tr>
+<tr><th>成本(估算)</th><td>原文报 ~800K 合成图像; 渲染 CPU 中等</td></tr>
+<tr><th>第二来源</th><td>SynthTIGER (2107.09313) 将其作为对比基线 (ST) 之一</td></tr>
+</table>
+<h3>trdg (TextRecognitionDataGenerator) <span class="small">(GitHub 工具, 无单一 arXiv, 2018 · A 文字识别合成)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>开源文字识别合成库; 随机文本+字体+背景+多种退化 (橡皮/纸质/模糊/鲁棒壳/边缘)渲染词级/行级文字图</td></tr>
+<tr><th>要什么输入</th><td>字体文件, 语料文本, 背普背景图片目录</td></tr>
+<tr><th>论文报告的效果</th><td>工业级广泛用于 STR 训练数据增广; 无统一榜单数字</td></tr>
+<tr><th>接入点</th><td>最低门槛 OCR 合成数据来源; 随机生成词级识别对</td></tr>
+<tr><th>成本(估算)</th><td>极低: 单机 CPU 即可产百万对</td></tr>
+<tr><th>第二来源</th><td>被 PaddleOCR 训练流程作为可选合成源提及</td></tr>
+</table>
+<h3>Donut / SynthDoG <span class="small">(arXiv:2111.15664, 2021 · B 文档合成/OCR-free)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>OCR-free 文档理解 Transformer; 附 SynthDoG 合成文档生成器 (支持多语言/多域预训练); 交叉熵预训练</td></tr>
+<tr><th>要什么输入</th><td>语料/字体, 版面模板, 各语言文本; 可跨语言域定制</td></tr>
+<tr><th>论文报告的效果</th><td>在多个 VDU 任务上取得 SOTA (速度与精度兼顾); 原文未给具体数字</td></tr>
+<tr><th>接入点</th><td>文档理解 SFT 样本合成 (发票/表单/标签); 可直接作为 Stage-2 数据源</td></tr>
+<tr><th>成本(估算)</th><td>渲染 CPU 中等; 训练需中等 GPU 量级</td></tr>
+<tr><th>第二来源</th><td>UDOP (2212.02623) 同属文档 AI 合成/自监督路线, 互为对比</td></tr>
+</table>
+<h3>UDOP <span class="small">(arXiv:2212.02623, 2022 · B 文档合成/OCR-free)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>Vision-Text-Layout Transformer; 自监督预训练 (掩码图像重建/布局预测) + 多域标注; 可从 text+layout 生成文档图像</td></tr>
+<tr><th>要什么输入</th><td>大规模未标注文档语料 + 多样标注数据; 需空间 layout 信息</td></tr>
+<tr><th>论文报告的效果</th><td>在 8 个 Document AI 任务 SOTA; DUB 榜第一; 首次同时实现文档编辑与内容定制</td></tr>
+<tr><th>接入点</th><td>编码器预训练加入文档自监督目标; 或合成文档作 SFT</td></tr>
+<tr><th>成本(估算)</th><td>预训练需较大 GPU (估算多卡多日); 合成 CPU 中等</td></tr>
+<tr><th>第二来源</th><td>Pix2Struct (2210.03347) 同为视觉语言预训练, 路线互补</td></tr>
+</table>
+<h3>Pix2Struct <span class="small">(arXiv:2210.03347, 2022 · B 文档合成/OCR-free)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>预训练任务 = 将掩码的网页截图解析为简化 HTML; 变分辨率输入 + 问题渲染在图上</td></tr>
+<tr><th>要什么输入</th><td>网页 (HTML 结构为源); 无需额外标注</td></tr>
+<tr><th>论文报告的效果</th><td>在 9 任务中 6 项 SOTA, 跨文档/插图/UI/自然图四域</td></tr>
+<tr><th>接入点</th><td>网页截图→HTML 作为编码器预训练自监督; 同时覆盖 OCR/LM/caption</td></tr>
+<tr><th>成本(估算)</th><td>网页抓取 CPU/带宽; 预训练中等 GPU</td></tr>
+<tr><th>第二来源</th><td>UDOP (2212.02623) 同为视觉语言预训练, 路线互补</td></tr>
+</table>
+<h3>Nougat <span class="small">(arXiv:2308.13418, 2023 · B 文档合成/OCR-free)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>针对学术 PDF 的文本识别; 将学术文档转 Markdown (含公式/表格); 跨人机机器可读与机器可解桥梁</td></tr>
+<tr><th>要什么输入</th><td>学术 PDF 语料; 需对应文本监督</td></tr>
+<tr><th>论文报告的效果</th><td>将学术文档转 Markdown (含公式/表格); 桥接人机可读与机器可解文本; 原文未给具体榜单数字</td></tr>
+<tr><th>接入点</th><td>学术文档 OCR 专项 SFT 数据; 公式/表格识别增广</td></tr>
+<tr><th>成本(估算)</th><td>训练中等 GPU; 数据构建 CPU 中等</td></tr>
+<tr><th>第二来源</th><td>与 olmOCR (2502.18443) 同属 PDF→文本 OCR 路线</td></tr>
+</table>
+<h3>mPLUG-DocOwl <span class="small">(arXiv:2307.02499, 2023 · C 文档 MLLM/指令调优)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>基于 mPLUG-Owl; 构建多任务文本-图像理解指令调优数据集; 统一指令调优策略联合训练</td></tr>
+<tr><th>要什么输入</th><td>多任务文档指令数据; 语言/通用 VL/文档数据三路并行</td></tr>
+<tr><th>论文报告的效果</th><td>超越现有多模态文档理解; 原文未给具体榜单数</td></tr>
+<tr><th>接入点</th><td>为 BaiZe MLLM 提供文档 OCR/理解指令调优数据可直接接入 Stage-2</td></tr>
+<tr><th>成本(估算)</th><td>指令调优中等 GPU; 数据构建人工成本较高</td></tr>
+<tr><th>第二来源</th><td>与 DocOwl1.5 同系; dots.ocr (2512.02498) 同属文档 MLLM 路线</td></tr>
+</table>
+<h3>dots.ocr <span class="small">(arXiv:2512.02498, 2025 · C 文档 MLLM/数据引擎)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>单一 VLM 联合学习版面检测+文字识别+关系理解 (端到端); 可扩展数据引擎合成多语言语料</td></tr>
+<tr><th>要什么输入</th><td>多语言语料 + 合成模板; 版面/语言/域多样</td></tr>
+<tr><th>论文报告的效果</th><td>OmniDocBench 上 SOTA; 跨语言/版面/域鲁棒</td></tr>
+<tr><th>接入点</th><td>可作为 BaiZe 数据引擎范例: 合成文档样本供 SFT</td></tr>
+<tr><th>成本(估算)</th><td>数据引擎合成 CPU 中等; 联合训练较大 GPU</td></tr>
+<tr><th>第二来源</th><td>与 mPLUG-DocOwl (2307.02499) 同属文档 MLLM 路线</td></tr>
+</table>
+<h3>ChartQA (增广集) <span class="small">(arXiv:2203.10244, 2022 · D 图表数据)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>9.6K 人写 + 23.1K 由人写图表摘要生成的问题; 含视觉+逻辑推理</td></tr>
+<tr><th>要什么输入</th><td>图表图像 + 人写摘要; 模板生成问题</td></tr>
+<tr><th>论文报告的效果</th><td>提供 relaxed accuracy 指标; 揭示复杂推理挑战</td></tr>
+<tr><th>接入点</th><td>作为 ChartQA 训练/评测数据直接接入 SFT; 同时是评测集</td></tr>
+<tr><th>成本(估算)</th><td>数据已开源免费; 接入零渲染成本</td></tr>
+<tr><th>第二来源</th><td>与 Chart-to-Text (2203.06486) 同年同属图表语料</td></tr>
+</table>
+<h3>Chart-to-Text <span class="small">(arXiv:2203.06486, 2022 · D 图表数据)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>大规模图表摘要基准: 两数据集共 44,096 图表; 数据表可用与需提取两种设置</td></tr>
+<tr><th>要什么输入</th><td>图表图像 + 底层数据表 (部分); 主题/类型多样</td></tr>
+<tr><th>论文报告的效果</th><td>提供图表→文本摘要训练数据; 模型有幻觉/事实错误</td></tr>
+<tr><th>接入点</th><td>生成图表摘要样本作 ChartQA 类任务 SFT 增广</td></tr>
+<tr><th>成本(估算)</th><td>已开源; 接入零渲染成本</td></tr>
+<tr><th>第二来源</th><td>与 ChartQA (2203.10244) 同年同属图表语料</td></tr>
+</table>
+<h3>olmOCR <span class="small">(arXiv:2502.18443, 2025 · E OCR 引擎/识别管线)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>微调 7B VLM 于 olmOCR-mix-0225 (260K 页, 100K+ PDF); 输出线性化纯文本保留结构; 支持 vLLM/SGLang 批处理</td></tr>
+<tr><th>要什么输入</th><td>爬取的 PDF (含图形/手写/低质扫描); 260K 页监督</td></tr>
+<tr><th>论文报告的效果</th><td>olmOCR-Bench 上超越 GPT-4o / Gemini Flash 2 / Qwen-2.5-VL; 百万页 $176</td></tr>
+<tr><th>接入点</th><td>作为识别管线生成伪标注 (设备); 或数据源供识别调优</td></tr>
+<tr><th>成本(估算)</th><td>$176/100万页 (原文); 训练 7B 中等 GPU</td></tr>
+<tr><th>第二来源</th><td>与 Nougat (2308.13418) 同属 PDF→文本 OCR 路线</td></tr>
+</table>
+<h3>Visual-RFT <span class="small">(arXiv:2503.01785, 2025 · F RL 可验证奖励)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>视觉强化微调: LVLM 生成多响应 + 可验证奖励函数 (IoU 等) + GRPO 策略优化; 数据稀缺时有效</td></tr>
+<tr><th>要什么输入</th><td>少量训练样本 + 任务可验证奖励函数; 无需大量标注</td></tr>
+<tr><th>论文报告的效果</th><td>在细粒度分类/小样本检测/推理定位上优于 SFT</td></tr>
+<tr><th>接入点</th><td>OCR 可设字符级 exact-match 可验证奖励, 用 RL 调优 MLLM 识别能力</td></tr>
+<tr><th>成本(估算)</th><td>少量数据 + 中等 GPU; 无需大规模标注</td></tr>
+<tr><th>第二来源</th><td>受 DeepSeek-R1 启发, 属 RLVR 路线</td></tr>
+</table>
+<h3>内部冗余自训练 OCR <span class="small">(arXiv:2508.14557, 2025 · F 自训练/伪标注)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>利用文档内部冗余 (重复文本/结构) 改进 OCR; 减少对额外标注的依赖</td></tr>
+<tr><th>要什么输入</th><td>未标注文档语料; 利用内部一致性</td></tr>
+<tr><th>论文报告的效果</th><td>原文: 改进 OCR 使用内部文档冗余 (未给具体榜单数)</td></tr>
+<tr><th>接入点</th><td>文档语料伪标注增广; 零标注成本低</td></tr>
+<tr><th>成本(估算)</th><td>低: 利用现有语料, CPU 为主</td></tr>
+<tr><th>第二来源</th><td>与 dots.ocr 数据引擎互为补充</td></tr>
+</table>
+<h3>PaddleOCR <span class="small">(工业工具包 (无单一 arXiv), 2020 · E OCR 引擎/识别管线)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>开源多语言 OCR 工具包 (检测+识别+版面); 含 PP-OCRv4 等; 训练流程可用 trdg 合成数据增广</td></tr>
+<tr><th>要什么输入</th><td>多语言语料 + 合成数据 (trdg)</td></tr>
+<tr><th>论文报告的效果</th><td>广泛工业部署; 无统一榜单数字</td></tr>
+<tr><th>接入点</th><td>作为识别管线伪标注器; 生成文本-图像对供 SFT</td></tr>
+<tr><th>成本(估算)</th><td>部署 CPU/GPU 低; 标注成本低</td></tr>
+<tr><th>第二来源</th><td>与 trdg 合成路线同属</td></tr>
+</table>
+<h3>im2latex <span class="small">(u9879目/u6570据集 (im2latex-100K), 未查到 arXiv 标题页, 2017 · G 公式/手写)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>将数学公式图像转 LaTeX; im2latex-100K 合成数据集 (渲染 LaTeX→图)</td></tr>
+<tr><th>要什么输入</th><td>LaTeX 公式语料 + 渲染器 (pdflatex/MathJax)</td></tr>
+<tr><th>论文报告的效果</th><td>公式识别基线; 无统一榜单数字</td></tr>
+<tr><th>接入点</th><td>公式识别专项 SFT 数据增广</td></tr>
+<tr><th>成本(估算)</th><td>渲染 CPU 低; 数据已公开</td></tr>
+<tr><th>第二来源</th><td>与 Nougat (2308.13418) 公式识别同属</td></tr>
+</table>
+<h3>GOT-OCR2.0 <span class="small">(未查到 arXiv 标题页 (编号/u540d称存疑, 本次检索未命中), 2024 · E OCR 引擎)</span></h3>
+<table class="m">
+<tr><th>怎么造</th><td>本次经代理检索 arXiv 标题未命中该论文; 仅按公开记忆描述为通用 OCR 理论 (General OCR Theory), 未取得可溯源摘要 → 本报告不采信其数字</td></tr>
+<tr><th>要什么输入</th><td>未核实</td></tr>
+<tr><th>论文报告的效果</th><td>未核实 (未取得摘要)</td></tr>
+<tr><th>接入点</th><td>待后续补检</td></tr>
+<tr><th>成本(估算)</th><td>未核实</td></tr>
+<tr><th>第二来源</th><td>仅公开记忆, 未检索到可溯源来源</td></tr>
+</table>
+
+<h2>5. 接入本项目管线的三条候选路线</h2>
+
+<h3>路线①: 低成本合成 OCR 识别对供 Stage-2 SFT (推荐首选)</h3>
+<table class="m"><tr><th>项</th><th>详情</th></tr>
+<tr><th>数据量</th><td>估 50-200 万对: trdg/SynthTIGER 生成印刷/场景文字 → 图像+转写文本对; + Chart-to-Text/ChartQA 增广集处理图表样本</td></tr>
+<tr><th>接入点</th><td>不动编码器; 在现有 ArmB/ArmE-R2 ckpt 上加一轮 OCR 专项 SFT (可 LoRA)</td></tr>
+<tr><th>成本</th><td>渲染 CPU 小时级 (~0 GPU); 训练 1-2 GPU·日 (估算)</td></tr>
+<tr><th>ETA</th><td>数据生成 1-2 人日 + SFT 1 日</td></tr>
+<tr><th>可证伪判据</th><td>OCRBench 提升 ≥ 2pp (1.6%→≥3.6%) 且 DocVQA ANLS 提升 ≥ 3pp; 未达则写负面结论</td></tr>
+</table>
+<h3>路线②: 文档型合成 + 指令调优 (中成本)</h3>
+<table class="m"><tr><th>项</th><th>详情</th></tr>
+<tr><th>数据量</th><td>SynthDoG/UDOP 风格合成文档 (发票/表单/论文) 10-50 万样本 + mPLUG-DocOwl 指令调优数据样式</td></tr>
+<tr><th>接入点</th><td>Stage-2 混入文档指令数据; 可加编码器预训练自监督目标 (可选)</td></tr>
+<tr><th>成本</th><td>合成 CPU 中等 + 训练 2-4 GPU·日</td></tr>
+<tr><th>ETA</th><td>3-5 人日</td></tr>
+<tr><th>可证伪判据</th><td>DocVQA ANLS 提升 ≥ 5pp 且 InfoVQA ANLS 提升 ≥ 4pp</td></tr>
+</table>
+<h3>路线③: RL 可验证奖励调优 (高成本, 待预算)</h3>
+<table class="m"><tr><th>项</th><th>详情</th></tr>
+<tr><th>数据量</th><td>少量样本 + 字符级 exact-match 可验证奖励 (Visual-RFT/GRPO)</td></tr>
+<tr><th>接入点</th><td>在路线①之后对 MLLM 做 RL 微调; 需答审预算批准</td></tr>
+<tr><th>成本</th><td>数据少但 RL 训练较贵; 需运维预算批准</td></tr>
+<tr><th>ETA</th><td>待路线①/②验证后再评估</td></tr>
+<tr><th>可证伪判据</th><td>在路线①基础上 OCRBench 再提升 ≥ 1pp 且无回退</td></tr>
+</table>
+
+<p class="small">成本与 ETA 均为估算, 非实测; 需运维预算与 GPU 排期批准后方可执行。</p>
+
+<h2>6. 风险与坑</h2>
+
+<ul>
+<li><b>域差 (domain gap)</b>: 合成文字/文档与真实扫描、手机拍照的光照/模糊/纸质差异大; 需充分退化沉淀真实分布, 否则合成上过拟、真实下掉。</li>
+<li><b>字体与语言覆盖</b>: 中文/小语种字体、手写、公式、表格覆盖不足会留下盲区; 须明确字体清单与语言比例, 避免英文为主、中文坐冷板决 (本项目语料以英文为主)。</li>
+<li><b>渲染伪影</b>: 合成图片易出现不自然贴合边缘、锉齿、光照不一致; 需多样退化与真实背景混合, 评测时注意合成泄漏 (评测集与训练集不得同源)。</li>
+<li><b>评测泄漏</b>: OCRBench/DocVQA/ChartQA/InfoVQA 为公开评测集; 合成数据年不得直接含评测集原文; 以模板/语料重新生成, 并在报告中披露是否使用了评测集的模板/语料。</li>
+<li><b>指标口径</b>: 本项目 OCRBench 用 lmms-eval ocrbench_accuracy (0-1 逐题 exact-match), 与原版 OCRBench 满分 1000 不同; 与外部榜横比前必须标注口径, 否则与 LLaVA/Qwen-VL 的 “57” 类数字不可比。</li>
+<li><b>容量→MLLM 不传递</b>: ArmE-R2 (ViT-L/14, ProtB 68.2%) 编码器最强但 OCRBench 仍 1.6% → 表明再加编码器容量不解决 OCR; 问题在数据/任务位, 而非编码器。</li>
+</ul>
+
+
+<h2>7. 优先级排序</h2>
+<div class="kbox">
+<p><b>单一下一步: 执行路线①</b> (低成本合成 OCR 识别对 + 专项 SFT)。</p>
+<p>理由: (a) 成本最低 (渲染 CPU + 1-2 GPU·日); (b) 不动编码器, 复用现有 ArmB/ArmE-R2 ckpt; (c) 直击最低分 (OCRBench 1.6%); (d) 可证伪 — 预注册判据明确。</p>
+<p><b>预注册判据</b>: 在现有 ckpt 上加一轮 OCR 专项 SFT 后, OCRBench 提升 <b>≥ 2pp</b> (1.6%→≥3.6%); 未达则写负面结论并排查数据质量/过拟。</p>
+<p>仅当路线①验证为正后, 再依次评估路线②(文档) 与路线③(RL)。未经运维批准, 本轮不启任何训练。</p>
+</div>
+
+<h2>8. 参考来源 (纯文本, 禁超链)</h2>
+<table><tr><th>方法/基准</th><th>标题 + arXiv 号 + 年份</th></tr>
+<tr><td>SynthTIGER</td><td>SynthTIGER: Synthetic Text Image GEneratoR Towards Better Text Recognition Models, arXiv:2107.09313, 2021</td></tr>
+<tr><td>SynthText</td><td>Synthetic Data for Text Localisation in Natural Images, arXiv:1604.06646, 2016</td></tr>
+<tr><td>trdg</td><td>TextRecognitionDataGenerator (GitHub 开源工具, 无单一 arXiv), 2018</td></tr>
+<tr><td>Donut/SynthDoG</td><td>OCR-free Document Understanding Transformer, arXiv:2111.15664, 2021</td></tr>
+<tr><td>UDOP</td><td>Unifying Vision, Text, and Layout for Universal Document Processing, arXiv:2212.02623, 2022</td></tr>
+<tr><td>Pix2Struct</td><td>Pix2Struct: Screenshot Parsing as Pretraining for Visual Language Understanding, arXiv:2210.03347, 2022</td></tr>
+<tr><td>Nougat</td><td>Nougat: Neural Optical Understanding for Academic Documents, arXiv:2308.13418, 2023</td></tr>
+<tr><td>mPLUG-DocOwl</td><td>mPLUG-DocOwl: Modularized Multimodal Large Language Model for Document Understanding, arXiv:2307.02499, 2023</td></tr>
+<tr><td>dots.ocr</td><td>dots.ocr: Multilingual Document Layout Parsing in a Single Vision-Language Model, arXiv:2512.02498, 2025</td></tr>
+<tr><td>ChartQA</td><td>ChartQA: A Benchmark for Question Answering about Charts with Visual and Logical Reasoning, arXiv:2203.10244, 2022</td></tr>
+<tr><td>Chart-to-Text</td><td>Chart-to-Text: A Large-Scale Benchmark for Chart Summarization, arXiv:2203.06486, 2022</td></tr>
+<tr><td>olmOCR</td><td>olmOCR (微调 7B VLM, olmOCR-mix-0225 260K页), arXiv:2502.18443, 2025</td></tr>
+<tr><td>Visual-RFT</td><td>Visual-RFT: Visual Reinforcement Fine-Tuning (GRPO + 可验证奖励), arXiv:2503.01785, 2025</td></tr>
+<tr><td>内部冗余自训练 OCR</td><td>Improving OCR using internal document redundancy, arXiv:2508.14557, 2025</td></tr>
+<tr><td>PaddleOCR</td><td>PaddleOCR 开源工具包 (无单一 arXiv), 2020</td></tr>
+<tr><td>im2latex</td><td>im2latex-100K 数据集/项目 (未查到 arXiv 标题页), 2017</td></tr>
+<tr><td>GOT-OCR2.0</td><td>本次检索未命中 arXiv 标题页 (编号/名称存疑), 未取得可溯源摘要</td></tr>
+<tr><td>OCRBench</td><td>OCRBench (29 数据集综合 OCR 评测), arXiv:2305.07895, 2023</td></tr>
+<tr><td>DocVQA</td><td>DocVQA: A Dataset for VQA on Document Images, arXiv:2007.00398, 2020</td></tr>
+<tr><td>LLaVA-1.5 / Qwen-VL</td><td>Improved Baselines with Visual Instruction Tuning, arXiv:2310.03744, 2023; Qwen-VL, arXiv:2308.12966, 2023</td></tr>
+</table>
+<hr>
+<p class="small">诚实条款: 外部效果数字均为论文自报、未在本项目复现; 成本为估算; 本项目数字全部实测可溯源 (consolidated_12benchmarks.json)。检索于 2026-10-25, 经代理 http://172.19.92.25:13128 访问 arXiv, 仅取摘要。生成器: vision/generate_ocr_synthdata_report.py。</p>
+</div></body></html>

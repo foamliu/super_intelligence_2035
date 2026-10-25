@@ -1775,3 +1775,33 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 
 **裁定**：ArmE-R2 平均(除MME) = **26.10%**，vs ArmD-R2 = **−0.02pp**（6 升 5 降，均 ±1.5pp 内），vs ArmC = **+0.32pp**，vs ArmB = **−0.00pp**（几乎完全持平）。落在预注册 22–26.5%「不可分辨」带。DocVQA/ChartQA/OCRBench vs ArmD-R2 无任一 +10pp（−0.09/−0.76/+0.00）⇒ 不触发「>24% 且单集 +10pp 成功」分支。沿用 ArmB/ArmC/ArmD-R2 预注册判据，**裁定 = 不可分辨（边界值）**。⚠️ **三变量 + 容量混杂**：ArmE-R2 vs ArmD-R2 的 ④Δ 是 塔(B→L, 86→304M) + LR(1e-3→5e-4) + warmup(2000→3000) 三重混杂，**不是纯编码器对照**；编码器纯对照看 ②ProtB（Δlp+3.899pp / Δ5-NN+2.948pp，双双正向，🏆全实验最高，已 secured）。
 
+
+## §16 OCR 类评测偏低 · 合成数据补强调研报告（2026-10-25 wake#271）
+
+> 用户令(2026-10-25 17:5x)：「vision：现在 OCR 类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」本轮 = 调研 + 写报告，不启训练。报告自包含 HTML：`reports/report_vision_ocr_synthdata_zh.html`（29177 B / 8 节 / 0 `<script>` / 0 外链 / 标签配平）。
+
+### §16.1 现状实测（四臂 OCR 相关四集）
+数据源：`mllm_eval_results_arm{B,C}/`、`mllm_eval_results_armD_r2_20261020/`、`mllm_eval_results_armE_r2_20261022/` 下 `consolidated_12benchmarks.json`。四集均无需 LLM judge（exact-match / ANLS / relaxed），与 MMVet/MathVista 的 OPENAI_API_KEY 阻塞无关。
+
+| 集合 | 指标 | ArmB | ArmC | ArmD-R2 | ArmE-R2 |
+|:--|:--|--:|--:|--:|--:|
+| OCRBench | ocrbench_accuracy | 1.60% | 1.80% | 1.60% | 1.60% |
+| DocVQA(val) | ANLS | 7.36% | 7.58% | 7.44% | 7.35% |
+| ChartQA | relaxed | 12.52% | 12.48% | 12.92% | 12.16% |
+| InfoVQA(val) | ANLS | 16.88% | 17.09% | 16.59% | 16.18% |
+
+四臂跨度 ≤1pp，与 ArmE-R2 编码器 ProtB 68.2%（全实验最高）形成鲜明对比 → 再加编码器容量不提升 OCR；缺位在专项数据/任务对齐。
+
+### §16.2 调研方法（经代理检索 arXiv 摘要，2026-10-25）
+覆盖 7 类 18 法：文字识别合成（SynthTIGER arXiv:2107.09313 / SynthText arXiv:1604.06646 / trdg）、文档合成/OCR-free（Donut-SynthDoG arXiv:2111.15664 / UDOP arXiv:2212.02623 / Pix2Struct arXiv:2210.03347 / Nougat arXiv:2308.13418）、文档 MLLM/指令调优（mPLUG-DocOwl arXiv:2307.02499 / dots.ocr arXiv:2512.02498）、图表数据（ChartQA arXiv:2203.10244 / Chart-to-Text arXiv:2203.06486）、OCR 引擎/识别管线（olmOCR arXiv:2502.18443 / PaddleOCR）、RL 可验证奖励（Visual-RFT arXiv:2503.01785）、自训练/伪标注（arXiv:2508.14557）、公式/手写（im2latex）。GOT-OCR2.0 本次检索未命中 arXiv 标题页（编号/名称存疑），未采信其数字。
+
+### §16.3 三条候选接入路线
+- 路线①（推荐首选）：低成本合成 OCR 识别对 50-200 万 + 在现有 ckpt 上专项 SFT；判据 OCRBench ≥+2pp。成本：渲染 CPU + 1-2 GPU·日（估算）。
+- 路线②：文档型合成 + 指令调优（SynthDoG/UDOP 风格 + mPLUG-DocOwl 指令数据）；判据 DocVQA ANLS ≥+5pp。成本 2-4 GPU·日（估算）。
+- 路线③：RL 可验证奖励调优（Visual-RFT/GRPO，字符级 exact-match 奖励）；待路线①验证后评估。
+
+### §16.4 诚实条款
+外部效果数字均为论文自报、未在本项目复现；成本/ETA 均为估算；本项目数字全部实测可溯源（consolidated_12benchmarks.json）。LLaVA-1.5/Qwen-VL/OCRBench/ChartQA 摘要均未列具体模型分数 → 同规模开源 MLLM 在 OCRBench/DocVQA 的公开值标注「未查到」。检索于 2026-10-25，经代理 http://172.19.92.25:13128 访问 arXiv，仅取摘要。
+
+- 报告：`reports/report_vision_ocr_synthdata_zh.html`（29177 B / 8 节 / 0 `<script>` / 0 外链 / 标签配平）。
+- 生成器：`vision/generate_ocr_synthdata_report.py`。

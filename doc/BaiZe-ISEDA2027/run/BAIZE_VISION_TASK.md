@@ -11,6 +11,8 @@
 
 ### [运维令] 2026-10-25 17:5x（**OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写报告**）· 用户直令 · 最高优先
 > 用户原话：「vision：现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」
+> ✅ **DONE (wake #271, 2026-10-25 18:57)**：四臂四集已量化、7 类 18 法调研完成、报告 `reports/report_vision_ocr_synthdata_zh.html`（29177B）+ 生成器 `vision/generate_ocr_synthdata_report.py` + `EXPERIMENTS_VISION.md §16` 已交付并 commit。本轮为调研+报告，未启训练。
+
 
 **1) 先把「低」量化（必做，不许凭印象）**
 - 从 `/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_arm*/consolidated_12benchmarks.json` 取四臂（ArmB / ArmC / ArmD-R2 / ArmE-R2）逐集实测，重点四集：**OCRBench / DocVQA(val) / ChartQA / InfoVQA(val)**。
