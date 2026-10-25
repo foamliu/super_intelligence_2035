@@ -322,3 +322,5 @@
 [swebench-pull] [314/500] OK pydata__xarray-6721 pulled=314 failed=0 skipped=0
 [swebench-pull] [315/500] OK pydata__xarray-6744 pulled=315 failed=0 skipped=0
 [swebench-pull] [316/500] OK pydata__xarray-6938 pulled=316 failed=0 skipped=0
+[swebench-pull] [317/500] OK pydata__xarray-6992 pulled=317 failed=0 skipped=0
+[swebench-pull] [318/500] OK pydata__xarray-7229 pulled=318 failed=0 skipped=0

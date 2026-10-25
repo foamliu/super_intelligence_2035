@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T18:46:47Z",
+  "generated_at": "2026-10-25T21:10:45Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -1648,10 +1648,10 @@
     ]
   },
   "hermes_rerun_20261025": {
-    "pass": 17,
-    "rewarded": 26,
-    "exceptions": 20,
-    "completed": 46,
+    "pass": 22,
+    "rewarded": 36,
+    "exceptions": 30,
+    "completed": 66,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -1971,6 +1971,146 @@
       {
         "task": "make-mips-interpreter",
         "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mcmc-sampling-stan",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "merge-diff-arc-agi-task",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "model-extraction-relu-logits",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "modernize-scientific-stack",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mteb-leaderboard",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mteb-retrieve",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "multi-source-data-merger",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "nginx-request-logging",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "openssl-selfsigned-cert",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "overfull-hbox",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "password-recovery",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing-reverse",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "polyglot-c-py",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "polyglot-rust-c",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "portfolio-optimization",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "protein-assembly",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "prove-plus-comm",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pypi-server",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-cli",
+        "harness": "hermes_rerun",
         "reward": null,
         "err_type": null,
         "err_subcause": null
@@ -1978,10 +2118,10 @@
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 9,
-    "rewarded": 22,
-    "exceptions": 9,
-    "completed": 31,
+    "pass": 10,
+    "rewarded": 30,
+    "exceptions": 11,
+    "completed": 41,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2195,6 +2335,76 @@
       },
       {
         "task": "fix-ocaml-gc",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gcode-to-text",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-leak-recovery",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-multibranch",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gpt2-codegolf",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "headless-terminal",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "hf-model-inference",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "install-windows-3.11",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "kv-store-grpc",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "large-scale-text-editing",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "largest-eigenval",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,
