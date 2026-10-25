@@ -1,7 +1,70 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 185 | TARGET: 29 -->
-## RUN_ID 185 — 🔎 只读：定位并读 `baize_dualnode_16gpu_test.sh`（搞清 mock/精度/数据/迭代开关，才能做 A/B 口径对齐）
+<!-- RUN_ID: 186 | TARGET: 29 -->
+## RUN_ID 186 — 🔎 只读：data + harness 两线实况探针（不重启、不 kill、不 pull）
+
+```bash
+set -u
+echo "=== RUN_ID 186 | data+harness liveness | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] 两线 loop 进程"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_(data|harness)_loop\.sh' | grep -v grep | cut -c1-160 || echo '  NO_LOOP'
+
+echo "[2] loop 日志尾部（看最后一次 wake / sleep 声明）"
+for f in /tmp/baize_data_loop.log /tmp/baize_harness_loop.log; do
+  echo "  --- $f ---"
+  ls -l --time-style=+%F_%T "$f" 2>/dev/null || echo '    NO_LOG'
+  tail -6 "$f" 2>/dev/null | cut -c1-170
+done
+
+echo "[3] 工作副本有没有 pull 到运维新令（关键：data 08:0x / harness 08:2x）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || true
+git rev-parse --short HEAD 2>/dev/null || true
+echo "  data TASK 顶部令："
+grep -n '2026-10-25 08:0x' "$R/BAIZE_DATA_TASK.md" 2>/dev/null | head -2 || echo '    NOT_FOUND(本地副本未更新)'
+echo "  harness TASK 顶部令："
+grep -n '2026-10-25 08:2x' "$R/BAIZE_HARNESS_TASK.md" 2>/dev/null | head -2 || echo '    NOT_FOUND(本地副本未更新)'
+
+echo "[4] data MEMORY mtime + WAITING"
+ls -l --time-style=+%F_%T "$R/MEMORY_DATA.md" 2>/dev/null
+grep -n '^WAITING:' "$R/MEMORY_DATA.md" 2>/dev/null | head -2
+
+echo "[5] harness MEMORY mtime + WAITING"
+ls -l --time-style=+%F_%T "$R/MEMORY_HARNESS.md" 2>/dev/null
+grep -n '^WAITING:' "$R/MEMORY_HARNESS.md" 2>/dev/null | head -2
+
+echo "[6] TB 7x89 存活（harbor 进程 + 运行中容器分布）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'harbor run -p /tmp/tb_7x89' | grep -v grep | cut -c1-140 | head -10 || echo '  NO_HARBOR'
+echo "  running_containers=$(docker ps -q 2>/dev/null | wc -l)"
+docker ps --format '{{.Names}}' 2>/dev/null | sed -E 's/__[a-z0-9]{6}__env$//' | sed -E 's/-[0-9]+$//' | sort | uniq -c | sort -rn | head -12 || true
+
+echo "[7] SWE-bench 下载进度（末 2 行）"
+tail -2 "$R/run/harness/swebench_verified_pull_progress.txt" 2>/dev/null || echo '  NO_PROGRESS_FILE'
+
+echo "[8] GPU（.29 本机 + .12）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 || echo '  no nvidia-smi'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "=== DONE 186 ==="
+```
+
+## RUN_ID 185 — 🔎 只读：定位并读 `baize_dualnode_16gpu_test.sh`（已执行 exit=124 超时，降级保留）
+
+```text
+set -u
+echo "=== RUN_ID 185 | read dual-node launcher | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 脚本位置"
+for h in . 12; do
+  if [ "$h" = . ]; then C="bash -lc"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 bash -lc"; fi
+  echo "  --- $h ---"
+  $C 'find /nas_train/app.e0031982 /tmp -maxdepth 4 -name "baize_dualnode*test.sh" 2>/dev/null | head -3; ls -l /tmp/baize_dualnode_16gpu_test.sh 2>/dev/null' 2>/dev/null || true
+done
+echo "[2] 主脚本前 60 行（看参数区）"
+echo "[3] 关键开关（mock / fp8 / cuda graph / data / iters / torchrun）"
+echo "[4] 该脚本里 mock 与真数据的切换点（上下文）"
+echo "=== DONE 185 ==="
+```
 
 ```bash
 set -u
