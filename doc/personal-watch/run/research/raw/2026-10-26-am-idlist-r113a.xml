@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api//rM3pJxujk8EorbHaV/azjRICkM</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.31276,2610.31646,2610.31024&amp;start=0&amp;max_results=3</title>
+  <updated>2026-10-25T22:03:47Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=3&amp;id_list=2610.31276,2610.31646,2610.31024" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31646v1</id>
+    <title>Low-Bit N-Gram Embeddings for Language Models</title>
+    <updated>2026-10-22T17:56:13Z</updated>
+    <link href="https://arxiv.org/abs/2610.31646v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31646v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Many recent open-weight language models use n-gram embedding tables to improve performance. These tables store learned representations of short token sequences, such as pairs or triples of consecutive tokens, which the model retrieves during processing. However, they can require substantial memory: DeepSeek-V4.1-Flash, for example, allocates 196 billion parameters to its Engram n-gram memory. We therefore investigate whether this memory cost can be reduced while preserving the performance improvement that the tables provide. We propose storing n-gram embeddings at low precision and systematically investigate different quantization methods and bit allocations across tables. Across nanochat-, Llama-, and GPT-2-family models trained from scratch, four-bit tables save approximately 75% of table memory while preserving more than 99% of the validation-loss improvement from adding the tables. Using fewer bits leads to a larger drop in performance, although we find that a short fine-tuning phase recovers a significant part of this loss. In addition, reinvesting the saved memory in larger tables can improve performance beyond that of the original full-precision tables while still using less memory. These table memory savings also extend to large existing models: on DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next, low-bit tables save 47-55% of table memory, with perplexity increases of less than 1.2% and largely preserved downstream task performance. These findings establish low-bit precision as a practical way to reduce the memory requirements of n-gram embeddings and use the saved capacity to improve model performance.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T17:56:13Z</published>
+    <arxiv:comment>24 pages, 10 figures, 10 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Stephen Chung</name>
+    </author>
+    <author>
+      <name>Wenyu Du</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31276v1</id>
+    <title>RIPPLE: Recovery Internalization through Process-Level Policy Learning and Effect-Aware Credit for Long-Horizon Agentic Coding</title>
+    <updated>2026-10-22T13:45:33Z</updated>
+    <link href="https://arxiv.org/abs/2610.31276v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31276v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Long-horizon coding agents can observe a failure and generate a plausible critique yet continue along the same incorrect trajectory. We call this the Critique-to-Action Handoff Gap. We introduce RIPPLE, a recovery-oriented training framework that internalizes process-level guidance into a single self-recovering policy. A prefix-only teacher provides evidence-grounded recovery supervision without access to future actions or terminal outcomes. After lightweight distillation, reinforcement learning assigns stage-specific credit to reflection triggering, diagnosis, and corrective action. Local validity signals gate trajectory advantages so that intermediate recovery decisions do not indiscriminately inherit terminal outcomes. Across four repository-level software-engineering benchmarks, RIPPLE improves the base policy by an arithmetic mean of 4.8 score points, with no auxiliary critic at deployment. Controlled ablations isolate the benefits of local, stage-aligned credit, and matched-prefix interventions show that critique semantics affect subsequent correction. Recovery gains concentrate where the prefix contains sufficient diagnostic evidence and the repository state remains reversible within the remaining budget.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T13:45:33Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jingxuan Xu</name>
+    </author>
+    <author>
+      <name>Zihang Xu</name>
+    </author>
+    <author>
+      <name>Yuechen Luo</name>
+    </author>
+    <author>
+      <name>Ziqi Miao</name>
+    </author>
+    <author>
+      <name>Wenqiang Zhu</name>
+    </author>
+    <author>
+      <name>Weihao Li</name>
+    </author>
+    <author>
+      <name>Junhao Fan</name>
+    </author>
+    <author>
+      <name>Xinshun Feng</name>
+    </author>
+    <author>
+      <name>Zhiyi Lai</name>
+    </author>
+    <author>
+      <name>Yanan Wu</name>
+    </author>
+    <author>
+      <name>Haoyang Huang</name>
+    </author>
+    <author>
+      <name>Ken Deng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.31024v1</id>
+    <title>NN-Based Transistor Modeling for Ultra-Fast SPICE Simulation and Standard Cell Library Characterization</title>
+    <updated>2026-10-22T09:59:47Z</updated>
+    <link href="https://arxiv.org/abs/2610.31024v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.31024v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Neural network (NN)-based transistor models have proven to be a promising solution to accelerate device modeling. Although these models demonstrated remarkable speedup in circuit simulations, they were not rigorously tested in complex tasks within standard EDA tool flows for chip design, which require very high transistor model precision to provide accurate results and converge properly. To investigate their full potential and promise, we develop NN-based transistor models that accurately predict the drain current and various charges for a 3nm nanosheet, and employ the models for a standard cell library characterization. This enables us to evaluate the accuracy and speedup under a very wide range of SPICE simulations, benchmarking our models against an industry-standard implementation. Since standard cell library characterization involves thousands of SPICE simulations, it serves as a great benchmark for transistor model quality and consistency. To further evaluate model accuracy, we also perform analog- and digital-level simulations for various complex circuits. Our experiments reveal that NN-based models are a valid alternative to existing transistor compact models, capable of producing accurate delay and power estimates with a much higher speed and convergence time compared to the conventional Verilog-A-based industry-standard (BSIM-CMG) transistor compact model. Our NNs achieve sub-0.11% and 0.76% errors for delay and total power evaluation on a wide range of circuits, while taking up to 8 times less time during the standard cell library characterization. Additionally, we provide comprehensive information and guidance on NN accuracy, unveiling the relationship between NN size and its effect on circuit simulation precision.</summary>
+    <category term="cs.ET" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-22T09:59:47Z</published>
+    <arxiv:comment>11 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.ET"/>
+    <author>
+      <name>Rodion Novkin</name>
+    </author>
+    <author>
+      <name>Hussam Amrouch</name>
+    </author>
+  </entry>
+</feed>
