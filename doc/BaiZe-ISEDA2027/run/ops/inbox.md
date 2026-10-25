@@ -1,5 +1,43 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 210 | TARGET: 29 -->
+## RUN_ID 210 — 只读：22:0x 巡检（四线为何静默 / 网格到哪一格 / 复跑计数 / 分词收尾）
+
+```bash
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+echo "=== RUN_ID 210 | probe | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] loops"
+pgrep -af 'baize_.*_loop\.sh|ops_relay\.sh' | cut -c1-120 || echo "  (NO LOOP RUNNING)"
+for l in vision pretrain data harness; do
+  f=/tmp/baize_${l}_loop.log
+  [ -f "$f" ] && { echo "  -- $l log mtime $(stat -c '%y' "$f" | cut -c1-19)"; tail -2 "$f" | cut -c1-150; } || echo "  -- $l : no log"
+done
+echo "[2] pretrain grid"
+tail -12 /tmp/baize_seqlen_grid/ALL_RESULTS.txt 2>/dev/null || echo "  no ALL_RESULTS"
+ls -d /tmp/baize_seqlen_grid/*/ 2>/dev/null | tr '\n' ' '; echo
+pgrep -af 'seqlen_grid' | cut -c1-120 || echo "  (no grid proc)"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[3] harness rerun"
+pgrep -af 'harbor' | cut -c1-90 || echo "  (no harbor)"
+docker ps -q 2>/dev/null | wc -l | sed 's/^/  docker_running=/'
+for d in /tmp/tb_7x89/jobs_hermes_rerun_20261025 /tmp/tb_7x89/jobs_claude-code_rerun_20261025; do
+  [ -d "$d" ] && echo "  $d reward=$(find $d -name reward.txt | wc -l) pass=$(find $d -name reward.txt -exec cat {} \; 2>/dev/null | grep -c '^1')" || echo "  MISSING $d"
+done
+tail -2 /nas_train/app.e0031982/harness/swebench_verified_pull_progress.txt 2>/dev/null
+echo "[4] data"
+tail -2 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-150
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true) text_bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)"
+ls -l "$R/run/data/DATA_MAPPING.md" "$R/run/data/disk_cleanup_candidates_20261025.tsv" 2>/dev/null | awk '{print "  "$5"B "$9}'
+df -h /nas_train | tail -1
+echo "[5] vision/data 交付物"
+ls -l "$R/reports/report_vision_ocr_sft_plan_zh.html" "$R/reports/report_pretrain_seqlen_throughput_zh.html" 2>/dev/null | awk '{print "  "$5"B "$9}' || echo "  (not yet)"
+echo "[6] git"
+cd "$R/.." 2>/dev/null; cd "$R"; git log -3 --format='  %h %ad %s' --date=format:'%H:%M' | cut -c1-120
+echo "=== DONE 210 ==="
+```
+
 <!-- RUN_ID: 209 | TARGET: 29 -->
 ## RUN_ID 209 — 只读：四条新令进度 + 32 shard 的 .bin 到底还剩没有（19:3x 巡检）
 
