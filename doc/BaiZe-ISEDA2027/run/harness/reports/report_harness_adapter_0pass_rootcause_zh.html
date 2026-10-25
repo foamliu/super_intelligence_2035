@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal-Bench 7x89 适配器 0% 通过率根因排查与修复（R492 2026-10-25）</title>
+<style>
+:root{--bg:#0f1419;--card:#1a2029;--ink:#e6edf3;--mut:#9aa7b4;--acc:#58a6ff;--ok:#3fb950;--bad:#f85149;--warn:#d29922;--code:#0d1117;--bd:#30363d}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;margin:0;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:24px;margin:0 0 4px;line-height:1.3}
+h2{font-size:19px;margin:34px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bd);color:var(--acc)}
+h3{font-size:16px;margin:22px 0 8px;color:#dbe1e8}
+.meta{color:var(--mut);font-size:13px;margin:0 0 6px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid var(--bd);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#21262d;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+code,pre{font-family:"SF Mono",Consolas,Menlo,monospace}
+code{background:#0d1117;border:1px solid var(--bd);padding:1px 5px;border-radius:5px;font-size:13px;color:#79c0ff}
+pre{background:var(--code);border:1px solid var(--bd);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:12.5px;line-height:1.55;color:#c9d1d9}
+.ev{border-left:3px solid var(--warn);background:#161b22;padding:10px 14px;margin:10px 0;border-radius:0 6px 6px 0}
+.ev .src{color:var(--mut);font-size:12px;margin-bottom:4px}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px 18px;margin:14px 0}
+.diff del{color:var(--bad);text-decoration:none}.diff ins{color:#7ee787;text-decoration:none}
+.small{font-size:12.5px;color:var(--mut)}
+ul{margin:8px 0}li{margin:3px 0}
+.pendsmoke{background:#2a1f0a;border:1px solid var(--warn);border-radius:8px;padding:12px 16px;margin:14px 0}
+</style></head><body><div class="wrap">
+<h1>Terminal-Bench 7x89 适配器 0% 通过率根因排查与修复</h1>
+<p class="meta">R492 2026-10-25 BaiZe harness 线 模型 kimi-k2.6-cloud 数据集 Terminal-Bench 2.0（89 tasks, Harbor）<br>口径：verifier/reward.txt（1=pass/0=fail），全部实测非估算。</p>
+<div class="card"><p style="margin:2px 0"><b>命名说明：</b>依用户令一律写 <code>cline</code>（对应 jobs_cline-patched / terminalbench.agents.cline_patched:ClinePatched），不写其它变体；代码里真实标识符保留不改。</p></div>
+<h2>TL;DR</h2>
+<ul>
+<li><b>已停三路</b>：claude-code（SIGTERM harbor PID 564462，已确认 GONE）；hermes/deepseek 排查前已 FINISHED 50/87 各，无存活进程无需 kill。<b>四存活（cline/codex/opencode/pi）未动</b>，launcher 与 gw_proxy 仍运行。</li>
+<li><b>0% 是适配器 bug，非模型不行</b>：hermes CLI 不在 PATH(36)+no_proxy 覆盖丢网关域名致 503(51)；deepseek 裸 pip 装不上 SDK(36)+runner 吞异常静默空输出(52)；claude-code 非 root 用户写不进 root 属主 /app(13)+撞 max-turns=50(18)。</li>
+<li><b>三适配器已修复</b>（hermes.py/deepseek_harness.py/claude_code.py，.orig 备份，py_compile 通过）。</li>
+<li><b>smoke：PENDING（未完成）</b>——为避让仍在运行的 4 路 survivor，本轮未跑 oracle-5 smoke；修复<b>尚未判为已验证修好</b>（见 §5）。</li>
+<li><b>四存活通过率（部分，非最终）</b>：cline 38/69=55.1% opencode 35/64=54.7% codex 20/41=48.8% pi 33/76=43.4%。McNemar 六对均未达显著。</li>
+</ul>
+<h2>1. 症状总表（三路 0% harness）</h2>
+<p class="small">来源：traces/&lt;h&gt;_run.log harbor 汇总 + 全量 result.json 扫描（/tmp/tb_7x89/jobs_*/）。</p>
+<table>
+<tr><th>harness</th><th>done</th><th>pass</th><th>通过率</th><th>异常</th><th>异常分布</th><th>主症状</th></tr>
+<tr><td><code>hermes</code></td><td>50</td><td class="bad">0</td><td class="bad">0.0%</td><td>37</td><td>RuntimeError x36 VerifierTimeout x1</td><td>exit 127 hermes: command not found x36；exit 0 HTTP 503 URL could not be retrieved x51</td></tr>
+<tr><td><code>deepseek-harness</code></td><td>50</td><td class="bad">0</td><td class="bad">0.0%</td><td>37</td><td>NonZeroAgentExitCodeError x35 VerifierTimeout x2</td><td>pip: command not found x36(install)；exit 0 stdout 全空 x52(runner 静默)</td></tr>
+<tr><td><code>claude-code</code></td><td>34</td><td class="bad">0</td><td class="bad">0.0%</td><td>含 err</td><td>exit 1 Reached max turns(50) x18；exit 0 权限/无法落盘 x13</td><td>模型有推理但写不进 root 属主 /app；或撞 50 轮上限</td></tr>
+</table>
+<p class="small">时间线（必查 #5）：三路从 Gen7 pilot(7x5) 就 0/5——从 pilot 起未修的老 bug，非本轮新增。</p>
+<div class="card"><b>必查 #1：reward.txt 是否真被写入？</b> 是。三路每个完成 trial 的 verifier/reward.txt 均存在且为 0（见 §3）。verifier 跑了、口径没歪，0% 是真实评分。对照 cline 的 nginx-request-logging reward.txt=1（pass 样本，结构一致）。</div>
+<h2>2. 停止动作证据（立即动作）</h2>
+<table>
+<tr><th>对象</th><th>处置</th><th>证据</th></tr>
+<tr><td>claude-code</td><td>SIGTERM harbor 564462</td><td>kill -TERM rc=0；~28s 后 ps -p 564462 -> GONE（优雅退出，拆除当前 trial 容器）</td></tr>
+<tr><td>hermes</td><td>无需 kill</td><td>排查前 harbor 汇总已打印 50 Trials/37 Exceptions/Mean 0.000，无存活进程</td></tr>
+<tr><td>deepseek-harness</td><td>无需 kill</td><td>同上，已 FINISHED 50/87</td></tr>
+<tr><td>四存活 cline/codex/opencode/pi</td><td><b>未动</b></td><td>SIGTERM 后 ps 确认 cline(536814)/opencode(551482)/pi(578125) 仍在跑、etimes 连续递增；launcher(522328) 与 gw_proxy(533489/533490) 仍在；codex 已自行跑完 41/87</td></tr>
+</table>
+<p class="small">已完成结果一律保留落盘（/tmp/tb_7x89/jobs_{hermes,deepseek-harness,claude-code}/ 未删），修好后用于对照复跑。</p>
+<h2>3. 逐 harness 根因 + 证据</h2>
+<h3>3.1 hermes —— 双根因，agent 两种意义上都没跑通</h3>
+<p><b>根因 A(36/50)：CLI 不在 PATH。</b> install() 用 pip install hermes-agent，约一半镜像 pip 不在 PATH，且 install<b>从不校验</b> which hermes，静默装好 -> run 阶段 hermes command not found。</p>
+<div class="ev"><div class="src">证据：jobs_hermes/.../dna-assembly__.../result.json -> agent_result.metadata</div>STDOUT: <code>bash: line 20: hermes: command not found</code><br>EXIT_CODE: <b>127</b>（全量扫描 exit 127 共 36 trial）</div>
+<p><b>根因 B(51/50)：no_proxy 覆盖丢网关域名 -> HTTP 503。</b> hermes run() 给 _env_for_harness(extra=...) 显式塞 <code>no_proxy: 127.0.0.1,localhost,10.239.*,172.19.*</code>，而 _base._env_for_harness() 已正确把网关主机 agi-gateway.cxmt.com 加进 no_proxy——env.update(extra) 在后执行，<b>把网关域名覆盖掉</b>。于是对网关请求被走 MITM 代理 -> 503。</p>
+<div class="ev"><div class="src">证据：jobs_hermes 全量扫描 stdout 首行签名</div>51 x <code>API call failed after 3 retries: HTTP 503 -- ERROR: The requested URL could not be retrieve...</code>（exit 0）</div>
+<div class="ev"><div class="src">证据：源码对照 _base.py vs hermes.py(修复前)</div><pre>_base._env_for_harness(): no_proxy_val = ...,<b>{gateway_host}</b>  # 含 agi-gateway.cxmt.com OK
+hermes.run() extra:       no_proxy: 127.0.0.1,localhost,10.239.*,172.19.*   # 覆盖掉网关域名 FAIL</pre></div>
+<p class="small">旁证：cline 走同一直连网关路线却 55% 通过——因 cline 用 _env_for_harness 默认 no_proxy(含网关域名)，没被 extra 覆盖。反向印证 503 是 no_proxy 覆盖所致，非网关不可用。</p>
+<h3>3.2 deepseek-harness —— SDK 装不上 + runner 吞异常</h3>
+<p><b>根因 A(36/50)：裸 pip 装不上 SDK。</b> install() 跑 pip install deepseek-harness-sdk，约 36 镜像 pip 不在 PATH(python3 在但 pip 不在)，且 install 不检查返回码，静默通过 -> run 阶段 import 失败 -> NonZeroAgentExitCodeError。</p>
+<div class="ev"><div class="src">证据：jobs_deepseek-harness/.../path-tracing-reverse__jRF8V9v/trial.log</div><pre>Running: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Trial failed: Command failed (exit 127): pip install ...
+stdout: <b>bash: line 1: pip: command not found</b></pre></div>
+<p><b>根因 B(52/50，最隐蔽)：runner 吞掉所有异常，静默空输出。</b> SDK 装上时 runner 的 harness.run() 可能因 dsh 运行时初始化失败/模型返回空拿到空 final_response，老 runner 只 print(... or "") -> 打印空串 -> <b>exit 0 且无任何报错</b>，verifier 自然 0 分。</p>
+<div class="ev"><div class="src">证据：全量扫描 88 个 result.json stdout 首行签名</div><b>88 x &lt;empty&gt;</b>；exit_code=0 共 52(跑完但啥也没产出)，exit_code=None 共 36(install/run 异常)。</div>
+<p class="warn">根因 B 的空输出确切机理(dsh 起不来? gw_proxy_dsh 不通? 模型返回空?)需 live smoke 定性。修复已让 runner 不再吞异常，下次会直接把 traceback/result repr 打到 stderr。</p>
+<h3>3.3 claude-code —— 模型在干活，但交付物落不了盘</h3>
+<p><b>根因 A(13/34 exit-0)：非 root 用户写不进 root 属主 /app/。</b> 适配器为绕过 claude root 下禁用 --dangerously-skip-permissions 而以 agent 用户运行，却只 chown 了 task workdir(cwd)，没动 /app/。许多 TB 任务要求写到 /app/&lt;file&gt;，/app/ 仍 root 属主 -> agent EACCES -> 模型算对也交不出文件。</p>
+<div class="ev"><div class="src">证据：jobs_claude-code/.../count-dataset-tokens__.../result.json -> metadata.stdout</div><pre>The total number of DeepSeek tokens ... is: **79586**
+However, I was unable to write this to /app/answer.txt because the directory
+is owned by root and I do not have permission to write there (no sudo/su access).</pre><span class="small">-> 模型确实调通了(有推理有数值)，死在写文件这一步。同类 stdout：permission issue writing to /app；/app directory exists but is owned by root。</span></div>
+<p><b>根因 B(18/34)：撞 max-turns=50。</b> Error: Reached max turns (50) -> exit 1 -> 无 patch -> 0 分。</p>
+<div class="ev"><div class="src">证据：全量扫描 stdout 首行签名</div>18 x <code>Error: Reached max turns (50)</code>（exit 1）</div>
+<p class="small">claude-code 是七路里最慢的(~1.7 trial/h)，慢+撞轮数上限叠加 -> 34/87 且 0 pass。</p>
+<h2>4. 修复 diff（补丁落 agents/，原文件存 .orig）</h2>
+<p class="small">三文件 py_compile 通过。只改这三路，未碰 cline/codex/opencode/pi 及 _base.py。</p>
+<h3>4.1 hermes.py</h3>
+<pre class="diff">install():
+<del>- pip install --break-system-packages hermes-agent   # 裸 pip，不校验</del>
+<ins>+ python3 -m pip install --break-system-packages hermes-agent   # python3 -m pip 必在</ins>
+<ins>+ command -v hermes 校验 -> 失败 --force-reinstall 重试 -> 仍失败 raise RuntimeError(不再静默 0%)</ins>
+<ins>+ run() 命令前 export PATH=/usr/local/bin:/usr/bin:$PATH</ins>
+run() extra:
+<del>- no_proxy/NO_PROXY: 127.0.0.1,localhost,10.239.*,172.19.*   # 覆盖掉网关域名 -> 503</del>
+<ins># 不再覆盖 no_proxy —— 让 _base._env_for_harness() 的正确值(含 agi-gateway.cxmt.com)生效</ins></pre>
+<h3>4.2 deepseek_harness.py</h3>
+<pre class="diff">install():
+<del>- pip install --break-system-packages deepseek-harness-sdk   # 裸 pip -> 36 trial pip: command not found</del>
+<del>- import 校验带 || true(失败也静默)</del>
+<ins>+ python3 -m pip install --break-system-packages deepseek-harness-sdk</ins>
+<ins>+ import 校验不带 || true；rc!=0 -> raise RuntimeError(含 install_out+stderr，暴露真因)</ins>
+runner_script:
+<del>- 裸 harness.run() + print(final_response or "")   # 异常被吞/空输出 exit 0</del>
+<ins>+ try/except 包裹；Exception -> traceback.print_exc()+sys.exit(1)</ins>
+<ins>+ final_response 为空 -> 打印 DSH WARNING: empty final_response + repr(result) 到 stderr + sys.exit(2)(不再静默)</ins></pre>
+<h3>4.3 claude_code.py</h3>
+<pre class="diff">run() 启动前 chown:
+<del>- chown -R agent {cwd}        # 只动 workdir，/app 仍 root 属主</del>
+<ins>+ chown -R agent {cwd}; chown -R agent /app; chmod -R a+rwX /app   # 让 agent 用户能写 /app/&lt;solution&gt;</ins>
+max_turns 默认:
+<del>- self._max_turns = opts.max_turns or 50   # 18/34 撞顶</del>
+<ins>+ self._max_turns = opts.max_turns or 80   # 缓解 Reached max turns</ins></pre>
+<div class="pendsmoke">
+<h3 style="margin-top:0">5. smoke 验证：PENDING（本轮未跑，故修复尚未判为已验证修好）</h3>
+<p>依令修完先跑 oracle 已知可解的 5 题，判据=至少 1 道 pass；0 pass 不算修好。本轮<b>未执行 smoke</b>，原因如实记录：</p>
+<ul>
+<li><b>资源避让</b>：四存活(cline/opencode/pi 仍在跑、codex 已完)共享同一 gw_proxy(9090/9091)与 CPU；用户令不许 kill/重启/改动四存活。新增 3 路 smoke 会与 survivor 抢 gw_proxy 与容器调度，有干扰风险。</li>
+<li><b>单 trial 时长</b>：claude-code ~30 min/trial、hermes/deepseek 含 pip 安装 ~10-20 min/trial；5 题 x3 路即使串行也需数小时，超出单轮唤醒可靠窗口。</li>
+<li><b>计划</b>：待 survivor 跑完(pi 11 余、cline 18 余、opencode 23 余，ETA 约本日午后~次日凌晨)释放 gw_proxy 后，下一/几轮唤醒用 oracle-15 可解 5 题(R473 oracle 11/15 可解)逐路 smoke：<br><code>nice -n 19 harbor run -p &lt;5task-dataset&gt; --agent terminalbench.agents.&lt;H&gt; -k 1 --n-concurrent 1 --extra-docker-compose overlay-network-host.yml --jobs-dir /tmp/tb_smoke_&lt;H&gt;</code><br>判据：>=1 pass 才算修好；仍 0 pass 则据新 stderr/traceback 继续查(尤其 deepseek 根因 B)。</li>
+</ul>
+<p class="warn"><b>结论口径</b>：根因已定位+修复已落码+编译通过；但是否真修好<b>以 smoke 为准，当前=未验证</b>，不含糊过关。</p>
+</div>
+<h2>6. 四存活 harness 通过率（部分结果，非最终）</h2>
+<p class="small">口径：verifier/reward.txt == 1。快照时间 2026-10-25 ~10:1x。cline/opencode/pi 仍在跑、codex 已 FIN 41/87。codex err 偏高已标注但未停(用户只令停那三个)。</p>
+<table>
+<tr><th>harness</th><th>done</th><th>pass</th><th>通过率</th><th>err(harbor 汇总)</th><th>剩余/ETA</th><th>备注</th></tr>
+<tr><td><code>cline</code></td><td>69</td><td>38</td><td><b>55.1%</b></td><td>运行中</td><td>18/87 ~7h</td><td>健康，参考基准</td></tr>
+<tr><td><code>opencode</code></td><td>64</td><td>35</td><td><b>54.7%</b></td><td>运行中</td><td>23/87 ~8h</td><td>健康</td></tr>
+<tr><td><code>codex</code></td><td>41</td><td>20</td><td>48.8%</td><td>59 exc(AgentTimeout x15, RuntimeError x44)</td><td>FIN 41/87</td><td class="warn">err 偏高(疑似适配器问题)，已标注未停</td></tr>
+<tr><td><code>pi</code></td><td>76</td><td>33</td><td>43.4%</td><td>运行中</td><td>11/87 ~4h</td><td>健康</td></tr>
+</table>
+<h3>6.1 McNemar 初步配对（共同任务，chi2 连续性校正，df=1，0.05 临界=3.84）</h3>
+<table>
+<tr><th>配对</th><th>共同 n</th><th>both pass</th><th>both fail</th><th>A only</th><th>B only</th><th>chi2</th><th>结论</th></tr>
+<tr><td>cline vs codex</td><td>32</td><td>13</td><td>15</td><td>3</td><td>1</td><td>0.250</td><td>不显著</td></tr>
+<tr><td>cline vs opencode</td><td>63</td><td>31</td><td>22</td><td>6</td><td>4</td><td>0.100</td><td>不显著</td></tr>
+<tr><td>cline vs pi</td><td>66</td><td>24</td><td>23</td><td>13</td><td>6</td><td>1.895</td><td>不显著(最接近)</td></tr>
+<tr><td>codex vs opencode</td><td>29</td><td>10</td><td>11</td><td>4</td><td>4</td><td>0.125</td><td>不显著</td></tr>
+<tr><td>codex vs pi</td><td>38</td><td>10</td><td>12</td><td>9</td><td>7</td><td>0.062</td><td>不显著</td></tr>
+<tr><td>opencode vs pi</td><td>63</td><td>23</td><td>24</td><td>11</td><td>5</td><td>1.562</td><td>不显著</td></tr>
+</table>
+<p class="small">样本仍小(共同 n=29-66，codex 仅 41 done)，六对均未达显著；cline-vs-pi(1.895)与 opencode-vs-pi(1.562)趋势上 cline/opencode 略强，需等全量 87 跑完再定。</p>
+<h2>7. 未修复/待办卡点</h2>
+<ul>
+<li><b>deepseek 根因 B(空输出)确切机理未最终定性</b>：修复已让 runner 不再吞异常，但 dsh 运行时是否起得来/gw_proxy_dsh 是否通/模型是否返回空需 smoke 的 stderr 确认。三路里最不确定的一路。</li>
+<li><b>smoke 未跑</b>：见 §5。三路修复均待 smoke >=1 pass 才算验证。</li>
+<li><b>codex 高 err(59 exc)</b>：用户令标注但不停，本轮仅记录；codex 已 FIN 41/87，是否另开排查待用户定。</li>
+<li><b>修复后全量复跑</b>：smoke 通过后三路需各自重跑 87 题(或先补完剩余)做对照，才能给出修复后通过率。</li>
+</ul>
+<h2>8. 铁律遵守自检</h2>
+<ul>
+<li>OK 只停这三路(claude-code SIGTERM；hermes/deepseek 本已 FIN 无需 kill)；四存活未动(ps 证据见 §2)。</li>
+<li>OK 停前记录 batch 目录、done 数、trial 列表；已完成结果未删。</li>
+<li>OK 未把 0% 归因为模型不行——逐路证明 agent 是否调用模型：claude-code 有推理输出(token>0、有数值)；hermes 503=网络代理配置错(请求确实发出)；deepseek=SDK 装不上/runner 吞异常。</li>
+<li>OK 未编造通过率，全部 reward.txt 实测；取不到处写明原因(survivor 运行中无汇总)。</li>
+<li>OK 未放宽 verifier/改 reward 口径/跳断言；未改另四路任何配置。</li>
+<li>OK 报告中文 HTML 自包含、无外链/CDN；命名依令写 cline。</li>
+<li>PENDING smoke 未跑(如实标注，未含糊过关)。</li>
+</ul>
+<p class="meta" style="margin-top:30px">-- R492 harness adapter-fix 补丁：hermes.py/deepseek_harness.py/claude_code.py(.orig 备份) commit 前缀 harness adapter-fix: --</p>
+</div></body></html>

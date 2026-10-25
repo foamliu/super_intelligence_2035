@@ -66,17 +66,33 @@ class DeepseekHarnessTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install DeepSeek-Harness SDK inside the Docker container via pip."""
-        await self.exec_as_root(
+        """Install DeepSeek-Harness SDK inside the Docker container via pip.
+
+        FIX (2026-10-25, R492): the old ``pip install ...`` used the bare ``pip``
+        command, which is NOT on PATH on ~36/50 task images
+        (``bash: line 1: pip: command not found`` → install silently "succeeds"
+        because the adapter never checked the return code, then run() fails with
+        NonZeroAgentExitCodeError / empty output → 0 pass).  Use
+        ``python3 -m pip`` (always present with python3), VERIFY the import
+        succeeds, and raise loudly if it does not.
+        """
+        install_res = await self.exec_as_root(
             environment,
             command=(
-                "pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5"
+                "python3 -m pip install --break-system-packages "
+                "deepseek-harness-sdk 2>&1 | tail -8"
             ),
         )
-        # Verify import
+        # Verify import; raise if the SDK did not install (was silently 0% before).
         result = await environment.exec(
-            command='python3 -c "import deepseek_harness; print(deepseek_harness.__version__)" 2>&1 || true'
+            command='python3 -c "import deepseek_harness; print(deepseek_harness.__version__)" 2>&1'
         )
+        if result.return_code != 0:
+            raise RuntimeError(
+                f"DeepSeek-Harness SDK install failed (python3 -m pip): "
+                f"rc={result.return_code} stderr={(result.stderr or '')[:400]} "
+                f"install_out={(install_res.stdout or '')[:300]}"
+            )
         self._version = result.stdout.strip() or "unknown"
         # Create DSH home
         await environment.exec(command=f"mkdir -p {self._dsh_home}")
@@ -107,24 +123,45 @@ class DeepseekHarnessTB(TBBaseAgent):
         # (run_harness.py:DeepseekHarnessDriver.run) passes the problem statement
         # as a Python *variable*; here we generate source, so we embed each value
         # with repr() — repr(str) is always a valid Python string literal.
+        # FIX (2026-10-25, R492): the old runner swallowed all exceptions — when
+        # the SDK failed to call the model or the native `dsh` runtime did not
+        # initialize, harness.run() returned an empty result, the script printed
+        # nothing and exited 0 → 52/50 trials "exit 0, empty stdout", 0 pass, with
+        # NO error visible.  Now wrap in try/except, print any traceback to stderr,
+        # exit non-zero on failure, and emit a loud diagnostic when the agent
+        # produced no final response (so the next run reveals the real cause
+        # instead of a silent 0%).
         runner_script = f'''
-import sys
-from deepseek_harness import DeepSeekHarness
-
-harness = DeepSeekHarness(
-    provider="deepseek-official",
-    model={repr(self._tb_model)},
-    base_url={repr(TB_GW_DSH_URL)},
-    api_key={repr(TB_DUMMY_KEY)},
-    cwd={repr(cwd)},
-    dsh_home={repr(self._dsh_home)},
-    profile={repr(self._profile)},
-    request_timeout_seconds=float({self._timeout}),
-    initialize_timeout_seconds=60.0,
-)
-with harness:
-    result = harness.run({repr(instruction)}, session_id="tb-deepseek")
-    print(getattr(result, "final_response", "") or "")
+import sys, traceback
+try:
+    from deepseek_harness import DeepSeekHarness
+    harness = DeepSeekHarness(
+        provider="deepseek-official",
+        model={repr(self._tb_model)},
+        base_url={repr(TB_GW_DSH_URL)},
+        api_key={repr(TB_DUMMY_KEY)},
+        cwd={repr(cwd)},
+        dsh_home={repr(self._dsh_home)},
+        profile={repr(self._profile)},
+        request_timeout_seconds=float({self._timeout}),
+        initialize_timeout_seconds=60.0,
+    )
+    with harness:
+        result = harness.run({repr(instruction)}, session_id="tb-deepseek")
+        final = getattr(result, "final_response", "") or ""
+        print(final)
+        if not final:
+            # Loud diagnostic: the agent produced no output.  Print whatever
+            # the result object exposes so the failure is no longer silent.
+            print("=== DSH WARNING: empty final_response ===", file=sys.stderr)
+            print("result repr:", repr(result)[:1000], file=sys.stderr)
+            sys.exit(2)
+except SystemExit:
+            raise
+except Exception:
+            print("=== DSH RUNNER EXCEPTION ===", file=sys.stderr)
+            traceback.print_exc()
+            sys.exit(1)
 '''
 
         # Write the script to a temp file and execute it

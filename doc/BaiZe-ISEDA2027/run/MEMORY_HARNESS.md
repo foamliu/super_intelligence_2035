@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~16.4h elapsed, 5/7 harbor alive; hermes+deepseek FINISHED 50/87 each) + SWE-bench Verified 后台下载进行中(255/500 pulled, 0 failed). 两线并列, TB未受下载影响(load 6.63↓较R490 8.45).
-已完成:       H-B 7way ctx compression report✅·Gate 7/7✅(R466)·7x89 concurrent LAUNCHED✅(R479)·SWE-bench Verified 体积估算✅(R480)·下载脚本+后台启动✅(R480)·TASK归档✅(R481)·hermes+deepseek 87/87 FINISHED✅(R484)·R485-R491双线监控✅
-当前动作:     R491: 双线并列监控. ①TB 7×87 并发~16.4h(16:21起,现08:46),5 harbor alive(hermes+deepseek已FINISHED 50/87). 精确统计(verifier/reward.txt口径,/tmp/tb_7x89/jobs_*): cline-patched 65done(36P=55.4%), codex 41done(20P=48.8%), opencode 60done(33P=55.0%), pi 69done(30P=43.5%), claude-code 30done(0P=0%,最慢), hermes FIN 50done(0P), deepseek FIN 50done(0P). 总365/609(60.0%). 较R490增量(+75min): cline+4(P+2)/codex+2(P+1)/opencode+4(P+3)/pi+3(P+1)/claude-code+4(P+0). load 6.63/6.86/7.53(TB未受下载影响,反而较R489 7.73↓). ⚠️codex高err(适配器问题);hermes/deepseek 0%+37err(适配器bug);claude-code最慢30/87(0%);cline/opencode/pi三路健康43-55%. ②SWE-bench Verified 下载: 255/500 pulled(+13/75min),0 failed,PID 1199724 alive(etimes=48335s~13.4h,进度mtime 08:37:06,末行[255/500]OK matplotlib__matplotlib-14623,子进程1575535正在拉matplotlib-20488). 总体19.0/h(255/13.4h),近期10.4/h(429退避致降速),剩余245→ETA~13h@19/h→10-25 22:00(或~24h@10.4/h→10-26 09:00). Docker 364 images(255 swebench),system df=452.5GB(99% reclaimable=449.8GB→dedup实测确认),/data 793G used/6.3T free(12%). ③体积估算(R480已交付):500镜像,dedup~30-60GB,sum(raw)~575GB,磁盘6.3T free→✅够;瓶颈=Docker Hub匿名限速(100 manifest/h/共享IP),非磁盘/带宽. ④git fetch OK(无behind),工作副本仅swebench_verified_pull_progress.txt变更(本线).
-下一步:       ①TB 5存活harness待完成(claude-code 30/87最慢~3.2/h→ETA~18h拖到10-26~02:30; codex 41/87~1.6/h→ETA~29h拖到10-26~13:30(全量瓶颈); pi 69→~7.5h(10-25~16:15),cline 65→~7h(10-25~16:00),opencode 60→~8.4h(10-25~17:10)),全量完成后→McNemar配对报告(中文HTML),codex/hermes/deepseek/claude-code高err需标注"疑似适配器bug" ②SWE-bench 下载持续(~10-19/h,ETA~10-25 22:00~10-26 09:00),监控pull_progress.txt,关注429退避 ③TB完成后:7 harness × 500 题 SWE-bench Verified 横评
-阻塞:         无. TB 在跑(5路存活,codex拖长至10-26下午为全量瓶颈); SWE-bench 下载受 Docker Hub 匿名限速(100 manifest/h,共享IP 203.127.181.131),实测近期~10/h(429被脚本300s退避重试消化,0 failed). ⚠️codex高err(适配器问题); hermes/deepseek 37err(适配器bug);claude-code err+最慢.
-ERROR_COUNT:  1
-📦 体积：TASK=33KB / MEMORY=31KB（归档 0KB）⚠️TASK 33KB 略超32KB软限(红线40KB),可归档块已基本归档完,远低于红线,暂留监控
+PHASE:        T2 Terminal-Bench 7x89 CONCURRENT RUNNING (~18h) — 3路0%适配器已根因+修复(R492,smoke PENDING); 4 survivor仍在跑; SWE-bench Verified 后台下载进行中.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·hermes+deepseek FIN✅(R484)·R485-R491监控✅·R492三路0%根因+修复✅(hermes/deepseek/claude-code,.orig备份,py_compile通过)·R492中文HTML报告✅(report_harness_adapter_0pass_rootcause_zh.html)
+当前动作:     R492: 诊断并修复三路0%适配器bug. ①已停claude-code(SIGTERM harbor 564462→GONE); hermes/deepseek排查前已FIN 50/87各(无存活进程,无需kill). 四survivor(cline/opencode/pi仍在跑,codex已FIN 41/87)未动,launcher+gw_proxy仍在. ②根因(全量result.json+trial.log扫描,逐路证明agent是否调模型): hermes=CLI不在PATH(bash:hermes:command not found exit127×36)+no_proxy覆盖丢网关域名agi-gateway.cxmt.com致HTTP503×51(_base._env_for_harness本已含网关域名,hermes run()extra覆盖掉→走MITM代理503;旁证cline走同路线55%通过因没被覆盖); deepseek=裸pip装不上SDK(pip:command not found×36,install不查返回码)+runner吞异常静默空输出(exit0 stdout全空×52); claude-code=非root agent用户写不进root属主/app(EACCES×13,模型有推理有数值但交不出文件)+撞max-turns50(×18). 时间线:三路从Gen7 pilot就0/5,老bug非本轮新增. ③修复(只改这3路,未碰4 survivor及_base.py,原文件存.orig,py_compile通过): hermes.py=python3 -m pip install+command -v hermes校验失败raise+run()export PATH+删no_proxy/NO_PROXY覆盖(让_base正确值生效); deepseek_harness.py=python3 -m pip+import校验不带||true失败raise+runner try/except不吞异常+空final_response打印DSH WARNING+repr(result)到stderr exit2; claude_code.py=chown -R agent /app+chmod -R a+rwX /app+max_turns 50→80. ④四存活通过率(部分,verifier/reward.txt==1,非最终): cline 38/69=55.1%, opencode 35/64=54.7%, codex 20/41=48.8%(FIN,59err已标注未停), pi 33/76=43.4%. McNemar六对均χ²<3.84(df1,临界3.84)未显著(cline-vs-pi1.895最接近). ⑤交付: reports/report_harness_adapter_0pass_rootcause_zh.html(中文自包含). ⑥smoke=PENDING未跑(为避让4 survivor抢gw_proxy/CPU,用户令不许动survivor;待survivor跑完下轮oracle-5逐路smoke,判据≥1pass才算修好;deepseek根因B空输出机理需smoke stderr定性). ⑦SWE-bench下载仍进行(255/500).
+下一步:       ①待4 survivor跑完(pi 11余/ETA~4h, cline 18余/~7h, opencode 23余/~8h)释放gw_proxy后,逐路smoke三修复(oracle-5可解题,判据≥1pass); ②smoke通过后三路全量复跑87题对照; ③codex高err(59exc)待用户定是否排查; ④SWE-bench下载持续监控
+阻塞:         smoke待survivor释放gw_proxy(资源避让); deepseek根因B(空输出)确切机理需live smoke的stderr定性
+ERROR_COUNT:  0
+📦 体积：TASK=33KB / MEMORY=25KB（R492归档R474-R477→2026-10-24.md）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -29,130 +29,12 @@ ERROR_COUNT:  1
 - 15/15 completed, mean reward 0.733 (11/15 solvable by oracle)
 - Failed by oracle: build-pmars, caffe-cifar-10(AgentTimeoutError), configure-git-webserver, git-multibranch
 
-### 🔴 R474 关键发现：Docker pull WORKS + cline-patched 0/15 根因
-
-**① Docker pull 实测成功（推翻"MITM proxy blocks Docker Hub"误判）**
-- daemon.json 已配 `proxies` → `http://172.19.92.25:13128`（Docker 27.5.1 支持 daemon.json proxies 字段）
-- `systemctl show docker --property=Environment` = 空（无 systemd drop-in），但 daemon.json proxies 已足够
-- 实测 `docker pull alexgshaw/circuit-fibsqrt:20251031` → 成功（392MB，共享 base layer "Already exists"）
-- 15 个已有镜像均为 `alexgshaw/*:20251031`（Docker Hub pull 来的，非 docker load）
-- **结论：之前"MITM proxy blocks"是误判**（可能当时 daemon.json proxies 还没配或 daemon 没重启）
-- 已启动 `_pull_all_tb_images.sh`（PID 2611629）批量拉取剩余 73 个镜像
-
-**② Terminal-Bench 任务数 = 89（全量）**
-- `ls ~/terminal-bench/` = 89 个任务目录
-- 15 个有本地镜像（alexgshaw/*:20251031），74 个缺失（1 个已拉，73 个正在拉）
-- 之前 7×15 = 105 trials 是因镜像不全，**非任务集本身只有 15 题**
-
-**③ cline-patched 0/15 RuntimeError 根因 = `export TB_API_KEY` 缺失**
-- v2 launcher `_full_7x15_v2_launcher.sh:30` 设 `TB_API_KEY="..."` 但**没 `export`**
-- Gen7 pilot launcher `_pilot_gen7_launcher.sh:14` 有 `export TB_API_KEY=...`
-- cline-patched 用直连网关 `TB_BASE_URL=http://agi-gateway.cxmt.com/cloud/v1`（需真实 key）
-- 其余 6 harness 用 gw_proxy (127.0.0.1:9090/9091，gw_proxy 注入真实 key from GW_API_KEY) → **不受影响**
-- **已修复**：launcher line 30 改为 `export TB_API_KEY=...`（下次重跑生效）
-- v2 run 已在跑 codex（不 kill），cline-patched 结果待 v2 完成后单独重跑
-
-**④ v2 run 状态**
-- cline-patched: 0/15 (15 RuntimeError) — 已保存，待重跑
-- codex: RUNNING (5 env containers up, ~08:59 开始)
-- log=/tmp/tb_full_7x15_v2.log, jobs=/tmp/tb_full_v2/jobs_*
-
-### 🔴 R475 关键发现：28 images failed due to transient auth.docker.io outage + retry script started
-
-**① Image pull progress (40/89 present, 49 missing)**
-- Original pull script (_pull_all_tb_images.sh, PID 2611629): 22 OK, 28 FAIL, 16 skipped
-- **28 failures root cause**: ALL same error — `auth.docker.io/token?... Service Unavailable` (503)
-  - This is a **transient Docker Hub auth service outage**, NOT a network/proxy issue
-  - Failures spanned tasks e→o alphabetically (extract-moves-from-video through openssl-selfsigned-cert)
-  - After the outage, pulls resumed succeeding (pulled went 11→22), confirming auth.docker.io recovered
-- Original script has NO retry logic — moved to next image on failure
-- **Retry script started** (_retry_pull_tb_images.sh, PID 3788007): 3 attempts per image, 30s delay between retries
-  - Already succeeding: extract-moves-from-video downloading layers (auth.docker.io back up)
-- Both scripts running in parallel (idempotent docker pull, skip already-present images)
-
-**② daemon.json proxy confirmed (no change from R474)**
-```json
-"proxies": {
-    "http-proxy": "http://172.19.92.25:13128",
-    "https-proxy": "http://172.19.92.25:13128",
-    "no-proxy": "localhost,127.0.0.1,::1"
-}
-```
-- `systemctl show docker --property=Environment` = empty (no systemd drop-in, but daemon.json proxies sufficient)
-- Docker 27.5.1 supports daemon.json `proxies` field
-- Docker Root Dir = `/data/docker`, /data has 6.4TB free (10% used)
-
-**③ v2 run status (codex harness)**
-- cline-patched: 0/15 (15 RuntimeError) — known bug (missing export TB_API_KEY), fixed for future reruns
-- codex: 11/15 completed, 3 PASS (adaptive-rejection-sampler=1.0, build-pov-ray=1.0, configure-git-webserver=1.0), filter-js-from-html in progress, 3 more tasks to go
-- v2 run will continue through remaining 5 harnesses after codex (hermes, opencode, claude-code, deepseek-harness, pi)
-
-**④ 7 concurrency plan (P2, after images complete)**
-- Cannot switch to 7 concurrency until all 89 images are present
-- Current v2 run is serial (7 harness × 15 tasks), ETA ~17h total
-- After 89 images: launch 7×89=623 full run with 7 concurrency (each harness 1 slot, independent /tmp jobs-dir)
-
-### 🔴 R476 关键发现：09:2x指令P0全部已解 + 7x89并发启动器已就绪 + 镜像55/89
-
-**① 09:2x 补充令 P0 回报（全部已被 R474/R475 解决，本轮复核确认）**
-- **P0-镜像来源**：89个镜像均为 `alexgshaw/*:20251031`（Docker Hub pull）。`docker history` 确认 buildkit 层（COPY/WORKDIR/CMD），**非 docker load**。15个已有镜像 = pull来的，非tar导入。
-- **P0-dockerd代理**：`/etc/docker/daemon.json` 已配 `proxies` 字段（http/https-proxy=`http://172.19.92.25:13128`，no-proxy=localhost,127.0.0.1,::1）。无 systemd drop-in（`/etc/systemd/system/docker.service.d/` 不存在）。`systemctl show docker --property=Environment`=空。**daemon.json proxies 方式生效**（Docker 27.5.1支持）。
-- **P0-hello-world pull**：`sg docker -c 'docker pull hello-world'` → **SUCCESS**（Image is up to date）。两个pull脚本持续下载证明 pull 稳定可用。
-- **结论**：09:2x 指令中的"MITM proxy blocks = 不可解"已被 R474 推翻。92.25 代理通过 daemon.json proxies 已配置并验证通过。无需切换 92.23。
-
-**② 镜像拉取进度（55/89 present, 34 missing）**
-- 主pull脚本 (_pull_all_tb_images.sh, PID 2611629, ~2.5h): 持续下载中
-- 重试脚本 (_retry_pull_tb_images.sh, PID 3788007, ~1.3h): **0 failures**，已拉10个（auth.docker.io 恢复）
-- 从49→55在数分钟内增长，预计~1h完成剩余34个
-- /data: 7.0T total, 678G used, **6.4T free (10%)** — 空间充足
-
-**③ v2 串行运行状态**
-- cline-patched: DONE 0/15 (15 RuntimeError — bug已修, launcher line 30 已有 export TB_API_KEY)
-- codex: DONE **6/14 PASS (42.9%)** — PASS: adaptive-rejection-sampler, build-pov-ray, configure-git-webserver, fix-git, git-multibranch, log-summary-date-ranges; FAIL: bn-fit-modify, break-filter-js-from-html, build-cython-ext, build-pmars, caffe-cifar-10, cancel-async-tasks, chess-best-move, count-dataset-tokens; Exceptions: 6 AgentTimeoutError + 1 VerifierTimeoutError; runtime 3h6m
-- hermes: RUNNING (started 12:05:25)
-- 剩余: opencode, claude-code, deepseek-harness, pi
-
-**④ 7×89 并发启动器已创建（R476）**
-- `_full_7x89_concurrent_launcher.sh` (147行, syntax OK, chmod+x)
-- 7个harbor进程并行启动，各独立 `/tmp/tb_7x89/jobs_<harness>` (非NFS)
-- 共享 gw_proxy (9090/9091), nice -n 19, 5s stagger
-- 前置检查：89镜像全齐才启动（否则exit 3）
-- 资源评估已写入脚本：224 CPU / 2TB RAM / 6.4TB disk → 7并发充裕
-
-**⑤ 资源评估（30秒）**
-- CPU: 224核, load avg 19.63/17.12/13.45 → 每harness可分~30核（需2-4）
-- RAM: 2.0TB total, 1.8TB available → 每harness ~250GB（需数GB）
-- Disk: /data 6.4TB free → 7容器同时跑充裕
-- 当前运行容器: 5个（v2 hermes的env容器）
-
-### 🔴 R477 关键发现：7x89启动器关键BUG修复 + 镜像81/89 + v2 opencode运行中
-
-**① 7x89 并发启动器关键BUG修复（R477）**
-- **BUG**: `_full_7x89_concurrent_launcher.sh` 中 `FULL_DATASET` 和 `N_TASKS` 变量在脚本**末尾**定义（原line 141-147），但harbor run循环在**中间**就引用了它们（line 103/112）→ 启动后所有harbor进程会拿到空`-p ""`参数导致失败
-- **修复**: 将`FULL_DATASET`创建块（mktemp+symlink farm+N_TASKS计数）移到harbor循环**之前**（新line 88-94），确保`-p "${FULL_DATASET}"`引用有效
-- 验证: `bash -n` syntax OK，grep确认FULL_DATASET在line 88（harbor loop在line 112之前）
-- **这是R476创建脚本时遗留的顺序错误，若不修复7x89并发会全部失败**
-
-**② 镜像拉取进度（81/89 present, 8 missing）**
-- 从R476的55/89增长到81/89（+26个，retry脚本pulled=18 + 主脚本 + helper）
-- 8个仍缺失: make-mips-interpreter, mcmc-sampling-stan, merge-diff-arc-agi-task, model-extraction-relu-logits, modernize-scientific-stack, mteb-leaderboard, mteb-retrieve, multi-source-data-merger
-- 两个脚本并行拉取: ①retry脚本(PID 3788007)在make-mips-interpreter ②helper pull脚本(PID 2248679)在multi-source-data-merger（已拉nginx-request-logging+openssl-selfsigned-cert）
-- ETA: ~30min完成剩余8个
-
-**③ v2 串行运行状态（3/7 harness DONE, opencode RUNNING）**
-- cline-patched: DONE 0/15 (15 RuntimeError — TB_API_KEY未export bug, 已修)
-- codex: DONE 6/14 PASS (42.9%) — PASS: adaptive-rejection-sampler, build-pov-ray, configure-git-webserver, fix-git, git-multibranch, log-summary-date-ranges; 7 exceptions (6 AgentTimeout + 1 VerifierTimeout); runtime 3h6m
-- hermes: DONE 0/9 (6 RuntimeError exceptions, 9 completed all 0.0); runtime 37m46s
-- opencode: RUNNING (~68min, on build-pmars task)
-- 剩余: claude-code, deepseek-harness, pi
-- **v2只跑15题（镜像不全时的子集），7x89将覆盖全量89题**
-
-**④ 切换计划（镜像补齐后）**
-- 镜像89/89后: 记录v2进度（3 DONE + opencode partial），可停v2或等opencode完成
-- 启动7x89并发（launcher已修复）: 623 trials, 7-way concurrent, ETA ~2.5-3h
-- v2的15题结果作为preliminary sanity check，7x89的89题结果作为正式报告数据
+> 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[10:1x] R492 **三路0%适配器根因+修复(hermes/deepseek/claude-code)+中文HTML报告**. ①已停claude-code(SIGTERM harbor 564462→GONE); hermes/deepseek排查前已FIN 50/87各(无存活进程,无需kill). 四survivor(cline/opencode/pi仍在跑,codex已FIN 41/87)未动,launcher(522328)+gw_proxy(533489/533490)仍在. ②根因(全量result.json+trial.log扫描,逐路证明agent是否调模型): hermes=CLI不在PATH(bash:hermes:command not found exit127×36)+no_proxy覆盖丢网关域名agi-gateway.cxmt.com致HTTP503×51(_base._env_for_harness本已含网关域名,hermes run()extra no_proxy覆盖掉→走MITM代理503;旁证cline走同直连网关路线55%通过因没被extra覆盖); deepseek=裸pip装不上SDK(pip:command not found×36,install不查返回码)+runner吞异常静默空输出(exit0 stdout全空×52); claude-code=非root agent用户写不进root属主/app(EACCES×13,模型有推理有数值"79586 tokens"但交不出文件)+撞max-turns50(×18). 时间线:三路从Gen7 pilot就0/5,老bug非本轮新增. ③修复(只改这3路,未碰4 survivor及_base.py,原文件存.orig,py_compile三文件通过): hermes.py=python3 -m pip install+command -v hermes校验失败--force-reinstall重试仍失败raise+run()命令前export PATH=/usr/local/bin:/usr/bin:$PATH+删no_proxy/NO_PROXY extra覆盖(让_base正确值含网关域名生效); deepseek_harness.py=python3 -m pip install+import校验不带||true失败raise RuntimeError(含install_out+stderr)+runner try/except不吞异常(Exception→traceback+exit1)+空final_response打印DSH WARNING:empty final_response+repr(result)到stderr exit2; claude_code.py=chown -R agent /app+chmod -R a+rwX /app(让agent用户能写/app/<solution>)+max_turns 50→80. ④四存活通过率(部分,verifier/reward.txt==1,非最终,快照10:1x): cline 38/69=55.1%, opencode 35/64=54.7%, codex 20/41=48.8%(FIN,59err已标注未停), pi 33/76=43.4%. McNemar六对均χ²<3.84(df1,0.05临界3.84)未显著(cline-vs-pi1.895/opencode-vs-pi1.562最接近,样本小共同n=29-66). ⑤交付: harness/reports/report_harness_adapter_0pass_rootcause_zh.html(中文自包含,症状表/逐路根因+证据/修复diff/4survivor率+McNemar/未修卡点/铁律自检,§5 smoke PENDING如实标注). ⑥smoke=PENDING未跑(为避让4 survivor抢gw_proxy/CPU,用户令不许kill/重启/改动survivor;单trial claude-code~30min/hermes+deepseek含pip~10-20min,5题×3路需数小时超单轮窗口;待survivor跑完下轮oracle-5逐路smoke,判据≥1pass才算修好,deepseek根因B空输出机理需smoke stderr定性). ⑦体积维护:归档R474-R477详细块(120行)→daily-memories-harness/2026-10-24.md,MEMORY 33.6KB→25KB(本轮将提交MEMORY+报告+3补丁+daily归档). WAITING=1.
+
+
 [08:46] R491 **双线并列监控(TB 16.4h + SWE-bench 255/500)**. ①TB 7×87 并发~16.4h(16:21起,现08:46),5 harbor alive(hermes+deepseek已FINISHED 50/87). 精确统计(verifier/reward.txt口径,find /tmp/tb_7x89/jobs_*/ -name reward.txt): cline-patched 65done(36P=55.4%), codex 41done(20P=48.8%), opencode 60done(33P=55.0%), pi 69done(30P=43.5%), claude-code 30done(0P=0%,最慢), hermes FIN 50done(0P), deepseek FIN 50done(0P). 总365/609(60.0%). 较R490增量(+75min): cline+4(P+2)/codex+2(P+1)/opencode+4(P+3)/pi+3(P+1)/claude-code+4(P+0). 5 harbor process确认(pgrep harbor run -p /tmp/tb_7x89_dataset=5: cline_patched/codex/opencode/pi/claude_code). load 6.63/6.86/7.53(TB未受下载影响,反而较R489 7.73↓). ⚠️codex高err(适配器问题);hermes/deepseek 0%+37err(适配器bug,harbor已exit);claude-code最慢30/87(0%);cline/opencode/pi三路健康44-55%. 各路ETA:claude-code~18h→10-26 02:30, codex~29h→10-26 13:30(全量瓶颈), pi~7.5h→10-25 16:15, cline~7h→10-25 16:00, opencode~8.4h→10-25 17:10. ②SWE-bench Verified 下载: 255/500 pulled(+13/75min),0 failed,PID 1199724 alive(etimes=48335s~13.4h,进度文件mtime 08:37:06,末行[255/500]OK matplotlib__matplotlib-14623,子进程1575535正在拉matplotlib-20488). 总体19.0/h(255/13.4h),近期10.4/h(429退避致降速),剩余245→ETA~13h@19/h→10-25 22:00(或~24h@10.4/h→10-26 09:00). Docker 364 images(255 swebench),system df=452.5GB(99% reclaimable=449.8GB→dedup实测确认,raw~575GB/dedup~2.7GB),/data 793G used/6.3T free(12%,自批250后disk_free=6367GB几乎未动→dedup实测确认). ③体积估算(R480已交付swebench_verified_volume_estimate.txt):500镜像,75manifest实测dedup 85.3%共享层,raw~575GB/dedup~30-60GB,磁盘6.3T free→✅够;瓶颈=Docker Hub匿名限速(100 manifest/h/共享IP 203.127.181.131),非磁盘/带宽. ④git fetch(92.25代理)OK无behind,工作副本仅swebench_verified_pull_progress.txt变更(本线,loop外实时更新本轮将提交),其余??=他线在途文件不动. ⑤体积:TASK=33KB/MEMORY=31KB(⚠️TASK略超32KB软限,可归档块已基本归档完,远低于红线40KB). WAITING=1.
 
 

@@ -64,7 +64,7 @@ class ClaudeCodeTB(TBBaseAgent):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         opts = self._opts(ClaudeCodeTBOptions, kwargs)
-        self._max_turns = opts.max_turns or 50
+        self._max_turns = opts.max_turns or 80  # FIX R492: was 50 → 18/34 trials hit "Reached max turns (50)"; bump to 80.
         self._permission_mode = opts.permission_mode or "bypassPermissions"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
 
@@ -149,9 +149,18 @@ class ClaudeCodeTB(TBBaseAgent):
         # bash/edit tools can operate on the task repo (otherwise cd/edits fail
         # with EACCES).  Best-effort: if the path doesn't exist yet, claude will
         # create what it needs under /home/agent.
+        # FIX (2026-10-25, R492): also chown/chmod /app — many TB tasks require
+        # the solution to be written to /app/<file>, but /app is root-owned and
+        # claude runs as the non-root `agent` user → "permission issue writing
+        # to /app/" on 13/34 exit-0 trials (model reasoned correctly but could
+        # not produce the deliverable → 0 pass).  Make /app writable by agent.
         await self.exec_as_root(
             environment,
-            command=f"chown -R agent {shlex.quote(cwd)} 2>/dev/null || true",
+            command=(
+                f"chown -R agent {shlex.quote(cwd)} 2>/dev/null || true; "
+                f"chown -R agent /app 2>/dev/null || true; "
+                f"chmod -R a+rwX /app 2>/dev/null || true"
+            ),
         )
         cmd = (
             f"cd {shlex.quote(cwd)} && "

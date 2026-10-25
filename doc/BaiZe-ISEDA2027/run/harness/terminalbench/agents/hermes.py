@@ -86,15 +86,44 @@ class HermesTB(TBBaseAgent):
     @override
     async def install(self, environment: BaseEnvironment) -> None:
         """Install hermes-agent + register the kimi-proxy provider plugin (R457)."""
-        # 1) install hermes-agent
-        await self._exec_in_container(
+        # 1) install hermes-agent.
+        # FIX (2026-10-25, R492): the old `pip install ...` flaked on task images
+        # where `pip` is not on PATH (36/50 trials → "hermes: command not found",
+        # exit 127, 0 pass).  Use `python3 -m pip` (always available with python3),
+        # make PATH explicit, then VERIFY `hermes` is callable and raise loudly if
+        # not — a silent missing CLI produced 0% with no exception in install().
+        await self.exec_as_root(
             environment,
             command=(
-                "pip install --break-system-packages hermes-agent 2>&1 | tail -5"
+                "export PATH=/usr/local/bin:/usr/bin:$PATH && "
+                "python3 -m pip install --break-system-packages hermes-agent 2>&1 | tail -5"
             ),
             timeout=900,
         )
-        result = await environment.exec(command="hermes --version 2>&1 || true")
+        # Verify the console script is on PATH; retry once if missing.
+        check = await environment.exec(
+            command="command -v hermes || ls /usr/local/bin/hermes /usr/bin/hermes 2>/dev/null"
+        )
+        if "hermes" not in (check.stdout or ""):
+            # Fallback: re-install with --force-reinstall and ensure console script.
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "export PATH=/usr/local/bin:/usr/bin:$PATH && "
+                    "python3 -m pip install --break-system-packages --force-reinstall "
+                    "hermes-agent 2>&1 | tail -5"
+                ),
+                timeout=900,
+            )
+            check2 = await environment.exec(command="command -v hermes 2>&1")
+            if "hermes" not in (check2.stdout or ""):
+                raise RuntimeError(
+                    f"Hermes CLI not found on PATH after install: "
+                    f"{(check2.stdout or '')[:300]}"
+                )
+        result = await environment.exec(
+            command="export PATH=/usr/local/bin:/usr/bin:$PATH && hermes --version 2>&1 || true"
+        )
         self._version = result.stdout.strip() or "unknown"
 
         # 2) R457: providers must be PLUGINS, config.yaml is not read for them
@@ -176,13 +205,23 @@ class HermesTB(TBBaseAgent):
         )
 
         # -z must immediately precede the prompt (no space)
+        # FIX (2026-10-25, R492): export PATH so the console script (installed to
+        # /usr/local/bin) is found even when the container's default PATH omits it.
         cmd = (
+            f"export PATH=/usr/local/bin:/usr/bin:$PATH && "
             f"cd {shlex.quote(cwd)} && "
             f"hermes -z{shlex.quote(instruction)} "
             f"--provider {HERMES_PROVIDER_NAME} --model {shlex.quote(self._tb_model)} "
             f"--yolo"
         )
         _key = self._tb_api_key or TB_DUMMY_KEY
+        # FIX (2026-10-25, R492): DO NOT override no_proxy/NO_PROXY here.  The old
+        # override ("127.0.0.1,localhost,10.239.*,172.19.*") DROPPED the gateway
+        # hostname agi-gateway.cxmt.com that _base._env_for_harness() adds, so
+        # hermes's model requests were routed through the MITM proxy →
+        # "HTTP 503 — The requested URL could not be retrieved" on 51/50 trials.
+        # Leaving no_proxy unset lets _env_for_harness's correct value (which
+        # includes the gateway host) win.
         env = self._env_for_harness(extra={
             # Plugin reads these (see env_vars in the ProviderProfile, R457).
             "HERMES_KIMI_API_KEY": _key,
@@ -190,8 +229,6 @@ class HermesTB(TBBaseAgent):
             # Keep OPENAI_* consistent in case hermes falls back to them.
             "OPENAI_API_KEY": _key,
             "OPENAI_BASE_URL": self._tb_base_url,
-            "no_proxy": "127.0.0.1,localhost,10.239.*,172.19.*",
-            "NO_PROXY": "127.0.0.1,localhost,10.239.*,172.19.*",
         })
 
         result = await environment.exec(
