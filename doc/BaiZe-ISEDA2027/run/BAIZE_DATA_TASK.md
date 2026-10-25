@@ -22,6 +22,14 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-25 22:3x（分词停顿 2.6h：37 进程活着但 0 产出，先诊断再动）· 用户直令 · 最高优先
+> 事实（RUN_ID 210 实测 22:00）：`done=94/131` 自 19:21 起未变；`tokens=150,155,374,778` 与 `bin_bytes=600,621,499,112` 与 19:21 **完全相同**；`preprocess=37`；ETA 由 7,688s 涨到 11,369s ⇒ 不是慢，是**停**。
+> 1) **先诊断（15 分钟内）**：`ps -eo pid,etimes,pcpu,stat,args | grep '[p]reprocess_data'`（看 CPU 与 D 状态）；对 2-3 个 PID `py-spy dump --pid` 或 `cat /proc/<pid>/stack`；`nfsstat -c` / `dmesg | tail` / `df -h`；确认 37 个进程是否卡在同一 parquet 或同一 NFS 句柄。
+> 2) **按类处置**（不许直接全杀）：① NFS/IO 阻塞 ⇒ 留证据，重启这些 shard（保留已完成 `.bin/.idx/.json`）；② BPE/进程死锁 ⇒ 照 2026-10-22 的 BPE 死循环处理：杀卡住的 PID、清半成品 `.bin`、supervisor 重排；③ 计数器坏了但仍在写 ⇒ 用 `du -sb` + 文件 mtime 证明，修 supervisor 计数。
+> 3) 恢复后每 30 分钟记一次 `done` 与 `bin_bytes`，**连续两次相同才算真停**。
+> 4) 完成后仍按 18:5x 令刷 `DATA_MAPPING.md` 第 7-10 行为 `镜像完整`、重跑 `build_tokenized_mirror.py` 与 triplet/inode 校验。
+> 5) 报回：卡在哪个 shard、哪类原因、处置动作、恢复后 done 速率与 ETA。
+
 ### [运维令] 2026-10-25 18:5x（把 DATA_MAPPING.md 做成脚本生成的真·单一事实源 + 授权按测得分批清理磁盘）· 用户直令 · 最高优先
 > 用户原话：「对于 data 来说，维护好 run/data/DATA_MAPPING.md 至关重要。可以适当清理一下硬盘，减少占用。」
 
@@ -111,20 +119,7 @@
 | 盘点交付物 | 报告 HTML 为必交付 | **`run/data/DATA_MAPPING.md`（Markdown）为单一事实源**；HTML 报告 = 按需由 md 生成，不是必交付 |
 | 32 uncovered shard | 待人工裁决（长期挂账、阻塞感） | **不阻塞**：映射表单列「未映射」节，逐条写证据与建议；未批准不许删 |
 
-### 🔥🔥 最高优先 · 2026-10-25 13:2x · 运维直令 · **停止一切报告工作，现在只做两件事**
-
-> 现状（运维 13:19 实测）：loop 活着（.12 PID 1647008）、cline 活着；你 12:41 重生成报告（10,520 B，1 table，每行加了 `du -sb …` 命令）—— **报告这部分做得对，验收通过**；`untokenized_v1_20261025.tsv`（12:47，500 B）已落。
-> **但 `…/baize-data/tokenized/` 不存在、`preprocess_data` 进程 = 0、load 6.8 → ① 布局没建、② 分词没跑。用户要的就是这两件。**
-
-1. **先提交你在工作区里的成果**（报告 HTML、`gen_tokenized_inventory_report.py`、`map_dl_vs_tok / untokenized_v1 / report_verify`、`DATA_LEDGER.md`、`MEMORY_DATA.md`）——
-   **用显式路径 add**（收尾铁律禁 `-A`，本令把 `reports/report_data_tokenized_inventory_zh.html` 与 `run/data/` 加入你的提交白名单）：
-   `git add -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html doc/BaiZe-ISEDA2027/run/data doc/BaiZe-ISEDA2027/run/DATA_LEDGER.md doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md doc/BaiZe-ISEDA2027/run/daily-memories-data && git commit -m "data <轮次>: <一句话>" && git push origin main`；**不许留在工作区不提交**。
-2. **立刻建 `tokenized/` 镜像布局**（见下方 ①，hardlink/symlink，零拷贝）→ 建完 `tokenized/INDEX.tsv` 必须存在，并在 MEMORY 里贴 `find tokenized -maxdepth 3 -type d` 的实际输出。
-3. **立刻开分词**（见下方 ②）→ **30 分钟内** `/tmp/tokenize_untokenized_*.log` 必须有 `done/total` 行、`ps -eo args= | grep -c '[p]reprocess_data'` 必须 > 0；标定四档（96/144/192/224）的数字要贴回来。
-> 🚫 从现在起**不要再改报告结构、不要再重写报告、不要再补勘误/摘要**（报告已验收）。
-> 🚫 不要把"核对了/准备跑"当成"跑起来了"；**判据只有：日志有进度 + 进程数 > 0**。
-
-
+### [已归档] §运维令·2026-10-25 13:2x（停止一切报告工作，只做布局+分词两件事）**已完成**（布局 7896810a3、分词 94/131 在跑、报告已验收）-> 原文归档到 `run/ARCHIVE_OPERATOR_DATA.md`。需要时再读。
 
 ### ⏱ 本轮执行顺序（2026-10-25 12:5x 用户直令 · **覆盖此前所有令**）
 > 用户原话：「1. 已下载已分词的，把分词目录整理一下，跟下载目录有更好的对应。2. 已下载未分词的，去分词，充分利用多核并发。」

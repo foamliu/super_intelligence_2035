@@ -51,6 +51,20 @@
 - **模块级 profile（H6/H7 的唯一判据）**：在 `cfg0a`（4096）与 `cfg1`（8192，可重跑 10 步）上各用 torch profiler / Nsight 采 10 步，输出 `attention / ssm(chunk scan) / mlp / loss / optimizer / data` 六类的时间占比与绝对毫秒；判据：若 `attention` 占比随 seq 平方增长 ⇒ H6 成立；若 `ssm` 绝对耗时随 seq 明显超线性 ⇒ H7 成立；两者都不成立再看 data。
 - 总 ETA 相应调整：cfg3 ~21:10 -> cfg0a/cfg0b ~21:40 -> cfg4-cfg6 ~22:40 -> profile + 修复复测 ~23:40 -> 报告次日 00:30 前。
 
+**补充（22:3x，网格已全部结束，数据来自 `/tmp/baize_seqlen_grid/ALL_RESULTS.txt` 原始行）**
+| cfg | seq | tok/step | tok/s | med_ms | per-GPU | peak MiB | 状态 |
+|:--|--:|--:|--:|--:|--:|--:|:--|
+| cfg1 | 8192 | 2,097,152 | 108,291 | 19,365.9 | 6,768 | 81,087 | OK |
+| cfg2 | 8192 | 4,194,304 | 111,897 | 37,483.7 | 6,993 | 81,085 | OK |
+| cfg3 | 16384 | 2,097,152 | 112,094 | 18,708.9 | 7,005 | 81,087 | OK |
+| cfg4 | 16384 | 4,194,304 | 121,495 | 34,522.4 | 7,593 | 81,079 | OK |
+| cfg5 | 32768 | 2,097,152 | FAIL | - | - | 81,031 | FAIL |
+| cfg6 | 32768 | 4,194,304 | FAIL | - | - | 81,031 | FAIL |
+- **平台证实**：8K/16K 下 tok/s = 108~121K，且随 seq **略升**（108->112->121）；tok/step 翻倍只 +3~8% ⇒ 与批大小无关的**每 token 固定成本被放大 5.6x**，拐点就在 4096。
+- **新证据（重要）**：四格峰值显存几乎一致（81,079-81,087 MiB，卡在 80GB 上限），**与 seq、tok/step 都无关** ⇒ 疑似存在**与 seq 无关的固定巨额分配**（workspace / 优化器状态 / 未分片缓冲 / CUDA graph 常驻池）；cfg5/cfg6 在 81,031 MiB 处 FAIL ⇒ 32K 所需的额外一点显存直接撑爆。请把「固定 81GB 到底是谁」列入 profile 清单（`torch.cuda.memory_summary()` + 分项 snapshot）。
+- **cfg5/cfg6**：先给 FAIL 的 torch 报错原文与判定（OOM / 其他），再按「配方变更组」用 `--recompute-activations` 或 `--use-distributed-optimizer` 重试，单列不混主表。
+
+
 **补充观测（20:40，cfg2/cfg3 出来后，归因更清楚了）**
 | cfg | seq | tok/step | tok/s | per-GPU | 相对基线(606,449) |
 |:--|--:|--:|--:|--:|--:|

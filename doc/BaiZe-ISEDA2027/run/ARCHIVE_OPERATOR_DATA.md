@@ -3,6 +3,20 @@
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
 ## 归档 2026-10-25（由 BAIZE_DATA_TASK.md 搬入，原文未改）
 
+### 🔥🔥 最高优先 · 2026-10-25 13:2x · 运维直令 · **停止一切报告工作，现在只做两件事**
+
+> 现状（运维 13:19 实测）：loop 活着（.12 PID 1647008）、cline 活着；你 12:41 重生成报告（10,520 B，1 table，每行加了 `du -sb …` 命令）—— **报告这部分做得对，验收通过**；`untokenized_v1_20261025.tsv`（12:47，500 B）已落。
+> **但 `…/baize-data/tokenized/` 不存在、`preprocess_data` 进程 = 0、load 6.8 → ① 布局没建、② 分词没跑。用户要的就是这两件。**
+
+1. **先提交你在工作区里的成果**（报告 HTML、`gen_tokenized_inventory_report.py`、`map_dl_vs_tok / untokenized_v1 / report_verify`、`DATA_LEDGER.md`、`MEMORY_DATA.md`）——
+   **用显式路径 add**（收尾铁律禁 `-A`，本令把 `reports/report_data_tokenized_inventory_zh.html` 与 `run/data/` 加入你的提交白名单）：
+   `git add -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html doc/BaiZe-ISEDA2027/run/data doc/BaiZe-ISEDA2027/run/DATA_LEDGER.md doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md doc/BaiZe-ISEDA2027/run/daily-memories-data && git commit -m "data <轮次>: <一句话>" && git push origin main`；**不许留在工作区不提交**。
+2. **立刻建 `tokenized/` 镜像布局**（见下方 ①，hardlink/symlink，零拷贝）→ 建完 `tokenized/INDEX.tsv` 必须存在，并在 MEMORY 里贴 `find tokenized -maxdepth 3 -type d` 的实际输出。
+3. **立刻开分词**（见下方 ②）→ **30 分钟内** `/tmp/tokenize_untokenized_*.log` 必须有 `done/total` 行、`ps -eo args= | grep -c '[p]reprocess_data'` 必须 > 0；标定四档（96/144/192/224）的数字要贴回来。
+> 🚫 从现在起**不要再改报告结构、不要再重写报告、不要再补勘误/摘要**（报告已验收）。
+> 🚫 不要把"核对了/准备跑"当成"跑起来了"；**判据只有：日志有进度 + 进程数 > 0**。
+
+
 ### 📊 运维指令 · 2026-10-24 13:2x（**MiniCPM5 全量已分词数据：硬盘实测清单**）· 用户直令 · 最高优先
 
 > 用户原话：「我现在要的是 MiniCPM5 全量数据，分词后的数据，列表，占多少硬盘，分词后多少 tok，在硬盘的文件全名是什么。让 data 在硬盘上查。」

@@ -23,6 +23,7 @@
   - 预注册判据：主 OCRBench >= +2pp（基线 1.60%）；副 DocVQA/ChartQA/InfoVQA >= +1pp；回归护栏 MMStar/MMBench/AI2D/RealWorldQA 掉幅 <= 1pp。必须给决策树。
   - 交付 `reports/report_vision_ocr_sft_plan_zh.html`（9 节、>=18KB、0 script/0 外链）+ `vision/generate_ocr_sft_plan_report.py` + 一页纸执行清单；本轮不启训练、不生成全量数据。
 - 20:2x（pretrain · seq 掉速根因令，**补记：上一轮只在对话里分析、未落盘，现正式落盘**）：用户质疑「4096->8192 吞吐掉 5.6x 不符合常识，阿里等 8192 预训练很常见，我们又是 Mamba2-hybrid，理应对长上下文更友好」，允许 web search。已下发（任务书 32,585B；归档 10-24 23:5x 块 3,607B）：① 补单变量对照 cfg0a（seq4096/2M）与 cfg0b（seq4096/4M 重跑基线）；② 时间分解 + dmon util + CUDA graph 状态 + 数据侧重打包/worker；③ web search 对标（Qwen2.5 预训练最大 32,768 / Llama 3 8K / Megatron 长序列实践 / SSD chunk scan 融合可提 1.50-2.51x）；④ 假设-检验表 H1-H5 逐行实测；⑤ 修复只改一项并复测，判据修复后降幅 <=30%；交付 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（≥15KB）+ 生成器 + 更新 seqlen 报告与 EXPERIMENTS；commit 前缀 `pretrain rc:`；ETA 3-4h。
+- 22:3x（网格收尾 + 分词停顿）：① **pretrain 6 格全部结束**（21:46）：seq 8K/16K 四格 tok/s = 108,291 / 111,897 / 112,094 / **121,495**，per-GPU 6.8-7.6K；**cfg5/cfg6（32K）FAIL**，峰值 81,031 MiB（卡 80GB 上限）。四格峰值显存几乎相同（81,079-81,087）且与 seq/tok-step 无关 ⇒ 疑似「与 seq 无关的固定巨额分配」，已要求列入 profile（memory_summary）；cfg5/6 按配方变更组用 recompute/dist-opt 重试。② **data 分词停顿**：`done=94/131` 自 19:21 起 2.6h 不变、tokens/bin_bytes 完全相同、37 进程存活、ETA 从 7,688s 涨到 11,369s ⇒ 已下令先诊断（ps/py-spy/nfsstat/dmesg）再按类处置，禁直接全杀。
 - 仍未变的老待办：vision B4 的 MMVet / MathVista 需 `OPENAI_API_KEY`；336+anyres 需工程 scope。
 
 
