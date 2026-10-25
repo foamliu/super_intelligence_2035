@@ -1,9 +1,35 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 196 | TARGET: 29 -->
-## RUN_ID 196 — 🩺 data loop 诊断 + **不健康就安全重启**（只动数据线）
+<!-- RUN_ID: 197 | TARGET: 29 -->
+## RUN_ID 197 — 🔍 只读：data agent 10:25 唤醒后正在做什么（loop 子进程 + 日志尾）
 
 ```bash
+set -u
+echo "=== RUN_ID 197 | what is data agent doing | $(date '+%F %T') | host=$(hostname) ==="
+timeout 60 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -s <<'EOS'
+set -u
+LP=$(ps -eo pid=,comm=,args= | awk '$2=="bash" && /baize_data_loop\.sh/ {print $1}' | head -1)
+echo "[1] loop=$LP 的子进程:"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" | cut -c1-130
+
+echo "[2] 所有 cline 进程（含 data-dir）:"
+ps -eo pid=,etimes=,args= | grep -E 'cline' | grep -v grep | cut -c1-120 | head -4
+
+echo "[3] loop 日志尾部 20 行（看它正在跑什么命令）:"
+tail -c 3000 /tmp/baize_data_loop.log 2>/dev/null | tr -d '\033' | tail -20 | cut -c1-150
+
+echo "[4] 当前是否有重 IO 扫描在跑（find/du）:"
+ps -eo pid=,etimes=,args= | grep -E 'find /nas|du -s' | grep -v grep | cut -c1-120 | head -4 || echo '  none'
+
+echo "[5] 新产物是否已出现:"
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_20261025.txt 2>/dev/null || echo '  no prune list'
+ls -lt /tmp/tokenize_untokenized_*.log 2>/dev/null | head -2 || echo '  no tokenize log'
+EOS
+echo "=== DONE 197 ==="
+```
+
+
+```text
 set -u
 echo "=== RUN_ID 196 | data loop check & fix | $(date '+%F %T') | host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
