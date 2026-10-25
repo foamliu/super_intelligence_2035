@@ -26,6 +26,16 @@ code{background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:0.9em}
 .small{font-size:0.85em;color:#64748b}
 </style></head><body>
 <h1>BaiZe-2B（Mamba2-hybrid）seq 长度 × tok/step 吞吐网格报告</h1>
+<div style='background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:14px 18px;margin:16px 0;color:#7f1d1d'>
+<div style='font-weight:700;font-size:1.05em;margin-bottom:6px'>⚠️ 根因更正（2026-10-25，cfg0a 对照实验确认）—— 本报告的「seq 效应」归因已被推翻</div>
+<p style='margin:6px 0'>本网格在「seq 翻倍」时<b>同步缩小了 gbs/accum</b>（为适配显存），构成<b>双变量混淆</b>：观测到的 4096→8192 悬崖无法区分「序列长度效应」与「批几何效应」。</p>
+<p style='margin:6px 0'>决定性对照 <code>cfg0a</code>（固定 <b>seq=4096</b>、仅复刻 cfg1 的小批几何 gbs512/accum8/mbs4）= 稳态 116,898 tok/s @ 14.2% MFU —— 用 seq=4096 复现了 5.2× 跌幅（基线 606K→117K），与 cfg1(seq8192)=108K 几乎一致。<b>若 seq 是主因，cfg0a 应≈606K；实测 117K ⇒ seq 非成因</b>。</p>
+<p style='margin:6px 0'><b>真因 = 小批几何(gbs/accum/mbs 联合)→GPU 饥饿(MFU 73.6%→14%)</b>：cfg0a 每步只做基线一半 token(2.10M vs 4.13M)却花 2.64× 墙钟(17.9s vs 6.8s)，多出 ~14.5s 几乎全是 GPU 空闲（kernel launch 间隙 + 每步固定开销不摊薄）。CUDA graph 两组均 <code>built 112</code> 成功 → 排除图回退。</p>
+<p style='margin:6px 0'><b>本报告的网格测量数据（cfg1–4 的 tok/s、显存、step time）仍然有效</b>，但其「seq→吞吐悬崖 / SSM 超线性」的因果解释 hereby 作废。H1–H9 假设检验中仅 H4(批几何→GPU 饥饿)确认；H1/H2/H5/H6/H8/H9 全证伪。</p>
+<p style='margin:6px 0;font-weight:700'>📄 完整根因报告 → <code>reports/report_pretrain_seq8192_slowdown_rootcause_zh.html</code>（21KB，含 H1–H9 假设表 + cfg0a 对照 + 算术分解 + GPU 饥饿机制 + 5 条文献引用 + 处置建议）。详细更正见 <code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>「🔴 根因更正」节。</p>
+<p style='margin:6px 0;color:#991b1b'><b>处置</b>：seq≥8192 <u>可用</u>，前提保持有效批 <b>tok/step ≥ 4M</b>（基线水准，用更大 accum 补 mbs 显存差）；预期回到 ~500–600K tok/s 而非 108K。原「不建议用 seq≥8192」的结论 hereby 撤销。</p>
+</div>
+
 <p class='small'>生成器：run/gen_seqlen_throughput_report.py · 数据源：/tmp/baize_seqlen_grid/ · 单变量实验：每步 token 数固定（2M=S1 / 4M=S2），仅改 seq</p>
 <span class='kpi'>基线 e18 seq4096 <b>606,449</b> tok/s</span><span class='kpi'>网格最快 cfg4（seq16384） <b>121,495</b> tok/s</span><span class='kpi'>vs 基线 <b>%+.1f%%</b></span>
 <h2>1. 实验目的与口径</h2>
