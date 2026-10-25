@@ -21371,3 +21371,102 @@ c856f02eb 2026-10-25 12:50:07 +0800 pretrain report: fix HTML validity (escape p
   复核PASS行=0
 === DONE 202 ===
 ```
+
+---
+
+## RUN_ID 203 · 2026-10-25 13:18:45 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 203 | fixed probe | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+
+echo "[1] .12 上的 data loop"
+timeout 40 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -c '
+LP=$(ps -eo pid=,args= | awk "/bash .*baize_data_loop\\.sh/ && !/awk/ {print \$1}" | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,etimes=,stat= -p "$LP"
+ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null | awk "{print \"  log \"\$6\" \"\$5\"B\"}"
+tail -4 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-120
+ps -eo pid=,etimes=,args= | grep cline | grep -v grep | cut -c1-90 | head -2
+'
+
+echo "[2] 报告 13:16 的改动（工作区 vs HEAD）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && {
+  git --no-pager diff --stat -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html doc/BaiZe-ISEDA2027/run/data/gen_tokenized_inventory_report.py
+  echo "  --- diff 片段 ---"
+  git --no-pager diff -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html | head -30
+  echo "  --- 现文件结构 ---"
+  grep -c "<table" doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+  grep -o "复核 PASS[^<]*" doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html | head -2
+  wc -c < doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+}
+
+echo "[3] 分词 / 布局 / 核对表"
+echo "  preprocess 进程=$(ps -eo args= | grep -c '[p]reprocess_data' || true)"
+echo "  load=$(cat /proc/loadavg)"
+[ -d "$B/tokenized" ] && find "$B/tokenized" -maxdepth 3 -type d | sed "s#$B/##" | head -10 || echo "  tokenized/ 不存在"
+ls -l --time-style=+%F_%T "$R/run/data/report_verify_20261025.md" "$R/run/data/untokenized_v1_20261025.tsv" 2>/dev/null | awk '{print "  "$6" "$5" "$7}'
+echo "=== DONE 203 ==="
+```
+
+**输出**
+```
+=== RUN_ID 203 | fixed probe | 2026-10-25 13:18:45 | host=whag0pgpuap29 ===
+[1] .12 上的 data loop
+bash: -c: option requires an argument
+  loop_pid=1647008
+1647008    5015 Sl
+  log 2026-10-25_13:18:47 54419939B
+[0m[2m    [ -z[0m[2m "$name" ][0m[2m && continue
+   [0m[2m is_done "$out[0m[2mp" && continue[0m[2m
+    { pg[0m[2mrep -af '[0m[2mpreprocess_data_cm[0m[2m[.]py'[0m[2m 2>/dev[0m[2m/null || true;[0m[2m } | grep 
+    attf[0m[2m="${stage}.at[0m[2mtempts"; att=$([0m[2mcat "$attf[0m
+3041408 4392021 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-h
+[2] 报告 13:16 的改动（工作区 vs HEAD）
+ .../report_data_tokenized_inventory_zh.html        | 46 +++++++++++-----------
+ .../run/data/gen_tokenized_inventory_report.py     | 27 +++++++++----
+ 2 files changed, 43 insertions(+), 30 deletions(-)
+  --- diff 片段 ---
+diff --git a/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html b/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+index 567088e2c..ac01c486a 100644
+--- a/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
++++ b/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+@@ -18,7 +18,7 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11.5px;color
+ </style></head><body>
+ <div class="container">
+ <h1>MiniCPM5 分词产物 ↔ 下载目录 对应表</h1>
+-<div class="meta">生成时间：2026-10-25 11:57 · 数据源 <code>run/data/map_dl_vs_tok_20261025.tsv</code> · 下载占用 = <code>du -sb &lt;下载目录&gt; / 1e9</code> · 分词 Token = 对应 <code>.json num_tokens</code> 求和 / 1e9 · 全部实测，无估算</div>
++<div class="meta">生成时间：2026-10-25 12:41 · 数据源 <code>run/data/map_dl_vs_tok_20261025.tsv</code> · 下载占用 = <code>du -sb &lt;下载目录&gt; / 1e9</code> · 分词 Token = 对应 <code>.json num_tokens</code> 求和 / 1e9 · 全部实测，无估算</div>
+ <table><thead><tr>
+ <th>分词产物目录</th>
+ <th>前缀 / shard</th>
+@@ -31,7 +31,7 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11.5px;color
+ <td><code>/nas_train/app.e0031982/datasets/baize-data/text</code></td>
+ <td>env14_*（110 shard）<br>bin=110</td>
+ <td><code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4</code><br>parquet=56320</td>
+-<td class="num">6747.43 GB<br><span style="color:#888;font-size:11px">6747434955525 B</span></td>
++<td class="num">6747.43 GB<br><span style="color:#888;font-size:11px">6747434955525 B</span><br><code style="color:#c62828">du -sb /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4</code></td>
+ <td class="num">2238.14<br><span style="color:#888;font-size:11px">2238140710284 tok</span></td>
+ <td class="s-ok">可用</td>
+ </tr>
+@@ -39,7 +39,7 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11.5px;color
+ <td><code>/nas_env/app.e0031982/baize-data/full_ufw_l3</code></td>
+ <td>full_ufw_l3（154 shard）<br>bin=154</td>
+ <td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa</code><br>parquet=616</td>
+-<td class="num">663.18 GB<br><span style="color:#888;font-size:11px">663183709378 B</span></td>
++<td class="num">663.18 GB<br><span style="color:#888;font-size:11px">663183709378 B</span><br><code style="color:#c62828">du -sb /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa</code></td>
+ <td class="num">263.90<br><span style="color:#888;font-size:11px">263899449229 tok</span></td>
+ <td class="s-ok">可用</td>
+  --- 现文件结构 ---
+1
+10520
+[3] 分词 / 布局 / 核对表
+  preprocess 进程=0
+  load=6.82 6.85 10.02 17/7629 1079887
+  tokenized/ 不存在
+  2026-10-25_12:47:30 500 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/untokenized_v1_20261025.tsv
+=== DONE 203 ===
+```
