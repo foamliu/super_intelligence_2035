@@ -1,6 +1,32 @@
 # ARCHIVE — 历史运维指令（源自 BAIZE_HARNESS_TASK.md）
 
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
+## 归档 2026-10-25（由 BAIZE_HARNESS_TASK.md 搬入，原文未改）
+
+### 📥 运维指令 · 2026-10-24 16:3x（**TB 7 并发跑着的同时，后台下载 SWE-bench Verified 容器**）· 用户直令 · 最高优先
+
+> 用户原话：「harness：启动 Terminal Bench 7 并发评测后，**开始下载 SWE-bench Verified 的容器**吧，以后把 SWE-bench 也刷一遍（**不是 Lite 而是更常用的 Verified**）」
+
+**① 目标**
+- 数据集：**SWE-bench Verified**（官方 500 题；`princeton-nlp/SWE-bench_Verified`）
+- **🚫 不是 Lite**（之前跑的是 Lite 300，Verified 才是主流引用口径）
+- 用途：TB 这轮跑完后，**7 harness × 500 题**刷一遍
+
+**② 执行方式：后台并行，不阻塞 TB**
+1. **TB 7×87 正在跑，优先级最高** —— 下载**必须限速**（参考 data 线的 `rsync --bwlimit` 做法），不能抢 TB 的 Docker 拉取带宽。
+2. 下载走 **92.25 代理直连**（已验证可用；Docker Hub pull 已通过 dockerd 代理配通）。
+3. **关键：先做去重体积估算**（2026-10-03 的老教训）：查 500 条对应镜像的 manifest → 报 **sum(size)** 与 **按 layer digest 去重后的实际下载量**；**500 张 ≠ 500 倍体积**。
+4. **查磁盘**：`docker info | grep 'Docker Root Dir'` + `df -h`。若空间不足，**先报，别拉一半撑爆**。
+
+**③ 下载策略**：**分批**（每批 50）+ **断点续跑**（`docker pull` 幂等，失败重试 2 次）+ 进度文件 `harness/swebench_verified_pull_progress.txt`；先拉基础层共享度高的（python/ubuntu 系列）。
+
+**④ 交付**：体积估算小结 / 下载脚本 / MEMORY 记录启动时间与 ETA。
+
+**⑤ 纪律**：🚫 不许影响 TB 7×87 进度；🚫 不 kill TB 的 7 个 harbor 进程；每轮唤醒并列报两条线进度；磁盘/带宽不足要明说并给替代方案。
+
+---
+
+
 
 ---
 

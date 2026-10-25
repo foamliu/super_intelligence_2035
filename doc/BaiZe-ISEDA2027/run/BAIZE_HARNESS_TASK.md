@@ -1,41 +1,54 @@
 # BAIZE_HARNESS_TASK.md
 
+### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
+> 用户原话：「安排 harness 去排查和修复导致 claude-code/hermes/deepseek 通过率为0的适配器 bug，修复期间这三个就不要跑了。同时汇报其它四个 harness 截止目前各自的通过率（已跑完的部分）。」
+> **① 立即动作：停掉这三个（只停这三个）**
+> - **停**：`claude-code`（26/87 done，**0 pass**）、`hermes`（FIN 50/87，**0 pass**，37 err）、`deepseek-harness`（FIN 50/87，**0 pass**，37 err）。
+> - **继续跑**：`cline-patched`、`codex`、`opencode`、`pi` —— 🚫 不许 kill / 重启 / 改动它们的容器与 launcher。
+> - 停法：按 `jobs_*` 目录名 / `--project-name` 精确匹配，**只 SIGTERM 这三路的 harbor 进程与容器**，逐个确认再停。
+> - 停完立刻回报：停了哪些 PID / 容器 + 四个存活 harness 未受影响（贴 `ps` / `docker ps` 证据）。
+
+> **② 排查（先定位再动手，禁止盲改）** — 三者症状不同，必须分开归因
+> | harness | 症状 | 待验假设 |
+> |:--|:--|:--|
+> | `claude-code` | 26 done / **0 pass**，最慢（~1.7/h），有 err | ① CLI 未进容器/PATH；② 非交互模式下只输出计划不执行；③ AgentTimeoutError 占主导 → 未产出 patch；④ 工具调用协议与 harbor 不匹配 |
+> | `hermes` | FIN 50 / **0 pass**，**37 err**（RuntimeError/NonZeroAgentExit） | 适配器入口/退出码处理错 → 一起步就非零退出 |
+> | `deepseek-harness` | FIN 50 / **0 pass**，**37 err** | 同 hermes；另查模型名/endpoint/base_url 是否配错（可能没连上模型就"成功"返回空） |
+> **必查证据（贴原文，不许只写结论）**
+> 1. **`verifier/reward.txt` 是否真被写入**——0 pass 可能是 verifier 没跑/没找到 patch，而非答错；与 `cline-patched` 的 pass 样本对比文件结构。
+> 2. **agent 是否真调用了模型**：抓失败 trial 的 `agent.log`/`session.json`/trace，确认有 LLM 请求、有 tool call、token>0。
+> 3. **37 err 完整堆栈**：`RuntimeError`/`NonZeroAgentExit` 逐条归类合并计数，贴前 3 条 traceback。
+> 4. **容器内 CLI 可用性**：`docker exec` 进失败容器验 `which <cli>` / `--version`。
+> 5. **时间线**：Gen7 pilot 里 hermes/deepseek **就是 0/5 且 no errors**、claude-code 0/5+3/5 err ⇒ **这是从 pilot 就没修的老 bug，不是本轮新增**，写进结论，别再"发现 0%"。
+> 6. **源码 diff**：读 harbor `terminalbench.agents.{hermes,deepseek_harness,claude_code}` 三个类 + 一个已知可用的（cline/codex/pi），指出差在哪几行。
+
+> **③ 修复（最小验证闭环）**
+> - 修完**不许直接上 87 题**：先跑 **oracle 已知可解的 5 题**（从 R473 oracle 15/15 里那 11 道可解题中挑）做 smoke，**判据 = 至少 1 道 pass**；0 pass 不算修好，回去继续查。
+> - smoke 过再各跑 5 题确认稳定；仍 0 pass ⇒ 判定「未修复」+ 写清卡点，不许含糊过关。
+> - 三个**逐个修、逐个验**（不许三个一起改一起测，要能归因）。
+> - 🚫 不许放宽 verifier / 改 reward 口径 / 跳断言来"让它通过"；🚫 不许改另外四个 harness 的任何配置。
+
+> **④ 同时汇报：其它四个 harness 的通过率（已跑完部分）**
+> 用 `verifier/reward.txt` 口径，逐 harness 给：**done / pass / 通过率 / err 数 / 预计完成时间**，标注「**部分结果，非最终**」。
+> R490 快照如下，**你要用自己最新实测覆盖它，不许照抄**：
+> cline-patched 61done/34P=55.7% · opencode 56/30=53.6% · codex 39/19=48.7% · pi 66/29=43.9%
+> - 另给四路两两 **McNemar 初步配对**（样本不足就写「暂不出」）。
+> - ⚠️ codex 已知 err 偏高：**标注但不要停**（用户只要求停那三个）。
+
+> **⑤ 产出**
+> - `reports/report_harness_adapter_0pass_rootcause_zh.html`（中文 HTML 自包含）：症状表 → 逐 harness 根因 → 证据（日志片段/traceback）→ 修复 diff → smoke 结果 → 未修复写卡点。
+> - 补丁落 `run/harness/terminalbench/`（保留原文件 + 说明改了什么）。
+> - `MEMORY_HARNESS.md` 首部新块 + `run/daily-memories-harness/2026-10-25.md`；commit 前缀 `harness adapter-fix:`。
+> - 🚫 **SWE-bench Verified 下载不停**；TB 四个存活 harness 也不停。
+
+> **🚫 铁律**
+> - **只停这三个**：claude-code / hermes / deepseek-harness；其它四个一根汗毛都不许动。
+> - 停之前**先记录**各自 batch 目录、done 数、已跑 trial 列表；已完成结果**一律保留落盘不许删**（修好要复跑对照）。
+> - 🚫 不许把「0 pass」直接归因为「模型不行」——先证明 agent 真调用了模型并产出 patch。
+> - 🚫 不许编造/估算通过率；一律 `reward.txt` 实测，取不到写「未取到 + 原因」。
+
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
-### 📥 运维指令 · 2026-10-24 16:3x（**TB 7 并发跑着的同时，后台下载 SWE-bench Verified 容器**）· 用户直令 · 最高优先
-
-> 用户原话：「harness：启动 Terminal Bench 7 并发评测后，**开始下载 SWE-bench Verified 的容器**吧，以后把 SWE-bench 也刷一遍（**不是 Lite 而是更常用的 Verified**）」
-
-**① 目标**
-- 数据集：**SWE-bench Verified**（官方 500 题；`princeton-nlp/SWE-bench_Verified`）
-- **🚫 不是 Lite**（之前跑的是 Lite 300，Verified 才是主流引用口径）
-- 用途：TB 这轮跑完后，**7 harness × 500 题**刷一遍
-
-**② 执行方式：后台并行，不阻塞 TB**
-1. **TB 7×87 正在跑，优先级最高** —— 下载**必须限速**（参考 data 线的 `rsync --bwlimit` 做法），不能抢 TB 的 Docker 拉取带宽。
-2. 下载走 **92.25 代理直连**（已验证可用；Docker Hub pull 已通过 dockerd 代理配通）。
-3. **关键：先做去重体积估算**（2026-10-03 的老教训）：
-   - 查 500 条对应镜像的 manifest → 报 **sum(size)** 与 **按 layer digest 去重后的实际下载量**
-   - **500 张 ≠ 500 倍体积**（大量共享 base layer，尤其 python/node 基础镜像）
-4. **查磁盘**：`docker info | grep 'Docker Root Dir'` + `df -h`。**镜像落本地盘不是 NFS**。若空间不足，**先报，别拉一半撑爆**。
-
-**③ 下载策略**
-- **分批**（每批 50 个），批间查**剩余磁盘 + 当前 TB 是否受影响**
-- **断点续跑**：`docker pull` 天然幂等，失败重试 2 次后记录
-- **进度可观测**：写一个 `harness/swebench_verified_pull_progress.txt`（每批更新：已拉 / 总数 / 累计 GB / 失败清单）
-- **先拉基础层共享度高的**（如 `python:3.9`、`ubuntu` 系列），能最大化层复用
-
-**④ 交付**
-1. **体积估算报告**（小结即可，不用 HTML）：总镜像数 / sum(size) / 去重后实际下载量 / Docker Root Dir 剩余 / 是否够
-2. 下载脚本落 `harness/`（可复现，含断点续跑）
-3. MEMORY 里记：`SWE-bench Verified 镜像下载启动 @时间 / 预计总量 / ETA`
-
-**⑤ 纪律**
-- 🚫 **不许影响 TB 7×87 的进度**（若发现 TB 变慢，立即降速或暂停下载）
-- 🚫 不 kill TB 的 7 个 harbor 进程
-- ✅ 每轮唤醒报：TB 进度 + SWE-bench 下载进度（两条线并列）
-- ⚠️ 若磁盘/带宽不足，**明确说"当前条件下 500 题镜像拉不全"**，并给替代方案（如只拉子集 / 换盘 / 分批跨天）
-
-
+### 📦 §运维指令·2026-10-24 16:3x（TB 7 并发 + 后台下载 SWE-bench Verified 容器）**已闭合**（R480 已交付体积估算、下载脚本与后台启动）→ 原文归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`。**结论**：SWE-bench Verified=500 题非 Lite；去重后 ~30–60GB（sum raw ~575GB）；Docker Root Dir /data 6.3T free 够；分批 50 + 断点续跑 + 进度文件 `harness/swebench_verified_pull_progress.txt`；实测瓶颈=**Docker Hub 匿名限速 100 manifest/h（共享 IP）**，~20/h，0 failed。需要时再读。
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 ### 📦 §补充令·2026-10-24 09:2x（92.25 代理配 dockerd）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：daemon.json proxies 已配 172.19.92.25:13128，docker pull 实测成功，89 张 TB 镜像已补齐。需要时再读。
