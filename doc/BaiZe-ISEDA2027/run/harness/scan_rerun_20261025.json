@@ -5,11 +5,11 @@
  },
  "rerun": {
   "hermes": {
-   "dirs": 42,
-   "done": 23,
-   "pass": 15,
-   "err": 18,
-   "running": 1
+   "dirs": 46,
+   "done": 26,
+   "pass": 17,
+   "err": 20,
+   "running": 0
   },
   "hermes_detail": {
    "adaptive-rejection-sampler": {
@@ -259,17 +259,41 @@
     "dir": "largest-eigenval__HvvoZRt"
    },
    "llm-inference-batching-scheduler": {
-    "state": "running",
-    "reward": null,
+    "state": "done",
+    "reward": "1",
     "err_type": "",
     "dir": "llm-inference-batching-scheduler__bzuooSZ"
+   },
+   "log-summary-date-ranges": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "log-summary-date-ranges__qZ3Uhpp"
+   },
+   "mailman": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "mailman__a5VPcoQ"
+   },
+   "make-doom-for-mips": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "make-doom-for-mips__Bg7JYCw"
+   },
+   "make-mips-interpreter": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "make-mips-interpreter__wKGoU2P"
    }
   },
   "claude-code": {
-   "dirs": 25,
-   "done": 17,
-   "pass": 5,
-   "err": 7,
+   "dirs": 31,
+   "done": 22,
+   "pass": 9,
+   "err": 8,
    "running": 1
   },
   "claude-code_detail": {
@@ -418,10 +442,46 @@
     "dir": "extract-moves-from-video__eRyBj3M"
    },
    "feal-differential-cryptanalysis": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "feal-differential-cryptanalysis__WqjKehe"
+   },
+   "feal-linear-cryptanalysis": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "feal-linear-cryptanalysis__hjzg4Hi"
+   },
+   "filter-js-from-html": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "filter-js-from-html__NgK4tjp"
+   },
+   "financial-document-processor": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "financial-document-processor__dpoapdU"
+   },
+   "fix-code-vulnerability": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "fix-code-vulnerability__RoaPz8B"
+   },
+   "fix-git": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "fix-git__NcEVnx2"
+   },
+   "fix-ocaml-gc": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "feal-differential-cryptanalysis__WqjKehe"
+    "dir": "fix-ocaml-gc__TwSWr77"
    }
   }
  },
@@ -761,8 +821,8 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": "running",
-   "claude-code_rerun_reward": null,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
    "claude-code_rerun_err": ""
   },
   {
@@ -774,9 +834,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "filter-js-from-html",
@@ -787,9 +847,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "financial-document-processor",
@@ -800,9 +860,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "RuntimeError"
   },
   {
    "task": "fix-code-vulnerability",
@@ -813,9 +873,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "fix-git",
@@ -826,9 +886,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "fix-ocaml-gc",
@@ -839,9 +899,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "running",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": ""
   },
   {
    "task": "gcode-to-text",
@@ -977,8 +1037,8 @@
    "task": "llm-inference-batching-scheduler",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": "running",
-   "hermes_rerun_reward": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
@@ -990,9 +1050,9 @@
    "task": "log-summary-date-ranges",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
    "claude-code_rerun_state": null,
@@ -1003,9 +1063,9 @@
    "task": "mailman",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -1016,9 +1076,9 @@
    "task": "make-doom-for-mips",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -1029,9 +1089,9 @@
    "task": "make-mips-interpreter",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,

@@ -5,6 +5,7 @@ Self-contained Chinese HTML, 0 <script>, 0 external links.
 Naming discipline: write 'cline' in body (code paths cline_patched.py unchanged).
 """
 import json, html, datetime
+from collections import Counter
 from pathlib import Path
 
 RUN = Path('/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run')
@@ -18,6 +19,20 @@ hr = SCAN['rerun']['hermes']   # dirs,done,pass,err,running
 cr = SCAN['rerun']['claude-code']
 ob = SCAN['old_baseline']
 pair = SCAN['pairing']
+
+# --- err type breakdown (computed from scan detail, not hardcoded) ---
+hermes_errtypes = Counter(v['err_type'] for v in SCAN['rerun']['hermes_detail'].values()
+                          if v['state'] == 'err' and v['err_type'])
+cc_errtypes = Counter(v['err_type'] for v in SCAN['rerun']['claude-code_detail'].values()
+                      if v['state'] == 'err' and v['err_type'])
+def errtype_str(c):
+    if not c:
+        return '无'
+    parts = []
+    for k in sorted(c, key=lambda x: -c[x]):
+        short = k.replace('asyncio.exceptions.', '')
+        parts.append(f'{short}×{c[k]}')
+    return ' + '.join(parts)
 
 # conditional pass rates
 def cpr(done, pas):
@@ -167,7 +182,7 @@ codex 异常排查章节已<b>完整</b>，复跑章节为<b>当前快照</b>（
 <div class="stat"><div class="num">{hr['err']}</div><div class="lbl">异常</div></div>
 <div class="stat"><div class="num">{hermes_cpr}</div><div class="lbl">条件通过率(pass/完成)</div></div>
 <div class="stat"><div class="num">0% → {hr['pass']}/{hr['done']}</div><div class="lbl">旧→新</div></div>
-<p style="margin-top:6px">异常类型：NonZeroAgentExitCode×{12} + RuntimeError×{1}（trial 级，非系统性适配器 bug）。</p>
+<p style="margin-top:6px">异常类型：{errtype_str(hermes_errtypes)}（trial 级，非系统性适配器 bug）。</p>
 
 <h3>claude-code</h3>
 <div class="stat"><div class="num">{cr['dirs']}/87</div><div class="lbl">已派题（{pct(cr['dirs'])}）</div></div>
@@ -176,7 +191,7 @@ codex 异常排查章节已<b>完整</b>，复跑章节为<b>当前快照</b>（
 <div class="stat"><div class="num">{cr['err']}</div><div class="lbl">异常</div></div>
 <div class="stat"><div class="num">{cc_cpr}</div><div class="lbl">条件通过率(pass/完成)</div></div>
 <div class="stat"><div class="num">0% → {cr['pass']}/{cr['done']}</div><div class="lbl">旧→新</div></div>
-<p style="margin-top:6px">异常类型：RuntimeError×{5} + CancelledError×{1}（trial 级，非系统性适配器 bug）。</p>
+<p style="margin-top:6px">异常类型：{errtype_str(cc_errtypes)}（trial 级，非系统性适配器 bug）。</p>
 </div>
 
 <div class="card ok">

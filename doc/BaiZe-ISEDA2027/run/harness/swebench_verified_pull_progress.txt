@@ -311,3 +311,10 @@
 [swebench-pull] [303/500] OK pydata__xarray-3677 pulled=303 failed=0 skipped=0
 [swebench-pull] [304/500] OK pydata__xarray-3993 pulled=304 failed=0 skipped=0
 [swebench-pull] [305/500] OK pydata__xarray-4075 pulled=305 failed=0 skipped=0
+[swebench-pull] [306/500] OK pydata__xarray-4094 pulled=306 failed=0 skipped=0
+[swebench-pull] [307/500] OK pydata__xarray-4356 pulled=307 failed=0 skipped=0
+[swebench-pull] [308/500] OK pydata__xarray-4629 pulled=308 failed=0 skipped=0
+[swebench-pull] [309/500] OK pydata__xarray-4687 pulled=309 failed=0 skipped=0
+[swebench-pull] [310/500] OK pydata__xarray-4695 pulled=310 failed=0 skipped=0
+[swebench-pull] [311/500] OK pydata__xarray-4966 pulled=311 failed=0 skipped=0
+[swebench-pull] [312/500] OK pydata__xarray-6461 pulled=312 failed=0 skipped=0

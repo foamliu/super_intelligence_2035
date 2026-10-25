@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T17:26:23Z",
+  "generated_at": "2026-10-25T18:46:47Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -1648,10 +1648,10 @@
     ]
   },
   "hermes_rerun_20261025": {
-    "pass": 15,
-    "rewarded": 23,
-    "exceptions": 19,
-    "completed": 42,
+    "pass": 17,
+    "rewarded": 26,
+    "exceptions": 20,
+    "completed": 46,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -1943,6 +1943,34 @@
       {
         "task": "llm-inference-batching-scheduler",
         "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mailman",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-doom-for-mips",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-mips-interpreter",
+        "harness": "hermes_rerun",
         "reward": null,
         "err_type": null,
         "err_subcause": null
@@ -1950,10 +1978,10 @@
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 5,
-    "rewarded": 17,
-    "exceptions": 8,
-    "completed": 25,
+    "pass": 9,
+    "rewarded": 22,
+    "exceptions": 9,
+    "completed": 31,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2125,6 +2153,48 @@
       },
       {
         "task": "feal-differential-cryptanalysis",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-linear-cryptanalysis",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "filter-js-from-html",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "financial-document-processor",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-code-vulnerability",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-git",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-ocaml-gc",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,
