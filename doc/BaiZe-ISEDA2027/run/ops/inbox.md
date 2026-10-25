@@ -1,9 +1,104 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 194 | TARGET: 29 -->
-## RUN_ID 194 — 🔎 只读：data loop / 85M 下载 是否还活着（本机 + .12）
+<!-- RUN_ID: 196 | TARGET: 29 -->
+## RUN_ID 196 — 🩺 data loop 诊断 + **不健康就安全重启**（只动数据线）
 
 ```bash
+set -u
+echo "=== RUN_ID 196 | data loop check & fix | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+LOG=/tmp/baize_data_loop.log
+
+run_on() {  # $1 = 12 | local
+  if [ "$1" = local ]; then bash -s; else timeout 200 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -s; fi
+}
+
+echo "[1] 现状（.12）"
+run_on 12 <<'EOS'
+set -u
+LOG=/tmp/baize_data_loop.log
+LP=$(ps -eo pid=,comm=,args= | awk '$2=="bash" && /baize_data_loop\.sh/ {print $1}' | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,etimes=,stat=,args= -p "$LP" | cut -c1-110
+echo "  log: $(ls -l --time-style=+%F_%T "$LOG" 2>/dev/null | awk '{print $6" "$5"B"}')"
+AGE=$(( ( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ) / 60 ))
+echo "  log_age=${AGE}min"
+echo "  last [loop] lines:"; grep -a "\[loop\]" "$LOG" 2>/dev/null | tail -3 | cut -c1-110
+echo "  data cline:"; ps -eo pid=,etimes=,args= | grep -E 'cline' | grep 'cline_data' | grep -v grep | cut -c1-100 | head -3
+EOS
+
+echo "[2] 判定 + 修复（仅当 log_age>45 或 loop 不在）"
+run_on 12 <<'EOS'
+set -u
+LOG=/tmp/baize_data_loop.log
+loop_pid() { ps -eo pid=,comm=,args= | awk '$2=="bash" && /baize_data_loop\.sh/ {print $1}' | head -1; }
+AGE=$(( ( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ) / 60 ))
+LP=$(loop_pid)
+HEALTHY=0; [ -n "${LP:-}" ] && [ "$AGE" -le 45 ] && HEALTHY=1
+echo "  HEALTHY=$HEALTHY (loop=${LP:-NONE}, log_age=${AGE}min)"
+if [ "$HEALTHY" -eq 1 ]; then echo "  => 健康，不重启"; exit 0; fi
+
+echo "  => 不健康：停 stale data-cline + 重启 loop"
+# 只杀 data 线的 cline（--data-dir 含 .cline_data）
+for p in $(ps -eo pid=,args= | grep cline | grep 'cline_data' | grep -v grep | awk '{print $1}'); do
+  kill -TERM "$p" 2>/dev/null && echo "    TERM cline $p"
+done
+for p in $LP; do kill -TERM "$p" 2>/dev/null && echo "    TERM loop $p"; done
+sleep 8
+for p in $LP; do kill -0 "$p" 2>/dev/null && { kill -9 "$p" 2>/dev/null && echo "    KILL9 loop $p"; }; done
+for p in $(ps -eo pid=,args= | grep cline | grep 'cline_data' | grep -v grep | awk '{print $1}'); do
+  kill -9 "$p" 2>/dev/null && echo "    KILL9 cline $p"
+done
+sleep 2
+echo "  停止后 loop=$(loop_pid || true)"
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run || exit 1
+[ -f "$LOG" ] && mv "$LOG" "$LOG.bak.$(date +%H%M)"
+setsid -f nohup bash ./baize_data_loop.sh >> "$LOG" 2>&1 < /dev/null
+sleep 25
+NEW=$(loop_pid)
+echo "  新 loop=${NEW:-NONE}"
+echo "  新日志:"; head -8 "$LOG" 2>/dev/null | cut -c1-140
+ps -o pid=,etimes=,stat=,args= -p "${NEW:-0}" 2>/dev/null | cut -c1-100
+EOS
+
+echo "[3] 任务书里三条令是否在位"
+grep -c -E '^### (⏱|🧵|🗑)' "$R/run/BAIZE_DATA_TASK.md" 2>/dev/null | sed 's/^/  指令块数: /'
+grep -n -E '^### (⏱|🧵|🗑)' "$R/run/BAIZE_DATA_TASK.md" 2>/dev/null | cut -c1-80
+echo "=== DONE 196 ==="
+```
+
+
+```text
+set -u
+echo "=== RUN_ID 195 | data loop liveness | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] .12 上的 data loop / agent 进程（含 etimes）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 \
+ 'ps -eo pid=,etimes=,stat=,args= | grep -E "baize_data_loop|cline" | grep -v grep | cut -c1-140 | head -6' 2>/dev/null || echo '  ssh .12 failed'
+
+echo "[2] data loop 日志（最后 12 行 + mtime）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 \
+ 'ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null; tail -12 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-150' 2>/dev/null || true
+
+echo "[3] 最近 loop wake 时间戳（grep 全部 [loop] 行尾部）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 \
+ 'grep -a "\[loop\]" /tmp/baize_data_loop.log 2>/dev/null | tail -6 | cut -c1-120' 2>/dev/null || true
+
+echo "[4] MEMORY_DATA mtime / TASK mtime（是否收到新令）"
+ls -l --time-style=+%F_%T "$R/run/MEMORY_DATA.md" "$R/run/BAIZE_DATA_TASK.md" 2>/dev/null | cut -c1-110
+echo "  WAITING: $(grep -m1 '^WAITING:' "$R/run/MEMORY_DATA.md" 2>/dev/null)"
+
+echo "[5] 新令产物是否存在"
+ls -l --time-style=+%F_%T "$R/run/data/prune_unmapped_20261025.txt" 2>/dev/null || echo '  no prune list'
+ls -lt /tmp/tokenize_untokenized_*.log 2>/dev/null | head -2 || echo '  no tokenize log'
+echo "[6] git 侧：data 最近提交"
+git -C "$R/.." log -3 --date=format:'%H:%M' --pretty=format:'  %ad %s' 2>/dev/null | head -3
+echo "=== DONE 195 ==="
+```
+
+
+```text
 set -u
 echo "=== RUN_ID 194 | data agents liveness | $(date '+%F %T') | host=$(hostname) ==="
 
