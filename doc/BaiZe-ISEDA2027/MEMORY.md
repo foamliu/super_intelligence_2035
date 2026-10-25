@@ -13,6 +13,19 @@
 
 ## 🆕 最近操作（2026-10-25）
 
+### 🚨 harness 运维令（用户直令 · 08:2x）：修复 claude-code / hermes / deepseek 的 0% 适配器 bug，修复期间这三路停跑
+- 用户原话：「安排 harness 去排查和修复导致 claude-code/hermes/deepseek 通过率为0的适配器 bug，修复期间这三个就不要跑了。同时汇报其它四个 harness 截止目前各自的通过率（已跑完的部分）。」
+- **下发** `run/BAIZE_HARNESS_TASK.md` 顶部新块（最高优先，commit `0bcd48ad` 已 push）：
+  - **①只停这三路**（claude-code / hermes / deepseek-harness），按 `jobs_*`/`--project-name` 精确匹配、只 SIGTERM 对应 harbor 进程与容器；**cline-patched / codex / opencode / pi 一根汗毛不许动**；停止前先记录 batch/done/trial 列表，**已完成结果不许删**（修好要复跑对照）。
+  - **②分开归因、6 条必查证据**：`verifier/reward.txt` 是否真写入（0 pass 可能=verifier 没跑/没找到 patch，而非答错）· 是否真调用模型（LLM 请求/tool call/token>0）· 37 err 的 traceback 归类 · 容器内 CLI 可用性 · **时间线（Gen7 pilot 里 hermes/deepseek 就已 0/5、claude-code 0/5+3/5 err ⇒ 老 bug 不是本轮新增）** · 与 cline/codex/pi 三个已知可用适配器做源码 diff。
+  - **③修复闭环**：先 smoke oracle 可解 5 题，**判据 ≥1 pass**，再各跑 5 题确认；三路**逐个修逐个验**；🚫 不许放宽 verifier / 改 reward 口径 / 跳断言。
+  - **④同时汇报四路**（`reward.txt` 口径，标注"部分结果·非最终"，并给 McNemar 初步或写"样本不足"）。
+  - **⑤产出** `reports/report_harness_adapter_0pass_rootcause_zh.html`（中文 HTML 自包含）+ 补丁落 `run/harness/terminalbench/`。
+  - 🚫 SWE-bench Verified 下载不停；TB 四路存活 harness 不停。
+- **给用户的四路通过率快照（R490，10-25 07:31，全部为部分结果）**：cline-patched 61done/34P=**55.7%** · opencode 56/30=**53.6%** · codex 39/19=**48.7%** · pi 66/29=**43.9%**；0% 三路：claude-code 26done/0P、hermes FIN 50/0P（37err）、deepseek FIN 50/0P（37err）。
+- **体积**：任务书 35.5KB → 归档 10-24 16:3x 闭合块（原文进 `run/ARCHIVE_OPERATOR_HARNESS.md` 顶部"归档 2026-10-25"节）→ **32,980B（32.2KB）**，仍略超 32KB 目标但与既有 29KB 量级一致，下轮由 agent 自滚。
+- ⚠️ **当前 harness 状态 `WAITING: 1`**（30 分钟长睡）⇒ 本令要等下一轮唤醒（约 08:3x–09:0x）才执行；若要立即生效需在 `.29` 重启 `baize_harness_loop.sh`。
+
 ### 📦 data 运维令（用户直令 · 08:0x）：重新盘点 MiniCPM5 数据，`report_data_tokenized_inventory_zh.html` 返工重做
 - 用户指出两处**漏源**：① `Ultra-FineWeb/tree/main/data` 下四个目录 **en / en_v1_4 / l1_en_hq / zh** 一个都没单列；② **UltraX-Preview** 没列。要求「**跟下载目录对应上，不要自己加戏，以下载目录为准，不要自己创造数据源**」。另点名「小学生错误」：④ 表中 `text/ 小计 3722.05B` 与下属各源加不上。
 - **运维复核（本地已核实）**：旧报告 ③/④ 表里只有 en_v1_4 / UFW-L3 / Code L3 / Code L2 / Math L3 / Math L1 六行 + `text/` 历史三子集；**base-en、l1_en_hq、zh、UltraX-Preview 全部缺失**。且 `text/ 小计 = 3722.05B` 实为 **en_v1_4 2238.14 + code 550.07 + l3 658.91 + math 274.92 = 3722.04B（4 源）**，而原指令写「必须覆盖…以及 text/ 下其它任何 *.bin 所在目录」——**表头表述与实际行数不一致**，属同一类硬伤。
