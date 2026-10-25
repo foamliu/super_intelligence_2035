@@ -20096,3 +20096,110 @@ d7fea171c
 7, 4 MiB
 === DONE 186 ===
 ```
+
+---
+
+## RUN_ID 187 · 2026-10-25 08:50:23 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 187 | follow-up probe | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || true
+echo "[0] 工作副本 HEAD: $(git rev-parse --short HEAD 2>/dev/null)   branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+
+echo "[1] data loop 是否在 .29 或 .12（两机都查）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_data_loop' | grep -v grep | cut -c1-140 || echo '  .29: NO_DATA_LOOP'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "baize_data_loop" | grep -v grep | cut -c1-140 || echo "  .12: NO_DATA_LOOP"' 2>/dev/null || echo '  ssh .12 FAILED'
+echo "  data loop 日志候选："
+ls -l --time-style=+%F_%T /tmp/baize_data*.log /tmp/*data_loop*.log 2>/dev/null | head -5 || echo '    .29 无'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls -l --time-style=+%F_%T /tmp/baize_data*.log 2>/dev/null | head -5; tail -4 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-160' 2>/dev/null || true
+
+echo "[2] TASK 文件是否含新令（多模式匹配，避免 x 占位符问题）"
+for pat in '2026-10-25 08' '重新盘点 MiniCPM5' '排查并修复 claude-code'; do
+  echo "  pattern[$pat] in DATA   : $(grep -c "$pat" "$R/BAIZE_DATA_TASK.md" 2>/dev/null || echo 0)"
+  echo "  pattern[$pat] in HARNESS: $(grep -c "$pat" "$R/BAIZE_HARNESS_TASK.md" 2>/dev/null || echo 0)"
+done
+
+echo "[3] 两线 MEMORY mtime + WAITING（文件是否存在）"
+for f in MEMORY_DATA.md MEMORY_HARNESS.md MEMORY_PRETRAIN_2B.md; do
+  if [ -f "$R/$f" ]; then
+    echo "  $f  $(stat -c '%y' "$R/$f" 2>/dev/null | cut -c1-19)  $(grep -m1 '^WAITING:' "$R/$f" 2>/dev/null)"
+  else
+    echo "  $f  NOT_FOUND"
+  fi
+done
+
+echo "[4] 7 路 TB harbor 明细（pid/运行时长/目标任务数/对应 harness）"
+for p in $(pgrep -f 'harbor run -p /tmp/tb_7x89' 2>/dev/null); do
+  et=$(ps -o etimes= -p "$p" 2>/dev/null | tr -d ' ')
+  args=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-200)
+  echo "  pid=$p et=${et}s"
+  echo "    $args"
+done | head -40
+
+echo "[5] 7 路 job 目录进度（verifier/reward.txt 口径）"
+for d in /tmp/tb_7x89/jobs_*; do
+  [ -d "$d" ] || continue
+  n=$(find "$d" -name reward.txt 2>/dev/null | wc -l)
+  p=$(find "$d" -name reward.txt -exec sh -c 'grep -qx 1 "$1" && echo x' _ {} \; 2>/dev/null | wc -l)
+  echo "  $(basename "$d")  done=$n pass=$p"
+done
+
+echo "[6] 是否还有 claude-code / hermes / deepseek 容器在跑"
+docker ps --format '{{.Names}}' 2>/dev/null | grep -icE 'claude|hermes|deepseek' || echo '  0 (三路已无容器)'
+docker ps --format '{{.Names}}' 2>/dev/null | head -20
+
+echo "=== DONE 187 ==="
+```
+
+**输出**
+```
+=== RUN_ID 187 | follow-up probe | 2026-10-25 08:50:23 | host=whag0pgpuap29 ===
+[0] 工作副本 HEAD: 0f3e4b588   branch=main
+[1] data loop 是否在 .29 或 .12（两机都查）
+1827417 1780283 bash baize_data_loop.sh
+  data loop 日志候选：
+-rw-r----- 1 app.e0031982 app.adm 53526716 2026-10-25_08:26:54 /tmp/baize_data_loop.log
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-25 08:26:54 WAITING=1 (async task running) → sleep 1800s
+[2] TASK 文件是否含新令（多模式匹配，避免 x 占位符问题）
+  pattern[2026-10-25 08] in DATA   : 0
+  pattern[2026-10-25 08] in HARNESS: 0
+  pattern[重新盘点 MiniCPM5] in DATA   : 0
+  pattern[重新盘点 MiniCPM5] in HARNESS: 0
+  pattern[排查并修复 claude-code] in DATA   : 0
+  pattern[排查并修复 claude-code] in HARNESS: 0
+[3] 两线 MEMORY mtime + WAITING（文件是否存在）
+  MEMORY_DATA.md  NOT_FOUND
+  MEMORY_HARNESS.md  NOT_FOUND
+  MEMORY_PRETRAIN_2B.md  NOT_FOUND
+[4] 7 路 TB harbor 明细（pid/运行时长/目标任务数/对应 harness）
+  pid=536814 et=59347s
+    /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_DQU5IC --agent terminalbench.agents.cline_patched:ClinePatched -k 1 --n-conc
+  pid=551482 et=59332s
+    /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_DQU5IC --agent terminalbench.agents.opencode:OpenCodeTB -k 1 --n-concurrent 
+  pid=564462 et=59327s
+    /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_DQU5IC --agent terminalbench.agents.claude_code:ClaudeCodeTB -k 1 --n-concur
+  pid=578125 et=59317s
+    /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_DQU5IC --agent terminalbench.agents.pi:PiTB -k 1 --n-concurrent 1 --extra-do
+[5] 7 路 job 目录进度（verifier/reward.txt 口径）
+  jobs_claude-code  done=31 pass=0
+  jobs_cline-patched  done=65 pass=36
+  jobs_codex  done=41 pass=20
+  jobs_deepseek-harness  done=50 pass=0
+  jobs_hermes  done=50 pass=0
+  jobs_opencode  done=60 pass=33
+  jobs_pi  done=71 pass=30
+[6] 是否还有 claude-code / hermes / deepseek 容器在跑
+0
+  0 (三路已无容器)
+overfull-hbox__mvhrqdt__env-main-1
+sqlite-db-truncate__cadvfkh__env-main-1
+regex-chess__wpfrfxf__env-main-1
+query-optimize__wgxxlzp__env-main-1
+=== DONE 187 ===
+```
