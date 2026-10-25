@@ -1,5 +1,51 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 204 | TARGET: 29 -->
+## RUN_ID 204 — 🔍 只读：分词是否真在跑 + ① 镜像布局做了没
+
+```bash
+set -u
+echo "=== RUN_ID 204 | tokenize live + layout | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/datasets/baize-data
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] 分词进程 / 并发 / 负载"
+n=$(ps -eo args= | grep -c '[p]reprocess_data' || true); echo "  preprocess 进程=$n"
+echo "  load=$(cat /proc/loadavg)"
+ps -eo pid=,etimes=,pcpu=,args= | grep '[p]reprocess_data' | head -2 | cut -c1-110
+echo "  launcher:"; ps -eo pid=,etimes=,args= | grep '[r]un_tokenize_untokenized' | cut -c1-100 | head -2
+
+echo "[2] 日志进度"
+for l in $(ls -t /tmp/tokenize_untokenized*.log /tmp/*untokenized*.log 2>/dev/null | head -2); do
+  echo "  --- $l ($(stat -c %y "$l" | cut -c1-19)) ---"
+  tail -6 "$l" | cut -c1-130
+done
+
+echo "[3] 已产出 shard（按前缀）"
+for p in ufw_en ufw_l1_en_hq ufw_zh ultrax_aicc; do
+  printf "  %-16s bin=%s\n" "$p" "$(ls $B/text/${p}*.bin 2>/dev/null | wc -l)$(ls $B/tokenized/*/*/${p}*.bin 2>/dev/null | wc -l)"
+done
+echo "  text/ 总 bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)"
+find "$B/tokenized" -name '*.bin' 2>/dev/null | wc -l | sed 's/^/  tokenized\/ 总 bin=/'
+
+echo "[4] ① 镜像布局 / INDEX"
+if [ -d "$B/tokenized" ]; then
+  find "$B/tokenized" -maxdepth 4 -type d | sed "s#$B/##" | head -14
+  ls -l "$B/tokenized/INDEX.tsv" 2>/dev/null | awk '{print "  INDEX: "$5" B "$6" "$7}'
+  head -3 "$B/tokenized/INDEX.tsv" 2>/dev/null
+  echo "  抽样（看是 hardlink 还是 symlink）:"
+  f=$(find "$B/tokenized" -name '*.bin' 2>/dev/null | head -1); [ -n "$f" ] && ls -l "$f" | cut -c1-120
+else
+  echo "  tokenized/ 不存在 → ①未做"
+fi
+
+echo "[5] 标定表 / 计划"
+ls -l --time-style=+%F_%T "$R/run/data/plan.tsv" "$R/run/data/"*calib* "$R/run/data/"*plan* 2>/dev/null | awk '{print "  "$6" "$5" "$7}' | head -6
+echo "[6] df"
+df -h /nas_train | tail -1
+echo "=== DONE 204 ==="
+```
+
 <!-- RUN_ID: 203 | TARGET: 29 -->
 ## RUN_ID 203 — 🔍 只读修正版：loop 在 .12（上条 202 查错机）、报告 13:16 被改了什么
 
