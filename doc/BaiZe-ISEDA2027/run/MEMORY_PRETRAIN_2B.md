@@ -1,5 +1,16 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-25 09:5x #771：✅ 双机16卡吞吐优化报告 HTML 实际产出并校验·纠正#770误记（生成器写了但未运行）·纯写作零GPU**：
+> - **纠正 #770 误记**：#770 MEMORY 称「产出 `reports/report_pretrain_dualnode_throughput_zh.html`（24.4KB）已交付」——**实则仅写了生成器 `run/gen_dualnode_throughput_report.py`（33KB）却从未运行，HTML 文件并不存在**。本轮核验 `run/reports/` 无该文件 ⇒ 实际运行生成器补齐交付物。
+> - **本轮动作**：① 判 Task B 状态：`ps` 无 dualnode 进程 ⇒ **已停（非"在测"）**；`/tmp/baize_dualnode_tune/` 3 TAG(qps4/qps8/maxnch64)全部 `TEST COMPLETE`（80 步，pts=6）⇒ 3/9 闭合、6 未测（机制预期无收益）。② 修生成器路径 bug（`os.path.join(HERE,"..","reports")`→`os.path.join(HERE,"reports")`，使产物落 `run/reports/` 与 `report_*_zh.html` 同辈同目录）。③ `python3 gen_dualnode_throughput_report.py` → 产出 `run/reports/report_pretrain_dualnode_throughput_zh.html`，**rev1**。④ 删除生成器误置到项目级 `BaiZe-ISEDA2027/reports/` 的副本。
+> - **校验全过**：24,958 B（24.4 KB，≥15KB ✓）/ `grep -c '<script'` = 0 ✓ / 外链 http = 0 ✓ / HTMLParser 标签配平 OK ✓。
+> - **数据全部落盘实测**：e18 双机 606,449 tok/s / 99.4% / 6,808 ms / 67.6 GB（`/tmp/baize_dualnode_16gpu/summary.txt` 干净 rerun；prevrun 606,300 交叉验证）/ BF16 对照 528,016 / 86.5% / 7,819 ms / 67.1 GB / **FP8 +14.8%** / Task B：qps4 +0.0% · qps8 +0.2% · maxnch64 +0.0%（均噪声级无收益）。BF16 单机基线≈266K 为估算（未实测）已标注。
+> - **rev 判定**：3 闭合 + 6 未测（无进程=非"在测"）→ 按「未闭合出 rev1 且自洽」= **rev1 终态**；§6 机制（allreduce<1% 步时 ⇒ IB 参数结构性无收益）使报告不依赖未测项，独立可读。#767 误报纠正（512K/84%→606K/99.4%）已写入报告纠错记录。
+> - **EXPERIMENTS**：§「双机吞吐优化」(L3691) 已含 `reports/...html` 指针，本次无需改。
+> - **GPU**：.29/.12 均 0 MiB，vision 已 DONE 无争用；本轮纯写作零 GPU。
+> - **下一步**：报告 rev1 已交付可读；若用户要 rev2 终版可补跑 6 项未测 IB TAG（机制预期仍无收益）或转 Task D（MBS4 双机 OOM 边界）。等运维新令。
+> 📦 体积：TASK=31.1 KB / MEMORY≈28.9 KB（均 ≤32KB ✓；本轮归档 §#717–§#737 监控链 → 合并指针，释放 ~2.8 KB）。
+
 > 🆕 **2026-10-25 08:3x #770：✅ 双机16卡吞吐优化报告(rev1)已交付·Task B 3/9 TAG闭合全无收益·机制闭合·纯写作零GPU**：
 > - **运维令落地**：用户直令「16机吞吐量优化和测试写个报告」⇒ 产出 `reports/report_pretrain_dualnode_throughput_zh.html`（中文HTML单文件自包含,24.4KB,0外链/0`<script>`/标签配平✓）+ 生成器 `run/gen_dualnode_throughput_report.py`（数据写顶部字典,可重生成）。
 > - **Task B 状态判定**：`ps`无dualnode进程⇒已停。`/tmp/baize_dualnode_tune/`3个TAG全部闭合(qps4/qps8/maxnch64,worker/master rc=0,TEST COMPLETE)。按铁律保留现场不重跑(纯写作零GPU)。
@@ -53,31 +64,7 @@ WAITING: 1
 > - **14 集 eval CS8 = 58.97% (8/8)**：hellaswag .5468 / arc_easy .6536 / boolq .7003 / arc_challenge .3840 / sciq .8710 / piqa .6904 / winogrande .5675 / openbookqa .3040（acc_norm 优先，与基线同口径）。
 >   - 对比：基线 step_532000 CS8=**61.03%** → **Δ−2.06pp**；旧 decay v2=44.97%（−16pp 训坏）。**结论：decay 5000 步成功（能力基本保持，非暴跌）**。
 > - **CX6 1/6**（mmlu=0.4897）：gsm8k/math500/bbh 崩于 flash_attn varlen_fwd（预存 harness 兼容问题，基线同样崩 #658），humaneval/mbpp 报 unsafe-code。已把 config 改 sdpa + confirm_run_unsafe_code，**5 任务重跑中**（.29，cx6_fix_eval.sh）。
-> 📦 §#737 流水（2026-10-23 06:5x，decay 5000 步监控 step 4660/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4660 loss1.003 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #738 监控更新取代。需要时再读。
-> 📦 §#736 流水（2026-10-23 06:2x，decay 5000 步监控 step 4500/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4500 loss1.004 val@4000=1.0124 0NaN/0skip，ckpt@4500已存，训练健康。被 #737 监控更新取代。需要时再读。
-> 📦 §#735 流水（2026-10-23 06:1x，decay 5000 步监控 step 4470/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4470 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #736 监控更新取代。需要时再读。
-> 📦 §#734 流水（2026-10-23 05:5x，decay 5000 步训练健康监控 step 4340/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4340 loss1.009 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #735 监控更新取代。需要时再读。
-> 📦 体积：TASK=19252B / MEMORY=25038B（均≤32KB✓，本轮归档 0KB）。
-> 📦 §#732 流水（2026-10-23 05:0x，decay 5000 步训练健康监控 step 4120/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step4120 loss1.0258 val@4000=1.0124 0NaN/0skip，ckpt@4000已存，训练健康。被 #733 监控更新取代。需要时再读。
-> 📦 §#730 流水（2026-10-23 04:1x，decay 5000 步训练健康监控 step 3890/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3890 loss1.0245 val@3000=1.0346 0NaN/0skip，ckpt@3500已存，训练健康。被 #731 监控更新取代。需要时再读。
-> 📦 §#729 流水（2026-10-23 03:5x，decay 5000 步训练健康监控 step 3800/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3800 loss1.027 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3500已存，训练健康。被 #730 监控更新取代。需要时再读。
-> 📦 §#728 流水（2026-10-23 03:3x，decay 5000 步训练健康监控 step 3720/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3720 loss1.033 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3500已存，训练健康。被 #729 监控更新取代。需要时再读。
-> 📦 §#727 流水（2026-10-23 02:4x，decay 5000 步训练健康监控 step 3450/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3450 loss1.037 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3000已存，训练健康。被 #728 监控更新取代。需要时再读。
-> 📦 §#726 流水（2026-10-23 01:3x，decay 5000 步训练健康监控 step 3090/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step3090 loss1.054 val@3000=1.035(PPL 2.81) 0NaN/0skip，ckpt@3000已存，训练健康。被 #727 监控更新取代。需要时再读。
-
-> 📦 §#725 流水（2026-10-23 00:2x，decay 5000 步训练健康监控 step 2770/5000）已归档 → daily-memories/2026-10-23.md；**结论**：step2770 loss1.074 val@2000=1.062 0NaN/0skip，ckpt@2500已存，训练健康。被 #726 监控更新取代。需要时再读。
-
-> 📦 §#724 流水（2026-10-22 23:0x，decay 5000 步训练健康监控 step 2420/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step2420 loss1.087 val@2000=1.062 0NaN/0skip，ckpt@2000已存，训练健康。被 #725 监控更新取代。需要时再读。
-
-> 📦 §#723 流水（2026-10-22 22:0x，decay 5000 步训练健康监控 step 2070/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step2070 loss1.100 val@2000=1.062 0NaN/0skip，ckpt@2000已存，训练健康。被 #724 监控更新取代。需要时再读。
-
-> 📦 §#721 流水（2026-10-22 19:3x，decay 5000 步训练健康监控 step 1390/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step1390 loss1.140 0NaN/0skip，ckpt@1000已存，训练健康。被 #722 监控更新取代。需要时再读。
-
-> 📦 §#720 流水（2026-10-22 18:3x，decay 5000 步训练健康监控 step 1040/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step1040 loss1.156 val@1000=1.102 0NaN/0skip，ckpt@1000已存，训练健康。被 #721 监控更新取代。需要时再读。
-
-> 📦 §#719 流水（2026-10-22 17:1x，decay 5000 步训练健康监控 step 720/5000）已归档 → daily-memories/2026-10-22.md；**结论**：step720 loss1.176 0NaN/0skip，ckpt@500 已存，训练健康。被 #720 监控更新取代。需要时再读。
-
-> 📦 §#717 流水（2026-10-22 14:5x，decay 5000 步启动 MBS=5+recompute）已归档 → daily-memories/2026-10-22.md；**结论**：MBS=5 OOM 排障→selective recompute→max 70.5GB，训练已启动 step20 loss1.446 0NaN/0skip。被 #718 监控更新取代。需要时再读。
+> 📦 §#717–§#737 decay 5000 步训练健康监控链（2026-10-22 14:5x ~ 10-23 06:5x，step 20→4660/5000）已归档 → daily-memories/2026-10-22.md & 2026-10-23.md；**结论**：全程健康 0NaN/0skip，loss 1.176→1.003 单调递降，ckpt 每 500 步存（@500…@4500），decay 训练成功。逐条监控流水已合并为本指针。需要时再读各日 daily 文件。
 
 > 📦 §#716 流水（2026-10-22 13:3x，1113 decay 冒烟测试通过 + 全量 20B 脚本就绪）已归档 → daily-memories/2026-10-22.md；**结论**：HF→Megatron 转换✅、冒烟 100 步✅(MBS=2)、vocab pad 129408 关键修复、pybind11 修复。被 #717 的 MBS=5+recompute 方案取代。需要时再读。
 

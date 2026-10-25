@@ -10,7 +10,7 @@ import os, re
 from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPORT_DIR = os.path.join(HERE, "..", "reports")
+REPORT_DIR = os.path.join(HERE, "reports")  # run/reports/ — 与 report_*_zh.html 同辈报告同目录
 REPORT_FILE = os.path.join(REPORT_DIR, "report_pretrain_dualnode_throughput_zh.html")
 
 REV = "rev1"  # Task B 仅 3/9 TAG 闭合（qps4/qps8/maxnch64），其余 IB 调参项未测（机制预期无收益）
