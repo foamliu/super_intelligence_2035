@@ -1,5 +1,31 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 207 | TARGET: 29 -->
+## RUN_ID 207 — 🔍 只读：监督器是否在推进（bin 增量 / 进程 / sup 日志）
+
+```bash
+set -u
+echo "=== RUN_ID 207 | progress | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+echo "[1] 进程"
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)  load=$(cat /proc/loadavg)"
+ps -eo pid=,etimes=,args= | grep '[t]okenize_supervisor' | cut -c1-70
+echo "[2] 产出"
+for p in ufw_en_train ufw_l1_en_hq_train ufw_zh_train ultrax_aicc_train; do
+  printf "  %-22s bin=%s\n" "$p" "$(ls $B/text/${p}*.bin 2>/dev/null | wc -l)"
+done
+echo "  text/ 总 bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)   目标≈285"
+echo "  最近写入:"; ls -lt --time-style=+%H:%M:%S "$B/text"/*.bin 2>/dev/null | head -3 | awk '{print "    "$6" "$7}'
+du -sh "$B/text" 2>/dev/null | awk '{print "  text/ 体积="$1}'
+echo "[3] 监督日志"
+tail -8 /tmp/tokenize_supervisor.out 2>/dev/null | cut -c1-120
+echo "  --- tokenize log ---"; tail -5 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-130
+echo "[4] tokenized 布局"
+[ -d "$B/tokenized" ] && { find "$B/tokenized" -maxdepth 3 -type d | sed "s#$B/##" | head -8; ls -l "$B/tokenized/INDEX.tsv" 2>/dev/null | awk '{print "  INDEX "$5"B"}'; } || echo "  仍无 tokenized/（①未做）"
+echo "=== DONE 207 ==="
+```
+
 <!-- RUN_ID: 206 | TARGET: 29 -->
 ## RUN_ID 206 — 🚑 给分词挂**常驻监督循环**（脚本跑完就退出 ⇒ 需要 loop 反复拉起）
 
