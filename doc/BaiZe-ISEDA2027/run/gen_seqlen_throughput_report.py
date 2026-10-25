@@ -21,7 +21,7 @@ REPORT_FILE = os.path.join(REPORT_DIR, "report_pretrain_seqlen_throughput_zh.htm
 # ───────── 环境与口径 ─────────
 ENV = {
     "nodes": "2 节点 × 8×H100 80GB SXM5（.12 master + .29 worker），DP=16 / TP=1 / PP=1",
-    "model": "BaiZe-2B Mamba2-hybrid（56 层 = 28 SSM + 28 Attention，hidden=2048，heads=16，参数量 2.220B）",
+    "model": "BaiZe-2B Mamba2-hybrid（56 层 = 24 Mamba2(SSM) + 4 Attention + 28 MLP-only，hidden=2048，heads=16，参数量 2.220B；hybrid_override_pattern=M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-，attention 位于第 10/22/33/45 层；TP=1/PP=1，sequence_parallel=false、context_parallel=1）",
     "data": "16 片 p5b_l3_train_s{0..15} 1:1 blend，真实数据（mock=false）；同组 3 个 seq 共用同一批 packed shard，仅运行时 --seq-length 切块长度不同 → 严格单变量",
     "recipe": "FP8 tensorwise(hybrid) + CUDA Graphs（即 e18 配方），与双机基线字节级一致；Mamba2 SSM dtype 由 mamba2_hybrid_2b.recipe 内部管理（launcher 无 --mamba-ssm-dtype flag，与 606K 基线同口径）",
     "nccl": "NCCL_IB_GID_INDEX=3 / MTU=4096 / TC=106 / TIMEOUT=22（主从两侧照抄），RoCE 多通道",
@@ -67,27 +67,27 @@ GRID = [
         "peak_mem_mib": 81087, "loss": 7.5811, "gnorm": 0.4882, "nan": 0,
         "src": "/tmp/baize_seqlen_grid/cfg3/summary.txt + worker.log iter30-80 median",
     },
-    # ─── 以下 3 格待网格跑完填入实测值（PENDING 时不渲染主表行）───
+    # ─── 以下 3 格为网格跑完后实测值（cfg4 OK；cfg5/cfg6 seq32768 OOM）───
     {
         "label": "cfg4", "group": "S2", "seq": 16384, "mbs": 1, "gbs": 256,
-        "accum": 16, "tok_per_step": 4194304, "status": "PENDING",
-        "tok_s": None, "step_s": None, "step_ms": None, "per_gpu": None,
-        "peak_mem_mib": None, "loss": None, "gnorm": None, "nan": None,
-        "src": "/tmp/baize_seqlen_grid/cfg4/ (运行中)",
+        "accum": 16, "tok_per_step": 4194304, "status": "OK",
+        "tok_s": 121495, "step_s": 34.522, "step_ms": 34522.4, "per_gpu": 7593,
+        "peak_mem_mib": 81079, "loss": 7.5732, "gnorm": 0.5023, "nan": 0,
+        "src": "/tmp/baize_seqlen_grid/cfg4/summary.txt + worker.log iter30-80 median (pts=6)",
     },
     {
         "label": "cfg5", "group": "S1", "seq": 32768, "mbs": 1, "gbs": 64,
-        "accum": 4, "tok_per_step": 2097152, "status": "PENDING",
+        "accum": 4, "tok_per_step": 2097152, "status": "OOM",
         "tok_s": None, "step_s": None, "step_ms": None, "per_gpu": None,
-        "peak_mem_mib": None, "loss": None, "gnorm": None, "nan": None,
-        "src": "/tmp/baize_seqlen_grid/cfg5/ (待测，seq32768 预计 OOM)",
+        "peak_mem_mib": 81031, "loss": None, "gnorm": None, "nan": None,
+        "src": "/tmp/baize_seqlen_grid/cfg5/summary.txt：worker rc=1 master rc=1，峰值显存 81031 MiB≈满卡 80GB 上限，rank 9(local_rank1) 退出；日志无显式 'out of memory' 字样(oom_lines=0)但显存已达上限→判定 OOM。未跑 --recompute-activations 回退（属配方变更组，本轮未补）",
     },
     {
         "label": "cfg6", "group": "S2", "seq": 32768, "mbs": 1, "gbs": 128,
-        "accum": 8, "tok_per_step": 4194304, "status": "PENDING",
+        "accum": 8, "tok_per_step": 4194304, "status": "OOM",
         "tok_s": None, "step_s": None, "step_ms": None, "per_gpu": None,
-        "peak_mem_mib": None, "loss": None, "gnorm": None, "nan": None,
-        "src": "/tmp/baize_seqlen_grid/cfg6/ (待测，seq32768 预计 OOM)",
+        "peak_mem_mib": 81031, "loss": None, "gnorm": None, "nan": None,
+        "src": "/tmp/baize_seqlen_grid/cfg6/summary.txt：worker rc=1 master rc=1，峰值显存 81031 MiB≈满卡 80GB 上限，rank 8(local_rank0) 退出；oom_lines=0 但显存已达上限→判定 OOM。未跑 --recompute-activations 回退（属配方变更组，本轮未补）",
     },
 ]
 

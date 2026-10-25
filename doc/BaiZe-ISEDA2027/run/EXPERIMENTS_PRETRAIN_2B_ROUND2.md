@@ -3691,3 +3691,34 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 > 📄 **完整报告**：`reports/report_pretrain_dualnode_throughput_zh.html`（中文 HTML，单文件自包含，rev1；生成器 `run/gen_dualnode_throughput_report.py`）。含 §1 摘要 / §2 环境 / §3 扩展性主结果 / §4 精度消融 / §5 Task B 全表 / §6 机制解释 / §7 单机对照 / §8 剩余优化项 / §9 复现命令 / §10 数据溯源 + #767 误报纠正记录。
 
 
+
+
+## seq 长度 x tok/step 吞吐网格（2026-10-25，用户直令 17:5x）
+
+> 单变量实验：每步训练数据量固定（2M=S1 / 4M=S2），仅改 seq（8192→16384→32768），考察增大 seq 对 16 卡训练吞吐的影响。
+> 配方冻结 = 双机 e18（DP16/TP1/PP1 + FP8 tensorwise + CUDA Graphs + 真数据），与基线字节级一致；同组 3 个 seq 共用同一批 16 个 `p5b_l3` packed shard，仅运行时 `--seq-length` 切块长度不同 → 严格单变量。
+> 测法：ITERS=80，median 取 step 30–80（6 点）；tok/s = tok_per_step ÷ median_step_秒。脚本 `baize_seqlen_grid_test.sh`，原始日志 `/tmp/baize_seqlen_grid/<cfg>/`。
+> 模型：BaiZe-2B Mamba2-hybrid = **24 Mamba2(SSM) + 4 Attention + 28 MLP-only = 56 层**（hybrid_override_pattern=`M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-`，attention 位于第 10/22/33/45 层）；TP=1/PP=1，**sequence_parallel=false、context_parallel=1**（无 SP/CP）。
+
+| # | 组 | seq | MBS | GBS | 累积 | tok/step | 状态 | tok/s | step/s | med ms | per-GPU | 峰值显存 | loss | gnorm | NaN |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 基线 e18 | — | 4096 | 3 | 1008 | 21 | 4,128,768 | OK | 606,449 | 0.147 | 6,808.1 | 37,903 | 67.6 GB | 7.5733 | 0.529 | 0 |
+| cfg1 | S1 | 8192 | 2 | 256 | 8 | 2,097,152 | OK | 108,291 | 0.052 | 19,365.9 | 6,768 | 79.2 GB | 7.5645 | 0.626 | 0 |
+| cfg2 | S2 | 8192 | 2 | 512 | 16 | 4,194,304 | OK | 111,897 | 0.027 | 37,483.7 | 6,993 | 79.2 GB | 7.5357 | 0.424 | 0 |
+| cfg3 | S1 | 16384 | 1 | 128 | 8 | 2,097,152 | OK | 112,094 | 0.053 | 18,708.9 | 7,005 | 79.2 GB | 7.5811 | 0.488 | 0 |
+| cfg4 | S2 | 16384 | 1 | 256 | 16 | 4,194,304 | OK | 121,495 | 0.029 | 34,522.4 | 7,593 | 79.2 GB | 7.5732 | 0.502 | 0 |
+| cfg5 | S1 | 32768 | 1 | 64 | 4 | 2,097,152 | OOM | — | — | — | — | 79.2 GB | — | — | — |
+| cfg6 | S2 | 32768 | 1 | 128 | 8 | 4,194,304 | OOM | — | — | — | — | 79.2 GB | — | — | — |
+
+**关键发现**：
+- seq 4096→8192（同 tok/step 2M，cfg0a 待补对照）：per-GPU 37,903→6,768 tok/s，崩 **82.1%（~5.5×）**；峰值显存 67.6→79.2 GB（逼近 80GB 上限）。
+- **同 seq 下 tok/step 翻倍（S1→S2），tok/s 只 +3%（108,291→111,897）** ⇒ 吞吐被某个与批大小无关的固定项卡住，非小 GBS/MBS 的 overlap 问题（H4 基本可排除）。
+- **S1 组 seq 8192→16384 吞吐反而 +3.5%（108,291→112,094）**：MBS 2→1 减少 launch/累积步数抵消了 SSM 成本增长。
+- **S2 组 seq 8192→16384 吞吐 +8.5%（111,897→121,495）**：同理 MBS 2→1 的 launch 节省主导。
+- seq 32768 两格均 **OOM**（峰值 81031 MiB≈满卡 80GB，rank rc=1 退出；日志无显式 OOM 字样但显存已达上限）。本轮未跑 `--recompute-activations` 回退（属配方变更组，待补）。
+- **机制（实测支撑 + 推测）**：掉速主因与 seq 相关的算子路径变慢有关——4 层 attention 的 O(seq²) 或 Mamba2 SSD chunk scan 的带宽受限/非融合路径；step time 极稳（CV~2%）⇒ 计算受限非数据饥饿。**Mamba2 SSM 超线性增长为推测·待 profile 验证**（见根因报告 `report_pretrain_seq8192_slowdown_rootcause_zh.html`，运维令 20:2x）。
+
+**可执行结论**：seq≥8192 在当前配方（TP1、无 SP/CP、recompute off）下吞吐崩塌且逼近 OOM，**不建议直接用 seq≥8192 做大规模预训练**；维持 seq=4096（基线 606K tok/s）最优。若需长上下文，应先启用 context parallelism / sequence parallelism / activation recompute 再评估。
+
+> 📄 **完整报告**：`reports/report_pretrain_seqlen_throughput_zh.html`（中文 HTML，单文件自包含，16,774B / 0 `<script>` / 0 外链）；生成器 `run/gen_seqlen_throughput_report.py`（数据字典写顶部，重生成 diff 空）。根因深挖见 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（运维令 20:2x，含 cfg0a/cfg0b 对照 + web 对标 + 假设检验表）。
+
