@@ -78,18 +78,31 @@ for h in ["分词产物目录", "前缀 / shard", "对应下载目录", "下载�
 H.append("</tr></thead><tbody>")
 
 for r in ROWS:
-    st = r["status"]
-    cls = "s-ok" if st == "可用" else ("s-del" if st.startswith("已删除") else "s-wait")
+    st_full = r["status"]
+    extra = ""
+    if st_full.startswith("已删除"):
+        # 状态列严格三选一（rule §6）：固定为「已删除(2026-10-25)」
+        st_strict = "已删除(2026-10-25)"
+        # 「原 X B」历史信息移到前缀列（去掉外层括号残留）
+        if " · " in st_full:
+            note = st_full.split(" · ", 1)[1].rstrip(")")
+            extra = "<br><span style=\"color:#888;font-size:11px\">%s</span>" % html.escape(note)
+    else:
+        st_strict = st_full
+    cls = "s-ok" if st_strict == "可用" else ("s-del" if st_strict.startswith("已删除") else "s-wait")
     H.append("<tr>")
     H.append("<td><code>%s</code></td>" % html.escape(r["tok_dir"]))
-    H.append("<td>%s%s</td>" % (html.escape(r["group"]),
-                                ("<br>bin=%d" % r["bin_n"]) if r["bin_n"] else ""))
+    H.append("<td>%s%s%s</td>" % (html.escape(r["group"]),
+                                  ("<br>bin=%d" % r["bin_n"]) if r["bin_n"] else "", extra))
     H.append("<td><code>%s</code><br>parquet=%d</td>" % (html.escape(r["dl_dir"]), r["dl_parquet"]))
-    H.append("<td class=\"num\">%s GB<br><span style=\"color:#888;font-size:11px\">%d B</span></td>"
-             % (gb(r["dl_bytes"]), r["dl_bytes"]))
+    # GB 单元格：2 位 + 精确字节 + 贴 du 命令（rule §2）
+    H.append("<td class=\"num\">%s GB<br><span style=\"color:#888;font-size:11px\">%d B</span>"
+             "<br><code style=\"color:#c62828\">du -sb %s</code></td>"
+             % (gb(r["dl_bytes"]), r["dl_bytes"], html.escape(r["dl_dir"])))
+    # Token 单元格：.json num_tokens 求和 / 1e9
     H.append("<td class=\"num\">%s<br><span style=\"color:#888;font-size:11px\">%d tok</span></td>"
              % (btok(r["tok_tokens"]), r["tok_tokens"]))
-    H.append("<td class=\"%s\">%s</td>" % (cls, html.escape(st)))
+    H.append("<td class=\"%s\">%s</td>" % (cls, html.escape(st_strict)))
     H.append("</tr>")
 
 H.append("<tr class=\"tot\">")

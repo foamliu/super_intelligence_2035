@@ -14,10 +14,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅盘点报告v3(prune后去重)+✅迁移5/5源全DONE+✅prune早期重复shard(78删/32留)+▶️85M下载+✅git sync
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅盘点报告v3(14源/716bin/prune后,去重训练可用3294.50B=env14 2238.14+/nas_env 1056.36); ✅迁移5/5源全DONE(574bins/4.24TB→/nas_env); ✅prune早期重复shard(78 covered删/释放3.69TiB,32 uncovered留待人工裁决); ▶️85M下载(9014/12126=74.3%)
-当前动作:     唤醒651(2026-10-25 10:3x)：执行运维令10:3x「prune不可映射早期分词产物+盘点报告升v3」①建analyze_prune_unmapped.py(解staging_r3符号链接→/nas_inference下载parquet,查source-set⊆full_*并集3422parquet)②判定:code_s 30/30 covered→删;l3_s 12/40 covered(en_l3/qa)→28 KEEP(multi_style/zh_l3未覆盖);math_s 36/40 covered→4 KEEP(Math-L2-preview无full_*)③产judgment.tsv+删除清单234文件+summary.json④删234文件(78shard×3ext,释放4,059,924,022,806B≈3.69TiB;pre14.90TB→post10.84TB)⑤验env14=110 untouched/code_s=0/l3_s=28/math_s=4=142bin✓⑥盘点报告升v3:inventory_v3 TSV+gen更新v3+生成report(25.1KB,716bin,去重训练可用3294.50B callout,4778.41B标注含历史重复,勘误#8)
-下一步:       ①commit+push(data prune+v3报告)②监控85M(9014/12126=74.3%,低优先级)③32 uncovered shard待人工裁决
+PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅prune早期重复shard+✅tokenized镜像布局建成(716shard/3342.49B)+▶️未分词4源分词中(32/131)+✅报告重生成(新路径)+✅git sync
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅prune早期重复shard(78删/释放3.69TiB); ✅迁移5/5源全DONE(→/nas_env,full_*为symlink); ✅tokenized镜像布局建成(10目录/716shard/3342.49B/13364.91GB,hardlink同盘+symlink跨盘,VERIFY triplet ALL OK+inode ALL OK,每目录MANIFEST.json+顶层INDEX.tsv); ✅报告重生成(单表14行,tok_dir更新为新镜像路径)
+当前动作:     唤醒652(2026-10-25 14:5x)：执行运维令13:2x「停报告·只做两件事」①建build_tokenized_mirror.py→建tokenized/镜像布局(env14 hardlink110/full_* symlink5组684/ufw_l1_en_hq hardlink32完成三件套,716shard全VERIFY OK)②确认②分词已在跑(supervisor PID335288@13:24,done=32/131,tokens/s≈9.6M,ETA≈4.3h,进程67>0)③更新map_dl_vs_tok tok_dir为新路径+重生成报告④建report_verify_20261025.md
+下一步:       ①commit+push(data线:镜像脚本+报告+TSV+verify+MEMORY+日报+tokenize_supervisor)②监控分词(done=32/131,ETA≈4.3h,完成后重跑build_tokenized_mirror.py把新shard hardlink进镜像+更新INDEX/报告/DATA_LEDGER §9)③32 uncovered shard待人工裁决
 阻塞:         无主线阻塞;32 uncovered shard(l3_s28+math_s4)来源不明待人工裁决
 ERROR_COUNT:  9
 ```
@@ -25,6 +25,7 @@ ERROR_COUNT:  9
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [14:5x] 唤醒652：建tokenized/镜像布局(build_tokenized_mirror.py,716shard/3342.49B,hardlink同盘+symlink跨盘,VERIFY triplet+inode ALL OK,每目录MANIFEST.json+INDEX.tsv)｜确认未分词分词在跑(PID335288,done=32/131,tokens/s≈9.6M,ETA≈4.3h,进程67>0)｜更新map_dl_vs_tok tok_dir为新镜像路径+重生成报告(14行/单表)｜建report_verify_20261025.md｜未完成指令：无（①布局✅②分词在跑）
 > 📦 唤醒651 原文已归档 → daily-memories-data/2026-10-25.md（运维令§prune不可映射早期分词234文件释放3.69TiB+盘点报告升v3,详见日文件）
 > 📦 唤醒650 原文已归档 → daily-memories-data/2026-10-25.md（运维令§盘点v2返工·5下载源实测+794bin+报告v2,详见日文件）
 > 📦 唤醒649 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 74.3%续命,详见日文件）
