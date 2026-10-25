@@ -22,31 +22,25 @@
 ---
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🔥🔥 最高优先 · 2026-10-25 13:2x · 运维直令 · **停止一切报告工作，现在只做两件事**
+
+> 现状（运维 13:19 实测）：loop 活着（.12 PID 1647008）、cline 活着；你 12:41 重生成报告（10,520 B，1 table，每行加了 `du -sb …` 命令）—— **报告这部分做得对，验收通过**；`untokenized_v1_20261025.tsv`（12:47，500 B）已落。
+> **但 `…/baize-data/tokenized/` 不存在、`preprocess_data` 进程 = 0、load 6.8 → ① 布局没建、② 分词没跑。用户要的就是这两件。**
+
+1. **先提交你在工作区里的成果**（报告 HTML、`gen_tokenized_inventory_report.py`、`untokenized_v1_20261025.tsv`，以及任何核对记录）→ `git add -A && git commit`，前缀 `data:`；**不许留在工作区不提交**。
+2. **立刻建 `tokenized/` 镜像布局**（见下方 ①，hardlink/symlink，零拷贝）→ 建完 `tokenized/INDEX.tsv` 必须存在，并在 MEMORY 里贴 `find tokenized -maxdepth 3 -type d` 的实际输出。
+3. **立刻开分词**（见下方 ②）→ **30 分钟内** `/tmp/tokenize_untokenized_*.log` 必须有 `done/total` 行、`ps -eo args= | grep -c '[p]reprocess_data'` 必须 > 0；标定四档（96/144/192/224）的数字要贴回来。
+> 🚫 从现在起**不要再改报告结构、不要再重写报告、不要再补勘误/摘要**（报告已验收）。
+> 🚫 不要把"核对了/准备跑"当成"跑起来了"；**判据只有：日志有进度 + 进程数 > 0**。
+
+
 
 ### ⏱ 本轮执行顺序（2026-10-25 12:5x 用户直令 · **覆盖此前所有令**）
 > 用户原话：「1. 已下载已分词的，把分词目录整理一下，跟下载目录有更好的对应。2. 已下载未分词的，去分词，充分利用多核并发。」
 > 已删 32 个不可对应 shard（1.91 TiB，RUN 199）；报告已由运维改为**单表**（8.5 KB / 1 table / 14 行），**结构不许改**。
 
-#### ⓪ 先核对这份报告（用户令：不是 data 做的，**data 必须逐格复核**，30 分钟内）
-
-对象：`reports/report_data_tokenized_inventory_zh.html`（运维生成，单表 14 行）+ `run/data/map_dl_vs_tok_20261025.tsv`。
-
-逐行复核（14 行 × 5 项，**每项都要贴命令与实际值**）：
-1. `test -d <下载目录>` → exists?
-2. `find <下载目录> -name '*.parquet' | wc -l` → 与表里 parquet 数一致?
-3. `du -sb <下载目录>` → 与表里字节/GB 一致（GB = 字节/1e9，2 位）?
-4. `ls <分词产物目录>/*.bin | wc -l` → 与 bin 数一致?（硬链接用 `stat -c %i` 验同 inode；软链接 `readlink -f` 验目标存在）
-5. `python3 -c` 汇总该目录所有 `.json num_tokens` → 与表里 Token(B) 一致（2 位）?
-
-另核：
-- 合计行 = 各行之和（下载 GB、Token B、bin 数三项都要对，误差须为 0）；
-- HTML 结构：`<table` 出现次数必须 = 1、表头 6 列齐全、禁用词（来源不明/待人工裁决/未实测/N/A）命中 = 0；
-- **已删除** 4 行：确认产物已不存在（`ls` 为空）且下载目录仍在，Token 列按定义写 0.00 —— 这一类在核对表里标 `无法复测(产物已删)`，**不许**自行补数字。
-
-交付 `run/data/report_verify_20261025.md`：`行# | 检查项 | 报告值 | 实测值 | 命令 | 结论(PASS/MISMATCH/无法复测)`。
-- 全 PASS ⇒ 在报告 footer 追加一行「data 复核 PASS · <时间> · 复核人 data」，不改其它内容；
-- 有 MISMATCH ⇒ 只改 `map_dl_vs_tok_20261025.tsv` 的错误格 → 重跑 `python run/data/gen_tokenized_inventory_report.py`（单表模式，结构不变），并在 `report_verify_*.md` 列明改了哪几格、原值/新值；
-- 🚫 不许改表结构/列名/加章节；🚫 不许只写「已核对无误」而不贴命令与实测值。
+#### ⓪ 报告复核 · **已完成并验收**
+> data 于 12:41 重生成（10,520 B / 1 table / 每行附 `du -sb` 命令 / 结构未变），运维 13:19 验收通过。若 `run/data/report_verify_20261025.md` 还没落，随下次提交补上（只补实测值与命令，不补论断）；🚫 不得再改报告结构。
 
 #### ① 已分词产物：整理成「镜像下载目录」的布局（**零拷贝**）
 
@@ -101,7 +95,6 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
-> 📦 §运维指令·2026-10-24 13:2x（MiniCPM5 全量已分词数据：硬盘实测清单）**已闭合**（首版报告已交付 `reports/report_data_tokenized_inventory_zh.html`，但**因 04 表漏源/小计错误被 10-25 令要求返工**）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：口径=只写硬盘实测（`du -sb`/`find`/`.idx` manifest），未分词原始 parquet 与 SFT/RL/85M 不计入总量、只做对照；产物 `run/data/tokenized_files_20261024.tsv`（2383 行）可复用。需要时再读。
 
 > 📦 §运维指令·2026-10-23 22:1x（复测 92.25 代理 / 恢复 85M / 分词产物体积 / 搬 /nas_env）**已闭合**（85M 已恢复并在降优先级后台跑，迁移 5/5 全 DONE）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：代理走 92.25+hf.co 直连；迁移铁律 = rsync -a 不用 mv、校验 shard+字节一致才删源、先建软链接、/nas_env 余量 ≥ 数据×1.1。需要时再读。
 
