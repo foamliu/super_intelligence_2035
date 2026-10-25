@@ -19,3 +19,20 @@ E5a E5a 2048 8 1024 8 16384 2097152 OK 112739 0.054 18601.8 7046 81085 7.5705 0.
 E5b E5b 1024 16 2048 8 16384 2097152 OK 106352 0.051 19719.0 6647 81083 7.5801 0.5155 0
 
 # LADDER COMPLETE @ 2026-10-26 01:13:39
+
+# ── rev3 RETEST (2026-10-26 02:0x): graph-off isolation @ tok/mb=16384 (script baize_rc_recompute.sh) ──
+# Recipe identical to ladder EXCEPT --enable-cuda-graph (on/off) and --recompute-num-layers.
+# FINDING: tok/mb=16384 + graph ON  = 121K tok/s / 81GB顶格 (slow, ladder cfg0a);
+#          tok/mb=16384 + graph OFF = 561K tok/s / 75.5GB (0.93x 8K满速, FAST).
+#   => 5.4x cliff = CUDA Graph replay stall at HBM顶格, NOT memory-bandwidth-bound.
+#   => --recompute-num-layers 56 is a NO-OP for Mamba2-hybrid: peak mem UNCHANGED (75517 MiB),
+#      speed unchanged (572K vs 561K). Flag only recomputes transformer/attention layers;
+#      Mamba2 SSM activations (the bulk) are untouched => recompute is NOT a memory lever here.
+#   => full-uniform recompute also requires full-iteration cuda-graph mode (Mamba2 uses local
+#      graph, no CLI switch) => recompute+graph combo asserts "full recompute only supported
+#      with full iteration CUDA graph".
+# cols same as ladder; graph/recompute encoded in label suffix (ang=graph-off/no-rc, ng=graph-off/rc56).
+RC	cfg0a-graphON	4096	4	512	8	16384	2097152	OK_PRIOR	121032	0.058	17327.2	7564	81087	7.5663	0.5882	0
+RC	cfg0ang	4096	4	512	8	16384	2097152	OK	561126	0.268	3737.4	35070	75517	7.5674	0.5772	0
+RC	rc56ng	4096	4	512	8	16384	2097152	OK	572476	0.273	3663.3	35779	75517	7.5648	0.5543	0
+# RETEST COMPLETE @ 2026-10-26 02:06:51

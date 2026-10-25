@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe-2B 预训练 seq=8192 吞吐骤降根因分析报告（rev2 · tok/mb 悬崖）</title>
+<title>BaiZe-2B 预训练 seq=8192 吞吐骤降根因分析报告（rev3 · CUDA Graph 顶格停滞）</title>
 <style>
   :root{
     --bg:#0f1419; --panel:#1a2230; --panel2:#22304a; --ink:#e6edf3; --dim:#9fb4c7;
@@ -58,25 +58,25 @@
 <body>
 <div class="wrap">
 <header>
-  <h1>BaiZe-2B（Mamba2-hybrid）预训练 seq=8192 吞吐骤降 —— 根因分析报告（rev2）</h1>
+  <h1>BaiZe-2B（Mamba2-hybrid）预训练 seq=8192 吞吐骤降 —— 根因分析报告（rev3）</h1>
   <div class="sub">运维令 2026-10-25 23:0x 通宵攻坚 · 单变量阶梯 tok/microbatch/GPU · 11 格决定性实验锁定显存悬崖</div>
   <div class="meta">
     <span class="tag">模型 BaiZe-2B</span>
     <span class="tag">硬件 2×8 H800（双节点 NVLink+IB）</span>
     <span class="tag">框架 Megatron-LM</span>
     <span class="tag">日期 2026-10-26</span>
-    <span class="tag">状态 ✅ 根因锁定 rev2</span>
+    <span class="tag">状态 ✅ 根因锁定 rev3（复测验证）</span>
   </div>
 </header>
 
-<div class="revnote">⌨ <b>版本说明</b>：本报告为 <b>rev2</b>，推翻 rev1（commit 30650205a）的「批几何→GPU 饥饿（H4 确认）」结论。rev1 仅凭 4 格 cfg0a 对照即下结论，被本报告的 11 格单变量阶梯（E1–E5b）证伪：<b>E2</b> 用同样的小批几何（gbs256/accum16）却跑出 605K tok/s @ 84% MFU（快），直接否决「GPU 饥饿」假说。真因见下方裁决。</div>
+<div class="revnote">⌨ <b>版本说明（rev3 · 2026-10-26 02:0x 复测）</b>：本报告经三版演进。<b>rev1</b>（commit 30650205a）「批几何→GPU 饥饿（H4）」被 <b>rev2</b> 的 11 格单变量阶梯证伪（E2 同小批 605K @ 84% MFU 快）。<b>rev2</b>「tok/mb≥16384→显存顶格 memory-bound」又被 <b>rev3 复测</b>推翻：在同一 tok/mb=16384 配方下仅<b>关掉 <code>--enable-cuda-graph</code></b>，吞吐从 121K 跃升到 <b>561K tok/s（0.93× 8K 满速）</b>、峰值 81GB→75.5GB ⇒ 顶格显存<u>不是</u>带宽瓶颈，5.4× 骤降真因 = <b>CUDA Graph 在 HBM 顶格时的 replay 停滞</b>。复测证据见<a href="#rev3">五·5 节</a>。recompute 复测同时证伪「降激活显存」处方（Mamba2-hybrid 无效，显存不变）。</div>
 
+<a id="rev3"></a>
 <div class="verdict">
-  <div class="lbl">▍ 结论（ROOT CAUSE · rev2）</div>
-  <div class="big">吞吐 5.4× 骤降的根因是 <em>tok/microbatch/GPU = mbs×seq ≥ 16384 导致单卡激活显存顶满 ~80GB HBM</em>，进入 memory-bound；<u>与序列长度无关、与批几何(gbs/accum)无关、与每步总 token 数无关</u>。</div>
-  <p><b>一句话铁律</b>：<code>tok/mb = mbs × seq</code>。≤ 12288 → 峰值显存 &lt; 70GB、余量 ≥ 10GB → 维持基线 <b>606,449 tok/s</b>（84% MFU）；≥ 16384 → 峰值显存 81.1GB 顶格（reserved 74GB / max-alloc 69GB / 余量 ~6GB）→ MFU 崩到 13% → 每 token 耗时 5.4×。</p>
-  <p><b>决定性证据</b>：11 格单变量阶梯（脚本 <code>baize_seqlen_control_test.sh</code>，结果表 <code>pretrain_rc_ladder_20261026.tsv</code>）。三组同 tok/mb=12288 的格（seq=4096/mbs3、seq=12288/mbs1、seq=6144/mbs2）全部 ~600K 快；七组同 tok/mb=16384 的格（seq 从 1024 到 16384、mbs 从 1 到 16）全部 ~108–121K 慢且峰值 81.1GB。序列长度在 1024↔16384 间扫遍，<u>慢/快完全由 tok/mb 决定，与 seq 无关</u>。</p>
-  <p><b>处置</b>：seq=8192 用 <b>mbs=1</b>（tok/mb=8192）即可满速 605K tok/s = 1.00× 基线（「8K 满速配方」，已复测达标 ≥0.7× 门槛）。seq=16384 须上 <b>context-parallel CP=2/4</b> 把单卡有效 tok/mb 压回 ≤12288，或开 <code>--recompute-activations</code> 降激活显存（配方变更组，单列）。</p>
+  <div class="lbl">▍ 结论（ROOT CAUSE · rev3 · 已复测验证）</div>
+  <div class="big">5.4× 吞吐骤降的根因是 <em>CUDA Graph 在 HBM 顶格（~81GB）时的 replay 病态停滞</em>，<u>非</u>显存带宽 memory-bound。<b>关掉 <code>--enable-cuda-graph</code></b> 后同一 tok/mb=16384 配方恢复 <em>561K tok/s = 0.93× 8K 满速</em>。</div>
+  <p><b>触发条件</b>：<code>tok/mb = mbs×seq ≥ 16384</code> → 单卡激活显存 ~72GB + graph workspace ~5.5GB = 81GB 顶格（reserved 74GB / 余量 ~6GB）→ graph replay 停滞，per-iter 3,737ms→17,327ms（4.64×）。<u>tok/mb≤12288 时峰值 &lt;70GB，graph 未顶格 → 满速</u>（11 格阶梯已证：4 个 ≤12288 格全快全 &lt;70GB，7 个 16384 格全慢全 81GB）。</p>
+  <p><b>修复（已验证）</b>：tok/mb≥16384 时<b>关 <code>--enable-cuda-graph</code></b> → 561K tok/s、75.5GB、loss 7.57/gnorm 0.58/nan 0 健康，<b>一个 flag</b>。seq=8192 仍用「8K 满速配方」（mbs=1，graph 可开，55GB 未顶格 → 605K）。<b>recompute 对 Mamba2-hybrid 无效</b>（只重算 transformer 层，SSM 激活主体不触及，显存 75.5GB 不变）；CP 为唯一序列切分杠杆（smoke 待跑）。</p>
 </div>
 
 <h2>一、问题与实验设计</h2>
@@ -152,7 +152,7 @@
 <thead><tr><th>假设</th><th>内容</th><th>判据</th><th>裁决</th><th>证据</th></tr></thead>
 <tbody>
 <tr><td><b>H1</b></td><td>seq↑ → attention O(n²) 超线性</td><td>小 seq 应快</td><td><span class="pill fals">证伪</span></td><td>E5a(seq=2048 最小)仍慢 112,739；E3(seq=12288)却快 617,269</td></tr>
-<tr><td><b>H2</b></td><td>seq&gt;4096 触发 CUDA graph 回退</td><td>慢格应无 graph</td><td><span class="pill fals">证伪</span></td><td>所有格均 <code>built 112 cuda graph(s)</code> 成功，<code>cuda_graph_impl: local</code> 一致</td></tr>
+<tr><td><b>H2</b></td><td>seq&gt;4096 触发 CUDA graph 回退</td><td>慢格应无 graph</td><td><span class="pill na">部分（rev3 修正）</span></td><td>所有格均 <code>built 112 cuda graph(s)</code> 成功（"回退"证伪）；<b>但 rev3 复测发现 graph replay 在 HBM 顶格时停滞</b>（关 graph 561K vs 开 graph 121K）⇒ graph 是真因，机制非"回退"而是"顶格停滞"</td></tr>
 <tr><td><b>H3</b></td><td>重算路径切换</td><td>—</td><td><span class="pill na">次要</span></td><td>未开 recompute；与主因正交</td></tr>
 <tr><td><b>H4</b></td><td>小批几何 → GPU 饥饿 / 低 MFU（rev1 根因）</td><td>同小批应都慢</td><td><span class="pill fals">证伪</span></td><td><b>E2 同样小批（gbs256/accum16/mbs1）却 605K @ 84% MFU 快</b> ⇒ 13% MFU 是 memory-bound 的症状，非 launch 间隙成因</td></tr>
 <tr><td><b>H5</b></td><td>seq↑ → 数据加载变慢</td><td>—</td><td><span class="pill fals">证伪</span></td><td>dataloader 配置全同；E5a(seq=1024)同样慢</td></tr>
@@ -160,10 +160,10 @@
 <tr><td><b>H7</b></td><td>通信瓶颈</td><td>—</td><td><span class="pill na">次要</span></td><td>DP16 全 reduce 数据量 ∝ tok/step，但 cfg2/cfg4(tok/step=4.19M)仍慢</td></tr>
 <tr><td><b>H8</b></td><td>seq&gt;4096 触发代码路径切换</td><td>—</td><td><span class="pill fals">证伪</span></td><td>E5a(seq=2048)同样慢；运维 672b61a57 亦标证伪</td></tr>
 <tr><td><b>H9</b></td><td>8K 特有固定开销</td><td>—</td><td><span class="pill fals">证伪</span></td><td>E5a(seq=2048)/E5b(seq=1024)同样慢，无 8K 特有项</td></tr>
-<tr><td><b>H-mem</b></td><td>tok/mb↑ → 激活显存顶 80GB → memory-bound</td><td>慢格应顶格、快格应有余量</td><td><span class="pill conf">确认 ✓</span></td><td>7 慢格峰值全 81,08x MiB 顶格；4 快格 &lt;70GB；max-alloc ∝ tok/mb 单调 ⇒ 根因</td></tr>
+<tr><td><b>H-mem</b></td><td>tok/mb↑ → 激活显存顶 80GB → memory-bound</td><td>慢格应顶格、快格应有余量</td><td><span class="pill na">必要条件（rev3 修正）</span></td><td>7 慢格峰值全 81,08x MiB 顶格；4 快格 &lt;70GB。顶格是 graph 停滞的<b>必要条件</b>，但<u>非</u>带宽瓶颈成因——关 graph 后 75.5GB 即满速 561K（rev3）⇒ 真因是 graph replay 停滞，非 memory-bandwidth-bound</td></tr>
 </tbody>
 </table>
-<div class="callout good"><b>裁决汇总（rev2）</b>：10 个假设中仅 <b>H-mem（显存顶格→memory-bound）确认</b>。rev1 的「根因 H4 GPU 饥饿」被 E2（同小批 84% MFU 快）<b>明确证伪</b>——13% MFU 是 memory-bound 的下游症状，不是上游成因。所有基于 seq 的假设（H1/H2/H5/H6/H8/H9）被 E5a/E5b（最小 seq 仍慢）+ E3（大 seq 却快）证伪。<u>根因唯一指向 H-mem</u>。</div>
+<div class="callout good"><b>裁决汇总（rev3）</b>：rev1「H4 GPU 饥饿」被 E2（同小批 84% MFU 快）<b>证伪</b>。rev2「H-mem memory-bound」被 rev3 复测<b>修正</b>：显存顶格是 graph 停滞的必要条件，但非带宽瓶颈成因——<b>真因 = H-graph（CUDA Graph 在 HBM 顶格时的 replay 停滞）</b>，关 graph 即满速 561K。所有基于 seq 的假设（H1/H5/H6/H8/H9）被 E5a/E5b（最小 seq 仍慢）+ E3（大 seq 却快）证伪。</div>
 
 <h2>五、三版归因的演进与证伪</h2>
 <div class="grid2">
@@ -181,10 +181,25 @@
   </div>
 </div>
 <div class="card" style="margin-top:14px">
-  <h4>v3「tok/mb ≥ 16384 → 显存顶格 memory-bound」（rev2 · 本报告）</h4>
+  <h4>v3「tok/mb ≥ 16384 → 显存顶格 memory-bound」（rev2）<span class="pill fals">已被 rev3 推翻</span></h4>
   <p><b>主张</b>：tok/mb = mbs×seq ≥ 16384 → 单卡激活显存顶 80GB HBM → memory-bound → MFU 84%→13% → 5.4×。</p>
-  <p><b>确认</b>：11 格中 7 个 tok/mb=16384 格全慢全顶格 81.1GB；4 个 tok/mb≤12288 格全快全 &lt;70GB。max-alloc 42.8→56.0→69.4 GB ∝ tok/mb 单调。无反例。</p>
+  <p><b>当时确认</b>：11 格中 7 个 tok/mb=16384 格全慢全顶格 81.1GB；4 个 tok/mb≤12288 格全快全 &lt;70GB。max-alloc 42.8→56.0→69.4 GB ∝ tok/mb 单调。无反例。</p>
+  <p class="sub"><b>rev3 推翻</b>：显存顶格是<b>必要条件</b>（graph workspace 把 HBM 推到顶格），但<u>不是</u>带宽瓶颈成因——关 graph 后同一配方 81GB→75.5GB 即满速 561K。真因是 graph replay 停滞，见五·5 节。</p>
 </div>
+
+<h2>五·5、rev3 复测：关 CUDA Graph → 16K 满速（推翻 memory-bound）</h2>
+<p>rev2 收尾后运维令追加「配方变更组」复测：在同一 tok/mb=16384 配方（seq4096/mbs4/gbs512/accum8，即阶梯 cfg0a）上<b>唯一变量 = <code>--enable-cuda-graph</code> 与 <code>--recompute-num-layers</code></b>，其余配方（DP16/TP1/PP1 + FP8 tensorwise + 真数据 + 双节点 .12+.29）与阶梯字节级一致。脚本 <code>baize_rc_recompute.sh</code>，每格 80 iter，稳态取 iter 30–80 中位数，结果表 <code>pretrain_rc_ladder_20261026.tsv</code>（RC 三行）。</p>
+<table>
+<thead><tr><th>格</th><th>graph</th><th>recompute</th><th>seq</th><th>mbs</th><th class="num">tok/mb</th><th class="num">ms/step</th><th class="num">tok/s</th><th class="num">vs 8K满速</th><th class="num">峰值显存</th><th>判</th></tr></thead>
+<tbody>
+<tr class="slow"><td>cfg0a（阶梯）</td><td>ON</td><td>off</td><td>4096</td><td>4</td><td class="num">16,384</td><td class="num">17,327</td><td class="num">121,032</td><td class="num">0.20×</td><td class="num">81,087 顶格</td><td>❌ 慢</td></tr>
+<tr class="fast"><td>cfg0ang（复测）</td><td><b>OFF</b></td><td>off</td><td>4096</td><td>4</td><td class="num">16,384</td><td class="num">3,737</td><td class="num">561,126</td><td class="num">0.93×</td><td class="num">75,517</td><td>✅ <b>关graph满速</b></td></tr>
+<tr class="fast"><td>rc56ng（复测）</td><td>OFF</td><td>56 层</td><td>4096</td><td>4</td><td class="num">16,384</td><td class="num">3,663</td><td class="num">572,476</td><td class="num">0.95×</td><td class="num">75,517</td><td>recompute 显存<u>无变化</u></td></tr>
+<tr class="fast"><td>E2（阶梯）</td><td>ON</td><td>off</td><td>8192</td><td>1</td><td class="num">8,192</td><td class="num">3,466</td><td class="num">605,012</td><td class="num">1.00×</td><td class="num">55,419</td><td>★ 8K满速（graph未顶格）</td></tr>
+</tbody>
+</table>
+<div class="callout good"><b>决定性复测</b>：cfg0a（graph ON）121K/81GB → cfg0ang（graph OFF，其余全同）561K/75.5GB。<b>4.64× 提速、显存降 5.5GB</b>，且 561K = 0.93× 8K 满速。⇒ 顶格显存本身不构成带宽瓶颈（97% util、满速），<b>5.4× 骤降 = CUDA Graph 在 HBM 顶格时的 replay 停滞</b>。graph 的 ~5.5GB workspace 把 75.5GB 推到 81GB 顶格，顶格时 graph 重放路径病态慢。</div>
+<div class="callout bad"><b>recompute 证伪（Mamba2-hybrid）</b>：<code>--recompute-num-layers 56</code>（全 56 层 uniform recompute）复测峰值显存 = <b>75,517 MiB，与不开 recompute 完全相同</b>，速度也相同（572K vs 561K，噪声内）。原因：该 flag 只重算 <b>transformer/attention 层</b>激活；BaiZe-2B 是 Mamba2-hybrid，<b>激活显存主体是 Mamba2 SSM 层</b>（flag 不触及）⇒ recompute 对本架构<b>不是降显存杠杆</b>。rev2「开 recompute 降 ~60% 激活显存」处方 hereby 作废。另注：full-uniform recompute 还要求 full-iteration cuda-graph 模式（Mamba2 用 local graph，CLI 不可切换），recompute+graph 组合直接 <code>AssertionError: full recompute is only supported with full iteration CUDA graph</code> 失败。</div>
 
 <h2>六、修复配方与档位表</h2>
 <h3>6.1 8K 满速配方（已复测达标 ≥0.7× 基线）</h3>
@@ -192,31 +207,32 @@
 
 <h3>6.2 推荐档位表</h3>
 <table>
-<thead><tr><th>目标 seq</th><th>mbs</th><th>accum</th><th class="num">tok/mb</th><th class="num">预期 tok/s</th><th class="num">峰值显存</th><th>备注</th></tr></thead>
+<thead><tr><th>目标 seq</th><th>mbs</th><th>accum</th><th>graph</th><th class="num">tok/mb</th><th class="num">预期 tok/s</th><th class="num">峰值显存</th><th>备注</th></tr></thead>
 <tbody>
-<tr class="fast"><td>4096</td><td>3</td><td>21</td><td class="num">12,288</td><td class="num">~606K</td><td class="num">67.6GB</td><td>基线（已验证）</td></tr>
-<tr class="fast"><td>8192</td><td>1</td><td>16</td><td class="num">8,192</td><td class="num">~605K</td><td class="num">55.4GB</td><td><b>★ 8K 满速配方（已验证 1.00×）</b></td></tr>
-<tr class="fast"><td>12288</td><td>1</td><td>16</td><td class="num">12,288</td><td class="num">~617K</td><td class="num">68.4GB</td><td>已验证快</td></tr>
-<tr class="fast"><td>6144</td><td>2</td><td>16</td><td class="num">12,288</td><td class="num">~598K</td><td class="num">69.3GB</td><td>已验证快</td></tr>
-<tr class="slow"><td>16384</td><td>1</td><td>—</td><td class="num">16,384</td><td class="num">~112K</td><td class="num">81.1GB顶格</td><td>❌ 不可用（memory-bound）</td></tr>
-<tr><td>16384</td><td>1</td><td>—</td><td class="num">8,192 (CP=2)</td><td class="num">待测</td><td class="num">~55GB 预期</td><td>🆕 CP=2 把单卡有效 tok/mb 压回 8192（smoke 待跑）</td></tr>
-<tr><td>32768</td><td>1</td><td>—</td><td class="num">—</td><td class="num">OOM</td><td class="num">81GB</td><td>cfg5/6 已 OOM；须 CP≥4 或 recompute</td></tr>
+<tr class="fast"><td>4096</td><td>3</td><td>21</td><td>ON</td><td class="num">12,288</td><td class="num">~606K</td><td class="num">67.6GB</td><td>基线（已验证）</td></tr>
+<tr class="fast"><td>8192</td><td>1</td><td>16</td><td>ON</td><td class="num">8,192</td><td class="num">~605K</td><td class="num">55.4GB</td><td><b>★ 8K 满速配方（已验证 1.00×，graph 未顶格）</b></td></tr>
+<tr class="fast"><td>12288</td><td>1</td><td>16</td><td>ON</td><td class="num">12,288</td><td class="num">~617K</td><td class="num">68.4GB</td><td>已验证快</td></tr>
+<tr class="fast"><td>6144</td><td>2</td><td>16</td><td>ON</td><td class="num">12,288</td><td class="num">~598K</td><td class="num">69.3GB</td><td>已验证快</td></tr>
+<tr class="slow"><td>16384</td><td>1</td><td>—</td><td>ON</td><td class="num">16,384</td><td class="num">~112K</td><td class="num">81.1GB顶格</td><td>❌ graph 顶格停滞（rev3）</td></tr>
+<tr class="fast"><td>16384</td><td>1</td><td>—</td><td><b>OFF</b></td><td class="num">16,384</td><td class="num"><b>~561K</b></td><td class="num">75.5GB</td><td>✅ <b>关 graph 即满速（已验证 0.93×，rev3）</b></td></tr>
+<tr><td>16384</td><td>1</td><td>—</td><td>OFF</td><td class="num">8,192 (CP=2)</td><td class="num">待测</td><td class="num">~55GB 预期</td><td>🆕 CP=2 进一步降显存（smoke 待跑；关 graph 已够用）</td></tr>
+<tr><td>32768</td><td>1</td><td>—</td><td>OFF</td><td class="num">—</td><td class="num">OOM</td><td class="num">81GB</td><td>cfg5/6 已 OOM；须 CP≥4（recompute 对 SSM 无效）</td></tr>
 </tbody>
 </table>
 <p class="sub">CP = context-parallel：把序列在序列维度切到多卡，单卡有效 tok/mb = mbs×seq/CP。CP=2 使 seq16384 的单卡有效 tok/mb = 16384/2 = 8192 ⇒ 预期回到满速。CP smoke（20 步）为本报告下一步。</p>
 
 <h3>6.3 配方变更组（cfg5/cfg6 32K OOM 重试，单列）</h3>
 <ul>
-  <li><code>--recompute-activations</code>（selective recompute）：省 ~60% 激活显存，仅 ~5% 额外开销。可把 tok/mb=16384 的激活显存从 69GB 降到 ~28GB ⇒ 预期解除顶格。<b>recompute 重测为本报告下一步</b>。</li>
+  <li><code>--recompute-num-layers</code>（full-uniform recompute）：<b>rev3 复测证伪</b>——峰值显存 75,517 MiB <b>完全不变</b>，速度也不变（572K vs 561K）。该 flag 只重算 transformer/attention 层；BaiZe-2B 是 Mamba2-hybrid，激活显存主体是 SSM 层（不触及）⇒ <b>对本架构不是降显存杠杆</b>。且 full-uniform recompute 要求 full-iteration cuda-graph 模式（Mamba2 用 local graph，CLI 不可切换），recompute+graph 组合直接 <code>AssertionError</code> 失败。</li>
   <li><code>--use-distributed-optimizer</code>：把优化器状态分片到 DP 维，省显存换通信。对激活显存（主因）无直接帮助，属次要杠杆。</li>
 </ul>
 
-<h2>七、处置建议</h2>
+<h2>七、处置建议（rev3）</h2>
 <ol>
-  <li><b>seq=8192 立即可用</b>：用「8K 满速配方」（mbs=1/accum=16），已 1.00× 基线验证。无需任何额外配置。</li>
-  <li><b>seq=16384</b>：单卡 mbs=1 必慢（memory-bound）。二选一：① 上 <b>CP=2</b>（单卡有效 tok/mb=8192，预期满速，smoke 待跑）；② 开 <code>--recompute-activations</code>（降激活显存，重测待跑）。</li>
-  <li><b>seq=32768</b>：单卡 OOM。须 <b>CP≥4</b> 或 <code>--recompute-activations</code>+CP 组合。</li>
-  <li><b>判据铁律</b>（写入任务书）：tok/mb = mbs×seq ≤ 12288 安全；= 16384 顶格慢；&gt; 16384 OOM。规划任何 seq 时先算 tok/mb。</li>
+  <li><b>seq=8192 立即可用</b>：用「8K 满速配方」（mbs=1/accum=16，graph 可开），已 1.00× 基线验证（605K，55GB 未顶格）。无需任何额外配置。</li>
+  <li><b>seq=16384</b>（rev3 修正）：<b>关掉 <code>--enable-cuda-graph</code></b> 即可满速 ——已验证 <b>561K tok/s = 0.93× 8K 满速</b>，峰值 75.5GB，loss 7.57/gnorm 0.58/nan 0 健康。<b>一个 flag，无需 CP、无需 recompute</b>（recompute 对 Mamba2-hybrid 已证伪无效）。</li>
+  <li><b>seq=32768</b>：单卡 OOM（关 graph 仍受 ~75GB 激活显存限制；recompute 对 SSM 无效）。须 <b>CP≥4</b>（序列切分是唯一降 SSM 激活的杠杆，smoke 待跑）。</li>
+  <li><b>判据铁律</b>（rev3 修正，写入任务书）：tok/mb = mbs×seq ≤ 12288 → graph 可开、满速；= 16384 → <b>关 graph</b>（561K，75.5GB）或降 mbs；&gt; 16384 → 须 CP。规划任何 seq 时先算 tok/mb，并按峰值显存决定是否关 graph。</li>
 </ol>
 
 <h2>八、方法论警示</h2>
@@ -233,7 +249,7 @@
   <li>Qwen3 技术报告 (arXiv:2505.09388). 长 context 训练的显存与吞吐权衡、CP 实践。检索日期 2026-10-25。</li>
 </ol>
 
-<p class="sub" style="margin-top:28px;text-align:center">— 报告 rev2 生成 2026-10-26 01:3x · BaiZe-2B 预训练线 · 根因 = tok/mb≥16384 显存顶格 memory-bound（非 seq、非批几何）—</p>
+<p class="sub" style="margin-top:28px;text-align:center">— 报告 rev3 生成 2026-10-26 02:0x · BaiZe-2B 预训练线 · 根因 = CUDA Graph 在 HBM 顶格(~81GB)时的 replay 停滞（关 graph 即满速 561K；非 memory-bandwidth-bound）—</p>
 </div>
 </body>
 </html>

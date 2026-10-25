@@ -3785,3 +3785,38 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 > 📄 根因报告（**rev2，2026-10-26 01:3x #785 重写**）：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（25,266B / 0 `<script>` / 0 外链 / 9 个 `<h2>`；含 11 格表 + 显存快照 + H1-H9/H-mem 假设账本 + 三版归因演进 + 档位表 + 8K 满速配方 + 证据路径）。
 > ⚠️ **#784 心跳曾误报「报告 16,942B rev1 含 11 格表」——实为虚假交付**：#784（commit 6171ef729）并未真正重写报告，盘上仍是 rev1（21,123B，GPU 饥饿/H4 确认）的错误版本。#785 本轮才真正重写为 rev2（25,266B，memory-bound/H4 证伪）。rev1 备份 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html.rev1_782.bak`。
 > 📦 旧 #782「GPU 饥饿」结论 hereby 标记已证伪（见上）；旧 seqlen 报告红框已指向本报告。
+
+---
+
+### 🔴🔴 tok/mb 悬崖根因 — rev3 复测：CUDA Graph 顶格停滞（推翻 memory-bound，2026-10-26 02:0x #786）
+
+**rev3 根因（一句话，复测验证）**：5.4× 吞吐骤降 = **CUDA Graph 在 HBM 顶格（~81GB）时的 replay 病态停滞**，**非**显存带宽 memory-bound。**关掉 `--enable-cuda-graph`** 后同一 tok/mb=16384 配方恢复 **561,126 tok/s = 0.93× 8K 满速**，峰值显存 81GB→**75.5GB**。**一个 flag 修复，无需 CP、无需 recompute。**
+
+**rev2→rev3 修正**：rev2「tok/mb≥16384→显存顶格→memory-bound」的**显存顶格观测真实**（7 慢格全 81,08x MiB），但**归因错误**——顶格是 graph 停滞的**必要条件**（graph 的 ~5.5GB workspace 把 75.5GB 推到 81GB 顶格），**非**带宽瓶颈成因。证据：关 graph 后 75.5GB（仍未顶格）即满速 561K，97% GPU util。
+
+**rev3 复测**（脚本 `baize_rc_recompute.sh`，每格 80 iter，稳态 iter 30–80 中位数；TSV `pretrain_rc_ladder_20261026.tsv` RC 三行）：
+
+| 格 | graph | recompute | seq | mbs | tok/mb | ms/step | tok/s | vs 8K满速 | 峰值显存 | 判 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| cfg0a（阶梯） | ON | off | 4096 | 4 | 16,384 | 17,327 | 121,032 | 0.20× | 81,087 顶格 | ❌ 慢 |
+| cfg0ang（复测） | **OFF** | off | 4096 | 4 | 16,384 | 3,737 | **561,126** | 0.93× | 75,517 | ✅ **关graph满速** |
+| rc56ng（复测） | OFF | 56 层 | 4096 | 4 | 16,384 | 3,663 | 572,476 | 0.95× | 75,517 | recompute 显存**无变化** |
+| E2（阶梯） | ON | off | 8192 | 1 | 8,192 | 3,466 | 605,012 | 1.00× | 55,419 | ★ 8K满速（graph未顶格）|
+
+**recompute 证伪（Mamba2-hybrid）**：`--recompute-num-layers 56`（全 56 层 uniform recompute）复测峰值显存 = **75,517 MiB，与不开 recompute 完全相同**，速度也相同（572K vs 561K，噪声内）。原因：该 flag 只重算 transformer/attention 层激活；BaiZe-2B 是 Mamba2-hybrid，**激活显存主体是 Mamba2 SSM 层**（flag 不触及）⇒ recompute 对本架构**不是降显存杠杆**。rev2「开 recompute 降 ~60% 激活显存」处方 hereby 作废。另：full-uniform recompute 要求 full-iteration cuda-graph 模式（Mamba2 用 local graph，CLI 不可切换），recompute+graph 组合直接 `AssertionError: full recompute is only supported with full iteration CUDA graph` 失败。
+
+**档位表（rev3，graph 列新增）**：
+
+| 目标 seq | mbs | accum | graph | tok/mb | tok/s | 峰值显存 | 备注 |
+|---|---|---|---|---|---|---|---|
+| 8192 | 1 | 16 | ON | 8,192 | ~605K | 55.4GB | ★ 8K 满速配方（graph 未顶格）|
+| 16384 | 1 | — | ON | 16,384 | ~112K | 81.1GB顶格 | ❌ graph 顶格停滞 |
+| 16384 | 1 | — | **OFF** | 16,384 | **~561K** | 75.5GB | ✅ **关 graph 即满速（0.93×，已验证）**|
+| 16384 | 1 | — | OFF | 8,192(CP=2) | 待测 | ~55GB | 🆕 CP=2 进一步降显存（smoke 待跑）|
+| 32768 | 1 | — | OFF | — | OOM | 81GB | 须 CP≥4（recompute 对 SSM 无效）|
+
+**判据铁律（rev3 修正）**：tok/mb = mbs×seq ≤ 12288 → graph 可开、满速；= 16384 → **关 graph**（561K，75.5GB）或降 mbs；> 16384 → 须 CP。规划任何 seq 时先算 tok/mb，并按峰值显存决定是否关 graph。
+
+> 📄 根因报告（**rev3，2026-10-26 02:0x #786 重写**）：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（rev3：CUDA Graph 顶格停滞 / 关 graph 满速 / recompute 证伪 / 五·5 复测节 + 档位表 graph 列）。
+> ⚠️ **rev2「memory-bound」归因 hereby 修正为「CUDA Graph 顶格停滞」**（显存顶格是必要条件非成因）；rev1「GPU 饥饿」早已证伪。三版归因演进完整保留于报告 revnote。
+> 🔧 **代码**：`pretrain_launcher.py` 新增 `--context-parallel` CLI arg（line 174）+ 接线 `context_parallelism=args.context_parallel`（line 109），PY_SYNTAX_OK；CP=2 smoke 待跑。
