@@ -22,31 +22,32 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### [运维令] 2026-10-25 18:1x（32 个「不可映射」分词 shard：能证重复的立刻删，证明不了的列清单报回）· 用户直令 · 最高优先
-> 用户原话：「data：有32个无法映射也就是找不到下载目录的分词目录吗？那就删掉。」
-> 运维核实（依据已 commit 的 `run/data/prune_unmapped_judgment_20261025.tsv`、`prune_unmapped_summary_20261025.json`）：这 32 个**不是找不到下载目录**，它们的 download_dir 都能对上（Ultra-FineWeb-L3 的 en/zh_l3 multi_style+qa、UltraData-Math L1/L2-preview/L3）。真正的缺口是：manifest 指向已废弃的 `staging_r3` 中间路径，**无法证明其源 parquet 全部包含在 `full_*` 分词集里**；32 个合计 472.85B tokens（按 4 B/token 约 1.89 TB）、涉及 1286 个未证覆盖的 parquet。全删有丢「唯一分词副本」的风险。
-> 口径修正（必须写进 `DATA_MAPPING.md`）：**不可映射 = 无法证明覆盖关系，不等于没有下载来源**，两者不许混写。
+### [运维令] 2026-10-25 18:2x（32 个「不可映射」分词 shard：**全部删除**，删前留档）· 用户直令 · 最高优先 · 覆盖 18:1x 块
+> 用户原话：「我难道说的还不清楚吗？不明来历的，无法被DATA_MAPPING.md收录的数据，也就无法使用，那放在那里占用磁盘空间干什么？你出这个硬盘吗？」
+> 前提（用户 18:3x 明确）：**这是 MiniCPM5 的训练数据管线** —— **下载的数据（parquet / 下载目录 / env14 / full_*）一律保留**；要删的只有 data 线**自己分词、且来历理不清**的那批产物（即下面这 32 个「不可映射」shard）。
+> 结论：**这 32 个（l3_s 28 个 + math_s 4 个）全部删除**，不再讨论「是否唯一」。用户口径 = **不能被 DATA_MAPPING.md 收录的数据即不可用，留着只占磁盘**。
+> 规模（已实测）：472.85B tokens，约 1.89 TB（按 4 B/token），涉及 1286 个 parquet 引用，全部是 l3_s / math_s 的 `staging_r3` 早期中间产物。
 
-**1) 先做覆盖核验（60 分钟内出结果，判据写死）**
-- 对象：judgment TSV 里 `mappable = 不可映射(...)` 且 `action` 以「保留」开头的 32 行（l3_s 28 个 + math_s 4 个：`l3_s0-s12, s25-s39`、`math_s32-s35`）。
-- 每个 shard 的 `.json`（分词 manifest）记录了它消费的 parquet（路径 / basename / 行数）。对每个 parquet 判定：
-  (a) **可证重复**：行数与 `full_*` 对应 shard 的累计文档数吻合，且抽 1000 条文本的 hash 在 `full_*`（或 `tokenized/` 镜像）里命中率 100%，或 token 数守恒误差小于 0.1%；
-  (b) **疑似唯一**：`full_*` 找不到对应 parquet，或 hash 不命中；
-  (c) **不可判**：manifest 无 parquet 明细。
-- 抽样口径落盘：hash 算法、样本数、命中率，写 `run/data/unmapped32_verify_20261025.md`。
+**1) 删前留档（唯一强制动作，10 分钟做完，先 commit 再删）**
+- 对 32 个目录逐个记录：目录路径、`du -sb` 字节、`find -type f | wc -l` 文件数、`.bin/.idx/.json` 三件套清单、`.json` 里的 parquet 引用（若有）。
+- 落 `run/data/deleted_unmapped32_20261025.tsv`（32 行明细）+ `run/data/deleted_unmapped32_summary.md`（总计字节 / TB / 文件数 / 一句结论）。
+- 留档只为追溯「删了什么、多大、从哪来」，**不是保留理由**。
 
-**2) 删除规则（安全第一）**
-- **只删判定为「可证重复」的 shard**：删前写 manifest（shard / 文件列表 / 字节 / 内嵌 parquet 列表 / 判定依据 / 抽样命中率），删后 `du -sb` 复核释放量，更新 `DATA_MAPPING.md`（状态置 `已废弃`）+ `tokenized/INDEX.tsv` + `DATA_LEDGER.md` 对应节。
-- **「疑似唯一 / 不可判」一律保留**：在 `DATA_MAPPING.md` 的「未映射 / 待裁决」节列清单（shard、字节、涉及 parquet 数、理由），并把该清单贴回 MEMORY + 当日日报，交运维决定（重分词 / 继续核验 / 删）。
-- 正在跑的分词不许打断：先让它 `done=131/131`，再动清理，避免与在写文件冲突。
-- 删完必须重跑 `build_tokenized_mirror.py` + triplet/inode 校验，确认镜像与被删 shard 之间没有悬空链接。
+**2) 执行删除（直接删，不搬家、不挂账）**
+- 对象 = judgment TSV 里 action 以「保留」开头的 32 行：`l3_s0`-`l3_s12`、`l3_s25`-`l3_s39`、`math_s32`-`math_s35`，位于 `/nas_train/app.e0031982/datasets/baize-data/text/`。
+- 删前抽查 3 个是否被 `tokenized/` 镜像 hardlink 引用（`find tokenized -samefile <path>`）；有引用就先解除再删，避免镜像里留悬空链接。
+- 删完立刻 `du -sb` 复核释放量，并记录 `df -h /nas_train` 前后对比。
 
-**3) 报回格式**
-一句话结论 + 三个计数：`删除 N 个 / 释放 X TB`、`保留 M 个（疑似唯一）`、`不可判 K 个`；再给清单与核对文件路径。
+**3) 收尾（必须同步，缺一不可）**
+- `DATA_MAPPING.md`：新增「已删除 / 不可用」节，32 行状态置 `已删除`（附删前字节、删除时间、指向 `deleted_unmapped32_20261025.tsv`），**正文映射表里不再出现**。
+- `tokenized/INDEX.tsv` + `DATA_LEDGER.md` 同步；重跑 `build_tokenized_mirror.py` 与 triplet/inode 校验，确认无悬空链接（在跑的 131 分词可先不打断，收尾校验等它结束后一并做）。
+- 报回：`删除 32 个 / 释放 X TB / 文件数 Y / 磁盘前后`，一句话结论 + 表。
 
 **铁律**
-- 不许为了「删干净」把「疑似唯一」也删掉：下载目录还在、但要重烧 CPU 重分词，**判断失误不可逆**。
-- 所有数字必须来自 `du -sb` / `find` / manifest 原文；取不到写「未取到 + 原因」。
+- 前提：**MiniCPM5 训练数据，下载的一律保留**；只删 data 线自己分词、来历理不清的 32 个产物。
+- 只删**分词产物**；下载 parquet / 下载目录 / env14 / full_* 原样保留，不许碰（它们是训练数据本体）。
+- 不许把这 32 个再挪进「待裁决」或再挂账：**本令为终裁，删完即结案**。
+- 个别目录删不掉（权限/占用）⇒ 如实报出路径与原因，不许静默跳过。
 
 ### [运维令] 2026-10-25 17:5x（**目录名不再重要：核心交付 = 「下载与分词」映射表；Markdown 为单一事实源，HTML 按需**）· 用户直令 · 最高优先
 > 用户原话：「data：目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」

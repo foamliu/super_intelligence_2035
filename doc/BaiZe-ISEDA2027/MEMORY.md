@@ -15,7 +15,7 @@
 
 - 用户原话（摘）：harness「授权 hermes/claude-code 全量复跑 89 题、排查codex 高 err」；data「目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」；vision「现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」；pretrain「…在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
 - 基线锚点：pretrain 双机 e18 = 606,300 tok/s、4,128,768 tok/step（seq=4096）；OCR 参考（ArmB，`run/vision/generate_armC_mllm_report.py` 的 ARMB）OCRBench 1.6% / DocVQA 7.36% / ChartQA 12.52% / InfoVQA 16.88%。
-- 18:1x 补充（data 32 shard 的核实）：用户问「32 个找不到下载目录的分词目录就删掉」→ **前提不成立**：这 32 个（l3_s 28 + math_s 4）**都有下载目录**（Ultra-FineWeb-L3 en/zh_l3 的 multi_style+qa、UltraData-Math L1/L2-preview/L3），缺的是「覆盖证明」——manifest 指向已废弃的 `staging_r3`，无法证明其 parquet 已含在 `full_*` 里；合计 **472.85B tokens、约 1.89 TB、涉 1286 个未证覆盖 parquet**。已下发 data 令：先做 parquet 级覆盖核验（文档数 + 抽样 hash，60 分钟），**只删「可证重复」的**；「疑似唯一 / 不可判」一律保留并出清单报回。并在 `DATA_MAPPING.md` 固化口径「不可映射 ≠ 无下载来源」。
+- 18:2x（data 32 shard · 终裁）：32 个 = l3_s 28 + math_s 4，合计 472.85B tokens ≈ 1.89 TB、涉 1286 个 parquet 引用；它们**有下载目录**，但 manifest 指向废弃的 `staging_r3`，**无法被 DATA_MAPPING.md 稳定收录**。用户口径：「不明来历、无法被映射表收录的数据 = 不可用 = 只占磁盘」⇒ **32 个全部删除**，不再讨论是否唯一。已改令：删前留档 `run/data/deleted_unmapped32_20261025.tsv`（路径/字节/文件数/parquet 引用，先 commit 再删），删后 `du -sb` 复核 + `df` 前后对比，`DATA_MAPPING.md` 增设「已删除/不可用」节，重跑镜像与 triplet/inode 校验；**下载 parquet / 下载目录 / env14 / full_* 一律保留**（MiniCPM5 训练数据本体，用户 18:3x 再次确认）。
 - 18:0x 顺手清理：删除重复且陈旧的分身文件 `run/reports/report_pretrain_dualnode_throughput_zh.html`（项目级 `reports/` 有正式版）。
 - 仍未变的老待办：vision B4 的 MMVet / MathVista 需 `OPENAI_API_KEY`；336+anyres 需工程 scope。
 
