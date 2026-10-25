@@ -248,3 +248,16 @@
 [swebench-pull] [242/500] OK django__django-16801 pulled=242 failed=0 skipped=0
 [swebench-pull] [243/500] OK django__django-16819 pulled=243 failed=0 skipped=0
 [swebench-pull] [244/500] OK django__django-16877 pulled=244 failed=0 skipped=0
+[swebench-pull] [245/500] OK django__django-16899 pulled=245 failed=0 skipped=0
+[swebench-pull] [246/500] OK django__django-16901 pulled=246 failed=0 skipped=0
+[swebench-pull] [247/500] OK django__django-16938 pulled=247 failed=0 skipped=0
+[swebench-pull] [248/500] OK django__django-16950 pulled=248 failed=0 skipped=0
+[swebench-pull] [249/500] OK django__django-17029 pulled=249 failed=0 skipped=0
+[swebench-pull] [250/500] OK django__django-17084 pulled=250 failed=0 skipped=0
+[swebench-pull] === BATCH idx=250 pulled=250 failed=0 skipped=0 disk_free=6367GB ===
+[swebench-pull] [251/500] OK django__django-17087 pulled=251 failed=0 skipped=0
+[swebench-pull] [252/500] OK django__django-7530 pulled=252 failed=0 skipped=0
+[swebench-pull] [253/500] OK django__django-9296 pulled=253 failed=0 skipped=0
+[swebench-pull] [254/500] OK matplotlib__matplotlib-13989 pulled=254 failed=0 skipped=0
+[swebench-pull] [255/500] OK matplotlib__matplotlib-14623 pulled=255 failed=0 skipped=0
+[swebench-pull] [256/500] OK matplotlib__matplotlib-20488 pulled=256 failed=0 skipped=0
