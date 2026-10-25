@@ -20420,3 +20420,94 @@ echo "=== DONE 189 ==="
 [D] 确认仍是唯一一个 relay（没被重复拉起）
 === DONE 189 ===
 ```
+
+---
+
+## RUN_ID 190 · 2026-10-25 09:07:40 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 190 | data line status | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+
+echo "[1] data loop 进程（.29 + .12 都查）"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_data_loop' | grep -v grep | cut -c1-150 || echo '  .29: NO_DATA_LOOP'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "baize_data_loop" | grep -v grep | cut -c1-150 || echo "  .12: NO_DATA_LOOP"' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[2] data loop 日志尾部（最后 wake/sleep + 是否在跑 agent）"
+ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null
+echo "  --- 最后 12 行 ---"
+tail -12 /tmp/baize_data_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-170
+
+echo "[3] 是否有 cline/pi 进程正在为 data 线工作（说明本轮唤醒进行中）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -iE 'cline|fleetagent|pi-coding' | grep -v grep | cut -c1-150 | head -6 || echo '  无 agent 进程'
+
+echo "[4] data 侧产物是否已更新（报告/测量文件）"
+for f in MEMORY_DATA.md BAIZE_DATA_TASK.md; do
+  [ -f "$T/$f" ] && echo "  $f  mtime=$(stat -c '%y' "$T/$f" | cut -c1-19)  size=$(stat -c %s "$T/$f")"
+done
+echo "  --- 报告 ---"
+R="$GR/doc/BaiZe-ISEDA2027/reports"
+ls -l --time-style=+%F_%T "$R/report_data_tokenized_inventory_zh.html" 2>/dev/null || echo '    NO_INVENTORY_REPORT'
+echo "  --- 新产物候选（inventory v2 相关）---"
+find "$T/data" "$R" -maxdepth 1 -newermt '-3 hours' \( -name '*inventory*' -o -name '*tokenized*' \) 2>/dev/null | head -10 || echo '    无（说明返工尚未产出）'
+
+echo "[5] data MEMORY 顶部快照（WAITING / PHASE / 当前动作）"
+head -40 "$T/MEMORY_DATA.md" 2>/dev/null | grep -aE '^WAITING|^PHASE|^当前动作|^下一步' | cut -c1-320
+
+echo "[6] daily-memories-data 今日文件尾部（看它自我汇报做了什么）"
+tail -20 "$T/daily-memories-data/2026-10-25.md" 2>/dev/null | cut -c1-200
+
+echo "=== DONE 190 ==="
+```
+
+**输出**
+```
+=== RUN_ID 190 | data line status | 2026-10-25 09:07:40 | host=whag0pgpuap29 ===
+[1] data loop 进程（.29 + .12 都查）
+1827417 1781320 bash baize_data_loop.sh
+[2] data loop 日志尾部（最后 wake/sleep + 是否在跑 agent）
+  --- 最后 12 行 ---
+[3] 是否有 cline/pi 进程正在为 data 线工作（说明本轮唤醒进行中）
+ 348025   50303 docker compose --project-name crack-7z-hash__pgn2drk__env --project-directory /home/app.e0031982/terminal-bench/crack-7z-hash/environm
+ 348050   50303 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name crack-7z-hash__pgn2drk__env --project-directory /home/app.e00319
+ 536814   60384 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_DQU5IC --a
+ 579734   60348 docker compose --project-name adaptive-rejection-sampler__n7o8glj__env --project-directory /home/app.e0031982/terminal-bench/adaptive-
+ 579760   60348 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name adaptive-rejection-sampler__n7o8glj__env --project-directory /ho
+ 607383   23290 docker compose --project-name make-mips-interpreter__jnefbdx__env --project-directory /home/app.e0031982/terminal-bench/make-mips-inte
+[4] data 侧产物是否已更新（报告/测量文件）
+  MEMORY_DATA.md  mtime=2026-10-25 08:24:41  size=30409
+  BAIZE_DATA_TASK.md  mtime=2026-10-25 08:04:06  size=28890
+  --- 报告 ---
+-rw-r--r-- 1 app.e0031982 app.adm 10881 2026-10-24_13:49:09 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+  --- 新产物候选（inventory v2 相关）---
+[5] data MEMORY 顶部快照（WAITING / PHASE / 当前动作）
+WAITING: 1
+PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅硬盘实测清单+✅迁移报告HTML+✅迁移5/5源全DONE(574bins/4.24TB→/nas_env)+▶️85M下载(9014/12126=74.3%,~1.3it/s)+✅git sync
+当前动作:     唤醒649(2026-10-25 08:21)：跨日巡检续命(距上次data commit 648@07:13已~68min→超60min判死阈值→本轮必commit续命)①迁移5/5源全DONE复核(无rsync/migrate进程,ps grep=NONE,migrate_fast.log END@21:42:28,运维令18:1x已闭合)②85M 9014/12126 parquet(74.3%,+24自648;PID73
+下一步:       ①迁移全部完成→已交接pretrain(软链接可访问/nas_env数据)②监控85M(9014/12126=74.3%,~1.3it/s,低优先级后台跑即可)③text/14.90TB留/nas_train(en_v1_4分词产物,太大无法迁/nas_env)④commit+push(data 649: 跨日巡检迁移全DONE复核+85M 74.3%续命)
+[6] daily-memories-data 今日文件尾部（看它自我汇报做了什么）
+
+**触发**：baize_data_loop 唤醒；距上次 data commit（648@07:13）已 ~68 min → 超 60 min 判死阈值 → 本轮必 commit 续命。
+
+**所做**：
+1. 读 BAIZE_DATA_TASK.md（顶部运维令 2026-10-24 18:1x「85M 降优先级 → 迁移提速」）→ 已由中继执行（ops/.last_run_id=162>158，兜底条件不触发），迁移全部 5/5 �
+2. 机器实测（host=whag0pgpuap12，date 08:21:02）：
+   - **迁移**：`pgrep -af 'migrate_to_nas_env'` = 无；`pgrep -af 'rsync'` = 无 → 5/5 源全 DONE，无残留进程（migrate_fast.log END@21:42:28）。运维令 18:1x 迁移提速已由中继
+   - **85M 下载**：log `/tmp/85M_dl_parallel.log` tail 显示 `9013-9014/12126 files 74%, 1.29-1.31s/it`，正在下 `obelics/EN/part75/train-00029/00030-of-00063.parquet`。landed ≈ **9014 / 121
+     - PID 731285（hf download）alive。
+     - PID 581946（download_85m_parallel16.sh）alive。
+     - ETA ~1:07h（按 log 显示）；landed 率 ~21/h（8990→9014，近 ~68min +24）→ ETA ~6-7 天。低优先级，符合用户令「85M 下载优先级不高」。
+   - **磁盘**：`df -h` → /nas_env 4.2T 已用 / 5.8T 可用（43%）；/nas_train 176T 已用 / 32T 可用（85%）。
+   - **git**：`git status -sb` = `## main...origin/main`（无 ahead/behind）；本线文件无改动；他线在途文件（harness/swebench_verified_pull_progress.txt、1049/3147/5245/7343/9441/ �
+   - **ops_relay**：`ps -eo pid=,ppid=,etimes=,args=` → PID 1032513，ppid=1，etimes=45998s≈12.8h → 真守护进程，健康。
+   - **体积**：TASK=28890B（28.2KB）/ MEMORY=31609B→30409B（30.9KB→29.7KB，本轮精简后），均 ≤32KB ✓，本轮无需归档。
+3. 更新 MEMORY_DATA.md：① 顶部 banner 85M 74.1%→74.3% + 磁盘 df 实测值（176T/32T、4.2T/5.8T）② 进度快照→唤醒649（精简 当前动作 行，省 ~1.2KB）③ 追加唤醒649 
+4. commit `data 649: 跨日巡检迁移全DONE复核+85M 74.3%续命` + push。
+
+**结论**：迁移全部完成（已交接 pretrain，软链接可访问 /nas_env 数据）；85M 低优先级后台下载中（74.3%，活跃下载 ~1.3 it/s）；无新阻塞；无新运维令。WA
+
+=== DONE 190 ===
+```
