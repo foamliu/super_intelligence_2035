@@ -324,3 +324,13 @@
 [swebench-pull] [316/500] OK pydata__xarray-6938 pulled=316 failed=0 skipped=0
 [swebench-pull] [317/500] OK pydata__xarray-6992 pulled=317 failed=0 skipped=0
 [swebench-pull] [318/500] OK pydata__xarray-7229 pulled=318 failed=0 skipped=0
+[swebench-pull] [319/500] OK pydata__xarray-7233 pulled=319 failed=0 skipped=0
+[swebench-pull] [320/500] OK pydata__xarray-7393 pulled=320 failed=0 skipped=0
+[swebench-pull] [321/500] OK pylint-dev__pylint-4551 pulled=321 failed=0 skipped=0
+[swebench-pull] [322/500] OK pylint-dev__pylint-4604 pulled=322 failed=0 skipped=0
+[swebench-pull] [323/500] OK pylint-dev__pylint-4661 pulled=323 failed=0 skipped=0
+[swebench-pull] [324/500] OK pylint-dev__pylint-4970 pulled=324 failed=0 skipped=0
+[swebench-pull] [325/500] OK pylint-dev__pylint-6386 pulled=325 failed=0 skipped=0
+[swebench-pull] [326/500] OK pylint-dev__pylint-6528 pulled=326 failed=0 skipped=0
+[swebench-pull] [327/500] OK pylint-dev__pylint-6903 pulled=327 failed=0 skipped=0
+[swebench-pull] [328/500] OK pylint-dev__pylint-7080 pulled=328 failed=0 skipped=0
