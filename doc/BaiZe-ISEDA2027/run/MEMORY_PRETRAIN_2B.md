@@ -1,6 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 2026-10-26 07:33 #789：✅ 通宵攻坚交付物复核全通过（收敛3条✓：①真因=CUDA Graph 顶格停滞·报告「一句话结论」节在位 ②修复=关 graph·seq=8192 复测 0.978×基线≥0.7×✓ ③报告 16,888B≥15KB✓ + seqlen 报告 20,332B banner 已改 rev3✓ + EXPERIMENTS rev3/§五·6/§五·7✓ + TSV 16 行✓ + 早报已写✓ + 全 commit faa01ac34 已推✓）；GPU .29 8 卡全空闲(8×4MiB/0%)·loop PID1401353 存活·无新运维令。**未完成指令：无** ⇒ **WAITING=1**。📦 体积：TASK=21.7KB / MEMORY=31.0KB（均≤32KB✓，本轮无归档）。
+
+
 > 🆕 **2026-10-26 06:1x #788：✅ §3 seq=8192 验收复测达标·关 graph per-GPU 37,067=0.978×基线(满速)·5.48×恢复 vs cfg1·peak 77.3GB<81GB顶格·loss/gnorm/NaN 正常·§3+§4.3 闭合·通宵攻坚收工**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §五·7 + `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html` 五·5b 节 + 档位表新行；TSV `s8k2goff-seq8k`；脚本 `baize_rc_seq8k_graphoff_smoke.sh`）：
 > - **配置**：seq=8192/mbs=2/gbs=256/DP8/accum=16，**tok/mb/GPU=16,384**（=cfg1 悬崖点，唯一变量 graph ON→OFF），单机 .29（.12 按 R2.4 不动；per-GPU 口径），60 iter，中位 iter 20–60 = **7,072.0 ms**。
 > - **结果**：tok/s=296,543(DP8) / **per-GPU=37,067=0.978×基线(37,903)**（≥§3 bar 0.7×✓）/ vs cfg1(graph-ON 6,768)=**5.48×恢复** / vs cfg0ang(seq4096 graph-OFF 35,070)=1.058×⇒**tok/mb 不变性再证** / peak **77,265 MiB**<81,087顶格 / loss 7.7489 / gnorm 0.8202 / **nan 0**。16 卡外推≈593K=0.98×606K。
