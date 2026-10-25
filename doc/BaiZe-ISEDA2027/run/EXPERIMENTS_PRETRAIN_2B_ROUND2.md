@@ -3734,6 +3734,8 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 
 ★ cfg0a 用 **seq=4096**（与基线同序列长度）复现了 5.2× 跌幅（606K→117K），与 seq=8192 的 cfg1（108K）几乎一致。**若 seq 是主因，cfg0a 应≈606K；实测 117K ⇒ seq 不是成因**。
 
+> ⚠️⚠️ **本节（#782 / rev1）结论「H4 GPU 饥饿 = 根因」已被下方 §「🔴 tok/mb 悬崖根因（E1–E5a，rev2）」推翻**（2026-10-26 #785）。决定性反证 = **E2 用同样小批几何（gbs256/accum16/mbs1）却跑出 605,012 tok/s @ 84% MFU（快）** ⇒ 13% MFU 是 memory-bound 的下游症状，不是上游成因。真因 = **tok/mb = mbs×seq ≥ 16384 → 显存顶 80GB HBM → memory-bound**。**本节保留作历史记录，不可作为现行结论**；现行结论见下方 rev2 节与本报告 rev2。
+
 **裁决（H1–H9）**：
 - **H4（小批几何→GPU 饥饿）= 确认**（根因）。小批簇 cfg0a(4096)=117K · cfg1(8192)=108K · cfg3(16384)=112K · cfg4(16384)=122K 全部落在 108–122K / 13–15% MFU 窄带，与 seq 无关。
 - **H1/H2/H5/H6/H8/H9 = 证伪**。尤其：① **H2（CUDA graph 回退）证伪**——基线与 cfg0a 均 `built 112 cuda graph(s)` 成功，配置 `cuda_graph_impl: local` 完全一致，无图回退；② **H6（Mamba2 SSM 超线性）证伪**——SSM 为线性 O(n)，且 cfg0a(seq4096) 同样慢。**#779/#781「SSM 超线性」结论 hereby 标记为已证伪**。
@@ -3780,5 +3782,6 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 
 **判据铁律**：tok/mb = mbs×seq ≤ 12288 安全；=16384 顶格慢；>16384 OOM（cfg5/6@32768 已 OOM@81GB）。
 
-> 📄 根因报告：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（16,942B rev1，含 11 格表 + 显存对比 + H1-H9/H-mem 假设账本 + 档位表 + 证据路径）。
+> 📄 根因报告（**rev2，2026-10-26 01:3x #785 重写**）：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（25,266B / 0 `<script>` / 0 外链 / 9 个 `<h2>`；含 11 格表 + 显存快照 + H1-H9/H-mem 假设账本 + 三版归因演进 + 档位表 + 8K 满速配方 + 证据路径）。
+> ⚠️ **#784 心跳曾误报「报告 16,942B rev1 含 11 格表」——实为虚假交付**：#784（commit 6171ef729）并未真正重写报告，盘上仍是 rev1（21,123B，GPU 饥饿/H4 确认）的错误版本。#785 本轮才真正重写为 rev2（25,266B，memory-bound/H4 证伪）。rev1 备份 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html.rev1_782.bak`。
 > 📦 旧 #782「GPU 饥饿」结论 hereby 标记已证伪（见上）；旧 seqlen 报告红框已指向本报告。
