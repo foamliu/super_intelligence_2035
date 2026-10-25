@@ -25,7 +25,12 @@
 
 ### ⏱ 本轮执行顺序（2026-10-25 11:4x 用户直令 · 覆盖下文步骤顺序）
 > 用户原话：「data 唤醒后，**先盘点**现有的 MiniCPM5 训练数据中**已下载且已分词**的数据，**删掉无法跟下载目录对应的分词数据**。」
-1. **先盘点**：现有 MiniCPM5 训练数据里「**已下载** + **已分词**」清单（= 下条 11:0x 令的 表 A / 表 B），逐条贴实测证据。
+1. **先盘点**（**必须自证，不许猜**）：对 `baize-data/text/` 里**每一个前缀**（现见：`env14_*` / `code_s*` / `l3_s*` / `math_s*`），逐项给出：
+   - ① **生成它的脚本 + 行号**（例：`run/data_pipeline/run_codemath_tokenize.sh:32,35`）
+   - ② **输入 parquet 的真实目录**（绝对路径，`test -d` 结果）
+   - ③ **shard 编号 → 输入 parquet 列表**的映射（取自脚本的 split 逻辑 / manifest / 日志）
+   - ④ 该源目录**现在是否还存在**（`ls` 证据）
+   > 查不到的项写「**查不到**」，**禁止**用"应该是/看起来是"填空。
 2. **再删除**：把**无法与 HF 下载目录对应**的分词产物删掉（= 10:3x 令：逐 shard 判定 → 先落 `prune_unmapped_20261025.txt` → 再 `rm` → 报释放量）。
 3. **最后分词**：对「已下载未分词」（表 C）按标定并发开跑（64/96/128/192 取拐点，**多开但不打满**，留余量给 85M 下载）。
 > 🚫 顺序不得颠倒：**没做完 ①②，不许开 ③**。
@@ -36,26 +41,25 @@
 > ⚠️ 澄清：**224 核是机器的上限，不是要全部用满** —— 目标是「比上一轮（65 并发）**多开一些**」，并按标定取性价比拐点。
 
 **① 盘点（三张表，全实测，禁估算）**
-- **表 A · HF 下载目录白名单**：`ls -d` + `find -name '*.parquet' | wc -l` + `du -sb` + mtime，逐条给出「绝对路径 / 对应 HF repo / 子目录名 / parquet 数 / 字节」。判断"是 HF 下载目录"的依据 = 目录内是 HF repo 的 parquet 布局（贴 `ls` 输出）。
-- **表 B · 分词产物 ↔ 下载目录 映射**：每个下载目录对应哪些 `.bin`（前缀 / shard 数 / tokens / 字节 / 产物路径 / 完成时间）。**只认能对上 A 表目录的产物**。
-- **表 C · 已下载未分词**：A 中有 parquet 但 B 无产物的部分 —— 逐目录给 repo/子目录/parquet 数/字节 + 「未分词」判定依据（无 `.bin`，或 shard 数与 parquet 分组数不符）。
+- **表 A · HF 下载目录**：`ls -d`+parquet 计数+`du -sb`+mtime，逐条给「路径/repo/子目录/parquet 数/字节」，贴 `ls` 证明是 HF parquet 布局。
+- **表 B · 分词产物 ↔ 目录映射**：见上条「执行顺序 ①」（前缀→脚本行号→源目录→shard 映射）。
+- **表 C · 已下载未分词**：A 中有 parquet 但无产物的部分 —— 逐目录给 parquet 数/字节 + 判定依据。
 
 **② 分词启动（只处理表 C，不重跑已完成的）**
 - 分词器沿用 `tokenizer_eod`（vocab 129,281 / pad 129,408），`preprocess_data.py` 链路不变；
 - **并发（不用满）**：机器 **224 核** ⇒ 4 档 60s 标定（`64/96/128/192`），记 tokens/s、CPU%、NFS 写速、load；取"增益不抵代价"那档（预期 96–160），**留余量给 85M**；`nice -n 10`；回报写明选它的理由；
 - 落盘：`/nas_train/.../baize-data/text/`（先 `df -h`，按"未分词×1.5"估余量；不足再议 `/nas_env`）；
-- 命名（与 `env14_*` 同规范）：按「repo+子目录」定前缀（如 `ufw_en_*`/`ultrax_*`/`ud_code_*`），**每前缀必须有 manifest**（shard→源 parquet）；
-- **断点续传**：已有 `.bin/.idx/.json` 的 shard 直接跳过；失败重试 2 次后落 `failed_shards.txt`；
-- `setsid` 后台启动，日志 `/tmp/tokenize_untokenized_*.log`。
+- 命名：按「repo+子目录」定前缀（如 `ufw_en_*`/`ultrax_*`），**每前缀必须有 manifest**（shard→源 parquet）；
+- **断点续传**：已有产物跳过；失败重试 2 次落 `failed_shards.txt`；`setsid` 后台，日志 `/tmp/tokenize_untokenized_*.log`。
 
-**③ 监控**：每轮回报 `done/total`、累计 tokens、tokens/s、CPU%/load、NFS 写速、ETA、失败数；完成后校验 `.bin=.idx`、总字节、`num_tokens` 求和、tokens/byte 合理性。
+**③ 监控**：每轮回报 `done/total`、tokens/s、CPU%/load、写速、ETA、失败数；完成后校验 `.bin=.idx`、总字节、`num_tokens`、tokens/byte。
 
 **④ 交付**：①三张表（A/B/C）+ 并发标定表（4 档）+ 启动命令 + 日志路径；②完成后每前缀 shard/tokens/字节 + 校验 + 空间变化；③更新 `DATA_LEDGER.md`/`MEMORY_DATA.md`；盘点报告升 **v3**（加「已下载未分词→已分词」+ 训练可用 token 总量）。
-> 🚫 不许把 `/tmp`、`staging`、`*.orig` 当源；🚫 不碰 `env14_*`（en_v1_4）与 `/nas_env/full_*`；🚫 未分词前不得声称"已就绪"。
+> 🚫 `/tmp`/`staging`/`*.orig` 不算源；🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 未分词前不得称"已就绪"。
 
 
 ### 🗑 运维令 · 2026-10-25 10:3x（**删除「无法对应下载目录」的早期分词产物**）· 用户直令 · 最高优先
-> 背景：`baize-data/text/` 现有 220 个 `.bin`（env14 110 / code_s 30 / l3_s 40 / math_s 40）。`env14_*` = **en_v1_4 全量分词（必须保留）**；其余三组来源须逐 shard 回溯到 HF 下载目录。用户令：**只认 HF 下载目录，对不上一律删**。
+> 背景：`baize-data/text/` 有 220 个 `.bin`（env14 110 / code_s 30 / l3_s 40 / math_s 40）。`env14_*`=en_v1_4 全量分词（保留）；其余须逐 shard 回溯到 HF 下载目录。用户令：**只认 HF 目录，对不上一律删**。
 
 **① HF 白名单**：**直接用上方「11:0x 令 · 表 A」的同一次盘点结果**（同轮完成，不重复扫盘）。
 
