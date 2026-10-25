@@ -1,7 +1,71 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 190 | TARGET: 29 -->
-## RUN_ID 190 — 🔎 只读：data 线状态（是否已读到 08:0x 盘点令 / loop 是否在跑 / 唤醒时刻）
+<!-- RUN_ID: 191 | TARGET: 29 -->
+## RUN_ID 191 — ✅ 验证：data 任务书的盘点令是否已进入「运维指令区」且能被 agent 读到
+
+```bash
+set -u
+echo "=== RUN_ID 191 | verify data task readability | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+F="$T/BAIZE_DATA_TASK.md"
+
+echo "[1] 仓库同步状态"
+cd "$GR" || exit 1
+timeout 60 git fetch origin >/dev/null 2>&1
+echo "  HEAD=$(git rev-parse --short HEAD)  behind=$(git rev-list --count HEAD..origin/main)  ahead=$(git rev-list --count origin/main..HEAD)"
+if [ "$(git rev-list --count HEAD..origin/main)" != "0" ] && [ "$(git rev-list --count origin/main..HEAD)" = "0" ]; then
+  echo "  -> 落后于 origin，做 ff-only merge"
+  timeout 60 git merge --ff-only origin/main 2>&1 | tail -3
+  echo "  新 HEAD=$(git rev-parse --short HEAD)"
+fi
+
+echo "[2] 文件基本量"
+echo "  size=$(stat -c %s "$F") bytes  lines=$(wc -l < "$F")  mtime=$(stat -c '%y' "$F" | cut -c1-19)"
+
+echo "[3] 关键：'运维指令区' 与 '我的令' 的字节偏移（越小越靠前）"
+python3 - "$F" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p, encoding='utf-8', errors='replace').read()
+zone = s.find('## 🔧 运维指令区')
+mine = s.find('2026-10-25 08:0x')
+ufw  = s.find('Ultra-FineWeb/data/')
+ultrax = s.find('UltraX-Preview')
+print(f"  total_chars={len(s)}")
+print(f"  运维指令区  offset={zone}  ({zone/len(s)*100:.1f}%)")
+print(f"  我的令08:0x offset={mine}  ({mine/len(s)*100:.1f}%)")
+print(f"  Ultra-FineWeb/data/ offset={ufw}")
+print(f"  UltraX-Preview      offset={ultrax}")
+ok = (zone > -1 and mine > zone)
+print(f"  >>> 我的令在运维指令区【之内】? {'YES ✅' if ok else 'NO ❌'}")
+# 模拟 loop: 整文件即 prompt，统计我的令前有多少字符（越小越不易被忽略）
+print(f"  >>> 我的令之前只有 {mine} 字符（占全文 {mine/len(s)*100:.1f}%）")
+PY
+
+echo "[4] 模拟 loop 的读取方式：prompt=\$(< TASK_MD)，看前 40 行里有没有我的令"
+head -40 "$F" | grep -an '运维指令区\|2026-10-25 08:0x\|Ultra-FineWeb/data\|UltraX-Preview' | cut -c1-140
+
+echo "[5] 4 条线任务书体积（>32KB 会被体积规程干扰注意力）"
+for f in BAIZE_PRETRAIN_2B_TASK.md BAIZE_DATA_TASK.md BAIZE_HARNESS_TASK.md BAIZE_VISION_TASK.md; do
+  [ -f "$T/$f" ] && echo "  $f  $(stat -c %s "$T/$f") bytes ($(awk -v b=$(stat -c %s "$T/$f") 'BEGIN{printf "%.1f", b/1024}') KB)"
+done
+
+echo "[6] data loop 最新状态（是否已唤醒 / 是否在跑 agent）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_data_loop' | grep -v grep | cut -c1-120
+tail -6 /tmp/baize_data_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-160
+
+echo "=== DONE 191 ==="
+```
+
+## RUN_ID 190 — 🔎 data 线状态（已执行 exit=0）
+
+```text
+结论：data loop PID=1827417 存活；08:26:54 sleep 1800s；MEMORY mtime 08:24:41；
+盘点报告仍是 10-24 13:49 旧版；无 inventory v2 产物；
+data 日志自述「读 BAIZE_DATA_TASK.md（顶部运维令 2026-10-24 18:1x）」=> 只看到旧块。
+根因：08:0x 块当时位于 ## 🔧 运维指令区 之外（第 3 行 vs 第 54 行）。
+```
 
 ```bash
 set -u
