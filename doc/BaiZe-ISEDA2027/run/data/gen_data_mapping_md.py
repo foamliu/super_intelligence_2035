@@ -29,6 +29,7 @@ DELETED_TSV_DEFAULT = os.path.join(RUN_DATA, "deleted_unmapped32_20261025.tsv")
 JUDGMENT_TSV_DEFAULT = os.path.join(RUN_DATA, "prune_unmapped_judgment_20261025.tsv")
 DU_CACHE_DEFAULT = os.path.join(RUN_DATA, ".du_download_cache.tsv")
 INPROGRESS_DEFAULT = os.path.join(RUN_DATA, "mapping_inprogress.txt")
+CLEANUP_TSV_DEFAULT = os.path.join(RUN_DATA, "cleanup_batches_20261025.tsv")
 OUT_DEFAULT = os.path.join(RUN_DATA, "DATA_MAPPING.md")
 
 GB = 1024 ** 3
@@ -101,6 +102,24 @@ def load_inprogress(path):
                     continue
                 s.add(line)
     return s
+
+
+def load_cleanup_batches(path):
+    """读清理批次侧车 cleanup_batches_*.tsv（幂等：历史记录，不改）。不存在 ⇒ 空列表。"""
+    rows = []
+    if os.path.exists(path):
+        with open(path, newline="") as f:
+            r = csv.DictReader(f, delimiter="\t")
+            for row in r:
+                rows.append({
+                    "batch": row.get("batch", ""),
+                    "date": row.get("date", ""),
+                    "items": row.get("items", ""),
+                    "released_bytes": int(row.get("released_bytes", "0") or "0"),
+                    "manifest": row.get("manifest", ""),
+                    "status": row.get("status", ""),
+                })
+    return rows
 
 
 def load_index(index_path):
@@ -273,6 +292,20 @@ def build_md(args):
     L.append("- 改名同步：分词后允许改目录名，但必须与本表同一批提交同步；改完跑 triplet+inode 校验写回 INDEX.tsv，再重跑本脚本。")
     L.append("- HTML 报告：需要时用 `gen_tokenized_inventory_report.py` 从本表渲染 `reports/report_data_tokenized_inventory_zh.html`。")
     L.append("")
+    # —— 清理记录指针（运维令 2026-10-25 18:5x ③）——
+    cleanup = load_cleanup_batches(args.cleanup_tsv)
+    if cleanup:
+        L.append("### 清理记录（运维令 2026-10-25 18:5x ②）")
+        L.append("")
+        L.append("> 磁盘清理按实测分批执行；每批实占 ≤500 GB，删后校验镜像 .bin 恒定 + 悬空链接 = 0。manifest = `run/data/disk_cleanup_candidates_20261025.tsv`。")
+        L.append("")
+        L.append("| 批次 | 日期 | 删除项 | 释放字节(实占) | manifest | 状态 |")
+        L.append("|:---|:---|:---|---:|:---|:---|")
+        for b in cleanup:
+            L.append(f"| {b['batch']} | {b['date']} | {b['items']} | {b['released_bytes']:,} | `{b['manifest']}` | {b['status']} |")
+        L.append("")
+        L.append("> 注：`释放字节(实占)` = 硬链接只算一次后的实际释放量（非表观体积）。batch1 释放 ~1.13 MB（78 个 staging_r3 符号链接目录 + .bak + 空目录 + 旧日志）；表观体积远大于实占因 110 env14 hardlink 实占 0。")
+        L.append("")
     return "\n".join(L) + "\n"
 
 
@@ -283,6 +316,7 @@ def main():
     ap.add_argument("--judgment-tsv", default=JUDGMENT_TSV_DEFAULT)
     ap.add_argument("--du-cache", default=DU_CACHE_DEFAULT)
     ap.add_argument("--inprogress", default=INPROGRESS_DEFAULT)
+    ap.add_argument("--cleanup-tsv", default=CLEANUP_TSV_DEFAULT)
     ap.add_argument("--out", default=OUT_DEFAULT)
     ap.add_argument("--measure", action="store_true", help="重新 du 下载目录并刷新缓存")
     ap.add_argument("--check-idempotent", action="store_true", help="连跑两次比较字节，退出码 0=幂等")

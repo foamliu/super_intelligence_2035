@@ -87,3 +87,14 @@
 - 改名同步：分词后允许改目录名，但必须与本表同一批提交同步；改完跑 triplet+inode 校验写回 INDEX.tsv，再重跑本脚本。
 - HTML 报告：需要时用 `gen_tokenized_inventory_report.py` 从本表渲染 `reports/report_data_tokenized_inventory_zh.html`。
 
+### 清理记录（运维令 2026-10-25 18:5x ②）
+
+> 磁盘清理按实测分批执行；每批实占 ≤500 GB，删后校验镜像 .bin 恒定 + 悬空链接 = 0。manifest = `run/data/disk_cleanup_candidates_20261025.tsv`。
+
+| 批次 | 日期 | 删除项 | 释放字节(实占) | manifest | 状态 |
+|:---|:---|:---|---:|:---|:---|
+| batch1 | 2026-10-25 | 78 staging_r3 symlink dirs + 1 .bak + 1 empty dir (staging_full) + 1 oldest /tmp log (kept latest 3) | 1,132,338 | `disk_cleanup_candidates_20261025.tsv` | DONE |
+| batch2 | 2026-10-25 | 110 env14_*.bin hardlink copies in text/ (actual 0 bytes; tokenized/ holds same inode; tidy only) | 0 | `disk_cleanup_candidates_20261025.tsv` | PENDING operator decision |
+
+> 注：`释放字节(实占)` = 硬链接只算一次后的实际释放量（非表观体积）。batch1 释放 ~1.13 MB（78 个 staging_r3 符号链接目录 + .bak + 空目录 + 旧日志）；表观体积远大于实占因 110 env14 hardlink 实占 0。
+
