@@ -96,7 +96,10 @@ class HermesTB(TBBaseAgent):
             environment,
             command=(
                 "export PATH=/usr/local/bin:/usr/bin:$PATH && "
-                "python3 -m pip install --break-system-packages hermes-agent 2>&1 | tail -5"
+                "if command -v python3 >/dev/null 2>&1; then PY=python3; "
+                "elif command -v python >/dev/null 2>&1; then PY=python; "
+                "else echo 'HERMES_NO_PYTHON: no python interpreter in task image' >&2; exit 127; fi && "
+                "$PY -m pip install --break-system-packages hermes-agent 2>&1 | tail -5"
             ),
             timeout_sec=900,
         )
@@ -110,7 +113,10 @@ class HermesTB(TBBaseAgent):
                 environment,
                 command=(
                     "export PATH=/usr/local/bin:/usr/bin:$PATH && "
-                    "python3 -m pip install --break-system-packages --force-reinstall "
+                    "if command -v python3 >/dev/null 2>&1; then PY=python3; "
+                    "elif command -v python >/dev/null 2>&1; then PY=python; "
+                    "else echo 'HERMES_NO_PYTHON: no python interpreter in task image' >&2; exit 127; fi && "
+                    "$PY -m pip install --break-system-packages --force-reinstall "
                     "hermes-agent 2>&1 | tail -5"
                 ),
                 timeout_sec=900,
