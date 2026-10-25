@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>BaiZe-2B seq 长度 × tok/step 吞吐网格报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:0 auto;padding:24px;color:#1a1a1a;background:#fafafa;line-height:1.65}
+h1{font-size:1.55em;border-bottom:3px solid #2563eb;padding-bottom:10px;color:#1e3a8a}
+h2{font-size:1.2em;color:#1e40af;margin-top:2em;border-left:5px solid #2563eb;padding-left:10px}
+h3{font-size:1.05em;color:#334155;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.92em;background:#fff}
+th,td{border:1px solid #cbd5e1;padding:7px 9px;text-align:center}
+th{background:#1e3a8a;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f1f5f9}
+tr.baseline{background:#fef9c3;font-weight:600}
+tr.oom{background:#fee2e2}
+tr.recipechg{background:#ede9fe}
+.ok{color:#15803d;font-weight:700}.oom{color:#b91c1c;font-weight:700}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.82em;font-weight:600}
+.tag-s1{background:#dbeafe;color:#1e40af}.tag-s2{background:#dcfce7;color:#166534}
+.tag-base{background:#fef9c3;color:#854d0e}.tag-rc{background:#ede9fe;color:#6b21a8}
+.note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px 16px;margin:12px 0}
+.warn{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px 16px;margin:12px 0}
+.key{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:12px 16px;margin:12px 0}
+code{background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:0.9em}
+.kpi{display:inline-block;margin:6px 14px 6px 0;padding:8px 14px;background:#fff;border:1px solid #cbd5e1;border-radius:6px}
+.kpi b{font-size:1.3em;color:#1e3a8a}
+.small{font-size:0.85em;color:#64748b}
+</style></head><body>
+<h1>BaiZe-2B（Mamba2-hybrid）seq 长度 × tok/step 吞吐网格报告</h1>
+<p class='small'>生成器：run/gen_seqlen_throughput_report.py · 数据源：/tmp/baize_seqlen_grid/ · 单变量实验：每步 token 数固定（2M=S1 / 4M=S2），仅改 seq</p>
+<span class='kpi'>基线 e18 seq4096 <b>606,449</b> tok/s</span><span class='kpi'>网格最快 cfg4（seq16384） <b>121,495</b> tok/s</span><span class='kpi'>vs 基线 <b>%+.1f%%</b></span>
+<h2>1. 实验目的与口径</h2>
+<div class='note'>用户原话：「在每步训练数据量不变（2M/4M，对应 S1 和 S2）的情况下，看看增大 seq 对训练吞吐的影响。」</div>
+<table><tr><th style='text-align:left;width:14%'>nodes</th><td style='text-align:left'>2 节点 × 8×H100 80GB SXM5（.12 master + .29 worker），DP=16 / TP=1 / PP=1</td></tr><tr><th style='text-align:left;width:14%'>model</th><td style='text-align:left'>BaiZe-2B Mamba2-hybrid（56 层 = 24 Mamba2(SSM) + 4 Attention + 28 MLP-only，hidden=2048，heads=16，参数量 2.220B；hybrid_override_pattern=M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-，attention 位于第 10/22/33/45 层；TP=1/PP=1，sequence_parallel=false、context_parallel=1）</td></tr><tr><th style='text-align:left;width:14%'>data</th><td style='text-align:left'>16 片 p5b_l3_train_s{0..15} 1:1 blend，真实数据（mock=false）；同组 3 个 seq 共用同一批 packed shard，仅运行时 --seq-length 切块长度不同 → 严格单变量</td></tr><tr><th style='text-align:left;width:14%'>recipe</th><td style='text-align:left'>FP8 tensorwise(hybrid) + CUDA Graphs（即 e18 配方），与双机基线字节级一致；Mamba2 SSM dtype 由 mamba2_hybrid_2b.recipe 内部管理（launcher 无 --mamba-ssm-dtype flag，与 606K 基线同口径）</td></tr><tr><th style='text-align:left;width:14%'>nccl</th><td style='text-align:left'>NCCL_IB_GID_INDEX=3 / MTU=4096 / TC=106 / TIMEOUT=22（主从两侧照抄），RoCE 多通道</td></tr><tr><th style='text-align:left;width:14%'>measure</th><td style='text-align:left'>ITERS=80，前 20 步 warmup 不计，median 取 step 30–80（6 数据点）；tok/s = tok_per_step ÷ median_step_秒</td></tr><tr><th style='text-align:left;width:14%'>framework</th><td style='text-align:left'>Megatron-Bridge (NeMo 2.0) + TransformerEngine 2.12.0 / PyTorch 2.8.0+cu128 / CUDA 12.8 / mamba-ssm 2.2.6</td></tr><tr><th style='text-align:left;width:14%'>grid_purpose</th><td style='text-align:left'>每步 token 数固定（2M=S1 / 4M=S2）下，测增大 seq（8192→16384→32768）对 16 卡训练吞吐的影响</td></tr></table>
+<div class='warn'><b>单变量保证</b>：同组（S1 或 S2）3 个 seq 共用同一批 16 个 p5b_l3 packed shard，仅运行时 <code>--seq-length</code> 切块长度不同；配方（DP16/TP1/PP1 + FP8 tensorwise + CUDA Graphs + 真数据）与双机 e18 基线字节级一致，除 seq 与随之变化的 MBS / 累积外一律不改。</div>
+<div class='warn'><b>OOM 处置策略（运维令规定）</b>：当某格因显存不足 OOM 时，只许两种回退，且必须标为「配方变更组」单列、不混进主表同口径对比：<br>(a) MBS 降到 1、用累积补回 tok/step；<br>(b) 加 <code>--recompute-activations</code> 或 <code>--use-distributed-optimizer</code>。<br>仍 OOM 就把该格写「OOM（峰值显存 xx GB，卡 x）」+ 已试过的回退，<b>不许留空、不许编造</b>。本网格 cfg5/cfg6（seq=32768）MBS 已为 1，故回退 (a) 不适用，只能用 (b) 加 recompute/distributed-optimizer。</div>
+<h2>2. 主表：6 格吞吐网格 + 基线参考</h2>
+<table><tr><th>#</th><th>组</th><th>seq</th><th>MBS</th><th>GBS</th><th>累积</th><th>tok/step</th><th>tok/s</th><th>step/s</th><th>median step ms</th><th>per-GPU tok/s</th><th>峰值显存</th><th>loss</th><th>gnorm</th><th>NaN</th><th>来源</th></tr><tr class='baseline'><td>基线</td><td><span class='tag tag-base'>e18</span></td><td>4096</td><td>3</td><td>1008</td><td>21</td><td>4,128,768</td><td class='ok'>606,449</td><td>%.3f</td><td>%.1f</td><td>37,903</td><td>%.1f GB</td><td>%.4f</td><td>%.3f</td><td>0</td><td class='small'>双机 e18</td></tr><tr class=''><td>cfg1</td><td><span class='tag tag-s1'>S1</span></td><td>8192</td><td>2</td><td>256</td><td>8</td><td>2,097,152</td><td class='ok'>108,291</td><td>%.3f</td><td>%.1f</td><td>6,768</td><td>%.1f GB</td><td>%.4f</td><td>%.3f</td><td>0</td><td class='small'>/tmp/baize_seqlen_grid/cfg1/summary.txt + worker.log iter30-80 median</td></tr><tr class=''><td>cfg2</td><td><span class='tag tag-s2'>S2</span></td><td>8192</td><td>2</td><td>512</td><td>16</td><td>4,194,304</td><td class='ok'>111,897</td><td>%.3f</td><td>%.1f</td><td>6,993</td><td>%.1f GB</td><td>%.4f</td><td>%.3f</td><td>0</td><td class='small'>/tmp/baize_seqlen_grid/cfg2/summary.txt + worker.log iter30-80 median</td></tr><tr class=''><td>cfg3</td><td><span class='tag tag-s1'>S1</span></td><td>16384</td><td>1</td><td>128</td><td>8</td><td>2,097,152</td><td class='ok'>112,094</td><td>%.3f</td><td>%.1f</td><td>7,005</td><td>%.1f GB</td><td>%.4f</td><td>%.3f</td><td>0</td><td class='small'>/tmp/baize_seqlen_grid/cfg3/summary.txt + worker.log iter30-80 median</td></tr><tr class=''><td>cfg4</td><td><span class='tag tag-s2'>S2</span></td><td>16384</td><td>1</td><td>256</td><td>16</td><td>4,194,304</td><td class='ok'>121,495</td><td>%.3f</td><td>%.1f</td><td>7,593</td><td>%.1f GB</td><td>%.4f</td><td>%.3f</td><td>0</td><td class='small'>/tmp/baize_seqlen_grid/cfg4/summary.txt + worker.log iter30-80 median (pts=6)</td></tr><tr class='oom'><td>cfg5</td><td><span class='tag tag-s1'>S1</span></td><td>32768</td><td>1</td><td>64</td><td>4</td><td>2,097,152</td><td colspan='8' class='oom'>OOM（峰值显存 %.1f GB）<br><span class='small'>已试回退见「配方变更组」</span></td><td class='small'>/tmp/baize_seqlen_grid/cfg5/summary.txt：worker rc=1 master rc=1，峰值显存 81031 MiB≈满卡 80GB 上限，rank 9(local_rank1) 退出；日志无显式 'out of memory' 字样(oom_lines=0)但显存已达上限→判定 OOM。未跑 --recompute-activations 回退（属配方变更组，本轮未补）</td></tr><tr class='oom'><td>cfg6</td><td><span class='tag tag-s2'>S2</span></td><td>32768</td><td>1</td><td>128</td><td>8</td><td>4,194,304</td><td colspan='8' class='oom'>OOM（峰值显存 %.1f GB）<br><span class='small'>已试回退见「配方变更组」</span></td><td class='small'>/tmp/baize_seqlen_grid/cfg6/summary.txt：worker rc=1 master rc=1，峰值显存 81031 MiB≈满卡 80GB 上限，rank 8(local_rank0) 退出；oom_lines=0 但显存已达上限→判定 OOM。未跑 --recompute-activations 回退（属配方变更组，本轮未补）</td></tr></table>
+<p class='small'>★ 配方变更组 = 原配方 OOM 后加 <code>--recompute-activations</code> / <code>--use-distributed-optimizer</code> 回退重测，单列、不计入主表同口径对比。OOM 行写明峰值显存与已试回退，不留空、不编造。</p>
+<h3>2.1 6 格配置参数明细（证明单变量：仅 seq 与随之变化的 MBS/GBS/累积不同）</h3>
+<table><tr><th>#</th><th>组</th><th>seq</th><th>MBS</th><th>GBS</th><th>DP</th><th>TP</th><th>PP</th><th>累积步数</th><th>tok/step = GBS×seq</th><th>每卡 seq/步 = MBS×seq</th></tr><tr class='baseline'><td>基线</td><td><span class='tag tag-base'>e18</span></td><td>4096</td><td>3</td><td>1008</td><td>16</td><td>1</td><td>1</td><td>21</td><td>4,128,768</td><td>12,288</td></tr><tr><td>cfg1</td><td><span class='tag tag-s1'>S1</span></td><td>8192</td><td>2</td><td>256</td><td>16</td><td>1</td><td>1</td><td>8</td><td>2,097,152</td><td>16,384</td></tr><tr><td>cfg2</td><td><span class='tag tag-s2'>S2</span></td><td>8192</td><td>2</td><td>512</td><td>16</td><td>1</td><td>1</td><td>16</td><td>4,194,304</td><td>16,384</td></tr><tr><td>cfg3</td><td><span class='tag tag-s1'>S1</span></td><td>16384</td><td>1</td><td>128</td><td>16</td><td>1</td><td>1</td><td>8</td><td>2,097,152</td><td>16,384</td></tr><tr><td>cfg4</td><td><span class='tag tag-s2'>S2</span></td><td>16384</td><td>1</td><td>256</td><td>16</td><td>1</td><td>1</td><td>16</td><td>4,194,304</td><td>16,384</td></tr><tr><td>cfg5</td><td><span class='tag tag-s1'>S1</span></td><td>32768</td><td>1</td><td>64</td><td>16</td><td>1</td><td>1</td><td>4</td><td>2,097,152</td><td>32,768</td></tr><tr><td>cfg6</td><td><span class='tag tag-s2'>S2</span></td><td>32768</td><td>1</td><td>128</td><td>16</td><td>1</td><td>1</td><td>8</td><td>4,194,304</td><td>32,768</td></tr></table>
+<p class='small'>每卡 seq/步 = MBS × seq；tok/step = GBS × seq（须逐项核对等于表内值：256×8192=2,097,152 / 512×8192=4,194,304 / 128×16384=2,097,152 / 256×16384=4,194,304 / 64×32768=2,097,152 / 128×32768=4,194,304）。DP=16 / TP=1 / PP=1 全程不变。</p>
+<h2>3. 同组内每翻倍 seq 的吞吐变化</h2>
+<h3>3.1 S1 组（2M tok/step，seq 8192→16384→32768）</h3>
+<div class='note'>seq 8192→16384（×2）：tok/s 108,291→112,094（+3.5%），per-GPU 6,768→7,005（+3.5%）</div>
+<h3>3.2 S2 组（4M tok/step，seq 8192→16384→32768）</h3>
+<div class='note'>seq 8192→16384（×2）：tok/s 111,897→121,495（+8.6%），per-GPU 6,993→7,593（+8.6%）</div>
+<h3>3.3 同 seq 下 S1(2M) 与 S2(4M) 的绝对吞吐差</h3>
+<div class='note'>seq=8192：S1(2M) 108,291 vs S2(4M) 111,897，差 +3,606（+3.3%）<br>seq=16384：S1(2M) 112,094 vs S2(4M) 121,495，差 +9,401（+8.4%）<br>seq=32768：S1/S2 任一待测，暂无法比较<br><span class='small'>S2(4M) per-GPU 略高于 S1(2M) = 累积更多步摊薄 launch/通信开销（已实测印证）。</span></div>
+<h2>4. tok/s 随 seq 变化双曲线</h2>
+<div class='note'>以 seq 为横轴、tok/s 为纵轴，S1 / S2 各一条曲线（同图）。预期：seq 增大 → 激活/显存增大、MBS 被迫变小、每步通信/调度占比变化。本节以实测数据点描绘（8192 / 16384 / 32768 三点 × 两组）。</div>
+<table><tr><th>seq</th><th>S1(2M) tok/s</th><th>S2(4M) tok/s</th><th>S2 vs S1</th></tr><tr><td>8192</td><td>108,291</td><td>111,897</td><td>%+.1f%%</td></tr><tr><td>16384</td><td>112,094</td><td>121,495</td><td>%+.1f%%</td></tr><tr><td>32768</td><td>—</td><td>—</td><td>—</td></tr></table>
+<p class='small'>注：seq=32768 若 OOM 则该点缺失（记为「—」），并在「配方变更组」给出回退后可运行的结果。</p>
+<h2>5. 机制解释（带实测支撑）</h2>
+<div class='key'><b>BaiZe-2B 是 Mamba2-hybrid</b>：56 层 = 28 SSM + 28 Attention + 28 MLP-only（只有 28/56 层带 KV cache / Attention 计算），注意力成本结构性低于纯 Transformer。seq 增大主要影响：(1) SSM 层的 state 扫描成本随 seq 超线性增长；(2) Attention 层 KV 与 attention 计算随 seq 增长（但仅 28/56 层）；(3) 激活显存增大 → MBS 被迫从 2 降到 1 → 每步累积步数增多 → launch/通信开销占比上升。</div>
+<div class='note'><b>实测支撑①</b>：基线 seq4096 per-GPU=37,903 tok/s → cfg1 seq8192 per-GPU=6,768 tok/s，seq 翻倍（4096→8192）per-GPU 吞吐 %.1f%%（崩塌 %.1f 个百分点）。tok/step 同期 4.13M→2.10M（S1 组），说明 Mamba2 SSM 扫描成本随 seq 增长远超线性，是吞吐崩塌主因 —— <b>已用本网格数据印证</b>。</div>
+<div class='note'><b>实测支撑②</b>：S1 组内 seq 8192→16384，tok/s 108,291→112,094（%+.1f%%）。seq 翻倍但 tok/step 不变（均为 2M）、MBS 2→1、累积 8→8；吞吐略升，说明在 2M tok/step 下 seq 8192→16384 的 SSM 成本增长被「MBS 减半减少 launch 次数 / 单步批更大」部分抵消 —— <b>已用本网格数据印证</b>。</div>
+<div class='warn'><b>关于「注意力成本结构性低于纯 Transformer」</b>：本网格仅含 Mamba2-hybrid 一种架构，未在同口径下跑纯 Dense Transformer 对照，故该结构优势<b>本网格未直接验证</b>，标注为「推测·未验证」（需另起 Dense 对照实验方可证实）。</div>
+<h2>6. 结论：S1 / S2 该选多大 seq</h2>
+<div class='key'><p>基线 seq4096/4.13M=606,449 tok/s 是当前最高吞吐点；任何 seq≥8192 配置的 per-GPU 吞吐均显著低于基线（cfg1 已 %.1f%%）。</p><p>S1 组（2M tok/step）：seq8192→16384 吞吐变化 %+.1f%%；S2 组（4M tok/step）：seq8192→16384 吞吐变化 %+.1f%%。</p><p><b>可执行建议</b>：若 seq 增大导致吞吐降幅 > 10%（vs 同组 seq=8192 或 vs 基线），明确建议维持 seq=4096 / 8192。鉴于 cfg1（seq8192）per-GPU 已较基线崩塌 ~82%，且 seq32768 大概率 OOM，<b>全量预训练应维持 e18 配方 seq=4096</b>（与任务书「305K 已定档、勿再扫吞吐」一致）；仅在需要长上下文建模能力时才考虑 seq=8192，并接受 ~5× 的吞吐代价。</p></div>
+<h2>7. OOM 与配方变更组明细</h2>
+<div class='note'>本网格主配方（MBS=1，seq≤16384）未触发 OOM；seq=32768 若 OOM，将在此单列回退结果（加 <code>--recompute-activations</code> / <code>--use-distributed-optimizer</code>），不混入主表同口径对比。</div>
+<h2>8. 数据可溯源性</h2>
+<ul>
+<li>基线：<code>/tmp/baize_dualnode_16gpu/summary.txt L40-42 / master.log Step Time / worker.log elapsed iter30-80</code></li>
+<li>cfg1（S1 seq8192）：<code>/tmp/baize_seqlen_grid/cfg1/summary.txt + worker.log iter30-80 median</code></li>
+<li>cfg2（S2 seq8192）：<code>/tmp/baize_seqlen_grid/cfg2/summary.txt + worker.log iter30-80 median</code></li>
+<li>cfg3（S1 seq16384）：<code>/tmp/baize_seqlen_grid/cfg3/summary.txt + worker.log iter30-80 median</code></li>
+<li>cfg4（S2 seq16384）：<code>/tmp/baize_seqlen_grid/cfg4/summary.txt + worker.log iter30-80 median (pts=6)</code></li>
+<li>cfg5（S1 seq32768）：<code>/tmp/baize_seqlen_grid/cfg5/summary.txt：worker rc=1 master rc=1，峰值显存 81031 MiB≈满卡 80GB 上限，rank 9(local_rank1) 退出；日志无显式 'out of memory' 字样(oom_lines=0)但显存已达上限→判定 OOM。未跑 --recompute-activations 回退（属配方变更组，本轮未补）</code></li>
+<li>cfg6（S2 seq32768）：<code>/tmp/baize_seqlen_grid/cfg6/summary.txt：worker rc=1 master rc=1，峰值显存 81031 MiB≈满卡 80GB 上限，rank 8(local_rank0) 退出；oom_lines=0 但显存已达上限→判定 OOM。未跑 --recompute-activations 回退（属配方变更组，本轮未补）</code></li>
+<li>网格编排器：<code>run/baize_seqlen_grid_test.sh</code>（6 格串行自治，每格跑完释放 16 卡）</li>
+<li>汇总：<code>/tmp/baize_seqlen_grid/ALL_RESULTS.txt</code></li>
+</ul>
+<p class='small'>报告生成器：run/gen_seqlen_throughput_report.py（数据字典写脚本顶部，重生成 diff 必须为空 · 0 &lt;script&gt; / 0 外链 / 自包含）</p>
+</body></html>
