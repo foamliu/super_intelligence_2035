@@ -1,11 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 **2026-10-25 14:00 #774：⚪ idle heartbeat · 复核全部指令已交付·无新令·纯验证零 GPU**：
-> - **复核**：① dualnode 报告（07:4x 令）`reports/report_pretrain_dualnode_throughput_zh.html` 24,970B 在位 + 生成器 `gen_dualnode_throughput_report.py` 33KB 在位 + EXPERIMENTS L3691 指针在 ✅；② longctx 报告重写（16:0x 令②）commit `1a304f509`，报告确为 BaiZe-2B Mamba2-hybrid（NemotronH 24SSM+4Attn+28MLP，`--mamba-ssm-dtype float32`，架构差异节在）✅；③ 305K 最佳实践（16:0x 令①）在任务书 16:0x 块 ✅。`git fetch`+`status` ⇒ 与 origin 同步、无 pretrain 文件待提交；Task B 无进程在跑（qps4/qps8/maxnch64 3 TAG 已闭合）。
-> - **未完成指令：无**（07:4x/23:5x/16:0x 三条运维令交付物均已在盘并 commit）⇒ `WAITING=1`（30 分钟长轮询）。
-> - **GPU**：.29 8×H100 全 4 MiB idle，零争用；本轮纯验证零 GPU。
-> 📦 体积：TASK=31.1 KB / MEMORY≈30.4 KB（均 ≤32KB✓；本轮未归档，仅新增 #774 idle 心跳）。
+> 🆕 **2026-10-25 15:10 #775：⚪ idle heartbeat · 07:4x 报告令复核依旧在位·无新令·纯验证零 GPU**：
+> - **复核**：`git fetch`+`status -sb` ⇒ 与 origin/main 同步（无 ahead/behind），任务书最后提交=10-25 09:16 纪律块（无新运维令）。dualnode 报告 `report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / 11 个 `<h2>` ✓；生成器 `gen_dualnode_throughput_report.py`=33KB ✓；EXPERIMENTS L3691 指针 ✓。Task B 无进程（qps4/qps8/maxnch64 3 TAG 早已闭合）。三项运维令（07:4x/23:5x/16:0x）交付物均在盘并已 commit。
+> - **未完成指令：无** ⇒ `WAITING=1`（30 分钟长轮询）。
+> - **GPU**：.29 8×H100 全 idle，零争用；本轮纯验证零 GPU。
+> 📦 体积：TASK=31.1 KB / MEMORY≈30.6 KB（均 ≤32KB ✓；#774 详细块→1 行指针，净增极小）。
+> 📦 §#774 流水（2026-10-25 14:00，idle 复核全部指令已交付）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x 报告 24,970B+生成器+EXPERIMENTS L3691 均在位，三项运维令交付完毕，WAITING=1。需要时再读。
 
 > 🆕 **2026-10-25 12:4x #773：✅ 07:4x 报告令交付物复核+收尾·修报告 HTML 严格有效性·清理 run/reports 残留·纯写作零 GPU**：
 > - **复核交付物**：项目级报告在位（`doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`，24,970 B，11 个 `<h2>`=§1 摘要…§10 数据溯源+附注，#767 误报纠正记录在）；生成器 re-run 产物 diff=空（确定性，可重生成）；EXPERIMENTS L3691 指针在 ⇒ **07:4x 报告令已完整交付**。
