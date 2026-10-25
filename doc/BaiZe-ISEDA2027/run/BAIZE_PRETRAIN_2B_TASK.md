@@ -9,128 +9,51 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### [运维令] 2026-10-25 20:2x（seq 4096->8192 掉速 5.6x 的根因排查：补对照 + 时间分解 + web search 对标）· 用户直令 · 最高优先
-> 用户原话：「让 pretrain 排查一下为啥 seq 从 4096 翻到 8192 吞吐掉这么多，也可以web search，这个不符合常识，因为阿里等公司用8192预训练还是常见的，而且我们又是Memba2-hybrid，理应对长上下文更加友好。」
-> 现状（实测）：cfg1（seq8192 / 2M tok/step）**108,291 tok/s** vs 基线（seq4096 / 4.13M）**606,449 tok/s**；per-GPU 6,768 vs 37,900（-82%）；峰值显存 79.2 vs 67.6 GB。
-> 运维判定：**该降幅不符合常识** —— BaiZe-2B 只有 4/56 层带 attention、24 层 Mamba2（线性于 seq）、28 层纯 MLP；同 tok/step 下 seq 翻倍的合理代价约 **+10~30%**。**证据不齐前，禁止把「Mamba2 SSM 超线性」写进报告/MEMORY 结论**（MEMORY #779 已有此句，本轮改为「推测·待验证」）。
+### [运维令] 2026-10-25 23:0x（**通宵攻坚：查清 tokens/microbatch 悬崖并给出可用档位；不解决不收工**）· 用户直令 · 最高优先
+> 用户原话：「下发指令让 pretrain 这个晚上一直排查这个问题，解决不了不要结束。」
+> 已知事实：基线(seq4096/mbs3=12,288 tok/mb/GPU)=606,449 tok/s；cfg0a(seq4096/mbs4=16,384)=113,514；cfg1(seq8192/mbs2=16,384)=108,291；cfg3/4(16K, 16,384)=112,094/121,495 ⇒ **悬崖在 12,288-16,384 tok/microbatch/GPU 之间，与 seq 无关**；四格峰值显存 81.08GB 顶到上限，基线 67.6GB。
 
-**1) 先补对照（现在的网格不是单变量：GBS 1008->256、MBS 3->2 一起变了）**
-- `cfg0a`：seq=4096 / S1 / mbs=4 / gbs=512（tok/step=2,097,152，与 cfg1 **只差 seq**）
-- `cfg0b`：seq=4096 / S2 / mbs=3 / gbs=1008（tok/step=4,128,768，**用同一脚本重跑基线**）
-- 判据：`tok/s(cfg0a) / tok/s(cfg1)`；`tok/s(cfg0b) / 606,449`。若 cfg0b 偏差 >5% ⇒ **先查环境/脚本差异**（CUDA graph、fp8、NCCL 变量、数据 blend、launcher 参数），不得继续谈 seq。
+**0) 夜间纪律（覆盖其它收尾条文）**
+- 本轮起至 **2026-10-26 08:00** 持续攻坚，`WAITING=0`；**不许**以「等用户 / 等运维 / 无新令」结束或空转。
+- 每个实验用 `setsid` 后台跑，`sleep 120-300` 轮询判读；**每 30 分钟至少一次 progress commit**（`pretrain rc: ...`），关键发现即时写 MEMORY。
+- 08:00 前必须交**早报**：一句话结论 + 档位表 + 证据路径（无论成败）。
+- 🚫 不 kill `SWE-bench` 下载与 harness 复跑；🚫 不抢 data 分词资源；每格跑完立刻释放 16 卡；🚫 不许把猜测写成结论、不许编数。
 
-**2) 时间分解（归因核心证据，每格都要）**
-- 开 Megatron 计时（`--log-timers-to-tensorboard --timing-log-level 2` 或等价），取 step 30-80 的 `forward-compute / backward-compute / optimizer / data-loading` 均值。
-- 每格采一次 `nvidia-smi dmon -s u -m -c 60`：GPU util 均值、util <10% 的时间占比。
-- 查 CUDA graph 是否真生效（log 里 capture 成功/失败、是否回退 eager），4096 与 8192 对比。
-- 查数据侧：seq=8192 时每步读几个 shard、是否跨 shard 重打包、worker 数 / CPU 饱和 / 队列空转；与 4096 用同 16 个 `p5b_l3` shard 对比。
-- 查 kernel/精度：`--mamba-ssm-dtype` 实际取值（recipe 内是否强制 float32）、chunk_size、sequence parallel / TP 在 8192 下是否被关、TE/fused kernel 是否回退。
+**1) 实验阶梯（按序，能跳就跳但要写理由）**
+| 步 | 配置 | tok/mb/GPU | 目的 | 判据 |
+|:--|:--|--:|:--|:--|
+| E1 | seq4096 / mbs3 / gbs1008（=cfg0b） | 12,288 | 复现基线 | ~606K ⇒ 基线真实；~113K ⇒ 基线来自不同 setup，先查环境 |
+| E2 | seq8192 / mbs1 / gbs256（accum16） | 8,192 | **seq 8K 能否满速** | 回到 55-60 万 ⇒ 「8K 满速只要 MBS=1」，这是给用户的答案 |
+| E3 | seq12288 / mbs1 | 12,288 | 定位阈值（与 E1 同 tok/mb、不同 seq） | ~606K ⇒ 阈值只与 tok/mb 有关，与 seq 无关（终判） |
+| E4 | seq8192 / mbs1.5 不可行 ⇒ seq6144 / mbs2 | 12,288 | 第三个同阈值点交叉验证 | 同上 |
+| E5 | 16,384 tok/mb 的最小复现（seq4096/mbs4 已有） | 16,384 | 悬崖边界细分：再插 seq4096/mbs4 与 seq8192/mbs2 均为 16,384 ⇒ 用 seq=8192/mbs2 与 seq=16384/mbs1 已覆盖；补 **seq=4096/mbs3.5 不可行**，改测 **seq=2048/mbs8=16,384** 与 **seq=1024/mbs16=16,384** | 若小 seq 大 mbs 也慢 ⇒ 纯 tok/mb 效应；若快 ⇒ 与 seq 相关 |
 
-**3) web search 对标（用户点名，必须真检索并引用）**
-- 检索方向：Qwen2.5 / Qwen3 预训练序列长度与吞吐；Llama 3（8K 预训练）；Megatron-LM 长序列最佳实践（sequence parallel / context parallel / activation recompute）；`mamba_ssm` 与 Megatron-Core hybrid Mamba 的已知性能坑（chunk scan、fp32 state、TP 下 scan 切分）；「同 tok/step 下 seq 翻倍的合理吞吐损失区间」。
-- 每条写：来源（标题 + arXiv 号 / 官方文档 / 博客 + 年份 + **检索日期 2026-10-25**）、结论、与本项目可比性；**查不到就写「未查到」**，不许凭印象。
+**2) 归因（E1-E5 出数后 2 小时内定位）**
+- **显存假说（首选）**：16,384 tok/mb 下峰值 81GB 顶格 ⇒ 检查是否触发 activation recompute / offload / 碎片；取 `torch.cuda.memory_summary()` 在 12,288 与 16,384 两侧各一份，比对 reserved/allocated/active 与 fragmentation；核对 `--recompute-*`、`PYTORCH_CUDA_ALLOC_CONF` 实际生效值。
+- **kernel 假说**：profile 六类（attention / ssm / mlp / loss / optimizer / data）在 12,288 与 16,384 各 10 步；看是否有算子在某 token 数跨过阈值后换实现（FP8 GEMM tiling、CUDA graph node 数、SSD chunk）。
+- **CUDA graph 假说**：确认两侧 graph 是否都 capture 成功、replay 次数与 graph 数量是否爆炸（token 数变化 ⇒ 多 shape ⇒ 多 graph）。
+- **数据假说**：data-loading 计时 + util 曲线，两侧对比；若 data 占步时 >30% 记下来但不算主因（除非其它都排除）。
 
-**4) 假设-检验表（报告必须逐行给实测结果）**
-| 假设 | 检验方式 | 若成立的特征 | 实测 | 结论 |
-|:--|:--|:--|:--|:--|
-| H1 数据管线在 8192 下重打包/跨 shard，GPU 饥饿 | data-loading 计时 + util 曲线 | data-loading 占步时 >50%，util 长期 <20% | | |
-| H2 CUDA graph 在 8192 回退 | log capture 行 | 出现 fallback / capture failed | | |
-| H3 Mamba2 fp32 SSM + chunk scan 长序列低效 | 改 chunk_size / 临时 bf16 对比（标为配方变更组） | 改后 tok/s 明显回升 | | |
-| H4 小 GBS/MBS 导致 overlap 与利用率下降 | cfg0a 对照 | 4096 也掉到 ~110K ⇒ 与 seq 无关 | | |
-| H5 8K 本身计算更贵 | 排除 H1-H4 后 | compute 占比接近 100% 且随 seq 增长 | | |
+**3) 修复与验收**
+- 定位后**只改一项**（MBS/accum、CP、recompute、graph 配置、mamba dtype 之一），在 **seq=8192** 上复测，要求：`tok/s >= 0.7 × 606K`（即降幅 ≤30%）且 loss/gnorm/NaN 正常。
+- 若 16K 必须 CP：给 CP=2/4 的可行性 + 预期吞吐（可只跑 20 步 smoke）。
+- 产出**档位表**：`seq × MBS × accum → tok/s → per-GPU → 峰值显存`，并给 S1/S2 的推荐档位（含「8K 满速配方」）。
 
-**5) 修复与复测**
-- 定位主因后**只改那一项**（如 seq 粒度预打包 / 加 dataloader worker / mamba dtype / 恢复 CUDA graph），用同一 `cfg0a` 复测，给修复前后 tok/s、step time、显存对比。
-- 判据：修复后 `cfg0a` 相对基线同 tok/step 的降幅 **≤30%**；若仍 >50% ⇒ 保留现场证据上报，不许硬编结论。
+**4) 收敛条件（必须同时满足才算解决）**
+1. 能一句话解释 5.5x 的成因，且有实验/证据支撑；
+2. 给出可复现的修复配方，且复测达标（≥0.7×基线）；
+3. `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（≥15KB）+ 修正版 seqlen 报告（旧结论标「已证伪」）+ EXPERIMENTS 新节 + MEMORY 首部新块，全部 commit。
+- **若 08:00 仍无解**：必须交「早报 + 已排除清单（每条附证据文件）+ 下一步最小实验（≤30 分钟可跑）+ 需要用户/运维决策的点」，**不许只写「未解决」**，也不许停机。
 
-**6) 交付**
-- `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、≥15KB）：摘要 / 现象与口径 / 对照实验 / 时间分解与 util / 假设检验表 / 外部对标 / 根因 / 修复与复测 / 复现命令 / 数据溯源。
-- 更新 `reports/report_pretrain_seqlen_throughput_zh.html` 与 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节；生成器 `run/gen_seq8192_rootcause_report.py`（重跑 diff 空）。
-- 修正 MEMORY #779 机制结论标注；commit 前缀 `pretrain rc:`。
-- **排期调整（20:5x 运维追加，优先级高于主表）**：`cfg3` 跑完后**先插 `cfg0a` + `cfg0b`**（两个合计约 20 分钟：cfg0a 3.5s/step x80 + 起停，cfg0b 6.8s/step x80 + 起停），**再续 cfg4-cfg6**。做法：cfg3 结束、`release_gpus` 返回后，SIGTERM 编排器 `baize_seqlen_grid_test.sh`（只杀编排进程，不碰 torchrun 子进程——此刻应已退出），把 `CONFIGS` 改成 `cfg0a cfg0b cfg4 cfg5 cfg6`，重新 `setsid` 起；若来不及在 cfg4 启动前拦住，就等 6 格全跑完立刻补跑，**不许省这一步**。
-- **模块级 profile（H6/H7 的唯一判据）**：在 `cfg0a`（4096）与 `cfg1`（8192，可重跑 10 步）上各用 torch profiler / Nsight 采 10 步，输出 `attention / ssm(chunk scan) / mlp / loss / optimizer / data` 六类的时间占比与绝对毫秒；判据：若 `attention` 占比随 seq 平方增长 ⇒ H6 成立；若 `ssm` 绝对耗时随 seq 明显超线性 ⇒ H7 成立；两者都不成立再看 data。
-- 总 ETA 相应调整：cfg3 ~21:10 -> cfg0a/cfg0b ~21:40 -> cfg4-cfg6 ~22:40 -> profile + 修复复测 ~23:40 -> 报告次日 00:30 前。
+**5) 交付路径**
+**附**：cfg5/cfg6（32K）OOM 重试按「配方变更组」（`--recompute-activations` / `--use-distributed-optimizer`）单列，不混主表。
 
-**补充（22:3x，网格已全部结束，数据来自 `/tmp/baize_seqlen_grid/ALL_RESULTS.txt` 原始行）**
-| cfg | seq | tok/step | tok/s | med_ms | per-GPU | peak MiB | 状态 |
-|:--|--:|--:|--:|--:|--:|--:|:--|
-| cfg1 | 8192 | 2,097,152 | 108,291 | 19,365.9 | 6,768 | 81,087 | OK |
-| cfg2 | 8192 | 4,194,304 | 111,897 | 37,483.7 | 6,993 | 81,085 | OK |
-| cfg3 | 16384 | 2,097,152 | 112,094 | 18,708.9 | 7,005 | 81,087 | OK |
-| cfg4 | 16384 | 4,194,304 | 121,495 | 34,522.4 | 7,593 | 81,079 | OK |
-| cfg5 | 32768 | 2,097,152 | FAIL | - | - | 81,031 | FAIL |
-| cfg6 | 32768 | 4,194,304 | FAIL | - | - | 81,031 | FAIL |
-- **平台证实**：8K/16K 下 tok/s = 108~121K，且随 seq **略升**（108->112->121）；tok/step 翻倍只 +3~8% ⇒ 与批大小无关的**每 token 固定成本被放大 5.6x**，拐点就在 4096。
-- **新证据（重要）**：四格峰值显存几乎一致（81,079-81,087 MiB，卡在 80GB 上限），**与 seq、tok/step 都无关** ⇒ 疑似存在**与 seq 无关的固定巨额分配**（workspace / 优化器状态 / 未分片缓冲 / CUDA graph 常驻池）；cfg5/cfg6 在 81,031 MiB 处 FAIL ⇒ 32K 所需的额外一点显存直接撑爆。请把「固定 81GB 到底是谁」列入 profile 清单（`torch.cuda.memory_summary()` + 分项 snapshot）。
-- **cfg5/cfg6**：先给 FAIL 的 torch 报错原文与判定（OOM / 其他），再按「配方变更组」用 `--recompute-activations` 或 `--use-distributed-optimizer` 重试，单列不混主表。
+- 实验日志 `/tmp/baize_rc_<step>/`；结果表 `run/pretrain_rc_ladder_20261026.tsv`（逐格一行）；profile 落 `run/pretrain_rc_profile_<tokmb>.txt`。
+- commit 前缀 `pretrain rc:`；报告 08:00 前必须存在（哪怕标 `rev1`）。
 
-**补充（22:5x：cfg0a 已证伪「seq 致慢」，追加两条必做实验 + 报告更正）**
-- 事实：`cfg0a`（seq4096 / mbs4 → **16,384 tok/microbatch/GPU**）= **113,514 tok/s**，与 cfg1（seq8192 / mbs2 → 同为 16,384）= 108,291 基本一致 ⇒ **seq 不是主因**；基线（seq4096 / mbs3 → **12,288 tok/microbatch/GPU**）= 606,449 ⇒ 悬崖落在 12,288→16,384 tok/microbatch 之间（且该区间峰值显存从 67.6GB 顶到 81GB）。
-- **必做 A（运维判断的关键验证，10 分钟）**：`seq=8192 / mbs=1 / gbs=256（accum=16）` → **8,192 tok/microbatch/GPU**。判据：若 tok/s 回到 ~55-60 万 ⇒ **「seq=8192 可以满速，只要把 MBS 降到 1」**，这是直接给用户的可行结论；若仍 ~110K ⇒ 说明与 tok/microbatch 无关，回去查 gbs/accum 与 kernel。
-- **必做 B（16K 的出路）**：`seq=16384 / mbs=1` 必然是 16,384 tok/microbatch ⇒ 注定踩崖；**要么开 context parallel（CP=2/4）把每卡序列切短，要么 16K 只做小规模微调**。请在报告里给 CP 的可行性判断（当前 config dump：SP=false / CP=1）。
-- **报告更正（必做）**：`reports/report_pretrain_seqlen_throughput_zh.html` §7 现在写「任何 seq>=8192 都崩 ~5x、建议维持 4096」——这是**基于错误归因**的结论。cfg0b 与必做 A 出数后，必须把该节改成「**悬崖由 tokens/microbatch/GPU 触发，与 seq 无关**」，并给「seq=8192 + mbs=1」的实测档位；旧结论标「已证伪」保留可追溯。
+### [已归档] §运维令·2026-10-25 20:2x（seq 掉速根因排查初版：H1-H9 假设表 + cfg0a/cfg0b 对照 + web 对标）**已并入 23:0x 通宵令**（cfg0a 已出数并证伪 seq 假设；假设表与外部对标原文见 ARCHIVE）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。需要时再读。
 
-
-
-**补充观测（20:40，cfg2/cfg3 出来后，归因更清楚了）**
-| cfg | seq | tok/step | tok/s | per-GPU | 相对基线(606,449) |
-|:--|--:|--:|--:|--:|--:|
-| 基线 e18 | 4096 | 4.13M | 606,449 | 37,903 | 1.00x |
-| cfg1 | 8192 | 2.10M | 108,291 | 6,768 | -82% |
-| cfg2 | 8192 | 4.19M | 111,897 | 6,993 | -82% |
-| cfg3 | 16384 | 2.10M | **112,094**（实测，非早期 step10 折算） | 7,005 | -82% |
-- **形态更正（22:1x 运维，依据 cfg3 实测 112,094）**：不是「超线性」，而是**在 seq 4096->8192 之间发生一次阶跃式跌落（约 5.5x），之后 8192 与 16384 都平台在 ~108-112K**：
-  - 8192/2.1M = 108,291 -> 8192/4.19M = 111,897（tok/step 翻倍仅 +3%）；
-  - 16384/2.1M = 112,094（seq 再翻倍基本不变）。
-- ⇒ **H6（attention O(seq^2) 主导）基本被证伪**（若是二次成本，16384 应比 8192 再掉一半，实测没有）；
-- ⇒ 单点特征指向**「seq>4096 触发了另一条 kernel/执行路径」**：`--mamba-ssm-dtype float32` 的 SSD chunk scan 慢路径、CUDA graph 在 8K 失效回退 eager、或数据管线在 8K 的固定开销。既然 8192 与 16384 同速，**主因大概率是「每 token 固定成本被放大」而非「随 seq 增长」**。
-- 必须用 profile 定位到模块级；并**找出拐点**：若 cfg0a（4096/2.1M）回到 ~600K，则再补一格 `seq=6144`（若模型/数据支持）或 `seq=5120`，把跌落锁定在 4096-8192 之间。
-
-**追加假设**
-| H6 | 4 层 attention 在 seq>=8192 走了非 flash/未融合路径（O(seq^2) 主导） | torch profiler / Nsight 按模块取时间占比；查 attention backend 与 flash 可用性日志 | attention 模块占比随 seq 平方增长 | | |
-| H7 Mamba2 SSD chunk scan 在长 seq 下走 fp32 逐 chunk 扫描（非融合） | 对比 `chunk_size` 与 dtype；查是否命中 PyTorch 2026-02 所述「五算子融合」前的慢路径（该博文实测融合可提速 1.50-2.51x） | 改 chunk/融合后 tok/s 明显回升 | | |
-| H8 seq>4096 触发路径切换（CUDA graph 失效 / attention backend / kernel 选择器） | 对比 4096 与 8192 的 log 中 graph capture 与 kernel 名；补 cfg0a 与 seq=6144 定位拐点 | 4096 正常、8192 起阶跃；且 8192 与 16384 同速 | | |
-| H9 数据管线在 8K 的每样本固定开销（非 token 线性） | data-loading 计时在 8192/16384/4096 三点对比；看 samples/s 是否恒定 | samples/s 恒定（tok/s 随 seq 线性） ⇒ 数据侧；实测 tok/s 恒定 ⇒ 排除 | | |
-
-### [运维令] 2026-10-25 17:5x（**seq 增大 x 每步 token 数固定（2M / 4M）的 16 卡吞吐网格**）· 用户直令 · 最高优先
-> 用户原话：「pretrain：测试下列配置的16卡训练吞吐 1）seq=8192, 2M tok/step 2）seq=8192, 4M tok/step 3）seq=16384, 2M tok/step 4）seq=16384, 4M tok/step 5）seq=32768, 2M tok/step 6）seq=32768, 4M tok/step 也就是在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
-
-**1) 网格（唯一变量 = seq；同组内 tok/step 与数据配比不变）**
-| # | seq | tok/step | GBS(seq) | DP16 每卡 seq/步 | MBS x 累积 建议 | 备注 |
-|:--|--:|--:|--:|--:|:--|:--|
-| 1 | 8192 | 2,097,152 | 256 | 16 | 2x8 或 4x4 | S1 组 |
-| 2 | 8192 | 4,194,304 | 512 | 32 | 2x16 或 4x8 | S2 组，约等于基线 tok/step |
-| 3 | 16384 | 2,097,152 | 128 | 8 | 1x8 | S1 组 |
-| 4 | 16384 | 4,194,304 | 256 | 16 | 1x16 | S2 组 |
-| 5 | 32768 | 2,097,152 | 64 | 4 | 1x4 | S1 组 |
-| 6 | 32768 | 4,194,304 | 128 | 8 | 1x8 | S2 组 |
-
-- GBS 必须整除 DP16；`tok/step = GBS x seq` 必须**逐项核对等于表内值**（256x8192=2,097,152 等）。
-- 配方冻结：**DP16 / TP1 / PP1 + FP8 tensorwise + CUDA Graphs + 真数据**（与双机 e18 同口径）；Mamba2 侧沿用 `--mamba-ssm-dtype float32`。**除 seq 与随之变化的 MBS / 累积外，一律不许改**。
-- 数据：**2M 组用 S1 配比、4M 组用 S2 配比**；同组 3 个 seq 必须来自**同一条 token 流**（同一批 packed shard，仅切块长度不同），并把打包命令写进报告，证明单变量。
-- 基线参考行（不计入 6 格，单独标注）：seq=4096 / 4,128,768 tok/step / DP16 e18 = **606,300 tok/s**（`/tmp/baize_dualnode_16gpu/`）。
-
-**2) 测法（与既有口径一致）**
-- 每配置 `ITERS=80`；取 **step 30-80 的 median step time**（6 点，与双机 e18 同规则）。
-- 必报：`tok/s`（主指标，= tok/step 除以 median step 秒）、`step/s`、median step ms、per-GPU tok/s、峰值显存（GB）、loss、gnorm、NaN 计数。
-- 每组内派生：**每翻倍 seq 的吞吐损失百分比**（vs 同组 seq=8192），并列「2M 与 4M 的绝对吞吐差」。
-- **OOM 处理**：只许两种回退，且必须**标为「配方变更组」单列、不混进主表**：(a) MBS 降到 1、用累积补回 tok/step；(b) 加 `--recompute-activations` 或 `--use-distributed-optimizer`。仍 OOM 就把该格写「OOM（峰值显存 xx GB，卡 x）」+ 已试过的回退，**不许留空、不许编造**。
-- 每格跑完立刻释放 16 卡（`nvidia-smi` 全 0 MiB 再起下一格）；**不许为写报告保占**。
-
-**3) 结论要求（报告的落点）**
-- 主表 6 行全填；再给「tok/s 随 seq 变化」双曲线（2M / 4M 各一条，同图）。
-- 机制解释**必须带实测支撑**：seq 变大则激活 / 显存变大、MBS 被迫变小、每步通信 / 调度占比变化；BaiZe-2B 是 **Mamba2-hybrid（24 SSM + 4 Attn + 28 MLP-only，只有 4/56 层带 KV）**，注意力成本结构性低于纯 Transformer，此点**须用本网格数据印证，未验证就标「推测·未验证」**。
-- 给 **S1 / S2 该选多大 seq** 的可执行结论（若 seq 增大导致吞吐降幅大于 10%，明确建议维持 4096 / 8192 并说明理由）。
-- 预计机时：单格 80 步 x (2-25 s) + 起停约 5 min，**6 格合计 2-5h**；先跑第 1 格标定，再回写总 ETA。
-
-**4) 产出**
-- `reports/report_pretrain_seqlen_throughput_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、不低于 15KB）
-- 生成器 `run/gen_seqlen_throughput_report.py`（数据字典写脚本顶部，重生成 `diff` 必须为空）
-- `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「seq 长度 x tok/step 吞吐网格」+ MEMORY 首部新块 + daily；commit 前缀 `pretrain seqlen:`（只 add 本次动的文件）。
-
-**铁律**
-- 不用 mock 数据出主表；配方变更组不许混进主表；报告禁 N/A / 空单元格（OOM 也写清原因）。
-- 不动单机 e18 与双机 e18 的既有结论 / 日志；新实验日志进 `/tmp/baize_seqlen_grid/<cfg>/`。
+### [已归档] §运维令·2026-10-25 17:5x（seq x tok/step 16 卡吞吐网格）**已完成**（6 格全测：cfg1-4 OK 108K/112K/112K/121K、cfg5-6 OOM@32768；报告 13,565B + 生成器已交付 commit 233c47d0e）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。**注意**：该报告「seq>=8192 崩 5x」的结论已被 cfg0a 证伪，需按 23:0x 块更正。需要时再读。
 
 ### [已归档] §运维令·2026-10-25 07:4x（双机 16 卡吞吐报告）**已完成**（#770-#776：报告 `reports/report_pretrain_dualnode_throughput_zh.html` 24,970B + 生成器可确定性重生成 + EXPERIMENTS L3691 指针，独立复核通过）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。需要时再读。
 
