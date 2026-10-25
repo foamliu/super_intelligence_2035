@@ -30,24 +30,19 @@
 **① 盘点（三张表，全部实测，禁止估算）**
 - **表 A · HF 下载目录白名单**：`ls -d` + `find -name '*.parquet' | wc -l` + `du -sb` + mtime，逐条给出「绝对路径 / 对应 HF repo / 子目录名 / parquet 数 / 字节」。判断"是 HF 下载目录"的依据 = 目录内是 HF repo 的 parquet 布局（贴 `ls` 输出）。
 - **表 B · 分词产物 ↔ 下载目录 映射**：每个下载目录对应哪些 `.bin`（前缀 / shard 数 / tokens / 字节 / 产物路径 / 完成时间）。**只认能对上 A 表目录的产物**。
-- **表 C · 已下载未分词（关键产出口）**：A 中**有 parquet 但 B 中无对应产物**的部分 —— 逐目录给：repo / 子目录 / 未分词 parquet 数 / 字节；并说明「未分词」的判定依据（无对应 `.bin`，或 `.bin` 的 shard 数与 parquet 分组数不匹配）。
+- **表 C · 已下载未分词**：A 中有 parquet 但 B 无产物的部分 —— 逐目录给 repo/子目录/parquet 数/字节 + 「未分词」判定依据（无 `.bin`，或 shard 数与 parquet 分组数不符）。
 
 **② 分词启动（只处理表 C，不重跑已完成的）**
 - 分词器沿用现有 **`tokenizer_eod`**（vocab 129,281 / pad 129,408），`preprocess_data.py` 链路不变；
 - **并发（重点，按标定取拐点，不是用满）**：机器共 **224 核** ⇒ 先做 4 档 60s 标定（`64 / 96 / 128 / 192` workers），记录 **tokens/s、CPU%、NFS 写 MB/s、load**；选 **tokens/s 增益开始不抵 CPU/IO 代价** 的那一档（预期落在 96–160 之间），**并留余量给 85M 下载与其它线**；`nice -n 10`；回报里必须写"为什么选这个并发"；
-- 落盘：优先 `/nas_train/app.e0031982/datasets/baize-data/text/`（若余量足），否则 `/nas_env/...`；**先 `df -h` 报余量**，估算"未分词字节 × 1.5"是否装得下；
+- 落盘：`/nas_train/.../baize-data/text/`（先 `df -h`，按"未分词×1.5"估余量；不足再议 `/nas_env`）；
 - 命名（与 `env14_*` 同规范）：按「repo+子目录」定前缀（如 `ufw_en_*`/`ultrax_*`/`ud_code_*`），**每前缀必须有 manifest**（shard→源 parquet）；
 - **断点续传**：已有 `.bin/.idx/.json` 的 shard 直接跳过；失败重试 2 次后落 `failed_shards.txt`；
 - `setsid` 后台启动，日志 `/tmp/tokenize_untokenized_*.log`。
 
-**③ 监控**
-- 每轮唤醒回报：`done/total shards`、累计 tokens、实测 tokens/s、CPU% / load、NFS 写速、ETA、失败数；
-- 完成后**必须校验**：每前缀 `.bin = .idx`、总字节、`.json` 的 `num_tokens` 求和，与源 parquet 字节做合理性核对（tokens/byte 落区间）。
+**③ 监控**：每轮回报 `done/total`、累计 tokens、tokens/s、CPU%/load、NFS 写速、ETA、失败数；完成后校验 `.bin=.idx`、总字节、`num_tokens` 求和、tokens/byte 合理性。
 
-**④ 交付**
-1. 三张表（A/B/C）+ 并发标定表（3 档）+ 启动命令 + 日志路径；
-2. 分词完成后：每前缀 shard/tokens/字节 + 校验结果 + 释放/占用空间变化；
-3. 更新 `DATA_LEDGER.md`、`MEMORY_DATA.md`；盘点报告升 **v3**（新增「已下载未分词 → 已分词」章节与最终"训练可用 token 总量"）。
+**④ 交付**：①三张表（A/B/C）+ 并发标定表（4 档）+ 启动命令 + 日志路径；②完成后每前缀 shard/tokens/字节 + 校验 + 空间变化；③更新 `DATA_LEDGER.md`/`MEMORY_DATA.md`；盘点报告升 **v3**（加「已下载未分词→已分词」+ 训练可用 token 总量）。
 > 🚫 不许把 `/tmp`、`staging`、`*.orig` 当源；🚫 不碰 `env14_*`（en_v1_4）与 `/nas_env/full_*`；🚫 未分词前不得声称"已就绪"。
 
 
