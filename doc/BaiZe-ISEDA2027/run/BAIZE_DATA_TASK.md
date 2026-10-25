@@ -69,60 +69,14 @@
 > 🚫 未分词前不得称「已就绪」。
 
 
-### 🧵 运维令 · 2026-10-25 11:0x（**重新盘点三张表 → 对「已下载未分词」启动分词（多开并发，按标定取拐点）**）· 用户直令 · 最高优先
-> 用户原话：「重新盘点，列出下载目录，以及对应的分词语料，已下载未分词的。让 data 去分词，服务器 CPU 224 核，可以设置适当并发。」
-> ⚠️ 澄清：**224 核是机器的上限，不是要全部用满** —— 目标是「比上一轮（65 并发）**多开一些**」，并按标定取性价比拐点。
+### 🧵 运维令 · 2026-10-25 11:0x（重盘盘点 + 对未分词开跑）· **已并入 12:0x 令，本条仅存档要点**
+> 224 核是上限不是指标（4 档标定 64/96/128/192 取拐点，留余量给 85M）；分词器 `tokenizer_eod`（vocab 129,281 / pad 129,408）；落 `/nas_train/.../baize-data/text/`；每前缀必须有 manifest（shard→源 parquet）；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log` + `failed_shards.txt`；🚫 `/tmp`/`staging`/`*.orig` 不算源。
 
-**① 盘点（三张表，全实测，禁估算）**
-- **表 A · HF 下载目录**：`ls -d`+parquet 计数+`du -sb`+mtime，逐条给「路径/repo/子目录/parquet 数/字节」，贴 `ls` 证明是 HF parquet 布局。
-- **表 B · 分词产物 ↔ 目录映射**：见上条「执行顺序 ①」（前缀→脚本行号→源目录→shard 映射）。
-- **表 C · 已下载未分词**：A 中有 parquet 但无产物的部分 —— 逐目录给 parquet 数/字节 + 判定依据。
+### 🗑 运维令 · 2026-10-25 10:3x（删不可对应产物）· **已执行完毕**
+> 判定 110 shard → 删 78（被 `full_*` 覆盖，3.69 TiB）+ 删 32（不可与下载目录建立产物级对应，1.91 TiB，运维 RUN_ID 199）；`baize-data/text/` 现为 **110 shard / 2238.14 B / 8.93 TB（全 `env14_*`）**。清单 `run/data/prune_unmapped_*.txt|tsv|json`。
 
-**② 分词启动（只处理表 C，不重跑已完成的）**
-- 分词器沿用 `tokenizer_eod`（vocab 129,281 / pad 129,408），`preprocess_data.py` 链路不变；
-- **并发（不用满）**：机器 **224 核** ⇒ 4 档 60s 标定（`64/96/128/192`），记 tokens/s、CPU%、NFS 写速、load；取"增益不抵代价"那档（预期 96–160），**留余量给 85M**；`nice -n 10`；回报写明选它的理由；
-- 落盘：`/nas_train/.../baize-data/text/`（先 `df -h`，按"未分词×1.5"估余量；不足再议 `/nas_env`）；
-- 命名：按「repo+子目录」定前缀（如 `ufw_en_*`/`ultrax_*`），**每前缀必须有 manifest**（shard→源 parquet）；
-- **断点续传**：已有产物跳过；失败重试 2 次落 `failed_shards.txt`；`setsid` 后台，日志 `/tmp/tokenize_untokenized_*.log`。
-
-**③ 监控**：每轮回报 `done/total`、tokens/s、CPU%/load、写速、ETA、失败数；完成后校验 `.bin=.idx`、总字节、`num_tokens`、tokens/byte。
-
-**④ 交付**：①三张表（A/B/C）+ 并发标定表（4 档）+ 启动命令 + 日志路径；②完成后每前缀 shard/tokens/字节 + 校验 + 空间变化；③更新 `DATA_LEDGER.md`/`MEMORY_DATA.md`；盘点报告升 **v3**（加「已下载未分词→已分词」+ 训练可用 token 总量）。
-> 🚫 `/tmp`/`staging`/`*.orig` 不算源；🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 未分词前不得称"已就绪"。
-
-
-### 🗑 运维令 · 2026-10-25 10:3x（**删除「无法对应下载目录」的早期分词产物**）· 用户直令 · 最高优先
-> 背景：`baize-data/text/` 有 220 个 `.bin`（env14 110 / code_s 30 / l3_s 40 / math_s 40）。`env14_*`=en_v1_4 全量分词（保留）；其余须逐 shard 回溯到 HF 下载目录。用户令：**只认 HF 目录，对不上一律删**。
-
-**① HF 白名单**：**直接用上方「11:0x 令 · 表 A」的同一次盘点结果**（同轮完成，不重复扫盘）。
-
-**② 逐 shard 映射**：对 `code_s*`(30) / `l3_s*`(40) / `math_s*`(40) 的**每一个** `.bin`（含 `.idx/.json`），用 manifest / `.json` 的 source / 分词日志回溯输入目录 → **对得上表 A ⇒ 保留；对不上（目录不存在/不在白名单/无证据）⇒ 删除**。
-**③ 闸门**：`env14_*` 与 `/nas_env/full_*` **绝对不动**；某组"部分对得上"⇒ 只删对不上的那几个并逐个写明对应目录。
-**④ 留痕**：先落 `run/data/prune_unmapped_20261025.txt`（shard / keep|delete / **依据** / 字节），**再** `rm` 对应 `.bin/.idx/.json`；删前后 `du -sb baize-data/text/` + `df -h /nas_train`，**报释放量**。
-**⑤ 交付**：判定表 + 删除清单 + 释放空间；更新 `DATA_LEDGER.md`/`MEMORY_DATA.md`（v3 与 11:0x 令合并出一次）。
-> 🚫 删前必先落 `prune_unmapped_*.txt`；🚫 不得凭"看起来重复"删除；🚫 不碰 en_v1_4 与 /nas_env；🚫 判定依据只准用"能否对上 HF 下载目录"，不许引入其它推测。
-
-### 🚨🚨 最高优先 · 2026-10-25 08:0x · 用户直令 · **本轮唤醒必须先做这件事**
-
-**任务**：重新盘点 MiniCPM5 数据，**重写** `reports/report_data_tokenized_inventory_zh.html`（v2）。
-**原因**：上一版漏了 4 个**已在盘**的源，且小计对不上 —— 用户要求「**以下载目录为准，不要自己加戏，不要自己创造数据源**」。
-
-> **① 必须逐个目录列出（一个下载目录 = 一行，不许合并）**
-> - `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/` 下 **4 个子目录全列**：`en`（base-en）/ `en_v1_4` / `l1_en_hq` / `zh`
-> - `/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview`（**单列**）
-> - 另加：Ultra-FineWeb-L3、UltraData-Code L3/L2、UltraData-Math L3/L1、`baize-data/text/` 下各历史子集
-> - 每行给：绝对路径 | parquet 数 | incomplete 数 | `.bin`/`.idx` 数 | `du -sb` 字节 | TB | token(实测) | 是否已分词 | 最近写入
->
-> **② 禁手填小计**：所有小计/总计用脚本求和，附录写求和式；**总字节 = 各行之和（误差 0）**。
-> 上一版 `text/ 小计 = 3722.05B` 实际只有 4 个源（2238.14+550.07+658.91+274.92），表头却写 5 源 —— 这类错**不许再犯**。
->
-> **③ 未分词源**（en / l1_en_hq / zh / UltraX）：token 列写「**未分词（未实测）**」，🚫 禁填估算/论文数；禁 N/A。
->
-> **④ 报告必含两节**：
-> - **「目录清单」放正文最前**（`ls` + `du` 第一性证据）
-> - **「⑥ 与上一版勘误表」**：逐条点名 base-en / l1_en_hq / zh / UltraX-Preview 四处遗漏 + text/ 小计错误
->
-> **⑤ 交付**：`reports/report_data_tokenized_inventory_zh.html`（中文 HTML 自包含 v2）+ 生成器 `run/data/gen_tokenized_inventory_report.py` + 原始测量 `run/data/inventory_v2_20261025.tsv`；commit 前缀 `data inventory:`。
+### 🚨 运维令 · 2026-10-25 08:0x（重写报告 v2）· **已闭合，被 12:0x 令取代**
+> 原要点：以下载目录为准、一个下载目录一行、禁手填小计、未分词写「未实测」。v2 仍含漏源与小计错，且不是单表 ⇒ 12:0x 令要求整篇重写为「一张对应表」。
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
