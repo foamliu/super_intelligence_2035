@@ -17,6 +17,7 @@
 - 基线锚点：pretrain 双机 e18 = 606,300 tok/s、4,128,768 tok/step（seq=4096）；OCR 参考（ArmB，`run/vision/generate_armC_mllm_report.py` 的 ARMB）OCRBench 1.6% / DocVQA 7.36% / ChartQA 12.52% / InfoVQA 16.88%。
 - 18:2x（data 32 shard · 终裁）：32 个 = l3_s 28 + math_s 4，合计 472.85B tokens ≈ 1.89 TB、涉 1286 个 parquet 引用；它们**有下载目录**，但 manifest 指向废弃的 `staging_r3`，**无法被 DATA_MAPPING.md 稳定收录**。用户口径：「不明来历、无法被映射表收录的数据 = 不可用 = 只占磁盘」⇒ **32 个全部删除**，不再讨论是否唯一。已改令：删前留档 `run/data/deleted_unmapped32_20261025.tsv`（路径/字节/文件数/parquet 引用，先 commit 再删），删后 `du -sb` 复核 + `df` 前后对比，`DATA_MAPPING.md` 增设「已删除/不可用」节，重跑镜像与 triplet/inode 校验；**下载 parquet / 下载目录 / env14 / full_* 一律保留**（MiniCPM5 训练数据本体，用户 18:3x 再次确认）。
 - 18:0x 顺手清理：删除重复且陈旧的分身文件 `run/reports/report_pretrain_dualnode_throughput_zh.html`（项目级 `reports/` 有正式版）。
+- 18:5x（data · 映射表是命门 + 授权清理）：用户令「维护好 `run/data/DATA_MAPPING.md` 至关重要；可以适当清理硬盘」。已下发（`BAIZE_DATA_TASK.md` 39,650B / 红线 40KB）：① 补 `run/data/gen_data_mapping_md.py`（幂等、重跑两次逐字节相同；合计脚本求和）；A 节加「下载目录字节 / 下载-分词字节比」两列；「证据」列写可复现命令；② 分词 `done=131/131` 后刷新第 7-10 行 `分词中`→`镜像完整`；③ 清理走「候选清单（表观 vs 实占 + inode 链接数）→ 分批实占 ≤500GB → 前后 `df`/`du` → triplet+inode 校验（镜像 .bin 恒 716、悬空 0）」。可删 = `staging_r3` 剩 78 个纯符号链接暂存 / 崩溃残留孤儿 / 空目录 / 旧日志 / 已被镜像收录的重复硬链接副本；**不可删 = `full_*`、`tokenized/` 镜像、`INDEX.tsv`、`DATA_LEDGER.md`、下载 parquet**。禁把表观体积当实际释放。
 - 仍未变的老待办：vision B4 的 MMVet / MathVista 需 `OPENAI_API_KEY`；336+anyres 需工程 scope。
 
 

@@ -22,6 +22,27 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-25 18:5x（把 DATA_MAPPING.md 做成脚本生成的真·单一事实源 + 授权按测得分批清理磁盘）· 用户直令 · 最高优先
+> 用户原话：「对于 data 来说，维护好 run/data/DATA_MAPPING.md 至关重要。可以适当清理一下硬盘，减少占用。」
+
+**1) 映射表补齐（第一优先）**
+- 补 `run/data/gen_data_mapping_md.py`（C 节现在写着「待补、首版手工建立」）：输入 = `tokenized/INDEX.tsv` + 盘上 `du -sb` / `find | wc -l` 实测 + 下载目录实测；输出 = A/B 两节 + 合计 + 核对式 + 「生成时间 / 驱动数据 / git 短 hash」。判据：**连跑两次 md 逐字节相同**（幂等）。
+- A 节增两列：`下载目录字节(B)`、`下载/分词字节比`（同一行能核对「下载了多少，分出来多少」），其余 12 列保留；合计行仍由脚本求和。
+- 分词跑完（判据 `done=131/131`）立即刷新：第 7-10 行 `分词中` 改 `镜像完整` 并补 bin/idx/json/字节/tokens；`INDEX.tsv`、`DATA_LEDGER` 对应节同批更新。
+- 「证据」列要可复现：写具体命令（`du -sb <path>`、`ls <dir>/*.bin | wc -l`）或 INDEX 行号，禁只写「OK」。
+
+**2) 磁盘清理（授权，但必须按实测分批）**
+- 先出候选清单 `run/data/disk_cleanup_candidates_20261025.tsv`：路径 / 类型 / `du -sb` 表观字节 / 实占字节（硬链接只算一次）/ inode 链接数 / 是否被 `tokenized/` 引用 / 判定（可删 / 保留 / 待定）/ 理由；按**实占**降序。
+- **可删（不必再请示）**：① `text/staging_r3/` 剩余 78 个纯输入符号链接暂存目录；② 分词崩溃残留（无 `.idx` 的孤儿 `.bin`、`.partial`、`.bak`）；③ 空目录；④ `/tmp` 下本线分词中间日志（保留最后 3 份）；⑤ 已被 `tokenized/` 收录且 inode 链接数 > 1 的重复副本（删前必须证明 `tokenized/` 侧仍可访问）。
+- **不可删**：`/nas_env/full_*`（训练数据本体）、`tokenized/` 镜像与 `INDEX.tsv`、`DATA_LEDGER.md`、`/nas_inference` 下载 parquet、任何 `.json` manifest。下载数据一律保留（18:3x 已定）。
+- **分批**：每批实占不超过 500 GB；每批前后各记 `df -h /nas_train` 与 `du -sb`；删后立即跑 triplet + inode 校验（镜像 `.bin` 数应恒为 716，悬空 = 0）。第一批做完报数，再决定是否继续。
+- 报回：`候选 N 项 / 第一批删 M 项 / 实占释放 X GB / 表观体积 Y GB（差值 = 硬链接）/ 校验 OK` + 清单路径。**不许把表观体积当实际释放。**
+
+**3) 收尾**
+- `DATA_MAPPING.md` C 节加「清理记录」指针（批次 / 时间 / 释放 / manifest 路径）。
+- `MEMORY_DATA.md` 首部新块 + `daily-memories-data/2026-10-25.md`；commit 前缀 `data mapping:` 或 `data cleanup:`；`git status -sb` 无 ahead / behind。
+- HTML 报告按需（用户或运维要才生成），不为此表反复改报告结构。
+
 ### [运维令] 2026-10-25 18:2x（32 个「不可映射」分词 shard：**全部删除**，删前留档）· 用户直令 · 最高优先 · 覆盖 18:1x 块
 > 用户原话：「我难道说的还不清楚吗？不明来历的，无法被DATA_MAPPING.md收录的数据，也就无法使用，那放在那里占用磁盘空间干什么？你出这个硬盘吗？」
 > 前提（用户 18:3x 明确）：**这是 MiniCPM5 的训练数据管线** —— **下载的数据（parquet / 下载目录 / env14 / full_*）一律保留**；要删的只有 data 线**自己分词、且来历理不清**的那批产物（即下面这 32 个「不可映射」shard）。
