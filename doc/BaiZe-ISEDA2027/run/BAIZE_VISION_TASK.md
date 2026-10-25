@@ -9,29 +9,55 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### [运维令] 2026-10-25 19:5x（把路线①细化成「可照着做」的 OCR 专项 SFT 执行方案报告）· 用户直令 · 最高优先
-> 用户原话：「优先执行 路线① — 用 trdg/SynthTIGER 低成本合成 50-200 万 OCR 识别对, 在现有 ckpt 上加一轮专项 SFT; 预注册判据 = OCRBench 提升 >= 2pp。把这个建议细化 写个报告我看看怎么做 中英文什么比例 数学公式怎么办 其他呢」
-> ✅ **DONE (wake #272, 2026-10-25 21:0x)**：9 节方案报告 `reports/report_vision_ocr_sft_plan_zh.html`（22706B/9节+附录一页纸执行清单/0 `<script>`/0 外链/标签配平/≥18KB）+ 生成器 `vision/generate_ocr_sft_plan_report.py` + `EXPERIMENTS_VISION.md §17` 已交付并 commit。回答四问（中英配比 A/B 候选 + 公式三通道 + 其他类别 P0-P2 + 可执行管线/SFT 配方/混合/成本/决策树）。本轮只出方案报告，未启训练、未生成全量数据。
-> 本轮**只出方案报告，不启训练、不生成全量数据**（用户看完再批预算）。
+### [运维令] 2026-10-25 22:4x（生成 1000 万 OCR 图文对，供后续 vision encoder 预训练）· 用户直令 · 最高优先
+> 用户原话：「vision：生成10M OCR 数据试试，图文对，我后边把它用在vision encoder预训练里边。」
+> 用途变了：这批数据给 **encoder 预训练（CLIP / AIMv2-style 图文对比）**，不是 MLLM OCR 专项 SFT；所以**格式必须能被现有 `run/vision/data.py` 混合加载器直接吃**（GPIC 走 json-caption、CC12M 走 txt-caption）。
 
-**1) 报告必须回答的四个问题（缺一不可）**
-1. **中英文比例**：给基线配比表（类别 x 数量 x 占比 x 依据），并给至少 2 个候选配比（A：英文 6 : 中文 3 : 中英混排 1；B：中英 1 : 1），写清各自适用条件与**可判定判据**（哪条指标动、动多少算选中）。
-2. **数学公式**：三条通道都要写 —— (a) 纯公式图（im2latex / LaTeX 渲染：行内、多行、矩阵、上下标、分式）；(b) 正文夹公式（arXiv LaTeX 段落经 KaTeX/MathJax 渲染成整页）；(c) 公式与表格混排。并回答：OCRBench 的公式/手写子类怎么打、公式占多少 token 预算、渲染失败率怎么控。给建议占比与理由。
-3. **其他类别**：文档版面（标题/分栏/表格/页眉页脚）、图表（柱/折/饼 + 数值标签）、表格（合并单元格）、手写、场景文本（招牌/路牌/包装）、低质（模糊/倾斜/透视/压缩/低分辨率）、代码截图、竖排与多语种（日韩/繁中）。每类给「建议数量 / 优先级 P0-P2 / 判据」。
-4. **怎么做（可执行）**：生成管线（trdg / SynthTIGER / 自研渲染器的选择与参数：字体集、语料源、版面、退化、分辨率、bbox 与标签格式）、**与现有 Stage-2 780k 的混合比例**（防灾难性遗忘）、SFT 配方（起始 ckpt、LR、epoch、GBS、LoRA 还是全参、224 单块 vs 336 anyres 的取舍）、成本（渲染 CPU 小时 / 存储 TB / 训练 GPU 小时，均标「估算」）、分阶段（P0 20 万 pilot -> 判据 -> P1 全量 -> P2 SFT -> 评估）。
+**1) 交付格式（硬要求，接不上就算白干）**
+- 目录 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m/`：
+  - `shard-000000.tar` …（webdataset；每 tar 5,000 对，共 2,000 个）
+  - tar 内每样本：`<key>.jpg` + `<key>.json`，json = `{text, caption, lang, cat, w, h, font, src, id, sha1}`
+  - `index.jsonl`（key / shard / cat / lang / n_tokens / text_sha1）、`DATASET_CARD.md`、`STATS.json`、`MANIFEST.sha256`
+- `text` = 渲染进图的完整文本（截断 ≤512 字符）；`caption` = 给 CLIP 文本塔的短描述（≤64 tokens，模板多样，例 "a scanned English document page with two columns of text"）。
+- 分辨率：**渲染 448x448**（长图按 448 宽等比、最长边 ≤1024），训练时再 resize/crop 到 224 或 336；JPEG q=90。**不要直接存 224**（不然以后 336 实验没法用）。
 
-**2) 硬性要求**
-- 预注册判据写死：主判据 **OCRBench >= +2pp**（基线 ArmE-R2 1.60%）；副判据 DocVQA / ChartQA / InfoVQA 各 >= +1pp；**回归护栏**：MMStar / MMBench / AI2D / RealWorldQA 掉幅不超过 1pp，否则判「以退化换分」不通过。
-- 必须给**决策树**：pilot 达标 -> 全量；pilot 不达标 -> 明确改哪一维（配比 / 分辨率 / 公式占比）再试一次；仍不达标则停并写结论。
-- 数据来源与许可：只用可商用 / 可再分发语料（维基、开源书籍、CC 语料、自建 LaTeX），逐类标来源与 License；不许用来历不明的爬虫数据。
-- 复用现状要写清：`vision/mllm_bridge/` 的 224 单块与 336+anyres 分支（后者需工程改造 + scope，属阻塞项），并给「若批准 336」的增量收益估计。
-- 外部数字标来源（arXiv 号 / 会议 / 年份）；本项目数字可溯源；估算一律标「估算」。
+**2) 规模与配比（合计 10,000,000，按路线①报告比例放大）**
+| 类别 | 数量 | 说明 |
+|:--|--:|:--|
+| 英文词句/段落 | 3,000,000 | 维基英 / 公有领域书 / 新闻正文，1-6 行 |
+| 中文词句/段落 | 2,000,000 | 维基中 / 中文书 / 新闻，1-6 行，简繁混合 ≤5% |
+| 中英混排 | 1,000,000 | 技术文档风格，中英比例随机 |
+| 文档版面（整页） | 1,500,000 | 单/双栏、标题、页眉页脚、表格嵌图 |
+| 图表 | 1,000,000 | 柱/折/饼 + 数值标签（matplotlib 渲染） |
+| 数学公式 | 1,000,000 | 印刷体 500k（LaTeX/KaTeX）+ 正文夹公式 300k + 公式表格混排 200k |
+| 手写 | 300,000 | 手写字体 / CROHME 风格渲染 |
+| 场景文本 | 200,000 | 招牌/路牌/包装风格（合成背景 + 透视） |
+- 低质退化（模糊 / JPEG 压缩 / 透视 / 低对比）作为**增强**随机施加在 30% 样本上，不单列类别，参数写进 json。
 
-**3) 交付**
-- `reports/report_vision_ocr_sft_plan_zh.html`（中文 HTML 自包含、0 `<script>` / 0 `<a href>` 外链、不低于 18KB）：9 节 = 摘要（含基线配比一览）/ 现状与差距 / 数据配方（中英、公式、其他三类）/ 生成管线与参数 / SFT 配方与混合策略 / 成本与 ETA / 判据与决策树 / 风险与坑 / 参考来源（纯文本 arXiv 号）。
-- 生成器 `vision/generate_ocr_sft_plan_report.py`（数据字典在脚本顶部，重跑 diff 为空）。
-- `EXPERIMENTS_VISION.md` 新节指针 + `MEMORY_VISION.md` 首部新块 + daily；commit 前缀 `vision ocr-plan:`。
-- 报告必须含一张「一页纸执行清单」：今天就能开始的第一步（装 trdg / 下字体 / 冒烟 1 万张）+ 验收看哪几个文件。
+**3) 两阶段执行（不许一次性闷头跑 10M）**
+- **P0 冒烟 10 万**：全类别跑通 → 报实测 throughput（img/s、CPU 核占用）、平均字节、失败率、去重率、**ETA 与预计占用 TB**，并核对 `/nas_train` 余量（现 35T 空闲）。
+- **P1 全量 10M**：`setsid` + supervisor 断点续跑（已有 tar 跳过、`index.jsonl` 追加）；每 100 万对 commit 一次进度（`vision ocr-synth: N/10M ...`）防判死。
+- 资源纪律：CPU-only、`nice -n 10`；不抢 `.29` 上分词/训练；若 `.29` load >150 改在 `.12` 跑；**一律不占显存**。
+
+**4) 质量与泄漏（必做，结果写进 STATS）**
+- 渲染失败率 <2%；空图/纯色图 = 0；文本长度分布（p50 / p95 / max）。
+- 文本 SHA1 **跨 shard 去重**，重复率压到 <1%。
+- **评测泄漏护栏**：OCRBench / DocVQA / ChartQA / InfoVQA 的 question+answer 归一化后哈希，命中即丢该样本（否则后面测出来是背题）。
+- 抽 200 张出 `preview_200.html`（缩略图 + text + caption + cat）供人工看。
+
+**5) 交付物**
+- 数据本体 + `preview_10k.tar`（1 万抽样包，便于用户直接试跑）。
+- `reports/report_vision_ocr_synth10m_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、≥15KB）：管线与参数 / 逐类实测计数与字节 / 吞吐与总耗时 / 质量检查 / **与现有 GPIC 加载器的兼容性验证（用 `data.py` 真读一批 tar 并前向 1 个 batch）** / 已知偏差。
+- 生成器 `vision/ocr_synth/gen_ocr_synth.py`（固定 seed + 参数文件，可重放）。
+- `EXPERIMENTS_VISION.md` 新节 + `MEMORY_VISION.md` 首部新块；commit 前缀 `vision ocr-synth:`。
+- **本轮只造数据，不启 encoder 训练**（等用户看完 P0 与总规模再批预算）。
+
+**6) 铁律**
+- 只用可商用 / 可再分发语料（维基 / 公有领域 / 自建 LaTeX / 自建图表），逐类在 DATASET_CARD 标 License。
+- 生成图只做训练，不得用于替换/扩充评测集；泄漏检查必做。
+- 数字一律实测（`du -sb` / `find | wc -l` / 计数脚本）；估算必须标「估算」。
+
+### [已归档] §运维令·2026-10-25 19:5x（路线①细化为执行方案报告）**已完成**（wake#272 交付 `reports/report_vision_ocr_sft_plan_zh.html` 22,706B / 9 节 + 一页纸清单 / 0 script / 0 外链；配比 英30/中20/混排10/文档15/图表10/公式10/低质手写5，SFT=ArmE-R2 stage3500+LoRA r64+LR1e-5+70:30 混 780k，判据 OCRBench >=+2pp）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 ### [运维令] 2026-10-25 17:5x（**OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写报告**）· 用户直令 · 最高优先
 > 用户原话：「vision：现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」
