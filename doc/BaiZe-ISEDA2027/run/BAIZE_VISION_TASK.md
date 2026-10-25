@@ -70,6 +70,8 @@
 
 > 用户原话：「让 vision 写上一份实验的 HTML 中文报告。」
 
+> ✅ **DONE (wake #247, 2026-10-24 12:57)**：完整 7 节中文 HTML 报告已交付 `reports/report_vision_armE_r2_20261024_zh.html`（26522B / 7 节：①摘要 ②配置与口径 ③训练 ④ProtB ⑤MLLM三阶段 ⑥12集 ⑦结论+复现命令 / 0 `<script>` / 0 外链 / 标签配平）；`EXPERIMENTS_VISION.md §15` 已链接；旧版 17KB（`report_vision_armE_r2_20261022_mllm_stage4_zh.html`）保留备查；生成器 `vision/generate_armE_r2_full_report.py`；commit e8dc74489 全闭合。**wake #267 复核：报告在位 ✅、7 节齐全 ✅（grep 逐节确认），未重做。**
+
 **① 现状（先看清差什么）**
 - 已有 `run/reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html`（17,136B）只含 **摘要 / 配置 / ProtB / 12 集 / 结论 / 文件路径** 六节 —— **缺 ①训练段、③MLLM 三阶段**，且不在主报告目录。
 - 本轮 = **补齐 + 归位**，不是重写另一个版本。
