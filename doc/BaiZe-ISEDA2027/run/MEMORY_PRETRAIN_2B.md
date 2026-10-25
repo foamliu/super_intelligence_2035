@@ -1,15 +1,14 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 **2026-10-25 19:46 #779：⏳ 网格监控·cfg1✅完成·cfg2训练中(step20/80)·健康0NaN·未完成指令:有⇒WAITING=0**：
-> - **cfg1 DONE**（@19:03-19:32）：`/tmp/baize_seqlen_grid/cfg1/summary.txt` pts=6(steps30-80 median) med_ms=19365.9 **tok/s=108,291** step/s=0.052 per_gpu=6,768 **peak=81,087MiB(79.2GB)** loss=7.5645 gnorm=0.6263 **nan=0** status=OK；跑完 16 卡全释放(全 4MiB)。
-> - **关键发现**：vs 基线 seq4096/4.13M=606,449 tok/s/per_gpu=37,900 ⇒ **2×seq(4096→8192)→5.6×每卡吞吐崩** +14.8GB显存 ⇒ **Mamba2 SSM 成本随 seq 超线性增长**（直接回答用户问题）。
-> - **cfg2 RUNNING**（S2 seq8192 mbs2 gbs512，tok/step=4,194,304✓）：master.log step20/80 @19:46 elapsed~38-41s loss8.06 gnorm1.45 **nan=0**；tok/s≈4.19M/39.5s≈106K（与cfg1同seq→同per-card负载→tok/s~恒定，口径自洽✓）；max reserved 76,930MiB<80GB 无OOM；ETA cfg2完~20:25。编排进程 PID981105(ppid=1,46min)→子3034617(cfg2,18min)健康，77 procs。
-> - **脚本核对**：`run/baize_seqlen_grid_test.sh` accum=gbs/(mbs·16)✓（cfg1=8/cfg2=16/cfg3=8/cfg4=16/cfg5=4/cfg6=8）、tok/step=gbs·seq✓（逐项=2,097,152[S1]/4,194,304[S2]）、OOM检测+16卡释放+median(steps≥30=6点)✓，6 格串行自治运行。
-> - **未完成指令：有**（17:5x 网格：cfg2-6 待跑，报告`reports/report_pretrain_seqlen_throughput_zh.html`+生成器`run/gen_seqlen_throughput_report.py`+EXPERIMENTS新节未交）⇒ **WAITING=0**（loop 再唤醒监控，铁律禁 N/A 空格→全 6 格完才出报告）。
-> - **下一步**：下唤醒查 `/tmp/baize_seqlen_grid/ALL_RESULTS.txt`+各 cfg summary；OOM 格→标"配方变更组"待 recompute 重试；全 6 格完→数据字典写脚本顶部→生成器确定性重生成→中文 HTML(≥15KB,0 script/0外链)+EXPERIMENTS新节「seq 长度 x tok/step 吞吐网格」+daily；commit 前缀 `pretrain seqlen:`（只 add 本次文件）。总 ETA ~22:30。
-> 📦 §#778 流水（2026-10-25 19:03，启动网格+cfg1训练中）已压缩 → 本块上方；**结论**：脚本落地+cfg1 detached 启动，配方与 e18 字节级一致。需要时再读 daily-memories/2026-10-25.md。
-> 📦 体积：TASK=31.1 KB / MEMORY≈29.5 KB（均 ≤32KB ✓；本轮零归档，#778 详块→1行指针）。
+> 🆕 **2026-10-25 20:33 #780：⏳ 网格监控·cfg1✅cfg2✅cfg3🏃(step~10/80)·编排器健康·未完成指令:有⇒WAITING=0**：
+> - **进度**（`/tmp/baize_seqlen_grid/ALL_RESULTS.txt`）：cfg1✅ S1 seq8192/2.10M tok/s=**108,291** per_gpu=6,768 peak=81,087MiB loss7.56 gnorm0.63 **nan0**；cfg2✅ S2 seq8192/4.19M tok/s=**111,897** per_gpu=6,993 peak=81,085MiB loss7.54 gnorm0.42 **nan0**；cfg3🏃 S1 seq16384/2.10M ~step10/80 step33.81s max_reserved76,970MiB<80GB **0OOM/0NaN** 健康。
+> - **关键发现（与基线对比）**：基线 dualnode e18 seq4096/4.13M=**606,449 tok/s** per_gpu=**37,903** peak≈69.2GB median6808ms scaling99.4%。⇒ seq 4096→8192 每卡吞吐 37,903→6,768/6,993（**崩~5.5×**）+显存69→81GB(+12GB) ⇒ **Mamba2 SSM 成本随 seq 超线性增长**（直接回答用户问题）；S2(4M)per_gpu 6,993 略高于 S1(2M)6,768 = 累积更多摊薄 launch/comm 开销。
+> - **编排器健康**：`981105 bash baize_seqlen_grid_test.sh`（ppid=1,etime1h29m,真守护）→`for cfg`串行循环 cfg1..cfg6，每格`release_gpus`释放16卡再起下一格 ⇒ **cfg4/5/6 将自动接续**。.12 上 8 进程=cfg3 master（PID1541482-89，非vision，preflight已确认.12空闲），无争用；.29 worker PID2641176-89(etime8m)。parent链 2641176→2641090(torchrun)→2641089→**981105(脚本)** ✓。
+> - **未完成指令：有**（17:5x 网格：cfg3-6 待跑完，报告`reports/report_pretrain_seqlen_throughput_zh.html`+生成器`run/gen_seqlen_throughput_report.py`+EXPERIMENTS新节未交；铁律禁N/A空格→**全6格完才出报告**）⇒ **WAITING=0**。
+> - **下一步**：下唤醒查 ALL_RESULTS.txt + 各cfg summary；cfg3 ETA~21:10（33.8s×80≈45min，起@20:24）；cfg5/6(seq32768)若OOM→标"配方变更组"按运维令(a)MBS已1/累积补回 或(b)加`--recompute-activations`重试，不混主表；全6格完→数据字典写`gen_seqlen_throughput_report.py`顶部→确定性重生成diff空→中文HTML(≥15KB,0 script/0外链)+EXPERIMENTS新节「seq 长度 x tok/step 吞吐网格」+daily；commit前缀`pretrain seqlen:`（只add本次文件）。
+> 📦 §#779 流水（2026-10-25 19:46，网格监控 cfg1✅cfg2🏃）已压缩 → daily-memories/2026-10-25.md；**结论**：cfg1=108K/cfg2 RUNNING，脚本配方与e18字节级一致，6格串行自治。需要时再读。
+> 📦 体积：TASK=31.1 KB / MEMORY≈30.6 KB（均 ≤32KB ✓；本轮零归档，#779详块→1行指针）。
 > 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
 
 
