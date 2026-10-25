@@ -20325,3 +20325,98 @@ Wait, but the post-push status showed `## main...origin/main` (synced). Now it s
 8e43a17b7
 === DONE 188 ===
 ```
+
+---
+
+## RUN_ID 189 · 2026-10-25 09:01:21 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 189 | repo-wide sync | $(date '+%F %T') | host=$(hostname) ==="
+# 四个白泽 agent 共用这一个仓库；中继在这里 pull，等于替它们把任务书同步到最新
+repos="/nas_train/app.e0031982/code/super_intelligence_2035 /nasdata/app.e0031982/code/super_intelligence_2035"
+for GR in $repos; do
+  [ -d "$GR/.git" ] || continue
+  echo ""
+  echo "########## REPO: $GR ##########"
+  cd "$GR" || continue
+  echo "[A] pull 前"
+  echo "  HEAD=$(git rev-parse --short HEAD 2>/dev/null)  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  echo "  status: $(git status -sb 2>/dev/null | head -1)"
+  echo "  dirty(已跟踪文件改动数): $(git status --porcelain --untracked-files=no 2>/dev/null | wc -l)"
+  echo "  dirty list(前10):"
+  git status --porcelain --untracked-files=no 2>/dev/null | head -10 | sed 's/^/    /'
+
+  echo "[B] fetch + 快进 pull（不 reset、不 rebase、不 stash，避免丢 agent 未提交工作）"
+  timeout 120 git fetch origin 2>&1 | tail -3
+  BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)
+  AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+  echo "  behind=$BEHIND ahead=$AHEAD"
+  if [ "$BEHIND" = "0" ] && [ "$AHEAD" = "0" ]; then
+    echo "  -> 已最新，无需 pull"
+  elif [ "$AHEAD" = "0" ]; then
+    echo "  -> 纯落后，执行 git merge --ff-only origin/main"
+    timeout 120 git merge --ff-only origin/main 2>&1 | tail -5
+  else
+    echo "  -> 本地有 $AHEAD 个未推送 commit + 落后 $BEHIND：只做 fetch，不 merge（避免冲突砸掉 agent 工作）"
+    echo "     （agent 下一轮自己 push 后即可 ff）"
+  fi
+
+  echo "[C] pull 后核验：4 条线运维令是否都在工作副本里"
+  T="$GR/doc/BaiZe-ISEDA2027/run"
+  echo "  HEAD=$(git rev-parse --short HEAD 2>/dev/null)"
+  for pair in \
+    "PRETRAIN|BAIZE_PRETRAIN_2B_TASK.md|双机 16 卡吞吐" \
+    "DATA|BAIZE_DATA_TASK.md|重新盘点 MiniCPM5" \
+    "HARNESS|BAIZE_HARNESS_TASK.md|排查并修复 claude-code" \
+    "VISION|BAIZE_VISION_TASK.md|WAITING" ; do
+    name="${pair%%|*}"; rest="${pair#*|}"; f="${rest%%|*}"; pat="${rest#*|}"
+    if [ -f "$T/$f" ]; then
+      c=$(grep -ac "$pat" "$T/$f" 2>/dev/null || echo 0)
+      echo "    $name  $f  pattern[$pat] = $c"
+    else
+      echo "    $name  $f  NOT_FOUND"
+    fi
+  done
+  echo "  MEMORY 文件 mtime:"
+  for m in MEMORY_PRETRAIN_2B.md MEMORY_DATA.md MEMORY_HARNESS.md MEMORY_VISION.md; do
+    [ -f "$T/$m" ] && echo "    $m  $(stat -c '%y' "$T/$m" 2>/dev/null | cut -c1-19)  $(grep -m1 '^WAITING:' "$T/$m" 2>/dev/null)"
+  done
+done
+
+echo ""
+echo "[D] 确认仍是唯一一个 relay（没被重复拉起）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'ops_relay\.sh' | grep -v grep | cut -c1-120
+echo "=== DONE 189 ==="
+```
+
+**输出**
+```
+=== RUN_ID 189 | repo-wide sync | 2026-10-25 09:01:21 | host=whag0pgpuap29 ===
+
+########## REPO: /nas_train/app.e0031982/code/super_intelligence_2035 ##########
+[A] pull 前
+  HEAD=d048e7835  branch=main
+  status: ## main...origin/main
+  dirty(已跟踪文件改动数): 1
+  dirty list(前10):
+     M doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pull_progress.txt
+[B] fetch + 快进 pull（不 reset、不 rebase、不 stash，避免丢 agent 未提交工作）
+  behind=0 ahead=0
+  -> 已最新，无需 pull
+[C] pull 后核验：4 条线运维令是否都在工作副本里
+  HEAD=d048e7835
+    PRETRAIN  BAIZE_PRETRAIN_2B_TASK.md  pattern[双机 16 卡吞吐] = 1
+    DATA  BAIZE_DATA_TASK.md  pattern[重新盘点 MiniCPM5] = 1
+    HARNESS  BAIZE_HARNESS_TASK.md  pattern[排查并修复 claude-code] = 1
+    VISION  BAIZE_VISION_TASK.md  pattern[WAITING] = 6
+  MEMORY 文件 mtime:
+    MEMORY_PRETRAIN_2B.md  2026-10-25 08:40:52  WAITING: 1
+    MEMORY_DATA.md  2026-10-25 08:24:41  WAITING: 1
+    MEMORY_HARNESS.md  2026-10-25 08:52:11  WAITING: 1
+    MEMORY_VISION.md  2026-10-25 08:09:50  WAITING: 1
+
+[D] 确认仍是唯一一个 relay（没被重复拉起）
+=== DONE 189 ===
+```
