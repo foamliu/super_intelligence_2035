@@ -3838,3 +3838,25 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 **修复路径（建议，列为后续代码任务）**：在 CP ring-attention 的 flash_attn_3 调用处，将 `window_size=(left, right)` 拆为 `window_size_left=left, window_size_right=right`；可能多处（fwd/bwd）。改完单跑 cp2 即可得 32K @ CP=2 的真实吞吐（预期 per-GPU 16384≈cfg0ang，总 ~280K tok/s = 4×DP×35K）。**此项不在本次 root-cause 收敛范围**（rev3 root cause + 关 graph 修复已独立成立并 commit #786）。
 
 > 📊 TSV：`pretrain_rc_ladder_20261026.tsv` 新增 2 行 CP smoke（`cp1-cp1-seq32k`、`cp2-cp2-seq32k`）。
+
+---
+
+### §五·7 §3 seq=8192 验收复测（单机 8×H100，2026-10-26 06:1x #788）
+
+**背景**：运维令 23:0x §3 要求「定位后只改一项（graph 配置），**在 seq=8192 上复测**，要求 tok/s ≥ 0.7×606K 且 loss/gnorm/NaN 正常」。rev3 复测（§五·5）的 cfg0ang 在 **seq=4096**（tok/mb=16384 graph-OFF=561K），未覆盖用户目标 seq=8192。本节补齐——这是 §3 字面条件 + 用户决策（S1/S2 用 seq=8192）的双重需要。
+
+**脚本**：`baize_rc_seq8k_graphoff_smoke.sh`（单机 .29 DP8，nnodes=1，规避 2-node master-ssh 挂起；.12 按 R2.4 不动；模板同 `baize_rc_cp_smoke_1n.sh`）。配置 seq=8192/mbs=2/gbs=256/cp=1/DP8/accum=16，**tok/mb/GPU = 16,384**（与 cfg1 同悬崖点，唯一变量 = graph ON→OFF），FP8 tensorwise，真数据（8 shard），ITERS=60，稳态取 iter 20–60 中位数。结果 `/tmp/baize_rc_seq8k_goff/ALL_RESULTS.txt`。
+
+**结果（TSV 行 `s8k2goff-seq8k`）**：status=OK，med_ms=**7,072.0**，tok/s=**296,543**（DP8 总），**per-GPU = 37,067**，峰值显存 **77,265 MiB**（< 81,087 顶格），loss=7.7489，gnorm=0.8202，**nan=0**。稳态 step time 极稳（iter 20/30/40/50/60 = 7001.8/7023.8/7268.1/7072.0/7138.1 ms，中位 7072.0）。
+
+**§3 验收（per-GPU 口径，因单机 8 卡；per-GPU 与 DP 数量无关）**：
+- per-GPU 37,067 vs 基线 per-GPU 37,903 = **0.978×（满速）**，远超 §3 bar 0.7× ✓
+- vs cfg1（同 seq8192/mbs2、graph ON）per-GPU 6,768 = **5.48× 恢复**（5.5× 悬崖完全恢复）
+- vs cfg0ang（graph-OFF、seq4096、同 tok/mb=16384）per-GPU 35,070 = 1.058× ⇒ **tok/mb 不变性再证**（seq 无关）
+- 峰值 77.3GB < 81GB 顶格 ⇒ graph-OFF 未顶格，与 rev3 机制一致
+- loss/gnorm/NaN 正常 ✓
+- 16 卡外推总吞吐 ≈ 2×296,543 = 593,086 = 0.98× 606K 基线
+
+**结论**：rev3 修复配方（关 `--enable-cuda-graph`）在**用户目标 seq=8192** 上复测达标（per-GPU 0.978× ≥ 0.7×，loss/gnorm/NaN 正常）。§3 验收闭合。结合 §五·5（seq4096）+ 本节（seq8192），关 graph 在 tok/mb=16384 的两个 seq 点均满速 ⇒ 真因 = CUDA Graph 顶格停滞（与 seq 无关）终判成立。
+
+> 📊 TSV：`pretrain_rc_ladder_20261026.tsv` 新增 1 行 §3 验收（`s8k2goff-seq8k`）+ `#788` 头注。

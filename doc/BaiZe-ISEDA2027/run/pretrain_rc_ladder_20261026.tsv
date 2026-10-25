@@ -41,3 +41,14 @@ RC	rc56ng	4096	4	512	8	16384	2097152	OK	572476	0.273	3663.3	35779	75517	7.5648	0
 RC	cp1-cp1-seq32k	32768	1	8	1	32768	262144	OOM	-	-	-	-	81049	-	-	-
 RC	cp2-cp2-seq32k	32768	1	8	2	16384	262144	FAIL_flashattn	-	-	-	-	23639	-	-	-
 # CP SMOKE COMPLETE @ 2026-10-26 03:24:54
+
+# ── §3 seq=8192 acceptance retest (2026-10-26 06:0x #788): graph-off at user's target seq=8192 ──
+# Single-node .29 DP8 (.12 off-limits per R2.4), nnodes=1, TP1/PP1/cp1, FP8 tensorwise, graph OFF, real data (8 shard).
+# §3 requires "在 seq=8192 上复测" the one-item fix (graph ON->OFF). rev3 cfg0ang was seq=4096; this fills seq=8192.
+# Compare per-GPU (setup-independent): baseline per-GPU 37,903; cfg0ang graph-OFF per-GPU 35,070; §3 bar per-GPU >= 26,532 (0.7x).
+# FINDING: seq8192/mbs2/tok_mb=16384 graph-OFF = 37,067 per-GPU = 0.978x baseline (FULL SPEED), 1.40x §3 bar, 5.48x recovery vs cfg1(graph-ON 6,768). peak 77,265 MiB (<81GB ceiling, not顶格). loss/gnorm/NaN normal (7.7489/0.8202/0).
+#   => rev3 fix (turn off --enable-cuda-graph) confirmed at user's target seq=8192. tok/mb invariance holds (seq4096 cfg0ang 35,070 vs seq8192 s8k2goff 37,067).
+#   => 16-card-equiv total = 2x296,543 = 593,086 = 0.98x 606K baseline (single-node DP8 total 296,543 = 0.49x because half the cards).
+# cols: label seq mbs gbs cp dp accum tok_per_mb_per_gpu tok_per_step status tok_per_s step_per_s med_ms per_gpu_tok_s peak_mem_MiB loss gnorm nan
+RC	s8k2goff-seq8k	8192	2	256	1	8	16	16384	2097152	OK	296543	0.141	7072.0	37067	77265	7.7489	0.8202	0
+# SEQ8192 §3 RETEST COMPLETE @ 2026-10-26 06:12:39

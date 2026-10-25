@@ -1,8 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 **2026-10-26 02:0x #786：🔬 rev3 真因=CUDA Graph 顶格停滞·关 graph 561,126 tok/s=0.93×8K满速(75.5GB)·recompute 证伪(显存不变75,517MiB)·报告 rev3 16.9KB**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` rev3 节 + `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`；TSV RC 三行；`pretrain_launcher.py --context-parallel` CLI 就绪 L174/L109）：
-> - **已交付并 commit (cb0a83307)**：rev3 报告/EXPERIMENTS/TSV/MEMORY。**CP smoke + 早报已由 #787 完成**（见下）。
+> 🆕 **2026-10-26 06:1x #788：✅ §3 seq=8192 验收复测达标·关 graph per-GPU 37,067=0.978×基线(满速)·5.48×恢复 vs cfg1·peak 77.3GB<81GB顶格·loss/gnorm/NaN 正常·§3+§4.3 闭合·通宵攻坚收工**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §五·7 + `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html` 五·5b 节 + 档位表新行；TSV `s8k2goff-seq8k`；脚本 `baize_rc_seq8k_graphoff_smoke.sh`）：
+> - **配置**：seq=8192/mbs=2/gbs=256/DP8/accum=16，**tok/mb/GPU=16,384**（=cfg1 悬崖点，唯一变量 graph ON→OFF），单机 .29（.12 按 R2.4 不动；per-GPU 口径），60 iter，中位 iter 20–60 = **7,072.0 ms**。
+> - **结果**：tok/s=296,543(DP8) / **per-GPU=37,067=0.978×基线(37,903)**（≥§3 bar 0.7×✓）/ vs cfg1(graph-ON 6,768)=**5.48×恢复** / vs cfg0ang(seq4096 graph-OFF 35,070)=1.058×⇒**tok/mb 不变性再证** / peak **77,265 MiB**<81,087顶格 / loss 7.7489 / gnorm 0.8202 / **nan 0**。16 卡外推≈593K=0.98×606K。
+> - **结论**：rev3 修复（关 `--enable-cuda-graph`）在**用户目标 seq=8192** 复测达标，§3 验收闭合；结合 §五·5(seq4096)+本节(seq8192)，关 graph 在 tok/mb=16384 两 seq 点均满速 ⇒ 真因=CUDA Graph 顶格停滞(与 seq 无关)终判成立。**§3、§4.3 全部闭合**。**未完成指令：无** ⇒ **WAITING=1**（通宵攻坚收工）。**git**：`pretrain rc #788:` commit。
+
+> 📦 §#786 流水（2026-10-26 02:0x，rev3 真因=CUDA Graph 顶格停滞·关 graph 561K=0.93×满速·recompute 证伪·报告 rev3·commit cb0a83307）已压缩 → daily-memories/2026-10-26.md；**结论**：rev3 root cause + 关 graph 修复独立成立，§3 seq8192 验收由 #788 补齐闭合。需要时再读。
 
 > 🆕 **2026-10-26 03:2x #787：🔬 CP=2/4 可行性 smoke 出结果·32K 当前不可跑·cp1 OOM@81,049MiB·cp2 flash-attn-3 API 阻断·16K 关 graph=实用满速上限·早报已写**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §五·6；TSV CP 两行；脚本 `baize_rc_cp_smoke_1n.sh`；结果 `/tmp/baize_rc_cp_smoke_1n/ALL_RESULTS.txt`）：
 > - **cp1（CP=1, seq32768, mbs1, DP8, graph-OFF, tok/mb/gpu=32768）**：**OOM**，峰值 **81,049 MiB**，`torch.OutOfMemoryError` @ FP8 quantize（220MiB free / 78.93GiB in use）→ 证实 32K 须 CP（关 graph 不足以装 32K 激活）。

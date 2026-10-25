@@ -201,6 +201,9 @@
 <div class="callout good"><b>决定性复测</b>：cfg0a（graph ON）121K/81GB → cfg0ang（graph OFF，其余全同）561K/75.5GB。<b>4.64× 提速、显存降 5.5GB</b>，且 561K = 0.93× 8K 满速。⇒ 顶格显存本身不构成带宽瓶颈（97% util、满速），<b>5.4× 骤降 = CUDA Graph 在 HBM 顶格时的 replay 停滞</b>。graph 的 ~5.5GB workspace 把 75.5GB 推到 81GB 顶格，顶格时 graph 重放路径病态慢。</div>
 <div class="callout bad"><b>recompute 证伪（Mamba2-hybrid）</b>：<code>--recompute-num-layers 56</code>（全 56 层 uniform recompute）复测峰值显存 = <b>75,517 MiB，与不开 recompute 完全相同</b>，速度也相同（572K vs 561K，噪声内）。原因：该 flag 只重算 <b>transformer/attention 层</b>激活；BaiZe-2B 是 Mamba2-hybrid，<b>激活显存主体是 Mamba2 SSM 层</b>（flag 不触及）⇒ recompute 对本架构<b>不是降显存杠杆</b>。rev2「开 recompute 降 ~60% 激活显存」处方 hereby 作废。另注：full-uniform recompute 还要求 full-iteration cuda-graph 模式（Mamba2 用 local graph，CLI 不可切换），recompute+graph 组合直接 <code>AssertionError: full recompute is only supported with full iteration CUDA graph</code> 失败。</div>
 
+<h3>五·5b、§3 seq=8192 验收复测（#788，2026-10-26 06:1x）</h3>
+<div class="callout good"><b>§3 要求「在 seq=8192 上复测」</b>（rev3 cfg0ang 在 seq=4096，本节补齐用户目标 seq=8192）。配置 <b>seq=8192 / mbs=2 / tok·mb=16384 / graph OFF</b>，单机 .29 DP8（.12 按 R2.4 不动；按 per-GPU 比较，与 DP 数量无关）。脚本 <code>baize_rc_seq8k_graphoff_smoke.sh</code>，60 iter，中位 iter 20–60 = <b>7,072 ms/step</b>。<b>per-GPU 37,067 = 0.978× 基线</b>（37,903）⇒ 满速，远超 §3 bar 0.7×；vs cfg1（同 seq8192/mbs2、graph ON）per-GPU 6,768 = <b>5.48× 恢复</b>；峰值 77.3GB &lt; 81GB 顶格（graph-OFF 未顶格）；loss 7.75 / gnorm 0.82 / nan 0 健康。<b>tok/mb 不变性再证</b>：seq4096 cfg0ang per-GPU 35,070 ≈ seq8192 s8k2goff 37,067（同 tok·mb=16384、同 graph-OFF）⇒ 真因确为 graph 顶格停滞、与 seq 无关。16 卡外推 ≈ 593K = 0.98× 606K 基线。TSV 行 <code>s8k2goff-seq8k</code>。</div>
+
 <h2>六、修复配方与档位表</h2>
 <h3>6.1 8K 满速配方（已复测达标 ≥0.7× 基线）</h3>
 <div class="callout good"><b>seq=8192 / mbs=1 / gbs=256 / accum=16</b> → <b>605,012 tok/s = 1.00× 基线</b>，峰值显存 55.4GB（余量 24GB），loss 7.56 / gnorm 0.59 / nan 0 健康。<b>这是给用户的「8K 满速」答案</b>：seq=8192 完全可用，只要把 mbs 从 2 降到 1（tok/mb 16384→8192）。</div>
@@ -215,6 +218,7 @@
 <tr class="fast"><td>6144</td><td>2</td><td>16</td><td>ON</td><td class="num">12,288</td><td class="num">~598K</td><td class="num">69.3GB</td><td>已验证快</td></tr>
 <tr class="slow"><td>16384</td><td>1</td><td>—</td><td>ON</td><td class="num">16,384</td><td class="num">~112K</td><td class="num">81.1GB顶格</td><td>❌ graph 顶格停滞（rev3）</td></tr>
 <tr class="fast"><td>16384</td><td>1</td><td>—</td><td><b>OFF</b></td><td class="num">16,384</td><td class="num"><b>~561K</b></td><td class="num">75.5GB</td><td>✅ <b>关 graph 即满速（已验证 0.93×，rev3）</b></td></tr>
+<tr class="fast"><td>8192</td><td>2</td><td>16</td><td><b>OFF</b></td><td class="num">16,384</td><td class="num">~593K</td><td class="num">77.3GB</td><td>✅ <b>§3 seq=8192 验收（#788）：per-GPU 37,067=0.978× 基线（满速）；用户 8K+mbs2 配方，关 graph 即满速</b></td></tr>
 <tr><td>16384</td><td>1</td><td>—</td><td>OFF</td><td class="num">8,192 (CP=2)</td><td class="num">待测</td><td class="num">~55GB 预期</td><td>🆕 CP=2 进一步降显存（smoke 待跑；关 graph 已够用）</td></tr>
 <tr><td>32768</td><td>1</td><td>—</td><td>OFF</td><td class="num">—</td><td class="num">OOM</td><td class="num">81GB</td><td>cfg5/6 已 OOM；须 CP≥4（recompute 对 SSM 无效）</td></tr>
 </tbody>
