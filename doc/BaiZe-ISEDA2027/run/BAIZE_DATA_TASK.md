@@ -25,11 +25,11 @@
 
 ### ⏱ 本轮执行顺序（2026-10-25 12:5x 用户直令 · **覆盖此前所有令**）
 > 用户原话：「1. 已下载已分词的，把分词目录整理一下，跟下载目录有更好的对应。2. 已下载未分词的，去分词，充分利用多核并发。」
-> 运维侧已完成：32 个不可对应 shard 已删（1.91 TiB，RUN_ID 199）；盘点报告已由运维重写为**单表**（`reports/report_data_tokenized_inventory_zh.html`，8.5 KB，1 个 table，14 行，数据源 `run/data/map_dl_vs_tok_20261025.tsv`），**不要再改报告结构**。
+> 已删 32 个不可对应 shard（1.91 TiB，RUN 199）；报告已由运维改为**单表**（8.5 KB / 1 table / 14 行），**结构不许改**。
 
 #### ⓪ 先核对这份报告（用户令：不是 data 做的，**data 必须逐格复核**，30 分钟内）
 
-对象：`reports/report_data_tokenized_inventory_zh.html`（运维 11:5x 生成，单表 14 行）+ 数据源 `run/data/map_dl_vs_tok_20261025.tsv`。
+对象：`reports/report_data_tokenized_inventory_zh.html`（运维生成，单表 14 行）+ `run/data/map_dl_vs_tok_20261025.tsv`。
 
 逐行复核（14 行 × 5 项，**每项都要贴命令与实际值**）：
 1. `test -d <下载目录>` → exists?
