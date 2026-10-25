@@ -309,3 +309,5 @@
 [swebench-pull] [301/500] OK pydata__xarray-3151 pulled=301 failed=0 skipped=0
 [swebench-pull] [302/500] OK pydata__xarray-3305 pulled=302 failed=0 skipped=0
 [swebench-pull] [303/500] OK pydata__xarray-3677 pulled=303 failed=0 skipped=0
+[swebench-pull] [304/500] OK pydata__xarray-3993 pulled=304 failed=0 skipped=0
+[swebench-pull] [305/500] OK pydata__xarray-4075 pulled=305 failed=0 skipped=0
