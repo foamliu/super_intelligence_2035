@@ -9,45 +9,47 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🚀 运维令 · 2026-10-25 07:4x（**写「双机 16 卡吞吐优化与测试」报告**）· 用户直令 · 最高优先
-> 用户原话：「pretrain：关于16机吞吐量优化和测试，写个报告。」
-> 即 **16 卡（双机 2×8×H100，DP16/TP1）吞吐优化与扩展性测试报告**。任务书 10-24 23:5x 块已写明「最优组合 + 中文 HTML 报告」是本阶段交付物 ⇒ **本轮把它落地成一份完整报告**，不再拖到下轮。
+### [运维令] 2026-10-25 17:5x（**seq 增大 x 每步 token 数固定（2M / 4M）的 16 卡吞吐网格**）· 用户直令 · 最高优先
+> 用户原话：「pretrain：测试下列配置的16卡训练吞吐 1）seq=8192, 2M tok/step 2）seq=8192, 4M tok/step 3）seq=16384, 2M tok/step 4）seq=16384, 4M tok/step 5）seq=32768, 2M tok/step 6）seq=32768, 4M tok/step 也就是在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
 
-> **① 先判状态（不许盲目重跑）**
-> - 立刻查 Task B 进度：`ps -ef | grep -E 'baize_dualnode_tune' | grep -v grep`；逐 TAG 看 `/tmp/baize_dualnode_tune/<TAG>/` 的 master/worker 日志是否跑满 80 步。
-> - **若正在跑** ⇒ 让它跑完（不 kill、不重启），本令**并行走写作**：先把已有数据（Task A 全部 + qps4/qps8 已闭合项 + 当前已闭合的 TAG）写进报告 §2–§5，报告**标 `rev1（在测）`**；剩下的 TAG 闭合后再补 `rev2`。
-> - **若已停/卡死** ⇒ 先按铁律保留现场（日志不删），再决定是否重跑未完成项（每项 80 步、跑完立刻释放 16 卡）。
+**1) 网格（唯一变量 = seq；同组内 tok/step 与数据配比不变）**
+| # | seq | tok/step | GBS(seq) | DP16 每卡 seq/步 | MBS x 累积 建议 | 备注 |
+|:--|--:|--:|--:|--:|:--|:--|
+| 1 | 8192 | 2,097,152 | 256 | 16 | 2x8 或 4x4 | S1 组 |
+| 2 | 8192 | 4,194,304 | 512 | 32 | 2x16 或 4x8 | S2 组，约等于基线 tok/step |
+| 3 | 16384 | 2,097,152 | 128 | 8 | 1x8 | S1 组 |
+| 4 | 16384 | 4,194,304 | 256 | 16 | 1x16 | S2 组 |
+| 5 | 32768 | 2,097,152 | 64 | 4 | 1x4 | S1 组 |
+| 6 | 32768 | 4,194,304 | 128 | 8 | 1x8 | S2 组 |
 
-> **② 数据来源（只许引用落盘实测，禁推测）**
-> - Task A（已闭合）：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §「双机吞吐优化（Dual-node 16-GPU scaling）」+ `/tmp/baize_dualnode_16gpu_prevrun_23x/` + `/tmp/baize_dualnode_bf16_ctrl/summary.txt`。
-> - Task B：`/tmp/baize_dualnode_tune/<TAG>/`（master.log / worker.log / summary.txt）。
-> - 原始日志里取 **两类行**：master `Step Time`（iter 20–80）、worker `elapsed time per iteration`（iter 30–80）；**median 取 step 30–80（6 点）**，与已有基线同口径。
-> - ⚠️ **#767 误报教训写进报告 §6「口径与纠错记录」**：512,801 tok/s / 84% / BF16+mock / 64.4GB 一组数字**作废**，实为 606,300 tok/s / 99.4% / FP8 tensorwise + 真数据 / 67.6GB。凡是**没有原始日志支撑**的数字一律不许进报告正文。
+- GBS 必须整除 DP16；`tok/step = GBS x seq` 必须**逐项核对等于表内值**（256x8192=2,097,152 等）。
+- 配方冻结：**DP16 / TP1 / PP1 + FP8 tensorwise + CUDA Graphs + 真数据**（与双机 e18 同口径）；Mamba2 侧沿用 `--mamba-ssm-dtype float32`。**除 seq 与随之变化的 MBS / 累积外，一律不许改**。
+- 数据：**2M 组用 S1 配比、4M 组用 S2 配比**；同组 3 个 seq 必须来自**同一条 token 流**（同一批 packed shard，仅切块长度不同），并把打包命令写进报告，证明单变量。
+- 基线参考行（不计入 6 格，单独标注）：seq=4096 / 4,128,768 tok/step / DP16 e18 = **606,300 tok/s**（`/tmp/baize_dualnode_16gpu/`）。
 
-> **③ 报告结构（照着写，缺的项写「未测 · 原因」）**
-> 1. 摘要（一屏结论：最优配置 + 峰值 tok/s + 扩展效率 + 相对单机增益）
-> 2. 测试环境与口径（2×8×H100、DP16/TP1/PP1、IB/RoCE 12 口、4 个固定 NCCL 变量、IB busbw≈46GB/s、每项 80 步、median 规则、seq=4096、真实数据）
-> 3. **扩展性主结果**：单机 e18 305,098 → 双机 e18 606,300（**99.4%**）；每卡 38,137→37,894（−0.6%）；中位步时 13,533→6,810ms（几乎完美减半）
-> 4. **精度消融**：FP8 tensorwise 606,300 vs BF16 528,016 = **+14.8%**，显存≈持平（67.6 vs 67.1GB），Δloss 0.08% ⇒ 两种精度均近线性扩展、通信非瓶颈
-> 5. **Task B NCCL/IB 调参全表**：每 TAG 一行（tok/s / 扩展效率 / vs 基线 / step ms / 显存 / loss / Δloss / NaN）；已闭合 qps4(+0.0%)、qps8(+0.2%) 明确写「无收益」；未闭合 TAG 标「在测」并给 ETA
-> 6. **机制解释（这是报告的价值所在）**：为什么 99.4%？——2.2B 梯度 ~4.4GB / busbw≈46GB/s ≈ 0.1s vs 6.8s 步时 ⇒ **allreduce 占步时 <1%**；故 QPS/CHANNELS 等 IB 参数**结构性无收益**，GPUDirect RDMA + 12×RoCE 已把跨机通信压到噪声级
-> 7. **与单机优化线的对照**：单机 10 项优化 9/10 完成、命中 305K 上限（#2 CUDA12.9 被驱动级 BLOCKED）；**双机 +99.4% ⇒ 结论：要再提吞吐只能靠加节点做数据并行，软件侧单机/双机已无空间**
-> 8. **剩余优化项与建议排序**（C 重叠 / D MBS4→GBS2016 / E distributed-optimizer / 更大 DP32），每项给「预期收益 / 风险 / 是否值得做」
-> 9. **复现命令**（脚本名 + 关键 env + ITERS=80 + 判据提取方法）
-> 10. 附：数据溯源表（每个数字 → 哪个日志哪个文件哪一行）
+**2) 测法（与既有口径一致）**
+- 每配置 `ITERS=80`；取 **step 30-80 的 median step time**（6 点，与双机 e18 同规则）。
+- 必报：`tok/s`（主指标，= tok/step 除以 median step 秒）、`step/s`、median step ms、per-GPU tok/s、峰值显存（GB）、loss、gnorm、NaN 计数。
+- 每组内派生：**每翻倍 seq 的吞吐损失百分比**（vs 同组 seq=8192），并列「2M 与 4M 的绝对吞吐差」。
+- **OOM 处理**：只许两种回退，且必须**标为「配方变更组」单列、不混进主表**：(a) MBS 降到 1、用累积补回 tok/step；(b) 加 `--recompute-activations` 或 `--use-distributed-optimizer`。仍 OOM 就把该格写「OOM（峰值显存 xx GB，卡 x）」+ 已试过的回退，**不许留空、不许编造**。
+- 每格跑完立刻释放 16 卡（`nvidia-smi` 全 0 MiB 再起下一格）；**不许为写报告保占**。
 
-> **④ 产出与归档**
-> - 报告：`reports/report_pretrain_dualnode_throughput_zh.html`（**中文 HTML、单文件自包含、0 外链/0 CDN/0 `<script>`**，按常驻规程）。体积建议 ≥15KB，含表格 + 结论框。
-> - 生成器：`run/gen_dualnode_throughput_report.py`（照 `run/gen_perf_report.py` / `run/gen_longctx_report.py` 的写法：数据写在脚本顶部字典里，脚本负责生成 HTML），**保证报告可重生成**。
-> - 校验：生成后自检 `grep -c '<script' = 0`、0 个 `http` 外链、`HTMLParser` 标签配平。
-> - `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §「双机吞吐优化」补一行指针指向本报告。
-> - `MEMORY_PRETRAIN_2B.md` 首部新块 + `run/daily-memories-2b/2026-10-25.md` 追加；commit 前缀 `pretrain report:`（只 add 本次动的文件，禁 `git add -A`）。
+**3) 结论要求（报告的落点）**
+- 主表 6 行全填；再给「tok/s 随 seq 变化」双曲线（2M / 4M 各一条，同图）。
+- 机制解释**必须带实测支撑**：seq 变大则激活 / 显存变大、MBS 被迫变小、每步通信 / 调度占比变化；BaiZe-2B 是 **Mamba2-hybrid（24 SSM + 4 Attn + 28 MLP-only，只有 4/56 层带 KV）**，注意力成本结构性低于纯 Transformer，此点**须用本网格数据印证，未验证就标「推测·未验证」**。
+- 给 **S1 / S2 该选多大 seq** 的可执行结论（若 seq 增大导致吞吐降幅大于 10%，明确建议维持 4096 / 8192 并说明理由）。
+- 预计机时：单格 80 步 x (2-25 s) + 起停约 5 min，**6 格合计 2-5h**；先跑第 1 格标定，再回写总 ETA。
 
-> **🚫 铁律**
-> - **纯写作零 GPU**：写报告本身不占卡；TF 测完立刻释放 16 卡，**不许为写报告保占**。
-> - 🚫 mock 数据的数字不许当扩展效率；🚫 不许改单机 e18 配方本身；🚫 未验证的机制解释标注「推测·未验证」。
-> - 报告里 **不许出现 N/A 或空单元格**：没测就写「未测（原因）」。
-> - 若 Task B 全部 TAG 在本轮内闭合，直接出 `rev2` 终版；若未闭合，`rev1` 也要能独立读懂（不依赖在测项）。
+**4) 产出**
+- `reports/report_pretrain_seqlen_throughput_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、不低于 15KB）
+- 生成器 `run/gen_seqlen_throughput_report.py`（数据字典写脚本顶部，重生成 `diff` 必须为空）
+- `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「seq 长度 x tok/step 吞吐网格」+ MEMORY 首部新块 + daily；commit 前缀 `pretrain seqlen:`（只 add 本次动的文件）。
+
+**铁律**
+- 不用 mock 数据出主表；配方变更组不许混进主表；报告禁 N/A / 空单元格（OOM 也写清原因）。
+- 不动单机 e18 与双机 e18 的既有结论 / 日志；新实验日志进 `/tmp/baize_seqlen_grid/<cfg>/`。
+
+### [已归档] §运维令·2026-10-25 07:4x（双机 16 卡吞吐报告）**已完成**（#770-#776：报告 `reports/report_pretrain_dualnode_throughput_zh.html` 24,970B + 生成器可确定性重生成 + EXPERIMENTS L3691 指针，独立复核通过）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。需要时再读。
 
 ### 🚀 运维令 · 2026-10-24 23:5x（**双机已调通 ⇒ 转入「双机吞吐优化」阶段**）· 用户直令 · 最高优先
 > **已调通（23:22–23:37，16 卡 DP=2×8，`baize_dualnode_16gpu_test.sh`）**：median **512,801 tok/s** / mean 508,860 / **扩展效率 84.0%** / 每卡 32,050 / 峰值显存 **64.4 GB** / loss 0.3695 / gnorm 0.72 / **0 NaN、0 skip**；NCCL 走 `NET/IB/0,2,6…` 多通道。

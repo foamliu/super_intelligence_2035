@@ -1,3 +1,45 @@
+## 归档 2026-10-25（由 BAIZE_PRETRAIN_2B_TASK.md 搬入，原文未改）
+
+### 🚀 运维令 · 2026-10-25 07:4x（**写「双机 16 卡吞吐优化与测试」报告**）· 用户直令 · 最高优先
+> 用户原话：「pretrain：关于16机吞吐量优化和测试，写个报告。」
+> 即 **16 卡（双机 2×8×H100，DP16/TP1）吞吐优化与扩展性测试报告**。任务书 10-24 23:5x 块已写明「最优组合 + 中文 HTML 报告」是本阶段交付物 ⇒ **本轮把它落地成一份完整报告**，不再拖到下轮。
+
+> **① 先判状态（不许盲目重跑）**
+> - 立刻查 Task B 进度：`ps -ef | grep -E 'baize_dualnode_tune' | grep -v grep`；逐 TAG 看 `/tmp/baize_dualnode_tune/<TAG>/` 的 master/worker 日志是否跑满 80 步。
+> - **若正在跑** ⇒ 让它跑完（不 kill、不重启），本令**并行走写作**：先把已有数据（Task A 全部 + qps4/qps8 已闭合项 + 当前已闭合的 TAG）写进报告 §2–§5，报告**标 `rev1（在测）`**；剩下的 TAG 闭合后再补 `rev2`。
+> - **若已停/卡死** ⇒ 先按铁律保留现场（日志不删），再决定是否重跑未完成项（每项 80 步、跑完立刻释放 16 卡）。
+
+> **② 数据来源（只许引用落盘实测，禁推测）**
+> - Task A（已闭合）：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §「双机吞吐优化（Dual-node 16-GPU scaling）」+ `/tmp/baize_dualnode_16gpu_prevrun_23x/` + `/tmp/baize_dualnode_bf16_ctrl/summary.txt`。
+> - Task B：`/tmp/baize_dualnode_tune/<TAG>/`（master.log / worker.log / summary.txt）。
+> - 原始日志里取 **两类行**：master `Step Time`（iter 20–80）、worker `elapsed time per iteration`（iter 30–80）；**median 取 step 30–80（6 点）**，与已有基线同口径。
+> - ⚠️ **#767 误报教训写进报告 §6「口径与纠错记录」**：512,801 tok/s / 84% / BF16+mock / 64.4GB 一组数字**作废**，实为 606,300 tok/s / 99.4% / FP8 tensorwise + 真数据 / 67.6GB。凡是**没有原始日志支撑**的数字一律不许进报告正文。
+
+> **③ 报告结构（照着写，缺的项写「未测 · 原因」）**
+> 1. 摘要（一屏结论：最优配置 + 峰值 tok/s + 扩展效率 + 相对单机增益）
+> 2. 测试环境与口径（2×8×H100、DP16/TP1/PP1、IB/RoCE 12 口、4 个固定 NCCL 变量、IB busbw≈46GB/s、每项 80 步、median 规则、seq=4096、真实数据）
+> 3. **扩展性主结果**：单机 e18 305,098 → 双机 e18 606,300（**99.4%**）；每卡 38,137→37,894（−0.6%）；中位步时 13,533→6,810ms（几乎完美减半）
+> 4. **精度消融**：FP8 tensorwise 606,300 vs BF16 528,016 = **+14.8%**，显存≈持平（67.6 vs 67.1GB），Δloss 0.08% ⇒ 两种精度均近线性扩展、通信非瓶颈
+> 5. **Task B NCCL/IB 调参全表**：每 TAG 一行（tok/s / 扩展效率 / vs 基线 / step ms / 显存 / loss / Δloss / NaN）；已闭合 qps4(+0.0%)、qps8(+0.2%) 明确写「无收益」；未闭合 TAG 标「在测」并给 ETA
+> 6. **机制解释（这是报告的价值所在）**：为什么 99.4%？——2.2B 梯度 ~4.4GB / busbw≈46GB/s ≈ 0.1s vs 6.8s 步时 ⇒ **allreduce 占步时 <1%**；故 QPS/CHANNELS 等 IB 参数**结构性无收益**，GPUDirect RDMA + 12×RoCE 已把跨机通信压到噪声级
+> 7. **与单机优化线的对照**：单机 10 项优化 9/10 完成、命中 305K 上限（#2 CUDA12.9 被驱动级 BLOCKED）；**双机 +99.4% ⇒ 结论：要再提吞吐只能靠加节点做数据并行，软件侧单机/双机已无空间**
+> 8. **剩余优化项与建议排序**（C 重叠 / D MBS4→GBS2016 / E distributed-optimizer / 更大 DP32），每项给「预期收益 / 风险 / 是否值得做」
+> 9. **复现命令**（脚本名 + 关键 env + ITERS=80 + 判据提取方法）
+> 10. 附：数据溯源表（每个数字 → 哪个日志哪个文件哪一行）
+
+> **④ 产出与归档**
+> - 报告：`reports/report_pretrain_dualnode_throughput_zh.html`（**中文 HTML、单文件自包含、0 外链/0 CDN/0 `<script>`**，按常驻规程）。体积建议 ≥15KB，含表格 + 结论框。
+> - 生成器：`run/gen_dualnode_throughput_report.py`（照 `run/gen_perf_report.py` / `run/gen_longctx_report.py` 的写法：数据写在脚本顶部字典里，脚本负责生成 HTML），**保证报告可重生成**。
+> - 校验：生成后自检 `grep -c '<script' = 0`、0 个 `http` 外链、`HTMLParser` 标签配平。
+> - `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §「双机吞吐优化」补一行指针指向本报告。
+> - `MEMORY_PRETRAIN_2B.md` 首部新块 + `run/daily-memories-2b/2026-10-25.md` 追加；commit 前缀 `pretrain report:`（只 add 本次动的文件，禁 `git add -A`）。
+
+> **🚫 铁律**
+> - **纯写作零 GPU**：写报告本身不占卡；TF 测完立刻释放 16 卡，**不许为写报告保占**。
+> - 🚫 mock 数据的数字不许当扩展效率；🚫 不许改单机 e18 配方本身；🚫 未验证的机制解释标注「推测·未验证」。
+> - 报告里 **不许出现 N/A 或空单元格**：没测就写「未测（原因）」。
+> - 若 Task B 全部 TAG 在本轮内闭合，直接出 `rev2` 终版；若未闭合，`rev1` 也要能独立读懂（不依赖在测项）。
+
 ---
 
 ### 🆕 运维调整 · 2026-10-09（🔁 只用 `.29` + 改序：**① 对比基准 → ② Muon vs AdamW**；撤下 T1/T2/T3）· 用户直令 · **最高优先（覆盖下方 ⚗️Muon 与 🌙夜班 两块）**

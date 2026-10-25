@@ -2,6 +2,22 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-10-25 17:5x — 四条用户令下发（harness / data / vision / pretrain）
+
+用户 17:4x 一次性下四条，已写进各自任务书顶部（用户直令 · 最高优先），并同步把「已闭合」旧块原文搬进 ARCHIVE（emoji 原样保留）：
+
+| 线 | 任务书 | 新令要点 | 体积 | 归档（原文搬入） |
+|:--|:--|:--|--:|:--|
+| harness | `run/BAIZE_HARNESS_TASK.md` | ① 授权 hermes / claude-code 全量复跑 89 题（canonical 87，先进 10 题判活）；② 排查 codex 高 err（20/87=23.0%，59 exception，先分类再归因：适配器 / 容量 / 上游） | 29,468B | 08:2x 适配器修复令（5,045B） |
+| data | `run/BAIZE_DATA_TASK.md` | 目录名不重要（可改名）；唯一硬交付 = `run/data/DATA_MAPPING.md`（Markdown 单一事实源、合计脚本求和），HTML 按需生成；32 uncovered shard 降为「未映射」表内标注、不阻塞、未批准不许删 | 33,582B（红线 40KB） | 未归档（余量充足） |
+| vision | `run/BAIZE_VISION_TASK.md` | OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写 8 节中文 HTML 报告；只调研不训练；OCRBench / DocVQA / ChartQA / InfoVQA 均不需 judge | 30,448B | 10-24 16:1x 报告令（4,482B） |
+| pretrain | `run/BAIZE_PRETRAIN_2B_TASK.md` | 6 格网格：seq 8192 / 16384 / 32768 x 2M / 4M tok/step（GBS 256 / 512 / 128 / 256 / 64 / 128），唯一变量 = seq；80 步取 step 30-80 median；OOM 回退单列不进主表 | 31,137B | 10-25 07:4x 双机报告令（5,200B） |
+
+- 用户原话（摘）：harness「授权 hermes/claude-code 全量复跑 89 题、排查codex 高 err」；data「目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」；vision「现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」；pretrain「…在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
+- 基线锚点：pretrain 双机 e18 = 606,300 tok/s、4,128,768 tok/step（seq=4096）；OCR 参考（ArmB，`run/vision/generate_armC_mllm_report.py` 的 ARMB）OCRBench 1.6% / DocVQA 7.36% / ChartQA 12.52% / InfoVQA 16.88%。
+- 仍未变的老待办：vision B4 的 MMVet / MathVista 需 `OPENAI_API_KEY`；336+anyres 需工程 scope。
+- 写文件注意（记下）：本机编辑器通道会把 emoji、箭头、大于等于号转成乱码（实测 🚨 变乱码），所以本轮新指令块一律用「纯中文 + ASCII 符号」书写；归档搬运由 Python 原样搬迁，emoji 不受影响。
+
 ## ⚡ 2026-10-24 18:1x — data 迁移提速（85M 降优先级 · 用户令）
 
 - 用户原话：「**85M 下载优先级不高。**」⇒ 不再为 85M 预留 NFS 带宽：迁移 `--bwlimit` **50000 → 300000 KiB/s**（≈51 MB/s → ≈307 MB/s，可调）。

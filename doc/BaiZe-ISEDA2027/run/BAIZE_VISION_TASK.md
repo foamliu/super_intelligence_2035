@@ -9,60 +9,35 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 📄 运维指令 · 2026-10-24 16:1x（**写"下一步如何提升 ProtB 与 MLLM 成绩"报告**）· 用户直令 · 最高优先
+### [运维令] 2026-10-25 17:5x（**OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写报告**）· 用户直令 · 最高优先
+> 用户原话：「vision：现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」
 
-> 用户原话：「vision：**下一步如何提升 ProtB 和 MLLM 成绩，写个报告。**」
+**1) 先把「低」量化（必做，不许凭印象）**
+- 从 `/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_arm*/consolidated_12benchmarks.json` 取四臂（ArmB / ArmC / ArmD-R2 / ArmE-R2）逐集实测，重点四集：**OCRBench / DocVQA(val) / ChartQA / InfoVQA(val)**。
+- 参考锚点（ArmB，见 `run/vision/generate_armC_mllm_report.py` 的 ARMB 字典，须自己再核一遍）：OCRBench **1.6%**、DocVQA **7.36%**、ChartQA **12.52%**、InfoVQA **16.88%**。报告用**你自己读到的数字**，不许照抄本块。
+- 外部参考带：同规模开源 MLLM 在 OCRBench / DocVQA 的公开值，逐条写来源（模型名 + 榜单或论文 + 年份）；**查不到就写「未查到」**。
+- 说明一句事实：**OCRBench（exact-match）、DocVQA（ANLS）、ChartQA（relaxed）、InfoVQA（ANLS）都不需要 LLM judge**，与 MMVet / MathVista 的 `OPENAI_API_KEY` 阻塞无关，可直接测。
 
-> ✅ **DONE (wake #250, 2026-10-24 16:57)**：报告已交付 `reports/report_vision_next_steps_protb_mllm_zh.html`（21.1KB, 8 节, 0 script/0 外链, 生成器 `vision/generate_next_steps_protb_mllm_report.py`）。核心结论：12 集已饱和（4 臂 ProtB 跨度 6.15pp 但 MLLM 跨度 0.34pp，逐集最大跨度 1.66pp，多数 <1σ）→ 单一建议 = 先做 B4（MMBench/MMVet/MathVista + 336anyres 在已有 ArmB/ArmE-R2 ckpt 重测, ~0 GPU·h）判定「评测盲区 vs 真失效」；顺带 A3（ckpt_60000 跑 ProtB, ~0.3 GPU·h）。ProtB 仍有 ~14–19pp 理论空间（vs CLIP@336 82.66%）但主因是预训练。本轮未启动训练/未动产物。**WAITING: 0**。
+**2) web search 调研（真检索、留证据）**
+- 检索方向（每条至少 2 个独立来源）：`synthetic OCR data` / `SynthTIGER` / `SynthText` / `trdg` / `SynthDoG`（Donut）/ `DocSynth` / `PDFA` / `document image synthesis` / `chart-to-text · ChartX` / `im2latex` / `handwriting synthesis` / `OCR distillation`（PaddleOCR / GOT-OCR2.0 / olmOCR / dots.ocr）/ `self-training OCR` / `RL with verifiable reward OCR` / `data engine for MLLM`。
+- 每条方法按 5 项写：
+  1. **怎么造**（渲染引擎 / 模板 / 版面 / 退化 / 教师蒸馏 / 自训练）；
+  2. **要什么输入**（字体、语料、版面、PDF、公式、标注来源）；
+  3. **论文报告的效果**（原文数字 + 出处；没给数字写「原文未给」）；
+  4. **接入点**（编码器预训练 / Stage-2 SFT / 新增 OCR 专项 SFT）；
+  5. **成本**（样本量、渲染 CPU 小时、训练 GPU 小时，标「估算」）。
+- 不许把常识写成结论；不许编造论文数字 / 榜单分数；检索时间写「检索于 2026-10-25」。
 
-**① 交付物**：`reports/report_vision_next_steps_protb_mllm_zh.html`（自包含单文件中文 HTML）
+**3) 报告（中文 HTML 自包含；0 `<script>` / 0 `<a href>` 外链 / 0 外链图片）**
+8 节：1 摘要（不超过 6 条 + 单一建议）2 现状：OCR 相关四集实测（四臂表）3 差距定位（文字识别 / 版面结构 / 图表数值 / 长文档）4 合成数据方法总览（分类表 + 逐法详情）5 接入本项目管线的三条候选路线（每条：数据量 / 成本 / ETA / 可证伪判据）6 风险与坑（域差、字体与语言覆盖、渲染伪影、评测泄漏）7 优先级排序（**单一下一步** + 判据，如 OCRBench 提升不低于 2pp）8 参考来源（标题 + arXiv 号 + 年份，**纯文本，禁超链**）。
+- 必含「诚实条款」：外部效果数字均为论文自报、未在本项目复现；成本为估算；本项目数字全部实测可溯源。
 
-**② 先摆清现状（这是分析的起点，必须写准）**
+**4) 纪律与产出**
+- 交付：`reports/report_vision_ocr_synthdata_zh.html` + 生成器 `vision/generate_ocr_synthdata_report.py` + `EXPERIMENTS_VISION.md` 新节指针 + `MEMORY_VISION.md` 首部新块 + daily；commit 前缀 `vision ocr-report:`。
+- 自检：不低于 15KB、`grep -c '<script'` = 0、`grep -c 'href="http'` = 0、HTMLParser 标签配平。
+- 本轮**只调研 + 写报告**：不启训练、不动 ArmB / C / D / E 产物、不伪造 API key（等用户批准预算）。
 
-| 阶段 | 结果 | 对比 |
-|---|---|---|
-| **ProtB（编码器）** | **ArmE-R2 lp 68.236±0.0182 / 5-NN 58.904** | 🏆 全实验最高（vs ArmD-R2 **Δlp+3.899 / Δ5-NN+2.948**）|
-| **MLLM（12 集）** | **ArmE-R2 avg 26.10%** | vs ArmD-R2 26.12%（**−0.02pp**）/ vs ArmC 25.78%（+0.32）/ vs ArmB 26.10%（0.00）|
-| **裁定** | **不可分辨（边界值）** | 落在 22–26.5% 带 |
-
-**核心矛盾（报告必须先讲透）**：
-> **编码器涨了 +3.9pp，MLLM 下游却 −0.02pp** → **ProtB→MLLM 传递性再次证伪**（ArmD-R2 时已证伪一次，ArmE-R2 用更大的 ViT-L/14 再次印证）。
-> **ViT-L/14（304M）比 B/16（86M）大 3.5×，MLLM 12 集仍持平 → 容量不是 MLLM 下游瓶颈。**
-
-**③ 报告必须回答两条主线**
-
-**A. 如何继续提升 ProtB（编码器）** —— 给 3-5 个**具体可执行**的方向，每条给证据：
-- 现有 best 是 **lp 68.236**，参考系：CLIP ViT-L/14@336 自测 82.66%、文献 ~88.1% → **还有 ~14-20pp 空间**
-- 候选方向（你有权增删，但每条要给出**预期增益 + 成本 + 判据**）：
-  - 分辨率（224 → 336）：ViT-L/14 在 336 下的已知增益
-  - 训练时长/epoch（当前 3 epoch）
-  - 数据质量/配比（6 源是否最优）
-  - 损失权重（contrast:patch = 1:1 是否最优，历史 R11 曾测过）
-  - **末段抖动问题**：MEMORY 提到"ProtB 用 s63400 末段抖动态，final lp 可能低于 best 段" → **取 best 段 ckpt 是否会直接提升 1-2pp？**
-  - 更大模型（ViT-H/14？代价？）
-
-**B. 如何让 MLLM 下游真正提升** —— 这是**更关键**的问题，因为编码器涨了 MLLM 不涨：
-- **必须回答：为什么传递性失效？** 给出假设并设计**可判定的实验**
-  - 假设 1：Stage-2 数据（LLaVA-NeXT-780k 原版 quick-start 子集，738K 样本）太弱/太小 → 是否该上完整 780K 或用 opt47？
-  - 假设 2：连接层（projector）训练不足 → 是否该加长 Stage-1 / 提高 projector lr？
-  - 假设 3：LoRA 容量不足（Stage-1.5 20000 步）→ 是否该全参微调或加秩？
-  - 假设 4：**12 集 benchmark 本身饱和在 26% 带**（ArmB/ArmC/ArmD-R2/ArmE-R2 全在 25.78–26.12%，跨度仅 0.34pp）→ **benchmark 是否已到分辨率上限，测不出差异？** 这条必须严肃评估：如果是，说明**当前评测集对编码器差异不敏感**，需要换/扩评测集（如 MMStar、MMBench、RealWorldQA 等更难集）
-  - 假设 5：视觉 token 数（256 for ViT-L/14 vs 196 for B/16）对 LLM 上下文的影响
-
-**④ 对每条方向必须给出（表格化）**
-`方向 | 预期增益 | 成本(GPU·h) | 风险 | 可判定判据 | 优先级`
-**判据必须是可证伪的**（如"若假设 4 成立，则换 MMStar 后 ArmB vs ArmE-R2 的 Δ 应 > 2pp"）。
-
-**⑤ 最后给结论**
-- **下一步最该做的一件事**（单一建议，不要摊大饼）
-- 若判断"当前 12 集测不出编码器差异"，**要明确说出来并给出替代评测集方案** —— 这比继续堆实验更有价值
-
-**⑥ 纪律**
-- ✅ 所有数字必须能溯源到 `EXPERIMENTS_VISION.md` / MEMORY / 报告文件
-- 🚫 不启动新训练（**本轮只出方案报告**，等用户批准）
-- 🚫 不动 ArmB/C/D/E 产物
-- ⚠️ 若某项是"推测"，**必须标注"推测·未验证"**，不许混进结论
-
+### [已归档] §运维指令·2026-10-24 16:1x（写「下一步如何提升 ProtB 与 MLLM 成绩」报告）**已完成**（wake#250 交付 `reports/report_vision_next_steps_protb_mllm_zh.html` 21.1KB / 8 节 / 0 script / 0 外链，后续 A3 + B4 已执行）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
