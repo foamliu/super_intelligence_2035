@@ -1,0 +1,14 @@
+# BaiZe-2B tok/microbatch cliff root-cause LADDER @ 2026-10-25 23:40 (operator order 23:0x)
+# Recipe: DP16/TP1/PP1 + FP8 tensorwise + CUDA Graphs + real data (e18 identical, 2-node .12+.29)
+# Baseline ref: seq4096/mbs3/gbs1008/accum21 tok/mb=12288 = 606,449 tok/s (per-gpu 37903, peak 67.6GB)
+# KEY prior: every tok/mb=16384 cell (cfg0a/cfg1-4) is SLOW (~108-121K) AND peak 81.1GB顶格;
+#            every tok/mb=12288 cell (baseline/cfg0b) is FAST (~606K) AND peak <70GB.
+#            cfg2/cfg4 have tok/step=4.19M (=baseline) yet SLOW -> refutes "small-tok/step" (#782).
+# cols: step label seq mbs gbs accum tok_per_mb tok_per_step status tok_per_s step_per_s med_ms per_gpu_tok_s peak_mem_MiB loss gnorm nan
+E0	basebaseline	4096	3	1008	21	12288	4128768	OK_PRIOR	606449	0.147	6808.1	37903	67600	7.5733	0.529	0
+E1	cfg0b	4096	3	1008	21	12288	4128768	OK	604859	0.146	6826.0	37803	69275	7.5710	0.5102	0
+E0	cfg0a	4096	4	512	8	16384	2097152	OK_PRIOR	121032	0.058	17327.2	7564	81087	7.5663	0.5882	0
+E0	cfg1	8192	2	256	8	16384	2097152	OK_PRIOR	108291	0.052	19365.9	6768	81087	7.5645	0.6263	0
+E0	cfg2	8192	2	512	16	16384	4194304	OK_PRIOR	111897	0.027	37483.7	6993	81085	7.5357	0.4238	0
+E0	cfg3	16384	1	128	8	16384	2097152	OK_PRIOR	112094	0.053	18708.9	7005	81087	7.5811	0.4882	0
+E0	cfg4	16384	1	256	16	16384	4194304	OK_PRIOR	121495	0.029	34522.4	7593	81079	7.5732	0.5023	0
