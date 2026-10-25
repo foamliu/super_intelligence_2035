@@ -1,0 +1,70 @@
+### BLOCK 1: Ultra-FineWeb/data/* subdirs
+== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en/
+2048
+2661358397268	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en/
+0
+== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/
+56320
+6747434955525	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/
+0
+== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/
+6000
+477975290461	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/
+0
+== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/
+256
+324321522155	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/
+0
+### BLOCK 2: UltraX-Preview / Ultra-FineWeb-L3 / UltraData-*
+== /nas_train/app.e0031982/datasets/openbmb/UltraX-Preview
+479
+486916113250	/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview
+0
+### BLOCK 3: tokenized .bin/.idx in baize-data/text and BaiZe-ISEDA2027/data
+/nas_train/app.e0031982/datasets/baize-data/text	220	14814727190824	14814.73 GB
+idx: 220
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base	44	2097708553788	2097.71 GB
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_sft_tok	4	83839927264	83.84 GB
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3	16	82259616356	82.26 GB
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_sft_agent_tok	4	32161914564	32.16 GB
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/r3_sources	6	10233851276	10.23 GB
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data	7	7444411524	7.44 GB
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/heldout	4	35095828	0.04 GB
+idx: 84
+### BLOCK 4: /nas_env full_* tokenized dirs (real paths)
+== /nas_env/app.e0031982/baize-data/full_ufw_l3
+154
+154
+1062126204214	/nas_env/app.e0031982/baize-data/full_ufw_l3
+== /nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+141
+141
+1691139372199	/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+== /nas_env/app.e0031982/baize-data/full_ultradata_code_l3
+63
+63
+516175730284	/nas_env/app.e0031982/baize-data/full_ultradata_code_l3
+== /nas_env/app.e0031982/baize-data/full_ultradata_math_l1
+149
+149
+659469521715	/nas_env/app.e0031982/baize-data/full_ultradata_math_l1
+== /nas_env/app.e0031982/baize-data/full_ultradata_math_l3
+67
+67
+313462723570	/nas_env/app.e0031982/baize-data/full_ultradata_math_l3
+### BLOCK 5: disk free
+Filesystem                          1B-blocks            Used      Available Use% Mounted on
+10.239.22.32:/vol_CTE0_data04  10885165219840   4610891186176  6274274033664  43% /nas_env
+10.239.22.31:/vol_CTE0_data01 227598906949632 192687805300736 34911101648896  85% /nas_train
+### BLOCK 6: test -d self-check for every row dir
+OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en
+OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4
+OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq
+OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh
+OK  /nas_train/app.e0031982/datasets/openbmb/UltraX-Preview
+OK  /nas_train/app.e0031982/datasets/baize-data/text
+OK  /nas_env/app.e0031982/baize-data/full_ufw_l3
+OK  /nas_env/app.e0031982/baize-data/full_ultradata_code_l2
+OK  /nas_env/app.e0031982/baize-data/full_ultradata_code_l3
+OK  /nas_env/app.e0031982/baize-data/full_ultradata_math_l1
+OK  /nas_env/app.e0031982/baize-data/full_ultradata_math_l3

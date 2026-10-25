@@ -1,0 +1,15 @@
+section	source_name	disk_dir	hf_repo_subdir	parquet	incomplete	bin	idx	bytes	tokens	is_tokenized	latest_mtime	exists	notes
+A	base-en (ultrafineweb_en)	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en	openbmb/Ultra-FineWeb/data/ultrafineweb_en	2048	0	0	0	2661358397268	0	no	2026-10-03 17:12	yes	原始 parquet 下载目录
+A	en_v1_4 (ultrafineweb_en_v1_4)	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4	openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4	56320	0	0	0	6747434955525	0	no	2026-10-23 19:48	yes	原始 parquet 下载目录
+A	l1_en_hq (ultrafineweb_l1_en_hq)	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq	openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq	6000	0	0	0	477975290461	0	no	2026-10-07 08:16	yes	原始 parquet 下载目录
+A	zh (ultrafineweb_zh)	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh	openbmb/Ultra-FineWeb/data/ultrafineweb_zh	256	0	0	0	324321522155	0	no	2026-10-08 01:07	yes	原始 parquet 下载目录
+A	UltraX-Preview	/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview	openbmb/UltraX-Preview	479	0	0	0	486916113250	0	no	2026-10-07 19:52	yes	原始 parquet 下载目录
+B	en_v1_4 分词产物 (env14_CC-MAIN-*)	/nas_train/app.e0031982/datasets/baize-data/text	baize-data/text  [env14_*]	0	0	110	110	8929852999497	2238140710284	yes	2026-10-24 11:48	yes	分词产物(baize-data/text 内按前缀分组)
+B	code 分词产物 (code_s*)	/nas_train/app.e0031982/datasets/baize-data/text	baize-data/text  [code_s*]	0	0	30	30	2207256428312	550073686046	yes	2026-10-10 10:08	yes	分词产物(baize-data/text 内按前缀分组)
+B	l3 分词产物 (l3_s*)	/nas_train/app.e0031982/datasets/baize-data/text	baize-data/text  [l3_s*]	0	0	40	40	2656829079984	658914589539	yes	2026-10-10 04:06	yes	分词产物(baize-data/text 内按前缀分组)
+B	math 分词产物 (math_s*)	/nas_train/app.e0031982/datasets/baize-data/text	baize-data/text  [math_s*]	0	0	40	40	1103305927338	274920544739	yes	2026-10-09 23:54	yes	分词产物(baize-data/text 内按前缀分组)
+C	UFW-L3 全量 (full_ufw_l3)	/nas_env/app.e0031982/baize-data/full_ufw_l3	/nas_env/.../full_ufw_l3	0	0	154	154	1062126204214	263899449229	yes	2026-10-21 15:49	yes	全量分词产物(/nas_env, 软链接 BaiZe-ISEDA2027/data/full_*)
+C	Code-L2 全量 (full_ultradata_code_l2)	/nas_env/app.e0031982/baize-data/full_ultradata_code_l2	/nas_env/.../full_ultradata_code_l2	0	0	141	141	1691139372199	421450419455	yes	2026-10-21 13:33	yes	全量分词产物(/nas_env, 软链接 BaiZe-ISEDA2027/data/full_*)
+C	Code-L3 全量 (full_ultradata_code_l3)	/nas_env/app.e0031982/baize-data/full_ultradata_code_l3	/nas_env/.../full_ultradata_code_l3	0	0	63	63	516175730284	128623266591	yes	2026-10-21 08:06	yes	全量分词产物(/nas_env, 软链接 BaiZe-ISEDA2027/data/full_*)
+C	Math-L1 全量 (full_ultradata_math_l1)	/nas_env/app.e0031982/baize-data/full_ultradata_math_l1	/nas_env/.../full_ultradata_math_l1	0	0	149	149	659469521715	164437183984	yes	2026-10-21 17:39	yes	全量分词产物(/nas_env, 软链接 BaiZe-ISEDA2027/data/full_*)
+C	Math-L3 全量 (full_ultradata_math_l3)	/nas_env/app.e0031982/baize-data/full_ultradata_math_l3	/nas_env/.../full_ultradata_math_l3	0	0	67	67	313462723570	77949162709	yes	2026-10-21 09:20	yes	全量分词产物(/nas_env, 软链接 BaiZe-ISEDA2027/data/full_*)
