@@ -1,8 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0
+WAITING: 1
 
 > 🆕 **2026-10-26 02:0x #786：🔬 rev3 真因=CUDA Graph 顶格停滞·关 graph 561,126 tok/s=0.93×8K满速(75.5GB)·recompute 证伪(显存不变75,517MiB)·报告 rev3 16.9KB**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` rev3 节 + `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`；TSV RC 三行；`pretrain_launcher.py --context-parallel` CLI 就绪 L174/L109）：
-> - **已交付并 commit (cb0a83307)**：rev3 报告/EXPERIMENTS/TSV/MEMORY。**未完成（WAITING=0）**：① CP=2 smoke（seq32768/mbs1/CP2/graph-off，脚本 `baize_rc_cp_smoke.sh`，验证 32K OOM→CP 启用）+ ② 08:00 早报（一句话结论+修正档位表+证据路径）。**未完成指令：有** ⇒ **WAITING=0**。
+> - **已交付并 commit (cb0a83307)**：rev3 报告/EXPERIMENTS/TSV/MEMORY。**CP smoke + 早报已由 #787 完成**（见下）。
+
+> 🆕 **2026-10-26 03:2x #787：🔬 CP=2/4 可行性 smoke 出结果·32K 当前不可跑·cp1 OOM@81,049MiB·cp2 flash-attn-3 API 阻断·16K 关 graph=实用满速上限·早报已写**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §五·6；TSV CP 两行；脚本 `baize_rc_cp_smoke_1n.sh`；结果 `/tmp/baize_rc_cp_smoke_1n/ALL_RESULTS.txt`）：
+> - **cp1（CP=1, seq32768, mbs1, DP8, graph-OFF, tok/mb/gpu=32768）**：**OOM**，峰值 **81,049 MiB**，`torch.OutOfMemoryError` @ FP8 quantize（220MiB free / 78.93GiB in use）→ 证实 32K 须 CP（关 graph 不足以装 32K 激活）。
+> - **cp2（CP=2, seq32768, mbs1, DP4×CP2, accum2, graph-OFF, tok/mb/gpu=16384）**：**FAIL**，峰值 23,639 MiB。`context_parallel_size:2` 接线正确、blend 加载正确、NCCL CP 组初始化完成；首个 attention 层抛 `RuntimeError: Unknown keyword argument 'window_size' for flash_attn_3::_flash_attn_forward`——CP ring-attn 路径用旧 `window_size=(l,r)` 元组签名，flash-attn-3 已改 `window_size_left/right` 标量。调用点在 **site-packages（非仓库源码）**。
+> - **结论**：32K 当前不可跑（CP=1 OOM / CP=2 被 flash-attn-3 API 阻断，非 Mamba2 SSM 本身问题）；**rev3 关 graph 561K/75.5GB（tok/mb=16384）= 当前 16K 实用满速上限**。32K 修复=patch CP 路径 flash-attn 调用（代码任务，非 smoke/配置可解），列后续。**rev3 root cause + 关 graph 修复独立成立（commit #786）**。
+> - **脚本 bug 修复（commit eda1e6c7d）**：`--train-data-path "$BLEND"`→`$BLEND`（unquoted，否则整串当 1 个 path prefix→AssertionError，首跑 cp1/cp2 均 FAIL data-path）；2-node master-ssh redirect 挂起→改单机 DP8。
+> - **未完成指令：无**（CP smoke + 早报两项 #786 遗留均已交付）⇒ **WAITING=1**。**git**：`pretrain rc #787:` commit。
 
 > 📦 §#785 流水（2026-10-26 01:3x，rev2 报告重写 25,266B memory-bound + 修 #784 虚假交付）已压缩 → EXPERIMENTS_PRETRAIN_2B_ROUND2.md rev2 节；**结论**：rev2「memory-bound」归因已被 #786 rev3 复测修正为「CUDA Graph 顶格停滞」（显存顶格是必要条件非成因）。需要时再读。
 
@@ -15,19 +22,9 @@ WAITING: 0
 > 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
 
 
-> 🆕 **2026-10-25 16:2x #776：⚪ idle heartbeat · 07:4x 报告令独立复核全部交付物在位且已 commit·无新令·纯验证零 GPU**：
-> - **触发**：上次心跳 #775@15:10，已过 60 min 判死线 ⇒ 必发心跳。
-> - **独立复核（从 repo root 重跑 git，纠正一处 CWD 误判）**：① 报告 `reports/report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / 外链 http=0 / 11 个 `<h2>` ✓；② **生成器 `run/gen_dualnode_throughput_report.py` 经 `git ls-files`+`git log` 确认已跟踪已 commit**（4 次 `pretrain report:` 提交，最新 c856f02eb）——一度从 run/ 子目录跑 git 误判为未跟踪，实为路径错；③ 生成器重生成 diff=空（确定性可重生成）✓；④ `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L3691 指针 ✓；⑤ longctx 报告（16:0x 任务）已用 Mamba2-hybrid 重写、0 处 Xmodel ✓；⑥ Task B 无进程，qps4/qps8/maxnch64 3 TAG 闭合（606672/607708/606690 tok/s，全 +0.0%~+0.2% 无收益）。
-> - **git**：`git fetch`+`status -sb` ⇒ `## main...origin/main`，ahead/behind=0/0（与远端同步）；任务书无新运维令。
-> - **未完成指令：无**（07:4x 报告 / 23:5x 双机吞吐父令 / 16:0x 305K+longctx 三项运维令交付物均在盘并已 commit）⇒ `WAITING=1`（30 分钟长轮询）。
-> - **GPU**：.29 8×H100 全 idle，零争用；本轮纯验证零 GPU。
-> 📦 体积：TASK=31.1 KB / MEMORY≈28.6 KB（均 ≤32KB ✓；本轮归档 #772/#773 详细块→1 行指针，释放~3.5KB）.
+> 📦 §#776 流水（2026-10-25 16:2x，idle 心跳复核 07:4x 报告令交付物在位、纯验证零 GPU）已压缩 → daily-memories/2026-10-25.md；**结论**：dualnode 报告 24,970B+生成器已跟踪 commit+EXPERIMENTS L3691 指针均复核在位，三项运维令交付完毕，WAITING=1。需要时再读。
 
-> 🆕 **2026-10-25 15:10 #775：⚪ idle heartbeat · 07:4x 报告令复核依旧在位·无新令·纯验证零 GPU**：
-> - **复核**：`git fetch`+`status -sb` ⇒ 与 origin/main 同步（无 ahead/behind），任务书最后提交=10-25 09:16 纪律块（无新运维令）。dualnode 报告 `report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / 11 个 `<h2>` ✓；生成器 `gen_dualnode_throughput_report.py`=33KB ✓；EXPERIMENTS L3691 指针 ✓。Task B 无进程（qps4/qps8/maxnch64 3 TAG 早已闭合）。三项运维令（07:4x/23:5x/16:0x）交付物均在盘并已 commit。
-> - **未完成指令：无** ⇒ `WAITING=1`（30 分钟长轮询）。
-> - **GPU**：.29 8×H100 全 idle，零争用；本轮纯验证零 GPU。
-> 📦 体积：TASK=31.1 KB / MEMORY≈30.6 KB（均 ≤32KB ✓；#774 详细块→1 行指针，净增极小）。
+> 📦 §#775 流水（2026-10-25 15:10，idle 心跳复核依旧在位·纯验证零 GPU）已压缩 → daily-memories/2026-10-25.md；**结论**：与 origin/main 同步，dualnode 报告/生成器/EXPERIMENTS 指针均复核，三项运维令交付完毕，WAITING=1。需要时再读。
 > 📦 §#774 流水（2026-10-25 14:00，idle 复核全部指令已交付）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x 报告 24,970B+生成器+EXPERIMENTS L3691 均在位，三项运维令交付完毕，WAITING=1。需要时再读。
 
 > 📦 §#773（2026-10-25 12:4x，报告 HTML 严格有效性修复+清理 run/reports 残留）已归档 → daily-memories/2026-10-25.md L59–69；**结论**：占位符转义修复，0 script/0 外链/标签配平双过，单一来源=项目级 reports/。需要时再读。

@@ -36,3 +36,8 @@ RC	cfg0a-graphON	4096	4	512	8	16384	2097152	OK_PRIOR	121032	0.058	17327.2	7564	8
 RC	cfg0ang	4096	4	512	8	16384	2097152	OK	561126	0.268	3737.4	35070	75517	7.5674	0.5772	0
 RC	rc56ng	4096	4	512	8	16384	2097152	OK	572476	0.273	3663.3	35779	75517	7.5648	0.5543	0
 # RETEST COMPLETE @ 2026-10-26 02:06:51
+# CP smoke (single-node 8xH100 .29, graph OFF, real data) @ 2026-10-26 03:21 — baize_rc_cp_smoke_1n.sh
+# label encodes cp value; status OOM / FAIL_flashattn. results: /tmp/baize_rc_cp_smoke_1n/ALL_RESULTS.txt
+RC	cp1-cp1-seq32k	32768	1	8	1	32768	262144	OOM	-	-	-	-	81049	-	-	-
+RC	cp2-cp2-seq32k	32768	1	8	2	16384	262144	FAIL_flashattn	-	-	-	-	23639	-	-	-
+# CP SMOKE COMPLETE @ 2026-10-26 03:24:54

@@ -3812,11 +3812,29 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 | 8192 | 1 | 16 | ON | 8,192 | ~605K | 55.4GB | ★ 8K 满速配方（graph 未顶格）|
 | 16384 | 1 | — | ON | 16,384 | ~112K | 81.1GB顶格 | ❌ graph 顶格停滞 |
 | 16384 | 1 | — | **OFF** | 16,384 | **~561K** | 75.5GB | ✅ **关 graph 即满速（0.93×，已验证）**|
-| 16384 | 1 | — | OFF | 8,192(CP=2) | 待测 | ~55GB | 🆕 CP=2 进一步降显存（smoke 待跑）|
-| 32768 | 1 | — | OFF | — | OOM | 81GB | 须 CP≥4（recompute 对 SSM 无效）|
+| 32768 | 1 | 1 | OFF | 32,768(CP=1) | **OOM** | 81.0GB | ✅ 复测：CP=1 @ 32K OOM @ **81,049 MiB**（FP8 quantize 阶段）——32K 无 CP 不入 80GB 卡 |
+| 32768 | 1 | 2 | OFF | 16,384(CP=2) | **FAIL** | 23.6GB | ❌ CP=2 触发 **flash-attn-3 API 不兼容**（`window_size` 元组 kwarg 已移除→改 `window_size_left/right`）；CP ring-attn 路径需代码 patch |
 
 **判据铁律（rev3 修正）**：tok/mb = mbs×seq ≤ 12288 → graph 可开、满速；= 16384 → **关 graph**（561K，75.5GB）或降 mbs；> 16384 → 须 CP。规划任何 seq 时先算 tok/mb，并按峰值显存决定是否关 graph。
 
 > 📄 根因报告（**rev3，2026-10-26 02:0x #786 重写**）：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（rev3：CUDA Graph 顶格停滞 / 关 graph 满速 / recompute 证伪 / 五·5 复测节 + 档位表 graph 列）。
 > ⚠️ **rev2「memory-bound」归因 hereby 修正为「CUDA Graph 顶格停滞」**（显存顶格是必要条件非成因）；rev1「GPU 饥饿」早已证伪。三版归因演进完整保留于报告 revnote。
-> 🔧 **代码**：`pretrain_launcher.py` 新增 `--context-parallel` CLI arg（line 174）+ 接线 `context_parallelism=args.context_parallel`（line 109），PY_SYNTAX_OK；CP=2 smoke 待跑。
+> 🔧 **代码**：`pretrain_launcher.py` 新增 `--context-parallel` CLI arg（line 174）+ 接线 `context_parallelism=args.context_parallel`（line 109），PY_SYNTAX_OK；CP=2 smoke 已跑（见 §五·6）。
+
+---
+
+### §五·6 CP=2/4 可行性 smoke（单机 8×H100，2026-10-26 03:2x #787）
+
+**脚本**：`baize_rc_cp_smoke_1n.sh`（单机 DP8，规避 2-node master-ssh redirect 挂起；修 `--train-data-path $BLEND` 引号 bug——`"$BLEND"` 整串当 1 个 path prefix→AssertionError，首跑 cp1/cp2 均 FAIL data-path，已改 unquoted 重跑）。结果路径 `/tmp/baize_rc_cp_smoke_1n/ALL_RESULTS.txt`。
+
+**结论（一句话）**：32K 当前**不可跑**——CP=1 graph-off **OOM @ 81,049 MiB**（FP8 quantize 阶段，32K 无 CP 不入 80GB 卡）；CP=2 触发 **flash-attn-3 API 不兼容**（CP ring-attention 路径传 `window_size=(l,r)` 元组，而 flash-attn-3 已改 `window_size_left`/`window_size_right` 两个标量 kwarg→`Unknown keyword argument 'window_size'`），峰值仅 23,639 MiB（首个 attention 层即崩，未到 full alloc）。**rev3 关 graph 的 561K/75.5GB（tok/mb=16384）即当前 16K 实用满速上限**；32K 需先 patch CP 路径 flash-attn 调用（代码任务，非 smoke/配置可解）。
+
+**cp1（CP=1, seq32768, mbs1, DP8, graph-OFF, tok/mb/gpu=32768）**：OOM。峰值 **81,049 MiB**，`torch.OutOfMemoryError` at `transformer_engine ... tex.quantize`（"GPU 1 ... 220.50 MiB free ... 78.93 GiB in use"）。→ 证实 32K 须 CP（关 graph 不足以装下 32K 激活）。
+
+**cp2（CP=2, seq32768, mbs1, DP4×CP2, accum2, graph-OFF, tok/mb/gpu=16384）**：FAIL。`context_parallel_size: 2` 已正确接线、数据 blend 正确加载（8 shard×1.0）、NCCL CP 组初始化完成（rank0↔rank1 P2P/CUMEM）；首个 attention 层 forward 抛 `RuntimeError: Unknown keyword argument 'window_size' for operator 'flash_attn_3::_flash_attn_forward'`。峰值 23,639 MiB。→ CP=2 在本环境**被 flash-attn-3 API 阻断**，非 Mamba2 SSM 本身问题（Mamba2 SSM 层未走到即崩）。
+
+**根因定位**：CP=1 走正常 attention 路径（与 ladder/recompute 一致，已验证可跑）；CP≥2 走 Megatron CP ring-attention 路径，其 flash-attn 调用使用旧 `window_size` 元组签名，与已装 flash-attn-3 的 `window_size_left`/`window_size_right` 标量签名不兼容。调用点在 site-packages（megatron core CP / flash-attn wrapper），**非仓库源码**。
+
+**修复路径（建议，列为后续代码任务）**：在 CP ring-attention 的 flash_attn_3 调用处，将 `window_size=(left, right)` 拆为 `window_size_left=left, window_size_right=right`；可能多处（fwd/bwd）。改完单跑 cp2 即可得 32K @ CP=2 的真实吞吐（预期 per-GPU 16384≈cfg0ang，总 ~280K tok/s = 4×DP×35K）。**此项不在本次 root-cause 收敛范围**（rev3 root cause + 关 graph 修复已独立成立并 commit #786）。
+
+> 📊 TSV：`pretrain_rc_ladder_20261026.tsv` 新增 2 行 CP smoke（`cp1-cp1-seq32k`、`cp2-cp2-seq32k`）。
