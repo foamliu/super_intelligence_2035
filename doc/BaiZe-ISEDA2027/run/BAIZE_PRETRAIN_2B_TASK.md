@@ -64,6 +64,13 @@
 - **新证据（重要）**：四格峰值显存几乎一致（81,079-81,087 MiB，卡在 80GB 上限），**与 seq、tok/step 都无关** ⇒ 疑似存在**与 seq 无关的固定巨额分配**（workspace / 优化器状态 / 未分片缓冲 / CUDA graph 常驻池）；cfg5/cfg6 在 81,031 MiB 处 FAIL ⇒ 32K 所需的额外一点显存直接撑爆。请把「固定 81GB 到底是谁」列入 profile 清单（`torch.cuda.memory_summary()` + 分项 snapshot）。
 - **cfg5/cfg6**：先给 FAIL 的 torch 报错原文与判定（OOM / 其他），再按「配方变更组」用 `--recompute-activations` 或 `--use-distributed-optimizer` 重试，单列不混主表。
 
+**补充（22:5x：cfg0a 已证伪「seq 致慢」，追加两条必做实验 + 报告更正）**
+- 事实：`cfg0a`（seq4096 / mbs4 → **16,384 tok/microbatch/GPU**）= **113,514 tok/s**，与 cfg1（seq8192 / mbs2 → 同为 16,384）= 108,291 基本一致 ⇒ **seq 不是主因**；基线（seq4096 / mbs3 → **12,288 tok/microbatch/GPU**）= 606,449 ⇒ 悬崖落在 12,288→16,384 tok/microbatch 之间（且该区间峰值显存从 67.6GB 顶到 81GB）。
+- **必做 A（运维判断的关键验证，10 分钟）**：`seq=8192 / mbs=1 / gbs=256（accum=16）` → **8,192 tok/microbatch/GPU**。判据：若 tok/s 回到 ~55-60 万 ⇒ **「seq=8192 可以满速，只要把 MBS 降到 1」**，这是直接给用户的可行结论；若仍 ~110K ⇒ 说明与 tok/microbatch 无关，回去查 gbs/accum 与 kernel。
+- **必做 B（16K 的出路）**：`seq=16384 / mbs=1` 必然是 16,384 tok/microbatch ⇒ 注定踩崖；**要么开 context parallel（CP=2/4）把每卡序列切短，要么 16K 只做小规模微调**。请在报告里给 CP 的可行性判断（当前 config dump：SP=false / CP=1）。
+- **报告更正（必做）**：`reports/report_pretrain_seqlen_throughput_zh.html` §7 现在写「任何 seq>=8192 都崩 ~5x、建议维持 4096」——这是**基于错误归因**的结论。cfg0b 与必做 A 出数后，必须把该节改成「**悬崖由 tokens/microbatch/GPU 触发，与 seq 无关**」，并给「seq=8192 + mbs=1」的实测档位；旧结论标「已证伪」保留可追溯。
+
+
 
 **补充观测（20:40，cfg2/cfg3 出来后，归因更清楚了）**
 | cfg | seq | tok/step | tok/s | per-GPU | 相对基线(606,449) |
