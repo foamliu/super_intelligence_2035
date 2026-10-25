@@ -1,6 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
-> 🆕 **2026-10-25 04:1x #769：BF16对照组(DP16)已完成·528K tok/s·FP8增益+14.8%确认·Task A完整闭合·下一步Task B(NCCL/IB调参)**：
+> 🆕 **2026-10-25 08:3x #770：✅ 双机16卡吞吐优化报告(rev1)已交付·Task B 3/9 TAG闭合全无收益·机制闭合·纯写作零GPU**：
+> - **运维令落地**：用户直令「16机吞吐量优化和测试写个报告」⇒ 产出 `reports/report_pretrain_dualnode_throughput_zh.html`（中文HTML单文件自包含,24.4KB,0外链/0`<script>`/标签配平✓）+ 生成器 `run/gen_dualnode_throughput_report.py`（数据写顶部字典,可重生成）。
+> - **Task B 状态判定**：`ps`无dualnode进程⇒已停。`/tmp/baize_dualnode_tune/`3个TAG全部闭合(qps4/qps8/maxnch64,worker/master rc=0,TEST COMPLETE)。按铁律保留现场不重跑(纯写作零GPU)。
+> - **报告内容(10节+纠错)**：§1摘要(606K/99.4%/+98.8%/FP8+14.8%) §2环境 §3扩展性主结果(单机305K→双机606K,步时13533→6808近减半) §4精度消融(FP8 vs BF16 +14.8%,显存≈持平,Δloss0.06%) §5 TaskB全表(3闭合+6未测) §6机制(allreduce<1%步时⇒IB参数结构性无收益) §7单机对照(305K天花板) §8剩余项(F加节点>D MBS4>C/E默认态) §9复现 §10溯源 + #767误报纠正(512K/84%→606K/99.4%)。
+> - **数据全部落盘实测**：rerun 606,449(/tmp/baize_dualnode_16gpu/summary.txt) + prevrun 606,300交叉验证 + BF16对照528,016 + qps4 606,672/qps8 607,708/maxnch64 606,690。BF16单机基线≈266K为估算已标注。
+> - **EXPERIMENTS更新**：maxnch64行(跑测中→闭合606,690/+0.0%) + TaskB结论节 + 报告指针。
+> - **GPU**：.29/.12均空(0MiB),vision已DONE无争用。本轮纯写作零GPU。
+> - **下一步**：报告rev1已自洽;若用户要rev2终版可补跑未测IB TAG(机制预期仍无收益)或转Task D(MBS4双机OOM边界实测)。等运维新令。
+> 📦 体积：TASK=30.0KB / MEMORY=30.9KB（均≤32KB✓；本轮归档 #657→daily-memories/2026-10-21.md）。
+
 > - **BF16对照**：`baize_dualnode_16gpu_bf16_ctrl.sh` 02:49-03:01跑完(80步,worker rc=0/master rc=0)。中位步时7819.4ms,throughput **528,016 tok/s**,per-GPU 33,001,峰值显存67.1GB(worker .29),loss 7.578/gnorm 0.50/0NaN。与e18(FP8)唯一差异=去掉`--fp8-recipe tensorwise`。
 > - **FP8增益量化**：606K(e18 FP8) vs 528K(BF16) = **+14.8%吞吐**；步时6810→7819ms(FP8快12.9%)；显存67.6→67.1GB(≈持平)；loss Δ0.08%✅等价。BF16自身扩展效率估算≈99.2%→**两种精度均近线性扩展,通信非瓶颈**。
 > - **Task A完整闭合**(e18+BF16对照均测)。下一步:Task B(NCCL/IB调参:`NCCL_IB_QPS_PER_CONNECTION`1/4/8·`NCCL_MAX_NCHANNELS`·`NCCL_ALGO`×`NCCL_PROTO`·`NCCL_IB_HCA`子集·`NCCL_CROSS_NIC`,每项80步)。GPUs全空闲(.29+.12均0MiB),vision已DONE无争用。
@@ -115,15 +124,7 @@ WAITING: 1
 > 📦 §#659 流水（2026-10-21 06:3x, 🩺 L1 step 410/5611 健康 + 后续串行计划/2×2 判读逻辑）已归档 → daily-memories/2026-10-21.md；**结论**：L1 step0 loss=1.76 vs v2 11.72→双移位修复确效、loss 稳步降、串行计划 L1→CS8 eval→L2→L3→2×2 因子定主因定案。需要时再读。
 > 📦 §#658 流水（2026-10-21 05:0x, 🚀 L1 训练启动 + 2×2 因子实验设计 + L2/L3 脚本就绪）已归档 → daily-memories/2026-10-21.md；**结论**：L1 烟测通过（step0 loss=1.76 vs v2 11.72→双移位修复确效），全量训练已启动 PID1430363/5611步=20B tok，L2/L3 脚本就绪，CX6 基线崩于 varlen_fwd 兼容性。需要时再读。
 
-> 🆕 **2026-10-21 04:5x #657：🔥 step_532000 基线 eval CS8=61.03% → decay 确认训坏模型 + L1 实验脚本就绪**：用户 02:3x 令授权自主实验。.29 8×GPU 全空确认（ssh hostname=whag0pgpuap29）。烟测通过（XmodelForCausalLM 1.350B params, logits 非 nan, 预测 "Paris" 正确）。14 集基线 eval 在 .29 启动（04:48:07），**CS8 Phase1 已完成**：
-> | task | acc | acc_norm | | task | acc | acc_norm |
-> | hellaswag | .4396 | **.5895** | | piqa | .7258 | **.7356** |
-> | arc_easy | .6915 | **.6641** | | winogrande | **.6101** | — |
-> | boolq | **.5924** | — | | openbookqa | .296 | **.394** |
-> | arc_challenge | .3524 | **.3865** | | sciq | .934 | **.910** |
-> **CS8 = (0.5895+0.6641+0.5924+0.3865+0.910+0.7356+0.6101+0.394)/8 = 61.03%**（acc_norm 优先，与 collect 脚本一致）。
-> 🔴 **关键判据**：起点 61.03% ≫ decay v2 final 44.97% → **decay 训坏模型（-16pp）**，问题在 decay 段非起点。Xmodel-2.5 官方 final 65.40% 仅比起点高 4pp → 正确 decay 应微升非暴跌。CX6（Phase2）仍在跑（gsm8k/math500/mmlu/bbh/humaneval/mbpp）。
-> **L1 实验脚本已就绪**：`baize_xmodel25_decay_L1.py`（修双移位：chunked CE 去掉 `hidden[:,:-1]`+`labels[:,1:]` 额外移位；non-chunked 传 `input_ids` 作 labels 让 HF 内部单移位）+ `baize_xmodel25_decay_L1.sh`（ITERS=5611=20B tok, LR=5e-4, WARMUP=100, 其余同 v2）。py_compile 通过。待 CX6 完成后启动 L1 训练。📦 体积：TASK=29.8KB / MEMORY=待测（均<32KB）。
+> 📦 §#657 流水（2026-10-21 04:5x, 基线 eval CS8=61.03% + L1 脚本就绪）已归档 → daily-memories/2026-10-21.md；**结论**：起点 61.03% ≫ decay v2 final 44.97% → decay 训坏模型(-16pp)；L1 实验脚本(baize_xmodel25_decay_L1.py/.sh)就绪待 CX6 完成后启动。需要时再读。
 
 > 📦 §#650~#656 流水（2026-10-21 00:2x~03:0x, 7 条稳态心跳「等用户批准跑基线 eval」）已归档 → daily-memories/2026-10-21.md；**结论**：均无新指令，重复确认 .29 GPU 全空、训练完成、起点 ckpt 在盘、等批准。需要时再读。
 

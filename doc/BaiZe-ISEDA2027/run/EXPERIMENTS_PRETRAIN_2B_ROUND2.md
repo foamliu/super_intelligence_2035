@@ -3676,10 +3676,18 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 | 基线(Task A) | (默认 QPS=1) | 606,449 | 99.4% | — | 6,808 | 69,245/69,275 MiB | 7.5733 | — | 0 |
 | qps4 | NCCL_IB_QPS_PER_CONNECTION=4 | 606,672 | 99.4% | +0.0% | 6,805.6 | 69,249/69,275 MiB | 7.5701 | 0.04% | 0 |
 | qps8 | NCCL_IB_QPS_PER_CONNECTION=8 | 607,708 | 99.6% | +0.2% | 6,794.0 | 69,229/69,255 MiB | 7.5720 | 0.02% | 0 |
-| maxnch64 | NCCL_MAX_NCHANNELS=64 | (跑测中) | | | | | | | |
+| maxnch64 | NCCL_MAX_NCHANNELS=64 | 606,690 | 99.4% | +0.0% | 6,805.4 | 69,229/69,275 MiB | 7.5703 | 0.04% | 0 |
 
 **QPS=4 判读**：tok/s 与基线逐位持平（+0.0%，606,672 vs 606,449），step ms 6805.6≈6808，显存/loss/gnorm 全等价 → **NCCL IB QPS 数对吞吐无影响**。物理印证：allreduce 传输仅占步时 <1%（2.2B 梯度 ~4.4GB / busbw≈46GB/s ≈ 0.1s vs 6.8s 步时），增加 QPS 无法压缩已非瓶颈的通信。NCCL 自动选用 12 个 RoCE 端口（mlx5_0/1/2/3/5/6/8/9/10/11/13/14），已自动排除 PORT_DOWN 的 mlx5_4/12/15。
 
 > 📌 旁注（供 Task C 参考）：e18 默认 config 已开启 `overlap_grad_reduce=True` + `overlap_param_gather=True` + `use_distributed_optimizer=True`（见 qps4 master.log DDPConfig）→ Task C 的 overlap 项可能已是默认态，需单独核查再决定是否实测。
+
+### Task B 结论（3 项闭合 TAG）
+
+- **3 项已闭合 TAG（qps4 / qps8 / maxnch64）一致结论：全部 ≤ +0.2%（无收益 / 噪声级）**。tok/s 在 606,449–607,708 间波动（Δ 0.0–0.2%，与 run-to-run 噪声同量级），step ms 6794–6808，显存/loss/gnorm 全等价。
+- **机制印证**：allreduce 传输仅占步时 <1%（2.2B 梯度 ~4.4GB / busbw≈46GB/s ≈ 0.1s vs 6.8s 步时；distributed-optimizer 分片下 ~0.7%），通信已非瓶颈 → IB QPS / 通道数 / 算法 / 协议等参数**结构性无收益**。GPUDirect RDMA + 12×RoCE 多通道已把跨机通信压到噪声级。
+- **未测 TAG**（运维令规划的 qps1 / maxnch32 / algo×proto / gdr2·3 / hca_subset / cross_nic）：机制分析预测同样无收益，本轮未消耗 16 卡重跑（纯写作零 GPU）。
+
+> 📄 **完整报告**：`reports/report_pretrain_dualnode_throughput_zh.html`（中文 HTML，单文件自包含，rev1；生成器 `run/gen_dualnode_throughput_report.py`）。含 §1 摘要 / §2 环境 / §3 扩展性主结果 / §4 精度消融 / §5 Task B 全表 / §6 机制解释 / §7 单机对照 / §8 剩余优化项 / §9 复现命令 / §10 数据溯源 + #767 误报纠正记录。
 
 
