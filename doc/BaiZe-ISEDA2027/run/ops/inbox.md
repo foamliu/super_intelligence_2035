@@ -1,5 +1,62 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 199 | TARGET: 29 -->
+## RUN_ID 199 — 🗑 **删除 32 个无法与下载目录对应的分词产物**（l3_s 28 + math_s 4 · 用户直令 11:5x）
+
+```bash
+set -u
+echo "=== RUN_ID 199 | DELETE 32 uncovered shards | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+T=/nas_train/app.e0031982/datasets/baize-data/text
+JUD=$R/run/data/prune_unmapped_judgment_20261025.tsv
+OUT=$R/run/data/prune_unmapped_uncovered_20261025.txt
+
+echo "[1] 从判定表取 uncovered(保留) shard 名单"
+awk -F'\t' 'NR>1 && $11 ~ /保留/ {print $1}' "$JUD" | sort > /tmp/_u32.txt
+echo "  名单数=$(wc -l < /tmp/_u32.txt)  env14命中=$(grep -c '^env14' /tmp/_u32.txt || true)"
+echo "  $(tr '\n' ' ' < /tmp/_u32.txt)"
+
+echo "[2] 删除前基线"
+du -sb "$T" | awk '{printf "  baize-data/text = %s B (%.2f TB)\n", $1, $1/1e12}'
+ls "$T"/*.bin 2>/dev/null | wc -l | awk '{print "  .bin 数 = " $1}'
+
+echo "[3] 先落清单（先写后删）"
+{
+  echo "# prune_unmapped_uncovered_20261025.txt — 32 uncovered shard (operator 2026-10-25 11:5x)"
+  echo "# rule: manifest->staging_r3 已废弃, 无法与现存下载目录建立产物级对应 => 删除; env14 & /nas_env/full_* untouched"
+} > "$OUT"
+tot=0; n=0
+while read -r s; do
+  [ -z "$s" ] && continue
+  for ext in bin idx json; do
+    f="$T/$s.$ext"
+    if [ -f "$f" ]; then
+      b=$(stat -c %s "$f")
+      printf "%s\t%s\n" "$f" "$b" >> "$OUT"
+      tot=$((tot+b)); n=$((n+1))
+    fi
+  done
+done < /tmp/_u32.txt
+echo "  待删文件=$n 字节=$tot"
+
+echo "[4] 执行删除"
+while read -r s; do
+  [ -z "$s" ] && continue
+  rm -f "$T/$s.bin" "$T/$s.idx" "$T/$s.json"
+done < /tmp/_u32.txt
+
+echo "[5] 删除后核验"
+du -sb "$T" | awk '{printf "  baize-data/text = %s B (%.2f TB)\n", $1, $1/1e12}'
+ls "$T"/*.bin 2>/dev/null | wc -l | awk '{print "  .bin 数 = " $1}'
+ls "$T"/env14_*.bin 2>/dev/null | wc -l | awk '{print "  env14 .bin = " $1 " (应=110)"}'
+for d in /nas_env/app.e0031982/baize-data/full_*; do
+  printf "  %-28s .bin=%s\n" "$(basename "$d")" "$(ls "$d"/*.bin 2>/dev/null | wc -l)"
+done
+df -h /nas_train | tail -1
+echo "=== DONE 199 ==="
+```
+
+
 <!-- RUN_ID: 197 | TARGET: 29 -->
 ## RUN_ID 197 — 🔍 只读：data agent 10:25 唤醒后正在做什么（loop 子进程 + 日志尾）
 
