@@ -21925,3 +21925,111 @@ echo "=== DONE 209 ==="
   OCR 报告 NOT FOUND
 === DONE 209 ===
 ```
+
+---
+
+## RUN_ID 210 · 2026-10-25 22:02:21 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+echo "=== RUN_ID 210 | probe | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] loops"
+pgrep -af 'baize_.*_loop\.sh|ops_relay\.sh' | cut -c1-120 || echo "  (NO LOOP RUNNING)"
+for l in vision pretrain data harness; do
+  f=/tmp/baize_${l}_loop.log
+  [ -f "$f" ] && { echo "  -- $l log mtime $(stat -c '%y' "$f" | cut -c1-19)"; tail -2 "$f" | cut -c1-150; } || echo "  -- $l : no log"
+done
+echo "[2] pretrain grid"
+tail -12 /tmp/baize_seqlen_grid/ALL_RESULTS.txt 2>/dev/null || echo "  no ALL_RESULTS"
+ls -d /tmp/baize_seqlen_grid/*/ 2>/dev/null | tr '\n' ' '; echo
+pgrep -af 'seqlen_grid' | cut -c1-120 || echo "  (no grid proc)"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[3] harness rerun"
+pgrep -af 'harbor' | cut -c1-90 || echo "  (no harbor)"
+docker ps -q 2>/dev/null | wc -l | sed 's/^/  docker_running=/'
+for d in /tmp/tb_7x89/jobs_hermes_rerun_20261025 /tmp/tb_7x89/jobs_claude-code_rerun_20261025; do
+  [ -d "$d" ] && echo "  $d reward=$(find $d -name reward.txt | wc -l) pass=$(find $d -name reward.txt -exec cat {} \; 2>/dev/null | grep -c '^1')" || echo "  MISSING $d"
+done
+tail -2 /nas_train/app.e0031982/harness/swebench_verified_pull_progress.txt 2>/dev/null
+echo "[4] data"
+tail -2 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-150
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true) text_bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)"
+ls -l "$R/run/data/DATA_MAPPING.md" "$R/run/data/disk_cleanup_candidates_20261025.tsv" 2>/dev/null | awk '{print "  "$5"B "$9}'
+df -h /nas_train | tail -1
+echo "[5] vision/data 交付物"
+ls -l "$R/reports/report_vision_ocr_sft_plan_zh.html" "$R/reports/report_pretrain_seqlen_throughput_zh.html" 2>/dev/null | awk '{print "  "$5"B "$9}' || echo "  (not yet)"
+echo "[6] git"
+cd "$R/.." 2>/dev/null; cd "$R"; git log -3 --format='  %h %ad %s' --date=format:'%H:%M' | cut -c1-120
+echo "=== DONE 210 ==="
+```
+
+**输出**
+```
+=== RUN_ID 210 | probe | 2026-10-25 22:02:21 | host=whag0pgpuap29 ===
+[1] loops
+149784 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.c
+290429 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e00
+290588 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.c
+1401353 bash ./baize_pretrain_loop.sh
+2585867 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+  -- vision : no log
+  -- pretrain log mtime 2026-10-25 21:47:03
+[loop] 2026-10-25 21:46:03 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-10-25 21:47:03 wake up, invoking cline ...
+  -- data : no log
+  -- harness log mtime 2026-10-25 21:46:26
+[push] push OK.
+[loop] 2026-10-25 21:46:26 WAITING=1 (async task running) → sleep 1800s
+[2] pretrain grid
+# Recipe: DP16/TP1/PP1 + FP8 tensorwise + CUDA Graphs + real data (e18 identical)
+# Baseline ref: seq=4096 / 4,128,768 tok/step / DP16 e18 = 606,449 tok/s
+# Single variable = seq; same 16 p5b_l3 shards for all 6 configs
+# cols: label group seq mbs gbs accum tok_per_step status tok/s step/s med_ms per_gpu_tok/s peak_mem_MiB loss gnorm nan
+cfg1 S1 8192 2 256 8 2097152 OK 108291 0.052 19365.9 6768 81087 7.5645 0.6263 0
+cfg2 S2 8192 2 512 16 4194304 OK 111897 0.027 37483.7 6993 81085 7.5357 0.4238 0
+cfg3 S1 16384 1 128 8 2097152 OK 112094 0.053 18708.9 7005 81087 7.5811 0.4882 0
+cfg4 S2 16384 1 256 16 4194304 OK 121495 0.029 34522.4 7593 81079 7.5732 0.5023 0
+cfg5 S1 32768 1 64 4 2097152 FAIL - - - - 81031 - - -
+cfg6 S2 32768 1 128 8 4194304 FAIL - - - - 81031 - - -
+
+# GRID COMPLETE @ 2026-10-25 21:46:04
+/tmp/baize_seqlen_grid/cfg1/ /tmp/baize_seqlen_grid/cfg2/ /tmp/baize_seqlen_grid/cfg3/ /tmp/baize_seqlen_grid/cfg4/ /tmp/baize_seqlen_grid/cfg5/ /tmp/baize_seqlen_grid/cfg6/ 
+149784 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.c
+290429 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e00
+290588 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.c
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[3] harness rerun
+924449 docker compose --project-name code-from-image__wdvjac4__env --project-directory /ho
+924475 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name code-from-ima
+1302462 docker compose --project-name constraints-scheduling__nqcpgsk__env --project-direc
+1302588 /usr/libexec/docker/cli-plugins/docker-compose compose --project-name constraints-
+2573271 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.loc
+3338432 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.loc
+  docker_running=2
+  /tmp/tb_7x89/jobs_hermes_rerun_20261025 reward=7 pass=5
+  /tmp/tb_7x89/jobs_claude-code_rerun_20261025 reward=6 pass=2
+[4] data
+[2026-10-25 21:57:47] done=94/131 running=37 pending=0 giveup=0 tokens=150155374778 bin_bytes=600621499112 | tokens/s=5223704 cpu=3699% ETA=11314s
+[2026-10-25 22:00:07] done=94/131 running=37 pending=0 giveup=0 tokens=150155374778 bin_bytes=600621499112 | tokens/s=5198385 cpu=3699% ETA=11369s
+  preprocess=37 text_bin=241
+  10272B /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/DATA_MAPPING.md
+  44489B /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/disk_cleanup_candidates_20261025.tsv
+10.239.23.31:/vol_CTE0_data01  207T  173T   35T  84% /nas_train
+[5] vision/data 交付物
+  22706B /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_vision_ocr_sft_plan_zh.html
+[6] git
+  672b61a57 22:02 ops 22:1x: 更正 pretrain 归因-非超线性而是4096->8192阶跃后平台(8192/16384同速~110K), 
+  bf46e2167 22:01 Merge remote-tracking branch 'origin/main'
+  0c4957203 22:01 ops 22:0x: 投 RUN_ID 210 只读探针(四线静默1.4h: loop存活/网格进度/复跑计数/分词�
+=== DONE 210 ===
+```
