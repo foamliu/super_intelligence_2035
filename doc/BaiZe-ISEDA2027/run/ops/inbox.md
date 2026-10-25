@@ -1,9 +1,34 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 193 | TARGET: 29 -->
-## RUN_ID 193 — 📦 只读：data 线实时快照（85M / 分词产物 / 迁移产物 / 磁盘 / 新令是否已执行）
+<!-- RUN_ID: 194 | TARGET: 29 -->
+## RUN_ID 194 — 🔎 只读：data loop / 85M 下载 是否还活着（本机 + .12）
 
 ```bash
+set -u
+echo "=== RUN_ID 194 | data agents liveness | $(date '+%F %T') | host=$(hostname) ==="
+
+for h in local 12; do
+  echo "--- $h ---"
+  if [ "$h" = local ]; then C="bash -lc"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 bash -lc"; fi
+  $C 'echo "  loops:"; pgrep -af "baize_data_loop|baize_.*loop" | cut -c1-95 | head -4 || echo "   none";
+      echo "  dl:"; pgrep -af "hf download|download_85m|hf_transfer|resolve.py" | cut -c1-95 | head -3 || echo "   none";
+      echo "  tokenize:"; pgrep -fc preprocess_data 2>/dev/null || echo 0;
+      echo "  agent:"; pgrep -af "cline|opencode" | grep -v grep | cut -c1-90 | head -2 || echo "   none"' 2>/dev/null || echo "   ssh failed"
+done
+
+echo "[3] 85M 最近写入时间（判断是否还在下）"
+M=/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M
+find "$M" -name '*.parquet' -newermt '-30 minutes' 2>/dev/null | wc -l | sed 's/^/  last30min_new_parquet: /'
+ls -lt "$M" 2>/dev/null | head -3 | awk '{print "  "$6,$7,$8,$9}'
+echo "[4] data 日志尾部"
+for f in /tmp/baize_data_loop.log /tmp/85M_dl_parallel.log /tmp/run_tokenize_env14_fullsource.log; do
+  [ -f "$f" ] && { echo "  == $f  ($(date -r "$f" '+%m-%d %H:%M'))"; tail -3 "$f" | cut -c1-140; }
+done
+echo "=== DONE 194 ==="
+```
+
+
+```text
 set -u
 echo "=== RUN_ID 193 | DATA live snapshot | $(date '+%F %T') | host=$(hostname) ==="
 T=/nas_train/app.e0031982/datasets/baize-data/text
