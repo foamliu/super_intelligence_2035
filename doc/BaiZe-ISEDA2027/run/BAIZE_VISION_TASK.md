@@ -10,6 +10,7 @@
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
 ### [运维令] 2026-10-25 22:4x（生成 1000 万 OCR 图文对，供后续 vision encoder 预训练）· 用户直令 · 最高优先
+> ✅ **DONE (wake #275, 2026-10-26 04:0x；wake #276, 05:22 复核完整性)**：全量 10M OCR 图文对已生成并交付到 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full/`。ok=9,999,999 / fail=0 / 2000 shard tars + preview_10k.tar / 470GB(0.5046TB) / 893.6 img/s / 3h6m30s · 8 类 cat_counts==plan(math 999,999) · 加载器兼容已验（真 `build_gpic_loader(caption_type='short')` 读 8 shard→(16,3,224,224) finite）。交付物：index.jsonl(9.999M行) + STATS + VALIDATION + DATASET_CARD + MANIFEST(2000行) + preview_200.html + preview_10k.tar + 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B/8节/0 script/0外链) + 5 脚本 `vision/ocr_synth/*.py` + EXPERIMENTS §18。**两处质量偏差如实记录（未掩盖）**：①文本 SHA1 去重 2.4486%>1% 目标（dup_pass=false，留 9,755,141 唯一 / 244,858 多余；合成文本组合空间有限所致）；②泄漏 113 命中（leak_rate=1.16e-5，短串巧合如 0.29→029 非真实泄漏；内联护栏路径错为空操作，真实复检读 OCRBench/DocVQA/ChartQA parquet；InfoVQA parquet 未找到）。**待用户裁定**：接受 / index 过滤补救（留 9,755,141 唯一）/ 扩语料重生成。本轮只造数据不启 encoder 训练（等用户批预算）。
 > 用户原话：「vision：生成10M OCR 数据试试，图文对，我后边把它用在vision encoder预训练里边。」
 > 用途变了：这批数据给 **encoder 预训练（CLIP / AIMv2-style 图文对比）**，不是 MLLM OCR 专项 SFT；所以**格式必须能被现有 `run/vision/data.py` 混合加载器直接吃**（GPIC 走 json-caption、CC12M 走 txt-caption）。
 
