@@ -1,5 +1,89 @@
 ## 归档 2026-10-25（由 BAIZE_PRETRAIN_2B_TASK.md 搬入，原文未改）
 
+### 🚀 运维指令 · 2026-10-24 16:0x（**① 305K 最佳实践写入任务书 ② longctx 报告用错模型：重测重写**）· 用户直令 · 最高优先
+
+> 用户原话：「1. 把第二轮最佳：**MBS3+FP8 TW+CG=305K tok/s（+2.6% vs 第一轮 / +21.0% vs 基线）**作为**最佳实践简要写入任务书**；2. 早上提交的 `report_pretrain_longctx_infer_cost_3x2b_zh.html` **有问题，BaiZe-2B 不应该采用 Xmodel-2.5 模型，而是应该沿用一直实验的 BaiZe-2B (Mamba2-hybrid）模型。重新测试，重写报告。**」
+
+---
+
+**① 最佳实践（写入本任务书「💡 最佳实践 / 硬口径」区，常驻）**
+
+> **BaiZe-2B 训练吞吐最佳配置（2026-10-24 第二轮定档，勿再重复扫描）**
+> - **配置**：`MBS3 + FP8 tensorwise + CUDA Graphs`（即 e18）
+> - **吞吐**：**305K tok/s**
+>   - **+2.6%** vs 第一轮最佳 e09（297K）
+>   - **+21.0%** vs 基线 252K / **+22.5%** vs 历史 249K
+> - **关键机理**：FP8 tensorwise **单独用反而 -10%**（Mamba2 SSM 小 GEMM 的量化 kernel launch 开销 > 计算节省）；**必须叠加 CUDA Graphs** 让量化 kernel 被图捕获，FP8 带宽收益才释放。
+> - **显存**：MBS3 下需确认峰值；80GB 内已知可行。
+> - **上限已确认 = 305K**（5 条依据闭合：VRAM / 计算（GPU 100%）/ 通信（NCCL 无收益）/ 软件栈（compile 崩溃）/ FP8 blockwise 驱动级阻塞）。
+> - **CUDA 12.9 不可用**：驱动 570.195.03 最高支持 12.8，12.9 需驱动 ≥575 → **驱动级 BLOCKED**（即使新建 conda env 也不行），升级需 root。
+> - 🚫 后续全量预训练**直接用 e18 配置**，不必再扫吞吐。
+
+---
+
+**② longctx 报告重测重写（核心问题）**
+
+**问题定位（运营方已核实报告内容）**：当前报告的"BaiZe-2B"写的是：
+```
+BaiZe-2B ~1.35B
+架构 LlamaForCausalLM (由 XmodelForCausalLM 转换)   ← ❌ 错
+层数 48 / hidden 1536 / 24 heads / GQA 8 KV / vocab 129,280 / 权重共享
+来源 自有模型 decay-5000 (Xmodel-2.5-code)          ← ❌ 错
+```
+**这是 Xmodel-2.5 的 Dense 架构（decay 后转换），不是 BaiZe-2B。**
+
+**BaiZe-2B 的真实规格**（必须以此为准）：
+- **架构：Mamba2-hybrid**（56 层 = 28 SSM + 28 Attention，hidden=2048，heads=16，**真实参数量 2.220B**）
+  - ⚠️ **口径订正（历史遗留错误）**：**不是 3.00B**。`3.00B` 来自 mcore 打印 `transformer layers 2.47 + embedding 0.53`，该打印**对 Mamba/hybrid 误把 56 层全按 full attention+MLP 计**。真实值以 `sum(numel())` = **2,220,268,032 = 2.220B** 为准（见 `EXPERIMENTS_2B.md` L7、`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L79）。
+  - **对比参照**：MiniCPM5-2B 实测 **2.512B**（transformer 1.98B + embedding 0.53B，tie=False 双嵌入）⇒ **BaiZe 反而更小**（2.220B < 2.512B）。**报告中若做对比，必须写"BaiZe 参数量更小的前提下达到/超过"**，这是加分点，不要写反。
+- **不是 Dense Transformer，不是 XmodelForCausalLM**
+- 模型路径请从 Baize-ISEDA2027 里**实际训好的 BaiZe-2B 权重**取（`nemo_experiments/` 下与 pretrain_launcher `--arch mamba2` 对应的产物）
+
+**重测要求**
+1. **确认模型**：加载前打印 `arch` / 层类型统计（SSM vs Attention 层数）/ 参数量，**贴在报告里**，证明是 Mamba2-hybrid。
+2. **SGLang 支持性核查**：Mamba2-hybrid 在 SGLang 0.5.9 下是否有专门支持（mamba backend / `--mamba-ssm-dtype`）？**若需特定 flag 或版本，先报再测**；若确实不支持，如实写"该架构在 SGLang 下不可服务"而不是拿 Dense 模型顶替。
+3. **三模型同口径重测**：BaiZe-2B(Mamba2-hybrid) / MiniCPM5-2B / Qwen3.5-2B，**同样的上下文阶梯 64K→2M、同样的测量协议**（1 预热 + 2 次取中位、生成 128 tok、`--disable-radix-cache`、mem-fraction 0.88）。
+4. **关键对比维度（Mamba2 的意义就在这）**：
+   - **KV cache 增长曲线**：Mamba2 只有 Attention 层有 KV（28/56 层），**显存增长应显著慢于 Dense**
+   - **TTFT / Decode 吞吐随上下文的退化斜率**
+   - **能服务的最大上下文**（谁先 OOM）
+5. **必须加一节"架构差异说明"**：讲清 Mamba2-hybrid 的 SSM 层是**常数状态**（不随上下文增长），这是它与 Dense 在长上下文成本上的**结构性差异**——这正是本报告的价值所在。
+
+**③ 交付**
+- 重写 `reports/report_pretrain_longctx_infer_cost_3x2b_zh.html`（**覆盖旧版，旧版先备份为 `.bak`**）
+- 报告中**必须写明**："旧版误用 Xmodel-2.5 Dense ckpt，本版改用 BaiZe-2B (Mamba2-hybrid) 重测"
+- 数据可溯源：每个数字对应 `logs/` 或 `/tmp` 中的原始测量文件
+- commit 前缀 `pretrain report:`
+
+**④ 纪律**
+- 🚫 不再扫吞吐（305K 已定档）
+- 🚫 不动 vision（`.12`）/ 不改 5 源分词产物
+- ✅ 每轮落 MEMORY + daily
+
+
+
+> 📦 §运维令·2026-10-24 09:3x（放行继续优化吞吐）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：R2c完成,e18=305K定档,7/7建议闭合。需要时再读。
+
+> 📦 §运维指令·2026-10-23 22:1x（优化吞吐>249K）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：10/10候选完成,297K→305K新纪录,HTML报告已交付。需要时再读。
+
+> 📦 §运维指令·2026-10-23（长上下文推理成本评测3模型）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Qwen3.5-2B独享1M上下文最快,HTML报告已交付。需要时再读。
+
+> 📦 §运维指令·2026-10-23（decay修复中文HTML报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：decay-5000官方μP+Muon修复,CS8=58.97%,报告已交付。需要时再读。
+
+> 📦 §运维指令·2026-10-22 13:5x（decay 5000步+MBS5排障）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：decay=5000步,MBS5+recompute排障,官方1113.sh口径。需要时再读。
+
+> 📦 §运维指令·2026-10-22 08:5x（decay参考官方1113.sh+20B）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：参考官方train_decay_fp8_1113.sh,20B数据,5560步。需要时再读。
+> 📦 §2026-10-09:3x（写两份中文 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：两份报告已交付（v2_result + short_experiment, commit c44ef1fea）。需要时再读。
+
+> 📦 §2026-10-02:3x（授权自主排查根因）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：L1 CS8=59.03% / L2 kill@step2370 / L3 作废，方向转 A方案官方 Megatron。需要时再读。
+
+> 📦 §2026-10-21:5x（decay v2 对照口径纠错）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v2 CS8=44.97% vs 官方 65.40% Δ−20.43pp，起点 61.03%⇒decay 训坏。需要时再读。
+
+> 📦 §2026-10-14:2x（评测 decay v2 final）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：14集eval CS8=44.97%/CX6=6.21%，报告已交付。需要时再读。
+
+> 📦 §2026-10-06:1x（事故复盘报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：crash@02:45 NCCL timeout→resume step_18000→收尾，P0-a/b 已落地，硬件=transient。需要时再读。
+
+
 ### 🚀 运维令 · 2026-10-24 23:5x（**双机已调通 ⇒ 转入「双机吞吐优化」阶段**）· 用户直令 · 最高优先
 > **已调通（23:22–23:37，16 卡 DP=2×8，`baize_dualnode_16gpu_test.sh`）**：median **512,801 tok/s** / mean 508,860 / **扩展效率 84.0%** / 每卡 32,050 / 峰值显存 **64.4 GB** / loss 0.3695 / gnorm 0.72 / **0 NaN、0 skip**；NCCL 走 `NET/IB/0,2,6…` 多通道。
 > ⚠️ **口径陷阱**：这次是 **BF16 mixed + `--mock` 数据**，而单机基线 305,098 是 **FP8 tensorwise + CUDA Graphs + 真数据** ⇒ 84% 只能证明"IB 健康"，**不能**直接当扩展效率结论。
