@@ -1,15 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 **2026-10-25 21:28 #781：⏳ 网格监控·cfg1✅cfg2✅cfg3✅cfg4🏃(step50/80,~34s/步,ETA~21:42)·生成器脚本已落(WIP)·未完成指令:有⇒WAITING=0**：
-> - **进度**（`/tmp/baize_seqlen_grid/ALL_RESULTS.txt` 已3格OK）：cfg1✅S1 seq8192/2.10M=**108,291**tok/s per_gpu6,768 peak79.2GB loss7.56 gnorm0.63 nan0；cfg2✅S2 seq8192/4.19M=**111,897** per_gpu6,993 peak79.2GB loss7.54 gnorm0.42 nan0；cfg3✅S1 seq16384/2.10M=**112,094** per_gpu7,005 peak79.2GB loss7.58 gnorm0.49 nan0（**S1组seq8192→16384吞吐+3.5%略升**：MBS2→1减launch抵消SSM成本增长）；cfg4🏃S2 seq16384/4.19M step50/80 稳态~34s/步 ETA~21:42 peak79.2GB **0OOM/0NaN** 健康。
-> - **关键发现**：基线e18 seq4096/4.13M=**606,449**tok/s per_gpu**37,903** ⇒ seq4096→8192 per-GPU崩**82.1%**（37,903→6,768，~5.5×），**Mamba2 SSM扫描成本随seq超线性增长是吞吐崩塌主因（已实测印证）**；S2(4M)per_gpu6,993>S1(2M)6,768=累积更多摊薄launch/comm。
-> - **本轮交付（prep，非最终）**：生成器`run/gen_seqlen_throughput_report.py`已落（440行，数据字典写顶部=3OK+3PENDING，8节中文HTML模板+config明细表+OOM策略+机制实测支撑+结论；`py_compile`✓，`render()`✓；selfcheck≥15KB**故意挡住WIP部分报告**——全6格完填3值即过→确定性重生成diff空）。**未生成HTML**（铁律禁空格/NA）。
-> - **编排器健康**：PID981105（ppid=1,etime2.4h真守护）串行cfg1..6，每格`release_gpus`释放16卡；cfg4后自动起cfg5/6(seq32768,MBS已1→预计OOM→标OOM峰值显存→手动跑`--recompute-activations`回退作"配方变更组"不混主表)。
-> - **未完成指令：有**（17:5x网格：cfg4-6待跑完+OOM回退；报告HTML+EXPERIMENTS新节未交）⇒ **WAITING=0**。
-> - **下一步**：下唤醒查ALL_RESULTS.txt；cfg4完~21:42→cfg5起；cfg5/6若OOM→手动`--recompute-activations`回退跑→填GRID数据字典+RECIPE_CHANGE→run生成器(过15KB)→HTML+EXPERIMENTS新节「seq长度x tok/step吞吐网格」+daily；commit前缀`pretrain seqlen:`（只add本次文件）。
+> 🆕 **2026-10-25 22:40 #782：🔬 cfg0a对照已证伪"seq=8192致慢"假设→真因指向tok/microbatch/GPU=16384(非seq)·17:5x报告已交付commit233c47d0e·cfg0b基线复现🏃·未完成指令:有⇒WAITING=0**：
+> - **🔥 决定性发现（cfg0a 稳态 iter30 确认）**：cfg0a(seq4096/mbs4/gbs512/accum8→tok/step2.10M→**16384 tok/microbatch/GPU**)=稳态18.5s/步→**113,514 tok/s**；cfg1(seq8192/mbs2/→同样**16384 tok/microbatch/GPU**)=108,291 tok/s。**同 tok/step(2.10M)、同 tok/microbatch(16384)，seq4096 vs seq8192 吞吐几乎相同(113K≈108K)** ⇒ **seq 长度不是 5.6× 掉速的成因**（#781"SSM超线性"结论已证伪，待 cfg0b 终确认）。真因指向 **tok/microbatch/GPU 从基线12288(mbs3×4096)→16384 触发的性能悬崖**（同 seq4096 下 mbs3→mbs4 掉 ~5.3×），或 gbs/accum 配置差。**这正面回答用户疑问：Mamba2-hybrid 跑 seq=8192 本不应慢**。
+> - **17:5x 已交付（commit 233c47d0e pushed）**：`reports/report_pretrain_seqlen_throughput_zh.html`(16774B/0script/0外链/8h2)+生成器`run/gen_seqlen_throughput_report.py`(**重生成diff空=确定性✓**)+EXPERIMENTS新节「seq长度x tok/step吞吐网格」(6格表+发现+结论)+cfg0a/cfg0b对照脚本`baize_seqlen_ctrl_test.sh`。cfg1-4 OK(108K/112K/112K/121K)、cfg5/6 OOM@32768(peak81GB)。
+> - **20:2x 进度**：①Web对标完成(Qwen3/Qwen2.5均4K预train；Llama3 8K但非hybrid；Megatron docs建议CP>8K；PyTorch博客"Mamba2 kernel fusion"1.5-2.5×加速→我们可能走未融合SSD路径)②日志实证(CUDA Graph 4096/8192同样启用排除H2；step time CV~2%稳定排除H1数据饥饿；config dump确认4Attn+24Mamba2+28MLP、SP=false/CP=1)③**cfg0a✅113.5K确认**(推翻seq假设)④**cfg0b🏃运行中**(seq4096/mbs3/gbs1008=基线配方同脚本复现，判据:若≈606K→基线真实+grid因tok/microbatch=16384慢;若≈113K→基线606K来自不同setup)。H6/H7 module-level profile 仍待(cfg0b后)。
+> - **下一步**：下唤醒①查`/tmp/baize_seqlen_ctrl/ALL_RESULTS.txt`收cfg0a终值+cfg0b；②判cfg0b(606K or 113K)定结论；③建`run/gen_seq8192_rootcause_report.py`+生成`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`(≥15KB自包含:H1-H7假设表+web引用+cfg0a/cfg0b对照+时间分解+token/microbatch悬崖机制)；④修#779"SSM超线性"→"已证伪·真因tok/microbatch悬崖"；⑤commit前缀`pretrain rc:`(只add本次文件)。
+> - **未完成指令：有**（20:2x 根因报告 HTML 未交）⇒ **WAITING=0**。cfg0a/cfg0b 后台 setsid 运行(`/tmp/baize_seqlen_ctrl/`)，跨唤醒存活。
+> 📦 §#781 流水（2026-10-25 21:28，cfg4跑完6格网格收尾+生成器落盘）已压缩 → daily-memories/2026-10-25.md；**结论**：6格全测完(cfg1-4 OK/cfg5-6 OOM@32768)，生成器确定性✓；其"SSM超线性"结论已被#782的cfg0a对照证伪。需要时再读。
 > 📦 §#780 流水（2026-10-25 20:33，网格监控 cfg1✅cfg2✅cfg3🏃）已压缩 → daily-memories/2026-10-25.md；**结论**：cfg1-3=108K/112K/112K，seq4096→8192 per-GPU崩82%，编排器自治。需要时再读。
-> 📦 体积：TASK=28.2 KB / MEMORY≈30.7 KB（均 ≤32KB ✓；本轮零归档，#780详块→1行指针）。
+> 📦 体积：TASK=28.2 KB / MEMORY≈30.8 KB（均 ≤32KB ✓；本轮归档 #781 详块→1行指针+daily原文）。
 > 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
 
 
