@@ -6,19 +6,19 @@ WAITING: 1
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
 > 🟢 **✅ 迁移5/5源全DONE（唤醒641@22:3x确认/唤醒647@05:56复核）**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删,迁移日志21:42:28 END)；运维令18:1x迁移提速已由中继执行完成(.last_run_id=162>158⇒中继已执行,无需agent代执行)。
-> 🟢 **✅ 85M降优先级后台跑(9014/12126=74.3%,+24自648,活跃下载~1.3it/s,低优先级符合用户令)**。
-> 🟢 **✅ /nas_env: df 4.2T已用/5.8T可用(43%)；/nas_train: 176T已用/32T可用(85%)**。
+> 🟢 **✅ 85M降优先级后台跑(9273/12126=76.5%,+259自657,1.53it/s,低优先级符合用户令)**。
+> 🟢 **✅ /nas_env: df 4.2T已用/5.8T可用(43%)；/nas_train: 174T已用/34T可用(84%)**。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅prune早期重复shard+✅tokenized镜像布局建成(716shard/3342.49B)+✅删32不可映射staging目录(运维令18:2x终裁)+✅DATA_MAPPING.md脚本化(运维令18:5x①,gen_data_mapping_md.py幂等)+✅磁盘清理候选清单+batch1(运维令18:5x②)+✅DATA_MAPPING.md清理记录指针(运维令18:5x③,C节含batch1/batch2表)+▶️未分词4源分词中(94/131,71.8%)
+PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅prune早期重复shard+✅tokenized镜像布局建成(716shard/3342.49B)+✅删32不可映射staging目录(运维令18:2x终裁)+✅DATA_MAPPING.md脚本化(运维令18:5x①,gen_data_mapping_md.py幂等)+✅磁盘清理候选清单+batch1(运维令18:5x②)+✅DATA_MAPPING.md清理记录指针(运维令18:5x③,C节含batch1/batch2表)+▶️未分词4源分词中(94/131,71.8%,37大shard活跃写,ETA~3.6h→~02:20 10-26)
 已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅prune早期重复shard(78删/释放3.69TiB); ✅迁移5/5源全DONE(→/nas_env,full_*为symlink); ✅tokenized镜像布局建成(10目录/716shard/3342.49B,hardlink同盘+symlink跨盘,VERIFY triplet+inode ALL OK); ✅删32不可映射staging_r3目录(运维令18:2x,实测=471.6KB符号链接非1.89TB,留档deleted_unmapped32_*.tsv/summary.md+DATA_MAPPING.md B节); ✅DATA_MAPPING.md脚本化(运维令18:5x①,gen_data_mapping_md.py,14列含下载目录字节+下载/分词字节比,--check-idempotent run1==run2 PASS,A节716shard+B节32已删除,单一事实源); ✅磁盘清理候选清单(disk_cleanup_candidates_20261025.tsv 228行,gen_disk_cleanup_candidates.py,37孤儿.bin正确判保留=活跃分词输出非崩溃残留); ✅batch1清理(78 staging_r3符号链接目录+1 .bak+1空目录+1旧/tmp日志,实占释放~1.13MB,镜像716不变/悬空0/分词未受影响); ✅DATA_MAPPING.md清理记录指针(运维令18:5x③,新建cleanup_batches_20261025.tsv侧车+gen_data_mapping_md.py读侧车渲染C节清理记录表batch1 DONE 1,132,338B/batch2 PENDING,幂等PASS)
-当前动作:     唤醒657(2026-10-25 21:2x)：补完运维令18:5x③收尾——DATA_MAPPING.md C节缺「清理记录」指针→新建cleanup_batches_20261025.tsv侧车(batch1 DONE 1,132,338B+batch2 PENDING 0B)→改gen_data_mapping_md.py加load_cleanup_batches()+C节渲染清理记录表→重跑生成器(--check-idempotent run1==run2=True)→分词健康巡检(94/131,37 running,ufw_en .bin mtime 21:28活跃写入,cpu 3696%,ETA~3h,大shard未完成非卡死)
-下一步:       ①等分词跑完(done=94/131,ETA~3h,37个ufw_en大shard~45GB each)→重跑build_tokenized_mirror.py把新shard hardlink进镜像→清空mapping_inprogress.txt→重跑gen_data_mapping_md.py(A节7-10行翻镜像完整)②batch2是否清110 env14 hardlink(实占0,tidy)待运维决③校验.bin=.idx+字节+num_tokens④更新DATA_LEDGER
-阻塞:         无主线阻塞;18:5x①②③全交付(batch1已清,batch2待运维决);等分词异步(done=94/131不阻塞,37大shard在写);disk充足(35T可用)
+当前动作:     唤醒658(2026-10-25 22:46)：心跳巡检——分词done=94/131未变(37大shard活跃写,ufw_en .bin mtime=22:46=NOW,size~52GB each,cpu=3696%,load55/224,giveup=0,ETA~13000s≈3.6h→~02:20 10-26);全部运维令(18:5x①②③/18:2x/17:5x)已交付;85M=9273/12126=76.5%;git behind=0/ahead=0已同步;无立即可交付的未完成指令→写心跳+WAITING=1等分词异步
+下一步:       ①等分词跑完(done=131/131,判据=日志done=131/131或进程数=0,ETA~02:20 10-26)→重跑build_tokenized_mirror.py把新shard hardlink进镜像→清空mapping_inprogress.txt→重跑gen_data_mapping_md.py(A节7-10行翻镜像完整)②校验.bin=.idx+字节+num_tokens+悬空=0③更新DATA_LEDGER §0④batch2是否清110 env14 hardlink(实占0,tidy)待运维决
+阻塞:         无主线阻塞;18:5x①②③+18:2x+17:5x全交付;分词异步阻塞wrap-up(done=94/131→131/131,ETA~3.6h,指令本身deferred到分词跑完);disk充足(34T可用);85M低优先级后台跑76.5%
 ERROR_COUNT:  9
 ```
 
@@ -26,6 +26,8 @@ ERROR_COUNT:  9
 
 ## 📋 本唤醒流水
 > [21:2x] 唤醒657：补完运维令18:5x③收尾（DATA_MAPPING.md C节缺「清理记录」指针）→新建cleanup_batches_20261025.tsv侧车(batch1 DONE 1,132,338B+batch2 PENDING 0B,确定性历史记录)→改gen_data_mapping_md.py加CLEANUP_TSV_DEFAULT常量+load_cleanup_batches()函数+--cleanup-tsv参数+C节渲染清理记录表→重跑生成器(DATA_MAPPING.md 10272B,--check-idempotent run1==run2=True exit0)→分词健康巡检(done=94/131 running=37,ufw_en 32.bin mtime 21:28:56活跃写入~45GB each,0 .idx=37大shard未完成非卡死,cpu 3696%,ETA~3h,39进程>0,日志21:26有进度)→staging_r3 batch1后=1,462,308B/0子目录(78全清)→未完成指令：无（18:5x①②③全交付；batch2=110 env14 hardlink实占0待运维决；分词异步done=94/131完成后做mirror rebuild+DATA_MAPPING刷新）
+> [22:46] 唤醒658：心跳巡检——分词done=94/131未变(running=37,pending=0,giveup=0,37大shard=32ufw_en+4ufw_zh+1ultrax活跃写,ufw_en .bin mtime=22:46:13=NOW size~52GB each,cpu=3696%,load55/224,tokens/s=4.5M缓降非卡死,ETA~13000s≈3.6h→~02:20 10-26,日志22:43:07有done/total进度,39进程>0)→全部运维令已交付(18:5x①②③+18:2x结案+17:5x)→85M=9273/12126=76.5%(+259自657,1.53it/s低优先级)→git fetch后behind=0/ahead=0已同步(原[behind 3]为stale tracking ref)→disk /nas_train 174T用/34T可用(84%)、/nas_env 4.2T/5.8T(43%)→MEMORY 34.2KB/TASK 38.4KB均<40KB无需归档→未完成指令：无（全部运维令已交付；分词异步done=94/131阻塞wrap-up,指令本身deferred到分词跑完done=131/131,判据=日志done=131/131或进程数=0）→WAITING=1
+
 
 > [20:1x] 唤醒656：执行运维令18:5x——①建gen_data_mapping_md.py(幂等生成DATA_MAPPING.md,14列含下载目录字节B+下载/分词字节比,A节716shard+B节32已删除,--check-idempotent run1==run2=True exit0;驱动指纹INDEX.tsv size=2888 blob-hash=1df161bf87e0 mtime=2026-10-25 14:54)→②建gen_disk_cleanup_candidates.py+候选清单disk_cleanup_candidates_20261025.tsv(228行:78 staging_r3暂存+37孤儿.bin[活跃判保留]+1 .bak+1空目录+1旧日志+110 env14 hardlink;可删191/保留37;可删表观8269GB但实占仅1.13MB[110 env14 hardlink实占0+37孤儿.bin是活跃分词输出非崩溃残留])→batch1删78 staging_r3符号链接目录(spot-check files=0/symlinks=38/bins=0)+.bak+空目录staging_full+1旧/tmp日志(留最新3)→校验(df 173T/35T不变[T粒度],staging_r3 2594646→1462308B/192→114entries,镜像.bin=716不变,悬空-xtype l=0,分词39进程健康done=94/131)→未完成指令：无（18:5x①②已交付；batch2=110 env14 hardlink实占0待运维决是否tidy；分词异步done=94/131完成后做mirror rebuild+DATA_MAPPING刷新）
 
