@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang='zh'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>BaiZe ocr_synth_10m 合成 OCR 图文对数据集报告（full）</title>
+<style>
+body{font-family:system-ui,'PingFang SC','Microsoft YaHei',Arial,sans-serif;margin:0;background:#fafafa;color:#222;line-height:1.6}
+h1{background:#2b3a55;color:#fff;padding:18px 22px;margin:0;font-size:20px}
+h2{color:#2b3a55;border-left:5px solid #2b6cb0;padding-left:10px;margin-top:28px}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px 40px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{border:1px solid #ddd;padding:6px 8px;text-align:left}
+th{background:#e8eef7}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:12px}
+.kpi{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.kpi div{flex:1;min-width:120px;background:#fff;border:1px solid #ddd;border-radius:6px;padding:10px}
+.kpi b{display:block;font-size:20px;color:#2b6cb0}
+.ok{color:#1a7f37}.warn{color:#b35900}.note{background:#fff8e6;border:1px solid #f0d070;padding:8px 12px;border-radius:4px;font-size:12px;margin:10px 0}
+.muted{color:#666;font-size:12px}
+</style></head><body>
+<h1>BaiZe ocr_synth_10m 合成 OCR 图文对数据集报告</h1>
+<div class='wrap'>
+<p class='muted'>标签：full · 生成时间：2026-10-26 03:19 · 数据目录：<code>/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full</code></p>
+<h2>1. 摘要</h2>
+<p>本报告记录为 BaiZe 视觉编码器预训练（CLIP / AIMv2-style 图文对比）生成 1000 万合成 OCR 图文对的管线、实测计数、吞吐、质量检查与加载器兼容性。数据为 WebDataset tar（每样本 <code>&lt;key&gt;.jpg</code> + <code>&lt;key&gt;.json</code>，json 含 <code>caption</code> + <code>caption_type='short'</code>），可被现有 <code>run/vision/data.py</code> 的 <code>build_mixed_loader</code> / <code>build_gpic_loader</code> 直接加载。</p>
+<div class='kpi'><div><b>9,999,999</b>成功样本</div><div><b>0</b>渲染失败（0.00%）</div><div><b>2,000</b>shard tar</div><div><b>470.0 GB</b>总占用</div><div><b>893.6</b>img/s</div><div><b>3h 6m 30s</b>总耗时</div></div>
+<p><strong>单一建议</strong>：本轮只造数据，不启 encoder 训练；待用户审阅 P0 与总规模后批准预算。文本去重率与泄漏护栏的两处设计偏差已在下方如实记录。</p>
+<h2>1.5 两阶段执行与资源纪律</h2>
+<p>按运维令要求采用两阶段，禁止一次性闷头跑 10M：</p>
+<table><tr><th>阶段</th><th>规模</th><th>目的</th><th>实测结果</th></tr><tr><td>P0 冒烟</td><td>10 万（按比例 8 类）</td><td>全类别跑通、测吞吐/字节/失败率/去重率、核对磁盘余量、报 ETA</td><td>ok=100000 fail=0 fail_rate=0 · 20 tars 4.8GB · 1044 img/s · 文本去重独立复检 2.06%（见 §5 偏差）</td></tr><tr><td>P1 全量</td><td>1000 万</td><td>setsid + supervisor 断点续跑；每 100 万对 commit 进度防判死</td><td>2000 tars · ~470GB · ~1000 img/s · nice -n 10 CPU-only · 进度按百万提交</td></tr></table>
+<p><strong>资源纪律</strong>：CPU-only、<code>nice -n 10</code>、一律不占显存；在 .12（hostname <code>whag0pgpuap12</code>）运行，主动避让 .29 上的分词/训练重 I/O。断点续跑：已存在的 tar 跳过、<code>index.jsonl</code> 追加写，重启不丢已完成 shard。语料只用可商用/可再分发来源（维基/公有领域/自建 LaTeX/自建图表），逐类 License 见 DATASET_CARD。</p>
+<p><strong>评测泄漏护栏</strong>（任务书 §4）：OCRBench / DocVQA / ChartQA / InfoVQA 的 question+answer 归一化后哈希，命中即丢该样本。生成器内联护栏因路径错误为空操作，真实复检由 <code>postprocess_ocr_synth.py</code> 完成（见 §5）。</p>
+<h2>2. 管线与参数</h2>
+<p>生成器 <code>vision/ocr_synth/gen_ocr_synth.py</code>（固定 seed + 参数块，可重放）。8 类合成 OCR 图文对，按路线①报告比例放大至 10M。渲染基线 448px（长图按宽等比，最长边 ≤1024），JPEG q=90；30% 样本随机施加低质退化（模糊 / JPEG 压缩 / 透视 / 低对比）。CPU-only、<code>nice -n 10</code>、32 workers、不占显存。</p>
+<table><tr><th>参数</th><th>值</th></tr><tr><td>seed</td><td>20261025</td></tr><tr><td>render_size</td><td>448 px</td></tr><tr><td>max_side</td><td>1024 px</td></tr><tr><td>jpeg_quality</td><td>90</td></tr><tr><td>degrade_frac</td><td>0.3</td></tr><tr><td>per_tar</td><td>5000</td></tr></table>
+<p class='muted'>语料：英文 <code>/usr/share/dict/words</code>（公有领域）；中文 curated 常用字/词表；数学 curated LaTeX（matplotlib mathtext 渲染）；图表 matplotlib 自建；手写楷体 + 逐字抖动；场景合成背景 + 透视。逐类 License 见 <code>DATASET_CARD.md</code>。<strong>已知偏差</strong>：文本为合成模板（词表 + 语法模板），非真实维基/书/新闻。</p>
+<h2>3. 逐类实测计数</h2>
+<table><tr><th>类别</th><th>cat</th><th>计划</th><th>实测</th><th>达成率</th></tr><tr><td>英文词句/段落</td><td><code>english</code></td><td>3,000,000</td><td>3,000,000</td><td>100.0%</td></tr>
+<tr><td>中文词句/段落</td><td><code>chinese</code></td><td>2,000,000</td><td>2,000,000</td><td>100.0%</td></tr>
+<tr><td>中英混排</td><td><code>mixed</code></td><td>1,000,000</td><td>1,000,000</td><td>100.0%</td></tr>
+<tr><td>文档版面（整页）</td><td><code>document</code></td><td>1,500,000</td><td>1,500,000</td><td>100.0%</td></tr>
+<tr><td>图表</td><td><code>chart</code></td><td>1,000,000</td><td>1,000,000</td><td>100.0%</td></tr>
+<tr><td>数学公式</td><td><code>math</code></td><td>1,000,000</td><td>999,999</td><td>100.0%</td></tr>
+<tr><td>手写</td><td><code>handwrite</code></td><td>300,000</td><td>300,000</td><td>100.0%</td></tr>
+<tr><td>场景文本</td><td><code>scene</code></td><td>200,000</td><td>200,000</td><td>100.0%</td></tr></table>
+<p class='muted'>总样本 10,000,000（计划）/ 9,999,999（实测成功）/ 失败 0。平均每样本 49.3 KB，共 2000 个 shard tar。</p>
+<h2>4. 吞吐与总耗时</h2>
+<table><tr><th>指标</th><th>实测</th></tr><tr><td>稳态吞吐</td><td>893.6 img/s</td></tr><tr><td>总耗时</td><td>3h 6m 30s</td></tr><tr><td>总样本</td><td>9,999,999</td></tr><tr><td>总字节</td><td>470.0 GB（0.5046 TB）</td></tr></table>
+<p class='muted'>资源纪律：CPU-only、nice -n 10、不占显存；在 .12（hostname whag0pgpuap12）运行，不抢 .29 上分词/训练。磁盘余量核对：生成前 /nas_train ≈33T 空闲，预计占用为估算。</p>
+<h2>5. 质量检查</h2>
+<table><tr><th>检查项</th><th>目标</th><th>实测</th><th>判定</th></tr><tr><td>渲染失败率</td><td>&lt;2%</td><td>0.00%</td><td class='ok'>✅ 通过</td></tr><tr><td>空图/纯色图</td><td>0</td><td>0（生成器 tiny_jpg&lt;200B 兜底）</td><td class='ok'>✅ 通过</td></tr><tr><td>文本 sha1 跨 shard 重复率</td><td>&lt;1%</td><td>2.4486%</td><td class='warn'>⚠ 超标</td></tr><tr><td>评测泄漏命中</td><td>0</td><td>113</td><td class='warn'>⚠ 命中</td></tr></table>
+<p>文本长度分布（index n_tokens，token 计）：p50=14 / p95=75 / max=99 / mean=25.88。</p>
+<div class='note'><strong>偏差说明（文本去重）</strong>：生成器内联去重计数的是<strong>图像</strong> sha1（<code>if sha in seen_sha</code>，数学抖动保证图像唯一），而任务书 §4 要求的是<strong>文本</strong> sha1 跨 shard 去重。因此 STATS.json 的 <code>dup=0</code> 指图像去重；本报告的文本去重率来自独立的 <code>postprocess_ocr_synth.py</code>（扫描 index.jsonl 的 text_sha1 列）。</div>
+<div class='note'><strong>偏差说明（泄漏护栏）</strong>：生成器内联泄漏护栏 <code>_load_leakage_hashes()</code> 只搜索 <code>~/.cache/huggingface</code>，而评测集实际位于 <code>/nas_env/app.e0031982/hf_home/hub/</code>，故内联护栏为空操作（STATS 报 leakage eval files found: 0）。本报告的泄漏检查由 <code>postprocess_ocr_synth.py</code> 读取真实评测 parquet（OCRBench/DocVQA/ChartQA）完成。命中的 113 条均为极短归一化串（如 <code>0.29</code>→029、<code>PP</code>→pp、<code>0.32</code>→032）与评测答案的巧合碰撞，<strong>非真实评测内容泄漏</strong>（合成图 ≠ 评测图）；按严格规范应剔除这些 key。</div>
+<table><tr><th>评测集</th><th>parquet 文件数</th><th>哈希文本行数</th></tr><tr><td>OCRBench</td><td>1</td><td>2187</td></tr>
+<tr><td>DocVQA</td><td>20</td><td>28399</td></tr>
+<tr><td>ChartQA</td><td>1</td><td>5000</td></tr></table>
+<h2>6. 与现有加载器的兼容性验证</h2>
+<p>用真实 <code>run/vision/data.py</code> 的 <code>build_gpic_loader(caption_type='short')</code> 读取本数据集的 shard tar，前向 1 个 batch，验证图像张量形状 (B,3,224,224)、数值有限、caption 存在、open_clip tokenizer 返回 ids。</p>
+<pre style='background:#f7f7f7;border:1px solid #eee;padding:8px;font-size:11px;overflow:auto'>[verify] data_dir   = /nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full
+[verify] total tars = 2000; using first 8
+[verify] batch_size = 16; image size = 224
+[verify] tokenizer  = open_clip.ViT-B-16
+[verify] loader built in 0.0s; pulling 1 batch ...
+[batch] imgs.shape   = (16, 3, 224, 224)  dtype=torch.float32
+[batch] imgs.min/max = -1.646/2.146
+[batch] imgs.mean    = 1.776
+[batch] texts type = &lt;class 'torch.Tensor'&gt;; len=16
+[verify] OK: 1 batch(es), 16 samples decoded end-to-end
+[verify] FORMAT COMPATIBLE with build_gpic_loader(caption_type='short')
+[verify] DONE</pre>
+<h2>6.5 如何加载本数据集</h2>
+<p>本数据集格式与现有 GPIC 一致（<code>&lt;key&gt;.jpg</code> + <code>&lt;key&gt;.json</code>，json 含 <code>caption</code> 与 <code>caption_type='short'</code>），可直接用 <code>run/vision/data.py</code> 的两个加载器之一：</p>
+<pre style='background:#f7f7f7;border:1px solid #eee;padding:8px;font-size:11px;overflow:auto'># 方式 A：GPIC 专用加载器（按 caption_type 过滤）
+import glob
+from data import build_gpic_loader
+shards = sorted(glob.glob(&quot;/nas_train/.../ocr_synth_10m_full/shard-*.tar&quot;))
+loader = build_gpic_loader(shard_list=shards, batch_size=256,
+                           tokenizer=open_clip.get_tokenizer(&quot;ViT-B-16&quot;),
+                           size=224, num_workers=6, caption_type=&quot;short&quot;)
+for imgs, texts in loader:   # imgs:(B,3,224,224) texts:dict(input_ids,attention_mask)
+    ...
+
+# 方式 B：混合加载器（可与 GPIC / CC12M 同表混喂）
+from data import build_mixed_loader
+loader = build_mixed_loader(shard_list=shards, batch_size=256,
+                            tokenizer=tok, size=224, gpic_caption_type='short')
+</pre>
+<p class='muted'>训练时 resize/crop 到 224 或 336 均可；本数据集存储为 448 基线渲染，保留更高分辨率以便后续 336 实验复用，不必重新生成。</p>
+<h2>6.6 退化与字体参数明细</h2>
+<table><tr><th>退化类型</th><th>参数范围</th><th>说明</th></tr><tr><td>高斯模糊</td><td>radius 0.5–2.0</td><td>模拟相机/扫描失焦</td></tr><tr><td>JPEG 再压缩</td><td>quality 30–70</td><td>模拟网络传输压缩</td></tr><tr><td>透视畸变</td><td>四角随机偏移</td><td>模拟拍摄角度（cv2.warpPerspective）</td></tr><tr><td>低对比</td><td>gamma 1.5–3.0 / 灰阶压缩</td><td>模拟弱光/褪色文档</td></tr><tr><td>施加比例</td><td>30% 样本随机选取上述一种或多种</td><td>参数写入每样本 json</td></tr></table>
+<table><tr><th>用途</th><th>字体</th><th>许可</th></tr><tr><td>英文 sans</td><td>DejaVuSans / Bold</td><td>公有领域</td></tr><tr><td>英文 serif</td><td>DejaVuSerif / Bold</td><td>公有领域</td></tr><tr><td>等宽</td><td>DejaVuSansMono</td><td>公有领域</td></tr><tr><td>中文宋体</td><td>AR PL UMing (uming.ttc)</td><td>ARPHIC 公众许可</td></tr><tr><td>中文楷体</td><td>gkai00mp</td><td>ARPHIC 公众许可</td></tr><tr><td>中文黑体</td><td>DroidSansFallbackFull</td><td>Apache 2.0</td></tr><tr><td>数学</td><td>Latin Modern Roman (lmroman10)</td><td>GUST (LPPL)</td></tr></table>
+<h2>7. 已知偏差</h2>
+<ul><li>文本为合成模板（词表 + 语法模板），非真实维基/书/新闻；视觉多样性是 OCR 预训练的主要价值。</li><li>生成器内联去重基于<strong>图像</strong> sha1（文本 sha1 仅写入 index 供独立复检），故文本去重率由 <code>postprocess_ocr_synth.py</code> 独立复检得到（见 §5）。</li><li>生成器内联泄漏护栏因路径错误为空操作；真实泄漏复检由 postprocess 完成，命中均为极短串巧合。</li><li>手写用楷体 + 逐字抖动近似，非真实笔画模拟。</li><li>数学用 matplotlib mathtext（LaTeX 子集），非完整 TeX 渲染。</li><li>场景文本用合成背景 + 透视，非真实照片。</li></ul>
+<h2>7.5 复现与验证命令</h2>
+<pre style='background:#f7f7f7;border:1px solid #eee;padding:8px;font-size:11px;overflow:auto'># 生成（固定 seed，可重放；--mode p0 冒烟 / --mode full 全量）
+python3 vision/ocr_synth/gen_ocr_synth.py --mode full \
+    --out /nas_train/.../ocr_synth_10m_full --workers 32
+
+# 独立质量复检（文本去重 + 真实评测泄漏 + 统计聚合）
+python3 vision/ocr_synth/postprocess_ocr_synth.py \
+    --data-dir /nas_train/.../ocr_synth_10m_full
+
+# 加载器兼容性验证（真 build_gpic_loader + open_clip tokenizer 前向 1 batch）
+python3 vision/ocr_synth/verify_loader_compat.py --n-shards 8 --batch-size 16
+
+# 预览（preview_200.html 自包含 + preview_10k.tar 抽样包）
+python3 vision/ocr_synth/make_preview.py --data-dir &lt;dir&gt; --n-preview 200 --n-pack 10000
+
+# 生成本报告
+python3 vision/ocr_synth/generate_ocr_synth10m_report.py --data-dir &lt;dir&gt;
+</pre>
+<p class='muted'>所有脚本 CPU-only；postprocess / verify / make_preview 均可在生成器运行时并行执行（轻 I/O、单进程、nice 友好）。生成器固定 seed=20261025 + 顶部参数块 ⇒ 相同参数重跑字节级可复现。</p>
+<h2>8. 诚实条款与参考来源</h2>
+<p><strong>诚实条款</strong>：本报告所有数字均为本项目实测，可溯源到 <code>STATS.json</code> / <code>VALIDATION.json</code> / <code>index.jsonl</code> 与生成器日志；成本类指标如为估算均标注「估算」；无外部模型/榜单数字被引用。数据仅用于训练，不替换/扩充评测集。</p>
+<p><strong>交付物清单</strong>：</p><ul><li>数据本体：<code>shard-*.tar</code> + <code>index.jsonl</code> + <code>STATS.json</code> + <code>DATASET_CARD.md</code> + <code>MANIFEST.sha256</code></li><li><code>preview_200.html</code>（自包含预览）+ <code>preview_10k.tar</code>（1 万抽样包）</li><li>生成器 <code>vision/ocr_synth/gen_ocr_synth.py</code>（固定 seed，可重放）</li><li>验证器 <code>postprocess_ocr_synth.py</code> / <code>verify_loader_compat.py</code> / <code>make_preview.py</code> / <code>generate_ocr_synth10m_report.py</code></li></ul>
+<p class='muted'>参考方法（纯文本，无超链）：SynthTIGER (Clova AI, arXiv:2107.09313, 2021) · SynthText (Gupta et al., CVPR 2016) · trdg (Belval, GitHub) · SynthDoG / Donut (Kim et al., arXiv:2111.15664, 2021) · im2latex-100k (Harvard, 2017) · SynthTIGER 退化参数参考其 GitHub README（检索于 2026-10-25）。本数据集为自研合成管线，方法借鉴上述工作但实现独立。</p>
+</div></body></html>

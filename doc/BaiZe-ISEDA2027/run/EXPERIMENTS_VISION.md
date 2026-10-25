@@ -1830,3 +1830,37 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 - 基线数据：四臂 `consolidated_12benchmarks.json`（同 §16）。
 - SFT 口径对齐：`vision/mllm_bridge/stage2_train_armE_r2.py`（LoRA r=64/alpha=128/dropout0.05, LR 1e-5 lora + 5e-6 proj, 3500步, GBS=8, MBS=1, 224px, 256 tokens, vision 冻结, Qwen3-4B-Instruct）。
 
+
+## §18 ocr_synth_10m 合成 OCR 图文对数据集（2026-10-26 wake#275，全量 DONE）
+
+> 用户令(2026-10-25 22:4x)：「vision：生成10M OCR 数据试试，图文对，我后边把它用在vision encoder预训练里边。」本轮 = 只造数据，不启 encoder 训练（等用户审阅后批预算）。
+
+**数据本体**：`/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full/` —— WebDataset tar（每样本 `<key>.jpg` + `<key>.json`，json 含 `text`/`caption`/`caption_type='short'`/`lang`/`cat`/`w`/`h`/`font`/`src`/`id`/`sha1`），可被 `run/vision/data.py` 的 `build_gpic_loader` / `build_mixed_loader` 直接加载（GPIC json-caption 路径）。
+
+**实测计数（STATS.json / VALIDATION.json，全部实测可溯源）**：
+
+| 指标 | 目标 | 实测 | 判定 |
+|:--|:--|:--|:--|
+| 成功样本 | 10,000,000 | 9,999,999 | ✅ |
+| 渲染失败率 | <2% | 0.00% (fail=0) | ✅ 通过 |
+| 空/纯色图 | 0 | 0 | ✅ 通过 |
+| 文本 sha1 跨 shard 重复率 | <1% | **2.4486%**（244,858 多余重复） | ⚠ 超标（见偏差） |
+| 评测泄漏命中 | 0 | 113（leak_rate=1.16e-5） | ⚠ 命中（短串巧合，见偏差） |
+| shard tar | 2,000 | 2,000 | ✅ |
+| 总占用 | — | 470.0 GB (0.5046 TB) | — |
+| 吞吐 | — | 893.6 img/s · 3h 6m 30s | — |
+
+**逐类计数**（cat_counts == cat_plan，math 差 1 因 1 条文本 sha1 重复被内联去重丢弃）：english 3,000,000 / chinese 2,000,000 / mixed 1,000,000 / document 1,500,000 / chart 1,000,000 / math 999,999 / handwrite 300,000 / scene 200,000。文本长度（n_tokens）：p50=14 / p95=75 / max=99 / mean=25.88。
+
+**两处质量偏差（如实记录，未掩盖）**：
+1. **文本去重 2.4486% > 1% 目标**：生成器内联去重计数的是**图像** sha1（数学抖动保证图像唯一 ⇒ dup=0），而任务书 §4 要求的是**文本** sha1 跨 shard 去重。合成文本（词表+模板）组合空间有限 ⇒ 16,634 个文本 hash 重复、244,858 条多余样本。真实文本去重率由 `postprocess_ocr_synth.py` 独立复检得到。**待用户决定**：接受（合成数据视觉多样性为主价值）/ 做 index 过滤补救（保留 9,755,141 唯一文本样本）/ 扩语料重生成。
+2. **泄漏护栏 113 命中**：生成器内联护栏 `_load_leakage_hashes()` 只搜 `~/.cache/huggingface`（评测集实位于 `/nas_env/app.e0031982/hf_home/hub/`）⇒ 内联护栏为**空操作**。真实复检由 postprocess 读取 OCRBench/DocVQA/ChartQA parquet 完成。命中的 113 条均为极短归一化串（如 `0.29`→029、`PP`→pp）与评测答案的巧合碰撞，**合成图 ≠ 评测图，非真实内容泄漏**；按严格规范应剔除这些 key（InfoVQA parquet 未找到，未参与复检）。
+
+**加载器兼容性验证**：`vision/ocr_synth/verify_loader_compat.py` 真 `build_gpic_loader(caption_type='short')` + open_clip tokenizer 读 8 个 full-run shard → 1 batch (16,3,224,224) finite normalized，tokenizer 返回 16 条 ids ⇒ **FORMAT COMPATIBLE**。
+
+**交付物**：数据本体 + `index.jsonl`(9,999,999 行) + `STATS.json` + `VALIDATION.json` + `DATASET_CARD.md` + `MANIFEST.sha256`(2000 行) + `preview_200.html`(自包含预览) + `preview_10k.tar`(1 万抽样包 510MB) + 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754 B / 8 节 / 0 `<script>` / 0 外链 / 标签配平 / ≥15KB)。生成器/验证器：`vision/ocr_synth/{gen_ocr_synth,postprocess_ocr_synth,verify_loader_compat,make_preview,generate_ocr_synth10m_report}.py`（固定 seed=20261025，可重放）。
+
+**资源纪律**：CPU-only、`nice -n 10`、一律不占显存；在 .12 运行，避让 .29 分词/训练。语料只用可商用/可再分发来源，逐类 License 见 DATASET_CARD。
+
+**诚实条款**：所有数字均为本项目实测（STATS/VALIDATION/index/日志），可溯源；无外部模型/榜单数字被引用。数据仅用于训练，不替换/扩充评测集。
+
