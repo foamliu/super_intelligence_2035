@@ -21110,3 +21110,112 @@ echo "=== DONE 199 ==="
 10.239.23.31:/vol_CTE0_data01  207T  172T   36T  83% /nas_train
 === DONE 199 ===
 ```
+
+---
+
+## RUN_ID 200 · 2026-10-25 11:55:34 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 200 | measure dl vs tok mapping | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+OUT=$R/run/data/map_dl_vs_tok_20261025.tsv
+R1=/nas_train/app.e0031982/datasets/openbmb
+R2=/nas_inference/app.e0031982/datasets/openbmb
+T=/nas_train/app.e0031982/datasets/baize-data/text
+
+echo "kind|path|exists|parquet_n|bytes|shards|tokens" | tr '|' '\t' > "$OUT"
+
+measure_dl() {  # $1 = label ; $2 = abs path
+  if [ -d "$2" ]; then ex=1; p=$(find "$2" -name '*.parquet' 2>/dev/null | wc -l); b=$(du -sb "$2" 2>/dev/null | cut -f1); else ex=0; p=0; b=0; fi
+  printf "DL\t%s\t%s\t%s\t%s\t0\t0\n" "$2" "$ex" "$p" "$b" >> "$OUT"
+  printf "  DL %-58s exists=%s parquet=%-6s %s B (%.2f GB)\n" "$2" "$ex" "$p" "$b" "$(awk -v x=$b 'BEGIN{print x/1e9}')"
+}
+
+measure_tok() {  # $1 = abs dir of tokenized
+  if [ -d "$1" ]; then ex=1; s=$(ls "$1"/*.bin 2>/dev/null | wc -l); b=$(du -sb "$1" 2>/dev/null | cut -f1); else ex=0; s=0; b=0; fi
+  t=$(python3 - "$1" <<'PY'
+import glob,json,os,sys
+tot=0
+for f in glob.glob(os.path.join(sys.argv[1],"*.json")):
+    try:
+        with open(f) as fh: tot+=int(json.load(fh).get("num_tokens",0))
+    except Exception: pass
+print(tot)
+PY
+)
+  printf "TOK\t%s\t%s\t0\t%s\t%s\t%s\n" "$1" "$ex" "$b" "$s" "$t" >> "$OUT"
+  printf "  TOK %-57s exists=%s bin=%-5s %s B  tokens=%s (%.2f B)\n" "$1" "$ex" "$s" "$b" "$t" "$(awk -v x=$t 'BEGIN{print x/1e9}')"
+}
+
+echo "[下载目录]"
+for d in \
+  "$R1/Ultra-FineWeb/data/ultrafineweb_en_v1_4" \
+  "$R1/Ultra-FineWeb/data/ultrafineweb_en" \
+  "$R1/Ultra-FineWeb/data/ultrafineweb_l1_en_hq" \
+  "$R1/Ultra-FineWeb/data/ultrafineweb_zh" \
+  "$R1/UltraX-Preview/data/UltraX-AICC" \
+  "$R2/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa" \
+  "$R2/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style" \
+  "$R2/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style" \
+  "$R2/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa" \
+  "$R2/UltraData-Code/data/UltraData-Code-L2" \
+  "$R2/UltraData-Code/data/UltraData-Code-L3" \
+  "$R2/UltraData-Math/data/UltraData-Math-L1" \
+  "$R2/UltraData-Math/data/UltraData-Math-L2-preview" \
+  "$R2/UltraData-Math/data/UltraData-Math-L3" ; do
+  measure_dl x "$d"
+done
+
+echo "[分词产物目录]"
+for d in "$T" /nas_env/app.e0031982/baize-data/full_ufw_l3 /nas_env/app.e0031982/baize-data/full_ultradata_code_l2 /nas_env/app.e0031982/baize-data/full_ultradata_code_l3 /nas_env/app.e0031982/datasets/baize-data/full_ultradata_math_l1 /nas_env/app.e0031982/datasets/baize-data/full_ultradata_math_l3 ; do
+  [ -d "$d" ] || continue
+  measure_tok "$d"
+done
+for d in /nas_env/app.e0031982/baize-data/full_* ; do
+  case "$d" in */full_ufw_l3|*/full_ultradata_code_l2|*/full_ultradata_code_l3) continue;; esac
+  measure_tok "$d"
+done
+
+echo "[env14 前缀构成]"
+ls "$T"/env14_*.bin 2>/dev/null | wc -l | awk '{print "  env14 .bin = " $1}'
+ls "$T"/*.bin 2>/dev/null | sed -E 's#.*/(env14|[a-z0-9]+)_s?.*#\1#' | sort | uniq -c
+
+echo "[TSV 落盘]"
+wc -l < "$OUT"
+echo "=== DONE 200 ==="
+```
+
+**输出**
+```
+=== RUN_ID 200 | measure dl vs tok mapping | 2026-10-25 11:55:34 | host=whag0pgpuap29 ===
+[下载目录]
+  DL /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4 exists=1 parquet=56320  6747434955525 B (6747.43 GB)
+  DL /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en exists=1 parquet=2048   2661358397268 B (2661.36 GB)
+  DL /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq exists=1 parquet=6000   477975290461 B (477.98 GB)
+  DL /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh exists=1 parquet=256    324321522155 B (324.32 GB)
+  DL /nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC exists=1 parquet=61     68553927738 B (68.55 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa exists=1 parquet=616    663183709378 B (663.18 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style exists=1 parquet=552    594817293567 B (594.82 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style exists=1 parquet=286    308080517080 B (308.08 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa exists=1 parquet=310    333134635259 B (333.14 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L2 exists=1 parquet=561    611281878122 B (611.28 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3 exists=1 parquet=560    604712501031 B (604.71 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1 exists=1 parquet=1485   366622940699 B (366.62 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L2-preview exists=1 parquet=138    63253585951 B (63.25 GB)
+  DL /nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3 exists=1 parquet=200    122536811815 B (122.54 GB)
+[分词产物目录]
+  TOK /nas_train/app.e0031982/datasets/baize-data/text          exists=1 bin=110   8929863707374 B  tokens=2238140710284 (2238.14 B)
+  TOK /nas_env/app.e0031982/baize-data/full_ufw_l3              exists=1 bin=154   1062126204214 B  tokens=263899449229 (263.90 B)
+  TOK /nas_env/app.e0031982/baize-data/full_ultradata_code_l2   exists=1 bin=141   1691139372199 B  tokens=421450419455 (421.45 B)
+  TOK /nas_env/app.e0031982/baize-data/full_ultradata_code_l3   exists=1 bin=63    516175730284 B  tokens=128623266591 (128.62 B)
+  TOK /nas_env/app.e0031982/baize-data/full_ultradata_math_l1   exists=1 bin=149   659469521715 B  tokens=164437183984 (164.44 B)
+  TOK /nas_env/app.e0031982/baize-data/full_ultradata_math_l3   exists=1 bin=67    313462723570 B  tokens=77949162709 (77.95 B)
+[env14 前缀构成]
+  env14 .bin = 110
+    110 env14
+[TSV 落盘]
+21
+=== DONE 200 ===
+```
