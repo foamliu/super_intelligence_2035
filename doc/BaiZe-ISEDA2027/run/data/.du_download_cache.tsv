@@ -1,0 +1,11 @@
+download_dir	bytes
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4	6747434955525
+/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa	663183709378
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L2	611281878122
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3	604712501031
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1	366622940699
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3	122536811815
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq	477975290461
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en	2661358397268
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh	324321522155
+/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC	68553927738

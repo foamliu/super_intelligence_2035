@@ -1,0 +1,7 @@
+# mapping_inprogress.txt — 仍「分词中」的下载目录（每行一个绝对路径，# 注释）。
+# 由 gen_data_mapping_md.py 读取：在此列表中的下载目录 ⇒ A 节状态 = 分词中。
+# 判据：done=131/131 后，重跑 build_tokenized_mirror.py 刷新 INDEX.tsv，再清空本文件（或删本文件），最后重跑 gen_data_mapping_md.py ⇒ A 节第 7–10 行自动翻「镜像完整」。
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh
+/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC

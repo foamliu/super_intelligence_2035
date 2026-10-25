@@ -1,13 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 **2026-10-25 19:03 #778：🚀 启动「seq x tok/step 16卡吞吐网格」(运维令17:5x)·cfg1(seq8192/2M)训练中·脚本已落地·未完成指令:有⇒WAITING=0**：
-> - **触发**：任务书 17:5x 新运维令(用户直令·最高优先)= seq 增大 x 每步 token 固定(2M=S1/4M=S2)的 16 卡吞吐网格 6 格。#777@17:43 时此令尚未到(报"无新令")，本唤醒首次发现 ⇒ 必须执行。
-> - **本轮动作**：① 核实基线 `baize_dualnode_16gpu_test.sh`/summary=**606,449 tok/s**(@seq4096/MBS3/GBS1008/DP16/FP8TW/CG)；② 确认 p5b_l3 16 shard 为**文档级 token 流**(json 仅 num_documents/num_tokens, 无 seq 打包)⇒ **同一批 shard 供 6 格 = 单变量**(仅 --seq-length 运行时切块不同)；③ 确认 launcher **无 --mamba-ssm-dtype flag**(Mamba2 SSM dtype 由 mamba2_hybrid_2b.recipe 内部管理, 与 606K 基线一致)⇒ 配方与 e18 字节级一致, 仅 seq/MBS/GBS 变；④ 落地 `run/baize_seqlen_grid_test.sh`(6 格串行·OOM检测·每格释放16卡·结果→`/tmp/baize_seqlen_grid/`)；⑤ **已 detached 启动, cfg1 训练中**：.29 GPU 73,459MiB/95%util, .12 NCCL Init COMPLETE, peak~73GB<80GB **无 OOM**。
-> - **6 格**(tok/step 逐项核对=2,097,152[S1]/4,194,304[S2])：cfg1(S1 seq8192 mbs2 gbs256)·cfg2(S2 seq8192 mbs2 gbs512)·cfg3(S1 seq16384 mbs1 gbs128)·cfg4(S2 seq16384 mbs1 gbs256)·cfg5(S1 seq32768 mbs1 gbs64)·cfg6(S2 seq32768 mbs1 gbs128)。每格 80 步, 取 step30-80 median。
-> - **未完成指令：有**(17:5x 网格：cfg1 训练中, cfg2-6 待跑, 报告+生成器+EXPERIMENTS 未交)⇒ **WAITING=0**(loop 60s 再唤醒)。
-> - **下一步**：下唤醒查 `/tmp/baize_seqlen_grid/ALL_RESULTS.txt`：cfg1 完→收结果→起 cfg2；OOM 格→标"配方变更组"待 recompute 重试；全 6 格完→建 `reports/report_pretrain_seqlen_throughput_zh.html` + `run/gen_seqlen_throughput_report.py` + EXPERIMENTS 新节。预计总机时 2-5h。
-> 📦 体积：TASK=31.1 KB / MEMORY≈29.5 KB（均 ≤32KB ✓；本轮零归档，#777 顶块→1行指针）.
+> 🆕 **2026-10-25 19:46 #779：⏳ 网格监控·cfg1✅完成·cfg2训练中(step20/80)·健康0NaN·未完成指令:有⇒WAITING=0**：
+> - **cfg1 DONE**（@19:03-19:32）：`/tmp/baize_seqlen_grid/cfg1/summary.txt` pts=6(steps30-80 median) med_ms=19365.9 **tok/s=108,291** step/s=0.052 per_gpu=6,768 **peak=81,087MiB(79.2GB)** loss=7.5645 gnorm=0.6263 **nan=0** status=OK；跑完 16 卡全释放(全 4MiB)。
+> - **关键发现**：vs 基线 seq4096/4.13M=606,449 tok/s/per_gpu=37,900 ⇒ **2×seq(4096→8192)→5.6×每卡吞吐崩** +14.8GB显存 ⇒ **Mamba2 SSM 成本随 seq 超线性增长**（直接回答用户问题）。
+> - **cfg2 RUNNING**（S2 seq8192 mbs2 gbs512，tok/step=4,194,304✓）：master.log step20/80 @19:46 elapsed~38-41s loss8.06 gnorm1.45 **nan=0**；tok/s≈4.19M/39.5s≈106K（与cfg1同seq→同per-card负载→tok/s~恒定，口径自洽✓）；max reserved 76,930MiB<80GB 无OOM；ETA cfg2完~20:25。编排进程 PID981105(ppid=1,46min)→子3034617(cfg2,18min)健康，77 procs。
+> - **脚本核对**：`run/baize_seqlen_grid_test.sh` accum=gbs/(mbs·16)✓（cfg1=8/cfg2=16/cfg3=8/cfg4=16/cfg5=4/cfg6=8）、tok/step=gbs·seq✓（逐项=2,097,152[S1]/4,194,304[S2]）、OOM检测+16卡释放+median(steps≥30=6点)✓，6 格串行自治运行。
+> - **未完成指令：有**（17:5x 网格：cfg2-6 待跑，报告`reports/report_pretrain_seqlen_throughput_zh.html`+生成器`run/gen_seqlen_throughput_report.py`+EXPERIMENTS新节未交）⇒ **WAITING=0**（loop 再唤醒监控，铁律禁 N/A 空格→全 6 格完才出报告）。
+> - **下一步**：下唤醒查 `/tmp/baize_seqlen_grid/ALL_RESULTS.txt`+各 cfg summary；OOM 格→标"配方变更组"待 recompute 重试；全 6 格完→数据字典写脚本顶部→生成器确定性重生成→中文 HTML(≥15KB,0 script/0外链)+EXPERIMENTS新节「seq 长度 x tok/step 吞吐网格」+daily；commit 前缀 `pretrain seqlen:`（只 add 本次文件）。总 ETA ~22:30。
+> 📦 §#778 流水（2026-10-25 19:03，启动网格+cfg1训练中）已压缩 → 本块上方；**结论**：脚本落地+cfg1 detached 启动，配方与 e18 字节级一致。需要时再读 daily-memories/2026-10-25.md。
+> 📦 体积：TASK=31.1 KB / MEMORY≈29.5 KB（均 ≤32KB ✓；本轮零归档，#778 详块→1行指针）。
 > 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
 
 
