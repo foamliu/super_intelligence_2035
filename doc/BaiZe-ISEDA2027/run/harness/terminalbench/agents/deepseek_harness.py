@@ -158,22 +158,37 @@ try:
         request_timeout_seconds=float({self._timeout}),
         initialize_timeout_seconds=60.0,
     )
-    with harness:
-        result = harness.run({repr(instruction)}, session_id="tb-deepseek")
-        final = getattr(result, "final_response", "") or ""
-        print(final)
-        if not final:
-            # Loud diagnostic: the agent produced no output.  Print whatever
-            # the result object exposes so the failure is no longer silent.
-            print("=== DSH WARNING: empty final_response ===", file=sys.stderr)
-            print("result repr:", repr(result)[:1000], file=sys.stderr)
-            sys.exit(2)
+    result = None
+    try:
+        with harness:
+            result = harness.run({repr(instruction)}, session_id="tb-deepseek")
+    except SystemExit as se:
+        # FIX (2026-10-25, R494): the SDK / native dsh runtime calls sys.exit()
+        # internally when it cannot reach the model or the native runtime fails
+        # to initialise.  The outer "except SystemExit: raise" re-raised it
+        # WITHOUT printing anything → exit 2, stdout="" stderr="" (the exact
+        # symptom we saw in smoke).  Print diagnostics to STDOUT (the adapter
+        # captures result.stdout, NOT result.stderr) before re-raising.
+        print(f"=== DSH INNER SystemExit({{se.code}}) ===")
+        print("harness.run() or __enter__ called sys.exit() internally.")
+        traceback.print_exc()
+        sys.stdout.flush()
+        raise
+    final = getattr(result, "final_response", "") or ""
+    print(final)
+    sys.stdout.flush()
+    if not final:
+        print("=== DSH WARNING: empty final_response ===")
+        print("result repr:", repr(result)[:1000])
+        sys.stdout.flush()
+        sys.exit(2)
 except SystemExit:
-            raise
+    raise
 except Exception:
-            print("=== DSH RUNNER EXCEPTION ===", file=sys.stderr)
-            traceback.print_exc()
-            sys.exit(1)
+    print("=== DSH RUNNER EXCEPTION ===")
+    traceback.print_exc()
+    sys.stdout.flush()
+    sys.exit(1)
 '''
 
         # Write the script to a temp file and execute it
@@ -208,5 +223,6 @@ except Exception:
         if result.return_code != 0:
             raise RuntimeError(
                 f"DeepSeek-Harness exited with code {result.return_code}: "
-                f"{(result.stderr or '')[:500]}"
+                f"stdout={(result.stdout or '')[:800]} "
+                f"stderr={(result.stderr or '')[:300]}"
             )

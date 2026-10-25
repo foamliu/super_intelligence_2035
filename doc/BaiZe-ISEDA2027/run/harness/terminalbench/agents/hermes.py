@@ -98,7 +98,7 @@ class HermesTB(TBBaseAgent):
                 "export PATH=/usr/local/bin:/usr/bin:$PATH && "
                 "python3 -m pip install --break-system-packages hermes-agent 2>&1 | tail -5"
             ),
-            timeout=900,
+            timeout_sec=900,
         )
         # Verify the console script is on PATH; retry once if missing.
         check = await environment.exec(
@@ -113,7 +113,7 @@ class HermesTB(TBBaseAgent):
                     "python3 -m pip install --break-system-packages --force-reinstall "
                     "hermes-agent 2>&1 | tail -5"
                 ),
-                timeout=900,
+                timeout_sec=900,
             )
             check2 = await environment.exec(command="command -v hermes 2>&1")
             if "hermes" not in (check2.stdout or ""):
