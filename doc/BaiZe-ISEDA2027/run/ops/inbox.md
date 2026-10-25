@@ -1,7 +1,67 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 186 | TARGET: 29 -->
-## RUN_ID 186 — 🔎 只读：data + harness 两线实况探针（不重启、不 kill、不 pull）
+<!-- RUN_ID: 187 | TARGET: 29 -->
+## RUN_ID 187 — 🔎 只读：补探（data loop 在哪台机 / harness 当前读到哪条令 / 7 路 TB 明细）
+
+```bash
+set -u
+echo "=== RUN_ID 187 | follow-up probe | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || true
+echo "[0] 工作副本 HEAD: $(git rev-parse --short HEAD 2>/dev/null)   branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+
+echo "[1] data loop 是否在 .29 或 .12（两机都查）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_data_loop' | grep -v grep | cut -c1-140 || echo '  .29: NO_DATA_LOOP'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "baize_data_loop" | grep -v grep | cut -c1-140 || echo "  .12: NO_DATA_LOOP"' 2>/dev/null || echo '  ssh .12 FAILED'
+echo "  data loop 日志候选："
+ls -l --time-style=+%F_%T /tmp/baize_data*.log /tmp/*data_loop*.log 2>/dev/null | head -5 || echo '    .29 无'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls -l --time-style=+%F_%T /tmp/baize_data*.log 2>/dev/null | head -5; tail -4 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-160' 2>/dev/null || true
+
+echo "[2] TASK 文件是否含新令（多模式匹配，避免 x 占位符问题）"
+for pat in '2026-10-25 08' '重新盘点 MiniCPM5' '排查并修复 claude-code'; do
+  echo "  pattern[$pat] in DATA   : $(grep -c "$pat" "$R/BAIZE_DATA_TASK.md" 2>/dev/null || echo 0)"
+  echo "  pattern[$pat] in HARNESS: $(grep -c "$pat" "$R/BAIZE_HARNESS_TASK.md" 2>/dev/null || echo 0)"
+done
+
+echo "[3] 两线 MEMORY mtime + WAITING（文件是否存在）"
+for f in MEMORY_DATA.md MEMORY_HARNESS.md MEMORY_PRETRAIN_2B.md; do
+  if [ -f "$R/$f" ]; then
+    echo "  $f  $(stat -c '%y' "$R/$f" 2>/dev/null | cut -c1-19)  $(grep -m1 '^WAITING:' "$R/$f" 2>/dev/null)"
+  else
+    echo "  $f  NOT_FOUND"
+  fi
+done
+
+echo "[4] 7 路 TB harbor 明细（pid/运行时长/目标任务数/对应 harness）"
+for p in $(pgrep -f 'harbor run -p /tmp/tb_7x89' 2>/dev/null); do
+  et=$(ps -o etimes= -p "$p" 2>/dev/null | tr -d ' ')
+  args=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-200)
+  echo "  pid=$p et=${et}s"
+  echo "    $args"
+done | head -40
+
+echo "[5] 7 路 job 目录进度（verifier/reward.txt 口径）"
+for d in /tmp/tb_7x89/jobs_*; do
+  [ -d "$d" ] || continue
+  n=$(find "$d" -name reward.txt 2>/dev/null | wc -l)
+  p=$(find "$d" -name reward.txt -exec sh -c 'grep -qx 1 "$1" && echo x' _ {} \; 2>/dev/null | wc -l)
+  echo "  $(basename "$d")  done=$n pass=$p"
+done
+
+echo "[6] 是否还有 claude-code / hermes / deepseek 容器在跑"
+docker ps --format '{{.Names}}' 2>/dev/null | grep -icE 'claude|hermes|deepseek' || echo '  0 (三路已无容器)'
+docker ps --format '{{.Names}}' 2>/dev/null | head -20
+
+echo "=== DONE 187 ==="
+```
+
+## RUN_ID 186 — 🔎 只读：data + harness 两线实况探针（已执行 exit=0）
+
+```text
+set -u
+echo "=== RUN_ID 186 | data+harness liveness | $(date '+%F %T') | host=$(hostname) ==="
+（原文见 outbox.md RUN_ID 186，已执行完毕，降级保留）
+```
 
 ```bash
 set -u

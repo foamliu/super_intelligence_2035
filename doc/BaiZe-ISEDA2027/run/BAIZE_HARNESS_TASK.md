@@ -7,8 +7,6 @@
 > - 如需交代接入层适配，放在**附录或脚注**写一次即可，正文一律 `cline`。
 
 ### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
-
-### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
 > 用户原话：「安排 harness 去排查和修复导致 claude-code/hermes/deepseek 通过率为0的适配器 bug，修复期间这三个就不要跑了。同时汇报其它四个 harness 截止目前各自的通过率（已跑完的部分）。」
 > **① 立即动作：停掉这三个（只停这三个）**
 > - **停**：`claude-code`（26/87 done，**0 pass**）、`hermes`（FIN 50/87，**0 pass**，37 err）、`deepseek-harness`（FIN 50/87，**0 pass**，37 err）。
