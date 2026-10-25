@@ -2406,3 +2406,57 @@ setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /de
 **⑤ 边界**：🚫 不覆盖 `armB_*`/`armC_*` 产物；🚫 不杀 `.29` pretrain（~02:50 收尾）；🚫 不动 harness relay。
 
 
+
+
+---
+
+## [归档·2026-10-26 wake#277] 运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对）原文
+
+### [运维令] 2026-10-25 22:4x（生成 1000 万 OCR 图文对，供后续 vision encoder 预训练）· 用户直令 · 最高优先
+> ✅ **DONE (wake #275, 2026-10-26 04:0x；wake #276, 05:22 复核完整性)**：全量 10M OCR 图文对已生成并交付到 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full/`。ok=9,999,999 / fail=0 / 2000 shard tars + preview_10k.tar / 470GB(0.5046TB) / 893.6 img/s / 3h6m30s · 8 类 cat_counts==plan(math 999,999) · 加载器兼容已验（真 `build_gpic_loader(caption_type='short')` 读 8 shard→(16,3,224,224) finite）。交付物：index.jsonl(9.999M行) + STATS + VALIDATION + DATASET_CARD + MANIFEST(2000行) + preview_200.html + preview_10k.tar + 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B/8节/0 script/0外链) + 5 脚本 `vision/ocr_synth/*.py` + EXPERIMENTS §18。**两处质量偏差如实记录（未掩盖）**：①文本 SHA1 去重 2.4486%>1% 目标（dup_pass=false，留 9,755,141 唯一 / 244,858 多余；合成文本组合空间有限所致）；②泄漏 113 命中（leak_rate=1.16e-5，短串巧合如 0.29→029 非真实泄漏；内联护栏路径错为空操作，真实复检读 OCRBench/DocVQA/ChartQA parquet；InfoVQA parquet 未找到）。**待用户裁定**：接受 / index 过滤补救（留 9,755,141 唯一）/ 扩语料重生成。本轮只造数据不启 encoder 训练（等用户批预算）。
+> 用户原话：「vision：生成10M OCR 数据试试，图文对，我后边把它用在vision encoder预训练里边。」
+> 用途变了：这批数据给 **encoder 预训练（CLIP / AIMv2-style 图文对比）**，不是 MLLM OCR 专项 SFT；所以**格式必须能被现有 `run/vision/data.py` 混合加载器直接吃**（GPIC 走 json-caption、CC12M 走 txt-caption）。
+
+**1) 交付格式（硬要求，接不上就算白干）**
+- 目录 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m/`：
+  - `shard-000000.tar` …（webdataset；每 tar 5,000 对，共 2,000 个）
+  - tar 内每样本：`<key>.jpg` + `<key>.json`，json = `{text, caption, lang, cat, w, h, font, src, id, sha1}`
+  - `index.jsonl`（key / shard / cat / lang / n_tokens / text_sha1）、`DATASET_CARD.md`、`STATS.json`、`MANIFEST.sha256`
+- `text` = 渲染进图的完整文本（截断 ≤512 字符）；`caption` = 给 CLIP 文本塔的短描述（≤64 tokens，模板多样，例 "a scanned English document page with two columns of text"）。
+- 分辨率：**渲染 448x448**（长图按 448 宽等比、最长边 ≤1024），训练时再 resize/crop 到 224 或 336；JPEG q=90。**不要直接存 224**（不然以后 336 实验没法用）。
+
+**2) 规模与配比（合计 10,000,000，按路线①报告比例放大）**
+| 类别 | 数量 | 说明 |
+|:--|--:|:--|
+| 英文词句/段落 | 3,000,000 | 维基英 / 公有领域书 / 新闻正文，1-6 行 |
+| 中文词句/段落 | 2,000,000 | 维基中 / 中文书 / 新闻，1-6 行，简繁混合 ≤5% |
+| 中英混排 | 1,000,000 | 技术文档风格，中英比例随机 |
+| 文档版面（整页） | 1,500,000 | 单/双栏、标题、页眉页脚、表格嵌图 |
+| 图表 | 1,000,000 | 柱/折/饼 + 数值标签（matplotlib 渲染） |
+| 数学公式 | 1,000,000 | 印刷体 500k（LaTeX/KaTeX）+ 正文夹公式 300k + 公式表格混排 200k |
+| 手写 | 300,000 | 手写字体 / CROHME 风格渲染 |
+| 场景文本 | 200,000 | 招牌/路牌/包装风格（合成背景 + 透视） |
+- 低质退化（模糊 / JPEG 压缩 / 透视 / 低对比）作为**增强**随机施加在 30% 样本上，不单列类别，参数写进 json。
+
+**3) 两阶段执行（不许一次性闷头跑 10M）**
+- **P0 冒烟 10 万**：全类别跑通 → 报实测 throughput（img/s、CPU 核占用）、平均字节、失败率、去重率、**ETA 与预计占用 TB**，并核对 `/nas_train` 余量（现 35T 空闲）。
+- **P1 全量 10M**：`setsid` + supervisor 断点续跑（已有 tar 跳过、`index.jsonl` 追加）；每 100 万对 commit 一次进度（`vision ocr-synth: N/10M ...`）防判死。
+- 资源纪律：CPU-only、`nice -n 10`；不抢 `.29` 上分词/训练；若 `.29` load >150 改在 `.12` 跑；**一律不占显存**。
+
+**4) 质量与泄漏（必做，结果写进 STATS）**
+- 渲染失败率 <2%；空图/纯色图 = 0；文本长度分布（p50 / p95 / max）。
+- 文本 SHA1 **跨 shard 去重**，重复率压到 <1%。
+- **评测泄漏护栏**：OCRBench / DocVQA / ChartQA / InfoVQA 的 question+answer 归一化后哈希，命中即丢该样本（否则后面测出来是背题）。
+- 抽 200 张出 `preview_200.html`（缩略图 + text + caption + cat）供人工看。
+
+**5) 交付物**
+- 数据本体 + `preview_10k.tar`（1 万抽样包，便于用户直接试跑）。
+- `reports/report_vision_ocr_synth10m_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、≥15KB）：管线与参数 / 逐类实测计数与字节 / 吞吐与总耗时 / 质量检查 / **与现有 GPIC 加载器的兼容性验证（用 `data.py` 真读一批 tar 并前向 1 个 batch）** / 已知偏差。
+- 生成器 `vision/ocr_synth/gen_ocr_synth.py`（固定 seed + 参数文件，可重放）。
+- `EXPERIMENTS_VISION.md` 新节 + `MEMORY_VISION.md` 首部新块；commit 前缀 `vision ocr-synth:`。
+- **本轮只造数据，不启 encoder 训练**（等用户看完 P0 与总规模再批预算）。
+
+**6) 铁律**
+- 只用可商用 / 可再分发语料（维基 / 公有领域 / 自建 LaTeX / 自建图表），逐类在 DATASET_CARD 标 License。
+- 生成图只做训练，不得用于替换/扩充评测集；泄漏检查必做。
+- 数字一律实测（`du -sb` / `find | wc -l` / 计数脚本）；估算必须标「估算」。
