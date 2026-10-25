@@ -21027,3 +21027,86 @@ echo "=== DONE 197 ==="
 -rw-r--r-- 1 app.e0031982 app.adm 16688 2026-10-25_11:12:51 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_20261025.txt
 === DONE 197 ===
 ```
+
+---
+
+## RUN_ID 199 · 2026-10-25 11:49:31 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 199 | DELETE 32 uncovered shards | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+T=/nas_train/app.e0031982/datasets/baize-data/text
+JUD=$R/run/data/prune_unmapped_judgment_20261025.tsv
+OUT=$R/run/data/prune_unmapped_uncovered_20261025.txt
+
+echo "[1] 从判定表取 uncovered(保留) shard 名单"
+awk -F'\t' 'NR>1 && $11 ~ /保留/ {print $1}' "$JUD" | sort > /tmp/_u32.txt
+echo "  名单数=$(wc -l < /tmp/_u32.txt)  env14命中=$(grep -c '^env14' /tmp/_u32.txt || true)"
+echo "  $(tr '\n' ' ' < /tmp/_u32.txt)"
+
+echo "[2] 删除前基线"
+du -sb "$T" | awk '{printf "  baize-data/text = %s B (%.2f TB)\n", $1, $1/1e12}'
+ls "$T"/*.bin 2>/dev/null | wc -l | awk '{print "  .bin 数 = " $1}'
+
+echo "[3] 先落清单（先写后删）"
+{
+  echo "# prune_unmapped_uncovered_20261025.txt — 32 uncovered shard (operator 2026-10-25 11:5x)"
+  echo "# rule: manifest->staging_r3 已废弃, 无法与现存下载目录建立产物级对应 => 删除; env14 & /nas_env/full_* untouched"
+} > "$OUT"
+tot=0; n=0
+while read -r s; do
+  [ -z "$s" ] && continue
+  for ext in bin idx json; do
+    f="$T/$s.$ext"
+    if [ -f "$f" ]; then
+      b=$(stat -c %s "$f")
+      printf "%s\t%s\n" "$f" "$b" >> "$OUT"
+      tot=$((tot+b)); n=$((n+1))
+    fi
+  done
+done < /tmp/_u32.txt
+echo "  待删文件=$n 字节=$tot"
+
+echo "[4] 执行删除"
+while read -r s; do
+  [ -z "$s" ] && continue
+  rm -f "$T/$s.bin" "$T/$s.idx" "$T/$s.json"
+done < /tmp/_u32.txt
+
+echo "[5] 删除后核验"
+du -sb "$T" | awk '{printf "  baize-data/text = %s B (%.2f TB)\n", $1, $1/1e12}'
+ls "$T"/*.bin 2>/dev/null | wc -l | awk '{print "  .bin 数 = " $1}'
+ls "$T"/env14_*.bin 2>/dev/null | wc -l | awk '{print "  env14 .bin = " $1 " (应=110)"}'
+for d in /nas_env/app.e0031982/baize-data/full_*; do
+  printf "  %-28s .bin=%s\n" "$(basename "$d")" "$(ls "$d"/*.bin 2>/dev/null | wc -l)"
+done
+df -h /nas_train | tail -1
+echo "=== DONE 199 ==="
+```
+
+**输出**
+```
+=== RUN_ID 199 | DELETE 32 uncovered shards | 2026-10-25 11:49:31 | host=whag0pgpuap29 ===
+[1] 从判定表取 uncovered(保留) shard 名单
+  名单数=32  env14命中=0
+  l3_s0 l3_s1 l3_s10 l3_s11 l3_s12 l3_s2 l3_s25 l3_s26 l3_s27 l3_s28 l3_s29 l3_s3 l3_s30 l3_s31 l3_s32 l3_s33 l3_s34 l3_s35 l3_s36 l3_s37 l3_s38 l3_s39 l3_s4 l3_s5 l3_s6 l3_s7 l3_s8 l3_s9 math_s32 math_s33 math_s34 math_s35 
+[2] 删除前基线
+  baize-data/text = 10837331165258 B (10.84 TB)
+  .bin 数 = 142
+[3] 先落清单（先写后删）
+  待删文件=96 字节=1907467445596
+[4] 执行删除
+[5] 删除后核验
+  baize-data/text = 8929863707374 B (8.93 TB)
+  .bin 数 = 110
+  env14 .bin = 110 (应=110)
+  full_ufw_l3                  .bin=154
+  full_ultradata_code_l2       .bin=141
+  full_ultradata_code_l3       .bin=63
+  full_ultradata_math_l1       .bin=149
+  full_ultradata_math_l3       .bin=67
+10.239.23.31:/vol_CTE0_data01  207T  172T   36T  83% /nas_train
+=== DONE 199 ===
+```
