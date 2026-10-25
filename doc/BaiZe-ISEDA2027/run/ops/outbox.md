@@ -20511,3 +20511,93 @@ PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅硬盘实�
 
 === DONE 190 ===
 ```
+
+---
+
+## RUN_ID 191 · 2026-10-25 09:11:56 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 191 | verify data task readability | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+F="$T/BAIZE_DATA_TASK.md"
+
+echo "[1] 仓库同步状态"
+cd "$GR" || exit 1
+timeout 60 git fetch origin >/dev/null 2>&1
+echo "  HEAD=$(git rev-parse --short HEAD)  behind=$(git rev-list --count HEAD..origin/main)  ahead=$(git rev-list --count origin/main..HEAD)"
+if [ "$(git rev-list --count HEAD..origin/main)" != "0" ] && [ "$(git rev-list --count origin/main..HEAD)" = "0" ]; then
+  echo "  -> 落后于 origin，做 ff-only merge"
+  timeout 60 git merge --ff-only origin/main 2>&1 | tail -3
+  echo "  新 HEAD=$(git rev-parse --short HEAD)"
+fi
+
+echo "[2] 文件基本量"
+echo "  size=$(stat -c %s "$F") bytes  lines=$(wc -l < "$F")  mtime=$(stat -c '%y' "$F" | cut -c1-19)"
+
+echo "[3] 关键：'运维指令区' 与 '我的令' 的字节偏移（越小越靠前）"
+python3 - "$F" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p, encoding='utf-8', errors='replace').read()
+zone = s.find('## 🔧 运维指令区')
+mine = s.find('2026-10-25 08:0x')
+ufw  = s.find('Ultra-FineWeb/data/')
+ultrax = s.find('UltraX-Preview')
+print(f"  total_chars={len(s)}")
+print(f"  运维指令区  offset={zone}  ({zone/len(s)*100:.1f}%)")
+print(f"  我的令08:0x offset={mine}  ({mine/len(s)*100:.1f}%)")
+print(f"  Ultra-FineWeb/data/ offset={ufw}")
+print(f"  UltraX-Preview      offset={ultrax}")
+ok = (zone > -1 and mine > zone)
+print(f"  >>> 我的令在运维指令区【之内】? {'YES ✅' if ok else 'NO ❌'}")
+# 模拟 loop: 整文件即 prompt，统计我的令前有多少字符（越小越不易被忽略）
+print(f"  >>> 我的令之前只有 {mine} 字符（占全文 {mine/len(s)*100:.1f}%）")
+PY
+
+echo "[4] 模拟 loop 的读取方式：prompt=\$(< TASK_MD)，看前 40 行里有没有我的令"
+head -40 "$F" | grep -an '运维指令区\|2026-10-25 08:0x\|Ultra-FineWeb/data\|UltraX-Preview' | cut -c1-140
+
+echo "[5] 4 条线任务书体积（>32KB 会被体积规程干扰注意力）"
+for f in BAIZE_PRETRAIN_2B_TASK.md BAIZE_DATA_TASK.md BAIZE_HARNESS_TASK.md BAIZE_VISION_TASK.md; do
+  [ -f "$T/$f" ] && echo "  $f  $(stat -c %s "$T/$f") bytes ($(awk -v b=$(stat -c %s "$T/$f") 'BEGIN{printf "%.1f", b/1024}') KB)"
+done
+
+echo "[6] data loop 最新状态（是否已唤醒 / 是否在跑 agent）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_data_loop' | grep -v grep | cut -c1-120
+tail -6 /tmp/baize_data_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-160
+
+echo "=== DONE 191 ==="
+```
+
+**输出**
+```
+=== RUN_ID 191 | verify data task readability | 2026-10-25 09:11:57 | host=whag0pgpuap29 ===
+[1] 仓库同步状态
+  HEAD=1663733bf  behind=0  ahead=0
+[2] 文件基本量
+  size=25970 bytes  lines=294  mtime=2026-10-25 09:11:33
+[3] 关键：'运维指令区' 与 '我的令' 的字节偏移（越小越靠前）
+  total_chars=15254
+  运维指令区  offset=890  (5.8%)
+  我的令08:0x offset=944  (6.2%)
+  Ultra-FineWeb/data/ offset=1227
+  UltraX-Preview      offset=1354
+  >>> 我的令在运维指令区【之内】? YES ✅
+  >>> 我的令之前只有 944 字符（占全文 6.2%）
+[4] 模拟 loop 的读取方式：prompt=$(< TASK_MD)，看前 40 行里有没有我的令
+17:## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+19:### 🚨🚨 最高优先 · 2026-10-25 08:0x · 用户直令 · **本轮唤醒必须先做这件事**
+25:> - `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/` 下 **4 个子目录全列**：`en`（base-en）/ `en_v1_4` / `l1_en_h
+26:> - `/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview`（**单列**）
+37:> - **「⑥ 与上一版勘误表」**：逐条点名 base-en / l1_en_hq / zh / UltraX-Preview 四处遗漏 + text/ 小计错误
+[5] 4 条线任务书体积（>32KB 会被体积规程干扰注意力）
+  BAIZE_PRETRAIN_2B_TASK.md  30777 bytes (30.1 KB)
+  BAIZE_DATA_TASK.md  25970 bytes (25.4 KB)
+  BAIZE_HARNESS_TASK.md  33566 bytes (32.8 KB)
+  BAIZE_VISION_TASK.md  29283 bytes (28.6 KB)
+[6] data loop 最新状态（是否已唤醒 / 是否在跑 agent）
+=== DONE 191 ===
+```
