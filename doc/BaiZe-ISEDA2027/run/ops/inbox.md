@@ -1,5 +1,43 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 203 | TARGET: 29 -->
+## RUN_ID 203 — 🔍 只读修正版：loop 在 .12（上条 202 查错机）、报告 13:16 被改了什么
+
+```bash
+set -u
+echo "=== RUN_ID 203 | fixed probe | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+
+echo "[1] .12 上的 data loop"
+timeout 40 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -c '
+LP=$(ps -eo pid=,args= | awk "/bash .*baize_data_loop\\.sh/ && !/awk/ {print \$1}" | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,etimes=,stat= -p "$LP"
+ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null | awk "{print \"  log \"\$6\" \"\$5\"B\"}"
+tail -4 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-120
+ps -eo pid=,etimes=,args= | grep cline | grep -v grep | cut -c1-90 | head -2
+'
+
+echo "[2] 报告 13:16 的改动（工作区 vs HEAD）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && {
+  git --no-pager diff --stat -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html doc/BaiZe-ISEDA2027/run/data/gen_tokenized_inventory_report.py
+  echo "  --- diff 片段 ---"
+  git --no-pager diff -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html | head -30
+  echo "  --- 现文件结构 ---"
+  grep -c "<table" doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+  grep -o "复核 PASS[^<]*" doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html | head -2
+  wc -c < doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+}
+
+echo "[3] 分词 / 布局 / 核对表"
+echo "  preprocess 进程=$(ps -eo args= | grep -c '[p]reprocess_data' || true)"
+echo "  load=$(cat /proc/loadavg)"
+[ -d "$B/tokenized" ] && find "$B/tokenized" -maxdepth 3 -type d | sed "s#$B/##" | head -10 || echo "  tokenized/ 不存在"
+ls -l --time-style=+%F_%T "$R/run/data/report_verify_20261025.md" "$R/run/data/untokenized_v1_20261025.tsv" 2>/dev/null | awk '{print "  "$6" "$5" "$7}'
+echo "=== DONE 203 ==="
+```
+
 <!-- RUN_ID: 202 | TARGET: 29 -->
 ## RUN_ID 202 — 🔍 只读：13:15 实况（data 是否活着 / 分词是否在跑 / 12:29 那次改动是什么）
 
