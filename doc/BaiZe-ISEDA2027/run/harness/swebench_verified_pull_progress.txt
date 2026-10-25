@@ -296,3 +296,16 @@
 [swebench-pull] [289/500] OK mwaskom__seaborn-3187 pulled=289 failed=0 skipped=0
 [swebench-pull] [290/500] OK pallets__flask-5014 pulled=290 failed=0 skipped=0
 [swebench-pull] [291/500] OK psf__requests-1142 pulled=291 failed=0 skipped=0
+[swebench-pull] [292/500] OK psf__requests-1724 pulled=292 failed=0 skipped=0
+[swebench-pull] [293/500] OK psf__requests-1766 pulled=293 failed=0 skipped=0
+[swebench-pull] [294/500] OK psf__requests-1921 pulled=294 failed=0 skipped=0
+[swebench-pull] [295/500] OK psf__requests-2317 pulled=295 failed=0 skipped=0
+[swebench-pull] [296/500] OK psf__requests-2931 pulled=296 failed=0 skipped=0
+[swebench-pull] [297/500] OK psf__requests-5414 pulled=297 failed=0 skipped=0
+[swebench-pull] [298/500] OK psf__requests-6028 pulled=298 failed=0 skipped=0
+[swebench-pull] [299/500] OK pydata__xarray-2905 pulled=299 failed=0 skipped=0
+[swebench-pull] [300/500] OK pydata__xarray-3095 pulled=300 failed=0 skipped=0
+[swebench-pull] === BATCH idx=300 pulled=300 failed=0 skipped=0 disk_free=6236GB ===
+[swebench-pull] [301/500] OK pydata__xarray-3151 pulled=301 failed=0 skipped=0
+[swebench-pull] [302/500] OK pydata__xarray-3305 pulled=302 failed=0 skipped=0
+[swebench-pull] [303/500] OK pydata__xarray-3677 pulled=303 failed=0 skipped=0

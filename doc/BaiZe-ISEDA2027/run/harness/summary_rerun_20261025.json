@@ -1,1518 +1,2135 @@
 {
- "meta": {
-  "generated": "2026-10-26 00:13 (partial - rerun in progress)",
-  "canonical_tasks": 87,
-  "old_baseline_date": "2026-10-24 16:21",
-  "rerun_start": "2026-10-25 19:25-19:36",
-  "note": "rerun incomplete; rewards for unfinished tasks = null"
- },
- "old_baseline": {
-  "hermes": {
-   "total": 87,
-   "done": 50,
-   "pass": 0
+  "generated_at": "2026-10-25T17:26:23Z",
+  "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
+  "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
+  "codex_old_7x89": {
+    "pass": 20,
+    "rewarded": 41,
+    "exceptions": 59,
+    "err_by_subcause": {
+      "timeout_900s": 15,
+      "exit1_no_stdout": 8,
+      "429_rate_limit": 34,
+      "cli_arg_parse": 1,
+      "signal_exit_137": 1
+    },
+    "rows": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "bn-fit-modify",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "build-cython-ext",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pmars",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "build-pov-ray",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "caffe-cifar-10",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cancel-async-tasks",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "chess-best-move",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "circuit-fibsqrt",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "cobol-modernization",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "code-from-image",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "compile-compcert",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "configure-git-webserver",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "constraints-scheduling",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "count-dataset-tokens",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "crack-7z-hash",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "custom-memory-heap-crash",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "db-wal-recovery",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "distribution-search",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-assembly",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "dna-insert",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-elf",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "extract-moves-from-video",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "feal-differential-cryptanalysis",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "feal-linear-cryptanalysis",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "filter-js-from-html",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "financial-document-processor",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "fix-code-vulnerability",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "fix-git",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "fix-ocaml-gc",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "gcode-to-text",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "git-leak-recovery",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "git-multibranch",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "gpt2-codegolf",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "headless-terminal",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "hf-model-inference",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "install-windows-3.11",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "kv-store-grpc",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "large-scale-text-editing",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "largest-eigenval",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "llm-inference-batching-scheduler",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "mailman",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "make-doom-for-mips",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "make-mips-interpreter",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "mcmc-sampling-stan",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "merge-diff-arc-agi-task",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "model-extraction-relu-logits",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "modernize-scientific-stack",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "multi-source-data-merger",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "nginx-request-logging",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "openssl-selfsigned-cert",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "overfull-hbox",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "password-recovery",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "path-tracing-reverse",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "path-tracing",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "polyglot-c-py",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "429_rate_limit"
+      },
+      {
+        "task": "polyglot-rust-c",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "portfolio-optimization",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "protein-assembly",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "prove-plus-comm",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pypi-server",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-cli",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "pytorch-model-recovery",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "cli_arg_parse"
+      },
+      {
+        "task": "qemu-alpine-ssh",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-startup",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "signal_exit_137"
+      },
+      {
+        "task": "query-optimize",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "raman-fitting",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "regex-chess",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "regex-log",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "reshard-c4-data",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "rstan-to-pystan",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "sam-cell-seg",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sanitize-git-repo",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "schemelike-metacircular-eval",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "sparql-university",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-db-truncate",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-with-gcov",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-pipeline-parallelism",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "torch-tensor-parallelism",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "train-fasttext",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "tune-mjcf",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      },
+      {
+        "task": "video-processing",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "vulnerable-secret",
+        "harness": "codex",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "winning-avg-corewars",
+        "harness": "codex",
+        "reward": null,
+        "err_type": "RuntimeError_exit1",
+        "err_subcause": "exit1_no_stdout"
+      },
+      {
+        "task": "write-compressor",
+        "harness": "codex",
+        "reward": 0,
+        "err_type": "AgentTimeoutError",
+        "err_subcause": "timeout_900s"
+      }
+    ]
   },
-  "claude-code": {
-   "total": 57,
-   "done": 34,
-   "pass": 0
+  "hermes_old_7x89": {
+    "pass": 0,
+    "rewarded": 50,
+    "exceptions": 37,
+    "rows": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "bn-fit-modify",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-cython-ext",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pmars",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pov-ray",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "caffe-cifar-10",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cancel-async-tasks",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "chess-best-move",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "circuit-fibsqrt",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cobol-modernization",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "code-from-image",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "compile-compcert",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "configure-git-webserver",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "constraints-scheduling",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "count-dataset-tokens",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "crack-7z-hash",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "custom-memory-heap-crash",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "db-wal-recovery",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "distribution-search",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-assembly",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-insert",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-elf",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-moves-from-video",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-differential-cryptanalysis",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-linear-cryptanalysis",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "filter-js-from-html",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "financial-document-processor",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-code-vulnerability",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-git",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-ocaml-gc",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gcode-to-text",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-leak-recovery",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-multibranch",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gpt2-codegolf",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "headless-terminal",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "hf-model-inference",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "install-windows-3.11",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "kv-store-grpc",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "large-scale-text-editing",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "largest-eigenval",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "llm-inference-batching-scheduler",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mailman",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-doom-for-mips",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-mips-interpreter",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mcmc-sampling-stan",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "merge-diff-arc-agi-task",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "model-extraction-relu-logits",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "modernize-scientific-stack",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "multi-source-data-merger",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "nginx-request-logging",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "openssl-selfsigned-cert",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "overfull-hbox",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "password-recovery",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing-reverse",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "polyglot-c-py",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "polyglot-rust-c",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "portfolio-optimization",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "protein-assembly",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "prove-plus-comm",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pypi-server",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-cli",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-recovery",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-alpine-ssh",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-startup",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "query-optimize",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "raman-fitting",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "regex-chess",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "regex-log",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "reshard-c4-data",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "rstan-to-pystan",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sam-cell-seg",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sanitize-git-repo",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "schemelike-metacircular-eval",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sparql-university",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-db-truncate",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-with-gcov",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-pipeline-parallelism",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-tensor-parallelism",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "train-fasttext",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "tune-mjcf",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "video-processing",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "vulnerable-secret",
+        "harness": "hermes",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "winning-avg-corewars",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "write-compressor",
+        "harness": "hermes",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      }
+    ]
+  },
+  "claude-code_old_7x89": {
+    "pass": 0,
+    "rewarded": 34,
+    "exceptions": 23,
+    "rows": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "bn-fit-modify",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-cython-ext",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pmars",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pov-ray",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "caffe-cifar-10",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cancel-async-tasks",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "chess-best-move",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "circuit-fibsqrt",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cobol-modernization",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "code-from-image",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "compile-compcert",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "configure-git-webserver",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "constraints-scheduling",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "count-dataset-tokens",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "crack-7z-hash",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "custom-memory-heap-crash",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "db-wal-recovery",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "distribution-search",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-assembly",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-insert",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-elf",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-moves-from-video",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-differential-cryptanalysis",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-linear-cryptanalysis",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "filter-js-from-html",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "financial-document-processor",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-code-vulnerability",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-git",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-ocaml-gc",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gcode-to-text",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-leak-recovery",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-multibranch",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gpt2-codegolf",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "headless-terminal",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "hf-model-inference",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "install-windows-3.11",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "kv-store-grpc",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "large-scale-text-editing",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "largest-eigenval",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "llm-inference-batching-scheduler",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mailman",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-doom-for-mips",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-mips-interpreter",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mcmc-sampling-stan",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "merge-diff-arc-agi-task",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "model-extraction-relu-logits",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "modernize-scientific-stack",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "multi-source-data-merger",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "nginx-request-logging",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "openssl-selfsigned-cert",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "overfull-hbox",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "password-recovery",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing-reverse",
+        "harness": "claude-code",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing",
+        "harness": "claude-code",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      }
+    ]
+  },
+  "hermes_rerun_20261025": {
+    "pass": 15,
+    "rewarded": 23,
+    "exceptions": 19,
+    "completed": 42,
+    "rows": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "bn-fit-modify",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-cython-ext",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pmars",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pov-ray",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "caffe-cifar-10",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cancel-async-tasks",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "chess-best-move",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "circuit-fibsqrt",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cobol-modernization",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "code-from-image",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "compile-compcert",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "configure-git-webserver",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "constraints-scheduling",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "count-dataset-tokens",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "crack-7z-hash",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "custom-memory-heap-crash",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "db-wal-recovery",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "distribution-search",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-assembly",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-insert",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-elf",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-moves-from-video",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-differential-cryptanalysis",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-linear-cryptanalysis",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "filter-js-from-html",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "financial-document-processor",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-code-vulnerability",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-git",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "fix-ocaml-gc",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gcode-to-text",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-leak-recovery",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "git-multibranch",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "gpt2-codegolf",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "headless-terminal",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "hf-model-inference",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "install-windows-3.11",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "kv-store-grpc",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "large-scale-text-editing",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "largest-eigenval",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "llm-inference-batching-scheduler",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      }
+    ]
+  },
+  "claude-code_rerun_20261025": {
+    "pass": 5,
+    "rewarded": 17,
+    "exceptions": 8,
+    "completed": 25,
+    "rows": [
+      {
+        "task": "adaptive-rejection-sampler",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "bn-fit-modify",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "break-filter-js-from-html",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-cython-ext",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pmars",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "build-pov-ray",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "caffe-cifar-10",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cancel-async-tasks",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "chess-best-move",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "circuit-fibsqrt",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "cobol-modernization",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "code-from-image",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "compile-compcert",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "configure-git-webserver",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "constraints-scheduling",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "count-dataset-tokens",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "crack-7z-hash",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "custom-memory-heap-crash",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "db-wal-recovery",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "distribution-search",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-assembly",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "dna-insert",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-elf",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "extract-moves-from-video",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "feal-differential-cryptanalysis",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      }
+    ]
   }
- },
- "rerun_partial": {
-  "hermes": {
-   "dirs": 30,
-   "done": 16,
-   "pass": 10,
-   "err": 13,
-   "running": 1
-  },
-  "claude-code": {
-   "dirs": 21,
-   "done": 14,
-   "pass": 5,
-   "err": 6,
-   "running": 1
-  }
- },
- "tasks": [
-  {
-   "task": "adaptive-rejection-sampler",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "RuntimeError"
-   }
-  },
-  {
-   "task": "bn-fit-modify",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "break-filter-js-from-html",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "build-cython-ext",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "build-pmars",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "RuntimeError"
-   }
-  },
-  {
-   "task": "build-pov-ray",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "RuntimeError"
-   }
-  },
-  {
-   "task": "caffe-cifar-10",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "cancel-async-tasks",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "chess-best-move",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "circuit-fibsqrt",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "RuntimeError"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "cobol-modernization",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": "asyncio.exceptions.CancelledError"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "RuntimeError"
-   }
-  },
-  {
-   "task": "code-from-image",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "compile-compcert",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "RuntimeError"
-   }
-  },
-  {
-   "task": "configure-git-webserver",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "constraints-scheduling",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "count-dataset-tokens",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "crack-7z-hash",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "custom-memory-heap-crash",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "db-wal-recovery",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": "asyncio.exceptions.CancelledError"
-   }
-  },
-  {
-   "task": "distribution-search",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   }
-  },
-  {
-   "task": "dna-assembly",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": "running",
-    "rerun_reward": null,
-    "err_type": ""
-   }
-  },
-  {
-   "task": "dna-insert",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "extract-elf",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "extract-moves-from-video",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "feal-differential-cryptanalysis",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "feal-linear-cryptanalysis",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "filter-js-from-html",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "0",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "financial-document-processor",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": "err",
-    "rerun_reward": null,
-    "err_type": "NonZeroAgentExitCode"
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "fix-code-vulnerability",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "done",
-    "rerun_reward": "1",
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "fix-git",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": "running",
-    "rerun_reward": null,
-    "err_type": ""
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "fix-ocaml-gc",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "gcode-to-text",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "git-leak-recovery",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "git-multibranch",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "gpt2-codegolf",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "headless-terminal",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "hf-model-inference",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "install-windows-3.11",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "kv-store-grpc",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "large-scale-text-editing",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "largest-eigenval",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "llm-inference-batching-scheduler",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "log-summary-date-ranges",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "mailman",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "make-doom-for-mips",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "make-mips-interpreter",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "mcmc-sampling-stan",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "merge-diff-arc-agi-task",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "model-extraction-relu-logits",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "modernize-scientific-stack",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "multi-source-data-merger",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "nginx-request-logging",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "openssl-selfsigned-cert",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "overfull-hbox",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "password-recovery",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "path-tracing",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": "0",
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "path-tracing-reverse",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "polyglot-c-py",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "polyglot-rust-c",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "portfolio-optimization",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "protein-assembly",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "prove-plus-comm",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "pypi-server",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "pytorch-model-cli",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "pytorch-model-recovery",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "qemu-alpine-ssh",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "qemu-startup",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "query-optimize",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "raman-fitting",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "regex-chess",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "regex-log",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "reshard-c4-data",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "rstan-to-pystan",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "sam-cell-seg",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "sanitize-git-repo",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "schemelike-metacircular-eval",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "sparql-university",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "sqlite-db-truncate",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "sqlite-with-gcov",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "torch-pipeline-parallelism",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "torch-tensor-parallelism",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "train-fasttext",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "tune-mjcf",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "video-processing",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "vulnerable-secret",
-   "hermes": {
-    "old_reward": "0",
-    "old_exc": false,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "winning-avg-corewars",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  },
-  {
-   "task": "write-compressor",
-   "hermes": {
-    "old_reward": null,
-    "old_exc": true,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   },
-   "claude-code": {
-    "old_reward": null,
-    "old_exc": null,
-    "rerun_state": null,
-    "rerun_reward": null,
-    "err_type": null
-   }
-  }
- ]
 }

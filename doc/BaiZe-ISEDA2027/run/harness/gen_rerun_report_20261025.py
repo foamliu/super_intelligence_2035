@@ -125,7 +125,7 @@ HTML=f'''<!DOCTYPE html>
 <div class="meta">
 生成时间：{NOW} · 任务令：2026-10-25 17:5x（授权 hermes/claude-code 全量复跑 89 题 + 排查 codex 高 err）<br>
 状态：<b>部分交付（复跑进行中）</b> · 模型：kimi-k2.6-cloud · 评测集：Terminal-Bench 2.0（canonical 87 题）<br>
-命名规程：正文一律写 <code>cline</code>（代码路径 <code>cline_patched.py</code> 不改）。
+命名规程：正文一律写 <code>cline</code>（接入层适配仅改 CLI 安装/baseUrl/参数大小写，原生工具循环未改；代码路径标识符保留原状、不在正文出现）。
 </div>
 
 <div class="card warn">

@@ -5,10 +5,10 @@
  },
  "rerun": {
   "hermes": {
-   "dirs": 30,
-   "done": 16,
-   "pass": 10,
-   "err": 13,
+   "dirs": 42,
+   "done": 23,
+   "pass": 15,
+   "err": 18,
    "running": 1
   },
   "hermes_detail": {
@@ -187,17 +187,89 @@
     "dir": "fix-code-vulnerability__3gD3wuz"
    },
    "fix-git": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "fix-git__gjeEgBj"
+   },
+   "fix-ocaml-gc": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "fix-ocaml-gc__DQZpeZH"
+   },
+   "gcode-to-text": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "gcode-to-text__i47277h"
+   },
+   "git-leak-recovery": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "git-leak-recovery__LqeMoDg"
+   },
+   "git-multibranch": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "git-multibranch__wL3NVb6"
+   },
+   "gpt2-codegolf": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "gpt2-codegolf__d4fDdLj"
+   },
+   "headless-terminal": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "headless-terminal__gEALPGS"
+   },
+   "hf-model-inference": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "hf-model-inference__UDW4oEE"
+   },
+   "install-windows-3.11": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "install-windows-3.11__ph4fsqV"
+   },
+   "kv-store-grpc": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "kv-store-grpc__33EiabP"
+   },
+   "large-scale-text-editing": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "large-scale-text-editing__EeCCi2k"
+   },
+   "largest-eigenval": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "largest-eigenval__HvvoZRt"
+   },
+   "llm-inference-batching-scheduler": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "fix-git__gjeEgBj"
+    "dir": "llm-inference-batching-scheduler__bzuooSZ"
    }
   },
   "claude-code": {
-   "dirs": 21,
-   "done": 14,
+   "dirs": 25,
+   "done": 17,
    "pass": 5,
-   "err": 6,
+   "err": 7,
    "running": 1
   },
   "claude-code_detail": {
@@ -322,10 +394,34 @@
     "dir": "distribution-search__2hE7jLY"
    },
    "dna-assembly": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "dna-assembly__UAQKqi8"
+   },
+   "dna-insert": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "dna-insert__9Bze9JW"
+   },
+   "extract-elf": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "extract-elf__sWFJA8o"
+   },
+   "extract-moves-from-video": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "extract-moves-from-video__eRyBj3M"
+   },
+   "feal-differential-cryptanalysis": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "dna-assembly__UAQKqi8"
+    "dir": "feal-differential-cryptanalysis__WqjKehe"
    }
   }
  },
@@ -613,9 +709,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": "running",
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": ""
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "dna-insert",
@@ -626,9 +722,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "extract-elf",
@@ -639,9 +735,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "extract-moves-from-video",
@@ -652,9 +748,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "RuntimeError"
   },
   {
    "task": "feal-differential-cryptanalysis",
@@ -665,9 +761,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "running",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": ""
   },
   {
    "task": "feal-linear-cryptanalysis",
@@ -725,8 +821,8 @@
    "task": "fix-git",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": "running",
-   "hermes_rerun_reward": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
@@ -738,9 +834,9 @@
    "task": "fix-ocaml-gc",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -751,9 +847,9 @@
    "task": "gcode-to-text",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -764,9 +860,9 @@
    "task": "git-leak-recovery",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -777,9 +873,9 @@
    "task": "git-multibranch",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -790,9 +886,9 @@
    "task": "gpt2-codegolf",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -803,9 +899,9 @@
    "task": "headless-terminal",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -816,9 +912,9 @@
    "task": "hf-model-inference",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
    "claude-code_rerun_state": null,
@@ -829,9 +925,9 @@
    "task": "install-windows-3.11",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -842,9 +938,9 @@
    "task": "kv-store-grpc",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
    "claude-code_rerun_state": null,
@@ -855,9 +951,9 @@
    "task": "large-scale-text-editing",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -868,9 +964,9 @@
    "task": "largest-eigenval",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
@@ -881,9 +977,9 @@
    "task": "llm-inference-batching-scheduler",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "running",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
    "claude-code_rerun_state": null,
