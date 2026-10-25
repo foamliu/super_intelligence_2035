@@ -47,7 +47,9 @@
 - `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、≥15KB）：摘要 / 现象与口径 / 对照实验 / 时间分解与 util / 假设检验表 / 外部对标 / 根因 / 修复与复测 / 复现命令 / 数据溯源。
 - 更新 `reports/report_pretrain_seqlen_throughput_zh.html` 与 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节；生成器 `run/gen_seq8192_rootcause_report.py`（重跑 diff 空）。
 - 修正 MEMORY #779 机制结论标注；commit 前缀 `pretrain rc:`。
-- 排期：cfg0a + cfg0b 约 1h，两次时间分解约 1h，修复复测约 1h ⇒ **3-4h**；6 格主表串行不打断，总 ETA 顺延。
+- **排期调整（20:5x 运维追加，优先级高于主表）**：`cfg3` 跑完后**先插 `cfg0a` + `cfg0b`**（两个合计约 20 分钟：cfg0a 3.5s/step x80 + 起停，cfg0b 6.8s/step x80 + 起停），**再续 cfg4-cfg6**。做法：cfg3 结束、`release_gpus` 返回后，SIGTERM 编排器 `baize_seqlen_grid_test.sh`（只杀编排进程，不碰 torchrun 子进程——此刻应已退出），把 `CONFIGS` 改成 `cfg0a cfg0b cfg4 cfg5 cfg6`，重新 `setsid` 起；若来不及在 cfg4 启动前拦住，就等 6 格全跑完立刻补跑，**不许省这一步**。
+- **模块级 profile（H6/H7 的唯一判据）**：在 `cfg0a`（4096）与 `cfg1`（8192，可重跑 10 步）上各用 torch profiler / Nsight 采 10 步，输出 `attention / ssm(chunk scan) / mlp / loss / optimizer / data` 六类的时间占比与绝对毫秒；判据：若 `attention` 占比随 seq 平方增长 ⇒ H6 成立；若 `ssm` 绝对耗时随 seq 明显超线性 ⇒ H7 成立；两者都不成立再看 data。
+- 总 ETA 相应调整：cfg3 ~21:10 -> cfg0a/cfg0b ~21:40 -> cfg4-cfg6 ~22:40 -> profile + 修复复测 ~23:40 -> 报告次日 00:30 前。
 
 **补充观测（20:40，cfg2/cfg3 出来后，归因更清楚了）**
 | cfg | seq | tok/step | tok/s | per-GPU | 相对基线(606,449) |
