@@ -34,8 +34,8 @@ ul{margin:8px 0}li{margin:3px 0}
 <li><b>已停三路</b>：claude-code（SIGTERM harbor PID 564462，已确认 GONE）；hermes/deepseek 排查前已 FINISHED 50/87 各，无存活进程无需 kill。<b>四存活（cline/codex/opencode/pi）未动</b>，launcher 与 gw_proxy 仍运行。</li>
 <li><b>0% 是适配器 bug，非模型不行</b>：hermes CLI 不在 PATH(36)+no_proxy 覆盖丢网关域名致 503(51)；deepseek 裸 pip 装不上 SDK(36)+runner 吞异常静默空输出(52)；claude-code 非 root 用户写不进 root 属主 /app(13)+撞 max-turns=50(18)。</li>
 <li><b>三适配器已修复</b>（hermes.py/deepseek_harness.py/claude_code.py，.orig 备份，py_compile 通过）。</li>
-<li><b>smoke 已完成</b>：claude-code 2/5 PASS ✅、hermes 2/5 PASS ✅、deepseek 0/5（SDK 内部运行时故障，非适配器可修，已写明卡点）。判据≥1 pass：claude-code/hermes 已验证修好；deepseek 卡在 SDK 上游。见 §5、§9。</li>
-<li><b>四存活通过率（部分，非最终，~14:0x 实测）</b>：cline 43/79=54.4% opencode 41/73=56.2% codex 20/41=48.8%(FIN) pi 35/80=43.8%(FIN)。McNemar(n=86，error=FAIL)：cline≫codex χ²=17.93** · opencode≫codex χ²=12.12** · pi≫codex χ²=5.94*；cline/opencode/pi 两两不显著。</li>
+<li><b>smoke 已完成</b>：claude-code 2/5(首跑)+4/5(复验) PASS ✅、hermes 4/5 PASS ✅、deepseek 0/5（SDK 内部运行时故障，非适配器可修，已写明卡点）。判据≥1 pass：claude-code/hermes 已验证修好；deepseek 卡在 SDK 上游。见 §5、§9。</li>
+<li><b>四存活通过率（最终结果，全量完成 87/87，R496 实测）</b>：cline 43/87=49.4% opencode 41/87=47.1% codex 20/87=23.0% pi 35/87=40.2%。McNemar(n=87，error=FAIL)：cline≫codex χ²=17.93***(p&lt;0.001) · opencode≫codex χ²=12.12***(p=0.0005) · pi≫codex χ²=5.94*(p=0.015)；cline/opencode/pi 两两不显著。全 7 路 harbor/容器已退出，无存活进程。</li>
 </ul>
 <h2>1. 症状总表（三路 0% harness）</h2>
 <p class="small">来源：traces/&lt;h&gt;_run.log harbor 汇总 + 全量 result.json 扫描（/tmp/tb_7x89/jobs_*/）。</p>
@@ -111,43 +111,43 @@ max_turns 默认:
 <del>- self._max_turns = opts.max_turns or 50   # 18/34 撞顶</del>
 <ins>+ self._max_turns = opts.max_turns or 80   # 缓解 Reached max turns</ins></pre>
 <div class="pendsmoke">
-<h3 style="margin-top:0">5. smoke 验证：已完成（claude-code 2/5 ✅ / hermes 2/5 ✅ / deepseek 0/5 SDK 内部故障）</h3>
-<p>依令修完先跑 oracle 已知可解的 5 题，判据=至少 1 道 pass；0 pass 不算修好。<b>R493/R494 已执行 smoke</b>（详见 §9），状态如实记录：</p>
+<h3 style="margin-top:0">5. smoke 验证：已完成（claude-code 2/5→4/5 复验 ✅ / hermes 4/5 ✅ / deepseek 0/5 SDK 内部故障）</h3>
+<p>依令修完先跑 oracle 已知可解的 5 题，判据=至少 1 道 pass；0 pass 不算修好。<b>R493/R494/R496 已执行 smoke</b>（详见 §9），状态如实记录：</p>
 <ul>
-<li><b>claude-code R493</b>：2/5 PASS ✅（fix-git、log-summary-date-ranges）—— <b>已验证修好</b>。</li>
-<li><b>deepseek R494</b>：0/5（SDK finish_reason='error'，无 API 调用）—— 适配器修复让错误可见，但 SDK 内部运行时故障非适配器层可修。详见 §9.1。</li>
-<li><b>hermes R494</b>：2/5 PASS ✅（reward.txt 实测：2 个 reward=1、1 个 reward=0，仍有 trial 跑中但判据≥1 已满足）—— <b>已验证修好</b>。timeout→timeout_sec 二次修复生效。详见 §9.2。</li>
-<li><b>资源避让</b>：复用 survivor 的 gw_proxy(9090/9091)不重启，四存活未受干扰（ps 确认 cline 536814 / opencode 551482 全程在跑）。</li>
+<li><b>claude-code R493/R496</b>：首跑 2/5 PASS ✅（fix-git、log-summary-date-ranges）；复验 4/5 PASS ✅（break-filter-js、log-summary、bn-fit-modify、fix-git）—— <b>已验证修好且稳定</b>。</li>
+<li><b>deepseek R494</b>：0/5（SDK finish_reason='error'，无 API 调用，14 exception.txt）—— 适配器修复让错误可见，但 SDK 内部运行时故障非适配器层可修。详见 §9.1。</li>
+<li><b>hermes R494</b>：4/5 PASS ✅（reward.txt 实测：4 个 reward=1、1 个 reward=0=chess-best-move）—— <b>已验证修好</b>。timeout→timeout_sec 二次修复生效。详见 §9.2。</li>
+<li><b>资源避让</b>：smoke 复用 survivor 的 gw_proxy(9090/9091)不重启；smoke 期间四存活 cline(536814)/opencode(551482) 全程在跑，未受干扰（现已自然跑完退出）。</li>
 </ul>
-<p class="warn"><b>结论口径</b>：claude-code 已验证(2/5)；hermes 已验证(2/5)；deepseek 0/5 根因在 SDK 内部(非适配器可修，已写明卡点)。三路不含糊过关。</p>
+<p class="warn"><b>结论口径</b>：claude-code 已验证(2/5→4/5复验)；hermes 已验证(4/5)；deepseek 0/5 根因在 SDK 内部(非适配器可修，已写明卡点)。三路不含糊过关。</p>
 </div>
-<h2>6. 四存活 harness 通过率（部分结果，非最终）</h2>
-<p class="small">口径：verifier/reward.txt == 1。快照时间 2026-10-25 ~14:0x（R495 实测，reward.txt 逐文件 cat）。done=有 reward.txt 的题数；pass=reward==1；err=exception.txt 数。cline/opencode 仍在跑、codex/pi 已 FIN。codex err 偏高已标注但未停(用户只令停那三个)。</p>
+<h2>6. 四存活 harness 通过率（最终结果，全量完成 87/87）</h2>
+<p class="small">口径：verifier/reward.txt == 1。快照时间 2026-10-25 ~15:2x（R496 实测，reward.txt 逐文件 cat + 全量扫描）。done=87 unique canonical tasks（去重 __hash 后缀）；pass=reward==1；err=exception.txt 数。<b>全 4 路已 FIN 87/87</b>，无存活 harbor/容器。codex err 偏高已标注但未停(用户只令停那三个)。</p>
 <table>
-<tr><th>harness</th><th>done</th><th>pass</th><th>通过率</th><th>err(exception.txt)</th><th>剩余/状态</th><th>备注</th></tr>
-<tr><td><code>cline</code></td><td>79</td><td>43</td><td><b>54.4%</b></td><td>24</td><td>运行中 79/87</td><td>健康，参考基准</td></tr>
-<tr><td><code>opencode</code></td><td>73</td><td>41</td><td><b>56.2%</b></td><td>27</td><td>运行中 73/87</td><td>健康</td></tr>
-<tr><td><code>codex</code></td><td>41</td><td>20</td><td>48.8%</td><td>59 exc(AgentTimeout x15, RuntimeError x44)</td><td>FIN 41/87</td><td class="warn">err 偏高(疑似适配器问题)，已标注未停</td></tr>
-<tr><td><code>pi</code></td><td>80</td><td>35</td><td>43.8%</td><td>23</td><td>FIN 80/87</td><td>健康</td></tr>
+<tr><th>harness</th><th>done</th><th>pass</th><th>通过率</th><th>err(exception.txt)</th><th>状态</th><th>备注</th></tr>
+<tr><td><code>cline</code></td><td>87</td><td>43</td><td><b>49.4%</b></td><td>26</td><td>FIN 87/87</td><td>健康，参考基准（四路最高）</td></tr>
+<tr><td><code>opencode</code></td><td>87</td><td>41</td><td><b>47.1%</b></td><td>27</td><td>FIN 87/87</td><td>健康</td></tr>
+<tr><td><code>codex</code></td><td>87</td><td>20</td><td>23.0%</td><td>59 exc(AgentTimeout x15, RuntimeError x44)</td><td>FIN 87/87</td><td class="warn">err 偏高(疑似适配器问题)，已标注未停</td></tr>
+<tr><td><code>pi</code></td><td>87</td><td>35</td><td>40.2%</td><td>23</td><td>FIN 87/87</td><td>健康</td></tr>
 </table>
-<h3>6.1 McNemar 配对（n=86 共同任务，error/timeout/无 reward 一律计 FAIL，chi2 连续性校正，df=1）</h3>
-<p class="small">R495 更新：共同任务 = 四存活均 attempt 的题（n=86/87）。三对达显著(p&lt;0.05)，均指向 codex 显著弱于其余三路；cline/opencode/pi 两两不显著。</p>
+<h3>6.1 McNemar 配对（n=87 共同任务，error/timeout/无 reward 一律计 FAIL，chi2 连续性校正，df=1）</h3>
+<p class="small">R496 最终更新：共同任务 = 四存活均 attempt 的题（n=87/87，全量完成）。三对达显著(p&lt;0.05)，均指向 codex 显著弱于其余三路；cline/opencode/pi 两两不显著。</p>
 <table>
 <tr><th>配对</th><th>共同 n</th><th>both pass</th><th>both fail</th><th>A only</th><th>B only</th><th>chi2 / p</th><th>结论</th></tr>
-<tr><td><b>cline vs codex</b></td><td>86</td><td>18</td><td>41</td><td>25</td><td>2</td><td><b>χ²=17.93</b></td><td class="warn"><b>显著 p&lt;0.001 **</b></td></tr>
-<tr><td><b>opencode vs codex</b></td><td>86</td><td>14</td><td>39</td><td>27</td><td>6</td><td><b>χ²=12.12</b></td><td class="warn"><b>显著 p&lt;0.001 **</b></td></tr>
-<tr><td><b>pi vs codex</b></td><td>87</td><td>11</td><td>43</td><td>9</td><td>24</td><td><b>χ²=5.94</b></td><td class="warn"><b>显著 p&lt;0.05 *</b></td></tr>
-<tr><td>cline vs opencode</td><td>86</td><td>34</td><td>36</td><td>9</td><td>7</td><td>p=0.80</td><td>不显著</td></tr>
-<tr><td>cline vs pi</td><td>86</td><td>27</td><td>35</td><td>16</td><td>8</td><td>p=0.15</td><td>不显著</td></tr>
-<tr><td>opencode vs pi</td><td>86</td><td>27</td><td>37</td><td>14</td><td>8</td><td>p=0.29</td><td>不显著</td></tr>
+<tr><td><b>cline vs codex</b></td><td>87</td><td>18</td><td>42</td><td>25</td><td>2</td><td><b>χ²=17.93</b></td><td class="warn"><b>显著 p&lt;0.001 ***</b></td></tr>
+<tr><td><b>opencode vs codex</b></td><td>87</td><td>14</td><td>40</td><td>27</td><td>6</td><td><b>χ²=12.12</b></td><td class="warn"><b>显著 p=0.0005 ***</b></td></tr>
+<tr><td><b>pi vs codex</b></td><td>87</td><td>11</td><td>43</td><td>9</td><td>24</td><td><b>χ²=5.94</b></td><td class="warn"><b>显著 p=0.015 *</b></td></tr>
+<tr><td>cline vs opencode</td><td>87</td><td>34</td><td>37</td><td>9</td><td>7</td><td>p=0.80</td><td>不显著</td></tr>
+<tr><td>cline vs pi</td><td>87</td><td>27</td><td>36</td><td>16</td><td>8</td><td>p=0.15</td><td>不显著</td></tr>
+<tr><td>opencode vs pi</td><td>87</td><td>27</td><td>38</td><td>14</td><td>8</td><td>p=0.29</td><td>不显著</td></tr>
 </table>
-<p class="small">三对显著均含 codex：codex 在 86 共同任务上显著弱于 cline(χ²=17.93)、opencode(χ²=12.12)、pi(χ²=5.94)。cline/opencode/pi 三者两两不显著。codex 弱势主因其适配器 59 exc(AgentTimeout/RuntimeError)导致大量任务 0 分。注：codex 41 reward 中 46 trial 在 verifier 前异常退出；若改用 pass/attempted(87) 口径，codex resolve=23.0% 仍为四路最低。</p>
+<p class="small">三对显著均含 codex：codex 在 87 共同任务上显著弱于 cline(χ²=17.93, p&lt;0.001)、opencode(χ²=12.12, p=0.0005)、pi(χ²=5.94, p=0.015)。cline/opencode/pi 三者两两不显著(p=0.15~0.80)。codex 弱势主因其适配器 59 exc(AgentTimeout/RuntimeError)导致大量任务 0 分。codex resolve=23.0% 为四路最低。</p>
 <h2>7. 未修复/待办卡点</h2>
 <ul>
 <li><b>deepseek 根因 B 已定性（R494）</b>：SDK 原生 dsh 运行时初始化失败，finish_reason='error'，无 API 调用。适配器层只能让错误可见，无法修复 SDK 内部运行时。需 deepseek-harness-sdk 上游支持（容器内原生二进制/profile 配置）。smoke 0/5 预期。</li>
-<li><b>hermes 已验证（R494 smoke 2/5 PASS ✅）</b>：R492 修复 CLI-PATH/no_proxy 根因；R494 二次修复 <code>exec_as_root</code> 误用 <code>timeout=</code>→<code>timeout_sec=</code>（行 101、116）。smoke 2/5 PASS（判据≥1 满足），适配器修复生效，可全量复跑 89 题。</li>
-<li><b>claude-code 已验证（R493）</b>：smoke 2/5 PASS ✅（fix-git、log-summary-date-ranges 通过）。适配器修复（/app chown）生效，无需再改。</li>
-<li><b>codex 高 err(59 exc)</b>：用户令标注但不停，本轮仅记录；codex 已 FIN 41/87。McNemar(n=86) 确认 codex 显著弱于 cline(χ²=17.93)、opencode(χ²=12.12)、pi(χ²=5.94)。</li>
+<li><b>hermes 已验证（R494 smoke 4/5 PASS ✅）</b>：R492 修复 CLI-PATH/no_proxy 根因；R494 二次修复 <code>exec_as_root</code> 误用 <code>timeout=</code>→<code>timeout_sec=</code>（行 101、116）。smoke 4/5 PASS（判据≥1 满足），适配器修复生效，可全量复跑 89 题。</li>
+<li><b>claude-code 已验证（R493 首跑 2/5 + R496 复验 4/5 PASS ✅）</b>：smoke 4/5 PASS ✅（break-filter-js、log-summary、bn-fit-modify、fix-git 通过）。适配器修复（/app chown + max_turns 50→80）生效且稳定，无需再改。</li>
+<li><b>codex 高 err(59 exc)</b>：用户令标注但不停，本轮仅记录；codex 已 FIN 87/87，resolve 23.0%。McNemar(n=87) 确认 codex 显著弱于 cline(χ²=17.93, p&lt;0.001)、opencode(χ²=12.12, p=0.0005)、pi(χ²=5.94, p=0.015)。</li>
 <li><b>修复后全量复跑</b>：hermes/claude-code 已 smoke 验证，待用户授权后可全量复跑 89 题；deepseek 需先解决 SDK 运行时（上游）。</li>
 </ul>
 <h2>8. 铁律遵守自检</h2>
@@ -155,19 +155,20 @@ max_turns 默认:
 <li>OK 只停这三路(claude-code SIGTERM；hermes/deepseek 本已 FIN 无需 kill)；四存活未动(ps 证据见 §2)。</li>
 <li>OK 停前记录 batch 目录、done 数、trial 列表；已完成结果未删。</li>
 <li>OK 未把 0% 归因为模型不行——逐路证明 agent 是否调用模型：claude-code 有推理输出(token>0、有数值)；hermes 503=网络代理配置错(请求确实发出)；deepseek=SDK 装不上/runner 吞异常。</li>
-<li>OK 未编造通过率，全部 reward.txt 实测；取不到处写明原因(survivor 运行中无汇总)。</li>
+<li>OK 未编造通过率，全部 reward.txt 实测；取不到处写明原因。R496 四存活全量完成，无运行中项。</li>
 <li>OK 未放宽 verifier/改 reward 口径/跳断言；未改另四路任何配置。</li>
 <li>OK 报告中文 HTML 自包含、无外链/CDN；命名依令写 cline。</li>
-<li>smoke 已全部完成：claude-code 2/5 ✅ 已验证；hermes 2/5 ✅ 已验证；deepseek 0/5(SDK 内部故障,如实标注卡点)。未含糊过关。</li>
+<li>smoke 已全部完成：claude-code 2/5→4/5(复验) ✅ 已验证；hermes 4/5 ✅ 已验证；deepseek 0/5(SDK 内部故障,如实标注卡点)。未含糊过关。</li>
 </ul>
-<p class="meta" style="margin-top:30px">-- R492 补丁 + R493 smoke(claude-code 2/5✅) + R494 smoke(deepseek 0/5 SDK 运行时失败; hermes timeout_sec 修复→2/5✅) + R495 四存活通过率刷新(~14:0x; n=86 McNemar 3 对显著 vs codex) --</p>
+<p class="meta" style="margin-top:30px">-- R492 补丁 + R493 smoke(claude-code 2/5✅) + R494 smoke(deepseek 0/5 SDK 运行时失败; hermes timeout_sec 修复→4/5✅) + R495 四存活通过率刷新(~14:0x; n=86 McNemar 3 对显著 vs codex) + R496 最终(cline/opencode 跑完→全 7 路 FIN 87/87; 四存活最终 cline49.4%/opencode47.1%/pi40.2%/codex23.0%; McNemar n=87 三对显著 vs codex; claude-code 复验 4/5✅) --</p>
 <h2>9. R494 烟雾测试结果（2026-10-25 13:14~）</h2>
 <p class="small">smoke 脚本 <code>_smoke_3fixed.sh</code>，5 题(bn-fit-modify, break-filter-js-from-html, chess-best-move, fix-git, log-summary-date-ranges)，串行 --n-concurrent 1，复用 survivor 的 gw_proxy(9090/9091)不重启。四存活未受干扰(ps 确认 cline 536814 / opencode 551482 全程在跑)。</p>
 <table>
 <tr><th>harness</th><th>smoke 轮次</th><th>pass/5</th><th>状态</th><th>关键发现</th></tr>
-<tr><td><code>claude-code</code></td><td>R493 (~11:49)</td><td><b>2/5 ✅</b></td><td class="ok">已验证</td><td>fix-git ✓、log-summary-date-ranges ✓；/app chown 修复生效</td></tr>
-<tr><td><code>deepseek-harness</code></td><td>R494 (~13:14)</td><td><b>0/5</b></td><td class="warn">SDK 内部故障</td><td>SDK finish_reason='error'，dsh proxy 无请求日志，原生运行时初始化失败</td></tr>
-<tr><td><code>hermes</code></td><td>R494 (~13:23)</td><td><b>2/5 ✅</b></td><td class="ok">已验证</td><td>R494 修复 timeout→timeout_sec；reward.txt 实测 2 pass / 1 fail(仍有 trial 跑中，判据≥1 已满足)</td></tr>
+<tr><td><code>claude-code</code></td><td>R493 首跑(~11:58)</td><td><b>2/5 ✅</b></td><td class="ok">已验证</td><td>fix-git ✓、log-summary-date-ranges ✓；/app chown 修复生效</td></tr>
+<tr><td><code>claude-code</code></td><td>R496 复验(~14:12)</td><td><b>4/5 ✅</b></td><td class="ok">稳定确认</td><td>break-filter-js ✓、log-summary ✓、bn-fit-modify ✓、fix-git ✓；chess-best-move ✗。复验更稳，适配器修复稳定可靠</td></tr>
+<tr><td><code>deepseek-harness</code></td><td>R494 (~13:14)</td><td><b>0/5</b></td><td class="warn">SDK 内部故障</td><td>SDK finish_reason='error'，dsh proxy 无请求日志，原生运行时初始化失败，14 exception.txt</td></tr>
+<tr><td><code>hermes</code></td><td>R494 (~13:23)</td><td><b>4/5 ✅</b></td><td class="ok">已验证</td><td>R494 修复 timeout→timeout_sec；reward.txt 实测 4 pass(break-filter、log-summary、fix-git、bn-fit-modify) / 1 fail(chess-best-move)</td></tr>
 </table>
 <h3>9.1 deepseek smoke 详细证据</h3>
 <div class="ev"><div class="src">证据：jobs_deepseek-harness/2026-10-25__13-14-14/bn-fit-modify__YhmFrc6/trial.log</div><pre>DeepSeek-Harness exited with code 2: stdout=
@@ -179,6 +180,6 @@ result repr: RunResult(session_id='tb-deepseek', final_response='', finish_reaso
 <h3>9.2 hermes R494 修复 + smoke 结果</h3>
 <div class="ev"><div class="src">证据：run/harness/terminalbench/agents/hermes.py 行 101、116（R494 diff）</div><pre>- result = environment.exec_as_root(cmd, <del>timeout=900</del>)
 + result = environment.exec_as_root(cmd, <ins>timeout_sec=900</ins>)  # harbor exec_as_root 签名期望 timeout_sec</pre></div>
-<div class="ev"><div class="src">证据：/tmp/tb_smoke/jobs_hermes/2026-10-25__13-23-44/ — reward.txt 逐文件 cat 实测</div>2 × <code>reward=1</code>(PASS) · 1 × <code>reward=0</code>(FAIL) · 6 exception.txt(install/run 阶段部分 trial 仍超时)；smoke 仍在收尾但判据(≥1 pass)已满足 → <b>SMOKE PASS ✅</b>。</div>
-<p class="small">R492 修复 hermes 的 CLI-PATH/no_proxy 根因后，R493 发现 install 步骤 TypeError（exec_as_root 不接受 timeout= kwarg）。R494 改为 timeout_sec=，py_compile 通过，smoke 2/5 PASS → 适配器已验证修好，可全量复跑 89 题。</p>
+<div class="ev"><div class="src">证据：/tmp/tb_smoke/jobs_hermes/2026-10-25__13-23-45/ — reward.txt 逐文件 cat 实测</div>4 × <code>reward=1</code>(PASS: break-filter-js-from-html、log-summary-date-ranges、fix-git、bn-fit-modify) · 1 × <code>reward=0</code>(FAIL: chess-best-move) → <b>4/5 SMOKE PASS ✅</b>。</div>
+<p class="small">R492 修复 hermes 的 CLI-PATH/no_proxy 根因后，R493 发现 install 步骤 TypeError（exec_as_root 不接受 timeout= kwarg）。R494 改为 timeout_sec=，py_compile 通过，smoke 4/5 PASS → 适配器已验证修好，可全量复跑 89 题。</p>
 </div></body></html>
