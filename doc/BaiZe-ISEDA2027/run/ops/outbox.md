@@ -19990,3 +19990,109 @@ echo "=== DONE 185 ==="
   --- . ---
 [relay] ⚠️ 命令块超时（>600s），已被 timeout 终止
 ```
+
+---
+
+## RUN_ID 186 · 2026-10-25 08:48:57 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 186 | data+harness liveness | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] 两线 loop 进程"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_(data|harness)_loop\.sh' | grep -v grep | cut -c1-160 || echo '  NO_LOOP'
+
+echo "[2] loop 日志尾部（看最后一次 wake / sleep 声明）"
+for f in /tmp/baize_data_loop.log /tmp/baize_harness_loop.log; do
+  echo "  --- $f ---"
+  ls -l --time-style=+%F_%T "$f" 2>/dev/null || echo '    NO_LOG'
+  tail -6 "$f" 2>/dev/null | cut -c1-170
+done
+
+echo "[3] 工作副本有没有 pull 到运维新令（关键：data 08:0x / harness 08:2x）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || true
+git rev-parse --short HEAD 2>/dev/null || true
+echo "  data TASK 顶部令："
+grep -n '2026-10-25 08:0x' "$R/BAIZE_DATA_TASK.md" 2>/dev/null | head -2 || echo '    NOT_FOUND(本地副本未更新)'
+echo "  harness TASK 顶部令："
+grep -n '2026-10-25 08:2x' "$R/BAIZE_HARNESS_TASK.md" 2>/dev/null | head -2 || echo '    NOT_FOUND(本地副本未更新)'
+
+echo "[4] data MEMORY mtime + WAITING"
+ls -l --time-style=+%F_%T "$R/MEMORY_DATA.md" 2>/dev/null
+grep -n '^WAITING:' "$R/MEMORY_DATA.md" 2>/dev/null | head -2
+
+echo "[5] harness MEMORY mtime + WAITING"
+ls -l --time-style=+%F_%T "$R/MEMORY_HARNESS.md" 2>/dev/null
+grep -n '^WAITING:' "$R/MEMORY_HARNESS.md" 2>/dev/null | head -2
+
+echo "[6] TB 7x89 存活（harbor 进程 + 运行中容器分布）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'harbor run -p /tmp/tb_7x89' | grep -v grep | cut -c1-140 | head -10 || echo '  NO_HARBOR'
+echo "  running_containers=$(docker ps -q 2>/dev/null | wc -l)"
+docker ps --format '{{.Names}}' 2>/dev/null | sed -E 's/__[a-z0-9]{6}__env$//' | sed -E 's/-[0-9]+$//' | sort | uniq -c | sort -rn | head -12 || true
+
+echo "[7] SWE-bench 下载进度（末 2 行）"
+tail -2 "$R/run/harness/swebench_verified_pull_progress.txt" 2>/dev/null || echo '  NO_PROGRESS_FILE'
+
+echo "[8] GPU（.29 本机 + .12）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 || echo '  no nvidia-smi'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | head -8' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "=== DONE 186 ==="
+```
+
+**输出**
+```
+=== RUN_ID 186 | data+harness liveness | 2026-10-25 08:48:57 | host=whag0pgpuap29 ===
+[1] 两线 loop 进程
+2585867       1  165696 Ss   bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+[2] loop 日志尾部（看最后一次 wake / sleep 声明）
+  --- /tmp/baize_data_loop.log ---
+    NO_LOG
+  --- /tmp/baize_harness_loop.log ---
+-rw-r----- 1 app.e0031982 app.adm 3044421 2026-10-25_08:48:57 /tmp/baize_harness_loop.log
+
+B[0m[2mottleneck: cod[0m[2mex →[0m[2m 10-26[0m[2m 13:30[0m[2m.
+
+Now let me[0m[2m write the new[0m[2m snapshot and[0m[2m flow[0m[2m line.
+
+[0m[2mFor TASK[0m[2m volume [0m[2m33KB > [0m[2m32KB: I[0m[2m'll note honestly[0m[2m. The arch[0m[2mivable blocks[0m[2m are[0m[2m mostly already archived
+[3] 工作副本有没有 pull 到运维新令（关键：data 08:0x / harness 08:2x）
+d7fea171c
+  data TASK 顶部令：
+  harness TASK 顶部令：
+[4] data MEMORY mtime + WAITING
+[5] harness MEMORY mtime + WAITING
+[6] TB 7x89 存活（harbor 进程 + 运行中容器分布）
+ 536814   59260 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 551482   59245 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 564462   59240 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+ 578125   59230 /home/app.e0031982/.local/share/uv/tools/harbor/bin/python /home/app.e0031982/.local/bin/harbor run -p /tmp/tb_7x89_dataset_
+  running_containers=4
+      1 sparql-university__zdmyxvv__env-main
+      1 regex-chess__wpfrfxf__env-main
+      1 query-optimize__wgxxlzp__env-main
+      1 openssl-selfsigned-cert__ag54ub2__env-main
+[7] SWE-bench 下载进度（末 2 行）
+[swebench-pull] [254/500] OK matplotlib__matplotlib-13989 pulled=254 failed=0 skipped=0
+[swebench-pull] [255/500] OK matplotlib__matplotlib-14623 pulled=255 failed=0 skipped=0
+[8] GPU（.29 本机 + .12）
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+0, 0 MiB
+1, 0 MiB
+2, 0 MiB
+3, 0 MiB
+4, 0 MiB
+5, 0 MiB
+6, 4 MiB
+7, 4 MiB
+=== DONE 186 ===
+```
