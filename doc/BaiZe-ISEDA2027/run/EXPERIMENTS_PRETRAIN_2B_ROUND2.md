@@ -3712,13 +3712,44 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 
 **关键发现**：
 - seq 4096→8192（同 tok/step 2M，cfg0a 待补对照）：per-GPU 37,903→6,768 tok/s，崩 **82.1%（~5.5×）**；峰值显存 67.6→79.2 GB（逼近 80GB 上限）。
-- **同 seq 下 tok/step 翻倍（S1→S2），tok/s 只 +3%（108,291→111,897）** ⇒ 吞吐被某个与批大小无关的固定项卡住，非小 GBS/MBS 的 overlap 问题（H4 基本可排除）。
+- **同 seq 下 tok/step 翻倍（S1→S2），tok/s 只 +3%（108,291→111,897）** ⇒ 吞吐被某个与批大小无关的固定项卡住，非小 GBS/MBS 的 overlap 问题（H4 基本可排除）。⚠️ **此结论已被 cfg0a 对照推翻，见下方「根因更正」**：S1→S2 是靠翻倍 *累积步数*（accum 8→16）实现 tok/step 翻倍的，而 accum 翻倍只是多跑同样饥饿的小微批 → tok/s 当然持平；这恰恰是 GPU 饥饿的特征，而非「H4 可排除」的证据。
 - **S1 组 seq 8192→16384 吞吐反而 +3.5%（108,291→112,094）**：MBS 2→1 减少 launch/累积步数抵消了 SSM 成本增长。
 - **S2 组 seq 8192→16384 吞吐 +8.5%（111,897→121,495）**：同理 MBS 2→1 的 launch 节省主导。
 - seq 32768 两格均 **OOM**（峰值 81031 MiB≈满卡 80GB，rank rc=1 退出；日志无显式 OOM 字样但显存已达上限）。本轮未跑 `--recompute-activations` 回退（属配方变更组，待补）。
-- **机制（实测支撑 + 推测）**：掉速主因与 seq 相关的算子路径变慢有关——4 层 attention 的 O(seq²) 或 Mamba2 SSD chunk scan 的带宽受限/非融合路径；step time 极稳（CV~2%）⇒ 计算受限非数据饥饿。**Mamba2 SSM 超线性增长为推测·待 profile 验证**（见根因报告 `report_pretrain_seq8192_slowdown_rootcause_zh.html`，运维令 20:2x）。
+- **机制（实测支撑 + 推测）**：掉速主因与 seq 相关的算子路径变慢有关——4 层 attention 的 O(seq²) 或 Mamba2 SSD chunk scan 的带宽受限/非融合路径；step time 极稳（CV~2%）⇒ 计算受限非数据饥饿。**Mamba2 SSM 超线性增长为推测·待 profile 验证**（见根因报告 `report_pretrain_seq8192_slowdown_rootcause_zh.html`，运维令 20:2x）。⚠️ **此「SSM 超线性」推测已被 cfg0a 对照证伪（#779/#781 更正），见下方「根因更正」**。
 
-**可执行结论**：seq≥8192 在当前配方（TP1、无 SP/CP、recompute off）下吞吐崩塌且逼近 OOM，**不建议直接用 seq≥8192 做大规模预训练**；维持 seq=4096（基线 606K tok/s）最优。若需长上下文，应先启用 context parallelism / sequence parallelism / activation recompute 再评估。
+---
+
+### 🔴 根因更正（2026-10-25，cfg0a 对照实验确认 · 推翻上方「seq 相关/SSM 超线性」归因）
+
+> 上方「关键发现」的**测量数据全部有效**（cfg1–4 的 tok/s、显存、step time CV 均如实记录），但**因果归因错误**：把「双变量混淆」（同步改了 seq 与 gbs/accum）误读为「seq 单变量效应」。下方以决定性对照实验 cfg0a 修正。
+
+**决定性对照 cfg0a**（固定 seq=4096，仅复刻 cfg1 的小批几何）：
+
+| 配置 | seq | gbs | accum | mbs | tok/step | ms/step（稳态） | tok/s | MFU | CUDA graph | 显存 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 基线 e18 | 4096 | 1008 | 21 | 3 | 4,128,768 | 6,808 | **606,449** | 73.6% | built 112 @29.06s | 56,153 MB |
+| **cfg0a**★ | 4096 | 512 | 8 | 4 | 2,097,152 | 17,940 | **116,898** | 14.2% | built 112 @32.03s | 69,370 MB |
+| cfg1 | 8192 | 256 | 8 | 2 | 2,097,152 | 19,366 | 108,291 | 13.3% | — | 79.2 GB |
+
+★ cfg0a 用 **seq=4096**（与基线同序列长度）复现了 5.2× 跌幅（606K→117K），与 seq=8192 的 cfg1（108K）几乎一致。**若 seq 是主因，cfg0a 应≈606K；实测 117K ⇒ seq 不是成因**。
+
+**裁决（H1–H9）**：
+- **H4（小批几何→GPU 饥饿）= 确认**（根因）。小批簇 cfg0a(4096)=117K · cfg1(8192)=108K · cfg3(16384)=112K · cfg4(16384)=122K 全部落在 108–122K / 13–15% MFU 窄带，与 seq 无关。
+- **H1/H2/H5/H6/H8/H9 = 证伪**。尤其：① **H2（CUDA graph 回退）证伪**——基线与 cfg0a 均 `built 112 cuda graph(s)` 成功，配置 `cuda_graph_impl: local` 完全一致，无图回退；② **H6（Mamba2 SSM 超线性）证伪**——SSM 为线性 O(n)，且 cfg0a(seq4096) 同样慢。**#779/#781「SSM 超线性」结论 hereby 标记为已证伪**。
+- H3（重算路径）/H7（通信）无独立证据或为次要。
+
+**机制**：MFU 73.6%→14%。cfg0a 每步只做基线一半的 token（2.10M vs 4.13M），墙钟却花 2.64×（17.9s vs 6.8s）——多出的 ~14.5s 几乎全是 GPU 空闲。两个来源：(A) 小微批下 kernel launch 间隙（CPU 5–20µs/次 × 数百 kernel）占比骤升，GPU 空等 CPU；(B) 每步固定开销（grad all-reduce / optimizer step / dataloader / Python 编排）与批大小无关，基线用 4.13M token 摊薄、cfg0a 仅用 2.10M 摊薄 → 单位 token 固定开销翻倍以上。CUDA graph 消掉了单次 forward 内部的 launch overhead，但无法覆盖微批之间与优化器步之间的 host 编排 —— 故 graph 配置一致、吞吐仍差 5×。
+
+**为何上方「S1→S2 +3% ⇒ H4 可排除」是误读**：S1→S2 靠翻倍 *accum*（8→16）实现 tok/step 翻倍，accum 翻倍只是多跑同样饥饿的小微批（mbs 仍 2）→ 每微批吞吐不变 → tok/s 持平。这是 GPU 饥饿的**特征**（无法靠「多跑饥饿微批」买到吞吐），恰是 H4 成立的证据，而非反证。能逃出饥饿的是「基线规模的 gbs/accum（多微批 + 大总批摊薄固定开销）」，即 cfg0b 在验证的配置。
+
+**更正后的可执行结论**：
+1. **seq≥8192 可用**，前提是保持有效批 **tok/step ≥ 4M**（基线水准）。显存若迫使 mbs 下调，用更大 accum 补偿（目标量是 tok/step，非 seq 专属常数）。预期 8192 纠正批几何后回到 ~500–600K tok/s，而非 108K。cfg0b（seq4096 全批）跑完将反向印证基线几何=快。
+2. **seq=32768 的 OOM 是独立的显存问题**（峰值 81GB≈满卡），用 selective recompute（省 ~60% 激活）/ context parallelism 解决，与吞吐根因无关。
+3. **若需纯 seq-吞吐曲线**：原 6 格是双变量混淆，不可作 seq 效应依据。应重做单变量扫描——固定 tok/step≈4M、仅变 seq（用 accum 补 mbs 显存差）。
+4. **方法论警示**：今后吞吐扫描必须锁定 tok/step，否则任何「seq 效应」都可能是批几何伪迹。
+
+> 📄 **根因报告**：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（21,123B / 0 `<script>` / 0 外链 / 8 个 `<h2>` / 标签配平 ✓；含 H1–H9 假设表 + cfg0a/cfg0b 对照 + 算术分解 + GPU 饥饿机制 + 5 条文献引用[VAHU/Marsggbo-CUDA-Graph/CSDN-enforce_eager/Qwen3-arXiv2505.09388/Megatron-MFU] + 处置建议）。检索日期 2026-10-25。
 
 > 📄 **完整报告**：`reports/report_pretrain_seqlen_throughput_zh.html`（中文 HTML，单文件自包含，16,774B / 0 `<script>` / 0 外链）；生成器 `run/gen_seqlen_throughput_report.py`（数据字典写顶部，重生成 diff 空）。根因深挖见 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（运维令 20:2x，含 cfg0a/cfg0b 对照 + web 对标 + 假设检验表）。
 
