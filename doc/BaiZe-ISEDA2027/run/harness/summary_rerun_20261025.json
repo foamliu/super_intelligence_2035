@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T22:23:20Z",
+  "generated_at": "2026-10-25T23:38:32Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -1648,10 +1648,10 @@
     ]
   },
   "hermes_rerun_20261025": {
-    "pass": 22,
-    "rewarded": 39,
-    "exceptions": 33,
-    "completed": 72,
+    "pass": 23,
+    "rewarded": 40,
+    "exceptions": 36,
+    "completed": 76,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2156,14 +2156,42 @@
         "reward": null,
         "err_type": null,
         "err_subcause": null
+      },
+      {
+        "task": "regex-log",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "reshard-c4-data",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "rstan-to-pystan",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sam-cell-seg",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
       }
     ]
   },
   "claude-code_rerun_20261025": {
     "pass": 12,
-    "rewarded": 34,
+    "rewarded": 37,
     "exceptions": 11,
-    "completed": 45,
+    "completed": 48,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2475,6 +2503,27 @@
       },
       {
         "task": "make-doom-for-mips",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-mips-interpreter",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mcmc-sampling-stan",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "merge-diff-arc-agi-task",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,

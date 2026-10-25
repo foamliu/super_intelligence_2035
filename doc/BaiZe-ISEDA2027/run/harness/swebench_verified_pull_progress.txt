@@ -334,3 +334,11 @@
 [swebench-pull] [326/500] OK pylint-dev__pylint-6528 pulled=326 failed=0 skipped=0
 [swebench-pull] [327/500] OK pylint-dev__pylint-6903 pulled=327 failed=0 skipped=0
 [swebench-pull] [328/500] OK pylint-dev__pylint-7080 pulled=328 failed=0 skipped=0
+[swebench-pull] [329/500] OK pylint-dev__pylint-7277 pulled=329 failed=0 skipped=0
+[swebench-pull] [330/500] OK pylint-dev__pylint-8898 pulled=330 failed=0 skipped=0
+[swebench-pull] [331/500] OK pytest-dev__pytest-10051 pulled=331 failed=0 skipped=0
+[swebench-pull] [332/500] OK pytest-dev__pytest-10081 pulled=332 failed=0 skipped=0
+[swebench-pull] [333/500] OK pytest-dev__pytest-10356 pulled=333 failed=0 skipped=0
+[swebench-pull] [334/500] OK pytest-dev__pytest-5262 pulled=334 failed=0 skipped=0
+[swebench-pull] [335/500] OK pytest-dev__pytest-5631 pulled=335 failed=0 skipped=0
+[swebench-pull] [336/500] OK pytest-dev__pytest-5787 pulled=336 failed=0 skipped=0

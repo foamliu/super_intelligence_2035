@@ -5,10 +5,10 @@
  },
  "rerun": {
   "hermes": {
-   "dirs": 72,
-   "done": 39,
-   "pass": 22,
-   "err": 32,
+   "dirs": 76,
+   "done": 40,
+   "pass": 23,
+   "err": 35,
    "running": 1
   },
   "hermes_detail": {
@@ -439,18 +439,42 @@
     "dir": "raman-fitting__UwUKhCv"
    },
    "regex-chess": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "regex-chess__fQTy6T9"
+   },
+   "regex-log": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "regex-log__HRjU23j"
+   },
+   "reshard-c4-data": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "reshard-c4-data__XGnLsSi"
+   },
+   "rstan-to-pystan": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "rstan-to-pystan__jJg9qkQ"
+   },
+   "sam-cell-seg": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "regex-chess__fQTy6T9"
+    "dir": "sam-cell-seg__WWGyY8u"
    }
   },
   "claude-code": {
-   "dirs": 45,
-   "done": 34,
+   "dirs": 48,
+   "done": 37,
    "pass": 12,
-   "err": 11,
-   "running": 0
+   "err": 10,
+   "running": 1
   },
   "claude-code_detail": {
    "adaptive-rejection-sampler": {
@@ -718,10 +742,28 @@
     "dir": "mailman__7HWqcec"
    },
    "make-doom-for-mips": {
-    "state": "err",
-    "reward": null,
+    "state": "done",
+    "reward": "0",
     "err_type": "asyncio.exceptions.CancelledError",
     "dir": "make-doom-for-mips__Ndxjmnz"
+   },
+   "make-mips-interpreter": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "make-mips-interpreter__3aAi8v9"
+   },
+   "mcmc-sampling-stan": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "mcmc-sampling-stan__xx2XRaU"
+   },
+   "merge-diff-arc-agi-task": {
+    "state": "running",
+    "reward": null,
+    "err_type": "",
+    "dir": "merge-diff-arc-agi-task__cpBgJCq"
    }
   }
  },
@@ -1321,8 +1363,8 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": "err",
-   "claude-code_rerun_reward": null,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
    "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
@@ -1334,9 +1376,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "mcmc-sampling-stan",
@@ -1347,9 +1389,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "merge-diff-arc-agi-task",
@@ -1360,9 +1402,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "running",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": ""
   },
   {
    "task": "model-extraction-relu-logits",
@@ -1667,9 +1709,9 @@
    "task": "regex-chess",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": "running",
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": "",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1680,9 +1722,9 @@
    "task": "regex-log",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1693,9 +1735,9 @@
    "task": "reshard-c4-data",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1706,9 +1748,9 @@
    "task": "rstan-to-pystan",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1719,9 +1761,9 @@
    "task": "sam-cell-seg",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "running",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
