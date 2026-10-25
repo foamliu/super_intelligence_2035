@@ -1,5 +1,16 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+
+> 🆕 **2026-10-25 12:4x #773：✅ 07:4x 报告令交付物复核+收尾·修报告 HTML 严格有效性·清理 run/reports 残留·纯写作零 GPU**：
+> - **复核交付物**：项目级报告在位（`doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`，24,970 B，11 个 `<h2>`=§1 摘要…§10 数据溯源+附注，#767 误报纠正记录在）；生成器 re-run 产物 diff=空（确定性，可重生成）；EXPERIMENTS L3691 指针在 ⇒ **07:4x 报告令已完整交付**。
+> - **修 HTML 严格有效性**：§9 复现命令 `<code>` 块里 `<TAG>`/`<EXTRA_NCCL>` 占位符未转义 → 独立严格 HTMLParser 报 2 个孤立未闭合标签（生成器旧 `_TagCheck` 的 `elif` 静默吞掉而漏报）。修：① 占位符 `<TAG>`→`&lt;TAG&gt;`、`<EXTRA_NCCL>`→`&lt;EXTRA_NCCL&gt;`；② `_TagCheck` 增 `orphans` 追踪隐式关闭的孤立标签 + `stray-end`，`selfcheck` 计入 issues。重生成后**生成器自检 + 独立严格 parser 双过**（unclosed=[]/errors=[]），0 `<script>` / 0 外链 / 24,970 B（≥15KB✓）。浏览器渲染不变。
+> - **清理残留**：`git rm doc/BaiZe-ISEDA2027/run/reports/report_pretrain_dualnode_throughput_zh.html`（#771 误置到 run/reports/、#772 拟删但未落地的副本）→ 单一来源=项目级 reports/，已 staged（`D` 状态）。
+> - **数据独立复核（全部落盘实测）**：Task A prevrun worker.log elapsed iter30-80 → median 6813ms → 606K（与 EXPERIMENTS 606,300 / tune 基线 606,449 同源，<0.3% 解析舍入）；BF16 对照 528,016/86.5%/7819ms/67.1GB；Task B qps4 606,672(+0.0%) / qps8 607,708(+0.2%) / maxnch64 606,690(+0.0%) 全闭合。与生成器 DATA 字典逐项一致。
+> - **rev 判定**：3 项已测 TAG 全闭合、8 项未测（机制预测无收益，非"在测"，无进程）→ 按运维令「全部已测 TAG 闭合出 rev2 / 否则 rev1 且自洽」= **rev1 终态**（自洽、0 个"在测"标签、不依赖在测项）。
+> - **未完成指令：无**（07:4x 报告令已交付并复核；23:5x 父令交付物即本报告，已完成；其余旧块均闭合归档）⇒ WAITING=1（30 分钟长轮询）。
+> - **GPU**：.29/.12 均 0 MiB，vision 已 DONE 无争用；本轮纯写作零 GPU。
+> - **归档**：#770/#771 详细块（全文已在 daily-memories/2026-10-25.md L13–37）→ 合并为 1 行指针，释放 ~4.7KB。
+> 📦 体积：TASK=31.1 KB / MEMORY≈29.1 KB（均 ≤32KB ✓；归档 #770/#771 → daily-memories/2026-10-25.md 已存）。
 > 🆕 **2026-10-25 11:1x #772：✅ 报告位置纠正·HTML 落地运维令 ④ 指定的项目级 reports/（与 gen_perf/gen_longctx 同目录）·纯写作零GPU**：
 > - **纠正 #771 位置误判**：#771 把报告产物从项目级 `doc/BaiZe-ISEDA2027/reports/` 改放到 `run/reports/`，理由「与 `report_*_zh.html` 同辈同目录」——**该理由对运维令 ④ 显式锚定的两个参照生成器不成立**：`gen_perf_report.py` 与 `gen_longctx_report.py` **均**用 `os.path.join(HERE,"..","reports")` 写到**项目级 `doc/BaiZe-ISEDA2027/reports/`**（pretrain 线自己的 `report_pretrain_2b_throughput_optim_zh.html` / `report_pretrain_longctx_infer_cost_3x2b_zh.html` 也在那里）。运维令 ④ 原文「报告：`reports/...html`」+「生成器：`run/...`」的路径不对称（report 无 `run/` 前缀、generator 有）也确认 report=项目级 reports/。
 > - **本轮动作**：① 修生成器 `REPORT_DIR` 回 `os.path.join(HERE,"..","reports")`（与 gen_longctx_report.py 完全一致）；② `python3 gen_dualnode_throughput_report.py` → 产物落 `doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`；③ `git rm` 误置的 `run/reports/` 副本（单一来源，避免双份混淆）。
@@ -11,33 +22,9 @@ WAITING: 1
 > - **下一步**：报告 rev1 已在正确位置交付可读；等运维新令（若要 rev2 终版可补跑 6 项未测 IB TAG，机制预期仍无收益；或转 Task D MBS4 双机 OOM 边界实测）。
 > 📦 体积：TASK=31.1 KB / MEMORY≈30.1 KB（均 ≤32KB ✓；本轮未归档，仅新增 #772 顶块）。
 
-> 🆕 **2026-10-25 09:5x #771：✅ 双机16卡吞吐优化报告 HTML 实际产出并校验·纠正#770误记（生成器写了但未运行）·纯写作零GPU**：
-> - **纠正 #770 误记**：#770 MEMORY 称「产出 `reports/report_pretrain_dualnode_throughput_zh.html`（24.4KB）已交付」——**实则仅写了生成器 `run/gen_dualnode_throughput_report.py`（33KB）却从未运行，HTML 文件并不存在**。本轮核验 `run/reports/` 无该文件 ⇒ 实际运行生成器补齐交付物。
-> - **本轮动作**：① 判 Task B 状态：`ps` 无 dualnode 进程 ⇒ **已停（非"在测"）**；`/tmp/baize_dualnode_tune/` 3 TAG(qps4/qps8/maxnch64)全部 `TEST COMPLETE`（80 步，pts=6）⇒ 3/9 闭合、6 未测（机制预期无收益）。② 修生成器路径 bug（`os.path.join(HERE,"..","reports")`→`os.path.join(HERE,"reports")`，使产物落 `run/reports/` 与 `report_*_zh.html` 同辈同目录）。③ `python3 gen_dualnode_throughput_report.py` → 产出 `run/reports/report_pretrain_dualnode_throughput_zh.html`，**rev1**。④ 删除生成器误置到项目级 `BaiZe-ISEDA2027/reports/` 的副本。
-> - **校验全过**：24,958 B（24.4 KB，≥15KB ✓）/ `grep -c '<script'` = 0 ✓ / 外链 http = 0 ✓ / HTMLParser 标签配平 OK ✓。
-> - **数据全部落盘实测**：e18 双机 606,449 tok/s / 99.4% / 6,808 ms / 67.6 GB（`/tmp/baize_dualnode_16gpu/summary.txt` 干净 rerun；prevrun 606,300 交叉验证）/ BF16 对照 528,016 / 86.5% / 7,819 ms / 67.1 GB / **FP8 +14.8%** / Task B：qps4 +0.0% · qps8 +0.2% · maxnch64 +0.0%（均噪声级无收益）。BF16 单机基线≈266K 为估算（未实测）已标注。
-> - **rev 判定**：3 闭合 + 6 未测（无进程=非"在测"）→ 按「未闭合出 rev1 且自洽」= **rev1 终态**；§6 机制（allreduce<1% 步时 ⇒ IB 参数结构性无收益）使报告不依赖未测项，独立可读。#767 误报纠正（512K/84%→606K/99.4%）已写入报告纠错记录。
-> - **EXPERIMENTS**：§「双机吞吐优化」(L3691) 已含 `reports/...html` 指针，本次无需改。
-> - **GPU**：.29/.12 均 0 MiB，vision 已 DONE 无争用；本轮纯写作零 GPU。
-> - **下一步**：报告 rev1 已交付可读；若用户要 rev2 终版可补跑 6 项未测 IB TAG（机制预期仍无收益）或转 Task D（MBS4 双机 OOM 边界）。等运维新令。
-> 📦 体积：TASK=31.1 KB / MEMORY≈28.9 KB（均 ≤32KB ✓；本轮归档 §#717–§#737 监控链 → 合并指针，释放 ~2.8 KB）。
+> 📦 §#771（2026-10-25 09:5x，报告 HTML 落地+纠正#770未运行生成器）已归档 → daily-memories/2026-10-25.md L25–37；**结论**：运行生成器产出 rev1 HTML（24.4KB），3 已测 TAG 闭合+6 未测，机制闭合。需要时再读。
 
-> 🆕 **2026-10-25 08:3x #770：✅ 双机16卡吞吐优化报告(rev1)已交付·Task B 3/9 TAG闭合全无收益·机制闭合·纯写作零GPU**：
-> - **运维令落地**：用户直令「16机吞吐量优化和测试写个报告」⇒ 产出 `reports/report_pretrain_dualnode_throughput_zh.html`（中文HTML单文件自包含,24.4KB,0外链/0`<script>`/标签配平✓）+ 生成器 `run/gen_dualnode_throughput_report.py`（数据写顶部字典,可重生成）。
-> - **Task B 状态判定**：`ps`无dualnode进程⇒已停。`/tmp/baize_dualnode_tune/`3个TAG全部闭合(qps4/qps8/maxnch64,worker/master rc=0,TEST COMPLETE)。按铁律保留现场不重跑(纯写作零GPU)。
-> - **报告内容(10节+纠错)**：§1摘要(606K/99.4%/+98.8%/FP8+14.8%) §2环境 §3扩展性主结果(单机305K→双机606K,步时13533→6808近减半) §4精度消融(FP8 vs BF16 +14.8%,显存≈持平,Δloss0.06%) §5 TaskB全表(3闭合+6未测) §6机制(allreduce<1%步时⇒IB参数结构性无收益) §7单机对照(305K天花板) §8剩余项(F加节点>D MBS4>C/E默认态) §9复现 §10溯源 + #767误报纠正(512K/84%→606K/99.4%)。
-> - **数据全部落盘实测**：rerun 606,449(/tmp/baize_dualnode_16gpu/summary.txt) + prevrun 606,300交叉验证 + BF16对照528,016 + qps4 606,672/qps8 607,708/maxnch64 606,690。BF16单机基线≈266K为估算已标注。
-> - **EXPERIMENTS更新**：maxnch64行(跑测中→闭合606,690/+0.0%) + TaskB结论节 + 报告指针。
-> - **GPU**：.29/.12均空(0MiB),vision已DONE无争用。本轮纯写作零GPU。
-> - **下一步**：报告rev1已自洽;若用户要rev2终版可补跑未测IB TAG(机制预期仍无收益)或转Task D(MBS4双机OOM边界实测)。等运维新令。
-> 📦 体积：TASK=30.0KB / MEMORY=30.9KB（均≤32KB✓；本轮归档 #657→daily-memories/2026-10-21.md）。
-
-> - **BF16对照**：`baize_dualnode_16gpu_bf16_ctrl.sh` 02:49-03:01跑完(80步,worker rc=0/master rc=0)。中位步时7819.4ms,throughput **528,016 tok/s**,per-GPU 33,001,峰值显存67.1GB(worker .29),loss 7.578/gnorm 0.50/0NaN。与e18(FP8)唯一差异=去掉`--fp8-recipe tensorwise`。
-> - **FP8增益量化**：606K(e18 FP8) vs 528K(BF16) = **+14.8%吞吐**；步时6810→7819ms(FP8快12.9%)；显存67.6→67.1GB(≈持平)；loss Δ0.08%✅等价。BF16自身扩展效率估算≈99.2%→**两种精度均近线性扩展,通信非瓶颈**。
-> - **Task A完整闭合**(e18+BF16对照均测)。下一步:Task B(NCCL/IB调参:`NCCL_IB_QPS_PER_CONNECTION`1/4/8·`NCCL_MAX_NCHANNELS`·`NCCL_ALGO`×`NCCL_PROTO`·`NCCL_IB_HCA`子集·`NCCL_CROSS_NIC`,每项80步)。GPUs全空闲(.29+.12均0MiB),vision已DONE无争用。
-> - **落盘**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md`双机节追加BF16对照结果表+Task A总结表。summary@`/tmp/baize_dualnode_bf16_ctrl/summary.txt`。
-> - **归档**：#767误报块(已被#768纠正)→daily-memories/2026-10-24.md,MEMORY释放~1.4KB。
-> 📦 体积：TASK=24.9KB / MEMORY=30.4KB（均≤32KB✓；归档#767~1.7KB→daily-10-24）。
+> 📦 §#770（2026-10-25 08:3x，双机16卡吞吐报告 rev1 交付）已归档 → daily-memories/2026-10-25.md L13–23；**结论**：双机扩展效率 99.4%(606K)，Task B 3 TAG 全无收益，机制=allreduce<1%步时，#767 误报已纠正。需要时再读。
 
 > 🆕 **2026-10-25 01:3x #768：⚠️纠正#767误报·双机16卡e18真实扩展效率=99.4%(606K tok/s)·非84%/BF16+mock·launcher bug已修并rerun复现·任务A完成·任务书归档**：
 > - **#767误报纠正**：#767报「513K/84%/BF16+mock/64.4GB/611TFLOP」**全部错误**。核验`/tmp/baize_dualnode_16gpu_prevrun_23x/`原始日志：①`mock:false`→真实数据(16片p5b_l3)非mock ②`fp8_recipe:tensorwise`→FP8 TW已生效非BF16 ③中位步时6.81s非8.05s ④tok/s=4,128,768/6.81=606,300非513K ⑤扩展效率99.4%非84% ⑥峰值显存69,275MiB=67.6GB非64.4GB ⑦729TFLOP/s/GPU非611。误报根因:脚本因`WORKER_SSH_PID`unbound挂起→summary.txt残缺无RESULT PARSING段→agent手工解析混淆2-rank排障数据。

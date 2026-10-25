@@ -139,7 +139,7 @@ REMAINING = [
 REPRO = {
     "taskA_e18": "bash baize_dualnode_16gpu_test.sh   # MBS3+FP8 TW+CG, DP16, ITERS=80",
     "taskA_bf16": "bash baize_dualnode_16gpu_bf16_ctrl.sh   # 同上但移除 --fp8-recipe tensorwise",
-    "taskB": 'bash baize_dualnode_tune.sh <TAG> "<EXTRA_NCCL>"   # 例: qps8 "NCCL_IB_QPS_PER_CONNECTION=8"',
+    "taskB": 'bash baize_dualnode_tune.sh &lt;TAG&gt; "&lt;EXTRA_NCCL&gt;"   # 例: qps8 "NCCL_IB_QPS_PER_CONNECTION=8"',
     "key_env": "NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22；MASTER_ADDR=10.239.2.12；ITERS=80",
     "extract": "master: grep 'Step Time' master.log（iter 20–80）；worker: grep 'elapsed time per iteration' worker.log（iter 30–80）；median 6 点",
     "toks_formula": "tok/s = GBS×seq / (median_step_ms/1000) = 1008×4096 / med_ms × 1000",
@@ -427,15 +427,18 @@ BaiZe Stage(i) 预训练 · 双机 16 卡吞吐优化报告 · {REV} · 生成�
 
 class _TagCheck(HTMLParser):
     def __init__(self):
-        super().__init__(); self.stack = []; self.void = {"meta","br","hr","img","input","link","area","base","col","embed","source","track","wbr"}
+        super().__init__(); self.stack = []; self.orphans = []; self.void = {"meta","br","hr","img","input","link","area","base","col","embed","source","track","wbr"}
     def handle_starttag(self, tag, attrs):
         if tag not in self.void: self.stack.append(tag)
     def handle_endtag(self, tag):
         if tag in self.void: return
         if self.stack and self.stack[-1] == tag: self.stack.pop()
         elif tag in self.stack:
-            while self.stack and self.stack[-1] != tag: self.stack.pop()
+            # 隐式关闭：栈顶到目标 tag 之间的都是孤立/未闭合标签（通常是 <code> 里未转义的 <...> 占位符）
+            while self.stack and self.stack[-1] != tag: self.orphans.append(self.stack.pop())
             if self.stack: self.stack.pop()
+        else:
+            self.orphans.append("stray-end:" + tag)
 
 def selfcheck(doc):
     issues = []
@@ -445,6 +448,7 @@ def selfcheck(doc):
     if ext: issues.append(f"外链 {len(ext)} 个: {ext[:3]}")
     tc = _TagCheck(); tc.feed(doc)
     if tc.stack: issues.append(f"未闭合标签: {tc.stack}")
+    if tc.orphans: issues.append(f"隐式关闭的孤立标签(应转义为实体): {tc.orphans}")
     size = len(doc.encode("utf-8"))
     if size < 15000: issues.append(f"体积 {size} B < 15KB 建议下限")
     return issues, size
