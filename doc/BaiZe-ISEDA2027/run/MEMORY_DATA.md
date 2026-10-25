@@ -6,18 +6,18 @@ WAITING: 1
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
 > 🟢 **✅ 迁移5/5源全DONE（唤醒641@22:3x确认/唤醒647@05:56复核）**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删,迁移日志21:42:28 END)；运维令18:1x迁移提速已由中继执行完成(.last_run_id=162>158⇒中继已执行,无需agent代执行)。
-> 🟢 **✅ 85M降优先级后台跑(8990/12126=74.1%,+20自647,活跃下载~1.3it/s,低优先级符合用户令)**。
-> 🟢 **✅ /nas_env: df 4.61T已用/6.27T可用(43%)；/nas_train: 192.5T已用/35.1T可用(85%)**。
+> 🟢 **✅ 85M降优先级后台跑(9014/12126=74.3%,+24自648,活跃下载~1.3it/s,低优先级符合用户令)**。
+> 🟢 **✅ /nas_env: df 4.2T已用/5.8T可用(43%)；/nas_train: 176T已用/32T可用(85%)**。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅硬盘实测清单+✅迁移报告HTML+✅迁移5/5源全DONE(574bins/4.24TB→/nas_env,软链接✓)+▶️85M下载(8990/12126=74.1%,活跃下载~1.3it/s)+✅git sync
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅硬盘实测清单(HTML+TSV); ✅迁移报告HTML; ✅math_l3迁移DONE(67/67,313GB,软链接✓); ✅code_l3迁移DONE(63/63,516GB,软链接✓); ✅math_l1迁移DONE(149/149,614GB,软链接✓); ✅ufw_l3迁移DONE(154/154,990GB,软链接✓); ✅code_l2迁移DONE(141/141,1691GB,软链接✓); ✅迁移提速生效(50→271MB/s); ✅迁移全部完成(5/5源,574bins/4.24TB→/nas_env); ▶️85M下载(8990/12126=74.1%,活跃下载~1.3it/s)
-当前动作:     唤醒648(2026-10-25 07:09)：①跨日巡检续命(距上次data commit 647@05:55已~74min→超60min判死阈值→本轮必commit续命) ②迁移=5/5源全DONE复核(无rsync/migrate/preprocess/run_tokenize进程,ps grep=NONE,migrate_fast.log END@21:42:28,5软链接全在→/nas_env[math_l3→15:21/code_l3→18:10/math_l1→19:01/ufw_l3→20:02/code_l2→21:42],运维令18:1x迁移提速已由中继执行完成,.last_run_id=162>158⇒中继已执行无需agent代执行) ③85M 8990/12126 parquet(74.1%,+20自647,8 incomplete;HF repo总数12124→12126微增2;PID731285 hf download alive(etimes7701s≈2.1h)+PID581946 parallel16 alive(etimes72925s≈20.3h);/tmp/85M_dl_parallel.log tail显示正在下obelics/EN/part74→part75,8992/12126 files 74%,1.30-1.40it/s;低优先级符合用户令「85M下载优先级不高」) ④磁盘df /nas_env 4.61T已用/6.27T可用(43%)/nas_train 192.5T已用/35.1T可用(85%) ⑤git sync正常(无ahead/behind;本线文件无改动,他线在途文件EXPERIMENTS_PRETRAIN_2B_ROUND2/harness/1049-9441目录/baize_dualnode_*/baize_p8_*/ops等一律不动) ⑥体积TASK=30957B(30.2KB)/MEMORY=31006B(30.3KB)均≤32KB✓ ⑦ops_relay_v2.sh alive(PID1032513,ppid=1,真守护) ⑧无新运维令(顶部运维令迁移提速已闭合DONE) 📦体积：TASK=30.2KB/MEMORY=30.3KB（归档0KB，本轮无需归档）
-下一步:       ①迁移全部完成→已交接pretrain(软链接可访问/nas_env数据) ②监控85M(8990/12126=74.1%,活跃下载~1.3it/s,低优先级后台跑即可) ③text/14.90TB留/nas_train(en_v1_4分词产物,太大无法迁/nas_env) ④commit+push(data 648: 跨日巡检迁移全DONE复核+85M 74.1%续命)
+PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅硬盘实测清单+✅迁移报告HTML+✅迁移5/5源全DONE(574bins/4.24TB→/nas_env)+▶️85M下载(9014/12126=74.3%,~1.3it/s)+✅git sync
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅硬盘实测清单(HTML+TSV); ✅迁移报告HTML; ✅迁移5/5源全DONE(574bins/4.24TB→/nas_env,软链接✓,源已删); ✅迁移提速生效(50→271MB/s); ▶️85M下载(9014/12126=74.3%)
+当前动作:     唤醒649(2026-10-25 08:21)：跨日巡检续命(距上次data commit 648@07:13已~68min→超60min判死阈值→本轮必commit续命)①迁移5/5源全DONE复核(无rsync/migrate进程,ps grep=NONE,migrate_fast.log END@21:42:28,运维令18:1x已闭合)②85M 9014/12126 parquet(74.3%,+24自648;PID731285 hf download alive+PID581946 parallel16 alive;log下obelics/EN/part75,1.29-1.31s/it,ETA~1:07h;低优先级符合用户令)③df /nas_env 4.2T已用/5.8T可用(43%)/nas_train 176T已用/32T可用(85%)④git sync正常(无ahead/behind;本线文件无改动,他线在途文件harness/dualnode/baize_p8/ops等不动)⑤体积TASK=28890B(28.2KB)/MEMORY=31609B(30.9KB)均≤32KB✓⑥ops_relay_v2.sh alive(PID1032513,ppid=1,真守护)⑦无新运维令 📦体积：TASK=28.2KB/MEMORY=30.9KB（归档0KB,本轮无需归档）
+下一步:       ①迁移全部完成→已交接pretrain(软链接可访问/nas_env数据)②监控85M(9014/12126=74.3%,~1.3it/s,低优先级后台跑即可)③text/14.90TB留/nas_train(en_v1_4分词产物,太大无法迁/nas_env)④commit+push(data 649: 跨日巡检迁移全DONE复核+85M 74.3%续命)
 阻塞:         无主线阻塞(85M活跃下载~1.3it/s,低优先级后台跑);迁移全部完成;text/14.90TB无法迁/nas_env需留/nas_train
 ERROR_COUNT:  9
 ```
@@ -25,7 +25,8 @@ ERROR_COUNT:  9
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [07:09] 唤醒648：跨日巡检续命（距上次data commit 647@05:55已~74min→超60min判死阈值→本轮必commit续命）①迁移=5/5源全DONE复核(无rsync/migrate/preprocess/run_tokenize进程,ps grep=NONE,migrate_fast.log END@21:42:28,5软链接全在→/nas_env[math_l3→15:21/code_l3→18:10/math_l1→19:01/ufw_l3→20:02/code_l2→21:42],运维令18:1x迁移提速已由中继执行完成,.last_run_id=162>158⇒中继已执行无需agent代执行) ②85M 8990/12126 parquet(74.1%,+20自647,8 incomplete;HF repo总数12124→12126微增2;PID731285 hf download alive(etimes7701s≈2.1h)+PID581946 parallel16 alive(etimes72925s≈20.3h);/tmp/85M_dl_parallel.log tail显示正在下obelics/EN/part74→part75,8992/12126 files 74%,1.30-1.40it/s;低优先级符合用户令「85M下载优先级不高」) ③磁盘df /nas_env 4.61T已用/6.27T可用(43%)/nas_train 192.5T已用/35.1T可用(85%) ④git sync正常(无ahead/behind;本线文件无改动,他线在途文件EXPERIMENTS_PRETRAIN_2B_ROUND2/harness/1049-9441目录/baize_dualnode_*/baize_p8_*/ops等一律不动) ⑤体积TASK=30957B(30.2KB)/MEMORY=31006B(30.3KB)均≤32KB✓ ⑥无新运维令(顶部运维令迁移提速已闭合DONE) ⑦ops_relay_v2.sh alive(PID1032513,ppid=1,真守护) ⑧WAITING=1
+> [08:21] 唤醒649：跨日巡检续命（距上次data commit 648@07:13已~68min→超60min判死阈值→本轮必commit续命）①迁移5/5源全DONE复核(无rsync/migrate进程,ps grep=NONE,migrate_fast.log END@21:42:28,运维令18:1x已闭合)②85M 9014/12126 parquet(74.3%,+24自648;PID731285 hf download alive+PID581946 parallel16 alive;log下obelics/EN/part75,1.29-1.31s/it,ETA~1:07h;低优先级符合用户令)③df /nas_env 4.2T已用/5.8T可用(43%)/nas_train 176T已用/32T可用(85%)④git sync正常(无ahead/behind;本线文件无改动,他线在途文件harness/dualnode/baize_p8/ops等不动)⑤体积TASK=28890B(28.2KB)/MEMORY=31609B(30.9KB)均≤32KB✓⑥ops_relay_v2.sh alive(PID1032513,ppid=1,真守护)⑦无新运维令 ⑧WAITING=1
+> 📦 唤醒648 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 74.1%续命,详见日文件）
 > 📦 唤醒647 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 74.0%代理stall恢复续命,详见日文件）
 > 📦 唤醒646 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 73.8%代理503stall续命,详见日文件）
 > 📦 唤醒645 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 73.7%续命,详见日文件）
