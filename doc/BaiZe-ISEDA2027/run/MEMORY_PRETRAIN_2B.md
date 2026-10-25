@@ -1,6 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-25 14:00 #774：⚪ idle heartbeat · 复核全部指令已交付·无新令·纯验证零 GPU**：
+> - **复核**：① dualnode 报告（07:4x 令）`reports/report_pretrain_dualnode_throughput_zh.html` 24,970B 在位 + 生成器 `gen_dualnode_throughput_report.py` 33KB 在位 + EXPERIMENTS L3691 指针在 ✅；② longctx 报告重写（16:0x 令②）commit `1a304f509`，报告确为 BaiZe-2B Mamba2-hybrid（NemotronH 24SSM+4Attn+28MLP，`--mamba-ssm-dtype float32`，架构差异节在）✅；③ 305K 最佳实践（16:0x 令①）在任务书 16:0x 块 ✅。`git fetch`+`status` ⇒ 与 origin 同步、无 pretrain 文件待提交；Task B 无进程在跑（qps4/qps8/maxnch64 3 TAG 已闭合）。
+> - **未完成指令：无**（07:4x/23:5x/16:0x 三条运维令交付物均已在盘并 commit）⇒ `WAITING=1`（30 分钟长轮询）。
+> - **GPU**：.29 8×H100 全 4 MiB idle，零争用；本轮纯验证零 GPU。
+> 📦 体积：TASK=31.1 KB / MEMORY≈30.4 KB（均 ≤32KB✓；本轮未归档，仅新增 #774 idle 心跳）。
+
 > 🆕 **2026-10-25 12:4x #773：✅ 07:4x 报告令交付物复核+收尾·修报告 HTML 严格有效性·清理 run/reports 残留·纯写作零 GPU**：
 > - **复核交付物**：项目级报告在位（`doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`，24,970 B，11 个 `<h2>`=§1 摘要…§10 数据溯源+附注，#767 误报纠正记录在）；生成器 re-run 产物 diff=空（确定性，可重生成）；EXPERIMENTS L3691 指针在 ⇒ **07:4x 报告令已完整交付**。
 > - **修 HTML 严格有效性**：§9 复现命令 `<code>` 块里 `<TAG>`/`<EXTRA_NCCL>` 占位符未转义 → 独立严格 HTMLParser 报 2 个孤立未闭合标签（生成器旧 `_TagCheck` 的 `elif` 静默吞掉而漏报）。修：① 占位符 `<TAG>`→`&lt;TAG&gt;`、`<EXTRA_NCCL>`→`&lt;EXTRA_NCCL&gt;`；② `_TagCheck` 增 `orphans` 追踪隐式关闭的孤立标签 + `stray-end`，`selfcheck` 计入 issues。重生成后**生成器自检 + 独立严格 parser 双过**（unclosed=[]/errors=[]），0 `<script>` / 0 外链 / 24,970 B（≥15KB✓）。浏览器渲染不变。
