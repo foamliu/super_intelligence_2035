@@ -1,10 +1,19 @@
 # BAIZE_HARNESS_TASK.md
 
+> 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
+> 用户原话：「agent 看到任务书 >32k 后要滚动归档，但是它们**在滚动归档时不要碰没有完成的运维指令**，而且在**归档后立即执行运维指令**，而不是立刻睡去等下次唤醒。」
+> 1. **未完成的运维指令一律不许归档**：判断标准 = 该块里的任务是否**已产出交付物并 commit**、或运维已标注「已闭合」。**没有 `✅ 已完成/已交付` 标记的一律视为未完成**，不许搬进 ARCHIVE。
+> 2. **归档完必须原地继续执行**：归档只是「清理」，**不是本轮交付物**。归档结束后立即回到运维指令区，从最上面那条**未完成**的指令开始做，做完再收尾。
+> 3. **禁止**「只做归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡 30 分钟」。**只要有未完成指令，`WAITING` 必须置 0**（loop 会 60 秒后立即再唤醒），直到该指令交付。
+> 4. 判据自检（写进心跳）：`本轮是否还有未完成的运维指令？` 若「是」→ `WAITING: 0` 并在本轮内完成它。
+
 > 📛 **命名常驻规程（2026-10-25 用户令 · 所有线通用的报告纪律）**：**报告里一律写 `cline`，🚫 不许写 `cline-patched`**。
 > - 同理：`ClinePatched` / `cline_patched` / `Cline-patched` 等任何变体**均禁止出现在报告正文、表格、图例、TL;DR、结论**里。
 > - 理由（用户原话）：「以后在报告里不要写 cline-patched，就写 cline，否则容易造成误解。」——读者会误以为"只跑了被改造过的 Cline"，而实际差异只在接入层（装 CLI / 写 baseUrl / 参数大小写），原生工具循环未改。
 > - **代码/脚本/配置里的标识符不改**（`cline_patched.py`、`terminalbench.agents.cline_patched:ClinePatched`、`jobs_cline-patched/` 是真实路径，改了会跑不起来）；**但报告里凡引用必须转写成 `cline`**。
 > - 如需交代接入层适配，放在**附录或脚注**写一次即可，正文一律 `cline`。
+
+## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
 ### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
 > 用户原话：「安排 harness 去排查和修复导致 claude-code/hermes/deepseek 通过率为0的适配器 bug，修复期间这三个就不要跑了。同时汇报其它四个 harness 截止目前各自的通过率（已跑完的部分）。」
@@ -78,53 +87,7 @@
 ### 🆕 运维指令 · 2026-10-17 20:0x（🚨 P0 抢修：重启 ops 中继 + 重跑 3 个失败 oracle 任务）
 > ⏩ 已闭合（oracle 5/5 已达成；中继已恢复）→ `daily-memories-harness/2026-10-17.md`。
 
-### 🆕 运维指令 · 2026-10-17（🧪 Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud）· 用户直令 · 最高优先（T1；T0 仍是 glm53 收口）
-
-> **用户令（2026-10-17）**：「harness：测完 glm53 7×300之后，开始基于kimi-k2.6做terminalbench的7 harness横评。」
-
-**⓪ 执行顺序（硬约束）**
-- **T0（先做，不得跳过）**：pi 剩余 **32 条**跑完 → 出 **glm53 7×300 最终版报告**（全量 2100 配对 McNemar）→ push。
-- **T1（收口前允许做）**：纯 CPU/IO 前置 —— Docker/uv/Harbor 安装、dataset 拉取、oracle 5×、7 个适配器骨架与单测。**零 API 调用**、不干扰 pi。
-- **T2（glm53 定稿 push 后立即启动）**：Terminal-Bench 正式横评。
-- 🚫 不得为赶 T2 而 kill / 降速正在跑的 pi。
-
-**① 基准与版本（先定后测）**
-- 基准 = **Terminal-Bench 2.0**（Harbor 框架；论文 arXiv:2601.11868 记 **89 tasks**；数据集 **`terminal-bench@2.0`**）。
-- 安装：`uv tool install harbor`（或 `pip install harbor`），**独立 uv/conda 环境**，🚫 不污染共享 `py310`。
-- **Oracle 必须 5/5**：`uv run harbor run -d terminal-bench@2.0 --agent oracle -k 5 --n-concurrent 4`。oracle 不过 ⇒ 先修环境（Docker/镜像/网络），**环境失败不得算到 harness 头上**。
-- 报告首段必须写明：`harbor --version`、`uv --version`、dataset 实际解析版本/commit、`docker version`、镜像 digest/拉取源；若实际任务数 ≠89，以实际为准并声明。
-
-**② 7 harness（与 7×300 同一套，不得替换/合并）**
-`cline-patched` / `codex` / `hermes` / `opencode` / `claude-code` / `deepseek-harness` / `pi`
-- 每 harness 一个 **Harbor 自定义 agent**（`BaseAgent` / `BaseInstalledAgent` 子类，放 `run/harness/terminalbench/agents/<name>.py`），**保留原生工具循环**（读/写/执行/多轮修复）。
-- 🚫 禁止「一个通用 shell agent 冒充 7 个」；🚫 禁止只换 system prompt 当不同 harness。
-- 适配器验收：单任务上产出 **≥1 条工具调用轨迹 + 非空提交**，trace 落 `run/harness/terminalbench/traces/`。
-
-**③ 模型与配额（逐字遵守）**
-- backbone = **`kimi-k2.6-cloud`**，Base URL = **`http://agi-gateway.cxmt.com/cloud/v1`**，key 取 `doc/keys.txt` 同名项（与旧 7×300 完全一致；**报告/任务书不得明文打印 key**）。
-- **同一 harness 全程只用一个模型**；换模型整臂重跑，禁止混算。
-- 429/额度墙：**暂停等窗口**并记录等待秒数，不硬刷；`quota-blocked` 单列，**不计入 harness 失败**。
-- 并发：每 harness 内 **并发 = 1**；7 路并行以「不触发 429」为限，触发即降到 2–3 路；所有结果带时间戳。
-
-**④ 规模与判据（预注册，先写后跑）**
-- 全量 = **7 × 89 = 623** 次（每任务每 harness 1 次，主口径 pass@1）。
-- 先跑 **7 × 5 分层 pilot**（覆盖不同任务族）只用于验收 pipeline，**不得替代全量**。
-- 主指标 **task resolution rate**；副指标 **timeout 率 / 无提交率 / 平均步数 / token 或 cost（若 Harbor 提供）**。
-- 统计：**Wilson 95% CI**；7×7 **McNemar 精确检验**（同一批任务配对，报 b/c/p，不做挑选性比较）；给「最小可检测差值」说明。
-- 三列口径 `resolved / failed / infra-or-quota`；某 harness infra 失败率 **>30% ⇒ 先停跑排障**，不得带病继续。
-
-**⑤ 交付物**
-1. `run/harness/terminalbench/`：7 适配器 + 启动脚本 + README（安装/复现命令/版本）+ mock 单测。
-2. `run/harness/terminalbench_kimi_k2.6_results.json`（逐任务逐 harness：结果、耗时、token、失败类别、trace 路径）。
-3. `reports/report_harness_terminalbench_7way_zh.html`：中文自包含；TL;DR / 总表（rate + CI）/ 逐任务热力表 / McNemar 矩阵 / 失败归因（环境 vs 能力 vs 适配器）/ 与 SWE-bench 7×300 结论对照 / **诚实条款**（内部口径、非官方榜、模型别名未经官方核验、dataset tag 会滚动）。
-4. `MEMORY_HARNESS.md` 状态头 + 心跳。
-
-**⑥ 纪律**
-- 🚫 不占 GPU；与 `.12` 80B decay / vision **错峰 IO**（`nice -n 19`；禁止大目录全树遍历）。
-- Docker 前置：`docker info` + `docker run --rm hello-world` + **实拉 1 个 TB 任务镜像**；内网阻断 ⇒ 立即在 MEMORY 记 **blocker + 完整报错 + 已试命令 + 替代方案**，**不许伪造结果、不许空跑**。
-- commit 前缀 **`harness tb:`**；任务书/MEMORY ≤32KB 自滚归档；每个数字可溯源到 `文件:行` 或原始日志。
-- 里程碑建议：T1 ≤2 次唤醒；pilot ≤24h；全量 ETA **3–5 天**（89×7，单任务 5–15min 量级，受配额/镜像拉取影响，报告须给实测 ETA）。
-
+> 📦 §运维指令·2026-10-17（🧪 Terminal-Bench 2.0 · 7 harness × 89 task · kimi-k2.6-cloud）**已闭合**（7×89 已启动并跑到 R491）→ 原文归档 `run/ARCHIVE_OPERATOR_HARNESS.md`；**结论**：TB 2.0 = 89 tasks（Harbor）、oracle 必须 5/5、7 路自定义 agent 不得替换/合并、报告需写 harbor/uv 版本与 dataset commit。需要时再读。
 
 ### 🆕 运维指令 · 2026-10-16（▶️ **重启未跑完的 4 路评测，把 188 条补完**）· 最高优先
 > ⏩ 已闭合（188 条已补完，glm53 7×300 2100/2100）→ `daily-memories-harness/2026-10-16.md`。
