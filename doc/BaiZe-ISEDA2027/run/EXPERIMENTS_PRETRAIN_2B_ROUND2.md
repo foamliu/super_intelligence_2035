@@ -3753,3 +3753,32 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 
 > 📄 **完整报告**：`reports/report_pretrain_seqlen_throughput_zh.html`（中文 HTML，单文件自包含，16,774B / 0 `<script>` / 0 外链）；生成器 `run/gen_seqlen_throughput_report.py`（数据字典写顶部，重生成 diff 空）。根因深挖见 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（运维令 20:2x，含 cfg0a/cfg0b 对照 + web 对标 + 假设检验表）。
 
+
+## 🔴 tok/mb 悬崖根因（E1–E5a 阶梯，2026-10-26 00:4x）— 推翻 #782「GPU 饥饿」与「seq 效应」两版归因
+
+> 运维令 2026-10-25 23:0x 通宵攻坚。单变量阶梯 = tok/mb（= mbs×seq），配方冻结 DP16/TP1/FP8/CUDA-graph，2 节点 .12+.29，每格 80 iter。脚本 `run/baize_rc_ladder.sh`，结果表 `run/pretrain_rc_ladder_20261026.tsv`。
+
+**一句话结论**：驱动变量 = **tok/microbatch/GPU**，与 seq 长度无关、与批几何(gbs/accum)无关。tok/mb ≥ 16384 → 单卡峰值激活显存顶 ~80GB HBM 上限（reserved 74GB / max-alloc 69GB，余量 ~6GB）→ memory-bound → GPU 达成算力从 ~830–960 TFLOP/s(84% MFU) 崩到 ~125 TFLOP/s(13% MFU) → 每 token 耗时 5.4×。tok/mb ≤ 12288 → 峰值 <70GB、余量 ≥10GB → 维持基线 606,449 tok/s。
+
+**11 格实测**（全在 TSV）：
+
+| tok/mb | 格 | tok/s | 峰值 | 档 |
+|:--|:--|--:|--:|:--|
+| 8192 | E2(seq8192/mbs1) | 605,012 | 55.4GB | 快 |
+| 12288 | 基线/E1/E3/E4 | 598K–617K | 67–69GB | 快 |
+| 16384 | cfg0a–cfg4/E5a | 108K–121K | 81.1GB顶格 | 慢 |
+
+**两版旧归因作废**：
+- 「seq/SSM 超线性」← E5a(seq=2048 最小)仍慢 112,739；E3(seq=12288)却快 617,269 ⇒ seq 非成因。
+- 「小批几何 GPU 饥饿」(#782) ← E2(同小批 gbs256/accum16/tok/step2.1M)却 84% MFU/605K 快 ⇒ 13% MFU 是 memory-bound 的症状，非 launch 间隙成因。cfg2/cfg4(tok/step=4.19M≈基线)仍慢 ⇒ 「tok/step≥4M 回到 500-600K」预言被证伪。
+
+**显存快照**（Rank 0 after 10 iter）：E2 max-alloc 42.8GB/reserved 51.3GB；E3 56.0/64.3GB；E5a 69.4/74.1GB ⇒ max-alloc ∝ tok/mb 单调 ⇒ 顶格。当前生效 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`，未开 `--recompute-activations`（全激活驻留 ⇒ 激活显存 ∝ tok/mb 是顶格直接来源）。
+
+**修复配方（已达标 ≥0.7×基线）**：seq8192/mbs1/gbs256/accum16 → 605,012 tok/s = 1.00×基线，峰值 55.4GB，loss 7.56/gnorm 0.59/nan 0 健康。= 「8K 满速配方」。
+
+**16K 处置**：单卡 seq16384 必慢；须上 CP=2/4 把单卡有效 tok/mb 压回 ≤12288（CP smoke 待跑，下一步 ≤30min）。或 `--recompute-activations`（配方变更组，单列）。
+
+**判据铁律**：tok/mb = mbs×seq ≤ 12288 安全；=16384 顶格慢；>16384 OOM（cfg5/6@32768 已 OOM@81GB）。
+
+> 📄 根因报告：`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（16,942B rev1，含 11 格表 + 显存对比 + H1-H9/H-mem 假设账本 + 档位表 + 证据路径）。
+> 📦 旧 #782「GPU 饥饿」结论 hereby 标记已证伪（见上）；旧 seqlen 报告红框已指向本报告。

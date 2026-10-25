@@ -33,7 +33,7 @@ code{background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:0.9em}
 <p style='margin:6px 0'><b>真因 = 小批几何(gbs/accum/mbs 联合)→GPU 饥饿(MFU 73.6%→14%)</b>：cfg0a 每步只做基线一半 token(2.10M vs 4.13M)却花 2.64× 墙钟(17.9s vs 6.8s)，多出 ~14.5s 几乎全是 GPU 空闲（kernel launch 间隙 + 每步固定开销不摊薄）。CUDA graph 两组均 <code>built 112</code> 成功 → 排除图回退。</p>
 <p style='margin:6px 0'><b>本报告的网格测量数据（cfg1–4 的 tok/s、显存、step time）仍然有效</b>，但其「seq→吞吐悬崖 / SSM 超线性」的因果解释 hereby 作废。H1–H9 假设检验中仅 H4(批几何→GPU 饥饿)确认；H1/H2/H5/H6/H8/H9 全证伪。</p>
 <p style='margin:6px 0;font-weight:700'>📄 完整根因报告 → <code>reports/report_pretrain_seq8192_slowdown_rootcause_zh.html</code>（21KB，含 H1–H9 假设表 + cfg0a 对照 + 算术分解 + GPU 饥饿机制 + 5 条文献引用 + 处置建议）。详细更正见 <code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>「🔴 根因更正」节。</p>
-<p style='margin:6px 0;color:#991b1b'><b>处置</b>：seq≥8192 <u>可用</u>，前提保持有效批 <b>tok/step ≥ 4M</b>（基线水准，用更大 accum 补 mbs 显存差）；预期回到 ~500–600K tok/s 而非 108K。原「不建议用 seq≥8192」的结论 hereby 撤销。</p>
+<p style='margin:6px 0;color:#991b1b'><b>处置（已二次更正 2026-10-26 #784）</b>：本段原先预测「保持 tok/step ≥ 4M 即可回到 ~500–600K」—— <b>该预测已被 cfg2/cfg4 证伪</b>（tok/step=4.19M≈基线却仍 111,897/121,495 慢档）。真因与正确判据见根因报告：<b>驱动变量 = tok/microbatch/GPU = mbs×seq</b>，须保持 <b>tok/mb ≤ 12288</b>（而非 tok/step ≥ 4M）才维持满速；tok/mb=16384 必顶 80GB 显存而崩 5.5×。故 seq≥8192 <u>可用</u>，前提是 <b>mbs×seq ≤ 12288</b>（如 seq8192→mbs1，已实测 605,012 tok/s）；16K 须上 Context Parallel。原「不建议用 seq≥8192」结论 hereby 撤销；「tok/step≥4M 回到 500-600K」预测 hereby 作废。</p>
 </div>
 
 <p class='small'>生成器：run/gen_seqlen_throughput_report.py · 数据源：/tmp/baize_seqlen_grid/ · 单变量实验：每步 token 数固定（2M=S1 / 4M=S2），仅改 seq</p>
