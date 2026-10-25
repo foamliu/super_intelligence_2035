@@ -199,4 +199,20 @@
 
 > 盘点报告已升 **v3**：`reports/report_data_tokenized_inventory_zh.html`（post-prune 实测 TSV `inventory_v3_20261025.tsv`）。
 
+### §7.1 删除 32 个不可映射 staging_r3 目录（运维令 2026-10-25 18:2x · 用户直令 · 终裁）
+
+> 用户口径：不能被 `DATA_MAPPING.md` 收录的数据即不可用，留着只占盘。对象 = judgment TSV 里 action 以「保留」开头的 32 行（`l3_s0`–`l3_s12`、`l3_s25`–`l3_s39`、`math_s32`–`math_s35`），位于 `baize-data/text/staging_r3/`。
+> ⚠️ **实测更正（与任务书前提不符，如实记录）**：此 32 目录实为**输入符号链接暂存**，**不含 `.bin/.idx/.json` 分词产物**：
+> - 32 目录合计 on-disk **482,940 B = 471.6 KB**（仅符号链接元数据），常规文件数 = 0；
+> - 「1.89 TB / 472.85B tokens」是按 `tokens × 4 B/token` 的**理论 .bin 体积**，对应实际 `.bin` 产物此前迁移 `/nas_env/full_*` 时已处置（仅「已覆盖」546 shard 以 `ufw_l3_train_s*` 等新名保留），这 32 个「未覆盖」shard 的 `.bin` 已不存在于任何挂载点；
+> - 留下的只是指向 `/nas_inference/…` 源 parquet 的悬空符号链接。
+>
+> 执行（2026-10-25 18:3x）：
+> - 删前留档：`run/data/deleted_unmapped32_20261025.tsv`（32 行：路径/字节/符号链接数/parquet 引用）+ `run/data/deleted_unmapped32_summary.md`（汇总）；留档已先 commit（9e8a297fb）再删。
+> - 删除：`rm -rf` 32 目录，全部成功；`staging_r3/` 子目录 110 → 78（剩余 = 78 个「已覆盖」shard 的输入暂存）。
+> - 校验：`/nas_inference` 源 parquet 抽样 intact（删的是符号链接，非目标文件）；`tokenized/` 镜像 .bin=716 不变、**悬空链接 = 0**（32 目录从未进入镜像）；在跑的 131 分词未受影响（done=94/131，进程 39>0）。
+> - 磁盘：`du staging_r3/` 77M → 55M；`df /nas_train` 无净下降（并发分词正写 ~20 GB 新 `.bin`，471 KB 释放被掩盖，属预期）。
+> - `DATA_MAPPING.md` B 节「已删除/不可用」32 行状态置 `已删除`；`tokenized/INDEX.tsv` 无需改（32 从未在镜像）。
+> - **结案**：本令为终裁，不再挂账。完整 mirror rebuild + triplet/inode 收尾校验待 131 分词结束后一并做（运维令 18:2x 允许）。
+
 **D11（与方案 §1 的差异）**：phase0 §1.2 把多模态一律归 `/nas_train`，实测「bytes 通用图文对」还躺在 `/nas_user`（Amshaker 3.7T、BLIP3o 1.3T）与 `/nas_train`（CC12M webdataset 1.2T 带图、LLaVA-CC3M-595K）——这批是"补数据不足"的实际弹药，上轮盘点漏记。

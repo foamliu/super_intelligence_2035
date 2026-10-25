@@ -14,17 +14,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅prune早期重复shard+✅tokenized镜像布局建成(716shard/3342.49B,已commit)+▶️未分词4源分词中(92/131,70.2%,ETA~1.65h)+✅报告重生成(新路径)+✅git sync
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅prune早期重复shard(78删/释放3.69TiB); ✅迁移5/5源全DONE(→/nas_env,full_*为symlink); ✅tokenized镜像布局建成(10目录/716shard/3342.49B/13364.91GB,hardlink同盘+symlink跨盘,VERIFY triplet ALL OK+inode ALL OK,每目录MANIFEST.json+顶层INDEX.tsv); ✅部分镜像校验(ufw_l1_en_hq 32bin=32idx,inode link=orig 47582211008✓,hardlink机制证实正确); ✅报告重生成(单表14行,tok_dir更新为新镜像路径)
-当前动作:     唤醒654(2026-10-25 17:23)：监控巡检——①tokenized/镜像布局✅已建成并已commit(7896810a3,716shard/3342.49B,hardlink同盘+symlink跨盘,VERIFY triplet+inode ALL OK;部分镜像ufw_l1_en_hq 32bin=32idx inode实测一致)②分词健康在跑(supervisor PID335288@13:24 alive etimes14044s,done=92/131,running=39,pending=0,giveup=0,tokens=147.42B,bin_bytes=589.68G,tokens/s≈10.5M,cpu≈3898%,ETA≈5946s≈1.65h,进程41>0,日志17:23:01有done/total进度,failed_shards.txt不存在giveup=0干净)③disk 36T空闲83%用充足④本唤醒提交心跳reset死亡钟
-下一步:       ①等分词跑完(ETA~19:0x,131/131)→重跑build_tokenized_mirror.py把新shard(ufw_en+l1_en_hq+zh+aicc)hardlink进镜像→更新INDEX.tsv②校验.bin=.idx+字节+num_tokens③更新DATA_LEDGER §9+重生成报告④32 uncovered shard待人工裁决
-阻塞:         无主线阻塞;32 uncovered shard(l3_s28+math_s4)来源不明待人工裁决(异步等分词不阻塞);disk充足
+PHASE:        ✅全量分词5源DONE+✅en_v1_4全源110/110DONE+✅prune早期重复shard+✅tokenized镜像布局建成(716shard/3342.49B)+✅删32不可映射staging目录(运维令18:2x终裁)+▶️未分词4源分词中(94/131,71.8%)+✅DATA_MAPPING.md首版(单一事实源)
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅prune早期重复shard(78删/释放3.69TiB); ✅迁移5/5源全DONE(→/nas_env,full_*为symlink); ✅tokenized镜像布局建成(10目录/716shard/3342.49B,hardlink同盘+symlink跨盘,VERIFY triplet+inode ALL OK); ✅删32不可映射staging_r3目录(运维令18:2x,实测=471.6KB符号链接非1.89TB,留档deleted_unmapped32_*.tsv/summary.md+DATA_MAPPING.md B节,staging_r3 110→78,镜像716不变悬空0,源parquetintact,分词未受影响); ✅DATA_MAPPING.md首版(A节716shard可用+B节32已删除,单一事实源)
+当前动作:     唤醒655(2026-10-25 18:3x)：执行运维令18:2x删32不可映射staging目录——删前留档TSV+summary+DATA_MAPPING.md首版(先commit 9e8a297fb)→rm -rf 32目录全成功(staging_r3 110→78)→校验(镜像716不变/悬空0/源parquetintact/分词done=94/131未受影响)→DATA_LEDGER §7.1记结案
+下一步:       ①等分词跑完(done=94/131,ETA~2h)→重跑build_tokenized_mirror.py把新shard(ufw_en+l1_en_hq+zh+aicc)hardlink进镜像→更新INDEX.tsv②校验.bin=.idx+字节+num_tokens③更新DATA_LEDGER+重生成报告④32已删除结案
+阻塞:         无主线阻塞;32不可映射shard已删除结案(运维令18:2x终裁);等分词异步(94/131不阻塞);disk充足
 ERROR_COUNT:  9
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [18:3x] 唤醒655：执行运维令18:2x删32不可映射staging目录——删前逐目录实测留档(deleted_unmapped32_20261025.tsv 32行+summary.md；实测=471.6KB/1408符号链接/0常规文件/无.bin/.idx/.json,与任务书"1.89TB"前提不符→如实更正:1.89TB为token×4B理论.bin体积,实际产物此前迁移full_*时已处置)→建DATA_MAPPING.md首版(A节716shard可用+B节32已删除)→先commit留档(9e8a297fb)再rm -rf 32目录全成功(staging_r3 110→78)→校验(镜像716不变/悬空链接0/源parquet抽样intact/分词done=94/131进程39>0未受影响)→DATA_LEDGER §7.1记结案→未完成指令：无（18:2x删除已结案；12:5x分词异步在跑done=94/131，完成后做mirror rebuild收尾）
+
 > [17:23] 唤醒654：监控巡检——分词健康在跑(done=92/131,running=39,pending=0,giveup=0,tokens=147.42B,tokens/s≈10.5M,cpu≈3898%,ETA≈5946s≈1.65h,进程41>0,日志17:23:01有done/total进度,failed_shards.txt不存在干净)｜镜像布局已commit(7896810a3,716shard/3342.49B,VERIFY triplet+inode ALL OK;部分镜像ufw_l1_en_hq 32bin=32idx inode link=orig 47582211008实测一致✓)｜disk 36T空闲83%用｜本唤醒提交心跳reset死亡钟｜未完成指令：无（①布局✅②分词在跑满足进程>0+日志有进度；收尾校验异步阻塞中,判据=done=131/131）
 
 > [16:0x] 唤醒653：监控巡检——分词健康在跑(done=61/131,running=64,pending=6,giveup=0,tokens=97.47B,tokens/s≈10.2M,cpu=6431%,ETA≈11000s≈3h,进程66>0,日志有done/total进度)｜镜像布局已commit(7896810a3,716shard/3342.49B)｜calibration实测(tiers64/96/128/192:W96=11.3M tok/s,取knee≈64并发,稳态~10M tok/s)｜data线git clean已push｜未完成指令：无（①布局✅②分词在跑满足进程>0+日志有进度）
