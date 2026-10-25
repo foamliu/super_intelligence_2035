@@ -1,7 +1,52 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 189 | TARGET: 29 -->
-## RUN_ID 189 — 🔄 整体 git pull（让 4 个 agent 共享仓库同步到最新运维令）
+<!-- RUN_ID: 190 | TARGET: 29 -->
+## RUN_ID 190 — 🔎 只读：data 线状态（是否已读到 08:0x 盘点令 / loop 是否在跑 / 唤醒时刻）
+
+```bash
+set -u
+echo "=== RUN_ID 190 | data line status | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+
+echo "[1] data loop 进程（.29 + .12 都查）"
+ps -eo pid=,ppid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_data_loop' | grep -v grep | cut -c1-150 || echo '  .29: NO_DATA_LOOP'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "baize_data_loop" | grep -v grep | cut -c1-150 || echo "  .12: NO_DATA_LOOP"' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "[2] data loop 日志尾部（最后 wake/sleep + 是否在跑 agent）"
+ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null
+echo "  --- 最后 12 行 ---"
+tail -12 /tmp/baize_data_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-170
+
+echo "[3] 是否有 cline/pi 进程正在为 data 线工作（说明本轮唤醒进行中）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -iE 'cline|fleetagent|pi-coding' | grep -v grep | cut -c1-150 | head -6 || echo '  无 agent 进程'
+
+echo "[4] data 侧产物是否已更新（报告/测量文件）"
+for f in MEMORY_DATA.md BAIZE_DATA_TASK.md; do
+  [ -f "$T/$f" ] && echo "  $f  mtime=$(stat -c '%y' "$T/$f" | cut -c1-19)  size=$(stat -c %s "$T/$f")"
+done
+echo "  --- 报告 ---"
+R="$GR/doc/BaiZe-ISEDA2027/reports"
+ls -l --time-style=+%F_%T "$R/report_data_tokenized_inventory_zh.html" 2>/dev/null || echo '    NO_INVENTORY_REPORT'
+echo "  --- 新产物候选（inventory v2 相关）---"
+find "$T/data" "$R" -maxdepth 1 -newermt '-3 hours' \( -name '*inventory*' -o -name '*tokenized*' \) 2>/dev/null | head -10 || echo '    无（说明返工尚未产出）'
+
+echo "[5] data MEMORY 顶部快照（WAITING / PHASE / 当前动作）"
+head -40 "$T/MEMORY_DATA.md" 2>/dev/null | grep -aE '^WAITING|^PHASE|^当前动作|^下一步' | cut -c1-320
+
+echo "[6] daily-memories-data 今日文件尾部（看它自我汇报做了什么）"
+tail -20 "$T/daily-memories-data/2026-10-25.md" 2>/dev/null | cut -c1-200
+
+echo "=== DONE 190 ==="
+```
+
+## RUN_ID 189 — 🔄 整体 git pull（已执行 exit=0，结论：仓库已最新 behind=0 ahead=0）
+
+```text
+4 条线运维令全部在位（pretrain/data/harness 各命中 1 次）。MEMORY mtime：
+pretrain 08:40:52 / data 08:24:41 / harness 08:52:11 / vision 08:09:50。
+=> 指令在文件里、仓库也最新；agent 未执行属"读到了但没照做"或"尚未唤醒"。
+```
 
 ```bash
 set -u
