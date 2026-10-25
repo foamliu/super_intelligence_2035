@@ -27,6 +27,27 @@
 > 用户原话：「1. 已下载已分词的，把分词目录整理一下，跟下载目录有更好的对应。2. 已下载未分词的，去分词，充分利用多核并发。」
 > 运维侧已完成：32 个不可对应 shard 已删（1.91 TiB，RUN_ID 199）；盘点报告已由运维重写为**单表**（`reports/report_data_tokenized_inventory_zh.html`，8.5 KB，1 个 table，14 行，数据源 `run/data/map_dl_vs_tok_20261025.tsv`），**不要再改报告结构**。
 
+#### ⓪ 先核对这份报告（用户令：不是 data 做的，**data 必须逐格复核**，30 分钟内）
+
+对象：`reports/report_data_tokenized_inventory_zh.html`（运维 11:5x 生成，单表 14 行）+ 数据源 `run/data/map_dl_vs_tok_20261025.tsv`。
+
+逐行复核（14 行 × 5 项，**每项都要贴命令与实际值**）：
+1. `test -d <下载目录>` → exists?
+2. `find <下载目录> -name '*.parquet' | wc -l` → 与表里 parquet 数一致?
+3. `du -sb <下载目录>` → 与表里字节/GB 一致（GB = 字节/1e9，2 位）?
+4. `ls <分词产物目录>/*.bin | wc -l` → 与 bin 数一致?（硬链接用 `stat -c %i` 验同 inode；软链接 `readlink -f` 验目标存在）
+5. `python3 -c` 汇总该目录所有 `.json num_tokens` → 与表里 Token(B) 一致（2 位）?
+
+另核：
+- 合计行 = 各行之和（下载 GB、Token B、bin 数三项都要对，误差须为 0）；
+- HTML 结构：`<table` 出现次数必须 = 1、表头 6 列齐全、禁用词（来源不明/待人工裁决/未实测/N/A）命中 = 0；
+- **已删除** 4 行：确认产物已不存在（`ls` 为空）且下载目录仍在，Token 列按定义写 0.00 —— 这一类在核对表里标 `无法复测(产物已删)`，**不许**自行补数字。
+
+交付 `run/data/report_verify_20261025.md`：`行# | 检查项 | 报告值 | 实测值 | 命令 | 结论(PASS/MISMATCH/无法复测)`。
+- 全 PASS ⇒ 在报告 footer 追加一行「data 复核 PASS · <时间> · 复核人 data」，不改其它内容；
+- 有 MISMATCH ⇒ 只改 `map_dl_vs_tok_20261025.tsv` 的错误格 → 重跑 `python run/data/gen_tokenized_inventory_report.py`（单表模式，结构不变），并在 `report_verify_*.md` 列明改了哪几格、原值/新值；
+- 🚫 不许改表结构/列名/加章节；🚫 不许只写「已核对无误」而不贴命令与实测值。
+
 #### ① 已分词产物：整理成「镜像下载目录」的布局（**零拷贝**）
 
 新根：`/nas_train/app.e0031982/datasets/baize-data/tokenized/`，**路径镜像 HF 下载目录**：
