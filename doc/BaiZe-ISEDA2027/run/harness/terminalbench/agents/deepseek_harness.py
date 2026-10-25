@@ -83,17 +83,29 @@ class DeepseekHarnessTB(TBBaseAgent):
                 "deepseek-harness-sdk 2>&1 | tail -8"
             ),
         )
-        # Verify import; raise if the SDK did not install (was silently 0% before).
+        # Verify the class used by run() is importable; raise if the SDK did not
+        # install (was silently 0% before).  NOTE (R493 fix): the SDK module has
+        # NO __version__ attribute — the R492 check `deepseek_harness.__version__`
+        # raised AttributeError → RuntimeError on EVERY trial → 0 pass, even
+        # though the install itself succeeded.  Import the actual class
+        # DeepSeekHarness that run() uses instead.  Also capture stdout (the
+        # command uses 2>&1, so stderr is empty; the real error is in stdout).
         result = await environment.exec(
-            command='python3 -c "import deepseek_harness; print(deepseek_harness.__version__)" 2>&1'
+            command='python3 -c "from deepseek_harness import DeepSeekHarness; print(1)" 2>&1'
         )
         if result.return_code != 0:
             raise RuntimeError(
                 f"DeepSeek-Harness SDK install failed (python3 -m pip): "
-                f"rc={result.return_code} stderr={(result.stderr or '')[:400]} "
+                f"rc={result.return_code} stdout={(result.stdout or '')[:400]} "
                 f"install_out={(install_res.stdout or '')[:300]}"
             )
-        self._version = result.stdout.strip() or "unknown"
+        # The SDK has no __version__; extract the version from pip's
+        # "Successfully installed ... deepseek-harness-sdk-X.Y.Z" line if present.
+        self._version = "unknown"
+        for _line in (install_res.stdout or "").splitlines():
+            if "deepseek-harness-sdk-" in _line:
+                self._version = _line.strip()
+                break
         # Create DSH home
         await environment.exec(command=f"mkdir -p {self._dsh_home}")
 
