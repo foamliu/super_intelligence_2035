@@ -22,6 +22,32 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-25 18:1x（32 个「不可映射」分词 shard：能证重复的立刻删，证明不了的列清单报回）· 用户直令 · 最高优先
+> 用户原话：「data：有32个无法映射也就是找不到下载目录的分词目录吗？那就删掉。」
+> 运维核实（依据已 commit 的 `run/data/prune_unmapped_judgment_20261025.tsv`、`prune_unmapped_summary_20261025.json`）：这 32 个**不是找不到下载目录**，它们的 download_dir 都能对上（Ultra-FineWeb-L3 的 en/zh_l3 multi_style+qa、UltraData-Math L1/L2-preview/L3）。真正的缺口是：manifest 指向已废弃的 `staging_r3` 中间路径，**无法证明其源 parquet 全部包含在 `full_*` 分词集里**；32 个合计 472.85B tokens（按 4 B/token 约 1.89 TB）、涉及 1286 个未证覆盖的 parquet。全删有丢「唯一分词副本」的风险。
+> 口径修正（必须写进 `DATA_MAPPING.md`）：**不可映射 = 无法证明覆盖关系，不等于没有下载来源**，两者不许混写。
+
+**1) 先做覆盖核验（60 分钟内出结果，判据写死）**
+- 对象：judgment TSV 里 `mappable = 不可映射(...)` 且 `action` 以「保留」开头的 32 行（l3_s 28 个 + math_s 4 个：`l3_s0-s12, s25-s39`、`math_s32-s35`）。
+- 每个 shard 的 `.json`（分词 manifest）记录了它消费的 parquet（路径 / basename / 行数）。对每个 parquet 判定：
+  (a) **可证重复**：行数与 `full_*` 对应 shard 的累计文档数吻合，且抽 1000 条文本的 hash 在 `full_*`（或 `tokenized/` 镜像）里命中率 100%，或 token 数守恒误差小于 0.1%；
+  (b) **疑似唯一**：`full_*` 找不到对应 parquet，或 hash 不命中；
+  (c) **不可判**：manifest 无 parquet 明细。
+- 抽样口径落盘：hash 算法、样本数、命中率，写 `run/data/unmapped32_verify_20261025.md`。
+
+**2) 删除规则（安全第一）**
+- **只删判定为「可证重复」的 shard**：删前写 manifest（shard / 文件列表 / 字节 / 内嵌 parquet 列表 / 判定依据 / 抽样命中率），删后 `du -sb` 复核释放量，更新 `DATA_MAPPING.md`（状态置 `已废弃`）+ `tokenized/INDEX.tsv` + `DATA_LEDGER.md` 对应节。
+- **「疑似唯一 / 不可判」一律保留**：在 `DATA_MAPPING.md` 的「未映射 / 待裁决」节列清单（shard、字节、涉及 parquet 数、理由），并把该清单贴回 MEMORY + 当日日报，交运维决定（重分词 / 继续核验 / 删）。
+- 正在跑的分词不许打断：先让它 `done=131/131`，再动清理，避免与在写文件冲突。
+- 删完必须重跑 `build_tokenized_mirror.py` + triplet/inode 校验，确认镜像与被删 shard 之间没有悬空链接。
+
+**3) 报回格式**
+一句话结论 + 三个计数：`删除 N 个 / 释放 X TB`、`保留 M 个（疑似唯一）`、`不可判 K 个`；再给清单与核对文件路径。
+
+**铁律**
+- 不许为了「删干净」把「疑似唯一」也删掉：下载目录还在、但要重烧 CPU 重分词，**判断失误不可逆**。
+- 所有数字必须来自 `du -sb` / `find` / manifest 原文；取不到写「未取到 + 原因」。
+
 ### [运维令] 2026-10-25 17:5x（**目录名不再重要：核心交付 = 「下载与分词」映射表；Markdown 为单一事实源，HTML 按需**）· 用户直令 · 最高优先
 > 用户原话：「data：目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」
 > 本条 + 下方「口径仲裁」新增的三行，优先于 13:2x 块里关于报告结构 / 目录命名 / uncovered shard 的旧口径。

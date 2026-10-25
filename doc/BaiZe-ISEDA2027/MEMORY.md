@@ -15,7 +15,11 @@
 
 - 用户原话（摘）：harness「授权 hermes/claude-code 全量复跑 89 题、排查codex 高 err」；data「目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」；vision「现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」；pretrain「…在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
 - 基线锚点：pretrain 双机 e18 = 606,300 tok/s、4,128,768 tok/step（seq=4096）；OCR 参考（ArmB，`run/vision/generate_armC_mllm_report.py` 的 ARMB）OCRBench 1.6% / DocVQA 7.36% / ChartQA 12.52% / InfoVQA 16.88%。
+- 18:1x 补充（data 32 shard 的核实）：用户问「32 个找不到下载目录的分词目录就删掉」→ **前提不成立**：这 32 个（l3_s 28 + math_s 4）**都有下载目录**（Ultra-FineWeb-L3 en/zh_l3 的 multi_style+qa、UltraData-Math L1/L2-preview/L3），缺的是「覆盖证明」——manifest 指向已废弃的 `staging_r3`，无法证明其 parquet 已含在 `full_*` 里；合计 **472.85B tokens、约 1.89 TB、涉 1286 个未证覆盖 parquet**。已下发 data 令：先做 parquet 级覆盖核验（文档数 + 抽样 hash，60 分钟），**只删「可证重复」的**；「疑似唯一 / 不可判」一律保留并出清单报回。并在 `DATA_MAPPING.md` 固化口径「不可映射 ≠ 无下载来源」。
+- 18:0x 顺手清理：删除重复且陈旧的分身文件 `run/reports/report_pretrain_dualnode_throughput_zh.html`（项目级 `reports/` 有正式版）。
 - 仍未变的老待办：vision B4 的 MMVet / MathVista 需 `OPENAI_API_KEY`；336+anyres 需工程 scope。
+
+
 - 写文件注意（记下）：本机编辑器通道会把 emoji、箭头、大于等于号转成乱码（实测 🚨 变乱码），所以本轮新指令块一律用「纯中文 + ASCII 符号」书写；归档搬运由 Python 原样搬迁，emoji 不受影响。
 
 ## ⚡ 2026-10-24 18:1x — data 迁移提速（85M 降优先级 · 用户令）
