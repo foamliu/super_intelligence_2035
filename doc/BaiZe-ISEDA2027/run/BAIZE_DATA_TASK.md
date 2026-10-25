@@ -1,42 +1,5 @@
 # BAIZE_DATA_TASK.md
 
-### 🚀 运维令 · 2026-10-25 08:0x（**重新盘点 MiniCPM5 数据：以下载目录为准，重出 tokenized inventory 报告**）· 用户直令 · 最高优先
-> 用户原话：「安排data重新盘点一下已下载/已分词的 MiniCPM5 数据。report_data_tokenized_inventory_zh.html 这个材料有些问题：1. ④ 逐源汇总表中为啥没有 base-en / l1_en_hq / zh —— 明明 `Ultra-FineWeb/tree/main/data` 下有四个目录 en、en_v1_4、l1_en_hq、zh。2. 为啥没有 UltraX-Preview。我需要你的盘点跟下载目录能够对应上，**不要自己加戏，以下载目录为准，不要自己创造数据源**。另外上一版盘点有多处"小学生错误"，比如 ④ 中 text/ 小计 3722.05B，但下属各源加不到这个数。」
-> **性质 = 报告返工重做**（不是打补丁）；口径从「我们以为的源」改为「磁盘下载目录实际有什么」。
-> 📌 运维预查（供你复核，仍需你自己实测）：`Ultra-FineWeb/data/` 四子目录均在盘（en / en_v1_4 / l1_en_hq / zh），`UltraX-Preview` 亦在盘；上一版 ④ 表漏了这 5 行，且「text/ 小计 3722.05B」= en_v1_4 2238.14 + code 550.07 + l3 658.91 + math 274.92（**只有 4 源，表头却写 5 源**）。
-
-**① 三条硬口径（违反即返工）**
-1. **以下载目录为准**：④ 每一行必须对应**磁盘真实目录**（`ls` 能列），写明绝对路径。目录里有的源**不许漏**；计划/论文里有但目录里没有的源**不许编进表**。
-2. **一一映射**：`Ultra-FineWeb/data` 下 **en / en_v1_4 / l1_en_hq / zh 各占一行**；`UltraX-Preview` **单独一行**。🚫 不许合并成一个「UFW」行。
-3. **小计禁手填**：所有 `小计/总计` 由脚本求和，附录写求和式；**总字节必须等于各行字节之和（误差 0）**。
-
-**② 必做实测（输出原样进附录 A）**
-```bash
-O=/nas_train/app.e0031982/datasets/openbmb
-for d in $O/Ultra-FineWeb/data/*/ ; do echo "== $d"; find "$d" -name '*.parquet' | wc -l; du -sb "$d"; find "$d" -name '*.incomplete' | wc -l; done
-for d in $O/UltraX-Preview $O/Ultra-FineWeb-L3 $O/UltraData-*; do [ -d "$d" ] && { echo "== $d"; find "$d" -name '*.parquet' | wc -l; du -sb "$d"; find "$d" -name '*.incomplete' | wc -l; }; done
-for r in /nas_train/app.e0031982/datasets/baize-data/text /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data; do
-  find "$r" -name '*.bin' -printf '%h\t%s\n' | awk -F'\t' '{s[$1]+=$2;n[$1]++} END{for(d in s) printf "%s\t%d\t%d\t%.2f GB\n",d,n[d],s[d],s[d]/1e9}' | sort -k3 -nr
-  echo "idx: $(find "$r" -name '*.idx' | wc -l)";
-done
-```
-- **token 列**：已分词目录用 `.idx` 实测（可复用 `run/data/tokenized_files_20261024.tsv` 的 2383 行，但要**按目录重新分组**）；**未分词**（en / l1_en_hq / zh / UltraX 等）写「**未分词（未实测）**」，🚫 禁估算/论文数顶替。
-- 历史参考值（`DATA_RESEARCH.md` v1.2：base en ≈206.76B / base zh ≈112.47B / UltraX ≈30.97B）**只放附录 C「参考·非实测·不入小计」**。
-
-**③ 报告结构（重写）**
-摘要 → **目录清单（ls 第一性证据）** → ① 四个核心数字 → ② 文件清单 → **③ 逐源汇总表（本次重点）** → ④ 已下载未分词清单 → ⑤ 空间判定 → **⑥ 与上一版勘误表（必须点名 base-en / l1_en_hq / zh / UltraX 四处遗漏 + text/ 小计行数错误）** → 附录 A 命令与输出 / B 求和核对式 / C 历史参考值。
-- ③ 表列：`下载目录(绝对路径)` | `HF 仓库+子目录` | `parquet` | `incomplete` | `.bin` | `.idx` | `字节(du -sb)` | `TB` | `token(实测)` | `是否已分词` | `最近写入`；**行序按磁盘目录树**，不按"重要性"。
-
-**④ 自检（任一不过不许提交）**
-- [ ] 每行目录 `test -d` 返回 0；[ ] Ultra-FineWeb 四子目录全部单列；[ ] UltraX-Preview 单列
-- [ ] 小计 = 脚本求和且附录 B 有算式；**总字节 = 各行之和（误差 0）**
-- [ ] `.bin` 数 == `.idx` 数（不等标红说明）；[ ] 未分词源 token 列无估算数字混入
-- [ ] 全表无 N/A / 空单元格；[ ] 0 `<script>`、0 外链、标签配平
-
-**⑤ 产出**
-`reports/report_data_tokenized_inventory_zh.html`（中文自包含，v2 覆盖旧版）+ 生成器 `run/data/gen_tokenized_inventory_report.py`（数字全部来自实测 TSV，禁手填）+ 原始测量 `run/data/inventory_v2_20261025.tsv` 与 `run/data/inventory_v2_commands.log`；回写 `MEMORY_DATA.md` + `run/daily-memories-data/2026-10-25.md`；commit 前缀 `data inventory:`。
-
-**🚫 铁律**：不许自造数据源 / 不许改源名 / 不许合并目录凑行；小计一律脚本求和；估算值永不入实测列与小计；纯 IO 盘点不占 GPU，与 85M 并行时 `ionice -c3` 防打满 NAS IO。
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_DATA.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 > 📦 §运维令·2026-10-24 18:1x（85M 降优先级 → 迁移提速）**已闭合**（迁移 5/5 源全 DONE，`migrate_to_nas_env_fast.sh` 已跑完）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：`--bwlimit` 50000→300000 KiB/s、新脚本带 `--partial`+`flock` 单实例锁、不得就地编辑在跑的脚本、不得起第二实例；85M 不再是任何前置条件。需要时再读。
@@ -52,6 +15,28 @@ done
 ---
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+
+### 🚨🚨 最高优先 · 2026-10-25 08:0x · 用户直令 · **本轮唤醒必须先做这件事**
+
+**任务**：重新盘点 MiniCPM5 数据，**重写** `reports/report_data_tokenized_inventory_zh.html`（v2）。
+**原因**：上一版漏了 4 个**已在盘**的源，且小计对不上 —— 用户要求「**以下载目录为准，不要自己加戏，不要自己创造数据源**」。
+
+> **① 必须逐个目录列出（一个下载目录 = 一行，不许合并）**
+> - `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/` 下 **4 个子目录全列**：`en`（base-en）/ `en_v1_4` / `l1_en_hq` / `zh`
+> - `/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview`（**单列**）
+> - 另加：Ultra-FineWeb-L3、UltraData-Code L3/L2、UltraData-Math L3/L1、`baize-data/text/` 下各历史子集
+> - 每行给：绝对路径 | parquet 数 | incomplete 数 | `.bin`/`.idx` 数 | `du -sb` 字节 | TB | token(实测) | 是否已分词 | 最近写入
+>
+> **② 禁手填小计**：所有小计/总计用脚本求和，附录写求和式；**总字节 = 各行之和（误差 0）**。
+> 上一版 `text/ 小计 = 3722.05B` 实际只有 4 个源（2238.14+550.07+658.91+274.92），表头却写 5 源 —— 这类错**不许再犯**。
+>
+> **③ 未分词源**（en / l1_en_hq / zh / UltraX）：token 列写「**未分词（未实测）**」，🚫 禁填估算/论文数；禁 N/A。
+>
+> **④ 报告必含两节**：
+> - **「目录清单」放正文最前**（`ls` + `du` 第一性证据）
+> - **「⑥ 与上一版勘误表」**：逐条点名 base-en / l1_en_hq / zh / UltraX-Preview 四处遗漏 + text/ 小计错误
+>
+> **⑤ 交付**：`reports/report_data_tokenized_inventory_zh.html`（中文 HTML 自包含 v2）+ 生成器 `run/data/gen_tokenized_inventory_report.py` + 原始测量 `run/data/inventory_v2_20261025.tsv`；commit 前缀 `data inventory:`。
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
