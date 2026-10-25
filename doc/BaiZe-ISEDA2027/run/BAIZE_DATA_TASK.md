@@ -27,19 +27,20 @@
 - **48h 盘点 + prune 已交付且核对通过**：`prune_unmapped_judgment_20261025.tsv`（110 行逐 shard）/ `prune_unmapped_20261025.txt`（234 文件）/ `_summary.json`（`delete_bytes=4,059,924,022,806`）+ `DATA_LEDGER.md §7`。
 - **已实测**：`code_s*` 30/30、`l3_s*` 12/40、`math_s*` 36/40 被 `full_*` 覆盖 ⇒ 删；留 **32 uncovered**（`l3_s0–12`+`l3_s25–39` = en_l3/multi_style + zh_l3；`math_s32–35` = Math-L2-preview）**472.85 B**；`env14_*` 与 `/nas_env/full_*` 未动。
 - **对这些 uncovered shard，"输入目录现在是否存在"已有答案**（`resolve` 自 manifest → 下载目录，非推测）：`Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style`、`..._zh_l3/{multi_style,qa}`、`UltraData-Math/data/UltraData-Math-L2-preview` —— **目录都在，只是 `full_*` 没覆盖它们**。
-- 📌 **因此：`l3_s*` / `math_s*` 不再叫"来源不明"**；它们是「**可溯源但未被 `full_*` 覆盖**」的分词，**保留、计入训练可用**（口径变更见下「12:0x 令」）。
+- 📌 **32 个 uncovered shard 已按用户令删除**（运维 2026-10-25 11:49 执行，见下）：`l3_s0–12 + l3_s25–39 + math_s32–35`，**96 文件 / 1,907,467,445,596 B = 1.91 TiB**；清单 `run/data/prune_unmapped_uncovered_20261025.txt`。`baize-data/text/` **10.84 → 8.93 TB，142 → 110 个 .bin（只剩 `env14_*`）**。
 
-### ⏱ 本轮执行顺序（2026-10-25 12:0x 用户直令 · **覆盖 11:4x 令，以本条为准**）
-> 用户原话：「让 data 去分词，服务器 CPU 224 核，可以设置适当并发。」
-> 12:0x 运维侧判定：11:4x 令的前提（"前缀来路不明、不许猜"）**已被 11:25 的自证结果推翻** —— 别名问题已解决，**不要再花一轮重做盘点**，直接进入分词。
+### ⏱ 本轮执行顺序（2026-10-25 11:5x 用户直令 · **覆盖 11:4x / 12:0x 两令**）
+> 用户原话：「来源不明的，无法跟下载目录对应的，**删掉**！！」
+> 运维已于 11:49 删完（RUN_ID 199）。**你现在只剩两件事：把账改对 + 把未分词的开跑。**
 
-1. **改口径（30 分钟，书面）**：把 §7 里 **472.85 B "来源不明"** 改成 **「可溯源、未覆盖，计入训练可用」** ⇒ 训练可用总量 **3294.50 → 3767.35 B**（+472.85）；同步修 `gen_tokenized_inventory_report.py` 的 v3 措辞与 HTML；`DATA_LEDGER.md` §8 记本次口径变更 + 依据（`prune_unmapped_summary_20261025.json` 的 `download_dir` 字段）。
-2. **表 C 定稿并立即分词**（这是本轮**唯一的新增重活**）：
-   - 产出 `run/data/untokenized_v1_20261025.tsv`：`下载目录 | parquet 数 | 字节 | 目标前缀`；**先补 uncovered 的 28+4 shard 剩余 parquet**（= 表 C 的一部分：`en_l3/multi_style`、`zh_l3/multi_style`、`zh_l3/qa`、`Math-L2-preview` 中**尚未进 shard** 的部分），再列 `en` / `l1_en_hq` / `zh` / `UltraX-Preview` 等未分词源；
-   - 并发：224 核上 4 档 60s 标定（`64/96/128/192`）取拐点（预期 96–160），`nice -n 10`，**留余量给 85M 下载**；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log`；断点续传 + `failed_shards.txt`。
-3. **回报**：口径变更后的数字表（训练可用 3767.35 B 的分项）+ 表 C + 标定 4 档 + 启动命令/日志 + 每轮 `done/total`/tokens-s/CPU%/ETA。
-> 🚫 **不要再重做 48h 盘点**；🚫 **不要删 32 uncovered shard**；🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 未分词前不得称"已就绪"。
-> 若你认为第 1 步口径变更不对（例如 uncovered 里含有你判定的真重复），**只准给反证**（shard .json/manifest 原文 + 与哪 个 `full_*` parquet 重复的行号），不许靠形容词。
+1. **改账（30 分钟，只改账不改盘）**：
+   - `DATA_LEDGER.md` 新增 §8：32 uncovered shard **已删除**（1.91 TiB），`baize-data/text/` 现为 **110 shard / 2238.14 B / 8.93 TB（全为 `env14_*`）**；
+   - 训练可用总量 **仍为 3294.50 B**（env14 2238.14 + `/nas_env` 5 源 1056.36），**不含**已删的 472.85 B；
+   - 重生成 `reports/report_data_tokenized_inventory_zh.html` → **v4**：表 B 的 `code_s*`/`l3_s*`/`math_s*` 三行标「已删除」且 bin=0；删除句子里的「来源不明待人工裁决」全部改成「已按运维令删除（不可与下载目录建立产物级对应）」。
+2. **表 C + 分词开跑**（唯一新增重活）：产出 `run/data/untokenized_v1_20261025.tsv`，列 `下载目录(绝对路径) | parquet 数 | 字节 | 目标前缀`；源 = `openbmb/Ultra-FineWeb/data/{ultrafineweb_en, ultrafineweb_l1_en_hq, ultrafineweb_zh}` + `openbmb/UltraX-Preview/data/UltraX-AICC`（**Ultra-FineWeb-L3 / UltraData-* 在 `/nas_inference/app.e0031982/datasets/openbmb/` 下，若你要补回 zh_l3/multi_style 等，先报数再由用户裁决，不得自行启动**）；并发 4 档标定（64/96/128/192）取拐点，`nice -n 10`，留余量给 85M 下载；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log`；断点续传 + `failed_shards.txt`。
+3. **回报**：§8 账目 + v4 报告路径 + 表 C + 标定 4 档 + 启动命令/日志 + 每轮 `done/total`/tokens-s/CPU%/ETA。
+> 🚫 **不要再重做 48h 盘点**；🚫 **不要恢复已删的 32 shard**（源 parquet 仍在 `/nas_inference`，要补必须用户点头）；🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 未分词前不得称"已就绪"。
+> 口径红线：报告里凡出现"来源不明""待人工裁决"字样即为**错误**，必须写清「已删除」或给出绝对下载目录。
 
 
 ### 🧵 运维令 · 2026-10-25 11:0x（**重新盘点三张表 → 对「已下载未分词」启动分词（多开并发，按标定取拐点）**）· 用户直令 · 最高优先
