@@ -23,16 +23,37 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🧵 运维令 · 2026-10-25 11:0x（**重新盘点三张表 → 对「已下载未分词」启动分词（224 核）**）· 用户直令 · 最高优先
+> 用户原话：「重新盘点，列出下载目录，以及对应的分词语料，已下载未分词的。让 data 去分词，服务器 CPU 224 核，可以设置适当并发。」
+
+**① 盘点（三张表，全部实测，禁止估算）**
+- **表 A · HF 下载目录白名单**：`ls -d` + `find -name '*.parquet' | wc -l` + `du -sb` + mtime，逐条给出「绝对路径 / 对应 HF repo / 子目录名 / parquet 数 / 字节」。判断"是 HF 下载目录"的依据 = 目录内是 HF repo 的 parquet 布局（贴 `ls` 输出）。
+- **表 B · 分词产物 ↔ 下载目录 映射**：每个下载目录对应哪些 `.bin`（前缀 / shard 数 / tokens / 字节 / 产物路径 / 完成时间）。**只认能对上 A 表目录的产物**。
+- **表 C · 已下载未分词（关键产出口）**：A 中**有 parquet 但 B 中无对应产物**的部分 —— 逐目录给：repo / 子目录 / 未分词 parquet 数 / 字节；并说明「未分词」的判定依据（无对应 `.bin`，或 `.bin` 的 shard 数与 parquet 分组数不匹配）。
+
+**② 分词启动（只处理表 C，不重跑已完成的）**
+- 分词器沿用现有 **`tokenizer_eod`**（vocab 129,281 / pad 129,408），`preprocess_data.py` 链路不变；
+- **并发**：本机 **224 核** ⇒ 先做 3 档 60s 吞吐标定（`32 / 64 / 128` workers，记录 tokens/s、CPU%、NFS 写 MB/s），**取拐点**再决定最终并发（建议 ≤ `nproc×0.85`，且 **`nice -n 10`**，不与 85M 下载抢 IO）；标定结果写进回报；
+- 落盘：优先 `/nas_train/app.e0031982/datasets/baize-data/text/`（若余量足），否则 `/nas_env/...`；**先 `df -h` 报余量**，估算"未分词字节 × 1.5"是否装得下；
+- 命名（与 `env14_*` 同规范）：按「repo+子目录」定前缀（如 `ufw_en_*`/`ultrax_*`/`ud_code_*`），**每前缀必须有 manifest**（shard→源 parquet）；
+- **断点续传**：已有 `.bin/.idx/.json` 的 shard 直接跳过；失败重试 2 次后落 `failed_shards.txt`；
+- `setsid` 后台启动，日志 `/tmp/tokenize_untokenized_*.log`。
+
+**③ 监控**
+- 每轮唤醒回报：`done/total shards`、累计 tokens、实测 tokens/s、CPU% / load、NFS 写速、ETA、失败数；
+- 完成后**必须校验**：每前缀 `.bin = .idx`、总字节、`.json` 的 `num_tokens` 求和，与源 parquet 字节做合理性核对（tokens/byte 落区间）。
+
+**④ 交付**
+1. 三张表（A/B/C）+ 并发标定表（3 档）+ 启动命令 + 日志路径；
+2. 分词完成后：每前缀 shard/tokens/字节 + 校验结果 + 释放/占用空间变化；
+3. 更新 `DATA_LEDGER.md`、`MEMORY_DATA.md`；盘点报告升 **v3**（新增「已下载未分词 → 已分词」章节与最终"训练可用 token 总量"）。
+> 🚫 不许把 `/tmp`、`staging`、`*.orig` 当源；🚫 不碰 `env14_*`（en_v1_4）与 `/nas_env/full_*`；🚫 未分词前不得声称"已就绪"。
+
+
 ### 🗑 运维令 · 2026-10-25 10:3x（**删除「无法对应下载目录」的早期分词产物**）· 用户直令 · 最高优先
 > 背景：`baize-data/text/` 下有 4 个前缀共 220 个 `.bin`（`env14_*` 110 / `code_s*` 30 / `l3_s*` 40 / `math_s*` 40）。其中 `env14_*` = **en_v1_4 全量分词（2238.14 B tok / 8.93 TB，必须保留）**；而 `code_s* / l3_s* / math_s*` 是 **2026-10-09/10 的早期分词**，**来源必须逐 shard 回溯到 HuggingFace 下载目录**。用户令：**只认 HF 下载目录 —— 对不上的早期产物一律删掉**（不做任何"重复/覆盖"推断）。
 
-**① 先建「HF 下载目录白名单」（唯一依据，不许自造）**
-用 `ls -d` + `find -name '*.parquet' | wc -l` + `du -sb` 列出机器上**真实存在的 HF 数据集下载目录**，逐条给出：绝对路径 / parquet 数 / 字节 / mtime。至少覆盖：
-- `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en`
-- `.../ultrafineweb_en_v1_4`、`.../ultrafineweb_l1_en_hq`、`.../ultrafineweb_zh`
-- `/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview`
-- 以及 `/nas_inference/.../openbmb/UltraData-*` 等**若确实是 HF repo 的 parquet 布局**（有 `*.parquet`；判断依据要贴 `ls` 输出）
-> 🚫 **白名单外的路径一律不算源**；🚫 不许把 `/tmp`、`staging`、`*.orig`、已删目录、"我记得是..."之类算进来。
+**① HF 白名单**：**直接用上方「11:0x 令 · 表 A」的同一次盘点结果**（同轮完成，不重复扫盘）。
 
 **② 逐 shard 映射（只认白名单，不做二次推断）**
 对 `code_s*`(30) / `l3_s*`(40) / `math_s*`(40) 的**每一个** `.bin`（连同 `.idx`/`.json`）：用 manifest / `.json` 里的 source 字段 / 分词日志，指出它的输入目录，然后
@@ -49,7 +70,7 @@
 - 删前后各跑 `du -sb baize-data/text/` + `df -h /nas_train`，**释放量写进回报**。
 
 
-**⑤ 交付**：①HF 白名单（每目录的 `ls`/parquet 数/字节）+ 逐 shard 判定表 + 删除清单 + 释放空间 + 剩余体积/文件数；②更新 `DATA_LEDGER.md` 与 `MEMORY_DATA.md`；③盘点报告升 **v3**：新增「**去重后已分词总量（训练可用）**」= `env14_* 2238.14 B + /nas_env 5 源 1056.36 B ≈ 3294.5 B`，原 **4778.41 B** 标注为"文件清单求和（含历史/待删产物）"，勘误表补 1 条。
+**⑤ 交付**：①逐 shard 判定表 + 删除清单 + 释放空间；②更新 `DATA_LEDGER.md` / `MEMORY_DATA.md`；③盘点报告 v3 里同步删掉的条目（与「11:0x 令」的 v3 交付合并出一次）。
 > 🚫 删前必先落 `prune_unmapped_*.txt`；🚫 不得凭"看起来重复"删除；🚫 不碰 en_v1_4 与 /nas_env；🚫 判定依据只准用"能否对上 HF 下载目录"，不许引入其它推测。
 
 ### 🚨🚨 最高优先 · 2026-10-25 08:0x · 用户直令 · **本轮唤醒必须先做这件事**
