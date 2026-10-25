@@ -4,6 +4,10 @@ WAITING: 1
 
 ## 状态头
 
+> 📄 **【路线①细化 · OCR 专项 SFT 执行方案报告 ✅ DONE · wake#272 · 2026-10-25 21:0x】** 用户令(19:5x)全链路交付：①回答四问——中英配比(基线 英30/中20/混10/版面15/图表10/公式10/低质5；候选 A 英6:中3:混1 默认 / B 中英1:1 备选，各带可判定判据)、数学公式三通道((a)纯公式图 im2latex/LaTeX 5% · (b)正文夹公式 arXiv+KaTeX 3% · (c)公式+表格混排 2%；总占≤10%，OCRBench 无独立公式子类主价值在符号词表+版面解析)、其他类别 P0-P2(版面20万P0/表格8万P0/图表12万P0/场景6万P1/低质贴附20%P0/代码截图3万P2/竖排多语3万P2/手写4万P1)、可执行做法(trdg词句主力+SynthTIGER退化补充+自研HTML→截图渲染器+matplotlib图表+LaTeX/KaTeX公式；SFT 严格对齐 stage2_train_armE_r2.py 口径=ArmE-R2 Stage-2 step3500 起始·LoRA r=64 继续·LR 1e-5/5e-6·224px 单块·256 tokens·vision 冻结；与 780k 混 70%OCR:30%780k 防遗忘；336+anyres 阻塞项)；②预注册判据 主 OCRBench≥+2pp(1.60%→≥3.60%)/副 DocVQA/ChartQA/InfoVQA 各≥+1pp/护栏 MMStar/AI2D/RealWorldQA/MMBench 退化≤1pp + 决策树(pilot达标→全量；不达→改一维再试；两次不达→停+负面结论)；③报告 `reports/report_vision_ocr_sft_plan_zh.html`(22706B/9节+附录一页纸执行清单/0 `<script>`/0 外链/标签配平/≥18KB)+生成器 `vision/generate_ocr_sft_plan_report.py`+EXPERIMENTS §17。本轮只出方案报告，未启训练/未生成全量数据/未动产物/未伪造 API key。trdg 参数经代理检索 GitHub README 核实(2026-10-25)。**未完成指令：无**。**WAITING: 1**。
+> **本唤醒流水 [wake #272, 2026-10-25 21:0x]**：📄 执行运维令 19:5x（路线①细化）。任务书 fed 版本未含新令 → 读盘上 BAIZE_VISION_TASK.md 发现 20:22 ops commit 新增 19:5x 块（未完成）⇒ 按归档/执行纪律本轮必须执行。复用 wake#271 四臂基线(consolidated_12benchmarks.json)+17 法 arXiv 引用 → curl 经代理 172.19.92.25:13128 检索 trdg GitHub README 核实参数(-k/-rk/-d/-do/-bl/-rbl/-b 0-3/--font_dir/--output_mask/--word_split, 支持中文) → 读 stage2_train_armE_r2.py 落地 SFT 口径(LoRA r=64/alpha=128/dropout0.05, LR 1e-5 lora+5e-6 proj, 3500步, GBS=8/MBS=1, 224px, 256 tokens, vision 冻结) → 写 generate_ocr_sft_plan_report.py(数据字典顶部,5 段 heredoc) → 生成 HTML 22706B 自检全过(0 script/0 外链/标签配平/≥18KB) → 标 19:5x 块 ✅DONE + 写 §17 + 本块 + 日流水 → commit `vision ocr-plan:`。数字全自溯源；外部数字标论文自报未复现；成本标「估算」。**未完成指令：无** ⇒ **WAITING: 1**。
+
+
 > 🎉 **【ArmE-R2 全链路 ✅ DONE · ①训练✅(63400步,~37h) · ②ProtB✅ lp68.236±0.0182/5-NN58.904(🏆全实验最高!) · ③MLLM三阶段✅(Stage-2 09:50) · ④12集✅ 12/12 avg26.10% · ⑤报告✅】** 裁定 = **不可分辨(边界值)**（avg 26.10% vs ArmD-R2 26.12% = **−0.02pp** / vs ArmC 25.78% = +0.32pp / vs ArmB 26.10% = −0.00pp）。**编码器🏆历史最高已 secured**：ProtB lp 68.236% vs ArmD-R2 **Δlp+3.899pp**/Δ5-NN+2.948pp。**但MLLM下游完全持平** → ViT-L/14(304M)比B/16(86M)大3.5×，MLLM 12集平均却−0.02pp → **容量不是MLLM下游瓶颈**。**ProtB→MLLM传递性证伪（最强烈一例）**：编码器4-6pp ProtB优势完全未转化为MLLM下游增益。🔧 eval bridge修复：lmms_eval_baize_llava.py 硬编码196(ViT-B/16)→ViT-L/14产出256→8GPU全崩；已修3处动态num_image_tokens。ArmE-R2 = ArmE降LR重跑(LR 1e-3→5e-4+warmup 2000→3000, ViT-L/14, 6源173M对, 63400步, lr5e-4, C1最高0.9664@s45240)。⚠️ vs ArmD-R2 = 塔(B→L)+LR+warmup**三变量**+容量混杂→报告须分开。报告(完整7节)=reports/report_vision_armE_r2_20261024_zh.html(25.9KB,含①训练+③MLLM三阶段)+EXPERIMENTS_VISION.md §15。旧版17KB(report_vision_armE_r2_20261022_mllm_stage4_zh.html)保留备查。生成器=vision/generate_armE_r2_full_report.py。📄**下一步方案报告(运维令16:1x)**=`reports/report_vision_next_steps_protb_mllm_zh.html`(21.1KB,8节,0 script/0外链,生成器`vision/generate_next_steps_protb_mllm_report.py`)。核心结论:12集已饱和(逐集最大跨度1.66pp,多数<1σ)→单一建议=先做B4(MMBench/MMVet/MathVista+336anyres在已有ArmB/ArmE-R2 ckpt重测,~0 GPU·h)。🔬**A3 ckpt_60000 ProtB(wake#266,2026-10-25 12:38)**✅DONE:lp68.3067±0.0155/5-NN59.002 vs final(63400)68.236±0.0182/58.904 → Δlp+0.071pp/Δ5-NN+0.098pp(均<0.3pp不可分辨,逐seed一致+0.07pp)⇒「末段抖动/best段省1-2pp」假设**证伪**(末段稳定;~14pp到CLIP@336缺口非ckpt选择可回收→强化报告主结论:须预训练侧改动)。🔬**B4(wake#264自发执行报告推荐项)**:MMBench en_dev_static双臂✅(ArmB24.14%/ArmE-R2 23.88%,Δ−0.26pp→确认MCQ评测盲点);MMVet/MathVista**阻塞(需OPENAI_API_KEY,无法伪造)**;336+anyres**阻塞(需工程改造+scope批准)**→3/4组件待运维裁决。**未完成指令:无**(16:1x报告DONE/10:3x报告DONE;B4系自发非运维令)。**WAITING: 1**。
 > 🔬 **【OCR 合成数据调研报告 ✅ DONE · wake#271 · 2026-10-25 18:57】** 用户令(17:5x)全链路交付：①实测四臂 OCR 四集（OCRBench 1.60-1.80% / DocVQA 7.35-7.58% / ChartQA 12.16-12.92% / InfoVQA 16.18-17.09%；四臂跨度 ≤1pp，与 ArmE-R2 编码器 ProtB 68.2% 最高形成对比 → 缺位在专项数据/任务对齐，非编码器容量）；②经代理检索 arXiv 摘要(2026-10-25)覆盖 7 类 18 法（SynthTIGER/SynthText/trdg/Donut-SynthDoG/UDOP/Pix2Struct/Nougat/mPLUG-DocOwl/dots.ocr/ChartQA/Chart-to-Text/olmOCR/PaddleOCR/Visual-RFT/自训练伪标注/im2latex；GOT-OCR2.0 检索未命中，标「未查到」）；③报告 `reports/report_vision_ocr_synthdata_zh.html`（29177B/8节/0 `<script>`/0 外链/标签配平/≥15KB）；④生成器 `vision/generate_ocr_synthdata_report.py`；⑤EXPERIMENTS §16 指针。单一建议=路线①（低成本合成 OCR 识别对 50-200 万 + 专项 SFT，判据 OCRBench ≥+2pp）。本轮只调研+写报告，未启训练/未动产物/未伪造 API key。**未完成指令：无**。**WAITING: 1**。
 
@@ -43,39 +47,7 @@ WAITING: 1
 
 
 
-> 📦 **wake #206 (2026-10-21 20:31, ArmD-R2 全链路状态复核)** 已归档 → daily-memories-vision/2026-10-21.md；**结论**：2026-10-21 运维令(Stage-2改原版780k)全完成并已提交(commit 9dce3f3d0)；④12集 avg26.12%✓；git 同步。需要时再读。
-
-> 📦 **wake #207 (2026-10-21 22:0x, ArmE 启动: 脚本创建/显存probe/MBS256决策/烟雾通过/正式起训 T0=22:02:33)** 已归档 → daily-memories-vision/2026-10-21.md；**结论**：ArmE 唯一变量=视觉塔 ViT-B/16→ViT-L/14(304.0M visual/427.6M total)，MBS=256/accum=4 保 GBS=8192+steps63400(仅1混杂=per-micro-batch对比batch 4096→2048)，烟雾 STEPS=100 通过，正式起训。需要时再读。
-> 📦 **wake #208 (2026-10-21 23:09, ArmE 首次监控 step1880/3.0%, 健康, 0.47it/s)** 已归档 → daily-memories-vision/2026-10-21.md；**结论**：ArmE 首次监控确认训练健康(loss单调降/C1单调升/0nan/peak77.5GB)，配置单变量守住。需要时再读。
-> 📦 **wake #212 (2026-10-22 04:1x, ArmE ②下游评估链脚本全部就绪)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：ArmE 下游全链脚本(4py+3sh+3共享改造)就绪，全py_compile/bash -n✓，单变量守住。需要时再读。
-> 📦 **wake #213 (2026-10-22 06:37, ArmE 第6次监控 step14700/23.2% 健康 ckpt@10k)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：step14700 健康,bestC1=0.7845,s13600-14400硬分片抖动后恢复,0nan,watcher活跃。需要时再读。
-> 📦 **wake #215 (2026-10-22 11:2x, ArmE 第9次监控 step22720/35.8% 健康 ckpt@20k 已存 watcher活跃)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：step22720 健康(第8次硬分片抖动后恢复中),bestC1=0.7845未破,0nan,config单变量守住,ckpt@10k+20k已存。需要时再读。
-> 📦 wake #223 (2026-10-23 01:46, ArmE-R2 ①训练第3次监控 step13460/21.2% 健康·spike5发展中·ckpt@10k) 已归档 → daily-memories-vision/2026-10-23.md；**结论**：spike5底0.28(>0.05红线5.6×余量)，0nan/0oom，ETA~10-24 07:00。需要时再读。
-> 📦 **wake #210 (2026-10-22 01:3x, ArmE 第3次监控 step6020/9.5% 健康)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：step6020 健康,0.48it/s,s4020-5020硬分片抖动后完全恢复,0nan。需要时再读。
-
-> 📦 **wake #211 (2026-10-22 02:4x, ArmE 第4次监控 step8200/12.9% 健康 ckpt@10k临近)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：step8200 健康,C1新高0.531超越spike前,0nan,ckpt@10k临近。需要时再读。
->
-
->
-> 📦 **wake #205 (2026-10-21 19:0x, ArmD-R2 全链路收尾→⑤报告生成完成)** 已归档 → daily-memories-vision/2026-10-21.md；**结论**：⑤报告 `report_vision_armD_r2_20261020_mllm_stage4_zh.html`+§14 DONE；裁定 avg26.12% 不可分辨(边界值)；编码器 ProtB Δlp+2.005pp/Δ5-NN+1.238pp 已 secured。需要时再读。
->
-> 📦 **ArmD 原始轮（LR 2e-3, 2026-10-19~20）已归档** → daily-memories-vision/2026-10-20.md + ARCHIVE_OPERATOR_VISION.md；**结论**：ArmD(四变量: data3→6源+epoch4→3+lr→2e-3+min_lr→2e-5) 训练至 step21820 发散(loss0.45→9.3, C1 0.589→0.0002), wake#180 停止保全 ckpt_10000, 7 产物移入 DIVERGED_archive/。**已被 ArmD-R2 承接**(LR 轴回退 1e-3/1e-5)。
->
-> 📦 **wakes #180–#198（ArmD-R2 ①训练全程监控：起训→完成@10:02:49, best joint s43700 loss0.1360/C1 0.8902）** 已归档 → daily-memories-vision/2026-10-2{0,1}.md。需要时再读。
-
-> 📦 **wake #217 (2026-10-22 12:39, ArmE 第10次监控 step24800/39.1% 第9次spike恢复中)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：第9次spike峰值8.33(迄今最大),loss从8.33→3.76再升5.38(振荡恢复),0nan。需要时再读。
-
-> 📦 **wake #220 (2026-10-22 19:1x, ArmE-R2 首次监控 step2160 健康·全链下游脚本就绪)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：warmup期零spike(vs ArmE同期多次spike)，本轮创建 ArmE-R2 全链下游脚本(6新+2改,全py_compile/bash✓)。需要时再读。
-
-> 📦 **wake #218 (2026-10-22 14:0x, ArmE 第11次监控 step27180/42.8% 第9次spike恢复极慢)** 已归档 → daily-memories-vision/2026-10-22.md；**结论**：第9次spike峰值8.33(迄今最大), 3500步仅恢复到C1=0.030, 已备份ckpt_10000防删。→触发运维令(停ArmE→降LR重跑ArmE-R2)。需要时再读。
-
-> 📦 **wakes #177,#179,#187,#191,#196,#199（ArmD/ArmD-R2 监控 keep-alive）** 已归档 → daily-memories-vision/2026-10-2{0,1}.md。
-
-> ✅ **ArmC 全链路 DONE（wake #172, 2026-10-19 19:46）** — 详见 `run/reports/report_vision_armC_20261018_mllm_stage4_zh.html` + `EXPERIMENTS_VISION.md §13` + `ARCHIVE_OPERATOR_VISION.md`。要点：**两变量**（min_lr 1e-4→1e-5 + wd 0.1→0.01）；①训练 57,250 步 ✓ ②ProtB lp 62.332±0.014 / 5-NN 54.718（vs ArmB 62.093/58.102）③MLLM 三阶段 ✓ ④**12/12 DONE，avg(除 MME) 25.78% vs ArmB 26.10% = Δ−0.32pp，裁定不可分辨**；逐集 Δ 全在 ±2pp 内（5 升 6 降）。⏭ **已被 ArmD 承接**（见上）。
- > 📦 ArmB 全程（2026-10-17 09:1x ~ 10-18 07:55，wake #128~#145）+ 10-14~16 全天流水已归档 → `daily-memories-vision/2026-10-1{7,8}.md` + `ARCHIVE_OPERATOR_VISION.md`；**结论**：ArmB 训练 57,250 步健康（0.85–0.87 it/s）、ProtB lp 62.093 / 5-NN 58.102、MLLM 12 集 26.10%、报告 `report_vision_armB_mllm_stage4_zh.html` + `§12`。需要时再读。
- > 📦 2026-10-18 15:12（wake #151 Stage-2 DONE+切ArmB768塔+12集首跑启动）已归档 → daily-memories-vision/2026-10-18.md；**结论**：Stage-2 DONE(15.3min,loss1.4779)；lmms-eval加vision_backend开关；ai2d冒烟PASS；12集首跑@15:12启动(后证实FAILED,见#152)。
- > 📦 2026-10-17 23:37（wake #140: ArmB step31480(55%)健康,ETA~07:50 10-18）已归档 → daily-memories-vision/2026-10-17.md。
-> 📦 2026-10-17 21:1x~19:5x（🔄 ArmB 监控 · wake #136~#139）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step15960→27540 健康, 0.85-0.87 it/s, ckpt@20000+10000已存, P1 ArmA 报告交付, ETA~08:00 10-18。
+> 📦 wake#272 归档：wakes #205-#218 + ArmB/ArmC/ArmD 原始轮 + 2026-10-17/18 流水指针块（均已在对应 daily-memories-vision/<日期>.md / ARCHIVE_OPERATOR_VISION.md，本块仅为指针）已从 MEMORY 滚出 → daily-memories-vision/2026-10-25.md「wake#272 归档」节。结论未变。需要时再读。
 > 📦 2026-10-17 14:5x~17:27（🔄 ArmB 监控 · wake #133~#135）已归档 → daily-memories-vision/2026-10-17.md；**结论**：ArmB step4540→12120 健康, P1 ArmA 中文报告交付(commit 2f15f88e), 0.86 it/s 稳态, checkpoint_10000 已存。
 >
 > 📦 2026-10-17 13:3x（🔄 ArmB 改 4 epoch 重启 · wake #132）已归档；**结论**：4-epoch run(steps=57250)由 wake #132 启动(PID 1203148)，wake #133 确认健康运行中(step 4540)。

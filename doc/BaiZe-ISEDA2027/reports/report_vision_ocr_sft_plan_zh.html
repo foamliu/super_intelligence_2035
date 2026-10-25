@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Vision: 路纽① OCR 专项 SFT 执行方案报告</title>
+<style>
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:24px auto;padding:0 20px;color:#222;line-height:1.62}
+h1{font-size:22px;border-bottom:3px solid #1a5276;padding-bottom:8px}
+h2{font-size:18px;margin-top:30px;border-left:5px solid #1a5276;padding-left:10px}
+h3{font-size:15px;margin-top:18px;color:#15435a}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px}
+th,td{border:1px solid #bcc;padding:5px 8px;text-align:left;vertical-align:top}
+th{background:#eaf2f8}
+table.m th{width:130px;background:#f4f8fb}
+.small{color:#777;font-size:12px;font-weight:normal}
+.kbox{background:#eef6fb;border:1px solid #b9d6ea;padding:12px 16px;border-radius:6px;margin:10px 0}
+.wbox{background:#fdf6e3;border:1px solid #e6d6a0;padding:12px 16px;border-radius:6px;margin:10px 0}
+code{background:#f3f3f3;padding:1px 4px;border-radius:3px;font-size:12px}
+.tag{display:inline-block;background:#1a5276;color:#fff;padding:1px 7px;border-radius:3px;font-size:12px}
+.pri{display:inline-block;padding:0 6px;border-radius:3px;font-size:11px;font-weight:bold;color:#fff}
+.p0{background:#c0392b}.p1{background:#d68910}.p2{background:#7f8c8d}
+pre{background:#f6f8fa;border:1px solid #ddd;padding:10px;overflow-x:auto;font-size:12px;border-radius:5px}
+ul{margin:6px 0}
+</style></head><body><div>
+<h1>BaiZe Vision: 路纽① — OCR 专项 SFT 执行方案报告</h1>
+<p class="small">生成器 <code>vision/generate_ocr_sft_plan_report.py</code> · 基线数字来自四臂 consolidated_12benchmarks.json · SFT 口径对齐 <code>stage2_train_armE_r2.py</code> · 检索/核实于 2026-10-25 · 生成 2026-10-25 20:48</p>
+<h2>1. 摘要</h2><div class="kbox"><ul>
+<li>本报告把调研报告的「单一建议」(路纽①)细化为可照着做的 OCR 专项 SFT 执行方案: 用 trdg/SynthTIGER/自研渲染器 合成 50-200 万对, 在 ArmE-R2 现行 ckpt 上加一轮 Stage-2.5 SFT.</li>
+<li><b>基纽配比一览</b>: 英文词句 30% / 中文词句 20% / 中英混排 10% / 文档版面 15% / 图表 10% / 数学公式 10% / 低质手写场景 5%; 总量 P0=20万(pilot), P1=150万(全量). 候选 A(英6中3混1) 为默认, B(中英1:1) 供中文场景备选.</li>
+<li>数学公式三通道: (a)纯公式图 im2latex/LaTeX 5% · (b)正文夹公式 arXiv+KaTeX 3% · (c)公式+表格混排 2%; 公式总占 ≤10%, 主价值在符号词表与版面解析, 不期望公式子集独立抬升 OCRBench.</li>
+<li>SFT 口径: 起始 ckpt = ArmE-R2 Stage-2 step3500·LoRA r=64继续·LR 1e-5/5e-6·224px 单块·256 tokens; 与 Stage-2 780k 混 70%OCR:30%780k 防遗忘; 336+anyres 为阻塞项(需工程改造+scope).</li>
+<li><b>预注册判据</b>: 主 OCRBench ≥ +2pp(1.60%→≥3.60%); 副 DocVQA/ChartQA/InfoVQA 各 ≥+1pp; 护栏 MMStar/AI2D/RealWorldQA/MMBench 退化 ≤1pp. 含决策树: pilot达标→全量; 不达标→改一维再试; 两次不达→停+负面结论.</li>
+<li>本轮只出方案报告, 不启训练、不生成全量数据(等用户看完批预算). 诚实条款: 外部数字均为论文自报未复现; 成本为估算; 本项目数字全部实测可溯源.</li>
+</ul></div>
+<h2>2. 现状与差距</h2>
+<p>基纽口径 = ArmE-R2 Stage-2 step3500 (现行最优编码器, ViT-L/14, 256 patch tokens, 224px 单块)。数据来源: 四臂 <code>consolidated_12benchmarks.json</code>。主判据四集均无需 LLM judge(exact-match/ANLS/relaxed), 与 MMVet/MathVista 的 OPENAI_API_KEY 阻塞无关, 可直接测.</p>
+<table><tr><th>集合</th><th>指标</th><th>ArmB</th><th>ArmC</th><th>ArmD-R2</th><th>ArmE-R2</th><th>差距定位</th></tr>
+<tr><td><b>ocrbench_accuracy,none</b></td><td>1.60%</td><td>1.80%</td><td>1.60%</td><td>1.60%</td><td><b>exact-match 逐题准确率</b></td><td></td></tr>
+<tr><td><b>anls,none</b></td><td>7.36%</td><td>7.58%</td><td>7.44%</td><td>7.35%</td><td><b>ANLS, 文档 VQA</b></td><td></td></tr>
+<tr><td><b>relaxed_overall,none</b></td><td>12.52%</td><td>12.48%</td><td>12.92%</td><td>12.16%</td><td><b>relaxed accuracy, 图表问答</b></td><td></td></tr>
+<tr><td><b>anls,none</b></td><td>16.88%</td><td>17.09%</td><td>16.59%</td><td>16.18%</td><td><b>ANLS, 信息图 VQA</b></td><td></td></tr>
+</table>
+<p class="small">四臂跨度 ≤1pp → 与编码器容量/ProtB 无关(ArmE-R2 ProtB 68.2% 最强但 OCRBench 仍 1.6%); 问题在数据/任务缺位而非编码器. 回归护栏基纽(ArmE-R2 待读, 下表用 ArmB 代表值并标注):</p>
+<table><tr><th>护栏集</th><th>指标</th><th>ArmB(代表)</th><th>护栏判据</th></tr>
+<tr><td><b>MMStar</b></td><td>average,none</td><td>27.95%</td><td>退化 ≤ 1pp</td></tr>
+<tr><td><b>AI2D</b></td><td>exact_match,flexible-extract</td><td>60.69%</td><td>退化 ≤ 1pp</td></tr>
+<tr><td><b>RealWorldQA</b></td><td>exact_match,flexible-extract</td><td>45.49%</td><td>退化 ≤ 1pp</td></tr>
+</table>
+<h2>3. 数据配方（中英 · 公式 · 其他）</h2>
+<h3>3.1 中英文比例 — 基纽配比表</h3>
+<table><tr><th>类别</th><th>数量(P1)</th><th>来源</th><th>依据</th></tr>
+<tr><td>纯英文词卡/句子识别</td><td>45万 (30%)</td><td>trdg + 英文语料(维基/CC12M词表)</td><td>抹平 OCRBench 主场地, 样本密度最高</td></tr>
+<tr><td>纯中文词卡/句子识别</td><td>30万 (20%)</td><td>trdg + 中文语料(维基/书籍语料)</td><td>拓宽中文落地, 字体覆盖广</td></tr>
+<tr><td>中英混排句/段</td><td>15万 (10%)</td><td>自研渲染器(混排模板)</td><td>测试跨语移强, 防止单语种过拟合</td></tr>
+<tr><td>文档版面(标题/分栏/表格)</td><td>22.5万 (15%)</td><td>自研渲染器(HTML→截图)</td><td>DocVQA/InfoVQA 主场地</td></tr>
+<tr><td>图表(柱/折/馅+数值标签)</td><td>15万 (10%)</td><td>matplotlib/pyplot 渲染</td><td>ChartQA 主场地</td></tr>
+<tr><td>数学公式(三通道合计)</td><td>15万 (10%)</td><td>LaTeX/KaTeX 渲染</td><td>公式识别, P1</td></tr>
+<tr><td>低质/手写/场景文本/代码截图</td><td>7.5万 (5%)</td><td>退化管线叠加</td><td>鲁棒性, P2</td></tr>
+</table>
+<h3>3.2 中英候选配比</h3>
+<table class="m"><tr><th>候选</th><th>划分</th><th>依据</th><th>选中判据</th></tr>
+<tr><td><b>A 基纽配比</b></td><td>英文 6 : 中文 3 : 中英混排 1</td><td>英文主导: OCRBench/DocVQA/InfoVQA 以英文为主, 中文补足实际落地, 混排测试跨语移强; 与现有 LLaVA-NeXT-780k 英文主体不冲突<br><span class="small">适用: 适用: 主要面向 OCRBench/DocVQA 这类英文主集; 判据 = OCRBench 动幅 ≥ DocVQA 动幅</span></td><td>英文子集 OCRBench 加权分数 ≥ 中文子集的 1.5× → 选中 A</td></tr>
+<tr><td><b>B 中英 1:1</b></td><td>中文 5 : 英文 4 : 混排 1</td><td>中英均衡: 全量中文语料易得(维基/开源书籍/CC), 能直接拓宽中文 OCR 落地场景; 风险 = 英文主集(OCRBench)加权不足可能不达 +2pp<br><span class="small">适用: 适用: 需同时拓宽中文文档场景, 且用户明确要中文能力</span></td><td>中文子集 DocVQA-style 加权分数 ≥ 英文子集的 1.2× 且 OCRBench 仍 ≥+2pp → 选中 B</td></tr>
+</table>
+<div class="wbox">默认推 <b>候选 A</b>：评测集(OCRBench/DocVQA)以英文为主，英文子集加权更高更容易达 +2pp。苵用户明确要中文能力再转 B。</div>
+<h3>3.3 数学公式三通道</h3>
+<table class="m"><tr><th>通道</th><th>工具</th><th>内容</th><th>输入</th><th>预算</th><th>失败率控</th></tr>
+<tr><td><b>(a) 纯公式图</b></td><td>im2latex / LaTeX 本地渲染(latexmk+dvipng 或 MathJax-node)</td><td>行内公式 / 多行公式 / 矩阵 / 上下标 / 分式 / 求和符号</td><td>开源 LaTeX 语料(arXiv 源码/数学教材源码); 字体=Computer Modern/STIX; 分辨率 96-150dpi</td><td>占 OCR 总预算的 ~5% (约 7.5万张); 每张约 8-25 tokens 等价于约 200 张普通文本图</td><td>渲染失败率控制: 本地渲染器先 dry-run 排除报错公式, 弃用不排版之原子; 目标失败率 &lt;=2%</td></tr>
+<tr><td><b>(b) 正文夹公式</b></td><td>arXiv LaTeX 段落 → KaTeX/MathJax(puppeteer/headless) 渲染成整页图</td><td>一页中混合普通文本+行内/独行公式, 贴近真实论文版面</td><td>开源 arXiv 文本源码(CC-BY/CC-0 子集); 纸质背景模板; 标题/作者行</td><td>占 ~3% (约 4.5万页); 每页约 100-300 tokens, 但含公式结构信息密度高</td><td>KaTeX 未支持的宏回退到纯文本; 失败率控 &lt;=5%</td></tr>
+<tr><td><b>(c) 公式+表格混排</b></td><td>自研渲染器: LaTeX 公式块 + HTML 表格合成同一页后截图</td><td>含合并单元格的表格 + 公式行列, 测试版面解析与公式解析联动</td><td>自建模板(表格结构生成器 + 公式语料); 截图 150dpi</td><td>占 ~2% (约 3万页); 最难类, 优先级 P1(非 P0)</td><td>表格跨页断裂检测后丢弃; 失败率控 &lt;=8%</td></tr>
+</table>
+<p class="small">OCRBench 原版含手写与印刷体子子集, 但无独立「数学公式」子类公开抽分; 故公式通道直接作用于总分体, 不期望「公式子集」独立抬升. 数学公式的主价值在于拓宽符号词表(上下标/希腊字母/符号)与版面解析, 为 MathVista/论文理解做铺垫.</p>
+<h3>3.4 其他类别（优先级 P0-P2）</h3>
+<table><tr><th>类别</th><th>数量</th><th>优先级</th><th>判据</th></tr>
+<tr><td>文档版面(标题/分栏/页眉页脚)</td><td>20万</td><td><span class="pri p0">P0</span></td><td>DocVQA(val) ANLS 加权子集 ≥ +1pp</td></tr>
+<tr><td>表格(含合并单元格)</td><td>8万</td><td><span class="pri p0">P0</span></td><td>InfoVQA(val) ANLS 加权子集 ≥ +0.8pp</td></tr>
+<tr><td>图表(柱/折/馅 + 数值标签)</td><td>12万</td><td><span class="pri p0">P0</span></td><td>ChartQA relaxed 加权子集 ≥ +1pp</td></tr>
+<tr><td>场景文本(招牌/路牌/包装)</td><td>6万</td><td><span class="pri p1">P1</span></td><td>RealWorldQA 不退化超 0.5pp 且主观抽样改善</td></tr>
+<tr><td>低质(模糊/倾斜/透视/压缩/低分辨)</td><td>贴在上述每类 20%领样本</td><td><span class="pri p0">P0</span></td><td>退化子集 OCRBench 加权高于干净子集 → 证明鲁棒性有效</td></tr>
+<tr><td>代码截图(缩进/语法高亮)</td><td>3万</td><td><span class="pri p2">P2</span></td><td>不设独立判据, 防过拟合占住预算</td></tr>
+<tr><td>竖排与多语种(日韩/繁中)</td><td>3万</td><td><span class="pri p2">P2</span></td><td>仅鲁棒性占位, 不设主判据</td></tr>
+<tr><td>手写体</td><td>4万</td><td><span class="pri p1">P1</span></td><td>OCRBench 手写子集加权加权不下降</td></tr>
+</table>
+<p class="small">数据来源与许可: 只用可商用/可再分发语料 — 维基(CC-BY-SA)、开源书籍(Gutenberg/CC)、CC 语料、自建 LaTeX; 逐类标来源与 License。不用来历不明的爬虫数据。</p>
+<h2>4. 生成管线与参数</h2>
+<table class="m"><tr><th>工具</th><th>角色</th><th>关键参数</th><th>字体</th><th>语料</th><th>标签格式</th></tr>
+<tr><td><b>trdg</b></td><td>词卡/句子级识别对 (主力)</td><td><code>-c &lt;count&gt; -w &lt;words_per_img&gt; -f 64(高度) -k 5 -rk(随机倾斜) -bl 2 -rbl(高斯模糊) -d 2 -do(扭曲) -b 0/1/2/3(背景: 高斯噪声/纯白/准晶/图像) --font_dir &lt;字体集&gt; --output_mask</code></td><td>英文: DejaVu/FreeFont/Google Noto; 中文: Noto Sans CJK/Source Han Sans; 手写模拟: 选用手写风字体 + 低规则抖动</td><td>英文: 维基词表/CC12M句子; 中文: 维基中文/开源书籍语料</td><td>图像 + ground_truth.txt(每行: imgpath&lt;TAB&gt;text)</td></tr>
+<tr><td><b>SynthTIGER</b></td><td>高多样性文字图补充 (试验性, 丰富退化)</td><td><code>配置: 字体采样/颜色/间距/形变序列; 背景纹理/透视; 退化管线叠加</code></td><td>同 trdg 字体集共用</td><td>同 trdg 语料共用; 可接入 SynthTIGER 官方语料</td><td>同 trdg 格式; 可输出字符级 bbox + mask</td></tr>
+<tr><td><b>自研渲染器 (HTML→截图)</b></td><td>文档版面/表格/图表/公式+表格混排</td><td><code>Playwright headless 截图 150dpi; HTML 模板验证不跨页; 退化后处(PIL 高斯/量化/JPEG压缩/随机裁剪)</code></td><td>同上</td><td>维基/开源书籍/自建模板语料</td><td>图像 + JSON(含 bbox/问答对) → 转 VQA 对格式</td></tr>
+<tr><td><b>matplotlib/pyplot</b></td><td>图表生成</td><td><code>随机生成数据→柱/折/馅图; 数值标签贴在线/柱; 颜色随机; 保存 PNG</code></td><td>同上</td><td>随机数值生成器</td><td>图像 + Q/A 对(问:「柱高度」 答:数值)</td></tr>
+<tr><td><b>LaTeX/KaTeX 渲染</b></td><td>数学公式三通道</td><td><code>(a) latexmk+dvipng 150dpi; (b) MathJax-node/puppeteer 整页; (c) 合成后 Playwright 截图</code></td><td>Computer Modern / STIX / Latin Modern</td><td>arXiv 源码(CC-BY/CC-0 子集)/数学教材 LaTeX</td><td>图像 + LaTeX 源串(作为 ground truth)</td></tr>
+</table>
+<p class="small">trdg 官方参数(检索/核实于 2026-10-25, GitHub README): <code>-k/-rk</code>倾斜、<code>-d/-do</code>扭曲、<code>-bl/-rbl</code>高斯模糊、<code>-b 0/1/2/3</code>背景(高斯噪声/纯白/准晶/图像)、<code>--font_dir</code>字体、<code>--output_mask</code>字符级 mask、<code>--word_split</code>连字语种; 支持非拉丁文字(含中文)。</p>
+<h2>5. SFT 配方与混合策略</h2>
+<h3>5.1 SFT 配方（对齐现有 stage2_train_armE_r2.py 口径）</h3>
+<table class="m">
+<tr><th>起始 ckpt</th><td>ArmE-R2 全链最终(Stage-2 step3500): vision tower ViT-L/14(冻结) + projector 1024→2560 + LoRA r=64 + Qwen3-4B-Instruct</td></tr>
+<tr><th>方法</th><td>新增「Stage-2.5 OCR 专项 SFT」: 在 Stage-2 最终 ckpt 上继续训练, 不动 vision tower(冻结), 只更新 projector + LoRA</td></tr>
+<tr><th>LoRA</th><td>r=64, alpha=128, dropout=0.05 (与 Stage-1.5/2 一致, 复用现有配置)</td></tr>
+<tr><th>LR</th><td>LoRA 1e-5, projector 5e-6, cosine→1e-7, warmup 0.01 (同 Stage-2 起点, 防止遗忘过快)</td></tr>
+<tr><th>步数</th><td>P0 pilot: 2000 步(20万样本/GBS=8≈2500步取整); P1 全量: 8000-12000 步</td></tr>
+<tr><th>GBS/MBS</th><td>GBS=8, MBS=1 (与 Stage-2 一致, 显存安全)</td></tr>
+<tr><th>图像</th><td>224×224 单块, 256 patch tokens, CLIP norm, 无 spatial merge (同 Stage-2; 336+anyres 为阻塞项, 见下)</td></tr>
+<tr><th>LoRA vs 全参</th><td>推荐 LoRA 继续(参数小、防遗忘、与现有链一致); 若 pilot 不达标且怀疑容量不足, 再考虑全参(需运维批准)</td></tr>
+<tr><th>336+anyres</th><td>336+anyres 需工程改造 mllm_bridge(动态 num_image_tokens × 多块拼接) + scope 批准, 属阻塞项; 若批准, 增量收益估计 = DocVQA/InfoVQA 额外 +0.5~1.5pp(估算, 源于公开 MLLM 分辨率消融报告)</td></tr>
+</table>
+<h3>5.2 与 Stage-2 780k 混合策略（防灾难性遗忘）</h3>
+<table class="m"><tr><th>阶段</th><th>混合</th></tr>
+<tr><td><b>P0 pilot (20万)</b></td><td>OCR 新数据 100% (不混 780k, 纯探针看是否能动)</td></tr>
+<tr><td><b>P1 全量 (150万)</b></td><td>OCR 新数据 70% : Stage-2 780k 采样 30% (采样同样本量约 50万), 防遗忘</td></tr>
+<tr><td><b>P2 混合再调 (若 P1 护栏退化)</b></td><td>OCR 60% : 780k 40%, 或提高 780k 中原有 OCR/文档样本权重</td></tr>
+</table>
+<div class="wbox">原理: 纯新数据 SFT 易压坎原有能力; 混入 30% 原版 780k 是主流 MLLM 防遗忘的常见做法(参考 LLaVA/DocOwl 调优路线)。P0 pilot 故意不混, 是为纯探针看「合成数据能否动」。</div>
+<h2>6. 成本与 ETA（估算）</h2>
+<table><tr><th>阶段</th><th>数据量</th><th>渲染 CPU·核·时</th><th>存储</th><th>训练 GPU·卡·时</th><th>ETA</th></tr>
+<tr><td><b>P0 pilot 渲染</b></td><td>20万对</td><td>≈20 CPU·核·时 (trdg 约 1万/s/CPU核; 版面/公式较慢, 加权后≈0.5万/s)</td><td>≈3 GB</td><td>≈2 GPU·卡·时 (2000步, 8卡 H100)</td><td>当天内(渲染~3h + 训练~2h + 评测~1h)</td></tr>
+<tr><td><b>P1 全量渲染</b></td><td>150万对</td><td>≈150 CPU·核·时 (多机器并行, 避让训练卡 .12/.29 I/O)</td><td>≈22 GB</td><td>≈12-18 GPU·卡·时 (8000-12000步, 8卡 H100)</td><td>渲染一夬夜 + 训练~1天 + 评测~1h</td></tr>
+<tr><td><b>P2 SFT+评测</b></td><td>同 P1</td><td>-</td><td>-</td><td>含于 P1</td><td>含于 P1</td></tr>
+</table>
+<p class="small">估算口径: trdg 约 1万/s/CPU核; 8×H100 与现有训练同环境; 渲染应走其他机器/夜间, 避让 .12/.29 训练卡 I/O。所有数字均为估算。</p>
+<h2>7. 判据与决策树</h2>
+<p><b>主判据</b>: <span class="tag">OCRBench ≥ +2pp (基线 ArmE-R2 1.60% → 目标 ≥ 3.60%)</span></p>
+<p><b>副判据</b>:</p><ul>
+<li>DocVQA(val) ≥ +1pp (基线 7.35% → ≥ 8.35%)</li>
+<li>ChartQA ≥ +1pp (基线 12.16% → ≥ 13.16%)</li>
+<li>InfoVQA(val) ≥ +1pp (基线 16.18% → ≥ 17.18%)</li>
+</ul><p><b>回归护栏(防以退化换分)</b>:</p><ul>
+<li>MMStar 退化 ≤ 1pp (基线 ArmE-R2 ↖, 待读数据)</li>
+<li>AI2D 退化 ≤ 1pp (基线 ArmE-R2 ↖)</li>
+<li>RealWorldQA 退化 ≤ 1pp (基线 ArmE-R2 45.49%)</li>
+<li>MMBench(en_dev_static) 退化 ≤ 1pp (基线 ArmE-R2 23.88%, 单独调用)</li>
+</ul>
+<h3>决策树</h3><pre>
+P0 pilot(20万, 2000步, 不混 780k) → 测 OCRBench/DocVQA/ChartQA/InfoVQA + 四护栏
+  ├─ 主判据 OCRBench ≥ +2pp 且护栏全过 → 进 P1 全量(150万, 70%OCR:30%780k)
+  ├─ OCRBench +0.5~2pp 但护栏退化超 1pp → 退一步: 混 30% 780k 重跑 P0, 判护栏是否恢复
+  ├─ OCRBench &lt; +0.5pp (几乎不动) → 改一维: ①提高中文占比(试 B 配比) ②增加退化领样比例 ③提高分辨率(若批准 336) → 再跑一次 P0
+  └─ 两次调整后仍不达标 → 停并写负面结论(记录哪一维调过、结果), 不继续烧资源
+</pre>
+<h2>8. 风险与坑</h2><table class="m"><tr><th>风险</th><th>缓解</th></tr>
+<tr><td>域差太大: 合成图过于干净, 模型学到「合成印」而非真实文档</td><td>重退化管线(模糊/透视/压缩/背景纹理), 保持 ≥20% 带退化领样</td></tr>
+<tr><td>字体与语言覆盖: 中文字体集不全 → 生咇字变体识别差</td><td>用 Noto Sans CJK + Source Han 全量字重; 含 简/繁 两套</td></tr>
+<tr><td>渲染伪影: 抗锯齿/边缘过锐 → 与真实扫描件不同分布</td><td>参数随机化 + 预检查边缘锐度分布</td></tr>
+<tr><td>评测泄漏: OCRBench/ChartQA 可能含与合成语料重叠的文本</td><td>语料不取 OCRBench/ChartQA/DocVQA/InfoVQA 的原文; 公式语料取 arXiv 不取上述评测集</td></tr>
+<tr><td>灾难性遗忘: 专项 SFT 压坎原有能力(MMStar/AI2D 退化)</td><td>混合 30% 780k + 护栏监控 + LoRA 而非全参</td></tr>
+<tr><td>公式 token 预算吾: 公式图 token 占比过高挤压其他类别</td><td>公式总占 ≤10%, (a)5%(b)3%(c)2%; 不超 15万</td></tr>
+<tr><td>训练卡 I/O 冲突: 渲染重 I/O 影响 .12/.29 训练</td><td>渲染走其他机器/夜间, 存到 NFS 后再启训练</td></tr>
+</table>
+<h2>9. 参考来源（纯文本 arXiv 号，禁超链）</h2><ul>
+<li>SynthTIGER — Liu et al., 「SynthTIGER: Synthetic Text Image GEnerator Towards Better Text Recognition」, arXiv:2107.09313, 2021</li>
+<li>SynthText — Gupta et al., 「Synthetic Data for Text Localisation in Natural Images」, arXiv:1604.06646, 2016</li>
+<li>trdg (TextRecognitionDataGenerator) — Belval, GitHub 开源工具, 无单一 arXiv, 2018-</li>
+<li>Donut / SynthDoG — Kim et al., 「OCR-free Document Understanding Transformer」, arXiv:2111.15664, 2021</li>
+<li>UDOP — Tang et al., 「Unifying Vision, Text, and Layout for Universal Document Processing」, arXiv:2212.02623, 2022</li>
+<li>Pix2Struct — Lee et al., 「Pix2Struct: Screenshot Parsing as Pretraining for Visual Language Modeling」, arXiv:2210.03347, 2022</li>
+<li>Nougat — Blecher et al., 「Nougat: Neural Optical Understanding for Academic Documents」, arXiv:2308.13418, 2023</li>
+<li>mPLUG-DocOwl — Ye et al., 「mPLUG-DocOwl: Modularized Multimodal Large Language Model for Document Understanding」, arXiv:2307.02499, 2023</li>
+<li>dots.ocr — arXiv:2512.02498, 2025</li>
+<li>ChartQA — Masry et al., 「ChartQA: A Benchmark for Question Answering about Charts」, arXiv:2203.10244, 2022</li>
+<li>Chart-to-Text — Kantharaj et al., arXiv:2203.06486, 2022</li>
+<li>olmOCR — arXiv:2502.18443, 2025</li>
+<li>Visual-RFT — arXiv:2503.01785, 2025</li>
+<li>内部冗余自训练 OCR — arXiv:2508.14557, 2025</li>
+<li>PaddleOCR — 工业工具包(无单一 arXiv), 2020-</li>
+<li>im2latex-100K — 数据集/项目, 未查到单一 arXiv 标题页, 2017</li>
+<li>GOT-OCR2.0 — 未查到 arXiv 标题页(编号/名称存疑, 本次检索未命中), 2024</li>
+<li>LLaVA-NeXT — Liu et al., 「Improved Baselines with Visual Instruction Tuning」系列, 本项目 Stage-2 用其 780k quick-start 子集(738588 样本)</li>
+</ul>
+<p class="small">检索/核实于 2026-10-25。外部效果数字均为论文自报、未在本项目复现; 本项目数字全部实测可溯源; 成本为估算。</p>
+<h2>附录: 一页纸执行清单（今天就能开始）</h2><div class="kbox"><table class="m"><tr><th>步</th><th>动作</th></tr>
+<tr><td><b>① 安装</b></td><td>pip install trdg Pillow playwright; playwright install chromium (版面截图用)</td></tr>
+<tr><td><b>② 字体</b></td><td>下 Google Noto Sans CJK + Source Han Sans + DejaVu/FreeFont 全字重, 放 &lt;font_dir&gt;</td></tr>
+<tr><td><b>③ 语料</b></td><td>备维基英文/中文词表 + CC12M 句子采样 + arXiv CC-BY/CC-0 LaTeX 子集</td></tr>
+<tr><td><b>④ 冒烟</b></td><td>trdg -c 10000 -w 1 -f 64 -k 5 -rk -bl 2 -rbl -b 0 --font_dir &lt;dir&gt; -o /tmp/ocr_smoke → 检查 1万张货样</td></tr>
+<tr><td><b>⑤ 验收看</b></td><td>看 &lt;out&gt;/labels.txt(图文对齐) + 抽样 50张图人眼看退化是否自然</td></tr>
+<tr><td><b>⑥ 下一步</b></td><td>冒烟过→扩到 20万(P0 pilot)→启动 Stage-2.5 OCR SFT(2000步)→测 OCRBench 看是否动</td></tr>
+</table></div>
+<p class="small">验收看哪几个文件: <code>/tmp/ocr_smoke/labels.txt</code>(图文对齐) · <code>/tmp/ocr_smoke/</code> 抽样 50张 PNG 人眼看 · P0 训练后 <code>mllm_eval_results_*/consolidated_12benchmarks.json</code> 的 OCRBench 列.</p>
+</div></body></html>

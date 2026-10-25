@@ -1805,3 +1805,28 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 
 - 报告：`reports/report_vision_ocr_synthdata_zh.html`（29177 B / 8 节 / 0 `<script>` / 0 外链 / 标签配平）。
 - 生成器：`vision/generate_ocr_synthdata_report.py`。
+
+
+## §17 路线①细化 · OCR 专项 SFT 执行方案报告（2026-10-25 wake#272）
+
+> 用户令(2026-10-25 19:5x)：「优先执行 路线① — 用 trdg/SynthTIGER 低成本合成 50-200 万 OCR 识别对, 在现有 ckpt 上加一轮专项 SFT; 预注册判据 = OCRBench 提升 >= 2pp。把这个建议细化 写个报告我看看怎么做 中英文什么比例 数学公式怎么办 其他呢」本轮 = 只出方案报告，不启训练、不生成全量数据（等用户看完批预算）。
+
+报告自包含中文 HTML：`reports/report_vision_ocr_sft_plan_zh.html`（22706 B / 9 节 + 附录一页纸执行清单 / 0 `<script>` / 0 外链 / 标签配平 / ≥18KB）。生成器 `vision/generate_ocr_sft_plan_report.py`（数据字典在脚本顶部，重跑 diff 为空）。
+
+回答四问：
+- **中英文比例**：基线配比 = 英文词句 30% / 中文 20% / 中英混排 10% / 文档版面 15% / 图表 10% / 数学公式 10% / 低质手写场景 5%；候选 A（英6:中3:混1，默认）/ 候选 B（中英1:1，中文场景备选），各给可判定判据。
+- **数学公式三通道**：(a) 纯公式图 im2latex/LaTeX 占 5%；(b) 正文夹公式 arXiv+KaTeX 占 3%；(c) 公式+表格混排占 2%；总占 ≤10%。OCRBench 无独立公式子类，主价值在符号词表与版面解析（为 MathVista/论文理解铺垫）。
+- **其他类别**（P0-P2）：文档版面 20 万 P0 / 表格 8 万 P0 / 图表 12 万 P0 / 场景文本 6 万 P1 / 低质(贴附每类 20%)P0 / 代码截图 3 万 P2 / 竖排多语种 3 万 P2 / 手写 4 万 P1。
+- **怎么做**：生成管线（trdg 词句级主力 + SynthTIGER 退化补充 + 自研 HTML→截图渲染器版面/表格/图表/公式混排 + matplotlib 图表 + LaTeX/KaTeX 公式）；SFT 配方严格对齐 `stage2_train_armE_r2.py` 口径 = ArmE-R2 Stage-2 step3500 起始·LoRA r=64 继续·LR 1e-5/5e-6·cosine→1e-7·224px 单块·256 tokens·vision 冻结；与 Stage-2 780k 混 70%OCR:30%780k 防遗忘；336+anyres 为阻塞项（需工程改造 + scope 批准，增量收益估算 +0.5~1.5pp）。
+
+预注册判据：主 OCRBench ≥ +2pp（基线 ArmE-R2 1.60% → ≥3.60%）；副 DocVQA/ChartQA/InfoVQA 各 ≥ +1pp；回归护栏 MMStar/AI2D/RealWorldQA/MMBench 退化 ≤ 1pp。决策树：pilot(20万/2000步)达标→全量(150万/70%:30%)；OCR +0.5~2pp 但护栏退化→退一步混 30%780k 重试；OCR < +0.5pp→改一维（中英配比/退化比例/分辨率）再试一次；两次仍不达→停+负面结论。
+
+成本（估算）：P0 pilot 渲染 ≈20 CPU·核·时 / 训练 ≈2 GPU·卡·时 / 当天内；P1 全量渲染 ≈150 CPU·核·时 / 训练 ≈12-18 GPU·卡·时 / 渲染一宿+训练~1天。
+
+诚实条款：外部数字均为论文自报、未在本项目复现；成本/ETA 均为估算；本项目数字全部实测可溯源（consolidated_12benchmarks.json）。trdg 参数经代理检索 GitHub README 核实（2026-10-25）。检索于 2026-10-25。
+
+- 报告：`reports/report_vision_ocr_sft_plan_zh.html`（22706 B / 9 节 + 附录 / 0 `<script>` / 0 外链 / 标签配平 / ≥18KB）。
+- 生成器：`vision/generate_ocr_sft_plan_report.py`。
+- 基线数据：四臂 `consolidated_12benchmarks.json`（同 §16）。
+- SFT 口径对齐：`vision/mllm_bridge/stage2_train_armE_r2.py`（LoRA r=64/alpha=128/dropout0.05, LR 1e-5 lora + 5e-6 proj, 3500步, GBS=8, MBS=1, 224px, 256 tokens, vision 冻结, Qwen3-4B-Instruct）。
+
