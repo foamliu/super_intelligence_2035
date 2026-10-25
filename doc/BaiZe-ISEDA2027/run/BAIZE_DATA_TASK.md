@@ -1,23 +1,45 @@
 # BAIZE_DATA_TASK.md
 
+### 🚀 运维令 · 2026-10-25 08:0x（**重新盘点 MiniCPM5 数据：以下载目录为准，重出 tokenized inventory 报告**）· 用户直令 · 最高优先
+> 用户原话：「安排data重新盘点一下已下载/已分词的 MiniCPM5 数据。report_data_tokenized_inventory_zh.html 这个材料有些问题：1. ④ 逐源汇总表中为啥没有 base-en / l1_en_hq / zh —— 明明 `Ultra-FineWeb/tree/main/data` 下有四个目录 en、en_v1_4、l1_en_hq、zh。2. 为啥没有 UltraX-Preview。我需要你的盘点跟下载目录能够对应上，**不要自己加戏，以下载目录为准，不要自己创造数据源**。另外上一版盘点有多处"小学生错误"，比如 ④ 中 text/ 小计 3722.05B，但下属各源加不到这个数。」
+> **性质 = 报告返工重做**（不是打补丁）；口径从「我们以为的源」改为「磁盘下载目录实际有什么」。
+> 📌 运维预查（供你复核，仍需你自己实测）：`Ultra-FineWeb/data/` 四子目录均在盘（en / en_v1_4 / l1_en_hq / zh），`UltraX-Preview` 亦在盘；上一版 ④ 表漏了这 5 行，且「text/ 小计 3722.05B」= en_v1_4 2238.14 + code 550.07 + l3 658.91 + math 274.92（**只有 4 源，表头却写 5 源**）。
+
+**① 三条硬口径（违反即返工）**
+1. **以下载目录为准**：④ 每一行必须对应**磁盘真实目录**（`ls` 能列），写明绝对路径。目录里有的源**不许漏**；计划/论文里有但目录里没有的源**不许编进表**。
+2. **一一映射**：`Ultra-FineWeb/data` 下 **en / en_v1_4 / l1_en_hq / zh 各占一行**；`UltraX-Preview` **单独一行**。🚫 不许合并成一个「UFW」行。
+3. **小计禁手填**：所有 `小计/总计` 由脚本求和，附录写求和式；**总字节必须等于各行字节之和（误差 0）**。
+
+**② 必做实测（输出原样进附录 A）**
+```bash
+O=/nas_train/app.e0031982/datasets/openbmb
+for d in $O/Ultra-FineWeb/data/*/ ; do echo "== $d"; find "$d" -name '*.parquet' | wc -l; du -sb "$d"; find "$d" -name '*.incomplete' | wc -l; done
+for d in $O/UltraX-Preview $O/Ultra-FineWeb-L3 $O/UltraData-*; do [ -d "$d" ] && { echo "== $d"; find "$d" -name '*.parquet' | wc -l; du -sb "$d"; find "$d" -name '*.incomplete' | wc -l; }; done
+for r in /nas_train/app.e0031982/datasets/baize-data/text /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data; do
+  find "$r" -name '*.bin' -printf '%h\t%s\n' | awk -F'\t' '{s[$1]+=$2;n[$1]++} END{for(d in s) printf "%s\t%d\t%d\t%.2f GB\n",d,n[d],s[d],s[d]/1e9}' | sort -k3 -nr
+  echo "idx: $(find "$r" -name '*.idx' | wc -l)";
+done
+```
+- **token 列**：已分词目录用 `.idx` 实测（可复用 `run/data/tokenized_files_20261024.tsv` 的 2383 行，但要**按目录重新分组**）；**未分词**（en / l1_en_hq / zh / UltraX 等）写「**未分词（未实测）**」，🚫 禁估算/论文数顶替。
+- 历史参考值（`DATA_RESEARCH.md` v1.2：base en ≈206.76B / base zh ≈112.47B / UltraX ≈30.97B）**只放附录 C「参考·非实测·不入小计」**。
+
+**③ 报告结构（重写）**
+摘要 → **目录清单（ls 第一性证据）** → ① 四个核心数字 → ② 文件清单 → **③ 逐源汇总表（本次重点）** → ④ 已下载未分词清单 → ⑤ 空间判定 → **⑥ 与上一版勘误表（必须点名 base-en / l1_en_hq / zh / UltraX 四处遗漏 + text/ 小计行数错误）** → 附录 A 命令与输出 / B 求和核对式 / C 历史参考值。
+- ③ 表列：`下载目录(绝对路径)` | `HF 仓库+子目录` | `parquet` | `incomplete` | `.bin` | `.idx` | `字节(du -sb)` | `TB` | `token(实测)` | `是否已分词` | `最近写入`；**行序按磁盘目录树**，不按"重要性"。
+
+**④ 自检（任一不过不许提交）**
+- [ ] 每行目录 `test -d` 返回 0；[ ] Ultra-FineWeb 四子目录全部单列；[ ] UltraX-Preview 单列
+- [ ] 小计 = 脚本求和且附录 B 有算式；**总字节 = 各行之和（误差 0）**
+- [ ] `.bin` 数 == `.idx` 数（不等标红说明）；[ ] 未分词源 token 列无估算数字混入
+- [ ] 全表无 N/A / 空单元格；[ ] 0 `<script>`、0 外链、标签配平
+
+**⑤ 产出**
+`reports/report_data_tokenized_inventory_zh.html`（中文自包含，v2 覆盖旧版）+ 生成器 `run/data/gen_tokenized_inventory_report.py`（数字全部来自实测 TSV，禁手填）+ 原始测量 `run/data/inventory_v2_20261025.tsv` 与 `run/data/inventory_v2_commands.log`；回写 `MEMORY_DATA.md` + `run/daily-memories-data/2026-10-25.md`；commit 前缀 `data inventory:`。
+
+**🚫 铁律**：不许自造数据源 / 不许改源名 / 不许合并目录凑行；小计一律脚本求和；估算值永不入实测列与小计；纯 IO 盘点不占 GPU，与 85M 并行时 `ionice -c3` 防打满 NAS IO。
+
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_DATA.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
-### ⚡ 运维令 · 2026-10-24 18:1x（**85M 降优先级 → 迁移提速**）· 用户直令 · 最高优先
-
-> 用户原话：「**85M 下载优先级不高。**」
-
-**① 唯一动作：把迁移限速提上去**
-- `--bwlimit` **50000 → 300000 KiB/s**（≈51 MB/s → **≈307 MB/s**，可调）。
-- 用新脚本 **`run/data_pipeline/migrate_to_nas_env_fast.sh`**：`BWLIMIT` 环境变量可覆盖（`0`=不限速）；
-  校验口径（shard 数 + 总字节数）、先软链接后删源、顺序 `math_l3→code_l3→math_l1→ufw_l3→code_l2` **与 v1 完全一致**，
-  新增 `--partial`（断点更省）与 `flock` **单实例锁**。
-- 🚫 **不得就地编辑正在跑的 `migrate_to_nas_env.sh`**（bash 按字节偏移读脚本，会读串行）⇒ 必须先停旧进程。
-- 🚫 **不得起第二个迁移实例**（串行总量才可控；双实例=双倍带宽=预算失效）。
-- 切换由运维经 ops **RUN_ID 158** 执行（SIGINT 停旧 → 起新脚本 → 实测 60s 速率 + ETA）。
-  - **兜底**：若中继无回执（`run/ops/.last_run_id` 仍为 `157`），则**本轮唤醒由你亲自执行同一套动作**（先 `kill -STOP` 旧脚本再 `kill -INT` rsync → `BWLIMIT=300000 setsid -f nohup bash migrate_to_nas_env_fast.sh > /tmp/migrate_to_nas_env_fast.log 2>&1 &` → `du -sb` 60s 实测），并在回报里写清"中继未执行、由 agent 代执行"。
-
-**② 85M 降级**：**不再是任何前置条件**，不再为它预留 NFS 带宽；继续后台跑即可（8752/12124≈72.2%）。
-
-**③ 判据**：新速率用 `du -sb` 60s 差值实测并写进 `MEMORY_DATA.md`；若 <80 MB/s ⇒ 瓶颈在 NFS 而非限速，如实记录（不要编"已提速"）。
+> 📦 §运维令·2026-10-24 18:1x（85M 降优先级 → 迁移提速）**已闭合**（迁移 5/5 源全 DONE，`migrate_to_nas_env_fast.sh` 已跑完）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：`--bwlimit` 50000→300000 KiB/s、新脚本带 `--partial`+`flock` 单实例锁、不得就地编辑在跑的脚本、不得起第二实例；85M 不再是任何前置条件。需要时再读。
 
 > 📦 §运维指令·2026-10-24 16:1x（写"正在做的迁移"报告）**已闭合**（`reports/report_data_migration_nas_env_zh.html` 已交付，唤醒 637@17:39）→ 原文已归档 → `run/ARCHIVE_OPERATOR_DATA.md`。需要时再读。
 
@@ -33,75 +55,9 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
-### 📊 运维指令 · 2026-10-24 13:2x（**MiniCPM5 全量已分词数据：硬盘实测清单**）· 用户直令 · 最高优先
+> 📦 §运维指令·2026-10-24 13:2x（MiniCPM5 全量已分词数据：硬盘实测清单）**已闭合**（首版报告已交付 `reports/report_data_tokenized_inventory_zh.html`，但**因 04 表漏源/小计错误被 10-25 令要求返工**）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：口径=只写硬盘实测（`du -sb`/`find`/`.idx` manifest），未分词原始 parquet 与 SFT/RL/85M 不计入总量、只做对照；产物 `run/data/tokenized_files_20261024.tsv`（2383 行）可复用。需要时再读。
 
-> 用户原话：「我现在要的是 MiniCPM5 全量数据，分词后的数据，列表，占多少硬盘，分词后多少 tok，在硬盘的文件全名是什么。让 data 在硬盘上查。」
-> **只许写硬盘实测值**：每个数字必须能追到 `du -sb` / `find` / `wc -l` / manifest 的原文行。🚫 不许估算、不许拼凑、🚫 不许把未分词/未下载的数据混进来。
-
-**① 对象定义（严格）**
-- 范围 = **已经分词落盘的 MiniCPM5 全量数据**（即 `/nas_train/app.e0031982/datasets/baize-data/text/` 下的全部分词产物 + 历史 `full_*` 目录）。
-- **不含**：未分词的原始 parquet（base-en / l1_en_hq / zh / Math L2p）、SFT/RL jsonl、85M 多模态。
-- 上述"不含"的部分只在报告末尾单列一节做**对照**，🚫 不得计入总量。
-
-**② 必须回答的四个数（正文里直接给）**
-1. **占多少硬盘**：总字节（`du -sb`，给 bytes + TB 两位小数）
-2. **多少 token**：总 token（**取 manifest / summary 的实测累计值**；若某目录没有 manifest ⇒ 该目录标 `N/A`，并单列"无 token 记录"）
-3. **多少 shard**：`.bin` 总数（并给 `.idx` 总数）
-4. **文件全名**：见 ③
-
-**③ 文件清单（这是本轮重点）**
-- 先给**命名规则 + 目录结构**（例：`l3_s00.bin` / `l3_s00.idx` / `env14_000.bin` …），说明每个前缀对应哪个数据源。
-- 再**逐文件列出完整路径与文件名**（每行：`绝对路径 | 字节`）。
-- 文件数多时：正文只放**前 20 行样例 + 汇总**，完整清单落盘到
-  `doc/BaiZe-ISEDA2027/run/data/tokenized_files_20261024.tsv`（列：`abs_path<TAB>bytes`），**commit 进仓库**并在正文给出该文件的路径与行数。
-
-**④ 逐源汇总表（一行一个分词产物目录）**
-
-`数据源 | 目录绝对路径 | .bin 数 | .idx 数 | 字节数(du -sb) | TB | token 数(实测) | 完成时间`
-
-必须覆盖：en_v1_4 全源分词、UFW-L3、UltraData-Code L3、UltraData-Code L2、UltraData-Math L3、UltraData-Math L1，以及 `text/` 下其它任何 `*.bin` 所在目录（有就列，没有就说明）。
-表末给**合计行**（∑字节 / ∑shards）。
-
-**⑤ 空间判定**：`df -B1 /nas_env` 可用字节 vs 上表合计（×1.1 双份窗口）⇒ **够 / 不够 + 差多少 TB**。
-
-**⑥ 口径（硬）**
-- 只用 `timeout 120 du -sb <单个目录>`；🚫 禁止整树 du。
-- 🚫 不要把内部轮次代号（如 "R3"）当数据源列出。
-- token 数一律取 manifest/summary 实测值；取不到写 `N/A`。
-- 纯只读：不移动、不删除、不起下载。
-
-**⑦ 交付**：中文 HTML `reports/report_data_tokenized_inventory_zh.html`（自包含）+ 本轮回复给同样的表 + `tokenized_files_20261024.tsv`；commit 前缀 `data report:`；push 后无 ahead/behind。
-
-### 🆕 运维指令 · 2026-10-23 22:1x（**① 复测 `92.25` 代理+hf.co 直连 ② 恢复 85M 下载 ③ MiniCPM5 分词产物体积 ④ 搬 `/nas_env` 腾 `/nas_train`**）· 用户直令 · 最高优先
-
-> 用户原话：「data: 1.尝试 92.25 代理+hf.co直连是否恢复；2.恢复 85M下载；3.看看MiniCPM5分词后的数据有多大；4.如果够放，在en_v1_4 分词完成后把MiniCPM5分词的数据搬到/nas_env去给/nas_train省空间。」
-
-**① 代理复测（先做，≤10 分钟出结论，别等分词）**
-- 口径（2026-10-15 用户令不变）：**下数据 = `http://172.19.92.25:13128` 直连 `huggingface.co`；🚫 不用 hf-mirror**。
-- 探针 4 条，逐条贴原文输出（`timeout 20` 包住）：
-  1. 端口：`nc -zv 172.19.92.25 13128`（或 `curl -m 5 -x http://172.19.92.25:13128 -o /dev/null -s -w '%{http_code}' https://huggingface.co`）；
-  2. `curl -x ... https://huggingface.co/api/models/openbmb/MiniCPM5-2B` → 期望 **200**；
-  3. 实测下载 1 个 ≤20MB 文件取速（MB/s）；
-  4. 与 `hf.co` 直连（不挂代理）对照，各 1 次。
-- **判据**：② 200 且 ③ ≥1 MB/s ⇒ 「已恢复」→ **立刻做 ②**；若仍 5xx/超时 ⇒ 记「未恢复」+ 附 4 条原文，**不要反复重试烧时间**，转去做 ③④。
-
-**② 恢复 85M 下载（用户直令，解除 10-13 的暂停）**
-- 目标：`LLaVA-OneVision-1.5-Mid-Training-85M`（历史路径 `/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`，**先 `ls` 核实真实路径**），暂停时进度 **8,436 / 12,124 parquet（69.6%）**。
-- **必须断点续传**（不重下已完成的 parquet）：复用既有 `hf download` 封装/wrapper，`--resume`（或 `.incomplete` 保留）；**建议落 `/nas_env`**（用户令要腾 `/nas_train`）——若改落点，先 `df` 报余量再动，且写进 `DATA_LEDGER.md`。
-- **前置**：`df -h /nas_train /nas_env` + 剩余 parquet 体积估算 + ETA，**先报数字再起下载**；放不下 ⇒ 报 blocker（说明差多少 TB）而不是硬下。
-- **错峰**：分词的 10 个 worker 正在写盘，下载并发 ≤8，`nice -n 10`；🚫 不停 en_v1_4 分词、不删任何已有 parquet。
-
-**③ MiniCPM5 分词产物体积（要机器可核的数字）**
-- 输出：`du -sh`（**只对已知目录做有界 du，带 `timeout`，🚫 不对 `/nas_train` 整树 du**）+ `find … -name '*.bin' | wc -l` + `find … -name '*.idx' | wc -l` + 字节总和。
-- 至少给：**总大小 / shard 数 / 各源拆分大小**（Code L3、Code L2、Math L3、Math L1、UFW-L3 五项）。
-- 同时给 `/nas_train`、`/nas_env` 的 `df -h` 现状与余量。
-
-**④ 迁移到 `/nas_env`（前置硬条件：en_v1_4 分词 done=110/110 之后才做）**
-- 安全铁律（沿用 10-22 RUN_ID 149 口径）：① `df` 确认 `/nas_env` 余量 ≥ 数据量 ×1.1；② **`rsync -a` 不用 `mv`**（跨挂载 mv = 复制+删除）；③ **校验 shard 数 + 总字节一致后**才删源；④ 先建**软链接**保证旧路径可访问；⑤ 不停 en_v1_4 分词以外的任何工作。
-- 删除前**必须在本轮回复里报「将删哪些目录 + 校验结果」**，未校验同号不得 `rm`。
-- 完成写 `DATA_LEDGER.md`（源/新路径/字节/shard/校验和）+ `MEMORY_DATA.md`；commit 前缀 `data migrate:`。
-
-**回报格式（本轮必须给）**：① 代理 4 探针原文+结论 ② 85M 磁盘余量/ETA/已起或 blocker ③ 五个源的 du 明细 ④ 迁移是否具备条件（余量对比）+ 若已迁则校验结果。
+> 📦 §运维指令·2026-10-23 22:1x（复测 92.25 代理 / 恢复 85M / 分词产物体积 / 搬 /nas_env）**已闭合**（85M 已恢复并在降优先级后台跑，迁移 5/5 全 DONE）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：代理走 92.25+hf.co 直连；迁移铁律 = rsync -a 不用 mv、校验 shard+字节一致才删源、先建软链接、/nas_env 余量 ≥ 数据×1.1。需要时再读。
 
 > 📦 §运维指令·2026-10-21 04:0x（MiniCPM5 全量数据完整分词·224核全开）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：5源全部分词完成（574 shards/1056.36B tokens/4.24TB），env14也完成（110/110/2238.14B/8.88TB）。迁移到/nas_env进行中。需要时再读。
 > 📦 §运维指令·2026-10-20 15:5x（✅恢复en_v1_4下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：下载已恢复并运行中（PID1875054 alive,99/110dirs），kill+重启口径恢复，分词不受影响。需要时再读。

@@ -1,6 +1,99 @@
 # ARCHIVE — 历史运维指令（源自 BAIZE_DATA_TASK.md）
 
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
+## 归档 2026-10-25（由 BAIZE_DATA_TASK.md 搬入，原文未改）
+
+### 📊 运维指令 · 2026-10-24 13:2x（**MiniCPM5 全量已分词数据：硬盘实测清单**）· 用户直令 · 最高优先
+
+> 用户原话：「我现在要的是 MiniCPM5 全量数据，分词后的数据，列表，占多少硬盘，分词后多少 tok，在硬盘的文件全名是什么。让 data 在硬盘上查。」
+> **只许写硬盘实测值**：每个数字必须能追到 `du -sb` / `find` / `wc -l` / manifest 的原文行。🚫 不许估算、不许拼凑、🚫 不许把未分词/未下载的数据混进来。
+
+**① 对象定义（严格）**
+- 范围 = **已经分词落盘的 MiniCPM5 全量数据**（即 `/nas_train/app.e0031982/datasets/baize-data/text/` 下的全部分词产物 + 历史 `full_*` 目录）。
+- **不含**：未分词的原始 parquet（base-en / l1_en_hq / zh / Math L2p）、SFT/RL jsonl、85M 多模态。
+- 上述"不含"的部分只在报告末尾单列一节做**对照**，🚫 不得计入总量。
+
+**② 必须回答的四个数（正文里直接给）**
+1. **占多少硬盘**：总字节（`du -sb`，给 bytes + TB 两位小数）
+2. **多少 token**：总 token（**取 manifest / summary 的实测累计值**；若某目录没有 manifest ⇒ 该目录标 `N/A`，并单列"无 token 记录"）
+3. **多少 shard**：`.bin` 总数（并给 `.idx` 总数）
+4. **文件全名**：见 ③
+
+**③ 文件清单（这是本轮重点）**
+- 先给**命名规则 + 目录结构**（例：`l3_s00.bin` / `l3_s00.idx` / `env14_000.bin` …），说明每个前缀对应哪个数据源。
+- 再**逐文件列出完整路径与文件名**（每行：`绝对路径 | 字节`）。
+- 文件数多时：正文只放**前 20 行样例 + 汇总**，完整清单落盘到
+  `doc/BaiZe-ISEDA2027/run/data/tokenized_files_20261024.tsv`（列：`abs_path<TAB>bytes`），**commit 进仓库**并在正文给出该文件的路径与行数。
+
+**④ 逐源汇总表（一行一个分词产物目录）**
+
+`数据源 | 目录绝对路径 | .bin 数 | .idx 数 | 字节数(du -sb) | TB | token 数(实测) | 完成时间`
+
+必须覆盖：en_v1_4 全源分词、UFW-L3、UltraData-Code L3、UltraData-Code L2、UltraData-Math L3、UltraData-Math L1，以及 `text/` 下其它任何 `*.bin` 所在目录（有就列，没有就说明）。
+表末给**合计行**（∑字节 / ∑shards）。
+
+**⑤ 空间判定**：`df -B1 /nas_env` 可用字节 vs 上表合计（×1.1 双份窗口）⇒ **够 / 不够 + 差多少 TB**。
+
+**⑥ 口径（硬）**
+- 只用 `timeout 120 du -sb <单个目录>`；🚫 禁止整树 du。
+- 🚫 不要把内部轮次代号（如 "R3"）当数据源列出。
+- token 数一律取 manifest/summary 实测值；取不到写 `N/A`。
+- 纯只读：不移动、不删除、不起下载。
+
+**⑦ 交付**：中文 HTML `reports/report_data_tokenized_inventory_zh.html`（自包含）+ 本轮回复给同样的表 + `tokenized_files_20261024.tsv`；commit 前缀 `data report:`；push 后无 ahead/behind。
+
+### 🆕 运维指令 · 2026-10-23 22:1x（**① 复测 `92.25` 代理+hf.co 直连 ② 恢复 85M 下载 ③ MiniCPM5 分词产物体积 ④ 搬 `/nas_env` 腾 `/nas_train`**）· 用户直令 · 最高优先
+
+> 用户原话：「data: 1.尝试 92.25 代理+hf.co直连是否恢复；2.恢复 85M下载；3.看看MiniCPM5分词后的数据有多大；4.如果够放，在en_v1_4 分词完成后把MiniCPM5分词的数据搬到/nas_env去给/nas_train省空间。」
+
+**① 代理复测（先做，≤10 分钟出结论，别等分词）**
+- 口径（2026-10-15 用户令不变）：**下数据 = `http://172.19.92.25:13128` 直连 `huggingface.co`；🚫 不用 hf-mirror**。
+- 探针 4 条，逐条贴原文输出（`timeout 20` 包住）：
+  1. 端口：`nc -zv 172.19.92.25 13128`（或 `curl -m 5 -x http://172.19.92.25:13128 -o /dev/null -s -w '%{http_code}' https://huggingface.co`）；
+  2. `curl -x ... https://huggingface.co/api/models/openbmb/MiniCPM5-2B` → 期望 **200**；
+  3. 实测下载 1 个 ≤20MB 文件取速（MB/s）；
+  4. 与 `hf.co` 直连（不挂代理）对照，各 1 次。
+- **判据**：② 200 且 ③ ≥1 MB/s ⇒ 「已恢复」→ **立刻做 ②**；若仍 5xx/超时 ⇒ 记「未恢复」+ 附 4 条原文，**不要反复重试烧时间**，转去做 ③④。
+
+**② 恢复 85M 下载（用户直令，解除 10-13 的暂停）**
+- 目标：`LLaVA-OneVision-1.5-Mid-Training-85M`（历史路径 `/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`，**先 `ls` 核实真实路径**），暂停时进度 **8,436 / 12,124 parquet（69.6%）**。
+- **必须断点续传**（不重下已完成的 parquet）：复用既有 `hf download` 封装/wrapper，`--resume`（或 `.incomplete` 保留）；**建议落 `/nas_env`**（用户令要腾 `/nas_train`）——若改落点，先 `df` 报余量再动，且写进 `DATA_LEDGER.md`。
+- **前置**：`df -h /nas_train /nas_env` + 剩余 parquet 体积估算 + ETA，**先报数字再起下载**；放不下 ⇒ 报 blocker（说明差多少 TB）而不是硬下。
+- **错峰**：分词的 10 个 worker 正在写盘，下载并发 ≤8，`nice -n 10`；🚫 不停 en_v1_4 分词、不删任何已有 parquet。
+
+**③ MiniCPM5 分词产物体积（要机器可核的数字）**
+- 输出：`du -sh`（**只对已知目录做有界 du，带 `timeout`，🚫 不对 `/nas_train` 整树 du**）+ `find … -name '*.bin' | wc -l` + `find … -name '*.idx' | wc -l` + 字节总和。
+- 至少给：**总大小 / shard 数 / 各源拆分大小**（Code L3、Code L2、Math L3、Math L1、UFW-L3 五项）。
+- 同时给 `/nas_train`、`/nas_env` 的 `df -h` 现状与余量。
+
+**④ 迁移到 `/nas_env`（前置硬条件：en_v1_4 分词 done=110/110 之后才做）**
+- 安全铁律（沿用 10-22 RUN_ID 149 口径）：① `df` 确认 `/nas_env` 余量 ≥ 数据量 ×1.1；② **`rsync -a` 不用 `mv`**（跨挂载 mv = 复制+删除）；③ **校验 shard 数 + 总字节一致后**才删源；④ 先建**软链接**保证旧路径可访问；⑤ 不停 en_v1_4 分词以外的任何工作。
+- 删除前**必须在本轮回复里报「将删哪些目录 + 校验结果」**，未校验同号不得 `rm`。
+- 完成写 `DATA_LEDGER.md`（源/新路径/字节/shard/校验和）+ `MEMORY_DATA.md`；commit 前缀 `data migrate:`。
+
+**回报格式（本轮必须给）**：① 代理 4 探针原文+结论 ② 85M 磁盘余量/ETA/已起或 blocker ③ 五个源的 du 明细 ④ 迁移是否具备条件（余量对比）+ 若已迁则校验结果。
+
+### ⚡ 运维令 · 2026-10-24 18:1x（**85M 降优先级 → 迁移提速**）· 用户直令 · 最高优先
+
+> 用户原话：「**85M 下载优先级不高。**」
+
+**① 唯一动作：把迁移限速提上去**
+- `--bwlimit` **50000 → 300000 KiB/s**（≈51 MB/s → **≈307 MB/s**，可调）。
+- 用新脚本 **`run/data_pipeline/migrate_to_nas_env_fast.sh`**：`BWLIMIT` 环境变量可覆盖（`0`=不限速）；
+  校验口径（shard 数 + 总字节数）、先软链接后删源、顺序 `math_l3→code_l3→math_l1→ufw_l3→code_l2` **与 v1 完全一致**，
+  新增 `--partial`（断点更省）与 `flock` **单实例锁**。
+- 🚫 **不得就地编辑正在跑的 `migrate_to_nas_env.sh`**（bash 按字节偏移读脚本，会读串行）⇒ 必须先停旧进程。
+- 🚫 **不得起第二个迁移实例**（串行总量才可控；双实例=双倍带宽=预算失效）。
+- 切换由运维经 ops **RUN_ID 158** 执行（SIGINT 停旧 → 起新脚本 → 实测 60s 速率 + ETA）。
+  - **兜底**：若中继无回执（`run/ops/.last_run_id` 仍为 `157`），则**本轮唤醒由你亲自执行同一套动作**（先 `kill -STOP` 旧脚本再 `kill -INT` rsync → `BWLIMIT=300000 setsid -f nohup bash migrate_to_nas_env_fast.sh > /tmp/migrate_to_nas_env_fast.log 2>&1 &` → `du -sb` 60s 实测），并在回报里写清"中继未执行、由 agent 代执行"。
+
+**② 85M 降级**：**不再是任何前置条件**，不再为它预留 NFS 带宽；继续后台跑即可（8752/12124≈72.2%）。
+
+**③ 判据**：新速率用 `du -sb` 60s 差值实测并写进 `MEMORY_DATA.md`；若 <80 MB/s ⇒ 瓶颈在 NFS 而非限速，如实记录（不要编"已提速"）。
+
+---
+
+
 
 ### 🆕 运维指令 · 2026-10-10（🔄 重启 `en_v1_4` 下载）· 用户直令 · 最高优先
 
