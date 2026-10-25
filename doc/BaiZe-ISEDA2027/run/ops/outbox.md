@@ -21219,3 +21219,78 @@ echo "=== DONE 200 ==="
 21
 === DONE 200 ===
 ```
+
+---
+
+## RUN_ID 201 · 2026-10-25 12:30:14 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 201 | progress check | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/datasets/baize-data
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+
+echo "[1] tokenized 布局"
+if [ -d "$B/tokenized" ]; then
+  find "$B/tokenized" -maxdepth 4 -type d -printf "%p\n" | sed "s#$B/##" | head -20
+  echo "--- 各目录 bin 数 ---"
+  for d in $(find "$B/tokenized" -maxdepth 4 -type d | sort); do
+    n=$(ls "$d"/*.bin 2>/dev/null | wc -l)
+    [ "$n" -gt 0 ] && printf "  %-60s bin=%s\n" "${d#$B/}" "$n"
+  done
+  echo "--- INDEX.tsv ---"
+  head -8 "$B/tokenized/INDEX.tsv" 2>/dev/null || echo "  (无 INDEX.tsv)"
+else
+  echo "  (tokenized/ 不存在)"
+fi
+
+echo "[2] MANIFEST 抽样"
+find "$B/tokenized" -maxdepth 4 -name MANIFEST.json 2>/dev/null | head -3 | while read -r m; do
+  echo "  $m"; head -c 300 "$m"; echo
+done
+
+echo "[3] 分词进程 / 并发"
+ps -eo pid=,etimes=,pcpu=,args= | grep -E 'preprocess_data|tokenize' | grep -v grep | wc -l | awk '{print "  tokenize 进程数 = " $1}'
+ps -eo pid=,etimes=,pcpu=,args= | grep -E 'preprocess_data|tokenize' | grep -v grep | head -3 | cut -c1-120
+echo "  load: $(cat /proc/loadavg)"
+echo "  core: $(nproc)"
+
+echo "[4] 分词日志"
+ls -lt /tmp/tokenize_untokenized_*.log /tmp/tokenize_*.log 2>/dev/null | head -5 || echo "  (无日志)"
+for l in $(ls -t /tmp/tokenize_untokenized_*.log 2>/dev/null | head -1); do
+  echo "  --- tail $l ---"; tail -6 "$l" | cut -c1-140
+done
+
+echo "[5] 空间"
+df -h /nas_train | tail -1
+du -sb "$B/text" "$B/tokenized" 2>/dev/null | awk '{printf "  %-50s %.2f TB\n", $2, $1/1e12}'
+
+echo "[6] data agent 最近动静"
+ps -eo pid=,etimes=,args= | grep cline | grep cline_data | grep -v grep | cut -c1-100 | head -2
+ls -l --time-style=+%F_%T "$R/run/MEMORY_DATA.md" "$R/run/DATA_LEDGER.md" "$R/run/data/map_dl_vs_tok_20261025.tsv" 2>/dev/null | awk '{print "  "$6" "$5" "$7}'
+echo "  loop 日志尾:"; grep -a "\[loop\]" /tmp/baize_data_loop.log 2>/dev/null | tail -2
+echo "=== DONE 201 ==="
+```
+
+**输出**
+```
+=== RUN_ID 201 | progress check | 2026-10-25 12:30:14 | host=whag0pgpuap29 ===
+[1] tokenized 布局
+  (tokenized/ 不存在)
+[2] MANIFEST 抽样
+[3] 分词进程 / 并发
+  tokenize 进程数 = 1
+  load: 5.84 8.73 12.59 20/7709 1751424
+  core: 224
+[4] 分词日志
+[5] 空间
+10.239.23.31:/vol_CTE0_data01  207T  171T   37T  83% /nas_train
+  /nas_train/app.e0031982/datasets/baize-data/text   8.93 TB
+[6] data agent 最近动静
+  2026-10-25_11:23:32 23973 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/DATA_LEDGER.md
+  2026-10-25_12:29:58 2646 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/map_dl_vs_tok_20261025.tsv
+  2026-10-25_11:22:55 31996 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+  loop 日志尾:
+=== DONE 201 ===
+```
