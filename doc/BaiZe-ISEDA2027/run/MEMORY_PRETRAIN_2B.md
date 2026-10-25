@@ -1,13 +1,14 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
 
-> 🆕 **2026-10-25 17:43 #777：⚪ idle heartbeat · #776@16:31 已过 60min 判死线 ⇒ 必发心跳·三项运维令交付物复核依旧在位·无新令·纯验证零 GPU**：
-> - **触发**：上次心跳 #776 commit 877ed26f4@16:31，距今 ~72min > 60min 判死线 ⇒ 本轮必发心跳。
-> - **独立复核（repo root 重跑 git）**：① 双机报告 `reports/report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / `grep 'http'`=0 / 11 个 `<h2>` ✓；② 生成器 `run/gen_dualnode_throughput_report.py`=33,495B，`git ls-files` 已跟踪、`git log` 最新 c856f02eb 已 commit ✓；③ `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L3691 指针 ✓；④ longctx 报告=19,158B / `grep -i Xmodel`=0（Mamba2-hybrid 重写）✓ commit 1a304f509@16:52 ✓；⑤ Task B 无进程，qps4/qps8/maxnch64 3 TAG 全闭合（summary 均见 `TEST COMPLETE` + POST-FLIGHT GPU 全 0 MiB）⇒ 16 卡全释放。
-> - **git**：`git fetch`+`status -sb` ⇒ `## main...origin/main`，ahead/behind=0/0（与远端同步）；任务书最后相关提交=10-25 纪律块（无新运维令）。
-> - **未完成指令：无**（07:4x 双机报告 / 23:5x 双机吞吐父令 / 16:0x 305K+longctx 三项运维令交付物均在盘并已 commit）⇒ `WAITING=1`（30 分钟长轮询）。
-> - **GPU**：.29 8×H100 全 idle，零争用；本轮纯验证零 GPU。
-> 📦 体积：TASK=31.1 KB / MEMORY≈29.0 KB（均 ≤32KB ✓；本轮零归档，仅新增 #777 顶块）.
+> 🆕 **2026-10-25 19:03 #778：🚀 启动「seq x tok/step 16卡吞吐网格」(运维令17:5x)·cfg1(seq8192/2M)训练中·脚本已落地·未完成指令:有⇒WAITING=0**：
+> - **触发**：任务书 17:5x 新运维令(用户直令·最高优先)= seq 增大 x 每步 token 固定(2M=S1/4M=S2)的 16 卡吞吐网格 6 格。#777@17:43 时此令尚未到(报"无新令")，本唤醒首次发现 ⇒ 必须执行。
+> - **本轮动作**：① 核实基线 `baize_dualnode_16gpu_test.sh`/summary=**606,449 tok/s**(@seq4096/MBS3/GBS1008/DP16/FP8TW/CG)；② 确认 p5b_l3 16 shard 为**文档级 token 流**(json 仅 num_documents/num_tokens, 无 seq 打包)⇒ **同一批 shard 供 6 格 = 单变量**(仅 --seq-length 运行时切块不同)；③ 确认 launcher **无 --mamba-ssm-dtype flag**(Mamba2 SSM dtype 由 mamba2_hybrid_2b.recipe 内部管理, 与 606K 基线一致)⇒ 配方与 e18 字节级一致, 仅 seq/MBS/GBS 变；④ 落地 `run/baize_seqlen_grid_test.sh`(6 格串行·OOM检测·每格释放16卡·结果→`/tmp/baize_seqlen_grid/`)；⑤ **已 detached 启动, cfg1 训练中**：.29 GPU 73,459MiB/95%util, .12 NCCL Init COMPLETE, peak~73GB<80GB **无 OOM**。
+> - **6 格**(tok/step 逐项核对=2,097,152[S1]/4,194,304[S2])：cfg1(S1 seq8192 mbs2 gbs256)·cfg2(S2 seq8192 mbs2 gbs512)·cfg3(S1 seq16384 mbs1 gbs128)·cfg4(S2 seq16384 mbs1 gbs256)·cfg5(S1 seq32768 mbs1 gbs64)·cfg6(S2 seq32768 mbs1 gbs128)。每格 80 步, 取 step30-80 median。
+> - **未完成指令：有**(17:5x 网格：cfg1 训练中, cfg2-6 待跑, 报告+生成器+EXPERIMENTS 未交)⇒ **WAITING=0**(loop 60s 再唤醒)。
+> - **下一步**：下唤醒查 `/tmp/baize_seqlen_grid/ALL_RESULTS.txt`：cfg1 完→收结果→起 cfg2；OOM 格→标"配方变更组"待 recompute 重试；全 6 格完→建 `reports/report_pretrain_seqlen_throughput_zh.html` + `run/gen_seqlen_throughput_report.py` + EXPERIMENTS 新节。预计总机时 2-5h。
+> 📦 体积：TASK=31.1 KB / MEMORY≈29.5 KB（均 ≤32KB ✓；本轮零归档，#777 顶块→1行指针）.
+> 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
 
 
 > 🆕 **2026-10-25 16:2x #776：⚪ idle heartbeat · 07:4x 报告令独立复核全部交付物在位且已 commit·无新令·纯验证零 GPU**：
