@@ -20727,3 +20727,76 @@ echo "=== DONE 192 ==="
   尚无 inventory_v2 文件
 === DONE 192 ===
 ```
+
+---
+
+## RUN_ID 193 · 2026-10-25 10:44:08 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 193 | DATA live snapshot | $(date '+%F %T') | host=$(hostname) ==="
+T=/nas_train/app.e0031982/datasets/baize-data/text
+N=/nas_env/app.e0031982/baize-data
+M=/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M
+
+echo "[1] 85M 图文对"
+echo "  parquet=$(find "$M" -name '*.parquet' 2>/dev/null | wc -l)  incomplete=$(find "$M" -name '*.incomplete' 2>/dev/null | wc -l)"
+echo "  size=$(du -sb "$M" 2>/dev/null | awk '{printf "%.2f TB", $1/1e12}')"
+pgrep -af 'hf download|download_85m' | cut -c1-100 | head -2 || echo '  no download proc'
+
+echo "[2] baize-data/text 分词产物（按前缀）"
+for p in env14 code_s l3_s math_s; do
+  n=$(ls "$T"/${p}*.bin 2>/dev/null | wc -l)
+  b=$(ls "$T"/${p}*.bin 2>/dev/null | xargs -r stat -c %s 2>/dev/null | awk '{s+=$1} END{printf "%.2f", s/1e12}')
+  echo "  ${p}: bin=$n  ${b:-0} TB"
+done
+echo "  total: bin=$(ls "$T"/*.bin 2>/dev/null | wc -l)  idx=$(ls "$T"/*.idx 2>/dev/null | wc -l)  du=$(du -sb "$T" 2>/dev/null | awk '{printf "%.2f TB", $1/1e12}')"
+
+echo "[3] /nas_env 5 源"
+for d in "$N"/full_*; do echo "  $(basename "$d"): bin=$(ls "$d"/*.bin 2>/dev/null | wc -l)  $(du -sb "$d" 2>/dev/null | awk '{printf "%.2f TB", $1/1e12}')"; done
+
+echo "[4] 磁盘"
+df -h /nas_train /nas_env | tail -2
+
+echo "[5] 分词进程 / 负载（224 核是否在用）"
+echo "  nproc=$(nproc)  load=$(cut -d' ' -f1-3 /proc/loadavg)"
+echo "  preprocess=$(pgrep -fc preprocess_data 2>/dev/null || echo 0)"
+
+echo "[6] 新令执行痕迹"
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_20261025.txt 2>/dev/null || echo '  no prune list yet'
+ls -lt /tmp/tokenize_untokenized_*.log 2>/dev/null | head -3 || echo '  no new tokenize log'
+echo "  data loop: $(pgrep -af 'baize_data_loop' | cut -c1-80 | head -1 || echo none)"
+echo "=== DONE 193 ==="
+```
+
+**输出**
+```
+=== RUN_ID 193 | DATA live snapshot | 2026-10-25 10:44:08 | host=whag0pgpuap29 ===
+[1] 85M 图文对
+  parquet=9053  incomplete=8
+  size=34.26 TB
+[2] baize-data/text 分词产物（按前缀）
+  env14: bin=110  8.88 TB
+  code_s: bin=30  2.20 TB
+  l3_s: bin=40  2.64 TB
+  math_s: bin=40  1.10 TB
+  total: bin=220  idx=220  du=14.90 TB
+[3] /nas_env 5 源
+  full_ufw_l3: bin=154  1.06 TB
+  full_ultradata_code_l2: bin=141  1.69 TB
+  full_ultradata_code_l3: bin=63  0.52 TB
+  full_ultradata_math_l1: bin=149  0.66 TB
+  full_ultradata_math_l3: bin=67  0.31 TB
+[4] 磁盘
+10.239.23.31:/vol_CTE0_data01  207T  176T   32T  85% /nas_train
+10.239.23.32:/vol_CTE0_data04   10T  4.2T  5.8T  43% /nas_env
+[5] 分词进程 / 负载（224 核是否在用）
+  nproc=224  load=5.14 5.71 6.73
+  preprocess=0
+0
+[6] 新令执行痕迹
+  no prune list yet
+  data loop: 
+=== DONE 193 ===
+```
