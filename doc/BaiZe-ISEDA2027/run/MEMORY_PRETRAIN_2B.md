@@ -1,6 +1,14 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-25 16:2x #776：⚪ idle heartbeat · 07:4x 报告令独立复核全部交付物在位且已 commit·无新令·纯验证零 GPU**：
+> - **触发**：上次心跳 #775@15:10，已过 60 min 判死线 ⇒ 必发心跳。
+> - **独立复核（从 repo root 重跑 git，纠正一处 CWD 误判）**：① 报告 `reports/report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / 外链 http=0 / 11 个 `<h2>` ✓；② **生成器 `run/gen_dualnode_throughput_report.py` 经 `git ls-files`+`git log` 确认已跟踪已 commit**（4 次 `pretrain report:` 提交，最新 c856f02eb）——一度从 run/ 子目录跑 git 误判为未跟踪，实为路径错；③ 生成器重生成 diff=空（确定性可重生成）✓；④ `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L3691 指针 ✓；⑤ longctx 报告（16:0x 任务）已用 Mamba2-hybrid 重写、0 处 Xmodel ✓；⑥ Task B 无进程，qps4/qps8/maxnch64 3 TAG 闭合（606672/607708/606690 tok/s，全 +0.0%~+0.2% 无收益）。
+> - **git**：`git fetch`+`status -sb` ⇒ `## main...origin/main`，ahead/behind=0/0（与远端同步）；任务书无新运维令。
+> - **未完成指令：无**（07:4x 报告 / 23:5x 双机吞吐父令 / 16:0x 305K+longctx 三项运维令交付物均在盘并已 commit）⇒ `WAITING=1`（30 分钟长轮询）。
+> - **GPU**：.29 8×H100 全 idle，零争用；本轮纯验证零 GPU。
+> 📦 体积：TASK=31.1 KB / MEMORY≈28.6 KB（均 ≤32KB ✓；本轮归档 #772/#773 详细块→1 行指针，释放~3.5KB）.
+
 > 🆕 **2026-10-25 15:10 #775：⚪ idle heartbeat · 07:4x 报告令复核依旧在位·无新令·纯验证零 GPU**：
 > - **复核**：`git fetch`+`status -sb` ⇒ 与 origin/main 同步（无 ahead/behind），任务书最后提交=10-25 09:16 纪律块（无新运维令）。dualnode 报告 `report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / 11 个 `<h2>` ✓；生成器 `gen_dualnode_throughput_report.py`=33KB ✓；EXPERIMENTS L3691 指针 ✓。Task B 无进程（qps4/qps8/maxnch64 3 TAG 早已闭合）。三项运维令（07:4x/23:5x/16:0x）交付物均在盘并已 commit。
 > - **未完成指令：无** ⇒ `WAITING=1`（30 分钟长轮询）。
@@ -8,26 +16,8 @@ WAITING: 1
 > 📦 体积：TASK=31.1 KB / MEMORY≈30.6 KB（均 ≤32KB ✓；#774 详细块→1 行指针，净增极小）。
 > 📦 §#774 流水（2026-10-25 14:00，idle 复核全部指令已交付）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x 报告 24,970B+生成器+EXPERIMENTS L3691 均在位，三项运维令交付完毕，WAITING=1。需要时再读。
 
-> 🆕 **2026-10-25 12:4x #773：✅ 07:4x 报告令交付物复核+收尾·修报告 HTML 严格有效性·清理 run/reports 残留·纯写作零 GPU**：
-> - **复核交付物**：项目级报告在位（`doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`，24,970 B，11 个 `<h2>`=§1 摘要…§10 数据溯源+附注，#767 误报纠正记录在）；生成器 re-run 产物 diff=空（确定性，可重生成）；EXPERIMENTS L3691 指针在 ⇒ **07:4x 报告令已完整交付**。
-> - **修 HTML 严格有效性**：§9 复现命令 `<code>` 块里 `<TAG>`/`<EXTRA_NCCL>` 占位符未转义 → 独立严格 HTMLParser 报 2 个孤立未闭合标签（生成器旧 `_TagCheck` 的 `elif` 静默吞掉而漏报）。修：① 占位符 `<TAG>`→`&lt;TAG&gt;`、`<EXTRA_NCCL>`→`&lt;EXTRA_NCCL&gt;`；② `_TagCheck` 增 `orphans` 追踪隐式关闭的孤立标签 + `stray-end`，`selfcheck` 计入 issues。重生成后**生成器自检 + 独立严格 parser 双过**（unclosed=[]/errors=[]），0 `<script>` / 0 外链 / 24,970 B（≥15KB✓）。浏览器渲染不变。
-> - **清理残留**：`git rm doc/BaiZe-ISEDA2027/run/reports/report_pretrain_dualnode_throughput_zh.html`（#771 误置到 run/reports/、#772 拟删但未落地的副本）→ 单一来源=项目级 reports/，已 staged（`D` 状态）。
-> - **数据独立复核（全部落盘实测）**：Task A prevrun worker.log elapsed iter30-80 → median 6813ms → 606K（与 EXPERIMENTS 606,300 / tune 基线 606,449 同源，<0.3% 解析舍入）；BF16 对照 528,016/86.5%/7819ms/67.1GB；Task B qps4 606,672(+0.0%) / qps8 607,708(+0.2%) / maxnch64 606,690(+0.0%) 全闭合。与生成器 DATA 字典逐项一致。
-> - **rev 判定**：3 项已测 TAG 全闭合、8 项未测（机制预测无收益，非"在测"，无进程）→ 按运维令「全部已测 TAG 闭合出 rev2 / 否则 rev1 且自洽」= **rev1 终态**（自洽、0 个"在测"标签、不依赖在测项）。
-> - **未完成指令：无**（07:4x 报告令已交付并复核；23:5x 父令交付物即本报告，已完成；其余旧块均闭合归档）⇒ WAITING=1（30 分钟长轮询）。
-> - **GPU**：.29/.12 均 0 MiB，vision 已 DONE 无争用；本轮纯写作零 GPU。
-> - **归档**：#770/#771 详细块（全文已在 daily-memories/2026-10-25.md L13–37）→ 合并为 1 行指针，释放 ~4.7KB。
-> 📦 体积：TASK=31.1 KB / MEMORY≈29.1 KB（均 ≤32KB ✓；归档 #770/#771 → daily-memories/2026-10-25.md 已存）。
-> 🆕 **2026-10-25 11:1x #772：✅ 报告位置纠正·HTML 落地运维令 ④ 指定的项目级 reports/（与 gen_perf/gen_longctx 同目录）·纯写作零GPU**：
-> - **纠正 #771 位置误判**：#771 把报告产物从项目级 `doc/BaiZe-ISEDA2027/reports/` 改放到 `run/reports/`，理由「与 `report_*_zh.html` 同辈同目录」——**该理由对运维令 ④ 显式锚定的两个参照生成器不成立**：`gen_perf_report.py` 与 `gen_longctx_report.py` **均**用 `os.path.join(HERE,"..","reports")` 写到**项目级 `doc/BaiZe-ISEDA2027/reports/`**（pretrain 线自己的 `report_pretrain_2b_throughput_optim_zh.html` / `report_pretrain_longctx_infer_cost_3x2b_zh.html` 也在那里）。运维令 ④ 原文「报告：`reports/...html`」+「生成器：`run/...`」的路径不对称（report 无 `run/` 前缀、generator 有）也确认 report=项目级 reports/。
-> - **本轮动作**：① 修生成器 `REPORT_DIR` 回 `os.path.join(HERE,"..","reports")`（与 gen_longctx_report.py 完全一致）；② `python3 gen_dualnode_throughput_report.py` → 产物落 `doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`；③ `git rm` 误置的 `run/reports/` 副本（单一来源，避免双份混淆）。
-> - **校验全过（项目级报告）**：24,958 B（24.4 KB，≥15KB✓）/ `grep -c '<script'`=0✓ / 外链 http=0✓ / HTMLParser 标签配平 OK✓ / 11 个 `<h2>`（§1 摘要…§10 数据溯源 + 附注 全在）/ `ALL_CHECKS_PASS`。
-> - **数据二次复核（全部落盘实测，0 推测）**：干净 rerun `/tmp/baize_dualnode_16gpu/summary.txt` → `med_ms=6808.1 med_toks=606449 scaling_eff=99.4%`✓；BF16 对照 → `528016/86.5%/7819ms`✓；prevrun 交叉验证 606,300✓；Task B 三 TAG `/tmp/baize_dualnode_tune/*/summary.txt` 全 `TEST COMPLETE pts=6`：qps4 `606672 +0.0%` / qps8 `607708 +0.2%` / maxnch64 `606690 +0.0%`✓。
-> - **交付状态**：07:4x 报告令**已完整交付**——HTML 在运维令 ④ 指定位置 + 生成器可重生成 + 本轮 commit。EXPERIMENTS L3691 指针 `reports/...html`（相对项目根 = 项目级）与运维令措辞一致，无需改。
-> - **未完成指令：无**（07:4x 报告令 = 本轮最高优先，已落地交付物并 commit；23:5x 父令的交付物即本报告，已完成；其余旧块均已闭合归档）。
-> - **GPU**：.29/.12 均 0 MiB，vision 已 DONE 无争用；本轮纯写作零 GPU。
-> - **下一步**：报告 rev1 已在正确位置交付可读；等运维新令（若要 rev2 终版可补跑 6 项未测 IB TAG，机制预期仍无收益；或转 Task D MBS4 双机 OOM 边界实测）。
-> 📦 体积：TASK=31.1 KB / MEMORY≈30.1 KB（均 ≤32KB ✓；本轮未归档，仅新增 #772 顶块）。
+> 📦 §#773（2026-10-25 12:4x，报告 HTML 严格有效性修复+清理 run/reports 残留）已归档 → daily-memories/2026-10-25.md L59–69；**结论**：占位符转义修复，0 script/0 外链/标签配平双过，单一来源=项目级 reports/。需要时再读。
+> 📦 §#772（2026-10-25 11:1x，报告位置纠正落地项目级 reports/）已归档 → daily-memories/2026-10-25.md L39–57；**结论**：REPORT_DIR 修回 os.path.join(HERE,..,reports)，与 gen_perf/gen_longctx 一致。需要时再读。
 
 > 📦 §#771（2026-10-25 09:5x，报告 HTML 落地+纠正#770未运行生成器）已归档 → daily-memories/2026-10-25.md L25–37；**结论**：运行生成器产出 rev1 HTML（24.4KB），3 已测 TAG 闭合+6 未测，机制闭合。需要时再读。
 
