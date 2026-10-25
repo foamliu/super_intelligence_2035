@@ -1,14 +1,13 @@
 # BAIZE_DATA_TASK.md
 
-> 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
-> 用户原话：「agent 看到任务书 >32k 后要滚动归档，但是它们**在滚动归档时不要碰没有完成的运维指令**，而且在**归档后立即执行运维指令**，而不是立刻睡去等下次唤醒。」
-> 1. **未完成的运维指令一律不许归档**：判断标准 = 该块任务是否**已产出交付物并 commit** 或运维已标「已闭合」。**没有 `✅ 已完成/已交付` 标记的一律视为未完成**，不许搬进 ARCHIVE。
-> 2. **归档完必须原地继续执行**：归档只是「清理」，**不是本轮交付物**。归档完立即回到运维指令区，从最上面那条**未完成**指令开始做。
-> 3. **禁止**「只归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡 30 分钟」。**只要有未完成指令，`WAITING` 必须置 0**（loop 60 秒后再唤醒），直到交付。
-> 4. 心跳里必须写这一句：`未完成指令：<有/无>`；有 ⇒ `WAITING: 0` 且本轮内完成。
+> 🧷 **行动优先纪律（2026-10-25 13:4x 用户令 · 覆盖一切归档/收尾/铁律类条文）**
+> 用户原话：「放开这些什么禁制、铁律什么的。」
+> 1. **先把活干出来，再谈记录**：本轮有未完成指令时，**先交付**（文件落盘/进程起来），心跳、日报、归档都排在交付之后。
+> 2. **未完成指令不许归档**；归档是清理，不是交付物。有未完成指令 ⇒ `WAITING: 0`（loop 60s 后再唤醒），不许睡 30 分钟。
+> 3. **体积不作挡箭牌**：任务书 ≤40KB 即可干活；>40KB 才需归档已闭合块。**不许因为体积/归档/心跳而推迟交付。**
+> 4. 心跳必须写 `未完成指令：<有/无>`。
 
-
-> ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_DATA.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
+> ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 > 📦 §运维令·2026-10-24 18:1x（85M 降优先级 → 迁移提速）**已闭合**（迁移 5/5 源全 DONE，`migrate_to_nas_env_fast.sh` 已跑完）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：`--bwlimit` 50000→300000 KiB/s、新脚本带 `--partial`+`flock` 单实例锁、不得就地编辑在跑的脚本、不得起第二实例；85M 不再是任何前置条件。需要时再读。
 
 > 📦 §运维指令·2026-10-24 16:1x（写"正在做的迁移"报告）**已闭合**（`reports/report_data_migration_nas_env_zh.html` 已交付，唤醒 637@17:39）→ 原文已归档 → `run/ARCHIVE_OPERATOR_DATA.md`。需要时再读。
@@ -30,7 +29,9 @@
 | 新增分词落哪 | 11:0x「落 `baize-data/text/`」 | **一律落 `baize-data/tokenized/<镜像下载路径>/`**；`text/` 不再新增任何文件 |
 | 前缀命名 | 11:0x `ufw_en_*` / `ultrax_*` | 12:5x 表为准：`ufw_en_s*` / `ufw_l1hq_s*` / `ufw_zh_s*` / `ultrax_aicc_s*` |
 | 并发 | 2026-10-18「32 或 64 核」 | 12:5x 为准：**96/144/192/224 四档各 60s 标定**，取拐点，`workers=min(拐点,200)`，`nice -n 5` |
-| 提交方式 | 收尾铁律「🚫 不用 `git add -A`」 | 仍禁 `-A`；但**白名单已含** `reports/report_data_tokenized_inventory_zh.html` 与 `run/data/`（13:2x 令） |
+| 提交方式 | 收尾铁律「🚫 不用 `git add -A`」 | **已放开**：白名单 = `run/**` + `reports/**`；必要时允许 `-A`（仅本线路径） |
+| 收尾铁律/体积 | 旧：≤32KB 必归档、`git add` 只许 8 个路径 | **已放开**：≤40KB 直接干活；体积**永不**优先于交付；归档只在 >40KB 时做 |
+| 下载白名单 | 旧表：只许下 2 个源 | 只约束**新增下载**；**不约束**本轮分词与目录整理 |
 
 ### 🔥🔥 最高优先 · 2026-10-25 13:2x · 运维直令 · **停止一切报告工作，现在只做两件事**
 
@@ -156,28 +157,27 @@
 
 每轮唤醒（一次 cline 会话）结束前，按顺序做完这 5 件事，再置 `WAITING` / 去睡：
 
-0. 体积自检（先跑，数字要抄进下一步的心跳）：
+0. 体积自检（**不阻塞交付**）：
    ```bash
    cd /nas_train/app.e0031982/code/super_intelligence_2035
-   for f in doc/BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md; do
-     printf '%-46s %7s B\n' "$f" "$(wc -c < "$f")"; done
+   wc -c doc/BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
    ```
-   判据：两者都应 ≤ 32KB；任一 > 32KB ⇒ 本轮收尾前【你自己】滚动归档（见本文件「📉 体积维护规程」：只把已闭合内容原文移入 `run/ARCHIVE_OPERATOR_DATA.md`、留 1 行指针），直到两者都 ≤ 32KB；> 40KB（红线）⇒ 必须先归档再提交（不许只上报等运维）。
-   收尾把两文件体积 + 本轮归档量抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB → ARCHIVE_OPERATOR_DATA.md）`。去向/指针格式见本文件「📉 体积维护规程」。
+   **≤40KB 一律不用管**（直接继续干活/收尾）；>40KB 才把已闭合块搬进 `run/ARCHIVE_OPERATOR_DATA.md`（留 1 行指针）。
+   🚫 不许用「先归档/先写心跳」当理由推迟分词或布局。
 
 1. 写心跳：更新 `run/MEMORY_DATA.md` 顶部进度快照（`PHASE` / `已完成` / `当前动作` / `下一步` / `阻塞`），并追加 1 行「本唤醒流水」：`[HH:MM] 干了什么 + 关键原始输出 1–2 行`。
 2. 写日报：`run/daily-memories-data/<YYYY-MM-DD>.md` 追加本轮记录（当天文件必须建，不许攒着最后补）。
-3. 自己提交 + 推送（不许等 loop 兜底）：
+3. 自己提交 + 推送（**不许等 loop 兜底**；提交范围已放开）：
    ```bash
    cd /nas_train/app.e0031982/code/super_intelligence_2035
-   git add -- doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md doc/BaiZe-ISEDA2027/run/DATA_LEDGER.md \
-              doc/BaiZe-ISEDA2027/run/CONTAMINATION_CHECK.md doc/BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md \
-              doc/BaiZe-ISEDA2027/run/DATA_MIX_RECIPE.md doc/BaiZe-ISEDA2027/run/DISK_CLEANUP_INVENTORY.md \
-              doc/BaiZe-ISEDA2027/run/daily-memories-data doc/BaiZe-ISEDA2027/run/data_pipeline
-   git commit -m "data <轮次>: <一句话>"      # 🚫 提交信息必须带线名前缀，否则运维无法溯源
-   git push origin main
+   git add -- doc/BaiZe-ISEDA2027/run doc/BaiZe-ISEDA2027/reports
+   # 若上面不够（例如脚本也被你改了）：git add -A   ← 允许，但提交信息必须带 data: 前缀便于溯源
+   git commit -m "data <轮次>: <一句话>"
+   git push origin main        # 失败时显式带代理：https_proxy=$P http_proxy=$P git push origin main
    ```
-   🚫 绝不用 `git add -A` —— 这是共享工作副本，`-A` 会把别线尚未完成的在途文件一并卷进你的提交（10-05 已因此出过事故：`restore other agents files from dropped auto-commit`），后果是提交归属不可溯（运维查不出谁在干活）。
+   ✅ `doc/BaiZe-ISEDA2027/run/**`（含 `run/data/`、`run/data_pipeline/`、MEMORY/日报）与 `doc/BaiZe-ISEDA2027/reports/**` **都在白名单内**。
+   🚫 只此一条仍保留：**不要把别的线（pretrain/vision/harness）正在改的文件卷进你的提交** —— 用 `git status` 看一眼，只提交本线路径即可。
+
 4. 闭环自检：`git status -sb` ⇒ 无 ahead / 无 behind；`git log -1 --format='%h %ad %s' --date=format:'%H:%M'` 的时间戳 = 本轮。
    push 失败（`error: Forbidden` / 网络）：重试 1 次；仍失败 ⇒ 把报错原文写进心跳，下一轮唤醒第一件事就是补推。
 
@@ -213,8 +213,8 @@
 ### 📉 体积维护规程（2026-10-03 立 → 2026-10-06 升级为「记忆 + 任务书」双约束，硬性）
 
 > 📦 §体积维护规程·理由段（2026-10-03~06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；结论：TASK/MEMORY每次唤醒全文读入→越大约烧token→≤32KB硬约束。需要时再读。
-- 上限（两者相同）：≤ 32KB；红线 40KB ⇒ 超红线当轮必须先归档才能收尾。
-- 自检：见「收尾铁律」第 0 条（`wc -c` 两文件，数字抄进心跳）。
+- 上限：**≤40KB 可正常干活**（>40KB 才当轮归档；不再要求 ≤32KB）。
+- 自检：见「收尾铁律」第 0 条；**体积永远不优先于交付**。
 - 归档去向（只归档「历史」，🚫 不许归档「活口径」）：
   ① 已执行完/已作废的运维指令块 → `run/ARCHIVE_OPERATOR_DATA.md`（留下 1 行指针）；
   ② 被取代的候选表/推导过程（保留现行档 + 实测结果） → `run/ARCHIVE_DATA_SPEC_HISTORY.md`（无则新建）；
