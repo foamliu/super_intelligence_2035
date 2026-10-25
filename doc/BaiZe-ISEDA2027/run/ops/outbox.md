@@ -20203,3 +20203,125 @@ regex-chess__wpfrfxf__env-main-1
 query-optimize__wgxxlzp__env-main-1
 === DONE 187 ===
 ```
+
+---
+
+## RUN_ID 188 · 2026-10-25 08:52:40 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 188 | locate real paths | $(date '+%F %T') | host=$(hostname) ==="
+echo "[0] git 仓库根 + 分支 + HEAD"
+GR=$(git -C /nas_train/app.e0031982/code/super_intelligence_2035 rev-parse --show-toplevel 2>/dev/null || echo NONE)
+echo "  GIT_ROOT=$GR"
+echo "  HEAD=$(git -C \"$GR\" rev-parse --short HEAD 2>/dev/null)  branch=$(git -C \"$GR\" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+echo "  remote=$(git -C \"$GR\" config --get remote.origin.url 2>/dev/null)"
+
+echo "[1] 全盘定位 BAIZE_HARNESS_TASK.md / MEMORY_DATA.md"
+find /nas_train/app.e0031982/code /nasdata/app.e0031982/code 2>/dev/null -maxdepth 8 -name 'BAIZE_HARNESS_TASK.md' | head -5
+find /nas_train/app.e0031982/code /nasdata/app.e0031982/code 2>/dev/null -maxdepth 8 -name 'MEMORY_DATA.md' | head -5
+
+echo "[2] 仓库根下的目录结构（确认 doc/ 是否存在）"
+ls -1 "$GR" 2>/dev/null | head -15
+echo "  --- $GR/doc ---"
+ls -1 "$GR/doc" 2>/dev/null | head -10 || echo '    NO doc/'
+
+echo "[3] 找到的 TASK 里是否含新令（用 -a 强制文本，避免 binary 判定）"
+for f in $(find /nas_train/app.e0031982/code /nasdata/app.e0031982/code 2>/dev/null -maxdepth 8 -name 'BAIZE_HARNESS_TASK.md' | head -2); do
+  echo "  FILE=$f  size=$(stat -c %s "$f")"
+  echo "    08:2x count=$(grep -ac '2026-10-25 08:2x' "$f" 2>/dev/null || echo 0)"
+  echo "    重新盘点 count=$(grep -ac 'MiniCPM5 数据' "$f" 2>/dev/null || echo 0)"
+done
+
+echo "[4] data loop 的 cwd 与它读的任务书（PID 1827417 的 /proc）"
+DP=1827417
+if [ -d /proc/$DP ]; then
+  echo "  cwd=$(readlink /proc/$DP/cwd 2>/dev/null)"
+  echo "  exe=$(readlink /proc/$DP/exe 2>/dev/null)"
+  tr '\0' '\n' < /proc/$DP/cmdline 2>/dev/null | head -5
+  echo "  --- data loop 日志最后 8 行 ---"
+  tail -8 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-170
+else
+  echo "  PID $DP 已退出"
+fi
+
+echo "[5] harness loop 的 cwd（PID 2585867）"
+HP=2585867
+if [ -d /proc/$HP ]; then
+  echo "  cwd=$(readlink /proc/$HP/cwd 2>/dev/null)"
+  echo "  --- harness loop 日志最后 10 行 ---"
+  tail -10 /tmp/baize_harness_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-170
+else
+  echo "  PID $HP 已退出"
+fi
+
+echo "[6] 两机 tmp 里的 TASK 副本（agent 可能从别处读）"
+ls -l --time-style=+%F_%T /tmp/BAIZE_*TASK*.md 2>/dev/null | head -5 || echo '  .29 /tmp 无'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls -l --time-style=+%F_%T /tmp/BAIZE_*TASK*.md 2>/dev/null | head -5; echo "--- .12 git ---"; cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && git rev-parse --short HEAD 2>/dev/null' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "=== DONE 188 ==="
+```
+
+**输出**
+```
+=== RUN_ID 188 | locate real paths | 2026-10-25 08:52:40 | host=whag0pgpuap29 ===
+[0] git 仓库根 + 分支 + HEAD
+  GIT_ROOT=/nas_train/app.e0031982/code/super_intelligence_2035
+  HEAD=  branch=
+  remote=
+[1] 全盘定位 BAIZE_HARNESS_TASK.md / MEMORY_DATA.md
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+[2] 仓库根下的目录结构（确认 doc/ 是否存在）
+chapters_v0_1
+chapters_v0_2
+chapters_v0_3
+chapters_v0_4
+chapters_v0_5
+chapters_v0_6
+chapters_v0_7
+chapters_v0_8
+chapters_v0_9
+chapters_v1_0
+chapters_v1_1
+CHARACTERS.md
+cline_mcp_config.json
+doc
+final_cleanup_report.md
+  --- /nas_train/app.e0031982/code/super_intelligence_2035/doc ---
+AI Sharing - QRA全员.docx
+AI创新大赛专家组启动会.pdf
+BaiZe-ISEDA2027
+CIT 组织分享.docx
+DeepResearch 项目 · 智谱合作需求.md
+keys.txt
+optimize_multimodal_training_pipeline.md
+out.txt
+personal-watch
+sft_data_preprocessing.md
+[3] 找到的 TASK 里是否含新令（用 -a 强制文本，避免 binary 判定）
+  FILE=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md  size=33566
+    08:2x count=1
+    重新盘点 count=0
+0
+[4] data loop 的 cwd 与它读的任务书（PID 1827417 的 /proc）
+  PID 1827417 已退出
+[5] harness loop 的 cwd（PID 2585867）
+  cwd=/nas_train/app.e0031982/code/super_intelligence_2035
+  --- harness loop 日志最后 10 行 ---
+
+Everything is done. Let me do a final verification of the commit and then summarize.
+
+Actually the commit hash changed due to rebase. Let me confirm the log shows the harness commit on top.
+Push succeeded — `d02c84fe7..8e43a17b7 main -> main`, and post-status shows `## main...origin/main` with no ahead/behind. The rebase replayed my R491 commit on top of t
+[run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && echo '=== FINAL SELF-CHECK ===' && git status -sb | head -...
+   ⎿ === FINAL SELF-CHECK === ## main...origin/main [ahead 1] ?? doc/BaiZe-ISEDA20...
+[thinking] Hmm, now status shows `## main...origin/main [ahead 1]` again — the relay pushed ANOTHER auto-commit (likely the result of my own push triggering a relay res
+
+Wait, but the post-push status showed `## main...origin/main` (synced). Now it shows ahead 1 again. So the relay pushed a new commit right after. This is the ops-relay au
+[6] 两机 tmp 里的 TASK 副本（agent 可能从别处读）
+--- .12 git ---
+8e43a17b7
+=== DONE 188 ===
+```
