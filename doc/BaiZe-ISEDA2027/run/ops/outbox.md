@@ -21780,3 +21780,54 @@ echo "=== DONE 207 ==="
   仍无 tokenized/（①未做）
 === DONE 207 ===
 ```
+
+---
+
+## RUN_ID 208 · 2026-10-25 14:07:47 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 208 | rate sample | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/datasets/baize-data
+
+snap() {
+  echo "  t=$(date +%H:%M:%S) bin=$(ls $B/text/*.bin 2>/dev/null | wc -l) idx=$(ls $B/text/*.idx 2>/dev/null | wc -l) json=$(ls $B/text/*.json 2>/dev/null | wc -l)"
+  echo "    bytes=$(du -sb $B/text 2>/dev/null | cut -f1)"
+  echo "    newest=$(ls -t $B/text/*.bin 2>/dev/null | head -1 | xargs -r stat -c '%y' | cut -c1-19)"
+  echo "    running=$(ps -eo args= | grep -c '[p]reprocess_data' || true) load=$(cut -d' ' -f1 /proc/loadavg)"
+}
+echo "[T0]"; snap
+sleep 90
+echo "[T1 +90s]"; snap
+sleep 90
+echo "[T2 +180s]"; snap
+echo "[日志尾]"; tail -4 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-130
+echo "=== DONE 208 ==="
+```
+
+**输出**
+```
+=== RUN_ID 208 | rate sample | 2026-10-25 14:07:47 | host=whag0pgpuap29 ===
+[T0]
+  t=14:07:47 bin=174 idx=110 json=111
+    bytes=9145598074334
+    newest=2026-10-25 14:07:50
+    running=65 load=73.63
+[T1 +90s]
+  t=14:09:20 bin=174 idx=110 json=111
+    bytes=9154605482790
+    newest=2026-10-25 14:09:22
+    running=64 load=70.67
+[T2 +180s]
+  t=14:10:53 bin=174 idx=110 json=111
+    bytes=9163564534702
+    newest=2026-10-25 14:10:55
+    running=65 load=72.38
+[日志尾]
+[2026-10-25 14:01:23] LAUNCH ufw_l1_en_hq s31 (64 parquet col=content att=2) -> ufw_l1_en_hq_train_s31 (running=63)
+[2026-10-25 14:04:17] done=0/131 running=64 pending=67 giveup=0 tokens=0 bin_bytes=0 | tokens/s=0 cpu=6751% ETA=0s
+[2026-10-25 14:07:22] done=0/131 running=64 pending=67 giveup=0 tokens=0 bin_bytes=0 | tokens/s=0 cpu=6590% ETA=0s
+[2026-10-25 14:10:29] done=0/131 running=64 pending=67 giveup=0 tokens=0 bin_bytes=0 | tokens/s=0 cpu=6528% ETA=0s
+=== DONE 208 ===
+```
