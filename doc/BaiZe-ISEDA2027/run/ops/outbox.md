@@ -20962,3 +20962,68 @@ echo "=== DONE 196 ==="
 61:### 🗑 运维令 · 2026-10-25 10:3x（**删除「无法对应下载目录�
 === DONE 196 ===
 ```
+
+---
+
+## RUN_ID 197 · 2026-10-25 11:29:30 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 197 | what is data agent doing | $(date '+%F %T') | host=$(hostname) ==="
+timeout 60 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -s <<'EOS'
+set -u
+LP=$(ps -eo pid=,comm=,args= | awk '$2=="bash" && /baize_data_loop\.sh/ {print $1}' | head -1)
+echo "[1] loop=$LP 的子进程:"
+[ -n "${LP:-}" ] && ps -o pid=,ppid=,etimes=,stat=,args= --ppid "$LP" | cut -c1-130
+
+echo "[2] 所有 cline 进程（含 data-dir）:"
+ps -eo pid=,etimes=,args= | grep -E 'cline' | grep -v grep | cut -c1-120 | head -4
+
+echo "[3] loop 日志尾部 20 行（看它正在跑什么命令）:"
+tail -c 3000 /tmp/baize_data_loop.log 2>/dev/null | tr -d '\033' | tail -20 | cut -c1-150
+
+echo "[4] 当前是否有重 IO 扫描在跑（find/du）:"
+ps -eo pid=,etimes=,args= | grep -E 'find /nas|du -s' | grep -v grep | cut -c1-120 | head -4 || echo '  none'
+
+echo "[5] 新产物是否已出现:"
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_20261025.txt 2>/dev/null || echo '  no prune list'
+ls -lt /tmp/tokenize_untokenized_*.log 2>/dev/null | head -2 || echo '  no tokenize log'
+EOS
+echo "=== DONE 197 ==="
+```
+
+**输出**
+```
+=== RUN_ID 197 | what is data agent doing | 2026-10-25 11:29:30 | host=whag0pgpuap29 ===
+[1] loop=1827417 的子进程:
+3642802 1827417     260 S    sleep 1800
+[2] 所有 cline 进程（含 data-dir）:
+3041408 4385465 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app
+3869306      71 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run -c core.ignorestat=f
+[3] loop 日志尾部 20 行（看它正在跑什么命令）:
+- **Artifacts**: `prune_unmapped_judgment_20261025.tsv`, `prune_unmapped_20261025.txt`, `prune_unmapped_summary_20261025.json`.
+
+### 2. Inventory report v3
+- Created `inventory_v3_20261025.tsv` (post-prune Section B) + `measure_postprune_v3.py` (post-prune measurement).
+- Updated `gen_tokenized_inventory_report.py` → **v3**: added prominent **「去重后已分词总量（训练可用）= 3294.50 B」** callout (= e
+- Generated `reports/report_data_tokenized_inventory_zh.html` v3 (25.1 KB, 716 bin, 3767.35B file-list total). Verified all key v3 strings present.
+
+### 3. Docs updated
+- **DATA_LEDGER.md**: appended §7 prune record (judgment table, released space, dedup training-available breakdown).
+- **MEMORY_DATA.md**: updated progress snapshot + added 唤醒651 flow; archived 唤醒649 → `daily-memories-data/2026-10-25.md`. Size 31.2 KB (≤3
+
+### 4. Git
+- Commit `89a9c980b` — 11 files (6 new, 5 modified), pushed to `origin/main` (fully synced).
+
+### Key rigor findings (for operator review)
+- **32 uncovered shards retained** (l3_s0–12 + l3_s25–39 = en_l3/multi_style + zh_l3; math_s32–35 = Math-L2-preview), totaling 472.85 B — flag
+- `full_ufw_l3` only tokenized `ultrafineweb_en_l3/qa` — the `l3_s*` shards from `en_l3/multi_style` and `zh_l3/*` are genuinely uncovered, correctl
+- env14 (110 shards, 2238.14 B, 8.93 TB) and `/nas_env/full_*` (5 sources, 1056.36 B, 4.24 TB) were **untouched** throughout.
+[loop] 2026-10-25 11:25:11 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-25 11:25:11 WAITING=1 (async task running) → sleep 1800s
+[4] 当前是否有重 IO 扫描在跑（find/du）:
+[5] 新产物是否已出现:
+-rw-r--r-- 1 app.e0031982 app.adm 16688 2026-10-25_11:12:51 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_20261025.txt
+=== DONE 197 ===
+```
