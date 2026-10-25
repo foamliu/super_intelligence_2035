@@ -1,7 +1,69 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 187 | TARGET: 29 -->
-## RUN_ID 187 — 🔎 只读：补探（data loop 在哪台机 / harness 当前读到哪条令 / 7 路 TB 明细）
+<!-- RUN_ID: 188 | TARGET: 29 -->
+## RUN_ID 188 — 🔧 只读修正：定位 TASK/MEMORY 真实路径（上轮 $R 路径猜错，全部 NOT_FOUND）
+
+```bash
+set -u
+echo "=== RUN_ID 188 | locate real paths | $(date '+%F %T') | host=$(hostname) ==="
+echo "[0] git 仓库根 + 分支 + HEAD"
+GR=$(git -C /nas_train/app.e0031982/code/super_intelligence_2035 rev-parse --show-toplevel 2>/dev/null || echo NONE)
+echo "  GIT_ROOT=$GR"
+echo "  HEAD=$(git -C \"$GR\" rev-parse --short HEAD 2>/dev/null)  branch=$(git -C \"$GR\" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+echo "  remote=$(git -C \"$GR\" config --get remote.origin.url 2>/dev/null)"
+
+echo "[1] 全盘定位 BAIZE_HARNESS_TASK.md / MEMORY_DATA.md"
+find /nas_train/app.e0031982/code /nasdata/app.e0031982/code 2>/dev/null -maxdepth 8 -name 'BAIZE_HARNESS_TASK.md' | head -5
+find /nas_train/app.e0031982/code /nasdata/app.e0031982/code 2>/dev/null -maxdepth 8 -name 'MEMORY_DATA.md' | head -5
+
+echo "[2] 仓库根下的目录结构（确认 doc/ 是否存在）"
+ls -1 "$GR" 2>/dev/null | head -15
+echo "  --- $GR/doc ---"
+ls -1 "$GR/doc" 2>/dev/null | head -10 || echo '    NO doc/'
+
+echo "[3] 找到的 TASK 里是否含新令（用 -a 强制文本，避免 binary 判定）"
+for f in $(find /nas_train/app.e0031982/code /nasdata/app.e0031982/code 2>/dev/null -maxdepth 8 -name 'BAIZE_HARNESS_TASK.md' | head -2); do
+  echo "  FILE=$f  size=$(stat -c %s "$f")"
+  echo "    08:2x count=$(grep -ac '2026-10-25 08:2x' "$f" 2>/dev/null || echo 0)"
+  echo "    重新盘点 count=$(grep -ac 'MiniCPM5 数据' "$f" 2>/dev/null || echo 0)"
+done
+
+echo "[4] data loop 的 cwd 与它读的任务书（PID 1827417 的 /proc）"
+DP=1827417
+if [ -d /proc/$DP ]; then
+  echo "  cwd=$(readlink /proc/$DP/cwd 2>/dev/null)"
+  echo "  exe=$(readlink /proc/$DP/exe 2>/dev/null)"
+  tr '\0' '\n' < /proc/$DP/cmdline 2>/dev/null | head -5
+  echo "  --- data loop 日志最后 8 行 ---"
+  tail -8 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-170
+else
+  echo "  PID $DP 已退出"
+fi
+
+echo "[5] harness loop 的 cwd（PID 2585867）"
+HP=2585867
+if [ -d /proc/$HP ]; then
+  echo "  cwd=$(readlink /proc/$HP/cwd 2>/dev/null)"
+  echo "  --- harness loop 日志最后 10 行 ---"
+  tail -10 /tmp/baize_harness_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-170
+else
+  echo "  PID $HP 已退出"
+fi
+
+echo "[6] 两机 tmp 里的 TASK 副本（agent 可能从别处读）"
+ls -l --time-style=+%F_%T /tmp/BAIZE_*TASK*.md 2>/dev/null | head -5 || echo '  .29 /tmp 无'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ls -l --time-style=+%F_%T /tmp/BAIZE_*TASK*.md 2>/dev/null | head -5; echo "--- .12 git ---"; cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && git rev-parse --short HEAD 2>/dev/null' 2>/dev/null || echo '  ssh .12 FAILED'
+
+echo "=== DONE 188 ==="
+```
+
+## RUN_ID 187 — 🔎 补探（已执行 exit=0；§[2] 因 $R 路径猜错全为 0，作废）
+
+```text
+原文见 outbox.md RUN_ID 187。有效结论：data loop PID=1827417 存活、7路TB 4个harbor存活、
+reward 口径 jobs_claude-code done=31 pass=0 / cline 65/36 / codex 41/20 / deepseek 50/0 / hermes 50/0 /
+opencode 60/33 / pi 71/30；三路 0% 已无容器。
+```
 
 ```bash
 set -u
