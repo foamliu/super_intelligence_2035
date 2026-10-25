@@ -21831,3 +21831,97 @@ echo "=== DONE 208 ==="
 [2026-10-25 14:10:29] done=0/131 running=64 pending=67 giveup=0 tokens=0 bin_bytes=0 | tokens/s=0 cpu=6528% ETA=0s
 === DONE 208 ===
 ```
+
+---
+
+## RUN_ID 209 · 2026-10-25 19:24:39 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+echo "=== RUN_ID 209 | probe | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] loops"
+pgrep -af 'baize_.*_loop\.sh|ops_relay\.sh' | cut -c1-120 || echo "  (no loop running)"
+for l in vision pretrain data harness; do
+  f=/tmp/baize_${l}_loop.log
+  if [ -f "$f" ]; then echo "  -- $l log mtime $(stat -c '%y' "$f" | cut -c1-19)"; tail -2 "$f" | cut -c1-140; else echo "  -- $l : no loop log"; fi
+done
+echo "[2] repo"
+cd "$R" && git log -3 --format='  %h %ad %s' --date=format:'%H:%M' | cut -c1-120
+echo "[3] 32 shard 是否还有分词产物（关键：471KB 符号链接 vs 1.89TB 理论）"
+echo "  text/ 下匹配 l3_s*/math_s* 的 bin=$(ls $B/text/l3_s*.bin $B/text/math_s*.bin 2>/dev/null | wc -l)"
+echo "  staging_r3 目录数=$(ls -d $B/text/staging_r3/*/ 2>/dev/null | wc -l)  du=$(du -sh $B/text/staging_r3 2>/dev/null | cut -f1)"
+echo "  tokenized/ 里含 l3_s 或 math_s 的条目=$(find $B/tokenized -maxdepth 3 -name '*l3_s*' -o -maxdepth 3 -name '*math_s*' 2>/dev/null | wc -l)"
+echo "  /nas_env/full_* 数量=$(ls -d /nas_env/*full_* /nas_env/full_* 2>/dev/null | wc -l)"
+echo "  text/ 总 bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)"
+tail -2 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-150
+ls -l run/data/deleted_unmapped32_* run/data/DATA_MAPPING.md 2>/dev/null | awk '{print "  "$5"B "$9}'
+df -h /nas_train | tail -1
+echo "[4] pretrain grid"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+ls -d /tmp/baize_seqlen_grid/* 2>/dev/null | head -8 || echo "  no grid dir"
+echo "[5] harness"
+pgrep -af 'harbor' | cut -c1-100 || echo "  (no harbor)"
+ls -d /tmp/tb_7x89/jobs_*rerun* 2>/dev/null || echo "  no rerun dir"
+tail -2 /nas_train/app.e0031982/harness/swebench_verified_pull_progress.txt 2>/dev/null
+echo "[6] vision"
+ls -l reports/report_vision_ocr_synthdata_zh.html 2>/dev/null || echo "  OCR 报告 NOT FOUND"
+echo "=== DONE 209 ==="
+```
+
+**输出**
+```
+=== RUN_ID 209 | probe | 2026-10-25 19:24:39 | host=whag0pgpuap29 ===
+[1] loops
+1401353 bash ./baize_pretrain_loop.sh
+1449019 node /home/app.e0031982/.local/bin/cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0
+1449070 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.
+2585867 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+3491663 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
+3492258 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/supe
+  -- vision : no loop log
+  -- pretrain log mtime 2026-10-25 19:10:02
+[loop] 2026-10-25 19:09:02 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-10-25 19:10:02 wake up, invoking cline ...
+  -- data : no loop log
+  -- harness log mtime 2026-10-25 19:24:39
+
+[0m[2mI'll make[0m[2m a pragmatic[0m[2m decision[0m[2m that[0m[2m honors the instruction's[0m[2m INT[0m[2mENT: launch[0m[2m 
+[2] repo
+  a4c950f9f 19:24 ops 19:3x: RUN_ID 209 只读探针(四线进度/loop 存活/32 shard 的 .bin 是否真的不存在/16
+  e1a8626c4 19:08 pretrain #778: 启动 seq x tok/step 16卡吞吐网格(运维令17:5x), 落地 baize_seqlen_grid_test.
+  89590e3d5 18:51 data 删32不可映射staging目录: 已执行+留档+结案(实测471.6KB符号链接非1.89TB,镜像
+[3] 32 shard 是否还有分词产物（关键：471KB 符号链接 vs 1.89TB 理论）
+  text/ 下匹配 l3_s*/math_s* 的 bin=0
+  staging_r3 目录数=78  du=55M
+  tokenized/ 里含 l3_s 或 math_s 的条目=0
+  /nas_env/full_* 数量=0
+  text/ 总 bin=241  preprocess=37
+[2026-10-25 19:21:57] done=94/131 running=37 pending=0 giveup=0 tokens=150155374778 bin_bytes=600621499112 | tokens/s=7741963 cpu=3700% ETA=7634s
+[2026-10-25 19:24:16] done=94/131 running=37 pending=0 giveup=0 tokens=150155374778 bin_bytes=600621499112 | tokens/s=7686872 cpu=3700% ETA=7688s
+  7685B run/data/DATA_MAPPING.md
+  10510B run/data/deleted_unmapped32_20261025.tsv
+  3966B run/data/deleted_unmapped32_summary.md
+10.239.23.31:/vol_CTE0_data01  207T  173T   35T  84% /nas_train
+[4] pretrain grid
+0, 74167 MiB, 0 %
+1, 78205 MiB, 0 %
+2, 78247 MiB, 0 %
+3, 73625 MiB, 0 %
+4, 78245 MiB, 0 %
+5, 78205 MiB, 0 %
+6, 78245 MiB, 0 %
+7, 71345 MiB, 1 %
+/tmp/baize_seqlen_grid/ALL_RESULTS.txt
+/tmp/baize_seqlen_grid/cfg1
+/tmp/baize_seqlen_grid/grid.log
+[5] harness
+3491663 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_
+3492258 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/ap
+  no rerun dir
+[6] vision
+  OCR 报告 NOT FOUND
+=== DONE 209 ===
+```
