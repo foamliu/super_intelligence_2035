@@ -29,18 +29,44 @@
 - **对这些 uncovered shard，"输入目录现在是否存在"已有答案**（`resolve` 自 manifest → 下载目录，非推测）：`Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style`、`..._zh_l3/{multi_style,qa}`、`UltraData-Math/data/UltraData-Math-L2-preview` —— **目录都在，只是 `full_*` 没覆盖它们**。
 - 📌 **32 个 uncovered shard 已按用户令删除**（运维 2026-10-25 11:49 执行，见下）：`l3_s0–12 + l3_s25–39 + math_s32–35`，**96 文件 / 1,907,467,445,596 B = 1.91 TiB**；清单 `run/data/prune_unmapped_uncovered_20261025.txt`。`baize-data/text/` **10.84 → 8.93 TB，142 → 110 个 .bin（只剩 `env14_*`）**。
 
-### ⏱ 本轮执行顺序（2026-10-25 11:5x 用户直令 · **覆盖 11:4x / 12:0x 两令**）
-> 用户原话：「来源不明的，无法跟下载目录对应的，**删掉**！！」
-> 运维已于 11:49 删完（RUN_ID 199）。**你现在只剩两件事：把账改对 + 把未分词的开跑。**
+### ⏱ 本轮执行顺序（2026-10-25 12:0x 用户直令 · **覆盖此前所有令**）
+> 用户原话：「把分词后的目录、下载目录，通过一个表起来都不会吗？……我只要这个对应的表，里边再有几列：**下载数据占用磁盘空间（GB）**、**分词后 Token 数（B）**。……不要再糊弄我了。」
+> 运维已删完 32 uncovered shard（1.91 TiB，RUN_ID 199）。**你只做下面两件事，别的一律不许做。**
 
-1. **改账（30 分钟，只改账不改盘）**：
-   - `DATA_LEDGER.md` 新增 §8：32 uncovered shard **已删除**（1.91 TiB），`baize-data/text/` 现为 **110 shard / 2238.14 B / 8.93 TB（全为 `env14_*`）**；
-   - 训练可用总量 **仍为 3294.50 B**（env14 2238.14 + `/nas_env` 5 源 1056.36），**不含**已删的 472.85 B；
-   - 重生成 `reports/report_data_tokenized_inventory_zh.html` → **v4**：表 B 的 `code_s*`/`l3_s*`/`math_s*` 三行标「已删除」且 bin=0；删除句子里的「来源不明待人工裁决」全部改成「已按运维令删除（不可与下载目录建立产物级对应）」。
-2. **表 C + 分词开跑**（唯一新增重活）：产出 `run/data/untokenized_v1_20261025.tsv`，列 `下载目录(绝对路径) | parquet 数 | 字节 | 目标前缀`；源 = `openbmb/Ultra-FineWeb/data/{ultrafineweb_en, ultrafineweb_l1_en_hq, ultrafineweb_zh}` + `openbmb/UltraX-Preview/data/UltraX-AICC`（**Ultra-FineWeb-L3 / UltraData-* 在 `/nas_inference/app.e0031982/datasets/openbmb/` 下，若你要补回 zh_l3/multi_style 等，先报数再由用户裁决，不得自行启动**）；并发 4 档标定（64/96/128/192）取拐点，`nice -n 10`，留余量给 85M 下载；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log`；断点续传 + `failed_shards.txt`。
-3. **回报**：§8 账目 + v4 报告路径 + 表 C + 标定 4 档 + 启动命令/日志 + 每轮 `done/total`/tokens-s/CPU%/ETA。
-> 🚫 **不要再重做 48h 盘点**；🚫 **不要恢复已删的 32 shard**（源 parquet 仍在 `/nas_inference`，要补必须用户点头）；🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 未分词前不得称"已就绪"。
-> 口径红线：报告里凡出现"来源不明""待人工裁决"字样即为**错误**，必须写清「已删除」或给出绝对下载目录。
+#### ① 报告 `reports/report_data_tokenized_inventory_zh.html` **整篇重写 → 只留一张表**
+
+**保留**：标题、一行 meta（生成时间 + 生成命令）、**这一张表**、表下一行校验（各行之和 = 总计，误差 0）。
+**全部删掉**：摘要、目录清单、四大数字卡片、「② 文件清单」、「③ 逐源汇总表」、「④ 已下载未分词」、「⑤」「⑥ 勘误表」、附录、口径说明段、任何解读段落。**报告里除这张表外不许有第二个表格或第二段正文。**
+
+**表结构（列顺序固定，共 6 列）**
+
+| 分词产物目录（.bin 所在绝对路径） | 前缀 / shard 范围 | 对应下载目录（绝对路径） | 下载数据占用（GB） | 分词后 Token（B） | 状态 |
+
+硬性规则：
+1. **一行 = 一个下载目录**（一个下载目录对应一组分词产物）。同一目录多前缀就写在同一行「前缀/shard」列。
+2. **下载数据占用（GB）** = 该下载目录 `du -sb <绝对路径> / 1e9`，保留 2 位（另在单元格内附精确字节）。**必须贴命令**。
+3. **分词后 Token（B）** = 对应 `.json` 的 `num_tokens` 求和 `/1e9`，保留 2 位。**禁估算、禁论文数**；没有产物就写 `0.00`，**不许写「—」「N/A」「未实测」**。
+4. **对应下载目录必须是绝对路径**，且 `test -d` 通过（不存在的写 `已删除` 但路径照写）。根目录注意：`/nas_train/app.e0031982/datasets/openbmb/…` 与 **`/nas_inference/app.e0031982/datasets/openbmb/…`** 两个根都要查。
+5. **必须覆盖全部下载目录**（一个都不许漏，含未分词的）：
+   - `openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4` ← `env14_*`（110 shard）
+   - `openbmb/Ultra-FineWeb/data/ultrafineweb_en` / `ultrafineweb_l1_en_hq` / `ultrafineweb_zh`
+   - `openbmb/UltraX-Preview/data/UltraX-AICC`
+   - `openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/{qa,multi_style}`、`ultrafineweb_zh_l3/{multi_style,qa}`
+   - `openbmb/UltraData-Code/data/{UltraData-Code-L2,UltraData-Code-L3}`
+   - `openbmb/UltraData-Math/data/{UltraData-Math-L1,UltraData-Math-L2-preview,UltraData-Math-L3}`
+   - `/nas_env/app.e0031982/baize-data/full_{ufw_l3,ultradata_code_l2,ultradata_code_l3,ultradata_math_l1,ultradata_math_l3}` 这 5 个是**分词产物**，各自也要有对应下载目录行。
+6. 状态列只允许：`可用` / `已删除(2026-10-25)` / `未分词`。
+7. **表内数字全部由脚本从实测 TSV 求和生成，禁手填**；`gen_tokenized_inventory_report.py` 直接改写成「单表模式」（老逻辑整段删除，不要留死代码）。
+
+#### ② 表 C + 分词开跑（本轮唯一新增重活，报告重写完后做）
+- 产出 `run/data/untokenized_v1_20261025.tsv`：`下载目录(绝对) | parquet 数 | 字节 | 目标前缀`；未分词源 = `ultrafineweb_en` / `ultrafineweb_l1_en_hq` / `ultrafineweb_zh` / `UltraX-AICC`。
+- 224 核上 4 档 60s 标定（64/96/128/192）取拐点，`nice -n 10`，留余量给 85M 下载；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log`；断点续传 + `failed_shards.txt`。
+- 回报：标定 4 档数字 + 启动命令 + 每轮 `done/total` / tokens-s / CPU% / ETA。
+
+> 🚫 报告里出现「来源不明」「待人工裁决」「未实测」「N/A」「—」= **不合格，重做**。
+> 🚫 不许在报告里加解读/建议/摘要/勘误表；**只有那张表**。
+> 🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 不恢复已删的 32 shard；🚫 不再重做 48h 盘点。
+> 🚫 未分词前不得称「已就绪」。
 
 
 ### 🧵 运维令 · 2026-10-25 11:0x（**重新盘点三张表 → 对「已下载未分词」启动分词（多开并发，按标定取拐点）**）· 用户直令 · 最高优先
