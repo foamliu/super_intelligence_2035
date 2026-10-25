@@ -291,3 +291,8 @@
 [swebench-pull] [284/500] OK matplotlib__matplotlib-26208 pulled=284 failed=0 skipped=0
 [swebench-pull] [285/500] OK matplotlib__matplotlib-26291 pulled=285 failed=0 skipped=0
 [swebench-pull] [286/500] OK matplotlib__matplotlib-26342 pulled=286 failed=0 skipped=0
+[swebench-pull] [287/500] OK matplotlib__matplotlib-26466 pulled=287 failed=0 skipped=0
+[swebench-pull] [288/500] OK mwaskom__seaborn-3069 pulled=288 failed=0 skipped=0
+[swebench-pull] [289/500] OK mwaskom__seaborn-3187 pulled=289 failed=0 skipped=0
+[swebench-pull] [290/500] OK pallets__flask-5014 pulled=290 failed=0 skipped=0
+[swebench-pull] [291/500] OK psf__requests-1142 pulled=291 failed=0 skipped=0
