@@ -1,6 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 **2026-10-25 17:43 #777：⚪ idle heartbeat · #776@16:31 已过 60min 判死线 ⇒ 必发心跳·三项运维令交付物复核依旧在位·无新令·纯验证零 GPU**：
+> - **触发**：上次心跳 #776 commit 877ed26f4@16:31，距今 ~72min > 60min 判死线 ⇒ 本轮必发心跳。
+> - **独立复核（repo root 重跑 git）**：① 双机报告 `reports/report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / `grep 'http'`=0 / 11 个 `<h2>` ✓；② 生成器 `run/gen_dualnode_throughput_report.py`=33,495B，`git ls-files` 已跟踪、`git log` 最新 c856f02eb 已 commit ✓；③ `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L3691 指针 ✓；④ longctx 报告=19,158B / `grep -i Xmodel`=0（Mamba2-hybrid 重写）✓ commit 1a304f509@16:52 ✓；⑤ Task B 无进程，qps4/qps8/maxnch64 3 TAG 全闭合（summary 均见 `TEST COMPLETE` + POST-FLIGHT GPU 全 0 MiB）⇒ 16 卡全释放。
+> - **git**：`git fetch`+`status -sb` ⇒ `## main...origin/main`，ahead/behind=0/0（与远端同步）；任务书最后相关提交=10-25 纪律块（无新运维令）。
+> - **未完成指令：无**（07:4x 双机报告 / 23:5x 双机吞吐父令 / 16:0x 305K+longctx 三项运维令交付物均在盘并已 commit）⇒ `WAITING=1`（30 分钟长轮询）。
+> - **GPU**：.29 8×H100 全 idle，零争用；本轮纯验证零 GPU。
+> 📦 体积：TASK=31.1 KB / MEMORY≈29.0 KB（均 ≤32KB ✓；本轮零归档，仅新增 #777 顶块）.
+
+
 > 🆕 **2026-10-25 16:2x #776：⚪ idle heartbeat · 07:4x 报告令独立复核全部交付物在位且已 commit·无新令·纯验证零 GPU**：
 > - **触发**：上次心跳 #775@15:10，已过 60 min 判死线 ⇒ 必发心跳。
 > - **独立复核（从 repo root 重跑 git，纠正一处 CWD 误判）**：① 报告 `reports/report_pretrain_dualnode_throughput_zh.html`=24,970B / `grep '<script'`=0 / 外链 http=0 / 11 个 `<h2>` ✓；② **生成器 `run/gen_dualnode_throughput_report.py` 经 `git ls-files`+`git log` 确认已跟踪已 commit**（4 次 `pretrain report:` 提交，最新 c856f02eb）——一度从 run/ 子目录跑 git 误判为未跟踪，实为路径错；③ 生成器重生成 diff=空（确定性可重生成）✓；④ `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` L3691 指针 ✓；⑤ longctx 报告（16:0x 任务）已用 Mamba2-hybrid 重写、0 处 Xmodel ✓；⑥ Task B 无进程，qps4/qps8/maxnch64 3 TAG 闭合（606672/607708/606690 tok/s，全 +0.0%~+0.2% 无收益）。
