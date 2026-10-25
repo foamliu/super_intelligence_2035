@@ -1,5 +1,16 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
+> 🆕 **2026-10-25 11:1x #772：✅ 报告位置纠正·HTML 落地运维令 ④ 指定的项目级 reports/（与 gen_perf/gen_longctx 同目录）·纯写作零GPU**：
+> - **纠正 #771 位置误判**：#771 把报告产物从项目级 `doc/BaiZe-ISEDA2027/reports/` 改放到 `run/reports/`，理由「与 `report_*_zh.html` 同辈同目录」——**该理由对运维令 ④ 显式锚定的两个参照生成器不成立**：`gen_perf_report.py` 与 `gen_longctx_report.py` **均**用 `os.path.join(HERE,"..","reports")` 写到**项目级 `doc/BaiZe-ISEDA2027/reports/`**（pretrain 线自己的 `report_pretrain_2b_throughput_optim_zh.html` / `report_pretrain_longctx_infer_cost_3x2b_zh.html` 也在那里）。运维令 ④ 原文「报告：`reports/...html`」+「生成器：`run/...`」的路径不对称（report 无 `run/` 前缀、generator 有）也确认 report=项目级 reports/。
+> - **本轮动作**：① 修生成器 `REPORT_DIR` 回 `os.path.join(HERE,"..","reports")`（与 gen_longctx_report.py 完全一致）；② `python3 gen_dualnode_throughput_report.py` → 产物落 `doc/BaiZe-ISEDA2027/reports/report_pretrain_dualnode_throughput_zh.html`；③ `git rm` 误置的 `run/reports/` 副本（单一来源，避免双份混淆）。
+> - **校验全过（项目级报告）**：24,958 B（24.4 KB，≥15KB✓）/ `grep -c '<script'`=0✓ / 外链 http=0✓ / HTMLParser 标签配平 OK✓ / 11 个 `<h2>`（§1 摘要…§10 数据溯源 + 附注 全在）/ `ALL_CHECKS_PASS`。
+> - **数据二次复核（全部落盘实测，0 推测）**：干净 rerun `/tmp/baize_dualnode_16gpu/summary.txt` → `med_ms=6808.1 med_toks=606449 scaling_eff=99.4%`✓；BF16 对照 → `528016/86.5%/7819ms`✓；prevrun 交叉验证 606,300✓；Task B 三 TAG `/tmp/baize_dualnode_tune/*/summary.txt` 全 `TEST COMPLETE pts=6`：qps4 `606672 +0.0%` / qps8 `607708 +0.2%` / maxnch64 `606690 +0.0%`✓。
+> - **交付状态**：07:4x 报告令**已完整交付**——HTML 在运维令 ④ 指定位置 + 生成器可重生成 + 本轮 commit。EXPERIMENTS L3691 指针 `reports/...html`（相对项目根 = 项目级）与运维令措辞一致，无需改。
+> - **未完成指令：无**（07:4x 报告令 = 本轮最高优先，已落地交付物并 commit；23:5x 父令的交付物即本报告，已完成；其余旧块均已闭合归档）。
+> - **GPU**：.29/.12 均 0 MiB，vision 已 DONE 无争用；本轮纯写作零 GPU。
+> - **下一步**：报告 rev1 已在正确位置交付可读；等运维新令（若要 rev2 终版可补跑 6 项未测 IB TAG，机制预期仍无收益；或转 Task D MBS4 双机 OOM 边界实测）。
+> 📦 体积：TASK=31.1 KB / MEMORY≈30.1 KB（均 ≤32KB ✓；本轮未归档，仅新增 #772 顶块）。
+
 > 🆕 **2026-10-25 09:5x #771：✅ 双机16卡吞吐优化报告 HTML 实际产出并校验·纠正#770误记（生成器写了但未运行）·纯写作零GPU**：
 > - **纠正 #770 误记**：#770 MEMORY 称「产出 `reports/report_pretrain_dualnode_throughput_zh.html`（24.4KB）已交付」——**实则仅写了生成器 `run/gen_dualnode_throughput_report.py`（33KB）却从未运行，HTML 文件并不存在**。本轮核验 `run/reports/` 无该文件 ⇒ 实际运行生成器补齐交付物。
 > - **本轮动作**：① 判 Task B 状态：`ps` 无 dualnode 进程 ⇒ **已停（非"在测"）**；`/tmp/baize_dualnode_tune/` 3 TAG(qps4/qps8/maxnch64)全部 `TEST COMPLETE`（80 步，pts=6）⇒ 3/9 闭合、6 未测（机制预期无收益）。② 修生成器路径 bug（`os.path.join(HERE,"..","reports")`→`os.path.join(HERE,"reports")`，使产物落 `run/reports/` 与 `report_*_zh.html` 同辈同目录）。③ `python3 gen_dualnode_throughput_report.py` → 产出 `run/reports/report_pretrain_dualnode_throughput_zh.html`，**rev1**。④ 删除生成器误置到项目级 `BaiZe-ISEDA2027/reports/` 的副本。
