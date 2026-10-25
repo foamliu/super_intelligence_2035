@@ -21294,3 +21294,80 @@ echo "=== DONE 201 ==="
   loop 日志尾:
 === DONE 201 ===
 ```
+
+---
+
+## RUN_ID 202 · 2026-10-25 13:16:38 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 202 | live status | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+
+echo "[1] data loop / cline"
+LP=$(ps -eo pid=,comm=,args= after 2>/dev/null | awk '$2=="bash" && /baize_data_loop\.sh/ {print $1}' | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,etimes=,stat=,args= -p "$LP" | cut -c1-90
+ps -eo pid=,etimes=,args= | grep cline | grep cline_data | grep -v grep | cut -c1-100 | head -3
+echo "  loop_log tail:"; tail -4 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-120
+ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null | awk '{print "  log "$6" "$5"B"}'
+
+echo "[2] 分词是否在跑"
+ps -eo pid=,etimes=,pcpu=,args= | grep -E '[p]reprocess_data|[t]okenize_untokenized' | head -5 | cut -c1-110
+echo "  进程数=$(ps -eo args= | grep -cE '[p]reprocess_data' || true)"
+echo "  load=$(cat /proc/loadavg)  nproc=$(nproc)"
+ls -lt /tmp/tokenize_untokenized_*.log /tmp/tokenize_*.log 2>/dev/null | head -3 || echo "  无分词日志"
+
+echo "[3] tokenized 布局"
+[ -d "$B/tokenized" ] && find "$B/tokenized" -maxdepth 3 -type d | sed "s#$B/##" | head -12 || echo "  tokenized/ 不存在"
+
+echo "[4] 12:29 那次 map TSV 改了什么"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && {
+  git status --porcelain | head -12
+  echo "  --- HEAD ---"; git --no-pager log --format='%h %ci %s' -2
+  echo "  --- map TSV diff（工作区 vs HEAD）---"
+  git --no-pager diff --stat -- doc/BaiZe-ISEDA2027/run/data/map_dl_vs_tok_20261025.tsv
+  git --no-pager diff -- doc/BaiZe-ISEDA2027/run/data/map_dl_vs_tok_20261025.tsv | head -40
+}
+
+echo "[5] 报告与核对表"
+ls -l --time-style=+%F_%T "$R/reports/report_data_tokenized_inventory_zh.html" "$R/run/data/report_verify_20261025.md" 2>/dev/null | awk '{print "  "$6" "$5" "$7}'
+grep -c "复核 PASS" "$R/reports/report_data_tokenized_inventory_zh.html" 2>/dev/null | sed 's/^/  复核PASS行=/'
+echo "=== DONE 202 ==="
+```
+
+**输出**
+```
+=== RUN_ID 202 | live status | 2026-10-25 13:16:38 | host=whag0pgpuap29 ===
+[1] data loop / cline
+  loop_pid=NONE
+  loop_log tail:
+[2] 分词是否在跑
+  进程数=0
+  load=8.02 7.29 10.62 22/7709 933993  nproc=224
+[3] tokenized 布局
+  tokenized/ 不存在
+[4] 12:29 那次 map TSV 改了什么
+ M doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+ M doc/BaiZe-ISEDA2027/run/data/gen_tokenized_inventory_report.py
+ M doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pull_progress.txt
+ M doc/BaiZe-ISEDA2027/run/harness/terminalbench/agents/deepseek_harness.py
+ M doc/BaiZe-ISEDA2027/run/harness/terminalbench/agents/hermes.py
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+?? doc/BaiZe-ISEDA2027/run/5245/
+?? doc/BaiZe-ISEDA2027/run/7343/
+?? doc/BaiZe-ISEDA2027/run/9441/
+?? doc/BaiZe-ISEDA2027/run/baize_p8_eval_14.sh
+?? doc/BaiZe-ISEDA2027/run/baize_p8_intermediate_collect.py
+  --- HEAD ---
+1641eaa9c 2026-10-25 13:16:49 +0800 ops RUN_ID 202 (TARGET:29): live status 13:15 - data alive? tokenizing? what changed at 12:29
+c856f02eb 2026-10-25 12:50:07 +0800 pretrain report: fix HTML validity (escape placeholders) + add repro scripts
+  --- map TSV diff（工作区 vs HEAD）---
+[5] 报告与核对表
+  2026-10-25_13:16:38 10520 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html
+  复核PASS行=0
+=== DONE 202 ===
+```
