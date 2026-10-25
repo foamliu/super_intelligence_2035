@@ -26,19 +26,31 @@
 ### 🗑 运维令 · 2026-10-25 10:3x（**删除「无法对应下载目录」的早期分词产物**）· 用户直令 · 最高优先
 > 背景：`baize-data/text/` 下有 4 个前缀共 220 个 `.bin`（`env14_*` 110 / `code_s*` 30 / `l3_s*` 40 / `math_s*` 40）。其中 `env14_*` = **en_v1_4 全量分词（2238.14 B tok / 8.93 TB，必须保留）**；而 `code_s* / l3_s* / math_s*` 是 **2026-10-09/10 的早期（部分）分词**，其源已由 10-21 的 `/nas_env/full_*` 全量重分词取代。用户令：**把无法与下载目录对应上的早期产物删掉**。
 
-**① 先出判定表（逐 shard，不许批量猜）**
-对 `code_s*` / `l3_s*` / `math_s*` 三组的**每一个** `.bin`（连同同名 `.idx`/`.json`）给出：shard 名 / 源目录候选（`Ultra-FineWeb/data/ultrafineweb_*`、`UltraX-Preview`、`/nas_inference/...UltraData-*`）/ **可映射 or 不可映射**（无 manifest、命名对不上、源目录不存在、指向已废弃路径 ⇒ 不可映射）/ **是否已被 `/nas_env/full_*` 覆盖**（判据：源相对路径集合 ⊆ full_* 源集合）/ 动作（保留 / 删除）。
+**① 先建「HF 下载目录白名单」（唯一依据，不许自造）**
+用 `ls -d` + `find -name '*.parquet' | wc -l` + `du -sb` 列出机器上**真实存在的 HF 数据集下载目录**，逐条给出：绝对路径 / parquet 数 / 字节 / mtime。至少覆盖：
+- `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en`
+- `.../ultrafineweb_en_v1_4`、`.../ultrafineweb_l1_en_hq`、`.../ultrafineweb_zh`
+- `/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview`
+- 以及 `/nas_inference/.../openbmb/UltraData-*` 等**若确实是 HF repo 的 parquet 布局**（有 `*.parquet`；判断依据要贴 `ls` 输出）
+> 🚫 **白名单外的路径一律不算源**；🚫 不许把 `/tmp`、`staging`、`*.orig`、已删目录、"我记得是..."之类算进来。
 
-**② 删除闸门（三条全满足才可删）**
-1. 判定 = **不可映射**；2. 判定 = **已被 full_* 覆盖**（"不可映射**且**无法证明覆盖" ⇒ **保留**，标注"来源不明，待人工裁决"）；3. `env14_*`（en_v1_4）与 `/nas_env/full_*` **绝对不动**。
+**② 逐 shard 映射（只认白名单，不做二次推断）**
+对 `code_s*`(30) / `l3_s*`(40) / `math_s*`(40) 的**每一个** `.bin`（连同 `.idx`/`.json`）：用 manifest / `.json` 里的 source 字段 / 分词日志，指出它的输入目录，然后
+- **能对上①白名单里某一条 ⇒ 保留**（**不再**按"是否与 full_* 重复"来删）；
+- **对不上（目录不存在 / 不在白名单 / 无任何证据）⇒ 删除**。
 
-**③ 执行与留痕**
-- 先 `ls -l` 出清单写 `run/data/prune_unmapped_20261025.txt`（逐文件：路径 + 字节），再 `rm` 对应 `.bin/.idx/.json`；
-- 删前后各跑 `du -sb baize-data/text/` + `df -h /nas_train`，**释放量写进回报**；
-- 若某组"部分可映射" ⇒ **只删不可映射的那几个 shard**，其余保留并说明。
+**③ 删除闸门**
+1. 只删①②判定为"对不上白名单"的 shard；
+2. `env14_*`（en_v1_4 全量分词）与 `/nas_env/full_*` **绝对不动**；
+3. 若某组"部分对得上" ⇒ **只删对不上的那几个**，其余保留并逐个写明对应白名单目录。
 
-**④ 交付**：①判定表 + 删除清单 + 释放空间 + 剩余体积/文件数；②更新 `DATA_LEDGER.md` 与 `MEMORY_DATA.md`；③盘点报告升 **v3**：新增「**去重后已分词总量（训练可用）**」= `env14_* 2238.14 B + /nas_env 5 源 1056.36 B ≈ 3294.5 B`，并把原 **4778.41 B 标注为"文件清单求和（含历史重复）"**，勘误表补 1 条。
-> 🚫 删前必先落 `prune_unmapped_*.txt`；🚫 不得凭"看起来重复"删除；🚫 不碰 en_v1_4 与 /nas_env。
+**④ 执行与留痕**
+- 先 `ls -l` 出清单写 `run/data/prune_unmapped_20261025.txt`：每行 = shard / 判定（keep|delete）/ **依据**（对上的白名单路径 或 "无对应目录"）/ 字节；落清单**之后**再 `rm` 对应 `.bin/.idx/.json`；
+- 删前后各跑 `du -sb baize-data/text/` + `df -h /nas_train`，**释放量写进回报**。
+
+
+**⑤ 交付**：①HF 白名单（每目录的 `ls`/parquet 数/字节）+ 逐 shard 判定表 + 删除清单 + 释放空间 + 剩余体积/文件数；②更新 `DATA_LEDGER.md` 与 `MEMORY_DATA.md`；③盘点报告升 **v3**：新增「**去重后已分词总量（训练可用）**」= `env14_* 2238.14 B + /nas_env 5 源 1056.36 B ≈ 3294.5 B`，原 **4778.41 B** 标注为"文件清单求和（含历史/待删产物）"，勘误表补 1 条。
+> 🚫 删前必先落 `prune_unmapped_*.txt`；🚫 不得凭"看起来重复"删除；🚫 不碰 en_v1_4 与 /nas_env；🚫 判定依据只准用"能否对上 HF 下载目录"，不许引入其它推测。
 
 ### 🚨🚨 最高优先 · 2026-10-25 08:0x · 用户直令 · **本轮唤醒必须先做这件事**
 
