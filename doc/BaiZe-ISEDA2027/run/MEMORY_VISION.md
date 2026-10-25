@@ -11,10 +11,10 @@ WAITING: 1
 
 > **本唤醒流水 [wake #277, 2026-10-26 06:32]**：📦 体积维护归档（step0：TASK 33693B/MEMORY 33540B 均>32KB）。22:4x 块(✅DONE wake#275)原文归档→ARCHIVE_OPERATOR_VISION.md(+5752B，留1行指针，保留待裁定+两处偏差)→TASK 33693→29169B✓；MEMORY 4 条冗长流水(272/274/275/276，全文在 daily-memories-vision/2026-10-26.md)压缩为指针→33540→31888B✓。归档后复核：22:4x/19:5x已归档DONE·17:5x✅DONE(wake#271)→**无未完成指令**。10M 数据集在位(2001 tars/9.999M/470GB/fail=0)。git 同步 behind=0/ahead=0。数字全实测。**未完成指令：无**⇒**WAITING: 1**。
 
-> **本唤醒流水 [wake #272, 2026-10-25 21:0x]**：📄 执行运维令 19:5x（路线①细化）→ 交付 `reports/report_vision_ocr_sft_plan_zh.html`(22706B/9节+一页纸清单/0 script/0外链) + §17 + 生成器 `vision/generate_ocr_sft_plan_report.py` + commit `vision ocr-plan:`。trdg 参数经代理检索 GitHub README 核实。详见 daily-memories-vision/2026-10-25.md。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #274, 2026-10-26 01:1x]**：🔄 10M 监控 41.85%(837 tars/914 img/s/ETA~02:58) + 新增 `vision/ocr_synth/verify_loader_compat.py` 真 `build_gpic_loader(caption_type='short')` 读 8 full shard→(16,3,224,224) finite ⇒ FORMAT COMPATIBLE。详见 daily-memories-vision/2026-10-26.md。**未完成指令:有(10M async,ETA~1.8h)**⇒**WAITING: 1**。
-> **本唤醒流水 [wake #275, 2026-10-26 04:0x]**：✅ 10M 全量 DONE 收尾(ok=9,999,999/fail=0/2000 tars/470GB/893.6 img/s) + 报告 15754B(8节/0script/0外链/标签配平) + EXPERIMENTS §18 + commit `vision ocr-synth:`。两处偏差(文本去重2.4486%>1%/泄漏113 短串巧合)如实记录未掩盖。详见 daily-memories-vision/2026-10-26.md。**未完成指令:无**⇒**WAITING: 1**。
-> **本唤醒流水 [wake #276, 2026-10-26 05:22]**：🔄 空唤醒复核·22:4x 交付完整性确认(2001 tars/9.999M index/470GB/fail=0，与 wake#275 逐项一致) + 任务书 22:4x 块追加 ✅DONE 标记(未改运维令原文)。无新指令。详见 daily-memories-vision/2026-10-26.md。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#272 (2026-10-25 21:0x)：路线①细化报告交付(report_vision_ocr_sft_plan_zh.html 22706B+§17+生成器+commit `vision ocr-plan:`)。流水原文 → daily-memories-vision/2026-10-25.md。**未完成指令：无**。
+> 📦 wake#274 (2026-10-26 01:1x)：10M 监控 41.85%+加载器兼容验真(build_gpic_loader→(16,3,224,224) finite)。流水原文 → daily-memories-vision/2026-10-26.md。**未完成指令:有(10M async)**。
+> 📦 wake#275 (2026-10-26 04:0x)：10M 全量 DONE 收尾(9,999,999/fail=0/470GB+报告15754B+§18+commit `vision ocr-synth:`；两处偏差如实记录)。流水原文 → daily-memories-vision/2026-10-26.md（亦见顶部 🆕 块）。**未完成指令:无**。
+> 📦 wake#276 (2026-10-26 05:22)：空唤醒复核·22:4x 交付完整性确认+任务书标✅DONE。流水原文 → daily-memories-vision/2026-10-26.md。**未完成指令：无**。
 
 > **本唤醒流水 [wake #273, 2026-10-25 22:03]**：🔄 空唤醒复核。`git fetch` 一度 behind 3 commits(30e5fa33b→672b61a57)，但共享工作副本他线 pull 已 fast-forward 入 HEAD=fb6142ce7(22:02 ops-relay)，复核 behind=0/ahead=0。任务书最后触我 commit=1f3fbc2b7(20:53 ocr-plan)，grep 无新 `[运维令]` 块；19:5x + 17:5x 两运维令仍 ✅DONE。复核四交付物在位(ocr_sft_plan 22706B / ocr_synthdata 29177B + 两 .py)，最新报告自检 0 `<script>`/0 外链/标签配平(0 leftover/0 stray)。体积 TASK 31902B / MEMORY 29082B 均≤32KB 无需归档。**未完成指令：无** ⇒ **WAITING: 1**（重置判死时钟，30min 后再轮询）。
 
