@@ -23,17 +23,23 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### ⏱ 本轮执行顺序（2026-10-25 11:4x 用户直令 · 覆盖下文步骤顺序）
-> 用户原话：「data 唤醒后，**先盘点**现有的 MiniCPM5 训练数据中**已下载且已分词**的数据，**删掉无法跟下载目录对应的分词数据**。」
-1. **先盘点**（**必须自证，不许猜**）：对 `baize-data/text/` 里**每一个前缀**（现见：`env14_*` / `code_s*` / `l3_s*` / `math_s*`），逐项给出：
-   - ① **生成它的脚本 + 行号**（例：`run/data_pipeline/run_codemath_tokenize.sh:32,35`）
-   - ② **输入 parquet 的真实目录**（绝对路径，`test -d` 结果）
-   - ③ **shard 编号 → 输入 parquet 列表**的映射（取自脚本的 split 逻辑 / manifest / 日志）
-   - ④ 该源目录**现在是否还存在**（`ls` 证据）
-   > 查不到的项写「**查不到**」，**禁止**用"应该是/看起来是"填空。
-2. **再删除**：把**无法与 HF 下载目录对应**的分词产物删掉（= 10:3x 令：逐 shard 判定 → 先落 `prune_unmapped_20261025.txt` → 再 `rm` → 报释放量）。
-3. **最后分词**：对「已下载未分词」（表 C）按标定并发开跑（64/96/128/192 取拐点，**多开但不打满**，留余量给 85M 下载）。
-> 🚫 顺序不得颠倒：**没做完 ①②，不许开 ③**。
+### ✅ 已完成核对（2026-10-25 11:30 · 运维侧复核 commit `89a9c980b`，**不必重做**）
+- **48h 盘点 + prune 已交付且核对通过**：`prune_unmapped_judgment_20261025.tsv`（110 行逐 shard）/ `prune_unmapped_20261025.txt`（234 文件）/ `_summary.json`（`delete_bytes=4,059,924,022,806`）+ `DATA_LEDGER.md §7`。
+- **已实测**：`code_s*` 30/30、`l3_s*` 12/40、`math_s*` 36/40 被 `full_*` 覆盖 ⇒ 删；留 **32 uncovered**（`l3_s0–12`+`l3_s25–39` = en_l3/multi_style + zh_l3；`math_s32–35` = Math-L2-preview）**472.85 B**；`env14_*` 与 `/nas_env/full_*` 未动。
+- **对这些 uncovered shard，"输入目录现在是否存在"已有答案**（`resolve` 自 manifest → 下载目录，非推测）：`Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style`、`..._zh_l3/{multi_style,qa}`、`UltraData-Math/data/UltraData-Math-L2-preview` —— **目录都在，只是 `full_*` 没覆盖它们**。
+- 📌 **因此：`l3_s*` / `math_s*` 不再叫"来源不明"**；它们是「**可溯源但未被 `full_*` 覆盖**」的分词，**保留、计入训练可用**（口径变更见下「12:0x 令」）。
+
+### ⏱ 本轮执行顺序（2026-10-25 12:0x 用户直令 · **覆盖 11:4x 令，以本条为准**）
+> 用户原话：「让 data 去分词，服务器 CPU 224 核，可以设置适当并发。」
+> 12:0x 运维侧判定：11:4x 令的前提（"前缀来路不明、不许猜"）**已被 11:25 的自证结果推翻** —— 别名问题已解决，**不要再花一轮重做盘点**，直接进入分词。
+
+1. **改口径（30 分钟，书面）**：把 §7 里 **472.85 B "来源不明"** 改成 **「可溯源、未覆盖，计入训练可用」** ⇒ 训练可用总量 **3294.50 → 3767.35 B**（+472.85）；同步修 `gen_tokenized_inventory_report.py` 的 v3 措辞与 HTML；`DATA_LEDGER.md` §8 记本次口径变更 + 依据（`prune_unmapped_summary_20261025.json` 的 `download_dir` 字段）。
+2. **表 C 定稿并立即分词**（这是本轮**唯一的新增重活**）：
+   - 产出 `run/data/untokenized_v1_20261025.tsv`：`下载目录 | parquet 数 | 字节 | 目标前缀`；**先补 uncovered 的 28+4 shard 剩余 parquet**（= 表 C 的一部分：`en_l3/multi_style`、`zh_l3/multi_style`、`zh_l3/qa`、`Math-L2-preview` 中**尚未进 shard** 的部分），再列 `en` / `l1_en_hq` / `zh` / `UltraX-Preview` 等未分词源；
+   - 并发：224 核上 4 档 60s 标定（`64/96/128/192`）取拐点（预期 96–160），`nice -n 10`，**留余量给 85M 下载**；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log`；断点续传 + `failed_shards.txt`。
+3. **回报**：口径变更后的数字表（训练可用 3767.35 B 的分项）+ 表 C + 标定 4 档 + 启动命令/日志 + 每轮 `done/total`/tokens-s/CPU%/ETA。
+> 🚫 **不要再重做 48h 盘点**；🚫 **不要删 32 uncovered shard**；🚫 不碰 `env14_*` 与 `/nas_env/full_*`；🚫 未分词前不得称"已就绪"。
+> 若你认为第 1 步口径变更不对（例如 uncovered 里含有你判定的真重复），**只准给反证**（shard .json/manifest 原文 + 与哪 个 `full_*` parquet 重复的行号），不许靠形容词。
 
 
 ### 🧵 运维令 · 2026-10-25 11:0x（**重新盘点三张表 → 对「已下载未分词」启动分词（多开并发，按标定取拐点）**）· 用户直令 · 最高优先
