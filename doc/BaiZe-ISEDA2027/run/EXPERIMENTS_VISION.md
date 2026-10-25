@@ -1751,6 +1751,25 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 | ⑤ 报告（旧版 6 节） | `vision/generate_armE_r2_mllm_report.py` → `reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html`（17KB，**旧版**，缺①训练/③MLLM三阶段，保留备查） |
 | 12集原始结果 | `datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/eval_*.json` + `consolidated_12benchmarks.json` |
 | 实验记录 | `EXPERIMENTS_VISION.md §15`（本节） |
+### §15.8 A3：ckpt_60000 ProtB 复测（末段抖动 / best-段 假设检验 · ✅ DONE · 2026-10-25 wake#266）
+
+> **动机**：「下一步方案报告」(§B4 推导)注意到 ArmE-R2 训练末段（s45240→s63400）CLIP loss / 对比指标仍有抖动，怀疑**最终 ckpt(s63400) 未必是该段最佳**。A3 复测**早 3400 步的 ckpt_60000**（同 ProtB、同 Protocol B、同 3 seeds），检验「换 best-段 ckpt 能否省回 1–2pp」假设。
+
+`vision/armE_r2_20261022_protb_vitl14_224_ckpt60000_results.json`（ckpt=`checkpoint_60000.pt`，5.15GB 全训练 ckpt 经 `load_armB_visual` 安全网：452 keys → 446 CLIP keys，`clip.` 前缀剥离、predictor 丢弃、`strict=False` 无 missing-visual-key WARNING）：
+
+| ckpt | lp_mean ± σ (%) | 5-NN (%) | lp per-seed (%) |
+|:--|--:|--:|:--|
+| **ckpt_60000 (A3)** | **68.3067 ± 0.0155** | **59.002** | 68.288 / 68.326 / 68.306 |
+| final(63400) | 68.236 ± 0.0182 | 58.904 | 68.212 / 68.256 / 68.240 |
+| **Δ(60000 − final)** | **+0.071** | **+0.098** | 逐 seed 一致 +0.066~+0.076 |
+
+**结论（假设证伪）**：ckpt_60000 与 final ckpt_63400 在 ProtB 上**统计不可分辨**（Δlp=+0.071pp / Δ5-NN=+0.098pp，均 <0.3pp「不可分辨」带，远小于报告假设的 1–2pp；三 seed 逐对 Δ 仅 +0.066~+0.076pp 量级）。→ **训练末段抖动未损害最终 ckpt 的线性可分性；不存在「换 best-段 ckpt 省 1–2pp」的增益**，编码器在最后 3400 步内**稳定**。该负结果**强化报告主结论**：ProtB 到 CLIP@336(82.66%) 的 ~14pp 缺口**不可由 ckpt 选择回收**，属预训练（数据/规模/分辨率）层面限制 → B4 之外的 ProtB 增益须靠预训练侧改动。
+
+- **A3 评测脚本**：`vision/run_armE_r2_protb_eval_ckpt60000.sh`（eval-only，8-GPU 并行抽取 train 1.28M + val 50k，3 seeds SGD 90ep）。
+- **A3 结果 JSON**：`vision/armE_r2_20261022_protb_vitl14_224_ckpt60000_results.json`。
+- **A3 日志**：`/tmp/armE_protb_eval_ckpt60000.log`（抽取 ~22min + gather/linear-probe ~6min，12:38 DONE exit 0）。
+
+
 
 | mme（不计入平均） | 718.0 (perc 513.75 + cog 204.29) | 806.5 (perc 559.7 + cog 246.8) | −88.5 | 897.8 (perc 642.1 + cog 255.7) | −179.8 | 796.5 (perc 583.7 + cog 212.9) | −78.5 |
 

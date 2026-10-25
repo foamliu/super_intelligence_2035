@@ -1,0 +1,21 @@
+{
+  "ckpt": "checkpoint_60000.pt",
+  "model": "ViT-L-14",
+  "feature": "projected",
+  "protocol": "B",
+  "probe_train": "full",
+  "epochs": 90,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "lp_per_seed": [
+    68.28799843788147,
+    68.32599639892578,
+    68.30599904060364
+  ],
+  "lp_mean": 68.3067,
+  "lp_sigma": 0.0155,
+  "knn5": 59.002
+}
