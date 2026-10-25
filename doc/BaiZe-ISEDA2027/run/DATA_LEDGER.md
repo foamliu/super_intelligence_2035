@@ -164,4 +164,39 @@
 | Recap-DataComp-1B | `/nas_user/app.e0031982/datasets/UCSC-VLAA/Recap-DataComp-1B` 等 | 🚫 URL-only | 518G + 67G | — | 🚫 淘汰 |
 | 新增候选（可选补量） | `hanlincs/InternVL-SA1B-Caption-WebDataset`、`zenless-archive/danbooru-2023-webdataset`、`yangyang857658468/cc12m-webdataset` | ✅ bytes | — | 待抽验 | 可选 |
 
+
+## 7. 分词产物 prune 记录（2026-10-25 · 唤醒651）
+
+> 运维令 2026-10-25 10:3x：删除 `baize-data/text/` 中「不可映射且已被 `/nas_env/full_*` 全量覆盖」的早期分词 shard。
+> 判定脚本：`run/data/analyze_prune_unmapped.py`（解 `staging_r3/<shard>/` 符号链接 → `/nas_inference` 下载 parquet，查 source-set ⊆ `full_*` 并集 3422 parquet）。
+> 判定 gate：**covered**（源 ⊆ full_*）⇒ 删；**uncovered**（源不在 full_*）⇒ KEEP，标「来源不明待人工裁决」。
+
+| 前缀 | 总 shard | covered(删) | uncovered(留) | covered 判定依据 | 释放空间 |
+|:---|---:|---:|---:|:---|---:|
+| `code_s*` | 30 | **30** | 0 | 源 = UltraData-Code L2/L3 ⊆ `full_ultradata_code_l2` + `full_ultradata_code_l3` | ~2.21 TB |
+| `l3_s*` | 40 | **12** | **28** | 仅 `en_l3/qa` ⊆ `full_ufw_l3`；`en_l3/multi_style` + `zh_l3/*` 未覆盖 → KEEP | ~0.65 TB |
+| `math_s*` | 40 | **36** | **4** | 源 ⊆ `full_ultradata_math_l1` + `full_ultradata_math_l3`；`Math-L2-preview` 无 full_* 等价 → KEEP | ~0.83 TB |
+| **合计** | 110 | **78** | **32** | — | **~3.69 TiB** |
+
+- **删除**：78 shard × 3 ext (.bin/.idx/.json) = **234 文件**；释放 **4,059,924,022,806 B ≈ 3.69 TiB**。
+- **保留 32 uncovered shard**（来源不明待人工裁决）：
+  - `l3_s0–s12`（en_l3/multi_style）+ `l3_s25–s39`（zh_l3/*）= 28 shard / 427.57 B
+  - `math_s32–s35`（Math-L2-preview）= 4 shard / 45.28 B
+- **env14（110 shard / 2238.14 B / 8.88 TB）完整保留**，与 `full_*` 无重叠。
+- **`/nas_env/full_*`（5 源 / 1056.36 B / 4.24 TB）未触碰**。
+- 删除前 `baize-data/text/` = 14.90 TB / 220 .bin；删除后 = **10.84 TB / 142 .bin**（110 env14 + 28 l3_s + 4 math_s）。
+- 产物清单：`run/data/prune_unmapped_judgment_20261025.tsv`（逐 shard 判定）、`prune_unmapped_20261025.txt`（删除清单）、`prune_unmapped_summary_20261025.json`（汇总）。
+
+### 去重后已分词总量（训练可用）
+
+| 组分 | token (B) | 说明 |
+|:---|---:|:---|
+| env14（en_v1_4 CC-MAIN 110 snapshot） | 2238.14 | 主体预训练，与 full_* 无重叠 |
+| /nas_env 5 源 full_* | 1056.36 | ufw_l3 263.90 + code_l2 421.45 + code_l3 128.62 + math_l1 164.44 + math_l3 77.95 |
+| **去重训练可用合计** | **3294.50** | env14 与 full_* 无重叠，直接相加 |
+| 32 保留 uncovered shard（不计入训练可用） | 472.85 | l3_s 427.57 + math_s 45.28，来源不明待人工裁决 |
+| v2 旧总计「文件清单求和（含历史重复）」 | ~~4778.41~~ | 含 78 个已被 full_* 覆盖的早期重复 shard，已废弃 |
+
+> 盘点报告已升 **v3**：`reports/report_data_tokenized_inventory_zh.html`（post-prune 实测 TSV `inventory_v3_20261025.tsv`）。
+
 **D11（与方案 §1 的差异）**：phase0 §1.2 把多模态一律归 `/nas_train`，实测「bytes 通用图文对」还躺在 `/nas_user`（Amshaker 3.7T、BLIP3o 1.3T）与 `/nas_train`（CC12M webdataset 1.2T 带图、LLaVA-CC3M-595K）——这批是"补数据不足"的实际弹药，上轮盘点漏记。

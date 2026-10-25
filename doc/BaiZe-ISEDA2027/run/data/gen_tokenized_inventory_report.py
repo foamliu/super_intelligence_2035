@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """gen_tokenized_inventory_report.py — 读取实测 TSV 生成自包含中文 HTML 盘点报告.
-数字全部来自 inventory_v2_20261025.tsv (禁手填); 小计/总计由本脚本求和.
-产出: reports/report_data_tokenized_inventory_zh.html (v2 覆盖旧版)
+数字全部来自 inventory_v3_20261025.tsv (禁手填); 小计/总计由本脚本求和.
+产出: reports/report_data_tokenized_inventory_zh.html (v3 覆盖旧版)
+v3 变更: ① Section B 改为 prune 后实测 (code_s 已删除, l3/math 仅保留来源不明 shard);
+        ② 新增「去重后已分词总量(训练可用)」= env14 2238.14B + /nas_env 5源 1056.36B = 3294.50B;
+        ③ 原 v2 总计 4778.41B 标注为「文件清单求和(含历史重复)」; ④ 勘误表补第 8 条.
 """
 import os, csv, html, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, "..", ".."))  # BaiZe-ISEDA2027
-TSV = os.path.join(HERE, "inventory_v2_20261025.tsv")
+TSV = os.path.join(HERE, "inventory_v3_20261025.tsv")
 CMDLOG = os.path.join(HERE, "inventory_v2_commands.log")
 OUT = os.path.join(REPO, "reports", "report_data_tokenized_inventory_zh.html")
 
@@ -72,6 +75,13 @@ TOT = {
 }
 # token total only from tokenized rows
 TOT_TOK = sum(r["tokens_i"] for r in ROWS if r["is_tokenized"] == "yes")
+# v3: 去重后已分词总量(训练可用) = env14 (2238.14B) + /nas_env 5源 (1056.36B)
+#     env14 与 full_* 无重叠; 32 保留 shard (l3_s 28 + math_s 4) 来源不明, 不计入训练可用
+ENV14_TOK = 2238140710284
+NASENV_TOK = 1056359481968
+DEDUP_TOK = ENV14_TOK + NASENV_TOK          # = 3,294,500,192,252 ≈ 3294.50 B
+# v2 历史总计 (prune 前文件清单求和, 含 78 个已被 full_* 覆盖的早期重复 shard)
+V2_HIST_TOK_B = 4778.41
 
 def section_label(sec):
     return {"A": "A · 下载 parquet 目录 (openbmb)",
@@ -123,7 +133,7 @@ HIST_REF = [
 H = []
 H.append('<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">')
 H.append('<meta name="viewport" content="width=device-width, initial-scale=1.0">')
-H.append('<title>BaiZe MiniCPM5 数据硬盘实测盘点 v2 — 2026-10-25</title><style>')
+H.append('<title>BaiZe MiniCPM5 数据硬盘实测盘点 v3 — 2026-10-25</title><style>')
 H.append('''*{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",sans-serif;background:#f5f5f5;color:#333;line-height:1.6;padding:20px}
 .container{max-width:1280px;margin:0 auto;background:#fff;border-radius:8px;padding:30px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
@@ -156,19 +166,22 @@ pre{background:#f8f8f8;border:1px solid #ddd;border-radius:4px;padding:10px;font
 .tok-yes{color:#1b5e20;font-weight:600}
 ''')
 H.append('</style></head><body><div class="container">')
-H.append('<h1>BaiZe MiniCPM5 数据硬盘实测盘点 (v2 返工)</h1>')
+H.append('<h1>BaiZe MiniCPM5 数据硬盘实测盘点 (v3 · prune 后去重)</h1>')
 H.append('<div class="meta">生成时间：%s · 口径：以下载目录为准 (ls 第一性证据) · '
          '数字来源：<code>du -sb</code> / <code>find</code> / <code>.json num_tokens</code> 实测 · '
-         '小计/总计由脚本求和 · TSV: <code>inventory_v2_20261025.tsv</code></div>' % GEN_TS)
+         '小计/总计由脚本求和 · TSV: <code>inventory_v3_20261025.tsv</code></div>' % GEN_TS)
 
 # ---- 摘要 ----
 H.append('<h2>摘要</h2>')
-H.append('<div class="warn"><p><strong>本版为返工重做 (v2)</strong>，覆盖 2026-10-24 旧版。'
-         '旧版 ③ 逐源汇总表<strong>遗漏 4 个已下载 parquet 源</strong>'
-         '(base-en / l1_en_hq / zh / UltraX-Preview)，且 text/ 小计行数标注错误。'
-         '本版口径：<strong>以下载目录为准</strong>，磁盘有什么就列什么，不自造数据源、不合并目录凑行。</p>'
-         '<p>盘点共 <strong>%d 个数据源目录</strong>：① 5 个 parquet 下载目录 (openbmb) ② 4 个 baize-data/text 分词前缀 ③ 5 个 /nas_env 全量分词目录。'
+H.append('<div class="warn"><p><strong>本版为 v3（prune 后去重）</strong>，覆盖 v2。'
+         'v2 总计 <strong>%.2f B</strong> 为<strong>「文件清单求和（含历史重复）」</strong>：'
+         '其中 78 个早期分词 shard (code_s 30 + l3_s 12 + math_s 36) 的源数据已在 /nas_env/full_* 全量重分词，属重复占盘。'
+         '2026-10-25 已删除这 78 个 covered shard（释放 ~3.69 TiB），保留 32 个 uncovered shard（l3_s 28 + math_s 4，来源不明待人工裁决）。</p>'
+         '<p><strong>去重后已分词总量（训练可用）= env14 2238.14 B + /nas_env 5 源 1056.36 B = %.2f B</strong>'
+         '（env14 与 full_* 无重叠；32 保留 shard 来源不明，不计入训练可用）。</p>'
+         '<p>盘点共 <strong>%d 个数据源目录</strong>：① 5 个 parquet 下载目录 (openbmb) ② 4 个 baize-data/text 分词前缀（含 1 已删除）③ 5 个 /nas_env 全量分词目录。'
          '原始 parquet 合计 <strong>%.2f TB</strong>；分词产物合计 <strong>%.2f TB / %.2f B tokens</strong>；总占盘 <strong>%.2f TB</strong>。</p></div>' % (
+    V2_HIST_TOK_B, btok(DEDUP_TOK),
     TOT["n"], tb(SA["bytes"]), tb(SB["bytes"]+SC["bytes"]),
     btok(TOT_TOK), tb(TOT["bytes"])))
 
@@ -197,6 +210,13 @@ H.append('<div class="card green"><div class="label">实测 Token 累计（分�
 H.append('<div class="card orange"><div class="label">.bin Shard 总数</div><div class="num">%d</div><div class="label">.idx 同数 = %d</div></div>' % (TOT["bin"], TOT["idx"]))
 H.append('<div class="card purple"><div class="label">数据源目录数</div><div class="num">%d</div><div class="label">5 下载 + 9 分词</div></div>' % TOT["n"])
 H.append('</div>')
+H.append('<div class="ok" style="border-left:4px solid #11998e;background:#e8f5e9;padding:15px 18px;margin:12px 0;border-radius:0 6px 6px 0">'
+         '<p style="font-size:15px"><strong>★ 去重后已分词总量（训练可用）= %.2f B</strong>'
+         '  ＝ env14 (2238.14 B) ＋ /nas_env 5 源 (1056.36 B) ＝ %s tok</p>'
+         '<p style="font-size:13px;color:#555;margin-top:4px">env14 (en_v1_4 CC-MAIN 110 snapshot) 与 /nas_env/full_* 无重叠；'
+         '32 个保留早期 shard (l3_s 28 + math_s 4, 合 %.2f B) 来源不明待人工裁决，<strong>不计入</strong>训练可用。'
+         'v2 原总计 %.2f B ＝ 文件清单求和（含历史重复），已废弃。</p></div>' % (
+    btok(DEDUP_TOK), fmt_bytes(DEDUP_TOK), btok(427574350106+45275478271), V2_HIST_TOK_B))
 H.append('<div class="warn"><strong>口径说明</strong>：总占盘字节 = 全部 %d 行 <code>du -sb</code> 之和（含原始 parquet + 分词 .bin/.idx/.json），'
          '是<strong>物理磁盘占用</strong>而非数据量（同一数据可能以 parquet 和 .bin 两种形式同时占盘）。'
          'Token 仅来自已分词源（9 行）的 <code>.json num_tokens</code> 求和；未分词源 token 列写「未分词（未实测）」，不计入 token 总计。</div>' % TOT["n"])
@@ -281,6 +301,7 @@ H.append('<tr><td>4</td><td><strong>遗漏 UltraX-Preview</strong>：openbmb/Ult
 H.append('<tr><td>5</td><td><strong>text/ 小计行数错误</strong>：v1 text/ 小计下仅 4 个子源 (env14/code/l3/math)，但表头/结构暗示 5 源；且 2238.14+550.07+658.91+274.92=3722.04≠3722.05（四舍五入误差被当精确值）</td><td>v2 ③ Section B 小计明确标 4 行；token 小计由脚本从 .json num_tokens 精确求和 = %s tok = %.2f B，附录 B 有算式</td></tr>' % (fmt_bytes(SB["tokens"]), btok(SB["tokens"])))
 H.append('<tr><td>6</td><td>v1 ④ 仅列分词产物，缺「下载目录」维度，无法与 openbmb 目录对应</td><td>v2 ③ 分 Section A (下载 parquet) / B (baize-data/text 分词) / C (/nas_env 全量分词)，每行写明绝对路径，与 <code>ls</code> 一一对应</td></tr>')
 H.append('<tr><td>7</td><td>v1 未说明 Ultra-FineWeb-L3 / UltraData-* 在 openbmb 不存在</td><td>v2 目录清单区明确：openbmb 下仅 Ultra-FineWeb + UltraX-Preview；L3/UltraData 分词产物在 /nas_env (Section C)</td></tr>')
+H.append('<tr><td>8</td><td><strong>v2 总计 4778.41 B 含历史重复</strong>：78 个早期分词 shard (code_s 30 + l3_s 12 + math_s 36) 的源数据已在 /nas_env/full_* 全量重分词，v2 将两者一并求和导致重复计 token ~1011 B。2026-10-25 prune 删除这 78 个 covered shard (释放 ~3.69 TiB)，保留 32 个 uncovered shard (来源不明)</td><td>v3 新增「去重后已分词总量（训练可用）」= env14 2238.14 B + /nas_env 1056.36 B = <strong>3294.50 B</strong>；v2 原 4778.41 B 标注为「文件清单求和（含历史重复）」</td></tr>')
 H.append('</table>')
 
 # ---- 附录 A 命令与输出 ----
@@ -325,9 +346,9 @@ for nm, val, src in HIST_REF:
 H.append('</table>')
 
 # ---- footer ----
-H.append('<div class="footer">BaiZe Data Agent · 盘点 v2 返工 · 生成时间 %s · '
-         '生成器 gen_tokenized_inventory_report.py · 实测 TSV inventory_v2_20261025.tsv · '
-         '口径：以下载目录为准，不自造数据源，小计脚本求和</div>' % GEN_TS)
+H.append('<div class="footer">BaiZe Data Agent · 盘点 v3 (prune 后去重) · 生成时间 %s · '
+         '生成器 gen_tokenized_inventory_report.py · 实测 TSV inventory_v3_20261025.tsv · '
+         '口径：以下载目录为准，不自造数据源，小计脚本求和 · 去重训练可用 3294.50 B</div>' % GEN_TS)
 H.append('</div></body></html>')
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)

@@ -1,0 +1,205 @@
+{
+  "generated_by": "analyze_prune_unmapped.py",
+  "operator_order": "2026-10-25 10:3x",
+  "env14_untouched": true,
+  "full_source_set_size": 3422,
+  "full_by_name": {
+    "full_ultradata_code_l2": 561,
+    "full_ultradata_code_l3": 560,
+    "full_ufw_l3": 616,
+    "full_ultradata_math_l3": 200,
+    "full_ultradata_math_l1": 1485
+  },
+  "early_groups": {
+    "code_s": {
+      "total": 30,
+      "covered": 30,
+      "uncovered": 0,
+      "tok_covered": 550073686046,
+      "tok_uncovered": 0
+    },
+    "l3_s": {
+      "total": 40,
+      "covered": 12,
+      "uncovered": 28,
+      "tok_covered": 231340239433,
+      "tok_uncovered": 427574350106
+    },
+    "math_s": {
+      "total": 40,
+      "covered": 36,
+      "uncovered": 4,
+      "tok_covered": 229645066468,
+      "tok_uncovered": 45275478271
+    }
+  },
+  "delete_files": 234,
+  "delete_bytes": 4059923990038,
+  "delete_tb": 4.06,
+  "keep_uncovered_shards": [
+    {
+      "shard": "l3_s0",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s1",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s2",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s3",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s4",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s5",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s6",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s7",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s8",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s9",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s10",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s11",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style"
+    },
+    {
+      "shard": "l3_s12",
+      "uncovered_parquet": 12,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style;Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa"
+    },
+    {
+      "shard": "l3_s25",
+      "uncovered_parquet": 2,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa;Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s26",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s27",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s28",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s29",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s30",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s31",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style"
+    },
+    {
+      "shard": "l3_s32",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style;Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s33",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s34",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s35",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s36",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s37",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s38",
+      "uncovered_parquet": 45,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "l3_s39",
+      "uncovered_parquet": 9,
+      "download_dir": "Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa"
+    },
+    {
+      "shard": "math_s32",
+      "uncovered_parquet": 33,
+      "download_dir": "UltraData-Math/data/UltraData-Math-L1;UltraData-Math/data/UltraData-Math-L2-preview"
+    },
+    {
+      "shard": "math_s33",
+      "uncovered_parquet": 46,
+      "download_dir": "UltraData-Math/data/UltraData-Math-L2-preview"
+    },
+    {
+      "shard": "math_s34",
+      "uncovered_parquet": 46,
+      "download_dir": "UltraData-Math/data/UltraData-Math-L2-preview"
+    },
+    {
+      "shard": "math_s35",
+      "uncovered_parquet": 13,
+      "download_dir": "UltraData-Math/data/UltraData-Math-L2-preview;UltraData-Math/data/UltraData-Math-L3"
+    }
+  ],
+  "outputs": [
+    "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_judgment_20261025.tsv",
+    "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/prune_unmapped_20261025.txt"
+  ]
+}
