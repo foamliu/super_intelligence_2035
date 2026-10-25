@@ -1,5 +1,46 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 202 | TARGET: 29 -->
+## RUN_ID 202 — 🔍 只读：13:15 实况（data 是否活着 / 分词是否在跑 / 12:29 那次改动是什么）
+
+```bash
+set -u
+echo "=== RUN_ID 202 | live status | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+
+echo "[1] data loop / cline"
+LP=$(ps -eo pid=,comm=,args= after 2>/dev/null | awk '$2=="bash" && /baize_data_loop\.sh/ {print $1}' | head -1)
+echo "  loop_pid=${LP:-NONE}"
+[ -n "${LP:-}" ] && ps -o pid=,etimes=,stat=,args= -p "$LP" | cut -c1-90
+ps -eo pid=,etimes=,args= | grep cline | grep cline_data | grep -v grep | cut -c1-100 | head -3
+echo "  loop_log tail:"; tail -4 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-120
+ls -l --time-style=+%F_%T /tmp/baize_data_loop.log 2>/dev/null | awk '{print "  log "$6" "$5"B"}'
+
+echo "[2] 分词是否在跑"
+ps -eo pid=,etimes=,pcpu=,args= | grep -E '[p]reprocess_data|[t]okenize_untokenized' | head -5 | cut -c1-110
+echo "  进程数=$(ps -eo args= | grep -cE '[p]reprocess_data' || true)"
+echo "  load=$(cat /proc/loadavg)  nproc=$(nproc)"
+ls -lt /tmp/tokenize_untokenized_*.log /tmp/tokenize_*.log 2>/dev/null | head -3 || echo "  无分词日志"
+
+echo "[3] tokenized 布局"
+[ -d "$B/tokenized" ] && find "$B/tokenized" -maxdepth 3 -type d | sed "s#$B/##" | head -12 || echo "  tokenized/ 不存在"
+
+echo "[4] 12:29 那次 map TSV 改了什么"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && {
+  git status --porcelain | head -12
+  echo "  --- HEAD ---"; git --no-pager log --format='%h %ci %s' -2
+  echo "  --- map TSV diff（工作区 vs HEAD）---"
+  git --no-pager diff --stat -- doc/BaiZe-ISEDA2027/run/data/map_dl_vs_tok_20261025.tsv
+  git --no-pager diff -- doc/BaiZe-ISEDA2027/run/data/map_dl_vs_tok_20261025.tsv | head -40
+}
+
+echo "[5] 报告与核对表"
+ls -l --time-style=+%F_%T "$R/reports/report_data_tokenized_inventory_zh.html" "$R/run/data/report_verify_20261025.md" 2>/dev/null | awk '{print "  "$6" "$5" "$7}'
+grep -c "复核 PASS" "$R/reports/report_data_tokenized_inventory_zh.html" 2>/dev/null | sed 's/^/  复核PASS行=/'
+echo "=== DONE 202 ==="
+```
+
 <!-- RUN_ID: 201 | TARGET: 29 -->
 ## RUN_ID 201 — 🔍 只读：进展（tokenized 布局 / INDEX / 标定 / 分词进程与日志）
 
