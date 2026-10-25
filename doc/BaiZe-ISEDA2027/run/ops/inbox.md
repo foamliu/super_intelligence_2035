@@ -1,7 +1,76 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 188 | TARGET: 29 -->
-## RUN_ID 188 — 🔧 只读修正：定位 TASK/MEMORY 真实路径（上轮 $R 路径猜错，全部 NOT_FOUND）
+<!-- RUN_ID: 189 | TARGET: 29 -->
+## RUN_ID 189 — 🔄 整体 git pull（让 4 个 agent 共享仓库同步到最新运维令）
+
+```bash
+set -u
+echo "=== RUN_ID 189 | repo-wide sync | $(date '+%F %T') | host=$(hostname) ==="
+# 四个白泽 agent 共用这一个仓库；中继在这里 pull，等于替它们把任务书同步到最新
+repos="/nas_train/app.e0031982/code/super_intelligence_2035 /nasdata/app.e0031982/code/super_intelligence_2035"
+for GR in $repos; do
+  [ -d "$GR/.git" ] || continue
+  echo ""
+  echo "########## REPO: $GR ##########"
+  cd "$GR" || continue
+  echo "[A] pull 前"
+  echo "  HEAD=$(git rev-parse --short HEAD 2>/dev/null)  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  echo "  status: $(git status -sb 2>/dev/null | head -1)"
+  echo "  dirty(已跟踪文件改动数): $(git status --porcelain --untracked-files=no 2>/dev/null | wc -l)"
+  echo "  dirty list(前10):"
+  git status --porcelain --untracked-files=no 2>/dev/null | head -10 | sed 's/^/    /'
+
+  echo "[B] fetch + 快进 pull（不 reset、不 rebase、不 stash，避免丢 agent 未提交工作）"
+  timeout 120 git fetch origin 2>&1 | tail -3
+  BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)
+  AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+  echo "  behind=$BEHIND ahead=$AHEAD"
+  if [ "$BEHIND" = "0" ] && [ "$AHEAD" = "0" ]; then
+    echo "  -> 已最新，无需 pull"
+  elif [ "$AHEAD" = "0" ]; then
+    echo "  -> 纯落后，执行 git merge --ff-only origin/main"
+    timeout 120 git merge --ff-only origin/main 2>&1 | tail -5
+  else
+    echo "  -> 本地有 $AHEAD 个未推送 commit + 落后 $BEHIND：只做 fetch，不 merge（避免冲突砸掉 agent 工作）"
+    echo "     （agent 下一轮自己 push 后即可 ff）"
+  fi
+
+  echo "[C] pull 后核验：4 条线运维令是否都在工作副本里"
+  T="$GR/doc/BaiZe-ISEDA2027/run"
+  echo "  HEAD=$(git rev-parse --short HEAD 2>/dev/null)"
+  for pair in \
+    "PRETRAIN|BAIZE_PRETRAIN_2B_TASK.md|双机 16 卡吞吐" \
+    "DATA|BAIZE_DATA_TASK.md|重新盘点 MiniCPM5" \
+    "HARNESS|BAIZE_HARNESS_TASK.md|排查并修复 claude-code" \
+    "VISION|BAIZE_VISION_TASK.md|WAITING" ; do
+    name="${pair%%|*}"; rest="${pair#*|}"; f="${rest%%|*}"; pat="${rest#*|}"
+    if [ -f "$T/$f" ]; then
+      c=$(grep -ac "$pat" "$T/$f" 2>/dev/null || echo 0)
+      echo "    $name  $f  pattern[$pat] = $c"
+    else
+      echo "    $name  $f  NOT_FOUND"
+    fi
+  done
+  echo "  MEMORY 文件 mtime:"
+  for m in MEMORY_PRETRAIN_2B.md MEMORY_DATA.md MEMORY_HARNESS.md MEMORY_VISION.md; do
+    [ -f "$T/$m" ] && echo "    $m  $(stat -c '%y' "$T/$m" 2>/dev/null | cut -c1-19)  $(grep -m1 '^WAITING:' "$T/$m" 2>/dev/null)"
+  done
+done
+
+echo ""
+echo "[D] 确认仍是唯一一个 relay（没被重复拉起）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'ops_relay\.sh' | grep -v grep | cut -c1-120
+echo "=== DONE 189 ==="
+```
+
+## RUN_ID 188 — 🔧 只读修正：定位 TASK/MEMORY 真实路径（已执行 exit=0）
+
+```text
+结论：GIT_ROOT=/nas_train/app.e0031982/code/super_intelligence_2035；TASK 真实路径在
+doc/BaiZe-ISEDA2027/run/ 下（上轮 $R 变量拼错导致 NOT_FOUND）；harness TASK 内 08:2x 令
+grep -a 命中 1 次（说明文件里确实有，agent 是否读到另说）；harness loop cwd=仓库根；
+.12 的仓库 HEAD=8e43a17b7。
+```
 
 ```bash
 set -u
