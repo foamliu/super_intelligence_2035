@@ -21617,3 +21617,102 @@ echo "=== DONE 205 ==="
   跳过重启（runs=0 left=0）
 === DONE 205 ===
 ```
+
+---
+
+## RUN_ID 206 · 2026-10-25 13:52:27 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 206 | supervisor for tokenize | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+S=$R/run/data_pipeline/run_tokenize_untokenized.sh
+SUP=$R/run/data_pipeline/tokenize_supervisor.sh
+
+echo "[1] 诊断：谁在写 / 有没有残留"
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)  python=$(ps -eo args= | grep -c '[p]ython.*preprocess' || true)"
+echo "  pid335288 alive? $(ps -p 335288 -o pid=,etimes=,args= 2>/dev/null | cut -c1-90 || echo NO)"
+echo "  /tmp 最近文件:"; ls -lt /tmp 2>/dev/null | head -6 | awk '{print "    "$6" "$7" "$8}'
+echo "  plan 文件:"; find "$R/run" -maxdepth 3 -name '*plan*.tsv' -newermt '-6 hours' 2>/dev/null | head -5
+
+echo "[2] 计数（目标 131 shard）"
+for p in ufw_en_train ufw_l1_en_hq_train ufw_zh_train ultrax_aicc_train; do
+  printf "  %-22s bin=%s\n" "$p" "$(ls $B/text/${p}*.bin 2>/dev/null | wc -l)"
+done
+echo "  text/ 总 bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)"
+
+echo "[3] 写监督脚本（每 60s 拉起一次，直到 131 全 DONE 或连续 5 轮无新增）"
+cat > "$SUP" <<'EOS'
+#!/usr/bin/env bash
+# tokenize_supervisor.sh — 反复拉起 run_tokenize_untokenized.sh，直到无新增或全 DONE
+set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+SH=$R/run/data_pipeline/run_tokenize_untokenized.sh
+cd "$R/run/data_pipeline" || exit 1
+idle=0
+for i in $(seq 1 240); do
+  before=$(ls "$B/text"/*.bin 2>/dev/null | wc -l)
+  running=$(ps -eo args= | grep -c '[p]reprocess_data' || true)
+  if [ "$running" -eq 0 ]; then
+    echo "[sup $(date +%H:%M:%S)] relaunch #$i (bin=$before)"
+    bash "$SH" >> "/tmp/tokenize_untokenized_sup.log" 2>&1 &
+    sleep 45
+  fi
+  after=$(ls "$B/text"/*.bin 2>/dev/null | wc -l)
+  echo "[sup $(date +%H:%M:%S)] bin=$after running=$(ps -eo args= | grep -c '[p]reprocess_data' || true)"
+  if [ "$after" -ge 285 ]; then echo "[sup] DONE 285"; break; fi
+  if [ "$after" -eq "$before" ]; then idle=$((idle+1)); else idle=0; fi
+  [ "$idle" -ge 5 ] && { echo "[sup] no progress x5 -> stop"; break; }
+  sleep 60
+done
+EOS
+chmod +x "$SUP"
+echo "  supervisor 行数=$(wc -l < "$SUP")"
+
+echo "[4] 启动监督循环"
+setsid -f nohup bash "$SUP" >> /tmp/tokenize_supervisor.out 2>&1 < /dev/null
+sleep 30
+echo "  supervisor pid: $(ps -eo pid=,args= | grep '[t]okenize_supervisor' | cut -c1-70)"
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)"
+echo "  --- /tmp/tokenize_supervisor.out ---"; tail -6 /tmp/tokenize_supervisor.out 2>/dev/null | cut -c1-140
+echo "  --- /tmp/tokenize_untokenized_sup.log ---"; tail -6 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-140
+echo "=== DONE 206 ==="
+```
+
+**输出**
+```
+=== RUN_ID 206 | supervisor for tokenize | 2026-10-25 13:52:27 | host=whag0pgpuap29 ===
+[1] 诊断：谁在写 / 有没有残留
+  preprocess=0  python=0
+  pid335288 alive? 
+  /tmp 最近文件:
+      
+    Oct 25 13:52
+    Oct 25 13:52
+    Oct 25 13:52
+    Oct 25 13:50
+    Oct 25 13:49
+  plan 文件:
+[2] 计数（目标 131 shard）
+  ufw_en_train           bin=32
+  ufw_l1_en_hq_train     bin=32
+  ufw_zh_train           bin=0
+  ultrax_aicc_train      bin=0
+  text/ 总 bin=174
+[3] 写监督脚本（每 60s 拉起一次，直到 131 全 DONE 或连续 5 轮无新增）
+  supervisor 行数=23
+[4] 启动监督循环
+  supervisor pid: 3539841 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/
+  preprocess=64
+  --- /tmp/tokenize_supervisor.out ---
+[sup 13:52:28] relaunch #1 (bin=174)
+  --- /tmp/tokenize_untokenized_sup.log ---
+=== PHASE A: CALIBRATION START 2026-10-25 13:52:28 ===
+tiers=64 96 128 192 nice=10 nproc=224 model=serial+concurrent measure=.bin-growth
+calib single-parquet shard dirs: 256
+[2026-10-25 13:52:30] TIER W=64 launching 64 serial shard procs (nice -n 10) ...
+=== DONE 206 ===
+```
