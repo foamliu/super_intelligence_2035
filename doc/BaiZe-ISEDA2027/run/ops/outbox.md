@@ -21716,3 +21716,67 @@ calib single-parquet shard dirs: 256
 [2026-10-25 13:52:30] TIER W=64 launching 64 serial shard procs (nice -n 10) ...
 === DONE 206 ===
 ```
+
+---
+
+## RUN_ID 207 · 2026-10-25 14:05:34 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 207 | progress | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+B=/nas_train/app.e0031982/datasets/baize-data
+echo "[1] 进程"
+echo "  preprocess=$(ps -eo args= | grep -c '[p]reprocess_data' || true)  load=$(cat /proc/loadavg)"
+ps -eo pid=,etimes=,args= | grep '[t]okenize_supervisor' | cut -c1-70
+echo "[2] 产出"
+for p in ufw_en_train ufw_l1_en_hq_train ufw_zh_train ultrax_aicc_train; do
+  printf "  %-22s bin=%s\n" "$p" "$(ls $B/text/${p}*.bin 2>/dev/null | wc -l)"
+done
+echo "  text/ 总 bin=$(ls $B/text/*.bin 2>/dev/null | wc -l)   目标≈285"
+echo "  最近写入:"; ls -lt --time-style=+%H:%M:%S "$B/text"/*.bin 2>/dev/null | head -3 | awk '{print "    "$6" "$7}'
+du -sh "$B/text" 2>/dev/null | awk '{print "  text/ 体积="$1}'
+echo "[3] 监督日志"
+tail -8 /tmp/tokenize_supervisor.out 2>/dev/null | cut -c1-120
+echo "  --- tokenize log ---"; tail -5 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-130
+echo "[4] tokenized 布局"
+[ -d "$B/tokenized" ] && { find "$B/tokenized" -maxdepth 3 -type d | sed "s#$B/##" | head -8; ls -l "$B/tokenized/INDEX.tsv" 2>/dev/null | awk '{print "  INDEX "$5"B"}'; } || echo "  仍无 tokenized/（①未做）"
+echo "=== DONE 207 ==="
+```
+
+**输出**
+```
+=== RUN_ID 207 | progress | 2026-10-25 14:05:34 | host=whag0pgpuap29 ===
+[1] 进程
+  preprocess=64  load=71.00 81.91 62.35 90/35057 477390
+[2] 产出
+  ufw_en_train           bin=32
+  ufw_l1_en_hq_train     bin=32
+  ufw_zh_train           bin=0
+  ultrax_aicc_train      bin=0
+  text/ 总 bin=174   目标≈285
+  最近写入:
+    14:05:35 /nas_train/app.e0031982/datasets/baize-data/text/ufw_l1_en_hq_train_s7.bin
+    14:05:35 /nas_train/app.e0031982/datasets/baize-data/text/ufw_l1_en_hq_train_s8.bin
+    14:05:35 /nas_train/app.e0031982/datasets/baize-data/text/ufw_l1_en_hq_train_s3.bin
+  text/ 体积=8.4T
+[3] 监督日志
+[sup 13:52:28] relaunch #1 (bin=174)
+[sup 13:53:13] bin=174 running=64
+[sup 13:54:13] bin=174 running=96
+[sup 13:55:13] relaunch #3 (bin=174)
+[sup 13:55:58] bin=174 running=128
+[sup 13:56:59] bin=174 running=192
+[sup 13:57:59] bin=174 running=192
+[sup] no progress x5 -> stop
+  --- tokenize log ---
+[2026-10-25 14:01:16] LAUNCH ufw_l1_en_hq s28 (64 parquet col=content att=2) -> ufw_l1_en_hq_train_s28 (running=60)
+[2026-10-25 14:01:18] LAUNCH ufw_l1_en_hq s29 (64 parquet col=content att=2) -> ufw_l1_en_hq_train_s29 (running=61)
+[2026-10-25 14:01:21] LAUNCH ufw_l1_en_hq s30 (64 parquet col=content att=2) -> ufw_l1_en_hq_train_s30 (running=62)
+[2026-10-25 14:01:23] LAUNCH ufw_l1_en_hq s31 (64 parquet col=content att=2) -> ufw_l1_en_hq_train_s31 (running=63)
+[2026-10-25 14:04:17] done=0/131 running=64 pending=67 giveup=0 tokens=0 bin_bytes=0 | tokens/s=0 cpu=6751% ETA=0s
+[4] tokenized 布局
+  仍无 tokenized/（①未做）
+=== DONE 207 ===
+```
