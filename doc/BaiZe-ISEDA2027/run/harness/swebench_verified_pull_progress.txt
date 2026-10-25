@@ -272,3 +272,5 @@
 [swebench-pull] [265/500] OK matplotlib__matplotlib-23314 pulled=265 failed=0 skipped=0
 [swebench-pull] [266/500] OK matplotlib__matplotlib-23412 pulled=266 failed=0 skipped=0
 [swebench-pull] [267/500] OK matplotlib__matplotlib-23476 pulled=267 failed=0 skipped=0
+[swebench-pull] [268/500] OK matplotlib__matplotlib-24026 pulled=268 failed=0 skipped=0
+[swebench-pull] [269/500] OK matplotlib__matplotlib-24149 pulled=269 failed=0 skipped=0
