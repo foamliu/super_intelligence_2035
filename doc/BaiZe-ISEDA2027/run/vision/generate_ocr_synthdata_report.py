@@ -16,7 +16,7 @@ from datetime import datetime
 from html import escape
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REPORTS_DIR = os.path.join(os.path.dirname(SCRIPT_DIR), "reports")
+REPORTS_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "reports"))  # 项目级 reports/（运维 18:5x 纠正：不许落 run/reports/）
 OUT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out"
 DEFAULT_OUT = os.path.join(REPORTS_DIR, "report_vision_ocr_synthdata_zh.html")
 

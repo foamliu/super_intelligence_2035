@@ -36,6 +36,7 @@
 
 **4) 纪律与产出**
 - 交付：`reports/report_vision_ocr_synthdata_zh.html` + 生成器 `vision/generate_ocr_synthdata_report.py` + `EXPERIMENTS_VISION.md` 新节指针 + `MEMORY_VISION.md` 首部新块 + daily；commit 前缀 `vision ocr-report:`。
+- ⚠️ 运维纠正（18:5x）：报告与生成器输出必须落**项目级** `doc/BaiZe-ISEDA2027/reports/`；`run/reports/` 属历史遗留目录，**不许再写**（本次已由运维 `git mv` 归位，并修 `REPORTS_DIR` 为 `../../reports`）。
 - 自检：不低于 15KB、`grep -c '<script'` = 0、`grep -c 'href="http'` = 0、HTMLParser 标签配平。
 - 本轮**只调研 + 写报告**：不启训练、不动 ArmB / C / D / E 产物、不伪造 API key（等用户批准预算）。
 
