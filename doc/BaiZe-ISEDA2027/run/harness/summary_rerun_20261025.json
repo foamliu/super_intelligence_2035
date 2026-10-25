@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T21:10:45Z",
+  "generated_at": "2026-10-25T22:23:20Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -1649,9 +1649,9 @@
   },
   "hermes_rerun_20261025": {
     "pass": 22,
-    "rewarded": 36,
-    "exceptions": 30,
-    "completed": 66,
+    "rewarded": 39,
+    "exceptions": 33,
+    "completed": 72,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2111,6 +2111,48 @@
       {
         "task": "pytorch-model-cli",
         "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-recovery",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-alpine-ssh",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-startup",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "query-optimize",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "raman-fitting",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "regex-chess",
+        "harness": "hermes_rerun",
         "reward": null,
         "err_type": null,
         "err_subcause": null
@@ -2118,10 +2160,10 @@
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 10,
-    "rewarded": 30,
+    "pass": 12,
+    "rewarded": 34,
     "exceptions": 11,
-    "completed": 41,
+    "completed": 45,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2405,6 +2447,34 @@
       },
       {
         "task": "largest-eigenval",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "llm-inference-batching-scheduler",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "log-summary-date-ranges",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mailman",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "make-doom-for-mips",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,

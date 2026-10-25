@@ -5,11 +5,11 @@
  },
  "rerun": {
   "hermes": {
-   "dirs": 66,
-   "done": 36,
+   "dirs": 72,
+   "done": 39,
    "pass": 22,
-   "err": 30,
-   "running": 0
+   "err": 32,
+   "running": 1
   },
   "hermes_detail": {
    "adaptive-rejection-sampler": {
@@ -403,18 +403,54 @@
     "dir": "pypi-server__kFX6MZ3"
    },
    "pytorch-model-cli": {
-    "state": "err",
-    "reward": null,
+    "state": "done",
+    "reward": "0",
     "err_type": "asyncio.exceptions.CancelledError",
     "dir": "pytorch-model-cli__WvPNrpc"
+   },
+   "pytorch-model-recovery": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "pytorch-model-recovery__CAzKjFU"
+   },
+   "qemu-alpine-ssh": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "qemu-alpine-ssh__p5DPc2b"
+   },
+   "qemu-startup": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "qemu-startup__Ar2euEJ"
+   },
+   "query-optimize": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "query-optimize__B4UMKy8"
+   },
+   "raman-fitting": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "raman-fitting__UwUKhCv"
+   },
+   "regex-chess": {
+    "state": "running",
+    "reward": null,
+    "err_type": "",
+    "dir": "regex-chess__fQTy6T9"
    }
   },
   "claude-code": {
-   "dirs": 41,
-   "done": 30,
-   "pass": 10,
-   "err": 10,
-   "running": 1
+   "dirs": 45,
+   "done": 34,
+   "pass": 12,
+   "err": 11,
+   "running": 0
   },
   "claude-code_detail": {
    "adaptive-rejection-sampler": {
@@ -658,10 +694,34 @@
     "dir": "large-scale-text-editing__FoWKV5Y"
    },
    "largest-eigenval": {
-    "state": "running",
-    "reward": null,
-    "err_type": "",
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
     "dir": "largest-eigenval__brnrxoN"
+   },
+   "llm-inference-batching-scheduler": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "llm-inference-batching-scheduler__iDF6PKi"
+   },
+   "log-summary-date-ranges": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "log-summary-date-ranges__zyFotPh"
+   },
+   "mailman": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "mailman__7HWqcec"
+   },
+   "make-doom-for-mips": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "make-doom-for-mips__Ndxjmnz"
    }
   }
  },
@@ -1209,9 +1269,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": "running",
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": ""
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "llm-inference-batching-scheduler",
@@ -1222,9 +1282,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "log-summary-date-ranges",
@@ -1235,9 +1295,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "mailman",
@@ -1248,9 +1308,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "make-doom-for-mips",
@@ -1261,9 +1321,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "make-mips-interpreter",
@@ -1529,8 +1589,8 @@
    "task": "pytorch-model-cli",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": "err",
-   "hermes_rerun_reward": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
@@ -1542,9 +1602,9 @@
    "task": "pytorch-model-recovery",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1555,9 +1615,9 @@
    "task": "qemu-alpine-ssh",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1568,9 +1628,9 @@
    "task": "qemu-startup",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1581,9 +1641,9 @@
    "task": "query-optimize",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1594,9 +1654,9 @@
    "task": "raman-fitting",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1607,9 +1667,9 @@
    "task": "regex-chess",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "running",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
