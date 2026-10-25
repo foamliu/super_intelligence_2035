@@ -1,5 +1,28 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
+<!-- RUN_ID: 208 | TARGET: 29 -->
+## RUN_ID 208 — 📈 只读：采样 180 秒算**真实产出速率**（done=0/131 是计数器坏了还是真没产出）
+
+```bash
+set -u
+echo "=== RUN_ID 208 | rate sample | $(date '+%F %T') | host=$(hostname) ==="
+B=/nas_train/app.e0031982/datasets/baize-data
+
+snap() {
+  echo "  t=$(date +%H:%M:%S) bin=$(ls $B/text/*.bin 2>/dev/null | wc -l) idx=$(ls $B/text/*.idx 2>/dev/null | wc -l) json=$(ls $B/text/*.json 2>/dev/null | wc -l)"
+  echo "    bytes=$(du -sb $B/text 2>/dev/null | cut -f1)"
+  echo "    newest=$(ls -t $B/text/*.bin 2>/dev/null | head -1 | xargs -r stat -c '%y' | cut -c1-19)"
+  echo "    running=$(ps -eo args= | grep -c '[p]reprocess_data' || true) load=$(cut -d' ' -f1 /proc/loadavg)"
+}
+echo "[T0]"; snap
+sleep 90
+echo "[T1 +90s]"; snap
+sleep 90
+echo "[T2 +180s]"; snap
+echo "[日志尾]"; tail -4 /tmp/tokenize_untokenized_sup.log 2>/dev/null | cut -c1-130
+echo "=== DONE 208 ==="
+```
+
 <!-- RUN_ID: 207 | TARGET: 29 -->
 ## RUN_ID 207 — 🔍 只读：监督器是否在推进（bin 增量 / 进程 / sup 日志）
 
