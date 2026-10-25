@@ -22,12 +22,24 @@
 ---
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### ⚖️ 口径仲裁（2026-10-25 13:3x · **与下文任何旧条冲突时，一律以本表为准**）
+| 冲突点 | 旧说法 | **现在按这个做** |
+|---|---|---|
+| `env14_*` / `/nas_env/full_*`「不碰」 | 12:5x 块末写「不碰原件」 | 「不碰」= **不删 / 不改 / 不移动 / 不复制**；**允许**建 hardlink（同盘 env14）与 symlink（跨盘 `/nas_env`）用于新布局 |
+| 报告能不能改 | 13:2x「停止一切报告工作」 | **结构冻结**（1 个 `<table>`、6 列、无解读段）；**内容允许**随实测更新——即按新 `tok_dir` 重跑生成器 |
+| 新增分词落哪 | 11:0x「落 `baize-data/text/`」 | **一律落 `baize-data/tokenized/<镜像下载路径>/`**；`text/` 不再新增任何文件 |
+| 前缀命名 | 11:0x `ufw_en_*` / `ultrax_*` | 12:5x 表为准：`ufw_en_s*` / `ufw_l1hq_s*` / `ufw_zh_s*` / `ultrax_aicc_s*` |
+| 并发 | 2026-10-18「32 或 64 核」 | 12:5x 为准：**96/144/192/224 四档各 60s 标定**，取拐点，`workers=min(拐点,200)`，`nice -n 5` |
+| 提交方式 | 收尾铁律「🚫 不用 `git add -A`」 | 仍禁 `-A`；但**白名单已含** `reports/report_data_tokenized_inventory_zh.html` 与 `run/data/`（13:2x 令） |
+
 ### 🔥🔥 最高优先 · 2026-10-25 13:2x · 运维直令 · **停止一切报告工作，现在只做两件事**
 
 > 现状（运维 13:19 实测）：loop 活着（.12 PID 1647008）、cline 活着；你 12:41 重生成报告（10,520 B，1 table，每行加了 `du -sb …` 命令）—— **报告这部分做得对，验收通过**；`untokenized_v1_20261025.tsv`（12:47，500 B）已落。
 > **但 `…/baize-data/tokenized/` 不存在、`preprocess_data` 进程 = 0、load 6.8 → ① 布局没建、② 分词没跑。用户要的就是这两件。**
 
-1. **先提交你在工作区里的成果**（报告 HTML、`gen_tokenized_inventory_report.py`、`untokenized_v1_20261025.tsv`，以及任何核对记录）→ `git add -A && git commit`，前缀 `data:`；**不许留在工作区不提交**。
+1. **先提交你在工作区里的成果**（报告 HTML、`gen_tokenized_inventory_report.py`、`map_dl_vs_tok / untokenized_v1 / report_verify`、`DATA_LEDGER.md`、`MEMORY_DATA.md`）——
+   **用显式路径 add**（收尾铁律禁 `-A`，本令把 `reports/report_data_tokenized_inventory_zh.html` 与 `run/data/` 加入你的提交白名单）：
+   `git add -- doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html doc/BaiZe-ISEDA2027/run/data doc/BaiZe-ISEDA2027/run/DATA_LEDGER.md doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md doc/BaiZe-ISEDA2027/run/daily-memories-data && git commit -m "data <轮次>: <一句话>" && git push origin main`；**不许留在工作区不提交**。
 2. **立刻建 `tokenized/` 镜像布局**（见下方 ①，hardlink/symlink，零拷贝）→ 建完 `tokenized/INDEX.tsv` 必须存在，并在 MEMORY 里贴 `find tokenized -maxdepth 3 -type d` 的实际输出。
 3. **立刻开分词**（见下方 ②）→ **30 分钟内** `/tmp/tokenize_untokenized_*.log` 必须有 `done/total` 行、`ps -eo args= | grep -c '[p]reprocess_data'` 必须 > 0；标定四档（96/144/192/224）的数字要贴回来。
 > 🚫 从现在起**不要再改报告结构、不要再重写报告、不要再补勘误/摘要**（报告已验收）。
@@ -78,14 +90,14 @@
 - `setsid` 后台跑，日志 `/tmp/tokenize_untokenized_*.log`；断点续传（已有三件套跳过）；失败重试 2 次后落 `failed_shards.txt`。
 - **边分边报**：每 30 分钟 `done/total`、tokens/s、CPU%/load、写速、ETA、失败数；全部完成后校验 `.bin=.idx`、字节、`num_tokens`，再更新 `DATA_LEDGER.md §9` + 重生成报告 + `INDEX.tsv`。
 
-> 🚫 不许 `cp` 已有 4.24 TB 产物；🚫 不许 `mv`/`rm` 已有分词文件；🚫 不碰 `env14_*` 原件与 `/nas_env/full_*`。
+> 🚫 不许 `cp` 已有 4.24 TB 产物；🚫 不许 `mv`/`rm` 已有分词文件；🚫 `env14_*` 原件与 `/nas_env/full_*`：不删/不改/不移/不复制（**建 hardlink/symlink 允许**，见顶部仲裁表）。
 > 🚫 报告结构不许改（已经是单表）；只需按新路径重生成。
 > 🚫 不许用「未实测/N/A/—」；未跑完不许称「已就绪」。
 > 顺序：**① 先做（分钟级：链接 + INDEX），② 立刻开跑**；② 未启动前不得睡。
 
 
 ### 🧵 运维令 · 2026-10-25 11:0x（重盘盘点 + 对未分词开跑）· **已并入 12:0x 令，本条仅存档要点**
-> 224 核是上限不是指标（4 档标定 64/96/128/192 取拐点，留余量给 85M）；分词器 `tokenizer_eod`（vocab 129,281 / pad 129,408）；落 `/nas_train/.../baize-data/text/`；每前缀必须有 manifest（shard→源 parquet）；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log` + `failed_shards.txt`；🚫 `/tmp`/`staging`/`*.orig` 不算源。
+> 224 核是上限不是指标（4 档标定 64/96/128/192 取拐点，留余量给 85M）；分词器 `tokenizer_eod`（vocab 129,281 / pad 129,408）；落 `baize-data/tokenized/<镜像下载路径>/`（见仲裁表）；每前缀必须有 manifest（shard→源 parquet）；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log` + `failed_shards.txt`；🚫 `/tmp`/`staging`/`*.orig` 不算源。
 
 ### 🗑 运维令 · 2026-10-25 10:3x（删不可对应产物）· **已执行完毕**
 > 判定 110 shard → 删 78（被 `full_*` 覆盖，3.69 TiB）+ 删 32（不可与下载目录建立产物级对应，1.91 TiB，运维 RUN_ID 199）；`baize-data/text/` 现为 **110 shard / 2238.14 B / 8.93 TB（全 `env14_*`）**。清单 `run/data/prune_unmapped_*.txt|tsv|json`。
@@ -101,33 +113,8 @@
 > 📦 §运维指令·2026-10-21 04:0x（MiniCPM5 全量数据完整分词·224核全开）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：5源全部分词完成（574 shards/1056.36B tokens/4.24TB），env14也完成（110/110/2238.14B/8.88TB）。迁移到/nas_env进行中。需要时再读。
 > 📦 §运维指令·2026-10-20 15:5x（✅恢复en_v1_4下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：下载已恢复并运行中（PID1875054 alive,99/110dirs），kill+重启口径恢复，分词不受影响。需要时再读。
 
-### 🆕 运维指令 · 2026-10-18 21:0x（🔴 分词口径纠正：不按 1.5T/500B 预算截断；要分就某个数据源全部分词）· 用户直令 · 最高优先 · 覆盖旧「到 500B」表述
-
-> **用户原话**：「Data 分词我没有说按 1.5T 分，要分就某个数据源全部分词。」
-> **纠正**：**1.5T / 500B 是 v5 训练取用量估算，不是分词目标、不是停止条件**；分词必须按**某个数据源全量**执行。
->
-> **当前源 = `en_v1_4`**：对 `CC-MAIN-*` 全部 **110 个 snapshot 目录**逐 shard 分词，直到 **110/110** 都有 `.bin/.idx/.json`；**不要在第 8 个 shard、92.6B tok 或 500B tok 处停止/宣告完成**。
->
-> **执行口径**：
-> 1. 当前 `run_tokenize_env14_resume.sh`（PID 2446254）继续跑完已下载 shards；
-> 2. 下载完成的 shard（512 parquet 且无 `.incomplete`）立即排队分词；
-> 3. 下载未完成的 shard **不提前分词**，标 `PENDING_DOWNLOAD`；
-> 4. 全部 110 shard 完成后产出 `env14_fullsource_manifest.tsv` + `env14_fullsource_summary.json`（每 shard tokens/bytes/status + 全源总 tokens），并写入 `DATA_LEDGER.md`；
-> 5. 全源完成前，任何报告**不得**写「en_v1_4 分词完成」；
-> 6. 当前 `run_tokenize_env14_resume.sh` 退出后，用 **`data_pipeline/run_tokenize_env14_fullsource.sh`** 接管（本次已新增）：自动扫描 110 个 shard、跳过 DONE/RUNNING、下载完成后自动补分，直到 **110/110**；启动：
->    `setsid -f nohup bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_tokenize_env14_fullsource.sh > /tmp/run_tokenize_env14_fullsource.log 2>&1 &`
->    （脚本内置等待 resume 退出，避免双 launcher；不要手工再起第二份）。
->
-> **报告**：每次唤醒报 `done/110`、`tokens 累计`、`PENDING_DOWNLOAD`、`全源 ETA`。
->
-> **并发（2026-10-18 21:0x 用户批准）**：分词可用 **32 或 64 核**。默认 **32**；按当前 8 workers ≈230B tok/day 线性外推：32 ≈ **2.5 天**、64 ≈ **1.3–1.5 天**（全源 2.31T；实际受 NFS/内存影响）。先以 32 起跑，10–15 分钟后看 `pgrep -c preprocess_data_cm`、`/proc/io`、NFS 延迟与 tok/s；若近似线性且内存充足，再升 64。
->
-> **接管方式**：当前 `run_tokenize_env14_resume.sh`（PID 2446254）只是发射器；先 `kill 2446254`（**不要杀 8 个 `preprocess_data_cm.py` 子进程**），确认子进程仍 alive 后，立即：
-> `MAX_CONCURRENT=32 setsid -f nohup bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline/run_tokenize_env14_fullsource.sh > /tmp/run_tokenize_env14_fullsource.log 2>&1 &`
-> 若 kill 把子进程也带走，等子进程退出后再启动；DONE shard 自动跳过，不会重复分词。
->
-> 🚫 不为凑 500B/1.5T 跳 shard、不混源部分分词、不把训练取用量当分词上限。
-
+### 🗄 运维指令 · 2026-10-18 21:0x（en_v1_4 全量分词，不按 500B 截断）· **已闭合**
+> 结论：env14 已 **110/110** 完成（2238.14 B tokens / 8.93 TB）；「32 或 64 核」是当时的限速口径，**已被 2026-10-25 12:5x 令的 96–224 四档标定取代**。原文归档 `run/ARCHIVE_OPERATOR_DATA.md`。
 
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
