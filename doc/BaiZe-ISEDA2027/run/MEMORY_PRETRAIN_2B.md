@@ -1,15 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 **2026-10-26 02:0x #786：🔬 rev3 复测推翻 rev2 memory-bound → 真因=CUDA Graph 顶格停滞·关 graph 561K 满速·recompute 证伪·报告 rev3 重写**：
-> - **rev3 根因（复测验证）**：5.4× 骤降 = **CUDA Graph 在 HBM 顶格(~81GB)时的 replay 病态停滞**，**非**显存带宽 memory-bound。同一 tok/mb=16384 配方**仅关 `--enable-cuda-graph`** → **561,126 tok/s = 0.93× 8K 满速**，峰值 81GB→**75.5GB**，loss 7.57/gnorm 0.58/nan 0 健康。**一个 flag 修复，无需 CP、无需 recompute。**
-> - **rev2→rev3 修正**：rev2「显存顶格→memory-bound」**观测真实但归因错误**——顶格是 graph 停滞的**必要条件**（graph ~5.5GB workspace 把 75.5GB 推到 81GB 顶格），**非**带宽瓶颈成因（关 graph 后 75.5GB 即满速、97% util）。
-> - **recompute 证伪（Mamba2-hybrid）**：`--recompute-num-layers 56` 峰值显存 = **75,517 MiB 完全不变**，速度不变（572K vs 561K）。flag 只重算 transformer 层，**SSM 激活主体不触及** ⇒ 对本架构非降显存杠杆；rev2「recompute 降激活」处方作废。recompute+graph 组合还 assert 失败（full-uniform 需 full-iteration graph，Mamba2 用 local graph）。
-> - **复测三格**（脚本 `baize_rc_recompute.sh`，80 iter，稳态 30–80；TSV RC 三行）：cfg0a(graph ON)=121K/81GB❌ → cfg0ang(graph OFF)=**561K/75.5GB**✅ → rc56ng(graph OFF+recompute56)=572K/75.5GB（显存无变化）。
-> - **交付**：① 报告 rev3 重写（`reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`：verdict/档位表 graph 列/五·5 复测节/recompute 证伪/H-mem 改「必要条件」/footer）；② EXPERIMENTS_ROUND2 新增 rev3 节；③ `pretrain_launcher.py` 加 `--context-parallel` CLI（line174+接线109，PY_SYNTAX_OK）；④ TSV 3 rev3 行。
-> - **未完成（WAITING=0 继续）**：CP=2 smoke（`--context-parallel 2`，seq16384/mbs1，20-step，代码已就绪）+ commit rev3 全套 + 08:00 早报（一句话结论+修正档位表+证据路径）。
-> - **未完成指令：有**（CP smoke + commit + 早报）⇒ **WAITING=0**。
-> 📦 体积：TASK=22.2KB / MEMORY≈待测（#785/#784 详块→指针释放~2.7KB，本轮净增可控）。
+> 🆕 **2026-10-26 02:0x #786：🔬 rev3 真因=CUDA Graph 顶格停滞·关 graph 561,126 tok/s=0.93×8K满速(75.5GB)·recompute 证伪(显存不变75,517MiB)·报告 rev3 16.9KB**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` rev3 节 + `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`；TSV RC 三行；`pretrain_launcher.py --context-parallel` CLI 就绪 L174/L109）：
+> - **已交付并 commit (cb0a83307)**：rev3 报告/EXPERIMENTS/TSV/MEMORY。**未完成（WAITING=0）**：① CP=2 smoke（seq32768/mbs1/CP2/graph-off，脚本 `baize_rc_cp_smoke.sh`，验证 32K OOM→CP 启用）+ ② 08:00 早报（一句话结论+修正档位表+证据路径）。**未完成指令：有** ⇒ **WAITING=0**。
 
 > 📦 §#785 流水（2026-10-26 01:3x，rev2 报告重写 25,266B memory-bound + 修 #784 虚假交付）已压缩 → EXPERIMENTS_PRETRAIN_2B_ROUND2.md rev2 节；**结论**：rev2「memory-bound」归因已被 #786 rev3 复测修正为「CUDA Graph 顶格停滞」（显存顶格是必要条件非成因）。需要时再读。
 
