@@ -1,2052 +1,1518 @@
 {
-  "meta": {
-    "generated": "2026-10-25 22:55 (partial - rerun in progress ~3.5h/8-12h)",
-    "canonical_tasks": 87,
-    "old_baseline_date": "2026-10-24 16:21",
-    "rerun_start": "2026-10-25 19:25-19:36",
-    "note": "rerun incomplete; rewards for unfinished tasks = null"
+ "meta": {
+  "generated": "2026-10-26 00:13 (partial - rerun in progress)",
+  "canonical_tasks": 87,
+  "old_baseline_date": "2026-10-24 16:21",
+  "rerun_start": "2026-10-25 19:25-19:36",
+  "note": "rerun incomplete; rewards for unfinished tasks = null"
+ },
+ "old_baseline": {
+  "hermes": {
+   "total": 87,
+   "done": 50,
+   "pass": 0
   },
-  "old_baseline": {
-    "hermes": {
-      "total": 87,
-      "done": 50,
-      "pass": 0
-    },
-    "claude-code": {
-      "total": 57,
-      "done": 34,
-      "pass": 0
-    }
+  "claude-code": {
+   "total": 57,
+   "done": 34,
+   "pass": 0
+  }
+ },
+ "rerun_partial": {
+  "hermes": {
+   "dirs": 30,
+   "done": 16,
+   "pass": 10,
+   "err": 13,
+   "running": 1
   },
-  "rerun_partial": {
-    "hermes": {
-      "dirs": 20,
-      "done": 11,
-      "pass": 8
-    },
-    "claude-code": {
-      "dirs": 18,
-      "done": 11,
-      "pass": 3
-    }
+  "claude-code": {
+   "dirs": 21,
+   "done": 14,
+   "pass": 5,
+   "err": 6,
+   "running": 1
+  }
+ },
+ "tasks": [
+  {
+   "task": "adaptive-rejection-sampler",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "RuntimeError"
+   }
   },
-  "tasks": [
-    {
-      "task": "adaptive-rejection-sampler",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "bn-fit-modify",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "break-filter-js-from-html",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "1",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "build-cython-ext",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "build-pmars",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "build-pov-ray",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "caffe-cifar-10",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "cancel-async-tasks",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "chess-best-move",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "circuit-fibsqrt",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "cobol-modernization",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "code-from-image",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "compile-compcert",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "configure-git-webserver",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "constraints-scheduling",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "count-dataset-tokens",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "crack-7z-hash",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": "NonZeroAgentExitCode",
-        "has_exc": true
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      }
-    },
-    {
-      "task": "custom-memory-heap-crash",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false
-      }
-    },
-    {
-      "task": "db-wal-recovery",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": "1",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "distribution-search",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "dna-assembly",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "dna-insert",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "extract-elf",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "extract-moves-from-video",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "feal-differential-cryptanalysis",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "feal-linear-cryptanalysis",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "filter-js-from-html",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "financial-document-processor",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "fix-code-vulnerability",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "fix-git",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "fix-ocaml-gc",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "Other",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "gcode-to-text",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "git-leak-recovery",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "git-multibranch",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "gpt2-codegolf",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "headless-terminal",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "hf-model-inference",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "install-windows-3.11",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "kv-store-grpc",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "large-scale-text-editing",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "largest-eigenval",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "llm-inference-batching-scheduler",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "log-summary-date-ranges",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "mailman",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "make-doom-for-mips",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "make-mips-interpreter",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "mcmc-sampling-stan",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "merge-diff-arc-agi-task",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "model-extraction-relu-logits",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "modernize-scientific-stack",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "multi-source-data-merger",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "nginx-request-logging",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "openssl-selfsigned-cert",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "overfull-hbox",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "password-recovery",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "path-tracing",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": "0",
-        "err_type": "AgentTimeoutError",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "path-tracing-reverse",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {
-        "reward": null,
-        "err_type": "Other",
-        "has_exc": true
-      },
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "polyglot-c-py",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "polyglot-rust-c",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "portfolio-optimization",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "protein-assembly",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "prove-plus-comm",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "pypi-server",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "pytorch-model-cli",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "Other",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "pytorch-model-recovery",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "qemu-alpine-ssh",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "qemu-startup",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "query-optimize",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "raman-fitting",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "regex-chess",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "regex-log",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "reshard-c4-data",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "rstan-to-pystan",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "sam-cell-seg",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "sanitize-git-repo",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "schemelike-metacircular-eval",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "sparql-university",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "sqlite-db-truncate",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "sqlite-with-gcov",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "torch-pipeline-parallelism",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "torch-tensor-parallelism",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "train-fasttext",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "tune-mjcf",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "video-processing",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "vulnerable-secret",
-      "hermes_old": {
-        "reward": "0",
-        "err_type": null,
-        "has_exc": false
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "winning-avg-corewars",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    },
-    {
-      "task": "write-compressor",
-      "hermes_old": {
-        "reward": null,
-        "err_type": "RuntimeError",
-        "has_exc": true
-      },
-      "hermes_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      },
-      "claude-code_old": {},
-      "claude-code_rerun": {
-        "reward": null,
-        "err_type": null,
-        "has_exc": false,
-        "status": "pending"
-      }
-    }
-  ]
+  {
+   "task": "bn-fit-modify",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "break-filter-js-from-html",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "build-cython-ext",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "build-pmars",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "RuntimeError"
+   }
+  },
+  {
+   "task": "build-pov-ray",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "RuntimeError"
+   }
+  },
+  {
+   "task": "caffe-cifar-10",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "cancel-async-tasks",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "chess-best-move",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "circuit-fibsqrt",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "RuntimeError"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "cobol-modernization",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": "asyncio.exceptions.CancelledError"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "RuntimeError"
+   }
+  },
+  {
+   "task": "code-from-image",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "compile-compcert",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "RuntimeError"
+   }
+  },
+  {
+   "task": "configure-git-webserver",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "constraints-scheduling",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "count-dataset-tokens",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "crack-7z-hash",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "custom-memory-heap-crash",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "db-wal-recovery",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError"
+   }
+  },
+  {
+   "task": "distribution-search",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   }
+  },
+  {
+   "task": "dna-assembly",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": "running",
+    "rerun_reward": null,
+    "err_type": ""
+   }
+  },
+  {
+   "task": "dna-insert",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "extract-elf",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "extract-moves-from-video",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "feal-differential-cryptanalysis",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "feal-linear-cryptanalysis",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "filter-js-from-html",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "0",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "financial-document-processor",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": "err",
+    "rerun_reward": null,
+    "err_type": "NonZeroAgentExitCode"
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "fix-code-vulnerability",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "done",
+    "rerun_reward": "1",
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "fix-git",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": "running",
+    "rerun_reward": null,
+    "err_type": ""
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "fix-ocaml-gc",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "gcode-to-text",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "git-leak-recovery",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "git-multibranch",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "gpt2-codegolf",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "headless-terminal",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "hf-model-inference",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "install-windows-3.11",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "kv-store-grpc",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "large-scale-text-editing",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "largest-eigenval",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "llm-inference-batching-scheduler",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "log-summary-date-ranges",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "mailman",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "make-doom-for-mips",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "make-mips-interpreter",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "mcmc-sampling-stan",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "merge-diff-arc-agi-task",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "model-extraction-relu-logits",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "modernize-scientific-stack",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "multi-source-data-merger",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "nginx-request-logging",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "openssl-selfsigned-cert",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "overfull-hbox",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "password-recovery",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "path-tracing",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": "0",
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "path-tracing-reverse",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "polyglot-c-py",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "polyglot-rust-c",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "portfolio-optimization",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "protein-assembly",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "prove-plus-comm",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "pypi-server",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "pytorch-model-cli",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "pytorch-model-recovery",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "qemu-alpine-ssh",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "qemu-startup",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "query-optimize",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "raman-fitting",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "regex-chess",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "regex-log",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "reshard-c4-data",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "rstan-to-pystan",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "sam-cell-seg",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "sanitize-git-repo",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "schemelike-metacircular-eval",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "sparql-university",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "sqlite-db-truncate",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "sqlite-with-gcov",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "torch-pipeline-parallelism",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "torch-tensor-parallelism",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "train-fasttext",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "tune-mjcf",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "video-processing",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "vulnerable-secret",
+   "hermes": {
+    "old_reward": "0",
+    "old_exc": false,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "winning-avg-corewars",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  },
+  {
+   "task": "write-compressor",
+   "hermes": {
+    "old_reward": null,
+    "old_exc": true,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   },
+   "claude-code": {
+    "old_reward": null,
+    "old_exc": null,
+    "rerun_state": null,
+    "rerun_reward": null,
+    "err_type": null
+   }
+  }
+ ]
 }

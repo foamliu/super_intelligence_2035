@@ -1,0 +1,1479 @@
+{
+ "meta": {
+  "generated_at": "scan",
+  "canonical_tasks": 87
+ },
+ "rerun": {
+  "hermes": {
+   "dirs": 30,
+   "done": 16,
+   "pass": 10,
+   "err": 13,
+   "running": 1
+  },
+  "hermes_detail": {
+   "adaptive-rejection-sampler": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "adaptive-rejection-sampler__rQc8f7D"
+   },
+   "bn-fit-modify": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "bn-fit-modify__qFrpopq"
+   },
+   "break-filter-js-from-html": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "break-filter-js-from-html__gNR5sg8"
+   },
+   "build-cython-ext": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "build-cython-ext__76j96iy"
+   },
+   "build-pmars": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "build-pmars__zwU4jtR"
+   },
+   "build-pov-ray": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "build-pov-ray__WQMP8ep"
+   },
+   "caffe-cifar-10": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "caffe-cifar-10__RV5D2Rc"
+   },
+   "cancel-async-tasks": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "cancel-async-tasks__Gh4oqMx"
+   },
+   "chess-best-move": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "chess-best-move__k9iPGoY"
+   },
+   "circuit-fibsqrt": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "circuit-fibsqrt__znFcgov"
+   },
+   "cobol-modernization": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "cobol-modernization__RH4BPsa"
+   },
+   "code-from-image": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "code-from-image__RZmjebM"
+   },
+   "compile-compcert": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "compile-compcert__JMVa4XT"
+   },
+   "configure-git-webserver": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "configure-git-webserver__hLd4suK"
+   },
+   "constraints-scheduling": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "constraints-scheduling__NqcPGSk"
+   },
+   "count-dataset-tokens": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "count-dataset-tokens__UXfQnWG"
+   },
+   "crack-7z-hash": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "crack-7z-hash__L6mHrz9"
+   },
+   "custom-memory-heap-crash": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "custom-memory-heap-crash__NqnAdX6"
+   },
+   "db-wal-recovery": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "db-wal-recovery__gCpoiVM"
+   },
+   "distribution-search": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "distribution-search__QvDjgE9"
+   },
+   "dna-assembly": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "dna-assembly__AKfrSgH"
+   },
+   "dna-insert": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "dna-insert__4qnvQLU"
+   },
+   "extract-elf": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "extract-elf__ThgSNkM"
+   },
+   "extract-moves-from-video": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "extract-moves-from-video__grPXhzS"
+   },
+   "feal-differential-cryptanalysis": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "feal-differential-cryptanalysis__fTbp3sp"
+   },
+   "feal-linear-cryptanalysis": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "feal-linear-cryptanalysis__pgCnByJ"
+   },
+   "filter-js-from-html": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "filter-js-from-html__AXwHWiy"
+   },
+   "financial-document-processor": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "financial-document-processor__SYqP8tM"
+   },
+   "fix-code-vulnerability": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "fix-code-vulnerability__3gD3wuz"
+   },
+   "fix-git": {
+    "state": "running",
+    "reward": null,
+    "err_type": "",
+    "dir": "fix-git__gjeEgBj"
+   }
+  },
+  "claude-code": {
+   "dirs": 21,
+   "done": 14,
+   "pass": 5,
+   "err": 6,
+   "running": 1
+  },
+  "claude-code_detail": {
+   "adaptive-rejection-sampler": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "adaptive-rejection-sampler__XecZBPn"
+   },
+   "bn-fit-modify": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "bn-fit-modify__h5kAxBb"
+   },
+   "break-filter-js-from-html": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "break-filter-js-from-html__S2zv49d"
+   },
+   "build-cython-ext": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "build-cython-ext__8dZ3SrA"
+   },
+   "build-pmars": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "build-pmars__e5WQbre"
+   },
+   "build-pov-ray": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "build-pov-ray__76Bupty"
+   },
+   "caffe-cifar-10": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "caffe-cifar-10__zwajvFV"
+   },
+   "cancel-async-tasks": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "cancel-async-tasks__58FNxkE"
+   },
+   "chess-best-move": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "chess-best-move__n88CAtm"
+   },
+   "circuit-fibsqrt": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "circuit-fibsqrt__S2DV5PY"
+   },
+   "cobol-modernization": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "cobol-modernization__LWURGu9"
+   },
+   "code-from-image": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "code-from-image__WDVJAc4"
+   },
+   "compile-compcert": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "compile-compcert__752ESLB"
+   },
+   "configure-git-webserver": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "configure-git-webserver__zFRHmbb"
+   },
+   "constraints-scheduling": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "constraints-scheduling__FggTyPt"
+   },
+   "count-dataset-tokens": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "count-dataset-tokens__8EKi9EX"
+   },
+   "crack-7z-hash": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "crack-7z-hash__CkY8CJC"
+   },
+   "custom-memory-heap-crash": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "custom-memory-heap-crash__Jx2nmbH"
+   },
+   "db-wal-recovery": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "db-wal-recovery__eh2ykyg"
+   },
+   "distribution-search": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "distribution-search__2hE7jLY"
+   },
+   "dna-assembly": {
+    "state": "running",
+    "reward": null,
+    "err_type": "",
+    "dir": "dna-assembly__UAQKqi8"
+   }
+  }
+ },
+ "old_baseline": {
+  "hermes": {
+   "total": 87,
+   "done": 50,
+   "pass": 0,
+   "exception": 37
+  },
+  "claude-code": {
+   "total": 57,
+   "done": 34,
+   "pass": 0,
+   "exception": 45
+  }
+ },
+ "pairing": [
+  {
+   "task": "adaptive-rejection-sampler",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "err",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": "RuntimeError"
+  },
+  {
+   "task": "bn-fit-modify",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "break-filter-js-from-html",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "build-cython-ext",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "build-pmars",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "err",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": "RuntimeError"
+  },
+  {
+   "task": "build-pov-ray",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "err",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": "RuntimeError"
+  },
+  {
+   "task": "caffe-cifar-10",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "cancel-async-tasks",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "chess-best-move",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "circuit-fibsqrt",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "RuntimeError",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "err",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "cobol-modernization",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "err",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": "RuntimeError"
+  },
+  {
+   "task": "code-from-image",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "compile-compcert",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "err",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": "RuntimeError"
+  },
+  {
+   "task": "configure-git-webserver",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "constraints-scheduling",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "count-dataset-tokens",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "crack-7z-hash",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "custom-memory-heap-crash",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "db-wal-recovery",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
+  },
+  {
+   "task": "distribution-search",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "dna-assembly",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": "running",
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": ""
+  },
+  {
+   "task": "dna-insert",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "extract-elf",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "extract-moves-from-video",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "feal-differential-cryptanalysis",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "feal-linear-cryptanalysis",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "filter-js-from-html",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "financial-document-processor",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": "err",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "fix-code-vulnerability",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "fix-git",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": "running",
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": "",
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "fix-ocaml-gc",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "gcode-to-text",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "git-leak-recovery",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "git-multibranch",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "gpt2-codegolf",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "headless-terminal",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "hf-model-inference",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "install-windows-3.11",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "kv-store-grpc",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "large-scale-text-editing",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "largest-eigenval",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "llm-inference-batching-scheduler",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "log-summary-date-ranges",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "mailman",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "make-doom-for-mips",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "make-mips-interpreter",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "mcmc-sampling-stan",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "merge-diff-arc-agi-task",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "model-extraction-relu-logits",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "modernize-scientific-stack",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "multi-source-data-merger",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "nginx-request-logging",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "openssl-selfsigned-cert",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": false,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "overfull-hbox",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "password-recovery",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "path-tracing",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": "0",
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "path-tracing-reverse",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": true,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "polyglot-c-py",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "polyglot-rust-c",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "portfolio-optimization",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "protein-assembly",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "prove-plus-comm",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "pypi-server",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "pytorch-model-cli",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "pytorch-model-recovery",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "qemu-alpine-ssh",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "qemu-startup",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "query-optimize",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "raman-fitting",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "regex-chess",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "regex-log",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "reshard-c4-data",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "rstan-to-pystan",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "sam-cell-seg",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "sanitize-git-repo",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "schemelike-metacircular-eval",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "sparql-university",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "sqlite-db-truncate",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "sqlite-with-gcov",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "torch-pipeline-parallelism",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "torch-tensor-parallelism",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "train-fasttext",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "tune-mjcf",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "video-processing",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "vulnerable-secret",
+   "hermes_old_reward": "0",
+   "hermes_old_exc": false,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "winning-avg-corewars",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  },
+  {
+   "task": "write-compressor",
+   "hermes_old_reward": null,
+   "hermes_old_exc": true,
+   "hermes_rerun_state": null,
+   "hermes_rerun_reward": null,
+   "hermes_rerun_err": null,
+   "claude-code_old_reward": null,
+   "claude-code_old_exc": null,
+   "claude-code_rerun_state": null,
+   "claude-code_rerun_reward": null,
+   "claude-code_rerun_err": null
+  }
+ ]
+}
