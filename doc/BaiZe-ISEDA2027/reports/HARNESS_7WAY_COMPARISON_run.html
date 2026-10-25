@@ -32,8 +32,8 @@ Data source: <code>kimi_pilot_results.json</code> (480 entries, 210 in 30x7 scop
 Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebench_analysis.html</code> <code>HARNESS_3WAY_COMPARISON.html</code></p>
 <h2>1 TL;DR</h2>
 <div class="tldr"><ul>
-<li><span class="green">cline-patched &amp; Pi tied at 60.0%</span> (18/30) highest resolve rate among 7 harnesses on same 30 SWE-bench Lite instances with kimi-k2.6-cloud backbone.</li>
-<li><span class="blue">cline-patched resolved set is a strict superset of ALL other harnesses</span> no harness solves any instance that cline-patched doesnt also solve. Strong evidence that <b>the model is the ceiling not the harness</b>.</li>
+<li><span class="green">cline &amp; Pi tied at 60.0%</span> (18/30) highest resolve rate among 7 harnesses on same 30 SWE-bench Lite instances with kimi-k2.6-cloud backbone.</li>
+<li><span class="blue">cline resolved set is a strict superset of ALL other harnesses</span> no harness solves any instance that cline doesnt also solve. Strong evidence that <b>the model is the ceiling not the harness</b>.</li>
 <li>7-way resolution spread: <b>40.0% to 60.0%</b> (20 pp) with clear tiers: T1 (cline/Pi 60%) T2 (Hermes 53%) T3 (opencode 50% codex 47%) T4 (claude-code 43% deepseek 40%).</li>
 <li><b>12/30 instances (40%) unsolved by ANY harness</b> model capability ceiling. 8/30 solved by ALL 7.</li>
 <li><b>Pi is the most efficient</b> (18 resolved at 275s avg = 235 res/h) while <b>codex is slowest</b> (843s avg) despite middling resolve rate. <b>Tool count inversely correlates with speed</b>.</li>
@@ -47,7 +47,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <tr><td>Timeout</td><td>1800s (30 min) per instance</td></tr>
 <tr><td>Evaluation</td><td><code>r1_eval.py</code> (unshare user-namespace sandbox no Docker)</td></tr>
 <tr><td>Classification</td><td><code>resolved</code> (FAIL_TO_PASS + PASS_TO_PASS) <code>patch-but-failed</code> <code>quota-blocked</code></td></tr>
-<tr><td>Harnesses</td><td>cline-patched Pi Hermes opencode codex claude-code deepseek-harness</td></tr>
+<tr><td>Harnesses</td><td>cline Pi Hermes opencode codex claude-code deepseek-harness</td></tr>
 <tr><td>Total entries</td><td>210 (30 x 7) 0 quota-blocked</td></tr>
 </table></div>
 <h2>3 Resolve Rate Comparison</h2>
@@ -67,7 +67,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <rect x="55" y="130.0" width="70" height="150.0" fill="#3fb950" rx="4" opacity="0.85"/>
 <text x="90.0" y="122.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18/30</text>
 <text x="90.0" y="108.0" text-anchor="middle" font-size="11" fill="#666">60.0%</text>
-<text x="90.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,90.0,298)">cline-patched</text>
+<text x="90.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,90.0,298)">cline</text>
 <rect x="155" y="130.0" width="70" height="150.0" fill="#58a6ff" rx="4" opacity="0.85"/>
 <text x="190.0" y="122.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18/30</text>
 <text x="190.0" y="108.0" text-anchor="middle" font-size="11" fill="#666">60.0%</text>
@@ -94,7 +94,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <text x="690.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,690.0,298)">deepseek-harness</text>
 </svg></div>
 <table><tr><th>Rank</th><th>Harness</th><th>Resolved</th><th>PBF</th><th>Rate</th><th>Tier</th></tr>
-<tr><td>1</td><td>cline-patched</td><td class="green">18/30</td><td class="red">12</td><td><b>60.0%</b></td><td>T1</td></tr>
+<tr><td>1</td><td>cline</td><td class="green">18/30</td><td class="red">12</td><td><b>60.0%</b></td><td>T1</td></tr>
 <tr><td>2</td><td>Pi</td><td class="green">18/30</td><td class="red">12</td><td><b>60.0%</b></td><td>T1</td></tr>
 <tr><td>3</td><td>Hermes</td><td class="green">16/30</td><td class="red">14</td><td><b>53.3%</b></td><td>T2</td></tr>
 <tr><td>4</td><td>opencode</td><td class="green">15/30</td><td class="red">15</td><td><b>50.0%</b></td><td>T3</td></tr>
@@ -104,7 +104,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 </table>
 <h3>3.1 Per-Instance Heatmap (30 x 7)</h3>
 <div class="svg-container"><svg viewBox="0 0 990 214" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;overflow:visible;">
-<text x="134" y="44.0" text-anchor="end" font-size="10" fill="#c9d1d9">cline-patched</text>
+<text x="134" y="44.0" text-anchor="end" font-size="10" fill="#c9d1d9">cline</text>
 <text x="134" y="66.0" text-anchor="end" font-size="10" fill="#c9d1d9">Pi</text>
 <text x="134" y="88.0" text-anchor="end" font-size="10" fill="#c9d1d9">Hermes</text>
 <text x="134" y="110.0" text-anchor="end" font-size="10" fill="#c9d1d9">opencode</text>
@@ -383,10 +383,10 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <text x="360.0" y="248" text-anchor="middle" font-size="10" fill="#8b949e">Number of harnesses that resolved the instance</text>
 </svg></div>
 <div class="finding"><b>Key finding</b>: 12/30 (40%) unsolved by any harness 8/30 (27%) solved by all 7. Only 10/30 (33%) in the discriminating zone. Bimodal: instances are either easy enough for everyone or too hard for anyone.</div>
-<h2>4 Superset Analysis: cline-patched Dominance</h2>
-<div class="card"><p><b>Verified</b>: cline-patched superset of all others = <span class="green">True</span></p>
+<h2>4 Superset Analysis: cline Dominance</h2>
+<div class="card"><p><b>Verified</b>: cline superset of all others = <span class="green">True</span></p>
 <table><tr><th>Harness</th><th>Resolved</th><th>Subset of cline?</th><th>Unique vs cline</th></tr>
-<tr><td>cline-patched</td><td>18</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>cline</td><td>18</td><td>Yes</td><td><small>-</small></td></tr>
 <tr><td>Pi</td><td>18</td><td>Yes</td><td><small>-</small></td></tr>
 <tr><td>Hermes</td><td>16</td><td>Yes</td><td><small>-</small></td></tr>
 <tr><td>opencode</td><td>15</td><td>Yes</td><td><small>-</small></td></tr>
@@ -394,14 +394,14 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <tr><td>claude-code</td><td>13</td><td>Yes</td><td><small>-</small></td></tr>
 <tr><td>deepseek-harness</td><td>12</td><td>Yes</td><td><small>-</small></td></tr>
 </table>
-<p><b>Implication</b>: cline-patched and Pi solve identical 18 instances. Every other harness resolved set is a subset of those 18. The harness job is extract maximum from the model. The model has a fixed capability frontier; better harnesses extract more of it.</p></div>
+<p><b>Implication</b>: cline and Pi solve identical 18 instances. Every other harness resolved set is a subset of those 18. The harness job is extract maximum from the model. The model has a fixed capability frontier; better harnesses extract more of it.</p></div>
 <h3>4.1 Pairwise Unique Resolves (non-cline)</h3>
 <div class="card"><table><tr><th>Pair</th><th>Unique to A</th><th>Unique to B</th></tr>
-<tr><td>cline-patched vs Hermes</td><td><small>django__django-10924, django__django-11422</small></td><td><small>-</small></td></tr>
-<tr><td>cline-patched vs opencode</td><td><small>django__django-10924, django__django-11422, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
-<tr><td>cline-patched vs codex</td><td><small>django__django-10924, django__django-11422, sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>-</small></td></tr>
-<tr><td>cline-patched vs claude-code</td><td><small>django__django-10924, django__django-11001, sympy__sympy-12236, sympy__sympy-12419, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
-<tr><td>cline-patched vs deepseek-harness</td><td><small>django__django-11422, django__django-11583, django__django-11620, sympy__sympy-12236, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>-</small></td></tr>
+<tr><td>cline vs Hermes</td><td><small>django__django-10924, django__django-11422</small></td><td><small>-</small></td></tr>
+<tr><td>cline vs opencode</td><td><small>django__django-10924, django__django-11422, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>cline vs codex</td><td><small>django__django-10924, django__django-11422, sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>-</small></td></tr>
+<tr><td>cline vs claude-code</td><td><small>django__django-10924, django__django-11001, sympy__sympy-12236, sympy__sympy-12419, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>cline vs deepseek-harness</td><td><small>django__django-11422, django__django-11583, django__django-11620, sympy__sympy-12236, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>-</small></td></tr>
 <tr><td>Pi vs Hermes</td><td><small>django__django-10924, django__django-11422</small></td><td><small>-</small></td></tr>
 <tr><td>Pi vs opencode</td><td><small>django__django-10924, django__django-11422, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
 <tr><td>Pi vs codex</td><td><small>django__django-10924, django__django-11422, sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>-</small></td></tr>
@@ -433,7 +433,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <rect x="55" y="137.7107037037037" width="50" height="122.2892962962963" fill="#3fb950" rx="3" opacity="0.5"/>
 <rect x="55" y="169.68666666666667" width="50" height="90.31333333333333" fill="#3fb950" rx="3" opacity="0.9"/>
 <text x="80.0" y="131.7107037037037" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">479s</text>
-<text x="80.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,80.0,276)">cline-patched</text>
+<text x="80.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,80.0,276)">cline</text>
 <rect x="140" y="189.84318518518518" width="50" height="70.15681481481481" fill="#58a6ff" rx="3" opacity="0.5"/>
 <rect x="140" y="210.24333333333334" width="50" height="49.75666666666666" fill="#58a6ff" rx="3" opacity="0.9"/>
 <text x="165.0" y="183.84318518518518" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">275s</text>
@@ -481,7 +481,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <line x1="490.0" y1="25" x2="490.0" y2="265" stroke="#e0e0e0" stroke-width="1"/>
 <text x="490.0" y="279" text-anchor="middle" font-size="10" fill="#999">900s</text>
 <circle cx="286.28627777777774" cy="59.285714285714306" r="8" fill="#3fb950" opacity="0.8" stroke="#fff" stroke-width="1"/>
-<text x="296.28627777777774" y="63.285714285714306" font-size="10" fill="#c9d1d9">cline-patched</text>
+<text x="296.28627777777774" y="63.285714285714306" font-size="10" fill="#c9d1d9">cline</text>
 <circle cx="187.68788888888886" cy="59.285714285714306" r="8" fill="#58a6ff" opacity="0.8" stroke="#fff" stroke-width="1"/>
 <text x="197.68788888888886" y="63.285714285714306" font-size="10" fill="#c9d1d9">Pi</text>
 <circle cx="322.45088888888887" cy="82.14285714285714" r="8" fill="#bc8cff" opacity="0.8" stroke="#fff" stroke-width="1"/>
@@ -497,7 +497,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <text x="250.0" y="298" text-anchor="middle" font-size="10" fill="#8b949e">Avg wall time (s)</text>
 </svg></div>
 <table><tr><th>Harness</th><th>Avg Wall (s)</th><th>Median (s)</th><th>Avg Patch (B)</th><th>Efficiency (res/h)</th><th>Rank</th></tr>
-<tr><td>cline-patched</td><td>479</td><td>353</td><td>3433</td><td><b>135.4</b></td><td>#4</td></tr>
+<tr><td>cline</td><td>479</td><td>353</td><td>3433</td><td><b>135.4</b></td><td>#4</td></tr>
 <tr><td>Pi</td><td>275</td><td>195</td><td>3337</td><td><b>236.0</b></td><td>#1</td></tr>
 <tr><td>Hermes</td><td>553</td><td>475</td><td>3161</td><td><b>104.1</b></td><td>#6</td></tr>
 <tr><td>opencode</td><td>290</td><td>216</td><td>3569</td><td><b>186.1</b></td><td>#2</td></tr>
@@ -505,10 +505,10 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <tr><td>claude-code</td><td>411</td><td>286</td><td>2212</td><td><b>114.0</b></td><td>#5</td></tr>
 <tr><td>deepseek-harness</td><td>293</td><td>162</td><td>1566</td><td><b>147.6</b></td><td>#3</td></tr>
 </table>
-<div class="finding"><b>Efficiency</b>: Pi (236.0) > opencode (186.1) > deepseek-harness (147.6) > cline-patched (135.4) > claude-code (114.0) > Hermes (104.1) > codex (59.8)<br><b>Pi</b> most efficient (235 res/h) same 60% as cline but 1.7x less wall time. <b>codex</b> least efficient (60 res/h) 843s avg with only 46.7%.</div>
+<div class="finding"><b>Efficiency</b>: Pi (236.0) > opencode (186.1) > deepseek-harness (147.6) > cline (135.4) > claude-code (114.0) > Hermes (104.1) > codex (59.8)<br><b>Pi</b> most efficient (235 res/h) same 60% as cline but 1.7x less wall time. <b>codex</b> least efficient (60 res/h) 843s avg with only 46.7%.</div>
 <h2>6 Architecture Comparison (7-Way)</h2>
 <div class="svg-container"><table><tr><th class="rowh">Dimension</th>
-<th>cline-patched</th>
+<th>cline</th>
 <th>Pi</th>
 <th>Hermes</th>
 <th>opencode</th>
@@ -608,7 +608,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <h2>7 Failure Mode Analysis</h2>
 <div class="card"><p>All 210 entries: resolved or patch-but-failed (0 quota-blocked). Failure = pbf (patch applied but tests failed).</p>
 <table><tr><th>Harness</th><th>Resolved</th><th>PBF</th><th>PBF Rate</th></tr>
-<tr><td>cline-patched</td><td class="green">18</td><td class="red">12</td><td>40.0%</td></tr>
+<tr><td>cline</td><td class="green">18</td><td class="red">12</td><td>40.0%</td></tr>
 <tr><td>Pi</td><td class="green">18</td><td class="red">12</td><td>40.0%</td></tr>
 <tr><td>Hermes</td><td class="green">16</td><td class="red">14</td><td>46.7%</td></tr>
 <tr><td>opencode</td><td class="green">15</td><td class="red">15</td><td>50.0%</td></tr>
@@ -650,7 +650,7 @@ Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebe
 <li><b>Single seed</b>: no variance estimation</li>
 <li><b>kimi != BaiZe</b>: backbone is kimi-k2.6-cloud not BaiZe 2.2B</li>
 <li><b>Non-Docker evaluation</b>: r1_eval.py unshare sandbox not official SWE-bench Docker results not comparable to leaderboard</li>
-<li><b>cline-patched</b>: custom modifications may not reflect stock cline</li>
+<li><b>cline</b>: custom modifications may not reflect stock cline</li>
 <li><b>No token data</b>: wall time proxy only</li>
 <li><b>Limited discriminating power</b>: 12+8=20/30 non-discriminating only 10/30 discriminate</li>
 <li><b>Bimodal distribution</b>: may over-represent easy and hard instances</li>

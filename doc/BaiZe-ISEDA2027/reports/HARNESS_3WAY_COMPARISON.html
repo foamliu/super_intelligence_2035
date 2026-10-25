@@ -33,8 +33,8 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <div class="tldr">
 <h2>TL;DR</h2>
 <ol>
-<li><strong>cline-patched and Pi achieve identical 60.0% (18/30)</strong> — and solved the <em>exact same 18 instances</em>. Hermes scored 53.3% (16/30), a strict subset. This suggests the <strong>model (kimi-k2.6-cloud) is the bottleneck</strong>, not the harness, for these 30 instances.</li>
-<li><strong>Pi is 1.7× faster than cline-patched</strong> (mean 275s vs 479s) and 2.0× faster than Hermes (553s), despite identical resolve rate — lightweight TypeScript/Bun print-mode architecture minimizes overhead.</li>
+<li><strong>cline and Pi achieve identical 60.0% (18/30)</strong> — and solved the <em>exact same 18 instances</em>. Hermes scored 53.3% (16/30), a strict subset. This suggests the <strong>model (kimi-k2.6-cloud) is the bottleneck</strong>, not the harness, for these 30 instances.</li>
+<li><strong>Pi is 1.7× faster than cline</strong> (mean 275s vs 479s) and 2.0× faster than Hermes (553s), despite identical resolve rate — lightweight TypeScript/Bun print-mode architecture minimizes overhead.</li>
 <li><strong>Hermes's 2 unique failures</strong> (django-10924, django-11422) are both "broke existing tests" (p2p_fail) — its verbose execution-discipline prompt may cause over-editing. cline's YOLO prompt ("run test suite to confirm") may prevent this.</li>
 <li><strong>12/30 instances unsolved by all three</strong> — these are genuinely hard for kimi-k2.6-cloud, not harness-dependent. The harness ceiling for this model+subset is ~60%.</li>
 <li><strong>Tool count inversely correlates with speed</strong>: Pi (7 tools) &gt; cline (9 tools) &gt; Hermes (20+ tools). More tools = more prompt tokens = slower per turn, but does not improve resolve rate.</li>
@@ -44,7 +44,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 
 <h2>1. Architecture Overview</h2>
 <table>
-<tr><th>Dimension</th><th>cline-patched</th><th>Pi</th><th>Hermes Agent</th></tr>
+<tr><th>Dimension</th><th>cline</th><th>Pi</th><th>Hermes Agent</th></tr>
 <tr><td><strong>Language</strong></td><td>TypeScript (Node/Bun)</td><td>TypeScript (Bun)</td><td>Python 3.14.6</td></tr>
 <tr><td><strong>Origin</strong></td><td>Cline v4.1.21 (modified)</td><td><code>@fleetagent/pi-coding-agent</code> v0.2.15</td><td><code>NousResearch/hermes-agent</code> @0e219331</td></tr>
 <tr><td><strong>Source path</strong></td><td class="code">/nas_train/.../harness/cline/sdk/packages/</td><td class="code">~/.npm-global/.../@fleetagent/pi-coding-agent/</td><td class="code">/nas_train/.../hermes-agent-src/</td></tr>
@@ -60,7 +60,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <h2>2. System Prompt Comparison</h2>
 <p>The system prompt is the <strong>single most impactful harness design choice</strong> — it shapes how the model approaches the task. All three prompts were read from source:</p>
 
-<h3>cline-patched — <code>YOLO_CLINE_SYSTEM_PROMPT</code></h3>
+<h3>cline — <code>YOLO_CLINE_SYSTEM_PROMPT</code></h3>
 <p><strong>Source:</strong> <code>cline/sdk/packages/shared/src/prompt/system.ts:38-68</code></p>
 <div class="callout">
 <p><strong>Key directives:</strong></p>
@@ -120,7 +120,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <h2>3. Tool Set Comparison</h2>
 <div class="chart-box"><svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="260.0" y="18" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Default Tool Count (SWE-bench mode)</text><rect x="50" y="107.0" width="100" height="63.0" fill="#6c5ce7" rx="4" opacity="0.8"/>
 <text x="100.0" y="99.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#6c5ce7">9</text>
-<text x="100.0" y="190" text-anchor="middle" font-size="12" fill="#333">cline-patched</text>
+<text x="100.0" y="190" text-anchor="middle" font-size="12" fill="#333">cline</text>
 <rect x="210" y="121.0" width="100" height="49.0" fill="#0984e3" rx="4" opacity="0.8"/>
 <text x="260.0" y="113.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#0984e3">7</text>
 <text x="260.0" y="190" text-anchor="middle" font-size="12" fill="#333">Pi</text>
@@ -129,14 +129,14 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <text x="420.0" y="190" text-anchor="middle" font-size="12" fill="#333">Hermes</text></svg></div>
 <table>
 <tr><th>Harness</th><th>Default Tools</th><th>Tool Names</th><th>Source</th></tr>
-<tr><td class="center"><strong>cline-patched</strong><br>(9 tools)</td><td>read_files, search_codebase, run_commands, fetch_web_content, apply_patch, editor, skills, ask_question, <strong>submit_and_exit</strong></td><td class="code">extensions/tools/constants.ts:12-26</td></tr>
+<tr><td class="center"><strong>cline</strong><br>(9 tools)</td><td>read_files, search_codebase, run_commands, fetch_web_content, apply_patch, editor, skills, ask_question, <strong>submit_and_exit</strong></td><td class="code">extensions/tools/constants.ts:12-26</td></tr>
 <tr><td class="center"><strong>Pi</strong><br>(7 core tools)</td><td>read, bash, edit, write, grep, find, ls<br><em>(+ websearch, subagent, compress_context if enabled)</em></td><td class="code">dist/core/agent-session.js:66</td></tr>
 <tr><td class="center"><strong>Hermes</strong><br>(20+ tools)</td><td>terminal, read_file, write_file, search_files, edit_file, execute_code, memory, skill_manage, session_search, browser, apply_diff, list_dir, read_terminal, close_terminal, ...</td><td class="code">tools/*.py (80+ tool files)</td></tr>
 </table>
 
 <h3>Tool design philosophy</h3>
 <table>
-<tr><th>Aspect</th><th>cline-patched</th><th>Pi</th><th>Hermes</th></tr>
+<tr><th>Aspect</th><th>cline</th><th>Pi</th><th>Hermes</th></tr>
 <tr><td><strong>File reading</strong></td><td><code>read_files</code> (batch, line ranges)</td><td><code>read</code> (single file, hashline tracking)</td><td><code>read_file</code> + <code>search_files</code></td></tr>
 <tr><td><strong>File editing</strong></td><td><code>editor</code> (line-based) + <code>apply_patch</code> (diff format)</td><td><code>edit</code> (str replace) + <code>write</code> (full file)</td><td><code>edit_file</code> (str replace) + <code>write_file</code></td></tr>
 <tr><td><strong>Code search</strong></td><td><code>search_codebase</code> (regex, built-in)</td><td><code>grep</code> + <code>find</code> + <code>ls</code> (separate tools)</td><td><code>search_files</code> + <code>file_operations_search</code></td></tr>
@@ -153,7 +153,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 
 <h2>4. Agent Loop &amp; Orchestration</h2>
 <table>
-<tr><th>Aspect</th><th>cline-patched</th><th>Pi</th><th>Hermes</th></tr>
+<tr><th>Aspect</th><th>cline</th><th>Pi</th><th>Hermes</th></tr>
 <tr><td><strong>Loop driver</strong></td><td>VS Code extension runtime → CLI adapter</td><td><code>Agent</code> class from <code>@fleetagent/pi-agent-core</code></td><td><code>run_conversation()</code> in <code>agent/conversation_loop.py</code></td></tr>
 <tr><td><strong>Turn structure</strong></td><td>User message → model call → tool dispatch → repeat</td><td>User message → model stream → tool calls → results → repeat</td><td>User turn → API call → tool round → post-turn hooks → repeat</td></tr>
 <tr><td><strong>Tool dispatch</strong></td><td>Sequential within a turn, batched across turns</td><td>Sequential (print mode) or concurrent (interactive)</td><td><strong>Concurrent</strong> (<code>concurrent.futures</code>, <code>tool_call_batches.py</code>) — parallel tool execution within a turn</td></tr>
@@ -193,7 +193,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <text x="42" y="44.0" text-anchor="end" font-size="10" fill="#999">100</text><rect x="50" y="40.0" width="80" height="210.0" fill="#6c5ce7" rx="4"/>
 <text x="90.0" y="32.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18</text>
 <text x="90.0" y="16.0" text-anchor="middle" font-size="11" fill="#666">(60.0%)</text>
-<text x="90.0" y="270" text-anchor="middle" font-size="12" fill="#333">cline-patched</text>
+<text x="90.0" y="270" text-anchor="middle" font-size="12" fill="#333">cline</text>
 <rect x="170" y="40.0" width="80" height="210.0" fill="#0984e3" rx="4"/>
 <text x="210.0" y="32.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18</text>
 <text x="210.0" y="16.0" text-anchor="middle" font-size="11" fill="#666">(60.0%)</text>
@@ -205,7 +205,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 
 <table>
 <tr><th>Harness</th><th>Scored</th><th>Resolved</th><th>Patch-but-failed</th><th>Resolve Rate</th><th>Mean Wall</th><th>Median Wall</th></tr>
-<tr><td><strong>cline-patched</strong></td><td class="center">30</td><td class="center green">18</td><td class="center">12</td><td class="center"><strong>60.0%</strong></td><td class="center">479s</td><td class="center">342s</td></tr>
+<tr><td><strong>cline</strong></td><td class="center">30</td><td class="center green">18</td><td class="center">12</td><td class="center"><strong>60.0%</strong></td><td class="center">479s</td><td class="center">342s</td></tr>
 <tr><td><strong>Pi</strong></td><td class="center">30</td><td class="center green">18</td><td class="center">12</td><td class="center"><strong>60.0%</strong></td><td class="center">275s</td><td class="center">193s</td></tr>
 <tr><td><strong>Hermes</strong></td><td class="center">30</td><td class="center">16</td><td class="center">14</td><td class="center"><strong>53.3%</strong></td><td class="center">553s</td><td class="center">406s</td></tr>
 </table>
@@ -214,7 +214,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <h2>6. Resolve Overlap Analysis</h2>
 <div class="chart-box"><svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="250" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Resolve Overlap (30 instances)</text><circle cx="180" cy="140" r="80" fill="#6c5ce7" opacity="0.3" stroke="#6c5ce7" stroke-width="2"/><circle cx="280" cy="140" r="80" fill="#0984e3" opacity="0.3" stroke="#0984e3" stroke-width="2"/><circle cx="230" cy="210" r="80" fill="#e17055" opacity="0.3" stroke="#e17055" stroke-width="2"/><text x="130" y="100" font-size="12" font-weight="bold" fill="#6c5ce7">cline</text><text x="320" y="100" font-size="12" font-weight="bold" fill="#0984e3">Pi</text><text x="210" y="280" font-size="12" font-weight="bold" fill="#e17055">Hermes</text><text x="140" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text><text x="320" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text><text x="225" y="265" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text><text x="215" y="145" text-anchor="middle" font-size="11" fill="#333">2</text><text x="195" y="195" text-anchor="middle" font-size="11" fill="#333">0</text><text x="265" y="195" text-anchor="middle" font-size="11" fill="#333">0</text><text x="230" y="170" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">16</text><text x="400" y="145" text-anchor="middle" font-size="11" fill="#999">none: 12</text><text x="250" y="295" text-anchor="middle" font-size="10" fill="#666">all 3=16 · cline-only=0 · pi-only=0 · hermes-only=0 · none=12</text></svg></div>
 <div class="key">
-<p><strong>The most striking finding:</strong> cline-patched and Pi solved <strong>exactly the same 18 instances</strong> — zero divergence. Hermes's 16 solves are a <strong>strict subset</strong> of both. This means:</p>
+<p><strong>The most striking finding:</strong> cline and Pi solved <strong>exactly the same 18 instances</strong> — zero divergence. Hermes's 16 solves are a <strong>strict subset</strong> of both. This means:</p>
 <ul>
 <li>The <strong>model (kimi-k2.6-cloud) determines which instances are solvable</strong>, not the harness — for these 30 instances, the harness only affects <em>whether</em> a solvable instance is actually solved, not <em>which</em> instances are solvable.</li>
 <li><strong>Hermes lost 2 instances</strong> that cline/Pi both solved: <code>django__django-10924</code> and <code>django__django-11422</code>. Both are "broke existing tests" failures (p2p_fail).</li>
@@ -445,7 +445,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <rect x="50" y="179.5060350253619" width="60" height="50.49396497463808" fill="#6c5ce7" rx="4" opacity="0.8"/>
 <line x1="50" y1="193.86454515161614" x2="110" y2="193.86454515161614" stroke="#333" stroke-width="2"/>
 <text x="80.0" y="171.5060350253619" text-anchor="middle" font-size="13" font-weight="bold" fill="#6c5ce7">479s</text>
-<text x="80.0" y="250" text-anchor="middle" font-size="12" fill="#333">cline-patched</text>
+<text x="80.0" y="250" text-anchor="middle" font-size="12" fill="#333">cline</text>
 <text x="80.0" y="265" text-anchor="middle" font-size="10" fill="#999">med=342s</text>
 <line x1="190.0" y1="223.31000777518605" x2="190.0" y2="140.59258025102744" stroke="#0984e3" stroke-width="2" opacity="0.4"/>
 <rect x="160" y="201.0318412381058" width="60" height="28.96815876189418" fill="#0984e3" rx="4" opacity="0.8"/>
@@ -472,7 +472,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 
 <table>
 <tr><th>Harness</th><th>Mean</th><th>Median</th><th>Min</th><th>Max</th><th>Std Dev</th></tr>
-<tr><td><strong>cline-patched</strong></td><td class="center">479s</td><td class="center">342s</td><td class="center">93s</td><td class="center">1800s</td><td class="center">425s</td></tr>
+<tr><td><strong>cline</strong></td><td class="center">479s</td><td class="center">342s</td><td class="center">93s</td><td class="center">1800s</td><td class="center">425s</td></tr>
 <tr><td><strong>Pi</strong></td><td class="center">275s</td><td class="center">193s</td><td class="center">63s</td><td class="center">847s</td><td class="center">212s</td></tr>
 <tr><td><strong>Hermes</strong></td><td class="center">553s</td><td class="center">406s</td><td class="center">26s</td><td class="center">1801s</td><td class="center">535s</td></tr>
 </table>
@@ -493,7 +493,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 
 <h3>Failure classification</h3>
 <table>
-<tr><th>Failure Type</th><th>cline-patched</th><th>Pi</th><th>Hermes</th><th>Evidence</th></tr>
+<tr><th>Failure Type</th><th>cline</th><th>Pi</th><th>Hermes</th><th>Evidence</th></tr>
 <tr><td><strong>Timeout (1800s)</strong></td><td class="center">1</td><td class="center">0</td><td class="center red">1</td><td>Hermes: <code>django__django-11019</code> rc=-1 timed_out=True wall=1800s</td></tr>
 <tr><td><strong>Empty patch (0 bytes)</strong></td><td class="center">2</td><td class="center">2</td><td class="center">2</td><td>All: <code>django__django-11019</code>, <code>django__django-11630</code> — model couldn't produce a fix</td></tr>
 <tr><td><strong>Wrong fix (f2p_fail)</strong></td><td class="center">7</td><td class="center">7</td><td class="center">7</td><td>FAIL_TO_PASS tests don't pass — model misunderstood the bug</td></tr>
@@ -506,7 +506,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; 
 <pre><code>== harness=hermes rc=0 timed_out=False wall=567.5s ==
 [run_single] model_patch: 5412 bytes
 eval: f2p_pass=1/1, p2p_pass=0/1  ← broke existing test!</code></pre>
-<p>cline-patched and Pi both resolved this instance (p2p=1/1). cline's YOLO prompt says <em>"run the relevant test suite to confirm... If tests fail, analyze the failures, revise your fix"</em> — this test-verification loop likely caught the regression before submission.</p>
+<p>cline and Pi both resolved this instance (p2p=1/1). cline's YOLO prompt says <em>"run the relevant test suite to confirm... If tests fail, analyze the failures, revise your fix"</em> — this test-verification loop likely caught the regression before submission.</p>
 </div>
 
 <div class="callout">
@@ -524,7 +524,7 @@ eval: f2p_pass=0/1, p2p_pass=46/46  ← didn't fix the bug, but didn't break any
 
 <h2>10. Architecture-Performance Correlation</h2>
 <table>
-<tr><th>Dimension</th><th>cline-patched</th><th>Pi</th><th>Hermes</th><th>Correlation with resolve rate</th></tr>
+<tr><th>Dimension</th><th>cline</th><th>Pi</th><th>Hermes</th><th>Correlation with resolve rate</th></tr>
 <tr><td><strong>Prompt length</strong></td><td>~200 words</td><td>~150 words</td><td>~850 words</td><td>⬇️ Inverse (longer prompt ≠ better)</td></tr>
 <tr><td><strong>Tool count</strong></td><td>9</td><td>7</td><td>20+</td><td>⬇️ Inverse (more tools ≠ better)</td></tr>
 <tr><td><strong>Wall time</strong></td><td>479s mean</td><td>275s mean</td><td>553s mean</td><td>⬇️ Inverse (slower ≠ better)</td></tr>
@@ -571,7 +571,7 @@ eval: f2p_pass=0/1, p2p_pass=46/46  ← didn't fix the bug, but didn't break any
 <ol>
 <li><strong>30 instances only</strong> — the identical cline/Pi solve set could be coincidental with this small sample. A 100+ instance run would be needed to confirm.</li>
 <li><strong>Single model</strong> (kimi-k2.6-cloud) — the "model is the bottleneck" finding may not generalize to weaker or stronger models. A 2.2B model might show more harness-dependent variation.</li>
-<li><strong>cline-patched is modified</strong> — it's not vanilla cline; the "patched" version may include SWE-bench-specific optimizations not in the upstream.</li>
+<li><strong>cline is modified</strong> — it's not vanilla cline; the "patched" version may include SWE-bench-specific optimizations not in the upstream.</li>
 <li><strong>Pi and Hermes versions are early</strong> — Pi v0.2.15 and Hermes @0e219331 are both pre-1.0; later versions may have different behavior.</li>
 <li><strong>No token consumption data</strong> — the eval didn't capture per-turn token counts, so cost analysis is limited to wall time.</li>
 <li><strong>Non-Docker sandbox</strong> (unshare R1) — may differ from official Docker-based SWE-bench evaluation.</li>

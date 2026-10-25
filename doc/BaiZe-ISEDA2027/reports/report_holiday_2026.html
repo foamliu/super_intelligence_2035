@@ -275,12 +275,12 @@ code{background:rgba(110,118,129,0.2);padding:1px 5px;border-radius:4px;font-siz
 
 <h2>🔧 四、Harness 线 — EDA 下游评测（.29）</h2>
 <div class="conclusion">
-<strong>核心成就</strong>：7-way SWE-bench Lite 横评全完成（210 entries），cline-patched 与 Pi 并列第一（60.0%），repo-based 失败分析 django vs sympy +11.4pp。
+<strong>核心成就</strong>：7-way SWE-bench Lite 横评全完成（210 entries），cline 与 Pi 并列第一（60.0%），repo-based 失败分析 django vs sympy +11.4pp。
 </div>
 <div class="card">
 <table>
 <tr><th>Harness</th><th>Resolve Rate</th><th>排名</th></tr>
-<tr><td><strong>cline-patched</strong></td><td><strong style="color:var(--green)">60.0%</strong></td><td>🥇</td></tr>
+<tr><td><strong>cline</strong></td><td><strong style="color:var(--green)">60.0%</strong></td><td>🥇</td></tr>
 <tr><td><strong>Pi</strong></td><td><strong style="color:var(--green)">60.0%</strong></td><td>🥇</td></tr>
 <tr><td>Hermes</td><td>53.3%</td><td>🥉</td></tr>
 <tr><td>opencode</td><td>50.0%</td><td>4</td></tr>
@@ -293,7 +293,7 @@ code{background:rgba(110,118,129,0.2);padding:1px 5px;border-radius:4px;font-siz
 <svg viewBox="0 0 700 220" width="100%" style="max-width:700px;margin:0 auto;display:block">
 <text x="350" y="18" text-anchor="middle" fill="#8b949e" font-size="13" font-weight="600">7-way Harness Resolve Rate 对比</text>
 <g>
-<rect x="120" y="35" width="360" height="22" fill="#3fb950" rx="3"/><text x="490" y="51" fill="#e6edf3" font-size="11" font-weight="700">60.0%</text><text x="110" y="51" text-anchor="end" fill="#8b949e" font-size="11">cline-patched</text>
+<rect x="120" y="35" width="360" height="22" fill="#3fb950" rx="3"/><text x="490" y="51" fill="#e6edf3" font-size="11" font-weight="700">60.0%</text><text x="110" y="51" text-anchor="end" fill="#8b949e" font-size="11">cline</text>
 <rect x="120" y="65" width="360" height="22" fill="#3fb950" rx="3"/><text x="490" y="81" fill="#e6edf3" font-size="11" font-weight="700">60.0%</text><text x="110" y="81" text-anchor="end" fill="#8b949e" font-size="11">Pi</text>
 <rect x="120" y="95" width="320" height="22" fill="#58a6ff" rx="3"/><text x="450" y="111" fill="#e6edf3" font-size="11" font-weight="700">53.3%</text><text x="110" y="111" text-anchor="end" fill="#8b949e" font-size="11">Hermes</text>
 <rect x="120" y="125" width="300" height="22" fill="#58a6ff" rx="3"/><text x="430" y="141" fill="#e6edf3" font-size="11" font-weight="700">50.0%</text><text x="110" y="141" text-anchor="end" fill="#8b949e" font-size="11">opencode</text>
@@ -356,7 +356,7 @@ code{background:rgba(110,118,129,0.2);padding:1px 5px;border-radius:4px;font-siz
 <li><strong>Scaling 量化</strong>：P-5b 20B（loss 5.37→1.91），未变平 → 推荐 100B；vision 二维 scaling（渐近 25.1%，649× 缺口）。</li>
 <li><strong>视觉翻盘</strong>：AIMv2 dense 使 lp 7.4%→19.8%（+12.36pp）；AR 范式坍缩证伪纯 AR。</li>
 <li><strong>数据就绪</strong>：288B token 远超目标；BO 400 trial（ρ=−0.80）；污染隔离 536 黑名单。</li>
-<li><strong>评测基础</strong>：7-way 横评完成（cline-patched 60%）。</li>
+<li><strong>评测基础</strong>：7-way 横评完成（cline 60%）。</li>
 <li><strong>论文</strong>：main.pdf 0 err，R2 数据全部回填。</li>
 </ol>
 <p><strong>一句话</strong>：十一假期完成"架构锁定 + 数据就绪 + scaling 量化"三件大事，<strong>P-8 可在 10 月中启动</strong>，项目从"实验探索期"进入"大规模训练期"。</p>

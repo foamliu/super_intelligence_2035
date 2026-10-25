@@ -58,7 +58,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);font-
 
 <h2 class="sec">1. 评测设计</h2>
 <div class="card">
-<p><b>对象</b>：7 个 coding agent harness —— <code>cline-patched</code>（BaiZe 的 agent 骨架，EDA 开发基于它）、<code>opencode</code>、<code>pi</code>（gpt-eng）、<code>codex</code>、<code>claude-code</code>、<code>deepseek-harness</code>、<code>hermes</code>（SWE-bench 官方 harness）。</p>
+<p><b>对象</b>：7 个 coding agent harness —— <code>cline</code>（BaiZe 的 agent 骨架，EDA 开发基于它）、<code>opencode</code>、<code>pi</code>（gpt-eng）、<code>codex</code>、<code>claude-code</code>、<code>deepseek-harness</code>、<code>hermes</code>（SWE-bench 官方 harness）。</p>
 <p><b>控制变量</b>：统一 backbone <code>kimi-k2.6-cloud</code> · 同一沙箱 · 同一 eval 判据（SWE-bench <code>test patch applied + FAIL_TO_PASS 全过 + PASS_TO_PASS 全过</code>）。</p>
 <p><b>任务集</b>：SWE-bench Lite <b>300 实例</b>（stratified 抽样：30 Round-1 + 70 比例填充；100-set 是 300-set 子集，可 <code>--resume</code> 复用）。7 路并行跑（R2），每 harness 内部串行。</p>
 <p><b>分类</b>：<code>resolved</code>（解出）/ <code>patch-but-failed</code>（PBF，补丁产出但测试未全过）/ <code>blocked</code> / <code>quota-blocked</code>。</p>

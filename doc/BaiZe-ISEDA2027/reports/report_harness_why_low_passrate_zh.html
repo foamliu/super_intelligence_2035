@@ -77,7 +77,7 @@ li{margin:4px 0}
 <tr><td>7</td><td>OpenHands + CodeAct</td><td>Claude 3.5 Sonnet</td><td class="num">41.7%</td><td>llmrun.dev</td></tr>
 <tr><td>8</td><td>Agentless-1.5</td><td>Claude 3.5 Sonnet</td><td class="num">40.7%</td><td>llmrun.dev</td></tr>
 <tr><td>9</td><td>DeepSeek v3</td><td>DeepSeek v3</td><td class="num">36.7%</td><td>llmrun.dev</td></tr>
-<tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>cline-patched（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>28.7%</b></td><td><b>本评测</b></td></tr>
+<tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>cline（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>28.7%</b></td><td><b>本评测</b></td></tr>
 <tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>opencode（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>29.0%</b></td><td><b>本评测</b></td></tr>
 <tr style="background:rgba(88,166,255,0.08)"><td>--</td><td><b>pi（我们）</b></td><td><b>kimi-k2.6-cloud</b></td><td class="num" style="color:var(--accent)"><b>30.3%</b></td><td><b>本评测</b></td></tr>
 <tr><td>10</td><td>CodeR</td><td>--</td><td class="num yellow">28.3%</td><td>emergentmind</td></tr>
@@ -202,14 +202,14 @@ fix4 <code>kimi_pilot_results.fix4.json</code> 27 条（进行中），new_eval.
 
 <h3>3.1 成功案例 — 典型 resolved 轨迹</h3>
 <div class="card card-green">
-<h4>案例 A：cline-patched | django__django-10924</h4>
+<h4>案例 A：cline | django__django-10924</h4>
 <div class="evidence">
 <code>wall_s=382.8s | resolved=True | f2p=1/1 | p2p=1/1 | model_patch=6687B</code><br>
 stdout_tail: "[run_single] model_patch: 6687 bytes" + "wrote predictions" + "cleanup: git reset --hard"
 </div>
 <p>典型成功模式：agent 在约 6 分钟内定位 bug、生成 6687 字节 patch、全部测试通过。</p>
 
-<h4>案例 B：cline-patched | django__django-11001</h4>
+<h4>案例 B：cline | django__django-11001</h4>
 <div class="evidence">
 <code>wall_s=900.7s | resolved=True | f2p=2/2 | p2p=118/118 | model_patch=1621B</code>
 </div>
@@ -224,14 +224,14 @@ stdout_tail: "[run_single] model_patch: 6687 bytes" + "wrote predictions" + "cle
 
 <h3>3.2 完全错误案例 — wrong-fix（f2p=0）</h3>
 <div class="card card-red">
-<h4>案例 D：cline-patched | django__django-11019 — 超时 + 0-byte patch</h4>
+<h4>案例 D：cline | django__django-11019 — 超时 + 0-byte patch</h4>
 <div class="evidence">
 <code>wall_s=1800.4s | resolved=False | patch_applied=True | f2p=0/16 | p2p=58/58 | model_patch=0 bytes</code>
 </div>
 <p>agent 跑满 30 分钟超时，产出 0 字节 patch。p2p=58/58 说明原有测试全过（patch 为空），
 但 f2p=0/16 说明目标测试一个也没过。典型「搜索很久但最终没产出有效修改」。</p>
 
-<h4>案例 E：cline-patched | django__django-11283 — 大 patch 但全错</h4>
+<h4>案例 E：cline | django__django-11283 — 大 patch 但全错</h4>
 <div class="evidence">
 <code>wall_s=581.2s | resolved=False | f2p=0/1 | p2p=0/8 | model_patch=12886B</code>
 </div>
@@ -256,7 +256,7 @@ stdout_tail: "[run_single] model_patch: 6687 bytes" + "wrote predictions" + "cle
 <tr><td>opencode</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
 <tr><td>claude-code</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
 <tr><td>deepseek-harness</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
-<tr><td>cline-patched</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
+<tr><td>cline</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
 <tr><td>pi</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
 <tr><td>hermes</td><td class="num">337/355</td><td class="num">0/0</td><td class="num red">False</td></tr>
 </table>
@@ -273,7 +273,7 @@ stdout_tail: "[run_single] model_patch: 6687 bytes" + "wrote predictions" + "cle
 <tr><td>deepseek-harness</td><td class="num red">77</td><td class="num red">25.7%</td><td>--</td></tr>
 <tr><td>hermes</td><td class="num">71</td><td class="num">23.7%</td><td>--</td></tr>
 <tr><td>claude-code</td><td class="num">70</td><td class="num">23.3%</td><td>--</td></tr>
-<tr><td class="green">cline-patched</td><td class="num green">25</td><td class="num green">8.3%</td><td>--</td></tr>
+<tr><td class="green">cline</td><td class="num green">25</td><td class="num green">8.3%</td><td>--</td></tr>
 <tr><td class="green">pi</td><td class="num green">16</td><td class="num green">5.3%</td><td>--</td></tr>
 <tr><td class="green">opencode</td><td class="num green">15</td><td class="num green">5.0%</td><td>--</td></tr>
 </table>

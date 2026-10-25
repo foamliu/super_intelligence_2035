@@ -44,7 +44,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <h2>1. Summary by Harness (100 each)</h2>
 <table>
 <tr><th>Harness</th><th>Scored</th><th>Resolved</th><th>PBF</th><th>Quota-blk</th><th>Infra-blk</th><th>Resolve Rate</th><th>Avg Wall</th><th>Status</th></tr>
-<tr><td class='hname'>cline-patched</td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>36/100 (36.0%)</td><td>538s</td><td>✅ done</td></tr>
+<tr><td class='hname'>cline</td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>36/100 (36.0%)</td><td>538s</td><td>✅ done</td></tr>
 <tr><td class='hname'>codex</td><td>93</td><td>34</td><td>59</td><td>0</td><td>7</td><td>34/93 (36.6%)</td><td>999s</td><td>✅ done</td></tr>
 <tr><td class='hname'>opencode</td><td>100</td><td>35</td><td>65</td><td>0</td><td>0</td><td>35/100 (35.0%)</td><td>449s</td><td>✅ done</td></tr>
 <tr><td class='hname'>claude-code</td><td>100</td><td>34</td><td>66</td><td>0</td><td>0</td><td>34/100 (34.0%)</td><td>613s</td><td>✅ done</td></tr>
@@ -56,7 +56,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <h2>2. Monitoring: R1(30,serial) vs R2(new,parallel)</h2>
 <table>
 <tr><th>Harness</th><th>R1 Res/Sc</th><th>R1 Q</th><th>R1 B</th><th>R2 Res/Sc</th><th>R2 Q</th><th>R2 B</th></tr>
-<tr><td class='hname'>cline-patched</td><td>18/30</td><td>0</td><td>0</td><td>18/70</td><td>0</td><td>0</td></tr>
+<tr><td class='hname'>cline</td><td>18/30</td><td>0</td><td>0</td><td>18/70</td><td>0</td><td>0</td></tr>
 <tr><td class='hname'>codex</td><td>14/30</td><td>0</td><td>0</td><td>20/63</td><td>0</td><td>7</td></tr>
 <tr><td class='hname'>opencode</td><td>15/30</td><td>0</td><td>0</td><td>20/70</td><td>0</td><td>0</td></tr>
 <tr><td class='hname'>claude-code</td><td>14/30</td><td>0</td><td>0</td><td>20/70</td><td>0</td><td>0</td></tr>
@@ -181,7 +181,7 @@ python3 gen_round2_compare.py</code></pre>
 <li><strong>Non-Docker sandbox</strong> (unshare R1).</li>
 <li><strong>Mixed run conditions:</strong> 30 serial (R1), 70 parallel (R2). See caliber section.</li>
 <li><strong>Codex 300 superset:</strong> codex's 70 new were serial, not R2 parallel.</li>
-<li><strong>cline-patched</strong> is modified, not vanilla.</li>
+<li><strong>cline</strong> is modified, not vanilla.</li>
 </ol>
 </div>
 <hr>

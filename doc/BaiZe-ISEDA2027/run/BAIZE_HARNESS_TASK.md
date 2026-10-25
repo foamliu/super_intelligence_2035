@@ -1,5 +1,13 @@
 # BAIZE_HARNESS_TASK.md
 
+> 📛 **命名常驻规程（2026-10-25 用户令 · 所有线通用的报告纪律）**：**报告里一律写 `cline`，🚫 不许写 `cline-patched`**。
+> - 同理：`ClinePatched` / `cline_patched` / `Cline-patched` 等任何变体**均禁止出现在报告正文、表格、图例、TL;DR、结论**里。
+> - 理由（用户原话）：「以后在报告里不要写 cline-patched，就写 cline，否则容易造成误解。」——读者会误以为"只跑了被改造过的 Cline"，而实际差异只在接入层（装 CLI / 写 baseUrl / 参数大小写），原生工具循环未改。
+> - **代码/脚本/配置里的标识符不改**（`cline_patched.py`、`terminalbench.agents.cline_patched:ClinePatched`、`jobs_cline-patched/` 是真实路径，改了会跑不起来）；**但报告里凡引用必须转写成 `cline`**。
+> - 如需交代接入层适配，放在**附录或脚注**写一次即可，正文一律 `cline`。
+
+### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
+
 ### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
 > 用户原话：「安排 harness 去排查和修复导致 claude-code/hermes/deepseek 通过率为0的适配器 bug，修复期间这三个就不要跑了。同时汇报其它四个 harness 截止目前各自的通过率（已跑完的部分）。」
 > **① 立即动作：停掉这三个（只停这三个）**

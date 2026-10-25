@@ -39,7 +39,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 
 <div class="tldr">
 <b>HERO 一句话结论</b>：在同一 backbone (kimi-k2.6-cloud) 下，7 个 harness 的 resolve rate 从 23.7% 到 30.3%——<b>6.7pp 方差完全由 harness 架构差异造成</b>。
-<b>cline-patched (28.7%) 排第三</b>，但暴露两个硬伤：<b>① 99.5% 的 PBF 尾部有 ai@7.0.49 transform error</b>（211/212），<b>② patch_not_applied 率 35.4%</b>（75/212，高于 codex/claude-code/hermes）。
+<b>cline (28.7%) 排第三</b>，但暴露两个硬伤：<b>① 99.5% 的 PBF 尾部有 ai@7.0.49 transform error</b>（211/212），<b>② patch_not_applied 率 35.4%</b>（75/212，高于 codex/claude-code/hermes）。
 <b>pi (30.3%) 最强且最快</b>（resolved wall 358s），<b>opencode (29.0%) 与 cline 最相似</b>（head-to-head both=75），<b>codex 最慢但 token 计量最精确</b>（服务端 usage 优先）。
 <br><b>TOP-8 改进建议</b>：P0 两条修 cline 的 ai@7.0.49 error + patch_not_applied；P1 三条沿用已提过的 O3/O4/O5；P2 三条新增（速度优化 + 选择性证据保留 + 失败条件化重试）。
 </div>
@@ -47,7 +47,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 <h2 class="sec">1. HERO 结论 + TL;DR</h2>
 <div class="card">
 <b>TL;DR</b>：<br>
-• <b>resolve rate 排名</b>：pi (30.3%) > opencode (29.0%) > cline-patched (28.7%) > hermes (27.0%) > codex (26.7%) > claude-code (26.0%) > deepseek-harness (23.7%)<br>
+• <b>resolve rate 排名</b>：pi (30.3%) > opencode (29.0%) > cline (28.7%) > hermes (27.0%) > codex (26.7%) > claude-code (26.0%) > deepseek-harness (23.7%)<br>
 • <b>速度排名</b>：opencode (460s) < deepseek (491s) < pi (492s) < cline (498s) < claude-code (620s) < hermes (792s) < codex (922s)<br>
 • <b>速度-精度 Pareto</b>：pi 是最优 Pareto 点（最高 rate + 第三快）；codex 是最差（resolve rate 偏低 + 最慢）<br>
 • <b>instance 重叠</b>：300 个 all-7 instances 中 182 个 nobody solved (60.7%)、30 个 everybody solved (10.0%)、88 个 some solved (29.3%)<br>
@@ -58,13 +58,13 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 
 <h2 class="sec">2. 方法与口径</h2>
 <div class="ok-box">
-<b>7 harness 版本</b>：cline-patched · opencode · pi · codex · claude-code · deepseek-harness · hermes<br>
+<b>7 harness 版本</b>：cline · opencode · pi · codex · claude-code · deepseek-harness · hermes<br>
 <b>同一 backbone</b>：kimi-k2.6-cloud（所有 entries 的 model 字段一致）<br>
 <b>题集</b>：SWE-bench Lite 300 条（12 repo 全集）；100-set ⊂ 300-set<br>
 <b>判据</b>：SWE-bench 官方 f2p (fail-to-pass) + p2p (pass-to-pass) test；resolved = patch_applied=True AND f2p 全通过 AND p2p 全通过<br>
 <b>R1/R2 并发口径与不可比性声明</b>：R1（第一轮 7×30/7×100）为串行执行（serial, N=1）；R2（7×300）为 7 路并行（每 harness 内 N=1），wall time 含并发资源争抢开销——<b>R1 与 R2 的 wall time 不可直接比较</b>。本报告数据为 R2 口径（7×300，含 --resume 复用）。<br>
 <b>轨迹数据可得性 + 缺失</b>：每个 entry 的 harness_result.stdout_tail 字段保留最后 500 字符——<b>仅存活尾部，非完整轨迹</b>。harness_result.eval 含 patch_applied/f2p_pass/f2p_total/p2p_pass/p2p_total/resolved。<b>缺失</b>：无 per-turn 轨迹（工具调用序列、token 计数、压缩事件均不可得）；仅 wall_s 和 stdout_tail 可用。<br>
-<b>数据量</b>：2100 entries（cline-patched 300 / opencode 300 / pi 300 / codex 300 / claude-code 300 / deepseek-harness 300 / hermes 300）
+<b>数据量</b>：2100 entries（cline 300 / opencode 300 / pi 300 / codex 300 / claude-code 300 / deepseek-harness 300 / hermes 300）
 </div>
 
 <h2 class="sec">3. 主结果可视化</h2>
@@ -86,7 +86,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 <h2 class="sec">4. 逐 harness 剖析（7 段）</h2>
 
 <div class="card cline">
-<h3 class="sub">cline（cline-patched）— resolve rate 28.7%（86/300）</h3>
+<h3 class="sub">cline（cline）— resolve rate 28.7%（86/300）</h3>
 <table>
 <tr><th style="width:130px">维度</th><th>特征</th></tr>
 <tr><td><b>工具集</b></td><td>read_file/write_file/execute_command/search_codebase/list_files/ask_question (cline 原生工具集)</td></tr>
@@ -217,7 +217,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 <tr><th>harness</th><th>强项（+证据）</th><th>弱项（+证据）</th></tr>
 <tr><td><b>pi</b></td><td>最高 rate 30.1%（89/296）；resolved wall 最快 363s；与 cline both=54（最高重叠，说明解题风格最接近）</td><td>70/200 patch_not_applied (35.0%)；blocked=7</td></tr>
 <tr><td><b>opencode</b></td><td>rate 29.0%（87/300）；wall 最快 460s；与 cline both=50, cline_only=10, other_only=10（最对称）</td><td>71/211 patch_not_applied (33.6%)；仅 2 blocked</td></tr>
-<tr><td><b>cline-patched</b></td><td>rate 28.7%（86/300）；wall 适中 498s；独解 2 instances；与 opencode/pi 互补性好</td><td><b>99.5% PBF 尾部有 ai@7.0.49 transform error（211/212）</b>；75 patch_not_applied (35.4%)；Focus Chain 已移除</td></tr>
+<tr><td><b>cline</b></td><td>rate 28.7%（86/300）；wall 适中 498s；独解 2 instances；与 opencode/pi 互补性好</td><td><b>99.5% PBF 尾部有 ai@7.0.49 transform error（211/212）</b>；75 patch_not_applied (35.4%)；Focus Chain 已移除</td></tr>
 <tr><td><b>codex</b></td><td>token 计量最精确（ServerObserved usage）；ThreadGoal 独立 plan 层；Rollout + window_id 原子检查点</td><td>最慢 922s（是 opencode 的 2 倍）；PBF wall 1059s；rate 仅 26.7%</td></tr>
 <tr><td><b>claude-code</b></td><td>TodoWrite + SessionMemory 持久层；memoized 归一化投影；api usage + 估算双路 token 计量</td><td>rate 25.4%（偏低）；wall 624s；16 blocked（最多之一）；57 patch_not_applied</td></tr>
 <tr><td><b>deepseek-harness</b></td><td>事件溯源检查点（无状态漂移）；wall 适中 491s</td><td>rate 23.7%（倒数第二）；4 no-patch（唯一有 no-patch 的 harness）；13 blocked</td></tr>
@@ -230,7 +230,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 <h3 class="sub">7.1 cline 在同题上的轨迹特征</h3>
 <div class="card cline">
 <table>
-<tr><th>指标</th><th>cline-patched</th><th>7-harness 中位数</th><th>排名</th></tr>
+<tr><th>指标</th><th>cline</th><th>7-harness 中位数</th><th>排名</th></tr>
 <tr><td>resolve rate</td><td>28.7% (86/300)</td><td>27.0%</td><td>3/7</td></tr>
 <tr><td>wall time (mean)</td><td>498s</td><td>498s</td><td>4/7</td></tr>
 <tr><td>resolved wall (mean)</td><td>399s</td><td>428s</td><td>2/7（快）</td></tr>
@@ -267,7 +267,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 <div class="card">
 <h3 class="sub"><span class="rank rp0">P0</span> 修复 ai@7.0.49 transform error <span class="tag t-new">新增</span> <span class="tag t-verified">已验证</span></h3>
 <table>
-<tr><td style="width:80px"><b>证据</b></td><td>211/212 cline PBF 的 stdout_tail 出现 node_modules/ai@7.0.49+.../dist/index.js:637 transform error（99.5%！）。这是 cline 依赖的 ai SDK 版本在序列化/反序列化时的报错。kimi_pilot_results.json cline-patched entries 的 stdout_tail 字段。</td></tr>
+<tr><td style="width:80px"><b>证据</b></td><td>211/212 cline PBF 的 stdout_tail 出现 node_modules/ai@7.0.49+.../dist/index.js:637 transform error（99.5%！）。这是 cline 依赖的 ai SDK 版本在序列化/反序列化时的报错。kimi_pilot_results.json cline entries 的 stdout_tail 字段。</td></tr>
 <tr><td><b>预期收益</b></td><td>消除 99.5% PBF 尾部的 transform error 噪音；可能减少 patch_not_applied（75/212=35.4%，部分可能由 transform error 导致 patch 格式损坏）。</td></tr>
 <tr><td><b>实现示意</b></td><td>升级 ai SDK 依赖或 patch transform 函数；在 PreToolUse hook 中增加 patch 格式校验。</td></tr>
 </table>
@@ -329,12 +329,12 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 </table>
 </div>
 
-<h3 class="sub">7.5 「已在 cline-patched 里验过的」vs「未验证的」</h3>
+<h3 class="sub">7.5 「已在 cline 里验过的」vs「未验证的」</h3>
 <div class="card">
 <table>
 <tr><th>类别</th><th>改进项</th><th>状态</th></tr>
-<tr><td><span class="tag t-verified">已在 cline-patched 验过</span></td><td>workdir per-harness 隔离 + rootfs flock（7×300 的 ②-A 代码修复）</td><td>✅ 已验证：block=0 确认（71 rounds, 0 new checkout/overwrite）</td></tr>
-<tr><td><span class="tag t-verified">已在 cline-patched 验过</span></td><td>cline-patched 作为 7×300 横评的参赛 harness</td><td>✅ 已验证：28.7% resolve rate, 300/300 完成</td></tr>
+<tr><td><span class="tag t-verified">已在 cline 验过</span></td><td>workdir per-harness 隔离 + rootfs flock（7×300 的 ②-A 代码修复）</td><td>✅ 已验证：block=0 确认（71 rounds, 0 new checkout/overwrite）</td></tr>
+<tr><td><span class="tag t-verified">已在 cline 验过</span></td><td>cline 作为 7×300 横评的参赛 harness</td><td>✅ 已验证：28.7% resolve rate, 300/300 完成</td></tr>
 <tr><td><span class="tag t-new">未验证</span></td><td>TOP-8 全部 8 条改进建议</td><td>💡 均未在 cline 代码中实现验证</td></tr>
 <tr><td><span class="tag t-existing">已提过（源码级）</span></td><td>O3 (PreCompact/PostCompact Hook) · O4 (TodoWrite) · O5 (token 计量)</td><td>CLINE_IMPROVEMENT_OPPORTUNITIES.md 已提，本报告从轨迹数据侧补充证据</td></tr>
 </table>
@@ -354,7 +354,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);color
 <tr><td>wall_s</td><td>kimi_pilot_results.json → harness_result.wall_s</td><td>statistics.mean([e['harness_result']['wall_s'] for e in entries if wall_s > 0])</td></tr>
 <tr><td>PBF breakdown</td><td>kimi_pilot_results.json → harness_result.eval</td><td>eval.patch_applied / eval.f2p_pass / eval.f2p_total / eval.p2p_pass / eval.p2p_total</td></tr>
 <tr><td>instance 重叠</td><td>kimi_pilot_results.json</td><td>defaultdict(lambda: defaultdict(dict)); len(res)==7 → all7; any(res.values()) → somebody</td></tr>
-<tr><td>head-to-head</td><td>kimi_pilot_results.json (all-7 子集)</td><td>cline_only = sum(1 for r in all7 if r['cline-patched'] and not r[other])</td></tr>
+<tr><td>head-to-head</td><td>kimi_pilot_results.json (all-7 子集)</td><td>cline_only = sum(1 for r in all7 if r['cline'] and not r[other])</td></tr>
 <tr><td>per-repo</td><td>kimi_pilot_results.json</td><td>group by e['repo'] × e['harness']; resolved = classification=='resolved'</td></tr>
 <tr><td>ai@7.0.49 error</td><td>kimi_pilot_results.json → harness_result.stdout_tail</td><td>grep 'ai@7.0.49' in stdout_tail → 211/212 cline PBF entries</td></tr>
 </table>

@@ -50,7 +50,7 @@ Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (
 </div>
 
 <div class="callout-green">
-<strong>HERO conclusion:</strong> Across 7 agent harnesses on 100 SWE-bench Lite instances with identical backbone and eval pipeline, <strong>pi</strong> achieved the highest in-scope resolve rate (40.9%), while <strong>cline-patched</strong>, <strong>hermes</strong>, and <strong>codex</strong> clustered at 36-37.5%. However, <strong>22 blocked instances</strong> (all sympy, from shared-workdir git checkout conflicts under parallel execution) and <strong>111 patch_applied=False</strong> (non-django/sympy eval env limitation) mean these rates <strong>understate true harness capability</strong>.
+<strong>HERO conclusion:</strong> Across 7 agent harnesses on 100 SWE-bench Lite instances with identical backbone and eval pipeline, <strong>pi</strong> achieved the highest in-scope resolve rate (40.9%), while <strong>cline</strong>, <strong>hermes</strong>, and <strong>codex</strong> clustered at 36-37.5%. However, <strong>22 blocked instances</strong> (all sympy, from shared-workdir git checkout conflicts under parallel execution) and <strong>111 patch_applied=False</strong> (non-django/sympy eval env limitation) mean these rates <strong>understate true harness capability</strong>.
 </div>
 
 <div class="summary-grid">
@@ -65,7 +65,7 @@ Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (
 <h2>1. Experiment Setup</h2>
 <h3>1.1 Harness Versions</h3>
 <table><tr><th>#</th><th>Harness</th><th>Form</th><th>Backbone</th></tr>
-<tr><td>1</td><td><strong>cline-patched</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>1</td><td><strong>cline</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
 <tr><td>2</td><td><strong>codex</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
 <tr><td>3</td><td><strong>hermes</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
 <tr><td>4</td><td><strong>opencode</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
@@ -135,7 +135,7 @@ Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (
 <table><tr><th>Dimension</th><th>Round 1 (30)</th><th>Round 2 (70)</th></tr><tr><td><strong>Concurrency</strong></td><td>Serial (1)</td><td>7 harnesses parallel (each serial)</td></tr><tr><td><strong>Conditions</strong></td><td>No contention</td><td>Competing for gateway/sandbox/I/O</td></tr><tr><td><strong>Resume</strong></td><td>First round</td><td>R2 reuses R1 30 results via --resume; 70 new in parallel</td></tr><tr><td><strong>Comparability</strong></td><td colspan="2">Cross-round NOT strictly comparable. Each row marked <span class="tag tag-r1">R1</span> or <span class="tag tag-r2">R2</span>.</td></tr></table>
 <div class="callout-blue"><strong>codex special case:</strong> codex ran 300 instances serially (full Lite superset). All 100 codex results in this table are <span class="tag tag-serial">serial</span> - codex did NOT participate in R2 parallel execution.</div>
 <h3>2.1 R1 vs R2 Resolve Rate</h3><table><tr><th>Harness</th><th>R1 res</th><th>R1 sco</th><th>R1 rate</th><th>R2 res</th><th>R2 sco</th><th>R2 rate</th><th>Delta</th></tr>
-<tr><td>cline-patched </td><td>18</td><td>30</td><td>60.0%</td><td>18</td><td>70</td><td>25.7%</td><td style="color:#dc2626">-34.3%</td></tr>
+<tr><td>cline </td><td>18</td><td>30</td><td>60.0%</td><td>18</td><td>70</td><td>25.7%</td><td style="color:#dc2626">-34.3%</td></tr>
 <tr><td>codex <span class="tag tag-serial">serial</span></td><td>14</td><td>30</td><td>46.7%</td><td>22</td><td>66</td><td>33.3%</td><td style="color:#dc2626">-13.3%</td></tr>
 <tr><td>hermes </td><td>16</td><td>30</td><td>53.3%</td><td>20</td><td>70</td><td>28.6%</td><td style="color:#dc2626">-24.8%</td></tr>
 <tr><td>opencode </td><td>15</td><td>30</td><td>50.0%</td><td>20</td><td>70</td><td>28.6%</td><td style="color:#dc2626">-21.4%</td></tr>
@@ -196,7 +196,7 @@ Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (
 <h3>2.2 Monitoring Indicators</h3><table><tr><th>Indicator</th><th>R1 (30 serial)</th><th>R2 (70 parallel)</th><th>Verdict</th></tr><tr><td>quota_blocked</td><td>0/210 (0%)</td><td>0/490 (0%)</td><td>NO gateway pollution</td></tr><tr><td>timeout</td><td>0 (codex 2)</td><td>minimal</td><td>Normal</td></tr><tr><td>workdir_blocked</td><td>0/210 (0%)</td><td>22/490 (4.5%)</td><td class="blocked-cell">Parallel pollution (git checkout conflicts)</td></tr><tr><td>patch_applied=False</td><td>0/210 (0%)</td><td>111/490 (22.7%)</td><td>Eval env limitation - see section 5</td></tr></table>
 <h2>3. Main Results Table</h2>
 <table><tr><th>Harness</th><th>Done</th><th>Resolved</th><th>PBF</th><th>Blocked</th><th>Quota-B</th><th>Scored</th><th>Rate</th><th>Med wall</th><th>Total wall</th><th>Mode</th></tr>
-<tr><td><strong>cline-patched</strong></td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">36.0%</td><td>371s</td><td>14.9h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr><td><strong>cline</strong></td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">36.0%</td><td>371s</td><td>14.9h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
 <tr><td><strong>codex</strong></td><td>100</td><td>36</td><td>60</td><td class="blocked-cell">4</td><td>0</td><td>96</td><td class="rate-high">37.5%</td><td>942s</td><td>26.5h</td><td><span class="tag tag-serial">serial</span></td></tr>
 <tr><td><strong>hermes</strong></td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">36.0%</td><td>517s</td><td>20.9h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
 <tr><td><strong>opencode</strong></td><td>100</td><td>35</td><td>65</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">35.0%</td><td>319s</td><td>12.5h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
@@ -465,7 +465,7 @@ Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (
 </svg><div class="chart-caption">Figure 4: patch_applied status (green=True, red=False)</div></div>
 <h3>5.2 Impact</h3><ul><li><strong>All-False repos</strong> (astropy, matplotlib, flask, pytest): 0/91 resolved. 637 runs guaranteed 0.</li><li><strong>Working repos</strong> (requests, xarray, pylint, sklearn, sphinx): sklearn 10/42, pylint 6/14 show genuine ability.</li></ul>
 <h3>5.3 Fair Scope Rates (django+sympy only)</h3><table><tr><th>Harness</th><th>Res</th><th>Sco</th><th>Fair</th><th>Overall</th><th>Delta</th></tr>
-<tr><td>cline-patched</td><td>35</td><td>71</td><td class="rate-high">49.3%</td><td>36.0%</td><td style="color:#059669">+13.3%</td></tr>
+<tr><td>cline</td><td>35</td><td>71</td><td class="rate-high">49.3%</td><td>36.0%</td><td style="color:#059669">+13.3%</td></tr>
 <tr><td>codex</td><td>32</td><td>67</td><td class="rate-high">47.8%</td><td>37.5%</td><td style="color:#059669">+10.3%</td></tr>
 <tr><td>hermes</td><td>33</td><td>71</td><td class="rate-high">46.5%</td><td>36.0%</td><td style="color:#059669">+10.5%</td></tr>
 <tr><td>opencode</td><td>33</td><td>71</td><td class="rate-high">46.5%</td><td>35.0%</td><td style="color:#059669">+11.5%</td></tr>
@@ -520,7 +520,7 @@ Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (
 <text x="211" y="52" text-anchor="middle" font-size="10" fill="#db2777" font-weight="bold">pi</text>
 </svg><div class="chart-caption">Figure 5: Median wall (x) vs rate (y). Top-left = fast+high.</div></div>
 <table><tr><th>Harness</th><th>Med wall</th><th>Total</th><th>Rate</th><th>Res/h</th></tr>
-<tr><td>cline-patched</td><td>371s</td><td>14.9h</td><td>36.0%</td><td>2.4</td></tr>
+<tr><td>cline</td><td>371s</td><td>14.9h</td><td>36.0%</td><td>2.4</td></tr>
 <tr><td>codex</td><td>942s</td><td>26.5h</td><td>37.5%</td><td>1.4</td></tr>
 <tr><td>hermes</td><td>517s</td><td>20.9h</td><td>36.0%</td><td>1.7</td></tr>
 <tr><td>opencode</td><td>319s</td><td>12.5h</td><td>35.0%</td><td>2.8</td></tr>

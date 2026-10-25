@@ -116,7 +116,7 @@
   <tr><td>codex resolved</td><td>34（11.3%）</td><td>43（14.3%）</td><td><span class="badge b-ok">+9</span></td><td>R118→R125 集中增长（+9），R125 后持平</td></tr>
   <tr><td>codex patch-but-failed</td><td>75（25.0%）</td><td>96（32.0%）</td><td><span class="badge b-info">+21</span></td><td>全窗口持续增长（git_fetch_retry 300s+3retry 解除 blocked）</td></tr>
   <tr><td>codex blocked</td><td>191（63.7%）</td><td>161（53.7%）</td><td><span class="badge b-ok">-30</span></td><td>每轮减 1–3 条，稳定递减</td></tr>
-  <tr><td>总 resolved（含 cline 18）</td><td>52</td><td>61</td><td><span class="badge b-ok">+9</span></td><td>cline-patched 30 条窗口内无变化（已完成 60.0%）</td></tr>
+  <tr><td>总 resolved（含 cline 18）</td><td>52</td><td>61</td><td><span class="badge b-ok">+9</span></td><td>cline 30 条窗口内无变化（已完成 60.0%）</td></tr>
   <tr><td>SWEBENCH_COMPARE.html</td><td>52 resolved</td><td>61 resolved · 72933 B</td><td><span class="badge b-ok">+9</span></td><td>每轮由 gen_kimi_compare.py 重新生成</td></tr>
   <tr><td>relay 健康复核</td><td>第 71 次（skip）</td><td>第 87 次（skip）</td><td><span class="badge b-ok">+16</span></td><td>ops_relay.sh PID 2489749（ppid=1，~5.6d），全程健康</td></tr>
   <tr><td>codex 进程运行时长</td><td>~137 min（窗口起）</td><td>~728 min（≈12.1h）</td><td>—</td><td>PID 2151526（ppid=1），启动于窗口前 ~19:43</td></tr>
@@ -275,7 +275,7 @@ df7d0481 01:26 harness R124: ... R123 push confirmed succeeded, relay healthy sk
 <table>
   <tr><th>文件</th><th>体积</th><th>状态</th></tr>
   <tr><td>SWEBENCH_COMPARE.html</td><td>72930 B</td><td>330 entries · 61 resolved · 每轮刷新</td></tr>
-  <tr><td>kimi_pilot_results.json</td><td>322056 B</td><td>330 entries（30 cline-patched + 300 codex）· codex 进程持续写入</td></tr>
+  <tr><td>kimi_pilot_results.json</td><td>322056 B</td><td>330 entries（30 cline + 300 codex）· codex 进程持续写入</td></tr>
   <tr><td>MEMORY_HARNESS.md</td><td>17781 B（17.4 KB）</td><td>≤32KB ✓ · R131 归档后稳定</td></tr>
   <tr><td>BAIZE_HARNESS_TASK.md</td><td>35729 B（34.9 KB）</td><td>⚠️ 超 32KB（运维 10-07 指令块所致）—— 下轮需归档</td></tr>
   <tr><td>daily-memories-harness/2026-10-07.md</td><td>~16 KB</td><td>当日 17 轮记录已写入</td></tr>
@@ -284,7 +284,7 @@ df7d0481 01:26 harness R124: ... R123 push confirmed succeeded, relay healthy sk
 <h3>下一轮计划</h3>
 <ol>
   <li><strong>归档 BAIZE_HARNESS_TASK.md</strong>：当前 35729B > 32KB，需将已闭合运维块归档至 <code>ARCHIVE_OPERATOR_HARNESS.md</code>（留 1 行指针），降至 ≤32KB。</li>
-  <li><strong>codex --resume 继续</strong>：161 blocked 待解除 → 完成后进入 cline-patched×300 <code>--resume</code> → opencode×300 → claude-code×300 → deepseek-harness×300。</li>
+  <li><strong>codex --resume 继续</strong>：161 blocked 待解除 → 完成后进入 cline×300 <code>--resume</code> → opencode×300 → claude-code×300 → deepseek-harness×300。</li>
   <li><strong>保持 <code>WAITING=1</code></strong>：loop 每 ~34 min 唤醒一次巡检。</li>
 </ol>
 

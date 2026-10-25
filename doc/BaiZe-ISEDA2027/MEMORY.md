@@ -327,6 +327,11 @@ WAITING: 0
 
 ## 5. 铁律与纪律
 
+- 📛 **报告命名纪律（2026-10-25 用户令 · 全项目所有线）**：报告里**一律写 `cline`，🚫 不许写 `cline-patched`**（含 `ClinePatched` / `cline_patched` / `Cline-patched` 等一切变体）。用户原话：「以后在报告里不要写 cline-patched，就写 cline，否则容易造成误解。」
+  - 理由：读者看到 "patched" 会误以为只跑了改造过的 Cline；实际差异仅在**接入层**（安装 CLI / 写 baseUrl / 参数大小写），原生工具循环未改。
+  - **代码/脚本/配置里的真实标识符不改**（`cline_patched.py`、`terminalbench.agents.cline_patched`、`jobs_cline-patched/`），但报告引用必须转写为 `cline`。接入层适配如需交代，放附录/脚注一次即可。
+  - 已批量修正 `reports/` 下 17 份历史报告（2026-10-25）。
+
 - 🚫 **绝不打断正在跑的 long-run**（尤其 **P-5b**：改 MBS/精度/seq 会让 20B loss 曲线作废）。
 - 🚫 **绝不 kill 各线 watchdog loop**（`baize_*_loop.sh`）；收敛后只置 `WAITING=1` 长睡。
 - **`WAITING:` 纪律**：只在各 `MEMORY_*.md` **顶部出现一次**（否则误触发 30 分钟长睡）。

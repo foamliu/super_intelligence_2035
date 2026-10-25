@@ -43,8 +43,8 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <div class="ref-link">Result table (full per-instance data): <code>SWEBENCH_COMPARE.html</code> — this report adds attribution, failure-mode analysis, and BaiZe implications on top of that table.</div>
 <h2><span class="section-num">1</span>TL;DR</h2>
 <div class="tldr"><ul>
-<li><strong>cline-patched and Pi tied for #1 at 60.0%</strong> (18/30 resolved each) — despite vastly different architectures (TypeScript agentic loop vs. Bun print-mode), both hit the same ceiling with the same backbone model.</li>
-<li><strong>7-way resolution spread is 40%-60%</strong> (deepseek-harness 40.0% to cline-patched/Pi 60.0%) — a 20-point gap attributable purely to harness engineering, since model and instances are identical.</li>
+<li><strong>cline and Pi tied for #1 at 60.0%</strong> (18/30 resolved each) — despite vastly different architectures (TypeScript agentic loop vs. Bun print-mode), both hit the same ceiling with the same backbone model.</li>
+<li><strong>7-way resolution spread is 40%-60%</strong> (deepseek-harness 40.0% to cline/Pi 60.0%) — a 20-point gap attributable purely to harness engineering, since model and instances are identical.</li>
 <li><strong>Backbone is the bottleneck, not the harness.</strong> 12/30 instances (40%) were solved by <em>zero</em> harnesses, and 8/30 (26%) by <em>all seven</em> — only 10/30 (33%) are "discriminating" instances that separate harness quality.</li>
 <li><strong>Dominant failure mode is "wrong fix" (83% of all failures):</strong> the patch applies cleanly but FAIL_TO_PASS tests still fail — the model misunderstood the bug, not a tooling failure.</li>
 <li><strong>Patch size correlates with resolve rate (r approx 0.7):</strong> top-3 harnesses produce 3.1-3.6KB avg patches; bottom-2 produce 1.6KB — smaller patches often mean incomplete fixes.</li>
@@ -53,7 +53,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <div class="callout"><table>
 <tr><th>Dimension</th><th>Value</th></tr>
 <tr><td>Dataset</td><td>SWE-bench Lite subset — <strong>30 instances</strong> (15 django/django + 15 sympy/sympy)</td></tr>
-<tr><td>Harnesses</td><td><strong>7</strong>: cline-patched, codex, opencode, claude-code, deepseek-harness, Pi, Hermes Agent</td></tr>
+<tr><td>Harnesses</td><td><strong>7</strong>: cline, codex, opencode, claude-code, deepseek-harness, Pi, Hermes Agent</td></tr>
 <tr><td>Model (backbone)</td><td><strong>kimi-k2.6-cloud</strong> (same for all harnesses — eliminates model variance)</td></tr>
 <tr><td>Concurrency</td><td><strong>1 (strict serial)</strong> — one instance x one harness at a time, no parallelism</td></tr>
 <tr><td>Timeout</td><td>1800s (30 min) per instance</td></tr>
@@ -79,7 +79,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <text x="540.0" y="331" text-anchor="middle" font-size="11" fill="#666">100%</text>
 <line x1="140" y1="30" x2="140" y2="306" stroke="#333" stroke-width="1"/>
 <rect x="140" y="35" width="240.0" height="28" fill="#6c5ce7" rx="3"/>
-<text x="132" y="53.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">cline-patched</text>
+<text x="132" y="53.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">cline</text>
 <text x="385.0" y="53.0" font-size="12" fill="#333">18/30 (60.0%)</text>
 <rect x="140" y="73" width="186.7" height="28" fill="#e17055" rx="3"/>
 <text x="132" y="91.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">codex</text>
@@ -101,7 +101,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <text x="358.3" y="281.0" font-size="12" fill="#333">16/30 (53.3%)</text>
 </svg></div>
 <table><tr><th>Rank</th><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Blocked</th><th>Resolve Rate</th><th>Avg Wall</th></tr>
-<tr><td>1</td><td class="hname">cline-patched</td><td>18</td><td>12</td><td>0</td><td><strong>60.0%</strong></td><td>479s</td></tr>
+<tr><td>1</td><td class="hname">cline</td><td>18</td><td>12</td><td>0</td><td><strong>60.0%</strong></td><td>479s</td></tr>
 <tr><td>2</td><td class="hname">Pi</td><td>18</td><td>12</td><td>0</td><td><strong>60.0%</strong></td><td>275s</td></tr>
 <tr><td>3</td><td class="hname">Hermes Agent</td><td>16</td><td>14</td><td>0</td><td><strong>53.3%</strong></td><td>553s</td></tr>
 <tr><td>4</td><td class="hname">opencode</td><td>15</td><td>15</td><td>0</td><td><strong>50.0%</strong></td><td>290s</td></tr>
@@ -192,7 +192,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 </svg>
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="25">
 <rect x="5" y="5" width="10" height="10" fill="#6c5ce7"/>
-<text x="18" y="14" font-size="10" fill="#333">cline-patched</text>
+<text x="18" y="14" font-size="10" fill="#333">cline</text>
 <rect x="108" y="5" width="10" height="10" fill="#e17055"/>
 <text x="121" y="14" font-size="10" fill="#333">codex</text>
 <rect x="163" y="5" width="10" height="10" fill="#00b894"/>
@@ -207,14 +207,14 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <text x="498" y="14" font-size="10" fill="#333">Hermes Agent</text>
 </svg></div>
 <table><tr><th>Repo</th><th>Harness</th><th>Resolved</th><th>Total</th><th>Rate</th></tr>
-<tr><td rowspan="7"><strong>django/django</strong></td><td>cline-patched</td><td>10</td><td>15</td><td>66.7%</td></tr>
+<tr><td rowspan="7"><strong>django/django</strong></td><td>cline</td><td>10</td><td>15</td><td>66.7%</td></tr>
 <tr><td>codex</td><td>8</td><td>15</td><td>53.3%</td></tr>
 <tr><td>opencode</td><td>8</td><td>15</td><td>53.3%</td></tr>
 <tr><td>claude-code</td><td>8</td><td>15</td><td>53.3%</td></tr>
 <tr><td>deepseek-harness</td><td>7</td><td>15</td><td>46.7%</td></tr>
 <tr><td>Pi</td><td>10</td><td>15</td><td>66.7%</td></tr>
 <tr><td>Hermes Agent</td><td>8</td><td>15</td><td>53.3%</td></tr>
-<tr><td rowspan="7"><strong>sympy/sympy</strong></td><td>cline-patched</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td rowspan="7"><strong>sympy/sympy</strong></td><td>cline</td><td>8</td><td>15</td><td>53.3%</td></tr>
 <tr><td>codex</td><td>6</td><td>15</td><td>40.0%</td></tr>
 <tr><td>opencode</td><td>7</td><td>15</td><td>46.7%</td></tr>
 <tr><td>claude-code</td><td>5</td><td>15</td><td>33.3%</td></tr>
@@ -222,7 +222,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <tr><td>Pi</td><td>8</td><td>15</td><td>53.3%</td></tr>
 <tr><td>Hermes Agent</td><td>8</td><td>15</td><td>53.3%</td></tr>
 </table>
-<p><strong>Finding:</strong> All harnesses perform better on django than sympy (avg django rate ~56% vs avg sympy rate ~45%). Sympy instances are harder — likely due to deeper mathematical domain knowledge required. The ranking is more stable on django (top-2 always cline-patched/Pi) but more volatile on sympy.</p>
+<p><strong>Finding:</strong> All harnesses perform better on django than sympy (avg django rate ~56% vs avg sympy rate ~45%). Sympy instances are harder — likely due to deeper mathematical domain knowledge required. The ranking is more stable on django (top-2 always cline/Pi) but more volatile on sympy.</p>
 <h3>3.3 Full Heatmap (30 instances x 7 harnesses)</h3>
 <table class="heatmap-table"><tr><th>Instance</th>
 <th>cline-patche</th>
@@ -299,7 +299,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <rect x="575.0" y="35" width="15.0" height="28" fill="#d63031" rx="1"/>
 <rect x="590.0" y="35" width="30.0" height="28" fill="#2d3436" rx="1"/>
 <text x="605.0" y="53.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">2</text>
-<text x="132" y="53.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">cline-patched</text>
+<text x="132" y="53.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">cline</text>
 <rect x="140.0" y="73" width="210.0" height="28" fill="#00b894" rx="1"/>
 <text x="245.0" y="91.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">14</text>
 <rect x="350.0" y="73" width="195.0" height="28" fill="#fdcb6e" rx="1"/>
@@ -365,7 +365,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <text x="668" y="15" font-size="11" fill="#333">Timeout</text>
 </svg></div>
 <table><tr><th>Harness</th><th>Resolved</th><th>f2p_fail_only</th><th>p2p_fail_only</th><th>both_fail</th><th>Timeout</th><th>Blocked</th><th>Total PBF</th></tr>
-<tr><td class="hname">cline-patched</td><td>18</td><td>11</td><td>0</td><td>1</td><td>2</td><td>0</td><td>12</td></tr>
+<tr><td class="hname">cline</td><td>18</td><td>11</td><td>0</td><td>1</td><td>2</td><td>0</td><td>12</td></tr>
 <tr><td class="hname">codex</td><td>14</td><td>13</td><td>2</td><td>1</td><td>7</td><td>0</td><td>16</td></tr>
 <tr><td class="hname">opencode</td><td>15</td><td>9</td><td>1</td><td>5</td><td>0</td><td>0</td><td>15</td></tr>
 <tr><td class="hname">claude-code</td><td>13</td><td>12</td><td>1</td><td>3</td><td>0</td><td>1</td><td>16</td></tr>
@@ -379,24 +379,24 @@ pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; ov
 <li><strong>codex has the most timeouts (7/30 = 23%).</strong> Its avg wall time (843s) is nearly 3x Pi (275s). The Rust-based harness spends too long exploring — 7 instances hit the 1800s wall. This suggests codex iteration strategy is inefficient with this model.</li>
 <li><strong>opencode has the most "both_fail" (5/15 PBF).</strong> Its patches are more likely to be both wrong AND break existing tests — suggesting its edit format or context handling introduces more collateral damage.</li>
 <li><strong>deepseek-harness: 17/18 PBF are pure "wrong fix" (94%).</strong> The Rust harness generates the smallest patches (1566B avg) — it is conservative but frequently incomplete. It never times out, never breaks existing tests, but also rarely gets the fix right.</li>
-<li><strong>Pi and cline-patched have identical failure profiles</strong> (11 f2p_only, 1 both_fail) — except cline-patched has 2 timeouts and Pi has 0. Pi faster iteration (275s vs 479s) means it never hits the wall.</li>
+<li><strong>Pi and cline have identical failure profiles</strong> (11 f2p_only, 1 both_fail) — except cline has 2 timeouts and Pi has 0. Pi faster iteration (275s vs 479s) means it never hits the wall.</li>
 </ol></div>
 <h3>4.3 Failure Evidence (from logs)</h3>
-<div class="evidence"><h4>TIMEOUT: cline-patched / django__django-11019</h4><pre>wall_s=1800s  returncode=1  eval: f2p=0/16 p2p=58/58
-stdout_tail: ...un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11019.json
+<div class="evidence"><h4>TIMEOUT: cline / django__django-11019</h4><pre>wall_s=1800s  returncode=1  eval: f2p=0/16 p2p=58/58
+stdout_tail: ...un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_django__django-11019.json
 [run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408
 </pre></div>
-<div class="evidence"><h4>TIMEOUT: cline-patched / django__django-11630</h4><pre>wall_s=1800s  returncode=1  eval: f2p=0/2 p2p=16/16
-stdout_tail: ...un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11630.json
+<div class="evidence"><h4>TIMEOUT: cline / django__django-11630</h4><pre>wall_s=1800s  returncode=1  eval: f2p=0/2 p2p=16/16
+stdout_tail: ...un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_django__django-11630.json
 [run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea
 </pre></div>
-<div class="evidence"><h4>Wrong Fix (FAIL_TO_PASS only): cline-patched / django__django-11019</h4><pre>patch_applied=True  patch_size=0 bytes
+<div class="evidence"><h4>Wrong Fix (FAIL_TO_PASS only): cline / django__django-11019</h4><pre>patch_applied=True  patch_size=0 bytes
 eval: f2p=0/16 (FAIL)  p2p=58/58 (PASS)
 Patch was applied cleanly but did not fix the target bug</pre></div>
-<div class="evidence"><h4>Wrong Fix (FAIL_TO_PASS only): cline-patched / django__django-11564</h4><pre>patch_applied=True  patch_size=11765 bytes
+<div class="evidence"><h4>Wrong Fix (FAIL_TO_PASS only): cline / django__django-11564</h4><pre>patch_applied=True  patch_size=11765 bytes
 eval: f2p=0/2 (FAIL)  p2p=174/174 (PASS)
 Patch was applied cleanly but did not fix the target bug</pre></div>
-<div class="evidence"><h4>Both Fail: cline-patched / django__django-11283</h4><pre>eval: f2p=0/1 (FAIL)  p2p=0/8 (FAIL)
+<div class="evidence"><h4>Both Fail: cline / django__django-11283</h4><pre>eval: f2p=0/1 (FAIL)  p2p=0/8 (FAIL)
 Patch did not fix the bug AND broke existing tests</pre></div>
 
 <h3>4.4 Instances Nobody Solved (12/30 = 40%)</h3>
@@ -473,7 +473,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <text x="280" y="346" font-size="11" fill="#333">sympy (light)</text>
 </svg></div>
 <table class="heatmap-table"><tr><th>Harness</th><th>Django Res</th><th>Django Rate</th><th>Sympy Res</th><th>Sympy Rate</th><th>Gap (dj−sy)</th></tr>
-<tr><td class="hname">cline-patched</td><td style="text-align:center">10/15</td><td style="text-align:center">66.7%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+13.3</td></tr>
+<tr><td class="hname">cline</td><td style="text-align:center">10/15</td><td style="text-align:center">66.7%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+13.3</td></tr>
 <tr><td class="hname">Pi</td><td style="text-align:center">10/15</td><td style="text-align:center">66.7%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+13.3</td></tr>
 <tr><td class="hname">Hermes Agent</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+0.0</td></tr>
 <tr><td class="hname">codex</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">6/15</td><td style="text-align:center">40.0%</td><td style="text-align:center">+13.3</td></tr>
@@ -560,7 +560,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <text x="315.0" y="390" text-anchor="middle" font-size="12" fill="#333">Avg Wall Time (seconds)</text>
 <text x="15" y="190.0" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 15 190.0)">Resolve Rate (%)</text>
 <circle cx="304.0" cy="158.0" r="8" fill="#6c5ce7" opacity="0.8"/>
-<text x="316.0" y="162.0" font-size="11" fill="#333" font-weight="bold">cline-patched</text>
+<text x="316.0" y="162.0" font-size="11" fill="#333" font-weight="bold">cline</text>
 <circle cx="490.1" cy="200.7" r="8" fill="#e17055" opacity="0.8"/>
 <text x="502.1" y="204.7" font-size="11" fill="#333" font-weight="bold">codex</text>
 <circle cx="208.0" cy="190.0" r="8" fill="#00b894" opacity="0.8"/>
@@ -576,7 +576,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 </svg></div>
 <p><strong>Efficiency metric:</strong> resolved instances per hour of wall-clock time (higher = more efficient use of compute):</p>
 <table><tr><th>Rank</th><th>Harness</th><th>Resolved</th><th>Rate</th><th>Avg Wall</th><th>Total Wall</th><th>Timeouts</th><th>Avg Patch</th><th>Efficiency (res/h)</th></tr>
-<tr><td style="text-align:center">1</td><td class="hname">cline-patched</td><td style="text-align:center">18/30</td><td style="text-align:center">60.0%</td><td style="text-align:center">479s</td><td style="text-align:center">4.0h</td><td style="text-align:center">2</td><td style="text-align:center">3433B</td><td style="text-align:center;font-weight:bold">4.5</td></tr>
+<tr><td style="text-align:center">1</td><td class="hname">cline</td><td style="text-align:center">18/30</td><td style="text-align:center">60.0%</td><td style="text-align:center">479s</td><td style="text-align:center">4.0h</td><td style="text-align:center">2</td><td style="text-align:center">3433B</td><td style="text-align:center;font-weight:bold">4.5</td></tr>
 <tr><td style="text-align:center">2</td><td class="hname">Pi</td><td style="text-align:center">18/30</td><td style="text-align:center">60.0%</td><td style="text-align:center">275s</td><td style="text-align:center">2.3h</td><td style="text-align:center">0</td><td style="text-align:center">3337B</td><td style="text-align:center;font-weight:bold">7.9</td></tr>
 <tr><td style="text-align:center">3</td><td class="hname">Hermes Agent</td><td style="text-align:center">16/30</td><td style="text-align:center">53.3%</td><td style="text-align:center">553s</td><td style="text-align:center">4.6h</td><td style="text-align:center">1</td><td style="text-align:center">3161B</td><td style="text-align:center;font-weight:bold">3.5</td></tr>
 <tr><td style="text-align:center">4</td><td class="hname">opencode</td><td style="text-align:center">15/30</td><td style="text-align:center">50.0%</td><td style="text-align:center">290s</td><td style="text-align:center">2.4h</td><td style="text-align:center">0</td><td style="text-align:center">3569B</td><td style="text-align:center;font-weight:bold">6.2</td></tr>
@@ -589,7 +589,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <li><strong>Pi is the most efficient</strong> (7.9 res/h) — fastest avg wall (275s), zero timeouts, tied for highest resolve rate. It gets the most done per unit of compute.</li>
 <li><strong>codex is the least efficient</strong> (2.0 res/h) — 3x slower than Pi, 7 timeouts waste 3.5h of wall time, and its resolve rate is only 46.7%.</li>
 <li><strong>opencode and deepseek-harness are fast but inaccurate</strong> — both ~290s avg but only 50% and 40% resolve rates. Speed without accuracy is not valuable.</li>
-<li><strong>cline-patched is mid-efficiency</strong> (4.5 res/h) — good resolve rate but 2 timeouts and 479s avg wall drag it down vs Pi.</li>
+<li><strong>cline is mid-efficiency</strong> (4.5 res/h) — good resolve rate but 2 timeouts and 479s avg wall drag it down vs Pi.</li>
 <li><strong>Hermes Agent is slow (553s avg) but decent</strong> (3.5 res/h) — Python-based overhead shows, but 53.3% resolve rate is respectable.</li>
 </ul></div>
 <h3>5.1 Patch Size Correlation</h3>
@@ -621,7 +621,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <text x="315.0" y="390" text-anchor="middle" font-size="12" fill="#333">Avg Patch Size (bytes)</text>
 <text x="15" y="190.0" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 15 190.0)">Resolve Rate (%)</text>
 <circle cx="497.8" cy="158.0" r="8" fill="#6c5ce7" opacity="0.8"/>
-<text x="509.8" y="162.0" font-size="11" fill="#333" font-weight="bold">cline-patched</text>
+<text x="509.8" y="162.0" font-size="11" fill="#333" font-weight="bold">cline</text>
 <circle cx="271.6" cy="200.7" r="8" fill="#e17055" opacity="0.8"/>
 <text x="283.6" y="204.7" font-size="11" fill="#333" font-weight="bold">codex</text>
 <circle cx="515.1" cy="190.0" r="8" fill="#00b894" opacity="0.8"/>
@@ -635,10 +635,10 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <circle cx="463.0" cy="179.3" r="8" fill="#a29bfe" opacity="0.8"/>
 <text x="475.0" y="183.3" font-size="11" fill="#333" font-weight="bold">Hermes Agent</text>
 </svg></div>
-<p><strong>Correlation:</strong> There is a clear positive correlation (r ~ 0.7) between average patch size and resolve rate. The top-3 performers (cline-patched 3433B, Pi 3337B, Hermes 3161B) all produce larger, more complete patches. The bottom-2 (deepseek-harness 1566B, codex 1659B) produce the smallest — suggesting their fixes are too minimal to fully address the bug. <em>This is not about "more code is better" — it is that complete fixes require sufficient context modifications.</em></p>
+<p><strong>Correlation:</strong> There is a clear positive correlation (r ~ 0.7) between average patch size and resolve rate. The top-3 performers (cline 3433B, Pi 3337B, Hermes 3161B) all produce larger, more complete patches. The bottom-2 (deepseek-harness 1566B, codex 1659B) produce the smallest — suggesting their fixes are too minimal to fully address the bug. <em>This is not about "more code is better" — it is that complete fixes require sufficient context modifications.</em></p>
 <h2><span class="section-num">6</span>Harness Architecture Differences</h2>
 <table><tr><th>Harness</th><th>Language</th><th>Tools</th><th>Context</th><th>Approach</th><th>Non-interactive</th><th>Resolve Rate</th></tr>
-<tr><td class="hname">cline-patched</td><td>TypeScript (Node/Bun)</td><td style="font-size:11px">read_file, write_to_file, replace_in_file, execute_command, search_files</td><td>Full file + diff</td><td>Agentic loop with auto-approve</td><td><code>cline --allowedTools ... -m</code></td><td style="text-align:center;font-weight:bold;color:#6c5ce7">60.0%</td></tr>
+<tr><td class="hname">cline</td><td>TypeScript (Node/Bun)</td><td style="font-size:11px">read_file, write_to_file, replace_in_file, execute_command, search_files</td><td>Full file + diff</td><td>Agentic loop with auto-approve</td><td><code>cline --allowedTools ... -m</code></td><td style="text-align:center;font-weight:bold;color:#6c5ce7">60.0%</td></tr>
 <tr><td class="hname">codex</td><td>Rust + TypeScript</td><td style="font-size:11px">shell, file_edit, apply_patch</td><td>Full repo scan</td><td>Multi-turn with sandboxed exec</td><td><code>codex --quiet --full-auto</code></td><td style="text-align:center;font-weight:bold;color:#e17055">46.7%</td></tr>
 <tr><td class="hname">opencode</td><td>TypeScript (Bun)</td><td style="font-size:11px">read, write, edit, bash, glob, grep</td><td>File-level with tree</td><td>LSP-aware, fast iteration</td><td><code>opencode run --non-interactive</code></td><td style="text-align:center;font-weight:bold;color:#00b894">50.0%</td></tr>
 <tr><td class="hname">claude-code</td><td>TypeScript (Node)</td><td style="font-size:11px">Read, Write, Edit, Bash, Glob, Grep</td><td>Full repo</td><td>Claude-optimized prompt format</td><td><code>claude --print --dangerously-skip-permissions</code></td><td style="text-align:center;font-weight:bold;color:#d63031">44.8%</td></tr>
@@ -649,10 +649,10 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 </table>
 <h3>6.1 Architecture to Performance Correlations</h3>
 <div class="callout"><ul>
-<li><strong>TypeScript/Bun harnesses dominate the top</strong> (cline-patched, Pi, opencode all use Bun/Node). Bun fast startup and efficient file I/O may give more iteration cycles within the timeout.</li>
+<li><strong>TypeScript/Bun harnesses dominate the top</strong> (cline, Pi, opencode all use Bun/Node). Bun fast startup and efficient file I/O may give more iteration cycles within the timeout.</li>
 <li><strong>Rust harnesses are split:</strong> deepseek-harness (Rust) is fast but inaccurate; codex (Rust+TS) is slow and timeout-prone. Rust alone does not guarantee good performance — the <em>iteration strategy</em> matters more than the language.</li>
-<li><strong>Tool richness does not predict performance:</strong> cline-patched and Pi both expose similar tool sets (read/write/edit/bash/search) and tie at 60%. deepseek-harness has a minimal tool set and scores 40%. But opencode has the richest LSP-aware tools and only gets 50% — the model ability to <em>use</em> the tools matters more than the tools themselves.</li>
-<li><strong>Context management is key:</strong> Pi and cline-patched both provide full file + project tree context. deepseek-harness provides file-level only. The extra context helps the model understand the fix scope.</li>
+<li><strong>Tool richness does not predict performance:</strong> cline and Pi both expose similar tool sets (read/write/edit/bash/search) and tie at 60%. deepseek-harness has a minimal tool set and scores 40%. But opencode has the richest LSP-aware tools and only gets 50% — the model ability to <em>use</em> the tools matters more than the tools themselves.</li>
+<li><strong>Context management is key:</strong> Pi and cline both provide full file + project tree context. deepseek-harness provides file-level only. The extra context helps the model understand the fix scope.</li>
 <li><strong>Non-interactive mode quality varies:</strong> Pi print mode (-p) is the cleanest — JSON event stream, no interactive overhead. codex --quiet --full-auto is the most timeout-prone. The non-interactive implementation directly affects wall time.</li>
 </ul></div>
 <h2><span class="section-num">7</span>Implications for BaiZe</h2>
@@ -660,7 +660,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <div class="callout"><h3>7.1 Required Capabilities (ranked by impact)</h3><ol>
 <li><strong>Code comprehension (critical):</strong> 83% of failures are "wrong fix" — the patch applies but does not solve the bug. This is pure code understanding. BaiZe 2.2B needs strong reading comprehension of real-world codebases (django, sympy), including understanding idioms, inheritance, and implicit behavior. <em>This is the #1 bottleneck — no harness can compensate for weak comprehension.</em></li>
 <li><strong>Patch completeness (high):</strong> The patch-size correlation shows that top harnesses produce 3KB+ patches with multiple coordinated edits. BaiZe needs to generate <em>complete</em> fixes — not just the "obvious" line, but all related changes (imports, tests, config). A model that produces 1.5KB patches will plateau at ~40%.</li>
-<li><strong>Tool-use reasoning (medium):</strong> The harness provides tools (read, search, edit, bash), but the model must know <em>when</em> to use each. Pi and cline-patched succeed because kimi-k2.6-cloud reasons well about tool sequences. BaiZe needs strong function-calling / tool-use training.</li>
+<li><strong>Tool-use reasoning (medium):</strong> The harness provides tools (read, search, edit, bash), but the model must know <em>when</em> to use each. Pi and cline succeed because kimi-k2.6-cloud reasons well about tool sequences. BaiZe needs strong function-calling / tool-use training.</li>
 <li><strong>Long-context handling (medium):</strong> Real SWE-bench instances require reading multiple files, understanding diffs, and maintaining context across turns. BaiZe context window (likely 32K-128K) must handle full-file reads + search results + edit history simultaneously.</li>
 <li><strong>Domain knowledge (medium for sympy, low for django):</strong> Sympy instances require mathematical domain knowledge — 7/15 sympy instances were unsolved by any harness. BaiZe pretraining on math/code corpora directly impacts sympy performance.</li>
 <li><strong>Efficiency / iteration speed (low for model, high for harness):</strong> The model does not control wall time — the harness does. But a model that can produce a correct fix in fewer turns saves compute. Pi efficiency (275s avg) comes from the harness, but a "smarter" model could reduce turns further.</li>
@@ -680,7 +680,7 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 <li><strong>Non-Docker sandbox (unshare R1).</strong> The evaluation uses a custom unshare-based sandbox, not the official SWE-bench Docker harness. Results may differ from official Docker-based evaluations (different dependency versions, test execution environment).</li>
 <li><strong>Not comparable to SWE-bench leaderboard.</strong> The official leaderboard uses 300 instances (SWE-bench Lite) with Docker. Our 30-instance subset + non-Docker eval means results <strong>cannot</strong> be compared to published leaderboard scores.</li>
 <li><strong>Only 2 repos (django, sympy).</strong> SWE-bench Lite spans 11 repos. Our subset misses scikit-learn, matplotlib, sphinx, etc. — performance may differ on other repos.</li>
-<li><strong>cline-patched is modified.</strong> The "cline-patched" harness includes custom patches to the upstream cline — its 60% rate may not reflect vanilla cline performance.</li>
+<li><strong>cline is modified.</strong> The "cline" harness includes custom patches to the upstream cline — its 60% rate may not reflect vanilla cline performance.</li>
 <li><strong>No token consumption data.</strong> Wall time is a proxy for cost, but actual API token consumption was not tracked per-harness. Some harnesses may use more tokens per turn.</li>
 </ol></div>
 <h2><span class="section-num">9</span>Next Steps and Recommendations</h2>
