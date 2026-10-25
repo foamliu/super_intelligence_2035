@@ -9,6 +9,46 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-25 20:2x（seq 4096->8192 掉速 5.6x 的根因排查：补对照 + 时间分解 + web search 对标）· 用户直令 · 最高优先
+> 用户原话：「让 pretrain 排查一下为啥 seq 从 4096 翻到 8192 吞吐掉这么多，也可以web search，这个不符合常识，因为阿里等公司用8192预训练还是常见的，而且我们又是Memba2-hybrid，理应对长上下文更加友好。」
+> 现状（实测）：cfg1（seq8192 / 2M tok/step）**108,291 tok/s** vs 基线（seq4096 / 4.13M）**606,449 tok/s**；per-GPU 6,768 vs 37,900（-82%）；峰值显存 79.2 vs 67.6 GB。
+> 运维判定：**该降幅不符合常识** —— BaiZe-2B 只有 4/56 层带 attention、24 层 Mamba2（线性于 seq）、28 层纯 MLP；同 tok/step 下 seq 翻倍的合理代价约 **+10~30%**。**证据不齐前，禁止把「Mamba2 SSM 超线性」写进报告/MEMORY 结论**（MEMORY #779 已有此句，本轮改为「推测·待验证」）。
+
+**1) 先补对照（现在的网格不是单变量：GBS 1008->256、MBS 3->2 一起变了）**
+- `cfg0a`：seq=4096 / S1 / mbs=4 / gbs=512（tok/step=2,097,152，与 cfg1 **只差 seq**）
+- `cfg0b`：seq=4096 / S2 / mbs=3 / gbs=1008（tok/step=4,128,768，**用同一脚本重跑基线**）
+- 判据：`tok/s(cfg0a) / tok/s(cfg1)`；`tok/s(cfg0b) / 606,449`。若 cfg0b 偏差 >5% ⇒ **先查环境/脚本差异**（CUDA graph、fp8、NCCL 变量、数据 blend、launcher 参数），不得继续谈 seq。
+
+**2) 时间分解（归因核心证据，每格都要）**
+- 开 Megatron 计时（`--log-timers-to-tensorboard --timing-log-level 2` 或等价），取 step 30-80 的 `forward-compute / backward-compute / optimizer / data-loading` 均值。
+- 每格采一次 `nvidia-smi dmon -s u -m -c 60`：GPU util 均值、util <10% 的时间占比。
+- 查 CUDA graph 是否真生效（log 里 capture 成功/失败、是否回退 eager），4096 与 8192 对比。
+- 查数据侧：seq=8192 时每步读几个 shard、是否跨 shard 重打包、worker 数 / CPU 饱和 / 队列空转；与 4096 用同 16 个 `p5b_l3` shard 对比。
+- 查 kernel/精度：`--mamba-ssm-dtype` 实际取值（recipe 内是否强制 float32）、chunk_size、sequence parallel / TP 在 8192 下是否被关、TE/fused kernel 是否回退。
+
+**3) web search 对标（用户点名，必须真检索并引用）**
+- 检索方向：Qwen2.5 / Qwen3 预训练序列长度与吞吐；Llama 3（8K 预训练）；Megatron-LM 长序列最佳实践（sequence parallel / context parallel / activation recompute）；`mamba_ssm` 与 Megatron-Core hybrid Mamba 的已知性能坑（chunk scan、fp32 state、TP 下 scan 切分）；「同 tok/step 下 seq 翻倍的合理吞吐损失区间」。
+- 每条写：来源（标题 + arXiv 号 / 官方文档 / 博客 + 年份 + **检索日期 2026-10-25**）、结论、与本项目可比性；**查不到就写「未查到」**，不许凭印象。
+
+**4) 假设-检验表（报告必须逐行给实测结果）**
+| 假设 | 检验方式 | 若成立的特征 | 实测 | 结论 |
+|:--|:--|:--|:--|:--|
+| H1 数据管线在 8192 下重打包/跨 shard，GPU 饥饿 | data-loading 计时 + util 曲线 | data-loading 占步时 >50%，util 长期 <20% | | |
+| H2 CUDA graph 在 8192 回退 | log capture 行 | 出现 fallback / capture failed | | |
+| H3 Mamba2 fp32 SSM + chunk scan 长序列低效 | 改 chunk_size / 临时 bf16 对比（标为配方变更组） | 改后 tok/s 明显回升 | | |
+| H4 小 GBS/MBS 导致 overlap 与利用率下降 | cfg0a 对照 | 4096 也掉到 ~110K ⇒ 与 seq 无关 | | |
+| H5 8K 本身计算更贵 | 排除 H1-H4 后 | compute 占比接近 100% 且随 seq 增长 | | |
+
+**5) 修复与复测**
+- 定位主因后**只改那一项**（如 seq 粒度预打包 / 加 dataloader worker / mamba dtype / 恢复 CUDA graph），用同一 `cfg0a` 复测，给修复前后 tok/s、step time、显存对比。
+- 判据：修复后 `cfg0a` 相对基线同 tok/step 的降幅 **≤30%**；若仍 >50% ⇒ 保留现场证据上报，不许硬编结论。
+
+**6) 交付**
+- `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链、≥15KB）：摘要 / 现象与口径 / 对照实验 / 时间分解与 util / 假设检验表 / 外部对标 / 根因 / 修复与复测 / 复现命令 / 数据溯源。
+- 更新 `reports/report_pretrain_seqlen_throughput_zh.html` 与 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节；生成器 `run/gen_seq8192_rootcause_report.py`（重跑 diff 空）。
+- 修正 MEMORY #779 机制结论标注；commit 前缀 `pretrain rc:`。
+- 排期：cfg0a + cfg0b 约 1h，两次时间分解约 1h，修复复测约 1h ⇒ **3-4h**；6 格主表串行不打断，总 ETA 顺延。
+
 ### [运维令] 2026-10-25 17:5x（**seq 增大 x 每步 token 数固定（2M / 4M）的 16 卡吞吐网格**）· 用户直令 · 最高优先
 > 用户原话：「pretrain：测试下列配置的16卡训练吞吐 1）seq=8192, 2M tok/step 2）seq=8192, 4M tok/step 3）seq=16384, 2M tok/step 4）seq=16384, 4M tok/step 5）seq=32768, 2M tok/step 6）seq=32768, 4M tok/step 也就是在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
 
@@ -51,31 +91,8 @@
 
 ### [已归档] §运维令·2026-10-25 07:4x（双机 16 卡吞吐报告）**已完成**（#770-#776：报告 `reports/report_pretrain_dualnode_throughput_zh.html` 24,970B + 生成器可确定性重生成 + EXPERIMENTS L3691 指针，独立复核通过）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。需要时再读。
 
-### 🚀 运维令 · 2026-10-24 23:5x（**双机已调通 ⇒ 转入「双机吞吐优化」阶段**）· 用户直令 · 最高优先
-> **已调通（23:22–23:37，16 卡 DP=2×8，`baize_dualnode_16gpu_test.sh`）**：median **512,801 tok/s** / mean 508,860 / **扩展效率 84.0%** / 每卡 32,050 / 峰值显存 **64.4 GB** / loss 0.3695 / gnorm 0.72 / **0 NaN、0 skip**；NCCL 走 `NET/IB/0,2,6…` 多通道。
-> ⚠️ **口径陷阱**：这次是 **BF16 mixed + `--mock` 数据**，而单机基线 305,098 是 **FP8 tensorwise + CUDA Graphs + 真数据** ⇒ 84% 只能证明"IB 健康"，**不能**直接当扩展效率结论。
-> ⚠️ **launcher bug**：`baize_dualnode_16gpu_test.sh:114/115  WORKER_SSH_PID: unbound variable`（`set -u` 下 worker 收尾即报错，导致脚本"挂在 SSH 清理"）→ **先修**（`WORKER_SSH_PID=${WORKER_SSH_PID:-}`，或在 worker 分支前置空）。
->
-> **优化任务（按序执行，每项固定 80 步；每次跑完立刻释放 16 卡）**
-> - **A. 口径对齐（必做第一步）**：16 卡跑 **e18 配方（MBS3 + FP8 TW + CUDA Graphs + 真数据）** ⇒ 得到与 305K 可比的真实扩展效率（预期 ~0.84）；同时留 BF16 组作对照。
-> - **B. NCCL/IB 调参**（每项单独跑）：`NCCL_IB_QPS_PER_CONNECTION` 1/4/8 · `NCCL_MAX_NCHANNELS` 32/64 · `NCCL_ALGO`(Ring/Tree)×`NCCL_PROTO`(LL/LL128/Simple) · `NCCL_NET_GDR_LEVEL` 2/3 · `NCCL_IB_HCA` 子集（**排除 `.29` 的 `mlx5_7`/`mlx5_15` 两个 PORT_DOWN**）· `NCCL_CROSS_NIC=1`
-> - **C. 通信/计算重叠**：`--overlap-grad-reduce` / `--overlap-param-gather`（DP=16、TP=1 下是否有收益）
-> - **D. MBS/GBS**：MBS3→**4**（64.4 GB 尚有 ~15 GB 余量）· GBS 1008→2016
-> - **E. 分布式优化器**：`--use-distributed-optimizer`（用显存换更大 MBS）
-> **判据**：每项报 `tok/s`、`扩展效率`、`median step ms`、`峰值显存`、`loss/gnorm`（与 e18 对齐，Δloss ≤5%）；最优组合写进 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「双机吞吐优化」+ 中文 HTML 报告 `reports/report_pretrain_dualnode_throughput_zh.html`（含每项对比表与结论）。
-> 🚫 不得改单机 e18 配方本身；🚫 不要再用 mock 数据下的数字对外宣称"扩展效率"。
+### [已归档] §运维令·2026-10-24 23:5x（双机已调通 -> 转入吞吐优化阶段）**已完成**（Task A/B 全闭合：606,300 tok/s / 99.4%；双机报告 24,970B；Task B 3 TAG 无收益）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。需要时再读。
 
-
-> 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
-> 📦 §运维实测·2026-10-24 21:45（2-rank NCCL打通）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：4个NCCL IB变量(GID_INDEX=3/MTU=4096/TC=106/TIMEOUT=22)必须照抄主从两侧,busbw≈46GB/s。需要时再读。
-
-> 📦 §运维令·2026-10-24 21:0x（NCCL卡在worker初始化）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：最小复现2rank打出Init COMPLETE,锁RoCE环境变量缺失。需要时再读。
-
-> 📦 §应急令·2026-10-24 19:2x（loop卡死29h重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：loop已重启,16卡双机测试已执行。需要时再读。
-
-> 📦 §运维指令·2026-10-24 16:2x（双机16卡联合训练测最大吞吐）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：双机16卡e18=606K tok/s,扩展效率99.4%(已纠正#767误报512K/84%)。需要时再读。
-
-> 📦 §补正·2026-10-24 16:2x（SGLang对Mamba2支持已验证）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：sglang 0.5.9原生支持nemotron_h,照抄P-9.11配置,加--mamba-ssm-dtype float32。需要时再读。
 ### 🚀 运维指令 · 2026-10-24 16:0x（**① 305K 最佳实践写入任务书 ② longctx 报告用错模型：重测重写**）· 用户直令 · 最高优先
 
 > 用户原话：「1. 把第二轮最佳：**MBS3+FP8 TW+CG=305K tok/s（+2.6% vs 第一轮 / +21.0% vs 基线）**作为**最佳实践简要写入任务书**；2. 早上提交的 `report_pretrain_longctx_infer_cost_3x2b_zh.html` **有问题，BaiZe-2B 不应该采用 Xmodel-2.5 模型，而是应该沿用一直实验的 BaiZe-2B (Mamba2-hybrid）模型。重新测试，重写报告。**」

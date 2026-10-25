@@ -22,6 +22,7 @@
   - 报告必答四问：① 中英文基线配比表 + 至少 2 个候选配比（A 英6:中3:混排1；B 中英1:1）与可判定判据；② 数学公式三通道（im2latex 纯公式 / arXiv LaTeX+KaTeX 正文夹公式 / 公式+表格混排）+ token 预算与渲染失败率；③ 其他类别（文档版面、图表、表格、手写、场景文本、低质退化、代码截图、多语种）各类数量/优先级/判据；④ 可执行管线（trdg/SynthTIGER 参数、stage-2 780k 混合比、SFT 配方、成本与 ETA、P0 20 万 pilot -> 全量 -> SFT）。
   - 预注册判据：主 OCRBench >= +2pp（基线 1.60%）；副 DocVQA/ChartQA/InfoVQA >= +1pp；回归护栏 MMStar/MMBench/AI2D/RealWorldQA 掉幅 <= 1pp。必须给决策树。
   - 交付 `reports/report_vision_ocr_sft_plan_zh.html`（9 节、>=18KB、0 script/0 外链）+ `vision/generate_ocr_sft_plan_report.py` + 一页纸执行清单；本轮不启训练、不生成全量数据。
+- 20:2x（pretrain · seq 掉速根因令，**补记：上一轮只在对话里分析、未落盘，现正式落盘**）：用户质疑「4096->8192 吞吐掉 5.6x 不符合常识，阿里等 8192 预训练很常见，我们又是 Mamba2-hybrid，理应对长上下文更友好」，允许 web search。已下发（任务书 32,585B；归档 10-24 23:5x 块 3,607B）：① 补单变量对照 cfg0a（seq4096/2M）与 cfg0b（seq4096/4M 重跑基线）；② 时间分解 + dmon util + CUDA graph 状态 + 数据侧重打包/worker；③ web search 对标（Qwen2.5 预训练最大 32,768 / Llama 3 8K / Megatron 长序列实践 / SSD chunk scan 融合可提 1.50-2.51x）；④ 假设-检验表 H1-H5 逐行实测；⑤ 修复只改一项并复测，判据修复后降幅 <=30%；交付 `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（≥15KB）+ 生成器 + 更新 seqlen 报告与 EXPERIMENTS；commit 前缀 `pretrain rc:`；ETA 3-4h。
 - 仍未变的老待办：vision B4 的 MMVet / MathVista 需 `OPENAI_API_KEY`；336+anyres 需工程 scope。
 
 

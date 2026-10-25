@@ -1,5 +1,32 @@
 ## 归档 2026-10-25（由 BAIZE_PRETRAIN_2B_TASK.md 搬入，原文未改）
 
+### 🚀 运维令 · 2026-10-24 23:5x（**双机已调通 ⇒ 转入「双机吞吐优化」阶段**）· 用户直令 · 最高优先
+> **已调通（23:22–23:37，16 卡 DP=2×8，`baize_dualnode_16gpu_test.sh`）**：median **512,801 tok/s** / mean 508,860 / **扩展效率 84.0%** / 每卡 32,050 / 峰值显存 **64.4 GB** / loss 0.3695 / gnorm 0.72 / **0 NaN、0 skip**；NCCL 走 `NET/IB/0,2,6…` 多通道。
+> ⚠️ **口径陷阱**：这次是 **BF16 mixed + `--mock` 数据**，而单机基线 305,098 是 **FP8 tensorwise + CUDA Graphs + 真数据** ⇒ 84% 只能证明"IB 健康"，**不能**直接当扩展效率结论。
+> ⚠️ **launcher bug**：`baize_dualnode_16gpu_test.sh:114/115  WORKER_SSH_PID: unbound variable`（`set -u` 下 worker 收尾即报错，导致脚本"挂在 SSH 清理"）→ **先修**（`WORKER_SSH_PID=${WORKER_SSH_PID:-}`，或在 worker 分支前置空）。
+>
+> **优化任务（按序执行，每项固定 80 步；每次跑完立刻释放 16 卡）**
+> - **A. 口径对齐（必做第一步）**：16 卡跑 **e18 配方（MBS3 + FP8 TW + CUDA Graphs + 真数据）** ⇒ 得到与 305K 可比的真实扩展效率（预期 ~0.84）；同时留 BF16 组作对照。
+> - **B. NCCL/IB 调参**（每项单独跑）：`NCCL_IB_QPS_PER_CONNECTION` 1/4/8 · `NCCL_MAX_NCHANNELS` 32/64 · `NCCL_ALGO`(Ring/Tree)×`NCCL_PROTO`(LL/LL128/Simple) · `NCCL_NET_GDR_LEVEL` 2/3 · `NCCL_IB_HCA` 子集（**排除 `.29` 的 `mlx5_7`/`mlx5_15` 两个 PORT_DOWN**）· `NCCL_CROSS_NIC=1`
+> - **C. 通信/计算重叠**：`--overlap-grad-reduce` / `--overlap-param-gather`（DP=16、TP=1 下是否有收益）
+> - **D. MBS/GBS**：MBS3→**4**（64.4 GB 尚有 ~15 GB 余量）· GBS 1008→2016
+> - **E. 分布式优化器**：`--use-distributed-optimizer`（用显存换更大 MBS）
+> **判据**：每项报 `tok/s`、`扩展效率`、`median step ms`、`峰值显存`、`loss/gnorm`（与 e18 对齐，Δloss ≤5%）；最优组合写进 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新节「双机吞吐优化」+ 中文 HTML 报告 `reports/report_pretrain_dualnode_throughput_zh.html`（含每项对比表与结论）。
+> 🚫 不得改单机 e18 配方本身；🚫 不要再用 mock 数据下的数字对外宣称"扩展效率"。
+
+
+> 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
+> 📦 §运维实测·2026-10-24 21:45（2-rank NCCL打通）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：4个NCCL IB变量(GID_INDEX=3/MTU=4096/TC=106/TIMEOUT=22)必须照抄主从两侧,busbw≈46GB/s。需要时再读。
+
+> 📦 §运维令·2026-10-24 21:0x（NCCL卡在worker初始化）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：最小复现2rank打出Init COMPLETE,锁RoCE环境变量缺失。需要时再读。
+
+> 📦 §应急令·2026-10-24 19:2x（loop卡死29h重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：loop已重启,16卡双机测试已执行。需要时再读。
+
+> 📦 §运维指令·2026-10-24 16:2x（双机16卡联合训练测最大吞吐）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：双机16卡e18=606K tok/s,扩展效率99.4%(已纠正#767误报512K/84%)。需要时再读。
+
+> 📦 §补正·2026-10-24 16:2x（SGLang对Mamba2支持已验证）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：sglang 0.5.9原生支持nemotron_h,照抄P-9.11配置,加--mamba-ssm-dtype float32。需要时再读。
+
+
 ### 🚀 运维令 · 2026-10-25 07:4x（**写「双机 16 卡吞吐优化与测试」报告**）· 用户直令 · 最高优先
 > 用户原话：「pretrain：关于16机吞吐量优化和测试，写个报告。」
 > 即 **16 卡（双机 2×8×H100，DP16/TP1）吞吐优化与扩展性测试报告**。任务书 10-24 23:5x 块已写明「最优组合 + 中文 HTML 报告」是本阶段交付物 ⇒ **本轮把它落地成一份完整报告**，不再拖到下轮。
