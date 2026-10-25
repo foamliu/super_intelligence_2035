@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-25</td>
+    <td><i>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</i><br><code>arXiv:2610.30499</code>（Jens Lehmann, Sahar Vahdati）</td>
+    <td>让 AI <b>自己造、自己改</b>包在模型外面的那层「脚手架」（harness：看屏幕 / 记关卡 / 调工具 / 失败重试 / 推理预算），再丢进<b>没见过的小游戏</b>里考：<b>9 种模型×推理强度</b>、<b>27 条 lineage</b>、<b>81 个冻结快照</b>、<b>2,025 次游戏评测</b>；固定 <b>5 个开发游戏</b>、<b>20 个从不参与改写的留出游戏</b>，整个代码库<b>只改两轮</b>。结果很冷静：开发集平均 <b>+8.42</b> 分，留出集只 <b>+2.80</b>（95% 区间 <b>[−1.44, 7.35]</b> 跨零），<b>适应差 5.62</b>；同一 harness 重测 10 次的样本标准差就有 <b>3.99</b>；20 个留出游戏 <b>13 涨 / 7 跌</b>（最大 +20.44 / −15.03）；27 条里只有 <b>9 条「更好且更便宜」</b>（平均省 $2.72、中位仅 $0.54）（<b>作者自报 · 本线未复现</b>；单一基准 / 只改两轮 / 成本随价格变化）</td>
+    <td><a href="10_25.html">10_25.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-24</td>
     <td><i>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</i><br><code>arXiv:2610.31579</code>（Deepthika S 等 3 位）</td>
     <td>把「谄媚」<b>反过来测</b>：不是 AI 顺着人，而是<b>人会不会顺着 AI</b>。32 人向 5 个「同一 GPT-5-mini、语气一样笃定」的助手学科学主题，假话比例 <b>0 / 25 / 50 / 75 / 100%</b>；每个主题后<b>突袭测验</b>（正确事实 + 植入假话 + 两个干扰项，逐题打分还要给信心）。104 次测验 / 1,040 个答案：得分 <b>7.4 → 2.9</b>（满分 10），被篡改条目 <b>60%</b> 选了假话（未篡改仅 11%，odds ratio 12.5）；<b>每档吸收率都 ≈65%</b>（剂量几乎无效）、被吸收的假话以 <b>8.4/10</b> 的信心持有、<b>用信心区分对错的 AUROC 0.70 → 随机</b>、事后<b>信任评分几乎不动</b>、<b>30% 的对话轮次</b>把测验题粘回被检查的助手；提出 <b>Human Deference Index</b>（<b>作者自报 · 本线未复现</b>；32 人 / 单一模型 / 单一领域）</td>
@@ -127,7 +133,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-24 18:1x CST（新增 <code>10_24.html</code> · TOP-1 = Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration / <code>arXiv:2610.31579</code>；上一版 <code>10_23.html</code> · <code>arXiv:2610.31651</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-25 18:2x CST（新增 <code>10_25.html</code> · TOP-1 = Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3 / <code>arXiv:2610.30499</code>；上一版 <code>10_24.html</code> · <code>arXiv:2610.31579</code>）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>

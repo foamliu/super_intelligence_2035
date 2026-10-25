@@ -52,15 +52,15 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-25 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5（早报）</b> · 早报 3 篇<b>全「借鉴」</b>（长上下文投机解码的 KV 压缩 / 小模型多模态的最小编辑蒸馏 / agent harness 演化的任务规模悖论）· 晚报 2 篇「科普」待 18:00 轮补齐</div>
+  <h1>论文推荐日报 · 2026-10-25 <span class="badge b-pm">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5（已收口）</b> · 早报 3 篇<b>全「借鉴」</b>（长上下文投机解码的 KV 压缩 / 小模型多模态的最小编辑蒸馏 / agent harness 演化的任务规模悖论）+ 晚报 2 篇<b>全「科普」</b>（AI 能不能自己改写自己的脚手架 / 循环模型怎么省掉重复的 KV cache）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-25（CST 本地日；AM = UTC 2026-10-24T22:0x）</span>
-    <span>🏷 标识：早报 3 / 5</span>
+    <span>📅 日期：2026-10-25（CST 本地日；AM = UTC 2026-10-24T22:0x / PM = UTC 2026-10-25T10:0x）</span>
+    <span>🏷 标识：早报 3 / 5 → 晚报 5 / 5</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成：2026-10-25 06:0x CST（AM）</span>
+    <span>🕒 生成：2026-10-25 06:0x CST（AM）· 优化：2026-10-25 18:0x CST（PM）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span>；晚报 2 篇 <span class="badge b-kp">科普</span> + 分镜脚本留待 18:00 时窗（本轮不越时窗执行第 5 批）。<b>公告批次 <code>2026-10-22</code> 仍未刷新</b>（周日无公告）⇒ 3 篇取自候选池，<b>首次提交日期逐一标注</b>（2026-10-20 / 10-21 / 10-22）。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span>（RIFT / Edit, Don't Imitate / SSR）+ 晚 2 <span class="badge b-kp">科普</span>（Can LLMs Improve Their Own Harness? / BeNice!）。<b>公告批次 <code>2026-10-22</code> 全天未刷新</b>（周日无公告；PM 复验 <code>totalResults=637451</code> 与 AM 逐条相同）⇒ 5 篇均取自候选池，<b>首次提交日期逐一标注</b>（2026-10-20 / 10-21 / 10-22）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment + PDF 首页。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -143,18 +143,57 @@
     <b>建议动作</b>：读原文 §3（证据组合怎么构造、竞速的预算如何逐级分配）→ 在我们 harness 演化流程里做<b>最小对照</b>：同一任务池，A=全量证据（现状）、B=按质量/覆盖度抽样成多组合 + 小预算竞速，只比「找到同等 harness 质量所需的执行次数」。
   </div>
 </div>
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 4–5 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3 <span class="badge b-kp">本日科普 TOP-1</span></h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">一个够通用的智能体应该能<b>自己长本事</b>，而不是每个新任务都等人来重写它的软件脚手架；<b>harness</b> 就是那个替模型做感知、记忆、工具调用、失败恢复与推理预算分配的「符号程序」。在交互式基准 <b>ARC-AGI-3</b> 上，作者让前沿模型<b>自己造 harness、自己改两轮</b>：9 种「模型 × 推理强度」条件、<b>27 条独立 lineage</b>、81 个冻结快照、2,025 次游戏评测。结果很冷静 —— harness 表现从 0 分到接近满分都有，但两轮改写只把<b>留出集</b>平均 <b>RHAE 抬高 2.80 分</b>（95% 区间 <b>[−1.44, 7.35]</b>，跨 0），而开发集平均涨了 <b>8.42 分</b>（<b>适应差 5.62 分</b>）—— <b>自己觉得变强了，留出集不一定认</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Jens Lehmann<sup>1,2</sup>, Sahar Vahdati<sup>3,4</sup>（<sup>1</sup> <b>Amazon</b> / <sup>2</sup> <b>Technische Universität Dresden</b> / <sup>3</sup> <b>Universität Hannover</b> / <sup>4</sup> <b>TIB – Leibniz Information Centre for Science and Technology</b>，据 PDF 首页核对）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-21</b>（<code>published=2026-10-21T22:29:47Z</code>；<code>updated</code> 同为 2026-10-21）· <code>comment</code>：<b>25 pages, 5 figures</b>，含附录与代码/数据补充包 · PDF 实测 <b>25 页</b> / 93,437 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code>（主分类）+ <code>cs.SE</code> · <span class="badge b-kp">科普</span> · 关键词：agent harness / 自我改进 / ARC-AGI-3 / 留出集 / 评测噪声 / 推理成本</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.30499">https://arxiv.org/abs/2610.30499</a>（PDF 已落地：<code>research/pdf/2026-10-25/2610.30499.pdf</code>，571,302 B，sha256 见附录 D′）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
+    <ol>
+      <li><b>钩子直击当下最大众化的想象</b>：「AI 能不能自己改自己？」不是哲学讨论，而是<b>做了一次可复现的对照实验</b>：27 条 lineage、统一编码引导、固定 5 个开发游戏、20 个<b>从不参与改写</b>的留出游戏。结论落地成一句人人能懂的话 —— <b>「它确实会改，但改完不一定更好；开发集上涨 8.42 分，留出集只涨 2.80 分，而且区间跨 0。」</b></li>
+      <li><b>画面感很强</b>：ARC-AGI-3 是「陌生小游戏里自己摸索规则」的交互环境，天然有探索/失败/重试的画面；再配一张<b>开发集 vs 留出集</b>的双柱图（8.42 vs 2.80）和<b>+15 涨 / −15 跌</b>的逐游戏散点，两分钟视频的结构就齐了。</li>
+      <li><b>还自带一个「反常识的诚实细节」</b>：同一份冻结 harness 重复评测 10 次，样本标准差就有 <b>3.99 分</b> —— 也就是说「涨了 3 分」可能只是噪声。这条特别适合做视频里的「等一下」转折，也提醒观众别被榜单小波动带跑。</li>
+      <li><b>边界（片中必须说）</b>：单一基准（ARC-AGI-3）· 只允许<b>两轮</b>改写（更长的自我改进循环未测）· 「留出集」只有 20 个游戏 · 成本是<b>美元计价的推理开销</b>、会随供应商价格变化 · 人类主导的系统在公开游戏上已达接近满分，但作者明说两者开发与选择流程不同、不可直接比。数字作者自报、本线未复现、未精读。</li>
+    </ol>
+    <b>建议动作</b>：作为本日分镜 <code>video/SCENES/10_25.html</code> 的选题（科普口径）→ 口播只讲「实验怎么设计 / 三个数字 / 一句结论」；<b>想借鉴的话</b>再读 §5 与附录 D（重复评测的方差、逐游戏涨跌、成本分解），把「开发集涨≠留出集涨」当作我们内部评测的常识。
+  </div>
+</div>
+<div class="card">
+  <h3><span class="no">5</span>BeNice! Closing Looping's Inference-Memory Gap via KV-Sharing</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v"><b>looped（循环）架构</b>把同一组层反复过几遍，<b>不增加参数</b>就想提升质量；代价是推理时<b>每一遍都生成独立的 KV cache</b>，显存随循环次数线性增长。已有工作发现「最后一遍的 KV 可以共享给前面几遍而不掉质量」（作者叫 <b>KV-shareability</b>），但机制不清楚 —— 同配方训练的模型也不是都具备（如 <b>Parcae 1.3B</b> 共享后困惑度 <b>0.601 → 2.281</b>）。本文给出两阶段办法：① 预训练用 <b>stochastic depth</b> 诱导<b>收缩型残差动力学</b>，让各遍表示收敛到同一不动点；② 后训练 <b>BeNice!</b> 把最后一遍的 KV 广播给第一遍并训练它产生兼容残差。结果：共享时验证困惑度相对标准微调改善 <b>9.75 分</b>、不共享时质量持平；模拟低显存长上下文服务下<b>缓存命中 +31.4%</b>、<b>吞吐 +23.6%</b>、<b>p90 首字延迟 −83.6%</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">BeNice! Closing Looping's Inference-Memory Gap via KV-Sharing</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Hayden Prairie<sup>1,2,*</sup>, Jacob M. Ryan<sup>1,*</sup>, Taylor Berg-Kirkpatrick<sup>1</sup>, Daniel Y. Fu<sup>1,2</sup>（<sup>1</sup> <b>University of California, San Diego</b> / <sup>2</sup> <b>Together AI</b>，据 PDF 首页核对；<sup>*</sup> 为原文共同一作标记）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-22</b>（<code>published=2026-10-22T17:49:44Z</code>；<code>updated</code> 同为 2026-10-22）· 无 comment · PDF 实测 <b>37 页</b> / 95,064 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code>（主分类，唯一分类）· <span class="badge b-kp">科普</span> · 关键词：looped 架构 / KV cache 共享 / 推理显存 / 长上下文 / 低精度量化</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.31633">https://arxiv.org/abs/2610.31633</a>（PDF 已落地：<code>research/pdf/2026-10-25/2610.31633.pdf</code>，3,593,462 B，sha256 见附录 D′）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
+    <ol>
+      <li><b>一句人话就能讲清的问题</b>：「让 AI 把同一套层反复想几遍，会更聪明，但每想一遍都要<b>再存一份记忆</b> —— 显存线性涨。」这正好对上普通人熟悉的手机/显卡「内存不够」体验，比抽象讲架构更抓人。</li>
+      <li><b>可视化极简单</b>：左边画<b>一根随循环次数变长的显存条</b>（每遍一格 KV），右边画<b>共享后只留最后一格</b>；再把 0.601 → 2.281（共享失败）与 BeNice! 的 9.75 分改善并排，观众一眼就懂「共享不是白拿的，要先训练成能共享」。</li>
+      <li><b>收益数字具体、且可叠加</b>：缓存命中 +31.4%（+8.1 个百分点）、吞吐 +23.6%、p90 首字延迟 −83.6%；还能与 MLA、Kimi delta attention、fp8/mxfp4/nvfp4 量化<b>组合</b> —— 适合做视频结尾的「所以它不是一个孤立技巧」。</li>
+      <li><b>边界（片中必须说）</b>：质量指标主要是<b>验证困惑度</b>（不等于下游任务表现）· 模型是 Parcae / Huginn / Ouro 等<b>公开 looped 模型</b>，主流 Transformer 不直接适用 · 服务侧收益来自<b>模拟</b>的低显存长上下文负载（非生产集群实测）· 数字作者自报、本线未复现、未精读。</li>
+    </ol>
+    <b>建议动作</b>：科普视频可作<b>备选选题</b>（今日 TOP-1 给了 #4）→ 若要做，主线建议「一个显存条的动画」贯穿全片；<b>借鉴侧</b>（若我们评估 looped / 深度循环结构）读 §3–§4 的 stochastic depth 与 BeNice! 两阶段配方，重点看「共享后掉质量」的失败模式与修复成本。
+  </div>
+</div>
+
 <h2 class="sec">附录</h2>
 
 <p><b>A. 口径（本页所有数字的适用范围）</b></p>
 <ul>
-  <li><b>推荐 ≠ 结论</b>：3 篇均为<b>待读线索</b>，<b>未精读全文</b>；「中文一句话」是<b>对官方摘要的转述</b>，不是我的实验结论。</li>
+  <li><b>推荐 ≠ 结论</b>：5 篇均为<b>待读线索</b>，<b>未精读全文</b>；「中文一句话」是<b>对官方摘要的转述</b>，不是我的实验结论。</li>
   <li><b>数字均作者自报</b>：本线<b>未复现任何一篇</b>；「SOTA / 提升 X%」均为论文声称。</li>
   <li><b>「我们判断」= 本线的迁移性判断</b>，不是论文结论；边界与建议动作同理。</li>
-  <li><b>日期口径</b>：只用 arXiv 元数据 <code>published</code>（首次提交，UTC）。<b>本轮 3 篇首次提交均不是「今日（2026-10-25）」</b>，本页不写「今日新提交」。</li>
-  <li><b>批次口径</b>：<code>2026-10-22</code> 批（<code>totalResults=637451</code>）；周日无新公告，<b>不为凑数放宽窗口 / 不回改旧结论</b>。</li>
+  <li><b>日期口径</b>：只用 arXiv 元数据 <code>published</code>（首次提交，UTC）。<b>本日 5 篇首次提交均不是「今日（2026-10-25）」</b>（AM 3 篇为 10-20/10-21/10-22；PM 2 篇为 10-21/10-22），本页不写「今日新提交」。</li>
+  <li><b>批次口径</b>：<code>2026-10-22</code> 批（<code>totalResults=637451</code>）；周日无新公告（<b>PM 18:0x 复验仍为 637451，最新样本仍 <code>published=2026-10-22T17:59Z</code></b>），<b>不为凑数放宽窗口 / 不回改旧结论</b>。</li>
 </ul>
 
-<p><b>B. 本轮检索与入账统计（fetch <code>--seen</code> · <code>weekend_batch</code> · 15 查询）</b></p>
+<p><b>B. 早报检索与入账统计（fetch <code>--seen</code> · <code>weekend_batch</code> · 15 查询 · AM 06:0x）</b></p>
 <table>
   <tr><th>#</th><th>领域</th><th>查询名</th><th>HTTP</th><th>totalResults</th><th>取回</th><th>attempts</th><th>kept</th></tr>
   <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>637,451</td><td>40</td><td>1</td><td>0</td></tr>
@@ -177,28 +216,45 @@
 <p><b>去重后入账（kept）为什么是 0</b>：600 条取回条目里 <b>558</b> 条命中 <code>SEEN</code>（<code>already in SEEN</code>）、<b>42</b> 条 <code>published</code> 早于 120h 窗口（<code>stale &gt; 120h</code>）⇒ <code>kept 0</code>。取证文件：<code>raw/2026-10-25-fetch-r111-seen.json</code>（<code>generated=2026-10-24T22:00:45Z</code>）。
 <br><b>本轮 DNS 兜底</b>：<code>export.arxiv.org</code> 解析到 Fastly 边缘曾出现解析失败，沿用前几轮的运行期兜底（<code>getaddrinfo</code> 仅进程内覆盖到 <code>151.101.67.42</code>，<b>TLS/SNI 主机名不变</b>，工具代码未改）；本轮 15/15 首次即通，<b>无重试</b>。</p>
 
-<p><b>C. <code>id_list</code> 权威复核（8 条请求 → 8 条完整返回 · 本地 2026-10-25 06:0x）</b></p>
+<p><b>B′. 晚报复验（fetch <code>--seen</code> · <code>weekend_batch</code> · 15 查询 · PM 18:0x）</b></p>
+<ul>
+  <li><b>结论与 AM 一致</b>：<b>15/15 查询 <code>HTTP 200</code>、全部 <code>attempts=1</code></b>，<b><code>kept 0</code> / <code>dropped 600</code></b>（<code>already in SEEN</code> <b>558</b> + <code>stale &gt; 120h</code> <b>42</b>）；<code>totalResults</code> 15 条查询与 AM <b>逐条相同</b>（<code>sweep-cs-5cats</code> 仍 637,451）。</li>
+  <li><b>证据</b>：<code>raw/2026-10-25-pm-fetch-r112-seen.json</code>（<code>generated=2026-10-25T10:01:55Z</code>）+ <code>.log</code>；探针 <code>raw/2026-10-25-pm-probe-r112.json</code>（arXiv API ✅ / HF Daily ❌ <code>[Errno 101]</code> / RSS cs.CL 183 条、cs.CV 与 cs.LG 各 0 条）。</li>
+  <li><b>解读</b>：周日 arXiv 不公告 ⇒ <b>公告批次停在 <code>2026-10-22</code></b>；<code>kept 0</code> 是<b>预期内的正常结果</b>，<b>不是取数失败</b>。晚报 2 篇因此取自 AM 附录 C 中<b>已复核通过但未入账</b>的候选（<code>2610.30499</code> / <code>2610.31633</code>），并在 PM 用 <code>id_list</code> <b>再次权威复核 2/2 返回</b>（见 C′）。</li>
+</ul>
+
+<p><b>C. 早报 <code>id_list</code> 权威复核（8 条请求 → 8 条完整返回 · 本地 2026-10-25 06:0x）</b></p>
 <table>
   <tr><th>arXiv ID</th><th>主分类</th><th>published (UTC)</th><th>标题（截断）</th><th>本轮处置</th></tr>
   <tr><td><code>2610.31098</code></td><td>cs.CL</td><td>2026-10-22T11:12:23Z</td><td>RIFT: KV Cache Compression for Draft Models…</td><td><b>入选 · 借鉴 #1</b></td></tr>
   <tr><td><code>2610.30231</code></td><td>cs.LG</td><td>2026-10-21T17:59:28Z</td><td>Edit, Don't Imitate: Minimal-Edit On-Policy Distillation…</td><td><b>入选 · 借鉴 #2</b></td></tr>
   <tr><td><code>2610.28815</code></td><td>cs.AI</td><td>2026-10-20T18:36:33Z</td><td>Forging More Tasks into Better Harnesses…</td><td><b>入选 · 借鉴 #3</b></td></tr>
-  <tr><td><code>2610.31633</code></td><td>cs.LG</td><td>2026-10-22T17:49:44Z</td><td>BeNice! Closing Looping's Inference-Memory Gap via KV-Sharing</td><td>复核通过 · 未入账（KV sharing 与 #1 同题，留作后续对照）</td></tr>
+  <tr><td><code>2610.31633</code></td><td>cs.LG</td><td>2026-10-22T17:49:44Z</td><td>BeNice! Closing Looping's Inference-Memory Gap via KV-Sharing</td><td>复核通过 · AM 未入账（KV sharing 与 #1 同题，留作后续对照）→ <b>PM 入选 · 科普 #5</b></td></tr>
   <tr><td><code>2610.30644</code></td><td>cs.AI</td><td>2026-10-22T03:05:29Z</td><td>Speculative Acceptance Does Not Decay with Position…</td><td>复核通过 · 未入账（诊断类，与 #1 互补，留待精读后定）</td></tr>
   <tr><td><code>2610.31338</code></td><td>cs.AI</td><td>2026-10-22T14:23:26Z</td><td>ValuSpec: Plug-and-Play Candidate Valuation before Target Verification…</td><td>复核通过 · 未入账（工程 trick，本轮 3 篇名额已满）</td></tr>
-  <tr><td><code>2610.30499</code></td><td>cs.AI</td><td>2026-10-21T22:29:47Z</td><td>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</td><td>复核通过 · 未入账（与 #3 同领域，选题让位给有规模化证据的 SSR）</td></tr>
+  <tr><td><code>2610.30499</code></td><td>cs.AI</td><td>2026-10-21T22:29:47Z</td><td>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</td><td>复核通过 · AM 未入账（与 #3 同领域，选题让位给有规模化证据的 SSR）→ <b>PM 入选 · 科普 #4（TOP-1）</b></td></tr>
   <tr><td><code>2610.28834</code></td><td>cs.SE</td><td>2026-10-20T18:59:01Z</td><td>Where Should a Stuck Agent Spend Its Next Tokens?…</td><td>复核通过 · 未入账（cs.SE 更贴 ZhuLong，但摘要未给可迁移细节）</td></tr>
 </table>
 <p>证据：<code>raw/2026-10-25-idlist-r111a.xml</code>（20,875 B）+ <code>.headers</code>（<code>status: 200</code> / <code>content-type: application/atom+xml; charset=utf-8</code> / <code>elapsed: 0.97s</code>）；脚本 <code>raw/idlist_r111.py</code>。8 条<b>全部</b>含 <code>published</code> 字段且与台账记录一致。</p>
 
-<p><b>D. PDF 落地校验（3 / 3 通过）</b></p>
+<p><b>C′. 晚报 <code>id_list</code> 二次权威复核（2 条请求 → 2 条完整返回 · 本地 2026-10-25 18:0x）</b></p>
+<table>
+  <tr><th>arXiv ID</th><th>主分类</th><th>published (UTC)</th><th>updated (UTC)</th><th>标题（截断）</th><th>PM 处置</th></tr>
+  <tr><td><code>2610.30499</code></td><td>cs.AI</td><td>2026-10-21T22:29:47Z</td><td>2026-10-21T22:29:47Z</td><td>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</td><td><b>入选 · 科普 #4（TOP-1）</b></td></tr>
+  <tr><td><code>2610.31633</code></td><td>cs.LG</td><td>2026-10-22T17:49:44Z</td><td>2026-10-22T17:49:44Z</td><td>BeNice! Closing Looping's Inference-Memory Gap via KV-Sharing</td><td><b>入选 · 科普 #5</b></td></tr>
+</table>
+<p>证据：<code>raw/2026-10-25-pm-idlist-r112a.xml</code>（5,947 B，<b>2 条 <code>&lt;entry&gt;</code> 完整</b>）+ <code>.headers</code>（<code>status: 200</code> / <code>content-type: application/atom+xml; charset=utf-8</code> / <code>elapsed: 0.96s</code>）；脚本 <code>raw/idlist_r112.py</code>。两篇的 <b>标题 / 作者 / 分类 / published / updated 全部取自该 XML</b>，未从搜索结果或摘要页抄写；<code>updated == published</code> ⇒ 无 v2，<b>不存在「版本更新」导致的日期歧义</b>。</p>
+
+<p><b>D. PDF 落地校验（早报 3 / 3 ✅ · 全日 5 / 5 ✅）</b></p>
 <table>
   <tr><th>arXiv ID</th><th>文件</th><th>字节</th><th>页数</th><th>pdftotext 字符</th><th>sha256（前 16）</th></tr>
   <tr><td><code>2610.31098</code></td><td><code>pdf/2026-10-25/2610.31098.pdf</code></td><td>466,531</td><td>27</td><td>89,325</td><td><code>727bee7a921d1685…</code></td></tr>
   <tr><td><code>2610.30231</code></td><td><code>pdf/2026-10-25/2610.30231.pdf</code></td><td>1,877,199</td><td>28</td><td>100,401</td><td><code>996a977c25ed569b…</code></td></tr>
   <tr><td><code>2610.28815</code></td><td><code>pdf/2026-10-25/2610.28815.pdf</code></td><td>605,702</td><td>28</td><td>96,979</td><td><code>e595bd3075babaa4…</code></td></tr>
+  <tr><td><code>2610.30499</code> <span class="badge b-pm">PM</span></td><td><code>pdf/2026-10-25/2610.30499.pdf</code></td><td>571,302</td><td>25</td><td>93,437</td><td><code>25753be2a0831ad2…</code></td></tr>
+  <tr><td><code>2610.31633</code> <span class="badge b-pm">PM</span></td><td><code>pdf/2026-10-25/2610.31633.pdf</code></td><td>3,593,462</td><td>37</td><td>95,064</td><td><code>7feb72f5f4e4902a…</code></td></tr>
 </table>
-<p>校验项：<code>%PDF</code> 魔数 ✅ · 字节数 &gt; 100 KB ✅ · <code>pdfinfo</code> 页数 ✅ · <code>pdftotext</code> 字符数 &gt; 0 ✅（作者/机构均由 PDF 首页核对，不靠记忆）。</p>
+<p>校验项：<code>%PDF</code> 魔数 ✅ · 字节数 &gt; 100 KB ✅ · <code>pdfinfo</code> 页数 ✅ · <code>pdftotext</code> 字符数 &gt; 0 ✅（作者/机构均由 PDF 首页核对，不靠记忆）。<b>PM 追加项</b>：两篇 PDF 均再验「文件头 <code>%PDF-1.x</code> + 尾部 <code>%%EOF</code>」双端完整（防截断下载），并用 <code>pdfinfo</code> 的 <code>Pages</code> 与正文页脚页码交叉核对。</p>
 <p><b>E. 台账变化（<code>research/SEEN.md</code> · <code>research/papers.jsonl</code>）</b></p>
 <table>
   <tr><th>项</th><th>本轮前</th><th>本轮后</th><th>变化</th></tr>
@@ -210,18 +266,39 @@
 </table>
 <p>落盘脚本：<code>raw/update_r111.py</code>（含断言：<code>n_kept==0</code> / <code>n_queries==15</code> / <code>window_mode=="weekend_batch"</code> / 15 条查询全 <code>200</code> 且 <code>attempts==1</code> / <code>id_list</code> 8 条 / 恰好翻转 3 行）。运行输出：<code>SEEN flipped: 3</code> · <code>papers.jsonl lines: 249</code>。</p>
 
-<p><b>F. 与昨日衔接 &amp; 今日剩余计划</b></p>
+<p><b>E′. 晚报台账变化（PM 收口 · 5 / 5）</b></p>
+<table>
+  <tr><th>项</th><th>PM 前</th><th>PM 后</th><th>变化</th></tr>
+  <tr><td>收录</td><td>249</td><td><b>251</b></td><td><b>+2</b>（<code>2610.30499</code> / <code>2610.31633</code> 两行「候选」→「收录」）</td></tr>
+  <tr><td>候选</td><td>3,857</td><td><b>3,855</b></td><td><b>−2</b>（同上，<b>不新增</b>候选，PM <code>kept 0</code>）</td></tr>
+  <tr><td>候选（RSS补充）</td><td>507</td><td><b>507</b></td><td>0（周末空 feed，无新增）</td></tr>
+  <tr><td>状态行合计</td><td>4,613</td><td><b>4,613</b></td><td><b>0</b>（只翻状态，不增行；另插入 1 行第 112 轮小结）</td></tr>
+  <tr><td><code>papers.jsonl</code></td><td>249</td><td><b>251</b></td><td><b>+2</b></td></tr>
+</table>
+<p>落盘脚本：<code>raw/update_r112.py</code>（断言：<code>n_kept==0</code> / <code>n_queries==15</code> / <code>window_mode=="weekend_batch"</code> / <code>n_dropped==600</code> / 15 条查询全 <code>200</code> 且 <code>attempts==1</code> / <code>id_list</code> 恰好 2 条 / 恰好翻转 2 行 / 两条 ID 不在 <code>papers.jsonl</code>）。运行输出：<code>SEEN flipped: 2</code> · <code>SEEN status: {'候选': 3855, '收录': 251} sum 4106</code> · <code>papers.jsonl lines: 251</code>。</p>
+
+<p><b>F. 与昨日衔接 &amp; 今日收口状态</b></p>
 <ul>
   <li><b>昨日（2026-10-24）已 5/5 收口</b>：早 3「借鉴」（HGM-Dual / LongZero / Target Regeneration）+ 晚 2「科普」（Who Is Sycophantic to Whom? <b>当日科普 TOP-1</b> / Where Did the Light Come From?），分镜 <code>video/SCENES/10_24.html</code>。</li>
-  <li><b>今日 AM（本轮）</b>：3/5，全「借鉴」；批次未刷新 ⇒ 取自候选池，<b>日期如实标注</b>。</li>
-  <li><b>今日 18:00（PM）待办</b>：①补 2 篇「科普」到 5/5（优先用本轮附录 C 里复核通过但未入账的条目，或届时新公告批次；<b>若批次仍未刷新同样如实记 <code>kept 0</code></b>）；②在文末补 <code>## 晚报变更说明（AM → PM）</code>；③产出当日科普 TOP-1 分镜 <code>research/video/SCENES/10_25.html</code>（P0 第 5 批，<b>本轮不越时窗执行</b>）。</li>
-  <li><b>连续性风险提示</b>：连续两日（10-24 PM、10-25 AM）<code>kept 0</code>，候选池<b>只减不增</b>；若周一公告批次恢复，应优先补记「跨批遗漏」而非继续消耗候选池。</li>
+  <li><b>今日 AM</b>：3/5，全「借鉴」（RIFT / Edit, Don't Imitate / SSR），<b>批次未刷新</b> ⇒ 取自候选池，日期如实标注。</li>
+  <li><b>今日 PM（本轮 · 已执行完毕）</b>：①补 2 篇「科普」→ <b>5/5 收口</b>（用 AM 附录 C 已复核候选，PM <code>id_list</code> 二次复核 2/2 ✅）；②文末已补「晚报变更说明（AM → PM）」；③科普 TOP-1 分镜 <code>research/video/SCENES/10_25.html</code> 已产出并登记到 <code>video/SCENES/index.html</code>。</li>
+  <li><b>连续性风险提示（仍未解除）</b>：连续三日（10-24 PM、10-25 AM、10-25 PM）<code>kept 0</code>，候选池<b>只减不增</b>（3,860 → 3,855）；若周一（10-26）公告批次恢复，应优先补记「跨批遗漏」而非继续消耗候选池。</li>
 </ul>
 
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <p><b>1. 变更性质：只「加」，不改 AM 结论。</b>早报 3 篇（RIFT / Edit, Don't Imitate / SSR）的标题、作者、日期、分类、摘要转述与推荐理由<b>一字未改</b>；PM 仅在文末<b>追加</b> 2 篇「科普」条目（#4 / #5）与本节说明。若 PM 数据与 AM 冲突，以<b>更新的一次</b>为准并在本节记录 —— 本轮<b>无此类冲突</b>。</p>
+  <p><b>2. 取数结果：与 AM 完全一致，<code>kept 0</code> 属预期。</b>PM 18:0x 重跑 15 条查询：<b>15/15 <code>200</code>、<code>attempts</code> 全 1</b>、<b><code>dropped 600</code> / <code>kept 0</code></b>（<code>already in SEEN</code> 558 + <code>stale &gt; 120h</code> 42），<code>totalResults</code> 与 AM 逐条相同（<code>637451</code>）。<b>原因：周日 arXiv 不公告</b>，公告批次仍为 <code>2026-10-22</code>（最新样本 <code>2026-10-22T17:59:48Z</code>）。<b>这不是失败</b>，故<b>没有</b>为了「凑够 2 篇」而放宽窗口、改查询或回改 AM 结论。</p>
+  <p><b>3. 晚报 2 篇从哪来（可追溯）。</b>两篇均来自 AM 附录 C 中<b>已通过 <code>id_list</code> 复核但当时未入账</b>的候选：<code>2610.30499</code>（当时理由「与 #3 同领域，选题让位」）与 <code>2610.31633</code>（当时理由「与 #1 同题，留作对照」）。PM 用 <code>id_list</code> 对这两条<b>再次权威复核（2/2 返回，<code>status 200</code>，<code>updated == published</code>）</b>后入账；<b>不是</b>从 RSS / 搜索摘要里新抓的、也<b>不是</b>凭记忆补的。</p>
+  <p><b>4. 标签口径没有漂移。</b>早 3 全 <span class="badge b-jz">借鉴</span>、晚 2 全 <span class="badge b-kp">科普</span>，<b>两口径不混用</b>；晚报 2 篇的入选理由是「大众看得懂 + 有传播力」，<b>不</b>因为「与我们工作相关」而入选（相关性只写在「借鉴侧」建议动作里，明确区分）。</p>
+  <p><b>5. 数字与边界：全部沿用「作者自报」口径。</b>新增数字（2.80 / 8.42 / 5.62 / 3.99 / 9.75 / 31.4% / 23.6% / 83.6% 等）均来自 PDF 正文与表格，本线<b>未复现</b>；两篇均<b>未精读</b>，卡片中的「边界」段落已写明各自的适用范围（单基准 / 两轮改写 / 困惑度非下游表现 / 模拟负载等）。</p>
+  <p><b>6. 今日产出清单（对齐 5/5 收口）。</b>日报本页（5 篇）· PDF 5/5 落地校验 · 台账 251 / 3,855 / 507 · <code>papers.jsonl</code> 251 条 · 分镜 <code>video/SCENES/10_25.html</code>（科普 TOP-1 = #4）· 证据链 <code>raw/2026-10-25-pm-probe-r112.json</code> / <code>-pm-fetch-r112-seen.{json,log}</code> / <code>-pm-idlist-r112a.{xml,headers}</code> / <code>update_r112.py</code>。</p>
+</div>
+
 <footer>
-  <div>research 线 · 论文推荐日报 · <b>2026-10-25 早报（3 / 5）</b> · 无外部依赖、离线可开（单文件自包含）</div>
-  <div>取数：<code>export.arxiv.org/api/query</code>（15 查询 <code>--seen</code> + 1 批 <code>id_list</code>）· 证据：<code>raw/2026-10-25-probe-r111.json</code> / <code>raw/2026-10-25-fetch-r111-seen.json</code> / <code>raw/2026-10-25-idlist-r111a.{xml,headers}</code></div>
-  <div>落盘：<code>raw/update_r111.py</code> → <code>SEEN.md</code>（收录 249 / 候选 3,857 / 候选（RSS补充）507）· <code>papers.jsonl</code>（249 条）· 本页</div>
+  <div>research 线 · 论文推荐日报 · <b>2026-10-25 晚报（5 / 5 · 已收口）</b> · 无外部依赖、离线可开（单文件自包含）</div>
+  <div>取数：<code>export.arxiv.org/api/query</code>（AM/PM 各 15 查询 <code>--seen</code>；<code>id_list</code> 8 + 2 条）· 证据：<code>raw/2026-10-25-probe-r111.json</code> / <code>-fetch-r111-seen.json</code> / <code>-idlist-r111a.{xml,headers}</code> / <code>-pm-probe-r112.json</code> / <code>-pm-fetch-r112-seen.{json,log}</code> / <code>-pm-idlist-r112a.{xml,headers}</code></div>
+  <div>落盘：<code>raw/update_r111.py</code> + <code>raw/update_r112.py</code> → <code>SEEN.md</code>（收录 251 / 候选 3,855 / 候选（RSS补充）507）· <code>papers.jsonl</code>（251 条）· 本页</div>
   <div>⚠️ 再次声明：本页为<b>推荐 / 待读线索</b>，<b>非结论</b>；数字均作者自报、未复现、未精读。</div>
 </footer>
 
