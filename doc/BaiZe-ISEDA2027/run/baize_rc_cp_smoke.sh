@@ -85,14 +85,9 @@ run_cfg() {
       [ -n "$U" ] && [ "$U" -gt "$MAX" ] && MAX="$U" && echo "$MAX" > "$PF_W"
       sleep 2
   done ) &  MON_W=$!
-  ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$MASTER_IP" "
-    PF='$PF_M'; : > \"\$PF\"
-    ( MAX=0; while :; do
-        U=\$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | sort -n | tail -1)
-        [ -n \"\$U\" ] && [ \"\$U\" -gt \"\$MAX\" ] && MAX=\"\$U\" && echo \"\$MAX\" > \"\$PF\"
-        sleep 2
-    done ) &
-  " 2>/dev/null
+  # remote (.12) peakmem monitor REMOVED: bg `while` loop inherits ssh channel stdout
+  # -> ssh never returns -> script hangs before torchrun. Use .29 local peak as proxy
+  # (DP16 symmetric, both nodes run identical rank work). PF_M left empty; PEAK_M=PEAK_W.
 
   ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$MASTER_IP" "
     cd '$BASE'; ulimit -n 65536
@@ -125,9 +120,9 @@ run_cfg() {
 
   kill $MON_W 2>/dev/null; wait $MON_W 2>/dev/null
   ssh -o StrictHostKeyChecking=no "$MASTER_IP" 'pkill -f "nvidia-smi.*memory.used" 2>/dev/null; true' 2>/dev/null
-  PEAK_M=$(ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$MASTER_IP" "cat $PF_M 2>/dev/null" 2>/dev/null | tail -1)
   PEAK_W=$(tail -1 "$PF_W" 2>/dev/null)
-  PEAK_M=${PEAK_M:-0}; PEAK_W=${PEAK_W:-0}
+  PEAK_W=${PEAK_W:-0}
+  PEAK_M=$PEAK_W  # .29 peak as proxy (DP16 symmetric); remote monitor removed (ssh-bg hang)
   local PEAK=$( [ "$PEAK_M" -gt "$PEAK_W" ] && echo "$PEAK_M" || echo "$PEAK_W" )
 
   if [ "$WORKER_RC" -ne 0 ] || [ "$MASTER_RC" -ne 0 ]; then
