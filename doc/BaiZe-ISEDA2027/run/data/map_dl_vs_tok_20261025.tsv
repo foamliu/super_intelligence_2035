@@ -1,0 +1,15 @@
+group	tok_dir	bin_n	dl_dir	dl_parquet	dl_bytes	tok_tokens	status
+env14_*（110 shard）	/nas_train/app.e0031982/datasets/baize-data/text	110	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4	56320	6747434955525	2238140710284	可用
+full_ufw_l3（154 shard）	/nas_env/app.e0031982/baize-data/full_ufw_l3	154	/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa	616	663183709378	263899449229	可用
+full_ultradata_code_l2（141 shard）	/nas_env/app.e0031982/baize-data/full_ultradata_code_l2	141	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L2	561	611281878122	421450419455	可用
+full_ultradata_code_l3（63 shard）	/nas_env/app.e0031982/baize-data/full_ultradata_code_l3	63	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3	560	604712501031	128623266591	可用
+full_ultradata_math_l1（149 shard）	/nas_env/app.e0031982/baize-data/full_ultradata_math_l1	149	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1	1485	366622940699	164437183984	可用
+full_ultradata_math_l3（67 shard）	/nas_env/app.e0031982/baize-data/full_ultradata_math_l3	67	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3	200	122536811815	77949162709	可用
+l3_s0–12 + s25（已删）	（已删除）	0	/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style	552	594817293567	0	已删除(2026-10-25 · 原 190.36 B)
+l3_s26–32（已删）	（已删除）	0	/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style	286	308080517080	0	已删除(2026-10-25 · 原 121.04 B)
+l3_s33–39（已删）	（已删除）	0	/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa	310	333134635259	0	已删除(2026-10-25 · 原 116.17 B)
+math_s32–35（已删）	（已删除）	0	/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L2-preview	138	63253585951	0	已删除(2026-10-25 · 原 45.28 B)
+（无产物）	（无）	0	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en	2048	2661358397268	0	未分词
+（无产物）	（无）	0	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq	6000	477975290461	0	未分词
+（无产物）	（无）	0	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh	256	324321522155	0	未分词
+（无产物）	（无）	0	/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC	61	68553927738	0	未分词

@@ -1,266 +1,149 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe MiniCPM5 数据硬盘实测盘点 v3 — 2026-10-25</title><style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",sans-serif;background:#f5f5f5;color:#333;line-height:1.6;padding:20px}
-.container{max-width:1280px;margin:0 auto;background:#fff;border-radius:8px;padding:30px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-h1{font-size:24px;color:#1a1a2e;margin-bottom:5px}
-h2{font-size:20px;color:#1a1a2e;margin:25px 0 12px;border-bottom:2px solid #e0e0e0;padding-bottom:5px}
-h3{font-size:16px;color:#333;margin:15px 0 8px}
-.meta{color:#666;font-size:13px;margin-bottom:20px}
-.summary-cards{display:flex;gap:15px;margin:15px 0;flex-wrap:wrap}
-.card{flex:1;min-width:220px;border-radius:10px;padding:20px;text-align:center;color:#fff}
-.card .num{font-size:26px;font-weight:bold;margin:5px 0}
-.card .label{font-size:13px;opacity:.9}
-.card.blue{background:linear-gradient(135deg,#2193b0,#6dd5ed)}
-.card.green{background:linear-gradient(135deg,#11998e,#38ef7d)}
-.card.orange{background:linear-gradient(135deg,#f12711,#f5af19)}
-.card.purple{background:linear-gradient(135deg,#667eea,#764ba2)}
-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
-th{background:#1a1a2e;color:#fff;padding:8px 6px;text-align:left;font-weight:600}
-td{padding:7px 6px;border-bottom:1px solid #e8e8e8;word-break:break-all}
-tr:hover{background:#f9f9ff}
-tr.total{font-weight:bold;background:#e8eaf6;color:#1a1a2e}
-tr.subgroup{background:#f5f5f5;font-style:italic;font-weight:bold}
-tr.sechead td{background:#3949ab;color:#fff;font-weight:bold;font-style:normal}
-code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:12px;color:#c62828}
-.warn{background:#fff3e0;border-left:4px solid #ff9800;padding:12px 15px;margin:10px 0;border-radius:0 4px 4px 0}
-.ok{background:#e8f5e9;border-left:4px solid #4caf50;padding:12px 15px;margin:10px 0;border-radius:0 4px 4px 0}
-.bad{background:#ffebee;border-left:4px solid #f44336;padding:12px 15px;margin:10px 0;border-radius:0 4px 4px 0}
-pre{background:#f8f8f8;border:1px solid #ddd;border-radius:4px;padding:10px;font-size:11px;overflow-x:auto;margin:10px 0;max-height:480px}
-.footer{margin-top:30px;padding-top:15px;border-top:1px solid #e0e0e0;color:#999;font-size:12px;text-align:center}
-.tok-no{color:#999;font-style:italic}
-.tok-yes{color:#1b5e20;font-weight:600}
-
-</style></head><body><div class="container">
-<h1>BaiZe MiniCPM5 数据硬盘实测盘点 (v3 · prune 后去重)</h1>
-<div class="meta">生成时间：2026-10-25 11:21 · 口径：以下载目录为准 (ls 第一性证据) · 数字来源：<code>du -sb</code> / <code>find</code> / <code>.json num_tokens</code> 实测 · 小计/总计由脚本求和 · TSV: <code>inventory_v3_20261025.tsv</code></div>
-<h2>摘要</h2>
-<div class="warn"><p><strong>本版为 v3（prune 后去重）</strong>，覆盖 v2。v2 总计 <strong>4778.41 B</strong> 为<strong>「文件清单求和（含历史重复）」</strong>：其中 78 个早期分词 shard (code_s 30 + l3_s 12 + math_s 36) 的源数据已在 /nas_env/full_* 全量重分词，属重复占盘。2026-10-25 已删除这 78 个 covered shard（释放 ~3.69 TiB），保留 32 个 uncovered shard（l3_s 28 + math_s 4，来源不明待人工裁决）。</p><p><strong>去重后已分词总量（训练可用）= env14 2238.14 B + /nas_env 5 源 1056.36 B = 3294.50 B</strong>（env14 与 full_* 无重叠；32 保留 shard 来源不明，不计入训练可用）。</p><p>盘点共 <strong>14 个数据源目录</strong>：① 5 个 parquet 下载目录 (openbmb) ② 4 个 baize-data/text 分词前缀（含 1 已删除）③ 5 个 /nas_env 全量分词目录。原始 parquet 合计 <strong>10.70 TB</strong>；分词产物合计 <strong>15.01 TB / 3767.35 B tokens</strong>；总占盘 <strong>25.71 TB</strong>。</p></div>
-<h2>目录清单（ls 第一性证据）</h2>
-<p>以下为磁盘实际存在的目录（<code>ls</code> 可列），是本盘点的第一性证据：</p>
-<pre>
-$ ls /nas_train/app.e0031982/datasets/openbmb/
-
-Ultra-FineWeb/   UltraX-Preview/
-
-$ ls /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/
-
-ultrafineweb_en/   ultrafineweb_en_v1_4/   ultrafineweb_l1_en_hq/   ultrafineweb_zh/
-
-$ ls /nas_env/app.e0031982/baize-data/
-
-full_ufw_l3/   full_ultradata_code_l2/   full_ultradata_code_l3/   full_ultradata_math_l1/   full_ultradata_math_l3/
-
-$ ls /nas_train/app.e0031982/datasets/baize-data/text/ | sed -E &quot;s/_s[0-9]+\.(bin|idx|json)//&quot; | sort -u
-
-code   env14_CC-MAIN-*   l3   math
-
-</pre>
-<div class="ok"><strong>注</strong>：openbmb 下 <strong>仅有</strong> Ultra-FineWeb 与 UltraX-Preview 两个仓库目录；运维令提到的 <code>Ultra-FineWeb-L3</code>、<code>UltraData-*</code> 在 openbmb 下<strong>不存在</strong>（<code>test -d</code> 返回非零），故不编入表。Ultra-FineWeb-L3 / UltraData 的分词产物已在 /nas_env 全量分词（见 Section C）。</div>
-<h2>① 四个核心数字</h2>
-<div class="summary-cards">
-<div class="card blue"><div class="label">总占盘字节（parquet + 分词产物）</div><div class="num">25.71 TB</div><div class="label">25710871053677 B</div></div>
-<div class="card green"><div class="label">实测 Token 累计（分词产物）</div><div class="num">3767.35 B</div><div class="label">3767350020629 tok</div></div>
-<div class="card orange"><div class="label">.bin Shard 总数</div><div class="num">716</div><div class="label">.idx 同数 = 716</div></div>
-<div class="card purple"><div class="label">数据源目录数</div><div class="num">14</div><div class="label">5 下载 + 9 分词</div></div>
-</div>
-<div class="ok" style="border-left:4px solid #11998e;background:#e8f5e9;padding:15px 18px;margin:12px 0;border-radius:0 6px 6px 0"><p style="font-size:15px"><strong>★ 去重后已分词总量（训练可用）= 3294.50 B</strong>  ＝ env14 (2238.14 B) ＋ /nas_env 5 源 (1056.36 B) ＝ 3294500192252 tok</p><p style="font-size:13px;color:#555;margin-top:4px">env14 (en_v1_4 CC-MAIN 110 snapshot) 与 /nas_env/full_* 无重叠；32 个保留早期 shard (l3_s 28 + math_s 4, 合 472.85 B) 来源不明待人工裁决，<strong>不计入</strong>训练可用。v2 原总计 4778.41 B ＝ 文件清单求和（含历史重复），已废弃。</p></div>
-<div class="warn"><strong>口径说明</strong>：总占盘字节 = 全部 14 行 <code>du -sb</code> 之和（含原始 parquet + 分词 .bin/.idx/.json），是<strong>物理磁盘占用</strong>而非数据量（同一数据可能以 parquet 和 .bin 两种形式同时占盘）。Token 仅来自已分词源（9 行）的 <code>.json num_tokens</code> 求和；未分词源 token 列写「未分词（未实测）」，不计入 token 总计。</div>
-<h2>② 文件清单（命名规则）</h2>
-<table><tr><th>类型</th><th>命名规则</th><th>所在目录</th><th>数量</th></tr>
-<tr><td>原始 parquet (base-en)</td><td><code>ultrafineweb-en-part-NNNN-of-2048.parquet</code></td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_en/</td><td>2,048</td></tr>
-<tr><td>原始 parquet (en_v1_4)</td><td><code>CC-MAIN-YYYY-NN/*.parquet</code> (110 snapshot)</td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/</td><td>56,320</td></tr>
-<tr><td>原始 parquet (l1_en_hq)</td><td><code>*.parquet</code></td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/</td><td>6,000</td></tr>
-<tr><td>原始 parquet (zh)</td><td><code>ultrafineweb-zh-part-NNN-of-256.parquet</code></td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_zh/</td><td>256</td></tr>
-<tr><td>原始 parquet (UltraX)</td><td><code>UltraX-AICC-en-part-NNNN-of-NNNN.parquet</code></td><td>openbmb/UltraX-Preview/data/UltraX-AICC/</td><td>479</td></tr>
-<tr><td>分词 .bin (en_v1_4)</td><td><code>env14_CC-MAIN-YYYY-NN.bin/.idx/.json</code></td><td>baize-data/text/</td><td>110</td></tr>
-<tr><td>分词 .bin (code/l3/math)</td><td><code>{code,l3,math}_sN.bin/.idx/.json</code></td><td>baize-data/text/</td><td>110</td></tr>
-<tr><td>全量分词 .bin (/nas_env)</td><td><code>ufw_l3_train_sN / *_train_sN .bin/.idx/.json</code></td><td>/nas_env/.../full_*</td><td>574</td></tr>
-<tr class="total"><td colspan="3">.bin 合计</td><td>716</td></tr>
-</table>
-<h2>③ 逐源汇总表（本次重点）</h2>
-<p>行序按磁盘目录树。每行 = 一个磁盘真实目录（或 baize-data/text 内一个前缀分组）。Ultra-FineWeb/data 下 4 个子目录各占一行；UltraX-Preview 单独一行。🚫 不合并。</p>
-<table><tr>
-<th>下载目录(绝对路径)</th>
-<th>HF 仓库+子目录</th>
-<th>parquet</th>
-<th>incomplete</th>
-<th>.bin</th>
-<th>.idx</th>
-<th>字节(du -sb)</th>
-<th>TB</th>
-<th>token(实测)</th>
-<th>是否已分词</th>
-<th>最近写入</th>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<title>分词产物 ↔ 下载目录 对应表</title><style>
+body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f4f6fb;margin:0;padding:24px;color:#1a1a2e}
+.container{max-width:1500px;margin:0 auto;background:#fff;border-radius:12px;padding:26px 30px;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+h1{font-size:22px;margin:0 0 6px}
+.meta{color:#666;font-size:12px;margin-bottom:16px;line-height:1.6}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:#1a1a2e;color:#fff;padding:9px 8px;text-align:left;font-weight:600;white-space:nowrap}
+td{padding:8px;border-bottom:1px solid #e8e8e8;vertical-align:top;word-break:break-all}
+tr:hover{background:#f7f8ff}
+tr.tot{background:#e8eaf6;font-weight:bold;color:#1a1a2e}
+code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11.5px;color:#c62828}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.s-ok{color:#1b5e20;font-weight:600}
+.s-del{color:#b71c1c}
+.s-wait{color:#e65100}
+.foot{margin-top:14px;font-size:12px;color:#555}
+</style></head><body>
+<div class="container">
+<h1>MiniCPM5 分词产物 ↔ 下载目录 对应表</h1>
+<div class="meta">生成时间：2026-10-25 11:57 · 数据源 <code>run/data/map_dl_vs_tok_20261025.tsv</code> · 下载占用 = <code>du -sb &lt;下载目录&gt; / 1e9</code> · 分词 Token = 对应 <code>.json num_tokens</code> 求和 / 1e9 · 全部实测，无估算</div>
+<table><thead><tr>
+<th>分词产物目录</th>
+<th>前缀 / shard</th>
+<th>对应下载目录</th>
+<th>下载数据占用（GB）</th>
+<th>分词后 Token（B）</th>
+<th>状态</th>
+</tr></thead><tbody>
+<tr>
+<td><code>/nas_train/app.e0031982/datasets/baize-data/text</code></td>
+<td>env14_*（110 shard）<br>bin=110</td>
+<td><code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4</code><br>parquet=56320</td>
+<td class="num">6747.43 GB<br><span style="color:#888;font-size:11px">6747434955525 B</span></td>
+<td class="num">2238.14<br><span style="color:#888;font-size:11px">2238140710284 tok</span></td>
+<td class="s-ok">可用</td>
 </tr>
-<tr class="sechead"><td colspan="11">A · 下载 parquet 目录 (openbmb)</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en</td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_en</td><td>2048</td><td>0</td><td>0</td><td>0</td><td>2661358397268</td><td>2.66</td><td>未分词（未实测）</td><td>❌ 未分词</td><td>2026-10-03 17:12</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4</td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4</td><td>56320</td><td>0</td><td>0</td><td>0</td><td>6747434955525</td><td>6.75</td><td>未分词（未实测）</td><td>❌ 未分词</td><td>2026-10-23 19:48</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>6000</td><td>0</td><td>0</td><td>0</td><td>477975290461</td><td>0.48</td><td>未分词（未实测）</td><td>❌ 未分词</td><td>2026-10-07 08:16</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh</td><td>openbmb/Ultra-FineWeb/data/ultrafineweb_zh</td><td>256</td><td>0</td><td>0</td><td>0</td><td>324321522155</td><td>0.32</td><td>未分词（未实测）</td><td>❌ 未分词</td><td>2026-10-08 01:07</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview</td><td>openbmb/UltraX-Preview</td><td>479</td><td>0</td><td>0</td><td>0</td><td>486916113250</td><td>0.49</td><td>未分词（未实测）</td><td>❌ 未分词</td><td>2026-10-07 19:52</td></tr>
-<tr class="subgroup"><td colspan="2">小计 · 下载 parquet 目录（5 行）</td><td>65103</td><td>0</td><td>0</td><td>0</td><td>10698006278659</td><td>10.70</td><td>—（未分词）</td><td>—</td><td>—</td></tr>
-<tr class="sechead"><td colspan="11">B · 分词产物 baize-data/text (按前缀分组)</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/baize-data/text</td><td>baize-data/text  [env14_*]</td><td>0</td><td>0</td><td>110</td><td>110</td><td>8879091909528</td><td>8.88</td><td>2238.14 B</td><td>✅ 已分词</td><td>2026-10-24 11:48</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/baize-data/text</td><td>baize-data/text  [code_s*]</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td><td>未分词（未实测）</td><td>❌ 未分词</td><td>2026-10-25 10:30</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/baize-data/text</td><td>baize-data/text  [l3_s*]</td><td>0</td><td>0</td><td>28</td><td>28</td><td>1710297400424</td><td>1.71</td><td>427.57 B</td><td>✅ 已分词</td><td>2026-10-10 04:06</td></tr>
-<tr class=""><td>/nas_train/app.e0031982/datasets/baize-data/text</td><td>baize-data/text  [math_s*]</td><td>0</td><td>0</td><td>4</td><td>4</td><td>181101913084</td><td>0.18</td><td>45.28 B</td><td>✅ 已分词</td><td>2026-10-09 23:54</td></tr>
-<tr class="subgroup"><td colspan="2">小计 · 分词产物 baize-data/text（4 行）</td><td>0</td><td>0</td><td>142</td><td>142</td><td>10770491223036</td><td>10.77</td><td>2710.99 B</td><td>—</td><td>—</td></tr>
-<tr class="sechead"><td colspan="11">C · 全量分词产物 /nas_env (full_*)</td></tr>
-<tr class=""><td>/nas_env/app.e0031982/baize-data/full_ufw_l3</td><td>/nas_env/.../full_ufw_l3</td><td>0</td><td>0</td><td>154</td><td>154</td><td>1062126204214</td><td>1.06</td><td>263.90 B</td><td>✅ 已分词</td><td>2026-10-21 15:49</td></tr>
-<tr class=""><td>/nas_env/app.e0031982/baize-data/full_ultradata_code_l2</td><td>/nas_env/.../full_ultradata_code_l2</td><td>0</td><td>0</td><td>141</td><td>141</td><td>1691139372199</td><td>1.69</td><td>421.45 B</td><td>✅ 已分词</td><td>2026-10-21 13:33</td></tr>
-<tr class=""><td>/nas_env/app.e0031982/baize-data/full_ultradata_code_l3</td><td>/nas_env/.../full_ultradata_code_l3</td><td>0</td><td>0</td><td>63</td><td>63</td><td>516175730284</td><td>0.52</td><td>128.62 B</td><td>✅ 已分词</td><td>2026-10-21 08:06</td></tr>
-<tr class=""><td>/nas_env/app.e0031982/baize-data/full_ultradata_math_l1</td><td>/nas_env/.../full_ultradata_math_l1</td><td>0</td><td>0</td><td>149</td><td>149</td><td>659469521715</td><td>0.66</td><td>164.44 B</td><td>✅ 已分词</td><td>2026-10-21 17:39</td></tr>
-<tr class=""><td>/nas_env/app.e0031982/baize-data/full_ultradata_math_l3</td><td>/nas_env/.../full_ultradata_math_l3</td><td>0</td><td>0</td><td>67</td><td>67</td><td>313462723570</td><td>0.31</td><td>77.95 B</td><td>✅ 已分词</td><td>2026-10-21 09:20</td></tr>
-<tr class="subgroup"><td colspan="2">小计 · 全量分词产物 /nas_env（5 行）</td><td>0</td><td>0</td><td>574</td><td>574</td><td>4242373551982</td><td>4.24</td><td>1056.36 B</td><td>—</td><td>—</td></tr>
-<tr class="total"><td colspan="2">总计（全部 14 行）</td><td>65103</td><td>0</td><td>716</td><td>716</td><td>25710871053677</td><td>25.71</td><td>3767.35 B</td><td>—</td><td>—</td></tr>
-</table>
-<div class="ok"><strong>自检</strong>：.bin = .idx = 716（相等 ✓）；总字节 = 各行之和 = 25710871053677 B（误差 0 ✓）；未分词源 token 列均为「未分词（未实测）」，无估算数字混入 ✓。</div>
-<h2>④ 已下载未分词清单</h2>
-<p>以下 4 个源已下载原始 parquet 但<strong>尚未分词</strong>（base 族不在分词范围 / UltraX 待分词）。</p>
-<table><tr><th>源</th><th>下载目录</th><th>parquet</th><th>字节</th><th>TB</th><th>状态</th></tr>
-<tr><td>base-en (ultrafineweb_en)</td><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en</td><td>2048</td><td>2661358397268</td><td>2.66</td><td>未分词（未实测）</td></tr>
-<tr><td>l1_en_hq (ultrafineweb_l1_en_hq)</td><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>6000</td><td>477975290461</td><td>0.48</td><td>未分词（未实测）</td></tr>
-<tr><td>zh (ultrafineweb_zh)</td><td>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh</td><td>256</td><td>324321522155</td><td>0.32</td><td>未分词（未实测）</td></tr>
-<tr><td>UltraX-Preview</td><td>/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview</td><td>479</td><td>486916113250</td><td>0.49</td><td>未分词（未实测）</td></tr>
-<tr class="total"><td colspan="3">未分词 parquet 小计</td><td>3950571323134</td><td>3.95</td><td>—</td></tr>
-</table>
-<div class="warn"><strong>注</strong>：en_v1_4 (ultrafineweb_en_v1_4) 已下载 parquet <strong>且已分词</strong>（分词产物见 ③ Section B env14），故不在「未分词」清单内。base-en / l1_en_hq / zh / UltraX-Preview 这 4 个源仅有原始 parquet，无 .bin/.idx。</div>
-<h2>⑤ 空间判定</h2>
-<table><tr><th>项目</th><th>字节</th><th>TB</th></tr>
-<tr><td>/nas_env 可用 (df -B1)</td><td>6274274033664</td><td>6.27</td></tr>
-<tr><td>/nas_train 可用 (df -B1, datasets 所在)</td><td>34911101648896</td><td>34.91</td></tr>
-<tr><td>原始 parquet 合计 (Section A)</td><td>10698006278659</td><td>10.70</td></tr>
-<tr><td>分词产物 baize-data/text (Section B)</td><td>10770491223036</td><td>10.77</td></tr>
-<tr><td>分词产物 /nas_env (Section C)</td><td>4242373551982</td><td>4.24</td></tr>
-<tr class="total"><td>总占盘（A+B+C）</td><td>25710871053677</td><td>25.71</td></tr>
-</table>
-<div class="bad"><strong>分词产物 (15.01 TB) 全部迁移到 /nas_env → 不够</strong>。/nas_env 仅 6.27 TB 可用，×1.1 需 16.51 TB。</div>
-<div class="ok"><strong>Section C (5 个 full_* 目录, 4.24 TB) 已在 /nas_env</strong>（迁移已完成，源已删，软链接在 BaiZe-ISEDA2027/data/full_*）。Section B (baize-data/text, 10.77 TB) 留 /nas_train（太大，/nas_env 无法容纳）。Section A (parquet, 10.70 TB) 留 /nas_train。</div>
-<h2>⑥ 与上一版勘误表（v1 → v2）</h2>
-<p>上一版 (2026-10-24) ④ 逐源汇总表的错误，本版逐一修正：</p>
-<table><tr><th>#</th><th>错误（v1）</th><th>修正（v2）</th></tr>
-<tr><td>1</td><td><strong>遗漏 base-en</strong>：openbmb/Ultra-FineWeb/data/ultrafineweb_en (2,048 parquet / 2.66 TB) 已在盘，v1 ④ 未列</td><td>v2 ③ Section A 第 1 行单列，parquet=2,048</td></tr>
-<tr><td>2</td><td><strong>遗漏 l1_en_hq</strong>：openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq (6,000 parquet / 0.48 TB) 已在盘，v1 ④ 未列</td><td>v2 ③ Section A 第 3 行单列，parquet=6,000</td></tr>
-<tr><td>3</td><td><strong>遗漏 zh</strong>：openbmb/Ultra-FineWeb/data/ultrafineweb_zh (256 parquet / 0.32 TB) 已在盘，v1 ④ 未列</td><td>v2 ③ Section A 第 4 行单列，parquet=256</td></tr>
-<tr><td>4</td><td><strong>遗漏 UltraX-Preview</strong>：openbmb/UltraX-Preview (479 parquet / 0.49 TB) 已在盘，v1 ④ 及 ⑥ 均未列</td><td>v2 ③ Section A 第 5 行单列，parquet=479</td></tr>
-<tr><td>5</td><td><strong>text/ 小计行数错误</strong>：v1 text/ 小计下仅 4 个子源 (env14/code/l3/math)，但表头/结构暗示 5 源；且 2238.14+550.07+658.91+274.92=3722.04≠3722.05（四舍五入误差被当精确值）</td><td>v2 ③ Section B 小计明确标 4 行；token 小计由脚本从 .json num_tokens 精确求和 = 2710990538661 tok = 2710.99 B，附录 B 有算式</td></tr>
-<tr><td>6</td><td>v1 ④ 仅列分词产物，缺「下载目录」维度，无法与 openbmb 目录对应</td><td>v2 ③ 分 Section A (下载 parquet) / B (baize-data/text 分词) / C (/nas_env 全量分词)，每行写明绝对路径，与 <code>ls</code> 一一对应</td></tr>
-<tr><td>7</td><td>v1 未说明 Ultra-FineWeb-L3 / UltraData-* 在 openbmb 不存在</td><td>v2 目录清单区明确：openbmb 下仅 Ultra-FineWeb + UltraX-Preview；L3/UltraData 分词产物在 /nas_env (Section C)</td></tr>
-<tr><td>8</td><td><strong>v2 总计 4778.41 B 含历史重复</strong>：78 个早期分词 shard (code_s 30 + l3_s 12 + math_s 36) 的源数据已在 /nas_env/full_* 全量重分词，v2 将两者一并求和导致重复计 token ~1011 B。2026-10-25 prune 删除这 78 个 covered shard (释放 ~3.69 TiB)，保留 32 个 uncovered shard (来源不明)</td><td>v3 新增「去重后已分词总量（训练可用）」= env14 2238.14 B + /nas_env 1056.36 B = <strong>3294.50 B</strong>；v2 原 4778.41 B 标注为「文件清单求和（含历史重复）」</td></tr>
-</table>
-<h2>附录 A · 命令与输出（原样）</h2>
-<pre>
-### BLOCK 1: Ultra-FineWeb/data/* subdirs
-== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en/
-2048
-2661358397268	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en/
-0
-== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/
-56320
-6747434955525	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4/
-0
-== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/
-6000
-477975290461	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/
-0
-== /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/
-256
-324321522155	/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh/
-0
-### BLOCK 2: UltraX-Preview / Ultra-FineWeb-L3 / UltraData-*
-== /nas_train/app.e0031982/datasets/openbmb/UltraX-Preview
-479
-486916113250	/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview
-0
-### BLOCK 3: tokenized .bin/.idx in baize-data/text and BaiZe-ISEDA2027/data
-/nas_train/app.e0031982/datasets/baize-data/text	220	14814727190824	14814.73 GB
-idx: 220
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base	44	2097708553788	2097.71 GB
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_sft_tok	4	83839927264	83.84 GB
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3	16	82259616356	82.26 GB
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_sft_agent_tok	4	32161914564	32.16 GB
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/r3_sources	6	10233851276	10.23 GB
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data	7	7444411524	7.44 GB
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/heldout	4	35095828	0.04 GB
-idx: 84
-### BLOCK 4: /nas_env full_* tokenized dirs (real paths)
-== /nas_env/app.e0031982/baize-data/full_ufw_l3
-154
-154
-1062126204214	/nas_env/app.e0031982/baize-data/full_ufw_l3
-== /nas_env/app.e0031982/baize-data/full_ultradata_code_l2
-141
-141
-1691139372199	/nas_env/app.e0031982/baize-data/full_ultradata_code_l2
-== /nas_env/app.e0031982/baize-data/full_ultradata_code_l3
-63
-63
-516175730284	/nas_env/app.e0031982/baize-data/full_ultradata_code_l3
-== /nas_env/app.e0031982/baize-data/full_ultradata_math_l1
-149
-149
-659469521715	/nas_env/app.e0031982/baize-data/full_ultradata_math_l1
-== /nas_env/app.e0031982/baize-data/full_ultradata_math_l3
-67
-67
-313462723570	/nas_env/app.e0031982/baize-data/full_ultradata_math_l3
-### BLOCK 5: disk free
-Filesystem                          1B-blocks            Used      Available Use% Mounted on
-10.239.22.32:/vol_CTE0_data04  10885165219840   4610891186176  6274274033664  43% /nas_env
-10.239.22.31:/vol_CTE0_data01 227598906949632 192687805300736 34911101648896  85% /nas_train
-### BLOCK 6: test -d self-check for every row dir
-OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en
-OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en_v1_4
-OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq
-OK  /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh
-OK  /nas_train/app.e0031982/datasets/openbmb/UltraX-Preview
-OK  /nas_train/app.e0031982/datasets/baize-data/text
-OK  /nas_env/app.e0031982/baize-data/full_ufw_l3
-OK  /nas_env/app.e0031982/baize-data/full_ultradata_code_l2
-OK  /nas_env/app.e0031982/baize-data/full_ultradata_code_l3
-OK  /nas_env/app.e0031982/baize-data/full_ultradata_math_l1
-OK  /nas_env/app.e0031982/baize-data/full_ultradata_math_l3
-
-</pre>
-<h2>附录 B · 求和核对式（脚本求和，非手填）</h2>
-<h3>字节求和</h3><pre>
-Section A (parquet 下载) 字节 = 2661358397268 + 6747434955525 + 477975290461 + 324321522155 + 486916113250 = <strong>10698006278659 B</strong>
-
-
-Section B (baize-data/text) 字节 = 8879091909528 + 0 + 1710297400424 + 181101913084 = <strong>10770491223036 B</strong>
-
-
-Section C (/nas_env full_*) 字节 = 1062126204214 + 1691139372199 + 516175730284 + 659469521715 + 313462723570 = <strong>4242373551982 B</strong>
-
-
-总字节 = 10698006278659 (A) + 10770491223036 (B) + 4242373551982 (C) = <strong>25710871053677 B</strong> = 25.71 TB
-
-校验: 各行之和 = 25710871053677, 总计行 = 25710871053677, 误差 = 0 ✓
-</pre>
-<h3>Token 求和</h3><pre>
-Section B tokens = 2238140710284 + 0 + 427574350106 + 45275478271 = <strong>2710990538661 tok</strong>
-
-
-Section C tokens = 263899449229 + 421450419455 + 128623266591 + 164437183984 + 77949162709 = <strong>1056359481968 tok</strong>
-
-
-Token 总计 = 2710990538661 (B) + 1056359481968 (C) = <strong>3767350020629 tok</strong> = 3767.35 B
-
-注: Section A (parquet) 未分词, token=0, 不入 token 总计.
-</pre>
-<h3>计数核对</h3><pre>
-.bin 总数 = 716  |  .idx 总数 = 716  |  .bin == .idx : ✓
-
-parquet 总数 = 65103 (5 个下载目录)"
-</pre>
-<h2>附录 C · 历史参考值（非实测，不入小计）</h2>
-<div class="warn">以下为 DATA_RESEARCH.md v1.2 的论文/估算值，<strong>非硬盘实测</strong>，仅供参考，不纳入任何小计或总计。</div>
-<table><tr><th>源</th><th>参考 token (估算)</th><th>来源</th></tr>
-<tr><td>base-en (ultrafineweb_en)</td><td>≈ 206.76 B</td><td>DATA_RESEARCH.md v1.2 论文/估算值</td></tr>
-<tr><td>base-zh (ultrafineweb_zh)</td><td>≈ 112.47 B</td><td>DATA_RESEARCH.md v1.2 论文/估算值</td></tr>
-<tr><td>UltraX-Preview</td><td>≈ 30.97 B</td><td>DATA_RESEARCH.md v1.2 论文/估算值</td></tr>
-</table>
-<div class="footer">BaiZe Data Agent · 盘点 v3 (prune 后去重) · 生成时间 2026-10-25 11:21 · 生成器 gen_tokenized_inventory_report.py · 实测 TSV inventory_v3_20261025.tsv · 口径：以下载目录为准，不自造数据源，小计脚本求和 · 去重训练可用 3294.50 B</div>
+<tr>
+<td><code>/nas_env/app.e0031982/baize-data/full_ufw_l3</code></td>
+<td>full_ufw_l3（154 shard）<br>bin=154</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa</code><br>parquet=616</td>
+<td class="num">663.18 GB<br><span style="color:#888;font-size:11px">663183709378 B</span></td>
+<td class="num">263.90<br><span style="color:#888;font-size:11px">263899449229 tok</span></td>
+<td class="s-ok">可用</td>
+</tr>
+<tr>
+<td><code>/nas_env/app.e0031982/baize-data/full_ultradata_code_l2</code></td>
+<td>full_ultradata_code_l2（141 shard）<br>bin=141</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L2</code><br>parquet=561</td>
+<td class="num">611.28 GB<br><span style="color:#888;font-size:11px">611281878122 B</span></td>
+<td class="num">421.45<br><span style="color:#888;font-size:11px">421450419455 tok</span></td>
+<td class="s-ok">可用</td>
+</tr>
+<tr>
+<td><code>/nas_env/app.e0031982/baize-data/full_ultradata_code_l3</code></td>
+<td>full_ultradata_code_l3（63 shard）<br>bin=63</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3</code><br>parquet=560</td>
+<td class="num">604.71 GB<br><span style="color:#888;font-size:11px">604712501031 B</span></td>
+<td class="num">128.62<br><span style="color:#888;font-size:11px">128623266591 tok</span></td>
+<td class="s-ok">可用</td>
+</tr>
+<tr>
+<td><code>/nas_env/app.e0031982/baize-data/full_ultradata_math_l1</code></td>
+<td>full_ultradata_math_l1（149 shard）<br>bin=149</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1</code><br>parquet=1485</td>
+<td class="num">366.62 GB<br><span style="color:#888;font-size:11px">366622940699 B</span></td>
+<td class="num">164.44<br><span style="color:#888;font-size:11px">164437183984 tok</span></td>
+<td class="s-ok">可用</td>
+</tr>
+<tr>
+<td><code>/nas_env/app.e0031982/baize-data/full_ultradata_math_l3</code></td>
+<td>full_ultradata_math_l3（67 shard）<br>bin=67</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3</code><br>parquet=200</td>
+<td class="num">122.54 GB<br><span style="color:#888;font-size:11px">122536811815 B</span></td>
+<td class="num">77.95<br><span style="color:#888;font-size:11px">77949162709 tok</span></td>
+<td class="s-ok">可用</td>
+</tr>
+<tr>
+<td><code>（已删除）</code></td>
+<td>l3_s0–12 + s25（已删）</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/multi_style</code><br>parquet=552</td>
+<td class="num">594.82 GB<br><span style="color:#888;font-size:11px">594817293567 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-del">已删除(2026-10-25 · 原 190.36 B)</td>
+</tr>
+<tr>
+<td><code>（已删除）</code></td>
+<td>l3_s26–32（已删）</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/multi_style</code><br>parquet=286</td>
+<td class="num">308.08 GB<br><span style="color:#888;font-size:11px">308080517080 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-del">已删除(2026-10-25 · 原 121.04 B)</td>
+</tr>
+<tr>
+<td><code>（已删除）</code></td>
+<td>l3_s33–39（已删）</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_zh_l3/qa</code><br>parquet=310</td>
+<td class="num">333.13 GB<br><span style="color:#888;font-size:11px">333134635259 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-del">已删除(2026-10-25 · 原 116.17 B)</td>
+</tr>
+<tr>
+<td><code>（已删除）</code></td>
+<td>math_s32–35（已删）</td>
+<td><code>/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L2-preview</code><br>parquet=138</td>
+<td class="num">63.25 GB<br><span style="color:#888;font-size:11px">63253585951 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-del">已删除(2026-10-25 · 原 45.28 B)</td>
+</tr>
+<tr>
+<td><code>（无）</code></td>
+<td>（无产物）</td>
+<td><code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en</code><br>parquet=2048</td>
+<td class="num">2661.36 GB<br><span style="color:#888;font-size:11px">2661358397268 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-wait">未分词</td>
+</tr>
+<tr>
+<td><code>（无）</code></td>
+<td>（无产物）</td>
+<td><code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</code><br>parquet=6000</td>
+<td class="num">477.98 GB<br><span style="color:#888;font-size:11px">477975290461 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-wait">未分词</td>
+</tr>
+<tr>
+<td><code>（无）</code></td>
+<td>（无产物）</td>
+<td><code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh</code><br>parquet=256</td>
+<td class="num">324.32 GB<br><span style="color:#888;font-size:11px">324321522155 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-wait">未分词</td>
+</tr>
+<tr>
+<td><code>（无）</code></td>
+<td>（无产物）</td>
+<td><code>/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC</code><br>parquet=61</td>
+<td class="num">68.55 GB<br><span style="color:#888;font-size:11px">68553927738 B</span></td>
+<td class="num">0.00<br><span style="color:#888;font-size:11px">0 tok</span></td>
+<td class="s-wait">未分词</td>
+</tr>
+<tr class="tot">
+<td>合计（14 个下载目录）</td><td>bin=684</td><td></td>
+<td class="num">13947.27 GB<br><span style="font-size:11px">13947267966049 B</span></td>
+<td class="num">3294.50<br><span style="font-size:11px">3294500192252 tok</span></td>
+<td></td></tr>
+</tbody></table>
+<div class="foot">校验：下载占用列之和 = 13947.27 GB（13947267966049 B，误差 0）· 分词 Token 列之和 = 3294.50 B（3294500192252 tok）· 行数 = 14（= 下载目录数，一行一个下载目录）。</div>
 </div></body></html>
