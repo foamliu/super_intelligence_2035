@@ -9,6 +9,29 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-25 19:5x（把路线①细化成「可照着做」的 OCR 专项 SFT 执行方案报告）· 用户直令 · 最高优先
+> 用户原话：「优先执行 路线① — 用 trdg/SynthTIGER 低成本合成 50-200 万 OCR 识别对, 在现有 ckpt 上加一轮专项 SFT; 预注册判据 = OCRBench 提升 >= 2pp。把这个建议细化 写个报告我看看怎么做 中英文什么比例 数学公式怎么办 其他呢」
+> 本轮**只出方案报告，不启训练、不生成全量数据**（用户看完再批预算）。
+
+**1) 报告必须回答的四个问题（缺一不可）**
+1. **中英文比例**：给基线配比表（类别 x 数量 x 占比 x 依据），并给至少 2 个候选配比（A：英文 6 : 中文 3 : 中英混排 1；B：中英 1 : 1），写清各自适用条件与**可判定判据**（哪条指标动、动多少算选中）。
+2. **数学公式**：三条通道都要写 —— (a) 纯公式图（im2latex / LaTeX 渲染：行内、多行、矩阵、上下标、分式）；(b) 正文夹公式（arXiv LaTeX 段落经 KaTeX/MathJax 渲染成整页）；(c) 公式与表格混排。并回答：OCRBench 的公式/手写子类怎么打、公式占多少 token 预算、渲染失败率怎么控。给建议占比与理由。
+3. **其他类别**：文档版面（标题/分栏/表格/页眉页脚）、图表（柱/折/饼 + 数值标签）、表格（合并单元格）、手写、场景文本（招牌/路牌/包装）、低质（模糊/倾斜/透视/压缩/低分辨率）、代码截图、竖排与多语种（日韩/繁中）。每类给「建议数量 / 优先级 P0-P2 / 判据」。
+4. **怎么做（可执行）**：生成管线（trdg / SynthTIGER / 自研渲染器的选择与参数：字体集、语料源、版面、退化、分辨率、bbox 与标签格式）、**与现有 Stage-2 780k 的混合比例**（防灾难性遗忘）、SFT 配方（起始 ckpt、LR、epoch、GBS、LoRA 还是全参、224 单块 vs 336 anyres 的取舍）、成本（渲染 CPU 小时 / 存储 TB / 训练 GPU 小时，均标「估算」）、分阶段（P0 20 万 pilot -> 判据 -> P1 全量 -> P2 SFT -> 评估）。
+
+**2) 硬性要求**
+- 预注册判据写死：主判据 **OCRBench >= +2pp**（基线 ArmE-R2 1.60%）；副判据 DocVQA / ChartQA / InfoVQA 各 >= +1pp；**回归护栏**：MMStar / MMBench / AI2D / RealWorldQA 掉幅不超过 1pp，否则判「以退化换分」不通过。
+- 必须给**决策树**：pilot 达标 -> 全量；pilot 不达标 -> 明确改哪一维（配比 / 分辨率 / 公式占比）再试一次；仍不达标则停并写结论。
+- 数据来源与许可：只用可商用 / 可再分发语料（维基、开源书籍、CC 语料、自建 LaTeX），逐类标来源与 License；不许用来历不明的爬虫数据。
+- 复用现状要写清：`vision/mllm_bridge/` 的 224 单块与 336+anyres 分支（后者需工程改造 + scope，属阻塞项），并给「若批准 336」的增量收益估计。
+- 外部数字标来源（arXiv 号 / 会议 / 年份）；本项目数字可溯源；估算一律标「估算」。
+
+**3) 交付**
+- `reports/report_vision_ocr_sft_plan_zh.html`（中文 HTML 自包含、0 `<script>` / 0 `<a href>` 外链、不低于 18KB）：9 节 = 摘要（含基线配比一览）/ 现状与差距 / 数据配方（中英、公式、其他三类）/ 生成管线与参数 / SFT 配方与混合策略 / 成本与 ETA / 判据与决策树 / 风险与坑 / 参考来源（纯文本 arXiv 号）。
+- 生成器 `vision/generate_ocr_sft_plan_report.py`（数据字典在脚本顶部，重跑 diff 为空）。
+- `EXPERIMENTS_VISION.md` 新节指针 + `MEMORY_VISION.md` 首部新块 + daily；commit 前缀 `vision ocr-plan:`。
+- 报告必须含一张「一页纸执行清单」：今天就能开始的第一步（装 trdg / 下字体 / 冒烟 1 万张）+ 验收看哪几个文件。
+
 ### [运维令] 2026-10-25 17:5x（**OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写报告**）· 用户直令 · 最高优先
 > 用户原话：「vision：现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」
 > ✅ **DONE (wake #271, 2026-10-25 18:57)**：四臂四集已量化、7 类 18 法调研完成、报告 `reports/report_vision_ocr_synthdata_zh.html`（29177B）+ 生成器 `vision/generate_ocr_synthdata_report.py` + `EXPERIMENTS_VISION.md §16` 已交付并 commit。本轮为调研+报告，未启训练。
@@ -44,36 +67,9 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
-### 📄 运维指令 · 2026-10-24 10:3x（**ArmE-R2 完整实验 → 中文 HTML 报告**）· 用户直令 · 最高优先
+### [已归档] §运维指令·2026-10-24 10:3x（ArmE-R2 完整实验报告）**已完成**（wake#247 交付 `reports/report_vision_armE_r2_20261024_zh.html` 26,522B / 7 节；wake#267 复核仍在位）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
-> 用户原话：「让 vision 写上一份实验的 HTML 中文报告。」
-
-> ✅ **DONE (wake #247, 2026-10-24 12:57)**：完整 7 节中文 HTML 报告已交付 `reports/report_vision_armE_r2_20261024_zh.html`（26522B / 7 节：①摘要 ②配置与口径 ③训练 ④ProtB ⑤MLLM三阶段 ⑥12集 ⑦结论+复现命令 / 0 `<script>` / 0 外链 / 标签配平）；`EXPERIMENTS_VISION.md §15` 已链接；旧版 17KB（`report_vision_armE_r2_20261022_mllm_stage4_zh.html`）保留备查；生成器 `vision/generate_armE_r2_full_report.py`；commit e8dc74489 全闭合。**wake #267 复核：报告在位 ✅、7 节齐全 ✅（grep 逐节确认），未重做。**
-
-**① 现状（先看清差什么）**
-- 已有 `run/reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html`（17,136B）只含 **摘要 / 配置 / ProtB / 12 集 / 结论 / 文件路径** 六节 —— **缺 ①训练段、③MLLM 三阶段**，且不在主报告目录。
-- 本轮 = **补齐 + 归位**，不是重写另一个版本。
-
-**② 交付**：`reports/report_vision_armE_r2_20261024_zh.html`（**单文件自包含**，无外链 CDN、无 `<script>`，标签配平）。必含 7 节：
-1. **摘要**（≤6 条）：ProtB **68.236% 🏆 全实验最高** · 12 集 **26.10%** · vs ArmD-R2 **−0.02pp 不可分辨** · 容量≠MLLM 下游瓶颈 · ProtB→MLLM 传递性证伪 · eval bridge 修复
-2. **配置与口径**：ArmE-R2 vs ArmD-R2 = **三变量**（塔 B/16→L/14 + LR 1e-3→5e-4 + warmup 2000→3000，**不得单归因**）；vs ArmC/ArmB 的对照边界；数据 6 源 173.1M 对 / GBS 8192 / 63,400 步 / seed 1234
-3. **① 训练（新增）**：T0 与总耗时（≈37.2h）、0.47–0.48 it/s、loss/contr/patch/C1 的 8–10 个里程碑点、**spike 统计**（次数/峰值/谷底/恢复步数，与 ArmE 发散对比）、ckpt 落盘清单、**0 nan/0 oom 的 grep 原文行**
-4. **② ProtB**：lp **68.236±0.0182** / 5-NN **58.904**，逐 seed（68.212/68.256/68.240），四臂对比表 + Δpp
-5. **③ MLLM 三阶段（新增）**：Stage-1 2500 步 / Stage-1.5 LoRA 20000 步 / Stage-2 3500 步的 loss 与耗时；**eval bridge bug**（196→256 patch tokens）根因、现象（8 卡全崩）、修法（3 处动态计算）
-6. **④ 12 集逐集表**：12 行 × [ArmE-R2 / ArmD-R2 / Δ]，avg(除 MME) **26.10 vs 26.12 = −0.02pp**；注明 22–26.5% 不可分辨带
-7. **结论与局限** + **复现命令**（训练 / ProtB / 12 集 三条）
-
-**③ 数据纪律**：每个数字必须能追到文件 —— `run/vision/armE_r2_20261022_protb_vitl14_224_results.json`、`run/vision/results/` 下 12 集 json、训练 log、`run/EXPERIMENTS_VISION.md §15`。🚫 不许估算/编造；取不到就写 `N/A` + 原因。
-
-**④ 收尾**：`run/EXPERIMENTS_VISION.md §15` 链到新报告（旧 17KB 版保留，标注"旧版"）；**本轮先归档任务书**（现 31.5KB，加本块会越 32KB ⇒ 按体积规程把已闭合的 ArmE/ArmD 旧块搬 `run/ARCHIVE_OPERATOR_VISION.md`，留 1 行指针，降到 ≤32KB）；commit `vision report:`；push 后 `git status -sb` 无 ahead/behind。
-
-> **已归档**（2026-10-24 11:43）：🔴 运维指令 · 2026-10-22 14:2x（**停止 ArmE → 降 LR 重跑 ArmE-R2：5e-4 + warmup 3000**）· 用户直令 · 最高优先 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
-
-> **已归档**（2026-10-24 11:43）：🚀 运维指令 · 2026-10-21 20:4x（**启动 ArmE：唯一变量 = 视觉塔换 open_clip ViT-L/14-224 (430M)**）· 用户直令 · 最高优先 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
-
-> **已归档**（2026-10-24 11:43）：🔓 运维指令 · 2026-10-21（**Stage-2 改用原版 LLaVA-NeXT-780k 数据**）· 已闭环 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
+> **已归档**（2026-10-24 11:43）：ArmE 停止降 LR 重跑 / 启动 ArmE（ViT-L14）/ Stage-2 改原版 780k 三块 —— 原文均在 `run/ARCHIVE_OPERATOR_VISION.md`。
 
 
 ### 📦 运维指令 · 2026-10-20 08:2x（**ArmD-R2：LR 1e-3 / min_LR 1e-5 / 数据不变**）· 用户直令 · 最高优先 — 已归档

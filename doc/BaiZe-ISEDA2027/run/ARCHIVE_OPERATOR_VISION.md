@@ -4,6 +4,38 @@
 
 ## 归档 2026-10-25（由 BAIZE_VISION_TASK.md 搬入，原文未改）
 
+### 📄 运维指令 · 2026-10-24 10:3x（**ArmE-R2 完整实验 → 中文 HTML 报告**）· 用户直令 · 最高优先
+
+> 用户原话：「让 vision 写上一份实验的 HTML 中文报告。」
+
+> ✅ **DONE (wake #247, 2026-10-24 12:57)**：完整 7 节中文 HTML 报告已交付 `reports/report_vision_armE_r2_20261024_zh.html`（26522B / 7 节：①摘要 ②配置与口径 ③训练 ④ProtB ⑤MLLM三阶段 ⑥12集 ⑦结论+复现命令 / 0 `<script>` / 0 外链 / 标签配平）；`EXPERIMENTS_VISION.md §15` 已链接；旧版 17KB（`report_vision_armE_r2_20261022_mllm_stage4_zh.html`）保留备查；生成器 `vision/generate_armE_r2_full_report.py`；commit e8dc74489 全闭合。**wake #267 复核：报告在位 ✅、7 节齐全 ✅（grep 逐节确认），未重做。**
+
+**① 现状（先看清差什么）**
+- 已有 `run/reports/report_vision_armE_r2_20261022_mllm_stage4_zh.html`（17,136B）只含 **摘要 / 配置 / ProtB / 12 集 / 结论 / 文件路径** 六节 —— **缺 ①训练段、③MLLM 三阶段**，且不在主报告目录。
+- 本轮 = **补齐 + 归位**，不是重写另一个版本。
+
+**② 交付**：`reports/report_vision_armE_r2_20261024_zh.html`（**单文件自包含**，无外链 CDN、无 `<script>`，标签配平）。必含 7 节：
+1. **摘要**（≤6 条）：ProtB **68.236% 🏆 全实验最高** · 12 集 **26.10%** · vs ArmD-R2 **−0.02pp 不可分辨** · 容量≠MLLM 下游瓶颈 · ProtB→MLLM 传递性证伪 · eval bridge 修复
+2. **配置与口径**：ArmE-R2 vs ArmD-R2 = **三变量**（塔 B/16→L/14 + LR 1e-3→5e-4 + warmup 2000→3000，**不得单归因**）；vs ArmC/ArmB 的对照边界；数据 6 源 173.1M 对 / GBS 8192 / 63,400 步 / seed 1234
+3. **① 训练（新增）**：T0 与总耗时（≈37.2h）、0.47–0.48 it/s、loss/contr/patch/C1 的 8–10 个里程碑点、**spike 统计**（次数/峰值/谷底/恢复步数，与 ArmE 发散对比）、ckpt 落盘清单、**0 nan/0 oom 的 grep 原文行**
+4. **② ProtB**：lp **68.236±0.0182** / 5-NN **58.904**，逐 seed（68.212/68.256/68.240），四臂对比表 + Δpp
+5. **③ MLLM 三阶段（新增）**：Stage-1 2500 步 / Stage-1.5 LoRA 20000 步 / Stage-2 3500 步的 loss 与耗时；**eval bridge bug**（196→256 patch tokens）根因、现象（8 卡全崩）、修法（3 处动态计算）
+6. **④ 12 集逐集表**：12 行 × [ArmE-R2 / ArmD-R2 / Δ]，avg(除 MME) **26.10 vs 26.12 = −0.02pp**；注明 22–26.5% 不可分辨带
+7. **结论与局限** + **复现命令**（训练 / ProtB / 12 集 三条）
+
+**③ 数据纪律**：每个数字必须能追到文件 —— `run/vision/armE_r2_20261022_protb_vitl14_224_results.json`、`run/vision/results/` 下 12 集 json、训练 log、`run/EXPERIMENTS_VISION.md §15`。🚫 不许估算/编造；取不到就写 `N/A` + 原因。
+
+**④ 收尾**：`run/EXPERIMENTS_VISION.md §15` 链到新报告（旧 17KB 版保留，标注"旧版"）；**本轮先归档任务书**（现 31.5KB，加本块会越 32KB ⇒ 按体积规程把已闭合的 ArmE/ArmD 旧块搬 `run/ARCHIVE_OPERATOR_VISION.md`，留 1 行指针，降到 ≤32KB）；commit `vision report:`；push 后 `git status -sb` 无 ahead/behind。
+
+> **已归档**（2026-10-24 11:43）：🔴 运维指令 · 2026-10-22 14:2x（**停止 ArmE → 降 LR 重跑 ArmE-R2：5e-4 + warmup 3000**）· 用户直令 · 最高优先 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
+
+
+> **已归档**（2026-10-24 11:43）：🚀 运维指令 · 2026-10-21 20:4x（**启动 ArmE：唯一变量 = 视觉塔换 open_clip ViT-L/14-224 (430M)**）· 用户直令 · 最高优先 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
+
+
+> **已归档**（2026-10-24 11:43）：🔓 运维指令 · 2026-10-21（**Stage-2 改用原版 LLaVA-NeXT-780k 数据**）· 已闭环 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
+
+
 ### 📄 运维指令 · 2026-10-24 16:1x（**写"下一步如何提升 ProtB 与 MLLM 成绩"报告**）· 用户直令 · 最高优先
 
 > 用户原话：「vision：**下一步如何提升 ProtB 和 MLLM 成绩，写个报告。**」
