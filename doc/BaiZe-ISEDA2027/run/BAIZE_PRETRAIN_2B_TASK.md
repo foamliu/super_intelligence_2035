@@ -57,14 +57,19 @@
 | 基线 e18 | 4096 | 4.13M | 606,449 | 37,903 | 1.00x |
 | cfg1 | 8192 | 2.10M | 108,291 | 6,768 | -82% |
 | cfg2 | 8192 | 4.19M | 111,897 | 6,993 | -82% |
-| cfg3（在跑） | 16384 | 2.10M | ~62,000（step 33.81s 折算） | ~3,875 | -90% |
-- **同 seq 下把 tok/step 翻倍，tok/s 只 +3%** ⇒ 吞吐被某个与批大小无关的固定项卡住；
-- **seq 再翻倍，tok/s 再近减半** ⇒ 该项随 seq 超线性增长（4096->8192 掉 5.5x，8192->16384 再掉 1.8x，拟合约 seq^1.6）。
-- 结论：**不是「小 GBS/MBS 的 overlap 问题」（H4 基本可排除），也不是纯数据饥饿**（数据饥饿不会随 seq 超线性）；最可能是**与 seq 相关的算子路径变慢**（4 层 attention 的 O(seq^2) 或 Mamba2 SSD chunk scan 的 fp32 路径），或**该路径下 kernel/attention backend 回退**。必须用 profile 定位到模块级。
+| cfg3 | 16384 | 2.10M | **112,094**（实测，非早期 step10 折算） | 7,005 | -82% |
+- **形态更正（22:1x 运维，依据 cfg3 实测 112,094）**：不是「超线性」，而是**在 seq 4096->8192 之间发生一次阶跃式跌落（约 5.5x），之后 8192 与 16384 都平台在 ~108-112K**：
+  - 8192/2.1M = 108,291 -> 8192/4.19M = 111,897（tok/step 翻倍仅 +3%）；
+  - 16384/2.1M = 112,094（seq 再翻倍基本不变）。
+- ⇒ **H6（attention O(seq^2) 主导）基本被证伪**（若是二次成本，16384 应比 8192 再掉一半，实测没有）；
+- ⇒ 单点特征指向**「seq>4096 触发了另一条 kernel/执行路径」**：`--mamba-ssm-dtype float32` 的 SSD chunk scan 慢路径、CUDA graph 在 8K 失效回退 eager、或数据管线在 8K 的固定开销。既然 8192 与 16384 同速，**主因大概率是「每 token 固定成本被放大」而非「随 seq 增长」**。
+- 必须用 profile 定位到模块级；并**找出拐点**：若 cfg0a（4096/2.1M）回到 ~600K，则再补一格 `seq=6144`（若模型/数据支持）或 `seq=5120`，把跌落锁定在 4096-8192 之间。
 
 **追加假设**
 | H6 | 4 层 attention 在 seq>=8192 走了非 flash/未融合路径（O(seq^2) 主导） | torch profiler / Nsight 按模块取时间占比；查 attention backend 与 flash 可用性日志 | attention 模块占比随 seq 平方增长 | | |
 | H7 Mamba2 SSD chunk scan 在长 seq 下走 fp32 逐 chunk 扫描（非融合） | 对比 `chunk_size` 与 dtype；查是否命中 PyTorch 2026-02 所述「五算子融合」前的慢路径（该博文实测融合可提速 1.50-2.51x） | 改 chunk/融合后 tok/s 明显回升 | | |
+| H8 seq>4096 触发路径切换（CUDA graph 失效 / attention backend / kernel 选择器） | 对比 4096 与 8192 的 log 中 graph capture 与 kernel 名；补 cfg0a 与 seq=6144 定位拐点 | 4096 正常、8192 起阶跃；且 8192 与 16384 同速 | | |
+| H9 数据管线在 8K 的每样本固定开销（非 token 线性） | data-loading 计时在 8192/16384/4096 三点对比；看 samples/s 是否恒定 | samples/s 恒定（tok/s 随 seq 线性） ⇒ 数据侧；实测 tok/s 恒定 ⇒ 排除 | | |
 
 ### [运维令] 2026-10-25 17:5x（**seq 增大 x 每步 token 数固定（2M / 4M）的 16 卡吞吐网格**）· 用户直令 · 最高优先
 > 用户原话：「pretrain：测试下列配置的16卡训练吞吐 1）seq=8192, 2M tok/step 2）seq=8192, 4M tok/step 3）seq=16384, 2M tok/step 4）seq=16384, 4M tok/step 5）seq=32768, 2M tok/step 6）seq=32768, 4M tok/step 也就是在每步训练数据量不变（2M/4M,对应S1和S2）的情况下，看看增大seq对训练吞吐的影响。」
