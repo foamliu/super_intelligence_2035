@@ -1,7 +1,80 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 
-<!-- RUN_ID: 191 | TARGET: 29 -->
-## RUN_ID 191 — ✅ 验证：data 任务书的盘点令是否已进入「运维指令区」且能被 agent 读到
+<!-- RUN_ID: 192 | TARGET: 29 -->
+## RUN_ID 192 — ✅ 验证四线任务书：纪律块在顶 + 指令区存在 + 未完成指令在区内 + 体积达标
+
+```bash
+set -u
+echo "=== RUN_ID 192 | verify 4 task files | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+cd "$GR" || exit 1
+timeout 60 git fetch origin >/dev/null 2>&1
+B=$(git rev-list --count HEAD..origin/main); A=$(git rev-list --count origin/main..HEAD)
+echo "[0] HEAD=$(git rev-parse --short HEAD) behind=$B ahead=$A"
+if [ "$B" != "0" ] && [ "$A" = "0" ]; then timeout 60 git merge --ff-only origin/main >/dev/null 2>&1; echo "  merged -> $(git rev-parse --short HEAD)"; fi
+
+for f in BAIZE_DATA_TASK.md BAIZE_HARNESS_TASK.md BAIZE_PRETRAIN_2B_TASK.md BAIZE_VISION_TASK.md; do
+  P="$T/$f"
+  [ -f "$P" ] || { echo "  $f NOT_FOUND"; continue; }
+  SZ=$(stat -c %s "$P")
+  KB=$(awk -v b=$SZ 'BEGIN{printf "%.1f", b/1024}')
+  python3 - "$P" "$f" "$KB" <<'PY'
+import sys
+p, name, kb = sys.argv[1], sys.argv[2], sys.argv[3]
+s = open(p, encoding='utf-8', errors='replace').read()
+discipline = s.find('归档与执行纪律')
+zone = s.find('## 🔧 运维指令区')
+# 该区里第一条未完成指令 = 区之后第一个 '### ' 且其块内没有"已闭合/已完成"标记
+import re
+first_unfinished = None
+if zone > -1:
+    rest = s[zone:]
+    for m in re.finditer(r'^### .*$', rest, re.M):
+        head_start = zone + m.start()
+        nxt = re.search(r'^### ', rest[m.end():], re.M)
+        blk_end = zone + m.end() + (nxt.start() if nxt else len(rest) - m.end())
+        blk = s[head_start:blk_end]
+        if ('已闭合' not in blk[:200]) and ('已归档' not in blk[:200]):
+            first_unfinished = (head_start, blk.split('\n')[0][:70])
+            break
+print(f"  === {name}  {kb} KB ===")
+print(f"     纪律块 offset={discipline} ({discipline/len(s)*100:.1f}%)  {'OK' if discipline>-1 else 'MISSING'}")
+print(f"     运维指令区 offset={zone} ({zone/len(s)*100:.1f}%)  {'OK' if zone>-1 else 'MISSING ❌'}")
+if first_unfinished:
+    off, title = first_unfinished
+    print(f"     第一条未完成指令 offset={off} ({off/len(s)*100:.1f}%)")
+    print(f"       {title}")
+else:
+    print("     第一条未完成指令: 无（或无法解析）")
+PY
+done
+
+echo "[1] 模拟 loop 读取：每条线前 30 行内是否有纪律块 + 指令区"
+for f in BAIZE_DATA_TASK.md BAIZE_HARNESS_TASK.md BAIZE_PRETRAIN_2B_TASK.md BAIZE_VISION_TASK.md; do
+  echo "  --- $f ---"
+  head -30 "$T/$f" | grep -an '归档与执行纪律\|运维指令区\|最高优先\|08:0x\|08:2x\|07:4x' | head -4 | cut -c1-130
+done
+
+echo "[2] 四线 MEMORY 状态（是否已动）"
+for m in MEMORY_DATA.md MEMORY_HARNESS.md MEMORY_PRETRAIN_2B.md MEMORY_VISION.md; do
+  [ -f "$T/$m" ] && echo "  $m  $(stat -c '%y' "$T/$m"|cut -c1-19)  $(grep -m1 '^WAITING:' "$T/$m")"
+done
+
+echo "[3] data 盘点产物是否出现"
+ls -l --time-style=+%F_%T "$GR/doc/BaiZe-ISEDA2027/reports/report_data_tokenized_inventory_zh.html" 2>/dev/null
+ls -l "$T/data/" 2>/dev/null | grep -i 'inventory' || echo '  尚无 inventory_v2 文件'
+
+echo "=== DONE 192 ==="
+```
+
+## RUN_ID 191 — ✅ 验证 data 可读性（已执行 exit=0）
+
+```text
+结果：运维指令区 offset=890(5.8%)，我的令 offset=944(6.2%)，判定「在指令区之内 YES」。
+模拟 loop 读前 40 行：命中 17/19/25/26/37 行，含 Ultra-FineWeb 四子目录 + UltraX-Preview + 勘误表。
+体积：pretrain 30.1KB / data 25.4KB / harness 32.8KB(超标) / vision 28.6KB。
+```
 
 ```bash
 set -u
