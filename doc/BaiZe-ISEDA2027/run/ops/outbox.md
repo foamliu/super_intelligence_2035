@@ -23161,3 +23161,72 @@ echo "=== DONE 220 ==="
 [9] data 迁移 / 坏 shard 迹象
 === DONE 220 ===
 ```
+
+---
+
+## RUN_ID 221 · 2026-10-26 23:00:18 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+C=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "=== RUN_ID 221 | who is editing | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] cline / loop 进程"
+ps -eo pid,etimes,args= | grep -E 'cline_pretrain|baize_pretrain_loop' | grep -Ev 'grep|bun|node /' | cut -c1-130 | head -5 || echo "  (none)"
+echo "[2] recipe.py / launcher / train_s1.sh mtime（是否刚被改）"
+ls -l --time-style=+%H:%M $C/mamba2_hybrid_2b/recipe.py $C/pretrain_launcher.py $C/scripts/train_s1.sh 2>/dev/null | awk '{print "  "$6"  "$7}'
+echo "[3] 训练代码仓提交（最近 5 条，看是否已 commit rotary_base）"
+git -C $C log -5 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' 2>/dev/null | cut -c1-130 || echo "  (not a git repo / no log)"
+echo "[4] recipe.py 里 rotary_base 的实际默认值与透传"
+grep -n -- 'rotary_base' $C/mamba2_hybrid_2b/recipe.py 2>/dev/null | head -10 | cut -c1-160
+echo "[5] launcher 是否已暴露 --rotary-base"
+grep -n -- 'rotary-base\|rotary_base' $C/pretrain_launcher.py 2>/dev/null | head -6 | cut -c1-160 || echo "  (launcher 无 rotary 参数)"
+echo "[6] train_s1.sh 里的关键项（ulimit / port / gbs / name / save-interval）"
+grep -nE 'ulimit|MASTER_PORT|GBS=|SAVE_INTERVAL|--name|WORLD|NNODES' $C/scripts/train_s1.sh 2>/dev/null | head -12 | cut -c1-150
+echo "=== DONE 221 ==="
+```
+
+**输出**
+```
+=== RUN_ID 221 | who is editing | 2026-10-26 23:00:18 | host=whag0pgpuap29 ===
+[1] cline / loop 进程
+1401353  185838 bash ./baize_pretrain_loop.sh
+[2] recipe.py / launcher / train_s1.sh mtime（是否刚被改）
+  22:51  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py
+  22:51  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py
+  21:23  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/scripts/train_s1.sh
+[3] 训练代码仓提交（最近 5 条，看是否已 commit rotary_base）
+  6517462 10-26 21:24 fix(train_s1): raise ulimit -n to 1048576 — fixes .12 fd exhaustion crash
+  ac1c790 10-26 21:12 fix: use fixed master_port for dual-node rendezvous (was random per-node → deadlock)
+  ae964bc 10-26 20:56 pretrain #796: S1 formal launch — TCPStore timeout fix, stale .idx validator, checkpoint save fix
+  027e413 10-26 02:22 pretrain launcher: add --context-parallel CLI arg + wire context_parallelism (CP=2 smoke ready, rev3 #786)
+  7a99c4b 10-24 23:45 fix: early NCCL init_process_group + barrier for dual-node IB connection race
+[4] recipe.py 里 rotary_base 的实际默认值与透传
+135:    rotary_base: int = 10000,
+156:      rotary_base              — RoPE theta (ABF). 默认 1e4（Megatron 默认）；
+198:    # RoPE theta (ABF). 父类 MambaModelProvider 有 rotary_base 字段（默认 1e4）。
+200:    kwargs["rotary_base"] = rotary_base
+256:    rotary_base: int = 10000,
+313:        rotary_base=rotary_base,
+[5] launcher 是否已暴露 --rotary-base
+146:    # RoPE theta (ABF). 仅在显式传入时透传——mamba2 recipe 接受 rotary_base；
+147:    # minicpm5/xmodel 把 rotary_base 烤进各自 provider 默认（不传 ⇒ 不受影响）。
+148:    if getattr(args, "rotary_base", None) is not None:
+149:        call_kwargs["rotary_base"] = args.rotary_base
+211:    p.add_argument("--rotary-base", type=int, default=None,
+245:    # 生效证据：rank0 打印 provider 的 rotary_base（theta），确认 --rotary-base 已落到模型配置。
+[6] train_s1.sh 里的关键项（ulimit / port / gbs / name / save-interval）
+24:NNODES=""
+31:        --nnodes) NNODES="$2"; shift 2 ;;
+32:        --name)   NAME="$2"; shift 2 ;;
+40:    NNODES="${NNODES:-1}"
+46:    NNODES="${NNODES:-2}"
+53:GBS=128
+58:SAVE_INTERVAL=2000
+80:ulimit -n 1048576
+129:if [[ $NNODES -gt 1 ]]; then
+133:# starts the TCPStore on MASTER_ADDR:MASTER_PORT, and workers connect to it.
+136:MASTER_PORT="${MASTER_PORT:-49500}"
+142:echo "===== S1 launch: name=$NAME nnodes=$NNODES node_rank=$NODE_RANK steps=$TRAIN_ITERS warmup=$WARMUP ====="
+=== DONE 221 ===
+```
