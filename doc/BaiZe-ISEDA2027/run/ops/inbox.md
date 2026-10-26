@@ -1,4 +1,54 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 211 | TARGET: 29 -->
+## RUN_ID 211 — 只读：pretrain 在干嘛（loop/日志/进程/GPU/TB/新代码是否已 pull/迁移）
+
+```bash
+set -u
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$G/doc/BaiZe-ISEDA2027
+echo "=== RUN_ID 211 | pretrain probe | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] pretrain loop / cline 进程（排除 cline 自身与 grep）"
+ps -eo pid,etimes,args= | grep -E 'pretrain_loop\.sh|cline_pretrain|ops_relay' | grep -Ev 'grep|cline -c|bun|node /' | cut -c1-140 || echo "  (none)"
+echo "[2] loop 日志（mtime / size / 末尾）"
+f=/tmp/baize_pretrain_loop.log
+if [ -f "$f" ]; then
+  echo "  mtime=$(stat -c '%y' "$f" | cut -c1-19)  size=$(stat -c %s "$f")B"
+  tail -12 "$f" | cut -c1-170
+else
+  echo "  no $f"
+fi
+echo "[3] 其他 loop 日志 mtime（判断哪些 loop 活着）"
+for l in vision data harness; do
+  ff=/tmp/baize_${l}_loop.log
+  [ -f "$ff" ] && echo "  $l: $(stat -c '%y' "$ff" | cut -c1-19)" || echo "  $l: no log"
+done
+echo "[4] git 状态（含 pretrain 最近提交与是否 pull 到工作副本）"
+cd "$G" || exit 1
+git log -4 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-120
+echo "  -- status --"
+git status -sb 2>/dev/null | head -3
+git log -1 --format='  HEAD=%h %ad %s' --date=format:'%m-%d %H:%M' | cut -c1-120
+echo "[5] 新代码是否已在工作副本（本次 5 次推送的产物）"
+for p in code/baize-llm/README.md code/baize-llm/scripts/train.sh code/baize-llm/scripts/check_rope.py code/baize-llm/scripts/abf_plan.py code/baize-llm/scripts/longctx_ladder.sh; do
+  if [ -f "$G/$p" ]; then echo "  OK   $(stat -c '%y' "$G/$p" | cut -c1-19)  $p"; else echo "  MISS $p"; fi
+done
+echo "[6] GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[7] 训练进程（torchrun / pretrain_launcher，排除 cline）"
+ps -eo pid,etimes,args= | grep -E 'torchrun|pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | cut -c1-150 || echo "  (none)"
+echo "[8] TensorBoard 6006 / 实验目录 / ckpt"
+ss -ltn 2>/dev/null | grep ':6006' | cut -c1-100 || echo "  (6006 not listening)"
+ls -d /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b* 2>/dev/null || echo "  (no baize2b exp dir)"
+for d in /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b*/checkpoints; do
+  [ -d "$d" ] && echo "  ckpt_dir=$d  n=$(ls -d "$d"/iter_* 2>/dev/null | wc -l)"
+done
+echo "[9] 磁盘 / 迁移（data 线 run2 是否还在跑）"
+df -h /nas_train /nas_env 2>/dev/null | tail -2
+ps -eo pid,etimes,args= | grep -E 'migrate_4sources|rsync .*nas_env' | grep -Ev 'grep|cline' | cut -c1-120 | head -4 || echo "  (no migrate/rsync)"
+tail -3 /tmp/migrate_4sources_to_nas_env.log 2>/dev/null | cut -c1-150
+echo "=== DONE 211 ==="
+```
+
 
 <!-- RUN_ID: 210 | TARGET: 29 -->
 ## RUN_ID 210 — 只读：22:0x 巡检（四线为何静默 / 网格到哪一格 / 复跑计数 / 分词收尾）
