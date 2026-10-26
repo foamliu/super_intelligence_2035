@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T23:38:32Z",
+  "generated_at": "2026-10-26T00:53:32Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -1649,9 +1649,9 @@
   },
   "hermes_rerun_20261025": {
     "pass": 23,
-    "rewarded": 40,
-    "exceptions": 36,
-    "completed": 76,
+    "rewarded": 41,
+    "exceptions": 39,
+    "completed": 80,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2184,14 +2184,42 @@
         "reward": null,
         "err_type": null,
         "err_subcause": null
+      },
+      {
+        "task": "sanitize-git-repo",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "schemelike-metacircular-eval",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sparql-university",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-db-truncate",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
       }
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 12,
-    "rewarded": 37,
-    "exceptions": 11,
-    "completed": 48,
+    "pass": 13,
+    "rewarded": 41,
+    "exceptions": 12,
+    "completed": 53,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2524,6 +2552,41 @@
       },
       {
         "task": "merge-diff-arc-agi-task",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "model-extraction-relu-logits",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "modernize-scientific-stack",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mteb-leaderboard",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "mteb-retrieve",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "multi-source-data-merger",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,

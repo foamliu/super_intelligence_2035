@@ -5,10 +5,10 @@
  },
  "rerun": {
   "hermes": {
-   "dirs": 76,
-   "done": 40,
+   "dirs": 80,
+   "done": 41,
    "pass": 23,
-   "err": 35,
+   "err": 38,
    "running": 1
   },
   "hermes_detail": {
@@ -463,17 +463,41 @@
     "dir": "rstan-to-pystan__jJg9qkQ"
    },
    "sam-cell-seg": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "sam-cell-seg__WWGyY8u"
+   },
+   "sanitize-git-repo": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "sanitize-git-repo__uqavrfv"
+   },
+   "schemelike-metacircular-eval": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "schemelike-metacircular-eval__cMcJpHu"
+   },
+   "sparql-university": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "sparql-university__ofKjuZE"
+   },
+   "sqlite-db-truncate": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "sam-cell-seg__WWGyY8u"
+    "dir": "sqlite-db-truncate__bHCgBNt"
    }
   },
   "claude-code": {
-   "dirs": 48,
-   "done": 37,
-   "pass": 12,
-   "err": 10,
+   "dirs": 53,
+   "done": 41,
+   "pass": 13,
+   "err": 11,
    "running": 1
   },
   "claude-code_detail": {
@@ -760,10 +784,40 @@
     "dir": "mcmc-sampling-stan__xx2XRaU"
    },
    "merge-diff-arc-agi-task": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "merge-diff-arc-agi-task__cpBgJCq"
+   },
+   "model-extraction-relu-logits": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "model-extraction-relu-logits__qMigHmp"
+   },
+   "modernize-scientific-stack": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "modernize-scientific-stack__uwJdTFG"
+   },
+   "mteb-leaderboard": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "mteb-leaderboard__2SwtAyt"
+   },
+   "mteb-retrieve": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "mteb-retrieve__moDvd5c"
+   },
+   "multi-source-data-merger": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "merge-diff-arc-agi-task__cpBgJCq"
+    "dir": "multi-source-data-merger__Q6GLvBF"
    }
   }
  },
@@ -1402,9 +1456,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": "running",
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": ""
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "model-extraction-relu-logits",
@@ -1415,9 +1469,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "modernize-scientific-stack",
@@ -1428,9 +1482,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "mteb-leaderboard",
@@ -1441,9 +1495,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "mteb-retrieve",
@@ -1454,9 +1508,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "multi-source-data-merger",
@@ -1467,9 +1521,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "running",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": ""
   },
   {
    "task": "nginx-request-logging",
@@ -1761,9 +1815,9 @@
    "task": "sam-cell-seg",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": "running",
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": "",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1774,9 +1828,9 @@
    "task": "sanitize-git-repo",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1787,9 +1841,9 @@
    "task": "schemelike-metacircular-eval",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1800,9 +1854,9 @@
    "task": "sparql-university",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1813,9 +1867,9 @@
    "task": "sqlite-db-truncate",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "running",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,

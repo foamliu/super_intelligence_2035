@@ -342,3 +342,16 @@
 [swebench-pull] [334/500] OK pytest-dev__pytest-5262 pulled=334 failed=0 skipped=0
 [swebench-pull] [335/500] OK pytest-dev__pytest-5631 pulled=335 failed=0 skipped=0
 [swebench-pull] [336/500] OK pytest-dev__pytest-5787 pulled=336 failed=0 skipped=0
+[swebench-pull] [337/500] OK pytest-dev__pytest-5809 pulled=337 failed=0 skipped=0
+[swebench-pull] [338/500] OK pytest-dev__pytest-5840 pulled=338 failed=0 skipped=0
+[swebench-pull] [339/500] OK pytest-dev__pytest-6197 pulled=339 failed=0 skipped=0
+[swebench-pull] [340/500] OK pytest-dev__pytest-6202 pulled=340 failed=0 skipped=0
+[swebench-pull] [341/500] OK pytest-dev__pytest-7205 pulled=341 failed=0 skipped=0
+[swebench-pull] [342/500] OK pytest-dev__pytest-7236 pulled=342 failed=0 skipped=0
+[swebench-pull] [343/500] OK pytest-dev__pytest-7324 pulled=343 failed=0 skipped=0
+[swebench-pull] [344/500] OK pytest-dev__pytest-7432 pulled=344 failed=0 skipped=0
+[swebench-pull] [345/500] OK pytest-dev__pytest-7490 pulled=345 failed=0 skipped=0
+[swebench-pull] [346/500] OK pytest-dev__pytest-7521 pulled=346 failed=0 skipped=0
+[swebench-pull] [347/500] OK pytest-dev__pytest-7571 pulled=347 failed=0 skipped=0
+[swebench-pull] [348/500] OK pytest-dev__pytest-7982 pulled=348 failed=0 skipped=0
+[swebench-pull] [349/500] OK pytest-dev__pytest-8399 pulled=349 failed=0 skipped=0
