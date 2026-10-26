@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-2B 预训练构想整理报告（含 ETA 测算）</title>
+<style>
+  :root{--bg:#0f1419;--panel:#1a2230;--panel2:#22304a;--ink:#e6edf3;--dim:#9fb4c7;
+    --accent:#58a6ff;--good:#3fb950;--bad:#f85149;--warn:#d29922;--mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.65;font-size:15px}
+  .wrap{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+  header{border-bottom:1px solid #2d3a4f;padding-bottom:20px;margin-bottom:28px}
+  h1{font-size:25px;margin:0 0 8px;color:#fff;letter-spacing:.3px}
+  h2{font-size:20px;margin:34px 0 12px;color:var(--accent);border-left:4px solid var(--accent);padding-left:12px}
+  h3{font-size:16px;margin:22px 0 8px;color:#c9d6e3}
+  .sub{color:var(--dim);font-size:13px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tag{background:var(--panel2);color:var(--accent);padding:3px 10px;border-radius:12px;font-size:12px;font-family:var(--mono)}
+  .verdict{background:linear-gradient(135deg,#1d2b1f,#13201a);border:1px solid #2f5d35;border-radius:12px;padding:20px 22px;margin:24px 0}
+  .verdict .lbl{color:var(--good);font-weight:700;font-size:13px;letter-spacing:1px}
+  .verdict .big{color:#fff;font-size:20px;font-weight:700;margin:6px 0 10px}
+  .verdict .big em{color:var(--good);font-style:normal}
+  .verdict .big em.bad{color:var(--bad)} .verdict .big em.warn{color:var(--warn)}
+  .verdict p{margin:6px 0;color:#cdd9e3}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px;background:var(--panel);border-radius:8px;overflow:hidden}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #2d3a4f}
+  th{background:#26344a;color:#fff;font-weight:600;white-space:nowrap}
+  td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+  tr:hover{background:#1e2a3d}
+  tr.hit td{color:#7fd391;font-weight:600} tr.miss td{color:#e88a8a}
+  .callout{background:var(--panel);border-left:4px solid var(--accent);padding:14px 16px;margin:14px 0;border-radius:0 8px 8px 0}
+  .callout.bad{border-left-color:var(--bad)} .callout.good{border-left-color:var(--good)} .callout.warn{border-left-color:var(--warn)}
+  code,kbd{font-family:var(--mono);background:#0b1118;color:#79c0ff;padding:1px 6px;border-radius:4px;font-size:12.5px}
+  pre{background:#0b1118;border:1px solid #2d3a4f;border-radius:8px;padding:14px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;color:#c9d1d9}
+  ul,ol{padding-left:22px} li{margin:5px 0}
+  .ref{font-size:13px;color:var(--dim);border-top:1px solid #2d3a4f;padding-top:14px;margin-top:30px}
+  .ref li{margin:8px 0}
+  .barwrap{display:flex;align-items:flex-end;gap:10px;height:200px;margin:16px 0;padding:14px;background:var(--panel);border-radius:8px}
+  .bar{flex:1;background:linear-gradient(180deg,#3f6d9c,#2a4a73);border-radius:4px 4px 0 0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:#fff;font-size:11px;font-family:var(--mono);padding-bottom:4px;min-height:10px}
+  .bar.hit{background:linear-gradient(180deg,#3fb950,#2a7a37)} .bar.warn{background:linear-gradient(180deg,#d29922,#7a5a16)}
+  .bar .v{position:absolute;top:-20px;font-size:11px;color:var(--ink);white-space:nowrap}
+  .bar small{position:absolute;bottom:-22px;left:0;right:0;text-align:center;color:var(--dim);font-size:9.5px;white-space:nowrap}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+  .kv{background:var(--panel);border-radius:8px;padding:14px 16px}
+  .kv .k{color:var(--dim);font-size:12px} .kv .v{color:#fff;font-size:15px;font-family:var(--mono);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>BaiZe-2B 预训练构想整理报告（含 ETA 测算）</h1>
+  <div class="sub">将用户 2026-10-26「BaiZe-2B 后续预训练初步想法」整理为结构化中文报告 · 全部数字可溯源</div>
+  <div class="meta">
+    <span class="tag">模型 Mamba2-hybrid 2.2B</span>
+    <span class="tag">56 层 Nemotron-H 式</span>
+    <span class="tag">16K / 16卡 / CP1 DP16</span>
+    <span class="tag">吞吐 613,992 tok/s（#792 实测）</span>
+    <span class="tag">WSD · LR 1e-3</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <div class="lbl">一句话结论</div>
+  <div class="big">三阶段（S1 2M·700k 步 + S2 4M·350k 步 + Decay 4M·20k 步）合计 <em>2.88T token</em>，按 #792 实测 613,992 tok/s 折算，<em>纯训练 ≈ 54.3 天</em>（≈ 2.08 万 GPU·h），<em class="warn">含 20% 故障/checkpoint 预留 ≈ 65.1 天</em>（≈ 2.50 万 GPU·h）。</div>
+  <p>吞吐基准 <code>613,992 tok/s</code> 来自 <b>#792 双机 16 卡 FP8 真实数据实测</b>（E1：16K / CP1 / DP16 / 关 graph / accum16 / tok-step=4,194,304 / step-time 6,831.2 ms / peak 75.2 GB / 0 NaN）—— 注意它正是 <b>S2 与 Decay 的 4M tok/step 配置</b>，S1 的 2M tok/step 是否同吞吐需重测（见 §4.1）。</p>
+</div>
+
+<h2>一、模型与配方</h2>
+
+<h3>1.1　模型</h3>
+<div class="two">
+  <div class="kv"><div class="k">架构</div><div class="v">Mamba2-hybrid</div></div>
+  <div class="kv"><div class="k">层数</div><div class="v">56 层</div></div>
+  <div class="kv"><div class="k">混合方式</div><div class="v">Nemotron-H 式顺序混合</div></div>
+  <div class="kv"><div class="k">参数量</div><div class="v">2.2 B</div></div>
+</div>
+<p class="sub">Mamba2-hybrid = Mamba2 SSM 块与注意力块按 Nemotron-H 式顺序交错，兼顾 SSM 的线性长序列效率与注意力的精确检索能力。56 层 @ 2.2B 与本项目既有「Mamba2-hybrid 2B」预训练线一致（见 report_pretrain_formal_v5_plan_zh.html）。</p>
+
+<h3>1.2　训练配方</h3>
+<table>
+<thead><tr><th>项</th><th>取值</th><th>说明 / 溯源</th></tr></thead>
+<tbody>
+<tr><td>序列长度</td><td class="num">16,384（16K）</td><td>S1/S2/Decay 全程 16K</td></tr>
+<tr><td>并行策略</td><td>CP1 · DP16</td><td>16 卡单副本，无上下文并行（16K 不需 CP，见吞吐报告 §3.2）</td></tr>
+<tr><td>CUDA Graph</td><td><b>关闭</b></td><td>关 graph 是 16K 满速的必要条件（#786/#788 rev3 真因 = CUDA Graph 顶格停滞）</td></tr>
+<tr><td>实测吞吐</td><td class="num">613,992 tok/s</td><td><b>#792</b> 双机 16 卡 FP8 tensorwise 真实数据（commit 594c9cb1b）</td></tr>
+<tr><td>每卡吞吐</td><td class="num">38,374 tok/s</td><td>16 卡平均</td></tr>
+<tr><td>峰值显存</td><td class="num">75.2 GB</td><td>&lt; 80 GB 卡上限，CP1 可行</td></tr>
+<tr><td>优化器 / LR 调度</td><td>WSD · 1e-3</td><td>2000 步 warmup → LR 保持 1e-3 → Decay 段衰减</td></tr>
+<tr><td>每步 token</td><td class="num">2M / 4M / 4M</td><td>S1=2M；S2 与 Decay=4M（与 #792 E1 实测档一致）</td></tr>
+</tbody>
+</table>
+<p class="sub">「关 graph」由本项目独立排查确立（rev3 真因 = CUDA Graph 在 tok/microbatch≥16384 时顶格停滞；关 graph 后 seq=8192 复测 0.978× 基线、16K 双机 613,992 达标）—— 是本配方吞吐可达 613,992 的前提。</p>
+
+<h2>二、三阶段计划</h2>
+
+<h3>2.1　阶段总览</h3>
+<table>
+<thead><tr><th>阶段</th><th class="num">tok/step</th><th class="num">总 token</th><th class="num">步数</th><th class="num">每步耗时</th><th>配比</th><th>LR</th></tr></thead>
+<tbody>
+<tr class="hit"><td><b>S1</b></td><td class="num">2,000,000</td><td class="num">1.4 T</td><td class="num">700,000</td><td class="num">3.257 s</td><td>同 S1 表</td><td>warmup 2000 步 → 1e-3 保持</td></tr>
+<tr class="hit"><td><b>S2</b></td><td class="num">4,000,000</td><td class="num">1.4 T</td><td class="num">350,000</td><td class="num">6.515 s</td><td>同 S1 表</td><td>1e-3 保持</td></tr>
+<tr class="hit"><td><b>Decay</b></td><td class="num">4,000,000</td><td class="num">80 B</td><td class="num">20,000</td><td class="num">6.515 s</td><td>Decay 表</td><td>1e-3 → 衰减至 min-lr</td></tr>
+<tr><td><b>合计</b></td><td class="num">—</td><td class="num"><b>2.88 T</b></td><td class="num"><b>1,070,000</b></td><td class="num">—</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="callout good">
+<p>一致性自检：① S1 2M × 700,000 = 1.4 T ✓ ② S2 4M × 350,000 = 1.4 T ✓ ③ Decay 4M × 20,000 = 80 B ✓ ④ 合计 1.4+1.4+0.08 = <b>2.88 T</b> ✓ ⑤ 每步耗时 = tok/step ÷ 613,992（S1 3.257 s、S2/Decay 6.515 s）✓</p>
+</div>
+
+<h3>2.2　S1 / S2 数据配比（sampling prop / epochs）</h3>
+<table>
+<thead><tr><th>数据集</th><th class="num">prop</th><th class="num">epochs</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>en_v1_4（ultrafineweb_en_v1_4）</td><td class="num">0.65</td><td class="num">0.81</td><td>英文网页主体（占比最大）</td></tr>
+<tr><td>ufw_l1_en_hq</td><td class="num">0.05</td><td class="num">0.93</td><td>英文高质量子集</td></tr>
+<tr><td>ufw_zh</td><td class="num">0.04</td><td class="num">0.99</td><td>中文网页</td></tr>
+<tr><td>Math-L1（UltraData-Math-L1）</td><td class="num">0.05</td><td class="num">0.85</td><td>数学基础</td></tr>
+<tr><td>Math-L3（UltraData-Math-L3）</td><td class="num">0.02</td><td class="num">0.72</td><td>数学高难度</td></tr>
+<tr><td>Code-L2（UltraData-Code-L2）</td><td class="num">0.15</td><td class="num">1.00</td><td>代码中等</td></tr>
+<tr><td>Code-L3（UltraData-Code-L3）</td><td class="num">0.04</td><td class="num">0.87</td><td>代码高难度</td></tr>
+<tr><td><b>合计</b></td><td class="num"><b>1.00</b></td><td class="num">—</td><td>prop 求和 = 1 ✓</td></tr>
+</tbody>
+</table>
+<p class="sub">「prop」= 每步采样占比；「epochs」= 全程 2.8T（S1+S2）内该集被采样的总 token ÷ 该集可用 token。epochs&lt;1 表示该集未被完整覆盖（见 §4.3 讨论）。</p>
+
+<h3>2.3　Decay 阶段数据配比（prop）</h3>
+<table>
+<thead><tr><th>数据集</th><th class="num">prop</th><th>类别</th></tr></thead>
+<tbody>
+<tr><td>ufw_en_l3(qa)</td><td class="num">0.18</td><td>英文 QA / 预训练态</td></tr>
+<tr><td>ufw_zh</td><td class="num">0.04</td><td>中文网页</td></tr>
+<tr><td>Math-L3</td><td class="num">0.04</td><td>数学高难度</td></tr>
+<tr><td>Code-L3</td><td class="num">0.02</td><td>代码高难度</td></tr>
+<tr class="hit"><td>UltraData-SFT-2605</td><td class="num">0.60</td><td><b>SFT 指令</b></td></tr>
+<tr class="hit"><td>UltraData-SFT-Agent-2609</td><td class="num">0.12</td><td><b>Agent 指令</b></td></tr>
+<tr><td><b>合计</b></td><td class="num"><b>1.00</b></td><td>SFT+Agent = <b>0.72</b></td></tr>
+</tbody>
+</table>
+<p class="sub">Decay 段仅 80B token（2.78% 总量），但 SFT/Agent 占 0.72 —— 是「以高质量指令数据退火」策略，详见 §4.4 讨论。</p>
+
+<h2>三、ETA 测算</h2>
+
+<h3>3.1　测算口径与基准</h3>
+<div class="callout">
+<p><b>吞吐基准</b>：613,992 tok/s（#792 实测，commit 594c9cb1b，报告 report_pretrain_seq16k32k_throughput_zh.html §5 · E1）。该实测档 = 16K / CP1 / DP16 / 关 graph / FP8 tensorwise / 真实数据 / tok-step=4,194,304 / step-time 6,831.2 ms / peak 75.2 GB / 0 NaN，<b>恰好等同 S2 与 Decay 的 4M tok/step 配置</b>。</p>
+<p><b>两口径</b>：①「纯训练」= 总 token ÷ 613,992；②「含故障/checkpoint 预留」= 纯训练 × (1 + 预留率)。预留率取 10% / 15% / 20% 三档（覆盖 checkpoint 写盘、偶发故障重启、中间 eval 暂停、跨节点 IB 抖动等）。</p>
+</div>
+
+<h3>3.2　分阶段 wall-clock</h3>
+<table>
+<thead><tr><th>阶段</th><th class="num">总 token</th><th class="num">步数</th><th class="num">秒</th><th class="num">小时</th><th class="num">天</th><th class="num">GPU·h（16卡）</th></tr></thead>
+<tbody>
+<tr class="hit"><td><b>S1</b></td><td class="num">1.4 T</td><td class="num">700,000</td><td class="num">2,280,160</td><td class="num">633.4</td><td class="num">26.39</td><td class="num">10,134</td></tr>
+<tr class="hit"><td><b>S2</b></td><td class="num">1.4 T</td><td class="num">350,000</td><td class="num">2,280,160</td><td class="num">633.4</td><td class="num">26.39</td><td class="num">10,134</td></tr>
+<tr class="hit"><td><b>Decay</b></td><td class="num">80 B</td><td class="num">20,000</td><td class="num">130,295</td><td class="num">36.2</td><td class="num">1.51</td><td class="num">579</td></tr>
+<tr><td><b>合计</b></td><td class="num"><b>2.88 T</b></td><td class="num"><b>1,070,000</b></td><td class="num"><b>4,690,615</b></td><td class="num"><b>1,302.9</b></td><td class="num"><b>54.29</b></td><td class="num"><b>20,847</b></td></tr>
+</tbody>
+</table>
+
+<div class="barwrap">
+  <div class="bar hit" style="height:96%"><span class="v">26.4 天</span><small>S1</small></div>
+  <div class="bar hit" style="height:96%"><span class="v">26.4 天</span><small>S2</small></div>
+  <div class="bar hit" style="height:6%"><span class="v">1.5 天</span><small>Decay</small></div>
+  <div class="bar warn" style="height:88%;opacity:.7"><span class="v">54.3 天</span><small>纯训练合计</small></div>
+</div>
+
+<h3>3.3　两口径总时长</h3>
+<table>
+<thead><tr><th>口径</th><th>预留率</th><th class="num">天</th><th class="num">GPU·h（16卡）</th><th>说明</th></tr></thead>
+<tbody>
+<tr class="hit"><td>纯训练</td><td>0%</td><td class="num">54.29</td><td class="num">20,847</td><td>理论下界（无任何中断）</td></tr>
+<tr><td>含预留</td><td>10%</td><td class="num">59.72</td><td class="num">22,932</td><td>乐观：仅 checkpoint + 轻微抖动</td></tr>
+<tr><td>含预留</td><td>15%</td><td class="num">62.43</td><td class="num">23,974</td><td>常规：含偶发故障重启 + 中间 eval</td></tr>
+<tr class="miss"><td>含预留</td><td>20%</td><td class="num">65.15</td><td class="num">25,017</td><td>保守：长时间连续运行的真实工程预期</td></tr>
+</tbody>
+</table>
+<div class="callout warn">
+<p><b>建议报给排期的口径</b>：以「含 20% 预留 ≈ <b>65 天 / 2.5 万 GPU·h</b>」作为承诺上界，「纯训练 ≈ 54 天」作为理论下界。2 个月级连续 16 卡占用是本计划最重的资源约束（见 §4.5）。</p>
+</div>
+
+<h3>3.4　关键派生量</h3>
+<div class="two">
+  <div class="kv"><div class="k">token / 参数（训练强度）</div><div class="v">2.88T ÷ 2.2B ≈ 1,309 tok/param</div></div>
+  <div class="kv"><div class="k">warmup token</div><div class="v">2,000 步 × 2M = 4.0 B</div></div>
+  <div class="kv"><div class="k">LR 稳定段步数</div><div class="v">1,048,000（S1+S2 − warmup）</div></div>
+  <div class="kv"><div class="k">Decay 占比</div><div class="v">80B / 2.88T = 2.78%</div></div>
+</div>
+<p class="sub">1,309 tok/param 远超 Chinchilla 的 ~20（compute-optimal），与 Llama/Phi 类「过度训练」实践一致——利于下游微调与推理效率，但意味着 S1+S2 的边际收益需用 eval 验证是否值得（见 §4.5）。</p>
+
+<h2>四、商榷点与建议</h2>
+
+<h3>4.1　4M tok/step 下吞吐是否仍 613,992（S1 2M 需重测）</h3>
+<div class="callout warn">
+<p><b>事实</b>：613,992 是在 <b>4M tok/step</b>（tok/mb=16,384/GPU，accum16）档实测的，恰为 S2/Decay 配置。S1 用 2M tok/step，每步 token 减半 ⇒ 单步计算量减半，但每步的<strong>通信/启动开销不随 batch 线性下降</strong>，因此 <b>S1 的稳态吞吐大概率 &lt; 613,992</b>（每秒 token 数可能下探，步时 &lt; 3.257 s 但不成比例减半）。</p>
+<p><b>建议</b>：S1 开跑前用 20–40 步 smoke 实测 2M tok/step 的真实 tok/s，把实测值回填 §3 的 ETA（若 S1 实测降到 ~550K，则 S1 天数从 26.4 上浮到 ~29.4，总纯训练升至 ~57 天）。本报告的 54.3 天对 S1 段属<strong>乐观估计</strong>。</p>
+</div>
+
+<h3>4.2　LR 保持 1e-3 + WSD 2000 步 warmup 的含义与注意点</h3>
+<div class="callout">
+<p><b>WSD 释义</b>：Warmup-Stable-Decay。本计划 = ① 2000 步线性 warmup 到 1e-3 → ② LR 保持 1e-3 跨 S1+S2 稳定段共 1,048,000 步 → ③ Decay 段 20,000 步从 1e-3 衰减到 min-lr。</p>
+<p><b>注意点</b>：</p>
+<ul>
+<li><b>1e-3 偏高</b>（2.2B / AdamW 口径）：本项目 decay 参考实验（1113.sh）用 muon 优化器、decoupled-lr 1e-2、min-lr 1.04e-4。若本计划沿用 AdamW，1e-3 是合理但偏激进的上界，建议确认优化器选型（AdamW vs muon）—— muon 通常允许更高 LR 但需 matched-adamw-rms。</li>
+<li><b>Decay 形状未指定</b>：WSD 的 D 段可为 linear / sqrt / exponential 衰减。1113.sh 用 exponential。建议明确 decay 曲线与 min-lr（推荐 min-lr ≈ 0.1×peak = 1e-4，与 1113.sh 的 1.04e-4 一致）。</li>
+<li><b>2000 步 warmup = 4B token</b>：对 2.2B 模型偏短但可接受；若开训早期 loss 不稳可加长到 5000 步（= 10B token）。</li>
+<li><b>μP 一致性</b>：本项目历史 decay 训坏（v2 44.97%）曾归因「缺 μP / LR 双移位」。本计划若换模型尺寸或优化器，须复核 μP 坐标（width/base/depth/bs）与 LR 标定，避免重蹈覆辙。</li>
+</ul>
+</div>
+
+<h3>4.3　数据配比 epochs&lt;1 的采样语义</h3>
+<div class="callout">
+<p>S1/S2 多个数据集 epochs&lt;1（Math-L3=0.72、Code-L3=0.87、en_v1_4=0.81、Math-L1=0.85）。<b>语义</b>：在 2.8T 全程内，该集每个文档平均被采样 &lt; 1 次 ⇒ <b>有 14%–28% 的数据从未被模型见过</b>。</p>
+<p><b>权衡</b>：</p>
+<ul>
+<li>对海量主体数据（en_v1_4 0.81）epochs&lt;1 是合理的——数据足够多，单遍即足。</li>
+<li>对<b>稀缺高价值</b>数据（Math-L3 仅 0.72、占比 0.02）epochs&lt;1 = 部分难题从未训练到，可能浪费稀缺资源。建议对 Math-L3 / Code-L3 这类高难度集适当提升 epochs（如 ≥1.0），或在小 prop 下用「过采样 + 重复去重标识」确保全覆盖。</li>
+<li>prop 与 epochs 是耦合的（epochs ≈ prop × 总token / 集大小）；若想提升某集 epochs，要么提 prop（挤占他集）要么接受更长总 token。建议在 §2.2 表基础上做一次「目标 epochs → 反推 prop」的配平。</li>
+</ul>
+</div>
+
+<h3>4.4　Decay 阶段 SFT/Agent 占比 0.72 的合理性</h3>
+<div class="callout warn">
+<p>Decay 段 80B token 中 SFT(0.60)+Agent(0.12)=<b>0.72</b>，预训练态数据仅 0.28。这是「以指令数据退火（instruction annealing）」策略，与 Phi 系列「末段注入教科书/SFT 数据」思路一致，能显著提升下游指令跟随与 Agent 能力。</p>
+<p><b>风险与建议</b>：</p>
+<ul>
+<li><b>退火窗口短</b>：Decay 仅 2.78% 总 token，72% 的 SFT 影响被压缩在末段——若 SFT 数据质量不均或分布偏移大，可能在 LR 衰减中引入能力骤降（参考本项目 v2 decay 训坏先例）。</li>
+<li><b>建议分段</b>：把 Decay 20k 步再切为「前半 0.4 SFT 比例 + 后半 0.85 SFT 比例」，让 base 能力先稳后退火，降低一次性倾斜风险。</li>
+<li><b>保留 base 评测基线</b>：Decay 前（S2 末）存 ckpt 并跑 CS8/CX6 eval，与 Decay 后对比，量化「退火收益 vs base 损失」。</li>
+<li><b>SFT-2605 / Agent-2609 去重与质量</b>：0.60+0.12 的体量需确认两集已去重、无 prompt 泄漏、无安全/风控问题（本项目禁令：不绕过验证/风控）。</li>
+</ul>
+</div>
+
+<h3>4.5　总计耗时与 GPU 预算</h3>
+<div class="callout bad">
+<p><b>核心约束</b>：纯训练 54.3 天、含预留 ~65 天，16×H100 连续占用 ~2 个月、~2.5 万 GPU·h。</p>
+<ul>
+<li><b>连续性风险</b>：2 个月级单集群连续占用，故障/重启几乎不可避免 ⇒ 必须有<strong>可靠的断点续训</strong>（ckpt 频率建议 S1/S2 每 5000 步一存 ≈ 8.6 GB/次、Decay 每 1000 步），并验证 resume loss 无跳变（本项目 P-8 resume 闭环已验证可用）。</li>
+<li><b>分阶段决策点</b>：S1（26 天 / 1.4T）跑完是一个天然评估闸门——建议 S1 末存 ckpt + 全量 eval（CS8/CX6/scaling-law 外推），<b>评估达标再启 S2</b>，避免一次性 commit 2 个月预算。</li>
+<li><b>资源争用</b>：本集群与 vision/data/harness 共用 NFS 与部分节点；长任务期间需与各线协调 GPU/IO 时段（吞吐实测已要求无争用干净测量，长训练同理需避免 IO 抖动）。</li>
+<li><b>预算对照</b>：本项目 2B 超参搜索阶段单次 ~44B token（P-8）；本计划 2.88T 是其 ~65 倍，是真正的「正式预训练」量级，资源量级需运维/用户拍板。</li>
+</ul>
+</div>
+
+<h2>五、数字溯源</h2>
+<ol class="ref">
+<li><b>吞吐 613,992 tok/s</b>：#792 双机 16 卡 FP8 真实数据实测 · commit 594c9cb1b · 报告 report_pretrain_seq16k32k_throughput_zh.html §5（E1：16K/CP1/DP16/关 graph/accum16/tok-step=4,194,304/step-time 6,831.2 ms/peak 75.2 GB/0 NaN）。</li>
+<li><b>关 graph 真因</b>：#786 rev3 + #788 验收 · 报告 report_pretrain_seq8192_slowdown_rootcause_zh.html（CUDA Graph 顶格停滞；关 graph 后 seq=8192 复测 0.978× 基线）。</li>
+<li><b>32K 结构性受限</b>：#792 E3 32K CP2 = 351,526 tok/s ≈ 2×外推天花板 366,788 的 96%（CP P2P KV 交换主因）—— 本计划全程 16K，不涉及 32K。</li>
+<li><b>decay 训坏先例</b>：v2 44.97%/6.21% → 官方 1113.sh decay-5000 58.97%/28.02% · 报告 report_pretrain_recent_work_zh.html（§4.2 μP/LR 双移位归因参照）。</li>
+<li><b>resume 闭环</b>：P-8 AdamW 44.4B 训练 resume 验证 · 见 MEMORY_PRETRAIN_2B.md §P-8 指针。</li>
+<li><b>模型/配方参照</b>：report_pretrain_formal_v5_plan_zh.html（Mamba2-hybrid 2B 既有规划）。</li>
+<li><b>ETA 计算</b>：总 token ÷ 613,992 tok/s；本报告所有时长/GPU·h 由该公式直接派生（Python 复算见提交说明）。</li>
+</ol>
+
+<p class="sub" style="margin-top:28px">报告生成：pretrain 线 · 2026-10-26 · 自包含中文 HTML（0 外链）· 数字可溯源至 #792/#786/#788 实测与 commit。commit 前缀 pretrain plan:。</p>
+
+</div>
+</body>
+</html>
