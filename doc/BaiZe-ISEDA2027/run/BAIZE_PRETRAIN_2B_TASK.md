@@ -9,6 +9,22 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-26 13:2x（**继续推进 FP8 真实数据 16K/32K 吞吐实测**）· 用户直令 · 最高优先
+
+> 用户原话：「安排 pretrain 继续推进 16K/32K 吞吐实测」
+
+**① 现状（复用，勿重复验证）**：双机 16 卡 BF16 连通性已验证（84% scaling、IB 多通道健康、SSH cleanup 挂起已 kill + 结果解析已修）。**下一步 = 正式 FP8 真实数据的 16K/32K 吞吐实测。**
+
+**② 本轮任务**
+1. 修完 `baize_dualnode_16gpu_test.sh` 的 SSH cleanup（等远端 torchrun 干净退出再加超时兜底，不再 `wait` 空挂）后，**去 `--mock`、用 `--fp8-recipe tensorwise` + 关 CUDA Graph + 真实数据**，起双机 16 卡。
+2. **seq=16K**（CP=1，accum≥16）实测：目标冲 **≥600K tok/s**；记录全卡 tok/s / 每卡 tok/s / peak 显存 / loss / NaN。
+3. **seq=32K**（CP=2）实测：给出**真实可达最优吞吐** + 量化 CP 的 P2P KV 交换开销 + 明确「32K 到不了 600K」的天花板与瓶颈。
+4. 每配置写清：seq / DP/CP / accum / MBS / 关graph? / fp8? / tok/s / 显存 / 结论，全部溯源脚本+log。
+
+**③ 交付**：结果追加到 `reports/report_pretrain_seq16k32k_throughput_zh.html`（或新报告）+ EXPERIMENTS 更新；commit `pretrain perf:`。
+
+**④ 纪律**：双机先用 `nvidia-smi` 确认 .12 空、不抢 vision/data/harness；数字不伪造；脚本改动留 diff/备份。
+
 ### [运维令] 2026-10-26 11:1x（**双机 16 卡实测调优 seq=16K/32K 训练吞吐**）· 用户直令 · 最高优先
 
 > 用户原话：「安排 pretrain 继续调优双机16卡 seq=16k/32k 的训练吞吐」
