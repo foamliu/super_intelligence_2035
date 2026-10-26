@@ -1,7 +1,16 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-26 21:15 #796：✅ **S1 正式训练 rendezvous 成功·数据集构建中**。(1) checkpoint EOFError 修复验证通过（mock 5 步：0 EOFError·4.2GB ckpt 2×保存·0 error）；根因=`multiprocessing.Manager()` 在 CUDA init 后 server 进程死亡→`bridge_compat.py` 用 `mp.Queue()`(spawn ctx) 替代 `Manager().Queue()`。commit `ae964bc`。(2) **端口修复**：`MASTER_PORT` 原本每节点独立随机生成→.29 听 X 端口而 .12 连 Y 端口→rendezvous 静默死锁（torchrun 无限挂起·无报错）。修复=`MASTER_PORT="${MASTER_PORT:-49500}"`（固定默认·可 env 覆盖）+ SSH 传参到 worker。commit `ac1c790`。(3) **rendezvous 确认成功**：.12 torchrun 用 `master_port=49500`→建立到 .29:49500 的连接→8 worker/节点 spawn→NCCL init 完成→Megatron `pretrain()` 运行中。PID=1836544(.29)+1949926(.12)。(4) **数据集构建中**：71+ shards 已加载(共~627)·GPU 显存 19GB/卡(模型已 init)·7/8 GPU 100% util·optimizer 配置完成(lr=1e-3·WSD·bf16+FP8)。等首个 iteration。**未完成指令：无** ⇒ WAITING=1（监控 S1·等首个 iteration loss/TFLOP）。📦 体积：MEMORY≈31.9KB。
+> 🆕 2026-10-26 23:05 #797：✅ **RoPE θ 修复完成并三重验证·S1 重启被 data 线 l1_en_hq 缺失阻塞**。回应运维令 21:3x（四点结论）。
+> - **① θ 实现方式（选 (ii)，commit `ae3a093` `pretrain train:`）**：根因=`mamba2_hybrid_2b/provider` 从未透传 `rotary_base` → Megatron 默认 1e4（父类 `MambaModelProvider` 有该字段但子类没 forward）。修：`pretrain_launcher.py` 增 `--rotary-base` CLI（default None，仅显式传入时透传 ⇒ minicpm5(5e6)/xmodel(5e5) 烤进 provider 默认的不受影响）+ rank0 打印 `[RoPE] rotary_base(theta)=...`；`recipe.py` 的 `model_config`/`pretrain_config` 增 `rotary_base:int=10000` 并 `kwargs["rotary_base"]=rotary_base`。2 files +25/-1，已 push（6517462..ae3a093）。patch 存 `run/pretrain_rope_theta_fix_2026-10-26.patch`。
+> - **② 生效证据（三重）**：(a) 静态 `model_config(rotary_base=1e6).rotary_base==1000000`（默认仍 10000）；(b) `--help` 显示 `--rotary-base`，`train.sh` `has_flag --rotary-base`=PASS（`ROPE_REQUIRED=1` 门禁通过 → ARGS 加 `--rotary-base 1000000`）；(c) **运行时 mock**（1GPU/5步）日志 `[RoPE] rotary_base(theta)=1000000 (cli --rotary-base=1000000)`，`check_for_nan_in_grad/loss=true` 未触发，0 NaN，`MOCK_DONE rc=0`。导出 HF 后 `check_rope.py` PASS 待首个 ckpt(step2000) 落地再验。
+> - **③ rank15 结论**：θ=1e4@16K 训练数值稳定（B1 全 NaN = θ=1e4 **+max_pos=1M 外推表溢出**，非 16K 训练）⇒ RoPE/θ **非** rank15 崩因。rank15(.12/lr7) exit1 无 traceback，最可能=.12 GPU7 瞬态(NCCL/IB/fd)。复现=`bash scripts/train.sh s1 --smoke 50`(.29 单机8卡50步)——**同样被 data 阻塞**(smoke 也要 blend)；data 恢复后先跑此 smoke 验 θ+0NaN+0crash 再起 16 卡。
+> - **④ --dir/重启命令**：`--dir` **未坏**——train.sh L95 用 `--dir "$EXP_ROOT"`(=nemo_experiments，非 /tmp)；运维见的 `/tmp/*smoke*.log` 只是 smoke 日志。正式 run 21:18 崩于首个 save@step2000 前~6min 故无 ckpt。**name**：common.env `NAME=baize2b`(19:2x「三阶段共用→S2 auto-resume」)；21:3x 提「baize2b_s1」——默认用 baize2b(保 auto-resume)，运维否决则 `NAME=baize2b_s1`(S2 需手动 `--load-dir`)。**重启命令(data 恢复后)**：`bash code/baize-llm/scripts/train.sh s1`（自动含 `--rotary-base 1000000`·`--dir nemo_experiments`·`--name baize2b`·`--save-interval 2000`·WSD·FP8 tensorwise·NNODES=2×8=16卡）。
+> - **🔴 阻塞(data 线在途)**：`gen_blend.py` rc=2——`Ultra-FineWeb/ultrafineweb_l1_en_hq` 找不到 shard。20:57 正式 run 时 94 片 flat `.bin/.idx`(~555GB)，22:51 该目录 mtime 刷新、现仅 1.3GB(`GPTDataset_indices` cache+MANIFEST)、**0 flat .bin**——data 线正重排该源(子目录 `ufw_l1_en_hq_train_s0/cache/...` 新结构，gen_blend 不识别)。其余 6 源 flat .bin 在位。另：§一.5 `env14_CC-MAIN-2023-23 ptr overflow`(en_v1_4 109/110 坏片) 仍存在(权重已摊平)，非本轮阻塞。**不碰 data**(AGENTS.md 铁律)；待 data 线恢复 l1_en_hq flat `.bin/.idx`(或运维批准临时 drop+renorm) 即可启动。
+> - **--lr-decay-shape**：S1 `LR_DECAY_ITERS=0` ⇒ 该门禁跳过(不传 flag，无影响)。Decay 阶段前必补：megatron-core **原生支持** `lr_wsd_decay_style="exponential"`(recipe 已透传)，但公式 `2·0.5^p−1` 与 `lr_schedule.py` 纯指数 `peak·(min/peak)^p` **不同**——Decay 前需对齐二者。本轮不动(S1 不需要)。
+> - **未完成指令：有**(21:3x 重启 S1)——被 data 线 l1_en_hq 缺失阻塞 + 运维保留 θ 方案否决权待复核。θ 修复已验证(commit ae3a093)。⇒ **WAITING: 1**(等 ①运维复核 θ 方案 ②data 线恢复 l1_en_hq flat shards)。📦 体积：TASK≈33.3KB(略超，21:3x 未闭合不可归档)/MEMORY≈32KB(本轮压缩 #768→指针腾位)。
+
+> 📦 §#796 流水（2026-10-26 21:15，S1 rendezvous 成功·数据集构建中——但该 run 21:18 rank15 崩，由 #797 接续）已压缩 → daily-memories/2026-10-26.md；**结论**：checkpoint EOFError 修复(commit `ae964bc`，`mp.Queue` 替代 `Manager().Queue`)+端口固定 `MASTER_PORT=49500`(commit `ac1c790`)；rendezvous 成功但 run 崩于 rank15(见 #797 ③)。需要时再读。
 > 📦 §#794 流水（2026-10-26 16:3x，运维令 15:3x「BaiZe-2B 预训练构想中文 HTML 报告+ETA」闭合）已压缩 → daily-memories/2026-10-26.md；**结论**：report_pretrain_baize2b_pretrain_plan_zh.html 22,270B·三阶段(S1 700k/S2 350k/Decay 20k)·ETA 54.29d·commit 14c56399f。需要时再读。
 > 📦 §#795 流水（2026-10-26 18:04，唤醒复核·全 7 条运维令闭合·无新令）已压缩 → daily-memories/2026-10-26.md；**结论**：git 同步·loop 健康·全指令闭合·WAITING=1。需要时再读。
 
@@ -46,15 +55,8 @@ WAITING: 1
 
 > 📦 §#770（2026-10-25 08:3x，双机16卡吞吐报告 rev1 交付）已归档 → daily-memories/2026-10-25.md L13–23；**结论**：双机扩展效率 99.4%(606K)，Task B 3 TAG 全无收益，机制=allreduce<1%步时，#767 误报已纠正。需要时再读。
 
-> 🆕 **2026-10-25 01:3x #768：⚠️纠正#767误报·双机16卡e18真实扩展效率=99.4%(606K tok/s)·非84%/BF16+mock·launcher bug已修并rerun复现·任务A完成·任务书归档**：
-> - **#767误报纠正**：#767报「513K/84%/BF16+mock/64.4GB/611TFLOP」**全部错误**。核验`/tmp/baize_dualnode_16gpu_prevrun_23x/`原始日志：①`mock:false`→真实数据(16片p5b_l3)非mock ②`fp8_recipe:tensorwise`→FP8 TW已生效非BF16 ③中位步时6.81s非8.05s ④tok/s=4,128,768/6.81=606,300非513K ⑤扩展效率99.4%非84% ⑥峰值显存69,275MiB=67.6GB非64.4GB ⑦729TFLOP/s/GPU非611。误报根因:脚本因`WORKER_SSH_PID`unbound挂起→summary.txt残缺无RESULT PARSING段→agent手工解析混淆2-rank排障数据。
-> - **launcher bug已修(working copy)**：`baize_dualnode_16gpu_test.sh` ①`wait $WORKER_SSH_PID`→`wait $MASTER_SSH_PID` ②`kill $MON_M`→`kill $MON_W`（set -u下两处unbound变量,导致脚本收尾挂起→summary.txt永远缺RESULT PARSING段）。
-> - **rerun复现(01:18–01:30,80步)**：clean summary.txt产出✓(bug fix验证通过)。中位步时6808.1ms,throughput **606,449 tok/s**,扩展效率**99.4%**,per-GPU 37,903,峰值显存69,245/69,275MiB(67.6GB),loss 7.5733/gnorm 0.529/0NaN。与prev逐位一致(iter10 loss=10.93756 vs prev 10.93718;step 30-70=6802/6809/6807/6817ms)。`TEST COMPLETE @ 01:30:33`,16卡全释放。
-> - **物理印证**：2.2B模型梯度~4.4GB,RoCE busbw≈46GB/s→allreduce传输~0.7%步时→99.4%近线性扩展是物理预期。DP16显存67.6GB<DP8 72.7GB(distributed-optimizer分摊更多卡)。
-> - **任务A(e18口径对齐)完成**。下一步:BF16对照组(`--precision bf16`无FP8,16卡80步,量化FP8在DP16增益)→任务B(NCCL/IB调参)/C(overlap grad-reduce/param-gather)/D(MBS4)/E(distributed-optimizer)。
-> - **落盘**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md`新节「双机吞吐优化」(含纠正+结果表)。summary@`/tmp/baize_dualnode_16gpu/summary.txt`(rerun,clean)。
-> - **任务书归档**：45.5KB→25.0KB(归档11个已闭合运维块→`ARCHIVE_OPERATOR_PRETRAIN.md`)。
-> 📦 体积：TASK=25.0KB / MEMORY=30.7KB（均≤32KB✓；本轮归档~20KB→ARCHIVE_OPERATOR_PRETRAIN.md + #766→daily-memories/2026-10-24.md）。
+> 📦 §#768 流水（2026-10-25 01:3x，纠正#767误报·双机16卡 e18 真实扩展效率=99.4%(606K tok/s)·非84%/BF16+mock·launcher bug 已修并 rerun 复现·任务A完成·任务书归档）已压缩 → daily-memories/2026-10-25.md；**结论**：#767 报 513K/84%/BF16+mock 系误报（脚本 `WORKER_SSH_PID` unbound 挂起→summary 残缺→手工解析混淆），rerun 606,449 tok/s/99.4%/per-GPU 37,903/67.6GB/loss7.5733/0NaN；launcher bug fix + EXPERIMENTS 落盘。需要时再读。
+
 
 > 📦 §#767（2026-10-24 23:3x，误报已纠正）已归档 → daily-memories/2026-10-24.md；**结论**：#767报513K/84%/BF16+mock系误报,#768纠正为606K/99.4%/FP8+real。需要时再读。
 

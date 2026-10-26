@@ -1,0 +1,97 @@
+diff --git a/mamba2_hybrid_2b/recipe.py b/mamba2_hybrid_2b/recipe.py
+index 86cc7db..de2a5b8 100644
+--- a/mamba2_hybrid_2b/recipe.py
++++ b/mamba2_hybrid_2b/recipe.py
+@@ -132,6 +132,7 @@ def model_config(
+     transformer_impl: Optional[str] = None,
+     bias_activation_fusion: Optional[bool] = None,
+     apply_rope_fusion: Optional[bool] = None,
++    rotary_base: int = 10000,
+ ) -> NVIDIAMambaHybridModelProvider2B:
+     """Configure the Mamba Hybrid ~2B model.
+ 
+@@ -152,6 +153,10 @@ def model_config(
+       transformer_impl         — "transformer_engine" | "local"
+       bias_activation_fusion   — fuse bias+activation
+       apply_rope_fusion        — fuse RoPE
++      rotary_base              — RoPE theta (ABF). 默认 1e4（Megatron 默认）；
++                                 BaiZe-2B 正式训练 = 1000000（4 层注意力 1M 位置外推）。
++                                 ⚠️ 只抬 max_position_embeddings 不改 theta ⇒ 实测全 NaN
++                                 （2026-10-06 B1）；theta=1e6 才能从 16K 外推到 1M。
+     """
+     kwargs = dict(
+         tensor_model_parallel_size=tensor_parallelism,
+@@ -190,6 +195,9 @@ def model_config(
+         kwargs["bias_activation_fusion"] = bias_activation_fusion
+     if apply_rope_fusion is not None:
+         kwargs["apply_rope_fusion"] = apply_rope_fusion
++    # RoPE theta (ABF). 父类 MambaModelProvider 有 rotary_base 字段（默认 1e4）。
++    # 显式覆盖：训练期 4 层注意力的 RoPE 用此 theta 逐位置计算。
++    kwargs["rotary_base"] = rotary_base
+     return NVIDIAMambaHybridModelProvider2B(**kwargs)
+ 
+ 
+@@ -245,6 +253,7 @@ def pretrain_config(
+     transformer_impl: Optional[str] = None,
+     bias_activation_fusion: Optional[bool] = None,
+     apply_rope_fusion: Optional[bool] = None,
++    rotary_base: int = 10000,
+     overlap_param_gather_with_optimizer_step: bool = False,
+     # Optimizer choice: "adam" (default) | "muon" | "dist_muon"
+     optimizer: str = "adam",
+@@ -301,6 +310,7 @@ def pretrain_config(
+         transformer_impl=transformer_impl,
+         bias_activation_fusion=bias_activation_fusion,
+         apply_rope_fusion=apply_rope_fusion,
++        rotary_base=rotary_base,
+     )
+ 
+     opt_config, scheduler = _build_optimizer_and_scheduler(
+diff --git a/pretrain_launcher.py b/pretrain_launcher.py
+index 7f117d3..2157be8 100644
+--- a/pretrain_launcher.py
++++ b/pretrain_launcher.py
+@@ -102,7 +102,7 @@ import bridge_compat  # noqa: E402  (必须在 pretrain() 前应用 optimizer AP
+ 
+ 
+ def build_config(args, pretrain_config_fn):
+-    return pretrain_config_fn(
++    call_kwargs = dict(
+         dir=args.dir,
+         name=args.name,
+         mock=args.mock,
+@@ -143,6 +143,11 @@ def build_config(args, pretrain_config_fn):
+         apply_rope_fusion=args.apply_rope_fusion,
+         overlap_param_gather_with_optimizer_step=args.overlap_param_gather_with_optimizer_step,
+     )
++    # RoPE theta (ABF). 仅在显式传入时透传——mamba2 recipe 接受 rotary_base；
++    # minicpm5/xmodel 把 rotary_base 烤进各自 provider 默认（不传 ⇒ 不受影响）。
++    if getattr(args, "rotary_base", None) is not None:
++        call_kwargs["rotary_base"] = args.rotary_base
++    return pretrain_config_fn(**call_kwargs)
+ 
+ 
+ def main() -> None:
+@@ -203,6 +208,10 @@ def main() -> None:
+                    help="Fuse bias+activation (true/false)")
+     p.add_argument("--apply-rope-fusion", default=None, type=lambda x: x.lower() == "true",
+                    help="Fuse RoPE (true/false)")
++    p.add_argument("--rotary-base", type=int, default=None,
++                   help="RoPE theta (ABF). BaiZe-2B 正式训练 = 1000000（4 层注意力 1M 位置外推）。"
++                        "None=沿用 recipe/provider 默认（mamba2=1e4；minicpm5=5e6；xmodel=5e5）。"
++                        "⚠️ 只抬 max_position_embeddings 不改 theta ⇒ 实测全 NaN（2026-10-06 B1）。")
+     p.add_argument("--overlap-param-gather-with-optimizer-step", action="store_true",
+                    help="Overlap param gather with optimizer step")
+     p.add_argument("--finetune", action="store_true",
+@@ -233,6 +242,11 @@ def main() -> None:
+         from mamba2_hybrid_2b.recipe import pretrain_config
+ 
+     cfg = build_config(args, pretrain_config)
++    # 生效证据：rank0 打印 provider 的 rotary_base（theta），确认 --rotary-base 已落到模型配置。
++    # 训练期 RoPE 逐位置计算用此 theta；max_position_embeddings 只在导出 HF config 生效（由 check_rope.py 把关）。
++    _rb = getattr(cfg.model, "rotary_base", "<n/a>")
++    if _rank == 0:
++        print(f"[RoPE] rotary_base(theta)={_rb}  (cli --rotary-base={getattr(args, 'rotary_base', None)})", flush=True)
+     cfg.train.eval_interval = args.eval_interval
+     cfg.train.eval_iters = args.eval_iters
+     bridge_compat.apply_all_compat_shims()
