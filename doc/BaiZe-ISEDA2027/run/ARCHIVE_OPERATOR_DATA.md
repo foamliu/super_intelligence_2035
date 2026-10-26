@@ -2094,3 +2094,31 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 > 📦 §运维令·2026-10-25 18:2x（删32不可映射shard）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：32个(l3_s28+math_s4)已全部删除(1.91TiB表观/实占~471.6KB)，删前留档deleted_unmapped32_20261025.tsv+summary.md，DATA_MAPPING.md B节标已删除，终裁结案。需要时再读。
 
 > 📦 §运维令 2026-10-25 17:5x（DATA_MAPPING 为单一事实源 + 下载↔分词映射）**已完成**（18:5x 令交付脚本化生成器 `gen_data_mapping_md.py` 幂等 PASS，A 节 716 shard + B 节 32 已删）→ 原文归档 ARCHIVE_OPERATOR_DATA.md。
+
+## 归档 2026-10-27（由 BAIZE_DATA_TASK.md 搬入，原文未改）
+
+### [运维令] 2026-10-26 22:0x（**修复坏 shard：en_v1_4 / env14_CC-MAIN-2023-23 的 .idx 指针越界**）· 用户直令「安排 data 去处理」
+
+> 用户原话：「坏 shard（env14_CC-MAIN-2023-23 idx 越界）安排 data 去处理吧」。
+> **事实（来自 pretrain S1 实测，可复核）**：blender 报
+> `SKIP env14_CC-MAIN-2023-23: ptr overflow: max_ptr=122,496,093,768 >= bin_size=49,025,167,172`
+> ⇒ 该 shard 的 `.idx` 指针约为 `.bin` 的 **2.5 倍**，判定损坏；blender 已安全跳过（`validate_shards: 109 ok, 1 skipped, 110 total`，0.65 权重摊到 109 片），
+> 但 `Ultra-FineWeb/ultrafineweb_en_v1_4` 实际少了 **1/110 片**（占比最大的一路）。
+
+**要做（按序，先留证再动手）**
+1. **定性**：`ls -l` 该 shard 的 `.bin/.idx` 实测字节；用 python 读 `.idx` 头与偏移，确认 `num_tokens` 与 `max_ptr`；判断是 **.bin 被截断** / **.idx 来自别的分片** / **分词中途写坏**。
+   证据落 `run/data/bad_shard_env14_CC-MAIN-2023-23_20261026.txt`（含命令与原始输出）。
+2. **修复优先级**：
+   - (a) 若 `staging_r3` / `full_*` / 源 parquet 仍在 ⇒ **只重分词这一片**（估 ~49GB / ~12B token，先报 ETA 再跑）；
+   - (b) 若 `.bin` 完整、仅 `.idx` 坏且 `preprocess_data.py` 支持重建索引 ⇒ 只重建 `.idx`；
+   - (c) 都不行 ⇒ **正式标记剔除**，并在 `DATA_MAPPING.md` 写「状态=已废弃(损坏)」+ 影响（en_v1_4 少 1/110）。
+3. **复验**：`max_ptr < bin_size` 且偏移单调；重跑 `blender` 校验不再出现 SKIP；结论写 `DATA_MAPPING.md` + `DATA_LEDGER §7`；commit `data fix:`。
+
+**红线**
+- 🚫 不许直接删 `.idx` 或截断 `.bin`（会破坏下载↔分词映射与训练）；改动前先 `cp` 留档或用 tsv 记录原始字节数。
+- 🚫 不许为了让校验通过而改 blast 权重规则（权重必须仍 = 1.0）。
+
+**体积**：本文件 ~33KB，请本轮顺手把已闭合块归档到 **≤32KB**（指针留 1 行）。
+
+> **执行结论（唤醒677-679, 2026-10-27 02:0x）**：已修复 DONE。定性=.bin 被截断至 49GB（=期望122.5GB的40%），.idx 正确(max_ptr=122.5GB)但指向截断外。修复=从源 parquet(512文件)重分词→新.bin 118.23GB/29.56B token(max_ptr=118.23GB<bin=118.23GB 复验PASS)→原子替换→build_tokenized_mirror.py重建hardlink+INDEX.tsv 815shard→DATA_MAPPING.md+report+DATA_LEDGER §7.2全量更新→commit 1cfb5e7dd data fix:。env14 110/110全齐，blender 不再 SKIP。证据 run/data/bad_shard_env14_CC-MAIN-2023-23_20261026.txt §8-9。
+

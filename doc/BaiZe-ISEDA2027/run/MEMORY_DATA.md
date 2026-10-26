@@ -8,32 +8,34 @@ WAITING: 0
 > 🟢 **✅ 迁移5/5源全DONE**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删)。
 > 🟢 **✅ 3稳定源迁移FINALIZE(唤醒678,00:3x)**：l1_en_hq(94shards)+zh(4)+AICC(1)→build_tokenized_mirror.py改symlink指向/nas_env/full_*→INDEX.tsv rebuild(815shard全triplet=OK inode=OK,3源storage=symlink)→DATA_MAPPING.md regen(指纹2953/7f2a09fb2920/00:34)→report_data_mapping_zh.html全量更新(总17.47TB,df 85%/82%)。源文件run4已删。
 > 🟢 **✅ 22:0x坏shard修复DONE（唤醒679,02:0x）**：env14_CC-MAIN-2023-23从源parquet(512)重分词→新.bin 118.23GB/29.56B token(降1.067B,-3.5%,num_tokens×4=bin_size逐字节自洽)→.idx max_ptr=118,227,700,960<bin=118,227,705,972复验PASS→原子替换(rm旧硬链→mv RETOK→text正名)→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→DATA_MAPPING.md env14 8.93→9.00TB/2238.14→2237.07B,合计4474.83→4473.76B/17.47→17.56TB→report全量更新→blender validate_shards 110/110全齐不SKIP。证据run/data/bad_shard_...txt §8-9。
-> 🟡 **ufw_en迁移DEFERRED**：s17.bin仍是移动靶(远端NFS进程在写,+38MB/8s),rsync verify必MISMATCH。暂留hardlink,待远端写完后re-check稳定性再迁。s21稳定。
-> 🟡 **/nas_env: df 8.1T已用/1.9T可用(82%)；/nas_train: 177T已用/31T可用(86%)**。
+> 🟡 **ufw_en迁移BLOCKED(磁盘空间)**：s17.bin现已稳定(mtime 02:31,8s无变化,不再是移动靶);但 **/nas_env 仅剩 1.85T 可用，ufw_en 需 3.0T ⇒ 空间不足无法迁移**。需运维决定：①清理/nas_env腾空间 ②ufw_en暂留/nas_train(hardlink)不迁 ③删除/nas_env旧数据腾位。
+> 🟡 **/nas_env: df 8.1T已用/1.85T可用(82%)；/nas_train: 177T已用/31T可用(86%)**。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅22:0x坏shard修复DONE(env14_CC-MAIN-2023-23重分词+原子替换+镜像重建+复验PASS,110/110全齐blender不SKIP)+✅3源迁移FINALIZE(l1_en_hq/zh/AICC→/nas_env symlink);ufw_en DEFERRED(移动靶)
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5/5源→/nas_env;✅3源迁移FINALIZE(build_tokenized_mirror.py改symlink+INDEX.tsv rebuild+DATA_MAPPING.md regen+report更新);✅14:4x令(commit 86431cfb4);✅22:0x坏shard修复(重分词→.bin118.23GB/max_ptr<bin复验PASS→原子替换→mirror rebuild 815shard→DATA_MAPPING/报告全量更新→commit data fix:)
-当前动作:     唤醒679(2026-10-27 02:0x):①retok完成验证(.idx max_ptr=118,227,700,960<bin=118,227,705,972,num_tokens29.56B=bin/4逐字节自洽,32.85M docs不变);②原子替换(rm tokenized旧硬链→mv RETOK→text正名→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→gen_data_mapping_md.py刷新DATA_MAPPING.md env14 8.93→9.00TB/2238.14→2237.07B,合计4474.83→4473.76B/17.47→17.56TB);③report_data_mapping_zh.html全量更新(env14行+总计+df 86%/82%);④DATA_LEDGER §7.2标记已完成+证据文件§8-9;⑤commit data fix:。未完成指令:无→WAITING:0
-下一步:       ①ufw_en迁移:等s17远端写完后re-check稳定性→rsync+verify+symlink rebuild;②§13:1x迁4新源到/nas_env(ufw_en/ufw_l1_en_hq/ufw_zh/UltraX-AICC,131shard≈4.05TB);③体积维护MEMORY_DATA.md(~44KB>32KB红线,轻归档)
-阻塞:         无活跃阻塞(坏shard已修复);ufw_en迁移DEFERRED(s17移动靶,远端NFS在写);disk /nas_train 31T/86% /nas_env 1.9T/82%
+PHASE:        ✅22:0x坏shard修复DONE+✅3源迁移FINALIZE+✅体积维护DONE;ufw_en迁移BLOCKED(/nas_env仅1.85T<需3.0T,s17已稳定非移动靶)
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5/5源→/nas_env;✅3源迁移FINALIZE(l1_en_hq/zh/AICC→symlink);✅14:4x令(commit 86431cfb4);✅22:0x坏shard修复(commit 1cfb5e7dd);✅体积维护MEMORY_DATA.md 44.6KB→22.2KB+TASK 22:0x归档
+当前动作:     唤醒680(2026-10-27 02:5x):①复核22:0x坏shard修复=DONE(commit 1cfb5e7dd,证据§8-9,DATA_MAPPING env14镜像完整110/110,LEDGER §7.2);②s17稳定性复测=稳定(mtime 02:31,8s无变化,不再是移动靶);③发现ufw_en迁移新阻塞=/nas_env仅1.85T可用<需3.0T(du -sh ufw_en=3.0T);④体积维护:MEMORY 44.6KB→22.2KB(唤醒674-677/661-665转📦+删650及以下旧📦)+TASK 22:0x归档ARCHIVE;⑤日报补680;⑥commit。未完成指令:无→WAITING:0
+下一步:       ①ufw_en迁移:等运维决定(/nas_env空间不足,需腾位或暂留hardlink);②体积已达标(22KB),后续维持
+阻塞:         ufw_en迁移BLOCKED=/nas_env仅1.85T可用<ufw_en需3.0T(需运维决定:腾空间/暂留hardlink/删旧数据);disk /nas_train 31T/86% /nas_env 1.85T/82%
 ERROR_COUNT:  10
-未完成指令:   无(22:0x坏shard已修复DONE,110/110全齐,blender不SKIP;ufw_en迁移DEFERRED待s17写完,非阻塞)→WAITING:0
+未完成指令:   无(22:0x坏shard已修复DONE;ufw_en迁移阻塞=/nas_env空间不足需运维决定,非本线可自行解决)→WAITING:0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [02:5x] 唤醒680：①复核22:0x坏shard修复=DONE(commit 1cfb5e7dd data fix:,证据bad_shard_...txt §8-9,DATA_MAPPING.md env14行=镜像完整110/110/8,999,055,538,432B/2,237,073,612,082tok,LEDGER §7.2已记录);②s17稳定性复测=STABLE(mtime 02:31:24,size 113,238,901,184B,8s间隔二次stat完全一致,不再是移动靶);③★发现ufw_en迁移新阻塞=/nas_env仅1.85T可用(df -BG=1852G)<ufw_en需3.0T(du -sh=3.0T)⇒空间不足无法迁移,需运维决定(腾空间/暂留hardlink/删旧数据);④tokenization确认全DONE(log:131/131 failed:0 END 10:33:21,lock释放);⑤体积维护:MEMORY_DATA.md 44,557B→22,204B(唤醒674-677/661-665转📦+删唤醒650及以下旧📦)+BAIZE_DATA_TASK.md 22:0x块归档ARCHIVE_OPERATOR_DATA.md留1行指针(34.7KB→~33KB);⑥日报补680。未完成指令:无→WAITING:0
+
 > [02:0x] 唤醒679：✅22:0x坏shard修复DONE。①retok完成验证(.idx max_ptr=118,227,700,960<bin=118,227,705,972,num_tokens29.56B=bin/4逐字节自洽,32.85M docs不变,较原始30.62B降1.067B/-3.5%并行切分边界差异);②原子替换(rm tokenized旧硬链→mv RETOK→text正名→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→gen_data_mapping_md.py刷新DATA_MAPPING.md env14 8,929,852,999,497→8,999,055,538,432B/2,238,140,710,284→2,237,073,612,082tok,合计4474.83→4473.76B/17.47→17.56TB;★NFS attr-cache踩坑首次run读旧缓存,二次fresh process读新);③report_data_mapping_zh.html全量更新(env14行+ufw_en移动靶GB2977→2995+总计+df 86%/82% 02:0x+footer);④DATA_LEDGER §7.2待完成→已完成+§7表env14/合计cell更新;⑤证据文件§8-9(retok结果+原子替换+复验+结论);⑥commit data fix:。未完成指令:无→WAITING:0
 > [00:3x] 唤醒678：①3源迁移FINALIZE(l1_en_hq/zh/AICC)：build_tokenized_mirror.py ENTRIES L32-34改src_dir→/nas_env/full_*+storage→symlink→rerun重建INDEX.tsv(815shard全triplet=OK inode=OK,3源storage=symlink,ufw_en/env14仍hardlink)+gen_data_mapping_md.py刷新DATA_MAPPING.md(指纹size=2953 hash=7f2a09fb2920 mtime=00:34,3源evidence列symlink,ufw_en bytes 2.98→3.20TB移动靶,合计17.26→17.47TB)+report_data_mapping_zh.html全量更新(2表3源hardlink→symlink,ufw_en GB 2777→2977,总17.26→17.47TB,df 85%/82% 00:35,footer+结论同步);②retok监控:200/512 parquet(39%),12.95B tokens@3222s,RETOK bin 51.8GB/122.5GB(42%),ETA~01:48;③ufw_en仍hardlink DEFERRED(s17移动靶)。待commit+push。未完成指令:有(retok在跑·异步阻塞§8)→WAITING:1
-> [23:4x] 唤醒677：①22:0x坏shard定性DONE(env14_CC-MAIN-2023-23:.idx正确max_ptr=122,496,093,768指针单调长度全正;.bin截断49GB=40%期望122.5GB;.json num_tokens=30.62B;源parquet512在)→裁决重分词(非重建idx,否则永久丢18.36B token)。②重分词启动23:42(PID352806,48worker,nice10,写RETOK_临时前缀不破坏原件,日志/tmp/retok_launcher.log),~15MB/s NFS IO bound(24→48worker无增益)ETA~128min~01:50;先24worker跑6min后kill改48(pkill -f误伤自身shell,已改ps+PID方式)。③13:1x迁移run4复核=FAILED/已停(23:32 ufw_en s17/s21 verify MISMATCH移动靶;3稳定源已拷/nas_env未finalize)。④证据bad_shard_..._20261026.txt+DATA_LEDGER §7.2+日报已写。未完成指令:有(22:0x重分词在跑·异步阻塞§8)→WAITING:0
-> [22:1x] 唤醒676：①复核run3=FAILED:wrapper PID444525已死,log 21:0x无"4SOURCES END",ufw_en s17.bin verify反复MISMATCH。②深度诊断根因(非脚本bug):ufw_en_train_s17.bin是**移动靶**——远端NFS进程仍在写(.bin~48MB/10s增长,.idx stale/不一致),.12本地/proc无writer(跨NFS不可见)。每次rsync拷到不同大小→verify必MISMATCH。s21.bin同理(history)。③其余3源稳定完整(l1_en_hq=603.5G/zh=453.6G/AICC=46.4G)。④run4策略:先迁3稳定源立即交付,ufw_en deferred。⑤脚本3改:migrate_4sources_to_nas_env.sh (a)SOURCES重排ufw_en最后 (b)stability guard(12s size sampling,增长则SKIP该源) (c)stale-dst-partial cleanup(删dst旧s17/s21 partial让rsync重拷) (d)per-file verify diff。⑥run4启动22:15:00:wrapper PID2333959,l1_en_hq(1/4)迁移中(66G/603GB@22:19),ETA 3源~73min→~23:30,ufw_en将自动SKIP。⑦确认finalize路径:build_tokenized_mirror.py ENTRIES 31-34行(hardlink+TEXT_DIR)→3源改src_dir=/nas_env/full_*+symlink,ufw_en保持hardlink。⑧run3 log备份_failed_run3.log。未完成指令:有(13:1x迁移run4在跑·异步阻塞§8)→WAITING:1
-> [20:5x] 唤醒675：①复核14:4x=DONE(commit 86431cfb4 "data report: 加入SFT-2605+Agent-2609到DATA_MAPPING.md+报告删第4节",git status无ahead/behind,DATA_MAPPING.md行11-12未分词+报告第4节"其余状态源"已删grep exit1)。②诊断13:1x迁移run2=FAILED:wrapper PID3136158已死,log 19:43:33"rsync rc=0但MISMATCH bytes 3129622375847!=3130256121911 VERIFY FAILED停下"——rsync成功但脚本du -sb整树校验跨NFS(.31 vs .32)目录元数据大小不同致误报。③per-file stat校验:96文件中.idx/.json全等,.bin仅s17(src75020091084 dst66776385212)+s21(src75615784516 dst67976084928)2个partial(共缺~15.8GB)。④修复:migrate_4sources_to_nas_env.sh L115+L136 verify逻辑du -sb→find -exec stat -c%s逐文件求和(排除MANIFEST.json);rm 2 partial .bin(s17/s21)让rsync重拷;run2 log备份_failed_run2.log;bash -n语法OK。⑤重启run3:BWLIMIT=300000 setsid,wrapper PID444525+rsync PID444557,20:51:17 START,ufw_en resume拷s17+s21~15GB~1min+后续l1_en_hq/zh/AICC。⑥ETA~74min→~22:05全4源完。未完成指令:有(13:1x迁移run3在跑·异步阻塞§8)→WAITING:1
-> [19:3x] 唤醒674：①复核14:4x=DONE(实测SFT-2605=1504jsonl/318990486183B+Agent-2609=50jsonl/54220373384B;tokenized无对应.bin→未分词正确;报告4节第4节"其余状态源"已删;git无ahead/behind)。②★发现13:1x迁移run1=FAILED:wrapper PID1170559已死,log"rsync rc=23...整条迁移停下"@18:24:09;根因NFS temp-file rename race(.ufw_en_train_s0.bin.MpnCda vanished)→ufw_en 31/32.bin(s0 MISSING 6.9GB+s17 PARTIAL 42/66GB)+l1_en_hq/zh/AICC 3源未开始;dst=3,077,392,451,902B vs src=3,128,799,277,951B。③处置:rm 4个stale debug目录(full_ufw_en_dbg/dbg2/test1/test2≈14.6GB)+重启wrapper(BWLIMIT=300000 setsid PID3136158 ppid=1+rsync PID3136183 --partial resume,log=/tmp/migrate_4sources_to_nas_env.log,旧log备份为_failed_run1.log)。④ETA ufw_en修s0+s17~31GB~2min+其余3源~1.1TB~1.2h。⑤finalize待rsync完后做(build_tokenized_mirror.py ENTRIES改src_dir→/nas_env+storage→symlink+rerun+gen_data_mapping_md.py --measure+report+commit)。未完成指令:有(13:1x迁移run2在跑·异步阻塞§8)→WAITING:1
+> 📦 唤醒677(10-27 23:4x)原文归档 → daily-memories-data/2026-10-27.md（22:0x坏shard定性=.bin截断49GB/40%+裁决重分词启动PID352806/48worker ETA~01:50;13:1x迁移run4复核FAILED/ufw_en s17/s21移动靶;3稳定源已拷/nas_env未finalize,详见日文件）
+> 📦 唤醒676(10-26 22:1x)原文归档 → daily-memories-data/2026-10-26.md（13:1x迁移run3=FAILED:ufw_en s17/s21移动靶跨NFS在写verify必MISMATCH;run4策略先迁3稳定源ufw_en deferred;脚本改stability guard,详见日文件）
+> 📦 唤醒675(10-26 20:5x)原文归档 → daily-memories-data/2026-10-26.md（14:4x=DONE commit86431cfb4;13:1x迁移run2=FAILED du -sb跨NFS误报→改stat逐文件校验;run3重启拷s17+s21,详见日文件）
+> 📦 唤醒674(10-26 19:3x)原文归档 → daily-memories-data/2026-10-26.md（14:4x复核DONE;13:1x迁移run1=FAILED rsync rc=23 NFS temp-file rename race;ufw_en 31/32.bin s0 MISSING+s17 PARTIAL,详见日文件）
 > [17:0x] 唤醒673：核查全部活跃指令状态（无新运维令，复核672交付+盘点在跑异步任务）→ ①14:4x已由唤醒672交付并commit/push：实测验证SFT-2605=1504jsonl/318990486183B+Agent-2609=50jsonl/54220373384B，tokenized镜像无对应.bin/.idx→未分词判定正确；DATA_MAPPING.md行11-12未分词+报告report_data_mapping_zh.html删第4节(现4节:总览/逐源列表/10已镜像源/结论)+git status无ahead/behind。②★**修正唤醒672的遗漏**：13:1x迁移4源→/nas_env**仍在跑**（672误报"未完成指令:无"）！证据：`migrate_4sources_to_nas_env.sh` PID1170559(ppid=1守护,etimes9664s≈2.68h)+rsync PID1170713(RN态)在跑，ufw_en→full_ufw_en 85.3%(2,651,505,982,786B/3,108,332,056,695B)@~280MB/s,bwlimit300000KiB/s；full_ufw_en 22/32 shard完整+5 partial(s0/s6/s7/s8/s9未拷贝)，l1_en_hq/zh/AICC 3源未开始；wrapper(/tmp/migrate_4sources_to_nas_env.log)自动 rsync+校验+rm text/+rm tokenized hardlink名(释放/nas_train)，但**finalize需rsync完后由agent做**：改build_tokenized_mirror.py ENTRIES(31-34行src_dir→/nas_env/full_*,storage→symlink)+rerun(重建per-file symlink+INDEX.tsv)+gen_data_mapping_md.py --measure(刷新DATA_MAPPING.md storage=symlink)+report refresh+commit data migrate:；ETA ufw_en~18:00+其余3源~19:10。/nas_env余量3.4T>剩余1.68T需求→够装。③df实测/nas_train 177T/31T(86%)+/nas_env 6.6T/3.4T(66%,因ufw_en迁移在填充,较672报的54%增长)。④轻归档：MEMORY47KB/TASK46.5KB均>40KB→搬已闭合22:3x诊断块+12:5x⓪①②+18:2x删32块到ARCHIVE_OPERATOR_DATA.md(留1行指针),压缩流水666-671到daily-memories-data/2026-10-26.md。未完成指令:有(13:1x迁移在跑·异步阻塞§8)→WAITING:1
 
 > [16:3x] 唤醒672：执行运维令14:4x（SFT-2605+Agent-2609加入映射表+报告删第4节·用户直令·最高优先）→ ①核查分词状态:tokenized镜像无SFT对应.bin/.idx/.json→判定未分词(不伪造镜像完整);②实测:SFT-2605=1504jsonl/318990486183B(297GB,no_think855:Chinese-general50/Code300/IF20/Knowledge80/Math300/Multi-lang-Knowledge50/Multi-lang-Math55+think649:Chinese-general50/Code279/IF20/Knowledge50/Math250),Agent-2609=50jsonl/54220373384B(50GB,Code_Agent7/General_Agent32/Search_Agent2/Tool_Use9);③新建untokenized_sft_sources.tsv+改gen_data_mapping_md.py(load_untokenized+--untokenized-tsv,A节追加2行未分词,分词目录=—,下载字节计入合计)→DATA_MAPPING.md重生成103行/11001B(★字节数变化:10093B→11001B,+908B;合计815shards/4474.83B/17.26TB分词产物/下载13021192793759B=12127GB,未分词小计2源1554jsonl/373210859567B=347.6GB,幂等run1==run2=True);④报告report_data_mapping_zh.html更新(★字节数变化:25112B→20434B,-4678B;总览数据源10→12+下载12647.98→13021.19GB+磁盘86%/54%,逐源列表加行11(SFT-2605未分词)+12(Agent-2609未分词)+合计13021192793759B/12127GB,删第4节其余状态源(32已删除表+状态汇总),5→4结论(加SFT未分词说明),footer更新);⑤HTML校验tag平衡(table2/tr26/div42)。commit data report:。未完成指令:无→WAITING:1
@@ -44,11 +46,11 @@ ERROR_COUNT:  10
 > 📦 唤醒667(10-26 08:13)原文归档 → daily-memories-data/2026-10-26.md（22:3x三度复核:done95→97恢复确认,非卡死自证,处置不杀,详见日文件）
 > 📦 唤醒666(10-26 07:24)原文归档 → daily-memories-data/2026-10-26.md（22:3x二度复核:/proc/io铁证非卡死,supervisor计数artifact,真ETA~2-3.5h,详见日文件）
 
-> [06:37] 唤醒665：22:3x step1-2 深度诊断(读码+实测)——done=95/131 FLAT,确诊非卡死=单核BPE慢(.bin流式写/.idx仅finalize产出,412K tok/s/proc,余~2h,ETA~09:00-11:00),处置=不杀。详见 `daily-memories-data/2026-10-26.md`。
-> [05:45] 唤醒664：22:3x step3 监测点6——done=95/131 FLAT,三重铁证非卡死(/proc/io在写+.bin mtime_age=0+WIP 3.30TB),finalize在即(后被665纠正为~2h非5-30min)。详见 `daily-memories-data/2026-10-26.md`。
-> [04:57] 唤醒663：22:3x 监测点5——done=95/131 FLAT,三重铁证非卡死(/proc/io write_bytes递增+.bin mtime=NOW+WIP 3.14TB),ETA~04:00-06:00(后被665纠正)。详见 `daily-memories-data/2026-10-26.md`。
+> 📦 唤醒665(10-26 06:37)原文归档 → daily-memories-data/2026-10-26.md（22:3x深度诊断:done95/131 FLAT确诊非卡死=单核BPE慢412K tok/s/proc ETA~2h,处置不杀,详见日文件）
+> 📦 唤醒664(10-26 05:45)原文归档 → daily-memories-data/2026-10-26.md（22:3x监测点6:done95/131 FLAT三重铁证非卡死finalize在即,详见日文件）
+> 📦 唤醒663(10-26 04:57)原文归档 → daily-memories-data/2026-10-26.md（22:3x监测点5:done95/131 FLAT三重铁证非卡死WIP 3.14TB,详见日文件）
 > 📦 唤醒662(10-26 03:44)原文归档 → daily-memories-data/2026-10-26.md（22:3x监测点4:/proc/io铁证非卡死@1.6MB/s,在写2.87TB,处置不杀,详见日文件）
-> [02:34] 唤醒661：22:3x 监测点3——done=95/131 FLAT,/proc/io铁证非卡死(ufw_en s5 +12.8MB/8s,ufw_zh +15.1MB/8s),.bin mtime=NOW,in-progress 2.60TB,ETA~04:00-06:00。处置=不杀。详见 `daily-memories-data/2026-10-26.md`。
+> 📦 唤醒661(10-26 02:34)原文归档 → daily-memories-data/2026-10-26.md（22:3x监测点3:done95/131 /proc/io铁证非卡死in-progress 2.60TB,处置不杀,详见日文件）
 > 📦 唤醒660(10-26 01:16)原文归档 → daily-memories-data/2026-10-26.md（22:3x监测点2:done94→95@00:15,1 shard完工,36进程健康,处置不杀,详见日文件）
 > 📦 唤醒657(10-25 21:2x)原文归档 → daily-memories-data/2026-10-25.md（18:5x③收尾:cleanup_batches侧车+gen_data_mapping_md.py加清理记录,详见日文件）
 > 📦 唤醒659(10-26 00:05)原文归档 → daily-memories-data/2026-10-26.md（22:3x停顿诊断:场景③非卡死,supervisor只计finalize故假停,处置不杀不重启,详见日文件）
@@ -63,107 +65,8 @@ ERROR_COUNT:  10
 > 📦 唤醒653(10-25 16:0x)原文归档 → daily-memories-data/2026-10-25.md（监控巡检:分词61/131,calibration实测W96=11.3M tok/s,详见日文件）
 > 📦 唤醒652(10-25 14:5x)原文归档 → daily-memories-data/2026-10-25.md（建tokenized/镜像布局716shard+确认分词在跑,详见日文件）
 > 📦 唤醒651 原文已归档 → daily-memories-data/2026-10-25.md（运维令§prune不可映射早期分词234文件释放3.69TiB+盘点报告升v3,详见日文件）
-> 📦 唤醒650 原文已归档 → daily-memories-data/2026-10-25.md（运维令§盘点v2返工·5下载源实测+794bin+报告v2,详见日文件）
-> 📦 唤醒649 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 74.3%续命,详见日文件）
-> 📦 唤醒647 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 74.0%代理stall恢复续命,详见日文件）
-> 📦 唤醒646 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 73.8%代理503stall续命,详见日文件）
-> 📦 唤醒645 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 73.7%续命,详见日文件）
-> 📦 唤醒644 原文已归档 → daily-memories-data/2026-10-25.md（跨日巡检迁移全DONE复核+85M 73.4%续命,详见日文件）
-> 📦 唤醒643 原文已归档 → `daily-memories-data/2026-10-25.md`（跨日巡检迁移全DONE+85M 73.3%续命,详见日文件）
-> 📦 唤醒642 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移5/5全DONE复核+运维令已执行+85M 73.1%,详见日文件）
-> 📦 唤醒641 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移5/5全DONE确认+85M 72.9%,详见日文件）
-> 📦 唤醒640 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移提速生效+code_l2@88%+85M 72.7%,详见日文件）
-> 📦 唤醒638 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移提速bwlimit 300000+math_l1修复+ufw_l3启动@286MB/s+85M 72.4%,详见日文件）
-> 📦 唤醒637 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移报告HTML更新+code_l3 50/63+85M 72.2%,详见日文件）
-> 📦 唤醒636 原文已归档 → `daily-memories-data/2026-10-24.md`（迁移报告生成+math_l3 DONE+code_l3 19/63+85M 71.9%,详见日文件）
-> 📦 唤醒635 原文已归档 → `daily-memories-data/2026-10-24.md`（巡检：清单报告commit确认+math_l3迁移82%+85M 71.8%+92.25确认,详见日文件）
-> 📦 唤醒634 原文已归档 → `daily-memories-data/2026-10-24.md`（硬盘实测清单：6目录19.14TB/4778.41B/794shards/2383文件+HTML+TSV+空间判定+迁移启动,详见日文件）
-> 📦 唤醒633 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询复核：分词110/110 DONE证实+85M线路复核92.25+hf.co直连✓+迁移READY但未启动,详见日文件）
-> 📦 唤醒632 原文已归档 → `daily-memories-data/2026-10-24.md`（运维质询回答+提速：5worker根因+65并发升级+85M线路确认+parallel-16切换,详见日文件）
-> 📦 唤醒594 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 12procs+bin~38G+5源574/574/574验证+done=90/110,详见日文件）
-> 📦 唤醒595 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~45G+5源574/574/574验证+done=90/110,详见日文件）
-> 📦 唤醒596 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+bin~51G+5源574/574/574验证+done=90/110,详见日文件）
-> 📦 唤醒597 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins~58-59GB+5源574/574/574验证+done=90/110,详见日文件）
-> 📦 唤醒598 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins~63-64GB+5源574/574/574验证+done=90/110,详见日文件）
-> 📦 唤醒599 原文已归档 → `daily-memories-data/2026-10-22.md`（含fullsource 13procs+oldest bins 70-76GB+5源574/574/574验证+done=90/110,详见日文件）
-> 📦 唤醒600 原文已归档 → `daily-memories-data/2026-10-22.md`（含BPE死循环根因修复全流程+13 partial .bin删除+smoke test+重启PID2557971+全部workers越过stall point,详见日文件）
-> 📦 唤醒601 原文已归档 → `daily-memories-data/2026-10-22.md`（含5源574/574/574验证+download106dirs+fullsource done=90/110 14workers@73MB/min,详见日文件）
-> 📦 唤醒602 原文已归档 → `daily-memories-data/2026-10-22.md`（含5源574/574/574验证+download106dirs/53927parquet+fullsource done=90/110 14workers@88%CPU .bin 7-12GB actively growing,详见日文件）
-> 📦 唤醒603 原文已归档 → `daily-memories-data/2026-10-22.md`（含5源574/574/574验证+download106dirs/54073parquet+fullsource done=90/110 14workers@88%CPU .bin 13-17GB,详见日文件）
-> 📦 唤醒604 原文已归档 → `daily-memories-data/2026-10-22.md`（含5源574/574/574验证+fullsource done=90/110 14workers 18-23GB+download 106dirs 54139parquet,详见日文件）
-> 📦 唤醒605 原文已归档 → `daily-memories-data/2026-10-22.md`（含5源574/574/574 token精确验证+download106dirs+fullsource done=90/110 14workers@1.37MB/s+in-progress 24-29GB,详见日文件）
-> 📦 唤醒606 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download107dirs+fullsource done=90/110 15workers@1.2MB/s,详见日文件）
-> 📦 唤醒607 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+tokenizer兼容性确认+download107dirs+fullsource done=90/110 15workers@1.1-1.4MB/s,详见日文件）
-> 📦 唤醒608 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download107dirs+fullsource done=90/110 15workers@1.3MB/s,详见日文件）
-> 📦 唤醒609 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download107dirs+fullsource done=90/110 15workers@1.2MB/s+count_running bug分析,详见日文件）
-> 📦 唤醒610 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download107dirs/54507parquet+fullsource done=90/110 15workers@1MB/s+bins24-53GB,详见日文件）
-> 📦 唤醒611 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download107dirs+fullsource done=90/110 15workers@2MB/s bursty writes确认+ETA first completions~08:30,详见日文件）
-> 📦 唤醒612 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download108dirs/54818parquet+fullsource done=90/110 16workers@1.2MB/s+ETA first completions~09:02(后修正),详见日文件）
-> 📦 唤醒613 原文已归档 → `daily-memories-data/2026-10-23.md`（含ETA修正+16workers@1MB/s+done=90 unchanged 3h+5源intact+download 2025-18活跃,详见日文件）
-> 📦 唤醒614 原文已归档 → `daily-memories-data/2026-10-23.md`（含2024-51 stall诊断+retry launched+13workers near completion@68-74GB+5源intact+download108dirs,详见日文件）
-> 📦 唤醒615 原文已归档 → `daily-memories-data/2026-10-23.md`（含2024-51 retry DONE+2025-18 download DONE+16 WIP bins 77-80GB+5源intact+download109dirs,详见日文件）
-> 📦 唤醒616 原文已归档 → `daily-memories-data/2026-10-23.md`（含14 WIP bins@79-86GB+5源574/574/574验证+download 2025-21@171/512+workers I/O alive,详见日文件）
-> 📦 唤醒617 原文已归档 → `daily-memories-data/2026-10-23.md`（含16 WIP bins@84-91GB+5源574/574/574验证+download 2025-21@353/512+fullsource done=90/110,详见日文件）
-> 📦 唤醒618 原文已归档 → `daily-memories-data/2026-10-23.md`（含5源574/574/574验证+download109dirs+fullsource done=91/110+17WIP bins@89-96GB+2025-21下载完成+fullsource launched 2024-51+2025-18,详见日文件）
-> 📦 唤醒619 原文已归档 → `daily-memories-data/2026-10-23.md`（含done=92/110+16WIP bins@94-102GB+2025-26@155/512下载中+17workers I/O alive,详见日文件）
-> 📦 唤醒620 原文已归档 → `daily-memories-data/2026-10-23.md`（含done=95/110+14WIP bins@4.3-107G+2025-26@333/512+5源574/574/574验证,详见日文件）
-> 📦 唤醒621 原文已归档 → `daily-memories-data/2026-10-23.md`（含done=98/110+11WIP bins@9.2-111G+2025-26@511/512+download PID alive,详见日文件）
-> 📦 唤醒622 原文已归档 → `daily-memories-data/2026-10-23.md`（含done=100/110+✅下载全完110/110×512+10WIP bins@4.5-116G+pending_download=0,详见日文件）
-> 📦 唤醒623 原文已归档 → `daily-memories-data/2026-10-23.md`（含done=101/110+9WIP bins@10-130G+3near completion,详见日文件）
-> 📦 唤醒624 原文已归档 → `daily-memories-data/2026-10-23.md`（含运维令4任务全执行：proxy复测恢复+85M下载恢复+MiniCPM5产物体积3.935TB+迁移条件NOT READY(102/110),详见日文件）
-> 📦 唤醒625 原文已归档 → `daily-memories-data/2026-10-24.md`（含done=102/110+8workers+85M=8456+5源3.9T+迁移NOT READY,详见日文件）
-> 📦 唤醒626 原文已归档 → `daily-memories-data/2026-10-24.md`（含proxy200OK+85M=8478+5源3.92TiB+done=103/110+迁移NOT READY,详见日文件）
-> 📦 唤醒627 原文已归档 → `daily-memories-data/2026-10-24.md`（含运维令4任务：proxy RESTORED+85M=8500/70.1%+5源3.86TiB/574shards精确字节验证+迁移NOT READY(104/110),详见日文件）
-> 📦 唤醒628 原文已归档 → `daily-memories-data/2026-10-24.md`（含proxy RESTORED+85M=8522/70.3%+5源3.86TiB+done=105/110+5WIP bins@36-85G+ETA~5-10h,详见日文件）
-> 📦 唤醒629 原文已归档 → `daily-memories-data/2026-10-24.md`（含proxy RESTORED+85M=8546/70.5%+5源3.86TiB精确字节+done=105/110+5WIP bins@42-91G,详见日文件）
-> 📦 唤醒630 原文已归档 → `daily-memories-data/2026-10-24.md`（含proxy RESTORED+85M=8568/70.7%+5源3.86TiB精确字节+done=105/110+5WIP bins@47-96G@1.04MB/s,详见日文件）
-> 📦 唤醒631 原文已归档 → `daily-memories-data/2026-10-24.md`（含proxy RESTORED+85M=8588/70.8%+5源3.86TiB精确字节+done=105/110+5WIP bins@52-101G@1.19MB/s,ETA~22:30,详见日文件）
 > 唤醒632（2026-10-24 10:50）运维质询回答+提速：①**分词为何5worker**=旧fullsource(PID2557971,已退出)串行1shard/进程,剩5shard→5进程→load26/224;09:39已升级run_tokenize_env14_parallel_finish.sh(PID3450586):**5shard×13workers=65并发**,load→71;shard进度:2024-51=500/512(98%)2025-13=250/512(49%)2025-18=250/512(49%)2025-21=300/512(59%)2025-26=300/512(59%);.bin=78-84G;ETA~1-1.5h;不重启(丢399GB partial).②**85M线路**=/proc/171042/environ:https_proxy=http://172.19.92.25:13128+无HF_ENDPOINT→**92.25+hf.co直连✓**.③**85M提速**:旧hf_transfer=1串行~19MB/s→kill+重启parallel-16(hf_transfer=0,16workers,PID581957):8文件并行,**~24MB/s**(+26%);8637/12124=71.3%,ETA~6.9天.④迁移NOT READY(105/110).disk:/nas_train 30T(86%)/nas_env 9.6T(4%);load71/224,1785G RAM.📦体积：TASK=31.1KB/MEMORY=26.5KB(无归档)
 
-> 📦 唤醒581~593 原文已归档 → `daily-memories-data/2026-10-21.md`/`2026-10-22.md`（含fullsource bug修复全流程+5源574/574/574验证+done=86→90/110推进,详见日文件）
-> 📦 唤醒574~580 原文已归档 → `daily-memories-data/2026-10-21.md`（含全量分词启动+测速@64workers+Code L3/L2 DONE+Math L3/L1 DONE+UFW-L3 DONE+5源ALL DONE,详见日文件）
-> 📦 唤醒573 原文已归档 → `daily-memories-data/2026-10-21.md`（含en_v1_4下载+分词巡检:PID1875054 alive 11.6h+2.80MB/s+sh96 DONE@02:41+sh97@50/512+分词done=86/110+git up-to-date，详见日文件）
-> 📦 唤醒572 原文已归档 → `daily-memories-data/2026-10-21.md`（含en_v1_4下载+分词巡检:PID1875054 alive 10.3h+2.80MB/s+sh96 DONE@02:41+sh97@3complete+分词done=85/110+git up-to-date，详见日文件）
-> 📦 唤醒571 原文已归档 → `daily-memories-data/2026-10-21.md`（含en_v1_4下载+分词巡检:PID1875054 alive 9h+2.73MB/s+sh96@400/512+分词done=85/110+git up-to-date，详见日文件）
-> 📦 唤醒570 原文已归档 → `daily-memories-data/2026-10-21.md`（含en_v1_4下载+分词巡检:PID1875054 alive 7.6h+2.73MB/s+sh96@384/512+分词done=83/110+git up-to-date）
-> 📦 唤醒569 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4下载+分词巡检:下载PID1875054 alive 6.4h+2.6MB/s+sh96@304/512+分词done=82/110+git up-to-date，详见日文件）
-> 📦 唤醒568 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4下载+分词巡检:下载PID1875054 alive 5.1h+5.4MB/s+sh96@236/512+分词done=80/110+git up-to-date，详见日文件）
-> 📦 唤醒565 原文已归档 → `daily-memories-data/2026-10-20.md`（含执行运维令恢复en_v1_4下载:resolve.py已运行PID1875054+sh95@275/512+分词done=76/110）
-> 📦 唤醒567 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4下载+分词巡检:PID1875054 alive 3.8h+6.4MB/s+sh96@106/512+分词done=79/110）
-> 📦 唤醒566 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4下载+分词巡检:PID1875054 alive 2.6h+6.5MB/s+sh95@444/512+分词done=78/110）
-
-> 📦 唤醒564 原文已归档 → `daily-memories-data/2026-10-20.md`（含暂停令补查+resolve.py自起kill+分词done=74/110）
-> 📦 唤醒563 原文已归档 → `daily-memories-data/2026-10-20.md`（含暂停令巡检+分词done=73/110+DATA_LEDGER更新）
-> 📦 唤醒562 原文已归档 → `daily-memories-data/2026-10-20.md`（含执行暂停令+下载已停+分词done=71/110+暂停点记录）
-> 📦 唤醒561 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4全源分词巡检:done=71/110+1.21T tok+ETA~3天）
-> 📦 唤醒560 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4全源分词巡检:done=70/110+1.19T tok+ETA~3.2天）
-> 📦 唤醒559 原文已归档 → `daily-memories-data/2026-10-20.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers运行37.3h+done=68/110(较558的67增1,1.149T tok done-only,+16B/1.67h)+93 .bin(68done+25in-progress,bin_bytes=4.597TB)+worker /proc/io alive(~1.1MB/s)+下载PID2732959 alive(37.3h,94/110dirs,sh94@278/512,0incomplete,总parquet47893)+全源ETA~3.5天+git up-to-date+85M⏸+体积29.3KB/25.6KB无归档）
-
-> 📦 唤醒558 原文已归档 → `daily-memories-data/2026-10-20.md`（含fullsource done=67/110+1.13T tok+94dirs+ETA~3.5天,详见日文件）
-
-> 📦 唤醒557 原文已归档 → `daily-memories-data/2026-10-20.md`（含fullsource done=62/110+1.05T tok+93dirs+ETA~3天,详见日文件）
-> 📦 唤醒556 原文已归档 → `daily-memories-data/2026-10-20.md`（含fullsource done=61/110+1.03T tok+93dirs+ETA~7天,详见日文件）
-
-> 📦 唤醒555 原文已归档 → `daily-memories-data/2026-10-20.md`（含fullsource done=59/110 1.00T tok+下载93dirs+ETA~8天,详见日文件）
-
-> 📦 唤醒554 原文已归档 → `daily-memories-data/2026-10-20.md`（含fullsource done=53/110 896.53B tok+下载93dirs+ETA~8天,详见日文件）
-
-> 📦 唤醒553 原文已归档 → `daily-memories-data/2026-10-20.md`（含fullsource done=47/110 789.53B tok+下载93dirs+ETA~3.9天,详见日文件）
-
-> 📦 唤醒546–552 原文已归档 → `daily-memories-data/2026-10-19.md` ~ `2026-10-20.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers+done=28→44/110+下载91→93dirs+85M⏸，详见各日文件）
-> 📦 唤醒545 原文已归档 → `daily-memories-data/2026-10-19.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers全占17.4h+done=26/110(较544的23增3,391.56B tok done-only+50.08B/74min=40.6Btok/hr,burst回落)+32 in-progress .bin(2015-35~2019-22大shard,均未完成)+worker /proc/io 6s delta alive(490068+1MB/s,693507+1MB/s,739834+1MB/s)+下载90/110complete sh90DONE@14:39(84.89GB/7.0MB/s)+sh91(2023-14)in-progress@122/512+resolve.py write_bytes 7MB/s+PENDING_DOWNLOAD=20(sh91-110)+32 downloaded queued+全源ETA~3天→~10-22 13:30下载完→~10-23全分完+manifest mtime stale(非correctness问题)+git up-to-date+85M⏸+disk4盘+体积29.3KB/13.7KB无归档）
-> 📦 唤醒544 原文已归档 → `daily-memories-data/2026-10-19.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers throttle@32持续16.1h+done=23/110(较543的17增6,2013-16小shard集中收尾burst,341.48B tok done-only+94.2B/80min=70Btok/hr)+32 in-progress .bin(2015-35~2019-09)+worker /proc/io alive(490068+5.9MB/5s,693507+7.0MB/5s,739834+6.5MB/5s)+下载89/110complete sh90(2023-06)in-progress@448/512+resolve.py write_bytes 6.95MB/s+PENDING_DOWNLOAD=20(sh91-110)+全源ETA~2.85天→~10-22 14:00+git up-to-date+85M⏸+disk4盘+体积29.3KB/13.1KB无归档）
-> 📦 唤醒543 原文已归档 → `daily-memories-data/2026-10-19.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers throttle@32持续14.78h+done=17/110(较542的11增6 burst收尾,247.28B tok done-only+84.93B,burst~62Btok/hr)+32 in-progress .bin(2014-52~2018-34,1.6G-57G,2018-*小shard刚launch)+worker /proc/io alive(490068+5.06MB/5s,693507+3.47MB/5s,739834+5.42MB/5s)+下载89/110complete sh90(2023-06)in-progress@244/512+resolve.py write_bytes 7.24MB/s+PENDING_DOWNLOAD=20(sh91-110)+全源ETA~2.94天→~10-22+git up-to-date+85M⏸+disk4盘+体积29.3KB/12.5KB无归档）
-> 📦 唤醒542 原文已归档 → `daily-memories-data/2026-10-19.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers throttle@32持续13.4h+done=11/110(较541的8增3:2014-49/2015-40/2016-26,162.35B tok done-only+38.33B)+32 in-progress .bin avg~46GB近完成burst+worker /proc/io alive(3653549/2017-47+7.3MB/5s,3218297/2018-05+6.4MB/5s)+下载89/110complete sh89DONE@11:17(86.56GB/7.0MB/s)+sh90@33/512+resolve.py write_bytes 7.08MB/s+git up-to-date+85M⏸+disk4盘+体积29.3KB/31.4KB）
-> 📦 唤醒541 原文已归档 → `daily-memories-data/2026-10-19.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers throttle@32持续12.1h+done=8/110(124.02B tok done-only)+worker .bin增长(2014-49=47.8G/2015-06=46G/2017-47=33G)+下载89/110complete sh88DONE@07:51(80.98GB/4.2MB/s)+sh89@363/512+git up-to-date+85M⏸+disk4盘+体积29.3KB/30.7KB）
-> 📦 唤醒540 原文已归档 → `daily-memories-data/2026-10-19.md`（含en_v1_4全源分词巡检:fullsource PID749330 32workers throttle@32持续10.8h+done=8/110(124.02B tok done-only)+worker .bin增长(2014-49=42.5G/2015-06=43.1G/2017-47=29.6G)+下载88/110complete sh88DONE@07:51(80.98GB/4.2MB/s)+sh89@100/512+git up-to-date+85M⏸+disk4盘+体积29.3KB/29.7KB）
-> 📦 唤醒525–539 原文已归档 → `daily-memories-data/2026-10-18.md` ~ `2026-10-19.md`（含 en_v1_4 下载巡检+假活修复[Errno2 restart PID2732959]+分词口径纠正[全源110shards]+fullsource PID749330 MAX_CONCURRENT=32 启动+bug修复+吞吐800B tok/day+done=0→8/110+下载86→89/110+全源ETA 5→6.5天，详见各日文件）
-> 📦 唤醒505–524 原文已归档 → `daily-memories-data/2026-10-17.md` ~ `2026-10-18.md`（含 en_v1_4 下载巡检 38→39K/56461+WebMix/InternVL/RL-2609/SFT-2605 全就绪+85M⏸，详见各日文件）
-> 📦 唤醒458–504 原文已归档 → `daily-memories-data/2026-10-15.md` ~ `2026-10-17.md`（含 3~4 路下载断点续传健康态+en_v1_4 35K→38K/56461+WebMix 733→2066par+InternVL→1.5T+RL-2609全程监控至20/20+自校PASS+SFT-2605复核通过+85M⏸，详见各日文件）
-> 📦 唤醒451–457 原文已归档 → `daily-memories-data/2026-10-15.md`（含 4 路下载断点续传+WebMix/wit_base 速率趋零 kill+restart+4 路进度对比表，详见各条目）
-> 📦 唤醒444–450 原文已归档 → `daily-memories-data/2026-10-14.md` ~ `2026-10-15.md`（含 恢复全部 4 路下载 setsid 启动+巡检+wrapper 自动重启+4 路进度对比表，详见各日文件）
-> 📦 唤醒428–443 原文已归档 → `daily-memories-data/2026-10-14.md`（含 第 7~17 次复核暂停态+进度表 6 路+.incomplete 保留+disk 4 盘，详见各日文件）
-> 📦 唤醒427 及更早（296–427）流水指针已归档 → `daily-memories-data/2026-10-10.md` ~ `2026-10-14.md`（含 6 路下载巡检全链+暂停/恢复+the_cauldron 完成+GPIC 完成+85M 移交/暂停+en_v1_4 进度 29%~58%+4 路图文对启动+R3 分词+BO R2 等，详见各日文件）
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
