@@ -9,6 +9,26 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-26 09:1x（**优化 16K / 32K 训练吞吐至 600K+**）· 用户直令 · 最高优先
+
+> 用户原话：「pretrain：16卡训练吞吐 seq=8k 吞吐（~605K）已达标；现在继续优化16k和32k训练吞吐，争取达到600K以上」
+
+**① 基线（已达标）**：seq=8192 关 graph，16 卡 ~593K（或按你实测 ~605K），以实测为准写明。
+
+**② 目标**：**seq=16K 与 seq=32K 的训练吞吐各 ≥600K tok/s（16 卡）**。
+
+**③ 现状（复用你 #787/#788 结论直接优化，勿重复取证）**
+- 16K：关 graph = 561K（0.93×），距 600K 差 ~7%，需继续优化。
+- 32K：cp1 OOM@81GB / cp2 被 flash-attn-3 阻断（`window_size=(l,r)` 旧签名，需 patch `window_size_left/right`，调用点在 site-packages）。
+
+**④ 方向（建议，可调整并记录理由）**
+1. **16K**：从 561K 找瓶颈（CP 激活重算 / KV cache / 通信重叠），尝试 context parallel、recompute 粒度微调等合法手段冲 600K+。
+2. **32K**：先 patch CP 路径 flash-attn-3 的 `window_size` 调用跑通，再优化吞吐冲 600K+；若 32K 物理受限（显存/架构），如实给出「当前最优吞吐 + 阻塞点 + 需要什么（如更多显存/升级 flash-attn/改 CP 实现）」。
+
+**⑤ 交付**：逐档记录（配置 → tok/s → 达标? → 瓶颈/结论），溯源脚本/日志；中文本报告 `reports/report_pretrain_seq16k32k_throughput_zh.html` + EXPERIMENTS 更新；commit `pretrain perf:`。
+
+**⑥ 纪律**：只用 .29（如需 16 卡则 2 机）；🚫 不碰 vision/data/harness；数字不伪造。
+
 ### [运维令] 2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
 
 > 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
