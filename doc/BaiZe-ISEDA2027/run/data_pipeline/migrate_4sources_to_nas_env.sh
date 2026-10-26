@@ -42,11 +42,13 @@ BWLIMIT="${BWLIMIT:-300000}"        # KiB/s; 300000 KiB/s ≈ 293 MB/s; 0 = unli
 LOCK="/tmp/migrate_to_nas_env.lock"  # 与旧 migrate_to_nas_env_fast.sh 同锁 ⇒ 串行所有迁移
 
 # 4 sources: name | tokenized subdir | text prefix | dst name
+# 2026-10-26 run4: ufw_en s17 仍被远端进程在写（.bin 持续增长），改为最后迁移；
+#   前 3 源（l1_en_hq/zh/AICC）已稳定完整，先迁它们做出交付，ufw_en 留待 s17 稳定后再跑。
 SOURCES=(
-  "ufw_en|Ultra-FineWeb/ultrafineweb_en|ufw_en_train_s|full_ufw_en"
   "ufw_l1_en_hq|Ultra-FineWeb/ultrafineweb_l1_en_hq|ufw_l1_en_hq_train_s|full_ufw_l1_en_hq"
   "ufw_zh|Ultra-FineWeb/ultrafineweb_zh|ufw_zh_train_s|full_ufw_zh"
   "ultrax_aicc|UltraX-Preview/UltraX-AICC|ultrax_aicc_train_s|full_ultrax_aicc"
+  "ufw_en|Ultra-FineWeb/ultrafineweb_en|ufw_en_train_s|full_ufw_en"
 )
 
 mkdir -p "$DST_BASE" || { echo "[FATAL] cannot create $DST_BASE"; exit 1; }
@@ -118,6 +120,46 @@ for entry in "${SOURCES[@]}"; do
   SRC_BYTES=$(find "$SRC_TOK" -maxdepth 1 \( -name '*.bin' -o -name '*.idx' -o -name '*.json' \) ! -name 'MANIFEST.json' -exec stat -c%s {} + 2>/dev/null | awk '{s+=$1} END{print s+0}')
   echo "  [$(date '+%T')] src tok: ${SRC_BINS} .bin, ${SRC_IDXS} .idx, ${SRC_JSONS} .json, ${SRC_BYTES} bytes"
 
+  # ── 2026-10-26 run4 修复①：稳定性自检（仅 ufw_en）────────────────────────
+  #   run1/2/3 VERIFY FAILED 的真因 = ufw_en s17.bin 仍被远端进程在写（.bin 持续增长），
+  #   对「移动靶」rsync 必然拷出尺寸不对的文件。两次采样 src 总字节（间隔 12s），
+  #   若变化 ⇒ 该源仍在被写 ⇒ SKIP（不 fail 整条迁移），留待稳定后再跑。
+  if [ "$name" = "ufw_en" ]; then
+    B1=$SRC_BYTES
+    sleep 12
+    B2=$(find "$SRC_TOK" -maxdepth 1 \( -name '*.bin' -o -name '*.idx' -o -name '*.json' \) ! -name 'MANIFEST.json' -exec stat -c%s {} + 2>/dev/null | awk '{s+=$1} END{print s+0}')
+    echo "  [$(date '+%T')] ufw_en stability check: b1=$B1 b2=$B2 delta=$((B2 - B1))"
+    if [ "$B1" != "$B2" ]; then
+      echo "  [$(date '+%T')] SKIP ufw_en: src 仍被写（12s 内 +$((B2 - B1)) bytes）—— 留待 s17 稳定后再迁移（前 3 源已迁完即交付）"
+      echo ""
+      continue
+    fi
+    SRC_BYTES=$B2
+  fi
+
+  # ── 2026-10-26 run4 修复②：rsync 前清掉 dst 残留的「旧 partial」──────────
+  #   rsync --partial 遇到 dst 残留的「尺寸 != src 的旧 partial」会误判为可续传，
+  #   结果拷出来尺寸仍不对（run1/2/3 即因此 VERIFY FAILED）。
+  #   逐文件比对：dst 存在且尺寸 != src ⇒ rm dst，让 rsync 全新传输该文件
+  #   （其余尺寸一致的 dst 文件 rsync 自然跳过，不重传）。
+  if [ -d "$DST" ]; then
+    STALE_CNT=0
+    while IFS= read -r sf; do
+      bn=$(basename "$sf")
+      df="$DST/$bn"
+      if [ -e "$df" ]; then
+        ss=$(stat -c%s "$sf" 2>/dev/null || echo 0)
+        ds=$(stat -c%s "$df" 2>/dev/null || echo 0)
+        if [ "$ss" != "$ds" ]; then
+          echo "  [$(date '+%T')] stale dst partial: $bn src=$ss dst=$ds -> rm dst (force fresh transfer)"
+          rm -f "$df"
+          STALE_CNT=$((STALE_CNT + 1))
+        fi
+      fi
+    done < <(find "$SRC_TOK" -maxdepth 1 \( -name '*.bin' -o -name '*.idx' -o -name '*.json' \) ! -name 'MANIFEST.json' 2>/dev/null)
+    [ "$STALE_CNT" -gt 0 ] && echo "  [$(date '+%T')] removed $STALE_CNT stale dst partial(s) before rsync"
+  fi
+
   echo "  [$(date '+%T')] starting rsync (bwlimit=${BWLIMIT}KiB/s)..."
   T0=$(date '+%s')
   nice -n "$NICE_VAL" rsync "${RSYNC_OPTS[@]}" "$SRC_TOK/" "$DST/" 2>&1 | sed 's/^/    /'
@@ -144,6 +186,15 @@ for entry in "${SOURCES[@]}"; do
   # DST_BYTES 可能为空（du 对不存在目录返回空）→ 用 -z 兜底，避免 [: integer expression expected
   if [ -z "$DST_BYTES" ] || [ "$SRC_BYTES" -ne "$DST_BYTES" ]; then
     echo "  [$(date '+%T')] MISMATCH: bytes $SRC_BYTES != ${DST_BYTES:-<missing>}"
+    # 2026-10-26 run4：bytes 不等时逐文件列出差异，便于定位（而非只报总和）。
+    echo "  [$(date '+%T')] per-file diff (src vs dst):"
+    while IFS= read -r sf; do
+      bn=$(basename "$sf")
+      df="$DST/$bn"
+      ss=$(stat -c%s "$sf" 2>/dev/null || echo -1)
+      ds=$(stat -c%s "$df" 2>/dev/null || echo -1)
+      [ "$ss" != "$ds" ] && echo "    DIFF $bn src=$ss dst=$ds"
+    done < <(find "$SRC_TOK" -maxdepth 1 \( -name '*.bin' -o -name '*.idx' -o -name '*.json' \) ! -name 'MANIFEST.json' 2>/dev/null)
     OK=0
   fi
 
