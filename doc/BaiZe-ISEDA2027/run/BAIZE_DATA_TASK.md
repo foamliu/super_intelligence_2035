@@ -9,6 +9,18 @@
 
 > ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 
+> 🆕 §运维令·2026-10-26 13:1x（**迁移 4 份新分词数据到 /nas_env**）· 用户直令 · 最高优先
+
+> 用户原话：「data: 把 ufw_en（ultrafineweb_en）、ufw_l1_en_hq（ultrafineweb_l1_en_hq）、ufw_zh（ultrafineweb_zh）、UltraX-AICC 这四份数据也迁移到 /nas_env 去。」
+> **任务**：把这 4 份已分词数据迁到 `/nas_env`，方式与之前迁移 5 源完全一致（复用 `migrate_to_nas_env_fast.sh`，bwlimit 300000 KiB/s、`--partial` + `flock` 单实例锁）。
+> **迁移对象**（tokenized 镜像内的 4 个目录，131 shard ≈ 4.05TB）：
+> - `tokenized/Ultra-FineWeb/ultrafineweb_en`（32）
+> - `tokenized/Ultra-FineWeb/ultrafineweb_l1_en_hq`（94）
+> - `tokenized/Ultra-FineWeb/ultrafineweb_zh`（4）
+> - `tokenized/UltraX-Preview/UltraX-AICC`（1）
+> **做法**：迁移底层数据 → `/nas_env`，tokenized/ 原路径改为 **symlink** 指向 /nas_env（镜像路径与 `INDEX.tsv` 逻辑不动）；迁移完成后 `gen_data_mapping_md.py` 重跑，`DATA_MAPPING.md` 的 storage 列同步为 symlink。
+> **判据**：`df` 确认 `/nas_train` 释放 ~4TB、`/nas_env` 相应增长；`INDEX.tsv` triplet=OK、inode_ok 不变。🚫 迁移只在有锁单实例内跑、不重复迁、不得就地改在跑脚本。commit `data migrate:`。
+
 > 🆕 §运维令·2026-10-26 10:4x（**围绕 DATA_MAPPING.md 写数据情况列表报告**）· 用户直令 · 最高优先
 
 > 用户原话：「那就让data写个报告，围绕DATA_MAPPING.md，列表讲清楚数据情况。」
