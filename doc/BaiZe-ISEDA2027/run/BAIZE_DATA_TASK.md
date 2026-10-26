@@ -9,6 +9,21 @@
 
 > ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 
+> 🆕 §运维令·2026-10-26 14:4x（**SFT-2605/Agent-2609 加入映射表+报告；删报告第 4 节**）· 用户直令 · 最高优先
+
+> 用户原话：① 把 `/nas_inference/app.e0031982/datasets/openbmb` 下 `UltraData-SFT-2605`、`UltraData-SFT-Agent-2609` 两份数据加入 `run/data/DATA_MAPPING.md` 和 `report_data_mapping_zh.html`；② 报告「4. 其余状态源（未分词/未映射/已删除/已废弃）」这节数据已删、没必要保留，删除该节。
+
+**① 加入两份数据（先核查分词状态，再如实登记）**
+- 源路径：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/`（no_think + think）与 `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/`（Code_Agent/General_Agent/Search_Agent/Tool_Use）。
+- 先查这两份是否已有分词产物（`.bin/.idx/.json`）：
+  - **已分词未镜像** → 镜像进 `tokenized/` + 更新 `INDEX.tsv` + 重跑 `gen_data_mapping_md.py`，使 DATA_MAPPING.md 自动含这两份（状态=镜像完整，storage 如实）。
+  - **未分词** → 在 DATA_MAPPING.md 以「未分词」状态如实登记（并标注，不伪造「已分词/镜像完整」）。
+- 每份列出：下载目录 → 镜像路径（或「—」）→ shard 数 → tokens → 字节 → 状态，数字溯源。
+
+**② 更新报告 `report_data_mapping_zh.html`**：加入这两份数据的行；**删除「4. 其余状态源（未分词/未映射/已删除/已废弃）」整节**（数据已删，节号顺延）。
+
+**③ 提交**：`DATA_MAPPING.md` + 报告一起 commit + push（前缀 `data report:`），心跳报字节数变化。
+
 > 🆕 §运维令·2026-10-26 13:1x（**迁移 4 份新分词数据到 /nas_env**）· 用户直令 · 最高优先
 
 > 用户原话：「data: 把 ufw_en（ultrafineweb_en）、ufw_l1_en_hq（ultrafineweb_l1_en_hq）、ufw_zh（ultrafineweb_zh）、UltraX-AICC 这四份数据也迁移到 /nas_env 去。」
