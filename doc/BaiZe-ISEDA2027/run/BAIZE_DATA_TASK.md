@@ -20,6 +20,10 @@
 > - `tokenized/UltraX-Preview/UltraX-AICC`（1）
 > **做法**：迁移底层数据 → `/nas_env`，tokenized/ 原路径改为 **symlink** 指向 /nas_env（镜像路径与 `INDEX.tsv` 逻辑不动）；迁移完成后 `gen_data_mapping_md.py` 重跑，`DATA_MAPPING.md` 的 storage 列同步为 symlink。
 > **判据**：`df` 确认 `/nas_train` 释放 ~4TB、`/nas_env` 相应增长；`INDEX.tsv` triplet=OK、inode_ok 不变。🚫 迁移只在有锁单实例内跑、不重复迁、不得就地改在跑脚本。commit `data migrate:`。
+> **⑤ 迁移完成后必须刷新并提交推送（用户补令）**：
+> 1. 重跑 `gen_data_mapping_md.py` → 刷新 `run/data/DATA_MAPPING.md`（storage 列 = symlink、triplet/inode 更新）；
+> 2. 基于新 `DATA_MAPPING.md` **重新生成** `reports/report_data_mapping_zh.html`（列表数字同步迁移后的状态）；
+> 3. 两个文件一起 `git add` + commit + push（前缀 `data migrate:` 或 `data report:`）。
 
 > 🆕 §运维令·2026-10-26 10:4x（**围绕 DATA_MAPPING.md 写数据情况列表报告**）· 用户直令 · 最高优先
 
