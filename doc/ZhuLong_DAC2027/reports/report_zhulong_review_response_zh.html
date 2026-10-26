@@ -63,7 +63,8 @@
     <li><span class="todo">✗</span> 摘要仍只给 57.4pp / 22.0pp 跨度，未显式提 13.5pp 受控回读轴 → 本函 §1.2 给出拟改文本。</li>
     <li><span class="todo">✗</span> §5 benchmark 无 release/reproducibility 声明 → 本函 §1.3 给出拟补段落。</li>
     <li><span class="todo">✗</span> 摘要"Bayesian argument bounds by observation fidelity"措辞仍偏强 → 本函 §1.1 给出柔和化措辞。</li>
-    <li><span class="todo">✗</span> 未加 Wilson CI / 配对比较 → 本函 §2.2 给出拟加位置与数值（待重新跑统计）。</li>
+    <li><span class="ok">✓</span> Wilson 95% CI <b>已重算（本轮）</b>：pooled n=2245，七配置 CI 数值见 §1.5（Full [73.86, 77.41]、N′ [60.16, 64.17]、B [63.49, 67.42]、Pure-LLM [16.76, 19.96] 等）。N′→F gap 13.5pp 给独立比例正态近似 CI [10.82, 16.18]pp。<span class="todo">paired bootstrap 仍待跑</span>（需 per-task regrade，§1.5 已给方法学）。</li>
+    <li><span class="ok">✓</span> cost 数字源 <b>已定位（本轮）</b>：陈熙元 commit <code>47519292</code> 已将 <code>tab:cost</code>（Time/In.tok/Rounds/run_code·5 配置 × 5-run mean±s.d.）合并入 <code>6_exp.tex</code>。USD 因内部网关非公开价，§2.1 给防御性句式。</li>
   </ul>
 </div>
 
@@ -118,7 +119,7 @@ The full 449-task set derives from non-redistributable vendor documentation and 
 
 <h3>1.5 意见 #5 — 组件贡献不均匀（Major）</h3>
 <p><b>意见摘录：</b><span class="quote">"The full system does not win every slice. On SKILL, ZhuLong scores 60.3%, below the 61.5% reported without offline self-exploration. On PyAether, removing retrieval barely hurts … The paper itself notes that toolchain-specific effects vary substantially."</span></p>
-<p><b>判定：</b><span class="verdict v-done">已落实</span>（叙述）+ <span class="verdict v-todo">待改</span>（Wilson CI）</p>
+<p><b>判定：</b><span class="verdict v-done">已落实</span>（叙述）+ <span class="verdict v-done">已落实</span>（Wilson CI·本轮重算）+ <span class="verdict v-todo">待改</span>（paired bootstrap·需 per-task regrade）</p>
 <p><b>证据位置：</b> <code>6_exp.tex:56</code>、<code>6_exp.tex:62</code>、<code>6_exp.tex:105</code>、<code>7_discussion.tex:7</code></p>
 <p><b>现行正文（已写）：</b></p>
 <ul>
@@ -131,16 +132,17 @@ The full 449-task set derives from non-redistributable vendor documentation and 
 <p><b>拟补一句（加在 <code>6_exp.tex:105</code> 末尾）：</b></p>
 <p class="quote new">The contribution is thus a generally effective architecture whose component magnitudes are toolchain-dependent; on PyAether the read-back channel substitutes for retrieval, and on SKILL the offline-self-exploration increment is locally negative, but the joint observation+execution loop is shared and reproduces on every slice.</p>
 <p><b>Wilson CI（待改项）：</b> 评审 §128 明确要求"confidence intervals and paired comparisons"。本文现行 5 配置 × 5 run 仅报 mean±s.d.，未给 CI。拟在 <code>6_exp.tex:50</code> 主结果句后加一句：</p>
-<p class="quote new">Wilson 95% intervals on the pooled Pass@1 are Full [72.7, 78.5], RAG [58.6, 66.2], w/o-Self-Expl. [69.4, 75.4], w/o-Retrieval [72.0, 78.0], Pure-LLM [15.0, 21.8]; the controlled N'→F read-back gap 13.5pp has a paired bootstrap 95% interval [8.2, 18.4]pp.</p>
-<p><span class="todo">注（待重新跑统计）：</span> 上述 Wilson / bootstrap 数值为<b>占位推测</b>，需用 <code>zhulong_results.md</code> 的 5-run 原始数据重算后填入。本轮未跑统计脚本，标 <span class="verdict v-todo">待改</span>。</p>
+<p class="quote new">Wilson 95% intervals on the pooled Pass@1 (n=2245=449×5) are Full [73.86, 77.41], w/o-Self-Expl. [70.72, 74.41], w/o-Retrieval [62.00, 65.97], RAG [60.47, 64.47], N′ [60.16, 64.17], B [63.49, 67.42], Pure-LLM [16.76, 19.96]; the controlled N′→F read-back gap of 13.50 pp has a normal-approx independent-proportion 95% interval [10.82, 16.18] pp (SE=1.37 pp). A paired bootstrap on the same gap is deferred: it requires per-task pass/fail arrays paired across the N′ and F arms, which are not stored in batch dirs (only counts are) and would need a one-shot regrade pass over both arms' batches to extract.</p>
+<p><span class="ok">✓ Wilson CI（已重算·本轮）：</span> 用 <code>6_exp.tex:18-27</code> Table 3 的 pooled mean 与 n=2245（449 任务 × 5 run）按 Wilson score interval 公式 <code>center ± z·√(p(1−p)/n + z²/(4n²))/(1+z²/n)</code> 算得，z=1.96。数值取整到 2 位小数。源数据：<code>zhulong_results.md</code> 5-run 各切片分表（行 81–511）+ 论文 Table 3。<span class="verdict v-done">已落实</span></p>
+<p><span class="todo">注（paired bootstrap 仍待跑）：</span> 上述 N′→F gap 13.5pp 的 CI 为<b>独立比例正态近似</b>（保守·比 paired 紧）。<b>配对 bootstrap</b> 需要两条臂<b>同任务集</b>的 per-task pass/fail 数组：N′ 臂 batch <code>2026_1019_035502 / 2026_1019_071104 / 2026_1019_145634 / 2026_1021_104432</code>（r1–r4）+ F 臂 = C1.full_v3 r1–r5（batch <code>2026_1018_*</code>）。batch 目录 <code>stats/</code> 仅存 success/failure/timeout 计数文件（非 per-task 列表），故需对两臂 batch 跑一次 regrade 提取 per-task 二元结果，再做 10⁴ 重采样 bootstrap。本轮未跑（耗时 + 不在 5-run 等待空档的关键路径上），标 <span class="verdict v-todo">待改</span>。</p>
 
 <h2>2. 五条 Strongly-recommended 逐条回应</h2>
 
 <h3>2.1 §155-1 — latency / tool calls / token / cost 与 Pass@1 并列</h3>
-<p><b>判定：</b><span class="verdict v-done">已落实</span>（latency + tool-calls）+ <span class="verdict v-partial">部分落实</span>（token / cost 未单列）</p>
-<p><b>证据：</b> <code>6_exp.tex:6,16</code> 主结果表右两列为 291-task 审计子集的 per-task operating cost（latency + tool-calls，5-run mean±s.d.）。Token usage 与 USD cost 未在正文单列——审计子集仅含 291 任务，PyAether 158 任务未审计，故未做 pooled token 表。<b>拟在 <code>6_exp.tex:62</code> 的"27% net-active solve time"句后补一句：</b></p>
-<p class="quote new">Per-task token usage and USD cost on the 291-task audited subset are reported in the supplementary material; the full-system median is X tokens / $Y per task, vs. Z / $W for w/o-Retrieval (which spends 2.3× the time but fewer tokens, since blind sandbox probing fails fast).</p>
-<p><span class="todo">注：</span> X/Y/Z/W 为占位，需从审计子集原始日志提取。<span class="verdict v-todo">待改</span>。</p>
+<p><b>判定：</b><span class="verdict v-done">已落实</span>（latency + tool-calls + token·陈熙元 <code>47519292</code> 已合并入 <code>tab:cost</code>）+ <span class="verdict v-defend">已防御</span>（USD 走内部网关非公开价·已给防御性句式）</p>
+<p><b>证据：</b> <code>6_exp.tex:6,16</code> 主结果表右两列为 291-task 审计子集的 per-task operating cost（latency + tool-calls，5-run mean±s.d.）。<b>Token usage 已在主表</b>（<code>6_exp.tex:234-240</code> <code>tab:cost</code>：Pure LLM 71±2k、RAG 226±12k、w/o-Retrieval 670±75k、w/o-Self-Expl. 732±75k、Full 669±63k input tokens；Time 163/174/904/535/390 s；Rounds 4.4/8.5/23.3/20.3/18.2；run_code 0/0/23.0/13.1/11.5）。<b>源</b>：陈熙元 commit <code>47519292</code>「陈熙元改进论文，填充实验数据」（2026-10-24），已合并入主线，<code>tab:cost</code> 即其原表。<b>USD cost 未单列</b>：审计子集仅含 291 任务、PyAether 158 任务未审计，且 USD 需 backbone 定价（DeepSeek-V4-Pro 内部网关、非公开价）→ 若评审要求 USD，建议改为"internal gateway pricing, not discloseable"或换算为 token·秒两个可复现单位。<b>拟在 <code>6_exp.tex:62</code> 的"27% net-active solve time"句后补一句：</b></p>
+<p class="quote new">Table~\ref{tab:cost} reports per-task time, input tokens, rounds, and \texttt{run\_code} calls on the 291-task audited subset (SKILL + two Tcl hosts; PyAether pending audit); the full system's median is 390 s / 669k input tokens per task, vs. 904 s / 670k for w/o-Retrieval (blind sandbox probing spends 2.3$\times$ the time at nearly identical token counts). USD cost is omitted because the backbone runs on an internal gateway with non-public pricing; the token and time figures above are the reproducible units.</p>
+<p><span class="ok">✓ cost 数字源（已定位·本轮）：</span> 陈熙元 commit <code>47519292</code> 已将 <code>tab:cost</code>（Time/In.tok/Rounds/run_code 四列·5 配置 × 5-run mean±s.d.）合并入主线 <code>6_exp.tex</code>。本函上述新句只是把 <code>tab:cost</code> 数字直接引入正文（评审 §155 要求"cost 与 Pass@1 并列"——主表已并列，正文句再加一句把数字带进叙述）。<span class="verdict v-done">已落实</span>（latency + token + tool-calls）+ <span class="verdict v-defend">已防御</span>（USD 不公开）。</p>
 
 <h3>2.2 §158-2 — SKILL 自探索回归 + 大方差解释</h3>
 <p><b>判定：</b><span class="verdict v-done">已落实</span>（SKILL）+ <span class="verdict v-partial">部分落实</span>（方差）</p>
@@ -168,7 +170,7 @@ The full 449-task set derives from non-redistributable vendor documentation and 
 <tr><td>1</td><td>Correct the 57.4-point observation claim everywhere</td><td><span class="verdict v-partial">部分落实</span></td><td>§4.2、§6.2 已分；摘要拟改见本函 §1.2。</td></tr>
 <tr><td>2</td><td>Reframe or formalize the grounding-gap claim</td><td><span class="verdict v-done">已落实</span></td><td>§4.2 已降为 Claim + "prediction rather than theorem"（<code>4_grounding.tex:56</code>）。</td></tr>
 <tr><td>3</td><td>Strengthen baseline + reproducibility story</td><td><span class="verdict v-partial">部分落实</span></td><td>基线见 §1.4；reproducibility 见 §1.3 拟补 §5.5。</td></tr>
-<tr><td>4</td><td>Add cost and statistical evidence</td><td><span class="verdict v-partial">部分落实</span></td><td>cost 列已在主表（<code>6_exp.tex:6</code>）；Wilson CI / paired bootstrap 待重算（§1.5）。</td></tr>
+<tr><td>4</td><td>Add cost and statistical evidence</td><td><span class="verdict v-partial">部分落实</span></td><td>cost 列已在主表（<code>6_exp.tex:6</code>·陈熙元 <code>47519292</code> 填充）；Wilson 95% CI 已重算（§1.5·pooled n=2245）；paired bootstrap 待跑（需 per-task regrade·§1.5 标 TODO）。</td></tr>
 <tr><td>5</td><td>Explain cross-runtime regressions; split Tcl</td><td><span class="verdict v-done">已落实</span>（回归）</td><td>SKILL −1.2pp 已披露（<code>6_exp.tex:105</code>）；Tcl 拆分见 §2.3 拟补表注。</td></tr>
 <tr><td>6</td><td>Tighten contribution statement</td><td><span class="verdict v-partial">部分落实</span></td><td>摘要拟改 §1.1 + §1.2 已强化"empirical system + testable claim"定位。</td></tr>
 </table>
@@ -191,7 +193,9 @@ The full 449-task set derives from non-redistributable vendor documentation and 
 <ul>
   <li><b>30-task PyAether 公开子集是否真存在</b>——若仅依赖公开 Empyrean Aether Python 文档的任务不足 30 个，§5.5 拟补段落的数字需改。</li>
   <li><b>Wilson CI / paired bootstrap 数值</b>——需用 <code>zhulong_results.md</code> 5-run 原始数据跑统计脚本（<code>scipy</code> 或手算 Wilson），本轮未跑。</li>
-  <li><b>token / USD cost 数字</b>——需从 291-task 审计子集原始日志提取，本轮未跑。</li>
+  <li><b>token / USD cost 数字</b>——<span class="ok">✓ 已定位</span>：陈熙元 commit <code>47519292</code> 已将 <code>tab:cost</code>（Time/In.tok/Rounds/run_code·5 配置 × 5-run mean±s.d.）合并入主线 <code>6_exp.tex</code>。USD 因 backbone 走内部网关非公开价，建议防御性表述（§2.1 已给句式）。</li>
+  <li><b>Wilson 95% CI</b>——<span class="ok">✓ 已重算（本轮）</span>：pooled n=2245，七配置 CI 见 §1.5。</li>
+  <li><b>paired bootstrap on N′→F gap 13.5pp</b>——<span class="todo">✗ 待跑</span>：需对两臂 batch 跑 per-task regrade 提取二元结果，再 10⁴ 重采样。已给方法学与 batch ID。</li>
   <li><b>部署指标可披露范围</b>——需用户与部署方确认。</li>
   <li><b>SKILL 自探索回归的 per-task 失败分析</b>——需 SKILL 切片 trace 重审，本轮未做。</li>
 </ul>
@@ -208,9 +212,9 @@ The full 449-task set derives from non-redistributable vendor documentation and 
 <ol>
   <li><b>P0（提交前必改）</b>：摘要 13.5pp split（§1.2）+ 摘要理论措辞柔和化（§1.1）——纯文本改动，无新数据。</li>
   <li><b>P0</b>：§5.5 Release and reproducibility 段落（§1.3）——文本 + 待用户确认 30-task 数字。</li>
-  <li><b>P1（强烈建议）</b>：Wilson CI / paired bootstrap（§1.5）——需重跑统计脚本。</li>
+  <li><b>P1（强烈建议）</b>：Wilson CI <span class="ok">✓ 已重算（§1.5）</span>；paired bootstrap 仍待跑（per-task regrade 后 10⁴ 重采样）。</li>
   <li><b>P1</b>：§6.3 reframe 句（§1.5）+ §6.2 baseline 对齐句（§1.4）——纯文本。</li>
-  <li><b>P1</b>：token / USD cost 指向 supplementary（§2.1）——需日志提取。</li>
+  <li><b>P1</b>：token cost 已在主表 <code>tab:cost</code>（陈熙元 <code>47519292</code>），USD 防御性表述句式见 §2.1。</li>
   <li><b>P2（锦上添花）</b>：SKILL 自探索回归机制推测（§2.2）+ WaveView/Innovus 拆分表注（§2.3）+ deployment 指针（§2.5）。</li>
   <li><b>P2</b>：重编译 pdflatex×1 + bibtex + pdflatex×2，验 7 页 / 0 undefined / 无 Overfull。</li>
 </ol>
