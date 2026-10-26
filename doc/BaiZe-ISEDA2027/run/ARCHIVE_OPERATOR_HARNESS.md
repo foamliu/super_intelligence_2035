@@ -1,6 +1,53 @@
 # ARCHIVE — 历史运维指令（源自 BAIZE_HARNESS_TASK.md）
 
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
+## 归档 2026-10-26（由 BAIZE_HARNESS_TASK.md 搬入，原文未改）
+
+> 搬入：2026-10-26 R517。两条运维令均已交付并 commit（08:2x 报告 R516 commit 7c9583236 / 17:5x 复跑 R502-R516）。原文未改，仅搬迁；完成结论见任务书对应 1 行指针。
+
+### [运维令] 2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
+
+> 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
+
+**任务**：写本线（harness）最近工作（10-20 起）总结报告 `reports/report_harness_recent_work_zh.html`（自包含中文 HTML）。
+- 结构：① 本线定位 → ② 近期任务逐个 → ③ 关键数据速查表 → ④ 阻塞/待拍板 → ⑤ 下一步建议。
+- **必覆盖**：① 卡死恢复（僵尸 git/python/sessions 清理 + CLINE_TIMEOUT 1500→3600 + 分阶段落盘）；② H-B 上下文压缩报告交付（7 harness 机制对比，58KB）；③ Terminal-Bench 7×89 横评（Gate 7/7 → 7×89 并发 → 全 7 路 FIN 87/87 + McNemar）；④ codex/claude-code infra 修复 + hermes/claude-code 复跑（57.5%/32.4% vs 原 0%）。
+- 数字溯源（log/json 文件:行）；遵守命名规程（正文一律写 `cline`）；commit `harness report:`。
+
+### [运维令] 2026-10-25 17:5x（**授权：hermes / claude-code 全量复跑 89 题 + 排查 codex 高 err**）· 用户直令 · 最高优先
+> 用户原话：「harness：授权 hermes/claude-code 全量复跑 89 题、排查 codex 高 err」
+> 前置已闭合：08:2x 适配器修复令（claude-code smoke 4/5、hermes 4/5、deepseek 0/5 卡上游 SDK）由 R492-R497 交付并核验，本令是它的后续动作。
+> 不许 kill `SWE-bench Verified` 下载进程（当前 272/500）；不许动 cline / opencode / pi 的既有结果与容器配置。
+
+**1) 复跑：hermes + claude-code 全量 89 题（两路各自独立跑）**
+- 配置必须与 7x89 完全一致（同镜像、同 TB_API_KEY、同超时 / verifier / 并发度），**只换适配器版本**；不许改题、不许改 reward 口径、不许放宽断言。
+- 分母口径：任务书 89 题 = 实际 canonical 87（去 `__hash` 重复）+ 2 题镜像 / 环境不可跑。**若跑不满 89，必须写明是哪 2 题、什么原因**，禁静默跳过。
+- 结果落**新目录**：`/tmp/tb_7x89/jobs_hermes_rerun_20261025/`、`/tmp/tb_7x89/jobs_claude-code_rerun_20261025/`；旧 `jobs_hermes/`、`jobs_claude-code/` **只读、不许覆盖 / 删除**（要逐题配对）。
+- **先跑 10 题判活**：任意 1 题 pass 才继续跑满（避免再白烧 8-12h）；仍 0 pass 就停跑、保留现场、写卡点。
+- 预计机时：2 路并行各 87 题约 8-12h；每 4h 在 MEMORY 落一次进度（done / pass / err），防判死。
+- 判据：两路通过率**均大于 0**，并给「旧 0% 到新 x%」逐题配对表（旧 reward 用 `/tmp/tb_7x89/jobs_*` 实测）。
+
+**2) 排查：codex 高 err（20/87=23.0%，59 exception）**
+- **先分类，再归因，最后才改**：逐 trial 读 `exception.txt` / `result.json` / agent 日志，按异常类型合并计数（AgentTimeoutError / NonZeroAgentExitCode / RuntimeError / context 超限 / tool-call 解析失败 / 429 或网关 403 / 其他），贴前 3 条原文。
+- 三选一定性，每条都要证据：
+  (a) **适配器 bug**：CLI 调用方式、`config.toml`（sandbox / approval / max_turns）、退出码与超时处理、工作目录写权限；
+  (b) **容量 / 上下文**：codex 默认上下文或输出上限导致中途截断；
+  (c) **上游服务**：429 / 超时 / 代理 403（对照 loop 剥代理的既定做法）。
+- 对照物：**同题上 cline / pi 的通过样本 trace** + 源码 diff（`terminalbench/agents/codex.py` 对 `cline_patched.py`）。
+- 修了就要验：挑 5 题 smoke（至少 2 题是旧 codex err 的题），判据 = 至少 1 pass，或该异常类型计数显著下降；**补跑 codex 全量前先报「预计机时 + 与 SWE-bench 下载 / 复跑共存的 load」**，别三线挤爆。
+- 若判定「非适配器可修」，写清卡点与证据，不硬改。
+
+**3) 产出**
+- 报告 `reports/report_harness_hermes_claude_rerun_codex_err_zh.html`（中文 HTML 自包含、0 `<script>` / 0 外链）：复跑前后配对表、codex err 分类表、根因、修法或未修原因、结论。**报告一律写 `cline`**（常驻命名规程）。
+- 逐题汇总 `run/harness/summary_rerun_20261025.json`（task / harness / reward / err_type）。
+- `MEMORY_HARNESS.md` 首部新块 + `run/daily-memories-harness/2026-10-25.md`；commit 前缀 `harness rerun:`。
+
+**铁律**
+- 旧结果只读；新结果进新目录；**不许用「放宽 verifier / 改 reward / 跳过断言」提分**。
+- 不许把「0 pass」直接归因为「模型不行」，必须证明 agent 真调用了模型、真产出 patch。
+- 不许编造 / 估算通过率；一律 `reward.txt` 实测，取不到写「未取到 + 原因」。
+
+
 ## 归档 2026-10-25（由 BAIZE_HARNESS_TASK.md 搬入，原文未改）
 
 ### 🚨 运维令 · 2026-10-25 08:2x（**排查并修复 claude-code / hermes / deepseek 通过率 0% 的适配器 bug；修复期间这三个停跑**）· 用户直令 · 最高优先
