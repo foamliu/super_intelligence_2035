@@ -480,3 +480,35 @@
 [swebench-pull] [469/500] OK sympy__sympy-19040 pulled=469 failed=0 skipped=0
 [swebench-pull] [470/500] OK sympy__sympy-19346 pulled=470 failed=0 skipped=0
 [swebench-pull] [471/500] OK sympy__sympy-19495 pulled=471 failed=0 skipped=0
+[swebench-pull] [472/500] OK sympy__sympy-19637 pulled=472 failed=0 skipped=0
+[swebench-pull] [473/500] OK sympy__sympy-19783 pulled=473 failed=0 skipped=0
+[swebench-pull] [474/500] OK sympy__sympy-19954 pulled=474 failed=0 skipped=0
+[swebench-pull] [475/500] OK sympy__sympy-20154 pulled=475 failed=0 skipped=0
+[swebench-pull] [476/500] OK sympy__sympy-20428 pulled=476 failed=0 skipped=0
+[swebench-pull] [477/500] OK sympy__sympy-20438 pulled=477 failed=0 skipped=0
+[swebench-pull] [478/500] OK sympy__sympy-20590 pulled=478 failed=0 skipped=0
+[swebench-pull] [479/500] OK sympy__sympy-20801 pulled=479 failed=0 skipped=0
+[swebench-pull] [480/500] OK sympy__sympy-20916 pulled=480 failed=0 skipped=0
+[swebench-pull] [481/500] OK sympy__sympy-21379 pulled=481 failed=0 skipped=0
+[swebench-pull] [482/500] OK sympy__sympy-21596 pulled=482 failed=0 skipped=0
+[swebench-pull] [483/500] OK sympy__sympy-21612 pulled=483 failed=0 skipped=0
+[swebench-pull] [484/500] OK sympy__sympy-21847 pulled=484 failed=0 skipped=0
+[swebench-pull] [485/500] OK sympy__sympy-21930 pulled=485 failed=0 skipped=0
+[swebench-pull] [486/500] OK sympy__sympy-22080 pulled=486 failed=0 skipped=0
+[swebench-pull] [487/500] OK sympy__sympy-22456 pulled=487 failed=0 skipped=0
+[swebench-pull] [488/500] OK sympy__sympy-22714 pulled=488 failed=0 skipped=0
+[swebench-pull] [489/500] OK sympy__sympy-22914 pulled=489 failed=0 skipped=0
+[swebench-pull] [490/500] OK sympy__sympy-23262 pulled=490 failed=0 skipped=0
+[swebench-pull] [491/500] OK sympy__sympy-23413 pulled=491 failed=0 skipped=0
+[swebench-pull] [492/500] OK sympy__sympy-23534 pulled=492 failed=0 skipped=0
+[swebench-pull] [493/500] OK sympy__sympy-23824 pulled=493 failed=0 skipped=0
+[swebench-pull] [494/500] OK sympy__sympy-23950 pulled=494 failed=0 skipped=0
+[swebench-pull] [495/500] OK sympy__sympy-24066 pulled=495 failed=0 skipped=0
+[swebench-pull] [496/500] OK sympy__sympy-24213 pulled=496 failed=0 skipped=0
+[swebench-pull] [497/500] OK sympy__sympy-24443 pulled=497 failed=0 skipped=0
+[swebench-pull] [498/500] OK sympy__sympy-24539 pulled=498 failed=0 skipped=0
+[swebench-pull] [499/500] OK sympy__sympy-24562 pulled=499 failed=0 skipped=0
+[swebench-pull] [500/500] OK sympy__sympy-24661 pulled=500 failed=0 skipped=0
+[swebench-pull] === BATCH idx=500 pulled=500 failed=0 skipped=0 disk_free=6134GB ===
+[swebench-pull] DONE 2026-10-26 18:23:06 total=500 pulled=500 failed=0 skipped=0
+[swebench-pull] swebench/* present: 500 / 500
