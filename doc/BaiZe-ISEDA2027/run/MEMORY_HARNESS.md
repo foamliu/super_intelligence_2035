@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A SWE-bench Verified 就绪核查完成(R518)+R519/R520活性复检确认状态未退化; 等运维拍板20条试点; 运维指令区无未完成指令.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查报告✅(11323B,8节,13项全溯源)·R519活性复检✅·R520防判死心跳✅(归档R507-R517)
-当前动作:     R520 防判死心跳(R519后~68min>60min阈值). liveness 5项实测全通过:①swebench500/500(不变)②pretrain loop在.29 PID1401353 etimes~53.7h需避让③load10.33/224(~4.6%)④/data6.0T free⑤ops/inbox RUN_ID219-221均pretrain线无harness新指令. 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效.
+PHASE:        H-A SWE-bench Verified 就绪核查完成(R518)+R519/R520/R521活性复检确认状态未退化; 等运维拍板20条试点; 运维指令区无未完成指令.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查报告✅(11323B,8节,13项全溯源)·R519活性复检✅·R520防判死心跳✅(归档R507-R517)·R521防判死心跳✅
+当前动作:     R521 防判死心跳(R520后~68min>60min阈值). liveness 5项实测全通过:①swebench500/500(不变)②/data6.0T free③load10.08/224(~4.5%)④pretrain loop在.29 PID1401353 etimes~55h需避让⑤ops/inbox RUN_ID220-221均pretrain线无harness新指令. 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效.
 下一步:       ①等运维拍板20条Verified试点(先cline+hermes smoke 1条→20条→报初步结果→放大决策); ②codex全量补跑待运维拍板; ③H-B续作(机制维度扩展)
-阻塞:         无未完成运维指令. H-A Verified试点待运维拍板(就绪报告R518已交付+R519/R520复检确认状态未退化,§3先报预算再跑).
+阻塞:         无未完成运维指令. H-A Verified试点待运维拍板(就绪报告R518已交付+R519/R520/R521复检确认状态未退化,§3先报预算再跑).
 ERROR_COUNT:  0
-📦 体积：TASK=26994B(26KB) / MEMORY=见收尾(≤32KB✓,本轮归档R507-R517→daily 10-26)
+📦 体积：TASK=26994B(26KB) / MEMORY=见收尾(≤32KB✓,本轮无归档)
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,6 +32,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[02:2x] R521 **防判死心跳(R520后~68min>60min阈值)**. ops/inbox RUN_ID220-221均pretrain线(.29),无harness新指令. liveness 5项实测全通过(swebench500/500不变·/data6.0T free·load10.08/224·pretrain loop PID1401353 etimes~55h需避让·last commit R520@01:13). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY见收尾(均≤32KB,本轮无归档).
 [01:0x] R520 **防判死心跳(R519后~68min>60min阈值)**. ops/inbox RUN_ID219-221均pretrain线,无harness新指令. liveness 5项实测全通过(swebench500/500不变·pretrain PID1401353 etimes~53.7h需避让·load10.33/224·/data6.0T free·last commit R519@23:58). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY见收尾(归档R507-R517→daily 10-26,均≤32KB).
 [23:5x] R519 **就绪状态活性复检(R518交付后~70min)**. 运维指令区顶部3条全[已归档],ops/inbox RUN_ID219-221均pretrain线,无harness新指令. 8项实测全通过(swebench500/500·gateway HTTP200 0.018s·pull 500/500·image_list 500·/data 6.0T free·load 9.35/224·pretrain loop在.29 PID1401353需避让·last commit R518@22:47). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1(等运维拍板,§3先报预算再跑). 体积:TASK=26994B/MEMORY见收尾(均≤32KB).
 [22:4x] R518 **H-A SWE-bench Verified 横评就绪核查(§1.2先20-50条/§3先报预算再跑)**. 实测13项:①docker镜像500/500在盘(sg docker -c 'docker images|grep swebench|sort -u|wc -l'=500,样本swebench/sweb.eval.x86_64.sympy_1776_sympy-24213:latest) ②下载DONE(progress.txt:514 DONE 2026-10-26 18:23:06 total=500 pulled=500 failed=0) ③sg docker可访问(610张镜像,本用户经sg docker切组) ④swebench v5.0.2 ⑤gateway /models HTTP200 0.02s ⑥Verified数据集带proxy可加载500题(首题astropy__astropy-12907与image_list.txt一致) ⑦image_list.txt 500行 ⑧/data 6.0T free ⑨load 7.52/224CPU ⑩pretrain loop在.29(避让) ⑪unshare rootfs仅13个(不适用500题) ⑫run_evaluation v5.0.2改名(需适配,r1_eval.py的make_test_spec/get_eval_report可用) ⑬直连gateway dummy key返回空(预期,真实key在gw_proxy). 评测路径选定**docker官方harness**. 产 gen_report_swebench_verified_readiness.py + report_swebench_verified_readiness_zh.html(11323B,8节,0script/0外链/0cline-patched,数字全溯源). 结论:就绪可启动20条试点(先cline+hermes smoke),需运维拍板+并发限制. **判据自检**:运维指令区顶部全为[已归档]指针,无未完成指令→WAITING=1(等运维拍板试点). 体积:TASK=26994B/MEMORY见收尾实测.
