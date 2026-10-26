@@ -1,4 +1,37 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 219 | TARGET: 29 -->
+## RUN_ID 219 — 只读：21:40:43 rank2(.29) exit1 的上下文 + 是否 OOM + 谁在收尾
+
+```bash
+set -u
+echo "=== RUN_ID 219 | rank2 cause | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 21:40:4x 前后 25 行（formal 日志）"
+grep -n '21:40:4' /tmp/baize_s1_formal.log 2>/dev/null | head -3
+L=$(grep -n '21:40:4' /tmp/baize_s1_formal.log 2>/dev/null | head -1 | cut -d: -f1)
+[ -n "${L:-}" ] && sed -n "$((L>20?L-20:1)),$((L+25))p" /tmp/baize_s1_formal.log | cut -c1-190
+echo
+echo "[2] 全日志里的真实异常关键字（去掉 torchrun 汇总）"
+grep -inE 'RuntimeError|MemoryError|CUDA error|out of memory|Killed|SIGKILL|assert|NCCL error|Watchdog|timeout' /tmp/baize_s1_formal.log 2>/dev/null | grep -viE 'ChildFailedError|SignalException|closing signal' | tail -10 | cut -c1-190
+echo
+echo "[3] 系统侧：OOM killer / 内存"
+dmesg -T 2>/dev/null | grep -iE 'oom|killed process' | tail -5 | cut -c1-170 || echo "  dmesg 不可读（权限）"
+free -g | head -3 | sed 's/^/  /'
+echo
+echo "[4] 包装脚本与其日志（谁在收尾/是否有 watchdog）"
+ls -lt /nas_train/app.e0031982/code/BaiZe-ISEDA2027/scripts/train_s1.sh 2>/dev/null
+grep -nE 'watchdog|timeout|kill|SIGTERM|restart' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/scripts/train_s1.sh 2>/dev/null | head -8 | cut -c1-160
+echo
+echo "[5] 谁还活着（loop/cline/包装脚本）"
+ps -eo pid,etimes,args= | grep -E 'baize_pretrain_loop|cline_pretrain|train_s1\.sh|torchrun' | grep -Ev 'grep|bun|node /' | cut -c1-130 | head -6 || echo "  (none)"
+echo
+echo "[6] exp 目录现状（tb 事件 / ckpt）"
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b_s1
+ls -l $E 2>/dev/null | head -6
+echo "  n_ckpt=$(ls -d $E/checkpoints/iter_* 2>/dev/null | wc -l)"
+find $E -name 'events.out.tfevents.*' -printf '  ev %TH:%TM %s %p\n' 2>/dev/null | sort -r | head -2
+echo "=== DONE 219 ==="
+```
+
 <!-- RUN_ID: 218 | TARGET: 29 -->
 ## RUN_ID 218 — 只读：S1 21:52 二次停止的原因（traceback / NaN / 谁杀的）
 
