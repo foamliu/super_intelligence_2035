@@ -44,12 +44,12 @@ H.append('<title>BaiZe Harness 研究线 · 近期工作报告（2026-10-20 起�
 H.append('<style>'+CSS+'</style></head><body><div class="wrap">')
 
 H.append('<h1>BaiZe Harness 研究线 · 近期工作报告</h1>')
-H.append('<p class="sub">时间范围：2026-10-20 → 2026-10-26（R460 → R515）· 生成：2026-10-26（R515 刷新·数字去 stale）· 自包含中文 HTML · 数据均溯源到文件/日志</p>')
+H.append('<p class="sub">时间范围：2026-10-20 → 2026-10-26（R460 → R516）· 生成：2026-10-26（R516 终版刷新·复跑两路全 FINISHED·SWE-bench 500/500 DONE）· 自包含中文 HTML · 数据均溯源到文件/日志</p>')
 
 H.append('<div class="tl"><b>TL;DR</b> · 本线定位为「agent harness 工程实现与能力差异」研究，分 <b>H-B 源码分析</b>与 <b>H-A Terminal-Bench / SWE-bench 横评</b>两条线。'
  '近一周关键进展：①<b>卡死恢复</b>——把单次 agent 超时从 1500s 提到 3600s 并改「分阶段落盘」，止住反复超时丢内容；②<b>H-B 交付</b> 7 个 harness 上下文压缩机制对比报告（58KB）；'
  '③<b>Terminal-Bench 7×89 全量横评</b>跑完，四存活线排名 <code>cline(49.4%) ≈ opencode(47.1%) &gt; pi(40.2%) &gt; codex(23.0%)</code>，McNemar 证实 codex 显著弱（n=87）；'
- '④<b>适配器修复 + 复跑</b>——hermes/claude-code 旧 0% 经修复后全量复跑，最新条件通过率 <b>hermes 56.8%（25/44，已 FINISHED）· claude-code 29.7%（19/64，进行中）</b>，判据「两路均 &gt; 0」已满足。</div>')
+ '④<b>适配器修复 + 复跑</b>——hermes/claude-code 旧 0% 经修复后全量复跑，<b>两路均已 FINISHED（89/89 全派，0 running）</b>，最终条件通过率 <b>hermes 56.8%（25/44）· claude-code 30.3%（20/66）</b>，resolve rate <b>hermes 28.7%（25/87）· claude-code 23.0%（20/87）</b>，判据「两路均 &gt; 0」已满足。</div>')
 
 H.append('<h2>一、本线定位 <span class="tag">H-B + H-A</span></h2>')
 H.append('<p>BaiZe 共 4 个活跃 agent 线（vision / pretrain / data / harness），本线（harness）是其中唯一<b>不占 GPU</b>的研究线，专注横向理解「agent harness」这一类系统：'
@@ -118,7 +118,7 @@ H.append('<table><tr><th>配对</th><th class="num">χ²</th><th>p 值</th><th c
  '</table>')
 H.append('<div class="note"><b>结论</b>：三对显著差异<b>均含 codex</b>——codex 因 59/87 exception 显著弱于其余三存活线；cline / opencode / pi 三者两两不显著，属同档。排名：<code>cline(49.4%) ≈ opencode(47.1%) &gt; pi(40.2%) &gt; codex(23.0%)</code>。</div>')
 
-H.append('<h3>任务 4 · 适配器 infra 修复 + hermes/claude-code 全量复跑 <span class="tag live">复跑进行中</span></h3>')
+H.append('<h3>任务 4 · 适配器 infra 修复 + hermes/claude-code 全量复跑 <span class="tag ok">复跑已 FINISHED</span></h3>')
 H.append('<p><b>第一步：三路 0% 根因排查与修复</b>（2026-10-25 08:2x 令，R492-R497 交付）。hermes / claude-code / deepseek 在 7×89 中均为 0%，逐路定位根因：</p>')
 H.append('<table><tr><th>路线</th><th>旧结果</th><th>根因</th><th>修复</th><th>smoke 验证</th></tr>'
  '<tr><td>hermes</td><td>0/50</td><td>CLI-PATH / no_proxy 配置问题，agent 启动失败</td><td>适配器修复（留 .orig 备份）</td><td><b>4/5 ✅</b></td></tr>'
@@ -127,13 +127,13 @@ H.append('<table><tr><th>路线</th><th>旧结果</th><th>根因</th><th>修复<
  '</table>')
 H.append('<p>交付报告：<code>harness/reports/report_harness_adapter_0pass_rootcause_zh.html</code>（24908B，自包含中文），<span class="src">daily-memories-harness/2026-10-25.md:326-354</span>。</p>')
 H.append('<p><b>第二步：hermes + claude-code 全量 89 题复跑</b>（2026-10-25 17:5x 令）。配置与 7×89 完全一致，只换适配器版本；结果落新目录 <code>/tmp/tb_7x89/jobs_hermes_rerun_20261025/</code>、<code>jobs_claude-code_rerun_20261025/</code>，旧结果只读不改。</p>')
-H.append('<p><b>最新复跑进度</b>（<code>verifier/reward.txt</code> 逐文件实测 + <code>summary_rerun_20261025.json</code>，2026-10-26 R515 快照；hermes 已 FINISHED 89 dirs/0 running，claude-code harbor PID 2573271 存活、batch mtime 18:20 仍在写）：</p>')
+H.append('<p><b>最终复跑结果</b>（<code>verifier/reward.txt</code> 逐文件实测 + <code>summary_rerun_20261025.json</code>，2026-10-26 R516 终版；两路均 FINISHED——各 89 task dirs 全派、0 running，claude-code 末次 job.log 写于 19:41 后进程退出）：</p>')
 H.append('<table><tr><th>路线</th><th>派题(dirs)</th><th class="num">完成(done)</th><th class="num">通过(pass)</th><th class="num">异常</th><th class="num">运行中</th><th class="num">条件通过率</th><th>旧基线</th></tr>'
  '<tr><td>hermes</td><td class="num">89/87</td><td class="num">44</td><td class="num"><b>25</b></td><td class="num">45</td><td class="num">0 ✅FIN</td><td class="num"><b>56.8%</b></td><td>0/50 (0%)</td></tr>'
- '<tr><td>claude-code</td><td class="num">86/87</td><td class="num">64</td><td class="num"><b>19</b></td><td class="num">21</td><td class="num">1</td><td class="num"><b>29.7%</b></td><td>0/34 (0%)</td></tr>'
+ '<tr><td>claude-code</td><td class="num">89/87</td><td class="num">66</td><td class="num"><b>20</b></td><td class="num">23</td><td class="num">0 ✅FIN</td><td class="num"><b>30.3%</b></td><td>0/34 (0%)</td></tr>'
  '</table>')
-H.append('<div class="note"><b>判据已满足</b>：运维令判据「两路通过率均 &gt; 0」已满足（旧两路均 0%，适配器修复确实生效；hermes 累计 25 pass · claude-code 累计 19 pass，较 R514 的 16 pass 继续增加）。'
- 'hermes 已 FINISHED（89 dirs 全派题，0 running）；claude-code 仍异步进行中（86 task dirs 已派，85 已判定 = 64 rewarded + 21 exc，1 running，约 1 题待派）。复跑全部完成后出终版 resolve rate + 逐题配对表 + McNemar。</div>')
+H.append('<div class="note"><b>判据已满足</b>：运维令判据「两路通过率均 &gt; 0」已满足（旧两路均 0%，适配器修复确实生效；hermes 累计 25 pass · claude-code 累计 20 pass）。'
+ 'hermes 已 FINISHED（89 dirs 全派，44 rewarded/45 err，0 running）；claude-code 亦已 FINISHED（89 dirs 全派，66 rewarded/23 err，0 running）。终版 resolve rate 已出：hermes 25/87=28.7% · claude-code 20/87=23.0%（旧均 0%）；逐题配对表 + McNemar 见 <code>report_harness_hermes_claude_rerun_codex_err_zh.html</code>（终版）。</div>')
 H.append('<p><b>codex 高 err 排查</b>（part②，R499 初版 + <b>R510 勘误</b>）：59/87 exception 经 R510 复查 <code>result.json</code> stdout 重新分类——'
  '<b>34 个 429 限流 → RuntimeError（57.6%）+ 15 AgentTimeoutError（25.4%）+ 10 RuntimeError 无 429（16.9%）</b>。'
  '<b>429 是 codex 独有</b>（严格标记 7 路横向对照：codex 34，其余 6 路全 0；cline 的 60 次「429」是 ISO 时间戳 <code>.429Z</code> 误匹配）。'
@@ -148,7 +148,7 @@ H.append('<div class="c good"><div class="v">87/87</div><div class="l">Terminal-
 H.append('<div class="c good"><div class="v">49.4%</div><div class="l">cline 通过率（43/87，存活线第一）</div></div>')
 H.append('<div class="c bad"><div class="v">23.0%</div><div class="l">codex 通过率（20/87，59 exc 显著弱）</div></div>')
 H.append('<div class="c good"><div class="v">56.8%</div><div class="l">hermes 复跑条件通过率 25/44（旧 0%，已 FINISHED）</div></div>')
-H.append('<div class="c good"><div class="v">29.7%</div><div class="l">claude-code 复跑条件通过率 19/64（旧 0%，进行中）</div></div>')
+H.append('<div class="c good"><div class="v">30.3%</div><div class="l">claude-code 复跑条件通过率 20/66（旧 0%，已 FIN）</div></div>')
 H.append('</div>')
 H.append('<table><tr><th>项</th><th>数值</th><th>溯源</th></tr>'
  '<tr><td>CLINE_TIMEOUT 调整</td><td>1500s → 3600s（2026-10-23）</td><td><span class="src">baize_harness_loop.sh:30</span></td></tr>'
@@ -160,24 +160,24 @@ H.append('<table><tr><th>项</th><th>数值</th><th>溯源</th></tr>'
  '<tr><td>四存活最终通过率</td><td>cline 43 · opencode 41 · pi 35 · codex 20（分母 87）</td><td><span class="src">baseline_rewards_7x89_20261024.json</span></td></tr>'
  '<tr><td>McNemar 显著对</td><td>cline≫codex χ²=17.93*** · opencode≫codex 12.12*** · pi≫codex 5.94*</td><td><span class="src">daily-memories-harness/2026-10-25.md:338-345</span></td></tr>'
  '<tr><td>适配器修复 smoke</td><td>claude-code 4/5 · hermes 4/5 · deepseek 0/5(SDK)</td><td><span class="src">daily-memories-harness/2026-10-25.md:346-349</span></td></tr>'
- '<tr><td>复跑最新进度</td><td>hermes 25/44=56.8% ✅FIN · claude-code 19/64=29.7%（86/87 进行中）</td><td><span class="src">harness/summary_rerun_20261025.json + verifier/reward.txt 逐文件实测</span></td></tr>'
+ '<tr><td>复跑最终结果</td><td>hermes 25/44=56.8%（resolve 25/87=28.7%，45 err）✅FIN · claude-code 20/66=30.3%（resolve 20/87=23.0%，23 err）✅FIN · 两路 89/89 全派 0 running</td><td><span class="src">harness/summary_rerun_20261025.json + verifier/reward.txt 逐文件实测（2026-10-26 19:46）</span></td></tr>'
  '<tr><td>codex err 分类（R510 修正）</td><td>59 = 34 限流429→RuntimeError + 15 AgentTimeout + 10 RuntimeError无429（429 为 codex 独有）</td><td><span class="src">harness/codex_err_classification_20261025.md §2-bis</span></td></tr>'
- '<tr><td>SWE-bench Verified 下载</td><td>499/500（后台，PID 1199724 存活，0 failed，即将完成）</td><td><span class="src">harness/swebench_verified_pull_progress.txt</span></td></tr>'
+ '<tr><td>SWE-bench Verified 下载</td><td>500/500 ✅DONE（2026-10-26 18:23:06，0 failed，PID 已退出）</td><td><span class="src">harness/swebench_verified_pull_progress.txt（末行 DONE total=500 pulled=500）</span></td></tr>'
  '</table>')
 
 H.append('<h2>四、阻塞 / 待拍板</h2>')
 H.append('<ul>'
- '<li><b>hermes 复跑已 FINISHED</b>（89 dirs 全派题，0 running，25/44=56.8%）；<b>claude-code 复跑后台异步进行中</b>（86 task dirs 已派，85 已判定，1 running，约 1 题待派，不需运维干预，自跑）。复跑全部完成后才能出终版 resolve rate + 逐题配对表 + McNemar。</li>'
+ '<li><b>hermes / claude-code 复跑均已 FINISHED</b>（两路各 89 task dirs 全派，0 running；hermes 44 rewarded/45 err，claude-code 66 rewarded/23 err）。<b>终版 resolve rate 可出</b>：hermes 25/87=28.7%·claude-code 20/87=23.0%（条件通过率 hermes 56.8%·claude-code 30.3%，旧均 0%）。逐题配对表 + McNemar 见 <code>report_harness_hermes_claude_rerun_codex_err_zh.html</code>（已刷新为终版）。</li>'
  '<li><b>codex 全量补跑</b>（R510 修正后）：根因 = <b>上游 429 为主（34/59，codex 调用模式独有）+ 容量/超时为辅 + 适配器无回合上限/无 429 退避放大</b>；<b>codex 可改善</b>（非「非适配器可修」）。<b>待拍板</b>是否(a)降并发（单独跑）+ 加 429 退避复跑 codex（建议先 smoke 5 题验证 429 是否消解），或(b)升级 codex 版本；启动前需先报机时 + load 评估，且应避开 hermes/claude-code 复跑在跑期（防叠加 429）。</li>'
  '<li><b>deepseek-harness</b>：0% 根因为上游 SDK 内部运行时故障（finish_reason=<code>error</code>），<b>非适配器可修，待上游</b>。</li>'
- '<li><b>SWE-bench Verified 下载</b>：499/500 即将完成（Docker Hub 匿名限速 100 manifest/h，实测 ~20/h），瓶颈为限速非磁盘/带宽；下载完成后方可启动 H-A 的 SWE-bench 横评。</li>'
+ '<li><b>SWE-bench Verified 下载已完成</b>：500/500 ✅DONE（2026-10-26 18:23:06，0 failed；瓶颈原为 Docker Hub 匿名限速 100 manifest/h，实测 ~20/h，非磁盘/带宽）。<b>H-A 的 SWE-bench 横评已可启动</b>。</li>'
  '</ul>')
 
 H.append('<h2>五、下一步建议</h2>')
 H.append('<ol>'
- '<li><b>复跑收尾</b>：hermes/claude-code 跑满 87/87 后，刷新 <code>summary_rerun_20261025.json</code> 与 <code>report_harness_hermes_claude_rerun_codex_err_zh.html</code> 为终版——补全 87 题逐题配对表（旧 reward vs 新 reward）+ McNemar 检验，给出 hermes/claude-code 的最终 resolve rate。</li>'
+ '<li><b>复跑已 FINISHED</b>：两路全派完成，<code>summary_rerun_20261025.json</code> 与 <code>report_harness_hermes_claude_rerun_codex_err_zh.html</code> 已刷新为终版——终版 resolve rate <b>hermes 25/87=28.7% · claude-code 20/87=23.0%</b>（旧均 0%），逐题配对表 + McNemar 见该报告。</li>'
  '<li><b>codex 决策</b>：报「codex 全量补跑机时 + load 评估」给运维拍板；若不补跑，则以「容量为主、非崩溃性 bug」为 codex 的最终结论归档。</li>'
- '<li><b>SWE-bench 横评启动</b>：下载到 500/500 后，按任务书 §1.2 口径（同子集/同模型/同超时/同 verifier）启动 H-A 的 SWE-bench Verified 横评，先 20-50 条跑通全流程再定规模。</li>'
+ '<li><b>SWE-bench 横评启动</b>：下载已完成 500/500，按任务书 §1.2 口径（同子集/同模型/同超时/同 verifier）启动 H-A 的 SWE-bench Verified 横评，先 20-50 条跑通全流程再定规模。</li>'
  '<li><b>H-B 续作</b>：7-way 上下文压缩报告已完成；可按同一方法学扩展到其它机制维度（工具循环实现 / 错误恢复 / 多轮规划），形成 harness 机制对比系列。</li>'
  '</ol>')
 
