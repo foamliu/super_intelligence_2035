@@ -1,4 +1,43 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 217 | TARGET: 29 -->
+## RUN_ID 217 — 只读：S1 训练进度（iteration/loss/tok·s）+ ckpt 落点 + θ 是否仍缺
+
+```bash
+set -u
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+echo "=== RUN_ID 217 | S1 progress | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 进程 uptime"
+ps -eo pid,etimes,args= | grep -E 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | awk '{print "  pid="$1" etimes="$2}' | head -3
+echo "[2] GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[3] 最新日志里的 iteration / loss / TFLOP（尾 3 条）"
+for f in $(ls -t /tmp/baize_s1*.log 2>/dev/null | head -3); do
+  echo "  --- $f ($(stat -c '%y' "$f" | cut -c1-19) $(stat -c %s "$f")B)"
+  grep -E 'iteration +[0-9]+' "$f" 2>/dev/null | tail -3 | cut -c1-190
+done
+echo "[4] ckpt / exp 落点"
+ls -d $E/baize2b* 2>/dev/null || echo "  (no baize2b dir)"
+for d in $E/baize2b*/; do
+  [ -d "$d" ] || continue
+  echo "  dir=$d  n_ckpt=$(ls -d "$d"/checkpoints/iter_* 2>/dev/null | wc -l)"
+  [ -f "$d/checkpoints/latest_checkpointed_iteration.txt" ] && echo "    latest=$(cat "$d/checkpoints/latest_checkpointed_iteration.txt")"
+  find "$d" -name 'events.out.tfevents.*' -printf '    ev %TH:%TM %s\n' 2>/dev/null | sort -r | head -1
+done
+ls -dt /tmp/*baize2b* 2>/dev/null | head -3
+echo "[5] θ 复检（本次 run 的 cmdline 是否已带 rotary-base）"
+CMD=$(ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1)
+if [ -n "$CMD" ]; then
+  echo "$CMD" | tr ' ' '\n' | grep -E '^--(rotary-base|dir|save-interval|optimizer|lr-decay-style)$' | head -6 | sed 's/^/  /'
+  echo "$CMD" | grep -q -- '--rotary-base' && echo "  rotary-base = PASSED" || echo "  rotary-base = NOT PASSED(仍缺)"
+else
+  echo "  (no launcher proc)"
+fi
+echo "[6] .12 健康（fd 限制 / GPU / 进程数）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  ulimit -n=$(ulimit -n)"; echo "  gpu: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"; echo "  n_proc=$(pgrep -c -f pretrain_launcher || echo 0)"' 2>&1 | cut -c1-180
+echo "=== DONE 217 ==="
+```
+
 <!-- RUN_ID: 216 | TARGET: 29 -->
 ## RUN_ID 216 — 只读：S1 退出原因 + mamba2 provider 的 rotary_base 默认值
 
