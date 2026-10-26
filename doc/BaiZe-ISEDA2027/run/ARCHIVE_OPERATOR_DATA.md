@@ -2032,3 +2032,65 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 > 🚫 报告结构不许改（已经是单表）；只需按新路径重生成。
 > 🚫 不许用「未实测/N/A/—」；未跑完不许称「已就绪」。
 > 顺序：**① 先做（分钟级：链接 + INDEX），② 立刻开跑**；② 未启动前不得睡。
+
+
+---
+
+## 归档 · 2026-10-25 17:5x 运维令（已完成）
+
+### [运维令] 2026-10-25 17:5x（**目录名不再重要：核心交付 = 「下载与分词」映射表；Markdown 为单一事实源，HTML 按需**）· 用户直令 · 最高优先
+> 用户原话：「data：目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」
+> 本条 + 下方「口径仲裁」新增的三行，优先于 13:2x 块里关于报告结构 / 目录命名 / uncovered shard 的旧口径。
+
+**1) 在跑的不要停**
+分词继续跑（131 目标，17:23 为 done=92/131）直到 `done=131/131`，然后：新 shard re-link 进 `tokenized/`（同盘 hardlink / 跨盘 symlink），再校验 `.bin == .idx == .json` 三元组 + 字节 + `num_tokens` 可解析，最后更新映射表。
+
+**2) 唯一硬交付：`run/data/DATA_MAPPING.md`（Markdown 单一事实源）**
+- 一行 = 一个下载目录（粒度以盘上 `ls` 实测为准；不自造源、不合并目录凑行）。
+- 列固定：`# | 下载目录 | 分词目录 | .bin | .idx | .json | 字节(B) | GB | tokens(B) | 状态 | 校验时间 | 证据`
+- `状态` 只取：`镜像完整` / `分词中` / `未分词` / `未映射` / `已废弃`。
+- **合计行由脚本求和**，不许手填；表尾附核对式（各列求和 = 合计，误差 0）。
+- 每行「证据」写实测命令（`du -sb` / `find | wc -l` / `wc -l`），或在附录统一给命令清单 + 输出摘要。
+- **允许改目录名**：改名必须与映射表**同一批提交**同步更新；改完跑一次 triplet + inode 校验，结果写回「校验时间」。禁出现「表里路径不存在 / 盘上目录没登记」。
+- 生成器：`run/data/gen_data_mapping_md.py`（读实测 TSV + `du`，输出 md + 合计 + 核对式；重跑幂等）。
+
+**3) 32 个未映射 shard 不再阻塞**
+- 在映射表单列「未映射 / 来源不明」一节，逐条写：路径、字节、能否追到下载目录、建议（保留 / 待删 / 补下载）。
+- **未经用户批准不许删除任何数据**；只标注与建议。
+
+**4) HTML 报告按需**
+- 需要给运维 / 用户看时，再用 `run/data/gen_tokenized_inventory_report.py` 从映射表生成 `reports/report_data_tokenized_inventory_zh.html`（单表结构不变）。
+- 不要为报告反复重写结构；**md 更新才是主线**，HTML 只是渲染。
+
+**5) 收尾**
+`MEMORY_DATA.md` 首部新块 + `run/daily-memories-data/2026-10-25.md`；commit 前缀 `data mapping:`；`git status -sb` 无 ahead / behind。
+
+
+---
+
+## 归档 · 2026-10-25 18:5x 运维令（已完成）
+
+### [运维令] 2026-10-25 18:5x（把 DATA_MAPPING.md 做成脚本生成的真·单一事实源 + 授权按测得分批清理磁盘）· 用户直令 · 最高优先
+> 用户原话：「对于 data 来说，维护好 run/data/DATA_MAPPING.md 至关重要。可以适当清理一下硬盘，减少占用。」
+
+**1) 映射表补齐（第一优先）**
+- 补 `run/data/gen_data_mapping_md.py`（C 节现在写着「待补、首版手工建立」）：输入 = `tokenized/INDEX.tsv` + 盘上 `du -sb` / `find | wc -l` 实测 + 下载目录实测；输出 = A/B 两节 + 合计 + 核对式 + 「生成时间 / 驱动数据 / git 短 hash」。判据：**连跑两次 md 逐字节相同**（幂等）。
+- A 节增两列：`下载目录字节(B)`、`下载/分词字节比`（同一行能核对「下载了多少，分出来多少」），其余 12 列保留；合计行仍由脚本求和。
+- 分词跑完（判据 `done=131/131`）立即刷新：第 7-10 行 `分词中` 改 `镜像完整` 并补 bin/idx/json/字节/tokens；`INDEX.tsv`、`DATA_LEDGER` 对应节同批更新。
+- 「证据」列要可复现：写具体命令（`du -sb <path>`、`ls <dir>/*.bin | wc -l`）或 INDEX 行号，禁只写「OK」。
+
+**2) 磁盘清理（授权，但必须按实测分批）**
+- 先出候选清单 `run/data/disk_cleanup_candidates_20261025.tsv`：路径 / 类型 / `du -sb` 表观字节 / 实占字节（硬链接只算一次）/ inode 链接数 / 是否被 `tokenized/` 引用 / 判定（可删 / 保留 / 待定）/ 理由；按**实占**降序。
+- **可删（不必再请示）**：① `text/staging_r3/` 剩余 78 个纯输入符号链接暂存目录；② 分词崩溃残留（无 `.idx` 的孤儿 `.bin`、`.partial`、`.bak`）；③ 空目录；④ `/tmp` 下本线分词中间日志（保留最后 3 份）；⑤ 已被 `tokenized/` 收录且 inode 链接数 > 1 的重复副本（删前必须证明 `tokenized/` 侧仍可访问）。
+- **不可删**：`/nas_env/full_*`（训练数据本体）、`tokenized/` 镜像与 `INDEX.tsv`、`DATA_LEDGER.md`、`/nas_inference` 下载 parquet、任何 `.json` manifest。下载数据一律保留（18:3x 已定）。
+- **分批**：每批实占不超过 500 GB；每批前后各记 `df -h /nas_train` 与 `du -sb`；删后立即跑 triplet + inode 校验（镜像 `.bin` 数应恒为 716，悬空 = 0）。第一批做完报数，再决定是否继续。
+- 报回：`候选 N 项 / 第一批删 M 项 / 实占释放 X GB / 表观体积 Y GB（差值 = 硬链接）/ 校验 OK` + 清单路径。**不许把表观体积当实际释放。**
+
+**3) 收尾**
+- `DATA_MAPPING.md` C 节加「清理记录」指针（批次 / 时间 / 释放 / manifest 路径）。
+- `MEMORY_DATA.md` 首部新块 + `daily-memories-data/2026-10-25.md`；commit 前缀 `data mapping:` 或 `data cleanup:`；`git status -sb` 无 ahead / behind。
+- HTML 报告按需（用户或运维要才生成），不为此表反复改报告结构。
+
+> 📦 §运维令·2026-10-25 18:2x（删32不可映射shard）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：32个(l3_s28+math_s4)已全部删除(1.91TiB表观/实占~471.6KB)，删前留档deleted_unmapped32_20261025.tsv+summary.md，DATA_MAPPING.md B节标已删除，终裁结案。需要时再读。
+
+> 📦 §运维令 2026-10-25 17:5x（DATA_MAPPING 为单一事实源 + 下载↔分词映射）**已完成**（18:5x 令交付脚本化生成器 `gen_data_mapping_md.py` 幂等 PASS，A 节 716 shard + B 节 32 已删）→ 原文归档 ARCHIVE_OPERATOR_DATA.md。

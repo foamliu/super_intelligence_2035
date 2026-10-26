@@ -9,6 +9,31 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-26 22:0x（**S1 吞吐对齐 613,992：先解释 ~480K 的差距，再选方案**）· 用户直令「目标是复现 613,992 基线」· 最高优先
+
+> 用户原话：「pretrain 需要想办法提高S1吞吐，目标是复现 613,992 基线」。
+> **实测（ops 中继 RUN_ID 217，S1 当前跑法）**：gbs=128 ⇒ 2,097,152 tok/step；step time **4.09 / 4.87 / 5.20 s** ⇒ **≈400–510K tok/s**，
+> 仅为 #792 基线 **613,992 的 65–83%**。#792 基线档 = `seq16384 / mbs1 / gbs256 / accum16 / CP1 / DP16 / FP8 tensorwise / graph OFF / 2 节点 16 卡`。
+
+**请按序给结论（不要一次改一堆参数）**
+1. **归因（必须先做）**：用 Megatron timers 或 nsys 抓 step 50–200，给 **per-step 分解**（forward / backward / optimizer / grad-allreduce / dataloader / 空隙）。
+   判据：明确说出「613K→480K 的差额主要落在哪一项」——固定每步开销、计算效率、还是通信/数据。
+2. **方案三选一并给证据**：
+   - **A（最直接，优先验证）**：S1 的 `gbs 128 → 256`（=4,194,304 tok/step，与 #792 E1 完全同档），步数 `700k → 334k`，**总 token 仍 1.4T 不变**。
+     预期 ~614K、墙钟不增；须交代「S1 小 batch 阶段」的意图保留还是放弃（+理由）。
+   - **B（保持 gbs=128，压固定开销）**：`--overlap-grad-reduce` / `--overlap-param-gather` / `--use-distributed-optimizer` / dataloader workers 数量与 prefetch / NCCL env，
+     **一次只改一项**，每项 ≥30 步取稳态，逐项记录（收益/副作用）。
+   - **C（折中）**：`gbs=192`（3,145,728 tok/step）测一档，把 2.1M/3.1M/4.2M 三点连成 tok/s 曲线。
+3. **红线**：🚫 不许开 CUDA Graph（tok/mb=16384 下会崩到 ~110K）；🚫 tok/mb/GPU 必须 ≤16,384；🚫 FP8 tensorwise 不改；🚫 不许用「更多 token/step」冒充提速（验收看 **tok/s**）。
+4. **验收**：稳态（step 50–200 中位数）**≥ 600K tok/s**（≥0.98×613,992）。达不到 ⇒ 给「可行上限 + 结构性原因」的量化结论，并同步改报告 §3 ETA
+   （按 480K 算 S1 已从 27.7 天变 **~36 天**，必须让 ETA 不再用 613,992 那一档）。
+5. **与 21:3x 令（θ=1e6）同批交付**：θ 未生效（无 `check_rope.py` PASS / 无 provider 打印证据）前，不许起 700k 步正式跑。
+6. **附带（阻塞项，先修）**：21:40:43 停机的直接原因是
+   `[rank2] RuntimeError: DataLoader worker (pid 3102075) is killed by signal: Killed`
+   （主机 2TB 内存 free 1.9TB，但 swap 7G 已满、`dmesg` 无权限）⇒ 请给结论：是 cgroup/单进程上限还是 worker 泄漏；
+   建议同时降 `num_workers`（当前 64/节点）并用 `TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank` 抓下次失败的 rank traceback（别再出现 `error_file=<N/A>`）。
+
+
 ### [运维令] 2026-10-26 21:3x（**RoPE θ 未生效：请你评估并给出方案，再重启 S1**）· 用户直令「把这个问题跟 pretrain 沟通，让它考虑」· 最高优先
 
 > 用户原话：「把这个问题跟 pretrain 沟通，让它考虑。」
