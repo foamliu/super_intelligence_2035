@@ -22949,3 +22949,123 @@ Root Cause (first observed failure):
   -- tail --
 === DONE 218 ===
 ```
+
+---
+
+## RUN_ID 219 · 2026-10-26 22:03:54 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 219 | rank2 cause | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 21:40:4x 前后 25 行（formal 日志）"
+grep -n '21:40:4' /tmp/baize_s1_formal.log 2>/dev/null | head -3
+L=$(grep -n '21:40:4' /tmp/baize_s1_formal.log 2>/dev/null | head -1 | cut -d: -f1)
+[ -n "${L:-}" ] && sed -n "$((L>20?L-20:1)),$((L+25))p" /tmp/baize_s1_formal.log | cut -c1-190
+echo
+echo "[2] 全日志里的真实异常关键字（去掉 torchrun 汇总）"
+grep -inE 'RuntimeError|MemoryError|CUDA error|out of memory|Killed|SIGKILL|assert|NCCL error|Watchdog|timeout' /tmp/baize_s1_formal.log 2>/dev/null | grep -viE 'ChildFailedError|SignalException|closing signal' | tail -10 | cut -c1-190
+echo
+echo "[3] 系统侧：OOM killer / 内存"
+dmesg -T 2>/dev/null | grep -iE 'oom|killed process' | tail -5 | cut -c1-170 || echo "  dmesg 不可读（权限）"
+free -g | head -3 | sed 's/^/  /'
+echo
+echo "[4] 包装脚本与其日志（谁在收尾/是否有 watchdog）"
+ls -lt /nas_train/app.e0031982/code/BaiZe-ISEDA2027/scripts/train_s1.sh 2>/dev/null
+grep -nE 'watchdog|timeout|kill|SIGTERM|restart' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/scripts/train_s1.sh 2>/dev/null | head -8 | cut -c1-160
+echo
+echo "[5] 谁还活着（loop/cline/包装脚本）"
+ps -eo pid,etimes,args= | grep -E 'baize_pretrain_loop|cline_pretrain|train_s1\.sh|torchrun' | grep -Ev 'grep|bun|node /' | cut -c1-130 | head -6 || echo "  (none)"
+echo
+echo "[6] exp 目录现状（tb 事件 / ckpt）"
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b_s1
+ls -l $E 2>/dev/null | head -6
+echo "  n_ckpt=$(ls -d $E/checkpoints/iter_* 2>/dev/null | wc -l)"
+find $E -name 'events.out.tfevents.*' -printf '  ev %TH:%TM %s %p\n' 2>/dev/null | sort -r | head -2
+echo "=== DONE 219 ==="
+```
+
+**输出**
+```
+=== RUN_ID 219 | rank2 cause | 2026-10-26 22:03:54 | host=whag0pgpuap29 ===
+[1] 21:40:4x 前后 25 行（formal 日志）
+9416:W1026 21:40:43.423000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814786 closing signal SIGTERM
+9417:W1026 21:40:43.430000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814788 closing signal SIGTERM
+9418:W1026 21:40:43.434000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814793 closing signal SIGTERM
+[rank2]:     output_tensor, num_tokens = forward_step(
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/core/pipeline_parallel/schedules.py", line 423, in forward_step
+[rank2]:     output_tensor, loss_func = forward_step_func(data_iterator, model)
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/bridge/training/gpt_step.py", line 322, in forward_step
+[rank2]:     tokens, labels, loss_mask, attention_mask, position_ids, cu_seqlens, cu_seqlens_argmin, max_seqlen = get_batch(
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/bridge/training/gpt_step.py", line 279, in get_batch
+[rank2]:     batch = get_batch_from_iterator(
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/bridge/training/gpt_step.py", line 82, in get_batch_from_iterator
+[rank2]:     batch = next(data_iterator)
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/core/rerun_state_machine.py", line 1124, in __next__
+[rank2]:     n = next(self.iterable)
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 734, in __next__
+[rank2]:     data = self._next_data()
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1492, in _next_data
+[rank2]:     idx, data = self._get_data()
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1444, in _get_data
+[rank2]:     success, data = self._try_get_data()
+[rank2]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1298, in _try_get_data
+[rank2]:     raise RuntimeError(
+[rank2]: RuntimeError: DataLoader worker (pid(s) 3102075) exited unexpectedly
+W1026 21:40:43.423000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814786 closing signal SIGTERM
+W1026 21:40:43.430000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814788 closing signal SIGTERM
+W1026 21:40:43.434000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814793 closing signal SIGTERM
+W1026 21:40:43.435000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814795 closing signal SIGTERM
+W1026 21:40:43.440000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814796 closing signal SIGTERM
+W1026 21:40:43.444000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814798 closing signal SIGTERM
+W1026 21:40:43.449000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814800 closing signal SIGTERM
+E1026 21:40:46.036000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:874] failed (exitcode: 1) local_rank: 2 (pid: 2814791) of binary: /nas_train/app.e0031982/minifor
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==2.8.0+cu128', 'console_scripts', 'torchrun')())
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 277, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+pretrain_launcher.py FAILED
+------------------------------------------------------------
+Failures:
+
+[2] 全日志里的真实异常关键字（去掉 torchrun 汇总）
+8847:  distributed_timeout_minutes: 10
+9369:[rank2]:     data = self._data_queue.get(timeout=timeout)
+9373:[rank2]:     gotit = waiter.acquire(True, timeout)
+9376:[rank2]: RuntimeError: DataLoader worker (pid 3102075) is killed by signal: Killed. 
+9414:[rank2]:     raise RuntimeError(
+9415:[rank2]: RuntimeError: DataLoader worker (pid(s) 3102075) exited unexpectedly
+
+[3] 系统侧：OOM killer / 内存
+                 total        used        free      shared  buff/cache   available
+  Mem:            2015          44        1907          41          64        1919
+  Swap:              7           7           0
+
+[4] 包装脚本与其日志（谁在收尾/是否有 watchdog）
+-rwxr-x--- 1 app.e0031982 app.adm 7422 Oct 26 21:23 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/scripts/train_s1.sh
+65:# NCCL/TCPStore timeout: 1800s (30 min) — the BlendedDataset build on 627 shards
+67:# data indexing.  NCCL_TIMEOUT env sets NCCL collectives timeout; the TCPStore
+68:# timeout is set in pretrain_launcher.py via init_process_group(timeout=...).
+69:# (Note: torchrun --timeout is NOT supported in this PyTorch version.)
+
+[5] 谁还活着（loop/cline/包装脚本）
+1401353  182454 bash ./baize_pretrain_loop.sh
+
+[6] exp 目录现状（tb 事件 / ckpt）
+total 4
+drwxr-xr-x 2 app.e0031982 app.adm 4096 Oct 26 21:29 tb_logs
+  n_ckpt=0
+  ev 21:40 74442 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b_s1/tb_logs/events.out.tfevents.1793021383.whag0pgpuap12.2911668.0
+=== DONE 219 ===
+```

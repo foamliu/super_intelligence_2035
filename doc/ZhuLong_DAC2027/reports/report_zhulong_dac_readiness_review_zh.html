@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ZhuLong DAC 2027 投稿就绪度评审报告</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:24px auto;padding:0 24px;color:#222;line-height:1.65}
+  h1{font-size:1.6em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+  h2{font-size:1.3em;color:#2c3e50;border-bottom:1px solid #bbb;padding-bottom:4px;margin-top:2em}
+  h3{font-size:1.1em;color:#34495e;margin-top:1.4em}
+  h4{font-size:1.0em;color:#555;margin-top:1.2em}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.92em}
+  th,td{border:1px solid #ccc;padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:#f0f3f5;font-weight:600}
+  tr:nth-child(even){background:#fafafa}
+  code{background:#f4f4f4;padding:1px 5px;border-radius:3px;font-family:"SF Mono",Consolas,monospace;font-size:0.9em}
+  pre{background:#f6f8fa;padding:12px;border-radius:6px;overflow-x:auto;font-size:0.88em}
+  .verdict{padding:10px 16px;border-radius:6px;margin:14px 0}
+  .verdict-bad{background:#fdecea;border-left:4px solid #c0392b}
+  .verdict-warn{background:#fff7e6;border-left:4px solid #e67e22}
+  .verdict-ok{background:#eafaf1;border-left:4px solid #27ae60}
+  .verdict-info{background:#eaf2fb;border-left:4px solid #2980b9}
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:0.82em;font-weight:600;margin-right:4px}
+  .tag-p0{background:#c0392b;color:#fff}
+  .tag-p1{background:#e67e22;color:#fff}
+  .tag-p2{background:#27ae60;color:#fff}
+  .tag-crit{background:#c0392b;color:#fff}
+  .tag-major{background:#e67e22;color:#fff}
+  .tag-minor{background:#7f8c8d;color:#fff}
+  .tag-ok{background:#27ae60;color:#fff}
+  blockquote{border-left:4px solid #aaa;margin:8px 0;padding:6px 14px;color:#555;background:#fafafa}
+  ul,ol{margin:6px 0 6px 0;padding-left:28px}
+  li{margin:3px 0}
+  .small{font-size:0.85em;color:#666}
+  .anchor{color:#2980b9;text-decoration:none}
+  hr{border:0;border-top:1px solid #ddd;margin:2em 0}
+  .toc{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:8px;padding:12px 20px;margin:16px 0}
+  .toc ul{list-style:none;padding-left:0}
+  .toc>ul>li{margin:6px 0;font-weight:600}
+  .toc ul ul{padding-left:24px;font-weight:400}
+  .evidence{font-size:0.85em;color:#666;font-style:italic}
+</style>
+</head>
+<body>
+
+<h1>ZhuLong DAC 2027 投稿就绪度评审报告</h1>
+
+<p class="small">
+生成时间：2026-10-26 22:xx（agent 自动评审）<br>
+评审对象：当前 7 页稿（正文 6 + refs 1）<br>
+评审依据：论文 PDF + <code>zhulong_results.md</code> 原始数据 + 外部评审 <code>REVIEW_DAC2027_external_2026-10-24.md</code> + 新增的 CLI 对比实验（MEMORY 10-26 收口）<br>
+报告作者：推进 agent（glm-5.2 编排）<br>
+纪律声明：每个批评锚定证据（论文节号/表号/行号 或 数据文件名+行号）；推测一律标"推测"；不编造文献与数字；中文 HTML，单文件自包含，无外链 CDN、无 <code>&lt;script&gt;</code>。
+</p>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+<li>① <a href="#s1" class="anchor">总体判断</a>（弱/边缘/可接受/强 + 审稿人最可能给的 3 条主要意见）</li>
+<li>② <a href="#s2" class="anchor">创新性与定位</a>（3-5 篇最接近工作对比 + 为什么必须发在 DAC）</li>
+<li>③ <a href="#s3" class="anchor">证据强度</a>（逐臂核对论文表 vs <code>zhulong_results.md</code> + 缺 CI/McNemar/多重比较）</li>
+<li>④ <a href="#s4" class="anchor">实验缺口清单</a>（按"补了能提升多少可信度"排序 + 最小可行实验设计）</li>
+<li>⑤ <a href="#s5" class="anchor">写作与呈现</a>（逐节挑刺）</li>
+<li>⑥ <a href="#s6" class="anchor">可复现与伦理</a></li>
+<li>⑦ <a href="#s7" class="anchor">改稿路线图</a>（P0/P1/P2 + 工作量 + 依赖）</li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="s1">① 总体判断</h2>
+
+<div class="verdict verdict-warn">
+<strong>档位判定：边缘（Borderline）/ 需 major revision</strong><br>
+与外部评审（<code>REVIEW_DAC2027_external_2026-10-24.md</code> §Overall assessment）一致：技术潜力高、证据强度中等、理论/基准/可复现是主要风险点。<strong>不修不可能中</strong>，修后可冲"可接受"档。
+</div>
+
+<h3>审稿人最可能给的 3 条主要意见（推测，依据评审 §2 + 本文 §③/④ 核对）</h3>
+
+<ol>
+<li>
+<span class="tag tag-crit">CRITICAL</span>
+<strong>57.4pp 归因错误</strong> —— 摘要写"observation-fidelity axis (no observation → full observation) spans 57.4 pp"（<code>0_abstract.tex:20-21</code>），但 Table 3 的受控 read-back 轴只有 <strong>13.5pp</strong>（Full 75.7% − No-read-back 62.2%）；57.4pp 是 Full 75.7% − Pure-LLM 18.3%（系统级增益，含检索+沙盒+自探索）。<strong>审稿人对着表 3 一减就能发现</strong>，是最易被抓的硬伤。证据：本报告 §③.1 已用 <code>zhulong_results.md</code> 复算确认。
+</li>
+<li>
+<span class="tag tag-crit">CRITICAL</span>
+<strong>理论 overclaim</strong> —— §4.2 把 <code>D_grounding ≤ g(ε)</code> 写成"bounded by observation fidelity, not model scale"（摘要 + intro + §4.2 + §6.2.1 四处），但论文未给出 <code>g</code> 的形式、推导假设、发散条件。外部评审原话："an intuitive hypothesis expressed in Bayesian notation rather than a demonstrated result"。10-24 15:4x 运维令已要求 Lemma→Claim 改写，但 <code>4_grounding.tex</code> 仍待核（本报告 §⑤.4）。
+</li>
+<li>
+<span class="tag tag-major">MAJOR</span>
+<strong>benchmark 不可独立复现 + 缺统计检验</strong> —— 449 任务来自不可再分发的厂商文档（PyAether/SKILL/Tcl 商业运行时）；论文未给 Wilson CI / 配对 McNemar / 多重比较校正；<strong>5 轮 + std 不足以establish每个组件差异的显著性</strong>（外部评审 §B）。3.1pp 的自探索增益在 std=3.0 的噪声下不显著（本报告 §③.4 推算）。
+</li>
+</ol>
+
+<h3>次级意见（会被一并提及）</h3>
+<ul>
+<li><span class="tag tag-major">MAJOR</span> baseline 太窄：只有内部消融，没有 strong external coding agent 对照（评审 §4）</li>
+<li><span class="tag tag-major">MAJOR</span> SKILL 自探索回归未解释：full 60.3% &lt; wo_selfexp 61.5%（<code>zhulong_results.md:335,314</code>）</li>
+<li><span class="tag tag-major">MAJOR</span> Tcl 拆分缺失：pooled 87.2% 掩盖 WaveView(88.6) vs Innovus(85.3) 差异（<code>zhulong_results.md:335</code>）</li>
+<li><span class="tag tag-minor">MINOR</span> 成本/延迟/token 缺失（评审 §4 Strongly recommended #1）</li>
+<li><span class="tag tag-minor">MINOR</span> 部署声明不可核验（评审 §4 #5）</li>
+<li><span class="tag tag-minor">MINOR</span> 参考文献占位符 "In Proceedings of . ACM"（评审 §4 Must fix #5）</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">② 创新性与定位</h2>
+
+<h3>2.1 与 3-5 篇最接近工作的逐项对比</h3>
+
+<p>下表对比 ZhuLong 与 5 篇最接近的工作（出处见 §2.3）。差异维度按外部评审 §A 建议：目标环境 / 统一接口 / 实证贡献。</p>
+
+<table>
+<tr>
+<th>工作</th><th>年份/出处</th><th>目标环境</th><th>统一接口</th><th>实证贡献</th><th>与 ZhuLong 的核心差异</th>
+</tr>
+<tr>
+<td><strong>ChatEDA</strong></td>
+<td>2023/MLCAD + 2024 IEEE TCAD<br><span class="small">arXiv:2308.10204</span></td>
+<td>数字 RTL→GDSII 流（OpenROAD/iEDA）<br>脚本语言：Python/TCL</td>
+<td>自定义 wrapper 包 OpenROAD；<strong>无统一 schema</strong></td>
+<td>~1500 指令对微调 AutoMage；<strong>无受控消融</strong>，无 read-back 轴</td>
+<td>ChatEDA 面向<strong>数字 flow 编排</strong>（synthesis/floorplan/P&R），ZhuLong 面向<strong>定制/模拟 EDA scripting</strong>（layout/schematic/waveform 状态查询）；ChatEDA 靠 fine-tune 注入领域知识，ZhuLong 靠<strong>检索 + 沙盒执行</strong>在线获取知识；ZhuLong 有受控 Ω/Φ 消融，ChatEDA 无</td>
+</tr>
+<tr>
+<td><strong>MCP4EDA</strong></td>
+<td>2025/07<br><span class="small">arXiv:2507.19570</span></td>
+<td>数字 RTL→GDSII（Yosys/Icarus/OpenLane/KLayout <strong>全开源</strong>）</td>
+<td><strong>Model Context Protocol</strong>（与 ZhuLong 同协议）</td>
+<td>backend-aware synthesis 优化；<strong>15-30% timing / 10-20% area</strong>；无 read-back/Φ 消融</td>
+<td>同为 MCP-based，但 MCP4EDA 是<strong>开源工具链 + 数字 flow 优化</strong>，ZhuLong 是<strong>商业运行时 + 多语言 scripting</strong>；MCP4EDA 的闭环是"综合指标→参数调优"，ZhuLong 是"执行反馈→代码修正"；<strong>两者互补</strong>（一个优化数字 flow，一个补 analog/定制断链）</td>
+</tr>
+<tr>
+<td><strong>LayoutCopilot</strong></td>
+<td>2025<br><span class="small">Google Scholar</span></td>
+<td>模拟 IC layout 设计（交互式）</td>
+<td>多 agent 协作框架；<strong>无统一 API schema</strong></td>
+<td>多 agent 协作做 layout placement；<strong>无受控 benchmark</strong></td>
+<td>LayoutCopilot 做<strong>模拟 layout 几何</strong>（placement/constraint），ZhuLong 做<strong>跨运行时 scripting</strong>（API 调用/状态查询）；LayoutCopilot 是 interactive multi-agent，ZhuLong 是 single-agent + 工具闭环；目标问题不同（几何 vs 脚本）</td>
+</tr>
+<tr>
+<td><strong>RAG-EDA</strong></td>
+<td>2024/07<br><span class="small">arXiv:2407.15353</span></td>
+<td>EDA 工具文档问答（QA）</td>
+<td>定制 RAG pipeline；<strong>无执行接口</strong></td>
+<td>EDA 文档 QA benchmark；<strong>只检索不执行</strong></td>
+<td>RAG-EDA 只做<strong>文档检索 QA</strong>（无 run_code），ZhuLong 是<strong>检索 + 沙盒执行 + 修正闭环</strong>；ZhuLong 的 C1.rag 臂（pooled ~62.5%）等价于 RAG-EDA 的能力上限，ZhuLong full 在此基础上 +13.2pp（系统级）</td>
+</tr>
+<tr>
+<td><strong>ChaTCL</strong></td>
+<td>2025/08<br><span class="small">IEEE Xplore</span></td>
+<td>TCL 脚本生成（多 agent RAG）</td>
+<td>多 agent + RAG；<strong>无统一 schema</strong></td>
+<td>TCL 脚本生成 benchmark；<strong>无 read-back/Φ 消融</strong></td>
+<td>ChaTCL 专做 TCL，ZhuLong <strong>跨 3 语言 4 运行时</strong>（PyAether/SKILL/Tcl-WaveView/Tcl-Innovus）；ChaTCL 是 multi-agent RAG，ZhuLong 是 single-agent + 执行闭环；ZhuLong 的 Tcl pooled 87.2% 可作 ChaTCL 的对照参考（但 benchmark 不同不可直接比）</td>
+</tr>
+</table>
+
+<h3>2.2 为什么必须发在 DAC 而不是软件工程会议</h3>
+
+<p>这是评审必问的定位问题。论据（推测，需在 intro 强化）：</p>
+
+<ol>
+<li><strong>问题领域是 EDA-specific</strong>：correctness 是 <em>situated property</em>（依赖 live layout/schematic/waveform 状态），不是通用代码生成的 functional correctness。SWE-bench 类 benchmark 的"测试通过"不捕获 EDA 的状态依赖。这是 DAC 而非 ICSE/SE 的核心理由。</li>
+<li><strong>统一接口覆盖 3 语言 4 商业运行时</strong>：PyAether/SKILL/Tcl-WaveView/Tcl-Innovus 是 EDA 工程师日常工具，软件工程会议受众不熟悉；DAC 受众这是核心痛点。</li>
+<li><strong>实证贡献是 cross-runtime benchmark + 受控消融</strong>：449 任务 + Ω/Φ 轴消融是 EDA 自动化的实证基准，不是 SE 的代码生成 benchmark（SWE-bench/HumanEval）。</li>
+<li><strong>部署场景是 EDA flow</strong>：在 leading memory design house 的量产 EDA flow 部署，是 EDA 产业链问题，不是通用 SWE。</li>
+</ol>
+
+<p><strong>风险</strong>：如果理论 overclaim 不修，审稿人可能说"这是 SE 论文披着 EDA 外衣"——所以 §4.2 必须降级为 framework/hypothesis（见 §⑦ P0）。</p>
+
+<h3>2.3 引用出处</h3>
+<ul>
+<li>ChatEDA: Wu, He et al., "ChatEDA: A Large Language Model Powered Autonomous Agent for EDA", MLCAD 2023 / IEEE TCAD 2024, <a href="https://arxiv.org/abs/2308.10204">arXiv:2308.10204</a></li>
+<li>MCP4EDA: Wang et al., "MCP4EDA: LLM-Powered Model Context Protocol RTL-to-GDSII Automation with Backend Aware Synthesis Optimization", <a href="https://arxiv.org/abs/2507.19570">arXiv:2507.19570</a>, 2025-07</li>
+<li>LayoutCopilot: "LayoutCopilot: An LLM-powered multiagent collaborative framework for interactive analog layout design", 2025 (Google Scholar)</li>
+<li>RAG-EDA: "Customized Retrieval Augmented Generation and Benchmarking for EDA Tool Documentation QA", <a href="https://arxiv.org/abs/2407.15353">arXiv:2407.15353</a>, 2024-07</li>
+<li>ChaTCL: "ChaTCL: LLM-Based Multi-Agent RAG Framework for TCL Script Generation", IEEE Xplore, 2025-08</li>
+<li>LLMs for EDA survey: Wu, Qiu, Yu, "Large Language Models for EDA: Future or Mirage?", ACM TODAES vol 30 issue 6, 2025-10, <a href="https://doi.org/10.1145/3736167">doi:10.1145/3736167</a></li>
+<li>Agentic EDA survey: "The Dawn of Agentic EDA: A Survey of Autonomous Digital Chip Design", <a href="https://arxiv.org/abs/2512.23189">arXiv:2512.23189</a>, 2025-12</li>
+</ul>
+
+<hr>
+
+<h2 id="s3">③ 证据强度</h2>
+
+<h3>3.1 逐臂核对：论文表 3（read-back 轴）vs <code>zhulong_results.md</code></h3>
+
+<p>外部评审 §2.2 指出 57.4pp 归因错误。本节用原始数据复算确认。</p>
+
+<table>
+<tr><th>配置</th><th>论文 Table 3 (Pass@1)</th><th>zhulong_results.md 复算</th><th>差异</th></tr>
+<tr><td>Pure LLM (no tools)</td><td>18.3%</td><td>(10.5×158 + 33.2×158 + 2.9×77 + 20.0×56)/449 = <strong>18.3%</strong> ✅</td><td>无</td></tr>
+<tr><td>No read-back (N)</td><td>62.2%</td><td>(73.3×158 + 30.2×158 + 88.3×77 + 84.2×56)/449 = <strong>62.1%</strong> ✅</td><td>四舍五入</td></tr>
+<tr><td>Binary (B)</td><td>65.5%</td><td>(78.1×158 + 38.7×158 + 84.4×77 + 78.9×56)/449 = <strong>65.4%</strong> ✅</td><td>四舍五入</td></tr>
+<tr><td>Full (F)</td><td>75.7%</td><td>(81.4×158 + 60.3×158 + 88.6×77 + 85.3×56)/449 = <strong>75.7%</strong> ✅</td><td>无</td></tr>
+</table>
+
+<p><strong>核对结论</strong>：论文 Table 3 数字与 <code>zhulong_results.md</code> 完全一致（误差 ≤0.1pp，四舍五入）。</p>
+
+<p><strong>归因核对</strong>：</p>
+<ul>
+<li>受控 read-back 轴 (N→F)：<strong>75.7 − 62.2 = 13.5pp</strong>（这是论文应该报的"observation-fidelity axis"数）</li>
+<li>Binary 增量 (N→B)：<strong>65.5 − 62.2 = 3.3pp</strong></li>
+<li>系统级增益 (Pure-LLM→F)：<strong>75.7 − 18.3 = 57.4pp</strong>（含检索+沙盒+自探索，不是 observation-fidelity 轴）</li>
+</ul>
+
+<div class="verdict verdict-bad">
+<strong>确认：57.4pp 归因错误成立</strong>。摘要 <code>0_abstract.tex:20-21</code> 把 57.4pp 标为"observation-fidelity axis (no observation → full observation)"——但"no observation"在受控轴上指 N 档（62.2%），不是 Pure-LLM（18.3%）。<strong>必须在 abstract / 贡献条 / §4.2 / §6.2.1 四处拆成三个数并分别表述</strong>（评审 §2.2 + 10-25 改稿令 A 已要求）。
+</div>
+
+<h3>3.2 逐臂核对：论文表 4（组件消融 C1）vs <code>zhulong_results.md</code></h3>
+
+<table>
+<tr><th>臂</th><th>PyAether</th><th>SKILL</th><th>WaveView</th><th>Innovus</th><th>数据来源</th></tr>
+<tr><td>C1.pure_llm</td><td>10.5±1.9</td><td>33.2±2.3</td><td>2.9±1.1</td><td>20.0±3.2</td><td><code>zhulong_results.md:253</code> ✅</td></tr>
+<tr><td>C1.rag</td><td>72.2±1.6</td><td>33.9±10.6</td><td>87.0±3.0</td><td>81.4±5.8</td><td><code>zhulong_results.md:274</code> ✅</td></tr>
+<tr><td>C1.wo_retrieval</td><td>81.0±4.5</td><td>39.0±12.6</td><td>81.6±3.4</td><td>61.8±34.6</td><td><code>zhulong_results.md:293</code> ✅</td></tr>
+<tr><td>C1.wo_selfexp (V2)</td><td>77.3±2.9</td><td>61.5±0.7</td><td>86.0±1.4</td><td>72.3±10.5</td><td><code>zhulong_results.md:314</code> ✅</td></tr>
+<tr><td>C1.full (V3 锚点)</td><td>81.4±1.5</td><td>60.3±6.7</td><td>88.6±2.1</td><td>85.3±15.4</td><td><code>zhulong_results.md:335</code> ✅</td></tr>
+</table>
+
+<p><strong>核对结论</strong>：C1 五臂数字与 <code>zhulong_results.md</code> 完全一致。论文表 4（若用陈熙元版本 81.4±1.5）数据可追溯。</p>
+
+<p><strong>异常点（评审 §2.5 已指出）</strong>：</p>
+<ul>
+<li>SKILL：full 60.3% &lt; wo_selfexp 61.5% → <strong>自探索在 SKILL 上 −1.2pp</strong>（<code>zhulong_results.md:337</code> 备注"SKILL语言相较于未使用增强文档通过率变低，可能要重测"）。需在论文里解释（见 §④.3）。</li>
+<li>PyAether：wo_retrieval 81.0% ≈ full 81.4% → <strong>检索在 PyAether 上几乎无增益</strong>（+0.4pp，远小于 std=4.5/1.5）。需解释。</li>
+<li>Innovus std=15.4 / 34.6 / 10.5 → <strong>高方差</strong>，5 轮不足以稳定估计。需 Wilson CI 或更多轮。</li>
+</ul>
+
+<h3>3.3 逐臂核对：S2 Φ 预算轴 vs <code>zhulong_results.md</code></h3>
+
+<table>
+<tr><th>臂</th><th>Pass@1 (PyAether)</th><th>Converged (%)</th><th>Mean gen-fail</th><th>单调性</th></tr>
+<tr><td>phi_k10</td><td>77.7±2.2</td><td>90.4</td><td>17.4</td><td rowspan="4">k10 &gt; k3 &gt; k1 ✅<br>lagged 介于 k3 与 k10 ✅</td></tr>
+<tr><td>phi_k3</td><td>69.1±2.5</td><td>80.4</td><td>27.6</td></tr>
+<tr><td>phi_k1</td><td>63.8±3.2</td><td>76.3</td><td>~34</td></tr>
+<tr><td>phi_lagged</td><td>73.0±3.2</td><td>97.5</td><td>9.0</td></tr>
+<tr><td>unbounded (full_v3)</td><td>82.1±3.0</td><td>99.1</td><td>10.4</td><td>—</td></tr>
+</table>
+
+<p class="evidence">数据来源：<code>zhulong_results.md:439,460,479,505,523</code>。单调性 + Converged 趋势与"Φ 更新率必须超过 L4 动态时间尺度"假设一致 ✅。</p>
+
+<p><strong>核对结论</strong>：S2 四臂数字与 <code>zhulong_results.md</code> 一致。但 <strong>S2 只在 PyAether 上跑了 4 臂</strong>（SKILL/Tcl 列空），论文若宣称"Φ 轴跨运行时"需补跑或限定 claim 范围。</p>
+
+<h3>3.4 缺失的统计检验（评审 §B + 10-25 改稿令 I）</h3>
+
+<p><strong>5 轮 + std 不足以 establish 显著性</strong>。需补：</p>
+
+<ol>
+<li>
+<strong>Wilson 95% CI for Pass@1</strong>（每臂 pooled + per-slice）：<br>
+公式：<code>CI = (p̂ + z²/2n ± z·√(p̂(1-p̂)/n + z²/4n²)) / (1 + z²/n)</code>，z=1.96，n=任务数（per-slice 158/77/56，pooled 449）。<br>
+<strong>数据已有</strong>，不用重跑。可用 <code>reports/a1_significance.py</code>（已存在）扩展。
+</li>
+<li>
+<strong>配对 McNemar 检验</strong>（组件两两对比）：<br>
+对每对臂（如 full vs wo_selfexp），用 5 轮 × 158 任务的 per-task pass/fail 矩阵建 2×2 列联表，算 McNemar χ²。<br>
+<strong>关键</strong>：需 per-task 级别的 pass/fail（5 轮 × 449 任务 = 2245 个二元结果），数据应在 batch 目录的 regrade 结果里。<br>
+<strong>判据</strong>：full vs wo_selfexp 在 PyAether 上 Δ=+4.1pp（81.4 vs 77.3），但 std=1.5/2.9 → 推测 McNemar 可能不显著（需实算）。
+</li>
+<li>
+<strong>多重比较校正</strong>（C1 五臂两两比 = 10 对，S2 四臂 = 6 对）：<br>
+用 Benjamini-Hochberg FDR 或 Bonferroni。<strong>不校正的话 10 对里至少 1 个假阳性概率 ≈ 40%</strong>（α=0.05）。
+</li>
+<li>
+<strong>5 轮轮间方差 vs 任务间方差分离</strong>：<br>
+当前 std 只反映轮间方差，<strong>任务间方差（难易分布）未报告</strong>。建议补 per-task 难度直方图 + bootstrap CI。
+</li>
+</ol>
+
+<h3>3.5 新增证据：CLI harness 对比（MEMORY 10-26 收口，论文未含）</h3>
+
+<div class="verdict verdict-info">
+<strong>新数据（10-26 收口，未纳入论文）</strong>：cline CLI vs zhulong CLI，同模型 glm-5.3-flash，同配置 maxTokens=8192，full readback，PyAether 158：
+<ul>
+<li>cline × glm-5.3-flash × full × 8192：**86.8±1.6%** [86.1,84.8,89.2,87.3,86.7]（<code>zhulong_results.md:222</code>）</li>
+<li>zhulong × glm-5.3-flash × full × 8192：**70.8±7.7%** [58.9,75.9,67.1,77.2,74.7]（MEMORY 10-26 21:52）</li>
+<li>Δ = **−16.0pp**，≈80% 来自"未生成代码(literal-pass)"（<code>report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html</code>）</li>
+</ul>
+<strong>对论文的影响</strong>：这是"只差 CLI 二进制"的干净对比，证明 <strong>harness 实现质量（literal-pass 抑制）是 16pp 差距的来源</strong>。论文当前未含此对比，但 <strong>这恰恰是 DAC 审稿人会问的"你的增益是算法还是工程实现"</strong> 的答案。建议在 §6.2 加一段"实现敏感性"讨论（见 §⑦ P1）。
+</div>
+
+<hr>
+
+<h2 id="s4">④ 实验缺口清单（最重要）</h2>
+
+<p>按"补了能提升多少可信度"排序。每条给：缺什么 → 为什么审稿人会问 → 最小可行实验设计 → 数据位置（若已跑）。</p>
+
+<h3>4.1 <span class="tag tag-p0">P0</span> 修 57.4pp 归因（数据已有，0 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：abstract / 贡献条 / §4.2 / §6.2.1 把 57.4pp 拆成三个数（13.5pp 受控 / 3.3pp binary / 57.4pp 系统级）</li>
+<li><strong>为什么问</strong>：对着 Table 3 一减就发现，是最易抓的硬伤</li>
+<li><strong>最小实验</strong>：0 臂 / 0 轮 / 0 GPU·h（纯改文字）</li>
+<li><strong>数据位置</strong>：本报告 §③.1 已复算确认</li>
+</ul>
+
+<h3>4.2 <span class="tag tag-p0">P0</span> 理论降级为 framework/hypothesis（0 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：§4.2 Lemma → Claim，去 "by standard results" 归因，加 delage2010percentile 引用支撑"模型失配是公认问题"</li>
+<li><strong>为什么问</strong>：评审 §2.1 "intuitive hypothesis expressed in Bayesian notation"</li>
+<li><strong>最小实验</strong>：0 GPU·h（纯改 .tex + 重编译）</li>
+<li><strong>状态</strong>：10-24 15:4x 运维令已要求，<code>4_grounding.tex</code> 待核（§⑤.4）</li>
+</ul>
+
+<h3>4.3 <span class="tag tag-p0">P0</span> 解释 SKILL 自探索回归（0-2 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：为什么 full(60.3%) &lt; wo_selfexp(61.5%) on SKILL（−1.2pp）</li>
+<li><strong>为什么问</strong>：评审 §2.5 + §B "self-exploration reduces performance on SKILL"</li>
+<li><strong>最小实验</strong>：
+  <ol>
+    <li>从 batch 日志统计 SKILL 任务的自探索文档查询次数 + 命中率（0 GPU·h，日志分析）</li>
+    <li>若日志不足，跑 1 臂 × 5 轮 × 158 SKILL 任务 = 5 轮（~10 GPU·h，复用现有 harness）</li>
+  </ol>
+</li>
+<li><strong>假设（推测）</strong>：SKILL API 集小，自探索文档可能与 V2 文档重叠/冲突，引入噪声；或 SKILL 解释器对 API 签名敏感，增强文档的额外字段反而误导</li>
+<li><strong>可验证判据</strong>：对比 V2 vs V3 文档在 SKILL 上的检索 top-k 命中率 + 生成代码的 API 调用错误率</li>
+</ul>
+
+<h3>4.4 <span class="tag tag-p0">P0</span> 加 Wilson CI + McNemar + 多重比较校正（0 GPU·h，数据已有）</h3>
+<ul>
+<li><strong>缺什么</strong>：见 §③.4</li>
+<li><strong>为什么问</strong>：评审 §B "Statistical evidence is limited"</li>
+<li><strong>最小实验</strong>：0 GPU·h（用现有 5 轮 × 449 任务的 per-task 结果算）</li>
+<li><strong>数据位置</strong>：各 batch 目录的 regrade 结果（<code>2026_101{4,5,6,7,8}_*</code> 等）</li>
+<li><strong>工作量</strong>：~1 天脚本 + 1 段论文文字</li>
+</ul>
+
+<h3>4.5 <span class="tag tag-p1">P1</span> 加 strong external baseline（最大缺口，~50 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：用同一 LLM + 同一工具访问 + 同一执行预算的 strong coding agent 对照（如 OpenHands/Cline/SWE-agent 同等配置）</li>
+<li><strong>为什么问</strong>：评审 §4 "does not clearly establish superiority over the most relevant existing EDA agents or alternative execution-grounded coding systems"</li>
+<li><strong>最小实验</strong>：1 个 baseline × 5 轮 × 449 任务 = 5 轮（~50 GPU·h）</li>
+<li><strong>建议</strong>：用 cline CLI（已是产线工具，86.8±1.6% on PyAether）作为 strong baseline —— <strong>数据已有</strong>（<code>zhulong_results.md:222</code> + MEMORY 10-26），只需写入论文 §6.2 并讨论 Δ</li>
+<li><strong>备注</strong>：cline vs zhulong 的 −16pp 差距主要来自 literal-pass（工程实现），不是算法 —— 这反而是<strong>诚实且有价值的发现</strong>，说明 harness 实现质量是关键</li>
+</ul>
+
+<h3>4.6 <span class="tag tag-p1">P1</span> 成本/延迟/token 报告（~10 GPU·h，部分数据已有）</h3>
+<ul>
+<li><strong>缺什么</strong>：每任务的 wall-clock、tool calls、token usage、约当成本</li>
+<li><strong>为什么问</strong>：评审 §4 Strongly recommended #1 + 10-25 改稿令 F</li>
+<li><strong>最小实验</strong>：
+  <ol>
+    <li>从现有 batch 日志统计（0 GPU·h）：每个 worker 的 token / 时长 / tool calls 已在 log 里</li>
+    <li>若日志不全，跑 1 轮 × 449 任务带 instrumented harness（~10 GPU·h）</li>
+  </ol>
+</li>
+<li><strong>用户提示</strong>：陈熙元版本里已有 cost 数字，可在 git 历史查（10-25 改稿令 F）—— <strong>先 <code>git log --all -S 'cost' -- doc/ZhuLong_DAC2027</code> 检索</strong></li>
+</ul>
+
+<h3>4.7 <span class="tag tag-p1">P1</span> Tcl 拆分：WaveView vs Innovus（数据已有，0 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：论文只报 pooled Tcl 87.2%，但 WaveView 88.6% vs Innovus 85.3% 差 3.3pp（且 Innovus std=15.4 高方差）</li>
+<li><strong>为什么问</strong>：评审 §C "Report WaveView and Innovus independently"</li>
+<li><strong>最小实验</strong>：0 GPU·h（数据已在 <code>zhulong_results.md:335</code>，只需在论文表里拆列）</li>
+</ul>
+
+<h3>4.8 <span class="tag tag-p1">P1</span> benchmark 可复现性子集（~20 工时，0 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：可公开的任务描述/签名/assertion 规格 + 小规模可复现子集</li>
+<li><strong>为什么问</strong>：评审 §2.3 "performed on a proprietary benchmark with insufficiently demonstrated reproducibility"</li>
+<li><strong>最小实验</strong>：
+  <ol>
+    <li>公开 ~50 个不涉及厂商专有 API 的任务（如 Tcl 通用任务 / 公开 SKILL API 任务）</li>
+    <li>发布 assertion 设计文档 + 防假阳性机制（独立 review + 多个 incorrect impl 对照）</li>
+    <li>发布 eval harness + 配置 + anonymized traces</li>
+  </ol>
+</li>
+<li><strong>工作量</strong>：~20 工时（法律审查 + 文档 + 代码清理）</li>
+</ul>
+
+<h3>4.9 <span class="tag tag-p2">P2</span> S2 Φ 轴跨运行时（~40 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：S2 四臂（k10/k3/k1/lagged）只在 PyAether 上跑了，SKILL/Tcl 列空</li>
+<li><strong>为什么问</strong>：论文若宣称"Φ 轴跨运行时"需补；若限定为 PyAether-only 需在 claim 里说清</li>
+<li><strong>最小实验</strong>：4 臂 × 5 轮 × 158 SKILL + 4 臂 × 5 轮 × 133 Tcl = 40 轮（~40 GPU·h）</li>
+<li><strong>建议</strong>：先限定 claim 为 PyAether-only（0 GPU·h），有时间再补</li>
+</ul>
+
+<h3>4.10 <span class="tag tag-p2">P2</span> S1.omega_low 跨运行时 + readback 轴补跑（~30 GPU·h）</h3>
+<ul>
+<li><strong>缺什么</strong>：S1.omega_low 只在 PyAether 上跑了 5 轮（<code>zhulong_results.md:370</code>，其他列空）；readback_binary/none 是 legacy 数据（部分 std 过大如 16.1）</li>
+<li><strong>为什么问</strong>：S1 三臂的 cross-runtime 数据不完整</li>
+<li><strong>最小实验</strong>：3 臂 × 5 轮 × 158 SKILL + 3 臂 × 5 轮 × 133 Tcl = 30 轮（~30 GPU·h）</li>
+</ul>
+
+<hr>
+
+<h2 id="s5">⑤ 写作与呈现（逐节挑刺）</h2>
+
+<h3>5.1 摘要（<code>0_abstract.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-crit">CRITICAL</span> <strong>57.4pp 归因错误</strong>（§③.1 已核对）—— "observation-fidelity axis (no observation → full observation) spans 57.4 pp" 应改为 "the controlled read-back axis spans 13.5 pp (no read-back → full read-back); the full system vs pure-LLM baseline spans 57.4 pp"</li>
+<li><span class="tag tag-minor">MINOR</span> <strong>"versus 22.0 pp for the backbone axis"</strong> —— 22.0pp 的口径不明。从 <code>zhulong_results.md</code> Phase B 看：glm-5.3-flash 86.8% − deepseek-v4-flash(复测) 60.1% = 26.7pp；kimi 77.0 − deepseek-v4-flash 60.1 = 16.9pp。22.0pp 对不上任何一对，需核</li>
+<li><span class="tag tag-minor">MINOR</span> <strong>部署声明</strong> "deployed in production EDA flows at a leading memory design house" —— 已比旧版"服务数百名工程师"弱化，但仍不可核验。建议加 "internal deployment (details restricted)" 或给可核验指标（任务完成数 / 工程师时间节省）</li>
+<li><span class="tag tag-ok">OK</span> 449 任务 / 三语言 / 四运行时 / 75.7% / 18.3% / 62.5% 数字与 <code>zhulong_results.md</code> 一致</li>
+</ul>
+
+<h3>5.2 Intro（<code>1_intro.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-major">MAJOR</span> 需核 release 句是否已改为 10-24 13:0x 令的 A 版（"specify the harness, schema, and assertion protocol in full" 而非开源承诺）</li>
+<li><span class="tag tag-major">MAJOR</span> <strong>related work 只有 6 条</strong>（评审 §5）—— 需补 ChatEDA / MCP4EDA / LayoutCopilot / ChaTCL / RAG-EDA 的三句差异（§2.1 表格内容）</li>
+<li><span class="tag tag-minor">MINOR</span> 需核"observation fidelity bounds grounding gap"措辞是否暗示已证（评审 §5 替代句式已给）</li>
+</ul>
+
+<h3>5.3 Background（<code>2_background.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-minor">MINOR</span> 需核 POMDP belief update 引用位置（Kaelbling/Thrun 应只用于框架，不支撑 D ≤ g(ε)）</li>
+</ul>
+
+<h3>5.4 Design / Grounding（<code>3_design.tex</code> + <code>4_grounding.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-crit">CRITICAL</span> <strong>§4.2 Lemma → Claim 未落地</strong>（10-24 15:4x 令）—— 需核 <code>4_grounding.tex:56-59</code> 是否仍是 "Lemma (observation-fidelity bound)" + "By standard POMDP model-approximation results"</li>
+<li><span class="tag tag-crit">CRITICAL</span> 需加 delage2010percentile 引用（已在 10-24 令里给 bib 条目）</li>
+<li><span class="tag tag-major">MAJOR</span> 全文 grep "bounded by the fidelity" / "is bounded by" / "we prove" / "Theorem" —— 凡暗示已证的要改（10-24 令⑤）</li>
+<li><span class="tag tag-minor">MINOR</span> Figure-1 需核是否已用 TikZ 重画（10-24 13:0x 令④，<code>figures/zhulong_arch_3.pdf</code>），caption 是否"four MCP tools + three platforms"</li>
+</ul>
+
+<h3>5.5 Benchmark（<code>5_bench.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-major">MAJOR</span> 需补一小节"可公开什么 / 受许可限制不能公开 / 独立研究者能复现到哪一步 / assertion 如何设计与防假阳性"（评审 §2.3 + 10-25 改稿令 C）</li>
+<li><span class="tag tag-minor">MINOR</span> 449 = 158 PyAether + 158 SKILL + 133 Tcl（77 WaveView + 56 Innovus）—— 需在表里拆 WaveView/Innovus（§4.7）</li>
+</ul>
+
+<h3>5.6 Experiments（<code>6_exp.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-crit">CRITICAL</span> §6.2.1 需核 57.4pp 表述（与摘要同改）</li>
+<li><span class="tag tag-major">MAJOR</span> 需加 Wilson CI + McNemar + 多重比较（§③.4）</li>
+<li><span class="tag tag-major">MAJOR</span> 需加 cost / latency / token / tool calls 列（§4.6）</li>
+<li><span class="tag tag-major">MAJOR</span> 需加 SKILL 自探索回归解释（§4.3）</li>
+<li><span class="tag tag-minor">MINOR</span> Tcl 拆列（§4.7）</li>
+<li><span class="tag tag-ok">OK</span> 表 3/4 数字与 <code>zhulong_results.md</code> 一致（§③.1/§③.2 已核对）</li>
+</ul>
+
+<h3>5.7 Discussion（<code>7_discussion.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-minor">MINOR</span> 需核 <code>\enlargethispage{8\baselineskip}</code> 是否已删（10-24 19:0x 令①）</li>
+</ul>
+
+<h3>5.8 Conclusion（<code>8_conclusion.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-minor">MINOR</span> 需核是否仍有"服务数百名工程师"（10-25 改稿令 J）</li>
+</ul>
+
+<h3>5.9 Appendix（<code>9_appendix.tex</code>）</h3>
+<ul>
+<li><span class="tag tag-minor">MINOR</span> 需核是否已删两节（app:cost / app:phi-bound）+ 从 main.tex 移除 \input（10-24 13:0x 令③）</li>
+</ul>
+
+<h3>5.10 排版与构建</h3>
+<ul>
+<li><span class="tag tag-ok">OK</span> 7 页 / 正文 6 + refs 1 / 0 undefined / 无 Overfull \vbox（10-24 19:0x 运维令已修）</li>
+<li><span class="tag tag-minor">MINOR</span> bibtex 仍有 pu2024rag 缺页码告警（数据缺失，不可编造）</li>
+<li><span class="tag tag-minor">MINOR</span> "In Proceedings of . ACM" 占位符（评审 §4 Must fix #5）—— 需核 ACM-Reference-Format.bst 渲染</li>
+</ul>
+
+<hr>
+
+<h2 id="s6">⑥ 可复现与伦理</h2>
+
+<h3>6.1 Artifact 可得性</h3>
+<table>
+<tr><th>组件</th><th>当前状态</th><th>可公开程度</th><th>建议</th></tr>
+<tr><td>eval harness（eda_fastmcp）</td><td>仓库外私有</td><td>可公开（不含厂商 IP）</td><td>开源 harness + 配置</td></tr>
+<tr><td>449 任务（描述/签名/assertion）</td><td>私有</td><td><strong>部分受许可限制</strong>（PyAether/SKILL/Tcl 厂商文档派生）</td><td>公开 ~50 个不涉专有 API 的子集 + 其余给描述</td></tr>
+<tr><td>商业运行时（PyAether/SKILL/WaveView/Innovus）</td><td>许可限制</td><td><strong>不可公开</strong></td><td>给"获取授权访问"流程文档</td></tr>
+<tr><td>anonymized execution traces</td><td>batch 目录里有</td><td>可公开（脱敏后）</td><td>发布 5 轮 × 449 任务的 trace</td></tr>
+<tr><td>regrade 脚本 + assertion 实现</td><td>部分在 reports/</td><td>可公开</td><td>整理发布</td></tr>
+</table>
+
+<h3>6.2 Anonymity</h3>
+<p>当前稿用 <code>anonymous, sigconf</code>（<code>main.tex:2</code>）✅。但摘要"leading memory design house"+ 作者邮箱 <code>@cxmt.com</code>（<code>main.tex</code> author block）<strong>可能 de-anonymize</strong>。建议：</p>
+<ul>
+<li>投稿版用 anonymous author block（去掉邮箱）</li>
+<li>"leading memory design house" 改为 "a leading memory design house (anonymized for review)"</li>
+</ul>
+
+<h3>6.3 LLM 使用声明</h3>
+<p>DAC 2027 投稿要求（推测，需核最新 CFP）可能要求声明 LLM 使用。建议加一段："LLMs were used for code generation in the ZhuLong system itself and for assistance in writing this manuscript; all experimental results are from deterministic regrade of generated code."</p>
+
+<h3>6.4 Benchmark 泄漏风险</h3>
+<ul>
+<li><strong>风险</strong>：449 任务来自厂商文档，若文档公开则 LLM 可能在预训练时见过 → Pass@1 虚高</li>
+<li><strong>缓解</strong>：(a) 用任务专属的 assertion（不是文档原话）；(b) 报告 pure_llm 臂 18.3% 作为"已见过"上界——若 LLM 见过，pure_llm 应更高；(c) 用闭源模型（如 doubao/kimi）对照，未见过的模型应表现一致</li>
+<li><strong>建议</strong>：在 §5 加一段"leakage analysis"，报告 pure_llm 跨模型的稳定性（doubao 63.8 / kimi 77.0 / glm-5.3-flash 86.8 —— 差异大说明任务不是 LLM 能直接 recall 的）</li>
+</ul>
+
+<h3>6.5 Assertion 防假阳性</h3>
+<p>评审 §B "Explain how assertions are designed, whether they are independently reviewed, and how false positives are prevented."</p>
+<ul>
+<li><strong>当前</strong>：task passes when code executes without errors AND assertions hold</li>
+<li><strong>风险</strong>：assertion 太弱 → 假阳性（错误实现碰巧通过）</li>
+<li><strong>建议</strong>：(a) 公开 assertion 设计文档；(b) 报告"多个 incorrect impl 对照"实验（同一任务多个错误实现是否被 assertion 拒绝）；(c) 人工抽检 ~50 任务的 pass 案例</li>
+</ul>
+
+<hr>
+
+<h2 id="s7">⑦ 改稿路线图</h2>
+
+<h3>P0（投稿前必须做）</h3>
+<table>
+<tr><th>#</th><th>任务</th><th>工作量</th><th>依赖</th><th>对应缺口</th></tr>
+<tr><td>P0.1</td><td>修 57.4pp 归因（abstract + 贡献条 + §4.2 + §6.2.1 四处拆成 13.5/3.3/57.4 三个数）</td><td>2h</td><td>无</td><td>§4.1</td></tr>
+<tr><td>P0.2</td><td>理论降级：Lemma → Claim + 去"by standard results" + 加 delage2010percentile + grep 全文改"已证"措辞</td><td>4h</td><td>无</td><td>§4.2 / §5.4</td></tr>
+<tr><td>P0.3</td><td>加 Wilson CI + McNemar + 多重比较校正（用现有 5 轮 per-task 数据）</td><td>1d</td><td>per-task regrade 数据</td><td>§4.4</td></tr>
+<tr><td>P0.4</td><td>解释 SKILL 自探索回归（日志分析 + 假设 + 判据）</td><td>0.5d</td><td>SKILL batch 日志</td><td>§4.3</td></tr>
+<tr><td>P0.5</td><td>related work 加强（ChatEDA/MCP4EDA/LayoutCopilot/ChaTCL/RAG-EDA 三句差异）</td><td>0.5d</td><td>无（§2.1 表格已有内容）</td><td>§5.2</td></tr>
+<tr><td>P0.6</td><td>benchmark 可复现性小节（可公开什么 / 不能公开什么 / assertion 防假阳性）</td><td>0.5d</td><td>无</td><td>§4.8 / §5.5</td></tr>
+<tr><td>P0.7</td><td>修参考文献占位符 "In Proceedings of . ACM"</td><td>0.5h</td><td>无</td><td>§5.10</td></tr>
+<tr><td>P0.8</td><td>部署声明改"内部部署（细节受限）"或给可核验指标</td><td>0.5h</td><td>无</td><td>§5.1 / §5.8</td></tr>
+<tr><td colspan="2"><strong>P0 合计</strong></td><td><strong>~3 工日</strong></td><td colspan="2">无 GPU 依赖（纯改稿 + 现有数据分析）</td></tr>
+</table>
+
+<h3>P1（能显著加分）</h3>
+<table>
+<tr><th>#</th><th>任务</th><th>工作量</th><th>依赖</th><th>对应缺口</th></tr>
+<tr><td>P1.1</td><td>加 cline strong baseline 对比（数据已有，写入 §6.2 + 讨论 Δ−16pp 来自 literal-pass）</td><td>0.5d</td><td>无（MEMORY 10-26 数据已收口）</td><td>§4.5 / §3.5</td></tr>
+<tr><td>P1.2</td><td>成本/延迟/token 报告（先 git 历史找陈熙元版本，再从 log 统计）</td><td>1d</td><td>git 检索 + log 统计</td><td>§4.6</td></tr>
+<tr><td>P1.3</td><td>Tcl 拆列（WaveView vs Innovus 分别报）</td><td>1h</td><td>无（数据已有）</td><td>§4.7</td></tr>
+<tr><td>P1.4</td><td>公开 ~50 任务的可复现子集 + eval harness</td><td>20 工时</td><td>法律审查</td><td>§4.8</td></tr>
+<tr><td>P1.5</td><td>leakage analysis（pure_llm 跨模型稳定性）</td><td>0.5d</td><td>无（数据已有）</td><td>§6.4</td></tr>
+<tr><td colspan="2"><strong>P1 合计</strong></td><td><strong>~4 工日</strong></td><td colspan="2">部分需法律审查</td></tr>
+</table>
+
+<h3>P2（有时间再做）</h3>
+<table>
+<tr><th>#</th><th>任务</th><th>工作量</th><th>依赖</th><th>对应缺口</th></tr>
+<tr><td>P2.1</td><td>S2 Φ 轴跨运行时（SKILL + Tcl 补跑）</td><td>~40 GPU·h</td><td>5-run harness</td><td>§4.9</td></tr>
+<tr><td>P2.2</td><td>S1.omega_low + readback 轴跨运行时补跑</td><td>~30 GPU·h</td><td>5-run harness</td><td>§4.10</td></tr>
+<tr><td>P2.3</td><td>per-task 难度直方图 + bootstrap CI</td><td>1d</td><td>per-task 数据</td><td>§3.4</td></tr>
+<tr><td>P2.4</td><td>人工抽检 50 任务 pass 案例防假阳性</td><td>2d</td><td>人工审查</td><td>§6.5</td></tr>
+<tr><td colspan="2"><strong>P2 合计</strong></td><td><strong>~70 GPU·h + 3 工日</strong></td><td colspan="2">需 GPU 资源 + 人工</td></tr>
+</table>
+
+<h3>依赖关系图</h3>
+<pre>
+P0.1 (57.4pp) ──┐
+P0.2 (理论降级) ─┤
+P0.5 (related) ──┤── P0 全做完 → 可投（边缘→可接受档）
+P0.6 (复现小节) ─┤
+P0.3/4/7/8 ─────┘
+
+P1.1 (cline baseline) ── 加分（可接受→强）
+P1.2 (成本) ──────────── 加分
+P1.3 (Tcl 拆) ─────────── 加分
+P1.4 (公开子集) ───────── 加分（需法律）
+P1.5 (leakage) ────────── 加分
+
+P2.* ── 时间充裕再做，不做也能投
+</pre>
+
+<hr>
+
+<h2>附录：本报告的核实清单</h2>
+<ul>
+<li>✅ 57.4pp 归因错误：用 <code>zhulong_results.md</code> 复算 Table 3 四个数字，确认 13.5pp 是受控轴、57.4pp 是系统级（§③.1）</li>
+<li>✅ C1 五臂数字：与 <code>zhulong_results.md:253-335</code> 逐行核对一致（§③.2）</li>
+<li>✅ S2 四臂数字：与 <code>zhulong_results.md:439-523</code> 一致，单调性成立（§③.3）</li>
+<li>✅ CLI 对比新数据：MEMORY 10-26 21:52 收口，70.8±7.7% vs 86.8±1.6%（§③.5）</li>
+<li>✅ 相关工作引用：6 篇均经 cimi_search 检索，出处可追溯（§2.3）</li>
+<li>⚠️ SKILL 自探索回归解释：目前是<strong>推测</strong>，需日志验证（§4.3）</li>
+<li>⚠️ 22.0pp backbone axis 口径：从 <code>zhulong_results.md</code> Phase B 算不出 22.0pp，需核论文口径（§5.1）</li>
+<li>⚠️ §4.2 Lemma/Claim 当前状态：本报告写时未读 <code>4_grounding.tex:56-59</code>，标"待核"（§5.4）</li>
+</ul>
+
+<p class="small">报告结束。下一步建议：先做 P0.1-P0.2（57.4pp + 理论降级，纯改稿，~6h），再做 P0.3（统计检验，~1d）。论文评审任务（10-25 response-letter）与本报告互补，可并行推进。</p>
+
+</body>
+</html>
