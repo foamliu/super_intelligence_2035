@@ -1,4 +1,34 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 216 | TARGET: 29 -->
+## RUN_ID 216 — 只读：S1 退出原因 + mamba2 provider 的 rotary_base 默认值
+
+```bash
+set -u
+C=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "=== RUN_ID 216 | crash + rope config | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] S1 是否还在跑 / 谁在跑"
+ps -eo pid,etimes,args= | grep -E 'pretrain_launcher\.py|torchrun' | grep -Ev 'grep|cline|bun|node /' | cut -c1-120 || echo "  (none now)"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo
+echo "[2] formal 日志里的错误行（最后 12 条）"
+grep -inE 'error|traceback|assert|exception|killed|out of memory|cuda|nccl|abort' /tmp/baize_s1_formal.log 2>/dev/null | tail -12 | cut -c1-190
+echo "  -- formal 尾 25 行 --"
+tail -25 /tmp/baize_s1_formal.log 2>/dev/null | cut -c1-190
+echo
+echo "[3] worker 日志尾 20 行"
+tail -20 /tmp/baize_s1_worker_node.log 2>/dev/null | cut -c1-190
+echo
+echo "[4] mamba2 / hybrid provider 的 rotary 设置"
+grep -rn --include=*.py -E 'rotary|rope' "$C/mamba2_hybrid_2b" "$C/mamba2_hybrid_proxy_d128" 2>/dev/null | head -10 | cut -c1-180
+echo "  -- launcher 里 mamba2 分支的模型配置来源 --"
+grep -nE 'mamba2|provider|rotary|arch ==' "$C/pretrain_launcher.py" 2>/dev/null | head -12 | cut -c1-170
+echo
+echo "[5] 实验/ckpt 落点（任何 baize2b 痕迹）"
+find /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments -maxdepth 1 -name 'baize2b*' 2>/dev/null | head -5
+ls -dt /tmp/*baize2b* 2>/dev/null | head -5
+echo "=== DONE 216 ==="
+```
+
 <!-- RUN_ID: 215 | TARGET: 29 -->
 ## RUN_ID 215 — 只读：launcher 是否支持 --rotary-base / --lr-decay-shape + S1 产物落点 + 迭代行
 
