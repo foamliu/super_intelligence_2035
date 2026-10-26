@@ -2472,3 +2472,37 @@ setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /de
 - 只用可商用 / 可再分发语料（维基 / 公有领域 / 自建 LaTeX / 自建图表），逐类在 DATASET_CARD 标 License。
 - 生成图只做训练，不得用于替换/扩充评测集；泄漏检查必做。
 - 数字一律实测（`du -sb` / `find | wc -l` / 计数脚本）；估算必须标「估算」。
+
+## [归档·2026-10-26 wake#284] 运维令·2026-10-25 17:5x（OCR 合成数据调研报告）原文
+
+### [运维令] 2026-10-25 17:5x（**OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写报告**）· 用户直令 · 最高优先
+> 用户原话：「vision：现在OCR类评测很低，web search 调研一下合成数据补强这块能力的方法，写报告。」
+> ✅ **DONE (wake #271, 2026-10-25 18:57)**：四臂四集已量化、7 类 18 法调研完成、报告 `reports/report_vision_ocr_synthdata_zh.html`（29177B）+ 生成器 `vision/generate_ocr_synthdata_report.py` + `EXPERIMENTS_VISION.md §16` 已交付并 commit。本轮为调研+报告，未启训练。
+
+
+**1) 先把「低」量化（必做，不许凭印象）**
+- 从 `/nas_train/app.e0031982/datasets/baize-vision/out/mllm_eval_results_arm*/consolidated_12benchmarks.json` 取四臂（ArmB / ArmC / ArmD-R2 / ArmE-R2）逐集实测，重点四集：**OCRBench / DocVQA(val) / ChartQA / InfoVQA(val)**。
+- 参考锚点（ArmB，见 `run/vision/generate_armC_mllm_report.py` 的 ARMB 字典，须自己再核一遍）：OCRBench **1.6%**、DocVQA **7.36%**、ChartQA **12.52%**、InfoVQA **16.88%**。报告用**你自己读到的数字**，不许照抄本块。
+- 外部参考带：同规模开源 MLLM 在 OCRBench / DocVQA 的公开值，逐条写来源（模型名 + 榜单或论文 + 年份）；**查不到就写「未查到」**。
+- 说明一句事实：**OCRBench（exact-match）、DocVQA（ANLS）、ChartQA（relaxed）、InfoVQA（ANLS）都不需要 LLM judge**，与 MMVet / MathVista 的 `OPENAI_API_KEY` 阻塞无关，可直接测。
+
+**2) web search 调研（真检索、留证据）**
+- 检索方向（每条至少 2 个独立来源）：`synthetic OCR data` / `SynthTIGER` / `SynthText` / `trdg` / `SynthDoG`（Donut）/ `DocSynth` / `PDFA` / `document image synthesis` / `chart-to-text · ChartX` / `im2latex` / `handwriting synthesis` / `OCR distillation`（PaddleOCR / GOT-OCR2.0 / olmOCR / dots.ocr）/ `self-training OCR` / `RL with verifiable reward OCR` / `data engine for MLLM`。
+- 每条方法按 5 项写：
+  1. **怎么造**（渲染引擎 / 模板 / 版面 / 退化 / 教师蒸馏 / 自训练）；
+  2. **要什么输入**（字体、语料、版面、PDF、公式、标注来源）；
+  3. **论文报告的效果**（原文数字 + 出处；没给数字写「原文未给」）；
+  4. **接入点**（编码器预训练 / Stage-2 SFT / 新增 OCR 专项 SFT）；
+  5. **成本**（样本量、渲染 CPU 小时、训练 GPU 小时，标「估算」）。
+- 不许把常识写成结论；不许编造论文数字 / 榜单分数；检索时间写「检索于 2026-10-25」。
+
+**3) 报告（中文 HTML 自包含；0 `<script>` / 0 `<a href>` 外链 / 0 外链图片）**
+8 节：1 摘要（不超过 6 条 + 单一建议）2 现状：OCR 相关四集实测（四臂表）3 差距定位（文字识别 / 版面结构 / 图表数值 / 长文档）4 合成数据方法总览（分类表 + 逐法详情）5 接入本项目管线的三条候选路线（每条：数据量 / 成本 / ETA / 可证伪判据）6 风险与坑（域差、字体与语言覆盖、渲染伪影、评测泄漏）7 优先级排序（**单一下一步** + 判据，如 OCRBench 提升不低于 2pp）8 参考来源（标题 + arXiv 号 + 年份，**纯文本，禁超链**）。
+- 必含「诚实条款」：外部效果数字均为论文自报、未在本项目复现；成本为估算；本项目数字全部实测可溯源。
+
+**4) 纪律与产出**
+- 交付：`reports/report_vision_ocr_synthdata_zh.html` + 生成器 `vision/generate_ocr_synthdata_report.py` + `EXPERIMENTS_VISION.md` 新节指针 + `MEMORY_VISION.md` 首部新块 + daily；commit 前缀 `vision ocr-report:`。
+- ⚠️ 运维纠正（18:5x）：报告与生成器输出必须落**项目级** `doc/BaiZe-ISEDA2027/reports/`；`run/reports/` 属历史遗留目录，**不许再写**（本次已由运维 `git mv` 归位，并修 `REPORTS_DIR` 为 `../../reports`）。
+- 自检：不低于 15KB、`grep -c '<script'` = 0、`grep -c 'href="http'` = 0、HTMLParser 标签配平。
+- 本轮**只调研 + 写报告**：不启训练、不动 ArmB / C / D / E 产物、不伪造 API key（等用户批准预算）。
+

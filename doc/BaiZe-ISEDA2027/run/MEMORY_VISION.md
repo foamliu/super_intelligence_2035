@@ -6,13 +6,14 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #283, 2026-10-26 14:09]**：🟢 空唤醒复核·无新令。运维令区复核：08:2x/22:4x/19:5x 已归档·17:5x ✅DONE(wake#271)·余均[已归档]/✅DONE ⇒ **未完成指令：无**。4 报告(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `vision/ocr_synth/*.py`+daily-2026-10-26.md 在位复核。git fetch 后 behind=0/ahead=0 同步（工作树脏项均属他线 harness/pretrain/zhulong，本线未碰）。📦 体积：TASK=29799B(29.1KB)/MEMORY≈32642B(31.9KB)，均≤32KB✓（无需归档）。本轮=补心跳防判死（上次 wake#282 12:59 距今~1h10m 超60min 判死线，重置时钟）。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #284, 2026-10-26 15:21]**：🟢 空唤醒复核·无新令（用户令=本轮归档收尾）。运维令区复核：08:2x/22:4x/19:5x 已归档·**17:5x ✅DONE(wake#271) 本轮归档**（原文→`run/ARCHIVE_OPERATOR_VISION.md`，TASK 留1行指针）·余均[已归档]/✅DONE ⇒ **未完成指令：无**。📦 体积：TASK=29799B→26169B(25.6KB,归档17:5x全文)/MEMORY=32691B→32100B(31.3KB,wake#283+wake#279压缩为指针+新增wake#284心跳)，均≤32KB✓。4报告(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6脚本`vision/ocr_synth/*.py`在位复核。git fetch 后 behind=0/ahead=1(他线 data migrate 提交未推，非本线；本线 push 顺带推走)。本轮=归档收尾+补心跳防判死。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #283 (2026-10-26 14:09, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #282 (2026-10-26 12:59, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #281 (2026-10-26 11:49, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
 > 📦 wake #280 (2026-10-26 10:3x, 归档收尾·08:2x 运维令块归档+MEMORY 滚动·wake#279 recent_work 报告在位复核·grep 覆盖项齐全) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
-> **本唤醒流水 [wake #279, 2026-10-26 09:2x]**：📝 **「最近工作报告」交付**（运维令 08:2x「关于最近的工作，安排 BaiZe 4 个 agent 各自写一份报告」）。产出 `reports/report_vision_recent_work_zh.html`（40423B / 39.5KB / 5 节+7 子节 / 0 `<script>` / 0 外链 / 标签配平 / ≥15KB ✓）+ 生成器 `vision/generate_recent_work_report.py`（纯字符串拼接，可重放）。覆盖窗 2026-10-20→10-26：§1 本线定位 · §2 ArmD-R2/ArmE 发散/ArmE-R2(🏆编码器历史最高 ProtB lp 68.236%)/Stage-2 原版780k修复/OCR 调研·SFT 方案·10M 合成数据集 · §3 速查表(4 表：ProtB/12 集/10M STATS/交付物清单) · §4 阻塞 B1-B6 · §5 下一步。**所有数字实测可溯源**（EXPERIMENTS_VISION.md §14-§18 + JSON/tar），关键数已逐项核对（ArmE-R2 ProtB lp=68.236±0.0182% / 5-NN=58.904% / 12 集平均 26.10% vs ArmD-R2 26.12% / OCR 10M 9,999,999 样本 470GB / 文本去重 2.4486% / 泄漏 113 命中——两处偏差如实披露）。self_check PASS。commit `vision report:`。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #279 (2026-10-26 09:2x, 「最近工作报告」交付 `reports/report_vision_recent_work_zh.html` 40423B/5节+7子节/0 script/0外链/标签配平/≥15KB + 生成器 `vision/generate_recent_work_report.py` + commit `vision report:`；数字全溯源 EXPERIMENTS §14-§18) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
 > 📄 **【路线①细化 · OCR 专项 SFT 执行方案报告 ✅ DONE · wake#272 · 2026-10-25 21:0x】**（9节方案报告 `reports/report_vision_ocr_sft_plan_zh.html`(22706B/0 script/0外链/标签配平)+生成器+EXPERIMENTS §17；回答四问：中英配比A英6:中3:混1/B中英1:1·公式三通道(纯公式5%/正文夹公式3%/混排2%)·类别P0-P2·SFT=ArmE-R2 step3500+LoRA r64+LR1e-5+70:30混780k；判据 OCRBench≥+2pp + 决策树）全文已归档 → daily-memories-vision/2026-10-25.md。需要时再读。
 > 📦 **wake #278 (2026-10-26 07:49, 空唤醒复核·无未完成指令·补心跳防判死·10M数据集+脚本+报告在位·git同步)** 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
