@@ -1,4 +1,41 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 215 | TARGET: 29 -->
+## RUN_ID 215 — 只读：launcher 是否支持 --rotary-base / --lr-decay-shape + S1 产物落点 + 迭代行
+
+```bash
+set -u
+C=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+echo "=== RUN_ID 215 | rope/exp audit | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] launcher --help 里的关键参数（是否有 rotary-base / max-position / decay-shape）"
+cd "$C" 2>/dev/null && timeout 120 "$PY/python" pretrain_launcher.py --help 2>&1 | grep -E 'rotary|max-position|max_position|decay-shape|decay_shape|weight-decay' | head -10 | cut -c1-160 || echo "  (help failed)"
+echo
+echo "[2] 源码里是否已有 rotary_base / rotary-base 支持"
+grep -rn --include=*.py -E 'rotary[-_]base' "$C" 2>/dev/null | head -8 | cut -c1-170
+echo "  -- 当前 launcher 里 rope theta 的取值 --"
+grep -rn --include=*.py -E 'rotary_base|rope_theta|10000' "$C/pretrain_launcher.py" 2>/dev/null | head -8 | cut -c1-170
+echo
+echo "[3] 实际 --dir / 产物落点（从 cmdline 抓）"
+ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1 | tr ' ' '\n' | grep -A1 -E '^--(dir|name)$' | paste - - | sed 's/^/  /'
+echo "  -- /tmp 下新出现的 exp 目录 --"
+ls -dt /tmp/*baize2b* /tmp/*s1*/ 2>/dev/null | head -5 | sed 's/^/  /'
+echo
+echo "[4] 迭代/吞吐行（两种日志，宽松匹配）"
+for f in /tmp/baize_s1_formal.log /tmp/baize_s1_worker_node.log; do
+  [ -f "$f" ] || continue
+  echo "  --- $f  ($(stat -c '%y' "$f" | cut -c1-19), $(stat -c %s "$f")B)"
+  grep -nE 'iteration|elapsed time per|tokens/sec|TFLOP|lm loss|grad norm' "$f" 2>/dev/null | tail -4 | cut -c1-190
+done
+echo
+echo "[5] 当前 8 个 worker 的 etimes（是否同一批）"
+ps -eo pid,etimes,args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline' | awk '{print "  pid="$1" etimes="$2}' | head -9
+echo
+echo "[6] .12 侧对应 worker 与 GPU"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  .12 卡: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"; pgrep -af pretrain_launcher | head -2 | cut -c1-120' 2>&1 | cut -c1-200
+echo "=== DONE 215 ==="
+```
+
 <!-- RUN_ID: 214 | TARGET: 29 -->
 ## RUN_ID 214 — 只读验收：S1 是否真在训 + 实际启动参数是否满足新令（RoPE 1M / ckpt2000 / AdamW / graph OFF）
 
