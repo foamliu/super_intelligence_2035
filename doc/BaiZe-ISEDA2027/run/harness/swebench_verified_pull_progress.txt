@@ -392,3 +392,24 @@
 [swebench-pull] [383/500] OK sphinx-doc__sphinx-10435 pulled=383 failed=0 skipped=0
 [swebench-pull] [384/500] OK sphinx-doc__sphinx-10449 pulled=384 failed=0 skipped=0
 [swebench-pull] [385/500] OK sphinx-doc__sphinx-10466 pulled=385 failed=0 skipped=0
+[swebench-pull] [386/500] OK sphinx-doc__sphinx-10614 pulled=386 failed=0 skipped=0
+[swebench-pull] [387/500] OK sphinx-doc__sphinx-10673 pulled=387 failed=0 skipped=0
+[swebench-pull] [388/500] OK sphinx-doc__sphinx-11445 pulled=388 failed=0 skipped=0
+[swebench-pull] [389/500] OK sphinx-doc__sphinx-11510 pulled=389 failed=0 skipped=0
+[swebench-pull] [390/500] OK sphinx-doc__sphinx-7440 pulled=390 failed=0 skipped=0
+[swebench-pull] [391/500] OK sphinx-doc__sphinx-7454 pulled=391 failed=0 skipped=0
+[swebench-pull] [392/500] OK sphinx-doc__sphinx-7462 pulled=392 failed=0 skipped=0
+[swebench-pull] [393/500] OK sphinx-doc__sphinx-7590 pulled=393 failed=0 skipped=0
+[swebench-pull] [394/500] OK sphinx-doc__sphinx-7748 pulled=394 failed=0 skipped=0
+[swebench-pull] [395/500] OK sphinx-doc__sphinx-7757 pulled=395 failed=0 skipped=0
+[swebench-pull] [396/500] OK sphinx-doc__sphinx-7889 pulled=396 failed=0 skipped=0
+[swebench-pull] [397/500] OK sphinx-doc__sphinx-7910 pulled=397 failed=0 skipped=0
+[swebench-pull] [398/500] OK sphinx-doc__sphinx-7985 pulled=398 failed=0 skipped=0
+[swebench-pull] [399/500] OK sphinx-doc__sphinx-8035 pulled=399 failed=0 skipped=0
+[swebench-pull] [400/500] OK sphinx-doc__sphinx-8056 pulled=400 failed=0 skipped=0
+[swebench-pull] === BATCH idx=400 pulled=400 failed=0 skipped=0 disk_free=6151GB ===
+[swebench-pull] [401/500] OK sphinx-doc__sphinx-8120 pulled=401 failed=0 skipped=0
+[swebench-pull] [402/500] OK sphinx-doc__sphinx-8265 pulled=402 failed=0 skipped=0
+[swebench-pull] [403/500] OK sphinx-doc__sphinx-8269 pulled=403 failed=0 skipped=0
+[swebench-pull] [404/500] OK sphinx-doc__sphinx-8459 pulled=404 failed=0 skipped=0
+[swebench-pull] [405/500] OK sphinx-doc__sphinx-8475 pulled=405 failed=0 skipped=0
