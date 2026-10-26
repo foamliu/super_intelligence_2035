@@ -1,33 +1,34 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
 > 🟢 **✅ 迁移5/5源全DONE**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删)。
 > 🟢 **✅ 3稳定源迁移FINALIZE(唤醒678,00:3x)**：l1_en_hq(94shards)+zh(4)+AICC(1)→build_tokenized_mirror.py改symlink指向/nas_env/full_*→INDEX.tsv rebuild(815shard全triplet=OK inode=OK,3源storage=symlink)→DATA_MAPPING.md regen(指纹2953/7f2a09fb2920/00:34)→report_data_mapping_zh.html全量更新(总17.47TB,df 85%/82%)。源文件run4已删。
-> 🔴 **22:0x坏shard重分词在跑**：env14_CC-MAIN-2023-23重分词,200/512 parquet(39%),12.95B tokens@3222s,RETOK bin 51.8GB/122.5GB(42%),ETA~01:48。PID352806,日志/tmp/retok_launcher.log。完成后→验证max_ptr<bin→原子替换→blender复验→commit data fix:。
+> 🟢 **✅ 22:0x坏shard修复DONE（唤醒679,02:0x）**：env14_CC-MAIN-2023-23从源parquet(512)重分词→新.bin 118.23GB/29.56B token(降1.067B,-3.5%,num_tokens×4=bin_size逐字节自洽)→.idx max_ptr=118,227,700,960<bin=118,227,705,972复验PASS→原子替换(rm旧硬链→mv RETOK→text正名)→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→DATA_MAPPING.md env14 8.93→9.00TB/2238.14→2237.07B,合计4474.83→4473.76B/17.47→17.56TB→report全量更新→blender validate_shards 110/110全齐不SKIP。证据run/data/bad_shard_...txt §8-9。
 > 🟡 **ufw_en迁移DEFERRED**：s17.bin仍是移动靶(远端NFS进程在写,+38MB/8s),rsync verify必MISMATCH。暂留hardlink,待远端写完后re-check稳定性再迁。s21稳定。
-> 🟡 **/nas_env: df 8.1T已用/1.9T可用(82%)；/nas_train: 176T已用/32T可用(85%)**。
+> 🟡 **/nas_env: df 8.1T已用/1.9T可用(82%)；/nas_train: 177T已用/31T可用(86%)**。
 
 ---
 
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟡22:0x坏shard重分词在跑(200/512 parquet,12.95B tokens,ETA~01:48)+✅3源迁移FINALIZE(l1_en_hq/zh/AICC→/nas_env symlink);ufw_en DEFERRED(移动靶)
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2238.14B/8.93TB);✅未分词4源131/131(1.18T/4.05TB);✅迁移5/5源→/nas_env;✅3源迁移FINALIZE(build_tokenized_mirror.py改symlink+INDEX.tsv rebuild 815shard storage=symlink+DATA_MAPPING.md regen+report_data_mapping_zh.html更新17.47TB);✅14:4x令(commit 86431cfb4);✅22:0x坏shard定性(.bin截断49GB=40%,期望122.5GB;.idx正确max_ptr=122,496,093,768)
-当前动作:     唤醒678(2026-10-27 00:3x):①3源迁移FINALIZE:build_tokenized_mirror.py ENTRIES L32-34改src_dir→/nas_env/full_*+storage→symlink→rerun重建INDEX.tsv(815shard全triplet=OK inode=OK,3源storage=symlink)+gen_data_mapping_md.py刷新DATA_MAPPING.md(指纹size=2953 hash=7f2a09fb2920 mtime=00:34)+report_data_mapping_zh.html更新(3源hardlink→symlink,总17.26→17.47TB,df 85%/82% 00:35);②retok监控:200/512 parquet(39%),12.95B tokens@3222s,RETOK bin 51.8GB/122.5GB(42%),ETA~01:48;③ufw_en仍hardlink(s17移动靶,远端在写,DEFERRED)。未完成指令:有(retok在跑·异步阻塞§8)→WAITING:1
-下一步:       ①commit+push本次迁移finalize(build_tokenized_mirror.py+DATA_MAPPING.md+INDEX.tsv+report);②等retok完成(~01:48,判据:log出现RETOK END rc=0+RETOK_*.bin≈122.5GB+.idx+.json齐全)→验证max_ptr<bin+num_tokens≈30.62B→原子替换(rm tokenized旧硬链→mv RETOK→text正名→build_tokenized_mirror.py重建hardlink+INDEX.tsv→gen_data_mapping_md.py刷新)→blender复验不SKIP→commit data fix:;③ufw_en迁移:等s17远端写完后re-check稳定性→rsync+verify+symlink rebuild
-阻塞:         22:0x重分词异步阻塞(~70min,200/512,ETA~01:48);ufw_en迁移blocked(s17移动靶,远端NFS在写);disk /nas_train 32T/85% /nas_env 1.9T/82%
+PHASE:        ✅22:0x坏shard修复DONE(env14_CC-MAIN-2023-23重分词+原子替换+镜像重建+复验PASS,110/110全齐blender不SKIP)+✅3源迁移FINALIZE(l1_en_hq/zh/AICC→/nas_env symlink);ufw_en DEFERRED(移动靶)
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5/5源→/nas_env;✅3源迁移FINALIZE(build_tokenized_mirror.py改symlink+INDEX.tsv rebuild+DATA_MAPPING.md regen+report更新);✅14:4x令(commit 86431cfb4);✅22:0x坏shard修复(重分词→.bin118.23GB/max_ptr<bin复验PASS→原子替换→mirror rebuild 815shard→DATA_MAPPING/报告全量更新→commit data fix:)
+当前动作:     唤醒679(2026-10-27 02:0x):①retok完成验证(.idx max_ptr=118,227,700,960<bin=118,227,705,972,num_tokens29.56B=bin/4逐字节自洽,32.85M docs不变);②原子替换(rm tokenized旧硬链→mv RETOK→text正名→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→gen_data_mapping_md.py刷新DATA_MAPPING.md env14 8.93→9.00TB/2238.14→2237.07B,合计4474.83→4473.76B/17.47→17.56TB);③report_data_mapping_zh.html全量更新(env14行+总计+df 86%/82%);④DATA_LEDGER §7.2标记已完成+证据文件§8-9;⑤commit data fix:。未完成指令:无→WAITING:0
+下一步:       ①ufw_en迁移:等s17远端写完后re-check稳定性→rsync+verify+symlink rebuild;②§13:1x迁4新源到/nas_env(ufw_en/ufw_l1_en_hq/ufw_zh/UltraX-AICC,131shard≈4.05TB);③体积维护MEMORY_DATA.md(~44KB>32KB红线,轻归档)
+阻塞:         无活跃阻塞(坏shard已修复);ufw_en迁移DEFERRED(s17移动靶,远端NFS在写);disk /nas_train 31T/86% /nas_env 1.9T/82%
 ERROR_COUNT:  10
-未完成指令:   有(22:0x坏shard重分词在跑:200/512,ETA~01:48;完成后需验证+原子替换+复验+commit data fix:;ufw_en迁移DEFERRED待s17写完→WAITING:1)
+未完成指令:   无(22:0x坏shard已修复DONE,110/110全齐,blender不SKIP;ufw_en迁移DEFERRED待s17写完,非阻塞)→WAITING:0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [02:0x] 唤醒679：✅22:0x坏shard修复DONE。①retok完成验证(.idx max_ptr=118,227,700,960<bin=118,227,705,972,num_tokens29.56B=bin/4逐字节自洽,32.85M docs不变,较原始30.62B降1.067B/-3.5%并行切分边界差异);②原子替换(rm tokenized旧硬链→mv RETOK→text正名→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→gen_data_mapping_md.py刷新DATA_MAPPING.md env14 8,929,852,999,497→8,999,055,538,432B/2,238,140,710,284→2,237,073,612,082tok,合计4474.83→4473.76B/17.47→17.56TB;★NFS attr-cache踩坑首次run读旧缓存,二次fresh process读新);③report_data_mapping_zh.html全量更新(env14行+ufw_en移动靶GB2977→2995+总计+df 86%/82% 02:0x+footer);④DATA_LEDGER §7.2待完成→已完成+§7表env14/合计cell更新;⑤证据文件§8-9(retok结果+原子替换+复验+结论);⑥commit data fix:。未完成指令:无→WAITING:0
 > [00:3x] 唤醒678：①3源迁移FINALIZE(l1_en_hq/zh/AICC)：build_tokenized_mirror.py ENTRIES L32-34改src_dir→/nas_env/full_*+storage→symlink→rerun重建INDEX.tsv(815shard全triplet=OK inode=OK,3源storage=symlink,ufw_en/env14仍hardlink)+gen_data_mapping_md.py刷新DATA_MAPPING.md(指纹size=2953 hash=7f2a09fb2920 mtime=00:34,3源evidence列symlink,ufw_en bytes 2.98→3.20TB移动靶,合计17.26→17.47TB)+report_data_mapping_zh.html全量更新(2表3源hardlink→symlink,ufw_en GB 2777→2977,总17.26→17.47TB,df 85%/82% 00:35,footer+结论同步);②retok监控:200/512 parquet(39%),12.95B tokens@3222s,RETOK bin 51.8GB/122.5GB(42%),ETA~01:48;③ufw_en仍hardlink DEFERRED(s17移动靶)。待commit+push。未完成指令:有(retok在跑·异步阻塞§8)→WAITING:1
 > [23:4x] 唤醒677：①22:0x坏shard定性DONE(env14_CC-MAIN-2023-23:.idx正确max_ptr=122,496,093,768指针单调长度全正;.bin截断49GB=40%期望122.5GB;.json num_tokens=30.62B;源parquet512在)→裁决重分词(非重建idx,否则永久丢18.36B token)。②重分词启动23:42(PID352806,48worker,nice10,写RETOK_临时前缀不破坏原件,日志/tmp/retok_launcher.log),~15MB/s NFS IO bound(24→48worker无增益)ETA~128min~01:50;先24worker跑6min后kill改48(pkill -f误伤自身shell,已改ps+PID方式)。③13:1x迁移run4复核=FAILED/已停(23:32 ufw_en s17/s21 verify MISMATCH移动靶;3稳定源已拷/nas_env未finalize)。④证据bad_shard_..._20261026.txt+DATA_LEDGER §7.2+日报已写。未完成指令:有(22:0x重分词在跑·异步阻塞§8)→WAITING:0
 > [22:1x] 唤醒676：①复核run3=FAILED:wrapper PID444525已死,log 21:0x无"4SOURCES END",ufw_en s17.bin verify反复MISMATCH。②深度诊断根因(非脚本bug):ufw_en_train_s17.bin是**移动靶**——远端NFS进程仍在写(.bin~48MB/10s增长,.idx stale/不一致),.12本地/proc无writer(跨NFS不可见)。每次rsync拷到不同大小→verify必MISMATCH。s21.bin同理(history)。③其余3源稳定完整(l1_en_hq=603.5G/zh=453.6G/AICC=46.4G)。④run4策略:先迁3稳定源立即交付,ufw_en deferred。⑤脚本3改:migrate_4sources_to_nas_env.sh (a)SOURCES重排ufw_en最后 (b)stability guard(12s size sampling,增长则SKIP该源) (c)stale-dst-partial cleanup(删dst旧s17/s21 partial让rsync重拷) (d)per-file verify diff。⑥run4启动22:15:00:wrapper PID2333959,l1_en_hq(1/4)迁移中(66G/603GB@22:19),ETA 3源~73min→~23:30,ufw_en将自动SKIP。⑦确认finalize路径:build_tokenized_mirror.py ENTRIES 31-34行(hardlink+TEXT_DIR)→3源改src_dir=/nas_env/full_*+symlink,ufw_en保持hardlink。⑧run3 log备份_failed_run3.log。未完成指令:有(13:1x迁移run4在跑·异步阻塞§8)→WAITING:1

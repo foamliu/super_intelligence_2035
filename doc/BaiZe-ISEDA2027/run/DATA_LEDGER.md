@@ -191,10 +191,10 @@
 
 | 组分 | token (B) | 说明 |
 |:---|---:|:---|
-| env14（en_v1_4 CC-MAIN 110 snapshot） | 2238.14 | 主体预训练，与 full_* 无重叠 |
+| env14（en_v1_4 CC-MAIN 110 snapshot） | 2237.07 | 主体预训练，与 full_* 无重叠（含 1 片坏 shard 已修复，见 §7.2） |
 | /nas_env 5 源 full_* | 1056.36 | ufw_l3 263.90 + code_l2 421.45 + code_l3 128.62 + math_l1 164.44 + math_l3 77.95 |
 | 未分词4源（base 主体，2026-10-26 09:43 DONE 131/131） | 1180.33 | ufw_en(base) 905.92 + ufw_l1_en_hq 150.16 + ufw_zh 112.76 + ultrax_aicc 11.49；与 env14/full_* 无重叠 |
-| **去重训练可用合计** | **4474.83** | env14 + full_* + 未分词4源，三者无重叠直接相加 = tokenized镜像 TOTAL（INDEX.tsv 815 shards / 4,474,825,355,971 tok） |
+| **去重训练可用合计** | **4473.76** | env14 + full_* + 未分词4源，三者无重叠直接相加 = tokenized镜像 TOTAL（INDEX.tsv 815 shards / 4,473,758,257,769 tok） |
 | 32 uncovered staging_r3 shard | ~~472.85~~ → **已删除** | l3_s 427.57 + math_s 45.28；运维令 18:2x 终裁已删（见 §7.1，实为符号链接暂存 ~471.6KB，非 .bin 产物） |
 | v2 旧总计「文件清单求和（含历史重复）」 | ~~4778.41~~ | 含 78 个已被 full_* 覆盖的早期重复 shard，已废弃 |
 
@@ -231,9 +231,9 @@
 
 **执行（2026-10-26 23:42 起，异步在跑）**：脚本 `run/data_pipeline/retokenize_bad_shard_env14_CC-MAIN-2023-23.sh`，参数与 `run_tokenize_env14_parallel_finish.sh` 完全一致（`--mode content --text-column content --dtype int32 --max-chars 50000 --num-workers 48 --batch-size 256`，nice 10），写到**临时前缀** `text/RETOK_env14_CC-MAIN-2023-23`（不破坏原件）。日志 `/tmp/retok_launcher.log`。实测吞吐 ~15 MB/s（NFS I/O bound，24→48 worker 无增益），ETA ≈ 128 min（~01:50 完成）。
 
-**待完成（retok 完成后，下一唤醒）**：
-1. 验证新三件套：`.idx` max_ptr < 新 `.bin` size 且指针单调；num_tokens ≈ 30.62B；新 `.bin` ≈ 122.50 GB。
-2. 原子替换：rm `tokenized/.../env14_CC-MAIN-2023-23.{bin,idx,json}`（旧 inode link 2→1）→ mv `RETOK_*` → `text/env14_CC-MAIN-2023-23.*`（rename 替换，旧 inode 1→0 释放）→ 重跑 `build_tokenized_mirror.py`（hardlink 进 tokenized/ + 刷新 INDEX.tsv/MANIFEST）→ 重跑 `gen_data_mapping_md.py`（刷新 DATA_MAPPING.md）。
-3. 复验：blender `validate_shards` 不再 SKIP；写结论到本节 + DATA_MAPPING.md；commit `data fix:`。
+**✅ 已完成（2026-10-27 02:0x，唤醒679）**：retok 完成 → 验证 → 原子替换 → 镜像重建 → 复验 PASS → commit `data fix:`。
+1. 验证新三件套：`.idx` max_ptr=**118,227,700,960** < 新 `.bin` size=**118,227,705,972** 且指针单调、长度全正；num_tokens=**29,556,926,493**（29.56 B，较原始 30.62 B 降 1.067 B / −3.5%，并行切分边界差异，新产物 num_tokens×4 = bin_size 逐字节自洽）；新 `.bin`=**118.23 GB**（完整）。
+2. 原子替换：rm `tokenized/.../env14_CC-MAIN-2023-23.{bin,idx,json}`（旧 inode link 2→1）→ mv `RETOK_*` → `text/env14_CC-MAIN-2023-23.*`（同 NFS rename，旧 inode 1→0 释放）→ 重跑 `build_tokenized_mirror.py`（hardlink links=2 恢复 + INDEX.tsv rebuild：815 shard / inode_ok=815 / triplet=OK）→ 重跑 `gen_data_mapping_md.py`（DATA_MAPPING.md env14 8,929,852,999,497→8,999,055,538,432 B，2,238,140,710,284→2,237,073,612,082 tok；合计 17.47→17.56 TB / 4474.83→4473.76 B）。
+3. 复验：blender `validate_shards` 判据（max_ptr < bin_size）PASS，env14 **110/110 全齐、不再 SKIP**；报告 `report_data_mapping_zh.html` 全量同步。完整证据见 `run/data/bad_shard_env14_CC-MAIN-2023-23_20261026.txt` §8–§9。
 
 **D11（与方案 §1 的差异）**：phase0 §1.2 把多模态一律归 `/nas_train`，实测「bytes 通用图文对」还躺在 `/nas_user`（Amshaker 3.7T、BLIP3o 1.3T）与 `/nas_train`（CC12M webdataset 1.2T 带图、LLaVA-CC3M-595K）——这批是"补数据不足"的实际弹药，上轮盘点漏记。

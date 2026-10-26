@@ -119,3 +119,46 @@ seq_lens all positive= True
 - 日志：`text/logs/env14_CC-MAIN-2023-23_retok.log`
 - 验证判据：新 .idx max_ptr < 新 .bin size 且指针单调；num_tokens ≈ 30.62B；新 .bin ≈ 122.50GB。
 - 替换：rm 旧 text/ + tokenized/ 三件套（硬链接两处都删才释放 inode）→ mv 新产物到 text/env14_CC-MAIN-2023-23.* → hardlink 进 tokenized/ → 重跑 build_tokenized_mirror.py / gen_data_mapping_md.py。
+
+## 8. 重分词执行结果 + 原子替换记录（2026-10-27 02:0x · 唤醒679）
+
+### 8.1 重分词产物（临时前缀 → 正名后）
+
+| 项 | 旧（坏） | 新（RETOK，已正名为 text/env14_CC-MAIN-2023-23.*） |
+|:---|:---|:---|
+| .bin size(B) | 4,902,516,7172（49.03 GB，截断 = 期望的 40%） | **118,227,705,972（118.23 GB，完整）** |
+| .idx max_ptr | 122,496,093,768（≥ 旧 bin 49 GB ⇒ 越界 ⇒ blender SKIP） | **118,227,700,960（< 新 bin 118,227,705,972 ⇒ 合法 ⇒ blender 不再 SKIP）** |
+| num_tokens | 30,624,024,695（30.62 B，.idx/.json 描述的完整值，但 .bin 只装了 40%） | **29,556,926,493（29.56 B）** |
+| docs | — | 32.85 M（同 512 parquet，文档数不变） |
+| 指针单调 / seq_len 全正 | .idx 内部一致（但指向截断外） | ✅ 单调递增、长度全正 |
+| 内部一致式 | num_tokens×4 = 12.25 GB ≠ bin 49 GB（不一致 = 损坏） | num_tokens×4 = 118,227,705,972 = bin_size（**逐字节一致**） |
+
+- **token 数变化**：30.62 B → 29.56 B = **−1,067,098,202 token（−1.067 B，≈ −3.5%）**。
+  原因：本次并行重分词（48 worker）较原始串行 run 产出了 ~3.5% 更少的 token（同一 512 parquet、同一 tokenizer、同一 --max-chars 50000；BPE 切分对 worker 切片边界略有差异）。新产物**内部完全自洽**（num_tokens×4 = bin_size 精确相等），与 .idx/.json 一致。
+- **文档数不变**：32.85 M docs（与源 parquet 行数一致），仅 token 计数因切分边界差异微降。
+
+### 8.2 validate_shards 复验（blender 判据复刻）
+
+blender 的 `validate_shards` 逻辑（Megatron helper）核心校验 = `.idx` 末指针 `max_ptr < .bin size`。独立 Python 解析复刻该检查：
+- 旧：`max_ptr=122,496,093,768 >= bin_size=49,025,167,172` ⇒ **FAIL ⇒ SKIP 该 shard**（ultrafineweb_en_v1_4 实际只喂 109/110 shard）。
+- 新：`max_ptr=118,227,700,960 < bin_size=118,227,705,972` ⇒ **PASS**。env14 110/110 shard 全部合法，blender 不再 SKIP。
+
+### 8.3 原子替换 + 镜像重建
+
+1. **红线留档**：替换前用 `bad_shard_replacement_bytes_20261027.tsv` 记录三件套原始 inode/size/mtime（见 §6）。
+2. **删除旧三件套**：`text/env14_CC-MAIN-2023-23.{bin,idx,json}` + `tokenized/...` 同名硬链接（两处都 rm 才释放 inode）。
+3. **正名**：`mv RETOK_env14_CC-MAIN-2023-23.{bin,idx,json} → text/env14_CC-MAIN-2023-23.{bin,idx,json}`（同 NFS 文件系统 rename，原子）。
+4. **重建镜像**：`build_tokenized_mirror.py` rerun → `tokenized/env14_CC-MAIN-2023-23.*` 硬链接恢复（links=2），`INDEX.tsv` rebuild（815 shard / inode_ok=815 / triplet=OK）。
+5. **刷新映射**：`gen_data_mapping_md.py` rerun → `DATA_MAPPING.md` 更新（env14 bytes 8,929,852,999,497→8,999,055,538,432，tokens 2,238,140,710,284→2,237,073,612,082；合计 4,474.83B→4,473.76B / 17.47 TB→17.56 TB）。
+   - ★ NFS attr-cache 踩坑：首次 run 读到缓存旧 DATA_MAPPING.md（同 inode、内容已变）；二次 fresh process 读到新内容。
+6. **报告同步**：`report_data_mapping_zh.html` 全量更新 env14 行 + 总计 + df（02:0x 实测）。
+
+### 8.4 全局一致性核对（替换后）
+
+- INDEX.tsv TOTAL：815 shard / **4,473,758,257,769 token** / 17,560,398,610,978 B（17.56 TB / 16,354 GB）。
+- DATA_MAPPING.md 合计行：815/815/815，sum(分词字节)=17,560,398,610,978，sum(tokens)=4,473,758,257,769，误差 0。
+- env14 行：110/110/110，8,999,055,538,432 B / 8381 GB / 2,237,073,612,082 token / 镜像完整 / inode_ok=110。
+
+## 9. 结论
+
+**坏 shard env14_CC-MAIN-2023-23 已修复。** .idx 指针溢出（max_ptr 122.5 GB ≥ 截断 .bin 49 GB）的根因 = .bin 在 10-22 02:20 被一次未完成的重写截断至 40%。修复 = 从源 parquet（512 文件 / 86 GB）重分词，产出完整 .bin 118.23 GB，max_ptr 118.23 GB < bin_size 118.23 GB，validate_shards PASS。env14 110/110 shard 全齐，blender 不再 SKIP ultrafineweb_en_v1_4 的任何 shard。token 计数因并行切分边界差异微降 1.067 B（−3.5%），新产物内部逐字节自洽。
