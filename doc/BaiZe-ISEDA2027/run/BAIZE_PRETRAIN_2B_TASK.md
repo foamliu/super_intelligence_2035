@@ -9,6 +9,39 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-26 15:3x（**整理「BaiZe-2B 预训练构想」为中文 HTML 报告 + ETA**）· 用户直令 · 最高优先
+
+> 用户原话：「关于后续的预训练，我有个初步想法想跟 pretrain 商榷。请安排 pretrain 把这个想法整理为中文 HTML 报告，附上 ETA 等信息。」
+> 用户构想原文照录如下，请据此整理成报告。
+
+**① 模型与配方**
+- 模型：Mamba2-hybrid（56 层，Nemotron-H 式顺序混合），参数量 **2.2B**。
+- 训练配方：**16K / 16卡 / CP1 DP16 / graph-OFF = 613,992 tok/s**。
+- 学习率：**WSD**，2000 步 warmup，然后 LR **保持 1e-3**。
+
+**② 三阶段计划**
+- **S1**：2M tok/step · 1.4T tok · 700,000 steps
+- **S2**：4M tok/step · 1.4T tok · 350,000 steps（配比同 S1）
+- **Decay**：4M tok/step · 80B tok · 20,000 steps
+
+S1/S2 配比（sampling prop / epochs）：
+| dataset | prop | epochs |
+|:--|--:|--:|
+| en_v1_4 (ultrafineweb_en_v1_4) | 0.65 | 0.81 |
+| ufw_l1_en_hq | 0.05 | 0.93 |
+| ufw_zh | 0.04 | 0.99 |
+| Math-L1 (UltraData-Math-L1) | 0.05 | 0.85 |
+| Math-L3 (UltraData-Math-L3) | 0.02 | 0.72 |
+| Code-L2 (UltraData-Code-L2) | 0.15 | 1.00 |
+| Code-L3 (UltraData-Code-L3) | 0.04 | 0.87 |
+
+Decay 配比（prop）：
+ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2605 0.60 / UltraData-SFT-Agent-2609 0.12
+
+**③ 报告要求**：输出 `reports/report_pretrain_baize2b_pretrain_plan_zh.html`（自包含中文 HTML）。
+- 结构：① 模型与配方 → ② 三阶段计划（各阶段 tok/step、steps、数据配比表）→ ③ **ETA 测算**（按 613,992 tok/s 算 S1/S2/Decay 各阶段 wall-clock 时长 + 总时长；分「纯训练」与「含故障/checkpoint 预留」两口径）→ ④ **商榷点与建议**（例如：4M tok/step 下 16K CP1 DP16 吞吐是否仍 613,992 需重测；LR 保持 1e-3 不改 + WSD 2000 步 warmup 的含义；数据配比 epochs<1 的采样语义；Decay 阶段 SFT/Agent 数据占比 0.72 的合理性；总计耗时与 GPU 预算）。
+- 全部数字可溯源（吞吐用 #792 实测 613,992）；commit `pretrain plan:`。
+
 ### [运维令] 2026-10-26 14:3x（**补写 #792 双机实测结果进吞吐报告**）· 用户直令 · 最高优先
 
 > 用户原话：「下发指令，让 pretrain 更新报告」
