@@ -10,8 +10,7 @@ intent-to-code synthesis at which large language models excel. This reframes EDA
 as the connective tissue that lets a general coding agent orchestrate flows natively and
 fill the breaks where tools stop. ZhuLong is built around this insight, and this paper
 asks which factor sets the ceiling of such an agent---a question grounded by a system
-already deployed in production EDA flows serving hundreds of engineers at a leading
-memory design house.
+already deployed in production EDA flows at a leading memory design house.
 % 引言动机段（09:2x 重定位：编排 + 补断链）。设计工程师日常工作与其说写全新脚本，不如说编排 design flow、补上 EDA 工具拒绝互通的断链——flow 跑不到端到端是设计耗时单一最大来源。商用 EDA 工具封闭，留白处只能手写胶水（Makefile 目标、Tcl 驱动、SKILL 封装），而这恰是 LLM 最擅长的小型"意图→代码"合成。这重新界定 EDA scripting 为让通用 coding agent 天生编排 flow、在工具停步处补断链的结缔组织。ZhuLong 围绕此洞察构建，本文追问决定这类智能体上限的因素——由已部署于一家头部存储芯片设计公司服务数百名工程师的量产系统支撑。
 
 We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL,
@@ -38,7 +37,8 @@ prediction the experiments could refute rather than a post-hoc explanation.
     % RQ1（上限）：形式化落地鸿沟，两侧测量——观测保真度轴（无观测→全观测）跨 57.4pp（固定 LLM），backbone 轴跨 22.0pp（固定框架）。
 
     \item \textbf{RQ2 (necessary components).} Ablation isolates retrieval, execution, and
-    belief update as jointly necessary and not interchangeable; offline self-exploration
+    belief update as jointly necessary, with toolchain-specific magnitudes that make them
+    complementary rather than interchangeable; offline self-exploration
     is a bounded complement, not a substitute (Section~\ref{sec:experiments}).
     % RQ2（必要组件）：消融分离检索、执行、信念更新，联合必要且不可互换；自探索为有界补充非替代。
 
