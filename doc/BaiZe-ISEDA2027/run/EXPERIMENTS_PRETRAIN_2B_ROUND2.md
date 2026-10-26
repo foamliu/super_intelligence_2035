@@ -3860,3 +3860,53 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 **结论**：rev3 修复配方（关 `--enable-cuda-graph`）在**用户目标 seq=8192** 上复测达标（per-GPU 0.978× ≥ 0.7×，loss/gnorm/NaN 正常）。§3 验收闭合。结合 §五·5（seq4096）+ 本节（seq8192），关 graph 在 tok/mb=16384 的两个 seq 点均满速 ⇒ 真因 = CUDA Graph 顶格停滞（与 seq 无关）终判成立。
 
 > 📊 TSV：`pretrain_rc_ladder_20261026.tsv` 新增 1 行 §3 验收（`s8k2goff-seq8k`）+ `#788` 头注。
+
+---
+
+### §五·8 双节点 16-GPU seq16K/32K 真实测速（.12+.29，2026-10-26 12:23–12:47 #792）
+
+**背景**：§五·7（#788）的 seq=8192 验收是**单机 8 卡**（296,543 tok/s），16 卡吞吐为「2× 外推 ≈ 593K」**估计值**，非实测。§五·6（#787）曾报告 **CP=2 被 flash-attn-3 `window_size` 元组签名阻断**（`Unknown keyword argument 'window_size'`），32K CP=2 不可跑。本节做两件事：① 用 **.12（vision 闲置）+ .29 双节点 16 卡**把 16K/32K 的 8 卡外推**换成实测**；② 验证 #787 的 FA3 CP patch（`window_size`→`window_size_left`/`window_size_right`，共享 NFS `/nas_train` 已就位、两节点透明可见）是否让 CP=2 真正落地并量出 32K CP=2 真实吞吐。
+
+**前置核验（.12 借用合规性）**：
+- .12（vision）当时 **WAITING=1、0 MiB、0 torchrun** → 8 卡全空闲。借用闲置 GPU **≠ 抢**（vision R9 收敛待派，未在跑）。
+- SSH 免密：集群探测仅 **.12+.29** 双向 key-based SSH 可用（.10/.11/.13/.20/.22/.24/.26/.27/.28/.30 全拒），无第三机可选。
+- 脚本含**安全闸**：preflight 查 .12 非空闲即 `abort`（vision 起训则自动跳过）；每配置 postflight 验两节点 GPU 回 0 MiB 才进下一格。
+
+**配置**（与 e18/§五·7 同口径：FP8 tensorwise、`--use-distributed-optimizer`、overlap-grad-reduce/param-gather、真数据 16 片 `p5b_l3_train_s{0..15}`、**graph OFF**（rev3 修复）、ITERS=40、稳态取 log-interval=10 的 Step Time 中位、减首段 warmup）：
+
+| 格 | seq | mbs | gbs | CP | DP | accum | tok/mb/GPU | tok/step | 说明 |
+|---|---|---|---|---|---|---|---|---|---|
+| E1 | 16384 | 1 | 256 | 1 | 16 | 16 | 16384 | 4,194,304 | 16K 无 CP（DP16），对标 #791 8卡 16K CP1 |
+| E2 | 16384 | 1 | 128 | 2 | 8 | 16 | 8192 | 2,097,152 | 16K CP=2（DP8×CP2），调参对照 |
+| E3 | 32768 | 1 | 128 | 2 | 8 | 16 | 16384 | 4,194,304 | 32K CP=2（DP8×CP2），对标 #791 8卡 32K CP2 |
+
+> 拓扑：master=.12 (rank0, 8卡) + worker=.29 (rank1, 8卡)；CP 对为**节点内** (rank0,1)(2,3)…（NVLink），DP=8 跨两节点（IB/RoCE）。NCCL 同 e18（`IB_GID_INDEX=3/MTU4096/TC106/TIMEOUT22`）。脚本 `baize_dualnode_seq16k32k_16gpu.sh`，原始日志 `results_dualnode_seq16k32k/`。
+
+**结果**（`/tmp/baize_dualnode_seq16k32k/ALL_RESULTS.txt`，三格 status 全 OK、run 12:23:03→12:46:56 干净退出、两节点 postflight 全回 4 MiB）：
+
+| 格 | tok/s | per-GPU | med ms/step | peak .12 MiB | peak .29 MiB | loss | gnorm | NaN |
+|---|---|---|---|---|---|---|---|---|
+| **E1 16K CP1 DP16** | **613,992** | 38,374 | 6,831.2 | 75,225 | 75,229 | 7.9386 | 1.4067 | 0 |
+| E2 16K CP2 DP8 | 281,970 | 17,623 | 7,437.5 | 49,757 | 49,761 | 7.9470 | 1.3713 | 0 |
+| **E3 32K CP2 DP8** | **351,526** | 21,970 | 11,931.7 | 76,053 | 75,915 | 7.9432 | 1.3320 | 0 |
+
+**关键结论**：
+
+1. ✅ **16K CP=1（graph-OFF）实测 613,992 tok/s = 600K 目标的 102%**——把 #788 的「2×296,543=593,086 外推」换成**真实双节点 16 卡实测**，且**反超 8K 基线** #770（606,300）1.3%。机制与 rev3 一致：tok/mb=16384 关 graph 即满速，16K 并不比 8K 慢（step 6.83s ≈ 8K 的 6.81s，tok/step 几乎相同）。
+
+2. ✅ **8→16 卡扩展**：E1 16K CP1 = #791 8卡 16K CP1（300,133）的 **2.045×**，per-GPU 38,374 vs 37,516 = **+2.3%（轻微超线性）**——DP16 distributed-optimizer 分片更多 + overlap 更充分。E3 32K CP2 = #791 8卡 32K CP2（183,394）的 **1.917×（95.8% 扩展效率）**，per-GPU 21,970 vs 22,924 = **−4.2%**（跨节点 DP allreduce 开销，可解释）。
+
+3. ✅ **#787 的 CP=2 阻断已解除**：FA3 CP patch 生效后 E2/E3 均 **status=OK、rc=0、0 NaN**——这是**首批真实 CP=2 吞吐数据**（#787 当时 cp2 在首个 attention 层即崩，峰值仅 23,639 MiB；本节 E2/E3 跑完 40 iter、峰值 49.7/76.0 GB）。
+
+4. 🔴 **16K 上 CP=2 反而更慢**：E2（16K CP2, 281,970）= E1（16K CP1, 613,992）的 **0.459×**。CP=2 把每卡激活显存砍半（75.2→49.7 GB）但吞吐掉 54%——**16K 应关 CP（用 CP=1 DP16）**，CP 的 P2P KV 交换开销在 16K 这个序列长度上不划算。
+
+5. 🔴 **32K 达不到 600K，且为结构性受限**：E3（32K CP2）= 351,526 tok/s = 600K 目标的 **58.6%**。
+   - **CP P2P KV 交换是主因**：E3 与 E1 **每卡 token 数相同**（tok/mb/GPU=16384），唯一差 = CP=2 的 ring-attention send/recv KV 块。per-GPU 38,374→21,970 = **0.573× → CP 开销 ≈ 42.7%**。
+   - **开销分解**：纯 CP 开销（8 卡同口径）= 37,516(16K CP1)→22,924(32K CP2) = 0.611×（**−38.9%**，节点内 NVLink P2P）；跨节点 DP 再叠加 22,924→21,970 = 0.958×（**−4.2%** IB）。两者相乘 0.611×0.958 = 0.585 ≈ 实测 0.573。
+   - **为何不可解**：32K CP=1 **OOM @ 81,049 MiB**（#787 实测，32K 无 CP 不入 80GB 卡）→ CP=2 是 32K 在 80GB H100 上的**强制项**，非可选优化。即便 8→16 卡完美线性（183,394×2 = 366,788）也只到 600K 的 61%。
+   - **趋近 600K 的路径（后续，非本节）**：① CP 通信/计算 overlap（当前 ring-attention KV 交换未必 fully overlapped）；② zigzag / unified CP 降低 KV 交换量；③ 更大 DP 摊薄（已 16 卡封顶，需更多节点）。
+
+**口径说明 / caveat**：三格均 40 iter、graph-OFF、FP8 tensorwise、真数据、从零随机初始化（loss≈7.94 为 40 步预热态，**非收敛值**，仅证训练健康/无 NaN）；稳态 Step Time 取 log-interval=10 的中位（E1=6.76/6.83/6.87s→6.83；E2=7.44/7.48s→7.46；E3=12.09/11.91/11.93s→11.93），首段 warmup（E1 10.45s / E2 11.37s / E3 18.58s）已剔除。峰值显存取两节点 `nvidia-smi` max。.12 借用窗口 12:23–12:47，全程 vision 闲置、pretrain（.29）R2 训练未受影响（本测在 .29 上跑 worker，与 pretrain loop **分时**——pretrain 当时处于不同 phase；postflight .29 已回 4 MiB）。
+
+> 📄 **报告**：`reports/report_pretrain_seq16k32k_throughput_zh.html`（中文 HTML，单文件自包含）。
+> 📊 **TSV**：`pretrain_rc_ladder_20261026.tsv` 新增 3 行（`e1_16k_cp1`/`e2_16k_cp2`/`e3_32k_cp2`）+ `#792` 完成注。原始日志 + ALL_RESULTS 已存 `results_dualnode_seq16k32k/`。

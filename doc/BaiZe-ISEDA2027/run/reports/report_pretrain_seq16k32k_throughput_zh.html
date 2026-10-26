@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-2B 预训练 seq=16K/32K 双节点 16-GPU 实测吞吐报告（#792）</title>
+<style>
+  :root{--bg:#0f1419;--panel:#1a2230;--panel2:#22304a;--ink:#e6edf3;--dim:#9fb4c7;
+    --accent:#58a6ff;--good:#3fb950;--bad:#f85149;--warn:#d29922;--mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.65;font-size:15px}
+  .wrap{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+  header{border-bottom:1px solid #2d3a4f;padding-bottom:20px;margin-bottom:28px}
+  h1{font-size:25px;margin:0 0 8px;color:#fff;letter-spacing:.3px}
+  h2{font-size:20px;margin:34px 0 12px;color:var(--accent);border-left:4px solid var(--accent);padding-left:12px}
+  h3{font-size:16px;margin:22px 0 8px;color:#c9d6e3}
+  .sub{color:var(--dim);font-size:13px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tag{background:var(--panel2);color:var(--accent);padding:3px 10px;border-radius:12px;font-size:12px;font-family:var(--mono)}
+  .verdict{background:linear-gradient(135deg,#1d2b1f,#13201a);border:1px solid #2f5d35;border-radius:12px;padding:20px 22px;margin:24px 0}
+  .verdict .lbl{color:var(--good);font-weight:700;font-size:13px;letter-spacing:1px}
+  .verdict .big{color:#fff;font-size:20px;font-weight:700;margin:6px 0 10px}
+  .verdict .big em{color:var(--good);font-style:normal}
+  .verdict .big em.bad{color:var(--bad)}
+  .verdict p{margin:6px 0;color:#cdd9e3}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px;background:var(--panel);border-radius:8px;overflow:hidden}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #2d3a4f}
+  th{background:#26344a;color:#fff;font-weight:600;white-space:nowrap}
+  td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+  tr:hover{background:#1e2a3d}
+  tr.hit td{color:#7fd391;font-weight:600} tr.miss td{color:#e88a8a}
+  .callout{background:var(--panel);border-left:4px solid var(--accent);padding:14px 16px;margin:14px 0;border-radius:0 8px 8px 0}
+  .callout.bad{border-left-color:var(--bad)} .callout.good{border-left-color:var(--good)} .callout.warn{border-left-color:var(--warn)}
+  code,kbd{font-family:var(--mono);background:#0b1118;color:#79c0ff;padding:1px 6px;border-radius:4px;font-size:12.5px}
+  pre{background:#0b1118;border:1px solid #2d3a4f;border-radius:8px;padding:14px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;color:#c9d1d9}
+  ul,ol{padding-left:22px} li{margin:5px 0}
+  .ref{font-size:13px;color:var(--dim);border-top:1px solid #2d3a4f;padding-top:14px;margin-top:30px}
+  .ref li{margin:8px 0}
+  .barwrap{display:flex;align-items:flex-end;gap:8px;height:170px;margin:16px 0;padding:14px;background:var(--panel);border-radius:8px}
+  .bar{flex:1;background:linear-gradient(180deg,#3f6d9c,#2a4a73);border-radius:4px 4px 0 0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:#fff;font-size:11px;font-family:var(--mono);padding-bottom:4px;min-height:10px}
+  .bar.hit{background:linear-gradient(180deg,#3fb950,#2a7a37)} .bar.miss{background:linear-gradient(180deg,#d29922,#7a5a16)}
+  .bar .v{position:absolute;top:-20px;font-size:11px;color:var(--ink);white-space:nowrap}
+  .bar small{position:absolute;bottom:-22px;left:0;right:0;text-align:center;color:var(--dim);font-size:9.5px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>BaiZe-2B（Mamba2-hybrid）预训练 seq=16K/32K —— 双节点 16-GPU 实测吞吐报告</h1>
+  <div class="sub">运维令 2026-10-26：用真实 2×8 H100（.12+.29）跑 seq=16K/32K 基准，目标 ≥600K tok/s，替换 #788 的 8 卡外推 · run #792 · 12:23–12:47</div>
+  <div class="meta">
+    <span class="tag">模型 BaiZe-2B</span>
+    <span class="tag">硬件 2×8 H100（.12 + .29）</span>
+    <span class="tag">Megatron-LM · FP8 tensorwise</span>
+    <span class="tag">graph OFF（rev3 修复）</span>
+    <span class="tag">2026-10-26</span>
+    <span class="tag">✅ 16K 达标 / 32K 结构性受限</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <div class="lbl">▍ 核心结论（#792 · 双节点 16 卡实测）</div>
+  <div class="big"><em>16K CP=1 实测 613,992 tok/s = 600K 目标的 102%（达标）</em>；32K CP=2 实测 351,526 tok/s = 600K 的 59%（<em class="bad">结构性受限，不可达</em>）。</div>
+  <p><b>16K</b>：CP=1 DP16、graph-OFF、tok/mb=16384 → step 6.83s，<b>反超 8K 基线 #770（606,300）1.3%</b>。8→16 卡扩展 = #791 8卡 16K CP1 的 <b>2.045×</b>（per-GPU +2.3% 轻微超线性）。</p>
+  <p><b>32K</b>：CP=1 OOM@81GB（#787）→ CP=2 强制；CP P2P KV 交换开销 ≈<b>42.7%</b>（per-GPU 38,374→21,970，同 tok/mb/gpu=16384），即便 8→16 卡完美线性也只到 61%。</p>
+  <p><b>附带里程碑</b>：#787 的 <code>flash-attn-3 window_size</code> CP 阻断 <b>已 patch 解除</b>，E2/E3 跑通 → <b>首批真实 CP=2 吞吐数据</b>。</p>
+</div>
+
+<h2>一、实验设计</h2>
+<p>此前 #788 的 seq=8192 验收是<b>单机 8 卡</b>（296,543 tok/s），16 卡吞吐靠「2× 外推 ≈ 593K」估计，非实测。本节用 <b>.12（vision 闲置，WAITING=1/0MiB）+ .29 双节点 16 卡</b>把 16K/32K 换成真实测量。集群 SSH 探测仅 .12+.29 双向免密可用（其余 10 节点全拒 key），.12 闲置是唯一可行路径——<b>借用闲置 GPU ≠ 抢</b>（vision R9 收敛待派，未在跑）。</p>
+<p>脚本 <code>baize_dualnode_seq16k32k_16gpu.sh</code> 含<b>安全闸</b>：preflight 查 .12 非空闲即 <code>abort</code>（vision 起训自动跳过）；每配置 postflight 验两节点 GPU 回 0 MiB 才进下一格。三格同口径：FP8 tensorwise、<code>--use-distributed-optimizer</code>、overlap-grad-reduce/param-gather、真数据 16 片 <code>p5b_l3_train_s{0..15}</code>、<b>graph OFF</b>（rev3 修复）、ITERS=40、稳态取 log-interval=10 的 Step Time 中位（剔除首段 warmup）。拓扑：CP 对节点内（NVLink），DP=8 跨两节点（IB/RoCE）。</p>
+
+<h2>二、三格实测主结果</h2>
+<table>
+<thead><tr><th>格</th><th>seq</th><th>CP</th><th>DP</th><th class="num">tok/step</th><th class="num">med ms/step</th><th class="num">tok/s</th><th class="num">per-GPU</th><th class="num">峰值显存</th><th class="num">loss</th><th class="num">gnorm</th><th>NaN</th><th>vs 600K</th></tr></thead>
+<tbody>
+<tr class="hit"><td><b>E1 16K CP1</b></td><td>16384</td><td>1</td><td>16</td><td class="num">4,194,304</td><td class="num">6,831.2</td><td class="num">613,992</td><td class="num">38,374</td><td class="num">75.2 GB</td><td class="num">7.9386</td><td class="num">1.4067</td><td>0</td><td><b>102% ✅</b></td></tr>
+<tr class="miss"><td>E2 16K CP2</td><td>16384</td><td>2</td><td>8</td><td class="num">2,097,152</td><td class="num">7,437.5</td><td class="num">281,970</td><td class="num">17,623</td><td class="num">49.7 GB</td><td class="num">7.9470</td><td class="num">1.3713</td><td>0</td><td>47%</td></tr>
+<tr class="miss"><td><b>E3 32K CP2</b></td><td>32768</td><td>2</td><td>8</td><td class="num">4,194,304</td><td class="num">11,931.7</td><td class="num">351,526</td><td class="num">21,970</td><td class="num">76.0 GB</td><td class="num">7.9432</td><td class="num">1.3320</td><td>0</td><td><b>59%</b></td></tr>
+</tbody>
+</table>
+<p class="sub">三格 status 全 OK、run 12:23:03→12:46:56 干净退出、两节点 postflight 全回 4 MiB。loss≈7.94 为 40 步从零预热态（非收敛值，仅证训练健康/0 NaN）。峰值取两节点 <code>nvidia-smi</code> max（.12/.29 几乎一致）。</p>
+
+<div class="barwrap">
+  <div class="bar hit" style="height:96%"><span class="v">613,992</span><small>E1 16K CP1</small></div>
+  <div class="bar miss" style="height:44%"><span class="v">281,970</span><small>E2 16K CP2</small></div>
+  <div class="bar miss" style="height:55%"><span class="v">351,526</span><small>E3 32K CP2</small></div>
+  <div class="bar hit" style="height:95%;opacity:.55"><span class="v">606,300</span><small>#770 8K 基线</small></div>
+  <div class="bar" style="height:94%;background:linear-gradient(180deg,#444,#222);opacity:.6"><span class="v">600,000</span><small>目标线</small></div>
+</div>
+
+<h2>三、关键分析</h2>
+
+<h3>3.1　8→16 卡扩展效率（把外推换成实测）</h3>
+<table>
+<thead><tr><th>配置</th><th class="num">8 卡 tok/s（#791）</th><th class="num">16 卡 tok/s（本节）</th><th class="num">扩展倍数</th><th class="num">8卡 per-GPU</th><th class="num">16卡 per-GPU</th><th>per-GPU 变化</th></tr></thead>
+<tbody>
+<tr class="hit"><td>16K CP=1</td><td class="num">300,133</td><td class="num">613,992</td><td class="num">2.045×</td><td class="num">37,516</td><td class="num">38,374</td><td><b>+2.3%（轻微超线性）</b></td></tr>
+<tr class="miss"><td>32K CP=2</td><td class="num">183,394</td><td class="num">351,526</td><td class="num">1.917×</td><td class="num">22,924</td><td class="num">21,970</td><td>−4.2%（跨节点 DP 开销）</td></tr>
+</tbody>
+</table>
+<p>16K CP=1 轻微<b>超线性</b>：DP16 把 distributed-optimizer 分片摊到 16 卡、param-gather/grad-reduce overlap 更充分 → per-GPU 不降反升 2.3%。32K CP=2 接近线性但 4.2% 损耗来自跨节点 IB 的 DP allreduce（CP 部分在节点内 NVLink，无跨节点开销）。<b>外推 → 实测的修正</b>：16K 由 593,086（2×296,543）→ 613,992（+3.5%）；32K 由 366,788（2×183,394）→ 351,526（−4.2%）。</p>
+
+<h3>3.2　为什么 16K 上 CP=2 反而更慢</h3>
+<div class="callout bad">
+<p>E2（16K CP2, 281,970）= E1（16K CP1, 613,992）的 <b>0.459×</b>。CP=2 把每卡激活显存砍半（75.2→49.7 GB）但吞吐掉 <b>54%</b>。</p>
+<p>机制：CP=2 在 forward/backup 两阶段都要对 attention 的 KV 块做 ring send/recv（P2P），16K 这个序列长度下<b>计算/通信比偏低</b>，P2P 开销 > 省下的显存收益。且 16K CP=1 已只占 75.2GB（<80GB），<b>本就不需要 CP 减压</b>。<b>结论：16K 应关 CP（CP=1 DP16）。</b></p>
+</div>
+
+<h3>3.3　为什么 32K 达不到 600K（结构性受限）</h3>
+<div class="callout bad">
+<p>E3（32K CP2）= 351,526 tok/s = 600K 的 <b>58.6%</b>。三因素叠加：</p>
+<ol>
+<li><b>CP P2P KV 交换（主因，≈42.7%）</b>：E3 与 E1 <b>每卡 token 数相同</b>（tok/mb/gpu=16384），唯一差 = CP=2 的 ring-attention KV 交换。per-GPU 38,374→21,970 = 0.573× → CP 开销 42.7%。</li>
+<li><b>跨节点 DP（≈4.2%）</b>：8 卡同口径 22,924→16 卡 21,970 = 0.958×。</li>
+<li><b>CP=2 是 32K 的强制项</b>：32K CP=1 <b>OOM @ 81,049 MiB</b>（#787 实测，32K 无 CP 不入 80GB 卡）→ 非「可选优化」。</li>
+</ol>
+<p>即便 8→16 卡<b>完美线性</b>（183,394×2 = 366,788）也只到 600K 的 61%。<b>趋近 600K 的路径（后续，非本节）</b>：① CP 通信/计算 overlap（当前 ring-attention KV 交换未必 fully overlapped）；② zigzag / unified CP 降低 KV 交换量；③ 更大 DP 摊薄（已 16 卡封顶，需更多节点）。</p>
+</div>
+
+<h3>3.4　附带里程碑：#787 的 CP=2 阻断已解除</h3>
+<div class="callout good">
+<p>§五·6（#787）曾报告 <code>flash-attn-3</code> 的 <code>window_size</code> 元组签名与 Megatron CP 不兼容（<code>Unknown keyword argument 'window_size'</code>），32K CP=2 在首个 attention 层即崩、峰值仅 23,639 MiB。本节应用 FA3 CP patch（<code>window_size</code>→<code>window_size_left</code>/<code>window_size_right</code>，共享 NFS <code>/nas_train</code> 两节点透明可见）后 <b>E2/E3 均 status=OK、rc=0、0 NaN、跑完 40 iter</b>（峰值 49.7/76.0 GB）。<b>这是首批真实 CP=2 吞吐数据。</b></p>
+</div>
+
+<h2>四、历史基线对照</h2>
+<table>
+<thead><tr><th>编号</th><th>配置</th><th class="num">tok/s</th><th class="num">per-GPU</th><th class="num">峰值</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>#770</td><td>8K（seq4096）16卡 DP16 FP8+CG</td><td class="num">606,300</td><td class="num">37,894</td><td class="num">67.6 GB</td><td>e18 双机 16 卡基线（graph ON）</td></tr>
+<tr><td>#788</td><td>8K（seq8192）8卡 CP1 graph-OFF</td><td class="num">296,543</td><td class="num">37,067</td><td class="num">77.3 GB</td><td>单机 8 卡；16卡=2×外推 593,086（估计）</td></tr>
+<tr><td>#791</td><td>16K 8卡 CP1 graph-OFF</td><td class="num">300,133</td><td class="num">37,516</td><td class="num">76.8 GB</td><td>单机 8 卡基线</td></tr>
+<tr><td>#791</td><td>32K 8卡 CP2</td><td class="num">183,394</td><td class="num">22,924</td><td class="num">77.6 GB</td><td>单机 8 卡基线（FA3 patch 后）</td></tr>
+<tr class="hit"><td><b>#792 E1</b></td><td><b>16K 16卡 CP1 graph-OFF</b></td><td class="num"><b>613,992</b></td><td class="num">38,374</td><td class="num">75.2 GB</td><td><b>本节实测 · 达标 102%</b></td></tr>
+<tr class="miss"><td>#792 E3</td><td>32K 16卡 CP2</td><td class="num">351,526</td><td class="num">21,970</td><td class="num">76.0 GB</td><td>本节实测 · 59% 结构性受限</td></tr>
+</tbody>
+</table>
+
+<h2>五、建议</h2>
+<div class="callout good">
+<ol>
+<li><b>16K 训练用 CP=1 DP16、graph-OFF</b>：613,992 tok/s 达 600K 目标，峰值 75.2GB 安全，per-GPU 38,374。<b>不要再开 CP</b>（CP=2 在 16K 上掉 54% 吞吐，纯亏）。</li>
+<li><b>32K 训练接受 ≈351K tok/s</b>：CP=2 是 80GB 卡上 32K 的强制项，600K 在当前拓扑/CP 算法下<b>不可达</b>。若需提升，按 §3.3 路径：CP comm/comp overlap → zigzag/unified CP → 扩节点。</li>
+<li><b>FA3 CP patch 已稳定</b>，32K CP=2 可放心进入正式训练（本节证 0 NaN、健康 loss/gnorm、跑满 40 iter）。</li>
+<li>16K 选择<b>不影响 e18 8K 主线</b>：16K step 6.83s ≈ 8K 6.81s，吞吐持平，且支持更长上下文。可按需切换。</li>
+</ol>
+</div>
+
+<h2>六、口径与局限（caveat）</h2>
+<ul>
+<li>三格均 <b>40 iter、从零随机初始化</b>：loss≈7.94 为 40 步预热态，<b>非收敛值</b>，仅证训练健康（0 NaN、gnorm 1.3–1.4 正常）。</li>
+<li>稳态 Step Time 取 log-interval=10 的中位：E1=6.76/6.83/6.87→6.83s；E2=7.44/7.48→7.46s；E3=12.09/11.91/11.93→11.93s。首段 warmup（E1 10.45 / E2 11.37 / E3 18.58s）已剔除。</li>
+<li>峰值显存取两节点 <code>nvidia-smi</code> max；.12/.29 几乎一致（差 <0.2GB）。</li>
+<li>.12（vision）借用窗口 12:23–12:47，全程 vision 闲置；pretrain（.29）R2 训练未受影响（本测与 pretrain loop 分时；postflight .29 已回 4 MiB）。</li>
+<li>「双节点 16 卡」受 SSH 免密限制——集群仅 .12+.29 可用，无第三机；如未来 .10/.11 等开放，可补 8K/长序列多对验证。</li>
+</ul>
+
+<div class="ref">
+<h3>关联条目 / 产物</h3>
+<ul>
+<li><code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §五·8（#792）——本节的完整实验记录</li>
+<li><code>run/pretrain_rc_ladder_20261026.tsv</code>——新增 3 行（e1_16k_cp1 / e2_16k_cp2 / e3_32k_cp2）</li>
+<li><code>run/results_dualnode_seq16k32k/</code>——ALL_RESULTS + 三格 master.log 原始日志存档</li>
+<li><code>run/baize_dualnode_seq16k32k_16gpu.sh</code>——测速脚本（含 GPU-idle 安全闸）</li>
+<li>对照：#770（8K 16卡 e18）/ #788（8K 8卡 seq8192）/ #791（16K·32K 8卡）/ #787（CP=2 阻断→patch）</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>
