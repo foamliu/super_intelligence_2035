@@ -355,3 +355,10 @@
 [swebench-pull] [347/500] OK pytest-dev__pytest-7571 pulled=347 failed=0 skipped=0
 [swebench-pull] [348/500] OK pytest-dev__pytest-7982 pulled=348 failed=0 skipped=0
 [swebench-pull] [349/500] OK pytest-dev__pytest-8399 pulled=349 failed=0 skipped=0
+[swebench-pull] [350/500] OK scikit-learn__scikit-learn-10297 pulled=350 failed=0 skipped=0
+[swebench-pull] === BATCH idx=350 pulled=350 failed=0 skipped=0 disk_free=6180GB ===
+[swebench-pull] [351/500] OK scikit-learn__scikit-learn-10844 pulled=351 failed=0 skipped=0
+[swebench-pull] [352/500] OK scikit-learn__scikit-learn-10908 pulled=352 failed=0 skipped=0
+[swebench-pull] [353/500] OK scikit-learn__scikit-learn-11310 pulled=353 failed=0 skipped=0
+[swebench-pull] [354/500] OK scikit-learn__scikit-learn-11578 pulled=354 failed=0 skipped=0
+[swebench-pull] [355/500] OK scikit-learn__scikit-learn-12585 pulled=355 failed=0 skipped=0
