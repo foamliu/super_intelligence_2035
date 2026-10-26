@@ -61,8 +61,20 @@ def load_spec(tsv: str):
     return rows
 
 
-def discover(d: str):
+def discover(d: str, exclude=frozenset()):
     bins = sorted(glob.glob(os.path.join(d, "*.bin")), key=natkey)
+    if exclude:
+        kept, skipped = [], []
+        for b in bins:
+            name = os.path.basename(b)[:-4]            # strip ".bin"
+            if any(name == e or name.startswith(e) for e in exclude):
+                skipped.append(name)
+            else:
+                kept.append(b)
+        if skipped:
+            print(f"# EXCLUDE: {d} 跳过 {len(skipped)} 片坏 shard："
+                  f"{', '.join(skipped)}", file=sys.stderr)
+        bins = kept
     for b in bins:
         if not os.path.isfile(b[:-4] + ".idx"):
             die(f"shard 不完整：{b} 缺 .idx", 2)
@@ -85,14 +97,21 @@ def main() -> None:
                     help="本阶段总 token（epochs 对账用；不传则跳过 epochs）")
     ap.add_argument("--json", action="store_true", help="输出结构化 JSON")
     ap.add_argument("--quiet", action="store_true", help="只输出最终 blend 串")
+    ap.add_argument("--exclude", default="",
+                    help="逗号分隔的 shard 名（去 .bin 后缀），跳过坏片；"
+                         "权重自动在源内重摊（w=prop/n_kept）。"
+                         "如 --exclude env14_CC-MAIN-2023-23")
     args = ap.parse_args()
+
+    exclude = frozenset(e.strip() for e in args.exclude.split(",")
+                        if e.strip()) if args.exclude else frozenset()
 
     rows = load_spec(args.tsv)
     pairs, stats, missing = [], [], []
 
     for r in rows:
         d = os.path.join(args.tok_root, r["subdir"])
-        bins = discover(d) if os.path.isdir(d) else []
+        bins = discover(d, exclude) if os.path.isdir(d) else []
         if not bins:
             missing.append(f"{r['key']} ({d})")
             continue

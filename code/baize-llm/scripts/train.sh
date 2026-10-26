@@ -77,9 +77,13 @@ awk -v t="$TOKENS" -v eta="${ETA_TPS:-613992}" 'BEGIN{printf "  ETA(纯训练,�
 
 # ---------- 数据 blend ----------
 BLENDFILE="/tmp/baize_blend_${STAGE}_$$.txt"
+# BLEND_EXCLUDE：跳过坏 shard（逗号分隔 shard 名），不碰数据文件、只不进 blend；
+# 权重在源内自动重摊。例：BLEND_EXCLUDE=env14_CC-MAIN-2023-23
+EXCLUDE_ARG=()
+[ -n "${BLEND_EXCLUDE:-}" ] && EXCLUDE_ARG=(--exclude "$BLEND_EXCLUDE")
 "$PY/python" "$BAIZE_LLM_HOME/scripts/gen_blend.py" \
     --tsv "$BLEND_TSV" --tok-root "$TOK_ROOT" \
-    --verify --total-tokens "$TOKENS" > "$BLENDFILE"
+    --verify --total-tokens "$TOKENS" "${EXCLUDE_ARG[@]}" > "$BLENDFILE"
 rc=$?
 if [ "$rc" -ne 0 ]; then
   rm -f "$BLENDFILE"
@@ -155,10 +159,24 @@ TLOG="/tmp/baize_${STAGE}_${NAME}.log"
 LOG_M="/tmp/baize_${STAGE}_${NAME}_master.log"
 LOG_W="/tmp/baize_${STAGE}_${NAME}_worker.log"
 NCCL_ENV="NCCL_DEBUG=INFO NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22"
-# 2026-10-26 运维令 22:0x §6：rank15/21:40 崩时 error_file=<N/A> 无 traceback。
-# TORCH_DISTRIBUTED_DEBUG=DETAIL ⇒ 失败 rank 落详细 trace；
-# TORCH_DISTRIBUTED_TORCH_TRACE ⇒ 运维建议的 rank trace 模板（/tmp/td_trace_%rank）。
-PYTORCH_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 TORCH_NCCL_BLOCKING_WAIT=1 TORCH_DISTRIBUTED_DEBUG=DETAIL TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank"
+# 2026-10-27 fix: TORCH_DISTRIBUTED_DEBUG=DETAIL removed from PYTORCH_ENV.
+# Root cause: DETAIL mode makes PyTorch wrap ProcessGroupNCCL in
+# _ProcessGroupWrapper (distributed_c10d.py:2098), which does NOT implement
+# reduce_scatter_tensor_coalesced → DDP gradient sync crashes with
+# "Backend nccl does not support reduce_scatter_tensor_coalesced".
+# The DataLoader OOM (#798) was diagnosed as swap exhaustion and mitigated
+# by BAIZE_NUM_WORKERS=4 (common.env), so default debug tracing is no longer
+# needed. To re-enable for debugging: export TORCH_DISTRIBUTED_DEBUG=DETAIL
+# (and optionally TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank) before
+# launching train.sh — but note DDP coalesced ops may crash under the wrapper.
+PYTORCH_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 TORCH_NCCL_BLOCKING_WAIT=1"
+# Optional: append distributed-debug vars only if explicitly set in the env
+if [ -n "${TORCH_DISTRIBUTED_DEBUG:-}" ]; then
+  PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_DEBUG=$TORCH_DISTRIBUTED_DEBUG"
+fi
+if [ -n "${TORCH_DISTRIBUTED_TORCH_TRACE:-}" ]; then
+  PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_TORCH_TRACE=$TORCH_DISTRIBUTED_TORCH_TRACE"
+fi
 
 # ---------- dry-run（跳过 GPU/端口门禁，只验参数与数据）----------
 if [ "$DRY" = "1" ]; then
@@ -196,6 +214,15 @@ export PYTHONPATH
 } >> "$TLOG"
 
 ulimit -n 65536 2>/dev/null || true
+
+# Export NCCL/PyTorch env vars for BOTH single-node and multi-node paths.
+# 2026-10-27 fix: single-node path was missing these exports → NCCL Error 1
+# (unhandled cuda error) at reduce_scatter_tensor_coalesced because
+# PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True was not set.
+# The multi-node path already exports them (lines below for ssh + local),
+# but the single-node smoke path ran torchrun without any of them.
+export $NCCL_ENV
+export $PYTORCH_ENV
 
 if [ "$NNODES" -eq 1 ]; then
   log "单机启动：${NPROC_PER_NODE} 卡"
