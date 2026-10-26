@@ -1,4 +1,34 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 218 | TARGET: 29 -->
+## RUN_ID 218 — 只读：S1 21:52 二次停止的原因（traceback / NaN / 谁杀的）
+
+```bash
+set -u
+echo "=== RUN_ID 218 | S1 second-stop cause | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 进程（launcher/cline/loop）"
+ps -eo pid,etimes,args= | grep -E 'pretrain_launcher\.py|baize_pretrain_loop|cline_pretrain' | grep -Ev 'grep|bun|node /' | cut -c1-120 | head -6 || echo "  (none)"
+echo
+echo "[2] formal 日志尾 40 行"
+tail -40 /tmp/baize_s1_formal.log 2>/dev/null | cut -c1-190
+echo
+echo "[3] 错误/信号/NaN 关键字（两个日志，各最后 8 条）"
+for f in /tmp/baize_s1_formal.log /tmp/baize_s1_worker_node.log; do
+  echo "  --- $f"
+  grep -inE 'traceback|error|nan|out of memory|killed|signal|exception|abort|assert' "$f" 2>/dev/null | tail -8 | cut -c1-190
+done
+echo
+echo "[4] 最后 3 条 iteration（完整 loss/gnorm/TFLOP 字段）"
+grep -E 'iteration +[0-9]+' /tmp/baize_s1_formal.log 2>/dev/null | tail -3 | sed 's/^/  /' | cut -c1-300
+echo
+echo "[5] worker 日志尾 25 行"
+tail -25 /tmp/baize_s1_worker_node.log 2>/dev/null | cut -c1-190
+echo
+echo "[6] .12 侧自己的日志尾（若有）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'ls -lt /tmp/baize_s1*.log 2>/dev/null | head -3; echo "  -- tail --"; tail -12 /tmp/baize_s1_worker*.log 2>/dev/null | cut -c1-170' 2>&1 | cut -c1-190
+echo "=== DONE 218 ==="
+```
+
 <!-- RUN_ID: 217 | TARGET: 29 -->
 ## RUN_ID 217 — 只读：S1 训练进度（iteration/loss/tok·s）+ ckpt 落点 + θ 是否仍缺
 
