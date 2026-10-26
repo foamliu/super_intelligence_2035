@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #290, 2026-10-26 23:02]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档；inbox 顶部 RUN_ID 221 TARGET:29=pretrain 非 vision 令·relay 仅执行首块；扫 217–221 全 TARGET 29 无 vision 令；上次提交 wake#289@21:50 距今 ~72min >60min 判死线 ⇒ 补心跳防判死）。复核交付物在位：4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(22706/15754/29177/40423B 逐一吻合)+6 脚本 `run/vision/ocr_synth/`+10M 数据集 `ocr_synth_10m_full`(index.jsonl/STATS/VALIDATION)。📦 体积：TASK 22247B(21.7KB)/MEMORY 滚前 32562B(31.8KB)均 ≤32KB✓；本轮滚动 wake#258–#270 旧指针(13行→1行)→daily-memories-vision/2026-10-25.md 释冗余留头寸。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #291, 2026-10-27 00:17]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；inbox 顶部 RUN_ID 221 TARGET:29=pretrain 非 vision 令·relay 仅执行首块；扫 210–221 全 TARGET 29 无 vision 令；上次提交 wake#290@23:10 距今 ~67min >60min 判死线 ⇒ 补心跳防判死）。复核交付物在位：4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(22706/15754/29177/40423B 逐一吻合)+6 脚本 `run/vision/ocr_synth/`+10M 数据集 `ocr_synth_10m_full`(index.jsonl/STATS/VALIDATION)。📦 体积：TASK 22247B(21.7KB)/MEMORY 30990B(30.3KB)均 ≤32KB✓（无需归档；本轮滚动 wake#272dup+#274 旧指针控头寸）。环境：vision loop PID 1294447 运行中·cline `~/.bun/bin/cline` 可用。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #290 (2026-10-26 23:02, 空唤醒·无新令·补心跳防判死·滚动wake#258-270旧指针控体积·inbox RUN_ID221=只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #289 (2026-10-26 21:50, 空唤醒·无新令·补心跳防判死·inbox RUN_ID216只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #288 (2026-10-26 20:35, 空唤醒·无新令·补心跳防判死·交付物位置澄清4报告在项目级reports) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #287 (2026-10-26 19:24, 空唤醒·无新令·补心跳防判死·inbox RUN_ID210只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
@@ -26,8 +27,7 @@ WAITING: 1
 
 > 📦 wake #277 (2026-10-26 06:32, 体积维护归档·22:4x块归档+MEMORY滚动·无未完成指令) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
-> 📦 wake#272 (2026-10-25 21:0x)：路线①细化报告交付(report_vision_ocr_sft_plan_zh.html 22706B+§17+生成器+commit `vision ocr-plan:`)。流水原文 → daily-memories-vision/2026-10-25.md。**未完成指令：无**。
-> 📦 wake#274 (2026-10-26 01:1x)：10M 监控 41.85%+加载器兼容验真(build_gpic_loader→(16,3,224,224) finite)。流水原文 → daily-memories-vision/2026-10-26.md。**未完成指令:有(10M async)**。
+
 > 📦 wake#275 (2026-10-26 04:0x)：10M 全量 DONE 收尾(9,999,999/fail=0/470GB+报告15754B+§18+commit `vision ocr-synth:`；两处偏差如实记录)。流水原文 → daily-memories-vision/2026-10-26.md（亦见顶部 🆕 块）。**未完成指令:无**。
 > 📦 wake#276 (2026-10-26 05:22)：空唤醒复核·22:4x 交付完整性确认+任务书标✅DONE。流水原文 → daily-memories-vision/2026-10-26.md。**未完成指令：无**。
 
