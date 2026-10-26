@@ -22033,3 +22033,117 @@ cfg6 S2 32768 1 128 8 4194304 FAIL - - - - 81031 - - -
   0c4957203 22:01 ops 22:0x: 投 RUN_ID 210 只读探针(四线静默1.4h: loop存活/网格进度/复跑计数/分词�
 === DONE 210 ===
 ```
+
+---
+
+## RUN_ID 211 · 2026-10-26 21:01:30 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$G/doc/BaiZe-ISEDA2027
+echo "=== RUN_ID 211 | pretrain probe | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] pretrain loop / cline 进程（排除 cline 自身与 grep）"
+ps -eo pid,etimes,args= | grep -E 'pretrain_loop\.sh|cline_pretrain|ops_relay' | grep -Ev 'grep|cline -c|bun|node /' | cut -c1-140 || echo "  (none)"
+echo "[2] loop 日志（mtime / size / 末尾）"
+f=/tmp/baize_pretrain_loop.log
+if [ -f "$f" ]; then
+  echo "  mtime=$(stat -c '%y' "$f" | cut -c1-19)  size=$(stat -c %s "$f")B"
+  tail -12 "$f" | cut -c1-170
+else
+  echo "  no $f"
+fi
+echo "[3] 其他 loop 日志 mtime（判断哪些 loop 活着）"
+for l in vision data harness; do
+  ff=/tmp/baize_${l}_loop.log
+  [ -f "$ff" ] && echo "  $l: $(stat -c '%y' "$ff" | cut -c1-19)" || echo "  $l: no log"
+done
+echo "[4] git 状态（含 pretrain 最近提交与是否 pull 到工作副本）"
+cd "$G" || exit 1
+git log -4 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-120
+echo "  -- status --"
+git status -sb 2>/dev/null | head -3
+git log -1 --format='  HEAD=%h %ad %s' --date=format:'%m-%d %H:%M' | cut -c1-120
+echo "[5] 新代码是否已在工作副本（本次 5 次推送的产物）"
+for p in code/baize-llm/README.md code/baize-llm/scripts/train.sh code/baize-llm/scripts/check_rope.py code/baize-llm/scripts/abf_plan.py code/baize-llm/scripts/longctx_ladder.sh; do
+  if [ -f "$G/$p" ]; then echo "  OK   $(stat -c '%y' "$G/$p" | cut -c1-19)  $p"; else echo "  MISS $p"; fi
+done
+echo "[6] GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[7] 训练进程（torchrun / pretrain_launcher，排除 cline）"
+ps -eo pid,etimes,args= | grep -E 'torchrun|pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | cut -c1-150 || echo "  (none)"
+echo "[8] TensorBoard 6006 / 实验目录 / ckpt"
+ss -ltn 2>/dev/null | grep ':6006' | cut -c1-100 || echo "  (6006 not listening)"
+ls -d /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b* 2>/dev/null || echo "  (no baize2b exp dir)"
+for d in /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b*/checkpoints; do
+  [ -d "$d" ] && echo "  ckpt_dir=$d  n=$(ls -d "$d"/iter_* 2>/dev/null | wc -l)"
+done
+echo "[9] 磁盘 / 迁移（data 线 run2 是否还在跑）"
+df -h /nas_train /nas_env 2>/dev/null | tail -2
+ps -eo pid,etimes,args= | grep -E 'migrate_4sources|rsync .*nas_env' | grep -Ev 'grep|cline' | cut -c1-120 | head -4 || echo "  (no migrate/rsync)"
+tail -3 /tmp/migrate_4sources_to_nas_env.log 2>/dev/null | cut -c1-150
+echo "=== DONE 211 ==="
+```
+
+**输出**
+```
+=== RUN_ID 211 | pretrain probe | 2026-10-26 21:01:30 | host=whag0pgpuap29 ===
+[1] pretrain loop / cline 进程（排除 cline 自身与 grep）
+1111323       0 bash ./ops_relay_v2.sh
+1401353  178710 bash ./baize_pretrain_loop.sh
+2259598  178026 bash ./ops_relay_v2.sh
+3446723    8444 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_pretra
+[2] loop 日志（mtime / size / 末尾）
+  mtime=2026-10-26 21:01:29  size=7773687B
+#[0m[2m794 is[0m[2m at 16:[0m[2m3x and #[0m[2m795 is at[0m[2m 18:04[0m[2m. In[0m[2m the file, #[0m[2m794 comes first[0m[2m ([0m[2molder[0m[2m),[0m
+
+[0m[2mBut that[0m[2m's[0m[2m unusual —[0m[2m typically memory[0m[2m files have[0m[2m newest first. Let[0m[2m me re[0m[2m-read the file more[0m[2m care
+
+Actually,[0m[2m looking at the AG[0m[2mENTS.md:
+"[0m[2m顶部[0m[2m必须[0m[2m保留：①[0m[2m `WAITING:`[0m[2m 行 [0m[2m②[0m[2m 状态头[0m[2m /「[0m[2m进度快[0m[2m照」③[0m[2m 「�
+
+So[0m[2m the recent[0m[2m entries should be at[0m[2m the top,[0m[2m after the WAITING[0m[2m line. Let[0m[2m me re[0m[2m-check[0m[2m the order[0m[2m.
+
+[0m[2mLooking at the file[0m[2m:
+[0m[2m- Line 4[0m[2m: `>[0m[2m 🆕 202[0m[2m6-10-[0m[2m26 16:[0m[2m3x #79[0m[2m4`[0m[2m — this is the[0m[2m first[0m[2m 🆕 entry[0m[2m
+- Line [0m[2m5: `>[0m[2m 🆕 [0m[2m2026-10[0m[2m-26 18[0m[2m:04 #7[0m[2m95` — this[0m[2m is the second[0m
+[3] 其他 loop 日志 mtime（判断哪些 loop 活着）
+  vision: no log
+  data: no log
+  harness: 2026-10-26 20:33:00
+[4] git 状态（含 pretrain 最近提交与是否 pull 到工作副本）
+  f407bdc69 10-26 18:09 pretrain #795: 唤醒复核无新运维令 #794已闭合并推送 压缩v2巡检旧指针维持M
+  14c56399f 10-26 16:57 pretrain plan: #794 BaiZe-2B 预训练构想整理为中文 HTML 报告+ETA
+  9c5c1f77c 10-26 15:34 pretrain perf: #793 补写双机16卡实测结果进吞吐报告(16K=613992达标/32K=351526结�
+  a02e4059f 10-26 14:10 pretrain perf #792: 补心跳 双机16卡seq16K/32K真机完成 16K CP1=613992达标 32K CP2=351
+  -- status --
+## main...origin/main
+ M code/baize-llm/scripts/train.sh
+?? doc/BaiZe-ISEDA2027/run/1049/
+  HEAD=e12ecb719 10-26 21:01 Merge remote-tracking branch 'origin/main'
+[5] 新代码是否已在工作副本（本次 5 次推送的产物）
+  OK   2026-10-26 20:41:33  code/baize-llm/README.md
+  OK   2026-10-26 21:01:30  code/baize-llm/scripts/train.sh
+  OK   2026-10-26 20:17:28  code/baize-llm/scripts/check_rope.py
+  OK   2026-10-26 20:22:43  code/baize-llm/scripts/abf_plan.py
+  OK   2026-10-26 20:22:43  code/baize-llm/scripts/longctx_ladder.sh
+[6] GPU
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[7] 训练进程（torchrun / pretrain_launcher，排除 cline）
+ 818817     234 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --nproc
+[8] TensorBoard 6006 / 实验目录 / ckpt
+LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*          
+  (no baize2b exp dir)
+[9] 磁盘 / 迁移（data 线 run2 是否还在跑）
+10.239.23.31:/vol_CTE0_data01  207T  177T   31T  86% /nas_train
+10.239.23.32:/vol_CTE0_data04   10T  7.1T  2.9T  72% /nas_env
+=== DONE 211 ===
+```
