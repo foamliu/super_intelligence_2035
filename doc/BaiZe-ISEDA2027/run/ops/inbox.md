@@ -1,4 +1,26 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 221 | TARGET: 29 -->
+## RUN_ID 221 — 只读：agent 是否在动手（cline 进程）+ recipe.py 改动时间 + 训练代码仓提交
+
+```bash
+set -u
+C=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "=== RUN_ID 221 | who is editing | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] cline / loop 进程"
+ps -eo pid,etimes,args= | grep -E 'cline_pretrain|baize_pretrain_loop' | grep -Ev 'grep|bun|node /' | cut -c1-130 | head -5 || echo "  (none)"
+echo "[2] recipe.py / launcher / train_s1.sh mtime（是否刚被改）"
+ls -l --time-style=+%H:%M $C/mamba2_hybrid_2b/recipe.py $C/pretrain_launcher.py $C/scripts/train_s1.sh 2>/dev/null | awk '{print "  "$6"  "$7}'
+echo "[3] 训练代码仓提交（最近 5 条，看是否已 commit rotary_base）"
+git -C $C log -5 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' 2>/dev/null | cut -c1-130 || echo "  (not a git repo / no log)"
+echo "[4] recipe.py 里 rotary_base 的实际默认值与透传"
+grep -n -- 'rotary_base' $C/mamba2_hybrid_2b/recipe.py 2>/dev/null | head -10 | cut -c1-160
+echo "[5] launcher 是否已暴露 --rotary-base"
+grep -n -- 'rotary-base\|rotary_base' $C/pretrain_launcher.py 2>/dev/null | head -6 | cut -c1-160 || echo "  (launcher 无 rotary 参数)"
+echo "[6] train_s1.sh 里的关键项（ulimit / port / gbs / name / save-interval）"
+grep -nE 'ulimit|MASTER_PORT|GBS=|SAVE_INTERVAL|--name|WORLD|NNODES' $C/scripts/train_s1.sh 2>/dev/null | head -12 | cut -c1-150
+echo "=== DONE 221 ==="
+```
+
 <!-- RUN_ID: 220 | TARGET: 29 -->
 ## RUN_ID 220 — 只读：S1 是否重启 / 进度 / θ 是否已改 / 是否在跑吞吐实验
 
