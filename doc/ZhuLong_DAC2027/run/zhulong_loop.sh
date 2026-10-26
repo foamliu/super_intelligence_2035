@@ -50,6 +50,13 @@ SLEEP_WAIT=1800                 # 有异步阻塞（eval 跑着/infra 不就绪�
 MEMORY="$SCRIPT_DIR/MEMORY_ZHULONG.md"
 LAST_PUSH="/tmp/zhulong_last_push"
 
+# 🔑 2026-10-26 fix: 显式注入代理（loop 自身 git fetch/push 需访问 GitHub）。
+# 启动环境注入不可靠（login shell / setsid 多次 fork 后 environ 丢失）→ 直接在脚本内 export。
+# 只作用于 loop 自身 git；line 116 opencode 调用的 `env -u http_proxy -u https_proxy` 不受影响（剥代理给 opencode）。
+# 理由已记 MEMORY_ZHULONG.md [16:13] 流水。运维令 10-08 允许此修改（先记流水再改）。
+export https_proxy="http://172.19.92.23:13128"
+export http_proxy="http://172.19.92.23:13128"
+
 git_sync_and_push() {
     local now last counts behind ahead
     now=$(date +%s)
