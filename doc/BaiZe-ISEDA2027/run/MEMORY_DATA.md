@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -18,16 +18,18 @@ WAITING: 0
 ```
 PHASE:        ✅ufw_en迁移DONE+✅4源迁移全完成+✅22:0x坏shard修复DONE+✅3源迁移FINALIZE+✅体积维护DONE;全部活跃指令DONE,无阻塞
 已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5+4=9源→/nas_env(ufw_en32+l1_en_hq94+zh4+AICC1+5源574=705shard/~8.3TB);✅DATA_MAPPING.md+报告刷新(storage=symlink,commit ace6fac0b);✅体积维护MEMORY_DATA.md 22.2KB
-当前动作:     唤醒682(2026-10-27 05:2x):①ufw_en迁移COMPLETE: text/源文件删除+tokenized/ 96 hardlink→per-file symlink→/nas_env/full_ufw_en/;②build_tokenized_mirror.py改ufw_en ENTRIES→INDEX.tsv rebuild(storage=symlink,triplet=OK,inode_ok=32);③DATA_MAPPING.md regen(bytes=3,222,004,397,626,storage=symlink,合计17,566,770,958,858B/4,473,758,257,769tok);④gen_report_data_mapping_html.py新增(从MD+INDEX+df→HTML);⑤report_data_mapping_zh.html重生成(9 symlink+1 hardlink,20624B);⑥commit ace6fac0b pushed;⑦df /nas_train 174T/84%(释放~3TB) /nas_env 8.2T/83%。未完成指令:无→WAITING:0
-下一步:       ①全部迁移已DONE,无待办;②体积已达标(24KB),后续维持;③待运维新令
-阻塞:         无(ufw_en迁移DONE,4源迁移全完成,disk /nas_train 34T/84% /nas_env 1.8T/83%)
+当前动作:     唤醒683(2026-10-27 06:23):全量复核轮(无新运维令)。①复核全部活跃运维令=DONE：13:1x迁移4源(ufw_en32+l1_en_hq94+zh4+AICC1=131shard/4.05TB→/nas_env)=DONE(commit ace6fac0b,DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整);②10:4x报告 report_data_mapping_zh.html EXISTS 20,624B(Oct27 05:40)✓;③09:5x分词131/131 DONE(已入映射表10源全镜像完整);④08:2x报告 report_data_recent_work_zh.html EXISTS 28,443B(Oct26 09:06)✓;⑤git status无本线未提交改动✓;⑥df /nas_train 174T/84%(34T可用) /nas_env 8.2T/83%(1.8T可用);⑦无未完成指令→WAITING:1(省token,30min轮询待新令)。未完成指令:无→WAITING:1
+下一步:       ①全部活跃指令DONE,无待办;②待运维新令(30min轮询)
+阻塞:         无(全部迁移DONE+全部报告DONE+全部分词DONE;disk /nas_train 34T/84% /nas_env 1.8T/83%)
 ERROR_COUNT:  10
-未完成指令:   无(ufw_en迁移DONE+4源迁移全完成+DATA_MAPPING.md/报告刷新+commit/push)→WAITING:0
+未完成指令:   无(4源迁移DONE+DATA_MAPPING.md/报告刷新DONE+2份报告DONE+commit/push)→WAITING:1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [06:23] 唤醒683：全量复核轮(无新运维令)。①复核4条活跃运维令全DONE：13:1x迁移4源→DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整/合计815shard/17,566,770,958,858B/4,473,758,257,769tok(commit ace6fac0b);10:4x报告report_data_mapping_zh.html 20,624B(Oct27 05:40)✓;09:5x分词131/131 DONE(10源全镜像完整);08:2x报告report_data_recent_work_zh.html 28,443B(Oct26 09:06)✓;②git status无本线未提交改动(git status --porcelain grep本线路径=空)✓;③df /nas_train 174T/84%(34T可用,较迁移前177T/86%释放~3TB)+/nas_env 8.2T/83%(1.8T可用);④体积自检MEMORY 25.4KB/TASK 31.9KB均≤40KB✓;⑤★纠正WAITING:0→WAITING:1(无未完成指令,按harness/pretrain惯例睡30min省token,避免每60s空唤醒烧token);⑥心跳+日报+commit。未完成指令:无→WAITING:1
+
 > [05:2x] 唤醒682：★ufw_en迁移COMPLETE + 4源迁移全部完成。①ufw_en迁移：text/源文件删除(deleted parquet text source files)+tokenized/ 96 hardlink删除→build_tokenized_mirror.py重建96 per-file symlink指向/nas_env/full_ufw_en/(ufw_en_train_s{0..31}.{bin,idx,json}=96 files);②INDEX.tsv rebuild: ufw_en行 storage=hardlink→symlink, triplet=OK, inode_ok=32/32, bytes=3,222,004,397,626;③DATA_MAPPING.md regen(gen_data_mapping_md.py): ufw_en行 bytes=3,222,004,397,626/GB=3001/storage=symlink/状态=镜像完整, 合计17,566,770,958,858B/4,473,758,257,769tok/815shard;④★gen_report_data_mapping_html.py新增报告生成脚本(从DATA_MAPPING.md+INDEX.tsv+df→自包含HTML,5节:总览KPI+磁盘/逐源列表/重点10源/未分词源/结论);⑤report_data_mapping_zh.html重生成20624B: ufw_en行 storage=symlink/bytes=3,222,004,397,626, 全表9 symlink+1 hardlink(env14), 旧值3,215,632,049,746已清除;⑥★NFS缓存踩坑: gen_data_mapping_md.py首跑输出stale(hardlink/旧bytes),因NFS attr-cache返回旧INDEX.tsv→重跑后correct; gen_report首次grep也读stale HTML→Python fresh read确认correct;⑦commit ace6fac0b `data migrate: ufw_en 32 shard 迁移 /nas_env 完成` pushed;⑧df实测/nas_train 174T已用/34T可用(84%,较迁移前177T/86%释放~3TB)+/nas_env 8.2T已用/1.8T可用(83%);⑨4源迁移全部完成: ufw_en(32)+l1_en_hq(94)+zh(4)+AICC(1)=131shard≈4.05TB→/nas_env, 连同此前5源(574shard/4.24TB), /nas_env共承载9源/705shard/~8.3TB。未完成指令:无→WAITING:0
 
 > [03:0x] 唤醒681：复核+归档轮（无新运维令）。①★复核最高优先14:4x令=DONE：git log 86431cfb4 `data report: 加入SFT-2605+Agent-2609到DATA_MAPPING.md+报告删第4节`；实测验证 SFT-2605=1504 jsonl/du -sb=318,990,486,183 B(0 .bin/.idx/.json)→DATA_MAPPING.md 行11=未分词✓；Agent-2609=50 jsonl/du -sb=54,220,373,384 B(0 .bin/.idx/.json)→行12=未分词✓；报告 report_data_mapping_zh.html 行11-12未分词+旧第4节「其余状态源」已删(现4节:总览/逐源列表/10已镜像源/结论,节号顺延)✓；untokenized_sft_sources.tsv 侧车✓。②14:4x块归档→ARCHIVE_OPERATOR_DATA.md(原文+执行结论)+BAIZE_DATA_TASK.md 留1行📦指针。③08:2x报告 report_data_recent_work_zh.html 28,443B EXISTS✓。④ufw_en迁移仍BLOCKED：df /nas_env=1852G可用<ufw_en需3.0T(du -sh=3.0T)，s17已稳定(非移动靶)，需运维决定(腾空间/暂留hardlink/删旧数据)。⑤git status=main...origin/main 无ahead/behind✓；df /nas_train 86%(31T) /nas_env 82%(1.85T)；MEMORY 22.7KB/TASK~31KB 均≤40KB✓。⑥心跳+日报+commit。未完成指令:无→WAITING:0
