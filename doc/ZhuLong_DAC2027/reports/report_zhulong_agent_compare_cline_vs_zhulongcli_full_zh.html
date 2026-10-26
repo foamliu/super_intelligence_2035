@@ -33,7 +33,7 @@
 <h1>cline 与 zhulong CLI 在 <code>full</code> 配置下的分数差异：证据与归因</h1>
 <div class="meta">
   对象：ZhuLong EDA-Scripting-Bench（PyAether 切片，158 题）· glm-5.3-flash · READBACK=full · 各 5 轮<br>
-  生成时间：2026-10-24 20:xx ｜ 依据：zhulong 线 MEMORY / daily-memories / zhulong_results.md 的落盘记录
+  生成时间：2026-10-24 20:xx（§1–7）｜ 更新：2026-10-26 21:5x（新增 §8「配置对齐后重测」）｜ 依据：zhulong 线 MEMORY / daily-memories / zhulong_results.md 的落盘记录
 </div>
 
 <div class="kbox">
@@ -176,6 +176,94 @@ r1=16、r2=16、r3=23、r4=12、r5=27（r5 心跳明确写"27 fail = literal-pas
   <li><b>可复现性</b>：若要写进论文，必须把 26.15 上两批 trace 归档进仓库（当前 git 里只有汇总数字）。</li>
 </ol>
 
+<h2>8. 配置对齐后重测（2026-10-26，用户直令「作废 224219 + 修复 worker 配置源 + 重跑」）</h2>
+<div class="kbox">
+  <b>背景：</b>10-24 报告初版指出 zhulong 侧 <code>maxTokens=16384</code> 而 cline 基线为 <code>8192</code>，构成配置混杂。
+  10-26 用户直令要求作废配置错误的 <code>224219</code> 批、修复 worker 配置复制源（<code>~/.zhulong/data/settings/providers.json</code>）、
+  用对齐后的配置（<code>glm-5.3-flash + maxTokens=8192 + baseUrl /v1 + reasoning=false</code>）重跑 5-run。
+  <b>本轮唯一变量收紧为"CLI 二进制"（cline 3.0.51 vs zhulong CLI），maxTokens/MCP/模型/端口/并发/题集全部逐字节对齐。</b>
+</div>
+
+<h3>8.1 配置对齐证据（判据 ①）</h3>
+<p>每轮起跑后从 <code>&lt;batch&gt;/cli_data/worker_{1,2,3,4}/data/settings/providers.json</code> 实测 4 个 worker 的配置，
+r1–r5 全部 20 个 worker 实测均为 <code>model=glm-5.3-flash / maxTokens=8192 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false</code>。
+<b>224219 stale-config bug（worker 复制 <code>~/.cline/data</code> 的 dsv4-pro+16384）未复现。</b>
+判据 ①（配置 diff 除 CLI 名/路径外为空）<b>成立</b>。详见 <code>run/daily-memories/2026-10-26.md</code> 各巡检条目。</p>
+
+<h3>8.2 对齐后 5-run 原始分数</h3>
+<table>
+  <tr>
+    <th>轮次</th>
+    <th class="num">pass</th><th class="num">通过率</th>
+    <th class="num">生成失败(gen-fail)</th><th class="num">生成成功</th><th class="num">条件通过率</th>
+    <th class="num">-32001</th><th class="num">sandbox-timeout</th><th class="num">429</th>
+    <th>batch</th>
+  </tr>
+  <tr><td>r1</td><td class="num">93/158</td><td class="num">58.9%</td><td class="num">52</td><td class="num">106</td><td class="num">87.7%</td><td class="num">—</td><td class="num">0</td><td class="num">—</td><td><code>2026_1026_094602</code></td></tr>
+  <tr><td>r2</td><td class="num">120/158</td><td class="num">75.9%</td><td class="num">22</td><td class="num">136</td><td class="num">88.2%</td><td class="num">—</td><td class="num">0</td><td class="num">—</td><td><code>2026_1026_113829</code></td></tr>
+  <tr><td>r3</td><td class="num">106/158</td><td class="num">67.1%</td><td class="num">37</td><td class="num">121</td><td class="num">87.6%</td><td class="num">—</td><td class="num">0</td><td class="num">—</td><td><code>2026_1026_125254</code></td></tr>
+  <tr><td>r4</td><td class="num">122/158</td><td class="num">77.2%</td><td class="num">20</td><td class="num">138</td><td class="num">88.4%</td><td class="num">—</td><td class="num">0</td><td class="num">—</td><td><code>2026_1026_160802</code></td></tr>
+  <tr><td>r5</td><td class="num">118/158</td><td class="num">74.7%</td><td class="num">25</td><td class="num">133</td><td class="num">88.7%</td><td class="num">20</td><td class="num">0</td><td class="num">41</td><td><code>2026_1026_190240</code></td></tr>
+  <tr><th>均值</th><th class="num">111.8/158</th><th class="num">70.8%</th><th class="num">31.2</th><th class="num">126.8</th><th class="num">88.1%</th><th class="num">—</th><th class="num">0</th><th class="num">—</th><th>std=7.7</th></tr>
+</table>
+<p class="sm">
+  gen-fail = 158 − 生成成功（assembled .py 数）；r5 的 -32001=20 / 429=41 来自 r5 主日志 grep 计数（429 为 gateway 限流，非 infra）。
+  各轮 <code>exec_err=0</code>、<code>sandbox-timeout=0</code>、<code>timeout≤10</code>、<code>infra=0</code>，判据十三 5 轮全部"技术有效"。
+  r1–r4 的 -32001/429 计数未单独落盘，标"—"。
+</p>
+
+<h3>8.3 与对齐前 / cline 基线的三方对照</h3>
+<table>
+  <tr><th>线</th><th class="num">配置</th><th class="num">5-run mean ± std</th><th class="num">Δ vs cline</th><th class="num">gen-fail 范围</th><th>说明</th></tr>
+  <tr><td>cline（基线）</td><td>maxTokens=8192</td><td class="num">86.8 ± 1.6%</td><td class="num">—</td><td class="num">1–4/轮</td><td>CLI 对比锚点</td></tr>
+  <tr><td>zhulong（对齐<b>前</b>）</td><td>maxTokens=16384</td><td class="num">75.6 ± 4.4%</td><td class="num">−11.2pp</td><td class="num">12–27/轮</td><td>本报告 §2 的 5-run</td></tr>
+  <tr><td><b>zhulong（对齐<b>后</b>）</b></td><td><b>maxTokens=8192</b></td><td class="num"><b>70.8 ± 7.7%</b></td><td class="num"><b>−16.0pp</b></td><td class="num"><b>20–52/轮</b></td><td>本节 8.2 的 5-run</td></tr>
+</table>
+
+<div class="bad">
+<b>对齐后比对齐前更差，且方差更大。</b>mean 从 75.6% 降到 70.8%（−4.8pp），std 从 4.4 涨到 7.7。
+<b>这排除了"maxTokens=16384 是 zhulong 落后主因"的假设</b>：把 maxTokens 调小非但没缩小差距，反而让 zhulong 的 literal-pass 更频繁、单轮波动更大。
+可能的解释方向（<b>推测，待 trace 验证</b>）：8192 更容易在长脚本生成时触发截断 → agent 拿不到完整回读 → 提前交 <code>pass</code>；
+或 8192 改变了 reasoning-off 下的 prompt 拼接行为。但<b>不论原因</b>，结论已清晰：<b>maxTokens 不是差距来源</b>。
+</div>
+
+<h3>8.4 判据核对（任务书 ③ 验收）</h3>
+<table>
+  <tr><th>判据</th><th>目标</th><th>实测</th><th>达成</th></tr>
+  <tr><td>① 配置 diff 为空（除 CLI 名/路径）</td><td>worker providers.json = glm-5.3-flash + 8192</td><td>r1–r5 全 20 worker 实测 = glm-5.3-flash + 8192 + /v1 + reasoning=false</td><td><b>✅ 成立</b></td></tr>
+  <tr><td>② 单轮 gen-fail ≤ 5/158</td><td>对齐前 12–27 应改善到 ≤5</td><td>r1=52 / r2=22 / r3=37 / r4=20 / r5=25</td><td><b>❌ 不达标</b>（5 轮全部远超，r1 反而恶化到 52）</td></tr>
+  <tr><td>③ 5 轮判据十三有效</td><td>timeout≤10 / exec_err=0 / infra=0</td><td>5 轮 timeout≤2 / exec_err=0 / infra=0</td><td><b>✅ 技术有效</b></td></tr>
+  <tr><td>④ zhulong 仍显著低于 cline → 给"已排除配置混杂"结论</td><td>如实报，不粉饰</td><td>70.8±7.7% vs 86.8±1.6%，Δ=−16.0pp（比对齐前 −11.2pp 更大）</td><td><b>✅ 结论见 8.5</b></td></tr>
+</table>
+
+<h3>8.5 结论：已排除配置混杂</h3>
+<div class="good">
+<b>在 maxTokens / MCP settings / 模型 / baseUrl / reasoning / 端口 / 并发 / 题集全部逐字节对齐 cline 之后，
+zhulong CLI 仍显著低于 cline（70.8±7.7% vs 86.8±1.6%，Δ=−16.0pp），且 gen-fail 仍高达 20–52/轮。</b>
+这<b>排除</b>了"配置混杂是差距来源"的可能：差距只能来自 CLI agent 本身（literal-pass 提前终止行为 / 工具调用编排 / 提交门控）。
+<b>对齐前 −11.2pp 的归因（§3：80% 来自 literal-pass）在对齐后依然成立，甚至更强</b>——对齐后 5 轮平均 gen-fail=31.2（占 19.7%），
+按 §3 的分解口径，literal-pass 贡献 ≈(155.6−126.8)×88.1%/158 ≈ <b>16.0pp</b>，与实测 Δ 完全吻合，<b>条件质量差距几乎为 0</b>（88.1% vs ≈88.1%）。
+</div>
+<div class="warn">
+<b>但需如实指出两点：</b><br>
+(1) 对齐后 mean 反而下降、std 反而上升，说明 maxTokens=8192 对 zhulong CLI <b>不是中性</b>的——
+<b>不建议</b>把 70.8±7.7% 当作"zhulong CLI 的最终能力数"写进论文，它受 maxTokens 选择影响且方向相反于预期；
+若要报 CLI 对比，应同时报 <b>对齐前 75.6±4.4（maxTokens=16384）</b>与<b>对齐后 70.8±7.7（maxTokens=8192）</b>两个数，并说明 maxTokens 对 zhulong 的敏感性。<br>
+(2) r1=58.9%（gf=52）是 5 轮里最低也是最离群的一轮，拉高了 std；若按 r2–r5（n=4）算为 73.7±4.6%，与对齐前 75.6±4.4% 基本持平。
+<b>是否把 r1 视为离群剔除，需用户裁决</b>——本报告按"5 轮全保留"口径报 70.8±7.7%，不擅自剔除。
+</div>
+
+<h3>8.6 行动项（覆盖 §7 旧行动项）</h3>
+<ol>
+  <li><b>literal-pass 仍是唯一可回收的大头</b>（≈16pp）。对齐后证明它<b>不是 maxTokens 问题</b>，
+      修法应转向 agent 行为侧：提交前硬校验非空 <code>.py</code> + 禁止以字符串 <code>pass</code> 作最终答案 + MCP <code>timeout=600</code> 与 <code>autoApprove</code> 启动自检。</li>
+  <li><b>maxTokens 敏感性需单独实验</b>：在 zhulong CLI 下跑 maxTokens ∈ {4096, 8192, 16384, 32768} 各 1–2 轮，
+      看 gen-fail 与 mean 的方向，再决定 zhulong CLI 的"标称 maxTokens"。</li>
+  <li><b>r1 离群裁决</b>：由用户决定是否补 r6 替换 r1，或按 n=4 报。</li>
+  <li><b>论文口径</b>：新线（glm-5.3-flash × zhulong）按用户 10-23 直令<b>不纳入论文</b>；
+      论文锚点仍用旧线 (N′) fp4×cline 4 轮 mean=76.7% provisional。本节结果作为<b>内部归因</b>存档。</li>
+</ol>
+
 <h2>附录：数据来源（可逐条核对）</h2>
 <table>
   <tr><th>#</th><th>数据</th><th>出处</th></tr>
@@ -185,6 +273,10 @@ r1=16、r2=16、r3=23、r4=12、r5=27（r5 心跳明确写"27 fail = literal-pas
   <tr><td>4</td><td>cline B.glm-5.3-flash 5/5 = 86.8±1.6；r1 <code>统计: 成功[157]/失败[1]</code>、<code>136/158 (86.1%)</code></td><td><code>zhulong_results.md</code>「Phase B / B.glm-5.3-flash」；<code>run/daily-memories/2026-10-18.md</code> §[16:22]/§[17:34]</td></tr>
   <tr><td>5</td><td>CLI / 回读 / maxTokens 口径</td><td><code>run/MEMORY_ZHULONG.md</code> CONFIG 行；<code>zhulong_results.md</code> 头部（Cline-CLI 3.0.51 / core 0.0.71）</td></tr>
   <tr><td>6</td><td>26.15 不可达（本机无 /nasdata、ssh 不通）</td><td>ops RUN_ID 166（.12）/ 167（.29）/ 168（候选 IP 探测）的 outbox 记录</td></tr>
+  <tr><td>7</td><td>对齐后 5 轮 pass / gen-fail / batch（§8.2）</td><td><code>run/daily-memories/2026-10-26.md</code> §[19:03]/§[16:13]/§[21:00]/§[21:52]；<code>run/MEMORY_ZHULONG.md</code> ROUND 行</td></tr>
+  <tr><td>8</td><td>r5 regrade 118/158 (74.7%) / gen 133 ok / 23 fail / 0 exec_err</td><td><code>/tmp/ABL_glm-5.3-flash_zl_aligned_r5_regrade.log</code>；<code>output_evaluation/20261026_2152_app.e0031982/final_report.json</code></td></tr>
+  <tr><td>9</td><td>r5 worker_1 providers.json = glm-5.3-flash+8192+/v1+reasoning=false（判据 ① 证据）</td><td><code>2026_1026_190240/cli_data/worker_1/data/settings/providers.json</code></td></tr>
+  <tr><td>10</td><td>对齐后 5/5 = 70.8 ± 7.7% [58.9,75.9,67.1,77.2,74.7]</td><td>由 pass 计数 93/120/106/122/118 计算（mean=111.8/158=70.76%，std=12.22/158=7.73%）</td></tr>
 </table>
 
 <p class="sm" style="margin-top:26px">

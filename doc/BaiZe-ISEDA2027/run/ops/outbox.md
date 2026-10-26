@@ -22815,3 +22815,137 @@ echo "=== DONE 217 ==="
   n_proc=2
 === DONE 217 ===
 ```
+
+---
+
+## RUN_ID 218 · 2026-10-26 22:00:44 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 218 | S1 second-stop cause | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 进程（launcher/cline/loop）"
+ps -eo pid,etimes,args= | grep -E 'pretrain_launcher\.py|baize_pretrain_loop|cline_pretrain' | grep -Ev 'grep|bun|node /' | cut -c1-120 | head -6 || echo "  (none)"
+echo
+echo "[2] formal 日志尾 40 行"
+tail -40 /tmp/baize_s1_formal.log 2>/dev/null | cut -c1-190
+echo
+echo "[3] 错误/信号/NaN 关键字（两个日志，各最后 8 条）"
+for f in /tmp/baize_s1_formal.log /tmp/baize_s1_worker_node.log; do
+  echo "  --- $f"
+  grep -inE 'traceback|error|nan|out of memory|killed|signal|exception|abort|assert' "$f" 2>/dev/null | tail -8 | cut -c1-190
+done
+echo
+echo "[4] 最后 3 条 iteration（完整 loss/gnorm/TFLOP 字段）"
+grep -E 'iteration +[0-9]+' /tmp/baize_s1_formal.log 2>/dev/null | tail -3 | sed 's/^/  /' | cut -c1-300
+echo
+echo "[5] worker 日志尾 25 行"
+tail -25 /tmp/baize_s1_worker_node.log 2>/dev/null | cut -c1-190
+echo
+echo "[6] .12 侧自己的日志尾（若有）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'ls -lt /tmp/baize_s1*.log 2>/dev/null | head -3; echo "  -- tail --"; tail -12 /tmp/baize_s1_worker*.log 2>/dev/null | cut -c1-170' 2>&1 | cut -c1-190
+echo "=== DONE 218 ==="
+```
+
+**输出**
+```
+=== RUN_ID 218 | S1 second-stop cause | 2026-10-26 22:00:44 | host=whag0pgpuap29 ===
+[1] 进程（launcher/cline/loop）
+1401353  182264 bash ./baize_pretrain_loop.sh
+
+[2] formal 日志尾 40 行
+    return f(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 277, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+pretrain_launcher.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-10-26_21:40:43
+  host      : whag0pgpuap29
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 2814791)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+===== Done: rc=1 =====
+
+[3] 错误/信号/NaN 关键字（两个日志，各最后 8 条）
+  --- /tmp/baize_s1_formal.log
+9421:W1026 21:40:43.444000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814798 closing signal SIGTERM
+9422:W1026 21:40:43.449000 2789027 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2814800 closing signal SIGTERM
+9424:Traceback (most recent call last):
+9427:  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+9436:    raise ChildFailedError(
+9437:torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+9450:  error_file: <N/A>
+9451:  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+  --- /tmp/baize_s1_worker_node.log
+61111:    raise ChildFailedError(
+61112:torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+61122:  error_file: <N/A>
+61123:  traceback : Signal 6 (SIGABRT) received by PID 2911667
+61129:  error_file: <N/A>
+61130:  traceback : Signal 6 (SIGABRT) received by PID 2911668
+61138:  error_file: <N/A>
+61139:  traceback : Signal 6 (SIGABRT) received by PID 2911666
+
+[4] 最后 3 条 iteration（完整 loss/gnorm/TFLOP 字段）
+
+[5] worker 日志尾 25 行
+[0]:
+  time      : 2026-10-26_21:51:34
+  host      : whag0pgpuap12
+  rank      : 13 (local_rank: 5)
+  exitcode  : -6 (pid: 2911666)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 2911666
+========================================================
+===== Done: rc=1 =====
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked semaphore objects to clean up
+  warnings.warn('resource_tracker: There appear to be %d '
+
+[6] .12 侧自己的日志尾（若有）
+  -- tail --
+=== DONE 218 ===
+```
