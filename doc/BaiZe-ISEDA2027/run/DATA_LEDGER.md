@@ -216,4 +216,24 @@
 > - `DATA_MAPPING.md` B 节「已删除/不可用」32 行状态置 `已删除`；`tokenized/INDEX.tsv` 无需改（32 从未在镜像）。
 > - **结案**：本令为终裁，不再挂账。完整 mirror rebuild + triplet/inode 收尾校验待 131 分词结束后一并做（运维令 18:2x 允许）。
 
+### §7.2 坏 shard 修复：env14_CC-MAIN-2023-23（运维令 2026-10-26 22:0x · 用户直令「安排 data 去处理」）
+
+> pretrain S1 blender 实测：`SKIP env14_CC-MAIN-2023-23: ptr overflow: max_ptr=122,496,093,768 >= bin_size=49,025,167,172`（`validate_shards: 109 ok, 1 skipped, 110 total`，0.65 权重摊到 109 片）。`ultrafineweb_en_v1_4` 实际少 1/110 片。
+
+**定性（2026-10-26 23:3x，唤醒677）**：用 Megatron `_IndexReader` 格式手解 `.idx`，证据落 `run/data/bad_shard_env14_CC-MAIN-2023-23_20261026.txt`。
+- `.idx` magic=`MMIDIDX`/version=1/dtype_code=4(int32) 全合法；`num_docs`=32,850,594；`num_tokens`=sum(seq_lens)=**30,624,024,695**（与 `.json` 一致）；`max_ptr`=**122,496,093,768**（与 blender 越界值逐位一致）；指针单调、长度全正 → **`.idx` 自身内部一致、未损坏**。
+- 期望 `.bin` = 30.62B × 4 = **122,496,098,780 B ≈ 122.50 GB**；实际 `.bin` = **49,025,167,172 B = 40.0%**。
+- mtime：`.bin`=2026-10-22 02:20（晚于 `.idx`/`.json`=2026-10-21 10:47 约 16h）。
+- **结论：`.bin` 被截断（truncated），`.idx` 正确。** 推断 10-22 02:20 有一次对该 `.bin` 的重写/截断未完成。manifest L92 误标 `DONE 30624024695 49025167172`（tokens=完整 / bin_bytes=截断）即该不一致留痕。
+- text/ 与 tokenized/ 三件套为同一 inode 硬链接（links=2），盘上仅 1 份；原始字节数已 tsv 留档（见证据文件 §6）。
+
+**修复路径裁决**：(b) 仅重建 `.idx` 不适用（坏的 是 `.bin`，重建 `.idx` 只覆盖到 12.26B token，永久丢 18.36B）；(a) 源 parquet 仍在 ⇒ **重分词这一片**。源 = `/nas_train/.../ultrafineweb_en_v1_4/CC-MAIN-2023-23`，实测 **512 个 `*.parquet`**、0 `.incomplete`（`/nas_inference` 上无此源）。
+
+**执行（2026-10-26 23:42 起，异步在跑）**：脚本 `run/data_pipeline/retokenize_bad_shard_env14_CC-MAIN-2023-23.sh`，参数与 `run_tokenize_env14_parallel_finish.sh` 完全一致（`--mode content --text-column content --dtype int32 --max-chars 50000 --num-workers 48 --batch-size 256`，nice 10），写到**临时前缀** `text/RETOK_env14_CC-MAIN-2023-23`（不破坏原件）。日志 `/tmp/retok_launcher.log`。实测吞吐 ~15 MB/s（NFS I/O bound，24→48 worker 无增益），ETA ≈ 128 min（~01:50 完成）。
+
+**待完成（retok 完成后，下一唤醒）**：
+1. 验证新三件套：`.idx` max_ptr < 新 `.bin` size 且指针单调；num_tokens ≈ 30.62B；新 `.bin` ≈ 122.50 GB。
+2. 原子替换：rm `tokenized/.../env14_CC-MAIN-2023-23.{bin,idx,json}`（旧 inode link 2→1）→ mv `RETOK_*` → `text/env14_CC-MAIN-2023-23.*`（rename 替换，旧 inode 1→0 释放）→ 重跑 `build_tokenized_mirror.py`（hardlink 进 tokenized/ + 刷新 INDEX.tsv/MANIFEST）→ 重跑 `gen_data_mapping_md.py`（刷新 DATA_MAPPING.md）。
+3. 复验：blender `validate_shards` 不再 SKIP；写结论到本节 + DATA_MAPPING.md；commit `data fix:`。
+
 **D11（与方案 §1 的差异）**：phase0 §1.2 把多模态一律归 `/nas_train`，实测「bytes 通用图文对」还躺在 `/nas_user`（Amshaker 3.7T、BLIP3o 1.3T）与 `/nas_train`（CC12M webdataset 1.2T 带图、LLaVA-CC3M-595K）——这批是"补数据不足"的实际弹药，上轮盘点漏记。
