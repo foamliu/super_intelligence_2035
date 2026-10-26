@@ -93,6 +93,7 @@
 <tr><td>优化器</td><td><b>AdamW</b>（<code>--optimizer adam</code>）</td><td>2026-10-26 定案（用户直令）；与 P-8 AdamW 44.4B 训练同口径</td></tr>
 <tr><td>LR 调度</td><td><b>WSD</b>：2000 步 warmup → 1e-3 平台 → D 段<b>指数衰减</b>至 1e-4</td><td>D 段 <code>lr(p)=1e-3×(1e-4/1e-3)^p</code>；p=0.5 时 3.16e-4（见 §五）</td></tr>
 <tr><td>监控</td><td><b>TensorBoard</b>（.29:6006）</td><td>日志 <code>nemo_experiments/&lt;name&gt;/tb_logs/</code>；<code>scripts/tb_6006.sh</code> 启停</td></tr>
+<tr><td>Checkpoint</td><td><b>每 2,000 步</b></td><td>2026-10-26 用户补令；S1 350 个 / S2 175 个 / Decay 10 个 ⇒ 必须配 <code>prune_ckpts.sh</code>（保留最近 3 + 每 25k 里程碑），否则 4.4–30GB/个会写满盘</td></tr>
 <tr><td>每步 token</td><td class="num">2M / 4M / 4M</td><td>S1=2M；S2 与 Decay=4M（与 #792 E1 实测档一致）</td></tr>
 </tbody>
 </table>
@@ -297,6 +298,7 @@
 │   ├── train.sh                     # s1|s2|decay（--smoke N / --dry-run / --nodes N）
 │   ├── tb_6006.sh                   # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py               # WSD-指数曲线 + 与 TB 的 csv 对账
+│   ├── prune_ckpts.sh               # ckpt 保留策略（最近 3 + 每 25k 里程碑，默认 dry-run）
 │   └── status.sh                    # 进程/显存/最新步数/ckpt/TB 一览
 └── docs/LAUNCHER_PATCH_EXP_DECAY.md  # 若 launcher 无 --lr-decay-shape 的补丁规格</code></pre>
 <p>关键命令：<code>bash scripts/preflight.sh</code> → <code>bash scripts/train.sh s1 --smoke 20</code> → <code>bash scripts/train.sh s1</code>（S2/Decay 同理）。三阶段共用 <code>--name baize2b</code>，靠<b>累计 iters</b> 自动续跑，避免「从 0 重新计步」的经典错。</p>
@@ -319,9 +321,17 @@
 <tr><td>3</td><td>WSD 指数 D 段</td><td><code>lr_schedule.py</code> 与 TB <code>learning-rate</code> 逐点 ≤0.1%；p=0.5 → 3.162e-4</td></tr>
 <tr><td>4</td><td>TensorBoard</td><td><code>ss -ltn</code> 见 <code>0.0.0.0:6006</code>，<code>curl 127.0.0.1:6006</code> 有响应，事件文件 mtime 在增长</td></tr>
 <tr><td>5</td><td>冒烟</td><td>20–40 步跑通、0 NaN、吞吐符合档位（S1 480–550K / S2 ≥550K）</td></tr>
-<tr><td>6</td><td>正式开跑</td><td>S1 起跑后 30 分钟内提交 <code>pretrain run:</code> 心跳（含 tok/s、峰值显存、TB URL）</td></tr>
+<tr><td>6</td><td>正式开跑</td><td>S1 起跑后 30 分钟内提交 <code>pretrain run:</code> 心跳（含 tok/s、峰值显存、TB URL、ckpt 间隔 2000 已生效）</td></tr>
+<tr><td>7</td><td>Checkpoint</td><td>每 2,000 步一个 <code>iter_*</code>；<code>prune_ckpts.sh</code> dry-run 后按「最近 3 + 每 25k 里程碑」清理，<code>df</code> 保持 /nas_train 可用 &gt;15TB</td></tr>
 </tbody>
 </table>
+
+<h3>5.6　Checkpoint 策略（用户补令：每 2,000 步一个）</h3>
+<div class="callout">
+<p>三阶段 <code>--save-interval</code> 统一改为 <b>2,000 步</b>：S1 350 个、S2 175 个、Decay 10 个。按实测体积（torch_dist 模型态 ≈4.4GB/个；含 Adam 状态 ≈30GB/个）全量保留分别需 <b>1.54TB / 10.5TB</b>（S1），会挤压数据迁移与后续训练的空间。</p>
+<p><b>配套保留策略</b>（<code>code/baize-llm/scripts/prune_ckpts.sh</code>，默认 dry-run）：保留<b>最近 3 个</b> + <b>每 25,000 步一个里程碑</b> + <code>latest_checkpointed_iteration.txt</code> 指向的那个（永远保护）。S1 收敛到 ≈31 个（4.4GB 口径 ≈136GB / 30GB 口径 ≈930GB）。</p>
+<p><b>执行节奏</b>：每 20k 步跑一次 dry-run，每 50k 步执行一次 <code>--apply</code>；红线 = <code>/nas_train</code> 可用低于 15TB 时立即清理并上报。</p>
+</div>
 
 <h2>六、数字溯源</h2>
 <ol class="ref">

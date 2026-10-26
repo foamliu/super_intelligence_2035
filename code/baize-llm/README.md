@@ -24,6 +24,7 @@ code/baize-llm/
 │   ├── train.sh                  # 统一入口：s1 | s2 | decay（支持 --smoke/--dry-run）
 │   ├── tb_6006.sh                # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py            # WSD-指数 LR 曲线打印 / 与 TB 对账
+│   ├── prune_ckpts.sh            # ckpt 保留策略清理（默认 dry-run）
 │   └── status.sh                 # 进程 / 显存 / 最新步数 / LR / TB 健康一览
 └── docs/
     └── LAUNCHER_PATCH_EXP_DECAY.md   # 若 launcher 不支持 --lr-decay-shape 的补丁规格
@@ -65,6 +66,31 @@ Decay 设 `--lr-decay-iters 20000` ⇒ 衰减恰好覆盖 1,050,000→1,070,000�
 **数据处理**：`gen_blend.py` 把每源 prop 均分到该源所有 shard（`prop / n_shards`，浮点权重，
 Megatron blended dataset 支持浮点），并在 `--verify` 时用 `.bin` 字节 / 4 反算 token 数与 epochs，
 与 `configs/blend_*.tsv` 的 epochs 列对账（偏差 >10% 会告警）。
+
+### 2.1 checkpoint 策略（用户令：**每 2000 步一个**）
+
+三阶段 `SAVE_INTERVAL` 统一 **2000**（`configs/s1|s2|decay.env`）：
+
+| 阶段 | 步数 | ckpt 个数 | 模型权重(≈4.4GB/个) | 含 Adam 状态(≈30GB/个) |
+|:--|--:|--:|--:|--:|
+| S1 | 700,000 | 350 | 1.54 TB | 10.5 TB |
+| S2 | 350,000 | 175 | 0.77 TB | 5.25 TB |
+| Decay | 20,000 | 10 | 44 GB | 300 GB |
+
+（单个 ckpt 体积实测口径：torch_dist 模型态 ≈4.4GB / 含 Adam 状态 ≈30GB，见
+`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §P-5b/P-8。是否存 optimizer 由 launcher 的 `save_optim` 决定。）
+
+**所以必须配合保留策略**（否则 2000 步间隔会写满 `/nas_train`）：
+
+```bash
+# 先 dry-run 看保留/删除清单
+bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000
+# 确认后执行（训练中的 latest 与 latest_checkpointed_iteration.txt 永远受保护）
+bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000 --apply
+```
+
+默认策略 = **最近 3 个 + 每 25,000 步一个里程碑**（S1 700k → 约 28 + 3 = 31 个；按 4.4GB ≈ 136GB，
+按 30GB ≈ 930GB）。建议：**每 20k 步（10 个 ckpt）跑一次 dry-run，每 50k 步执行一次 --apply**。
 
 ---
 
@@ -127,6 +153,7 @@ python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --decay-iters 20000 --total
 | 吞吐 | S2/Decay 应 ≥ **550K tok/s**（#792 实测 613,992 的 90%）；S1 允许 480–550K（tok/step 减半） |
 | 显存 | 峰值 ≤ 78 GB（#792 实测 75.2 GB） |
 | TensorBoard | `.29:6006` 可访问，`learning-rate` 标量随步数变化 |
+| checkpoint | **每 2000 步落一个**（`ls checkpoints/iter_* | wc -l` 随时间线性增长）；磁盘由 `prune_ckpts.sh` 控（保留最近 3 + 每 25k 里程碑） |
 
 ---
 
