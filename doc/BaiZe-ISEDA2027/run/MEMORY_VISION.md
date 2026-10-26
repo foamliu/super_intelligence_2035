@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #295, 2026-10-27 05:07]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 在位 609KB@10-26 23:00，顶部 RUN_ID 221=TARGET29 pretrain 只读 probe，**无 vision 令**；上次提交 wake#294@03:52 距今 ~75min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**交付物在位：4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `run/vision/ocr_synth/`(gen_ocr_synth/generate_ocr_synth10m_report/make_preview/postprocess_ocr_synth/verify_loader_compat/_inspect .py 齐全)+**10M 数据集 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full` 实测 2000 shard tars + index.jsonl `wc -l`=9,999,999 行(1.96GB) + DATASET_CARD/MANIFEST.sha256/STATS/VALIDATION/preview_10k.tar/preview_200.html 齐全(~495GB)**（⚠️ 同名 `ocr_synth_10m` 是 4.8G 小样预跑非交付物，勿混）。📦 体积：TASK 22247B(21.7KB)/MEMORY 31576B(30.8KB)均 ≤32KB✓（无需归档）。环境：vision loop PID 1294447 运行中(etimes≈905931s≈10.5d)·relay `ops_relay_v2.sh` PID 1032513 运行中·cline `~/.bun/bin/cline` 可用。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #296, 2026-10-27 06:19]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 在位 609KB@10-26 23:00 顶部 RUN_ID 221=TARGET29 pretrain 只读 probe，**无 vision 令**；inbox 自 wake#295 后无新写入；上次提交 wake#295@05:07 距今 ~72min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**交付物在位：4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `run/vision/ocr_synth/*.py` 齐全+10M 数据集 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full`(2000 shard tars+index.jsonl 9,999,999 行+STATS/VALIDATION/DATASET_CARD/MANIFEST)。📦 体积：TASK 22247B(21.7KB)/MEMORY 32182B(31.4KB)均 ≤32KB✓（滚动 wake#281/#282 旧指针控体积）。环境：vision loop PID 1294447 运行中(etimes≈910258s)·cline `~/.bun/bin/cline` 可用。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #295 (2026-10-27 05:07, 空唤醒·补心跳防判死·ops/inbox.md在位RUN_ID221非vision令·4报告6脚本10M数据集在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #294 (2026-10-27 03:52, 空唤醒·补心跳防判死·run/ops/inbox.md在位RUN_ID221非vision令·4报告6脚本10M数据集在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #293 (2026-10-27 02:42, 空唤醒·补心跳防判死·ops/inbox.md已恢复在位·RUN_ID221非vision令·4报告6脚本10M数据集在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #292 (2026-10-27 01:33, 空唤醒·补心跳防判死·ops/inbox.md当时缺失已记·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
@@ -19,8 +20,6 @@ WAITING: 1
 > 📦 wake #285 (2026-10-26 16:42, 空唤醒·补标2026-10-17 ArmA块✅DONE+原文归档ARCHIVE_OPERATOR_VISION.md·wake#277~284漏判修正) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #284 (2026-10-26 15:21, 空唤醒·归档17:5x运维令块+滚动MEMORY·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #283 (2026-10-26 14:09, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
-> 📦 wake #282 (2026-10-26 12:59, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
-> 📦 wake #281 (2026-10-26 11:49, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
 > 📦 wake #280 (2026-10-26 10:3x, 归档收尾·08:2x 运维令块归档+MEMORY 滚动·wake#279 recent_work 报告在位复核·grep 覆盖项齐全) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
