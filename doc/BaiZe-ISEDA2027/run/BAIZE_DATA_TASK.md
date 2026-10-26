@@ -9,6 +9,21 @@
 
 > ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 
+> 🆕 §运维令·2026-10-26 09:5x（**提高未分词源的分词并发**）· 用户直令 · 最高优先
+
+> 用户原话：「给 data 下发提高分词并发的指令」。
+> **问题**：当前 `run_tokenize_untokenized.sh` 的 knee 校准把 `MAX_CONCURRENT` 收敛到 ~6（224 核只用了 ~6 核，CPU ~3%），分词巨慢（~18min/shard，ETA 深夜）。
+> **动作（立即，先交付再写心跳）**：
+> 1. kill 当前 `run_tokenize_untokenized.sh` 及其 `preprocess_data_cm.py` 子进程（脚本带 `flock` 锁 `/tmp/tokenize_untokenized.lock`，kill 后锁随进程释放）。
+> 2. 用 `KNEE` 环境变量预设并发、跳过校准，重启：
+>    ```bash
+>    cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline
+>    KNEE=96 MAX_CONCURRENT=96 PARQUET_PER_SHARD=64 setsid -f nohup bash run_tokenize_untokenized.sh > /tmp/tokenize_untokenized_96.log 2>&1 &
+>    ```
+>    （脚本 Phase B 有 resume：`is_done` 跳过已完成 shard + `manifest/failed_shards` 续跑，安全，不会重复分词。）
+> 3. 重启后观察：`done` 推进速率应明显快于 ~18min/shard；每轮报 `tokens/s`、`cpu%`、新 ETA。若 96 已撞 NFS 读 IO 瓶颈（tokens/s 不增反降）→ 回落到 **64** 并在心跳说明；若余量充足再升 128。
+> 4. 判据：目标把「未分词 4 源」（done 97→131）的 ETA 从深夜提前到 **数小时内完成**。
+
 > 🆕 §运维令·2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
 > 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
 > **任务**：写本线（data）最近工作（10-20 起）总结报告 `reports/report_data_recent_work_zh.html`（自包含中文 HTML）。
