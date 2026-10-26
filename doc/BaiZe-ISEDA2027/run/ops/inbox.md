@@ -1,4 +1,38 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 212 | TARGET: 29 -->
+## RUN_ID 212 — 只读：torchrun 为何 GPU 0%（cmd/日志/.12 状态）+ train.sh 未提交改动是什么
+
+```bash
+set -u
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "=== RUN_ID 212 | pretrain pinpoint | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] torchrun 进程（含完整参数，截断 260 字符）"
+ps -eo pid,ppid,etimes,args= | grep -E 'torchrun|pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | cut -c1-260 || echo "  (none)"
+echo "[2] /tmp 下最新 baize 日志（按时间）"
+ls -lt /tmp/baize_*.log 2>/dev/null | head -8 | awk '{print "  "$6" "$7" "$8"  "$5"B  "$9}'
+echo "  -- 最新一个的末尾 --"
+NEW=$(ls -t /tmp/baize_*.log 2>/dev/null | head -1)
+echo "  file=$NEW"
+[ -n "${NEW:-}" ] && tail -25 "$NEW" | cut -c1-180
+echo "[3] .12 状态（能否 ssh / 是否有 rank0 / GPU）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  ssh=OK host=$(hostname)"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | tr "\n" " "; echo; pgrep -af "torchrun|pretrain_launcher" | grep -v cline | cut -c1-160 | head -3 || echo "  (no rank0 proc)"' 2>&1 | cut -c1-200 || echo "  ssh .12 FAILED/timeout"
+echo "[4] 工作副本未提交改动（train.sh 被谁改了？）"
+cd "$G" || exit 1
+git status --short | head -6
+echo "  -- diff stat --"
+git diff --stat | head -8
+echo "  -- train.sh diff（前 45 行）--"
+git diff -- code/baize-llm/scripts/train.sh | head -45 | cut -c1-160
+echo "[5] TensorBoard / 实验目录 / 事件文件"
+ss -ltn 2>/dev/null | grep ':6006' | cut -c1-80
+find /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments -maxdepth 2 -name 'tb_logs' -newermt '-1 day' 2>/dev/null | head -5
+find /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments -name 'events.out.tfevents.*' -printf '  %TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | sort -r | head -3
+echo "[6] 最近 10 分钟内是否有新 commit（agent 是否在推进）"
+git log -3 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' | cut -c1-120
+echo "=== DONE 212 ==="
+```
+
 <!-- RUN_ID: 211 | TARGET: 29 -->
 ## RUN_ID 211 — 只读：pretrain 在干嘛（loop/日志/进程/GPU/TB/新代码是否已 pull/迁移）
 
