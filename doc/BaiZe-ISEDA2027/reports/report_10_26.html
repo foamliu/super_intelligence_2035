@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-26</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:28px}table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-26</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-26 ~16:10 · 覆盖五线：pretrain / vision / harness / data / recruit</p>
+
+<div class='info'><strong>TL;DR</strong>：今日五大主成果——① <strong>pretrain 修复 decay 训坏</strong>（自写脚本 44.97% → 官方 1113.sh+Muon 58.97%，距起点基线仅 −2pp）并<strong>双机 16 卡实测 16K=613,992 tok/s 达标</strong>；② <strong>vision ArmE-R2（ViT-L/14 + 降 LR）全链路完成</strong>，ProtB <strong>lp 68.236 全系列最高</strong>，另交付 OCR 合成 10M 图文对；③ <strong>data 全管线收尾</strong>（下载/分词/镜像 815 shard/映射表），迁移 4 源到 /nas_env 进行中；④ <strong>harness Terminal-Bench 7×89 全 7 路 FIN 87/87 + McNemar</strong>，hermes/claude-code 复跑从 0% 修到 56.8%/31.0%；⑤ recruit 连续多日达成全职/实习各 ≥2 封。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>decay 修复 + 吞吐调优 + 预训练构想</td><td>decay 44.97%→58.97%；16K 双机 613,992 达标 / 32K 351,526 结构性受限；BaiZe-2B 预训练构想报告待写</td><td class='green'>🏆 成果落地</td></tr>
+<tr><td class='blue'>vision</td><td>ArmE-R2 闭环 + OCR 数据</td><td>ArmE-R2 全链路 DONE（ProtB lp 68.236）；OCR 合成 10M 完成待裁定</td><td class='green'>🟢 推进</td></tr>
+<tr><td class='blue'>data</td><td>管线收尾 + 迁移</td><td>815 shard 全镜像完整；迁移 4 源到 /nas_env 进行中（~17%）</td><td class='green'>🟢 推进</td></tr>
+<tr><td class='blue'>harness</td><td>TB 7×89 复跑收口</td><td>7 路 FIN 87/87 + McNemar；hermes 56.8% / claude-code 31.0% 复跑中</td><td class='amber'>🟠 复跑中</td></tr>
+<tr><td class='blue'>recruit</td><td>日常招聘</td><td>第 41 轮：全职 2 + 实习 2 双达标（连续多日）</td><td class='green'>✅ 达标</td></tr>
+</table>
+
+<h2>2. Pretrain —— decay 修复 + 双机吞吐 + 预训练构想 🏆</h2>
+<div class='ok'><strong>decay 训坏 → 修复全历程闭环</strong>：自写脚本 decay v2 把模型从 61% 训退到 <strong>44.97%</strong>（归因：双移位 bug + 缺 μP + peak LR 过高）；换官方 <code>train_decay_fp8_1113.sh</code>（μP + Muon + FP8）跑 5000 步 decay 后回到 <strong>CS8 58.97% / CX6 28.02%</strong>（vs 起点基线 61.03% 仅 −2.06pp，vs 旧 decay v2 +14.0/+21.8pp）。</div>
+<div class='ok'><strong>双机 16 卡吞吐实测（#792）</strong>：修复 FA3 CP 11 处 API 不兼容后真 16 卡实测——</div>
+<table><tr><th>格</th><th>tok/s</th><th>per-GPU</th><th>峰值显存</th><th>vs 600K</th></tr>
+<tr><td class='blue'>16K CP1 DP16 graph-OFF</td><td class='blue'>613,992</td><td>38,374</td><td>75.2 GB</td><td class='green'>✅ 102% 达标</td></tr>
+<tr><td>16K CP2 DP8</td><td>281,970</td><td>17,623</td><td>49.7 GB</td><td class='red'>47%（CP 在 16K 纯亏）</td></tr>
+<tr><td class='blue'>32K CP2 DP8</td><td class='blue'>351,526</td><td>21,970</td><td>76.0 GB</td><td class='amber'>59%（结构性受限）</td></tr>
+</table>
+<div class='note'><strong>结论</strong>：16K 达标且反超 8K 基线 1.3%；<strong>32K 到不了 600K 是物理上限</strong>（2×上下文 + CP=2 强制[CP1 OOM] + P2P KV 交换），351,526 已达 2×线性外推天花板 366,788 的 96%。</div>
+<div class='info'><strong>BaiZe-2B 预训练构想（待整理成报告）</strong>：Mamba2-hybrid 56 层 2.2B；16K/16卡/CP1 DP16/graph-OFF=613,992 tok/s；WSD 2000 步 warmup 后 LR 保持 1e-3；三阶段 S1（2M tok/step·1.4T·700K 步）/ S2（4M·1.4T·350K）/ Decay（4M·80B·20K，SFT 0.60+Agent 0.12）。已令 pretrain 整理成 HTML 报告 + 各阶段 ETA + 商榷点。</div>
+
+<h2>3. Vision —— ArmE-R2 全链路 + OCR 10M 🟢</h2>
+<div class='ok'><strong>ArmE-R2（ViT-L/14 + 降 LR）全链路 DONE</strong>：训练 63400 步零发散（spike 底连续 4 次趋浅，验证「模型放大要降 LR」）；<strong>ProtB lp 68.236 / 5-NN 58.1（全系列最高</strong>，vs ArmD-R2 64.34 提升 +3.9pp）；MLLM 12 集 avg 26.10% 不可分辨（ProtB→MLLM 传递性再次证伪）。Stage-2 instruct 已改用原版 LLaVA-NeXT-780k。</div>
+<div class='warn'><strong>OCR 合成 10M 完成、待裁定</strong>：9,999,999 对 / 2000 tar / 470GB / 3h6m，加载器兼容已验证。两处质量偏差如实披露：①文本去重 2.4486% &gt; 1% 目标；②泄漏 113 命中（leak_rate 1.16e-5，短串巧合）。<strong>待用户裁定</strong>：接受 / index 过滤补救 / 扩语料重生成。</div>
+
+<h2>4. Data —— 管线全收尾 + 迁移进行中 🟢</h2>
+<div class='ok'><strong>下载/分词/镜像/映射全闭环</strong>：en_v1_4 全源 110/110（2238B tok）+ 5 源分词（1056B）+ 未分词 4 源 131/131（1.18T）+ 迁移 5 源 → /nas_env + tokenized 镜像重建 <strong>815 shard / 4474.83B / 17.26TB</strong>（triplet+inode 全 OK）；DATA_MAPPING.md 10 行全「镜像完整」；<code>report_data_mapping_zh.html</code> 已交付。</div>
+<div class='info'><strong>迁移 4 源到 /nas_env 进行中</strong>：ufw_en(32)+ufw_l1_en_hq(94)+ufw_zh(4)+UltraX-AICC(1) ≈4.05TB，rsync bwlimit 300MB/s，已迁 ~17%（4.2T→4.9T），预计再 ~3h。迁移后刷新 DATA_MAPPING.md + 报告。</div>
+<div class='note'><strong>待办</strong>：SFT-2605 / Agent-2609 两份数据加入 DATA_MAPPING.md + 报告（查证当前既未在映射表、镜像亦无产物，按「未分词」如实登记）；删除报告「4. 其余状态源」节。</div>
+
+<h2>5. Harness —— TB 7×89 横评 + 复跑收口 🟠</h2>
+<div class='ok'><strong>Terminal-Bench 7×89 主线完成</strong>：Gate 7/7 → 7×89 并发 → <strong>全 7 路 FIN 87/87 + McNemar</strong>；H-B 上下文压缩报告已交付（58KB，7 harness 机制对比）。</div>
+<div class='info'><strong>三路 0% 复跑收口</strong>：hermes <strong>FIN 25/44=56.8%</strong>（R457 plugin 修复生效）；claude-code <strong>31.0%</strong>（77/87，剩 ~10 题，ETA 3–5h）；codex 待降并发复跑（之前 429+RuntimeError）。deepseek 卡上游 SDK。</div>
+
+<h2>6. Recruit —— 连续达标 ✅</h2>
+<div class='ok'><strong>第 41 轮（06:00）全职/实习各 2 封双达标</strong>：全职许沛傑/李彦皞，实习沈女士/柯善焜。筛选规则已全部放开（应届/经验/地域/专业等全不作筛人依据），仅保留「不伪造、不约面、真实简历」底线。</div>
+
+<footer>BaiZe 项目日报 · 2026-10-26 · 数字均可溯源至各线 MEMORY_*.md / EXPERIMENTS / results_dualnode_seq16k32k / DATA_MAPPING.md</footer>
+</body></html>
