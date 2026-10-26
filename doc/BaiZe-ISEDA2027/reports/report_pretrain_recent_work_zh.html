@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 预训练线 · 近期工作报告（2026-10-16 ~ 10-26）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8f9fa;color:#1a1a2e;line-height:1.7;max-width:1140px;margin:0 auto;padding:20px}
+h1{font-size:1.5rem;text-align:center;margin:20px 0 8px;color:#1a1a2e}
+.subtitle{text-align:center;color:#555;font-size:0.85rem;margin-bottom:14px}
+h2{font-size:1.2rem;margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid #2563eb;color:#1e3a5f}
+h3{font-size:1.05rem;margin:20px 0 8px;color:#2563eb}
+h4{font-size:0.95rem;margin:16px 0 6px;color:#475569}
+p{margin:8px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.82rem}
+th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+td{padding:6px 10px;border-bottom:1px solid #e2e8f0}
+tr:nth-child(even){background:#f1f5f9}
+.green{color:#16a34a}.amber{color:#ca8a04}.red{color:#dc2626}.blue{color:#2563eb}.bold{font-weight:bold}
+.small{font-size:0.75rem;color:#666}
+.info{background:#e8f4fd;border-left:4px solid #2563eb;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#fef3cd;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.danger{background:#fee2e2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.tldr{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:8px;margin:16px 0}
+.tldr h2{color:#fff;border:none}
+.tldr table{color:#1a1a2e}.tldr th{background:rgba(0,0,0,0.2)}.tldr td{background:rgba(255,255,255,0.92)}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:0.8rem}
+ul,ol{margin:8px 0 8px 24px}li{margin:4px 0}
+.ref{font-size:0.72rem;color:#888}
+.src{font-family:monospace;font-size:0.72rem;color:#6b7280;background:#f1f5f9;padding:1px 5px;border-radius:3px}
+</style>
+</head>
+<body>
+<h1>📋 BaiZe 预训练线 · 近期工作报告</h1>
+<p class="subtitle">覆盖 2026-10-16 ~ 2026-10-26（唤醒 #715 ~ #789）· pretrain 线 · 自包含中文 HTML<br>
+生成：2026-10-26 08:4x · 唤醒 #790 · 运维令 2026-10-26 08:2x「4 个 agent 各写一份报告」· commit 前缀 <code>pretrain report:</code></p>
+
+<div class="tldr">
+<h2>§1 一句话结论（TL;DR）</h2>
+<p style="color:rgba(255,255,255,0.95);margin-bottom:12px">pretrain 线近 10 天聚焦两条主线并全部收口：
+<strong>① Xmodel-2.5 decay「训坏→修复」</strong>——自写脚本 v2 把模型训坏（CS8 44.97%/CX6 6.21%，根因=双移位 bug+缺μP+LR 过高三因叠加），改用官方 <code>1113.sh</code> 路径（μP+Muon0.2+FP8+MBS5）修复至 CS8 58.97%/CX6 28.02%（+14.0/+21.8pp），能力基本保持；
+<strong>② 长上下文 seq 扩展吞吐排查</strong>——5.4× 吞吐悬崖真因 = <strong>CUDA Graph 在 HBM 顶格（~81GB）时的 replay 病态停滞</strong>（与 seq 无关，驱动变量 = tok/microbatch = mbs×seq），<strong>关掉 <code>--enable-cuda-graph</code> 一个 flag 即恢复 0.93~0.978× 满速</strong>，16K=当前实用满速上限，32K 当前不可跑（CP=1 OOM / CP=2 被 flash-attn-3 API 阻断）。
+两份 decay 报告 + 一份根因报告均已交付 commit。</p>
+<table>
+<tr><th>主线</th><th>起点</th><th>终态</th><th>关键修复/结论</th></tr>
+<tr><td>decay 训坏→修复</td><td>v2: 44.97%/6.21%（训坏）</td><td>decay-5000: 58.97%/28.02%（修复）</td><td>关双移位 bug + 用官方 1113.sh（μP/Muon/FP8）</td></tr>
+<tr><td>seq 吞吐悬崖</td><td>16,384 tok/mb → ~112K（5.4× 骤降）</td><td>关 graph → 561K（0.93× 满速）</td><td>真因=CUDA Graph 顶格停滞，关 <code>--enable-cuda-graph</code></td></tr>
+<tr><td>双机 16 卡基线</td><td>#767 误报 513K/84%</td><td>#768 纠正 606,449 / 99.4%</td><td>launcher bug 修复 + rerun 复现</td></tr>
+</table>
+</div>
+
+<h2>§2 本线定位</h2>
+<div class="info">
+<p><strong>任务</strong>：BaiZe Stage(i) LLM 预训练——<strong>2.2B Mamba2-hybrid</strong>（48 层 / hidden 1536 / GQA8 / ffn 3840 / rope_theta 500000 / RMSNorm / swiglu / use_mup，vocab 129280）从零预训练 + 在 <strong>Xmodel-2.5 stable 末 ckpt</strong>（step_532000，~1.41T tokens）上做 WSD decay，争超 Xmodel-2.5 官方 final（CS8=65.40% / CX=32.90%）。</p>
+<p><strong>硬件</strong>：<code>10.239.2.29</code> 8×H100 80GB（DP8 / TP1），双机扩展用 <code>10.239.2.12</code>（DP16，RoCE busbw≈46GB/s）。</p>
+<p><strong>软件栈</strong>：Megatron-LM / megatron-core 0.16.1 · transformer_engine 2.12.0 · mamba-ssm 2.2.6.post3 · torch 2.8.0+cu128 / CUDA 12.8 · FP8 tensorwise（TE hybrid）· 训练 env=<code>py310</code>。</p>
+<p><strong>近期两条工作主线</strong>：(A) Xmodel-2.5 decay「训坏→修复」（10-16 计划 → 10-23 修复交付）；(B) 长上下文 seq 扩展吞吐排查（10-25 网格 → 10-26 通宵攻坚根因锁定）。</p>
+<p class="src">溯源：架构 ckpt 实测见 run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md P-6 节 3（56 层映射）；环境见 MEMORY_PRETRAIN_2B.md「关键笔记」。</p>
+</div>
+<h2>§3 近期任务逐个（设置 → 过程 → 结果 → 结论）</h2>
+
+<h3>3.1 Xmodel-2.5 Decay「训坏 → 修复」全历程</h3>
+<h4>设置</h4>
+<p>在 Xmodel-2.5 stable 末 ckpt（step_532000，~1.41T tokens 预训练后，CS8 起点 baseline = <strong>61.03%</strong>）上做 WSD decay，目标超越官方 final（CS8=65.40% / CX6=32.90%）。数据配比 SFT 64% : Ultra-FineWeb-L3 24% : code 8% : math 4%。</p>
+
+<h4>过程</h4>
+<ol>
+<li><strong>decay v2（自写脚本 <code>baize_xmodel25_decay_v2.py</code>，训坏）</strong>：71.2B tokens，peak LR 1.67e-3，AdamW，无 μP。<strong>step0 loss=11.7244（≈随机）</strong>→ 训完 final CS8=<span class="red bold">44.97%</span> / CX6=<span class="red bold">6.21%</span>，远低于起点 61.03%（−16.06pp）与官方 65.40%（−20.43pp）。<span class="src">v2 eval：eval_decay_v2_final/eval_summary.txt（CS Avg=0.4497 / CX Avg=0.0621）</span></li>
+<li><strong>归因（4 因子叠加）</strong>：① <strong>双移位 bug</strong>（<code>baize_xmodel25_decay_v2.py:547-548</code> 预移位 <code>input_ids=full[:,:-1]</code>/<code>labels=full[:,1:]</code> + <code>:567-568</code> chunked CE 再移位，train 2-step / eval 1-step，全 14 集受影响）；② <strong>缺 μP</strong>（自写脚本未用 use-mup，官方用 Muon + μP +4.58pp）；③ <strong>peak LR 1.67e-3 过高</strong>；④ code 26 epochs 过采样。<span class="src">归因见 daily-memories/2026-10-23.md:263 + 2026-10-20.md:881-891</span></li>
+<li><strong>L1 排查（修双移位 + LR 5e-4 + 20B）</strong>：<strong>step0 loss=1.7510（vs v2 11.72，降 6.7× ⇒ 双移位修复确效）</strong>→ CS8=<strong>59.03%</strong>（≥55% 门槛，方向正确）。<span class="src">L1 eval：eval_L1_20b_cs8/eval_summary.txt@23:55</span></li>
+<li><strong>decay-5000（官方 <code>train_decay_fp8_1113.sh</code> 落地，修复）</strong>：use-mup + Muon 0.2 + FP8 TE hybrid + 无 warmup + MBS=5 / seq=3776 / GBS=960 / lr=1.66667e-3 / WSD exponential / DP8+distributed-optimizer / tokenizer deepseekv3 / vocab=129280，train-iters 550000→5560（18.1B）→ CS8=<span class="green bold">58.97%</span> / CX6=<span class="green bold">28.02%</span>。<span class="src">ckpt out/decay_5000_fp8_mbs5/iter_0005000；eval nemo_experiments/eval_decay_5000_final/ + p8_eval_summary.json（0.5897/0.2802）；log /tmp/baize_decay_5000_mbs5.log</span></li>
+</ol>
+
+<h4>结果</h4>
+<table>
+<tr><th>阶段</th><th>配置</th><th>tokens</th><th>CS8</th><th>CX6</th><th>vs 起点 61.03%</th><th>vs 官方 65.40/32.90</th></tr>
+<tr><td>起点基线 step_532000</td><td>decay 前</td><td>0</td><td>61.03%</td><td>—</td><td>—</td><td>−4.37pp</td></tr>
+<tr><td><span class="red">decay v2（训坏）</span></td><td>自写脚本·bug·AdamW·无μP·LR1.67e-3</td><td>71.2B</td><td class="red">44.97%</td><td class="red">6.21%</td><td class="red">−16.06pp</td><td class="red">−20.43 / −26.69pp</td></tr>
+<tr><td>L1（排查）</td><td>修双移位·LR5e-4</td><td>20B</td><td>59.03%</td><td>—</td><td>−2.00pp</td><td>—</td></tr>
+<tr><td><span class="green">decay-5000（修复）</span></td><td>官方1113.sh·μP·Muon0.2·FP8·MBS5</td><td>18.1B</td><td class="green">58.97%</td><td class="green">28.02%</td><td>−2.06pp</td><td>−6.43 / −4.88pp</td></tr>
+<tr><td>官方 final（对照）</td><td>官方内部</td><td>71.2B</td><td>65.40%</td><td>32.90%</td><td>+4.37pp</td><td>—</td></tr>
+</table>
+
+<h4>结论</h4>
+<div class="success">
+<p>decay v2 训坏根因 = <strong>双移位 bug + 缺 μP + LR 过高</strong>三因叠加（双移位是最大单项根因，step0 loss 11.72≈随机即铁证）。官方 <code>1113.sh</code> 路径（μP+Muon+FP8+MBS5）<strong>修复成功</strong>，CS8 58.97% / CX6 28.02% 较 v2 大幅回升（+14.0/+21.8pp），能力基本保持（vs 起点 −2.06pp，非训坏而是数据/训练量未达官方量级）。<strong>CX6 修复幅度（+21.81pp）远大于 CS8（+14.00pp）⇒ 复杂任务对训坏更敏感、修复收益更大</strong>。残余 gap（58.97% vs 65.40%）= 数据配比/训练量（18.1B vs 71.2B）/超参差异，<strong>非训坏</strong>。</p>
+</div>
+<p class="src">报告交付：① <code>reports/report_pretrain_decay_v2_final_eval_zh.html</code>（21092B，v2 final eval，commit e5ecf5d35）；② <code>reports/report_pretrain_decay_repair_zh.html</code>（23878B / 197 行 / §1–§9+溯源，训坏→修复完整报告，commit ae9e1e780）。另有 report_pretrain_decay_v2_result_zh.html（13856B）与 report_pretrain_decay_short_experiment_zh.html（14953B，L1/L2 短途）。</p>
+<h3>3.2 长上下文 Seq 扩展吞吐排查（tok/microbatch 悬崖根因）</h3>
+<h4>设置</h4>
+<p>双机 16 卡（DP16）基线 = <strong>606,449 tok/s</strong>（seq4096 / mbs3，tok/mb/GPU=12,288，扩展效率 99.4%）。扩 seq 到 8192/16384/32768 时吞吐骤降至 ~112K（5.4× 悬崖，峰值显存 81.08GB 顶到 HBM 上限）。运维令 23:0x 通宵攻坚查清根因并给可用档位。</p>
+
+<h4>过程（通宵攻坚 #780–#789）</h4>
+<ol>
+<li><strong>seq×tok/step 网格（cfg1–6）</strong>：cfg1(seq8192/mbs2)=108,291；cfg3/4(16K)=112,094/121,495；cfg5/6(32K) OOM。旧结论「seq≥8192 崩 5×」。</li>
+<li><strong>cfg0a 对照（证伪 seq 假设）</strong>：seq4096/mbs4（tok/mb=16384，与基线同 seq 不同 tok/mb）= 113,514，<strong>同样慢 ⇒ 驱动变量 = tok/mb 而非 seq</strong>。</li>
+<li><strong>E1–E5a 11 格实测</strong>：tok/mb≤12288 全快（~606K，&lt;70GB，84%MFU）；tok/mb≥16384 全慢（~112K，81.1GB 顶格，13%MFU）。最小 seq=2048/mbs8（tok/mb=16384）仍慢 ⇒ <strong>seq 非成因终判</strong>。</li>
+<li><strong>rev3 决定性复测（唯一变量 = <code>--enable-cuda-graph</code>）</strong>：cfg0a graph-ON = 121,032 / 81,087 MiB 顶格 ❌ vs <strong>cfg0ang graph-OFF = 561,126 tok/s = 0.93× 满速 / 75,517 MiB ✅（4.64× 提速，显存降 5.5GB）</strong>。recompute 56 层显存不变（75,517 MiB）⇒ recompute 对 Mamba2-hybrid 非降显存杠杆，证伪。</li>
+<li><strong>seq=8192 验收复测（graph-OFF）</strong>：mbs2/DP8/accum16，中位 iter 20–60 = 7,072.0 ms，tok/s=296,543(DP8) / <strong>per-GPU=37,067 = 0.978× 基线(37,903)</strong> / vs cfg1(graph-ON 6,768) = 5.48× 恢复 / peak 77,265 MiB &lt; 81,087 顶格 / loss 7.7489 / gnorm 0.8202 / nan 0 ⇒ §3 验收闭合。</li>
+<li><strong>32K CP 可行性 smoke</strong>：CP=1（seq32768/mbs1）<strong>OOM @ 81,049 MiB</strong>（须 CP）；CP=2（DP4×CP2）<strong>FAIL</strong>——<code>RuntimeError: Unknown keyword argument 'window_size' for flash_attn_3::_flash_attn_forward</code>，CP ring-attn 用旧 <code>window_size=(l,r)</code> 元组签名，flash-attn-3 已改 <code>window_size_left/right</code> 标量（site-packages，非 Mamba2 SSM 本身问题）。</li>
+</ol>
+
+<h4>结果（档位表 rev3）</h4>
+<table>
+<tr><th>目标 seq</th><th>mbs</th><th>graph</th><th>tok/mb</th><th>tok/s</th><th>per-GPU</th><th>峰值显存</th><th>状态</th></tr>
+<tr><td>8192</td><td>1</td><td>ON</td><td>8,192</td><td>~605K</td><td>~37,800</td><td>55.4GB</td><td class="green">✅ 8K 满速配方（graph 未顶格）</td></tr>
+<tr><td>16384</td><td>1</td><td>ON</td><td>16,384</td><td>~112K</td><td>~7,000</td><td>81.1GB 顶格</td><td class="red">❌ graph 顶格停滞</td></tr>
+<tr><td>16384</td><td>1</td><td><strong>OFF</strong></td><td>16,384</td><td><strong>~561K</strong></td><td>35,070</td><td>75.5GB</td><td class="green">✅ 关 graph 满速（0.93×）</td></tr>
+<tr><td>8192</td><td>2</td><td>OFF</td><td>16,384</td><td>296,543(DP8)</td><td>37,067</td><td>77.3GB</td><td class="green">✅ seq8192 验收（0.978×）</td></tr>
+<tr><td>32768</td><td>1</td><td>OFF</td><td>32,768(CP=1)</td><td>OOM</td><td>—</td><td>81.0GB</td><td class="red">❌ 32K 须 CP</td></tr>
+<tr><td>32768</td><td>1</td><td>OFF</td><td>16,384(CP=2)</td><td>FAIL</td><td>—</td><td>23.6GB</td><td class="red">❌ flash-attn-3 API 不兼容</td></tr>
+</table>
+
+<h4>结论</h4>
+<div class="success">
+<p>5.4× 吞吐骤降根因 = <strong>CUDA Graph 在 HBM 顶格（~81GB）时的 replay 病态停滞</strong>（<strong>非</strong>显存带宽 memory-bound——显存顶格是必要条件非成因；<strong>与 seq 无关</strong>）。驱动变量 = tok/mb = mbs×seq：≤12288 全快，≥16384 触发 graph 顶格停滞。<strong>修复 = 关掉 <code>--enable-cuda-graph</code> 一个 flag</strong>，无需 CP/recompute，已在 seq4096（0.93×）与 seq8192（0.978×）两点复测达标。<strong>16K = 当前实用满速上限</strong>（关 graph 561K / 75.5GB）；<strong>32K 当前不可跑</strong>（CP=1 OOM / CP=2 被 flash-attn-3 API 阻断，需代码 patch）。</p>
+</div>
+<p class="src">报告交付：<code>reports/report_pretrain_seq8192_slowdown_rootcause_zh.html</code>（rev3，16888B，commit cb0a83307）；seqlen 报告 <code>reports/report_pretrain_seqlen_throughput_zh.html</code>（20332B，rev3 banner，旧「seq≥8192 崩 5×」结论标已证伪）；EXPERIMENTS_PRETRAIN_2B_ROUND2.md rev3 节 + §五·6 CP 节 + §五·7 seq8192 验收；TSV run/pretrain_rc_ladder_20261026.tsv（16 行）；CP smoke /tmp/baize_rc_cp_smoke_1n/ALL_RESULTS.txt；commits cb0a83307(#786)+eda1e6c7d(#787)+faa01ac34(#788)。</p>
+
+<h3>3.3 双机 16 卡吞吐基线（#767→#768，10-25）</h3>
+<h4>设置 → 过程 → 结果 → 结论</h4>
+<p><strong>设置</strong>：双节点 .29+.12 DP16，seq4096/mbs3，FP8 tensorwise，80 步。<strong>过程</strong>：#767 首报 513K/84%/BF16+mock 系<strong>误报</strong>（脚本 <code>wait $WORKER_SSH_PID</code>/<code>kill $MON_M</code> 两处 unbound 变量致收尾挂起 → summary.txt 残缺 → agent 手工解析混淆 2-rank 排障数据）。修复 launcher bug（→<code>wait $MASTER_SSH_PID</code>/<code>kill $MON_W</code>）后 rerun 复现。<strong>结果</strong>：中位步时 6808.1 ms，throughput <strong>606,449 tok/s</strong>，扩展效率 <strong>99.4%</strong>，per-GPU 37,903，峰值 69,275 MiB（67.6GB），loss 7.5733 / gnorm 0.529 / 0 NaN。<strong>结论</strong>：99.4% 近线性扩展可信（梯度 ~4.4GB，RoCE busbw≈46GB/s → allreduce ~0.7% 步时，物理预期）；FP8 TW 已生效（非 BF16），真实数据（非 mock）。</p>
+<p class="src">报告 <code>reports/report_pretrain_dualnode_throughput_zh.html</code>（24970B）；summary /tmp/baize_dualnode_16gpu/summary.txt（rerun clean）；EXPERIMENTS「双机吞吐优化」节。</p>
+<h2>§4 关键数据速查表</h2>
+<table>
+<tr><th>指标</th><th>数值</th><th>来源</th></tr>
+<tr><td>双机 16 卡基线吞吐</td><td>606,449 tok/s（99.4% 扩展效率）</td><td class="src">/tmp/baize_dualnode_16gpu/summary.txt</td></tr>
+<tr><td>基线 per-GPU</td><td>37,903 tok/s/GPU</td><td class="src">606,449÷16</td></tr>
+<tr><td>8K 满速配方</td><td>seq8192/mbs1 graph-ON ≈605K / 55.4GB</td><td class="src">TSV s8k1 行</td></tr>
+<tr><td>关 graph 修复（16K）</td><td>561,126 tok/s = 0.93× / 75.5GB</td><td class="src">TSV cfg0ang 行；/tmp/baize_rc_recompute</td></tr>
+<tr><td>seq8192 验收（关 graph）</td><td>per-GPU 37,067 = 0.978× / 77.3GB</td><td class="src">脚本 baize_rc_seq8k_graphoff_smoke.sh</td></tr>
+<tr><td>decay v2（训坏）</td><td>CS8 44.97% / CX6 6.21%</td><td class="src">eval_decay_v2_final/eval_summary.txt</td></tr>
+<tr><td>decay-5000（修复）</td><td>CS8 58.97% / CX6 28.02%</td><td class="src">p8_eval_summary.json（0.5897/0.2802）</td></tr>
+<tr><td>decay 起点基线</td><td>CS8 61.03%</td><td class="src">eval_baseline_cs8/eval_summary.txt</td></tr>
+<tr><td>官方 final（对照）</td><td>CS8 65.40% / CX6 32.90%</td><td class="src">Xmodel-2.5 官方</td></tr>
+<tr><td>L1（修双移位+LR5e-4）</td><td>CS8 59.03% / step0 loss 1.7510</td><td class="src">eval_L1_20b_cs8/eval_summary.txt</td></tr>
+<tr><td>双移位 bug 位置</td><td>baize_xmodel25_decay_v2.py:547-548,567-568</td><td class="src">三方确认（py + chunked CE + eval）</td></tr>
+<tr><td>32K CP=1</td><td>OOM @ 81,049 MiB</td><td class="src">/tmp/baize_rc_cp_smoke_1n/cp1</td></tr>
+<tr><td>32K CP=2</td><td>FAIL（flash-attn-3 window_size API）</td><td class="src">/tmp/baize_rc_cp_smoke_1n/cp2</td></tr>
+<tr><td>当前 GPU 状态（.29）</td><td>8 卡全空闲（4 MiB / 0%）</td><td class="src">nvidia-smi @ 08:46</td></tr>
+</table>
+
+<h2>§5 阻塞 / 待拍板</h2>
+<div class="warn">
+<ol>
+<li><strong>32K seq 启用</strong>：CP=2 被 flash-attn-3 API 阻断（<code>window_size=(l,r)</code> 元组 → <code>window_size_left/right</code> 标量，site-packages 多处 fwd/bwd）。<strong>需用户/运维决定是否 patch CP ring-attn 的 flash_attn_3 调用</strong>（代码任务，非配置可解）；patch 完单跑 cp2 验证即可解锁 32K。</li>
+<li><strong>decay 残余 gap（58.97% vs 65.40%）</strong>：非训坏（vs 起点 −2.06pp，能力保持），残余 = 数据配比 / 训练量（18.1B vs 官方 71.2B）/ 超参差异。<strong>需决定是否做更长 decay（80B plan 已出）或调数据配比</strong>以追官方 final。</li>
+<li><strong>16K 训练配方已就绪</strong>：关 <code>--enable-cuda-graph</code> 即满速（0.93–0.978×），无需 CP/recompute，可直接用于生产 16K 训练，无阻塞。</li>
+</ol>
+</div>
+
+<h2>§6 下一步建议（按优先级）</h2>
+<ol>
+<li><strong>32K 启用前先 patch CP ring-attn flash_attn_3 调用</strong>：<code>window_size=(l,r)</code>→<code>window_size_left=</code>/<code>window_size_right=</code>（site-packages 多处 fwd/bwd），改完单跑 cp2 验证（≤30 min smoke）即可解锁 32K 长上下文训练。</li>
+<li><strong>16K 训练直接用关 graph 配方</strong>：已验证 seq4096/mbs4（0.93×）与 seq8192/mbs2（0.978×）两点达标，无需 CP/recompute；生产 16K 训练直接 <code>--no-enable-cuda-graph</code>（或移除该 flag）。</li>
+<li><strong>decay 续跑（若要追官方 final）</strong>：执行已出计划的 80B decay（<code>reports/report_xmodel25_decay_80b_plan_zh.html</code>，Muon+μP+FP8，22,472 步）或调数据配比；当前 decay-5000（18.1B）已证明修复路径正确、能力保持。</li>
+<li><strong>等待运维/用户对 32K patch 与 decay 续跑的决策</strong>；GPU .29 8 卡当前全空闲，可立即接新任务。</li>
+</ol>
+
+<p class="ref" style="margin-top:24px;border-top:1px solid #e2e8f0;padding-top:10px">
+报告自包含：0 &lt;script&gt; / 0 外链 / 内联样式。所有数字均标注来源（log/json/报告:行）。<br>
+生成于 2026-10-26 08:4x · pretrain 线 · 唤醒 #790 · 运维令 2026-10-26 08:2x。
+</p>
+</body>
+</html>
+

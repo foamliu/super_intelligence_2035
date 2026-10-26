@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 2026-10-26 08:4x #790：✅ 运维令 08:2x「写最近工作报告」交付 — `reports/report_pretrain_recent_work_zh.html`（20,218B，自包含中文 HTML：0 script/0 外链/内联样式，6 h2/4 table）覆盖 3 必做项：① decay 训坏→修复全历程（v2 44.97/6.21[step0 loss 11.72]→L1 59.03→1113.sh decay-5000 58.97/28.02，归因双移位 py:547-548+567-568/缺μP/LR1.67e-3）② seq 扩展排查（CUDA Graph 顶格停滞真因 + seq8192 关 graph per-GPU 37,067=0.978×满速 + 32K CP=1 OOM/CP=2 flash-attn-3 API 阻断）③ 两份 decay 报告交付（report_pretrain_decay_v2_final_eval_zh.html 21092B commit e5ecf5d35 + report_pretrain_decay_repair_zh.html 23878B commit ae9e1e780）；数字全溯源（eval_summary.txt/p8_eval_summary.json/py:行）。先验证 #789 通宵攻坚交付物齐备（rootcause 16,888B/seqlen 20,332B/TSV 54 行/commit faa01ac34）再写报告。GPU .29 8 卡全空闲(8×4MiB/0%)·loop PID1401353 存活。**未完成指令：无**（08:2x 报告令已交付）⇒ **WAITING=1**。📦 体积：TASK=22.7KB / MEMORY≈32.9KB（均≤32KB✓，本轮无归档）。
+
 > 🆕 2026-10-26 07:33 #789：✅ 通宵攻坚交付物复核全通过（收敛3条✓：①真因=CUDA Graph 顶格停滞·报告「一句话结论」节在位 ②修复=关 graph·seq=8192 复测 0.978×基线≥0.7×✓ ③报告 16,888B≥15KB✓ + seqlen 报告 20,332B banner 已改 rev3✓ + EXPERIMENTS rev3/§五·6/§五·7✓ + TSV 16 行✓ + 早报已写✓ + 全 commit faa01ac34 已推✓）；GPU .29 8 卡全空闲(8×4MiB/0%)·loop PID1401353 存活·无新运维令。**未完成指令：无** ⇒ **WAITING=1**。📦 体积：TASK=21.7KB / MEMORY=31.0KB（均≤32KB✓，本轮无归档）。
 
 
@@ -11,12 +13,7 @@ WAITING: 1
 
 > 📦 §#786 流水（2026-10-26 02:0x，rev3 真因=CUDA Graph 顶格停滞·关 graph 561K=0.93×满速·recompute 证伪·报告 rev3·commit cb0a83307）已压缩 → daily-memories/2026-10-26.md；**结论**：rev3 root cause + 关 graph 修复独立成立，§3 seq8192 验收由 #788 补齐闭合。需要时再读。
 
-> 🆕 **2026-10-26 03:2x #787：🔬 CP=2/4 可行性 smoke 出结果·32K 当前不可跑·cp1 OOM@81,049MiB·cp2 flash-attn-3 API 阻断·16K 关 graph=实用满速上限·早报已写**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §五·6；TSV CP 两行；脚本 `baize_rc_cp_smoke_1n.sh`；结果 `/tmp/baize_rc_cp_smoke_1n/ALL_RESULTS.txt`）：
-> - **cp1（CP=1, seq32768, mbs1, DP8, graph-OFF, tok/mb/gpu=32768）**：**OOM**，峰值 **81,049 MiB**，`torch.OutOfMemoryError` @ FP8 quantize（220MiB free / 78.93GiB in use）→ 证实 32K 须 CP（关 graph 不足以装 32K 激活）。
-> - **cp2（CP=2, seq32768, mbs1, DP4×CP2, accum2, graph-OFF, tok/mb/gpu=16384）**：**FAIL**，峰值 23,639 MiB。`context_parallel_size:2` 接线正确、blend 加载正确、NCCL CP 组初始化完成；首个 attention 层抛 `RuntimeError: Unknown keyword argument 'window_size' for flash_attn_3::_flash_attn_forward`——CP ring-attn 路径用旧 `window_size=(l,r)` 元组签名，flash-attn-3 已改 `window_size_left/right` 标量。调用点在 **site-packages（非仓库源码）**。
-> - **结论**：32K 当前不可跑（CP=1 OOM / CP=2 被 flash-attn-3 API 阻断，非 Mamba2 SSM 本身问题）；**rev3 关 graph 561K/75.5GB（tok/mb=16384）= 当前 16K 实用满速上限**。32K 修复=patch CP 路径 flash-attn 调用（代码任务，非 smoke/配置可解），列后续。**rev3 root cause + 关 graph 修复独立成立（commit #786）**。
-> - **脚本 bug 修复（commit eda1e6c7d）**：`--train-data-path "$BLEND"`→`$BLEND`（unquoted，否则整串当 1 个 path prefix→AssertionError，首跑 cp1/cp2 均 FAIL data-path）；2-node master-ssh redirect 挂起→改单机 DP8。
-> - **未完成指令：无**（CP smoke + 早报两项 #786 遗留均已交付）⇒ **WAITING=1**。**git**：`pretrain rc #787:` commit。
+> 📦 §#787 流水（2026-10-26 03:2x，CP=2/4 smoke：cp1 OOM@81,049MiB / cp2 flash-attn-3 `window_size` API 阻断 / 32K 不可跑 / 16K 关 graph=实用满速上限 / 早报已写）已压缩 → daily-memories/2026-10-26.md；**结论**：32K 须 CP 且被 flash-attn-3 API 阻断（代码任务，非 Mamba2 SSM 本身），rev3 关 graph 561K/75.5GB=16K 实用满速上限。脚本 bug 修复 commit eda1e6c7d。需要时再读。
 
 > 📦 §#785 流水（2026-10-26 01:3x，rev2 报告重写 25,266B memory-bound + 修 #784 虚假交付）已压缩 → EXPERIMENTS_PRETRAIN_2B_ROUND2.md rev2 节；**结论**：rev2「memory-bound」归因已被 #786 rev3 复测修正为「CUDA Graph 顶格停滞」（显存顶格是必要条件非成因）。需要时再读。
 
