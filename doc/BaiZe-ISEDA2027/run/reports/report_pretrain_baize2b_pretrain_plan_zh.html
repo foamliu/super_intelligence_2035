@@ -95,7 +95,7 @@
 <tr><td>监控</td><td><b>TensorBoard</b>（.29:6006）</td><td>日志 <code>nemo_experiments/&lt;name&gt;/tb_logs/</code>；<code>scripts/tb_6006.sh</code> 启停</td></tr>
 <tr><td>Checkpoint</td><td><b>每 2,000 步</b></td><td>2026-10-26 用户补令；S1 350 个 / S2 175 个 / Decay 10 个 ⇒ 必须配 <code>prune_ckpts.sh</code>（保留最近 3 + 每 25k 里程碑），否则 4.4–30GB/个会写满盘</td></tr>
 <tr><td>RoPE / 位置</td><td><b>max_pos = 1,048,576（1M）· theta = 1e6</b></td><td>2026-10-26 用户补令：56 层中 <b>4 层全注意力</b>吃 RoPE。⚠️ 只抬 max_pos 不抬 theta ⇒ 实测全 NaN（2026-10-06 B1），两者必须同改（详见 §5.7）</td></tr>
-<tr><td>长上下文策略</td><td><b>ABF</b>（+ 可选阶梯扩展）</td><td>2026-10-26 用户补令「长上下文用 ABF，要为此做好准备」：训练保持 16K，能力靠 ABF 外推到 1M；产品目标 32K–128K（详见 §5.8）</td></tr>
+<tr><td>长上下文策略</td><td><b>ABF</b>（+ 可选阶梯扩展）</td><td>2026-10-26 用户补令「长上下文用 ABF，要为此做好准备」：训练保持 16K（为把 1M 外推倍数压到 64×），产品目标 = <b>1M</b>；路径 = 16K → 阶梯 32K/64K/128K/256K → ABF 外推（详见 §5.8）</td></tr>
 <tr><td>每步 token</td><td class="num">2M / 4M / 4M</td><td>S1=2M；S2 与 Decay=4M（与 #792 E1 实测档一致）</td></tr>
 </tbody>
 </table>
@@ -333,7 +333,7 @@
 <tr><td>6</td><td>正式开跑</td><td>S1 起跑后 30 分钟内提交 <code>pretrain run:</code> 心跳（含 tok/s、峰值显存、TB URL、ckpt 间隔 2000 已生效）</td></tr>
 <tr><td>7</td><td>Checkpoint</td><td>每 2,000 步一个 <code>iter_*</code>；<code>prune_ckpts.sh</code> dry-run 后按「最近 3 + 每 25k 里程碑」清理，<code>df</code> 保持 /nas_train 可用 &gt;15TB</td></tr>
 <tr><td>8</td><td>RoPE / 1M</td><td>启动命令含 <code>--rotary-base 1000000</code>；导出后 <code>check_rope.py</code> PASS（56 层 / attention=4 / max_pos=1048576 / theta=1e6）；前 500 步 loss 抬升 ≤5%</td></tr>
-<tr><td>9</td><td>长上下文 ABF 准备</td><td>① <code>check_longctx_data.py</code> 出 ≥32K/≥128K 的 token 占比（≥20%/≥5%）；② <code>abf_plan.py</code> 表可复现；③ 首个 ckpt 上跑一次「零训练」PPL/passkey 基线（4K→1M）并留档</td></tr>
+<tr><td>9</td><td>长上下文 1M 准备</td><td>① <code>check_longctx_data.py</code> 出 ≥32K/≥128K 的 token 占比（≥20%/≥5%）；② <code>abf_plan.py</code> 表可复现（含 rung4 256K）；③ 首个 ckpt 上跑「零训练」基线：PPL(4K→1M) + passkey + <b>RULER</b>，1M 目标 RULER ≥70%</td></tr>
 </tbody>
 </table>
 
@@ -355,7 +355,7 @@
 
 <h3>5.8　长上下文：ABF 与「为此做好准备」（用户补令 2026-10-26）</h3>
 <div class="callout good">
-<p><b>口径</b>：训练主配方保持 <b>16K</b>；长上下文能力 = <b>ABF 外推</b>（θ=1e6，B1 实测已覆盖到 1M）+ <b>可选序列阶梯扩展</b>。产品目标 <b>32K–128K</b>，能力上限 <b>1M</b>（推理侧）。</p>
+<p><b>口径</b>：<b>产品目标 = 1M</b>（用户 2026-10-26 明确：「产品目标自然是长上下文 1M，要不为啥预训练就用 16K 这么长」）。训练从 <b>16K</b> 起步，使 16K→1M 的外推倍数只有 <b>64×</b>（4K→1M 是 256×）；路径 = 16K 主训练 → 阶梯 32K/64K/128K(/256K) → ABF 外推 1M。现实约束：<b>16 卡最多训到 256K</b>（CP16/DP1），<b>1M 原生训练需 ≥64 卡</b>（CP64）。</p>
 <p><b>为什么 ABF 而不是裸抬 max_pos / 纯 PI</b>：B1 实测三组对照——baseline（θ=1e4）只能 4K；<b>maxpos_only 全 NaN</b>；<b>ABF（θ=1e6）在 32K/128K/256K/512K/1M 的 PPL = 58.55 / 53.34 / 52.99 / 55.81 / 55.42</b>，全程无退化。ABF 的代价是训练长度上的轻微退化（4K +10.5%），而本计划从零训练、θ 初始即 1e6，不背这笔税。</p>
 <p><b>已备好的三件工具</b>：① <code>scripts/abf_plan.py</code> —— θ_ABF 公式 + 16 卡可行性（CP/DP/gbs）表；② <code>scripts/check_longctx_data.py</code> —— 按 EOD(129280) 切分统计「≥32K / ≥128K 文档覆盖的 token 占比」，防止「长序列其实是跨文档拼接」；③ <code>scripts/longctx_ladder.sh</code> —— 32K→64K→128K 阶梯扩展，逐级 0 NaN / 吞吐门禁、累计 iters 续跑。</p>
 <table>
@@ -364,10 +364,11 @@
 <tr><td>1</td><td class="num">32K</td><td class="num">2</td><td class="num">8</td><td class="num">128</td><td class="num">20 B</td><td class="num">4,769</td><td class="num">351,526（实测）</td><td class="num">15.8 h</td></tr>
 <tr><td>2</td><td class="num">64K</td><td class="num">4</td><td class="num">4</td><td class="num">64</td><td class="num">10 B</td><td class="num">2,385</td><td class="num">~180K（外推）</td><td class="num">15.4 h</td></tr>
 <tr><td>3</td><td class="num">128K</td><td class="num">8</td><td class="num">2</td><td class="num">32</td><td class="num">5 B</td><td class="num">1,193</td><td class="num">~90K（外推）</td><td class="num">15.4 h</td></tr>
+<tr><td>4</td><td class="num">256K</td><td class="num">16</td><td class="num">1</td><td class="num">16</td><td class="num">2 B</td><td class="num">477</td><td class="num">~45K（外推）</td><td class="num">12.3 h</td></tr>
 </tbody>
 </table>
-<p><b>三条硬判据</b>：① 数据 —— ≥32K 文档的 token 占比 ≥20%、≥128K ≥5%（不达标先补长文源，否则长上下文只是「学会拼接」）；② 配置 —— θ 与 max_pos 成对、导出后 <code>check_rope.py</code> PASS；③ 效果 —— PPL 相对上一级抬升 ≤5%、passkey ≥95%、CS8 退化 ≤1pp，且 θ 若升级必须复测 16K 退化 ≤1%。</p>
-<p><b>成本与边界</b>：全阶梯 ≈47 h / ≈750 GPU·h（只做 32K 则 ~16h）；32K 的 CP 开销是结构性的（351,526 = 16K 满速的 59%），<b>不承诺长上下文满速</b>；1M 仅作能力证明（prefill 172s / 34.7GB 单卡）。</p>
+<p><b>三条硬判据</b>：① 数据 —— ≥32K 文档的 token 占比 ≥20%、≥128K ≥5%（不达标先补长文源，否则长上下文只是「学会拼接」）；② 配置 —— θ 与 max_pos 成对、导出后 <code>check_rope.py</code> PASS；③ 效果 —— **1M 上 RULER ≥70%**、passkey ≥95%（B1 老 ckpt 全 0%：PPL 好看≠有检索力）、PPL 相对上一级抬升 ≤5%、CS8 退化 ≤1pp；θ 若升级必须复测 16K 退化 ≤1%。</p>
+<p><b>三条路径（必须选一条）</b>：<b>A（推荐）</b> 16K→阶梯到 128K→ABF 外推 1M（+~46h，16 卡可完成）；<b>B</b> 加 rung4 到 256K→ABF 外推 1M（+~59h，外推压力 4×）；<b>C</b> 直训 1M（CP64，需 ≥64 卡，当前做不到）。</p><p><b>成本与边界</b>：全阶梯 ≈59 h / ≈940 GPU·h；32K 的 CP 开销是结构性的（351,526 = 16K 满速的 59%），256K 更是只有 ~7%，<b>不承诺长上下文满速</b>；1M 服务成本 = prefill 172s / 34.7GB 单卡，需 chunked prefill + KV 分页。</p>
 </div>
 
 <h2>六、数字溯源</h2>

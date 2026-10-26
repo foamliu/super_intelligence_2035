@@ -128,7 +128,7 @@ python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
 ### 2.3 长上下文：ABF（用户令 2026-10-26「长上下文用 ABF，要为此做好准备」）
 
 **口径**：训练主配方保持 **16K**；长上下文能力 = **ABF 外推（θ=1e6，已覆盖到 1M，B1 实测）+ 可选序列阶梯扩展**。
-产品目标 **32K–128K**，能力上限 **1M**；完整方案见 `docs/LONGCTX_ABF_PLAN.md`。
+**产品目标 = 1M**（16K 起步就是为把外推倍数压到 64×）；路径 = 16K → 阶梯 32K/64K/128K(/256K) → ABF 外推 1M。完整方案见 `docs/LONGCTX_ABF_PLAN.md`。
 
 | 工具 | 作用 | 命令 |
 |:--|:--|:--|
