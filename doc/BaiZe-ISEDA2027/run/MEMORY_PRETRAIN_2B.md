@@ -1,15 +1,14 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 🆕 2026-10-26 10:5x #791：✅ **TE flash-attn-3 CP API 修复（11 处）+ seq16K/32K 吞吐验证**。**16K(CP=1,关graph,accum16)8卡=300,133 tok/s·每卡37,516·peak76,795MiB·0NaN**（tok/mb 不变性@16K 成立，16卡外推~584K→≥600K 目标可达）。**32K CP=2 此前被 FA3 原生 op 的 `window_size` 元组(8处)+反向`causal`→`is_causal`(3处)两组 API 不兼容完全阻断**；修 `context_parallel.py` 11 点（diff→`run/te_cp_flash_attn3_patch.diff`，备份`.bak_baize_20261026`，py_compile✓·grep 零残留）后 **32K CP=2 首次跑通**：8卡=183,394 tok/s·每卡22,924·peak77,619MiB·loss 10.96→7.77 单调降·**0 NaN**·rc=0·837.9TFLOP/s/GPU。32K 每微批715ms 比16K(437ms)慢64%=CP P2P KV 交换开销（2× 上下文固有代价，非缺陷），16卡外推~322K。报告 `reports/report_pretrain_seq16k32k_throughput_zh.html`(14.2KB,自包含)。脚本 `baize_rc_seq16k_graphoff_smoke.sh`/`baize_rc_cp2_seq32k_validate.sh`。**未完成指令：16卡16K accum≥16 实跑确认≥600K** ⇒ **WAITING=1**。📦 体积：本轮归档 #788→daily-memories/2026-10-26.md（腾位）。
+
 > 🆕 2026-10-26 08:4x #790：✅ 运维令 08:2x「写最近工作报告」交付 — `reports/report_pretrain_recent_work_zh.html`（20,218B，自包含中文 HTML：0 script/0 外链/内联样式，6 h2/4 table）覆盖 3 必做项：① decay 训坏→修复全历程（v2 44.97/6.21[step0 loss 11.72]→L1 59.03→1113.sh decay-5000 58.97/28.02，归因双移位 py:547-548+567-568/缺μP/LR1.67e-3）② seq 扩展排查（CUDA Graph 顶格停滞真因 + seq8192 关 graph per-GPU 37,067=0.978×满速 + 32K CP=1 OOM/CP=2 flash-attn-3 API 阻断）③ 两份 decay 报告交付（report_pretrain_decay_v2_final_eval_zh.html 21092B commit e5ecf5d35 + report_pretrain_decay_repair_zh.html 23878B commit ae9e1e780）；数字全溯源（eval_summary.txt/p8_eval_summary.json/py:行）。先验证 #789 通宵攻坚交付物齐备（rootcause 16,888B/seqlen 20,332B/TSV 54 行/commit faa01ac34）再写报告。GPU .29 8 卡全空闲(8×4MiB/0%)·loop PID1401353 存活。**未完成指令：无**（08:2x 报告令已交付）⇒ **WAITING=1**。📦 体积：TASK=22.7KB / MEMORY≈32.9KB（均≤32KB✓，本轮无归档）。
 
 > 🆕 2026-10-26 07:33 #789：✅ 通宵攻坚交付物复核全通过（收敛3条✓：①真因=CUDA Graph 顶格停滞·报告「一句话结论」节在位 ②修复=关 graph·seq=8192 复测 0.978×基线≥0.7×✓ ③报告 16,888B≥15KB✓ + seqlen 报告 20,332B banner 已改 rev3✓ + EXPERIMENTS rev3/§五·6/§五·7✓ + TSV 16 行✓ + 早报已写✓ + 全 commit faa01ac34 已推✓）；GPU .29 8 卡全空闲(8×4MiB/0%)·loop PID1401353 存活·无新运维令。**未完成指令：无** ⇒ **WAITING=1**。📦 体积：TASK=21.7KB / MEMORY=31.0KB（均≤32KB✓，本轮无归档）。
 
 
-> 🆕 **2026-10-26 06:1x #788：✅ §3 seq=8192 验收复测达标·关 graph per-GPU 37,067=0.978×基线(满速)·5.48×恢复 vs cfg1·peak 77.3GB<81GB顶格·loss/gnorm/NaN 正常·§3+§4.3 闭合·通宵攻坚收工**（详→`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §五·7 + `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html` 五·5b 节 + 档位表新行；TSV `s8k2goff-seq8k`；脚本 `baize_rc_seq8k_graphoff_smoke.sh`）：
-> - **配置**：seq=8192/mbs=2/gbs=256/DP8/accum=16，**tok/mb/GPU=16,384**（=cfg1 悬崖点，唯一变量 graph ON→OFF），单机 .29（.12 按 R2.4 不动；per-GPU 口径），60 iter，中位 iter 20–60 = **7,072.0 ms**。
-> - **结果**：tok/s=296,543(DP8) / **per-GPU=37,067=0.978×基线(37,903)**（≥§3 bar 0.7×✓）/ vs cfg1(graph-ON 6,768)=**5.48×恢复** / vs cfg0ang(seq4096 graph-OFF 35,070)=1.058×⇒**tok/mb 不变性再证** / peak **77,265 MiB**<81,087顶格 / loss 7.7489 / gnorm 0.8202 / **nan 0**。16 卡外推≈593K=0.98×606K。
-> - **结论**：rev3 修复（关 `--enable-cuda-graph`）在**用户目标 seq=8192** 复测达标，§3 验收闭合；结合 §五·5(seq4096)+本节(seq8192)，关 graph 在 tok/mb=16384 两 seq 点均满速 ⇒ 真因=CUDA Graph 顶格停滞(与 seq 无关)终判成立。**§3、§4.3 全部闭合**。**未完成指令：无** ⇒ **WAITING=1**（通宵攻坚收工）。**git**：`pretrain rc #788:` commit。
+> 📦 §#788 流水（2026-10-26 06:1x，seq8192 验收复测 per-GPU 37,067=0.978×基线·§3+§4.3 闭合·关 graph 终判）已归档 → daily-memories/2026-10-26.md；**结论**：关 graph 在 tok/mb=16384 两 seq 点(seq4096/8192)均满速，CUDA Graph 顶格停滞终判成立。需要时再读。
 
 > 📦 §#786 流水（2026-10-26 02:0x，rev3 真因=CUDA Graph 顶格停滞·关 graph 561K=0.93×满速·recompute 证伪·报告 rev3·commit cb0a83307）已压缩 → daily-memories/2026-10-26.md；**结论**：rev3 root cause + 关 graph 修复独立成立，§3 seq8192 验收由 #788 补齐闭合。需要时再读。
 

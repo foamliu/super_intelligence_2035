@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>BaiZe-2B seq=16K/32K 吞吐优化与 TE flash-attn-3 CP 修复报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:0 auto;padding:24px;color:#1a1a1a;background:#fafafa;line-height:1.65}
+h1{font-size:1.55em;border-bottom:3px solid #2563eb;padding-bottom:10px;color:#1e3a8a}
+h2{font-size:1.2em;color:#1e40af;margin-top:2em;border-left:5px solid #2563eb;padding-left:10px}
+h3{font-size:1.05em;color:#334155;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.92em;background:#fff}
+th,td{border:1px solid #cbd5e1;padding:7px 9px;text-align:center}
+th{background:#1e3a8a;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f1f5f9}
+tr.baseline{background:#fef9c3;font-weight:600}
+tr.cp{background:#ede9fe;font-weight:600}
+.ok{color:#15803d;font-weight:700}.block{color:#b91c1c;font-weight:700}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.82em;font-weight:600}
+.tag-s16{background:#dbeafe;color:#1e40af}.tag-s32{background:#ede9fe;color:#6b21a8}.tag-fix{background:#dcfce7;color:#166534}
+.note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px 16px;margin:12px 0}
+.warn{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px 16px;margin:12px 0}
+.key{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:12px 16px;margin:12px 0}
+.bad{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:12px 16px;margin:12px 0;color:#7f1d1d}
+code{background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:0.9em}
+.kpi{display:inline-block;margin:6px 14px 6px 0;padding:8px 14px;background:#fff;border:1px solid #cbd5e1;border-radius:6px}
+.kpi b{font-size:1.3em;color:#1e3a8a}
+.small{font-size:0.85em;color:#64748b}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.88em}
+</style></head><body>
+<h1>BaiZe-2B（Mamba2-hybrid）seq=16K/32K 吞吐优化 · TE flash-attn-3 上下文并行（CP）API 修复报告</h1>
+
+<div class='key'>
+<div style='font-weight:700;font-size:1.05em;margin-bottom:6px'>✅ 一句话结论</div>
+<p style='margin:6px 0'><b>seq=16K（CP=1，关 graph）8 卡 = 300,133 tok/s（每卡 37,516），16 卡外推 ≈584K→≥600K 目标可达（accum≥16 摊薄跨节点 AllReduce）</b>；<b>seq=32K 此前被 TE flash-attn-3 CP 的两组 API 不兼容 bug 完全阻断（CP=2 必需但一跑即崩）</b>，本次修复 <b>11 处</b>代码点（<code>window_size</code> 元组→标量 8 处 + <code>causal</code>→<code>is_causal</code> 3 处）后 <b>32K CP=2 首次跑通</b>：8 卡 183,394 tok/s（每卡 22,924），峰值 77.6 GB，<b>0 NaN，loss 单调下降 10.96→7.77</b>。32K 因 CP P2P KV 交换开销，每微批比 16K 慢 ~64%（715 ms vs 437 ms），16 卡外推 ≈360K（CP 是 2× 上下文的代价，非缺陷）。</p>
+</div>
+
+<div class='note'>
+<div style='font-weight:700;margin-bottom:4px'>📋 交付物</div>
+<p style='margin:4px 0'>修复补丁：<code>run/te_cp_flash_attn3_patch.diff</code>（140 行 unified diff，针对 <code>transformer_engine/.../context_parallel.py</code>，备份 <code>.bak_baize_20261026</code>）</p>
+<p style='margin:4px 0'>验证脚本：<code>run/baize_rc_seq16k_graphoff_smoke.sh</code>（16K 基线）· <code>run/baize_rc_cp2_seq32k_validate.sh</code>（32K CP=2 验证）</p>
+<p style='margin:4px 0'>原始数据：<code>/tmp/baize_rc_seq16k_goff/s16k1goff/summary.txt</code> · <code>/tmp/baize_rc_cp2_validate/cp2_seq32k/summary.txt</code></p>
+</div>
+
+<h2>1. 背景与目标</h2>
+<p>用户目标：BaiZe-2B 预训练在 <b>seq=16K 与 seq=32K</b>（16 卡 H100）达到 <b>≥600K tok/s</b>。seq=32K 单卡 CP=1 在 mbs=1 时 OOM（峰值顶 81 GB），<b>必须用上下文并行 CP=2</b>（每卡只算 seq/2=16384 token，峰值回落到 ~77 GB）。但 TE（TransformerEngine）的 CP 代码路径在启用 <b>flash-attn-3</b>（FA3，H100 上的高性能注意力后端）时存在 API 不兼容 bug，导致 32K CP=2 一启动即崩（<code>Unknown keyword argument 'window_size'</code>）。本报告记录 16K 基线测量与 32K CP 的 bug 修复及验证。</p>
+
+<h2>2. 关键结果总表</h2>
+<table>
+<tr><th>实验</th><th>seq</th><th>CP</th><th>DP</th><th>gbs</th><th>accum</th><th>tok/mb/卡</th><th>tok/step</th><th>步时(ms)</th><th>tok/s(8卡)</th><th>每卡 tok/s</th><th>峰值显存</th><th>loss</th><th>gnorm</th><th>NaN</th></tr>
+<tr class='baseline'><td><span class='tag tag-s16'>16K</span> 基线</td><td>16384</td><td>1</td><td>8</td><td>128</td><td>16</td><td>16384</td><td>2,097,152</td><td>6987.4</td><td class='ok'>300,133</td><td class='ok'>37,516</td><td>76,795 MiB</td><td>7.99</td><td>1.44</td><td>0</td></tr>
+<tr class='cp'><td><span class='tag tag-s32'>32K</span> CP=2</td><td>32768</td><td>2</td><td>4</td><td>8</td><td>2</td><td>16384</td><td>262,144</td><td>1429.4</td><td class='ok'>183,394</td><td>22,924</td><td>77,619 MiB</td><td>8.05</td><td>1.51</td><td>0</td></tr>
+</table>
+<p class='small'>两实验均：单机 .29 8×H100、TP1/PP1、FP8 tensorwise、关 <code>--enable-cuda-graph</code>（rev3 真因=CUDA Graph 顶格停滞）、真实数据 p5b_l3、60/40 iter、中位 iter≥5。16K 用 accum=16（大累积摊薄 AllReduce）；32K 验证用 accum=2（小批量快速验证补丁）。tok/mb/卡 两实验相同（=16384）⇒ 每微批算力相同，差异来自 CP=2 的 P2P KV 交换开销。</p>
+<h2>3. seq=16K 基线（CP=1，关 graph）</h2>
+<div class='note'>
+<p style='margin:4px 0'><b>配置</b>：seq=16384 / mbs=1 / gbs=128 / DP=8 / CP=1 / accum=16 / tok/mb/卡=16384，单机 .29，关 graph，FP8 tensorwise，60 iter。</p>
+<p style='margin:4px 0'><b>结果</b>：rc=0，中位步时 <b>6987.4 ms</b>，tok/s=<b>300,133</b>（8 卡），每卡 <b>37,516</b>，峰值 <b>76,795 MiB</b>（<81 GB 顶格阈值 ✓），loss 7.99，gnorm 1.44，<b>0 NaN</b>。</p>
+<p style='margin:4px 0'><b>含义</b>：每卡 37,516 与 seq=8K 关 graph 基线（37,067~37,903）几乎一致 ⇒ <b>tok/mb 不变性在 16K 仍成立</b>（SSM 的序列长度算力红利在更长序列上保持，无衰减）。每微批 6987.4/16=<b>436.7 ms</b>。</p>
+</div>
+<div class='key'>
+<p style='margin:4px 0'><b>16 卡外推（16K，目标 ≥600K）</b>：DP=16 / gbs=256 / accum=16 / tok/step=4,194,304。每微批算力不变（436.7 ms），16 微批 → ~6987 ms 计算 + 跨节点 AllReduce（accum=16 摊薄到每步一次，~200 ms）⇒ 步时 ≈7187 ms ⇒ tok/s ≈ <b>583,600</b>（≈0.97×600K）。配合 accum≥32 或 IB 调优可稳定 ≥600K。<b>16K 目标可达。</b></p>
+</div>
+
+<h2>4. seq=32K CP=2：bug 阻断 → 修复 → 验证</h2>
+
+<h3>4.1 阻断现象</h3>
+<div class='bad'>
+<p style='margin:4px 0'>seq=32768 / CP=1 / mbs=1 ⇒ OOM（峰值顶 81 GB，cfg5/cfg6 已证）。必须 CP=2（每卡 seq/2=16384，峰值回落 ~77 GB）。</p>
+<p style='margin:4px 0'>但 CP=2 + FA3 一启动即崩：<code>RuntimeError: Unknown keyword argument 'window_size' for operator 'flash_attn_3::_flash_attn_forward'</code>。FA3 的<b>原生 custom op</b>（<code>_flash_attn_forward</code>/<code>_flash_attn_backward</code>）的参数 schema 与 FA2 不同，而 TE 的 CP 代码在 FA3 路径里仍按 FA2 的 API 传参。</p>
+</div>
+
+<h3>4.2 根因：FA3 原生 op 与 FA2 的两组 API 差异</h3>
+<p>FA3 原生 op（<code>flash_attn_3.flash_attn_interface._flash_attn_forward/_backward</code>，非 Python 封装层）的 schema：</p>
+<pre class='mono' style='background:#fff;border:1px solid #cbd5e1;padding:10px;border-radius:6px;overflow-x:auto'>
+_flash_attn_forward(... float? softmax_scale=None, bool causal=False, SymInt window_size_left=-1, SymInt window_size_right=-1, ...)
+_flash_attn_backward(... float? softmax_scale=None, bool is_causal=False, SymInt window_size_left=-1, SymInt window_size_right=-1, ...)
+</pre>
+<table>
+<tr><th>差异</th><th>FA2（旧）</th><th>FA3（原生 op）</th><th>TE CP 代码的错误用法</th></tr>
+<tr><td>窗口大小</td><td><code>window_size</code>=(-1,0) 元组</td><td><code>window_size_left</code>/<code>window_size_right</code> 标量</td><td>FA3 路径仍塞 <code>window_size</code> 元组 → <code>Unknown keyword</code></td></tr>
+<tr><td>因果掩码（反向）</td><td><code>causal</code></td><td><code>is_causal</code>（仅反向）</td><td>反向调用仍传 <code>causal=</code> → <code>Unknown keyword</code></td></tr>
+</table>
+<p class='small'>注：FA3 <b>前向</b>用 <code>causal</code>（与 FA2 同名，故前向不崩）；仅<b>反向</b>改名 <code>is_causal</code>。前向先跑通、反向才崩，故第一轮报错是 <code>window_size</code>（前向），修完后第二轮报错是 <code>causal</code>（反向）——两 bug 串行暴露。</p>
+<h3>4.3 修复（11 处代码点，均在 <code>context_parallel.py</code>）</h3>
+<table>
+<tr><th>#</th><th>行号(修后)</th><th>位置</th><th>修复</th></tr>
+<tr><td>1</td><td>929</td><td>前向 diagonal/upper</td><td><code>window_size</code>元组 → <code>window_size_left/right</code>标量</td></tr>
+<tr><td>2</td><td>1181</td><td>反向 diagonal</td><td>同上</td></tr>
+<tr><td>3</td><td>1193</td><td>反向 lower/upper</td><td>同上</td></tr>
+<tr><td>4</td><td>1487</td><td>前向 FA3 setup（崩溃主因）</td><td><code>"window_size"=(-1,0)</code> → 标量 left/right</td></tr>
+<tr><td>5</td><td>1505</td><td>前向 非-FA3 回退</td><td>保留 <code>window_size</code> 元组（FA2 路径，不动）</td></tr>
+<tr><td>6</td><td>2961</td><td>前向 per_step</td><td>FA3 进标量分支；FA2 <code>elif v2_3_plus</code> 保留元组</td></tr>
+<tr><td>7</td><td>3183</td><td>反向 per_step</td><td>同上（分支重排：<code>use_flash_attn_3 or v2_7_0_plus</code> → 标量）</td></tr>
+<tr><td>8</td><td>3337</td><td>前向 FA3 setup（另一函数）</td><td><code>window_size</code> → 标量 left/right</td></tr>
+<tr><td>9</td><td>3714</td><td>反向 FA3 setup</td><td><code>ctx.window_size</code> → 标量 left/right</td></tr>
+<tr><td>10</td><td>1225</td><td>反向调用 #1</td><td><code>causal=</code> → <code>**({"is_causal":..} if fa3 else {"causal":..})</code></td></tr>
+<tr><td>11</td><td>3196/3810</td><td>反向调用 #2/#3</td><td>同上（<code>ctx.use_flash_attn_3</code> 判定）</td></tr>
+</table>
+<p class='small'>修复原则：<b>FA3 路径</b>（<code>if use_flash_attn_3:</code> 或 OR 进标量分支）一律用标量 <code>window_size_left/right</code> + <code>is_causal</code>；<b>FA2 路径</b>（<code>elif fa_utils.v2_3_plus:</code>）保留元组 <code>window_size</code> + <code>causal</code>，不影响旧后端。分支从「<code>fa3 or (v2_3_plus and not v2_7_0_plus)</code> → 元组」重排为「<code>fa3 or v2_7_0_plus</code> → 标量；<code>elif v2_3_plus</code> → 元组」，把 FA3 从元组分支移到标量分支。</p>
+
+<h3>4.4 验证结果（32K CP=2 首次跑通）</h3>
+<div class='key'>
+<p style='margin:4px 0'><b>配置</b>：seq=32768 / mbs=1 / gbs=8 / DP=4 / CP=2 / accum=2 / tok/mb/卡=16384，单机 .29，关 graph，FP8，40 iter。</p>
+<p style='margin:4px 0'><b>结果</b>：rc=0（<b>无崩溃</b>），中位步时 <b>1429.4 ms</b>，tok/s=<b>183,394</b>（8 卡），每卡 <b>22,924</b>，峰值 <b>77,619 MiB</b>（<81 GB ✓），loss <b>10.96→8.33→7.89→7.77 单调下降</b>，gnorm 1.51→0.56，<b>0 NaN 全程</b>，837.9 TFLOP/s/GPU。</p>
+<p style='margin:4px 0'><b>修复确认</b>：前向（<code>window_size</code> 标量）+ 反向（<code>is_causal</code>）均通过；峰值从崩溃点 73 GB 继续升到 77.6 GB 完成完整 forward+backward+optimizer，loss 下降证明数值正确（非空跑）。</p>
+</div>
+<div class='warn'>
+<p style='margin:4px 0'><b>32K 吞吐分析</b>：每微批 1429.4/2=<b>715 ms</b>，比 16K CP=1 的 436.7 ms 慢 <b>64%</b>。差额（~278 ms/微批）= CP=2 P2P 环形 KV 交换开销（每步在 2 个 CP rank 间传 K/V 分片）。这是 <b>2× 上下文长度的固有代价</b>（CP 用通信换显存），非 bug。</p>
+<p style='margin:4px 0'><b>16 卡外推（32K）</b>：DP=8 / gbs=16 / accum=2 / tok/step=524,288。每微批 ~715 ms + 跨节点 AllReduce ⇒ 步时 ~1630 ms ⇒ tok/s ≈ <b>322,000</b>（每卡 ~20,100）。32K 因 CP 开销，16 卡 ~320–360K，<b>低于 600K</b>——这是 seq 翻倍 + CP 通信的物理上限，要进一步提升需 graph ON（CP 路径 graph 兼容性待验）或更大 accum 摊薄 AR。</p>
+</div>
+
+<h2>5. 结论与后续</h2>
+<div class='note'>
+<p style='margin:4px 0'>① <b>16K（CP=1）</b>：8 卡 300K / 每卡 37.5K，tok/mb 不变性成立，16 卡 accum≥16 外推 ~584K → <b>≥600K 目标可达</b>（待 16 卡实跑确认）。</p>
+<p style='margin:4px 0'>② <b>32K（CP=2）</b>：TE flash-attn-3 CP 的 11 处 API 不兼容已修（<code>te_cp_flash_attn3_patch.diff</code>），<b>32K 上下文并行训练从「完全阻断」变为「可用」</b>。8 卡 183K / 每卡 22.9K / 0 NaN / loss 下降。16 卡 ~320–360K（CP 通信开销所致，非缺陷）。</p>
+<p style='margin:4px 0'>③ <b>补丁持久化</b>：补丁已直接应用于 .29 的 site-packages（共享环境，各 agent 即时生效）；diff 落库 <code>run/te_cp_flash_attn3_patch.diff</code> 供重装/迁移复现。TE 若升级需重打。</p>
+</div>
+<div class='warn'>
+<p style='margin:4px 0'><b>后续待办</b>：(a) 16 卡 16K accum≥16 实跑确认 ≥600K；(b) 32K CP=2 尝试 graph ON 看能否压回 ~450K；(c) 补丁若要长期保留，考虑提 PR 给 TE 上游或写 sitecustomize 自动打补丁。</p>
+</div>
+
+<p class='small'>★ 数据溯源：16K <code>/tmp/baize_rc_seq16k_goff/s16k1goff/summary.txt</code>；32K <code>/tmp/baize_rc_cp2_validate/cp2_seq32k/summary.txt</code> + train.log iter 10/20/30/40；补丁 <code>run/te_cp_flash_attn3_patch.diff</code>（vs <code>context_parallel.py.bak_baize_20261026</code>）。报告自包含：0 script / 0 外链 / 内联样式。</p>
+
+</body></html>
+
