@@ -14,18 +14,19 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ▶️未分词4源分词中(done=95/131,36大shard流式分词中,✅二度确诊非卡死=单核BPE慢,ETA~09:30-11:00 10-26)+✅22:3x停顿诊断完成
+PHASE:        ▶️未分词4源分词中(done=97/131,恢复!95→96@07:49→97@08:07,~18min/shard,余34,ETA~13:20-14:45)+✅22:3x停顿诊断完成+恢复已确认
 已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅prune(78删/3.69TiB); ✅迁移5/5源全DONE(→/nas_env); ✅tokenized镜像布局(10目录/716shard/3342.49B); ✅删32不可映射staging; ✅DATA_MAPPING.md脚本化(gen_data_mapping_md.py 17.4KB); ✅磁盘清理候选TSV(44KB); ✅22:3x诊断(读码+三重实测,确诊单核BPE流式分词慢非卡死)
-当前动作:     唤醒666(2026-10-26 07:24):二度复核06:37诊断仍成立——done=95/131 FLAT since 00:54(无新finalize);supervisor日志(07:24)bin_bytes=646.59GB/tokens=161.6B均FLAT(因supervisor只计已finalize的95个,36个WIP的3.41TB .bin不计入→这是触发22:3x"停顿"假警的计数artifact);★/proc/io二次实测(pid416617):write_bytes +33MB/20s=1.65MB/s=412K tok/s/proc(与06:37完全一致,真在写);38进程全R态99.9%CPU wchan=0无D态0failed;WIP .bin=3.41TB mtime=07:23(活跃);ufw_en32个~100GB(target112GB=89%)/ufw_zh4个~99-109GB(target121GB=85%).★关键纠正:supervisor的tokens/s=2.5M是finalized_tokens/elapsed的下降均值(非实时速率),故其ETA 24440s=6.8h偏高;实时聚合≈412K×36≈14.8M tok/s,真实ETA~2-3.5h→finalize~09:30-11:00.处置=🚫不杀(健康+仅剩~2-3.5h,杀毁3.41TB/17h成果)
-下一步:       ①等ufw_en32+ufw_zh4 finalize(判据=首个.idx出现→done开始跳,ETA~09:30-11:00)②done=131/131后→重跑build_tokenized_mirror.py→清mapping_inprogress.txt→重跑gen_data_mapping_md.py(A节7-10行翻镜像完整)③校验.bin=.idx+字节+num_tokens+悬空=0④更新DATA_LEDGER §0⑤18:5x清理wrap-up
-阻塞:         无主线阻塞;22:3x诊断完成(二度确诊非卡死);分词异步阻塞wrap-up(done=95/131→131/131,ETA~09:30-11:00,18:5x deferred到分词跑完);disk充足(/nas_train 32T可用/85%,/nas_env 5.8T可用/43%)
+当前动作:     唤醒667(2026-10-26 08:13):三度复核+恢复已确认——supervisor日志done 95→96@07:49(+28B tok/+113GB)→97@08:07(+28B/+113GB),即22:3x"停顿"已结束(2 shard finalized in 18min);/proc/io pid416617 write_bytes +25MB/15s=1.67MB/s=417K tok/s/proc(真在写,与#665/#666一致);37进程全R态99.9%CPU wchan=0无D态0failed;WIP .bin=3.89TB(07:24为3.41TB,+0.48TB/50min)mtime=08:14=NOW;ufw_en/ufw_zh大shard~100-113GB;disk /nas_train 32T可用/85% /nas_env 5.8T可用/43%.处置=🚫不杀(健康+恢复已自证).22:3x step4+18:5x wrap-up仍deferred到done=131/131(ETA~13:20-14:45);prep文件(gen_data_mapping_md.py/cleanup TSV/DATA_MAPPING.md/build_tokenized_mirror.py)均已就绪.
+下一步:       ①继续等finalize(done=97→131,~18min/shard,余34,ETA~13:20-14:45)②done=131/131后→重跑build_tokenized_mirror.py→清mapping_inprogress.txt→重跑gen_data_mapping_md.py(A节7-10行翻镜像完整)③校验.bin=.idx+字节+num_tokens+悬空=0④更新DATA_LEDGER §0⑤18:5x清理wrap-up(候选TSV已就绪,第一批≤500GB)
+阻塞:         无主线阻塞;22:3x诊断完成+恢复已确认(自证非卡死);分词异步阻塞wrap-up(done=97/131→131/131,ETA~13:20-14:45,18:5x deferred到分词跑完);disk充足
 ERROR_COUNT:  9
-未完成指令:   有(22:3x诊断已交付+二度复核,等finalize;18:5x映射表刷新/清理wrap-up deferred到done=131/131)
+未完成指令:   有(22:3x恢复已确认,等finalize;18:5x映射表刷新/清理wrap-up deferred到done=131/131)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [08:13] 唤醒667：22:3x 三度复核+恢复已确认(距#666@07:24已49min,有未完成指令故WAITING:0续命commit)——supervisor日志done 95→96@07:49(+28B tok/+113GB bin_bytes)→97@08:07(+28B/+113GB),即22:3x"停顿"已结束(2 shard finalized in 18min,非卡死自证);/proc/io pid416617 write_bytes 106425253888→106450321408=+25MB/15s=1.67MB/s=417K tok/s/proc(真在写,与#665/#666一致);37进程全R态99.9%CPU wchan=-无D态0failed;WIP .bin=3.89TB(07:24为3.41TB,+0.48TB/50min)mtime=08:14=NOW;disk /nas_train 32T/85% /nas_env 5.8T/43%.处置=🚫不杀(健康+恢复已自证).★22:3x报告:卡在ufw_en32+ufw_zh4大shard;原因=单核BPE流式分词(supervisor只计finalize故假停);处置=不杀;恢复done速率~18min/shard,余34,ETA~13:20-14:45.18:5x wrap-up仍deferred到done=131/131,prep文件均已就绪.未完成指令:有(等finalize+18:5x wrap-up)
 > [07:24] 唤醒666：22:3x 二度复核(距#665@06:37已47min,有未完成指令故WAITING:0续命commit)——done=95/131 FLAT since 00:54(无新finalize);supervisor日志(07:24)bin_bytes=646.59GB/tokens=161.6B均FLAT(只计已finalize的95个,36个WIP的3.41TB .bin不计入→22:3x假警的计数artifact);★/proc/io二次实测(pid416617):write_bytes+33MB/20s=1.65MB/s=412K tok/s/proc(与06:37完全一致);38进程全R态99.9%CPU wchan=0无D态0failed;WIP .bin=3.41TB mtime=07:23;ufw_en32个~100GB(target112GB=89%)/ufw_zh4个~99-109GB(target121GB=85%).★关键纠正:supervisor tokens/s=2.5M=finalized_tokens/elapsed下降均值(非实时),ETA 24440s偏高;实时聚合≈412K×36≈14.8M tok/s,真ETA~2-3.5h→finalize~09:30-11:00.处置=🚫不杀.18:5x prep(gen_data_mapping_md.py/cleanup TSV/DATA_MAPPING.md)均已就绪,done=131/131后可直接wrap-up.未完成指令:有(等finalize+18:5x wrap-up)
 
 > [06:37] 唤醒665：22:3x step1-2 深度诊断(读码+实测)——done=95/131 FLAT,确诊非卡死=单核BPE慢(.bin流式写/.idx仅finalize产出,412K tok/s/proc,余~2h,ETA~09:00-11:00),处置=不杀。详见 `daily-memories-data/2026-10-26.md`。
