@@ -39,6 +39,13 @@
 <table>
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
+    <td>2026-10-27</td>
+    <td>早报（AM · 3/5）</td>
+    <td>3 / 5</td>
+    <td><a href="2026-10-27.html">2026-10-27.html</a></td>
+    <td><b>☀️ 早报 3 篇「借鉴」（AM · 批次未刷新，仍 <code>2026-10-23</code>；取自 r114 候选池，首次提交均为 2026-10-23 UTC）</b>：<code>2610.32951</code> <b>Where Rounding Happens Matters</b>（vLLM 采样 vs HF 重算 logprob 的「舍入位置失配」让 BF16 RL 训练崩塌；只把 RoPE / SwiGLU / 残差 RMSNorm 的中间量留 FP32 即稳，<b>只对齐 RoPE 也够</b>；4 个 Qwen 系模型、静态 per-token KL 仅降 9.1–25.5%）· <code>2610.32881</code> <b>NgramRL</b>（用同 prompt 的历史 rollout 当 n-gram 草稿，表放 CPU 不占显存；<b>3.60–7.77 token/step</b>、rollout 吞吐 <b>1.38×</b>、decode 迭代 26.1→19.2 ms）· <code>2610.32483</code> <b>When Agents Fail</b>（把 agent 失败拆成模型 / harness：VCR + Model-Harness Fit + Cross-Model Fit + Interaction Residuals + Token Load；4 harness × 4 模型 + 2 原生 × 6 基准、<b>111 设置 / 52,168 轨迹</b>）。<br>取数：<code>--fetch --seen</code> 15/15 查询 200（全 <code>attempts=1</code>）、<code>kept 0</code> / <code>dropped 600</code>（563 已收 + 37 超 72h）；<code>id_list</code> 复核 <b>3/3</b>；PDF <b>3/3</b>（17 / 7 / 43 页）；台账 4,262 行不变（3 行「候选」→「收录」）⇒ 收录 <b>259</b> / 候选 <b>4,003</b>。晚报 2 篇「科普」留待 18:00 收口 5/5。</td>
+  </tr>
+  <tr>
     <td>2026-10-26</td>
     <td>晚报（PM · 5/5 · 当日收口）</td>
     <td>5 / 5（收口）</td>

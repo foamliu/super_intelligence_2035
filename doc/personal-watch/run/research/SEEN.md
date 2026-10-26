@@ -4873,7 +4873,7 @@
 | 2026-10-26 | 2610.32966 | ViT-H: Generative Video-To-Humanoid Control with Motion Tracking Feedback | cs.RO | 候选 |
 | 2026-10-26 | 2610.32964 | Flownomaly: Single-Step Conditional-Mean Recovery for Few-Shot Anomaly Detection | cs.CV | 候选 |
 | 2026-10-26 | 2610.32955 | Measure Before You Train: Typed Decision Models vs. a Classical Baseline vs. a Generative LLM for Routing a Personal Multilingual Inbox | cs.CL | 候选 |
-| 2026-10-26 | 2610.32951 | Where Rounding Happens Matters: Rounding-Location Alignment Stabilizes LLM Reinforcement Learning | cs.LG | 候选 |
+| 2026-10-26 | 2610.32951 | Where Rounding Happens Matters: Rounding-Location Alignment Stabilizes LLM Reinforcement Learning | cs.LG | 收录 |
 | 2026-10-26 | 2610.32948 | Beyond Discrete Tokens: Preserving Numerical Continuity in Medical Vision-Language Models | cs.CV | 候选 |
 | 2026-10-26 | 2610.32945 | Monetizing Intelligence: Advertising and Subscription Design on LLM Platforms | econ.TH | 候选 |
 | 2026-10-26 | 2610.32943 | Knowledge Distillation across Item and Code Spaces for Parallel Generative Recommendation | cs.IR | 候选 |
@@ -4893,7 +4893,7 @@
 | 2026-10-26 | 2610.32888 | When Human Corrections Travel: Safety in Federated VLA Adaptation | cs.RO | 候选 |
 | 2026-10-26 | 2610.32887 | Reinforcement Learning with Multi-Step Transition Predictions: A Bellman Theory | cs.LG | 候选 |
 | 2026-10-26 | 2610.32884 | VTRL-Med: Progressive Visual Refinement with Topology-Guided Regularization for Medical Image Clustering | cs.CV | 候选 |
-| 2026-10-26 | 2610.32881 | NgramRL: Accelerating RL Post-Training for Structured Generation via Rollout-Aware N-gram Speculative Decoding | cs.AI | 候选 |
+| 2026-10-26 | 2610.32881 | NgramRL: Accelerating RL Post-Training for Structured Generation via Rollout-Aware N-gram Speculative Decoding | cs.AI | 收录 |
 | 2026-10-26 | 2610.32880 | Multimodal Generative AI Assists Comprehensive Echocardiographic Interpretation | cs.CV | 候选 |
 | 2026-10-26 | 2610.32878 | Advancing SVD-based LLM Compression via Layer-Wise Error Model Search | cs.AI | 候选 |
 | 2026-10-26 | 2610.32876 | Trusting the Tool: Asymmetric Deference of LLM Vulnerability Auditors to Static-Analysis Evidence | cs.SE | 候选 |
@@ -4925,7 +4925,7 @@
 | 2026-10-26 | 2610.32492 | Accordion: Elastic-Depth Inference via Fixed-Prefix Layer Looping | cs.LG | 候选 |
 | 2026-10-26 | 2610.32486 | Efficient Zero-Shot Video Anomaly Detection via Signal-Aware Adaptive Fusion (SAAF) | cs.CV | 候选 |
 | 2026-10-26 | 2610.32485 | PCFBench: How Far Can Large Vision-Language Models Go in Physics-aware Photonic Inverse Design? | cs.CV | 候选 |
-| 2026-10-26 | 2610.32483 | When Agents Fail: Model or Harness--Who's to Blame? | cs.AI | 候选 |
+| 2026-10-26 | 2610.32483 | When Agents Fail: Model or Harness--Who's to Blame? | cs.AI | 收录 |
 | 2026-10-26 | 2610.32478 | PathJev: Decision-Native Vision-Language Modelling for Histopathology | cs.CV | 候选 |
 | 2026-10-26 | 2610.32474 | Beyond Post-Hoc Rewards: Privileged Reasoning Exploration for Multimodal Embeddings | cs.AI | 候选 |
 | 2026-10-26 | 2610.32463 | Reading Between the Layers: Cross-Modal Alignment and Representational Hierarchy in Vision Transformers | cs.CL | 候选 |
@@ -5020,3 +5020,5 @@
 | 2026-10-26 | 2610.31712 | Reuse, Rewrite, or Reject: Evidence-Constrained Trace Reuse for Repeated Mobile GUI Control | cs.SE | 候选 |
 | 2026-10-26 | 2610.31710 | Compact-Bench: Measuring What Context Compaction Costs Long-Horizon Coding Agents | cs.SE | 候选 |
 > **第一百一十四轮（本地 2026-10-26 18:00（CST）· P0 第 4 批「晚 2」轮 · 当日 5/5 收口）**：**公告批次已刷新** —— `2026-10-22` → **`2026-10-23`**（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`cat:cs.CL` 探针 `totalResults` `123563` → **`123669`**、最新样本 `published=2026-10-23T17:59:56Z`；广度扫描 `totalResults` `637451` → **`637936`**）；`window_mode=weekend_batch`（120h，脚本按周末口径自动判定，**未人工放宽**）⇒ **15/15 查询 `200`、全部 `attempts=1`**、**`kept 156` / `dropped 418`**（`generated=2026-10-26T10:05:40Z`；156 条中 `published` 2026-10-23 = 126 / 2026-10-22 = 30）。R1′ arXiv ✅（默认 Fastly 边缘 `146.75.115.42` 极慢 → 首次 fetch 超时中止，改用 `raw/run_arxiv_r109.py` 在进程内覆盖 DNS 边缘到 `151.101.67.42` 后 15/15 成功，**未改工具代码**）/ HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 169 · cs.CV 205 · cs.LG 321（工作日恢复非空，仅作发现）。**晚报 2 篇「科普」直接取自本批** + **`id_list` 权威复核 3/3 返回**（`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-26-pm-idlist-r114a.{xml,headers}`）：`2610.32055` How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models（**本日科普 TOP-1**）/ `2610.31842` Scaling cross-situational word learning on children's naturalistic experiences。台账 **4,106 → 4,262 行（+156）**（2 行「收录」+ 154 行「候选」）→ 累计（**收录 256 / 候选 4,006（含 RSS 补充 507）**）；`papers.jsonl` **254 → 256**；PDF 3/3 落地校验通过；落盘脚本 `raw/update_r114.py`。口径见 `ARXIV_API.md` §9.114。
+
+> **第一百一十五轮（本地 2026-10-27 06:00（CST）· P0 第 4 批「早 3」轮 · 新一日 AM）**：**公告批次未刷新** —— 仍 `2026-10-23`（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`cat:cs.CL` 探针 `totalResults=123669`、最新样本 `published=2026-10-23T17:59:56Z`，**与 r114 PM 逐条相同**；广度扫描 `totalResults=637936`；本轮唤醒 `UTC 2026-10-26T22:00`，早于周一 20:00 ET 公告）；`window_mode=daily`（72h，脚本自动判定、未人工放宽）⇒ **15/15 查询 `200`、全部 `attempts=1`**、**`kept 0` / `dropped 600`**（`generated=2026-10-26T22:01:24Z`；600 = 563 `already in SEEN` + 37 `stale > 72h`）。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 169 · cs.CV 205 · cs.LG 321（仅作发现）。**早报 3 篇「借鉴」取自 r114 的 154 条候选池**（均已在 SEEN、从未进过任何日报）+ **`id_list` 权威复核 3/3 返回**（`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-27-am-idlist-r115a.{xml,headers}`）：`2610.32951` Where Rounding Happens Matters: Rounding-Location Alignment Stabilizes LLM RL（ByteDance Seed + PKU；4 个 Qwen 系模型、PPO-clipped GRPO；BF16 基线全崩塌、三区域对齐或仅 RoPE 对齐即稳定；静态 per-token KL 仅降 9.1–25.5%）/ `2610.32881` NgramRL（UCSD + WVU；per-prompt 历史 rollout n-gram 草稿表 + fan-out 预取；3.60–7.77 token/step、1.38× rollout 吞吐、26.1→19.2 ms）/ `2610.32483` When Agents Fail: Model or Harness--Who's to Blame?（上海人工智能实验室；五指标 VCR / Fit / Cross-Model Fit / Interaction Residuals / Token Load；4 harness × 4 模型 + 2 原生 × 6 基准、111 设置 / 52,168 轨迹）⇒ **首次提交均为 `2026-10-23`（UTC）**，非「今日新提交」。台账 **4,262 行不变**（3 行「候选」→「收录」）→ 累计（**收录 259 / 候选 4,003（含 RSS 补充 507）**）；`papers.jsonl` **256 → 259**；PDF **3/3** 落地校验通过（17 / 7 / 43 页）；交付 `daily/2026-10-27.html`（32,393 B · 3/5）+ `daily/index.html`；落盘脚本 `raw/update_r115.py`。口径见 `ARXIV_API.md` §9.115。
