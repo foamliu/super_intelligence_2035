@@ -1,4 +1,4 @@
-This is BibTeX, Version 0.99e (TeX Live 2026)
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: ACM-Reference-Format.bst
@@ -12,46 +12,50 @@ Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--no number and no volume in li2026pdagent
+Warning--page numbers missing in both pages and numpages fields in li2026pdagent
 Warning--page numbers missing in both pages and numpages fields in pu2024rag
-You've used 16 entries,
+Warning--no number and no volume in xu2026iscript
+Warning--page numbers missing in both pages and numpages fields in xu2026iscript
+You've used 19 entries,
             6273 wiz_defined-function locations,
-            1763 strings with 23762 characters,
-and the built_in function-call counts, 17210 in all, are:
-= -- 1947
-> -- 870
+            1775 strings with 24609 characters,
+and the built_in function-call counts, 21088 in all, are:
+= -- 2424
+> -- 1139
 < -- 0
-+ -- 301
-- -- 299
-* -- 1460
-:= -- 1931
-add.period$ -- 75
-call.type$ -- 16
-change.case$ -- 162
-chr.to.int$ -- 16
-cite$ -- 17
-duplicate$ -- 1313
-empty$ -- 939
-format.name$ -- 351
-if$ -- 3861
++ -- 397
+- -- 392
+* -- 1838
+:= -- 2393
+add.period$ -- 89
+call.type$ -- 19
+change.case$ -- 206
+chr.to.int$ -- 19
+cite$ -- 24
+duplicate$ -- 1547
+empty$ -- 1110
+format.name$ -- 456
+if$ -- 4764
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 24
-newline$ -- 183
-num.names$ -- 112
-pop$ -- 523
+missing$ -- 32
+newline$ -- 207
+num.names$ -- 133
+pop$ -- 647
 preamble$ -- 1
-purify$ -- 282
+purify$ -- 349
 quote$ -- 0
-skip$ -- 517
+skip$ -- 592
 stack$ -- 0
-substring$ -- 1056
-swap$ -- 107
+substring$ -- 1216
+swap$ -- 119
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 423
-warning$ -- 1
-while$ -- 76
+type$ -- 485
+warning$ -- 5
+while$ -- 85
 width$ -- 0
-write$ -- 344
-(There was 1 warning)
+write$ -- 397
+(There were 5 warnings)

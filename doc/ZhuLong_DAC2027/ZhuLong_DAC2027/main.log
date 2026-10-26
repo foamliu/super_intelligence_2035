@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  26 OCT 2026 09:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  26 OCT 2026 10:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -724,7 +724,7 @@ Underfull \hbox (badness 1127) in paragraph at lines 45--50
 x.map}
 
 ]) (./DAC2027/3_design.tex
-<figures/zhulong_arch_3.pdf, id=161, 514.95285pt x 156.44547pt>
+<figures/zhulong_arch_3.pdf, id=164, 514.95285pt x 156.44547pt>
 File: figures/zhulong_arch_3.pdf Graphic file (type pdf)
 <use figures/zhulong_arch_3.pdf>
 Package pdftex.def Info: figures/zhulong_arch_3.pdf  used on input line 12.
@@ -743,66 +743,59 @@ Overfull \hbox (1.29785pt too wide) in paragraph at lines 14--27
  [][] 
  []
 
-) (./DAC2027/6_exp.tex [4.4]
+[4.4]) (./DAC2027/6_exp.tex
 LaTeX Font Info:    Font shape `OT1/cmss/m/it' in size <9> not available
 (Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 55.
-
+ [5.5]
 Overfull \hbox (5.28232pt too wide) in paragraph at lines 80--93
  [][] 
  []
 
-[5.5]) (./DAC2027/7_discussion.tex) (./DAC2027/8_conclusion.tex) [6.6]
-(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
-File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
-)
-(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
-File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
-) [7.7
+) (./DAC2027/7_discussion.tex) (./DAC2027/8_conclusion.tex [6.6]) [7.7
 
 ]
 (./main.bbl
-LaTeX Info: Redefining \tempurl on input line 136.
+LaTeX Info: Redefining \tempurl on input line 211.
 
-Underfull \hbox (badness 1087) in paragraph at lines 143--147
+Underfull \hbox (badness 1087) in paragraph at lines 220--228
 \OT1/cmr/m/n/7 (+20) Bench-mark-ing for EDA Tool Doc-u-men-ta-tion QA. In \OT1/
 cmr/m/it/7 (+20) Pro-
  []
 
 
-Underfull \hbox (badness 1430) in paragraph at lines 143--147
+Underfull \hbox (badness 1430) in paragraph at lines 220--228
 \OT1/cmr/m/it/7 (+20) ceed-ings of the IEEE/ACM In-ter-na-tional Con-fer-ence o
 n
  []
 
-LaTeX Info: Redefining \tempurl on input line 162.
+LaTeX Info: Redefining \tempurl on input line 252.
 )
-Overfull \vbox (1.625pt too high) has occurred while \output is active []
 
- [8.8
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
+
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
+File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
+)
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
+File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
+) [8.8
 
 ]
-
-LaTeX Warning: Hook 'shipout/lastpage' executed on wrong page (7 not 8).
-               Rerun to correct this.
-
 (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 0E60899B42AFFE6989524179C9FD794C;4754.
  ) 
 Here is how much of TeX's memory you used:
- 17942 strings out of 475589
- 284373 string characters out of 5782859
- 1953975 words of memory out of 5000000
- 39252 multiletter control sequences out of 15000+600000
- 579618 words of font info for 218 fonts, out of 8000000 for 9000
+ 17962 strings out of 475589
+ 284676 string characters out of 5782859
+ 1952975 words of memory out of 5000000
+ 39261 multiletter control sequences out of 15000+600000
+ 579889 words of font info for 222 fonts, out of 8000000 for 9000
  474 hyphenation exceptions out of 8191
  90i,12n,131p,1466b,567s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/app.e0031982/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0
@@ -832,10 +825,10 @@ mti8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on main.pdf (8 pages, 426327 bytes).
+Output written on main.pdf (8 pages, 430898 bytes).
 PDF statistics:
- 416 PDF objects out of 1000 (max. 8388607)
- 360 compressed objects within 4 object streams
- 65 named destinations out of 1000 (max. 500000)
+ 424 PDF objects out of 1000 (max. 8388607)
+ 368 compressed objects within 4 object streams
+ 68 named destinations out of 1000 (max. 500000)
  48358 words of extra memory for PDF output out of 51595 (max. 10000000)
 
