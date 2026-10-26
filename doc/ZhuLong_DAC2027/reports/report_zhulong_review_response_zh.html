@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ZhuLong DAC 2027 评审回复函（response letter）</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; line-height: 1.65; color: #1d1d1f; max-width: 1080px; margin: 0 auto; padding: 28px 36px 80px; background: #fafafa; }
+  h1 { font-size: 1.55rem; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-top: 8px; }
+  h2 { font-size: 1.22rem; color: #2c3e50; margin-top: 36px; border-left: 5px solid #2c3e50; padding-left: 12px; }
+  h3 { font-size: 1.06rem; color: #34495e; margin-top: 26px; }
+  h4 { font-size: 0.98rem; color: #555; margin-bottom: 4px; }
+  .meta { color: #666; font-size: 0.9rem; margin-bottom: 18px; }
+  .verdict { display: inline-block; padding: 2px 10px; border-radius: 4px; font-weight: 600; font-size: 0.88rem; }
+  .v-done { background: #d4edda; color: #155724; }
+  .v-partial { background: #fff3cd; color: #856404; }
+  .v-todo { background: #f8d7da; color: #721c24; }
+  .v-defend { background: #d1ecf1; color: #0c5460; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.9rem; }
+  th, td { border: 1px solid #ddd; padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: #eef2f7; }
+  tr:nth-child(even) td { background: #fff; }
+  code, .f { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 0.86rem; background: #f0f0f2; padding: 1px 5px; border-radius: 3px; }
+  .quote { border-left: 3px solid #b0b0b0; color: #555; margin: 8px 0; padding: 2px 12px; font-size: 0.92rem; }
+  .old { color: #a00; } .new { color: #060; }
+  .anchor { color: #888; font-size: 0.82rem; }
+  .todo { color: #c00; font-weight: 600; }
+  .ok { color: #060; font-weight: 600; }
+  ul { margin: 6px 0 6px 0; padding-left: 22px; } li { margin: 3px 0; }
+  .summary-box { background: #fff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 14px 18px; margin: 16px 0; }
+  .legend { font-size: 0.86rem; color: #555; margin: 8px 0 20px; }
+</style>
+</head>
+<body>
+
+<h1>ZhuLong DAC 2027 投稿评审回复函</h1>
+<div class="meta">
+  回复对象：<code>reviews/REVIEW_DAC2027_external_2026-10-24.md</code>（外部评审，Borderline / major revision）<br>
+  撰写：ZhuLong agent（10-25 deliverable，10-26 落盘）<br>
+  评审意见 5 critical + 5 strongly-recommended + 6 revision-priority，逐条回应。每条给出：意见 → 判定 → 证据位置 → 原文/新文对照。
+</div>
+<div class="legend">
+  判定图例：<span class="verdict v-done">已落实</span>
+  <span class="verdict v-partial">部分落实</span>
+  <span class="verdict v-todo">待改</span>
+  <span class="verdict v-defend">已防御/不动</span>
+</div>
+
+<h2>0. 总览：本次改稿已完成与未完成</h2>
+<div class="summary-box">
+  <b>已在 LaTeX 落实</b>（评审前或本轮已修）：
+  <ul>
+    <li><span class="ok">✓</span> §4.2 引理已降级为 <b>Claim</b>，显式声明"作为实验可检验的预测而非此处推导的定理"（<code>4_grounding.tex:56</code>）。</li>
+    <li><span class="ok">✓</span> §6.2 与 §4.2 已将 <b>57.4pp 系统级 ε 轴</b> 与 <b>13.5pp 受控回读轴（N'→F）</b> 分开表述（<code>6_exp.tex:50</code>、<code>4_grounding.tex:59</code>）。</li>
+    <li><span class="ok">✓</span> 主结果表已加 <b>2 列 cost（latency / tool-calls）</b>，源自 291-task 审计子集（<code>6_exp.tex:6,16</code>）。</li>
+    <li><span class="ok">✓</span> Related work 已覆盖 6 篇核心对照 + 1 survey + 2 同期 benchmark（<code>2_background.tex:10</code>：ChatEDA / MCP4EDA / AutoEDA / LayoutCopilot / ChaTCL / RAG-EDA / survey / iScript / PDAgent）。</li>
+    <li><span class="ok">✓</span> §7 Discussion 已写 3 条 limitation（base-LLM 方差、自探索 +3.1pp 互补非头条、Pass@1 断言式非全功能等价）（<code>7_discussion.tex:7</code>）。</li>
+    <li><span class="ok">✓</span> §6.3 已解释 SKILL 上 self-exploration 倒挂 −1.2pp 及各切片工具链特定幅度（<code>6_exp.tex:105</code>）。</li>
+    <li><span class="ok">✓</span> <code>delage2010percentile</code> bib 条目已存在（<code>reference.bib:414</code>）。</li>
+    <li><span class="ok">✓</span> 未发现"In Proceedings of . ACM,"占位符（评审 Must-fix #5 已不适用）。</li>
+  </ul>
+  <b>本轮新增/待改</b>：
+  <ul>
+    <li><span class="todo">✗</span> 摘要仍只给 57.4pp / 22.0pp 跨度，未显式提 13.5pp 受控回读轴 → 本函 §1.2 给出拟改文本。</li>
+    <li><span class="todo">✗</span> §5 benchmark 无 release/reproducibility 声明 → 本函 §1.3 给出拟补段落。</li>
+    <li><span class="todo">✗</span> 摘要"Bayesian argument bounds by observation fidelity"措辞仍偏强 → 本函 §1.1 给出柔和化措辞。</li>
+    <li><span class="todo">✗</span> 未加 Wilson CI / 配对比较 → 本函 §2.2 给出拟加位置与数值（待重新跑统计）。</li>
+  </ul>
+</div>
+
+<h2>1. 五条 Critical 意见逐条回应</h2>
+
+<h3>1.1 意见 #1 — 理论 overclaim（Critical）</h3>
+<p><b>意见摘录：</b><span class="quote">"Section 4 defines a grounding gap using Bayesian inference and then posits D_grounding ≤ g(ε) … the draft explicitly calls this a prediction, not a theorem … The theoretical contribution is an intuitive hypothesis expressed in Bayesian notation rather than a demonstrated result."</span></p>
+<p><b>判定：</b><span class="verdict v-done">已落实</span>（正文）/ <span class="verdict v-todo">待改</span>（摘要措辞）</p>
+<p><b>证据位置：</b> <code>4_grounding.tex:56</code>、<code>7_discussion.tex:4</code>、<code>0_abstract.tex:14-16</code></p>
+<p><b>正文对照（已落实）：</b></p>
+<p class="quote old">（评审所见旧版，推测）Lemma：D_grounding ≤ g(ε)，由标准 POMDP 模型近似结果可得 …</p>
+<p class="quote new">（现行 <code>4_grounding.tex:56</code>）<b>Claim (observation-fidelity bound).</b> … We posit that D_grounding ≤ g(ε), with g(ε)→0 as ε→0 and g independent of the complexity of the prior K: the grounding gap is bounded by observation fidelity, not model scale. <b>We state this as a prediction the experiments can test rather than a theorem derived here</b>; the next paragraph tests it from both sides.</p>
+<p>评审推荐的两条出路（"formal proposition + proof" 或 "call it a framework / conceptual hypothesis"）——本文已选第二条：以 <b>Claim</b> 命名、显式声明"prediction … rather than a theorem"，且 §7 Discussion L4 改写为"a paradigm that may generalize"，措辞已收敛为框架性而非定理式。</p>
+<p><b>摘要待改（§1.1 待改项）：</b></p>
+<p class="quote old">（<code>0_abstract.tex:14-16</code> 现行）… with a theoretical grounding showing EDA correctness is a <em>situated</em> property whose "grounding gap" a Bayesian argument bounds by <em>observation fidelity</em>, not model scale.</p>
+<p class="quote new">（拟改）… with a <em>grounding-gap framework</em> that recasts EDA correctness as a <em>situated</em> property and proposes—<em>as a testable claim rather than a proven bound</em>—that the gap is set by <em>observation fidelity</em>, not model scale; the experiments test this claim from both the observation and prior axes.</p>
+<p>理由：评审明确允许"the title and abstract can remain ambitious, but the wording must accurately reflect the evidence"。把"theoretical grounding showing … bounds"改为"framework … proposes as a testable claim"与正文 §4.2 Claim 的措辞一致。</p>
+
+<h3>1.2 意见 #2 — 57.4pp 归因错误（Critical）</h3>
+<p><b>意见摘录：</b><span class="quote">"The abstract and introduction say the observation ladder improves Pass@1 by 57.4pp with the LLM fixed. However, Table 3 reports … full-observation vs no-read-back is 13.5pp, not 57.4. The 57.4-point figure is the difference between the full system and the pure-LLM baseline, which changes more than observation alone. … Correct the abstract, contribution bullets, Section 4.2, and Section 6.2.1."</span></p>
+<p><b>判定：</b><span class="verdict v-partial">部分落实</span>（§4.2、§6.2 已分；摘要未分）</p>
+<p><b>证据位置：</b> <code>4_grounding.tex:59</code>、<code>6_exp.tex:50</code>、<code>0_abstract.tex:18-21</code></p>
+<p><b>正文对照（已分）：</b></p>
+<p class="quote new">（<code>4_grounding.tex:59</code>）The read-back ladder (N' → B → F, Table~\ref{tab:omega}) manipulates ε from large to small with retrieval and effector fixed, and the monotone accuracy gain (<b>13.5pp, N' to F</b>) reflects g(ε)'s monotonicity under a single-variable slice; the <b>system-level ε axis</b>—pure LLM with no observation to the full system—spans <b>57.4pp</b>.</p>
+<p class="quote new">（<code>6_exp.tex:50</code>）Relative to the full system, removing execution costs 13.2pp pooled, removing retrieval 11.8pp, and removing self-exploration 3.1pp; <b>against the pure-LLM floor the full system gains 57.4pp</b>.</p>
+<p>三组数字已分别在 §4.2 与 §6.2 显式分开：13.5pp = 受控回读轴（N'→F，单变量切片）；3.3pp = B−N'（二值反馈档，评审 §57 推荐补充的数字，现行正文未单列，见下）；57.4pp = 系统级 ε 轴（Pure-LLM 18.3 → Full 75.7）。</p>
+<p><b>摘要待改（§1.2 待改项）：</b></p>
+<p class="quote old">（<code>0_abstract.tex:18-21</code> 现行）ZhuLong reaches 75.7% pooled Pass@1 vs. 18.3% (pure LLM) and 62.5% (retrieval-only); with the LLM fixed, the observation-fidelity axis (no observation → full observation) spans 57.4pp, versus 22.0pp for the backbone axis.</p>
+<p class="quote new">（拟改）ZhuLong reaches 75.7% pooled Pass@1 vs. 18.3% (pure LLM) and 62.5% (retrieval-only); the controlled read-back ladder (no read-back → binary → full observation, LLM fixed) spans <b>13.5pp</b>, the binary-feedback rung adds 3.3pp over no read-back, and the system-level observation axis (pure LLM → full system) spans <b>57.4pp</b>—versus 22.0pp for the backbone axis.</p>
+<p>理由：评审明确要求"Separate the controlled read-back comparison from the overall system-versus-baseline comparison"。改后摘要同时给 13.5pp（受控）、3.3pp（B 档）、57.4pp（系统级），三组数字与其来源一一对应。</p>
+<p><b>注（3.3pp 推测标记）：</b> 评审 §57 给出 B = 65.5、N' = 62.2 → B−N' = 3.3pp。本文 <code>zhulong_results.md</code> 与 Table 3 显示 B=65.5、N'=62.2，3.3pp 为算术核对结果（<b>非新实验</b>）。摘要拟改文本中加入此数以完整回应评审 §57 的"binary-feedback effect as 3.3 points over no read-back"。</p>
+
+<h3>1.3 意见 #3 — benchmark 不可独立验证（Critical）</h3>
+<p><b>意见摘录：</b><span class="quote">"EDA-Scripting-Bench contains 449 tasks derived from non-redistributable vendor documentation. The draft explains the task schema and assertion-based scoring, but readers cannot readily inspect the full task set, reproduce all commercial runtime behaviors, or verify that the assertions adequately capture the intended design changes."</span></p>
+<p><b>判定：</b><span class="verdict v-todo">待改</span>（§5 无 release 声明）</p>
+<p><b>证据位置：</b> <code>5_bench.tex</code> 全 44 行——已写 schema、4 切片组成、协议；<b>未</b>写 release / licensing / 可复现子集 / 评估 harness 可得性。</p>
+<p><b>拟补段落（加在 <code>5_bench.tex</code> 末尾，新 §5.5 Release and reproducibility）：</b></p>
+<p class="quote new">\subsection{Release and reproducibility}<br>
+The full 449-task set derives from non-redistributable vendor documentation and cannot be released wholesale. We release what licensing permits: (i) the task <em>schema</em>, natural-language prompts, function signatures, and assertion specifications for all 449 tasks; (ii) the evaluation harness, PreToolUse hook, and configuration files for all five ablation configurations; (iii) anonymized execution traces for the 291-task audited subset (SKILL + two Tcl hosts); and (iv) a <em>fully reproducible public subset</em> of 30 PyAether tasks whose APIs are documented in the public Empyrean Aether Python reference and require no vendor-internal context. Independent researchers can reproduce (iv) end-to-end with the released harness; (i)–(iii) let them inspect every assertion and re-score the released traces. Assertions were designed by EDA experts to be self-contained and executable in a clean sandbox, and each assertion was independently reviewed by a second expert; a task passes only when code executes without errors <em>and</em> all assertions hold, so a plausible-but-incorrect implementation that does not produce the asserted design change fails. What cannot be independently reproduced is execution against the live commercial runtimes, which requires authorized vendor access—this is a licensing limit, not an algorithmic one.</p>
+<p><b>证据锚：</b> "30 PyAether 公开子集"为推测性承诺——本文 <code>zhulong_results.md</code> 未单列此子集，需用户确认是否真有 30 个仅依赖公开文档的 PyAether 任务可释放。若不可，应改为"我们正与厂商协商释放一个 PyAether 公开子集"。<span class="todo">待用户拍板可释放任务数</span>。</p>
+
+<h3>1.4 意见 #4 — 对照面太窄（Major）</h3>
+<p><b>意见摘录：</b><span class="quote">"The main experiments compare ZhuLong against a pure LLM and several component ablations, including retrieval-only RAG. This establishes that the complete harness is better than those configurations under the selected protocol, but it does not clearly establish superiority over the most relevant existing EDA agents or alternative execution-grounded coding systems."</span></p>
+<p><b>判定：</b><span class="verdict v-defend">已防御</span>（结构性限制）+ <span class="verdict v-partial">部分落实</span>（语义对齐）</p>
+<p><b>证据位置：</b> <code>6_exp.tex:41</code>、<code>2_background.tex:10</code></p>
+<p><b>现行防御（<code>6_exp.tex:41</code>）：</b></p>
+<p class="quote">… no third-party agent can execute these runtimes without the MCP bridge, so baselines are tool-registration ablations of the same fixed harness—which makes single-variable attribution possible.</p>
+<p>这是结构性限制而非疏漏：四个商业运行时（Empyrean Aether / Cadence Virtuoso / Synopsys WaveView / Cadence Innovus）均需授权访问，ChatEDA / MCP4EDA / AutoEDA 等公开 EDA agent 仅支持开源工具链（Yosys / OpenLane / OpenRoad，见 <code>2_background.tex:10</code>），<b>物理上无法在本文 benchmark 上运行</b>。评审推荐的"retrieve–execute–repair loop"与"general-purpose coding agent with equivalent tool access"——本文 <b>w/o Self-Expl.</b> 配置（检索+沙盒、无离线自探索）即 retrieve–execute–repair；<b>RAG</b> 配置即 retrieval-only。<b>ZhuLong Full</b> = retrieve + execute + repair + offline self-exploration，与 w/o Self-Expl. 的差（+3.1pp pooled）正是"加了离线自探索的 retrieve–execute–repair"相对于"裸 retrieve–execute–repair"的增量。</p>
+<p><b>拟补一句（加在 <code>6_exp.tex:41</code> 末尾）：</b></p>
+<p class="quote new">The w/o-Self-Exploration and RAG configurations operationalize the retrieve–execute–repair and retrieval-only baselines the reviewer requests; their gap to ZhuLong (Full) isolates the offline-self-exploration increment under the same tool access and execution budget, which is the controlled comparison the protocol permits.</p>
+<p>评审 §79 推荐的"stronger iterative baseline with the same execution-call budget"对应本文 S2 的 budget-k 扫描（<code>6_exp.tex:68</code>，k=1/3/10 + lagged channel）——已展开。不再单加新基线。</p>
+
+<h3>1.5 意见 #5 — 组件贡献不均匀（Major）</h3>
+<p><b>意见摘录：</b><span class="quote">"The full system does not win every slice. On SKILL, ZhuLong scores 60.3%, below the 61.5% reported without offline self-exploration. On PyAether, removing retrieval barely hurts … The paper itself notes that toolchain-specific effects vary substantially."</span></p>
+<p><b>判定：</b><span class="verdict v-done">已落实</span>（叙述）+ <span class="verdict v-todo">待改</span>（Wilson CI）</p>
+<p><b>证据位置：</b> <code>6_exp.tex:56</code>、<code>6_exp.tex:62</code>、<code>6_exp.tex:105</code>、<code>7_discussion.tex:7</code></p>
+<p><b>现行正文（已写）：</b></p>
+<ul>
+  <li><code>6_exp.tex:56</code>：PyAether 上回读通道可替代检索（86.7% trace 用 dir()/inspect/__doc__ 沙盒内省），故 w/o Retrieval 在 PyAether 反升（81.0 vs 81.4）——已解释为"检索只是 Ω 的一种实现而非通道本身"。</li>
+  <li><code>6_exp.tex:62</code>：自探索是"cost-negative rung"，移除检索使 agent 退化为盲探沙盒（2.3× 时间）。</li>
+  <li><code>6_exp.tex:105</code>：SKILL 上 Full 落后 w/o-Self-Expl. −1.2pp，明确披露；各切片组件幅度差异（execution +26.4pp on SKILL vs +2.6pp on Tcl；retrieval redundant on PyAether but +21.3/+14.1pp on SKILL/Tcl）已逐项列出。</li>
+  <li><code>7_discussion.tex:7</code>：self-exploration +3.1pp 已明确定性为"complementary, not headline"。</li>
+</ul>
+<p>评审推荐"reframe as generally effective architecture with toolchain-dependent component value, rather than implying every component is individually necessary in every setting"——本文 §6.3 L105 已用"the structure (observation and execution jointly closing the loop) is shared"措辞做了 reframe，但摘要仍称"retrieval, documentation inspection, and sandbox execution … into a closed loop"未明示组件并非处处必需。建议在摘要不动（空间紧），在 §6.3 末加一句强化 reframe。</p>
+<p><b>拟补一句（加在 <code>6_exp.tex:105</code> 末尾）：</b></p>
+<p class="quote new">The contribution is thus a generally effective architecture whose component magnitudes are toolchain-dependent; on PyAether the read-back channel substitutes for retrieval, and on SKILL the offline-self-exploration increment is locally negative, but the joint observation+execution loop is shared and reproduces on every slice.</p>
+<p><b>Wilson CI（待改项）：</b> 评审 §128 明确要求"confidence intervals and paired comparisons"。本文现行 5 配置 × 5 run 仅报 mean±s.d.，未给 CI。拟在 <code>6_exp.tex:50</code> 主结果句后加一句：</p>
+<p class="quote new">Wilson 95% intervals on the pooled Pass@1 are Full [72.7, 78.5], RAG [58.6, 66.2], w/o-Self-Expl. [69.4, 75.4], w/o-Retrieval [72.0, 78.0], Pure-LLM [15.0, 21.8]; the controlled N'→F read-back gap 13.5pp has a paired bootstrap 95% interval [8.2, 18.4]pp.</p>
+<p><span class="todo">注（待重新跑统计）：</span> 上述 Wilson / bootstrap 数值为<b>占位推测</b>，需用 <code>zhulong_results.md</code> 的 5-run 原始数据重算后填入。本轮未跑统计脚本，标 <span class="verdict v-todo">待改</span>。</p>
+
+<h2>2. 五条 Strongly-recommended 逐条回应</h2>
+
+<h3>2.1 §155-1 — latency / tool calls / token / cost 与 Pass@1 并列</h3>
+<p><b>判定：</b><span class="verdict v-done">已落实</span>（latency + tool-calls）+ <span class="verdict v-partial">部分落实</span>（token / cost 未单列）</p>
+<p><b>证据：</b> <code>6_exp.tex:6,16</code> 主结果表右两列为 291-task 审计子集的 per-task operating cost（latency + tool-calls，5-run mean±s.d.）。Token usage 与 USD cost 未在正文单列——审计子集仅含 291 任务，PyAether 158 任务未审计，故未做 pooled token 表。<b>拟在 <code>6_exp.tex:62</code> 的"27% net-active solve time"句后补一句：</b></p>
+<p class="quote new">Per-task token usage and USD cost on the 291-task audited subset are reported in the supplementary material; the full-system median is X tokens / $Y per task, vs. Z / $W for w/o-Retrieval (which spends 2.3× the time but fewer tokens, since blind sandbox probing fails fast).</p>
+<p><span class="todo">注：</span> X/Y/Z/W 为占位，需从审计子集原始日志提取。<span class="verdict v-todo">待改</span>。</p>
+
+<h3>2.2 §158-2 — SKILL 自探索回归 + 大方差解释</h3>
+<p><b>判定：</b><span class="verdict v-done">已落实</span>（SKILL）+ <span class="verdict v-partial">部分落实</span>（方差）</p>
+<p><b>证据：</b> <code>6_exp.tex:105</code> 已披露 SKILL Full −1.2pp；<code>7_discussion.tex:7</code> 已点 "Tcl w/o Retrieval ±13.8" 高方差。SKILL 自探索回归的<b>机制</b>解释目前是"toolchain-specific"——本文未深挖原因。评审 §128 要求"investigate why offline self-exploration hurts SKILL"。<b>拟在 <code>7_discussion.tex:7</code> 第三 limitation 内补一句：</b></p>
+<p class="quote new">The SKILL self-exploration regression (−1.2pp) is consistent with SKILL's smaller API surface: offline self-exploration enriches L1–L3 facts, but on SKILL the marginal fact is more often redundant with what retrieval already returns, so the added context can crowd out task-relevant evidence; a per-task error analysis of the SKILL slice is in progress.</p>
+<p><span class="todo">注：</span> "consistent with … smaller API surface"为<b>推测</b>，需 SKILL 切片的 per-task 失败分析支撑。标 <span class="verdict v-partial">部分落实</span>。</p>
+
+<h3>2.3 §159-3 — WaveView / Innovus 分开报</h3>
+<p><b>判定：</b><span class="verdict v-defend">已防御</span>（空间）</p>
+<p><b>证据：</b> <code>6_exp.tex:84,95</code> Table 4 注"Tcl pools WaveView (77) and Innovus (57)"——已明示合并。7 页正文空间紧（评审 §137 也说"if space permits"），单拆 WaveView/Innovus 两列会使主表过宽。<b>拟在 <code>6_exp.tex:95</code> 表注补一句：</b></p>
+<p class="quote new">Per-host WaveView (77) and Innovus (57) Pass@1 for all configurations are reported in the supplementary material; the pooled Tcl column aggregates them with weights 77/134 and 57/134.</p>
+<p><span class="todo">注：</span> 需 supplementary material 真有 per-host 数据。标 <span class="verdict v-partial">部分落实</span>。</p>
+
+<h3>2.4 §160-4 — retrieval 通道 vs 实时设计态观测，二者不可互换</h3>
+<p><b>判定：</b><span class="verdict v-done">已落实</span></p>
+<p><b>证据：</b> <code>6_exp.tex:56-57</code> 明确写"Retrieval is thus one <em>implementation</em> of Ω, not the channel itself; what is substitutable is the implementation, not Ω"，并给出 PyAether 上沙盒内省（dir()/inspect/__doc__）替代检索的机制。这正是评审要的"clarify the distinction"。</p>
+
+<h3>2.5 §161-5 — 量产部署的可量化证据</h3>
+<p><b>判定：</b><span class="verdict v-partial">部分落实</span></p>
+<p><b>证据：</b> <code>0_abstract.tex:21</code> 与 <code>1_intro.tex</code>（待核）有"deployed in production EDA flows at a leading memory design house"措辞。<b>注：</b> 早期版本摘要写"服务数百名工程师"，现行 <code>0_abstract.tex:21</code> 已改为"deployed in production EDA flows at a leading memory design house"——更保守但更模糊。评审要"adoption / task completion / engineer time saved"。<span class="todo">需用户确认可披露的部署指标</span>——若无授权，应在 <code>7_discussion.tex</code> 加"deployment metrics are subject to a separate disclosure review and will be reported in an extended version"。</p>
+
+<h2>3. 六条 Revision-priority 逐条回应</h2>
+<table>
+<tr><th>#</th><th>评审要求</th><th>判定</th><th>证据 / 拟改</th></tr>
+<tr><td>1</td><td>Correct the 57.4-point observation claim everywhere</td><td><span class="verdict v-partial">部分落实</span></td><td>§4.2、§6.2 已分；摘要拟改见本函 §1.2。</td></tr>
+<tr><td>2</td><td>Reframe or formalize the grounding-gap claim</td><td><span class="verdict v-done">已落实</span></td><td>§4.2 已降为 Claim + "prediction rather than theorem"（<code>4_grounding.tex:56</code>）。</td></tr>
+<tr><td>3</td><td>Strengthen baseline + reproducibility story</td><td><span class="verdict v-partial">部分落实</span></td><td>基线见 §1.4；reproducibility 见 §1.3 拟补 §5.5。</td></tr>
+<tr><td>4</td><td>Add cost and statistical evidence</td><td><span class="verdict v-partial">部分落实</span></td><td>cost 列已在主表（<code>6_exp.tex:6</code>）；Wilson CI / paired bootstrap 待重算（§1.5）。</td></tr>
+<tr><td>5</td><td>Explain cross-runtime regressions; split Tcl</td><td><span class="verdict v-done">已落实</span>（回归）</td><td>SKILL −1.2pp 已披露（<code>6_exp.tex:105</code>）；Tcl 拆分见 §2.3 拟补表注。</td></tr>
+<tr><td>6</td><td>Tighten contribution statement</td><td><span class="verdict v-partial">部分落实</span></td><td>摘要拟改 §1.1 + §1.2 已强化"empirical system + testable claim"定位。</td></tr>
+</table>
+
+<h2>4. 拟落盘的 LaTeX 改动清单（commit 计划）</h2>
+<table>
+<tr><th>文件</th><th>位置</th><th>改动</th><th>状态</th></tr>
+<tr><td><code>0_abstract.tex</code></td><td>L14-16</td><td>"theoretical grounding showing … bounds" → "framework … proposes as a testable claim"</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>0_abstract.tex</code></td><td>L18-21</td><td>加 13.5pp 受控回读轴 + 3.3pp B 档；57.4pp 标"system-level"</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>5_bench.tex</code></td><td>末尾</td><td>新增 §5.5 Release and reproducibility（30-task 公开子集待用户确认）</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L41</td><td>补"w/o-Self-Expl. = retrieve–execute–repair baseline"对齐句</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L50</td><td>主结果句后加 Wilson 95% CI（数值待重算）</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L62</td><td>补 token / USD cost 指向 supplementary</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L95</td><td>表注补 WaveView/Innovus 拆分指向 supplementary</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L105</td><td>补"generally effective architecture, toolchain-dependent magnitude"reframe 句</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>7_discussion.tex</code></td><td>L7</td><td>补 SKILL 自探索回归机制推测 + deployment 指针</td><td><span class="verdict v-todo">待改</span></td></tr>
+</table>
+
+<h2>5. 本轮未做（需用户拍板）</h2>
+<ul>
+  <li><b>30-task PyAether 公开子集是否真存在</b>——若仅依赖公开 Empyrean Aether Python 文档的任务不足 30 个，§5.5 拟补段落的数字需改。</li>
+  <li><b>Wilson CI / paired bootstrap 数值</b>——需用 <code>zhulong_results.md</code> 5-run 原始数据跑统计脚本（<code>scipy</code> 或手算 Wilson），本轮未跑。</li>
+  <li><b>token / USD cost 数字</b>——需从 291-task 审计子集原始日志提取，本轮未跑。</li>
+  <li><b>部署指标可披露范围</b>——需用户与部署方确认。</li>
+  <li><b>SKILL 自探索回归的 per-task 失败分析</b>——需 SKILL 切片 trace 重审，本轮未做。</li>
+</ul>
+
+<h2>6. 不改的项目（已防御）</h2>
+<ul>
+  <li><b>不重做理论证明</b>——评审给了二选一（formalize OR reframe），本文已选 reframe（§4.2 Claim + "prediction rather than theorem"），不再加形式化证明。</li>
+  <li><b>不加新第三方基线</b>——四个商业运行时需授权访问，公开 EDA agent 物理上无法在本文 benchmark 运行；w/o-Self-Expl. 即 retrieve–execute–repair，已通过 §1.4 对齐句说明。</li>
+  <li><b>WaveView/Innovus 不在正文拆两列</b>——7 页空间紧，拟 supplementary 补 per-host。</li>
+  <li><b>摘要"deployed in production"措辞保留</b>——已从早期"数百名工程师"收为"leading memory design house"，进一步量化待部署方授权。</li>
+</ul>
+
+<h2>7. 改稿路线图（按优先级）</h2>
+<ol>
+  <li><b>P0（提交前必改）</b>：摘要 13.5pp split（§1.2）+ 摘要理论措辞柔和化（§1.1）——纯文本改动，无新数据。</li>
+  <li><b>P0</b>：§5.5 Release and reproducibility 段落（§1.3）——文本 + 待用户确认 30-task 数字。</li>
+  <li><b>P1（强烈建议）</b>：Wilson CI / paired bootstrap（§1.5）——需重跑统计脚本。</li>
+  <li><b>P1</b>：§6.3 reframe 句（§1.5）+ §6.2 baseline 对齐句（§1.4）——纯文本。</li>
+  <li><b>P1</b>：token / USD cost 指向 supplementary（§2.1）——需日志提取。</li>
+  <li><b>P2（锦上添花）</b>：SKILL 自探索回归机制推测（§2.2）+ WaveView/Innovus 拆分表注（§2.3）+ deployment 指针（§2.5）。</li>
+  <li><b>P2</b>：重编译 pdflatex×1 + bibtex + pdflatex×2，验 7 页 / 0 undefined / 无 Overfull。</li>
+</ol>
+
+<div class="meta" style="margin-top:40px;border-top:1px solid #ccc;padding-top:10px;">
+  本回复函为 ZhuLong agent 10-25 deliverable，10-26 落盘。所有"已落实"项均锚定到具体 LaTeX 文件行号；所有"待改"项给出拟改文本；所有"推测"内容已显式标注。无虚构数字、无虚构文献。
+</div>
+
+</body>
+</html>
