@@ -1,11 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
 
-> 🆕 2026-10-27 04:0x #800：✅ **8卡 smoke PASS + 🚀 16卡正式 S1（方案A）已起跑**。smoke 60/60 步 0 NaN、loss 11.55→8.32、step~6.94s(8卡gbs128)、max mem 72.8GB(≤78GB)、θ=1e6 运行时确认、DDP 修复验证（0 崩溃、NCCL 优雅退出）。preflight S1 全 PASS（2 FAIL 均 Decay-only）。**16卡正式 S1**：`GBS=256 ITERS=350000 bash code/baize-llm/scripts/train.sh s1`（PID 2102542 setsid），DP=16 NNODES=2(.12 rank0 + .29 rank1)，tok/step=4,194,304，总 1.468T token，ETA 27.67 天(@613,992 tok/s)，--save-interval 2000，θ=1e6，FP8 tensorwise，graph OFF。✅ 双节点已上 GPU（各~19GB init→~72-77GB 训练），NCCL 跨节点 ring 连通(PXN0 GDR1)，rank0 .12 数据索引中(~20-30min 到首步)。**下一步**：step 50-200 中位 ≥600K tok/s = 22:0x 验收；ckpt@step2000 落地检查 `nemo_experiments/baize2b/checkpoints/`。
-> - **未完成指令：有**（22:0x 验收 step50-200 吞吐 ≥600K + nsys 归因待补[若 Plan A 不达标] + --lr-decay-shape 补丁[Decay阶段]）。⇒ **WAITING: 1**（16卡正式 S1 运行中，~30min 后查首步吞吐/0NaN/0崩溃；非空转，60min 判死前刷心跳）。
-> 📦 §#799 流水（data 解除 + DDP fix commit e34d5a5ea + 8卡 smoke 起跑）已压缩 → 本条结论已并入 #800；DDP fix 根因=DETAIL wrapper 缺 reduce_scatter_tensor_coalesced。需要时读 daily-memories/2026-10-27.md。
+> 🆕 2026-10-27 06:2x #801：🔴 **#800 S1 崩溃根因定位+修复+重启**。#800 S1(PID 2102542) 04:23 崩于 step70，rank7/local_rank7(.12) DataLoader worker OOM-killed(signal Killed)。**根因**：train.sh ssh→.12 只 export NCCL_ENV+PYTORCH_ENV，**未传 BAIZE_NUM_WORKERS** → recipe.py .12 默认 num_workers=8(非4) → 8×8=64 procs → swap耗尽 → OOM kill。#798 降 num_workers=4 **只在.29生效，.12从未生效**。**修复**(commit pretrain train:)：PYTORCH_ENV += BAIZE_NUM_WORKERS=4 + TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank(默认开，替代error_file=N/A)。**重启**：06:29 S1 gbs256/350k/θ=1e6(PID 311325)，ssh已确认传BAIZE_NUM_WORKERS=4，双节点上卡(.12全19GB/100%、.29 init)，数据索引中(~20-30min首步)。**#800崩溃前吞吐**：step60=8.15s→514K、step70=8.28s→507K(趋势下降，未到稳态step50-200)。**下一步**：step50-200中位≥600K=22:0x验收；若<600K给可行上限+结构性原因+改ETA。📦体积：TASK=33KB(>32KB但未完成运维块不可归档) / MEMORY≈32KB。
+> - 未完成指令：有（22:0x吞吐验收step50-200≥600K + nsys归因[若不达标] + lr-decay-shape补丁[Decay]）。WAITING=0（S1重启中，60s后查首步/0崩溃）。
+> 📦 §#800 流水（04:0x，8卡smoke PASS + 16卡S1起跑→04:23崩于rank7 .12 DataLoader OOM）→ daily-memories/2026-10-27.md；smoke 60/60 PASS(0NaN/loss11.55→8.32/72.8GB/θ=1e6)，S1到step70(loss8.68/0NaN)后崩(num_workers=8非4→#801修复)。
+> 📦 §#799（DDP fix e34d5a5ea + smoke起跑）→ daily-memories/2026-10-27.md；DDP fix根因=DETAIL wrapper缺reduce_scatter_tensor_coalesced。
 
-> 📦 §#798 流水（2026-10-26 23:5x，回应运维令 22:0x：解析归因 F≈2.57s 固定开销/C≈984K + 方案A gbs256 预置 + item6 DataLoader OOM 诊断 + 报告 ETA 修正）已压缩 → daily-memories/2026-10-26.md；**结论**：613K→480K 差额=固定开销摊薄（非计算/通信/数据）；方案A gbs256 预置（GBS/ITERS env 可覆盖）；num_workers 降 4（commit 8b8bf31）；**#798 item6c 加的 DETAIL 已被 #799 证实致 DDP 崩并修复**。需要时再读。
+> 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
 > 📦 §#797 流水（2026-10-26 23:05，RoPE θ 修复：选路径(ii) `--rotary-base` CLI + recipe 透传，commit ae3a093，三重验证 PASS；rank15 结论=θ非崩因；data 阻塞 l1_en_hq）已压缩 → daily-memories/2026-10-26.md；**结论**：θ=1e6 修复 commit ae3a093，静态/--help/mock 三重验证 PASS；**#799 已运行时确认 θ=1e6 + 0崩**（DDP 崩因=DETAIL wrapper，非 θ）；data 阻塞已由 #799 解除。需要时再读。
 

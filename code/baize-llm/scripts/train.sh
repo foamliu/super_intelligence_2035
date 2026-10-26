@@ -170,12 +170,24 @@ NCCL_ENV="NCCL_DEBUG=INFO NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NC
 # (and optionally TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank) before
 # launching train.sh — but note DDP coalesced ops may crash under the wrapper.
 PYTORCH_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 TORCH_NCCL_BLOCKING_WAIT=1"
-# Optional: append distributed-debug vars only if explicitly set in the env
+# 2026-10-27 fix (#801): BAIZE_NUM_WORKERS must reach BOTH nodes.
+# common.env sets BAIZE_NUM_WORKERS=4, but this script only sourced it on .29;
+# the ssh command to .12 exported NCCL_ENV + PYTORCH_ENV but NOT BAIZE_NUM_WORKERS
+# → recipe.py defaulted to 8 on .12 → 8×8=64 worker procs → swap exhaustion →
+# OOM-kill of DataLoader worker → rank7/local_rank7 crash (04:23, same as 21:18).
+# Fix: inject BAIZE_NUM_WORKERS into PYTORCH_ENV (which IS exported to both nodes
+# via `export $PYTORCH_ENV` on local + ssh remote paths).
+PYTORCH_ENV="$PYTORCH_ENV BAIZE_NUM_WORKERS=${BAIZE_NUM_WORKERS:-4}"
+# 2026-10-27 fix (#801): default TORCH_DISTRIBUTED_TORCH_TRACE so crash tracebacks
+# are captured on disk (error_file=<N/A> twice now — 21:18 and 04:23).  Unlike
+# TORCH_DISTRIBUTED_DEBUG=DETAIL (which wraps ProcessGroupNCCL and breaks DDP
+# coalesced ops), TORCH_DISTRIBUTED_TORCH_TRACE only writes per-rank trace files
+# and is safe to always-on.
+: "${TORCH_DISTRIBUTED_TORCH_TRACE:=/tmp/td_trace_%rank}"
+PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_TORCH_TRACE=$TORCH_DISTRIBUTED_TORCH_TRACE"
+# Optional: append DETAIL debug only if explicitly set (breaks DDP coalesced ops!)
 if [ -n "${TORCH_DISTRIBUTED_DEBUG:-}" ]; then
   PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_DEBUG=$TORCH_DISTRIBUTED_DEBUG"
-fi
-if [ -n "${TORCH_DISTRIBUTED_TORCH_TRACE:-}" ]; then
-  PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_TORCH_TRACE=$TORCH_DISTRIBUTED_TORCH_TRACE"
 fi
 
 # ---------- dry-run（跳过 GPU/端口门禁，只验参数与数据）----------
