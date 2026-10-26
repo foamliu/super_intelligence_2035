@@ -30,6 +30,7 @@ JUDGMENT_TSV_DEFAULT = os.path.join(RUN_DATA, "prune_unmapped_judgment_20261025.
 DU_CACHE_DEFAULT = os.path.join(RUN_DATA, ".du_download_cache.tsv")
 INPROGRESS_DEFAULT = os.path.join(RUN_DATA, "mapping_inprogress.txt")
 CLEANUP_TSV_DEFAULT = os.path.join(RUN_DATA, "cleanup_batches_20261025.tsv")
+UNTOKENIZED_TSV_DEFAULT = os.path.join(RUN_DATA, "untokenized_sft_sources.tsv")
 OUT_DEFAULT = os.path.join(RUN_DATA, "DATA_MAPPING.md")
 
 GB = 1024 ** 3
@@ -118,6 +119,27 @@ def load_cleanup_batches(path):
                     "released_bytes": int(row.get("released_bytes", "0") or "0"),
                     "manifest": row.get("manifest", ""),
                     "status": row.get("status", ""),
+                })
+    return rows
+
+
+def load_untokenized(path):
+    """读未分词源侧车 untokenized_sft_sources.tsv（运维令 2026-10-26 14:4x）。
+    列：download_dir, files, bytes, status, evidence_cmd, structure, notes。
+    不存在 ⇒ 空列表（保持向后兼容 / 幂等）。"""
+    rows = []
+    if os.path.exists(path):
+        with open(path, newline="") as f:
+            r = csv.DictReader(f, delimiter="\t")
+            for row in r:
+                rows.append({
+                    "download_dir": row.get("download_dir", ""),
+                    "files": int(row.get("files", "0") or "0"),
+                    "bytes": int(row.get("bytes", "0") or "0"),
+                    "status": row.get("status", "未分词"),
+                    "evidence_cmd": row.get("evidence_cmd", ""),
+                    "structure": row.get("structure", ""),
+                    "notes": row.get("notes", ""),
                 })
     return rows
 
@@ -217,6 +239,7 @@ def build_md(args):
         du_cache = load_du_cache(args.du_cache)
     inprogress = load_inprogress(args.inprogress)
     deleted = load_deleted(args.deleted_tsv, args.judgment_tsv)
+    untokenized = load_untokenized(args.untokenized_tsv)
 
     idx_mtime = file_mtime_iso(args.index)
     idx_size = os.path.getsize(args.index) if os.path.exists(args.index) else 0
@@ -254,9 +277,29 @@ def build_md(args):
         s_bin += shards; s_idx += shards; s_json += shards
         s_bytes += byts; s_tokens += tokens; s_dl += dl_bytes
 
+    # —— 未分词源（运维令 2026-10-26 14:4x）：SFT/指令微调 JSONL，未进分词镜像 ——
+    # 追加在已分词行之后、合计行之前；.bin/.idx/.json=0、tokens=0、分词字节=0，
+    # 仅下载目录字节计入合计（如实登记「未分词」，不伪造「镜像完整」）。
+    s_ut_files = s_ut_dl = 0
+    next_i = len(index_rows) + 1
+    for u in untokenized:
+        u_dl = u["download_dir"]
+        u_bytes = u["bytes"]
+        u_files = u["files"]
+        u_status = u["status"]
+        u_evidence = f"未分词：{u['evidence_cmd']}"
+        u_ratio = "—"
+        L.append(f"| {next_i} | `{short_path(u_dl)}` | — | 0 | 0 | 0 | 0 | 0 | 0 | {u_bytes:,} | {u_ratio} | {u_status} | — | {u_evidence} |")
+        s_dl += u_bytes
+        s_ut_files += u_files
+        s_ut_dl += u_bytes
+        next_i += 1
+
     L.append(f"| **合计** | | | **{s_bin}** | **{s_idx}** | **{s_json}** | **{s_bytes:,}** | **{s_bytes/GB:.0f}** | **{s_tokens:,}** | **{s_dl:,}** | **{s_dl/GB:.0f} GB** | | | 误差 0 |")
     L.append("")
     L.append(f"核对式：`sum(.bin)={s_bin} = sum(.idx)={s_idx} = sum(.json)={s_json}`；`sum(分词字节)={s_bytes:,}`；`sum(tokens)={s_tokens:,}`；`sum(下载字节)={s_dl:,}`。")
+    if untokenized:
+        L.append(f"> 未分词源小计（运维令 2026-10-26 14:4x）：{len(untokenized)} 个 JSONL 指令微调数据集，{s_ut_files} 个 `.jsonl` 文件，下载目录字节 {s_ut_dl:,}（≈ {s_ut_dl/GB:.1f} GB），状态=未分词，未进 `.bin/.idx/.json` 分词镜像。明细：`run/data/untokenized_sft_sources.tsv`。")
     L.append("")
     L.append("> 注：`env14_*` 真身在 `/nas_train/.../baize-data/text/`（与 `tokenized/` 同盘 ⇒ hardlink）；`full_*` 真身在 `/nas_env/app.e0031982/baize-data/`（跨盘 ⇒ symlink）。两者均属「下载的一律保留」，未删未改未移。`下载/分词字节比` = 下载目录字节 ÷ 分词产物字节（int32 token×4B 常大于压缩 parquet，故比值多 < 1）。")
     L.append("")
@@ -317,6 +360,7 @@ def main():
     ap.add_argument("--du-cache", default=DU_CACHE_DEFAULT)
     ap.add_argument("--inprogress", default=INPROGRESS_DEFAULT)
     ap.add_argument("--cleanup-tsv", default=CLEANUP_TSV_DEFAULT)
+    ap.add_argument("--untokenized-tsv", default=UNTOKENIZED_TSV_DEFAULT, help="未分词源侧车 TSV（运维令 2026-10-26 14:4x）")
     ap.add_argument("--out", default=OUT_DEFAULT)
     ap.add_argument("--measure", action="store_true", help="重新 du 下载目录并刷新缓存")
     ap.add_argument("--check-idempotent", action="store_true", help="连跑两次比较字节，退出码 0=幂等")

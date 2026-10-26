@@ -23,9 +23,12 @@
 | 8 | `…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq` | `…/Ultra-FineWeb/ultrafineweb_l1_en_hq` | 94 | 94 | 94 | 603,519,735,520 | 562 | 150,155,374,778 | 477,975,290,461 | 0.792 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L9: triplet=OK inode_ok=94 (hardlink) |
 | 9 | `…/Ultra-FineWeb/data/ultrafineweb_zh` | `…/Ultra-FineWeb/ultrafineweb_zh` | 4 | 4 | 4 | 453,644,894,252 | 422 | 112,756,190,641 | 324,321,522,155 | 0.715 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L10: triplet=OK inode_ok=4 (hardlink) |
 | 10 | `…/UltraX-Preview/data/UltraX-AICC` | `…/UltraX-Preview/UltraX-AICC` | 1 | 1 | 1 | 46,394,689,578 | 43 | 11,492,264,080 | 68,553,927,738 | 1.478 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L11: triplet=OK inode_ok=1 (hardlink) |
-| **合计** | | | **815** | **815** | **815** | **17,256,859,646,891** | **16072** | **4,474,825,355,971** | **12,647,981,934,192** | **11779 GB** | | | 误差 0 |
+| 11 | `…/UltraData-SFT-2605/data/` | — | 0 | 0 | 0 | 0 | 0 | 0 | 318,990,486,183 | — | 未分词 | — | 未分词：find /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/ -name '*.jsonl' | wc -l ; du -sb /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/ |
+| 12 | `…/UltraData-SFT-Agent-2609/data/` | — | 0 | 0 | 0 | 0 | 0 | 0 | 54,220,373,384 | — | 未分词 | — | 未分词：find /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/ -name '*.jsonl' | wc -l ; du -sb /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/ |
+| **合计** | | | **815** | **815** | **815** | **17,256,859,646,891** | **16072** | **4,474,825,355,971** | **13,021,192,793,759** | **12127 GB** | | | 误差 0 |
 
-核对式：`sum(.bin)=815 = sum(.idx)=815 = sum(.json)=815`；`sum(分词字节)=17,256,859,646,891`；`sum(tokens)=4,474,825,355,971`；`sum(下载字节)=12,647,981,934,192`。
+核对式：`sum(.bin)=815 = sum(.idx)=815 = sum(.json)=815`；`sum(分词字节)=17,256,859,646,891`；`sum(tokens)=4,474,825,355,971`；`sum(下载字节)=13,021,192,793,759`。
+> 未分词源小计（运维令 2026-10-26 14:4x）：2 个 JSONL 指令微调数据集，1554 个 `.jsonl` 文件，下载目录字节 373,210,859,567（≈ 347.6 GB），状态=未分词，未进 `.bin/.idx/.json` 分词镜像。明细：`run/data/untokenized_sft_sources.tsv`。
 
 > 注：`env14_*` 真身在 `/nas_train/.../baize-data/text/`（与 `tokenized/` 同盘 ⇒ hardlink）；`full_*` 真身在 `/nas_env/app.e0031982/baize-data/`（跨盘 ⇒ symlink）。两者均属「下载的一律保留」，未删未改未移。`下载/分词字节比` = 下载目录字节 ÷ 分词产物字节（int32 token×4B 常大于压缩 parquet，故比值多 < 1）。
 
