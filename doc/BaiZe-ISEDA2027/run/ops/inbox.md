@@ -1,4 +1,35 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 213 | TARGET: 29 -->
+## RUN_ID 213 — 只读：S1 正式/worker 日志原文 + 双机 rendezvous 端口 + 进程是否还在动
+
+```bash
+set -u
+echo "=== RUN_ID 213 | s1 hang diag | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 正式 S1 日志（/tmp/baize_s1_formal.log，尾 45 行）"
+[ -f /tmp/baize_s1_formal.log ] && tail -45 /tmp/baize_s1_formal.log | cut -c1-190 || echo "  missing"
+echo
+echo "[2] worker 节点日志（/tmp/baize_s1_worker_node.log，尾 45 行）"
+[ -f /tmp/baize_s1_worker_node.log ] && tail -45 /tmp/baize_s1_worker_node.log | cut -c1-190 || echo "  missing"
+echo
+echo "[3] smoke3 末尾（是否通过）"
+tail -8 /tmp/baize_s1_smoke3.log 2>/dev/null | cut -c1-190 || echo "  missing"
+echo
+echo "[4] 双机 torchrun 进程（etimes 是否在增长 / 参数尾部）"
+ps -eo pid,etimes,args= | grep -E 'torchrun' | grep -Ev 'grep|cline|bun|node /' | cut -c1-300
+echo
+echo "[5] rendezvous / TB 端口"
+ss -ltn 2>/dev/null | grep -E ':(29[0-9]{3}|6006)\b' | cut -c1-90 || echo "  (no relevant port)"
+echo
+echo "[6] .29 → .12 连通性（ping + ssh 快速）"
+timeout 6 ping -c 2 10.239.2.12 2>&1 | tail -3
+timeout 12 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  .12 ssh ok"; ps -eo pid,etimes,args= | grep torchrun | grep -v grep | cut -c1-200' 2>&1 | cut -c1-220
+echo
+echo "[7] 实验目录是否出现 baize2b"
+ls -lt /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments 2>/dev/null | head -6 | awk '{print "  "$6" "$7" "$8"  "$9}'
+echo "=== DONE 213 ==="
+```
+
 <!-- RUN_ID: 212 | TARGET: 29 -->
 ## RUN_ID 212 — 只读：torchrun 为何 GPU 0%（cmd/日志/.12 状态）+ train.sh 未提交改动是什么
 
