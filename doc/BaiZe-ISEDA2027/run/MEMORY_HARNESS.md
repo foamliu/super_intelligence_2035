@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A SWE-bench Verified 就绪核查完成(R518)+R519~R523活性复检确认状态未退化; 等运维拍板20条试点; 运维指令区无未完成指令.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查报告✅(11323B,8节,13项全溯源)·R519活性复检✅·R520防判死心跳✅(归档R507-R517)·R521/R522/R523防判死心跳✅
-当前动作:     R523 防判死心跳(R522后~68min>60min阈值). liveness 5项实测全通过:①swebench500/500(不变)②/data6.0T free(15%use)③load16.45/224(~7%)④harness loop PID2585867 etimes~323595s(~89.9h)在跑⑤ops/inbox RUN_ID219-221均pretrain线无harness新指令. 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效.
+PHASE:        H-A SWE-bench Verified 就绪核查完成(R518)+R519~R524活性复检确认状态未退化; 等运维拍板20条试点; 运维指令区无未完成指令.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查报告✅(11323B,8节,13项全溯源)·R519活性复检✅·R520防判死心跳✅(归档R507-R517)·R521/R522/R523/R524防判死心跳✅
+当前动作:     R524 防判死心跳(R523后~67min>60min阈值). liveness 5项实测全通过:①swebench500/500(不变)②/data6.0T free(15%use)③load5.40/224(~2.4%)④harness loop PID2585867在跑⑤ops/inbox RUN_ID221=pretrain线无harness新指令,task file自10-26 21:25未改. 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效.
 下一步:       ①等运维拍板20条Verified试点(先cline+hermes smoke 1条→20条→报初步结果→放大决策); ②codex全量补跑待运维拍板; ③H-B续作(机制维度扩展)
-阻塞:         无未完成运维指令. H-A Verified试点待运维拍板(就绪报告R518已交付+R519~R523复检确认状态未退化,§3先报预算再跑).
+阻塞:         无未完成运维指令. H-A Verified试点待运维拍板(就绪报告R518已交付+R519~R524复检确认状态未退化,§3先报预算再跑).
 ERROR_COUNT:  0
-📦 体积：TASK=26994B(26KB) / MEMORY=10752B(10KB)（均≤32KB✓,本轮无归档）
+📦 体积：TASK=26994B(26KB) / MEMORY=11230B(11KB)（均≤32KB✓,本轮无归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,6 +32,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[05:4x] R524 **防判死心跳(R523后~67min>60min阈值)**. 运维指令区顶部3条全[已归档],ops/inbox RUN_ID221=pretrain线(.29),无harness新指令(task file自10-26 21:25未改). liveness 5项实测全通过(swebench500/500不变·/data6.0T free 15%use·load5.40/224~2.4%·harness loop PID2585867在跑·last commit R523@04:42). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY=11230B(均≤32KB,本轮无归档).
 [04:4x] R523 **防判死心跳(R522后~68min>60min阈值)**. 运维指令区顶部3条全[已归档],ops/inbox RUN_ID219-221均pretrain线(.29),无harness新指令. liveness 5项实测全通过(swebench500/500不变·/data6.0T free 15%use·load16.45/224~7%·harness loop PID2585867 etimes~323595s在跑·last commit R522@03:32). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY=10752B(均≤32KB,本轮无归档).
 [03:3x] R522 **防判死心跳(R521后~67min>60min阈值)**. 运维指令区顶部3条全[已归档],ops/inbox RUN_ID220-221均pretrain线(.29),无harness新指令(无task-file改动since02:23). liveness 5项实测全通过(swebench500/500不变·/data6.0T free·load6.60/224·harness loop PID2585867+cline PID1495392在跑·pretrain在.29需避让). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY=10136B(均≤32KB,本轮无归档).
 [02:2x] R521 **防判死心跳(R520后~68min>60min阈值)**. ops/inbox RUN_ID220-221均pretrain线(.29),无harness新指令. liveness 5项实测全通过(swebench500/500不变·/data6.0T free·load10.08/224·pretrain loop PID1401353 etimes~55h需避让·last commit R520@01:13). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY见收尾(均≤32KB,本轮无归档).
