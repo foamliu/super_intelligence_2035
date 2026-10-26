@@ -112,7 +112,10 @@ for entry in "${SOURCES[@]}"; do
   SRC_BINS=$(find "$SRC_TOK" -maxdepth 1 -name '*.bin' 2>/dev/null | wc -l)
   SRC_IDXS=$(find "$SRC_TOK" -maxdepth 1 -name '*.idx' 2>/dev/null | wc -l)
   SRC_JSONS=$(find "$SRC_TOK" -maxdepth 1 -name '*.json' ! -name 'MANIFEST.json' 2>/dev/null | wc -l)
-  SRC_BYTES=$(du -sb "$SRC_TOK" 2>/dev/null | awk '{print $1}')
+  # 2026-10-26 修复：du -sb 跨 NFS 会因目录元数据大小不同而误报 MISMATCH（run1/run2 即因此停下）。
+  # 改为对各 .bin/.idx/.json 逐文件 stat -c%s 求和（排除 MANIFEST.json，与计数口径一致），
+  # 配合计数校验 ⇒ 任一文件尺寸不对即和值不等，足以判定 rsync 是否完整。
+  SRC_BYTES=$(find "$SRC_TOK" -maxdepth 1 \( -name '*.bin' -o -name '*.idx' -o -name '*.json' \) ! -name 'MANIFEST.json' -exec stat -c%s {} + 2>/dev/null | awk '{s+=$1} END{print s+0}')
   echo "  [$(date '+%T')] src tok: ${SRC_BINS} .bin, ${SRC_IDXS} .idx, ${SRC_JSONS} .json, ${SRC_BYTES} bytes"
 
   echo "  [$(date '+%T')] starting rsync (bwlimit=${BWLIMIT}KiB/s)..."
@@ -130,7 +133,8 @@ for entry in "${SOURCES[@]}"; do
   DST_BINS=$(find "$DST" -maxdepth 1 -name '*.bin' 2>/dev/null | wc -l)
   DST_IDXS=$(find "$DST" -maxdepth 1 -name '*.idx' 2>/dev/null | wc -l)
   DST_JSONS=$(find "$DST" -maxdepth 1 -name '*.json' ! -name 'MANIFEST.json' 2>/dev/null | wc -l)
-  DST_BYTES=$(du -sb "$DST" 2>/dev/null | awk '{print $1}')
+  # 2026-10-26 修复：同 SRC_BYTES，改 du -sb 为逐文件 stat -c%s 求和（跨 NFS 目录元数据不一致的根因）。
+  DST_BYTES=$(find "$DST" -maxdepth 1 \( -name '*.bin' -o -name '*.idx' -o -name '*.json' \) ! -name 'MANIFEST.json' -exec stat -c%s {} + 2>/dev/null | awk '{s+=$1} END{print s+0}')
   echo "  [$(date '+%T')] dst:      ${DST_BINS} .bin, ${DST_IDXS} .idx, ${DST_JSONS} .json, ${DST_BYTES} bytes"
 
   OK=1
