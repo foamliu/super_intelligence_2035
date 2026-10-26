@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
 # baize-llm · 训练统一入口
-#   bash scripts/train.sh s1|s2|decay [--smoke N] [--dry-run] [--nodes N] [--name X]
+#   bash scripts/train.sh s1|s2|decay|longctx [--smoke N] [--dry-run] [--nodes N] [--name X]
 # 配方固定：Mamba2-hybrid 2.2B / 16K / AdamW / WSD(D=exponential) / graph OFF / FP8 tensorwise
 # ============================================================
 set -uo pipefail
@@ -29,7 +29,7 @@ while [ $# -gt 0 ]; do
     *) die "未知参数：$1" ;;
   esac
 done
-case "$STAGE" in s1|s2|decay) ;; *) usage; exit 2 ;; esac
+case "$STAGE" in s1|s2|decay|longctx) ;; *) usage; exit 2 ;; esac
 
 # shellcheck source=../configs/common.env
 source "$BAIZE_LLM_HOME/configs/common.env"

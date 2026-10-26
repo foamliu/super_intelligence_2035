@@ -95,6 +95,7 @@
 <tr><td>监控</td><td><b>TensorBoard</b>（.29:6006）</td><td>日志 <code>nemo_experiments/&lt;name&gt;/tb_logs/</code>；<code>scripts/tb_6006.sh</code> 启停</td></tr>
 <tr><td>Checkpoint</td><td><b>每 2,000 步</b></td><td>2026-10-26 用户补令；S1 350 个 / S2 175 个 / Decay 10 个 ⇒ 必须配 <code>prune_ckpts.sh</code>（保留最近 3 + 每 25k 里程碑），否则 4.4–30GB/个会写满盘</td></tr>
 <tr><td>RoPE / 位置</td><td><b>max_pos = 1,048,576（1M）· theta = 1e6</b></td><td>2026-10-26 用户补令：56 层中 <b>4 层全注意力</b>吃 RoPE。⚠️ 只抬 max_pos 不抬 theta ⇒ 实测全 NaN（2026-10-06 B1），两者必须同改（详见 §5.7）</td></tr>
+<tr><td>长上下文策略</td><td><b>ABF</b>（+ 可选阶梯扩展）</td><td>2026-10-26 用户补令「长上下文用 ABF，要为此做好准备」：训练保持 16K，能力靠 ABF 外推到 1M；产品目标 32K–128K（详见 §5.8）</td></tr>
 <tr><td>每步 token</td><td class="num">2M / 4M / 4M</td><td>S1=2M；S2 与 Decay=4M（与 #792 E1 实测档一致）</td></tr>
 </tbody>
 </table>
@@ -291,18 +292,24 @@
 ├── configs/
 │   ├── common.env                   # 路径 / 16K·CP1·DP16 / AdamW / LR / TB
 │   ├── s1.env  s2.env  decay.env    # 三阶段（累计 iters：700k → 1,050k → 1,070k）
+│   ├── longctx.env / longctx_ladder.tsv  # 长上下文 ABF 阶梯（32K/64K/128K）
 │   ├── blend_s1.tsv                 # 7 源 prop/epochs（= 本报告 §2.2）
 │   └── blend_decay.tsv              # Decay 配比（= §2.3）
 ├── scripts/
 │   ├── preflight.sh                 # 一条命令自检（路径/launcher 特性/数据/GPU/磁盘/端口）
 │   ├── gen_blend.py                 # 由 tokenized 目录生成 --train-data-path（含 epochs 对账）
-│   ├── train.sh                     # s1|s2|decay（--smoke N / --dry-run / --nodes N）
+│   ├── train.sh                     # s1|s2|decay|longctx（--smoke N / --dry-run / --nodes N）
 │   ├── tb_6006.sh                   # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py               # WSD-指数曲线 + 与 TB 的 csv 对账
 │   ├── prune_ckpts.sh               # ckpt 保留策略（最近 3 + 每 25k 里程碑，默认 dry-run）
 │   ├── check_rope.py                # 校验 56 层/4 注意力/1M/theta=1e6（导出后卡口）
+│   ├── abf_plan.py                  # ABF 表（θ_ABF / CP / DP / gbs）
+│   ├── check_longctx_data.py        # 长上下文数据体检（EOD → 文档长度分布）
+│   ├── longctx_ladder.sh            # 32K→64K→128K 阶梯扩展（逐级门禁）
 │   └── status.sh                    # 进程/显存/最新步数/ckpt/TB 一览
-└── docs/LAUNCHER_PATCH_EXP_DECAY.md  # 若 launcher 无 --lr-decay-shape 的补丁规格</code></pre>
+└── docs/
+    ├── LAUNCHER_PATCH_EXP_DECAY.md   # launcher 缺 --lr-decay-shape / --rotary-base 的补丁规格
+    └── LONGCTX_ABF_PLAN.md           # 长上下文 ABF 准备方案（口径/阶梯/数据体检/评测矩阵）</code></pre>
 <p>关键命令：<code>bash scripts/preflight.sh</code> → <code>bash scripts/train.sh s1 --smoke 20</code> → <code>bash scripts/train.sh s1</code>（S2/Decay 同理）。三阶段共用 <code>--name baize2b</code>，靠<b>累计 iters</b> 自动续跑，避免「从 0 重新计步」的经典错。</p>
 
 <h3>5.4　开跑前置（阻塞项，如实列出）</h3>
@@ -326,6 +333,7 @@
 <tr><td>6</td><td>正式开跑</td><td>S1 起跑后 30 分钟内提交 <code>pretrain run:</code> 心跳（含 tok/s、峰值显存、TB URL、ckpt 间隔 2000 已生效）</td></tr>
 <tr><td>7</td><td>Checkpoint</td><td>每 2,000 步一个 <code>iter_*</code>；<code>prune_ckpts.sh</code> dry-run 后按「最近 3 + 每 25k 里程碑」清理，<code>df</code> 保持 /nas_train 可用 &gt;15TB</td></tr>
 <tr><td>8</td><td>RoPE / 1M</td><td>启动命令含 <code>--rotary-base 1000000</code>；导出后 <code>check_rope.py</code> PASS（56 层 / attention=4 / max_pos=1048576 / theta=1e6）；前 500 步 loss 抬升 ≤5%</td></tr>
+<tr><td>9</td><td>长上下文 ABF 准备</td><td>① <code>check_longctx_data.py</code> 出 ≥32K/≥128K 的 token 占比（≥20%/≥5%）；② <code>abf_plan.py</code> 表可复现；③ 首个 ckpt 上跑一次「零训练」PPL/passkey 基线（4K→1M）并留档</td></tr>
 </tbody>
 </table>
 
@@ -343,6 +351,23 @@
 <p><b>实现落点</b>：训练期真正生效的是 <code>--rotary-base 1000000</code>（Megatron 逐位置算 RoPE）；<code>max_position_embeddings</code> 只在导出 HF/SGLang 的 <code>config.json</code> 生效。因此「训练能跑」≠「配置达标」，必须走导出后校验。</p>
 <p><b>验收</b>：① <code>train.sh --dry-run</code> 命令里出现 <code>--rotary-base 1000000</code>（launcher 不支持该参数时脚本<b>拒绝开跑</b>，不许静默退回 1e4）；② 导出后用 <code>python scripts/check_rope.py --hf-dir &lt;dir&gt;</code> 校验 <b>56 层 / attention=4 / max_pos=1048576 / theta=1e6 / rope_scaling=None</b>；③ 前 500 步 loss 与 baseline 对照抬升 ≤5%、0 NaN。</p>
 <p><b>已知代价</b>：既有实测的 +10.5%（4K PPL 83.24 vs 75.36）是「在 4K 训练的 ckpt 上事后换 theta」的税；本计划从头训练、theta 初始即 1e6，不背这笔税，但仍需盯早期 loss。</p>
+</div>
+
+<h3>5.8　长上下文：ABF 与「为此做好准备」（用户补令 2026-10-26）</h3>
+<div class="callout good">
+<p><b>口径</b>：训练主配方保持 <b>16K</b>；长上下文能力 = <b>ABF 外推</b>（θ=1e6，B1 实测已覆盖到 1M）+ <b>可选序列阶梯扩展</b>。产品目标 <b>32K–128K</b>，能力上限 <b>1M</b>（推理侧）。</p>
+<p><b>为什么 ABF 而不是裸抬 max_pos / 纯 PI</b>：B1 实测三组对照——baseline（θ=1e4）只能 4K；<b>maxpos_only 全 NaN</b>；<b>ABF（θ=1e6）在 32K/128K/256K/512K/1M 的 PPL = 58.55 / 53.34 / 52.99 / 55.81 / 55.42</b>，全程无退化。ABF 的代价是训练长度上的轻微退化（4K +10.5%），而本计划从零训练、θ 初始即 1e6，不背这笔税。</p>
+<p><b>已备好的三件工具</b>：① <code>scripts/abf_plan.py</code> —— θ_ABF 公式 + 16 卡可行性（CP/DP/gbs）表；② <code>scripts/check_longctx_data.py</code> —— 按 EOD(129280) 切分统计「≥32K / ≥128K 文档覆盖的 token 占比」，防止「长序列其实是跨文档拼接」；③ <code>scripts/longctx_ladder.sh</code> —— 32K→64K→128K 阶梯扩展，逐级 0 NaN / 吞吐门禁、累计 iters 续跑。</p>
+<table>
+<thead><tr><th>rung</th><th class="num">seq</th><th class="num">CP</th><th class="num">DP</th><th class="num">gbs</th><th class="num">token</th><th class="num">步数</th><th class="num">预估 tok/s</th><th class="num">预估墙钟</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="num">32K</td><td class="num">2</td><td class="num">8</td><td class="num">128</td><td class="num">20 B</td><td class="num">4,769</td><td class="num">351,526（实测）</td><td class="num">15.8 h</td></tr>
+<tr><td>2</td><td class="num">64K</td><td class="num">4</td><td class="num">4</td><td class="num">64</td><td class="num">10 B</td><td class="num">2,385</td><td class="num">~180K（外推）</td><td class="num">15.4 h</td></tr>
+<tr><td>3</td><td class="num">128K</td><td class="num">8</td><td class="num">2</td><td class="num">32</td><td class="num">5 B</td><td class="num">1,193</td><td class="num">~90K（外推）</td><td class="num">15.4 h</td></tr>
+</tbody>
+</table>
+<p><b>三条硬判据</b>：① 数据 —— ≥32K 文档的 token 占比 ≥20%、≥128K ≥5%（不达标先补长文源，否则长上下文只是「学会拼接」）；② 配置 —— θ 与 max_pos 成对、导出后 <code>check_rope.py</code> PASS；③ 效果 —— PPL 相对上一级抬升 ≤5%、passkey ≥95%、CS8 退化 ≤1pp，且 θ 若升级必须复测 16K 退化 ≤1%。</p>
+<p><b>成本与边界</b>：全阶梯 ≈47 h / ≈750 GPU·h（只做 32K 则 ~16h）；32K 的 CP 开销是结构性的（351,526 = 16K 满速的 59%），<b>不承诺长上下文满速</b>；1M 仅作能力证明（prefill 172s / 34.7GB 单卡）。</p>
 </div>
 
 <h2>六、数字溯源</h2>

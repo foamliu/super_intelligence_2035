@@ -15,6 +15,8 @@ code/baize-llm/
 │   ├── s1.env                    # S1：2M tok/step 档 · 700k 步
 │   ├── s2.env                    # S2：4M tok/step 档 · 350k 步（承接 S1 ckpt）
 │   ├── decay.env                 # Decay：4M 档 · 20k 步（指数衰减 D 段）
+│   ├── longctx.env               # 长上下文扩展（ABF）：阶梯默认值
+│   ├── longctx_ladder.tsv        # 阶梯表：32K/64K/128K × token 预算 × CP
 │   ├── blend_s1.tsv              # S1/S2 数据配比（prop / epochs）
 │   └── blend_decay.tsv           # Decay 数据配比
 ├── scripts/
@@ -25,10 +27,14 @@ code/baize-llm/
 │   ├── tb_6006.sh                # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py            # WSD-指数 LR 曲线打印 / 与 TB 对账
 │   ├── check_rope.py             # 校验 56 层 / 4 注意力 / max_pos=1M / theta=1e6
+│   ├── abf_plan.py               # ABF 表：θ_ABF / CP / DP / gbs（长上下文准备）
+│   ├── check_longctx_data.py     # 长上下文数据体检（EOD 切分 → 文档长度分布）
+│   ├── longctx_ladder.sh         # 32K→64K→128K 阶梯扩展（逐级门禁）
 │   ├── prune_ckpts.sh            # ckpt 保留策略清理（默认 dry-run）
 │   └── status.sh                 # 进程 / 显存 / 最新步数 / LR / TB 健康一览
 └── docs/
-    └── LAUNCHER_PATCH_EXP_DECAY.md   # 若 launcher 不支持 --lr-decay-shape 的补丁规格
+    ├── LAUNCHER_PATCH_EXP_DECAY.md   # 若 launcher 缺 --lr-decay-shape / --rotary-base 的补丁规格
+    └── LONGCTX_ABF_PLAN.md           # 长上下文 ABF 准备方案（口径/阶梯/数据体检/评测矩阵）
 ```
 
 **部署位置**：本目录随仓库走（`<repo>/code/baize-llm`）。训练机期望路径是
@@ -118,6 +124,29 @@ python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
 > ⚠️ 已知代价：既有推理侧实测（在 4K 训练的 ckpt 上事后做 ABF）4K PPL 83.24 vs 基线 75.36（+10.5%）。
 > 本次是**从头训练**、theta 初始即 1e6，不存在「事后换 theta」的税；但必须盯**前 500 步 loss**
 > 与同时长 baseline 对照，异常升高（>5%）要在心跳里标出来。
+
+### 2.3 长上下文：ABF（用户令 2026-10-26「长上下文用 ABF，要为此做好准备」）
+
+**口径**：训练主配方保持 **16K**；长上下文能力 = **ABF 外推（θ=1e6，已覆盖到 1M，B1 实测）+ 可选序列阶梯扩展**。
+产品目标 **32K–128K**，能力上限 **1M**；完整方案见 `docs/LONGCTX_ABF_PLAN.md`。
+
+| 工具 | 作用 | 命令 |
+|:--|:--|:--|
+| `scripts/abf_plan.py` | 打印 θ_ABF / CP / DP / gbs 表（16 卡可行性） | `python scripts/abf_plan.py` |
+| `scripts/check_longctx_data.py` | 按 EOD（129280）统计文档长度分布 → 有多少 token 真能进 32K/128K | `python scripts/check_longctx_data.py --shards <dir> --targets 32768,131072 --sample 8` |
+| `scripts/longctx_ladder.sh` | 32K→64K→128K 阶梯扩展（逐级 0 NaN / 吞吐门禁，累计 iters 续跑） | `bash scripts/longctx_ladder.sh --dry-run` |
+| 评测 | 复用 `run/baize_b1_longctx_extend.py` 的 PPL/passkey | 见方案 §4 |
+
+**三条硬判据**（写进方案，不可省）：
+1. **数据侧**：≥32K 文档的 token 占比应 ≥20%，≥128K 应 ≥5%；不达标要「长文档优先采样或补源」，否则长上下文只是学会拼接。
+2. **配置侧**：θ 与 max_pos 必须成对（只抬 max_pos ⇒ 全 NaN，2026-10-06 实测）；导出后 `check_rope.py` 必须 PASS。
+3. **效果侧**：PPL 相对上一级抬升 ≤5%，passkey ≥95%，CS8 退化 ≤1pp；θ 升级后必须复测 16K 不退化（≤1%）。
+
+> 阶梯预算（可选）：32K/20B ≈15.8h + 64K/10B ≈15.4h + 128K/5B ≈15.4h ≈ **47h / 750 GPU·h**；
+> 只做 32K 则 ~16h。32K 的 CP 开销是结构性的（351,526 tok/s = 16K 的 59%），不承诺长上下文满速。
+
+---
+
 
 
 ---

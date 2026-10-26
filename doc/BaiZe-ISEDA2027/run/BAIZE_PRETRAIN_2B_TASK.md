@@ -34,6 +34,7 @@
 7. **S2 / Decay**：S1 收尾后 `train.sh s2`；Decay **当前禁止开跑**（见下）。
 8. **Checkpoint（用户 2026-10-26 补令）**：三阶段 `--save-interval` 统一 **2000 步**（`configs/s1|s2|decay.env` 已改，`train.sh` 自动带上）。起跑后用 `ls nemo_experiments/baize2b/checkpoints/iter_* | wc -l` 确认按 2000 步递增（首个点 = 2000）。**同时必须控盘**：每 20k 步跑 `bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000`（dry-run），每 50k 步 `--apply`；保留最近 3 + 每 25k 里程碑 + `latest_checkpointed_iteration.txt` 指向者。S1 350 个 ckpt 全留会占 1.5–10.5TB。
 9. **RoPE / 1M（用户 2026-10-26 补令）**：56 层中 **4 层全注意力**，RoPE **max embedding position = 1,048,576**（1M）；`configs/common.env` 已设 `ROPE_MAX_POS=1048576` + `ROPE_THETA=1000000`（ABF）。`train.sh` 自动传 `--rotary-base 1000000`；launcher 若无该参数会**直接拒绝开跑**（`ROPE_REQUIRED=1`），按 `code/baize-llm/docs/LAUNCHER_PATCH_EXP_DECAY.md` §5 打补丁。导出 HF 后必须 `python scripts/check_rope.py --hf-dir <dir>` **PASS**（56 层 / attention=4 / max_pos=1048576 / theta=1e6 / rope_scaling=None）。冒烟后核对：0 NaN、前 500 步 loss 与 baseline 抬升 ≤5%。
+10. **长上下文 ABF 准备（用户 2026-10-26 补令「长上下文用 ABF，要为此做好准备」）**：口径 = 训练保持 **16K**、能力靠 **ABF（θ=1e6）外推**、可选 **32K→64K→128K 阶梯**（`configs/longctx_ladder.tsv` + `scripts/longctx_ladder.sh`，每级保持 tok/mb/GPU=16384）。**本轮必做三件**：① `python scripts/check_longctx_data.py --shards <tokenized源目录> --eod-id 129280 --targets 32768,131072 --sample 8` 出 token 占比（≥32K 应 ≥20%、≥128K ≥5%），写进心跳；② 首个可导出 ckpt 上跑一次**零训练** PPL/passkey 基线（4K→1M，复用 `run/baize_b1_longctx_extend.py`），留档到 `run/`；③ `python scripts/abf_plan.py` 复核 θ/CP 表（默认**不抬 θ**，只在实测退化时升级，升级后必须复测 16K）。完整方案 `code/baize-llm/docs/LONGCTX_ABF_PLAN.md`。
 
 **阻塞与红线**
 - 🚫 **Decay 不得开跑**：`UltraData-SFT-2605`（0.60）/ `UltraData-SFT-Agent-2609`（0.12）仍「未分词」（`run/data/DATA_MAPPING.md` 0 shard），`gen_blend.py` 会 rc=2 直接退出。需 data 线分词后才能跑；不许用别的数据偷偷替代。
@@ -42,6 +43,7 @@
 - 🚫 不许把「2M/4M」当精确值对外：DP16×16K = 262,144，落地档 = gbs128(2,097,152) / gbs256(4,194,304)。
 - 🚫 **磁盘红线**：`/nas_train` 可用 <15TB ⇒ 先 `prune_ckpts.sh --apply` 再继续训练；不许为保 ckpt 把盘写满（会连带卡死 data 迁移与 eval）。
 - 🚫 **RoPE 红线**：不许只改 `max_position_embeddings` 不改 `rope_theta`（实测全 NaN）；不许把「训练跑起来了」当成 1M 配置达标（`max_pos` 只在导出 config 生效，必须过 `check_rope.py`）。
+- 🚫 **长上下文红线**：不许拿「跨文档拼接出来的长序列」冒充长上下文收益（先看 `check_longctx_data.py` 的 token 占比）；θ 若升级必须复测 16K PPL（退化 ≤1%），否则回退。
 
 **交付物**
 - `code/baize-llm/`（已随仓库预置；若你补丁/微调则 commit `pretrain train:`）
@@ -54,35 +56,8 @@
 > 📦 §运维令 14:3x（补写 #792 双机实测进吞吐报告）**已完成**（#793：报告 14,208→20,888B）→ 原文同上归档。
 > 📦 §运维令 13:2x（FP8 真实数据 16K/32K 实测）**已完成**（#792：16K=613,992 / 32K CP2=351,526）→ 原文同上归档。
 > 📦 §运维令 11:1x（双机 16 卡调优 seq16K/32K）**已完成**（#791 8卡首跑 + #792 双机实测覆盖）→ 原文同上归档。
-### [运维令] 2026-10-26 09:1x（**优化 16K / 32K 训练吞吐至 600K+**）· 用户直令 · 最高优先
-
-> 用户原话：「pretrain：16卡训练吞吐 seq=8k 吞吐（~605K）已达标；现在继续优化16k和32k训练吞吐，争取达到600K以上」
-
-**① 基线（已达标）**：seq=8192 关 graph，16 卡 ~593K（或按你实测 ~605K），以实测为准写明。
-
-**② 目标**：**seq=16K 与 seq=32K 的训练吞吐各 ≥600K tok/s（16 卡）**。
-
-**③ 现状（复用你 #787/#788 结论直接优化，勿重复取证）**
-- 16K：关 graph = 561K（0.93×），距 600K 差 ~7%，需继续优化。
-- 32K：cp1 OOM@81GB / cp2 被 flash-attn-3 阻断（`window_size=(l,r)` 旧签名，需 patch `window_size_left/right`，调用点在 site-packages）。
-
-**④ 方向（建议，可调整并记录理由）**
-1. **16K**：从 561K 找瓶颈（CP 激活重算 / KV cache / 通信重叠），尝试 context parallel、recompute 粒度微调等合法手段冲 600K+。
-2. **32K**：先 patch CP 路径 flash-attn-3 的 `window_size` 调用跑通，再优化吞吐冲 600K+；若 32K 物理受限（显存/架构），如实给出「当前最优吞吐 + 阻塞点 + 需要什么（如更多显存/升级 flash-attn/改 CP 实现）」。
-
-**⑤ 交付**：逐档记录（配置 → tok/s → 达标? → 瓶颈/结论），溯源脚本/日志；中文本报告 `reports/report_pretrain_seq16k32k_throughput_zh.html` + EXPERIMENTS 更新；commit `pretrain perf:`。
-
-**⑥ 纪律**：只用 .29（如需 16 卡则 2 机）；🚫 不碰 vision/data/harness；数字不伪造。
-
-### [运维令] 2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
-
-> 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
-
-**任务**：写本线（pretrain）最近工作（10-20 起）总结报告 `reports/report_pretrain_recent_work_zh.html`（自包含中文 HTML）。
-- 结构：① 本线定位 → ② 近期任务逐个（设置→过程→结果→结论）→ ③ 关键数据速查表 → ④ 阻塞/待拍板 → ⑤ 下一步建议。
-- **必覆盖**：① decay 训坏→修复全历程（v2 44.97%/6.21% → 官方 1113.sh decay-5000 58.97%/28.02%，含归因双移位/缺μP/LR）；② 长上下文 seq 扩展排查（CUDA Graph 顶格停滞真因 + seq=8192 关 graph 0.978×满速 + 32K CP 不可跑[flash-attn-3 API 阻断]）；③ 两份 decay 报告交付。
-- 数字溯源（log/json 文件:行）；遵守命名规程；commit `pretrain report:`。
-
+> 📦 §运维令 09:1x（优化 16K/32K 吞吐至 600K+）**已完成**（#791 8卡 + #792 双机 16K=613,992 ≥600K）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。
+> 📦 §运维令 08:2x（写最近工作报告 · 中文 HTML）**已完成**（#790，report_pretrain_recent_work_zh.html 20KB）→ 原文同上归档。
 ### [运维令] 2026-10-25 23:0x（**通宵攻坚：查清 tokens/microbatch 悬崖并给出可用档位；不解决不收工**）· 用户直令 · 最高优先
 > 用户原话：「下发指令让 pretrain 这个晚上一直排查这个问题，解决不了不要结束。」
 > 已知事实：基线(seq4096/mbs3=12,288 tok/mb/GPU)=606,449 tok/s；cfg0a(seq4096/mbs4=16,384)=113,514；cfg1(seq8192/mbs2=16,384)=108,291；cfg3/4(16K, 16,384)=112,094/121,495 ⇒ **悬崖在 12,288-16,384 tok/microbatch/GPU 之间，与 seq 无关**；四格峰值显存 81.08GB 顶到上限，基线 67.6GB。
