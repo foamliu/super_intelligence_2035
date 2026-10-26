@@ -22533,3 +22533,78 @@ LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*
   a85096706 10-26 21:16 pretrain: heartbeat #796 update - rendezvous success, port fix committed, dataset build in progr
 === DONE 214 ===
 ```
+
+---
+
+## RUN_ID 215 · 2026-10-26 21:22:15 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+C=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+echo "=== RUN_ID 215 | rope/exp audit | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] launcher --help 里的关键参数（是否有 rotary-base / max-position / decay-shape）"
+cd "$C" 2>/dev/null && timeout 120 "$PY/python" pretrain_launcher.py --help 2>&1 | grep -E 'rotary|max-position|max_position|decay-shape|decay_shape|weight-decay' | head -10 | cut -c1-160 || echo "  (help failed)"
+echo
+echo "[2] 源码里是否已有 rotary_base / rotary-base 支持"
+grep -rn --include=*.py -E 'rotary[-_]base' "$C" 2>/dev/null | head -8 | cut -c1-170
+echo "  -- 当前 launcher 里 rope theta 的取值 --"
+grep -rn --include=*.py -E 'rotary_base|rope_theta|10000' "$C/pretrain_launcher.py" 2>/dev/null | head -8 | cut -c1-170
+echo
+echo "[3] 实际 --dir / 产物落点（从 cmdline 抓）"
+ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1 | tr ' ' '\n' | grep -A1 -E '^--(dir|name)$' | paste - - | sed 's/^/  /'
+echo "  -- /tmp 下新出现的 exp 目录 --"
+ls -dt /tmp/*baize2b* /tmp/*s1*/ 2>/dev/null | head -5 | sed 's/^/  /'
+echo
+echo "[4] 迭代/吞吐行（两种日志，宽松匹配）"
+for f in /tmp/baize_s1_formal.log /tmp/baize_s1_worker_node.log; do
+  [ -f "$f" ] || continue
+  echo "  --- $f  ($(stat -c '%y' "$f" | cut -c1-19), $(stat -c %s "$f")B)"
+  grep -nE 'iteration|elapsed time per|tokens/sec|TFLOP|lm loss|grad norm' "$f" 2>/dev/null | tail -4 | cut -c1-190
+done
+echo
+echo "[5] 当前 8 个 worker 的 etimes（是否同一批）"
+ps -eo pid,etimes,args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline' | awk '{print "  pid="$1" etimes="$2}' | head -9
+echo
+echo "[6] .12 侧对应 worker 与 GPU"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  .12 卡: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"; pgrep -af pretrain_launcher | head -2 | cut -c1-120' 2>&1 | cut -c1-200
+echo "=== DONE 215 ==="
+```
+
+**输出**
+```
+=== RUN_ID 215 | rope/exp audit | 2026-10-26 21:22:15 | host=whag0pgpuap29 ===
+[1] launcher --help 里的关键参数（是否有 rotary-base / max-position / decay-shape）
+
+[2] 源码里是否已有 rotary_base / rotary-base 支持
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/minicpm5_2b/provider.py:30:        num_query_groups=2（KV heads）/ rotary_base=5_000_000（rope_theta 5e6）/
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/minicpm5_2b/provider.py:39:    rotary_base: int = 5_000_000         # MiniCPM config 的 rope_theta = 5e6
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/xmodel25_2b/provider.py:39:        num_query_groups=8（KV heads）→ GQA 组=3 / head_dim=64 / rotary_base=500000（rope_th
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/xmodel25_2b/provider.py:47:    rotary_base: int = 500_000           # Xmodel config 的 rope_theta = 5e5
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/examples/export/trtllm_export/distributed_export/gpt_distributed_gpu_export.py:76:                        rot
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/examples/export/trtllm_export/single_device_export/gpt_single_device_cpu_export.py:76:                       
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/examples/multimodal/model.py:231:        language_rotary_base=args.rotary_base,
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/hpo/adamw_mup_depth_transfer_v1.py:134:            "--rotary-base", "500000",
+  -- 当前 launcher 里 rope theta 的取值 --
+
+[3] 实际 --dir / 产物落点（从 cmdline 抓）
+  -- /tmp 下新出现的 exp 目录 --
+  /tmp/baize_s1_baize2b_smoke.log
+  /tmp/baize_s1_baize2b_smoke_worker.log
+  /tmp/pymp-s1vypo_3/
+  /tmp/tmp_4s1kuai/
+  /tmp/tmp8s1tdox6/
+
+[4] 迭代/吞吐行（两种日志，宽松匹配）
+  --- /tmp/baize_s1_formal.log  (2026-10-26 21:22:20, 627929B)
+  --- /tmp/baize_s1_worker_node.log  (2026-10-26 21:18:36, 1587060B)
+
+[5] 当前 8 个 worker 的 etimes（是否同一批）
+
+[6] .12 侧对应 worker 与 GPU
+  .12 卡: 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 4 MiB 4 MiB 
+2697947 bash -c echo "  .12 卡: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"; pgrep -af p
+=== DONE 215 ===
+```
