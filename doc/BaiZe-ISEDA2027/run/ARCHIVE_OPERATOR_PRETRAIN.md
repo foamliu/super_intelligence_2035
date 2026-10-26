@@ -3443,3 +3443,51 @@ ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2
 - **必覆盖**：① decay 训坏→修复全历程（v2 44.97%/6.21% → 官方 1113.sh decay-5000 58.97%/28.02%，含归因双移位/缺μP/LR）；② 长上下文 seq 扩展排查（CUDA Graph 顶格停滞真因 + seq=8192 关 graph 0.978×满速 + 32K CP 不可跑[flash-attn-3 API 阻断]）；③ 两份 decay 报告交付。
 - 数字溯源（log/json 文件:行）；遵守命名规程；commit `pretrain report:`。
 
+
+
+---
+
+## 归档 · 2026-10-25 23:0x 通宵攻坚令（已完成）
+
+### [运维令] 2026-10-25 23:0x（**通宵攻坚：查清 tokens/microbatch 悬崖并给出可用档位；不解决不收工**）· 用户直令 · 最高优先
+> 用户原话：「下发指令让 pretrain 这个晚上一直排查这个问题，解决不了不要结束。」
+> 已知事实：基线(seq4096/mbs3=12,288 tok/mb/GPU)=606,449 tok/s；cfg0a(seq4096/mbs4=16,384)=113,514；cfg1(seq8192/mbs2=16,384)=108,291；cfg3/4(16K, 16,384)=112,094/121,495 ⇒ **悬崖在 12,288-16,384 tok/microbatch/GPU 之间，与 seq 无关**；四格峰值显存 81.08GB 顶到上限，基线 67.6GB。
+
+**0) 夜间纪律（覆盖其它收尾条文）**
+- 本轮起至 **2026-10-26 08:00** 持续攻坚，`WAITING=0`；**不许**以「等用户 / 等运维 / 无新令」结束或空转。
+- 每个实验用 `setsid` 后台跑，`sleep 120-300` 轮询判读；**每 30 分钟至少一次 progress commit**（`pretrain rc: ...`），关键发现即时写 MEMORY。
+- 08:00 前必须交**早报**：一句话结论 + 档位表 + 证据路径（无论成败）。
+- 🚫 不 kill `SWE-bench` 下载与 harness 复跑；🚫 不抢 data 分词资源；每格跑完立刻释放 16 卡；🚫 不许把猜测写成结论、不许编数。
+
+**1) 实验阶梯（按序，能跳就跳但要写理由）**
+| 步 | 配置 | tok/mb/GPU | 目的 | 判据 |
+|:--|:--|--:|:--|:--|
+| E1 | seq4096 / mbs3 / gbs1008（=cfg0b） | 12,288 | 复现基线 | ~606K ⇒ 基线真实；~113K ⇒ 基线来自不同 setup，先查环境 |
+| E2 | seq8192 / mbs1 / gbs256（accum16） | 8,192 | **seq 8K 能否满速** | 回到 55-60 万 ⇒ 「8K 满速只要 MBS=1」，这是给用户的答案 |
+| E3 | seq12288 / mbs1 | 12,288 | 定位阈值（与 E1 同 tok/mb、不同 seq） | ~606K ⇒ 阈值只与 tok/mb 有关，与 seq 无关（终判） |
+| E4 | seq8192 / mbs1.5 不可行 ⇒ seq6144 / mbs2 | 12,288 | 第三个同阈值点交叉验证 | 同上 |
+| E5 | 16,384 tok/mb 的最小复现（seq4096/mbs4 已有） | 16,384 | 悬崖边界细分：再插 seq4096/mbs4 与 seq8192/mbs2 均为 16,384 ⇒ 用 seq=8192/mbs2 与 seq=16384/mbs1 已覆盖；补 **seq=4096/mbs3.5 不可行**，改测 **seq=2048/mbs8=16,384** 与 **seq=1024/mbs16=16,384** | 若小 seq 大 mbs 也慢 ⇒ 纯 tok/mb 效应；若快 ⇒ 与 seq 相关 |
+
+**2) 归因（E1-E5 出数后 2 小时内定位）**
+- **显存假说（首选）**：16,384 tok/mb 下峰值 81GB 顶格 ⇒ 检查是否触发 activation recompute / offload / 碎片；取 `torch.cuda.memory_summary()` 在 12,288 与 16,384 两侧各一份，比对 reserved/allocated/active 与 fragmentation；核对 `--recompute-*`、`PYTORCH_CUDA_ALLOC_CONF` 实际生效值。
+- **kernel 假说**：profile 六类（attention / ssm / mlp / loss / optimizer / data）在 12,288 与 16,384 各 10 步；看是否有算子在某 token 数跨过阈值后换实现（FP8 GEMM tiling、CUDA graph node 数、SSD chunk）。
+- **CUDA graph 假说**：确认两侧 graph 是否都 capture 成功、replay 次数与 graph 数量是否爆炸（token 数变化 ⇒ 多 shape ⇒ 多 graph）。
+- **数据假说**：data-loading 计时 + util 曲线，两侧对比；若 data 占步时 >30% 记下来但不算主因（除非其它都排除）。
+
+**3) 修复与验收**
+- 定位后**只改一项**（MBS/accum、CP、recompute、graph 配置、mamba dtype 之一），在 **seq=8192** 上复测，要求：`tok/s >= 0.7 × 606K`（即降幅 ≤30%）且 loss/gnorm/NaN 正常。
+- 若 16K 必须 CP：给 CP=2/4 的可行性 + 预期吞吐（可只跑 20 步 smoke）。
+- 产出**档位表**：`seq × MBS × accum → tok/s → per-GPU → 峰值显存`，并给 S1/S2 的推荐档位（含「8K 满速配方」）。
+
+**4) 收敛条件（必须同时满足才算解决）**
+1. 能一句话解释 5.5x 的成因，且有实验/证据支撑；
+2. 给出可复现的修复配方，且复测达标（≥0.7×基线）；
+3. `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（≥15KB）+ 修正版 seqlen 报告（旧结论标「已证伪」）+ EXPERIMENTS 新节 + MEMORY 首部新块，全部 commit。
+- **若 08:00 仍无解**：必须交「早报 + 已排除清单（每条附证据文件）+ 下一步最小实验（≤30 分钟可跑）+ 需要用户/运维决策的点」，**不许只写「未解决」**，也不许停机。
+
+**5) 交付路径**
+**附**：cfg5/cfg6（32K）OOM 重试按「配方变更组」（`--recompute-activations` / `--use-distributed-optimizer`）单列，不混主表。
+
+- 实验日志 `/tmp/baize_rc_<step>/`；结果表 `run/pretrain_rc_ladder_20261026.tsv`（逐格一行）；profile 落 `run/pretrain_rc_profile_<tokmb>.txt`。
+- commit 前缀 `pretrain rc:`；报告 08:00 前必须存在（哪怕标 `rev1`）。
+

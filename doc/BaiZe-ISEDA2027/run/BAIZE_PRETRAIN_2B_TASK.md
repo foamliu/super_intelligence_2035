@@ -9,6 +9,42 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-26 21:3x（**RoPE θ 未生效：请你评估并给出方案，再重启 S1**）· 用户直令「把这个问题跟 pretrain 沟通，让它考虑」· 最高优先
+
+> 用户原话：「把这个问题跟 pretrain 沟通，让它考虑。」
+> 这不是命令你照做，而是**把现场证据交给你判断**：请给出你的结论 + 实现选择 + 理由，我们保留否决权。
+
+**一、现场事实（全部来自 ops 中继只读探针，可复核）**
+1. S1 确实跑起来过：21:12 起 16 卡（.29 8 + .12 8），**19,049 MiB/卡 · 100% util**；TB 6006 `http=200`；blend 627 shards。`--optimizer adam` ✓ `--lr-decay-style WSD` ✓ `--save-interval 2000` ✓ 无 `--enable-cuda-graph` ✓ `--fp8-recipe tensorwise` ✓（RUN_ID 214）
+2. **但实际命令里没有 `--rotary-base`**；`pretrain_launcher.py --help` 无该参数；`mamba2_hybrid_2b/recipe.py` 只有 `apply_rope_fusion`，**没有 `rotary_base`** ⇒ θ 走 Megatron 默认 **1e4**（RUN_ID 215/216）。
+3. 21:18:34 **rank 15（.12 / local_rank 7）exitcode=1**，`error_file=<N/A>` 无 traceback；21:22 前后主进程收到 **SIGTERM(15)** 被整体停掉；21:24 16 卡回 4 MiB（RUN_ID 216）。
+4. `nemo_experiments/` 里**没有 `baize2b*` 目录/ckpt**，只有 `/tmp/baize_s1_baize2b_smoke*.log` ⇒ 正式 run 的 `--dir` 可能指到 `/tmp`（RUN_ID 215）。
+5. blend 跳了 1 片坏 shard：`env14_CC-MAIN-2023-23: ptr overflow max_ptr=122,496,093,768 >= bin_size=49,025,167,172` ⇒ 109/110，权重已摊平。**这是 data 侧问题，你不用改数据**，只需在心跳里记一行。
+
+**二、为什么必须先解决（不能带着跑）**
+- θ 是**训练期固定量**，训完不能补；用户 20:1x 令「56 层中 4 层注意力的 RoPE max position = 1M」，落地口径 = `max_pos=1,048,576` + `θ=1e6`。
+- 本项目 2026-10-06 B1 实测：**只抬 max_pos 不改 θ ⇒ 全 NaN（连 4K 都 NaN）**；`θ=1e6` 才能从 16K 外推到 1M（PPL 32K/128K/1M = 58.55/53.34/55.42）。
+- 即：**现在这套跑法训出来的 ckpt 不具备 1M 能力**，而 1M 是产品目标（用户明确「要不为啥预训练就用 16K 这么长」）。
+
+**三、请你给结论（按这四点回）**
+1. **实现路径二选一 + 理由**：
+   (i) `mamba2_hybrid_2b/recipe.py::pretrain_config` 增 `rotary_base: int = 1_000_000` 并 `kwargs["rotary_base"]=rotary_base`（改动小、影响该 arch 全配方）；
+   (ii) `pretrain_launcher.py` 增 `--rotary-base`（显式可配，但要同时改 CLI 与 provider 透传）。
+   请说明你选哪个、对现有其它配方（minicpm5 5e6 / xmodel 5e5）有无副作用。
+2. **生效证据怎么给**（任选其一并写进心跳）：① provider 初始化时打印 `transformer_config.rotary_base`；② 导出 HF 后 `python code/baize-llm/scripts/check_rope.py --hf-dir <dir>` **PASS**（56 层 / attention=4 / max_pos=1048576 / θ=1e6 / no scaling）；③ 4K PPL 与 θ=1e4 基线对比。
+3. **rank 15 exit1 的定位结论**：不要盲重启。建议加 `TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank` 或先**单机 8 卡 50 步**复现；给出你判断的最可能原因。
+4. **`--dir` 修正**：ckpt 必须落 `nemo_experiments/baize2b_s1`（用户令 ckpt 每 2000 步）；写进 `/tmp` 会在重启/清理时全丢。
+
+**四、红线**
+- 🚫 θ 未验证（无生效证据）不许起 700k 步正式 S1；「能跑起来」不算验收。
+- 🚫 不许只改 `max_position_embeddings` 不改 θ。
+- 🚫 不许为了让 smoke 过而把 warmup/decay 语义改成与正式不一致（`--lr-decay-shape exponential` 仍缺，Decay 阶段前必须补上并留证据）。
+
+**五、交付**
+- 心跳写清：**θ 实现方式 / 生效证据 / rank15 结论 / 重启命令（含 --dir 与 --rotary-base 或 recipe 默认值）**；
+- commit 前缀 `pretrain train:`（代码）/ `pretrain run:`（实跑）；**只 add 自己线文件**。
+
+
 ### [运维令] 2026-10-26 19:2x（**预训练正式落地并开跑：AdamW / WSD-D 指数 / TensorBoard 6006 / code/baize-llm 项目化**）· 用户直令 · 最高优先
 
 > 用户原话（逐条照录，六条）：
@@ -58,48 +94,7 @@
 > 📦 §运维令 11:1x（双机 16 卡调优 seq16K/32K）**已完成**（#791 8卡首跑 + #792 双机实测覆盖）→ 原文同上归档。
 > 📦 §运维令 09:1x（优化 16K/32K 吞吐至 600K+）**已完成**（#791 8卡 + #792 双机 16K=613,992 ≥600K）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。
 > 📦 §运维令 08:2x（写最近工作报告 · 中文 HTML）**已完成**（#790，report_pretrain_recent_work_zh.html 20KB）→ 原文同上归档。
-### [运维令] 2026-10-25 23:0x（**通宵攻坚：查清 tokens/microbatch 悬崖并给出可用档位；不解决不收工**）· 用户直令 · 最高优先
-> 用户原话：「下发指令让 pretrain 这个晚上一直排查这个问题，解决不了不要结束。」
-> 已知事实：基线(seq4096/mbs3=12,288 tok/mb/GPU)=606,449 tok/s；cfg0a(seq4096/mbs4=16,384)=113,514；cfg1(seq8192/mbs2=16,384)=108,291；cfg3/4(16K, 16,384)=112,094/121,495 ⇒ **悬崖在 12,288-16,384 tok/microbatch/GPU 之间，与 seq 无关**；四格峰值显存 81.08GB 顶到上限，基线 67.6GB。
-
-**0) 夜间纪律（覆盖其它收尾条文）**
-- 本轮起至 **2026-10-26 08:00** 持续攻坚，`WAITING=0`；**不许**以「等用户 / 等运维 / 无新令」结束或空转。
-- 每个实验用 `setsid` 后台跑，`sleep 120-300` 轮询判读；**每 30 分钟至少一次 progress commit**（`pretrain rc: ...`），关键发现即时写 MEMORY。
-- 08:00 前必须交**早报**：一句话结论 + 档位表 + 证据路径（无论成败）。
-- 🚫 不 kill `SWE-bench` 下载与 harness 复跑；🚫 不抢 data 分词资源；每格跑完立刻释放 16 卡；🚫 不许把猜测写成结论、不许编数。
-
-**1) 实验阶梯（按序，能跳就跳但要写理由）**
-| 步 | 配置 | tok/mb/GPU | 目的 | 判据 |
-|:--|:--|--:|:--|:--|
-| E1 | seq4096 / mbs3 / gbs1008（=cfg0b） | 12,288 | 复现基线 | ~606K ⇒ 基线真实；~113K ⇒ 基线来自不同 setup，先查环境 |
-| E2 | seq8192 / mbs1 / gbs256（accum16） | 8,192 | **seq 8K 能否满速** | 回到 55-60 万 ⇒ 「8K 满速只要 MBS=1」，这是给用户的答案 |
-| E3 | seq12288 / mbs1 | 12,288 | 定位阈值（与 E1 同 tok/mb、不同 seq） | ~606K ⇒ 阈值只与 tok/mb 有关，与 seq 无关（终判） |
-| E4 | seq8192 / mbs1.5 不可行 ⇒ seq6144 / mbs2 | 12,288 | 第三个同阈值点交叉验证 | 同上 |
-| E5 | 16,384 tok/mb 的最小复现（seq4096/mbs4 已有） | 16,384 | 悬崖边界细分：再插 seq4096/mbs4 与 seq8192/mbs2 均为 16,384 ⇒ 用 seq=8192/mbs2 与 seq=16384/mbs1 已覆盖；补 **seq=4096/mbs3.5 不可行**，改测 **seq=2048/mbs8=16,384** 与 **seq=1024/mbs16=16,384** | 若小 seq 大 mbs 也慢 ⇒ 纯 tok/mb 效应；若快 ⇒ 与 seq 相关 |
-
-**2) 归因（E1-E5 出数后 2 小时内定位）**
-- **显存假说（首选）**：16,384 tok/mb 下峰值 81GB 顶格 ⇒ 检查是否触发 activation recompute / offload / 碎片；取 `torch.cuda.memory_summary()` 在 12,288 与 16,384 两侧各一份，比对 reserved/allocated/active 与 fragmentation；核对 `--recompute-*`、`PYTORCH_CUDA_ALLOC_CONF` 实际生效值。
-- **kernel 假说**：profile 六类（attention / ssm / mlp / loss / optimizer / data）在 12,288 与 16,384 各 10 步；看是否有算子在某 token 数跨过阈值后换实现（FP8 GEMM tiling、CUDA graph node 数、SSD chunk）。
-- **CUDA graph 假说**：确认两侧 graph 是否都 capture 成功、replay 次数与 graph 数量是否爆炸（token 数变化 ⇒ 多 shape ⇒ 多 graph）。
-- **数据假说**：data-loading 计时 + util 曲线，两侧对比；若 data 占步时 >30% 记下来但不算主因（除非其它都排除）。
-
-**3) 修复与验收**
-- 定位后**只改一项**（MBS/accum、CP、recompute、graph 配置、mamba dtype 之一），在 **seq=8192** 上复测，要求：`tok/s >= 0.7 × 606K`（即降幅 ≤30%）且 loss/gnorm/NaN 正常。
-- 若 16K 必须 CP：给 CP=2/4 的可行性 + 预期吞吐（可只跑 20 步 smoke）。
-- 产出**档位表**：`seq × MBS × accum → tok/s → per-GPU → 峰值显存`，并给 S1/S2 的推荐档位（含「8K 满速配方」）。
-
-**4) 收敛条件（必须同时满足才算解决）**
-1. 能一句话解释 5.5x 的成因，且有实验/证据支撑；
-2. 给出可复现的修复配方，且复测达标（≥0.7×基线）；
-3. `reports/report_pretrain_seq8192_slowdown_rootcause_zh.html`（≥15KB）+ 修正版 seqlen 报告（旧结论标「已证伪」）+ EXPERIMENTS 新节 + MEMORY 首部新块，全部 commit。
-- **若 08:00 仍无解**：必须交「早报 + 已排除清单（每条附证据文件）+ 下一步最小实验（≤30 分钟可跑）+ 需要用户/运维决策的点」，**不许只写「未解决」**，也不许停机。
-
-**5) 交付路径**
-**附**：cfg5/cfg6（32K）OOM 重试按「配方变更组」（`--recompute-activations` / `--use-distributed-optimizer`）单列，不混主表。
-
-- 实验日志 `/tmp/baize_rc_<step>/`；结果表 `run/pretrain_rc_ladder_20261026.tsv`（逐格一行）；profile 落 `run/pretrain_rc_profile_<tokmb>.txt`。
-- commit 前缀 `pretrain rc:`；报告 08:00 前必须存在（哪怕标 `rev1`）。
-
+> 📦 §运维令 2026-10-25 23:0x（通宵攻坚：tokens/microbatch 悬崖）**已完成**（#784–#789：真因=CUDA Graph 顶格停滞·关 graph 修复·16K 双机 613,992 达标；根因报告 + seqlen rev3）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。
 ### [已归档] §运维令·2026-10-25 20:2x（seq 掉速根因排查初版：H1-H9 假设表 + cfg0a/cfg0b 对照 + web 对标）**已并入 23:0x 通宵令**（cfg0a 已出数并证伪 seq 假设；假设表与外部对标原文见 ARCHIVE）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。需要时再读。
 
 ### [已归档] §运维令·2026-10-25 17:5x（seq x tok/step 16 卡吞吐网格）**已完成**（6 格全测：cfg1-4 OK 108K/112K/112K/121K、cfg5-6 OOM@32768；报告 13,565B + 生成器已交付 commit 233c47d0e）-> 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。**注意**：该报告「seq>=8192 崩 5x」的结论已被 cfg0a 证伪，需按 23:0x 块更正。需要时再读。
