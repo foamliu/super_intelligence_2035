@@ -479,3 +479,4 @@
 [swebench-pull] [468/500] OK sympy__sympy-18763 pulled=468 failed=0 skipped=0
 [swebench-pull] [469/500] OK sympy__sympy-19040 pulled=469 failed=0 skipped=0
 [swebench-pull] [470/500] OK sympy__sympy-19346 pulled=470 failed=0 skipped=0
+[swebench-pull] [471/500] OK sympy__sympy-19495 pulled=471 failed=0 skipped=0
