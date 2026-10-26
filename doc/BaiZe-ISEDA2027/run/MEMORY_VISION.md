@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #282, 2026-10-26 12:59]**：🟢 空唤醒复核·无新令。运维令区复核：08:2x/22:4x/19:5x 已归档·17:5x ✅DONE(wake#271)·余均[已归档]/✅DONE ⇒ **未完成指令：无**。4 报告(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `vision/ocr_synth/*.py`+daily-2026-10-26.md 在位复核。git fetch 后 behind=0/ahead=0 同步。📦 体积：TASK=29799B(29.1KB)/MEMORY≈32460B(31.7KB)，均≤32KB✓（无需归档）。本轮=补心跳防判死（上次 wake#281 11:49 距今~1h08m 超60min 判死线，重置时钟）。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #283, 2026-10-26 14:09]**：🟢 空唤醒复核·无新令。运维令区复核：08:2x/22:4x/19:5x 已归档·17:5x ✅DONE(wake#271)·余均[已归档]/✅DONE ⇒ **未完成指令：无**。4 报告(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `vision/ocr_synth/*.py`+daily-2026-10-26.md 在位复核。git fetch 后 behind=0/ahead=0 同步（工作树脏项均属他线 harness/pretrain/zhulong，本线未碰）。📦 体积：TASK=29799B(29.1KB)/MEMORY≈32642B(31.9KB)，均≤32KB✓（无需归档）。本轮=补心跳防判死（上次 wake#282 12:59 距今~1h10m 超60min 判死线，重置时钟）。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #282 (2026-10-26 12:59, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #281 (2026-10-26 11:49, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
 > 📦 wake #280 (2026-10-26 10:3x, 归档收尾·08:2x 运维令块归档+MEMORY 滚动·wake#279 recent_work 报告在位复核·grep 覆盖项齐全) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
@@ -82,7 +83,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（16:1x方案报告已交付,无训练运行,待运维下一令）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-26 06:32 (wake #277, 体积维护归档)**：三条运维令均 ✅DONE —— 22:4x(10M OCR 图文对, wake#275 全量 DONE：ok=9,999,999/fail=0/2000 tars/470GB/893.6 img/s + 报告 15754B + §18；wake#276 复核一致；**待用户裁定** 接受/index过滤/扩语料重生成) / 19:5x(路线①SFT方案报告, wake#272) / 17:5x(OCR合成数据调研报告, wake#271)。本轮=收尾铁律 step0 体积维护：22:4x 块(✅DONE)原文归档→ARCHIVE_OPERATOR_VISION.md(留1行指针，保留待裁定+两处偏差) + MEMORY 4 条冗长流水压缩为指针 → TASK 33693→29169B(29.1KB)✓ / MEMORY 33540→31888B(31.2KB)✓。复核 10M 数据集在位(2001 tars/9.999M index/470GB/fail=0)。B4 3/4 组件(MMVet/MathVista 需 OPENAI_API_KEY / 336+anyres 需工程 scope)仍阻塞待运维裁决；A3(wake#266)假设证伪。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决/22:4x 质量偏差裁定，30min轮询）。 |
+| 更新 | **2026-10-26 14:09 (wake #283, 空唤醒·补心跳防判死)**：三条运维令均 ✅DONE —— 22:4x(10M OCR 图文对, wake#275 全量 DONE：ok=9,999,999/fail=0/2000 tars/470GB/893.6 img/s + 报告 15754B + §18；**待用户裁定** 接受/index过滤/扩语料重生成) / 19:5x(路线①SFT方案报告, wake#272) / 17:5x(OCR合成数据调研报告, wake#271)。10M 数据集在位(2001 tars/9.999M index/470GB/fail=0)。4 报告+6 脚本在位复核。git behind=0/ahead=0 同步。B4 3/4 组件(MMVet/MathVista 需 OPENAI_API_KEY / 336+anyres 需工程 scope)仍阻塞待运维裁决；A3(wake#266)假设证伪。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决/22:4x 质量偏差裁定，30min轮询）。 |
 
 ### 评测耗时归因（2026-10-15）
 
