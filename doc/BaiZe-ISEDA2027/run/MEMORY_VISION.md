@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #292, 2026-10-27 01:33]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；⚠️ **ops/inbox.md 缺失**——relay 通讯文件不在位，无法下发新令，已记入心跳供运维察觉；上次提交 wake#291@00:23 距今 ~70min >60min 判死线 ⇒ 补心跳防判死）。复核交付物在位：4 报告项目级 `reports/`(22706/15754/29177/40423B)+6 脚本 `vision/ocr_synth/`+10M 数据集 `ocr_synth_10m_full`(index.jsonl/STATS/VALIDATION)。📦 体积：TASK 22247B(21.7KB)/MEMORY 30825B(30.1KB)均 ≤32KB✓（无需归档）。环境：vision loop PID 1294447 运行中·cline `~/.bun/bin/cline` 可用。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #293, 2026-10-27 02:42]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；ops/inbox.md **已恢复在位** 609KB@10-26 23:00，顶部 RUN_ID 221=TARGET29 pretrain 只读 probe，**无 vision 令**；上次提交 wake#292@01:35 距今 ~67min >60min 判死线 ⇒ 补心跳防判死）。复核交付物在位：4 报告项目级 `reports/`(22706/15754/29177/40423B)+6 脚本 `vision/ocr_synth/`+10M 数据集 `ocr_synth_10m_full`(index.jsonl/STATS/VALIDATION)。📦 体积：TASK 22247B(21.7KB)/MEMORY 30948B(30.2KB)均 ≤32KB✓（无需归档）。环境：vision loop PID 1294447 运行中·cline `~/.bun/bin/cline` 可用。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #292 (2026-10-27 01:33, 空唤醒·补心跳防判死·ops/inbox.md当时缺失已记·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #291 (2026-10-27 00:17, 空唤醒·无新令·补心跳防判死·滚动wake#272dup/#274旧指针·inbox RUN_ID221非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #290 (2026-10-26 23:02, 空唤醒·无新令·补心跳防判死·滚动wake#258-270旧指针控体积·inbox RUN_ID221=只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #289 (2026-10-26 21:50, 空唤醒·无新令·补心跳防判死·inbox RUN_ID216只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
