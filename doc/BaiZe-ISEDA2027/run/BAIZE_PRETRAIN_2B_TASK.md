@@ -46,88 +46,10 @@
 - commit 前缀：脚本/配置 = `pretrain train:`；实跑 = `pretrain run:`
 
 
-### [运维令] 2026-10-26 15:3x（**整理「BaiZe-2B 预训练构想」为中文 HTML 报告 + ETA**）· 用户直令 · 最高优先
-
-> 用户原话：「关于后续的预训练，我有个初步想法想跟 pretrain 商榷。请安排 pretrain 把这个想法整理为中文 HTML 报告，附上 ETA 等信息。」
-> 用户构想原文照录如下，请据此整理成报告。
-
-**① 模型与配方**
-- 模型：Mamba2-hybrid（56 层，Nemotron-H 式顺序混合），参数量 **2.2B**。
-- 训练配方：**16K / 16卡 / CP1 DP16 / graph-OFF = 613,992 tok/s**。
-- 学习率：**WSD**，2000 步 warmup，然后 LR **保持 1e-3**。
-
-**② 三阶段计划**
-- **S1**：2M tok/step · 1.4T tok · 700,000 steps
-- **S2**：4M tok/step · 1.4T tok · 350,000 steps（配比同 S1）
-- **Decay**：4M tok/step · 80B tok · 20,000 steps
-
-S1/S2 配比（sampling prop / epochs）：
-| dataset | prop | epochs |
-|:--|--:|--:|
-| en_v1_4 (ultrafineweb_en_v1_4) | 0.65 | 0.81 |
-| ufw_l1_en_hq | 0.05 | 0.93 |
-| ufw_zh | 0.04 | 0.99 |
-| Math-L1 (UltraData-Math-L1) | 0.05 | 0.85 |
-| Math-L3 (UltraData-Math-L3) | 0.02 | 0.72 |
-| Code-L2 (UltraData-Code-L2) | 0.15 | 1.00 |
-| Code-L3 (UltraData-Code-L3) | 0.04 | 0.87 |
-
-Decay 配比（prop）：
-ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2605 0.60 / UltraData-SFT-Agent-2609 0.12
-
-**③ 报告要求**：输出 `reports/report_pretrain_baize2b_pretrain_plan_zh.html`（自包含中文 HTML）。
-- 结构：① 模型与配方 → ② 三阶段计划（各阶段 tok/step、steps、数据配比表）→ ③ **ETA 测算**（按 613,992 tok/s 算 S1/S2/Decay 各阶段 wall-clock 时长 + 总时长；分「纯训练」与「含故障/checkpoint 预留」两口径）→ ④ **商榷点与建议**（例如：4M tok/step 下 16K CP1 DP16 吞吐是否仍 613,992 需重测；LR 保持 1e-3 不改 + WSD 2000 步 warmup 的含义；数据配比 epochs<1 的采样语义；Decay 阶段 SFT/Agent 数据占比 0.72 的合理性；总计耗时与 GPU 预算）。
-- 全部数字可溯源（吞吐用 #792 实测 613,992）；commit `pretrain plan:`。
-
-### [运维令] 2026-10-26 14:3x（**补写 #792 双机实测结果进吞吐报告**）· 用户直令 · 最高优先
-
-> 用户原话：「下发指令，让 pretrain 更新报告」
-> **问题**：`reports/report_pretrain_seq16k32k_throughput_zh.html` 仍是 #791 旧版（14,208B，正文停在「16K 外推 ~584K + 待实跑确认」），#792 双机 16 卡实测结果没写进去。
-
-**① 补写「双机 16 卡实测」节（数字溯源 `results_dualnode_seq16k32k/` + EXPERIMENTS §五·8）**
-- **16K CP1 DP16 graph-OFF accum16 = 613,992 tok/s**（每卡 38,374、peak 75.2GB、0 NaN）→ 600K 目标 **102% 达标**（反超 8K 基线 #770 的 606,300 约 1.3%）；
-- **16K CP2 = 281,970（0.459×）**：CP 在 16K 纯亏（激活显存 75.2→49.7GB 但吞吐掉 54%）→ 16K 应关 CP；
-- **32K CP2 DP8 = 351,526 tok/s**（每卡 21,970、peak 76GB、0 NaN）= 600K 的 58.6%，结构性受限（32K 强制 CP=2[CP1 OOM@81GB] + 2×上下文 + P2P KV 交换，已≈2×线性外推天花板 366K 的 96%）。
-
-**② 改写「结论与后续」**：16K 从「待实跑确认」改为「已达标 613,992 ≥600K」；32K 写明「结构性到不了 600K，351,526 已≈天花板 96%」；删除/更新过期的「待办 (a) 实跑确认 (b) 32K graph ON」条目。
-
-**③ 纪律**：报告正文必须真含这些数字（🚫 再只在心跳里说、正文不写）；更新后 commit `pretrain perf:` + push，心跳附新字节数（须 >14,208 即证明真更新了）。
-
-### [运维令] 2026-10-26 13:2x（**继续推进 FP8 真实数据 16K/32K 吞吐实测**）· 用户直令 · 最高优先
-
-> 用户原话：「安排 pretrain 继续推进 16K/32K 吞吐实测」
-
-**① 现状（复用，勿重复验证）**：双机 16 卡 BF16 连通性已验证（84% scaling、IB 多通道健康、SSH cleanup 挂起已 kill + 结果解析已修）。**下一步 = 正式 FP8 真实数据的 16K/32K 吞吐实测。**
-
-**② 本轮任务**
-1. 修完 `baize_dualnode_16gpu_test.sh` 的 SSH cleanup（等远端 torchrun 干净退出再加超时兜底，不再 `wait` 空挂）后，**去 `--mock`、用 `--fp8-recipe tensorwise` + 关 CUDA Graph + 真实数据**，起双机 16 卡。
-2. **seq=16K**（CP=1，accum≥16）实测：目标冲 **≥600K tok/s**；记录全卡 tok/s / 每卡 tok/s / peak 显存 / loss / NaN。
-3. **seq=32K**（CP=2）实测：给出**真实可达最优吞吐** + 量化 CP 的 P2P KV 交换开销 + 明确「32K 到不了 600K」的天花板与瓶颈。
-4. 每配置写清：seq / DP/CP / accum / MBS / 关graph? / fp8? / tok/s / 显存 / 结论，全部溯源脚本+log。
-
-**③ 交付**：结果追加到 `reports/report_pretrain_seq16k32k_throughput_zh.html`（或新报告）+ EXPERIMENTS 更新；commit `pretrain perf:`。
-
-**④ 纪律**：双机先用 `nvidia-smi` 确认 .12 空、不抢 vision/data/harness；数字不伪造；脚本改动留 diff/备份。
-
-### [运维令] 2026-10-26 11:1x（**双机 16 卡实测调优 seq=16K/32K 训练吞吐**）· 用户直令 · 最高优先
-
-> 用户原话：「安排 pretrain 继续调优双机16卡 seq=16k/32k 的训练吞吐」
-
-**① 目标**：用**真实双机 16 卡**（2×8 H100）实测并调优 seq=16K 与 seq=32K 的训练吞吐（此前只是单机 8 卡 + 外推，未真 16 卡实跑）。
-
-**② 现状（复用你 #791 结论，直接在此基础上继续，勿重复取证）**
-- 16K（CP=1，关 graph，accum16）8 卡 = 300,133 tok/s（每卡 37,516），外推 16 卡 ~584K，**尚未真 16 卡实跑**。
-- 32K（CP=2，FA3 11 处 patch 后）8 卡 = 183,394 tok/s（每卡 22,924），外推 16 卡 ~322K。
-
-**③ 要求**
-1. **真 16 卡跑**：起 2 机（`.29` + 另一台空闲机，先 `nvidia-smi` 确认空闲）DP16 或 DP8×CP2，跑 seq=16K 与 32K，记真实 tok/s（别再只外推）。
-2. **调优方向**（可自行调整并记录理由）：16K 冲 600K+（调 accum / CP 开与关 / recompute 粒度 / 通信重叠）；32K 给出**真实可达的最优吞吐**，并量化 CP P2P KV 交换开销，明确「32K 因 2×上下文+CP 固有代价到不了 600K」的具体瓶颈与天花板。
-3. 每个配置记录：seq / DP/CP / accum / MBS / 关graph? / tok/s(全卡) / 每卡 tok/s / peak显存 / loss / NaN / 结论。
-
-**④ 交付**：实测结果写入 `reports/report_pretrain_seq16k32k_throughput_zh.html`（在原报告追加 §）或新报告；更新 EXPERIMENTS；commit `pretrain perf:`。
-
-**⑤ 纪律**：16 卡需 2 机，先确认第二台空闲、不抢 vision(.12)/data/harness；数字溯源脚本/日志；不伪造。
-
+> 📦 §运维令 15:3x（预训练构想报告 + ETA）**已完成**（#794：`report_pretrain_baize2b_pretrain_plan_zh.html` 22.5KB；§五执行口径已补）→ 原文归档 run/ARCHIVE_OPERATOR_PRETRAIN.md。
+> 📦 §运维令 14:3x（补写 #792 双机实测进吞吐报告）**已完成**（#793：报告 14,208→20,888B）→ 原文同上归档。
+> 📦 §运维令 13:2x（FP8 真实数据 16K/32K 实测）**已完成**（#792：16K=613,992 / 32K CP2=351,526）→ 原文同上归档。
+> 📦 §运维令 11:1x（双机 16 卡调优 seq16K/32K）**已完成**（#791 8卡首跑 + #792 双机实测覆盖）→ 原文同上归档。
 ### [运维令] 2026-10-26 09:1x（**优化 16K / 32K 训练吞吐至 600K+**）· 用户直令 · 最高优先
 
 > 用户原话：「pretrain：16卡训练吞吐 seq=8k 吞吐（~605K）已达标；现在继续优化16k和32k训练吞吐，争取达到600K以上」
