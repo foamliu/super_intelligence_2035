@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 训练数据情况报告 — 围绕 DATA_MAPPING.md</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; margin: 0; padding: 32px 20px; color: #1f2937; background: #f6f7f9; line-height: 1.65; }
+  .wrap { max-width: 1280px; margin: 0 auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 28px 30px 40px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; color: #0f172a; }
+  h2 { font-size: 1.25rem; margin: 30px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #2563eb; color: #1e3a8a; }
+  h3 { font-size: 1.05rem; margin: 18px 0 8px; color: #334155; }
+  .meta { color: #64748b; font-size: 0.82rem; margin: 0 0 6px; }
+  .meta b { color: #334155; }
+  .src { color: #b45309; font-size: 0.8rem; margin: 0 0 18px; background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 0 4px 4px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0 4px; font-size: 0.82rem; }
+  th, td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f1f5f9; color: #334155; font-weight: 600; position: sticky; top: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.tot td { font-weight: 700; background: #eff6ff; color: #1e3a8a; }
+  tr.tot td.num { background: #dbeafe; }
+  tr.ok td { background: #f0fdf4; }
+  tr.del td { background: #fef2f2; color: #7f1d1d; }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 9px; font-size: 0.72rem; font-weight: 600; }
+  .b-ok  { background: #dcfce7; color: #166534; }
+  .b-del { background: #fee2e2; color: #991b1b; }
+  .kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 14px 0 4px; }
+  .kpi .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; }
+  .kpi .card .k { color: #64748b; font-size: 0.74rem; }
+  .kpi .card .v { color: #0f172a; font-size: 1.12rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .kpi .card .s { color: #64748b; font-size: 0.72rem; }
+  .disk { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .disk .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; }
+  .disk .card h4 { margin: 0 0 8px; font-size: 0.92rem; color: #1e3a8a; }
+  .disk dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 0.8rem; }
+  .disk dt { color: #64748b; }
+  .disk dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .bar { height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; margin: 6px 0; }
+  .bar > span { display: block; height: 100%; }
+  .p85 { background: #ef4444; }
+  .p43 { background: #22c55e; }
+  ul.note { margin: 6px 0; padding-left: 20px; font-size: 0.82rem; color: #475569; }
+  ul.note li { margin: 3px 0; }
+  .verdict { background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 8px; padding: 14px 16px; margin: 12px 0; }
+  .verdict h3 { color: #065f46; margin-top: 0; }
+  code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 0.78rem; }
+  .legend { font-size: 0.76rem; color: #64748b; margin: 6px 0 0; }
+  .foot { margin-top: 30px; padding-top: 14px; border-top: 1px solid #e5e7eb; color: #94a3b8; font-size: 0.74rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>BaiZe 训练数据情况报告</h1>
+<p class="meta">围绕 <code>run/data/DATA_MAPPING.md</code> · 列表讲清楚数据情况</p>
+<p class="meta"><b>生成时间：</b>2026-10-26 12:21 · <b>数据线：</b>BaiZe data agent · <b>报告：</b>reports/report_data_mapping_zh.html</p>
+<p class="src">
+  <b>唯一数据源</b>：<code>run/data/DATA_MAPPING.md</code>（mtime 2026-10-26 09:52，100 行）+ <code>baize-data/tokenized/INDEX.tsv</code>（mtime 2026-10-26 09:52，2956 B，12 行）。
+  磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-26 12:21 实测）。数字一律以这两份文件 + df 为准，未另做 <code>du</code>/<code>find</code> 全树扫描（遵运维令 2026-10-26 10:4x）。
+  所有条目可溯源到 <code>DATA_MAPPING.md</code> 行号或 <code>INDEX.tsv</code> 行号。
+</p>
+
+<h2>1. 总览</h2>
+<div class="kpi">
+  <div class="card"><div class="k">数据源总数（可用）</div><div class="v">10</div><div class="s">A 节 10 行，全部「镜像完整」（L16–L25）</div></div>
+  <div class="card"><div class="k">总 shard 数</div><div class="v">815</div><div class="s">.bin=.idx=.json 各 815，三件套齐全（核对式 L28）</div></div>
+  <div class="card"><div class="k">总 tokens</div><div class="v">4,474.83 B</div><div class="s">4,474,825,355,971 tokens（INDEX.tsv TOTAL 行）</div></div>
+  <div class="card"><div class="k">总分词产物字节</div><div class="v">17.26 TB</div><div class="s">17,256,859,646,891 B（int32 token×4B，合计行 L26）</div></div>
+</div>
+<div class="kpi">
+  <div class="card"><div class="k">下载目录总字节</div><div class="v">12,647.98 GB</div><div class="s">12,647,981,934,192 B（A 节「下载目录字节」列 L26）</div></div>
+  <div class="card"><div class="k">已删除 / 不可用源</div><div class="v">32</div><div class="s">B 节 32 个 staging_r3 符号链接目录（已删除 L42–L73）</div></div>
+  <div class="card"><div class="k">分词器</div><div class="v">tokenizer_eod</div><div class="s">vocab=129,281 / pad=129,408（DeepSeek-V4.1-Flash int32）</div></div>
+  <div class="card"><div class="k">校验状态</div><div class="v">ALL OK</div><div class="s">triplet=OK · inode_bad=0 · 0 悬空（INDEX.tsv 全行）</div></div>
+</div>
+
+<h3>磁盘占用（df 实测 · 2026-10-26 12:21）</h3>
+<div class="disk">
+  <div class="card"><h4>/nas_train（分词镜像真身 + 下载目录）</h4><div class="bar"><span class="p85" style="width:85%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.31:/vol_CTE0_data01</dd><dt>总容量</dt><dd>207 TB</dd><dt>已用</dt><dd>176 TB（85%）</dd><dt>可用</dt><dd>32 TB</dd></dl></div>
+  <div class="card"><h4>/nas_env（full_* 跨盘 symlink 真身）</h4><div class="bar"><span class="p43" style="width:43%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.32:/vol_CTE0_data04</dd><dt>总容量</dt><dd>10 TB</dd><dt>已用</dt><dd>4.2 TB（43%）</dd><dt>可用</dt><dd>5.8 TB</dd></dl></div>
+</div>
+<p class="legend">注：<code>env14_*</code> 真身在 <code>/nas_train/.../baize-data/text/</code>（与 tokenized/ 同盘 ⇒ hardlink，0 额外空间）；<code>full_*</code> 真身在 <code>/nas_env/app.e0031982/baize-data/</code>（跨盘 ⇒ symlink）。两者均属「下载的一律保留」，未删未改未移（L30）。</p>
+
+<h2>2. 逐源列表（每个下载目录一行）</h2>
+<p class="meta">来源：A 节（DATA_MAPPING.md L14–L26）+ INDEX.tsv L2–L11。状态只取映射表定义的取值。</p>
+<table>
+  <thead><tr><th>#</th><th>数据源（下载目录）</th><th>分词镜像目录</th><th class="num">.bin</th><th class="num">.idx</th><th class="num">.json</th><th class="num">分词字节 (B)</th><th class="num">GB</th><th class="num">tokens (B)</th><th class="num">下载字节 (B)</th><th class="num">下载/分词比</th><th>存储</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr class="ok"><td>1</td><td>…/Ultra-FineWeb/data/ultrafineweb_en_v1_4</td><td>…/Ultra-FineWeb/ultrafineweb_en_v1_4</td><td class="num">110</td><td class="num">110</td><td class="num">110</td><td class="num">8,929,852,999,497</td><td class="num">8317</td><td class="num">2,238,140,710,284</td><td class="num">6,747,434,955,525</td><td class="num">0.756</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>2</td><td>…/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa</td><td>…/Ultra-FineWeb-L3/ultrafineweb_en_l3/qa</td><td class="num">154</td><td class="num">154</td><td class="num">154</td><td class="num">1,062,000,123,988</td><td class="num">989</td><td class="num">263,899,449,229</td><td class="num">663,183,709,378</td><td class="num">0.624</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>3</td><td>…/UltraData-Code/data/UltraData-Code-L2</td><td>…/UltraData-Code/UltraData-Code-L2</td><td class="num">141</td><td class="num">141</td><td class="num">141</td><td class="num">1,691,139,314,855</td><td class="num">1575</td><td class="num">421,450,419,455</td><td class="num">611,281,878,122</td><td class="num">0.361</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>4</td><td>…/UltraData-Code/data/UltraData-Code-L3</td><td>…/UltraData-Code/UltraData-Code-L3</td><td class="num">63</td><td class="num">63</td><td class="num">63</td><td class="num">516,117,199,509</td><td class="num">481</td><td class="num">128,623,266,591</td><td class="num">604,712,501,031</td><td class="num">1.172</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>5</td><td>…/UltraData-Math/data/UltraData-Math-L1</td><td>…/UltraData-Math/UltraData-Math-L1</td><td class="num">149</td><td class="num">149</td><td class="num">149</td><td class="num">659,469,460,275</td><td class="num">614</td><td class="num">164,437,183,984</td><td class="num">366,622,940,699</td><td class="num">0.556</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>6</td><td>…/UltraData-Math/data/UltraData-Math-L3</td><td>…/UltraData-Math/UltraData-Math-L3</td><td class="num">67</td><td class="num">67</td><td class="num">67</td><td class="num">313,425,604,823</td><td class="num">292</td><td class="num">77,949,162,709</td><td class="num">122,536,811,815</td><td class="num">0.391</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>7</td><td>…/Ultra-FineWeb/data/ultrafineweb_en</td><td>…/Ultra-FineWeb/ultrafineweb_en</td><td class="num">32</td><td class="num">32</td><td class="num">32</td><td class="num">2,981,295,624,594</td><td class="num">2777</td><td class="num">905,921,334,220</td><td class="num">2,661,358,397,268</td><td class="num">0.893</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>8</td><td>…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>…/Ultra-FineWeb/ultrafineweb_l1_en_hq</td><td class="num">94</td><td class="num">94</td><td class="num">94</td><td class="num">603,519,735,520</td><td class="num">562</td><td class="num">150,155,374,778</td><td class="num">477,975,290,461</td><td class="num">0.792</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>9</td><td>…/Ultra-FineWeb/data/ultrafineweb_zh</td><td>…/Ultra-FineWeb/ultrafineweb_zh</td><td class="num">4</td><td class="num">4</td><td class="num">4</td><td class="num">453,644,894,252</td><td class="num">422</td><td class="num">112,756,190,641</td><td class="num">324,321,522,155</td><td class="num">0.715</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>10</td><td>…/UltraX-Preview/data/UltraX-AICC</td><td>…/UltraX-Preview/UltraX-AICC</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">46,394,689,578</td><td class="num">43</td><td class="num">11,492,264,080</td><td class="num">68,553,927,738</td><td class="num">1.478</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="tot"><td colspan="3">合计（A 节 L26）</td><td class="num">815</td><td class="num">815</td><td class="num">815</td><td class="num">17,256,859,646,891</td><td class="num">16072</td><td class="num">4,474,825,355,971</td><td class="num">12,647,981,934,192</td><td class="num">11779 GB</td><td>—</td><td>—</td></tr>
+  </tbody>
+</table>
+<p class="legend">核对式（L28）：<code>sum(.bin)=815 = sum(.idx)=815 = sum(.json)=815</code>；<code>sum(分词字节)=17,256,859,646,891</code>；<code>sum(tokens)=4,474,825,355,971</code>；<code>sum(下载字节)=12,647,981,934,192</code>。误差 0。「下载/分词字节比」= 下载目录字节 ÷ 分词产物字节；int32 token×4B 常大于压缩 parquet，故比值多 &lt; 1（L30）。</p>
+
+<h2>3. 重点：10 个已镜像源（全部「镜像完整」）</h2>
+<p class="meta">DATA_MAPPING.md A 节第 1–10 行（L16–L25），与运维令列举顺序一致。</p>
+<table>
+  <thead><tr><th>#</th><th>数据源</th><th class="num">shard</th><th class="num">tokens (B)</th><th class="num">分词字节 (GB)</th><th class="num">下载字节 (GB)</th><th>存储方式</th><th>校验</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr class="ok"><td>1</td><td>en_v1_4（ultrafineweb_en_v1_4）</td><td class="num">110</td><td class="num">2,238,140,710,284</td><td class="num">8317</td><td class="num">6284</td><td>hardlink</td><td>triplet=OK · inode_ok=110</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>2</td><td>ufw_en_l3（ultrafineweb_en_l3/qa）</td><td class="num">154</td><td class="num">263,899,449,229</td><td class="num">989</td><td class="num">618</td><td>symlink</td><td>triplet=OK · inode_ok=154</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>3</td><td>Code-L2（UltraData-Code-L2）</td><td class="num">141</td><td class="num">421,450,419,455</td><td class="num">1575</td><td class="num">569</td><td>symlink</td><td>triplet=OK · inode_ok=141</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>4</td><td>Code-L3（UltraData-Code-L3）</td><td class="num">63</td><td class="num">128,623,266,591</td><td class="num">481</td><td class="num">563</td><td>symlink</td><td>triplet=OK · inode_ok=63</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>5</td><td>Math-L1（UltraData-Math-L1）</td><td class="num">149</td><td class="num">164,437,183,984</td><td class="num">614</td><td class="num">341</td><td>symlink</td><td>triplet=OK · inode_ok=149</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>6</td><td>Math-L3（UltraData-Math-L3）</td><td class="num">67</td><td class="num">77,949,162,709</td><td class="num">292</td><td class="num">114</td><td>symlink</td><td>triplet=OK · inode_ok=67</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>7</td><td>ufw_en（ultrafineweb_en）</td><td class="num">32</td><td class="num">905,921,334,220</td><td class="num">2777</td><td class="num">2479</td><td>hardlink</td><td>triplet=OK · inode_ok=32</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>8</td><td>ufw_l1_en_hq（ultrafineweb_l1_en_hq）</td><td class="num">94</td><td class="num">150,155,374,778</td><td class="num">562</td><td class="num">445</td><td>hardlink</td><td>triplet=OK · inode_ok=94</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>9</td><td>ufw_zh（ultrafineweb_zh）</td><td class="num">4</td><td class="num">112,756,190,641</td><td class="num">422</td><td class="num">302</td><td>hardlink</td><td>triplet=OK · inode_ok=4</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>10</td><td>UltraX-AICC</td><td class="num">1</td><td class="num">11,492,264,080</td><td class="num">43</td><td class="num">64</td><td>hardlink</td><td>triplet=OK · inode_ok=1</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="tot"><td colspan="2">合计</td><td class="num">815</td><td class="num">4,474,825,355,971</td><td class="num">16072</td><td class="num">11779</td><td>—</td><td>ALL OK · inode_bad=0</td><td>—</td></tr>
+  </tbody>
+</table>
+<p class="legend">下载字节 GB 为「下载目录字节(B) ÷ 1,073,741,824」换算，与分词字节 GB 列口径一致。校验列对应 INDEX.tsv 各行 triplet / inode_ok / inode_bad。</p>
+
+<h2>4. 其余状态源（未分词 / 未映射 / 已删除 / 已废弃）</h2>
+<p class="meta">当前 A 节 10 行全部「镜像完整」，<b>无</b>「分词中」「未分词」「未映射」「已废弃」源。唯一的「其余状态」= B 节 32 个「已删除」源（DATA_MAPPING.md L34–L76）。</p>
+
+<h3>4.1 已删除 / 不可用（32 个 · 运维令 2026-10-25 18:2x 终裁）</h3>
+<p class="meta">用户口径：不能被 A 节收录的数据即不可用，留着只占盘。本节为终裁，删完即结案（L36）。</p>
+<table>
+  <thead><tr><th>#</th><th>shard</th><th>原路径（staging_r3/）</th><th class="num">删前字节</th><th class="num">符号链接数</th><th class="num">理论 tokens (参考)</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr class="del"><td>1</td><td>l3_s0</td><td>l3_s0</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,364,981,864</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>2</td><td>l3_s1</td><td>l3_s1</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,367,599,448</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>3</td><td>l3_s10</td><td>l3_s10</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,366,888,523</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>4</td><td>l3_s11</td><td>l3_s11</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,365,010,123</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>5</td><td>l3_s12</td><td>l3_s12</td><td class="num">15,320</td><td class="num">45</td><td class="num">17,970,036,302</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>6</td><td>l3_s2</td><td>l3_s2</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,366,256,102</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>7</td><td>l3_s25</td><td>l3_s25</td><td class="num">15,230</td><td class="num">45</td><td class="num">19,048,242,972</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>8</td><td>l3_s26</td><td>l3_s26</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,114,958,375</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>9</td><td>l3_s27</td><td>l3_s27</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,115,321,614</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>10</td><td>l3_s28</td><td>l3_s28</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,116,508,289</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>11</td><td>l3_s29</td><td>l3_s29</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,116,608,027</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>12</td><td>l3_s3</td><td>l3_s3</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,366,613,648</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>13</td><td>l3_s30</td><td>l3_s30</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,115,801,296</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>14</td><td>l3_s31</td><td>l3_s31</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,114,861,130</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>15</td><td>l3_s32</td><td>l3_s32</td><td class="num">15,338</td><td class="num">45</td><td class="num">17,298,553,950</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>16</td><td>l3_s33</td><td>l3_s33</td><td class="num">15,212</td><td class="num">45</td><td class="num">18,737,130,528</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>17</td><td>l3_s34</td><td>l3_s34</td><td class="num">15,212</td><td class="num">45</td><td class="num">18,737,633,687</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>18</td><td>l3_s35</td><td>l3_s35</td><td class="num">15,212</td><td class="num">45</td><td class="num">18,738,003,380</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>19</td><td>l3_s36</td><td>l3_s36</td><td class="num">15,212</td><td class="num">45</td><td class="num">18,735,200,626</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>20</td><td>l3_s37</td><td>l3_s37</td><td class="num">15,212</td><td class="num">45</td><td class="num">18,737,362,596</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>21</td><td>l3_s38</td><td>l3_s38</td><td class="num">15,212</td><td class="num">45</td><td class="num">18,736,865,948</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>22</td><td>l3_s39</td><td>l3_s39</td><td class="num">5,500</td><td class="num">9</td><td class="num">3,747,724,045</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>23</td><td>l3_s4</td><td>l3_s4</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,368,882,547</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>24</td><td>l3_s5</td><td>l3_s5</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,365,361,981</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>25</td><td>l3_s6</td><td>l3_s6</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,364,257,374</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>26</td><td>l3_s7</td><td>l3_s7</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,366,499,270</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>27</td><td>l3_s8</td><td>l3_s8</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,365,102,915</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>28</td><td>l3_s9</td><td>l3_s9</td><td class="num">15,617</td><td class="num">45</td><td class="num">14,366,083,546</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>29</td><td>math_s32</td><td>math_s32</td><td class="num">14,708</td><td class="num">46</td><td class="num">7,566,398,806</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>30</td><td>math_s33</td><td>math_s33</td><td class="num">14,448</td><td class="num">46</td><td class="num">10,432,537,812</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>31</td><td>math_s34</td><td>math_s34</td><td class="num">14,448</td><td class="num">46</td><td class="num">12,565,307,743</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="del"><td>32</td><td>math_s35</td><td>math_s35</td><td class="num">15,570</td><td class="num">46</td><td class="num">14,711,233,910</td><td><span class="badge b-del">已删除</span></td></tr>
+    <tr class="tot"><td colspan="2">合计（L74）</td><td>—</td><td class="num">482,940</td><td class="num">1408</td><td class="num">472,849,828,377</td><td>—</td></tr>
+  </tbody>
+</table>
+<p class="legend">⚠️ 实测更正（L38）：此 32 目录实为 <code>staging_r3/</code> 下的<b>输入符号链接暂存</b>（仅 ~471.6 KB 元数据，非 <code>.bin/.idx/.json</code> 产物）；真正的分词产物此前迁移 <code>/nas_env/full_*</code> 时已处置。删除释放 ≈ 471.6 KB（非早年所述 1.89 TB；1.89 TB 为按 token×4B 的理论 .bin 体积）。<code>/nas_inference</code> 源 parquet 原样保留。明细：<code>run/data/deleted_unmapped32_20261025.tsv</code>（32 行）。</p>
+
+<h3>4.2 状态源汇总（按状态分类）</h3>
+<table>
+  <thead><tr><th>状态</th><th class="num">源数</th><th class="num">shard 数</th><th class="num">tokens (B)</th><th class="num">分词产物字节</th><th>出处</th></tr></thead>
+  <tbody>
+    <tr class="ok"><td><span class="badge b-ok">镜像完整</span></td><td class="num">10</td><td class="num">815</td><td class="num">4,474,825,355,971</td><td class="num">17,256,859,646,891</td><td>A 节 L16–L25</td></tr>
+    <tr><td>分词中</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>无（131/131 分词已 09:43:35 RUN COMPLETE）</td></tr>
+    <tr><td>未分词</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>无</td></tr>
+    <tr><td>未映射</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>无</td></tr>
+    <tr><td>已废弃</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>无</td></tr>
+    <tr class="del"><td><span class="badge b-del">已删除</span></td><td class="num">32</td><td class="num">—</td><td class="num">472,849,828,377 (理论)</td><td class="num">~471.6 KB (实占)</td><td>B 节 L42–L73</td></tr>
+  </tbody>
+</table>
+
+<h2>5. 结论</h2>
+<div class="verdict">
+  <h3>✅ 数据管线已全部收尾就绪</h3>
+  <ul class="note">
+    <li><b>分词</b>：131/131 shard 已于 2026-10-26 09:43:35 RUN COMPLETE（1.18T tokens / 4.05 TB，0 fail）；连同既有 5 源全量分词（574 shards / 1056.36B）+ en_v1_4（110 / 2238.14B），全部并入 tokenized 镜像。</li>
+    <li><b>镜像</b>：<code>build_tokenized_mirror.py</code> 重跑后 tokenized 镜像 = <b>10 目录 / 815 shard / 4474.83B tokens / 17.26 TB</b>，triplet ALL OK、inode ALL OK、0 悬空链接（INDEX.tsv 全行）。</li>
+    <li><b>映射表</b>：<code>DATA_MAPPING.md</code> A 节 10 行<b>全部「镜像完整」</b>，无任何「分词中 / 未分词 / 未映射 / 已废弃」状态源。生成器幂等（连跑两次逐字节相同）。</li>
+    <li><b>不可用源</b>：32 个 staging_r3 符号链接暂存目录已按运维令 2026-10-25 18:2x 终裁删除（实占释放 ~471.6 KB），B 节留档结案。</li>
+    <li><b>磁盘</b>：/nas_train 85%（32 TB 可用）、/nas_env 43%（5.8 TB 可用），训练数据本体充足。</li>
+  </ul>
+</div>
+
+<h3>还差什么收尾动作</h3>
+<ul class="note">
+  <li><b>主线收尾</b>：无。下载 → 分词 → 镜像 → 映射表，全链路已闭环，训练可直接消费 <code>tokenized/</code> 下 815 个 <code>.bin/.idx/.json</code> 三件套。</li>
+  <li><b>待运维裁决（非阻塞）</b>：磁盘清理 batch2（DATA_MAPPING.md L97）—— 110 个 <code>env14_*.bin</code> 在 <code>text/</code> 的 hardlink 副本，实占 0（与 tokenized/ 同 inode），仅作 tidy。状态 <code>PENDING operator decision</code>。删与否均不影响镜像可用性。</li>
+  <li><b>体积维护（可选）</b>：本线 <code>MEMORY_DATA.md</code> 42 KB / <code>BAIZE_DATA_TASK.md</code> 43 KB，略超 40 KB 红线，下次唤醒可轻归档已闭合块；按「体积永不优先于交付」，不阻塞任何工作。</li>
+  <li><b>下游</b>：配比 / 去重 / 污染隔离（CONTAMINATION_CHECK）按方案文档另线推进，不在本映射表范围内。</li>
+</ul>
+
+<div class="foot">
+  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code>（100 行）与 <code>baize-data/tokenized/INDEX.tsv</code>（12 行），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-26 12:21 实测）。生成：BaiZe data agent · 运维令 2026-10-26 10:4x。
+</div>
+
+</div>
+</body>
+</html>
