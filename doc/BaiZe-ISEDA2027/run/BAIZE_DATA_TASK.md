@@ -89,13 +89,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### [运维令] 2026-10-25 22:3x（分词停顿 2.6h：37 进程活着但 0 产出，先诊断再动）· 用户直令 · 最高优先
-> 事实（RUN_ID 210 实测 22:00）：`done=94/131` 自 19:21 起未变；`tokens=150,155,374,778` 与 `bin_bytes=600,621,499,112` 与 19:21 **完全相同**；`preprocess=37`；ETA 由 7,688s 涨到 11,369s ⇒ 不是慢，是**停**。
-> 1) **先诊断（15 分钟内）**：`ps -eo pid,etimes,pcpu,stat,args | grep '[p]reprocess_data'`（看 CPU 与 D 状态）；对 2-3 个 PID `py-spy dump --pid` 或 `cat /proc/<pid>/stack`；`nfsstat -c` / `dmesg | tail` / `df -h`；确认 37 个进程是否卡在同一 parquet 或同一 NFS 句柄。
-> 2) **按类处置**（不许直接全杀）：① NFS/IO 阻塞 ⇒ 留证据，重启这些 shard（保留已完成 `.bin/.idx/.json`）；② BPE/进程死锁 ⇒ 照 2026-10-22 的 BPE 死循环处理：杀卡住的 PID、清半成品 `.bin`、supervisor 重排；③ 计数器坏了但仍在写 ⇒ 用 `du -sb` + 文件 mtime 证明，修 supervisor 计数。
-> 3) 恢复后每 30 分钟记一次 `done` 与 `bin_bytes`，**连续两次相同才算真停**。
-> 4) 完成后仍按 18:5x 令刷 `DATA_MAPPING.md` 第 7-10 行为 `镜像完整`、重跑 `build_tokenized_mirror.py` 与 triplet/inode 校验。
-> 5) 报回：卡在哪个 shard、哪类原因、处置动作、恢复后 done 速率与 ETA。
+> 📦 §运维令·2026-10-25 22:3x（分词停顿2.6h诊断）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：done=95/131 FLAT系supervisor只计finalize的计数artifact非真停；/proc/io铁证36进程健康在写@1.65MB/s=412K tok/s/proc；处置=不杀；分词09:43:35全DONE 131/131。需要时再读。
 
 ### [运维令] 2026-10-25 18:5x（把 DATA_MAPPING.md 做成脚本生成的真·单一事实源 + 授权按测得分批清理磁盘）· 用户直令 · 最高优先
 > 用户原话：「对于 data 来说，维护好 run/data/DATA_MAPPING.md 至关重要。可以适当清理一下硬盘，减少占用。」
@@ -118,32 +112,7 @@
 - `MEMORY_DATA.md` 首部新块 + `daily-memories-data/2026-10-25.md`；commit 前缀 `data mapping:` 或 `data cleanup:`；`git status -sb` 无 ahead / behind。
 - HTML 报告按需（用户或运维要才生成），不为此表反复改报告结构。
 
-### [运维令] 2026-10-25 18:2x（32 个「不可映射」分词 shard：**全部删除**，删前留档）· 用户直令 · 最高优先 · 覆盖 18:1x 块
-> 用户原话：「我难道说的还不清楚吗？不明来历的，无法被DATA_MAPPING.md收录的数据，也就无法使用，那放在那里占用磁盘空间干什么？你出这个硬盘吗？」
-> 前提（用户 18:3x 明确）：**这是 MiniCPM5 的训练数据管线** —— **下载的数据（parquet / 下载目录 / env14 / full_*）一律保留**；要删的只有 data 线**自己分词、且来历理不清**的那批产物（即下面这 32 个「不可映射」shard）。
-> 结论：**这 32 个（l3_s 28 个 + math_s 4 个）全部删除**，不再讨论「是否唯一」。用户口径 = **不能被 DATA_MAPPING.md 收录的数据即不可用，留着只占磁盘**。
-> 规模（已实测）：472.85B tokens，约 1.89 TB（按 4 B/token），涉及 1286 个 parquet 引用，全部是 l3_s / math_s 的 `staging_r3` 早期中间产物。
-
-**1) 删前留档（唯一强制动作，10 分钟做完，先 commit 再删）**
-- 对 32 个目录逐个记录：目录路径、`du -sb` 字节、`find -type f | wc -l` 文件数、`.bin/.idx/.json` 三件套清单、`.json` 里的 parquet 引用（若有）。
-- 落 `run/data/deleted_unmapped32_20261025.tsv`（32 行明细）+ `run/data/deleted_unmapped32_summary.md`（总计字节 / TB / 文件数 / 一句结论）。
-- 留档只为追溯「删了什么、多大、从哪来」，**不是保留理由**。
-
-**2) 执行删除（直接删，不搬家、不挂账）**
-- 对象 = judgment TSV 里 action 以「保留」开头的 32 行：`l3_s0`-`l3_s12`、`l3_s25`-`l3_s39`、`math_s32`-`math_s35`，位于 `/nas_train/app.e0031982/datasets/baize-data/text/`。
-- 删前抽查 3 个是否被 `tokenized/` 镜像 hardlink 引用（`find tokenized -samefile <path>`）；有引用就先解除再删，避免镜像里留悬空链接。
-- 删完立刻 `du -sb` 复核释放量，并记录 `df -h /nas_train` 前后对比。
-
-**3) 收尾（必须同步，缺一不可）**
-- `DATA_MAPPING.md`：新增「已删除 / 不可用」节，32 行状态置 `已删除`（附删前字节、删除时间、指向 `deleted_unmapped32_20261025.tsv`），**正文映射表里不再出现**。
-- `tokenized/INDEX.tsv` + `DATA_LEDGER.md` 同步；重跑 `build_tokenized_mirror.py` 与 triplet/inode 校验，确认无悬空链接（在跑的 131 分词可先不打断，收尾校验等它结束后一并做）。
-- 报回：`删除 32 个 / 释放 X TB / 文件数 Y / 磁盘前后`，一句话结论 + 表。
-
-**铁律**
-- 前提：**MiniCPM5 训练数据，下载的一律保留**；只删 data 线自己分词、来历理不清的 32 个产物。
-- 只删**分词产物**；下载 parquet / 下载目录 / env14 / full_* 原样保留，不许碰（它们是训练数据本体）。
-- 不许把这 32 个再挪进「待裁决」或再挂账：**本令为终裁，删完即结案**。
-- 个别目录删不掉（权限/占用）⇒ 如实报出路径与原因，不许静默跳过。
+> 📦 §运维令·2026-10-25 18:2x（删32不可映射shard）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：32个(l3_s28+math_s4)已全部删除(1.91TiB表观/实占~471.6KB)，删前留档deleted_unmapped32_20261025.tsv+summary.md，DATA_MAPPING.md B节标已删除，终裁结案。需要时再读。
 
 ### [运维令] 2026-10-25 17:5x（**目录名不再重要：核心交付 = 「下载与分词」映射表；Markdown 为单一事实源，HTML 按需**）· 用户直令 · 最高优先
 > 用户原话：「data：目录不重要，分词后可以改目录名字。关键是维护好映射表，这个映射表可以是markdown，需要时转HTML给运维报告。」
@@ -188,53 +157,7 @@
 
 ### [已归档] §运维令·2026-10-25 13:2x（停止一切报告工作，只做布局+分词两件事）**已完成**（布局 7896810a3、分词 94/131 在跑、报告已验收）-> 原文归档到 `run/ARCHIVE_OPERATOR_DATA.md`。需要时再读。
 
-### ⏱ 本轮执行顺序（2026-10-25 12:5x 用户直令 · **覆盖此前所有令**）
-> 用户原话：「1. 已下载已分词的，把分词目录整理一下，跟下载目录有更好的对应。2. 已下载未分词的，去分词，充分利用多核并发。」
-> 已删 32 个不可对应 shard（1.91 TiB，RUN 199）；报告已由运维改为**单表**（8.5 KB / 1 table / 14 行），**结构不许改**。
-
-#### ⓪ 报告复核 · **已完成并验收**
-> data 于 12:41 重生成（10,520 B / 1 table / 每行附 `du -sb` 命令 / 结构未变），运维 13:19 验收通过。若 `run/data/report_verify_20261025.md` 还没落，随下次提交补上（只补实测值与命令，不补论断）；🚫 不得再改报告结构。
-
-#### ① 已分词产物：整理成「镜像下载目录」的布局（**零拷贝**）
-
-新根：`/nas_train/app.e0031982/datasets/baize-data/tokenized/`，**路径镜像 HF 下载目录**：
-
-| 新目录（= 镜像下载路径） | 现有产物来源 | 建法 |
-|---|---|---|
-| `tokenized/Ultra-FineWeb/ultrafineweb_en_v1_4/` | `baize-data/text/env14_*.{bin,idx,json}`（110 组） | 同盘 ⇒ **hardlink**（同 inode、0 额外空间、旧路径继续可用） |
-| `tokenized/Ultra-FineWeb-L3/ultrafineweb_en_l3/qa/` | `/nas_env/…/full_ufw_l3`（154 组） | 跨盘 ⇒ **symlink**（**禁止 cp**，4.24 TB） |
-| `tokenized/UltraData-Code/UltraData-Code-L2/` | `/nas_env/…/full_ultradata_code_l2`（141） | symlink |
-| `tokenized/UltraData-Code/UltraData-Code-L3/` | `/nas_env/…/full_ultradata_code_l3`（63） | symlink |
-| `tokenized/UltraData-Math/UltraData-Math-L1/` | `/nas_env/…/full_ultradata_math_l1`（149） | symlink |
-| `tokenized/UltraData-Math/UltraData-Math-L3/` | `/nas_env/…/full_ultradata_math_l3`（67） | symlink |
-
-硬性规则：
-1. **只许 hardlink（同盘）/ symlink（跨盘）**；🚫 `cp`、🚫 `mv`、🚫 `rm` 任何已有 `.bin/.idx/.json`。目的是"整理视图"，不是搬数据。
-2. 每个新目录写 `MANIFEST.json`：`{download_dir(绝对), hf_repo, subdir, shards:[...], tokens_total, bytes_total, tokenizer, storage:"hardlink|symlink", created}`。
-3. 顶层 `tokenized/INDEX.tsv`：`tokenized_dir | download_dir | shards | tokens | bytes | tokenizer | storage`；数字用脚本统计（`ls *.bin` / `du -sb` / `.json num_tokens` 求和），禁手填。
-4. 之后**校验**：每目录 `bin == idx == json 三件套齐全`、hardlink 用 `stat -c %i` 比 inode 相同、`num_tokens` 可解析。
-5. 完成后把 `run/data/map_dl_vs_tok_20261025.tsv` 的 `tok_dir` 列改成新路径，重跑 `python run/data/gen_tokenized_inventory_report.py`（已是单表模式），报告表里的「分词产物目录」必须是新布局。
-
-#### ② 已下载未分词：**现在就分词，把 224 核用起来**
-
-未分词 4 源（实测：**12,002 parquet / 3,532.21 GB**）：
-
-| 下载目录 | parquet | GB | 目标前缀 | 输出目录（新布局） |
-|---|---:|---:|---|---|
-| `…/openbmb/Ultra-FineWeb/data/ultrafineweb_en` | 2,048 | 2661.36 | `ufw_en_s*` | `tokenized/Ultra-FineWeb/ultrafineweb_en/` |
-| `…/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq` | 6,000 | 477.98 | `ufw_l1hq_s*` | `tokenized/Ultra-FineWeb/ultrafineweb_l1_en_hq/` |
-| `…/openbmb/Ultra-FineWeb/data/ultrafineweb_zh` | 256 | 324.32 | `ufw_zh_s*` | `tokenized/Ultra-FineWeb/ultrafineweb_zh/` |
-| `…/openbmb/UltraX-Preview/data/UltraX-AICC` | 61 | 68.55 | `ultrax_aicc_s*` | `tokenized/UltraX-Preview/UltraX-AICC/` |
-
-- **并发标定（必须做，别拍脑袋）**：`96 / 144 / 192 / 224` 四档各 60s，记 tokens/s、CPU%、load、NFS 写速；取 **tokens/s 拐点**，`workers = min(拐点, 200)`（留 4–8 核给系统与 85M 下载）；`nice -n 5`。标定表必须贴进回报。
-- 分词器沿用 `tokenizer_eod`（vocab 129,281 / pad 129,408），链路 `preprocess_data.py` 不变；shard 目标 ~64–80 GB/片；每片写 manifest（shard → 源 parquet 列表）。
-- `setsid` 后台跑，日志 `/tmp/tokenize_untokenized_*.log`；断点续传（已有三件套跳过）；失败重试 2 次后落 `failed_shards.txt`。
-- **边分边报**：每 30 分钟 `done/total`、tokens/s、CPU%/load、写速、ETA、失败数；全部完成后校验 `.bin=.idx`、字节、`num_tokens`，再更新 `DATA_LEDGER.md §9` + 重生成报告 + `INDEX.tsv`。
-
-> 🚫 不许 `cp` 已有 4.24 TB 产物；🚫 不许 `mv`/`rm` 已有分词文件；🚫 `env14_*` 原件与 `/nas_env/full_*`：不删/不改/不移/不复制（**建 hardlink/symlink 允许**，见顶部仲裁表）。
-> 🚫 报告结构不许改（已经是单表）；只需按新路径重生成。
-> 🚫 不许用「未实测/N/A/—」；未跑完不许称「已就绪」。
-> 顺序：**① 先做（分钟级：链接 + INDEX），② 立刻开跑**；② 未启动前不得睡。
+> 📦 §运维令·2026-10-25 12:5x（本轮执行顺序：①已分词布局镜像hardlink/symlink ②未分词4源开跑224核）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：①布局DONE(tokenized/镜像10目录/815shard/INDEX.tsv)+②分词DONE 131/131(09:43:35,1.18T/4.05TB)；口径仲裁表(本文件下方)仍为活口径不归档。需要时再读。
 
 
 ### 🧵 运维令 · 2026-10-25 11:0x（重盘盘点 + 对未分词开跑）· **已并入 12:0x 令，本条仅存档要点**
