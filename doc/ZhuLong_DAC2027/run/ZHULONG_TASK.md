@@ -1,7 +1,52 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令
-### 📕 改稿任务令 · 2026-10-25 00:0x（**按外部评审意见改论文（含 57.4pp 归因硬伤）**）· 用户直令 · 最高优先
+### 🟢 运维指令 · 2026-10-26 08:1x（**作废 224219（配置错误）→ 已修复 worker 配置源 → 重启 loop → 用正确配置重跑 zhulong×glm-5.3-flash×full 5-run**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话（10-26）：「作废224219，重启 agent loop。你现在 36.15机器上，可以直接操作。」
+> **背景**：10-24 22:1x 令要求「停 cline-full → zhulong 配置对齐 cline（maxTokens 8192）→ zhulong 重跑 5-run」。但 224219 起跑时 **worker 复制了 stale providers.json**（`~/.cline/data/settings/providers.json` = `deepseek-v4-pro + maxTokens=16384`），而非令要求的 `glm-5.3-flash + maxTokens=8192`。根因：`run_cli.sh` 默认 `CLI_DATA_DIR=~/.cline/data`，而 `run_zhulong_script.sh` 的 `export CLI_DATA_DIR=~/.zhulong` 在某些启动路径下未生效。此外 agent loop 在 10-24 22:46 执行 `pkill -f 'zhulong'` 杀 cline-full r1 时**误杀了自己**（zhulong_loop.sh 匹配了 `zhulong`），导致 loop 死亡 ~34h。
+
+**① 已由运维完成（勿重复）**
+1. **作废 224219**：已写 `VOID_REASON.txt` 到 `2026_1024_224219/`；数据留证不删；不进 5-run。
+2. **修复 worker 配置源**：已把 `~/.zhulong/settings/providers.json`（正确值 `glm-5.3-flash + maxTokens=8192 + baseUrl /v1`）复制到 `~/.zhulong/data/settings/providers.json`（run_cli.sh 复制源）。验证：模拟 worker 复制 → 得 `glm-5.3-flash + 8192` ✅。
+3. **确认当前配置全对**：`.env` `CLI_AGENT=zhulong / READBACK=full / PROXY_PORTS=8650,8651,8652,8654`；`~/.zhulong/settings/providers.json` `model=glm-5.3-flash / maxTokens=8192 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false`；8090 PID 2778637 活 + full readback 四字段 ✅；4 端口 8650/8651/8652/8654 全 OK。
+4. **重启 agent loop**：用**登录 shell** 启动（`setsid bash -lc "exec bash <...>/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &`），确保 PATH 有 `zhulong`。启动后自检 `command -v zhulong` 有输出 + log 无 `No such file`。
+
+**② 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full 5-run（配置对齐后重跑）`、`PHASE = running`、`WAITING = 0`（loop 刚重启，需起 r1）。
+2. **起 r1**（zhulong × glm-5.3-flash × full × maxTokens=8192 × 8650 组 × `-p 4`）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_aligned_r1.log 2>&1 < /dev/null &`
+   - **关键**：`run_zhulong_script.sh` 会 `export CLI_DATA_DIR=~/.zhulong`（已确认 line 28），worker 会复制 `~/.zhulong/settings/providers.json`（= `glm-5.3-flash + 8192` ✅）。
+3. **起跑后验证 worker 用的模型**：从 `<batch>/cli_data/worker_1/data/settings/providers.json` grep `model` 应为 `glm-5.3-flash`、`maxTokens` 应为 `8192`。**这条必须贴证据**（若仍是 `deepseek-v4-pro` 或 `16384` 立即停跑报错）。
+4. **r1 → 手动 regrade（Step7.1 auto-grade 有已知 bug）→ 记 `pass/158` + `gen-fail` + 耗时 + `-32001` + `sandbox-timeout` → r2 → ... → r5 → 5/5 mean±std**。
+5. **与 cline 基线 86.8±1.6% 对比**，更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"配置对齐后重测"一节）。
+
+**③ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）—— **worker providers.json 必须 = glm-5.3-flash + 8192**；
+2. 单轮 **gen-fail ≤ 5/158**（对齐前 12–27）—— 这是本次对齐最该改善的指标；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. 若对齐后 zhulong 仍显著低于 cline，**必须**在报告里给出"已排除配置混杂"的结论。
+
+**④ ⚠️ loop 自杀防护（血泪教训）**
+- **禁止用 `pkill -f 'zhulong'`**（会匹配 `zhulong_loop.sh` 自己 → loop 自杀）。如需停 eval，用**精确 PID**：`kill <launcher_PID>`，或 `pkill -f 'run_zhulong_script.sh'`（不含 `zhulong` 字样）。
+- **禁止用 `pkill -f 'cline'`**（同理会匹配 cline 相关非目标进程）。停 cline eval 用 `pkill -f 'run_cline_script.sh'`。
+
+**⑤ 作废明细（留证不删）**
+- `2026_1024_224219`：worker stale providers.json = `deepseek-v4-pro + maxTokens=16384`（应为 `glm-5.3-flash + 8192`）→ ❌ 作废（已写 `VOID_REASON.txt`）。
+- 上一线 ZL-flash full 5/5（10-23，原始配置 maxTokens=16384）= **75.6±4.4%** ✅ 已收口（但 maxTokens 未对齐，不作为 CLI 对比锚点）。
+- cline-full r1 `2026_1023_231253` / r2 `2026_1024_141148`：被 22:1x 令停，r2 未 regrade（可补 regrade 留档，但不进 5-run）。
+
+**⑥ 口径备注**
+- 本线 = **zhulong×glm-5.3-flash×full×maxTokens=8192**（配置对齐 cline 后），目的是与 **cline×glm-5.3-flash×full×maxTokens=8192**（基线 86.8±1.6%）做"只差 CLI 二进制"的干净对比。
+- 新线（glm-5.3-flash × zhulong）**不纳入论文**（用户 10-23 直令）。论文锚点仍用旧线 (N′) fp4×cline 4 轮 mean=76.7% provisional。
+- 论文已砍到正文 6 页（DAC 限制达成，commit `e7de188d` + `3651b322`）。
+
+**⑦ 与 10-25 论文改稿令的关系**
+- 10-25 00:0x 令（按外部评审意见改论文）**与 5-run 并行**，不冲突。5-run 照跑，论文改稿在等待空档推进。
+- 若论文改稿需打断 5-run 验证关键点，按 10-25 令「先落盘 + 记 MEMORY + 事后 regrade 补记」执行。
+
+---
+
+### 📕 改稿任务令 · 2026-10-25 00:0x（**按外部评审意见改论文（含 57.4pp 归因硬伤）**）· 用户直令 · 与 5-run 并行 ·【保留·与 10-26 令并行】
 > **评审原文（必读，逐条对照）**：`doc/ZhuLong_DAC2027/reviews/REVIEW_DAC2027_external_2026-10-24.md`
 > 评审结论：**Borderline / major revision**。核心建议 = 「把论文做成**实证 EDA 自动化论文**，grounding-gap 只作**有边界的框架/假设**，不要当成已证明的定理」。
 
@@ -67,7 +112,8 @@
 > **已知事实（可直接引用，不用重新调研）**：论文现状 7 页（正文 6 + refs 1）、0 LaTeX 告警；cline vs zhulong-CLI 同模型 full 对比 = **86.8±1.6% vs 75.6±4.4%**，其中 **≈80% 差距来自"未生成代码(literal-pass)"**（见 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`）；配置混杂已于 22:23 对齐（`maxTokens 16384→8192`，MCP 两侧逐字节相同）。
 
 
-### ✅ 配置已对齐（22:23 运维执行，**不要再改**）· 直接起 5-run
+### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令 ·【历史·已被 10-26 令覆盖】
+### ✅ 配置已对齐（22:23 运维执行，**不要再改**）· 直接起 5-run ·【历史·已被 10-26 令覆盖】
 > 实测三方对照（RUN_ID 119）：`cline 10-17 备份(glm 时代)=maxTokens 8192 / baseUrl /v1 / reasoning false`；`zhulong 原值=16384 / /v1 / false` ⇒ **唯一差异 = maxTokens**。
 > 已执行（RUN_ID 120）：`~/.zhulong/settings/providers.json` 的 **`maxTokens: 16384 → 8192`**，备份 `providers.json.bak.20261024_2223`；`model=glm-5.3-flash`、`baseUrl=http://agi-gateway.cxmt.com/v1`、`reasoning.enabled=false` **保持不变**；MCP settings 与 cline **逐字节相同**（`identical: True`）。
 > **你（agent）本轮只做一件事：用 zhulong 起 5-run**，不要再动 providers.json / MCP settings。
