@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 RERUN-20261025 全 FINISHED + 两条运维令(08:2x报告/17:5x复跑)已交付并归档; SWE-bench下载500/500 DONE; 运维指令区顶部已全为[已归档]指针,无未完成指令.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err分类✅·R509/R516近期工作报告✅(22988B)·R502-R516 17:5x复跑令全3part✅(rerun报告44431B+summary)·R517归档两条已闭合运维令(08:2x+17:5x)原文→ARCHIVE+1行指针,08:2x报告复核确认完成
-当前动作:     R517 归档bookkeeping. 复核08:2x报告(report_harness_recent_work_zh.html 22988B commit 7c9583236)确认4必覆盖全到位+合规(0script/0外链/0cline-patched)+数字溯源; 将08:2x与17:5x两条已闭合运维令原文搬入ARCHIVE_OPERATOR_HARNESS.md(##归档2026-10-26),任务书留1行[已归档]指针; R516长流水滚至daily-memories/2026-10-26.md.
-下一步:       ①H-A SWE-bench Verified横评启动(下载已500/500,按§1.2口径先20-50条); ②codex全量补跑待运维拍板(报机时+load); ③H-B续作(机制维度扩展)
-阻塞:         无未完成运维指令(运维指令区顶部已全部为[已归档]指针). codex补跑/SWE-bench横评为下一步建议非阻塞.
+PHASE:        H-A SWE-bench Verified 就绪核查完成(R518),等运维拍板20条试点; 下载500/500 DONE; 运维指令区无未完成指令.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查报告✅(11323B,8节,13项核查全溯源,0script/0外链/0cline-patched)
+当前动作:     R518 H-A SWE-bench Verified 横评就绪核查. 实测:docker镜像500/500在盘(sg docker确认500个swebench/*仓库)·swebench v5.0.2·gateway /models HTTP200(0.02s)·Verified数据集带proxy可加载500题(首题astropy__astropy-12907)·image_list.txt 500行·/data 6.0T free·load 7.52/224CPU(~3.4%)·pretrain loop在.29运行(需避让). 评测路径选定docker官方harness(unshare rootfs仅13个不适用500题). 产 report_swebench_verified_readiness_zh.html+gen脚本. 结论:就绪可启动20条试点,需运维拍板+并发限制.
+下一步:       ①等运维拍板20条Verified试点(先cline+hermes smoke 1条→20条→报初步结果→放大决策); ②codex全量补跑待运维拍板; ③H-B续作(机制维度扩展)
+阻塞:         无未完成运维指令. H-A Verified试点待运维拍板(就绪报告已交付,§3先报预算再跑).
 ERROR_COUNT:  0
-📦 体积：TASK=26994B(26KB) / MEMORY=31508B(31KB)（本轮归档两运维令原文→ARCHIVE,R516长流水滚至daily;均≤32KB）
+📦 体积：TASK=26994B(26KB) / MEMORY=32792B→合并R511-R516指针后见收尾(≤32KB,本轮新增R518流水1行+合并3指针为1)
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,13 +32,10 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[22:4x] R518 **H-A SWE-bench Verified 横评就绪核查(§1.2先20-50条/§3先报预算再跑)**. 实测13项:①docker镜像500/500在盘(sg docker -c 'docker images|grep swebench|sort -u|wc -l'=500,样本swebench/sweb.eval.x86_64.sympy_1776_sympy-24213:latest) ②下载DONE(progress.txt:514 DONE 2026-10-26 18:23:06 total=500 pulled=500 failed=0) ③sg docker可访问(610张镜像,本用户经sg docker切组) ④swebench v5.0.2 ⑤gateway /models HTTP200 0.02s ⑥Verified数据集带proxy可加载500题(首题astropy__astropy-12907与image_list.txt一致) ⑦image_list.txt 500行 ⑧/data 6.0T free ⑨load 7.52/224CPU ⑩pretrain loop在.29(避让) ⑪unshare rootfs仅13个(不适用500题) ⑫run_evaluation v5.0.2改名(需适配,r1_eval.py的make_test_spec/get_eval_report可用) ⑬直连gateway dummy key返回空(预期,真实key在gw_proxy). 评测路径选定**docker官方harness**. 产 gen_report_swebench_verified_readiness.py + report_swebench_verified_readiness_zh.html(11323B,8节,0script/0外链/0cline-patched,数字全溯源). 结论:就绪可启动20条试点(先cline+hermes smoke),需运维拍板+并发限制. **判据自检**:运维指令区顶部全为[已归档]指针,无未完成指令→WAITING=1(等运维拍板试点). 体积:TASK=26994B/MEMORY见收尾实测.
 [21:0x] R517 **归档bookkeeping(两条已闭合运维令)+08:2x报告复核**. 复核08:2x报告(report_harness_recent_work_zh.html 22988B,commit 7c9583236@20:00):5节4必覆盖全到位(①卡死恢复含僵尸进程清理+CLINE_TIMEOUT1500→3600+分阶段落盘·②H-B 58KB·③TB7×89 Gate7/7→FIN87/87+McNemar·④适配器修复+复跑hermes56.8%/claude-code30.3%旧0%),合规grep cline-patched/ClinePatched/cline_patched=0·script=0·外链=0,数字全溯源.src spans验证通过.将08:2x与17:5x两条已闭合运维令原文搬入ARCHIVE_OPERATOR_HARNESS.md(##归档2026-10-26,原文未改),任务书各留1行[已归档]指针(含完成结论).R516长流水滚至daily-memories-harness/2026-10-26.md.**判据自检**:运维指令区顶部现全为[已归档]指针(08:2x报告/17:5x复跑/08:2x适配器修复),无未完成指令→WAITING=1.体积:TASK=26994B/MEMORY见收尾实测(均≤32KB).
 
-> 📦 R516(19:5x) 两报告终版刷新长流水原文已归档 → daily-memories-harness/2026-10-26.md（结论：08:2x报告8处stale字面量刷新+双写22988B identical;rerun报告动态读scan终版44431B;claude-code复跑FIN 30.3%/hermes FIN 56.8%;SWE-bench500/500 DONE;NFS缓存坑sync+touch+-B修复）。需要时再读。
-
-> 📦 R513(15:43)/R514(16:55) 近期工作报告刷新长流水原文已归档 → daily-memories-harness/2026-10-26.md（结论：两轮均为08:2x报告数字刷新+位置修正，R513发现scan去重口径不一致→双写顶层reports/，R514统一去重claude-code16/51=31.4%；R515已修正为raw口径19/64=29.7%与hermes同方法）。需要时再读。
-
-> 📦 R511(13:04)/R512(14:16) 心跳刷新长流水原文已归档 → daily-memories-harness/2026-10-26.md（结论：两次均为防判死紧急心跳刷新，claude-code复跑从63/51推进至74/57，无新交付物）。需要时再读。
+> 📦 R511-R516 长流水原文已归档 → daily-memories-harness/2026-10-26.md（结论：R511/R512防判死心跳(claude-code推进至74/57);R513/R514报告数字刷新+去重口径修正(raw 19/64=29.7%);R516两报告终版刷新22988B/44431B+claude-code30.3%/hermes56.8%+SWE-bench500/500 DONE+NFS缓存坑修复）。需要时再读。
 
 [10:17] R509 **近期工作报告交付(2026-10-26 08:2x 用户直令·已完成，R513已刷新)**. 产 `reports/report_harness_recent_work_zh.html`(初版21761B→R513刷新22291B). 生成器 `harness/gen_report_harness_recent_work_zh.py`(R513改为双写顶层+run reports). 结构5节+4必覆盖,数字全溯源. commit `harness report:`.
 
