@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe data 线 · 近期工作报告（2026-10-20 起）</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:0 auto;padding:22px;color:#222;line-height:1.65;background:#f8f9fa}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px;font-size:1.65em}
+h2{color:#1a5276;border-bottom:1px solid #bdc3c7;padding-bottom:6px;margin-top:2em;font-size:1.3em}
+h3{color:#2c3e50;font-size:1.1em;margin-top:1.4em}
+h4{color:#34495e;font-size:1.0em;margin-top:1.1em}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.9em}
+th,td{border:1px solid #ddd;padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#2980b9;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f2f2f2}
+tr:hover{background:#e8f4f8}
+td.num,th.num{text-align:right}
+code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:0.86em;color:#c0392b}
+pre{background:#2c3e50;color:#ecf0f1;padding:12px 16px;border-radius:6px;overflow-x:auto;font-size:0.82em;line-height:1.5}
+.done{color:#27ae60;font-weight:bold}
+.progress{color:#e67e22;font-weight:bold}
+.pending{color:#95a5a6}
+.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.ok{background:#eafaf1;border-left:4px solid #27ae60;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.src{color:#7f8c8d;font-size:0.8em;font-style:italic}
+.summary-box{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.summary-card{flex:1;min-width:170px;background:#fff;border:1px solid #ddd;border-radius:8px;padding:14px;text-align:center}
+.summary-card .num{font-size:1.7em;font-weight:bold;color:#2980b9}
+.summary-card .label{font-size:0.82em;color:#666;margin-top:4px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:bold}
+.tag-done{background:#d5f5e3;color:#27ae60}
+.tag-progress{background:#fef9e7;color:#e67e22}
+.tag-pending{background:#eee;color:#95a5a6}
+.tag-deleted{background:#fadbd8;color:#c0392b}
+.footer{margin-top:2em;padding-top:12px;border-top:1px solid #ddd;color:#999;font-size:0.85em}
+.toc{background:#fff;border:1px solid #ddd;border-radius:8px;padding:14px 20px;margin:16px 0}
+.toc ul{margin:6px 0;padding-left:20px}
+</style>
+</head>
+<body>
+<h1>BaiZe data 线 · 近期工作报告</h1>
+<p><strong>生成时间</strong>：2026-10-26 09:0x | <strong>覆盖区间</strong>：2026-10-20 → 2026-10-26 | <strong>报告类型</strong>：本线近期工作总结 | <strong>任务书依据</strong>：运维令 2026-10-26 08:2x（用户直令「4 个 agent 各写一份报告」）</p>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+<li><a href="#sec1">1. 本线定位</a></li>
+<li><a href="#sec2">2. 近期任务逐个</a>
+  <ul>
+  <li><a href="#t1">2.1 en_v1_4 全源下载（暂停 → 恢复 → 110/110 完成）</a></li>
+  <li><a href="#t2">2.2 5 源全量分词（574 shards / 1056.36B）</a></li>
+  <li><a href="#t3">2.3 迁移 5/5 源 → /nas_env + 软链接</a></li>
+  <li><a href="#t4">2.4 prune / 磁盘清理 + 85M 降优先级</a></li>
+  <li><a href="#t5">2.5 当前收尾：未分词 4 源（95/131 → 97/131）</a></li>
+  <li><a href="#t6">2.6 顺带完成的工程治理（映射表脚本化 / 诊断 / 报告）</a></li>
+  </ul></li>
+<li><a href="#sec3">3. 关键数据速查表</a></li>
+<li><a href="#sec4">4. 阻塞 / 待拍板</a></li>
+<li><a href="#sec5">5. 下一步建议</a></li>
+</ul>
+</div>
+
+<div class="summary-box">
+<div class="summary-card"><div class="num">3294.5 B</div><div class="label">训练可用 token（去重合计）</div></div>
+<div class="summary-card"><div class="num">716</div><div class="label">已镜像 shard（tokenized/）</div></div>
+<div class="summary-card"><div class="num">97/131</div><div class="label">未分词 4 源进度</div></div>
+<div class="summary-card"><div class="num">3.69 TiB</div><div class="label">prune 释放（78 shard）</div></div>
+<div class="summary-card"><div class="num">86% / 43%</div><div class="label">/nas_train / /nas_env 占用</div></div>
+</div>
+
+<h2 id="sec1">1. 本线定位</h2>
+<p>BaiZe data 线的任务是把盘上原始语料变成<strong>训练可直接消费、配比正确、不污染评测集</strong>的形态，产出 Megatron <code>.bin/.idx</code>（通用文本主体 + 退火混合源）与 webdataset tar（多模态），并维护污染隔离红线（见 <code>BAIZE_DATA_TASK.md §3</code>）。本线<strong>不占 GPU</strong>，瓶颈在磁盘 I/O、NFS 带宽与单核 BPE 分词吞吐，因此近期工作的主线是「下载 / 分词 / 迁移 / 清理 / 映射」四件离线工程。</p>
+<p>本报告覆盖区间（10-20 起）正好是 MiniCPM5 训练数据管线的<strong>收尾冲刺阶段</strong>：en_v1_4 主体下载收官、5 源退火分词完成并迁出 /nas_train、磁盘 prune 与不可映射产物清理、未分词 4 源分词进入 finalize 冲刺。所有数字均<strong>可溯源</strong>到具体文件（行号见每节末「溯源」块）。</p>
+
+<h2 id="sec2">2. 近期任务逐个</h2>
+
+<h3 id="t1">2.1 en_v1_4 全源下载（暂停 → 恢复 → 110/110 完成）</h3>
+<p><code>ultrafineweb_en_v1_4</code> 是 BaiZe 预训练主体（CC-MAIN 110 个 snapshot）。下载在 10-13 曾按用户令暂停（让位 GPIC / l1_en_hq / zh 三源），10-20 15:5x 用户令恢复，经 .23 + hf-mirror 续传 + 直连，最终全源下满。</p>
+<table>
+<tr><th>里程碑</th><th>时间</th><th>状态</th><th>关键数字</th></tr>
+<tr><td>恢复下载（用户令 10-20 15:5x）</td><td>10-20</td><td><span class="done">✅</span></td><td>PID 1875054（<code>download_en_v1_4_resolve.py</code>），12 并发 worker</td></tr>
+<tr><td>续传最后 25 shard</td><td>10-18~10-23</td><td><span class="done">✅</span></td><td>.23 + hf-mirror 续传；单 shard ~4.64h（<code>sh92 DONE @ 22:39, 5.5 MB/s</code>）</td></tr>
+<tr><td>全源下载完成</td><td>10-23 20:55</td><td><span class="done">✅</span></td><td><strong>110/110 dirs，全部 512/512 parquet，0 .incomplete</strong>；PID1875054 已退出</td></tr>
+</table>
+<div class="ok"><strong>结论</strong>：en_v1_4 下载 <strong>110/110 全完</strong>，下载目录实测 <strong>6,747,434,955,525 B ≈ 6.75 TB</strong>。<span class="src">溯源：DATA_LEDGER.md L13；DATA_MAPPING.md L16（下载目录字节列）</span></div>
+
+<h3 id="t2">2.2 5 源全量分词（574 shards / 1056.36B）</h3>
+<p>5 个退火混合源（Code/Math/UFW-L3）在 10-21 04:0x 用户令下「224 核全开全量分词」全部完成。分词器 = <code>tokenizer_eod</code>（vocab 129,281 / pad 129,408，DeepSeek-V4.1-Flash int32），链路 <code>preprocess_data_cm.py</code>。</p>
+<table>
+<tr><th>数据源</th><th class="num">shard</th><th class="num">token (B)</th><th class="num">字节 (du -sb)</th><th>大小</th><th>完成时间</th><th>产物路径</th></tr>
+<tr><td>Ultra-FineWeb-L3</td><td class="num">154</td><td class="num">263.90</td><td class="num">1,062,126,204,214</td><td>990 GB</td><td>10-21 15:50</td><td><code>full_ufw_l3/</code></td></tr>
+<tr><td>UltraData-Code-L2</td><td class="num">141</td><td class="num">421.45</td><td class="num">1,691,139,372,199</td><td>1.6 TB</td><td>10-21 13:34</td><td><code>full_ultradata_code_l2/</code></td></tr>
+<tr><td>UltraData-Code-L3</td><td class="num">63</td><td class="num">128.62</td><td class="num">516,175,730,284</td><td>481 GB</td><td>10-21 08:07</td><td><code>full_ultradata_code_l3/</code></td></tr>
+<tr><td>UltraData-Math-L1</td><td class="num">149</td><td class="num">164.44</td><td class="num">659,469,521,715</td><td>615 GB</td><td>10-21 ~17:35</td><td><code>full_ultradata_math_l1/</code></td></tr>
+<tr><td>UltraData-Math-L3</td><td class="num">67</td><td class="num">77.95</td><td class="num">313,462,723,570</td><td>292 GB</td><td>10-21 09:20</td><td><code>full_ultradata_math_l3/</code></td></tr>
+<tr style="font-weight:bold;background:#d6eaf8"><td>合计</td><td class="num">574</td><td class="num">1056.36</td><td class="num">4,242,373,551,982</td><td>≈ 4.24 TB</td><td>10-21</td><td>—</td></tr>
+</table>
+<div class="ok"><strong>结论</strong>：5 源全量分词 <strong>574 shards / 1056.36 B tokens / 4.24 TB</strong>，manifest 逐行累加 = 1,056,359,481,968 ✓。<span class="src">溯源：DATA_LEDGER.md L14–16；token 累加 <code>full_tokenize_5source_summary.json</code></span></div>
+
+<h3 id="t3">2.3 迁移 5/5 源 → /nas_env + 软链接</h3>
+<p>/nas_train 占用率逼近 86%，运维令 10-23 22:1x / 10-24 18:1x 授权把这 5 源退火分词产物（4.24 TB）迁到空闲的 /nas_env（10 TB，当时仅 11%）。用 <code>rsync -a</code>（不用 mv，跨 NFS 挂载 mv 不安全），从小到大逐源迁，每源「rsync → 4 项校验（.bin/.idx/.json 数 + 总字节精确到 byte）→ rm 源 → ln -s」。</p>
+<table>
+<tr><th>顺序</th><th>源</th><th class="num">大小</th><th>迁移脚本</th><th>软链接完成</th><th>状态</th></tr>
+<tr><td>1</td><td>math_l3</td><td class="num">292 GB</td><td><code>migrate_to_nas_env.sh</code></td><td>10-24 15:21:57</td><td><span class="tag tag-done">✅</span></td></tr>
+<tr><td>2</td><td>code_l3</td><td class="num">481 GB</td><td>→ <code>migrate_to_nas_env_fast.sh</code>（提速）</td><td>10-24 18:10</td><td><span class="tag tag-done">✅</span></td></tr>
+<tr><td>3</td><td>math_l1</td><td class="num">615 GB</td><td>fast 脚本</td><td>10-24 19:01</td><td><span class="tag tag-done">✅</span></td></tr>
+<tr><td>4</td><td>ufw_l3</td><td class="num">990 GB</td><td>fast 脚本</td><td>10-24 20:02</td><td><span class="tag tag-done">✅</span></td></tr>
+<tr><td>5</td><td>code_l2</td><td class="num">1.57 TB</td><td>fast 脚本</td><td>10-24 21:42:28</td><td><span class="tag tag-done">✅</span></td></tr>
+</table>
+<div class="info"><strong>提速改动</strong>（运维令 10-24 18:1x）：<code>--bwlimit</code> 50000 → 300000 KiB/s；fast 脚本带 <code>--partial</code> + <code>flock</code> 单实例锁；不在跑的脚本上就地编辑、不起第二实例。<strong>5/5 全 DONE @ 21:42:28</strong>（迁移日志 END）。pretrain 线脚本路径无需改动（软链接透明）。</div>
+<div class="ok"><strong>结论</strong>：5/5 源迁移完成 + 软链接全建好 + 源已删，释放 /nas_train ≈ 4.24 TB，/nas_env 用至 43%（4.2T/10T）。<span class="src">溯源：MEMORY_DATA.md L8；daily-memories-data/2026-10-25.md L10/L98（migrate_fast.log END@21:42:28）；report_data_migration_nas_env_zh.html L52–57/L129–135</span></div>
+
+<h3 id="t4">2.4 prune / 磁盘清理 + 85M 降优先级</h3>
+<h4>2.4.1 prune：删 78 个被 full_* 覆盖的早期重复 shard</h4>
+<p>运维令 10-25 10:3x：删除 <code>baize-data/text/</code> 中「不可映射且已被 <code>/nas_env/full_*</code> 全量覆盖」的早期分词 shard。判定脚本 <code>analyze_prune_unmapped.py</code>（解 staging_r3 符号链接 → 源 parquet，查 source-set ⊆ full_* 并集 3422 parquet）。</p>
+<table>
+<tr><th>前缀</th><th class="num">总 shard</th><th class="num">删(covered)</th><th class="num">留(uncovered)</th><th class="num">释放</th></tr>
+<tr><td>code_s*</td><td class="num">30</td><td class="num">30</td><td class="num">0</td><td class="num">~2.21 TB</td></tr>
+<tr><td>l3_s*</td><td class="num">40</td><td class="num">12</td><td class="num">28</td><td class="num">~0.65 TB</td></tr>
+<tr><td>math_s*</td><td class="num">40</td><td class="num">36</td><td class="num">4</td><td class="num">~0.83 TB</td></tr>
+<tr style="font-weight:bold;background:#d6eaf8"><td>合计</td><td class="num">110</td><td class="num">78</td><td class="num">32</td><td class="num">~3.69 TiB</td></tr>
+</table>
+<p>删 78 shard × 3 ext = <strong>234 文件，释放 4,059,924,022,806 B ≈ 3.69 TiB</strong>。<code>baize-data/text/</code> 从 14.90 TB / 220 .bin → <strong>10.84 TB / 142 .bin</strong>（110 env14 + 28 l3_s + 4 math_s）。env14（2238.14 B / 8.88 TB）完整保留。<span class="src">溯源：DATA_LEDGER.md L174–188；<code>prune_unmapped_judgment_20261025.tsv</code> / <code>prune_unmapped_summary_20261025.json</code></span></p>
+
+<h4>2.4.2 删 32 个不可映射 shard（用户终裁）</h4>
+<p>运维令 10-25 18:2x（用户直令）：32 个「不可被 DATA_MAPPING.md 收录、来历理不清」的 shard <strong>全部删除</strong>（l3_s 28 + math_s 4）。</p>
+<div class="warn"><strong>重要事实更正</strong>：盘上实测与任务书前提（估 1.89 TB）<strong>不符</strong>。这 32 个 <code>staging_r3/&lt;shard&gt;</code> 目录其实是<strong>早期分词的输入暂存目录</strong>（只放指向 /nas_inference 源 parquet 的符号链接），真正的 <code>.bin</code> 产物此前迁移时已被删，留的只是<strong>悬空符号链接</strong>。实测：<strong>合计 482,940 B = 471.6 KB</strong>，1408 个符号链接，0 个常规文件，无 .bin/.idx/.json 三件套。删除实际释放 ≈ 471.6 KB（仅元数据），「1.89 TB」是按 token×4B 的<strong>理论 .bin 体积</strong>（对应产物此前已删）。/nas_inference 源 parquet 原样保留，tokenized/ 镜像无引用、无悬空链接。<span class="src">溯源：<code>deleted_unmapped32_summary.md</code> L7–29/L33–43</span></div>
+
+<h4>2.4.3 磁盘清理候选 + 分批</h4>
+<p>运维令 10-25 18:5x：生成候选清单 <code>disk_cleanup_candidates_20261025.tsv</code>（44 KB，按实占降序），可删项分批（每批 ≤500 GB）。batch1 已删 78 staging_r3 symlink dirs + 1 .bak + 1 空目录 + 1 旧 /tmp 日志（保留最新 3 份），实占释放 ~1.13 MB（硬链接只算一次）。batch2（110 env14 hardlink copies，实占 0）PENDING 待运维拍板。<span class="src">溯源：DATA_MAPPING.md L90–99</span></p>
+
+<h4>2.4.4 85M 多模态下载降优先级</h4>
+<p>用户令 10-24 18:1x：85M（LLaVA-OV-Mid-85M）下载<strong>降优先级</strong>，让位迁移提速。85M 走 92.25 代理 + hf.co 直连（<code>https_proxy=http://172.19.92.25:13128</code>，无 HF_ENDPOINT，HF_HUB_MAX_WORKERS=16），低优先级后台跑（<code>download_85m_parallel16.sh</code>，nice 10）。当前 <strong>9273 / 12126 = 76.5%</strong>（+259 自 10-24 的 657），1.53 it/s，ETA ~7 天。8 子集：5 子集 100%（coyo/datacomp/imagenet/laioncn/mint），obelics 80.3%，sa1b + zero250m 未开始。<span class="src">溯源：MEMORY_DATA.md L9；DATA_LEDGER.md L19；report_data_migration_nas_env_zh.html L185</span></p>
+
+<h3 id="t5">2.5 当前收尾：未分词 4 源（95/131 → 97/131）</h3>
+<p>运维令 10-25 12:5x：「已下载未分词的，去分词，充分利用多核并发」。未分词 4 源实测 <strong>12,002 parquet / 3,532.21 GB</strong>，10-25 13:28 启动 <code>run_tokenize_untokenized_*.sh</code>（knee=64 并发，PID 335288）。</p>
+<table>
+<tr><th>下载目录</th><th class="num">parquet</th><th class="num">GB</th><th>目标前缀</th><th>输出目录</th></tr>
+<tr><td>ultrafineweb_en</td><td class="num">2,048</td><td class="num">2661.36</td><td><code>ufw_en_s*</code></td><td>tokenized/Ultra-FineWeb/ultrafineweb_en/</td></tr>
+<tr><td>ultrafineweb_l1_en_hq</td><td class="num">6,000</td><td class="num">477.98</td><td><code>ufw_l1hq_s*</code></td><td>tokenized/Ultra-FineWeb/ultrafineweb_l1_en_hq/</td></tr>
+<tr><td>ultrafineweb_zh</td><td class="num">256</td><td class="num">324.32</td><td><code>ufw_zh_s*</code></td><td>tokenized/Ultra-FineWeb/ultrafineweb_zh/</td></tr>
+<tr><td>UltraX-AICC</td><td class="num">61</td><td class="num">68.55</td><td><code>ultrax_aicc_s*</code></td><td>tokenized/UltraX-Preview/UltraX-AICC/</td></tr>
+</table>
+<h4>进度与「假停顿」诊断</h4>
+<p>分词目标 = 131 shard（base-en 2048÷64=32 + l1_en_hq 6000÷187.5=32 + zh 256÷64=4 + AICC ~63÷2≈... 实际 131）。小 shard（l1_en_hq 94 个 + AICC 1 个）很快 finalize，但 <strong>32 个 ufw_en + 4 个 ufw_zh 大 shard（各 ~77–113 GB）单核 BPE 流式分词耗时 ~18 min/shard</strong>。</p>
+<div class="note"><strong>22:3x 停顿诊断（运维令）</strong>：10-25 22:00 发现 done=94/131 自 19:21 起未变、bin_bytes 完全相同，疑似停。经读源码 + /proc/io 三重实测，确诊 <strong>非卡死 = 单核 BPE 流式分词慢</strong>：<code>preprocess_data_cm.py</code> L340–341 <code>.bin</code> 按 doc 流式写、L349 <code>.idx</code> 仅 finalize() 一次性产出 → supervisor <code>done</code> 只计三件套齐全的 shard，36 个 WIP 还在写 .bin 未到 finalize，故 <code>done</code> FLAT 是<strong>计数 artifact 非真停</strong>。/proc/<code>write_bytes</code> 持续 +1.6–1.9 MB/s = 412K tok/s/proc（真在写）。处置 = <strong>不杀不重启</strong>（杀毁 ~3 TB 在写数据）。<span class="src">溯源：daily-memories-data/2026-10-26.md L8–21/L48–57；MEMORY_DATA.md L17–18</span></div>
+<div class="ok"><strong>恢复确认</strong>：done 95→96@07:49（+28B tok / +113 GB bin_bytes）→ 97@08:07（+28B / +113 GB），即 22:3x「停顿」已结束（2 shard finalized in 18 min，自证非卡死）。当前 <strong>done=97/131</strong>，余 34，~18 min/shard，ETA ~10-26 13:20–14:45。<span class="src">溯源：MEMORY_DATA.md L17/L29</span></div>
+
+<h3 id="t6">2.6 顺带完成的工程治理</h3>
+<table>
+<tr><th>项</th><th>产出</th><th>说明</th></tr>
+<tr><td>tokenized 镜像布局</td><td><code>tokenized/</code> 10 目录 / 716 shard / 3,342.49 B</td><td>env14 hardlink + 5 源 symlink，零拷贝；<code>build_tokenized_mirror.py</code> + <code>INDEX.tsv</code> + triplet/inode 校验</td></tr>
+<tr><td>映射表脚本化（单一事实源）</td><td><code>gen_data_mapping_md.py</code>（17.4 KB）→ <code>DATA_MAPPING.md</code></td><td>幂等（连跑两次逐字节相同）；A 节 12 列 + 下载字节 + 下载/分词比；合计脚本求和 + 核对式</td></tr>
+<tr><td>删前留档</td><td><code>deleted_unmapped32_20261025.tsv</code> + summary.md</td><td>32 行明细（路径 / du -sb / 文件数 / parquet 引用）</td></tr>
+<tr><td>报告（按需）</td><td><code>report_data_migration_nas_env_zh.html</code> / <code>report_data_tokenized_inventory_zh.html</code></td><td>中文自包含 HTML，单表结构冻结</td></tr>
+<tr><td>en_v1_4 分词提速</td><td><code>run_tokenize_env14_parallel_finish.sh</code></td><td>5 shard × 13 workers = 65 并发，ETA 22:30 → 11:48 完成（+148.7B tok，0 fail）</td></tr>
+</table>
+<p><span class="src">溯源：DATA_MAPPING.md L16–26（合计 716 / 13,364,914,740,849 B / 3,342,489,027,194 tok）；MEMORY_DATA.md L18；DATA_LEDGER.md L13</span></p>
+
+<h2 id="sec3">3. 关键数据速查表</h2>
+<h3>3.1 训练可用 token（去重合计）</h3>
+<table>
+<tr><th>组分</th><th class="num">token (B)</th><th class="num">shard</th><th class="num">字节</th><th>状态</th><th>溯源</th></tr>
+<tr><td>env14（en_v1_4 CC-MAIN 110 snapshot）</td><td class="num">2238.14</td><td class="num">110</td><td class="num">8.88 TB</td><td><span class="tag tag-done">镜像完整</span></td><td>DATA_MAPPING.md L16</td></tr>
+<tr><td>/nas_env 5 源 full_*（退火混合）</td><td class="num">1056.36</td><td class="num">574</td><td class="num">4.24 TB</td><td><span class="tag tag-done">镜像完整</span></td><td>DATA_LEDGER.md L14–16 / L195</td></tr>
+<tr style="font-weight:bold;background:#d6eaf8"><td>训练可用合计（无重叠，直接相加）</td><td class="num">3294.50</td><td class="num">684</td><td class="num">13.12 TB</td><td>—</td><td>DATA_LEDGER.md L196</td></tr>
+<tr><td>未分词 4 源（base-en + l1_hq + zh + AICC）</td><td class="num">（分词中）</td><td class="num">131 目标</td><td class="num">3,532 GB 输入</td><td><span class="tag tag-progress">分词中 97/131</span></td><td>DATA_MAPPING.md L22–25 / MEMORY L17</td></tr>
+<tr><td>32 不可映射 shard（已删）</td><td class="num">472.85（理论）</td><td class="num">32</td><td class="num">471.6 KB（实占）</td><td><span class="tag tag-deleted">已删除</span></td><td>deleted_unmapped32_summary.md L33–43</td></tr>
+</table>
+
+<h3>3.2 tokenized 镜像（单一事实源 INDEX.tsv 驱动）</h3>
+<table>
+<tr><th>#</th><th>下载目录 → 分词目录</th><th class="num">.bin</th><th class="num">字节(B)</th><th class="num">tokens(B)</th><th>存储</th><th>状态</th></tr>
+<tr><td>1</td><td>ultrafineweb_en_v1_4</td><td class="num">110</td><td class="num">8,929,852,999,497</td><td class="num">2238.14</td><td>hardlink</td><td><span class="tag tag-done">镜像完整</span></td></tr>
+<tr><td>2</td><td>ultrafineweb_en_l3/qa</td><td class="num">154</td><td class="num">1,062,000,123,988</td><td class="num">263.90</td><td>symlink</td><td><span class="tag tag-done">镜像完整</span></td></tr>
+<tr><td>3</td><td>UltraData-Code-L2</td><td class="num">141</td><td class="num">1,691,139,314,855</td><td class="num">421.45</td><td>symlink</td><td><span class="tag tag-done">镜像完整</span></td></tr>
+<tr><td>4</td><td>UltraData-Code-L3</td><td class="num">63</td><td class="num">516,117,199,509</td><td class="num">128.62</td><td>symlink</td><td><span class="tag tag-done">镜像完整</span></td></tr>
+<tr><td>5</td><td>UltraData-Math-L1</td><td class="num">149</td><td class="num">659,469,460,275</td><td class="num">164.44</td><td>symlink</td><td><span class="tag tag-done">镜像完整</span></td></tr>
+<tr><td>6</td><td>UltraData-Math-L3</td><td class="num">67</td><td class="num">313,425,604,823</td><td class="num">77.95</td><td>symlink</td><td><span class="tag tag-done">镜像完整</span></td></tr>
+<tr><td>7</td><td>ultrafineweb_en（base）</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>—</td><td><span class="tag tag-progress">分词中</span></td></tr>
+<tr><td>8</td><td>ultrafineweb_l1_en_hq</td><td class="num">32</td><td class="num">192,910,037,902</td><td class="num">47.99</td><td>—</td><td><span class="tag tag-progress">分词中</span></td></tr>
+<tr><td>9</td><td>ultrafineweb_zh</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>—</td><td><span class="tag tag-progress">分词中</span></td></tr>
+<tr><td>10</td><td>UltraX-AICC</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>—</td><td><span class="tag tag-progress">分词中</span></td></tr>
+<tr style="font-weight:bold;background:#d6eaf8"><td>合计</td><td>—</td><td class="num">716</td><td class="num">13,364,914,740,849</td><td class="num">3342.49</td><td>—</td><td>误差 0</td></tr>
+</table>
+<p><span class="src">溯源：DATA_MAPPING.md L16–28（INDEX.tsv L2–L7 + du 实测）；核对式 sum(.bin)=716=sum(.idx)=sum(.json)</span></p>
+
+<h3>3.3 磁盘与下载快照</h3>
+<table>
+<tr><th>指标</th><th>值</th><th>溯源</th></tr>
+<tr><td>/nas_train 占用</td><td>177T / 207T = 86%（可用 31T）</td><td><code>df -h</code> 实测 2026-10-26 09:0x</td></tr>
+<tr><td>/nas_env 占用</td><td>4.2T / 10T = 43%（可用 5.8T）</td><td><code>df -h</code> 实测 2026-10-26 09:0x</td></tr>
+<tr><td>85M 下载进度</td><td>9273 / 12126 = 76.5%，nice 10，ETA ~7 天</td><td>MEMORY_DATA.md L9</td></tr>
+<tr><td>未分词 4 源分词</td><td>done=97/131，~18 min/shard，ETA ~13:20–14:45</td><td>MEMORY_DATA.md L17/L29</td></tr>
+<tr><td>prune 释放</td><td>78 shard / 234 文件 / 3.69 TiB</td><td>DATA_LEDGER.md L181/L187</td></tr>
+<tr><td>32 不可映射删除实占</td><td>471.6 KB（非 1.89 TB；1.89 TB 为理论 .bin 体积）</td><td>deleted_unmapped32_summary.md L26–29</td></tr>
+</table>
+
+<h2 id="sec4">4. 阻塞 / 待拍板</h2>
+<table>
+<tr><th>项</th><th>状态</th><th>需谁拍板 / 做什么</th></tr>
+<tr><td>未分词 4 源 finalize</td><td><span class="tag tag-progress">分词中 97/131</span></td><td>无需拍板；等 finalize（ETA ~10-26 13:20–14:45）。done=131/131 后自动触发 wrap-up</td></tr>
+<tr><td>DATA_MAPPING.md 第 7–10 行翻「镜像完整」</td><td><span class="tag tag-pending">deferred</span></td><td>运维令 18:5x：done=131/131 后重跑 <code>build_tokenized_mirror.py</code> → 清 <code>mapping_inprogress.txt</code> → 重跑 <code>gen_data_mapping_md.py</code>。无需人工</td></tr>
+<tr><td>磁盘清理 batch2（110 env14 hardlink copies，实占 0）</td><td><span class="tag tag-pending">PENDING</span></td><td>需运维拍板：是否删 text/ 下 110 个 env14 hardlink 副本（tokenized/ 持同 inode，删后实占释放 0，仅 tidy）</td></tr>
+<tr><td>22:3x 停顿诊断 step4 + 18:5x wrap-up</td><td><span class="tag tag-pending">deferred</span></td><td>已确诊非卡死（单核 BPE 慢）+ 恢复已确认；step4/wrap-up 等 done=131/131 一并做</td></tr>
+<tr><td>85M 下载（sa1b + zero250m 未开始）</td><td><span class="tag tag-progress">76.5%</span></td><td>低优先级后台跑，ETA ~7 天；无阻塞，代理 503 瞬态会自动重试</td></tr>
+<tr><td>多模态打包（phase4）/ handoff 报告（phase6）</td><td><span class="tag tag-pending">⬜ 待下载完成</span></td><td>等 85M 下载完成后再做（看板 MEMORY_DATA.md L187–188）</td></tr>
+</table>
+<div class="info"><strong>无主线阻塞</strong>。唯一「阻塞」是异步等待未分词 4 源 finalize（已确诊健康在写，非卡死），其余均为「deferred 到 done=131/131」的收尾项，prep 文件（<code>gen_data_mapping_md.py</code> / <code>cleanup TSV</code> / <code>DATA_MAPPING.md</code> / <code>build_tokenized_mirror.py</code>）均已就绪，分词跑完即可直接 wrap-up。</div>
+
+<h2 id="sec5">5. 下一步建议</h2>
+<ol>
+<li><strong>等未分词 4 源 finalize（do nothing，~10-26 13:20–14:45）</strong>：已三重铁证确诊进程健康在写（/proc/io write_bytes 持续 +1.6–1.9 MB/s，36 进程全 R 态 99.9% CPU，0 failed），<strong>不要杀不要重启</strong>（杀毁 ~3 TB 在写数据 + 重跑仍单核 ~19h/shard）。</li>
+<li><strong>done=131/131 后立即 wrap-up（运维令 18:5x，全自动）</strong>：
+  <ol>
+  <li>重跑 <code>build_tokenized_mirror.py</code>：把新 shard hardlink 进 <code>tokenized/</code>、刷新 <code>INDEX.tsv</code>；</li>
+  <li>清空 <code>mapping_inprogress.txt</code>；</li>
+  <li>重跑 <code>gen_data_mapping_md.py</code> ⇒ A 节第 7–10 行自动翻「镜像完整」并补字节/tokens；</li>
+  <li>校验 <code>.bin=.idx</code> + 字节 + <code>num_tokens</code> + 悬空链接 = 0；</li>
+  <li>更新 <code>DATA_LEDGER.md §0</code>；</li>
+  <li>18:5x 清理 wrap-up：候选 TSV 已就绪，第一批 ≤500 GB。</li>
+  </ol>
+</li>
+<li><strong>磁盘清理 batch2 待运维拍板</strong>：110 env14 hardlink 副本实占 0，删与不删对空间无影响，仅决定 text/ 目录是否 tidy。建议保留（hardlink 零成本，删了也得保证 tokenized/ 侧 inode 可访问）。</li>
+<li><strong>85M 继续低优先级后台跑</strong>：代理 503 瞬态会自动重试，无需干预；下完后再做 phase4 多模态打包 + phase6 handoff 报告。</li>
+<li><strong>给 pretrain 线的交接状态</strong>：5 源退火数据已迁 /nas_env + 软链接建好（旧路径透明可用），pretrain 可直接取用；env14 主体 2238.14 B 留 /nas_train 可用。训练可用合计 <strong>3294.50 B tokens</strong>（env14 2238.14 + 5 源 1056.36，无重叠）。</li>
+<li><strong>报告维护</strong>：<code>DATA_MAPPING.md</code>（Markdown）为单一事实源，HTML 报告按需由 <code>gen_tokenized_inventory_report.py</code> 渲染，不为报告反复改结构。</li>
+</ol>
+
+<div class="footer">
+<p>本报告由 BaiZe data 线生成（运维令 2026-10-26 08:2x） | <strong>所有数字可溯源</strong>：DATA_MAPPING.md / DATA_LEDGER.md / deleted_unmapped32_summary.md / MEMORY_DATA.md / daily-memories-data/ / <code>df -h</code> 实测（2026-10-26 09:0x 采集）</p>
+<p>报告自包含中文 HTML，无外链 / 无 CDN，结构与既有 <code>report_data_migration_nas_env_zh.html</code> 同风格。</p>
+</div>
+</body>
+</html>
