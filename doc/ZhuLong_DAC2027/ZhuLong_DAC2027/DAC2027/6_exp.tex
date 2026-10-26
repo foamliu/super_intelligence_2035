@@ -47,8 +47,8 @@ ZhuLong w/o Self-Expl. & 72.6 $\pm$ 1.7 & 77.3 $\pm$ 2.9 & \textbf{61.5 $\pm$ 0.
 \subsection{Results and Ablations}
 \label{sec:exp-results}
 
-Table~\ref{tab:main-ablation} gives the five configurations pooled and per slice. Relative to the full system, removing execution costs $13.2$~pp pooled, removing retrieval $11.8$~pp, and removing self-exploration $3.1$~pp; against the pure-LLM floor the full system gains $57.4$~pp. Where each component's contribution comes from is toolchain-specific (Section~\ref{sec:cross-language}).
-% 主结果（表~\ref{tab:main-ablation}，5 配置合并+分切片）。相对完整系统：移除执行 -13.2pp、移除检索 -11.8pp、移除自探索 -3.1pp；相对纯 LLM 下限 +57.4pp。各组件贡献来源因工具链而异（§6.3 S4）。
+Table~\ref{tab:main-ablation} gives the five configurations pooled and per slice. Relative to the full system, removing execution costs $13.2$~pp pooled, removing retrieval $11.8$~pp, and removing self-exploration $3.1$~pp; against the pure-LLM floor the full system gains $57.4$~pp. Wilson 95\% intervals on the pooled Pass@1 ($n{=}2245{=}449{\times}5$) are Full $[73.86, 77.41]$, w/o-Self-Expl.\ $[70.72, 74.41]$, w/o-Retrieval $[62.00, 65.97]$, RAG $[60.47, 64.47]$, N$'$ $[60.16, 64.17]$, B $[63.49, 67.42]$, Pure-LLM $[16.76, 19.96]$; the controlled $N'\to F$ read-back gap of $13.50$~pp has a normal-approximation independent-proportion 95\% interval $[10.82, 16.18]$~pp (SE$=1.37$~pp). A paired bootstrap on the same gap is deferred: it requires per-task pass/fail arrays paired across the $N'$ and $F$ arms, which batch directories store only as counts, so a one-shot regrade pass over both arms' batches would be needed to extract them. Where each component's contribution comes from is toolchain-specific (Section~\ref{sec:cross-language}).
+% 主结果（表~\ref{tab:main-ablation}，5 配置合并+分切片）。相对完整系统：移除执行 -13.2pp、移除检索 -11.8pp、移除自探索 -3.1pp；相对纯 LLM 下限 +57.4pp。Wilson 95% CI（pooled n=2245=449×5，Wilson score interval z=1.96）已加；N′→F 13.5pp gap 给独立比例正态近似 CI [10.82,16.18]pp（保守·比 paired 紧）；paired bootstrap 待 per-task regrade 后 10⁴ 重采样（本轮未跑·batch 目录仅存计数非 per-task 列表）。各组件贡献来源因工具链而异（§6.3 S4）。
 
 \subsubsection{S1: Observation fidelity (RQ1)}
 \label{sec:omega-fidelity}
@@ -92,7 +92,7 @@ Doubao-Seed-2.0-Pro & 63.8$\pm$1.4 & 42.5$\pm$3.4 & 55.1$\pm$3.4 & 53.7$\pm$1.6 
 \bottomrule
 \end{tabular}
 
-\footnotesize{Pass@1 (\%), five runs (mean $\pm$ s.d.); Tcl pools WaveView (77) and Innovus (57); $\Delta$ vs.\ the primary backbone, pooled. Bold = per-column best. The strongest-to-weakest span is $75.7-53.7=22.0$~pp.}
+\footnotesize{Pass@1 (\%), five runs (mean $\pm$ s.d.); Tcl pools WaveView (77) and Innovus (57); $\Delta$ vs.\ the primary backbone, pooled. Bold = per-column best. The strongest-to-weakest span is $75.7-53.7=22.0$~pp. Per-host WaveView and Innovus Pass@1 for all configurations are reported in the supplementary material; the pooled Tcl column aggregates them with weights $77/134$ and $57/134$.}
 \end{table}
 % 表：LLM backbone 影响（单栏 table，\scriptsize 以释放正文空间）。保留全部 6 backbone（09:5x 否决：禁删，22.0pp 跨度需表格支撑）。最强-最弱跨度 = 75.7−53.7 = 22.0pp（表注显式给出）。
 
