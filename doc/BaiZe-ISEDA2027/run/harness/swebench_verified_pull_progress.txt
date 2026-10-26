@@ -380,3 +380,15 @@
 [swebench-pull] [371/500] OK scikit-learn__scikit-learn-14894 pulled=371 failed=0 skipped=0
 [swebench-pull] [372/500] OK scikit-learn__scikit-learn-14983 pulled=372 failed=0 skipped=0
 [swebench-pull] [373/500] OK scikit-learn__scikit-learn-15100 pulled=373 failed=0 skipped=0
+[swebench-pull] [374/500] OK scikit-learn__scikit-learn-25102 pulled=374 failed=0 skipped=0
+[swebench-pull] [375/500] OK scikit-learn__scikit-learn-25232 pulled=375 failed=0 skipped=0
+[swebench-pull] [376/500] OK scikit-learn__scikit-learn-25747 pulled=376 failed=0 skipped=0
+[swebench-pull] [377/500] OK scikit-learn__scikit-learn-25931 pulled=377 failed=0 skipped=0
+[swebench-pull] [378/500] OK scikit-learn__scikit-learn-25973 pulled=378 failed=0 skipped=0
+[swebench-pull] [379/500] OK scikit-learn__scikit-learn-26194 pulled=379 failed=0 skipped=0
+[swebench-pull] [380/500] OK scikit-learn__scikit-learn-26323 pulled=380 failed=0 skipped=0
+[swebench-pull] [381/500] OK scikit-learn__scikit-learn-9288 pulled=381 failed=0 skipped=0
+[swebench-pull] [382/500] OK sphinx-doc__sphinx-10323 pulled=382 failed=0 skipped=0
+[swebench-pull] [383/500] OK sphinx-doc__sphinx-10435 pulled=383 failed=0 skipped=0
+[swebench-pull] [384/500] OK sphinx-doc__sphinx-10449 pulled=384 failed=0 skipped=0
+[swebench-pull] [385/500] OK sphinx-doc__sphinx-10466 pulled=385 failed=0 skipped=0
