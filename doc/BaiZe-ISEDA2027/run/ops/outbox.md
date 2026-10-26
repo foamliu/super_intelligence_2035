@@ -22147,3 +22147,129 @@ LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*
 10.239.23.32:/vol_CTE0_data04   10T  7.1T  2.9T  72% /nas_env
 === DONE 211 ===
 ```
+
+---
+
+## RUN_ID 212 · 2026-10-26 21:03:41 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+G=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "=== RUN_ID 212 | pretrain pinpoint | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] torchrun 进程（含完整参数，截断 260 字符）"
+ps -eo pid,ppid,etimes,args= | grep -E 'torchrun|pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | cut -c1-260 || echo "  (none)"
+echo "[2] /tmp 下最新 baize 日志（按时间）"
+ls -lt /tmp/baize_*.log 2>/dev/null | head -8 | awk '{print "  "$6" "$7" "$8"  "$5"B  "$9}'
+echo "  -- 最新一个的末尾 --"
+NEW=$(ls -t /tmp/baize_*.log 2>/dev/null | head -1)
+echo "  file=$NEW"
+[ -n "${NEW:-}" ] && tail -25 "$NEW" | cut -c1-180
+echo "[3] .12 状态（能否 ssh / 是否有 rank0 / GPU）"
+timeout 15 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  ssh=OK host=$(hostname)"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader | tr "\n" " "; echo; pgrep -af "torchrun|pretrain_launcher" | grep -v cline | cut -c1-160 | head -3 || echo "  (no rank0 proc)"' 2>&1 | cut -c1-200 || echo "  ssh .12 FAILED/timeout"
+echo "[4] 工作副本未提交改动（train.sh 被谁改了？）"
+cd "$G" || exit 1
+git status --short | head -6
+echo "  -- diff stat --"
+git diff --stat | head -8
+echo "  -- train.sh diff（前 45 行）--"
+git diff -- code/baize-llm/scripts/train.sh | head -45 | cut -c1-160
+echo "[5] TensorBoard / 实验目录 / 事件文件"
+ss -ltn 2>/dev/null | grep ':6006' | cut -c1-80
+find /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments -maxdepth 2 -name 'tb_logs' -newermt '-1 day' 2>/dev/null | head -5
+find /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments -name 'events.out.tfevents.*' -printf '  %TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | sort -r | head -3
+echo "[6] 最近 10 分钟内是否有新 commit（agent 是否在推进）"
+git log -3 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' | cut -c1-120
+echo "=== DONE 212 ==="
+```
+
+**输出**
+```
+=== RUN_ID 212 | pretrain pinpoint | 2026-10-26 21:03:41 | host=whag0pgpuap29 ===
+[1] torchrun 进程（含完整参数，截断 260 字符）
+ 818817  788415     364 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --nproc_per_node=8 --node_rank=0 --master_addr=10.239.2.29 --master_port=48173 pretrain_launcher.py --arch ma
+[2] /tmp 下最新 baize 日志（按时间）
+  Oct 26 21:03  7809113B  /tmp/baize_pretrain_loop.log
+  Oct 26 21:01  2789B  /tmp/baize_ops_relay.29.log
+  Oct 26 20:59  2469B  /tmp/baize_s1_worker_node.log
+  Oct 26 20:57  2567B  /tmp/baize_s1_formal.log
+  Oct 26 20:53  68183B  /tmp/baize_s1_mock_ckpt.log
+  Oct 26 20:45  986944B  /tmp/baize_s1_smoke3.log
+  Oct 26 20:33  6520377B  /tmp/baize_harness_loop.log
+  Oct 26 20:28  57673B  /tmp/baize_s1_smoke2.log
+  -- 最新一个的末尾 --
+  file=/tmp/baize_pretrain_loop.log
+
+[0m[2mWait[0m[2m, but[0m[2m I need to be[0m[2m careful with[0m[2m the editor tool —[0m[2m it replaces[0m[2m old[0m[2m_text with new_text[0m[2m,[0m[2m or creat
+
+[0m[2mLet[0m[2m me do[0m[2m:
+[0m[2m1. editor[0m[2m: append[0m[2m #[0m[2m794 +[0m[2m #795 details[0m[2m to daily-mem[0m[2mories/2026[0m[2m-10-26[0m[2m.md (insert_line[0m[2m=[0m[2m257)
+2[0m[2m. editor: replace[0m[2m #794 line[0m[2m in MEMORY with #[0m[2m796 + compressed[0m[2m #794
+[0m[2m3. editor:[0m[2m replace #795[0m[2m line in MEMORY with[0m[2m compressed #795[0m[2m
+
+But I need[0m[2m to be careful —[0m[2m edits[0m[2m 2 and [0m[2m3 are on the[0m[2m same file ([0m[2mMEMORY), so they[0m[2m might[0m[2m conflict. Let[0m[2m me do
+
+Actually[0m[2m, I can combine[0m[2m edits[0m[2m 2 and [0m[2m3 into a[0m[2m single edit:[0m[2m replace lines[0m[2m 4-5[0m[2m (both[0m[2m #794 and[0m[2m #795)[0m
+
+[0m[2mLet[0m[2m me do this:
+[0m[2m1. editor[0m[2m: append #79[0m[2m4 + #7[0m[2m95 details to daily[0m[2m-memories ([0m[2minsert at[0m[2m end)
+[0m[2m2. editor:[0m[2m replace lines[0m[2m 4-5[0m[2m in MEMORY with #[0m[2m796 + compressed[0m[2m #794 +[0m[2m compressed #795[0m[2m
+
+These[0m[2m are on[0m[2m different files, so[0m[2m I can do them[0m[2m in parallel.
+
+For[0m[2m edit[0m[2m 2, the[0m[2m old_text is the[0m[2m full[0m[2m text of lines [0m[2m4-5 ([0m[2mthe[0m[2m #794 and[0m[2m #795 entries[0m[2m). The[0m[2m new_
+
+Let me construct[0m[2m the texts[0m[2m carefully[0m[2m.
+
+old[0m[2m_text (lines[0m[2m 4-5[0m[2m):
+```
+>[0m[2m 🆕 [0m[2m2026-10[0m[2m-26 16[0m[2m:3x #[0m[2m794：[0m[2m✅ **运维令[0m[2m 15:3[0m[2mx「整理「[0m[2mBaiZe-[0m[2m2B[0m[2m 预训练构想」
+[3] .12 状态（能否 ssh / 是否有 rank0 / GPU）
+  ssh=OK host=whag0pgpuap12
+0, 0 MiB 1, 0 MiB 2, 0 MiB 3, 0 MiB 4, 0 MiB 5, 0 MiB 6, 4 MiB 7, 4 MiB 
+1012719 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --nproc_per_node=8 --node
+[4] 工作副本未提交改动（train.sh 被谁改了？）
+ M code/baize-llm/scripts/train.sh
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+?? doc/BaiZe-ISEDA2027/run/5245/
+?? doc/BaiZe-ISEDA2027/run/7343/
+?? doc/BaiZe-ISEDA2027/run/9441/
+  -- diff stat --
+ code/baize-llm/scripts/train.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+  -- train.sh diff（前 45 行）--
+diff --git a/code/baize-llm/scripts/train.sh b/code/baize-llm/scripts/train.sh
+index 5968e6233..d40bffc66 100644
+--- a/code/baize-llm/scripts/train.sh
++++ b/code/baize-llm/scripts/train.sh
+@@ -45,6 +45,12 @@ if [ "$SMOKE" -gt 0 ]; then
+   SAVE_INTERVAL=0
+   NNODES=1
+   DP=$(( NNODES * NPROC_PER_NODE / (TP * CP) ))
++  # WSD 调度器断言 lr_warmup_steps < lr_decay_steps；recipe.py:89-91 把
++  # lr_decay_iters 设 None → bridge 默认到 train_iters，故断言等价 warmup < iters。
++  # smoke 步数远小于正式 warmup(2000)，按 SMOKE/4 取 warmup（至少 1 步）。
++  # 详见 megatron/core/optimizer_param_scheduler.py:157。
++  WARMUP=$(( SMOKE / 4 ))
++  [ "$WARMUP" -ge 1 ] || WARMUP=1
+ fi
+ 
+ MICRO=$(( MBS * DP ))
+[5] TensorBoard / 实验目录 / 事件文件
+LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*          
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/seqlen_ctrl_cfg0a/tb_logs
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/seqlen_ctrl_cfg0b/tb_logs
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/rc_ladder_E2/tb_logs
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/rc_ladder_E3/tb_logs
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/rc_ladder_E4/tb_logs
+  2026-10-26 12:46  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/dn16g_e3_32k_cp2/tb_logs/events.out.tfevents.1792989519.whag0pgpuap29.2200484.0
+  2026-10-26 12:36  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/dn16g_e2_16k_cp2/tb_logs/events.out.tfevents.1792989070.whag0pgpuap29.1691318.0
+  2026-10-26 12:29  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/dn16g_e1_16k_cp1/tb_logs/events.out.tfevents.1792988679.whag0pgpuap29.1228533.0
+[6] 最近 10 分钟内是否有新 commit（agent 是否在推进）
+  c55ec49ae 10-26 21:03 zhulong r5: 健康巡检#3 (21:00·132/158 84%·worker glm-5.3-flash+8192 ✅·WAITING=1 等收�
+  da82a2d29 10-26 21:03 Merge remote-tracking branch 'origin/main'
+  cb510a858 10-26 21:03 ops 21:0x: 投 RUN_ID 212（定位 torchrun GPU 0%：cmd/日志/.12 状态/train.sh 未提交 di
+=== DONE 212 ===
+```
