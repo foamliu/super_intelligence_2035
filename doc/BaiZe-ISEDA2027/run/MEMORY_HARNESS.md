@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 RERUN-20261025 — hermes+claude-code复跑进行中(R508监控~13.5h:hermes80dirs/41done/23pass/38err/1running·claude-code53dirs/41done/13pass/11err/1running,两路harbor存活健康); codex高err排查已完成(非适配器可修,证据已commit); 3件deliverable已用最新数据刷新; SWE-bench下载349/500持续.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·R492三路0%根因+修复✅·R496全7路FIN87/87✅+McNemar✅·R499 codex err分类归因✅(commit4a3b82719)·R500-R507复跑监控+summary/报告交付+修报告err类型硬编码·R508复跑进度刷新(scan/summary/report三件用最新数据重生成)·R509近期工作报告交付(report_harness_recent_work_zh.html,21761B)
-当前动作:     R508 复跑进度刷新+deliverable重生成(17:5x令·part①进行中,part②已完成,part③部分交付刷新). ~13.5h mark(08:54). harbor两路存活(hermes PID3338432 etimes47820·claude-code PID2573271 etimes48448). 精确实测:hermes_rerun 80dirs/41done/23pass/38err/1running; claude-code_rerun 53dirs/41done/13pass/11err/1running. 条件通过率:hermes 23/41=56.1%·claude-code 13/41=31.7%(旧两路均0%). 判据"两路通过率均>0"已满足. 进度对比R507(07:38):hermes 76→80dirs/23→23pass(+0,新4dirs=1done+3err,撞难题);claude-code 48→53dirs/12→13pass(+1pass,新5dirs=4done(1pass)+1err). 本轮刷新3件deliverable:①scan_rerun_20261025.json;②summary_rerun_20261025.json(hermes23/41·claude-code13/41·codex20/41/59exc);③run/reports/report_harness_hermes_claude_rerun_codex_err_zh.html(40869B,div54/54平衡,0 cline-patched/0 script/0外链,429仅作否定语出现). codex err分类(权威R499):44 RuntimeError+15 AgentTimeoutError=59,非适配器可修. ETA:hermes剩余~7题~2.3h→~11:15·claude-code剩余~34题~8.7h→~17:30. SWE-bench下载349/500存活(PID1199724). load avg41.7/224CPU~19%.
-下一步:       ①继续监控复跑到87/87(每30min轮询); ②复跑完成后刷新summary+报告为终版(逐题配对表完整+McNemar); ③codex全量补跑需先报机时+load评估
-阻塞:         hermes/claude-code复跑后台异步进行中(不需运维,自跑;hermes~2.3h·claude-code~8.7h); codex全量补跑待机时评估; deepseek SDK需上游
+PHASE:        T2 RERUN-20261025 — hermes FINISHED(89dirs/44done/25pass/45err/0running=56.8%)·claude-code进行中(63dirs/51done/16pass/11err/1running=31.4%); codex高err R510勘误(429为主34/59,推翻R499"无429"); 4件deliverable已用最新数据刷新; SWE-bench下载373/500持续.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499 codex err分类✅(commit4a3b82719)·R500-R509复跑监控+summary/报告交付+近期工作报告·R510 codex 429勘误(推翻R499"无429")+复跑进度刷新(hermes FINISHED)+4 deliverable重生成
+当前动作:     R510 codex 429勘误+复跑进度刷新(17:5x令). hermes FINISHED 89/44/25/45/0=56.8%; claude-code 63/51/16/11/1=31.4%(旧两路均0%). R510复查result.json stdout(严格标记exceeded retry limit/429 Too Many Requests/status:429):codex 59异常=34限流429→RuntimeError(57.6%)+15 AgentTimeout(25.4%)+10 RuntimeError无429(16.9%);429为codex独有(7路横向cline/opencode/pi/hermes/claude-code/deepseek全0,cline的60次"429"是.429Z时间戳误匹配).修正codex_err_classification_20261025.md加§2-bis;修正gen_rerun_report §5.2-5.5/§6根因((c)上游429为主+(b)容量为辅+(a)无退避放大)+裁定(codex可改善,非"非适配器可修").重生成2报告:rerun+codex_err报告(43974B,R510=9,div55/55/table3/3,0script/0外链/0cline-patched)+recent_work报告(22204B,R510=6,div26/26/table7/7).SWE-bench373/500. harbor claude-code PID2559124存活(etimes59172s~16.4h). load8.64.
+下一步:       ①继续监控claude-code复跑到87/87(每30min轮询); ②复跑完成后刷新summary+报告为终版(逐题配对表完整+McNemar); ③codex降并发复跑(避开claude-code在跑期,先smoke5题验429是否消解)再报机时
+阻塞:         claude-code复跑后台异步进行中(63/87,~24题,不需运维自跑); codex降并发复跑待claude-code完成+机时/load评估; deepseek SDK需上游
 ERROR_COUNT:  0
-📦 体积：TASK=30KB(30468B) / MEMORY=~30KB(30406B)（均≤32KB，无需归档）
+📦 体积：TASK=30KB(30468B) / MEMORY=~31KB（均≤32KB，无需归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)

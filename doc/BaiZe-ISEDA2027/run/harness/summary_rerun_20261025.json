@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T00:53:32Z",
+  "generated_at": "2026-10-26T03:32:19Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -1648,10 +1648,10 @@
     ]
   },
   "hermes_rerun_20261025": {
-    "pass": 23,
-    "rewarded": 41,
-    "exceptions": 39,
-    "completed": 80,
+    "pass": 25,
+    "rewarded": 44,
+    "exceptions": 45,
+    "completed": 89,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2209,6 +2209,69 @@
       {
         "task": "sqlite-db-truncate",
         "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-with-gcov",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-pipeline-parallelism",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-tensor-parallelism",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "train-fasttext",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "tune-mjcf",
+        "harness": "hermes_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "video-processing",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "vulnerable-secret",
+        "harness": "hermes_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "winning-avg-corewars",
+        "harness": "hermes_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "write-compressor",
+        "harness": "hermes_rerun",
         "reward": null,
         "err_type": null,
         "err_subcause": null
@@ -2216,10 +2279,10 @@
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 13,
-    "rewarded": 41,
+    "pass": 16,
+    "rewarded": 51,
     "exceptions": 12,
-    "completed": 53,
+    "completed": 63,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2587,6 +2650,76 @@
       },
       {
         "task": "multi-source-data-merger",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "nginx-request-logging",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "openssl-selfsigned-cert",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "overfull-hbox",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "password-recovery",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing-reverse",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "path-tracing",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "polyglot-c-py",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "polyglot-rust-c",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "portfolio-optimization",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "protein-assembly",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,

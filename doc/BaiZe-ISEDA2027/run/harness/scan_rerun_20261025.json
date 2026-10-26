@@ -5,11 +5,11 @@
  },
  "rerun": {
   "hermes": {
-   "dirs": 80,
-   "done": 41,
-   "pass": 23,
-   "err": 38,
-   "running": 1
+   "dirs": 89,
+   "done": 44,
+   "pass": 25,
+   "err": 45,
+   "running": 0
   },
   "hermes_detail": {
    "adaptive-rejection-sampler": {
@@ -487,16 +487,70 @@
     "dir": "sparql-university__ofKjuZE"
    },
    "sqlite-db-truncate": {
-    "state": "running",
-    "reward": null,
+    "state": "done",
+    "reward": "1",
     "err_type": "",
     "dir": "sqlite-db-truncate__bHCgBNt"
+   },
+   "sqlite-with-gcov": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "sqlite-with-gcov__Le2FMLA"
+   },
+   "torch-pipeline-parallelism": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "torch-pipeline-parallelism__ZWwgc9g"
+   },
+   "torch-tensor-parallelism": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "torch-tensor-parallelism__nTbTU6J"
+   },
+   "train-fasttext": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "train-fasttext__JMaEYWd"
+   },
+   "tune-mjcf": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "tune-mjcf__ZNjVGye"
+   },
+   "video-processing": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "video-processing__gxqcJfD"
+   },
+   "vulnerable-secret": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "vulnerable-secret__KuQJFEA"
+   },
+   "winning-avg-corewars": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "winning-avg-corewars__hgCsvJh"
+   },
+   "write-compressor": {
+    "state": "err",
+    "reward": null,
+    "err_type": "NonZeroAgentExitCode",
+    "dir": "write-compressor__tHzESEJ"
    }
   },
   "claude-code": {
-   "dirs": 53,
-   "done": 41,
-   "pass": 13,
+   "dirs": 63,
+   "done": 51,
+   "pass": 16,
    "err": 11,
    "running": 1
   },
@@ -814,10 +868,70 @@
     "dir": "mteb-retrieve__moDvd5c"
    },
    "multi-source-data-merger": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "multi-source-data-merger__Q6GLvBF"
+   },
+   "nginx-request-logging": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "nginx-request-logging__rXKdSun"
+   },
+   "openssl-selfsigned-cert": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "openssl-selfsigned-cert__dw4CuXt"
+   },
+   "overfull-hbox": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "overfull-hbox__rhojgNd"
+   },
+   "password-recovery": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "password-recovery__kiwE2fe"
+   },
+   "path-tracing-reverse": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "path-tracing-reverse__cnTbqyA"
+   },
+   "path-tracing": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "path-tracing__MU8RnoC"
+   },
+   "polyglot-c-py": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "polyglot-c-py__KedcmHs"
+   },
+   "polyglot-rust-c": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "polyglot-rust-c__zBNJPCP"
+   },
+   "portfolio-optimization": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "portfolio-optimization__Svk5G7t"
+   },
+   "protein-assembly": {
     "state": "running",
     "reward": null,
     "err_type": "",
-    "dir": "multi-source-data-merger__Q6GLvBF"
+    "dir": "protein-assembly__Jjrtby4"
    }
   }
  },
@@ -1521,8 +1635,8 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": "running",
-   "claude-code_rerun_reward": null,
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
    "claude-code_rerun_err": ""
   },
   {
@@ -1534,9 +1648,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "openssl-selfsigned-cert",
@@ -1547,9 +1661,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": false,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "overfull-hbox",
@@ -1560,9 +1674,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "password-recovery",
@@ -1573,9 +1687,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "path-tracing",
@@ -1586,9 +1700,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": "0",
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "path-tracing-reverse",
@@ -1599,9 +1713,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": true,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "polyglot-c-py",
@@ -1612,9 +1726,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "polyglot-rust-c",
@@ -1625,9 +1739,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "portfolio-optimization",
@@ -1638,9 +1752,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "protein-assembly",
@@ -1651,9 +1765,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "running",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": ""
   },
   {
    "task": "prove-plus-comm",
@@ -1867,8 +1981,8 @@
    "task": "sqlite-db-truncate",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": "running",
-   "hermes_rerun_reward": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
@@ -1880,9 +1994,9 @@
    "task": "sqlite-with-gcov",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1893,9 +2007,9 @@
    "task": "torch-pipeline-parallelism",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1906,9 +2020,9 @@
    "task": "torch-tensor-parallelism",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1919,9 +2033,9 @@
    "task": "train-fasttext",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1932,9 +2046,9 @@
    "task": "tune-mjcf",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "0",
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1945,9 +2059,9 @@
    "task": "video-processing",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1958,9 +2072,9 @@
    "task": "vulnerable-secret",
    "hermes_old_reward": "0",
    "hermes_old_exc": false,
-   "hermes_rerun_state": null,
-   "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_state": "done",
+   "hermes_rerun_reward": "1",
+   "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1971,9 +2085,9 @@
    "task": "winning-avg-corewars",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,
@@ -1984,9 +2098,9 @@
    "task": "write-compressor",
    "hermes_old_reward": null,
    "hermes_old_exc": true,
-   "hermes_rerun_state": null,
+   "hermes_rerun_state": "err",
    "hermes_rerun_reward": null,
-   "hermes_rerun_err": null,
+   "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
    "claude-code_rerun_state": null,

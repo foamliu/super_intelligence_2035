@@ -5,6 +5,12 @@
 > 对照物：`agents/cline_patched.py`（cline）+ 同批次 `jobs_cline-patched|opencode|pi`。
 > 命名规程：本文件正文一律写 `cline`（代码路径 `cline_patched.py` 不改）。
 
+> ⚠ **R510 勘误（2026-10-26 ~11:00）—— 本节 §2 / §3(c) / §5 中「没有 429」「(c) 上游服务不成立」的结论已被推翻，以 §2-bis 为准。**
+> 原始 R499 分类只读了 `exception.txt` 末行（症状层：RuntimeError/AgentTimeoutError），未读 `result.json` 的 `agent_result.metadata.stdout`（根因层）。
+> R510 复查 stdout 发现：**34/59 个 RuntimeError 的真正触发链是上游 429 限流**（`exceeded retry limit, last status: 429 Too Many Requests` → `turn.failed` → codex CLI 卡住 → 1800s 超时 → RuntimeError）。
+> 且 429 是 **codex 独有**：用严格标记（`exceeded retry limit` / `429 Too Many Requests` / `status: 429`）扫描 7 路 stdout，**只有 codex 命中 34 次**，cline/opencode/pi/hermes/claude-code/deepseek 全为 0（cline 的 60 次「429」是 ISO 时间戳 `.429Z` 误匹配，0 次 `turn.failed`）。
+> ⇒ 修正后归因：**(c) 上游 429 为主（34/59=57.6%）+ (b) 容量/超时为辅（25/59=42.4%）+ (a) 适配器无回合上限放大了前两者**。详见 §2-bis。
+
 ## 1. 总览（reward.txt 实测，分母 87 = canonical 可跑任务）
 
 | Harness | 完成(eval trial, 有 reward) | pass | exception | 完成率 | 条件通过率(pass/完成) |
@@ -43,6 +49,57 @@ exception.txt 调用链尾：`trial.py:651 await asyncio.wait_for(...)`（外层
 内层同 codex.py:171 → docker.py:775 communicate 超时。
 
 两类根因相同：**codex CLI 在 1800s 内未退出**。
+
+## 2-bis. 429 复查（R510，2026-10-26 ~11:00，证据确凿 · 推翻 §2 的「没有 429」）
+
+R499 的 §2 只按 `exception.txt` 末行分类（44 RuntimeError + 15 AgentTimeoutError = 59），结论「没有 429」。
+R510 逐 trial 读取 `result.json` 的 `agent_result.metadata.stdout`，用**严格标记**（`exceeded retry limit` / `429 Too Many Requests` / `status: 429`）重新分类：
+
+### 修正后三类（n=59）
+
+| 子类 | 计数 | 占比 | 触发链 | 根因归类 |
+|:--|--:|--:|:--|:--|
+| **429 限流 → RuntimeError** | 34 | 57.6% | 网关返回 429 → codex 重试耗尽 → `{"type":"turn.failed","error":{"message":"exceeded retry limit, last status: 429 Too Many Requests"}}` → codex CLI 卡住 → 1800s docker 超时 → RuntimeError | **(c) 上游 429** + (a) codex 429 处理无退避 |
+| **AgentTimeoutError（纯超时）** | 15 | 25.4% | `trial.py:651` 外层 agent-phase 1800s 超时，stdout 无 429 | (b) 容量/超时 |
+| **RuntimeError（无 429）** | 10 | 16.9% | `Command timed out after 1800 seconds`，codex 跑满预算（重编译/构建类），stdout 无 429 | (b) 容量/超时 |
+
+> 34 + 15 + 10 = 59 = 全部异常。
+
+### 429 是 codex 独有（7 路横向对照，严格标记）
+
+| Harness | trials | exceptions | **真 429（stdout）** | 备注 |
+|:--|--:|--:|--:|:--|
+| cline | 87 | 26 | **0** | cline stdout 的 60 次「429」= ISO 时间戳 `.429Z` 误匹配，0 次 `turn.failed` |
+| opencode | 87 | 27 | **0** | |
+| pi | 87 | 23 | **0** | |
+| **codex** | 87 | 59 | **34** | 全部 34 个 429 都落在 exception 里（`turn.failed` 致命） |
+| hermes | 87 | 37 | **0** | |
+| claude-code | 57 | 45 | **0** | |
+| deepseek-harness | 87 | 37 | **0** | |
+
+⇒ 429 非「7 路共享的网关拥塞」，而是 **codex 调用模式独有**：codex 0.94.0 走 `wire_api="responses"` 经 gw_proxy 翻译 `/v1/responses`→`/v1/chat/completions`（codex.py:114-125），调用频次/突发高于其余 6 路 → 触发网关 429；且 codex 重试无有效退避 → `turn.failed` → 卡住 → 撞 1800s 超时记为 exception。
+
+### 429 原文（feal-differential-cryptanalysis，result.json stdout 末段）
+
+```
+"exit_code":0,"status":"completed"}}
+{"type":"error","message":"exceeded retry limit, last status: 429 Too Many Requests"}
+{"type":"turn.failed","error":{"message":"exceeded retry limit, last status: 429 Too Many Requests"}}
+```
+
+### 修正后归因（取代 §3 的 (c)「不成立」）
+
+- **(c) 上游服务 —— 成立（为主）**：34/59=57.6% 的 codex 异常是网关 429 限流触发。R499 因只读 exception.txt 误判为「不成立」。
+- **(b) 容量/超时 —— 为辅**：25/59=42.4%（15 AgentTimeout + 10 RuntimeError 无 429）是纯 1800s 预算超时。
+- **(a) 适配器/CLI —— 放大器**：codex 0.94.0 exec 无内置回合上限 + 429 无有效退避 → 429 后不能干净退出 → 撞 1800s 超时记为 exception（而非干净失败）；这是 codex 429 致命化、而 cline 429 可恢复的关键差异。
+
+### 修正后修法判断（取代 §4 / §5 的「非适配器可修 / 改命令不会提分」）
+
+codex **可改善**（非「非适配器可修」）：34 个 429 异常若经下列任一手段消解，完成率可从 47.1% 上行 → resolve rate 有真实提升空间：
+1. **降并发复跑** codex（单独跑或 2-3 路，降低网关 429 触发率）；
+2. 给 codex 配 429 退避/重试上限（config.toml 或 `-c` 覆盖），让 429 后干净重试而非 `turn.failed` 卡死；
+3. 排查 `wire_api="responses"` 代理翻译路径是否放大了请求频次。
+> 铁律仍守：四 survivor 源码本轮不硬改；补跑前先报机时 + load 评估。
 
 ## 3. 归因（三选一，逐条带证据）
 

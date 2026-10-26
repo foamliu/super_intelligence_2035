@@ -220,19 +220,32 @@ codex 异常排查章节已<b>完整</b>，复跑章节为<b>当前快照</b>（
 <p style="margin-top:8px">关键观察：codex 的<b>条件通过率 48.8%</b>（在它完成的 41 题上）与 cline/opencode 相当；
 codex 的真正短板是<b>完成率仅 47.1%</b>——59/87 题在 1800s 预算内没跑完即被超时杀掉。</p>
 
-<h3>5.2 异常分类（59 个全部归类完毕）</h3>
+<h3>5.2 异常分类（59 个全部归类完毕 · R510 修正：含 429 复查）</h3>
+<div class="card warn" style="margin:8px 0">
+<b>⚠ R510 勘误（2026-10-26）</b>：R499 仅按 <code>exception.txt</code> 末行分类，误判「没有 429」。
+R510 逐 trial 读 <code>result.json</code> 的 <code>agent_result.metadata.stdout</code>（根因层），
+用严格标记（<code>exceeded retry limit</code> / <code>429 Too Many Requests</code> / <code>status: 429</code>）复查，
+发现 <b>34/59 个 RuntimeError 的真正触发链是上游 429 限流</b>，且 429 是 <b>codex 独有</b>（其余 6 路 stdout 真 429 = 0；
+cline 的 60 次「429」是 ISO 时间戳 <code>.429Z</code> 误匹配，0 次 <code>turn.failed</code>）。详见 <code>codex_err_classification_20261025.md §2-bis</code>。
+</div>
 <table>
-<tr><th>异常类</th><th>计数</th><th>捕获层</th><th>含义</th></tr>
-<tr><td>RuntimeError</td><td>44</td><td>docker.py:775 <code>asyncio.wait_for(communicate)</code> 超时</td><td>codex CLI 进程读 stdout/stderr 超 1800s 未退出</td></tr>
-<tr><td>AgentTimeoutError</td><td>15</td><td>trial.py:651 外层 agent-phase 超时</td><td>整个 agent 阶段超 1800s 预算</td></tr>
+<tr><th>子类（R510 修正）</th><th>计数</th><th>占比</th><th>触发链</th><th>根因</th></tr>
+<tr><td><b>429 限流 → RuntimeError</b></td><td>34</td><td>57.6%</td><td>网关 429 → codex 重试耗尽 → <code>turn.failed</code> → CLI 卡住 → 1800s 超时 → RuntimeError</td><td><b>(c) 上游 429</b> + (a) 无退避</td></tr>
+<tr><td>AgentTimeoutError（纯超时）</td><td>15</td><td>25.4%</td><td><code>trial.py:651</code> 外层 agent-phase 1800s 超时，stdout 无 429</td><td>(b) 容量/超时</td></tr>
+<tr><td>RuntimeError（无 429）</td><td>10</td><td>16.9%</td><td><code>Command timed out after 1800 seconds</code>，codex 跑满预算（构建类）</td><td>(b) 容量/超时</td></tr>
 </table>
-<p>44+15 = 59 = 全部异常。<b>没有</b> NonZeroAgentExitCode、context 超限、tool-call 解析失败、429 或网关 403。</p>
+<p>34 + 15 + 10 = 59 = 全部异常。<b>非</b>「没有 429」——429 是 codex 异常的<b>主因</b>（57.6%）。</p>
+<p style="font-size:.8rem;color:#666">7 路横向对照（严格标记）：cline 0 · opencode 0 · pi 0 · <b>codex 34</b> · hermes 0 · claude-code 0 · deepseek 0 → 429 为 codex 调用模式独有。</p>
 
-<h3>5.3 前 3 条原文</h3>
-<p><b>RuntimeError（44）代表 — build-pov-ray</b>：</p>
+<h3>5.3 原文样例</h3>
+<p><b>429 限流（34）代表 — feal-differential-cryptanalysis</b>（result.json stdout 末段）：</p>
+<pre style="background:#f7fafc;padding:8px;border-radius:4px;font-size:.78rem;white-space:pre-wrap">"exit_code":0,"status":"completed"}}
+{{"type":"error","message":"exceeded retry limit, last status: 429 Too Many Requests"}}
+{{"type":"turn.failed","error":{{"message":"exceeded retry limit, last status: 429 Too Many Requests"}}}}</pre>
+<p><b>RuntimeError 无 429（10）代表 — build-pov-ray</b>：</p>
 <pre style="background:#f7fafc;padding:8px;border-radius:4px;font-size:.78rem;white-space:pre-wrap">Trial build-pov-ray__uRX5ZqY failed: Command timed out after 1800 seconds</pre>
-<p><b>AgentTimeoutError（15）代表 — adaptive-rejection-sampler</b>：调用链尾 <code>trial.py:651 await asyncio.wait_for(...)</code>（外层超时）→ 内层同 codex.py:171 → docker.py:775。</p>
-<p>两类根因相同：<b>codex CLI 在 1800s 内未退出</b>。</p>
+<p><b>AgentTimeoutError（15）代表 — adaptive-rejection-sampler</b>：<code>trial.py:651</code> 外层 1800s 超时，无 429。</p>
+<p>429 类根因 = 网关限流 + codex 无退避致命化；纯超时类根因 = codex 在 1800s 预算内未退出。</p>
 
 <h3>5.4 归因（三选一，逐条带证据）</h3>
 <p><b>(a) 适配器 bug —— 部分成立（设计差异，非崩溃性 bug）</b><br>
@@ -241,27 +254,30 @@ codex.py:156-162 命令 <code>codex exec --cd &lt;cwd&gt; --model kimi-k2.6-clou
 源码 grep <code>max_iterations|turn_limit|max_turns|iteration_limit</code> 0 命中 → exec 模式无内置回合上限。
 后果：codex 在难题上持续跑到外层 1800s 被杀，记为 exception，放大 exception 计数、压低 eval-trial 计数（41/87），
 但不直接压低条件通过率。对照 cline 完成率 92% → cline 在 1800s 内更常自行结束。</p>
-<p><b>(b) 容量 / 上下文 —— 主要成立</b><br>
-codex 完成率 47.1% ≪ cline/opencode/pi 的 86–92%。codex 跑满 1800s 的 59 题多为重编译/构建类
-（build-pov-ray、compile-compcert、build-pmars、make-doom-for-mips…，与 cline 也超时的难题高度重叠，但 cline 超时仅 ~19 题）。
-codex 0.94.0 走 <code>wire_api="responses"</code> 经 gw_proxy 翻译 /v1/responses→/v1/chat/completions，
-单轮开销较高 → 难题 1800s 跑不完。<b>这不是「模型不行」</b>：codex 完成的 41 题里通过 20 题（48.8%）。</p>
-<p><b>(c) 上游服务 —— 不成立</b><br>
-gw_proxy 9090/9091 在线；日志仅见 benign 的 ConnectionResetError 与 LiteLLM model-cost fetch Errno 101（loop 剥代理所致）。
-codex 20 pass 的题证明模型调用通路正常，无 429 / 网关 403 / API 截断。</p>
+<p><b>(b) 容量 / 上下文 —— 为辅（25/59=42.4%）</b><br>
+15 AgentTimeoutError + 10 RuntimeError(无 429) 是纯 1800s 预算超时：codex 跑满预算的多为重编译/构建类
+（build-pov-ray、compile-compcert、build-pmars…，与 cline 也超时的难题重叠，但 cline 超时仅 ~19 题）。
+codex 0.94.0 走 <code>wire_api="responses"</code> 经 gw_proxy 翻译 /v1/responses→/v1/chat/completions，单轮开销较高 → 难题 1800s 跑不完。
+<b>这不是「模型不行」</b>：codex 完成的 41 题里通过 20 题（48.8%）。</p>
+<p><b>(c) 上游服务 —— 成立（为主，34/59=57.6%）</b> <span style="color:#a32323">【R510 修正：推翻 R499「不成立」】</span><br>
+R510 复查 <code>result.json</code> stdout 发现 34 个 RuntimeError 的真正触发链是网关 <b>429 限流</b>：
+<code>exceeded retry limit, last status: 429 Too Many Requests</code> → <code>turn.failed</code> → codex CLI 卡住 → 撞 1800s 超时。
+429 是 <b>codex 独有</b>：7 路横向对照（严格标记），只有 codex 命中 34 次，其余 6 路全为 0
+（cline stdout 的 60 次「429」是 ISO 时间戳 <code>.429Z</code> 误匹配，0 次 <code>turn.failed</code>）。
+⇒ codex 0.94.0 <code>responses</code> 代理路径调用频次/突发高于其余 6 路 → 触发网关 429；且 codex 重试无有效退避 → 429 致命化。
+gw_proxy 9090/9091 本身在线、20 pass 通路正常，但<b>在 codex 的调用模式下确实返回了 429</b>。</p>
 
-<h3>5.5 修法判断：非适配器可修（不硬改）</h3>
+<h3>5.5 修法判断：codex 可改善（R510 修正 · 推翻「非适配器可修 / 改命令不会提分」）</h3>
 <div class="card bad" style="margin:8px 0">
-codex 0.94.0 exec 模式无内置回合上限 → 无法通过 <code>-c key=value</code> 让它干净退出。
-唯一可调旋钮 = <code>TB_AGENT_TIMEOUT</code>（默认 1800s）：调小→codex 更快失败但不提分；调大→更费机时、边际收益不明。
-改 codex.py 命令/超时处理<b>不会提升通过率</b>（codex 已在它完成的题上拿到 48.8%）；只会把 59 个超时 exception 转成更早的干净失败。
-铁律遵守：四 survivor 源码（含 codex.py）本轮不改动。
+R499 判「非适配器可修」是基于「没有 429」的错误前提。R510 证实 34/59 异常是 429 限流所致 → codex <b>有真实提升空间</b>：
+1. <b>降并发复跑</b> codex（单独跑或 2-3 路，降低网关 429 触发率）—— 最直接；
+2. 给 codex 配 429 退避/重试上限（config.toml 或 <code>-c</code> 覆盖），让 429 后干净重试而非 <code>turn.failed</code> 卡死；
+3. 排查 <code>wire_api="responses"</code> 代理翻译路径是否放大请求频次。
+预期：消解 34 个 429 异常后，完成率可从 47.1% 上行 → resolve rate 有真实提升空间。
 </div>
-<p><b>结论</b>：codex 高 err（59/87=67.8% exception，resolve 20/87=23.0%）根因 = <b>(b) 容量为主 + (a) 适配器设计为辅</b>：
-codex 0.94.0 exec 无内置回合上限 + 单轮开销较高，导致 59/87 题在 1800s 预算内跑不完被超时杀掉；
-<b>非上游服务问题，亦非可经适配器层修复的崩溃性 bug</b>。条件通过率 48.8% 表明 codex 能力与其它存活线同档，
-短板是「在固定预算内完成题数少」。</p>
-<p style="color:#666">codex 全量补跑待办：需先报「预计机时 + 与 SWE-bench 下载/复跑共存的 load」评估，避免三线挤爆。</p>
+<p><b>结论</b>：codex 高 err（59/87=67.8% exception，resolve 20/87=23.0%）根因 = <b>(c) 上游 429 为主（34/59=57.6%，codex 调用模式独有）+ (b) 容量/超时为辅（25/59=42.4%）+ (a) 适配器无回合上限/无 429 退避放大了前两者</b>。
+<b>非「非适配器可修」</b>：降并发复跑或加 429 退避可改善。条件通过率 48.8% 表明 codex 能力与存活线同档，短板是「429 致命化 + 固定预算内完成题数少」。</p>
+<p style="color:#666">codex 全量补跑待办：建议先「降并发（如单独跑）+ 加 429 退避」smoke 5 题（至少 2 题是旧 429 题）验证 429 是否消解，再报机时 + load 评估；铁律仍守四 survivor 源码不硬改。</p>
 </div>
 
 <h2>六、结论（部分）</h2>
@@ -269,8 +285,7 @@ codex 0.94.0 exec 无内置回合上限 + 单轮开销较高，导致 59/87 题�
 <ol>
 <li><b>hermes / claude-code 适配器修复<b>已验证生效</b></b>：旧批两路 0% → 复跑当前 hermes {hr['pass']}/{hr['done']} 条件通过率 {hermes_cpr}、
 claude-code {cr['pass']}/{cr['done']} 条件通过率 {cc_cpr}。判据「两路通过率均 &gt; 0」已满足。复跑全部完成后将给出终版 resolve rate 与 McNemar 检验。</li>
-<li><b>codex 高 err 根因已定位</b>：非上游服务、非可修适配器 bug，而是 codex 0.94.0 exec 模式无内置回合上限 + 单轮开销较高导致 1800s 预算内完成题数少；
-条件通过率 48.8% 与存活线同档。<b>不硬改</b>，按铁律保留 codex.py 原状。</li>
+<li><b>codex 高 err 根因已定位（R510 修正）</b>：主因 = <b>上游 429 限流（34/59=57.6%，codex 调用模式独有）</b>，辅以容量/超时（25/59）与适配器无回合上限/无 429 退避的放大。<b>codex 可改善</b>（降并发复跑或加 429 退避），非「非适配器可修」。条件通过率 48.8% 与存活线同档。铁律守四 survivor 源码不硬改，补跑前先 smoke + 报 load。</li>
 <li>逐题汇总见 <code>run/harness/summary_rerun_20261025.json</code>（partial，随复跑进度更新）。</li>
 </ol>
 </div>
