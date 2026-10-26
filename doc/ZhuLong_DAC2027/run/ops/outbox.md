@@ -15143,3 +15143,152 @@ echo "=== DONE 126 ==="
 /nasdata/app.e0031982/eda_code_eval/2026_1024_222846
 === DONE 126 ===
 ```
+
+---
+
+## RUN_ID 128 · 2026-10-26 08:40:53 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 128 | attach cimi MCP to opencode | $(date '+%F %T') | host=$(hostname) ==="
+D=/nasdata/app.e0031982/code/eda_fastmcp
+URL_MCP="http://10.251.36.15:8090/mcp"
+MASK='s/(sk-|[A-Za-z0-9_]*key"?[[:space:]]*[:=][[:space:]]*")[A-Za-z0-9_.\-]{8,}/\1***/g'
+
+echo "[1] 现有 opencode 配置位置"
+ls -la "$HOME/.config/opencode" 2>/dev/null | head -8
+for f in "$HOME/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.jsonc" "$D/opencode.json" "$D/opencode.jsonc" "$(pwd)/opencode.json"; do
+  [ -f "$f" ] && { echo "  FOUND: $f ($(wc -c < "$f") B)"; }
+done
+echo "  opencode bin: $(which opencode 2>/dev/null || echo none)  ver: $(opencode --version 2>/dev/null | head -1)"
+
+echo "[2] 选目标文件（有项目配置用项目，否则全局）"
+T=""
+for f in "$D/opencode.json" "$D/opencode.jsonc" "$HOME/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.jsonc"; do
+  [ -f "$f" ] && { T="$f"; break; }
+done
+if [ -z "$T" ]; then T="$HOME/.config/opencode/opencode.json"; mkdir -p "$(dirname "$T")"; echo '{"$schema":"https://opencode.ai/config.json"}' > "$T"; echo "  created $T"; fi
+echo "  TARGET=$T"
+
+echo "[3] 改前内容（脱敏）"
+head -c 800 "$T" | sed -E "$MASK"; echo
+
+echo "[4] 备份 + 合并 mcp.pyAether（保留所有既有键/服务器）"
+cp -a "$T" "$T.bak.$(date +%Y%m%d_%H%M)" && echo "  backup ok"
+python3 - "$T" "$URL_MCP" <<'PY'
+import json,re,sys
+p,url=sys.argv[1],sys.argv[2]
+raw=open(p,encoding="utf-8").read()
+try:
+    d=json.loads(raw)
+except Exception:
+    # JSONC: 去注释（保守：只去整行 // 与 /* */）
+    s=re.sub(r"/\*.*?\*/","",raw,flags=re.S)
+    s=re.sub(r"^\s*//.*$","",s,flags=re.M)
+    d=json.loads(s)
+d.setdefault("$schema","https://opencode.ai/config.json")
+mcp=d.setdefault("mcp",{})
+ent=mcp.get("pyAether",{})
+ent.update({"type":"remote","url":url,"enabled":True})
+mcp["pyAether"]=ent
+json.dump(d,open(p,"w",encoding="utf-8"),ensure_ascii=False,indent=2)
+print("  merged mcp.pyAether ->",json.dumps(ent,ensure_ascii=False))
+print("  servers now:",list(mcp.keys()))
+PY
+
+echo "[5] 校验 JSON + 回显 mcp 段"
+python3 -c "import json;d=json.load(open('$T'));print('  JSON OK; mcp =',json.dumps(d.get('mcp',{}),ensure_ascii=False)[:400])"
+
+echo "[6] opencode 侧是否认到（mcp list）"
+timeout 60 opencode mcp list 2>&1 | head -12 | sed -E "$MASK" || echo '  (mcp list 不支持/超时，见下)'
+
+echo "[7] 服务端是否真的注册了 cimi_search"
+timeout 20 grep -rn "cimi_search\|cimi_fetch" "$D/tools" 2>/dev/null | head -4
+timeout 20 grep -nE 'CIMI|WEB_SEARCH|ENABLE_.*WEB|search' "$D/.env" 2>/dev/null | head -6
+echo "  -- 8090 健康 --"; timeout 8 bash -c "exec 3<>/dev/tcp/10.251.36.15/8090" 2>/dev/null && echo '  TCP 8090 OPEN' || echo '  TCP 8090 CLOSED'
+
+echo "[8] 结论提示"
+echo "  若 [6] 看到 pyAether 且 [7] 显示 cimi_search 已注册 → 直接可用；"
+echo "  若 [7] 无 cimi_search → 需在 .env 打开 web 工具开关并重启 8090 服务（见 README）。"
+echo "=== DONE 128 ==="
+```
+
+**输出**
+```
+=== RUN_ID 128 | attach cimi MCP to opencode | 2026-10-26 08:40:53 | host=hfeg0tedaap02 ===
+[1] 现有 opencode 配置位置
+total 48
+drwxr-xr-x  3 app.e0031982 app.adm  4096 Oct 13 15:21 .
+drwx------  6 app.e0031982 app.adm  4096 Oct 12 11:02 ..
+-rw-r--r--  1 app.e0031982 app.adm    63 Oct 12 11:15 .gitignore
+drwxr-x--- 29 app.e0031982 app.adm  4096 Oct 12 13:05 node_modules
+-rw-r--r--  1 app.e0031982 app.adm   858 Oct 12 13:26 opencode.json
+-rw-r--r--  1 app.e0031982 app.adm   516 Oct 12 13:26 opencode.json.bak.59
+-rw-r-----  1 app.e0031982 app.adm    64 Oct 12 13:05 package.json
+  FOUND: /home/app.e0031982/.config/opencode/opencode.json (858 B)
+  opencode bin: /home/app.e0031982/.local/node-20/bin/opencode  ver: opencode v2.0.27
+[2] 选目标文件（有项目配置用项目，否则全局）
+  TARGET=/home/app.e0031982/.config/opencode/opencode.json
+[3] 改前内容（脱敏）
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": {
+          "name": "DeepSeek V4 Pro Cloud"
+        }
+      }
+    },
+    "glm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "GLM (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+      },
+      "models": {
+        "glm-5.2": {
+          "name": "GLM-5.
+[4] 备份 + 合并 mcp.pyAether（保留所有既有键/服务器）
+  backup ok
+  merged mcp.pyAether -> {"type": "remote", "url": "http://10.251.36.15:8090/mcp", "enabled": true}
+  servers now: ['pyAether']
+[5] 校验 JSON + 回显 mcp 段
+  JSON OK; mcp = {"pyAether": {"type": "remote", "url": "http://10.251.36.15:8090/mcp", "enabled": true}}
+[6] opencode 侧是否认到（mcp list）
+Error: Server process exited with code 1
+Error: Managed service port 49375 on 127.0.0.1 is already in use by another process. Configure another port with `opencode service set port <port>` and start the service again.
+    at <anonymous> (/$bunfs/root/chunk-c1a0vz4v.js:2:8825) {
+  [cause]: ServeError: 
+      at N (/$bunfs/root/chunk-kk1ag8jt.js:52:7706)
+      at applyHandlers (node:events:64:20)
+      at emitError (node:events:44:27)
+      at emitListenErrorNextTick (node:_http_server:134:12)
+      at processTicksAndRejections (unknown:7:39) {
+    [cause]: Error: Failed to start server. Is port 49375 in use?
+        at serve (unknown)
+        at <anonymous> (node:_http_server:359:39)
+[7] 服务端是否真的注册了 cimi_search
+/nasdata/app.e0031982/code/eda_fastmcp/tools/web_search/__init__.py:1:# web_search tools: cimi_search & cimi_fetch
+/nasdata/app.e0031982/code/eda_fastmcp/tools/web_search/cimi_fetch.py:1:"""cimi_fetch — Web page fetch tool via CIMI gateway.
+/nasdata/app.e0031982/code/eda_fastmcp/tools/web_search/cimi_fetch.py:16:    "http://agi-gateway.cxmt.com/agi/tool/cimi_fetch",
+/nasdata/app.e0031982/code/eda_fastmcp/tools/web_search/cimi_fetch.py:25:def cimi_fetch(url: str, max_length: int = 10000) -> dict[str, str]:
+249:# 核心工具（search/get/run）始终开启，除非被写进本清单。
+255:#   核心(评测必需，建议别禁): get_api_details, search_apis, search_apis_by_keyword, run_code
+257:#                       cimi_search, cimi_fetch, vqa
+259:EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,text_to_image,query_memory_bank
+  -- 8090 健康 --
+  TCP 8090 OPEN
+[8] 结论提示
+  若 [6] 看到 pyAether 且 [7] 显示 cimi_search 已注册 → 直接可用；
+  若 [7] 无 cimi_search → 需在 .env 打开 web 工具开关并重启 8090 服务（见 README）。
+=== DONE 128 ===
+```
