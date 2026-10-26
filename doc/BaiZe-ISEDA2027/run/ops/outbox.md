@@ -22410,3 +22410,126 @@ rtt min/avg/max/mdev = 0.080/0.115/0.151/0.035 ms
   Oct 26 10:23  s16kgoff_rc_s16k1goff
 === DONE 213 ===
 ```
+
+---
+
+## RUN_ID 214 · 2026-10-26 21:20:08 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+echo "=== RUN_ID 214 | S1 acceptance | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] pretrain_launcher 进程"
+ps -eo pid,ppid,etimes,args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | cut -c1-140 || echo "  (none)"
+echo
+echo "[2] 实际启动参数（关键项逐条）"
+CMD=$(ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1)
+if [ -n "$CMD" ]; then
+  for k in rotary-base max-position-embeddings optimizer lr-decay-style lr-decay-shape lr-warmup-iters lr-decay-iters train-iters seq-length global-batch-size micro-batch-size context-parallel tensor-parallel save-interval fp8-recipe enable-cuda-graph name; do
+    v=$(echo "$CMD" | tr ' ' '\n' | grep -A1 -- "^--$k\$" | tail -1)
+    if echo "$CMD" | grep -q -- "--$k\b"; then echo "  --$k = ${v:-<flag>}"; else echo "  --$k = (NOT PASSED)"; fi
+  done
+else
+  echo "  (no launcher cmdline)"
+fi
+echo
+echo "[3] 最新训练日志与 iteration 行"
+for f in /tmp/baize_s1_formal.log /tmp/baize_s1_worker_node.log; do
+  [ -f "$f" ] || continue
+  echo "  --- $f (mtime=$(stat -c '%y' "$f" | cut -c1-19) size=$(stat -c %s "$f"))"
+  grep -E 'iteration +[0-9]+' "$f" 2>/dev/null | tail -2 | cut -c1-200
+done
+NEW=$(ls -t /tmp/baize_s1*.log 2>/dev/null | head -1)
+echo "  newest=$NEW"
+[ -n "${NEW:-}" ] && tail -6 "$NEW" | cut -c1-200
+echo
+echo "[4] GPU（util/显存）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo
+echo "[5] exp 目录 / ckpt / tb 事件"
+ls -d $E/baize2b* 2>/dev/null || echo "  (no baize2b dir)"
+for d in $E/baize2b*/; do
+  [ -d "$d" ] || continue
+  echo "  dir=$d"
+  [ -f "$d/checkpoints/latest_checkpointed_iteration.txt" ] && echo "    latest=$(cat "$d/checkpoints/latest_checkpointed_iteration.txt")"
+  echo "    n_ckpt=$(ls -d "$d"/checkpoints/iter_* 2>/dev/null | wc -l)"
+  find "$d" -name 'events.out.tfevents.*' -printf '    ev %TH:%TM %s %p\n' 2>/dev/null | sort -r | head -2
+done
+echo
+echo "[6] TB 6006"
+ss -ltn 2>/dev/null | grep ':6006' | cut -c1-80 || echo "  (not listening)"
+curl -s -o /dev/null -w '  http=%{http_code}\n' --max-time 5 http://127.0.0.1:6006/ 2>/dev/null || echo "  curl fail"
+echo
+echo "[7] 最近提交（agent 是否在推进）"
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log -3 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' | cut -c1-120
+echo "=== DONE 214 ==="
+```
+
+**输出**
+```
+=== RUN_ID 214 | S1 acceptance | 2026-10-26 21:20:08 | host=whag0pgpuap29 ===
+[1] pretrain_launcher 进程
+1836544 1801874     518 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun 
+1878443 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878444 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878445 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878446 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878447 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878448 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878449 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+1878450 1836544     478 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b_s1 --d
+
+[2] 实际启动参数（关键项逐条）
+  --rotary-base = (NOT PASSED)
+  --max-position-embeddings = (NOT PASSED)
+  --optimizer = adam
+  --lr-decay-style = WSD
+  --lr-decay-shape = (NOT PASSED)
+  --lr-warmup-iters = 2000
+  --lr-decay-iters = 0
+  --train-iters = 700000
+  --seq-length = 16384
+  --global-batch-size = 128
+  --micro-batch-size = 1
+  --context-parallel = 1
+  --tensor-parallel = 1
+  --save-interval = 2000
+  --fp8-recipe = tensorwise
+  --enable-cuda-graph = (NOT PASSED)
+  --name = baize2b_s1
+
+[3] 最新训练日志与 iteration 行
+  --- /tmp/baize_s1_formal.log (mtime=2026-10-26 21:17:29 size=620131)
+  --- /tmp/baize_s1_worker_node.log (mtime=2026-10-26 21:18:36 size=1587060)
+  newest=/tmp/baize_s1_worker_node.log
+  rank      : 15 (local_rank: 7)
+  exitcode  : 1 (pid: 1957848)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+===== Done: rc=1 =====
+
+[4] GPU（util/显存）
+0, 19049 MiB, 100 %
+1, 19049 MiB, 100 %
+2, 19053 MiB, 100 %
+3, 19049 MiB, 100 %
+4, 19049 MiB, 100 %
+5, 19049 MiB, 100 %
+6, 19049 MiB, 100 %
+7, 19049 MiB, 100 %
+
+[5] exp 目录 / ckpt / tb 事件
+  (no baize2b dir)
+
+[6] TB 6006
+LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*          
+  http=200
+
+[7] 最近提交（agent 是否在推进）
+  9b4a054fc 10-26 21:20 Merge remote-tracking branch 'origin/main'
+  10bfd3684 10-26 21:20 ops 21:2x: RUN_ID 214 S1 acceptance probe
+  a85096706 10-26 21:16 pretrain: heartbeat #796 update - rendezvous success, port fix committed, dataset build in progr
+=== DONE 214 ===
+```
