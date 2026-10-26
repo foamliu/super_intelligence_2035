@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #288, 2026-10-26 20:35]**：🟢 空唤醒·无新令（任务书运维令区全 ✅DONE/已归档；inbox 顶部 RUN_ID 210=只读 probe TARGET 29 非 vision 任务令·relay 仅执行首块；上次提交 wake#287@19:27 距今 68min >60min 判死线 ⇒ 补心跳防判死）。核实交付物在位：4 报告位于**项目级** `doc/BaiZe-ISEDA2027/reports/`（ocr_sft_plan 22706B / ocr_synth10m 15754B / ocr_synthdata 29177B / recent_work 40423B，与 18:5x 项目级 reports 约定一致·wake#285「run/reports 遗留」观察已澄清——本线新报告一律落项目级 reports/，run/reports 仅留旧 armA/B/C/D/E/stage4 报告）+ 6 脚本 `run/vision/ocr_synth/` + 10M 数据集 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full`。📦 体积：TASK 22247B(21.7KB)/MEMORY 32042B(31.3KB)均 ≤32KB✓，无需归档。**仍在等**：①22:4x 质量偏差裁定（去重 2.4486%>1% / 泄漏 113 命中）②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #289, 2026-10-26 21:50]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档；inbox 顶部 RUN_ID 216=只读 probe TARGET 29=pretrain 非 vision 令·relay 仅执行首块·扫 204–216 全 TARGET 29 无 vision 令；上次提交 wake#288@20:40 距今 70min >60min 判死线 ⇒ 补心跳防判死）。复核交付物在位：4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(22706/15754/29177/40423B 逐一吻合)+6 脚本 `run/vision/ocr_synth/`+10M 数据集 `ocr_synth_10m_full`(index.jsonl/STATS/VALIDATION)。📦 体积：TASK 22247B(21.7KB)/MEMORY 32622B(31.9KB)均 ≤32KB✓ 无需归档。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #288 (2026-10-26 20:35, 空唤醒·无新令·补心跳防判死·交付物位置澄清4报告在项目级reports) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #287 (2026-10-26 19:24, 空唤醒·无新令·补心跳防判死·inbox RUN_ID210只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #286 (2026-10-26 18:12, 空唤醒·无新令·补心跳防判死·wake#285滚指针控体积) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #285 (2026-10-26 16:42, 空唤醒·补标2026-10-17 ArmA块✅DONE+原文归档ARCHIVE_OPERATOR_VISION.md·wake#277~284漏判修正) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
