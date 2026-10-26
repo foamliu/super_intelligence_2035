@@ -22273,3 +22273,140 @@ LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*
   cb510a858 10-26 21:03 ops 21:0x: 投 RUN_ID 212（定位 torchrun GPU 0%：cmd/日志/.12 状态/train.sh 未提交 di
 === DONE 212 ===
 ```
+
+---
+
+## RUN_ID 213 · 2026-10-26 21:05:32 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 213 | s1 hang diag | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 正式 S1 日志（/tmp/baize_s1_formal.log，尾 45 行）"
+[ -f /tmp/baize_s1_formal.log ] && tail -45 /tmp/baize_s1_formal.log | cut -c1-190 || echo "  missing"
+echo
+echo "[2] worker 节点日志（/tmp/baize_s1_worker_node.log，尾 45 行）"
+[ -f /tmp/baize_s1_worker_node.log ] && tail -45 /tmp/baize_s1_worker_node.log | cut -c1-190 || echo "  missing"
+echo
+echo "[3] smoke3 末尾（是否通过）"
+tail -8 /tmp/baize_s1_smoke3.log 2>/dev/null | cut -c1-190 || echo "  missing"
+echo
+echo "[4] 双机 torchrun 进程（etimes 是否在增长 / 参数尾部）"
+ps -eo pid,etimes,args= | grep -E 'torchrun' | grep -Ev 'grep|cline|bun|node /' | cut -c1-300
+echo
+echo "[5] rendezvous / TB 端口"
+ss -ltn 2>/dev/null | grep -E ':(29[0-9]{3}|6006)\b' | cut -c1-90 || echo "  (no relevant port)"
+echo
+echo "[6] .29 → .12 连通性（ping + ssh 快速）"
+timeout 6 ping -c 2 10.239.2.12 2>&1 | tail -3
+timeout 12 ssh -o StrictHostKeyChecking=no -o BatchMode=yes 10.239.2.12 \
+  'echo "  .12 ssh ok"; ps -eo pid,etimes,args= | grep torchrun | grep -v grep | cut -c1-200' 2>&1 | cut -c1-220
+echo
+echo "[7] 实验目录是否出现 baize2b"
+ls -lt /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments 2>/dev/null | head -6 | awk '{print "  "$6" "$7" "$8"  "$9}'
+echo "=== DONE 213 ==="
+```
+
+**输出**
+```
+=== RUN_ID 213 | s1 hang diag | 2026-10-26 21:05:32 | host=whag0pgpuap29 ===
+[1] 正式 S1 日志（/tmp/baize_s1_formal.log，尾 45 行）
+===== Generating blend (7 datasets) =====
+  WARNING: skipped invalid shards in Ultra-FineWeb/ultrafineweb_en_v1_4:
+SKIP env14_CC-MAIN-2023-23: ptr overflow: max_ptr=122496093768 >= bin_size=49025167172
+validate_shards: 109 ok, 1 skipped, 110 total
+  Ultra-FineWeb/ultrafineweb_en_v1_4 : 109 shards, w/shard=0.005963
+  WARNING: skipped invalid shards in Ultra-FineWeb/ultrafineweb_l1_en_hq:
+validate_shards: 94 ok, 0 skipped, 94 total
+  Ultra-FineWeb/ultrafineweb_l1_en_hq : 94 shards, w/shard=0.000532
+  WARNING: skipped invalid shards in Ultra-FineWeb/ultrafineweb_zh:
+validate_shards: 4 ok, 0 skipped, 4 total
+  Ultra-FineWeb/ultrafineweb_zh : 4 shards, w/shard=0.010000
+  WARNING: skipped invalid shards in UltraData-Math/UltraData-Math-L1:
+validate_shards: 149 ok, 0 skipped, 149 total
+  UltraData-Math/UltraData-Math-L1 : 149 shards, w/shard=0.000336
+  WARNING: skipped invalid shards in UltraData-Math/UltraData-Math-L3:
+validate_shards: 67 ok, 0 skipped, 67 total
+  UltraData-Math/UltraData-Math-L3 : 67 shards, w/shard=0.000299
+  WARNING: skipped invalid shards in UltraData-Code/UltraData-Code-L2:
+validate_shards: 141 ok, 0 skipped, 141 total
+  UltraData-Code/UltraData-Code-L2 : 141 shards, w/shard=0.001064
+  WARNING: skipped invalid shards in UltraData-Code/UltraData-Code-L3:
+validate_shards: 63 ok, 0 skipped, 63 total
+  UltraData-Code/UltraData-Code-L3 : 63 shards, w/shard=0.000635
+  total: 627 shards (1254 blend elements)
+===== S1 launch: name=baize2b_s1 nnodes=2 node_rank=0 steps=700000 warmup=2000 =====
+===== Spawning worker on 10.239.2.12 =====
+  worker SSH pid=817900, log=/tmp/baize_s1_worker_node.log
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If
+  import pynvml  # type: ignore[import]
+W1026 20:57:39.655000 818817 site-packages/torch/distributed/run.py:774] 
+W1026 20:57:39.655000 818817 site-packages/torch/distributed/run.py:774] *****************************************
+W1026 20:57:39.655000 818817 site-packages/torch/distributed/run.py:774] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overload
+W1026 20:57:39.655000 818817 site-packages/torch/distributed/run.py:774] *****************************************
+
+[2] worker 节点日志（/tmp/baize_s1_worker_node.log，尾 45 行）
+===== Generating blend (7 datasets) =====
+  WARNING: skipped invalid shards in Ultra-FineWeb/ultrafineweb_en_v1_4:
+SKIP env14_CC-MAIN-2023-23: ptr overflow: max_ptr=122496093768 >= bin_size=49025167172
+validate_shards: 109 ok, 1 skipped, 110 total
+  Ultra-FineWeb/ultrafineweb_en_v1_4 : 109 shards, w/shard=0.005963
+  WARNING: skipped invalid shards in Ultra-FineWeb/ultrafineweb_l1_en_hq:
+validate_shards: 94 ok, 0 skipped, 94 total
+  Ultra-FineWeb/ultrafineweb_l1_en_hq : 94 shards, w/shard=0.000532
+  WARNING: skipped invalid shards in Ultra-FineWeb/ultrafineweb_zh:
+validate_shards: 4 ok, 0 skipped, 4 total
+  Ultra-FineWeb/ultrafineweb_zh : 4 shards, w/shard=0.010000
+  WARNING: skipped invalid shards in UltraData-Math/UltraData-Math-L1:
+validate_shards: 149 ok, 0 skipped, 149 total
+  UltraData-Math/UltraData-Math-L1 : 149 shards, w/shard=0.000336
+  WARNING: skipped invalid shards in UltraData-Math/UltraData-Math-L3:
+validate_shards: 67 ok, 0 skipped, 67 total
+  UltraData-Math/UltraData-Math-L3 : 67 shards, w/shard=0.000299
+  WARNING: skipped invalid shards in UltraData-Code/UltraData-Code-L2:
+validate_shards: 141 ok, 0 skipped, 141 total
+  UltraData-Code/UltraData-Code-L2 : 141 shards, w/shard=0.001064
+  WARNING: skipped invalid shards in UltraData-Code/UltraData-Code-L3:
+validate_shards: 63 ok, 0 skipped, 63 total
+  UltraData-Code/UltraData-Code-L3 : 63 shards, w/shard=0.000635
+  total: 627 shards (1254 blend elements)
+===== S1 launch: name=baize2b_s1 nnodes=2 node_rank=1 steps=700000 warmup=2000 =====
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If
+  import pynvml  # type: ignore[import]
+W1026 20:59:17.351000 1012719 site-packages/torch/distributed/run.py:774] 
+W1026 20:59:17.351000 1012719 site-packages/torch/distributed/run.py:774] *****************************************
+W1026 20:59:17.351000 1012719 site-packages/torch/distributed/run.py:774] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloa
+W1026 20:59:17.351000 1012719 site-packages/torch/distributed/run.py:774] *****************************************
+
+[3] smoke3 末尾（是否通过）
+  time      : 2026-10-26_20:45:27
+  host      : whag0pgpuap29
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 3745467)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+===== Done: rc=1 =====
+
+[4] 双机 torchrun 进程（etimes 是否在增长 / 参数尾部）
+ 818817     475 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --nproc_per_node=8 --node_rank=0 --master_addr=10.239.2.29 --master_port=48173 pretrain_launcher.py --arch mamba2 --name baize2b_s1 --dir /nas_train/app.e003
+
+[5] rendezvous / TB 端口
+LISTEN 0      128          0.0.0.0:6006       0.0.0.0:*          
+
+[6] .29 → .12 连通性（ping + ssh 快速）
+--- 10.239.2.12 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1029ms
+rtt min/avg/max/mdev = 0.080/0.115/0.151/0.035 ms
+  .12 ssh ok
+1012719     380 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --nproc_per_node=8 --node_rank=1 --master_addr=10.239.2.2
+
+[7] 实验目录是否出现 baize2b
+      
+  Oct 26 12:38  dn16g_e3_32k_cp2
+  Oct 26 12:31  dn16g_e2_16k_cp2
+  Oct 26 12:24  dn16g_e1_16k_cp1
+  Oct 26 10:48  cp2val_rc_cp2_seq32k
+  Oct 26 10:23  s16kgoff_rc_s16k1goff
+=== DONE 213 ===
+```
