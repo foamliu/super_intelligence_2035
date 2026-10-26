@@ -23069,3 +23069,95 @@ drwxr-xr-x 2 app.e0031982 app.adm 4096 Oct 26 21:29 tb_logs
   ev 21:40 74442 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b_s1/tb_logs/events.out.tfevents.1793021383.whag0pgpuap12.2911668.0
 === DONE 219 ===
 ```
+
+---
+
+## RUN_ID 220 · 2026-10-26 22:58:10 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+echo "=== RUN_ID 220 | S1 restatus | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 进程（torchrun / launcher / loop / cline）"
+ps -eo pid,etimes,args= | grep -E 'torchrun|pretrain_launcher\.py|baize_pretrain_loop|cline_pretrain' | grep -Ev 'grep|bun|node /' | cut -c1-120 | head -6 || echo "  (none)"
+echo "[2] GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[3] 最新日志 + 最后 2 条 iteration"
+for f in $(ls -t /tmp/baize_s1*.log 2>/dev/null | head -2); do
+  echo "  --- $f ($(stat -c '%y' "$f" | cut -c1-19) $(stat -c %s "$f")B)"
+  grep -E 'iteration +[0-9]+' "$f" 2>/dev/null | tail -2 | cut -c1-230
+done
+echo "[4] θ / gbs 复检（cmdline）"
+CMD=$(ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1)
+if [ -n "$CMD" ]; then
+  for k in rotary-base global-batch-size micro-batch-size seq-length save-interval optimizer; do
+    v=$(echo "$CMD" | tr ' ' '\n' | grep -A1 -- "^--$k\$" | tail -1); echo "  --$k = ${v:-<none>}"
+  done
+else
+  echo "  (no launcher running)"
+fi
+echo "[5] recipe/provider 是否已加 rotary_base（改动迹象）"
+grep -rn --include=*.py -E 'rotary_base|rotary-base' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b /nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py 2>/dev/null | head -6 | cut -c1-170
+echo "[6] ckpt / tb"
+ls -d $E/baize2b* 2>/dev/null || echo "  (no baize2b dir)"
+for d in $E/baize2b*/; do [ -d "$d" ] || continue; echo "  $d n_ckpt=$(ls -d "$d"/checkpoints/iter_* 2>/dev/null | wc -l) latest=$(cat "$d"/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null)"; done
+find $E/baize2b* -name 'events.out.tfevents.*' -printf '  ev %TH:%TM %s\n' 2>/dev/null | sort -r | head -2
+echo "[7] dataloader worker 数（每节点）"
+ps -eo args= | grep -c 'torch.utils.data\|dataloader' 2>/dev/null | sed 's/^/  approx_workers=/'
+pgrep -fc 'pretrain_launcher' 2>/dev/null | sed 's/^/  launcher_procs=/'
+echo "[8] 工作副本未提交改动（agent 在改什么）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && git status --short | head -8
+echo "[9] data 迁移 / 坏 shard 迹象"
+tail -2 /tmp/migrate_4sources_to_nas_env.log 2>/dev/null | cut -c1-150
+ls -lt /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/bad_shard_* 2>/dev/null | head -2
+echo "=== DONE 220 ==="
+```
+
+**输出**
+```
+=== RUN_ID 220 | S1 restatus | 2026-10-26 22:58:11 | host=whag0pgpuap29 ===
+[1] 进程（torchrun / launcher / loop / cline）
+1401353  185711 bash ./baize_pretrain_loop.sh
+[2] GPU
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+[3] 最新日志 + 最后 2 条 iteration
+  --- /tmp/baize_s1_formal.log (2026-10-26 21:52:08 940416B)
+  --- /tmp/baize_s1_worker_node.log (2026-10-26 21:52:08 9943271B)
+ [2026-10-26 21:38:38] iteration      120/  700000 | consumed samples:        15360 | elapsed time per iteration (ms): 4865.7 | learning rate: 6.000000E-05 | global batch size:   128 | lm loss: 7.600087E+00 | loss scale: 1.0 | gra
+ [2026-10-26 21:39:30] iteration      130/  700000 | consumed samples:        16640 | elapsed time per iteration (ms): 5199.7 | learning rate: 6.500000E-05 | global batch size:   128 | lm loss: 7.513339E+00 | loss scale: 1.0 | gra
+[4] θ / gbs 复检（cmdline）
+  (no launcher running)
+[5] recipe/provider 是否已加 rotary_base（改动迹象）
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:135:    rotary_base: int = 10000,
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:156:      rotary_base              — RoPE theta (ABF). 默认 1e4（Megatron 默认）；
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:198:    # RoPE theta (ABF). 父类 MambaModelProvider 有 rotary_base 字段（默认 1e4）。
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:200:    kwargs["rotary_base"] = rotary_base
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:256:    rotary_base: int = 10000,
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:313:        rotary_base=rotary_base,
+[6] ckpt / tb
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b_s1
+  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b_s1/ n_ckpt=0 latest=
+  ev 21:40 74442
+[7] dataloader worker 数（每节点）
+  approx_workers=1
+  launcher_procs=2
+[8] 工作副本未提交改动（agent 在改什么）
+ M code/baize-llm/scripts/train.sh
+?? doc/BaiZe-ISEDA2027/run/1049/
+?? doc/BaiZe-ISEDA2027/run/3147/
+?? doc/BaiZe-ISEDA2027/run/5245/
+?? doc/BaiZe-ISEDA2027/run/7343/
+?? doc/BaiZe-ISEDA2027/run/9441/
+?? doc/BaiZe-ISEDA2027/run/baize_p8_eval_14.sh
+?? doc/BaiZe-ISEDA2027/run/baize_p8_intermediate_collect.py
+[9] data 迁移 / 坏 shard 迹象
+=== DONE 220 ===
+```
