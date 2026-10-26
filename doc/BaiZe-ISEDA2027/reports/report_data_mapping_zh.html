@@ -54,10 +54,10 @@
 
 <h1>BaiZe 训练数据情况报告</h1>
 <p class="meta">围绕 <code>run/data/DATA_MAPPING.md</code> · 列表讲清楚数据情况</p>
-<p class="meta"><b>更新时间：</b>2026-10-26 16:3x · <b>数据线：</b>BaiZe data agent · <b>报告：</b>reports/report_data_mapping_zh.html · <b>运维令：</b>2026-10-26 14:4x</p>
+<p class="meta"><b>更新时间：</b>2026-10-27 00:35 · <b>数据线：</b>BaiZe data agent · <b>报告：</b>reports/report_data_mapping_zh.html · <b>运维令：</b>2026-10-26 22:0x（/nas_env 迁移 finalize）</p>
 <p class="src">
   <b>唯一数据源</b>：<code>run/data/DATA_MAPPING.md</code>（mtime 2026-10-26 09:52，100 行）+ <code>baize-data/tokenized/INDEX.tsv</code>（mtime 2026-10-26 09:52，2956 B，12 行）。
-  磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-26 12:21 实测）。数字一律以这两份文件 + df 为准，未另做 <code>du</code>/<code>find</code> 全树扫描（遵运维令 2026-10-26 10:4x）。
+  磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-27 00:35 实测）。数字一律以这两份文件 + df 为准，未另做 <code>du</code>/<code>find</code> 全树扫描（遵运维令 2026-10-26 10:4x）。
   所有条目可溯源到 <code>DATA_MAPPING.md</code> 行号或 <code>INDEX.tsv</code> 行号。
 </p>
 
@@ -66,7 +66,7 @@
   <div class="card"><div class="k">数据源总数</div><div class="v">12</div><div class="s">A 节 12 行：10 镜像完整（L16–L25）+ 2 未分词 SFT（L26–L27）</div></div>
   <div class="card"><div class="k">总 shard 数</div><div class="v">815</div><div class="s">.bin=.idx=.json 各 815，三件套齐全（核对式 L28）</div></div>
   <div class="card"><div class="k">总 tokens</div><div class="v">4,474.83 B</div><div class="s">4,474,825,355,971 tokens（INDEX.tsv TOTAL 行）</div></div>
-  <div class="card"><div class="k">总分词产物字节</div><div class="v">17.26 TB</div><div class="s">17,256,859,646,891 B（int32 token×4B，合计行 L26）</div></div>
+  <div class="card"><div class="k">总分词产物字节</div><div class="v">17.47 TB</div><div class="s">17,472,035,574,735 B（int32 token×4B，合计行 L28）</div></div>
 </div>
 <div class="kpi">
   <div class="card"><div class="k">下载目录总字节</div><div class="v">13,021.19 GB</div><div class="s">13,021,192,793,759 B（A 节「下载目录字节」列 L28，含 2 未分词 SFT 源）</div></div>
@@ -75,10 +75,10 @@
   <div class="card"><div class="k">校验状态</div><div class="v">ALL OK</div><div class="s">triplet=OK · inode_bad=0 · 0 悬空（INDEX.tsv 全行）</div></div>
 </div>
 
-<h3>磁盘占用（df 实测 · 2026-10-26 12:21）</h3>
+<h3>磁盘占用（df 实测 · 2026-10-27 00:35）</h3>
 <div class="disk">
-  <div class="card"><h4>/nas_train（分词镜像真身 + 下载目录）</h4><div class="bar"><span class="p85" style="width:86%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.31:/vol_CTE0_data01</dd><dt>总容量</dt><dd>207 TB</dd><dt>已用</dt><dd>177 TB（86%）</dd><dt>可用</dt><dd>31 TB</dd></dl></div>
-  <div class="card"><h4>/nas_env（full_* 跨盘 symlink 真身）</h4><div class="bar"><span class="p43" style="width:54%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.32:/vol_CTE0_data04</dd><dt>总容量</dt><dd>10 TB</dd><dt>已用</dt><dd>5.3 TB（54%）</dd><dt>可用</dt><dd>4.7 TB</dd></dl></div>
+  <div class="card"><h4>/nas_train（分词镜像真身 + 下载目录）</h4><div class="bar"><span class="p85" style="width:86%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.31:/vol_CTE0_data01</dd><dt>总容量</dt><dd>207 TB</dd><dt>已用</dt><dd>176 TB（85%）</dd><dt>可用</dt><dd>32 TB</dd></dl></div>
+  <div class="card"><h4>/nas_env（full_* 跨盘 symlink 真身）</h4><div class="bar"><span class="p43" style="width:54%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.32:/vol_CTE0_data04</dd><dt>总容量</dt><dd>10 TB</dd><dt>已用</dt><dd>8.1 TB（82%）</dd><dt>可用</dt><dd>1.9 TB</dd></dl></div>
 </div>
 <p class="legend">注：<code>env14_*</code> 真身在 <code>/nas_train/.../baize-data/text/</code>（与 tokenized/ 同盘 ⇒ hardlink，0 额外空间）；<code>full_*</code> 真身在 <code>/nas_env/app.e0031982/baize-data/</code>（跨盘 ⇒ symlink）。两者均属「下载的一律保留」，未删未改未移（L30）。</p>
 
@@ -93,16 +93,16 @@
     <tr class="ok"><td>4</td><td>…/UltraData-Code/data/UltraData-Code-L3</td><td>…/UltraData-Code/UltraData-Code-L3</td><td class="num">63</td><td class="num">63</td><td class="num">63</td><td class="num">516,117,199,509</td><td class="num">481</td><td class="num">128,623,266,591</td><td class="num">604,712,501,031</td><td class="num">1.172</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
     <tr class="ok"><td>5</td><td>…/UltraData-Math/data/UltraData-Math-L1</td><td>…/UltraData-Math/UltraData-Math-L1</td><td class="num">149</td><td class="num">149</td><td class="num">149</td><td class="num">659,469,460,275</td><td class="num">614</td><td class="num">164,437,183,984</td><td class="num">366,622,940,699</td><td class="num">0.556</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
     <tr class="ok"><td>6</td><td>…/UltraData-Math/data/UltraData-Math-L3</td><td>…/UltraData-Math/UltraData-Math-L3</td><td class="num">67</td><td class="num">67</td><td class="num">67</td><td class="num">313,425,604,823</td><td class="num">292</td><td class="num">77,949,162,709</td><td class="num">122,536,811,815</td><td class="num">0.391</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>7</td><td>…/Ultra-FineWeb/data/ultrafineweb_en</td><td>…/Ultra-FineWeb/ultrafineweb_en</td><td class="num">32</td><td class="num">32</td><td class="num">32</td><td class="num">2,981,295,624,594</td><td class="num">2777</td><td class="num">905,921,334,220</td><td class="num">2,661,358,397,268</td><td class="num">0.893</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>8</td><td>…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>…/Ultra-FineWeb/ultrafineweb_l1_en_hq</td><td class="num">94</td><td class="num">94</td><td class="num">94</td><td class="num">603,519,735,520</td><td class="num">562</td><td class="num">150,155,374,778</td><td class="num">477,975,290,461</td><td class="num">0.792</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>9</td><td>…/Ultra-FineWeb/data/ultrafineweb_zh</td><td>…/Ultra-FineWeb/ultrafineweb_zh</td><td class="num">4</td><td class="num">4</td><td class="num">4</td><td class="num">453,644,894,252</td><td class="num">422</td><td class="num">112,756,190,641</td><td class="num">324,321,522,155</td><td class="num">0.715</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>10</td><td>…/UltraX-Preview/data/UltraX-AICC</td><td>…/UltraX-Preview/UltraX-AICC</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">46,394,689,578</td><td class="num">43</td><td class="num">11,492,264,080</td><td class="num">68,553,927,738</td><td class="num">1.478</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>7</td><td>…/Ultra-FineWeb/data/ultrafineweb_en</td><td>…/Ultra-FineWeb/ultrafineweb_en</td><td class="num">32</td><td class="num">32</td><td class="num">32</td><td class="num">3,196,471,552,438</td><td class="num">2977</td><td class="num">905,921,334,220</td><td class="num">2,661,358,397,268</td><td class="num">0.833</td><td>hardlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>8</td><td>…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq</td><td>…/Ultra-FineWeb/ultrafineweb_l1_en_hq</td><td class="num">94</td><td class="num">94</td><td class="num">94</td><td class="num">603,519,735,520</td><td class="num">562</td><td class="num">150,155,374,778</td><td class="num">477,975,290,461</td><td class="num">0.792</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>9</td><td>…/Ultra-FineWeb/data/ultrafineweb_zh</td><td>…/Ultra-FineWeb/ultrafineweb_zh</td><td class="num">4</td><td class="num">4</td><td class="num">4</td><td class="num">453,644,894,252</td><td class="num">422</td><td class="num">112,756,190,641</td><td class="num">324,321,522,155</td><td class="num">0.715</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>10</td><td>…/UltraX-Preview/data/UltraX-AICC</td><td>…/UltraX-Preview/UltraX-AICC</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">46,394,689,578</td><td class="num">43</td><td class="num">11,492,264,080</td><td class="num">68,553,927,738</td><td class="num">1.478</td><td>symlink</td><td><span class="badge b-ok">镜像完整</span></td></tr>
     <tr style="background:#fffbeb"><td>11</td><td>…/UltraData-SFT-2605/data/</td><td>—</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">318,990,486,183</td><td class="num">—</td><td>JSONL</td><td><span class="badge" style="background:#fef3c7;color:#92400e">未分词</span></td></tr>
     <tr style="background:#fffbeb"><td>12</td><td>…/UltraData-SFT-Agent-2609/data/</td><td>—</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">54,220,373,384</td><td class="num">—</td><td>JSONL</td><td><span class="badge" style="background:#fef3c7;color:#92400e">未分词</span></td></tr>
-    <tr class="tot"><td colspan="3">合计（A 节 L28）</td><td class="num">815</td><td class="num">815</td><td class="num">815</td><td class="num">17,256,859,646,891</td><td class="num">16072</td><td class="num">4,474,825,355,971</td><td class="num">13,021,192,793,759</td><td class="num">12127 GB</td><td>—</td><td>—</td></tr>
+    <tr class="tot"><td colspan="3">合计（A 节 L28）</td><td class="num">815</td><td class="num">815</td><td class="num">815</td><td class="num">17,472,035,574,735</td><td class="num">16272</td><td class="num">4,474,825,355,971</td><td class="num">13,021,192,793,759</td><td class="num">12127 GB</td><td>—</td><td>—</td></tr>
   </tbody>
 </table>
-<p class="legend">核对式（L30）：<code>sum(.bin)=815 = sum(.idx)=815 = sum(.json)=815</code>；<code>sum(分词字节)=17,256,859,646,891</code>；<code>sum(tokens)=4,474,825,355,971</code>；<code>sum(下载字节)=13,021,192,793,759</code>（含 2 未分词 SFT 源 373,210,859,567 B）。误差 0。「下载/分词字节比」= 下载目录字节 ÷ 分词产物字节；int32 token×4B 常大于压缩 parquet，故比值多 &lt; 1。未分词源 .bin/.idx/.json=0、tokens=0，仅下载目录字节计入合计。</p>
+<p class="legend">核对式（L30）：<code>sum(.bin)=815 = sum(.idx)=815 = sum(.json)=815</code>；<code>sum(分词字节)=17,472,035,574,735</code>；<code>sum(tokens)=4,474,825,355,971</code>；<code>sum(下载字节)=13,021,192,793,759</code>（含 2 未分词 SFT 源 373,210,859,567 B）。误差 0。「下载/分词字节比」= 下载目录字节 ÷ 分词产物字节；int32 token×4B 常大于压缩 parquet，故比值多 &lt; 1。未分词源 .bin/.idx/.json=0、tokens=0，仅下载目录字节计入合计。</p>
 
 <h2>3. 重点：10 个已镜像源（全部「镜像完整」）</h2>
 <p class="meta">DATA_MAPPING.md A 节第 1–10 行（L16–L25），与运维令列举顺序一致。</p>
@@ -115,11 +115,11 @@
     <tr class="ok"><td>4</td><td>Code-L3（UltraData-Code-L3）</td><td class="num">63</td><td class="num">128,623,266,591</td><td class="num">481</td><td class="num">563</td><td>symlink</td><td>triplet=OK · inode_ok=63</td><td><span class="badge b-ok">镜像完整</span></td></tr>
     <tr class="ok"><td>5</td><td>Math-L1（UltraData-Math-L1）</td><td class="num">149</td><td class="num">164,437,183,984</td><td class="num">614</td><td class="num">341</td><td>symlink</td><td>triplet=OK · inode_ok=149</td><td><span class="badge b-ok">镜像完整</span></td></tr>
     <tr class="ok"><td>6</td><td>Math-L3（UltraData-Math-L3）</td><td class="num">67</td><td class="num">77,949,162,709</td><td class="num">292</td><td class="num">114</td><td>symlink</td><td>triplet=OK · inode_ok=67</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>7</td><td>ufw_en（ultrafineweb_en）</td><td class="num">32</td><td class="num">905,921,334,220</td><td class="num">2777</td><td class="num">2479</td><td>hardlink</td><td>triplet=OK · inode_ok=32</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>8</td><td>ufw_l1_en_hq（ultrafineweb_l1_en_hq）</td><td class="num">94</td><td class="num">150,155,374,778</td><td class="num">562</td><td class="num">445</td><td>hardlink</td><td>triplet=OK · inode_ok=94</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>9</td><td>ufw_zh（ultrafineweb_zh）</td><td class="num">4</td><td class="num">112,756,190,641</td><td class="num">422</td><td class="num">302</td><td>hardlink</td><td>triplet=OK · inode_ok=4</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="ok"><td>10</td><td>UltraX-AICC</td><td class="num">1</td><td class="num">11,492,264,080</td><td class="num">43</td><td class="num">64</td><td>hardlink</td><td>triplet=OK · inode_ok=1</td><td><span class="badge b-ok">镜像完整</span></td></tr>
-    <tr class="tot"><td colspan="2">合计</td><td class="num">815</td><td class="num">4,474,825,355,971</td><td class="num">16072</td><td class="num">11779</td><td>—</td><td>ALL OK · inode_bad=0</td><td>—</td></tr>
+    <tr class="ok"><td>7</td><td>ufw_en（ultrafineweb_en）</td><td class="num">32</td><td class="num">905,921,334,220</td><td class="num">2977</td><td class="num">2479</td><td>hardlink</td><td>triplet=OK · inode_ok=32</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>8</td><td>ufw_l1_en_hq（ultrafineweb_l1_en_hq）</td><td class="num">94</td><td class="num">150,155,374,778</td><td class="num">562</td><td class="num">445</td><td>symlink</td><td>triplet=OK · inode_ok=94</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>9</td><td>ufw_zh（ultrafineweb_zh）</td><td class="num">4</td><td class="num">112,756,190,641</td><td class="num">422</td><td class="num">302</td><td>symlink</td><td>triplet=OK · inode_ok=4</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="ok"><td>10</td><td>UltraX-AICC</td><td class="num">1</td><td class="num">11,492,264,080</td><td class="num">43</td><td class="num">64</td><td>symlink</td><td>triplet=OK · inode_ok=1</td><td><span class="badge b-ok">镜像完整</span></td></tr>
+    <tr class="tot"><td colspan="2">合计</td><td class="num">815</td><td class="num">4,474,825,355,971</td><td class="num">16272</td><td class="num">11779</td><td>—</td><td>ALL OK · inode_bad=0</td><td>—</td></tr>
   </tbody>
 </table>
 <p class="legend">下载字节 GB 为「下载目录字节(B) ÷ 1,073,741,824」换算，与分词字节 GB 列口径一致。校验列对应 INDEX.tsv 各行 triplet / inode_ok / inode_bad。</p>
@@ -129,10 +129,10 @@
   <h3>✅ 数据管线已全部收尾就绪</h3>
   <ul class="note">
     <li><b>分词</b>：131/131 shard 已于 2026-10-26 09:43:35 RUN COMPLETE（1.18T tokens / 4.05 TB，0 fail）；连同既有 5 源全量分词（574 shards / 1056.36B）+ en_v1_4（110 / 2238.14B），全部并入 tokenized 镜像。</li>
-    <li><b>镜像</b>：<code>build_tokenized_mirror.py</code> 重跑后 tokenized 镜像 = <b>10 目录 / 815 shard / 4474.83B tokens / 17.26 TB</b>，triplet ALL OK、inode ALL OK、0 悬空链接（INDEX.tsv 全行）。</li>
-    <li><b>映射表</b>：<code>DATA_MAPPING.md</code> A 节 12 行 —— 10 行<b>「镜像完整」</b>（815 shard / 4474.83B tokens / 17.26 TB 分词产物）+ 2 行<b>「未分词」</b>（运维令 2026-10-26 14:4x 新增：<code>UltraData-SFT-2605</code> 1504 jsonl / 297 GB、<code>UltraData-SFT-Agent-2609</code> 50 jsonl / 50 GB，合计 1554 jsonl / 347.6 GB，未进 <code>.bin/.idx/.json</code> 分词镜像）。生成器幂等（连跑两次逐字节相同）。</li>
+    <li><b>镜像</b>：<code>build_tokenized_mirror.py</code> 重跑后 tokenized 镜像 = <b>10 目录 / 815 shard / 4474.83B tokens / 17.47 TB</b>，triplet ALL OK、inode ALL OK、0 悬空链接（INDEX.tsv 全行）。</li>
+    <li><b>映射表</b>：<code>DATA_MAPPING.md</code> A 节 12 行 —— 10 行<b>「镜像完整」</b>（815 shard / 4474.83B tokens / 17.47 TB 分词产物）+ 2 行<b>「未分词」</b>（运维令 2026-10-26 14:4x 新增：<code>UltraData-SFT-2605</code> 1504 jsonl / 297 GB、<code>UltraData-SFT-Agent-2609</code> 50 jsonl / 50 GB，合计 1554 jsonl / 347.6 GB，未进 <code>.bin/.idx/.json</code> 分词镜像）。生成器幂等（连跑两次逐字节相同）。</li>
     <li><b>不可用源</b>：32 个 staging_r3 符号链接暂存目录已按运维令 2026-10-25 18:2x 终裁删除（实占释放 ~471.6 KB），B 节留档结案。</li>
-    <li><b>磁盘</b>：/nas_train 86%（31 TB 可用）、/nas_env 54%（4.7 TB 可用）（df 2026-10-26 16:3x 实测），训练数据本体充足。</li>
+    <li><b>磁盘</b>：/nas_train 85%（32 TB 可用）、/nas_env 82%（1.9 TB 可用）（df 2026-10-27 00:35 实测），训练数据本体充足。</li>
   </ul>
 </div>
 
@@ -146,7 +146,7 @@
 </ul>
 
 <div class="foot">
-  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code>（103 行）与 <code>baize-data/tokenized/INDEX.tsv</code>（12 行），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-26 16:3x 实测）。更新：BaiZe data agent · 运维令 2026-10-26 14:4x（新增 2 未分词 SFT 源 + 删第 4 节）。
+  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code>（103 行）与 <code>baize-data/tokenized/INDEX.tsv</code>（12 行），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-27 00:35 实测）。更新：BaiZe data agent · 运维令 2026-10-26 22:0x（3 源迁移至 /nas_env：l1_en_hq / zh / AICC 由 hardlink 改 symlink；ufw_en 因 s17 仍在被远端写入为 moving target 暂留 hardlink 待迁；env14 坏 shard 重分词进行中）。
 </div>
 
 </div>
