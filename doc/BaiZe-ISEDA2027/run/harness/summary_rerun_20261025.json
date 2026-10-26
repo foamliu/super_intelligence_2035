@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T03:32:19Z",
+  "generated_at": "2026-10-26T09:03:37Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -2279,10 +2279,10 @@
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 16,
-    "rewarded": 51,
-    "exceptions": 12,
-    "completed": 63,
+    "pass": 19,
+    "rewarded": 61,
+    "exceptions": 21,
+    "completed": 82,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2720,6 +2720,139 @@
       },
       {
         "task": "protein-assembly",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "prove-plus-comm",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pypi-server",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-cli",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "pytorch-model-recovery",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-alpine-ssh",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "qemu-startup",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "query-optimize",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "raman-fitting",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "regex-chess",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "regex-log",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "reshard-c4-data",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "rstan-to-pystan",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sam-cell-seg",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sanitize-git-repo",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "schemelike-metacircular-eval",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sparql-university",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-db-truncate",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "sqlite-with-gcov",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-pipeline-parallelism",
         "harness": "claude-code_rerun",
         "reward": null,
         "err_type": null,
