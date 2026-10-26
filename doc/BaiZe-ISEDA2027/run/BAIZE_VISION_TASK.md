@@ -9,14 +9,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### [运维令] 2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
-
-> 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
-
-**任务**：写本线（vision）最近工作（10-20 起）总结报告 `reports/report_vision_recent_work_zh.html`（自包含中文 HTML）。
-- 结构：① 本线定位 → ② 近期任务逐个 → ③ 关键数据速查表 → ④ 阻塞/待拍板 → ⑤ 下一步建议。
-- **必覆盖**：① ArmE 发散→ArmE-R2 降 LR(5e-4+warmup3000) 修复全历程（含 spike 底连续趋浅证据、ProtB **lp 68.236** vs ArmD-R2 64.34、12集 26.10% 不可分辨、ProtB→MLLM 传递性）；② Stage-2 instruct 改用原版 LLaVA-NeXT-780k；③ OCR 合成 10M 图文对（470GB/2000tar，含两处质量偏差[去重 2.45%/泄漏 113]如实披露）。
-- 数字溯源（log/json 文件:行）；遵守命名规程；commit `vision report:`。
+### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节+7子节/0 script/0外链/标签配平/≥15KB + 生成器 `vision/generate_recent_work_report.py`；覆盖 ArmD-R2/ArmE发散→ArmE-R2(ProtB lp 68.236 vs ArmD-R2 64.34·12集 26.10%不可分辨·传递性)/Stage-2 原版780k/OCR 调研·SFT方案·10M合成数据集(470GB/2000tar·去重2.4486%/泄漏113如实披露)；数字全溯源 EXPERIMENTS §14-§18；commit 847ce67eb）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 ### [已归档] §运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对，供 vision encoder 预训练）**已完成** （wake#275 全量 DONE ok=9,999,999/fail=0/2000 shard tars+preview_10k.tar/470GB(0.5046TB)/893.6 img/s/3h6m30s · 8 类 cat_counts==plan · 加载器兼容已验真 build_gpic_loader→(16,3,224,224) finite · 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B/8节/0 script/0外链) + 5 脚本 `vision/ocr_synth/*.py` + EXPERIMENTS §18 + index.jsonl(9.999M) + STATS/VALIDATION/DATASET_CARD/MANIFEST + preview_200.html + preview_10k.tar；wake#276 复核完整性一致）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。**两处质量偏差如实记录**：①文本 SHA1 去重 2.4486%>1% 目标（dup_pass=false，留 9,755,141 唯一 / 244,858 多余；合成文本组合空间有限所致）；②泄漏 113 命中（leak_rate=1.16e-5，短串巧合如 0.29→029 非真实泄漏；内联护栏路径错为空操作，真实复检读 OCRBench/DocVQA/ChartQA parquet；InfoVQA parquet 未找到）。**待用户裁定**：接受 / index 过滤补救（留 9,755,141 唯一）/ 扩语料重生成。本轮只造数据不启 encoder 训练（等用户批预算）。需要时再读。
 

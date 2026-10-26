@@ -2,6 +2,18 @@
 
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
 
+## 归档 2026-10-26（由 BAIZE_VISION_TASK.md 搬入，原文未改）
+
+### [运维令] 2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
+
+> 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
+> ✅ **DONE (wake #279, 2026-10-26 09:2x)**：交付 `reports/report_vision_recent_work_zh.html`（40423B/5节+7子节/0 `<script>`/0外链/标签配平/≥15KB✓）+ 生成器 `vision/generate_recent_work_report.py`（纯字符串拼接，可重放）。覆盖窗 2026-10-20→10-26：①本线定位 ②近期任务逐个（ArmD-R2 / ArmE发散→ArmE-R2降LR(5e-4+warmup3000)修复全历程含spike底连续趋浅证据·ProtB lp 68.236 vs ArmD-R2 64.34·12集26.10%不可分辨·ProtB→MLLM传递性 / Stage-2 instruct 改原版 LLaVA-NeXT-780k / OCR调研·SFT方案·10M合成数据集）③速查表(4表：ProtB/12集/10M STATS/交付物清单) ④阻塞B1-B6 ⑤下一步。所有数字实测可溯源(EXPERIMENTS_VISION.md §14-§18 + JSON/tar)；OCR 10M两处质量偏差(文本去重2.4486%/泄漏113命中)如实披露。commit `vision report:` (847ce67eb)。
+
+**任务**：写本线（vision）最近工作（10-20 起）总结报告 `reports/report_vision_recent_work_zh.html`（自包含中文 HTML）。
+- 结构：① 本线定位 → ② 近期任务逐个 → ③ 关键数据速查表 → ④ 阻塞/待拍板 → ⑤ 下一步建议。
+- **必覆盖**：① ArmE 发散→ArmE-R2 降 LR(5e-4+warmup3000) 修复全历程（含 spike 底连续趋浅证据、ProtB **lp 68.236** vs ArmD-R2 64.34、12集 26.10% 不可分辨、ProtB→MLLM 传递性）；② Stage-2 instruct 改用原版 LLaVA-NeXT-780k；③ OCR 合成 10M 图文对（470GB/2000tar，含两处质量偏差[去重 2.45%/泄漏 113]如实披露）。
+- 数字溯源（log/json 文件:行）；遵守命名规程；commit `vision report:`。
+
 ## 归档 2026-10-25（由 BAIZE_VISION_TASK.md 搬入，原文未改）
 
 ### [运维令] 2026-10-25 19:5x（把路线①细化成「可照着做」的 OCR 专项 SFT 执行方案报告）· 用户直令 · 最高优先
