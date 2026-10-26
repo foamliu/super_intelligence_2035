@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #287, 2026-10-26 19:24]**：🟢 空唤醒·无新令（git 18:16→19:24 无 vision 新指令；上次提交 wake#286@18:16 距今 68min >60min 判死线 ⇒ 补心跳防判死）。复核运维令区：所有块均 ✅DONE/已归档，无未完成指令。复核 ops/inbox.md 顶部 RUN_ID 210 = 22:0x 只读巡检 probe（非 vision 任务令，relay 仅执行首块）。📦 体积：TASK 22247B(21.7KB)/MEMORY 31857B(31.1KB)均 ≤32KB✓，无需归档。4 报告+6 脚本+10M 数据集在位未动。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #288, 2026-10-26 20:35]**：🟢 空唤醒·无新令（任务书运维令区全 ✅DONE/已归档；inbox 顶部 RUN_ID 210=只读 probe TARGET 29 非 vision 任务令·relay 仅执行首块；上次提交 wake#287@19:27 距今 68min >60min 判死线 ⇒ 补心跳防判死）。核实交付物在位：4 报告位于**项目级** `doc/BaiZe-ISEDA2027/reports/`（ocr_sft_plan 22706B / ocr_synth10m 15754B / ocr_synthdata 29177B / recent_work 40423B，与 18:5x 项目级 reports 约定一致·wake#285「run/reports 遗留」观察已澄清——本线新报告一律落项目级 reports/，run/reports 仅留旧 armA/B/C/D/E/stage4 报告）+ 6 脚本 `run/vision/ocr_synth/` + 10M 数据集 `/nas_train/app.e0031982/datasets/baize-vision/ocr_synth_10m_full`。📦 体积：TASK 22247B(21.7KB)/MEMORY 32042B(31.3KB)均 ≤32KB✓，无需归档。**仍在等**：①22:4x 质量偏差裁定（去重 2.4486%>1% / 泄漏 113 命中）②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #287 (2026-10-26 19:24, 空唤醒·无新令·补心跳防判死·inbox RUN_ID210只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #286 (2026-10-26 18:12, 空唤醒·无新令·补心跳防判死·wake#285滚指针控体积) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #285 (2026-10-26 16:42, 空唤醒·补标2026-10-17 ArmA块✅DONE+原文归档ARCHIVE_OPERATOR_VISION.md·wake#277~284漏判修正) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #284 (2026-10-26 15:21, 空唤醒·归档17:5x运维令块+滚动MEMORY·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
