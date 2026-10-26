@@ -17,8 +17,8 @@ WAITING: 0
 
 ```
 PHASE:        ✅22:0x坏shard修复DONE+✅3源迁移FINALIZE+✅体积维护DONE;ufw_en迁移BLOCKED(/nas_env仅1.85T<需3.0T,s17已稳定非移动靶)
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5/5源→/nas_env;✅3源迁移FINALIZE(l1_en_hq/zh/AICC→symlink);✅14:4x令(commit 86431cfb4);✅22:0x坏shard修复(commit 1cfb5e7dd);✅体积维护MEMORY_DATA.md 44.6KB→22.2KB+TASK 22:0x归档
-当前动作:     唤醒680(2026-10-27 02:5x):①复核22:0x坏shard修复=DONE(commit 1cfb5e7dd,证据§8-9,DATA_MAPPING env14镜像完整110/110,LEDGER §7.2);②s17稳定性复测=稳定(mtime 02:31,8s无变化,不再是移动靶);③发现ufw_en迁移新阻塞=/nas_env仅1.85T可用<需3.0T(du -sh ufw_en=3.0T);④体积维护:MEMORY 44.6KB→22.2KB(唤醒674-677/661-665转📦+删650及以下旧📦)+TASK 22:0x归档ARCHIVE;⑤日报补680;⑥commit。未完成指令:无→WAITING:0
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5/5源→/nas_env;✅3源迁移FINALIZE(l1_en_hq/zh/AICC→symlink);✅14:4x令(commit 86431cfb4);✅14:4x归档ARCHIVE(唤醒681);✅22:0x坏shard修复(commit 1cfb5e7dd);✅体积维护MEMORY_DATA.md 44.6KB→22.2KB+TASK 22:0x归档
+当前动作:     唤醒681(2026-10-27 03:0x):①复核14:4x最高优先令=DONE(commit 86431cfb4:DATA_MAPPING.md行11-12未分词SFT-2605=1504jsonl/297GB+Agent-2609=50jsonl/50GB,报告行11-12+删第4节节号顺延);②14:4x块归档ARCHIVE_OPERATOR_DATA.md留1行📦指针;③复核08:2x报告=report_data_recent_work_zh.html 28KB EXISTS;④ufw_en迁移仍BLOCKED(/nas_env 1.85T<需3.0T,需运维决定);⑤git status main...origin/main无ahead/behind;⑥心跳+日报+commit。未完成指令:无→WAITING:0
 下一步:       ①ufw_en迁移:等运维决定(/nas_env空间不足,需腾位或暂留hardlink);②体积已达标(22KB),后续维持
 阻塞:         ufw_en迁移BLOCKED=/nas_env仅1.85T可用<ufw_en需3.0T(需运维决定:腾空间/暂留hardlink/删旧数据);disk /nas_train 31T/86% /nas_env 1.85T/82%
 ERROR_COUNT:  10
@@ -28,6 +28,8 @@ ERROR_COUNT:  10
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [03:0x] 唤醒681：复核+归档轮（无新运维令）。①★复核最高优先14:4x令=DONE：git log 86431cfb4 `data report: 加入SFT-2605+Agent-2609到DATA_MAPPING.md+报告删第4节`；实测验证 SFT-2605=1504 jsonl/du -sb=318,990,486,183 B(0 .bin/.idx/.json)→DATA_MAPPING.md 行11=未分词✓；Agent-2609=50 jsonl/du -sb=54,220,373,384 B(0 .bin/.idx/.json)→行12=未分词✓；报告 report_data_mapping_zh.html 行11-12未分词+旧第4节「其余状态源」已删(现4节:总览/逐源列表/10已镜像源/结论,节号顺延)✓；untokenized_sft_sources.tsv 侧车✓。②14:4x块归档→ARCHIVE_OPERATOR_DATA.md(原文+执行结论)+BAIZE_DATA_TASK.md 留1行📦指针。③08:2x报告 report_data_recent_work_zh.html 28,443B EXISTS✓。④ufw_en迁移仍BLOCKED：df /nas_env=1852G可用<ufw_en需3.0T(du -sh=3.0T)，s17已稳定(非移动靶)，需运维决定(腾空间/暂留hardlink/删旧数据)。⑤git status=main...origin/main 无ahead/behind✓；df /nas_train 86%(31T) /nas_env 82%(1.85T)；MEMORY 22.7KB/TASK~31KB 均≤40KB✓。⑥心跳+日报+commit。未完成指令:无→WAITING:0
+
 > [02:5x] 唤醒680：①复核22:0x坏shard修复=DONE(commit 1cfb5e7dd data fix:,证据bad_shard_...txt §8-9,DATA_MAPPING.md env14行=镜像完整110/110/8,999,055,538,432B/2,237,073,612,082tok,LEDGER §7.2已记录);②s17稳定性复测=STABLE(mtime 02:31:24,size 113,238,901,184B,8s间隔二次stat完全一致,不再是移动靶);③★发现ufw_en迁移新阻塞=/nas_env仅1.85T可用(df -BG=1852G)<ufw_en需3.0T(du -sh=3.0T)⇒空间不足无法迁移,需运维决定(腾空间/暂留hardlink/删旧数据);④tokenization确认全DONE(log:131/131 failed:0 END 10:33:21,lock释放);⑤体积维护:MEMORY_DATA.md 44,557B→22,204B(唤醒674-677/661-665转📦+删唤醒650及以下旧📦)+BAIZE_DATA_TASK.md 22:0x块归档ARCHIVE_OPERATOR_DATA.md留1行指针(34.7KB→~33KB);⑥日报补680。未完成指令:无→WAITING:0
 
 > [02:0x] 唤醒679：✅22:0x坏shard修复DONE。①retok完成验证(.idx max_ptr=118,227,700,960<bin=118,227,705,972,num_tokens29.56B=bin/4逐字节自洽,32.85M docs不变,较原始30.62B降1.067B/-3.5%并行切分边界差异);②原子替换(rm tokenized旧硬链→mv RETOK→text正名→build_tokenized_mirror.py重建hardlink links=2+INDEX.tsv 815shard inode_ok=815→gen_data_mapping_md.py刷新DATA_MAPPING.md env14 8,929,852,999,497→8,999,055,538,432B/2,238,140,710,284→2,237,073,612,082tok,合计4474.83→4473.76B/17.47→17.56TB;★NFS attr-cache踩坑首次run读旧缓存,二次fresh process读新);③report_data_mapping_zh.html全量更新(env14行+ufw_en移动靶GB2977→2995+总计+df 86%/82% 02:0x+footer);④DATA_LEDGER §7.2待完成→已完成+§7表env14/合计cell更新;⑤证据文件§8-9(retok结果+原子替换+复验+结论);⑥commit data fix:。未完成指令:无→WAITING:0

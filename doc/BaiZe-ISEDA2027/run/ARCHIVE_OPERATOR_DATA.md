@@ -2122,3 +2122,22 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 
 > **执行结论（唤醒677-679, 2026-10-27 02:0x）**：已修复 DONE。定性=.bin 被截断至 49GB（=期望122.5GB的40%），.idx 正确(max_ptr=122.5GB)但指向截断外。修复=从源 parquet(512文件)重分词→新.bin 118.23GB/29.56B token(max_ptr=118.23GB<bin=118.23GB 复验PASS)→原子替换→build_tokenized_mirror.py重建hardlink+INDEX.tsv 815shard→DATA_MAPPING.md+report+DATA_LEDGER §7.2全量更新→commit 1cfb5e7dd data fix:。env14 110/110全齐，blender 不再 SKIP。证据 run/data/bad_shard_env14_CC-MAIN-2023-23_20261026.txt §8-9。
 
+---
+
+### [运维令] 2026-10-26 14:4x（**SFT-2605/Agent-2609 加入映射表+报告；删报告第 4 节**）· 用户直令 · 最高优先
+
+> 用户原话：① 把 `/nas_inference/app.e0031982/datasets/openbmb` 下 `UltraData-SFT-2605`、`UltraData-SFT-Agent-2609` 两份数据加入 `run/data/DATA_MAPPING.md` 和 `report_data_mapping_zh.html`；② 报告「4. 其余状态源（未分词/未映射/已删除/已废弃）」这节数据已删、没必要保留，删除该节。
+
+**① 加入两份数据（先核查分词状态，再如实登记）**
+- 源路径：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/`（no_think + think）与 `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/`（Code_Agent/General_Agent/Search_Agent/Tool_Use）。
+- 先查这两份是否已有分词产物（`.bin/.idx/.json`）：
+  - **已分词未镜像** → 镜像进 `tokenized/` + 更新 `INDEX.tsv` + 重跑 `gen_data_mapping_md.py`，使 DATA_MAPPING.md 自动含这两份（状态=镜像完整，storage 如实）。
+  - **未分词** → 在 DATA_MAPPING.md 以「未分词」状态如实登记（并标注，不伪造「已分词/镜像完整」）。
+- 每份列出：下载目录 → 镜像路径（或「—」）→ shard 数 → tokens → 字节 → 状态，数字溯源。
+
+**② 更新报告 `report_data_mapping_zh.html`**：加入这两份数据的行；**删除「4. 其余状态源（未分词/未映射/已删除/已废弃）」整节**（数据已删，节号顺延）。
+
+**③ 提交**：`DATA_MAPPING.md` + 报告一起 commit + push（前缀 `data report:`），心跳报字节数变化。
+
+> **执行结论（唤醒672, 2026-10-26 16:3x）**：已交付 DONE。①核查分词状态=两份均无 .bin/.idx/.json（仅 jsonl）→判定「未分词」（不伪造镜像完整）。②实测：SFT-2605=1504 jsonl/318,990,486,183 B（297 GB，no_think 855:Chinese-general50/Code300/IF20/Knowledge80/Math300/Multi-lang-Knowledge50/Multi-lang-Math55 + think 649:Chinese-general50/Code279/IF20/Knowledge50/Math250）；Agent-2609=50 jsonl/54,220,373,384 B（50 GB，Code_Agent7/General_Agent32/Search_Agent2/Tool_Use9）。③新建 `untokenized_sft_sources.tsv` + 改 `gen_data_mapping_md.py`（load_untokenized + --untokenized-tsv，A 节追加 2 行未分词，分词目录=—，下载字节计入合计）→ DATA_MAPPING.md 重生成 103 行/11,001 B（字节数变化 10,093→11,001 B，+908 B；合计 815 shards/4474.83 B/17.26 TB 分词产物/下载 13,021,192,793,759 B=12127 GB；未分词小计 2 源 1554 jsonl/373,210,859,567 B=347.6 GB；幂等 run1==run2=True）。④报告 report_data_mapping_zh.html 更新（字节数变化 25,112→20,434 B，−4,678 B；总览数据源 10→12 + 下载 12647.98→13021.19 GB；逐源列表加行 11(SFT-2605 未分词)+12(Agent-2609 未分词)+合计；删第 4 节「其余状态源」（32 已删除表+状态汇总），5→4 结论节号顺延，加 SFT 未分词说明；footer 更新）。⑤HTML 校验 tag 平衡。commit 86431cfb4 `data report:`。后续 1cfb5e7dd（坏 shard 修复）再次全量刷新报告，当前报告 20,882 B / 4 节。
+
