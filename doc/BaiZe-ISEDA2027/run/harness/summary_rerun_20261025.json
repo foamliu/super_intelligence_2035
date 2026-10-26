@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T09:03:37Z",
+  "generated_at": "2026-10-26T11:46:44Z",
   "directive": "2026-10-25 17:5x: hermes/claude-code full rerun + codex err triage",
   "denominator_note": "89 task dirs; canonical 87 after __hash dedup",
   "codex_old_7x89": {
@@ -2279,10 +2279,10 @@
     ]
   },
   "claude-code_rerun_20261025": {
-    "pass": 19,
-    "rewarded": 61,
-    "exceptions": 21,
-    "completed": 82,
+    "pass": 20,
+    "rewarded": 66,
+    "exceptions": 23,
+    "completed": 89,
     "rows": [
       {
         "task": "adaptive-rejection-sampler",
@@ -2854,7 +2854,56 @@
       {
         "task": "torch-pipeline-parallelism",
         "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "torch-tensor-parallelism",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "train-fasttext",
+        "harness": "claude-code_rerun",
         "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "tune-mjcf",
+        "harness": "claude-code_rerun",
+        "reward": 0,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "video-processing",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "vulnerable-secret",
+        "harness": "claude-code_rerun",
+        "reward": 1,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "winning-avg-corewars",
+        "harness": "claude-code_rerun",
+        "reward": null,
+        "err_type": null,
+        "err_subcause": null
+      },
+      {
+        "task": "write-compressor",
+        "harness": "claude-code_rerun",
+        "reward": 0,
         "err_type": null,
         "err_subcause": null
       }

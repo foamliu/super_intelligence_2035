@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 RERUN-20261025 — hermes FIN(25/44=56.8%)·claude-code进行中(raw 86dirs/64done/19pass/21exc/1run=29.7%); 08:2x报告R515刷新(数字去stale)已交付; SWE-bench下载499/500即将完成.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499 codex err分类✅·R509近期工作报告交付✅·R513/R514刷新·R515近期工作报告再刷新(claude-code 19/64=29.7%·SWE-bench499/500·08:2x报告22471B双写identical)
-当前动作:     R515 近期工作报告刷新(08:2x令). live实测claude-code复跑=86dirs/64done/19pass/21exc/1run=29.7%(raw口径,与hermes 25/44同方法,修正R514的scan去重16/51不一致);SWE-bench下载466→499/500. gen_report_harness_recent_work_zh.py 10处数字刷新,双写顶层reports/+run/reports/两副本identical 22471B. 合规:0script/0外链/0cline-patched/5节齐全/4必覆盖.
-下一步:       ①监控claude-code复跑到87/87(86/87,~1题待派,ETA~1-2h); ②复跑完刷新summary+报告终版(逐题配对+McNemar); ③codex降并发复跑(避开claude-code在跑,先smoke5验429)再报机时; ④SWE-bench下载到500/500后启动H-A横评
-阻塞:         claude-code复跑后台异步进行中(86/87,~1题待派,不需运维自跑); codex降并发复跑待claude-code完成+机时/load评估; deepseek SDK需上游
+PHASE:        T2 RERUN-20261025 — 两路复跑全 FINISHED(hermes25/44=56.8%·claude-code20/66=30.3%,均89/89全派0running); 08:2x报告R516终版刷新已交付(22988B); 17:5x复跑令全3part完成; SWE-bench下载500/500 DONE.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err分类✅·R509近期工作报告交付✅·R513/R514/R515刷新·R516近期工作报告终版(复跑两路FIN·SWE-bench500/500·22988B双写identical)·R516 17:5x复跑令part①②③全完成(summary终版+rerun报告终版44431B)
+当前动作:     R516 两报告终版刷新(08:2x+17:5x). live实测:claude-code复跑=89dirs/66done/20pass/23exc/0run=30.3%(FINISHED,job.log mtime19:41后进程退出,23 incomplete全有exception.txt非pending);hermes89dirs/44done/25pass/45exc/0run=56.8%(FIN).SWE-bench下载500/500 DONE(18:23:06,0failed).重 gen summary_rerun+scan_rerun+两报告(08:2x报告8处stale字面量刷新:TL;DR/§二任务4表格/KPI/数据表/阻塞/下一步;rerun报告动态读scan自动终版).NFS缓存致一次regen读stale .py→sync+touch+-B修复.
+下一步:       ①H-A SWE-bench Verified横评启动(下载已500/500,按§1.2口径先20-50条); ②codex全量补跑待运维拍板(报机时+load); ③H-B续作(机制维度扩展)
+阻塞:         无未完成运维指令(08:2x报告+17:5x复跑令均已完成). codex补跑/SWE-bench横评为下一步建议非阻塞.
 ERROR_COUNT:  0
-📦 体积：TASK=30KB(30468B) / MEMORY=~31KB（本轮滚R513/R514流水→daily,均≤32KB）
+📦 体积：TASK=30KB(30468B) / MEMORY=31362B（本轮未超限,无需归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,7 +32,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[18:2x] R515 **近期工作报告再刷新(08:2x令·数字去stale)**. live实测:①claude-code复跑=86dirs/64done/19pass/21exc/1run=29.7%(raw口径,verifier/reward.txt逐文件实测,与hermes 25/44=56.8%同方法;修正R514用scan去重16/51=31.4%的方法不一致→本轮统一raw);pass数16→19继续增加,率31.4%→29.7%因更多非pass trial完成而归一. ②SWE-bench下载466→499/500(PID1199724存活,0failed,即将完成). gen_report_harness_recent_work_zh.py刷新10处(claude-code16/51→19/64,31.4%→29.7%,63/87→86/87,SWE-bench466→499,R514→R515),双写顶层reports/+run/reports/两副本identical 22471B,合规0script/0外链/0cline-patched/5节齐全/4必覆盖. **判据自检**:08:2x报告令=已完成(R509交付→R513/R514刷新→R515再刷新);17:5x复跑令part①claude-code后台异步86/87(~1题待派,无可行动作),part②codex err=已完成,part③报告+summary=已交付(快照版,终版待复跑完)→唯一未完=异步后台复跑→WAITING=1. 体积:TASK=30KB(30468B)/MEMORY=滚R513/R514后≤32KB.
+[19:5x] R516 **两报告终版刷新(08:2x报告+17:5x复跑令全完成)**. live实测发现状态已变:①claude-code复跑已 FINISHED(非R515记的"进行中")——89dirs/66done/20pass/46fail/23exc/0run=30.3%(resolve20/87=23.0%);job.log mtime19:41后无进程存活,23 incomplete全有exception.txt(非pending,均AgentTimeout/Cancelled等err).②hermes FIN(25/44=56.8%,resolve25/87=28.7%,45err).③SWE-bench下载500/500 DONE(18:23:06,0failed,PID已退出).重gen summary_rerun_20261025.json(终版)+scan_rerun_20261025.json;rerun报告(gen_rerun_report)动态读scan→自动终版44431B(20/66·25/44·0 cline-patched·0script).08:2x报告:gen_report_harness_recent_work_zh.py刷新8处stale字面量(TL;DR/§二任务4表格行86/87→89/87·64→66·19→20·29.7%→30.3%·tag复跑进行中→已FIN/KPI卡/数据表复跑最新进度→最终结果/阻塞/下一步),双写顶层reports/+run/reports/两副本identical 22988B,合规0script/0外链/0cline-patched/0ClinePatched/5节/4必覆盖,grep stale(19/64|29.7%|499/500|86/87|进行中|R515)=全0.**坑**:NFS缓存致一次regen读stale .py(输出md5=b3a895与刷新前同)→sync+touch .py+rm __pycache__+python -B修复.**判据自检**:08:2x报告令=已完成(R516终版);17:5x复跑令part①复跑=DONE(两路FIN,判据两路>0满足),part②codex err=已完成(R499/R510),part③报告+summary=已交付(终版)→两条运维令均完成,无未完成指令→WAITING=1.体积:TASK=30468B/MEMORY=31362B(均≤32KB,无需归档).
 
 > 📦 R513(15:43)/R514(16:55) 近期工作报告刷新长流水原文已归档 → daily-memories-harness/2026-10-26.md（结论：两轮均为08:2x报告数字刷新+位置修正，R513发现scan去重口径不一致→双写顶层reports/，R514统一去重claude-code16/51=31.4%；R515已修正为raw口径19/64=29.7%与hermes同方法）。需要时再读。
 

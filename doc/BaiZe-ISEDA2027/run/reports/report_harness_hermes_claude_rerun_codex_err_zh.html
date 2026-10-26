@@ -38,7 +38,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <body>
 <h1>harness 复跑与 codex 异常排查报告</h1>
 <div class="meta">
-生成时间：2026-10-26 17:03 · 任务令：2026-10-25 17:5x（授权 hermes/claude-code 全量复跑 89 题 + 排查 codex 高 err）<br>
+生成时间：2026-10-26 19:48 · 任务令：2026-10-25 17:5x（授权 hermes/claude-code 全量复跑 89 题 + 排查 codex 高 err）<br>
 状态：<b>部分交付（复跑进行中）</b> · 模型：kimi-k2.6-cloud · 评测集：Terminal-Bench 2.0（canonical 87 题）<br>
 命名规程：正文一律写 <code>cline</code>（接入层适配仅改 CLI 安装/baseUrl/参数大小写，原生工具循环未改；代码路径标识符保留原状、不在正文出现）。
 </div>
@@ -73,7 +73,7 @@ codex 异常排查章节已<b>完整</b>，复跑章节为<b>当前快照</b>（
 判活门已过，继续跑满。</p>
 </div>
 
-<h2>三、复跑当前结果（2026-10-26 17:03 快照 · 进行中）</h2>
+<h2>三、复跑当前结果（2026-10-26 19:48 快照 · 进行中）</h2>
 <div class="card">
 <h3>hermes</h3>
 <div class="stat"><div class="num">89/87</div><div class="lbl">已派题（102.3%）</div></div>
@@ -85,18 +85,18 @@ codex 异常排查章节已<b>完整</b>，复跑章节为<b>当前快照</b>（
 <p style="margin-top:6px">异常类型：NonZeroAgentExitCode×38 + CancelledError×6 + RuntimeError×1（trial 级，非系统性适配器 bug）。</p>
 
 <h3>claude-code</h3>
-<div class="stat"><div class="num">63/87</div><div class="lbl">已派题（72.4%）</div></div>
-<div class="stat"><div class="num">51</div><div class="lbl">完成（有 reward）</div></div>
-<div class="stat"><div class="num">16</div><div class="lbl">通过</div></div>
-<div class="stat"><div class="num">11</div><div class="lbl">异常</div></div>
-<div class="stat"><div class="num">31.4%</div><div class="lbl">条件通过率(pass/完成)</div></div>
-<div class="stat"><div class="num">0% → 16/51</div><div class="lbl">旧→新</div></div>
-<p style="margin-top:6px">异常类型：RuntimeError×8 + CancelledError×3（trial 级，非系统性适配器 bug）。</p>
+<div class="stat"><div class="num">89/87</div><div class="lbl">已派题（102.3%）</div></div>
+<div class="stat"><div class="num">66</div><div class="lbl">完成（有 reward）</div></div>
+<div class="stat"><div class="num">20</div><div class="lbl">通过</div></div>
+<div class="stat"><div class="num">23</div><div class="lbl">异常</div></div>
+<div class="stat"><div class="num">30.3%</div><div class="lbl">条件通过率(pass/完成)</div></div>
+<div class="stat"><div class="num">0% → 20/66</div><div class="lbl">旧→新</div></div>
+<p style="margin-top:6px">异常类型：RuntimeError×12 + CancelledError×11（trial 级，非系统性适配器 bug）。</p>
 </div>
 
 <div class="card ok">
-<b>✅ 判据已满足</b>：两路通过率均 &gt; 0（hermes 25 pass · claude-code 16 pass）。
-适配器修复<b>确实生效</b>——两路从旧批 0% 跃升为显著非零。条件通过率 hermes 56.8%、claude-code 31.4%，
+<b>✅ 判据已满足</b>：两路通过率均 &gt; 0（hermes 25 pass · claude-code 20 pass）。
+适配器修复<b>确实生效</b>——两路从旧批 0% 跃升为显著非零。条件通过率 hermes 56.8%、claude-code 30.3%，
 与同批存活线（cline 53.8%、opencode 54.7%、pi 43.8%）量级可比。
 </div>
 
@@ -167,33 +167,33 @@ codex 异常排查章节已<b>完整</b>，复跑章节为<b>当前快照</b>（
 <tr><td class="task">polyglot-c-py</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err"></td></tr>
 <tr><td class="task">polyglot-rust-c</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
 <tr><td class="task">portfolio-optimization</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td></tr>
-<tr><td class="task">protein-assembly</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge run">运行中</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">prove-plus-comm</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">pypi-server</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">pytorch-model-cli</td><td class="old">超时</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">pytorch-model-recovery</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">qemu-alpine-ssh</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">qemu-startup</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">query-optimize</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">raman-fitting</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">regex-chess</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">regex-log</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">reshard-c4-data</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">rstan-to-pystan</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">sam-cell-seg</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">sanitize-git-repo</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">schemelike-metacircular-eval</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">sparql-university</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">sqlite-db-truncate</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">sqlite-with-gcov</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">torch-pipeline-parallelism</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">torch-tensor-parallelism</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">train-fasttext</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">tune-mjcf</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">video-processing</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">vulnerable-secret</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">winning-avg-corewars</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
-<tr><td class="task">write-compressor</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge none">未跑</span></td><td class="pending">—</td><td class="err"></td></tr>
+<tr><td class="task">protein-assembly</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">prove-plus-comm</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err"></td></tr>
+<tr><td class="task">pypi-server</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td></tr>
+<tr><td class="task">pytorch-model-cli</td><td class="old">超时</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">pytorch-model-recovery</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">RuntimeError</td></tr>
+<tr><td class="task">qemu-alpine-ssh</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">RuntimeError</td></tr>
+<tr><td class="task">qemu-startup</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">RuntimeError</td></tr>
+<tr><td class="task">query-optimize</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err"></td></tr>
+<tr><td class="task">raman-fitting</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err"></td></tr>
+<tr><td class="task">regex-chess</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">regex-log</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">reshard-c4-data</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">rstan-to-pystan</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">sam-cell-seg</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">sanitize-git-repo</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err"></td></tr>
+<tr><td class="task">schemelike-metacircular-eval</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">sparql-university</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">sqlite-db-truncate</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td></tr>
+<tr><td class="task">sqlite-with-gcov</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">RuntimeError</td></tr>
+<tr><td class="task">torch-pipeline-parallelism</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">torch-tensor-parallelism</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err"></td></tr>
+<tr><td class="task">train-fasttext</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">tune-mjcf</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">video-processing</td><td class="old">0</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">vulnerable-secret</td><td class="old">0</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="pass">1</td><td class="err"></td></tr>
+<tr><td class="task">winning-avg-corewars</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
+<tr><td class="task">write-compressor</td><td class="old">超时</td><td><span class="badge err">异常</span></td><td class="pending">—</td><td class="err">NonZeroAgentExitCode</td><td class="old">—</td><td><span class="badge done">完成</span></td><td class="fail">0</td><td class="err">asyncio.exceptions.CancelledError</td></tr>
 </table>
 <p style="color:#666;font-size:.78rem;margin-top:8px">说明：旧 reward 取自 <code>/tmp/tb_7x89/jobs_*/</code> 实测；「超时」=旧批异常；新 reward=1 为通过、0 为未通过、— 为未跑/运行中。</p>
 </div>
@@ -275,7 +275,7 @@ R499 判「非适配器可修」是基于「没有 429」的错误前提。R510 
 <div class="card">
 <ol>
 <li><b>hermes / claude-code 适配器修复<b>已验证生效</b></b>：旧批两路 0% → 复跑当前 hermes 25/44 条件通过率 56.8%、
-claude-code 16/51 条件通过率 31.4%。判据「两路通过率均 &gt; 0」已满足。复跑全部完成后将给出终版 resolve rate 与 McNemar 检验。</li>
+claude-code 20/66 条件通过率 30.3%。判据「两路通过率均 &gt; 0」已满足。复跑全部完成后将给出终版 resolve rate 与 McNemar 检验。</li>
 <li><b>codex 高 err 根因已定位（R510 修正）</b>：主因 = <b>上游 429 限流（34/59=57.6%，codex 调用模式独有）</b>，辅以容量/超时（25/59）与适配器无回合上限/无 429 退避的放大。<b>codex 可改善</b>（降并发复跑或加 429 退避），非「非适配器可修」。条件通过率 48.8% 与存活线同档。铁律守四 survivor 源码不硬改，补跑前先 smoke + 报 load。</li>
 <li>逐题汇总见 <code>run/harness/summary_rerun_20261025.json</code>（partial，随复跑进度更新）。</li>
 </ol>

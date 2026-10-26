@@ -548,11 +548,11 @@
    }
   },
   "claude-code": {
-   "dirs": 63,
-   "done": 51,
-   "pass": 16,
-   "err": 11,
-   "running": 1
+   "dirs": 89,
+   "done": 66,
+   "pass": 20,
+   "err": 23,
+   "running": 0
   },
   "claude-code_detail": {
    "adaptive-rejection-sampler": {
@@ -928,10 +928,166 @@
     "dir": "portfolio-optimization__Svk5G7t"
    },
    "protein-assembly": {
-    "state": "running",
-    "reward": null,
-    "err_type": "",
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
     "dir": "protein-assembly__Jjrtby4"
+   },
+   "prove-plus-comm": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "prove-plus-comm__tax5mmC"
+   },
+   "pypi-server": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "pypi-server__ewHDQvX"
+   },
+   "pytorch-model-cli": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "pytorch-model-cli__SZjtkvz"
+   },
+   "pytorch-model-recovery": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "pytorch-model-recovery__n2HvShS"
+   },
+   "qemu-alpine-ssh": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "qemu-alpine-ssh__6CvSLU8"
+   },
+   "qemu-startup": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "qemu-startup__vyFQdGD"
+   },
+   "query-optimize": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "query-optimize__oFHy3BF"
+   },
+   "raman-fitting": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "raman-fitting__WxjPggJ"
+   },
+   "regex-chess": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "regex-chess__rhTY4d8"
+   },
+   "regex-log": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "regex-log__7EVjguM"
+   },
+   "reshard-c4-data": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "reshard-c4-data__vVp2Gzh"
+   },
+   "rstan-to-pystan": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "rstan-to-pystan__bLTfyaw"
+   },
+   "sam-cell-seg": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "sam-cell-seg__H6JxAXB"
+   },
+   "sanitize-git-repo": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "sanitize-git-repo__F2ftYJD"
+   },
+   "schemelike-metacircular-eval": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "schemelike-metacircular-eval__5dwt2Ja"
+   },
+   "sparql-university": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "sparql-university__VZyLxZh"
+   },
+   "sqlite-db-truncate": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "sqlite-db-truncate__BHrGLY7"
+   },
+   "sqlite-with-gcov": {
+    "state": "err",
+    "reward": null,
+    "err_type": "RuntimeError",
+    "dir": "sqlite-with-gcov__p7U3Lx7"
+   },
+   "torch-pipeline-parallelism": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "torch-pipeline-parallelism__fpPfEND"
+   },
+   "torch-tensor-parallelism": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "",
+    "dir": "torch-tensor-parallelism__6CiQKXJ"
+   },
+   "train-fasttext": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "train-fasttext__vz5im5B"
+   },
+   "tune-mjcf": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "tune-mjcf__V89L9RF"
+   },
+   "video-processing": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "video-processing__tzCF2NW"
+   },
+   "vulnerable-secret": {
+    "state": "done",
+    "reward": "1",
+    "err_type": "",
+    "dir": "vulnerable-secret__M29fmfd"
+   },
+   "winning-avg-corewars": {
+    "state": "err",
+    "reward": null,
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "winning-avg-corewars__gVXgivq"
+   },
+   "write-compressor": {
+    "state": "done",
+    "reward": "0",
+    "err_type": "asyncio.exceptions.CancelledError",
+    "dir": "write-compressor__YUvhfJj"
    }
   }
  },
@@ -1765,9 +1921,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": "running",
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": ""
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "prove-plus-comm",
@@ -1778,9 +1934,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "pypi-server",
@@ -1791,9 +1947,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "pytorch-model-cli",
@@ -1804,9 +1960,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "pytorch-model-recovery",
@@ -1817,9 +1973,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "RuntimeError"
   },
   {
    "task": "qemu-alpine-ssh",
@@ -1830,9 +1986,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "RuntimeError"
   },
   {
    "task": "qemu-startup",
@@ -1843,9 +1999,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "RuntimeError"
   },
   {
    "task": "query-optimize",
@@ -1856,9 +2012,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "raman-fitting",
@@ -1869,9 +2025,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "regex-chess",
@@ -1882,9 +2038,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "regex-log",
@@ -1895,9 +2051,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "reshard-c4-data",
@@ -1908,9 +2064,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "rstan-to-pystan",
@@ -1921,9 +2077,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "sam-cell-seg",
@@ -1934,9 +2090,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "sanitize-git-repo",
@@ -1947,9 +2103,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "schemelike-metacircular-eval",
@@ -1960,9 +2116,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "sparql-university",
@@ -1973,9 +2129,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "sqlite-db-truncate",
@@ -1986,9 +2142,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "sqlite-with-gcov",
@@ -1999,9 +2155,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "RuntimeError"
   },
   {
    "task": "torch-pipeline-parallelism",
@@ -2012,9 +2168,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "torch-tensor-parallelism",
@@ -2025,9 +2181,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "train-fasttext",
@@ -2038,9 +2194,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "tune-mjcf",
@@ -2051,9 +2207,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "video-processing",
@@ -2064,9 +2220,9 @@
    "hermes_rerun_err": "asyncio.exceptions.CancelledError",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "vulnerable-secret",
@@ -2077,9 +2233,9 @@
    "hermes_rerun_err": "",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "1",
+   "claude-code_rerun_err": ""
   },
   {
    "task": "winning-avg-corewars",
@@ -2090,9 +2246,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
+   "claude-code_rerun_state": "err",
    "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   },
   {
    "task": "write-compressor",
@@ -2103,9 +2259,9 @@
    "hermes_rerun_err": "NonZeroAgentExitCode",
    "claude-code_old_reward": null,
    "claude-code_old_exc": null,
-   "claude-code_rerun_state": null,
-   "claude-code_rerun_reward": null,
-   "claude-code_rerun_err": null
+   "claude-code_rerun_state": "done",
+   "claude-code_rerun_reward": "0",
+   "claude-code_rerun_err": "asyncio.exceptions.CancelledError"
   }
  ]
 }
