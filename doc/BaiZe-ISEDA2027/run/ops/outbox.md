@@ -22608,3 +22608,134 @@ echo "=== DONE 215 ==="
 2697947 bash -c echo "  .12 卡: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"; pgrep -af p
 === DONE 215 ===
 ```
+
+---
+
+## RUN_ID 216 · 2026-10-26 21:24:06 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+C=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "=== RUN_ID 216 | crash + rope config | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] S1 是否还在跑 / 谁在跑"
+ps -eo pid,etimes,args= | grep -E 'pretrain_launcher\.py|torchrun' | grep -Ev 'grep|cline|bun|node /' | cut -c1-120 || echo "  (none now)"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo
+echo "[2] formal 日志里的错误行（最后 12 条）"
+grep -inE 'error|traceback|assert|exception|killed|out of memory|cuda|nccl|abort' /tmp/baize_s1_formal.log 2>/dev/null | tail -12 | cut -c1-190
+echo "  -- formal 尾 25 行 --"
+tail -25 /tmp/baize_s1_formal.log 2>/dev/null | cut -c1-190
+echo
+echo "[3] worker 日志尾 20 行"
+tail -20 /tmp/baize_s1_worker_node.log 2>/dev/null | cut -c1-190
+echo
+echo "[4] mamba2 / hybrid provider 的 rotary 设置"
+grep -rn --include=*.py -E 'rotary|rope' "$C/mamba2_hybrid_2b" "$C/mamba2_hybrid_proxy_d128" 2>/dev/null | head -10 | cut -c1-180
+echo "  -- launcher 里 mamba2 分支的模型配置来源 --"
+grep -nE 'mamba2|provider|rotary|arch ==' "$C/pretrain_launcher.py" 2>/dev/null | head -12 | cut -c1-170
+echo
+echo "[5] 实验/ckpt 落点（任何 baize2b 痕迹）"
+find /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments -maxdepth 1 -name 'baize2b*' 2>/dev/null | head -5
+ls -dt /tmp/*baize2b* 2>/dev/null | head -5
+echo "=== DONE 216 ==="
+```
+
+**输出**
+```
+=== RUN_ID 216 | crash + rope config | 2026-10-26 21:24:06 | host=whag0pgpuap29 ===
+[1] S1 是否还在跑 / 谁在跑
+0, 4 MiB, 0 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+
+[2] formal 日志里的错误行（最后 12 条）
+162:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import vllm plugin due to: ImportError('/nas_tr
+166:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/core/transformer/transformer_config.py:1705: UserWarning: full scope is deprecated. Use empty cuda_gra
+170:/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron/core/transformer/transformer_config.py:1705: UserWarning: full scope is deprecated. Use empty cuda_gra
+215:INFO:megatron.core.distributed.distributed_data_parallel:Setting up DistributedDataParallel with config DistributedDataParallelConfig(grad_reduce_in_fp32=True, overlap_grad_reduce=True, 
+6255:Traceback (most recent call last):
+6261:    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+6262:torch.distributed.elastic.multiprocessing.api.SignalException: Process 1836544 got signal: 15
+6264:During handling of the above exception, another exception occurred:
+6266:Traceback (most recent call last):
+6269:  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+6294:    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+6295:torch.distributed.elastic.multiprocessing.api.SignalException: Process 1836544 got signal: 15
+  -- formal 尾 25 行 --
+    run(args)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    result = agent.run()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+    result = f(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+    self._shutdown(e.sigval)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/local_elastic_agent.py", line 368, in _shutdown
+    self._pcontext.close(death_sig)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 577, in close
+    self._close(death_sig=death_sig, timeout=timeout)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 912, in _close
+    handler.proc.wait(time_to_wait)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/subprocess.py", line 1209, in wait
+    return self._wait(timeout=timeout)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/subprocess.py", line 1953, in _wait
+    time.sleep(delay)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1836544 got signal: 15
+===== Done: rc=1 =====
+
+[3] worker 日志尾 20 行
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 277, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+pretrain_launcher.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-10-26_21:18:34
+  host      : whag0pgpuap12
+  rank      : 15 (local_rank: 7)
+  exitcode  : 1 (pid: 1957848)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+===== Done: rc=1 =====
+
+[4] mamba2 / hybrid provider 的 rotary 设置
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:134:    apply_rope_fusion: Optional[bool] = None,
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:154:      apply_rope_fusion        — fuse RoPE
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:191:    if apply_rope_fusion is not None:
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:192:        kwargs["apply_rope_fusion"] = apply_rope_fusion
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:247:    apply_rope_fusion: Optional[bool] = None,
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:266:    # ── FP8 precision config: when fp8_recipe is set, create a proper MixedPrecisionConfig ──
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py:303:        apply_rope_fusion=apply_rope_fusion,
+  -- launcher 里 mamba2 分支的模型配置来源 --
+9:#       --arch minicpm5|mamba2 --name smoke01 --mock --train-iters 10
+16:#   - 两架构 provider/recipe 均为「从零随机初始化」，tokenizer=DeepSeek(vocab=129281)。
+27:# 让本地包（minicpm5_2b / mamba2_hybrid_2b）可 import
+38:# model_provider.py checks is_initialized() and skips its own init.
+150:    p.add_argument("--arch", required=True, choices=["minicpm5", "mamba2"])
+230:    if args.arch == "minicpm5":
+233:        from mamba2_hybrid_2b.recipe import pretrain_config
+241:    # "Early NCCL init" block above. Megatron's model_provider checks
+
+[5] 实验/ckpt 落点（任何 baize2b 痕迹）
+/tmp/baize_s1_baize2b_smoke.log
+/tmp/baize_s1_baize2b_smoke_worker.log
+=== DONE 216 ===
+```
