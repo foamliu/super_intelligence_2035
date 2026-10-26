@@ -1,4 +1,46 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 220 | TARGET: 29 -->
+## RUN_ID 220 — 只读：S1 是否重启 / 进度 / θ 是否已改 / 是否在跑吞吐实验
+
+```bash
+set -u
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+echo "=== RUN_ID 220 | S1 restatus | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] 进程（torchrun / launcher / loop / cline）"
+ps -eo pid,etimes,args= | grep -E 'torchrun|pretrain_launcher\.py|baize_pretrain_loop|cline_pretrain' | grep -Ev 'grep|bun|node /' | cut -c1-120 | head -6 || echo "  (none)"
+echo "[2] GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo "[3] 最新日志 + 最后 2 条 iteration"
+for f in $(ls -t /tmp/baize_s1*.log 2>/dev/null | head -2); do
+  echo "  --- $f ($(stat -c '%y' "$f" | cut -c1-19) $(stat -c %s "$f")B)"
+  grep -E 'iteration +[0-9]+' "$f" 2>/dev/null | tail -2 | cut -c1-230
+done
+echo "[4] θ / gbs 复检（cmdline）"
+CMD=$(ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1)
+if [ -n "$CMD" ]; then
+  for k in rotary-base global-batch-size micro-batch-size seq-length save-interval optimizer; do
+    v=$(echo "$CMD" | tr ' ' '\n' | grep -A1 -- "^--$k\$" | tail -1); echo "  --$k = ${v:-<none>}"
+  done
+else
+  echo "  (no launcher running)"
+fi
+echo "[5] recipe/provider 是否已加 rotary_base（改动迹象）"
+grep -rn --include=*.py -E 'rotary_base|rotary-base' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b /nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py 2>/dev/null | head -6 | cut -c1-170
+echo "[6] ckpt / tb"
+ls -d $E/baize2b* 2>/dev/null || echo "  (no baize2b dir)"
+for d in $E/baize2b*/; do [ -d "$d" ] || continue; echo "  $d n_ckpt=$(ls -d "$d"/checkpoints/iter_* 2>/dev/null | wc -l) latest=$(cat "$d"/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null)"; done
+find $E/baize2b* -name 'events.out.tfevents.*' -printf '  ev %TH:%TM %s\n' 2>/dev/null | sort -r | head -2
+echo "[7] dataloader worker 数（每节点）"
+ps -eo args= | grep -c 'torch.utils.data\|dataloader' 2>/dev/null | sed 's/^/  approx_workers=/'
+pgrep -fc 'pretrain_launcher' 2>/dev/null | sed 's/^/  launcher_procs=/'
+echo "[8] 工作副本未提交改动（agent 在改什么）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && git status --short | head -8
+echo "[9] data 迁移 / 坏 shard 迹象"
+tail -2 /tmp/migrate_4sources_to_nas_env.log 2>/dev/null | cut -c1-150
+ls -lt /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/bad_shard_* 2>/dev/null | head -2
+echo "=== DONE 220 ==="
+```
+
 <!-- RUN_ID: 219 | TARGET: 29 -->
 ## RUN_ID 219 — 只读：21:40:43 rank2(.29) exit1 的上下文 + 是否 OOM + 谁在收尾
 
