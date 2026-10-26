@@ -45,6 +45,12 @@ if [ "$SMOKE" -gt 0 ]; then
   SAVE_INTERVAL=0
   NNODES=1
   DP=$(( NNODES * NPROC_PER_NODE / (TP * CP) ))
+  # WSD 调度器断言 lr_warmup_steps < lr_decay_steps；recipe.py:89-91 把
+  # lr_decay_iters 设 None → bridge 默认到 train_iters，故断言等价 warmup < iters。
+  # smoke 步数远小于正式 warmup(2000)，按 SMOKE/4 取 warmup（至少 1 步）。
+  # 详见 megatron/core/optimizer_param_scheduler.py:157。
+  WARMUP=$(( SMOKE / 4 ))
+  [ "$WARMUP" -ge 1 ] || WARMUP=1
 fi
 
 MICRO=$(( MBS * DP ))
@@ -67,7 +73,7 @@ cat <<EOF
   迭代区间  : [$START_ITER, $ITERS)   累计口径（S2/Decay 必须如此，否则会误判已到终点）
   name      : $NAME   exp_root=$EXP_ROOT
 EOF
-awk -v t="$TOKENS" 'BEGIN{printf "  ETA(纯训练,按 613,992 tok/s): %.1f h = %.2f 天\n", t/613992/3600, t/613992/86400}'
+awk -v t="$TOKENS" -v eta="${ETA_TPS:-613992}" 'BEGIN{printf "  ETA(纯训练,按 %d tok/s): %.1f h = %.2f 天\n", eta, t/eta/3600, t/eta/86400}'
 
 # ---------- 数据 blend ----------
 BLENDFILE="/tmp/baize_blend_${STAGE}_$$.txt"
@@ -149,7 +155,10 @@ TLOG="/tmp/baize_${STAGE}_${NAME}.log"
 LOG_M="/tmp/baize_${STAGE}_${NAME}_master.log"
 LOG_W="/tmp/baize_${STAGE}_${NAME}_worker.log"
 NCCL_ENV="NCCL_DEBUG=INFO NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22"
-PYTORCH_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 TORCH_NCCL_BLOCKING_WAIT=1"
+# 2026-10-26 运维令 22:0x §6：rank15/21:40 崩时 error_file=<N/A> 无 traceback。
+# TORCH_DISTRIBUTED_DEBUG=DETAIL ⇒ 失败 rank 落详细 trace；
+# TORCH_DISTRIBUTED_TORCH_TRACE ⇒ 运维建议的 rank trace 模板（/tmp/td_trace_%rank）。
+PYTORCH_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 TORCH_NCCL_BLOCKING_WAIT=1 TORCH_DISTRIBUTED_DEBUG=DETAIL TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank"
 
 # ---------- dry-run（跳过 GPU/端口门禁，只验参数与数据）----------
 if [ "$DRY" = "1" ]; then

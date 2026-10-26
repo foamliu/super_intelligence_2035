@@ -156,6 +156,19 @@
 <p><b>两口径</b>：①「纯训练」= 总 token ÷ 613,992；②「含故障/checkpoint 预留」= 纯训练 × (1 + 预留率)。预留率取 10% / 15% / 20% 三档（覆盖 checkpoint 写盘、偶发故障重启、中间 eval 暂停、跨节点 IB 抖动等）。</p>
 </div>
 
+<div class="callout warn">
+<p><b>⚠️ 2026-10-26 运维令 22:0x 勘误：S1 的 ETA 不再用 613,992 那一档</b>。#792 的 613,992 tok/s 是在 <b>gbs256（4M tok/step）</b>档实测的，恰为 S2/Decay 配置；S1 当前档 = <b>gbs128（2M tok/step）</b>，21:40 实测稳态仅 <b>≈400–510K tok/s（中位 ~480K）</b>。归因（双点求解）：固定每步开销 <b>F ≈ 2.57 s</b>（optimizer step + grad-allreduce barrier + dataloader/prefetch 落定 + kernel-launch 尾），纯计算吞吐 <b>C ≈ 984K tok/s</b>；gbs128 下 F 占步时 55% ⇒ 446K，gbs256 下 F 占 38% ⇒ 614K —— <b>差额主要落在「固定每步开销摊薄」</b>，非计算/通信/数据效率问题。</p>
+<p><b>两档 ETA（S1 = 1.468T token）</b>：</p>
+<table>
+<thead><tr><th>S1 档</th><th class="num">tok/step</th><th class="num">实测/预期 tok/s</th><th class="num">纯训练天</th><th>状态</th></tr></thead>
+<tbody>
+<tr class="miss"><td>gbs128（当前 configs/s1.env）</td><td class="num">2,097,152</td><td class="num">~480,000</td><td class="num">35.40</td><td>实测（21:40 RUN_ID 217）</td></tr>
+<tr class="hit"><td>gbs256（方案 A，待验证）</td><td class="num">4,194,304</td><td class="num">~614,000</td><td class="num">27.67</td><td>与 #792 E1 同档，待 smoke 实测</td></tr>
+</tbody>
+</table>
+<p>故 <b>本节 §3.2/§5.2 表格里的 S1 = 26.4 / 27.67 天是「方案 A（gbs256）上界估计」，对当前 gbs128 档不成立</b>。当前 gbs128 档的承诺上界应按 <b>S1 ≈ 35.4 天</b>计；三阶段（S1@480K + S2@614K + Decay@614K）纯训练 <b>≈ 64.7 天</b>，含 20% 预留 <b>≈ 77.6 天</b>。<b>方案 A（S1 gbs128→256，步数 700k→350k，总 token 1.468T 不变）可直接恢复 ~614K / 27.7 天</b>，需 smoke 实测验证（见 §4.1）；其「放弃 S1 小 batch 阶段」的取舍由运维裁定。</p>
+</div>
+
 <h3>3.2　分阶段 wall-clock</h3>
 <table>
 <thead><tr><th>阶段</th><th class="num">总 token</th><th class="num">步数</th><th class="num">秒</th><th class="num">小时</th><th class="num">天</th><th class="num">GPU·h（16卡）</th></tr></thead>
@@ -199,10 +212,17 @@
 
 <h2>四、商榷点与建议</h2>
 
-<h3>4.1　4M tok/step 下吞吐是否仍 613,992（S1 2M 需重测）</h3>
+<h3>4.1　S1 2M tok/step 吞吐：已实测 ~480K（2026-10-26 22:0x 运维令，归因已给出）</h3>
 <div class="callout warn">
-<p><b>事实</b>：613,992 是在 <b>4M tok/step</b>（tok/mb=16,384/GPU，accum16）档实测的，恰为 S2/Decay 配置。S1 用 2M tok/step，每步 token 减半 ⇒ 单步计算量减半，但每步的<strong>通信/启动开销不随 batch 线性下降</strong>，因此 <b>S1 的稳态吞吐大概率 &lt; 613,992</b>（每秒 token 数可能下探，步时 &lt; 3.257 s 但不成比例减半）。</p>
-<p><b>建议</b>：S1 开跑前用 20–40 步 smoke 实测 2M tok/step 的真实 tok/s，把实测值回填 §3 的 ETA（若 S1 实测降到 ~550K，则 S1 天数从 26.4 上浮到 ~29.4，总纯训练升至 ~57 天）。本报告的 54.3 天对 S1 段属<strong>乐观估计</strong>。</p>
+<p><b>实测</b>：S1 gbs128（2,097,152 tok/step）21:40 稳态 step time 4.09 / 4.87 / 5.20 s ⇒ <b>≈400–510K tok/s（中位 ~480K）</b>，仅为 #792 gbs256 基线 613,992 的 65–83%。</p>
+<p><b>归因（双点求解，无需 nsys）</b>：以 gbs256→613,992 tok/s（6.831 s/step）与 gbs128→~446K（~4.7 s/step）两点解 <code>t = F + tok/C</code> ⇒ <b>固定每步开销 F ≈ 2.57 s</b>（optimizer step + grad-allreduce barrier + dataloader/prefetch 落定 + kernel-launch 尾），<b>纯计算吞吐 C ≈ 984K tok/s</b>。gbs128 下 F 占步时 55%（⇒446K），gbs256 下 F 占 38%（⇒614K）。<b>613K→480K 的差额主要落在「固定每步开销摊薄」，非计算效率/通信扩展/数据瓶颈</b>。GPU 实测 per-step 分解（nsys / Megatron timers step 50–200）待 data 线恢复 l1_en_hq 后补，用于确认 F 内部各子项占比。</p>
+<p><b>方案三选一（已预置，待运维裁定 + smoke 验证）</b>：</p>
+<ul>
+<li><b>A（推荐，已预置）</b>：S1 <code>gbs 128→256</code>（=4,194,304 tok/step，与 #792 E1 同档），步数 <code>700k→350k</code>，总 token 1.468T 不变 ⇒ 预期 ~614K / 27.7 天。落地：<code>GBS=256 ITERS=350000 bash code/baize-llm/scripts/train.sh s1</code>（configs/s1.env 的 GBS/ITERS 已改为 <code>${VAR:-default}</code> 可 env 覆盖）。「放弃 S1 小 batch 阶段」的取舍 = warmup 已处理早期稳定性，accum16 对 2.2B AdamW 在稳定区间，无 loss-descent 硬理由保留 gbs128 —— 由运维否决权裁定。</li>
+<li><b>B</b>：保持 gbs128，压固定开销（<code>--overlap-grad-reduce</code>/<code>--overlap-param-gather</code>/<code>--use-distributed-optimizer</code> 已在 recipe 开；dataloader workers/prefetch、NCCL env 逐项调）—— F≈2.57s 中通信/barrier 占比待 nsys 确认后逐项压。</li>
+<li><b>C</b>：<code>gbs=192</code>（3,145,728 tok/step）测一档，连 2.1M/3.1M/4.2M 三点画 tok/s 曲线。</li>
+</ul>
+<p><b>验收</b>：稳态（step 50–200 中位）<b>≥ 600K tok/s</b>（≥0.98×613,992）。达不到 ⇒ 沿用 ~480K / 35.4 天（§3 已同步）。<b>红线</b>：不开 CUDA Graph（16K 下崩到 ~110K）；tok/mb/GPU ≤16,384；FP8 tensorwise 不改；不许用「更多 token/step」冒充提速（验收看 tok/s）。</p>
 </div>
 
 <h3>4.2　LR 与优化器：已定案（2026-10-26 用户直令，不再商榷）</h3>
