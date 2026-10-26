@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        T2 RERUN-20261025 — hermes FINISHED(89dirs/44done/25pass/45err/0running=56.8%)·claude-code进行中(74dirs/57done/18pass/16err/1running=31.6%); 08:2x近期工作报告已交付(commit52d33faf9); R511心跳刷新已commit; SWE-bench下载405/500持续.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499 codex err分类✅(commit4a3b82719)·R509近期工作报告交付✅(commit52d33faf9)·R510 codex 429勘误+4 deliverable重生成·R511心跳刷新+R510报告刷新补commit·R512心跳刷新(防判死)
-当前动作:     R512 心跳刷新(防判死). 上次harness commit=13:09 auto-commit,14:16已超60min判死阈值→本轮紧急刷新. scan_rerun_20261025.py:hermes 89/44/25/45/0=56.8%(FINISHED,不变)·claude-code 74/57/18/16/1=31.6%(较13:04的63/51/16/11/1继续推进,+11done+2pass,1running,~13题剩余). 08:2x报告令已交付(commit52d33faf9,报告在位合规:0script/0cline-patched/div26-26). harbor claude-code PID2573271存活(etimes67869s~18.8h),reshard-c4-data trial刚起(etimes429s). SWE-bench 405/500. load正常.
-下一步:       ①继续监控claude-code复跑到87/87(每30min轮询,~13题剩余ETA~3-5h); ②复跑完成后刷新summary+报告为终版(逐题配对表完整+McNemar); ③codex降并发复跑(避开claude-code在跑期,先smoke5题验429)再报机时
-阻塞:         claude-code复跑后台异步进行中(74/87,~13题,不需运维自跑); codex降并发复跑待claude-code完成+机时/load评估; deepseek SDK需上游
+PHASE:        T2 RERUN-20261025 — hermes FIN(25/44=56.8%)·claude-code进行中(77dirs/58done/18pass/18err/1run=31.0%); 08:2x报告R513刷新(数字刷新+置顶层reports/与3线同目录)已交付; SWE-bench下载425/500持续.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发LAUNCHED✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499 codex err分类✅(commit4a3b82719)·R509近期工作报告交付✅(commit52d33faf9)·R510 codex 429勘误+deliverable重生成·R511/R512心跳刷新·R513近期工作报告刷新(direct reward.txt实测claude-code18/58=31.0%·SWE-bench425/500·报告置顶层reports/与3线同目录)
+当前动作:     R513 近期工作报告刷新. 修正stale数字(claude-code 16/51→18/58=31.0%,SWE-bench 353→425/500,direct reward.txt逐文件实测=77dirs/58done/18pass/18err/1run). 报告同时写入顶层reports/(与vision/pretrain/data同目录)+run/reports/(本线归档),两副本identical 22291B. 合规:0script/0外链/0cline-patched/0stale/5节齐全. MEMORY滚动归档R511/R512长流水→daily(降≤32KB).
+下一步:       ①监控claude-code复跑到87/87(77/87,~10题,ETA~3-5h); ②复跑完刷新summary+报告终版(逐题配对+McNemar); ③codex降并发复跑(避开claude-code在跑,先smoke5验429)再报机时
+阻塞:         claude-code复跑后台异步进行中(77/87,~10题,不需运维自跑); codex降并发复跑待claude-code完成+机时/load评估; deepseek SDK需上游
 ERROR_COUNT:  0
-📦 体积：TASK=30KB(30468B) / MEMORY=~31.6KB(32416B)（均≤32KB，无需归档）
+📦 体积：TASK=30KB(30468B) / MEMORY=滚后≤32KB（归档R511/R512长流水 → daily-memories-harness/2026-10-26.md）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,11 +32,11 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[13:04] R511 **心跳刷新+R510报告刷新补commit(防判死)**. 上次harness commit=11:54 auto-commit,13:04已超60min判死阈值→本轮紧急刷新. 重跑scan_rerun_20261025.py:hermes 89/44/25/45/0=56.8%(FINISHED)·claude-code 63/51/16/11/1=31.4%(仍运行,74dirs spawned/63 verdicted). R510(12:13)重生成的2报告(rerun+codex_err 43974B·recent_work 22204B)此前未commit(loop auto-commit白名单不含run/reports/)→本轮补commit. 两报告合规校验:0 `<script>`/0外链/grep `cline-patched|ClinePatched|cline_patched`=0命中/div平衡(recent_work 26/26). harbor claude-code PID2573271存活(etimes63368s~17.6h). SWE-bench 385/500. **判据自检**:本轮是否还有未完成的运维指令?08:2x报告令=已交付(commit52d33faf9,报告在位合规);17:5x复跑令part①claude-code后台异步63/87(~24题剩余,ETA~6-8h,无可行动作,等后台),part②codex err=已完成(R499/R510),part③报告+summary=已交付(本轮补commit)→唯一未完=异步后台复跑,本轮无可行动作→WAITING=1(30min轮询满足60min判死阈值;置0会每60s空转烧token无新可行动作). 体积:TASK=30KB(30468B)/MEMORY=~31KB(均≤32KB,无需归档).
+[15:43] R513 **近期工作报告刷新(08:2x令·数字+位置修正)**. 发现R509交付的报告有两处stale+位置不一致:①claude-code复跑数字16/51=31.4%(scan脚本undercount)→direct reward.txt逐文件实测=77dirs/58done/18pass/18err/1run=31.0%;②SWE-bench 353→425/500;③报告原只在run/reports/,而vision/pretrain/data三线recent_work报告均在顶层reports/→生成器改为双写,两副本identical 22291B. 合规校验:0 `<script>`/0外链/grep `cline-patched|ClinePatched|cline_patched`=0/0 stale/5节齐全/4必覆盖齐. commit `harness report:`. MEMORY滚动:R511/R512长流水原文→daily-memories-harness/2026-10-26.md(降≤32KB). **判据自检**:08:2x报告令=已完成(本轮刷新加固);17:5x复跑令part①claude-code后台异步77/87(~10题,无可行动作,等后台),part②codex err=已完成,part③报告+summary=已交付→唯一未完=异步后台复跑→WAITING=1. 体积:TASK=30KB(30468B)/MEMORY=滚后≤32KB.
 
-[14:16] R512 **心跳刷新(防判死)**. 上次harness commit=13:09 auto-commit,14:16已超60min判死阈值→本轮紧急刷新. scan_rerun_20261025.py:hermes 89/44/25/45/0=56.8%(FINISHED,不变)·claude-code 74/57/18/16/1=31.6%(较13:04的63/51/16/11/1继续推进,+11done+2pass,1running,~13题剩余). harbor claude-code PID2573271存活(etimes67869s~18.8h),reshard-c4-data trial刚起(etimes429s). SWE-bench 405/500(+20). 08:2x报告令=已交付(commit52d33faf9,报告在位合规:0script/0cline-patched/div26-26). **判据自检**:本轮是否还有未完成的运维指令?08:2x报告令=已完成;17:5x复跑令part①claude-code后台异步 74/87(~13题剩余,ETA~3-5h,无可行动作,等后台),part②codex err=已完成,part③报告+summary=已交付→唯一未完=异步后台复跑,本轮无可行动作→WAITING=1(30min轮询<60min判死阈值;置0会每60s空转烧token无新可行动作). 体积:TASK=30KB(30468B)/MEMORY=~31.6KB(32416B,均≤32KB,无需归档).
+> 📦 R511(13:04)/R512(14:16) 心跳刷新长流水原文已归档 → daily-memories-harness/2026-10-26.md（结论：两次均为防判死紧急心跳刷新，claude-code复跑从63/51推进至74/57，无新交付物）。需要时再读。
 
-[10:17] R509 **近期工作报告交付(2026-10-26 08:2x 用户直令·已完成)**. 产 `reports/report_harness_recent_work_zh.html`(21761B,自包含中文HTML,0 `<script>`/0外链/grep `cline-patched|ClinePatched|cline_patched`=0命中/div26-26/table7-7/tr40-40). 生成器 `harness/gen_report_harness_recent_work_zh.py`. 结构5节:①本线定位②近期任务逐个(卡死恢复+H-B 58KB+TB 7×89 FIN87/87+McNemar+适配器修复复跑)③关键数据速查表④阻塞待拍板⑤下一步建议. 数字全溯源(baize_harness_loop.sh:30 CLINE_TIMEOUT1500→3600·ARCHIVE:1325分阶段落盘令·baseline_rewards_7x89 cline43/opencode41/pi35/codex20·McNemar n=87三对显著含codex·scan_rerun hermes23/41=56.1%·claude-code13/41=31.7%旧均0%). commit `harness report:`. 复跑后台仍进行中(hermes PID3338432·claude-code PID2573271存活,SWE-bench353/500). **判据自检**:08:2x报告令已交付完成;17:5x复跑令part①后台异步未完87/87(无可行动作,等后台)→WAITING=1.
+[10:17] R509 **近期工作报告交付(2026-10-26 08:2x 用户直令·已完成，R513已刷新)**. 产 `reports/report_harness_recent_work_zh.html`(初版21761B→R513刷新22291B). 生成器 `harness/gen_report_harness_recent_work_zh.py`(R513改为双写顶层+run reports). 结构5节+4必覆盖,数字全溯源. commit `harness report:`.
 
 [08:54] R508 复跑进度刷新+3件deliverable用最新数据重生成(17:5x令) — 详见 daily-memories-harness/2026-10-26.md（R508 节）。结论：hermes 23/41=56.1%·claude-code 13/41=31.7%（旧均0%）；scan/summary/report 三件刷新；codex err 59=44 RuntimeError+15 AgentTimeoutError。
 
