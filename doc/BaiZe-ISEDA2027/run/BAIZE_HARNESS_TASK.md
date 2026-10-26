@@ -15,6 +15,15 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### [运维令] 2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
+
+> 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
+
+**任务**：写本线（harness）最近工作（10-20 起）总结报告 `reports/report_harness_recent_work_zh.html`（自包含中文 HTML）。
+- 结构：① 本线定位 → ② 近期任务逐个 → ③ 关键数据速查表 → ④ 阻塞/待拍板 → ⑤ 下一步建议。
+- **必覆盖**：① 卡死恢复（僵尸 git/python/sessions 清理 + CLINE_TIMEOUT 1500→3600 + 分阶段落盘）；② H-B 上下文压缩报告交付（7 harness 机制对比，58KB）；③ Terminal-Bench 7×89 横评（Gate 7/7 → 7×89 并发 → 全 7 路 FIN 87/87 + McNemar）；④ codex/claude-code infra 修复 + hermes/claude-code 复跑（57.5%/32.4% vs 原 0%）。
+- 数字溯源（log/json 文件:行）；遵守命名规程（正文一律写 `cline`）；commit `harness report:`。
+
 ### [运维令] 2026-10-25 17:5x（**授权：hermes / claude-code 全量复跑 89 题 + 排查 codex 高 err**）· 用户直令 · 最高优先
 > 用户原话：「harness：授权 hermes/claude-code 全量复跑 89 题、排查 codex 高 err」
 > 前置已闭合：08:2x 适配器修复令（claude-code smoke 4/5、hermes 4/5、deepseek 0/5 卡上游 SDK）由 R492-R497 交付并核验，本令是它的后续动作。
