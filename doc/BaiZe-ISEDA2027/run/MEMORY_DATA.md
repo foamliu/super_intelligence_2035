@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -14,18 +14,19 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ▶️未分词4源分词中(done=97/131,恢复!95→96@07:49→97@08:07,~18min/shard,余34,ETA~13:20-14:45)+✅22:3x停顿诊断完成+恢复已确认
-已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.88TB); ✅prune(78删/3.69TiB); ✅迁移5/5源全DONE(→/nas_env); ✅tokenized镜像布局(10目录/716shard/3342.49B); ✅删32不可映射staging; ✅DATA_MAPPING.md脚本化(gen_data_mapping_md.py 17.4KB); ✅磁盘清理候选TSV(44KB); ✅22:3x诊断(读码+三重实测,确诊单核BPE流式分词慢非卡死)
-当前动作:     唤醒667(2026-10-26 08:13):三度复核+恢复已确认——supervisor日志done 95→96@07:49(+28B tok/+113GB)→97@08:07(+28B/+113GB),即22:3x"停顿"已结束(2 shard finalized in 18min);/proc/io pid416617 write_bytes +25MB/15s=1.67MB/s=417K tok/s/proc(真在写,与#665/#666一致);37进程全R态99.9%CPU wchan=0无D态0failed;WIP .bin=3.89TB(07:24为3.41TB,+0.48TB/50min)mtime=08:14=NOW;ufw_en/ufw_zh大shard~100-113GB;disk /nas_train 32T可用/85% /nas_env 5.8T可用/43%.处置=🚫不杀(健康+恢复已自证).22:3x step4+18:5x wrap-up仍deferred到done=131/131(ETA~13:20-14:45);prep文件(gen_data_mapping_md.py/cleanup TSV/DATA_MAPPING.md/build_tokenized_mirror.py)均已就绪.
-下一步:       ①继续等finalize(done=97→131,~18min/shard,余34,ETA~13:20-14:45)②done=131/131后→重跑build_tokenized_mirror.py→清mapping_inprogress.txt→重跑gen_data_mapping_md.py(A节7-10行翻镜像完整)③校验.bin=.idx+字节+num_tokens+悬空=0④更新DATA_LEDGER §0⑤18:5x清理wrap-up(候选TSV已就绪,第一批≤500GB)
-阻塞:         无主线阻塞;22:3x诊断完成+恢复已确认(自证非卡死);分词异步阻塞wrap-up(done=97/131→131/131,ETA~13:20-14:45,18:5x deferred到分词跑完);disk充足
+PHASE:        ✅未分词4源分词DONE 131/131(09:43:35,1.18T tok/4.05TB,0fail)+✅tokenized镜像rebuild(815shards/4474.83B/17.26TB,triplet+inode ALL OK,0悬空)+✅DATA_MAPPING.md刷新(10行全镜像完整,脚本幂等)+✅DATA_LEDGER更新+✅22:3x诊断(非卡死,单核BPE慢,自恢复)+✅08:2x报告已交付(commit 4b69548c8)
+已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB); ✅en_v1_4全源110/110(2238.14B/8.93TB); ✅未分词4源131/131(1.18T/4.05TB,ufw_en32+ufw_l1_en_hq94+ufw_zh4+aicc1); ✅prune(78删/3.69TiB); ✅迁移5/5源全DONE(→/nas_env); ✅tokenized镜像rebuild(10目录/815shard/4474.83B/17.26TB); ✅删32不可映射staging; ✅DATA_MAPPING.md脚本化+刷新(全镜像完整); ✅磁盘清理batch1 DONE(释放1.13MB); ✅22:3x诊断(确诊单核BPE流式分词慢非卡死,自恢复); ✅08:2x最近工作报告HTML(已commit 4b69548c8已push)
+当前动作:     唤醒668(2026-10-26 09:5x):发现分词09:43:35 RUN COMPLETE(done=131/131,0fail,1.18T tok/4.05TB,比ETA提前~4h)→异步阻塞解除→执行18:5x wrap-up:①build_tokenized_mirror.py重跑(hardlink 131新shard,815shards/4474.83B/17.26TB,triplet ALL OK,inode ALL OK,0悬空,inode 47582206080 text=tokenized 真硬link)②清mapping_inprogress.txt③gen_data_mapping_md.py刷新(NFS attr cache致首次读旧INDEX→touch bust→二次run成功,A节7-10行翻镜像完整,合计815/4474.83B/误差0,幂等run1==run2)④DATA_LEDGER §0/§7更新(去重训练可用4474.83B=env14+full_*+4源)⑤心跳+日报+commit.磁盘batch2(110 env14 hardlink tidy,0实占)PENDING运维决策.
+下一步:       ①等运维对磁盘batch2(0实占tidy)裁决→执行或结案②体积41KB略超40→下次唤醒轻归档(搬22:3x诊断闭合块到ARCHIVE)③若运维新令则执行④85M下载仍在跑(vision线,低优先,非本线)
+阻塞:         无主线阻塞;全部活跃指令已交付(报告+分词+镜像+映射+ledger);磁盘batch2 PENDING运维决策(0实占tidy,非阻塞);disk /nas_train 32T/85% /nas_env 5.8T/43% 充足
 ERROR_COUNT:  9
-未完成指令:   有(22:3x恢复已确认,等finalize;18:5x映射表刷新/清理wrap-up deferred到done=131/131)
+未完成指令:   无(22:3x已闭合+18:5x wrap-up已交付+08:2x报告已交付;仅磁盘batch2等运维裁决)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [09:5x] 唤醒668：★重大状态变化——分词 09:43:35 RUN COMPLETE(done=131/131,0fail,total_tokens=1,180,325,163,719=1.18T,total_bin_bytes=4,051,302,797,904=4.05TB,比ETA提前~4h;supervisor log /tmp/tokenize_untokenized_1792906129.log FINAL SUMMARY;ufw_en32+ufw_l1_en_hq94+ufw_zh4+ultrax_aicc1=131).异步阻塞解除→执行18:5x wrap-up全链:①build_tokenized_mirror.py重跑→hardlink 131新shard进镜像,NEW TOTAL=815shards/4,474,825,355,971tok(4474.83B)/17,256,859,646,891B(17.26TB),triplet ALL OK,inode ALL OK,0悬空,inode 47582206080 text=tokenized真硬link(0额外空间);②清mapping_inprogress.txt(4源不再分词中);③gen_data_mapping_md.py刷新——★踩坑:NFS attr cache致首次run读旧INDEX.tsv(size=2888/mtime=10-25 14:54,A节7-10仍分词中0/32/0/0),touch+二次run后bust成功读新INDEX(size=2956/mtime=10-26 09:52),A节7-10全翻镜像完整(ufw_en32/905.92B,l1_en_hq94/150.16B,ufw_zh4/112.76B,aicc1/11.49B),合计815/4474.83B/误差0,幂等run1==run2=True;④DATA_LEDGER §0(line13)+§7totals更新(去重训练可用4474.83B=env14 2238.14+full_* 1056.36+4源 1180.33,32 uncovered标已删除);⑤本心跳+日报+commit.磁盘batch1已DONE(释放1.13MB),batch2(110 env14 hardlink tidy,0实占)PENDING运维决策.未完成指令:无(全交付,仅batch2等裁决)→WAITING:1
 > [08:13] 唤醒667：22:3x 三度复核+恢复已确认(距#666@07:24已49min,有未完成指令故WAITING:0续命commit)——supervisor日志done 95→96@07:49(+28B tok/+113GB bin_bytes)→97@08:07(+28B/+113GB),即22:3x"停顿"已结束(2 shard finalized in 18min,非卡死自证);/proc/io pid416617 write_bytes 106425253888→106450321408=+25MB/15s=1.67MB/s=417K tok/s/proc(真在写,与#665/#666一致);37进程全R态99.9%CPU wchan=-无D态0failed;WIP .bin=3.89TB(07:24为3.41TB,+0.48TB/50min)mtime=08:14=NOW;disk /nas_train 32T/85% /nas_env 5.8T/43%.处置=🚫不杀(健康+恢复已自证).★22:3x报告:卡在ufw_en32+ufw_zh4大shard;原因=单核BPE流式分词(supervisor只计finalize故假停);处置=不杀;恢复done速率~18min/shard,余34,ETA~13:20-14:45.18:5x wrap-up仍deferred到done=131/131,prep文件均已就绪.未完成指令:有(等finalize+18:5x wrap-up)
 > [07:24] 唤醒666：22:3x 二度复核(距#665@06:37已47min,有未完成指令故WAITING:0续命commit)——done=95/131 FLAT since 00:54(无新finalize);supervisor日志(07:24)bin_bytes=646.59GB/tokens=161.6B均FLAT(只计已finalize的95个,36个WIP的3.41TB .bin不计入→22:3x假警的计数artifact);★/proc/io二次实测(pid416617):write_bytes+33MB/20s=1.65MB/s=412K tok/s/proc(与06:37完全一致);38进程全R态99.9%CPU wchan=0无D态0failed;WIP .bin=3.41TB mtime=07:23;ufw_en32个~100GB(target112GB=89%)/ufw_zh4个~99-109GB(target121GB=85%).★关键纠正:supervisor tokens/s=2.5M=finalized_tokens/elapsed下降均值(非实时),ETA 24440s偏高;实时聚合≈412K×36≈14.8M tok/s,真ETA~2-3.5h→finalize~09:30-11:00.处置=🚫不杀.18:5x prep(gen_data_mapping_md.py/cleanup TSV/DATA_MAPPING.md)均已就绪,done=131/131后可直接wrap-up.未完成指令:有(等finalize+18:5x wrap-up)
 

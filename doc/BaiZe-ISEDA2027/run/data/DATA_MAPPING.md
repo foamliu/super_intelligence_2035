@@ -3,7 +3,7 @@
 > 维护规程（运维令 2026-10-25 17:5x / 18:5x）：本文件为 Markdown 单一事实源，由 `run/data/gen_data_mapping_md.py` 生成；HTML 报告按需由 `gen_tokenized_inventory_report.py` 渲染。
 > 一行 = 一个下载目录（粒度以盘上 `ls` 实测为准）；`状态` 取值：`镜像完整` / `分词中` / `未分词` / `未映射` / `已废弃` / `已删除`。
 > 合计行由脚本求和，禁手填。数字均来自实测（`du -sb` / `find | wc -l` / `INDEX.tsv`）。
-> 生成器：`run/data/gen_data_mapping_md.py`（幂等：连跑两次逐字节相同）。驱动数据指纹：`INDEX.tsv` size=2888 blob-hash=1df161bf87e0 mtime=2026-10-25 14:54。
+> 生成器：`run/data/gen_data_mapping_md.py`（幂等：连跑两次逐字节相同）。驱动数据指纹：`INDEX.tsv` size=2956 blob-hash=30a079e1ceb6 mtime=2026-10-26 09:52。
 
 ---
 
@@ -13,19 +13,19 @@
 
 | # | 下载目录 | 分词目录 | .bin | .idx | .json | 字节(B) | GB | tokens(B) | 下载目录字节(B) | 下载/分词字节比 | 状态 | 校验时间 | 证据 |
 |:---|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|:---|:---|:---|
-| 1 | `…/Ultra-FineWeb/data/ultrafineweb_en_v1_4` | `…/Ultra-FineWeb/ultrafineweb_en_v1_4` | 110 | 110 | 110 | 8,929,852,999,497 | 8317 | 2,238,140,710,284 | 6,747,434,955,525 | 0.756 | 镜像完整 | 2026-10-25 14:54 | INDEX.tsv L2: triplet=OK inode_ok=110 (hardlink) |
-| 2 | `…/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa` | `…/Ultra-FineWeb-L3/ultrafineweb_en_l3/qa` | 154 | 154 | 154 | 1,062,000,123,988 | 989 | 263,899,449,229 | 663,183,709,378 | 0.624 | 镜像完整 | 2026-10-25 14:54 | INDEX.tsv L3: triplet=OK inode_ok=154 (symlink) |
-| 3 | `…/UltraData-Code/data/UltraData-Code-L2` | `…/UltraData-Code/UltraData-Code-L2` | 141 | 141 | 141 | 1,691,139,314,855 | 1575 | 421,450,419,455 | 611,281,878,122 | 0.361 | 镜像完整 | 2026-10-25 14:54 | INDEX.tsv L4: triplet=OK inode_ok=141 (symlink) |
-| 4 | `…/UltraData-Code/data/UltraData-Code-L3` | `…/UltraData-Code/UltraData-Code-L3` | 63 | 63 | 63 | 516,117,199,509 | 481 | 128,623,266,591 | 604,712,501,031 | 1.172 | 镜像完整 | 2026-10-25 14:54 | INDEX.tsv L5: triplet=OK inode_ok=63 (symlink) |
-| 5 | `…/UltraData-Math/data/UltraData-Math-L1` | `…/UltraData-Math/UltraData-Math-L1` | 149 | 149 | 149 | 659,469,460,275 | 614 | 164,437,183,984 | 366,622,940,699 | 0.556 | 镜像完整 | 2026-10-25 14:54 | INDEX.tsv L6: triplet=OK inode_ok=149 (symlink) |
-| 6 | `…/UltraData-Math/data/UltraData-Math-L3` | `…/UltraData-Math/UltraData-Math-L3` | 67 | 67 | 67 | 313,425,604,823 | 292 | 77,949,162,709 | 122,536,811,815 | 0.391 | 镜像完整 | 2026-10-25 14:54 | INDEX.tsv L7: triplet=OK inode_ok=67 (symlink) |
-| 7 | `…/Ultra-FineWeb/data/ultrafineweb_en` | `…/Ultra-FineWeb/ultrafineweb_en` | 0 | 0 | 0 | 0 | 0 | 0 | 2,661,358,397,268 | — | 分词中 | 2026-10-25 14:54 | ls …/Ultra-FineWeb/ultrafineweb_en/*.bin | wc -l ; 日志 /tmp/tokenize_untokenized_*.log（done=131/131 后刷新） |
-| 8 | `…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq` | `…/Ultra-FineWeb/ultrafineweb_l1_en_hq` | 32 | 32 | 32 | 192,910,037,902 | 180 | 47,988,834,942 | 477,975,290,461 | 2.478 | 分词中 | 2026-10-25 14:54 | ls …/Ultra-FineWeb/ultrafineweb_l1_en_hq/*.bin | wc -l ; 日志 /tmp/tokenize_untokenized_*.log（done=131/131 后刷新） |
-| 9 | `…/Ultra-FineWeb/data/ultrafineweb_zh` | `…/Ultra-FineWeb/ultrafineweb_zh` | 0 | 0 | 0 | 0 | 0 | 0 | 324,321,522,155 | — | 分词中 | 2026-10-25 14:54 | ls …/Ultra-FineWeb/ultrafineweb_zh/*.bin | wc -l ; 日志 /tmp/tokenize_untokenized_*.log（done=131/131 后刷新） |
-| 10 | `…/UltraX-Preview/data/UltraX-AICC` | `…/UltraX-Preview/UltraX-AICC` | 0 | 0 | 0 | 0 | 0 | 0 | 68,553,927,738 | — | 分词中 | 2026-10-25 14:54 | ls …/UltraX-Preview/UltraX-AICC/*.bin | wc -l ; 日志 /tmp/tokenize_untokenized_*.log（done=131/131 后刷新） |
-| **合计** | | | **716** | **716** | **716** | **13,364,914,740,849** | **12447** | **3,342,489,027,194** | **12,647,981,934,192** | **11779 GB** | | | 误差 0 |
+| 1 | `…/Ultra-FineWeb/data/ultrafineweb_en_v1_4` | `…/Ultra-FineWeb/ultrafineweb_en_v1_4` | 110 | 110 | 110 | 8,929,852,999,497 | 8317 | 2,238,140,710,284 | 6,747,434,955,525 | 0.756 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L2: triplet=OK inode_ok=110 (hardlink) |
+| 2 | `…/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa` | `…/Ultra-FineWeb-L3/ultrafineweb_en_l3/qa` | 154 | 154 | 154 | 1,062,000,123,988 | 989 | 263,899,449,229 | 663,183,709,378 | 0.624 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L3: triplet=OK inode_ok=154 (symlink) |
+| 3 | `…/UltraData-Code/data/UltraData-Code-L2` | `…/UltraData-Code/UltraData-Code-L2` | 141 | 141 | 141 | 1,691,139,314,855 | 1575 | 421,450,419,455 | 611,281,878,122 | 0.361 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L4: triplet=OK inode_ok=141 (symlink) |
+| 4 | `…/UltraData-Code/data/UltraData-Code-L3` | `…/UltraData-Code/UltraData-Code-L3` | 63 | 63 | 63 | 516,117,199,509 | 481 | 128,623,266,591 | 604,712,501,031 | 1.172 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L5: triplet=OK inode_ok=63 (symlink) |
+| 5 | `…/UltraData-Math/data/UltraData-Math-L1` | `…/UltraData-Math/UltraData-Math-L1` | 149 | 149 | 149 | 659,469,460,275 | 614 | 164,437,183,984 | 366,622,940,699 | 0.556 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L6: triplet=OK inode_ok=149 (symlink) |
+| 6 | `…/UltraData-Math/data/UltraData-Math-L3` | `…/UltraData-Math/UltraData-Math-L3` | 67 | 67 | 67 | 313,425,604,823 | 292 | 77,949,162,709 | 122,536,811,815 | 0.391 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L7: triplet=OK inode_ok=67 (symlink) |
+| 7 | `…/Ultra-FineWeb/data/ultrafineweb_en` | `…/Ultra-FineWeb/ultrafineweb_en` | 32 | 32 | 32 | 2,981,295,624,594 | 2777 | 905,921,334,220 | 2,661,358,397,268 | 0.893 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L8: triplet=OK inode_ok=32 (hardlink) |
+| 8 | `…/Ultra-FineWeb/data/ultrafineweb_l1_en_hq` | `…/Ultra-FineWeb/ultrafineweb_l1_en_hq` | 94 | 94 | 94 | 603,519,735,520 | 562 | 150,155,374,778 | 477,975,290,461 | 0.792 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L9: triplet=OK inode_ok=94 (hardlink) |
+| 9 | `…/Ultra-FineWeb/data/ultrafineweb_zh` | `…/Ultra-FineWeb/ultrafineweb_zh` | 4 | 4 | 4 | 453,644,894,252 | 422 | 112,756,190,641 | 324,321,522,155 | 0.715 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L10: triplet=OK inode_ok=4 (hardlink) |
+| 10 | `…/UltraX-Preview/data/UltraX-AICC` | `…/UltraX-Preview/UltraX-AICC` | 1 | 1 | 1 | 46,394,689,578 | 43 | 11,492,264,080 | 68,553,927,738 | 1.478 | 镜像完整 | 2026-10-26 09:52 | INDEX.tsv L11: triplet=OK inode_ok=1 (hardlink) |
+| **合计** | | | **815** | **815** | **815** | **17,256,859,646,891** | **16072** | **4,474,825,355,971** | **12,647,981,934,192** | **11779 GB** | | | 误差 0 |
 
-核对式：`sum(.bin)=716 = sum(.idx)=716 = sum(.json)=716`；`sum(分词字节)=13,364,914,740,849`；`sum(tokens)=3,342,489,027,194`；`sum(下载字节)=12,647,981,934,192`。
+核对式：`sum(.bin)=815 = sum(.idx)=815 = sum(.json)=815`；`sum(分词字节)=17,256,859,646,891`；`sum(tokens)=4,474,825,355,971`；`sum(下载字节)=12,647,981,934,192`。
 
 > 注：`env14_*` 真身在 `/nas_train/.../baize-data/text/`（与 `tokenized/` 同盘 ⇒ hardlink）；`full_*` 真身在 `/nas_env/app.e0031982/baize-data/`（跨盘 ⇒ symlink）。两者均属「下载的一律保留」，未删未改未移。`下载/分词字节比` = 下载目录字节 ÷ 分词产物字节（int32 token×4B 常大于压缩 parquet，故比值多 < 1）。
 
