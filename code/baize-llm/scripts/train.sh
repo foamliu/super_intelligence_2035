@@ -62,6 +62,7 @@ cat <<EOF
   token     : tok/step=$TPS（$(( TPS / 1000 ))K）, 本段 $STEPS 步 = $TOKENS token
   LR        : peak=$LR min=$MIN_LR warmup=$WARMUP decay_iters=$LR_DECAY_ITERS shape=$LR_DECAY_SHAPE
   优化器    : $OPTIMIZER（AdamW）  精度: $PRECISION / fp8=$FP8_RECIPE
+  RoPE      : theta=$ROPE_THETA · max_pos=$ROPE_MAX_POS（1M）· 全注意力 $ATTN_LAYERS/56 层
   CUDA Graph: $([ "${CUDA_GRAPH_OFF:-1}" = "1" ] && echo "OFF（不传 --enable-cuda-graph）" || echo "ON")
   迭代区间  : [$START_ITER, $ITERS)   累计口径（S2/Decay 必须如此，否则会误判已到终点）
   name      : $NAME   exp_root=$EXP_ROOT
@@ -98,6 +99,27 @@ ARGS=( --arch "$ARCH" --name "$NAME" --dir "$EXP_ROOT"
 
 [ "$CP" -gt 1 ] && ARGS+=( --context-parallel "$CP" )
 [ -n "${FP8_RECIPE:-}" ] && ARGS+=( --fp8-recipe "$FP8_RECIPE" )
+
+# ---------- RoPE（用户令 2026-10-26：4 层注意力的 max position = 1M）----------
+# 训练期真正生效的是 rope_theta（ABF）；max_position_embeddings 在导出/推理 config 生效。
+# ⚠️ 只抬 max_pos 不抬 theta ⇒ 实测全 NaN（2026-10-06 B1），所以两者必须同改。
+if has_flag --rotary-base; then
+  ARGS+=( --rotary-base "$ROPE_THETA" )
+else
+  if [ "${ROPE_REQUIRED:-1}" = "1" ]; then
+    die "launcher 不支持 --rotary-base ⇒ 无法把 rope_theta 设为 $ROPE_THETA（1M 位置的硬前提）。按 docs/LAUNCHER_PATCH_EXP_DECAY.md 的 §RoPE 打补丁；确需降级须显式 ROPE_REQUIRED=0 并在心跳标注。"
+  fi
+  warn "launcher 不支持 --rotary-base ⇒ 本次沿用默认 theta（1e4）；1M 位置会 NaN（ROPE_REQUIRED=0 已显式降级）"
+fi
+if has_flag --max-position-embeddings; then
+  ARGS+=( --max-position-embeddings "$ROPE_MAX_POS" )
+else
+  warn "launcher 无 --max-position-embeddings（训练不受影响，RoPE 逐位置计算）；导出 HF config 时必须写 max_position_embeddings=$ROPE_MAX_POS，由 scripts/check_rope.py 把关"
+fi
+if [ -n "${ROPE_SCALING:-}" ]; then
+  has_flag --rope-scaling && ARGS+=( --rope-scaling "$ROPE_SCALING" ) \
+    || warn "launcher 不支持 --rope-scaling，忽略 ROPE_SCALING=$ROPE_SCALING"
+fi
 
 if [ -n "${WEIGHT_DECAY:-}" ]; then
   if has_flag --weight-decay; then

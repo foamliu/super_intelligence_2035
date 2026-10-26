@@ -24,6 +24,7 @@ code/baize-llm/
 │   ├── train.sh                  # 统一入口：s1 | s2 | decay（支持 --smoke/--dry-run）
 │   ├── tb_6006.sh                # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py            # WSD-指数 LR 曲线打印 / 与 TB 对账
+│   ├── check_rope.py             # 校验 56 层 / 4 注意力 / max_pos=1M / theta=1e6
 │   ├── prune_ckpts.sh            # ckpt 保留策略清理（默认 dry-run）
 │   └── status.sh                 # 进程 / 显存 / 最新步数 / LR / TB 健康一览
 └── docs/
@@ -92,6 +93,33 @@ bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000 --apply
 默认策略 = **最近 3 个 + 每 25,000 步一个里程碑**（S1 700k → 约 28 + 3 = 31 个；按 4.4GB ≈ 136GB，
 按 30GB ≈ 930GB）。建议：**每 20k 步（10 个 ckpt）跑一次 dry-run，每 50k 步执行一次 --apply**。
 
+### 2.2 RoPE / 1M 位置（用户令 2026-10-26）
+
+56 层 = **4 层全注意力（吃 RoPE）** + 24 层 Mamba2 + 28 层 MLP；本次要求把 RoPE 的
+**max embedding position 设为 1M**：
+
+| 项 | 取值 | 说明 |
+|:--|:--|:--|
+| `ROPE_MAX_POS` | **1,048,576**（2^20） | 不是十进制 1,000,000（与 `run/baize_b1_longctx_extend.py` 的 ABF_1e6 一致） |
+| `ROPE_THETA` | **1,000,000**（ABF） | ⚠️ **必须与 max_pos 同时改**：本项目 2026-10-06 实测「只抬 max_pos 不改 theta」⇒ cos/sin 高频分量溢出 ⇒ **全 NaN（连 4K 都 NaN）** |
+| `ROPE_SCALING` | 空 | 训练期不启 PI/NTK/YaRN（theta=1e6 已覆盖 1M 位置） |
+| 生效位置 | `--rotary-base`（训练） + `max_position_embeddings`（导出/推理 config） | Megatron 侧 RoPE 逐位置计算，训练真正吃的是 theta |
+
+- `train.sh` 会传 `--rotary-base 1000000`；launcher 若没有该参数 ⇒ **默认拒绝开跑**
+  （`ROPE_REQUIRED=1`），按 `docs/LAUNCHER_PATCH_EXP_DECAY.md` §RoPE 打补丁。
+- 若 launcher 无 `--max-position-embeddings`：训练不受影响，但**导出 HF config 必须写 1048576**，
+  由 `scripts/check_rope.py` 卡口：
+
+```bash
+python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
+# ⇒ PASS: 56 层 / attention=4 / max_pos=1048576 / theta=1e6 / rope_scaling=None
+```
+
+> ⚠️ 已知代价：既有推理侧实测（在 4K 训练的 ckpt 上事后做 ABF）4K PPL 83.24 vs 基线 75.36（+10.5%）。
+> 本次是**从头训练**、theta 初始即 1e6，不存在「事后换 theta」的税；但必须盯**前 500 步 loss**
+> 与同时长 baseline 对照，异常升高（>5%）要在心跳里标出来。
+
+
 ---
 
 ## 3. 快速开始
@@ -153,6 +181,7 @@ python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --decay-iters 20000 --total
 | 吞吐 | S2/Decay 应 ≥ **550K tok/s**（#792 实测 613,992 的 90%）；S1 允许 480–550K（tok/step 减半） |
 | 显存 | 峰值 ≤ 78 GB（#792 实测 75.2 GB） |
 | TensorBoard | `.29:6006` 可访问，`learning-rate` 标量随步数变化 |
+| RoPE / 1M | 启动命令含 `--rotary-base 1000000`；导出 config 经 `check_rope.py` **PASS**（56 层 / attention=4 / max_pos=1048576 / theta=1e6）；前 500 步 loss 无异常抬升（>5%） |
 | checkpoint | **每 2000 步落一个**（`ls checkpoints/iter_* | wc -l` 随时间线性增长）；磁盘由 `prune_ckpts.sh` 控（保留最近 3 + 每 25k 里程碑） |
 
 ---

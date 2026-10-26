@@ -33,6 +33,7 @@
 6. **正式开跑 S1（16 卡）**：先核 `.12` 空闲（`train.sh` 会自动拒绝非空闲）；`setsid bash code/baize-llm/scripts/train.sh s1 > /tmp/baize_s1_launch.log 2>&1 < /dev/null &`。起跑后 30 分钟内交 `pretrain run:` 心跳，必须含：`tok/s`、`per-GPU tok/s`、峰值显存、`--train-iters/from`、TB URL、`AdamW` 与 `lr_decay_shape` 实值。
 7. **S2 / Decay**：S1 收尾后 `train.sh s2`；Decay **当前禁止开跑**（见下）。
 8. **Checkpoint（用户 2026-10-26 补令）**：三阶段 `--save-interval` 统一 **2000 步**（`configs/s1|s2|decay.env` 已改，`train.sh` 自动带上）。起跑后用 `ls nemo_experiments/baize2b/checkpoints/iter_* | wc -l` 确认按 2000 步递增（首个点 = 2000）。**同时必须控盘**：每 20k 步跑 `bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000`（dry-run），每 50k 步 `--apply`；保留最近 3 + 每 25k 里程碑 + `latest_checkpointed_iteration.txt` 指向者。S1 350 个 ckpt 全留会占 1.5–10.5TB。
+9. **RoPE / 1M（用户 2026-10-26 补令）**：56 层中 **4 层全注意力**，RoPE **max embedding position = 1,048,576**（1M）；`configs/common.env` 已设 `ROPE_MAX_POS=1048576` + `ROPE_THETA=1000000`（ABF）。`train.sh` 自动传 `--rotary-base 1000000`；launcher 若无该参数会**直接拒绝开跑**（`ROPE_REQUIRED=1`），按 `code/baize-llm/docs/LAUNCHER_PATCH_EXP_DECAY.md` §5 打补丁。导出 HF 后必须 `python scripts/check_rope.py --hf-dir <dir>` **PASS**（56 层 / attention=4 / max_pos=1048576 / theta=1e6 / rope_scaling=None）。冒烟后核对：0 NaN、前 500 步 loss 与 baseline 抬升 ≤5%。
 
 **阻塞与红线**
 - 🚫 **Decay 不得开跑**：`UltraData-SFT-2605`（0.60）/ `UltraData-SFT-Agent-2609`（0.12）仍「未分词」（`run/data/DATA_MAPPING.md` 0 shard），`gen_blend.py` 会 rc=2 直接退出。需 data 线分词后才能跑；不许用别的数据偷偷替代。
@@ -40,6 +41,7 @@
 - 🚫 **不许开 CUDA Graph**：16K 下会掉到 ~110K tok/s（#786/#788 已实测定性）。
 - 🚫 不许把「2M/4M」当精确值对外：DP16×16K = 262,144，落地档 = gbs128(2,097,152) / gbs256(4,194,304)。
 - 🚫 **磁盘红线**：`/nas_train` 可用 <15TB ⇒ 先 `prune_ckpts.sh --apply` 再继续训练；不许为保 ckpt 把盘写满（会连带卡死 data 迁移与 eval）。
+- 🚫 **RoPE 红线**：不许只改 `max_position_embeddings` 不改 `rope_theta`（实测全 NaN）；不许把「训练跑起来了」当成 1M 配置达标（`max_pos` 只在导出 config 生效，必须过 `check_rope.py`）。
 
 **交付物**
 - `code/baize-llm/`（已随仓库预置；若你补丁/微调则 commit `pretrain train:`）

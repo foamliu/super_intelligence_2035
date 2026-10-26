@@ -56,6 +56,22 @@ has_flag --weight-decay && ok "支持 --weight-decay（可在 configs 设 0.1）
                         || warn "--weight-decay 未探测到，WEIGHT_DECAY 留空即可"
 
 echo
+echo "--- [2.5] RoPE / 1M 位置（用户令 2026-10-26）---"
+echo "      theta=$ROPE_THETA  max_pos=$ROPE_MAX_POS  全注意力层=$ATTN_LAYERS/56"
+if has_flag --rotary-base; then
+  ok "支持 --rotary-base（将传 $ROPE_THETA）"
+else
+  if [ "${ROPE_REQUIRED:-1}" = "1" ]; then
+    bad "不支持 --rotary-base ⇒ 无法把 RoPE theta 设为 $ROPE_THETA（只抬 max_pos 会 NaN，2026-10-06 实测）"
+  else
+    warn "不支持 --rotary-base，且 ROPE_REQUIRED=0 ⇒ 本次不满足 1M 位置要求（仅降级试跑）"
+  fi
+fi
+has_flag --max-position-embeddings \
+  && ok "支持 --max-position-embeddings（将传 $ROPE_MAX_POS）" \
+  || warn "无 --max-position-embeddings：训练期无影响，导出 HF config 时须写 $ROPE_MAX_POS（check_rope.py 把关）"
+
+echo
 echo "--- [3] 数据 blend（逐阶段）---"
 for st in s1 s2 decay; do
   ( set +u

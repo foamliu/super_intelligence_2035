@@ -121,3 +121,46 @@ python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --warmup 2000 \
 
 改动只新增一个参数与一个分支；回滚 = `git -C /nas_train/app.e0031982/code/BaiZe-ISEDA2027 checkout -- <改动文件>`，
 或直接不传 `--lr-decay-shape`（默认 linear，等价旧行为）。
+
+## 5. 附：RoPE 参数（`--rotary-base` / `--max-position-embeddings`）
+
+用户令 2026-10-26：56 层中 **4 层注意力**的 RoPE **max embedding position = 1M**。
+本计划的实现口径 = **`rotary_base`（theta）1e6 + `max_position_embeddings` 1,048,576** 同时设置。
+
+```bash
+# 先探测
+grep -rn "rotary_base\|rotary-base\|rope_theta" pretrain_launcher.py
+python pretrain_launcher.py --help | grep -E "rotary|max-position"
+```
+
+- 若 `--help` 里**已有** `--rotary-base`：不需要改，`train.sh` 会自动传 `1000000`。
+- 若没有：在 Megatron args 里补一个参数并透传给 transformer config：
+
+```python
+group.add_argument("--rotary-base", type=int, default=10000,
+                   help="RoPE theta（ABF）。本项目正式训练 = 1000000")
+# 透传
+config.rotary_base = args.rotary_base
+# 导出/推理侧（若 launcher 自己写 config）
+config.max_position_embeddings = getattr(args, "max_position_embeddings", 4096)
+```
+
+**为什么必须两个一起改**：本项目 2026-10-06 的 B1 实验实测——
+只把 `max_position_embeddings` 抬到 131072 而 `rope_theta` 仍是 1e4 ⇒ cos/sin 高频分量溢出
+⇒ **全 NaN（连 4K 都 NaN）**；`ABF_1e6`（max_pos=1048576 + theta=1e6）才降到可用
+（4K/128K/1M PPL 83.24/54.66/55.42）。
+参见 `reports/report_pretrain_research4_longctx_1m_p8.html` §2.2、`run/baize_b1_longctx_extend.py`。
+
+**验收**
+
+```bash
+# ① 启动命令里必须出现 --rotary-base 1000000（train.sh --dry-run 可看）
+bash scripts/train.sh s1 --dry-run | tr ' ' '\n' | grep -A1 rotary-base
+# ② 导出 HF config 后做结构校验（必须 PASS）
+python scripts/check_rope.py --hf-dir <hf_dir>
+# ③ 训练日志：前 500 步 loss 稳定、0 NaN；与 baseline 同时长对照抬升 ≤5%
+```
+
+> 训练期 RoPE 是逐位置计算的，`max_position_embeddings` 不影响显存/吞吐；它只在导出
+> `config.json`（HF/SGLang）时生效，所以**训练能跑 ≠ 配置达标**，必须用 ② 卡口。
+
