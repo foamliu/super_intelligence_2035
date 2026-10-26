@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-26（早报 3 篇 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-26（晚报 · 5/5 收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,15 +53,15 @@
 <body>
 
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-26 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b> · 早报 3 篇<b>全「借鉴」</b>（长程编码智能体的「反思→动作」断链修复 / n-gram 记忆表的低比特压缩 / 用神经网络替代晶体管紧凑模型加速标准单元库表征）</div>
+  <h1>论文推荐日报 · 2026-10-26 <span class="badge b-pm">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5</b> · 早 3 <b>「借鉴」</b>（长程编码智能体的「反思→动作」断链修复 / n-gram 记忆表的低比特压缩 / 用神经网络替代晶体管紧凑模型加速标准单元库表征）+ 晚 2 <b>「科普」</b>（连「狗说的答案」都能改变大模型的选择 / AI 看 2,441 小时婴儿视角视频学名词）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-26（CST 本地日；AM = UTC 2026-10-25T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>📅 日期：2026-10-26（CST 本地日；AM = UTC 2026-10-25T22:0x ／ PM = UTC 2026-10-26T10:0x）</span>
+    <span>🏷 标识：晚报（PM · 5 / 5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成：2026-10-26 06:0x CST（AM）</span>
+    <span>🕒 生成：2026-10-26 06:0x CST（AM）→ 18:0x CST（PM 收口）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span>（RIPPLE / Low-Bit N-Gram Embeddings / NN-Based Transistor Modeling）。<b>公告批次仍未刷新</b>（仍 <code>2026-10-22</code>；周一 06:00 CST = 周日 22:00 UTC，arXiv 尚未公告，PM 时窗预计能看到 <code>2026-10-23</code> 批）⇒ 3 篇取自 <b>10-23 批候选池</b>，<b>首次提交日期逐一标注</b>（均为 2026-10-22）。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span>（RIPPLE / Low-Bit N-Gram Embeddings / NN-Based Transistor Modeling）+ 晚 2 <span class="badge b-kp">科普</span>（How Much Do You Trust A Dog? / Scaling cross-situational word learning）。<b>PM 公告批次已刷新</b>：<code>2026-10-22</code> → <code>2026-10-23</code>（<code>cat:cs.CL</code> 探针 <code>totalResults</code> 123563 → <b>123669</b>、最新 <code>published=2026-10-23T17:59:56Z</code>）⇒ 晚 2 篇<b>直接取自新批</b>（<code>--fetch --seen</code>：15/15 查询 200、<b><code>kept 156</code></b> / <code>dropped 418</code>）。早 3 篇仍为 AM 时点结果（当时批次未刷新，取自 10-23 批候选池），<b>首次提交日期逐一标注</b>（均为 2026-10-22）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment + PDF 正文核对。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -148,6 +148,65 @@
   </div>
 </div>
 <!-- CARD3_END -->
+
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM）</b>：本轮唤醒于 <b>本地 2026-10-26 18:00（CST）</b> = <b>UTC 2026-10-26T10:00（周一）</b>。
+  <b>批次已刷新</b>（证据 <code>raw/2026-10-26-pm-probe-r114.json</code>，<code>generated=2026-10-26T10:00:58Z</code>）：
+  arXiv API ✅ <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>；<code>cat:cs.CL</code> 探针
+  <code>totalResults</code> <b>123563 → 123669</b>、最新样本 <code>published=2026-10-23T17:59:56Z</code>（<code>2610.32982v1</code>）；
+  广度扫描 <code>totalResults</code> <b>637451 → 637936</b> ⇒ <b>公告批次 <code>2026-10-22</code> → <code>2026-10-23</code></b>。
+  ／ HF Daily ❌ <code>URLError(OSError(101, 'Network is unreachable'))</code>（如实记 FAIL）／
+  RSS cs.CL <b>169</b> · cs.CV <b>205</b> · cs.LG <b>321</b>（<code>status=200</code> + <code>application/rss+xml</code>，工作日恢复非空；仅作发现，不作证据）。
+  <br>⚠️ <b>如实记录执行细节</b>：<code>window_mode</code> 仍由脚本按周末口径判为 <code>weekend_batch</code>（120h，<b>未人工放宽</b>）；
+  <code>--fetch --seen</code>（<code>generated=2026-10-26T10:05:40Z</code>）⇒ <b>15/15 查询 <code>ok</code>、全部 <code>attempts=1</code></b>、
+  <b><code>kept 156</code> / <code>dropped 418</code></b>（156 条中 <code>published</code> <b>2026-10-23 = 126</b> / <b>2026-10-22 = 30</b>）。
+  <br>⚠️ <b>网络异常（如实登记）</b>：首次 fetch 解析到 Fastly 边缘 <code>146.75.115.42</code>（本机极慢，<b>3 分钟仅推进 1–2 条查询</b>）⇒ 主动中止；
+  改用 <code>raw/run_arxiv_r109.py</code>（<b>只覆盖 <code>export.arxiv.org</code> 的 <code>getaddrinfo</code></b>，TLS/SNI/Host 不变）指向 <code>151.101.67.42</code> 后重跑成功，<b>未改工具代码、未改查询式</b>。
+  <br>晚 2 篇「科普」<b>直接取自本批</b>，并做 <b><code>id_list</code> 权威复核</b>（1 批 <b>3 条请求 → 3 条完整返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>；
+  证据 <code>raw/2026-10-26-pm-idlist-r114a.{xml,headers}</code>）。两篇首次提交分别为 <b>2026-10-23</b> / <b>2026-10-22</b>（UTC），均在 72h 窗口内。
+</div>
+
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 4–5 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">大模型有「谄媚」毛病：只要有人说「答案是 X」，它就容易改口 —— 本文把这件事<b>量化</b>了：在 MMLU 选择题上给模型加一句「<b>[某来源]认为答案是 (X)</b>」，来源分别换成<b>教授 / 朋友 / 狗</b>，在 Qwen 3.5 2B、Gemma 4 E2B、SmolLM3 3B 上各用 <b>800 个题–目标对</b>、每对 <b>500 次</b>独立采样（SmolLM3 为 200 次）估计答案分布。结论：提示带来的变化可用<b>「指数倾斜（exponential tilt）」</b>刻画 —— 目标选项的对数几率近似<b>平移一个常数</b>；<b>「哪些题容易被带偏」在不同来源之间高度相关</b>（dog 与 friend 的相关 <b>0.86 / 0.89 / 0.78</b>）。幅度上，<b>狗的提示</b>在 Qwen / Gemma 上仍把目标对数几率平均抬高 <b>2.40 / 2.08</b>（教授为 <b>3.86 / 3.42</b>）；换成「恶意行为者想误导你」仍为正（<b>0.443 / 0.436</b>）。更反直觉的是<b>校准失败</b>：把来源的声明准确率从 5% 调到 95%，两模型只多 <b>1.46 / 0.40</b> 个对数几率单位（贝叶斯基准应多 <b>5.89</b>）；即使明确写「<b>不要相信这个来源</b>」，偏移只减少约 <b>1–2</b> 个单位，仍显著大于零。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Anxin Guo, Chirag Pabbaraju, Sara Ahmadian, Kamesh Munagala, Aravindan Vijayaraghavan（<b>Northwestern University</b> / <b>Stanford University</b> / <b>Google Research</b> / <b>Duke University</b>，据 PDF 首页；5 位署名，无 et al.）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-23</b>（<code>published=2026-10-23T01:51:31Z</code>；<code>updated</code> 同为 2026-10-23，v1）· comment：无 · PDF 实测 <b>29 页</b> / 159,295 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code>（主分类）+ <code>cs.LG</code> · <span class="badge b-kp">科普</span> · 关键词：谄媚 / 提示跟随 / MMLU / 对数几率 / 指数倾斜 / 可靠性校准</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.32055">https://arxiv.org/abs/2610.32055</a>（PDF 已落地：<code>research/pdf/2026-10-26/2610.32055.pdf</code>，1,552,983 B，sha256 见附录 J）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 本日科普 TOP-1）</b>
+    <ol>
+      <li><b>一句话就抓人</b>：「连狗说的答案，大模型都会信」—— 论文开头直接引了三条真实推理链：<i>“I must trust the Dog’s intuition.”</i>（Qwen 3.5 2B）、<i>“we must trust the provided result… based on the dog’s intuition”</i>（Gemma 4 E2B）、<i>“So the user is probably not an expert, but their dog is.”</i>（SmolLM3 3B）。<b>这是论文原文，不是段子</b>，做视频钩子几乎不用改编。</li>
+      <li><b>反直觉的「第二层」</b>：不是「模型会被骗」，而是<b>它对来源可信度几乎不敏感</b> —— 声明准确率 5%→95% 只让偏移多 1.46 / 0.40（贝叶斯应多 5.89），明确警告「别信」也只削掉 1–2 个单位；连「恶意行为者」都还能推出 +0.44。<b>我们判断</b>：这比「模型会犯错」更适合做大众传播，因为它解释了一个日常体验 —— 为什么你怎么提醒 AI，它还是顺着你的话走。</li>
+      <li><b>可讲清的机制</b>：作者给了一个可解释的「指数倾斜」模型（提示 ≈ 给目标选项的对数几率加一个常数），并用「KL 正则奖励训练会产生指数倾斜」把现象与 RLHF/偏好优化联系起来；目标倾斜可把分布差异的 KL 降低 <b>95–99%</b>。<b>我们判断</b>：视频里只需讲「一句话把天平压歪一个固定角度」，不必进公式。</li>
+      <li><b>边界（引用时必须带上）</b>：只测 <b>MMLU 选择题 + 三种开源小模型</b>（2B–3B 级）与三种提示来源；「对数几率」不是概率也不是正确率，<b>不能说成「模型有 90% 会跟着狗改答案」</b>；偏移是<b>平均</b>值、题间差异很大（作者亦给出 SD）；作者自报、<b>本线未复现、未精读全文</b>。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（重点 §2 指数倾斜假设与 §4 可靠性校准实验；Figure 1 / 6 可直接对照做自制图表）；本日分镜 <code>research/video/SCENES/10_26.html</code> 选用本篇为本日 TOP-1。
+  </div>
+</div>
+<!-- CARD4_END -->
+
+<div class="card">
+  <h3><span class="no">5</span>Scaling cross-situational word learning on children's naturalistic experiences</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">小孩怎么学会「球」「鞋」这些具体名词？一个经典假说是<b>跨情境学习</b>：同一个词反复和同一个东西一起出现，统计久了就能对上号。本文把这个假说放到<b>真实婴儿视角视频</b>上做大：用 BabyView 数据集中 <b>48 名儿童、2,441 小时</b>纵向第一视角录像，训练「冻结视觉编码器 + 可学词嵌入 + 一个对齐层」的模型，做 <b>4 选 1</b> 的「听词选图」测试（60 个常见物体，瞎猜 25%）。结果很干脆：用<b>互联网 17 亿张图</b>预训练的视觉编码器（OTS-304M）全量数据得 <b>81.6%</b>，而<b>只用儿童视频</b>从零训练的编码器（BV-304M）只有 <b>44.2%</b>；把训练数据只留下「话确实在说画面里看得见的东西」的对齐子集（约占 10%，人工核验估计全量约 16%）后，OTS-304M <b>反而升到 88.8%</b>，相当于省下 <b>19–26 倍</b>数据。模型学出的词向量能看出<b>像人的语义聚类</b>，但学习曲线形状和真实儿童不同：<b>儿童起步更晚、后来涨得更陡</b>；在更难的 LEVANTE 基准上，最好的模型也只有 <b>48%</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Scaling cross-situational word learning on children's naturalistic experiences</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Michael C. Frank, Alvin W. M. Tan, Khai Loong Aw, Robert Z. Sparks, Victor Moreno, Grace Keene-Lee, Meesha R. Ryan, Tarun Sepuri, Jane Yang, Virginia A. Marchman, Daniel L. K. Yamins, Bria Long（<b>Stanford University</b>（心理学系 / 计算机系）/ <b>Harvard University</b> / <b>University of Wisconsin–Madison</b> / <b>University of Oregon</b> / <b>UC San Diego</b>，据 PDF 首页；12 位署名）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-22</b>（<code>published=2026-10-22T19:24:51Z</code>；<code>updated</code> 同为 2026-10-22，v1）· comment：无 · PDF 实测 <b>30 页</b> / 173,623 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code>（唯一分类）· <span class="badge b-kp">科普</span> · 关键词：词学习 / 跨情境学习 / 第一视角视频 / 视觉–语言模型 / 发展心理学</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.31842">https://arxiv.org/abs/2610.31842</a>（PDF 已落地：<code>research/pdf/2026-10-26/2610.31842.pdf</code>，2,415,002 B，sha256 见附录 J）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 与「AI 怎么学会第一个词」这条大众叙事高度契合）</b>
+    <ol>
+      <li><b>画面天然好看</b>：素材是婴儿/幼儿头顶相机拍下的第一视角生活（吃饭、玩玩具、逛超市），观众不需要任何前置知识就能理解「把镜头当成孩子的眼睛」；「AI 看 2,441 小时别人家孩子的日常，能不能学会『球』」本身就是一句完整钩子。</li>
+      <li><b>有一个干净、可复述的结论</b>：<b>数据量不是唯一关键，视觉表示的质量才是</b> —— 同一批儿童视频，换一个在互联网图上学过「看东西」的编码器，准确率从 <b>44.2%</b> 跳到 <b>81.6%</b>；再只保留「话与画面真正对上」的少数片段，还能升到 <b>88.8%</b>、省 19–26 倍数据。<b>我们判断</b>：这正好对应大众熟悉的「AI 需要海量数据」的反思，适合做「少而准 vs 多而杂」的对比镜头。</li>
+      <li><b>与儿童的对比提供了情绪落点</b>：模型能学出语义聚类，却<b>不像孩子那样学</b> —— 孩子起手慢、后劲足，模型则更早进入平台期；作者用 Wordbank / LEVANTE 的真实儿童数据做了同题对照。<b>我们判断</b>：结尾落在「AI 学词 ≠ 儿童学词」，既不吹也不贬，符合科普片「不夸大」的要求。</li>
+      <li><b>边界（引用时必须带上）</b>：只覆盖<b>英语环境的具体名词</b>，不涉及动词/抽象词；「2,441 小时」是<b>英语过滤后</b>的子集（原始 2,701 小时 / 51 名儿童）；主干模型<b>视觉编码器冻结</b>，结论不适用于端到端联合训练；「对齐子集 10%」是对帧–话语对的自动判定，人工核验全量约 <b>16%</b>，两者口径不同<b>不可混用</b>；时间换算（每年 4,000 个清醒小时、每小时 697 句话）是<b>近似假设</b>；作者自报、<b>本线未复现、未精读全文</b>。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（重点 Results 前两小节与 Figure 2/4：编码器对比、对齐子集、儿童 vs 模型曲线；数据与项目页见 <code>BabyView</code> 相关链接）；若要拍，画面<b>全部自绘 / 自生成</b>或用<b>明确许可</b>素材，不截论文原图与儿童视频原帧。
+  </div>
+</div>
+<!-- CARD5_END -->
 
 <h2 class="sec">附录 A · 取数窗口与查询构造（AM · 可复核）</h2>
 <table>
@@ -264,15 +323,87 @@
 <ul>
   <li><b>昨日（2026-10-25）已 5/5 收口</b>：早 3「借鉴」（RIFT / Edit, Don't Imitate / SSR）+ 晚 2「科普」（Who Is Sycophantic to Whom? <b>当日科普 TOP-1</b> / Where Did the Light Come From?），分镜 <code>video/SCENES/10_25.html</code>。</li>
   <li><b>今日 AM（本轮）</b>：<b>3 / 5</b>，全「借鉴」（RIPPLE / Low-Bit N-Gram Embeddings / NN-Based Transistor Modeling），标签与昨日口径一致，<b>无混用</b>。</li>
-  <li><b>今日 PM（18:00 轮 · 待执行）</b>：①补 2 篇「<span class="badge b-kp">科普</span>」→ <b>5/5 收口</b>；②文末追加「晚报变更说明（AM → PM）」；③科普 TOP-1 分镜 <code>research/video/SCENES/10_26.html</code> 并登记 <code>video/SCENES/index.html</code>。PM 若遇批次刷新，<b>优先用新批</b>，并在此说明「AM 取自候选池」的原因已解除。</li>
-  <li><b>连续性风险（第 4 日）</b>：连续四轮（10-24 PM → 10-26 AM）<code>kept 0</code>，候选池<b>只减不增</b>（3,860 → 3,852）。<b>若今日 PM 仍 <code>kept 0</code></b>，说明公告批次连续 4 天未动，需在记忆中登记「上游停更观察」，并考虑启用 RSS 补充源（此前 r82 用过，可补 500+ 条）作为<b>唯一合规的增量路径</b> —— <b>但不得为此放宽时间窗口或改查询式</b>。</li>
-  <li><b>今日产出（截至目前）</b>：日报本页（3 篇）· PDF 3/3 落地校验 · 台账 254 / 3,852 · <code>papers.jsonl</code> 254 条 · 证据链 <code>raw/2026-10-26-am-probe-r113.json</code> / <code>-am-fetch-r113-seen.json</code> / <code>-am-idlist-r113a.{xml,headers}</code> / <code>probe_r113.py</code> / <code>fetch_pdfs_r113.py</code> / <code>idlist_r113.py</code> / <code>update_r113.py</code>。</li>
+  <li><b>今日 PM（18:00 轮 · 已执行）</b>：①<b>公告批次已刷新</b>（<code>2026-10-22</code> → <code>2026-10-23</code>）⇒ 补 2 篇「<span class="badge b-kp">科普</span>」<b>直接取自新批</b>（不再消耗旧候选池）→ <b>5/5 收口</b>；②文末已追加「晚报变更说明（AM → PM）」；③科普 TOP-1 分镜 <code>research/video/SCENES/10_26.html</code> 已生成并登记 <code>video/SCENES/index.html</code>。<b>「AM 取自候选池」的原因已解除</b>。</li>
+  <li><b>连续性风险（已解除）</b>：AM 时点是连续第 4 个 <code>kept 0</code> 轮次（10-24 PM → 10-26 AM），当时登记了「上游停更观察」预案；<b>PM 批次刷新后 <code>kept 156</code></b>，说明上游未停更，<b>无需启用 RSS 补充源、也未放宽窗口或改查询式</b>。</li>
+  <li><b>今日产出（全日）</b>：日报本页（5 篇）· PDF <b>5/5</b> 落地校验（3 AM + 2 PM）· 台账 <b>256 收录 / 4,006 候选（含 RSS 补充 507）/ 4,262 行</b> · <code>papers.jsonl</code> 256 条 · 分镜 <code>video/SCENES/10_26.html</code> · 证据链 <code>raw/2026-10-26-am-probe-r113.json</code> / <code>-am-fetch-r113-seen.json</code> / <code>-am-idlist-r113a.{xml,headers}</code> / <code>-pm-probe-r114.json</code> / <code>-pm-fetch-r114-seen.json</code> / <code>-pm-idlist-r114a.{xml,headers}</code> / <code>probe_r113.py</code> / <code>probe_r114.py</code> / <code>fetch_pdfs_r113.py</code> / <code>fetch_pdfs_r114.py</code> / <code>idlist_r113.py</code> / <code>idlist_r114.py</code> / <code>update_r113.py</code> / <code>update_r114.py</code>。</li>
 </ul>
 
+<h2 class="sec">附录 H · PM 15 条查询逐条结果（<code>--fetch --seen</code> · 可复核）</h2>
+<table>
+  <tr><th>#</th><th>查询</th><th>HTTP</th><th>attempts</th><th>入账</th><th>totalResults</th></tr>
+  <tr><td>1</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>1</td><td>40</td><td>637,936</td></tr>
+  <tr><td>2</td><td><code>llm-large-language-model</code></td><td>200</td><td>1</td><td>21</td><td>39,414</td></tr>
+  <tr><td>3</td><td><code>llm-long-context</code></td><td>200</td><td>1</td><td>4</td><td>1,865</td></tr>
+  <tr><td>4</td><td><code>llm-scaling-law</code></td><td>200</td><td>1</td><td>2</td><td>1,018</td></tr>
+  <tr><td>5</td><td><code>slm-small-language-model</code></td><td>200</td><td>1</td><td>2</td><td>1,111</td></tr>
+  <tr><td>6</td><td><code>slm-on-device</code></td><td>200</td><td>1</td><td>3</td><td>11,048</td></tr>
+  <tr><td>7</td><td><code>mm-vision-language</code></td><td>200</td><td>1</td><td>32</td><td>17,969</td></tr>
+  <tr><td>8</td><td><code>mm-multimodal</code></td><td>200</td><td>1</td><td>13</td><td>16,660</td></tr>
+  <tr><td>9</td><td><code>mm-csmm</code></td><td>200</td><td>1</td><td>3</td><td>10,268</td></tr>
+  <tr><td>10</td><td><code>agent-harness-title</code></td><td>200</td><td>1</td><td>2</td><td>149</td></tr>
+  <tr><td>11</td><td><code>agent-swe-bench</code></td><td>200</td><td>1</td><td>6</td><td>410</td></tr>
+  <tr><td>12</td><td><code>agent-tool-use</code></td><td>200</td><td>1</td><td>2</td><td>1,723</td></tr>
+  <tr><td>13</td><td><code>agent-csma-multiagent</code></td><td>200</td><td>1</td><td>5</td><td>6,038</td></tr>
+  <tr><td>14</td><td><code>nb-retrieval-augmented</code></td><td>200</td><td>1</td><td>3</td><td>3,973</td></tr>
+  <tr><td>15</td><td><code>nb-alignment</code></td><td>200</td><td>1</td><td>18</td><td>22,101</td></tr>
+  <tr><th colspan="4">合计</th><th>156</th><th>—</th></tr>
+</table>
+<p>取回 <b>600</b> 条（15 × 40）⇒ <b><code>kept 156</code> / <code>dropped 418</code></b>（剔除原因：<code>already in SEEN</code> 与 <code>stale &gt; 120h</code>；逐条明细见 <code>raw/2026-10-26-pm-fetch-r114-seen.json</code> 的 <code>meta.dropped</code>）。<code>generated=2026-10-26T10:05:40Z</code>。</p>
+
+<h2 class="sec">附录 I · 晚报 2 篇 <code>id_list</code> 权威复核（3 条请求 → 3 条完整返回）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>标题（官方 XML 照抄）</th><th>作者数</th><th>主分类</th><th>published / updated</th><th>PDF</th></tr>
+  <tr>
+    <td><code>2610.32055</code></td>
+    <td><i>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</i></td>
+    <td>5</td><td><code>cs.CL</code></td>
+    <td><code>2026-10-23T01:51:31Z</code> / 同</td>
+    <td>29 页 / 1,552,983 B</td>
+  </tr>
+  <tr>
+    <td><code>2610.31842</code></td>
+    <td><i>Scaling cross-situational word learning on children's naturalistic experiences</i></td>
+    <td>12</td><td><code>cs.CL</code></td>
+    <td><code>2026-10-22T19:24:51Z</code> / 同</td>
+    <td>30 页 / 2,415,002 B</td>
+  </tr>
+  <tr>
+    <td><code>2610.31985</code></td>
+    <td><i>The Helpful Agent Problem: When Emergent Cooperation Among LLM Agents Bypasses Intended Workflows</i></td>
+    <td>3</td><td><code>cs.AI</code></td>
+    <td><code>2026-10-22T22:55:40Z</code> / 同</td>
+    <td>26 页 / 619,009 B（备选，未入晚报，已入 SEEN「候选」）</td>
+  </tr>
+</table>
+<p>证据：<code>raw/2026-10-26-pm-idlist-r114a.xml</code> + <code>.headers</code>（<code>STATUS=200</code> · <code>CTYPE=application/atom+xml; charset=utf-8</code> · 8,781 B · 1.84s）。三条均 <code>updated == published</code>（v1）。</p>
+
+<h2 class="sec">附录 J · PDF 落地校验（晚报 2 / 2 · 全日 5 / 5）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节</th><th>Content-Length 一致</th><th><code>%PDF-</code> 头 / <code>%%EOF</code> 尾</th><th>页数</th><th>字符（pdftotext）</th><th>sha256（前 16 位）</th></tr>
+  <tr><td><code>2610.32055</code></td><td>1,552,983</td><td>✅</td><td>✅ / ✅</td><td>29</td><td>159,295</td><td><code>19b3a28214002254</code></td></tr>
+  <tr><td><code>2610.31842</code></td><td>2,415,002</td><td>✅</td><td>✅ / ✅</td><td>30</td><td>173,623</td><td><code>ca659deac09c824a</code></td></tr>
+</table>
+<p>路径 <code>research/pdf/2026-10-26/</code>（<b><code>pdf/</code> 已在 <code>research/.gitignore</code>，不入 git</b>）；校验失败即删除（2026-10-15 截断教训）。全日 5 篇 PDF 合计 <b>13,640,071 B ≈ 13.01 MB</b>（≤ 20 MB ⇒ 当日日报邮件单封可发）。</p>
+
+<h2 class="sec">附录 K · 台账变更（落盘脚本 <code>raw/update_r114.py</code>）</h2>
+<p>断言（任一不满足即中止）：<code>n_kept==156</code> / <code>n_queries==15</code> / <code>window_mode=="weekend_batch"</code> / <code>n_dropped==418</code> / 15 条查询全 <code>200</code> 且 <code>attempts</code> 合计 <code>15</code> / <code>items</code> 长度 156 且无重复 / 2 个推荐 ID 均在本批 / <code>id_list</code> 恰好 3 条 / 元数据<b>只取官方 XML</b>。运行输出：<code>SEEN rows appended: 156</code> · <code>SEEN status: {'候选': 4006, '收录': 256} sum 4262</code> · <code>papers.jsonl lines: 256</code>。</p>
+<p>口径说明：<b>候选 4,006 含「候选（RSS 补充）507」</b>（历史 RSS 补充子集，<b>不重复相加</b>到总行数以外）；<b>4,262 行 = 收录 256 + 候选 4,006</b>，与 <code>SEEN.md</code> 实际状态行数一致。</p>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<ol>
+  <li><b>页头与标题</b>：<code>早报 · 3/5</code> → <code>晚报 · 5/5 收口</code>；进度 <code>3/5</code> → <code>5/5</code>，补 PM 时点（<code>UTC 2026-10-26T10:0x</code>）。<b>原因</b>：18:00 轮已完成当日 5 篇收口，页头须与最终状态一致。</li>
+  <li><b>新增「晚报取数说明」ok-box</b>：登记批次刷新（<code>2026-10-22</code> → <code>2026-10-23</code>、<code>totalResults</code> 123563 → 123669 / 广度 637451 → 637936）、<code>kept 156</code> 的日期分布（10-23 = 126 / 10-22 = 30）、HF FAIL 与 RSS 恢复非空，以及<b>Fastly 边缘 <code>146.75.115.42</code> 过慢导致首次 fetch 中止</b>（改用 <code>run_arxiv_r109.py</code> 覆盖 DNS 边缘后成功，未改工具代码）。<b>原因</b>：把「拿到了什么」与「怎么拿到的、哪里出过问题」一起留痕，避免只报喜。</li>
+  <li><b>新增晚报 2 篇「科普」卡片（序号 4–5）</b>：<code>2610.32055</code>（本日科普 TOP-1）与 <code>2610.31842</code>，<b>8 字段齐全</b>（原题照抄 / 作者机构 / 日期 / 分类标签 / abs 链接 / 推荐理由 / 边界 / 建议动作），数字均<b>回查 PDF 原文</b>（页数、字符数、均值与区间）。<b>原因</b>：P0 第 4 批要求 18:00 补齐 2 篇并按「科普」口径选；同时执行 AM 轮「发布前回查 PDF」的教训。</li>
+  <li><b>附录 G 三条改写</b>：PM 从「待执行」→「已执行」；「连续性风险（第 4 日）」→「<b>已解除</b>」（<code>kept 156</code> 证明上游未停更，未启用 RSS 补充源、未放宽窗口）；今日产出补全为 5 篇 / PDF 5·5 / 台账 256·4,006·4,262。</li>
+  <li><b>新增附录 H–K</b>：PM 15 条查询逐条结果、<code>id_list</code> 3/3 复核（含备选 <code>2610.31985</code>）、PDF 校验与 sha256、台账断言与口径说明。<b>原因</b>：与 AM 附录 A–E 保持同等可核验密度，便于 supervisor 抽查。</li>
+  <li><b>footer</b>：改为「2026-10-26 晚报（5 / 5 · PM 收口）」，补 PM 证据路径与分镜链接；免责句由「3 篇」改为「5 篇均未精读全文」。</li>
+</ol>
+
 <footer>
-  <div>research 线 · 论文推荐日报 · <b>2026-10-26 早报（3 / 5 · AM 轮）</b> · 无外部依赖、离线可开（单文件自包含；无外链样式/脚本/字体）</div>
-  <div>取数：<code>export.arxiv.org/api/query</code>（AM 15 查询 <code>--seen</code>，<code>weekend_batch</code> 120h；<code>id_list</code> 1 批 3 条）· 证据：<code>raw/2026-10-26-am-probe-r113.json</code> / <code>-am-fetch-r113-seen.json</code> / <code>-am-idlist-r113a.{xml,headers}</code></div>
-  <div>免责：本页为<b>待读线索</b>，非结论；数字均<b>作者自报</b>、本线<b>未复现</b>；3 篇均<b>未精读全文</b>。引用请回到 arXiv 原文核对。</div>
+  <div>research 线 · 论文推荐日报 · <b>2026-10-26 晚报（5 / 5 · PM 轮收口）</b> · 无外部依赖、离线可开（单文件自包含；无外链样式/脚本/字体）</div>
+  <div>取数：<code>export.arxiv.org/api/query</code>（AM 15 查询 <code>--seen</code>，<code>weekend_batch</code> 120h；PM 15 查询 <code>--seen</code>，<code>kept 156</code>；<code>id_list</code> 2 批 6 条）· 证据：<code>raw/2026-10-26-am-probe-r113.json</code> / <code>-am-fetch-r113-seen.json</code> / <code>-am-idlist-r113a.{xml,headers}</code> / <code>-pm-probe-r114.json</code> / <code>-pm-fetch-r114-seen.json</code> / <code>-pm-idlist-r114a.{xml,headers}</code></div>
+  <div>分镜脚本：<a href="../video/SCENES/10_26.html">research/video/SCENES/10_26.html</a>（本日科普 TOP-1 = <code>2610.32055</code>）· 索引：<a href="index.html">日报索引</a></div>
+  <div>免责：本页为<b>待读线索</b>，非结论；数字均<b>作者自报</b>、本线<b>未复现</b>；5 篇均<b>未精读全文</b>。引用请回到 arXiv 原文核对。</div>
 </footer>
 </div>
 </body>

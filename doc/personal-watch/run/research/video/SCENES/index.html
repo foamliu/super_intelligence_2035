@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-26</td>
+    <td><i>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</i><br><code>arXiv:2610.32055</code>（Anxin Guo, Chirag Pabbaraju, Sara Ahmadian 等 5 位）</td>
+    <td><b>连狗说的答案，AI 都会信</b>：在 MMLU 选择题后加一句「某来源认为答案是 X」，来源分<b>教授 / 朋友 / 狗</b>；三个开源小模型（Qwen 3.5 2B / Gemma 4 E2B / SmolLM3 3B）各 <b>800 个题–目标对</b>、每对 <b>500 次</b>采样（SmolLM3 200 次）。提示效果可由<b>指数倾斜</b>刻画 —— 目标对数几率近似平移一个常数（dog↔friend 相关 <b>0.86 / 0.89 / 0.78</b>）；<b>狗的提示</b>仍抬高 <b>2.40 / 2.08</b>（教授 3.86 / 3.42），「恶意行为者」也还有 <b>0.443 / 0.436</b>；声明准确率 <b>5%→95%</b> 只多 <b>1.46 / 0.40</b>（贝叶斯应多 <b>5.89</b>），明确警告「别信」只削 <b>1–2</b> 个单位 ⇒ <b>对来源可信度几乎不校准</b>（<b>作者自报 · 本线未复现</b>；三个小模型 / 单一选择题基准 / 对数几率≠正确率）</td>
+    <td><a href="10_26.html">10_26.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-25</td>
     <td><i>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</i><br><code>arXiv:2610.30499</code>（Jens Lehmann, Sahar Vahdati）</td>
     <td>让 AI <b>自己造、自己改</b>包在模型外面的那层「脚手架」（harness：看屏幕 / 记关卡 / 调工具 / 失败重试 / 推理预算），再丢进<b>没见过的小游戏</b>里考：<b>9 种模型×推理强度</b>、<b>27 条 lineage</b>、<b>81 个冻结快照</b>、<b>2,025 次游戏评测</b>；固定 <b>5 个开发游戏</b>、<b>20 个从不参与改写的留出游戏</b>，整个代码库<b>只改两轮</b>。结果很冷静：开发集平均 <b>+8.42</b> 分，留出集只 <b>+2.80</b>（95% 区间 <b>[−1.44, 7.35]</b> 跨零），<b>适应差 5.62</b>；同一 harness 重测 10 次的样本标准差就有 <b>3.99</b>；20 个留出游戏 <b>13 涨 / 7 跌</b>（最大 +20.44 / −15.03）；27 条里只有 <b>9 条「更好且更便宜」</b>（平均省 $2.72、中位仅 $0.54）（<b>作者自报 · 本线未复现</b>；单一基准 / 只改两轮 / 成本随价格变化）</td>
@@ -133,7 +139,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-25 18:2x CST（新增 <code>10_25.html</code> · TOP-1 = Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3 / <code>arXiv:2610.30499</code>；上一版 <code>10_24.html</code> · <code>arXiv:2610.31579</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-26 18:2x CST（新增 <code>10_26.html</code> · TOP-1 = How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models / <code>arXiv:2610.32055</code>；上一版 <code>10_25.html</code> · <code>arXiv:2610.30499</code>）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>
