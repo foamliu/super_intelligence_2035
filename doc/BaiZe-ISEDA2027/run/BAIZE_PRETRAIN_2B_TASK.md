@@ -14,6 +14,7 @@
 > 用户原话：「pretrain 需要想办法提高S1吞吐，目标是复现 613,992 基线」。
 > **实测（ops 中继 RUN_ID 217，S1 当前跑法）**：gbs=128 ⇒ 2,097,152 tok/step；step time **4.09 / 4.87 / 5.20 s** ⇒ **≈400–510K tok/s**，
 > 仅为 #792 基线 **613,992 的 65–83%**。#792 基线档 = `seq16384 / mbs1 / gbs256 / accum16 / CP1 / DP16 / FP8 tensorwise / graph OFF / 2 节点 16 卡`。
+> 📌 **参数口径（勘误，不要再报错）**：本模型唯一权威 = **2,220,268,032 = 2.220B**（rank 上 `sum(numel())`；P-6 转换 507 tensor keys / 323 HF keys 均逐位一致）。provider 启动打印的「transformer 2.47B + embedding 0.53B = 3.00B」是**把 vocab 嵌入计重的粗糙打印**，2026-10-06 已在 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §P-3 标注作废。**从来没有 3B 模型**；今后任何报告/心跳引用参数量一律写 2.220B（或 2,220,268,032）。
 
 **请按序给结论（不要一次改一堆参数）**
 1. **归因（必须先做）**：用 Megatron timers 或 nsys 抓 step 50–200，给 **per-step 分解**（forward / backward / optimizer / grad-allreduce / dataloader / 空隙）。
