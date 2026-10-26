@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #284, 2026-10-26 15:21]**：🟢 空唤醒复核·无新令（用户令=本轮归档收尾）。运维令区复核：08:2x/22:4x/19:5x 已归档·**17:5x ✅DONE(wake#271) 本轮归档**（原文→`run/ARCHIVE_OPERATOR_VISION.md`，TASK 留1行指针）·余均[已归档]/✅DONE ⇒ **未完成指令：无**。📦 体积：TASK=29799B→26169B(25.6KB,归档17:5x全文)/MEMORY=32691B→32100B(31.3KB,wake#283+wake#279压缩为指针+新增wake#284心跳)，均≤32KB✓。4报告(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6脚本`vision/ocr_synth/*.py`在位复核。git fetch 后 behind=0/ahead=1(他线 data migrate 提交未推，非本线；本线 push 顺带推走)。本轮=归档收尾+补心跳防判死。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #285, 2026-10-26 16:42]**：🟢 空唤醒·无新令（git 15:21→16:42 无 vision 新指令）。深度复核运维令区：发现 **2026-10-17 🆕 ArmA 块漏标 ✅DONE**（wake#277~284 漏判）→ 核实报告 `run/reports/report_vision_armA_openclip_result_zh.html`(249行/§1-§6+附录A+B)**已交付**(commit `vision armA:` 2f15f88eb/wake#133)，EXPERIMENTS §10 数字一致(lp58.03±0.02/5-NN53.98/Δlp−9.02pp/Δ5-NN+11.63pp) ⇒ 本轮**补标✅DONE+原文归档**→ARCHIVE_OPERATOR_VISION.md(+4146B CRLF)+TASK留1行指针。📦 体积：TASK 26169→22247B(21.7KB)/MEMORY 32109→≤32KB✓(wake#284/wake#277 滚为指针)。⚠️ **观察(待运维裁决·不行动)**：ArmA 报告现位历史目录 `run/reports/`，与 18:5x 运维纠正「报告须落项目级 reports/」不一致；该纠正 git mv 漏了 ArmA+armB_openclip/armC/armD_r2/armE_r2×2/next_steps/stage4_mllm 等多份 vision 旧报告+harness/pretrain 报告(跨线·部分与项目级重复)→ 留待运维裁定。4报告+6脚本在位。**仍在等**：①22:4x 质量偏差裁定 ②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres scope。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #284 (2026-10-26 15:21, 空唤醒·归档17:5x运维令块+滚动MEMORY·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #283 (2026-10-26 14:09, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #282 (2026-10-26 12:59, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步·补心跳防判死) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #281 (2026-10-26 11:49, 空唤醒复核·无未完成令·4报告+6脚本在位·git同步) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
@@ -18,7 +19,7 @@ WAITING: 1
 > 📄 **【路线①细化 · OCR 专项 SFT 执行方案报告 ✅ DONE · wake#272 · 2026-10-25 21:0x】**（9节方案报告 `reports/report_vision_ocr_sft_plan_zh.html`(22706B/0 script/0外链/标签配平)+生成器+EXPERIMENTS §17；回答四问：中英配比A英6:中3:混1/B中英1:1·公式三通道(纯公式5%/正文夹公式3%/混排2%)·类别P0-P2·SFT=ArmE-R2 step3500+LoRA r64+LR1e-5+70:30混780k；判据 OCRBench≥+2pp + 决策树）全文已归档 → daily-memories-vision/2026-10-25.md。需要时再读。
 > 📦 **wake #278 (2026-10-26 07:49, 空唤醒复核·无未完成指令·补心跳防判死·10M数据集+脚本+报告在位·git同步)** 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
-> **本唤醒流水 [wake #277, 2026-10-26 06:32]**：📦 体积维护归档（step0：TASK 33693B/MEMORY 33540B 均>32KB）。22:4x 块(✅DONE wake#275)原文归档→ARCHIVE_OPERATOR_VISION.md(+5752B，留1行指针，保留待裁定+两处偏差)→TASK 33693→29169B✓；MEMORY 4 条冗长流水(272/274/275/276，全文在 daily-memories-vision/2026-10-26.md)压缩为指针→33540→31888B✓。归档后复核：22:4x/19:5x已归档DONE·17:5x✅DONE(wake#271)→**无未完成指令**。10M 数据集在位(2001 tars/9.999M/470GB/fail=0)。git 同步 behind=0/ahead=0。数字全实测。**未完成指令：无**⇒**WAITING: 1**。
+> 📦 wake #277 (2026-10-26 06:32, 体积维护归档·22:4x块归档+MEMORY滚动·无未完成指令) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 
 > 📦 wake#272 (2026-10-25 21:0x)：路线①细化报告交付(report_vision_ocr_sft_plan_zh.html 22706B+§17+生成器+commit `vision ocr-plan:`)。流水原文 → daily-memories-vision/2026-10-25.md。**未完成指令：无**。
 > 📦 wake#274 (2026-10-26 01:1x)：10M 监控 41.85%+加载器兼容验真(build_gpic_loader→(16,3,224,224) finite)。流水原文 → daily-memories-vision/2026-10-26.md。**未完成指令:有(10M async)**。
@@ -84,7 +85,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（16:1x方案报告已交付,无训练运行,待运维下一令）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-26 14:09 (wake #283, 空唤醒·补心跳防判死)**：三条运维令均 ✅DONE —— 22:4x(10M OCR 图文对, wake#275 全量 DONE：ok=9,999,999/fail=0/2000 tars/470GB/893.6 img/s + 报告 15754B + §18；**待用户裁定** 接受/index过滤/扩语料重生成) / 19:5x(路线①SFT方案报告, wake#272) / 17:5x(OCR合成数据调研报告, wake#271)。10M 数据集在位(2001 tars/9.999M index/470GB/fail=0)。4 报告+6 脚本在位复核。git behind=0/ahead=0 同步。B4 3/4 组件(MMVet/MathVista 需 OPENAI_API_KEY / 336+anyres 需工程 scope)仍阻塞待运维裁决；A3(wake#266)假设证伪。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决/22:4x 质量偏差裁定，30min轮询）。 |
+| 更新 | **2026-10-26 16:42 (wake #285, 补标2026-10-17 ArmA块✅DONE+原文归档·补心跳防判死)**：三条运维令均 ✅DONE —— 22:4x(10M OCR 图文对, wake#275 全量 DONE：ok=9,999,999/fail=0/2000 tars/470GB/893.6 img/s + 报告 15754B + §18；**待用户裁定** 接受/index过滤/扩语料重生成) / 19:5x(路线①SFT方案报告, wake#272) / 17:5x(OCR合成数据调研报告, wake#271)。10M 数据集在位(2001 tars/9.999M index/470GB/fail=0)。4 报告+6 脚本在位复核。git behind=0/ahead=0 同步。B4 3/4 组件(MMVet/MathVista 需 OPENAI_API_KEY / 336+anyres 需工程 scope)仍阻塞待运维裁决；A3(wake#266)假设证伪。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决/22:4x 质量偏差裁定，30min轮询）。 |
 
 ### 评测耗时归因（2026-10-15）
 

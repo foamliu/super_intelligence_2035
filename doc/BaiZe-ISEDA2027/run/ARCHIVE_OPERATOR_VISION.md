@@ -2506,3 +2506,43 @@ setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /de
 - 自检：不低于 15KB、`grep -c '<script'` = 0、`grep -c 'href="http'` = 0、HTMLParser 标签配平。
 - 本轮**只调研 + 写报告**：不启训练、不动 ArmB / C / D / E 产物、不伪造 API key（等用户批准预算）。
 
+
+
+---
+
+### [已归档] §运维令·2026-10-17（📄 ArmA 中文报告 + 归档 · 🔌 open_clip × AIMv2-style 兼容性工程评估）· 用户直令 · 最高优先
+
+> **✅ 已完成（wake#133, 2026-10-17 15:02）**。归档于 2026-10-26 wake#285 —— 任务书该块此前漏标 ✅DONE，本轮核实已全量交付后补标 + 原文归档。
+
+> **交付核验（wake#285）**：① 报告 `run/reports/report_vision_armA_openclip_result_zh.html`（249 行 / §1-§6 + 附录A 兼容性 + 附录B 概念澄清 / 数字全溯源 EXPERIMENTS §10：lp 58.03±0.02% · 5-NN 53.98% · Δlp −9.02pp · Δ5-NN +11.63pp · 非单变量）；commit `vision armA:` = 2f15f88eb；路径写入 MEMORY_VISION.md + EXPERIMENTS §10.6。② 兼容性附录（附录A：模型/推理接口兼容·open_clip loss/训练环不兼容·4 步做法+代码行号；附录B：官方 AIMv2 vs 本仓 AIMv2-style）。③ ArmB 已被 12:0x 取代并训完评完（ProtB 62.093/58.102·MLLM 26.10%，EXPERIMENTS §11）。④ 纪律遵守（纯写作零 GPU·数字可溯源）。
+
+> **⚠️ 旁注（wake#285 观察·待运维裁决·本轮不行动）**：ArmA 报告现位 `run/reports/`，与 2026-10-25 18:5x 运维纠正「报告须落项目级 `doc/BaiZe-ISEDA2027/reports/`·run/reports/ 不许再写」不一致。该 18:5x 纠正当时 `git mv` 搬了 OCR 那批，漏了 ArmA 及 armB_openclip/armC/armD_r2/armE_r2×2/next_steps/stage4_mllm 等多份 vision 旧报告 + harness/pretrain 报告（跨线·部分与项目级 reports/ 重复）。本轮仅闭合本块·不擅自跨线搬运·留待运维统一裁定。
+
+> **原文（verbatim·自 BAIZE_VISION_TASK.md:53-78 搬迁·一字未改）**：
+
+### 🆕 运维指令 · 2026-10-17（📄 ArmA 结果中文报告 + 归档 · 🔌 open_clip × AIMv2-style 兼容性工程评估）· 用户直令 · 最高优先
+
+> **用户令（2026-10-17）**：「vision：把 ArmA 结果写成中文报告并归档。问题：open_clip 接口和AIMv2-style不能兼容吗？」
+
+**① 报告（先做，纯写作零 GPU）**：`reports/report_vision_armA_openclip_result_zh.html`，中文自包含，必须含：
+- **协议**：ProtB（full IN-1k 1.28M train + 50k val，SGD 90 epochs，seeds 0/1/2），`feature=projected`，ckpt=`latest.pt`；数字取 `run/vision/armA_protb_vitb16_224_results.json`（lp 58.02/58.07/58.02 → **58.03±0.02%**；5-NN **53.98%**）。
+- **训练口径**：open_clip **ViT-B/16 224**（visual 86.2M / total 149.6M，双塔随机初始化）、**ClipLoss InfoNCE**、GBS 2048（MBS 256×8）、LR 2e-3→2e-4（warmup 8000）、**154,500 步**、数据 GPIC(7437)+CC12M(1100)+Amshaker(2250)=10,787 shards ≈118M 对；证据 `run_armA_openclip.sh:13-15,45-52` + `armA_openclip_train.py:169-187,256-316`。
+- **对比表**（同表列：协议/塔/参数量/目标/步数/数据/ProtB lp/5-NN）：ArmA vs **④-4ep（67.05±0.02 / 42.35）**、④-2ep、V3、R11-G 等，数值以 `EXPERIMENTS_VISION.md` 既有记录为准。
+- **关键解读（必须写）**：ArmA = **lp −9.02pp / 5-NN +11.63pp** ⇒ 检索型表征强、线性可分性弱，与「C1/lp 背离」假设一致；⚠️ **不是单变量对照**（塔 86.2M vs 126.8M、目标 InfoNCE vs AIMv2-style dense、步数/样本不同）⇒ **不得写成「AIMv2 目标比 InfoNCE 好 9pp」**。
+- **诚实条款**：内部 ProtB 口径、非官方榜；单 backbone/单预算点；5-NN 与 lp 口径不同；仅评测 3 seeds（训练单 seed）。
+- **归档**：报告 + 结果 JSON + 训练/评测日志路径写入 `MEMORY_VISION.md` 与 `EXPERIMENTS_VISION.md` 新 §「ArmA（open_clip ViT-B/16, 2026-10-17）」；commit `vision armA:`。
+
+**② 回答问题（报告附录 A，必须给结论 + 代码行号）**：
+- **结论：分两层 —— 模型/推理接口兼容；open_clip 自带「训练损失/循环」不兼容（需自定义，不是不能做）。**
+- **兼容证据**：ArmA 用的就是 open_clip 模型，`model(imgs, texts) → (img_feat, txt_feat, logit_scale)` + `ClipLoss`（`armA_openclip_train.py:286-287`）；导出侧只需 `encode_image` 的 pooled/patch 输出（`mllm_bridge/open_clip_baize.py:8-16,26-34`）。predictor 是训练期辅助头，**不进入推理图** ⇒ 不影响 open_clip 加载/评测。
+- **不兼容点**：open_clip 的 loss 家族（Clip/SigLIP/CoCa/GenLIP…）**没有 patch 级重建目标**；其训练循环只吃 `(image,text)`，不提供 mask 采样/patch 目标。我们这套 AIMv2-style 是**自研训练环**：`loss = contrast_weight×InfoNCE + patch_loss_weight×MSE(predictor(patches[mask]), target[mask])`，`mask_ratio=0.6`（`r9_train.py:782-807`；实现说明 `reports/report_vision_aimv2_impl.html`）。
+- **做「open_clip 模型 + AIMv2-style」需要 4 件事（≈1–2 人日，纯 CPU）**：
+  1. 在 open_clip ViT 上挂 `PatchPredictor`（≈0.66M）；
+  2. 取 patch tokens（按 open_clip 版本用 `visual.forward_features` / `visual.trunk.patch_embed` / `forward_intermediates` 之一，或用 forward hook **复用同一次前向**，避免二次算力；实现前先 `python -c` 打印 `type(model.visual)` 与可用方法并截图/日志存证）；
+  3. 自定义 loss + 训练步（照 ArmA 循环改 ≈50 行）；
+  4. ckpt 存 predictor；**导出 open_clip 权重时必须剥离 predictor**（或单独存 `predictor.pt`），否则 `load_state_dict(strict=True)` 会报 unexpected keys；若 `contrast_weight=0`（纯 AR）→ `find_unused_parameters=True` 或冻结文本塔（ArmA 现为 `False`）。
+- **概念澄清**：官方 AIMv2 = 多模态自回归（图文 token + decoder，弃用对比），open_clip 的对比接口无法表达；本仓 `r9_train.py` 的 `aimv2_ar` + `decoder_depth` 才是那一支。报告须分开写，避免混淆。
+
+**③ ArmB**：配方/起训/排队**已被 2026-10-17 12:0x 顶部指令取代**（open_clip ViT-B/16 + AIMv2-style，全量 8000 GPIC，3 epoch）；本条只保留 **① 报告** 与 **② 兼容性附录**。预注册判据仍有效：lp ≥58.03% 不倒退；≥61.0% 且 5-NN ≥48.98% → 接受混合；否则写负面结论。
+
+**④ 纪律**：不占 GPU（除放行）；每个数字可溯源到 `文件:行`/原始日志；不改已发布数值；与 pretrain 线 IO 错峰。
