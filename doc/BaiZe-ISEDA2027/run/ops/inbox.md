@@ -1,4 +1,57 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
+<!-- RUN_ID: 214 | TARGET: 29 -->
+## RUN_ID 214 — 只读验收：S1 是否真在训 + 实际启动参数是否满足新令（RoPE 1M / ckpt2000 / AdamW / graph OFF）
+
+```bash
+set -u
+E=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+echo "=== RUN_ID 214 | S1 acceptance | $(date '+%F %T') | host=$(hostname) ==="
+echo "[1] pretrain_launcher 进程"
+ps -eo pid,ppid,etimes,args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | cut -c1-140 || echo "  (none)"
+echo
+echo "[2] 实际启动参数（关键项逐条）"
+CMD=$(ps -eo args= | grep 'pretrain_launcher\.py' | grep -Ev 'grep|cline|bun|node /' | head -1)
+if [ -n "$CMD" ]; then
+  for k in rotary-base max-position-embeddings optimizer lr-decay-style lr-decay-shape lr-warmup-iters lr-decay-iters train-iters seq-length global-batch-size micro-batch-size context-parallel tensor-parallel save-interval fp8-recipe enable-cuda-graph name; do
+    v=$(echo "$CMD" | tr ' ' '\n' | grep -A1 -- "^--$k\$" | tail -1)
+    if echo "$CMD" | grep -q -- "--$k\b"; then echo "  --$k = ${v:-<flag>}"; else echo "  --$k = (NOT PASSED)"; fi
+  done
+else
+  echo "  (no launcher cmdline)"
+fi
+echo
+echo "[3] 最新训练日志与 iteration 行"
+for f in /tmp/baize_s1_formal.log /tmp/baize_s1_worker_node.log; do
+  [ -f "$f" ] || continue
+  echo "  --- $f (mtime=$(stat -c '%y' "$f" | cut -c1-19) size=$(stat -c %s "$f"))"
+  grep -E 'iteration +[0-9]+' "$f" 2>/dev/null | tail -2 | cut -c1-200
+done
+NEW=$(ls -t /tmp/baize_s1*.log 2>/dev/null | head -1)
+echo "  newest=$NEW"
+[ -n "${NEW:-}" ] && tail -6 "$NEW" | cut -c1-200
+echo
+echo "[4] GPU（util/显存）"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8
+echo
+echo "[5] exp 目录 / ckpt / tb 事件"
+ls -d $E/baize2b* 2>/dev/null || echo "  (no baize2b dir)"
+for d in $E/baize2b*/; do
+  [ -d "$d" ] || continue
+  echo "  dir=$d"
+  [ -f "$d/checkpoints/latest_checkpointed_iteration.txt" ] && echo "    latest=$(cat "$d/checkpoints/latest_checkpointed_iteration.txt")"
+  echo "    n_ckpt=$(ls -d "$d"/checkpoints/iter_* 2>/dev/null | wc -l)"
+  find "$d" -name 'events.out.tfevents.*' -printf '    ev %TH:%TM %s %p\n' 2>/dev/null | sort -r | head -2
+done
+echo
+echo "[6] TB 6006"
+ss -ltn 2>/dev/null | grep ':6006' | cut -c1-80 || echo "  (not listening)"
+curl -s -o /dev/null -w '  http=%{http_code}\n' --max-time 5 http://127.0.0.1:6006/ 2>/dev/null || echo "  curl fail"
+echo
+echo "[7] 最近提交（agent 是否在推进）"
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log -3 --format='  %h %ad %s' --date=format:'%m-%d %H:%M' | cut -c1-120
+echo "=== DONE 214 ==="
+```
+
 <!-- RUN_ID: 213 | TARGET: 29 -->
 ## RUN_ID 213 — 只读：S1 正式/worker 日志原文 + 双机 rendezvous 端口 + 进程是否还在动
 
