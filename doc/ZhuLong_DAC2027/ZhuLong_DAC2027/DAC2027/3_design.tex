@@ -9,7 +9,7 @@ ZhuLong is built on Cline-CLI \cite{cline2024cline}, an open-source framework fo
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/zhulong_arch_3.pdf}
+\includegraphics[width=\textwidth]{figures/zhulong_arch.pdf}
 \caption{ZhuLong system architecture. The LLM agent runtime, the API knowledge base, and the EDA execution sandbox are linked through \emph{four} unified MCP tools (\texttt{search\_apis}, \texttt{search\_apis\_by\_keyword}, \texttt{get\_api\_details}, \texttt{run\_code}) that dispatch on a single \texttt{lang}--\texttt{host} pair to \emph{three} platforms/languages (PyAether, SKILL, Tcl). Offline API self-exploration pre-augments the knowledge base (dashed), and execution feedback is looped back for iterative refinement.}
 % ZhuLong 系统架构。LLM 智能体运行时、API 知识库、EDA 执行沙盒经四个统一 MCP 工具（search_apis / search_apis_by_keyword / get_api_details / run_code）连接，由统一 lang-host 对分发到三个平台/语言（PyAether / SKILL / Tcl）。离线自探索运行前增强知识库（虚线），执行反馈回环支持迭代优化。图 2026-10-24 TikZ 重画为 zhulong_arch_3.pdf（除图文矛盾：补齐 search_apis_by_keyword 与 Tcl）。
 \Description{Block diagram of ZhuLong's three components: the LLM agent runtime, the API knowledge base (search and retrieval), and the EDA execution sandbox. The runtime calls four MCP tools -- search_apis, search_apis_by_keyword, get_api_details, and run_code -- which dispatch on a single lang--host pair to three platforms (PyAether, SKILL, Tcl); execution feedback is looped back for iterative refinement, and an offline self-exploration step pre-augments the knowledge base.}
