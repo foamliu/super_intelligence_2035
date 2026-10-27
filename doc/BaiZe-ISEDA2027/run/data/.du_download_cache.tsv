@@ -9,3 +9,5 @@ download_dir	bytes
 /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq	477975290461
 /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh	324321522155
 /nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC	68553927738
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data	318990486183
+/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data	54220373384
