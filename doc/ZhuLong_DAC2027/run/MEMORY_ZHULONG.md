@@ -4,6 +4,17 @@ WAITING: 1
 
 <!-- 运维直令 2026-10-27 08:31：8192 5-run（70.8±7.7%）全部作废，maxTokens 改回 16384 与 cline 基线对齐，r1 已重起 batch 2026_1027_083127（PID 800411），4 worker providers.json = glm-5.3-flash+16384+/v1+reasoning=false 与 cline 基线逐项 diff 全 ✅，唯一变量 = CLI 二进制。任务书 10-27 令置顶。loop 由运维重启。agent 接管 r1→r5 自驱。 -->
 
+<!-- heartbeat 2026-10-27 20:16 🔴 **r2 regrade ⚠️ infra 作废（pyAether license unavailable）·WAITING=1 等 license 恢复**（10-27 令②5·r2 launcher 19:10 收口 → regrade 三次尝试 → 第三次 4s 完成但 license 耗尽）：
+① r2 launcher PID 1875510 已退出（19:10）·raw stats success=132/failure=21/timeout=5/total_time=64401s·completed jsonl 158 行 status=success=118/fail=35/timeout=5。
+② **r2 regrade ⚠️ infra 作废**：三次尝试 — 第 1/2 次 futex 死锁（根因=opencode shell 继承 stale SANDBOX_PORT_HTTP=8668 env → shards 连错端口卡死·unset 后第 3 次跑通）·第 3 次（PID 4166657/4166660·20:06:56→20:07:00 仅 4s）log 显示 118 脚本→4 shard→合并 118 结果→**25/158 pass (15.8%)**·但 execution_results.jsonl 93/118 stderr="pyAether licence unavailable · licence circuit breaker open: 47 consecutive failures" → **license 耗尽 infra 作废·25/158 不计数·非 r2 真实成绩**。
+③ **根因**：r2 eval 17h 长 run（含 task 158 卡 3h -32001 retry）耗尽 pyAether license pool → regrade 时 circuit breaker 已开。
+④ **判据①✅** r2 worker_1 = glm-5.3-flash+16384+/v1+reasoning=false 与 cline 基线逐字节对齐·唯一变量=CLI 二进制。
+⑤ **r1 ✅ 已收口=71.5%(113/158)**（batch 2026_1027_083127·归档 20261027_1233）。
+⑥ infra 现状：4 端口 8650/8651/8652/8654 OPEN（HTTP 响应）·但 pyAether license circuit breaker OPEN（curl 测 run_code 60s 超时无响应）·8090 PID2778637 活·/home 20G free·loop PID813663 活带 proxy ✅。
+⑦ **下一步**：按 §7 infra 作废规则 — 不计数·记 ⚠️ infra·WAITING=1 原地等 license 恢复·下次唤醒先 curl 测 license·恢复则重跑 regrade（脚本 /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh·⚠️ 启动前 unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR）·regrade 出 pass→记 r2 成绩→起 r3→...→r5→5/5 mean±std→对比 cline 86.8±1.6%→更新报告 §8。
+⑧ ops inbox RUN_ID 128·无新指令。本 session self-commit+push（带 proxy）。详见 daily-memories/2026-10-27.md §[20:16]。-->
+- [2026-10-27 20:16] 🔴 **r2 regrade ⚠️ infra 作废（pyAether license unavailable）·WAITING=1 等 license 恢复**：① r2 launcher 19:10 收口·raw stats 132/21/5·completed jsonl 118/35/5。② **regrade 三次尝试**：第 1/2 次 futex 死锁（根因=stale SANDBOX_PORT_HTTP=8668 env 继承→shards 连错端口·unset 后第 3 次跑通）·第 3 次（20:06:56→20:07:00 仅 4s）**25/158 pass (15.8%) 但 execution_results 93/118 stderr="pyAether licence unavailable · circuit breaker open: 47 consecutive failures" → license 耗尽 infra 作废·不计数**。③ 根因=r2 eval 17h 长 run + task 158 卡 3h retry 耗尽 license pool。④ 判据①✅ r2 worker_1 配置逐字节对齐。⑤ r1 ✅=71.5%(113/158)。⑥ infra：4 端口 OPEN 但 license circuit breaker OPEN（curl 60s 超时）·8090/loop/proxy 全绿。⑦ **下一步**：§7 infra 作废规则·WAITING=1 等 license 恢复·下次唤醒 curl 测 license·恢复则重跑 regrade（⚠️ 启动前 unset SANDBOX_PORT_HTTP/PORT_TCP/WORKDIR）·出 pass→记 r2→起 r3→...→r5→对比 cline 86.8±1.6%。本 session self-commit+push（带 proxy）。
+
 <!-- heartbeat 2026-10-27 19:37 🟢 **r2 已自然收口·regrade 跑中（PID 4016380/4016383·19:36:59 起·预计 ~19:52 出 pass/158）**（10-27 令②5·r2 launcher 19:10 自然退出·进入 §7 Step A 打分环节）：
 ① r2 launcher PID 1875510 已退出（pgrep 无 run_zhulong_script.sh ✅）·log mtime 19:10·Step 7.1 SUCCESS·输出 /home/app.e0031982/eda_code_eval/2026_1027_123502/·trace mtime 19:10。
 ② **r2 raw stats**：success=132/failure=21/timeout=5/total_time=64401s（~17h53min·含 task 158 卡 ~3h）·completed jsonl 158 行 status=success=118/fail=35/timeout=5（gen-side fail+timeout=40/158·判据②黄旗·同 r1 趋势·zhulong CLI 稳定现象·非配置混杂）。
