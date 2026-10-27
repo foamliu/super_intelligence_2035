@@ -1277,3 +1277,14 @@
 | 2026-10-27 | Mac 版 Ollama 支持本地 TTS（Gradium Phonon 系列），官方称 M5 Max 上比 Gradium 自身实现快 35%、支持五语与实时语音 | IT之家 `1/018/228`（CST 10-27 11:01 · 正文全文已读） | 不收（第 157 轮 · 附录 A11 · 工具发布说明，非事件性） | https://www.ithome.com/1/018/228.htm |
 | 2026-10-27 | 钛媒体早报/评论类：《Edge AI Daily 早报（10 月 27 日）》·《GPT-6.1 Terra 发布，评论区：拉完了》·《AI 大战，欧洲急了》·《囤卡三年》·《机器人集合店：有流量，钱难赚》 | 钛媒体 `8182929` / `8182987` / `8182780` / `8183156` / `8182455` | 不收（第 157 轮 · 附录 A12 · 早报聚合 / 评论 / 分析体） | https://www.tmtpost.com/8182929.html |
 | 2026-10-27 | 英文源本轮候选（HN 20 条）：《Empires of AI》（Foreign Affairs）· r/opensource 禁 AI 项目与非英语使用者（The Verge / Tom's Hardware）· 科技公司借宗教谈 AI 道德（AP） | Hacker News `search_news` | 不收（第 157 轮 · 附录 A13 · 专栏 / 社区规则 / 宗教议题） | https://news.ycombinator.com/ |
+| 2026-10-27 | 智元发布具身 Agent 框架 Genie Master：精灵 G2 在真实便利店「无人在环」持续自我进化（Physical RSI）；11-02 将安排 6 台连续 24 小时便利店作业直播测试（厂商自述） | IT之家 `1/018/423` | https://www.ithome.com/1/018/423.htm |
+| 2026-10-27 | 小米披露 21 自由度仿生灵巧手：26 电机混合驱动 · 1500 点全掌触觉 · 基于 1827 个真实作业 SOP（覆盖 70.8% 以上典型工段工序） | IT之家 `1/018/345` | https://www.ithome.com/1/018/345.htm |
+| 2026-10-27 | 台媒：台积电拟对 CoWoS 等先进封装涨价 10%–20%（AI 需求 + 产能吃紧）；分析师预估月产能 2026 年破 13 万片、2027 年 20 万片（单源·台积电未回应） | IT之家 `1/018/409`（据工商时报） | https://www.ithome.com/1/018/409.htm |
+| 2026-10-27 | 微软身份验证器 AuthMask 攻击链：无权限应用冒充第一方应用获取令牌（委托邮箱/文件/日历）；已修复 CVE-2026-80097，6.2606.4246 之前版本受影响 | IT之家 `1/018/347` | https://www.ithome.com/1/018/347.htm |
+| 2026-10-27 | 云南大学钱声帮团队 PNAS：三颗系外行星在宿主恒星进入核心氦燃烧（红巨星）后仍幸存，轨道均处理论应被吞噬区（24 Boo / HD 12648 / TYC 4282-605-1） | IT之家 `1/018/411`（据新华网） | https://www.ithome.com/1/018/411.htm |
+| 2026-10-27 | Sucker Punch 裁员 26 人（工作室约 200 人），称「市场环境面临挑战」，同时在筹备新项目（原文未提 AI） | IT之家 `1/018/253`（据 Aftermath） | https://www.ithome.com/1/018/253.htm |
+| 2026-10-27 | 彭博：Anthropic 若以 2 万亿美元估值上市，澳联邦银行持股约值 32 亿澳元（未计稀释）；该行 2025-03 参与 E 轮，账面 1.53 亿→15.3 亿澳元 | IT之家 `1/018/417`（据彭博社） | https://www.ithome.com/1/018/417.htm |
+| 2026-10-27 | 凤凰网科技引知情人士：DeepSeek 大举扩充团队、规划新增长路线；新一轮融资约 1000 亿元（传闻），半年累计或约 1500 亿元；梁文锋长期在北京租房 | IT之家 `1/018/339` | https://www.ithome.com/1/018/339.htm |
+| 2026-10-27 | 附录 A14：苹果 iOS 27.2 为 iPhone Duo 带来 Apple Pencil (USB-C) 支持，需线缆配对（不收·常规功能说明） | IT之家 `1/018/420` | https://www.ithome.com/1/018/420.htm |
+| 2026-10-27 | 附录 A15：华为发布 Huawei VitaAAU（RetinaMIMO 引入 U6GHz · 256TRx · 1500+ 阵子），宣称 10Gbps 峰值（不收·电信设备） | IT之家 `1/018/392` | https://www.ithome.com/1/018/392.htm |
+| 2026-10-27 | 附录 A16：英文源 HN 20 条候选（Empires of AI / r/opensource 版规 / AP 宗教议题 / Claude 抗毒血清）· 钛媒体评论稿 3 篇（均不收） | Hacker News / 钛媒体 | https://www.foreignaffairs.com/china/empires-artificial-intelligence-niall-ferguson-eric-schmidt |
