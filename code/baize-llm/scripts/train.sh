@@ -178,6 +178,10 @@ PYTORCH_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTE
 # Fix: inject BAIZE_NUM_WORKERS into PYTORCH_ENV (which IS exported to both nodes
 # via `export $PYTORCH_ENV` on local + ssh remote paths).
 PYTORCH_ENV="$PYTORCH_ENV BAIZE_NUM_WORKERS=${BAIZE_NUM_WORKERS:-4}"
+# 2026-10-27 #806 spawn+COW 修复：把 start-method / persistent_workers 透传到双节点
+# （与 BAIZE_NUM_WORKERS 同机制，避免 #801 那种「只 .29 生效 .12 默认值」坑）。
+PYTORCH_ENV="$PYTORCH_ENV BAIZE_DATALOADER_START_METHOD=${BAIZE_DATALOADER_START_METHOD:-}"
+PYTORCH_ENV="$PYTORCH_ENV BAIZE_PERSISTENT_WORKERS=${BAIZE_PERSISTENT_WORKERS:-0}"
 # 2026-10-27 fix (#801): default TORCH_DISTRIBUTED_TORCH_TRACE so crash tracebacks
 # are captured on disk (error_file=<N/A> twice now — 21:18 and 04:23).  Unlike
 # TORCH_DISTRIBUTED_DEBUG=DETAIL (which wraps ProcessGroupNCCL and breaks DDP
