@@ -23342,3 +23342,145 @@ echo "=== DONE 222 ==="
     log=/tmp/baize_s1_spawn_v3_nw8_100.log
 === DONE 222 ===
 ```
+
+---
+
+## RUN_ID 223 · 2026-10-28 07:00:09 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 223 | pretrain liveness | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo "[1] pretrain loop 进程（两机）"
+ps -eo pid=,ppid=,etimes=,stat=,lstart=,args= 2>/dev/null | grep -E 'baize_pretrain_loop' | grep -v grep | cut -c1-170 || echo '  .29 无 pretrain loop ❌'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "baize_pretrain_loop" | grep -v grep | cut -c1-160 || echo "  .12 无 pretrain loop"' 2>/dev/null || true
+
+echo "[2] pretrain loop 日志尾部"
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -15 /tmp/baize_pretrain_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-175
+
+echo "[3] agent 进程（本轮唤醒是否进行中）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -iE 'cline|fleetagent' | grep -v grep | cut -c1-140 | head -4 || echo '  无 agent'
+
+echo "[4] 训练进程（spawn/nw8 长跑是否活着）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'pretrain_launcher|train\.sh s1|torchrun' | grep -v grep | head -6 | cut -c1-150
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "pretrain_launcher|train.sh s1" | grep -v grep | head -6 | cut -c1-150' 2>/dev/null || true
+
+echo "[5] 双机 GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/  .29 /'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | sed "s/^/  .12 /"' 2>/dev/null || true
+
+echo "[6] spawn 相关日志最新迭代进度"
+for f in /tmp/baize_s1_spawn_v3_nw8_100.log /tmp/baize_s1*.log; do
+  [ -f "$f" ] || continue
+  echo "  --- $f  mtime=$(stat -c '%y' "$f"|cut -c1-19)  size=$(stat -c %s "$f") ---"
+  grep -aoE 'iteration +[0-9]+' "$f" 2>/dev/null | tail -1 | sed 's/^/    last: /'
+  tail -3 "$f" 2>/dev/null | cut -c1-160 | sed 's/^/    /'
+done | head -40
+
+echo "[7] 两机内存/swap/swappiness 现状"
+echo "  .29: $(free -g | awk '/Mem:/{printf "mem used=%dG avail=%dG",$3,$7} /Swap:/{printf "  swap used=%dG free=%dG",$3,$4}')  swappiness=$(cat /proc/sys/vm/swappiness)"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'free -g | awk "/Mem:/{printf \"  .12: mem used=%dG avail=%dG\",\$3,\$7} /Swap:/{printf \"  swap used=%dG free=%dG\",\$3,\$4}"; echo "  swappiness=$(cat /proc/sys/vm/swappiness)"' 2>/dev/null || true
+
+echo "[8] 修复是否落地（common.env 的 spawn/nw 旋钮 + dataset 是否 memmap）"
+grep -nE 'NUM_WORKERS|SPAWN|PERSISTENT|PREFETCH' "$GR/code/baize-llm/configs/common.env" 2>/dev/null | head -8 | sed 's/^/    /'
+grep -rnE 'np\.memmap|mmap_mode' "$GR/code/baize-llm" --include='*.py' 2>/dev/null | head -5 | sed 's/^/    /'
+
+echo "=== DONE 223 ==="
+```
+
+**输出**
+```
+=== RUN_ID 223 | pretrain liveness | 2026-10-28 07:00:09 | host=whag0pgpuap29 ===
+[1] pretrain loop 进程（两机）
+[2] pretrain loop 日志尾部
+-rw-r----- 1 app.e0031982 app.adm 12827786 2026-10-27_17:11:27 /tmp/baize_pretrain_loop.log
+The 10 remaining processes are likely the 8 rank processes plus the torchrun. The spawn workers should be killed when their parent dies, but let me make sure.
+
+Let me kill all remaining processes forcefully.
+10 processes still alive. Memory still at 1769GB. Killing all remaining forcefully:
+[run_commands] pkill -9 -f 'pretrain_launcher' 2>/dev/null; pkill -9 -f 'torchrun' 2>/dev/null; pkill -9 -f 'train_s1' 2>/dev/null; ...
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)
+      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)
+      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)
+      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)
+      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)
+
+[3] agent 进程（本轮唤醒是否进行中）
+2751345 2036535 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982
+[4] 训练进程（spawn/nw8 长跑是否活着）
+[5] 双机 GPU
+  .29 0, 0 MiB, 0 %
+  .29 1, 0 MiB, 0 %
+  .29 2, 0 MiB, 0 %
+  .29 3, 0 MiB, 0 %
+  .29 4, 0 MiB, 0 %
+  .29 5, 0 MiB, 0 %
+  .29 6, 0 MiB, 0 %
+  .29 7, 0 MiB, 0 %
+  .12 0, 0 MiB, 0 %
+  .12 1, 0 MiB, 0 %
+  .12 2, 0 MiB, 0 %
+  .12 3, 0 MiB, 0 %
+  .12 4, 0 MiB, 0 %
+  .12 5, 0 MiB, 0 %
+  .12 6, 4 MiB, 0 %
+  .12 7, 4 MiB, 0 %
+[6] spawn 相关日志最新迭代进度
+  --- /tmp/baize_s1_spawn_v3_nw8_100.log  mtime=2026-10-27 17:11:45  size=1094867 ---
+      warnings.warn('resource_tracker: There appear to be %d '
+    /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 33 leake
+      warnings.warn('resource_tracker: There appear to be %d '
+  --- /tmp/baize_s1_baize2b.log  mtime=2026-10-27 08:15:44  size=1520 ---
+      tok/step=4194304 tokens=1468006400000 optimizer=adam lr=1e-3 min=1e-4 warmup=2000
+      decay_iters=0 shape=exponential graph=OFF fp8=tensorwise
+      blend=628 shards
+  --- /tmp/baize_s1_baize2b_master.log  mtime=2026-10-27 13:56:40  size=1205483 ---
+    W1027 13:56:40.931000 46095 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 58138 closing signal SIGTERM
+    W1027 13:56:40.933000 46095 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 58139 closing signal SIGTERM
+    W1027 13:56:40.935000 46095 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 58140 closing signal SIGTERM
+  --- /tmp/baize_s1_baize2b_smoke.log  mtime=2026-10-27 16:05:06  size=3865 ---
+      decay_iters=0 shape=exponential graph=OFF fp8=tensorwise
+      blend=628 shards
+    ===== s1 END 2026-10-27 16:05:06 worker_rc=1 master_rc=- =====
+  --- /tmp/baize_s1_baize2b_smoke_worker.log  mtime=2026-10-27 16:05:05  size=1030171 ---
+      File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_pro
+        raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+    torch.distributed.elastic.multiprocessing.api.SignalException: Process 3541465 got signal: 15
+  --- /tmp/baize_s1_baize2b_worker.log  mtime=2026-10-27 13:57:02  size=82 ---
+    code/baize-llm/scripts/train.sh: line 273: --master_port=29581: command not found
+  --- /tmp/baize_s1_formal_crash1.log  mtime=2026-10-26 21:24:02  size=627929 ---
+        raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+    torch.distributed.elastic.multiprocessing.api.SignalException: Process 1836544 got signal: 15
+    ===== Done: rc=1 =====
+  --- /tmp/baize_s1_formal.log  mtime=2026-10-26 21:52:08  size=940416 ---
+    /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 3 leaked
+      warnings.warn('resource_tracker: There appear to be %d '
+    ===== Done: rc=1 =====
+  --- /tmp/baize_s1_launch.log  mtime=2026-10-27 13:57:02  size=3658 ---
+    [2026-10-27 08:15:54] rank1 @ whag0pgpuap29（前台）
+    code/baize-llm/scripts/train.sh: line 275: syntax error near unexpected token `else'
+    code/baize-llm/scripts/train.sh: line 275: `  else'
+  --- /tmp/baize_s1_mock_ckpt.log  mtime=2026-10-26 20:53:06  size=68183 ---
+    last: iteration       5
+    [rank7]:[W1026 20:53:06.561845049 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+    [rank5]:[W1026 20:53:06.563006794 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+    [rank3]:[W1026 20:53:06.594677902 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+  --- /tmp/baize_s1_smoke2.log  mtime=2026-10-26 20:28:55  size=57673 ---
+[7] 两机内存/swap/swappiness 现状
+  .29: mem used=37G avail=1920G  swap used=7G free=0G  swappiness=60
+  .12: mem used=58G avail=1802G  swap used=6G free=1G  swappiness=0
+[8] 修复是否落地（common.env 的 spawn/nw 旋钮 + dataset 是否 memmap）
+    62:# DataLoader workers/rank（recipe.py:387 读 BAIZE_NUM_WORKERS，默认 8）。
+    69:export BAIZE_NUM_WORKERS="${BAIZE_NUM_WORKERS:-0}"
+    72:#   BAIZE_DATALOADER_START_METHOD=spawn + BAIZE_NUM_WORKERS=4 + BAIZE_PERSISTENT_WORKERS=1
+    76:export BAIZE_PERSISTENT_WORKERS="${BAIZE_PERSISTENT_WORKERS:-0}"
+    /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/check_longctx_data.py:50:    a = np.memmap(path, dtype=np.int32, mode="r")
+=== DONE 223 ===
+```
