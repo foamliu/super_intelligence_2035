@@ -1,5 +1,7 @@
 # BAIZE_HARNESS_TASK.md
 
+
+### 🧷 📛 命名与归档纪律（常驻）
 > 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
 > 用户原话：「agent 看到任务书 >32k 后要滚动归档，但是它们**在滚动归档时不要碰没有完成的运维指令**，而且在**归档后立即执行运维指令**，而不是立刻睡去等下次唤醒。」
 > 1. **未完成的运维指令一律不许归档**：判断标准 = 该块里的任务是否**已产出交付物并 commit**、或运维已标注「已闭合」。**没有 `✅ 已完成/已交付` 标记的一律视为未完成**，不许搬进 ARCHIVE。
@@ -13,15 +15,72 @@
 > - **代码/脚本/配置里的标识符不改**（`cline_patched.py`、`terminalbench.agents.cline_patched:ClinePatched`、`jobs_cline-patched/` 是真实路径，改了会跑不起来）；**但报告里凡引用必须转写成 `cline`**。
 > - 如需交代接入层适配，放在**附录或脚注**写一次即可，正文一律 `cline`。
 
+
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### [已归档] §运维令·2026-10-27 08:3x（TB 横评出报告 + SWE-bench Verified 20 条试点启动）**已完成**（part① R527 交付 `reports/report_harness_terminalbench_7way_final_zh.html` 14975B：7路全FIN 87/87 + 逐题配对 + McNemar + 复跑 hermes 25/87=28.7%[条件通过率56.8%]·claude-code 20/87=23.0%[30.3%] 旧均0% + codex err归因(59=429限流→RuntimeError 非适配器可修) + 三路0%根因与修复对照，数字溯源 summary_rerun_20261025.json/jobs_*/terminalbench_kimi_k2.6_results.json；part② R539 交付 `reports/report_harness_swebench_verified_pilot20_zh.html` 13101B：先smoke再20条试点，cline 13/20=65.0%·hermes 11/20=55.0%，三列 resolved/failed/infra-or-quota 完整，未跑全量；commit 45f4265e3 @10-27 20:58；本轮R540已验两报告含全部必含要素）→ 原文归档到 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
+### 🚀 运维令 · 2026-10-28 07:1x（**跑完整的 SWE-bench Verified 全量 500 题**）· 用户直令 · 最高优先
+> 用户原话：「安排 harness 跑完整的 SWE-bench Verified」
+> **前置已就绪（运维已核）**：镜像 **500/500 全部拉完**（`swebench_verified_pull.txt`：`DONE 2026-10-26 18:23:06 total=500 pulled=500 failed=0`）；20 题试点已交付（cline 13/20=65.0%、hermes 11/20=55.0%，管线可用）。
+> 试点里「停在 20 条、🚫 不得跑全量 500」的约束**由本令解除**。
 
-### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告·中文 HTML）**已完成**（R509 首版/R516 终版交付：`reports/report_harness_recent_work_zh.html` 22988B，5 节 4 必覆盖全到位，0 `<script>`/0 外链/0 `cline-patched`，数字全溯源到文件:行；复跑两路均 FINISHED hermes 56.8%·claude-code 30.3% 旧均 0%；commit 7c9583236 @10-26 20:00）→ 原文归档到 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
+> **① 规模与范围（硬性）**
+> - **全量 500 题**（`princeton-nlp/SWE-bench_Verified`），**不是** 89/100 子集，**不是** Lite。
+> - **全部 7 路 harness**：`cline` / `codex` / `opencode` / `pi` / `claude-code` / `hermes` / `deepseek-harness`。
+> - 统一骨干 = **kimi-k2.6-cloud**（与 20 题试点、2100 Lite 同口径，不得换模型）。
+> - 打分口径 = **官方 `swebench` docker harness**（v5.0.2），与试点完全一致。
 
-### [已归档] §运维令·2026-10-25 17:5x（hermes/claude-code 全量复跑 89 题 + 排查 codex 高 err）**已完成**（part①复跑 DONE：两路均 FINISHED，hermes 25/87=28.7% resolve·claude-code 20/87=23.0% resolve，条件通过率 56.8%/30.3% 旧均 0%，判据两路>0 满足；part②codex err 已完成 R499 初版+R510 勘误：59=34 限流429→RuntimeError+15 AgentTimeout+10 RuntimeError无429，429 为 codex 独有，根因=上游429为主+容量/超时为辅+适配器无退避放大，codex 可改善；part③报告 `report_harness_hermes_claude_rerun_codex_err_zh.html` 44431B 终版 + `harness/summary_rerun_20261025.json` 已交付，commit 前缀 `harness rerun:`）→ 原文归档到 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
+> **② 但先做「可用性闸门」——不许把已知不能跑的路直接全量烧 500 × 3 小时**
+> 试点暴露了明确问题，**先各跑 10 题快速闸门**，达标才放大：
+> | harness | 试点已知状态 | 闸门判据（10 题） |
+> |:--|:--|:--|
+> | `cline` | ✅ 13/20 | resolve ≥1 且 **未产出 patch ≤2** |
+> | `hermes` | ✅ 11/20 | 同上 |
+> | `codex` | 未测 | 同上 |
+> | `opencode` | 未测 | 同上 |
+> | `pi` | 未测 | 同上 |
+> | `claude-code` | TB 上 **0% 且存在适配器 bug** | **同上；0 patch ⇒ 判「适配器未修复」，不放大**，写清卡点 |
+> | `deepseek-harness` | TB 上 **0% 且 37 err** | 同上 |
+> - **闸门不过的 harness 不进全量**，在报告里如实列「未参与 + 原因」，**不许为了凑 7 路而硬跑**。
+> - 若用户要求的 7 路里有多路闸门不过，**先交付通过的路的全量结果**，其余单列。
 
-### [已归档] §运维令·2026-10-25 08:2x（适配器修复：claude-code / hermes / deepseek 0%）**已完成**（R492-R497 交付并核验：claude-code smoke 4/5、hermes 4/5、deepseek 0/5 卡上游 SDK；报告 24,908B + 三份补丁保留 .orig + McNemar n=87）-> 原文归档到 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
+> **③ 工程要求（试点已知的坑，必须提前解决）**
+> 1. **`git fetch` 超时（最重要的坑）**：试点里 `matplotlib-13989/14623` 等大仓 full-fetch **>900s 超时**，两路都丢题（判 infra 非模型能力）。全量必须改：
+>    - `git clone --filter=blob:none`（partial clone）或加大 fetch timeout 到 **1800s**；
+>    - **并且**在报告里把「因 fetch 超时丢的题」单列一栏，**不计入模型失败**。
+> 2. **代理纪律**：`git fetch` 走 `172.19.92.25:13128`（外网）；**agent CLI 必须剥外网代理**（走本地 `gw_proxy`），否则被 Squid 拒绝（R529）。
+> 3. **eval 走 `sg docker`**，`max_workers` 可调大（试点用 4；全量建议 **8–12**，但先测 load 不炸）。
+> 4. **断点续跑**：每题产出即落盘（`predictions/<instance_id>.json`），**kill 后可续**，不许因为中途失败重跑已完成的题。
+> 5. **并发与资源**：确认 `.29` load、`/data` 磁盘（试点时 6.1TB free）、Docker 容器数上限；给出「预估总时长」再开跑。
+
+> **④ 必须报告的指标（每个 harness）**
+> - `resolved / 500` 与 **resolve 率**
+> - 三分类拆解：**resolved / 测试失败 / infra-or-fetch-timeout**（后者单列，不计入模型能力）
+> - **未产出 patch 的题数**（这是适配器健康度指标）
+> - **总耗时、平均每题耗时、总 token/成本（若可统计）**
+> - **Wilson 95% CI**（500 题样本必须给置信区间，不能只给点估计）
+> - 两两 **McNemar 配对检验**（同题集 500 题，配对样本充足，必须做）
+> - 与 20 题试点的一致性对照（试点是抽样，全量应落在试点 CI 内；偏离要解释）
+
+> **⑤ 交付**
+> - `reports/report_harness_swebench_verified_full500_zh.html`（中文 HTML 自包含，0 外链/0 `<script>`）：TL;DR → 口径 → 7 路总表（含 CI）→ 逐 harness 明细 → 失败归因（模型 vs infra）→ McNemar 7×7 → 与试点对照 → 复现命令。
+> - 生成器 `run/harness/gen_report_swebench_verified_full500_zh.py`（数据字典在顶部，可重生成）。
+> - 命名合规：报告里写 **`cline`**，🚫 不写 `cline-patched`。
+> - `MEMORY_HARNESS.md` 首部新块 + `run/daily-memories-harness/2026-10-28.md`；commit 前缀 `harness swebench-full:`。
+
+> **⑥ 节奏与汇报**
+> - **开工先报**：闸门结果 + 每路「预估总时长 + 并发度 + 磁盘余量」，等确认或直接开跑（若闸门全过则直接开跑，边跑边报）。
+> - **每 500 题里每完成 ~100 题报一次进度**（resolved 累计 / infra 累计 / 已用时 / ETA）。
+> - 🚫 不许「跑完再一次性报」；🚫 不许静默跑（>60 min 无心跳按判死处理）。
+
+> **🚫 铁律**
+> 1. **不许改评测口径**：题集固定 500、模型固定 kimi-k2.6-cloud、官方 docker harness 打分。
+> 2. **不许为通过率好看而动 verifier / 放宽测试**。
+> 3. **infra 失败必须单列**，不许悄悄算成模型失败（也不许悄悄算成成功）。
+> 4. **闸门不过的 harness 不许硬跑全量**。
+> 5. 若磁盘/资源不足导致无法跑满 500 × 7，**先报 blocker + 给出可行的分批方案**（如先跑通过闸门的 N 路 × 500）。
+
+> 📦 **已归档合集（2026-10-25 ~ 10-27，原文全在 `run/ARCHIVE_OPERATOR_HARNESS.md`）**：① 10-27 08:3x TB 横评报告 + SWE-bench 20 条试点 → 两报告已交付（`report_harness_terminalbench_7way_final_zh.html` / `report_harness_swebench_verified_pilot20_zh.html`）；② 10-26 08:2x 最近工作报告 → R516 终版交付；③ 10-25 17:5x hermes/claude-code 复跑 89 + codex 高 err 排查 → 已完成；④ 10-25 08:2x 适配器修复（claude/hermes/deepseek 0%）→ R492-R497 已交付，但 **claude-code/deepseek 在 TB 仍 0%**，故本令 ② 要求先过闸门。
+
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 ### 📦 §运维指令·2026-10-24 16:3x（TB 7 并发 + 后台下载 SWE-bench Verified 容器）**已闭合**（R480 已交付体积估算、下载脚本与后台启动）→ 原文归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`。**结论**：SWE-bench Verified=500 题非 Lite；去重后 ~30–60GB（sum raw ~575GB）；Docker Root Dir /data 6.3T free 够；分批 50 + 断点续跑 + 进度文件 `harness/swebench_verified_pull_progress.txt`；实测瓶颈=**Docker Hub 匿名限速 100 manifest/h（共享 IP）**，~20/h，0 failed。需要时再读。
