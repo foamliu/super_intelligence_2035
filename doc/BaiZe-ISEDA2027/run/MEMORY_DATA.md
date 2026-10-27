@@ -18,9 +18,9 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅运维令13:3x SFT分词全DONE(唤醒691复核).12源全部镜像完整,无未完成指令
+PHASE:        ✅运维令13:3x SFT分词全DONE(唤醒692复核).12源全部镜像完整,无未完成指令
 已完成:       ✅运维令08:3x刷新两文件(commit42bf3a52f);✅运维令13:3x分词SFT-2605(94shard/18.89B tok/75.87GB)+Agent-2609(13shard/5.97B tok/23.89GB)→/nas_env;✅convert_sft_jsonl_to_parquet.py+run_tokenize_sft.sh(三阶段自治runner);✅build_tokenized_mirror.py刷新INDEX.tsv(922shard全triplet=OK inode_ok);✅gen_data_mapping_md.py刷新DATA_MAPPING.md(10603B,行11-12=镜像完整);✅gen_report_data_mapping_html.py刷新report(20764B,12源);✅commit 44b512316 pushed to origin/main;✅补提交.du_download_cache.tsv(runner git add遗漏)
-当前动作:     唤醒691(2026-10-27 18:5x):例行心跳巡检(无新运维令)→①git fetch无BAIZE_DATA_TASK.md新提交(13:3x仍最高且DONE);②复核运维令13:3x全DONE(INDEX.tsv L12-13 triplet=OK/inode_ok=94+13/0悬空/df 84%+85%);③发现.du_download_cache.tsv未提交(runner git add遗漏含SFT两源du缓存)→补提交;④更新心跳+日报+push
+当前动作:     唤醒692(2026-10-27 20:0x):例行心跳巡检(无新运维令)→①git fetch无BAIZE_DATA_TASK.md新提交(13:3x仍最高且DONE);②复核运维令13:3x全DONE(INDEX.tsv L12-13 triplet=OK/inode_ok=94+13/0悬空/df 84%+85%);③无runner残留;④更新心跳+日报+push
 下一步:       无未完成指令.30min轮询待新运维令
 阻塞:         无
 ERROR_COUNT:  10
@@ -30,6 +30,10 @@ ERROR_COUNT:  10
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [20:0x] 唤醒692：例行心跳巡检(无新运维令,上次data commit bd523902c@18:5x≈1.2h前) → ①git fetch无BAIZE_DATA_TASK.md新提交(13:3x仍最高且DONE)✓;②复核运维令13:3x全DONE:INDEX.tsv L12-13 SFT-2605(94shard/triplet=OK/inode_ok=94/symlink)+Agent-2609(13shard/triplet=OK/inode_ok=13/symlink)✓;SFT-2605 94.bin+94.idx+95.json 0悬空✓;Agent-2609 13.bin+13.idx+14.json 0悬空✓;/nas_env full_sft_2605=71G+full_sft_agent_2609=23G✓;③DATA_MAPPING.md=10603B行11-12=镜像完整✓;report=20764B(12源)✓;④df /nas_env 8.3T/84% /nas_train 175T/85%✓;⑤git main...origin/main无ahead/behind✓;⑥无runner进程残留✓;⑦体积MEMORY 34.6KB/TASK 34.7KB均≤40KB✓;⑧更新心跳+日报+commit+push。未完成指令:无→WAITING:1
+
+> 📦 唤醒691(10-27 18:5x)原文归档 → daily-memories-data/2026-10-27.md（例行巡检+补提交.du_download_cache.tsv,详见日文件）
+
 > [18:5x] 唤醒691：例行心跳巡检(无新运维令,上次data commit bd523902c@15:2x≈3h前) → ①git fetch无BAIZE_DATA_TASK.md新提交(13:3x仍最高且DONE)✓;②复核运维令13:3x全DONE:INDEX.tsv 14行(12源+合计)L12-13 SFT-2605(94shard/triplet=OK/inode_ok=94/symlink)+Agent-2609(13shard/triplet=OK/inode_ok=13/symlink)✓;SFT-2605 tokenized/94.bin+94.idx+95.json 0悬空✓;Agent-2609 13.bin+13.idx+14.json 0悬空✓;/nas_env full_sft_2605=71G+full_sft_agent_2609=23G✓;③DATA_MAPPING.md=10603B行11-12=镜像完整✓;report=20764B(12源)✓;④df /nas_env 8.3T/84% /nas_train 175T/85%✓;⑤git main...origin/main无ahead/behind✓;⑥发现.du_download_cache.tsv未提交(runner git add遗漏,含SFT-2605+Agent-2609两行du缓存)→本轮补提交;⑦体积MEMORY 33.5KB/TASK 34.7KB均≤40KB✓;⑧无runner进程残留✓;⑨更新心跳+日报+commit .du_download_cache.tsv+push。未完成指令:无→WAITING:1
 
 > 📦 唤醒690(10-27 15:2x)原文归档 → daily-memories-data/2026-10-27.md（13:3x验证:runner完成无残留/SFT-2605 94shard+Agent-2609 13shard 0悬空/INDEX.tsv 922shard/DMM 10603B/report 20764B/commit 44b512316 pushed,详见日文件）
