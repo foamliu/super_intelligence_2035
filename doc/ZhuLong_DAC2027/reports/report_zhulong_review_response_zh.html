@@ -38,6 +38,10 @@
   撰写：ZhuLong agent（10-25 deliverable，10-26 落盘）<br>
   评审意见 5 critical + 5 strongly-recommended + 6 revision-priority，逐条回应。每条给出：意见 → 判定 → 证据位置 → 原文/新文对照。
 </div>
+<div class="summary-box" style="border-color:#2c3e50;background:#eef3f8;">
+  <b>🔄 更新 2026-10-28 06:5x（agent wake#319·license 等待空档收尾）：</b>
+  本函原写于 10-26 23:17，§4「拟落盘 LaTeX 改动清单」当时全标 <span class="verdict v-todo">待改</span>。其后 commits <code>c3453bf41</code>（10-26 22:3x·P0-A/B/D/E + abstract 13.5pp split + theory softening）、<code>c8ad53b13</code>（10-27·Wilson CI + WaveView/Innovus supp 指针 + SKILL 回归/部署兜底句）、<code>5aa5a4628</code>（陈熙元重画 Fig-1）、<code>d1f4817cb</code>（10-28 05:05·P0-C reproducibility 节 + 告警修复）、<code>cb3cd15e9</code>（10-28 06:30·prose 删节 9 处 + tab3 scriptsize + 图 0.84）已将 9 行中的 7 行落盘到 .tex（多为 woven 压缩式融入，非整段粘贴）。§4 表状态已同步：7 行 <span class="verdict v-done">已落实</span> + 2 行 <span class="verdict v-partial">部分落实</span>（row 4 retrieve–execute–repair 对齐句仅 §1.4 给 framing 未入正文 L41；row 6 USD 完整句压缩为 L62 的 <code>see Table~\ref{tab:cost}</code> + <code>2.3$\times$</code> 引用）。<b>页数 8（body 7p 实满 + refs p8）仍超目标 7</b>——prose 删节已尽，需 author-level 结构性删段（候选：§4.3 折入 §4.2 / Self-exploration rung 折入 read-back axis / Error Analysis 案例细节削减），agent 不便单方面删研究内容，已如实记录待 author 裁决。license pool 1/4（8654 OK / 8650,8651,8652 hang）持续 &gt;10h，r2 regrade 阻塞中（与本文档无关·ZL 16384 cline-aligned 5-run 进度见 <code>MEMORY_ZHULONG.md</code>）。
+</div>
 <div class="legend">
   判定图例：<span class="verdict v-done">已落实</span>
   <span class="verdict v-partial">部分落实</span>
@@ -99,7 +103,7 @@
 
 <h3>1.3 意见 #3 — benchmark 不可独立验证（Critical）</h3>
 <p><b>意见摘录：</b><span class="quote">"EDA-Scripting-Bench contains 449 tasks derived from non-redistributable vendor documentation. The draft explains the task schema and assertion-based scoring, but readers cannot readily inspect the full task set, reproduce all commercial runtime behaviors, or verify that the assertions adequately capture the intended design changes."</span></p>
-<p><b>判定：</b><span class="verdict v-todo">待改</span>（§5 无 release 声明）</p>
+<p><b>判定：</b><span class="verdict v-partial">部分落实</span>（§5.5 reproducibility 节已补入 <code>5_bench.tex:47-49</code>·commit <code>d1f4817cb</code>；落地版较本函 §1.3 起草版更紧凑，未承诺 30-task 公开子集——该数需用户拍板，见下方"证据锚"）</p>
 <p><b>证据位置：</b> <code>5_bench.tex</code> 全 44 行——已写 schema、4 切片组成、协议；<b>未</b>写 release / licensing / 可复现子集 / 评估 harness 可得性。</p>
 <p><b>拟补段落（加在 <code>5_bench.tex</code> 末尾，新 §5.5 Release and reproducibility）：</b></p>
 <p class="quote new">\subsection{Release and reproducibility}<br>
@@ -178,15 +182,15 @@ The full 449-task set derives from non-redistributable vendor documentation and 
 <h2>4. 拟落盘的 LaTeX 改动清单（commit 计划）</h2>
 <table>
 <tr><th>文件</th><th>位置</th><th>改动</th><th>状态</th></tr>
-<tr><td><code>0_abstract.tex</code></td><td>L14-16</td><td>"theoretical grounding showing … bounds" → "framework … proposes as a testable claim"</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>0_abstract.tex</code></td><td>L18-21</td><td>加 13.5pp 受控回读轴 + 3.3pp B 档；57.4pp 标"system-level"</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>5_bench.tex</code></td><td>末尾</td><td>新增 §5.5 Release and reproducibility（30-task 公开子集待用户确认）</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>6_exp.tex</code></td><td>L41</td><td>补"w/o-Self-Expl. = retrieve–execute–repair baseline"对齐句</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>6_exp.tex</code></td><td>L50</td><td>主结果句后加 Wilson 95% CI（数值待重算）</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>6_exp.tex</code></td><td>L62</td><td>补 token / USD cost 指向 supplementary</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>6_exp.tex</code></td><td>L95</td><td>表注补 WaveView/Innovus 拆分指向 supplementary</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>6_exp.tex</code></td><td>L105</td><td>补"generally effective architecture, toolchain-dependent magnitude"reframe 句</td><td><span class="verdict v-todo">待改</span></td></tr>
-<tr><td><code>7_discussion.tex</code></td><td>L7</td><td>补 SKILL 自探索回归机制推测 + deployment 指针</td><td><span class="verdict v-todo">待改</span></td></tr>
+<tr><td><code>0_abstract.tex</code></td><td>L14-16</td><td>"theoretical grounding showing … bounds" → "framework … proposes as a testable claim"</td><td><span class="verdict v-done">已落实</span>（<code>0_abstract.tex:14-17</code>·commit <code>c3453bf41</code>）</td></tr>
+<tr><td><code>0_abstract.tex</code></td><td>L18-21</td><td>加 13.5pp 受控回读轴 + 3.3pp B 档；57.4pp 标"system-level"</td><td><span class="verdict v-done">已落实</span>（<code>0_abstract.tex:20-23</code>·commit <code>c3453bf41</code>）</td></tr>
+<tr><td><code>5_bench.tex</code></td><td>末尾</td><td>新增 §5.5 Release and reproducibility（30-task 公开子集待用户确认）</td><td><span class="verdict v-done">已落实</span>（<code>5_bench.tex:47-49</code> §sec:reproducibility·commit <code>d1f4817cb</code>）</td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L41</td><td>补"w/o-Self-Expl. = retrieve–execute–repair baseline"对齐句</td><td><span class="verdict v-partial">部分落实</span>（正文 L46 仅给 "w/o Self-Expl. (retrieval + sandbox)" 定义；retrieve–execute–repair framing 见本函 §1.4，未入正文 L41）</td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L50</td><td>主结果句后加 Wilson 95% CI（数值待重算）</td><td><span class="verdict v-done">已落实</span>（<code>6_exp.tex:50</code>·pooled n=2245 七配置 CI + N′→F 13.5pp gap CI [10.82,16.18]pp·commit <code>c8ad53b13</code>）</td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L62</td><td>补 token / USD cost 指向 supplementary</td><td><span class="verdict v-partial">部分落实</span>（L62 已 woven 引用 <code>see Table~\ref{tab:cost}</code> + <code>2.3$\times$ the full system's time</code>；本函 §2.1 起草的完整 "USD cost is omitted..." 句压缩未整段粘贴·commit <code>c8ad53b13</code>）</td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L95</td><td>表注补 WaveView/Innovus 拆分指向 supplementary</td><td><span class="verdict v-done">已落实</span>（<code>6_exp.tex:93</code> 表注 verbatim 含 "Per-host WaveView and Innovus Pass@1 ... supplementary material ... weights 77/134 and 57/134"·commit <code>c8ad53b13</code>）</td></tr>
+<tr><td><code>6_exp.tex</code></td><td>L105</td><td>补"generally effective architecture, toolchain-dependent magnitude"reframe 句</td><td><span class="verdict v-done">已落实</span>（<code>6_exp.tex:103</code> woven "Component magnitudes are toolchain-specific ... the structure ... reproduces on every slice"·commit <code>c8ad53b13</code>）</td></tr>
+<tr><td><code>7_discussion.tex</code></td><td>L7</td><td>补 SKILL 自探索回归机制推测 + deployment 指针</td><td><span class="verdict v-done">已落实</span>（<code>7_discussion.tex:7</code> 含 SKILL −1.2pp 机制推测 + "Deployment metrics ... subject to a separate disclosure review ... extended version"·commit <code>c8ad53b13</code>）</td></tr>
 </table>
 
 <h2>5. 本轮未做（需用户拍板）</h2>
