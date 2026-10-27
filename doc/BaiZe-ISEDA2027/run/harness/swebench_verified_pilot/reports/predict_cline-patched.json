@@ -3,10 +3,10 @@
     "instance_id": "astropy__astropy-12907",
     "harness": "cline-patched",
     "returncode": 1,
-    "wall_s": 4.6,
+    "wall_s": 15.8,
     "model_patch_len": 0,
     "quota_blocked": false,
-    "stdout_tail": " by proxy.ai.srv (squid/6.8)</p>\\n<!-- ERR_ACCESS_DENIED -->\\n</div>\\n</body></html>\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pilot/predictions/cline-patched__astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+    "stdout_tail": "url?: Unable to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pilot/predictions/cline-patched__astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
     "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pilot/predictions/cline-patched__astropy__astropy-12907.json",
     "classification": "no-patch"
   }
