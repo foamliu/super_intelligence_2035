@@ -36,7 +36,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <tr><th class="l">维度</th><th class="l">取值</th></tr>
 <tr><td class="l">评测集</td><td class="l">SWE-bench Verified 500 题中抽取 20 条（astropy 4 / django 4 / sympy 4 / matplotlib 4 / scikit-learn 4）</td></tr>
 <tr><td class="l">模型</td><td class="l">kimi-k2.6-cloud（统一骨干，与 2100 Lite 同口径可比）</td></tr>
-<tr><td class="l">harness</td><td class="l">cline（<code>cline-patched</code> 适配器）+ hermes（两路适配器均已 smoke 验通）</td></tr>
+<tr><td class="l">harness</td><td class="l">cline + hermes（两路适配器均已 smoke 验通；接入层适配见数据溯源脚注）</td></tr>
 <tr><td class="l">predict</td><td class="l">每题 git clone@base_commit → 跑 harness CLI agent（problem_statement）→ git diff 作 model_patch；timeout 1800s/题</td></tr>
 <tr><td class="l">eval</td><td class="l">官方 swebench v5.0.2 docker harness（enriched_20.json 补全 infra 字段）；<code>sg docker</code>，max_workers 4，timeout 1800s/题</td></tr>
 <tr><td class="l">代理</td><td class="l">git fetch 经 172.19.92.25:13128（外网）；agent CLI 经本地 gw_proxy（剥外网代理，R529）</td></tr>
