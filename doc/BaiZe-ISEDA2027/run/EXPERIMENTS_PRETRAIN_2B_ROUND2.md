@@ -3977,4 +3977,37 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 2. step 2000 首个 ckpt → `check_rope.py --hf-dir` PASS（θ 终验）。
 3. lr-decay-shape exponential：Decay 阶段前 `lr_schedule.py` + TB 对账验证。
 4. 长上下文 ABF 三件（check_longctx_data.py 占比 / 零训练 PPL+RULER / abf_plan.py 复核）—— 待首个可导出 ckpt。
+## §五·9 续2：spawn-vs-fork COW 机制 CPU 微基准验证（#807 · 2026-10-27 12:1x）
+
+> 对应运维令 10:4x（不放弃：验证 spawn 方案 + 授权 web 调研，吞吐回 600K+）。spawn GPU smoke 仍被阻塞（S1 占满 16 卡 + step2000 ckpt 未出 ~15:25，现在杀 S1 = 丢 ~1080 步无 resume 点 = 破坏性），故本轮做**不抢 GPU、不碰 S1** 的 CPU 微基准，直接验证 #806 的核心机制假设：「spawn 消除 fork-COW → worker RSS 不随父进程驻留内存膨胀 → nw>0 不 OOM」。
+
+### 方法
+- 脚本 `/tmp/spawn_vs_fork_rss4.py`（CPU-only，无 GPU）。父进程分配 **2 GB 驻留内存**（`np.empty` + 随机填充 touch 全页 → RSS 实测 4591 MB = 2GB + Python/torch baseline），作为**全局变量，不被 Dataset 引用**（模拟真实 rank 进程的 CUDA context + 数据索引驻留，而 Megatron mmap dataset 在 worker 内自行 open+mmap、轻量）。
+- Dataset 轻量（`torch.randn(64)`，无父内存引用 —— 镜像 Megatron `text_document` mmap 行为）。
+- `DataLoader(num_workers=4, persistent_workers=True, pin_memory=False)`，fork vs spawn 各跑 30 步，每 5 步用 `/proc/<pid>/status` 之和测 live worker RSS。
+
+### 结果（同压力、唯一变量 = start_method）
+
+| start_method | 父进程 RSS | 每 worker RSS | 4-worker 总 RSS | 步 0→29 RSS 漂移 |
+|:---|---:|---:|---:|:---|
+| **fork**（默认） | 4591 MB | **~2353 MB** | 9412 MB | 稳定（一次性继承） |
+| **spawn** | 4591 MB | **~502 MB** | 2009 MB | 稳定（基线） |
+
+**spawn 把每 worker RSS 从 ~2353 MB 降到 ~502 MB（-79%），4-worker 总 RSS 9412→2009 MB（-79%）。** fork worker 通过 COW 继承父进程 2GB 驻留内存（每 worker ≈ 父驻留量）；spawn worker 是全新进程、不继承父地址空间，RSS ≈ Python+torch+numpy import 基线，**与父驻留量无关**。
+
+### 外推到真实训练
+- 真实 rank 父进程驻留 = CUDA context（~10–20 GB/卡）+ 数据索引 + 已加载数据 ≈ 数十 GB。fork+nw=8 → 8 worker 各继承数十 GB → 8×数十 GB 耗尽 .29 8G swap → OOM-SIGKILL（精确复现 #802 nw8→step70 / nw4→step90 / nw2→step200 史）。spawn+nw=8 → 每 worker ~1–2 GB 基线 → 8×~1.5 GB ≈ 12 GB → **不 OOM**。
+- ⇒ **#806 spawn 补丁的机制假设被独立验证成立**（CPU 侧、不依赖 GPU/真实数据）。这是不抢 S1 的前提下能给出的最强预验证；最终落地仍需 step2000 ckpt 后的 8 卡 GPU smoke 量化吞吐。
+
+### 附带发现（spawn 正确性前置条件，已核对）
+1. ✅ `pretrain_launcher.py` 有 `if __name__ == "__main__":`（L281）+ `def main()`（L173）→ spawn worker 重 import 不会重跑训练（**关键前置，否则 spawn 会递归重执行**）。微基准首版无此 guard → spawn 报 `freeze_support()` 错；加 guard 后通过。
+2. ⚠️ spawn 启动慢：首步 t=2.1s vs fork 0.2s（worker 各重 import torch）→ `persistent_workers=True` 必须配套（一次性开销，常驻后无感）—— 与 #806 设计一致。
+3. ⚠️ **Dataset 不可持有大父对象引用**：spawn 会 pickle Dataset 到每 worker（早期微基准把 2GB 数组放进 Dataset → spawn worker 也 ~2GB，是 pickle 复制不是 COW；真实 Megatron mmap dataset 轻量，不受影响）。已在补丁设计规避（recipe.py 只设 persistent_workers，dataset 仍由 Megatron 在 worker 内建）。
+4. ⚠️ `set_start_method('spawn')` 在 `pretrain_launcher.py` 是**模块级**（L55-65，main 外）→ spawn worker 重 import 时会再执行该行（无害，仅重设 method）；不影响 NCCL（torchrun 的 rank 进程由 torchrun 自己起，与 DataLoader 的 spawn worker 独立）。
+
+### 当前阻塞 + 下一步（不变，待 ckpt）
+- S1 健康：~13.1 s/step ≈ **320K tok/s**（gbs256=4,194,304 tok/step，nw=0），step ≈ 1080/350000，0 NaN，θ=1e6，.29 Mem 71.5%（<95% 安全），swap 8G/8G stale（nw=0 无新压力）。首个 ckpt @ step2000 ≈ **15:25**（save-interval=2000，当前无 ckpt = 杀 S1 丢全部进度，故不动）。
+- web 调研（10:4x ③）：`cimi_search`/`cimi_fetch` **未配置到本环境**（无 CLI/MCP/PATH）；`fetch_web_content` 工具直连超时、proxy curl 取 pytorch.org 仅 rc=0 无正文。本轮 web 调研**未取到有效内容**；fallback 候选（prefetch_factor 调高 / pin_memory 关 / swappiness=1 / 索引 mmap）已记入待 smoke 网格，待 spawn smoke 后按 10:4x「逐变体记网格」补充。
+- spawn 8 卡 smoke 命令（ckpt 出后）：`BAIZE_DATALOADER_START_METHOD=spawn BAIZE_NUM_WORKERS=4 BAIZE_PERSISTENT_WORKERS=1 bash code/baize-llm/scripts/train.sh s1 --smoke 50`，判据：0 崩溃/0 NaN + 显存正常 + 免 OOM + 吞吐≥500K（≥30 步稳态）。PASS ⇒ 从 step2000 resume 16 卡 spawn+nw>0 趋近 614K；FAIL ⇒ 回退 nw=0。
+
 
