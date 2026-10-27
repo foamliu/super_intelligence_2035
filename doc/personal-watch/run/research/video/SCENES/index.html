@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-27</td>
+    <td><i>Do vision models know that three is three?</i><br><code>arXiv:2610.35857</code>（Ankit Sonthalia, Arnas Uselis, Seong Joon Oh）</td>
+    <td><b>AI 认得「3」，但知道三是三吗</b>：同一个「三」可以是<b>手写数字 / 三根手指 / 三个球 / 三个点</b>；在 <b>46 个视觉编码器</b>×<b>10 个概念族</b>×<b>2,530 次检验</b>里，把「2→3」看成一个方向 —— 形式内几乎都能找到（<b>99.1%</b> 显著；数量 2→3 <b>100%</b>），跨形式却只有 <b>52.2%</b>（数量仅 <b>46.9%</b>；物体身份 99.3%、年龄 94.6% 最高）⇒ 作者命名 <b>fragmented linearity（碎片化线性）</b>：每种「三」都单独学一遍；碎片化分数 <b>0.67（监督 ViT）vs 0（CLIP）</b>、clean→dirty <b>0.92 vs 0.08</b>；局部越强的模型越能跨过去（Kendall τ <b>0.38–0.89</b>，全 p&lt;1e-3）（<b>作者自报 · 本线未复现</b>；概念类型有限 / 反事实样本近似配对 / 「线性」≠「真理解」）</td>
+    <td><a href="10_27.html">10_27.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-26</td>
     <td><i>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</i><br><code>arXiv:2610.32055</code>（Anxin Guo, Chirag Pabbaraju, Sara Ahmadian 等 5 位）</td>
     <td><b>连狗说的答案，AI 都会信</b>：在 MMLU 选择题后加一句「某来源认为答案是 X」，来源分<b>教授 / 朋友 / 狗</b>；三个开源小模型（Qwen 3.5 2B / Gemma 4 E2B / SmolLM3 3B）各 <b>800 个题–目标对</b>、每对 <b>500 次</b>采样（SmolLM3 200 次）。提示效果可由<b>指数倾斜</b>刻画 —— 目标对数几率近似平移一个常数（dog↔friend 相关 <b>0.86 / 0.89 / 0.78</b>）；<b>狗的提示</b>仍抬高 <b>2.40 / 2.08</b>（教授 3.86 / 3.42），「恶意行为者」也还有 <b>0.443 / 0.436</b>；声明准确率 <b>5%→95%</b> 只多 <b>1.46 / 0.40</b>（贝叶斯应多 <b>5.89</b>），明确警告「别信」只削 <b>1–2</b> 个单位 ⇒ <b>对来源可信度几乎不校准</b>（<b>作者自报 · 本线未复现</b>；三个小模型 / 单一选择题基准 / 对数几率≠正确率）</td>
@@ -139,7 +145,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-26 18:2x CST（新增 <code>10_26.html</code> · TOP-1 = How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models / <code>arXiv:2610.32055</code>；上一版 <code>10_25.html</code> · <code>arXiv:2610.30499</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-27 18:2x CST（新增 <code>10_27.html</code> · TOP-1 = Do vision models know that three is three? / <code>arXiv:2610.35857</code> · 5 镜 / 120s / 口播 446 字；上一版 <code>10_26.html</code> · <code>arXiv:2610.32055</code>）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>

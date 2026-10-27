@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-27 · AI 认得「3」，但它知道三是三吗？</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1f3a93 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(31,58,147,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1f3a93; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1f3a93; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#1f3a93; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1f3a93; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-27</h1>
+  <div class="sub">今日 TOP-1：<b>AI 认得「3」，但它知道三是三吗？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>约 446 字</b></div>
+  <div class="meta">
+    <span>📄 Do vision models know that three is three?</span>
+    <span>🆔 arXiv:2610.35857</span>
+    <span>🏷 cs.CV（唯一分类）· 科普口径</span>
+    <span>👥 Ankit Sonthalia, Arnas Uselis, Seong Joon Oh（3 位）</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕只使用论文正文与表格可支撑的内容；「99.1% / 52.2% / 46.9% / 0.67 / 0.92 / 0.08 / τ 0.38–0.89」等为<b>作者自报、本线未复现、未精读全篇</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与图表。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>问题一句话、人人有直觉</b>：「手写的 3、三根手指、三颗糖 —— 对你是同一个『三』，AI 也是吗？」不需要任何 AI 背景就能听懂，而且答案不是是／否，是<b>「能测，而且答案是：认得，但不一定『知道』」</b> —— 天然带反转。</li>
+    <li><b>数字反差极干净</b>：<b>局部线性 99.1% 显著（数量 2→3 为 100%），跨形式只有 52.2%（2→3 仅 46.9%）</b>。一组「99 对 52」就能撑起整条视频的记忆点。</li>
+    <li><b>有「越强越不像」的反直觉</b>：碎片化分数 <b>0.67（监督 ViT，接近随机基线）vs 0（CLIP）</b>；clean→dirty 上 <b>0.92 vs 0.08</b>；同时局部越强的模型越能「逃出」碎片化（Kendall τ ∈ [0.38, 0.89]）。这条留给评论区讨论。</li>
+    <li><b>画面可极简</b>：四格画面（手写 3 / 三根手指 / 三个球 / 三个点）+ 一组箭头方向，配两根横条（99% / 52%）就能讲完，不需要任何论文插图。</li>
+    <li><b>边界清楚（片中说）</b>：46 个视觉编码器、10 个概念族（数量 / 年龄 / 物体身份 + 7 个 MIT-States 属性）；「线性」是<b>统计意义上的方向一致性</b>，<b>不等于</b>模型「真的理解」；反事实样本按嵌入距离近似配对；<b>不覆盖</b>生成模型、不覆盖视频、不覆盖「模型能不能自己学会」这类因果问题。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Do vision models know that three is three?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Ankit Sonthalia, Arnas Uselis, Seong Joon Oh（<b>3 位署名</b>，无 et al.；机构据 PDF 首页：<b>University of Tübingen</b> / <b>KAIST AI</b>；片中<b>不念机构</b>）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-26T17:58:17Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom；<code>updated</code> 相同 ⇒ 无 v2）· <code>comment</code>：无 · PDF 实测 <b>15 页</b>（<code>Preprint</code>）</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.CV</code>（主分类，唯一分类）· 关键词：视觉编码器 / 线性表征假设（LRH）/ 碎片化线性 / 概念泛化 / 探针</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><code>https://arxiv.org/abs/2610.35857</code>（放视频简介；本页不嵌外链资源）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-27 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 公告批次 <code>2026-10-26</code>（PM 轮刷新后<b>直接取自新批</b>）· 经 <code>id_list</code> 权威复核（<code>raw/2026-10-27-pm-idlist-r116a.xml</code>）</div></div>
+</div>
+
+<h2 class="sec">🎞 五段分镜（0–10 / 10–30 / 30–80 / 80–105 / 105–120s）</h2>
+<table>
+  <tr><th style="width:44px">镜</th><th style="width:96px">时间</th><th style="width:88px">段落</th><th style="width:34%">口播（中文 · 约 200 字/分）</th><th>画面（一律自绘 / AI 生成）</th><th style="width:18%">字幕（屏上大字）</th><th style="width:16%">音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">手写的 3、三根手指、三颗糖 —— 你一眼就知道，它们是同一个数。可 AI 眼里的「三」，也是同一个吗？</td>
+    <td>黑屏上依次落下<b>四张卡片</b>：手写「3」/ 三根手指线条图 / 三个小球 / 三个圆点，四张卡<b>同时翻面</b>，背面写着同一个字：「<b>3</b>」。镜头拉近「3」字，字被<b>拆成四块碎片</b>向四角飞散 —— 屏上浮出一行白字「<b>46 个视觉模型 · 10 个概念 · 2,530 次检验</b>」。<b>不出现</b>任何论文截图，全部矢量自绘。</td>
+    <td>它们是同一个三吗？<br><b>46 个模型 · 2,530 次检验</b><br>（小字：作者自报 · 未复现）</td>
+    <td>卡片落下「啪」×4；碎片飞散「唰」；低频「嗡」收尾。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">视觉模型常被夸「看得懂图」。可它是在记像素，还是真抓住了「三」这个抽象概念？怎么测？作者借用了语言模型上已验证的办法：看内部表征里有没有一条稳定的「方向」。</td>
+    <td>画面左边一台<b>相机取景框</b>扫过四张卡片，右边浮出一排<b>灰色向量小方块</b>（代表模型的内部表征）。取景框缩成一个问号，向量方块被排成一列，中间出现一支<b>箭头</b>，箭头先<b>左右乱晃</b>，随后被一条虚线「<b>方向</b>」稳住。屏上出现两个词：<code>linear representation</code> 与中文「<b>线性表征</b>」。</td>
+    <td>它在认像素，还是懂概念？<br><b>测「方向」：线性表征</b></td>
+    <td>取景框「咔」；问号「叮」；箭头晃动「沙沙」，稳住时一声「咚」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">思路很朴素：如果一个概念的变化在模型内部对应一个固定方向，把「2 个」换成「3 个」时方向应该稳定 —— 这就是局部线性。作者准备了四种毫不相干的「3」：手写数字、三根手指、三个球、三个点。然后拿四十多个视觉模型，逐一在向量空间里找这支箭头，再问：换个形式，还是同一个方向吗。</td>
+    <td>分三步演示：① <b>四宫格</b>：每组左边「2」右边「3」（手写 / 手指 / 球 / 点），下方各画一支<b>同色箭头</b>；② 镜头拉远，四支箭头被<b>收集到中心</b>，标注「<b>局部（形式内）</b>」；③ 四支箭头开始<b>两两比对</b>：同色的重合成一支，不同色的<b>错开角度</b> —— 字幕提示「<b>跨形式 = 全局</b>」。全程用<b>矢量图标 + 箭头</b>，不写公式、不出现论文 Figure 2 的矩阵。</td>
+    <td>4 种「3」，各测一次<br><b>局部：形式内方向一致吗？</b><br><b>全局：跨形式还是同一方向？</b><br>（小字：46 个编码器 / 10 个概念族）</td>
+    <td>四宫格「哒」×4；箭头合并「叮」；错开时「呲」；每换一步一次轻「咔」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">答案分两层。第一层：这个方向几乎都找得到 —— 所有检验里 99.1% 显著，数字 2 到 3 是 100%。第二层：跨形式还是同一方向吗？只有 52.2%，数字只有 46.9%。每种「三」都单独学了一遍 —— 作者叫它碎片化线性。</td>
+    <td>屏幕上半先长出<b>两根横条</b>：<b>局部 99.1%</b>（几乎满格）与 <b>全局 52.2%</b>（刚过半），数字在条尾滚动定格。切到下半：四宫格的「3」被<b>四条虚线</b>连向中央，虚线在中央<b>不汇合、而是彼此错开</b>，每条旁边标一个「<b>2→3</b>」，配字幕「<b>每个『三』各学一遍</b>」。右下角补一行小字「数字概念：局部 100% / 全局 46.9%」。全部数字旁挂「<b>作者自报 · 未复现</b>」。</td>
+    <td>局部 99.1% ｜ 全局 52.2%<br><b>每种「三」都单独学了一遍</b><br>（小字：碎片化线性 fragmented linearity）</td>
+    <td>横条生长「嗖」；滚数「哒哒」；虚线错开「呲」；定格「咚」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">而且碎片化不是固定的：局部越强的模型越能跨过去，排序相关系数在 0.38 到 0.89 之间。所以真正的问题不是「AI 会不会数数」，而是它学到的那个「三」，是不是我们的那个三。</td>
+    <td>四条错开的虚线开始<b>缓慢聚拢</b>，屏幕上一条<b>上升曲线</b>从左到右爬升，横轴写「<b>局部线性（越强）</b>」、纵轴写「<b>跨形式一致性</b>」，曲线旁标「<b>τ 0.38–0.89</b>」。片尾定格：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.35857</b> + 一行「<b>论文解读 · 非官方 · 非结论</b>」。<b>不出现</b>「AI 完全不懂世界 / 大模型只是死记硬背」等原文未支持的绝对化表述（作者原文是「并非都『知道』」）。</td>
+    <td>越强的模型越能跨过去<br><b>τ 0.38–0.89</b><br>（片尾：原题 + arXiv 链接放简介）</td>
+    <td>虚线聚拢「沙…」；曲线爬升「嗖」；结尾单音「叮」后留 1s 静音。</td>
+  </tr>
+</table>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面全部自绘 / 自生成</b>：四宫格卡片（手写 3 / 手势 / 小球 / 点阵）、向量小方块、箭头、横条、上升曲线，均为<b>自制矢量图形或 AI 生成</b>；🚫 <b>不得</b>截取论文 Figure 2/3 的 DC 矩阵图与 Table 1 或任何表格。</li>
+  <li><b>风格建议</b>：深蓝主色（<code>#1f3a93</code> → <code>#1f6feb</code>）+ 冷灰底；<b>「局部」统一用实心蓝条 / 「全局」统一用带斜纹的浅蓝条</b>，全片不改色义；核心数字（<b>99.1 / 52.2 / 100 / 46.9 / 0.67 / 0.92 / 0.08 / τ 0.38–0.89</b>）置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+  <li><b>配音</b>：中文普通话，语速 200–205 字/分；「<b>也是同一个吗</b>」「<b>单独学了一遍</b>」「<b>是不是我们的那个三</b>」三处<b>放慢并加重</b>；镜 4 两个百分比<b>平稳念完</b>，不要念成悬念。</li>
+  <li><b>字幕</b>：镜 4 全部数字配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行，照抄不改写）</b>。</li>
+  <li><b>术语友好化</b>：<b>linear representation hypothesis (LRH)</b> → 「概念在模型内部像一根箭头」，屏上保留 <code>LRH</code>；<b>regime</b> → 「形式 / 样子」（手写、手势、球、点），<b>不直译</b>；<b>fragmented linearity</b> → 「碎片化线性：每种『三』各学一遍」，屏上保留英文原词；<b>Kendall τ</b> → 「排序相关系数」，<b>不展开公式</b>；<b>说明符（DC / 碎片化分数 / Bonferroni 校正 / Welch t 检验）</b> → 全片<b>不出现</b>。</li>
+  <li><b>节奏</b>：镜 1 的「四张卡翻面 → 碎片飞散」要在 <b>5 秒内</b>完成，反差靠画面不靠解说；镜 3 是全片信息密度最高处，<b>每讲一件事就换一次画面</b>（四宫格 → 箭头汇总 → 跨形式比对），避免一张图讲 50 秒。</li>
+  <li><b>可选加料（不进 120s 主片）</b>：① 「clean→dirty：监督 ViT 碎片化 0.92 vs CLIP 0.08」可做 6s 竖屏切片；② 「物体身份 99.3% / 年龄 94.6% 的全局显著率最高 —— 有统一视觉线索的概念更容易跨形式」可做第二集钩子。</li>
+</ul>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给出 <b>arXiv abs 地址</b>（页内以代码文本呈现，不嵌外链资源）+ <b>英文原题</b>照抄不改写（<i>Do vision models know that three is three?</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「AI 根本没有理解能力 / 大模型只是像素记忆 / 通用人工智能被证伪」；结论严格照论文措辞 —— 作者原文是「几乎所有视觉模型都编码了『三』，但并非都『知道』它是三」。</li>
+    <li>✅ <b>指标不曲解（本片最关键）</b>：<b>99.1% / 52.2%</b> 是「(模型, 概念, 形式) 检验中<b>统计显著的比例</b>」，<b>不是</b>「模型的准确率」、<b>不是</b>「AI 有 99% 懂三」；<b>碎片化分数 0.67</b> 是「跨形式方向<b>不显著的比例</b>」（越接近 1 越碎片化），<b>不是</b>准确率；<b>Kendall τ</b> 是<b>模型间的秩相关</b>（局部线性越强的模型全局也越强），<b>不是</b>因果关系；作者明确写「我们不主张因果关系」。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文 Figure 2 的 DC 矩阵、不用 Figure 3 的散点图、不用 Table 1。</li>
+    <li>✅ <b>不编造数据</b>：仅使用论文可支撑的表述 —— 「46 个视觉编码器」「10 个概念族（数量 / 年龄 / 物体身份 + 7 个 MIT-States 属性）」「2,530 个 (模型, 概念, 形式) 检验」「局部 99.1% / 全局 52.2%；2→3：100% / 46.9%；物体身份 99.3%、年龄 94.6%」「碎片化 0.67（监督 ViT，2→3）vs 0（CLIP）；clean→dirty 0.92 vs 0.08」「Kendall τ ∈ [0.38, 0.89]，全部 p < 1e-3」；<b>不虚构</b>模型清单细节、作者动机、未给出的百分比。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：🚫 不使用「AI 只认识像素」「模型根本不懂数字」等反义引申（论文结论是<b>局部几乎普遍线性</b>，且<b>部分模型能跨形式迁移</b>）；镜 5 明确边界（概念类型有限 / 反事实样本近似配对 / 未复现）。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（<b>3 位署名</b>：Ankit Sonthalia, Arnas Uselis, Seong Joon Oh）；机构仅写在页面信息栏（据 PDF 首页：University of Tübingen / KAIST AI），<b>片中不念</b>，不臆测分工。</li>
+    <li>✅ <b>预印本状态如实标注</b>：镜 4 有「<b>作者自报 · 未复现</b>」小字；PDF 首页标 <code>Preprint</code>、<code>comment</code> 为空 ⇒ <b>不声称</b>已被会议/期刊接收，<b>不声称</b>代码与数据已开源。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-27</b> ｜ 文件 <code>research/video/SCENES/10_27.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>Do vision models know that three is three?</i>（Ankit Sonthalia, Arnas Uselis, Seong Joon Oh）｜ arXiv:2610.35857 ｜ 首次提交 2026-10-26 ｜ 分类 <code>cs.CV</code> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-27.html">research/daily/2026-10-27.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_26.html">10_26.html</a></div>
+</footer>
+</div>
+</body>
+</html>

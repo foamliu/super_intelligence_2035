@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-27（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-27（晚报 · 5/5 收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,15 +53,15 @@
 <body>
 
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-27 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b> · 早 3 篇<b>全部「借鉴」</b>（训练/推理数值失配让 RL 后训练崩塌 → 只对齐「舍入位置」即可稳住 / 用本 prompt 历史 rollout 当 n-gram 草稿，把 RL rollout 提速 1.38× / agent 跑分到底是「模型」还是「harness」的锅 —— 五个可测指标）</div>
+  <h1>论文推荐日报 · 2026-10-27 <span class="badge b-pm">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5</b> · 早 3 篇<b>「借鉴」</b>（训练/推理数值失配让 RL 后训练崩塌 → 只对齐「舍入位置」即可稳住 / 用本 prompt 历史 rollout 当 n-gram 草稿，把 RL rollout 提速 1.38× / agent 跑分到底是「模型」还是「harness」的锅）+ 晚 2 篇<b>「科普」</b>（视觉模型都认得「3」，但它们「知道」三是什么吗 / 只泄漏 3 秒语音特征，就能用你的声音说任意的话）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-27（CST 本地日；AM = UTC 2026-10-26T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>📅 日期：2026-10-27（CST 本地日；AM = UTC 2026-10-26T22:0x ／ PM = UTC 2026-10-27T10:0x）</span>
+    <span>🏷 标识：晚报（PM · 5 / 5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成：2026-10-27 06:0x CST</span>
+    <span>🕒 生成：2026-10-27 06:0x CST（AM）→ 18:0x CST（PM 收口）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span>（Rounding-Location Alignment / NgramRL / When Agents Fail）；晚 2 <span class="badge b-kp">科普</span> 留待 <b>18:00</b> 轮补齐（收口 5/5）。<b>本轮公告批次未刷新</b>：仍为 <code>2026-10-23</code>（<code>cat:cs.CL</code> 探针 <code>totalResults=123669</code>、最新 <code>published=2026-10-23T17:59:56Z</code>，与上一轮逐条相同；本轮唤醒在 <b>UTC 2026-10-26T22:00</b>，<b>早于周一 20:00 ET 公告</b>）⇒ 3 篇取自已入账候选池（<b>首次提交均为 2026-10-23</b>、<b>从未进过任何日报</b>）。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5</b> —— 早 3 <span class="badge b-jz">借鉴</span>（Rounding-Location Alignment / NgramRL / When Agents Fail）+ 晚 2 <span class="badge b-kp">科普</span>（Do vision models know that three is three? / From Speech Tokens to Stolen Voices）。<b>PM 公告批次已刷新</b>：<code>2026-10-23</code> → <code>2026-10-26</code>（<code>cat:cs.CL</code> 探针 <code>totalResults</code> 123669 → <b>123901</b>、最新 <code>published=2026-10-26T17:59:33Z</code>）⇒ 晚 2 篇<b>直接取自新批</b>（<code>--fetch --seen</code>：15/15 查询 200、<b><code>kept 206</code></b> / <code>dropped 366</code>）。早 3 篇仍为 AM 时点结果（当时批次未刷新，取自 r114 候选池），<b>首次提交日期逐一标注</b>（均为 2026-10-23）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + comment + 论文 PDF 正文核对，<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示；数字均<b>作者自报</b>，本线未复现。</div>
 </header>
 
@@ -147,6 +147,65 @@
   </div>
 </div>
 
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM）</b>：本轮唤醒于 <b>本地 2026-10-27 18:00（CST）</b> = <b>UTC 2026-10-27T10:00（周二）</b>。
+  <b>批次已刷新</b>（证据 <code>raw/2026-10-27-pm-probe-r116.json</code>，<code>generated=2026-10-27T10:00:46Z</code>）：
+  arXiv API ✅ <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>；<code>cat:cs.CL</code> 探针
+  <code>totalResults</code> <b>123669 → 123901</b>、最新样本 <code>published=2026-10-26T17:59:33Z</code>（<code>2610.35865v1</code>）；
+  广度扫描 <code>totalResults</code> <b>637936 → 639007</b> ⇒ <b>公告批次 <code>2026-10-23</code> → <code>2026-10-26</code></b>。
+  ／ HF Daily ❌ <code>URLError(OSError(101, 'Network is unreachable'))</code>（如实记 FAIL）／
+  RSS cs.CL <b>374</b> · cs.CV <b>483</b> · cs.LG <b>321</b>（<code>status=200</code> + <code>application/rss+xml</code>；<b>仅作发现，不作证据</b>）。
+  <br>⚠️ <b>如实记录执行细节</b>：<code>window_mode=daily</code>（72h，脚本按当前 UTC 时间<b>自动</b>判定，<b>未人工放宽</b>）；
+  <code>--fetch --seen</code>（<code>generated=2026-10-27T10:03:38Z</code>）⇒ <b>15/15 查询 <code>ok</code>、全部 <code>attempts=1</code></b>、
+  <b><code>kept 206</code> / <code>dropped 366</code></b>（206 条中 <code>published</code> <b>2026-10-26 = 131</b> / <b>2026-10-25 = 57</b> / <b>2026-10-24 = 18</b>）。
+  <br>晚 2 篇「科普」<b>直接取自本批</b>，并做 <b><code>id_list</code> 权威复核</b>（1 批 <b>3 条请求 → 3 条完整返回</b>，均 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code> + 含 <code>published</code>；
+  证据 <code>raw/2026-10-27-pm-idlist-r116a.{xml,headers}</code>，<code>STATUS=200 BYTES=9131 ELAPSED=2.08s</code>）。
+  两篇首次提交分别为 <b>2026-10-26T17:58:17Z</b> / <b>2026-10-26T01:24:54Z</b>（UTC），均在 72h 窗口内、<b>为当日新提交</b>。
+</div>
+
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 4–5 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>Do vision models know that three is three?</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">「三」这个数，可以是<b>手写的数字 3</b>、可以是<b>三根手指</b>、可以是<b>图里三个球</b>、也可以是<b>三个点</b> —— 对人来说是同一个概念，对视觉模型是吗？本文用「线性表征假设」当尺子：在模型的嵌入空间里，<b>把「2 个」变成「3 个」的那一步，是不是同一个方向？</b>他们测了 <b>46 个视觉编码器</b>（对比学习 CLIP/SigLIP、DINO、掩码重建、纯监督；CNN 与 ViT 都有）× <b>10 个概念族</b>（数量、年龄、物体身份 + 7 个 MIT-States 属性：干净/脏、亮/暗、湿/干、生/熟、新/旧、雾/晴、熟/未熟），共 <b>2,530 个（模型, 概念, 形式）</b>检验。结果：<b>「在每种形式内部」几乎都能找到那个方向</b>（整体 <b>99.1%</b> 显著，数量 2→3 为 <b>100%</b>）；但<b>「跨形式还是同一个方向」只有 52.2%</b>（2→3 仅 <b>46.9%</b>，干净/脏 51.8%；物体身份 99.3%、年龄 94.6% 最高）。作者把这个现象命名为 <b>fragmented linearity（碎片化线性）</b>：<b>每种「三」它都单独学了一遍，却没认出它们是同一个三</b>。一句话结论：<b>几乎所有视觉模型都编码了「三」，但并非都「知道」它是三。</b></div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Do vision models know that three is three?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Ankit Sonthalia, Arnas Uselis, Seong Joon Oh（3 位，无 et al.）· <b>University of Tübingen</b> + <b>KAIST AI</b>（据 PDF 首页核对；通讯作者 Ankit Sonthalia，<code>Preprint</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-26</b>（<code>published=2026-10-26T17:58:17Z</code>；<code>updated</code> 同为 2026-10-26）· 无 comment · PDF 实测 <b>15 页</b> / 65,165 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code>（主分类，唯一分类）· <span class="badge b-kp">科普</span> · 关键词：视觉编码器 / 线性表征假设 / 概念泛化 / 碎片化线性 / 可解释性 / 探针</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.35857">https://arxiv.org/abs/2610.35857</a>（PDF 已落地：<code>research/pdf/2026-10-27/2610.35857.pdf</code>，556,912 B，sha256 见附录 C′）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>钩子极强、零门槛</b>：「AI 认得『3』，但它知道三个手指和三颗糖是同一个三吗？」—— 不需要任何 AI 背景就能听懂；而且答案不是「是/否」，是<b>「看情况，而且能测」</b>，天然带反转。</li>
+      <li><b>有画面</b>：同一概念在四种画面上并排 —— 手写 3 / 三根手指 / CLEVR 里的三个球 / 点阵里的三个点；再配一张「方向箭头」图：形式内部的箭头一致，跨形式的箭头乱掉。视觉信息几乎不用解释。</li>
+      <li><b>可量化的反差数字</b>：<b>局部 99.1% vs 全局 52.2%</b>（数量 2→3：100% vs 46.9%）—— 一句「每种『三』都学了，但没学会它们是同一个」就能收尾。</li>
+      <li><b>能讲出「越好越不像」的反直觉</b>：碎片化分数 0.67（监督 ViT，接近随机基线）对 0（CLIP）；clean→dirty 上监督 ViT 0.92 对 CLIP 0.08；同时局部线性越强的模型越能「逃出」碎片化（Kendall τ ∈ [0.38, 0.89]）—— 这条可以做「为什么大模型看起来更懂」的讨论点。</li>
+      <li><b>边界（引用时必须带上）</b>：<b>概念类型有限</b>（数量 / 年龄 / 物体身份 / 7 个 MIT-States 属性），<b>反事实样本按嵌入距离匹配</b>（近似配对，作者自述局限）；「线性」是<b>统计显著的方向一致性</b>，<b>不等于</b>模型「真的理解」；数字作者自报、本线<b>未复现</b>、未精读全篇。🚫 不得说成「AI 根本不懂数字」。</li>
+    </ol>
+    <b>建议动作</b>：<b>做（V2 脚本已出：<code>research/video/SCENES/10_27.html</code>）</b> —— 两分钟里只讲「2→3」一个概念 + 一组对比数字；画面全部自绘（数字卡 / 手势线条图 / 点阵 / 箭头），🚫 不搬论文 Figure 2 的矩阵图与表格。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">5</span>From Speech Tokens to Stolen Voices: Attacker-Chosen-Text Speaker Impersonation via Representation Inversion</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">现在的端到端语音大模型常把「<b>语音前端</b>」放在你的手机上：本地把声音压成<b>表征</b>（离散 token / 连续向量 / 混合），只把表征发给云端推理，<b>原始录音不出设备</b> —— 很多人以为这样就安全了。本文问的是：<b>这些表征还够不够冒充你说任意一句话？</b>作者提出 <b>STIA（Speech Token Inversion Attack）</b>：攻击者只拿到<b>受害者一小段语音的表征</b>（没有原始音频、也没有原文），先用公开语音数据训练一个<b>条件流匹配</b>生成模型，把泄漏表征当「<b>说话人条件</b>」、再和<b>攻击者自己指定的文本</b>拼在一起，在冻结的音频编解码器潜空间里合成语音。在未见说话人（Emilia 语料）上、统一 <b>3 秒</b>表征泄漏：<b>Moshi</b> 前端说话人相似度（CAM++ 余弦）<b>0.78</b>、目标文本 <b>WER 3.80%</b>；<b>Kimi-Audio</b> <b>0.82 / 3.84%</b>；<b>Qwen3-Omni</b> <b>0.75 / 4.61%</b>。作为对照，先前「先还原说话人向量再接 TTS」的基线（SpInv+TTS）在 Moshi 上只有 <b>0.22 / 13.37%</b> —— 也就是说：<b>只泄漏 3 秒的「特征」，就足以用你的声音说出攻击者想说的话，而且吐字相当准。</b></div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">From Speech Tokens to Stolen Voices: Attacker-Chosen-Text Speaker Impersonation via Representation Inversion</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Ye Lu, Shen Wang, Runze Liu, Zhitao Ou, Haonan Huang, Yihan Yan, Fanghui Sun, Zhaoyang Zhang（共 8 位）· <b>School of Cyberspace Science, Harbin Institute of Technology</b>（哈尔滨工业大学网络空间安全学院；全体同机构，通讯作者 Zhaoyang Zhang；据 PDF 首页核对）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-26</b>（<code>published=2026-10-26T01:24:54Z</code>；<code>updated</code> 同为 2026-10-26）· 无 comment · PDF 实测 <b>14 页</b> / 100,756 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SD</code>（主分类）+ <code>cs.AI</code> + <code>cs.CR</code> + <code>cs.CV</code> + <code>cs.MM</code> · <span class="badge b-kp">科普</span> · 关键词：语音隐私 / 表征反演 / 说话人仿冒 / 语音前端 / 端云拆分的隐私假设 / 流匹配</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.34688">https://arxiv.org/abs/2610.34688</a>（PDF 已落地：<code>research/pdf/2026-10-27/2610.34688.pdf</code>，560,451 B，sha256 见附录 C′）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>和每个人都有关的「安全感反转」</b>：「原始录音不上传」听起来很安全，但这篇说<b>不够</b> —— 只要那串「特征」被拿到 3 秒，就能用你的声音说别的话。反诈、隐私、语音助手用户都能代入，天然有传播力。</li>
+      <li><b>有画面、有对照</b>：左边「本地只有波形 → 前端压成小方块（表征）→ 云端」，右边攻击者拿到一堆小方块 + 打一行字 → 播放出「你的声音」。再配一张「泄漏时长 vs 像不像」的折线（2s 0.76 / 3s 0.78 / 5s 0.79 / 8s 0.80）—— 一句「<b>3 秒就够了，再长只多一点像</b>」。</li>
+      <li><b>数字直白</b>：像不像 <b>0.78（3 秒）</b>、说没说对 <b>3.80% 字错率</b>；对照基线 <b>0.22 / 13.37%</b> —— 差距大到不需要解释什么叫流匹配。</li>
+      <li><b>能落到「怎么办」</b>：作者给的防御是工程味很实的四条 —— <b>表征传输做认证加密</b>、<b>进程隔离 / 限制读取权限</b>、<b>缩短保留时间</b>、<b>应用层再校验「这段语音是否被授权做这笔操作」</b>。做视频时可以直接给观众可执行建议（如「别把语音助手的权限开到能直接转账」）。</li>
+      <li><b>边界（引用时必须带上）</b>：只测了 <b>3 个前端</b>（Moshi / Kimi-Audio / Qwen3-Omni）、<b>英语为主</b>（中文只在 Moshi 上单独训练评估）；<b>相似度是自动指标</b>（CAM++ 余弦 / WER / UTMOS），<b>不等于真实认证系统的通过率</b>，作者明确说需要人听测试与真实系统评估；输出音质受冻结的 Higgs 编解码器限制；数字作者自报、本线<b>未复现</b>、未精读全篇。🚫 不做「已被用于诈骗」这类无出处暗示，🚫 不放任何可模仿真实人声的示范音频。</li>
+    </ol>
+    <b>建议动作</b>：<b>仅备忘 / 可做第二条竖屏切片</b>（与镜 4 的「视觉模型认不认三」并列为本周科普备选）；若成片，<b>只用合成示意波形与文字卡</b>，🚫 不使用任何真人语音样本。
+  </div>
+</div>
+
 <h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
 <p style="font-size:13px">证据：<code>raw/2026-10-27-am-fetch-r115-seen.json</code>（<code>generated=2026-10-26T22:01:24Z</code>，<code>window_mode=daily</code>／<code>window_hours=72</code>／<code>rate_limit=3.0s</code>）。全部 15 条查询 <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>、<b>全部 <code>attempts=1</code></b>（无重试）。</p>
 <table>
@@ -198,10 +257,79 @@
   </ol>
 </div>
 
+<h2 class="sec">附录 A′ · 晚报 15 条查询逐条结果（<code>--fetch --seen</code> · 可复核）</h2>
+<table>
+  <tr><th>#</th><th>域</th><th>查询名</th><th>HTTP</th><th>totalResults</th><th>取回</th><th>kept</th><th>attempts</th></tr>
+  <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>639,007</td><td>40</td><td>40</td><td>1</td></tr>
+  <tr><td>2</td><td>LLM</td><td><code>llm-large-language-model</code></td><td>200</td><td>39,486</td><td>40</td><td>36</td><td>1</td></tr>
+  <tr><td>3</td><td>LLM</td><td><code>llm-long-context</code></td><td>200</td><td>1,872</td><td>40</td><td>3</td><td>1</td></tr>
+  <tr><td>4</td><td>LLM</td><td><code>llm-scaling-law</code></td><td>200</td><td>1,025</td><td>40</td><td>4</td><td>1</td></tr>
+  <tr><td>5</td><td>SLM</td><td><code>slm-small-language-model</code></td><td>200</td><td>1,111</td><td>40</td><td>0</td><td>1</td></tr>
+  <tr><td>6</td><td>SLM</td><td><code>slm-on-device</code></td><td>200</td><td>11,062</td><td>40</td><td>9</td><td>1</td></tr>
+  <tr><td>7</td><td>多模态</td><td><code>mm-vision-language</code></td><td>200</td><td>18,051</td><td>40</td><td>38</td><td>1</td></tr>
+  <tr><td>8</td><td>多模态</td><td><code>mm-multimodal</code></td><td>200</td><td>16,685</td><td>40</td><td>10</td><td>1</td></tr>
+  <tr><td>9</td><td>多模态</td><td><code>mm-csmm</code></td><td>200</td><td>10,279</td><td>40</td><td>4</td><td>1</td></tr>
+  <tr><td>10</td><td>agent harness</td><td><code>agent-harness-title</code></td><td>200</td><td>154</td><td>40</td><td>5</td><td>1</td></tr>
+  <tr><td>11</td><td>agent harness</td><td><code>agent-swe-bench</code></td><td>200</td><td>416</td><td>40</td><td>5</td><td>1</td></tr>
+  <tr><td>12</td><td>agent harness</td><td><code>agent-tool-use</code></td><td>200</td><td>1,731</td><td>40</td><td>6</td><td>1</td></tr>
+  <tr><td>13</td><td>agent harness</td><td><code>agent-csma-multiagent</code></td><td>200</td><td>6,055</td><td>40</td><td>10</td><td>1</td></tr>
+  <tr><td>14</td><td>邻域</td><td><code>nb-retrieval-augmented</code></td><td>200</td><td>3,985</td><td>40</td><td>7</td><td>1</td></tr>
+  <tr><td>15</td><td>邻域</td><td><code>nb-alignment</code></td><td>200</td><td>22,145</td><td>40</td><td>29</td><td>1</td></tr>
+  <tr><th>合计</th><th>5 域</th><th>15 条</th><th>15 × 200</th><th>—</th><th>600</th><th>206</th><th>全 1</th></tr>
+</table>
+<p><b>kept 206 / dropped 366 怎么来的</b>：600 条取回条目中，<b>366</b> 条要么<b>已在 <code>SEEN</code></b>（<code>2026-10-25</code> 及更早的旧批），要么<b>早于 72h 窗口</b>；新入账的 <b>206</b> 条即本批（<code>published</code> 2026-10-26 = 131 / 2026-10-25 = 57 / 2026-10-24 = 18）。<b>未放宽窗口、未改查询式、未人工干预 <code>attempts</code></b>（15 条全为 1，无重试）。证据 <code>raw/2026-10-27-pm-fetch-r116-seen.json</code>（<code>generated=2026-10-27T10:03:38Z</code>）。</p>
+
+<h2 class="sec">附录 B′ · 晚报 2 篇 <code>id_list</code> 权威复核 + 台账断言</h2>
+<table>
+  <tr><th>arXiv ID</th><th>主分类（全部）</th><th>published (UTC)</th><th>标题（照抄，未截断）</th><th>本轮处置</th></tr>
+  <tr><td><code>2610.35857</code></td><td><code>cs.CV</code>（唯一）</td><td>2026-10-26T17:58:17Z</td><td>Do vision models know that three is three?</td><td><b>收录</b>（晚报 #4 · 科普 · <b>本日科普 TOP-1</b>）</td></tr>
+  <tr><td><code>2610.34688</code></td><td><code>cs.SD</code>（+ <code>cs.AI</code> / <code>cs.CR</code> / <code>cs.CV</code> / <code>cs.MM</code>）</td><td>2026-10-26T01:24:54Z</td><td>From Speech Tokens to Stolen Voices: Attacker-Chosen-Text Speaker Impersonation via Representation Inversion</td><td><b>收录</b>（晚报 #5 · 科普）</td></tr>
+  <tr><td><code>2610.34855</code></td><td><code>cs.AI</code>（+ <code>cs.CV</code>）</td><td>2026-10-26T05:19:02Z</td><td>DecoyCount: Evaluating Visual-Reasoning Misalignment in Counting</td><td><b>备选未用</b>（与 #4 同属「视觉计数」主题，避免同质化；已入 <code>SEEN</code> 候选）</td></tr>
+</table>
+<p style="font-size:13px">证据：<code>raw/2026-10-27-pm-idlist-r116a.xml</code> + <code>.headers</code>（<code>STATUS=200</code>、<code>application/atom+xml; charset=utf-8</code>、<code>BYTES=9131</code>、<code>2.08s</code>；3 条请求 → 3 条完整返回，均含 <code>published</code>）。<b>标题 / 作者 / 分类 / 日期一律取自官方 Atom 元数据，不手抄。</b></p>
+<div class="ok-box">
+  <b>PM 台账断言（<code>raw/update_r116.py</code> 幂等校验）</b>：<code>n_queries==15</code> ✓ · <code>n_kept==206</code> ✓ · <code>n_dropped==366</code> ✓ · <code>window_mode=='daily'</code> ✓ · 15 条全 <code>ok/200/attempts==1</code> ✓ · <code>items==206</code> ✓ · 2 个推荐 ID 均在批内 ✓ · 2 个 ID 的 <code>published</code> 均以 <code>2026-10-26</code> 开头 ✓ · <code>id_list</code> 恰 3 条 ✓。<br>
+  实跑输出：<code>SEEN rows appended: 206</code> · <code>{候选: 4207, 收录: 261}</code>（另 <code>候选（RSS补充）507</code>）· <code>papers.jsonl lines: 261</code>。
+</div>
+
+<h2 class="sec">附录 C′ · PDF 落地校验（全日 5/5 通过）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节</th><th>校验</th><th>页数 / 文本量</th><th>sha256</th></tr>
+  <tr><td><code>2610.32951</code></td><td>1,308,219</td><td><code>application/pdf</code> + <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + 字节 == <code>Content-Length</code> ✅（AM）</td><td>17 页 / 73,582 字符</td><td><code>e16b2c413a79f773…</code>（全串见附录 C）</td></tr>
+  <tr><td><code>2610.32881</code></td><td>2,309,478</td><td>同上 ✅（AM）</td><td>7 页 / 74,409 字符</td><td><code>15c82082d5b1a421…</code></td></tr>
+  <tr><td><code>2610.32483</code></td><td>3,268,395</td><td>同上 ✅（AM）</td><td>43 页 / 185,467 字符</td><td><code>377125f259836165…</code></td></tr>
+  <tr><td><code>2610.35857</code></td><td>556,912</td><td>同上 ✅（PM）</td><td>15 页 / 65,165 字符</td><td><code>21934ddac855707651b2d6cf…</code></td></tr>
+  <tr><td><code>2610.34688</code></td><td>560,451</td><td>同上 ✅（PM；首轮 <code>urllib</code> 中途 <code>TimeoutError</code> ⇒ <b>丢弃临时文件后用 curl 重下并重新校验</b>）</td><td>14 页 / 100,756 字符</td><td><code>414cc5747b893a5e0329e8aa…</code></td></tr>
+</table>
+<p style="font-size:13px">落地目录 <code>research/pdf/2026-10-27/</code>（<code>research/.gitignore</code> 已排除 <code>pdf/</code> 与 <code>*.pdf</code> ⇒ <b>不入 git</b>）；全日 5 个 PDF 合计 <b>8,003,455 B ≈ 7.63 MB &lt; 20 MB</b>（日报邮件单封直发，无需分包）。<b>失败即删、绝不留截断文件</b>（2026-10-15 教训）。</p>
+
+<h2 class="sec">附录 D′ · PM 口径与边界（引用前请读）</h2>
+<div class="note">
+  <ol>
+    <li><b>「推荐」不等于「结论」</b>：晚 2 篇均为「待读线索」（<b>科普</b>口径 = 大众看得懂 + 有传播力，<b>不代表</b>与 BaiZe / ZhuLong 的借鉴价值高）—— 数字来自 PDF 正文回查，<b>未经复现</b>。</li>
+    <li><b>时间口径</b>：两篇「首次提交」均为 <b>2026-10-26（UTC）</b>，相对本轮唤醒（2026-10-27T10:00Z）约 <b>16.0h / 32.6h</b>，<b>在 72h 窗口内</b>、且属<b>当日新批</b>（与 AM 轮「取自已入账候选池」不同，已如实区分）。</li>
+    <li><b>两口径不混用</b>：晚 2 篇全为 <span class="badge b-kp">科普</span>；早 3 篇全为 <span class="badge b-jz">借鉴</span>（AM 时点口径，未回改）。</li>
+    <li><b>HF Daily Papers 标记缺席</b>：本机 <code>huggingface.co</code> 长期 <code>Errno 101</code> ⇒ 本页<b>没有</b> <code>🏷 hf_daily</code> 标记，<b>不是「未被精选」</b>，而是<b>拿不到证据</b>（不伪造）。</li>
+    <li><b>分镜与邮件</b>：科普 TOP-1 分镜 <code>research/video/SCENES/10_27.html</code>（5 镜 / 120s）；当日日报邮件见 <code>research/mail/发送记录.md</code>（<b>没写 = 没发</b>）。</li>
+  </ol>
+</div>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="ok-box">
+  <ol>
+    <li><b>页头与标题</b>：<code>早报 · 3/5</code> → <code>晚报 · 5/5 收口</code>（<code>&lt;title&gt;</code> + <code>h1</code> + 标识徽章）；进度 <code>3/5</code> → <code>5/5</code>，补 PM 时点（<code>UTC 2026-10-27T10:0x</code>）。<b>原因</b>：18:00 轮已完成当日 5 篇收口，页头须与最终状态一致。</li>
+    <li><b>新增晚报取数说明（PM ok-box）</b>：写明<b>公告批次已刷新</b> <code>2026-10-23</code> → <code>2026-10-26</code>（探针 123669 → 123901 / 最新 <code>2026-10-26T17:59:33Z</code>；广度 637936 → 639007）、<code>kept 206</code> / <code>dropped 366</code>、15/15 <code>attempts=1</code>。<b>原因</b>：AM 轮的「批次未刷新」结论在 PM 已不成立，必须<b>明写变化</b>，不能悄悄替换。</li>
+    <li><b>新增晚报 2 篇「科普」卡片（序号 4–5）</b>：<code>2610.35857</code>（本日科普 TOP-1）与 <code>2610.34688</code>，8 字段齐全（原题照抄 / 作者机构 / 日期 / 分类标签 / abs 链接 / 推荐理由 / 边界 / 建议动作），数字均<b>回查 PDF 正文</b>（页数、字符数、局部–全局显著率、碎片化分数、CAM++ 余弦与 WER 消融表）。<b>原因</b>：P0 第 4 批要求 18:00 补齐 2 篇并按「科普」口径选；同时执行 AM 轮「发布前回查 PDF」的教训。</li>
+    <li><b>新增附录 A′–D′</b>：PM 15 条查询逐条结果（含 <code>kept</code> 列）、<code>id_list</code> 3/3 复核（含备选 <code>2610.34855</code> 与<b>未用理由</b>）、PDF 全日 5/5 校验与 sha256 前缀、PM 口径与边界。<b>原因</b>：与 AM 附录 A–D 保持同等可核验密度，便于 supervisor 抽查；并把「PM 一篇 PDF 首轮超时、重下后重新校验」如实登记。</li>
+    <li><b>附录 D 第 5 条（AM 的「下一步」）不再作为待办</b>：其四项（复验批次 / 补 2 篇科普 / 出分镜 / 发日报）已在 PM 全部执行，故 PM 侧用附录 D′ 重新表述当前口径；<b>AM 原文保留不改写</b>（沿用「不回改历史小节」的先例）。</li>
+    <li><b>footer</b>：改为「2026-10-27 晚报（5 / 5 · PM 收口）」，补 PM 证据路径与分镜链接；免责句由「3 篇」改为「5 篇均未精读全文」。<b>原因</b>：页尾是最后被读到的口径声明，不能停留在 3/5。</li>
+  </ol>
+</div>
+
 <footer>
-  <p>research 线 · 论文推荐日报 · 2026-10-27（早报 AM · 3/5）· 数据源 arXiv（<code>export.arxiv.org/api/query</code> + <code>id_list</code> 复核）· 生成于 2026-10-27 06:0x CST。</p>
-  <p>台账：<code>research/SEEN.md</code>（去重主键 arXiv ID）· <code>research/papers.jsonl</code>（结构化）· 口径记录：<code>research/ARXIV_API.md §9.115</code>。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
-  <p>⚠️ 免责：本页为<b>论文解读 / 待读线索</b>，非官方、非结论；不得作为「已验证收益 / SOTA 已证」的依据。</p>
+  <p>research 线 · 论文推荐日报 · 2026-10-27（晚报 PM · 5/5 收口）· 数据源 arXiv（<code>export.arxiv.org/api/query</code> + <code>id_list</code> 复核）· 生成于 2026-10-27 06:0x CST（AM）→ 18:0x CST（PM 收口）。</p>
+  <p>台账：<code>research/SEEN.md</code>（去重主键 arXiv ID）· <code>research/papers.jsonl</code>（结构化）· 口径记录：<code>research/ARXIV_API.md §9.116</code>。证据链：<code>raw/2026-10-27-am-probe-r115.json</code> / <code>-am-fetch-r115-seen.json</code> / <code>-am-idlist-r115a.{xml,headers}</code> / <code>-pm-probe-r116.json</code> / <code>-pm-fetch-r116-seen.json</code> / <code>-pm-idlist-r116a.{xml,headers}</code>。分镜：<code>research/video/SCENES/10_27.html</code>。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+  <p>⚠️ 免责：本页为<b>论文解读 / 待读线索</b>，非官方、非结论；5 篇均<b>未精读全文</b>，不得作为「已验证收益 / SOTA 已证」的依据。</p>
 </footer>
 </div>
 </body>

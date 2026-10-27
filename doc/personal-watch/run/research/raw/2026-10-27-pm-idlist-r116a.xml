@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/AtFc2I7W0syLJXsR0mkgFXoJ77w</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.35857,2610.34688,2610.34855&amp;start=0&amp;max_results=3</title>
+  <updated>2026-10-27T10:06:23Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=3&amp;id_list=2610.35857,2610.34688,2610.34855" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.34855v1</id>
+    <title>DecoyCount: Evaluating Visual-Reasoning Misalignment in Counting</title>
+    <updated>2026-10-26T05:19:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.34855v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.34855v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Visual counting benchmarks report whether vision-language models produce the correct number, but not whether errors arise from perception or reasoning. We introduce DecoyCount, a benchmark built from 1,660 real-world images with designed decoys across seven mechanisms, along with paired prompts: a neutral question, a matched alignment cue, and a novel multi-hop, multi-image question that situates the same counting problem in a realistic scenario. Using this design, we find that counting failures are induced partly by visual misalignment: models can execute the intended counting process when cue-guided but fail to select it unaided, and we term this difference in accuracy the reasoning-alignment gap. Despite being highly capable on general reasoning, frontier models remain below 50\% accuracy on our benchmark, while alignment gaps range from 11.8-22.1 percentage points; strikingly, we observe that more capable models, greater thinking budgets, and agentic processes often induce larger gaps. Because humans may bring context that models lack, we test whether textual underspecification contributes to misalignment using a scenario-based multi-hop condition without explicit hinting, but this added context does not improve aggregate performance. Our analysis concludes that stronger general reasoning does not by itself generalize to aligned visual reasoning, leaving misalignment with human visual expectations as a substantial component of the remaining deficit.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T05:19:02Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name> Qiuyi</name>
+      <arxiv:affiliation>Richard</arxiv:affiliation>
+    </author>
+    <author>
+      <name> Zhang</name>
+    </author>
+    <author>
+      <name>Zhen Xu</name>
+    </author>
+    <author>
+      <name>Jing Gu</name>
+    </author>
+    <author>
+      <name>Seojin Bang</name>
+    </author>
+    <author>
+      <name>Arnav Mohanty Das</name>
+    </author>
+    <author>
+      <name>Yaning Hu</name>
+    </author>
+    <author>
+      <name>Gautam Kumar</name>
+    </author>
+    <author>
+      <name>Jared Lichtarge</name>
+    </author>
+    <author>
+      <name>Le Xue</name>
+    </author>
+    <author>
+      <name>Bettina Catoto</name>
+    </author>
+    <author>
+      <name>Akul Datta</name>
+    </author>
+    <author>
+      <name>Daniel Luo</name>
+    </author>
+    <author>
+      <name>Farha Khan</name>
+    </author>
+    <author>
+      <name>Marcella Valentine</name>
+    </author>
+    <author>
+      <name>Yinfei Yang</name>
+    </author>
+    <author>
+      <name>Andrew M. Dai</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.34688v1</id>
+    <title>From Speech Tokens to Stolen Voices: Attacker-Chosen-Text Speaker Impersonation via Representation Inversion</title>
+    <updated>2026-10-26T01:24:54Z</updated>
+    <link href="https://arxiv.org/abs/2610.34688v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.34688v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Speech interaction systems have gradually evolved from traditional cascaded systems that use text as intermediate information to end-to-end speech language models that directly process speech representations. In some applications, the speech frontend runs on the user's device and sends speech representations to a remote server for inference, while the original audio remains local. However, these representations may still contain speaker identity information. If an attacker obtains them, it may use this information to imitate the user's voice, threatening their voice privacy. To investigate this risk, we propose \stia, a Speech Token Inversion Attack that generates speech with attacker-specified text in a victim's voice using a single short leaked representation, without access to the original audio or its transcript. Specifically, \stia converts discrete, continuous, or mixed speech representations into conditioning sequences and trains a conditional flow-matching speech generation model using pairs of different utterances from the same speaker in public speech datasets. The model combines speaker characteristics contained in the leaked representation with the specified text to generate speech in the victim's voice. Experiments show that, with a Moshi representation leak corresponding to 3 seconds of speech, \stia achieves an average CAM++ speaker cosine similarity of 0.78 and a target-text word error rate of 3.80\%. These results show that speech frontend representations reveal reusable speaker identity information and highlight the need to consider privacy risks when designing speech frontend representation methods.</summary>
+    <category term="cs.SD" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T01:24:54Z</published>
+    <arxiv:primary_category term="cs.SD"/>
+    <author>
+      <name>Ye Lu</name>
+    </author>
+    <author>
+      <name>Shen Wang</name>
+    </author>
+    <author>
+      <name>Runze Liu</name>
+    </author>
+    <author>
+      <name>Zhitao Ou</name>
+    </author>
+    <author>
+      <name>Haonan Huang</name>
+    </author>
+    <author>
+      <name>Yihan Yan</name>
+    </author>
+    <author>
+      <name>Fanghui Sun</name>
+    </author>
+    <author>
+      <name>Zhaoyang Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.35857v1</id>
+    <title>Do vision models know that three is three?</title>
+    <updated>2026-10-26T17:58:17Z</updated>
+    <link href="https://arxiv.org/abs/2610.35857v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.35857v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Do vision models encode the transition $2{\to}3$ the same way whether it appears in handwritten digits or in hand gestures, and do they "understand" that clean${\to}$dirty is the same transformation regardless of whether it is applied to a kitchen or a carpet? The linear representation hypothesis (LRH) answers this for language models: concept changes correspond to directions in (language) embedding space. In vision, the same concept can manifest in visually unrelated "regimes" that rarely co-occur: images of digits and hands do not share much in common in pixel space. To understand whether vision models still encode the underlying abstract concepts, we study 46 vision encoders across architectures, training objectives, and scales, on 10 concept families including numerosity, age, object identity, and MIT-States attributes. Within each regime, we find statistically significant concept directions near-universally across our tested models. However, two distinct regimes do not always share the same concept direction. Several models learn multiple linear structures for the same concept transition, split across regimes. We call this phenomenon "fragmented linearity": strong local linearity coexisting with near-absent global linearity. Fragmentation is, however, not fixed: models with stronger local linearity progressively escape it (local-global linearity correlated with $τ\in [0.38, 0.89]$ across all concepts), and where global linearity does emerge, concept directions can transfer as linear probes across regimes.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T17:58:17Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ankit Sonthalia</name>
+    </author>
+    <author>
+      <name>Arnas Uselis</name>
+    </author>
+    <author>
+      <name>Seong Joon Oh</name>
+    </author>
+  </entry>
+</feed>
