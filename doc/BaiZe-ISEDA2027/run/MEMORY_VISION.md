@@ -6,8 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #306, 2026-10-27 18:03]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 顶部 RUN_ID 221=只读 probe pretrain（TARGET 29），无新 vision 令；上次提交 wake#305@16:55 距今 ~68min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**：`git pull` Already up to date✓；`git status -sb` main==origin/main 同步✓（未跟踪文件均属别线在途，🚫不碰）；4 报告+6 脚本+10M 数据集前序已验真，齐全在位。📦 体积：TASK 22247B(21.7KB)/MEMORY ≈31KB 均 ≤32KB✓（本轮滚动 wake#293-#304 旧指针释放体积）。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
-> 📦 wake #305/#304/#302/#301/#300/#299/#298/#297/#296/#295/#294/#293 (2026-10-27 02:42~16:55, 12 轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-27.md。需要时再读。
+> **本唤醒流水 [wake #307, 2026-10-27 19:12]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 顶部 RUN_ID 221=只读 probe pretrain（TARGET 29），无新 vision 令；上次提交 wake#306@18:03 距今 ~69min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**：`git fetch` 无新提交✓；`git status -sb` main==origin/main 同步✓（未跟踪文件均属别线在途，🚫不碰）；4 报告+6 脚本+10M 数据集前序已验真，齐全在位。📦 体积：TASK 22247B(21.7KB)/MEMORY 29490B(28.8KB) 均 ≤32KB✓。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #306/#305/#304/#302/#301/#300/#299/#298/#297/#296/#295/#294/#293 (2026-10-27 02:42~18:03, 13 轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #290 (2026-10-26 23:02, 空唤醒·无新令·补心跳防判死·滚动wake#258-270旧指针控体积·inbox RUN_ID221=只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #289 (2026-10-26 21:50, 空唤醒·无新令·补心跳防判死·inbox RUN_ID216只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #288 (2026-10-26 20:35, 空唤醒·无新令·补心跳防判死·交付物位置澄清4报告在项目级reports) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
