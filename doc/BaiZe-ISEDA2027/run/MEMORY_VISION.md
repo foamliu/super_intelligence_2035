@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #301, 2026-10-27 12:13]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 顶部 RUN_ID 221=只读 probe pretrain（who-is-editing/recipe.py mtime/rotary_base），grep `vision/视觉/ocr/ArmE/ArmD/ProtB/编码器` 仅命中旧 RUN_ID 历史 probe（行 372/414/435/474 等），**无新 vision 令**；上次提交 wake#300@11:05 距今 ~68min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**：`git fetch`后`git status -sb` main==origin/main 同步✓（未跟踪文件 1049/3147/5245/7343/9441/ baize_p8_* / harness log 等均为别线在途，🚫不碰）；4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `run/vision/ocr_synth/*.py` 齐全+10M 数据集 `datasets/baize-vision/ocr_synth_10m_full`(index.jsonl `wc -l`=9,999,999✓ / 2000 tars ✓)在位。📦 体积：TASK 22247B(21.7KB)/MEMORY ~31KB 均 ≤32KB✓ 无需归档。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #302, 2026-10-27 13:24]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 顶部 RUN_ID 221=只读 probe pretrain（TARGET 29, who-is-editing/recipe.py mtime/rotary_base），grep `vision/视觉/ocr/ArmE/ArmD/ProtB/编码器` 仅命中旧 RUN_ID 历史 probe，**无新 vision 令**；上次提交 wake#301@12:15 距今 ~69min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**：`git fetch`后`git status -sb` main==origin/main 同步✓（未跟踪文件 1049/3147/5245/7343/9441/ baize_p8_* / convert_baize_to_llama.py / harness log 等均为别线在途，🚫不碰）；4 报告项目级 `doc/BaiZe-ISEDA2027/reports/`(ocr_sft_plan 22706B/ocr_synth10m 15754B/ocr_synthdata 29177B/recent_work 40423B)+6 脚本 `run/vision/ocr_synth/*.py` 齐全+10M 数据集 `datasets/baize-vision/ocr_synth_10m_full`(index.jsonl `wc -l`=9,999,999✓ / 2000 tars ✓)在位。📦 体积：TASK 22247B(21.7KB)/MEMORY 31467B(30.7KB) 均 ≤32KB✓ 无需归档（滚动 wake#292 旧指针）。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #301 (2026-10-27 12:13, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #300 (2026-10-27 11:01, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #299 (2026-10-27 09:51, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #298 (2026-10-27 08:43, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
@@ -15,7 +16,6 @@ WAITING: 1
 > 📦 wake #295 (2026-10-27 05:07, 空唤醒·补心跳防判死·ops/inbox.md在位RUN_ID221非vision令·4报告6脚本10M数据集在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #294 (2026-10-27 03:52, 空唤醒·补心跳防判死·run/ops/inbox.md在位RUN_ID221非vision令·4报告6脚本10M数据集在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #293 (2026-10-27 02:42, 空唤醒·补心跳防判死·ops/inbox.md已恢复在位·RUN_ID221非vision令·4报告6脚本10M数据集在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
-> 📦 wake #292 (2026-10-27 01:33, 空唤醒·补心跳防判死·ops/inbox.md当时缺失已记·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #290 (2026-10-26 23:02, 空唤醒·无新令·补心跳防判死·滚动wake#258-270旧指针控体积·inbox RUN_ID221=只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #289 (2026-10-26 21:50, 空唤醒·无新令·补心跳防判死·inbox RUN_ID216只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #288 (2026-10-26 20:35, 空唤醒·无新令·补心跳防判死·交付物位置澄清4报告在项目级reports) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
