@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        全部交付·待新指令(R543). 运维指令区全为[已归档]/已闭合/常驻指针,无未完成指令→WAITING=1. 本轮发现R542修复不完整(只改生成器.py未重生成HTML→正文违规残留)→重生成HTML真正修复.
+PHASE:        全部交付·待新指令(R544). 运维指令区全为[已归档]/已闭合/常驻指针,无未完成指令→WAITING=1. 两交付报告命名规程复核通过(TB final grep=0✓·pilot20仅line51真实路径carve-out✓).
 已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R496全7路FIN87/87+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518就绪核查✅(11323B)·R527 TB 7way最终报告✅(14975B,commit86a556482)·R539 pilot20最终报告✅(13101B,cline 13/20=65%·hermes 11/20=55%)·R540 归档运维令08:3x块+验核✅·R541 心跳轮防判死✅·R542 修生成器.py:164(但未重生成HTML→修复不完整)·R543 重生成pilot20 HTML真正修复命名规程(正文cline-patched→cline,正文grep=0)✅
-当前动作:     R543 真正修复pilot20报告命名规程违规+心跳. 巡检发现R542只改生成器gen_report_swebench_verified_pilot20_zh.py:164但未重生成HTML→HTML line39正文仍含"cline（cline-patched 适配器）"违规残留(grep=2). 处置:运行python3 gen_report_swebench_verified_pilot20_zh.py重生成HTML(13099B,数据一致cline13/20·hermes11/20). post-edit grep cline-patched=1(仅line51真实文件路径eval_cline-patched.json=carve-out,合规);正文grep=0✓. TB最终报告grep=0✓. git fetch(origin,带proxy)确认同步. 仅idle gw_proxy常驻(非eval进程). 上次commit R542@00:32距今~74min>60min→本轮补心跳防判死.
+当前动作:     R544 心跳轮防判死(上次commit R543@01:50距今~68min>60min). 运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(reports/report_harness_terminalbench_7way_final_zh.html,14975B)grep cline-patched=0✓;pilot20报告(report_harness_swebench_verified_pilot20_zh.html,13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). git fetch(带proxy)确认与origin/main同步.
 下一步:       ①等待运维新指令; ②若运维要求扩大SWE-bench样本(20→更多)或补充分析(per-instance对比/McNemar),按指令执行; ③保持watcher/编排器已退出(仅idle gw_proxy常驻),报告已入库.
 阻塞:         无. 运维指令区无未完成指令(命名常驻规程=常驻规则,本轮已真正修复)→WAITING=1.
 ERROR_COUNT:  0
-📦 体积：TASK=27898B(27KB) / MEMORY=见收尾实测（均≤32KB✓,本轮无归档）
+📦 体积：TASK=27898B(27KB) / MEMORY=31818B(31KB)（均≤32KB✓,本轮无归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,6 +32,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[02:58] R544 **心跳轮防判死(上次commit R543@01:50距今~68min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(reports/report_harness_terminalbench_7way_final_zh.html,14975B)grep cline-patched=0✓;pilot20报告(report_harness_swebench_verified_pilot20_zh.html,13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(无ahead/behind). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). 体积TASK=27898B/MEMORY见收尾实测,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令(命名常驻规程=常驻规则,两报告已复核通过)→WAITING=1正确.
 [01:46] R543 **真正修复pilot20报告命名规程违规(R542修复不完整)+心跳防判死**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 巡检两交付物grep 'cline-patched':TB最终报告(14975B)=0✓;pilot20报告=2✗. **关键发现:R542只改生成器gen_report_swebench_verified_pilot20_zh.py:164但从未重生成HTML**→HTML line39正文仍为旧文"cline（<code>cline-patched</code> 适配器）"(正文违规残留),line51为真实文件路径eval_cline-patched.json(carve-out,合规). 处置:运行python3 gen_report_swebench_verified_pilot20_zh.py重生成HTML→13099B(数据一致:cline resolved=13/20·hermes=11/20,eval_real=True). post-edit grep cline-patched=1(仅line51真实路径provenance,合规),正文grep=0✓. git fetch(origin,带proxy)+status确认与origin/main同步(无ahead/behind,仅他线文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). 上次commit R542@00:32距今~74min>60min→本轮补心跳防判死. 体积TASK=27898B/MEMORY见收尾实测,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令(命名常驻规程=常驻规则,本轮已真正修复其违反)→WAITING=1正确.
 [00:32] R542 **合规修复pilot20报告命名规程违反+心跳防判死**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 巡检两交付物grep 'cline-patched':TB最终报告report_harness_terminalbench_7way_final_zh.html=0✓,pilot20报告report_harness_swebench_verified_pilot20_zh.html=2✗(违反命名常驻规程"正文一律cline"). 定位:①line39正文口径cell "cline（cline-patched 适配器）"=正文描述→违规;②line51数据溯源脚注 "eval_cline-patched.json"=真实文件路径(ls确认run/harness/swebench_verified_pilot/reports/eval_cline-patched.json在位)→命名规程carve-out(真实路径不改,改则破坏可溯源). 处置:修line39→"cline + hermes(两路适配器均已smoke验通;接入层适配见数据溯源脚注)",保留line51真实路径(=脚注唯一适配器提及). 同步修生成器gen_report_swebench_verified_pilot20_zh.py:164防回归(其line16注释本就声明该规程,属实现bug). post-edit grep正文=0,全文残留1(真实路径provenance,合规). git fetch(origin,带proxy)+status确认同步(无ahead/behind,仅他线文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). 上次commit R541 fa65560e8@23:24距今~68min>60min→本轮补心跳防运维判死. 体积TASK=27898B/MEMORY见收尾实测,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令(命名常驻规程=常驻规则,本轮已修复其违反)→WAITING=1正确.
 [23:21] R541 **心跳轮(空唤醒)防判死**. WAITING=1唤醒,无新运维指令. git fetch(origin,带proxy)+status确认与origin/main同步(无ahead/behind). 验核运维指令区:全为[已归档]/已闭合指针,无未完成指令(判据自检→本轮无未完成运维指令→WAITING=1正确). 两交付物在位:TB最终报告report_harness_terminalbench_7way_final_zh.html(14975B)+pilot20报告report_harness_swebench_verified_pilot20_zh.html(13101B). 上次commit R540 db580c107@22:14距今~67min>60min→本轮补心跳防运维判死. 体积:TASK=27898B(27KB)/MEMORY=27502B(27KB)均≤32KB✓,本轮无归档. 无残留进程(watcher/编排器均已退出).
