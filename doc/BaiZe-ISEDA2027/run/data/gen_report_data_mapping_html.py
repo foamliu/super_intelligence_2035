@@ -221,23 +221,23 @@ H.append(f"""<div class="verdict">
   <ul class="note">
     <li><b>分词</b>：131/131 shard 已于 2026-10-26 09:43:35 RUN COMPLETE（1.18T tokens / 4.05 TB，0 fail）；连同既有 5 源全量分词（574 shards / 1056.36B）+ en_v1_4（110 / 2237.07B），全部并入 tokenized 镜像。</li>
     <li><b>迁移 /nas_env</b>：运维令 2026-10-26 13:1x 要求的 4 份新分词数据（ufw_en 32 / ufw_l1_en_hq 94 / ufw_zh 4 / UltraX-AICC 1 = 131 shard ≈ 4.05 TB）<b>已全部迁移到 /nas_env</b>，tokenized/ 原路径改为 per-file symlink 指向 /nas_env/full_*。连同此前 5 源（574 shard / 4.24 TB），<b>/nas_env 共承载 9 源 / 705 shard / ~8.3 TB</b>；env14（110 shard）仍以 hardlink 留 /nas_train。</li>
-    <li><b>镜像</b>：<code>build_tokenized_mirror.py</code> 重跑后 tokenized 镜像 = <b>10 目录 / 815 shard / {total_tokens/1e9:.2f}B tokens / {fmt_bytes(total_bytes)}</b>，triplet ALL OK、inode ALL OK、0 悬空链接（INDEX.tsv 全行）。</li>
-    <li><b>映射表</b>：<code>DATA_MAPPING.md</code> A 节 {len(data_rows)} 行 —— {n_ok} 行<b>「镜像完整」</b>（{total_shards} shard / {total_tokens/1e9:.2f}B tokens / {fmt_bytes(total_bytes)} 分词产物）+ {n_untok} 行<b>「未分词」</b>（SFT-2605 1504 jsonl / 297 GB、SFT-Agent-2609 50 jsonl / 50 GB，合计 1554 jsonl / 347.6 GB，未进 <code>.bin/.idx/.json</code> 分词镜像）。生成器幂等（连跑两次逐字节相同）。</li>
+    <li><b>镜像</b>：<code>build_tokenized_mirror.py</code> 重跑后 tokenized 镜像 = <b>{len(data_rows)} 目录 / {total_shards} shard / {total_tokens/1e9:.2f}B tokens / {fmt_bytes(total_bytes)}</b>，triplet ALL OK、inode ALL OK、0 悬空链接（INDEX.tsv 全行）。</li>
+    <li><b>映射表</b>：<code>DATA_MAPPING.md</code> A 节 {len(data_rows)} 行 —— {n_ok} 行<b>「镜像完整」</b>（{total_shards} shard / {total_tokens/1e9:.2f}B tokens / {fmt_bytes(total_bytes)} 分词产物）+ {n_untok} 行<b>「未分词」</b>。SFT-2605（1504 jsonl / 297 GB）与 SFT-Agent-2609（50 jsonl / 50 GB）已分词入镜像（运维令 2026-10-27 13:3x）。生成器幂等（连跑两次逐字节相同）。</li>
     <li><b>不可用源</b>：32 个 staging_r3 符号链接暂存目录已按运维令 2026-10-25 18:2x 终裁删除（实占释放 ~471.6 KB），B 节留档结案。</li>
     <li><b>磁盘</b>：/nas_train {nt.get('pct','')}（{nt.get('avail','')} 可用）、/nas_env {ne.get('pct','')}（{ne.get('avail','')} 可用）（df {NOW} 实测），训练数据本体充足。</li>
   </ul>
 </div>
 <h3>还差什么收尾动作</h3>
 <ul class="note">
-  <li><b>主线收尾（预训练）</b>：下载 → 分词 → 镜像 → 映射表 → 迁移 /nas_env，全链路已闭环，预训练可直接消费 <code>tokenized/</code> 下 815 个 <code>.bin/.idx/.json</code> 三件套。</li>
-  <li><b>SFT 数据（未分词）</b>：2 个 JSONL 指令微调数据集（SFT-2605 / SFT-Agent-2609，合计 1554 jsonl / 347.6 GB）已如实登记为「未分词」，待按 SFT 管线（chat 模板）另行处理。</li>
+  <li><b>主线收尾（预训练）</b>：下载 → 分词 → 镜像 → 映射表 → 迁移 /nas_env，全链路已闭环，预训练可直接消费 <code>tokenized/</code> 下 {total_shards} 个 <code>.bin/.idx/.json</code> 三件套。</li>
+  <li><b>SFT 数据（已分词入镜像）</b>：2 个 SFT 指令微调数据集（SFT-2605 / SFT-Agent-2609，合计 1554 jsonl / 347.6 GB）经 SFT 序列化管线（role-tagged content 串行化）分词到 <code>/nas_env/baize-data/full_sft_2605|full_sft_agent_2609</code>，已纳入 tokenized 镜像同等对待（运维令 2026-10-27 13:3x）。</li>
   <li><b>下游</b>：配比 / 去重 / 污染隔离（CONTAMINATION_CHECK）按方案文档另线推进，不在本映射表范围内。</li>
 </ul>""")
 
 
 # ── Footer ──
 H.append(f"""<div class="foot">
-  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code> 与 <code>baize-data/tokenized/INDEX.tsv</code>（{idx_sz} B / mtime {idx_mt}），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（{NOW} 实测）。更新：BaiZe data agent · 运维令 2026-10-26 13:1x（迁移 4 份新分词数据到 /nas_env：ufw_en 32 shard / ufw_l1_en_hq 94 / ufw_zh 4 / UltraX-AICC 1 = 131 shard ≈ 4.05 TB 全部迁移完成，tokenized/ 改 per-file symlink 指向 /nas_env/full_*，DATA_MAPPING.md storage 列同步为 symlink，INDEX.tsv triplet=OK / inode_ok 全通过）。
+  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code> 与 <code>baize-data/tokenized/INDEX.tsv</code>（{idx_sz} B / mtime {idx_mt}），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（{NOW} 实测）。更新：BaiZe data agent · 运维令 2026-10-27 13:3x（分词 SFT-2605 1504 jsonl / 297 GB + SFT-Agent-2609 50 jsonl / 50 GB 到 /nas_env/full_sft_2605|full_sft_agent_2609，经 SFT 序列化管线 role-tagged content 串行化，纳入 tokenized 镜像同等对待；DATA_MAPPING.md 行 11-12 由「未分词」→「镜像完整」，INDEX.tsv 扩至 {len(data_rows)} 目录；连同运维令 2026-10-26 13:1x 的 4 份新分词数据迁移 131 shard ≈ 4.05 TB 全部完成）。
 </div>
 </div>
 </body>

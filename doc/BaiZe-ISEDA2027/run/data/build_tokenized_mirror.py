@@ -32,6 +32,9 @@ ENTRIES = [
     {"tok_subdir": "Ultra-FineWeb/ultrafineweb_l1_en_hq", "src_dir": "/nas_env/app.e0031982/baize-data/full_ufw_l1_en_hq", "glob_pfx": "ufw_l1_en_hq_train_s", "dl_dir": "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq", "hf_repo": "openbmb/Ultra-FineWeb", "subdir": "ultrafineweb_l1_en_hq", "storage": "symlink"},
     {"tok_subdir": "Ultra-FineWeb/ultrafineweb_zh", "src_dir": "/nas_env/app.e0031982/baize-data/full_ufw_zh", "glob_pfx": "ufw_zh_train_s", "dl_dir": "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh", "hf_repo": "openbmb/Ultra-FineWeb", "subdir": "ultrafineweb_zh", "storage": "symlink"},
     {"tok_subdir": "UltraX-Preview/UltraX-AICC", "src_dir": "/nas_env/app.e0031982/baize-data/full_ultrax_aicc", "glob_pfx": "ultrax_aicc_train_s", "dl_dir": "/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC", "hf_repo": "openbmb/UltraX-Preview", "subdir": "UltraX-AICC", "storage": "symlink"},
+    # —— 运维令 2026-10-27 13:3x：SFT 两源分词到 /nas_env，纳入镜像同等对待 ——
+    {"tok_subdir": "UltraData-SFT-2605/UltraData-SFT-2605", "src_dir": "/nas_env/app.e0031982/baize-data/full_sft_2605", "glob_pfx": "sft2605_train_s", "dl_dir": "/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data", "hf_repo": "openbmb/UltraData-SFT-2605", "subdir": "UltraData-SFT-2605", "storage": "symlink"},
+    {"tok_subdir": "UltraData-SFT-Agent-2609/UltraData-SFT-Agent-2609", "src_dir": "/nas_env/app.e0031982/baize-data/full_sft_agent_2609", "glob_pfx": "sftagent2609_train_s", "dl_dir": "/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data", "hf_repo": "openbmb/UltraData-SFT-Agent-2609", "subdir": "UltraData-SFT-Agent-2609", "storage": "symlink"},
 ]
 
 def err(m): print("  [ERR] "+m, file=sys.stderr)
