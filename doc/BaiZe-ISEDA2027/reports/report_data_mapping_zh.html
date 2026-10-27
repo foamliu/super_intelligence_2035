@@ -53,8 +53,8 @@
 
 <h1>BaiZe 训练数据情况报告</h1>
 <p class="meta">围绕 <code>run/data/DATA_MAPPING.md</code> · 列表讲清楚数据情况</p>
-<p class="meta"><b>更新时间：</b>2026-10-27 05:40 · <b>数据线：</b>BaiZe data agent · <b>报告：</b>reports/report_data_mapping_zh.html · <b>运维令：</b>2026-10-26 13:1x（迁移 4 份新分词数据到 /nas_env · ufw_en 完成）</p>
-<p class="src"><b>唯一数据源</b>：<code>run/data/DATA_MAPPING.md</code>（mtime 2026-10-27 05:26）+ <code>baize-data/tokenized/INDEX.tsv</code>（mtime 2026-10-27 05:26，2952 B，12 行）。磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-27 05:40 实测）。数字一律以这两份文件 + df 为准，未另做 <code>du</code>/<code>find</code> 全树扫描（遵运维令 2026-10-26 10:4x）。所有条目可溯源到 <code>DATA_MAPPING.md</code> 行号或 <code>INDEX.tsv</code> 行号。</p>
+<p class="meta"><b>更新时间：</b>2026-10-27 09:57 · <b>数据线：</b>BaiZe data agent · <b>报告：</b>reports/report_data_mapping_zh.html · <b>运维令：</b>2026-10-26 13:1x（迁移 4 份新分词数据到 /nas_env · ufw_en 完成）</p>
+<p class="src"><b>唯一数据源</b>：<code>run/data/DATA_MAPPING.md</code>（mtime 2026-10-27 05:26）+ <code>baize-data/tokenized/INDEX.tsv</code>（mtime 2026-10-27 05:26，2952 B，12 行）。磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-27 09:57 实测）。数字一律以这两份文件 + df 为准，未另做 <code>du</code>/<code>find</code> 全树扫描（遵运维令 2026-10-26 10:4x）。所有条目可溯源到 <code>DATA_MAPPING.md</code> 行号或 <code>INDEX.tsv</code> 行号。</p>
 <h2>1. 总览</h2>
 <div class="kpi">
   <div class="card"><div class="k">数据源总数</div><div class="v">12</div><div class="s">A 节 12 行：10 镜像完整 + 2 未分词 SFT</div></div>
@@ -68,7 +68,7 @@
   <div class="card"><div class="k">分词器</div><div class="v">tokenizer_eod</div><div class="s">vocab=129,281 / pad=129,408（DeepSeek-V4.1-Flash int32）</div></div>
   <div class="card"><div class="k">校验状态</div><div class="v">ALL OK</div><div class="s">triplet=OK · inode_bad=0 · 0 悬空（INDEX.tsv 全行）</div></div>
 </div>
-<h3>磁盘占用（df 实测 · 2026-10-27 05:40）</h3>
+<h3>磁盘占用（df 实测 · 2026-10-27 09:57）</h3>
 <div class="disk">
   <div class="card"><h4>/nas_train（分词镜像真身 + 下载目录）</h4><div class="bar"><span class="p85" style="width:84%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.31:/vol_CTE0_data01</dd><dt>总容量</dt><dd>207T</dd><dt>已用</dt><dd>174T（84%）</dd><dt>可用</dt><dd>34T</dd></dl></div>
   <div class="card"><h4>/nas_env（full_* 跨盘 symlink 真身）</h4><div class="bar"><span class="p85" style="width:83%"></span></div><dl><dt>文件系统</dt><dd>10.239.22.32:/vol_CTE0_data04</dd><dt>总容量</dt><dd>10T</dd><dt>已用</dt><dd>8.2T（83%）</dd><dt>可用</dt><dd>1.8T</dd></dl></div>
@@ -122,7 +122,7 @@
     <li><b>镜像</b>：<code>build_tokenized_mirror.py</code> 重跑后 tokenized 镜像 = <b>10 目录 / 815 shard / 4473.76B tokens / 17.57 TB</b>，triplet ALL OK、inode ALL OK、0 悬空链接（INDEX.tsv 全行）。</li>
     <li><b>映射表</b>：<code>DATA_MAPPING.md</code> A 节 12 行 —— 10 行<b>「镜像完整」</b>（815 shard / 4473.76B tokens / 17.57 TB 分词产物）+ 2 行<b>「未分词」</b>（SFT-2605 1504 jsonl / 297 GB、SFT-Agent-2609 50 jsonl / 50 GB，合计 1554 jsonl / 347.6 GB，未进 <code>.bin/.idx/.json</code> 分词镜像）。生成器幂等（连跑两次逐字节相同）。</li>
     <li><b>不可用源</b>：32 个 staging_r3 符号链接暂存目录已按运维令 2026-10-25 18:2x 终裁删除（实占释放 ~471.6 KB），B 节留档结案。</li>
-    <li><b>磁盘</b>：/nas_train 84%（34T 可用）、/nas_env 83%（1.8T 可用）（df 2026-10-27 05:40 实测），训练数据本体充足。</li>
+    <li><b>磁盘</b>：/nas_train 84%（34T 可用）、/nas_env 83%（1.8T 可用）（df 2026-10-27 09:57 实测），训练数据本体充足。</li>
   </ul>
 </div>
 <h3>还差什么收尾动作</h3>
@@ -132,7 +132,7 @@
   <li><b>下游</b>：配比 / 去重 / 污染隔离（CONTAMINATION_CHECK）按方案文档另线推进，不在本映射表范围内。</li>
 </ul>
 <div class="foot">
-  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code> 与 <code>baize-data/tokenized/INDEX.tsv</code>（2952 B / mtime 2026-10-27 05:26），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-27 05:40 实测）。更新：BaiZe data agent · 运维令 2026-10-26 13:1x（迁移 4 份新分词数据到 /nas_env：ufw_en 32 shard / ufw_l1_en_hq 94 / ufw_zh 4 / UltraX-AICC 1 = 131 shard ≈ 4.05 TB 全部迁移完成，tokenized/ 改 per-file symlink 指向 /nas_env/full_*，DATA_MAPPING.md storage 列同步为 symlink，INDEX.tsv triplet=OK / inode_ok 全通过）。
+  本报告自包含（无外链 / 无 CDN），数据全部溯源至 <code>run/data/DATA_MAPPING.md</code> 与 <code>baize-data/tokenized/INDEX.tsv</code>（2952 B / mtime 2026-10-27 05:26），磁盘占用取自 <code>df -h /nas_train /nas_env</code>（2026-10-27 09:57 实测）。更新：BaiZe data agent · 运维令 2026-10-26 13:1x（迁移 4 份新分词数据到 /nas_env：ufw_en 32 shard / ufw_l1_en_hq 94 / ufw_zh 4 / UltraX-AICC 1 = 131 shard ≈ 4.05 TB 全部迁移完成，tokenized/ 改 per-file symlink 指向 /nas_env/full_*，DATA_MAPPING.md storage 列同步为 symlink，INDEX.tsv triplet=OK / inode_ok 全通过）。
 </div>
 </div>
 </body>
