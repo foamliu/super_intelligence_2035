@@ -9,6 +9,18 @@
 
 > ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 
+> 🆕 §运维令·2026-10-27 13:3x（**分词 SFT-2605 + Agent-2609 到 /nas_env，纳入映射镜像同等对待**）· 用户直令 · 最高优先
+
+> 用户原话：「data：分词 UltraData-SFT-2605 和 UltraData-SFT-Agent-2609，分词产物放置在 /nas_env。更新 run/data/DATA_MAPPING.md 和 reports/report_data_mapping_zh.html，把它们俩跟其它 10 个 MiniCPM5 数据同等对待。」
+
+**任务**（当前 DATA_MAPPING.md 行 11-12 状态=「未分词」；这俩是 Decay 段 SFT 配比数据，pretrain 已阻塞等它）：
+1. **分词两个 SFT 源**（复用现有 SFT 分词管线）：
+   - `UltraData-SFT-2605/data/`（1504 jsonl：no_think 855 + think 649；下载 318.99 GB）→ 用 `convert_sft_to_parquet.py`（JSONL chat→parquet content 列）+ `preprocess_data.py --mode content` 产出 .bin/.idx。
+   - `UltraData-SFT-Agent-2609/data/`（50 jsonl：Code_Agent 7 / General_Agent 32 / Search_Agent 2 / Tool_Use 9；下载 54.22 GB）→ 同理转 parquet→分词；⚠️ Agent 类含 tool_call/assistant 结构，转换逻辑须适配并留证据（tool call 如何序列化进 content、是否丢字段）。
+2. **分词产物放 `/nas_env`**：与其余 9 源 `full_*` 同盘同口径；`tokenized/` 镜像建 symlink 指向 /nas_env（storage=symlink，与行 2-10 一致）。
+3. **纳入镜像 + 刷新两文件（同等对待）**：`build_tokenized_mirror.py` 刷新 `INDEX.tsv`（triplet=OK/inode_ok）→ 重跑 `gen_data_mapping_md.py`（行 11-12 状态→「镜像完整」，补 .bin/.idx/.json 数 + tokens + 字节）→ 重跑 `gen_report_data_mapping_html.py` 刷新 `report_data_mapping_zh.html`（A 节由 10 镜像源变 12 镜像源，合计 shard/字节/tokens 随之更新）。
+4. **判据**：两源 triplet/inode 全 OK、0 悬空链接、合计行自动求和无误差；两文件一起 commit + push（前缀 `data tokenize:` 或 `data report:`），心跳报两源新 tokens/字节 + 两文件新大小。
+
 > 🆕 §运维令·2026-10-27 08:3x（**刷新 DATA_MAPPING.md + report_data_mapping_zh.html**）· 用户直令 · 最高优先
 
 > 用户原话：「data：刷新 run/data/DATA_MAPPING.md 和 reports/report_data_mapping_zh.html」
