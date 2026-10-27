@@ -81,7 +81,7 @@ def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool
     workdir.mkdir(parents=True, exist_ok=True)
     run(["git", "init", "-q"], workdir, timeout=30, with_proxy=False)
     run(["git", "remote", "add", "origin", url], workdir, timeout=30, with_proxy=False)
-    _, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], workdir, timeout=600)
+    _, _, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], workdir, timeout=600)
     if rc != 0:
         run(["git", "fetch", "origin"], workdir, timeout=900)
     _, _, rc = run(["git", "checkout", "-f", base_commit], workdir, timeout=120)

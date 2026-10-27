@@ -1,17 +1,17 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 📊 进度快照
 
 ```
-PHASE:        H-A SWE-bench Verified 就绪核查完成(R518)+R519~R526活性复检确认状态未退化; 等运维拍板20条试点; 运维指令区无未完成指令.
-已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查报告✅(11323B,8节,13项全溯源)·R519活性复检✅·R520防判死心跳✅(归档R507-R517)·R521/R522/R523/R524/R525/R526防判死心跳✅
-当前动作:     R526 防判死心跳(R525后~68min>60min阈值). liveness 5项实测全通过:①swebench500/500(不变,progress文件确认DONE 10-26 18:23)②/data6.0T free(15%use)③load5.54/224(~2.5%)④harness loop PID2585867在跑(etimes~336099s~93h)⑤ops/inbox最新RUN_ID221 TARGET:29均pretrain线无harness新指令,task file自10-26 21:24未改. 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效.
-下一步:       ①等运维拍板20条Verified试点(先cline+hermes smoke 1条→20条→报初步结果→放大决策); ②codex全量补跑待运维拍板; ③H-B续作(机制维度扩展)
-阻塞:         无未完成运维指令. H-A Verified试点待运维拍板(就绪报告R518已交付+R519~R526复检确认状态未退化,§3先报预算再跑).
+PHASE:        H-A SWE-bench Verified 20条试点执行中(R529): ①TB最终报告已交付(R527)✅ ②smoke(cline+hermes各1条)后台运行中; 运维令08:3x未完成→WAITING=0.
+已完成:       H-B ctx压缩报告✅·Gate7/7✅(R466)·7x89并发✅(R479)·R496全7路FIN87/87✅+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518 H-A Verified就绪核查✅(11323B)·R519~R526活性复检✅·R527 TB 7way最终中文报告✅(report_harness_terminalbench_7way_final_zh.html 14975B,7×87全FIN+McNemar21对+复跑hermes28.7%/claude-code23.0%+codex59err+3路0%根因,commit 92ce36995)·R528 pilot编排器run_verified_pilot.py+20实例选取(enriched_20.json全40char sha)+gold smoke eval验证(astropy-12907 1/1 resolved)✅
+当前动作:     R529 执行运维令08:3x part②SWE-bench Verified 20条试点. 已启动smoke(cline+hermes各1条astropy-12907)后台setsid进程(PID1325673/1325674,git fetch--depth=1 full40sha进行中). 修复发现:初版nohup进程被tool 30s超时kill进程组误杀→改setsid独立session;git_clone_or_fetch用full40sha(非短hash)depth-1 fetch正确. part①TB报告R527已交付.
+下一步:       ①监控smoke完成(fetch→agent run→eval)→若验通启动20条试点(cline+hermes各20,后台)→eval→三列resolved/failed/infra-or-quota报告; ②持续每轮监控直到试点交付; ③codex全量补跑待运维拍板
+阻塞:         无. smoke后台运行中(setsid独立session),待fetch+agent(≤1800s)+eval完成. 运维令part②未完成→WAITING=0.
 ERROR_COUNT:  0
-📦 体积：TASK=26994B(26KB) / MEMORY=13029B(13KB)（均≤32KB✓,本轮无归档）
+📦 体积：TASK=28394B(28KB) / MEMORY=见收尾实测（均≤32KB✓,本轮无归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,6 +32,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[12:3x] R529 **执行运维令08:3x part②SWE-bench Verified 20条试点启动**. part①TB报告已于R527交付(commit 92ce36995,report_harness_terminalbench_7way_final_zh.html 14975B,0 cline-patched/0 script,7×87全FIN+McNemar21对+复跑hermes25/87=28.7%·claude-code20/87=23.0%+codex59err(34x429)+三路0%根因对照). part②:发现R528编排器smoke首跑失败——git_clone_or_fetch用depth-1 fetch短hash `d16bfe05a744`报"couldn't find remote ref";核查enriched_20.json实为full40sha(误截);且初版nohup进程被run_commands tool 30s超时kill进程组误杀. 修复:①清空死workdir ②改setsid独立session启动 ③用full40sha. 已重启smoke(cline+hermes各1条astropy-12907)后台PID1325673/1325674,git fetch--depth=1 full40sha d16bfe05a744909de4b27f5875fe0d4ed41ce607进行中(git-remote-https活跃). infra全验:gw_proxy9090/9091 LISTEN·cline ~/.local/bin·sg docker 27.5.1·swebench_repo在/tmp·/data 6.0T free·load14.76/224·swebench500/500. **判据自检**:运维令part②未完成→WAITING=0(60s后再唤醒监控smoke).
+[09:3x] R527 **TB 7way最终中文HTML报告交付(运维令08:3x part①)**. 产 gen_report_tb_7way_final.py + reports/report_harness_terminalbench_7way_final_zh.html(14975B,97行,自包含中文,0 script/0外链/0 cline-patched). 必含全到位:7路主线7×89全FIN 87/87+逐题配对+McNemar精确检验21对(cline43/87=49.4%&opencode41/87=47.1%并列p=0.80ns;pi35/87=40.2%;codex20/87=23.0%)+复跑hermes25/87=28.7%[条件通过率56.8%]·claude-code20/87=23.0%[30.3%]旧均0%+codex err归因(59=34限流429→RuntimeError+15 AgentTimeout+8 exit1+2其他,429为codex独有,非适配器可修)+三路0%根因与修复对照(hermes缺工具链/claude-code NFS权限/deepseek卡SDK). 数字溯源summary_rerun_20261025.json+/tmp/tb_7x89/jobs_*. commit 92ce36995 `harness report:`.
+[10:5x~11:1x] R528 **SWE-bench Verified 20条试点编排器就绪+gold smoke eval验证**. 产 harness/swebench_verified_pilot/run_verified_pilot.py(predict复用run_single.py+eval复用swebench v5.0.2 docker harness)+verified_20_ids.txt(20题:astropy/django/sympy/matplotlib/scikit-learn各4)+enriched_20.json(补全image/eval_script/FAIL_TO_PASS/PASS_TO_PASS等infra字段,base_commit全40char)+instances/20份单题JSON. gold smoke eval(astropy-12907用gold patch)→results.json:resolved 1/1,completed 1/1,infra_failure 0. 验证eval管线通. commit harness auto-commit 11:13.
 [08:0x] R526 **防判死心跳(R525后~68min>60min阈值)**. 运维指令区顶部3条全[已归档],ops/inbox最新RUN_ID221 TARGET:29(pretrain线),无harness新指令(task file自10-26 21:24未改). liveness 5项实测全通过(swebench500/500不变(progress文件确认DONE 10-26 18:23)·/data6.0T free 15%use·load5.54/224~2.5%·harness loop PID2585867 etimes~336099s~93h在跑·git 0ahead/0behind last commit R525@07:00). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY=13029B(均≤32KB,本轮无归档).
 [06:5x] R525 **防判死心跳(R524后~67min>60min阈值)**. 运维指令区顶部3条全[已归档],ops/inbox RUN_ID220-221均pretrain线(.29),无harness新指令(task file自10-26 21:25未改). liveness 5项实测全通过(swebench500/500不变(progress文件确认DONE 10-26 18:23)·/data6.0T free 15%use·load6.70/224~3%·harness loop PID2585867 etimes~331913s~92h在跑·last commit R524@05:51). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY=11775B(均≤32KB,本轮无归档).
 [05:4x] R524 **防判死心跳(R523后~67min>60min阈值)**. 运维指令区顶部3条全[已归档],ops/inbox RUN_ID221=pretrain线(.29),无harness新指令(task file自10-26 21:25未改). liveness 5项实测全通过(swebench500/500不变·/data6.0T free 15%use·load5.40/224~2.4%·harness loop PID2585867在跑·last commit R523@04:42). 结论:R518就绪状态未退化,运维待批20条Verified试点决策仍有效. **判据自检**:无未完成运维指令→WAITING=1. 体积:TASK=26994B/MEMORY=11230B(均≤32KB,本轮无归档).
