@@ -23484,3 +23484,107 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
     /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/check_longctx_data.py:50:    a = np.memmap(path, dtype=np.int32, mode="r")
 === DONE 223 ===
 ```
+
+---
+
+## RUN_ID 224 · 2026-10-28 07:05:28 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 224 | restart pretrain loop | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+LOOP="$T/baize_pretrain_loop.sh"
+LOG=/tmp/baize_pretrain_loop.log
+
+echo "[0] 前置检查"
+cd "$GR" || exit 1
+[ -f "$LOOP" ] && echo "  loop 脚本: $LOOP ($(stat -c %s "$LOOP") B)" || { echo "  ❌ loop 脚本不存在，中止"; exit 1; }
+echo "  git HEAD=$(git rev-parse --short HEAD 2>/dev/null)"
+echo "  GPU 现状:"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/    .29 /'
+
+echo "[1] 修 .29 swappiness 60→0（与 .12 对齐，消除 swap thrashing）"
+echo "  before: $(cat /proc/sys/vm/swappiness)"
+if echo 0 > /proc/sys/vm/swappiness 2>/dev/null; then
+  echo "  ✅ 已设为: $(cat /proc/sys/vm/swappiness)"
+else
+  echo "  ⚠️ 无权限写（需 root），不改，继续重启 loop"
+fi
+echo "  swap: $(free -m | awk '/Swap:/{printf "used=%dMB free=%dMB",$3,$4}')"
+
+echo "[2] 停掉残留 loop（精确匹配，不用裸 pkill -f 防误杀自身）"
+for p in $(pgrep -f 'bash .*baize_pretrain_loop\.sh' 2>/dev/null); do
+  [ "$p" = "$$" ] && continue
+  echo "  SIGTERM old loop pid=$p"
+  kill -TERM "$p" 2>/dev/null || true
+done
+sleep 2
+echo "  残留数: $(pgrep -cf 'bash .*baize_pretrain_loop\.sh' 2>/dev/null || echo 0)"
+
+echo "[3] 备份旧日志"
+if [ -f "$LOG" ]; then
+  B="${LOG}.prev_$(date +%m%d_%H%M)"
+  mv "$LOG" "$B" && echo "  已备份 -> $B"
+fi
+
+echo "[4] setsid -f 脱离进程组启动（防 SIGHUP/工具超时误杀）"
+cd "$T" || exit 1
+setsid -f nohup bash "$LOOP" > "$LOG" 2>&1 < /dev/null
+sleep 6
+
+echo "[5] 验证"
+ps -eo pid=,ppid=,sid=,etimes=,stat=,args= 2>/dev/null | grep 'baize_pretrain_loop\.sh' | grep -v grep | cut -c1-160 | sed 's/^/    /'
+NP=$(pgrep -cf 'bash .*baize_pretrain_loop\.sh' 2>/dev/null || echo 0)
+echo "  loop 进程数 = $NP  ($([ "$NP" -ge 1 ] && echo '✅ 存活' || echo '❌ 未起来'))"
+echo "  日志前 15 行:"
+head -15 "$LOG" 2>/dev/null | sed 's/^/    /'
+echo "  日志大小: $(stat -c %s "$LOG" 2>/dev/null) B"
+
+echo "[6] 任务书第一条指令"
+grep -n '^### ' "$T/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null | head -3 | sed 's/^/    /'
+grep -c '归档与执行纪律' "$T/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null | sed 's/^/    纪律块命中: /'
+
+echo "=== DONE 224 ==="
+```
+
+**输出**
+```
+=== RUN_ID 224 | restart pretrain loop | 2026-10-28 07:05:28 | host=whag0pgpuap29 ===
+[0] 前置检查
+  loop 脚本: /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh (7248 B)
+  git HEAD=27a9852a4
+  GPU 现状:
+    .29 0, 0 MiB
+    .29 1, 0 MiB
+    .29 2, 0 MiB
+    .29 3, 0 MiB
+    .29 4, 0 MiB
+    .29 5, 0 MiB
+    .29 6, 0 MiB
+    .29 7, 0 MiB
+[1] 修 .29 swappiness 60→0（与 .12 对齐，消除 swap thrashing）
+  before: 60
+/tmp/tmp.f64yAOd1Jq: line 17: /proc/sys/vm/swappiness: Permission denied
+  ⚠️ 无权限写（需 root），不改，继续重启 loop
+  swap: used=8182MB free=9MB
+[2] 停掉残留 loop（精确匹配，不用裸 pkill -f 防误杀自身）
+  残留数: 0
+0
+[3] 备份旧日志
+  已备份 -> /tmp/baize_pretrain_loop.log.prev_1028_0705
+[4] setsid -f 脱离进程组启动（防 SIGHUP/工具超时误杀）
+[5] 验证
+    2167271       1 2167271       6 Ss   bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  loop 进程数 = 3  (✅ 存活)
+  日志前 15 行:
+    [loop] 2026-10-28 07:05:31 wake up, invoking cline ...
+  日志大小: 55 B
+[6] 任务书第一条指令
+    12:### [运维提示] 2026-10-27 15:2x（**cimi MCP web search 已配好，可用于调研**）· 用户直令 · 最高优先
+    18:### [运维令] 2026-10-27 13:1x（**杀掉 S1，先调吞吐：立即验证 spawn 方案**）· 用户直令 · 最高优先
+    35:### [运维令] 2026-10-27 10:4x（**不放弃：验证 spawn 方案 + 授权 web 调研，吞吐回 600K+**）· 用户直令 · 最高优先
+    纪律块命中: 1
+=== DONE 224 ===
+```
