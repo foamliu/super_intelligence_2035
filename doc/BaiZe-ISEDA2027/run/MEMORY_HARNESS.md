@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        全部交付·待新指令(R546). 运维指令区全为[已归档]/已闭合/常驻指针,无未完成指令→WAITING=1. 两交付报告命名规程复核通过(TB final grep=0✓·pilot20仅line51真实路径carve-out✓).
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R496全7路FIN87/87+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R527 TB 7way最终报告✅(14975B)·R539 pilot20最终报告✅(13099B,cline 13/20=65%·hermes 11/20=55%)·R543 真正修复pilot20 HTML命名规程✅·R545 心跳轮✅
-当前动作:     R546 心跳轮防判死(上次commit R545@04:09距今~67min>60min). 运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/reports,14975B)grep cline-patched=0✓;pilot20报告(两副本均13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). git fetch(带proxy)确认与origin/main同步.
+PHASE:        全部交付·待新指令(R547). 运维指令区全为[已归档]/已闭合/常驻指针,无未完成指令→WAITING=1. 两交付报告命名规程复核通过(TB final grep=0✓·pilot20仅line51真实路径carve-out✓).
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R496全7路FIN87/87+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R527 TB 7way最终报告✅(14975B)·R539 pilot20最终报告✅(13099B,cline 13/20=65%·hermes 11/20=55%)·R543 真正修复pilot20 HTML命名规程✅·R545/R546 心跳轮✅
+当前动作:     R547 心跳轮防判死(上次commit R546@05:22距今~67min>60min). 运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/reports,14975B)grep cline-patched=0✓;pilot20报告(13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). git fetch(带proxy)确认与origin/main同步(HEAD=ef937c9d3 zhu_long归档,无harness新指令).
 下一步:       ①等待运维新指令; ②若运维要求扩大SWE-bench样本(20→更多)或补充分析(per-instance对比/McNemar),按指令执行; ③保持watcher/编排器已退出(仅idle gw_proxy常驻),报告已入库.
 阻塞:         无. 运维指令区无未完成指令(命名常驻规程=常驻规则,两报告已复核通过)→WAITING=1.
 ERROR_COUNT:  0
-📦 体积：TASK=27898B(27KB) / MEMORY=31615B(31KB)（均≤32KB✓,本轮R542流水压缩→指针）
+📦 体积：TASK=27898B(27KB) / MEMORY=31629B(31KB)（均≤32KB✓,无需归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -32,6 +32,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[06:29] R547 **心跳轮防判死(上次commit R546@05:22距今~67min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/BaiZe-ISEDA2027/reports/,14975B)grep cline-patched=0✓;pilot20报告(13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(HEAD=ef937c9d3 zhu_long归档@06:22,无harness新指令;工作树仅他线文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程,etimes≈310067s). 体积TASK=27898B/MEMORY=31629B,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令→WAITING=1正确.
+
 [05:16] R546 **心跳轮防判死(上次commit R545@04:09距今~67min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/BaiZe-ISEDA2027/reports/,14975B)grep cline-patched=0✓;pilot20报告(doc/reports与run/harness两副本均13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(无ahead/behind,仅他线在途文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). 体积TASK=27898B/MEMORY≈32100B,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令→WAITING=1正确.
 
 [04:08] R545 **心跳轮防判死(上次commit R544@03:01距今~67min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(14975B)grep cline-patched=0✓;pilot20报告(13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(无ahead/behind). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). 体积TASK=27898B/MEMORY≈32100B,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令→WAITING=1正确.
