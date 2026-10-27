@@ -1,6 +1,9 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1
+WAITING: 0
+
+<!-- 运维直令 2026-10-27 08:31：8192 5-run（70.8±7.7%）全部作废，maxTokens 改回 16384 与 cline 基线对齐，r1 已重起 batch 2026_1027_083127（PID 800411），4 worker providers.json = glm-5.3-flash+16384+/v1+reasoning=false 与 cline 基线逐项 diff 全 ✅，唯一变量 = CLI 二进制。任务书 10-27 令置顶。loop 由运维重启。agent 接管 r1→r5 自驱。 -->
+
 <!-- heartbeat 2026-10-27 08:23 🟢 例行唤醒健康巡检 + MEMORY 体积归档（无新用户/ops 指令·5-run 已封盘 70.8±7.7% 不动·保持 WAITING=1 等用户裁决·防 60min 判死刷心跳·距上次 07:55 ~28min < 60min 阈值）：① 进程全绿：loop PID3659222（/proc/environ 验证 https_proxy=http://172.19.92.23:13128 ✅）/ops relay PID118463 活/.last_run_id=128=inbox 顶部/无本线 eval/8090 LISTEN ✅/4 端口 8650/8651/8652/8654 curl 404 全可达/home 23G/git in sync origin 仅 ../trace_retest/ untracked。② 配置未变（providers.json=glm-5.3-flash+8192 ✅）。③ 5-run 5/5 已封盘 70.8±7.7%·判据 ①✅②❌③✅④✅·3 份报告齐备。④ ops inbox 顶部仍 RUN_ID 128·无新指令。⑤ **MEMORY 体积归档**：本 session 把 02:21~06:39 七条巡检流水原文搬入 daily-memories/2026-10-27.md（35.6KB→~30KB·回到 32KB 上限内·按 10-06 规程）。⑥ 待用户裁决 5 项不变 + P0-C 双阻塞 + H supplementary 目标。本 session self-commit+push（带 proxy）。-->
 
 - [2026-10-27 08:23] 🟢 **例行唤醒健康巡检 + MEMORY 体积归档**（无新用户/ops 指令·5-run 已封盘 70.8±7.7%·保持 WAITING=1 等用户裁决·防 60min 判死刷心跳·距上次 07:55 ~28min < 60min 阈值）：① 进程全绿：loop PID3659222（/proc/environ 验证 https_proxy=http://172.19.92.23:13128 ✅）/ops relay PID118463 活/.last_run_id=128=inbox 顶部/无本线 eval/8090 PID2778637 LISTEN ✅/4 端口 8650/8651/8652/8654 curl 404 全可达/home 23G/git in sync origin 仅 ../trace_retest/ untracked。② 配置未变（providers.json=glm-5.3-flash+8192 ✅）。③ 5-run 5/5 已封盘 70.8±7.7%·判据 ①✅②❌③✅④✅·3 份报告齐备。④ ops inbox 顶部仍 RUN_ID 128·无新指令。⑤ **MEMORY 体积归档**：把 02:21~06:39 七条巡检流水原文搬入 daily-memories/2026-10-27.md（35.6KB→~30KB·回到 32KB 上限内·按 10-06 规程）。⑥ 待用户裁决 5 项不变：(a) r1 离群剔除 (b) cline×dsv4-pro 5-run (c) maxTokens 敏感性 (d) 论文剩余 TODO (e) 8→7 页压缩 + P0-C 双阻塞 + H supplementary 目标。本 session self-commit+push（带 proxy）。详见 daily-memories/2026-10-27.md §[08:23]。

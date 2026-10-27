@@ -1,6 +1,59 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 🟢 运维指令 · 2026-10-26 08:1x（**作废 224219（配置错误）→ 已修复 worker 配置源 → 重启 loop → 用正确配置重跑 zhulong×glm-5.3-flash×full 5-run**）· 用户直令 · 最高优先 · 覆盖一切
+### 🟢 运维指令 · 2026-10-27 09:0x（**修正 maxTokens 错配：8192→16384（与 cline 基线对齐）→ 作废 8192 的 5-run → 重起 16384 的 5-run**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话（10-27）：「让 ZL 试验完全使用 cline 相同的配置：glm-5.3-flash+full 配置。把现有评测停下。确保配置完全一致的情况下，启动 ZL 5-run 评测。」
+> **背景**：10-24 22:1x 令错误把 cline 基线 maxTokens 归因为 8192（实际 cline 基线 10-18/19 retest r1-r5，batch `2026_1019_005714` 留存 worker config = **16384**，已逐项核对验证）。10-26 15:46 运维已把 providers.json 改 16384 起的 r1 batch `2026_1026_154647`，但**任务书旧块仍写"maxTokens 必须 = 8192"**，agent 按任务书优先原则把 16384 batch 作废、改回 8192 重起 5-run（r1 `2026_1026_160802` / r2-r5 同），封盘 70.8±7.7%。**该 5-run maxTokens 与 cline 基线不一致（8192 vs 16384），不能作为 CLI 回归结论**。
+
+**① 已由运维完成（勿重复）**
+1. **修正任务书**：本块置顶，旧块（10-26 08:1x）降级为 `text`；旧块里所有"maxTokens=8192"的硬约束**作废**，以本块为准。
+2. **修正配置源**：已把 `~/.zhulong/settings/providers.json` 与 `~/.zhulong/data/settings/providers.json` 的 `maxTokens` 改为 **16384**（两处都已改，已验证）。
+3. **停当前 eval + loop**：8192 的 5-run 已封盘不再跑，loop 已停（PID 3659222 由运维停）。
+
+**② 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full 5-run（maxTokens=16384 cline-aligned 重跑）`、`PHASE = running`、`WAITING = 0`。
+2. **作废 8192 的 5 个 batch**（写 VOID_REASON.txt，留证不删）：
+   - `2026_1026_160802` / `2026_1026_190240`（已确认 8192）+ 其余 3 个 8192 batch（从 `2026_1026_16*` ~ `2026_1026_2*` 范围内 worker config = 8192 的全部作废）
+   - VOID_REASON 写明："maxTokens=8192 与 cline 基线 16384 不一致，10-27 令作废，数据留证不进 5-run"
+   - **不要作废 `2026_1026_154647`**（它是 16384 的，已被前轮误作废，需<b>恢复</b>：删其 VOID_REASON.txt，它可进 16384 5-run 作为 r1）
+3. **起 r1**（zhulong × glm-5.3-flash × full × maxTokens=**16384** × 8650 组 × `-p 4`）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r1.log 2>&1 < /dev/null &`
+   - **关键**：worker 会复制 `~/.zhulong/settings/providers.json`（= `glm-5.3-flash + 16384` ✅）。
+4. **起跑后验证 worker 用的模型**：从 `<batch>/cli_data/worker_1/data/settings/providers.json` grep `maxTokens` 应为 **16384**。**若仍是 8192 立即停跑报错**（这是本线的硬约束）。
+5. **r1 → 手动 regrade → 记 `pass/158` + `gen-fail` + 耗时 → r2 → ... → r5 → 5/5 mean±std**。
+6. **与 cline 基线 86.8±1.6% 对比**，更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"maxTokens=16384 cline-aligned 重测"一节，<b>纠正</b>上轮报告"cline 线 8192"的错误说法——cline 基线实测 = 16384，已留存 batch `2026_1019_005714` 为证）。
+
+**③ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）—— **worker providers.json 必须 = glm-5.3-flash + 16384 + /v1 + reasoning=false**；
+2. 单轮 **gen-fail ≤ 5/158**；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. **若 16384 5-run 仍显著低于 cline 86.8±1.6%，必须在报告里给出"已排除配置混杂"的结论**（maxTokens 已逐字节对齐，唯一变量 = CLI 二进制）。
+
+**④ 关键判据：cline 基线真实配置（不可篡改，已留证）**
+- cline 基线 = 10-18/19 retest r1-r5，batch `2026_1019_005714` 留存
+- worker config 实测：`model=glm-5.3-flash / maxTokens=16384 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false / apiKey=02_088EE...BF697`
+- regrade 脚本注释（`/tmp/run_glm-5.3-flash_retest_r1_regrade.sh`）：`运维令三十一·2026-10-18·-p 4 起步`
+- **结论**：cline 基线 maxTokens = **16384**（不是 8192），-p = **4**，benchmark = PyAether 158
+- ZL 5-run 必须与此逐字节对齐，唯一变量 = CLI 二进制（cline vs zhulong）
+
+**⑤ ⚠️ loop 自杀防护（不变）**
+- 禁止 `pkill -f 'zhulong'`（会匹配 loop 自身）。用精确 PID 或 `pkill -f 'run_zhulong_script.sh'`。
+
+**⑥ 口径备注**
+- 本线 = **zhulong×glm-5.3-flash×full×maxTokens=16384**（与 cline 基线逐字节对齐），目的是与 **cline×glm-5.3-flash×full×maxTokens=16384**（基线 86.8±1.6%）做"只差 CLI 二进制"的干净对比。
+- 8192 的 5-run（70.8±7.7%）<b>作废</b>，不进对比；数据留证。
+- 上轮 `2026_1026_154647`（16384，被前轮误作废）<b>恢复</b>，可作为 16384 5-run 的 r1。
+
+**⑦ 与 10-25 论文改稿令的关系**
+- 10-25 改稿令**并行**，不冲突。5-run 照跑，论文改稿在等待空档推进。
+
+---
+
+### 🟠 历史指令 · 2026-10-26 08:1x（**作废 224219（配置错误）→ 已修复 worker 配置源 → 重启 loop → 用正确配置重跑 zhulong×glm-5.3-flash×full 5-run**）· 已被 10-27 令覆盖
+
+> ⚠️ **本块已被 10-27 令覆盖**：本块里所有"maxTokens=8192"的硬约束**作废**，cline 基线实测 maxTokens = 16384（见 10-27 令 ④）。本块保留仅供历史追溯。
+
+```text
 
 > 用户原话（10-26）：「作废224219，重启 agent loop。你现在 36.15机器上，可以直接操作。」
 > **背景**：10-24 22:1x 令要求「停 cline-full → zhulong 配置对齐 cline（maxTokens 8192）→ zhulong 重跑 5-run」。但 224219 起跑时 **worker 复制了 stale providers.json**（`~/.cline/data/settings/providers.json` = `deepseek-v4-pro + maxTokens=16384`），而非令要求的 `glm-5.3-flash + maxTokens=8192`。根因：`run_cli.sh` 默认 `CLI_DATA_DIR=~/.cline/data`，而 `run_zhulong_script.sh` 的 `export CLI_DATA_DIR=~/.zhulong` 在某些启动路径下未生效。此外 agent loop 在 10-24 22:46 执行 `pkill -f 'zhulong'` 杀 cline-full r1 时**误杀了自己**（zhulong_loop.sh 匹配了 `zhulong`），导致 loop 死亡 ~34h。
@@ -43,6 +96,7 @@
 **⑦ 与 10-25 论文改稿令的关系**
 - 10-25 00:0x 令（按外部评审意见改论文）**与 5-run 并行**，不冲突。5-run 照跑，论文改稿在等待空档推进。
 - 若论文改稿需打断 5-run 验证关键点，按 10-25 令「先落盘 + 记 MEMORY + 事后 regrade 补记」执行。
+```
 
 ---
 
