@@ -1,6 +1,48 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
-<!-- RUN_ID: 221 | TARGET: 29 -->
-## RUN_ID 221 — 只读：agent 是否在动手（cline 进程）+ recipe.py 改动时间 + 训练代码仓提交
+<!-- RUN_ID: 222 | TARGET: 29 -->
+## RUN_ID 222 — 🔎 只读：实测两机内存/swap/SSD + DataLoader 配置 + bin 大小（回应"4TB 内存不够用？"/"合并成大文件放 SSD"）
+
+```bash
+set -u
+echo "=== RUN_ID 222 | memory+ssd+dataloader | $(date '+%F %T') | host=$(hostname) ==="
+
+for H in . 12; do
+  if [ "$H" = "." ]; then C="bash -lc"; TAG=".29"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -lc"; TAG=".12"; fi
+  echo ""
+  echo "########## $TAG ##########"
+  $C '
+    echo "[内存]"
+    free -g | sed "s/^/    /"
+    echo "    SwapFree: $(awk "/SwapFree/{printf \"%.2f GB\", \$2/1024/1024}" /proc/meminfo)  swappiness: $(cat /proc/sys/vm/swappiness)"
+    echo "[本地盘 NVMe 清单]"
+    lsblk -d -o NAME,ROTA,SIZE,MODEL 2>/dev/null | sed "s/^/    /"
+    echo "    --- 本地挂载点(排除 nfs/tmpfs/overlay) ---"
+    df -hT 2>/dev/null | grep -vE "nfs|tmpfs|overlay|udev" | sed "s/^/    /"
+  ' 2>/dev/null || echo "  $TAG ssh FAILED"
+done
+
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$GR" 2>/dev/null || exit 1
+echo ""
+echo "[1] 训练侧 DataLoader 参数实测"
+grep -rnE 'num_workers|pin_memory|prefetch_factor|persistent_workers' code/baize-llm --include='*.py' --include='*.sh' --include='*.env' 2>/dev/null | grep -v test | head -15 | sed 's/^/    /'
+
+echo "[2] 数据集类：是 memmap 还是全读进内存"
+grep -rnE 'class .*Dataset|np\.memmap|np\.fromfile|\.npy|mmap_mode' code/baize-llm --include='*.py' 2>/dev/null | grep -v test | head -15 | sed 's/^/    /'
+
+echo "[3] .bin 文件大小分布（判断能否合并）"
+T=/nas_train/app.e0031982/datasets/baize-data
+find "$T" -name '*.bin' 2>/dev/null | head -400 | xargs -r stat -c '%s' 2>/dev/null | sort -n | awk '{a[NR]=$1; s+=$1} END{if(NR>0) printf "    n=%d  min=%.2fGB  median=%.2fGB  max=%.2fGB  sum=%.1fGB\n", NR, a[1]/1e9, a[int(NR/2)]/1e9, a[NR]/1e9, s/1e9}'
+echo "    .bin 总数: $(find "$T" -name '*.bin' 2>/dev/null | wc -l)"
+
+echo "[4] S1 训练进程与 num_workers 实际生效值"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'train\.sh s1|pretrain_launcher' | grep -v grep | head -4 | cut -c1-140 | sed 's/^/    /'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "train.sh s1|pretrain_launcher" | grep -v grep | head -4 | cut -c1-140 | sed "s/^/    /"' 2>/dev/null || true
+LOG=$(ls -t /tmp/*s1*.log 2>/dev/null | head -1)
+[ -n "${LOG:-}" ] && { echo "    log=$LOG"; grep -aoE 'num_workers[\": ]+[0-9]+' "$LOG" 2>/dev/null | head -2 | sed 's/^/      /'; }
+
+echo "=== DONE 222 ==="
+```
 
 ```bash
 set -u
