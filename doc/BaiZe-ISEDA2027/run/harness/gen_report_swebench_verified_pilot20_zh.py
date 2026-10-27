@@ -84,25 +84,31 @@ def is_smoke_eval(ev):
     return "_smoke" in ev.get("run_id", "")
 
 
-def classify_instance(harness, iid, ev, pred_map):
+def classify_instance(harness, iid, ev, pred_map, eval_done=True):
+    pr = pred_map.get(iid, {})
+    cls = pr.get("classification", "")
+    # infra / no-patch are determinable from predict alone (no eval needed)
+    if cls in ("infra", "blocked", "git-fetch-timeout", "timeout", "quota-blocked"):
+        return "infra-or-quota"
+    if cls == "no-patch":
+        return "no-patch"
+    if not eval_done:
+        # eval not yet run for this harness: a produced patch cannot be
+        # classified resolved/failed -> mark eval-pending (NOT failed/resolved)
+        if pr or patch_len(harness, iid) > 0:
+            return "eval-pending"
+        return "not-run"
     resolved = set(ev.get("resolved", []))
     failed = set(ev.get("failed", []))
     infra = set(ev.get("infra_or_quota", []))
     if iid in resolved:
         return "resolved"
-    if iid in failed:
-        return "failed"
     if iid in infra:
         return "infra-or-quota"
-    pr = pred_map.get(iid, {})
-    cls = pr.get("classification", "")
-    if cls in ("infra", "blocked", "git-fetch-timeout", "timeout", "quota-blocked"):
-        return "infra-or-quota"
-    if cls == "no-patch":
-        return "no-patch"
-    if pr:
+    if iid in failed:
         return "failed"
-    if patch_len(harness, iid) > 0:
+    # has a patch but absent from eval lists (eval skipped it) -> failed
+    if pr or patch_len(harness, iid) > 0:
         return "failed"
     return "not-run"
 
@@ -111,8 +117,12 @@ def fmt_pct(a, b):
     return f"{a/b*100:.1f}%" if b else "—"
 def parts_from(per_harness, n_total, now, banner, eval_real, predict_done,
                cr, cf, ci, cnp, hr, hf, hi, hnp):
-    c_evald = cr + cf + ci
-    h_evald = hr + hf + hi
+    c_evald = cr + cf
+    h_evald = hr + hf
+    cep = per_harness["cline-patched"]["counts"].get("eval-pending", 0)
+    hep = per_harness["hermes"]["counts"].get("eval-pending", 0)
+    c_ep_s = f" · <b>eval-pending {cep}</b>" if cep else ""
+    h_ep_s = f" · <b>eval-pending {hep}</b>" if hep else ""
     parts = [f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SWE-bench Verified 20 条试点横评报告</title>
@@ -130,7 +140,7 @@ th,td{{border:1px solid #e2e8f0;padding:6px 8px;text-align:center}}
 th{{background:#edf2f7;font-weight:600}} tr:nth-child(even){{background:#f7fafc}}
 td.l{{text-align:left}}
 td.pass{{background:#c6f6d5;font-weight:700;color:#22543d}} td.fail{{background:#fed7d7;color:#822727}}
-td.infra{{background:#feebc8;color:#7b341e}} td.nopatch{{background:#e2e8f0;color:#718096}} td.notrun{{background:#f7fafc;color:#a0aec0}}
+td.infra{{background:#feebc8;color:#7b341e}} td.nopatch{{background:#e2e8f0;color:#718096}} td.notrun{{background:#f7fafc;color:#a0aec0}} td.evalpend{{background:#e9d8fd;color:#553c9a}}
 code{{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}}
 .ev{{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;color:#555}}
 .foot{{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}}
@@ -143,8 +153,8 @@ code{{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}}
     parts.append(f"""<div class="tldr"><h3 style="margin-top:0">TL;DR</h3>
 <p>两路 harness 各跑 20 条 SWE-bench Verified 试点（同一 20 题集 / 同一模型 kimi-k2.6-cloud / 同一 timeout 1800s / 同一官方 docker 评测）：</p>
 <ul>
-<li><b>cline</b>：resolve <b>{cr}/{n_total}</b>（{fmt_pct(cr, n_total)}）；resolved {cr} · failed {cf} · infra-or-quota {ci} · 未产出 patch {cnp}（eval 覆盖 {c_evald} 条）。</li>
-<li><b>hermes</b>：resolve <b>{hr}/{n_total}</b>（{fmt_pct(hr, n_total)}）；resolved {hr} · failed {hf} · infra-or-quota {hi} · 未产出 patch {hnp}（eval 覆盖 {h_evald} 条）。</li>
+<li><b>cline</b>：resolve <b>{cr}/{n_total}</b>（{fmt_pct(cr, n_total)}）；resolved {cr} · failed {cf} · infra-or-quota {ci} · 未产出 patch {cnp}（eval 覆盖 {c_evald} 条）{c_ep_s}。</li>
+<li><b>hermes</b>：resolve <b>{hr}/{n_total}</b>（{fmt_pct(hr, n_total)}）；resolved {hr} · failed {hf} · infra-or-quota {hi} · 未产出 patch {hnp}（eval 覆盖 {h_evald} 条）{h_ep_s}。</li>
 <li>⚠️ 严格遵守任务令「停在 20 条试点」，<b>未跑全量 500</b>。本结果供运维放大决策。</li>
 </ul></div>""")
     parts.append("""<h2>一、评测口径</h2><div class="card"><table>
@@ -161,19 +171,23 @@ code{{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}}
 
 
 def finalize(parts, per_harness, n_total, now, eval_real, cr, hr):
+    hep = per_harness["hermes"]["counts"].get("eval-pending", 0)
+    cc = per_harness["cline-patched"]["counts"]
+    cf, ci = cc["failed"], cc["infra-or-quota"]
     parts.append("""<h2>二、三列汇总（resolved / failed / infra-or-quota）</h2>
 <div class="card"><table>
 <tr><th>harness</th><th>predict 产出 patch</th><th>eval 覆盖</th>
-<th class="pass">resolved</th><th class="fail">failed</th><th class="infra">infra-or-quota</th><th>resolve 率（/20）</th></tr>""")
+<th class="pass">resolved</th><th class="fail">failed</th><th class="infra">infra-or-quota</th><th class="evalpend">eval-pending</th><th>resolve 率（/20）</th></tr>""")
     for h in HARNESS_ORDER:
         d = per_harness[h]; c = d["counts"]
         pred_patch = sum(1 for r in d["rows"] if r["patch"] > 0)
-        evald = c["resolved"] + c["failed"] + c["infra-or-quota"]
+        evald = c["resolved"] + c["failed"]
         parts.append(f'<tr><td class="l">{DISPLAY[h]}</td><td>{pred_patch}/{n_total}</td><td>{evald}</td>'
                      f'<td class="pass">{c["resolved"]}</td><td class="fail">{c["failed"]}</td>'
-                     f'<td class="infra">{c["infra-or-quota"]}</td><td>{fmt_pct(c["resolved"], n_total)}</td></tr>')
+                     f'<td class="infra">{c["infra-or-quota"]}</td><td class="evalpend">{c["eval-pending"]}</td>'
+                     f'<td>{fmt_pct(c["resolved"], n_total)}</td></tr>')
     parts.append('</table><p class="ev">数据溯源：<code>swebench_verified_pilot/reports/eval_cline-patched.json</code> · <code>reports/eval_hermes.json</code> · <code>reports/predict_*.json</code> · <code>predictions/{harness}__{iid}.json</code>。</p></div>')
-    cls_css = {"resolved": "pass", "failed": "fail", "infra-or-quota": "infra", "no-patch": "nopatch", "not-run": "notrun"}
+    cls_css = {"resolved": "pass", "failed": "fail", "infra-or-quota": "infra", "no-patch": "nopatch", "eval-pending": "evalpend", "not-run": "notrun"}
     for idx, h in enumerate(HARNESS_ORDER):
         d = per_harness[h]
         parts.append(f'<h2>三-{idx+1}、{DISPLAY[h]} 逐题明细</h2><div class="card"><table>'
@@ -184,7 +198,14 @@ def finalize(parts, per_harness, n_total, now, eval_real, cr, hr):
                          f'<td>{r["wall"] if r["wall"] is not None else "—"}</td><td>{esc(r["diff"]) or "—"}</td></tr>')
         parts.append("</table></div>")
     if not eval_real:
-        concl = "eval 阶段尚未完成，无法给出 resolve 结论。待编排器自动 eval 完成后重新运行本生成器。"
+        # one or both evals still pending -- report per-harness honestly
+        c_done = (cr + cf + ci) > 0
+        cpart = (f"cline eval 已完成：resolve {cr}/{n_total}（{fmt_pct(cr, n_total)}），"
+                 f"resolved {cr} · failed {cf} · infra-or-quota {ci}。") if c_done else "cline eval 尚未完成。"
+        hpatch = sum(1 for r in per_harness["hermes"]["rows"] if r["patch"] > 0)
+        hpart = (f"hermes eval 仍在进行（predict 已产出 {hpatch}/20 patch，{hep} 条待 eval），"
+                 f"编排器自动 eval 完成后重新运行本生成器获得最终三列结果。") if hep else "hermes eval 尚未完成。"
+        concl = cpart + hpart
     elif cr == 0 and hr == 0:
         concl = "两路 resolve 均为 0。需排查是否为 infra（git-fetch-timeout / docker eval）或模型能力问题。建议运维先看 <code>logs/eval_*.log</code> 再决定是否放大。"
     else:
@@ -219,14 +240,15 @@ def build():
         ev = load_eval(h)
         if len(preds) < n_total:
             predict_done = False
-        if is_smoke_eval(ev) or not ev:
+        ev_done = bool(ev) and not is_smoke_eval(ev)
+        if not ev_done:
             eval_real = False
         pred_map = {p["instance_id"]: p for p in preds}
         rows = []
         counts = {"resolved": 0, "failed": 0, "infra-or-quota": 0,
-                  "no-patch": 0, "not-run": 0}
+                  "no-patch": 0, "eval-pending": 0, "not-run": 0}
         for iid in ids:
-            cls = classify_instance(h, iid, ev, pred_map)
+            cls = classify_instance(h, iid, ev, pred_map, eval_done=ev_done)
             counts[cls] = counts.get(cls, 0) + 1
             pl = patch_len(h, iid)
             pr = pred_map.get(iid, {})
