@@ -18,7 +18,7 @@ WAITING: 1
 ```
 PHASE:        ✅ufw_en迁移DONE+✅4源迁移全完成+✅22:0x坏shard修复DONE+✅3源迁移FINALIZE+✅体积维护DONE;全部活跃指令DONE,无阻塞
 已完成:       ✅5源全量分词(574shards/1056.36B/4.24TB);✅en_v1_4(110/2237.07B/8.38TB,坏shard已修复);✅未分词4源131/131(1.18T/4.05TB);✅迁移5+4=9源→/nas_env(ufw_en32+l1_en_hq94+zh4+AICC1+5源574=705shard/~8.3TB);✅DATA_MAPPING.md+报告刷新(storage=symlink,commit ace6fac0b);✅体积维护MEMORY_DATA.md 22.2KB
-当前动作:     唤醒684(2026-10-27 07:32):防判死心跳轮(无新运维令,上次commit 06:25=67min>60min阈值)。①复核4条活跃运维令仍全DONE：13:1x迁移4源→DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整✓;②10:4x报告 report_data_mapping_zh.html 20,624B(Oct27 05:40)✓;③09:5x分词131/131 DONE✓;④08:2x报告 report_data_recent_work_zh.html 28,443B(Oct26 09:06)✓;⑤git status无本线未提交改动✓;⑥df /nas_train 174T/84%(34T可用) /nas_env 8.2T/83%(1.8T可用)✓;⑦体积自检 MEMORY 26.3KB/TASK 31.9KB 均≤40KB✓;⑧无未完成指令→WAITING:1。未完成指令:无→WAITING:1
+当前动作:     唤醒685(2026-10-27 08:42):防判死心跳轮(无新运维令,上次commit 07:34=68min>60min阈值)。①复核4条活跃运维令仍全DONE：13:1x迁移4源→DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整✓;②10:4x报告 report_data_mapping_zh.html 20,624B(Oct27 05:40)✓;③09:5x分词131/131 DONE✓;④08:2x报告 report_data_recent_work_zh.html 28,443B(Oct26 09:06)✓;⑤git fetch无BAIZE_DATA_TASK.md新提交(03:46后未改)✓;⑥git status无本线未提交改动✓;⑦df /nas_train 174T/84%(34T可用) /nas_env 8.2T/83%(1.8T可用)✓;⑧体积自检 MEMORY 26.8KB/TASK 31.9KB 均≤40KB✓;⑨无未完成指令→WAITING:1。未完成指令:无→WAITING:1
 下一步:       ①全部活跃指令DONE,无待办;②待运维新令(30min轮询)
 阻塞:         无(全部迁移DONE+全部报告DONE+全部分词DONE;disk /nas_train 34T/84% /nas_env 1.8T/83%)
 ERROR_COUNT:  10
@@ -28,6 +28,8 @@ ERROR_COUNT:  10
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [08:42] 唤醒685：防判死心跳轮(无新运维令,上次commit 07:34=68min>60min阈值)。①复核4条活跃运维令全DONE：13:1x迁移4源→DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整✓;10:4x报告report_data_mapping_zh.html 20,624B(Oct27 05:40)✓;09:5x分词131/131 DONE✓;08:2x报告report_data_recent_work_zh.html 28,443B(Oct26 09:06)✓;②git fetch无BAIZE_DATA_TASK.md新提交(03:46后未改)✓;③git status无本线未提交改动✓;④df /nas_train 174T/84%(34T可用)+/nas_env 8.2T/83%(1.8T可用)✓;⑤体积自检MEMORY 26.8KB/TASK 31.9KB均≤40KB✓;⑥无未完成指令→WAITING:1。未完成指令:无→WAITING:1
+
 > [07:32] 唤醒684：防判死心跳轮(无新运维令,上次commit 06:25=67min>60min阈值)。①复核4条活跃运维令仍全DONE：13:1x迁移4源→DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整✓;10:4x报告report_data_mapping_zh.html 20,624B(Oct27 05:40)✓;09:5x分词131/131 DONE✓;08:2x报告report_data_recent_work_zh.html 28,443B(Oct26 09:06)✓;②git status无本线未提交改动✓;③df /nas_train 174T/84%(34T可用) /nas_env 8.2T/83%(1.8T可用)✓;④体积自检 MEMORY 26.3KB/TASK 31.9KB 均≤40KB✓;⑤无未完成指令→WAITING:1。未完成指令:无→WAITING:1
 
 > [06:23] 唤醒683：全量复核轮(无新运维令)。①复核4条活跃运维令全DONE：13:1x迁移4源→DATA_MAPPING.md行7-10 storage=symlink/状态=镜像完整/合计815shard/17,566,770,958,858B/4,473,758,257,769tok(commit ace6fac0b);10:4x报告report_data_mapping_zh.html 20,624B(Oct27 05:40)✓;09:5x分词131/131 DONE(10源全镜像完整);08:2x报告report_data_recent_work_zh.html 28,443B(Oct26 09:06)✓;②git status无本线未提交改动(git status --porcelain grep本线路径=空)✓;③df /nas_train 174T/84%(34T可用,较迁移前177T/86%释放~3TB)+/nas_env 8.2T/83%(1.8T可用);④体积自检MEMORY 25.4KB/TASK 31.9KB均≤40KB✓;⑤★纠正WAITING:0→WAITING:1(无未完成指令,按harness/pretrain惯例睡30min省token,避免每60s空唤醒烧token);⑥心跳+日报+commit。未完成指令:无→WAITING:1
