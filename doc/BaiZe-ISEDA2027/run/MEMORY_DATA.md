@@ -5,7 +5,7 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 📥 运维新令（2026-10-27 13:3x·用户直令）：分词 SFT-2605 + Agent-2609 到 /nas_env、纳入映射镜像同等对待、刷新 DATA_MAPPING.md + report，详见任务书运维指令区「13:3x」条。
+> 🟢 **✅ 运维令13:3x DONE（唤醒690,15:0x）**：分词 SFT-2605(94 shard/18.89B tok/75.87GB)+Agent-2609(13 shard/5.97B tok/23.89GB)→/nas_env(full_sft_2605/full_sft_agent_2609)；tokenized/ 镜像 per-file symlink→/nas_env；INDEX.tsv 922 shard triplet全OK inode_ok；DATA_MAPPING.md(10603B)行11-12=镜像完整；report_data_mapping_zh.html(20764B)12源全量更新；commit 44b512316 pushed。
 
 > 🟢 **✅ 迁移5/5源全DONE**：math_l3✅+code_l3✅+math_l1✅+ufw_l3✅+code_l2✅(5源574bins/4.24TB全迁/nas_env,软链接全建好,源已删)。
 > 🟢 **✅ 3稳定源迁移FINALIZE(唤醒678,00:3x)**：l1_en_hq(94shards)+zh(4)+AICC(1)→build_tokenized_mirror.py改symlink指向/nas_env/full_*→INDEX.tsv rebuild(815shard全triplet=OK inode=OK,3源storage=symlink)→DATA_MAPPING.md regen(指纹2953/7f2a09fb2920/00:34)→report_data_mapping_zh.html全量更新(总17.47TB,df 85%/82%)。源文件run4已删。
@@ -18,18 +18,22 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄SFT分词IN-PROGRESS(运维令13:3x):run_tokenize_sft.sh PID1054237自治运行中,Phase1 convert进行中
-已完成:       ✅convert_sft_jsonl_to_parquet.py(新建,smoke-tested);✅run_tokenize_sft.sh(三阶段自治runner,smoke-tested端到端.bin/.idx/.json全产出0error);✅build_tokenized_mirror.py+2 ENTRIES(SFT-2605/Agent-2609);✅gen_report_data_mapping_html.py结论改已分词入镜像;✅脚本commit e254a4c2e pushed;✅smoke-test验证(665MB parquet→162.7M tokens/0 error/0 timeout)
-当前动作:     唤醒689(2026-10-27 14:1x):执行运维令13:3x分词SFT-2605+Agent-2609→/nas_env。①convert_sft_jsonl_to_parquet.py已smoke-test(SFT-2605 role-tagged content+Agent-2609 <|tools|>/<tool_calls>/<reasoning>/<|tool|>全序列化,无字段丢失);②run_tokenize_sft.sh三阶段(Phase1 convert 16子集并行→Phase2 size-balanced分shard 96并发preprocess_data_cm.py→Phase3 finalize清空未分词侧车+build_mirror+gen_md--measure+gen_report+git commit+push);③smoke-test端到端验证PASS(Search_Agent 2 jsonl→2 parquet→1 shard tokenized→.bin 650MB/.idx 200KB/.json 508B,num_tokens=162707719,num_errors=0);④修复bug:SFT-2605 --kind sft2609→sft2605(argparse误);⑤full runner PID1054237 launched,Phase1 convert进行中(SFT-2605 602/1504 parquet+Agent-2609 20/50,7 converts running);⑥脚本commit e254a4c2e pushed
-下一步:       ①runner自治完成Phase1(convert)→Phase2(tokenize ~107 shard 96并发)→Phase3(finalize+git);②30min后唤醒检查runner进度;③若runner DONE验证DATA_MAPPING.md行11-12=镜像完整+report刷新+commit pushed
-阻塞:         无(runner自治运行中;disk /nas_train 34T/84% /nas_env 1.8T/83%,SFT分词产物~350GB→/nas_env余量1.8T足够)
+PHASE:        ✅运维令13:3x SFT分词全DONE(唤醒690验证).12源全部镜像完整,无未完成指令
+已完成:       ✅运维令08:3x刷新两文件(commit42bf3a52f);✅运维令13:3x分词SFT-2605(94shard/18.89B tok/75.87GB)+Agent-2609(13shard/5.97B tok/23.89GB)→/nas_env;✅convert_sft_jsonl_to_parquet.py+run_tokenize_sft.sh(三阶段自治runner);✅build_tokenized_mirror.py刷新INDEX.tsv(922shard全triplet=OK inode_ok);✅gen_data_mapping_md.py刷新DATA_MAPPING.md(10603B,行11-12=镜像完整);✅gen_report_data_mapping_html.py刷新report(20764B,12源);✅commit 44b512316 pushed to origin/main
+当前动作:     唤醒690(2026-10-27 15:2x):验证运维令13:3x交付完成→①runner PID1054237已完成(无进程残留);②验证SFT-2605 tokenized/(94.bin+94.idx symlink→/nas_env/full_sft_2605/,0悬空);③验证Agent-2609 tokenized/(13.bin+13.idx symlink→/nas_env/full_sft_agent_2609/,0悬空);④INDEX.tsv L12-13 triplet=OK inode_ok=94/13;⑤DATA_MAPPING.md行11-12=镜像完整(10603B);⑥report=20764B;⑦git origin/main含44b512316(harness 0fd247d89建于其上=已push);⑧更新心跳+日报
+下一步:       无未完成指令.30min轮询待新运维令
+阻塞:         无
 ERROR_COUNT:  10
-未完成指令:   有(运维令13:3x SFT分词runner在跑·异步,runner自治完成Phase3 git commit+push)→WAITING:1
+未完成指令:   无(运维令13:3x+08:3x均已DONE并pushed)→WAITING:1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [15:2x] 唤醒690：验证运维令13:3x交付完成 → ①runner PID1054237已完成(ps无进程残留,无preprocess_data子进程);②验证SFT-2605 tokenized/(94 .bin+94 .idx+94 .json,symlink→/nas_env/app.e0031982/baize-data/full_sft_2605/,find -type l ! -exec test -e = 0悬空✓);③验证Agent-2609 tokenized/(13 .bin+13 .idx+13 .json,symlink→/nas_env/app.e0031982/baize-data/full_sft_agent_2609/,0悬空✓);④/nas_env/full_sft_2605/(74092556KB≈74GB)+full_sft_agent_2609/(23326764KB≈23GB)实文件在位✓;⑤INDEX.tsv L12-13: SFT-2605 triplet=OK inode_ok=94 / Agent-2609 triplet=OK inode_ok=13 / TOTAL=922shard/4498619063829tok/17666524644830B✓;⑥DATA_MAPPING.md=10603B行11-12=镜像完整(commit44b512316)✓;⑦report_data_mapping_zh.html=20764B(12源)✓;⑧git origin/main=0fd247d89(harness建于44b512316之上=data commit已push)✓;⑨更新心跳快照+流水+日报,commit data heartbeat:。未完成指令:无→WAITING:1
+
+> 📦 唤醒689(10-27 14:1x)原文归档 → daily-memories-data/2026-10-27.md（13:3x令执行：新建convert_sft_jsonl_to_parquet.py+run_tokenize_sft.sh三阶段自治runner+build_tokenized_mirror.py+2ENTRIES+gen_report改;smoke-test PASS;full runner PID1054237 launched Phase1 convert进行中;脚本commit e254a4c2e pushed;runner后自治完成Phase1→Phase2→Phase3,commit 44b512316 at 15:06推送DATA_MAPPING.md+report）
+
 > [14:1x] 唤醒689：执行运维令13:3x（分词SFT-2605+Agent-2609→/nas_env·用户直令·最高优先）→ ①读BAIZE_DATA_TASK.md发现13:3x新令(比pasted的08:3x更高优先,08:3x刷新两文件已DONE commit 42bf3a52f);②新建convert_sft_jsonl_to_parquet.py(~180行,--kind{sft2605,agent2609},SFT-2605 role-tagged content串行化,Agent-2609 tool_calls/reasoning_content/tools/tool-role全序列化带<|tools|>/<tool_calls>/<reasoning>/<|tool|>标签,无字段丢失);③smoke-test两kind均PASS;④新建run_tokenize_sft.sh三阶段自治runner(Phase1 convert 16子集并行幂等→Phase2 size-balanced round-robin分shard PPS_SFT=16/PPS_AGENT=4≈107shard 96并发preprocess_data_cm.py --mode content resume+failed→Phase3 finalize清空untokenized_sft_sources.tsv+build_tokenized_mirror.py+gen_data_mapping_md.py --measure+gen_report_data_mapping_html.py+git commit+push);⑤build_tokenized_mirror.py +2 ENTRIES(SFT-2605/Agent-2609 src_dir=/nas_env/full_sft_2605|full_sft_agent_2609 storage=symlink);⑥gen_report_data_mapping_html.py结论/footer改"SFT已分词入镜像";⑦smoke-test端到端PASS(Search_Agent 2jsonl→2parquet→PLAN gen→1shard tokenized→.bin 650MB/.idx 200KB/.json 508B,num_tokens=162707719,num_errors=0,num_timeout_skips=0);⑧修复bug:SFT-2605 --kind sft2609→sft2605(argparse choices={sft2605,agent2609});⑨full runner PID1054237 launched setsid,Phase1 convert进行中(SFT-2605 602/1504+Agent-2609 20/50 parquet,7 converts running,3 Agent subsets已skip幂等);⑩脚本commit e254a4c2e pushed。未完成指令:有(SFT分词runner在跑·异步)→WAITING:1
 
 > [12:29] 唤醒688：防判死心跳轮(上次data commit 11:15=74min>60min阈值,无新运维令)。①复核运维令08:3x刷新两文件DONE:DATA_MAPPING.md 10997B(行2-10=9源storage=symlink指向/nas_env+行1 env14 hardlink+行11-12 SFT-2605/Agent-2609未分词保留,815shards/4473.76B/17.57TB)✓;report_data_mapping_zh.html 20624B(df /nas_train 84%/nas_env 83%,与实测df 12:29一致)✓;②生成器幂等铁证:python3 gen_data_mapping_md.py --out /tmp/DMM_test.md→wc -c 10997B==提交版+diff TEST==REAL+grep SFT-2605/Agent-2609=2行(print的"8852 bytes"=Python len(md)字符数,wc -c=10997字节数,UTF-8 CJK多字节致差异,非缺行)✓;③commit 42bf3a52f已push,git status main...origin/main无ahead/behind✓;④BAIZE_DATA_TASK.md无新运维令(08:3x最高且DONE,其余全📦归档/已闭合)✓;⑤df实测12:29 /nas_train 174T/84%(34T可用) /nas_env 8.2T/83%(1.8T可用)与报告一致✓;⑥体积MEMORY 27.6KB/TASK 32.0KB均≤40KB✓;⑦无未完成指令→本轮仅写心跳防判死+commit/push。未完成指令:无→WAITING:1
