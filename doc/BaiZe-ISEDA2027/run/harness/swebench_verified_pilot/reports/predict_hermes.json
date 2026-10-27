@@ -1,0 +1,13 @@
+[
+  {
+    "instance_id": "astropy__astropy-12907",
+    "harness": "hermes",
+    "returncode": 1,
+    "wall_s": 308.2,
+    "model_patch_len": 0,
+    "quota_blocked": false,
+    "stdout_tail": "d41ce607\n[run_single] running hermes ...\n== harness=hermes rc=2 timed_out=False wall=307.7s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pilot/predictions/hermes__astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+    "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_pilot/predictions/hermes__astropy__astropy-12907.json",
+    "classification": "no-patch"
+  }
+]

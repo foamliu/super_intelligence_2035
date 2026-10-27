@@ -62,11 +62,30 @@ def load_instances() -> dict[str, dict]:
 
 
 def run(cmd, cwd=None, timeout=300, with_proxy=True):
+    """Run a subprocess.
+
+    with_proxy=True  -> ensure external proxy set (git fetch to github etc.).
+    with_proxy=False -> ACTIVELY strip all proxy env. Harness agent CLIs
+      (cline/hermes) talk to the LOCAL gateway (127.0.0.1:9092 / :9090).
+      cline's bun ai-sdk HTTP client ignores no_proxy for HTTP and would
+      tunnel the localhost request through the external Squid proxy ->
+      ERR_ACCESS_DENIED (R529, 2026-10-27). Mirrors run_serial_kimi
+      skip_proxy=True (codex Rust client, same class of bug, 2026-10-14).
+    NOTE: the old impl only *added* proxy when True and did nothing when False,
+      so a parent shell that exported http_proxy (for git) leaked into the
+      agent subprocess and broke cline. Now False actively removes it.
+    """
     e = os.environ.copy()
     if with_proxy:
         e.setdefault("https_proxy", PROXY)
         e.setdefault("http_proxy", PROXY)
         e.setdefault("no_proxy", "127.0.0.1,localhost")
+    else:
+        for k in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY",
+                  "all_proxy", "ALL_PROXY"):
+            e.pop(k, None)
+        e["no_proxy"] = "*"
+        e["NO_PROXY"] = "*"
     p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
                        timeout=timeout, env=e)
     return p.stdout, p.stderr, p.returncode
