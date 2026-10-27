@@ -23230,3 +23230,115 @@ echo "=== DONE 221 ==="
 142:echo "===== S1 launch: name=$NAME nnodes=$NNODES node_rank=$NODE_RANK steps=$TRAIN_ITERS warmup=$WARMUP ====="
 === DONE 221 ===
 ```
+
+---
+
+## RUN_ID 222 · 2026-10-27 21:23:38 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 222 | memory+ssd+dataloader | $(date '+%F %T') | host=$(hostname) ==="
+
+for H in . 12; do
+  if [ "$H" = "." ]; then C="bash -lc"; TAG=".29"; else C="ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 bash -lc"; TAG=".12"; fi
+  echo ""
+  echo "########## $TAG ##########"
+  $C '
+    echo "[内存]"
+    free -g | sed "s/^/    /"
+    echo "    SwapFree: $(awk "/SwapFree/{printf \"%.2f GB\", \$2/1024/1024}" /proc/meminfo)  swappiness: $(cat /proc/sys/vm/swappiness)"
+    echo "[本地盘 NVMe 清单]"
+    lsblk -d -o NAME,ROTA,SIZE,MODEL 2>/dev/null | sed "s/^/    /"
+    echo "    --- 本地挂载点(排除 nfs/tmpfs/overlay) ---"
+    df -hT 2>/dev/null | grep -vE "nfs|tmpfs|overlay|udev" | sed "s/^/    /"
+  ' 2>/dev/null || echo "  $TAG ssh FAILED"
+done
+
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$GR" 2>/dev/null || exit 1
+echo ""
+echo "[1] 训练侧 DataLoader 参数实测"
+grep -rnE 'num_workers|pin_memory|prefetch_factor|persistent_workers' code/baize-llm --include='*.py' --include='*.sh' --include='*.env' 2>/dev/null | grep -v test | head -15 | sed 's/^/    /'
+
+echo "[2] 数据集类：是 memmap 还是全读进内存"
+grep -rnE 'class .*Dataset|np\.memmap|np\.fromfile|\.npy|mmap_mode' code/baize-llm --include='*.py' 2>/dev/null | grep -v test | head -15 | sed 's/^/    /'
+
+echo "[3] .bin 文件大小分布（判断能否合并）"
+T=/nas_train/app.e0031982/datasets/baize-data
+find "$T" -name '*.bin' 2>/dev/null | head -400 | xargs -r stat -c '%s' 2>/dev/null | sort -n | awk '{a[NR]=$1; s+=$1} END{if(NR>0) printf "    n=%d  min=%.2fGB  median=%.2fGB  max=%.2fGB  sum=%.1fGB\n", NR, a[1]/1e9, a[int(NR/2)]/1e9, a[NR]/1e9, s/1e9}'
+echo "    .bin 总数: $(find "$T" -name '*.bin' 2>/dev/null | wc -l)"
+
+echo "[4] S1 训练进程与 num_workers 实际生效值"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'train\.sh s1|pretrain_launcher' | grep -v grep | head -4 | cut -c1-140 | sed 's/^/    /'
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "train.sh s1|pretrain_launcher" | grep -v grep | head -4 | cut -c1-140 | sed "s/^/    /"' 2>/dev/null || true
+LOG=$(ls -t /tmp/*s1*.log 2>/dev/null | head -1)
+[ -n "${LOG:-}" ] && { echo "    log=$LOG"; grep -aoE 'num_workers[\": ]+[0-9]+' "$LOG" 2>/dev/null | head -2 | sed 's/^/      /'; }
+
+echo "=== DONE 222 ==="
+```
+
+**输出**
+```
+=== RUN_ID 222 | memory+ssd+dataloader | 2026-10-27 21:23:38 | host=whag0pgpuap29 ===
+
+########## .29 ##########
+[内存]
+                   total        used        free      shared  buff/cache   available
+    Mem:            2015          37        1764          46         213        1920
+    Swap:              7           7           0
+    SwapFree: 0.01 GB  swappiness: 60
+[本地盘 NVMe 清单]
+    NAME  ROTA   SIZE MODEL
+    loop0    0  63.9M 
+    loop1    0    87M 
+    loop2    0  38.8M 
+    sda      0     7T MR9560-8i
+    sdb      0 893.8G MR9560-8i
+    --- 本地挂载点(排除 nfs/tmpfs/overlay) ---
+    Filesystem                                                                                   Type   Size  Used Avail Use% Mounted on
+    /dev/mapper/vgroot-lv_root                                                                   ext4   384G   13G  352G   4% /
+    /dev/disk/by-id/dm-uuid-LVM-7REZHedvpF4bkkJNhmRZBzI5uNORjyT0tXXhvbSyDpfPi1ITi32wKNaWxz2MpChC ext4    98G   25G   69G  27% /usr
+    /dev/sdb2                                                                                    ext4   2.0G  346M  1.5G  19% /boot
+    /dev/sdb1                                                                                    vfat   1.1G  6.1M  1.1G   1% /boot/efi
+    /dev/mapper/vgroot-lv_home                                                                   ext4   196G   94G   93G  51% /home
+    /dev/mapper/vgroot-lv_tmp                                                                    ext4    98G   23G   71G  25% /tmp
+    /dev/mapper/vgroot-lv_var                                                                    ext4    98G  6.0G   87G   7% /var
+    /dev/mapper/vgdata-lv_data                                                                   xfs    7.0T 1018G  6.0T  15% /data
+
+########## .12 ##########
+[内存]
+                   total        used        free      shared  buff/cache   available
+    Mem:            2015          69         445          15        1500        1792
+    Swap:              7           6           1
+    SwapFree: 1.94 GB  swappiness: 0
+[本地盘 NVMe 清单]
+    NAME  ROTA   SIZE MODEL
+    loop0    0  63.9M 
+    loop1    0    87M 
+    loop2    0  38.8M 
+    sda      0     7T MR9560-8i
+    sdb      0 893.8G MR9560-8i
+    --- 本地挂载点(排除 nfs/tmpfs/overlay) ---
+    Filesystem                                                                                   Type   Size  Used Avail Use% Mounted on
+    /dev/mapper/vgroot-lv_root                                                                   ext4   384G   13G  352G   4% /
+    /dev/disk/by-id/dm-uuid-LVM-UETclYLHuakZce1jSQ4GH1B1q5RP71EHv3ML9jlJLo1LCsc0dhdIWdAjTf2glMyT ext4    98G   25G   69G  27% /usr
+    /dev/sdb2                                                                                    ext4   2.0G  346M  1.5G  19% /boot
+    /dev/sdb1                                                                                    vfat   1.1G  6.1M  1.1G   1% /boot/efi
+    /dev/mapper/vgroot-lv_var                                                                    ext4    98G  6.5G   87G   7% /var
+    /dev/mapper/vgroot-lv_tmp                                                                    ext4    98G   62G   32G  67% /tmp
+    /dev/mapper/vgroot-lv_home                                                                   ext4   196G  143G   44G  77% /home
+    /dev/mapper/vgdata-lv_data                                                                   xfs    7.0T  285G  6.8T   4% /data
+
+[1] 训练侧 DataLoader 参数实测
+    code/baize-llm/configs/common.env:63:# 实测 OOM-kill 史：num_workers=8→step70崩 / =4→step90崩 / =2→step200崩（均在 .29）。
+    code/baize-llm/configs/common.env:66:# 2026-10-27 #803 定论：num_workers=0（主进程同步加载，无子进程→无 RSS 累积→无 OOM）。
+[2] 数据集类：是 memmap 还是全读进内存
+    code/baize-llm/scripts/check_longctx_data.py:50:    a = np.memmap(path, dtype=np.int32, mode="r")
+[3] .bin 文件大小分布（判断能否合并）
+    n=400  min=0.00GB  median=58.67GB  max=147.83GB  sum=17898.3GB
+    .bin 总数: 1033
+[4] S1 训练进程与 num_workers 实际生效值
+    log=/tmp/baize_s1_spawn_v3_nw8_100.log
+=== DONE 222 ===
+```
