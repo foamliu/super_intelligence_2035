@@ -94,7 +94,17 @@ def run(cmd, cwd=None, timeout=300, with_proxy=True):
 def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool, str]:
     url = f"https://github.com/{repo}.git"
     if (workdir / ".git").exists():
-        run(["git", "fetch", "--all", "--tags"], workdir, timeout=600)
+        # Avoid slow `git fetch --all --tags` (crashed pilot20 R531: astropy has
+        # hundreds of release tags -> 600s timeout).  Instead check if the commit
+        # is already local (common: same repo reused across the 4 instances that
+        # share one workdir) and only do a targeted shallow fetch when missing.
+        _, _, rc_chk = run(["git", "cat-file", "-e", f"{base_commit}^{{commit}}"],
+                           workdir, timeout=30, with_proxy=False)
+        if rc_chk != 0:
+            _, _, rc_f = run(["git", "fetch", "--depth=1", "origin", base_commit],
+                             workdir, timeout=600)
+            if rc_f != 0:
+                run(["git", "fetch", "origin"], workdir, timeout=900)
         out2, _, rc2 = run(["git", "checkout", "-f", base_commit], workdir, timeout=120)
         return rc2 == 0, "existing workdir updated"
     workdir.mkdir(parents=True, exist_ok=True)
@@ -110,7 +120,11 @@ def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool
 def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
     iid = inst["instance_id"]
     bc = inst["base_commit"]
-    ok, msg = git_clone_or_fetch(inst["repo"], bc, workdir)
+    try:
+        ok, msg = git_clone_or_fetch(inst["repo"], bc, workdir)
+    except subprocess.TimeoutExpired:
+        return {"instance_id": iid, "harness": harness, "blocked": "git-fetch-timeout",
+                "classification": "infra", "model_patch_len": 0}
     if not ok:
         return {"instance_id": iid, "harness": harness, "blocked": msg,
                 "classification": "blocked", "model_patch_len": 0}
@@ -122,7 +136,12 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
            "--out-predictions", str(pred_out),
            "--model-name", f"{harness}-kimi-k2.6-cloud"]
     t0 = time.time()
-    out, err, rc = run(cmd, workdir, timeout=TIMEOUT_RUN + 120, with_proxy=False)
+    timed_out = False
+    try:
+        out, err, rc = run(cmd, workdir, timeout=TIMEOUT_RUN + 120, with_proxy=False)
+    except subprocess.TimeoutExpired:
+        out, err, rc = f"[agent TIMEOUT after {TIMEOUT_RUN + 120}s]", "", -1
+        timed_out = True
     wall = time.time() - t0
     patch_len = 0
     if pred_out.exists():
@@ -135,7 +154,8 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
     blocked = ("quota" in out.lower() or "429" in out or "forbidden" in out.lower())
     return {"instance_id": iid, "harness": harness, "returncode": rc,
             "wall_s": round(wall, 1), "model_patch_len": patch_len,
-            "quota_blocked": blocked, "stdout_tail": out[-400:],
+            "quota_blocked": blocked, "timeout": timed_out,
+            "stdout_tail": out[-400:],
             "predictions_file": str(pred_out)}
 
 
@@ -167,8 +187,10 @@ def phase_predict(harness: str, smoke: bool, max_n: int | None) -> list[dict]:
         workdir = WORKDIRS / harness / inst["repo"].replace("/", "_")
         log(f"PREDICT {harness} on {iid} (workdir={workdir})")
         r = predict_one(harness, inst, workdir)
-        cls = ("no-patch" if r["model_patch_len"] == 0
+        cls = ("infra" if r.get("classification") == "infra"
+               else "timeout" if r.get("timeout")
                else "quota-blocked" if r.get("quota_blocked")
+               else "no-patch" if r["model_patch_len"] == 0
                else "patch-produced")
         r["classification"] = cls
         log(f"  -> {cls} (patch={r['model_patch_len']}B wall={r.get('wall_s')}s)")
