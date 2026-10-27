@@ -1,6 +1,49 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
-<!-- RUN_ID: 222 | TARGET: 29 -->
-## RUN_ID 222 — 🔎 只读：实测两机内存/swap/SSD + DataLoader 配置 + bin 大小（回应"4TB 内存不够用？"/"合并成大文件放 SSD"）
+<!-- RUN_ID: 223 | TARGET: 29 -->
+## RUN_ID 223 — 🚨 pretrain 已约 14h 无产出（#809 卡在 10-27 20:52）→ 查 loop/训练进程/GPU/内存
+
+```bash
+set -u
+echo "=== RUN_ID 223 | pretrain liveness | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo "[1] pretrain loop 进程（两机）"
+ps -eo pid=,ppid=,etimes=,stat=,lstart=,args= 2>/dev/null | grep -E 'baize_pretrain_loop' | grep -v grep | cut -c1-170 || echo '  .29 无 pretrain loop ❌'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "baize_pretrain_loop" | grep -v grep | cut -c1-160 || echo "  .12 无 pretrain loop"' 2>/dev/null || true
+
+echo "[2] pretrain loop 日志尾部"
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -15 /tmp/baize_pretrain_loop.log 2>/dev/null | sed -E 's/\x1b\[[0-9;]*m//g' | cut -c1-175
+
+echo "[3] agent 进程（本轮唤醒是否进行中）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -iE 'cline|fleetagent' | grep -v grep | cut -c1-140 | head -4 || echo '  无 agent'
+
+echo "[4] 训练进程（spawn/nw8 长跑是否活着）"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'pretrain_launcher|train\.sh s1|torchrun' | grep -v grep | head -6 | cut -c1-150
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'ps -eo pid=,etimes=,args= | grep -E "pretrain_launcher|train.sh s1" | grep -v grep | head -6 | cut -c1-150' 2>/dev/null || true
+
+echo "[5] 双机 GPU"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/  .29 /'
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader | head -8 | sed "s/^/  .12 /"' 2>/dev/null || true
+
+echo "[6] spawn 相关日志最新迭代进度"
+for f in /tmp/baize_s1_spawn_v3_nw8_100.log /tmp/baize_s1*.log; do
+  [ -f "$f" ] || continue
+  echo "  --- $f  mtime=$(stat -c '%y' "$f"|cut -c1-19)  size=$(stat -c %s "$f") ---"
+  grep -aoE 'iteration +[0-9]+' "$f" 2>/dev/null | tail -1 | sed 's/^/    last: /'
+  tail -3 "$f" 2>/dev/null | cut -c1-160 | sed 's/^/    /'
+done | head -40
+
+echo "[7] 两机内存/swap/swappiness 现状"
+echo "  .29: $(free -g | awk '/Mem:/{printf "mem used=%dG avail=%dG",$3,$7} /Swap:/{printf "  swap used=%dG free=%dG",$3,$4}')  swappiness=$(cat /proc/sys/vm/swappiness)"
+timeout 12 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'free -g | awk "/Mem:/{printf \"  .12: mem used=%dG avail=%dG\",\$3,\$7} /Swap:/{printf \"  swap used=%dG free=%dG\",\$3,\$4}"; echo "  swappiness=$(cat /proc/sys/vm/swappiness)"' 2>/dev/null || true
+
+echo "[8] 修复是否落地（common.env 的 spawn/nw 旋钮 + dataset 是否 memmap）"
+grep -nE 'NUM_WORKERS|SPAWN|PERSISTENT|PREFETCH' "$GR/code/baize-llm/configs/common.env" 2>/dev/null | head -8 | sed 's/^/    /'
+grep -rnE 'np\.memmap|mmap_mode' "$GR/code/baize-llm" --include='*.py' 2>/dev/null | head -5 | sed 's/^/    /'
+
+echo "=== DONE 223 ==="
+```
 
 ```bash
 set -u
