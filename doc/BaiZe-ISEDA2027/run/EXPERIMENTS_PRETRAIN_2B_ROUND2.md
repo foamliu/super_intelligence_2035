@@ -3910,3 +3910,71 @@ iteration  40/80: 13713.9 ms (steady), loss=7.702,  gnorm=0.647
 
 > 📄 **报告**：`reports/report_pretrain_seq16k32k_throughput_zh.html`（中文 HTML，单文件自包含）。
 > 📊 **TSV**：`pretrain_rc_ladder_20261026.tsv` 新增 3 行（`e1_16k_cp1`/`e2_16k_cp2`/`e3_32k_cp2`）+ `#792` 完成注。原始日志 + ALL_RESULTS 已存 `results_dualnode_seq16k32k/`。
+
+---
+
+## §五·9 续：S1（gbs256+nw=0）吞吐实测验收 + 09:2x spawn 评估（#805 · 2026-10-27 09:5x）
+
+> 对应运维令 22:0x（S1 吞吐对齐 613,992）item 1/2/4/6 + 运维提示 09:2x（fork-COW + spawn）+ 08:4x（内存>95%告警）。
+
+### 实跑配置（已起跑，#800→#804→#805）
+
+- 命令：`GBS=256 ITERS=350000 bash code/baize-llm/scripts/train.sh s1`，08:15 起 16 卡（.29 8 + .12 8 via ssh）。
+- 关键参数：gbs=256 / mbs=1 / seq=16384 / **nw=0**（`BAIZE_NUM_WORKERS=0`）/ **θ=1e6**（`--rotary-base 1000000`，master log 打印 `[RoPE] rotary_base(theta)=1000000 (cli --rotary-base=1000000)` ✓）/ FP8 tensorwise / graph-OFF / AdamW / WSD / `--lr-decay-iters 0`（S1 无 decay 段）/ `--save-interval 2000` / `--dir nemo_experiments`。
+- tok/step = 256×16384 = **4,194,304**（与 #792 E1 同档）。
+- 健康度（step 340/350000，09:48）：loss 11.57(step10)→5.98(step340) 单调降，**0 NaN / 0 skipped / 0 崩溃**；峰值显存 ~75GB/卡；swap 8G/8G（stale，主进程 VmSwap=0，非本 run）。
+
+### 22:0x item 1 归因（更正 #798）
+
+- **#798「固定开销摊薄」假设被实测推翻**。#798 双点求解（gbs128→446K + gbs256→614K ⇒ F≈2.57s/C≈984K）隐含假设两档 num_workers 相同；实际 21:40 gbs128 的 ~480K 是 **nw>0**（dataloader overlap）档，本 gbs256 实测是 **nw=0**（dataloader 串行）档 —— **跨 nw 档不可比**。
+- **正确归因**：613K(#792, nw=8) → 308K(本跑, nw=0) 的差额 **≈100% 数据加载串行化**。nw=0 下每步 ≈6.8s 数据准备（主进程同步 blend 采样/索引 627 shards）+ ≈6.8s 计算 **串行** = 13.6s/step；#792 nw=8 下两者 overlap = 6.83s/step。
+- **计算效率本身正常**：per-GPU 533 TFLOP/s（master `GPU utilization` 末段）vs #792 511 TFLOP/s，反而略高；GPU 在数据准备期空等是唯一瓶颈。**非计算/通信/数据效率问题**。
+- 根因链：fork-COW 膨胀（PyTorch DataLoader 默认 fork，worker COW 复制父进程 CUDA context+索引+已加载数据，N worker 后 RSS 近翻 N 倍）→ nw>0 必 OOM（史：nw8→step70 / nw4→step90 / nw2→step200 / nw0→无 OOM）→ 被迫 nw=0 → 丢 ~50% 吞吐。**与 cgroup 无关**（`memory.max` 不存在 / cgroup=user.session.scope 无限制 / 2TB RAM 765Gi free → OOM 纯因 worker RSS 累积耗尽 8G swap → SIGKILL）。
+
+### 22:0x item 2 方案选择
+
+- 选 **A**（gbs128→256）= 已落地实跑。结果：**方案 A 单独不能复现 614K**（308K），因为 nw=0 瓶颈压过了 batch 摊薄收益。
+- 「S1 小 batch 阶段」取舍：**放弃**。warmup 2000 步已处理早期稳定性，accum16 对 2.2B AdamW 在稳定区，无 loss-descent 硬理由保留 gbs128；gbs256 同 token 总量步数减半，更省 ckpt/IO。
+
+### 22:0x item 4 验收（实测中位，脚本 /tmp/throughput_calc.py）
+
+| 窗口 | n | 中位 step-time | tok/s | %×613,992 | 判定 |
+|:--|--:|--:|--:|--:|:--|
+| step 50–200（验收窗） | 16 | 14.975 s | **280,100** | 45.6% | ❌ <600K |
+| step 200–340（全暖） | 15 | 13.614 s | **308,100** | 50.2% | ❌ <600K |
+| step 100–340 | 25 | 13.933 s | 301,000 | 49.0% | ❌ |
+| baseline #792 (nw=8) | — | 6.831 s | 613,992 | 100% | 目标 |
+
+- **验收不达标**。可行上限 ≈ **308K tok/s**（nw=0 全暖中位），结构性原因 = 数据加载串行（见上归因）。
+- **ETA 已同步改报告 §3**：S1 @308K = **55.2 天**（原 27.7d@614K）；三阶段纯训练 ≈92.2 天，含 20% 预留 ≈110.6 天。
+
+### 22:0x item 6 DataLoader OOM 归因（已答）
+
+- 结论：**worker 泄漏（fork-COW 膨胀），非 cgroup/单进程上限**。证据：主机 2TB RAM free 765Gi、`memory.max` 不存在、cgroup=user.session.scope 无限制 → OOM 纯因 worker RSS 累积耗尽 8G swap → SIGKILL。`TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank` 已在本跑命令中（防再 `error_file=<N/A>`）；本跑 nw=0 无 worker → 0 崩溃。
+
+### 09:2x spawn 评估（运维转交·非强制·供考虑）
+
+- **采纳判断：方向正确，是趋近 614K 的唯一结构性路径，但需先 smoke 验证再切**。spawn（`multiprocessing_context='spawn'`）让 worker 不继承父进程内存 → 从机制上消除 COW → 允许 nw>0 不 OOM → 恢复数据/计算 overlap → 预期回到 ~614K。
+- **实现位置**：Megatron `megatron/core/dataset/blended_loader.py` / `build_dataloader` 接受 `DataLoader(multiprocessing_context=...)`；最稳 = 在 provider/launcher 启动早期 `torch.multiprocessing.set_start_method('spawn', force=True)`（全局，影响所有 fork 点），或仅给 DataLoader 传 `multiprocessing_context='spawn'`（局部，更安全）。需先确认 Megatron-LM fork 是否暴露 dataloader context 钩子（grep `start_method`/`multiprocessing_context` 当前为空 → 可能需小补丁）。
+- **代价/风险**：spawn 启动慢（worker 每次重新 import + 重建 dataset 状态，除非 `persistent_workers=True`）；故 **spawn + persistent_workers=True 应配套**。副作用： Megatron 早期 `set_start_method` 可能影响 NCCL/distributed fork 行为 → **必须单机 8 卡 50 步 smoke 验证 0 崩溃 + 显存/内存正常 + 吞吐≥500K 后才切 16 卡正式 S1**。
+- **当前策略**：不立即重启。当前 nw=0 实跑健康且 θ=1e6 已确认，继续到 step 2000 出首个 ckpt（满足 21:3x 的 check_rope.py PASS 验证 + 提供 resume 点）；随后实现 spawn 补丁 → 8 卡 smoke → 若 PASS 则从 step 2000 resume S1 用 spawn+nw>0，剩余 ~348k 步可望 2× 提速。若 spawn smoke 失败/OOM，回退 nw=0 继续（已验证安全）。
+
+### 21:3x RoPE θ（运行时已确认 PASS）
+
+- **θ 实现方式**：路径 (ii) `--rotary-base 1000000` CLI（#797 commit ae3a093，pretrain_launcher.py 增参 + recipe 透传）。master log 运行时打印 `[RoPE] rotary_base(theta)=1000000 (cli --rotary-base=1000000)` ✓。
+- **生效证据**：① 运行时打印 ✓（本节）；② `check_rope.py` PASS 待首个 ckpt@step2000（~6h 后）；③ 4K PPL 对比待 ckpt。
+- **rank15 结论**（#796/#799 已答）：崩因 = DDP DETAIL wrapper 缺 `reduce_scatter_tensor_coalesced`（commit e34d5a5ea 已修），**非 θ**；本跑 0 崩溃印证。
+- **--dir 修正**：已落 `nemo_experiments/`（命令 `--dir /nas_train/.../nemo_experiments`，非 /tmp）；ckpt 每 2000 步（`--save-interval 2000`）。
+- **lr-decay-shape exponential**：S1 `--lr-decay-iters 0`（无 decay 段），exponential 形状待 Decay 阶段前验证（`scripts/lr_schedule.py` + TB 对账）。
+
+### 08:4x 内存>95% 告警（已记入）
+
+- 调试/测吞吐盯 Mem+Swap；本跑 Mem used 1.3T/2.0T（65%），swap 8G/8G（stale，主进程 VmSwap=0）—— 当前 run 未触发告警。spawn smoke 时将盯内存，逼近 95% 先降载上报。
+
+### 待办（未完成指令：有 → WAITING=0）
+
+1. spawn 补丁实现 + 8 卡 smoke（趋近 614K 的结构性修复）—— 下一唤醒优先。
+2. step 2000 首个 ckpt → `check_rope.py --hf-dir` PASS（θ 终验）。
+3. lr-decay-shape exponential：Decay 阶段前 `lr_schedule.py` + TB 对账验证。
+4. 长上下文 ABF 三件（check_longctx_data.py 占比 / 零训练 PPL+RULER / abf_plan.py 复核）—— 待首个可导出 ckpt。
+
