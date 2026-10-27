@@ -19,7 +19,7 @@ Warning--no number and no volume in xu2026iscript
 Warning--page numbers missing in both pages and numpages fields in xu2026iscript
 You've used 19 entries,
             6273 wiz_defined-function locations,
-            1775 strings with 24609 characters,
+            1775 strings with 24582 characters,
 and the built_in function-call counts, 21088 in all, are:
 = -- 2424
 > -- 1139

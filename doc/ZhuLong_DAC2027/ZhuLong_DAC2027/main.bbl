@@ -220,9 +220,8 @@
   \bibinfo{person}{Bei Yu}.} \bibinfo{year}{2024}\natexlab{}.
 \newblock \showarticletitle{Customized Retrieval Augmented Generation and
   Benchmarking for {EDA} Tool Documentation {QA}}. In
-  \bibinfo{booktitle}{\emph{Proceedings of the IEEE/ACM International
-  Conference on Computer-Aided Design (ICCAD)}}. \bibinfo{publisher}{IEEE},
-  \bibinfo{address}{New York, NY, USA}.
+  \bibinfo{booktitle}{\emph{Proc. IEEE/ACM Int. Conf. on Computer-Aided Design
+  (ICCAD)}}. \bibinfo{publisher}{IEEE}, \bibinfo{address}{New York, NY, USA}.
 \newblock
 \showeprint[arxiv]{2407.15353}~[cs.CL]
 

@@ -1,28 +1,10 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Design engineers' daily work is less about writing fresh scripts than about orchestrating
-design flows and patching the gaps between EDA tools that refuse to interoperate---a flow
-that cannot run end-to-end is the single largest source of lost design time. Commercial
-EDA tools are closed: where they leave a gap, the only recourse is hand-written glue (a
-Makefile target, a Tcl driver, a SKILL wrapper), which is precisely the small,
-intent-to-code synthesis at which large language models excel. This reframes EDA scripting
-as the connective tissue that lets a general coding agent orchestrate flows natively and
-fill the breaks where tools stop. ZhuLong is built around this insight, and this paper
-asks which factor sets the ceiling of such an agent---a question grounded by a system
-already deployed in production EDA flows at a leading memory design house.
+Design engineers' daily work is less about writing fresh scripts than about orchestrating design flows and patching the gaps between EDA tools that refuse to interoperate---a flow that cannot run end-to-end is the single largest source of lost design time. Commercial EDA tools are closed: where they leave a gap, the only recourse is hand-written glue (a Makefile target, a Tcl driver, a SKILL wrapper), precisely the small intent-to-code synthesis at which LLMs excel. This reframes EDA scripting as the connective tissue that lets a general coding agent orchestrate flows natively and fill the breaks where tools stop. ZhuLong is built around this insight, and this paper asks which factor sets the ceiling of such an agent---grounded by a system deployed in production EDA flows at a leading memory design house.
 % 引言动机段（09:2x 重定位：编排 + 补断链）。设计工程师日常工作与其说写全新脚本，不如说编排 design flow、补上 EDA 工具拒绝互通的断链——flow 跑不到端到端是设计耗时单一最大来源。商用 EDA 工具封闭，留白处只能手写胶水（Makefile 目标、Tcl 驱动、SKILL 封装），而这恰是 LLM 最擅长的小型"意图→代码"合成。这重新界定 EDA scripting 为让通用 coding agent 天生编排 flow、在工具停步处补断链的结缔组织。ZhuLong 围绕此洞察构建，本文追问决定这类智能体上限的因素——由已部署于一家头部存储芯片设计公司服务数百名工程师的量产系统支撑。
 
-We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL,
-and Tcl, built on Cline-CLI \cite{cline2024cline} and four unified MCP tools
-\cite{lee2025autoeda}---semantic and keyword API search, documentation lookup, and
-sandbox execution---that form a closed generate--execute--refine loop over four
-commercial runtimes via a single \texttt{lang}--\texttt{host} pair. An offline
-\textbf{API self-exploration} mechanism enriches the documentation prior as a bounded
-complement. Beyond the engineering, we give a \textbf{theoretical grounding}
-(Section~\ref{sec:grounding-theory}): EDA correctness is a situated (L4) property, and a
-Bayesian argument bounds the grounding gap by observation fidelity, not model scale---a
-prediction the experiments could refute rather than a post-hoc explanation.
+We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl, built on Cline-CLI \cite{cline2024cline} and four unified MCP tools \cite{lee2025autoeda}---semantic and keyword API search, documentation lookup, and sandbox execution---that form a closed generate--execute--refine loop over four commercial runtimes via a single \texttt{lang}--\texttt{host} pair. An offline \textbf{API self-exploration} mechanism enriches the documentation prior as a bounded complement. Beyond the engineering, we give a \textbf{theoretical grounding} (Section~\ref{sec:grounding-theory}): EDA correctness is a situated (L4) property, and a Bayesian argument bounds the grounding gap by observation fidelity, not model scale---a prediction the experiments could refute rather than a post-hoc explanation.
 % ZhuLong 系统概述。基于 Cline-CLI，扩展四个统一 MCP 工具——语义/关键词检索、文档查阅、沙盒执行——
 % 形成"生成–执行–修正"闭环，由统一 lang-host 参数对覆盖四个商业运行时。离线 API 自探索为有界补充。
 % 理论论证（§4）：EDA 正确性是情境化属性，贝叶斯论证表明落地鸿沟受观测保真度而非模型规模约束——
