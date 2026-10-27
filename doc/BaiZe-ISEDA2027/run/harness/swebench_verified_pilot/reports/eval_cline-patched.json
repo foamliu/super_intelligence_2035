@@ -1,0 +1,10 @@
+{
+  "harness": "cline-patched",
+  "run_id": "verified_pilot_cline-patched_smoke",
+  "n": 1,
+  "resolved": [
+    "astropy__astropy-12907"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}
