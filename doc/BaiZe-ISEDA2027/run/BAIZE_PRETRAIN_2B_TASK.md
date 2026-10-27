@@ -9,6 +9,23 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-27 10:4x（**不放弃：验证 spawn 方案 + 授权 web 调研，吞吐回 600K+**）· 用户直令 · 最高优先
+
+> 用户原话：「让 pretrain 不要放弃，自己调用 web search 调研一下，争取吞吐回到 600K 以上。pretrain 已经看到 spawn 方案了对吧，可以开始验证；如果 spawn 方案还是无法恢复吞吐，可以继续调研。」
+
+**① 目标**：S1 吞吐回到 **≥600K**（当前 nw=0 仅 ~308K）。**不放弃，逐方案验证。**
+
+**② 立即验证 spawn 方案（你已知 09:2x 完整方案，按序执行）**：
+- **spawn + persistent_workers=True（必要时再加 shared_memory / mmap 索引）**，消 fork-COW 膨胀 → 可 nw>0 → 找回数据/计算重叠 → 目标 ~614K。
+- 先 8 卡 **smoke（≥30 步稳态）** 验证：无 worker RSS 累积 OOM + 吞吐回升；PASS 后从当前完好 ckpt（step2000 或现有最新）resume 全速。
+- 逐变体记网格：spawn 单改 / spawn+persistent / +shared_memory / nw 档位 → 吞吐 + RSS 曲线 + 是否 OOM，溯源到脚本/log。
+
+**③ 若 spawn 仍不达标 → 继续 web 调研**（授权使用 MCP web 工具 **`cimi_search` / `cimi_fetch`**，已配置给本线）：
+- 调研方向：PyTorch DataLoader fork-COW 免膨胀、num_workers×NUMA/swappiness、prefetch_factor、pin_memory、iterator 预取、数据索引 mmap、Megatron 数据加载最佳实践等。
+- 每候选同样 smoke + 记录收益，直到吞吐回 600K+ 或给出「当前物理上限 + 需要什么硬性条件」。
+
+**④ 纪律**：进度写 EXPERIMENTS §五 + 报告吞吐节；commit `pretrain perf:`；⚠️ 内存 >95% 告警（08:4x 提示）；不碰 vision/data/harness。
+
 ### [运维提示] 2026-10-27 09:2x（**DataLoader OOM 根因升级：fork COW 膨胀 + spawn 方案参考**）· 用户转交 · 供考虑
 
 > 用户请外部调研后转交：把 #802/#803 的「worker RSS 累积」根因做一次**机制级升级**，给出更本质的解法，**请 pretrain 记入知识并自行评估采纳**（非强制照做）。
