@@ -21,7 +21,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 .foot{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}
 </style></head><body>
 <h1>SWE-bench Verified · 20 条试点横评报告</h1>
-<div class="meta">生成时间：2026-10-27 20:54 · 任务令：2026-10-27 08:3x part②（用户直令：SWE-bench Verified 20 条试点启动）<br>
+<div class="meta">生成时间：2026-10-28 01:47 · 任务令：2026-10-27 08:3x part②（用户直令：SWE-bench Verified 20 条试点启动）<br>
 模型：kimi-k2.6-cloud（cline 经 secrets.json / hermes 经 gw_proxy 9090）· 评测集：SWE-bench Verified 500 题中抽取 20 条（5 repo × 4 题）<br>
 评测脚本：官方 swebench v5.0.2 docker harness（<code>sg docker</code>，max_workers 4，timeout 1800s）· 命名规程：正文一律写 <code>cline</code>。</div>
 
@@ -36,7 +36,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <tr><th class="l">维度</th><th class="l">取值</th></tr>
 <tr><td class="l">评测集</td><td class="l">SWE-bench Verified 500 题中抽取 20 条（astropy 4 / django 4 / sympy 4 / matplotlib 4 / scikit-learn 4）</td></tr>
 <tr><td class="l">模型</td><td class="l">kimi-k2.6-cloud（统一骨干，与 2100 Lite 同口径可比）</td></tr>
-<tr><td class="l">harness</td><td class="l">cline（<code>cline-patched</code> 适配器）+ hermes（两路适配器均已 smoke 验通）</td></tr>
+<tr><td class="l">harness</td><td class="l">cline + hermes（两路适配器均已 smoke 验通；接入层适配见数据溯源脚注）</td></tr>
 <tr><td class="l">predict</td><td class="l">每题 git clone@base_commit → 跑 harness CLI agent（problem_statement）→ git diff 作 model_patch；timeout 1800s/题</td></tr>
 <tr><td class="l">eval</td><td class="l">官方 swebench v5.0.2 docker harness（enriched_20.json 补全 infra 字段）；<code>sg docker</code>，max_workers 4，timeout 1800s/题</td></tr>
 <tr><td class="l">代理</td><td class="l">git fetch 经 172.19.92.25:13128（外网）；agent CLI 经本地 gw_proxy（剥外网代理，R529）</td></tr>
@@ -100,6 +100,6 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <li>eval 经 <code>sg docker</code> 切组运行；docker 镜像 500/500 已预拉。</li>
 <li>严格遵守任务令：停在 20 条试点，🚫 不得跑全量 500。</li>
 </ul></div>
-<div class="foot">报告生成器：harness/gen_report_swebench_verified_pilot20_zh.py · 数据目录：harness/swebench_verified_pilot/ · 生成时间：2026-10-27 20:54<br>
+<div class="foot">报告生成器：harness/gen_report_swebench_verified_pilot20_zh.py · 数据目录：harness/swebench_verified_pilot/ · 生成时间：2026-10-28 01:47<br>
 溯源文件：verified_20_ids.txt（20 题清单）· enriched_20.json（infra 字段补全）· reports/eval_*.json · reports/predict_*.json · predictions/ · logs/</div>
 </body></html>
