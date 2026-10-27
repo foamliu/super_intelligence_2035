@@ -1,17 +1,18 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1
+WAITING: 1（🔴 21:33 r2 regrade 仍被 pyAether license circuit breaker 阻塞·等 license 恢复）
 
 <!-- 运维直令 2026-10-27 08:31：8192 5-run（70.8±7.7%）全部作废，maxTokens 改回 16384 与 cline 基线对齐，r1 已重起 batch 2026_1027_083127（PID 800411），4 worker providers.json = glm-5.3-flash+16384+/v1+reasoning=false 与 cline 基线逐项 diff 全 ✅，唯一变量 = CLI 二进制。任务书 10-27 令置顶。loop 由运维重启。agent 接管 r1→r5 自驱。 -->
 
-<!-- heartbeat 2026-10-27 20:55 🔴 **r2 regrade 仍被 license 阻塞·WAITING=1 等 license 恢复（不变·续上次 20:16 状态）**（10-27 令②5·本次唤醒复核 license 是否恢复）：
-① **license 复核**：两次 MCP pyAether run_code 探测（8650 + 8651）均 150s 超时无响应 → pyAether license circuit breaker 仍 OPEN·未恢复。
-② **r2 regrade 仍作废**：上次 20:07 regrade 25/158 但 execution_results.jsonl 89/118 stderr="pyAether licence unavailable · circuit breaker open: 47 consecutive failures" → 不计数（已核 grep -c "licence unavailable" = 89）。
-③ **r1 ✅ 已收口=71.5%(113/158)**（batch 2026_1027_083127·归档 20261027_1233_app.e0031982）·判据①✅ worker_1 = glm-5.3-flash+16384+/v1+reasoning=false 与 cline 基线逐字节对齐·唯一变量=CLI 二进制。
-④ **infra 现状**：4 端口 8650/8651/8652/8654 HTTP 404（服务活·端口 OPEN）·/home 20G free（>8G）·8090 PID2778637 活·loop PID813663 活（etime 12h19m）·/proc/environ https_proxy=http://172.19.92.23:13128 ✅·PATH 含 /home/app.e0031982/.local/node-20/bin（zhulong CLI 在位）✅。
-⑤ **下一步**：按 §7 infra 作废规则 — license 未恢复·保持 WAITING=1 原地等·下次唤醒再 curl/MCP 测 license·恢复则重跑 regrade（脚本 /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh·⚠️ 启动前 unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR）·regrade 出 pass→记 r2 成绩→起 r3→...→r5→5/5 mean±std→对比 cline 86.8±1.6%→更新报告 §8。
-⑥ ops inbox RUN_ID 128·无新指令。本 session self-commit+push（带 proxy）。详见 daily-memories/2026-10-27.md §[20:55]。-->
-- [2026-10-27 20:55] 🔴 **r2 regrade 仍被 license 阻塞·WAITING=1 等 license 恢复（不变）**：① license 复核 — 两次 MCP pyAether run_code 探测（8650+8651）均 150s 超时 → circuit breaker 仍 OPEN·未恢复。② r2 regrade 仍作废（20:07 25/158·89/118 "licence unavailable"·不计数）。③ r1 ✅=71.5%(113/158)。④ infra：4 端口 404（OPEN）/20G/8090 活/loop PID813663 活带 proxy ✅。⑤ **下一步**：§7 infra 作废规则·WAITING=1 等 license 恢复·下次唤醒再测 license·恢复则重跑 regrade（unset SANDBOX_PORT_HTTP/PORT_TCP/WORKDIR）·出 pass→记 r2→起 r3→...→r5→对比 cline 86.8±1.6%。本 session 归档：MEMORY 40.9KB>40KB 红线 → 4 条 r2 心跳（20:16/19:37/18:55/18:19）滚入 daily-memories/2026-10-27.md（18:19/18:55/20:16 已有 §[HH:MM] LIVE 条目·19:37 新增 §[rolled-out 20:55]），MEMORY 现 ~17KB ✅。本 session self-commit+push（带 proxy）。
+<!-- heartbeat 2026-10-27 21:33 🔴 **r2 regrade 仍被 license 阻塞·WAITING=1 等 license 恢复（不变·续 20:55 状态）**（10-27 令②5·本次唤醒复核 license 是否恢复）：
+① **license 复核**：两次 MCP pyAether run_code 探测（port 8652 aeGetCurDesign + port 8651 print PING_OK）均 150s 超时无响应 → pyAether license circuit breaker 仍 OPEN·未恢复。
+② **r2 生成已收口**：batch 2026_1027_123502·batch_cline.log 19:09:09 收口·总耗时 23636s·统计 success=132/timeout=5/failure=21（158 全分发）·failed_task.log 21 条（102,114,116,118,119,120-128,130,131,132,136,139,147,154）·timeout_task.log 5 条（150,151,153,155,157）·regrade 待 license 恢复后重跑。
+③ **r2 判据①✅ 复核**：worker_1 providers.json 实测 model=glm-5.3-flash / maxTokens=16384 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false / apiKey=02_...6903b05e → 与 cline 基线 batch 2026_1019_005714 逐字节对齐·唯一变量=CLI 二进制。
+④ **r1 ✅ 已收口=71.5%(113/158)**（batch 2026_1027_083127·归档 20261027_1233_app.e0031982）。
+⑤ **infra 现状全绿**：4 端口 8650/8651/8652/8654 HTTP 404（服务活·端口 OPEN）·/home 20G free（>8G）·8090 PID2778637 活（etime 4d11h）·loop PID813663 活（etime 12h57m）·/proc/813663/environ https_proxy=http://172.19.92.23:13128 ✅（代理注入正常）·无 run_zhulong_script/run_cli_script 进程（r2 gen 已结束）。
+⑥ **下一步**：按 §7 infra 作废规则 — license 未恢复·保持 WAITING=1 原地等·下次唤醒再 MCP 测 license·恢复则重跑 regrade（脚本 /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh·⚠️ 启动前 unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR·脚本已 unset http_proxy/https_proxy/ALL_PROXY + NO_PROXY=10.129.32.75）·regrade 出 pass→记 r2 成绩→起 r3→...→r5→5/5 mean±std→对比 cline 86.8±1.6%→更新报告 §8。
+⑦ ops inbox RUN_ID 222·无新指令。本 session self-commit+push（带 proxy）。详见 daily-memories/2026-10-27.md §[21:33]。-->
+- [2026-10-27 21:33] 🔴 **r2 regrade 仍被 license 阻塞·WAITING=1 等 license 恢复（不变）**：① license 复核 — 两次 MCP pyAether run_code 探测（8652 aeGetCurDesign + 8651 print）均 150s 超时 → circuit breaker 仍 OPEN·未恢复。② **r2 生成已收口 19:09:09**：batch 2026_1027_123502·success=132/timeout=5/failure=21（158 全分发·failed 21 条 / timeout 5 条）·regrade 待 license 恢复。③ r2 判据①✅ worker_1 = glm-5.3-flash+16384+/v1+reasoning=false+apiKey 02_...6903b05e 与 cline 基线逐字节对齐。④ r1 ✅=71.5%(113/158)。⑤ infra 全绿：4 端口 404（OPEN）/20G/8090 PID2778637 活/loop PID813663 活 etime 12h57m 带 proxy ✅/无 run_zhulong_script 进程。⑥ **下一步**：§7 infra 作废规则·WAITING=1 等 license 恢复·下次唤醒再测 license·恢复则重跑 regrade（unset SANDBOX_PORT_HTTP/PORT_TCP/WORKDIR）·出 pass→记 r2→起 r3→...→r5→对比 cline 86.8±1.6%。本 session self-commit+push（带 proxy）。
 
 
 > **2026-10-27 13:10 及更早 1-line heartbeat 已滚出存档**（17:30 心跳触发·MEMORY 48KB>40KB 红线归档·按 10-06 常驻规程）：8 条原文（08:38 / 09:16 / 09:51 / 10:25 / 11:38×2 / 12:21 / 13:10）已搬入 `daily-memories/2026-10-27.md` §[rolled-out 17:30]。**18:55 心跳再次归档**：6 条 r2 冗余心跳（13:44 / 14:19 / 14:56 / 15:34 / 16:09 / 16:47）搬入 `daily-memories/2026-10-27.md` §[rolled-out 18:55]（MEMORY 42.3KB→28.9KB）。**20:55 心跳第三次归档**：4 条 r2 心跳（20:16 / 19:37 / 18:55 / 18:19）从 MEMORY 顶部滚出（18:19/18:55/20:16 已在本日 daily-memories 各有 §[HH:MM] LIVE 条目·19:37 新增 §[rolled-out 20:55]），MEMORY 40.9KB→~17KB ✅。
