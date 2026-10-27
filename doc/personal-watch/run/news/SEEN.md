@@ -1288,3 +1288,14 @@
 | 2026-10-27 | 附录 A14：苹果 iOS 27.2 为 iPhone Duo 带来 Apple Pencil (USB-C) 支持，需线缆配对（不收·常规功能说明） | IT之家 `1/018/420` | https://www.ithome.com/1/018/420.htm |
 | 2026-10-27 | 附录 A15：华为发布 Huawei VitaAAU（RetinaMIMO 引入 U6GHz · 256TRx · 1500+ 阵子），宣称 10Gbps 峰值（不收·电信设备） | IT之家 `1/018/392` | https://www.ithome.com/1/018/392.htm |
 | 2026-10-27 | 附录 A16：英文源 HN 20 条候选（Empires of AI / r/opensource 版规 / AP 宗教议题 / Claude 抗毒血清）· 钛媒体评论稿 3 篇（均不收） | Hacker News / 钛媒体 | https://www.foreignaffairs.com/china/empires-artificial-intelligence-niall-ferguson-eric-schmidt |
+| 2026-10-27 | 苹果 iOS 27.2 为 AI 生成 / 编辑图片加入谷歌 SynthID 隐藏水印（图乐园全部加水印；「扩展」「重新构图」加水印；「清理」视编辑幅度；iPhone 端无检测工具，需 SynthID Detector 网站） | IT之家 `1/018/482`（据 macrumors） | https://www.ithome.com/1/018/482.htm |
+| 2026-10-27 | CISA 将 PHP2Shell 两漏洞 CVE-2026-109618 / CVE-2026-109619（CVSS 4.0 均 9.2）列入 KEV，要求美国联邦民事机构 10-29 前修复；PHP 官方 10-21 已发 8.5.12/8.4.27/8.3.36/8.2.35（前传=10-22 GPT-5.6 Sol 发现条，本条为 CISA 新事件） | IT之家 `1/018/493` | https://www.ithome.com/1/018/493.htm |
+| 2026-10-27 | 南非女作家 Coral Hart 借 AI 约 20 个月出 371 本书、销量超 100 万册、自称 2026 年收入超 100 万美元；收死亡威胁；拟推 AI 写作软件 Authorythm（本人说法，据法新社 10-23） | IT之家 `1/018/540` | https://www.ithome.com/1/018/540.htm |
+| 2026-10-27 | 韩国公平交易委员会罚三星 201.14 亿韩元（约 1.02 亿元）：Galaxy S21/S22/Tab S8 游戏性能广告未充分告知 GOS 性能限制；三星已提行政诉讼（受限游戏 S21 82 / S22 47 / Tab S8 8 款） | IT之家 `1/018/472` | https://www.ithome.com/1/018/472.htm |
+| 2026-10-27 | 英伟达与 Meta 扩大 Muse 智能助手合作，并向 Meta 股权投资发行投资 30 亿美元（约 200.51 亿元）；考虑 OpenShell 智能体安全架构 + Sentry 行为监控；Meta 扩大 Vera Rubin / Vera CPU / Spectrum-X / BlueField-4 部署（官方新闻稿） | IT之家 `1/018/441` | https://www.ithome.com/1/018/441.htm |
+| 2026-10-27 | 高盛研究（据商业内幕）：过去三周半导体板块可解释各类资产约 54% 的表现分化，油价仅 2%；情绪尚未到历史买点。背景：KOSPI 盘中涨 5%、三星 +6%、SK 海力士 +8%，较 6 月高点仍跌约 40%（卖方测算，非因果） | IT之家 `1/018/464` | https://www.ithome.com/1/018/464.htm |
+| 2026-10-27 | 李在镕首次视察三星 RX 机器人事业部（2026-07 成立），检查 CES 2027 参展准备（人形手臂 / 灵巧手）；路线=先在自有工厂验证再拓家庭零售（据韩国《Money Today》） | IT之家 `1/018/478` | https://www.ithome.com/1/018/478.htm |
+| 2026-10-27 | 附录 A17：欧盟委员会接受 TEMU DSA 整改计划（5 项措施 / 4 个月 / 独立审计），此前 2026-05 被罚 2 亿欧元（不收·电商合规） | IT之家 `1/018/546` | https://www.ithome.com/1/018/546.htm |
+| 2026-10-27 | 附录 A18：上海「星枢计划」三阶段（2027 打通天地双算 32POPS → 2030 加 150 星 → 2032 千星 / 百万级 TOPS）（不收·目标值规划） | IT之家 `1/018/535` | https://www.ithome.com/1/018/535.htm |
+| 2026-10-27 | 附录 A19：Rokid Glasses 2 发布 3699 元起（双芯 BES2800BP + 骁龙 AR1 · 1200 万像素 · 4K30 · 263mAh）（不收·消费硬件发布会） | IT之家 `1/018/475` | https://www.ithome.com/1/018/475.htm |
+| 2026-10-27 | 附录 A20：GMO 遭勒索 100 万美元（曾索 5000 万）已拒付 / 约 2.67 万台服务器 · DPU 首个国标 · 中系 CSP 与三星·SK 洽谈十年期内存 LTA（单源）· 英文 HN 20 条候选（均不收） | IT之家 `1/018/488` · `1/018/514` · `1/018/547` · HN | https://www.ithome.com/1/018/488.htm |
