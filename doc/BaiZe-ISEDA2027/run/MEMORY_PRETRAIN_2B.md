@@ -1,14 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-27 16:4x #809：✅ **#806v3 SMOKE TEST PASS**（8 GPU, 10 iters, spawn+nw=4+persistent_workers, rc=0）。**关键结果**：① NCCL init COMPLETE 全 8 rank（_IS_MAIN guard 生效，spawn worker 不重跑 NCCL）；② 0 OOM / 0 NaN / 0 skipped / lm loss 11.144 / grad norm 3.095（随机初始化稳定）；③ **spawn worker RSS 630MB**（首 batch）vs fork baseline 57.5GB = **~90x 降低**，COW 膨胀消除确认；④ GPU mem 72.8GB max（of 80GB H100）✓；⑤ GPU compute 509.6 TFLOP/s/GPU；⑥ throughput ~147K tok/s（128×16384/14.23s，10-iter avg 含 warmup，稳态 TBD）；⑦ checkpoint @ iter10 保存成功。**commit c8e6894**（pretrain_launcher.py 4×_IS_MAIN guard + set_start_method 移到 NCCL init 后 + scripts/train_s1.sh --rotary-base 1000000）。**下一步**：① 跑更长 test（≥100 iters）测稳态吞吐（排除 warmup）；② 试 nw=8 看数据加载是否跟上；③ 若稳态 ≥500K → 16卡 spawn+nw>0 resume S1 提速；④ 若仍 <500K → 调 prefetch_factor/pin_memory/swappiness。
+> 🆕 2026-10-28 07:4x #810：🔄 **100-iter spawn smoke RUNNING**（.29 8 GPU, spawn+nw=4+persistent_workers, gbs128, θ=1e6）。S1 已杀（两机 GPU 全空）。**已确认**：① NCCL init COMPLETE 全 8 rank；② set_start_method=spawn applied AFTER NCCL init；③ GPTDatasetConfig num_workers=4/persistent_workers=True；④ spawn worker RSS ~29.6GB（含共享库，PSS 远低；system free 430GB/2TB，swap 7G 稳定=无 COW 膨胀）；⑤ 16/32 spawn workers created。**当前**：torch._inductor JIT 编译中（32 compile_worker 进程，首步 kernel 编译，GPU util 0%/power 116W）。待编译完→首步→log_interval=10 出吞吐数据。
+> 📦 §#809（16:4x spawn smoke 10-iter PASS, 147K warmup avg）→ daily-memories/2026-10-27.md；**已被 #810 100-iter smoke 取代——正在跑稳态测试**。
 
 > 📦 §#808（13:0x spawn smoke 就绪性复核 PASS）→ daily-memories/2026-10-27.md；**已被 #809 取代——smoke 已跑完 PASS**。
 > 📦 §#807（12:1x spawn-vs-fork CPU 微基准 PASS, worker RSS −79%）→ daily-memories/2026-10-27.md；**已被 #809 GPU smoke 确认**。
 > 📦 §#806（10:2x spawn+COW 补丁实现+静态验证 PASS）→ daily-memories/2026-10-27.md；**v3 commit c8e6894 已由 #809 验证**。
 > 📦 §#805（09:5x 吞吐终判 308K=50%×613K, nw=0 数据串行）→ daily-memories/2026-10-27.md；**spawn fix 目标即消除此 gap**。
 
-> - 未完成指令：有（① **spawn 稳态吞吐验证**[#809 smoke PASS 但 147K 是 10-iter warmup avg, 需 ≥100 iters 测稳态] ② check_rope.py PASS[待 ckpt@step2000, S1 之前跑至~1240, 待确认 S1 是否仍在跑或已停] ③ lr-decay-shape exponential[Decay前验证] ④ 长上下文ABF三件[待首个可导出ckpt]）。WAITING=0（#806v3 smoke PASS, 补丁 commit c8e6894 已 push；下一步跑更长 test 测稳态吞吐 + nw=8 网格；S1 状态待确认）。
+> - 未完成指令：有（① **spawn 稳态吞吐验证**[#810 100-iter smoke RUNNING on .29, JIT 编译中] ② check_rope.py PASS[待 ckpt, S1 已杀需重启] ③ lr-decay-shape exponential[Decay前验证] ④ 长上下文ABF三件[待首个可导出ckpt]）。WAITING=0（100-iter spawn smoke 在跑，等吞吐数据）。
 > 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
 > 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
