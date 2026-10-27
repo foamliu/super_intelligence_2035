@@ -9,6 +9,18 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维提示] 2026-10-27 09:2x（**DataLoader OOM 根因升级：fork COW 膨胀 + spawn 方案参考**）· 用户转交 · 供考虑
+
+> 用户请外部调研后转交：把 #802/#803 的「worker RSS 累积」根因做一次**机制级升级**，给出更本质的解法，**请 pretrain 记入知识并自行评估采纳**（非强制照做）。
+> **根因（机制级）**：PyTorch DataLoader 默认 `fork()` 起 worker，子进程继承 rank 进程内存；**Python 引用计数每次访问对象都写对象头 ⇒ read-only 访问也触发 COW（copy-on-write）⇒ 父进程内存（CUDA context + 数据索引 + 已加载数据）被逐个 worker 复制，N 个 worker 后 RSS 近翻 N 倍** → 耗尽 .29 swap → OOM-kill。这精确解释了 `num_workers 8→step70 / 4→step90 / 2→step200`（worker 越多 COW 越快）。
+> **方案（按序，一次只改一项 + ≥30 步稳态 + 记录收益/副作用）**：
+> 1. **spawn 启动**（最彻底）：`torch.multiprocessing.set_start_method('spawn', force=True)` 或 Megatron 对应开关——worker 不再 fork 复制父进程内存，代价是启动慢。
+> 2. **`persistent_workers=True`**：worker 常驻，避免反复 fork 重建累积（单靠它不消除 COW，但可搭配 spawn）。
+> 3. **大对象（数据索引/词表）放 shared_memory**：避免每 worker 复制。
+> 4. **关 `pin_memory`**（若在开）：避免大 batch 锁页内存碎片化。
+> 5. `num_workers=0`（#803 已用）：**消除症状的最保守根治**，在 16K batch（mmap<10ms vs 计算~9s，IO<1%）下吞吐损失可忽略，故当前选择合理。
+> **评估口径**：若后续数据加载变重（重 tokenize/augment），应转向 **spawn + persistent_workers + shared_memory**，而不是继续降 num_workers（降 nw 只是推迟、spawn 才从机制上消除 COW）。
+
 ### [运维提示] 2026-10-27 08:4x（**内存使用率 >95% 会触发告警，调试时注意**）· 用户直令 · 最高优先
 
 > 用户原话：「告诉 pretrain 内存使用率>95%会导致告警，让它调试时注意。」
