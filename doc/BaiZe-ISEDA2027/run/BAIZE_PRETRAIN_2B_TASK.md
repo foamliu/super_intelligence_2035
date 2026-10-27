@@ -9,6 +9,12 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维提示] 2026-10-27 15:2x（**cimi MCP web search 已配好，可用于调研**）· 用户直令 · 最高优先
+
+> 用户原话：「可以提醒 pretrain 可以 web search（cimi search）」
+> **本线 MCP 工具已就绪**：`cimi_search`（web 搜索）/ `cimi_fetch`（抓网页全文）/ `vqa` / `text_to_image`（cline MCP，type=streamableHttp，指向 `http://10.239.2.29:8092/mcp`）。下一轮唤醒（新 cline 进程）即生效。
+> **排查/调研时直接用 `cimi_search`**——例如当前 spawn smoke 的 CP GLOO `Broken pipe` 问题，可查「PyTorch DataLoader spawn context parallel gloo broken pipe」「Megatron CP GLOO group init spawn」等；或查 fork-COW 免 OOM、16K 吞吐优化等。🚫 别再只依赖 fetch_web_content 或被 proxy 卡住。
+
 ### [运维令] 2026-10-27 13:1x（**杀掉 S1，先调吞吐：立即验证 spawn 方案**）· 用户直令 · 最高优先
 
 > 用户原话：「杀掉 S1，如果吞吐上不去一切没意义」
