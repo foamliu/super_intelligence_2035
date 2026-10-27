@@ -9,6 +9,14 @@
 
 > ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 
+> 🆕 §运维令·2026-10-27 08:3x（**刷新 DATA_MAPPING.md + report_data_mapping_zh.html**）· 用户直令 · 最高优先
+
+> 用户原话：「data：刷新 run/data/DATA_MAPPING.md 和 reports/report_data_mapping_zh.html」
+> **任务**（迁移 4 源已完成，把两个文件刷到最新 symlink 状态）：
+> 1. 重跑 `gen_data_mapping_md.py` → 刷新 `run/data/DATA_MAPPING.md`（9 源 storage=symlink 指向 /nas_env、字节/tokens 最新、SFT-2605/Agent-2609「未分词」行保留）。
+> 2. 重跑报告生成脚本（`gen_report_data_mapping_html.py` 或等价）→ 刷新 `reports/report_data_mapping_zh.html`（列表数字同步迁移后状态，df /nas_env 83%/nas_train 84%）。
+> 3. 两文件一起 commit + push（前缀 `data report:`），心跳报两文件新字节数。
+
 > 📦 §运维令·2026-10-26 14:4x（SFT-2605/Agent-2609 加入映射表+报告；删报告第 4 节）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：两份均未分词(0 .bin/.idx/.json)→DATA_MAPPING.md 行11-12如实登记「未分词」(SFT-2605=1504jsonl/297GB,Agent-2609=50jsonl/50GB)+报告加行11-12+删第4节(节号顺延5→4)+untokenized_sft_sources.tsv侧车+gen_data_mapping_md.py改load_untokenized，commit 86431cfb4 data report:。需要时再读。
 
 > 🆕 §运维令·2026-10-26 13:1x（**迁移 4 份新分词数据到 /nas_env**）· 用户直令 · 最高优先
