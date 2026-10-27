@@ -1,0 +1,70 @@
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 5930484..ea54d2e 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -11,7 +11,7 @@
+ from __future__ import division, print_function
+ 
+ from sympy.core import S, sympify
+-from sympy.core.compatibility import iterable
++from sympy.core.compatibility import iterable, zip_longest
+ from sympy.core.containers import Tuple
+ from sympy.simplify import nsimplify, simplify
+ from sympy.geometry.exceptions import GeometryError
+@@ -266,8 +266,8 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++        return sqrt(sum([(a - b)**2 for a, b in zip_longest(
++            self.args, p.args if isinstance(p, Point) else p, fillvalue=0)]))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.
+@@ -300,7 +300,7 @@ def taxicab_distance(self, p):
+ 
+         """
+         p = Point(p)
+-        return sum(abs(a - b) for a, b in zip(self.args, p.args))
++        return sum(abs(a - b) for a, b in zip_longest(self.args, p.args, fillvalue=0))
+ 
+     def midpoint(self, p):
+         """The midpoint between self and point p.
+@@ -329,7 +329,7 @@ def midpoint(self, p):
+         Point2D(7, 3)
+ 
+         """
+-        return Point([simplify((a + b)*S.Half) for a, b in zip(self.args, p.args)])
++        return Point([simplify((a + b)*S.Half) for a, b in zip_longest(self.args, p.args, fillvalue=0)])
+ 
+     def evalf(self, prec=None, **options):
+         """Evaluate the coordinates of the point.
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index c7b2d30..9ffb69c 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -226,6 +226,23 @@ def test_point3D():
+     raises(ValueError, lambda: (p - p_2d))
+ 
+ 
++def test_point3d_line_distance():
++    # issue from distance calculation between 2D and 3D points
++    assert Point(2, 0).distance(Point(1, 0, 2)) == sqrt(5)
++    assert Point(1, 0, 2).distance(Point(2, 0)) == sqrt(5)
++    assert Point(0, 0).distance(Point(0, 0, 0)) == 0
++    assert Point(0, 0).distance(Point(1, 1, 1)) == sqrt(3)
++    assert Point(0, 0, 0).distance(Point(1, 1)) == sqrt(2)
++
++    # test taxicab_distance between points of different dimensions
++    assert Point(1, 1).taxicab_distance(Point(2, 2, 2)) == 4
++    assert Point(1, 1, 1).taxicab_distance(Point(2, 2)) == 3
++
++    # test midpoint between points of different dimensions
++    assert Point(0, 0).midpoint(Point(2, 2, 2)) == Point(1, 1, 1)
++    assert Point(0, 0, 0).midpoint(Point(2, 2)) == Point(1, 1, 0)
++
++
+ def test_Point2D():
+ 
+     # Test Distance

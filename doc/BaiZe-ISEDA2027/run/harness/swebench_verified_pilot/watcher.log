@@ -1,0 +1,5 @@
+[watcher] hermes eval done (run_id=verified_pilot_hermes) at 20:54:51
+written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/report_harness_swebench_verified_pilot20_zh.html (13101B)
+  cline: resolved=13 failed=3 infra=2 (eval_real=True)
+  hermes: resolved=11 failed=2 infra=5
+[watcher] report regenerated at 20:54:51

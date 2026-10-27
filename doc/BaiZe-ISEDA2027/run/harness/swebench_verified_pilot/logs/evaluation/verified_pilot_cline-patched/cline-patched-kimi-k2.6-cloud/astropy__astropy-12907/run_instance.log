@@ -1,0 +1,119 @@
+2026-10-27 20:01:59,988 - INFO - Creating container for astropy__astropy-12907...
+2026-10-27 20:02:00,023 - INFO - Container for astropy__astropy-12907 created: d7750c8bf757f86e8f9b00832b857cdef30b0f64c969e2fe21a608571a3cae46
+2026-10-27 20:02:01,106 - INFO - Container for astropy__astropy-12907 started: d7750c8bf757f86e8f9b00832b857cdef30b0f64c969e2fe21a608571a3cae46
+2026-10-27 20:02:01,108 - INFO - Intermediate patch for astropy__astropy-12907 written to logs/evaluation/verified_pilot_cline-patched/cline-patched-kimi-k2.6-cloud/astropy__astropy-12907/patch.diff, now applying to container...
+2026-10-27 20:02:01,286 - INFO - >>>>> Applied Patch:
+Checking patch astropy/modeling/separable.py...
+warning: astropy/modeling/separable.py has type 100755, expected 100644
+Checking patch astropy/modeling/tests/test_separable.py...
+warning: astropy/modeling/tests/test_separable.py has type 100755, expected 100644
+Applied patch astropy/modeling/separable.py cleanly.
+Applied patch astropy/modeling/tests/test_separable.py cleanly.
+
+2026-10-27 20:02:02,000 - INFO - Git diff before:
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e2729..45bea3608 100755
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c862..207b3720c 100755
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -112,6 +112,31 @@ def test_cstack():
+                               [0, 0, 1]])
+                     )
+ 
++    # Test with ndarray inputs (nested compound models)
++    left = np.array([[1, 0], [0, 1]])
++    right = np.array([[1, 0], [0, 1]])
++    result = _cstack(left, right)
++    assert_allclose(result,
++                    np.array([[1, 0, 0, 0],
++                              [0, 1, 0, 0],
++                              [0, 0, 1, 0],
++                              [0, 0, 0, 1]])
++                    )
++
++    # Test with mixed Model and ndarray
++    result = _cstack(sh1, right)
++    assert_allclose(result,
++                    np.array([[1, 0, 0],
++                              [0, 1, 0],
++                              [0, 0, 1]])
++                    )
++    result = _cstack(left, sh1)
++    assert_allclose(result,
++                    np.array([[1, 0, 0],
++                              [0, 1, 0],
++                              [0, 0, 1]])
++                    )
++
+ 
+ def test_arith_oper():
+     # Models as inputs
+@@ -148,3 +173,32 @@ def test_custom_model_separable():
+ 
+     assert not model_c().separable
+     assert np.all(separability_matrix(model_c()) == [True, True])
++
++
++def test_nested_compound_model_separable():
++    """Regression test for nested CompoundModels with & operator."""
++    cm = models.Linear1D(10) & models.Linear1D(5)
++    # Direct compound model should be diagonal
++    expected = np.array([[True, False],
++                         [False, True]])
++    assert_allclose(separability_matrix(cm), expected)
++
++    # Flattened equivalent should be the same
++    flat = models.Pix2Sky_TAN() & models.Linear1D(10) & models.Linear1D(5)
++    expected_flat = np.array([[True, True, False, False],
++                              [True, True, False, False],
++                              [False, False, True, False],
++                              [False, False, False, True]])
++    assert_allclose(separability_matrix(flat), expected_flat)
++
++    # Nested compound model should produce the same result as flattened
++    nested = models.Pix2Sky_TAN() & cm
++    assert_allclose(separability_matrix(nested), expected_flat)
++
++    # Also test nesting on the left side
++    nested_left = cm & models.Pix2Sky_TAN()
++    expected_left = np.array([[True, False, False, False],
++                              [False, True, False, False],
++                              [False, False, True, True],
++                              [False, False, True, True]])
++    assert_allclose(separability_matrix(nested_left), expected_left)
+2026-10-27 20:02:02,003 - INFO - Eval script for astropy__astropy-12907 written to logs/evaluation/verified_pilot_cline-patched/cline-patched-kimi-k2.6-cloud/astropy__astropy-12907/eval.sh; copying to container...
+2026-10-27 20:03:50,805 - INFO - Test runtime: 108.73 seconds
+2026-10-27 20:03:50,809 - INFO - Test output for astropy__astropy-12907 written to logs/evaluation/verified_pilot_cline-patched/cline-patched-kimi-k2.6-cloud/astropy__astropy-12907/test_output.txt
+2026-10-27 20:03:50,872 - INFO - Git diff after:
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e2729..45bea3608 100755
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+2026-10-27 20:03:50,872 - INFO - Git diff changed after running eval script
+2026-10-27 20:03:50,872 - INFO - Grading answer for astropy__astropy-12907...
+2026-10-27 20:03:50,882 - INFO - report: {'astropy__astropy-12907': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/modeling/tests/test_separable.py::test_separable[compound_model6-result6]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model9-result9]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/modeling/tests/test_separable.py::test_coord_matrix', 'astropy/modeling/tests/test_separable.py::test_cdot', 'astropy/modeling/tests/test_separable.py::test_cstack', 'astropy/modeling/tests/test_separable.py::test_arith_oper', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model0-result0]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model1-result1]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model2-result2]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model3-result3]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model4-result4]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model5-result5]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model7-result7]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model8-result8]', 'astropy/modeling/tests/test_separable.py::test_custom_model_separable'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-12907: resolved: True
+2026-10-27 20:03:50,883 - INFO - Attempting to stop container sweb.eval.astropy__astropy-12907.verified_pilot_cline-patched...
+2026-10-27 20:04:06,413 - INFO - Container sweb.eval.astropy__astropy-12907.verified_pilot_cline-patched stopped successfully.
+2026-10-27 20:04:06,414 - INFO - Attempting to remove container sweb.eval.astropy__astropy-12907.verified_pilot_cline-patched...
+2026-10-27 20:04:06,487 - INFO - Container sweb.eval.astropy__astropy-12907.verified_pilot_cline-patched removed successfully.

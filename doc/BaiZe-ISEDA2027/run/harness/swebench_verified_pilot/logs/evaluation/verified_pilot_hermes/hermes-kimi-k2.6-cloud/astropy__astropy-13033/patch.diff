@@ -1,0 +1,245 @@
+diff --git a/astropy/timeseries/core.py b/astropy/timeseries/core.py
+index c279f35f87..f470d3e8ec 100644
+--- a/astropy/timeseries/core.py
++++ b/astropy/timeseries/core.py
+@@ -76,6 +76,14 @@ class BaseTimeSeries(QTable):
+ 
+             elif self.colnames[:len(required_columns)] != required_columns:
+ 
++                if (len(self.colnames) < len(required_columns) and
++                        self.colnames == required_columns[:len(self.colnames)]):
++                    missing = required_columns[len(self.colnames):]
++                    missing_str = ', '.join(f"'{c}'" for c in missing)
++                    plural_missing = 's' if len(missing) > 1 else ''
++                    raise ValueError("{} object is invalid - missing required column{}: {}"
++                                     .format(self.__class__.__name__, plural_missing, missing_str))
++
+                 raise ValueError("{} object is invalid - expected '{}' "
+                                  "as the first column{} but found '{}'"
+                                  .format(self.__class__.__name__, required_columns[0], plural, self.colnames[0]))
+diff --git a/test_fix.py b/test_fix.py
+new file mode 100644
+index 0000000000..1e39547524
+--- /dev/null
++++ b/test_fix.py
+@@ -0,0 +1,83 @@
++import numpy as np
++from astropy.time import Time
++from astropy.timeseries import TimeSeries
++from astropy.table import Column
++
++INPUT_TIME = Time(['2016-03-22T12:30:31', '2015-01-21T12:30:32', '2016-03-22T12:30:40'])
++
++def test_required_columns():
++    ts = TimeSeries(time=INPUT_TIME,
++                    data=[[10, 2, 3], [4, 5, 6]],
++                    names=['a', 'b'])
++
++    # copy works fine
++    ts.copy()
++
++    try:
++        ts.copy().add_column(Column([3, 4, 5], name='c'), index=0)
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'c'")
++
++    try:
++        ts.copy().add_columns([Column([3, 4, 5], name='d'),
++                               Column([3, 4, 5], name='e')], indexes=[0, 1])
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'd'")
++
++    try:
++        ts.copy().keep_columns(['a', 'b'])
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'a'")
++
++    try:
++        ts.copy().remove_column('time')
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'a'")
++
++    try:
++        ts.copy().remove_columns(['time', 'a'])
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'b'")
++
++    try:
++        ts.copy().rename_column('time', 'banana')
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'banana'")
++
++    print("test_required_columns passed")
++
++
++def test_missing_required_column_message():
++    """Regression test for the issue: misleading exception when required column check fails."""
++    time = Time(np.arange(100000, 100003), format='jd')
++    ts = TimeSeries(time=time, data={"flux": [99.9, 99.8, 99.7]})
++    ts._required_columns = ["time", "flux"]
++
++    try:
++        ts.remove_column("flux")
++        assert False, "Should have raised ValueError"
++    except ValueError as e:
++        msg = e.args[0]
++        print("Exception message:", msg)
++        assert "missing required column" in msg, f"Unexpected message: {msg}"
++        assert "'flux'" in msg, f"Message should mention 'flux': {msg}"
++
++    print("test_missing_required_column_message passed")
++
++
++if __name__ == "__main__":
++    test_required_columns()
++    test_missing_required_column_message()
++    print("All tests passed.")
+diff --git a/test_fix_comprehensive.py b/test_fix_comprehensive.py
+new file mode 100644
+index 0000000000..a3389aa2e1
+--- /dev/null
++++ b/test_fix_comprehensive.py
+@@ -0,0 +1,131 @@
++import numpy as np
++from astropy.time import Time
++from astropy.timeseries import TimeSeries, BinnedTimeSeries
++from astropy.table import Column
++from astropy import units as u
++
++INPUT_TIME = Time(['2016-03-22T12:30:31', '2015-01-21T12:30:32', '2016-03-22T12:30:40'])
++
++def test_required_columns():
++    ts = TimeSeries(time=INPUT_TIME,
++                    data=[[10, 2, 3], [4, 5, 6]],
++                    names=['a', 'b'])
++
++    ts.copy()
++
++    try:
++        ts.copy().add_column(Column([3, 4, 5], name='c'), index=0)
++        assert False
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'c'")
++
++    try:
++        ts.copy().add_columns([Column([3, 4, 5], name='d'),
++                               Column([3, 4, 5], name='e')], indexes=[0, 1])
++        assert False
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'd'")
++
++    try:
++        ts.copy().keep_columns(['a', 'b'])
++        assert False
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'a'")
++
++    try:
++        ts.copy().remove_column('time')
++        assert False
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'a'")
++
++    try:
++        ts.copy().remove_columns(['time', 'a'])
++        assert False
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'b'")
++
++    try:
++        ts.copy().rename_column('time', 'banana')
++        assert False
++    except ValueError as e:
++        assert e.args[0] == ("TimeSeries object is invalid - expected "
++                             "'time' as the first column but found 'banana'")
++
++    print("test_required_columns passed")
++
++
++def test_missing_required_column_message():
++    time = Time(np.arange(100000, 100003), format='jd')
++    ts = TimeSeries(time=time, data={"flux": [99.9, 99.8, 99.7]})
++    ts._required_columns = ["time", "flux"]
++
++    try:
++        ts.remove_column("flux")
++        assert False
++    except ValueError as e:
++        msg = e.args[0]
++        assert "missing required column" in msg, f"Unexpected: {msg}"
++        assert "'flux'" in msg, f"Unexpected: {msg}"
++
++    print("test_missing_required_column_message passed")
++
++
++def test_multiple_missing_required_columns():
++    time = Time(np.arange(100000, 100003), format='jd')
++    ts = TimeSeries(time=time, data={"flux": [99.9, 99.8, 99.7], "error": [0.1, 0.1, 0.1]})
++    ts._required_columns = ["time", "flux", "error"]
++    try:
++        ts.remove_columns(["flux", "error"])
++        assert False
++    except ValueError as e:
++        msg = e.args[0]
++        assert "missing required columns" in msg, f"Unexpected: {msg}"
++        assert "'flux'" in msg and "'error'" in msg, f"Unexpected: {msg}"
++
++    print("test_multiple_missing_required_columns passed")
++
++
++def test_binned_missing_required():
++    ts = BinnedTimeSeries(time_bin_start=INPUT_TIME,
++                          time_bin_size=3 * u.s,
++                          data=[[1, 2, 3]], names=['a'])
++    ts._required_columns = ["time_bin_start", "time_bin_size", "a"]
++    try:
++        ts.remove_column("a")
++        assert False
++    except ValueError as e:
++        msg = e.args[0]
++        assert "missing required column" in msg, f"Unexpected: {msg}"
++        assert "'a'" in msg, f"Unexpected: {msg}"
++
++    print("test_binned_missing_required passed")
++
++
++def test_no_columns_at_all():
++    ts = TimeSeries(time=INPUT_TIME,
++                    data=[[10, 2, 3], [4, 5, 6]],
++                    names=['a', 'b'])
++    ts._required_columns = ["time", "flux"]
++    try:
++        ts.remove_columns(["a", "b"])
++        assert False
++    except ValueError as e:
++        msg = e.args[0]
++        assert "missing required column" in msg, f"Unexpected: {msg}"
++        assert "'flux'" in msg, f"Unexpected: {msg}"
++
++    print("test_no_columns_at_all passed")
++
++
++if __name__ == "__main__":
++    test_required_columns()
++    test_missing_required_column_message()
++    test_multiple_missing_required_columns()
++    test_binned_missing_required()
++    test_no_columns_at_all()
++    print("All tests passed.")

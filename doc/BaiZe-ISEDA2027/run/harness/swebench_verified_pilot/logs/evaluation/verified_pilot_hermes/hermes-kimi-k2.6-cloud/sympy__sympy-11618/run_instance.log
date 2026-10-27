@@ -1,0 +1,556 @@
+2026-10-27 20:49:31,857 - INFO - Creating container for sympy__sympy-11618...
+2026-10-27 20:49:31,891 - INFO - Container for sympy__sympy-11618 created: 361188d8d73e73829d79b08aae4cc40e9c608aaaa3e593e3c69424e4de780c8c
+2026-10-27 20:49:32,886 - INFO - Container for sympy__sympy-11618 started: 361188d8d73e73829d79b08aae4cc40e9c608aaaa3e593e3c69424e4de780c8c
+2026-10-27 20:49:32,889 - INFO - Intermediate patch for sympy__sympy-11618 written to logs/evaluation/verified_pilot_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-11618/patch.diff, now applying to container...
+2026-10-27 20:49:33,069 - INFO - >>>>> Applied Patch:
+Checking patch doc/ext/docscrape.py...
+Checking patch doc/ext/numpydoc.py...
+Checking patch sympy/assumptions/sathandlers.py...
+Checking patch sympy/core/basic.py...
+Checking patch sympy/geometry/point.py...
+Checking patch sympy/matrices/matrices.py...
+Checking patch sympy/matrices/sparse.py...
+Checking patch sympy/matrices/tests/test_matrices.py...
+Checking patch sympy/physics/mechanics/linearize.py...
+Checking patch sympy/plotting/plot.py...
+Checking patch sympy/printing/conventions.py...
+Checking patch sympy/tensor/array/arrayop.py...
+Checking patch sympy/tensor/array/ndim_array.py...
+Applied patch doc/ext/docscrape.py cleanly.
+Applied patch doc/ext/numpydoc.py cleanly.
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/geometry/point.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/matrices/sparse.py cleanly.
+Applied patch sympy/matrices/tests/test_matrices.py cleanly.
+Applied patch sympy/physics/mechanics/linearize.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+Applied patch sympy/printing/conventions.py cleanly.
+Applied patch sympy/tensor/array/arrayop.py cleanly.
+Applied patch sympy/tensor/array/ndim_array.py cleanly.
+
+2026-10-27 20:49:33,450 - INFO - Git diff before:
+diff --git a/doc/ext/docscrape.py b/doc/ext/docscrape.py
+index 64aff5c50..4e0f4d18a 100644
+--- a/doc/ext/docscrape.py
++++ b/doc/ext/docscrape.py
+@@ -87,7 +87,7 @@ def is_empty(self):
+         return not ''.join(self._str).strip()
+ 
+ 
+-class NumpyDocString(collections.Mapping):
++class NumpyDocString(collections.abc.Mapping):
+     def __init__(self, docstring, config={}):
+         docstring = textwrap.dedent(docstring).split('\n')
+ 
+diff --git a/doc/ext/numpydoc.py b/doc/ext/numpydoc.py
+index a57506032..2b89abb55 100644
+--- a/doc/ext/numpydoc.py
++++ b/doc/ext/numpydoc.py
+@@ -102,7 +102,7 @@ def mangle_signature(app, what, name, obj, options, sig, retann):
+             'initializes x; see ' in pydoc.getdoc(obj.__init__))):
+         return '', ''
+ 
+-    if not (isinstance(obj, collections.Callable) or
++    if not (isinstance(obj, collections.abc.Callable) or
+             hasattr(obj, '__argspec_is_invalid_')):
+         return
+ 
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index fd4584e8f..978893658 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index 627630fea..92677698c 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 593048464..c95e2b258 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -11,7 +11,7 @@
+ from __future__ import division, print_function
+ 
+ from sympy.core import S, sympify
+-from sympy.core.compatibility import iterable
++from sympy.core.compatibility import iterable, zip_longest
+ from sympy.core.containers import Tuple
+ from sympy.simplify import nsimplify, simplify
+ from sympy.geometry.exceptions import GeometryError
+@@ -266,8 +266,8 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++        return sqrt(sum([(a - b)**2 for a, b in zip_longest(
++            self.args, p.args if isinstance(p, Point) else p, fillvalue=0)]))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.
+@@ -300,7 +300,7 @@ def taxicab_distance(self, p):
+ 
+         """
+         p = Point(p)
+-        return sum(abs(a - b) for a, b in zip(self.args, p.args))
++        return sum(abs(a - b) for a, b in zip_longest(self.args, p.args, fillvalue=0))
+ 
+     def midpoint(self, p):
+         """The midpoint between self and point p.
+@@ -329,7 +329,7 @@ def midpoint(self, p):
+         Point2D(7, 3)
+ 
+         """
+-        return Point([simplify((a + b)*S.Half) for a, b in zip(self.args, p.args)])
++        return Point([simplify((a + b)*S.Half) for a, b in zip_longest(self.args, p.args, fillvalue=0)])
+ 
+     def evalf(self, prec=None, **options):
+         """Evaluate the coordinates of the point.
+@@ -406,7 +406,7 @@ def intersection(self, o):
+     def dot(self, p2):
+         """Return dot product of self with another Point."""
+         p2 = Point(p2)
+-        return Add(*[a*b for a,b in zip(self, p2)])
++        return Add(*[a*b for a,b in zip_longest(self, p2, fillvalue=0)])
+ 
+     def equals(self, other):
+         """Returns whether the coordinates of self and other agree."""
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index f458f7d1e..b9ad0957a 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -386,7 +386,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 6a6a3818c..d5fd0c32c 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -51,7 +51,7 @@ def __init__(self, *args):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/matrices/tests/test_matrices.py b/sympy/matrices/tests/test_matrices.py
+index 8c2481580..c15617d3e 100644
+--- a/sympy/matrices/tests/test_matrices.py
++++ b/sympy/matrices/tests/test_matrices.py
+@@ -2405,7 +2405,7 @@ def test_hash():
+         assert len(s) == 1 and s.pop() == cls.eye(1)
+     # issue 3979
+     for cls in classes[:2]:
+-        assert not isinstance(cls.eye(1), collections.Hashable)
++        assert not isinstance(cls.eye(1), collections.abc.Hashable)
+ 
+ 
+ @XFAIL
+diff --git a/sympy/physics/mechanics/linearize.py b/sympy/physics/mechanics/linearize.py
+index b63172e5d..da68d54a5 100644
+--- a/sympy/physics/mechanics/linearize.py
++++ b/sympy/physics/mechanics/linearize.py
+@@ -261,7 +261,7 @@ def linearize(self, op_point=None, A_and_B=False, simplify=False):
+         # Compose dict of operating conditions
+         if isinstance(op_point, dict):
+             op_point_dict = op_point
+-        elif isinstance(op_point, collections.Iterable):
++        elif isinstance(op_point, collections.abc.Iterable):
+             op_point_dict = {}
+             for op in op_point:
+                 op_point_dict.update(op)
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b1ead153e..f3dc7f60f 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index f514890b4..bc4a0c049 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -70,7 +70,7 @@ def requires_partial(expr):
+     get the context of the expression.
+     """
+ 
+-    if not isinstance(expr.free_symbols, collections.Iterable):
++    if not isinstance(expr.free_symbols, collections.abc.Iterable):
+         return len(set(expr.variables)) > 1
+ 
+     return sum(not s.is_integer for s in expr.free_symbols) > 1
+diff --git a/sympy/tensor/array/arrayop.py b/sympy/tensor/array/arrayop.py
+index 3d04f3c33..258f430d6 100644
+--- a/sympy/tensor/array/arrayop.py
++++ b/sympy/tensor/array/arrayop.py
+@@ -102,7 +102,7 @@ def tensorcontraction(array, *contraction_axes):
+     # Verify contraction_axes:
+     taken_dims = set([])
+     for axes_group in contraction_axes:
+-        if not isinstance(axes_group, collections.Iterable):
++        if not isinstance(axes_group, collections.abc.Iterable):
+             raise ValueError("collections of contraction axes expected")
+ 
+         dim = array.shape[axes_group[0]]
+@@ -188,7 +188,7 @@ def derive_by_array(expr, dx):
+     [[[1, 0], [0, 2*y*z]], [[0, y**2], [0, 0]]]
+ 
+     """
+-    array_types = (collections.Iterable, MatrixBase, NDimArray)
++    array_types = (collections.abc.Iterable, MatrixBase, NDimArray)
+ 
+     if isinstance(dx, array_types):
+         dx = ImmutableDenseNDimArray(dx)
+diff --git a/sympy/tensor/array/ndim_array.py b/sympy/tensor/array/ndim_array.py
+index 264583e02..a9741d19c 100644
+--- a/sympy/tensor/array/ndim_array.py
++++ b/sympy/tensor/array/ndim_array.py
+@@ -87,13 +87,13 @@ def _get_tuple_index(self, integer_index):
+         return tuple(index)
+ 
+     def _setter_iterable_check(self, value):
+-        if isinstance(value, (collections.Iterable, Matrix, NDimArray)):
++        if isinstance(value, (collections.abc.Iterable, Matrix, NDimArray)):
+             raise NotImplementedError
+ 
+     @classmethod
+     def _scan_iterable_shape(cls, iterable):
+         def f(pointer):
+-            if not isinstance(pointer, collections.Iterable):
++            if not isinstance(pointer, collections.abc.Iterable):
+                 return [pointer], ()
+ 
+             result = []
+@@ -117,7 +117,7 @@ def _handle_ndarray_creation_inputs(cls, iterable=None, shape=None, **kwargs):
+             shape = iterable.shape
+             iterable = list(iterable)
+         # Construct N-dim array from an iterable (numpy arrays included):
+-        elif shape is None and isinstance(iterable, collections.Iterable):
++        elif shape is None and isinstance(iterable, collections.abc.Iterable):
+             iterable, shape = cls._scan_iterable_shape(iterable)
+ 
+         # Construct N-dim array from a Matrix:
+@@ -307,21 +307,21 @@ def __sub__(self, other):
+         return type(self)(result_list, self.shape)
+ 
+     def __mul__(self, other):
+-        if isinstance(other, (collections.Iterable,NDimArray, Matrix)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, Matrix)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [i*other for i in self]
+         return type(self)(result_list, self.shape)
+ 
+     def __rmul__(self, other):
+-        if isinstance(other, (collections.Iterable,NDimArray, Matrix)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, Matrix)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [other*i for i in self]
+         return type(self)(result_list, self.shape)
+ 
+     def __div__(self, other):
+-        if isinstance(other, (collections.Iterable,NDimArray, Matrix)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, Matrix)):
+             raise ValueError("scalar expected")
+         other = sympify(other)
+         result_list = [i/other for i in self]
+2026-10-27 20:49:33,453 - INFO - Eval script for sympy__sympy-11618 written to logs/evaluation/verified_pilot_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-11618/eval.sh; copying to container...
+2026-10-27 20:49:38,160 - INFO - Test runtime: 4.62 seconds
+2026-10-27 20:49:38,162 - INFO - Test output for sympy__sympy-11618 written to logs/evaluation/verified_pilot_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-11618/test_output.txt
+2026-10-27 20:49:38,258 - INFO - Git diff after:
+diff --git a/doc/ext/docscrape.py b/doc/ext/docscrape.py
+index 64aff5c50..4e0f4d18a 100644
+--- a/doc/ext/docscrape.py
++++ b/doc/ext/docscrape.py
+@@ -87,7 +87,7 @@ def is_empty(self):
+         return not ''.join(self._str).strip()
+ 
+ 
+-class NumpyDocString(collections.Mapping):
++class NumpyDocString(collections.abc.Mapping):
+     def __init__(self, docstring, config={}):
+         docstring = textwrap.dedent(docstring).split('\n')
+ 
+diff --git a/doc/ext/numpydoc.py b/doc/ext/numpydoc.py
+index a57506032..2b89abb55 100644
+--- a/doc/ext/numpydoc.py
++++ b/doc/ext/numpydoc.py
+@@ -102,7 +102,7 @@ def mangle_signature(app, what, name, obj, options, sig, retann):
+             'initializes x; see ' in pydoc.getdoc(obj.__init__))):
+         return '', ''
+ 
+-    if not (isinstance(obj, collections.Callable) or
++    if not (isinstance(obj, collections.abc.Callable) or
+             hasattr(obj, '__argspec_is_invalid_')):
+         return
+ 
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index fd4584e8f..978893658 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index 627630fea..92677698c 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 593048464..c95e2b258 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -11,7 +11,7 @@
+ from __future__ import division, print_function
+ 
+ from sympy.core import S, sympify
+-from sympy.core.compatibility import iterable
++from sympy.core.compatibility import iterable, zip_longest
+ from sympy.core.containers import Tuple
+ from sympy.simplify import nsimplify, simplify
+ from sympy.geometry.exceptions import GeometryError
+@@ -266,8 +266,8 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++        return sqrt(sum([(a - b)**2 for a, b in zip_longest(
++            self.args, p.args if isinstance(p, Point) else p, fillvalue=0)]))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.
+@@ -300,7 +300,7 @@ def taxicab_distance(self, p):
+ 
+         """
+         p = Point(p)
+-        return sum(abs(a - b) for a, b in zip(self.args, p.args))
++        return sum(abs(a - b) for a, b in zip_longest(self.args, p.args, fillvalue=0))
+ 
+     def midpoint(self, p):
+         """The midpoint between self and point p.
+@@ -329,7 +329,7 @@ def midpoint(self, p):
+         Point2D(7, 3)
+ 
+         """
+-        return Point([simplify((a + b)*S.Half) for a, b in zip(self.args, p.args)])
++        return Point([simplify((a + b)*S.Half) for a, b in zip_longest(self.args, p.args, fillvalue=0)])
+ 
+     def evalf(self, prec=None, **options):
+         """Evaluate the coordinates of the point.
+@@ -406,7 +406,7 @@ def intersection(self, o):
+     def dot(self, p2):
+         """Return dot product of self with another Point."""
+         p2 = Point(p2)
+-        return Add(*[a*b for a,b in zip(self, p2)])
++        return Add(*[a*b for a,b in zip_longest(self, p2, fillvalue=0)])
+ 
+     def equals(self, other):
+         """Returns whether the coordinates of self and other agree."""
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index f458f7d1e..b9ad0957a 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -386,7 +386,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 6a6a3818c..d5fd0c32c 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -51,7 +51,7 @@ def __init__(self, *args):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/matrices/tests/test_matrices.py b/sympy/matrices/tests/test_matrices.py
+index 8c2481580..c15617d3e 100644
+--- a/sympy/matrices/tests/test_matrices.py
++++ b/sympy/matrices/tests/test_matrices.py
+@@ -2405,7 +2405,7 @@ def test_hash():
+         assert len(s) == 1 and s.pop() == cls.eye(1)
+     # issue 3979
+     for cls in classes[:2]:
+-        assert not isinstance(cls.eye(1), collections.Hashable)
++        assert not isinstance(cls.eye(1), collections.abc.Hashable)
+ 
+ 
+ @XFAIL
+diff --git a/sympy/physics/mechanics/linearize.py b/sympy/physics/mechanics/linearize.py
+index b63172e5d..da68d54a5 100644
+--- a/sympy/physics/mechanics/linearize.py
++++ b/sympy/physics/mechanics/linearize.py
+@@ -261,7 +261,7 @@ def linearize(self, op_point=None, A_and_B=False, simplify=False):
+         # Compose dict of operating conditions
+         if isinstance(op_point, dict):
+             op_point_dict = op_point
+-        elif isinstance(op_point, collections.Iterable):
++        elif isinstance(op_point, collections.abc.Iterable):
+             op_point_dict = {}
+             for op in op_point:
+                 op_point_dict.update(op)
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b1ead153e..f3dc7f60f 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index f514890b4..bc4a0c049 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -70,7 +70,7 @@ def requires_partial(expr):
+     get the context of the expression.
+     """
+ 
+-    if not isinstance(expr.free_symbols, collections.Iterable):
++    if not isinstance(expr.free_symbols, collections.abc.Iterable):
+         return len(set(expr.variables)) > 1
+ 
+     return sum(not s.is_integer for s in expr.free_symbols) > 1
+diff --git a/sympy/tensor/array/arrayop.py b/sympy/tensor/array/arrayop.py
+index 3d04f3c33..258f430d6 100644
+--- a/sympy/tensor/array/arrayop.py
++++ b/sympy/tensor/array/arrayop.py
+@@ -102,7 +102,7 @@ def tensorcontraction(array, *contraction_axes):
+     # Verify contraction_axes:
+     taken_dims = set([])
+     for axes_group in contraction_axes:
+-        if not isinstance(axes_group, collections.Iterable):
++        if not isinstance(axes_group, collections.abc.Iterable):
+             raise ValueError("collections of contraction axes expected")
+ 
+         dim = array.shape[axes_group[0]]
+@@ -188,7 +188,7 @@ def derive_by_array(expr, dx):
+     [[[1, 0], [0, 2*y*z]], [[0, y**2], [0, 0]]]
+ 
+     """
+-    array_types = (collections.Iterable, MatrixBase, NDimArray)
++    array_types = (collections.abc.Iterable, MatrixBase, NDimArray)
+ 
+     if isinstance(dx, array_types):
+         dx = ImmutableDenseNDimArray(dx)
+diff --git a/sympy/tensor/array/ndim_array.py b/sympy/tensor/array/ndim_array.py
+index 264583e02..a9741d19c 100644
+--- a/sympy/tensor/array/ndim_array.py
++++ b/sympy/tensor/array/ndim_array.py
+@@ -87,13 +87,13 @@ def _get_tuple_index(self, integer_index):
+         return tuple(index)
+ 
+     def _setter_iterable_check(self, value):
+-        if isinstance(value, (collections.Iterable, Matrix, NDimArray)):
++        if isinstance(value, (collections.abc.Iterable, Matrix, NDimArray)):
+             raise NotImplementedError
+ 
+     @classmethod
+     def _scan_iterable_shape(cls, iterable):
+         def f(pointer):
+-            if not isinstance(pointer, collections.Iterable):
++            if not isinstance(pointer, collections.abc.Iterable):
+                 return [pointer], ()
+ 
+             result = []
+@@ -117,7 +117,7 @@ def _handle_ndarray_creation_inputs(cls, iterable=None, shape=None, **kwargs):
+             shape = iterable.shape
+             iterable = list(iterable)
+         # Construct N-dim array from an iterable (numpy arrays included):
+-        elif shape is None and isinstance(iterable, collections.Iterable):
++        elif shape is None and isinstance(iterable, collections.abc.Iterable):
+             iterable, shape = cls._scan_iterable_shape(iterable)
+ 
+         # Construct N-dim array from a Matrix:
+@@ -307,21 +307,21 @@ def __sub__(self, other):
+         return type(self)(result_list, self.shape)
+ 
+     def __mul__(self, other):
+-        if isinstance(other, (collections.Iterable,NDimArray, Matrix)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, Matrix)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [i*other for i in self]
+         return type(self)(result_list, self.shape)
+ 
+     def __rmul__(self, other):
+-        if isinstance(other, (collections.Iterable,NDimArray, Matrix)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, Matrix)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [other*i for i in self]
+         return type(self)(result_list, self.shape)
+ 
+     def __div__(self, other):
+-        if isinstance(other, (collections.Iterable,NDimArray, Matrix)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, Matrix)):
+             raise ValueError("scalar expected")
+         other = sympify(other)
+         result_list = [i/other for i in self]
+2026-10-27 20:49:38,258 - INFO - Grading answer for sympy__sympy-11618...
+2026-10-27 20:49:38,280 - INFO - report: {'sympy__sympy-11618': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_11617'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_point3D', 'test_Point2D', 'test_issue_9214', 'test_transform'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-11618: resolved: True
+2026-10-27 20:49:38,282 - INFO - Attempting to stop container sweb.eval.sympy__sympy-11618.verified_pilot_hermes...
+2026-10-27 20:49:53,788 - INFO - Container sweb.eval.sympy__sympy-11618.verified_pilot_hermes stopped successfully.
+2026-10-27 20:49:53,788 - INFO - Attempting to remove container sweb.eval.sympy__sympy-11618.verified_pilot_hermes...
+2026-10-27 20:49:53,834 - INFO - Container sweb.eval.sympy__sympy-11618.verified_pilot_hermes removed successfully.

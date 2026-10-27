@@ -1,0 +1,52 @@
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index 2135089..e605b2a 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,9 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 1b8005e..55d316e 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -507,7 +507,10 @@ def _eval_evalf(self, prec):
+             func = getattr(mpmath, fname)
+         except (AttributeError, KeyError):
+             try:
+-                return Float(self._imp_(*self.args), prec)
++                result = self._imp_(*self.args)
++                if isinstance(result, Expr) and result.is_number:
++                    return result._evalf(prec)
++                return Float(result, prec)
+             except (AttributeError, TypeError, ValueError):
+                 return
+ 
+diff --git a/sympy/core/tests/test_evalf.py b/sympy/core/tests/test_evalf.py
+index 1d63f9e..949fd4c 100644
+--- a/sympy/core/tests/test_evalf.py
++++ b/sympy/core/tests/test_evalf.py
+@@ -328,6 +328,16 @@ def test_implemented_function_evalf():
+     del f._imp_     # XXX: due to caching _imp_ would influence all other tests
+ 
+ 
++def test_implemented_function_evalf_nested():
++    from sympy.utilities.lambdify import implemented_function
++    f = implemented_function('f', lambda x: x ** 2)
++    g = implemented_function('g', lambda x: 2 * x)
++    assert f(g(2)).evalf() == 16
++    # symbolic arguments should still return unevaluated
++    assert f(g(x)).evalf() == f(g(x))
++    del f._imp_, g._imp_
++
++
+ def test_evaluate_false():
+     for no in [0, False]:
+         assert Add(3, 2, evaluate=no).is_Add

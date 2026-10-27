@@ -1,0 +1,100 @@
+2026-10-27 20:01:59,994 - INFO - Creating container for astropy__astropy-13398...
+2026-10-27 20:02:00,025 - INFO - Container for astropy__astropy-13398 created: 488df35d753cc25b7191659da54e1f6edc23024f953eef359764723192fa5f8d
+2026-10-27 20:02:00,902 - INFO - Container for astropy__astropy-13398 started: 488df35d753cc25b7191659da54e1f6edc23024f953eef359764723192fa5f8d
+2026-10-27 20:02:00,904 - INFO - Intermediate patch for astropy__astropy-13398 written to logs/evaluation/verified_pilot_cline-patched/cline-patched-kimi-k2.6-cloud/astropy__astropy-13398/patch.diff, now applying to container...
+2026-10-27 20:02:01,055 - INFO - >>>>> Applied Patch:
+Checking patch astropy/coordinates/builtin_frames/__init__.py...
+Checking patch astropy/coordinates/builtin_frames/itrs_observed_transforms.py...
+Checking patch astropy/coordinates/tests/test_intermediate_transformations.py...
+Applied patch astropy/coordinates/builtin_frames/__init__.py cleanly.
+Applied patch astropy/coordinates/builtin_frames/itrs_observed_transforms.py cleanly.
+Applied patch astropy/coordinates/tests/test_intermediate_transformations.py cleanly.
+
+2026-10-27 20:02:01,836 - INFO - Git diff before:
+diff --git a/astropy/coordinates/builtin_frames/__init__.py b/astropy/coordinates/builtin_frames/__init__.py
+index 6fd688c28..17b524478 100644
+--- a/astropy/coordinates/builtin_frames/__init__.py
++++ b/astropy/coordinates/builtin_frames/__init__.py
+@@ -48,6 +48,7 @@ from . import supergalactic_transforms
+ from . import icrs_cirs_transforms
+ from . import cirs_observed_transforms
+ from . import icrs_observed_transforms
++from . import itrs_observed_transforms
+ from . import intermediate_rotation_transforms
+ from . import ecliptic_transforms
+ 
+diff --git a/astropy/coordinates/tests/test_intermediate_transformations.py b/astropy/coordinates/tests/test_intermediate_transformations.py
+index 007ccc025..01d6c9973 100644
+--- a/astropy/coordinates/tests/test_intermediate_transformations.py
++++ b/astropy/coordinates/tests/test_intermediate_transformations.py
+@@ -806,6 +806,47 @@ def test_straight_overhead():
+     assert_allclose(hd.dec, 52*u.deg, atol=1*u.uas, rtol=0)
+ 
+ 
++def test_itrs_to_observed_direct():
++    """
++    Test direct ITRS -> AltAz/HADec transforms that stay within the ITRS.
++
++    These should give exact geometric results for nearby objects, without
++    the aberration-related errors that arise when going through CIRS.
++    """
++    t = Time('J2010')
++    obj = EarthLocation(-1*u.deg, 52*u.deg, height=10.*u.km)
++    home = EarthLocation(-1*u.deg, 52*u.deg, height=0.*u.km)
++
++    itrs_obj = obj.get_itrs(t)
++
++    # Straight overhead in ITRS should be straight overhead in AltAz.
++    aa = itrs_obj.transform_to(AltAz(obstime=t, location=home))
++    assert_allclose(aa.alt, 90*u.deg, atol=1*u.uas, rtol=0)
++
++    # And in HADec.
++    hd = itrs_obj.transform_to(HADec(obstime=t, location=home))
++    assert_allclose(hd.ha, 0*u.hourangle, atol=1*u.uas, rtol=0)
++    assert_allclose(hd.dec, 52*u.deg, atol=1*u.uas, rtol=0)
++
++    # Round-trip should be exact.
++    itrs_back = aa.transform_to(ITRS(obstime=t))
++    assert_allclose(itrs_obj.separation_3d(itrs_back), 0*u.m, atol=1*u.mm)
++
++    # Unit-spherical input should stay unit-spherical.
++    direction = ITRS(UnitSphericalRepresentation(1*u.deg, 2*u.deg), obstime=t)
++    aa_unit = direction.transform_to(AltAz(obstime=t, location=home))
++    assert isinstance(aa_unit.data, UnitSphericalRepresentation)
++    hd_unit = direction.transform_to(HADec(obstime=t, location=home))
++    assert isinstance(hd_unit.data, UnitSphericalRepresentation)
++
++    # Array input should be handled correctly.
++    objs = EarthLocation([-1, 0]*u.deg, [52, 52]*u.deg, height=[10., 20.]*u.km)
++    itrs_arr = objs.get_itrs(t)
++    aa_arr = itrs_arr.transform_to(AltAz(obstime=t, location=home))
++    assert aa_arr.isscalar is False
++    assert len(aa_arr) == 2
++
++
+ def jplephem_ge(minversion):
+     """Check if jplephem is installed and has version >= minversion."""
+     # This is a separate routine since somehow with pyinstaller the stanza
+2026-10-27 20:02:01,839 - INFO - Eval script for astropy__astropy-13398 written to logs/evaluation/verified_pilot_cline-patched/cline-patched-kimi-k2.6-cloud/astropy__astropy-13398/eval.sh; copying to container...
+2026-10-27 20:03:49,178 - INFO - Test runtime: 107.28 seconds
+2026-10-27 20:03:49,182 - INFO - Test output for astropy__astropy-13398 written to logs/evaluation/verified_pilot_cline-patched/cline-patched-kimi-k2.6-cloud/astropy__astropy-13398/test_output.txt
+2026-10-27 20:03:49,257 - INFO - Git diff after:
+diff --git a/astropy/coordinates/builtin_frames/__init__.py b/astropy/coordinates/builtin_frames/__init__.py
+index 6fd688c28..17b524478 100644
+--- a/astropy/coordinates/builtin_frames/__init__.py
++++ b/astropy/coordinates/builtin_frames/__init__.py
+@@ -48,6 +48,7 @@ from . import supergalactic_transforms
+ from . import icrs_cirs_transforms
+ from . import cirs_observed_transforms
+ from . import icrs_observed_transforms
++from . import itrs_observed_transforms
+ from . import intermediate_rotation_transforms
+ from . import ecliptic_transforms
+2026-10-27 20:03:49,257 - INFO - Git diff changed after running eval script
+2026-10-27 20:03:49,257 - INFO - Grading answer for astropy__astropy-13398...
+2026-10-27 20:03:49,274 - INFO - report: {'astropy__astropy-13398': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['astropy/coordinates/tests/test_intermediate_transformations.py::test_itrs_topo_to_altaz_with_refraction', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_itrs_topo_to_hadec_with_refraction', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_itrs_topo', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_itrs_straight_overhead']}, 'PASS_TO_PASS': {'success': ['astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrs[icoo0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrs[icoo1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrs_dist_diff[gframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrs_dist_diff[gframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_to_altaz', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_to_hadec', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_itrs', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_itrs', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_cirs', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_hadec', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_precessed_geocentric', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_precessed_geocentric_different_obstime', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_sunish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_sunish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_sunish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_sunish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_sunish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_moonish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_moonish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_moonish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_moonish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_moonish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_moonish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_moonish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_moonish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_moonish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_moonish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_nodist[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_nodist[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_nodist[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_nodist[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_altaz_nodist[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_icrs_moonish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_icrs_moonish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_icrs_moonish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_icrs_moonish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_cirs_icrs_moonish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_icrs_moonish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_icrs_moonish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_icrs_moonish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_icrs_moonish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_icrs_moonish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrscirs_sunish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrscirs_sunish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrscirs_sunish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrscirs_sunish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_gcrscirs_sunish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_altaz_moonish[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_altaz_moonish[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_altaz_moonish[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_altaz_moonish[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_icrs_altaz_moonish[testframe4]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_self_transform_closeby', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_teme_itrf', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_precessedgeocentric_loopback', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_teme_loopback', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_tete_transforms', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_straight_overhead', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_aa_high_precision_nodata', 'astropy/coordinates/tests/test_intermediate_transformations.py::TestGetLocationGCRS::test_get_gcrs_posvel', 'astropy/coordinates/tests/test_intermediate_transformations.py::TestGetLocationGCRS::test_tete_quick', 'astropy/coordinates/tests/test_intermediate_transformations.py::TestGetLocationGCRS::test_cirs_quick'], 'failure': ['astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_bothroutes[testframe0]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_bothroutes[testframe1]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_bothroutes[testframe2]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_bothroutes[testframe3]', 'astropy/coordinates/tests/test_intermediate_transformations.py::test_gcrs_altaz_bothroutes[testframe4]']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-13398: resolved: False
+2026-10-27 20:03:49,276 - INFO - Attempting to stop container sweb.eval.astropy__astropy-13398.verified_pilot_cline-patched...
+2026-10-27 20:04:04,564 - INFO - Container sweb.eval.astropy__astropy-13398.verified_pilot_cline-patched stopped successfully.
+2026-10-27 20:04:04,565 - INFO - Attempting to remove container sweb.eval.astropy__astropy-13398.verified_pilot_cline-patched...
+2026-10-27 20:04:04,632 - INFO - Container sweb.eval.astropy__astropy-13398.verified_pilot_cline-patched removed successfully.
