@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate reports/report_harness_terminalbench_7way_final_zh.html
 Terminal-Bench 7-way final report (self-contained Chinese HTML)."""
-import json, glob
+import json, glob, os
 from math import comb
 
 RUN = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run"
@@ -154,6 +154,6 @@ H.append(f'<div class="foot">数据全部来自实测（/tmp/tb_7x89/jobs_* 与 
 H.append('</body></html>')
 
 html="\n".join(H)
-out=f"{RUN}/reports/report_harness_terminalbench_7way_final_zh.html"
+out=os.path.join(os.path.dirname(RUN), "reports", "report_harness_terminalbench_7way_final_zh.html")
 open(out,"w").write(html)
 print(f"WROTE {out} ({len(html)} bytes)")
