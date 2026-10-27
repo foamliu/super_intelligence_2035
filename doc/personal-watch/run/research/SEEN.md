@@ -5048,7 +5048,7 @@
 | 2026-10-27 | 2610.35806 | Does VGGT Know What It Does Not Know? | cs.CV | 候选 |
 | 2026-10-27 | 2610.35804 | Learning When to Commit: Schedule Distillation for Fast Diffusion Language Models | cs.CL | 候选 |
 | 2026-10-27 | 2610.35802 | Game theory of academic effort and hiring in the age of AI | cs.AI | 候选 |
-| 2026-10-27 | 2610.35801 | FOCUS: Active Critic Learning for Long-Horizon Language Model Agents | cs.LG | 候选 |
+| 2026-10-27 | 2610.35801 | FOCUS: Active Critic Learning for Long-Horizon Language Model Agents | cs.LG | 收录 |
 | 2026-10-27 | 2610.35793 | Quantifying Claim Smoothing by LLM Research Agents | cs.CL | 候选 |
 | 2026-10-27 | 2610.35787 | Selective Tie Learning: Mitigating Spurious Correlations in Preference Optimization | cs.LG | 候选 |
 | 2026-10-27 | 2610.35785 | A theory of noisy linear recurrent neural network learning dynamics | cs.LG | 候选 |
@@ -5068,7 +5068,7 @@
 | 2026-10-27 | 2610.35704 | Explainable Multimodal AI Approach to Reduce Unnecessary Breast Biopsies | cs.AI | 候选 |
 | 2026-10-27 | 2610.35698 | From Self-Confidence to Statistical Accuracy: Scaling Human-in-the-Loop Evaluation with Direct and LLM-Assisted Auditing | cs.CL | 候选 |
 | 2026-10-27 | 2610.35695 | Towards a Unified Framework of Optimal Input-Side Dimensional Configuration for Deep CTR Prediction | cs.IR | 候选 |
-| 2026-10-27 | 2610.35690 | EvoRouter: Cost-Efficient Multi-Agent Routing via Insight-Guided On-Policy Distillation | cs.AI | 候选 |
+| 2026-10-27 | 2610.35690 | EvoRouter: Cost-Efficient Multi-Agent Routing via Insight-Guided On-Policy Distillation | cs.AI | 收录 |
 | 2026-10-27 | 2610.35687 | TrySee: Modular Perception-Enhanced VLM Grounding for Closed-Loop Robot Task Planning in Specialized Domains | cs.RO | 候选 |
 | 2026-10-27 | 2610.35685 | Adapting LLM-SC to Living Sacred Heritage: Domain-Specific Extraction, Semantic Networks and Human Evaluation on Pashupatinath Temple Reviews | cs.CL | 候选 |
 | 2026-10-27 | 2610.35684 | OmniShowcase: Omnidirectional Subject-Consistent Video Generation from Multi-View Images | cs.CV | 候选 |
@@ -5092,7 +5092,7 @@
 | 2026-10-27 | 2610.35328 | Constrained Decoding: Harmful or Beneficial? Revisiting Its Impact on LLM Performance | cs.CL | 候选 |
 | 2026-10-27 | 2610.35323 | CRIM: Composable and Reusable Item Memory for Efficient Personalized Retrieval | cs.IR | 候选 |
 | 2026-10-27 | 2610.35312 | OVM-Occ: Open-Vocabulary Monocular Occupancy Prediction via Geometry-Aware Vision-Language Distillation | cs.CV | 候选 |
-| 2026-10-27 | 2610.35309 | Shared Context, Separate Engines: Streaming Vision--Language Inference on Edge SoCs | cs.LG | 候选 |
+| 2026-10-27 | 2610.35309 | Shared Context, Separate Engines: Streaming Vision--Language Inference on Edge SoCs | cs.LG | 收录 |
 | 2026-10-27 | 2610.35304 | Inference Latency-Aware Tsetlin Machine Training | cs.LG | 候选 |
 | 2026-10-27 | 2610.35261 | The Lay of the Land in Idiom-Translation Quality Estimation | cs.CL | 候选 |
 | 2026-10-27 | 2610.35254 | Style over Substance? Linguistic Bias in LLM-based Peer Review Copy title | cs.CL | 候选 |
@@ -5230,3 +5230,5 @@
 | 2026-10-27 | 2610.33635 | DROA-CLIPSeg: Prompt-Guided Thin Crack Segmentation in Low-Light Conditions | cs.CV | 候选 |
 | 2026-10-27 | 2610.33623 | Graph-dependent pooling: adaptive granularity in hierarchical graph neural networks | cs.AI | 候选 |
 > **第一百一十六轮（本地 2026-10-27 18:00（CST）· P0 第 4 批「晚 2」轮 · 当日 5/5 收口）**：**公告批次已刷新** —— `2026-10-23` → **`2026-10-26`**（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`cat:cs.CL` 探针 `totalResults` `123669` → **`123901`**、最新样本 `published=2026-10-26T17:59:33Z`；广度扫描 `totalResults` `637936` → **`639007`**）；`window_mode=daily`（72h，脚本自动判定、**未人工放宽**）⇒ **15/15 查询 `200`、全部 `attempts=1`**、**`kept 206` / `dropped 366`**（`generated=2026-10-27T10:03:38Z`；206 条中 `published` 2026-10-26 = 131 / 2026-10-25 = 57 / 2026-10-24 = 18）。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 374 · cs.CV 483 · cs.LG 321（仅作发现）。**晚报 2 篇「科普」直接取自本批** + **`id_list` 权威复核 3/3 返回**（`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-27-pm-idlist-r116a.{xml,headers}`）：`2610.35857` *Do vision models know that three is three?*（**本日科普 TOP-1**；46 个视觉编码器 / 10 个概念族 / 2,530 检验；局部线性 99.1% 显著、全局仅 52.2% ⇒ 命名 fragmented linearity；监督 ViT 碎片化 0.67 vs CLIP 0；局部–全局 Kendall τ ∈ [0.38, 0.89]）/ `2610.34688` *From Speech Tokens to Stolen Voices*（3 秒 Moshi 表征泄漏 → 冒充说话人说任意文本：CAM++ 0.78 / WER 3.80%；Kimi-Audio 0.82 / 3.84%；Qwen3-Omni 0.75 / 4.61%；基线 SpInv+TTS 0.22 / 13.37%）。台账 **4,769 → 4,975 行（+206）**（2 行「收录」+ 204 行「候选」）→ 累计（**收录 261 / 候选 4,207 / 候选（RSS 补充）507**）；`papers.jsonl` **259 → 261**；PDF **5/5** 落地校验通过（17 / 7 / 43 / 15 / 14 页）；交付 `daily/2026-10-27.html`（5/5 收口）+ `video/SCENES/10_27.html` + 两个 index；落盘脚本 `raw/update_r116.py`。口径见 `ARXIV_API.md` §9.116。
+
+> **第一百一十七轮（本地 2026-10-28 06:00（CST）· P0 第 4 批「早 3」轮 · 新一日 AM）**：**公告批次未刷新** —— 仍 `2026-10-26`（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`cat:cs.CL` 探针 `totalResults=123901`、最新样本 `published=2026-10-26T17:59:33Z`（`2610.35865v1`），广度扫描 `639007`，**与 r116 逐条相同**）；`window_mode=daily`（72h，脚本自动判定、**未人工放宽**）⇒ **15/15 查询 `200`、全部 `attempts=1`**、**`kept 0` / `dropped 600`**（600 = **547** already in SEEN + **53** stale > 72h；`generated=2026-10-27T22:01:20Z`）—— 整批已入 SEEN，**非「无数据」**。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL · cs.CV · cs.LG **均 0 条**（本地 06:00 = UTC 前一日 22:00，当日公告尚未生成，**仅作发现、不作证据**）。**早报 3 篇「借鉴」取自 r116 的 206 条候选池**（已在 SEEN、从未进过任何日报）+ **`id_list` 权威复核 3/3**（`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-28-am-idlist-r117a.{xml,headers}`）：`2610.35690` *EvoRouter: Cost-Efficient Multi-Agent Routing via Insight-Guided On-Policy Distillation*（21 数据集 / 7 领域；洞察蒸馏 + 成本感知 RL；4B 域内 68.69%（+7.23 pp）而 MAS 成本 −50.95%，含 router 总成本仍低 76.5% / 39.2%；OOD 74.67–78.93%）· `2610.35801` *FOCUS: Active Critic Learning for Long-Horizon Language Model Agents*（压缩边界当候选状态 + 主动选点续采样精化 critic + TD(λ) 段级 advantage；Qwen3.5-9B 上 DeonticBench 56.5 vs 52.4、BrowseComp-Plus 55.4 vs 48.2、LocBench 72.4/81.6 vs 70.1/80.5）· `2610.35309` *Shared Context, Separate Engines: Streaming Vision--Language Inference on Edge SoCs*（版本化上下文 + 跨引擎 KV 导入；RK3588 双流 +19.6% / +27.2%、TTFT −34.9%，KV 导入比前缀重算早 4.6×，SSG 2.48×）⇒ **首次提交均为 `2026-10-26`（UTC）**，非「今日新提交」。台账 **4,975 行不变**（3 行「候选」→「收录」）+ 1 行状态 ⇒（**收录 264 / 候选 4,204 / 候选（RSS 补充）507**）；`papers.jsonl` **261 → 264**；PDF **3/3** 落地校验通过（13 / 32 / 25 页）；交付 `daily/2026-10-28.html`（3/5）+ `daily/index.html`；落盘脚本 `raw/update_r117.py`。口径见 `ARXIV_API.md` §9.117。

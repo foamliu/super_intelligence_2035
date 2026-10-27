@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/3VM+X+oiqoYF9RbNuhSClshWxtU</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.35690,2610.35801,2610.35309&amp;start=0&amp;max_results=3</title>
+  <updated>2026-10-27T22:02:43Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=3&amp;id_list=2610.35690,2610.35801,2610.35309" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.35690v1</id>
+    <title>EvoRouter: Cost-Efficient Multi-Agent Routing via Insight-Guided On-Policy Distillation</title>
+    <updated>2026-10-26T16:21:00Z</updated>
+    <link href="https://arxiv.org/abs/2610.35690v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.35690v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Serving web queries at scale with multi-agent systems requires jointly configuring large language models, collaboration modes, agent counts, interaction rounds, and skills. However, the resulting configuration space grows combinatorially, while sparse execution rewards provide limited fine-grained supervision for interdependent planning decisions. We propose EvoRouter, a self-evolving multi-agent routing framework driven by insight-guided on-policy distillation. A dedicated expert periodically synthesizes performance-cost feedback from configuration trajectories across tasks into reusable conditional routing insights about capability requirements, returns from resource scaling, and interactions among configuration choices. A privileged teacher combines these evolving insights with current execution feedback to provide dense token-level supervision for the router's own planning trajectories through on-policy distillation. Cost-aware reinforcement learning jointly optimizes task performance and computational cost. Together, these training signals internalize execution insights into the routing policy. The updated policy generates new trajectories that support subsequent insight extraction, forming an execution-driven self-improvement loop. We evaluate EvoRouter on 19 in-domain datasets spanning five domains and two out-of-domain benchmarks. EvoRouter achieves an average in-domain accuracy of 68.69%, outperforming the strongest routing baseline by 7.23 percentage points while reducing inference compute cost by 50.95%. Our code is open-sourced at https://github.com/CenYangtze/EvoRouter.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T16:21:00Z</published>
+    <arxiv:comment>13 pages, 12 figures, 4 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yitao Xiao</name>
+    </author>
+    <author>
+      <name>Xu Zhang</name>
+    </author>
+    <author>
+      <name>Ye Cheng</name>
+    </author>
+    <author>
+      <name>Shaoyong Guo</name>
+    </author>
+    <author>
+      <name>Yan Sun</name>
+    </author>
+    <author>
+      <name>Ziyue Zhu</name>
+    </author>
+    <author>
+      <name>Sitao Xie</name>
+    </author>
+    <author>
+      <name>Guo Tong</name>
+    </author>
+    <author>
+      <name>Haoran Luo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.35801v1</id>
+    <title>FOCUS: Active Critic Learning for Long-Horizon Language Model Agents</title>
+    <updated>2026-10-26T17:34:47Z</updated>
+    <link href="https://arxiv.org/abs/2610.35801v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.35801v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sparse outcome rewards make it difficult for long-horizon language-model agents to assign credit to earlier actions. Learned critics provide value estimates for intermediate states, but these estimates can be inaccurate, while estimating intermediate values with repetitive continuation samples from points within a trajectory incurs substantial costs. To mitigate these issues, we introduce FOCUS, an RL method that uses selective branching to help the critic network learn its value estimator. The rollout controller facilitates active learning for the critic by sampling continuations from states that are expected to most reduce the critic's estimation error. These refined value estimates then score the segment between consecutive states with a TD($λ$) advantage, while the sampled evidence supplies training targets for the critic. FOCUS supports long-horizon agentic reinforcement learning through a modular context-management interface that decouples context management from rollout allocation. Our experiments show that using compaction-induced segment boundaries for value estimation and credit assignment, FOCUS outperforms GRPO and VinePPO with matched per-step generation budgets on legal reasoning, deep search, and code localization benchmarks, improving held-out accuracy at Qwen3.5-9B scale by 7.2 points over the strongest baseline on BrowseComp-Plus (55.4 vs. 48.2) and by 4.1 points on DeonticBench (56.5 vs. 52.4).</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T17:34:47Z</published>
+    <arxiv:comment>32 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Zhengping Jiang</name>
+    </author>
+    <author>
+      <name>William Jurayj</name>
+    </author>
+    <author>
+      <name>Liaoyaqi Wang</name>
+    </author>
+    <author>
+      <name>Chunsheng Zuo</name>
+    </author>
+    <author>
+      <name>Anqi Liu</name>
+    </author>
+    <author>
+      <name>Benjamin Van Durme</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.35309v1</id>
+    <title>Shared Context, Separate Engines: Streaming Vision--Language Inference on Edge SoCs</title>
+    <updated>2026-10-26T12:13:23Z</updated>
+    <link href="https://arxiv.org/abs/2610.35309v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.35309v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Edge SoCs pack CPUs, GPUs, and NPUs, yet vision--language model (VLM) runtimes keep generation on one engine and leave the others idle. Streaming VLMs expose further parallelism: new frames arrive while earlier queries are still being answered. Engines differ in compute and memory access and contend when they co-run, so no single placement of stages wins across SoCs and workloads. Backend-local KV state keeps other engines from continuing the work. \name coordinates heterogeneous accelerators to execute stateful VLM inference concurrently. It separates a stream's versioned context from each engine's KV state, so any engine can continue the stream by reusing, importing, or reconstructing that state. Stateful Streaming Generation ingests new frames on one engine while another answers, and Concurrent Sequence Generation serves different ready requests in parallel. State-aware dispatch sends each request to the engine expected to finish it first. Each answer reads a fixed, published version of its history and matches its serial reference. \name beats the strongest single-engine baselines on Apple M4 Max, Rockchip RK3588, and Qualcomm QCS6490, even when they reuse context. On two RK3588 video streams, it delivers $19.6\%$ more throughput than the best single engine with context reuse and $27.2\%$ more than parallel engines without shared state. Cross-engine KV import cuts first-token latency by a factor of $4.6$ over prefix recomputation. Stateful Streaming Generation delivers up to $2.48\times$ the throughput of serial execution, and state-aware dispatch cuts query completion time by up to $72.7\%$.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T12:13:23Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Yilong Li</name>
+    </author>
+    <author>
+      <name>Chengpo Yan</name>
+    </author>
+    <author>
+      <name>Yijing Zeng</name>
+    </author>
+    <author>
+      <name>Hanlei Wu</name>
+    </author>
+    <author>
+      <name>Mingjun Song</name>
+    </author>
+    <author>
+      <name>Suman Banerjee</name>
+    </author>
+  </entry>
+</feed>
