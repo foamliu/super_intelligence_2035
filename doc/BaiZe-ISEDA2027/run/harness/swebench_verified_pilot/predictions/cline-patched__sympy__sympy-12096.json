@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-12096",
+    "model_name_or_path": "cline-patched-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/core/function.py b/sympy/core/function.py\nindex 1b8005e..96edf01 100644\n--- a/sympy/core/function.py\n+++ b/sympy/core/function.py\n@@ -507,7 +507,10 @@ def _eval_evalf(self, prec):\n             func = getattr(mpmath, fname)\n         except (AttributeError, KeyError):\n             try:\n-                return Float(self._imp_(*self.args), prec)\n+                result = self._imp_(*self.args)\n+                if isinstance(result, Expr):\n+                    result = result.evalf(prec)\n+                return Float(result, prec)\n             except (AttributeError, TypeError, ValueError):\n                 return\n \ndiff --git a/sympy/core/tests/test_evalf.py b/sympy/core/tests/test_evalf.py\nindex 1d63f9e..593ebe2 100644\n--- a/sympy/core/tests/test_evalf.py\n+++ b/sympy/core/tests/test_evalf.py\n@@ -325,6 +325,12 @@ def test_implemented_function_evalf():\n     assert str(f(2)) == \"f(2)\"\n     assert f(2).evalf() == 3\n     assert f(x).evalf() == f(x)\n+    # check that nested implemented functions are evaluated recursively\n+    g = implemented_function('g', lambda x: 2*x)\n+    h = implemented_function('h', lambda x: x**2)\n+    assert h(g(2)).evalf() == 16\n+    assert g(h(2)).evalf() == 8\n+    assert h(g(x)).evalf() == h(g(x))\n     del f._imp_     # XXX: due to caching _imp_ would influence all other tests\n \n \n"
+  }
+]
