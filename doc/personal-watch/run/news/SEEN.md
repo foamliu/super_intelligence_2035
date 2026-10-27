@@ -1309,3 +1309,13 @@
 | 2026-10-27 | 附录 A21：云南蝙蝠洞确认全球唯一经分子证据确认的丹尼索瓦人桡骨 BFD771（付巧妹团队 · 《自然》2026-09），与 AI 无关不收 | IT之家 `1/018/603` | https://www.ithome.com/1/018/603.htm |
 | 2026-10-27 | 附录 A22：钛媒体《AI 排行榜信用重估》分析稿（BenchLM 710 基准中 105 个饱和 · Surge AI 三份新评测通过率），分析体不收、数字不进新闻区 | 钛媒体 `8183550` | https://www.tmtpost.com/8183550.html |
 | 2026-10-27 | 附录 A23：老干妈两帖（辟谣帖 156 轮已入账；「瓶价改 15 块」为自媒体转述）· 「国务院定调减缓 AI 应用」帖仅标题层未核 · 南宁网约车/柳州智驾个案（司法个案）⇒ 均不收 | 头条站点流 | https://www.toutiao.com/w/1880170566846475/ |
+| 2026-10-28 | Anthropic CEO 阿莫德伊访谈：称「编码会最先被 AI 完全取代」、区分 Coding 与 Software Engineering，提出「人类守 5%/AI 担 95%」概括（新智元编译稿转载） | IT之家 `1/018/708` | https://www.ithome.com/1/018/708.htm |
+| 2026-10-28 | Meta AI 负责人罗希特·帕特尔离职创业，办原生 AI 办公软件 Ndoc（目标替代 Office / Workspace，三模块 Stage/Narrative/Model，`.ndoc.html` 拟开源） | IT之家 `1/018/696` | https://www.ithome.com/1/018/696.htm |
+| 2026-10-28 | Anthropic 确认部分销售/HR/IT 内部系统遭访问：Cathedral 称用 AI 智能体、不到 12 小时经第三方软件漏洞进入；客户对话/模型权重未受影响 | IT之家 `1/018/683` | https://www.ithome.com/1/018/683.htm |
+| 2026-10-28 | AMD 向 Meta 股权发行投资 10 亿美元（约 66.84 亿元），覆盖 EPYC/Instinct/ROCm；Helios 已在 Meta 安装测试，目标吉瓦级 AI 基础设施 | IT之家 `1/018/676` | https://www.ithome.com/1/018/676.htm |
+| 2026-10-28 | 苹果 Apple 创作坊更新：Pixelmator Pro/Keynote/Pages/Numbers 多项 AI 功能 Beta，FCP 内置 MotionVFX，Logic Pro 增 Music Understanding，11 月免费上线 | IT之家 `1/018/666` | https://www.ithome.com/1/018/666.htm |
+| 2026-10-28 | 上海「星枢计划」三阶段部署（2026-27 打通天地双算链路 32POPS；2028-30 发 50 算力+100 边缘卫星；2031-32 达百万级 TOPS、产值目标破千亿元）· 均属规划指标 | IT之家 `1/018/535` | https://www.ithome.com/1/018/535.htm |
+| 2026-10-28 | 附录 A1：「字节时间」辟谣——抖音副总裁李亮回应；红果短剧否认「年化收入逼近 400 亿/420-450 亿」，称网传机构/行业/专家数据非官方 | IT之家 `1/018/668` `1/018/649` | https://www.ithome.com/1/018/649.htm |
+| 2026-10-28 | 附录 A2：爱范儿「谷歌 Genie 4 发布」体验稿（第一人称解读、未取官方公告）⇒ 非报道体不收，留线索 | 爱范儿 `1686234` | https://www.ifanr.com/1686234 |
+| 2026-10-28 | 附录 A3：重复项说明——丹尼索瓦人桡骨（`1/018/603`）已于 10-27 第 160 轮登记为附录 A21，本轮不重复计数 | IT之家 `1/018/603` | https://www.ithome.com/1/018/603.htm |
+| 2026-10-28 | 附录 A4：DMA 外挂案（司法个案不收）· 艺卓显示器 · 宁德时代固态电池 · Surface 显示争议 · 恩智浦/希捷/罗技/Visa/波音等财报 ⇒ 均不收 | IT之家 `1/018/691` 等 | https://www.ithome.com/1/018/691.htm |
