@@ -1,6 +1,65 @@
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
-<!-- RUN_ID: 223 | TARGET: 29 -->
-## RUN_ID 223 — 🚨 pretrain 已约 14h 无产出（#809 卡在 10-27 20:52）→ 查 loop/训练进程/GPU/内存
+<!-- RUN_ID: 224 | TARGET: 29 -->
+## RUN_ID 224 — 🔄 重启 pretrain loop（用户直令）+ 先修 .29 swappiness=60→0
+
+```bash
+set -u
+echo "=== RUN_ID 224 | restart pretrain loop | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+T="$GR/doc/BaiZe-ISEDA2027/run"
+LOOP="$T/baize_pretrain_loop.sh"
+LOG=/tmp/baize_pretrain_loop.log
+
+echo "[0] 前置检查"
+cd "$GR" || exit 1
+[ -f "$LOOP" ] && echo "  loop 脚本: $LOOP ($(stat -c %s "$LOOP") B)" || { echo "  ❌ loop 脚本不存在，中止"; exit 1; }
+echo "  git HEAD=$(git rev-parse --short HEAD 2>/dev/null)"
+echo "  GPU 现状:"
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/    .29 /'
+
+echo "[1] 修 .29 swappiness 60→0（与 .12 对齐，消除 swap thrashing）"
+echo "  before: $(cat /proc/sys/vm/swappiness)"
+if echo 0 > /proc/sys/vm/swappiness 2>/dev/null; then
+  echo "  ✅ 已设为: $(cat /proc/sys/vm/swappiness)"
+else
+  echo "  ⚠️ 无权限写（需 root），不改，继续重启 loop"
+fi
+echo "  swap: $(free -m | awk '/Swap:/{printf "used=%dMB free=%dMB",$3,$4}')"
+
+echo "[2] 停掉残留 loop（精确匹配，不用裸 pkill -f 防误杀自身）"
+for p in $(pgrep -f 'bash .*baize_pretrain_loop\.sh' 2>/dev/null); do
+  [ "$p" = "$$" ] && continue
+  echo "  SIGTERM old loop pid=$p"
+  kill -TERM "$p" 2>/dev/null || true
+done
+sleep 2
+echo "  残留数: $(pgrep -cf 'bash .*baize_pretrain_loop\.sh' 2>/dev/null || echo 0)"
+
+echo "[3] 备份旧日志"
+if [ -f "$LOG" ]; then
+  B="${LOG}.prev_$(date +%m%d_%H%M)"
+  mv "$LOG" "$B" && echo "  已备份 -> $B"
+fi
+
+echo "[4] setsid -f 脱离进程组启动（防 SIGHUP/工具超时误杀）"
+cd "$T" || exit 1
+setsid -f nohup bash "$LOOP" > "$LOG" 2>&1 < /dev/null
+sleep 6
+
+echo "[5] 验证"
+ps -eo pid=,ppid=,sid=,etimes=,stat=,args= 2>/dev/null | grep 'baize_pretrain_loop\.sh' | grep -v grep | cut -c1-160 | sed 's/^/    /'
+NP=$(pgrep -cf 'bash .*baize_pretrain_loop\.sh' 2>/dev/null || echo 0)
+echo "  loop 进程数 = $NP  ($([ "$NP" -ge 1 ] && echo '✅ 存活' || echo '❌ 未起来'))"
+echo "  日志前 15 行:"
+head -15 "$LOG" 2>/dev/null | sed 's/^/    /'
+echo "  日志大小: $(stat -c %s "$LOG" 2>/dev/null) B"
+
+echo "[6] 任务书第一条指令"
+grep -n '^### ' "$T/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null | head -3 | sed 's/^/    /'
+grep -c '归档与执行纪律' "$T/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null | sed 's/^/    纪律块命中: /'
+
+echo "=== DONE 224 ==="
+```
 
 ```bash
 set -u
