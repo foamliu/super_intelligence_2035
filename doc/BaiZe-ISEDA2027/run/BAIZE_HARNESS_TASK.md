@@ -15,18 +15,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### [运维令] 2026-10-27 08:3x（**TB 横评出报告 + SWE-bench Verified 20 条试点启动**）· 用户直令 · 最高优先
-
-> 用户原话：「harness：TB 横评出报告，SWE-bench Verified 20条试点启动」
-
-**① TB 横评最终中文 HTML 报告**
-- 汇总 Terminal-Bench 横评全结果，输出 `reports/report_harness_terminalbench_7way_final_zh.html`（自包含中文 HTML，遵守命名规程正文一律写 `cline`）。
-- 必含：7 路主线 7×89 **全 FIN 87/87** + 逐题配对 + McNemar 精确检验 + 复跑结果（hermes 25/87=28.7% resolve[条件通过率 56.8%]·claude-code 20/87=23.0%[30.3%]，旧均 0%）+ codex err 归因（59=429 限流→RuntimeError 等，非适配器可修）+ 三路 0% 根因与修复对照。
-- 数字溯源（`summary_rerun_20261025.json` / `jobs_*` / `terminalbench_kimi_k2.6_results.json`）；commit `harness report:`。
-
-**② SWE-bench Verified 20 条试点启动**
-- 按 R518 就绪核查报告（`harness/` 下 11323B 那份）的方案：**先 cline + hermes 各 smoke 1 条验通 → 再各跑 20 条试点 → 报初步 resolve 结果**（三列 resolved/failed/infra-or-quota + 结论），供运维放大决策。
-- SWE-bench Verified 已下载 500/500（进度文件 `harness/swebench_verified_pull_progress.txt` DONE 10-26 18:23）；🚫 不得跑全量，严格停在 20 条试点并报数。commit `harness ha:`。
+### [已归档] §运维令·2026-10-27 08:3x（TB 横评出报告 + SWE-bench Verified 20 条试点启动）**已完成**（part① R527 交付 `reports/report_harness_terminalbench_7way_final_zh.html` 14975B：7路全FIN 87/87 + 逐题配对 + McNemar + 复跑 hermes 25/87=28.7%[条件通过率56.8%]·claude-code 20/87=23.0%[30.3%] 旧均0% + codex err归因(59=429限流→RuntimeError 非适配器可修) + 三路0%根因与修复对照，数字溯源 summary_rerun_20261025.json/jobs_*/terminalbench_kimi_k2.6_results.json；part② R539 交付 `reports/report_harness_swebench_verified_pilot20_zh.html` 13101B：先smoke再20条试点，cline 13/20=65.0%·hermes 11/20=55.0%，三列 resolved/failed/infra-or-quota 完整，未跑全量；commit 45f4265e3 @10-27 20:58；本轮R540已验两报告含全部必含要素）→ 原文归档到 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
 
 ### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告·中文 HTML）**已完成**（R509 首版/R516 终版交付：`reports/report_harness_recent_work_zh.html` 22988B，5 节 4 必覆盖全到位，0 `<script>`/0 外链/0 `cline-patched`，数字全溯源到文件:行；复跑两路均 FINISHED hermes 56.8%·claude-code 30.3% 旧均 0%；commit 7c9583236 @10-26 20:00）→ 原文归档到 `run/ARCHIVE_OPERATOR_HARNESS.md`。需要时再读。
 

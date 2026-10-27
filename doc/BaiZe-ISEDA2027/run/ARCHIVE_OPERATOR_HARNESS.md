@@ -1474,3 +1474,19 @@ docker pull hello-world          # 必须成功
 - ✅ 报告里必须同时给出：**每 harness 逐题结果 + 汇总 + McNemar 配对检验 + "15/89 非全量"声明**
 
 ---ARCHIVE BOUNDARY 2026-10-24 R481---
+
+---ARCHIVE BOUNDARY 2026-10-27 R540---
+
+### [运维令] 2026-10-27 08:3x（**TB 横评出报告 + SWE-bench Verified 20 条试点启动**）· 用户直令 · 最高优先
+
+> 用户原话：「harness：TB 横评出报告，SWE-bench Verified 20条试点启动」
+
+**① TB 横评最终中文 HTML 报告**
+- 汇总 Terminal-Bench 横评全结果，输出 `reports/report_harness_terminalbench_7way_final_zh.html`（自包含中文 HTML，遵守命名规程正文一律写 `cline`）。
+- 必含：7 路主线 7×89 **全 FIN 87/87** + 逐题配对 + McNemar 精确检验 + 复跑结果（hermes 25/87=28.7% resolve[条件通过率 56.8%]·claude-code 20/87=23.0%[30.3%]，旧均 0%）+ codex err 归因（59=429 限流→RuntimeError 等，非适配器可修）+ 三路 0% 根因与修复对照。
+- 数字溯源（`summary_rerun_20261025.json` / `jobs_*` / `terminalbench_kimi_k2.6_results.json`）；commit `harness report:`。
+
+**② SWE-bench Verified 20 条试点启动**
+- 按 R518 就绪核查报告（`harness/` 下 11323B 那份）的方案：**先 cline + hermes 各 smoke 1 条验通 → 再各跑 20 条试点 → 报初步 resolve 结果**（三列 resolved/failed/infra-or-quota + 结论），供运维放大决策。
+- SWE-bench Verified 已下载 500/500（进度文件 `harness/swebench_verified_pull_progress.txt` DONE 10-26 18:23）；🚫 不得跑全量，严格停在 20 条试点并报数。commit `harness ha:`。
+
