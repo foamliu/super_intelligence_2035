@@ -21,15 +21,15 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 .foot{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}
 </style></head><body>
 <h1>SWE-bench Verified · 20 条试点横评报告</h1>
-<div class="meta">生成时间：2026-10-27 20:49 · 任务令：2026-10-27 08:3x part②（用户直令：SWE-bench Verified 20 条试点启动）<br>
+<div class="meta">生成时间：2026-10-27 20:54 · 任务令：2026-10-27 08:3x part②（用户直令：SWE-bench Verified 20 条试点启动）<br>
 模型：kimi-k2.6-cloud（cline 经 secrets.json / hermes 经 gw_proxy 9090）· 评测集：SWE-bench Verified 500 题中抽取 20 条（5 repo × 4 题）<br>
 评测脚本：官方 swebench v5.0.2 docker harness（<code>sg docker</code>，max_workers 4，timeout 1800s）· 命名规程：正文一律写 <code>cline</code>。</div>
-<div class="warn">⚠️ eval 阶段尚未完成（eval_*.json 仍为 smoke 旧产物或缺失）。predict/eval 全部完成后请重新运行本生成器以获得最终三列结果。</div>
+
 <div class="tldr"><h3 style="margin-top:0">TL;DR</h3>
 <p>两路 harness 各跑 20 条 SWE-bench Verified 试点（同一 20 题集 / 同一模型 kimi-k2.6-cloud / 同一 timeout 1800s / 同一官方 docker 评测）：</p>
 <ul>
 <li><b>cline</b>：resolve <b>13/20</b>（65.0%）；resolved 13 · failed 3 · infra-or-quota 2 · 未产出 patch 2（eval 覆盖 16 条）。</li>
-<li><b>hermes</b>：resolve <b>0/20</b>（0.0%）；resolved 0 · failed 0 · infra-or-quota 5 · 未产出 patch 2（eval 覆盖 0 条） · <b>eval-pending 13</b>。</li>
+<li><b>hermes</b>：resolve <b>11/20</b>（55.0%）；resolved 11 · failed 2 · infra-or-quota 5 · 未产出 patch 2（eval 覆盖 13 条）。</li>
 <li>⚠️ 严格遵守任务令「停在 20 条试点」，<b>未跑全量 500</b>。本结果供运维放大决策。</li>
 </ul></div>
 <h2>一、评测口径</h2><div class="card"><table>
@@ -47,7 +47,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <tr><th>harness</th><th>predict 产出 patch</th><th>eval 覆盖</th>
 <th class="pass">resolved</th><th class="fail">failed</th><th class="infra">infra-or-quota</th><th class="evalpend">eval-pending</th><th>resolve 率（/20）</th></tr>
 <tr><td class="l">cline</td><td>16/20</td><td>16</td><td class="pass">13</td><td class="fail">3</td><td class="infra">2</td><td class="evalpend">0</td><td>65.0%</td></tr>
-<tr><td class="l">hermes</td><td>13/20</td><td>0</td><td class="pass">0</td><td class="fail">0</td><td class="infra">5</td><td class="evalpend">13</td><td>0.0%</td></tr>
+<tr><td class="l">hermes</td><td>13/20</td><td>13</td><td class="pass">11</td><td class="fail">2</td><td class="infra">5</td><td class="evalpend">0</td><td>55.0%</td></tr>
 </table><p class="ev">数据溯源：<code>swebench_verified_pilot/reports/eval_cline-patched.json</code> · <code>reports/eval_hermes.json</code> · <code>reports/predict_*.json</code> · <code>predictions/{harness}__{iid}.json</code>。</p></div>
 <h2>三-1、cline 逐题明细</h2><div class="card"><table><tr><th>instance_id</th><th>repo</th><th>分类</th><th>patch(B)</th><th>wall(s)</th><th>难度</th></tr>
 <tr><td class="l">astropy__astropy-12907</td><td>astropy/astropy</td><td class="pass">resolved</td><td>3288</td><td>185.2</td><td>15 min - 1 hour</td></tr>
@@ -72,34 +72,34 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <tr><td class="l">scikit-learn__scikit-learn-11310</td><td>scikit-learn/scikit-learn</td><td class="pass">resolved</td><td>8379</td><td>482.6</td><td>&lt;15 min fix</td></tr>
 </table></div>
 <h2>三-2、hermes 逐题明细</h2><div class="card"><table><tr><th>instance_id</th><th>repo</th><th>分类</th><th>patch(B)</th><th>wall(s)</th><th>难度</th></tr>
-<tr><td class="l">astropy__astropy-12907</td><td>astropy/astropy</td><td class="evalpend">eval-pending</td><td>8368</td><td>410.4</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">astropy__astropy-13033</td><td>astropy/astropy</td><td class="evalpend">eval-pending</td><td>9206</td><td>609.7</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">astropy__astropy-13236</td><td>astropy/astropy</td><td class="evalpend">eval-pending</td><td>4477</td><td>670.2</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">astropy__astropy-13398</td><td>astropy/astropy</td><td class="evalpend">eval-pending</td><td>29968</td><td>686.1</td><td>1-4 hours</td></tr>
-<tr><td class="l">django__django-10097</td><td>django/django</td><td class="evalpend">eval-pending</td><td>1913</td><td>296.2</td><td>&lt;15 min fix</td></tr>
+<tr><td class="l">astropy__astropy-12907</td><td>astropy/astropy</td><td class="pass">resolved</td><td>8368</td><td>410.4</td><td>15 min - 1 hour</td></tr>
+<tr><td class="l">astropy__astropy-13033</td><td>astropy/astropy</td><td class="fail">failed</td><td>9206</td><td>609.7</td><td>15 min - 1 hour</td></tr>
+<tr><td class="l">astropy__astropy-13236</td><td>astropy/astropy</td><td class="pass">resolved</td><td>4477</td><td>670.2</td><td>15 min - 1 hour</td></tr>
+<tr><td class="l">astropy__astropy-13398</td><td>astropy/astropy</td><td class="pass">resolved</td><td>29968</td><td>686.1</td><td>1-4 hours</td></tr>
+<tr><td class="l">django__django-10097</td><td>django/django</td><td class="fail">failed</td><td>1913</td><td>296.2</td><td>&lt;15 min fix</td></tr>
 <tr><td class="l">django__django-10554</td><td>django/django</td><td class="nopatch">no-patch</td><td>0</td><td>1800.5</td><td>1-4 hours</td></tr>
-<tr><td class="l">django__django-10880</td><td>django/django</td><td class="evalpend">eval-pending</td><td>635</td><td>574.2</td><td>&lt;15 min fix</td></tr>
-<tr><td class="l">django__django-10914</td><td>django/django</td><td class="evalpend">eval-pending</td><td>5919</td><td>1084.1</td><td>&lt;15 min fix</td></tr>
-<tr><td class="l">sympy__sympy-11618</td><td>sympy/sympy</td><td class="evalpend">eval-pending</td><td>10452</td><td>488.7</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">sympy__sympy-12096</td><td>sympy/sympy</td><td class="evalpend">eval-pending</td><td>1934</td><td>1185.4</td><td>&lt;15 min fix</td></tr>
+<tr><td class="l">django__django-10880</td><td>django/django</td><td class="pass">resolved</td><td>635</td><td>574.2</td><td>&lt;15 min fix</td></tr>
+<tr><td class="l">django__django-10914</td><td>django/django</td><td class="pass">resolved</td><td>5919</td><td>1084.1</td><td>&lt;15 min fix</td></tr>
+<tr><td class="l">sympy__sympy-11618</td><td>sympy/sympy</td><td class="pass">resolved</td><td>10452</td><td>488.7</td><td>15 min - 1 hour</td></tr>
+<tr><td class="l">sympy__sympy-12096</td><td>sympy/sympy</td><td class="pass">resolved</td><td>1934</td><td>1185.4</td><td>&lt;15 min fix</td></tr>
 <tr><td class="l">sympy__sympy-12419</td><td>sympy/sympy</td><td class="nopatch">no-patch</td><td>0</td><td>1800.3</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">sympy__sympy-12481</td><td>sympy/sympy</td><td class="evalpend">eval-pending</td><td>4342</td><td>1648.8</td><td>&lt;15 min fix</td></tr>
+<tr><td class="l">sympy__sympy-12481</td><td>sympy/sympy</td><td class="pass">resolved</td><td>4342</td><td>1648.8</td><td>&lt;15 min fix</td></tr>
 <tr><td class="l">matplotlib__matplotlib-13989</td><td>matplotlib/matplotlib</td><td class="infra">infra-or-quota</td><td>0</td><td>—</td><td>&lt;15 min fix</td></tr>
 <tr><td class="l">matplotlib__matplotlib-14623</td><td>matplotlib/matplotlib</td><td class="infra">infra-or-quota</td><td>0</td><td>—</td><td>15 min - 1 hour</td></tr>
 <tr><td class="l">matplotlib__matplotlib-20488</td><td>matplotlib/matplotlib</td><td class="infra">infra-or-quota</td><td>0</td><td>—</td><td>15 min - 1 hour</td></tr>
 <tr><td class="l">matplotlib__matplotlib-20676</td><td>matplotlib/matplotlib</td><td class="infra">infra-or-quota</td><td>0</td><td>—</td><td>&lt;15 min fix</td></tr>
-<tr><td class="l">scikit-learn__scikit-learn-10297</td><td>scikit-learn/scikit-learn</td><td class="evalpend">eval-pending</td><td>926</td><td>367.3</td><td>15 min - 1 hour</td></tr>
+<tr><td class="l">scikit-learn__scikit-learn-10297</td><td>scikit-learn/scikit-learn</td><td class="pass">resolved</td><td>926</td><td>367.3</td><td>15 min - 1 hour</td></tr>
 <tr><td class="l">scikit-learn__scikit-learn-10844</td><td>scikit-learn/scikit-learn</td><td class="infra">infra-or-quota</td><td>0</td><td>—</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">scikit-learn__scikit-learn-10908</td><td>scikit-learn/scikit-learn</td><td class="evalpend">eval-pending</td><td>2084</td><td>312.6</td><td>15 min - 1 hour</td></tr>
-<tr><td class="l">scikit-learn__scikit-learn-11310</td><td>scikit-learn/scikit-learn</td><td class="evalpend">eval-pending</td><td>4534</td><td>1559.3</td><td>&lt;15 min fix</td></tr>
+<tr><td class="l">scikit-learn__scikit-learn-10908</td><td>scikit-learn/scikit-learn</td><td class="pass">resolved</td><td>2084</td><td>312.6</td><td>15 min - 1 hour</td></tr>
+<tr><td class="l">scikit-learn__scikit-learn-11310</td><td>scikit-learn/scikit-learn</td><td class="pass">resolved</td><td>4534</td><td>1559.3</td><td>&lt;15 min fix</td></tr>
 </table></div>
-<h2>四、结论与放大建议</h2><div class="card"><p>cline eval 已完成：resolve 13/20（65.0%），resolved 13 · failed 3 · infra-or-quota 2。hermes eval 仍在进行（predict 已产出 13/20 patch，13 条待 eval），编排器自动 eval 完成后重新运行本生成器获得最终三列结果。</p>
+<h2>四、结论与放大建议</h2><div class="card"><p>初步结果：cline resolve 13/20（65.0%），hermes resolve 11/20（55.0%）。两路均产出有效 patch 且 eval 通过率非零 → pipeline 可用。建议运维据此决定是否放大到 50/100 条或扩到 7 路。⚠️ matplotlib 13989/14623 等大仓 fetch 易超时（900s），放大时建议加大 fetch timeout 或用 partial-clone。</p>
 <p><b>已知 infra 注意点</b>：</p><ul>
 <li>matplotlib / 大型仓 <code>git fetch</code> 全量拉取可能 &gt;900s 超时 → 该题判 infra-or-quota（非模型能力）。</li>
 <li>agent CLI（cline/hermes）必须剥外网代理（否则本地 gw_proxy 请求被 Squid 拒绝，R529）。</li>
 <li>eval 经 <code>sg docker</code> 切组运行；docker 镜像 500/500 已预拉。</li>
 <li>严格遵守任务令：停在 20 条试点，🚫 不得跑全量 500。</li>
 </ul></div>
-<div class="foot">报告生成器：harness/gen_report_swebench_verified_pilot20_zh.py · 数据目录：harness/swebench_verified_pilot/ · 生成时间：2026-10-27 20:49<br>
+<div class="foot">报告生成器：harness/gen_report_swebench_verified_pilot20_zh.py · 数据目录：harness/swebench_verified_pilot/ · 生成时间：2026-10-27 20:54<br>
 溯源文件：verified_20_ids.txt（20 题清单）· enriched_20.json（infra 字段补全）· reports/eval_*.json · reports/predict_*.json · predictions/ · logs/</div>
 </body></html>

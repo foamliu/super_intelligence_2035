@@ -1,17 +1,17 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 📊 进度快照
 
 ```
-PHASE:        H-A SWE-bench Verified 20条试点·hermes eval进行中(R538): ①运维令08:3x part①TB最终报告已交付✅(doc/BaiZe-ISEDA2027/reports/report_harness_terminalbench_7way_final_zh.html 14975B,commit86a556482) ②part②pilot20: cline eval DONE(13/20=65% resolved,3 failed,2 infra,2 no-patch,eval n=16)·hermes predict DONE(20/20 attempted:13 patch-produced,2 no-patch,5 infra)·hermes eval RUNNING(sg docker swebench run_evaluation,13 instances,max_workers4,run_id=verified_pilot_hermes,~20:47起,ETA~5min)·报告生成器已修(加eval-pending类,修smoke eval误分类,eval覆盖=resolved+failed)·interim报告13324B已生成(cline65%·hermes eval-pending13)·后台watcher PID3928546监控eval_hermes.json变非smoke→自动regen最终HTML+写.hermes_eval_done marker. 运维令part②最终报告待hermes eval完→WAITING=0.
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R496全7路FIN87/87+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518就绪核查✅(11323B)·R519~R526活性复检✅·R527 TB 7way最终报告✅(14975B,commit86a556482)·R528编排器✅·R529/R530 smoke✅·R531 pilot20重启✅·R532 part①合规复核✅·R533-R537 pilot20进度巡检✅·R538 cline eval DONE(13/20=65%)+hermes eval启动+报告生成器修eval-pending+interim报告13324B✅
-当前动作:     R538 part②交付推进. cline eval已完成(eval_cline-patched.json n=16:13 resolved 3 failed,resolve 13/20=65%). hermes predict完成(predict_hermes.json 20/20:13 patch-produced 2 no-patch 5 infra),hermes eval正在跑(swebench docker,13题,max_workers4,run_id=verified_pilot_hermes,~20:47起,ETA~5min). 报告生成器gen_report_swebench_verified_pilot20_zh.py已修:加eval-pending分类(eval未跑的patch-produced不误判failed/resolved)+eval覆盖=resolved+failed(不含predict-infra)+conclusion按harness分别报告. interim报告13324B已生成. 后台watcher(PID3928546,ppid=1)监控eval_hermes.json→自动regen最终HTML+写marker.
-下一步:       ①下轮唤醒查.hermes_eval_done marker→若DONE:验最终报告(两路三列,0script/0外链/正文cline)→拷到doc/BaiZe-ISEDA2027/reports/→commit harness ha:→交付part②→WAITING=1; ②若marker TIMEOUT/未就绪:查eval进程+eval_hermes.json+手动regen,WAITING=0.
-阻塞:         无. hermes eval正在跑(13题docker eval,~5min). part②最终报告待eval完. 运维令part②未交付→WAITING=0.
+PHASE:        H-A SWE-bench Verified 20条试点·全部交付✅(R539): ①运维令08:3x part①TB最终报告✅(doc/BaiZe-ISEDA2027/reports/report_harness_terminalbench_7way_final_zh.html 14975B,commit86a556482) ②part②pilot20最终报告✅(doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_pilot20_zh.html 13101B): cline 13/20=65.0%(resolved13 failed3 infra2 no-patch2 eval覆盖16)·hermes 11/20=55.0%(resolved11 failed2 infra5 no-patch2 eval覆盖13)·两路eval均DONE(eval-pending=0)·三列表(resolved/failed/infra-or-quota)完整·0script/0外链/cline-patched仅口径2处✅. 运维令part①②均已交付→WAITING=1.
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R496全7路FIN87/87+McNemar✅·R499/R510 codex err✅·R509/R516报告✅·R517归档✅·R518就绪核查✅(11323B)·R519~R526活性复检✅·R527 TB 7way最终报告✅(14975B,commit86a556482)·R528编排器✅·R529/R530 smoke✅·R531 pilot20重启✅·R532 part①合规复核✅·R533-R537 pilot20进度巡检✅·R538 cline eval DONE+hermes eval启动+报告生成器修eval-pending+interim报告✅·R539 hermes eval DONE(11/20=55%)+最终报告13101B交付+拷贝reports/+合规核验✅
+当前动作:     R539 运维令08:3x part②最终交付. hermes eval于20:54:51完成(watcher自动检测eval_hermes.json变非smoke→自动regen最终HTML 13101B). 最终结果:cline 13/20=65.0%(resolved13 failed3 infra2 no-patch2)·hermes 11/20=55.0%(resolved11 failed2 infra5 no-patch2). 两路eval均DONE(eval-pending=0). 三列表(resolved/failed/infra-or-quota)完整. 合规核验:0script/0外链/cline-patched仅口径2处. 最终报告已拷贝到doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_pilot20_zh.html(13101B). 运维令part①②均已交付→WAITING=1.
+下一步:       ①运维令part①②均已交付,等待新指令; ②若运维要求扩大样本(20→更多)或补充分析(如per-instance对比/McNemar),按指令执行; ③保持watcher/编排器已退出(无残留进程),报告已入库.
+阻塞:         无. 运维令part①(TB 7way最终报告)②(pilot20三列报告)均已交付. WAITING=1.
 ERROR_COUNT:  0
-📦 体积：TASK=28394B(28KB) / MEMORY=25193B(25KB)（均≤32KB✓,本轮无归档）
+📦 体积：TASK=28394B(28KB) / MEMORY=~26KB（均≤32KB✓,本轮无归档）
 ```
 
 ### Gen7 pilot 最终结果(7×5=35 trials)
@@ -33,6 +33,8 @@ ERROR_COUNT:  0
 
 ### 本唤醒流水
 [20:40] R538 **运维令08:3x part② pilot20交付推进: cline eval DONE + hermes eval启动 + 报告生成器修eval-pending**. part①复核:TB最终报告在位✅(14975B,commit86a556482). part②:①cline编排器已退出→predict 20/20(16 patch-produced 2 no-patch 2 infra)→eval DONE(eval_cline-patched.json n=16:**13 resolved 3 failed**,resolve **13/20=65%**;3 failed=astropy-13033/13398/django-10097). ②hermes编排器predict完成(predict_hermes.json 20/20:13 patch-produced 2 no-patch 5 infra)→eval启动(sg docker swebench run_evaluation,13 instances,max_workers4,run_id=verified_pilot_hermes,PID3749149,~20:47起,ETA~5min;eval_hermes.json仍smoke stub待覆盖). ③报告生成器gen_report_swebench_verified_pilot20_zh.py已修:加eval-pending分类(smoke/missing eval时patch-produced→eval-pending不误判failed/resolved)+summary加eval-pending列+eval覆盖=resolved+failed(不含predict-infra)+conclusion按harness分别报告. ④interim报告13324B已生成(cline 13/20=65%·hermes eval-pending13 0%·0script/0外链/cline-patched仅口径2处). ⑤后台watcher PID3928546(ppid=1,setsid)监控eval_hermes.json变非smoke→自动regen最终HTML+写.hermes_eval_done marker. **判据自检**:运维令part②(三列报告)未交付(hermes eval仍在跑)→WAITING=0(60s后再唤醒,下轮查marker→交付最终报告). 体积:TASK=28394B/MEMORY=25193B均≤32KB✓.
+[20:55] R539 **运维令08:3x part②最终交付：hermes eval DONE → 最终报告 13101B 交付✅**. watcher(PID3928546)于20:54:51检测到eval_hermes.json变非smoke(run_id=verified_pilot_hermes,n=13)→自动regen最终HTML(13101B). eval_hermes.json实绩:**11 resolved,2 failed**(resolved:astropy-12907/13236/13398,django-10880/10914,sympy-11618/12096/12481,sklearn-10297/10908/11310;failed:astropy-13033,django-10097). **最终结果**:cline 13/20=65.0%(resolved13 failed3 infra2 no-patch2 eval覆盖16)·hermes 11/20=55.0%(resolved11 failed2 infra5 no-patch2 eval覆盖13)·两路eval均DONE(eval-pending=0). 合规核验:0script/0外链(无href)/cline-patched仅口径2处. 最终报告已拷贝到doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_pilot20_zh.html(13101B). 运维令part①(TB 7way 14975B)②(pilot20三列 13101B)均已交付→**WAITING=1**. 体积:TASK=28394B/MEMORY=~26KB均≤32KB✓.
+
 
 [19:55] R537 **运维令08:3x part② pilot20进度巡检(防判死心跳)**. part①复核:TB最终报告已核验在位✅(doc/BaiZe-ISEDA2027/reports/report_harness_terminalbench_7way_final_zh.html 14975B,commit86a556482). part②:两路编排器alive(cline PID803083/hermes PID803086,etimes~16465s~4.6h,ppid=1). predict进度(以predictions/*.json为准)cline 17/20(在scikit-learn-11310 git-fetch etimes537s;matplotlib13989/14623已丢=git-fetch-timeout)·hermes 13/20(astropy4/django4/sympy4/sklearn10297完19:49;matplotlib×4全丢=git-fetch-timeout;正在fetch大仓pack_header=2,276141). ⚠️infra共性:matplotlib大仓经proxy全量fetch>900s易超时,两路均丢matplotlib题(非harness差异=infra). 日志stdout缓冲只flush5行但prediction文件持续落地. cline predict ETA~20:10→自动eval~1-2h;hermes predict ETA~20:30-21:00→eval~1-2h. 报告生成器就绪(已测). **判据自检**:运维令part②(三列报告)未交付→WAITING=0(60s后再唤醒巡检). 体积实测见收尾.
 
