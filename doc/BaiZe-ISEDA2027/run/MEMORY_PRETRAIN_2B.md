@@ -1,8 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-27 08:1x #803：🔴 **#802 S1 三崩于 DataLoader OOM（num_workers=2→step200）→ 根治 num_workers=0 + 重启**。#802(gbs256/350k/num_workers=2)跑到 **step200**（08:00, loss6.76/0NaN）后崩：rank8/local_rank0(**.29**) `DataLoader worker (pid 348250) exited unexpectedly`（08:02:30）。num_workers=2 两节点均生效（master log `num_workers: 2`），但 RSS 累积更慢仍耗尽 .29 swap(8G/SwapFree=0)→SIGKILL（不可捕获，TORCH_DISTRIBUTED_TORCH_TRACE 无文件）。**吞吐 step50-200 中位=461K=75%×613,992，未达 600K**；step time 递增(8.0→9.7s)=swap thrashing。**OOM 史**：nw8→step70 / nw4→step90 / nw2→step200（均 .29 worker SIGKILL）。**根治**：common.env `BAIZE_NUM_WORKERS 0`（commit 7c5c6ddee）——无 worker 子进程→无 RSS 累积→无 OOM；16K batch 8.4MB/step mmap<10ms vs compute~9s⇒IO<1%；损 prefetch 重叠但消 swap thrashing。**重启**：08:15 S1 gbs256/350k/θ=1e6/num_workers=0（PID3791677/.29），rank0→.12/rank1→.29，数据索引中。**下一步**：查 num_workers=0 生效+首步+0崩溃；step50-200 中位≥600K=22:0x 验收；若<600K⇒「可行上限+结构性原因」改报告 ETA。
-> - 未完成指令：有（22:0x吞吐验收 step50-200≥600K[num_workers=0 跑后判] + DataLoader OOM[num_workers=0 验证中] + lr-decay-shape[Decay]）。WAITING=0（S1 num_workers=0 重启中，60s 后查首步/0崩溃/吞吐）。
+> 🆕 2026-10-27 08:5x #804：🟡 **num_workers=0 已验证无 OOM，但吞吐 ~285–300K=46%×613,992，结构性不达 600K**。S1(gbs256/350k/θ=1e6/nw=0)08:15 起跑→数据索引 ~30min→step~15（08:59）。**验证 PASS**：① `num_workers: 0`（config dump 确认，无 worker 子进程）② `[RoPE] rotary_base(theta)=1000000`（master log 打印，21:3x θ 令运行时确认 PASS）③ loss 7.1–7.4（TB `lm loss` step129–143，0 NaN，下降中）④ 0 崩溃/0 SIGKILL（swap 8G/8G 但主进程 VmSwap=0，765Gi RAM free，stale swap 非当前 run）⑤ DDP `overlap_grad_reduce/overlap_param_gather/use_distributed_optimizer` 均已 ON。**吞吐实测**（step6–15，`Step Time` 每步=tok/step 4,194,304 / step_time）：33→22→20→18→17→16→15→14→13.6→13.9→15.2→14.5s，**末 10 步中位≈289K tok/s（区间 239–309K）**，已平台化，**不向 6.83s(=614K) 收敛**。**归因（22:0x item1）**：613K→289K 差额**主因=数据加载串行**（nw=0 → dataloader 在主进程同步执行，~7s 数据准备 + ~7s 计算串行 = 14s/step；基线 #792 nw=8 时两者重叠=6.83s/step）。计算效率本身正常（533 TFLOP/s/GPU vs 基线 511），GPU 在数据准备期空等。#798 的「固定开销摊薄」假设不适用（gbs256 已在跑，瓶颈是 nw 非 batch）。**OOM 归因（22:0x item6）**：**worker 泄漏，非 cgroup**（`memory.max` 不存在 / cgroup=user.session.scope 无限制 / 2TB RAM 765Gi free → OOM 纯因 worker RSS 累积耗尽 8G swap → SIGKILL；史：nw8→step70/nw4→step90/nw2→step200）。**结构性矛盾**：nw=0 无 OOM 但损 50% 吞吐；nw>0 有吞吐但必崩。**下一步**：① 等 step 50–200 取正式中位（预计 ~289K，不达 600K → 按 22:0x item4 给「可行上限≈300K + 结构性原因=数据加载串行」量化结论 + 改报告 §3 ETA：1.468T/300K=56.6d vs 27.7d@614K）② 探索 nw>0 免 OOM 方案（数据 cache 持久化 / worker 定期重启 / 减索引内存）③ lr-decay-shape exponential 待 Decay 前验证（S1 lr-decay-iters=0 无 decay）④ 首个 ckpt@step2000 后跑 check_rope.py PASS。
+> - 未完成指令：有（22:0x吞吐验收 step50-200≥600K[等 step50，预计不达→给可行上限+改ETA] + DataLoader OOM 归因[已答=worker泄漏非cgroup] + lr-decay-shape[Decay前验证] + check_rope.py[待 ckpt@2000]）。WAITING=0（S1 在跑 step~15，60s 后查 step50 吞吐中位 + 0崩溃）。
+> 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
 > 📦 §#801 流水（06:2x，num_workers=4 修复 .12 未传参 + gbs256 重启→06:59 step90 再崩 OOM）→ daily-memories/2026-10-27.md；**结论**：num_workers=4 只延长到 step90，未消除 swap 耗尽 OOM（#802 定论根因=worker RSS 累积）。需要时再读。
 > 📦 §#800 流水（04:0x，8卡smoke PASS + 16卡S1起跑→04:23崩于rank7 .12 DataLoader OOM）→ daily-memories/2026-10-27.md；smoke 60/60 PASS(0NaN/loss11.55→8.32/72.8GB/θ=1e6)，S1到step70(loss8.68/0NaN)后崩(num_workers=8非4→#801修复)。
@@ -12,16 +13,7 @@ WAITING: 0
 
 > 📦 §#797 流水（2026-10-26 23:05，RoPE θ 修复：选路径(ii) `--rotary-base` CLI + recipe 透传，commit ae3a093，三重验证 PASS；rank15 结论=θ非崩因；data 阻塞 l1_en_hq）已压缩 → daily-memories/2026-10-26.md；**结论**：θ=1e6 修复 commit ae3a093，静态/--help/mock 三重验证 PASS；**#799 已运行时确认 θ=1e6 + 0崩**（DDP 崩因=DETAIL wrapper，非 θ）；data 阻塞已由 #799 解除。需要时再读。
 
-> 📦 §#796 流水（2026-10-26 21:15，S1 rendezvous 成功·数据集构建中——但该 run 21:18 rank15 崩，由 #797 接续）已压缩 → daily-memories/2026-10-26.md；**结论**：checkpoint EOFError 修复(commit `ae964bc`，`mp.Queue` 替代 `Manager().Queue`)+端口固定 `MASTER_PORT=49500`(commit `ac1c790`)；rendezvous 成功但 run 崩于 rank15(见 #797 ③)。需要时再读。
-> 📦 §#794 流水（2026-10-26 16:3x，运维令 15:3x「BaiZe-2B 预训练构想中文 HTML 报告+ETA」闭合）已压缩 → daily-memories/2026-10-26.md；**结论**：report_pretrain_baize2b_pretrain_plan_zh.html 22,270B·三阶段(S1 700k/S2 350k/Decay 20k)·ETA 54.29d·commit 14c56399f。需要时再读。
-> 📦 §#795 流水（2026-10-26 18:04，唤醒复核·全 7 条运维令闭合·无新令）已压缩 → daily-memories/2026-10-26.md；**结论**：git 同步·loop 健康·全指令闭合·WAITING=1。需要时再读。
-
-
-> 📦 §#793 流水（2026-10-26 15:2x，补写 #792 双机实测进吞吐报告 14,208B→20,888B + 13:2x §③报告交付闭合）已压缩 → daily-memories/2026-10-26.md；**结论**：报告真含 16K=613,992/16K CP2=281,970/32K CP2=351,526 + 结论改写 + 删过期待办；13:2x 实验目标早由 #792 满足(FP8 tensorwise+真实数据+关 graph+16K 达标+32K 最优吞吐)；commit `pretrain perf:`。需要时再读。
-
-> 📦 §#792 流水（2026-10-26 12:5x，双机16卡FP8真实数据实测）已压缩 → daily-memories/2026-10-26.md；**结论**：16K CP1 DP16=613,992(600K的102%)；16K CP2=281,970(CP纯亏)；32K CP2=351,526(≈天花板366,788的96%)；commit 594c9cb1b；报告由 #793 补写。需要时再读。
-
-> 📦 §#791 流水（2026-10-26 10:5x，TE FA3 CP 11 处 patch + 16K 8卡300K/32K CP2 8卡183K 首跑通）已归档 → daily-memories/2026-10-26.md；**结论**：FA3 CP API 修复后 32K CP2 首次跑通（8卡183K/0NaN），16K 8卡300K，为 #792 真机16卡铺路。需要时再读。
+> 📦 §#796/#794/#795/#793/#792/#791 流水（2026-10-26）→ daily-memories/2026-10-26.md。**结论汇总**：#796 rendezvous OK 但 rank15 崩(EOFError 修复 ae964bc)；#794 预训练构想报告 22KB+ETA 54d；#795 全令闭合 WAITING=1；#793 吞吐报告补写；#792 双机16K=613,992/32K CP2=351,526(commit 594c9cb1b)；#791 FA3 CP patch+首跑通。需要时再读。
 
 > 📦 §#790 流水（2026-10-26 08:4x，运维令 08:2x 写最近工作报告交付）已归档 → daily-memories/2026-10-26.md；**结论**：report_pretrain_recent_work_zh.html 20,218B 覆盖 decay 修复全历程+seq 扩展排查+两份 decay 报告。需要时再读。
 
