@@ -1,148 +1,259 @@
-<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>BaiZe-2B tok/microbatch 悬崖根因报告（seq8192 掉速 5.5×）</title>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-2B 预训练 seq=8192 吞吐骤降根因分析报告（rev3 · CUDA Graph 顶格停滞）</title>
 <style>
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1200px;margin:0 auto;padding:24px;color:#1a1a1a;background:#fafafa;line-height:1.65}
-h1{font-size:1.55em;border-bottom:3px solid #2563eb;padding-bottom:10px;color:#1e3a8a}
-h2{font-size:1.2em;color:#1e40af;margin-top:2em;border-left:5px solid #2563eb;padding-left:10px}
-h3{font-size:1.05em;color:#334155;margin-top:1.4em}
-table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.9em;background:#fff}
-th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:center}
-th{background:#1e3a8a;color:#fff;font-weight:600}
-tr:nth-child(even){background:#f1f5f9}
-tr.fast{background:#dcfce7;font-weight:600}
-tr.slow{background:#fee2e2;font-weight:600}
-tr.base{background:#fef9c3;font-weight:700}
-.ok{color:#15803d;font-weight:700}.bad{color:#b91c1c;font-weight:700}
-.note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px 16px;margin:12px 0}
-.key{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:12px 16px;margin:12px 0}
-.warn{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px 16px;margin:12px 0}
-.refuted{background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:14px 18px;margin:16px 0;color:#7f1d1d}
-code{background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
-.kpi{display:inline-block;margin:6px 12px 6px 0;padding:8px 14px;background:#fff;border:1px solid #cbd5e1;border-radius:6px}
-.kpi b{font-size:1.25em;color:#1e3a8a}
-.small{font-size:0.85em;color:#64748b}
-.formula{background:#0f172a;color:#e2e8f0;padding:14px 18px;border-radius:6px;font-family:ui-monospace,Consolas,monospace;font-size:0.92em;margin:12px 0;overflow-x:auto}
-</style></head><body>
-<h1>BaiZe-2B（Mamba2-hybrid）tok/microbatch 悬崖根因报告</h1>
-<p class='small'>seq8192 掉速 5.5× 的决定性归因 · 运维令 2026-10-25 23:0x 通宵攻坚交付 · rev1 @ 2026-10-26 00:4x</p>
+  :root{
+    --bg:#0f1419; --panel:#1a2230; --panel2:#22304a; --ink:#e6edf3; --dim:#9fb4c7;
+    --accent:#58a6ff; --good:#3fb950; --bad:#f85149; --warn:#d29922; --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+  header{border-bottom:1px solid #2d3a4f;padding-bottom:20px;margin-bottom:28px}
+  h1{font-size:25px;margin:0 0 8px;color:#fff;letter-spacing:.3px}
+  h2{font-size:20px;margin:34px 0 12px;color:var(--accent);border-left:4px solid var(--accent);padding-left:12px}
+  h3{font-size:16px;margin:22px 0 8px;color:#c9d6e3}
+  .sub{color:var(--dim);font-size:13px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tag{background:var(--panel2);color:var(--accent);padding:3px 10px;border-radius:12px;font-size:12px;font-family:var(--mono)}
+  .revnote{background:#332b16;border:1px solid #6b5419;border-radius:8px;padding:12px 16px;margin:14px 0;color:#e3c98a;font-size:13px}
+  .verdict{background:linear-gradient(135deg,#1d2b1f,#13201a);border:1px solid #2f5d35;border-radius:12px;padding:20px 22px;margin:24px 0}
+  .verdict .lbl{color:var(--good);font-weight:700;font-size:13px;letter-spacing:1px}
+  .verdict .big{color:#fff;font-size:20px;font-weight:700;margin:6px 0 10px}
+  .verdict .big em{color:var(--bad);font-style:normal}
+  .verdict p{margin:6px 0;color:#cdd9e3}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px;background:var(--panel);border-radius:8px;overflow:hidden}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #2d3a4f}
+  th{background:#26344a;color:#fff;font-weight:600;white-space:nowrap}
+  td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+  tr:hover{background:#1e2a3d}
+  tr.fast td{color:#7fd391} tr.slow td{color:#e88a8a}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;font-family:var(--mono)}
+  .pill.conf{background:#1d3a22;color:var(--good)}
+  .pill.fals{background:#3a1d1d;color:var(--bad)}
+  .pill.na{background:#332b16;color:var(--warn)}
+  .callout{background:var(--panel);border-left:4px solid var(--accent);padding:14px 16px;margin:14px 0;border-radius:0 8px 8px 0}
+  .callout.bad{border-left-color:var(--bad)}
+  .callout.good{border-left-color:var(--good)}
+  .callout.warn{border-left-color:var(--warn)}
+  code,kbd{font-family:var(--mono);background:#0b1118;color:#79c0ff;padding:1px 6px;border-radius:4px;font-size:12.5px}
+  pre{background:#0b1118;border:1px solid #2d3a4f;border-radius:8px;padding:14px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;color:#c9d1d9}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .card{background:var(--panel);border:1px solid #2d3a4f;border-radius:10px;padding:16px}
+  .card h4{margin:0 0 8px;color:var(--accent);font-size:14px}
+  ul,ol{padding-left:22px} li{margin:5px 0}
+  .ref{font-size:13px;color:var(--dim);border-top:1px solid #2d3a4f;padding-top:14px;margin-top:30px}
+  .ref li{margin:8px 0}
+  .cliff{display:flex;align-items:flex-end;gap:5px;height:130px;margin:16px 0;padding:12px;background:var(--panel);border-radius:8px}
+  .bar{flex:1;background:linear-gradient(180deg,#3f6d9c,#2a4a73);border-radius:4px 4px 0 0;position:relative;display:flex;align-items:flex-start;justify-content:center;color:#fff;font-size:10px;font-family:var(--mono);padding-top:4px;min-height:8px}
+  .bar.fast{background:linear-gradient(180deg,#3fb950,#2a7a37)}
+  .bar small{position:absolute;bottom:-22px;left:0;right:0;text-align:center;color:var(--dim);font-size:9px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>BaiZe-2B（Mamba2-hybrid）预训练 seq=8192 吞吐骤降 —— 根因分析报告（rev3）</h1>
+  <div class="sub">运维令 2026-10-25 23:0x 通宵攻坚 · 单变量阶梯 tok/microbatch/GPU · 11 格决定性实验锁定显存悬崖</div>
+  <div class="meta">
+    <span class="tag">模型 BaiZe-2B</span>
+    <span class="tag">硬件 2×8 H800（双节点 NVLink+IB）</span>
+    <span class="tag">框架 Megatron-LM</span>
+    <span class="tag">日期 2026-10-26</span>
+    <span class="tag">状态 ✅ 根因锁定 rev3（复测验证）</span>
+  </div>
+</header>
 
-<div class='key'>
-<p style='margin:4px 0;font-weight:700;font-size:1.08em'>🎯 一句话结论（收敛条件 #1）</p>
-<p style='margin:6px 0'><b>驱动变量 = tok/microbatch/GPU（= mbs×seq），与 seq 长度无关、与批几何(gbs/accum)无关。</b>当 <code>tok/mb ≥ 16384</code> 时，单卡峰值激活显存顶到 <b>~80GB HBM 上限</b>（reserved 74GB / max-allocated 69GB，余量仅 ~6GB）；在此显存压力下 PyTorch caching allocator（<code>expandable_segments:True</code>）与 CUDA-graph replay 进入<b>显存受限(memory-bound)</b>执行，实测 GPU 达成算力从 ~830–960 TFLOP/s（~84% MFU）崩到 <b>~125 TFLOP/s（~13% MFU）</b>，每 token 耗时上升 <b>5.4×</b>。<code>tok/mb ≤ 12288</code> 时峰值 &lt;70GB、余量 ≥10GB，维持基线 <b>606,449 tok/s</b>。</p>
+<div class="revnote">⌨ <b>版本说明（rev3 · 2026-10-26 02:0x 复测）</b>：本报告经三版演进。<b>rev1</b>（commit 30650205a）「批几何→GPU 饥饿（H4）」被 <b>rev2</b> 的 11 格单变量阶梯证伪（E2 同小批 605K @ 84% MFU 快）。<b>rev2</b>「tok/mb≥16384→显存顶格 memory-bound」又被 <b>rev3 复测</b>推翻：在同一 tok/mb=16384 配方下仅<b>关掉 <code>--enable-cuda-graph</code></b>，吞吐从 121K 跃升到 <b>561K tok/s（0.93× 8K 满速）</b>、峰值 81GB→75.5GB ⇒ 顶格显存<u>不是</u>带宽瓶颈，5.4× 骤降真因 = <b>CUDA Graph 在 HBM 顶格时的 replay 停滞</b>。复测证据见<a href="#rev3">五·5 节</a>。recompute 复测同时证伪「降激活显存」处方（Mamba2-hybrid 无效，显存不变）。</div>
+
+<a id="rev3"></a>
+<div class="verdict">
+  <div class="lbl">▍ 结论（ROOT CAUSE · rev3 · 已复测验证）</div>
+  <div class="big">5.4× 吞吐骤降的根因是 <em>CUDA Graph 在 HBM 顶格（~81GB）时的 replay 病态停滞</em>，<u>非</u>显存带宽 memory-bound。<b>关掉 <code>--enable-cuda-graph</code></b> 后同一 tok/mb=16384 配方恢复 <em>561K tok/s = 0.93× 8K 满速</em>。</div>
+  <p><b>触发条件</b>：<code>tok/mb = mbs×seq ≥ 16384</code> → 单卡激活显存 ~72GB + graph workspace ~5.5GB = 81GB 顶格（reserved 74GB / 余量 ~6GB）→ graph replay 停滞，per-iter 3,737ms→17,327ms（4.64×）。<u>tok/mb≤12288 时峰值 &lt;70GB，graph 未顶格 → 满速</u>（11 格阶梯已证：4 个 ≤12288 格全快全 &lt;70GB，7 个 16384 格全慢全 81GB）。</p>
+  <p><b>修复（已验证）</b>：tok/mb≥16384 时<b>关 <code>--enable-cuda-graph</code></b> → 561K tok/s、75.5GB、loss 7.57/gnorm 0.58/nan 0 健康，<b>一个 flag</b>。seq=8192 仍用「8K 满速配方」（mbs=1，graph 可开，55GB 未顶格 → 605K）。<b>recompute 对 Mamba2-hybrid 无效</b>（只重算 transformer 层，SSM 激活主体不触及，显存 75.5GB 不变）；CP 为唯一序列切分杠杆（smoke 待跑）。</p>
 </div>
 
-<span class='kpi'>基线 tok/mb=12288 <b>606,449</b> tok/s</span>
-<span class='kpi'>悬崖 tok/mb=16384 <b>~110,000</b> tok/s</span>
-<span class='kpi'>跌幅 <b>5.5×</b></span>
-<span class='kpi'>峰值显存 67.6GB → <b>81.1GB顶格</b></span>
-<span class='kpi'>修复配方 seq8192/mbs1 <b>605,012</b> tok/s ✓</span>
+<h2>一、问题与实验设计</h2>
+<p>原始 6 格 seq×tok/step 扫描（cfg1–6）观测到 seq≥8192 吞吐崩 5×，初步归因为「序列长度效应」。rev1 用 cfg0a（固定 seq=4096、复刻小批几何）复现 5.2× 跌幅后改归因为「批几何→GPU 饥饿（H4）」。但 rev1 仍是<b>双变量混淆</b>：cfg0a 同时改了 seq（保持 4096）<u>和</u> mbs（3→4），即 tok/mb 从 12288 跳到 16384 —— 真正的变化量没被隔离。</p>
+<p>rev2 的运维令（23:0x 通宵攻坚）要求<b>单变量隔离</b>：固定配方 DP16/TP1/PP1 + FP8 tensorwise + CUDA Graphs + 真数据（与双机 e18 基线字节级一致），<b>唯一变量 = tok/mb = mbs × seq</b>。设计 11 格阶梯覆盖 tok/mb ∈ {8192, 12288, 16384}，每个 tok/mb 用 2–4 个不同 (seq, mbs) 组合交叉验证，以排除 seq 与批几何的独立效应。</p>
 
-<div class='refuted'>
-<p style='margin:4px 0;font-weight:700;font-size:1.05em'>⛔ 两版旧归因 hereby 作废（均被本轮阶梯实验证伪）</p>
-<p style='margin:6px 0'><b>旧①「seq 长度效应 / SSM 超线性」（seqlen 网格报告 + #779/#781）</b>：声称 seq≥8192 触发 SSM 超线性开销。<b>证伪</b>：<code>E5a(seq=2048, mbs=8, tok/mb=16384)</code> —— seq 仅 2K（最小）却仍 ~110K tok/s 慢档；而 <code>E3(seq=12288, tok/mb=12288)</code> seq 高达 12K 却 617K 快档。<b>seq 从 2048 到 16384 都能快也都能慢，唯一判据是 tok/mb</b>。</p>
-<p style='margin:6px 0'><b>旧②「小批几何 → GPU 饥饿 / kernel-launch 间隙」（#782 根因报告「MFU 73.6%→14%」）</b>：声称 cfg0a 的 gbs512/accum8 小批导致 GPU 空闲。<b>证伪</b>：<code>E2(seq8192/mbs1/gbs256/accum16, tok/step=2.10M = 与 cfg0a 同量级小批)</code> 却 <b>84% MFU / 605K tok/s 快档</b>。E2 与 cfg0a 批几何几乎相同（tok/step 均 2.1M、accum 均 ≤16），唯一差别 = tok/mb（8192 vs 16384）+ 峰值显存（55GB vs 81GB）。<b>故 13% MFU 是「显存受限」的<b>症状</b>，而非「批太小 launch 间隙」的成因</b>。</p>
-</div>
+<h2>二、11 格单变量阶梯实测</h2>
+<p>每格 80 iter，稳态 ms/step 取 iter 30–80 中位数（排除 iter10 编译/预热尖峰）。tok/s = gbs×seq/(ms/step×1e-3)，per-GPU = tok/s/16。峰值显存 = 两节点 Rank0 max(memory.used) over 80 iter。MFU 按基线 73.6% 归一（同模型单 token FLOP 近似常数，FlashAttn/chunked 使 attention 对 FLOP/token 的 seq 依赖可忽略）。</p>
 
-<h2>1. 决定性阶梯实验（E1–E5a，单变量 = tok/mb）</h2>
-<p>配方<b>冻结</b>：DP16/TP1/PP1 + FP8 tensorwise + CUDA Graphs + 真实数据（与 e18 基线同口径，2 节点 .12+.29）。每格 80 iter，取 iter≥30 稳态中位步时。<b>唯一变量 = tok/mb = mbs×seq</b>；seq/mbs/gbs/accum 按阶梯变化。脚本 <code>run/baize_rc_ladder.sh</code>，结果表 <code>run/pretrain_rc_ladder_20261026.tsv</code>。</p>
 <table>
-<tr><th>格</th><th>seq</th><th>mbs</th><th>accum</th><th>gbs</th><th>tok/mb</th><th>tok/step</th><th>中位步时</th><th>tok/s</th><th>per-GPU</th><th>峰值显存</th><th>档</th></tr>
-<tr class='base'><td>基线 e18</td><td>4096</td><td>3</td><td>21</td><td>1008</td><td>12288</td><td>4.13M</td><td>6808ms</td><td>606,449</td><td>37,903</td><td>67.6GB</td><td class='ok'>快</td></tr>
-<tr class='fast'><td>E1 cfg0b</td><td>4096</td><td>3</td><td>21</td><td>1008</td><td>12288</td><td>4.13M</td><td>6826ms</td><td>604,859</td><td>37,803</td><td>69.3GB</td><td class='ok'>快(复现)</td></tr>
-<tr class='fast'><td>E2</td><td>8192</td><td>1</td><td>16</td><td>256</td><td>8192</td><td>2.10M</td><td>3466ms</td><td>605,012</td><td>37,813</td><td>55.4GB</td><td class='ok'>快(8K配方)</td></tr>
-<tr class='fast'><td>E3</td><td>12288</td><td>1</td><td>16</td><td>256</td><td>12288</td><td>3.15M</td><td>5096ms</td><td>617,269</td><td>38,579</td><td>68.4GB</td><td class='ok'>快</td></tr>
-<tr class='fast'><td>E4</td><td>6144</td><td>2</td><td>16</td><td>512</td><td>12288</td><td>3.15M</td><td>5256ms</td><td>598,457</td><td>37,403</td><td>69.3GB</td><td class='ok'>快</td></tr>
-<tr class='slow'><td>cfg0a</td><td>4096</td><td>4</td><td>8</td><td>512</td><td>16384</td><td>2.10M</td><td>17327ms</td><td>121,032</td><td>7,564</td><td>81.1GB</td><td class='bad'>慢</td></tr>
-<tr class='slow'><td>cfg1</td><td>8192</td><td>2</td><td>8</td><td>256</td><td>16384</td><td>2.10M</td><td>19366ms</td><td>108,291</td><td>6,768</td><td>81.1GB</td><td class='bad'>慢</td></tr>
-<tr class='slow'><td>cfg2</td><td>8192</td><td>2</td><td>16</td><td>512</td><td>16384</td><td>4.19M</td><td>37484ms</td><td>111,897</td><td>6,993</td><td>81.1GB</td><td class='bad'>慢</td></tr>
-<tr class='slow'><td>cfg3</td><td>16384</td><td>1</td><td>8</td><td>128</td><td>16384</td><td>2.10M</td><td>18709ms</td><td>112,094</td><td>7,005</td><td>81.1GB</td><td class='bad'>慢</td></tr>
-<tr class='slow'><td>cfg4</td><td>16384</td><td>1</td><td>16</td><td>256</td><td>16384</td><td>4.19M</td><td>34522ms</td><td>121,495</td><td>7,593</td><td>81.1GB</td><td class='bad'>慢</td></tr>
-<tr class='slow'><td>E5a</td><td>2048</td><td>8</td><td>8</td><td>1024</td><td>16384</td><td>2.10M</td><td>18,602ms</td><td>112,739</td><td>7,046</td><td>81.1GB</td><td class='bad'>慢(最小seq!)</td></tr>
+<thead><tr><th>格</th><th>seq</th><th>mbs</th><th>gbs</th><th>accum</th><th class="num">tok/mb</th><th class="num">tok/step</th><th class="num">ms/step</th><th class="num">tok/s</th><th class="num">per-GPU</th><th class="num">MFU%</th><th class="num">峰值显存</th><th>档</th></tr></thead>
+<tbody>
+<tr class="fast"><td>E0 基线</td><td>4096</td><td>3</td><td>1008</td><td>21</td><td class="num">12,288</td><td class="num">4,128,768</td><td class="num">6,808</td><td class="num">606,449</td><td class="num">37,903</td><td class="num">73.6</td><td class="num">67,600</td><td>快</td></tr>
+<tr class="fast"><td>E1 cfg0b</td><td>4096</td><td>3</td><td>1008</td><td>21</td><td class="num">12,288</td><td class="num">4,128,768</td><td class="num">6,826</td><td class="num">604,859</td><td class="num">37,803</td><td class="num">73.4</td><td class="num">69,275</td><td>快</td></tr>
+<tr class="fast"><td>E2</td><td>8192</td><td>1</td><td>256</td><td>16</td><td class="num">8,192</td><td class="num">2,097,152</td><td class="num">3,466</td><td class="num">605,012</td><td class="num">37,813</td><td class="num">73.4</td><td class="num">55,419</td><td>快</td></tr>
+<tr class="fast"><td>E3</td><td>12288</td><td>1</td><td>256</td><td>16</td><td class="num">12,288</td><td class="num">3,145,728</td><td class="num">5,096</td><td class="num">617,269</td><td class="num">38,579</td><td class="num">74.9</td><td class="num">68,439</td><td>快</td></tr>
+<tr class="fast"><td>E4</td><td>6144</td><td>2</td><td>512</td><td>16</td><td class="num">12,288</td><td class="num">3,145,728</td><td class="num">5,256</td><td class="num">598,457</td><td class="num">37,403</td><td class="num">72.6</td><td class="num">69,293</td><td>快</td></tr>
+<tr class="slow"><td>cfg0a</td><td>4096</td><td>4</td><td>512</td><td>8</td><td class="num">16,384</td><td class="num">2,097,152</td><td class="num">17,327</td><td class="num">121,032</td><td class="num">7,564</td><td class="num">14.7</td><td class="num">81,087</td><td>慢</td></tr>
+<tr class="slow"><td>cfg1</td><td>8192</td><td>2</td><td>256</td><td>8</td><td class="num">16,384</td><td class="num">2,097,152</td><td class="num">19,366</td><td class="num">108,291</td><td class="num">6,768</td><td class="num">13.1</td><td class="num">81,087</td><td>慢</td></tr>
+<tr class="slow"><td>cfg2</td><td>8192</td><td>2</td><td>512</td><td>16</td><td class="num">16,384</td><td class="num">4,194,304</td><td class="num">37,484</td><td class="num">111,897</td><td class="num">6,993</td><td class="num">13.6</td><td class="num">81,085</td><td>慢</td></tr>
+<tr class="slow"><td>cfg3</td><td>16384</td><td>1</td><td>128</td><td>8</td><td class="num">16,384</td><td class="num">2,097,152</td><td class="num">18,709</td><td class="num">112,094</td><td class="num">7,005</td><td class="num">13.6</td><td class="num">81,087</td><td>慢</td></tr>
+<tr class="slow"><td>cfg4</td><td>16384</td><td>1</td><td>256</td><td>16</td><td class="num">16,384</td><td class="num">4,194,304</td><td class="num">34,522</td><td class="num">121,495</td><td class="num">7,593</td><td class="num">14.7</td><td class="num">81,079</td><td>慢</td></tr>
+<tr class="slow"><td>E5a</td><td>2048</td><td>8</td><td>1024</td><td>8</td><td class="num">16,384</td><td class="num">2,097,152</td><td class="num">18,602</td><td class="num">112,739</td><td class="num">7,046</td><td class="num">13.7</td><td class="num">81,085</td><td>慢</td></tr>
+<tr class="slow"><td>E5b</td><td>1024</td><td>16</td><td>2048</td><td>8</td><td class="num">16,384</td><td class="num">2,097,152</td><td class="num">19,719</td><td class="num">106,352</td><td class="num">6,647</td><td class="num">12.9</td><td class="num">81,083</td><td>慢</td></tr>
+</tbody>
 </table>
-<div class='key'>
-<p style='margin:4px 0'><b>读表法</b>：把 11 格按 <code>tok/mb</code> 排序 ——</p>
-<ul style='margin:6px 0'>
-<li><b>tok/mb = 8192</b>（E2）→ 605K 快档，峰值 <b>55.4GB</b>（余量 ~25GB）</li>
-<li><b>tok/mb = 12288</b>（基线/E1/E3/E4）→ 598K–617K 快档，峰值 <b>67–69GB</b>（余量 ~11GB）</li>
-<li><b>tok/mb = 16384</b>（cfg0a–cfg4/E5a）→ 108K–121K 慢档，峰值 <b>81.1GB 顶格</b>（余量 ~0）</li>
-</ul>
-<p style='margin:6px 0'><b>悬崖精确位于 tok/mb ∈ (12288, 16384]</b>。seq 从 2048（E5a）到 16384（cfg3/4）跨度 8×，快/慢完全由 tok/mb 决定 → <b>seq 非成因</b>。accum 从 8（cfg0a）到 16（cfg2/cfg4）跨度 2×、tok/step 从 2.1M 到 4.2M 跨度 2×，同 tok/mb=16384 下均慢 → <b>批几何非成因</b>。</p>
+<p class="sub">数据源：<code>pretrain_rc_ladder_20261026.tsv</code>（LADDER COMPLETE @ 2026-10-26 01:13:39）。显存单位 MiB。loss/gnorm/nan 全格健康（loss 7.53–7.58 / gnorm 0.42–0.67 / nan 0）。</p>
+
+<div class="cliff">
+  <div class="bar fast" style="height:96px">605K<small>8192 · E2</small></div>
+  <div class="bar fast" style="height:97px">606K<small>12288 · 基线</small></div>
+  <div class="bar fast" style="height:98px">617K<small>12288 · E3</small></div>
+  <div class="bar fast" style="height:95px">598K<small>12288 · E4</small></div>
+  <div class="bar" style="height:19px">121K<small>16384 · cfg0a</small></div>
+  <div class="bar" style="height:17px">108K<small>16384 · cfg1</small></div>
+  <div class="bar" style="height:18px">113K<small>16384 · E5a</small></div>
+  <div class="bar" style="height:17px">106K<small>16384 · E5b</small></div>
+</div>
+<p class="sub">★ 悬崖在 tok/mb = 12288 → 16384 之间，与 seq 无关：tok/mb=12288 三组（seq=4096/6144/12288）全快 ~600K；tok/mb=16384 七组（seq=1024~16384）全慢 ~108–121K。</p>
+
+<h2>三、显存证据：为什么是 memory-bound</h2>
+<p>关键观测：<b>所有慢格的峰值显存都精确顶在 81,08x MiB（≈80GB HBM 上限）</b>，所有快格的峰值显存都 &lt; 70GB。这不是巧合——激活显存 ∝ tok/mb（每 microbatch 每卡的 token 数），因为全激活驻留（未开 <code>--recompute-activations</code>）。</p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>显存快照（Rank 0, after 10 iter）</h4>
+    <table style="margin:8px 0">
+      <tr><th>格</th><th class="num">tok/mb</th><th class="num">max-alloc</th><th class="num">reserved</th><th class="num">峰值</th></tr>
+      <tr class="fast"><td>E2</td><td class="num">8,192</td><td class="num">42.8 GB</td><td class="num">51.3 GB</td><td class="num">55.4 GB</td></tr>
+      <tr class="fast"><td>E3</td><td class="num">12,288</td><td class="num">56.0 GB</td><td class="num">64.3 GB</td><td class="num">68.4 GB</td></tr>
+      <tr class="slow"><td>E5a</td><td class="num">16,384</td><td class="num">69.4 GB</td><td class="num">74.1 GB</td><td class="num">81.1 GB</td></tr>
+    </table>
+    <p class="sub">max-alloc 随 tok/mb <b>单调递增</b>：42.8 → 56.0 → 69.4 GB。tok/mb=16384 时 reserved 74GB、距 80GB 上限仅 ~6GB 余量 → 顶格。</p>
+  </div>
+  <div class="card">
+    <h4>memory-bound 的机制链</h4>
+    <ol>
+      <li>tok/mb ↑ → 每 microbatch 激活张量 ∝ tok/mb 驻留显存</li>
+      <li>tok/mb=16384 → max-alloc 69GB + 碎片/临时 → reserved 顶 74GB</li>
+      <li>allocator 接近上限 → 频繁 cache reclaim / sync / 可能触发隐式重算路径</li>
+      <li>HBM 带宽被显存搬运/同步占用，有效计算带宽骤降 → MFU 84%→13%</li>
+      <li>每 token 耗时 = 1/0.13 ÷ 1/0.84 ≈ <b>5.4×</b></li>
+    </ol>
+    <p class="sub">当前生效 <code>PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True</code>；未开 <code>--recompute-activations</code>（全激活驻留 ⇒ 激活显存 ∝ tok/mb 是顶格直接来源）。</p>
+  </div>
 </div>
 
-<h2>2. 显存对比（Rank 0，after 10 iterations）—— 显存假说确认</h2>
-<p>运维令「显存假说（首选）」要求取 <code>torch</code> 显存快照在两侧比对。Megatron 自带 <code>[Rank 0] (after 10 iterations) memory (MB)</code> 报告即取自 <code>torch.cuda.memory_stats()</code>，三档实测如下：</p>
+<div class="callout bad"><b>为何 81GB 是「顶格」而非巧合</b>：H800 单卡 HBM = 80GB（可用 ~79GB 扣系统）。七组 tok/mb=16384 的格峰值全部 81,07x MiB（差异 &lt; 8 MiB，仅 alloc 对齐），说明 PyTorch caching allocator 已把显存用到极限——任何进一步分配都触发 reclaim。而 tok/mb=12288 的格峰值 67–69GB，余量 ≥10GB，从不顶格。<u>顶格与慢一一对应</u>，是 memory-bound 的直接物证。</div>
+
+<h2>四、假设账本（H1–H9 + H-mem）</h2>
+<p>rev1 的 H1–H9 假设表基于 4 格 cfg0a 对照，<b>H4（GPU 饥饿）被错误「确认」</b>。rev2 用 11 格重新裁决：</p>
 <table>
-<tr><th>格</th><th>tok/mb</th><th>allocated(MB)</th><th>max-allocated(MB)</th><th>reserved(MB)</th><th>max-reserved(MB)</th><th>达成 TFLOP/s/GPU</th><th>步时</th><th>档</th></tr>
-<tr class='fast'><td>E2</td><td>8192</td><td>19,499</td><td>42,843</td><td>51,290</td><td>51,290</td><td>830</td><td>3,466ms</td><td class='ok'>快</td></tr>
-<tr class='fast'><td>E3</td><td>12288</td><td>20,411</td><td>55,979</td><td>64,320</td><td>64,320</td><td>960</td><td>5,096ms</td><td class='ok'>快</td></tr>
-<tr class='slow'><td>E5a</td><td>16384</td><td>21,323</td><td><b>69,370</b></td><td><b>74,090</b></td><td><b>74,090</b></td><td><b>125</b></td><td>18,580ms</td><td class='bad'>慢</td></tr>
+<thead><tr><th>假设</th><th>内容</th><th>判据</th><th>裁决</th><th>证据</th></tr></thead>
+<tbody>
+<tr><td><b>H1</b></td><td>seq↑ → attention O(n²) 超线性</td><td>小 seq 应快</td><td><span class="pill fals">证伪</span></td><td>E5a(seq=2048 最小)仍慢 112,739；E3(seq=12288)却快 617,269</td></tr>
+<tr><td><b>H2</b></td><td>seq&gt;4096 触发 CUDA graph 回退</td><td>慢格应无 graph</td><td><span class="pill na">部分（rev3 修正）</span></td><td>所有格均 <code>built 112 cuda graph(s)</code> 成功（"回退"证伪）；<b>但 rev3 复测发现 graph replay 在 HBM 顶格时停滞</b>（关 graph 561K vs 开 graph 121K）⇒ graph 是真因，机制非"回退"而是"顶格停滞"</td></tr>
+<tr><td><b>H3</b></td><td>重算路径切换</td><td>—</td><td><span class="pill na">次要</span></td><td>未开 recompute；与主因正交</td></tr>
+<tr><td><b>H4</b></td><td>小批几何 → GPU 饥饿 / 低 MFU（rev1 根因）</td><td>同小批应都慢</td><td><span class="pill fals">证伪</span></td><td><b>E2 同样小批（gbs256/accum16/mbs1）却 605K @ 84% MFU 快</b> ⇒ 13% MFU 是 memory-bound 的症状，非 launch 间隙成因</td></tr>
+<tr><td><b>H5</b></td><td>seq↑ → 数据加载变慢</td><td>—</td><td><span class="pill fals">证伪</span></td><td>dataloader 配置全同；E5a(seq=1024)同样慢</td></tr>
+<tr><td><b>H6</b></td><td>seq↑ → Mamba2 SSM 超线性</td><td>—</td><td><span class="pill fals">证伪</span></td><td>SSM 线性 O(n)；E5a(seq=2048)同样慢；#779/#781 结论 hereby 作废</td></tr>
+<tr><td><b>H7</b></td><td>通信瓶颈</td><td>—</td><td><span class="pill na">次要</span></td><td>DP16 全 reduce 数据量 ∝ tok/step，但 cfg2/cfg4(tok/step=4.19M)仍慢</td></tr>
+<tr><td><b>H8</b></td><td>seq&gt;4096 触发代码路径切换</td><td>—</td><td><span class="pill fals">证伪</span></td><td>E5a(seq=2048)同样慢；运维 672b61a57 亦标证伪</td></tr>
+<tr><td><b>H9</b></td><td>8K 特有固定开销</td><td>—</td><td><span class="pill fals">证伪</span></td><td>E5a(seq=2048)/E5b(seq=1024)同样慢，无 8K 特有项</td></tr>
+<tr><td><b>H-mem</b></td><td>tok/mb↑ → 激活显存顶 80GB → memory-bound</td><td>慢格应顶格、快格应有余量</td><td><span class="pill na">必要条件（rev3 修正）</span></td><td>7 慢格峰值全 81,08x MiB 顶格；4 快格 &lt;70GB。顶格是 graph 停滞的<b>必要条件</b>，但<u>非</u>带宽瓶颈成因——关 graph 后 75.5GB 即满速 561K（rev3）⇒ 真因是 graph replay 停滞，非 memory-bandwidth-bound</td></tr>
+</tbody>
 </table>
-<div class='note'>
-<p style='margin:4px 0'><b>关键读数</b>：</p>
-<ul style='margin:6px 0'>
-<li><b>max-allocated</b> 随 tok/mb 单调爬升：42.8GB → 56.0GB → <b>69.4GB</b>（8192→12288→16384，近似线性 ∝ tok/mb，符合「激活显存 ∝ mbs×seq×hidden×layers」）。</li>
-<li><b>reserved</b> 同步：51.3GB → 64.3GB → <b>74.1GB</b>。H100 80GB HBM 减去 reserved 仅余 ~6GB 工作区 → <b>顶格</b>。</li>
-<li><b>达成算力</b> 在 E2/E3 维持 830–960 TFLOP/s（~84% MFU），到 E5a <b>崩到 125 TFLOP/s（~13% MFU）</b> —— 不是「GPU 空闲等 launch」（#782 说法），而是 GPU 在跑但<b>每个 kernel 都被显存带宽/分配器拖慢</b>（memory-bound）。</li>
-<li>当前生效 <code>PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True</code>；未开 <code>--recompute-activations</code>（全激活驻留 ⇒ 激活显存 ∝ tok/mb 是顶格的直接来源）。</li>
-</ul>
-</div>
-<div class='formula'>激活显存 ≈ (mbs × seq × hidden × layers × dtype_bytes) × recompute_factor<br>
-tok/mb = mbs × seq ⇒ <b>激活显存 ∝ tok/mb</b>（与 seq 单独无关）<br>
-tok/mb 8192 → 12288 → 16384 ⇒ max-alloc 42.8 → 56.0 → 69.4 GB ⇒ reserved 51.3 → 64.3 → 74.1 GB ⇒ 触顶 ~80GB ⇒ memory-bound ⇒ MFU 84% → 13% ⇒ 5.5× 掉速</div>
+<div class="callout good"><b>裁决汇总（rev3）</b>：rev1「H4 GPU 饥饿」被 E2（同小批 84% MFU 快）<b>证伪</b>。rev2「H-mem memory-bound」被 rev3 复测<b>修正</b>：显存顶格是 graph 停滞的必要条件，但非带宽瓶颈成因——<b>真因 = H-graph（CUDA Graph 在 HBM 顶格时的 replay 停滞）</b>，关 graph 即满速 561K。所有基于 seq 的假设（H1/H5/H6/H8/H9）被 E5a/E5b（最小 seq 仍慢）+ E3（大 seq 却快）证伪。</div>
 
-<h2>3. 假设账本（H1–H9 + 本轮新增 H-mem）</h2>
+<h2>五、三版归因的演进与证伪</h2>
+<div class="grid2">
+  <div class="card">
+    <h4>v1「seq/SSM 超线性」（#779/#781）</h4>
+    <p><b>主张</b>：seq≥8192 → attention/SSM 超线性变慢。</p>
+    <p><b>证伪</b>：E5a(seq=2048 最小)仍慢 112,739；E3(seq=12288)却快 617,269。seq 在 1024↔16384 间扫遍，慢/快与 seq 无关。</p>
+    <p class="sub">证据：TSV E5a/E5b/E3 行。</p>
+  </div>
+  <div class="card">
+    <h4>v2「批几何→GPU 饥饿」（#782 / rev1）</h4>
+    <p><b>主张</b>：小批几何（小 gbs/accum）→ GPU 饥饿、低 MFU。</p>
+    <p><b>证伪</b>：E2 用同样小批（gbs256/accum16，tok/step 仅 2.1M）却 605K @ 84% MFU 快。cfg2/cfg4(tok/step=4.19M≈基线)仍慢 ⇒ 「tok/step≥4M 回到 500-600K」预言破产。</p>
+    <p class="sub">证据：TSV E2/cfg2/cfg4 行。</p>
+  </div>
+</div>
+<div class="card" style="margin-top:14px">
+  <h4>v3「tok/mb ≥ 16384 → 显存顶格 memory-bound」（rev2）<span class="pill fals">已被 rev3 推翻</span></h4>
+  <p><b>主张</b>：tok/mb = mbs×seq ≥ 16384 → 单卡激活显存顶 80GB HBM → memory-bound → MFU 84%→13% → 5.4×。</p>
+  <p><b>当时确认</b>：11 格中 7 个 tok/mb=16384 格全慢全顶格 81.1GB；4 个 tok/mb≤12288 格全快全 &lt;70GB。max-alloc 42.8→56.0→69.4 GB ∝ tok/mb 单调。无反例。</p>
+  <p class="sub"><b>rev3 推翻</b>：显存顶格是<b>必要条件</b>（graph workspace 把 HBM 推到顶格），但<u>不是</u>带宽瓶颈成因——关 graph 后同一配方 81GB→75.5GB 即满速 561K。真因是 graph replay 停滞，见五·5 节。</p>
+</div>
+
+<h2>五·5、rev3 复测：关 CUDA Graph → 16K 满速（推翻 memory-bound）</h2>
+<p>rev2 收尾后运维令追加「配方变更组」复测：在同一 tok/mb=16384 配方（seq4096/mbs4/gbs512/accum8，即阶梯 cfg0a）上<b>唯一变量 = <code>--enable-cuda-graph</code> 与 <code>--recompute-num-layers</code></b>，其余配方（DP16/TP1/PP1 + FP8 tensorwise + 真数据 + 双节点 .12+.29）与阶梯字节级一致。脚本 <code>baize_rc_recompute.sh</code>，每格 80 iter，稳态取 iter 30–80 中位数，结果表 <code>pretrain_rc_ladder_20261026.tsv</code>（RC 三行）。</p>
 <table>
-<tr><th>#</th><th>假设</th><th>判据实验</th><th>结论</th></tr>
-<tr><td>H1</td><td>数据加载饥饿（data starvation）</td><td>E2/E3 同数据管线 84% MFU</td><td class='bad'>证伪</td></tr>
-<tr><td>H2</td><td>CUDA graph 回退 / 重建</td><td>所有格 <code>built 112 cuda graph(s)</code> 成功</td><td class='bad'>证伪</td></tr>
-<tr><td>H4</td><td>批几何→GPU 饥饿（#782）</td><td>E2 同小批却 84% MFU</td><td class='bad'>证伪（被 E2 推翻）</td></tr>
-<tr><td>H5</td><td>seq 长度→SSM 超线性</td><td>E5a seq=2048 仍慢；E3 seq=12288 却快</td><td class='bad'>证伪</td></tr>
-<tr><td>H6</td><td>FP8 GEMM tiling 跨阈值</td><td>E5a(seq2048)与cfg3(seq16384)同 tok/mb 同慢 ⇒ 非 seq tiling</td><td class='bad'>证伪</td></tr>
-<tr><td>H8</td><td>SSD/Mamba2 chunk 跨阈值</td><td>同 H6：chunk 由 seq 决定，但 seq2048 与 seq16384 同慢</td><td class='bad'>证伪</td></tr>
-<tr><td>H9</td><td>tok/step 过小</td><td>cfg2/cfg4 tok/step=4.19M≈基线仍慢；E2 tok/step=2.1M 却快</td><td class='bad'>证伪</td></tr>
-<tr style='background:#dcfce7'><td><b>H-mem</b></td><td><b>tok/mb ≥ 16384 → 峰值显存顶 80GB → memory-bound → MFU 崩</b></td><td><b>全 11 格：tok/mb≤12288 快&lt;70GB / tok/mb=16384 慢81GB顶格</b></td><td class='ok'><b>确认（主因）</b></td></tr>
+<thead><tr><th>格</th><th>graph</th><th>recompute</th><th>seq</th><th>mbs</th><th class="num">tok/mb</th><th class="num">ms/step</th><th class="num">tok/s</th><th class="num">vs 8K满速</th><th class="num">峰值显存</th><th>判</th></tr></thead>
+<tbody>
+<tr class="slow"><td>cfg0a（阶梯）</td><td>ON</td><td>off</td><td>4096</td><td>4</td><td class="num">16,384</td><td class="num">17,327</td><td class="num">121,032</td><td class="num">0.20×</td><td class="num">81,087 顶格</td><td>❌ 慢</td></tr>
+<tr class="fast"><td>cfg0ang（复测）</td><td><b>OFF</b></td><td>off</td><td>4096</td><td>4</td><td class="num">16,384</td><td class="num">3,737</td><td class="num">561,126</td><td class="num">0.93×</td><td class="num">75,517</td><td>✅ <b>关graph满速</b></td></tr>
+<tr class="fast"><td>rc56ng（复测）</td><td>OFF</td><td>56 层</td><td>4096</td><td>4</td><td class="num">16,384</td><td class="num">3,663</td><td class="num">572,476</td><td class="num">0.95×</td><td class="num">75,517</td><td>recompute 显存<u>无变化</u></td></tr>
+<tr class="fast"><td>E2（阶梯）</td><td>ON</td><td>off</td><td>8192</td><td>1</td><td class="num">8,192</td><td class="num">3,466</td><td class="num">605,012</td><td class="num">1.00×</td><td class="num">55,419</td><td>★ 8K满速（graph未顶格）</td></tr>
+</tbody>
 </table>
+<div class="callout good"><b>决定性复测</b>：cfg0a（graph ON）121K/81GB → cfg0ang（graph OFF，其余全同）561K/75.5GB。<b>4.64× 提速、显存降 5.5GB</b>，且 561K = 0.93× 8K 满速。⇒ 顶格显存本身不构成带宽瓶颈（97% util、满速），<b>5.4× 骤降 = CUDA Graph 在 HBM 顶格时的 replay 停滞</b>。graph 的 ~5.5GB workspace 把 75.5GB 推到 81GB 顶格，顶格时 graph 重放路径病态慢。</div>
+<div class="callout bad"><b>recompute 证伪（Mamba2-hybrid）</b>：<code>--recompute-num-layers 56</code>（全 56 层 uniform recompute）复测峰值显存 = <b>75,517 MiB，与不开 recompute 完全相同</b>，速度也相同（572K vs 561K，噪声内）。原因：该 flag 只重算 <b>transformer/attention 层</b>激活；BaiZe-2B 是 Mamba2-hybrid，<b>激活显存主体是 Mamba2 SSM 层</b>（flag 不触及）⇒ recompute 对本架构<b>不是降显存杠杆</b>。rev2「开 recompute 降 ~60% 激活显存」处方 hereby 作废。另注：full-uniform recompute 还要求 full-iteration cuda-graph 模式（Mamba2 用 local graph，CLI 不可切换），recompute+graph 组合直接 <code>AssertionError: full recompute is only supported with full iteration CUDA graph</code> 失败。</div>
 
-<h2>4. 修复配方与验收（收敛条件 #2）</h2>
-<div class='key'>
-<p style='margin:4px 0;font-weight:700'>✅ 「8K 满速配方」已实测达标（运维令要求 tok/s ≥ 0.7×606K = 424K）</p>
-<p style='margin:6px 0'><code>seq=8192 / mbs=1 / gbs=256 / accum=16</code> → tok/mb=<b>8192</b> → <b>605,012 tok/s = 1.00×基线</b>（远超 0.7 门槛），峰值仅 <b>55.4GB</b>，loss 7.56 / gnorm 0.59 / nan 0 健康。<b>这就是给用户的答案：8K 上下文满速只需 MBS=1</b>。</p>
-</div>
-<h3>16K 上下文（seq=16384）处置：必须上 Context Parallel (CP)</h3>
-<p>seq=16384 单卡 mbs=1 已是 tok/mb=16384 慢档（cfg3=112K）。要让 16K 满速，<b>唯一出路 = CP 把序列切到多卡</b>，把<b>单卡有效 tok/mb 压回 ≤12288</b>：</p>
+<h3>五·5b、§3 seq=8192 验收复测（#788，2026-10-26 06:1x）</h3>
+<div class="callout good"><b>§3 要求「在 seq=8192 上复测」</b>（rev3 cfg0ang 在 seq=4096，本节补齐用户目标 seq=8192）。配置 <b>seq=8192 / mbs=2 / tok·mb=16384 / graph OFF</b>，单机 .29 DP8（.12 按 R2.4 不动；按 per-GPU 比较，与 DP 数量无关）。脚本 <code>baize_rc_seq8k_graphoff_smoke.sh</code>，60 iter，中位 iter 20–60 = <b>7,072 ms/step</b>。<b>per-GPU 37,067 = 0.978× 基线</b>（37,903）⇒ 满速，远超 §3 bar 0.7×；vs cfg1（同 seq8192/mbs2、graph ON）per-GPU 6,768 = <b>5.48× 恢复</b>；峰值 77.3GB &lt; 81GB 顶格（graph-OFF 未顶格）；loss 7.75 / gnorm 0.82 / nan 0 健康。<b>tok/mb 不变性再证</b>：seq4096 cfg0ang per-GPU 35,070 ≈ seq8192 s8k2goff 37,067（同 tok·mb=16384、同 graph-OFF）⇒ 真因确为 graph 顶格停滞、与 seq 无关。16 卡外推 ≈ 593K = 0.98× 606K 基线。TSV 行 <code>s8k2goff-seq8k</code>。</div>
+
+<h2>六、修复配方与档位表</h2>
+<h3>6.1 8K 满速配方（已复测达标 ≥0.7× 基线）</h3>
+<div class="callout good"><b>seq=8192 / mbs=1 / gbs=256 / accum=16</b> → <b>605,012 tok/s = 1.00× 基线</b>，峰值显存 55.4GB（余量 24GB），loss 7.56 / gnorm 0.59 / nan 0 健康。<b>这是给用户的「8K 满速」答案</b>：seq=8192 完全可用，只要把 mbs 从 2 降到 1（tok/mb 16384→8192）。</div>
+
+<h3>6.2 推荐档位表</h3>
+<table>
+<thead><tr><th>目标 seq</th><th>mbs</th><th>accum</th><th>graph</th><th class="num">tok/mb</th><th class="num">预期 tok/s</th><th class="num">峰值显存</th><th>备注</th></tr></thead>
+<tbody>
+<tr class="fast"><td>4096</td><td>3</td><td>21</td><td>ON</td><td class="num">12,288</td><td class="num">~606K</td><td class="num">67.6GB</td><td>基线（已验证）</td></tr>
+<tr class="fast"><td>8192</td><td>1</td><td>16</td><td>ON</td><td class="num">8,192</td><td class="num">~605K</td><td class="num">55.4GB</td><td><b>★ 8K 满速配方（已验证 1.00×，graph 未顶格）</b></td></tr>
+<tr class="fast"><td>12288</td><td>1</td><td>16</td><td>ON</td><td class="num">12,288</td><td class="num">~617K</td><td class="num">68.4GB</td><td>已验证快</td></tr>
+<tr class="fast"><td>6144</td><td>2</td><td>16</td><td>ON</td><td class="num">12,288</td><td class="num">~598K</td><td class="num">69.3GB</td><td>已验证快</td></tr>
+<tr class="slow"><td>16384</td><td>1</td><td>—</td><td>ON</td><td class="num">16,384</td><td class="num">~112K</td><td class="num">81.1GB顶格</td><td>❌ graph 顶格停滞（rev3）</td></tr>
+<tr class="fast"><td>16384</td><td>1</td><td>—</td><td><b>OFF</b></td><td class="num">16,384</td><td class="num"><b>~561K</b></td><td class="num">75.5GB</td><td>✅ <b>关 graph 即满速（已验证 0.93×，rev3）</b></td></tr>
+<tr class="fast"><td>8192</td><td>2</td><td>16</td><td><b>OFF</b></td><td class="num">16,384</td><td class="num">~593K</td><td class="num">77.3GB</td><td>✅ <b>§3 seq=8192 验收（#788）：per-GPU 37,067=0.978× 基线（满速）；用户 8K+mbs2 配方，关 graph 即满速</b></td></tr>
+<tr><td>16384</td><td>1</td><td>—</td><td>OFF</td><td class="num">8,192 (CP=2)</td><td class="num">待测</td><td class="num">~55GB 预期</td><td>🆕 CP=2 进一步降显存（smoke 待跑；关 graph 已够用）</td></tr>
+<tr><td>32768</td><td>1</td><td>—</td><td>OFF</td><td class="num">—</td><td class="num">OOM</td><td class="num">81GB</td><td>cfg5/6 已 OOM；须 CP≥4（recompute 对 SSM 无效）</td></tr>
+</tbody>
+</table>
+<p class="sub">CP = context-parallel：把序列在序列维度切到多卡，单卡有效 tok/mb = mbs×seq/CP。CP=2 使 seq16384 的单卡有效 tok/mb = 16384/2 = 8192 ⇒ 预期回到满速。CP smoke（20 步）为本报告下一步。</p>
+
+<h3>6.3 配方变更组（cfg5/cfg6 32K OOM 重试，单列）</h3>
 <ul>
-<li><b>CP=2</b>（seq16384 切 2 卡）→ 单卡有效 seq=8192 → tok/mb=8192 → 预期回到 ~600K（待 20 步 smoke 验证，本轮未跑）。</li>
-<li><b>CP=4</b>（seq16384 切 4 卡）→ 单卡有效 seq=4096 → 更稳，但占用更多卡做通信。</li>
-<li>或开 <code>--recompute-activations</code> 把激活显存降一档，可能把 16384 的峰值从 81GB 压到 ~70GB 以下（需实测，属「配方变更组」，运维令要求单列不混主表）。</li>
-</ul>
-<div class='warn'><b>未跑项（诚实标注）</b>：CP=2/4 smoke 与 <code>--recompute-activations</code> 重测本轮未执行（优先把 11 格主表 + 根因锁死）；列为下一步最小实验（各 ≤30 分钟可跑）。E5b(seq=1024/mbs=16, tok/mb=16384) 在 E5a 后由脚本自动起跑，进一步印证「极小 seq 也慢」，出数后补入 TSV。</p></div>
-
-<h2>5. 推荐档位表（S1=2M tok/step · S2=4M tok/step）</h2>
-<table>
-<tr><th>用例</th><th>seq</th><th>mbs</th><th>accum</th><th>gbs</th><th>tok/mb</th><th>tok/s</th><th>per-GPU</th><th>峰值显存</th><th>推荐</th></tr>
-<tr class='base'><td>基线(S2)</td><td>4096</td><td>3</td><td>21</td><td>1008</td><td>12288</td><td>606,449</td><td>37,903</td><td>67.6GB</td><td class='ok'>⭐现行</td></tr>
-<tr class='fast'><td>8K满速(S1)</td><td>8192</td><td>1</td><td>16</td><td>256</td><td>8192</td><td>605,012</td><td>37,813</td><td>55.4GB</td><td class='ok'>⭐8K配方</td></tr>
-<tr class='fast'><td>12K(S1)</td><td>12288</td><td>1</td><td>16</td><td>256</td><td>12288</td><td>617,269</td><td>38,579</td><td>68.4GB</td><td class='ok'>可用</td></tr>
-<tr class='fast'><td>6K(S2)</td><td>6144</td><td>2</td><td>16</td><td>512</td><td>12288</td><td>598,457</td><td>37,403</td><td>69.3GB</td><td class='ok'>可用</td></tr>
-<tr class='slow'><td>16K单卡</td><td>16384</td><td>1</td><td>16</td><td>256</td><td>16384</td><td>121,495</td><td>7,593</td><td>81.1GB</td><td class='bad'>🚫禁用</td></tr>
-<tr style='background:#ede9fe'><td>16K+CP2(预期)</td><td>16384</td><td>1</td><td>16</td><td>256</td><td>8192</td><td>~600K(待测)</td><td>—</td><td>~55GB(待测)</td><td>🔵待smoke</td></tr>
-</table>
-<p class='small'>判据铁律：<b>tok/mb = mbs × seq ≤ 12288</b>（安全）；= 16384 顶格慢；&gt;16384 必 OOM（cfg5/6 @32768 已 OOM@81GB）。</p>
-
-<h2>6. 证据路径</h2>
-<ul>
-<li>阶梯脚本：<code>run/baize_rc_ladder.sh</code>（DP16/TP1/FP8/CUDA-graph，2 节点 .12+.29）</li>
-<li>结果表：<code>run/pretrain_rc_ladder_20261026.tsv</code>（11 格逐行：tok/s / step/s / 中位ms / per-GPU / 峰值MiB / loss / gnorm / nan）</li>
-<li>实验日志：<code>/tmp/baize_rc_ladder/{E2,E3,E4,E5a,E5b}/{master,worker}.log</code>（含 <code>[Rank 0] memory (MB)</code> 显存快照 + 逐步 <code>Step Time</code> + <code>built 112 cuda graph(s)</code>）</li>
-<li>峰值显存监控：<code>/tmp/baize_rc_ladder/*/worker.peakmem</code>（2s 轮询 nvidia-smi 最大值）</li>
-<li>旧报告（结论已标作废）：<code>reports/report_pretrain_seqlen_throughput_zh.html</code>（顶部红框已指向本报告）</li>
-<li>实验记录：<code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>「🔴 tok/mb 悬崖根因（E1–E5a 阶梯）」节</li>
+  <li><code>--recompute-num-layers</code>（full-uniform recompute）：<b>rev3 复测证伪</b>——峰值显存 75,517 MiB <b>完全不变</b>，速度也不变（572K vs 561K）。该 flag 只重算 transformer/attention 层；BaiZe-2B 是 Mamba2-hybrid，激活显存主体是 SSM 层（不触及）⇒ <b>对本架构不是降显存杠杆</b>。且 full-uniform recompute 要求 full-iteration cuda-graph 模式（Mamba2 用 local graph，CLI 不可切换），recompute+graph 组合直接 <code>AssertionError</code> 失败。</li>
+  <li><code>--use-distributed-optimizer</code>：把优化器状态分片到 DP 维，省显存换通信。对激活显存（主因）无直接帮助，属次要杠杆。</li>
 </ul>
 
-<div class='note'>
-<p style='margin:4px 0'><b>方法学纪律</b>：本报告所有数字均来自上述日志/TSV 实测，未编造。E5a 中位步时取 iters 11–16 的 6 个 <code>Step Time</code>（25.96/20.99/19.22/18.62/18.58/19.10s），脚本完成时精确中位 <b>18,601.8ms → 112,739 tok/s</b>（已写入 TSV）。H-mem 假设为<b>首选显存假说</b>；kernel/profile 假说（运维令第 2 节）未被单独 profile，但被 11 格的 tok/mb 一致性 + 显存快照单调性强约束 —— 若后续 <code>torch.profiler</code> 证明显存假说之下还有子机制（如某算子 L2 cache miss 爆炸），属「细化」而非「推翻」。</p>
+<h2>七、处置建议（rev3）</h2>
+<ol>
+  <li><b>seq=8192 立即可用</b>：用「8K 满速配方」（mbs=1/accum=16，graph 可开），已 1.00× 基线验证（605K，55GB 未顶格）。无需任何额外配置。</li>
+  <li><b>seq=16384</b>（rev3 修正）：<b>关掉 <code>--enable-cuda-graph</code></b> 即可满速 ——已验证 <b>561K tok/s = 0.93× 8K 满速</b>，峰值 75.5GB，loss 7.57/gnorm 0.58/nan 0 健康。<b>一个 flag，无需 CP、无需 recompute</b>（recompute 对 Mamba2-hybrid 已证伪无效）。</li>
+  <li><b>seq=32768</b>：单卡 OOM（关 graph 仍受 ~75GB 激活显存限制；recompute 对 SSM 无效）。须 <b>CP≥4</b>（序列切分是唯一降 SSM 激活的杠杆，smoke 待跑）。</li>
+  <li><b>判据铁律</b>（rev3 修正，写入任务书）：tok/mb = mbs×seq ≤ 12288 → graph 可开、满速；= 16384 → <b>关 graph</b>（561K，75.5GB）或降 mbs；&gt; 16384 → 须 CP。规划任何 seq 时先算 tok/mb，并按峰值显存决定是否关 graph。</li>
+</ol>
+
+<h2>八、方法论警示</h2>
+<div class="callout warn"><b>双变量混淆是本次两版错误归因的共同根因</b>。v1 在调 seq 时同步改了 gbs/accum；v1→rev1 的 cfg0a 在「固定 seq」时又同步改了 mbs（3→4），把 tok/mb 从 12288 偷偷推到 16384。<b>真正隔离变量的做法 = 固定 tok/mb、扫 (seq, mbs) 组合</b>——这正是 rev2 的 11 格阶梯所做的。今后凡涉及吞吐的扫描，必须先写明「单变量是什么」，并交叉验证（同一变量值用多个不同组合复现），否则任何观测到的「效应」都可能是混淆伪迹。这是比本次根因更重要的教训。</div>
+
+<div class="callout"><b>证据可复现性</b>：所有 11 格由脚本 <code>baize_seqlen_control_test.sh</code> 串行跑出，结果表 <code>pretrain_rc_ladder_20261026.tsv</code>（逐格一行，LADDER COMPLETE @ 01:13:39）。每格原始日志 <code>/tmp/baize_rc_ladder/&lt;格&gt;/{master,worker}.log</code> + <code>worker.peakmem</code>。ms/step 直接取自 Megatron <code>elapsed time per iteration (ms)</code> 日志行。显存快照取自 Rank0 after 10 iter 的 <code>torch.cuda.memory_summary</code> 等价查询。</div>
+
+<h2>九、参考文献</h2>
+<ol class="ref">
+  <li>Neel Mishra — Megatron-LM: 3D Parallelism. MFU 定义；selective recompute 省 ~60% 激活、~5% 额外开销。检索日期 2026-10-25。</li>
+  <li>VAHU — Mastering LLM Training: Batch Size, Gradient Accumulation, and Throughput (2026-07-07). 有效批 = mbs × accum × world_size；小微批致 GPU 利用率不足。检索日期 2026-10-25。</li>
+  <li>NVIDIA — Context Parallelism in Megatron-LM. CP 在序列维度切分，单卡有效 seq = seq/CP，降单卡激活显存。检索日期 2026-10-26。</li>
+  <li>PyTorch — CUDA Memory Management &amp; PYTORCH_CUDA_ALLOC_CONF. caching allocator / expandable_segments / reserved vs allocated。检索日期 2026-10-26。</li>
+  <li>Qwen3 技术报告 (arXiv:2505.09388). 长 context 训练的显存与吞吐权衡、CP 实践。检索日期 2026-10-25。</li>
+</ol>
+
+<p class="sub" style="margin-top:28px;text-align:center">— 报告 rev3 生成 2026-10-26 02:0x · BaiZe-2B 预训练线 · 根因 = CUDA Graph 在 HBM 顶格(~81GB)时的 replay 停滞（关 graph 即满速 561K；非 memory-bandwidth-bound）—</p>
 </div>
-
-<p class='small'>生成：BaiZe pretrain agent · 运维令 2026-10-25 23:0x · 交期 2026-10-26 08:00 前 · rev1</p>
-</body></html>
+</body>
+</html>

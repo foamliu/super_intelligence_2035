@@ -156,6 +156,21 @@
 <p><b>两口径</b>：①「纯训练」= 总 token ÷ 613,992；②「含故障/checkpoint 预留」= 纯训练 × (1 + 预留率)。预留率取 10% / 15% / 20% 三档（覆盖 checkpoint 写盘、偶发故障重启、中间 eval 暂停、跨节点 IB 抖动等）。</p>
 </div>
 
+<div class="callout warn">
+<p><b>⚠️ 2026-10-27 #805 实测终判：S1（gbs256 + nw=0）= 308K tok/s，方案 A 未能复现 614K，ETA 改 55.2 天</b>。方案 A（S1 gbs128→256，步数 700k→350k，总 token 1.468T 不变）已于 2026-10-27 08:15 起跑（16 卡 / gbs256 / mbs1 / seq16384 / nw=0 / θ=1e6 / FP8 tensorwise / graph-OFF / AdamW），step 50–200 稳态中位 step-time <b>14.975 s ⇒ 280.1K tok/s</b>（45.6%×613,992），全暖（step 200–340）中位 <b>13.614 s ⇒ 308.1K tok/s</b>（50.2%×613,992）。<b>验收 ≥600K 不达标</b>。</p>
+<p><b>归因更正（推翻 #798「固定开销摊薄」假设）</b>：#798 的双点求解（F≈2.57s / C≈984K，预测 gbs256→614K）<b>跨了不同 num_workers 配置</b>——21:40 gbs128 的 ~480K 是 nw&gt;0（dataloader 与计算 overlap）档，而本 gbs256 实测是 <b>nw=0</b>（dataloader 在主进程串行）档，两者不可比。<b>613K(#792, nw=8) → 308K(本跑, nw=0) 的差额 ≈ 100% 数据加载串行化</b>：nw=0 下每步 ~6.8 s 数据准备 + ~6.8 s 计算<b>串行</b>=13.6 s；#792 nw=8 下两者 overlap=6.83 s。<b>计算效率本身正常</b>（per-GPU 533 TFLOP/s vs #792 511，反而略高），GPU 在数据准备期空等。根因链：fork-COW 膨胀（worker 继承并 COW 复制父进程 CUDA context+索引）→ nw&gt;0 必 OOM（史：nw8→step70/nw4→step90/nw2→step200）→ 被迫 nw=0 → 丢 50% 吞吐。</p>
+<p><b>实测 ETA（S1 = 1.468T token，350,000 步）</b>：</p>
+<table>
+<thead><tr><th>S1 档</th><th class="num">tok/step</th><th class="num">实测 tok/s</th><th class="num">纯训练天</th><th>状态</th></tr></thead>
+<tbody>
+<tr class="miss"><td>gbs256 + nw=0（当前 S1 实跑）</td><td class="num">4,194,304</td><td class="num">308,100</td><td class="num">55.2</td><td>实测（step 200–340 中位，#805）</td></tr>
+<tr class="miss"><td>gbs256 + nw=0（验收窗 50–200）</td><td class="num">4,194,304</td><td class="num">280,100</td><td class="num">60.7</td><td>实测（含 warmup 尾，#805）</td></tr>
+<tr class="hit"><td>gbs256 + nw&gt;0（目标，待 spawn 修复）</td><td class="num">4,194,304</td><td class="num">~614,000</td><td class="num">27.7</td><td>#792 E1 同档，需 spawn 消除 COW-OOM</td></tr>
+</tbody>
+</table>
+<p>故 <b>S1 的 ETA 不再用 613,992 那一档</b>：当前实跑档 = <b>S1 ≈ 55.2 天</b>（@308K 全暖中位）。三阶段（S1@308K + S2@614K + Decay@614K）纯训练 <b>≈ 92.2 天</b>，含 20% 预留 <b>≈ 110.6 天</b>。<b>趋近 614K 的唯一结构性路径 = 修复 dataloader（spawn 启动 worker 消除 fork-COW，详见运维 2026-10-27 09:2x 转交）</b>，使 nw&gt;0 不再 OOM、恢复数据/计算 overlap。当前 nw=0 实跑<b>健康（0 NaN / loss 11.57→5.98 单调降 / 0 崩溃 / θ=1e6 已确认）</b>，作为安全基线继续产出 ckpt（首个 @step2000），spawn 方案将先单机 8 卡 smoke 验证免 OOM 后再切。</p>
+</div>
+
 <h3>3.2　分阶段 wall-clock</h3>
 <table>
 <thead><tr><th>阶段</th><th class="num">总 token</th><th class="num">步数</th><th class="num">秒</th><th class="num">小时</th><th class="num">天</th><th class="num">GPU·h（16卡）</th></tr></thead>
@@ -199,10 +214,17 @@
 
 <h2>四、商榷点与建议</h2>
 
-<h3>4.1　4M tok/step 下吞吐是否仍 613,992（S1 2M 需重测）</h3>
+<h3>4.1　S1 2M tok/step 吞吐：已实测 ~480K（2026-10-26 22:0x 运维令，归因已给出）</h3>
 <div class="callout warn">
-<p><b>事实</b>：613,992 是在 <b>4M tok/step</b>（tok/mb=16,384/GPU，accum16）档实测的，恰为 S2/Decay 配置。S1 用 2M tok/step，每步 token 减半 ⇒ 单步计算量减半，但每步的<strong>通信/启动开销不随 batch 线性下降</strong>，因此 <b>S1 的稳态吞吐大概率 &lt; 613,992</b>（每秒 token 数可能下探，步时 &lt; 3.257 s 但不成比例减半）。</p>
-<p><b>建议</b>：S1 开跑前用 20–40 步 smoke 实测 2M tok/step 的真实 tok/s，把实测值回填 §3 的 ETA（若 S1 实测降到 ~550K，则 S1 天数从 26.4 上浮到 ~29.4，总纯训练升至 ~57 天）。本报告的 54.3 天对 S1 段属<strong>乐观估计</strong>。</p>
+<p><b>实测</b>：S1 gbs128（2,097,152 tok/step）21:40 稳态 step time 4.09 / 4.87 / 5.20 s ⇒ <b>≈400–510K tok/s（中位 ~480K）</b>，仅为 #792 gbs256 基线 613,992 的 65–83%。</p>
+<p><b>归因（双点求解，无需 nsys）</b>：以 gbs256→613,992 tok/s（6.831 s/step）与 gbs128→~446K（~4.7 s/step）两点解 <code>t = F + tok/C</code> ⇒ <b>固定每步开销 F ≈ 2.57 s</b>（optimizer step + grad-allreduce barrier + dataloader/prefetch 落定 + kernel-launch 尾），<b>纯计算吞吐 C ≈ 984K tok/s</b>。gbs128 下 F 占步时 55%（⇒446K），gbs256 下 F 占 38%（⇒614K）。<b>613K→480K 的差额主要落在「固定每步开销摊薄」，非计算效率/通信扩展/数据瓶颈</b>。GPU 实测 per-step 分解（nsys / Megatron timers step 50–200）待 data 线恢复 l1_en_hq 后补，用于确认 F 内部各子项占比。</p>
+<p><b>方案三选一（已预置，待运维裁定 + smoke 验证）</b>：</p>
+<ul>
+<li><b>A（推荐，已预置）</b>：S1 <code>gbs 128→256</code>（=4,194,304 tok/step，与 #792 E1 同档），步数 <code>700k→350k</code>，总 token 1.468T 不变 ⇒ 预期 ~614K / 27.7 天。落地：<code>GBS=256 ITERS=350000 bash code/baize-llm/scripts/train.sh s1</code>（configs/s1.env 的 GBS/ITERS 已改为 <code>${VAR:-default}</code> 可 env 覆盖）。「放弃 S1 小 batch 阶段」的取舍 = warmup 已处理早期稳定性，accum16 对 2.2B AdamW 在稳定区间，无 loss-descent 硬理由保留 gbs128 —— 由运维否决权裁定。</li>
+<li><b>B</b>：保持 gbs128，压固定开销（<code>--overlap-grad-reduce</code>/<code>--overlap-param-gather</code>/<code>--use-distributed-optimizer</code> 已在 recipe 开；dataloader workers/prefetch、NCCL env 逐项调）—— F≈2.57s 中通信/barrier 占比待 nsys 确认后逐项压。</li>
+<li><b>C</b>：<code>gbs=192</code>（3,145,728 tok/step）测一档，连 2.1M/3.1M/4.2M 三点画 tok/s 曲线。</li>
+</ul>
+<p><b>验收</b>：稳态（step 50–200 中位）<b>≥ 600K tok/s</b>（≥0.98×613,992）。达不到 ⇒ 沿用 ~480K / 35.4 天（§3 已同步）。<b>红线</b>：不开 CUDA Graph（16K 下崩到 ~110K）；tok/mb/GPU ≤16,384；FP8 tensorwise 不改；不许用「更多 token/step」冒充提速（验收看 tok/s）。</p>
 </div>
 
 <h3>4.2　LR 与优化器：已定案（2026-10-26 用户直令，不再商榷）</h3>
