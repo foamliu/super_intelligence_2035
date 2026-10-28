@@ -16,6 +16,8 @@
 > - 如需交代接入层适配，放在**附录或脚注**写一次即可，正文一律 `cline`。
 
 
+> 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
+
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
 ### 🚀 运维令 · 2026-10-28 12:0x（**TB 7way 报告质量整改 · 逐条回应 5 问**）· 用户直令 · 最高优先
@@ -78,7 +80,7 @@
 > - 与 20 题试点的一致性对照（试点是抽样，全量应落在试点 CI 内；偏离要解释）
 
 > **⑤ 交付**
-> - `reports/report_harness_swebench_verified_full500_zh.html`（中文 HTML 自包含，0 外链/0 `<script>`）：TL;DR → 口径 → 7 路总表（含 CI）→ 逐 harness 明细 → 失败归因（模型 vs infra）→ McNemar 7×7 → 与试点对照 → 复现命令。
+> - `doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html`（中文 HTML 自包含，0 外链/0 `<script>`）：TL;DR → 口径 → 7 路总表（含 CI）→ 逐 harness 明细 → 失败归因（模型 vs infra）→ McNemar 7×7 → 与试点对照 → 复现命令。
 > - 生成器 `run/harness/gen_report_swebench_verified_full500_zh.py`（数据字典在顶部，可重生成）。
 > - 命名合规：报告里写 **`cline`**，🚫 不写 `cline-patched`。
 > - `MEMORY_HARNESS.md` 首部新块 + `run/daily-memories-harness/2026-10-28.md`；commit 前缀 `harness swebench-full:`。

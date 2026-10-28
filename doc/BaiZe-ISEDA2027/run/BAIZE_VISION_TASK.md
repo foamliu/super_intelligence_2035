@@ -7,6 +7,8 @@
 > 3. **禁止**「只归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡 30 分钟」。**只要有未完成指令，`WAITING` 必须置 0**（loop 60 秒后再唤醒），直到交付。
 > 4. 心跳里必须写这一句：`未完成指令：<有/无>`；有 ⇒ `WAITING: 0` 且本轮内完成。
 
+> 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
+
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
 ### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节+7子节/0 script/0外链/标签配平/≥15KB + 生成器 `vision/generate_recent_work_report.py`；覆盖 ArmD-R2/ArmE发散→ArmE-R2(ProtB lp 68.236 vs ArmD-R2 64.34·12集 26.10%不可分辨·传递性)/Stage-2 原版780k/OCR 调研·SFT方案·10M合成数据集(470GB/2000tar·去重2.4486%/泄漏113如实披露)；数字全溯源 EXPERIMENTS §14-§18；commit 847ce67eb）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。

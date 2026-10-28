@@ -7,6 +7,8 @@
 > 3. **禁止**「只归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡 30 分钟」。**只要有未完成指令，`WAITING` 必须置 0**（loop 60 秒后再唤醒），直到交付。
 > 4. 心跳里必须写这一句：`未完成指令：<有/无>`；有 ⇒ `WAITING: 0` 且本轮内完成。
 
+> 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
+
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
 ### [运维令] 2026-10-28 11:5x（**写 blend 逻辑中文 HTML 报告 · 澄清「训练时是否串行出不同源」**）· 用户直令 · 最高优先
@@ -20,11 +22,11 @@
 
 **② 直接回答用户核心疑问**：**训练时不会「串行出不同源」**。每个 global batch（128 样本）内已按权重**交错**包含 7 源数据；此前 308K 的「串行」只发生在 **nw=0 时「数据准备 vs GPU compute」这一层**（每步 ≈6.8s 数据 + 6.8s 计算串行），与「源 vs 源」无关。`pre-blend`（物理合并 628→~100 大 shard）与 `blend`（索引交错）是**正交两层**：pre-blend 只减 shard 数、**不改权重、不改交错**。
 
-**③ 交付**：`run/reports/report_pretrain_blend_logic_zh.html`（0 script / 0 外链 / 标签配平），并拷贝一份到项目级 `reports/`；正文含一个权重 0.65/0.35 的具体交错序列示例 + 训练时数据流（索引→取样本→组 batch→compute）的示意图/文字说明。commit `pretrain 报告:`。**优先级：该报告独立于 pre-blend 进行，不影响 10:0x 计划的 pre-blend/S 起跑主线。**
+**③ 交付**：`doc/BaiZe-ISEDA2027/reports/report_pretrain_blend_logic_zh.html`（0 script / 0 外链 / 标签配平）；正文含一个权重 0.65/0.35 的具体交错序列示例 + 训练时数据流（索引→取样本→组 batch→compute）的示意图/文字说明。commit `pretrain 报告:`。**优先级：该报告独立于 pre-blend 进行，不影响 10:0x 计划的 pre-blend/S 起跑主线。**
 
 ### [运维令] 2026-10-28 10:0x（**预训练计划定稿：Stable 4M/step × 70w 步 = 2.94T + 数据 pre-blend → nw=8 保 613K**）· 用户直令 · 最高优先
 
-> 用户原话（2026-10-28 10:0x）：「训练计划已定稿，成文见 `run/reports/report_pretrain_baize2b_training_plan_final_zh.html`；把 S 换成 4M tok/step（2.94T），数据做 pre-blend（只 Stable），pre-blend 不用等全部完成即可开训。」
+> 用户原话（2026-10-28 10:0x）：「训练计划已定稿，成文见 `doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_training_plan_final_zh.html`；把 S 换成 4M tok/step（2.94T），数据做 pre-blend（只 Stable），pre-blend 不用等全部完成即可开训。」
 
 **① 定稿口径（取代 09:3x 的 spawn 调试路径，spawn 不再是主路）**
 - 配方冻结不变：16K / CP1 / DP16 / **mbs=1 / gbs=256 / accum=16** / FP8 tensorwise / graph OFF = **613,992 tok/s**。🚫 不许再为吞吐改 seq/TP/CP/精度/graph。
@@ -39,7 +41,7 @@
 
 **③ 长上下文 / 监控（不变）**：ABF θ=1e6 + RoPE max_position=1048576（4 层注意力）；TB 常驻 `.29:6006`。
 
-**④ 交付**：① 改 `train.sh`/`configs`（GBS=256）+ 重生成 blend；② 8 卡 smoke（gbs256 + pre-blend 后 nw=8）验证 0 NaN + 吞吐 ≥500K，16 卡稳态对齐 613K；③ 起跑 S 前 `check_rope.py` PASS；④ 计划报告在位 `run/reports/report_pretrain_baize2b_training_plan_final_zh.html`；commit `pretrain train:` / `pretrain run:`。
+**④ 交付**：① 改 `train.sh`/`configs`（GBS=256）+ 重生成 blend；② 8 卡 smoke（gbs256 + pre-blend 后 nw=8）验证 0 NaN + 吞吐 ≥500K，16 卡稳态对齐 613K；③ 起跑 S 前 `check_rope.py` PASS；④ 计划报告在位 `doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_training_plan_final_zh.html`；commit `pretrain train:` / `pretrain run:`。
 
 **⑤ 纪律**：不碰 vision/data/harness；盯内存/swap/磁盘余量（pre-blend 写 ~6TB）；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到 smoke 交付；只 add 自己线文件。
 
@@ -78,7 +80,7 @@
 
 **已由运维预置（你不需要重写，直接复用）**
 - `code/baize-llm/` 全套：`README.md` + `configs/{common,s1,s2,decay}.env` + `configs/blend_{s1,decay}.tsv` + `scripts/{lib,preflight,gen_blend,train,tb_6006,lr_schedule,status}` + `docs/LAUNCHER_PATCH_EXP_DECAY.md`。
-- 报告已按六条修订：`run/reports/report_pretrain_baize2b_pretrain_plan_zh.html`（新增 §五「执行口径与工程落地」；§4.2 改为「已定案」；**μP 内容全删**）。
+- 报告已按六条修订：`doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_pretrain_plan_zh.html`（新增 §五「执行口径与工程落地」；§4.2 改为「已定案」；**μP 内容全删**）。
 - 关键口径（写死在 `configs/`）：16K / CP1 / DP16 / graph-OFF / FP8 tensorwise / AdamW / WSD-D 指数 1e-3→1e-4 / 三阶段累计 iters 700k→1,050k→1,070k / `--name baize2b`。
 
 **执行步骤（按序，每步留证据）**
