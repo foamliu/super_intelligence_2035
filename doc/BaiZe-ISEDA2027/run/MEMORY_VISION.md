@@ -6,12 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #320, 2026-10-28 10:07]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 顶部 RUN_ID 224=重启 pretrain loop（TARGET 29），无新 vision 令；上次提交 wake#319@08:57 距今 ~70min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**：`git fetch`→origin/main 最新提交均为 data/pretrain/news，无 vision 相关✓；`git status -sb` main==origin/main 同步✓（0/0）；未跟踪文件均属别线在途（🚫不碰）；交付物在位（4报告项目级 reports/: recent_work 40423B/ocr_synth10m 15754B/ocr_sft_plan 22706B/ocr_synthdata 29177B + 6脚本 run/vision/ocr_synth/*.py + 2报告 run/reports/: armE_r2 26522B/next_steps 29419B）。📦 体积：TASK 22247B(21.7KB)/MEMORY 30566B(29.8KB) 均 ≤32KB✓。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
-> 📦 wake #319 (2026-10-28 08:57, 空唤醒·无新令·补心跳防判死·inbox RUN_ID224=重启pretrain非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake #318 (2026-10-28 07:49, 空唤醒·无新令·补心跳防判死·inbox RUN_ID224=重启pretrain非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake #317/#316 (2026-10-28 06:40/05:31, 空唤醒·无新令·补心跳防判死·inbox RUN_ID222只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake #315 (2026-10-28 04:22, 空唤醒·无新令·补心跳防判死·inbox RUN_ID222只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake #314/#313/#312 (2026-10-28 00:59~03:14, 3轮空唤醒·均无新令·补心跳防判死·inbox RUN_ID222只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
+> **本唤醒流水 [wake #321, 2026-10-28 11:16]**：🟢 空唤醒·无新令（运维令区全✅DONE/已归档/已闭合；`run/ops/inbox.md` 顶部 RUN_ID 224=重启 pretrain loop（TARGET 29），无新 vision 令；上次提交 wake#320@10:09 距今 ~67min >60min 判死线 ⇒ 补心跳防判死）。**实测复核**：`git fetch`→origin/main 最新提交均为 zhulong/data/pretrain/harness，无 vision 相关✓；`git status -sb` main==origin/main 同步✓（0/0）；未跟踪文件均属别线在途（🚫不碰）；交付物在位（4报告项目级 reports/: recent_work 40423B/ocr_synth10m 15754B/ocr_sft_plan 22706B/ocr_synthdata 29177B + 6脚本 run/vision/ocr_synth/*.py + 2报告 run/reports/: armE_r2 26522B/next_steps 29419B）。📦 体积：TASK 22247B(21.7KB)/MEMORY 30766B(30.0KB) 均 ≤32KB✓。**仍在等**：①22:4x 质量偏差裁定(去重2.4486%>1%/泄漏113)②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#320/#319/#318/#317/#316/#315/#314/#313/#312 (2026-10-28 00:59~10:09, 9轮空唤醒·均无新令·补心跳防判死·inbox RUN_ID222/224非vision令·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake #311/#310/#309/#308/#307/#306/#305/#304/#302/#301/#300/#299/#298/#297/#296/#295/#294 (2026-10-27 02:42~23:50, 18 轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #290 (2026-10-26 23:02, 空唤醒·无新令·补心跳防判死·滚动wake#258-270旧指针控体积·inbox RUN_ID221=只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #289 (2026-10-26 21:50, 空唤醒·无新令·补心跳防判死·inbox RUN_ID216只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
