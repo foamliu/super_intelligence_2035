@@ -1,5 +1,0 @@
-Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && node --version && npm --version
-Command outputs captured
-Running command: echo '--- npm config ---' && npm config get registry && npm config get strict-ssl && echo '--- env proxy ---' && env | grep -iE 'proxy|npm_config' | head -10 && npm install -g cline@latest --cache /tmp/npm-cache-cline 2>&1 ||   (echo '=== NPM DEBUG LOG ===' &&    cat /root/.npm/_logs/*debug*.log 2>/dev/null | tail -40 &&    exit 1)
-Trial fix-git__Az4482g cancelled
-Collecting main service artifacts

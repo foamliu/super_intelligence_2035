@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16145",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/core/management/commands/runserver.py b/django/core/management/commands/runserver.py\nindex 3c39f57e4..730a55082 100644\n--- a/django/core/management/commands/runserver.py\n+++ b/django/core/management/commands/runserver.py\n@@ -99,6 +99,8 @@ class Command(BaseCommand):\n             if not self.port.isdigit():\n                 raise CommandError(\"%r is not a valid port number.\" % self.port)\n             if self.addr:\n+                if self.addr == \"0\":\n+                    self.addr = \"0.0.0.0\"\n                 if _ipv6:\n                     self.addr = self.addr[1:-1]\n                     self.use_ipv6 = True\ndiff --git a/tests/admin_scripts/tests.py b/tests/admin_scripts/tests.py\nindex 9d2ca839d..32b473bc9 100644\n--- a/tests/admin_scripts/tests.py\n+++ b/tests/admin_scripts/tests.py\n@@ -1584,6 +1584,9 @@ class ManageRunserver(SimpleTestCase):\n         call_command(self.cmd, addrport=\"1.2.3.4:8000\")\n         self.assertServerSettings(\"1.2.3.4\", \"8000\")\n \n+        call_command(self.cmd, addrport=\"0:8000\")\n+        self.assertServerSettings(\"0.0.0.0\", \"8000\")\n+\n         call_command(self.cmd, addrport=\"7000\")\n         self.assertServerSettings(\"127.0.0.1\", \"7000\")\n \n"
-  }
-]

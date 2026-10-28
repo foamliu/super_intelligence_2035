@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-7233",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/xarray/core/rolling.py b/xarray/core/rolling.py\nindex c194ec0..968daae 100644\n--- a/xarray/core/rolling.py\n+++ b/xarray/core/rolling.py\n@@ -973,7 +973,7 @@ class Coarsen(CoarsenArithmetic, Generic[T_Xarray]):\n             else:\n                 reshaped[key] = var\n \n-        should_be_coords = set(window_dim) & set(self.obj.coords)\n+        should_be_coords = set(self.obj.coords) & set(reshaped.variables)\n         result = reshaped.set_coords(should_be_coords)\n         if isinstance(self.obj, DataArray):\n             return self.obj._from_temp_dataset(result)\ndiff --git a/xarray/tests/test_coarsen.py b/xarray/tests/test_coarsen.py\nindex d444998..a216dbe 100644\n--- a/xarray/tests/test_coarsen.py\n+++ b/xarray/tests/test_coarsen.py\n@@ -318,3 +318,14 @@ def test_coarsen_construct(dask: bool) -> None:\n \n     with pytest.raises(ValueError):\n         ds.coarsen(time=12).construct(time=(\"bar\",))\n+\n+\n+def test_coarsen_construct_keeps_all_coords() -> None:\n+    # regression test for GH7233\n+    da = xr.DataArray(np.arange(24), dims=[\"time\"])\n+    da = da.assign_coords(day=365 * da)\n+    ds = da.to_dataset(name=\"T\")\n+\n+    actual = ds.coarsen(time=12).construct(time=(\"year\", \"month\"))\n+    assert \"day\" in actual.coords\n+    assert \"T\" in actual.data_vars\n"
-  }
-]

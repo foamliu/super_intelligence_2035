@@ -1,6 +1,0 @@
-Agent 'cline-patched' does not declare an options_model; leftover kwargs are ignored
-Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && node --version && npm --version
-Command outputs captured
-Running command: ln -sf /opt/cline-modules/@cline/cli-linux-x64/bin/cline /usr/local/bin/cline && cline --version
-Command outputs captured
-Collecting main service artifacts

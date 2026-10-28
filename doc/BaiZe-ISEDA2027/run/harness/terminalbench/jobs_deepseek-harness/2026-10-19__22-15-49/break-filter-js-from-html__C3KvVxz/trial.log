@@ -1,3 +1,0 @@
-Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
-Command outputs captured
-Collecting main service artifacts

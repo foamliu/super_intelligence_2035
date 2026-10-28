@@ -1,4 +1,0 @@
-Running command: pip install --break-system-packages --upgrade pip && pip install --break-system-packages hermes-agent 2>&1 | tail -5
-Command outputs captured
-Trial break-filter-js-from-html__W8Fzdj5 failed: 'DockerEnvironment' object has no attribute 'default_working_dir'
-Collecting main service artifacts

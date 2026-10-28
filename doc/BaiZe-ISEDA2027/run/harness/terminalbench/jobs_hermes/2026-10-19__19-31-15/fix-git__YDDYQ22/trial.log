@@ -1,4 +1,0 @@
-Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
-Command outputs captured
-Trial fix-git__YDDYQ22 failed: Hermes exited with code 1: 
-Collecting main service artifacts

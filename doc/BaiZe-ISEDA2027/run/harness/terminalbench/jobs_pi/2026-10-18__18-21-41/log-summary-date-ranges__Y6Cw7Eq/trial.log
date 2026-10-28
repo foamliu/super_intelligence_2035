@@ -1,9 +1,0 @@
-Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
-Command outputs captured
-Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
-Command outputs captured
-docker compose cp failed; retrying upload with tar stream: Docker compose command failed for environment log-summary-date-ranges. Command: docker compose --project-name log-summary-date-ranges__y6cw7eq__env --project-directory /home/app.e0031982/terminal-bench/log-summary-date-ranges/environment -f /tmp/tmpxhczad9b/log-summary-date-ranges__Y6Cw7Eq__env-docker-compose-resources.json -f /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml -f /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml -f /tmp/tmppylhsxve/docker-compose-environment.json -f /tmp/tmpelta6cxv/docker-compose-mounts.json cp /tmp/tmpi3gcine__models.json main:/root/.pi/agent/models.json. Return code: 1. Stdout:  log-summary-date-ranges__y6cw7eq__env-main-1 copy /tmp/tmpi3gcine__models.json to log-summary-date-ranges__y6cw7eq__env-main-1:/root/.pi/agent/models.json Copying
-Error response from daemon: Could not find the file /root/.pi/agent in container b96a4cd6a6ca3f1b334d55f3bd512e96b975807d1ffc967d643e1bdbbd3f9f4f
-. Stderr: None. 
-Trial log-summary-date-ranges__Y6Cw7Eq failed: Pi exited with code 1: 
-Collecting main service artifacts

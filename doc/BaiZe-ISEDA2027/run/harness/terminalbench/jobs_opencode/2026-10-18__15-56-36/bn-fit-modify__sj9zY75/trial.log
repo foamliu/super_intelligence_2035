@@ -1,12 +1,0 @@
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Classified failed command as NetworkConnectionError (pattern: 'curl: \\(\\d+\\)')
-Trial bn-fit-modify__sj9zY75 failed: Command failed (exit 56): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: [0m
-[0;2mInstalling [0mopencode [0;2mversion: [0m1.19.3[0m
-#=#=#                                                                          ##O#-#                                                                         ##O=#  #                  ... [6480 chars truncated] ...                                                       -=O=#   #   #   #                                                              -=O#- #   #   #                                                                -=#=-#  #    #                                                                 -#O=#  #   #                                                                   -#O#-#   #                                                                     #=#=#   #                                                                      ##O#- #                                                                        #=#=-#                                                                         curl: (56) Failure when receiving data from the peer
-
-
-
-stderr: None
-Collecting main service artifacts

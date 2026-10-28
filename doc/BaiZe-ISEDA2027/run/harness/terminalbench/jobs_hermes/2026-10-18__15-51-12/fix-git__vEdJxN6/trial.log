@@ -1,4 +1,0 @@
-Running command: pip install --upgrade pip && pip install hermes-agent 2>&1 | tail -5
-Command outputs captured
-Trial fix-git__vEdJxN6 failed: 'DockerEnvironment' object has no attribute 'default_working_dir'
-Collecting main service artifacts

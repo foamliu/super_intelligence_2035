@@ -1,4 +1,0 @@
-12:36:10 opencode eval done, re-parsing...
-[verified-full 12:36:10]   resolved=7 failed=2 infra=0
-opencode: {'harness': 'opencode', 'harness_code': 'opencode', 'run_id': 'verified_full_opencode', 'n': 9, 'resolved': ['scikit-learn__scikit-learn-10297', 'pydata__xarray-2905', 'pylint-dev__pylint-4970', 'psf__requests-1142', 'astropy__astropy-12907', 'sympy__sympy-11618', 'sphinx-doc__sphinx-10323'], 'failed': ['django__django-10097', 'pytest-dev__pytest-10051'], 'infra_or_quota': []}
-12:36:10 opencode re-parse done
