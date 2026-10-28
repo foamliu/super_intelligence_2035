@@ -1,14 +1,14 @@
 {
   "harness": "codex",
   "harness_code": "codex",
-  "done": 14,
+  "done": 16,
   "total": 500,
-  "patch_produced": 10,
+  "patch_produced": 11,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 1,
-  "no_patch": 2,
-  "last_update": "2026-10-28 14:45:47",
+  "no_patch": 3,
+  "last_update": "2026-10-28 15:34:57",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -185,6 +185,32 @@
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13212.json",
       "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-13279",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 1142.5,
+      "model_patch_len": 2516,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ll_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 2516 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13279.json\n[run_single] cleanup: git reset --hard 6e9c5ee88fc948e05b4a7d9f82a8861ed2b0343d\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13279.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-13297",
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.3,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13297.json\n[run_single] cleanup: git reset --hard 8954f255bbf5f4ee997fd6de62cb50fc9b5dd697\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13297.json",
+      "classification": "no-patch"
     }
   ]
 }

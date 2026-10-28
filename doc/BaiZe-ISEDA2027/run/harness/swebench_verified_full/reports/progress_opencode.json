@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 22,
+  "done": 25,
   "total": 500,
-  "patch_produced": 21,
+  "patch_produced": 24,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 0,
-  "last_update": "2026-10-28 14:47:05",
+  "last_update": "2026-10-28 15:28:43",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -288,6 +288,45 @@
       "stdout_tail": "Fix the IndexError when x is a scalar and keep_attrs=True\n[✓] Add/run tests for the fix\n\u001b[0m\n\n[run_single] model_patch: 1443 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6461.json\n[run_single] cleanup: git reset --hard 851dadeb0338403e5021c3fbe80cbc9127ee672d\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6461.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-6599",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 1501.3,
+      "model_patch_len": 2454,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": " \u001b[0mTodos\n[✓] Investigate polyval with timedelta64 coordinates producing wrong results\n\u001b[0m\n\n[run_single] model_patch: 2454 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6599.json\n[run_single] cleanup: git reset --hard 6bb2b855498b5c68d7cca8cceb710365d58e6048\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6599.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-6721",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 290.5,
+      "model_patch_len": 1013,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "rray/core/common.py to avoid triggering array loading.\n[✓] Run tests to verify the fix.\n\u001b[0m\n\n[run_single] model_patch: 1013 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6721.json\n[run_single] cleanup: git reset --hard cc183652bf6e1273e985e1c4b3cba79c896c1193\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6721.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-6744",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 696.4,
+      "model_patch_len": 1995,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": " fix for center justification in rolling iterator\n[✓] Write/run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 1995 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6744.json\n[run_single] cleanup: git reset --hard 7cc6cc991e586a6158bb656b8001234ccda25407\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6744.json",
       "classification": "patch-produced"
     }
   ]

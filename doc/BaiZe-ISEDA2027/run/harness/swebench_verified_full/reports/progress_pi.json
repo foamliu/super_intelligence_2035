@@ -1,14 +1,14 @@
 {
   "harness": "pi",
   "harness_code": "pi",
-  "done": 16,
+  "done": 20,
   "total": 500,
-  "patch_produced": 14,
+  "patch_produced": 17,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 1,
-  "no_patch": 0,
-  "last_update": "2026-10-28 14:41:41",
+  "no_patch": 1,
+  "last_update": "2026-10-28 15:27:36",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -211,6 +211,58 @@
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8548.json",
       "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8551",
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 1517.5,
+      "model_patch_len": 3507,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "62254ccfaf9e3861\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=1517.3s ==\n[run_single] model_patch: 3507 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8551.json\n[run_single] cleanup: git reset --hard 57ed10c68057c96491acbd3e62254ccfaf9e3861\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8551.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8593",
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 600.1,
+      "model_patch_len": 2729,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "8ecbda1c8598200ca\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=599.9s ==\n[run_single] model_patch: 2729 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8593.json\n[run_single] cleanup: git reset --hard 07983a5a8704ad91ae855218ecbda1c8598200ca\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8593.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8595",
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 350.6,
+      "model_patch_len": 1705,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "cdeca8db08ae0ba56\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=350.4s ==\n[run_single] model_patch: 1705 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8595.json\n[run_single] cleanup: git reset --hard b19bce971e82f2497d67fdacdeca8db08ae0ba56\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8595.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8621",
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 271.0,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "d73e6fba568a154e83b3\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=270.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8621.json\n[run_single] cleanup: git reset --hard 21698c14461d27933864d73e6fba568a154e83b3\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/pi__sphinx-doc__sphinx-8621.json",
+      "classification": "no-patch"
     }
   ]
 }
