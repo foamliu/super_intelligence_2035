@@ -1385,3 +1385,17 @@
 | 2026-10-28 | 第 166 轮 附录 A43：大众集团中国技术日 6 篇（VEGA / L2++ / L3-L4 芯片 / CEA / 南美 / 唯一自研表述）（**发布通稿 · 不收**） | IT之家 RSS | 不收 | https://www.ithome.com/1/019/151.htm |
 | 2026-10-28 | 第 166 轮 附录 A44：腾讯视频 2027 片单 / 影之刃零补丁 / 爱范儿·钛媒体·量子位·雷峰网分析体与厂商稿 0 入账 | 各站 RSS | 不收 | https://www.ithome.com/1/019/134.htm |
 | 2026-10-28 | 第 166 轮 附录 A45：HN `search_by_date` 40 命中（Show HN 8 / 观点 14 / arXiv 测量 1 / 科技媒体产品报道）⇒ 72h 内 0 入账；arXiv API 连续第 4 轮超时 | Hacker News Algolia / arXiv | 不收 | https://news.ycombinator.com/ |
+| 2026-10-29 | 第 167 轮 入账：Gemini 4 Carbon 发布〔`1/019/240`〕 | IT之家 RSS | news | https://www.ithome.com/1/019/240.htm |
+| 2026-10-29 | 第 167 轮 入账：Anthropic 内部 Claude 研究模型自主挖洞 5 条攻击链〔`1/019/268`〕 | IT之家 RSS | news | https://www.ithome.com/1/019/268.htm |
+| 2026-10-29 | 第 167 轮 入账：AA Intelligence Index v5 上线 / FrontierCode 2.0〔`1/019/237`〕 | IT之家 RSS | news | https://www.ithome.com/1/019/237.htm |
+| 2026-10-29 | 第 167 轮 入账：AI 高管脱节（Mayer / Zuckerberg / Pew 50% vs 5%） | TechCrunch | news | https://techcrunch.com/2026/10/28/ai-execs-may-be-too-out-of-touch-to-build-for-the-general-public/ |
+| 2026-10-29 | 第 167 轮 入账：上海首例 AI 合成声音侵权案判赔 5 万 / 举证责任转移〔`10722491`〕 | 中新网（工人日报） | news | https://www.chinanews.com.cn/sh/2026/10-29/10722491.shtml |
+| 2026-10-29 | 第 167 轮 附录 A1：业余数学家+AI 攻克悬案（站内推荐流·未取正文） | 头条 feed | 不收 | https://www.toutiao.com/article/7701836302269858330/ |
+| 2026-10-29 | 第 167 轮 附录 A2：钛媒体 4 篇分析/传闻体（Anthropic 巨亏 / DeepSeek 亚文化 / DeepSeek V5 传闻） | 钛媒体 RSS | 不收 | https://www.tmtpost.com/8183803.html |
+| 2026-10-29 | 第 167 轮 附录 A3：爱范儿《Gemini 4 Carbon 正式发布》体验稿（发布事件已由 `1/019/240` 入账） | 爱范儿 RSS | 不收 | https://www.ifanr.com/feed |
+| 2026-10-29 | 第 167 轮 附录 A4：雷峰网 3 条（具身生态评论 / 字节辟谣 / 华为刘睿访谈） | 雷峰网 RSS | 不收 | https://www.leiphone.com/feed |
+| 2026-10-29 | 第 167 轮 附录 A5：中新网滚动页 AI 相关 10 条（OPC 已入账 / 地方产业稿 / 视频稿） | 中新网滚动页 | 不收 | https://www.chinanews.com.cn/scroll-news/news1.html |
+| 2026-10-29 | 第 167 轮 附录 A6：苹果首款触控 MacBook Pro 发布批（`1/019/236`–`1/019/262`，产品发布不收） | IT之家 RSS | 不收 | https://www.ithome.com/1/019/238.htm |
+| 2026-10-29 | 第 167 轮 附录 A7：谷歌/微软/福特财报与英伟达财报日程（纯财报数字不收） | IT之家 RSS | 不收 | https://www.ithome.com/1/019/257.htm |
+| 2026-10-29 | 第 167 轮 附录 A8：LG 电视 Copilot 下线 / Mate 90 汇总 / 内存涨价（候选 · 未达门槛） | IT之家 RSS | 不收 | https://www.ithome.com/1/019/267.htm |
+| 2026-10-29 | 第 167 轮 附录 A9：HN 两组 70 命中（Show/Ask HN · Substack · 付费墙 · 超窗）72h 内 0 入账；arXiv API 第 5 次超时 | Hacker News Algolia / arXiv | 不收 | https://news.ycombinator.com/ |
