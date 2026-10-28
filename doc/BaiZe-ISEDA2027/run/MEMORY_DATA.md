@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        ✅运维令10:1x暂停下载DONE.无活跃下载/迁移进程,12源全部镜像完整.例行巡检中
 已完成:       ✅运维令10:1x暂停下载(pgrep/ps双验无download_85m/hf/rsync/wget/aria2进程,判据满足);✅运维令13:3x SFT分词全DONE;✅运维令08:3x刷新两文件;✅12源全部镜像完整(922shard)
-当前动作:     唤醒707(2026-10-28 14:29):例行心跳巡检(上次心跳@13:2x距今~64min,防判死)→①git fetch+diff BAIZE_DATA_TASK.md=空(无新运维令)✓;②pgrep/ps双验无下载/迁移进程✓;③df /nas_train 85%/nas_env 84%✓;④体积MEMORY 38.3KB/TASK 35.4KB均≤40KB✓;⑤更新心跳+日报+commit+push
+当前动作:     唤醒708(2026-10-28 14:47):例行心跳巡检(上次心跳@14:29距今~18min,防判死)→①git fetch+diff BAIZE_DATA_TASK.md=空(无新运维令)✓;②pgrep/ps双验无下载/迁移进程✓;③df /nas_train 85%/nas_env 84%✓;④体积MEMORY 38.8KB/TASK 35.4KB均≤40KB✓;⑤更新心跳+日报+commit+push
 下一步:       待「恢复下载」新令.此前不发起新下载/迁移.WAITING:1
 阻塞:         无
 ERROR_COUNT:  10
@@ -30,6 +30,10 @@ ERROR_COUNT:  10
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [14:47] 唤醒708：例行心跳巡检(上次心跳@14:29距今~18min,防判死) → ①git fetch+diff BAIZE_DATA_TASK.md=空(无新运维令)✓;②pgrep -af 'hf download|download_.*\\.sh|rsync|wget|aria2'=仅grep自身+cline(非下载)✓;③ps -eo grep -iE 'download|rsync|wget|aria2|hf '=NO_DOWNLOAD_PROCESSES✓;④df /nas_train 85%(32T)/nas_env 84%(1.7T)✓;⑤体积MEMORY 38.8KB/TASK 35.4KB均≤40KB✓;⑥更新心跳+日报+commit+push.未完成指令:无(所有运维令已DONE)→WAITING:1
+>
+> 📦 唤醒707(10-28 14:29)原文归档 → daily-memories-data/2026-10-28.md（例行巡检,详见日文件）
+>
 > [14:29] 唤醒707：例行心跳巡检(上次心跳@13:2x距今~64min,防判死) → ①git fetch+diff BAIZE_DATA_TASK.md=空(无新运维令)✓;②pgrep -af 'hf download|download_.*\\.sh|rsync|wget|aria2'=仅grep自身+cline(非下载)✓;③ps -eo grep -iE 'download|rsync|wget|aria2|hf '=NO_DOWNLOAD_PROCESSES✓;④df /nas_train 85%(32T)/nas_env 84%(1.7T)✓;⑤体积MEMORY 38.3KB/TASK 35.4KB均≤40KB✓;⑥更新心跳+日报+commit+push.未完成指令:无(所有运维令已DONE)→WAITING:1
 >
 > [11:5x] 唤醒704：执行运维令10:1x(暂停下载·用户直令「让data把下载暂停一下」) → ①pgrep -af 'hf download|download_.*\.sh|rsync|wget|aria2'=仅cline自身(PID1248337,命令行含TASK文本)+grep自身,无真实下载进程✓;②ps -eo pid=,ppid=,etimes=,args= grep -iE '85m|llava.*onevision|download.*sh'=仅app.t0002965的tensorboard(PID697495,非本用户非下载)✓;③download_85m_parallel16.sh存在(2314B Oct24)但未运行✓;/tmp/85m_parquet_before.txt=5B Oct24✓;④判据满足:无活跃download/migration进程,无需kill;⑤承诺:恢复前不发起任何下载/迁移重I/O,给pretrain pre-blend让路;⑥更新心跳+日报+commit+push。未完成指令:无(判据已满足)→WAITING:1
