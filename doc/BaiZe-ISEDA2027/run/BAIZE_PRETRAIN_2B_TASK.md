@@ -9,6 +9,27 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-28 10:0x（**预训练计划定稿：Stable 4M/step × 70w 步 = 2.94T + 数据 pre-blend → nw=8 保 613K**）· 用户直令 · 最高优先
+
+> 用户原话（2026-10-28 10:0x）：「训练计划已定稿，成文见 `run/reports/report_pretrain_baize2b_training_plan_final_zh.html`；把 S 换成 4M tok/step（2.94T），数据做 pre-blend（只 Stable），pre-blend 不用等全部完成即可开训。」
+
+**① 定稿口径（取代 09:3x 的 spawn 调试路径，spawn 不再是主路）**
+- 配方冻结不变：16K / CP1 / DP16 / **mbs=1 / gbs=256 / accum=16** / FP8 tensorwise / graph OFF = **613,992 tok/s**。🚫 不许再为吞吐改 seq/TP/CP/精度/graph。
+- **Stable（S1+S2 合并为 S）**：`GBS=256`、`ITERS=700000`、seq=16384 → **4.19M tok/step → 2.94T token**。config 落点：`s1.env` GBS 128→256（ITERS 保持 700000）。
+- **Decay**：4M/step、80B、~20000 步（80B vs 83.9B 的 5% 出入 Decay 起跑前定夺）；`UltraData-SFT-2605`/`SFT-Agent-2609` 未分词 → 后置。
+- **LR**：AdamW + WSD（2000 步 warmup → 1e-3 恒定；Decay 段指数衰减）。7 源配比沿用 `blend_s1.tsv`。
+
+**② 吞吐恢复改为「pre-blend → nw=8」**
+- 根因已定：627 片小 shard 的 blend 采样/索引撑大 fork-COW → OOM → 被迫 nw=0 → 数据/计算串行（308K）。pre-blend 把各源合并成 **~16–32 片大 shard**（对齐 613K 基线用的 16 片 p5b_l3 结构）后索引骤小、COW 可忽略 → **恢复 nw=8（fork 即可，不必 spawn）**。
+- 只 pre-blend **Stable 7 源**（Decay 暂不）；输出目录 `/nas_user/app.e0031982/datasets/pre-blend`；.12/.29 并发多开；**按源分开做，每源做完即可换入 gen_blend，无需等全部完成**。
+- pre-blend 完成前可用现有 tokenized 数据先起 smoke/验证；全量 S 起跑前至少把 en_v1_4（0.65 主源）pre-blend 完并换入。
+
+**③ 长上下文 / 监控（不变）**：ABF θ=1e6 + RoPE max_position=1048576（4 层注意力）；TB 常驻 `.29:6006`。
+
+**④ 交付**：① 改 `train.sh`/`configs`（GBS=256）+ 重生成 blend；② 8 卡 smoke（gbs256 + pre-blend 后 nw=8）验证 0 NaN + 吞吐 ≥500K，16 卡稳态对齐 613K；③ 起跑 S 前 `check_rope.py` PASS；④ 计划报告在位 `run/reports/report_pretrain_baize2b_training_plan_final_zh.html`；commit `pretrain train:` / `pretrain run:`。
+
+**⑤ 纪律**：不碰 vision/data/harness；盯内存/swap/磁盘余量（pre-blend 写 ~6TB）；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到 smoke 交付；只 add 自己线文件。
+
 ### [运维令] 2026-10-28 09:3x（**锁定 613K 最佳配置，spawn 调优不许偏离配方；先复跑 smoke 解决真问题**）· 用户直令 · 最高优先
 
 > 用户原话（2026-10-28 09:3x）：「跟 pretrain 沟通，让它不要偏离 613K 最佳配置过远，解决真正的问题。」
