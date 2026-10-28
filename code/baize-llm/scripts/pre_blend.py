@@ -223,6 +223,12 @@ def main():
     ap.add_argument("--verify", action="store_true", help="verify each output shard")
     ap.add_argument("--dry-run", action="store_true", help="show plan only")
     ap.add_argument("--exclude", default="", help="comma-separated shard names to skip")
+    ap.add_argument("--output-start", type=int, default=0,
+                    help="start output shard index (for parallel split across machines)")
+    ap.add_argument("--output-end", type=int, default=-1,
+                    help="end output shard index (exclusive); -1 = all remaining")
+    ap.add_argument("--skip-existing", action="store_true",
+                    help="skip output shards that already have .bin+.idx+.json")
     args = ap.parse_args()
 
     import numpy as np
@@ -251,12 +257,18 @@ def main():
     log(f"Found {len(shards)} shards, target = {args.target_shards} output shards")
 
     groups = group_shards(shards, args.target_shards)
+    output_end = args.output_end if args.output_end >= 0 else len(groups)
     total_bytes_all = 0
     for i, g in enumerate(groups):
         g_bytes = sum(os.path.getsize(os.path.join(src_dir, s + ".bin")) for s in g)
         total_bytes_all += g_bytes
-        log(f"  shard {i:03d}: {len(g)} input -> {fmt_bytes(g_bytes)}")
+        marker = ""
+        if i < args.output_start or i >= output_end:
+            marker = " (OUT OF RANGE)"
+        log(f"  shard {i:03d}: {len(g)} input -> {fmt_bytes(g_bytes)}{marker}")
+    selected = [(i, g) for i, g in enumerate(groups) if args.output_start <= i < output_end]
     log(f"Total: {len(shards)} input -> {len(groups)} output, {fmt_bytes(total_bytes_all)}")
+    log(f"Selected range: [{args.output_start}, {output_end}) = {len(selected)} output shards")
 
     if args.dry_run:
         log("DRY RUN - not writing.")
@@ -269,37 +281,54 @@ def main():
     if avail < total_bytes_all * 1.1:
         die(f"insufficient space: need ~{fmt_bytes(total_bytes_all)}, have {fmt_bytes(avail)}")
 
-    results = []
+    results = {}
     start_time = time.time()
-    for i, group in enumerate(groups):
+    for i, group in selected:
         out_prefix = os.path.join(out_dir, f"{args.prefix}_s{i:03d}")
+        out_bin_check = out_prefix + ".bin"
+        out_idx_check = out_prefix + ".idx"
+        out_json_check = out_prefix + ".json"
+        if args.skip_existing and os.path.isfile(out_bin_check) and \
+           os.path.isfile(out_idx_check) and os.path.isfile(out_json_check):
+            log(f"=== Output shard {i:03d}/{len(groups)-1} — SKIP (already exists) ===")
+            idx_existing = read_idx(out_idx_check)
+            r = {"shards_merged": len(group), "seq_count": idx_existing["seq_count"],
+                 "num_tokens": int(idx_existing["seq_lens"].sum()),
+                 "bin_bytes": os.path.getsize(out_bin_check)}
+            results[i] = r
+            continue
         log(f"=== Output shard {i:03d}/{len(groups)-1} ===")
         r = merge_group(src_dir, group, out_prefix, args.verify)
-        results.append(r)
+        results[i] = r
         elapsed = time.time() - start_time
-        done_bytes = sum(r["bin_bytes"] for r in results)
+        done_bytes = sum(r["bin_bytes"] for r in results.values())
         rate = done_bytes / elapsed if elapsed > 0 else 0
         pct = done_bytes / total_bytes_all * 100 if total_bytes_all else 100
         log(f"  Progress: {pct:.1f}% ({fmt_bytes(done_bytes)}/{fmt_bytes(total_bytes_all)}) "
             f"at {fmt_bytes(rate)}/s, elapsed {elapsed:.0f}s")
 
     elapsed = time.time() - start_time
-    total_tokens = sum(r["num_tokens"] for r in results)
-    total_bytes = sum(r["bin_bytes"] for r in results)
-    log(f"\n=== DONE ===")
-    log(f"  {len(shards)} input -> {len(results)} output shards")
+    total_tokens = sum(r["num_tokens"] for r in results.values())
+    total_bytes = sum(r["bin_bytes"] for r in results.values())
+    log(f"\n=== DONE (range [{args.output_start}, {output_end})) ===")
+    log(f"  {len(results)} output shards processed")
     log(f"  {total_tokens:,} tokens, {fmt_bytes(total_bytes)}")
-    log(f"  Elapsed: {elapsed:.0f}s ({fmt_bytes(total_bytes/elapsed)}/s)")
+    if elapsed > 0:
+        log(f"  Elapsed: {elapsed:.0f}s ({fmt_bytes(total_bytes/elapsed)}/s)")
 
-    manifest = {"source_dir": src_dir, "prefix": args.prefix,
-                "input_shards": len(shards), "output_shards": len(results),
-                "total_tokens": total_tokens, "total_bytes": total_bytes,
-                "target_shards": args.target_shards,
-                "shards": [{"name": f"{args.prefix}_s{i:03d}", **r}
-                           for i, r in enumerate(results)]}
-    with open(os.path.join(out_dir, "MANIFEST.json"), "w") as f:
-        json.dump(manifest, f, indent=2, ensure_ascii=False)
-    log(f"  Manifest: {os.path.join(out_dir, 'MANIFEST.json')}")
+    # Only write MANIFEST if all target shards are covered
+    if len(results) == len(groups):
+        manifest = {"source_dir": src_dir, "prefix": args.prefix,
+                    "input_shards": len(shards), "output_shards": len(results),
+                    "total_tokens": total_tokens, "total_bytes": total_bytes,
+                    "target_shards": args.target_shards,
+                    "shards": [{"name": f"{args.prefix}_s{i:03d}", **results[i]}
+                               for i in sorted(results)]}
+        with open(os.path.join(out_dir, "MANIFEST.json"), "w") as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        log(f"  Manifest: {os.path.join(out_dir, 'MANIFEST.json')}")
+    else:
+        log(f"  Partial run ({len(results)}/{len(groups)} shards) — MANIFEST not written (run all shards to generate)")
 
 
 if __name__ == "__main__":

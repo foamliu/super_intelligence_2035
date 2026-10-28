@@ -1,16 +1,11 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 12:3x #812：**Pre-blend 4/6 DONE + TSV 切绝对路径 + gbs256 correctness smoke 10/30 PASS（0 NaN！）**。① 4 源 pre-blend DONE（math_l3/ufw_l1_en_hq/math_l1/code_l3 各 16 shard）；code_l2 ~60%（PID 518481）；en_v1_4 ~6.4%（PID 457774, ETA ~6h）。② `blend_s1_preblend.tsv` 更新：4 DONE 源切绝对路径，gen_blend.py 验证 PASS（319 shards, weight_sum=1.0）。③ **8 卡 correctness smoke step 10/30 结果**：lm loss=11.57 / **nan iterations=0** ✓ / skipped=0 / grad norm=2.435 / loss scale=1.0 / GPU mem max 72.8GB（≤78GB ✓）/ params=3.0B / lr=1e-3（warmup done） / GBS=256 verified（consumed 2560 samples/10 steps） / step time=53.9s（nw=0 数据串行，吞吐 77.8K tok/s——pre-blend 完成后 nw=8 才测吞吐）。**结论**：gbs=256 配方正确性 PASS，0 NaN + loss 合理 + 显存安全。**下一步**：smoke 30 步跑完确认 loss 持续下降；code_l2/en_v1_4 pre-blend 完成后全量切绝对路径 + common.env nw=8 → 8 卡吞吐 smoke ≥500K → 16 卡 613K → check_rope.py → 起 S。
-> 📦 §#810（08:0x spawn smoke CRASHED@iter31 OOM——inductor compile workers 256→32 fix）→ daily-memories/2026-10-28.md；**已被 #811 pre-blend 方案取代**——pre-blend 减 shards→fork+nw=8 即可，不再需要 spawn。
-> 📦 §#809（16:4x spawn smoke 10-iter PASS, 147K warmup avg）→ daily-memories/2026-10-27.md；**已被 #810 取代——#810 100-iter 崩于 iter31 OOM（inductor workers 过多）**。
+> 🆕 2026-10-28 13:2x #813：**Smoke 30/30 PASS + code_l2 pre-blend DONE + en_v1_4 并行加速**。① **gbs256 correctness smoke 30/30 完成**：step10 loss=11.57→step20 8.61→step30 8.35，**nan=0 全程** ✓，grad norm 2.435→2.350→0.697，GPU mem 72.8GB ≤78GB ✓，step time ramp 53.9s→32.3s→30.2s（nw=0 数据串行），rc=0。② **code_l2 pre-blend DONE**（16 shards, 1.6TB, MANIFEST verified）→ TSV 切绝对路径 → gen_blend.py 验证 PASS（194 shards, weight_sum=1.0）。③ **en_v1_4 并行化**：pre_blend.py 新增 --output-start/--output-end/--skip-existing → .29 处理 s0-7（skip s0-3 已完成，处理 s4-7, PID 195917）+ .12 处理 s8-15（PID 1892956）→ ETA ~5h→~3.3h。④ train.sh bash -n PASS（旧 syntax error 是 10-27 旧版）。**下一步**：en_v1_4 完成后切 TSV 绝对路径 + common.env nw=8 → 8 卡吞吐 smoke ≥500K → 16 卡 613K → check_rope.py → 起 S。
+> 📦 §#812（12:3x, smoke 10/30 + 4 源 DONE）→ daily-memories/2026-10-28.md；**已被 #813 取代——smoke 30/30 完成 + code_l2 DONE + en_v1_4 并行**。
+> 📦 §#806~#810（spawn 调试系列）→ daily-memories/2026-10-27/28.md；**已被 pre-blend 方案取代——pre-blend 减 shards→fork+nw=8 即可**。
 
-> 📦 §#808（13:0x spawn smoke 就绪性复核 PASS）→ daily-memories/2026-10-27.md；**已被 #809 取代——smoke 已跑完 PASS**。
-> 📦 §#807（12:1x spawn-vs-fork CPU 微基准 PASS, worker RSS −79%）→ daily-memories/2026-10-27.md；**已被 #809 GPU smoke 确认**。
-> 📦 §#806（10:2x spawn+COW 补丁实现+静态验证 PASS）→ daily-memories/2026-10-27.md；**v3 commit c8e6894 已由 #809 验证**。
-> 📦 §#805（09:5x 吞吐终判 308K=50%×613K, nw=0 数据串行）→ daily-memories/2026-10-27.md；**spawn fix 目标即消除此 gap**。
-
-> - 未完成指令：有（① **pre-blend 2 源运行中**[en_v1_4 ~6.4% ETA~6h / code_l2 ~60%, PID 457774/518481]；4 源 DONE ② **gbs256 correctness smoke 运行中**[torch.compile 阶段] ③ pre-blend 全部完成后更新 TSV 全部绝对路径 + common.env nw=8 ④ 8 卡吞吐 smoke(gbs256+nw=8)验 0NaN+吞吐≥500K ⑤ 16 卡稳态对齐 613K ⑥ check_rope.py PASS[待 ckpt] ⑦ lr-decay-shape exponential[Decay前验证] ⑧ 长上下文ABF三件[待首个可导出ckpt]）。WAITING=0（smoke 运行中 + pre-blend 运行中，下轮检查 smoke 结果 + pre-blend 进度）。
+> - 未完成指令：有（① **en_v1_4 并行 pre-blend 运行中**[.29 PID195917 s4-7 + .12 PID1892956 s8-15, ETA~3.3h]；5 源 DONE ② smoke 30/30 PASS ✓ ③ en_v1_4 完成后切 TSV 全部绝对路径 + common.env nw=8 ④ 8 卡吞吐 smoke(gbs256+nw=8)验 0NaN+吞吐≥500K ⑤ 16 卡稳态对齐 613K ⑥ check_rope.py PASS[待ckpt] ⑦ lr-decay-shape exponential[Decay前验证] ⑧ 长上下文ABF三件[待首个可导出ckpt]）。WAITING=0（en_v1_4 pre-blend 运行中，下轮检查进度）。
 > 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
 > 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
