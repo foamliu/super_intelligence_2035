@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-29 03:45 #856：**S1监控iter4333健康**。iter 4333/700k(0.62%): loss ~2.53(近5步2.486/2.588/2.537/2.576/2.479, 稳定振荡微降), 0 NaN, 0 skipped, LR=1e-3(恒定peak), ~7.5s/step≈559K tok/s(稳态). GPU 97-100% util ~75GB/卡(.29+.12均8卡全满). mem .29 493G/2T swap 5G/7G; .12 456G/2T swap 0G/7G; /nas_train 35TB free(84%). ckpt@4000(已保存), next@6000(~1667步, ~3.5h). TB6006 OK. grad norm 0.14-0.16(健康收窄). loss-scale 1.0(无溢出). **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~55天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲).
+> 🆕 2026-10-29 03:47 #857：**S1监控iter4503健康**。iter 4503/700k(0.64%): loss ~2.58(近5步2.611/2.543/2.657/2.522/2.588, 稳定振荡微降), 0 NaN, 0 skipped, LR=1e-3(恒定peak), ~7.3s/step≈575K tok/s(稳态). GPU 97-100% util ~75GB/卡(.29+.12均8卡全满). mem .29 500G/2T swap 5G/7G; .12 458G/2T swap 0G/7G; /nas_train 35TB free(84%). ckpt@4000(已保存), next@6000(~1497步, ~3h). TB6006 OK. grad norm 0.12-0.14(健康收窄). loss-scale 1.0(无溢出). **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~55天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲).
+> 📦 §#856（10-29 03:45, S1监控iter4333健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.53, 0NaN, 559K tok/s, ckpt@4000。被#857更新。需要时再读。
 > 📦 §#855（10-29 03:03, S1监控iter4140健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.55, 0NaN, 559K tok/s, ckpt@4000。被#856更新。需要时再读。
 > 📦 §#854（10-29 02:43, S1监控iter3980健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.59, 0NaN, 559K tok/s, ckpt@2000。被#855更新。需要时再读。
 > 📦 §#853（10-29 02:24, S1监控iter3837健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.50, 0NaN, 574K tok/s, ckpt@2000。被#854更新。需要时再读。
@@ -16,8 +17,8 @@ WAITING: 1
 > 📦 §#812~#828（10-28 12:3x~17:3x, pre-blend+smoke+项目目录+LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke✓, LR exp✓, 5源MANIFEST✓, activate✓, 项目目录✓。被#842更新。需要时再读。
 > 📦 §#799~#810（10-27, spawn OOM + nw=0 + pre-blend确立）→ daily-memories/2026-10-27.md；**结论**：spawn被pre-blend取代, nw=0验证PASS(308K)。需要时再读。
 
-> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 4333/700k, 559K tok/s, 0 NaN, loss ~2.53稳定微降) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@2000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅+README§9依赖环境新增）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~55天）。ETA ~54天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=30.5KB / MEMORY=31.6KB（本轮无归档）
+> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 4503/700k, 575K tok/s, 0 NaN, loss ~2.58稳定微降) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@2000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅+README§9依赖环境新增）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~55天）。ETA ~54天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=30.5KB / MEMORY=31.8KB（本轮无归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
