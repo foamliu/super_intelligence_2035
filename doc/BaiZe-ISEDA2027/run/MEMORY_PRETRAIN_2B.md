@@ -1,8 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 17:1x #825：**en_v1_4 pre-blend 14/16 (s013 at 44% 252GB/570GB, s014+s015 待写) + 5 源 ✓ + GPU 全空闲**。① blend 报告 ✓。② LR exponential ✓。③ en_v1_4 s000-s012 done + s013 writing: 4/7 input shards copied @252GB/570GB(44%), PID 2422384 alive(80min), s013 ETA~20min + s014~35min + s015~35min → 全部完成 ETA~18:40。④ 5 源 MANIFEST ✓ (code_l2=421B/code_l3=129B/math_l1=164B/math_l3=78B/ufw_l1_en_hq=150B tok)。⑤ .29 8GPU idle / TB 6006 HTTP 200 / mem 44G/2.0Ti / swap 5.4G/8.0G / /nas_user 12T(90%) /nas_train 29T(86%)。⑥ activate_preblend.sh 就绪（等 en_v1_4 MANIFEST.json）。全线等 I/O。
-> 📦 §#824（17:0x, en_v1_4 14/16 + 5源验证 + GPU全空闲）→ daily-memories/2026-10-28.md；**结论**：en_v1_4 14/16(s013 writing)，5源MANIFEST ✓，全线等I/O。被 #825 更新。需要时再读。
+> 🆕 2026-10-28 17:3x #826：**en_v1_4 pre-blend 14/16 (s014 writing 84GB/638GB ~13%, s015 pending, PID 2422384 alive 99min) + 项目目录脚本&文档更新**。① 脚本已在项目目录 ✓（train.sh/pre_blend.py/gen_blend.py/check_rope.py/check_longctx_data.py/activate_preblend.sh 全在 code/baize-llm/scripts/）。② **README.md 更新**：S1+S2 合并为 S（GBS256/700k/2.94T），2 阶段 S→Decay，pre-blend 工作流 §3.0，部署路径 → baize-llm/baize-llm，16.3KB。③ **decay.env 修正**：ITERS 1070000→720000, START_ITER 1050000→700000（合并 S 后累计步数对齐）。④ **s2.env 标注**：⚠️ 已被合并 S 取代，保留回退用。⑤ blend_s1_preblend.tsv 注释更新（stale PID 修正）。⑥ 5 源 MANIFEST ✓。⑦ TASK 归档 11:5x blend 报告块 → ARCHIVE，TASK 31.3KB。⑧ .29 8GPU idle / mem 44G / /nas_user 12T(90%) /nas_train 29T(87%)。en_v1_4 s014 ETA~25min + s015~25min → 全部完成 ETA~18:20。
+> 📦 §#825（17:1x, en_v1_4 14/16 s013 writing + 项目目录定位）→ daily-memories/2026-10-28.md；**结论**：s013 done→s014 writing, 脚本&README&configs 更新, TASK 归档。被 #826 更新。需要时再读。
 > 📦 §#823（16:4x, en_v1_4 13/16 + LR schedule ✓）→ daily-memories/2026-10-28.md；**结论**：LR exponential ✓，en_v1_4 13/16 被 #824 更新为 14/16。需要时再读。
 > 📦 §#821（16:2x, gbs256 smoke 20/20 PASS + en_v1_4 12/16）→ daily-memories/2026-10-28.md；**结论**：smoke 0NaN/loss11.58→8.65/mem72.8GB/nw=0~155K。需要时再读。
 > 📦 §#820（15:5x, activate_preblend.sh 修复 3 bug）→ daily-memories/2026-10-28.md；**结论**：3 bug 修复，gen_blend PASS，5 源 MANIFEST ✓。需要时再读。
@@ -10,14 +10,9 @@ WAITING: 0
 > 📦 §#817（15:2x, 11/16 · .29 完成）→ daily-memories/2026-10-28.md；**已被 #819 取代**。
 > 📦 §#812~#816（12:3x~15:3x, pre-blend 4→11/16 + smoke + blend 报告）→ daily-memories/2026-10-28.md；**结论**：smoke 30/30 ✓，blend 报告 ✓，5 源 pre-blend ✓，en_v1_4 11/16。
 > 📦 §#806~#810（spawn 调试系列）→ daily-memories/2026-10-27/28.md；**已被 pre-blend 方案取代**。
+> 📦 §#799~#804 流水（2026-10-27, spawn OOM 系列 + nw=0 验证）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS(θ=1e6/0崩/0NaN)，吞吐受数据串行限于~300K。spawn 被 pre-blend 取代。需要时再读。
 
-> - 未完成指令：有（① **en_v1_4 pre-blend 14/16**[s013@44% 252GB/570GB, PID 2422384 alive, ETA~18:40] ② activate_preblend.sh[待①] ③ 8卡smoke(nw=8)验≥500K[待②] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓ ⑦ 长上下文ABF[待ckpt]）。LR schedule ✓。5 源 pre-blend ✓ 验证。全线等 en_v1_4 pre-blend I/O。WAITING=0。
-> 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
-> 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
-> 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
-> 📦 §#801 流水（06:2x，num_workers=4 修复 .12 未传参 + gbs256 重启→06:59 step90 再崩 OOM）→ daily-memories/2026-10-27.md；**结论**：num_workers=4 只延长到 step90，未消除 swap 耗尽 OOM（#802 定论根因=worker RSS 累积）。需要时再读。
-> 📦 §#800 流水（04:0x，8卡smoke PASS + 16卡S1起跑→04:23崩于rank7 .12 DataLoader OOM）→ daily-memories/2026-10-27.md；smoke 60/60 PASS(0NaN/loss11.55→8.32/72.8GB/θ=1e6)，S1到step70(loss8.68/0NaN)后崩(num_workers=8非4→#801修复)。
-> 📦 §#799（DDP fix e34d5a5ea + smoke起跑）→ daily-memories/2026-10-27.md；DDP fix根因=DETAIL wrapper缺reduce_scatter_tensor_coalesced。
+> - 未完成指令：有（① **en_v1_4 pre-blend 14/16**[s014 writing ~13%, PID 2422384 alive, ETA~18:20] ② activate_preblend.sh[待①] ③ 8卡smoke(nw=8)验≥500K[待②] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓ ⑦ 长上下文ABF[待ckpt] ⑧ **项目目录脚本&文档**[✓ 脚本在位+README/configs 更新, 待 commit]）。LR schedule ✓。5 源 pre-blend ✓。WAITING=0。
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 

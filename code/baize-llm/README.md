@@ -12,17 +12,20 @@ code/baize-llm/
 ├── README.md                     # 本文件（结构 / 快速开始 / 验收 / 排错）
 ├── configs/
 │   ├── common.env                # 全局：路径、模型、并行、精度、优化器、LR、TB
-│   ├── s1.env                    # S1：2M tok/step 档 · 700k 步
-│   ├── s2.env                    # S2：4M tok/step 档 · 350k 步（承接 S1 ckpt）
+│   ├── s1.env                    # S：4M tok/step 档 · 700k 步 · 2.94T token（S1+S2 合并）
+│   ├── s2.env                    # ⚠️ 回退用：原 S2 配置（已被合并 S 取代，保留恢复 3 阶段用）
 │   ├── decay.env                 # Decay：4M 档 · 20k 步（指数衰减 D 段）
 │   ├── longctx.env               # 长上下文扩展（ABF）：阶梯默认值
 │   ├── longctx_ladder.tsv        # 阶梯表：32K/64K/128K × token 预算 × CP
-│   ├── blend_s1.tsv              # S1/S2 数据配比（prop / epochs）
+│   ├── blend_s1.tsv              # S 数据配比（原始 tokenized 路径版）
+│   ├── blend_s1_preblend.tsv     # S 数据配比（pre-blend 版 · 当前使用）
 │   └── blend_decay.tsv           # Decay 数据配比
 ├── scripts/
 │   ├── lib.sh                    # 公共函数（日志 / GPU 门禁 / 特性探测）
 │   ├── preflight.sh              # 开跑前自检（一条命令跑完）
 │   ├── gen_blend.py              # 由 tokenized 目录 + 配比生成 --train-data-path
+│   ├── pre_blend.py              # 数据 pre-blend：合并小 shard → 大 shard（减索引/降 COW）
+│   ├── activate_preblend.sh      # pre-blend 完成后激活：切 TSV 绝对路径 + common.env nw=8
 │   ├── train.sh                  # 统一入口：s1 | s2 | decay（支持 --smoke/--dry-run）
 │   ├── tb_6006.sh                # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py            # WSD-指数 LR 曲线打印 / 与 TB 对账
@@ -38,14 +41,18 @@ code/baize-llm/
 ```
 
 **部署位置**：本目录随仓库走（`<repo>/code/baize-llm`）。训练机期望路径是
-`/nas_train/app.e0031982/code/baize-llm`，二选一：
+`/nas_train/app.e0031982/code/baize-llm/baize-llm`（外层 `baize-llm` 是 git 仓库或 symlink），二选一：
 
 ```bash
 # A) 软链接（推荐，仓库更新即生效）
 ln -sfn /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm \
-        /nas_train/app.e0031982/code/baize-llm
+        /nas_train/app.e0031982/code/baize-llm/baize-llm
 # B) 直接 cp -a（仓库后续更新需重新同步）
 ```
+
+> ⚠️ 2026-10-28 用户令：**后续训练一律从项目目录启动**：
+> `bash /nas_train/app.e0031982/code/baize-llm/baize-llm/scripts/train.sh <stage>`
+> 🚫 不再从 `run/` 散落脚本启动。
 
 脚本不依赖被 cp 的位置：用 `BAIZE_LLM_HOME`（默认=脚本所在目录的上一级）定位配置，
 用 `BAIZE_TRAIN_CODE` 定位训练代码（默认 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027`，
@@ -55,20 +62,22 @@ ln -sfn /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm \
 
 ## 2. 阶段与可实现档位
 
+> 2026-10-28 定稿：原 S1（GBS128）+ S2（GBS256）**合并为 S**（GBS256，700k 步）。
+> `s2.env` 保留为回退选项（恢复 3 阶段时启用），主路 = **2 阶段 S → Decay**。
+
 | 阶段 | seq | mbs | gbs | accum | tok/step（精确） | 步数 | token 合计 | LR |
 |:--|--:|--:|--:|--:|--:|--:|--:|:--|
-| S1 | 16384 | 1 | **128** | 8 | **2,097,152** | 700,000 | 1.468 T | warmup 2000 → 1e-3 恒定 |
-| S2 | 16384 | 1 | **256** | 16 | **4,194,304** | 350,000 | 1.468 T | 1e-3 恒定 |
+| **S** | 16384 | 1 | **256** | 16 | **4,194,304** | 700,000 | **2.94 T** | warmup 2000 → 1e-3 恒定 |
 | Decay | 16384 | 1 | **256** | 16 | **4,194,304** | 20,000 | 83.9 B | 1e-3 → 1e-4（**指数**） |
 
-> ⚠️ 构想里的「2M / 4M」是名义值。DP16 × seq16384 = **262,144** tok/microstep，
-> gbs 必须取它的整数倍 ⇒ 2M 只能取 128（=2.097M），4M 取 256（=4.194M，与 #792 E1 实测同一档）。
-> 因此总 token 由 2.88T 变为 **3.02T**，纯训练 ETA 由 54.3 天变为 **56.9 天**（含 20% 预留 68.3 天）。
+> ⚠️ 构想里的「4M」是名义值。DP16 × seq16384 = **262,144** tok/microstep，
+> gbs 必须取它的整数倍 ⇒ 4M 取 256（=4.194M，与 #792 E1 实测同一档）。
+> 总 token **2.94T + 83.9B ≈ 3.02T**，纯训练 ETA ≈ **56.9 天**（含 20% 预留 68.3 天）。
 
-**三个阶段的 `--train-iters` 是累计值**（S1 700,000 → S2 1,050,000 → Decay 1,070,000），
+**两个阶段的 `--train-iters` 是累计值**（S 700,000 → Decay 720,000），
 共用同一个 `--name baize2b`：每阶段启动时自动从上一阶段最后一个 checkpoint 续跑，
-LR 由绝对迭代数决定，所以 S1/S2 不设 decay（`--lr-decay-iters 0`），
-Decay 设 `--lr-decay-iters 20000` ⇒ 衰减恰好覆盖 1,050,000→1,070,000。
+LR 由绝对迭代数决定，所以 S 不设 decay（`--lr-decay-iters 0`），
+Decay 设 `--lr-decay-iters 20000` ⇒ 衰减恰好覆盖 700,000→720,000。
 
 **数据处理**：`gen_blend.py` 把每源 prop 均分到该源所有 shard（`prop / n_shards`，浮点权重，
 Megatron blended dataset 支持浮点），并在 `--verify` 时用 `.bin` 字节 / 4 反算 token 数与 epochs，
@@ -80,8 +89,7 @@ Megatron blended dataset 支持浮点），并在 `--verify` 时用 `.bin` 字�
 
 | 阶段 | 步数 | ckpt 个数 | 模型权重(≈4.4GB/个) | 含 Adam 状态(≈30GB/个) |
 |:--|--:|--:|--:|--:|
-| S1 | 700,000 | 350 | 1.54 TB | 10.5 TB |
-| S2 | 350,000 | 175 | 0.77 TB | 5.25 TB |
+| S | 700,000 | 350 | 1.54 TB | 10.5 TB |
 | Decay | 20,000 | 10 | 44 GB | 300 GB |
 
 （单个 ckpt 体积实测口径：torch_dist 模型态 ≈4.4GB / 含 Adam 状态 ≈30GB，见
@@ -96,7 +104,7 @@ bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000
 bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000 --apply
 ```
 
-默认策略 = **最近 3 个 + 每 25,000 步一个里程碑**（S1 700k → 约 28 + 3 = 31 个；按 4.4GB ≈ 136GB，
+默认策略 = **最近 3 个 + 每 25,000 步一个里程碑**（S 700k → 约 28 + 3 = 31 个；按 4.4GB ≈ 136GB，
 按 30GB ≈ 930GB）。建议：**每 20k 步（10 个 ckpt）跑一次 dry-run，每 50k 步执行一次 --apply**。
 
 ### 2.2 RoPE / 1M 位置（用户令 2026-10-26）
@@ -153,8 +161,31 @@ python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
 
 ## 3. 快速开始
 
+### 3.0 数据 pre-blend（首次开跑前必做）
+
+> 2026-10-28 定稿：627 片小 shard 的 blend 索引撑大 fork-COW → OOM → 被迫 nw=0 → 吞吐仅 308K。
+> **pre-blend** 把各源合并成 ~16 片大 shard → 索引骤小 → 恢复 nw=8 → 趋近 614K tok/s。
+
 ```bash
-cd /nas_train/app.e0031982/code/baize-llm
+cd /nas_train/app.e0031982/code/baize-llm/baize-llm
+
+# 1) pre-blend 各源（每源做完即可换入 gen_blend，无需等全部完成）
+#    只 pre-blend Stable 7 源（Decay 暂不）
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+$PY scripts/pre_blend.py \
+  --src-dir /nas_train/app.e0031982/datasets/baize-data/tokenized/Ultra-FineWeb/ultrafineweb_en_v1_4 \
+  --out-dir /nas_user/app.e0031982/datasets/pre-blend/en_v1_4 \
+  --prefix en_v1_4_pb --target-shards 16 --skip-existing
+# （对其余 5 源重复，改 --src-dir / --out-dir / --prefix）
+
+# 2) 全部完成后，激活 pre-blend（更新 TSV 绝对路径 + common.env nw=8 + 重启 mmap）
+bash scripts/activate_preblend.sh
+```
+
+### 3.1 训练启动
+
+```bash
+cd /nas_train/app.e0031982/code/baize-llm/baize-llm
 
 # 0) 一次性自检（GPU / 数据 / tokenizer / 磁盘 / launcher 特性 / 端口）
 bash scripts/preflight.sh
@@ -170,9 +201,8 @@ bash scripts/tb_6006.sh start
 #    → http://10.239.2.29:6006
 
 # 4) 正式启动（16 卡 = .12 master + .29 worker；.12 非空闲会自动跳过）
-bash scripts/train.sh s1
-bash scripts/train.sh s2        # S1 收尾后
-bash scripts/train.sh decay     # S2 收尾后
+bash scripts/train.sh s1          # S stable · 700k 步 · 2.94T token
+bash scripts/train.sh decay       # S 收尾后 · 20k 步 · 指数衰减
 ```
 
 后台运行一律 `setsid`：
@@ -191,9 +221,9 @@ bash scripts/train.sh decay     # S2 收尾后
 
 ```bash
 # 打印理论曲线
-python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --decay-iters 20000 --total-iters 1070000
+python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --warmup 2000 --decay-iters 20000 --total-iters 720000
 # 用 TB 导出的 csv 对账（columns: step,learning-rate）
-python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --decay-iters 20000 --total-iters 1070000 \
+python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --warmup 2000 --decay-iters 20000 --total-iters 720000 \
     --tb-csv /tmp/lr_from_tb.csv --tol 1e-3
 ```
 
@@ -204,10 +234,10 @@ python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --decay-iters 20000 --total
 | 项 | 判据 |
 |:--|:--|
 | 优化器 | 日志/`--optimizer adam`；首 10 步 `grad-norm` 有限，无 NaN |
-| LR（S1） | 2000 步内 0→1e-3 线性；之后恒定 1e-3（TB `learning-rate` ±1e-9） |
+| LR（S） | 2000 步内 0→1e-3 线性；之后恒定 1e-3（TB `learning-rate` ±1e-9） |
 | LR（Decay） | D 段 `lr(p)=peak·(min/peak)^p`，20,000 步从 1e-3 降到 1e-4。抽查 p=0.25/0.5/0.75 与 `lr_schedule.py` 输出一致（相对误差 ≤0.1%） |
 | CUDA Graph | **必须 OFF**（日志无 "cuda graph" capture；否则 16K 会掉到 ~110K tok/s） |
-| 吞吐 | S2/Decay 应 ≥ **550K tok/s**（#792 实测 613,992 的 90%）；S1 允许 480–550K（tok/step 减半） |
+| 吞吐 | S/Decay 应 ≥ **550K tok/s**（#792 实测 613,992 的 90%）；pre-blend + nw=8 后目标趋近 614K |
 | 显存 | 峰值 ≤ 78 GB（#792 实测 75.2 GB） |
 | TensorBoard | `.29:6006` 可访问，`learning-rate` 标量随步数变化 |
 | RoPE / 1M | 启动命令含 `--rotary-base 1000000`；导出 config 经 `check_rope.py` **PASS**（56 层 / attention=4 / max_pos=1048576 / theta=1e6）；前 500 步 loss 无异常抬升（>5%） |
@@ -220,11 +250,14 @@ python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --decay-iters 20000 --total
 1. **Decay 阶段数据未就绪**：`UltraData-SFT-2605`（0.60）与 `UltraData-SFT-Agent-2609`（0.12）
    在 `DATA_MAPPING.md` 里仍是**未分词**（0 shard）。`configs/blend_decay.tsv` 已如实登记，
    `gen_blend.py` 会直接报错退出 —— **Decay 不得开跑**，需 data 线先分词。
-   S1/S2 不受影响（7 源均在 tokenized 镜像内、状态「镜像完整」）。
+   S 不受影响（7 源均在 tokenized 镜像内、状态「镜像完整」）。
 2. **16 卡 = 借用 .12**：`train.sh` 内置「.12 非空闲即 SKIP」门禁（不抢 vision）。若 .12 被占用，
-   只能单机 8 卡跑 S1（吞吐约减半，ETA 翻倍），需另行决策。
+   只能单机 8 卡跑 S（吞吐约减半，ETA 翻倍），需另行决策。
 3. **launcher 特性**：`--lr-decay-shape` 若不存在，`preflight.sh` 会红字提示，
    按 `docs/LAUNCHER_PATCH_EXP_DECAY.md` 打补丁（单函数改动）。
+4. **数据 pre-blend**：627 片小 shard 会导致 DataLoader fork-COW OOM（实测 nw=0 → 吞吐仅 308K）。
+   pre-blend 把 7 源合并成 ~16 片大 shard 后恢复 nw=8 → 趋近 614K tok/s。
+   `scripts/pre_blend.py` + `scripts/activate_preblend.sh` 完成此流程（见 §3.0）。
 
 ---
 
