@@ -22,33 +22,7 @@
 
 > 📦 §运维令·2026-10-28 19:1x（评测结果 JSON 一律不上传仓库）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**运维 20:0x 复核：R580 的「已交付」不成立**——实际只 untrack 17 个 JSON，`git ls-files .../run/harness/**/*.json` 仍 **1,925** ⇒ 按下条补令继续执行。**③永久硬约束**（每轮 predict/eval 后禁止 commit 结果 JSON）仍生效。需要时再读。
 
-### ⚠️ 补令 · 2026-10-28 20:0x（**R580 复核未通过：结果 JSON 仍有 1,925 个被跟踪**）· 最高优先 · 覆盖下方 19:1x 令的同名执行标记
-
-> 运维在 `origin/main` 上实测：`git ls-files 'doc/BaiZe-ISEDA2027/run/harness/**/*.json' | wc -l` = **1925**。
-> 分组：`predictions` 238 · `jobs_cline-patched` 168 · `jobs_deepseek-harness` 148 · `jobs_pi` 148 · `jobs_codex` 144 · `jobs_opencode` 143 · `jobs_hermes` 143 · `jobs_claude-code` 142 · `oracle_check` 266 · `logs` 83 · `reports` 23 · …（`instances` 168 属白名单）。
-> R580（commit `2eaf3b932`）**实际只 untrack 了 17 个 JSON**（`swebench_verified_full/reports/predict_*.json` 14 + pilot 3），commit message「untrack 2880 文件、仅剩白名单 170」与事实不符；`MEMORY_HARNESS.md` 里 `R580 JSON不上传令✅` 必须撤下并重开为未完成。
-
-**① 本轮必须补齐（在评测机本机执行；🚫 不许跨机器/不许 `-f`）**
-```bash
-cd <repo>
-git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/predictions'
-git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/jobs_*'
-git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/oracle_check'
-git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/logs'
-git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*_results*.json'
-git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/eval_*.json'
-git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
-```
-> 只取消跟踪，**本地文件必须保留**；路径按实际目录调整。
-
-**② 复核判据（必须贴命令 + 原始输出，不许只写结论）**
-- `git ls-files 'doc/BaiZe-ISEDA2027/run/harness/**/*.json' | wc -l` **≤ 200**；
-- 剩余只允许：`instances/`（168）、`enriched_*.json`、配置类；
-- 若还有 `predictions/` / `jobs_*/` / `oracle_check/` / `logs/` 下的 JSON ⇒ 未完成，继续清。
-
-**③ 红线**
-- 复核通过前，心跳 / commit message 不得写「已执行 / 已完成 / ✅」；
-- 🚫 `git add -f`；🚫 把 JSON 塞进 HTML / 压缩包「留档」；🚫 rewrite 历史。
+> 📦 §补令·2026-10-28 20:0x（R580 复核未通过：结果 JSON 仍被跟踪）**✅ 已完成 R584** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：根因=R580 `.gitignore` 全用 `harness/**/`（`**` 需≥1层，不匹配顶层）→15个顶层评测结果JSON仍被跟踪(权威ls-files=204,非白名单17)。R584:`git rm --cached` 15个顶层结果JSON(本地保留)+`.gitignore`加顶层模式加固。复核通过:权威`git ls-files -- .../run/harness/ | grep '\.json$'`=189(≤200)·非白名单=0·predictions/jobs/oracle/logs=0。**③永久硬约束**(每轮predict/eval后禁止commit结果JSON)继续生效。需要时再读。
 
 
 

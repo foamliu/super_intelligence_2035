@@ -11,3 +11,10 @@ run/harness/**/*verified_full_*.json
 run/harness/**/reports/predict_*.json
 run/harness/**/reports/progress_*.json
 run/harness/**/verified_*_full.json
+# 补令 2026-10-28 20:0x：harness/ 直接下层「顶层」评测结果 JSON —— harness/**/ 的 ** 需 ≥1 层目录，不匹配顶层，必须单列。
+# （R580 漏掉这 15 个顶层结果 JSON，导致 git ls-files 仍 1925；本轮 R584 补齐 untrack + 此处加固，防 loop auto-commit 再跟踪）
+run/harness/*_results*.json
+run/harness/baseline_rewards_*.json
+run/harness/summary_rerun_*.json
+run/harness/scan_rerun_*.json
+# 注：instance_selection_100.json 与 swebench_verified_manifests.json 属「配置/infra」白名单，不忽略。
