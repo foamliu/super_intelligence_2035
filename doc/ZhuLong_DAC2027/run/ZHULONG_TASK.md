@@ -1,6 +1,71 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 🟢 运维指令 · 2026-10-28 10:3x（**重新 regrade r2 + 推进 r3-r5**）· 用户直令 · 最高优先 · 覆盖一切
+### 🟢 运维指令 · 2026-10-28 11:0x（**换端口 8663/8666/8667 重跑 r2 regrade**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话（10-28 11:0x）：「让 zhulong agent 用 8663/8666/8667 端口 regrade 试试」。
+> **背景**：10-28 10:3x 令让 agent 重跑 r2 regrade，但 ops 中继先执行了原版 RUN_ID 129 直接起跑 regrade PID 3608951 @10:44:26。agent 10:56 唤醒诊断出**两个致命问题**：
+> 1. **stale-shard bug**：`output_evaluation/tmp/execution_results_shard_3.jsonl` 残留 prior 20:07 run 的 29 行 → `run_eval.py` resume 逻辑判定 shard_3"已完成" → **跳过唯一可用端口 8654**，只在 3 个死端口（8650/8651/8652）空转 → 100% timeout → 注定 INVALID。
+> 2. **跨用户争用**：`app.t0002997` 用户的 65 个 cline worker（10:29:44 起）抢占共享 sandbox `10.129.32.75:8650-8654` → license pool 实为 0/4（非之前误判的 1/4）。agent 无权 kill 别用户进程。
+> 当前 regrade PID 3608951 在 8650-8654 上注定跑 ~5h 出 INVALID，浪费资源且阻塞新 regrade。**必须先停它**，再用 8663/8666/8667（避开 t0002997 抢占组）重起。
+
+**① 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE`、`PHASE = running`、`WAITING` 当前为 1（本令要求改 0）。
+2. **改 `WAITING = 0`** + commit + push（让 loop 进入 ~1min 续跑模式接手后续）。
+3. **停当前注定 INVALID 的 regrade**（精确 PID，**🚫 禁止 `pkill -f zhulong`**，会匹配 loop 自身）：
+   - 先 `ps -p 3608951 -o pid,cmd` + `ps -p 3608954 -o pid,cmd` 确认是 regrade + run_eval.py（不是别的进程）
+   - 确认后 `kill 3608951 3608954`（若 PID 已 GONE 说明自己收口了，跳过）
+   - 再 `pgrep -af 'run_eval.py|run_glm-5.3-flash_zl_clinealigned16384_r2_regrade'` 确认无残留（cut -c1-140）
+   - **不要 kill t0002997 的 worker**（无权动别用户进程）
+4. **清 stale-shard 文件**（修 stale-shard bug，关键）：
+   - `rm -f /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/tmp/execution_results_shard_*.jsonl`
+   - 清后 `ls -la /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/tmp/` 确认无 shard_*.jsonl 残留
+5. **验证 8663/8666/8667 3 端口健康**（真实 run_code 调用，每端口 2 次）：
+   - `for p in 8663 8666 8667; do for i in 1 2; do echo "port $p try $i:"; timeout 15 curl -s -m 12 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"host":"aether","lang":"pyAether","code":"print(\"probe ok\")"}' | head -c 180; echo; done; done`
+   - **判据**：3 端口 × 2 次 = 6 次全返回 `{"response":"The code execution was successful..."}` 才过。**任一端口失败 → 停手报运维**（不要用坏端口起 regrade）
+   - 同时探测 workdir 映射：`curl -s -m 5 http://10.129.32.75:$p/` 看返回（404 = 端口活）；查 `.env` 或上次 r4″（10-20）的 SANDBOX_ENDPOINTS 记录里 8663/8666/8667 对应的 workdir（参考 `MEMORY.md` §3 / `daily-memories/2026-10-20.md`）
+6. **改 regrade 脚本的端口**（用 8663/8666/8667）：
+   - 复制脚本：`cp /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade_8663.sh`
+   - 用 sed 改新脚本的 `SANDBOX_ENDPOINTS` + `PROXY_PORTS`：
+     - `SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/t0002997_1,8666:/proj/train/AI/workdir/t0002997_2,8667:/proj/train/AI/workdir/t0002997_3`（workdir 若与 8663/8666/8667 实际映射不符，按第 5 步探测结果改；若 t0002997_1/2/3 被 t0002997 占用，尝试用 t0002997_5/6/7 或自方分配的 workdir——**核实后如实写**）
+     - `PROXY_PORTS=8663,8666,8667`
+   - **改后 `head -25` 贴证据**（确认 sed 生效）
+7. **重起 regrade**（用新脚本 + 新 log 时间戳）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR && setsid bash /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade_8663.sh > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_8663_$(date +%H%M).log 2>&1 < /dev/null &`
+   - 8s 后 `kill -0 $PID` 确认存活 + `head -20` log
+8. **30min 内报健康**（real_MCP_32001 + sandbox-timeout + licence-unavailable 计数 + 3 端口可达性 + 进度 X/158）。
+9. **regrade 收口后判定 r2 有效性**（按判据十三 + infra 作废规则）：
+   - **有效**（PASS_RATE 合理 + licence-unavailable ≈ 0 + timeout ≤ 10 + exec_err = 0 + infra 0）→ **记 r2 = pass/158** → 起 r3（用同 8663/8666/8667 端口，generation + regrade）→ r4 → r5 → 5/5 mean±std → 更新报告 §8
+   - **无效** → 如实贴 log 末尾 30 行 + 计数 → `WAITING=1` 报 blocker
+10. **若 r2 有效，r3-r5 同用 8663/8666/8667 端口**（避开 t0002997 抢占组，直到 t0002997 收口或运维另令）。
+11. **每一步 commit + push**（带 `zhulong 8663-port:` 前缀）。
+
+**② 验收判据（不达标要如实报，不得粉饰）**
+1. 当前 regrade PID 3608951/3608954 **必须停**（不能让它跑 5h 出 INVALID 浪费资源）；
+2. stale-shard 文件**必须清**（否则新 regrade 也会被 resume 逻辑坑）；
+3. 8663/8666/8667 3 端口 **6 次 run_code 探针全过**才起 regrade；
+4. r2 regrade log 末尾必须贴证据（PASS_RATE + licence-unavailable 计数）；
+5. 5/5 mean±std 与 cline 86.8±1.6% 对比，**必须在报告里给出"已排除配置混杂 + 排除跨用户争用"的结论**。
+
+**③ 红线**
+- 🚫 **禁止 `pkill -f zhulong`**（会匹配 loop 自身）—— 用精确 PID；
+- 🚫 **不 kill t0002997 的 worker**（无权动别用户进程）；
+- 不覆盖 r1 产物（r1 ✅ = 71.5% 已收口）；
+- 不动 8192 的 5 个 VOIDED batch；
+- 不改 providers.json / .env / cline settings（配置已对齐，本令只换 regrade 端口）；
+- regrade log 不覆盖 10:44 那次（带时间戳 + 8663 命名）；
+- 8663/8666/8667 探针任一失败 → 停手报运维，不强行起 regrade。
+
+**④ 与 10-28 10:3x 令的关系**
+- 10:3x 令的"重跑 r2 regrade"由本令接手并**细化**：增加"停旧 regrade + 清 stale shard + 换端口 8663/8666/8667"三步。10:3x 令的 r3-r5 推进 + 报告更新部分继续适用（端口改用 8663/8666/8667）。
+
+**⑤ 8663/8666/8667 端口背景**
+- 10-20 r4″ 曾用 8663/8666/8667/8670（用户令复活，原 §6 标记"作废"已过时）→ 8663 当时验证可用；
+- 这次用户指定 3 个（无 8670），-p 参数用 3（不是 4）；
+- workdir 映射需 agent 实测确认（8663/8666/8667 → t0002997_X 的 X 是什么，或是否需用别的 workdir）。
+
+---
+
+### 🟢 运维指令 · 2026-10-28 10:3x（**重新 regrade r2 + 推进 r3-r5**）· 用户直令 · 已由 11:0x 令接手细化
 
 > 用户原话（10-28 10:3x）：「重新 regrade」（针对 r2 regrade 自 10-27 20:07 INVALID 后已 14h+ 未重试、agent 仅做 21 次单次 curl 探针推理"必然失败"而未实测的情况）。
 > **背景**：r2 generation 已于 10-27 19:09 收口（batch `2026_1027_123502`·158 行 jsonl·132 success/21 fail/5 timeout·worker providers.json 实测 = `glm-5.3-flash + 16384 + /v1 + reasoning=false` 与 cline 基线逐字节对齐 ✅）。r2 regrade 20:07 跑过一次但 **INVALID**（93/118 licence unavailable，仅 shard3=8654 那批 25 条能跑 → PASS_RATE=0.1582）。此后 14h+ agent 仅做单次 curl 探针（每次都是 pool 1/4：8654 ✅ / 8650·8651·8652 ❌ hang 或 circuit-breaker OPEN），按 §7 infra 作废规则判定"重跑仍会 ~75% fail"而**未再实测 regrade**。用户判定此推理不充分，要求**直接重跑 regrade 拿真实数据**。
