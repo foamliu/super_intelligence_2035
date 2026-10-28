@@ -182,6 +182,9 @@ PYTORCH_ENV="$PYTORCH_ENV BAIZE_NUM_WORKERS=${BAIZE_NUM_WORKERS:-4}"
 # （与 BAIZE_NUM_WORKERS 同机制，避免 #801 那种「只 .29 生效 .12 默认值」坑）。
 PYTORCH_ENV="$PYTORCH_ENV BAIZE_DATALOADER_START_METHOD=${BAIZE_DATALOADER_START_METHOD:-}"
 PYTORCH_ENV="$PYTORCH_ENV BAIZE_PERSISTENT_WORKERS=${BAIZE_PERSISTENT_WORKERS:-0}"
+# 2026-10-28 #810 OOM fix: propagate mmap_bin_files disable to both nodes
+# (same mechanism as BAIZE_NUM_WORKERS — avoid #801-style "only .29 gets it").
+PYTORCH_ENV="$PYTORCH_ENV BAIZE_NO_MMAP_BIN_FILES=${BAIZE_NO_MMAP_BIN_FILES:-1}"
 # 2026-10-27 fix (#801): default TORCH_DISTRIBUTED_TORCH_TRACE so crash tracebacks
 # are captured on disk (error_file=<N/A> twice now — 21:18 and 04:23).  Unlike
 # TORCH_DISTRIBUTED_DEBUG=DETAIL (which wraps ProcessGroupNCCL and breaks DDP
