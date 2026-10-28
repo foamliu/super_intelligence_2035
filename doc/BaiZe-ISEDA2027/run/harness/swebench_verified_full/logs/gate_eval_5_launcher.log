@@ -6,3 +6,37 @@
 12:25:19 EVAL claude-code ...
   12:30:46 EVAL claude-code rc=0
 12:30:46 EVAL opencode ...
+  12:36:09 EVAL opencode rc=0
+12:36:09 EVAL pi ...
+  12:41:35 EVAL pi rc=0
+=== GATE EVAL complete: Wed Oct 28 12:41:35 PM CST 2026 ===
+
+============================================================
+RESULT: cline (n=10)
+  resolved=1  failed=5  infra=0
+  patch_produced=6  no_patch=0
+============================================================
+
+============================================================
+RESULT: codex (n=10)
+  resolved=6  failed=1  infra=0
+  patch_produced=7  no_patch=2
+============================================================
+
+============================================================
+RESULT: claude-code (n=10)
+  resolved=3  failed=3  infra=0
+  patch_produced=6  no_patch=2
+============================================================
+
+============================================================
+RESULT: opencode (n=10)
+  resolved=7  failed=2  infra=0
+  patch_produced=9  no_patch=0
+============================================================
+
+============================================================
+RESULT: pi (n=10)
+  resolved=7  failed=1  infra=0
+  patch_produced=8  no_patch=1
+============================================================

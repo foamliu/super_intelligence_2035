@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 10,
-  "total": 10,
-  "patch_produced": 9,
+  "done": 11,
+  "total": 500,
+  "patch_produced": 10,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 0,
-  "last_update": "2026-10-28 11:43:07",
+  "last_update": "2026-10-28 13:23:35",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -132,6 +132,19 @@
       "stdout_tail": "x it\n[✓] Implement fix to prevent Content-Length header on GET requests\n[✓] Test the fix\n\u001b[0m\n\n[run_single] model_patch: 3135 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__psf__requests-1142.json\n[run_single] cleanup: git reset --hard 22623bd8c265b78b161542663ee980738441c307\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__psf__requests-1142.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-3151",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 216.7,
+      "model_patch_len": 1743,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "dev/shm/harness_verified_full/workdirs/opencode/pydata_xarray/reproducer.py\n(no output)\n\u001b[0m\n\n[run_single] model_patch: 1743 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-3151.json\n[run_single] cleanup: git reset --hard 118f4d996e7711c9aced916e6049af9f28d5ec66\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-3151.json",
       "classification": "patch-produced"
     }
   ]

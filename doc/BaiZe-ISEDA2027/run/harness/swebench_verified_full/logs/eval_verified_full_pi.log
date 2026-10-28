@@ -1,0 +1,36 @@
+Running 8 instances...
+All instances run.
+Total instances: 8
+Instances submitted: 8
+Instances completed: 8
+Instances incomplete: 0
+Instances resolved: 7
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 8
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+
+[stderr]
+
+  0%|          | 0/8 [00:00<?, ?it/s]
+ 12%|█▎        | 1/8 [00:20<02:23, 20.48s/it]
+1 ran successfully, 0 failed:  12%|█▎        | 1/8 [00:20<02:23, 20.48s/it]
+1 ran successfully, 0 failed:  25%|██▌       | 2/8 [00:40<02:00, 20.17s/it]
+2 ran successfully, 0 failed:  25%|██▌       | 2/8 [00:40<02:00, 20.17s/it]
+2 ran successfully, 0 failed:  38%|███▊      | 3/8 [00:41<01:08, 13.79s/it]
+3 ran successfully, 0 failed:  38%|███▊      | 3/8 [00:41<01:08, 13.79s/it]
+3 ran successfully, 0 failed:  50%|█████     | 4/8 [01:03<01:03, 15.99s/it]
+4 ran successfully, 0 failed:  50%|█████     | 4/8 [01:03<01:03, 15.99s/it]
+4 ran successfully, 0 failed:  62%|██████▎   | 5/8 [01:04<00:38, 12.89s/it]
+5 ran successfully, 0 failed:  62%|██████▎   | 5/8 [01:04<00:38, 12.89s/it]
+5 ran successfully, 0 failed:  75%|███████▌  | 6/8 [01:25<00:28, 14.29s/it]
+6 ran successfully, 0 failed:  75%|███████▌  | 6/8 [01:25<00:28, 14.29s/it]
+6 ran successfully, 0 failed:  88%|████████▊ | 7/8 [01:42<00:14, 14.71s/it]
+7 ran successfully, 0 failed:  88%|████████▊ | 7/8 [01:42<00:14, 14.71s/it]
+7 ran successfully, 0 failed: 100%|██████████| 8/8 [05:21<00:00, 40.18s/it]
+8 ran successfully, 0 failed: 100%|██████████| 8/8 [05:21<00:00, 40.18s/it]
+8 ran successfully, 0 failed: 100%|██████████| 8/8 [05:21<00:00, 40.18s/it]
