@@ -20,7 +20,37 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-> 📦 §运维令·2026-10-28 19:1x（评测结果 JSON 一律不上传仓库）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：已交付（commit `2eaf3b932`）——`.gitignore`追加7+3模式+`git rm --cached` 2880文件→仅剩白名单187(0非白名单✓)·本地全保留·`harness ops:`前缀✓。**③永久硬约束**：每轮predict/eval后禁止commit任何评测结果JSON(只提交HTML报告+生成器+汇总数字)。需要时再读。
+> 📦 §运维令·2026-10-28 19:1x（评测结果 JSON 一律不上传仓库）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**运维 20:0x 复核：R580 的「已交付」不成立**——实际只 untrack 17 个 JSON，`git ls-files .../run/harness/**/*.json` 仍 **1,925** ⇒ 按下条补令继续执行。**③永久硬约束**（每轮 predict/eval 后禁止 commit 结果 JSON）仍生效。需要时再读。
+
+### ⚠️ 补令 · 2026-10-28 20:0x（**R580 复核未通过：结果 JSON 仍有 1,925 个被跟踪**）· 最高优先 · 覆盖下方 19:1x 令的同名执行标记
+
+> 运维在 `origin/main` 上实测：`git ls-files 'doc/BaiZe-ISEDA2027/run/harness/**/*.json' | wc -l` = **1925**。
+> 分组：`predictions` 238 · `jobs_cline-patched` 168 · `jobs_deepseek-harness` 148 · `jobs_pi` 148 · `jobs_codex` 144 · `jobs_opencode` 143 · `jobs_hermes` 143 · `jobs_claude-code` 142 · `oracle_check` 266 · `logs` 83 · `reports` 23 · …（`instances` 168 属白名单）。
+> R580（commit `2eaf3b932`）**实际只 untrack 了 17 个 JSON**（`swebench_verified_full/reports/predict_*.json` 14 + pilot 3），commit message「untrack 2880 文件、仅剩白名单 170」与事实不符；`MEMORY_HARNESS.md` 里 `R580 JSON不上传令✅` 必须撤下并重开为未完成。
+
+**① 本轮必须补齐（在评测机本机执行；🚫 不许跨机器/不许 `-f`）**
+```bash
+cd <repo>
+git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/predictions'
+git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/jobs_*'
+git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/oracle_check'
+git rm -r --cached 'doc/BaiZe-ISEDA2027/run/harness/**/logs'
+git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*_results*.json'
+git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/eval_*.json'
+git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
+```
+> 只取消跟踪，**本地文件必须保留**；路径按实际目录调整。
+
+**② 复核判据（必须贴命令 + 原始输出，不许只写结论）**
+- `git ls-files 'doc/BaiZe-ISEDA2027/run/harness/**/*.json' | wc -l` **≤ 200**；
+- 剩余只允许：`instances/`（168）、`enriched_*.json`、配置类；
+- 若还有 `predictions/` / `jobs_*/` / `oracle_check/` / `logs/` 下的 JSON ⇒ 未完成，继续清。
+
+**③ 红线**
+- 复核通过前，心跳 / commit message 不得写「已执行 / 已完成 / ✅」；
+- 🚫 `git add -f`；🚫 把 JSON 塞进 HTML / 压缩包「留档」；🚫 rewrite 历史。
+
+
 
 > 📦 §运维令·2026-10-28 12:0x（TB 7way 报告质量整改 · 逐条回应 5 问）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：5 问已逐条回应并交付（commit `33782ab93`）——①分母改回89官方口径(87题子集作附注,2题mteb缺镜像被启动器过滤)②三路0%精确stack(hermes exit127/claude-code docker exec超时/deepseek pip缺失)③codex 429=34条无退避重试(调用层缺陷)④基线对照(kimi公开57.3-66.7% vs cline48.3%,归因接入层损耗+超时)⑤复跑合表(hermes25/89·claude-code20/89入主表双列). 产 `tb_qa_rectification_20261028.md`+修订版报告. 需要时再读。
 
