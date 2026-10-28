@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #330, 2026-10-28 18:0x]**：🔧 执行运维令·2026-10-28 17:3x（OCR 合成数据 10M 质量偏差裁定：接受现状）。①MEMORY_VISION.md 顶部状态头待等项①标记为 ✅ 已裁定：接受现状 ②EXPERIMENTS_VISION.md §18 补充 1 行用户裁定 ③写心跳+日报+commit(`vision ocr-accept:`)+push ④任务书标✅已完成。**裁定内容**：10M OCR 合成数据集两处质量偏差（去重 2.4486%>1% / 泄漏 113 命中）均接受现状（accept as-is），不重生成、不做 index 过滤；DATASET_CARD 偏差记录保留不动；数据集可用于后续 encoder 预训练/OCR SFT。📦 体积：TASK≈24KB/MEMORY≈30KB 均 ≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #331, 2026-10-28 18:40]**：空唤醒·补心跳防判死。上次心跳 wake#330@18:08 距今 ~32min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → main==origin/main 同步✓（0/0）。交付物复核：6 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/`（recent_work 40423B/ocr_synth10m 15754B/ocr_sft_plan 22706B/ocr_synthdata 29177B/armE_r2 26522B/next_steps 29419B）+ 6 脚本 `vision/ocr_synth/*.py`；注意 `run/reports/` 已被运维统一删除（commit d7397d08a），两份旧报告已搬至项目级 reports/。📦 体积：TASK=24093B(23.5KB)/MEMORY=30065B(29.4KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#330 (2026-10-28 18:08, 🔧执行运维令·OCR 10M 质量偏差裁定=接受现状·①②③④全完成·commit `vision ocr-accept:`·WAITING=1) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#329 (2026-10-28 16:55, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#328/#327/#326/#325/#324/#323/#322/#321/#320/#319/#318/#317/#316/#315/#314 (2026-10-28 00:59~16:24, 15轮空唤醒·均无新令·补心跳防判死·inbox RUN_ID222/224非vision令·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake #311/#310/#309/#308/#307/#306/#305/#304/#302/#301/#300/#299/#298/#297/#296/#295/#294 (2026-10-27 02:42~23:50, 18 轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-27.md。需要时再读。
