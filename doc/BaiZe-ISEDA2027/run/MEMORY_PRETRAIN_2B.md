@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-28 19:56 #836：**16卡S1监控轮·健康运行中！iter 660/700k: loss 4.44↓, 0 NaN, ~6.95s/step=603K tok/s, VRAM 75GB, grad norm 0.6~1.3**。Loss 趋势: iter80=8.29→270=6.12→470=5.10→660=4.44（持续稳定下降✅, 下降加速）。LR warmup: 3.3e-4→1e-3(@step2000). .12/.29各8卡98-100% util, 75GB/卡, ~1040 TFLOP/s/GPU. .29 mem 417G/2T swap 5G/7G 稳定, .12 mem 451G/2T swap 0G/7G 稳定. 磁盘: /nas_train 32TB free✅, /nas_user 16TB free✅. TB .29:6006 健康(pid=2324095, ~48h uptime). 无ckpt(首个@step2000 ETA~22:33, 约2.6h后). 项目目录✅. **阻塞项**: check_rope.py + longctx ABF baseline 均待ckpt@step2000。ETA ~56.2天。
+> 🆕 2026-10-28 20:18 #837：**16卡S1监控轮·健康运行中！iter 840/700k: loss 4.03↓, 0 NaN, ~7.0s/step=599K tok/s, VRAM 75GB, grad norm 0.48~0.71**。Loss 趋势: iter80=8.29→270=6.12→470=5.10→660=4.44→840=4.03（持续稳定下降✅, 下降加速）。LR warmup: 4.2e-4→1e-3(@step2000). .12/.29各8卡96-100% util, 75GB/卡. .29 mem 419G/2T swap 5.4G/8G 稳定, .12 mem 445G/2T swap 0G/8G 稳定. 磁盘: /nas_train 33TB free✅, /nas_user 17TB free✅. TB .29:6006 健康(pid=2324095, ~48.9h uptime). 无ckpt(首个@step2000 ETA~22:32, 约2.2h后). common.env注释更新(pre-blend修复文档化). 项目目录✅. **阻塞项**: check_rope.py + longctx ABF baseline 均待ckpt@step2000。ETA ~55.6天。
+> 📦 §#836（19:56, iter 660/700k loss 4.44↓ 0 NaN 603K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 0.6~1.3, 首个ckpt@step2000 ETA~22:33。被#837更新。需要时再读。
 > 📦 §#835（19:32, iter 487/700k loss 5.1↓ 0 NaN 599K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 1.0~2.6, 首个ckpt@step2000 ETA~22:30。被#836更新。需要时再读。
 > 📦 §#834（19:10, iter 270/700k loss 6.12↓ 0 NaN 608K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 1.9, 首个ckpt@step2000 ETA~22:30。被#835更新。需要时再读。
 > 📦 §#832（18:42, iter 20/700k 613K tok/s 对齐目标 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1正式训练, pre-blend+nw=8恢复613K基线吞吐。被#833更新。需要时再读。
@@ -12,8 +13,8 @@ WAITING: 1
 > 📦 §#812~#825（10-28 12:3x~17:1x, pre-blend 4→15/16 + smoke + 项目目录 + LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke30/30✓(nw=0/155K), LR exponential✓, 5源MANIFEST✓, activate_preblend.sh✓, 项目目录commit✓。需要时再读。
 > 📦 §#799~#810（10-27, spawn OOM + nw=0验证 + pre-blend方案确立）→ daily-memories/2026-10-27.md；**结论**：spawn被pre-blend取代, nw=0验证PASS(308K)。需要时再读。
 
-> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅ ② activate_preblend.sh ✅ ③ 8卡smoke(nw=8) ✅PASS ④ **16卡正式S1** ✅RUNNING(iter 660/700k, 603K tok/s, 0 NaN, loss 4.44↓) ⑤ check_rope.py[阻塞·待ckpt@step2000~2.6h] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓）。**⑤⑦阻塞于ckpt@step2000(预计~22:33)**，本轮=监控轮（训练健康, 无可执行动作, ⑤⑦依赖外部ckpt产出）。ETA ~56.2天。WAITING=1(30min轮询, 待ckpt到位后执行check_rope+longctx)。
-> - 📦 体积：TASK=31.3KB / MEMORY=31.6KB（归档 0KB → 无需归档）
+> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅ ② activate_preblend.sh ✅ ③ 8卡smoke(nw=8) ✅PASS ④ **16卡正式S1** ✅RUNNING(iter 840/700k, 599K tok/s, 0 NaN, loss 4.03↓) ⑤ check_rope.py[阻塞·待ckpt@step2000~2.2h] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓+common.env注释更新）。**⑤⑦阻塞于ckpt@step2000(预计~22:32)**，本轮=监控轮（训练健康, 无可执行动作, ⑤⑦依赖外部ckpt产出）。ETA ~55.6天。WAITING=1(30min轮询, 待ckpt到位后执行check_rope+longctx)。
+> - 📦 体积：TASK=31.3KB / MEMORY=32.0KB（归档 0KB → 无需归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
