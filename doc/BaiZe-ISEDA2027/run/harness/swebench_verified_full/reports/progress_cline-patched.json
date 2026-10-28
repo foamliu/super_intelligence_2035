@@ -1,14 +1,14 @@
 {
   "harness": "cline",
   "harness_code": "cline-patched",
-  "done": 25,
+  "done": 29,
   "total": 500,
-  "patch_produced": 21,
+  "patch_produced": 23,
   "infra": 3,
   "timeout": 0,
   "quota_blocked": 0,
-  "no_patch": 1,
-  "last_update": "2026-10-28 16:13:47",
+  "no_patch": 3,
+  "last_update": "2026-10-28 16:26:47",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -316,6 +316,58 @@
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-14995.json",
       "classification": "patch-produced"
+    },
+    {
+      "instance_id": "astropy__astropy-7166",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 354.2,
+      "model_patch_len": 2475,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "oint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 2475 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7166.json\n[run_single] cleanup: git reset --hard 26d147868f8a891a6009a25cd6a8576d2e1bd747\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7166.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "astropy__astropy-7336",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1.7,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "un_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=1.5s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7336.json\n[run_single] cleanup: git reset --hard 732d89c2940156bdc0e200bb36dc38b5e424bcba\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7336.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "astropy__astropy-7606",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 400.9,
+      "model_patch_len": 1034,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "oint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 1034 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7606.json\n[run_single] cleanup: git reset --hard 3cedd79e6c121910220f8e6df77c54a0b344ea94\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7606.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "astropy__astropy-7671",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 2.4,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "un_single] running cline (patched) ...\n== harness=cline rc=0 timed_out=False wall=2.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7671.json\n[run_single] cleanup: git reset --hard a7141cd90019b62688d507ae056298507678c058\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-7671.json",
+      "classification": "no-patch"
     }
   ]
 }
