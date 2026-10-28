@@ -1,14 +1,14 @@
 {
   "harness": "claude-code",
   "harness_code": "claude-code",
-  "done": 5,
+  "done": 6,
   "total": 10,
   "patch_produced": 2,
   "infra": 2,
   "timeout": 0,
   "quota_blocked": 0,
-  "no_patch": 1,
-  "last_update": "2026-10-28 10:23:33",
+  "no_patch": 2,
+  "last_update": "2026-10-28 10:32:37",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -62,6 +62,19 @@
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__scikit-learn__scikit-learn-10297.json",
       "classification": "patch-produced"
+    },
+    {
+      "instance_id": "astropy__astropy-12907",
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 396.4,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=395.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__astropy__astropy-12907.json",
+      "classification": "no-patch"
     }
   ]
 }
