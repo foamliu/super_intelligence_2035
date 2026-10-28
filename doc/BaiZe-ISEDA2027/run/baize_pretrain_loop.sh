@@ -35,9 +35,9 @@ CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1
 [ -z "$CLINE_KEY" ] && CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
-PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
+PUSH_INTERVAL=900               # 每 15 分钟兜底同步一次（=SLEEP_WAIT；2026-10-28 由 30min 再缩：用户令 1800→900）
 SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗）
-SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤醒间隔：30 分钟（省 token）
+SLEEP_WAIT=900                  # 有异步阻塞任务(训练 running)时的唤醒间隔：15 分钟（省 token；2026-10-28 用户令 1800→900）
 MEMORY="$SCRIPT_DIR/MEMORY_PRETRAIN_2B.md"
 LAST_PUSH="/tmp/baize_pretrain_last_push"
 
@@ -110,7 +110,7 @@ while true; do
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
     fi
     git_push_if_needed
-    # 自适应睡眠：WAITING=1（有训练等异步任务 running）→ 长睡 30 分钟省 token；
+    # 自适应睡眠：WAITING=1（有训练等异步任务 running）→ 长睡 15 分钟省 token；
     # WAITING=0（无阻塞、应连续推进）→ 短睡 1 分钟，让 cline 尽快续跑下一轮。
     SLEEP="$SLEEP_BUSY"
     # ⚠️ 只认**行首**的 WAITING 字段。旧正则 'WAITING:[* ]*1' 会误匹配正文散文
