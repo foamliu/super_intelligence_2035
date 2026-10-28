@@ -49,83 +49,17 @@
 
 **④ 纪律**：进度写 EXPERIMENTS §五 + 报告吞吐节；commit `pretrain perf:`；⚠️ 内存 >95% 告警（08:4x 提示）；不碰 vision/data/harness。
 
-### [运维提示] 2026-10-27 09:2x（**DataLoader OOM 根因升级：fork COW 膨胀 + spawn 方案参考**）· 用户转交 · 供考虑
-
-> 用户请外部调研后转交：把 #802/#803 的「worker RSS 累积」根因做一次**机制级升级**，给出更本质的解法，**请 pretrain 记入知识并自行评估采纳**（非强制照做）。
-> **根因（机制级）**：PyTorch DataLoader 默认 `fork()` 起 worker，子进程继承 rank 进程内存；**Python 引用计数每次访问对象都写对象头 ⇒ read-only 访问也触发 COW（copy-on-write）⇒ 父进程内存（CUDA context + 数据索引 + 已加载数据）被逐个 worker 复制，N 个 worker 后 RSS 近翻 N 倍** → 耗尽 .29 swap → OOM-kill。这精确解释了 `num_workers 8→step70 / 4→step90 / 2→step200`（worker 越多 COW 越快）。
-> **方案（按序，一次只改一项 + ≥30 步稳态 + 记录收益/副作用）**：
-> 1. **spawn 启动**（最彻底）：`torch.multiprocessing.set_start_method('spawn', force=True)` 或 Megatron 对应开关——worker 不再 fork 复制父进程内存，代价是启动慢。
-> 2. **`persistent_workers=True`**：worker 常驻，避免反复 fork 重建累积（单靠它不消除 COW，但可搭配 spawn）。
-> 3. **大对象（数据索引/词表）放 shared_memory**：避免每 worker 复制。
-> 4. **关 `pin_memory`**（若在开）：避免大 batch 锁页内存碎片化。
-> 5. `num_workers=0`（#803 已用）：**消除症状的最保守根治**，在 16K batch（mmap<10ms vs 计算~9s，IO<1%）下吞吐损失可忽略，故当前选择合理。
-> **评估口径**：若后续数据加载变重（重 tokenize/augment），应转向 **spawn + persistent_workers + shared_memory**，而不是继续降 num_workers（降 nw 只是推迟、spawn 才从机制上消除 COW）。
+> 📦 §运维提示 2026-10-27 09:2x（DataLoader OOM fork-COW 根因 + spawn 方案）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：fork-COW 是 RSS 累积根因，spawn 方案已采纳验证中（#806~#811）。需要时再读。
 
 ### [运维提示] 2026-10-27 08:4x（**内存使用率 >95% 会触发告警，调试时注意**）· 用户直令 · 最高优先
 
 > 用户原话：「告诉 pretrain 内存使用率>95%会导致告警，让它调试时注意。」
 > 刚从 #802/#803 的 DataLoader OOM（.29 swap 耗尽 → SIGKILL）时也印证：调试/测吞吐务必盯 **内存 + swap**，避免把内存打到 >95% 触发告警。措施：num_workers 节制、并发/预留窗口适度、及时释放不再用的进程/张量；若逼近 95% 先降载并上报，不要硬顶。
 
-### [运维令] 2026-10-26 22:0x（**S1 吞吐对齐 613,992：先解释 ~480K 的差距，再选方案**）· 用户直令「目标是复现 613,992 基线」· 最高优先
-
-> 用户原话：「pretrain 需要想办法提高S1吞吐，目标是复现 613,992 基线」。
-> **实测（ops 中继 RUN_ID 217，S1 当前跑法）**：gbs=128 ⇒ 2,097,152 tok/step；step time **4.09 / 4.87 / 5.20 s** ⇒ **≈400–510K tok/s**，
-> 仅为 #792 基线 **613,992 的 65–83%**。#792 基线档 = `seq16384 / mbs1 / gbs256 / accum16 / CP1 / DP16 / FP8 tensorwise / graph OFF / 2 节点 16 卡`。
-> 📌 **参数口径（勘误，不要再报错）**：本模型唯一权威 = **2,220,268,032 = 2.220B**（rank 上 `sum(numel())`；P-6 转换 507 tensor keys / 323 HF keys 均逐位一致）。provider 启动打印的「transformer 2.47B + embedding 0.53B = 3.00B」是**把 vocab 嵌入计重的粗糙打印**，2026-10-06 已在 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` §P-3 标注作废。**从来没有 3B 模型**；今后任何报告/心跳引用参数量一律写 2.220B（或 2,220,268,032）。
-
-**请按序给结论（不要一次改一堆参数）**
-1. **归因（必须先做）**：用 Megatron timers 或 nsys 抓 step 50–200，给 **per-step 分解**（forward / backward / optimizer / grad-allreduce / dataloader / 空隙）。
-   判据：明确说出「613K→480K 的差额主要落在哪一项」——固定每步开销、计算效率、还是通信/数据。
-2. **方案三选一并给证据**：
-   - **A（最直接，优先验证）**：S1 的 `gbs 128 → 256`（=4,194,304 tok/step，与 #792 E1 完全同档），步数 `700k → 334k`，**总 token 仍 1.4T 不变**。
-     预期 ~614K、墙钟不增；须交代「S1 小 batch 阶段」的意图保留还是放弃（+理由）。
-   - **B（保持 gbs=128，压固定开销）**：`--overlap-grad-reduce` / `--overlap-param-gather` / `--use-distributed-optimizer` / dataloader workers 数量与 prefetch / NCCL env，
-     **一次只改一项**，每项 ≥30 步取稳态，逐项记录（收益/副作用）。
-   - **C（折中）**：`gbs=192`（3,145,728 tok/step）测一档，把 2.1M/3.1M/4.2M 三点连成 tok/s 曲线。
-3. **红线**：🚫 不许开 CUDA Graph（tok/mb=16384 下会崩到 ~110K）；🚫 tok/mb/GPU 必须 ≤16,384；🚫 FP8 tensorwise 不改；🚫 不许用「更多 token/step」冒充提速（验收看 **tok/s**）。
-4. **验收**：稳态（step 50–200 中位数）**≥ 600K tok/s**（≥0.98×613,992）。达不到 ⇒ 给「可行上限 + 结构性原因」的量化结论，并同步改报告 §3 ETA
-   （按 480K 算 S1 已从 27.7 天变 **~36 天**，必须让 ETA 不再用 613,992 那一档）。
-5. **与 21:3x 令（θ=1e6）同批交付**：θ 未生效（无 `check_rope.py` PASS / 无 provider 打印证据）前，不许起 700k 步正式跑。
-6. **附带（阻塞项，先修）**：21:40:43 停机的直接原因是
-   `[rank2] RuntimeError: DataLoader worker (pid 3102075) is killed by signal: Killed`
-   （主机 2TB 内存 free 1.9TB，但 swap 7G 已满、`dmesg` 无权限）⇒ 请给结论：是 cgroup/单进程上限还是 worker 泄漏；
-   建议同时降 `num_workers`（当前 64/节点）并用 `TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank` 抓下次失败的 rank traceback（别再出现 `error_file=<N/A>`）。
+> 📦 §运维令 2026-10-26 22:0x（S1 吞吐对齐 613,992：归因 + 方案 A/B/C）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#798 归因=gbs128 固定开销摊薄不足；吞吐目标 ≥600K 由后续 10:4x/13:1x 令推进（spawn 验证中）。参数口径 2.220B 仍有效。需要时再读。
 
 
-### [运维令] 2026-10-26 21:3x（**RoPE θ 未生效：请你评估并给出方案，再重启 S1**）· 用户直令「把这个问题跟 pretrain 沟通，让它考虑」· 最高优先
-
-> 用户原话：「把这个问题跟 pretrain 沟通，让它考虑。」
-> 这不是命令你照做，而是**把现场证据交给你判断**：请给出你的结论 + 实现选择 + 理由，我们保留否决权。
-
-**一、现场事实（全部来自 ops 中继只读探针，可复核）**
-1. S1 确实跑起来过：21:12 起 16 卡（.29 8 + .12 8），**19,049 MiB/卡 · 100% util**；TB 6006 `http=200`；blend 627 shards。`--optimizer adam` ✓ `--lr-decay-style WSD` ✓ `--save-interval 2000` ✓ 无 `--enable-cuda-graph` ✓ `--fp8-recipe tensorwise` ✓（RUN_ID 214）
-2. **但实际命令里没有 `--rotary-base`**；`pretrain_launcher.py --help` 无该参数；`mamba2_hybrid_2b/recipe.py` 只有 `apply_rope_fusion`，**没有 `rotary_base`** ⇒ θ 走 Megatron 默认 **1e4**（RUN_ID 215/216）。
-3. 21:18:34 **rank 15（.12 / local_rank 7）exitcode=1**，`error_file=<N/A>` 无 traceback；21:22 前后主进程收到 **SIGTERM(15)** 被整体停掉；21:24 16 卡回 4 MiB（RUN_ID 216）。
-4. `nemo_experiments/` 里**没有 `baize2b*` 目录/ckpt**，只有 `/tmp/baize_s1_baize2b_smoke*.log` ⇒ 正式 run 的 `--dir` 可能指到 `/tmp`（RUN_ID 215）。
-5. blend 跳了 1 片坏 shard：`env14_CC-MAIN-2023-23: ptr overflow max_ptr=122,496,093,768 >= bin_size=49,025,167,172` ⇒ 109/110，权重已摊平。**这是 data 侧问题，你不用改数据**，只需在心跳里记一行。
-
-**二、为什么必须先解决（不能带着跑）**
-- θ 是**训练期固定量**，训完不能补；用户 20:1x 令「56 层中 4 层注意力的 RoPE max position = 1M」，落地口径 = `max_pos=1,048,576` + `θ=1e6`。
-- 本项目 2026-10-06 B1 实测：**只抬 max_pos 不改 θ ⇒ 全 NaN（连 4K 都 NaN）**；`θ=1e6` 才能从 16K 外推到 1M（PPL 32K/128K/1M = 58.55/53.34/55.42）。
-- 即：**现在这套跑法训出来的 ckpt 不具备 1M 能力**，而 1M 是产品目标（用户明确「要不为啥预训练就用 16K 这么长」）。
-
-**三、请你给结论（按这四点回）**
-1. **实现路径二选一 + 理由**：
-   (i) `mamba2_hybrid_2b/recipe.py::pretrain_config` 增 `rotary_base: int = 1_000_000` 并 `kwargs["rotary_base"]=rotary_base`（改动小、影响该 arch 全配方）；
-   (ii) `pretrain_launcher.py` 增 `--rotary-base`（显式可配，但要同时改 CLI 与 provider 透传）。
-   请说明你选哪个、对现有其它配方（minicpm5 5e6 / xmodel 5e5）有无副作用。
-2. **生效证据怎么给**（任选其一并写进心跳）：① provider 初始化时打印 `transformer_config.rotary_base`；② 导出 HF 后 `python code/baize-llm/scripts/check_rope.py --hf-dir <dir>` **PASS**（56 层 / attention=4 / max_pos=1048576 / θ=1e6 / no scaling）；③ 4K PPL 与 θ=1e4 基线对比。
-3. **rank 15 exit1 的定位结论**：不要盲重启。建议加 `TORCH_DISTRIBUTED_TORCH_TRACE=/tmp/td_trace_%rank` 或先**单机 8 卡 50 步**复现；给出你判断的最可能原因。
-4. **`--dir` 修正**：ckpt 必须落 `nemo_experiments/baize2b_s1`（用户令 ckpt 每 2000 步）；写进 `/tmp` 会在重启/清理时全丢。
-
-**四、红线**
-- 🚫 θ 未验证（无生效证据）不许起 700k 步正式 S1；「能跑起来」不算验收。
-- 🚫 不许只改 `max_position_embeddings` 不改 θ。
-- 🚫 不许为了让 smoke 过而把 warmup/decay 语义改成与正式不一致（`--lr-decay-shape exponential` 仍缺，Decay 阶段前必须补上并留证据）。
-
-**五、交付**
-- 心跳写清：**θ 实现方式 / 生效证据 / rank15 结论 / 重启命令（含 --dir 与 --rotary-base 或 recipe 默认值）**；
-- commit 前缀 `pretrain train:`（代码）/ `pretrain run:`（实跑）；**只 add 自己线文件**。
+> 📦 §运维令 2026-10-26 21:3x（RoPE θ 未生效：评估 + 方案 + 重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：θ=1e6 实现路径(ii) `--rotary-base` CLI + recipe 透传，commit ae3a093，三重验证 PASS；#799 运行时确认 θ=1e6 + 0崩；rank15 崩因=DDP DETAIL wrapper（非θ）；--dir 修正已落地。**仍有效红线**：check_rope.py PASS 需 ckpt（待 S1 重启）；lr-decay-shape exponential Decay 前验证。需要时再读。
 
 
 ### [运维令] 2026-10-26 19:2x（**预训练正式落地并开跑：AdamW / WSD-D 指数 / TensorBoard 6006 / code/baize-llm 项目化**）· 用户直令 · 最高优先
