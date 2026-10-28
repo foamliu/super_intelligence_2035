@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 39,
+  "done": 40,
   "total": 500,
-  "patch_produced": 36,
+  "patch_produced": 37,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 2,
-  "last_update": "2026-10-28 18:28:59",
+  "last_update": "2026-10-28 18:37:53",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -509,6 +509,19 @@
       "stdout_tail": "ince those indicate quantifiers, not delineation\nbetween expressions.\n\nCloses #7229\n\u001b[0m\n\n[run_single] model_patch: 5299 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pylint-dev__pylint-8898.json\n[run_single] cleanup: git reset --hard 1f8c4d9eb185c16a2c1d881c054f015e1c2eb334\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pylint-dev__pylint-8898.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-10081",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 532.8,
+      "model_patch_len": 2108,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "running tearDown under --pdb\n[✓] Run tests to verify fix and ensure no regressions\n\u001b[0m\n\n[run_single] model_patch: 2108 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-10081.json\n[run_single] cleanup: git reset --hard da9a2b584eb7a6c7e924b2621ed0ddaeca0a7bea\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-10081.json",
       "classification": "patch-produced"
     }
   ]
