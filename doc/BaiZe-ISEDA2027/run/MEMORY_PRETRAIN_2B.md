@@ -1,22 +1,23 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-28 21:44 #840：**16卡S1监控轮·健康运行中！iter 1570/700k: loss 3.11↓, 0 NaN, 0 skipped, ~7.3s/step=576K tok/s, VRAM 75GB, grad norm 0.19~0.63**。Loss 趋势: iter1=12.19→270=6.12→608=4.48→840=4.03→1216=3.55→1387=3.21→1570=3.11（持续稳定下降✅）。LR warmup: 7.85e-4→1e-3(@step2000, 还差430步~52min). .12/.29各8卡100% util, 75GB/卡. .29 mem 430G/2T(21.5%) swap 5.4G/8G 稳定. 磁盘: /nas_train 35TB free✅, /nas_user 19TB free✅. TB .29:6006 HTTP 200✅. 无ckpt(首个@step2000 ETA~22:36, 约52min后). 脚本就绪验证: check_rope.py/longctx/prune_ckpts.sh 全在项目目录scripts/✓, configs对齐运行参数✓. **阻塞项**: check_rope.py + longctx ABF baseline 均待ckpt@step2000。ETA ~57.5天。
-> 📦 §#839（21:21, iter 1387/700k loss 3.21↓ 0 NaN 590K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 0.29~0.35, 首个ckpt@step2000 ETA~22:33。被#840更新。需要时再读。
-> 📦 §#838（20:59, iter 1216/700k loss 3.55↓ 0 NaN 599K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 0.31~0.38。被#839更新。需要时再读。
-> 📦 §#837（20:18, iter 840/700k loss 4.03↓ 0 NaN 599K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 0.48~0.71, 首个ckpt@step2000 ETA~22:32。被#838更新。需要时再读。
-> 📦 §#835（19:32, iter 487/700k loss 5.1↓ 0 NaN 599K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 1.0~2.6, 首个ckpt@step2000 ETA~22:30。被#836更新。需要时再读。
-> 📦 §#834（19:10, iter 270/700k loss 6.12↓ 0 NaN 608K tok/s VRAM 75GB）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降, grad norm 1.9, 首个ckpt@step2000 ETA~22:30。被#835更新。需要时再读。
-> 📦 §#832（18:42, iter 20/700k 613K tok/s 对齐目标 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1正式训练, pre-blend+nw=8恢复613K基线吞吐。被#833更新。需要时再读。
-> 📦 §#829（17:59, en_v1_4 s015 58% ETA~18:10）→ daily-memories/2026-10-28.md；**结论**：s015在18:09完成(.bin 508GB+.idx+.json+MANIFEST)。被#830更新。需要时再读。
-> 📦 §#828（17:50, en_v1_4 15/16 s015 21% + gen_blend dry-run PASS）→ daily-memories/2026-10-28.md；**结论**：s015 writing, 5源MANIFEST✓, gen_blend PASS, activate_preblend.sh✓, 16GPU idle。被#829更新。需要时再读。
-> 📦 §#827（17:39, en_v1_4 14/16→15/16 + 全验证就绪）→ daily-memories/2026-10-28.md；**结论**：configs/TSV/activate/README全✓, longctx数据体检✅, s014 done→s015 writing。被#828更新。需要时再读。
-> 📦 §#826（17:3x, 项目目录脚本&文档更新）→ daily-memories/2026-10-28.md；**结论**：脚本/README/configs全在项目目录并commit, 5源MANIFEST✓。被#827更新。需要时再读。
-> 📦 §#812~#825（10-28 12:3x~17:1x, pre-blend 4→15/16 + smoke + 项目目录 + LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke30/30✓(nw=0/155K), LR exponential✓, 5源MANIFEST✓, activate_preblend.sh✓, 项目目录commit✓。需要时再读。
-> 📦 §#799~#810（10-27, spawn OOM + nw=0验证 + pre-blend方案确立）→ daily-memories/2026-10-27.md；**结论**：spawn被pre-blend取代, nw=0验证PASS(308K)。需要时再读。
+> 🆕 2026-10-28 22:07 #841：**16卡S1监控轮·健康运行中！iter 1760/700k: loss 3.02↓, 0 NaN, 0 skipped, ~7.17s/step=585K tok/s, VRAM 75GB, grad norm 0.19~0.49**。Loss趋势: iter1=12.19→270=6.12→840=4.03→1216=3.55→1570=3.11→1760=3.02（持续稳定下降✅）。LR warmup: 8.8e-4→1e-3(@step2000, 还差240步~29min). .12/.29各8卡100% util, 75GB/卡. .29 mem 432G/2T(21.4%) swap 5G/8G. 磁盘: /nas_train 35TB free✅, /nas_user 20TB free✅. TB .29:6006 HTTP 200✅. 无ckpt(首个@step2000 ETA~22:36). common.env补项目目录启动注释(17:0x令②③✓). train.sh bash -n PASS✓. **阻塞项**: check_rope.py + longctx ABF baseline 均待ckpt@step2000。ETA ~57天。
+> 📦 §#840（21:44, iter 1570/700k loss 3.11↓ 0 NaN 576K tok/s）→ daily-memories/2026-10-28.md；**结论**：S1健康, loss持续下降。被#841更新。需要时再读。
+> 📦 §#839（21:21, iter 1387 loss 3.21↓ 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1健康。被#840更新。需要时再读。
+> 📦 §#838（20:59, iter 1216 loss 3.55↓ 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1健康。被#839更新。需要时再读。
+> 📦 §#837（20:18, iter 840 loss 4.03↓ 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1健康。被#838更新。需要时再读。
+> 📦 §#835（19:32, iter 487 loss 5.1↓ 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1健康。被#837更新。需要时再读。
+> 📦 §#834（19:10, iter 270 loss 6.12↓ 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1健康。被#835更新。需要时再读。
+> 📦 §#832（18:42, iter 20 613K tok/s 0 NaN）→ daily-memories/2026-10-28.md；**结论**：S1正式训练, pre-blend+nw=8恢复613K基线。被#834更新。需要时再读。
+> 📦 §#829（17:59, en_v1_4 s015完成）→ daily-memories/2026-10-28.md；**结论**：s015完成(.bin 508GB)。被#830更新。需要时再读。
+> 📦 §#828（17:50, s015 21% + gen_blend PASS）→ daily-memories/2026-10-28.md；**结论**：gen_blend/activate✓。被#829更新。需要时再读。
+> 📦 §#827（17:39, 全验证就绪）→ daily-memories/2026-10-28.md；**结论**：configs/TSV/activate/README全✓。被#828更新。需要时再读。
+> 📦 §#826（17:3x, 项目目录脚本&文档）→ daily-memories/2026-10-28.md；**结论**：脚本/README/configs全在项目目录并commit。被#827更新。需要时再读。
+> 📦 §#812~#825（10-28 12:3x~17:1x, pre-blend+smoke+项目目录+LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke✓, LR exp✓, 5源MANIFEST✓, activate✓, 项目目录✓。需要时再读。
+> 📦 §#799~#810（10-27, spawn OOM + nw=0 + pre-blend确立）→ daily-memories/2026-10-27.md；**结论**：spawn被pre-blend取代, nw=0验证PASS(308K)。需要时再读。
 
-> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅ ② activate_preblend.sh ✅ ③ 8卡smoke(nw=8) ✅PASS ④ **16卡正式S1** ✅RUNNING(iter 1570/700k, 576K tok/s, 0 NaN, loss 3.11↓) ⑤ check_rope.py[阻塞·待ckpt@step2000~52min] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓+common.env注释更新）。**⑤⑦阻塞于ckpt@step2000(预计~22:36)**，本轮=监控轮（训练健康, 脚本就绪验证✓, ⑤⑦依赖外部ckpt产出）。ETA ~57.5天。WAITING=1(30min轮询, 待ckpt到位后执行check_rope+longctx)。
-> - 📦 体积：TASK=30.5KB / MEMORY=31.6KB（归档 0KB → 无需归档）
+> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅ ② activate_preblend.sh ✅ ③ 8卡smoke(nw=8) ✅PASS ④ **16卡正式S1** ✅RUNNING(iter 1760/700k, 585K tok/s, 0 NaN, loss 3.02↓) ⑤ check_rope.py[阻塞·待ckpt@step2000~29min] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓+common.env注释更新✓）。**⑤⑦阻塞于ckpt@step2000(预计~22:36)**，本轮=监控轮（训练健康, train.sh bash -n PASS✓, ⑤⑦依赖外部ckpt产出）。ETA ~57天。WAITING=1(30min轮询, 待ckpt到位后执行check_rope+longctx)。
+> - 📦 体积：TASK=30.5KB / MEMORY=31.9KB（归档 0KB → 无需归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
