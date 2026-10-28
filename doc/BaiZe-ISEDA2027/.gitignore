@@ -1,0 +1,9 @@
+# 2026-10-28 用户令：评测结果 JSON 一律不上传仓库（原始 JSON 留在评测机本地）
+# 仅忽略「结果类」；输入/配置类（instances/、enriched_*.json、config）不在此列。
+run/harness/**/predictions/
+run/harness/**/jobs_*/
+run/harness/**/oracle_check/
+run/harness/**/logs/
+run/harness/**/*_results*.json
+run/harness/**/eval_*.json
+run/harness/**/*verified_full_*.json
