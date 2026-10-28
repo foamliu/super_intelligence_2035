@@ -18,18 +18,20 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅运维令13:3x SFT分词全DONE(唤醒703复核).12源全部镜像完整,无未完成指令
-已完成:       ✅运维令08:3x刷新两文件(commit42bf3a52f);✅运维令13:3x分词SFT-2605(94shard/18.89B tok/75.87GB)+Agent-2609(13shard/5.97B tok/23.89GB)→/nas_env;✅convert_sft_jsonl_to_parquet.py+run_tokenize_sft.sh(三阶段自治runner);✅build_tokenized_mirror.py刷新INDEX.tsv(922shard全triplet=OK inode_ok);✅gen_data_mapping_md.py刷新DATA_MAPPING.md(10603B,行11-12=镜像完整);✅gen_report_data_mapping_html.py刷新report(20764B,12源);✅commit 44b512316 pushed to origin/main;✅补提交.du_download_cache.tsv(runner git add遗漏)
-当前动作:     唤醒703(2026-10-28 10:5x):例行心跳巡检(无新运维令,上次心跳4ba197e4a@09:51距今~59min接近60min判死线)→①git fetch无BAIZE_DATA_TASK.md新提交(git diff origin/main空,feaa7e288@13:34仍最新,13:3x仍最高且DONE);②复核运维令13:3x全DONE(INDEX.tsv 14行/922shard全triplet=OK inode_ok/DATA_MAPPING.md 10603B行11-12=镜像完整/untokenized_sft_sources.tsv仅表头/df /nas_train 85%/nas_env 84%);③git main...origin/main无ahead/behind;④本线无未提交改动;⑤更新心跳+日报+push
-下一步:       无未完成指令.30min轮询待新运维令
+PHASE:        ✅运维令10:1x暂停下载DONE(唤醒704).无活跃下载/迁移进程,12源全部镜像完整
+已完成:       ✅运维令10:1x暂停下载(pgrep/ps双验无download_85m/hf/rsync/wget/aria2进程,判据满足);✅运维令13:3x SFT分词全DONE;✅运维令08:3x刷新两文件;✅12源全部镜像完整(922shard)
+当前动作:     唤醒704(2026-10-28 11:5x):执行运维令10:1x(暂停下载)→①pgrep -af 'hf download|download_.*\.sh|rsync|wget|aria2'=无真实匹配(仅cline自身+grep)✓;②ps -eo grep -iE '85m|llava.*onevision|download.*sh'=仅他用户(app.t0002965)tensorboard,非下载✓;③download_85m_parallel16.sh存在但未运行✓;④判据满足,无需kill;⑤恢复前不发起任何下载/迁移重I/O;⑥更新心跳+日报+commit+push
+下一步:       待「恢复下载」新令.此前不发起新下载/迁移.WAITING:1
 阻塞:         无
 ERROR_COUNT:  10
-未完成指令:   无(运维令13:3x+08:3x均已DONE并pushed)→WAITING:1
+未完成指令:   无(运维令10:1x暂停下载=判据已满足,无进程需kill)→WAITING:1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11:5x] 唤醒704：执行运维令10:1x(暂停下载·用户直令「让data把下载暂停一下」) → ①pgrep -af 'hf download|download_.*\.sh|rsync|wget|aria2'=仅cline自身(PID1248337,命令行含TASK文本)+grep自身,无真实下载进程✓;②ps -eo pid=,ppid=,etimes=,args= grep -iE '85m|llava.*onevision|download.*sh'=仅app.t0002965的tensorboard(PID697495,非本用户非下载)✓;③download_85m_parallel16.sh存在(2314B Oct24)但未运行✓;/tmp/85m_parquet_before.txt=5B Oct24✓;④判据满足:无活跃download/migration进程,无需kill;⑤承诺:恢复前不发起任何下载/迁移重I/O,给pretrain pre-blend让路;⑥更新心跳+日报+commit+push。未完成指令:无(判据已满足)→WAITING:1
+>
 > [10:5x] 唤醒703：例行心跳巡检(无新运维令,上次心跳4ba197e4a@09:51距今~59min接近60min判死线→主动更新) → ①git fetch+git diff origin/main -- BAIZE_DATA_TASK.md=空(feaa7e288@13:34仍最新,无新运维令)✓;②复核运维令13:3x全DONE:INDEX.tsv 14行/922shard全triplet=OK inode_ok/L12 SFT-2605 94shard symlink→/nas_env/full_sft_2605/L13 Agent-2609 13shard symlink→/nas_env/full_sft_agent_2609/物理存在✓/untokenized_sft_sources.tsv仅表头✓;③DATA_MAPPING.md 10603B行11-12=镜像完整✓;④report_data_mapping_zh.html 20764B 12源✓;⑤git status main...origin/main无ahead/behind✓本线无未提交改动✓;⑥df /nas_train 85%(32T)/nas_env 84%(1.7T)✓;⑦体积MEMORY 37.2KB/TASK 34.7KB均≤40KB✓;⑧更新心跳+日报+commit+push。未完成指令:无→WAITING:1
 >
 > 📦 唤醒702(10-28 09:5x)原文归档 → daily-memories-data/2026-10-28.md（例行巡检,详见日文件）
