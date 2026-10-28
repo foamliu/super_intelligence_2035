@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        ✅运维令10:1x暂停下载DONE.无活跃下载/迁移进程,12源全部镜像完整.例行巡检中
 已完成:       ✅运维令10:1x暂停下载(pgrep/ps双验无download_85m/hf/rsync/wget/aria2进程,判据满足);✅运维令13:3x SFT分词全DONE;✅运维令08:3x刷新两文件;✅12源全部镜像完整(922shard)
-当前动作:     唤醒705(2026-10-28 12:2x):例行心跳巡检(上次心跳8d7f11be9@11:5x距今~33min)→①git fetch+diff BAIZE_DATA_TASK.md=空(无新运维令)✓;②ps -eo grep -iE '85m|llava.*onevision|download.*sh'=仅app.t0002965 tensorboard(非下载)✓;③df /nas_train 85%/nas_env 84%✓;④体积MEMORY 37.2KB/TASK 34.5KB均≤40KB✓;⑤更新心跳+日报+commit+push
+当前动作:     唤醒706(2026-10-28 13:2x):例行心跳巡检(上次心跳128fded8f@12:3x距今~52min)→①git fetch+diff BAIZE_DATA_TASK.md=空(无新运维令)✓;②pgrep/ps双验无下载/迁移进程✓;③df /nas_train 85%/nas_env 84%✓;④体积MEMORY 37.8KB/TASK 35.4KB均≤40KB✓;⑤更新心跳+日报+commit+push
 下一步:       待「恢复下载」新令.此前不发起新下载/迁移.WAITING:1
 阻塞:         无
 ERROR_COUNT:  10
@@ -31,6 +31,8 @@ ERROR_COUNT:  10
 
 ## 📋 本唤醒流水
 > [11:5x] 唤醒704：执行运维令10:1x(暂停下载·用户直令「让data把下载暂停一下」) → ①pgrep -af 'hf download|download_.*\.sh|rsync|wget|aria2'=仅cline自身(PID1248337,命令行含TASK文本)+grep自身,无真实下载进程✓;②ps -eo pid=,ppid=,etimes=,args= grep -iE '85m|llava.*onevision|download.*sh'=仅app.t0002965的tensorboard(PID697495,非本用户非下载)✓;③download_85m_parallel16.sh存在(2314B Oct24)但未运行✓;/tmp/85m_parquet_before.txt=5B Oct24✓;④判据满足:无活跃download/migration进程,无需kill;⑤承诺:恢复前不发起任何下载/迁移重I/O,给pretrain pre-blend让路;⑥更新心跳+日报+commit+push。未完成指令:无(判据已满足)→WAITING:1
+>
+> [13:2x] 唤醒706：例行心跳巡检(上次心跳128fded8f@12:3x距今~52min,防判死) → ①git fetch+diff BAIZE_DATA_TASK.md=空(b989d6465仍最新,无新运维令)✓;②pgrep -af 'hf download|download_.*\.sh|rsync|wget|aria2'=仅grep自身+cline(非下载)✓;③ps -eo grep -iE '85m|llava.*onevision|download.*sh'=无匹配✓;④df /nas_train 85%(32T)/nas_env 84%(1.7T)✓;⑤体积MEMORY 37.8KB/TASK 35.4KB均≤40KB✓;⑥更新心跳+日报+commit+push.未完成指令:无(所有运维令已DONE)→WAITING:1
 >
 > [12:2x] 唤醒705：例行心跳巡检(上次心跳8d7f11be9@11:5x距今~33min,防判死) → ①git fetch+diff BAIZE_DATA_TASK.md=空(b989d6465仍最新,无新运维令)✓;②ps -eo grep -iE '85m|llava.*onevision|download.*sh'=仅app.t0002965 tensorboard(PID697495,非本用户非下载)✓;③df /nas_train 85%(32T)/nas_env 84%(1.7T)✓;④体积MEMORY 37.2KB/TASK 34.5KB均≤40KB✓;⑤更新心跳+日报+commit+push.未完成指令:无(所有运维令已DONE)→WAITING:1
 >
