@@ -34,9 +34,9 @@ LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
-PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
+PUSH_INTERVAL=900               # 每 15 分钟兜底同步一次（=SLEEP_WAIT；2026-10-28 由 30min 再缩：用户令 1800→900）
 SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔
-SLEEP_WAIT=1800                 # 有异步阻塞时的唤醒间隔（省 token）
+SLEEP_WAIT=900                  # 有异步阻塞时的唤醒间隔（省 token；2026-10-28 用户令 1800→900）
 MEMORY="$SCRIPT_DIR/MEMORY_DATA.md"
 LAST_PUSH="/tmp/baize_data_last_push"
 
