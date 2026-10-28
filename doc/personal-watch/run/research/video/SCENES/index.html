@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-28</td>
+    <td><i>Can LLMs Uncover Hidden Physical Laws through Free Exploration?</i><br><code>arXiv:2610.37649</code>（Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen）</td>
+    <td><b>物理定律被偷偷改了一条，AI 能发现吗</b>：<b>LongChang</b> 造 <b>15 个 MuJoCo 虚拟世界</b>（1 个正常对照 + <b>14 个各改一条定律</b>，如「越重的球落得越慢」），LLM 当探索者，<b>不给任务、不透露定律</b>，只能自己搬物体 / 造工具 / 提问题 / 做实验；LLM 代理负责生成与演化场景、审工具、按「改过的定律」判报告是否<b>又对又有证据</b>。<b>12 个前沿 LLM × 15 场景 × 最多 100 轮</b>：仅 <b>GPT-6-Astra 发现率 16.7%</b>（其余 <b>11 个全 0%</b>），其证据支撑率 <b>97.6%</b>、定律正确率 <b>19.0%</b>；加提示 <b>16.7%→28.6%</b>、预算 100→500 轮反而 <b>14.3%</b>、关掉造工具 <b>4.8%</b>；Gemini-3.7-Flash 每局均提前收工（平均 <b>10.9</b> 轮）、GLM 系 <b>约 90 轮</b>且每局造出装置却 <b>0 发现</b>（失败动作占 16.8–20.2%）⇒ 会动手 ≠ 会发现（<b>作者自报 · 本线未复现</b>；判分/场景演化也是 LLM；15 场景属小样本）</td>
+    <td><a href="10_28.html">10_28.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-27</td>
     <td><i>Do vision models know that three is three?</i><br><code>arXiv:2610.35857</code>（Ankit Sonthalia, Arnas Uselis, Seong Joon Oh）</td>
     <td><b>AI 认得「3」，但知道三是三吗</b>：同一个「三」可以是<b>手写数字 / 三根手指 / 三个球 / 三个点</b>；在 <b>46 个视觉编码器</b>×<b>10 个概念族</b>×<b>2,530 次检验</b>里，把「2→3」看成一个方向 —— 形式内几乎都能找到（<b>99.1%</b> 显著；数量 2→3 <b>100%</b>），跨形式却只有 <b>52.2%</b>（数量仅 <b>46.9%</b>；物体身份 99.3%、年龄 94.6% 最高）⇒ 作者命名 <b>fragmented linearity（碎片化线性）</b>：每种「三」都单独学一遍；碎片化分数 <b>0.67（监督 ViT）vs 0（CLIP）</b>、clean→dirty <b>0.92 vs 0.08</b>；局部越强的模型越能跨过去（Kendall τ <b>0.38–0.89</b>，全 p&lt;1e-3）（<b>作者自报 · 本线未复现</b>；概念类型有限 / 反事实样本近似配对 / 「线性」≠「真理解」）</td>
@@ -145,7 +151,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-27 18:2x CST（新增 <code>10_27.html</code> · TOP-1 = Do vision models know that three is three? / <code>arXiv:2610.35857</code> · 5 镜 / 120s / 口播 446 字；上一版 <code>10_26.html</code> · <code>arXiv:2610.32055</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-28 18:4x CST（新增 <code>10_28.html</code> · TOP-1 = Can LLMs Uncover Hidden Physical Laws through Free Exploration? / <code>arXiv:2610.37649</code> · 5 镜 / 120s / 口播 445 字；上一版 <code>10_27.html</code> · <code>arXiv:2610.35857</code>）<br>
   🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
 </footer>
 </div>

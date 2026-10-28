@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-28（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-28（晚报 · 5/5 收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,15 +53,15 @@
 
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-28 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b> · 早 3 篇全为<b>「借鉴」</b>（多智能体路由怎么在「更准」与「更省」之间自演化 / 长程 agent 的信用分配：让 critic 自己挑「最值得续采」的状态 / 边缘 SoC 上把 KV 状态变成可版本化、可跨引擎搬运的一等对象）</div>
+  <h1>论文推荐日报 · 2026-10-28 <span class="badge b-am">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5</b> · 早 3 篇<b>「借鉴」</b>（多智能体路由怎么在「更准」与「更省」之间自演化 / 长程 agent 的信用分配：让 critic 自己挑「最值得续采」的状态 / 边缘 SoC 上把 KV 状态变成可版本化、可跨引擎搬运的一等对象）+ 晚 2 篇<b>「科普」</b>（在「物理定律被改过」的世界里，AI 能不能自己发现定律 / 把 Asch 从众实验搬进 LLM：换成采样分布后，人越多反而不再更从众）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-28（CST 本地日；本轮 = UTC 2026-10-27T22:0x）</span>
-    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>📅 日期：2026-10-28（CST 本地日；PM 轮 = UTC 2026-10-28T10:0x）</span>
+    <span>🏷 标识：晚报（PM · 5 / 5 收口）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成：2026-10-28 06:0x CST（AM）</span>
+    <span>🕒 生成：2026-10-28 06:0x CST（AM 3 篇）→ 18:3x CST（PM 补 2 篇收口）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（EvoRouter / FOCUS / CrossInfer）；晚报 2 篇 <span class="badge b-kp">科普</span>（18:00 轮补齐）。<b>本轮公告批次未刷新</b>：<code>cat:cs.CL</code> 探针 <code>totalResults=123901</code>、最新 <code>published=2026-10-26T17:59:33Z</code>（<b>与 10-27 晚报完全相同</b>）⇒ <code>--fetch --seen</code> <b><code>kept 0</code></b> / <code>dropped 600</code>（整批已入 <code>SEEN</code>）⇒ 早 3 篇<b>取自已入账的候选池</b>（首次提交均为 <b>2026-10-26（UTC）</b>，<b>非「今日新提交」</b>），并逐篇做 <code>id_list</code> 权威复核。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（EvoRouter / FOCUS / CrossInfer）+ 晚 2 篇 <span class="badge b-kp">科普</span>（LongChang 隐藏物理定律 / Asch 从众的分布化测量）。<b>PM 轮公告批次已刷新</b>：<code>cat:cs.CL</code> 探针 <code>totalResults</code> <b>123,901 → 124,009</b>、最新 <code>published=2026-10-27T17:58:52Z</code>（<code>2610.37657v1</code>）；广度扫描 <b>639,007 → 639,590</b> ⇒ <code>--fetch --seen</code> <b><code>kept 162</code></b> / <code>dropped 400</code>（<code>window_mode=daily</code>，72h）⇒ 晚 2 篇<b>直接取自本轮新批</b>（首次提交 <b>2026-10-27（UTC）</b>），并做 <code>id_list</code> 权威复核（2/2）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + 论文 PDF 正文核对，<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。数字均<b>作者自报</b>，本线未复现。</div>
 </header>
 
@@ -83,6 +83,19 @@
   —— 原因是 <b><code>2026-10-26</code> 整批已在前两轮入账 <code>SEEN</code></b>（<code>kept 0</code> 是「已收过」，<b>不是「无数据」</b>，也<b>不是</b>窗口越界、<b>不是</b>单查询 FAIL）。<b>未为凑数放宽窗口</b>。
   <br>3 篇入账论文取自 <b>10-27 晚报轮的 206 条候选池</b>（已入 <code>SEEN</code>、<b>从未进过任何日报</b>），本轮再做 <b>arXiv API <code>id_list</code> 权威复核</b>
   （<b>3/3 完整返回</b>，<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，均含 <code>published</code>；证据 <code>raw/2026-10-28-am-idlist-r117a.{xml,headers}</code>）⇒ <b>首次提交均为 2026-10-26（UTC）</b>，<b>非「今日新提交」</b>；标题 / 作者 / 日期一律取自官方 Atom 元数据，<b>不手抄</b>。
+</div>
+
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM）</b>：本轮唤醒于 <b>本地 2026-10-28 18:30（CST）</b> = <b>UTC 2026-10-28T10:30</b>（周三 06:30 ET），已<b>晚于</b>周二 20:00 ET 的 arXiv 公告。
+  <b>R1′ 分源实测</b>（证据 <code>raw/2026-10-28-pm-probe-r118.json</code>，<code>generated=2026-10-28T10:02:32Z</code>）：
+  arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>2.04s</code>；<code>cat:cs.CL</code> 探针 <code>totalResults=124009</code>，最新样本 <code>2026-10-27T17:58:52Z</code>（<code>2610.37657v1</code>））⇒ <b>公告批次已刷新 <code>2026-10-26</code> → <code>2026-10-27</code></b>／
+  HF Daily ❌（<code>URLError(OSError(101, 'Network is unreachable'))</code>，如实记 FAIL、不伪造）／
+  RSS cs.CL ❌（<code>TimeoutError('timed out')</code>，<code>status=None</code>）、cs.CV ✅ <b>245</b> 条、cs.LG ✅ <b>437</b> 条（RSS 只作发现，不作证据）。
+  <br>⚠️ <b>如实记录本轮取数</b>：窗口 <code>window_mode=daily</code>（72h，脚本按 UTC 时间<b>自动</b>判定，<b>未人工放宽</b>）跑 <code>--fetch --seen</code>（<code>generated=2026-10-28T10:06:31Z</code>）→ <b>15/15 条查询 <code>HTTP 200</code></b>；
+  <code>attempts=1</code> 共 <b>13</b> 条，<b>2 条重试后成功</b>（<code>llm-scaling-law</code>：首次 <code>ConnectionResetError(104, 'Connection reset by peer')</code> → backoff 20s 后成功；<code>mm-csmm</code>：同样 1 次重试）—— 如实记录，<b>不写「全都一次通过」</b>；
+  <b><code>kept 162</code> / <code>dropped 400</code></b>（<b>397</b> 条「already in SEEN」+ <b>3</b> 条「stale &gt; 72h」）。
+  162 条新候选按首次提交分布：<b>2026-10-27 占 129</b>、2026-10-26 占 31、2026-10-25 占 2 ⇒ 晚报 2 篇<b>直接取自新批</b>（非旧池承接）。
+  <br>2 篇均做 <b>arXiv API <code>id_list</code> 权威复核</b>（<b>2/2 完整返回</b>，<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，均含 <code>published</code>；证据 <code>raw/2026-10-28-pm-idlist-r118a.{xml,headers}</code>，<code>BYTES=4556</code>、<code>1.35s</code>）⇒ <b>首次提交均为 2026-10-27（UTC）</b>；标题 / 作者 / 日期一律取自官方 Atom 元数据，<b>不手抄</b>。
 </div>
 
 <h2 class="sec">早报 · 3 篇「借鉴」（AM · 1–3 / 5）</h2>
@@ -150,7 +163,50 @@
 </div>
 
 
-<h2 class="sec">附录 A · 本轮 15 条查询逐条结果（可核验）</h2>
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 4–5 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>Can LLMs Uncover Hidden Physical Laws through Free Exploration?</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把「科学发现」做成一场可自动运行、无人干预的闯关：<b>LongChang</b> 造出 <b>15 个 MuJoCo 虚拟世界</b>（1 个普通物理对照 + <b>14 个各改一条物理定律</b>，例如「越重的球掉得越慢」），让 LLM 当「探索者」，<b>不告诉它要研究什么</b>，只让它自己搬物体、造工具（天平、挡板）、提问题、做实验；另有一组 LLM 代理负责生成与演化场景、审查工具设计、并按「改动后的真实定律」判定报告是否<b>既正确又有实验支撑</b>。12 个前沿 LLM、每场景最多 100 轮：<b>只有 GPT-6-Astra 拿到 16.7% 的发现率，其余 11 个全为 0%</b>；它的「证据支撑率」高达 <b>97.6%</b>，但「定律说对率」只有 <b>19.0%</b> —— 会做像样的实验，却常常只说对一半条件。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Can LLMs Uncover Hidden Physical Laws through Free Exploration?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen（<b>4 位署名</b>，据 PDF 首页：<b>HKUST(GZ)</b> + <b>Alibaba Group</b> + <b>ZJU</b> + <b>HKUST</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T17:57:00Z</code>；<code>updated</code> 同日）· <code>comment</code>：项目页 <code>zhenyangcs.github.io/LongChang-website/</code> · PDF 实测 <b>14 页</b> / 54,304 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code>（主分类；cross-list <code>cs.AI</code> + <code>cs.MA</code>）· <span class="badge b-kp">科普</span> · 关键词：自主科学发现 / 反事实物理世界 / 工具构建 / 多智能体评测 / 无任务探索 · <b>本日科普 TOP-1</b></div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.37649">https://arxiv.org/abs/2610.37649</a>（PDF 已落地：<code>research/pdf/2026-10-28/2610.37649.pdf</code>，5,773,268 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>一句话就能讲清，而且自带反转</b>：「如果物理定律被偷偷改了一条，AI 能不能自己发现？」—— 不需要任何 AI 背景；而答案不是「能 / 不能」，是「<b>12 个顶级模型里只有 1 个做到了，而且是 16.7%（≈1/6 场景）</b>」。反差极干净。</li>
+      <li><b>画面天然可自绘</b>：一个「玻璃房间」里，红球被推后被墙挡住、又自己重新启动；天平没有挡板时红球滑走、量不到重量 → 加挡板、加竖直行程 → 读数稳定。全是<b>可自绘的物理小剧场</b>，不需要论文原图。</li>
+      <li><b>失败细节比成功更有故事</b>：Gemini-3.7-Flash <b>每局都提前收工</b>（平均 <b>10.9</b> 轮）；GLM-5.3 / GLM-5.3-Flash 平均用 <b>约 90 轮</b>、<b>每局都能造出可用装置</b>，却 <b>0 发现</b>，且造装置失败率 <b>&gt;60%</b>、失败动作占 <b>16.8–20.2%</b> 的轮次 ⇒ 视频可以落一句「<b>会动手 ≠ 会发现</b>」。</li>
+      <li><b>有可引用的量化「压力测试」</b>：给一句「定律可能被改过」的提示 + 场景线索后，发现率 <b>16.7% → 28.6%</b>（证据支撑率仍 97.6%）、平均轮数 <b>39.3 → 30.9</b>；把预算 <b>100 → 500 轮</b>反而降到 <b>14.3%</b>（模型约 40 轮就自己停）；<b>关掉造工具</b>则发现率跌到 <b>4.8%</b> ⇒ 「更多算力 ≠ 更多发现」这条很适合做视频的第二个钩子。</li>
+      <li><b>边界（片中说清）</b>：15 个场景 / 每场景最多 100 轮 / 判分与场景演化<b>也是 LLM</b>（GPT-6.1-Sol 判正确性与证据、GPT-6-Astra 审装置与生成新场景）；16.7% 属小样本量级；<b>不覆盖</b>真实实验室、不证明「AI 会做科研」；数字作者自报、本线未复现、未精读附录。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（重点 §3.4 指标定义、Table 3/Table 4、§4.1–4.3 的三个案例）+ <b>做视频</b>（本日 TOP-1 → <code>video/SCENES/10_28.html</code>）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>A Quantitative Approach to Asch Conformity in Frontier Large Language Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把经典的 <b>Asch 从众实验</b>搬进 LLM，但把「社会压力」换成<b>采样分布</b>：先用同一道 2015 年代 SAT 式填空题问同一个模型 <b>100 次</b>（temperature 1），得到它自己的答案分布（出现率 ≥5% 的词记为 preferred-model-words）；再把答案做成四选一，<b>先单独问 100 次</b>，然后告诉它「另外 n 个参与者都选了你最少选的那个词」（n = 1 / 2 / 5 / 10），每个条件再问 100 次。10 句 × 6 个前沿模型：<b>6 个模型全都会向「多数」偏移</b>，且偏移量取决于「多数答案离它自己多近」—— 与它另一个常用词配对时，n 从 1 到 10 偏移由 <b>22 点升到 49 点</b>；与「意思近但自己没说过的词」配对时 n=10 为 <b>30 点（近义）/ 24 点（中等）/ 0 点（远义）</b>；但 <b>n 从 5 到 10 几乎不再涨（&lt;3 点）</b>，个别模型还回落 —— 与「人越多越从众」的直觉相反。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">A Quantitative Approach to Asch Conformity in Frontier Large Language Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Senthil Rajasekaran, Stylianos Loukas Vasileiou（<b>2 位署名</b>，据 PDF 首页：<b>Université libre de Bruxelles</b> + <b>New Mexico State University</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T05:40:08Z</code>；<code>updated</code> 同日）· 无 comment · PDF 实测 <b>15 页</b> / 57,216 字符</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code>（主分类；cross-list <code>cs.AI</code>）· <span class="badge b-kp">科普</span> · 关键词：Asch 从众 / 行为评测 / 分布对比 / 多智能体一致性 / 采样温度</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.36668">https://arxiv.org/abs/2610.36668</a>（PDF 已落地：<code>research/pdf/2026-10-28/2610.36668.pdf</code>，388,417 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>经典实验 + 新玩法，天然有画面</b>：「一排人故意说错答案，你会不会跟着说错？」换到 AI 身上：不是「几个人在骗它」，而是「它的 100 次采样本身就是一个分布」，再让「另外 n 个参与者」把这个分布往一边推。</li>
+      <li><b>反直觉结论最容易传播</b>：从众偏移在 <b>n=1→5 一路上涨</b>，但 <b>5→10 只差不到 3 点</b>，有的模型 10 人时反而更不从众 ⇒ 「喊得人多没用，关键是那一步离它自己有多近」。</li>
+      <li><b>数字具体、可做字幕卡</b>：n=10 时 (w1, wp) 偏移 <b>33 点（Claude-Opus-5.5）→ 73 点（Gemini-3.8-Flash）</b>；显著性上 <b>31/36</b>（w1, wp）、<b>38/60</b>（w1, u_near）、<b>28/60</b>（w1, u_medium）、<b>47/60</b>（u_near, u_medium），而含「远义」的配对 <b>0/60</b>；另有 <b>2 题</b>显著反向。<b>197,976</b> 次计入试验里只有 <b>583</b> 次选了填充项 ⇒ 偏移几乎全部来自「换答案」。</li>
+      <li><b>现实含义可讲给普通人</b>：作者据此建议，想让模型「被说服」，别用一大堆 agent 一起施压，而是<b>用小数量 agent、分多步、每步只推一小步</b> —— 这直接关系到多智能体系统里「大家一致」到底是独立判断还是互相带偏。</li>
+      <li><b>边界（片中说清）</b>：6 个模型 / 10 句英文 SAT 式填空题 / temperature 1 采样；「从众」是<b>行为学类比</b>（作者明确说不主张模型有「社会压力」）；非偏好词由 GPT-5.6-Terra 生成（temperature 0）；作者自报、本线未复现、未精读附录。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（重点 §2 的偏移/分布距离定义、Fig. 2/3、§4 的 within-sentence 对比）+ <b>仅备忘</b>（「多 agent 一致 ≠ 独立证据」这一条对 ZhuLong 多智能体编排有参考价值）。
+  </div>
+</div>
+
+
+<h2 class="sec">附录 A · 本轮 15 条查询逐条结果（AM 轮 · 可核验）</h2>
 <table>
   <tr><th>#</th><th>area</th><th>name（<code>queries.json</code>）</th><th>HTTP</th><th><code>totalResults</code></th><th>取回</th><th>本轮 <code>kept</code></th><th><code>attempts</code></th></tr>
   <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>639,007</td><td>40</td><td>0</td><td>1</td></tr>
@@ -171,6 +227,27 @@
 </table>
 <p><b>kept 0 / dropped 600 怎么来的</b>：600 条取回条目中，<b>547</b> 条<b>已在 <code>SEEN</code></b>，<b>53</b> 条<b>早于 72h 窗口</b>；因公告批次未刷新（仍 <code>2026-10-26</code>），本批<b>无新增</b>。<b>未放宽窗口、未改查询式、未人工干预 <code>attempts</code></b>（15 条全为 1，无重试）。证据 <code>raw/2026-10-28-am-fetch-r117-seen.json</code>（<code>generated=2026-10-27T22:01:20Z</code>）。</p>
 
+<h2 class="sec">附录 A′ · PM 轮 15 条查询逐条结果（可核验）</h2>
+<table>
+  <tr><th>#</th><th>area</th><th>name（<code>queries.json</code>）</th><th>HTTP</th><th><code>totalResults</code></th><th>取回</th><th>本轮 <code>kept</code></th><th><code>attempts</code></th></tr>
+  <tr><td>1</td><td>广度扫描</td><td><code>sweep-cs-5cats</code></td><td>200</td><td>639,590</td><td>40</td><td>40</td><td>1</td></tr>
+  <tr><td>2</td><td>LLM</td><td><code>llm-large-language-model</code></td><td>200</td><td>39,514</td><td>40</td><td>27</td><td>1</td></tr>
+  <tr><td>3</td><td>LLM</td><td><code>llm-long-context</code></td><td>200</td><td>1,875</td><td>40</td><td>1</td><td>1</td></tr>
+  <tr><td>4</td><td>LLM</td><td><code>llm-scaling-law</code></td><td>200</td><td>1,026</td><td>40</td><td>0</td><td><b>2</b></td></tr>
+  <tr><td>5</td><td>SLM</td><td><code>slm-small-language-model</code></td><td>200</td><td>1,112</td><td>40</td><td>0</td><td>1</td></tr>
+  <tr><td>6</td><td>SLM</td><td><code>slm-on-device</code></td><td>200</td><td>11,071</td><td>40</td><td>6</td><td>1</td></tr>
+  <tr><td>7</td><td>多模态</td><td><code>mm-vision-language</code></td><td>200</td><td>18,082</td><td>40</td><td>27</td><td>1</td></tr>
+  <tr><td>8</td><td>多模态</td><td><code>mm-multimodal</code></td><td>200</td><td>16,714</td><td>40</td><td>16</td><td>1</td></tr>
+  <tr><td>9</td><td>多模态</td><td><code>mm-csmm</code></td><td>200</td><td>10,287</td><td>40</td><td>3</td><td><b>2</b></td></tr>
+  <tr><td>10</td><td>agent harness</td><td><code>agent-harness-title</code></td><td>200</td><td>155</td><td>40</td><td>1</td><td>1</td></tr>
+  <tr><td>11</td><td>agent harness</td><td><code>agent-swe-bench</code></td><td>200</td><td>416</td><td>40</td><td>0</td><td>1</td></tr>
+  <tr><td>12</td><td>agent harness</td><td><code>agent-tool-use</code></td><td>200</td><td>1,739</td><td>40</td><td>4</td><td>1</td></tr>
+  <tr><td>13</td><td>agent harness</td><td><code>agent-csma-multiagent</code></td><td>200</td><td>6,069</td><td>40</td><td>11</td><td>1</td></tr>
+  <tr><td>14</td><td>邻域</td><td><code>nb-retrieval-augmented</code></td><td>200</td><td>3,988</td><td>40</td><td>2</td><td>1</td></tr>
+  <tr><td>15</td><td>邻域</td><td><code>nb-alignment</code></td><td>200</td><td>22,176</td><td>40</td><td>24</td><td>1</td></tr>
+</table>
+<p><b><code>kept 162</code> / <code>dropped 400</code> 怎么来的</b>：600 条取回条目中，<b>397</b> 条<b>已在 <code>SEEN</code></b>、<b>3</b> 条<b>早于 72h 窗口</b>；15 条查询 kept 合计 <b>162</b>（去重后同为此数）。<b>未放宽窗口、未改查询式、未人工干预 <code>attempts</code></b>；<code>attempts=2</code> 的 2 条为<b>真实网络重试</b>（<code>llm-scaling-law</code> 首次 <code>ConnectionResetError(104)</code>、<code>mm-csmm</code> 同因），均已如实记入 <code>per_query</code>。证据 <code>raw/2026-10-28-pm-fetch-r118-seen.json</code>（<code>generated=2026-10-28T10:06:31Z</code>）。</p>
+
 <h2 class="sec">附录 B · 早报 3 篇 <code>id_list</code> 权威复核 + 候选池筛选路径</h2>
 <table>
   <tr><th>arXiv ID</th><th>分类（全部）</th><th>published (UTC)</th><th>标题（照抄，未截断）</th><th>本轮处置</th></tr>
@@ -181,32 +258,66 @@
 <p style="font-size:13px">证据：<code>raw/2026-10-28-am-idlist-r117a.xml</code> + <code>.headers</code>（<code>STATUS=200</code>、<code>application/atom+xml; charset=utf-8</code>、<code>BYTES=8560</code>、<code>0.96s</code>；3 条请求 → 3 条完整返回，均含 <code>published</code>）。<b>标题 / 作者 / 分类 / 日期一律取自官方 Atom 元数据，不手抄。</b></p>
 <p style="font-size:13px"><b>候选池筛选路径（可复核）</b>：上游池 = r116 的 <b>206</b> 条（其中 <code>published</code> 2026-10-26 占 <b>131</b> 条）→ 剔除<b>历史日报已用过的 104 个 arXiv ID</b> → 剩 <b>126</b> 条 → 按 §1 关注领域关键词（agent / training / inference / KV / memory / kernel / EDA / chip / benchmark 等 30 词）命中 ≥3 个 → <b>65</b> 条 → 按「与 BaiZe（训练/推理效率、后训练 RL）/ ZhuLong（长程 code agent）强相关 + 三条不重复（训练信号设计 / 信用分配 / 状态与硬件）」选 3 条。<b>未查询备选 ID</b>（首轮 3/3 即定，如实记录），备选池仍留在 <code>SEEN</code> 供后续轮次使用。</p>
 
+<h2 class="sec">附录 B′ · 晚报 2 篇 <code>id_list</code> 权威复核 + 筛选路径</h2>
+<table>
+  <tr><th>arXiv ID</th><th>分类（全部）</th><th>published (UTC)</th><th>标题（照抄，未截断）</th><th>本轮处置</th></tr>
+  <tr><td><code>2610.37649</code></td><td><code>cs.CL</code>（+ <code>cs.AI</code> + <code>cs.MA</code>）</td><td>2026-10-27T17:57:00Z</td><td>Can LLMs Uncover Hidden Physical Laws through Free Exploration?</td><td><b>收录</b>（晚报 #4 · 科普 · <b>本日 TOP-1</b>）</td></tr>
+  <tr><td><code>2610.36668</code></td><td><code>cs.CL</code>（+ <code>cs.AI</code>）</td><td>2026-10-27T05:40:08Z</td><td>A Quantitative Approach to Asch Conformity in Frontier Large Language Models</td><td><b>收录</b>（晚报 #5 · 科普）</td></tr>
+</table>
+<p style="font-size:13px">证据：<code>raw/2026-10-28-pm-idlist-r118a.xml</code> + <code>.headers</code>（<code>STATUS=200</code>、<code>application/atom+xml; charset=utf-8</code>、<code>BYTES=4556</code>、<code>1.35s</code>；2 条请求 → 2 条完整返回，均含 <code>published</code>）。<b>标题 / 作者 / 分类 / 日期一律取自官方 Atom 元数据，不手抄。</b></p>
+<p style="font-size:13px"><b>筛选路径（可复核，如实说明）</b>：上游池 = 本轮 <code>--fetch --seen</code> 的 <b>162</b> 条新候选（<b>全部不在 <code>SEEN</code>、也从未进过任何日报</b>；<code>published</code> 分布：2026-10-27 占 <b>129</b>、2026-10-26 占 31、2026-10-25 占 2）→ 按<b>科普口径</b>（① 大众能懂 ② 有传播力 ③ 可讲清 ④ 有真实来源）<b>人工通读标题 + 摘要</b>挑选（<b>非关键词脚本打分</b>，此处不假装有量化漏斗）→ 选 2 条且<b>主题不重复</b>（「自主科学发现 / 隐藏物理定律」×「社会行为评测 / 从众」），并<b>与早 3 篇无重叠</b>（同一 arXiv ID 全天只出现一次）。<b>未查询备选 ID</b>（首轮 2/2 即定，如实记录），其余 160 条已作为「候选」入 <code>SEEN</code> 供后续轮次使用。</p>
 
-<h2 class="sec">附录 C · PDF 落地校验（3/3 通过）</h2>
+
+<h2 class="sec">附录 C · PDF 落地校验（5/5 通过）</h2>
 <table>
   <tr><th>arXiv ID</th><th>字节</th><th>校验</th><th>页数 / 文本量</th><th>sha256</th></tr>
   <tr><td><code>2610.35690</code></td><td>2,009,890</td><td><code>application/pdf</code> + <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + 字节 == <code>Content-Length</code> ✅</td><td>13 页 / 134,839 字符</td><td><code>674bf17fa58feb1daf40107891f5af68bacaf1e5a12c40bbc14985cb7c6b257e</code></td></tr>
   <tr><td><code>2610.35801</code></td><td>869,720</td><td>同上 ✅</td><td>32 页 / 142,490 字符</td><td><code>e7b7e3a3b41ad930d0ce766bdc6538af18a4cf5fc5e5aaf94b9006b4a58a61a1</code></td></tr>
   <tr><td><code>2610.35309</code></td><td>4,251,501</td><td>同上 ✅</td><td>25 页 / 164,262 字符</td><td><code>26242e67af68b885b95a839494a6c0f56c05550ccc2e2248493513596cf7a13b</code></td></tr>
+  <tr><td><code>2610.37649</code></td><td>5,773,268</td><td><code>application/pdf</code> + <code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + 字节 == <code>Content-Range</code> total + <code>pdfinfo</code> 可解析 ✅（⚠️ sha256 与 CDN <code>etag</code> 不一致，见下）</td><td>14 页 / 54,304 字符</td><td><code>4c458abe7addc6b40c8ace31c1947466cee445bf7bb1d6454a31497d2a0f733c</code></td></tr>
+  <tr><td><code>2610.36668</code></td><td>388,417</td><td>同上 ✅（⚠️ 该 CDN 节点 <code>etag</code> 为 base64，脚本无法直接比对，已用结构校验替代）</td><td>15 页 / 57,216 字符</td><td><code>c2a0769e51863068b0e1aebf19788bf524a9d63d93521f4fa8d01b876ef0473a</code></td></tr>
 </table>
-<p style="font-size:13px">落地目录 <code>research/pdf/2026-10-28/</code>（<code>research/.gitignore</code> 已排除 <code>pdf/</code> 与 <code>*.pdf</code> ⇒ <b>不入 git</b>）；本轮 3 个 PDF 合计 <b>7,131,111 B ≈ 6.80 MB</b>；<b>每个单文件均 &lt; 5 MB</b>（最大 4,251,501 B），且 <code>pdf/</code> 整目录不入 git。<b>失败即删、绝不留截断文件</b>（2026-10-15 教训）。</p>
+<p style="font-size:13px">落地目录 <code>research/pdf/2026-10-28/</code>（<code>research/.gitignore</code> 已排除 <code>pdf/</code> 与 <code>*.pdf</code> ⇒ <b>不入 git</b>）；本轮 5 个 PDF 合计 <b>13,292,796 B ≈ 12.68 MB</b>；<b><code>2610.37649</code> 单文件 5.77 MB &gt; 5 MB</b> ⇒ 按 §4-9 体积红线<b>绝不入 git</b>（已用 <code>git check-ignore</code> 验证），仅本地留存 + 元数据入账。<b>失败即删、绝不留截断文件</b>（2026-10-15 教训）。</p>
+<div class="note" style="margin-top:10px">
+  <b>⚠️ 本轮 PDF 下载的两个真实异常（如实记录，不粉饰）</b>：
+  <ol>
+    <li><b>首轮单流下载被截断</b>：18:18 落地的 <code>2610.37649.pdf</code> 仅 <b>2,348,454 B</b>（应有 5,773,268 B），<code>pdfinfo</code> 直接报 <code>Couldn't read xref table</code> ⇒ <b>已删除重下</b>，未计入成功。</li>
+    <li><b>改为 HTTP Range 12 段并发</b>（本机单连接实测 ≈2.7 KB/s，整文件单流需 ≈35 min；<code>-C -</code> 续传在服务端回 200 时会从头覆盖）→ 分段拼接后 <b>字节数 == <code>Content-Range</code> total</b>、<b><code>%PDF-</code> / <code>%%EOF</code></b> 齐备、<code>pdfinfo</code> 与 <code>pdftotext</code> 均可解析（14 页 / 54,304 字符；15 页 / 57,216 字符），正文内容与摘要一致。<b>但 <code>2610.37649</code> 的 sha256 与 <code>etag</code> 声明值不一致</b>（<code>etag</code> 为 hex sha256 格式），<code>2610.36668</code> 的 <code>etag</code> 为 base64 格式无法直接比对 —— 故<b>这两篇的完整性证据 = 结构校验，而非端到端哈希</b>；引用前如需绝对一致，请自行从 arXiv 重下核对。本条<b>不写成「全部端到端校验通过」</b>。</li>
+  </ol>
+</div>
 
 <h2 class="sec">附录 D · 本轮口径与边界（引用前请读）</h2>
 <div class="note">
   <ol>
-    <li><b>「推荐」不等于「结论」</b>：早 3 篇均为「待读线索」（<b>借鉴</b>口径 = 与在研工作相关性），数字来自 PDF 正文回查，<b>未经复现</b>。</li>
-    <li><b>时间口径</b>：三篇「首次提交」均为 <b>2026-10-26（UTC）</b>，距本轮唤醒（<code>2026-10-27T22:00Z</code>）分别约 <b>29.7h / 28.4h / 33.8h</b>，<b>均在 72h 窗口内</b>；但它们属于<b>上一公告批次</b>，<b>不是本轮新提交</b> —— 已在页头与取数说明中如实区分。</li>
-    <li><b>两口径不混用</b>：早 3 篇全为 <span class="badge b-jz">借鉴</span>；晚报 2 篇（18:00 轮）必须按 <span class="badge b-kp">科普</span> 口径选，且<b>不得与本页 3 篇重复</b>（同一 arXiv ID 全天只出现一次）。</li>
+    <li><b>「推荐」不等于「结论」</b>：5 篇均为「待读线索」（早 3 篇 = <b>借鉴</b>口径 / 晚 2 篇 = <b>科普</b>口径），数字来自 PDF 正文回查，<b>未经复现</b>。</li>
+    <li><b>时间口径（AM）</b>：早 3 篇「首次提交」均为 <b>2026-10-26（UTC）</b>，距 AM 唤醒（<code>2026-10-27T22:00Z</code>）约 <b>29.7h / 28.4h / 33.8h</b>；属<b>上一公告批次</b>，<b>不是 AM 轮新提交</b>。</li>
+    <li><b>时间口径（PM）</b>：晚 2 篇「首次提交」均为 <b>2026-10-27（UTC）</b>，距 PM 唤醒（<code>2026-10-28T10:30Z</code>）约 <b>16.6h / 28.8h</b>，且<b>正是本轮 <code>--fetch</code> 新批</b>（<code>kept 162</code> 中的两条）—— 与 AM 轮取旧池的做法<b>不同</b>，本页已分开标注。</li>
+    <li><b>两口径不混用</b>：早 3 篇全为 <span class="badge b-jz">借鉴</span>；晚 2 篇全为 <span class="badge b-kp">科普</span>，且<b>与本页早 3 篇无重叠</b>（同一 arXiv ID 全天只出现一次）。晚 2 篇<b>不是</b>「与 BaiZe / ZhuLong 强相关」的推荐，而是按「大众看得懂 + 有传播力」挑的。</li>
     <li><b>HF Daily Papers 标记缺席</b>：本机 <code>huggingface.co</code> 长期 <code>Errno 101</code> ⇒ 本页<b>没有</b> <code>🏷 hf_daily</code> 标记，<b>不是「未被精选」</b>，而是<b>拿不到证据</b>（不伪造）。</li>
-    <li><b>RSS 为空不算「无新增」</b>：本地 06:00 = UTC 22:00，当轮 RSS 尚未生成（三分类均 0 条）⇒ 只作发现、不作证据；结论<b>只</b>由 arXiv API + <code>id_list</code> 支撑。</li>
-    <li><b>待办</b>：18:00 轮需 ① 复验批次（预期出现 <code>2026-10-27</code> 批）；② 补 2 篇「科普」收口 5/5 + 追加 <code>晚报变更说明（AM → PM）</code>；③ 出科普 TOP-1 分镜 <code>video/SCENES/10_28.html</code>；④ 发当日日报邮件。</li>
+    <li><b>RSS 不完整不算「无新增」</b>：PM 轮 cs.CL RSS <code>TimeoutError</code>（<code>status=None</code>）、cs.CV 245 条、cs.LG 437 条 ⇒ RSS 只作发现、不作证据；结论<b>只</b>由 arXiv API + <code>id_list</code> 支撑。</li>
+    <li><b>PDF 完整性</b>：晚 2 篇为 Range 分段拼接，<b>结构校验通过、端到端哈希未通过 CDN <code>etag</code> 比对</b>（详见附录 C 的异常说明）—— 本页不声称「5/5 端到端校验通过」。</li>
+    <li><b>待办</b>：本日已收口 5/5 → ① 科普 TOP-1 分镜 <code>video/SCENES/10_28.html</code> 已出；② 当日日报邮件（<code>paul.liu@cxmt.com</code>）见 <code>research/mail/发送记录.md</code>；③ 下轮（<code>2026-10-29 06:00</code>）复验批次 + 早 3 篇「借鉴」。</li>
+  </ol>
+</div>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <ol>
+    <li><b>页头 / 进度：3 / 5 → 5 / 5</b>，标识「早报」→「晚报 · 5/5 收口」；<b>为什么</b>：18:00 轮按 P0 第 4 批口径必须收口当日 5 篇。</li>
+    <li><b>新增「晚报取数说明（PM）」整块</b>；<b>为什么</b>：PM 轮公告批次已刷新（<code>123,901 → 124,009</code>；广度 <code>639,007 → 639,590</code>），<code>kept 162</code>，取数结论与 AM 完全不同，必须分开写、不能覆盖 AM 记录。</li>
+    <li><b>新增序号 4–5 两条「科普」推荐（含各自的推荐理由与边界）</b>；<b>为什么</b>：补齐晚报 2 篇，按科普口径选、与早 3 篇主题不重复。</li>
+    <li><b>附录 A 标题加注「AM 轮」，并新增附录 A′（PM 轮 15 条查询明细）</b>；<b>为什么</b>：两轮 <code>totalResults</code> 与 <code>kept</code> 不同，混在一张表会误导；A′ 另如实标注 2 条 <code>attempts=2</code> 的真实重试。</li>
+    <li><b>附录 B 标题加注「早报」，并新增附录 B′（晚报 2 篇 <code>id_list</code> 复核 + 筛选路径）</b>；<b>为什么</b>：两批论文来源不同（旧池 vs 新批），证据文件也不同。</li>
+    <li><b>附录 C：3/3 → 5/5</b>，补 2 行校验数据，并新增「两个真实异常」说明（首轮截断已删重下；Range 拼接的 sha256 与 <code>etag</code> 不一致，改用结构校验）；<b>为什么</b>：不把「结构可解析」写成「端到端哈希通过」。</li>
+    <li><b>附录 D：口径条目由 6 条扩为 8 条</b>（补 PM 时间口径、PDF 完整性、待办更新）；<b>为什么</b>：AM/PM 两轮口径不同，需分别可引用。</li>
+    <li><b>未改动</b>：早报 3 篇的正文、数字、理由<b>一字未改</b> —— 本轮抽查其 PDF 原文关键数字（EvoRouter 68.69% / 7.23 pp / 50.95%；FOCUS 56.5 / 55.4；CrossInfer 19.6% / 27.2% / 34.9% / 4.6×）与页面一致，<b>无需更正</b>。</li>
   </ol>
 </div>
 
 <footer>
-  <p>research 线 · 论文推荐日报 · 2026-10-28（早报 AM · 3/5）· 数据源 arXiv（<code>export.arxiv.org/api/query</code> + <code>id_list</code> 复核）· 生成于 2026-10-28 06:0x CST（AM）。</p>
-  <p>台账：<code>research/SEEN.md</code>（去重主键 arXiv ID）· <code>research/papers.jsonl</code>（结构化）· 口径记录：<code>research/ARXIV_API.md §9.117</code>。证据链：<code>raw/2026-10-28-am-probe-r117.json</code> / <code>-am-fetch-r117-seen.json</code> / <code>-am-idlist-r117a.{xml,headers}</code>。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
-  <p>⚠️ 免责：本页为<b>论文解读 / 待读线索</b>，非官方、非结论；3 篇均<b>未精读全文</b>，不得作为「已验证收益 / SOTA 已证」的依据。</p>
+  <p>research 线 · 论文推荐日报 · 2026-10-28（晚报 PM · 5/5 收口）· 数据源 arXiv（<code>export.arxiv.org/api/query</code> + <code>id_list</code> 复核）· 生成于 2026-10-28 06:0x CST（AM 3 篇）→ 18:3x CST（PM 补 2 篇）。</p>
+  <p>台账：<code>research/SEEN.md</code>（去重主键 arXiv ID）· <code>research/papers.jsonl</code>（结构化）· 口径记录：<code>research/ARXIV_API.md §9.117</code>（AM）/ <code>§9.118</code>（PM）。证据链（AM）：<code>raw/2026-10-28-am-probe-r117.json</code> / <code>-am-fetch-r117-seen.json</code> / <code>-am-idlist-r117a.{xml,headers}</code>；（PM）：<code>raw/2026-10-28-pm-probe-r118.json</code> / <code>-pm-fetch-r118-seen.json</code> / <code>-pm-idlist-r118a.{xml,headers}</code>。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+  <p>⚠️ 免责：本页为<b>论文解读 / 待读线索</b>，非官方、非结论；5 篇均<b>未精读全文</b>，不得作为「已验证收益 / SOTA 已证」的依据。</p>
 </footer>
 </div>
 </body>
