@@ -1,14 +1,14 @@
 {
   "harness": "codex",
   "harness_code": "codex",
-  "done": 21,
+  "done": 24,
   "total": 500,
-  "patch_produced": 13,
+  "patch_produced": 15,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 1,
-  "no_patch": 6,
-  "last_update": "2026-10-28 17:30:24",
+  "no_patch": 7,
+  "last_update": "2026-10-28 17:57:43",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -275,6 +275,45 @@
       "stdout_tail": "ll_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 4514 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13363.json\n[run_single] cleanup: git reset --hard 76e0151ea0e0f56dca66cee846a78b89346d2c4c\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13363.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-13401",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 1300.4,
+      "model_patch_len": 2688,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ll_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 2688 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13401.json\n[run_single] cleanup: git reset --hard 453967477e3ddae704cd739eac2449c0e13d464c\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13401.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-13406",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 273.0,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "shell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13406.json\n[run_single] cleanup: git reset --hard 84609b3205905097d7d3038d32e6101f012c0619\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13406.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "django__django-13410",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 50.2,
+      "model_patch_len": 753,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 753 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13410.json\n[run_single] cleanup: git reset --hard 580a4341cb0b4cbfc215a70afc004875a7e815f4\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13410.json",
       "classification": "patch-produced"
     }
   ]
