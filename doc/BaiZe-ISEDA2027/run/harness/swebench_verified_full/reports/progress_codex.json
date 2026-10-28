@@ -1,14 +1,14 @@
 {
   "harness": "codex",
   "harness_code": "codex",
-  "done": 25,
+  "done": 27,
   "total": 500,
-  "patch_produced": 16,
+  "patch_produced": 17,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 1,
-  "no_patch": 7,
-  "last_update": "2026-10-28 18:24:02",
+  "no_patch": 8,
+  "last_update": "2026-10-28 18:56:30",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -327,6 +327,32 @@
       "stdout_tail": "ll_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 1292 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13417.json\n[run_single] cleanup: git reset --hard 71ae1ab0123582cc5bfe0f7d5f4cc19a9412f396\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13417.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-13449",
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.4,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13449.json\n[run_single] cleanup: git reset --hard 2a55431a5678af52f669ffe7dff3dd0bd21727f8\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13449.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "django__django-13512",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 140.1,
+      "model_patch_len": 1090,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ll_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 1090 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13512.json\n[run_single] cleanup: git reset --hard b79088306513d5ed76d31ac40ab3c15f858946ea\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-13512.json",
       "classification": "patch-produced"
     }
   ]
