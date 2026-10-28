@@ -5241,7 +5241,7 @@
 | 2026-10-28 | 2610.37651 | GEPA-Curator: Curated Learning for Self Improving Agents | cs.CL | 候选 |
 | 2026-10-28 | 2610.37649 | Can LLMs Uncover Hidden Physical Laws through Free Exploration? | cs.CL | 收录 |
 | 2026-10-28 | 2610.37648 | Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis | cs.LG | 候选 |
-| 2026-10-28 | 2610.37647 | MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control | cs.LG | 候选 |
+| 2026-10-28 | 2610.37647 | MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control | cs.LG | 收录 |
 | 2026-10-28 | 2610.37645 | Multi-State Linear Attention with Generalized Second-Order Routing | cs.CL | 候选 |
 | 2026-10-28 | 2610.37642 | Metacognitive Decoding: Efficient Inference for Diffusion Language Agents | cs.CL | 候选 |
 | 2026-10-28 | 2610.37633 | Repurposing Video Diffusion Transformers for Cross-View Temporal Object Correspondence | cs.CV | 候选 |
@@ -5250,7 +5250,7 @@
 | 2026-10-28 | 2610.37624 | Rare, Relevant, and Still Wrong: How Memory Fails LLM Group Decisions | cs.AI | 候选 |
 | 2026-10-28 | 2610.37619 | Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video | cs.CV | 候选 |
 | 2026-10-28 | 2610.37613 | VideoLVR: Latent Visual Reasoning over Grounded Video Evidence | cs.CV | 候选 |
-| 2026-10-28 | 2610.37609 | EnvSched: Environment-Aware Scheduling for Rollout-Efficient Agent Reinforcement Learning | cs.LG | 候选 |
+| 2026-10-28 | 2610.37609 | EnvSched: Environment-Aware Scheduling for Rollout-Efficient Agent Reinforcement Learning | cs.LG | 收录 |
 | 2026-10-28 | 2610.37605 | Beyond Answer Changes: Matched Same-Class Controls for Local Audio Evidence | cs.SD | 候选 |
 | 2026-10-28 | 2610.37599 | MoI-Bench: A Benchmark for Image Generation and Editing on Mobile Devices | cs.CV | 候选 |
 | 2026-10-28 | 2610.37598 | GAS-PFN: Graph-Aware Spatiotemporal Prior-Data Fitted Networks for Zero-Shot Traffic Forecasting | cs.LG | 候选 |
@@ -5382,7 +5382,7 @@
 | 2026-10-28 | 2610.36169 | Don't Pick a Winner: Knowledge Conflicts Need a Prior, Not a Rule | cs.AI | 候选 |
 | 2026-10-28 | 2610.36151 | Replication or Corroboration? An Axiomatic Framework for Evidential Dependence in Multi-Agent Debate | cs.MA | 候选 |
 | 2026-10-28 | 2610.36146 | From Structural Feedback to Prompt Policies: Learning Faithful Text-to-Image Prompt Editors | cs.AI | 候选 |
-| 2026-10-28 | 2610.36114 | Context Is a Pipeline, Not a Window: Information Attrition in LLM Agent Harnesses | cs.SE | 候选 |
+| 2026-10-28 | 2610.36114 | Context Is a Pipeline, Not a Window: Information Attrition in LLM Agent Harnesses | cs.SE | 收录 |
 | 2026-10-28 | 2610.36108 | Log-To-Leak: Prompt Injection Attacks on Tool-Using LLM Agents via the Model Context Protocol | cs.CR | 候选 |
 | 2026-10-28 | 2610.36083 | FinLLM-KG: Knowledge Graph-Enhanced LLMs for Financial Sentiment Analysis in Algorithmic Trading | cs.CL | 候选 |
 | 2026-10-28 | 2610.36077 | The Trinity:Capability-Driven Recursive Self-Improvement for Multimodal Agents | cs.AI | 候选 |
