@@ -9,6 +9,20 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-28 09:3x（**锁定 613K 最佳配置，spawn 调优不许偏离配方；先复跑 smoke 解决真问题**）· 用户直令 · 最高优先
+
+> 用户原话（2026-10-28 09:3x）：「跟 pretrain 沟通，让它不要偏离 613K 最佳配置过远，解决真正的问题。」
+
+**① 613K 最佳配置已冻结（#792 E1 实测，不许改）**：16K / CP1 / DP16 / FP8 tensorwise / CUDA Graph **OFF**。613,992 tok/s = 6.831s/step、~38.4K tok/s/GPU。**spawn 调优只许动 DataLoader 侧旋钮（start-method / num_workers / persistent_workers / TORCHINDUCTOR_COMPILE_THREADS），🚫 禁止为「绕过问题」去改 seq / TP / CP / 精度 / 架构 / graph 开关。**
+
+**② 真正的问题（已定位，别跑偏）**：613K(nw=8) → 308K(nw=0) 的差额 ≈ **100% 数据加载串行化**（每步 ≈6.8s 数据 + 6.8s 计算**串行**）。**不是内存、不是 IO、不是 NFS**——#810 前 30 步已证 GPU 100% util、无 data starvation、mmap IO<1%。目标 = **恢复 nw>0 的「数据/计算 overlap」→ 回到 ~613K**。
+
+**③ 本轮运维已就位（勿重复做）**：`.29`/`.12` 均已 `swappiness=0` 且 `swapoff -a && swapon -a` 清掉 7G/6G 残留 swap（现 Swap free≈8G）；#810 OOM 根因已修（`TORCHINDUCTOR_COMPILE_THREADS=4` 已入 train.sh:195，256→32 compile workers，省 ~168GB）。
+
+**④ 下一步（按序，交付才算完）**：① `COMPILE_THREADS=4 + spawn + persistent_workers + nw=4` 重跑 **8 卡 ≥30 步 smoke**，验证 #810 OOM 是否已解 + 吞吐是否 ramp 回 ≥500K；② 定位日志里 **33 leaked 泄漏对象类型**（semaphore / Process / 共享内存？nw=8 长跑唯一没跨过的坎），对症修掉；③ 达标后按 #792 配方重启 S1 全速。
+
+**⑤ 纪律**：盯内存/swap 水位；不碰 vision/data/harness；commit `pretrain perf:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0`，60s 后继续直到 smoke 交付。
+
 ### [运维提示] 2026-10-27 15:2x（**cimi MCP web search 已配好，可用于调研**）· 用户直令 · 最高优先
 
 > 用户原话：「可以提醒 pretrain 可以 web search（cimi search）」
