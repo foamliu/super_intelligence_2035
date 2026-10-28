@@ -1511,3 +1511,37 @@ docker pull hello-world          # 必须成功
 
 > **归档备注（R553, 2026-10-28）**：本令已交付——commit `33782ab93`「harness TB整改: QA 5问逐条回应+修订版7way报告」。交付物：`run/harness/tb_qa_rectification_20261028.md`（逐条书面回应）+ `reports/report_harness_terminalbench_7way_final_zh.html`（修订版，分母89/复跑合表/基线对照/3路0%stack/codex429）。因任务书 >32KB 且本令已产出交付物并 commit，按「📉 体积维护规程」原文搬迁归档，留指针于任务书。
 
+---ARCHIVE BOUNDARY 2026-10-28 R581---
+
+### [运维令] 2026-10-28 19:1x（**评测结果 JSON 一律不上传仓库**）· 用户直令 · 最高优先
+
+> 用户原话：「让 harness 不要把评测结果（json）上传。」
+
+**① 范围（harness 全线的「结果类 JSON」）**
+- **不上传**：`run/harness/**/predictions/`、`**/jobs_*/`（含各 harness 逐题 patch / 输出）、`**/oracle_check/`、`**/logs/` 下的 JSON，以及 `*_results*.json`、`eval_*.json`、`*verified_full_*.json` 等逐题/逐实例原始评测结果。
+- **可上传（保持现状）**：中文 HTML 报告（必须落 `doc/BaiZe-ISEDA2027/reports/`）、报告生成器 `.py`、`.md` 说明 / 任务书 / MEMORY；汇总数字写进报告正文或 Markdown/TSV，**不新增结果 JSON**。
+- 输入类文件（`instances/`、`enriched_*.json`、配置 JSON）**不属「评测结果」**，本次不动；若也要清走请另令。
+
+**② 立即执行（本轮内完成）**
+1. 在 `doc/BaiZe-ISEDA2027/.gitignore` 追加（按实际路径）：
+```
+run/harness/**/predictions/
+run/harness/**/jobs_*/
+run/harness/**/oracle_check/
+run/harness/**/logs/
+run/harness/**/*_results*.json
+run/harness/**/eval_*.json
+run/harness/**/*verified_full_*.json
+```
+2. `git rm -r --cached` 已跟踪的上述结果 JSON（**只取消跟踪，不删本地文件**；禁止 `git add -f` 绕过）。
+3. 原始 JSON 继续留在评测机本地（报告里写「本地路径 + 生成命令 + 统计口径」即可），不写进仓库。
+4. 核对并写进心跳：`git ls-files 'doc/BaiZe-ISEDA2027/run/harness/**/*.json'` 只剩白名单（`instances/`、`enriched_*.json`、配置），贴数量；本轮 commit 的 `git show --stat` 不含任何结果 `*.json`。
+5. commit 前缀 `harness ops:`，push。
+
+**③ 从今往后（硬约束）**
+- 每轮 predict / eval 后：**禁止 `git add`/`commit`/`push` 任何评测结果 JSON**；只提交 HTML 报告 + 生成器 + 汇总数字。
+- 若脚本默认把结果 JSON 写进仓库目录 ⇒ 改默认输出到仓库外（或已 ignore 的目录），从源头避免误提交。
+- 🚫 不为「留档」把 JSON 塞进 HTML base64 / 压缩包；🚫 不 rewrite 历史（已 push 的旧 JSON 留在历史里，不 force push）。
+
+> **归档备注（R581, 2026-10-28）**：本令已交付——commit `2eaf3b932`「harness ops: R580 评测结果JSON不上传(gitignore+untrack 2880文件,仅剩白名单170)」。执行详情：①`.gitignore`追加7+3模式(operator加7+agent补3:reports/predict_*.json·reports/progress_*.json·verified_*_full.json)②`git rm --cached` 2880文件(2863首轮+17 reports/)③本地文件全保留④`git ls-files`验证仅剩白名单187(185 instances/+2 enriched),0非白名单✓⑤commit前缀`harness ops:`✓push✅。③永久硬约束已写入MEMORY自检清单。因任务书>32KB且本令已产出交付物并commit，按「📉 体积维护规程」原文搬迁归档，留指针于任务书。
+

@@ -20,36 +20,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🚫 运维令 · 2026-10-28 19:1x（**评测结果 JSON 一律不上传仓库**）· 用户直令 · 最高优先
-
-> 用户原话：「让 harness 不要把评测结果（json）上传。」
-
-**① 范围（harness 全线的「结果类 JSON」）**
-- **不上传**：`run/harness/**/predictions/`、`**/jobs_*/`（含各 harness 逐题 patch / 输出）、`**/oracle_check/`、`**/logs/` 下的 JSON，以及 `*_results*.json`、`eval_*.json`、`*verified_full_*.json` 等逐题/逐实例原始评测结果。
-- **可上传（保持现状）**：中文 HTML 报告（必须落 `doc/BaiZe-ISEDA2027/reports/`）、报告生成器 `.py`、`.md` 说明 / 任务书 / MEMORY；汇总数字写进报告正文或 Markdown/TSV，**不新增结果 JSON**。
-- 输入类文件（`instances/`、`enriched_*.json`、配置 JSON）**不属「评测结果」**，本次不动；若也要清走请另令。
-
-**② 立即执行（本轮内完成）**
-1. 在 `doc/BaiZe-ISEDA2027/.gitignore` 追加（按实际路径）：
-```
-run/harness/**/predictions/
-run/harness/**/jobs_*/
-run/harness/**/oracle_check/
-run/harness/**/logs/
-run/harness/**/*_results*.json
-run/harness/**/eval_*.json
-run/harness/**/*verified_full_*.json
-```
-2. `git rm -r --cached` 已跟踪的上述结果 JSON（**只取消跟踪，不删本地文件**；禁止 `git add -f` 绕过）。
-3. 原始 JSON 继续留在评测机本地（报告里写「本地路径 + 生成命令 + 统计口径」即可），不写进仓库。
-4. 核对并写进心跳：`git ls-files 'doc/BaiZe-ISEDA2027/run/harness/**/*.json'` 只剩白名单（`instances/`、`enriched_*.json`、配置），贴数量；本轮 commit 的 `git show --stat` 不含任何结果 `*.json`。
-5. commit 前缀 `harness ops:`，push。
-
-**③ 从今往后（硬约束）**
-- 每轮 predict / eval 后：**禁止 `git add`/`commit`/`push` 任何评测结果 JSON**；只提交 HTML 报告 + 生成器 + 汇总数字。
-- 若脚本默认把结果 JSON 写进仓库目录 ⇒ 改默认输出到仓库外（或已 ignore 的目录），从源头避免误提交。
-- 🚫 不为「留档」把 JSON 塞进 HTML base64 / 压缩包；🚫 不 rewrite 历史（已 push 的旧 JSON 留在历史里，不 force push）。
-
+> 📦 §运维令·2026-10-28 19:1x（评测结果 JSON 一律不上传仓库）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：已交付（commit `2eaf3b932`）——`.gitignore`追加7+3模式+`git rm --cached` 2880文件→仅剩白名单187(0非白名单✓)·本地全保留·`harness ops:`前缀✓。**③永久硬约束**：每轮predict/eval后禁止commit任何评测结果JSON(只提交HTML报告+生成器+汇总数字)。需要时再读。
 
 > 📦 §运维令·2026-10-28 12:0x（TB 7way 报告质量整改 · 逐条回应 5 问）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：5 问已逐条回应并交付（commit `33782ab93`）——①分母改回89官方口径(87题子集作附注,2题mteb缺镜像被启动器过滤)②三路0%精确stack(hermes exit127/claude-code docker exec超时/deepseek pip缺失)③codex 429=34条无退避重试(调用层缺陷)④基线对照(kimi公开57.3-66.7% vs cline48.3%,归因接入层损耗+超时)⑤复跑合表(hermes25/89·claude-code20/89入主表双列). 产 `tb_qa_rectification_20261028.md`+修订版报告. 需要时再读。
 
