@@ -1,14 +1,14 @@
 {
   "harness": "cline",
   "harness_code": "cline-patched",
-  "done": 44,
+  "done": 47,
   "total": 500,
-  "patch_produced": 36,
+  "patch_produced": 39,
   "infra": 3,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 5,
-  "last_update": "2026-10-28 18:50:12",
+  "last_update": "2026-10-28 19:14:46",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -562,6 +562,45 @@
       "stdout_tail": "point-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 2828 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11141.json\n[run_single] cleanup: git reset --hard 5d9cf79baf07fc4aed7ad1b06990532a65378155\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11141.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-11149",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1123.8,
+      "model_patch_len": 7539,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "point-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 7539 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11149.json\n[run_single] cleanup: git reset --hard e245046bb6e8b32360aa48b8a41fb7050f0fc730\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11149.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-11163",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 122.2,
+      "model_patch_len": 1163,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "point-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 1163 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11163.json\n[run_single] cleanup: git reset --hard e6588aa4e793b7f56f4cadbfa155b581e0efc59a\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11163.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-11179",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 212.0,
+      "model_patch_len": 1074,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "point-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 1074 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-11179.json",
       "classification": "patch-produced"
     }
   ]

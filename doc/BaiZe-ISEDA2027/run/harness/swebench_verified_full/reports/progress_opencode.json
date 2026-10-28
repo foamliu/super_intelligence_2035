@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 43,
+  "done": 45,
   "total": 500,
-  "patch_produced": 40,
+  "patch_produced": 42,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 2,
-  "last_update": "2026-10-28 19:02:17",
+  "last_update": "2026-10-28 19:11:44",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -561,6 +561,32 @@
       "stdout_tail": "hm/harness_verified_full/workdirs/opencode/pytest-dev_pytest/test_fix.py\n(no output)\n\u001b[0m\n\n[run_single] model_patch: 638 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5631.json\n[run_single] cleanup: git reset --hard cb828ebe70b4fa35cd5f9a7ee024272237eab351\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5631.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5787",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 442.7,
+      "model_patch_len": 9906,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": " for chained exception serialization\n[✓] Add tests for the fix\n[✓] Verify fix works\n\u001b[0m\n\n[run_single] model_patch: 9906 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5787.json\n[run_single] cleanup: git reset --hard 955e54221008aba577ecbaefa15679f6777d3bf8\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5787.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5809",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 118.4,
+      "model_patch_len": 1049,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "pytest/pastebin.py && python -m py_compile testing/test_pastebin.py && echo \"OK\"\nOK\n\u001b[0m\n\n[run_single] model_patch: 1049 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5809.json\n[run_single] cleanup: git reset --hard 8aba863a634f40560e25055d179220f0eefabe9a\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5809.json",
       "classification": "patch-produced"
     }
   ]
