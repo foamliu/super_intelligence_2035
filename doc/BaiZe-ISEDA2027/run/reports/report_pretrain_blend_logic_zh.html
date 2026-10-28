@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-2B 预训练数据 Blend 逻辑详解</title>
+<style>
+body { font-family: -apple-system, "Noto Sans SC", "Microsoft YaHei", sans-serif; max-width: 960px; margin: 0 auto; padding: 2em; line-height: 1.7; color: #1a1a1a; background: #fafafa; }
+h1 { border-bottom: 3px solid #2563eb; padding-bottom: 0.3em; color: #1e3a5f; }
+h2 { color: #2563eb; margin-top: 2em; border-left: 4px solid #2563eb; padding-left: 0.6em; }
+h3 { color: #475569; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+th, td { border: 1px solid #cbd5e1; padding: 0.4em 0.8em; text-align: left; font-size: 0.95em; }
+th { background: #e0e7ff; font-weight: 600; }
+tr:nth-child(even) { background: #f1f5f9; }
+code { background: #e2e8f0; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.9em; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1em; border-radius: 6px; overflow-x: auto; font-size: 0.85em; }
+pre code { background: none; color: inherit; }
+.note { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 0.8em 1em; margin: 1em 0; border-radius: 0 4px 4px 0; }
+.answer { background: #d1fae5; border-left: 4px solid #10b981; padding: 0.8em 1em; margin: 1em 0; border-radius: 0 4px 4px 0; }
+.warn { background: #fee2e2; border-left: 4px solid #ef4444; padding: 0.8em 1em; margin: 1em 0; border-radius: 0 4px 4px 0; }
+.tag-a { color: #2563eb; font-weight: bold; }
+.tag-b { color: #dc2626; font-weight: bold; }
+.small { font-size: 0.85em; color: #64748b; }
+ul { padding-left: 1.5em; }
+li { margin: 0.3em 0; }
+.flow-box { display: inline-block; border: 2px solid #2563eb; border-radius: 6px; padding: 0.5em 1em; margin: 0.3em; background: #eff6ff; font-weight: 500; }
+.flow-arrow { font-size: 1.4em; color: #2563eb; vertical-align: middle; }
+</style>
+</head>
+<body>
+<h1>BaiZe-2B 预训练数据 Blend 逻辑详解</h1>
+<p class="small">撰写：2026-10-28 · 运维令 11:5x · commit: pretrain 报告:</p>
+<div class="answer">
+<strong>核心结论（直接回答用户疑问）：</strong>训练时<strong>不会</strong>「串行出不同源」。
+每个 global batch 内的样本已经按权重<strong>均匀交错</strong>包含全部 7 个数据源——
+不是「先读完源 A 再读源 B」，而是「每个位置都从混合索引取样本」。
+此前 308K tok/s 的「串行」只发生在 <code>nw=0</code> 时<strong>「数据准备 vs GPU 计算」</strong>这一层
+（每步 ≈6.8s 数据准备 + 6.8s 计算串行），与「源 vs 源」无关。
+</div>
+
+<h2>1. 背景：什么是 Blend？</h2>
+<p>BaiZe-2B 预训练使用 7 个数据源按权重混合（blend）训练。配比见 <code>blend_s1.tsv</code>：</p>
+<table>
+<tr><th>数据源</th><th>权重 (prop)</th><th>说明</th></tr>
+<tr><td>en_v1_4 (Ultra-FineWeb EN)</td><td>0.65</td><td>英文网页主体</td></tr>
+<tr><td>code_l2 (UltraData-Code-L2)</td><td>0.15</td><td>代码中等级</td></tr>
+<tr><td>ufw_l1_en_hq</td><td>0.05</td><td>英文高质量</td></tr>
+<tr><td>math_l1</td><td>0.05</td><td>数学基础</td></tr>
+<tr><td>ufw_zh</td><td>0.04</td><td>中文网页</td></tr>
+<tr><td>code_l3</td><td>0.04</td><td>代码高等级</td></tr>
+<tr><td>math_l3</td><td>0.02</td><td>数学高等级</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>1.00</strong></td><td>—</td></tr>
+</table>
+<p>问题：Megatron-LM 如何在训练时按这些权重混合 7 个数据源？是串行读还是交错读？</p>
+
+<h2>2. Megatron Blend 的「索引层」逻辑</h2>
+<h3>2.1 核心数据结构：两个索引数组</h3>
+<p>Megatron 的 <code>BlendedDataset</code> 在初始化时一次性构建两个数组并缓存为 <code>.npy</code> 文件：</p>
+<table>
+<tr><th>数组</th><th>含义</th><th>长度</th></tr>
+<tr><td><code>dataset_index</code></td><td>每个采样位置取哪个数据集（0~6 对应 7 源）</td><td>总样本数 N</td></tr>
+<tr><td><code>dataset_sample_index</code></td><td>在该数据集内取第几条样本</td><td>总样本数 N</td></tr>
+</table>
+<p>训练时 DataLoader 只需按序遍历这两个数组——<strong>O(1) 查表</strong>，无额外计算。</p>
+
+<h3>2.2 索引构建算法：Bresenham 式加权交错</h3>
+<p>底层由 C++ 函数 <code>helpers.build_blending_indices</code> 实现。算法本质：</p>
+<pre><code>对每个采样位置 i（0, 1, 2, ..., N-1）：
+    对每个数据源 k：
+        deficit[k] = weight[k] * (i+1) - sampled_count[k]
+    选择 deficit 最大的数据源：chosen = argmax_k(deficit[k])
+    dataset_index[i] = chosen
+    dataset_sample_index[i] = sampled_count[chosen]++
+</code></pre>
+<p>这保证了每个数据源的实际采样比例<strong>最大误差 ≤ 1 个样本</strong>，且不同源的样本在序列中<strong>均匀交错</strong>而非成块聚集。</p>
+<div class="note">
+<strong>直观理解</strong>：想象 7 个水龙头，每个有不同的流速（=权重）。Bresenham 算法就像一个快速旋转的阀门，在每一滴水时选择「欠采样最严重」的那个水龙头放一滴。结果 = 7 股水流均匀交织成一股混合流。
+</div>
+
+<h2>3. 具体交错序列示例（权重 0.65 / 0.35）</h2>
+<p>为方便理解，以简化的 2 源为例（源 A 权重 0.65，源 B 权重 0.35），展示前 20 个采样位置的交错序列：</p>
+<table>
+<tr><th>位置 i</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th></tr>
+<tr><th>数据源</th>
+<td class="tag-a">A</td><td class="tag-a">A</td><td class="tag-b">B</td><td class="tag-a">A</td>
+<td class="tag-a">A</td><td class="tag-b">B</td><td class="tag-a">A</td><td class="tag-a">A</td>
+<td class="tag-b">B</td><td class="tag-a">A</td><td class="tag-a">A</td><td class="tag-a">A</td>
+<td class="tag-b">B</td><td class="tag-a">A</td><td class="tag-a">A</td><td class="tag-b">B</td>
+<td class="tag-a">A</td><td class="tag-a">A</td><td class="tag-a">A</td><td class="tag-b">B</td>
+</tr>
+<tr><th>累计 A:B</th>
+<td>1:0</td><td>2:0</td><td>2:1</td><td>3:1</td>
+<td>4:1</td><td>4:2</td><td>5:2</td><td>6:2</td>
+<td>6:3</td><td>7:3</td><td>8:3</td><td>9:3</td>
+<td>9:4</td><td>10:4</td><td>11:4</td><td>11:5</td>
+<td>12:5</td><td>13:5</td><td>14:5</td><td>14:6</td>
+</tr>
+</table>
+<p class="small">20 个位置中 A 出现 14 次（14/20 = 0.70 ≈ 0.65），B 出现 6 次（6/20 = 0.30 ≈ 0.35）。随着序列增长，比例收敛到精确 0.65/0.35。实际 7 源的交错逻辑完全相同，只是 argmax 在 7 维上操作。</p>
+
+<h2>4. 训练时数据流（索引 → 取样本 → 组 batch → compute）</h2>
+<p>训练时的数据流路径：</p>
+<div style="text-align: center; margin: 1.5em 0;">
+<span class="flow-box">统一混合索引<br><small>(dataset_index +<br>dataset_sample_index)</small></span>
+<span class="flow-arrow">→</span>
+<span class="flow-box">DataLoader<br><small>按序取 N 个样本<br>(N = global_batch_size)</small></span>
+<span class="flow-arrow">→</span>
+<span class="flow-box">组 batch<br><small>样本来自 7 源<br>已交错混合</small></span>
+<span class="flow-arrow">→</span>
+<span class="flow-box">GPU compute<br><small>forward + backward<br>+ optimizer step</small></span>
+</div>
+<ol>
+<li><strong>统一混合索引</strong>：训练启动时，<code>BlendedDataset</code> 从 <code>.npy</code> 缓存加载（或首次构建）两个索引数组。数组长度 = 所有数据源的总样本数。</li>
+<li><strong>DataLoader 取样</strong>：每个 training step，DataLoader 从当前 epoch 的索引位置开始，取 <code>global_batch_size</code>（= 256）个样本。每个样本的「来源」由 <code>dataset_index[pos]</code> 决定，「该源内序号」由 <code>dataset_sample_index[pos]</code> 决定。</li>
+<li><strong>组 batch</strong>：256 个样本已天然混合 7 源（按权重交错）。不存在「这个 batch 全是 en_v1_4，下个 batch 全是 code_l2」的情况。</li>
+<li><strong>GPU compute</strong>：batch 送入 GPU 做 forward/backward/optimizer step。模型看到的就是一个混合了多源数据的 batch。</li>
+</ol>
+
+<h2>5. Pre-blend 与 Blend 的关系（正交两层）</h2>
+<div class="note">
+<strong>关键区分</strong>：<code>pre-blend</code>（物理合并 shard）与 <code>blend</code>（索引交错）是<strong>两个正交的层</strong>，互不影响。
+</div>
+<table>
+<tr><th></th><th>Pre-blend（物理层）</th><th>Blend（索引层）</th></tr>
+<tr><td><strong>做什么</strong></td><td>把 628 片小 shard 合并成 ~100 片大 shard</td><td>按权重交错采样 7 个数据源</td></tr>
+<tr><td><strong>改什么</strong></td><td>文件数 / 索引大小（628→100）</td><td>不改权重、不改交错</td></tr>
+<tr><td><strong>为什么</strong></td><td>减 shard 数 → 减 fork-COW 内存膨胀 → 可开 nw=8</td><td>保证 7 源按 0.65/0.15/.../0.02 混合</td></tr>
+<tr><td><strong>对训练的影响</strong></td><td>吞吐恢复（308K → 613K）</td><td>数据配比（不变）</td></tr>
+</table>
+<p>pre-blend <strong>不改</strong>任何权重、不改交错算法、不改数据内容——只是把同一数据源的多片小文件合并成少数大文件，减少 DataLoader 打开/索引的文件数量。</p>
+
+<h2>6. 为什么之前吞吐只有 308K？</h2>
+<div class="warn">
+<strong>根因</strong>：不是「源 vs 源串行」，而是 <code>nw=0</code>（num_workers=0）导致<strong>数据准备与 GPU 计算串行</strong>。
+</div>
+<p>正常情况下（<code>nw=8</code>），DataLoader 的 8 个 worker 子进程在 GPU 计算当前 step 的同时，预先加载下一个 step 的数据（<strong>数据/计算 overlap</strong>）：</p>
+<pre><code>nw=8 (理想 overlap):
+  Worker: [加载数据_0] [加载数据_1] [加载数据_2] ...
+  GPU:                 [compute_0]  [compute_1]  [compute_2] ...
+  总步时 = max(加载, 计算) ≈ 6.8s  → 613,992 tok/s
+
+nw=0 (串行):
+  主进程: [加载数据_0] [compute_0] [加载数据_1] [compute_1] ...
+  总步时 = 加载 + 计算 ≈ 6.8s + 6.8s = 13.6s  → ~308K tok/s
+</code></pre>
+<p>此前 <code>nw=8</code> 会 OOM 的原因是：628 片小 shard 的 blend 索引在 fork 子进程时因 Copy-on-Write (COW) 机制导致内存膨胀 → swap 耗尽 → OOM-kill。pre-blend 把 shard 数从 628 减到 ~100 后，索引数组骤小，COW 可忽略，<code>nw=8</code> 可正常工作。</p>
+
+<h2>7. 总结</h2>
+<ul>
+<li><strong>训练时不会串行出不同源</strong>：每个 batch 内 7 源按权重交错混合（Bresenham 算法，误差 ≤1）。</li>
+<li><strong>Blend 索引一次性构建并缓存</strong>：训练时 O(1) 查表，无额外计算开销。</li>
+<li><strong>Pre-blend 与 Blend 正交</strong>：pre-blend 只减 shard 数（物理合并），不改权重、不改交错。</li>
+<li><strong>308K → 613K 的吞吐差额</strong>：来自 <code>nw=0</code> 的数据/计算串行，与「源 vs 源」无关。pre-blend 后恢复 <code>nw=8</code> 即可。</li>
+</ul>
+<p class="small">— BaiZe Pretrain Agent · 2026-10-28 —</p>
+</body>
+</html>

@@ -43,61 +43,17 @@
 
 **⑤ 纪律**：不碰 vision/data/harness；盯内存/swap/磁盘余量（pre-blend 写 ~6TB）；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到 smoke 交付；只 add 自己线文件。
 
-### [运维令] 2026-10-28 09:3x（**锁定 613K 最佳配置，spawn 调优不许偏离配方；先复跑 smoke 解决真问题**）· 用户直令 · 最高优先
-
-> 用户原话（2026-10-28 09:3x）：「跟 pretrain 沟通，让它不要偏离 613K 最佳配置过远，解决真正的问题。」
-
-**① 613K 最佳配置已冻结（#792 E1 实测，不许改）**：16K / CP1 / DP16 / FP8 tensorwise / CUDA Graph **OFF**。613,992 tok/s = 6.831s/step、~38.4K tok/s/GPU。**spawn 调优只许动 DataLoader 侧旋钮（start-method / num_workers / persistent_workers / TORCHINDUCTOR_COMPILE_THREADS），🚫 禁止为「绕过问题」去改 seq / TP / CP / 精度 / 架构 / graph 开关。**
-
-**② 真正的问题（已定位，别跑偏）**：613K(nw=8) → 308K(nw=0) 的差额 ≈ **100% 数据加载串行化**（每步 ≈6.8s 数据 + 6.8s 计算**串行**）。**不是内存、不是 IO、不是 NFS**——#810 前 30 步已证 GPU 100% util、无 data starvation、mmap IO<1%。目标 = **恢复 nw>0 的「数据/计算 overlap」→ 回到 ~613K**。
-
-**③ 本轮运维已就位（勿重复做）**：`.29`/`.12` 均已 `swappiness=0` 且 `swapoff -a && swapon -a` 清掉 7G/6G 残留 swap（现 Swap free≈8G）；#810 OOM 根因已修（`TORCHINDUCTOR_COMPILE_THREADS=4` 已入 train.sh:195，256→32 compile workers，省 ~168GB）。
-
-**④ 下一步（按序，交付才算完）**：① `COMPILE_THREADS=4 + spawn + persistent_workers + nw=4` 重跑 **8 卡 ≥30 步 smoke**，验证 #810 OOM 是否已解 + 吞吐是否 ramp 回 ≥500K；② 定位日志里 **33 leaked 泄漏对象类型**（semaphore / Process / 共享内存？nw=8 长跑唯一没跨过的坎），对症修掉；③ 达标后按 #792 配方重启 S1 全速。
-
-**⑤ 纪律**：盯内存/swap 水位；不碰 vision/data/harness；commit `pretrain perf:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0`，60s 后继续直到 smoke 交付。
+> 📦 §运维令 2026-10-28 09:3x（锁定 613K 配置 + spawn 调优）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：613K 配方已冻结（16K/CP1/DP16/FP8/graph-OFF），根因=数据加载串行化(nw=0)，spawn 路径被 10:0x pre-blend 取代。需要时再读。
 
 ### [运维提示] 2026-10-27 15:2x（**cimi MCP web search 已配好，可用于调研**）· 用户直令 · 最高优先
 
 > 用户原话：「可以提醒 pretrain 可以 web search（cimi search）」
 > **本线 MCP 工具已就绪**：`cimi_search`（web 搜索）/ `cimi_fetch`（抓网页全文）/ `vqa` / `text_to_image`（cline MCP，type=streamableHttp，指向 `http://10.239.2.29:8092/mcp`）。下一轮唤醒（新 cline 进程）即生效。
-> **排查/调研时直接用 `cimi_search`**——例如当前 spawn smoke 的 CP GLOO `Broken pipe` 问题，可查「PyTorch DataLoader spawn context parallel gloo broken pipe」「Megatron CP GLOO group init spawn」等；或查 fork-COW 免 OOM、16K 吞吐优化等。🚫 别再只依赖 fetch_web_content 或被 proxy 卡住。
+> **排查/调研时直接用 `cimi_search`**——查 fork-COW 免 OOM、16K 吞吐优化、DataLoader 最佳实践等。🚫 别再只依赖 fetch_web_content 或被 proxy 卡住。
 
-### [运维令] 2026-10-27 13:1x（**杀掉 S1，先调吞吐：立即验证 spawn 方案**）· 用户直令 · 最高优先
-
-> 用户原话：「杀掉 S1，如果吞吐上不去一切没意义」
-
-**① 杀掉当前 S1**（nw=0，step≈1080，吞吐 ~320K 不达标）：
-- 立即 kill S1 训练（.29 + .12 两机进程），确认 GPU 全释放。
-- 当前 ~1080 步**直接丢弃**，不等 step2000（吞吐不达标，继续跑没意义）。
-
-**② 立即做 spawn 方案的真实 GPU smoke**（目标吞吐回 600K+）：
-- 用 **spawn + persistent_workers**（必要时 + shared_memory / mmap 索引），nw 从 2 试到 8。
-- 8 卡 smoke ≥30 步：验证**免 OOM**（worker RSS 不累积）+ **吞吐回升**（记每变体 tok/s + RSS 曲线 + 是否 OOM，溯源脚本/log）。
-- 找到吞吐 ~614K 且不 OOM 的最优组合。
-
-**③ 达标即重启 S1 全速**（用最优配置）；若 spawn 仍不达 600K → **继续 web 调研**（`cimi_search`；若 MCP 工具未生效，先用能用的方式：proxy curl 该接口 / 其他），逐方案 smoke 直到回 600K+ 或给出物理上限。
-
-**④ 纪律**：内存 >95% 告警；不碰 vision/data/harness；commit `pretrain perf:`。
-
-### [运维令] 2026-10-27 10:4x（**不放弃：验证 spawn 方案 + 授权 web 调研，吞吐回 600K+**）· 用户直令 · 最高优先
-
-> 用户原话：「让 pretrain 不要放弃，自己调用 web search 调研一下，争取吞吐回到 600K 以上。pretrain 已经看到 spawn 方案了对吧，可以开始验证；如果 spawn 方案还是无法恢复吞吐，可以继续调研。」
-
-**① 目标**：S1 吞吐回到 **≥600K**（当前 nw=0 仅 ~308K）。**不放弃，逐方案验证。**
-
-**② 立即验证 spawn 方案（你已知 09:2x 完整方案，按序执行）**：
-- **spawn + persistent_workers=True（必要时再加 shared_memory / mmap 索引）**，消 fork-COW 膨胀 → 可 nw>0 → 找回数据/计算重叠 → 目标 ~614K。
-- 先 8 卡 **smoke（≥30 步稳态）** 验证：无 worker RSS 累积 OOM + 吞吐回升；PASS 后从当前完好 ckpt（step2000 或现有最新）resume 全速。
-- 逐变体记网格：spawn 单改 / spawn+persistent / +shared_memory / nw 档位 → 吞吐 + RSS 曲线 + 是否 OOM，溯源到脚本/log。
-
-**③ 若 spawn 仍不达标 → 继续 web 调研**（授权使用 MCP web 工具 **`cimi_search` / `cimi_fetch`**，已配置给本线）：
-- 调研方向：PyTorch DataLoader fork-COW 免膨胀、num_workers×NUMA/swappiness、prefetch_factor、pin_memory、iterator 预取、数据索引 mmap、Megatron 数据加载最佳实践等。
-- 每候选同样 smoke + 记录收益，直到吞吐回 600K+ 或给出「当前物理上限 + 需要什么硬性条件」。
-
-**④ 纪律**：进度写 EXPERIMENTS §五 + 报告吞吐节；commit `pretrain perf:`；⚠️ 内存 >95% 告警（08:4x 提示）；不碰 vision/data/harness。
-
-> 📦 §运维提示 2026-10-27 09:2x（DataLoader OOM fork-COW 根因 + spawn 方案）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：fork-COW 是 RSS 累积根因，spawn 方案已采纳验证中（#806~#811）。需要时再读。
+> 📦 §运维令 2026-10-27 13:1x（杀掉 S1 + spawn smoke）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：S1 已杀，spawn 方案被 2026-10-28 10:0x pre-blend 取代。需要时再读。
+> 📦 §运维令 2026-10-27 10:4x（不放弃：spawn 验证 + web 调研）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：spawn 被 pre-blend 取代；web 调研授权仍有效（见 15:2x）。需要时再读。
+> 📦 §运维提示 2026-10-27 09:2x（DataLoader OOM fork-COW 根因 + spawn 方案）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：fork-COW 是 RSS 累积根因，spawn 方案被 pre-blend 取代。需要时再读。
 
 ### [运维提示] 2026-10-27 08:4x（**内存使用率 >95% 会触发告警，调试时注意**）· 用户直令 · 最高优先
 
