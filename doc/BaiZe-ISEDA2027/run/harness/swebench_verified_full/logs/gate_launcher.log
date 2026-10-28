@@ -1,15 +1,11 @@
-=== GATE LAUNCH: 6 harnesses x 10 problems ===
-Started: Wed Oct 28 08:00:05 AM CST 2026
+=== GATE LAUNCH v2: 7 harnesses x 10 diverse problems ===
+Phase: all  |  ids: gate_10_ids.txt
+Started: Wed Oct 28 09:17:09 AM CST 2026
+
+Cleaning stale workdirs + progress from failed v1 gate...
+  done.
 
 Starting PREDICT for cline-patched ...
-  PID=1935077 -> logs/gate_predict_cline-patched.log
+  PID=3332855 -> logs/gate_predict_cline-patched.log
 Starting PREDICT for codex ...
-  PID=1947198 -> logs/gate_predict_codex.log
-Starting PREDICT for opencode ...
-  PID=1971113 -> logs/gate_predict_opencode.log
-Starting PREDICT for pi ...
-  PID=1983754 -> logs/gate_predict_pi.log
-Starting PREDICT for claude-code ...
-  PID=2007693 -> logs/gate_predict_claude-code.log
-Starting PREDICT for hermes ...
-  PID=2023437 -> logs/gate_predict_hermes.log
+  PID=3356704 -> logs/gate_predict_codex.log

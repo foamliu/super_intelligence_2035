@@ -1,0 +1,40 @@
+{
+  "harness": "opencode",
+  "harness_code": "opencode",
+  "done": 2,
+  "total": 10,
+  "patch_produced": 0,
+  "infra": 0,
+  "timeout": 0,
+  "quota_blocked": 0,
+  "no_patch": 2,
+  "last_update": "2026-10-28 09:29:41",
+  "results": [
+    {
+      "instance_id": "django__django-10097",
+      "harness": "opencode",
+      "returncode": 1,
+      "wall_s": 68.5,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "1mError: \u001b[0mCannot connect to API: Unable to connect. Is the computer able to access the url?\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__django__django-10097.json\n[run_single] cleanup: git reset --hard b9cf764be62e77b4777b3a75ec256f6209a57671\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__django__django-10097.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "sympy__sympy-11618",
+      "harness": "opencode",
+      "returncode": 1,
+      "wall_s": 69.5,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "\u001b[1mError: \u001b[0mCannot connect to API: Unable to connect. Is the computer able to access the url?\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__sympy__sympy-11618.json\n[run_single] cleanup: git reset --hard 360290c4c401e386db60723ddb0109ed499c9f6e\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__sympy__sympy-11618.json",
+      "classification": "no-patch"
+    }
+  ]
+}

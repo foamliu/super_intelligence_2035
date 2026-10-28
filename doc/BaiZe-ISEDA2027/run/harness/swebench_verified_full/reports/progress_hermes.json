@@ -1,0 +1,40 @@
+{
+  "harness": "hermes",
+  "harness_code": "hermes",
+  "done": 2,
+  "total": 10,
+  "patch_produced": 0,
+  "infra": 0,
+  "timeout": 0,
+  "quota_blocked": 0,
+  "no_patch": 2,
+  "last_update": "2026-10-28 09:27:52",
+  "results": [
+    {
+      "instance_id": "django__django-10097",
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 5.5,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "I client: cannot import name 'ArgsKwargs' from 'pydantic_core._pydantic_core' (unknown location)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__django__django-10097.json\n[run_single] cleanup: git reset --hard b9cf764be62e77b4777b3a75ec256f6209a57671\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__django__django-10097.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "sympy__sympy-11618",
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 2.7,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "nAI client: cannot import name 'ArgsKwargs' from 'pydantic_core._pydantic_core' (unknown location)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__sympy__sympy-11618.json\n[run_single] cleanup: git reset --hard 360290c4c401e386db60723ddb0109ed499c9f6e\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__sympy__sympy-11618.json",
+      "classification": "no-patch"
+    }
+  ]
+}
