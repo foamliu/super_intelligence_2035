@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 42,
+  "done": 43,
   "total": 500,
-  "patch_produced": 39,
+  "patch_produced": 40,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 2,
-  "last_update": "2026-10-28 18:59:56",
+  "last_update": "2026-10-28 19:02:17",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -548,6 +548,19 @@
       "stdout_tail": "kdirs/opencode/pytest-dev_pytest/AGENTS.md\n\u001b[0m→ \u001b[0mRead README.rst\u001b[90m [limit=50]\u001b[0m\n\n[run_single] model_patch: 1018 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5262.json\n[run_single] cleanup: git reset --hard 58e6a09db49f34886ff13f3b7520dd0bcd7063cd\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5262.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5631",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 139.3,
+      "model_patch_len": 638,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "hm/harness_verified_full/workdirs/opencode/pytest-dev_pytest/test_fix.py\n(no output)\n\u001b[0m\n\n[run_single] model_patch: 638 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5631.json\n[run_single] cleanup: git reset --hard cb828ebe70b4fa35cd5f9a7ee024272237eab351\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5631.json",
       "classification": "patch-produced"
     }
   ]
