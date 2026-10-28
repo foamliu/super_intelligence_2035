@@ -1343,3 +1343,18 @@
 | 2026-10-28 | 附录 A15：钛媒体两篇分析体「Claude 的账单，金主先看不下去了」「DeepSeek 登顶全球第一，一场『账单碾压』的胜利」 | 钛媒体 RSS | 不收 | https://www.tmtpost.com/ |
 | 2026-10-28 | 附录 A16：中新网「AI 乌镇 科创桐乡｜『乌镇七子』亮相」（地方产业稿）、「遇 AI『换脸』带货，消费者能否索赔」（述评/消费维权）—— `fetch_cn_news(30)` 30 条中 AI 相关仅此 2 条，均不收；另丢弃超龄 108.8h 一条 | 中新网 / 央视（`fetch_cn_news`） | 不收 | https://www.chinanews.com.cn/ |
 | 2026-10-28 | 附录 A17：HN 3 组查询 24 命中，最新 2026-10-21，其余 9 月及更早 ⇒ 72h 内 0 条新事件；arXiv 未跑 | Hacker News 检索 | 不收 | https://news.ycombinator.com/item?id=49921982 |
+| 2026-10-28 | 第 164 轮 news：Anthropic 招聘经理取消传统编程题面试（「编程面试已经死了，至少对我的团队而言」；改考判断力/产品品味/协作；「饥饿胜过资历」） | IT之家 `1/018/876` | news | https://www.ithome.com/1/018/876.htm |
+| 2026-10-28 | 第 164 轮 news：Anthropic S-1 披露四类芯片算力统一调度（Trainium/TPU/英伟达 GPU/AMD GPU），分析师谈「英伟达定价权」 | IT之家 `1/018/906` | news | https://www.ithome.com/1/018/906.htm |
+| 2026-10-28 | 第 164 轮 news：《人类事务》论文《谁应当为应对专业技能退化负责？》（凯萨·凯尔基 · 论文发布事件） | IT之家 `1/018/877` | news | https://www.ithome.com/1/018/877.htm |
+| 2026-10-28 | 第 164 轮 news：基辛格经 Playground Global 支持 Nagare Labs 开发 Z2RAM（500 万美元种子轮 · 绕开 EUV · 4 年内送样） | IT之家 `1/018/887` | news | https://www.ithome.com/1/018/887.htm |
+| 2026-10-28 | 第 164 轮 news：奥斯卡学院主席泰勒称 AI 只是工具、作品须「人类驱动的工作流程」（第 99 届新规 + 非美会员 25%） | IT之家 `1/018/892` | news | https://www.ithome.com/1/018/892.htm |
+| 2026-10-28 | 第 164 轮 附录 A18：⚠️ 撤回 —— 短链 `1/018/868` 返回页标题为「GEO优化公司推荐深度观察…」与预期不符，整条作废（未入账） | IT之家 `1/018/868` | 收录-撤回 | https://www.ithome.com/1/018/868.htm |
+| 2026-10-28 | 第 164 轮 附录 A19：FCC 批准 Amazon Leo 以 115 亿美元收购 Globalstar（约 24 颗卫星 + 频谱；苹果 SOS/查找功能协议续供） | IT之家 `1/018/895` | 候选 | https://www.ithome.com/1/018/895.htm |
+| 2026-10-28 | 第 164 轮 附录 A20：华为何刚公布 Mate 90 系列「十大黑科技」（厂商发布会 · 纯硬件参数） | IT之家 `1/018/907` | 不收 | https://www.ithome.com/1/018/907.htm |
+| 2026-10-28 | 第 164 轮 附录 A21：索尼网络通信 So-net 数据库被攻破，约 258.5 万用户受影响（与 AI 关联弱） | IT之家 `1/018/778` | 不收 | https://www.ithome.com/1/018/778.htm |
+| 2026-10-28 | 第 164 轮 附录 A22：爱范儿《2030 年之前，我们可能再也买不到便宜的电脑了》（分析体） | 爱范儿 RSS | 不收 | https://www.ifanr.com/1686326 |
+| 2026-10-28 | 第 164 轮 附录 A23：钛媒体同日多篇观点/解读体（Anthropic 给云厂商打工 / 7 美元控住 50.1% 投票权 / AI 洗牌财富榜 / AI 的时薪 / 跑代码易做任务难） | 钛媒体 RSS | 不收 | https://www.tmtpost.com/ |
+| 2026-10-28 | 第 164 轮 附录 A24：雷峰网 20 条（通稿 + 早报二次汇编）0 入账 | 雷峰网 RSS | 不收 | https://www.leiphone.com/ |
+| 2026-10-28 | 第 164 轮 附录 A25：量子位 10 条（最新 10-28 04:04 蚂蚁百灵 Ling-3.1-flash 厂商发布稿）0 入账 | 量子位 RSS | 不收 | https://www.qbitai.com/2026/10/505928.html |
+| 2026-10-28 | 第 164 轮 附录 A26：中新网 `fetch_cn_news(30)` AI 相关 3 条（同行评审合作稿 / 校园高尔夫 AI 规则课堂 / 湘江 AI 轻创业述评）0 入账 | 中新网（`fetch_cn_news`） | 不收 | https://www.chinanews.com.cn/ |
+| 2026-10-28 | 第 164 轮 附录 A27：HN 5 组查询 50 命中（OpenAI 双证明 / Anthropic IPO 解读 / Proton 重面试 / 荷兰裁员等），多为博客·付费墙·Show HN ⇒ 0 入账；arXiv 未跑 | Hacker News 检索 | 不收 | https://news.ycombinator.com/ |
