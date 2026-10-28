@@ -11,6 +11,25 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### §运维令·2026-10-28 17:3x（OCR 合成数据 10M 质量偏差裁定：接受现状）· 用户直令 · 最高优先
+
+> **用户裁定（2026-10-28）**：10M OCR 合成数据集（9,999,999 样本 / 2000 tars / 470GB）**接受现状（accept as-is）**。
+>
+> **裁定内容**：
+> 1. 两处质量偏差**均接受**，不重生成、不做 index 过滤：
+>    - ① 文本 SHA1 去重 2.4486%（>1% 目标，244,858 多余）—— 合成文本组合空间有限所致，可接受；
+>    - ② 泄漏 113 命中（leak_rate=1.16e-5）—— 短串巧合（如 `0.29`→`029`），非真实泄漏，可接受。
+> 2. 数据集 DATASET_CARD 中已有的偏差记录**保留不动**（如实披露原则）。
+> 3. 该 10M 数据集可用于后续 vision encoder 预训练 / OCR SFT，**不需要再等待质量裁定**。
+>
+> **agent 执行清单**：
+> 1. 在 `MEMORY_VISION.md` 顶部状态头中，将待等项 ①（22:4x 质量偏差裁定）标记为 **✅ 已裁定：接受现状**。
+> 2. 在 `EXPERIMENTS_VISION.md` §18（OCR 合成 10M）补充 1 行：「2026-10-28 用户裁定：接受现状（accept as-is），不重生成/不过滤」。
+> 3. 写心跳 + 日报 + commit（`vision ocr-accept:` 前缀）+ push。
+> 4. 本指令完成后标 `✅ 已完成`。
+>
+> **注意**：本指令**只裁定数据质量**，**不启动** encoder 训练或 OCR SFT（仍需用户另行批预算 = 待等项 ②）。
+
 ### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节+7子节/0 script/0外链/标签配平/≥15KB + 生成器 `vision/generate_recent_work_report.py`；覆盖 ArmD-R2/ArmE发散→ArmE-R2(ProtB lp 68.236 vs ArmD-R2 64.34·12集 26.10%不可分辨·传递性)/Stage-2 原版780k/OCR 调研·SFT方案·10M合成数据集(470GB/2000tar·去重2.4486%/泄漏113如实披露)；数字全溯源 EXPERIMENTS §14-§18；commit 847ce67eb）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 ### [已归档] §运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对，供 vision encoder 预训练）**已完成** （wake#275 全量 DONE ok=9,999,999/fail=0/2000 shard tars+preview_10k.tar/470GB(0.5046TB)/893.6 img/s/3h6m30s · 8 类 cat_counts==plan · 加载器兼容已验真 build_gpic_loader→(16,3,224,224) finite · 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B/8节/0 script/0外链) + 5 脚本 `vision/ocr_synth/*.py` + EXPERIMENTS §18 + index.jsonl(9.999M) + STATS/VALIDATION/DATASET_CARD/MANIFEST + preview_200.html + preview_10k.tar；wake#276 复核完整性一致）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。**两处质量偏差如实记录**：①文本 SHA1 去重 2.4486%>1% 目标（dup_pass=false，留 9,755,141 唯一 / 244,858 多余；合成文本组合空间有限所致）；②泄漏 113 命中（leak_rate=1.16e-5，短串巧合如 0.29→029 非真实泄漏；内联护栏路径错为空操作，真实复检读 OCRBench/DocVQA/ChartQA parquet；InfoVQA parquet 未找到）。**待用户裁定**：接受 / index 过滤补救（留 9,755,141 唯一）/ 扩语料重生成。本轮只造数据不启 encoder 训练（等用户批预算）。需要时再读。
