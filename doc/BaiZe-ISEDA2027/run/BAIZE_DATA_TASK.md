@@ -9,6 +9,15 @@
 
 > ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
 
+> 🆕 §运维令·2026-10-28 10:1x（**暂停下载**）· 用户直令 · 最高优先
+
+> 用户原话：「让 data 把下载暂停一下。」
+> **任务**：
+> 1. **立即暂停当前所有下载进程**：含 `download_85m_parallel16.sh`（`hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`）及其子进程等，全部停掉。
+> 2. **恢复前不再发起任何新的下载 / 迁移等重 I/O 操作**，直到收到「恢复下载」新令。
+> 3. 给 pretrain 的 pre-blend（.12/.29 并发、将写 ~6TB）让出 IO/磁盘/带宽。
+> **判据**：`pgrep -af "hf download|download_.*\.sh|rsync|wget|aria2"` 无活跃下载/迁移进程。
+
 > 🆕 §运维令·2026-10-27 13:3x（**分词 SFT-2605 + Agent-2609 到 /nas_env，纳入映射镜像同等对待**）· 用户直令 · 最高优先
 
 > 用户原话：「data：分词 UltraData-SFT-2605 和 UltraData-SFT-Agent-2609，分词产物放置在 /nas_env。更新 run/data/DATA_MAPPING.md 和 reports/report_data_mapping_zh.html，把它们俩跟其它 10 个 MiniCPM5 数据同等对待。」
