@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R609 SWE-bench全量500 predict 5路后台运行中(07:1x)·健康·稳步推进·最高opencode80/500.
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·三路7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改(QA 5问✅)✅·R584 补令-R580顶层结果JSON补齐untrack+gitignore加固✅·R582-R609巡检✅
-当前动作:     R609:巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·稳步推进. 权威progress JSON:opencode80/500(patch76,infra1,quota0,no_patch3)·cline68/500(patch57,infra3,quota0,no_patch8)·claude-code59/500(patch41,infra2,quota2,no_patch14)·pi56/500(patch49,infra1,quota2,no_patch4)·codex46/500(patch34,infra1,quota2,no_patch9). 自R608增量:cline+1·pi+1·opencode+0·claude-code+0·codex+0. 落盘preds:cline65·opencode79·codex45·pi55·claude-code57. 5父全ALIVE(etimes~35463-35583s≈9.9h,13:18启动). gw_proxy9090=200·9091=403(活着,auth-gated✅). /data6.0T free·mem1481G avail·docker0(predict不用).
-下一步:       ①监控full_predict(每~100题报一次,当前最高opencode80/500未到阈值)→②五路predict全完→全量eval(docker workers8-12)→③交付report_harness_swebench_verified_full500_zh.html. ④永久硬约束:禁止commit评测结果JSON(补令③).
+PHASE:        R610 SWE-bench全量500 predict 5路后台运行中(07:1x)·健康·稳步推进·最高opencode81/500.
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·三路7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改(QA 5问✅)✅·R584 补令-R580顶层结果JSON补齐untrack+gitignore加固✅·R582-R610巡检✅
+当前动作:     R610:巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·稳步推进. 权威progress JSON:opencode81/500(patch77,infra1,quota0,no_patch3)·cline69/500(patch58,infra3,quota0,no_patch8)·claude-code59/500(patch41,infra2,quota2,no_patch14)·pi57/500(patch50,infra1,quota2,no_patch4)·codex47/500(patch35,infra1,quota2,no_patch9). 自R609增量:cline+1·codex+1·opencode+1·pi+1·claude-code+0. 落盘preds:cline66·opencode80·codex46·pi56·claude-code57. 5父全ALIVE(etimes~35812-35932s≈10.0h,13:18启动). gw_proxy9090=403·9091=403(活着,auth-gated✅). /data6.0T free·mem1481G avail·docker0(predict不用).
+下一步:       ①监控full_predict(每~100题报一次,当前最高opencode81/500接近100阈值)→②五路predict全完(ETA最慢codex~4天Nov1)→全量eval(docker workers8-12)→③交付report_harness_swebench_verified_full500_zh.html. ④永久硬约束:禁止commit评测结果JSON(补令③).
 阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=33364B(32.6KB,略超32KB软标·<40KB红线·无可归档已闭合块) / MEMORY=11093B(10.9KB,≤32KB✅)
+📦 体积：TASK=33364B(32.6KB,略超32KB软标·<40KB红线·无可归档已闭合块) / MEMORY=11301B(11.0KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[23:19] R610 巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·稳步推进. 5父全ALIVE(cline4184703·codex32831·claude-code62463·opencode106230·pi142978,etimes~35812-35932s≈10.0h,13:18启动)+5子run_verified_full.py ALIVE+5孙run_single.py ALIVE(cline73s·opencode249s·codex211s·pi178s·claude-code889s). 权威progress:opencode81/500(patch77,infra1,quota0,no_patch3)·cline69/500(patch58,infra3,quota0,no_patch8)·claude-code59/500(patch41,infra2,quota2,no_patch14)·pi57/500(patch50,infra1,quota2,no_patch4)·codex47/500(patch35,infra1,quota2,no_patch9). 自R609增量:cline+1·codex+1·opencode+1·pi+1·claude-code+0. 落盘preds:cline66·opencode80·codex46·pi56·claude-code57. 核查:②5父+5子+5孙全ALIVE③gw_proxy9090=403·9091=403(活着,auth-gated✅)④infra单列(均git-fetch-timeout,符合铁律3)⑤timeout=0⑥quota低(codex2·pi2·claude-code2,已单列)⑦断点续跑正常⑧hermes(no_patch5>2)/deepseek(patch0)闸门FAIL未进全量⑨/data6.0T free·mem1481G avail·docker0(predict不用)·log无error/429. ETA(~10h速率):opencode~52h·cline~62h·claude-code~75h·pi~78h·codex~96h(最慢~Nov1). 最高opencode81/500,接近~100题报进度阈值. 体积自检:TASK=33364B(32.6KB)·MEMORY=11301B(11.0KB,≤32KB✅). 判据自检:07:1x全量500运维令仍在跑(predict运行中,未交付)→WAITING=0.
+
 [23:11] R609 巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·稳步推进. 5父全ALIVE(cline4184703·codex32831·claude-code62463·opencode106230·pi142978,etimes~35463-35583s≈9.9h,13:18启动)+5子run_verified_full.py ALIVE+5孙run_single.py ALIVE(cline200s·opencode712s·codex1353s·pi44s·claude-code540s). 权威progress:opencode80/500(patch76,infra1,quota0,no_patch3)·cline68/500(patch57,infra3,quota0,no_patch8)·claude-code59/500(patch41,infra2,quota2,no_patch14)·pi56/500(patch49,infra1,quota2,no_patch4)·codex46/500(patch34,infra1,quota2,no_patch9). 自R608增量:cline+1·pi+1·opencode+0·claude-code+0·codex+0. 落盘preds:cline65·opencode79·codex45·pi55·claude-code57. 核查:②5父+5子+5孙全ALIVE③gw_proxy9090=200·9091=403(活着,auth-gated✅)④infra单列(均git-fetch-timeout,符合铁律3)⑤timeout=0⑥quota低(cline0·opencode0·codex2·pi2·claude-code2)⑦断点续跑正常⑧hermes(no_patch5>2)/deepseek(patch0)闸门FAIL未进全量⑨/data6.0T free·mem1481G avail·docker0(predict不用)·log无error/429. 最高opencode80/500,未到~100题报进度阈值. 体积自检:TASK=33364B(32.6KB)·MEMORY=11093B(10.9KB,≤32KB✅). 判据自检:07:1x全量500运维令仍在跑(predict运行中,未交付)→WAITING=0.
 
 > 📦 R590-R605 巡检流水(2026-10-28 21:08~22:47,16轮常态巡检)已归档 → daily-memories-harness/2026-10-28.md。结论：5路predict持续健康运行,稳步推进(cline56→66·opencode58→77·codex40→46·pi48→53·claude-code45→57),全路timeout=0,gw_proxy=200,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
