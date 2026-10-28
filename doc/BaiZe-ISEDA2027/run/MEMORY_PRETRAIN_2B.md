@@ -1,13 +1,14 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 15:5x #820：**activate_preblend.sh 修复 + 全源验证**。① 修 3 bug：TSV heredoc 产生字面 `\t`（非 tab）→ 改 printf；路径多 `_pb` 后缀（文件前缀非目录）→ 去掉；key 名 `tsven_v_v1_4` 笔误 + 脆弱 sed → 直接 printf。② 5/7 源 MANIFEST.json 存在 ✓（code_l2/code_l3/math_l1/math_l3/ufw_l1_en_hq），en_v1_4 缺（11/16），ufw_zh 4 shards 无需 pre-blend ✓。③ gen_blend.py 测试：pre-blend 绝对路径 + ufw_zh 相对路径均 PASS。④ en_v1_4 s011=210G/515G(~41%)，PID 2422384 alive，ETA 全 16 shards ~18:12。
+> 🆕 2026-10-28 16:2x #821：**gbs256 correctness smoke 20/20 PASS + en_v1_4 pre-blend 13/16**。① dry-run PASS（194 shards=110+16×5+4, weight_sum=1.0, gbs256/accum32, θ=1e6, AdamW, FP8, graph OFF）。② 8卡 smoke 20步 worker_rc=0：0 NaN ✅ / 0 skipped ✅ / loss 11.578→8.646 / LR=1e-3 / grad_norm 2.19→1.61 / mem max 72.8GB<80GB。③ nw=0 稳态 27s/iter=~155K tok/s（预期低；≥500K 需 pre-blend+nw=8）。④ en_v1_4 pre-blend 13/16（s012 in progress 190G, PID 2422384 alive, ETA~18:00）。⑤ blend 报告 ✓（#816 已交付 11,284B）。
+> 📦 §#820（15:5x, activate_preblend.sh 修复 3 bug + 全源验证）→ daily-memories/2026-10-28.md；**结论**：TSV tab/路径/key 3 bug 修复，gen_blend.py PASS，5 源 MANIFEST ✓。需要时再读。
 > 📦 §#819（15:4x, pre_blend 进程已死→清理+重启 PID 2422384）→ daily-memories/2026-10-28.md；**结论**：清理 s011/s012 残留后重启，skip s000-s010，processing s011。
 > 📦 §#817（15:2x, 11/16 · .29 完成）→ daily-memories/2026-10-28.md；**已被 #819 取代**。
 > 📦 §#812~#816（12:3x~15:3x, pre-blend 4→11/16 + smoke + blend 报告）→ daily-memories/2026-10-28.md；**结论**：smoke 30/30 ✓，blend 报告 ✓，5 源 pre-blend ✓，en_v1_4 11/16。
 > 📦 §#806~#810（spawn 调试系列）→ daily-memories/2026-10-27/28.md；**已被 pre-blend 方案取代**。
 
-> - 未完成指令：有（① **en_v1_4 pre-blend s011-s015 进行中**[PID 2422384, s011=210G/515G, ETA~18:12] ② en_v1_4 完成后 activate_preblend.sh(**已修复**) ③ 8 卡 smoke(gbs256+nw=8)验 0NaN+≥500K ④ 16 卡对齐 613K ⑤ check_rope.py PASS[待ckpt] ⑥ lr-decay-shape exponential[Decay前] ⑦ 长上下文ABF三件[待ckpt]）。blend 报告 ✓。smoke 30/30 ✓。5 源 pre-blend ✓。activate_preblend.sh 修复 ✓。WAITING=0。
+> - 未完成指令：有（① **en_v1_4 pre-blend 13/16**[s012 in progress 190G, PID 2422384, ETA~18:00] ② en_v1_4 完成后 activate_preblend.sh(**已修复**) ③ 8 卡 smoke(gbs256+pre-blend+nw=8)验 0NaN+≥500K ④ 16 卡对齐 613K ⑤ check_rope.py PASS[待ckpt] ⑥ lr-decay-shape exponential[Decay前] ⑦ 长上下文ABF三件[待ckpt]）。blend 报告 ✓。gbs256 correctness smoke 20/20 ✓(0NaN/loss11.58→8.65/nw=0~155K)。5 源 pre-blend ✓。activate_preblend.sh 修复 ✓。WAITING=0。
 > 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
 > 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
@@ -39,7 +40,7 @@ WAITING: 0
 > 📦 §#782「GPU饥饿」+#781/#780 流水（2026-10-25，已被 #784 取代/证伪）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#782「小批GPU饥饿(MFU14%)」被 E2(同小批84%MFU)证伪，真因=tok/mb≥16384 显存顶 80GB→memory-bound。需要时再读。
 > 📦 §#781 流水（2026-10-25 21:28，cfg4跑完6格网格收尾+生成器落盘）已压缩 → daily-memories/2026-10-25.md；**结论**：6格全测完(cfg1-4 OK/cfg5-6 OOM@32768)，生成器确定性✓；其"SSM超线性"结论已被#782的cfg0a对照证伪。需要时再读。
 > 📦 §#780 流水（2026-10-25 20:33，网格监控 cfg1✅cfg2✅cfg3🏃）已压缩 → daily-memories/2026-10-25.md；**结论**：cfg1-3=108K/112K/112K，seq4096→8192 per-GPU崩82%，编排器自治。需要时再读。
-> 📦 体积：TASK=28.2 KB / MEMORY≈30.8 KB（均 ≤32KB ✓；本轮归档 #781 详块→1行指针+daily原文）。
+> 📦 体积：TASK=30.6 KB / MEMORY=31.3 KB（均 ≤32KB ✓）。
 > 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
 
 
