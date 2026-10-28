@@ -318,3 +318,53 @@ python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
 - 每次开跑/收尾写心跳：`run/MEMORY_PRETRAIN_2B.md` + `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`。
 - commit 前缀：`pretrain train:`（脚本/配置改动）、`pretrain run:`（实跑结果）。
 - 禁止 `git add -A`（共享工作副本，会卷入他线在途文件）。
+
+---
+
+## 9. 依赖环境
+
+> 从零按本节即可确认环境就绪，配合 `scripts/preflight.sh` 一键自检。
+
+### Python / 关键包
+
+| 组件 | 版本 | 说明 |
+|:--|:--|:--|
+| Python | 3.10.18 | `miniforge3/envs/py310` |
+| PyTorch | 2.8.0+cu128 | 含 CUDA 12.8 |
+| Transformer Engine | 2.12.0 | FP8 tensorwise（`--fp8-recipe tensorwise`） |
+| Megatron-Core | 0.16.1 | `pretrain_launcher.py` + `megatron/` fork |
+| Megatron-Energon | 5.0.0 | DataLoader / blended dataset |
+| Flash Attention | 2.8.4（FA3 3.0.0） | 16K attention |
+| NCCL | 2.27.3 | 多节点 AllReduce |
+| TensorBoard | 2.20.0 | 监控 `.29:6006` |
+| omegaconf | 2.3.0 | 配置解析（通过 `PYTHONPATH` 注入） |
+| numpy | 1.26.4 | |
+
+### GPU / 网络 / 存储
+
+- **GPU**：H100 80GB × 16（.12 master 8 卡 + .29 worker 8 卡），峰值 ~75GB/卡
+- **网络**：InfiniBand（`NCCL_IB_GID_INDEX=3` / `NCCL_IB_MTU=4096` / `NCCL_IB_TC=106` / `NCCL_IB_TIMEOUT=22`，由 `train.sh` 自动 `export`）
+- **存储**：
+  - `/nas_train` — 训练代码 + checkpoint + tokenizer（需 ≥15TB 可用）
+  - `/nas_user` — pre-blend 数据（~6TB）
+  - `/nas_train/.../datasets/baize-data/tokenized` — 原始 tokenized 源
+
+### 环境变量（`configs/common.env` 自动 source，可覆盖）
+
+| 变量 | 默认值 | 作用 |
+|:--|:--|:--|
+| `BAIZE_TRAIN_CODE` | `/nas_train/app.e0031982/code/BaiZe-ISEDA2027` | Megatron 代码 + `pretrain_launcher.py` |
+| `PY` | `/nas_train/app.e0031982/miniforge3/envs/py310/bin` | `torchrun` / `python` 路径 |
+| `PYTHONPATH` | `/nas_train/app.e0031982/omegaconf_230` | omegaconf 2.3.0 |
+| `TOK_ROOT` | `/nas_train/.../baize-data/tokenized` | 原始 tokenized 数据根 |
+| `TOKENIZER` | `$BAIZE_TRAIN_CODE/data/tokenizer_eod` | EOD tokenizer |
+| `EXP_ROOT` | `$BAIZE_TRAIN_CODE/nemo_experiments` | 实验输出（ckpt + TB logs） |
+
+### 一键验证
+
+```bash
+bash scripts/preflight.sh
+# 检查：① GPU 数量与空闲 ② tokenizer 存在 ③ 数据路径可读 ④ 磁盘 ≥15TB
+#       ⑤ launcher 支持 --lr-decay-shape / --rotary-base ⑥ TB 6006 端口
+# 全部 PASS 即可开跑。
+```
