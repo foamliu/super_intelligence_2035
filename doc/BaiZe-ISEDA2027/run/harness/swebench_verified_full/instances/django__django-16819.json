@@ -1,0 +1,1 @@
+{"instance_id": "django__django-16819", "repo": "django/django", "base_commit": "0b0998dc151feb77068e2387c34cc50ef6b356ae", "problem_statement": "Reduce Add/RemoveIndex migration operations.\nDescription\n\t\nWe should reduce AddIndex/RemoveIndex operations when optimizing migration operations.\n"}
