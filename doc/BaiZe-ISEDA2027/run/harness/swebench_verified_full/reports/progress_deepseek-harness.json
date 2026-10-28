@@ -1,14 +1,14 @@
 {
   "harness": "deepseek-harness",
   "harness_code": "deepseek-harness",
-  "done": 3,
+  "done": 10,
   "total": 10,
   "patch_produced": 0,
-  "infra": 0,
+  "infra": 2,
   "timeout": 0,
   "quota_blocked": 0,
-  "no_patch": 3,
-  "last_update": "2026-10-28 09:29:27",
+  "no_patch": 8,
+  "last_update": "2026-10-28 09:45:14",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -47,6 +47,85 @@
       "stdout_tail": " deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=3.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__sphinx-doc__sphinx-10323.json\n[run_single] cleanup: git reset --hard 31eba1a76dd485dc633cae48227b46879eda5df4\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__sphinx-doc__sphinx-10323.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-13989",
+      "harness": "deepseek-harness",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10297",
+      "harness": "deepseek-harness",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "astropy__astropy-12907",
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 3.6,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ng deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=3.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__astropy__astropy-12907.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "pydata__xarray-2905",
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 6.4,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "nning deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=6.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__pydata__xarray-2905.json\n[run_single] cleanup: git reset --hard 7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__pydata__xarray-2905.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-10051",
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 3.2,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": " deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=3.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__pytest-dev__pytest-10051.json\n[run_single] cleanup: git reset --hard aa55975c7d3f6c9f6d7f68accc41bb7cadf0eb9a\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__pytest-dev__pytest-10051.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4970",
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 3.3,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "g deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=3.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__pylint-dev__pylint-4970.json\n[run_single] cleanup: git reset --hard 40cc2ffd7887959157aaf469e09585ec2be7f528\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__pylint-dev__pylint-4970.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "psf__requests-1142",
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 6.0,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "unning deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=5.9s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__psf__requests-1142.json\n[run_single] cleanup: git reset --hard 22623bd8c265b78b161542663ee980738441c307\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/deepseek-harness__psf__requests-1142.json",
       "classification": "no-patch"
     }
   ]

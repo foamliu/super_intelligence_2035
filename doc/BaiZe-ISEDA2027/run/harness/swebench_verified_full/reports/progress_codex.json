@@ -1,0 +1,73 @@
+{
+  "harness": "codex",
+  "harness_code": "codex",
+  "done": 5,
+  "total": 10,
+  "patch_produced": 3,
+  "infra": 1,
+  "timeout": 0,
+  "quota_blocked": 0,
+  "no_patch": 1,
+  "last_update": "2026-10-28 10:24:06",
+  "results": [
+    {
+      "instance_id": "django__django-10097",
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.6,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-10097.json\n[run_single] cleanup: git reset --hard b9cf764be62e77b4777b3a75ec256f6209a57671\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__django__django-10097.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "sympy__sympy-11618",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 367.4,
+      "model_patch_len": 1844,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "hell_command\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 1844 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__sympy__sympy-11618.json\n[run_single] cleanup: git reset --hard 360290c4c401e386db60723ddb0109ed499c9f6e\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__sympy__sympy-11618.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10323",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 313.2,
+      "model_patch_len": 1679,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ommand\", \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 1679 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__sphinx-doc__sphinx-10323.json\n[run_single] cleanup: git reset --hard 31eba1a76dd485dc633cae48227b46879eda5df4\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__sphinx-doc__sphinx-10323.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-13989",
+      "harness": "codex",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10297",
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 681.6,
+      "model_patch_len": 2753,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": " \"visibility\": \"list\", \"supported_in_api\": true, \"upgrade\": null, \"priority\": 1}]}\n\n[run_single] model_patch: 2753 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__scikit-learn__scikit-learn-10297.json\n[run_single] cleanup: git reset --hard b90661d6a46aa3619d3eec94d5281f5888add501\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/codex__scikit-learn__scikit-learn-10297.json",
+      "classification": "patch-produced"
+    }
+  ]
+}

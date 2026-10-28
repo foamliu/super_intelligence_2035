@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-10051",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": ""
+  }
+]

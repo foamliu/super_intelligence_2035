@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-10051",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py\nindex a4f4214..f9b96c9 100644\n--- a/src/_pytest/logging.py\n+++ b/src/_pytest/logging.py\n@@ -342,7 +342,7 @@ class LogCaptureHandler(logging_StreamHandler):\n         super().emit(record)\n \n     def reset(self) -> None:\n-        self.records = []\n+        self.records[:] = []\n         self.stream = StringIO()\n \n     def handleError(self, record: logging.LogRecord) -> None:\ndiff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py\nindex bcb20de..bfbc70a 100644\n--- a/testing/logging/test_fixture.py\n+++ b/testing/logging/test_fixture.py\n@@ -151,6 +151,19 @@ def test_clear(caplog):\n     assert not caplog.text\n \n \n+def test_clear_get_records_consistency(caplog):\n+    caplog.set_level(logging.INFO)\n+    assert caplog.get_records(\"call\") == caplog.records\n+    logger.info(\"test\")\n+    assert caplog.get_records(\"call\") == caplog.records\n+    caplog.clear()\n+    assert caplog.get_records(\"call\") == caplog.records\n+    assert caplog.get_records(\"call\") == []\n+    logger.info(\"after clear\")\n+    assert caplog.get_records(\"call\") == caplog.records\n+    assert [r.message for r in caplog.get_records(\"call\")] == [\"after clear\"]\n+\n+\n @pytest.fixture\n def logging_during_setup_and_teardown(caplog):\n     caplog.set_level(\"INFO\")\n"
+  }
+]

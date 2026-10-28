@@ -1,14 +1,14 @@
 {
   "harness": "cline",
   "harness_code": "cline-patched",
-  "done": 1,
+  "done": 10,
   "total": 10,
-  "patch_produced": 1,
-  "infra": 0,
+  "patch_produced": 6,
+  "infra": 4,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 0,
-  "last_update": "2026-10-28 09:27:51",
+  "last_update": "2026-10-28 10:19:43",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -21,6 +21,99 @@
       "stdout_tail": "nk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 1317 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-10097.json\n[run_single] cleanup: git reset --hard b9cf764be62e77b4777b3a75ec256f6209a57671\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__django__django-10097.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sympy__sympy-11618",
+      "harness": "cline-patched",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10323",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 511.1,
+      "model_patch_len": 2930,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "d6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 2930 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__sphinx-doc__sphinx-10323.json\n[run_single] cleanup: git reset --hard 31eba1a76dd485dc633cae48227b46879eda5df4\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__sphinx-doc__sphinx-10323.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-13989",
+      "harness": "cline-patched",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10297",
+      "harness": "cline-patched",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "astropy__astropy-12907",
+      "harness": "cline-patched",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "pydata__xarray-2905",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 370.8,
+      "model_patch_len": 1979,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "unk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 1979 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__pydata__xarray-2905.json\n[run_single] cleanup: git reset --hard 7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__pydata__xarray-2905.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-10051",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 129.5,
+      "model_patch_len": 1310,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "d6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 1310 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__pytest-dev__pytest-10051.json\n[run_single] cleanup: git reset --hard aa55975c7d3f6c9f6d7f68accc41bb7cadf0eb9a\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__pytest-dev__pytest-10051.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4970",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 493.7,
+      "model_patch_len": 2477,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 2477 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__pylint-dev__pylint-4970.json\n[run_single] cleanup: git reset --hard 40cc2ffd7887959157aaf469e09585ec2be7f528\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__pylint-dev__pylint-4970.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "psf__requests-1142",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 192.6,
+      "model_patch_len": 1252,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "hunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 1252 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__psf__requests-1142.json\n[run_single] cleanup: git reset --hard 22623bd8c265b78b161542663ee980738441c307\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__psf__requests-1142.json",
       "classification": "patch-produced"
     }
   ]

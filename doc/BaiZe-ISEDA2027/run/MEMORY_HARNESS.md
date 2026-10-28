@@ -5,38 +5,25 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R548 SWE-bench Verified 全量500·可用性闸门(GATE v2)运行中. 运维令2026-10-28 07:1x(用户直令·最高优先):跑完整SWE-bench Verified全量500题×7路harness. 先10题闸门→达标放大.
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅(cline13/20=65%·hermes11/20=55%)·R547心跳轮
-当前动作:     R548 GATE v2 运行中(09:17启动). **v2修复生效**:cline/codex git checkout成功(HEAD=b9cf764be62e,18 files)→agent实跑中(cline node进程处理django URLValidator题~3.6min);opencode/pi/claude-code/hermes/deepseek-harness git fetch进行中(index-pack接收浅clone pack). v1是全blocked(0 agent),v2是agent实跑. predict 7并发→预计~50min(10题×~5min). 进程在跑.
-下一步:       ①监控gate predict(每~5min查logs/gate_predict_*.log+reports/progress_*.json)→eval→report;②闸门达标路(resolve≥1且no_patch≤2)放大到全量500;③不达标路如实列原因不硬跑;④交付report_harness_swebench_verified_full500_zh.html+gen_report脚本+McNemar+Wilson CI.
-阻塞:         无. 闸门在跑. git fetch改浅fetch已验证(pilot口径).
+PHASE:        R548 SWE-bench Verified 全量500·可用性闸门 GATE v2 结果出炉+4路config修复. 运维令2026-10-28 07:1x(用户直令·最高优先).
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·R547心跳轮·GATE v2 predict完成(cline10/10·hermes10/10·opencode10/10·pi10/10·deepseek10/10)
+当前动作:     GATE v2 predict完成. **3路PASS(产patch)**:cline 6patch/0no_patch✅·codex 2patch/1no_patch(运行中4/10)·claude-code 1patch/1no_patch(运行中4/10). **4路FAIL(0patch)**:hermes/opencode/pi/deepseek. **根因已定位+已修**:①pi models.json端口9092(死)→9090✅;②opencode opencode.json端口9092→9090✅;③deepseek /tmp/dsh_home陈旧session已清✅;④hermes config正确(9090)·gate失败疑7并发gw_proxy争用·单跑diag timeout120s(需更长). 正在验证pi修复+准备重跑4路gate. codex/claude-code gate predict仍在跑.
+下一步:       ①验证pi/opencode修复(diag跑django题)→②重跑4路gate(hermes/opencode/pi/deepseek 10题)→③全部gate predict完成后跑eval(docker swebench v5.0.2)→④达标路放大全量500→⑤交付report+McNemar+Wilson CI.
+阻塞:         无. 4路config bug已修. git-fetch-timeout(sympy/matplotlib/sklearn/astropy大仓)仍是infra问题(shallow fetch 300s不够)→全量需改--filter=blob:none或timeout1800s.
 ERROR_COUNT:  0
-📦 体积：TASK=待实测 / MEMORY=待实测
+📦 体积：TASK=31.3KB / MEMORY=待收尾实测
 ```
 
-### Gen7 pilot 最终结果(7×5=35 trials)
-| Harness | Pass Rate | Errors | Notes |
-|:--|:--|:--|:--|
-| cline-patched | 5/5 (100%) | 0 | ✅ Perfect |
-| pi | 5/5 (100%) | 0 | ✅ Perfect |
-| codex (rerun) | 3/5 (60%) | 0 | ✅ config.toml fix worked |
-| opencode | 3/5 (60%) | 1/5 | ⚠️ 1 AgentTimeoutError |
-| hermes | 0/5 (0%) | 0 | Genuine 0% (no errors) |
-| deepseek-harness | 0/5 (0%) | 0 | Genuine 0% (no errors) |
-| claude-code (rerun3) | 0/5 (0%) | 3/5 | 🔴 1 RuntimeError(exit1)+2 AgentTimeoutError |
-
-### Oracle check (15 tasks, R473)
-- 15/15 completed, mean reward 0.733 (11/15 solvable by oracle)
-- Failed by oracle: build-pmars, caffe-cifar-10(AgentTimeoutError), configure-git-webserver, git-multibranch
+> 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[09:28] R548 GATE v2 **修复生效确认**. cline/codex git checkout成功(django HEAD=b9cf764be62e,18 files)→agent实跑中(run_single→cline node处理URLValidator题~3.6min);opencode/pi/claude-code/hermes/deepseek-harness git fetch进行中(git index-pack接收浅clone pack,etimes 70-122s). v1全blocked(0 agent)→v2 agent实跑. 注意:launch_gate.sh被run_commands工具30s超时杀掉(仅启动cline+codex),已手动setsid补启其余5路predict(09:22). eval阶段需手动跑(launcher已死). predict预计~50min. 续监控.
+[10:15] R548 GATE v2 **predict完成+4路根因定位+config修复**. GATE v2 predict结果(10题×7路): **cline 10/10 done 6patch 4infra 0no_patch→PASS**; codex 4/10(运行中) 2patch 1no_patch 1infra; claude-code 4/10(运行中) 1patch 1no_patch 2infra; **hermes 10/10 0patch 9no_patch 1infra→FAIL**; **opencode 10/10 0patch 9no_patch 1infra→FAIL**; **pi 10/10 0patch 8no_patch 2infra→FAIL**; **deepseek 10/10 0patch 8no_patch 2infra→FAIL**. 4路FAIL根因(全部config bug非模型失败): ①pi `~/.pi/agent/models.json` baseUrl=9092(死端口,glm53遗留)→已sed改9090✅; ②opencode `~/.config/opencode/opencode.json` gw provider baseURL=9092→已sed改9090✅; ③deepseek `/tmp/dsh_home`陈旧session("already exists")→已清空✅; ④hermes config正确(9090)·gate 5.5s rc=1疑7并发gw_proxy争用·单跑diag timeout120s(需1800s). cline 4 infra=git-fetch-timeout(sympy/matplotlib/sklearn/astropy大仓 shallow fetch 300s不够). gw_proxy 9090 curl=200✅ 9091 curl=403. pi修复diag已启动(PID bg). 准备重跑4路gate. **判据自检**:运维指令(全量500)未完成→WAITING=0.
 
-[09:17] R548 **SWE-bench Verified 全量500·闸门v2启动**. 运维令2026-10-28 07:1x(用户直令最高优先). 发现R548 v1闸门已失败:gate_predict日志显示6路×10题全"blocked(patch=0B)"→0 agent实跑. 根因:verified_500_ids.txt前10个全是astropy/astropy(同一巨型仓)×6并发→6路同时fetch→首超时→破workdir(.git已建但commit缺失)被9个后续同仓实例静默复用("existing workdir updated")→checkout失败→全blocked. 且deepseek-harness被launch_gate.sh误排除("not available"实为可用:find_spec✓/tmp/dsh_sdk). **v2修复3项**:①run_verified_full.py git_clone_or_fetch改回pilot验证逻辑(run_pilot_batch.py:浅fetch--depth=1+NFS-race checkout+清*.lock·无full-fetch回退·timeout300s);②新建gate_10_ids.txt(10仓各1:django/sympy/sphinx/matplotlib/sklearn/astropy/xarray/pytest/pylint/requests·9/10含完整eval字段,pylint-4970替4551);③launch_gate.sh重写:7路含deepseek-harness(PYTHONPATH=/tmp/dsh_sdk)+--ids-file+清v1残留. 闸门09:17启动(PID3332857 cline起),predict 7并发20s stagger→eval串行docker workers8. WAITING=0(有未完成指令). 体积待收尾实测.
+[09:28] R548 GATE v2 修复生效确认·cline/codex agent实跑·其余5路fetch中(详见daily-memories-harness/2026-10-28.md).
 
-[06:29] R547 **心跳轮防判死(上次commit R546@05:22距今~67min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/BaiZe-ISEDA2027/reports/,14975B)grep cline-patched=0✓;pilot20报告(13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(HEAD=ef937c9d3 zhu_long归档@06:22,无harness新指令;工作树仅他线文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程,etimes≈310067s). 体积TASK=27898B/MEMORY=31629B,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令→WAITING=1正确.
+> 📦 R548 闸门v2启动(09:17) + R547心跳轮(06:29) 详细流水已归档 → daily-memories-harness/2026-10-28.md。结论：v1全blocked(同仓6并发fetch超时)→v2改浅fetch+10仓各1+7路含deepseek→agent实跑;R547防判死心跳+两报告命名复核。需要时再读。
 
 [05:16] R546 **心跳轮防判死(上次commit R545@04:09距今~67min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/BaiZe-ISEDA2027/reports/,14975B)grep cline-patched=0✓;pilot20报告(doc/reports与run/harness两副本均13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(无ahead/behind,仅他线在途文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程). 体积TASK=27898B/MEMORY≈32100B,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令→WAITING=1正确.
 

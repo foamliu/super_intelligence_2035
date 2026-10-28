@@ -1,0 +1,67 @@
+{
+  "harness": "claude-code",
+  "harness_code": "claude-code",
+  "done": 5,
+  "total": 10,
+  "patch_produced": 2,
+  "infra": 2,
+  "timeout": 0,
+  "quota_blocked": 0,
+  "no_patch": 1,
+  "last_update": "2026-10-28 10:23:33",
+  "results": [
+    {
+      "instance_id": "django__django-10097",
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 1674.5,
+      "model_patch_len": 970,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ingle] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=1673.8s ==\n[run_single] model_patch: 970 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-10097.json\n[run_single] cleanup: git reset --hard b9cf764be62e77b4777b3a75ec256f6209a57671\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-10097.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "sympy__sympy-11618",
+      "harness": "claude-code",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10323",
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 751.2,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ngle] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=749.6s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__sphinx-doc__sphinx-10323.json\n[run_single] cleanup: git reset --hard 31eba1a76dd485dc633cae48227b46879eda5df4\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__sphinx-doc__sphinx-10323.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-13989",
+      "harness": "claude-code",
+      "blocked": "git-fetch-timeout",
+      "classification": "infra",
+      "model_patch_len": 0
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10297",
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 234.7,
+      "model_patch_len": 1547,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ng claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=234.4s ==\n[run_single] model_patch: 1547 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__scikit-learn__scikit-learn-10297.json\n[run_single] cleanup: git reset --hard b90661d6a46aa3619d3eec94d5281f5888add501\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__scikit-learn__scikit-learn-10297.json",
+      "classification": "patch-produced"
+    }
+  ]
+}

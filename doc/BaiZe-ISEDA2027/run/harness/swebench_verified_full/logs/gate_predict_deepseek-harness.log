@@ -5,3 +5,17 @@
 [verified-full 09:28:00] [3/10] PREDICT deepseek-harness on sphinx-doc__sphinx-10323
 [verified-full 09:29:27]   -> no-patch (patch=0B wall=3.6s)
 [verified-full 09:29:27] [4/10] PREDICT deepseek-harness on matplotlib__matplotlib-13989
+[verified-full 09:34:27]   -> infra (patch=0B wall=Nones)
+[verified-full 09:34:27] [5/10] PREDICT deepseek-harness on scikit-learn__scikit-learn-10297
+[verified-full 09:39:27]   -> infra (patch=0B wall=Nones)
+[verified-full 09:39:27] [6/10] PREDICT deepseek-harness on astropy__astropy-12907
+[verified-full 09:42:13]   -> no-patch (patch=0B wall=3.6s)
+[verified-full 09:42:13] [7/10] PREDICT deepseek-harness on pydata__xarray-2905
+[verified-full 09:43:10]   -> no-patch (patch=0B wall=6.4s)
+[verified-full 09:43:10] [8/10] PREDICT deepseek-harness on pytest-dev__pytest-10051
+[verified-full 09:43:49]   -> no-patch (patch=0B wall=3.2s)
+[verified-full 09:43:49] [9/10] PREDICT deepseek-harness on pylint-dev__pylint-4970
+[verified-full 09:44:55]   -> no-patch (patch=0B wall=3.3s)
+[verified-full 09:44:55] [10/10] PREDICT deepseek-harness on psf__requests-1142
+[verified-full 09:45:14]   -> no-patch (patch=0B wall=6.0s)
+[verified-full 09:45:14] merged 0/10 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
