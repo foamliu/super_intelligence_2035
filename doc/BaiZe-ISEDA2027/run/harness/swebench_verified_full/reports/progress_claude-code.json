@@ -1,14 +1,14 @@
 {
   "harness": "claude-code",
   "harness_code": "claude-code",
-  "done": 22,
+  "done": 23,
   "total": 500,
   "patch_produced": 13,
   "infra": 2,
   "timeout": 0,
   "quota_blocked": 0,
-  "no_patch": 7,
-  "last_update": "2026-10-28 16:21:23",
+  "no_patch": 8,
+  "last_update": "2026-10-28 16:51:27",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -282,6 +282,19 @@
       "stdout_tail": "_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=1497.9s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15957.json\n[run_single] cleanup: git reset --hard f387d024fc75569d2a4a338bfda76cc2f328f627\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15957.json",
+      "classification": "no-patch"
+    },
+    {
+      "instance_id": "django__django-15973",
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 1800.5,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "_single] running claude-code ...\n== harness=claude-code rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15973.json\n[run_single] cleanup: git reset --hard 2480554dc4ada4ecf3f6a08e318735a2e50783f3\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15973.json",
       "classification": "no-patch"
     }
   ]
