@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0
+WAITING: 1
 
+> 🆕 2026-10-28 18:48 #833：**16卡S1健康运行中！iter 70/700k: loss 8.56↓, 0 NaN, ~7.0s/step=599K tok/s, VRAM 71GB, grad norm 5.5**。Loss 趋势: iter10=11.55→20=10.24→30=9.91→40=9.61→50=9.21→60=8.87→70=8.56（稳定下降✅）。LR warmup: 3.5e-5→1e-3(@step2000). .12/.29各8卡100% util. .29 mem 410G/2T swap 5.4G/8G 稳定. 首个ckpt@step2000预计~3.5h后(约22:20). commit 91838aaa0: pre-blend config激活(nw=8+mmap re-enabled)。**阻塞项**: check_rope.py + longctx ABF baseline 均待ckpt@step2000。ETA ~56.7天。
 > 🆕 2026-10-28 18:42 #832：**16卡S1正式训练中！iter 20/700k: 613K tok/s ✅ 对齐613K目标！0 NaN, VRAM 75GB, loss 10.24↓**。启动18:31, NCCL init ~9min(双节点16卡), 数据索引100/100 shards, 模型加载完成。iter 10: 10.74s/step=390K(warmup), iter 20: 6.84s/step=613K(steady). .12/.29各8卡100% util, 75GB/卡. .29 mem 409G/2T swap 5G/8G 稳定. LR warmup: 5e-6→1e-5→...→1e-3(@step2000). grad norm 17.7→4.3(收敛中). ETA 55.4天. pre-blend+nw=8成功恢复613K基线吞吐。
 > 📦 §#829（17:59, en_v1_4 s015 58% ETA~18:10）→ daily-memories/2026-10-28.md；**结论**：s015在18:09完成(.bin 508GB+.idx+.json+MANIFEST)。被#830更新。需要时再读。
 > 📦 §#828（17:50, en_v1_4 15/16 s015 21% + gen_blend dry-run PASS）→ daily-memories/2026-10-28.md；**结论**：s015 writing, 5源MANIFEST✓, gen_blend PASS, activate_preblend.sh✓, 16GPU idle。被#829更新。需要时再读。
@@ -9,7 +10,8 @@ WAITING: 0
 > 📦 §#812~#825（10-28 12:3x~17:1x, pre-blend 4→15/16 + smoke + 项目目录 + LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke30/30✓(nw=0/155K), LR exponential✓, 5源MANIFEST✓, activate_preblend.sh✓, 项目目录commit✓。需要时再读。
 > 📦 §#799~#810（10-27, spawn OOM + nw=0验证 + pre-blend方案确立）→ daily-memories/2026-10-27.md；**结论**：spawn被pre-blend取代, nw=0验证PASS(308K)。需要时再读。
 
-> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅ ② activate_preblend.sh ✅ ③ 8卡smoke(nw=8) ✅PASS ④ **16卡正式S1** ✅RUNNING(613K tok/s, iter 20/700k, 0 NaN) ⑤ check_rope.py[待ckpt@step2000] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓）。16卡S1运行中, ETA 55.4天。WAITING=0。
+> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅ ② activate_preblend.sh ✅ ③ 8卡smoke(nw=8) ✅PASS ④ **16卡正式S1** ✅RUNNING(iter 70/700k, 599K tok/s, 0 NaN, loss 8.56↓) ⑤ check_rope.py[阻塞·待ckpt@step2000~3.5h] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓）。**⑤⑦阻塞于ckpt@step2000(预计~22:20)**，本轮无可执行动作。config commit 91838aaa0。ETA ~56.7天。WAITING=1(30min轮询, 待ckpt到位后执行check_rope+longctx)。
+> - 📦 体积：TASK=31.3KB / MEMORY=31.5KB（归档 0KB → 无需归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
