@@ -189,6 +189,10 @@ PYTORCH_ENV="$PYTORCH_ENV BAIZE_PERSISTENT_WORKERS=${BAIZE_PERSISTENT_WORKERS:-0
 # and is safe to always-on.
 : "${TORCH_DISTRIBUTED_TORCH_TRACE:=/tmp/td_trace_%rank}"
 PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_TORCH_TRACE=$TORCH_DISTRIBUTED_TORCH_TRACE"
+# 2026-10-28 fix (#810): TORCHINDUCTOR_COMPILE_THREADS defaults to min(32, cpu_count)
+# per rank → 8 ranks × 32 = 256 inductor compile workers (each ~0.75GB) → 2TB RAM
+# exhausted → OOM-kill at iter~31. Cap to 4/rank (8×4=32 workers, saves ~168GB).
+PYTORCH_ENV="$PYTORCH_ENV TORCHINDUCTOR_COMPILE_THREADS=${TORCHINDUCTOR_COMPILE_THREADS:-4}"
 # Optional: append DETAIL debug only if explicitly set (breaks DDP coalesced ops!)
 if [ -n "${TORCH_DISTRIBUTED_DEBUG:-}" ]; then
   PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_DEBUG=$TORCH_DISTRIBUTED_DEBUG"
