@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 17:3x #826：**en_v1_4 pre-blend 14/16 (s014 writing 84GB/638GB ~13%, s015 pending, PID 2422384 alive 99min) + 项目目录脚本&文档更新**。① 脚本已在项目目录 ✓（train.sh/pre_blend.py/gen_blend.py/check_rope.py/check_longctx_data.py/activate_preblend.sh 全在 code/baize-llm/scripts/）。② **README.md 更新**：S1+S2 合并为 S（GBS256/700k/2.94T），2 阶段 S→Decay，pre-blend 工作流 §3.0，部署路径 → baize-llm/baize-llm，16.3KB。③ **decay.env 修正**：ITERS 1070000→720000, START_ITER 1050000→700000（合并 S 后累计步数对齐）。④ **s2.env 标注**：⚠️ 已被合并 S 取代，保留回退用。⑤ blend_s1_preblend.tsv 注释更新（stale PID 修正）。⑥ 5 源 MANIFEST ✓。⑦ TASK 归档 11:5x blend 报告块 → ARCHIVE，TASK 31.3KB。⑧ .29 8GPU idle / mem 44G / /nas_user 12T(90%) /nas_train 29T(87%)。en_v1_4 s014 ETA~25min + s015~25min → 全部完成 ETA~18:20。
+> 🆕 2026-10-28 17:39 #827：**en_v1_4 pre-blend 14/16 → s014 at 416GB/~615GB(68%) growing ~25GB/min, s015 pending, PID 2422384 alive 115min**。验证全部就绪：① configs ✓（common.env GBS=256/nw=0/FP8/RoPE θ=1e6/maxpos=1M, s1.env GBS256/ITERS700k, decay.exp ITERS720k/START700k/decay_iters20k, exp shape）② blend_s1_preblend.tsv ✓（5源绝对路径+en_v1_4相对+ufw_zh相对, props=1.00）③ activate_preblend.sh ✓（检查MANIFEST.json→切TSV绝对路径+nw=8+mmap=0→gen_blend验证）④ 16GPU idle（.12 8卡0%/.29 8卡0%）⑤ README.md 16.3KB ✓ ⑥ 项目目录commit d89633779 ✓ ⑦ longctx数据体检✅(en_v1_4: ≥32K=2.52%token/<20%LOW, ≥128K=0.03%/<5%LOW, maxdoc=196K→1M靠ABF外推, PID 2316552 done) ⑧ s014 ETA~17:48 + s015~18:12 → 全部完成ETA~18:12。.29 mem 44G/2T, swap 5.4G/8G, /nas_user 11T(90%), /nas_train 29T(87%)。
+> 📦 §#826（17:3x, en_v1_4 14/16 s014 writing + 项目目录脚本&文档更新）→ daily-memories/2026-10-28.md；**结论**：脚本/README/configs 全在项目目录并commit, 5源MANIFEST✓, decay.env修正, TASK归档。被#827更新进度。需要时再读。
 > 📦 §#825（17:1x, en_v1_4 14/16 s013 writing + 项目目录定位）→ daily-memories/2026-10-28.md；**结论**：s013 done→s014 writing, 脚本&README&configs 更新, TASK 归档。被 #826 更新。需要时再读。
 > 📦 §#823（16:4x, en_v1_4 13/16 + LR schedule ✓）→ daily-memories/2026-10-28.md；**结论**：LR exponential ✓，en_v1_4 13/16 被 #824 更新为 14/16。需要时再读。
 > 📦 §#821（16:2x, gbs256 smoke 20/20 PASS + en_v1_4 12/16）→ daily-memories/2026-10-28.md；**结论**：smoke 0NaN/loss11.58→8.65/mem72.8GB/nw=0~155K。需要时再读。
@@ -12,7 +13,7 @@ WAITING: 0
 > 📦 §#806~#810（spawn 调试系列）→ daily-memories/2026-10-27/28.md；**已被 pre-blend 方案取代**。
 > 📦 §#799~#804 流水（2026-10-27, spawn OOM 系列 + nw=0 验证）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS(θ=1e6/0崩/0NaN)，吞吐受数据串行限于~300K。spawn 被 pre-blend 取代。需要时再读。
 
-> - 未完成指令：有（① **en_v1_4 pre-blend 14/16**[s014 writing ~13%, PID 2422384 alive, ETA~18:20] ② activate_preblend.sh[待①] ③ 8卡smoke(nw=8)验≥500K[待②] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓ ⑦ 长上下文ABF[待ckpt] ⑧ **项目目录脚本&文档**[✓ 脚本在位+README/configs 更新, 待 commit]）。LR schedule ✓。5 源 pre-blend ✓。WAITING=0。
+> - 未完成指令：有（① **en_v1_4 pre-blend 14/16**[s014 68% ~25GB/min, PID 2422384 alive, ETA~18:12] ② activate_preblend.sh[待①, 脚本已验证就绪] ③ 8卡smoke(nw=8)验≥500K[待②] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓ ⑦ 长上下文ABF[数据体检✅en_v1_4≥32K=2.52%LOW/≥128K=0.03%LOW→1M靠ABF, 余待ckpt] ⑧ **项目目录脚本&文档**[✓ commit d89633779]）。全部configs/README验证通过。16GPU idle。WAITING=0。
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
@@ -165,4 +166,4 @@ WAITING: 0
 ## GPU / 进程
 - 主训练 10.239.2.29（8×H100 GPU0~7）：P-5b ✅ 已结束；P-9.1~P-9.7 全 ✅ 定稿；P-9.8 ✅ / P-9.9 ✅ / P-9.10 ①②③ ✅ / **P-5b 8-set eval ✅ COMPLETE**（GPU0-1 已释放）；**⭐ 全 8 GPU 空闲**（data agent @08:06 kill S0a → GPU2-7 释放；proxy 标定尚未起跑）；**P-9.11 ① HF 转换 ✅ BOTH DONE**（p3_hybrid→nemotron_h + p3_dense→Llama，待 sglang 起服）。
 - watchdog `baize_pretrain_loop.sh` PID 1391466 必须 7×24 存续，🚫 绝不 kill。
-- P-9（P-9.1 ✅ / P-9.2 ✅ / P-9.3 ✅ / P-9.4 ✅ / **P-9.5 ✅ COMPLETE** — 崩溃修复 + 5-way 归因 + HTML / P-9.6①② ✅ / P-9.7 ✅ / P-9.8 ✅ COMPLETE → delayed FP8 可用于 P-8 / **P-9.9 ✅ COMPLETE → tensorwise T1/T4 FAIL → P-8 沿用 delayed** / **P-9.10 ① ✅ sglang ✅ 可用(vllm env) [第109次更正] → eager 下界✅已测 + sglang 上界待 HF 转换补测，② ✅ COMPLETE eager 下界 H1✅H2❌H3❌H4✅**）；🚫 不对 live 长跑做 nsys/ncu attach。
+- P-9（P-9.1 ✅ / P-9.2 ✅ / P-9.3 ✅ / P-9.4 ✅ / **P-9.5 ✅ COMPLETE** — 崩溃修复 + 5-way 归因 + HTML / P-9.6①② ✅ / P-9.7 ✅ / P-9.8 ✅ COMPLETE → delayed FP8 可用于 P-8 / **P-9.9 ✅ COMPLETE → tensorwise T1/T4 FAIL → P-8 沿用 delayed** / **P-9.10 ① ✅ sglang ✅ 可用(vllm env) [第109次更正] → eager 下界✅已测 + sglang 上界待 HF 转换补测，② ✅ CO

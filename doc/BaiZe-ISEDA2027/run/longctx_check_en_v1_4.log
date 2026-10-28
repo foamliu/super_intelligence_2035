@@ -1,0 +1,20 @@
+# 扫描 8/110 个 shard（每片上限 4.0GB）
+# eod_id=129280  targets=[32768, 131072]
+  env14_CC-MAIN-2013-20.bin                tokens=1,073,741,824 docs= 1,278,366 max_doc=  195,935
+  env14_CC-MAIN-2013-48.bin                tokens=1,073,741,824 docs= 1,234,151 max_doc=  137,067
+  env14_CC-MAIN-2014-10.bin                tokens=1,073,741,824 docs= 1,190,534 max_doc=  153,666
+  env14_CC-MAIN-2014-15.bin                tokens=1,073,741,824 docs= 1,220,730 max_doc=  138,583
+  env14_CC-MAIN-2014-23.bin                tokens=1,073,741,824 docs= 1,179,779 max_doc=  133,431
+  env14_CC-MAIN-2014-35.bin                tokens=1,073,741,824 docs= 1,191,623 max_doc=  129,686
+  env14_CC-MAIN-2014-41.bin                tokens=1,073,741,824 docs= 1,184,145 max_doc=  150,224
+  env14_CC-MAIN-2014-42.bin                tokens=1,073,741,824 docs= 1,184,591 max_doc=  148,469
+
+合计：tokens=8,589,934,592  docs=9,663,919  平均文档=888.9 最长=195,935
+
+    target       docs≥T   docs%         tokens≥T  token% 判据
+-----------------------------------------------------------
+    32,768        4,257   0.04%      216,493,081   2.52% LOW(<20%)
+   131,072           18   0.00%        2,572,752   0.03% LOW(<5%)
+
+# 读法：token% 才是「长上下文训练里真正有多长上下文」的比例；docs% 只看文档数。
+# 若 32K 的 token% <20% ⇒ 建议长上下文阶段改用「长文档优先采样」或补长文档数据源。
