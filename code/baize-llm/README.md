@@ -30,6 +30,7 @@ code/baize-llm/
 │   ├── tb_6006.sh                # TensorBoard 启停（.29:6006）
 │   ├── lr_schedule.py            # WSD-指数 LR 曲线打印 / 与 TB 对账
 │   ├── check_rope.py             # 校验 56 层 / 4 注意力 / max_pos=1M / theta=1e6
+│   ├── export_hf.sh              # mcore ckpt → HF 导出 + config patch + check_rope（一键）
 │   ├── abf_plan.py               # ABF 表：θ_ABF / CP / DP / gbs（长上下文准备）
 │   ├── check_longctx_data.py     # 长上下文数据体检（EOD 切分 → 文档长度分布）
 │   ├── longctx_ladder.sh         # 32K→64K→128K 阶梯扩展（逐级门禁）
@@ -225,6 +226,43 @@ python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --warmup 2000 --decay-iters
 # 用 TB 导出的 csv 对账（columns: step,learning-rate）
 python scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --warmup 2000 --decay-iters 20000 --total-iters 720000 \
     --tb-csv /tmp/lr_from_tb.csv --tol 1e-3
+```
+
+---
+
+## 4.5 HF 导出与 RoPE 验证
+
+首个 checkpoint 落盘后（默认 `--save-interval 2000`，即 iter 2000），导出 HF 格式并验证 1M 位置编码：
+
+```bash
+# 一键导出 + patch config + check_rope.py 验证
+bash scripts/export_hf.sh 2000
+# → 产出: $EXP_ROOT/baize2b/hf_iter_2000/
+# → check_rope.py 自动跑：56 层 / 4 注意力 / max_pos=1048576 / theta=1e6 / rope_scaling=None → PASS
+```
+
+如需手动导出（分步）：
+
+```bash
+# 1) mcore → HF safetensors（convert_mcore_to_hf.py 在 $BAIZE_TRAIN_CODE 下）
+python $BAIZE_TRAIN_CODE/convert_mcore_to_hf.py \
+    --arch hybrid \
+    --ckpt-dir $EXP_ROOT/baize2b/checkpoints/iter_2000 \
+    --output-dir $EXP_ROOT/baize2b/hf_iter_2000
+
+# 2) Patch config.json（转换器默认 max_pos=4096，需改为 1M + theta=1e6）
+python -c "
+import json
+p = '$EXP_ROOT/baize2b/hf_iter_2000/config.json'
+cfg = json.load(open(p))
+cfg['max_position_embeddings'] = 1048576
+cfg['rope_theta'] = 1000000
+cfg['rope_scaling'] = None
+json.dump(cfg, open(p, 'w'), indent=2)
+"
+
+# 3) 验证
+python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
 ```
 
 ---
