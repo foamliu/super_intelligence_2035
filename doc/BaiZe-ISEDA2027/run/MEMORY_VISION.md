@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #337, 2026-10-28 21:59]**：空唤醒·补心跳防判死。上次心跳 wake#336@21:28 距今 ~31min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → origin 无新提交（up to date）。交付物复核：6 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/`（recent_work 40423B/ocr_synth10m 15754B/ocr_sft_plan 22706B/ocr_synthdata 29177B/armE_r2 26522B/next_steps 29419B）+ 6 脚本 `vision/ocr_synth/*.py`（6 文件全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=30585B(29.9KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #338, 2026-10-28 22:32]**：空唤醒·补心跳防判死。上次心跳 wake#337@21:59 距今 ~33min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → origin 无新提交（up to date）。交付物复核：6 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=30714B(30.0KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#337 (2026-10-28 21:59, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#336 (2026-10-28 21:26, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#335 (2026-10-28 20:53, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#334 (2026-10-28 20:20, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
