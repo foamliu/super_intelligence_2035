@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 28,
+  "done": 29,
   "total": 500,
-  "patch_produced": 27,
+  "patch_produced": 28,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 0,
-  "last_update": "2026-10-28 16:09:53",
+  "last_update": "2026-10-28 16:17:49",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -366,6 +366,19 @@
       "stdout_tail": "s.html\n======================== 1 passed, 3 warnings in 0.09s =========================\n\u001b[0m\n\n[run_single] model_patch: 2503 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-7229.json\n[run_single] cleanup: git reset --hard 3aa75c8d00a4a2d4acf10d80f76b937cadb666b7\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-7229.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-7233",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 473.4,
+      "model_patch_len": 1277,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "s.html\n===== 1673 passed, 180 skipped, 4 xpassed, 20 warnings in 77.45s (0:01:17) =====\n\u001b[0m\n\n[run_single] model_patch: 1277 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-7233.json\n[run_single] cleanup: git reset --hard 51d37d1be95547059251076b3fadaa317750aab3\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-7233.json",
       "classification": "patch-produced"
     }
   ]
