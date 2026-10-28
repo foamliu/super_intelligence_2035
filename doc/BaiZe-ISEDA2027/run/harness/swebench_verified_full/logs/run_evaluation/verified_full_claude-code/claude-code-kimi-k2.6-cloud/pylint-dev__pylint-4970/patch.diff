@@ -1,0 +1,50 @@
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c8..49a7d27 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -739,7 +739,7 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. Setting it to 0 will disable the duplicate code check.",
+             },
+         ),
+         (
+@@ -830,6 +830,8 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+     def close(self):
+         """compute and display similarities on closing (i.e. end of parsing)"""
++        if self.min_lines == 0:
++            return
+         total = sum(len(lineset) for lineset in self.linesets)
+         duplicated = 0
+         stats = self.stats
+diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
+index 4ddf202..9a07dce 100644
+--- a/tests/checkers/unittest_similar.py
++++ b/tests/checkers/unittest_similar.py
+@@ -393,6 +393,23 @@ def test_no_args() -> None:
+             pytest.fail("not system exit")
+ 
+ 
++def test_disable_similarity_with_zero() -> None:
++    """Test that setting min-similarity-lines to 0 disables the check."""
++    linter = PyLinter(reporter=Reporter())
++    checker = similar.SimilarChecker(linter)
++    linter.register_checker(checker)
++    linter.global_set_option("min-similarity-lines", 0)
++    with open(SIMILAR1, encoding="utf-8") as stream1, open(
++        SIMILAR2, encoding="utf-8"
++    ) as stream2:
++        checker.append_stream(SIMILAR1, stream1)
++        checker.append_stream(SIMILAR2, stream2)
++    linter.open()
++    checker.open()
++    checker.close()
++    assert linter.reporter.messages == []
++
++
+ def test_get_map_data() -> None:
+     """Tests that a SimilarChecker respects the MapReduceMixin interface"""
+     linter = PyLinter(reporter=Reporter())

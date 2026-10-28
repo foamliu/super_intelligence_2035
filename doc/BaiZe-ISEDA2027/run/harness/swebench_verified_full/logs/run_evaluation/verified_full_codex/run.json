@@ -1,0 +1,6 @@
+{
+  "dataset": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/enriched_500.json",
+  "split": "test",
+  "task_repo": null,
+  "created_at": "2026-10-28T04:23:39+00:00"
+}

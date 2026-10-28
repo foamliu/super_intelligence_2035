@@ -32,7 +32,7 @@ WORKDIRS = Path("/dev/shm/harness_verified_full/workdirs")
 PROXY = "http://172.19.92.25:13128"
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
-EVAL_LOG_ROOT = HERE / "logs" / "evaluation"
+EVAL_LOG_ROOT = HERE / "logs" / "run_evaluation"
 
 ALL_HARNESSES = [
     "cline-patched", "codex", "opencode", "pi",

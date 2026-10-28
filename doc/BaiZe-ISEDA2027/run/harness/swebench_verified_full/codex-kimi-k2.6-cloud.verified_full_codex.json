@@ -1,0 +1,62 @@
+{
+    "total_instances": 7,
+    "submitted_instances": 7,
+    "completed_instances": 7,
+    "resolved_instances": 6,
+    "unresolved_instances": 1,
+    "infra_failure_instances": 0,
+    "ambiguous_failure_instances": 1,
+    "empty_patch_instances": 0,
+    "error_instances": 0,
+    "completed_ids": [
+        "astropy__astropy-12907",
+        "psf__requests-1142",
+        "pydata__xarray-2905",
+        "pytest-dev__pytest-10051",
+        "scikit-learn__scikit-learn-10297",
+        "sphinx-doc__sphinx-10323",
+        "sympy__sympy-11618"
+    ],
+    "incomplete_ids": [],
+    "empty_patch_ids": [],
+    "submitted_ids": [
+        "astropy__astropy-12907",
+        "psf__requests-1142",
+        "pydata__xarray-2905",
+        "pytest-dev__pytest-10051",
+        "scikit-learn__scikit-learn-10297",
+        "sphinx-doc__sphinx-10323",
+        "sympy__sympy-11618"
+    ],
+    "resolved_ids": [
+        "astropy__astropy-12907",
+        "psf__requests-1142",
+        "pydata__xarray-2905",
+        "scikit-learn__scikit-learn-10297",
+        "sphinx-doc__sphinx-10323",
+        "sympy__sympy-11618"
+    ],
+    "unresolved_ids": [
+        "pytest-dev__pytest-10051"
+    ],
+    "infra_failure_ids": [],
+    "ambiguous_failure_ids": [
+        "pytest-dev__pytest-10051"
+    ],
+    "failure_reasons": {
+        "pytest-dev__pytest-10051": "no_tests_collected"
+    },
+    "error_ids": [],
+    "schema_version": 2,
+    "unstopped_instances": 0,
+    "unstopped_containers": [],
+    "unremoved_images": [
+        "swebench/sweb.eval.x86_64.astropy_1776_astropy-12907:latest",
+        "swebench/sweb.eval.x86_64.psf_1776_requests-1142:latest",
+        "swebench/sweb.eval.x86_64.pydata_1776_xarray-2905:latest",
+        "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-10051:latest",
+        "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-10297:latest",
+        "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10323:latest",
+        "swebench/sweb.eval.x86_64.sympy_1776_sympy-11618:latest"
+    ]
+}

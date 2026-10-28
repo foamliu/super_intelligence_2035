@@ -1,0 +1,30 @@
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..0c99e5d 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -386,7 +386,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+diff --git a/test_requests.py b/test_requests.py
+index c974e98..fce1427 100644
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -57,6 +57,13 @@ class RequestsTestCase(unittest.TestCase):
+         assert pr.url == req.url
+         assert pr.body == 'life=42'
+ 
++    def test_no_content_length_on_get(self):
++        req = requests.Request('GET', 'http://example.com').prepare()
++        self.assertNotIn('Content-Length', req.headers)
++
++    def test_content_length_on_post(self):
++        req = requests.Request('POST', 'http://example.com', data='hello').prepare()
++        self.assertEqual(req.headers['Content-Length'], '5')
+ 
+     def test_path_is_not_double_encoded(self):
+         request = requests.Request('GET', "http://0.0.0.0/get/test case").prepare()
