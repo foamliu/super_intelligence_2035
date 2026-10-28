@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 41,
+  "done": 42,
   "total": 500,
-  "patch_produced": 38,
+  "patch_produced": 39,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 2,
-  "last_update": "2026-10-28 18:57:05",
+  "last_update": "2026-10-28 18:59:56",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -535,6 +535,19 @@
       "stdout_tail": "] Add changelog entry and update AUTHORS if needed\n[✓] Run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 4124 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-10356.json\n[run_single] cleanup: git reset --hard 3c1534944cbd34e8a41bc9e76818018fadefc9a1\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-10356.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5262",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 168.3,
+      "model_patch_len": 1018,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "kdirs/opencode/pytest-dev_pytest/AGENTS.md\n\u001b[0m→ \u001b[0mRead README.rst\u001b[90m [limit=50]\u001b[0m\n\n[run_single] model_patch: 1018 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5262.json\n[run_single] cleanup: git reset --hard 58e6a09db49f34886ff13f3b7520dd0bcd7063cd\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pytest-dev__pytest-5262.json",
       "classification": "patch-produced"
     }
   ]
