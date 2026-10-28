@@ -7,3 +7,7 @@ run/harness/**/logs/
 run/harness/**/*_results*.json
 run/harness/**/eval_*.json
 run/harness/**/*verified_full_*.json
+# 补充（harness agent 2026-10-28 R580）：reports/ 下 predict/progress JSON 也是评测结果
+run/harness/**/reports/predict_*.json
+run/harness/**/reports/progress_*.json
+run/harness/**/verified_*_full.json
