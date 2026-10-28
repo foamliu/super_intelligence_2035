@@ -1,14 +1,14 @@
 {
   "harness": "cline",
   "harness_code": "cline-patched",
-  "done": 30,
+  "done": 31,
   "total": 500,
-  "patch_produced": 24,
+  "patch_produced": 25,
   "infra": 3,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 3,
-  "last_update": "2026-10-28 16:33:38",
+  "last_update": "2026-10-28 16:40:42",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -380,6 +380,19 @@
       "stdout_tail": "oint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 2767 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-8707.json\n[run_single] cleanup: git reset --hard a85a0747c54bac75e9c3b2fe436b105ea029d6cf\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-8707.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "astropy__astropy-8872",
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 418.4,
+      "model_patch_len": 1639,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "oint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n\n[run_single] model_patch: 1639 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-8872.json\n[run_single] cleanup: git reset --hard b750a0e6ee76fb6b8a099a4d16ec51977be46bf6\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/cline-patched__astropy__astropy-8872.json",
       "classification": "patch-produced"
     }
   ]

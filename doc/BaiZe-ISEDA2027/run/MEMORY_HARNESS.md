@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R560 SWE-bench Verified全量500 predict 5路后台运行中(运维令10-28 07:1x)·健康·稳步推进.
+PHASE:        R561 SWE-bench Verified全量500 predict 5路后台运行中(运维令10-28 07:1x)·健康·稳步推进.
 已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改(QA 5问✅)✅
-当前动作:     R560巡检SWE-bench全量predict. 5路ALIVE(~3.3h,13:18-20启动):cline30·codex18·claude-code22·opencode30·pi23(各/500);patch产率良好(cline24·codex11·claude-code13·opencode29·pi18);infra单列(git-fetch-timeout,符合铁律3);无429升级(grep=0全5路日志);gw_proxy9090/v1/models=200✅. codex当前实例django-13344 etimes=1466s·claude-code django-15973 etimes=900s(均<1800s超时,stat=S alive非卡死). hermes/deepseek闸门FAIL未进全量(符合令②). ETA:opencode~52h(2.2d最快)/codex~88h(3.7d最慢).
-下一步:       ①监控full_predict(每~100题报一次,当前最高cline/opencode30,未到阈值)→②5路predict全完→全量eval(docker workers8-12)→③交付report_harness_swebench_verified_full500_zh.html.
+当前动作:     R561巡检SWE-bench全量predict. 5路ALIVE(~3.4h,13:18-20启动):cline31·codex19·claude-code22·opencode30·pi24(各/500);自R560增量:cline+1·codex+1·pi+1;patch产率良好(cline25·codex12·claude-code13·opencode29·pi20);infra单列(git-fetch-timeout,符合铁律3);无429升级(grep=0全5路日志);gw_proxy9090/v1/models=200✅. 当前实例:cline django-10554(127s)·codex django-13346(22s,刚轮转)·claude-code django-15973(1289s)·opencode pylint-4551(1094s)·pi sphinx-9258(298s),均stat=S alive<1800s. hermes/deepseek闸门FAIL未进全量(符合令②). ETA:opencode~52h/codex~88h.
+下一步:       ①监控full_predict(每~100题报一次,当前最高cline31,未到阈值)→②5路predict全完→全量eval(docker workers8-12)→③交付report_harness_swebench_verified_full500_zh.html.
 阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=31.5KB(≤32KB✅) / MEMORY=27.4KB(≤32KB✅·本轮无归档)
+📦 体积：TASK=31.5KB(≤32KB✅) / MEMORY=28.7KB(≤32KB✅·本轮无归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[16:42] R561 **巡检SWE-bench全量predict(运维令10-28 07:1x)·5路健康·稳步推进**. 5路predict进程全ALIVE(stat=S,13:18-20启动~3.4h). progress JSON(权威源):cline31/500(patch25,infra3,no_patch3)·codex19/500(patch12,infra1,no_patch5,quota1)·claude-code22/500(patch13,infra2,no_patch7)·opencode30/500(patch29,infra1,no_patch0)·pi24/500(patch20,infra1,no_patch2,quota1). 自R560增量:cline+1(30→31)·codex+1(18→19)·pi+1(23→24)(claude-code/opencode在长实例,done不变). 当前实例:cline django-10554(127s)·codex django-13346(22s,刚轮转)·claude-code django-15973(1289s)·opencode pylint-4551(1094s)·pi sphinx-9258(298s),均stat=S alive<1800s超时. 关键核查:①无429/quota升级(grep-c=0全5路full_predict日志)②gw_proxy9090/v1/models=200✅③infra=git-fetch-timeout已单列(符合铁律3)④断点续跑正常(predictions落盘:cline28/codex18/claude-code20/opencode29/pi23)⑤日志tail无error/traceback⑥hermes/deepseek闸门FAIL未进全量(符合令②). 磁盘6.0T free·load9.25·docker0(predict阶段不用). ETA:opencode~52h/codex~88h. 未到~100题报进度阈值(最高cline31). **判据自检**:SWE-bench全量500运维令仍在跑(predict运行中,未交付)→WAITING=0. 体积:TASK=31.5KB/MEMORY=28.7KB.
+
 [16:36] R560 **巡检SWE-bench全量predict(运维令10-28 07:1x)·5路健康·稳步推进**. 5路predict进程全ALIVE(stat=S,13:18-20启动~3.3h). progress JSON(权威源,日志因Python stdout块缓冲滞后):cline30/500(patch24,infra3,no_patch3)·codex18/500(patch11,infra1,no_patch5,quota1)·claude-code22/500(patch13,infra2,no_patch7)·opencode30/500(patch29,infra1,no_patch0,最快)·pi23/500(patch18,infra1,no_patch3,quota1). 自R559增量:cline+1(29→30)·pi+1(22→23)(codex/claude-code/opencode在长实例,done不变). 当前实例:cline astropy-8872(163s)·codex django-13344(1466s,接近1800s超时将正常轮转)·claude-code django-15973(900s)·opencode pylint-4551(734s)·pi sphinx-9230(332s),均stat=S alive. 关键核查:①无429/quota升级(grep-c=0全5路full_predict日志)②gw_proxy9090/v1/models=200✅③infra=git-fetch-timeout已单列(符合铁律3)④断点续跑正常(predictions落盘:cline27/codex17/claude-code20/opencode29/pi22)⑤日志tail无error/traceback⑥hermes/deepseek闸门FAIL未进全量(符合令②). 磁盘6.0T free·load12.25·docker0(predict阶段不用). ETA:opencode~52h(2.2d最快)/codex~88h(3.7d最慢). 未到~100题报进度阈值(最高cline/opencode30). **判据自检**:SWE-bench全量500运维令仍在跑(predict运行中,未交付)→WAITING=0. 体积:TASK=31.5KB/MEMORY=27.4KB.
 
 [16:30] R559 **巡检SWE-bench全量predict(运维令10-28 07:1x)·5路健康·稳步推进**. 5路predict进程全ALIVE(stat=S,13:20启动~3.2h). progress JSON(权威源,日志因Python stdout块缓冲滞后):cline29/500(patch23,infra3,no_patch3)·codex18/500(patch12,infra1,no_patch4,quota1)·claude-code22/500(patch13,infra2,no_patch7)·opencode30/500(patch29,infra1,no_patch0,最快)·pi22/500(patch19,infra1,no_patch1,quota1). 自R558增量:cline+2(其余codex/pi在长实例,claude-code/opencode进度JSON在R558已刷新). 关键核查:①无429/quota升级(grep-c=0全5路full_predict日志)②gw_proxy9090/v1/models=200✅(root=403预期,patch产率证API通)③pi当前实例sphinx-9229 etimes=1798s≈将达1800s超时→正常轮转,stat=S alive非卡死④infra=git-fetch-timeout已单列(符合铁律3,不计模型失败)⑤断点续跑正常(predictions落盘:cline26/codex17/claude-code20/opencode29/pi21文件)⑥日志tail无error/traceback. 闸门复核:hermes/deepseek各0patch FAIL未进全量(符合令②). 磁盘6.0T free·load13.35·docker0(predict阶段不用). ETA:opencode~52h(2.2d最快)/codex~88h(3.7d最慢). 未到~100题报进度阈值(最高opencode30). **判据自检**:SWE-bench全量500运维令仍在跑(predict运行中,未交付)→WAITING=0. 体积:TASK=31.5KB/MEMORY=26.1KB.
