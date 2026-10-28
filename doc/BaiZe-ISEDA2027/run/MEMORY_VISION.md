@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #347, 2026-10-29 03:27]**：空唤醒·补心跳防判死。上次心跳 wake#346@02:55 距今 ~32min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → origin 同步✓(0 ahead/0 behind)。交付物复核：35 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=32006B(31.2KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #348, 2026-10-29 04:00]**：空唤醒·补心跳防判死。上次心跳 wake#347@03:27 距今 ~33min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → origin 同步✓(0 ahead/0 behind)。交付物复核：35 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=32189B(31.4KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#347 (2026-10-29 03:27, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#346 (2026-10-29 02:53, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#345 (2026-10-29 02:20, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#344 (2026-10-29 01:47, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
@@ -21,9 +22,7 @@ WAITING: 1
 > 📦 wake#334 (2026-10-28 20:20, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#333 (2026-10-28 19:47, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#331 (2026-10-28 18:40, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake#330 (2026-10-28 18:08, 🔧执行运维令·OCR 10M 质量偏差裁定=接受现状·①②③④全完成·commit `vision ocr-accept:`·WAITING=1) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake#329 (2026-10-28 16:55, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
-> 📦 wake#328/#327/#326/#325/#324/#323/#322/#321/#320/#319/#318/#317/#316/#315/#314 (2026-10-28 00:59~16:24, 15轮空唤醒·均无新令·补心跳防判死·inbox RUN_ID222/224非vision令·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-28.md。需要时再读。
+> 📦 wake#314~#330 (2026-10-28 00:59~18:08, 17轮·wake#330=执行OCR 10M质量裁定令/其余空唤醒·均无新令·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake #311/#310/#309/#308/#307/#306/#305/#304/#302/#301/#300/#299/#298/#297/#296/#295/#294 (2026-10-27 02:42~23:50, 18 轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-27.md。需要时再读。
 > 📦 wake #290 (2026-10-26 23:02, 空唤醒·无新令·补心跳防判死·滚动wake#258-270旧指针控体积·inbox RUN_ID221=只读probe非vision令·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
 > 📦 wake #289 (2026-10-26 21:50, 空唤醒·无新令·补心跳防判死·inbox RUN_ID216只读probe·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-26.md。需要时再读。
