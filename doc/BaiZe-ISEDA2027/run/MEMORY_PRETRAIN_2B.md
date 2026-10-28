@@ -1,14 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 17:59 #829：**en_v1_4 pre-blend s015 4/6 shards copied, cum 272GB/472GB(58%), PID 2422384 alive 136min, ETA~18:10**。5/6源MANIFEST✓, en_v1_4待s015。gen_blend dry-run PASS(当前194 shards=110en_v1_4+4ufw_zh+80pre-blend; 激活后→100 shards)。configs/activate_preblend.sh/TSV全验证✓。16GPU idle(.12/.29全0%)。.29 mem 43G/2T swap 5.4G/8G, /nas_user 11T(91%)。下轮唤醒若s015完成→立即activate→smoke(nw=8)。
+> 🆕 2026-10-28 18:17 #830：**en_v1_4 pre-blend s015 完成！全6源MANIFEST✓ → activate_preblend.sh 成功 → 8卡smoke(nw=8)已启动，正在建数据索引(15/100 shards loaded)**。activate: TSV切绝对路径(100 shards=16×6 pre-blend+4 ufw_zh), common.env nw=0→8/NO_MMAP=1→0, gen_blend PASS。smoke: train.sh s1 --smoke 30, PID 326169, torchrun PID 326234, 18:11启动, 当前初始化中(GPTDataset builder)。.29 mem 73G/2T swap 5G/8G 稳定无OOM, GPU 19GB/卡(未加载模型)。preflight: --rotary-base PASS, --lr-decay-shape FAIL(仅Decay需要, S1不阻塞)。TB 6006常驻✓。下轮唤醒查smoke结果(0 NaN + ≥500K tok/s)。
+> 📦 §#829（17:59, en_v1_4 s015 58% ETA~18:10）→ daily-memories/2026-10-28.md；**结论**：s015在18:09完成(.bin 508GB+.idx+.json+MANIFEST)。被#830更新。需要时再读。
 > 📦 §#828（17:50, en_v1_4 15/16 s015 21% + gen_blend dry-run PASS）→ daily-memories/2026-10-28.md；**结论**：s015 writing, 5源MANIFEST✓, gen_blend PASS, activate_preblend.sh✓, 16GPU idle。被#829更新。需要时再读。
 > 📦 §#827（17:39, en_v1_4 14/16→15/16 + 全验证就绪）→ daily-memories/2026-10-28.md；**结论**：configs/TSV/activate/README全✓, longctx数据体检✅, s014 done→s015 writing。被#828更新。需要时再读。
 > 📦 §#826（17:3x, 项目目录脚本&文档更新）→ daily-memories/2026-10-28.md；**结论**：脚本/README/configs全在项目目录并commit, 5源MANIFEST✓。被#827更新。需要时再读。
 > 📦 §#812~#825（10-28 12:3x~17:1x, pre-blend 4→15/16 + smoke + 项目目录 + LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke30/30✓(nw=0/155K), LR exponential✓, 5源MANIFEST✓, activate_preblend.sh✓, 项目目录commit✓。需要时再读。
 > 📦 §#799~#810（10-27, spawn OOM + nw=0验证 + pre-blend方案确立）→ daily-memories/2026-10-27.md；**结论**：spawn被pre-blend取代, nw=0验证PASS(308K)。需要时再读。
 
-> - 未完成指令：有（① **en_v1_4 pre-blend s015**[4/6 shards, 272GB/472GB=58%, PID 2422384 alive, ETA~18:10] ② activate_preblend.sh[待①完成, 脚本就绪] ③ 8卡smoke(nw=8)验≥500K[待②] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓ ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓）。gen_blend dry-run PASS(194 shards)。16GPU idle。WAITING=0。
+> - 未完成指令：有（① en_v1_4 pre-blend s015 ✅完成 ② activate_preblend.sh ✅完成(100 shards, nw=8, mmap re-enabled) ③ **8卡smoke(nw=8)验≥500K**[🔄RUNNING, init中15/100 shards, mem 73G稳定] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓(S1不阻塞) ⑦ 长上下文ABF[数据体检✅, 余待ckpt] ⑧ 项目目录脚本&文档 ✓）。smoke PID 326169。WAITING=0。
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
