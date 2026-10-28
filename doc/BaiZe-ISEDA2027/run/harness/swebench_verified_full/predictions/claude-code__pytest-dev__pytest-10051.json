@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-10051",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py\nindex a4f4214..b60465c 100644\n--- a/src/_pytest/logging.py\n+++ b/src/_pytest/logging.py\n@@ -342,7 +342,7 @@ class LogCaptureHandler(logging_StreamHandler):\n         super().emit(record)\n \n     def reset(self) -> None:\n-        self.records = []\n+        self.records.clear()\n         self.stream = StringIO()\n \n     def handleError(self, record: logging.LogRecord) -> None:\ndiff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py\nindex bcb20de..815eb6d 100644\n--- a/testing/logging/test_fixture.py\n+++ b/testing/logging/test_fixture.py\n@@ -151,6 +151,22 @@ def test_clear(caplog):\n     assert not caplog.text\n \n \n+def test_clear_consistency(caplog):\n+    \"\"\"Ensure caplog.get_records and caplog.records stay in sync after clear().\n+\n+    Regression test for https://github.com/pytest-dev/pytest/issues/10057\n+    \"\"\"\n+    caplog.set_level(logging.INFO)\n+    assert caplog.get_records(\"call\") == caplog.records\n+    logger.info(\"test\")\n+    assert caplog.get_records(\"call\") == caplog.records\n+    caplog.clear()\n+    assert caplog.get_records(\"call\") == caplog.records\n+    logger.info(\"test2\")\n+    assert caplog.get_records(\"call\") == caplog.records\n+    assert caplog.messages == [\"test2\"]\n+\n+\n @pytest.fixture\n def logging_during_setup_and_teardown(caplog):\n     caplog.set_level(\"INFO\")\n"
+  }
+]

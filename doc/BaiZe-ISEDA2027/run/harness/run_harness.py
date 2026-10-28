@@ -83,12 +83,22 @@ class DriverResult:
 
 
 def _run(cmd: list[str], cwd: Path, timeout: int, env: dict | None = None) -> DriverResult:
-    """Run a harness subprocess; capture stdout/stderr; return wall + code."""
+    """Run a harness subprocess; capture stdout/stderr; return wall + code.
+
+    If ``env`` maps a key to ``None``, that key is *removed* from the inherited
+    environment (used to strip a poisoning ``PYTHONPATH`` — e.g. the deepseek
+    SDK's stale ``pydantic_core`` at ``/tmp/dsh_sdk`` shadowing the hermes-venv,
+    causing ``cannot import name 'ArgsKwargs'``; root-caused R548 2026-10-28).
+    """
     import time
     t0 = time.time()
     e = dict(os.environ)
     if env:
-        e.update(env)
+        for k, v in env.items():
+            if v is None:
+                e.pop(k, None)
+            else:
+                e[k] = v
     try:
         p = subprocess.run(
             cmd, cwd=str(cwd), capture_output=True, text=True, timeout=timeout, env=e
@@ -476,6 +486,8 @@ class HermesDriver:
         env = {
             "no_proxy": "127.0.0.1,localhost",
             "NO_PROXY": "127.0.0.1,localhost",
+            "PYTHONPATH": None,   # R548 2026-10-28: strip stray dsh_sdk path that
+                                  # shadows the hermes-venv pydantic_core (ArgsKwargs)
         }
         r = _run(cmd, workdir, timeout, env=env)
         r.harness = self.name
