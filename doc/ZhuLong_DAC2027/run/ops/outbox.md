@@ -15292,3 +15292,158 @@ Error: Managed service port 49375 on 127.0.0.1 is already in use by another proc
   若 [7] 无 cimi_search → 需在 .env 打开 web 工具开关并重启 8090 服务（见 README）。
 === DONE 128 ===
 ```
+
+---
+
+## RUN_ID 129 · 2026-10-28 10:43:38 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 129 | regrade r2 (user direct order 10-28 10:3x) | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] license 探针（4 端口 run_code POST·单次）"
+for p in 8650 8651 8652 8654; do
+  printf "  port %s: " "$p"
+  timeout 15 curl -s -m 12 -X POST "http://10.129.32.75:$p/v1/run_code" \
+    -H 'Content-Type: application/json' \
+    -d '{"host":"aether","lang":"pyAether","code":"print(\"probe ok\")"}' \
+    | head -c 180
+  echo
+done
+
+echo "[2] regrade 脚本检查"
+SCRIPT=/tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh
+if [ ! -f "$SCRIPT" ]; then
+  echo "  ERROR: script not found at $SCRIPT"
+  echo "  locate similar:"
+  timeout 10 ls -la /tmp/ABL_glm-5.3-flash*zl*regrade*.sh 2>/dev/null | head
+  echo "=== DONE 129 (script missing) ==="
+  exit 0
+fi
+echo "  script: $SCRIPT ($(wc -c < "$SCRIPT") B, mtime $(stat -c %y "$SCRIPT" 2>/dev/null | cut -c1-19))"
+echo "  -- content head --"
+timeout 5 head -25 "$SCRIPT"
+
+echo "[3] r2 jsonl 检查"
+JSONL=/nasdata/app.e0031982/eda_code_eval/completed_code_generation_2026_1027_123502.jsonl
+if [ ! -f "$JSONL" ]; then
+  echo "  ERROR: jsonl not found at $JSONL"
+  timeout 10 find /nasdata/app.e0031982/eda_code_eval -maxdepth 2 -name 'completed_code_generation_2026_1027_123502*' 2>/dev/null | head
+  echo "=== DONE 129 (jsonl missing) ==="
+  exit 0
+fi
+echo "  jsonl: $JSONL ($(wc -c < "$JSONL") B, $(wc -l < "$JSONL") lines)"
+
+echo "[4] 防 futex 死锁：unset SANDBOX_PORT_*"
+unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR 2>/dev/null || true
+echo "  after unset: SANDBOX_PORT_HTTP=${SANDBOX_PORT_HTTP:-<unset>} PORT_TCP=${SANDBOX_PORT_TCP:-<unset>} WORKDIR=${SANDBOX_WORKDIR:-<unset>}"
+
+echo "[5] 启动 regrade（setsid 后台 + log 落盘·不阻塞 relay）"
+LOG=/tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_r2_$(date +%H%M).log
+echo "  log: $LOG"
+setsid bash "$SCRIPT" > "$LOG" 2>&1 < /dev/null &
+PID=$!
+echo "  regrade started PID=$PID"
+sleep 8
+if kill -0 $PID 2>/dev/null; then
+  echo "  ✅ regrade alive after 8s"
+  echo "  -- log head (first 20 lines) --"
+  timeout 5 head -20 "$LOG" 2>/dev/null
+else
+  wait $PID 2>/dev/null
+  RC=$?
+  echo "  ❌ regrade died within 8s (exit=$RC)"
+  echo "  -- log tail (last 30 lines) --"
+  timeout 5 tail -30 "$LOG" 2>/dev/null
+fi
+
+echo "[6] 进程快照（regrade / run_eval）"
+timeout 10 pgrep -af 'run_eval|regrade|run_glm' 2>/dev/null | cut -c1-140 || echo "  (none)"
+
+echo "[7] 8090 + loop 健康快照"
+timeout 8 bash -c "exec 3<>/dev/tcp/10.251.36.15/8090" 2>/dev/null && echo "  TCP 8090 OPEN" || echo "  TCP 8090 CLOSED"
+timeout 8 pgrep -af 'zhulong_loop' 2>/dev/null | cut -c1-100 || echo "  loop: not found"
+
+echo "=== DONE 129 ==="
+```
+
+**输出**
+```
+=== RUN_ID 129 | regrade r2 (user direct order 10-28 10:3x) | 2026-10-28 10:43:38 | host=hfeg0tedaap02 ===
+[1] license 探针（4 端口 run_code POST·单次）
+  port 8650: 
+  port 8651: 
+  port 8652: 
+  port 8654: 
+[2] regrade 脚本检查
+  script: /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh (1963 B, mtime 2026-10-27 19:36:50)
+  -- content head --
+#!/usr/bin/env bash
+# glm-5.3-flash × zhulong × full × maxTokens=16384 (cline-aligned) r2 手动 re-grade
+# 运维令 2026-10-27 09:0x（maxTokens 8192→16384 与 cline 基线对齐重跑）
+# batch = completed_code_generation_2026_1027_123502.jsonl
+# 模板 = run_glm-5.3-flash_zl_clinealigned16384_r1_regrade.sh 改 GEN_FILE/batch + r2
+# 按运维令：先 unset http_proxy https_proxy ALL_PROXY + export NO_PROXY=10.129.32.75,localhost,127.0.0.1（避免 Squid 503）
+set +e
+cd /nasdata/app.e0031982/code/eda_fastmcp
+
+# 剥 proxy（避免 Squid 503）
+unset http_proxy https_proxy ALL_PROXY
+export NO_PROXY=10.129.32.75,localhost,127.0.0.1
+
+export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+export SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+export PROXY_PORTS=8650,8651,8652,8654
+export RAG_RECALL_URL=http://localhost:9006/recall
+export SANDBOX_HOST=10.129.32.75
+export PYTHON=$PWD/venv/bin/python
+
+GEN_FILE=completed_code_generation_2026_1027_123502.jsonl
+BENCHMARK=benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl
+LANG=pyAether
+
+echo "=== GLM-5.3-FLASH × ZHULONG × FULL × maxTokens=16384 (CLINE-ALIGNED) R2 RE-GRADE START $(date '+%Y-%m-%d %H:%M:%S') ==="
+[3] r2 jsonl 检查
+  jsonl: /nasdata/app.e0031982/eda_code_eval/completed_code_generation_2026_1027_123502.jsonl (511831 B, 158 lines)
+[4] 防 futex 死锁：unset SANDBOX_PORT_*
+  after unset: SANDBOX_PORT_HTTP=<unset> PORT_TCP=<unset> WORKDIR=<unset>
+[5] 启动 regrade（setsid 后台 + log 落盘·不阻塞 relay）
+  log: /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_r2_1044.log
+  regrade started PID=3608951
+  ✅ regrade alive after 8s
+  -- log head (first 20 lines) --
+=== GLM-5.3-FLASH × ZHULONG × FULL × maxTokens=16384 (CLINE-ALIGNED) R2 RE-GRADE START 2026-10-28 10:44:26 ===
+ARM=(F) MODEL=glm-5.3-flash READBACK=full maxTokens=16384 (cline-aligned) R2
+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+PROXY_PORTS=8650,8651,8652,8654
+RAG_RECALL_URL=http://localhost:9006/recall
+SANDBOX_HOST=10.129.32.75
+GEN_FILE=completed_code_generation_2026_1027_123502.jsonl
+BENCHMARK=benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl
+LANG=pyAether
+NO_PROXY=10.129.32.75,localhost,127.0.0.1  (http_proxy/https_proxy/ALL_PROXY unset)
+2026-10-28 10:44:27,188 - INFO - --- [阶段2] 开始：组装可执行脚本 ---
+2026-10-28 10:44:27,193 - INFO - 配置 'clean_main_block' 为 True。将从 'completion' 中移除 __main__ 代码块。
+2026-10-28 10:44:27,205 - INFO - 已创建并清空输出目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-28 10:44:27,205 - INFO - 从 benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl 读取评测问题...
+2026-10-28 10:44:27,208 - INFO - 成功加载 158 个问题的测试代码。
+2026-10-28 10:44:27,208 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_2026_1027_123502.jsonl 流式读取生成的代码...
+2026-10-28 10:44:27,209 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/158 [00:00<?, ?it/s]组装脚本:  57%|█████▋    | 90/158 [00:00<00:00, 892.69it/s]组装脚本: 100%|██████████| 158/158 [00:00<00:00, 1169.08it/s]
+2026-10-28 10:44:27,353 - INFO - 成功组装并保存了 118 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+[6] 进程快照（regrade / run_eval）
+3587264 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书 
+3587265 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书  ### 🟢 运维指
+3608951 bash /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh
+3608954 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_eval.py --generations completed_code_generation_2026_1027_123502.
+3609882 timeout 10 pgrep -af run_eval|regrade|run_glm
+[7] 8090 + loop 健康快照
+  TCP 8090 OPEN
+813663 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.
+3587264 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC202
+3587265 opencode run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评�
+3609904 timeout 8 pgrep -af zhulong_loop
+=== DONE 129 ===
+```
