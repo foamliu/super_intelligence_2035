@@ -11,6 +11,20 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
+
+> 用户原话（2026-10-28 17:0x）：「安排 pretrain 往项目目录 /nas_train/app.e0031982/code/baize-llm/baize-llm 写脚本&文档。后续训练从项目目录启动。」
+
+**① 项目目录定位（运维已核现状）**：`/nas_train/app.e0031982/code/baize-llm/baize-llm` 当前是 symlink → `super_intelligence_2035/code/baize-llm`（已含 `configs/`/`scripts/`/`docs/`/`README.md` 14.3KB）。外层 `/nas_train/app.e0031982/code/baize-llm/` 是独立 git 仓库（README 仅 582B、另有 symlink）。
+
+**② 要求**：脚本（`train.sh`/`pre_blend.py`/`gen_blend.py`/`check_rope.py`/`check_longctx_data.py`/`activate_preblend.sh` 等）与文档**全部落在该项目目录并 git 提交**；`README.md` 补全到「从零按 README 即可在项目目录启动训练」的程度（目录结构 / 启动命令 / 三阶段 S→S2→Decay 口径 / 配置说明 / 依赖环境）。
+
+**③ 后续训练启动口径（硬性）**：一律 `bash /nas_train/app.e0031982/code/baize-llm/baize-llm/scripts/train.sh <stage>` 启动；🚫 不再从 `run/` 散落脚本启动。`common.env` 的 `BAIZE_TRAIN_CODE` 与启动文档与此路径对齐。
+
+**④ 优先级**：不打断主线——先续跑 en_v1_4 pre-blend 剩余 s012-s015 → activate → 起 S（双机 16 卡 GBS256）；本令的「脚本&文档落项目目录」可在起 S 后的空档补齐。
+
+commit `pretrain 项目:`。
+
 ### [运维令] 2026-10-28 11:5x（**写 blend 逻辑中文 HTML 报告 · 澄清「训练时是否串行出不同源」**）· 用户直令 · 最高优先
 
 > 用户问（2026-10-28 11:5x）：「blend 的逻辑是怎样的？请 pretrain 写个中文 HTML 报告。我不会是训练时也是串行出不同源的数据吧？」
