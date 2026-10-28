@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 33,
+  "done": 34,
   "total": 500,
-  "patch_produced": 32,
+  "patch_produced": 33,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 0,
-  "last_update": "2026-10-28 16:57:06",
+  "last_update": "2026-10-28 17:09:17",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -431,6 +431,19 @@
       "stdout_tail": "ion\n[✓] Check for any other references to .pylint.d\n[✓] Run tests to verify changes\n\u001b[0m\n\n[run_single] model_patch: 2564 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pylint-dev__pylint-4661.json\n[run_single] cleanup: git reset --hard 1d1619ef913b99b06647d2030bddff4800abdf63\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pylint-dev__pylint-4661.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6386",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 728.7,
+      "model_patch_len": 2289,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "stable/how-to/capture-warnings.html\n78 passed, 2 deselected, 169 warnings in 10.64s\n\u001b[0m\n\n[run_single] model_patch: 2289 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pylint-dev__pylint-6386.json\n[run_single] cleanup: git reset --hard 754b487f4d892e3d4872b6fc7468a71db4e31c13\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pylint-dev__pylint-6386.json",
       "classification": "patch-produced"
     }
   ]
