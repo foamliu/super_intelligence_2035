@@ -49,8 +49,9 @@ def log(msg: str):
     print(f"[verified-full {time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def load_ids(max_n: int | None, offset: int = 0) -> list[str]:
-    ids = IDS_FILE.read_text().split()
+def load_ids(max_n: int | None, offset: int = 0, ids_file: Path | None = None) -> list[str]:
+    src = ids_file or IDS_FILE
+    ids = src.read_text().split()
     if max_n:
         ids = ids[offset:offset + max_n]
     return ids
@@ -96,35 +97,55 @@ def run(cmd, cwd=None, timeout=300, with_proxy=True):
 
 
 def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool, str]:
-    """Git clone/fetch with PARTIAL CLONE fix + 1800s timeout.
+    """Shallow fetch of base_commit ONLY (PROVEN pilot logic, run_pilot_batch.py).
 
-    Improvements over pilot:
-    - Partial clone config (--filter=blob:none) to avoid matplotlib 900s+ timeout
-    - Fetch timeout increased from 600s to 1800s per operator directive
-    - Targeted shallow fetch (--depth=1 origin <commit>) as first attempt
+    R548 root-cause (2026-10-28): the previous impl fell back to a FULL
+    `git fetch origin` when the shallow fetch failed — for astropy (huge repo)
+    that downloads gigabytes of history through the proxy, and with 6 harnesses
+    doing it concurrently the first fetch timed out, leaving a broken workdir
+    that all 9 subsequent same-repo instances silently reused ("existing
+    workdir updated" -> 0 agents ran).  Fix: NO full-fetch fallback; shallow
+    fetch only; NFS-race resilient (try checkout even if fetch reports a
+    tmp_pack error, because on NFS objects may actually be downloaded); clean
+    stale lock files from previous failed fetches.
     """
     url = f"https://github.com/{repo}.git"
     if (workdir / ".git").exists():
+        # Clean stale lock files from previous failed fetches
+        for lock in (workdir / ".git").glob("*.lock"):
+            try:
+                lock.unlink()
+            except OSError:
+                pass
+        # Check if commit already local (common: same repo reused across instances)
         _, _, rc_chk = run(["git", "cat-file", "-e", f"{base_commit}^{{commit}}"],
                            workdir, timeout=30, with_proxy=False)
         if rc_chk != 0:
             _, _, rc_f = run(["git", "fetch", "--depth=1", "origin", base_commit],
-                             workdir, timeout=1800)
+                             workdir, timeout=300)
             if rc_f != 0:
-                run(["git", "fetch", "origin"], workdir, timeout=1800)
+                # NFS resilience: try checkout anyway (fetch may report tmp_pack
+                # error while objects are actually downloaded)
+                _, _, rc_co = run(["git", "checkout", "-f", base_commit],
+                                  workdir, timeout=120)
+                if rc_co == 0:
+                    return True, "fetch errored but checkout succeeded (NFS race)"
+                return False, "git fetch base_commit failed (shallow)"
         _, _, rc2 = run(["git", "checkout", "-f", base_commit], workdir, timeout=120)
         return rc2 == 0, "existing workdir updated"
     workdir.mkdir(parents=True, exist_ok=True)
     run(["git", "init", "-q"], workdir, timeout=30, with_proxy=False)
     run(["git", "remote", "add", "origin", url], workdir, timeout=30, with_proxy=False)
-    run(["git", "config", "remote.origin.promisor", "true"], workdir, timeout=10, with_proxy=False)
-    run(["git", "config", "remote.origin.partialclonefilter", "blob:none"], workdir, timeout=10, with_proxy=False)
     _, _, rc = run(["git", "fetch", "--depth=1", "origin", base_commit],
-                   workdir, timeout=1800)
+                   workdir, timeout=300)
     if rc != 0:
-        run(["git", "fetch", "origin"], workdir, timeout=1800)
+        # NFS resilience: try checkout anyway
+        _, _, rc_co = run(["git", "checkout", "-f", base_commit], workdir, timeout=120)
+        if rc_co == 0:
+            return True, "fetch errored but checkout succeeded (NFS race)"
+        return False, "git fetch base_commit failed (shallow)"
     _, _, rc = run(["git", "checkout", "-f", base_commit], workdir, timeout=120)
-    return rc == 0, f"init+partial-clone+fetch (checkout rc={rc})"
+    return rc == 0, "init+shallow fetch"
 
 
 def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
@@ -328,10 +349,12 @@ def main():
     ap.add_argument("--harness", required=True, choices=ALL_HARNESSES)
     ap.add_argument("--max", type=int, default=None, help="cap #instances (gate=10, full=500)")
     ap.add_argument("--offset", type=int, default=0, help="skip first N instances")
+    ap.add_argument("--ids-file", default=None, help="custom instance-id list (e.g. gate_10_ids.txt)")
     args = ap.parse_args()
 
+    ids_file = Path(args.ids_file) if args.ids_file else None
     max_n = args.max or (10 if args.phase == "gate" else None)
-    ids = load_ids(max_n, args.offset)
+    ids = load_ids(max_n, args.offset, ids_file)
     insts = load_instances()
 
     if args.phase in ("predict", "gate", "all"):
