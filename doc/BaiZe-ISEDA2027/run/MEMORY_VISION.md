@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #332, 2026-10-28 19:13]**：空唤醒·补心跳防判死。上次心跳 wake#331@18:40 距今 ~33min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → main==origin/main 同步✓（0/0）。交付物复核：6 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/`（recent_work 40423B/ocr_synth10m 15754B/ocr_sft_plan 22706B/ocr_synthdata 29177B/armE_r2 26522B/next_steps 29419B）+ 6 脚本 `vision/ocr_synth/*.py`。📦 体积：TASK=24093B(23.5KB)/MEMORY=30338B(29.6KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #333, 2026-10-28 19:47]**：空唤醒·补心跳防判死。上次心跳 wake#332@19:16 距今 ~31min。运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git fetch → main==origin/main 同步✓（0/0）。交付物复核：6 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/`（recent_work 40423B/ocr_synth10m 15754B/ocr_sft_plan 22706B/ocr_synthdata 29177B/armE_r2 26522B/next_steps 29419B）+ 6 脚本 `vision/ocr_synth/*.py`。📦 体积：TASK=24093B(23.5KB)/MEMORY=30405B(29.7KB) 均≤32KB✓ 无需归档。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#332 (2026-10-28 19:16, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#331 (2026-10-28 18:40, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#330 (2026-10-28 18:08, 🔧执行运维令·OCR 10M 质量偏差裁定=接受现状·①②③④全完成·commit `vision ocr-accept:`·WAITING=1) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
 > 📦 wake#329 (2026-10-28 16:55, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-28.md。需要时再读。
@@ -74,7 +75,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（OCR 10M质量偏差✅已裁定:接受现状; 16:1x方案报告已交付,无训练运行,待运维下一令/OCR SFT预算）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-28 18:0x (wake #330, 执行运维令·OCR 10M 质量偏差裁定)**：运维令 17:3x ✅ 已完成 —— ①MEMORY_VISION 待等项①(质量偏差裁定)标记为 ✅ 已裁定：接受现状 ②EXPERIMENTS_VISION.md §18 补充用户裁定行 ③心跳+日报+commit(`vision ocr-accept:`)+push ④任务书标✅。**裁定**：10M OCR 合成数据集两处偏差（去重 2.4486%>1% / 泄漏 113 命中）均接受现状（accept as-is），不重生成/不过滤，DATASET_CARD 偏差记录保留不动，数据集可用于后续 encoder 预训练/OCR SFT。三条运维令均 ✅DONE —— 22:4x(10M OCR, wake#275, ✅已裁定) / 19:5x(SFT方案, wake#272) / 17:5x(调研报告, wake#271)。git behind=0/ahead=0 同步（未跟踪文件均为别线在途，🚫不碰）。B4 3/4 组件仍阻塞待运维裁决。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
+| 更新 | **2026-10-28 19:47 (wake #333, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。inbox RUN_ID 224 = 重启 pretrain loop（TARGET 29），非 vision 令。git main==origin/main 同步✓（0/0）。交付物复核：6 报告 + 6 脚本均在位。体积 TASK=24093B/MEMORY=30405B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
 
 ### 评测耗时归因（2026-10-15）
 
