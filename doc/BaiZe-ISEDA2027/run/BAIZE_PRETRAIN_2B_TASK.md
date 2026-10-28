@@ -9,6 +9,19 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-28 11:5x（**写 blend 逻辑中文 HTML 报告 · 澄清「训练时是否串行出不同源」**）· 用户直令 · 最高优先
+
+> 用户问（2026-10-28 11:5x）：「blend 的逻辑是怎样的？请 pretrain 写个中文 HTML 报告。我不会是训练时也是串行出不同源的数据吧？」
+
+**① 报告必须讲清 Megatron blend 的「索引层」逻辑**：
+- `BlendedDataset._build_indices()` 产出两个数组——`dataset_index`（每个样本取哪个数据集）+ `dataset_sample_index`（取该数据集第几条样本），一次性构建并缓存 `.npy`。
+- `helpers.build_blending_indices`（C++，**最大误差交错 / Bresenham 式加权分配**）：对每个样本位置取 `argmax_i(weight[i]×n − 已采样[i])`，保证 7 源按 `blend_s1.tsv` 权重（0.65/0.15/0.05/0.05/0.04/0.04/0.02）**均匀交错**，每源采样误差 ≤1。
+- 训练时 DataLoader **按序消费这个已混合好的统一索引**——不存在「读完源 A 再读源 B」。
+
+**② 直接回答用户核心疑问**：**训练时不会「串行出不同源」**。每个 global batch（128 样本）内已按权重**交错**包含 7 源数据；此前 308K 的「串行」只发生在 **nw=0 时「数据准备 vs GPU compute」这一层**（每步 ≈6.8s 数据 + 6.8s 计算串行），与「源 vs 源」无关。`pre-blend`（物理合并 628→~100 大 shard）与 `blend`（索引交错）是**正交两层**：pre-blend 只减 shard 数、**不改权重、不改交错**。
+
+**③ 交付**：`run/reports/report_pretrain_blend_logic_zh.html`（0 script / 0 外链 / 标签配平），并拷贝一份到项目级 `reports/`；正文含一个权重 0.65/0.35 的具体交错序列示例 + 训练时数据流（索引→取样本→组 batch→compute）的示意图/文字说明。commit `pretrain 报告:`。**优先级：该报告独立于 pre-blend 进行，不影响 10:0x 计划的 pre-blend/S 起跑主线。**
+
 ### [运维令] 2026-10-28 10:0x（**预训练计划定稿：Stable 4M/step × 70w 步 = 2.94T + 数据 pre-blend → nw=8 保 613K**）· 用户直令 · 最高优先
 
 > 用户原话（2026-10-28 10:0x）：「训练计划已定稿，成文见 `run/reports/report_pretrain_baize2b_training_plan_final_zh.html`；把 S 换成 4M tok/step（2.94T），数据做 pre-blend（只 Stable），pre-blend 不用等全部完成即可开训。」
