@@ -1,14 +1,14 @@
 {
   "harness": "claude-code",
   "harness_code": "claude-code",
-  "done": 10,
-  "total": 10,
-  "patch_produced": 6,
+  "done": 12,
+  "total": 500,
+  "patch_produced": 7,
   "infra": 2,
   "timeout": 0,
   "quota_blocked": 0,
-  "no_patch": 2,
-  "last_update": "2026-10-28 11:33:41",
+  "no_patch": 3,
+  "last_update": "2026-10-28 13:57:18",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -127,6 +127,32 @@
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__psf__requests-1142.json",
       "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-15572",
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 448.3,
+      "model_patch_len": 2422,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ingle] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=447.5s ==\n[run_single] model_patch: 2422 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15572.json\n[run_single] cleanup: git reset --hard 0b31e024873681e187b574fe1c4afe5e48aeeecf\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15572.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "django__django-15629",
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 1800.5,
+      "model_patch_len": 0,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "_single] running claude-code ...\n== harness=claude-code rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15629.json\n[run_single] cleanup: git reset --hard 694cf458f16b8d340a3195244196980b2dec34fd\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/claude-code__django__django-15629.json",
+      "classification": "no-patch"
     }
   ]
 }

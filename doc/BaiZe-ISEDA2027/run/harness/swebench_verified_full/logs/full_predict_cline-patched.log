@@ -1,2 +1,4 @@
 [verified-full 13:18:23] resume: loaded 10 existing results
 [verified-full 13:18:23] [1/500] PREDICT cline on astropy__astropy-12907
+[verified-full 13:25:26]   -> patch-produced (patch=2144B wall=366.9s)
+[verified-full 13:25:26] [2/500] PREDICT cline on astropy__astropy-13033
