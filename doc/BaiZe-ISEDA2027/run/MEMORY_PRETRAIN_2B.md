@@ -1,15 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 07:4x #810：🔄 **100-iter spawn smoke RUNNING**（.29 8 GPU, spawn+nw=4+persistent_workers, gbs128, θ=1e6）。S1 已杀（两机 GPU 全空）。**已确认**：① NCCL init COMPLETE 全 8 rank；② set_start_method=spawn applied AFTER NCCL init；③ GPTDatasetConfig num_workers=4/persistent_workers=True；④ spawn worker RSS ~29.6GB（含共享库，PSS 远低；system free 430GB/2TB，swap 7G 稳定=无 COW 膨胀）；⑤ 16/32 spawn workers created。**当前**：torch._inductor JIT 编译中（32 compile_worker 进程，首步 kernel 编译，GPU util 0%/power 116W）。待编译完→首步→log_interval=10 出吞吐数据。
-> 📦 §#809（16:4x spawn smoke 10-iter PASS, 147K warmup avg）→ daily-memories/2026-10-27.md；**已被 #810 100-iter smoke 取代——正在跑稳态测试**。
+> 🆕 2026-10-28 08:0x #810：💥 **100-iter spawn smoke CRASHED@iter~31** OOM kill（.29 8 GPU, spawn+nw=4+persistent, gbs128, θ=1e6）。**30 iters PASS 段数据**：step 14.47→13.65→11.14s（improving✅），throughput 145K→154K→188K tok/s（8GPU/mbs=1），GPU 501→651 TFLOP/s/GPU，loss 11.47→8.43，0 NaN/0 skip，all GPU 100% util（**spawn 无 data starvation ✅**）。**崩溃**：rank5 DataLoader worker(pid 957210) killed by signal: Killed（OOM killer@08:02:11）。**根因**：`TORCHINDUCTOR_COMPILE_THREADS`默认`min(32,cpu)`=32/rank→8×32=**256 inductor compile workers**(each~0.75GB)+32 spawn workers(~29.6GB)+8 rank procs(~59GB)→sys mem 430GB→1717GB@iter10→OOM@iter~31。**修复**：设`TORCHINDUCTOR_COMPILE_THREADS=4`（256→32 workers，省~168GB）重跑smoke。**关键**：spawn 本身 PASS（无 COW、无 data starvation），OOM 来自 inductor compile worker 数量失控。
+> 📦 §#809（16:4x spawn smoke 10-iter PASS, 147K warmup avg）→ daily-memories/2026-10-27.md；**已被 #810 取代——#810 100-iter 崩于 iter31 OOM（inductor workers 过多）**。
 
 > 📦 §#808（13:0x spawn smoke 就绪性复核 PASS）→ daily-memories/2026-10-27.md；**已被 #809 取代——smoke 已跑完 PASS**。
 > 📦 §#807（12:1x spawn-vs-fork CPU 微基准 PASS, worker RSS −79%）→ daily-memories/2026-10-27.md；**已被 #809 GPU smoke 确认**。
 > 📦 §#806（10:2x spawn+COW 补丁实现+静态验证 PASS）→ daily-memories/2026-10-27.md；**v3 commit c8e6894 已由 #809 验证**。
 > 📦 §#805（09:5x 吞吐终判 308K=50%×613K, nw=0 数据串行）→ daily-memories/2026-10-27.md；**spawn fix 目标即消除此 gap**。
 
-> - 未完成指令：有（① **spawn 稳态吞吐验证**[#810 100-iter smoke RUNNING on .29, JIT 编译中] ② check_rope.py PASS[待 ckpt, S1 已杀需重启] ③ lr-decay-shape exponential[Decay前验证] ④ 长上下文ABF三件[待首个可导出ckpt]）。WAITING=0（100-iter spawn smoke 在跑，等吞吐数据）。
+> - 未完成指令：有（① **spawn 稳态吞吐验证**[#810 smoke CRASHED@iter31 OOM——需加`TORCHINDUCTOR_COMPILE_THREADS=4`重跑] ② check_rope.py PASS[待 ckpt, S1 已杀需重启] ③ lr-decay-shape exponential[Decay前验证] ④ 长上下文ABF三件[待首个可导出ckpt]）。WAITING=0（smoke 已崩，需分析+重跑）。
 > 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
 > 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
