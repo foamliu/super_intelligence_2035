@@ -1,6 +1,51 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 🟢 运维指令 · 2026-10-27 09:0x（**修正 maxTokens 错配：8192→16384（与 cline 基线对齐）→ 作废 8192 的 5-run → 重起 16384 的 5-run**）· 用户直令 · 最高优先 · 覆盖一切
+### 🟢 运维指令 · 2026-10-28 10:3x（**重新 regrade r2 + 推进 r3-r5**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话（10-28 10:3x）：「重新 regrade」（针对 r2 regrade 自 10-27 20:07 INVALID 后已 14h+ 未重试、agent 仅做 21 次单次 curl 探针推理"必然失败"而未实测的情况）。
+> **背景**：r2 generation 已于 10-27 19:09 收口（batch `2026_1027_123502`·158 行 jsonl·132 success/21 fail/5 timeout·worker providers.json 实测 = `glm-5.3-flash + 16384 + /v1 + reasoning=false` 与 cline 基线逐字节对齐 ✅）。r2 regrade 20:07 跑过一次但 **INVALID**（93/118 licence unavailable，仅 shard3=8654 那批 25 条能跑 → PASS_RATE=0.1582）。此后 14h+ agent 仅做单次 curl 探针（每次都是 pool 1/4：8654 ✅ / 8650·8651·8652 ❌ hang 或 circuit-breaker OPEN），按 §7 infra 作废规则判定"重跑仍会 ~75% fail"而**未再实测 regrade**。用户判定此推理不充分，要求**直接重跑 regrade 拿真实数据**。
+
+**① 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full×maxTokens=16384 cline-aligned 5-run`、`PHASE = running`、`WAITING` 当前为 1（本令要求改 0）。
+2. **改 `WAITING = 0`**（本令解除等待）+ commit + push（让 loop 进入 ~1min 续跑模式接手后续 r3-r5）。
+3. **先做一次 4 端口 license 探针**（`curl -m 12 -X POST http://10.129.32.75:$p/v1/run_code -d '{"host":"aether","lang":"pyAether","code":"print(\"probe ok\")"}'`，p = 8650/8651/8652/8654），记录结果。**但无论探针结果如何，都必须继续执行第 4 步重跑 regrade**（探针只留对比数据，不作为是否重跑的判据——这是本令的核心）。
+4. **重跑 r2 regrade**：
+   - regrade 脚本：`/tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh`（就位·07:34 已校正无路径 bug·直接用）
+   - **启动前必须 `unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR`**（防 futex 死锁，与 r1 regrade 同口径；20:07 第 1/2 次失败就是 stale SANDBOX_PORT_HTTP env 导致）
+   - 启动命令（参考 r1 regrade）：`cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR && setsid bash /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_$(date +%H%M).log 2>&1 < /dev/null &`
+   - **regrade log 命名带时间戳**（避免覆盖 20:07 那次的 log）
+   - regrade 跑完（~10-30min）后**读 log 末尾**拿 `PASS_RATE` + licence-unavailable 计数 + timeout 计数
+5. **判定 r2 有效性**（按判据十三 + infra 作废规则）：
+   - **有效**（PASS_RATE 合理 + licence-unavailable ≈ 0 + timeout ≤ 10 + exec_err = 0 + infra 0）→ **记 r2 = pass/158** → 起 r3（同 batch 流程：generation → regrade）→ r4 → r5 → 5/5 mean±std → 更新报告 §8
+   - **无效**（仍大面积 licence-unavailable，与 20:07 同型）→ **如实报**：贴 regrade log 末尾 30 行 + licence-unavailable 计数 + 4 端口探针结果 → `WAITING=1` 等 license 恢复（但至少有了一份新鲜实测数据，而非 14h 前的旧推理）
+   - **futex 死锁**（regrade 起不来）→ 检查 stale env → 修正后重试（最多 2 次）→ 仍不行则报 blocker
+6. **若 r2 有效，推进 r3-r5**（每轮同判据十三：timeout ≤ 10、exec_err = 0、infra 0）→ 5/5 mean±std → **与 cline 基线 86.8±1.6% 对比** → 更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"maxTokens=16384 cline-aligned 重测"一节，纠正上轮报告"cline 线 8192"的错误说法——cline 基线实测 = 16384，batch `2026_1019_005714` 为证）。
+7. **每一步都 commit + push**（带 `zhulong 16384-aligned:` 前缀）。
+
+**② 验收判据（不达标要如实报，不得粉饰）**
+1. r2 regrade **必须实测**（不得以"探针推断必然失败"为由跳过）；
+2. r2 regrade log 末尾必须贴证据（PASS_RATE + licence-unavailable 计数）；
+3. 若 r2 有效，r3-r5 各轮判据十三全过才进 5-run；
+4. 5/5 mean±std 与 cline 86.8±1.6% 对比，**必须在报告里给出"已排除配置混杂"的结论**（maxTokens 已逐字节对齐，唯一变量 = CLI 二进制）。
+
+**③ 红线**
+- 不覆盖 r1 产物（r1 ✅ = 71.5% 已收口）；
+- 不动 8192 的 5 个 VOIDED batch（留证）；
+- 不动 `2026_1026_154647`（16384 候补，已恢复）；
+- 不改 providers.json / .env / cline settings（配置已对齐，本令只重跑 regrade）；
+- 不启 full@pro-cloud（那是另一条线）；
+- regrade log 不覆盖 20:07 那次（带时间戳命名）。
+
+**④ 与 10-27 令的关系**
+- 10-27 令的 ①②③④ 已全部闭环（8192 VOIDED / 154647 恢复 / r1 收口 / r2 generation 完成）。本令只接手 **r2 regrade + r3-r5**，不重复 10-27 令的已闭环部分。
+- 10-27 令的验收判据（maxTokens diff 为空 / gen-fail ≤ 5/158 / 5 轮判据十三有效）继续适用。
+
+**⑤ ops 通道**
+- RUN_ID 129（只读探针·不跑 regrade）已下发，结果会落 `run/ops/outbox.md` 末尾。**agent 不要参考 ops 探针结果来决定是否跑 regrade**——无论 ops 探针结果如何，agent 都必须按本令第 4 步重跑 regrade。ops 探针仅用于运维侧体检。
+
+---
+
+### 🟢 运维指令 · 2026-10-27 09:0x（**修正 maxTokens 错配：8192→16384（与 cline 基线对齐）→ 作废 8192 的 5-run → 重起 16384 的 5-run**）· 用户直令 · 已大部分闭环·r2 regrade 由 10-28 令接手
 
 > 用户原话（10-27）：「让 ZL 试验完全使用 cline 相同的配置：glm-5.3-flash+full 配置。把现有评测停下。确保配置完全一致的情况下，启动 ZL 5-run 评测。」
 > **背景**：10-24 22:1x 令错误把 cline 基线 maxTokens 归因为 8192（实际 cline 基线 10-18/19 retest r1-r5，batch `2026_1019_005714` 留存 worker config = **16384**，已逐项核对验证）。10-26 15:46 运维已把 providers.json 改 16384 起的 r1 batch `2026_1026_154647`，但**任务书旧块仍写"maxTokens 必须 = 8192"**，agent 按任务书优先原则把 16384 batch 作废、改回 8192 重起 5-run（r1 `2026_1026_160802` / r2-r5 同），封盘 70.8±7.7%。**该 5-run maxTokens 与 cline 基线不一致（8192 vs 16384），不能作为 CLI 回归结论**。
