@@ -15447,3 +15447,9 @@ NO_PROXY=10.129.32.75,localhost,127.0.0.1  (http_proxy/https_proxy/ALL_PROXY uns
 3609904 timeout 8 pgrep -af zhulong_loop
 === DONE 129 ===
 ```
+
+### RUN 14:4x — r2 regrade 收口 + r3-r5 继续（端口裁决）
+- **r2 regrade = 有效**：67.1%（106/158 pass · 118 ok / 35 fail · **0 exec_err** / 0 infra-void），batch 2026_1027_123502，端口 8664/8665/8653/8669（自有池·t0002596 workdir）。
+- **根因**：旧 regrade 脚本硬编码 t0002997 池 8650-8654 → 跨用户争用（licence/infra-void）；已改回自有池 + 清 stale-shard。
+- **r3-r5 端口裁决**：用户重启的 8650-8654=t0002997 第三方池（其 14:17 起重起 81 进程/10+ cline worker，仍争用）→ 🚫；8663/8666/8667 listen 无 backend → 🚫。**唯一指定池 = 8664/8665/8653/8669**。
+- **下一步**：agent 起 r3 generation（CLI_AGENT=zhulong run_zhulong_script.sh -p 4 -n）→ r3 regrade → r4 → r5 → 5/5 mean±std → 报告 §8。

@@ -1,5 +1,34 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🟢 运维指令 · 2026-10-28 14:4x（**r2 收口 67.1% · 端口改回自有池 8664/8665/8653/8669 · 继续 r3-r5**）· 运维直令 · 最高优先 · 覆盖 11:0x / 10:3x 令的端口决议
+
+> 用户原话（10-28 14:4x）：「8650-8654 端口已重启，安排 zhulong agent 继续评测 r3-r5」。
+> **运维端口裁决（最终·如实写）**：用户重启的 **8650-8654 是 app.t0002997 的第三方池**（workdir t0002997_1..4），且 t0002997 已在该池重起 ~10 cline worker（14:17 起·实测 81 进程 active）→ **仍是跨用户争用区，🚫 不可用**。自有端口池（`.env` L107 `SANDBOX_ENDPOINTS` 唯一生效值）= **`8664/8665/8653/8669`**（workdir t0002596_*，4/4 实测绿 + r2 regrade 全程 0 exec_err）→ **为 r3-r5 唯一指定池**。8663/8666/8667 作废（listen 无 backend，勿用）。
+
+**① 已由运维完成（勿重复）**
+1. r2 regrade = **有效**，14:03 收口：**67.1%（106/158 pass** · 118 ok / 35 fail / **0 exec_err** / 0 infra-void），batch `2026_1027_123502`，用自有池 8664/8665/8653/8669。
+2. 根因已排除：旧 regrade 脚本硬编码 t0002997 池 8650/8651/8652/8654 → 跨用户争用 + licence/infra-void；stale-shard 已清。
+
+**② 你（agent）要做的（按序）**
+1. 读 MEMORY 顶部状态头 → 确认 STAGE=zhulong×glm-5.3-flash×full×maxTokens=16384 cline-aligned、PHASE=running、WAITING=0（本令已置 0）。
+2. 记成绩：r1=71.5%(113/158)、r2=67.1%(106/158) → 写入 MEMORY 成绩表 + 报告。
+3. **起 r3 generation**（`.env` 已是 8664 池·无需改脚本）：
+   `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r3.log 2>&1 < /dev/null &`
+4. generation 收口拿新 batch（`completed_code_generation_*.jsonl`）→ **起 r3 regrade**：复制 `/tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade_ownpool.sh` 为 `..._r3_regrade_ownpool.sh`，仅改 `GEN_FILE=<r3 batch>` + 标题 R3；**`SANDBOX_ENDPOINTS`/`PROXY_PORTS` 保持 8664,8665,8653,8669 不动**；起前清 `output_evaluation/tmp/execution_results_shard_*.jsonl`。
+5. 判据十三判定 r3 有效（timeout≤10、exec_err=0、infra=0、PASS_RATE 合理）→ 记 r3 → 同法 r4 → r5。
+6. 5/5 收口后算 mean±std（样本 std·1 位小数）→ 对比 cline 基线 86.8±1.6% → 更新报告 §8（结论注明「已排除 maxTokens 混杂 + 已排除跨用户争用」，唯一变量=CLI 二进制）。
+
+**③ 验收判据**
+- r3/r4/r5 每轮 regrade 的 `SANDBOX_ENDPOINTS`/`PROXY_PORTS` 必须 = **8664,8665,8653,8669**（🚫 不用 8650-8654；🚫 不用 8663,8666,8667）。
+- 每轮 exec_err=0、infra=0、timeout≤10。
+- 5/5 mean±std 落报告 + 每步 git commit+push（前缀 `zhulong 16384-aligned r3-r5:`）。
+
+**④ 红线**
+- 🚫 不用 8650-8654（t0002997 的池·已被其 81 进程抢占）；🚫 不用 8663/8666/8667（死端口）。
+- 不覆盖 r1/r2 产物；不 kill t0002997 进程；不改 providers.json/.env。
+- 起 regrade 前 `unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR`（防 futex 死锁）+ 清 stale shard（防 resume 误判）。
+
+---
 ### 🟢 运维指令 · 2026-10-28 11:0x（**换端口 8663/8666/8667 重跑 r2 regrade**）· 用户直令 · 最高优先 · 覆盖一切
 
 > 用户原话（10-28 11:0x）：「让 zhulong agent 用 8663/8666/8667 端口 regrade 试试」。
