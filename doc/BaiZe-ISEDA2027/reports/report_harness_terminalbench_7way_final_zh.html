@@ -10,38 +10,46 @@ th,td{border:1px solid #e2e8f0;padding:6px 8px;text-align:center}
 th{background:#edf2f7;font-weight:600} tr:nth-child(even){background:#f7fafc}
 td.l{text-align:left}
 td.pass{background:#c6f6d5;font-weight:700;color:#22543d} td.zero{background:#e2e8f0;color:#718096}
+td.note{background:#fefcbf;color:#744210}
 .sig{font-weight:700}.sig3{color:#c53030}.sig2{color:#dd6b20}.sig1{color:#2b6cb0}.ns{color:#718096}
 code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 .ev{font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:#555}
 .foot{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}
 .bar{height:16px;border-radius:3px;display:inline-block;background:linear-gradient(90deg,#48bb78,#68d391)}</style></head><body>
 <h1>Terminal-Bench 2.0 · 7 路 harness 横评最终报告</h1>
-<div class="meta">生成时间：2026-10-27 · 任务令：2026-10-27 08:3x（用户直令：TB 横评出报告）<br>模型：kimi-k2.6-cloud（经 gw_proxy 9090/9091）· 评测集：Terminal-Bench 2.0 canonical 87 题<br>命名规程：正文一律写 <code>cline</code>（接入层适配仅改 CLI 安装/baseUrl/参数大小写，原生工具循环未改）。</div>
-<div class="tldr"><h3 style="margin-top:0">TL;DR</h3><p>7 路 harness × 87 题（7×89 并发，去 <code>__hash</code> 重复后 canonical 87 题）<b>全 FIN 87/87</b>：</p><ul><li><b>cline 43/87（49.4%）</b> 与 <b>opencode 41/87（47.1%）</b> 并列第一梯队，McNemar 不显著（p=0.80）。</li><li><b>pi 35/87（40.2%）</b> 第二梯队，与 cline/opencode 差异不显著（p=0.15 / 0.29）。</li><li><b>codex 20/87（23.0%）</b>：59 条异常中 34 条为上游 429 限流→RuntimeError（codex 独有），非适配器可修。</li><li><b>hermes / claude-code / deepseek 主跑均 0%</b>：适配器层 bug（非模型能力）。hermes / claude-code 修复后复跑 <b>25/87（28.7%）</b>、<b>20/87（23.0%）</b>；deepseek 卡上游 SDK 未修复。</li></ul></div>
+<div class="meta">生成时间：2026-10-28（QA 整改版）· 任务令：2026-10-28 12:0x（用户直令：TB 报告质量整改逐条回应 5 问）<br>模型：kimi-k2.6-cloud（经 gw_proxy 9090/9091）· 评测集：Terminal-Bench 2.0 <b>官方 89 题</b>（其中 87 题可评测，2 题缺镜像未评测）<br>命名规程：正文一律写 <code>cline</code>（接入层适配仅改 CLI 安装/baseUrl/参数大小写，原生工具循环未改）。</div>
+<div class="tldr"><h3 style="margin-top:0">TL;DR</h3><p>7 路 harness × 89 题（官方口径）。89 题中 <code>mteb-leaderboard、mteb-retrieve</code> 缺 Docker 镜像未评测（对 7 路均记 0），实际可评测 87 题。<b>复跑结果已合入主表</b>（hermes/claude-code 适配器修复后采用复跑值）：</p><ul>
+<li><b>cline 43/89（48.3%）</b> 与 <b>opencode 41/89（46.1%）</b> 并列第一梯队，McNemar 不显著（p=0.80）。</li>
+<li><b>pi 35/89（39.3%）</b> 第二梯队。</li>
+<li><b>hermes 25/89（28.1%）</b>、<b>claude-code 20/89（22.5%）</b>：主跑 0%（适配器 bug），修复后复跑采用。</li>
+<li><b>codex 20/89（22.5%）</b>：59 异常中 34 条上游 429（codex 独有，无退避重试），待修复后复测。</li>
+<li><b>deepseek 0/89</b>：适配器 install bug（pip 缺失），<b>未修复</b>，0% 不反映模型水平。</li>
+<li>与公开基线（kimi-k2.6 TB 2.0 ≈ 57.3%–66.7%）差 9–18 点，主因接入层损耗 + 超时 + 适配器 bug（详见 §六）。</li>
+</ul></div>
 <h2>一、评测口径</h2><div class="card"><table>
 <tr><th class="l">维度</th><th class="l">取值</th></tr>
-<tr><td class="l">评测集</td><td class="l">Terminal-Bench 2.0，canonical 87 题（89 任务目录去 <code>__hash</code> 重复）</td></tr>
+<tr><td class="l">评测集</td><td class="l">Terminal-Bench 2.0，<b>官方 89 题</b>。<code>__hash</code> 后缀是 harbor 单次运行实例标识，<b>非任务重复</b>。89 题中 <code>mteb-leaderboard、mteb-retrieve</code> 缺 Docker 镜像被启动器过滤 → 实际可评测 87 题。分母一律用官方 89，2 题未评测对 7 路均记 0。</td></tr>
 <tr><td class="l">模型</td><td class="l">kimi-k2.6-cloud（统一骨干，经 gw_proxy 9090 chat / 9091 dsh 翻译）</td></tr>
-<tr><td class="l">并发</td><td class="l">7 路并发（每路 <code>--n-concurrent 1</code> 串行 89 题），7 个独立 harbor 进程并行</td></tr>
+<tr><td class="l">并发</td><td class="l">7 路并发（每路串行 89 题），7 个独立 harbor 进程并行</td></tr>
 <tr><td class="l">超时</td><td class="l">TB_AGENT_TIMEOUT=1800s/题（复跑同）</td></tr>
 <tr><td class="l">verifier</td><td class="l">原样不放宽</td></tr>
-<tr><td class="l">镜像</td><td class="l">89 张 <code>alexgshaw/*:20251031</code> Docker 镜像（已补齐）</td></tr>
-<tr><td class="l">jobs-dir</td><td class="l"><code>/tmp/tb_7x89/jobs_&lt;harness&gt;</code>（独立于 NFS，避免 stale handle）</td></tr>
+<tr><td class="l">镜像</td><td class="l">87 张 alexgshaw/*:20251031（mteb-leaderboard/mteb-retrieve 缺失）</td></tr>
 <tr><td class="l">主跑</td><td class="l">2026-10-24 16:21 起（R479）</td></tr>
-<tr><td class="l">复跑</td><td class="l">2026-10-25 19:2x（hermes / claude-code 适配器修复后）</td></tr>
+<tr><td class="l">复跑</td><td class="l">2026-10-25 19:2x（hermes / claude-code 适配器修复后，覆盖 89 题）</td></tr>
 </table></div>
-<h2>二、7 路主线结果总表（主跑 7×87）</h2><div class="card">
-<table><tr><th>排名</th><th>harness</th><th>resolve</th><th>通过率</th><th>分布</th><th>异常数</th><th class="l">主要异常</th></tr>
-<tr><td>1</td><td class="l">cline</td><td class="pass">43/87</td><td>49.4%</td><td><span class="bar" style="width:59px"></span></td><td>26</td><td class="l" style="font-size:.78rem">AgentTimeoutError 19, RuntimeError 4, VerifierTimeoutError 3</td></tr>
-<tr><td>2</td><td class="l">opencode</td><td class="pass">41/87</td><td>47.1%</td><td><span class="bar" style="width:57px"></span></td><td>27</td><td class="l" style="font-size:.78rem">AgentTimeoutError 15, RuntimeError 8, VerifierTimeoutError 4</td></tr>
-<tr><td>3</td><td class="l">pi</td><td class="pass">35/87</td><td>40.2%</td><td><span class="bar" style="width:48px"></span></td><td>23</td><td class="l" style="font-size:.78rem">AgentTimeoutError 16, RuntimeError 5, VerifierTimeoutError 2</td></tr>
-<tr><td>4</td><td class="l">codex</td><td class="pass">20/87</td><td>23.0%</td><td><span class="bar" style="width:28px"></span></td><td>59</td><td class="l" style="font-size:.78rem">RuntimeError 44, AgentTimeoutError 15</td></tr>
-<tr><td>5</td><td class="l">hermes</td><td class="zero">0/87</td><td>0.0%</td><td><span class="bar" style="width:0px"></span></td><td>37</td><td class="l" style="font-size:.78rem">RuntimeError 36, VerifierTimeoutError 1</td></tr>
-<tr><td>6</td><td class="l">deepseek</td><td class="zero">0/87</td><td>0.0%</td><td><span class="bar" style="width:0px"></span></td><td>37</td><td class="l" style="font-size:.78rem">NonZeroAgentExitCodeError 35, VerifierTimeoutError 2</td></tr>
-<tr><td>7</td><td class="l">claude-code</td><td class="zero">0/87</td><td>0.0%</td><td><span class="bar" style="width:0px"></span></td><td>45</td><td class="l" style="font-size:.78rem">AgentTimeoutError 23, RuntimeError 20, VerifierTimeoutError 1</td></tr>
+<h2>二、7 路结果总表（主跑 + 复跑合表 · 分母 89）</h2><div class="card">
+<p>采用值 = 复跑优先（hermes/claude-code 主跑为适配器 bug 的 0%，采用修复后复跑值）；其余路采用主跑。分母 = 官方 89。</p>
+<table><tr><th>排名</th><th>harness</th><th>主跑/87</th><th>复跑/87</th><th>采用值/89</th><th>通过率</th><th>分布</th><th>主跑异常</th><th class="l">说明</th></tr>
+<tr><td>1</td><td class="l">cline</td><td>43/87</td><td>—</td><td class="pass">43/89</td><td>48.3%</td><td><span class="bar" style="width:58px"></span></td><td>26</td><td class="l" style="font-size:.78rem">主跑采用</td></tr>
+<tr><td>2</td><td class="l">opencode</td><td>41/87</td><td>—</td><td class="pass">41/89</td><td>46.1%</td><td><span class="bar" style="width:55px"></span></td><td>27</td><td class="l" style="font-size:.78rem">主跑采用</td></tr>
+<tr><td>3</td><td class="l">pi</td><td>35/87</td><td>—</td><td class="pass">35/89</td><td>39.3%</td><td><span class="bar" style="width:47px"></span></td><td>23</td><td class="l" style="font-size:.78rem">主跑采用</td></tr>
+<tr><td>4</td><td class="l">hermes</td><td>0/87</td><td>25/87</td><td class="pass">25/89</td><td>28.1%</td><td><span class="bar" style="width:34px"></span></td><td>37</td><td class="l" style="font-size:.78rem">复跑采用</td></tr>
+<tr><td>5</td><td class="l">codex</td><td>20/87</td><td>—</td><td class="pass">20/89</td><td>22.5%</td><td><span class="bar" style="width:27px"></span></td><td>59</td><td class="l" style="font-size:.78rem">429 拖累·待复测</td></tr>
+<tr><td>6</td><td class="l">claude-code</td><td>0/87</td><td>20/87</td><td class="pass">20/89</td><td>22.5%</td><td><span class="bar" style="width:27px"></span></td><td>45</td><td class="l" style="font-size:.78rem">复跑采用</td></tr>
+<tr><td>7</td><td class="l">deepseek</td><td>0/87</td><td>—</td><td class="zero">0/89</td><td>0.0%</td><td><span class="bar" style="width:0px"></span></td><td>37</td><td class="l" style="font-size:.78rem">install bug·未修复</td></tr>
 </table>
-<p><small>trials 总数因 retry 可 &gt;87（cline 106·opencode 102·pi 103·codex 100·hermes 87·claude-code 79·deepseek 87）；resolve 按 <code>reward_stats.reward["1.0"]</code> 去重唯一任务数。源：<code>/tmp/tb_7x89/jobs_*/result.json</code>。</small></p></div>
-<h2>三、逐题配对 McNemar 精确检验（主跑）</h2><div class="card"><p>对 87 题 0/1 resolve 矩阵做 21 对两两 McNemar 精确检验（双侧二项分布）。</p>
+<p><small>87 题子集通过率（附注）：cline 43/87=49.4% · opencode 41/87=47.1% · pi 35/87=40.2%。claude-code 主跑仅覆盖 57 题。源：<code>/tmp/tb_7x89/jobs_*/result.json</code> + <code>harness/summary_rerun_20261025.json</code>。</small></p></div>
+<h2>三、逐题配对 McNemar 精确检验（主跑 87 题可评测子集）</h2><div class="card"><p>对 87 题 0/1 resolve 矩阵做 21 对两两 McNemar 精确检验（双侧二项分布）。2 个缺镜像题对所有路均 0，不产生 discordant pair，不影响配对检验。</p>
 <table><tr><th class="l">A</th><th class="l">B</th><th>A失B过</th><th>A过B失</th><th>n</th><th>p 值</th></tr>
 <tr><td class="l">cline</td><td class="l">codex</td><td>2</td><td>25</td><td>27</td><td><span class="sig sig3">0.0000 ***</span></td></tr>
 <tr><td class="l">cline</td><td class="l">opencode</td><td>7</td><td>9</td><td>16</td><td><span class="ns">0.8036 ns</span></td></tr>
@@ -64,35 +72,37 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <tr><td class="l">deepseek</td><td class="l">claude-code</td><td>0</td><td>0</td><td>0</td><td><span class="ns">1.0000 ns</span></td></tr>
 <tr><td class="l">deepseek</td><td class="l">pi</td><td>35</td><td>0</td><td>35</td><td><span class="sig sig3">0.0000 ***</span></td></tr>
 <tr><td class="l">claude-code</td><td class="l">pi</td><td>24</td><td>0</td><td>24</td><td><span class="sig sig3">0.0000 ***</span></td></tr>
-</table><p><small>*** p&lt;0.001 · ** p&lt;0.01 · * p&lt;0.05 · ns 不显著。hermes/deepseek/claude-code 主跑均 0%，两两 n01=n10=0 无法区分（p=1.0）。</small></p></div>
-<h2>四、复跑结果（hermes / claude-code 适配器修复后）</h2><div class="card"><p>主跑中 hermes / claude-code 两路 0%，经 R492–R497 排查定位为<b>适配器层 bug</b>（非模型能力）。2026-10-25 17:5x 运维令授权只换适配器版本全量复跑。</p>
-<table><tr><th class="l">harness</th><th>主跑</th><th>主跑异常</th><th>复跑 resolve</th><th>复跑通过率</th><th>条件通过率*</th><th>复跑异常</th></tr>
-<tr><td class="l">hermes</td><td class="zero">0/87</td><td>37</td><td class="pass">25/87</td><td>28.7%</td><td>56.8%</td><td>45</td></tr>
-<tr><td class="l">claude-code</td><td class="zero">0/87</td><td>23</td><td class="pass">20/87</td><td>23.0%</td><td>30.3%</td><td>23</td></tr>
-</table>
-<p><small>*条件通过率=resolve/rewarded。hermes 25/44=56.8%；claude-code 20/66=30.3%。<b>判据</b>：两路复跑&gt;0（满足）。源：<code>harness/summary_rerun_20261025.json</code> + <code>/tmp/tb_7x89/jobs_*_rerun_20261025/</code>。</small></p>
-<p><b>复跑 McNemar（hermes vs claude-code）</b>：n01=6·n10=11·n=17·p=0.3323（不显著）。hermes 复跑通过率高于 claude-code，但配对差异未达统计显著。</p></div>
-<h2>五、codex 异常归因（59/87 exception）</h2><div class="card"><p>codex 主跑 20/87 resolve，59 条异常。逐条归因：</p>
+</table><p><small>*** p&lt;0.001 · ** p&lt;0.01 · * p&lt;0.05 · ns 不显著。hermes/deepseek/claude-code 主跑均 0%，两两 n01=n10=0（p=1.0）。cline vs opencode p=0.80 ns。</small></p></div>
+<h2>四、codex 异常归因（59/87 exception）</h2><div class="card"><p>codex 主跑 20/87 resolve，59 条异常。逐条归因：</p>
 <table><tr><th class="l">子类</th><th>异常类型</th><th>数量</th><th class="l">归因</th></tr>
-<tr><td class="l">429_rate_limit</td><td>RuntimeError</td><td>34</td><td class="l" style="font-size:.82rem">上游 API 429 限流（codex 独有）→ 适配器无退避重试放大为 RuntimeError。非适配器可修，需上游扩容/加退避</td></tr>
+<tr><td class="l">429_rate_limit</td><td>RuntimeError</td><td>34</td><td class="l" style="font-size:.82rem">上游 API 429 限流（codex 独有，其余 6 路无 429）→ 适配器无退避重试（codex.py:171-187 单次 exec，return_code!=0 即 raise），放大为 RuntimeError。<b>接入层缺陷，非模型能力</b></td></tr>
 <tr><td class="l">timeout_900s</td><td>AgentTimeoutError</td><td>15</td><td class="l" style="font-size:.82rem">单题 900s 超时（build/compile 类重任务）</td></tr>
 <tr><td class="l">exit1_no_stdout</td><td>RuntimeError</td><td>8</td><td class="l" style="font-size:.82rem">codex CLI exit 1 无 stdout（疑似上游返回异常体）</td></tr>
 <tr><td class="l">cli_arg_parse</td><td>—</td><td>1</td><td class="l" style="font-size:.82rem">CLI 参数解析失败</td></tr>
 <tr><td class="l">signal_exit_137</td><td>—</td><td>1</td><td class="l" style="font-size:.82rem">SIGKILL（OOM 或资源争用）</td></tr>
 </table>
-<p><b>结论</b>：59 = 34（429）+ 15（超时）+ 8（exit1）+ 2（其他）。429 为 codex 独有（其余 6 路无 429），根因=上游 429 为主 + 容量/超时为辅 + 适配器无退避放大。<b>非适配器可修</b>。源：<code>summary_rerun_20261025.json: codex_old_7x89.err_by_subcause</code>。</p></div>
-<h2>六、三路 0% 根因与修复对照</h2><div class="card"><table><tr><th class="l">harness</th><th>主跑</th><th class="l">根因</th><th class="l">修复</th><th>复跑</th></tr>
-<tr><td class="l">hermes</td><td class="zero">0/87</td><td class="l" style="font-size:.82rem">缺 hermes-agent 工具链，agent 无法执行工具调用 → 全部 RuntimeError</td><td class="l" style="font-size:.82rem">补装 hermes-agent 工具链，修复适配器入口（R492–R497）</td><td class="pass">25/87（28.7%）</td></tr>
-<tr><td class="l">claude-code</td><td class="zero">0/87</td><td class="l" style="font-size:.82rem">NFS 权限 + CLI 调用问题 → RuntimeError / AgentTimeout</td><td class="l" style="font-size:.82rem">chmod 755 修复 NFS 权限，修正 CLI 调用路径（R492–R497）</td><td class="pass">20/87（23.0%）</td></tr>
-<tr><td class="l">deepseek</td><td class="zero">0/87</td><td class="l" style="font-size:.82rem">上游 SDK 不兼容 → NonZeroAgentExitCodeError 35 条</td><td class="l" style="font-size:.82rem">smoke 0/5 仍卡 SDK，<b>未修复</b>（需上游 SDK 升级）</td><td class="zero">未复跑</td></tr>
-</table><p><b>关键结论</b>：三路 0% 均<b>非模型能力问题</b>，而是适配器/工具链/SDK 接入层 bug。hermes / claude-code 修复后复跑均&gt;0%（28.7%/23.0%），证明模型有能力；deepseek 卡 SDK 未修复，0% 不能反映模型真实水平。</p></div>
+<p><b>结论</b>：59 = 34（429）+ 15（超时）+ 8（exit1）+ 2（其他）。429 为 codex 独有（其余 6 路 exception_stats 无 429；<code>grep -rl 429 jobs_codex/</code> 命中 50 文件，其他 0）。根因 = 上游 429 + 适配器无退避放大。<b>非模型能力</b>。修复方案：codex.py 加指数退避重试（2/4/8/16s，上限 4 次），待资源窗口复测。</p></div>
+<h2>五、三路 0% 根因与修复对照</h2><div class="card"><table><tr><th class="l">harness</th><th>主跑</th><th class="l">精确根因（stack）</th><th class="l">代表性样本</th><th class="l">修复</th><th>复跑</th></tr>
+<tr><td class="l">hermes</td><td class="zero">0/87</td><td class="l" style="font-size:.82rem">hermes.py:210 RuntimeError: exited with code 127（command not found — hermes-agent CLI 未装，从未进入工具循环）</td><td class="l ev">adaptive-rejection-sampler__sx6tLpe</td><td class="l" style="font-size:.82rem">✅ R492–497 补装工具链</td><td class="pass">25/87（28.7%）</td></tr>
+<tr><td class="l">claude-code</td><td class="zero">0/57</td><td class="l" style="font-size:.82rem">claude_code.py:188 docker exec asyncio.wait_for 超时（AgentTimeoutError）+ NFS 权限（CLI 不可执行）</td><td class="l ev">gcode-to-text__7BCwWHu</td><td class="l" style="font-size:.82rem">✅ R492–497 chmod 755 + CLI 路径</td><td class="pass">20/87（23.0%）</td></tr>
+<tr><td class="l">deepseek</td><td class="zero">0/87</td><td class="l" style="font-size:.82rem">deepseek_harness.py:70 install() → pip install deepseek-harness-sdk → bash: pip: command not found (exit 127) → 每题 setup 即失败</td><td class="l ev">path-tracing-reverse__jRF8V9v</td><td class="l" style="font-size:.82rem">🚫 未修复（需改 python -m pip）</td><td class="zero">未复跑</td></tr>
+</table><p><b>关键结论</b>：三路 0% 均<b>非模型能力问题</b>，而是适配器/工具链/SDK 接入层 bug（exit 127 / 超时 / pip 缺失）。hermes / claude-code 修复后复跑均&gt;0%（28.7%/23.0%）；deepseek 卡 install bug 未修复，0% <b>不反映模型真实水平</b>。stack 原文见 <code>/tmp/tb_7x89/jobs_*/&lt;task&gt;/exception.txt</code>。</p></div>
+<h2>六、与公开基线对照（差距归因）</h2><div class="card"><p>运维 web search 基线：骨干 kimi-k2.6 在 Terminal-Bench 2.0 公开分数 ≈ <b>57.3%–66.7%</b>（benchleader / evals.report / benchmarklist）。本报告最高 cline 43/89=48.3% → <b>低 9.0–18.4 个百分点</b>。</p>
+<table><tr><th class="l">差距来源</th><th class="l">说明</th><th>影响</th></tr>
+<tr><td class="l">评测口径/包装</td><td class="l">公开多用模型厂商自带 harness；本报告统一 7 个第三方 harness 接入同一骨干，接入层翻译（gw_proxy responses→chat、dummy key）引入损耗，非「裸模型」分数</td><td class="note">主要</td></tr>
+<tr><td class="l">超时 1800s/题</td><td class="l">cline 主跑 AgentTimeoutError 19 条（占其错误主体），build/compile 重任务难完成</td><td class="note">较大</td></tr>
+<tr><td class="l">接入层 bug（3 路）</td><td class="l">hermes/claude-code/deepseek 主跑 0% 全因适配器缺陷；修复后 hermes 28.1%、claude-code 22.5% 仍偏低</td><td class="note">较大</td></tr>
+<tr><td class="l">codex 429 限流</td><td class="l">34 题无退避重试判异常，修复后保守 +10–15 题</td><td class="note">中</td></tr>
+<tr><td class="l">2 题缺镜像</td><td class="l">mteb-leaderboard/mteb-retrieve 缺 Docker 镜像，拉低 /89 分母</td><td>小</td></tr>
+</table><p><b>结论</b>：本报告测的是「7 个 harness × 接入层」端到端能力，<b>不是裸 kimi-k2.6 模型分数</b>。9–18 点差距主要由接入层损耗 + 超时 + 适配器 bug 构成。可提升点：补镜像、加退避重试、放宽超时、修 deepseek install。</p></div>
 <h2>七、数据溯源与复现命令</h2><div class="card"><table><tr><th class="l">数据项</th><th class="l">来源</th></tr>
-<tr><td class="l">主跑 resolve 矩阵</td><td class="l ev">/tmp/tb_7x89/jobs_&lt;h&gt;/&lt;ts&gt;/result.json → stats.evals.*.reward_stats.reward["1.0"]</td></tr>
-<tr><td class="l">主跑异常</td><td class="l ev">同上 → stats.evals.*.exception_stats</td></tr>
+<tr><td class="l">官方题集（89）</td><td class="l ev">~/terminal-bench/（89 目录）</td></tr>
+<tr><td class="l">缺镜像题（2）</td><td class="l ev">docker image inspect alexgshaw/mteb-leaderboard:20251031 = MISSING</td></tr>
+<tr><td class="l">主跑 resolve 矩阵</td><td class="l ev">/tmp/tb_7x89/jobs_&lt;h&gt;/&lt;ts&gt;/result.json → stats.evals.*.reward_stats.reward["1.0"]（split __ 去实例 id）</td></tr>
+<tr><td class="l">主跑异常 stack</td><td class="l ev">/tmp/tb_7x89/jobs_&lt;h&gt;/&lt;ts&gt;/&lt;task&gt;/exception.txt</td></tr>
 <tr><td class="l">复跑 summary</td><td class="l ev">harness/summary_rerun_20261025.json</td></tr>
 <tr><td class="l">codex err 子类</td><td class="l ev">summary_rerun_20261025.json → codex_old_7x89.err_by_subcause</td></tr>
-<tr><td class="l">启动器</td><td class="l ev">harness/terminalbench/_full_7x89_concurrent_launcher.sh</td></tr>
 </table>
-<p class="ev"># 复现主跑 resolve 计数<br>python3 harness/gen_report_tb_7way_final.py  # 本报告生成脚本</p></div>
-<div class="foot">数据全部来自实测（/tmp/tb_7x89/jobs_* 与 harness/summary_rerun_20261025.json），不编造。McNemar 为精确双侧二项检验。命名遵循规程：正文一律 <code>cline</code>。BaiZe Harness 研究线 · 2026-10-27。</div>
+<p class="ev"># 复现<br>python3 harness/gen_report_tb_7way_final.py  # 本报告生成脚本<br>docker image inspect alexgshaw/mteb-leaderboard:20251031  # → MISSING</p></div>
+<div class="foot">数据全部来自实测（/tmp/tb_7x89/jobs_* 与 harness/summary_rerun_20261025.json），不编造。McNemar 为精确双侧二项检验。命名遵循规程：正文一律 <code>cline</code>。QA 整改版 · BaiZe Harness 研究线 · 2026-10-28。</div>
 </body></html>

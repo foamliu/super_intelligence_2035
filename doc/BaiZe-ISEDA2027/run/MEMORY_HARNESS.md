@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R551 SWE-bench Verified 全量500·GATE全PASS·全量predict 5路后台运行中. 运维令2026-10-28 07:1x(用户直令·最高优先).
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成(5路PASS:cline1/6·codex6/7·claude-code3/6·opencode7/9·pi7/8;2路FAIL:hermes·deepseek)
-当前动作:     全量500 predict 5路后台运行(setsid): cline(PID4184705)·codex(PID32834)·claude-code(PID62476)·opencode(PID106234)·pi(PID142980). git-fetch-timeout已修300→1800s. 每路用rotated ids(不同起始repo)避免并发fetch拥塞. 断点续跑已生效(gate 10题自动skip). ETA~2-3天.
-下一步:       ①监控full_predict进度(每~100题报一次)→②5路predict全完→全量eval(顺序·docker workers=8)→③hermes/deepseek单列「未参与+原因」→④交付report_harness_swebench_verified_full500_zh.html(含McNemar 5x5+Wilson CI).
-阻塞:         无. hermes适配器2s瞬断(FAIL原因)·deepseek SDK 3s退出(FAIL原因)→均不进全量,报告单列.
+PHASE:        R552 TB 7way报告质量整改(运维令10-28 12:0x)✅已交付 + SWE-bench Verified全量500 predict 5路后台运行中(运维令10-28 07:1x).
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改(QA 5问逐条回应+修订版报告)✅
+当前动作:     R552完成TB整改:①分母89→87纠错(2题mteb缺镜像,非__hash dedup)②三路0%精确stack(hermes exit127/claude-code timeout/deepseek pip缺失)③codex 429=34条无退避重试④基线对照(kimi公开57.3-66.7% vs cline48.3%)⑤复跑合表. 产 tb_qa_rectification_20261028.md + 修订版gen_report_tb_7way_final.py + report_harness_terminalbench_7way_final_zh.html(21879B,0 cline-patched/0 script). SWE-bench全量predict 5路后台ALIVE(cline4184705·codex32834·claude-code62476·opencode106234·pi142980,未打断).
+下一步:       ①TB整改已交付,等运维验收→②监控SWE-bench full_predict(每~100题报一次)→③5路predict全完→全量eval→④交付report_harness_swebench_verified_full500_zh.html.
+阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=30.5KB / MEMORY=17.7KB（本轮归档 0KB）
+📦 体积：TASK=33.0KB(略超32KB·未达40KB红线·待下次归档已闭合块) / MEMORY=18.5KB（本轮归档 0KB）
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[15:1x] R552 **TB 7way报告质量整改(运维令10-28 12:0x)逐条回应5问→已交付**. ①分母:实测89目录名均无__(`grep -c __`=0),__hash是harbor单次运行实例id非重复;真因=2题(mteb-leaderboard·mteb-retrieve)缺Docker镜像(alexgshaw/mteb-*:20251031 MISSING)被启动器(_full_7x89_concurrent_launcher.sh:91-93)过滤→分母改回89官方口径,87题子集作附注. ②三路0%精确stack:hermes=hermes.py:210 exit127(CLI未装)·claude-code=claude_code.py:188 docker exec超时+NFS权限·deepseek=deepseek_harness.py:70 pip:command not found(install bug,未修复). ③codex:59异常=34(429独有,其余6路无429)+15(timeout)+8(exit1)+2其他;codex.py:171-187单次exec无退避重试→429直接raise RuntimeError. ④基线:kimi-k2.6公开57.3-66.7% vs本报告cline43/89=48.3%→低9-18点,归因接入层损耗+超时+适配器bug. ⑤复跑合表:hermes25/89·claude-code20/89采用复跑值入主表(双列主跑/复跑),消除§二vs§四矛盾. 产:harness/tb_qa_rectification_20261028.md(逐条书面回应)+修订gen_report_tb_7way_final.py+reports/report_harness_terminalbench_7way_final_zh.html(21879B,8节,0 cline-patched/0 script/0外链). SWE-bench全量predict 5路后台ALIVE(未打断). **判据自检**:TB整改运维令已交付;SWE-bench全量500运维令仍在跑(predict运行中)→WAITING=0. 体积:TASK=33.0KB(略超32KB,待归档)/MEMORY=18.5KB.
+
 [13:20] R551 **GATE全PASS→全量500 predict 5路后台启动**. 运维令2026-10-28(全量500). Gate eval全部完成: 5路PASS=cline(1/6)·codex(6/7)·claude-code(3/6)·opencode(7/9)·pi(7/8); 2路FAIL=hermes(3p/6np>2)·deepseek(0p,SDK 3s退出). kill残留hermes gate进程. 全量启动: git-fetch-timeout 300→1800s; rotated ids(offset 0/100/200/300/400); launch_full_predict_5.sh setsid 5路; 断点续跑(gate 10题auto-skip). gw_proxy 9090=200. PID: cline4184705·codex32834·claude-code62476·opencode106234·pi142980. ETA~2-3天. WAITING=0(predict运行中). 体积:TASK=30.5KB/MEMORY=17.7KB✓.
 
 
