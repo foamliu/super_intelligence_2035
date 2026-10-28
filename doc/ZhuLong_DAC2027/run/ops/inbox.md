@@ -1,8 +1,80 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 128 -->
-## RUN_ID 128 — 🛠 给 opencode 挂上 `cimi_search`/`cimi_fetch`（自动定位配置 → 合并 MCP → 校验，幂等）
+<!-- RUN_ID: 129 -->
+## RUN_ID 129 — 🔄 重新 regrade r2（用户直令 2026-10-28 10:3x「重新 regrade」·14h 未重试·直接实测）
 
 ```bash
+set -u
+echo "=== RUN_ID 129 | regrade r2 (user direct order 10-28 10:3x) | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] license 探针（4 端口 run_code POST·单次）"
+for p in 8650 8651 8652 8654; do
+  printf "  port %s: " "$p"
+  timeout 15 curl -s -m 12 -X POST "http://10.129.32.75:$p/v1/run_code" \
+    -H 'Content-Type: application/json' \
+    -d '{"host":"aether","lang":"pyAether","code":"print(\"probe ok\")"}' \
+    | head -c 180
+  echo
+done
+
+echo "[2] regrade 脚本检查"
+SCRIPT=/tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh
+if [ ! -f "$SCRIPT" ]; then
+  echo "  ERROR: script not found at $SCRIPT"
+  echo "  locate similar:"
+  timeout 10 ls -la /tmp/ABL_glm-5.3-flash*zl*regrade*.sh 2>/dev/null | head
+  echo "=== DONE 129 (script missing) ==="
+  exit 0
+fi
+echo "  script: $SCRIPT ($(wc -c < "$SCRIPT") B, mtime $(stat -c %y "$SCRIPT" 2>/dev/null | cut -c1-19))"
+echo "  -- content head --"
+timeout 5 head -25 "$SCRIPT"
+
+echo "[3] r2 jsonl 检查"
+JSONL=/nasdata/app.e0031982/eda_code_eval/completed_code_generation_2026_1027_123502.jsonl
+if [ ! -f "$JSONL" ]; then
+  echo "  ERROR: jsonl not found at $JSONL"
+  timeout 10 find /nasdata/app.e0031982/eda_code_eval -maxdepth 2 -name 'completed_code_generation_2026_1027_123502*' 2>/dev/null | head
+  echo "=== DONE 129 (jsonl missing) ==="
+  exit 0
+fi
+echo "  jsonl: $JSONL ($(wc -c < "$JSONL") B, $(wc -l < "$JSONL") lines)"
+
+echo "[4] 防 futex 死锁：unset SANDBOX_PORT_*"
+unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR 2>/dev/null || true
+echo "  after unset: SANDBOX_PORT_HTTP=${SANDBOX_PORT_HTTP:-<unset>} PORT_TCP=${SANDBOX_PORT_TCP:-<unset>} WORKDIR=${SANDBOX_WORKDIR:-<unset>}"
+
+echo "[5] 启动 regrade（setsid 后台 + log 落盘·不阻塞 relay）"
+LOG=/tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_r2_$(date +%H%M).log
+echo "  log: $LOG"
+setsid bash "$SCRIPT" > "$LOG" 2>&1 < /dev/null &
+PID=$!
+echo "  regrade started PID=$PID"
+sleep 8
+if kill -0 $PID 2>/dev/null; then
+  echo "  ✅ regrade alive after 8s"
+  echo "  -- log head (first 20 lines) --"
+  timeout 5 head -20 "$LOG" 2>/dev/null
+else
+  wait $PID 2>/dev/null
+  RC=$?
+  echo "  ❌ regrade died within 8s (exit=$RC)"
+  echo "  -- log tail (last 30 lines) --"
+  timeout 5 tail -30 "$LOG" 2>/dev/null
+fi
+
+echo "[6] 进程快照（regrade / run_eval）"
+timeout 10 pgrep -af 'run_eval|regrade|run_glm' 2>/dev/null | cut -c1-140 || echo "  (none)"
+
+echo "[7] 8090 + loop 健康快照"
+timeout 8 bash -c "exec 3<>/dev/tcp/10.251.36.15/8090" 2>/dev/null && echo "  TCP 8090 OPEN" || echo "  TCP 8090 CLOSED"
+timeout 8 pgrep -af 'zhulong_loop' 2>/dev/null | cut -c1-100 || echo "  loop: not found"
+
+echo "=== DONE 129 ==="
+```
+
+## RUN_ID 128 — 🛠 给 opencode 挂上 `cimi_search`/`cimi_fetch`（自动定位配置 → 合并 MCP → 校验，幂等）【已执行·历史】
+
+```text
 set -u
 echo "=== RUN_ID 128 | attach cimi MCP to opencode | $(date '+%F %T') | host=$(hostname) ==="
 D=/nasdata/app.e0031982/code/eda_fastmcp
