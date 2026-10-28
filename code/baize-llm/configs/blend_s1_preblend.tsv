@@ -1,14 +1,7 @@
-# S 共用配比（2026-10-28 定稿 · pre-blend 版）
-# 列：key <TAB> tokenized 子目录（相对 TOK_ROOT 或绝对路径） <TAB> prop <TAB> 目标 epochs
-# prop 之和必须 = 1.000；epochs 仅用于 gen_blend.py --verify 对账（"-" = 不校验）
-# pre-blend 目录使用绝对路径（os.path.join 会优先绝对路径），未 pre-blend 的源仍用相对路径
-# 2026-10-28: 5 源 pre-blend DONE → 已切绝对路径；en_v1_4 pre-blend 13/16 done (s013 writing, s014+s015 pending)
-#   DONE: math_l3, ufw_l1_en_hq, math_l1, code_l3, code_l2（各 16 大 shard）
-#   RUNNING: en_v1_4 (s000-s012 done, s013 at 83%, PID 2422384)
-#   SKIP: ufw_zh（仅 4 shard，无需 pre-blend）
-#   en_v1_4 行目前仍用相对路径（指向原始 tokenized 目录）；
-#   待 en_v1_4 全部完成后运行 activate_preblend.sh 自动切为绝对路径
-en_v1_4	Ultra-FineWeb/ultrafineweb_en_v1_4	0.65	0.81
+# S 共用配比（2026-10-28 定稿 · pre-blend 激活版）
+# 列：key <TAB> tokenized 子目录（绝对路径=pre-blend / 相对=TOK_ROOT） <TAB> prop <TAB> epochs
+# prop 之和 = 1.000；绝对路径源用 pre-blend 大 shard，ufw_zh 保持原 4 shards
+en_v1_4	/nas_user/app.e0031982/datasets/pre-blend/en_v1_4	0.65	0.81
 ufw_l1_en_hq	/nas_user/app.e0031982/datasets/pre-blend/ufw_l1_en_hq	0.05	0.93
 ufw_zh	Ultra-FineWeb/ultrafineweb_zh	0.04	0.99
 math_l1	/nas_user/app.e0031982/datasets/pre-blend/math_l1	0.05	0.85
