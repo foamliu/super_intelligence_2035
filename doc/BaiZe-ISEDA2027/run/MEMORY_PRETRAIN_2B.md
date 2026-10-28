@@ -1,8 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 16:4x #823：**en_v1_4 pre-blend 13/16 + LR schedule ✓ + 全线等 pre-blend**。① blend 报告 ✓ commit aa6d3eddf。② LR exponential ✓（p=0.25→5.623e-4/p=0.5→3.162e-4/p=0.75→1.778e-4）。③ en_v1_4 s000-s012 done(13/16), s012 ~99%(587/595GB growing), s013-s015 待跑 ETA~90min, PID 2422384 alive。④ GPU 全空闲/TB 6006 ✓/mem 45G/swap 5G/disk /nas_user 12T(90%)。⑤ gen_blend 194 shards weight_sum=1.0 ✓。⑥ plan report ✓ 8653B。⑦ symlink baize-llm ✓。
-> 📦 §#822（17:0x, en_v1_4 12/16 + s012 334GB）→ daily-memories/2026-10-28.md；**结论**：s012 growing, 被 #823 更新为 13/16。需要时再读。
+> 🆕 2026-10-28 17:0x #824：**en_v1_4 pre-blend 14/16 (s013 writing) + 5 源验证 ✓ + .12/.29 GPU 全空闲**。① blend 报告 ✓ (已验证 TAG BALANCE PASS/0 script/0 外链)。② LR exponential ✓。③ en_v1_4 s000-s012 done(13/16) + s013 writing @213GB/~600GB @447MB/s → s013 ETA~14min + s014+s015 ~22min each → 全部完成 ETA~58min(~18:00), PID 2422384 alive。④ 5 源 pre-blend 验证: code_l2/code_l3/math_l1/math_l3/ufw_l1_en_hq 各 16 bins/16 idxs OK + MANIFEST.json ✓。⑤ .29 8GPU idle / .12 8GPU idle / TB 6006 HTTP 200 / mem 44G/2.0Ti / swap 5.4G/8.0G / /nas_user 12T(90%) /nas_train 29T(86%)。⑥ gen_blend 原始 194 shards weight_sum=1.0 ✓。⑦ ufw_zh 4 shards 无需 pre-blend。全线等 en_v1_4 pre-blend I/O 完成。
+> 📦 §#823（16:4x, en_v1_4 13/16 + LR schedule ✓）→ daily-memories/2026-10-28.md；**结论**：LR exponential ✓，en_v1_4 13/16 被 #824 更新为 14/16。需要时再读。
 > 📦 §#821（16:2x, gbs256 smoke 20/20 PASS + en_v1_4 12/16）→ daily-memories/2026-10-28.md；**结论**：smoke 0NaN/loss11.58→8.65/mem72.8GB/nw=0~155K。需要时再读。
 > 📦 §#820（15:5x, activate_preblend.sh 修复 3 bug）→ daily-memories/2026-10-28.md；**结论**：3 bug 修复，gen_blend PASS，5 源 MANIFEST ✓。需要时再读。
 > 📦 §#819（15:4x, pre_blend 进程已死→清理+重启 PID 2422384）→ daily-memories/2026-10-28.md；**结论**：清理 s011/s012 残留后重启，skip s000-s010，processing s011。
@@ -10,7 +10,7 @@ WAITING: 0
 > 📦 §#812~#816（12:3x~15:3x, pre-blend 4→11/16 + smoke + blend 报告）→ daily-memories/2026-10-28.md；**结论**：smoke 30/30 ✓，blend 报告 ✓，5 源 pre-blend ✓，en_v1_4 11/16。
 > 📦 §#806~#810（spawn 调试系列）→ daily-memories/2026-10-27/28.md；**已被 pre-blend 方案取代**。
 
-> - 未完成指令：有（① **en_v1_4 pre-blend 13/16**[s012 ~99% done, PID 2422384, ETA~90min] ② activate_preblend.sh ③ 8卡smoke(nw=8)验≥500K ④ 16卡对齐613K ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓数学验证[Decay前] ⑦ 长上下文ABF[待ckpt]）。LR schedule ✓。全线等 en_v1_4 pre-blend I/O。WAITING=0。
+> - 未完成指令：有（① **en_v1_4 pre-blend 14/16**[s013 writing@213GB, PID 2422384, ETA~58min] ② activate_preblend.sh[待①] ③ 8卡smoke(nw=8)验≥500K[待②] ④ 16卡对齐613K[待③] ⑤ check_rope.py[待ckpt] ⑥ lr-decay-shape exponential ✓ ⑦ 长上下文ABF[待ckpt]）。LR schedule ✓。5 源 pre-blend ✓ 验证。全线等 en_v1_4 pre-blend I/O。WAITING=0。
 > 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
 > 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。
