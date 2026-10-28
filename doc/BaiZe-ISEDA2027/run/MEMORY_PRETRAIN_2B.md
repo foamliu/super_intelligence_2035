@@ -1,10 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-29 06:20 #865：**S1监控iter5818健康**。iter 5818/700k(0.83%): loss ~2.46(近10步2.30~2.61, 均值~2.46, 稳定微降). 0 NaN(5818步全0), 0 skipped, LR=1e-3(恒定peak), ~7.3s/step≈575K tok/s(稳态, 16卡全满100% util ~75GB/卡). mem .29 552G/2T(27%) swap 5.4G/8G; .12 464G swap 0/8G; /nas_train 35TB free(84%). ckpt@4000, next@6000(~182步, ~22min). TB6006 OK(.29:6006). grad norm 0.108~0.132(健康). loss-scale 1.0. PID1764179 etimes~11.8h. ETA ~56.2天. **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~56天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲, 不打断主线).
+> 🆕 2026-10-29 06:43 #866：**S1监控iter5993健康**。iter 5993/700k(0.856%): loss ~2.41(近5步2.29~2.49, 均值~2.41, 稳定微降). 0 NaN, 0 skipped, LR=1e-3(恒定peak), ~7.3s/step≈575K tok/s(稳态, 16卡全满~100% util ~75GB/卡). mem .29 559G/2T(28%) swap 5G/8G; .12 467G swap 0/8G; /nas_train 35TB free(84%). ckpt@4000, next@6000(仅~7步, ~1min). TB6006 OK(.29:6006). grad norm 0.113~0.125(健康). loss-scale 1.0. PID1764179 etimes~12.2h. ETA ~59天. **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~59天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲, 不打断主线).
+> 📦 §#865（10-29 06:20, S1监控iter5818健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.46, 0NaN, 575K tok/s, ckpt@4000。被#866更新。需要时再读。
 > 📦 §#864（10-29 06:01, S1监控iter5650健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.46, 0NaN, 588K tok/s, ckpt@4000。被#865更新。需要时再读。
-> 📦 §#863（10-29 05:43, S1监控iter5490健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.46, 0NaN, 585K tok/s, ckpt@4000。被#864更新。需要时再读。
-> 📦 §#862（10-29 05:25, S1监控iter5326健康）→ daily-memories/2026-10-29.md；**结论**：loss ~2.48, 0NaN, 594K tok/s, ckpt@4000。被#863更新。需要时再读。
+> 📦 §#858~#863（10-29 04:05~06:01, S1监控iter4660~5650健康×6）→ daily-memories/2026-10-29.md；**结论汇总**：loss ~2.53→2.46持续↓, 0NaN, 575-594K tok/s, ckpt@4000。被#866更新。需要时再读。
 > 📦 §#858~#860（10-29 04:05~04:45, S1监控iter4660~5000健康×3）→ daily-memories/2026-10-29.md；**结论汇总**：loss ~2.53→2.51, 0NaN, 588-591K tok/s, ckpt@4000。被#861更新。需要时再读。
 > 📦 §#851~#857（10-29 01:25~03:47, S1监控iter3330~4503健康×7）→ daily-memories/2026-10-29.md；**结论汇总**：loss 2.64→2.53持续↓, 0NaN, 559-575K tok/s, ckpt@2000→4000, train.sh PASS, README§9✅。被#858更新。需要时再读。
 > 📦 §#850（10-29 01:25, S1监控iter3330+README§9依赖环境+abf_plan.py✅）→ daily-memories/2026-10-29.md；**结论**：loss ~2.636, 0NaN, 559K tok/s, README 19.7KB+abf_plan.py✅。被#851更新。需要时再读。
@@ -16,8 +16,8 @@ WAITING: 1
 > 📦 §#812~#828（10-28 12:3x~17:3x, pre-blend+smoke+项目目录+LR验证）→ daily-memories/2026-10-28.md；**结论汇总**：smoke✓, LR exp✓, 5源MANIFEST✓, activate✓, 项目目录✓。被#842更新。需要时再读。
 
 
-> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 5818/700k, 575K tok/s, 0 NaN, loss ~2.46稳定微降) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@2000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅+README§9依赖环境新增）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~56天）。ETA ~56.2天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=30.5KB / MEMORY=31.7KB（本轮归档~0KB: #864→1行指针）
+> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 5993/700k, 575K tok/s, 0 NaN, loss ~2.41稳定微降) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@2000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅+README§9依赖环境新增）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~59天）。ETA ~59天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=30.5KB / MEMORY=26.0KB（本轮归档~5.7KB: #768~#790旧指针合并为1行→daily-memories）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
@@ -25,44 +25,7 @@ WAITING: 1
 
 > 📦 §#796/#794/#795/#793/#792/#791 流水（2026-10-26）→ daily-memories/2026-10-26.md。**结论汇总**：#796 rendezvous OK 但 rank15 崩(EOFError 修复 ae964bc)；#794 预训练构想报告 22KB+ETA 54d；#795 全令闭合 WAITING=1；#793 吞吐报告补写；#792 双机16K=613,992/32K CP2=351,526(commit 594c9cb1b)；#791 FA3 CP patch+首跑通。需要时再读。
 
-> 📦 §#790 流水（2026-10-26 08:4x，运维令 08:2x 写最近工作报告交付）已归档 → daily-memories/2026-10-26.md；**结论**：report_pretrain_recent_work_zh.html 20,218B 覆盖 decay 修复全历程+seq 扩展排查+两份 decay 报告。需要时再读。
-
-> 📦 §#789 流水（2026-10-26 07:33，通宵攻坚交付物复核全通过）已压缩 → daily-memories/2026-10-26.md；**结论**：真因=CUDA Graph 顶格停滞；修复=关 graph·seq=8192 复测 0.978×；报告 16,888B+seqlen rev3+EXPERIMENTS+TSV+早报全 commit faa01ac34。需要时再读。
-
-
-> 📦 §#788 流水（2026-10-26 06:1x，seq8192 验收复测 per-GPU 37,067=0.978×基线·§3+§4.3 闭合·关 graph 终判）已归档 → daily-memories/2026-10-26.md；**结论**：关 graph 在 tok/mb=16384 两 seq 点(seq4096/8192)均满速，CUDA Graph 顶格停滞终判成立。需要时再读。
-
-> 📦 §#786 流水（2026-10-26 02:0x，rev3 真因=CUDA Graph 顶格停滞·关 graph 561K=0.93×满速·recompute 证伪·报告 rev3·commit cb0a83307）已压缩 → daily-memories/2026-10-26.md；**结论**：rev3 root cause + 关 graph 修复独立成立，§3 seq8192 验收由 #788 补齐闭合。需要时再读。
-
-> 📦 §#787 流水（2026-10-26 03:2x，CP=2/4 smoke：cp1 OOM@81,049MiB / cp2 flash-attn-3 `window_size` API 阻断 / 32K 不可跑 / 16K 关 graph=实用满速上限 / 早报已写）已压缩 → daily-memories/2026-10-26.md；**结论**：32K 须 CP 且被 flash-attn-3 API 阻断（代码任务，非 Mamba2 SSM 本身），rev3 关 graph 561K/75.5GB=16K 实用满速上限。脚本 bug 修复 commit eda1e6c7d。需要时再读。
-
-> 📦 §#785 流水（2026-10-26 01:3x，rev2 报告重写 25,266B memory-bound + 修 #784 虚假交付）已压缩 → EXPERIMENTS_PRETRAIN_2B_ROUND2.md rev2 节；**结论**：rev2「memory-bound」归因已被 #786 rev3 复测修正为「CUDA Graph 顶格停滞」（显存顶格是必要条件非成因）。需要时再读。
-
-> 📦 §#784 流水（2026-10-26 00:4x，tok/mb 悬崖 11 格实测 E1–E5a 全出数 + rev1 报告 16.9KB）已压缩 → EXPERIMENTS_PRETRAIN_2B_ROUND2.md「🔴 tok/mb 悬崖根因」节；**结论**：驱动变量=tok/mb=mbs×seq（与 seq/批几何无关）；11 格证 tok/mb≥16384 全慢全 81.1GB 顶格、≤12288 全快全 <70GB；rev1「GPU 饥饿」被 E2 证伪。**其 memory-bound 归因已被 #786 rev3 修正为 CUDA Graph 顶格停滞。** 需要时再读。
-
-> 📦 §#782「GPU饥饿」+#781/#780 流水（2026-10-25，已被 #784 取代/证伪）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#782「小批GPU饥饿(MFU14%)」被 E2(同小批84%MFU)证伪，真因=tok/mb≥16384 显存顶 80GB→memory-bound。需要时再读。
-> 📦 §#781 流水（2026-10-25 21:28，cfg4跑完6格网格收尾+生成器落盘）已压缩 → daily-memories/2026-10-25.md；**结论**：6格全测完(cfg1-4 OK/cfg5-6 OOM@32768)，生成器确定性✓；其"SSM超线性"结论已被#782的cfg0a对照证伪。需要时再读。
-> 📦 §#780 流水（2026-10-25 20:33，网格监控 cfg1✅cfg2✅cfg3🏃）已压缩 → daily-memories/2026-10-25.md；**结论**：cfg1-3=108K/112K/112K，seq4096→8192 per-GPU崩82%，编排器自治。需要时再读。
-> 📦 体积：TASK=30.6 KB / MEMORY=31.5 KB（均 ≤32KB ✓）。
-> 📦 §#777 流水（2026-10-25 17:43，idle 复核三项运维令已交付，无新令）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x报告/23:5x父令/16:0x 三项交付物在位已 commit，WAITING=1。需要时再读。
-
-
-> 📦 §#776 流水（2026-10-25 16:2x，idle 心跳复核 07:4x 报告令交付物在位、纯验证零 GPU）已压缩 → daily-memories/2026-10-25.md；**结论**：dualnode 报告 24,970B+生成器已跟踪 commit+EXPERIMENTS L3691 指针均复核在位，三项运维令交付完毕，WAITING=1。需要时再读。
-
-> 📦 §#775 流水（2026-10-25 15:10，idle 心跳复核依旧在位·纯验证零 GPU）已压缩 → daily-memories/2026-10-25.md；**结论**：与 origin/main 同步，dualnode 报告/生成器/EXPERIMENTS 指针均复核，三项运维令交付完毕，WAITING=1。需要时再读。
-> 📦 §#774 流水（2026-10-25 14:00，idle 复核全部指令已交付）已归档 → daily-memories/2026-10-25.md；**结论**：07:4x 报告 24,970B+生成器+EXPERIMENTS L3691 均在位，三项运维令交付完毕，WAITING=1。需要时再读。
-
-> 📦 §#773（2026-10-25 12:4x，报告 HTML 严格有效性修复+清理 run/reports 残留）已归档 → daily-memories/2026-10-25.md L59–69；**结论**：占位符转义修复，0 script/0 外链/标签配平双过，单一来源=项目级 reports/。需要时再读。
-> 📦 §#772（2026-10-25 11:1x，报告位置纠正落地项目级 reports/）已归档 → daily-memories/2026-10-25.md L39–57；**结论**：REPORT_DIR 修回 os.path.join(HERE,..,reports)，与 gen_perf/gen_longctx 一致。需要时再读。
-
-> 📦 §#771（2026-10-25 09:5x，报告 HTML 落地+纠正#770未运行生成器）已归档 → daily-memories/2026-10-25.md L25–37；**结论**：运行生成器产出 rev1 HTML（24.4KB），3 已测 TAG 闭合+6 未测，机制闭合。需要时再读。
-
-> 📦 §#770（2026-10-25 08:3x，双机16卡吞吐报告 rev1 交付）已归档 → daily-memories/2026-10-25.md L13–23；**结论**：双机扩展效率 99.4%(606K)，Task B 3 TAG 全无收益，机制=allreduce<1%步时，#767 误报已纠正。需要时再读。
-
-> 📦 §#768 流水（2026-10-25 01:3x，纠正#767误报·双机16卡 e18 真实扩展效率=99.4%(606K tok/s)·非84%/BF16+mock·launcher bug 已修并 rerun 复现·任务A完成·任务书归档）已压缩 → daily-memories/2026-10-25.md；**结论**：#767 报 513K/84%/BF16+mock 系误报（脚本 `WORKER_SSH_PID` unbound 挂起→summary 残缺→手工解析混淆），rerun 606,449 tok/s/99.4%/per-GPU 37,903/67.6GB/loss7.5733/0NaN；launcher bug fix + EXPERIMENTS 落盘。需要时再读。
-
-
-> 📦 §#767（2026-10-24 23:3x，误报已纠正）已归档 → daily-memories/2026-10-24.md；**结论**：#767报513K/84%/BF16+mock系误报,#768纠正为606K/99.4%/FP8+real。需要时再读。
+> 📦 §#768~#790 流水（2026-10-24~10-26，吞吐调优/CUDA Graph根因/双机实测/报告交付）已归档 → daily-memories/2026-10-{24,25,26}.md & ARCHIVE_OPERATOR_PRETRAIN.md；**结论汇总**：CUDA Graph顶格停滞=吞吐下降真因(关graph修复)；双机16K=613,992 tok/s；32K CP2=351,526；RoPE θ=1e6修复commit ae3a093；多份报告已交付。需要时再读。
 
 > 📦 §#766（2026-10-24 15:0x）已归档 → daily-memories/2026-10-24.md；**结论**：CUDA12.9驱动级BLOCKED(570<575),7/7建议全闭合,吞吐上限305K确认,data未就绪。需要时再读。
 
