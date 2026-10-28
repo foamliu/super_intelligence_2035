@@ -1490,3 +1490,24 @@ docker pull hello-world          # 必须成功
 - 按 R518 就绪核查报告（`harness/` 下 11323B 那份）的方案：**先 cline + hermes 各 smoke 1 条验通 → 再各跑 20 条试点 → 报初步 resolve 结果**（三列 resolved/failed/infra-or-quota + 结论），供运维放大决策。
 - SWE-bench Verified 已下载 500/500（进度文件 `harness/swebench_verified_pull_progress.txt` DONE 10-26 18:23）；🚫 不得跑全量，严格停在 20 条试点并报数。commit `harness ha:`。
 
+
+---ARCHIVE BOUNDARY 2026-10-28 R553---
+
+### [运维令] 2026-10-28 12:0x（**TB 7way 报告质量整改 · 逐条回应 5 问**）· 用户直令 · 最高优先
+
+> 用户直批 TB 报告「工作质量很低，让人失望」，5 问必须逐条书面回应并整改（可打断 SWE-bench gate 以外的闲杂项，但**不得打断已 running 的 R548/gate**）。
+
+**① 分母 89 → 87 错在哪**：Terminal-Bench 2.0 官方口径 = **89 题**（Stanford+Laude；tbench.ai / Snorkel / arXiv 2601.11868 均写 89）。你们自创「89 目录去 `__hash` 重复 → canonical 87」的**无官方依据**。请列出被去掉的 2 个 task 名 + 依据；无据则**全文分母改回 89**（87 题结果可留作「87 题子集」附注，不许冒充官方口径）。
+
+**② 三路 0% 必须给根因**：hermes(RuntimeError×36) / claude-code(AgentTimeoutError×23) / deepseek(NonZeroAgentExitCodeError×35) 各给**精确 stack + 代表性样本**；能修的修完重跑，不能修的标「未修复（原因）」，**不许用 bug 结果充当最终结论**。
+
+**③ codex 23% 异常**：59/87 异常中 34 条 429（其余 6 路无 429 → codex 独有，必是调用层缺陷）。加**指数退避重试**后重跑，给干净分数。
+
+**④ 已替你 web search 基线（必须在报告中对照）**：骨干 kimi-k2.6 在 TB 2.0 公开分数 ≈ **57.3%–66.7%**（benchleader / evals.report / benchmarklist）；而本报告最高 cline 仅 49.4%、opencode 47.1%、codex 23% —— **整体显著偏低**。请给「差距归因」（harness 循环 / 超时 1800s / 工具缺失 / 接入层），说明可提升点。
+
+**⑤ 总表与复跑矛盾**：§四已写 hermes 25/87(28.7%)、claude-code 20/87(23.0%)，§二总表却仍 0/87 —— **复跑结果必须合入主表**（「主跑/复跑」双列或直接更新），禁止正文自相矛盾。
+
+**交付**：① 逐条书面回应（中文，commit 到 `run/harness/`，可并入报告「QA 修订」节）；② 修订版 `report_harness_terminalbench_7way_final_zh.html`（分母口径 + 复跑合表 + 基线对照）。commit 前缀 `harness TB整改:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0`。
+
+> **归档备注（R553, 2026-10-28）**：本令已交付——commit `33782ab93`「harness TB整改: QA 5问逐条回应+修订版7way报告」。交付物：`run/harness/tb_qa_rectification_20261028.md`（逐条书面回应）+ `reports/report_harness_terminalbench_7way_final_zh.html`（修订版，分母89/复跑合表/基线对照/3路0%stack/codex429）。因任务书 >32KB 且本令已产出交付物并 commit，按「📉 体积维护规程」原文搬迁归档，留指针于任务书。
+
