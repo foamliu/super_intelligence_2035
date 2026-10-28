@@ -1,14 +1,14 @@
 {
   "harness": "opencode",
   "harness_code": "opencode",
-  "done": 19,
+  "done": 22,
   "total": 500,
-  "patch_produced": 18,
+  "patch_produced": 21,
   "infra": 1,
   "timeout": 0,
   "quota_blocked": 0,
   "no_patch": 0,
-  "last_update": "2026-10-28 14:18:50",
+  "last_update": "2026-10-28 14:47:05",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -249,6 +249,45 @@
       "stdout_tail": "butes\n[✓] Implement fix to preserve attributes\n[✓] Verify fix with test case from issue\n\u001b[0m\n\n[run_single] model_patch: 3073 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-4687.json\n[run_single] cleanup: git reset --hard d3b6aa6d8b997df115a53c001d00222a0f92f63a\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-4687.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-4695",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 700.0,
+      "model_patch_len": 2495,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ode\n[✓] Implement fix with minimal changes\n[✓] Add regression test\n[✓] Verify fix works\n\u001b[0m\n\n[run_single] model_patch: 2495 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-4695.json\n[run_single] cleanup: git reset --hard 51ef2a66c4e0896eab7d2b03e3dfb3963e338e3c\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-4695.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-4966",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 526.3,
+      "model_patch_len": 3488,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "ed=False decode behavior in xarray/tests/test_coding.py\n[✓] Run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 3488 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-4966.json\n[run_single] cleanup: git reset --hard 37522e991a32ee3c0ad1a5ff8afe8e3eb1885550\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-4966.json",
+      "classification": "patch-produced"
+    },
+    {
+      "instance_id": "pydata__xarray-6461",
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 460.7,
+      "model_patch_len": 1443,
+      "quota_blocked": false,
+      "timeout": false,
+      "stdout_tail": "Fix the IndexError when x is a scalar and keep_attrs=True\n[✓] Add/run tests for the fix\n\u001b[0m\n\n[run_single] model_patch: 1443 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6461.json\n[run_single] cleanup: git reset --hard 851dadeb0338403e5021c3fbe80cbc9127ee672d\n",
+      "stderr_tail": "",
+      "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/opencode__pydata__xarray-6461.json",
       "classification": "patch-produced"
     }
   ]
