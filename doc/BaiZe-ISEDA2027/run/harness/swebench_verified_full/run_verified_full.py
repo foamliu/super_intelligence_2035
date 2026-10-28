@@ -122,7 +122,7 @@ def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool
                            workdir, timeout=30, with_proxy=False)
         if rc_chk != 0:
             _, _, rc_f = run(["git", "fetch", "--depth=1", "origin", base_commit],
-                             workdir, timeout=300)
+                             workdir, timeout=1800)
             if rc_f != 0:
                 # NFS resilience: try checkout anyway (fetch may report tmp_pack
                 # error while objects are actually downloaded)
@@ -137,7 +137,7 @@ def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool
     run(["git", "init", "-q"], workdir, timeout=30, with_proxy=False)
     run(["git", "remote", "add", "origin", url], workdir, timeout=30, with_proxy=False)
     _, _, rc = run(["git", "fetch", "--depth=1", "origin", base_commit],
-                   workdir, timeout=300)
+                   workdir, timeout=1800)
     if rc != 0:
         # NFS resilience: try checkout anyway
         _, _, rc_co = run(["git", "checkout", "-f", base_commit], workdir, timeout=120)

@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R549 SWE-bench Verified 全量500·可用性闸门 GATE v2 predict全完成·eval运行中(5路). 运维令2026-10-28 07:1x(用户直令·最高优先).
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2 predict全7路完成(cline6patch·codex7·claude-code6·opencode9·pi8·hermes3·deepseek0)
-当前动作:     GATE eval后台运行中(5路:cline/codex/claude-code/opencode/pi·max_workers=4·4 docker容器已起). **5路PASS(产patch≥1,no_patch≤2)**:cline(6p/0np)·codex(7p/2np)·claude-code(6p/2np)·opencode(9p/0np)·pi(8p/1np). **2路FAIL**:hermes(3p/6np,其中4个2s瞬断=适配器bug+1个1800s timeout)·deepseek(0p/9np,3s/题=SDK内部失败,proxy9091 chat可用故非proxy问题). hermes rerun在最后一题(psf). eval ETA~1.5-2h.
-下一步:       ①等eval完成→②gate判定(resolve≥1)→③5路通过的全量500启动(断点续跑)→④hermes/deepseek单列「未参与+原因」→⑤全量eval→⑥交付report_harness_swebench_verified_full500_zh.html(含McNemar+Wilson CI).
-阻塞:         无. git-fetch-timeout(sympy/matplotlib/sklearn/astropy大仓)仍是infra→全量需--filter=blob:none或timeout1800s. hermes适配器2s瞬断待查. deepseek SDK 3s退出待查.
+PHASE:        R551 SWE-bench Verified 全量500·GATE全PASS·全量predict 5路后台运行中. 运维令2026-10-28 07:1x(用户直令·最高优先).
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成(5路PASS:cline1/6·codex6/7·claude-code3/6·opencode7/9·pi7/8;2路FAIL:hermes·deepseek)
+当前动作:     全量500 predict 5路后台运行(setsid): cline(PID4184705)·codex(PID32834)·claude-code(PID62476)·opencode(PID106234)·pi(PID142980). git-fetch-timeout已修300→1800s. 每路用rotated ids(不同起始repo)避免并发fetch拥塞. 断点续跑已生效(gate 10题自动skip). ETA~2-3天.
+下一步:       ①监控full_predict进度(每~100题报一次)→②5路predict全完→全量eval(顺序·docker workers=8)→③hermes/deepseek单列「未参与+原因」→④交付report_harness_swebench_verified_full500_zh.html(含McNemar 5x5+Wilson CI).
+阻塞:         无. hermes适配器2s瞬断(FAIL原因)·deepseek SDK 3s退出(FAIL原因)→均不进全量,报告单列.
 ERROR_COUNT:  0
-📦 体积：TASK=31.3KB / MEMORY=31.9KB
+📦 体积：TASK=30.5KB / MEMORY=17.7KB（本轮归档 0KB）
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[13:20] R551 **GATE全PASS→全量500 predict 5路后台启动**. 运维令2026-10-28(全量500). Gate eval全部完成: 5路PASS=cline(1/6)·codex(6/7)·claude-code(3/6)·opencode(7/9)·pi(7/8); 2路FAIL=hermes(3p/6np>2)·deepseek(0p,SDK 3s退出). kill残留hermes gate进程. 全量启动: git-fetch-timeout 300→1800s; rotated ids(offset 0/100/200/300/400); launch_full_predict_5.sh setsid 5路; 断点续跑(gate 10题auto-skip). gw_proxy 9090=200. PID: cline4184705·codex32834·claude-code62476·opencode106234·pi142980. ETA~2-3天. WAITING=0(predict运行中). 体积:TASK=30.5KB/MEMORY=17.7KB✓.
+
+
 [12:32] R550 **EVAL_LOG_ROOT路径bug修复→3路eval re-parse→GATE PASS**. 发现`parse_eval()`中`EVAL_LOG_ROOT=HERE/"logs"/"evaluation"`但swebench v5.0.2实际写入`logs/run_evaluation/{run_id}/{model}/{iid}/report.json`→全显示infra. **修复**:`EVAL_LOG_ROOT`改为`HERE/"logs"/"run_evaluation"`. re-parse 3路(eval已DONE): **cline**resolved=1/6(psf-requests)→PASS·**codex**resolved=6/7(astropy/requests/xarray/sklearn/sphinx/sympy,failed=pytest)→PASS·**claude-code**resolved=3/6(sklearn/xarray/requests)→PASS. opencode eval仍跑(PID703151,9 patches,watcher reparse_opencode.sh setsid后台PID866376等eval完自动re-parse). pi eval未启动(将用fixed code). hermes FAIL(4patch/5no_patch>2)·deepseek FAIL(0patch). **判据**:5路中3路已PASS·2路pending(opencode/pi)→全量500未启动→WAITING=0. 体积:TASK=31263B/MEMORY=17KB均≤32KB✓.
 
 [12:20] R549 **GATE v2 predict全7路完成·eval后台启动(5路)**. 运维令2026-10-28(全量500). Gate predict结果(10题×7路): **cline**10/10 6patch 0np 4infra(git-fetch-timeout)→PASS; **codex**10/10 7patch 2np 1infra→PASS; **claude-code**10/10 6patch 2np 2infra→PASS; **opencode**10/10 9patch 0np 1infra→PASS(port 9092→9090修复生效); **pi**10/10 8patch 1np 1infra→PASS(port 9092→9090修复生效); **hermes**9/9(rerun) 3patch 6np(其中4个wall=2s瞬断=适配器bug,1个1800s timeout)→FAIL(no_patch>2); **deepseek**10/10 0patch 9np 1infra→FAIL(每题wall=3s,SDK内部失败). 已查:gw_proxy_dsh(9091)/v1/chat/completions返回200✅(403仅/v1/models)→deepseek非proxy问题. **eval已启动**:run_gate_eval_5.sh后台跑5路(cline/codex/claude-code/opencode/pi),max_workers=4,4 docker容器已起(sweb.eval.*.verified_full_cline-patched). hermes rerun在最后一题(psf,61s). 体积TASK=31263B/MEMORY≈32620B. **判据自检**:运维指令(全量500)未完成→WAITING=0.

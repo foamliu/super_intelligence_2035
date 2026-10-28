@@ -3,12 +3,12 @@
   "harness_code": "hermes",
   "done": 10,
   "total": 9,
-  "patch_produced": 4,
+  "patch_produced": 5,
   "infra": 0,
   "timeout": 0,
   "quota_blocked": 0,
-  "no_patch": 6,
-  "last_update": "2026-10-28 12:23:52",
+  "no_patch": 5,
+  "last_update": "2026-10-28 13:00:23",
   "results": [
     {
       "instance_id": "django__django-10097",
@@ -92,11 +92,11 @@
       "instance_id": "pydata__xarray-2905",
       "harness": "hermes",
       "returncode": 1,
-      "wall_s": 2.0,
+      "wall_s": 1800.2,
       "model_patch_len": 0,
       "quota_blocked": false,
       "timeout": false,
-      "stdout_tail": "AI client: cannot import name 'ArgsKwargs' from 'pydantic_core._pydantic_core' (unknown location)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__pydata__xarray-2905.json\n[run_single] cleanup: git reset --hard 7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614\n",
+      "stdout_tail": "f016e5ad614\n[run_single] running hermes ...\n== harness=hermes rc=-1 timed_out=True wall=1800.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__pydata__xarray-2905.json\n[run_single] cleanup: git reset --hard 7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__pydata__xarray-2905.json",
       "classification": "no-patch"
@@ -104,15 +104,15 @@
     {
       "instance_id": "pytest-dev__pytest-10051",
       "harness": "hermes",
-      "returncode": 1,
-      "wall_s": 2.2,
-      "model_patch_len": 0,
+      "returncode": 0,
+      "wall_s": 391.7,
+      "model_patch_len": 7055,
       "quota_blocked": false,
       "timeout": false,
-      "stdout_tail": "ient: cannot import name 'ArgsKwargs' from 'pydantic_core._pydantic_core' (unknown location)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__pytest-dev__pytest-10051.json\n[run_single] cleanup: git reset --hard aa55975c7d3f6c9f6d7f68accc41bb7cadf0eb9a\n",
+      "stdout_tail": "eb9a\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=391.5s ==\n[run_single] model_patch: 7055 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__pytest-dev__pytest-10051.json\n[run_single] cleanup: git reset --hard aa55975c7d3f6c9f6d7f68accc41bb7cadf0eb9a\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/hermes__pytest-dev__pytest-10051.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "pylint-dev__pylint-4970",
