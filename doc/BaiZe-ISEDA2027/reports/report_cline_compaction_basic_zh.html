@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compaction 默认策略改为 basic 的收益分析与实施方案</title>
+<style>
+:root{--fg:#1a1a2e;--muted:#55556e;--accent:#2563eb;--bg:#fafafa;--card:#ffffff;--line:#e5e7eb;--warn:#b45309;--ok:#15803d;--code-bg:#f1f5f9}
+*{box-sizing:border-box}
+body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:960px;margin:0 auto;padding:32px 24px 80px}
+h1{font-size:26px;margin:0 0 4px;line-height:1.35}
+h2{font-size:20px;margin:40px 0 12px;padding-left:10px;border-left:4px solid var(--accent)}
+h3{font-size:16px;margin:24px 0 8px}
+p{margin:10px 0}
+.sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin:16px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-right:6px}
+.tag.ok{background:#ecfdf5;color:var(--ok)}
+.tag.warn{background:#fffbeb;color:var(--warn)}
+.tag.info{background:#eff6ff;color:var(--accent)}
+code{background:var(--code-bg);padding:1px 6px;border-radius:4px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;color:#0f172a}
+pre{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px 20px;overflow-x:auto;font-size:13px;line-height:1.6}
+pre code{background:transparent;color:inherit;padding:0}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:#f8fafc;font-weight:600}
+.muted{color:var(--muted)}
+.kv{font-weight:600;color:var(--accent)}
+ul,ol{margin:8px 0;padding-left:24px}
+li{margin:4px 0}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+.footnote{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Compaction 默认策略改为 basic 的收益分析与实施方案</h1>
+<p class="sub">主题：cline-cli 上下文压缩默认策略 agentic → basic · 参考对象：BaiZe 多 agent 自动化循环 · 2026-10-28</p>
+
+<h2>一、背景：Compaction 的两种策略</h2>
+<div class="card">
+<p>当会话上下文接近模型输入上限时，Cline 会触发 <strong>Compaction（上下文压缩）</strong>，压掉较早的历史内容，为后续对话腾出空间。核心实现位于 <code>sdk/packages/core/src/extensions/context/compaction.ts</code>，支持两种策略（<code>CoreCompactionStrategy = "basic" | "agentic"</code>，见 <code>types/config.ts:156</code>）：</p>
+<table>
+<thead><tr><th>策略</th><th>原理</th><th>是否调用 LLM</th><th>特点</th></tr></thead>
+<tbody>
+<tr>
+<td><code>basic</code><br>（确定性裁剪）</td>
+<td>纯确定性算法：按规则截断、保留最近 N tokens、压缩工具活动摘要，不生成新文本。</td>
+<td><strong>否</strong></td>
+<td>快、零额外交互、结果可预测、无外部失败点。</td>
+</tr>
+<tr>
+<td><code>agentic</code><br>（LLM 摘要）</td>
+<td>调 LLM（<code>generateSummary</code>，见 <code>agentic-compaction.ts:62</code>）把历史总结成「continuation note」。需要额外的 summarizer 模型/输入预算。</td>
+<td><strong>是</strong></td>
+<td>摘要语义质量更高、可能保留更多隐含上下文；但多一次模型往返、有延迟/成本/失败风险。</td>
+</tr>
+</tbody>
+</table>
+<p class="muted">另外还有一个 <code>off</code>（彻底关压缩），不在本报告讨论范围。</p>
+</div>
+
+<h2>二、默认值是 agentic（三处口径）</h2>
+<div class="card">
+<p>当前压缩默认策略是 <code>agentic</code>，分散在多个入口：</p>
+<table>
+<thead><tr><th>位置</th><th>文件:行</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>CLI 默认常量</td><td><code>apps/cli/src/utils/compaction-mode.ts:11-14</code></td><td><code>DEFAULT_CLI_COMPACTION_MODE = "agentic"</code></td></tr>
+<tr><td>engine 兜底</td><td><code>sdk/packages/core/src/extensions/context/compaction.ts:285</code></td><td><code>strategy = userCompaction?.strategy ?? "agentic"</code></td></tr>
+<tr><td>运行时全局设置</td><td><code>settings/global-settings.json</code></td><td><code>"compactionStrategy": "agentic"</code>（各 agent 线均有）</td></tr>
+</tbody>
+</table>
+<p>CLI 暴露了 <code>--compaction &lt;mode&gt;</code> 命令行参数（<code>agentic|basic|off</code>，默认 agentic），但 loop 脚本没有显式传参，因此实际走的就是默认 <code>agentic</code>。</p>
+</div>
+
+<h2>三、建议：默认改为 basic（纯确定性裁剪，不调 LLM）</h2>
+<div class="card">
+<p>把三处默认从 <code>agentic</code> 统一切到 <code>basic</code>，让「不传参」的默认行为变成纯确定性裁剪。核心考量：在无人值守、由 loop 反复唤醒的自动化场景下，agentic 带来的语义增益几乎用不上，却要付出实打实的 LLM 成本与延迟。</p>
+</div>
+
+<h2>四、收益分析</h2>
+<div class="card">
+<h3>4.1 消除额外 LLM 调用（成本 & 延迟）</h3>
+<p>agentic 策略在压缩时会额外发起一次模型请求（<code>generateSummary</code> 走 <code>handler.createMessage("Summarize the provided coding session ...")</code>）。这意味着：</p>
+<ul>
+<li><span class="kv">每单位压缩少量延迟</span>：多一次完整的模型往返（首 token 延迟 + 生成摘要文本的流式时间）。</li>
+<li><span class="kv">每单位压缩少量 token 支出</span>：要把历史内容作为输入喂给 summarizer，再生成 summary 输出，双向都有 token 账单。</li>
+<li><span class="kv">失败风险</span>：summarizer 有输入预算上限（<code>summarizerInputLimit</code>），超限会「budget exhausted」直接跳过；模型不可用/超时会抛错。basic 无此类外部依赖。</li>
+</ul>
+
+<h3>4.2 收益量化（经验估计）</h3>
+<table>
+<thead><tr><th>维度</th><th>agentic（现状默认）</th><th>basic（建议默认）</th><th>收益</th></tr></thead>
+<tbody>
+<tr><td>压缩时额外 LLM 往返</td><td>1 次/触发</td><td>0 次</td><td><span class="kv">消除</span></td></tr>
+<tr><td>压缩附加 token 成本</td><td>输入历史 + 生成摘要</td><td>0</td><td><span class="kv">归零</span></td></tr>
+<tr><td>压缩延迟</td><td>数百 ms ~ 数 s</td><td>≈ 0（纯内存裁剪）</td><td>大幅降低</td></tr>
+<tr><td>外部失败点</td><td>有（超限/超时/模型错）</td><td>无</td><td>消除</td></tr>
+<tr><td>结果确定性</td><td>非确定</td><td>确定可复现</td><td>提高</td></tr>
+</tbody>
+</table>
+
+<h3>4.3 收益边界（诚实说明）</h3>
+<ul>
+<li><span class="kv">损失</span>：agentic 的语义摘要可能比「机械截断」保留更多隐含上下文，极端长对话下 reduced 后的续写质量可能略低。对自动化循环（每轮只读任务书、推进一步、写心跳即退出）影响极小——它本就不依赖跨压缩的精细长程记忆。</li>
+<li><span class="kv">适用前提</span>：本建议针对「无人值守 / 高频唤醒 / 成本敏感」场景。交互式重度长会话若依赖高质量摘要，可显式 <code>--compaction agentic</code> 覆盖。</li>
+<li><span class="kv">注意</span>：<code>overflowRecovery</code>（模型端拒绝超上下文时强制压缩）本就固定走 basic 确定性路径（见 <code>compaction.ts</code> 注释「recovery must not depend on another successful LLM request」），不受此改动影响——安全性不降。</li>
+</ul>
+</div>
+
+<h2>五、实施方案</h2>
+<div class="card">
+<h3>5.1 改代码默认值（源码层，治本）</h3>
+<p><strong>① CLI 默认常量</strong> —— <code>apps/cli/src/utils/compaction-mode.ts</code>：</p>
+<pre><code>export const DEFAULT_CLI_COMPACTION_MODE: Extract&lt;
+	CliCompactionMode,
+	"agentic" | "basic"
+&gt; = "basic";  // 原为 "agentic"</code></pre>
+
+<p><strong>② engine 兜底</strong> —— <code>sdk/packages/core/src/extensions/context/compaction.ts:285</code>：</p>
+<pre><code>const strategy = userCompaction?.strategy ?? "basic";  // 原为 "agentic"</code></pre>
+
+<p><strong>③ CLI help 文案同步</strong> —— <code>apps/cli/src/utils/compaction-mode.ts</code>：</p>
+<pre><code>export const CLI_COMPACTION_MODE_OPTION_DESCRIPTION =
+	"Context compaction mode: agentic|basic|off (default: basic)";</code></pre>
+
+<h3>5.2 改运行时全局设置（配置层，立即可用，不改源码）</h3>
+<p>各 agent 线的 <code>&lt;data-dir&gt;/settings/global-settings.json</code> 里把 <code>compactionStrategy</code> 改为 <code>basic</code>：</p>
+<pre><code>{
+  "compactionStrategy": "basic",   // 原 "agentic"
+  "compactionEnabled": true        // 保留启用，仅换策略
+}</code></pre>
+
+<h3>5.3 重新构建与验证</h3>
+<pre><code>cd /nas_train/app.e0031982/harness/cline
+bun run build:sdk
+bun -F @cline/cli build
+# CLI standalone 二进制（如需随包发布）
+cd apps/cli &amp;&amp; bun build --compile ./src/index.ts --outfile &lt;out&gt;</code></pre>
+<p>验证：不传 <code>--compaction</code> 启动一个长会话，观察压缩时是否仍产生 summarizer LLM 调用（agentic 会在日志打印 <code>Generated compaction summary</code> / <code>Agentic compaction summarizer diagnostics</code>，basic 则无）。</p>
+</div>
+
+<h2>六、结论与建议</h2>
+<div class="card">
+<ul>
+<li>cline 压缩双策略中，<strong>默认是 agentic（调 LLM）</strong>，basic（确定性裁剪）明明更省却被默认避开。</li>
+<li>将默认改为 <strong>basic</strong>：消除压缩时的额外 LLM 往返、token 支出与外部失败点，换来更快的压缩与可复现行为；仅在依赖「语义摘要保长程记忆」的交互式场景才有负面影响。</li>
+<li>建议分两步落地：先改 <span class="tag tag-info">5.2 配置层</span>（零构建成本、立即生效），再合并 <span class="tag tag-info">5.1 源码层</span>（固化默认，避免未来配置漂移）。</li>
+</ul>
+<p class="footnote">依据源码：<code>/nas_train/app.e0031982/harness/cline</code>（v3.0.51 基线）；行号以该版本为准，升级后请重核。</p>
+</div>
+
+</div>
+</body>
+</html>

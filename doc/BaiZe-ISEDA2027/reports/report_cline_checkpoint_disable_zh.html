@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关闭 Cline Checkpoint 的收益分析与实施方案</title>
+<style>
+:root{--fg:#1a1a2e;--muted:#55556e;--accent:#2563eb;--bg:#fafafa;--card:#ffffff;--line:#e5e7eb;--warn:#b45309;--ok:#15803d;--code-bg:#f1f5f9}
+*{box-sizing:border-box}
+body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:960px;margin:0 auto;padding:32px 24px 80px}
+h1{font-size:26px;margin:0 0 4px;line-height:1.35}
+h2{font-size:20px;margin:40px 0 12px;padding-left:10px;border-left:4px solid var(--accent)}
+h3{font-size:16px;margin:24px 0 8px}
+p{margin:10px 0}
+.sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin:16px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-right:6px}
+.tag.ok{background:#ecfdf5;color:var(--ok)}
+.tag.warn{background:#fffbeb;color:var(--warn)}
+.tag.info{background:#eff6ff;color:var(--accent)}
+code{background:var(--code-bg);padding:1px 6px;border-radius:4px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;color:#0f172a}
+pre{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px 20px;overflow-x:auto;font-size:13px;line-height:1.6}
+pre code{background:transparent;color:inherit;padding:0}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:#f8fafc;font-weight:600}
+.muted{color:var(--muted)}
+.kv{font-weight:600;color:var(--accent)}
+ul{margin:8px 0;padding-left:24px}
+li{margin:4px 0}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+.footnote{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>关闭 Cline Checkpoint 的收益分析与实施方案</h1>
+<p class="sub">主题：desktop-app 与 cline-cli 的 checkpoint 默认关闭 · 参考对象：BaiZe 多 agent 自动化工作副本 · 2026-10-28</p>
+
+<h2>一、背景：Checkpoint 是什么</h2>
+<div class="card">
+<p>Cline 的 <strong>Checkpoint（检查点）</strong>是一套「影子 Git 仓库」快照机制：agent 每执行一轮工具调用（改文件、跑命令）前，对当前工作区打一个可回滚的 git 快照，存进独立于主仓库历史的 <code>refs/cline/checkpoints/&lt;sessionId&gt;/&lt;runCount&gt;</code>。目的是让交互式用户能一键「恢复文件 / 恢复对话 / 两者都恢复」。</p>
+<p>其核心实现位于 <code>sdk/packages/core/src/hooks/checkpoint-hooks.ts</code>，触发点是 <code>beforeModel</code> 且 <code>iteration === 1</code>（即每个 run 第一次调模型前）。关键代价路径是：</p>
+<ol>
+<li><code>git stash create</code>（快照已跟踪文件的改动）；</li>
+<li><code>git ls-files --others --exclude-standard -z</code> —— 枚举工作区<strong>全部未跟踪文件</strong>；</li>
+<li>把未跟踪文件逐个 <code>git add --force --pathspec-from-file</code> 写进临时 index，再 <code>write-tree</code>/<code>commit-tree</code> 合入 stash 的第三个 parent（<code>createUntrackedParentCommit</code>）。</li>
+</ol>
+<p class="muted">第 2、3 步的开销与「未跟踪文件数量」成正比，与大文件数量、文件所在文件系统（本地盘 vs NFS）强相关。这正是问题所在。</p>
+</div>
+
+<h2>二、问题：在 BaiZe 场景下，Checkpoint 是纯负担</h2>
+<div class="card">
+<p>BaiZe 的四条 agent 线（pretrain / data / vision / harness）以 <span class="tag tag.info">无人值守循环</span>方式运行 cline：loop 每轮唤醒 cline，读到任务书、只推进一步、更新心跳后退出，从未使用交互式「回滚」功能。</p>
+<p>但这套循环跑在一个<strong>共享、巨大、挂在 NFS 上的 Git 工作副本</strong>里。工作区存在海量未跟踪文件（各线在途产物、大模型权重、数据分片、下载缓存等）。于是每次 cline 进程启动、第一个 run 触发 <code>beforeModel</code> 时，checkpoint 都要做一次全量未跟踪文件扫描 + 哈希 + 写 index：</p>
+<ul>
+<li><span class="kv">实测现象</span>：data 线启动时 checkpoint 的 <code>git add --force --pathspec-from-file</code> 卡住 <strong>4 分钟以上</strong>仍未走完，把 agent 挡在启动阶段，长期停滞。</li>
+<li><span class="kv">后果</span>：每次唤醒的前几分钟被 checkpoint 吃掉，agent 迟迟无法进入正题；在 loop 的 25 分钟单次超时预算里，占比可观，且随未跟踪文件增长只会更慢。</li>
+</ul>
+<p>对「无人值守、从不回滚、且晚点可用 git 本体兜底」的自动化场景，checkpoint 提供不了任何价值，却付出每轮数分钟的高昂代价。</p>
+</div>
+
+<h2>三、默认开关现状（三个入口逐一定位）</h2>
+<div class="card">
+<table>
+<thead><tr><th>入口</th><th>文件:行</th><th>当前默认</th><th>说明</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>core（引擎底层）</strong></td>
+<td><code>sdk/packages/core</code></td>
+<td>opt-in（默认关闭）</td>
+<td>核心把 checkpoint 留作可选项；注释明确「Core leaves checkpoints disabled by default」。</td>
+</tr>
+<tr>
+<td><strong>cline-cli</strong></td>
+<td><code>apps/cli/src/runtime/defaults.ts:16-18</code><br><code>CLI_DEFAULT_CHECKPOINT_CONFIG = { enabled: true }</code></td>
+<td><span class="tag tag.warn">开</span></td>
+<td>CLI 显式开启，让每次 run 都有可恢复快照。<strong>已在本项目关闭</strong>：改 <code>enabled:false</code> 并重编译为 standalone 二进制。</td>
+</tr>
+<tr>
+<td><strong>desktop-app</strong></td>
+<td><code>apps/examples/desktop-app/sidecar/chat-session.ts:378</code><br><code>checkpoint: { enabled: true }</code></td>
+<td><span class="tag tag.warn">开</span></td>
+<td>桌面应用侧车进程 <code>buildSessionConnectionUpdate</code> 里硬编码开启，与 CLI 是<strong>两套独立入口</strong>。</td>
+</tr>
+</tbody>
+</table>
+<p class="footnote">结论：desktop-app 的 checkpoint 默认<strong>是开的</strong>，且改 <code>defaults.ts</code>（CLI 入口）不会影响它；要关 desktop-app，必须改 <code>chat-session.ts:378</code>。</p>
+</div>
+
+<h2>四、关掉 desktop-app checkpoint 的性能收益</h2>
+<div class="card">
+<h3>4.1 收益定性</h3>
+<ul>
+<li><strong>消除每次会话首个 run 的固定冷启动开销</strong>：不再执行「全量未跟踪文件枚举 + 哈希 + 写 origin index + write-tree/commit-tree」这一整套 O(未跟踪文件数) 的磁盘/NFS 扫描。</li>
+<li><strong>大仓库 / NFS 场景收益最显著</strong>：未跟踪文件越多、文件越大、存储越慢（NFS），节省越明显。实测同类工作副本下单次 checkpoint 可达分钟级，关闭后该开销归零。</li>
+<li><strong>日常小仓库、本地盘场景收益有限</strong>：当未跟踪文件少、git 扫描快（几十毫秒级），关闭 checkpoint 几乎感觉不到差别——此时它本就不是瓶颈。</li>
+</ul>
+
+<h3>4.2 收益量化（经验估计）</h3>
+<table>
+<thead><tr><th>工作区状态</th><th>关闭前单次 checkpoint 耗时</th><th>关闭后</th><th>相对收益</th></tr></thead>
+<tbody>
+<tr><td>小仓库、本地 SSD、少量未跟踪文件</td><td>≈ 5–50 ms</td><td>0</td><td class="muted">可忽略</td></tr>
+<tr><td>中型仓库、几千未跟踪文件</td><td>≈ 0.5–5 s</td><td>0</td><td>低–中</td></tr>
+<tr><td>大型共享仓库、NFS、海量/巨量未跟踪文件（BaiZe 现状）</td><td><strong>数十秒至数分钟</strong>（实测一度 &gt; 4 min）</td><td>0</td><td><span class="kv">极高</span></td></tr>
+</tbody>
+</table>
+<p>以 BaiZe 灰区现状为基准，关闭后每条 agent 线<strong>每次唤醒可省下数分钟纯等待</strong>，直接转化为「更快进入任务、更高唤醒吞吐、更少被误判卡死」。</p>
+
+<h3>4.3 收益边界与代价</h3>
+<ul>
+<li><span class="kv">代价</span>：失去「一键回滚工作区文件 / 对话到历史检查点」的交互式能力。</li>
+<li><span class="kv">对自动化循环</span>：无代价——这些线从不使用回滚，且已有 git 本体 + 各线 MEMORY/日报 + loop 兜底提交作为安全保障。</li>
+<li><span class="kv">对交互式桌面用户</span>：确有代价——如果用户依赖「改坏了→恢复」，关闭后需改用 git 自己管理。因此建议按「部署形态」区分：无人值守形态关，交互形态保留。</li>
+</ul>
+</div>
+
+<h2>五、如何关掉 desktop-app 的 checkpoint</h2>
+<div class="card">
+<h3>方案 A：硬编码关闭（最小改动）</h3>
+<p>编辑 <code>apps/examples/desktop-app/sidecar/chat-session.ts</code>，把第 378 行的 <code>enabled: true</code> 改为 <code>false</code>：</p>
+<pre><code>// 改前（第 378 行）
+checkpoint: { enabled: true },
+
+// 改后
+checkpoint: { enabled: false },</code></pre>
+<p>随后重新构建侧车并打包：</p>
+<pre><code>cd apps/examples/desktop-app
+bun run build:sidecar           # 编译 sidecar/index.js
+bun run build:sidecar:bin       # 生成侧车 standalone 二进制（如发布需随包）</code></pre>
+
+<h3>方案 B：改成可配置（推荐，兼顾两种部署形态）</h3>
+<p>不写死，而是从已有配置对象读一个可选字段（例如 <code>config.checkpointEnabled</code> 或复用 <code>config.checkpoint</code>），缺省时按部署环境决定：</p>
+<pre><code>// 示意：让 webview 传入的 config 能显式覆盖，缺省关闭
+checkpoint: { enabled: config.checkpointEnabled ?? false },</code></pre>
+<p>这样交互式桌面构建可通过配置按需开启，无人值守形态默认关闭，避免同一份源码在两种场景下反复改。</p>
+
+<h3>方案 C：与 CLI 总结对齐</h3>
+<p>如果希望三入口（core / cli / desktop-app）口径统一，最终应把「默认是否开启 checkpoint」收敛到一处配置来源（例如统一读 <code>config.checkpoint?.enabled</code>），由各 host 在启动时注入，而不是各自硬编码 <code>true</code>。这属于结构性清理，收益是长期消除「改了 one 处、漏了 another 处」的隐患。</p>
+</div>
+
+<h2>六、结论与建议</h2>
+<div class="card">
+<ul>
+<li>desktop-app 的 checkpoint <strong>默认开启</strong>（<code>sidecar/chat-session.ts:378</code> 硬编码 <code>enabled:true</code>），与 cline-cli 是独立的开关点。</li>
+<li>在 BaiZe 这类「NFS 大仓库 + 无人值守循环」环境下，checkpoint 是纯开销：实测单次可达分钟级，关闭后每次唤醒收益显著。</li>
+<li>cline-cli 侧已完成关闭并落地为 standalone 二进制；desktop-app 侧若有无人值守部署，建议按 <span class="tag tag.info">方案 B</span> 改为可配置（缺省关闭），交互式场景再显式开启。</li>
+</ul>
+<p class="footnote">本报告依据的源码版本：cline 仓库 <code>/nas_train/app.e0031982/harness/cline</code>（v3.0.51 基线）；关键行号以该版本为准，升级版本后请重新核对行号。</p>
+</div>
+
+</div>
+</body>
+</html>
