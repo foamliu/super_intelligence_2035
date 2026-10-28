@@ -7,7 +7,7 @@ WAITING: 0
 ```
 PHASE:        R548 SWE-bench Verified 全量500·可用性闸门(GATE v2)运行中. 运维令2026-10-28 07:1x(用户直令·最高优先):跑完整SWE-bench Verified全量500题×7路harness. 先10题闸门→达标放大.
 已完成:       H-B ctx压缩✅·Gate7/7(R466)·7x89(R479)·R527 TB报告✅·R539 pilot20报告✅(cline13/20=65%·hermes11/20=55%)·R547心跳轮
-当前动作:     R548 GATE v2 运行中(09:17启动). R548 v1闸门失败根因=10个astropy-only实例×6并发→6路同时fetch同一巨型仓→首超时→破workdir被9个同仓实例静默复用→0 agent实跑. v2修复:①git_clone_or_fetch改回pilot验证逻辑(浅fetch+NFS-race checkout+清锁·无full-fetch回退)②多样gate集gate_10_ids.txt(10仓各1:django/sympy/sphinx/matplotlib/sklearn/astropy/xarray/pytest/pylint/requests)③加deepseek-harness(PYTHONPATH=/tmp/dsh_sdk)共7路. 闸门predict 7并发→eval串行(docker). 进程在跑(09:17 PID3332857等).
+当前动作:     R548 GATE v2 运行中(09:17启动). **v2修复生效**:cline/codex git checkout成功(HEAD=b9cf764be62e,18 files)→agent实跑中(cline node进程处理django URLValidator题~3.6min);opencode/pi/claude-code/hermes/deepseek-harness git fetch进行中(index-pack接收浅clone pack). v1是全blocked(0 agent),v2是agent实跑. predict 7并发→预计~50min(10题×~5min). 进程在跑.
 下一步:       ①监控gate predict(每~5min查logs/gate_predict_*.log+reports/progress_*.json)→eval→report;②闸门达标路(resolve≥1且no_patch≤2)放大到全量500;③不达标路如实列原因不硬跑;④交付report_harness_swebench_verified_full500_zh.html+gen_report脚本+McNemar+Wilson CI.
 阻塞:         无. 闸门在跑. git fetch改浅fetch已验证(pilot口径).
 ERROR_COUNT:  0
@@ -32,6 +32,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[09:28] R548 GATE v2 **修复生效确认**. cline/codex git checkout成功(django HEAD=b9cf764be62e,18 files)→agent实跑中(run_single→cline node处理URLValidator题~3.6min);opencode/pi/claude-code/hermes/deepseek-harness git fetch进行中(git index-pack接收浅clone pack,etimes 70-122s). v1全blocked(0 agent)→v2 agent实跑. 注意:launch_gate.sh被run_commands工具30s超时杀掉(仅启动cline+codex),已手动setsid补启其余5路predict(09:22). eval阶段需手动跑(launcher已死). predict预计~50min. 续监控.
+
 [09:17] R548 **SWE-bench Verified 全量500·闸门v2启动**. 运维令2026-10-28 07:1x(用户直令最高优先). 发现R548 v1闸门已失败:gate_predict日志显示6路×10题全"blocked(patch=0B)"→0 agent实跑. 根因:verified_500_ids.txt前10个全是astropy/astropy(同一巨型仓)×6并发→6路同时fetch→首超时→破workdir(.git已建但commit缺失)被9个后续同仓实例静默复用("existing workdir updated")→checkout失败→全blocked. 且deepseek-harness被launch_gate.sh误排除("not available"实为可用:find_spec✓/tmp/dsh_sdk). **v2修复3项**:①run_verified_full.py git_clone_or_fetch改回pilot验证逻辑(run_pilot_batch.py:浅fetch--depth=1+NFS-race checkout+清*.lock·无full-fetch回退·timeout300s);②新建gate_10_ids.txt(10仓各1:django/sympy/sphinx/matplotlib/sklearn/astropy/xarray/pytest/pylint/requests·9/10含完整eval字段,pylint-4970替4551);③launch_gate.sh重写:7路含deepseek-harness(PYTHONPATH=/tmp/dsh_sdk)+--ids-file+清v1残留. 闸门09:17启动(PID3332857 cline起),predict 7并发20s stagger→eval串行docker workers8. WAITING=0(有未完成指令). 体积待收尾实测.
 
 [06:29] R547 **心跳轮防判死(上次commit R546@05:22距今~67min>60min)**. WAITING=1唤醒,运维指令区全为[已归档]/已闭合/常驻指针→无未完成离散指令. 复核两交付物命名规程:TB最终报告(doc/BaiZe-ISEDA2027/reports/,14975B)grep cline-patched=0✓;pilot20报告(13099B)grep=1仅line51真实文件路径eval_cline-patched.json(carve-out,合规)✓. git fetch(带proxy)+status确认与origin/main同步(HEAD=ef937c9d3 zhu_long归档@06:22,无harness新指令;工作树仅他线文件改动). 仅idle gw_proxy/gw_proxy_dsh常驻(非eval进程,etimes≈310067s). 体积TASK=27898B/MEMORY=31629B,均≤32KB✓无需归档. **判据自检**:运维指令区无未完成离散指令→WAITING=1正确.
