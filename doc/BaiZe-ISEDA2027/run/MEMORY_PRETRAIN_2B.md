@@ -1,13 +1,13 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 🆕 2026-10-28 15:4x #819：**pre_blend 进程已死→清理+重启**。① #818 的 PID 3280653 **已不存在**（.12 进程已死，日志 /tmp/preblend_en_v1_4_s11_15.log 不可读）。② s011 残留：.bin=180G（不完整，预期 565G）+ .idx=3.3G/.json（**来自旧损坏 run 的残留**，非本次产出）。s012 残留：.bin=9.3G（无 .idx/.json）。③ **已删除** s011 全部 + s012.bin。④ **重启** pre_blend（`--output-start 0 --output-end 16 --skip-existing`，用 miniforge3/py310 Python，PID 2422384 on .29），skip s000-s010 后正在 processing s011（565.84 GB）。⑤ 完成后会自动写 MANIFEST.json（16/16 in results）。ETA ~2.5h（~18:15）。磁盘 /nas_user 13T/89% / /nas_train 30T/86%。**下一步**：en_v1_4 完成→activate_preblend.sh（切 TSV 绝对路径 + nw=0→8）→ 8 卡 smoke(gbs256+nw=8) ≥500K → 16 卡 613K → check_rope → 起 S。
-> 📦 §#818（15:3x, 修复 .12 重复进程 + 重启 s011-s015）→ daily-memories/2026-10-28.md；**已被 #819 取代——进程已死，重新清理+重启**。
+> 🆕 2026-10-28 15:5x #820：**activate_preblend.sh 修复 + 全源验证**。① 修 3 bug：TSV heredoc 产生字面 `\t`（非 tab）→ 改 printf；路径多 `_pb` 后缀（文件前缀非目录）→ 去掉；key 名 `tsven_v_v1_4` 笔误 + 脆弱 sed → 直接 printf。② 5/7 源 MANIFEST.json 存在 ✓（code_l2/code_l3/math_l1/math_l3/ufw_l1_en_hq），en_v1_4 缺（11/16），ufw_zh 4 shards 无需 pre-blend ✓。③ gen_blend.py 测试：pre-blend 绝对路径 + ufw_zh 相对路径均 PASS。④ en_v1_4 s011=210G/515G(~41%)，PID 2422384 alive，ETA 全 16 shards ~18:12。
+> 📦 §#819（15:4x, pre_blend 进程已死→清理+重启 PID 2422384）→ daily-memories/2026-10-28.md；**结论**：清理 s011/s012 残留后重启，skip s000-s010，processing s011。
 > 📦 §#817（15:2x, 11/16 · .29 完成）→ daily-memories/2026-10-28.md；**已被 #819 取代**。
 > 📦 §#812~#816（12:3x~15:3x, pre-blend 4→11/16 + smoke + blend 报告）→ daily-memories/2026-10-28.md；**结论**：smoke 30/30 ✓，blend 报告 ✓，5 源 pre-blend ✓，en_v1_4 11/16。
 > 📦 §#806~#810（spawn 调试系列）→ daily-memories/2026-10-27/28.md；**已被 pre-blend 方案取代**。
 
-> - 未完成指令：有（① **en_v1_4 pre-blend s011-s015 重启中**[.29 PID 2422384, s011 processing, ETA~2.5h(~18:15)] ② en_v1_4 完成后 activate_preblend.sh（切 TSV 绝对路径 + nw=0→8） ③ 8 卡 smoke(gbs256+nw=8)验 0NaN+吞吐≥500K ④ 16 卡稳态对齐 613K ⑤ check_rope.py PASS[待ckpt] ⑥ lr-decay-shape exponential[Decay前验证] ⑦ 长上下文ABF三件[待首个可导出ckpt]）。blend 报告(11:5x) ✓。smoke 30/30 ✓。5 源 pre-blend ✓。WAITING=0。
+> - 未完成指令：有（① **en_v1_4 pre-blend s011-s015 进行中**[PID 2422384, s011=210G/515G, ETA~18:12] ② en_v1_4 完成后 activate_preblend.sh(**已修复**) ③ 8 卡 smoke(gbs256+nw=8)验 0NaN+≥500K ④ 16 卡对齐 613K ⑤ check_rope.py PASS[待ckpt] ⑥ lr-decay-shape exponential[Decay前] ⑦ 长上下文ABF三件[待ckpt]）。blend 报告 ✓。smoke 30/30 ✓。5 源 pre-blend ✓。activate_preblend.sh 修复 ✓。WAITING=0。
 > 📦 §#804 流水（08:5x，nw=0 无OOM但吞吐289K<600K）→ daily-memories/2026-10-27.md；**结论**：nw=0 验证 PASS（θ=1e6/0崩/0NaN），吞吐受数据串行限于~300K（#805 终判量化）。需要时再读。
 > 📦 §#803 流水（08:1x，num_workers=0 重启+根治分析）→ daily-memories/2026-10-27.md；**结论**：nw=0 commit 7c5c6ddee，08:15 重跑，IO<1% 预测但实测吞吐受数据串行影响（#804 量化）。需要时再读。
 > 📦 §#802 流水（07:2x，num_workers=2 重启→step200 三崩 OOM + 吞吐461K<600K）→ daily-memories/2026-10-27.md；**结论**：num_workers=2 延至 step200 仍崩；吞吐中位 461K=75%×613,992（swap thrashing 致 step time 递增）。需要时再读。

@@ -37,22 +37,24 @@ if [ "$ALL_DONE" = 0 ]; then
 fi
 
 echo "=== Updating blend TSV with absolute paths ==="
-cat > "$TSV" << 'TSVEOF'
-# S 共用配比（2026-10-28 定稿 · pre-blend 激活版）
-# 列：key <TAB> tokenized 子目录（绝对路径=pre-blend / 相对=TOK_ROOT） <TAB> prop <TAB> epochs
-# prop 之和 = 1.000；绝对路径源用 pre-blend 大 shard，ufw_zh 保持原 4 shards
-tsven_v_v1_4	/nas_user/app.e0031982/datasets/pre-blend/en_v1_4/en_v1_4_pb	0.65	0.81
-ufw_l1_en_hq	/nas_user/app.e0031982/datasets/pre-blend/ufw_l1_en_hq/ufw_l1_en_hq_pb	0.05	0.93
-ufw_zh	Ultra-FineWeb/ultrafineweb_zh	0.04	0.99
-math_l1	/nas_user/app.e0031982/datasets/pre-blend/math_l1/math_l1_pb	0.05	0.85
-math_l3	/nas_user/app.e0031982/datasets/pre-blend/math_l3/math_l3_pb	0.02	0.72
-code_l2	/nas_user/app.e0031982/datasets/pre-blend/code_l2/code_l2_pb	0.15	1.00
-code_l3	/nas_user/app.e0031982/datasets/pre-blend/code_l3/code_l3_pb	0.04	0.87
-TSVEOF
-# Fix the first line (heredoc tab issue)
-sed -i 's/^tsven_v_v1_4/  en_v1_4/' "$TSV"
-sed -i 's/^  en_v1_4/ en_v1_4/' "$TSV"
+# Use printf to ensure actual TAB characters (heredoc \t would be literal backslash-t).
+# Paths are the pre-blend OUTPUT DIRECTORY (contains *_pb_sNNN.bin files),
+# NOT the _pb file prefix — gen_blend.py globs "*.bin" inside the directory.
+{
+  printf '# S 共用配比（2026-10-28 定稿 · pre-blend 激活版）\n'
+  printf '# 列：key <TAB> tokenized 子目录（绝对路径=pre-blend / 相对=TOK_ROOT） <TAB> prop <TAB> epochs\n'
+  printf '# prop 之和 = 1.000；绝对路径源用 pre-blend 大 shard，ufw_zh 保持原 4 shards\n'
+  printf 'en_v1_4\t/nas_user/app.e0031982/datasets/pre-blend/en_v1_4\t0.65\t0.81\n'
+  printf 'ufw_l1_en_hq\t/nas_user/app.e0031982/datasets/pre-blend/ufw_l1_en_hq\t0.05\t0.93\n'
+  printf 'ufw_zh\tUltra-FineWeb/ultrafineweb_zh\t0.04\t0.99\n'
+  printf 'math_l1\t/nas_user/app.e0031982/datasets/pre-blend/math_l1\t0.05\t0.85\n'
+  printf 'math_l3\t/nas_user/app.e0031982/datasets/pre-blend/math_l3\t0.02\t0.72\n'
+  printf 'code_l2\t/nas_user/app.e0031982/datasets/pre-blend/code_l2\t0.15\t1.00\n'
+  printf 'code_l3\t/nas_user/app.e0031982/datasets/pre-blend/code_l3\t0.04\t0.87\n'
+} > "$TSV"
 echo "TSV updated: $TSV"
+echo "--- TSV content ---"
+cat -A "$TSV" | head -12
 
 echo "=== Updating common.env: nw=8, fork, mmap re-enabled ==="
 sed -i 's/export BAIZE_NUM_WORKERS="${BAIZE_NUM_WORKERS:-0}"/export BAIZE_NUM_WORKERS="${BAIZE_NUM_WORKERS:-8}"/' "$COMMON"
