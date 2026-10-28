@@ -2,11 +2,14 @@
 # 列：key <TAB> tokenized 子目录（相对 TOK_ROOT 或绝对路径） <TAB> prop <TAB> 目标 epochs
 # prop 之和必须 = 1.000；epochs 仅用于 gen_blend.py --verify 对账（"-" = 不校验）
 # pre-blend 目录使用绝对路径（os.path.join 会优先绝对路径），未 pre-blend 的源仍用相对路径
-# 2026-10-28: en_v1_4 正在 pre-blend → 完成后改为绝对路径 /nas_user/app.e0031982/datasets/pre-blend/en_v1_4
+# 2026-10-28: 4 源 pre-blend DONE → 已切绝对路径；en_v1_4/code_l2 仍 running → 保持相对路径
+#   DONE: math_l3, ufw_l1_en_hq, math_l1, code_l3（各 16 大 shard）
+#   RUNNING: en_v1_4 (~4%, PID 457774), code_l2 (~52%, PID 518481)
+#   SKIP: ufw_zh（仅 4 shard，无需 pre-blend）
 en_v1_4	Ultra-FineWeb/ultrafineweb_en_v1_4	0.65	0.81
-ufw_l1_en_hq	Ultra-FineWeb/ultrafineweb_l1_en_hq	0.05	0.93
+ufw_l1_en_hq	/nas_user/app.e0031982/datasets/pre-blend/ufw_l1_en_hq	0.05	0.93
 ufw_zh	Ultra-FineWeb/ultrafineweb_zh	0.04	0.99
-math_l1	UltraData-Math/UltraData-Math-L1	0.05	0.85
-math_l3	UltraData-Math/UltraData-Math-L3	0.02	0.72
+math_l1	/nas_user/app.e0031982/datasets/pre-blend/math_l1	0.05	0.85
+math_l3	/nas_user/app.e0031982/datasets/pre-blend/math_l3	0.02	0.72
 code_l2	UltraData-Code/UltraData-Code-L2	0.15	1.00
-code_l3	UltraData-Code/UltraData-Code-L3	0.04	0.87
+code_l3	/nas_user/app.e0031982/datasets/pre-blend/code_l3	0.04	0.87
