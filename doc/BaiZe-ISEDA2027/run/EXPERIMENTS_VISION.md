@@ -1856,6 +1856,8 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 1. **文本去重 2.4486% > 1% 目标**：生成器内联去重计数的是**图像** sha1（数学抖动保证图像唯一 ⇒ dup=0），而任务书 §4 要求的是**文本** sha1 跨 shard 去重。合成文本（词表+模板）组合空间有限 ⇒ 16,634 个文本 hash 重复、244,858 条多余样本。真实文本去重率由 `postprocess_ocr_synth.py` 独立复检得到。**待用户决定**：接受（合成数据视觉多样性为主价值）/ 做 index 过滤补救（保留 9,755,141 唯一文本样本）/ 扩语料重生成。
 2. **泄漏护栏 113 命中**：生成器内联护栏 `_load_leakage_hashes()` 只搜 `~/.cache/huggingface`（评测集实位于 `/nas_env/app.e0031982/hf_home/hub/`）⇒ 内联护栏为**空操作**。真实复检由 postprocess 读取 OCRBench/DocVQA/ChartQA parquet 完成。命中的 113 条均为极短归一化串（如 `0.29`→029、`PP`→pp）与评测答案的巧合碰撞，**合成图 ≠ 评测图，非真实内容泄漏**；按严格规范应剔除这些 key（InfoVQA parquet 未找到，未参与复检）。
 
+**2026-10-28 用户裁定**：接受现状（accept as-is），不重生成/不过滤。两处偏差（去重 2.4486% / 泄漏 113 命中）均接受，DATASET_CARD 偏差记录保留不动。数据集可用于后续 encoder 预训练 / OCR SFT。
+
 **加载器兼容性验证**：`vision/ocr_synth/verify_loader_compat.py` 真 `build_gpic_loader(caption_type='short')` + open_clip tokenizer 读 8 个 full-run shard → 1 batch (16,3,224,224) finite normalized，tokenizer 返回 16 条 ids ⇒ **FORMAT COMPATIBLE**。
 
 **交付物**：数据本体 + `index.jsonl`(9,999,999 行) + `STATS.json` + `VALIDATION.json` + `DATASET_CARD.md` + `MANIFEST.sha256`(2000 行) + `preview_200.html`(自包含预览) + `preview_10k.tar`(1 万抽样包 510MB) + 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754 B / 8 节 / 0 `<script>` / 0 外链 / 标签配平 / ≥15KB)。生成器/验证器：`vision/ocr_synth/{gen_ocr_synth,postprocess_ocr_synth,verify_loader_compat,make_preview,generate_ocr_synth10m_report}.py`（固定 seed=20261025，可重放）。
