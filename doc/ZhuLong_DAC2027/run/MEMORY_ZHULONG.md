@@ -119,7 +119,6 @@ WAITING: 1（🟢 **ZL-flash-clinealigned-16384 5-run 全部完成 + 报告 §9 
 ## 操作流水
 - [2026-10-29 02:45 已滚出·原文在 daily-memories/2026-10-29.md §[02:45] LIVE]（03:19 体积归档·状态为"r4 gen 健康巡检 138/158·do-nothing·WAITING=1"·已被 03:19 巡检取代）
 - [2026-10-29 02:08 已滚出·原文在 daily-memories/2026-10-29.md §[02:08] LIVE]（03:19 体积归档·milestone：**🔴 r3 同型布局回归在 r4 已确认复现**（前 12 task dirs `ws/pyAether_code` present=0/12）→ 收口后须同 r3 法 mv 修复·状态"r4 gen 126/158·do-nothing·WAITING=1"·已被 03:19 巡检取代）Aether_code/` 布局**·缺则同 r3 法 mv 修复 + 重跑 format/complete→复制 `/tmp/run_glm-5.3-flash_zl_clinealigned16384_r3_regrade_ownpool.sh` 为 `r4_regrade_ownpool.sh`·仅改 GEN_FILE=<r4 batch completed jsonl 路径> + 标题 R4·端口保持 8664,8665,8653,8669·起前 `rm -f output_evaluation/tmp/execution_results_shard_*.jsonl` + unset SANDBOX_PORT_HTTP/TCP/WORKDIR→起 r4 regrade→判据十三→记 r4→r5→5/5 mean±std→对比 cline 86.8±1.6%→报告 §8（结论注明「已排除 maxTokens 混杂 + 已排除跨用户争用 + 已排除 CLI_AGENT 回归」·唯一变量=CLI 二进制）。
-<<<<<<< Updated upstream
 - [2026-10-29 01:35 已滚出·原文在 daily-memories/2026-10-29.md §[01:35] LIVE]（02:08 体积归档·状态为"r4 gen 健康巡检·120/158·do-nothing·WAITING=1"·已被 02:08 巡检 + 布局回归确认取代）
 - [2026-10-28 18:13 已滚出·原文在 daily-memories/2026-10-28.md §[18:13] LIVE]（02:08 体积归档·状态为"r3 gen 健康跑中·74/158·do-nothing·WAITING=1"·已被 r3 ✅ 收口 + r4 gen 取代）
 - [2026-10-28 17:38 已滚出·原文在 daily-memories/2026-10-28.md §[17:38] LIVE]（18:13 体积归档·滚出 17:38 流水·状态为"r3 gen 健康跑中·51/158·do-nothing·WAITING=1"·无新推进）
@@ -128,6 +127,3 @@ WAITING: 1（🟢 **ZL-flash-clinealigned-16384 5-run 全部完成 + 报告 §9 
 - [2026-10-24 21:28 已滚出] r2 健康巡检#10·什么都不做退出·WAITING=1（10-24 早期流水·原文在 daily-memories/2026-10-24.md）
 - [2026-10-20 及更早 指针块·已滚出] r4 家族全部巡检/收口/作废 + B/C1/C2/S1 各臂巡检/收割/regrade + 10-04~10-11 早期流水 → 原文搬入 daily-memories/2026-10-{04..21}.md 各 §HH:MM。里程碑详见各日报。
 - [2026-10-29 16:55] 🟢 **wake#347 · 空唤醒·line done idle·infra 全绿·do-nothing exit·WAITING=1**·自检：loop 真实 PID 813663（`ps -eo pid,cmd|grep 'bash .*zhulong_loop\.sh'`·避 opencode 误匹配）活带 https_proxy=http://172.19.92.23:13128 ✅·`pgrep run_zhulong_script|run_eval.py|run_glm.*regrade` 空→无在跑 eval ✅·/home 18G free（≥8G）✅·8664 池 4/4 run_code 探针全返回 `The code execution was successful` ✅·git `## main...origin/main`（仅 untracked 顶层 `_vqa_fig1.png`+`trace_retest/`·非本线 run/ 产物·不动）✅·ops `.last_run_id=129`=inbox 顶部（已闭环·无新运维令）·成绩不动 r1=71.5%/r2=67.1%/r3=67.1%/r4=71.5%/r5=67.7%·**5/5=69.0±2.3% vs cline 86.8±1.6% Δ=−17.8pp**·报告 §9 在位（grep 实测含「69.0 ± 2.3%」「17.8pp」「16384 cline-aligned」✅）·14:4x 运维直令 ③验收全过·本 session self-commit+push（仅 `doc/ZhuLong_DAC2027/run`·防判死）·详见 daily-memories/2026-10-29.md §[wake#347]。
-=======
-- [2026-10-29 01:35 已滚出·原文在 daily-memories/2026-10-29.md §[01:35] LIVE]（02:08 体积归档·状态为"
->>>>>>> Stashed changes
