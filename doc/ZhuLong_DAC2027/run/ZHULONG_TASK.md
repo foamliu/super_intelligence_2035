@@ -1,56 +1,71 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 🔴 运维指令 · 2026-10-29 21:3x（**论文逐处细节核对：全篇 + 参考文献 web 核验 → 中文 HTML 审阅报告**）· 用户直令 · 最高优先 · 覆盖一切
+### 🔴 运维指令 · 2026-10-29 21:5x（**论文审阅：参考文献 + 逻辑链 + 数字↔措辞一致性**）· 用户直令 · 最高优先 · 覆盖一切
 
-> 用户原话：「安排 zhulong agent 使用 web search 细致核对论文的每处细节，出具审阅报告（中文HTML）。」
+> 用户原话：「数字是没错的，主要核对参考文献，和论文逻辑。以及数字和措辞是否一致。」
 > 对象 = **DAC2027 论文权威树** `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（`main.tex` + `DAC2027/0~9_*.tex` + `reference.bib` + `software.bib` + `figures/*.pdf`）。**只审不改**。
+> ⚠️ **口径（覆盖上一条 21:3x 令）**：**数值正确性已由用户确认 ⇒ 不需要回溯 batch / regrade log 去验数**。只查三件事：**① 参考文献 ② 论文逻辑 ③ 数字与措辞是否一致**。仅当同一数字在文中互相矛盾时，才允许去产物里查一次定位。
 
-**① 背景（必读）**
-- 21:17 提交 `59094e282`「陈熙元修改论文」已改 9 个 tex（+58/−64）：主表 75.7→**76.9**、纯 LLM 18.3→**19.7**、RAG 62.5→**68.6**、PyAether 81.4→**82.5%（130/158）**、回读阶梯 13.5→**7.1pp**、backbone 22.0→**23.7pp**、成本表由 291 题子集扩到 **449 全量**并新增 `Input (k)` 列。
-- **本次每个改动数字都必须重新溯源**；旧报告（`reports/report_zhulong_paper_review_zh.html`、`report_zhulong_dac_readiness_review_zh.html`、`report_zhulong_review_response_zh.html`）只当线索，**结论不得原样复用**。
+**① 重点一：参考文献（权重最高——逐条 + 逐引用上下文）**
+1. **逐条核元数据**：`reference.bib` + `software.bib` 每一条 → 标题 / 全部作者 / 年份 / venue（会议或期刊全称）/ volume / pages / DOI / arXiv id；与 Crossref / DBLP / arXiv / Semantic Scholar / doi.org **原始记录**比对。
+2. **查幻觉**：条目是否真实存在（非"标题相似的另一篇"）；作者顺序是否被改；年份是否错位（arXiv v1 vs 正式发表年）；venue 是否把 workshop 写成主会、把 arXiv 预印本写成已发表。
+3. **逐引用上下文核验（最关键）**：正文每一处 `\cite{...}` 都打开该文献，判断**被引结论是否真由该文支持** ⇒ 标 `✅支持` / `⚠️部分支持` / `❌不支持`（张冠李戴、夸大、方法名错配、把他人不同设置下的数字拿来用）。
+4. **覆盖度**：同方向关键基线/近两年工作是否漏引（EDA LLM agent、scripting benchmark、execution feedback / self-debug、RAG for code、EDA benchmark）；是否存在**自引堆砌**或**凑数引用**。
+5. **格式**：字段缺失（doi / pages / publisher）、重复条目、key 命名不一致、`\cite` 未定义、孤儿条目（bib 有但正文从未引用）。
 
-**② 核对范围（A–I 九类，全部要覆盖）**
-- **A 结构/元数据**：`main.tex`（anonymous·sigconf·作者/邮箱/单位·CCS·keywords·标题摘要）；用 web 核实 **DAC 2027 投稿规则**（页数上限、模板版本、双盲、图表与引用格式）；**页数必须实测**——`pdfinfo main.pdf` 取页数（无 `pdfinfo` 则 `pdftotext main.pdf - | grep -c $'\f'`，两者都没有就如实写「未实测」），再与官方上限比对。
-- **B 数字一致性**：摘要 ↔ 正文 ↔ 表 1/2/3 ↔ 图 ↔ 结论；449/158/157/134、291 子集、5 runs、mean±sd 等，**同一数字出现多处必须逐处比对**。
-- **C 数字溯源**：每个数字对应 batch / regrade log / results json，写明路径 + 行号或可复现 `grep` 命令；对不上 ⇒ ❌。
-- **D 参考文献**：`reference.bib` + `software.bib` **逐条**核 title / 作者 / 年份 / venue / DOI / arXiv / pages，查缺字段、查幻觉条目、查重复。
-- **E 术语定义**：Pass@1、回读等级 Ω、L1–L4、slice 名（PyAether/SKILL/Tcl）、任务计数、缩写首现是否定义。
-- **F 图表**：caption ↔ 正文描述、`tabular` 列数 ↔ 表头项数、单位、`\label`/`\ref` 是否都存在、mean±sd 是否与逐轮数据相符。
-- **G 方法↔实现**：文中 pipeline / 超参（glm-5.3-flash、maxTokens=16384、`-p 4`、5 runs）与实际脚本、批次配置是否一致。
-- **H 语言/合规**：语法拼写、中英混排、`.tex` 残留中文注释、商业运行时许可、数据/代码可得性、利益冲突。
-- **I 论证链**：claim ↔ 证据是否匹配；ablation 归因是否成立；**改数后结论措辞是否仍成立**（尤其 13.5pp→7.1pp、22.0→23.7pp 两处）。
-- 报告里每类都要给「检查项数 / ✅通过 / ⚠️存疑 / ❌错误」。
+**② 重点二：论文逻辑（贯穿全篇的论证链）**
+1. 建一张 **claim → 证据 → 结论** 映射表：摘要 / intro 的每条主张，在 §3–§6 是否有对应实验或论证；反之每个实验是否回扣某条主张。
+2. **定义—方法—实验闭环**：§4 的理论（如 L4 不可见性、observation fidelity）是否真的被 §6 的 ablation 检验；该检验能否区分它与替代解释。
+3. **因果 vs 相关**：凡 `because / therefore / thus / due to / attribute to` 的句子，检查有无对照实验，还是只凭相关性下结论。
+4. **ablation 归因**：组件贡献是否单变量、差值是否可加自洽、**改数后归因叙述是否仍成立**（例：回读阶梯跨度 13.5pp→7.1pp 后，围绕 13.5pp 的 "substantial/large" 措辞是否还站得住）。
+5. **前后自洽**：§1 承诺 → §6 兑现；§6 结果 → §7/§8 不引入新主张；limitation / threat-to-validity 是否覆盖真实弱点（而非安全项）。
+6. **逻辑断点单列**：跳跃（缺中间步）、循环论证、以个例代证明、把 harness 现象当模型能力。
 
-**③ web 核验手段（每条结论都要留 URL + 抓取时间）**
-- 文献：`https://api.crossref.org/works/<DOI>`、`https://doi.org/<DOI>`、`https://dblp.org/search/publ/api?q=<title>&format=json`、`http://export.arxiv.org/api/query?id_list=<id>`、`https://api.semanticscholar.org/graph/v1/paper/search?query=...`
-- 软件：GitHub API（仓库是否存在 / 最新 release / license）
-- 会议规则：DAC 官网、ACM 作者指南
-- 通用：`cn.bing.com`（RSS）、DuckDuckGo html；**必须打开原始页面**，🚫 不得把搜索摘要当证据
-- 网络：`export https_proxy=http://172.19.92.23:13128; export http_proxy=$https_proxy`；不可达时如实写「未核实 + 命令 + 报错」，**禁止编造**
+**③ 重点三：数字 ↔ 措辞一致性**
+1. **同一数字的多处出现**：摘要 / intro / 正文 / 表 / 图注 / 结论逐处比对（含四舍五入后是否仍相等，如 76.9 vs 76.86）。
+2. **措辞强度 vs 数值**：`significant / substantial / large / marginal / comparable / consistent / robust / up to / nearly / over / outperforms` 是否与差值、方差匹配；**差值 ≤ 1 倍 sd 时不得写 "substantially"**。
+3. **百分比口径**：pp 与 % 混用、相对提升（+x%）与绝对提升（+x pp）是否写错；"from A to B" 方向是否正确。
+4. **表格 ↔ 正文**：正文引用值与表中是否一致；表格加粗（最优）是否与正文 "best/outperforms" 一致；`mean ± sd` 与逐轮数据是否自洽（只查表内自洽，不回溯 batch）。
+5. **限定条件**：结论句是否带实验条件（slice / runs / toolchain），有没有把单切片结论写成全称判断。
+6. 每条给「原文摘录 → 数值 → 判定 → 建议改法」。
 
-**④ 交付物**
-1. `doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html`
-   - 单文件自包含、中文、**0 `<script>` / 0 外链资源**（URL 以文本给出）；**≥25KB**；标题注明「基于 main.tex@`0188e978b`」
-   - 必含：**TL;DR 结论**（可投 / 需修 / 需重做）· 问题分级 **P0/P1/P2** · **逐文件逐行清单表**（`文件:行` | 原文摘录 | 核对方式+来源 | ✅/⚠️/❌ | 建议改法）· **数字溯源表** · **参考文献逐条核对表** · **`59094e282` 改动 diff 复核表** · **未核实清单**（含原因与已尝试命令）
-2. `doc/ZhuLong_DAC2027/run/paper_audit_progress.md`：覆盖率计数（已覆盖/总数、bib 已核/总数），每轮更新
+**④ 结构与元数据（轻量，勿喧宾夺主）**
+`main.tex`（anonymous·sigconf·作者/邮箱/单位·CCS·keywords）+ **DAC 2027 规则 web 核实**（页数上限、模板版本、双盲、图表与引用格式）+ **页数实测**（`pdfinfo main.pdf`；无则 `pdftotext main.pdf - | grep -c $'\f'`；都没有写「未实测」）。
+
+**⑤ 次要项（有则记，不占主篇幅）**：术语首现定义（Pass@1、Ω、L1–L4）、caption↔正文、单位、`\label`/`\ref` 缺失、语法拼写、`.tex` 残留中文注释、商业工具许可与数据可得性表述。
+
+**⑥ web 核验手段（每条结论留 URL + 抓取时间）**
+`https://api.crossref.org/works/<DOI>` · `https://doi.org/<DOI>` · `https://dblp.org/search/publ/api?q=<title>&format=json` · `http://export.arxiv.org/api/query?id_list=<id>` · `https://api.semanticscholar.org/graph/v1/paper/search?query=...` · GitHub API（软件条目）· DAC 官网 / ACM 作者指南 · `cn.bing.com` RSS / DuckDuckGo html。
+**必须打开原始页面**，🚫 不得把搜索摘要当证据。
+网络：`export https_proxy=http://172.19.92.23:13128; export http_proxy=$https_proxy`；不可达如实写「未核实 + 命令 + 报错」。
+
+**⑦ 交付物**
+1. `doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html` — 中文、单文件自包含、**0 `<script>` / 0 外链资源**、**≥25KB**、标题注明「基于 main.tex@`<HEAD>`」。必含：
+   - **TL;DR**（可投 / 需修 / 需重做）+ 问题分级 **P0/P1/P2**
+   - **参考文献核对表**：`key | 文献 | 核对源 URL | 元数据 ✅/❌ | 引用上下文 ✅支持/⚠️部分/❌不支持 | 建议`
+   - **逻辑链审查表**：`claim | 出处 | 支撑证据 | 强度 | 判定 | 建议` + 逻辑断点清单
+   - **数字↔措辞一致性表**：`数值 | 出现位置 | 原文措辞 | 是否匹配 | 建议`
+   - **未核实清单**（含已尝试命令与报错）
+2. `doc/ZhuLong_DAC2027/run/paper_audit_progress.md`：逐项进度 + 计数（bib 已核/总数、`\cite` 已核/总数、claim 已核/总数）
 3. `MEMORY_ZHULONG.md` 顶部：一句话结论 + 报告路径 + P0/P1 计数
 
-**⑤ 判据（缺一不算完成）**
-- **覆盖率**：`main.tex` + 9 个正文 tex 100% 通读；bib 条目 **100%** 外部核验（查不到也要写「查无」）
-- **可复现**：每个 ❌/⚠️ 都附命令/输出/URL
-- **体量与格式**：HTML ≥25KB、0 script、0 外链、标签配平
-- **检查项总数 ≥150**，其中**外部 web 核验 ≥ bib 条目数 + 20**
+**⑧ 判据（缺一不算完成）**
+- bib 条目 **100%** 外部核验；正文**每一处 `\cite`** 的上下文都判过（✅/⚠️/❌）
+- 摘要 + intro 每条 claim 都进映射表；章级逻辑断点有清单
+- **所有出现过的数字**都做过多处一致性比对，且**措辞强度逐句判过**
+- 报告 ≥25KB、0 script、0 外链、标签配平；每个 ❌/⚠️ 可复现（URL 或 `文件:行`）
 
-**⑥ 红线**
+**⑨ 红线**
 - 🚫 不改 `.tex` / `.bib` / `figures/`（改法只写进报告）
-- 🚫 不编造 DOI / 页码 / 文献；查不到写「查无/未核实」
-- 🚫 不覆盖旧报告；不碰评测进程、端口、batch；本令纯离线审阅，不占 sandbox
-- 🚫 不把「未核实」写成「已核实」；不得因赶时间跳过 bib
+- 🚫 不编造 DOI / 页码 / 文献；查不到写「查无 / 未核实」
+- 🚫 **不得因"数字已确认"就跳过数字↔措辞比对**（这是三大重点之一）
+- 🚫 不覆盖旧报告；不碰评测进程 / 端口 / batch；纯离线审阅
+- 🚫 不把「未核实」写成「已核实」
 
-**⑦ 节奏**
-- 本轮起 `WAITING=0` 立即执行；顺序：`git show 59094e282` 列改动 → 数字溯源（本机 batch 产物只读引用）→ bib 外部核验 → 写 HTML
-- 允许分 2–3 轮，但每轮必须更新进度文件并 commit（前缀 `zhulong paper-audit:`）+ push
-- 完成后置 `WAITING=1`，MEMORY 顶部写「✅ 论文逐处核对完成 + 报告路径 + P0/P1 计数」
+**⑩ 节奏**
+- `WAITING=0` 立即执行；顺序：通读全文 → 建 claim 表 → bib 逐条 + cite 上下文 → 数字↔措辞 → 写 HTML
+- 允许 2–3 轮，每轮必须更新进度文件并 commit（前缀 `zhulong paper-audit:`）+ push
+- 完成后置 `WAITING=1`，MEMORY 顶部写「✅ 完成 + 报告路径 + P0/P1 计数」
 
 > 📦 §运维令·2026-10-28 14:4x（r2 收口 67.1% · 端口回自有池 8664/8665/8653/8669 · 继续 r3-r5）**✅ 已完成** → `ARCHIVE_ZHULONG_TASK.md §归档 batch 14`；结论：r3–r5 全部收口，**5/5 = 69.0±2.3%**（r1 71.5 / r2 67.1 / r3 67.1 / r4 71.5 / r5 67.7），vs cline 86.8±1.6% ⇒ **−17.8pp**；全程 0 exec_err / 0 infra / timeout≤6；报告 §9 已更新。
 
