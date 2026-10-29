@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compaction 默认策略改为 basic 的收益分析与实施方案</title>
 <style>
-:root{--fg:#1a1a2e;--muted:#55556e;--accent:#2563eb;--bg:#fafafa;--card:#ffffff;--line:#e5e7eb;--warn:#b45309;--ok:#15803d;--code-bg:#f1f5f9}
+:root{--fg:#1a1a2e;--muted:#55556e;--accent:#2563eb;--bg:#fafafa;--card:#ffffff;--line:#e5e7eb;--warn:#b45309;--ok:#15803d;--code-bg:#f1f5f9;--note-bg:#f0f7ff}
 *{box-sizing:border-box}
 body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;line-height:1.75;font-size:15px}
-.wrap{max-width:960px;margin:0 auto;padding:32px 24px 80px}
+.wrap{max-width:980px;margin:0 auto;padding:32px 24px 80px}
 h1{font-size:26px;margin:0 0 4px;line-height:1.35}
 h2{font-size:20px;margin:40px 0 12px;padding-left:10px;border-left:4px solid var(--accent)}
 h3{font-size:16px;margin:24px 0 8px}
@@ -31,126 +31,199 @@ ul,ol{margin:8px 0;padding-left:24px}
 li{margin:4px 0}
 hr{border:none;border-top:1px solid var(--line);margin:32px 0}
 .footnote{font-size:12px;color:var(--muted)}
+.notice{background:var(--note-bg);border-left:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:14px 0}
+.notice .t{font-weight:600;color:var(--accent)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <h1>Compaction 默认策略改为 basic 的收益分析与实施方案</h1>
-<p class="sub">主题：cline-cli 上下文压缩默认策略 agentic → basic · 参考对象：BaiZe 多 agent 自动化循环 · 2026-10-28</p>
+<p class="sub">主题：cline 上下文压缩默认策略 agentic → basic · 含 basic 机制详解与「切了会不会变笨」顾虑缓解 · 2026-10-28 修订</p>
 
-<h2>一、背景：Compaction 的两种策略</h2>
+<h2>一、背景：Compaction 是什么，为什么会有它</h2>
 <div class="card">
-<p>当会话上下文接近模型输入上限时，Cline 会触发 <strong>Compaction（上下文压缩）</strong>，压掉较早的历史内容，为后续对话腾出空间。核心实现位于 <code>sdk/packages/core/src/extensions/context/compaction.ts</code>，支持两种策略（<code>CoreCompactionStrategy = "basic" | "agentic"</code>，见 <code>types/config.ts:156</code>）：</p>
+<p>会话上下文是有上限的。当对话历史（系统提示 + 全部消息 + 工具定义）逐渐逼近模型输入窗口时，必须对旧历史做「压缩」，腾出空间让 agent 继续往下走，否则请求会被模型直接拒绝（超窗）。Cline 的这套机制叫 <strong>Compaction（上下文压缩）</strong>，实现在 <code>sdk/packages/core/src/extensions/context/</code> 下。</p>
+<p>按默认参数：当会话已吃掉可用输入预算的 <strong>90%</strong>（<code>COMPACTION_TRIGGER_RATIO = 0.9</code>）时触发一次压缩，压缩后压低到约 <strong>70%</strong>（<code>DEFAULT_TARGET_RATIO = 0.7</code>）。一句话：<strong>它只在你真的快用满上下文时才动手，平时完全不介入。</strong></p>
+<p>Compaction 支持两种策略（<code>CoreCompactionStrategy = "basic" | "agentic"</code>，<code>types/config.ts</code>）：</p>
 <table>
-<thead><tr><th>策略</th><th>原理</th><th>是否调用 LLM</th><th>特点</th></tr></thead>
+<thead><tr><th>策略</th><th>原理</th><th>调 LLM</th><th>结果形态</th></tr></thead>
 <tbody>
-<tr>
-<td><code>basic</code><br>（确定性裁剪）</td>
-<td>纯确定性算法：按规则截断、保留最近 N tokens、压缩工具活动摘要，不生成新文本。</td>
-<td><strong>否</strong></td>
-<td>快、零额外交互、结果可预测、无外部失败点。</td>
-</tr>
-<tr>
-<td><code>agentic</code><br>（LLM 摘要）</td>
-<td>调 LLM（<code>generateSummary</code>，见 <code>agentic-compaction.ts:62</code>）把历史总结成「continuation note」。需要额外的 summarizer 模型/输入预算。</td>
-<td><strong>是</strong></td>
-<td>摘要语义质量更高、可能保留更多隐含上下文；但多一次模型往返、有延迟/成本/失败风险。</td>
-</tr>
+<tr><td><code>basic</code></td><td>确定性规则：按「保留原则」裁剪历史，把被丢掉的工具活动提炼成结构化摘要。</td><td><strong>否</strong></td><td>原文保留 + 结构化足迹摘要</td></tr>
+<tr><td><code>agentic</code></td><td>额外调一次 LLM，把历史总结成一段自然语言「continuation note」。</td><td><strong>是</strong></td><td>LLM 生成的语义摘要</td></tr>
 </tbody>
 </table>
-<p class="muted">另外还有一个 <code>off</code>（彻底关压缩），不在本报告讨论范围。</p>
 </div>
 
-<h2>二、默认值是 agentic（三处口径）</h2>
+<h2>二、basic 的原理与机制（详解，源码为证）</h2>
+
 <div class="card">
-<p>当前压缩默认策略是 <code>agentic</code>，分散在多个入口：</p>
+<p class="muted">以下全部来自 <code>sdk/packages/core/src/extensions/context/basic-compaction.ts</code> 与 <code>compaction-shared.ts</code> 的逐条实现。理解这些，就能判断「切到 basic 会不会变笨」——答案是：<strong>不会，因为它不是简单截断，而是有明确保留优先级的结构化裁剪。</strong></p>
+
+<h3>2.1 四条硬保留原则（runBasicCompaction 的核心注释原文）</h3>
+<div class="notice">
+<div class="t">设计目标</div>
+<p style="margin:6px 0 0">「Typed user prompts always survive. The latest typed turn keeps its newest messages verbatim within the token target. Older turns keep their concluding assistant answer when it fits. Everything else is dropped and re-surfaced as dropped-work summaries.」</p>
+</div>
+<p>翻译成白话，压缩后<strong>一定还在</strong>的东西是：</p>
+<ol>
+<li><span class="kv">你打过的每一句用户指令（typed user prompt）都会原样保留</span>——<code>sanitizedTypedByIndex</code> 强制把所有 <code>isTurnStartMessage</code>（真正的用户输入，非工具回执）计入预算且永不删除。也就是说「目标、约束、要求」这些最关键的东西一条都不丢。</li>
+<li><span class="kv">最新一轮对话的最近消息整体 verbatim 保留</span>——<code>keptExtraIndices</code> 从尾部向前收录，直到撞到 token 预算才停。当前正在做的事，上下文是完整的。</li>
+<li><span class="kv">历史每一轮都保留它的「结论性 assistant 答复」</span>——<code>olderFinalByIndex</code> 从新到老为每个旧 turn 挑出那轮的最终回答（不含 <code>tool_use</code> 的纯文本答复）保留，「成果」不丢。</li>
+<li><span class="kv">被丢弃的部分不是凭空消失，而是提炼成结构化摘要</span>——<code>buildDroppedWorkSummaryBlock</code> 生成 <code>&lt;SYSTEM_NOTICE&gt;</code> 块，明确告知模型「这里压缩过了，你做过这些事」。</li>
+</ol>
+</div>
+
+<div class="card">
+<h3>2.2 丢弃中间过程时，保留的是「结构化足迹」，不是空白</h3>
+<p>被压缩掉的大头是<strong>工具调用的中间过程</strong>（每个 read/edit 返回的长文本、每条命令输出）。basic 用 <code>summarizeToolActivity</code> 把这些中间过程萃取成三类足迹（<code>ToolActivitySummary</code>）：</p>
+<table>
+<thead><tr><th>足迹类型</th><th>内容</th><th>实现</th></tr></thead>
+<tbody>
+<tr><td><code>Files read</code></td><td>读过哪些文件（含 <code>read_files</code> 输入里的行长区间 <code>path:start-end</code>）</td><td><code>formatReadFileEntry</code></td></tr>
+<tr><td><code>Files edited</code></td><td>改过哪些文件（从 <code>editor/apply_patch</code> 结果的带号 diff 里反解出 <code>path:start-end</code>）</td><td><code>extractDiffLineRange</code> + <code>tool_use_id</code> 关联</td></tr>
+<tr><td><code>Commands ran</code></td><td>跑过哪些命令（每条截断到 100 字符）</td><td><code>truncateCommandForSummary</code> + <code>COMMAND_SUMMARY_CHAR_LIMIT</code></td></tr>
+</tbody>
+</table>
+<p>最终拼成一段高度浓缩的追述，贴在幸存的下一条用户消息上：</p>
+<pre><code>&lt;SYSTEM_NOTICE&gt;
+Earlier context was compacted. Summary of your actions after the request above:
+Files read:
+  src/a.ts:12-40
+Files edited:
+  src/b.ts:100-180
+Commands ran:
+  npm run build
+Your recent responses:
+  ...（最近几条 assistant 回复原文）...
+&lt;/SYSTEM_NOTICE&gt;</code></pre>
+<p class="muted">关键洞察：agent 续作真正需要的，从来不是「曾经 read 返回的每一行原文」，而是「我碰过哪些文件、改到哪几行、跑过什么命令」——basic 恰好把后者原样保住了。</p>
+</div>
+
+<div class="card">
+<h3>2.3 三个「防变笨」的工程细节</h3>
+<ul>
+<li><span class="kv">保留最近 3 条 assistant 回复原文</span>：<code>PRESERVED_ASSISTANT_TEXT_COUNT = 3</code>，跨轮衔接的「最近回答」会 verbatim 进入摘要块，模型不会断片。</li>
+<li><span class="kv">裁切边界落在安全位置，绝不拆散 tool_use/tool_result 对</span>：<code>isSafeCutBoundary</code> 只允许在 assistant 消息或用户 turn 起点裁切；把保留尾向前「吸」到 assistant 消息（<code>keep suffix starts at an assistant message</code>），确保不会留下一个没有对应结果的孤儿 <code>tool_result</code>（那会被 provider 直接拒绝）。</li>
+<li><span class="kv">旧答复剥离 thinking 块</span>：<code>sanitizeOlderAssistantFinal</code> 在保留历史结论时丢掉 <code>thinking/redacted_thinking</code>（历史思考过程对续作无价值，还占 token）。</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>2.4 反复压缩不会越压越烂（防退化）</h3>
+<ul>
+<li><span class="kv">已压缩产出被「冻结」</span>：<code>markPreservedByCompaction</code> 给被压缩存活的消息打 <code>compaction: "preserved"</code> 标记，下一次压缩 <code>isPreservedByCompaction</code> 跳过它们，<strong>绝不二次折叠</strong>——不会出现「摘要上叠摘要」的退化。</li>
+<li><span class="kv">用量指标跨轮累计正确</span>：<code>aggregateUsageMetrics</code> 把即将被剥离的 per-message 指标（input/output/cache/cost tokens）聚合到压缩消息的 metadata 上，成本与用量统计不丢。</li>
+<li><span class="kv">估算漂移有安全阀</span>：token 估算是约数，<code>projectionTargetTokens = min(max(target, keptTokens), triggerTokens)</code> 兜住「目标已低于必须保留内容」的极端情况，绝不为了追数字去砍掉用户指令。</li>
+</ul>
+</div>
+
+<h2>三、顾虑缓解：切到 basic 到底会不会「智能下降」？</h2>
+
+<div class="card">
+<h3>3.1 直答：对自动化 agent 场景，不会</h3>
+<p>「智能」在 agent 长任务里的承载物就三样：<strong>目标/约束、当前进展、历史结论</strong>。basic 的保留优先级正是对着这三样设计的——指令原文全留、最新一轮 verbatim、历史每轮的最终答复保留。它丢掉的只是「中间过程的细节」，而细节已经被提炼成文件级/行号级/命令级足迹。</p>
+<p>反而 <code>agentic</code> 的语义摘要存在一个 basic 没有的风险：<strong>LLM 压缩有损还可能幻觉</strong>——总结者把「改了 A」记成「改了 B」，或把细节讲偏。basic 是确定性萃取文件名与行号，<strong>不会曲解事实</strong>。</p>
+</div>
+
+<div class="card">
+<h3>3.2 两者对比：丢信息的「位置」不同，而非「多 vs 少」</h3>
+<table>
+<thead><tr><th>维度</th><th>agentic（LLM 摘要）</th><th>basic（确定性裁剪）</th></tr></thead>
+<tbody>
+<tr><td>用户指令是否保留原文</td><td>被总结进 prose，原文可能改写</td><td><span class="kv">原文全部保留</span></td></tr>
+<tr><td>当前轮上下文</td><td>部分进入摘要</td><td><span class="kv">verbatim 保留</span></td></tr>
+<tr><td>历史结论</td><td>融合成一段话</td><td><span class="kv">每轮最终答复原文保留</span></td></tr>
+<tr><td>中间工具足迹</td><td>可能被总结遗漏或改述</td><td><span class="kv">文件/行号/命令结构化保留</span></td></tr>
+<tr><td>事实准确性</td><td>有幻觉/曲解风险</td><td>确定性，无曲解</td></tr>
+<tr><td>隐含的纯文本推理论证</td><td>可能被语义摘要保留得更好</td><td>可能被机械裁剪（见 3.3）</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h3>3.3 诚实的边界：何时 basic 略逊、何时无所谓</h3>
+<ul>
+<li><span class="kv">可能略逊</span>：一段「大量纯文本设计讨论、几乎没有工具调用」的超长对话里，agentic 的语义摘要可能比机械裁剪更好地保留中间推演脉络。</li>
+<li><span class="kv">对本项目基本无关</span>：四条 agent 线都是「工具调用密集、结论导向」——读任务书、跑命令、改文件、写心跳。这类会话压缩时，basic 丢弃的恰好是最没信息量的工具输出长文本，保留的恰好是续作所需。</li>
+<li><span class="kv">更大概率不触发</span>：loop 每轮唤醒往往只推进一步就退出，会话短，根本到不了 90% 触发线；即使 harness 跑超长单题触发压缩，也主要发生在「工具循环很长」的情形——正是 basic 最稳的情形。</li>
+</ul>
+<p class="muted">结论：对交互式重度纯文本长会话，保留 agentic 作为可选覆盖；对无人值守自动化场景，basic 是「同等可靠、更便宜、无幻觉」的默认。</p>
+</div>
+
+<h2>四、默认值现状（三处口径）</h2>
+<div class="card">
 <table>
 <thead><tr><th>位置</th><th>文件:行</th><th>内容</th></tr></thead>
 <tbody>
 <tr><td>CLI 默认常量</td><td><code>apps/cli/src/utils/compaction-mode.ts:11-14</code></td><td><code>DEFAULT_CLI_COMPACTION_MODE = "agentic"</code></td></tr>
 <tr><td>engine 兜底</td><td><code>sdk/packages/core/src/extensions/context/compaction.ts:285</code></td><td><code>strategy = userCompaction?.strategy ?? "agentic"</code></td></tr>
-<tr><td>运行时全局设置</td><td><code>settings/global-settings.json</code></td><td><code>"compactionStrategy": "agentic"</code>（各 agent 线均有）</td></tr>
+<tr><td>运行时全局设置</td><td><code>settings/global-settings.json</code></td><td><code>"compactionStrategy": "agentic"</code></td></tr>
 </tbody>
 </table>
-<p>CLI 暴露了 <code>--compaction &lt;mode&gt;</code> 命令行参数（<code>agentic|basic|off</code>，默认 agentic），但 loop 脚本没有显式传参，因此实际走的就是默认 <code>agentic</code>。</p>
+<p>CLI 暴露 <code>--compaction &lt;mode&gt;</code>（<code>agentic|basic|off</code>，默认 agentic），但 loop 未显式传参，走的就是默认 agentic。</p>
 </div>
 
-<h2>三、建议：默认改为 basic（纯确定性裁剪，不调 LLM）</h2>
+<h2>五、收益分析（把默认改为 basic）</h2>
 <div class="card">
-<p>把三处默认从 <code>agentic</code> 统一切到 <code>basic</code>，让「不传参」的默认行为变成纯确定性裁剪。核心考量：在无人值守、由 loop 反复唤醒的自动化场景下，agentic 带来的语义增益几乎用不上，却要付出实打实的 LLM 成本与延迟。</p>
-</div>
-
-<h2>四、收益分析</h2>
-<div class="card">
-<h3>4.1 消除额外 LLM 调用（成本 & 延迟）</h3>
-<p>agentic 策略在压缩时会额外发起一次模型请求（<code>generateSummary</code> 走 <code>handler.createMessage("Summarize the provided coding session ...")</code>）。这意味着：</p>
+<h3>5.1 消除压缩时的额外 LLM 调用</h3>
+<p>agentic 在压缩时会额外发起一次模型请求（<code>generateSummary</code> → <code>handler.createMessage("Summarize the provided coding session ...")</code>）：</p>
 <ul>
-<li><span class="kv">每单位压缩少量延迟</span>：多一次完整的模型往返（首 token 延迟 + 生成摘要文本的流式时间）。</li>
-<li><span class="kv">每单位压缩少量 token 支出</span>：要把历史内容作为输入喂给 summarizer，再生成 summary 输出，双向都有 token 账单。</li>
-<li><span class="kv">失败风险</span>：summarizer 有输入预算上限（<code>summarizerInputLimit</code>），超限会「budget exhausted」直接跳过；模型不可用/超时会抛错。basic 无此类外部依赖。</li>
+<li><span class="kv">多一次完整往返延迟</span>（首 token + 流式生成摘要）；</li>
+<li><span class="kv">双向 token 支出</span>（喂入历史 + 生成摘要输出）；</li>
+<li><span class="kv">外部失败点</span>：summarizer 有输入预算上限，超限直接「budget exhausted」跳过；模型不可用/超时抛错。</li>
 </ul>
+<p>basic 是纯内存裁剪，<strong>零额外交互、零附加成本、无外部失败点</strong>。</p>
 
-<h3>4.2 收益量化（经验估计）</h3>
+<h3>5.2 量化对比</h3>
 <table>
-<thead><tr><th>维度</th><th>agentic（现状默认）</th><th>basic（建议默认）</th><th>收益</th></tr></thead>
+<thead><tr><th>维度</th><th>agentic（现状）</th><th>basic（建议）</th><th>收益</th></tr></thead>
 <tbody>
 <tr><td>压缩时额外 LLM 往返</td><td>1 次/触发</td><td>0 次</td><td><span class="kv">消除</span></td></tr>
-<tr><td>压缩附加 token 成本</td><td>输入历史 + 生成摘要</td><td>0</td><td><span class="kv">归零</span></td></tr>
-<tr><td>压缩延迟</td><td>数百 ms ~ 数 s</td><td>≈ 0（纯内存裁剪）</td><td>大幅降低</td></tr>
+<tr><td>压缩附加 token 成本</td><td>输入历史 + 输出摘要</td><td>0</td><td><span class="kv">归零</span></td></tr>
+<tr><td>压缩延迟</td><td>数百 ms ~ 数 s</td><td>≈ 0</td><td>大幅降低</td></tr>
 <tr><td>外部失败点</td><td>有（超限/超时/模型错）</td><td>无</td><td>消除</td></tr>
-<tr><td>结果确定性</td><td>非确定</td><td>确定可复现</td><td>提高</td></tr>
+<tr><td>事实准确性</td><td>有幻觉风险</td><td>确定可复现</td><td>提高</td></tr>
 </tbody>
 </table>
-
-<h3>4.3 收益边界（诚实说明）</h3>
-<ul>
-<li><span class="kv">损失</span>：agentic 的语义摘要可能比「机械截断」保留更多隐含上下文，极端长对话下 reduced 后的续写质量可能略低。对自动化循环（每轮只读任务书、推进一步、写心跳即退出）影响极小——它本就不依赖跨压缩的精细长程记忆。</li>
-<li><span class="kv">适用前提</span>：本建议针对「无人值守 / 高频唤醒 / 成本敏感」场景。交互式重度长会话若依赖高质量摘要，可显式 <code>--compaction agentic</code> 覆盖。</li>
-<li><span class="kv">注意</span>：<code>overflowRecovery</code>（模型端拒绝超上下文时强制压缩）本就固定走 basic 确定性路径（见 <code>compaction.ts</code> 注释「recovery must not depend on another successful LLM request」），不受此改动影响——安全性不降。</li>
-</ul>
+<p class="muted">补充：<code>overflowRecovery</code>（模型端主动拒超窗时强制压缩）本就固定走 basic 确定性路径（「recovery must not depend on another successful LLM request」）——安全性不因本改动而有任何下降。</p>
 </div>
 
-<h2>五、实施方案</h2>
+<h2>六、实施方案</h2>
 <div class="card">
-<h3>5.1 改代码默认值（源码层，治本）</h3>
-<p><strong>① CLI 默认常量</strong> —— <code>apps/cli/src/utils/compaction-mode.ts</code>：</p>
-<pre><code>export const DEFAULT_CLI_COMPACTION_MODE: Extract&lt;
-	CliCompactionMode,
-	"agentic" | "basic"
-&gt; = "basic";  // 原为 "agentic"</code></pre>
-
-<p><strong>② engine 兜底</strong> —— <code>sdk/packages/core/src/extensions/context/compaction.ts:285</code>：</p>
-<pre><code>const strategy = userCompaction?.strategy ?? "basic";  // 原为 "agentic"</code></pre>
-
-<p><strong>③ CLI help 文案同步</strong> —— <code>apps/cli/src/utils/compaction-mode.ts</code>：</p>
-<pre><code>export const CLI_COMPACTION_MODE_OPTION_DESCRIPTION =
-	"Context compaction mode: agentic|basic|off (default: basic)";</code></pre>
-
-<h3>5.2 改运行时全局设置（配置层，立即可用，不改源码）</h3>
-<p>各 agent 线的 <code>&lt;data-dir&gt;/settings/global-settings.json</code> 里把 <code>compactionStrategy</code> 改为 <code>basic</code>：</p>
+<h3>6.1 配置层（零构建，立即可用，先做）</h3>
+<p>各 agent 线 <code>&lt;data-dir&gt;/settings/global-settings.json</code> 把 <code>compactionStrategy</code> 改为 <code>basic</code>：</p>
 <pre><code>{
-  "compactionStrategy": "basic",   // 原 "agentic"
-  "compactionEnabled": true        // 保留启用，仅换策略
+  "compactionStrategy": "basic",    // 原 "agentic"
+  "compactionEnabled": true         // 保留启用，仅换策略
 }</code></pre>
 
-<h3>5.3 重新构建与验证</h3>
-<pre><code>cd /nas_train/app.e0031982/harness/cline
+<h3>6.2 源码层（固化默认，治本）</h3>
+<p><strong>① CLI 默认常量</strong> —— <code>apps/cli/src/utils/compaction-mode.ts</code>：</p>
+<pre><code>export const DEFAULT_CLI_COMPACTION_MODE = "basic";  // 原 "agentic"</code></pre>
+<p><strong>② engine 兜底</strong> —— <code>sdk/packages/core/src/extensions/context/compaction.ts:285</code>：</p>
+<pre><code>const strategy = userCompaction?.strategy ?? "basic";  // 原 "agentic"</code></pre>
+<p><strong>③ help 文案同步</strong> —— <code>apps/cli/src/utils/compaction-mode.ts</code>：</p>
+<pre><code>CLI_COMPACTION_MODE_OPTION_DESCRIPTION = "Context compaction mode: agentic|basic|off (default: basic)";</code></pre>
+
+<h3>6.3 重新构建与验证</h3>
+<pre><code>cd &lt;cline-repo&gt;
 bun run build:sdk
 bun -F @cline/cli build
-# CLI standalone 二进制（如需随包发布）
+# 需要 standalone 二进制时：
 cd apps/cli &amp;&amp; bun build --compile ./src/index.ts --outfile &lt;out&gt;</code></pre>
-<p>验证：不传 <code>--compaction</code> 启动一个长会话，观察压缩时是否仍产生 summarizer LLM 调用（agentic 会在日志打印 <code>Generated compaction summary</code> / <code>Agentic compaction summarizer diagnostics</code>，basic 则无）。</p>
+<p>验证：不传 <code>--compaction</code> 跑一个能触发压缩的长会话，观察日志——basic 打印 <code>Performed basic compaction</code>（含 tokensBefore/After、messagesRemoved、budget Actions），agentic 则打印 <code>Generated compaction summary</code> / <code>Agentic compaction summarizer diagnostics</code>。确认无后者即可。</p>
 </div>
 
-<h2>六、结论与建议</h2>
+<h2>七、结论</h2>
 <div class="card">
 <ul>
-<li>cline 压缩双策略中，<strong>默认是 agentic（调 LLM）</strong>，basic（确定性裁剪）明明更省却被默认避开。</li>
-<li>将默认改为 <strong>basic</strong>：消除压缩时的额外 LLM 往返、token 支出与外部失败点，换来更快的压缩与可复现行为；仅在依赖「语义摘要保长程记忆」的交互式场景才有负面影响。</li>
-<li>建议分两步落地：先改 <span class="tag tag-info">5.2 配置层</span>（零构建成本、立即生效），再合并 <span class="tag tag-info">5.1 源码层</span>（固化默认，避免未来配置漂移）。</li>
+<li>basic 不是「粗鲁截断」，而是<strong>保留用户指令原文 + 最新轮 verbatim + 历史各轮结论 + 工具足迹结构化摘要</strong>的确定性裁剪，并有三层防退化机制（安全裁切边界、压缩产物冻结、指标聚合）。</li>
+<li>对自动化 agent 场景，「切到 basic 会导致智能下降」的顾虑<strong>不成立</strong>：它保留的恰是续作所需信息，丢掉的恰是最无信息量的工具输出长文本，且无 agentic 的幻觉风险。</li>
+<li>把默认从 agentic 改为 basic：消除压缩时的额外 LLM 调用、token 成本与失败点，换来更快、更便宜、更可复现的压缩；交互式重纯文本长会话可显式 <code>--compaction agentic</code> 覆盖。</li>
+<li>落地顺序：先配置层（<code>compactionStrategy=basic</code>，零构建），再源码层固化默认。</li>
 </ul>
-<p class="footnote">依据源码：<code>/nas_train/app.e0031982/harness/cline</code>（v3.0.51 基线）；行号以该版本为准，升级后请重核。</p>
+<p class="footnote">依据源码：cline 仓库（v3.0.51 基线），关键实现 <code>sdk/packages/core/src/extensions/context/basic-compaction.ts</code>、<code>compaction-shared.ts</code>、<code>apps/cli/src/utils/compaction-mode.ts</code>；行号以该版本为准，升级后请重核。</p>
 </div>
 
 </div>
