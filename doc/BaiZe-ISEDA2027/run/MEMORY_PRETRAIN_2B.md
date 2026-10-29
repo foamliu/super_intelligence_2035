@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-30 02:15 #924：**S1监控iter15670健康·loss~2.26稳态·0 NaN·grad-norm spike@15590恢复·ckpt@14000**。iter 15670/700k(2.24%): lm loss last10(15580-15670)=[2.274,2.270,2.279,2.267,2.260,2.263,2.250,2.261,2.258,2.259](avg≈2.264,稳态). 0 NaN(15670 iters total), 0 skip. LR=1e-3恒定, GBS=256. grad-norm last10=[0.123,0.843,0.103,0.084,0.103,0.103,0.094,0.095,0.094,0.101](avg≈0.174,spike@15590=0.843即时恢复). 16卡.12+.29全96-100%util ~75GB/卡. step~7.17s→~585K tok/s. mem .29 931G/2TB(46%) swap 5G. /nas_train 35T free(84%). ckpt@14000(7ckpt:2k~14k,29G), next@16000. TB6006 OK(LISTEN 0.0.0.0:6006). 未完成指令：有(⑦零训练PPL/passkey基线, 需GPU空闲, 16卡满载训练无法执行). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~30.5KB.
+> 🆕 2026-10-30 02:35 #925：**S1监控iter15852健康·loss~2.25稳态·0 NaN·grad-norm极稳无spike·ckpt@14000(即将@16000)**。iter 15852/700k(2.26%): lm loss last20(15833-15852) avg≈2.247, range[2.06~2.41]. 0 NaN(17697 points total), 0 skip. LR=1e-3恒定, GBS=256. grad-norm last20 avg≈0.096, range[0.085~0.123], 极稳无spike. 16卡.12+.29全97-100%util ~75GB/卡. step~7.23s→~580K tok/s. mem .29 938G/2TB(46%) swap 5G. /nas_train 35T free(84%). ckpt@14000(7ckpt:2k~14k), next@16000(距当前148步~18min). TB6006 OK(LISTEN 0.0.0.0:6006). 未完成指令：有(⑦零训练PPL/passkey基线, 需GPU空闲, 16卡满载训练无法执行). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~31.7KB.
+> 📦 §#924（10-30 02:15, S1监控iter15670健康·loss~2.26稳态·0 NaN·grad-norm spike@15590恢复·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.264, 0NaN, ~585K tok/s, ckpt@14000, spike@15590恢复. 被#925更新。需要时再读。
 > 📦 §#923（10-30 01:51, S1监控iter15500健康·loss~2.26稳态·0 NaN·grad-norm极稳无spike·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.259, 0NaN, ~580K tok/s, ckpt@14000, 极稳无spike. 被#924更新。需要时再读。
 > 📦 §#922（10-30 01:32, S1监控iter15330健康·loss~2.25微降·0 NaN·grad-norm极稳无spike·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.257, 0NaN, ~560K tok/s, ckpt@14000, 极稳无spike. 被#923更新。需要时再读。
 > 📦 §#921（10-30 01:12, S1监控iter15183健康·loss~2.27稳态·0 NaN·ckpt@14000·grad-norm极稳）→ daily-memories/2026-10-30.md；**结论**：loss~2.268, 0NaN, 552K tok/s, ckpt@14000, 极稳无spike. 被#922更新。需要时再读。
@@ -26,9 +27,7 @@ WAITING: 1
 > 📦 §#900（10-29 18:12, S1监控iter11750健康·loss spike@11730-11740恢复中·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss spike@11730(grad-norm=4.019→loss=4.18)已恢复, 0NaN, 590K tok/s, ckpt@10000。被#901更新。需要时再读。
 > 📦 §#899（10-29 17:50, S1监控iter11569健康·loss~2.37·grad-norm spike@11568已恢复·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.37, 0NaN, 620K tok/s, ckpt@10000, spike@11568已恢复。被#900更新。需要时再读。
 > 📦 §#898（10-29 17:29, S1监控iter11383健康·loss~2.33·grad-norm正常·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.33, 0NaN, 582K tok/s, ckpt@10000, 正常。被#899更新。需要时再读。
-> 📦 §#897（10-29 17:05, S1监控iter11213健康·loss~2.32·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.32, 0NaN, 582K tok/s, ckpt@10000, 正常。被#898更新。需要时再读。
-> 📦 §#896（10-29 16:44, S1监控iter11020健康·loss稳态~2.33·grad-norm正常·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.33, 0NaN, 583K tok/s, ckpt@10000, 正常。被#897更新。需要时再读。
-> 📦 §#895（10-29 16:24, S1监控iter10850健康·loss~2.35·grad-norm spike@10520已恢复·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.35, 0NaN, 590K tok/s, ckpt@10000, spike@10520已恢复。被#896更新。需要时再读。
+> 📦 §#895~#908（10-29 16:24~20:53, S1监控iter10850~13090, 14轮连续健康·0NaN·ckpt@10000→12000·loss 2.31~2.35·check_rope PASS·b67bf0c pushed）→ daily-memories/2026-10-29.md。需要时再读。
 > 📦 §#894（10-29 16:05, S1监控iter10680健康·loss~2.35·grad-norm spike@10590已恢复·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.35, 0NaN, 590K tok/s, ckpt@10000, spike@10590已恢复。被#895更新。需要时再读。
 > 📦 §#884–#893（10-29 12:37–15:45, 10条S1监控流水·iter8950→10530·loss~2.34–2.40·ckpt@8000→10000）→ daily-memories/2026-10-29.md；**结论**：S1全程健康, 0NaN, ~580K tok/s, 多次grad-norm spike均自恢复。被#894+更新。需要时再读。
 > 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
