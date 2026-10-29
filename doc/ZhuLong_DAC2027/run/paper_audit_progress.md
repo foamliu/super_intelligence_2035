@@ -1,46 +1,52 @@
-# paper_audit_progress.md — ZhuLong DAC2027 论文逐处核对进度
+# ZhuLong 论文审阅进度（参考文献 + 逻辑链 + 数字↔措辞一致性）
 
-> 任务：运维令 2026-10-29 **21:5x（覆盖 21:3x）** — 论文逐处细节核对
-> **口径**（用户原话）：「数字是没错的，主要核对参考文献，和论文逻辑。以及数字和措辞是否一致。」
-> ⇒ **数字正确性已由用户确认**，不回溯 batch/regrade log 验数；只在**同一数字在文内自相矛盾**时才查 batch 一次。
-> 审阅范围仅限：① 参考文献（逐条元数据 + 逐 `\cite` 上下文） ② 论文逻辑链 ③ 数字↔措辞一致性。
-> 对象：`doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（main.tex + DAC2027/0~9 + reference.bib + software.bib + figures）·**只审不改**
-> 审阅基线 commit：`0188e978b`（Merge），HEAD `40fbf3687`，关键改动 commit `59094e282`「陈熙元修改论文」(+58/−64, 9 tex)
-> 报告路径：`doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html`（~37KB · 0 `<script>` · 0 外链 · 标签平衡 · title 注明 main.tex@40fbf3687）
+> 任务令：2026-10-29 21:5x（用户直令）。对象 = `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/` @ HEAD `c78558a0`。
+> 口径：数值正确性已确认 ⇒ 只查 ①参考文献 ②论文逻辑 ③数字↔措辞一致性。
 
-## 覆盖率计数（终态）
+## 基线信息
+- HEAD: `c78558a0a30b03c1fc851652d98297ed69c2ddb7`
+- bib 条目总数（reference.bib 实体）: 28（vaswani / openai-gpt4 / qwen3 / verigen / rtlcoder / dawning / autoeda / blocklove / agentforge / cline / mcp / seed / bge / faiss / pyaether / layoutcopilot / rag / chatcl / humaneval / iscript / pdagent / kaelbling / delage / thrun / austin / chateda / mcp4eda / liu-agentic）
+- software.bib：**未被 `\bibliography` 引用**（main.tex 仅 `\bibliography{reference}`）→ 模板遗留，不审。
+- 正文 `\cite` 唯一 key 数：**19**
+- 孤儿条目（bib 有、正文未引用）：**10**（vaswani2017attention, openai2023gpt4, yang2025qwen3, thakur2023verigen, liu2023rtlcoder, chen2024dawning, blocklove2024eda, kumar2026agentforge, mcp2024protocol, jiang2024seed）
+- main.bbl 条目数：19（= 引用的 19 个）
+- 页数（mutool info）：**8**（任务书目标 7 = 正文 6 + refs 1 → ⚠️ 超目标 1 页，需在报告记录）
+- pdftotext / pdfinfo：本机不可用 → 已用 mutool 实测 8 页
+- main.log：0 undefined ref/citation；Overfull 1（1.3pt，可忽略）；Underfull 4（排版自然现象，`\raggedbottom`+短页）
 
-| 项 | 已覆盖 / 总数 | 状态 |
-|:--|:-:|:--|
-| main.tex 通读 | 1/1 | ✅ |
-| 正文 tex 通读（0~9） | 10/10 | ✅（9_appendix 已删、无 \input） |
-| reference.bib 条目外部核验 | 29/29 | ✅（19 cited + 10 uncited）·bib 100% 外部验 |
-| software.bib 条目 | 10/10 | ✅（全部 unused 左余样例） |
-| `\cite` 上下文逐条判定 | 22/22 | ✅（19 key 全有 bibitem + 3 重复 cite 上下文） |
-| 论文逻辑链 claim 映射 | 9/9 | ✅（claim→loc→evidence→强度→verdict→建议） |
-| 数字↔措辞 多处比对 | 16/16 | ✅（按句判措辞强度） |
-| 59094e282 改动 diff 复核 | 9/9 tex | ✅ |
-| LaTeX 编译/告警检查 | 已核 | ✅ 0 undefined ref/cite · 19/19 cite key 有 bibitem · 1 overfull(1.3pt) · 匿名·sigconf 双盲合规 · CCS 3条 + keywords 在位 |
-| web 外部核验条数 | ≥52 | ✅（arXiv 18 + Crossref/DOI 4 + search 12 + GitHub/site 3 + DAC rules + software.bib 样例 + MCP 等）·**≥ bib 29 + 20** |
-| 检查项总数 | ≥160 | ✅ |
+## 计数（已完成）
+| 项 | 已核 / 总数 |
+|:--|:--|
+| bib 条目元数据外部核验 | 28 / 28 ✅ |
+| 正文 `\cite` 上下文判定 | 21 / 21 ✅ |
+| claim 进映射表 | 8 / 8 ✅ |
+| 数字↔措辞逐句 | 20+ / 全 ✅ |
+| 逻辑断点清单 | 6 ✅ |
 
-## 问题计数（终态）
+## 逐项进度
+- [x] 通读全文 ✅
+- [x] 建 claim→证据→结论 映射表（8 claim）
+- [x] bib 逐条元数据核验（arXiv/doi.org/EconPapers/scixplorer/GitHub）
+- [x] 每个 `\cite` 上下文判定 ✅/⚠️/❌
+- [x] 数字↔措辞一致性表
+- [x] 结构与元数据（main.tex / 页数 mutool=8）
+- [x] 写 HTML 报告（46KB, 0 script, 0 外链）✅
 
-- **P0（阻断）**：0（21:5x 口径下数字已由用户确认，原 21:3x「数字不可溯源」P0 已撤销）
-- **P1（严重）**：6
-  - **P1-1** `he2024chateda`：arXiv:2401.00754 实为天体物理论文；真实 ChatEDA = arXiv:2308.10204，作者全错（bib ❌ + cite 上下文错配）
-  - **P1-2** `wang2025mcp4eda`：arXiv:2502.18436 实为宇宙学论文；真实 MCP4EDA = arXiv:2507.19570（bib ❌）
-  - **P1-3** `delage2010percentile`：DOI 10.1287/opre.1090.0711 实为 Song 库存论文；Delage&Mannor 标题/作者/卷/页均正确，仅 DOI 错（bib 元数据 ❌ / cite 上下文 ✅ 支持百分位 regret 论断）
-  - **P1-4** §S3/abstract 概念漂移：57.2pp 标为"observation-fidelity axis"，实为系统级（Ω+effector）轴；纯 Ω 才是受控 7.1pp 阶梯——核心论点措辞与定义不一致
-  - **P1-5** `6_exp §error-analysis` L109「82.5% (130/158)」：130/158=82.3%≠82.5%；82.5%×158=130.35（非整数）——**句内自相矛盾**（按 21:5x 唯一允许查 batch 的一次，zhulong_results.md 亦无 82.5/130/158 三联）
-  - **P1-6** 提交版页数未实测：committed `main.pdf`=8 页但 stale（mtime 10:45 < commit 21:17）；临时编译因字体环境差异得 12 页不稳定；目标 body 6 + refs 1 = 7 页未实测确认
-- **P2（轻微）**：12（4 处 title 微差 / 10 uncited 死条目 / software.bib unused / empyrean 403 / cadence 手册泛化 / pu2024rag venue 待核 / 等，详见报告 §4）
+## 关键发现摘要
+- **P0×3**：① he2024chateda bib 伪造（eprint 2401.00754→天体物理，作者全错；真实=2308.10204）② wang2025mcp4eda bib 伪造（eprint 2502.18436→宇宙学，标题/作者全错；真实=2507.19570）③ main.pdf 与源码失配（stale 构建产物，PDF=81.4%/129/291-subset vs 源码=82.5%/130/449）
+- **P1×6**：页数 8>7；delage DOI 错（指向 Song et al.）；pu2024rag venue 可疑（ICCAD 2024 vs TCAD 2025 44:4615）；核心逻辑断点（57.2pp 系统轴混杂 ε+执行器+检索 vs 23.7pp backbone；受控回读轴 7.1pp<23.7pp 结论会反转）；cost 口径 449 vs 291 可疑；10 个孤儿 bib
+- **P2×12**：li2026pdagent 标题漏 /VLM；lee2025autoeda 作者不全；3 处 cite 上下文 ⚠️；孤儿 blocklove/chen2024dawning/jiang2024seed 标题小误；82.5%(130/158) 均值vs计数；12/9 分类+86.7%内省率自注待复核；software.bib 模板遗留；中文注释残留等
+- ✅ 实验数字内部高度自洽（Wilson CI、组件差值、跨切片归因全可对齐）；57.2/23.7/7.1/76.9/19.7/68.6 全文一致；部署兜底句已按评审处理
 
-## 轮次流水
+## 交付物
+- 报告：`doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html`（46KB）
+- 进度：本文件
+- MEMORY：`MEMORY_ZHULONG.md` 顶部已写结论
 
-- [2026-10-29 21:4x] R1：完成内部证据收集（git show 59094e282、zhulong_results.md 比对、main.log/bbl 告警、label/ref 配对、temp 编译测页数）+ bib 外部 web 核验（arxiv 18 条 / crossref DOI / github / MCP / DAC rules / search）+ 写首版 HTML 报告（21:3x 口径，含 P0 数字溯源）+ 进度文件。
-- [2026-10-29 21:5x] R2：**接到 21:5x 运维令（覆盖 21:3x）**，按用户原话「数字已确认·核对参考文献+逻辑+措辞」**撤销 R1 的 P0 数字溯源结论**，重写 HTML 报告为 21:5x 口径（三张必交表：ref-check / logic-chain / number↔wording + 断点清单 + 未核实清单），重写本进度文件。终态：**P0=0 / P1=6 / P2=12，bib 29/29 外部验，cite 22/22 判定，claim 9/9 映射，number↔wording 16/16 比对，web 核验 ≥52 条**。报告 ~37KB / 0 script / 0 外链 / 标签平衡 / title 注明 main.tex@40fbf3687。
-
-## 结论
-
-✅ 论文逐处核对完成（21:5x 口径）。**参考文献 3 处硬错（P1-1/2/3）+ 概念漂移 1 处（P1-4）+ 句内算术矛盾 1 处（P1-5）+ 页数未实测 1 处（P1-6）**，其余数字内部自洽且算术成立。所有 ❌/⚠️ 均可复现（arXiv/Crossref URL 或 file:line）。报告已交付，只审不改。
+## 操作流水
+- [2026-10-30] 启动审阅：读全文 + 列 bib/cite 清单 + 页数实测（mutool=8 页）。
+- [2026-10-30] bib 28 条 + cite 21 处外部核验完成；发现 2 条 P0 伪造条目 + 1 DOI 错 + 1 venue 可疑。
+- [2026-10-30] 发现 main.pdf stale（PDF=81.4%/129/291 vs 源码=82.5%/130/449），P0-3。
+- [2026-10-30] 建 claim 映射表(8) + 逻辑断点(6) + 数字↔措辞表(20+)；核心断点 LB1：57.2pp 系统轴混杂 ε vs backbone 23.7pp，受控回读轴仅 7.1pp<23.7pp。
+- [2026-10-30] 写完 HTML 报告 46KB（0 script / 0 外链 / 标签配平）。
+- [2026-10-30] 更新 MEMORY 顶部 + commit+push。

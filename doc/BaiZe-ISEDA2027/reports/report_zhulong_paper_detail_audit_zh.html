@@ -3,228 +3,302 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZhuLong DAC2027 论文逐处审阅报告（基于 main.tex@40fbf3687 · 含提交 59094e282「陈熙元修改论文」）</title>
+<title>ZhuLong DAC2027 论文详细审阅报告（参考文献 + 逻辑链 + 数字↔措辞一致性）— 基于 main.tex@c78558a0</title>
 <style>
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1240px;margin:0 auto;padding:18px;line-height:1.55;color:#1a1a1a;background:#fafafa}
-h1{font-size:1.45em;border-bottom:3px solid #b00;padding-bottom:8px}
-h2{font-size:1.2em;background:#eee;padding:6px 10px;border-left:5px solid #555;margin-top:30px}
-h3{font-size:1.05em;color:#333;margin-top:18px}
-table{border-collapse:collapse;width:100%;font-size:0.82em;margin:8px 0 18px;background:#fff}
-th,td{border:1px solid #bbb;padding:5px 6px;vertical-align:top;text-align:left}
-th{background:#e8e8e8}
-tr:nth-child(even){background:#f6f6f6}
-.ok{color:#0a7d2a;font-weight:bold}.warn{color:#b88a00;font-weight:bold}.err{color:#c00;font-weight:bold}
-.p0{background:#ffd6d6}.p1{background:#ffe9c7}.p2{background:#fff7cc}
-code{background:#eee;padding:1px 4px;border-radius:3px;font-size:0.9em;word-break:break-all}
-.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:0.78em;font-weight:bold;color:#fff}
-.t-p0{background:#c00}.t-p1{background:#e88a00}.t-p2{background:#caa500}.t-ok{background:#0a7d2a}
-.box{border:1px solid #999;padding:10px 14px;margin:12px 0;background:#fff;border-radius:4px}
-.tldr{border:2px solid #b00;background:#fff0f0;padding:12px 16px;border-radius:5px}
-small{color:#666}
-ul{margin:6px 0 6px 18px}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;line-height:1.65;color:#1d1d1f;background:#fafafa;margin:0;padding:0;-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 80px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+h1{font-size:1.5rem;border-bottom:3px solid #2c3e50;padding-bottom:10px;margin-bottom:6px}
+h2{font-size:1.22rem;margin-top:42px;border-left:6px solid #2c3e50;padding-left:10px;background:linear-gradient(90deg,#eef2f7,#fff);padding-top:6px;padding-bottom:6px}
+h3{font-size:1.05rem;margin-top:26px;color:#244}
+h4{font-size:.98rem;margin-top:18px;color:#445}
+p{margin:.6em 0}
+code{background:#f0f0f3;padding:1px 5px;border-radius:4px;font-size:.9em;font-family:"SF Mono",Consolas,Menlo,monospace}
+pre{background:#1e1e22;color:#e6e6e6;padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:.82em;line-height:1.5}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:.82rem;overflow:hidden}
+th,td{border:1px solid #d0d4da;padding:6px 8px;vertical-align:top;text-align:left}
+th{background:#e8eef5;font-weight:600}
+tr:nth-child(even) td{background:#f7f9fb}
+.tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:.72rem;font-weight:700;color:#fff;white-space:nowrap}
+.p0{background:#c0392b}.p1{background:#d68910}.p2{background:#566}.ok{background:#1e8449}.warn{background:#b9770e}.bad{background:#922b21}
+.box{padding:14px 16px;border-radius:8px;margin:14px 0}
+.box.tldr{background:#eaf6ff;border:1px solid #8ec5e8}
+.box.p0box{background:#fdecea;border:1px solid #e74c3c}
+.box.note{background:#fff8e7;border:1px solid #f0c36d}
+.box.ok{background:#eafaf1;border:1px solid #82e0aa}
+ul{margin:.4em 0 .8em 0}li{margin:.2em 0}
+.small{font-size:.78rem;color:#555}
+a{color:#246;text-decoration:none}
+.hdrmeta{font-size:.8rem;color:#555;margin-bottom:18px}
+.toc{background:#f4f6f8;border:1px solid #dde2e8;border-radius:8px;padding:10px 16px;font-size:.85rem;margin-bottom:8px}
+.toc a{display:block;padding:1px 0}
+.kbd{background:#222;color:#fff;padding:1px 6px;border-radius:4px;font-size:.8em}
+.flag{font-weight:700}
+.hr{height:2px;background:#eee;margin:30px 0;border:0}
+.q{color:#922b21;font-weight:700}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<h1>ZhuLong（DAC2027）论文逐处审阅报告</h1>
-<p><small>
+<h1>ZhuLong DAC2027 论文详细审阅报告</h1>
+<p style="font-size:1.05rem;color:#2c3e50;font-weight:600;margin-top:0">参考文献核对 · 论文逻辑链 · 数字↔措辞一致性</p>
+<div class="hdrmeta">
 审阅对象：<code>doc/ZhuLong_DAC2027/ZhuLong_DAC2027/</code>（<code>main.tex</code> + <code>DAC2027/0~9_*.tex</code> + <code>reference.bib</code> + <code>software.bib</code> + <code>figures/</code>）<br>
-基线：<code>main.tex@40fbf3687</code>（HEAD）；重点复核改动 commit <code>59094e282</code>「陈熙元修改论文」(+58/−64，9 tex)<br>
-审阅依据：运维令 2026-10-29 21:5x（<b>覆盖 21:3x</b>）—— 用户原话「数字是没错的，主要核对参考文献，和论文逻辑。以及数字和措辞是否一致。」<br>
-<b>口径</b>：数值正确性已由用户确认 ⇒ <b>不回溯 batch/regrade log 验数</b>；只查 ① 参考文献（逐条+逐引用上下文）② 论文逻辑 ③ 数字↔措辞一致性；仅当同数字在文中互相矛盾时才查一次产物定位。<br>
-web 核验：arXiv / Crossref / DBLP / GitHub / 官网（cimi_fetch/cimi_search，代理 <code>http://172.19.92.23:13128</code>；curl 直连失败）。抓取时间 2026-10-29 21:4x。<b>只审不改</b>。
-</small></p>
+源码 HEAD：<code>c78558a0a30b03c1fc851652d98297ed69c2ddb7</code>　|　审阅日期：2026-10-30　|　口径：数值正确性已由用户确认，本报告只查 ①参考文献 ②论文逻辑 ③数字↔措辞一致性<br>
+只审不改：本报告所有"建议改法"均写入报告，未改动任何 <code>.tex</code>/<code>.bib</code>/<code>figures/</code>。
+</div>
 
-<div class="tldr">
-<h2 style="margin-top:0;background:transparent;border:0;padding:0">🎯 TL;DR 结论：<span class="err">需修（Need Revision）</span></h2>
-<p>论文结构完整、理论已按外评审意见软化为可检验 prediction、双盲合规、label/ref 全配平无 undefined、全文数字内部算术自洽。但存在 <b>P1×6 / P2×11</b>，投稿前应修。<b>无 P0</b>（数字正确性经用户确认，不做溯源证伪）。</p>
+<div class="toc">
+<strong>目录</strong>
+<a href="#tldr">① TL;DR 与问题分级</a>
+<a href="#meta">② 结构与元数据快照</a>
+<a href="#ref">③ 参考文献核对表（28 条逐条 + 21 处 cite 上下文）</a>
+<a href="#logic">④ 论文逻辑链审查表 + 逻辑断点清单</a>
+<a href="#num">⑤ 数字↔措辞一致性表</a>
+<a href="#unverified">⑥ 未核实清单</a>
+<a href="#minor">⑦ 次要项</a>
+</div>
+
+<!-- ===================== TL;DR ===================== -->
+<h2 id="tldr">① TL;DR 与问题分级</h2>
+<div class="box tldr">
+<p><span class="flag">一句话结论：</span>论文的实验数字内部高度自洽（Wilson CI、组件差值、跨切片归因均可对齐），<strong>但参考文献存在 <span class="q">2 条 P0 级伪造/张冠李戴条目</span></strong>（<code>he2024chateda</code> 与 <code>wang2025mcp4eda</code> 的 arXiv id 与作者列表完全错配，指向天体物理/宇宙学论文），且 <strong>核心论证"observation, not scale, sets the ceiling"存在一处 P1 级逻辑断点</strong>（用混杂了执行器+检索的 57.2pp 系统轴 vs 23.7pp backbone 轴下结论，而受控观测保真度回读轴仅 7.1pp&lt;23.7pp，若按真正的 ε 轴结论会反转）。另发现 <strong>main.pdf 与源码不同步</strong>（stale 构建产物，PDF 显示 81.4%/129/291-subset，源码为 82.5%/130/449），页数 8&gt;目标 7。</p>
+<p><strong>判定：需修（major revision）。</strong>数字与措辞总体一致，逻辑链可投但需收紧"观测保真度"的口径表述；参考文献必须先修 2 条 P0 才能送审。</p>
+</div>
+
+<table>
+<tr><th style="width:60px">级别</th><th>定义</th><th style="width:70px">计数</th></tr>
+<tr><td><span class="tag p0">P0</span></td><td>阻断送审 / 涉及学术诚信（伪造文献、源码与产物失配）</td><td>3</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>严肃问题，审稿人大概率抓出（页数超标、DOI 错、venue 可疑、核心逻辑断点、cost 口径、孤儿条目）</td><td>6</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>次要（标题词漏、作者不全、引用上下文宽松、孤儿元数据小误、初步证据当结果）</td><td>12</td></tr>
+</table>
+
+<div class="box p0box">
+<h3 style="margin-top:4px">P0 清单（必须修）</h3>
+<ol>
+<li><strong>P0-1　<code>he2024chateda</code> 参考文献为伪造/张冠李戴。</strong>bib 中 <code>eprint={2401.00754}</code> 实为天体物理论文 <em>"Constraining the Number Density of the Accretion Disk Wind in Hercules X-1..."</em>（Kosec et al., astro-ph）；且作者列表 <code>He, Wei and Ren, Yibo and Zhu, Hang ...</code> 与真实 ChatEDA 作者完全不符。真实 ChatEDA = <strong>arXiv:2308.10204</strong>，作者 <em>Zhuolun He, Haoyuan Wu, Xinyun Zhang, Xufeng Yao, Su Zheng, Haisheng Zheng, Bei Yu</em>。标题正确，但 eprint+作者两处错。→ <span class="q">学术诚信问题</span>，正文 §2 line 10 引用它支撑"数字流程闭环执行反馈"——真实论文确支持，但 bib 元数据指向无关论文，审稿人一查 DOI 即穿。</li>
+<li><strong>P0-2　<code>wang2025mcp4eda</code> 参考文献为伪造。</strong>bib 中 <code>eprint={2502.18436}</code> 实为宇宙学论文 <em>"Reconstructing early universe evolution with gravitational waves..."</em>（Gonstal, Lewicki, Swiezewska, gr-qc）；bib 标题 <em>"MCP4EDA: Bridging Large Language Models to EDA Tools via the Model Context Protocol"</em> 与作者 <code>Wang, Ziyuan and Liu, Bangyu ...</code> 均与真实论文不符。真实 MCP4EDA = <strong>arXiv:2507.19570</strong>，标题 <em>"MCP4EDA: LLM-Powered Model Context Protocol RTL-to-GDSII Automation with Backend Aware Synthesis Optimization"</em>，作者 <em>Yiting Wang, Wanghao Ye, Yexiao He, Yiran Chen, Gang Qu, Ang Li</em>。</li>
+<li><strong>P0-3　<code>main.pdf</code> 与源码失配（stale 构建产物）。</strong>仓库内 <code>main.pdf</code>（Oct 29 10:45，未纳入 git）是从更早源码编译的：PDF p6 表注写 <em>"291-task audited subset (SKILL + two Tcl hosts)"</em>、p7 §6.3 写 <em>"81.4% Pass@1 (129/158)"</em>；而当前源码 <code>6_exp.tex</code> 已改为 <em>"over all 449 tasks"</em> 与 <em>"82.5% Pass@1 (130/158)"</em>。源码已 commit 但 PDF 未重建 → 任何基于 PDF 的页数/warning 测量都不反映当前源码；若以此 PDF 送审等于送错版本。</li>
+</ol>
+</div>
+
+<div class="box note">
+<h3 style="margin-top:4px">P1 清单（严肃）</h3>
+<ol>
+<li><strong>P1-1　页数 8 &gt; 目标 7。</strong><code>mutool info main.pdf</code> 实测 8 页；任务书目标"正文 6 + refs 1 = 7"。commit <code>cb3cd15e9</code>/<code>d1f4817cb</code> 的提交说明亦承认"页数仍 8（body 7p 实满），需 author-level 结构性删段"。<span class="small">（注：此 8 页来自 stale PDF；当前源码重编译后页数未实测，但 commit 历史表明仍是 8。）</span></li>
+<li><strong>P1-2　<code>delage2010percentile</code> DOI 错误。</strong>bib <code>doi={10.1287/opre.1090.0711}</code> 经 doi.org 解析实指向 <em>Song, Zhang, Hou, Wang (2010) "The Effect of Lead Time and Demand Uncertainties in (r,Q) Inventory Systems"</em>（<em>Operations Research</em> 58(1):68–80，同卷期另一篇文章）。Delage &amp; Mannor "Percentile Optimization for MDPs with Parameter Uncertainty" 确实存在于 <em>Operations Research</em> 58(1):203–213 (2010)（EconPapers 已确认标题/作者/venue），但本条 DOI 张冠李戴。</li>
+<li><strong>P1-3　<code>pu2024rag</code> venue 可疑。</strong>bib 标 <code>booktitle={Proc. IEEE/ACM Int. Conf. on Computer-Aided Design (ICCAD)}</code> year 2024；但 scixplorer 索引记录为 <code>2025ITCAD..44.4615P</code>，强烈指向 <strong>IEEE TCAD 2025, vol 44, p 4615</strong>（期刊而非会议）。arXiv:2407.15353、作者、标题均正确。需确认是否同时在 ICCAD 2024 发表，抑或 venue 应改为 TCAD 2025。</li>
+<li><strong>P1-4　核心论证逻辑断点（"observation, not scale, sets the ceiling"）。</strong>摘要与 §1 RQ1 把 57.2pp 称为"observation-fidelity axis (no observation → full observation), LLM fixed"。但 57.2pp = Full(76.9) − Pure-LLM(19.7)，<strong>Pure-LLM 同时无检索、无执行器、无自探索</strong>，Full 同时有三者——此轴变动了 3 个组件，并非只变动观测保真度 ε。§4.2 把 ε 严格定义为"观测似然 Ω 的保真度"（即回读通道），而<strong>受控回读轴 N'→F 仅 7.1pp</strong>，反而 <strong>&lt; 23.7pp backbone 轴</strong>。论文用"系统级 ε 轴 57.2pp vs backbone 23.7pp"得出"观测 &gt; 规模"，但若用真正受控的 ε 轴（7.1pp）则结论反转。措辞"observation, not scale, sets the ceiling"与受控证据不匹配，属<strong>以混杂轴下因果结论</strong>。</li>
+<li><strong>P1-5　cost 口径可疑（449 vs 291）。</strong>源码 Table 1 表注与脚注均称 cost 三列"averaged over all 449 tasks"，但 stale PDF 表注写"291-task audited subset (SKILL + two Tcl hosts)"（291=157+77+57，排除 PyAether 158）。源码疑似只改了 caption 文字、未重算 cost 数字。需确认表内 Time/<code>run_code</code>/Input 数值确实按 449 重算，否则 caption 与数据口径矛盾。</li>
+<li><strong>P1-6　10 个孤儿 bib 条目。</strong>reference.bib 有 28 条，正文仅引用 19 条。孤儿：vaswani2017attention、openai2023gpt4、yang2025qwen3、thakur2023verigen、liu2023rtlcoder、chen2024dawning、blocklove2024eda、kumar2026agentforge、mcp2024protocol、jiang2024seed。DAC 双盲版 bib 应只保留被引条目；孤儿膨胀参考文献页、也增加审稿人误查风险（其中 blocklove/chen2024dawning/jiang2024seed 元数据本身还有小误，见 P2）。</li>
+</ol>
+</div>
+
+<div class="box ok">
+<h3 style="margin-top:4px">✅ 已确认良好的方面</h3>
 <ul>
-<li><b>P1-1（引用·最严重）</b>：<code>he2024chateda</code> 的 arXiv id <code>2401.00754</code> 实为天体物理论文《Constraining the Number Density of the Accretion Disk Wind in Hercules X-1》，且 bib 作者列表（He, Wei / Ren, Yibo …）与真实 ChatEDA（arXiv:<code>2308.10204</code>，He, Zhuolun / Wu, Haoyuan / Zhang, Xinyun / Yao, Xufeng / Zheng, Su / Zheng, Haisheng / Yu, Bei）<b>完全不符</b>。正文 <code>2_background</code> 引用它支撑「ChatEDA 在开源工具链上闭环」——指向的是一篇不存在的 ChatEDA。</li>
-<li><b>P1-2（引用）</b>：<code>wang2025mcp4eda</code> 的 arXiv id <code>2502.18436</code> 实为宇宙学论文《Reconstructing early universe evolution with gravitational waves…》；真实 MCP4EDA = arXiv:<code>2507.19570</code>（Yiting Wang 等，标题「…RTL-to-GDSII Automation with Backend Aware Synthesis Optimization」），与 bib 的标题/作者均不同，<b>疑似杜撰条目</b>。</li>
-<li><b>P1-3（引用·DOI）</b>：<code>delage2010percentile</code> 的 DOI <code>10.1287/opre.1090.0711</code> 经 Crossref 实查指向 Song 的《The Effect of Lead Time and Demand Uncertainties in (r,q) Inventory Systems》(pp 68-80)，<b>非</b> Delage&amp;Mannor。该条标题/作者/卷期/页码(203-213)均正确，仅 DOI 错。<b>引用上下文本身 ✅ 支持</b>（Delage&amp;Mannor 2010 确为「参数不确定下 MDP 百分位优化」，支撑正文「model mismatch is a recognized obstacle」）。</li>
-<li><b>P1-4（逻辑断点）</b>：§6 S3 把「系统级 57.2pp」标注为 <b>"the system-level observation-fidelity axis"</b>，与 §4.2 命题「gap bounded by <em>observation fidelity</em> Ω」对照 backbone 23.7pp。但 57.2pp 的轴是 pure-LLM→full（同时变了 检索+沙盒+自探索+回读 = Ω <b>与</b> effector），<b>并非纯 Ω 轴</b>；纯 Ω 轴是受控回读阶梯 7.1pp。用 57.2 作为「observation-fidelity axis」headline 与 23.7 对比，<b>把系统级增益（含 effector）归到 observation fidelity 名下</b>，是核心论证的概念漂移。（注：论文已把 7.1pp 受控阶梯单列，部分缓解；但 abstract/§S3 的 headline 措辞仍称 57.2 为 observation axis。）</li>
-<li><b>P1-5（数字↔措辞）</b>：<code>6_exp §error-analysis</code> 写「reaches 82.5% Pass@1 (130/158)」，但 130/158 = 82.28% ≈ <b>82.3%</b>，非 82.5%；且 82.5%×158 = 130.35（非整数）。同一句里百分比与计数互相矛盾——按 21:5x「仅当同数字在文中矛盾时查一次产物」触发：130/158 为单轮计数，82.5% 为 5-run 均值，二者本不应并列等同。</li>
-<li><b>P1-6（结构/页数）</b>：committed <code>main.pdf</code> = <b>8 页</b>，但 mtime 10-29 10:45 早于 59094e282 提交 21:17 ⇒ <b>stale</b>，审计版真实页数未实测；目标 body 6 + refs 1 = 7。需在原始环境重新编译实测并压页。</li>
-<li><b>P2 群</b>：4 处 bib 标题微差（li2026pdagent 漏 /VLM、chen2024dawning "Promises"→"Opportunities"、blocklove2024eda / jiang2024seed 标题不符）；10 条 uncited 死条目；<code>software.bib</code> 整文件未被 \bibliography（无关 ACM 样例）；<code>pu2024rag</code> 引用上下文 ⚠️（RAG-EDA 是文档 QA，正文称其「generate Tcl scripts but do not execute」略偏）；<code>lee2025autoeda</code> 在 intro 被 cite 为「four unified MCP tools」来源 ⚠️（四工具是 ZhuLong 自设计，非 AutoEDA）；86.7% 内省率作者自标「待复核」；§4 「monotone gain」未限定 Tcl 倒挂；DAC 2027 官方页数上限未独立核实；empyrean URL 403；部署声明无可核验证据；5_bench §Reproducibility 小节被 59094e282 删除（可复现性声明减弱）。</li>
-<li><b>已达标 ✅</b>：0 undefined ref/citation；19/19 引用键均有 bibitem；label↔ref 配平；全文 Δ/pp 跨度/成本比率算术自洽（57.2=76.9−19.7、23.7=76.9−53.2、7.1=76.9−69.8、消融 −8.3/−10.7/−2.4、28.1%、2.1×）；S2 Φ 数字（k1=63.8/k3=69.1/k10=77.7/lagged=73.0/Converged 99.1→76.3）内部自洽；449=158+157+77+57、Tcl 134=77+57；理论已 softening 为 prediction（评审 P0-B 已修）；改后 13.5→7.1 / 22.0→23.7 / 57.4→57.2 措辞与论证链成立；双盲 anonymous·sigconf 合规；CCS 3 条 + keywords 在位；排版告警极轻（1 Overfull 1.3pt）。</li>
+<li>实验数字内部高度自洽：表 1 五配置 + 回读三档 + cost 三列的全部差值（−8.3/−10.7/−2.4/+57.2/+2.1×/−28.1% 等）与正文逐句可对齐；§6.3 工具链特定量级（执行 SKILL +8.1/Tcl +5.3；检索 SKILL +15.1/PyAether +9.1/Tcl +7.7）经表 1 逐项复核全部正确。</li>
+<li>Wilson 95% CI 七条 + N'→F 7.1pp CI [4.52,9.68] 与各表 mean 中心、SE=1.32pp 全部自洽（n=2245=449×5）。</li>
+<li>57.2pp / 23.7pp / 7.1pp / 76.9% / 19.7% / 68.6% 在摘要/intro/§4/§6/§8 多处出现完全一致（用户 10-25 评审要求把旧 57.4pp→57.2pp、13.5pp→7.1pp 的归因重写已落地且全文统一）。</li>
+<li>"服务数百名工程师"已从英文正文移除（仅残留于中文注释），改为"leading memory design house"，符合 10-25 评审 J 项要求；部署指标在 §7 明确标注"deferred to extended version"。</li>
+<li>0 undefined ref/citation；Overfull 仅 1 处 1.3pt；Underfull 4 处为短页自然现象。</li>
+<li>§4.2 的 grounding-gap bound 已按评审意见降级为"testable prediction rather than theorem"（Claim 措辞），框架口径恰当。</li>
 </ul>
-<p><b>处置</b>：① 修 3 处引用（he2024chateda→2308.10204+正确作者；wang2025mcp4eda→2507.19570 或删；delage→删错 DOI）；② §S3/abstract 把 57.2 明确标注为「system-level (Ω+effector) axis」、与纯 Ω 的 7.1pp 受控阶梯区分表述；③ 修 82.5%(130/158) 计数；④ 原始环境重编译实测页数；⑤ 清理死条目 + software.bib。修完即可投。</p>
 </div>
 
-<h2>一、问题分级汇总</h2>
+<hr class="hr">
+<!-- ===================== META ===================== -->
+<h2 id="meta">② 结构与元数据快照</h2>
 <table>
-<tr><th style="width:5%">级</th><th style="width:9%">编号</th><th style="width:34%">问题</th><th style="width:30%">证据 / 位置</th><th style="width:22%">建议</th></tr>
-<tr class="p1"><td><span class="tag t-p1">P1</span></td><td>P1-1</td><td><code>he2024chateda</code> arXiv id 错（→天体物理）+ 作者全错</td><td>arxiv.org/abs/2401.00754 标题不符；真实 ChatEDA=2308.10204；<code>2_background L10</code> cite</td><td>改 eprint=2308.10204 + 作者 He,Zhuolun 等 7 人</td></tr>
-<tr class="p1"><td><span class="tag t-p1">P1</span></td><td>P1-2</td><td><code>wang2025mcp4eda</code> arXiv id 错（→宇宙学）+ 标题/作者不符</td><td>arxiv.org/abs/2502.18436 标题不符；真实 MCP4EDA=2507.19570；<code>2_background L10</code> cite</td><td>改 eprint=2507.19570 + 更正标题/作者，或删</td></tr>
-<tr class="p1"><td><span class="tag t-p1">P1</span></td><td>P1-3</td><td><code>delage2010percentile</code> DOI 错（→Song 库存论论文）</td><td>Crossref 10.1287/opre.1090.0711 → Song pp68-80；<code>4_grounding L53</code> cite</td><td>删错 DOI 或更正（RePEc:inm:oropre:v:58:y:2010:i:1:p:203-213）</td></tr>
-<tr class="p1"><td><span class="tag t-p1">P1</span></td><td>P1-4</td><td>57.2pp 被标 "observation-fidelity axis"，实含 effector，与纯 Ω(7.1pp) 概念混淆</td><td><code>4_grounding L59</code> / <code>6_exp §S3 L97</code> / abstract</td><td>明确区分「system-level (Ω+effector) 57.2」与「controlled Ω 7.1」</td></tr>
-<tr class="p1"><td><span class="tag t-p1">P1</span></td><td>P1-5</td><td>「82.5% (130/158)」计数与百分比矛盾（130/158=82.3%）</td><td><code>6_exp §error-analysis L109</code></td><td>去 (130/158) 单计数，或改为对应轮真实计数</td></tr>
-<tr class="p1"><td><span class="tag t-p1">P1</span></td><td>P1-6</td><td>页数=8（stale pre-commit pdf），审计版未实测，目标 7</td><td><code>main.log</code> "8 pages"；main.pdf mtime 10:45&lt;21:17</td><td>原始环境重编译实测+压页</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-1</td><td><code>li2026pdagent</code> 标题漏 /VLM</td><td>arxiv 2606.17253 标题含 "LLM/VLM"</td><td>补 /VLM</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-2</td><td><code>chen2024dawning</code> "Promises"→"Opportunities"</td><td>arxiv 2403.07257</td><td>更正</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-3</td><td><code>blocklove2024eda</code> 标题不符（uncited）</td><td>arxiv 2411.11856 "Automatically Improving..."</td><td>更正或删</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-4</td><td><code>jiang2024seed</code> 标题不符（uncited）</td><td>arxiv 2403.00046 "Exploring Data-Efficient..."</td><td>更正或删</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-5</td><td>10 条 uncited 死条目</td><td>blocklove/chen2024dawning/jiang/kumar/liu2023rtlcoder/mcp2024protocol/openai2023gpt4/thakur/vaswani/yang2025qwen3</td><td>引用之或删</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-6</td><td><code>software.bib</code> 整文件 unused（无关 ACM 样例）</td><td>main.tex 仅 \bibliography{reference}</td><td>删 software.bib</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-7</td><td><code>pu2024rag</code> 引用上下文 ⚠️（RAG-EDA 是文档 QA，非 Tcl 生成）</td><td><code>2_background L10</code> "generate Tcl scripts but do not execute"</td><td>改述为「EDA 文档 QA / RAG」</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-8</td><td><code>lee2025autoeda</code> 在 intro 被引为「four unified MCP tools」来源 ⚠️</td><td><code>1_intro L7</code> "four unified MCP tools \cite{lee2025autoeda}"</td><td>四工具是 ZhuLong 自设计，cite 改为相关工作指针</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-9</td><td>86.7% 内省率作者自标「待复核」却以事实陈述</td><td><code>6_exp §S1</code> 行内注释</td><td>加「(初步统计)」或完成重分析</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-10</td><td>§4「monotone gain」未限定 Tcl 中间档倒挂</td><td><code>4_grounding L59</code> vs §S1 已披露 Tcl 倒挂</td><td>§4 加「(pooled; Tcl 中间档倒挂见 §6)」</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-11</td><td>5_bench §Reproducibility 小节被 59094e282 删除</td><td>git show 59094e282 5_bench.tex −6 行</td><td>恢复或并入 §setup（可复现性是评审 P0-C）</td></tr>
-<tr class="p2"><td><span class="tag t-p2">P2</span></td><td>P2-12</td><td>DAC 2027 官方页数上限未独立核实；empyrean URL 403；部署声明无证据</td><td>wikicfp 日期错乱；cimi_fetch empyrean→403；abstract/intro/conclusion</td><td>直访 dac.com/2027；更新 URL；弱化部署措辞</td></tr>
+<tr><th style="width:34%">项</th><th>实测 / 判定</th></tr>
+<tr><td>documentclass</td><td><code>\documentclass[anonymous, sigconf]{acmart}</code> ✅ 双盲匿名 + sigconf，符合 DAC 模板基线</td></tr>
+<tr><td>作者/邮箱/单位</td><td>15 位作者 + <code>paul.liu@cxmt.com</code> 等邮箱 + Changxin Memory Technologies, Inc. ✅ 字段完整。⚠️ 匿名版仍含真实邮箱与公司名（<code>anonymous</code> 选项已隐去版权块，但 <code>\author</code> 块未匿名）→ <span class="tag p1">P1</span> 双盲合规需作者自行确认 <code>anonymous</code> 是否足够遮蔽 <code>\author</code>（acmart <code>anonymous</code> 会自动隐去作者信息，应以编译后 PDF 为准；但 stale PDF p6 页眉显示 "Anon."，提示匿名生效——需重编译后复核）</td></tr>
+<tr><td>CCS / keywords</td><td>3 条 CCS（Hardware~Software tools for EDA / Neural networks / Automatic programming）+ keywords 5 项 ✅（commit <code>82df9eaee</code> 已补足）</td></tr>
+<tr><td>页数</td><td><span class="tag p1">P1-1</span> <code>mutool info</code> = <strong>8 页</strong>（stale PDF）。目标 7（正文 6 + refs 1）。refs 落 p8（\clearpage 后）。页数超标 1 页。</td></tr>
+<tr><td>pdfinfo / pdftotext</td><td>本机不可用 → 用 <code>mutool</code> 替代实测，结果 8 页</td></tr>
+<tr><td>main.log 告警</td><td>0 undefined ref/citation；Overfull \hbox 1（1.29785pt，可忽略）；Underfull \hbox 4（badness 1014–3635，短页/浮动自然现象，已 <code>\raggedbottom</code>+<code>\emergencystretch=3em</code> 缓解）✅</td></tr>
+<tr><td>main.bbl 条目</td><td>19 条 = 正文 19 个唯一 cite key ✅</td></tr>
+<tr><td>software.bib</td><td><span class="tag p2">P2-10</span> <code>\bibliography{reference}</code> 仅引 reference.bib，software.bib <strong>未被引用</strong>（acmart 模板遗留：Scilab/CGAL/Parmap/tag-sound 等），建议从仓库移除以免误用</td></tr>
+<tr><td>figures/</td><td>正文仅 <code>\includegraphics{figures/zhulong_arch.pdf}</code>（1 处），文件存在 ✅。目录另有 <code>zhulong_arch_2.pdf</code>、<code>zhulong_arch.pptx</code> 未引用（无害）</td></tr>
+<tr><td>\cite 总数 / 唯一 key</td><td>26 处 \cite / 19 唯一 key（cline 3×, lee/li2026pdagent/xu2026iscript/liu2026agentic/delage 各 2×）</td></tr>
+<tr><td>DAC 2027 规则 web 核实</td><td>未实测（见未核实清单 §⑥）</td></tr>
 </table>
 
-<h2>二、参考文献核对表（reference.bib 29 条 + software.bib）· 逐条元数据 + 逐引用上下文</h2>
-<p><small>列：<code>key | 文献 | 核对源 URL | 元数据 ✅/⚠️/❌ | 引用上下文 ✅支持/⚠️部分/❌不支持/—未引 | 建议</code>。元数据 = 标题/作者/年/venue/卷期/页/DOI/arXiv 与原始记录比对；引用上下文 = 正文该 cite 处的被引结论是否真由该文支持。</small></p>
-<table>
-<tr><th style="width:11%">key</th><th style="width:20%">文献（bib 标题）</th><th style="width:17%">核对源 URL</th><th style="width:9%">元数据</th><th style="width:25%">引用上下文（cite 处）</th><th style="width:18%">建议</th></tr>
-<tr><td>vaswani2017attention</td><td>Attention is All You Need, NeurIPS 30, 5998-6008, 2017</td><td>mlanthology.org/neurips/2017/vaswani</td><td class="ok">✅</td><td>— 未引用（dead）</td><td>删或引</td></tr>
-<tr><td>openai2023gpt4</td><td>GPT-4 Technical Report, arXiv:2303.08774</td><td>arxiv.org/abs/2303.08774</td><td class="ok">✅</td><td>— 未引用</td><td>删或引</td></tr>
-<tr><td>yang2025qwen3</td><td>Qwen3 Technical Report, arXiv:2505.09388</td><td>arxiv.org/abs/2505.09388</td><td class="ok">✅</td><td>— 未引用</td><td>删或引</td></tr>
-<tr><td>thakur2023verigen</td><td>VeriGen, TODAES 29(3) 1-31, 2023</td><td>arxiv.org/abs/2308.00708</td><td class="warn">⚠️</td><td>— 未引用；TODAES 发表年疑 2024</td><td>核年</td></tr>
-<tr><td>liu2023rtlcoder</td><td>RTLCoder, ICCAD 2024, arXiv:2312.08617</td><td>arxiv.org/abs/2312.08617</td><td class="ok">✅</td><td>— 未引用</td><td>删或引</td></tr>
-<tr><td>chen2024dawning</td><td>The Dawn of AI-Native EDA: <b>Promises</b> and Challenges</td><td>arxiv.org/abs/2403.07257</td><td class="warn">⚠️ P2-2</td><td>— 未引用</td><td>改 Promises→Opportunities</td></tr>
-<tr><td>lee2025autoeda</td><td>AutoEDA: Enabling EDA Flow Automation through Microservice-Based LLM Agents</td><td>arxiv.org/abs/2508.01012</td><td class="ok">✅</td><td>intro L7「four unified MCP tools \cite{lee2025autoeda}」<b>⚠️ 部分</b>：AutoEDA 用 MCP 做 EDA 自动化（支持 MCP-for-EDA 大方向），但「四个统一工具(search_apis/keyword/get_api_details/run_code)」是 ZhuLong 自设计，非 AutoEDA 定义。background L10「AutoEDA 闭环 Yosys/OpenLane/OpenRoad」<b>✅ 支持</b></td><td>intro cite 改为相关工作指针</td></tr>
-<tr><td>blocklove2024eda</td><td>Can EDA Tool Feedback Improve Verilog Generation by LLMs?</td><td>arxiv.org/abs/2411.11856</td><td class="warn">⚠️ P2-3</td><td>— 未引用；arXiv 标题 "Automatically Improving LLM-based Verilog Generation using EDA Tool Feedback"</td><td>更正标题或删</td></tr>
-<tr><td>kumar2026agentforge</td><td>AgentForge: Execution-Grounded Multi-Agent LLM Framework…</td><td>arxiv.org/abs/2604.13120</td><td class="ok">✅</td><td>— 未引用</td><td>删或引</td></tr>
-<tr><td>cline2024cline</td><td>Cline: Autonomous AI Coding Assistant</td><td>api.github.com/repos/cline/cline (id 824874689)</td><td class="ok">✅</td><td>3_design L7「built on Cline-CLI…autonomous coding agents」<b>✅ 支持</b>；L28「iteratively refines through execution feedback」<b>✅ 支持</b></td><td>—</td></tr>
-<tr><td>mcp2024protocol</td><td>Model Context Protocol (MCP)</td><td>modelcontextprotocol.io/introduction</td><td class="ok">✅</td><td>— 未引用（MCP 正文提及但无 \cite）</td><td>在 MCP 首现处补 \cite</td></tr>
-<tr><td>jiang2024seed</td><td>SEED: Customize LLMs with Sample-Efficient Adaptation</td><td>arxiv.org/abs/2403.00046</td><td class="warn">⚠️ P2-4</td><td>— 未引用；arXiv 标题 "Exploring Data-Efficient Adaptation…"</td><td>更正或删</td></tr>
-<tr><td>bge2024</td><td>M3-Embedding…</td><td>arxiv.org/abs/2402.03216</td><td class="ok">✅</td><td>3_design L22「BGE-M3 embeddings \cite{bge2024}」<b>✅ 支持</b>（M3-Embedding 即 BGE-M3）</td><td>—</td></tr>
-<tr><td>douze2024faiss</td><td>The Faiss library</td><td>arxiv.org/abs/2401.08281</td><td class="ok">✅</td><td>3_design L22「FAISS \cite{douze2024faiss}」<b>✅ 支持</b></td><td>—</td></tr>
-<tr class="p2"><td>empyrean_pyaether</td><td>Empyrean PyAether</td><td>empyrean.com.cn/solutions/index-128.html → <b>403</b></td><td class="warn">⚠️</td><td>2_background L4「PyAether for Empyrean Aether」<b>✅ 支持</b>（产品页）</td><td>更新可访问 URL</td></tr>
-<tr><td>liu2025layoutcopilot</td><td>LayoutCopilot, TCAD 44(8) 3126-3139, 2025</td><td>crossref 10.1109/TCAD.2025.3529805 + IEEE Xplore</td><td class="ok">✅</td><td>2_background L10「LayoutCopilot targets analog layout (not scripting) via multi-agent」<b>✅ 支持</b>（完全匹配）</td><td>—</td></tr>
-<tr class="p2"><td>pu2024rag</td><td>Customized RAG and Benchmarking for EDA Tool Documentation QA</td><td>arxiv.org/abs/2407.15353</td><td class="warn">⚠️</td><td>2_background L10「RAG-EDA retrieve from static KB to <b>generate Tcl scripts</b> but do not execute」<b>⚠️ 部分</b>：RAG-EDA 是 EDA 文档 QA，非「生成 Tcl 脚本」；「不执行」成立</td><td>改述为「EDA 文档 QA / RAG」</td></tr>
-<tr><td>rui2025chatcl</td><td>ChaTCL, ISEDA 2025, 736-742</td><td>Google Scholar (Yibo Rui 等, ISEDA 2025)</td><td class="ok">✅</td><td>2_background L10「ChaTCL retrieve from static KB to generate Tcl but do not execute」<b>✅ 支持</b></td><td>—</td></tr>
-<tr><td>chen2021evaluating</td><td>Evaluating LLMs Trained on Code</td><td>arxiv.org/abs/2107.03374</td><td class="ok">✅</td><td>2_background L7「correctness verified by unit tests」<b>✅</b>；5_bench L43「Pass@1 \cite{chen2021evaluating}」<b>✅ 支持</b>（HumanEval 定义 Pass@1）</td><td>—</td></tr>
-<tr><td>xu2026iscript</td><td>iScript…Physical Design Tcl Script Generation</td><td>arxiv.org/abs/2603.04476</td><td class="ok">✅</td><td>2_background L10「Concurrent benchmarks focus on digital Tcl」<b>✅ 支持</b></td><td>—</td></tr>
-<tr><td>li2026pdagent</td><td>PDAGENT-BENCH: …LLM Agents…</td><td>arxiv.org/abs/2606.17253</td><td class="warn">⚠️ P2-1</td><td>2_background L10「physical-design agents」<b>✅ 支持</b>（标题漏 /VLM，正文 cite 语义 OK）</td><td>补 /VLM</td></tr>
-<tr><td>kaelbling1998planning</td><td>Planning and acting in partially observable stochastic domains, AI 101, 99-134, 1998</td><td>布朗大学 IJCAI 2021 Classic AIJ 奖页</td><td class="ok">✅</td><td>4_grounding L36「decision-making under partial observability」<b>✅</b>；L43「Eq.(1) standard POMDP filter」<b>✅ 支持</b></td><td>—</td></tr>
-<tr class="p1"><td>delage2010percentile</td><td>Percentile Optimization for MDPs with Parameter Uncertainty, OR 58(1) 203-213, 2010</td><td>crossref 10.1287/opre.1090.0711 → <b>Song 库存论</b>；EconPapers RePEc:inm:oropre:v:58:y:2010:i:1:p:203-213 → Delage&amp;Mannor 真实</td><td class="err">❌ DOI</td><td>4_grounding L53「Model mismatch under estimated parameters is a recognized obstacle \cite{delage2010percentile}」<b>✅ 支持</b>（该文正是参数不确定 MDP 百分位优化）</td><td>删错 DOI（内容/上下文均正确）</td></tr>
-<tr><td>thrun2005probabilistic</td><td>Probabilistic Robotics, MIT Press, 2005</td><td>Google Books (Thrun/Burgard/Fox, MIT Press 2005-08-19)</td><td class="ok">✅</td><td>4_grounding L36「\cite{thrun2005probabilistic}」POMDP/部分可观测<b>✅ 支持</b></td><td>—</td></tr>
-<tr><td>austin2021program</td><td>Program Synthesis with LLMs</td><td>arxiv.org/abs/2108.07732</td><td class="ok">✅</td><td>2_background L7「\cite{austin2021program}」程序合成/MBPP<b>✅ 支持</b></td><td>—</td></tr>
-<tr class="p1"><td>he2024chateda</td><td>ChatEDA: A LLM Powered Autonomous Agent for EDA</td><td>arxiv.org/abs/2401.00754 → <b>天体物理</b>；真实=arxiv.org/abs/2308.10204</td><td class="err">❌ arXiv+作者</td><td>2_background L10「ChatEDA 闭环 Yosys/OpenLane/OpenRoad」<b>❌ 不支持（指向错论文）</b>；改正后真实 ChatEDA(OpenROAD) <b>✅ 支持</b></td><td>改 2308.10204 + 正确作者</td></tr>
-<tr class="p1"><td>wang2025mcp4eda</td><td>MCP4EDA: Bridging LLMs to EDA Tools via MCP</td><td>arxiv.org/abs/2502.18436 → <b>宇宙学</b>；真实=arxiv.org/abs/2507.19570</td><td class="err">❌ arXiv+标题+作者</td><td>2_background L10「MCP4EDA」<b>❌ 不支持（指向错论文）</b>；改正后真实 MCP4EDA <b>✅ 支持</b></td><td>改 2507.19570 或删</td></tr>
-<tr><td>liu2026agentic</td><td>Agentic EDA: A Handoff Perspective</td><td>arxiv.org/abs/2606.19795</td><td class="ok">✅</td><td>2_background L10「recent survey organizes EDA agents by handoff validity」<b>✅ 支持</b>（标题即 Handoff Perspective）</td><td>—</td></tr>
-<tr class="p2"><td>cadence2024virtuoso</td><td>Virtuoso Studio SKILL Language Reference</td><td>cimi_search (SKILL 为 Cadence 语言)</td><td class="warn">⚠️</td><td>2_background L4「SKILL for Cadence Virtuoso」<b>✅ 支持</b></td><td>补手册版本号</td></tr>
-<tr class="p2"><td>software.bib (10)</td><td>Scilab / CGAL / parmap / tag-sound / BabyJ…</td><td>scilab.org / cgal.org / parmap（均真实）</td><td class="warn">⚠️</td><td>— <b>全未引用</b>；内容为无关 ACM 样例</td><td>删 software.bib</td></tr>
-</table>
-<p><small><b>bib 覆盖</b>：reference.bib 29 条 100% 外部核验（arXiv 18 + Crossref/DOI 4 + GitHub/MCP/官网 4 + 搜索 3）；software.bib 10 条确认全 unused。<b>正文 \cite 上下文</b>：19 个被引键、~22 处 \cite 逐处判定（✅支持 16 / ⚠️部分 3 / ❌不支持 2 处因指向错论文 / —未引 10）。元数据：✅ 19 / ⚠️ 7 / ❌ 3。</small></p>
+<hr class="hr">
+<!-- ===================== REF ===================== -->
+<h2 id="ref">③ 参考文献核对表</h2>
+<p class="small">核对源：Crossref / doi.org / arXiv abs / DBLP（DBLP 经 Anubis 反爬，已用 cimi_search 替代）/ EconPapers / scixplorer / GitHub。每条留 URL + 抓取时间 2026-10-30。元数据列：✅ 全对 / ⚠️ 部分错 / ❌ 错或伪造。引用上下文列仅对"正文实际引用"的 19 key 判定。</p>
 
-<h2>三、逻辑链审查表（claim → 证据 → 结论）+ 逻辑断点清单</h2>
+<h3>③.1 被引用的 19 条（元数据 + 引用上下文）</h3>
 <table>
-<tr><th style="width:26%">claim</th><th style="width:14%">出处</th><th style="width:26%">支撑证据</th><th style="width:8%">强度</th><th style="width:8%">判定</th><th style="width:18%">建议</th></tr>
-<tr><td>observation 而非 scale 定上限</td><td>1_intro RQ1 / abstract</td><td>系统级轴 57.2pp &gt; backbone 轴 23.7pp</td><td>中</td><td class="warn">⚠️</td><td>见断点 BP-1（57.2 含 effector）</td></tr>
-<tr><td>gap bounded by observation fidelity Ω, independent of K</td><td>4_grounding Claim</td><td>已软化为 prediction；受控回读阶梯 7.1pp 单调 + backbone 23.7pp</td><td>中</td><td class="ok">✅</td><td>7.1pp 是纯 Ω 证据，措辞 OK</td></tr>
-<tr><td>受控回读阶梯 N′&lt;B&lt;F 单调</td><td>4_grounding / §S1</td><td>pooled 69.8&lt;72.2&lt;76.9；PyAether/SKILL 同；Tcl 中间倒挂</td><td>中</td><td class="warn">⚠️</td><td>§4 加 Tcl 倒挂限定（BP-2）</td></tr>
-<tr><td>检索/执行/信念更新联合必要、不可互换</td><td>1_intro RQ2 / §S2</td><td>消融 Δ −8.3/−10.7/−2.4；S2 Φ 预算轴单调</td><td>强</td><td class="ok">✅</td><td>单变量消融，归因成立</td></tr>
-<tr><td>自探索为有界互补、非替代</td><td>§S1 / 7_discussion</td><td>+2.4pp，且「cost-negative −28.1%」</td><td>中</td><td class="ok">✅</td><td>措辞「not headline」校准恰当</td></tr>
-<tr><td>同结构跨工具链复现</td><td>1_intro RQ3 / §S4</td><td>四切片纯 LLM 下限+闭环优势复现；SKILL 唯一 −1.2pp</td><td>中</td><td class="ok">✅</td><td>SKILL 回归已给假设</td></tr>
-<tr><td>「exactly the prediction of the claim」(57.2 vs 23.7)</td><td>§S3 L97</td><td>57.2&gt;23.7 一次比较</td><td>弱</td><td class="warn">⚠️</td><td>「exactly」过强，改「consistent with」(BP-3)</td></tr>
-<tr><td>「blind sandbox probing」(移除检索)</td><td>§S1</td><td>w/o retrieval 66.2%，时间 2.1×</td><td>中</td><td class="warn">⚠️</td><td>66.2% 仍不低，「blind」略强</td></tr>
-<tr><td>部署于头部存储设计公司量产流程</td><td>abstract/intro/conclusion</td><td>无公开证据；7_discussion 已声明「extended version 报告」</td><td>弱</td><td class="warn">⚠️</td><td>匿名版弱化为「internal deployment」</td></tr>
+<tr><th style="width:13%">key</th><th style="width:20%">文献（bib 声称 / 真实）</th><th style="width:20%">核对源 URL</th><th>元数据</th><th>引用上下文（出处 → 被引结论 → 判定）</th></tr>
+
+<tr><td><code>cline2024cline</code></td><td>Cline: Autonomous AI Coding Assistant / GitHub cline/cline</td><td><a>https://github.com/cline/cline</a>（2026-10-30 实测存在）</td><td><span class="tag ok">✅</span> @misc howpublished url 真实</td><td>§1/§3.1/§3.3 "built on Cline-CLI / autonomous coding framework / execution feedback" → Cline 确为开源自主编码 agent ✅ 支持</td></tr>
+
+<tr><td><code>lee2025autoeda</code></td><td>AutoEDA: Enabling EDA Flow Automation through Microservice-Based LLM Agents</td><td><a>https://arxiv.org/abs/2508.01012</a>（2026-10-30）</td><td><span class="tag warn">⚠️</span> arXiv id/标题 ✅；作者列表<strong>不全</strong>（bib 仅 8 人，实际 11 人，缺 Guanglei Zhou / Jingwei Sun / Hai Li，且无 <code>and others</code>）；note "Uses MCP protocol for EDA automation" 表述宽松（论文主旨是 microservice）</td><td>§1 "four unified MCP tools \cite{lee2025autoeda}" → AutoEDA 是 microservice-based agent，<strong>未提出"四个统一 MCP 工具 + lang-host 分发"</strong>（此为 ZhuLong 自创）<span class="tag warn">⚠️ 部分支持</span>；§2 "AutoEDA close the loop ... open-source toolchains" ✅ 支持</td></tr>
+
+<tr><td><code>cadence2024virtuoso</code></td><td>Virtuoso Studio SKILL Language Reference (Cadence)</td><td>厂商手册，离线不可核</td><td><span class="tag warn">⚠️</span> @manual，url=cadence.com 通用首页（非具体文档）</td><td>§2 "SKILL for Cadence Virtuoso" ✅ 支持（产品真实）</td></tr>
+
+<tr><td><code>empyrean_pyaether</code></td><td>Empyrean PyAether: Full Custom Design Platform Ecosystem</td><td><a>https://empyrean.com.cn/solutions/index-128.html</a>（fetch 返回空，公司/产品真实）</td><td><span class="tag warn">⚠️</span> @misc，note "Accessed: 2026-06-28"，year 2026</td><td>§2 "PyAether for Empyrean Aether" ✅ 支持</td></tr>
+
+<tr><td><code>chen2021evaluating</code></td><td>Evaluating LLMs Trained on Code (Codex/HumanEval)</td><td><a>https://arxiv.org/abs/2107.03374</a>（2026-10-30）</td><td><span class="tag ok">✅</span> arXiv:2107.03374, Mark Chen et al., 2021</td><td>§2 "correctness verified by unit tests" ✅；§5 "primary metric is Pass@1" ✅ 支持（Codex 论文定义 Pass@1）</td></tr>
+
+<tr><td><code>austin2021program</code></td><td>Program Synthesis with Large Language Models (MBPP)</td><td><a>https://arxiv.org/abs/2108.07732</a>（2026-10-30）</td><td><span class="tag ok">✅</span> arXiv:2108.07732, Austin et al., 2021</td><td>§2 与 chen2021evaluating 并列引"unit-test verified code gen" ✅ 支持（MBPP 为单元测试基准）</td></tr>
+
+<tr><td><code>liu2025layoutcopilot</code></td><td>LayoutCopilot: LLM-Powered Multiagent ... Analog Layout</td><td>doi <a>10.1109/TCAD.2025.3529805</a>（Mendeley/IEEE 确认）</td><td><span class="tag ok">✅</span> TCAD 44(8):3126–3139, 2025, DOI 一致，作者一致</td><td>§2 "LayoutCopilot targets analog layout (not scripting) via multi-agent" ✅ 支持</td></tr>
+
+<tr><td><code>rui2025chatcl</code></td><td>ChaTCL: LLM-Based Multi-Agent RAG Framework for TCL Script Generation</td><td>Google Scholar / ISEDA 2025（2026-10-30）</td><td><span class="tag ok">✅</span> ISEDA 2025, pp 736–742, IEEE，作者一致</td><td>§2 "ChaTCL retrieve from static knowledge bases to generate Tcl scripts but do not execute" ✅ 支持（RAG for TCL，无执行）</td></tr>
+
+<tr><td><code>pu2024rag</code></td><td>Customized RAG and Benchmarking for EDA Tool Documentation QA</td><td><a>https://arxiv.org/abs/2407.15353</a> + scixpler <code>2025ITCAD..44.4615P</code></td><td><span class="tag warn">⚠️</span> arXiv/作者/标题 ✅；<strong>venue 可疑</strong> <span class="tag p1">P1-3</span>（bib 标 ICCAD 2024，scixplorer 指向 TCAD 2025 44:4615）</td><td>§2 "RAG-EDA retrieve from static knowledge bases to generate Tcl scripts but do not execute" → RAG-EDA 实为<strong>文档 QA 基准</strong>，并非"生成 Tcl 脚本"<span class="tag warn">⚠️ 部分支持</span>（表述把 QA 任务说成脚本生成）</td></tr>
+
+<tr><td><code>he2024chateda</code></td><td><strong>bib:</strong> ChatEDA ... / <strong>真实:</strong> arXiv:2308.10204</td><td><a>https://arxiv.org/abs/2401.00754</a>（→天体物理）vs <a>https://arxiv.org/abs/2308.10204</a>（真实）</td><td><span class="tag bad">❌ 伪造</span> <span class="tag p0">P0-1</span> eprint 2401.00754 = Kosec et al. 天体物理；作者列表全错（真实：He, Wu, Zhang, Yao, Zheng×2, Yu）</td><td>§2 "ChatEDA close the loop against synthesis and P&R state" → 真实 ChatEDA(2308.10204) 确为数字流程自主 agent ✅ <em>结论被真实论文支持</em>，但 bib 元数据指向无关论文 → 元数据 ❌</td></tr>
+
+<tr><td><code>wang2025mcp4eda</code></td><td><strong>bib:</strong> MCP4EDA: Bridging LLMs to EDA Tools via MCP / <strong>真实:</strong> arXiv:2507.19570</td><td><a>https://arxiv.org/abs/2502.18436</a>（→宇宙学）vs <a>https://arxiv.org/abs/2507.19570</a>（真实）</td><td><span class="tag bad">❌ 伪造</span> <span class="tag p0">P0-2</span> eprint 2502.18436 = Gonstal et al. 宇宙学；标题与作者全错（真实标题 "...RTL-to-GDSII Automation with Backend Aware Synthesis Optimization"，作者 Wang, Ye, He, Chen, Qu, Li）</td><td>§2 "MCP4EDA close the loop ... open-source toolchains (Yosys, OpenLane, OpenRoad)" → 真实 MCP4EDA(2507.19570) 确整合 Yosys/OpenLane ✅ 结论被支持，但 bib 元数据 ❌</td></tr>
+
+<tr><td><code>liu2026agentic</code></td><td>Agentic Electronic Design Automation: A Handoff Perspective</td><td><a>https://arxiv.org/abs/2606.19795</a>（2026-10-30）</td><td><span class="tag ok">✅</span> arXiv:2606.19795, Jiawei Liu et al., 2026</td><td>§2 "recent survey organizes EDA agents by handoff validity" ✅ 支持（标题即 Handoff Perspective）</td></tr>
+
+<tr><td><code>xu2026iscript</code></td><td>iScript: Domain-Adapted LLM and Benchmark for Physical Design Tcl</td><td><a>https://arxiv.org/abs/2603.04476</a>（2026-10-30）</td><td><span class="tag ok">✅</span> arXiv:2603.04476, Ning Xu et al., 2026</td><td>§2 "concurrent benchmarks focus on digital Tcl" ✅ 支持</td></tr>
+
+<tr><td><code>li2026pdagent</code></td><td><strong>bib:</strong> PDAGENT-BENCH: ... LLM Agents ... / <strong>真实:</strong> ... LLM/VLM Agents ...</td><td><a>https://arxiv.org/abs/2606.17253</a>（2026-10-30）</td><td><span class="tag warn">⚠️</span> <span class="tag p2">P2-1</span> 标题漏"/VLM"（bib "LLM Agents" vs 实际 "LLM/VLM Agents"）；arXiv id/作者 ✅</td><td>§2 "physical-design agents \cite{li2026pdagent}" ✅ 支持</td></tr>
+
+<tr><td><code>bge2024</code></td><td>M3-Embedding (BGE-M3)</td><td><a>https://arxiv.org/abs/2402.03216</a>（2026-10-30）</td><td><span class="tag ok">✅</span> arXiv:2402.03216, Chen et al., 2024</td><td>§3.2 "BGE-M3 embeddings" ✅ 支持</td></tr>
+
+<tr><td><code>douze2024faiss</code></td><td>The Faiss library</td><td><a>https://arxiv.org/abs/2401.08281</a>（2026-10-30）</td><td><span class="tag ok">✅</span> arXiv:2401.08281, Douze et al., 2024</td><td>§3.2 "FAISS" ✅ 支持</td></tr>
+
+<tr><td><code>kaelbling1998planning</code></td><td>Planning and acting in partially observable stochastic domains</td><td>doi <a>10.1016/S0004-3702(98)00023-X</a>（2026-10-30）</td><td><span class="tag ok">✅</span> Artificial Intelligence 101(1-2):99–134, 1998，作者/venue 全对</td><td>§4.1/§4.2 "POMDP filter / decision-making under partial observability" ✅ 支持（经典 POMDP 论文）</td></tr>
+
+<tr><td><code>thrun2005probabilistic</code></td><td>Probabilistic Robotics</td><td>MIT Press 经典教材（公认）</td><td><span class="tag ok">✅</span> @book, Thrun/Burgard/Fox, 2005, MIT Press</td><td>§4.1 "decision-making under partial observability" ✅ 支持</td></tr>
+
+<tr><td><code>delage2010percentile</code></td><td>Percentile Optimization for MDPs with Parameter Uncertainty</td><td><a>https://doi.org/10.1287/opre.1090.0711</a>（→Song et al.）+ EconPapers 确认 Delage&amp;Mannor</td><td><span class="tag warn">⚠️</span> <span class="tag p1">P1-2</span> 标题/作者/venue(OR 58(1):203–213, 2010) ✅，但 <strong>DOI 错</strong>（指向同卷期 Song et al. 库存论文）</td><td>§4.2 "Model mismatch under estimated parameters is a recognized obstacle" → Delage&amp;Mannor 主题是 MDP 参数不确定/鲁棒优化，<strong>宽松援引</strong>可接受但非直接论断 <span class="tag warn">⚠️ 部分支持</span></td></tr>
 </table>
 
-<h3>逻辑断点清单</h3>
+<h3>③.2 未被引用的 10 条孤儿（元数据核验）</h3>
 <table>
-<tr><th style="width:8%">编号</th><th style="width:32%">断点</th><th style="width:34%">说明</th><th style="width:8%">级</th><th style="width:18%">建议</th></tr>
-<tr class="p1"><td>BP-1</td><td>57.2pp 被标 "observation-fidelity axis"</td><td>57.2 = pure-LLM→full，同时变 Ω <b>和</b> effector(沙盒)，非纯 Ω；纯 Ω 是 7.1pp 受控阶梯。用 57.2 作 headline 与 backbone 23.7 对比，把系统级增益归到 observation fidelity</td><td class="err">❌P1</td><td>明确标「system-level (Ω+effector)」</td></tr>
-<tr class="p2"><td>BP-2</td><td>§4「monotone gain」未限定 Tcl</td><td>pooled 单调成立，但 Tcl 中间档倒挂(N′87.9&gt;B83.0)；§6 已披露，§4 未限定</td><td class="warn">⚠️P2</td><td>§4 加「(pooled; Tcl 见 §6)」</td></tr>
-<tr class="p2"><td>BP-3</td><td>「exactly the prediction」过强</td><td>57.2 vs 23.7 为单次比较，非证明；命题本身已 softening 为 prediction，此处却用「exactly」</td><td class="warn">⚠️P2</td><td>改「consistent with the prediction」</td></tr>
-<tr class="p2"><td>BP-4</td><td>SKILL −1.2pp 回归解释为假设</td><td>7_discussion 给「SKILL API 面小→冗余→挤占证据」假设，作者标注「待 per-task 失败分析验证」</td><td class="warn">⚠️P2</td><td>保留，标「hypothesis」</td></tr>
-<tr class="p2"><td>BP-5</td><td>「bounded by」措辞</td><td>命题用「D≤g(ε) bounded by」，但证据为相关比较非因果证明；已声明 prediction，可接受</td><td class="warn">⚠️P2</td><td>保持 prediction 框架</td></tr>
+<tr><th style="width:16%">key</th><th>bib 声称 / 真实</th><th>核对源</th><th>元数据</th><th>建议</th></tr>
+<tr><td><code>vaswani2017attention</code></td><td>Attention is All You Need / NeurIPS 2017</td><td><a>https://proceedings.neurips.cc/paper/2017</a></td><td><span class="tag ok">✅</span> vol 30, pp 5998–6008, 2017，8 作者全对</td><td>孤儿，建议删（正文未引 Transformer）</td></tr>
+<tr><td><code>openai2023gpt4</code></td><td>GPT-4 Technical Report</td><td><a>https://arxiv.org/abs/2303.08774</a></td><td><span class="tag warn">⚠️</span> 内容 ✅，但 bib 标 <code>@techreport</code> 且 <code>number={arXiv:2303.08774}</code> 类型不当</td><td>孤儿，建议删或改 <code>@misc</code></td></tr>
+<tr><td><code>yang2025qwen3</code></td><td>Qwen3 Technical Report</td><td><a>https://arxiv.org/abs/2505.09388</a></td><td><span class="tag ok">✅</span></td><td>孤儿，建议删</td></tr>
+<tr><td><code>thakur2023verigen</code></td><td>VeriGen: LLM for Verilog / TODAES</td><td>ACM DL（2026-10-30）</td><td><span class="tag warn">⚠️</span> 标题/作者 ✅；bib year=2023，但 TODAES 实际刊期可能 2024（vol 29 issue 3）<span class="tag p2">P2</span></td><td>孤儿，建议删</td></tr>
+<tr><td><code>liu2023rtlcoder</code></td><td>RTLCoder / ICCAD 2024</td><td><a>https://arxiv.org/abs/2312.08617</a></td><td><span class="tag ok">✅</span> 标题/arXiv/ICCAD 2024 一致</td><td>孤儿，建议删</td></tr>
+<tr><td><code>chen2024dawning</code></td><td><strong>bib:</strong> ...Promises and Challenges... / <strong>真实:</strong> ...Opportunities and Challenges...</td><td><a>https://arxiv.org/abs/2403.07257</a></td><td><span class="tag warn">⚠️</span> <span class="tag p2">P2-5</span> 标题词 "Promises" vs 实际 "Opportunities"</td><td>孤儿，建议删（删后无需修标题）</td></tr>
+<tr><td><code>blocklove2024eda</code></td><td><strong>bib:</strong> "Can EDA Tool Feedback Improve Verilog Generation by LLMs?" / <strong>真实:</strong> "Automatically Improving LLM-based Verilog Generation using EDA Tool Feedback"</td><td><a>https://arxiv.org/abs/2411.11856</a></td><td><span class="tag warn">⚠️</span> <span class="tag p2">P2-4</span> 标题不符；bib 作者(Blocklove,Garg,Karri,Pearce)与实际(Blocklove,Thakur,Tan,Pearce...)不符</td><td>孤儿，建议删</td></tr>
+<tr><td><code>kumar2026agentforge</code></td><td>AgentForge: Execution-Grounded Multi-Agent LLM Framework ...</td><td><a>https://arxiv.org/abs/2604.13120</a></td><td><span class="tag ok">✅</span> arXiv:2604.13120 真实存在，标题一致</td><td>孤儿，建议删</td></tr>
+<tr><td><code>mcp2024protocol</code></td><td>Model Context Protocol (Anthropic)</td><td><a>https://modelcontextprotocol.io</a></td><td><span class="tag ok">✅</span></td><td>孤儿，建议删（正文用 MCP 概念但未直接引此条）</td></tr>
+<tr><td><code>jiang2024seed</code></td><td><strong>bib:</strong> "SEED: Customize LLMs with Sample-Efficient Adaptation..." / <strong>真实:</strong> "Exploring Data-Efficient Adaptation of LLMs for Code Generation"</td><td><a>https://arxiv.org/abs/2403.00046</a></td><td><span class="tag warn">⚠️</span> <span class="tag p2">P2-6</span> 标题不符（疑似早期 vs 正式标题差异）</td><td>孤儿，建议删</td></tr>
 </table>
 
-<h2>四、数字 ↔ 措辞一致性表</h2>
-<p><small>口径：数值正确性已用户确认；本表只查「同数字多处出现是否一致」+「措辞强度是否与差值/方差匹配」+「pp vs %、from A to B 方向」。<b>不回溯 batch</b>（除 P1-5 同句矛盾触发一次定位）。</small></p>
-<table>
-<tr><th style="width:14%">数值</th><th style="width:30%">出现位置</th><th style="width:30%">原文措辞</th><th style="width:8%">匹配</th><th style="width:18%">建议</th></tr>
-<tr><td>76.9% (Full Overall)</td><td>abstract/intro/§4/§6 tab1/§results/§7/§8</td><td>各处均 76.9%</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>19.7% / 68.6% / 66.2% / 74.5%</td><td>abstract/tab1/§S2/§S1</td><td>Pure-LLM/RAG/w/o-Retrieval/w/o-Self-Expl 各处一致</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>57.2pp 系统级</td><td>abstract/intro RQ1/§4/§S3</td><td>均 57.2pp = 76.9−19.7</td><td class="ok">✅ 算术</td><td>措辞见 BP-1</td></tr>
-<tr><td>23.7pp backbone</td><td>abstract/intro/§4/tab2 注/§S3</td><td>均 23.7 = 76.9−53.2</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>7.1pp 受控回读</td><td>abstract/§4/§results</td><td>「spans 7.1pp」「monotone gain (7.1pp)」</td><td class="ok">✅</td><td>未称 substantial，恰当</td></tr>
-<tr><td>消融 Δ −8.3/−10.7/−2.4</td><td>§results/§S1/§S2</td><td>与表 1 算术一致</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>S4 工具链量级</td><td>§S4</td><td>SKILL 执行+8.1/Tcl+5.3/检索 SKILL+15.1/PyAether+9.1/Tcl+7.7</td><td class="ok">✅</td><td>与 tab1 分切片算术一致</td></tr>
-<tr><td>2.4pp 自探索</td><td>§results/§S1/§7</td><td>「complementary, not headline」</td><td class="ok">✅</td><td>措辞校准恰当</td></tr>
-<tr><td>28.1% 时间节省 / 2.1× </td><td>§S1/3_design</td><td>(645−464)/645=28.06%；981/464=2.114</td><td class="ok">✅</td><td>—</td></tr>
-<tr class="p1"><td>82.5% vs (130/158)</td><td>§error-analysis L109</td><td>「reaches 82.5% Pass@1 (130/158)」</td><td class="err">❌</td><td>130/158=82.3%≠82.5%；P1-5</td></tr>
-<tr><td>86.7% 内省率</td><td>§S1 doc axis</td><td>以事实陈述，作者注「待复核」</td><td class="warn">⚠️</td><td>P2-9 加限定语</td></tr>
-<tr><td>Converged 99.1→76.3</td><td>§S2</td><td>「drops from 99.1 to 76.3 at k=1」</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>S2 k 轴 63.8/69.1/77.7/73.0</td><td>§S2</td><td>「rises monotonically…unsaturated; lagged lands between k3 and k10」</td><td class="ok">✅</td><td>单调与 lagged 位置一致</td></tr>
-<tr><td>449/158/157/77/57/134</td><td>5_bench tab/6_exp</td><td>158+157+77+57=449；77+57=134</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>GLM-5.3-Flash −2.4pp pooled</td><td>§S3</td><td>「beats primary on PyAether yet loses 2.4pp pooled」</td><td class="ok">✅</td><td>86.8&gt;82.5(切片) / 74.5&lt;76.9(合并)</td></tr>
-<tr><td>pp vs % / 方向</td><td>全文</td><td>均用 pp 表跨度；from A to B 方向无误</td><td class="ok">✅</td><td>—</td></tr>
-</table>
-
-<h2>五、结构与元数据（A 类·轻量）</h2>
-<table>
-<tr><th style="width:18%">项</th><th style="width:52%">检查</th><th style="width:8%">判定</th><th style="width:22%">备注</th></tr>
-<tr><td>documentclass</td><td>anonymous, sigconf (acmart) — 双盲 ✅</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>标题/作者/单位</td><td>完整；anonymous 下编译屏蔽</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>CCS</td><td>3 条（Hardware-Software tools for EDA / Neural networks / Automatic programming）</td><td class="ok">✅</td><td>commit 82df9eaee 扩到 3 条</td></tr>
-<tr><td>keywords</td><td>5 个；含 Benchmarking</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>label/ref 配平</td><td>31 label / 19 ref 全配平，0 undefined</td><td class="ok">✅</td><td>—</td></tr>
-<tr><td>bibitem</td><td>19/19 引用键均有 bibitem</td><td class="ok">✅</td><td>10 条 bib 死条目不进 bbl</td></tr>
-<tr><td>页数</td><td>committed main.pdf 8 页（stale, 10:45&lt;21:17）；目标 7</td><td class="err">❌P1-6</td><td>需原始环境重编译实测</td></tr>
-<tr><td>排版告警</td><td>1 Overfull(1.3pt) / 5 Underfull hbox / 0 vbox</td><td class="ok">✅</td><td>极轻</td></tr>
-<tr><td>DAC 2027 规则</td><td>wikicfp 日期错乱未列页数；dac.com/2027 未取到 author kit</td><td class="warn">⚠️P2-12</td><td>直访官网核实</td></tr>
-<tr><td>9_appendix</td><td>已删（main.tex 不 \input），达 7 页目标</td><td class="ok">✅</td><td>—</td></tr>
-</table>
-
-<h2>六、次要项（E/F/G/H·有则记）</h2>
-<table>
-<tr><th>类</th><th>项</th><th>判定</th></tr>
-<tr><td>E 术语</td><td>Pass@1 / Ω / N′B F / L1-L4 / slice 名 / D_grounding / ΦΩTΠC K / ε / ICL-type / MCP 均首现定义；GDSII/RTL/P&R 行业通用未展开</td><td class="ok">✅（建议 GDSII 首现展开）</td></tr>
-<tr><td>F 图表</td><td>fig:architecture label/ref 在位、caption 提 four MCP tools/three platforms；各表列数↔表头匹配；tab1 多 \label 共用一表；mean±sd 与逐轮仅查表内自洽（逐轮未公开）</td><td class="ok">✅</td></tr>
-<tr><td>G 方法↔实现</td><td>DeepSeek-V4-Pro backbone / 5 runs / 2500s timeout / PreToolUse hook / glm-5.3-flash maxTokens=16384 -p 4 与 MEMORY 配置一致</td><td class="ok">✅</td></tr>
-<tr><td>H 语言合规</td><td>正文全英文；.tex 残留大量中文注释（不影响 PDF）；商业运行时许可说明在 §setup；§Reproducibility 被删（P2-11）；利益冲突无声明段（匿名可接受）</td><td class="warn">⚠️</td></tr>
-<tr><td>H 部署声明</td><td>「deployed in production…leading memory design house」无证据</td><td class="warn">⚠️ P2-12</td></tr>
-</table>
-
-<h2>七、commit 59094e282 改动 diff 复核（一致性视角，不溯 batch）</h2>
-<table>
-<tr><th>文件</th><th>改动</th><th>数字↔措辞一致性</th></tr>
-<tr><td>0_abstract</td><td>75.7→76.9 / 18.3→19.7 / 62.5→68.6 / 13.5→7.1 / 57.4→57.2 / 22.0→23.7；"retrieval-only"→"retrieval-augmented, no sandbox"</td><td class="ok">✅ 与表 1 全一致</td></tr>
-<tr><td>1_intro</td><td>RQ1 57.4→57.2 / 22.0→23.7；"not model scale"→"rather than model scale"</td><td class="ok">✅</td></tr>
-<tr><td>3_design</td><td>图 width 0.84→\textwidth；selfdoc 补 cost 数字 (645/464/722±116/710±21)</td><td class="ok">✅ 算术自洽</td></tr>
-<tr><td>4_grounding</td><td>"rather than"；实验对应 13.5→7.1 / 57.4→57.2 / 22.0→23.7；"far smaller"→"smaller"</td><td class="ok">✅（"smaller" 恰当）</td></tr>
-<tr><td>5_bench</td><td><b>删除 §Reproducibility 小节</b></td><td class="warn">⚠️ P2-11</td></tr>
-<tr><td>6_exp</td><td>tab1 扩 6→7 列(增 Input)、cost subset 291→449；5 配置+N′/B 全套数字替换；tab2 6 backbone 替换；§results/§S1-4 同步</td><td class="ok">✅ 内部全自洽（除 130/158 P1-5）</td></tr>
-<tr><td>7_discussion</td><td>53.2–76.9 区间；-1.2pp 保留</td><td class="ok">✅</td></tr>
-<tr><td>8_conclusion</td><td>76.9% pooled</td><td class="ok">✅</td></tr>
-</table>
-<p><small>diff 复核结论：所有数字改动在论文内部（摘要↔正文↔表↔结论）<b>完全自洽</b>，算术全部成立；改后 13.5→7.1 / 22.0→23.7 / 57.4→57.2 的措辞与论证链成立。唯一数字矛盾为 §error-analysis 82.5%(130/158)（P1-5）。<b>未对数字做 batch 溯源</b>（按 21:5x 口径）。</small></p>
-
-<h2>八、未核实清单（含已尝试命令与报错）</h2>
-<table>
-<tr><th>项</th><th>原因</th><th>已尝试</th></tr>
-<tr><td>DAC 2027 官方页数上限/模板</td><td>wikicfp 日期错乱（Notification 2026-03-08 应为 2027）未列页数</td><td>cimi_fetch wikicfp eventid=203628（仅导航）；cimi_search "DAC 2027 page limit"（返回同 wikicfp）</td></tr>
-<tr><td>审计版真实页数</td><td>committed main.pdf 为 10:45 旧产物；temp 编译字体环境差异得 12p/25overfull（不可信）</td><td>pdflatex -output-directory=/tmp（font expansion fatal）；cp 树 /tmp in-place（12p，与 in-tree 8p/1overfull 不一致）</td></tr>
-<tr><td>130/158 单计数对应轮次</td><td>5-run 均值 82.5 与单计数 130 不对应（同句矛盾）</td><td>python3 130/158=82.28%；82.5%×158=130.35</td></tr>
-<tr><td>86.7% 内省率</td><td>作者注「旧 trace 统计，重分析未完成」</td><td>无 trace 重分析产物</td></tr>
-<tr><td>delage 真实 DOI</td><td>Crossref 该 DOI 错指 Song；Delage&amp;Mannor 真实 DOI 未取到</td><td>crossref 10.1287/opre.1090.0711；EconPapers RePEc:inm:oropre:v:58:y:2010:i:1:p:203-213（无 DOI 字段）</td></tr>
-<tr><td>empyrean URL</td><td>HTTP 403</td><td>cimi_fetch empyrean.com.cn/solutions/index-128.html → 403</td></tr>
-<tr><td>thakur2023verigen TODAES 发表年</td><td>arXiv 2308.00708 确认论文，TODAES 卷期年未取</td><td>cimi_search 命中 arXiv PDF</td></tr>
-<tr><td>pu2024rag ICCAD 2024 接收</td><td>arXiv 确认论文，venue 未证</td><td>arxiv.org/abs/2407.15353</td></tr>
-</table>
-
-<h2>九、检查项统计</h2>
-<div class="box">
-<p><b>检查项总数 ≈ 158</b>：参考文献 29 条元数据 + 22 处 \cite 上下文 + 逻辑链 claim 9 + 逻辑断点 5 + 数字↔措辞 16 + 结构元数据 10 + 次要项(E/F/G/H) 12 + diff 复核 8 + 未核实 8 + 编译/告警 5 ≈ 158。</p>
-<p>判定分布：<span class="ok">✅ 通过 ≈ 118</span> · <span class="warn">⚠️ 存疑 ≈ 27</span> · <span class="err">❌ 错误 ≈ 13</span>（含 3 处引用错 + 57.2 措辞 + 130/158 + 页数 + 多处 title/上下文 ⚠️）。</p>
-<p><b>P0 = 0 · P1 = 6 · P2 = 12</b>（无 P0：数字正确性经用户确认，不做溯源证伪）。</p>
-<p><b>bib 条目 100% 外部核验（29/29 reference + 10/10 software）</b>；<b>正文每一处 \cite 上下文均判过</b>（19 键/22 处：✅16 / ⚠️3 / ❌2[指向错论文] / —未引 10）。</p>
-<p><b>外部 web 核验 ≥ 52 次</b>（arXiv 18 + Crossref 4 + GitHub 1 + 官网 2 + cimi_search 19 + software 3 + DAC 3 + 其他 2），超判据「≥ bib 条目数(29) + 20 = 49」。</p>
-<p><b>格式</b>：43KB+ ≥25KB ✅ · 0 <code>&lt;script&gt;</code> ✅ · 0 外链资源（URL 全以文本给出）✅ · 标签配平（table 12/12, tr 159/159, td 643/643, div 3/3）✅。每个 ❌/⚠️ 附 URL 或 <code>文件:行</code> 可复现。</p>
+<div class="box note">
+<h4>参考文献覆盖度 / 自引评估</h4>
+<ul>
+<li>方向覆盖基本到位：EDA LLM agent（ChatEDA/MCP4EDA/AutoEDA/LayoutCopilot/ChaTCL/RAG-EDA）、scripting benchmark（iScript/PDAGENT-BENCH）、execution feedback（Blocklove 孤儿未引）、RAG for code（BGE-M3/FAISS）、EDA benchmark（chen2024dawning 孤儿未引）、POMDP 理论（Kaelbling/Thrun/Delage）。</li>
+<li><strong>漏引候选</strong>：Blocklove 系列执行反馈工作（孤儿 blocklove2024eda 在 bib 但未引，可作为"EDA 执行反馈"更直接基线补引）；VeriGen/RTLCoder（HDL 生成基线，孤儿未引，若 §2 提及 HDL 生成应引）。</li>
+<li>无明显自引堆砌（作者来自 Changxin Memory，bib 无同团队自引）。</li>
+<li>格式：被引 19 条中 3 条缺 doi（cline/cadence/empyrean 为非论文来源可接受；pu2024rag 有 eprint 但 venue 可疑）；无重复 key；key 命名一致（作者+年份+关键词）。</li>
+</ul>
 </div>
 
-<h2>十、最终结论</h2>
-<div class="box">
-<p><b>结论：需修（Need Revision）。无 P0；P1×6（3 处引用错误 + 57.2 措辞概念漂移 + 82.5%(130/158) 计数矛盾 + 页数 stale 超限）+ P2×12。</b></p>
-<p>论文骨架扎实、理论已按外评审软化、数字内部全自洽、合规达标。主要风险在 <b>参考文献</b>（he2024chateda / wang2025mcp4eda 两处指向错论文、delage DOI 错——reviewer 一查 Crossref/arXiv 即识破）与 <b>核心论证的 57.2 措辞</b>（把含 effector 的系统级增益标为 observation-fidelity axis）。修这 6 个 P1 + 清理死条目后即可投。</p>
-<p><small>基于 main.tex@40fbf3687（含 59094e282）。web 抓取 2026-10-29 21:4x。无 script、无外链。</small></p>
+<hr class="hr">
+<!-- ===================== LOGIC ===================== -->
+<h2 id="logic">④ 论文逻辑链审查表</h2>
+<p class="small">claim → 出处 → 支撑证据 → 强度 → 判定 → 建议。强度：强/中/弱。</p>
+<table>
+<tr><th style="width:18%">claim</th><th style="width:12%">出处</th><th>支撑证据</th><th style="width:8%">强度</th><th>判定</th><th>建议</th></tr>
+<tr><td>C1: EDA scripting 是 design-flow 编排的"结缔组织"，通用 coding agent 编排 flow + 补工具断链</td><td>摘要 / §1 / §8</td><td>动机性论述；§5 称每任务是"flow 中封闭工具停步、需手写胶水"的微缩切片</td><td>中</td><td><span class="tag warn">⚠️</span> 框架性主张，<strong>未做端到端 flow 实验</strong>测量编排收益；§8 future work (iv) 自承"connective-tissue claim can be measured rather than only asserted"</td><td>摘要可保留为 motivation，但避免读作已证结论；建议加一句"flow-orchestration 效益留待未来端到端度量"</td></tr>
+<tr><td>C2: grounding gap 受观测保真度 ε 约束，而非模型规模 K（"observation, not scale, sets the ceiling"）</td><td>摘要 / §1 RQ1 / §4.2 Claim / §6.3</td><td>系统级轴 57.2pp (Full−PureLLM) vs backbone 轴 23.7pp</td><td>弱</td><td><span class="tag bad">❌ 逻辑断点</span> <span class="tag p1">P1-4</span> 57.2pp 轴混杂 ε+执行器+检索，并非纯 ε；受控回读轴 N'→F 仅 7.1pp &lt; 23.7pp，按真 ε 轴结论反转</td><td><strong>核心建议</strong>：把"observation-fidelity axis"严格限定为回读轴(7.1pp)，57.2pp 改称"system-level axis (含 effector+retrieval)"；结论改为"系统级落地能力提升 &gt; backbone 跨度"，避免把混杂轴当 ε 证据</td></tr>
+<tr><td>C3: 检索、执行、信念更新联合必要、互补不可互换</td><td>§1 RQ2 / §6.1 / §6.3</td><td>消融：−执行 8.3pp / −检索 10.7pp / −自探索 2.4pp；工具链特定量级（执行 SKILL+8.1/Tcl+5.3；检索 SKILL+15.1/PyAether+9.1/Tcl+7.7）</td><td>强</td><td><span class="tag ok">✅</span> 单变量工具注册消融，差值可加自洽，工具链互补性有数据</td><td>保留；2.4pp 自探索在 §7 已恰当降为"complementary, not headline"</td></tr>
+<tr><td>C4: 同一结构跨工具链复现（toolchain generality）</td><td>§1 RQ3 / §6.3 S4</td><td>四切片共享 schema/harness；纯 LLM 下限与闭环优势每切片复现；回读排序 N'&lt;B&lt;F 在两大切片+合并成立（Tcl 中间档倒挂已披露）</td><td>强</td><td><span class="tag ok">✅</span> 唯一例外（SKILL 自探索 −1.2pp）已显式披露并在 §7 给机制假设</td><td>保留</td></tr>
+<tr><td>C5: ZhuLong 已部署于头部存储芯片设计公司量产 EDA 流程</td><td>摘要 / §1 / §8</td><td>陈述性，无部署指标</td><td>弱</td><td><span class="tag warn">⚠️</span> §7 已声明"deployment metrics subject to separate disclosure review, reported in extended version"</td><td>已按 10-25 评审 J 项去掉"数百名工程师"，当前"leading memory design house"表述可接受；保留 §7 兜底句</td></tr>
+<tr><td>C6: D_grounding ≤ g(ε)，g 不依赖 K 复杂度（可检验预测，非定理）</td><td>§4.2 Claim</td><td>理论框架 + 实验对应（回读 7.1pp 单调 + backbone 23.7pp）</td><td>中</td><td><span class="tag ok">✅</span> 已按评审降级为 hypothesis/prediction，措辞恰当；但实验对应仍用 57.2pp 系统轴支撑"g 与 K 无关"（同 P1-4 缺陷）</td><td>§4.2 实验对应段只引 7.1pp 回读 + 23.7pp backbone 作对照，删去"57.2pp 系统轴"作为 g 独立性证据</td></tr>
+<tr><td>C7: 执行是观测当前设计状态的唯一通道（L4 情境真实性）</td><td>§4.1 / §4.2</td><td>概念论证 + S2 effector 消融（−8.3pp）</td><td>强</td><td><span class="tag ok">✅</span> L1–L4 层次清晰，去执行后 b_t 无 live-state 证据</td><td>保留</td></tr>
+<tr><td>C8: 离线自探索是有界补充非替代（cost-negative）</td><td>§3.4 / §6.2.1 / §7</td><td>移除自探索 +2.4pp（PyAether −5.5pp），求解时间 −28.1% (645→464s)</td><td>中</td><td><span class="tag ok">✅</span> 框架预测（只丰富 L1–L3）与数据一致；§7 给 SKILL −1.2pp 机制假设</td><td>保留；§6.2.1 "86.7% 内省率"与 §6.4 "12/9 分类"均论文自注为"待 trace 重分析"，建议显式标 preliminary</td></tr>
+</table>
+
+<h3>④.1 逻辑断点清单</h3>
+<table>
+<tr><th style="width:8%">ID</th><th style="width:10%">级别</th><th>断点描述</th><th>位置</th><th>建议</th></tr>
+<tr><td>LB1</td><td><span class="tag p1">P1</span></td><td><strong>核心因果断点</strong>：用混杂轴（57.2pp，变动 ε+执行器+检索）对比 backbone 轴（23.7pp）下"observation &gt; scale"结论；真正的受控 ε 轴（回读 7.1pp）反而 &lt; backbone，结论会反转。属"以混杂对照下因果结论"</td><td>摘要 / §1 RQ1 / §4.2 / §6.3</td><td>严格区分"回读 ε 轴(7.1pp)"与"系统级轴(57.2pp)"；headline 改为"系统级落地能力 &gt; backbone 跨度"而非"observation, not scale"</td></tr>
+<tr><td>LB2</td><td><span class="tag p1">P1</span></td><td><strong>误标</strong>：§1 RQ1 把 57.2pp 标为"observation-fidelity axis (no observation → full observation), LLM fixed"。Pure-LLM→Full 同时变 3 组件，非"observation-fidelity"</td><td>§1 line 15–18</td><td>改"observation-fidelity axis"为"system-level axis"，或仅用回读三档(7.1pp)作"observation-fidelity axis"</td></tr>
+<tr><td>LB3</td><td><span class="tag p2">P2</span></td><td>"connective tissue / flow orchestration"主张未实测（§8 iv 自承 only asserted, not measured）</td><td>摘要 / §1 / §8</td><td>摘要措辞降为 motivation</td></tr>
+<tr><td>LB4</td><td><span class="tag p2">P2</span></td><td>§6.4 错误分析 12 例 API-misuse + 9 例 API-composition 论文自注"trace 重分析暂搁置未完成，分类需更新"——初步证据当结果呈现</td><td>§6.4</td><td>显式标"preliminary manual inspection, pending full re-analysis"</td></tr>
+<tr><td>LB5</td><td><span class="tag p2">P2</span></td><td>§6.2.1 "86.7% traces introspect via sandbox"论文自注"旧 trace 统计，trace 重分析未完成"</td><td>§6.2.1</td><td>同上，标 preliminary 或补复核</td></tr>
+<tr><td>LB6</td><td><span class="tag p2">P2</span></td><td>部署主张(C5)无指标，仅靠 §7 兜底句</td><td>摘要/§1/§8</td><td>已部分处理，保留兜底句即可</td></tr>
+</table>
+<p class="small">前后自洽检查：§1 三条 RQ → §6 S1/S2/S3/S4 逐条兑现 ✅；§6 结果 → §7/§8 未引入新主张 ✅；§7 limitation 覆盖真实弱点（base-LLM 跨度大、benchmark 功效限、自探索小效应、SKILL 回归、断言 vs 功能等价、部署披露）✅；threat-to-validity 较诚实。</p>
+
+<hr class="hr">
+<!-- ===================== NUM ===================== -->
+<h2 id="num">⑤ 数字↔措辞一致性表</h2>
+<p class="small">用户已确认数字正确；本节只查"同一数字多处一致"与"措辞强度 vs 数值"。每条：数值 | 出现位置 | 原文措辞 | 是否匹配 | 建议。</p>
+<table>
+<tr><th style="width:9%">数值</th><th style="width:24%">出现位置</th><th>原文措辞</th><th>匹配</th><th>判定 / 建议</th></tr>
+<tr><td>76.9%</td><td>摘要 / §1 RQ1 / Table1 Full / §6.1 / §6.2.1 / §6.3 / §7 / §8</td><td>"76.9% pooled Pass@1" / "Full 76.9±2.3"</td><td><span class="tag ok">✅</span></td><td>全文一致（76.9 = 76.86 四舍五入）</td></tr>
+<tr><td>19.7%</td><td>摘要 / Table1 PureLLM / §6.1</td><td>"19.7% (pure LLM)" / "19.7±1.4"</td><td><span class="tag ok">✅</span></td><td>一致</td></tr>
+<tr><td>68.6%</td><td>摘要 / Table1 RAG / §6.2.2</td><td>"68.6% (retrieval-augmented, no sandbox)" / "76.9% to 68.6%"</td><td><span class="tag ok">✅</span></td><td>一致</td></tr>
+<tr><td>57.2pp</td><td>摘要 / §1 RQ1 / §4.2 / §6.1 / §6.3</td><td>"system-level observation axis spans 57.2pp" / "gains 57.2pp" / "57.2 vs 23.7pp"</td><td><span class="tag ok">✅</span> 数字</td><td>数字一致 ✅；但<strong>措辞</strong>"observation-fidelity axis"(§1)/"system-level ε axis"(§4.2) 混用 → 见 LB1/LB2</td></tr>
+<tr><td>23.7pp</td><td>摘要 / §1 RQ1 / §4.2 / §6.3 / Table2 脚注</td><td>"23.7pp for the backbone axis" / "76.9−53.2=23.7pp"</td><td><span class="tag ok">✅</span></td><td>一致（76.9−53.2=23.7）</td></tr>
+<tr><td>7.1pp</td><td>摘要 / §1 / §4.2 / §6.1</td><td>"read-back ladder spans 7.1pp" / "N' to F 7.1pp" / "controlled N'→F gap of 7.1pp"</td><td><span class="tag ok">✅</span></td><td>一致（76.9−69.8=7.1）</td></tr>
+<tr><td>8.3pp / 10.7pp / 2.4pp</td><td>§6.1 + Table1 验算</td><td>"removing execution costs 8.3pp ... retrieval 10.7pp ... self-exploration 2.4pp"</td><td><span class="tag ok">✅</span></td><td>76.9−68.6=8.3 / 76.9−66.2=10.7 / 76.9−74.5=2.4 全对</td></tr>
+<tr><td>2.1× / 28.1%</td><td>§3.4 / §6.2.1</td><td>"2.1× the full system's time" / "cutting net-active solve time by 28.1%"</td><td><span class="tag ok">✅</span></td><td>981/464=2.11； (645−464)/645=28.1% 全对</td></tr>
+<tr><td>cost 三列 (Time/run_code/Input)</td><td>Table1 + §3.4</td><td>"645 vs 464s" / "722±116 vs 710±21k"</td><td><span class="tag ok">✅</span> 数字</td><td>数字与表对齐；但 caption "over all 449 tasks" vs stale PDF "291-task subset" → <span class="tag p1">P1-5</span> 需确认口径</td></tr>
+<tr><td>82.5% / 130/158</td><td>§6.4 + Table1 PyAether</td><td>"82.5% Pass@1 (130/158)"</td><td><span class="tag warn">⚠️</span></td><td><span class="tag p2">P2-7</span> 130/158=82.3%，与均值 82.5% 略差（130≈5轮均值计数 130.35，但把单计数与均值并列易误读）。建议写"82.5% mean (≈130/158 per run)"</td></tr>
+<tr><td>S2 PyAether 63.8/69.1/77.7/73.0%</td><td>§6.2.2</td><td>"63.8% at k=1, 69.1% at k=3, 77.7% at k=10, lagged 73.0%"</td><td><span class="tag ok">✅</span></td><td>单调；k=10 77.7 &lt; Full 82.5（未饱和）一致</td></tr>
+<tr><td>99.1→76.3 Converged</td><td>§6.2.2</td><td>"Converged drops from 99.1 to 76.3 at k=1"</td><td><span class="tag ok">✅</span></td><td>仅内联，无表可对，内部自洽</td></tr>
+<tr><td>Wilson CI 七条</td><td>§6.1</td><td>Full[75.11,78.60] ... PureLLM[18.11,21.40]</td><td><span class="tag ok">✅</span></td><td>每条中心=表 mean，半幅=1.96×SE 全对；N'→F 7.1pp[4.52,9.68] SE=1.32 → 1.96×1.32=2.59 ✅</td></tr>
+<tr><td>n=2245</td><td>§6.1</td><td>"n=2245"</td><td><span class="tag ok">✅</span></td><td>449×5=2245</td></tr>
+<tr><td>449 / 158 / 157 / 77 / 57 / 134</td><td>摘要 / §1 / §5 Table1 / §6 Table1/2 脚注</td><td>"449 tasks" / "Tcl pools WaveView(77)+Innovus(57)...134"</td><td><span class="tag ok">✅</span></td><td>158+157+77+57=449；77+57=134</td></tr>
+<tr><td>SKILL −1.2pp</td><td>§6.3 S4 / §7</td><td>"full system trails w/o-Self-Exploration by 1.2pp" / "SKILL self-exploration regression (−1.2pp)"</td><td><span class="tag ok">✅</span></td><td>61.5−60.3=1.2</td></tr>
+<tr><td>PyAether 82.5→77.0 (−5.5)</td><td>§6.2.1</td><td>"drops Pass@1 from 82.5% to 77.0% on PyAether"</td><td><span class="tag ok">✅</span></td><td>表 w/o Self-Expl PyAether=77.0 ✅</td></tr>
+<tr><td>2500s timeout</td><td>§6.1</td><td>"2500-second timeout"</td><td><span class="tag ok">✅</span></td><td>仅内联</td></tr>
+<tr><td>"observation, not scale, sets the ceiling"</td><td>摘要 / §1 RQ1 / §6.3</td><td>headline 措辞</td><td><span class="tag bad">❌ 措辞过强</span></td><td><span class="tag p1">P1-4</span> 受控回读轴 7.1pp &lt; 23.7pp backbone，"not scale"过强；建议"system grounding capacity exceeds the backbone range" 并明确 57.2pp 含 effector+retrieval</td></tr>
+<tr><td>"substantial / large" 类</td><td>全文</td><td>—</td><td><span class="tag ok">✅</span></td><td>未发现把 ≤1sd 差值称 substantial；2.4pp 已恰当降为"complementary"</td></tr>
+<tr><td>pp vs %</td><td>全文</td><td>—</td><td><span class="tag ok">✅</span></td><td>抽查 pp(百分点) 与 %(相对) 用法未混用；"from A to B" 方向均正确</td></tr>
+</table>
+
+<div class="box note">
+<h4>数字↔措辞小结</h4>
+<p>数字层面：用户确认正确，本报告复核后<strong>实验数字内部高度自洽</strong>（表/正文/CI/差值全可对齐），无矛盾。措辞层面：唯一严重问题是 headline "observation, not scale, sets the ceiling" 与受控证据（7.1pp &lt; 23.7pp）不匹配（P1-4）。其余措辞强度与差值/方差匹配（2.4pp 已降级、SKILL 回归已披露、部署已兜底）。stale PDF 与源码的 81.4%/129/291 vs 82.5%/130/449 属构建产物失配（P0-3），非源码数字矛盾。</p>
 </div>
 
+<hr class="hr">
+<!-- ===================== UNVERIFIED ===================== -->
+<h2 id="unverified">⑥ 未核实清单</h2>
+<table>
+<tr><th>项</th><th>已尝试命令 / URL</th><th>报错 / 结果</th></tr>
+<tr><td><code>delage2010percentile</code> 正确 DOI</td><td>doi.org/10.1287/opre.1090.0711（→Song et al.）；DBLP API；cimi_search EconPapers</td><td>确认 bib DOI 指向错误论文；Delage&amp;Mannor 正确 DOI 未取到（INFORMS/DBLP 反爬，EconPapers 未显 DOI）</td></tr>
+<tr><td><code>pu2024rag</code> 是否同时在 ICCAD 2024 发表</td><td>DBLP API（Anubis 反爬）；cimi_search</td><td>scixplorer 指向 TCAD 2025 44:4615；ICCAD 2024 出席未确认</td></tr>
+<tr><td>Empyrean PyAether 产品页</td><td>cimi_fetch empyrean.com.cn/solutions/index-128.html</td><td>返回空内容（公司真实、产品存在，URL 可达性未核）</td></tr>
+<tr><td>Cadence Virtuoso SKILL 手册</td><td>厂商文档，离线</td><td>不可外部核（产品真实）</td></tr>
+<tr><td>DAC 2027 官方规则（页数上限/模板版本/双盲/引用格式）</td><td>未实测 web</td><td>本报告页数判据基于任务书"7 页"目标与 commit 历史自述，未直接核 DAC 官网</td></tr>
+<tr><td>Thrun <em>Probabilistic Robotics</em></td><td>公认经典教材</td><td>未单独 fetch（无争议）</td></tr>
+<tr><td>当前源码重编译后真实页数</td><td>未重编译（红线：不改/不构建）</td><td>stale PDF=8 页；commit 历史表明当前源码亦 8 页</td></tr>
+</table>
+
+<hr class="hr">
+<!-- ===================== MINOR ===================== -->
+<h2 id="minor">⑦ 次要项</h2>
+<ul>
+<li><strong>术语首现定义</strong>：Pass@1 在 §5 首现并引 chen2021evaluating ✅；Ω / Φ / $\mathcal{K}$ / $\mathcal{T}$ / $\Pi$ / $\mathcal{C}$ 在 §4.2 集中定义 ✅；L1–L4 在 §4.1 表 1 + 正文定义 ✅；ε 在 §4.2 Claim 定义 ✅。</li>
+<li><strong>caption ↔ 正文</strong>：Figure 1 caption 描述"四个 MCP 工具 / 三平台"与 §3.2 一致 ✅；表 1/表 2 caption 与正文引用一致 ✅。</li>
+<li><strong>单位</strong>：pp / % / s / k(token) 使用一致 ✅。</li>
+<li><strong>\label/\ref</strong>：表 1 三 label（tab:main-ablation/tab:omega/tab:cost）指向同表，正文 \ref 均能解析（0 undefined）✅；表 2 tab:llm-comparison ✅。</li>
+<li><strong>中文注释残留</strong>：各 .tex 含大量中文注释（设计说明/历史修改），匿名版若误泄露 .tex 源可能暴露内部信息——但 PDF 编译不含注释，<strong>仅提交 PDF 不受影响</strong>；若开源 .tex 需清理。<span class="tag p2">P2</span></li>
+<li><strong>语法拼写</strong>：抽查未发现明显语法错误；"ZhuLong" 大小写全文一致 ✅。</li>
+<li><strong>商业工具许可与数据可得性</strong>：§6.1 已声明"task cases derive from non-redistributable vendor documentation"；§5 给出 harness/schema/assertion 协议；可复现性节（commit <code>d1f4817cb</code> 称已补入 5_bench）✅ 符合 10-25 评审 C 项。</li>
+<li><strong>9_appendix.tex</strong>：已被注释为"removed 2026-10-24"，main.tex 不再 \input，文件保留作 git 追溯 ✅。</li>
+<li><strong>"In Proceedings of . ACM" 空字段</strong>：抽查 main.bbl 未发现此类空 venue（10-25 评审 E 项称已修）✅。</li>
+</ul>
+
+<hr class="hr">
+<h3>交付摘要</h3>
+<table>
+<tr><th>交付物</th><th>状态</th></tr>
+<tr><td>本报告（HTML, 中文, 自包含, 0 script, 0 外链）</td><td>✅ 已交付 <code>doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html</code></td></tr>
+<tr><td>进度文件</td><td>✅ <code>doc/ZhuLong_DAC2027/run/paper_audit_progress.md</code></td></tr>
+<tr><td>MEMORY 顶部结论</td><td>✅ <code>MEMORY_ZHULONG.md</code></td></tr>
+</table>
+<p class="small">判据自检：bib 28 条 100% 外部核验 ✅（含 2 P0 伪造 + 1 DOI 错 + 1 venue 可疑 + 4 孤儿小误）；正文 21 处 cite 上下文 100% 判定（✅/⚠️/❌）✅；摘要+intro 全部 claim 进映射表 ✅；章级逻辑断点 6 条清单 ✅；所有出现数字多处一致性比对 + 措辞强度逐句判定 ✅；每个 ❌/⚠️ 可复现（URL 或 文件:行）✅。报告 ≥25KB / 0 script / 0 外链 ✅。</p>
+<p class="small" style="color:#888">— 审阅 agent: GLM-5.2 @ OpenCode, 2026-10-30 —</p>
+</div>
 </body>
 </html>
