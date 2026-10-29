@@ -1474,3 +1474,13 @@
 | 2026-10-29 | Are we human?（Anthropic engineer declares the coding interview dead · 反爬挑战页不可取 · 不收） | The Register | news(不可直取) | https://www.theregister.com/ai-and-ml/2026/10/28/anthropic-engineer_declares_the_coding_interview_dead/ |
 | 2026-10-29 | I Used AI to Fake a Scientific Paper. Here's What Happened（第一人称实验 · 不收） | IEEE Spectrum | feature | https://spectrum.ieee.org/ai-generated-scientific-papers |
 | 2026-10-29 | 空客 2026 年前三季度收入 506 亿欧元、交付 547 架（纯财报 · 不收） | IT之家 | news | https://www.ithome.com/1/019/605.htm |
+| 2026-10-29 | Deepgram acquires Pipecat-maker Daily to bolster its voice AI infrastructure（金额未披露 · Pipecat 永久开源） | TechCrunch | news（第 174 轮 · §1） | https://techcrunch.com/2026/10/29/deepgram-acquires-pipecat-maker-daily-to-bolster-its-voice-ai-infrastructure/ |
+| 2026-10-29 | 豆包工作向企业客户推出第三方模型服务：含 Kimi 3.1 Pro、GLM 5.3、DeepSeek V4.1 Flash 等 | IT之家 | news（第 174 轮 · §1） | https://www.ithome.com/1/019/733.htm |
+| 2026-10-29 | 借钱搞 AI：消息称微软计划通过美国债券发行至少筹资 250 亿美元 | IT之家（据彭博社） | news（第 174 轮 · §5） | https://www.ithome.com/1/019/753.htm |
+| 2026-10-29 | 今日宜休发布行业首套弹性调休方案「好状态」计划：员工精力指数低于 60 分可自主申请调休 | IT之家 | news（第 174 轮 · §4） | https://www.ithome.com/1/019/757.htm |
+| 2026-10-29 | Amazon updates Alexa to help you manage shopping lists, subscriptions, and update delivery instructions | TechCrunch | news（第 174 轮 · §4） | https://techcrunch.com/2026/10/29/amazon-updates-alexa-to-help-you-manage-shopping-lists-subscriptions-and-update-delivery-instructions/ |
+| 2026-10-29 | 第 174 轮 附录 A59：IT之家财报 19 条（顺丰/立讯/美的/江波龙/中际旭创/新易盛 等） | IT之家 RSS | 不收（纯经营数据） | https://www.ithome.com/rss/ |
+| 2026-10-29 | 第 174 轮 附录 A60–A61：IT之家产品稿 18 条 + 访谈式表态 4 条（王腾致谢/夏尔马/理想高管/阿维塔争议） | IT之家 RSS | 不收（厂商稿·言论） | https://www.ithome.com/rss/ |
+| 2026-10-29 | 第 174 轮 附录 A62–A63：研究 500Wh/kg 电池（ACS Energy Letters · paper）· ISHO Intelligence / 2.76 亿人睡眠不佳（同场发布会分条） | IT之家 `1/019/759`/`1/019/737`/`1/019/734` | 不收（paper / 同事件） | https://www.ithome.com/1/019/759.htm |
+| 2026-10-29 | 第 174 轮 附录 A64：CNBC（AI capex 442B 拦截页）· Ars（Delaware AI 公司 403）· BMJ（AI 处方更贵 · Cloudflare）· The Register（AI Mode 变现 · 反爬） | HN Algolia 转链 | 不收（不可直取） | https://www.cnbc.com/2026/10/29/microsoft-google-ai-capex-estimates.html |
+| 2026-10-29 | 第 174 轮 附录 A65–A68：dsrupt 澳儿童 AI 情感亲密禁令（单源）· HN 60 条其余（政治/宗教/司法/Show HN）· 中新网 30 条（时政军事伤亡）· 钛媒体 16 / 爱范儿 20（分析实测体） | 多源 | 不收（单源·红线·非报道体） | https://dsrupt.news/articles/australia-bans-ai-emotional-intimacy-with-children-chatbot-makers-will-keep-the/ |
