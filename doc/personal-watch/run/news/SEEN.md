@@ -1438,3 +1438,16 @@
 | 2026-10-29 | 第 170 轮 附录 A34：爱范儿早报（Gemini 4 Carbon / 微软 FY27Q1 / SK 海力士 / 豆包回应 15 万群演 / 抖音治理 50.7 万账号 / Amodei 编码先被取代） | 爱范儿 `1686590` | 部分同事件不重复，其余仅标题层不收 | https://www.ifanr.com/1686590 |
 | 2026-10-29 | 第 170 轮 附录 A30/A33/A35：IT之家其余 16 条 + 中新网/央视 30 条（A 股/地震/行拘/涉台/民族团结等红线或非 AI）+ 雷峰网/钛媒体 20 条分析稿 | IT之家 RSS / 中国新闻网滚动 RSS / 雷峰网 / 钛媒体 | 不收（产品·财报·红线·分析稿） | https://www.chinanews.com.cn/rss/scroll-news.xml |
 | 2026-10-29 | 第 170 轮 附录 A36：NYT「Top Dartmouth Leader Steps Down over Undisclosed A.I. Use」（A24 复核仍在） | NYT（HN 2 分，直取 000） | 不收（源不可达，待补第二源） | https://www.nytimes.com/2026/10/28/us/dartmouth-santiago-schnell-ai.html |
+| 2026-10-29 | 第 171 轮 §1：全国首个昇腾 950DT 1024 卡超节点集群在武汉上线（FP8 1 EFLOPS / 256TB 统一内存 / 1 个月点亮） | IT之家 `1/019/419` | news | https://www.ithome.com/1/019/419.htm |
+| 2026-10-29 | 第 171 轮 §1：腾讯发布跨应用 AI 协同体系 Buddy One（打通文档/会议/网盘/ima · VIP 700 元/月） | IT之家 `1/019/412` | news | https://www.ithome.com/1/019/412.htm |
+| 2026-10-29 | 第 171 轮 §2：Claude Code v2.1.311 新增 CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS | IT之家 `1/019/476`（据 The Register 10-28） | news | https://www.ithome.com/1/019/476.htm |
+| 2026-10-29 | 第 171 轮 §3：谷歌向第三方 Android 应用商店开放一键安装权限（年审核费 1 万美元 · 12-01 起） | IT之家 `1/019/518` | news | https://www.ithome.com/1/019/518.htm |
+| 2026-10-29 | 第 171 轮 §4：AI 冲击初级编程岗，美高校计算机与信息科学本科入学下滑超 12%（两年本科在读 -18.4%） | IT之家据彭博社 `1/019/516` | news | https://www.ithome.com/1/019/516.htm |
+| 2026-10-29 | 第 171 轮 §5：三星电子 2027 年 HBM 产能售罄、2028 年 DRAM 供应紧张（HBM4 占 HBM 营收 60%） | IT之家 `1/019/430` | news | https://www.ithome.com/1/019/430.htm |
+| 2026-10-29 | 第 171 轮 §6：SpaceXAI 拟收购绍斯黑文市 418 套住宅，条件为放弃噪音集体诉讼索赔权 | IT之家据《卫报》`1/019/442` | news | https://www.ithome.com/1/019/442.htm |
+| 2026-10-29 | 第 171 轮 附录 A37：IT之家财报/销量类 8 条（iPhone Duo 首销 20 万台传闻、三星 MX 亏损、大众/意法/威刚/友达/现代/吉利） | IT之家 RSS | 不收（纯财报·销量） | https://www.ithome.com/rss/ |
+| 2026-10-29 | 第 171 轮 附录 A38–A39：小米 MiMo/泰坦未来多晶 SiC/Altera Agilex 2X/XREAL AURA 等产品稿 + 腾讯 WorkBuddy 数据/腾讯×Visa | IT之家 RSS | 不收（厂商发布·同事件） | https://www.ithome.com/rss/ |
+| 2026-10-29 | 第 171 轮 附录 A40：爱范儿 20 条 + 量子位 10 条（第 9 轮恢复更新但全为厂商稿）+ 雷峰网 12 + 钛媒体 19 | 各站 RSS | 不收（分析稿/厂商稿） | https://www.qbitai.com/feed |
+| 2026-10-29 | 第 171 轮 附录 A41：HN search_by_date 50 命中（arXiv Trinity / Bernstein / Alphabet 营收 Bloomberg 付费墙） | HN Algolia | 不收（论文/工具/付费墙） | https://hn.algolia.com/api/v1/search_by_date |
+| 2026-10-29 | 第 171 轮 附录 A42：arXiv cat:cs.AI 最新 15 条（2026-10-27 提交，超 72h） | arXiv API | 不收（超窗） | https://export.arxiv.org/api/query?search_query=cat:cs.AI |
+| 2026-10-29 | 第 171 轮 附录 A43：cn_news(30) 与 IT之家其余（含伊朗击落无人机·司法个案等红线项） | 中新网/央视/IT之家 | 不收（非 AI·红线） | https://www.chinanews.com.cn/rss/scroll-news.xml |
