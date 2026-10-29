@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-29</td>
+    <td><i>Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</i><br><code>arXiv:2610.36195</code>（Kartik Jangra, Atharva Gawane, Siddharth Pulipaka 等 5 位 · AI4Bharat / IIT Madras / Mahindra University）</td>
+    <td><b>AI 读得懂发票，却读不懂盲文</b>：盲文字符只由小格子里<b>哪几个点凸起</b>决定，考的是<b>数点 + 几何</b>，恰好是 VLM 的软肋。作者建 <b>BrailleBench</b>：<b>259 张</b>人工校验真实照片（<b>215 一级 + 44 二级</b>，书本 / 标牌 / 低分辨率都有）。<b>四类系统同台</b>：单次推理的通用 VLM 一级<b>除 GPT Sol 系外全 &lt;3%</b>（最强 GPT-6.1 Sol <b>53.95%</b>、CER 0.374；二级 11.36%）；OCR 专用与工具辅助 agent（Claude Code / Opus 5.5 High）一级 <b>88.37%</b>、二级 <b>40.91%</b>，代价 <b>≈180 秒 + $0.51–0.58 / 图</b>；自建合成管线 <b>276k</b> 样本微调 <b>Qwen3.5-2B</b> ⇒ <b>一次调用</b>一级 <b>86.98%</b> / 二级 <b>61.36%</b>（二级比 Claude Code 高 20.45 pp）。<b>最扎心的负结果</b>：用他人合成数据训练时，<b>合成验证集 96.00% → 真实照片一级仅 3.26%</b>（Llama-3.2-11B 55.00% → 0.47%）；把合成语料扩到 500k 长文本，真实一级反而 <b>82.63% → 72.97%</b> ⇒ <b>考得好 ≠ 会</b>（<b>作者自报 · 本线未复现</b>；基准仅 259 张、以一级为主；工具成绩依赖具体 harness 版本）</td>
+    <td><a href="10_29.html">10_29.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-28</td>
     <td><i>Can LLMs Uncover Hidden Physical Laws through Free Exploration?</i><br><code>arXiv:2610.37649</code>（Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen）</td>
     <td><b>物理定律被偷偷改了一条，AI 能发现吗</b>：<b>LongChang</b> 造 <b>15 个 MuJoCo 虚拟世界</b>（1 个正常对照 + <b>14 个各改一条定律</b>，如「越重的球落得越慢」），LLM 当探索者，<b>不给任务、不透露定律</b>，只能自己搬物体 / 造工具 / 提问题 / 做实验；LLM 代理负责生成与演化场景、审工具、按「改过的定律」判报告是否<b>又对又有证据</b>。<b>12 个前沿 LLM × 15 场景 × 最多 100 轮</b>：仅 <b>GPT-6-Astra 发现率 16.7%</b>（其余 <b>11 个全 0%</b>），其证据支撑率 <b>97.6%</b>、定律正确率 <b>19.0%</b>；加提示 <b>16.7%→28.6%</b>、预算 100→500 轮反而 <b>14.3%</b>、关掉造工具 <b>4.8%</b>；Gemini-3.7-Flash 每局均提前收工（平均 <b>10.9</b> 轮）、GLM 系 <b>约 90 轮</b>且每局造出装置却 <b>0 发现</b>（失败动作占 16.8–20.2%）⇒ 会动手 ≠ 会发现（<b>作者自报 · 本线未复现</b>；判分/场景演化也是 LLM；15 场景属小样本）</td>
@@ -151,8 +157,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-28 18:4x CST（新增 <code>10_28.html</code> · TOP-1 = Can LLMs Uncover Hidden Physical Laws through Free Exploration? / <code>arXiv:2610.37649</code> · 5 镜 / 120s / 口播 445 字；上一版 <code>10_27.html</code> · <code>arXiv:2610.35857</code>）<br>
-  🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片）待用户确认工具链。
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-29 18:3x CST（新增 <code>10_29.html</code> · TOP-1 = Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs / <code>arXiv:2610.36195</code> · 5 镜 / 120s / 口播 440 字；上一版 <code>10_28.html</code> · <code>arXiv:2610.37649</code>）<br>
 </footer>
 </div>
 </body>

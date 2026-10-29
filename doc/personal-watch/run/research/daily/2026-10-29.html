@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-29（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-29（晚报 · 5/5 收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,15 +53,15 @@
 
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-29 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b> · 早 3 篇全按<b>「借鉴」</b>口径（Muon 优化器的权重范数控制怎么才够用 / agentic RL 的 rollout 预算该按「环境」而不是按「题」来分 / agent harness 把工具输出截断时到底丢了什么）+ 晚报 2 篇<b>「科普」</b>待 18:00 补齐</div>
+  <h1>论文推荐日报 · 2026-10-29 <span class="badge b-pm">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5（收口）</b> · 早 3 篇全按<b>「借鉴」</b>口径（Muon 优化器的权重范数控制怎么才够用 / agentic RL 的 rollout 预算该按「环境」而不是按「题」来分 / agent harness 把工具输出截断时到底丢了什么）+ 晚报 2 篇<b>「科普」</b>（AI 读不懂盲文，以及「合成集 96% → 真实照片 3.26%」的落差 / 第一人称网球视频里，机器人能不能预判 1.1 秒后的球）</div>
   <div class="meta">
-    <span>📅 日期：2026-10-29（CST 本地日；AM 轮 = UTC 2026-10-28T22:00）</span>
-    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>📅 日期：2026-10-29（CST 本地日；AM 轮 = UTC 2026-10-28T22:00 / PM 轮 = UTC 2026-10-29T10:00）</span>
+    <span>🏷 标识：晚报（PM · 5 / 5 收口）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
-    <span>🕒 生成：2026-10-29 06:0x CST</span>
+    <span>🕒 生成：2026-10-29 06:0x CST（AM 3 篇）→ 18:2x CST（PM 补 2 篇）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（MuonGS / EnvSched / Context Is a Pipeline）。<b>AM 轮公告批次未刷新</b>：<code>cat:cs.CL</code> 探针 <code>totalResults</code> <b>124,009（与 r118 PM 相同）</b>、最新 <code>published=2026-10-27T17:58:52Z</code>（<code>2610.37657v1</code>）；广度扫描 <b>639,590（相同）</b> ⇒ <code>--fetch --seen</code> <b><code>kept 0</code></b> / <code>dropped 600</code>（<code>window_mode=daily</code>，72h）⇒ 3 篇<b>取自 r118 的 162 条候选池</b>（已在 <code>SEEN</code>、从未进过任何日报），并做 <code>id_list</code> 权威复核（3/3）。</div>
+  <div class="progress">📈 <b>今日进度：5 / 5（收口）</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（MuonGS / EnvSched / Context Is a Pipeline）+ 晚 2 篇 <span class="badge b-kp">科普</span>（Learning to Read Braille / Egocentric Tennis Vision）。<b>PM 轮公告批次仍未刷新</b>：<code>cat:cs.CL</code> 探针 <code>totalResults</code> <b>124,009（与 AM 轮相同）</b>、最新 <code>published=2026-10-27T17:58:52Z</code>；广度扫描 <b>639,590（相同，15 条查询 <code>totalResults</code> 逐条相同）</b> ⇒ <code>--fetch --seen</code> <b><code>kept 0</code></b> / <code>dropped 600</code>（<code>window_mode=daily</code>，72h）⇒ 晚 2 篇同样<b>取自 r118 的 162 条候选池</b>（已在 <code>SEEN</code>、从未进过任何日报），并做 <code>id_list</code> 权威复核（2/2）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + 论文 PDF 正文核对，<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。数字均<b>作者自报</b>，本线未复现。</div>
 </header>
 
@@ -144,7 +144,62 @@
   </div>
 </div>
 
-<h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM）</b>：本轮唤醒于 <b>本地 2026-10-29 18:00（CST）</b> = <b>UTC 2026-10-29T10:00</b>（周四 06:00 ET）。
+  <b>R1′ 分源实测</b>（证据 <code>raw/2026-10-29-pm-probe-r120.json</code>，<code>generated=2026-10-29T10:00:38Z</code>）：
+  arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>1.39s</code>；<code>cat:cs.CL</code> 探针 <code>totalResults=124009</code>，最新样本 <code>2026-10-27T17:58:52Z</code>；广度扫描 <code>639590</code>，<b>与 AM 轮逐条相同</b>）⇒ <b>公告批次仍为 <code>2026-10-27</code>，PM 轮未刷新</b>（预期中的刷新没有发生，如实记录）／
+  HF Daily ❌（<code>URLError(OSError(101, 'Network is unreachable'))</code>，如实记 FAIL、不伪造）／
+  RSS cs.CL / cs.CV / cs.LG 均 <code>HTTP 200</code> 但<b>条目数为 0</b>（空 feed；<b>仅作发现，不作证据</b>，不据此声称「无新增」）。
+  <br>⚠️ <b>如实记录本轮取数</b>：窗口 <code>window_mode=daily</code>（72h，脚本按 UTC 时间<b>自动</b>判定，<b>未人工放宽</b>）跑 <code>--fetch --seen</code>（<code>generated=2026-10-29T10:00:40Z</code>）→
+  <b>15/15 查询 <code>ok</code> / <code>HTTP 200</code></b>（<b>14 条 <code>attempts=1</code> + 1 条 <code>attempts=2</code></b>：第 4 条 <code>cat:cs.LG AND all:"scaling law"</code> 首次真实重试后成功）、
+  <b><code>kept 0</code> / <code>dropped 600</code></b>（600 = <b>557</b> 条「already in SEEN」+ <b>43</b> 条「stale &gt; 72h」）。<b><code>kept 0</code> 的语义</b>：<code>2026-10-27</code> 整批已在 r118 入账 ⇒ <b>不是「上游无数据」</b>、<b>不是单查询 FAIL</b>、<b>不是窗口越界</b>；<b>未为凑数放宽窗口</b>。
+  <br>晚 2 篇取自 <b>r118 晚报轮的 162 条候选池</b>（已入 <code>SEEN</code>、<b>从未进过任何日报</b>），并做 <b><code>id_list</code> 权威复核</b>（<b>2/2 完整返回</b>，<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>BYTES=6206</code>、<code>3.58s</code>；证据 <code>raw/2026-10-29-pm-idlist-r120a.{xml,headers}</code>）⇒ 首次提交 <b>2026-10-26 / 2026-10-27（UTC）</b>，<b>非「今日新提交」</b>。
+</div>
+
+<h2 class="sec">晚报 · 2 篇「科普」（PM · 4–5 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">会转写文档的 AI，几乎<b>读不了盲文</b>。作者做了 <b>BrailleBench</b>（<b>259 张</b>人工校验的真实盲文照片：<b>215 张一级（Grade-1）+ 44 张二级（Grade-2）</b>，覆盖书本插图、标牌、印刷点、低分辨率等多种材质与拍摄条件），把「闭源 VLM / 开源模型 / OCR 专用 / 工具辅助 agent」四类系统拉到同一张卷子上：<b>单次推理的通用 VLM 普遍不及格</b> —— 一级上除 GPT Sol 系以外<b>全部低于 3%</b> 完全匹配，最强的 <b>GPT-6.1 Sol 也只有 53.95%</b>（CER 0.374）、GPT-5.6 Sol High 11.16%；二级更难（GPT-6.1 Sol 11.36%、GPT-5.6 Sol High 4.55%）。<b>「工具辅助」的 agent harness 强得多但很贵</b>：Claude Code（Opus 5.5 High）一级 <b>88.37%</b>（CER 0.019）、二级 <b>40.91%</b>；Codex 一级 62.79%、二级 <b>0%</b>；代价约 <b>180 秒/图</b>、<b>$0.51–0.58/图</b>。作者另造合成盲文生成管线（<b>276k</b> 样本，含版式与图像扰动），用它<b>完整微调 Qwen3.5-2B</b>，<b>一次模型调用</b>即在真实基准上达 <b>一级 86.98% / 二级 61.36%</b>（二级比 Claude Code 高 <b>20.45</b> 个百分点）。<b>最扎心的是负结果</b>：用先前工作的合成数据（WMT-Train）训练时，同一个 2B 模型在<b>合成验证集 96.00%</b>，到真实照片一级只剩 <b>3.26%</b>、二级 <b>0%</b>（Llama-3.2-11B 为 55.00% → <b>0.47%</b>）；把合成语料扩到 500k 长文本，真实一级反而从 <b>82.63% 掉到 72.97%</b>（合成验证集却从 41.70% 升到 63.10%）⇒ <b>「合成集高分」几乎不预测真实照片表现</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Kartik Jangra, Atharva Gawane, Siddharth Pulipaka, Hemachandran Karah, Raj Dabre（<b>5 位署名</b>；据 PDF 首页：<b>Nilekani Centre at AI4Bharat</b> · <b>IIT Madras</b> · <b>Mahindra University</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-26</b>（<code>published=2026-10-26T19:32:41Z</code>；<code>updated</code> 同日，无 v2）· <code>comment</code>：22 pages, 8 figures, 16 tables；代码/数据 <code>github.com/kartik0806/BrailleBench</code> · PDF 实测 <b>22 页</b> / 65,886 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code>（主分类；cross-list <code>cs.CL</code>）· <span class="badge b-kp">科普</span> · 关键词：盲文识别 / 无障碍 / 视觉语言模型 / 合成数据 / sim-to-real / 基准</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.36195">https://arxiv.org/abs/2610.36195</a>（PDF 已落地：<code>research/pdf/2026-10-29/2610.36195.pdf</code>，6,027,201 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>一句话就能立住的反差</b>：「AI 都能读发票、读手写体了，怎么读不了盲文？」—— 盲文字符<b>只由小格子里凸点的有无与相对位置定义</b>，考的是<b>数点 + 几何推理</b>，恰好是 VLM 的软肋；这个设定不需要任何 AI 背景。</li>
+      <li><b>有画面感、也有社会意义</b>：全球至少 <b>22 亿人</b>有视力障碍（论文引 WHO / IAPB 口径，含 <b>4,300 万</b>全盲），盲文是识字与受教育的关键通道；而且<b>看得见但不识盲文的人</b>（老师检查作业、家人读便条）同样是受益者 —— 这类「桥」的故事天然有传播力。</li>
+      <li><b>三个数字撑起三段叙事</b>：① 通用 VLM 一级<b>除 GPT Sol 系外全 &lt;3%</b>（很多还「自信地胡说」）；② 靠 agent 套工具能到 <b>88.37%</b>，但要 <b>3 分钟 + 0.5 美元/图</b>；③ 一个 <b>2B 小模型只看合成数据</b>就能 <b>86.98% / 61.36%</b>，<b>一次调用</b>完成。</li>
+      <li><b>最好的钩子在最后</b>：「在自己造的数据上 96%，换到真实照片只剩 3.26%」—— 这条<b>合成-to-真实鸿沟</b>不只属于盲文，是所有「用生成数据练模型」的人都要面对的问题，适合做视频的落点。</li>
+      <li><b>边界（片中说清）</b>：基准只有 <b>259 张</b>且<b>以一级为主（215/259）</b>；工具辅助成绩依赖具体 harness 与版本；<b>作者自报、本线未复现</b>；PDF 完整性为<b>结构校验</b>（Range 分段拼接，sha256 与 CDN <code>etag</code> 未对齐，见附录 C）。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（Table 2 全系统对比、§4.2 合成→真实迁移、Figure 3 的训练曲线）+ 作为 <b>《论文两分钟》10-29 期 TOP-1</b>（分镜见 <code>research/video/SCENES/10_29.html</code>）。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">5</span>Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">机器人在场上要「看得懂 + 预判得了」高速运动，天然是<b>第一人称（自视角）</b>视角。作者戴着头戴相机、加 <b>5 台固定机位</b>采集网球对打，标出 3D 球轨迹、球员场上轨迹、正反手与击球时刻，得到 <b>85 个回合 / 53,155 帧</b>第一人称画面（有效时长约 <b>29.6 分钟</b>，原始连续录制约 80 分钟；第一人称 <b>3840×2160 @29.97fps</b>，固定机位 ≥5120×2880，球/球员 3D 标签分别覆盖 <b>99.9% / 100%</b> 帧）。然后在 <b>7 个时空任务</b>上评测 <b>13 个视觉配置</b>（图像编码器 DINOv3 / SigLIP 2 / DA3 / PLM-3B / SAM 3、视频编码器 V-JEPA 2、VLM Qwen3-VL-4B / LFM2.5-VL-3B）：<b>当前帧</b>球员误差 <b>0.14–0.18 m</b>（DA3 最好）、球 <b>0.54–0.90 m</b>（PLM 3B 最好、V-JEPA 2 最差）；<b>1.10 秒后</b>预测球员 <b>0.34 m</b>（V-JEPA 2 最好）– 球 <b>0.91 m</b>（PLM 3B 最好；V-JEPA 2 最差 1.27 m）；正反手预判 <b>98.2–99.9%</b>、击球时间误差 <b>141–149 ms</b>。两个反直觉发现：<b>辅助深度</b>把 3D 球定位从 <b>0.51 m 降到 0.21 m</b>（再叠加球员位置到 0.19 m），说明「从图像推公制深度」仍是难点；而<b>加长输入历史对球预测没有帮助</b>（SigLIP 2 单帧 1.02 m、多帧 1.08 m）⇒ 表示更像是在用<b>单帧场景上下文</b>，而不是帧间位移。最后用条件扩散模型把视觉预测变成全身网球动作，在 RTX 5090 上 <b>100 Hz</b> 实时推理。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Tudor Braicu, Joseph DelPreto, Jared Boyer, Mónika Farsang, Maximilian Stölzle, Tim Niklas Seyde, Daniela Rus（<b>7 位署名</b>，前 5 位共同一作；据 PDF 首页：<b>MIT CSAIL</b> · <b>Cornell University</b> · <b>TU Wien</b> · <b>Liquid AI</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T17:47:14Z</code>；<code>updated</code> 同日，无 v2）· <code>comment</code>：8 pages, 5 figures；项目页 <code>tennis-vision.csail.mit.edu</code> · PDF 实测 <b>8 页</b> / 39,759 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code>（主分类；cross-list <code>cs.RO</code>）· <span class="badge b-kp">科普</span> · 关键词：第一人称视频 / 时空预测 / 轨迹预判 / 机器人感知 / 运动理解 / 数据集</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.37619">https://arxiv.org/abs/2610.37619</a>（PDF 已落地：<code>research/pdf/2026-10-29/2610.37619.pdf</code>，1,823,189 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>画面天生好看</b>：第一人称视角的网球对打、球速与击球瞬间，本身就有运动镜头感；「机器人接得住这一拍吗」是大众能立刻代入的问题。</li>
+      <li><b>数字可以被理解成「有多准」</b>：「1.1 秒后预测球的位置，误差 <b>0.91 米</b>」—— 一个网球场的尺度下，这个误差意味着「知道大概方向，但还接不准」，比抽象指标好讲。</li>
+      <li><b>两条反直觉结论</b>：① <b>给模型更多历史帧，球预测并没有变好</b>（它主要靠单帧场景上下文）；② <b>补上深度信息，3D 球定位误差从 0.51 m 直接掉到 0.21 m</b> ⇒ 「空间感」比「记忆力」更关键。</li>
+      <li><b>有「未来可期」的落点</b>：作者把视觉预测接到条件扩散模型上生成全身网球动作，<b>100 Hz</b> 实时 —— 可以收尾在「感知 → 动作」的闭环上，而不是停在排行榜。</li>
+      <li><b>边界（片中说清）</b>：<b>单一受试者、单一场景</b>（85 回合、约 29.6 分钟有效画面）；数据「论文录用后公开」；动作生成只是<b>运动学演示</b>，论文明确说还没有接到真实机器人策略；<b>作者自报、本线未复现</b>。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（Table I 13 配置全表、Table II 深度消融、Table III 历史长度）+ 作为 10-29 期<b>备选科普选题</b>（TOP-1 为盲文那篇）。
+  </div>
+</div>
+
+<h2 class="sec">附录 A · 早报（AM）检索式与命中数（可核验）</h2>
 <p>证据文件：<code>research/raw/2026-10-29-am-fetch-r119-seen.json</code>（<code>meta.per_query</code>，15 条查询<b>全部</b> <code>ok=true</code> / <code>status=200</code> / <code>attempts=1</code>；请求间隔 <code>rate_limit_seconds=3.0</code>）。</p>
 <table>
   <tr><th>#</th><th>领域</th><th>检索式</th><th>totalResults</th><th>取回条目</th><th>本轮 kept</th></tr>
@@ -166,7 +221,7 @@
 </table>
 <p class="note">⚠️ <b>「取回 40」≠「40 篇新论文」</b>：每查询按 <code>sortBy=submittedDate&amp;sortOrder=descending</code> 取最新 40 条，其中绝大多数已入 <code>SEEN</code> 或超出 72h 窗口。<b><code>kept 0</code> 是本轮的真实结果</b>（见附录 B），<b>未放宽窗口、未用超窗条目凑数</b>。</p>
 
-<h2 class="sec">附录 B · 去重剔除（<code>--fetch --seen</code> 明细）</h2>
+<h2 class="sec">附录 B · 早报（AM）去重剔除（<code>--fetch --seen</code> 明细）</h2>
 <table>
   <tr><th>指标</th><th>值</th><th>说明</th></tr>
   <tr><td>查询数</td><td>15</td><td>全部 <code>ok</code> / <code>200</code> / <code>attempts=1</code>（<b>无重试</b>）</td></tr>
@@ -177,25 +232,75 @@
 </table>
 <p>3 篇入账论文在 <code>SEEN.md</code> 中<b>原本即为「候选」</b>（首次收录 2026-10-28，来自 r118 的 162 条候选池），本轮<b>只翻状态为「收录」</b>，<b>不新增行</b>；与近 7 天 <code>daily/*.html</code> 逐条比对<b>无重复</b>（3 个 ID 均未在任何日报出现过）。</p>
 
-<h2 class="sec">附录 C · PDF 落地与校验（3/3）</h2>
+<h2 class="sec">附录 C · PDF 落地与校验（AM 3 + PM 2 = 5/5）</h2>
 <table>
   <tr><th>arXiv ID</th><th>字节</th><th>页数</th><th>字符（去空白）</th><th>校验结果</th></tr>
   <tr><td><code>2610.37647</code></td><td>2,682,396</td><td>21</td><td>50,243</td><td><code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code>/<code>pdftotext</code> 可解析；字节 == <code>Content-Range</code> total；<b>Range 抽样字节 == 服务端同区间</b></td></tr>
   <tr><td><code>2610.37609</code></td><td>2,953,308</td><td>27</td><td>69,941</td><td>同上</td></tr>
   <tr><td><code>2610.36114</code></td><td>217,638</td><td>5</td><td>23,929</td><td>同上</td></tr>
+  <tr><td><code>2610.36195</code>（PM）</td><td>6,027,201</td><td>22</td><td>65,886</td><td><code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code>/<code>pdftotext</code> 可解析；字节 == <code>Content-Range</code> total（Range 8 段拼接）；<b>sha256 与 <code>etag</code> 未对齐</b></td></tr>
+  <tr><td><code>2610.37619</code>（PM）</td><td>1,823,189</td><td>8</td><td>39,759</td><td>同上</td></tr>
 </table>
-<p class="note">⚠️ <b>如实记录两个真实异常（不写成「端到端校验通过」）</b>：① 下载脚本 <code>raw/fetch_pdfs_r119.sh</code> 的尾部断言用 <code>tail -c 5</code>，遇到文件以 <code>%%EOF\n</code> 结尾时被截成 <code>%EOF</code> ⇒ <b>3 篇全被判 FAIL</b>（字节数其实都 == total）；本轮<b>未把截断文件当成功</b>，而是改用 <code>pdfinfo</code> + <code>pdftotext</code> + <b>服务端 Range 抽样对比</b> 复核后才落地。② 服务端 <code>etag</code> 对 2 篇给的是 <code>sha256:&lt;hex&gt;</code>、1 篇给的是 base64，且本地 sha256 <b>与 etag 不一致</b> ⇒ 完整性证据取<b>结构校验 + 字节区间对齐</b>，<b>不声称哈希端到端一致</b>。PDF 在 <code>research/pdf/</code>（<code>.gitignore</code> 已排除）⇒ <b>不入 git</b>。</p>
+<p class="note">⚠️ <b>如实记录三个真实异常（不写成「端到端校验通过」）</b>：① 下载脚本 <code>raw/fetch_pdfs_r119.sh</code> 的尾部断言用 <code>tail -c 5</code>，遇到文件以 <code>%%EOF\n</code> 结尾时被截成 <code>%EOF</code> ⇒ <b>3 篇全被判 FAIL</b>（字节数其实都 == total）；AM 轮<b>未把截断文件当成功</b>，而是改用 <code>pdfinfo</code> + <code>pdftotext</code> + <b>服务端 Range 抽样对比</b> 复核后才落地。② 服务端 <code>etag</code> 对 2 篇给的是 <code>sha256:&lt;hex&gt;</code>、1 篇给的是 base64，且本地 sha256 <b>与 etag 不一致</b> ⇒ 完整性证据取<b>结构校验 + 字节区间对齐</b>，<b>不声称哈希端到端一致</b>。③ <b>PM 轮下载更坎坷（如实记录）</b>：本机到 arXiv 单连接极慢（实测 300s 只收到 2–500 KB），<code>fetch_pdfs_r120.sh</code> 的 <code>xargs + curl</code> 方案有 3 段重试用尽 ⇒ 中途改用 <code>raw/pdf_range_resume_r120.py</code>（<b>逐段 Range 续传</b>，超时后从已有字节继续，最多 40 次），两篇/<b>16 段全部补齐</b>后才合并；PM 两篇的 sha256 与 <code>etag</code> 仍<b>未对齐</b>（<code>2610.36195</code>：本地 <code>3f5a36…</code> vs <code>etag e59d01…</code>；<code>2610.37619</code>：本地 <code>758200…</code> vs <code>etag d4828a…</code>）⇒ <b>只声称结构校验通过</b>。PDF 在 <code>research/pdf/</code>（<code>.gitignore</code> 已排除）⇒ <b>不入 git</b>。</p>
 
 <h2 class="sec">附录 D · 台账与今日待办</h2>
 <ul>
-  <li><b>台账</b>：<code>SEEN.md</code> <b>行数不变</b>（3 行「候选」→「收录」）⇒ 累计 <b>收录 269 / 候选 4,361 / 候选（RSS 补充）507</b>；<code>papers.jsonl</code> <b>266 → 269</b>（只追加 3 条，元数据取自官方 <code>id_list</code> XML）。</li>
-  <li><b>落盘脚本</b>：<code>raw/update_r119.py</code>（含幂等断言：<code>n_kept==0</code>、<code>n_dropped==600</code>、<code>window_mode=='daily'</code>、15 条全 <code>ok/200/attempts==1</code>、3 个推荐 ID 均在 <code>SEEN</code> 且状态为「候选」、<code>id_list</code> 恰 3 条且 <code>published</code> 前缀匹配）。</li>
-  <li><b>今日 18:00（PM）待办</b>：① 复验批次（<b>预期刷新到 <code>2026-10-28</code></b>，因 PM 轮晚于周三 20:00 ET 公告）；② 补 <b>2 篇「科普」</b>收口 5/5 + 本页追加 <code>## 晚报变更说明（AM → PM）</code>；③ 从当日 5 篇里挑 <b>科普 TOP-1</b> 出 <code>video/SCENES/10_29.html</code>；④ 发当日论文日报邮件（<code>paul.liu@cxmt.com</code>，5 篇齐后 1 封）。</li>
-  <li><b>口径纪律</b>：早报 3 篇全按「<b>借鉴</b>」选（与 BaiZe / ZhuLong 在研工作的相关性），<b>不掺科普口径</b>；「推荐」≠「结论」；<code>SOTA / 首次 / 突破</code> 一律不写；所有数字可回查 PDF 与官方 Atom 元数据。</li>
+  <li><b>台账（收口后）</b>：<code>SEEN.md</code> <b>行数不变</b>（AM 3 行 + PM 2 行「候选」→「收录」，<b>不新增行</b>）⇒ 累计 <b>收录 271 / 候选 4,359 / 候选（RSS 补充）507</b>（状态行合计 <b>4,630</b>）；<code>papers.jsonl</code> <b>266 → 271</b>（只追加 5 条，元数据均取自官方 <code>id_list</code> XML）。</li>
+  <li><b>落盘脚本</b>：<code>raw/update_r119.py</code>（AM）+ <code>raw/update_r120.py</code>（PM，含幂等断言：<code>n_kept==0</code>、<code>n_dropped==600</code>、<code>window_mode=='daily'</code>、15 条全 <code>ok/200</code> 且恰 1 条 <code>attempts==2</code>、2 个推荐 ID 均在 <code>SEEN</code> 且状态为「候选」、<code>id_list</code> 恰 2 条且 <code>published</code> 前缀匹配）。</li>
+  <li><b>今日 PM 待办（已全部完成）</b>：① 复验批次 → <b>未刷新</b>（仍 <code>2026-10-27</code>，如实记录，<code>kept 0</code>）；② 补 <b>2 篇「科普」</b> → 收口 <b>5/5</b> + 本页 <code>晚报变更说明（AM → PM）</code>；③ <b>科普 TOP-1</b> 分镜 → <code>video/SCENES/10_29.html</code>（盲文那篇）；④ 当日论文日报邮件（<code>paul.liu@cxmt.com</code>，5 篇齐后 1 封，台账见 <code>research/mail/发送记录.md</code>）。</li>
+  <li><b>口径纪律</b>：早报 3 篇全按「<b>借鉴</b>」选（与 BaiZe / ZhuLong 在研工作的相关性），晚报 2 篇全按「<b>科普</b>」选（大众看得懂 + 有传播力），<b>两口径不混用</b>，同一 arXiv ID 全天只出现一次；「推荐」≠「结论」；<code>SOTA / 首次 / 突破</code> 一律不写；所有数字可回查 PDF 与官方 Atom 元数据。</li>
 </ul>
 
+<h2 class="sec">附录 A′ · 晚报（PM）检索式与命中数（可核验）</h2>
+<p>证据文件：<code>research/raw/2026-10-29-pm-fetch-r120-seen.json</code>（<code>meta.per_query</code>，15 条查询<b>全部</b> <code>ok=true</code> / <code>status=200</code>；<b>14 条 <code>attempts=1</code> + 1 条 <code>attempts=2</code></b>，后者为第 4 条 <code>cat:cs.LG AND all:"scaling law"</code>；请求间隔 <code>rate_limit_seconds=3.0</code>）。</p>
+<table>
+  <tr><th>#</th><th>领域</th><th>检索式</th><th>totalResults</th><th>取回条目</th><th>本轮 kept</th></tr>
+  <tr><td>1</td><td>广度扫描</td><td><code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code></td><td>639,590</td><td>40</td><td>0</td></tr>
+  <tr><td>2</td><td>LLM</td><td><code>cat:cs.CL AND all:"large language model"</code></td><td>39,514</td><td>40</td><td>0</td></tr>
+  <tr><td>3</td><td>LLM</td><td><code>cat:cs.CL AND all:"long context"</code></td><td>1,875</td><td>40</td><td>0</td></tr>
+  <tr><td>4</td><td>LLM</td><td><code>cat:cs.LG AND all:"scaling law"</code>（<b>attempts=2</b>）</td><td>1,026</td><td>40</td><td>0</td></tr>
+  <tr><td>5</td><td>SLM</td><td><code>abs:"small language model"</code></td><td>1,112</td><td>40</td><td>0</td></tr>
+  <tr><td>6</td><td>SLM</td><td><code>cat:cs.LG AND all:"on-device"</code></td><td>11,071</td><td>40</td><td>0</td></tr>
+  <tr><td>7</td><td>多模态</td><td><code>all:"vision-language"</code></td><td>18,082</td><td>40</td><td>0</td></tr>
+  <tr><td>8</td><td>多模态</td><td><code>cat:cs.CV AND all:"multimodal"</code></td><td>16,714</td><td>40</td><td>0</td></tr>
+  <tr><td>9</td><td>多模态</td><td><code>cat:cs.MM</code></td><td>10,287</td><td>40</td><td>0</td></tr>
+  <tr><td>10</td><td>agent harness</td><td><code>ti:"agent harness"</code></td><td>155</td><td>40</td><td>0</td></tr>
+  <tr><td>11</td><td>agent harness</td><td><code>cat:cs.SE AND all:"SWE-bench"</code></td><td>416</td><td>40</td><td>0</td></tr>
+  <tr><td>12</td><td>agent harness</td><td><code>cat:cs.AI AND all:"tool use"</code></td><td>1,739</td><td>40</td><td>0</td></tr>
+  <tr><td>13</td><td>agent harness</td><td><code>cat:cs.MA AND all:"multi-agent"</code></td><td>6,069</td><td>40</td><td>0</td></tr>
+  <tr><td>14</td><td>邻域</td><td><code>cat:cs.CL AND all:"retrieval augmented"</code></td><td>3,988</td><td>40</td><td>0</td></tr>
+  <tr><td>15</td><td>邻域</td><td><code>cat:cs.AI AND all:"alignment"</code></td><td>22,176</td><td>40</td><td>0</td></tr>
+</table>
+<p class="note">⚠️ PM 轮 15 条 <code>totalResults</code> <b>与 AM 轮逐条相同</b> ⇒ <b>公告批次确实没有刷新</b>（本轮最重要的取数事实，不做美化）；<code>kept 0</code> 的真实原因见附录 B′。</p>
+
+<h2 class="sec">附录 B′ · 晚报（PM）去重剔除与 <code>id_list</code> 复核</h2>
+<table>
+  <tr><th>指标</th><th>值</th><th>说明</th></tr>
+  <tr><td>查询数</td><td>15</td><td>全部 <code>ok</code> / <code>200</code>；<b>1 条真实重试</b>（<code>attempts=2</code>）</td></tr>
+  <tr><td><code>kept</code></td><td><b>0</b></td><td>2026-10-27 整批已在 r118 入 <code>SEEN</code> ⇒ 无新增候选</td></tr>
+  <tr><td><code>dropped</code></td><td><b>600</b></td><td><b>557</b> = <code>already in SEEN</code>；<b>43</b> = <code>stale &gt; 72h</code></td></tr>
+  <tr><td>窗口</td><td><code>daily</code> · 72h</td><td>脚本按 UTC 时间<b>自动</b>判定，<b>未人工放宽</b></td></tr>
+  <tr><td>时间戳</td><td><code>generated=2026-10-29T10:00:40Z</code></td><td>本轮唤醒 = 本地 2026-10-29 18:00 CST</td></tr>
+  <tr><td><code>id_list</code> 复核</td><td><b>2/2</b></td><td><code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>BYTES=6206</code>、<code>3.58s</code>；<code>2610.36195</code> <code>published=2026-10-26T19:32:41Z</code>、<code>2610.37619</code> <code>published=2026-10-27T17:47:14Z</code>（均无 v2）</td></tr>
+</table>
+<p>晚 2 篇在 <code>SEEN.md</code> 中<b>原本即为「候选」</b>（首次收录 2026-10-28，来自 r118 的 162 条候选池），本轮<b>只翻状态为「收录」</b>，<b>不新增行</b>；与近 7 天 <code>daily/*.html</code> 及<b>本页早 3 篇</b>逐条比对<b>无重复</b>（5 个 ID 全天各出现一次）。<br>⚠️ <b>选文路径如实记录</b>：候选池里更「炫」的还有 <code>2610.37579</code>（As the Story Unfolds：AI 像人一样「看电影认角色」，VGG Oxford + Zisserman）与 <code>2610.36449</code>（A Heart Means Recursion：一个红心表情就能把模型推向递归解法）；本轮<b>未选</b>前者，是因为其 PDF 实测 <b>20,142,107 B ≈ 19.2 MB</b>，单篇就吃掉日报邮件 20 MB 的附件预算（本轮该篇分片下载过慢，遂中止）；<b>不是</b>因为选题质量差 —— 留作后续备选。</p>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <ol>
+    <li><b>页头 / 进度：3 / 5 → 5 / 5（收口）</b>，标识「早报」→「晚报 · 5/5 收口」；<b>为什么</b>：18:00 轮按 P0 第 4 批口径必须收口当日 5 篇。</li>
+    <li><b>新增「晚报取数说明（PM）」整块</b>；<b>为什么</b>：PM 轮探针与 15 条查询 <code>totalResults</code> <b>与 AM 完全相同</b>（广度仍 <code>639,590</code>）⇒ <b>预期中的公告刷新没有发生</b>；不写清楚会让人误以为「今天有两批新论文」。同时如实标注 <b>1 条 <code>attempts=2</code></b> 与 RSS 空 feed。</li>
+    <li><b>新增序号 4–5 两条「科普」推荐（含各自推荐理由与边界）</b>；<b>为什么</b>：补齐晚报 2 篇，按科普口径选，且<b>与本页早 3 篇、近 7 天日报均不重复</b>。</li>
+    <li><b>附录 A 标题加注「AM 轮」，并新增附录 A′（PM 轮 15 条查询明细）</b>；<b>为什么</b>：两轮证据文件不同，<code>attempts</code> 也不同（AM 全 1 / PM 有 1 条 2），混表会误导。</li>
+    <li><b>附录 B 标题加注「AM 轮」，并新增附录 B′（PM 去重 + <code>id_list</code> 复核 + 选文路径）</b>；<b>为什么</b>：两轮都是 <code>kept 0</code>，需分别留证据；另把「为什么没选那篇更炫的电影论文」写清楚（附件预算，不是质量）。</li>
+    <li><b>附录 C：3/3 → 5/5</b>，补 PM 2 行校验数据，并把异常说明由 2 条扩为 <b>3 条</b>（新增 PM 轮「<code>curl</code> 分段重试用尽 → 改 <code>pdf_range_resume_r120.py</code> 逐段续传」与两篇 sha256/<code>etag</code> 未对齐）；<b>为什么</b>：不把「结构可解析」写成「端到端哈希通过」。</li>
+    <li><b>附录 D：台账数字更新为收口值（收录 271 / 候选 4,359 / <code>papers.jsonl</code> 271）</b>，PM 待办改为「已全部完成」；<b>为什么</b>：AM 版的 269 / 4,361 是 3/5 时的中间值。</li>
+    <li><b>未改动</b>：早报 3 篇的正文、数字、理由<b>一字未改</b>（本轮复核未发现需要更正之处）。</li>
+  </ol>
+</div>
+
 <footer>
-  research 线 · <code>research/daily/2026-10-29.html</code>（<b>早报 · 3/5</b>，AM 轮）｜ 数据源 arXiv <code>export.arxiv.org</code> ｜ 生成 2026-10-29 06:0x CST ｜
+  research 线 · <code>research/daily/2026-10-29.html</code>（<b>晚报 · 5/5 收口</b>，AM + PM 轮）｜ 数据源 arXiv <code>export.arxiv.org</code> ｜ 生成 2026-10-29 06:0x CST（AM 3 篇）→ 18:2x CST（PM 补 2 篇）｜
   上一次唤醒：2026-10-28 18:30 CST（r118 · 晚报收口 5/5）｜ 免责：推荐 = 待读线索，非结论；数字作者自报，本线未复现。
 </footer>
 </div>

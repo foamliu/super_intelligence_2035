@@ -5248,7 +5248,7 @@
 | 2026-10-28 | 2610.37631 | What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models | cs.AI | 候选 |
 | 2026-10-28 | 2610.37626 | Know, then Draw: A New Learning Paradigm for Visual Generation | cs.CV | 候选 |
 | 2026-10-28 | 2610.37624 | Rare, Relevant, and Still Wrong: How Memory Fails LLM Group Decisions | cs.AI | 候选 |
-| 2026-10-28 | 2610.37619 | Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video | cs.CV | 候选 |
+| 2026-10-28 | 2610.37619 | Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video | cs.CV | 收录 |
 | 2026-10-28 | 2610.37613 | VideoLVR: Latent Visual Reasoning over Grounded Video Evidence | cs.CV | 候选 |
 | 2026-10-28 | 2610.37609 | EnvSched: Environment-Aware Scheduling for Rollout-Efficient Agent Reinforcement Learning | cs.LG | 收录 |
 | 2026-10-28 | 2610.37605 | Beyond Answer Changes: Matched Same-Class Controls for Local Audio Evidence | cs.SD | 候选 |
@@ -5376,7 +5376,7 @@
 | 2026-10-28 | 2610.36221 | EREBOTS 4.0: A framework for conversational assistants with A2A agents and MCP tools | cs.MA | 候选 |
 | 2026-10-28 | 2610.36210 | Diagnosing and Correcting Bias in MLLM for Long Video Understanding | cs.CV | 候选 |
 | 2026-10-28 | 2610.36204 | Concorde: Geometry-Aware Link Prediction via Decoupled Energy Minimization | cs.LG | 候选 |
-| 2026-10-28 | 2610.36195 | Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs | cs.CV | 候选 |
+| 2026-10-28 | 2610.36195 | Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs | cs.CV | 收录 |
 | 2026-10-28 | 2610.36192 | Beyond the Estimate: Wiener-Informed Decoding for Easier Training of Pixel-Space Flow Models | cs.CV | 候选 |
 | 2026-10-28 | 2610.36191 | LLM Hallucination Detection via Low-rank Multilinear Decomposition | cs.CL | 候选 |
 | 2026-10-28 | 2610.36169 | Don't Pick a Winner: Knowledge Conflicts Need a Prior, Not a Rule | cs.AI | 候选 |

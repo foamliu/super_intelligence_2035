@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/EY9XDt0Cfw7GTtD+/xVrMrnb1sI</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.36195,2610.37619&amp;start=0&amp;max_results=2</title>
+  <updated>2026-10-29T10:04:10Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=2&amp;id_list=2610.36195,2610.37619" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37619v1</id>
+    <title>Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video</title>
+    <updated>2026-10-27T17:47:14Z</updated>
+    <link href="https://arxiv.org/abs/2610.37619v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37619v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agile robots require spatiotemporal intelligence to interpret scenes, reason about interactions, and anticipate future events. Yet it remains unclear how well foundation vision models support these capabilities, particularly from a moving egocentric camera, which is a natural view for robots. To investigate this, we collect an annotated tennis dataset and train a suite of vision models on spatiotemporal tasks. Our dataset contains egocentric video synchronized with five allocentric videos, estimated global positions, labeled contact times, and annotated stroke types. We then evaluate seven prediction tasks from egocentric images: 2D ego player and 3D ball localization, future player and ball trajectories, forehand or backhand stroke anticipation, time to the next ego player ball contact, and 3D ball position at that contact. We compare image encoders, video encoders, and vision-language models with jointly trained prediction heads. The best performing models achieve mean current-frame localization errors of 0.14 m for the ego player and 0.54 m for the ball, future forecasting errors of 0.34 m for the ego player and 0.91 m for the ball over 1.1 s, and a mean contact-time prediction error of 0.14 s. Auxiliary depth information substantially improves 3D ball localization, suggesting that inferring metric depth remains a challenge. Longer image histories do not improve ball forecasting, indicating that representations exploit scene context rather than rely solely on inter-frame motion. Finally, we propose a conditional diffusion model to generate whole-body kinematic tennis motion from vision encoder predictions on egocentric video at real-time rates, adapting movements as predictions are refined. These results move towards a deeper understanding of how foundation vision models can support real-time dynamic robots using egocentric video.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T17:47:14Z</published>
+    <arxiv:comment>8 pages, 5 figures. Project page: https://tennis-vision.csail.mit.edu/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Tudor Braicu</name>
+    </author>
+    <author>
+      <name>Joseph DelPreto</name>
+    </author>
+    <author>
+      <name>Jared Boyer</name>
+    </author>
+    <author>
+      <name>Mónika Farsang</name>
+    </author>
+    <author>
+      <name>Maximilian Stölzle</name>
+    </author>
+    <author>
+      <name>Tim Niklas Seyde</name>
+    </author>
+    <author>
+      <name>Daniela Rus</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.36195v1</id>
+    <title>Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</title>
+    <updated>2026-10-26T19:32:41Z</updated>
+    <link href="https://arxiv.org/abs/2610.36195v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.36195v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Despite rapid progress in visual understanding and document transcription, modern vision-language models (VLMs) struggle with a fundamental accessibility task: reading Braille from images. We introduce BrailleBench, a manually curated benchmark of 259 real-world Grade-1 and Grade-2 Braille images. We evaluate proprietary, open-weight, OCR-specialized, and tool-assisted multimodal systems and find that standalone general-purpose models perform poorly at directly transcribing Braille images, whereas tool-assisted systems perform much better. We design a synthetic Braille generation pipeline with diverse layouts and image perturbations. A 2B VLM model trained on our synthetic data reaches 87% exact match on Grade-1 and 61% on Grade-2 BrailleBench, outperforming standalone VLMs and achieving the highest Grade-2 exact match score among the evaluated systems. We further show that high accuracy on synthetic validation data does not guarantee high accuracy on real photographs in our experiments: models trained on prior synthetic data reach up to 96% on their synthetic validation set but at most 3.26% on Grade-1 BrailleBench. Our results identify an accessibility-relevant capability gap in multimodal systems and show that targeted synthetic supervision can improve real-world Braille transcription.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-26T19:32:41Z</published>
+    <arxiv:comment>22 pages, 8 figures, 16 tables. Code and data: https://github.com/kartik0806/BrailleBench</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Kartik Jangra</name>
+    </author>
+    <author>
+      <name>Atharva Gawane</name>
+    </author>
+    <author>
+      <name>Siddharth Pulipaka</name>
+    </author>
+    <author>
+      <name>Hemachandran Karah</name>
+    </author>
+    <author>
+      <name>Raj Dabre</name>
+    </author>
+  </entry>
+</feed>

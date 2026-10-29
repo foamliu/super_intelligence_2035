@@ -1,0 +1,48 @@
+paul 您好，
+
+今日（2026-10-29）日报已收口，5 / 5 全齐（早报 3 篇「借鉴」+ 晚报 2 篇「科普」）。本封附 5 个 PDF，合计 13,703,732 B ≈ 13.07 MB，单封发完（≤ 20 MB，无需分包）。
+
+口径说明：「借鉴」= 对 BaiZe / ZhuLong 有直接迁移价值；「科普」= 大众看得懂 + 有传播力。两套口径不混用。早报 3 篇为 AM 时点记录，一字未改；晚报 2 篇按科普口径选，且与早 3 篇不重复（5 个 arXiv ID 全天各出现一次）。
+
+一、本轮取数说明（如实）
+- 唤醒时点：早报 AM = 本地 2026-10-29 06:00（CST）= UTC 2026-10-28T22:00；晚报 PM = 本地 18:00（CST）= UTC 2026-10-29T10:00。
+- 批次：AM 与 PM 两轮探针均为 cat:cs.CL totalResults=124009、最新 published=2026-10-27T17:58:52Z、广度扫描 639590（15 条查询 totalResults 逐条相同）⇒ 公告批次仍为 2026-10-27，PM 亦未刷新（预期中的「刷新到 2026-10-28」没有发生，如实记录，不做美化）。
+- 取数：两轮 --fetch --seen 均 15/15 HTTP 200（AM 全 attempts=1；PM 14 条 attempts=1 + 1 条 attempts=2，cat:cs.LG AND all:"scaling law" 真实重试后成功），kept 0 / dropped 600（557 already in SEEN + 43 stale > 72h）。kept 0 的语义是「2026-10-27 整批已在上一轮入账」，不是上游无数据、不是单查询失败、不是窗口越界；未为凑数放宽窗口。
+- 5 篇来源：均取自 10-28 晚报轮的 162 条候选池（已在 SEEN、从未进过任何日报），每篇再做 arXiv id_list 权威复核（AM 3/3、PM 2/2，HTTP 200 + application/atom+xml，标题/作者/日期一律取官方元数据）。首次提交日期均为 2026-10-26 / 2026-10-27（UTC），不是「今日新提交」。
+- 其他源：HF Daily Papers 仍不可达（Errno 101），如实记 FAIL；RSS AM cs.CL 176 / cs.CV 245 / cs.LG 437 条，PM 三源均 0 条（空 feed）—— 仅作发现，不作证据。
+- 选文路径如实：候选池里更「炫」的 2610.37579（As the Story Unfolds，VGG Oxford + Zisserman）未选 —— 其 PDF 实测 20,142,107 B ≈ 19.2 MB，单篇即吃掉本封 20 MB 附件预算，且本轮分片下载过慢中止；不是因为选题质量差，留作后续备选。
+- PDF 过程如实登记：PM 轮本机到 arXiv 单连接极慢（300 s 只收到 2–500 KB），分段脚本 3 段重试用尽 ⇒ 改用逐段 HTTP Range 续传把 16 段补齐后合并。两篇 PM PDF 的 sha256 与 CDN etag 声明值不一致（2610.36195 本地 3f5a36… vs etag e59d01…；2610.37619 本地 758200… vs etag d4828a…）⇒ 完整性证据是「结构校验（%PDF- / %%EOF / pdfinfo / pdftotext）+ 字节数 == Content-Range total」，不是端到端哈希。如需绝对一致，请以 arXiv 原站重下核对。
+
+二、早报精选（3 篇「借鉴」）
+
+1. MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control
+   arXiv:2610.37647 ｜ cs.LG（+ cs.AI + math.OC）｜ University of Minnesota（3 位）｜ 21 页 / 2,682,396 B ｜ 附件：是
+   为何值得读：把 Muon 系优化器的「权重范数控制」换成一个可分析的量 —— 累积有效学习率 C_T = Σ η_t/‖W_t‖_F：证明 vanilla Muon 全程只能按对数累积（Θ(log T)），MuonW / MuonH 在给定条件下至少线性；再提出 MuonGS，用 Gram–Schmidt 投影去掉每次更新的径向分量（不固定范数），在恒定名义学习率 + 有界更新方向下证明范数至多 √t 增长、C_T = Ω(√T)，并对光滑尺度不变目标给出 O(T^{-1/2}) 平稳性。实验：160M / 400M 稠密（FineWeb 子集）+ 135M-active / 1B-total MoE（Ultra-FineWeb），长 horizon 验证 ppl 低于 MuonH，等 loss 下估计 token 等效加速最高 ≈15%（正文 7–15%）。可用点：只改「每步更新后做一次投影」，改造面小，适合在 BaiZe 现用优化器上做 A/B。边界：最大 400M 稠密 / 1B MoE，未到 7B+；15% 是等 loss 拟合的 token 等效，不是墙钟；作者自报未复现。
+
+2. EnvSched: Environment-Aware Scheduling for Rollout-Efficient Agent Reinforcement Learning
+   arXiv:2610.37609 ｜ cs.LG（+ cs.CL）｜ PKU + XJTU + THU + Samsung Research + CASIA + CUHK（12 位）｜ 27 页 / 2,953,308 B ｜ 附件：是
+   为何值得读：agentic RL 的瓶颈在 rollout 成本。本文把调度粒度从「题」换成「环境–任务对」：环境–任务双关系图 + 奖励方差预测 + 环境覆盖 / 配额 / 相似度惩罚。EnvScaler 2,550 任务 / 51 环境，Qwen3 1.7B–30B-A3B + GRPO（B=64、K=8、200 步）：8B 用 40 步均分 48.81 已超随机 120 步最好；200 步时 4B +3.05/+3.23/+2.00、8B +4.00/+3.03/+3.34。可用点：ZhuLong 的 EDA 任务天然多环境、各环境 rollout 单价差异大，「按环境配额 + 奖励方差预测」可直接用于采样配比。边界：部分维度（DPS / LEEPS）低于随机基线；作者自报未复现。
+
+3. Context Is a Pipeline, Not a Window: Information Attrition in LLM Agent Harnesses
+   arXiv:2610.36114 ｜ cs.SE（+ cs.AI）｜ Brock University + University of Ottawa（3 位）｜ 5 页 / 217,638 B ｜ 附件：是
+   为何值得读：把 agent 评测漏掉的第三个量讲清楚 —— 工具输出在到达模型前的损耗。720 次运行里最大 prompt 仅占 400k 窗口 5.75%，但 3,827 / 11,189（≈1/3）工具结果被前缀截断成坏 JSON；同一 payload 的两个列表到达率 4.7% vs 99.3%；受控实验里调用 +43%（53→76）、计算 18→36、yield 0.61→0.31；7 个框架中 2 个按位置截断（langchain-core 500 字符、smolagents 删中间 >20k）。可用点：ZhuLong harness 的截断应改「结构化截断 + 到达率监控」，而不是按字符/位置砍。边界：作者明确声明因果未定，5 页短文、单套 harness 家族。
+
+三、晚报精选（2 篇「科普」，均附 PDF）
+
+4. Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs
+   arXiv:2610.36195 ｜ cs.CV（+ cs.CL）｜ AI4Bharat（Nilekani Centre）+ IIT Madras + Mahindra University（5 位）｜ 22 页 / 6,027,201 B ｜ 附件：是 ｜ 本日科普 TOP-1
+   为何值得读：BrailleBench = 259 张人工校验的真实盲文照片（215 一级 + 44 二级，书本 / 标牌 / 低分辨率都有）。单次推理的通用 VLM 一级除 GPT Sol 系外全部 <3%（最强 GPT-6.1 Sol 53.95%、CER 0.374；二级 11.36%）；工具辅助 agent（Claude Code / Opus 5.5 High）一级 88.37%、二级 40.91%，代价 ≈180 秒 + $0.51–0.58 / 图；用自建 276k 合成样本完整微调 Qwen3.5-2B，一次调用即 一级 86.98% / 二级 61.36%（二级比 Claude Code 高 20.45 个百分点）。最扎心的负结果：用他人合成数据训练时，合成验证集 96.00% → 真实照片一级只剩 3.26%、二级 0%（Llama-3.2-11B 55.00% → 0.47%）；把合成语料扩到 500k 长文本，真实一级反而从 82.63% 掉到 72.97%。传播点：「考得好 ≠ 会」。分镜脚本：research/video/SCENES/10_29.html（5 镜 / 120s / 口播 440 字）。
+
+5. Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video
+   arXiv:2610.37619 ｜ cs.CV（+ cs.RO）｜ MIT CSAIL + Cornell + TU Wien + Liquid AI（7 位）｜ 8 页 / 1,823,189 B ｜ 附件：是
+   为何值得读：头戴 4K 相机 + 5 台固定机位采网球对打，得 85 回合 / 53,155 帧第一人称画面（≈29.6 分钟有效）。7 个时空任务 × 13 个视觉配置：当前帧球员误差 0.14–0.18 m、球 0.54–0.90 m；1.10 秒后预测球员 0.34 m、球 0.91 m；正反手 98.2–99.9%、击球时间误差 141–149 ms。两条反直觉结论：给辅助深度后 3D 球定位从 0.51 m 降到 0.21 m（空间感比记忆力更关键）；加长输入历史对球预测没有帮助（SigLIP 2 单帧 1.02 m、多帧 1.08 m）⇒ 表示更依赖单帧场景上下文。最后接条件扩散策略，RTX 5090 上 100 Hz 实时生成全身动作。边界：单一受试者、单场景；数据「录用后公开」；动作生成只是运动学演示，未接真机策略。
+
+四、台账与证据
+- 台账：SEEN.md 收录 271 / 候选 4,359 / 候选（RSS 补充）507，共 5,137 行；papers.jsonl 271 行（5 条元数据均取自官方 id_list XML，已逐字段比对 title / authors / published / updated / category）。
+- 口径记录：research/ARXIV_API.md §9.119（AM）/ §9.120（PM）。
+- 证据链：raw/2026-10-29-pm-probe-r120.json、raw/2026-10-29-pm-fetch-r120-seen.json、raw/2026-10-29-pm-idlist-r120a.{xml,headers}；AM 侧见 §9.119。
+- 日报：research/daily/2026-10-29.html（5/5 收口，自包含，含「晚报变更说明（AM → PM）」）。
+
+全部数字均为作者自报，本线未复现、未精读全篇（附录未读）。推荐 = 待读线索，非结论。
+
+—— research 线（自动日报）
