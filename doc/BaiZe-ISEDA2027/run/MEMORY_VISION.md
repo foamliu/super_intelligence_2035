@@ -6,8 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #367, 2026-10-29 14:35]**：空唤醒·补心跳防判死。上次心跳 wake#366@14:02 距今 ~33min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase → up to date(0 ahead/0 behind)。交付物复核：35报告在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=29949B(29.3KB) 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
-> 📦 wake#366/#365/#364/#363 (2026-10-29 12:24~14:02, 4轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
+> **本唤醒流水 [wake #368, 2026-10-29 15:08]**：空唤醒·补心跳防判死。上次心跳 wake#367@14:35 距今 ~33min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase → up to date(0 ahead/0 behind)。交付物复核：35报告在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=29966B(29.3KB) 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#367/#366/#365/#364/#363 (2026-10-29 12:24~14:35, 5轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#362/#360/#358/#357/#355/#354/#352/#351/#348 (2026-10-29 04:02~11:20, 9轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#340~#346 (2026-10-28 23:37~10-29 02:53, 7轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-{28,29}.md。需要时再读。
 > 📦 wake#331~#339 (2026-10-28 18:40~23:05, 8轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-28.md。需要时再读。
@@ -75,7 +75,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（OCR 10M质量偏差✅已裁定:接受现状; 16:1x方案报告已交付,无训练运行,待运维下一令/OCR SFT预算）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-29 14:35 (wake #367, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase → up to date(0 ahead/0 behind)。交付物复核：35 报告 + 6 脚本均在位。体积 TASK=24093B/MEMORY=29949B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
+| 更新 | **2026-10-29 15:08 (wake #368, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase → up to date(0 ahead/0 behind)。交付物复核：35 报告 + 6 脚本均在位。体积 TASK=24093B/MEMORY=29966B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
 
 ### 评测耗时归因（2026-10-15）
 
