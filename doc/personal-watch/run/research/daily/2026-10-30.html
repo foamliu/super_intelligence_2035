@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文推荐日报 · 2026-10-30（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+
+<body>
+<header class="hero">
+  <h1>论文推荐日报 · 2026-10-30 <span class="badge b-am">早报 · 3/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b> · 早 3 篇全按<b>「借鉴」</b>口径（agent 的合成环境数据该按「工具/数据库多样性」还是「任务条数」花预算 / 无标签 RLVR 为什么题越多越容易崩、有没有可算的临界题量 / 预训练评测的聚合分数掩盖了什么，能不能用「时点模型」把评测项分层）</div>
+  <div class="meta">
+    <span>📅 日期：2026-10-30（CST 本地日；AM 轮 = UTC 2026-10-29T22:00）</span>
+    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>🎯 数据源：arXiv（export.arxiv.org API + id_list 复核）</span>
+    <span>🕒 生成：2026-10-30 06:0x CST</span>
+  </div>
+  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（SynthAPI / Collective Dynamics of Self-Reinforcement / TVS 时点模型）。<b>⚠️ 公告批次连续第三轮未刷新</b>（仍 <code>2026-10-27</code>）：<code>cat:cs.CL</code> 探针 <code>totalResults</code> <b>124,009（与 10-29 AM/PM 逐条相同）</b>、最新 <code>published=2026-10-27T17:58:52Z</code>；本轮<b>另加一条独立复核</b> —— 全库 <code>submittedDate:[202610280000 TO 202610312359]</code> 查询 <b><code>totalResults=0</code></b>、<code>sortBy=lastUpdatedDate</code> 最新仍是 <code>2026-10-27T17:58:52Z</code> ⇒ <b>不是缓存/分页假象，而是上游确实没有新公告</b>。故 <code>--fetch --seen</code> <b><code>kept 0</code></b> / <code>dropped 600</code>（<code>window_mode=daily</code>，72h，未放宽）⇒ 早 3 篇<b>取自 r118 的 162 条候选池</b>（已入 <code>SEEN</code>、从未进过任何日报），并做 <code>id_list</code> 权威复核（3/3）。</div>
+  <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + 论文 PDF 正文核对，<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。数字均<b>作者自报</b>，本线未复现。</div>
+</header>
+
+<div class="wrap">
+<div class="note">
+  <b>入围与标签口径</b>：<span class="badge b-jz">借鉴</span> = 与在研工作相关（<b>BaiZe</b>：从零训练 ~2B / Mamba-2×attention 混合 / 规模律 / 数据配比 / 后训练 SFT·RL / 多模态 / 高效推理；<b>ZhuLong</b>：execution-grounded EDA coding agent / MCP 工具 / generate–execute–refine / code agent harness / 评测基准；含<b>存储/芯片</b>视角）。
+  <span class="badge b-kp">科普</span> = 面向《两分钟论文》科普视频：<b>大众看得懂 + 有传播力</b>（可与我们工作无关）。<b>两口径不混用</b> —— 早报 3 篇全按「借鉴」选；晚报 2 篇（18:00 轮）全按「科普」选。
+</div>
+
+<div class="ok-box">
+  <b>早报取数说明（诚实口径 · AM）</b>：本轮唤醒于 <b>本地 2026-10-30 06:00（CST，周五）</b> = <b>UTC 2026-10-29T22:00</b>（周四 18:00 ET，<b>早于当日 20:00 ET 的 arXiv 公告</b>）。
+  <b>R1′ 分源实测</b>（证据 <code>raw/2026-10-30-am-probe-r121.json</code>，<code>generated=2026-10-29T22:00:31Z</code>）：
+  arXiv API ✅（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>0.83s</code>；<code>cat:cs.CL</code> 探针 <code>totalResults=124009</code>，最新样本 <code>2026-10-27T17:58:52Z</code>（<code>2610.37657v1</code>）；广度扫描 <code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code> <code>totalResults=639590</code>，<b>与 10-29 AM / PM 两轮逐条相同</b>）／
+  HF Daily ❌（<code>URLError(OSError(101, 'Network is unreachable'))</code>，如实记 FAIL、不伪造）／
+  RSS cs.CL / cs.CV / cs.LG 均 <code>HTTP 200</code> 但<b>条目数为 0</b>（空 feed，<b>仅作发现，不作证据</b>；不据此声称「无新增」）。
+  <br>🔎 <b>本轮新增一条独立复核（针对「连续三轮批次不刷新」这一异常）</b>（证据：本轮 3 条查询，间隔 ≥3.2s，逐条打印原始返回）：
+  ① <code>cat:cs.CL</code> + <code>sortBy=lastUpdatedDate&amp;sortOrder=descending</code> → 最新 5 条仍是 <code>2026-10-27</code> 批次（<code>totalResults=124009</code>）；
+  ② 全库 <code>submittedDate:[202610280000 TO 202610312359]</code> → <b><code>status=200</code> 但 <code>totalResults=0</code></b>（10-28 之后<b>没有任何已公告提交</b>）；
+  ③ 全库同区间不加分类限制 → 同样 <code>totalResults=0</code>。⇒ <b>「批次未刷新」不是本机缓存、不是分页/排序参数问题，而是上游公告批次确实停在 <code>2026-10-27</code></b>；<b>未为凑数放宽 72h 窗口、未拿超窗条目顶替</b>。
+  <br>⚠️ <b>如实记录本轮取数</b>：窗口 <code>window_mode=daily</code>（72h，脚本按 UTC 时间<b>自动</b>判定）跑 <code>--fetch --seen</code>（<code>generated=2026-10-29T22:01:07Z</code>）→
+  <b>15/15 查询 <code>ok</code> / <code>HTTP 200</code>、全部 <code>attempts=1</code>（本轮无重试）</b>、
+  <b><code>kept 0</code> / <code>dropped 600</code></b>（600 = <b>557</b> 条「already in SEEN」+ <b>43</b> 条「stale &gt; 72h」，最久 645.3h）。
+  <b><code>kept 0</code> 的语义</b>：<code>2026-10-27</code> 整批已在 r118 入账 <code>SEEN</code> ⇒ 本轮返回条目全部命中 <code>SEEN</code> 或落在 72h 外，<b>不是「上游无数据」</b>（上游有 600 条返回）、<b>不是单查询 FAIL</b>、<b>不是窗口越界</b>。
+  <br>3 篇入账论文取自 <b>r118 晚报轮的 162 条候选池</b>（已入 <code>SEEN</code>、<b>从未进过任何日报</b>），本轮再做 <b>arXiv API <code>id_list</code> 权威复核</b>
+  （<b>3/3 完整返回</b>，<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>BYTES=7736</code>、<code>2.05s</code>；证据 <code>raw/2026-10-30-am-idlist-r121a.{xml,headers}</code>）⇒ 首次提交均 <b>2026-10-27（UTC）</b>，<b>非「今日新提交」</b>；距本轮唤醒 ≈ <b>52h</b>，仍在 72h 窗口内。
+</div>
+
+<h2 class="sec">早报 · 3 篇「借鉴」（AM · 1–3 / 5）</h2>
+
+<div class="card">
+  <h3><span class="no">1</span>Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">工具使用 agent 的合成数据该<b>怎么配</b>？作者提出 <b>SynthAPI</b> —— 一条能<b>显式控制多样性</b>的可执行环境合成管线：沿「<b>应用/工具数 A</b>、<b>每应用任务数 T</b>、<b>每任务数据档案数 S</b>（同一指令、不同初始数据库状态）、<b>数据库干扰深度 D</b>」四轴生成带<b>真实 Python API + 初始数据库 + 可执行成功校验器</b>的工具环境，用 GLM-5.2 当「专家」最多试 4 次采轨迹（只留通过校验器的第一次），再<b>只对 reasoning / action token 做蒸馏</b>（SFT，1 epoch），训练 <b>Qwen3.5 家族的 2B / 4B / 9B / 27B</b> 学生。规模：<b>458,752 个任务、849 个训练模型</b>、数据共 <b>5.9B tokens</b>（其中 <b>721M</b> 是 agent 的推理与动作输出）。结论（都在「留出最高 25% 训练 FLOPs、16× 外推」上验证）：① 拟合出<b>数据组成感知的规模律</b> <code>P̂ = σ(c0 + cA·log2(A·S·D)) · σ(b0 + bT·log2 T)^ν</code>，留出区 <b>MAE 0.0285</b>，而「只看数据量」的规模律 <b>MAE 0.1706</b>；② <b>预算小时「少应用多任务」更好</b>（<b>A=8</b> 在 64–512 任务最优），<b>预算 &gt; 4096 任务后 A=64 明显更好</b>，且性能天花板 U 随 A 升高；③ 每任务的<b>数据档案数 S 随预算从 1 → 2（512–4096）→ 4（&gt;4096）</b>递增最优；④ 干扰数据 <b>D=4</b> 在高预算下优于 D=1/2。下游：<b>SynthAPI-Big</b> 在 <b>AppWorld Test-C 66.4%（4B）/ 77.0%（9B）/ 81.5%（27B）</b>，ASTRA-Bench High 74.2 / 76.8 / 82.3，BFCL-v3 多轮 51.1 / 53.6 / 65.0，SynthAPI-Holdout 53.0 / 64.0 / 69.8；同预算下 <b>SynthAPI-Opt（A=64,T=128,S=4,D=4）全面优于 SynthAPI-SubOpt（A=32,T=1024,S=1,D=2）</b>（例：AppWorld 4B 45.0 vs 38.4；Holdout 4B 56.0 vs 51.3）。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Andrew Szot, Samira Abnar, Omar Attia, Abbas Kazerouni, Michael Kirchhof, Cheng-Yu Hsieh, Raviteja Vemulapalli, Alexander Toshev（<b>8 位署名</b>；据 PDF 首页与通讯邮箱：<b>Apple</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T17:56:46Z</code>；<code>updated</code> 同日，无 v2）· 无 <code>comment</code> · PDF 实测 <b>24 页</b> / 67,331 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code>（唯一分类）· <span class="badge b-jz">借鉴</span> · 关键词：工具使用 agent / 可执行环境合成 / 数据配比 / 规模律 / 蒸馏 SFT / 可验证校验器</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.37648">https://arxiv.org/abs/2610.37648</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.37648.pdf</code>，4,483,220 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>正对 ZhuLong 的数据来源问题</b>：EDA agent 的合成轨迹常见做法是「让 LLM 假装工具返回（模拟响应）」，而 SynthAPI 用的是<b>真可执行环境 + 成功校验器</b>（生成器产出 Python API 与初始数据库，任务自带 verifier）—— 这与我们 generate–execute–refine 的「执行 + 校验」结构同构，是<b>可直接对照</b>的数据构造范式。</li>
+      <li><b>给出一条可执行的「预算分配规则」</b>：数据预算变大时，<b>加工具/数据库多样性比加任务条数更值</b>（A=64 在 &gt;4096 任务后胜出；S 随预算 1→2→4）—— 对我们「一轮合成多少任务 vs 扩多少个工具/库」这种配比决策，<b>有可试的具体档位</b>，不必只凭经验。</li>
+      <li><b>规模律形式可以在我们自己的 harness 上小规模拟合</b>：<code>σ(c0 + cA·log2(A·S·D))·σ(b0 + bT·log2 T)^ν</code> 只有 A/T/S/D 四个可测输入 + 下游成功率一个输出 ⇒ 用 2–3 档 × 4 维的小 sweep（远小于他们的 849 个模型）就能先看「我们的曲线上限主要由哪一维决定」。</li>
+      <li><b>边界（必须写清）</b>：单一学生家族（Qwen3.5）+ <b>纯 SFT（无 RL）</b>；下游只有 4 个基准（AppWorld / ASTRA-Bench / BFCL-v3 / 自建 Holdout），且 3 个偏「设备助理 / 客服 API」域，<b>与 EDA 工具链差异大</b>；作者<b>自承</b>与 ToolACE / SimSAT / EnvFactory / EnvScaler 的对比「训练配方不同（小数据 SFT+RL vs 大数据纯 SFT），既不隔离合成方法、也不证明数据效率」；规模律外推区间只是 16× FLOPs；数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（重点 §3.2 的 A/T/S/D 四个控制量定义、§4.2 的「tasks vs apps」「data profile」「distractor」三组扫描、Eq 4.2 与 Table 1）+ <b>试跑</b>（先做<b>离线</b>：用已有 rollout 日志统计「工具数 / 任务数 / 初始状态数 / 干扰数据量」与成功率的散点，看趋势是否与论文一致；再决定是否值得做小 sweep）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">2</span>Collective Dynamics of Self-Reinforcement: How Cross-Task Coupling Drives Policy Collapse in Unsupervised RLVR</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">「无标签 RLVR」（用<b>多数投票当奖励</b>、不需要标准答案）为什么<b>先涨后崩</b>、而且<b>只在题很多时崩</b>？本文给出一套可算的解释：在多题共享参数的可解模型里，只要单题自强化漂移 <b>F</b> 的群体平均斜率 <b>⟨F′⟩ &gt; 0</b>（题目仍不确定时成立；K=3 时等价于答案 logit <b>|z| &lt; ln(2+√3) ≈ 1.32</b>），任何<b>共享方向的扰动</b>都会被放大（Curie–Weiss 型顺磁不稳定）。关键是两个速率赛跑：单题锐化被 <b>1/N</b> 拖慢，而共享模式以 <b>∝λ²</b> 增长、<b>与 N 无关</b> ⇒ 得到<b>闭式临界题量</b> <code>N_c ≃ ln(1/δ)/(λ²·ln[F*/F(a)])</code>，并把 <b>λ²·N·ln[F*/F(a)]</b> 收敛到单一临界值 <b>Λc ≈ 2.6</b>。四条可证伪预测在随机模拟（REINFORCE, K=3, 二值答案, 普通 SGD）上全部成立：相变陡峭；<b>Nc ∝ λ^−2</b>（拟合斜率 −2.22，含对数修正）；λ=0.1 / a=0.5 时 <b>Nc ≈ 536</b>；GRPO 同 Nc（<b>548</b>）；更大 group size 抬高 Nc（K=5/8/16 → 793/876/1557）。小 Transformer 实验（6 位数比较题 x1+x2+x3 &gt; x4+x5+x6；<b>22 个条件 × 7 个数据集规模 × 6 seeds</b>）：<b>去掉共享方向（反对称网络）则永不坍缩</b>；把共享耦合经 bias 加回 ⇒ <b>剂量依赖地恢复坍缩</b>（ρb ≥ 1 时几乎全崩）；边际熵奖励在 <b>βc ≈ 12</b> 以上能阻止坍缩，<b>但救不回准确率</b> —— 不稳定转移到下一个「与任务无关」的集体核模式。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Collective Dynamics of Self-Reinforcement: How Cross-Task Coupling Drives Policy Collapse in Unsupervised RLVR</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Peize Ding（<b>单作者</b>；据 PDF 首页未标注机构，正文亦未给出 affiliation ⇒ <b>如实记「未标注」</b>，不做推测）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T17:01:55Z</code>；<code>updated</code> 同日，无 v2）· 无 <code>comment</code> · PDF 实测 <b>20 页</b> / 74,911 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code>（唯一分类）· <span class="badge b-jz">借鉴</span> · 关键词：RLVR / 无标签强化学习 / 自奖励 / 策略坍缩 / 数据集规模 / 学习动力学</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.37553">https://arxiv.org/abs/2610.37553</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.37553.pdf</code>，749,369 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>给「后训练 RLVR 什么时候会崩」一个可算的量</b>：我们做 RL 后训练（有标签或无标签自奖励）时，「题越多越稳」是常见直觉；本文说<b>恰恰相反的方向</b> —— 题越多，共享模式越容易赢，`N_c` 是可估的临界点（<code>Λ = λ²·N·ln[F*/F(a)]</code> 对 <code>Λc ≈ 2.6</code>）。即使不完全信这个 1/N vs λ² 的赛跑模型，<b>「监控聚合奖励上升同时 held-out 准确率下降」这一坍缩签名</b>也该进我们的训练看板。</li>
+      <li><b>指出一个可检查的结构风险</b>：坍缩需要「<b>与任务无关的共享方向</b>」（格式、偏好值、输出偏置）。对 ZhuLong 这种<b>输出格式高度模板化</b>的 EDA agent（固定 JSON 字段、固定工具调用骨架），这正好是天然存在的共享方向 —— 值得自查：我们的自奖励/弱标签信号是否主要在强化「格式一致」而不是「答案正确」。</li>
+      <li><b>说明「补丁」可能只治标</b>：边际熵奖励能止崩但<b>救不回准确率</b>（不稳定迁移到下一个核模式）⇒ 若我们要上类似正则项，验收标准必须是<b>准确率</b>，不能只看「奖励没崩」。</li>
+      <li><b>边界（必须写清）</b>：证据是<b>玩具模型 + 小型合成任务（6 位数比较）上的 tiny Transformer</b>，<b>未在真实 LLM 的 RLVR 上验证</b>；理论依赖「多题共享参数 / 二值答案 / K=3」等简化；单作者、无 <code>comment</code>、无代码链接；数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3 单题漂移 F 与不确定窗口、§4.2–4.4 的 Nc 与 Λc 推导、§6.2 与 Figure 4 的「去共享方向 ⇒ 不崩 / 加回 ⇒ 崩」对照）+ <b>试跑（只读诊断，不改训练）</b>：在现有 RL 日志上同时画「聚合奖励 / held-out 准确率 / 答案分布的众数占比」，先看有没有坍缩签名。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">3</span>What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">「预训练到底在学什么」能不能<b>不只靠聚合 benchmark 分数</b>回答？作者提出 <b>TVS（temporal variability score）= 一条样本在各年份「时点模型」上的 per-token NLL 变异系数</b>，用 <b>PIT-4B</b> 系列（8 个 4B 基座，2017–2024 逐年 FineWeb 快照，<b>同架构 / 同分词器 / 同训练配方</b>，只差数据年份）算出每个评测项的「时间稳定度」，再在 6 个多选题基准（HellaSwag / PIQA / WinoGrande / ARC-Easy / ARC-Challenge / MMLU，共 <b>16,239 条</b>，按 token 长度分箱、箱内按 TVS 三分位分组）上跟踪 6 个模型（<b>Pythia 1.4B / 6.9B、TinyLlama 1.1B、SmolLM3 3B、OLMo 1B / 7B</b>；checkpoint 覆盖 <b>0.54B → 11.1T tokens</b>）的机会归一化准确率。发现：① <b>早期两组几乎无差</b>（24 个设置里低 TVS 组赢 13 个，均值 −0.8 分）；② <b>后半程高 TVS 组每 10 倍 token 多涨 2.0 分</b>（36 个设置中 26 个为正）；③ <b>最终高 TVS 组在 34/36 个「模型×基准」设置上胜出，平均 +7.3 分</b>（95% CI [5.5, 9.2]；按 4 个模型家族平均后 CI [4.8, 10.2]，p=.003），每个基准都是正向（WinoGrande +1.7 → PIQA +16.1）；④ 在知识密集型 ARC / MMLU 上，控制平均 NLL 后 18 个设置<b>全部为正（+6.9 分）</b>，但再控制「金答案 vs 干扰项 margin」后只剩 <b>+1.4 分（22/36 为正）</b> ⇒ <b>7.3 分不是「独立的 TVS 效应」</b>。反向对照很硬：按<b>平均 NLL</b> 分组时，高 NLL 组在<b>全部 36 个设置</b>里更差；用未归一化的 NLL 标准差分组则效应反转。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Chang Su, Bin Wu, Emine Yilmaz, Yao Lu（<b>4 位署名</b>；据 PDF 首页：<b>University of Pennsylvania</b> + <b>UCL 人工智能中心</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T17:52:38Z</code>；<code>updated</code> 同日，无 v2）· <code>comment</code>：<b>Accepted to AACL 2026</b>（本版更正附录小错）· PDF 实测 <b>13 页</b> / 36,246 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code>（唯一分类）· <span class="badge b-jz">借鉴</span> · 关键词：预训练诊断 / 学习曲线 / 评测分层 / 时点模型（PIT）/ 困惑度 / checkpoint 分析</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.37631">https://arxiv.org/abs/2610.37631</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.37631.pdf</code>，3,822,269 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>正对 BaiZe 的「预训练阶段评测」</b>：我们盯 loss 曲线和聚合 benchmark，容易得出「小模型阶段各能力都差不多」的结论；本文的 <b>item 级分层量 TVS</b> 说明<b>聚合分数把两种学习轨迹混在一起</b>：时间稳定项早期就学会、时间波动项后期才涨。作为一个<b>纯离线、不需要训练</b>的诊断层，成本极低。</li>
+      <li><b>可复用的具体做法</b>：用公开的 PIT 年份模型算每个评测项 NLL 的变异系数 → 在<b>长度分箱内</b>切成低/中/高三档（避免 TVS 与题面长度混淆）→ 分别画 checkpoint 学习曲线。这套流水线可以直接套到我们的 eval 集（中文 / 代码 / EDA），检验「高 TVS 项后期涨更快」是否跨语种/跨域仍成立。</li>
+      <li><b>它自己给出的「别误读」示范</b>：控制平均 NLL、控制 margin 后效应从 7.3 → 1.4 分，且按平均 NLL 分组会得到<b>相反结论</b>。这正好是我们做「评测分层」时的对照组设计模板 —— <b>任何分层指标都要配上「按难度/困惑度分组」的反向对照</b>。</li>
+      <li><b>边界（必须写清）</b>：6 个<b>英文</b>多选题基准、6 个开源模型、<b>每个设置只有 1 条训练轨迹</b>（给出的 CI 反映设置间差异，<b>不是 run-to-run 方差</b>）；TVS 度量的是「likelihood 随年份的波动」，<b>不是知识流行度的直接测量</b>；PIT 模型基于 FineWeb（英文网页），迁移到中文/代码/EDA 语料属<b>未验证</b>；数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§2 TVS 定义与「为什么除以均值」、§3 分层协议（长度分箱 + 三分位）、§4.2 的三组对照表）+ <b>试跑</b>（纯离线：对我们某个小模型的 checkpoint 序列 + 现成 eval 集算 TVS 分层曲线；先看趋势，不改训练）。
+  </div>
+</div>
+
+
+<h2 class="sec">附录 A · 早报（AM）检索式与命中数（可核验）</h2>
+<p>证据文件：<code>research/raw/2026-10-30-am-fetch-r121-seen.json</code>（<code>meta.per_query</code>，15 条查询<b>全部</b> <code>ok=true</code> / <code>status=200</code> / <code>attempts=1</code>；请求间隔 <code>rate_limit_seconds=3.0</code>）。</p>
+<table>
+  <tr><th>#</th><th>领域</th><th>检索式</th><th>totalResults</th><th>取回条目</th><th>本轮 kept</th></tr>
+  <tr><td>1</td><td>广度扫描</td><td><code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code></td><td>639,590</td><td>40</td><td>0</td></tr>
+  <tr><td>2</td><td>LLM</td><td><code>cat:cs.CL AND all:"large language model"</code></td><td>39,514</td><td>40</td><td>0</td></tr>
+  <tr><td>3</td><td>LLM</td><td><code>cat:cs.CL AND all:"long context"</code></td><td>1,875</td><td>40</td><td>0</td></tr>
+  <tr><td>4</td><td>LLM</td><td><code>cat:cs.LG AND all:"scaling law"</code></td><td>1,026</td><td>40</td><td>0</td></tr>
+  <tr><td>5</td><td>SLM</td><td><code>abs:"small language model"</code></td><td>1,112</td><td>40</td><td>0</td></tr>
+  <tr><td>6</td><td>SLM</td><td><code>cat:cs.LG AND all:"on-device"</code></td><td>11,071</td><td>40</td><td>0</td></tr>
+  <tr><td>7</td><td>多模态</td><td><code>all:"vision-language"</code></td><td>18,082</td><td>40</td><td>0</td></tr>
+  <tr><td>8</td><td>多模态</td><td><code>cat:cs.CV AND all:"multimodal"</code></td><td>16,714</td><td>40</td><td>0</td></tr>
+  <tr><td>9</td><td>多模态</td><td><code>cat:cs.MM</code></td><td>10,287</td><td>40</td><td>0</td></tr>
+  <tr><td>10</td><td>agent harness</td><td><code>ti:"agent harness"</code></td><td>155</td><td>40</td><td>0</td></tr>
+  <tr><td>11</td><td>agent harness</td><td><code>cat:cs.SE AND all:"SWE-bench"</code></td><td>416</td><td>40</td><td>0</td></tr>
+  <tr><td>12</td><td>agent harness</td><td><code>cat:cs.AI AND all:"tool use"</code></td><td>1,739</td><td>40</td><td>0</td></tr>
+  <tr><td>13</td><td>agent harness</td><td><code>cat:cs.MA AND all:"multi-agent"</code></td><td>6,069</td><td>40</td><td>0</td></tr>
+  <tr><td>14</td><td>邻域</td><td><code>cat:cs.CL AND all:"retrieval augmented"</code></td><td>3,988</td><td>40</td><td>0</td></tr>
+  <tr><td>15</td><td>邻域</td><td><code>cat:cs.AI AND all:"alignment"</code></td><td>22,176</td><td>40</td><td>0</td></tr>
+</table>
+<p class="note">⚠️ <b>「取回 40」≠「40 篇新论文」</b>：每查询按 <code>sortBy=submittedDate&amp;sortOrder=descending</code> 取最新 40 条，其中绝大多数已入 <code>SEEN</code> 或超出 72h 窗口。<b><code>kept 0</code> 是本轮的真实结果</b>（见附录 B），<b>未放宽窗口、未用超窗条目凑数</b>。</p>
+
+<h2 class="sec">附录 B · 去重剔除与「批次未刷新」独立复核</h2>
+<table>
+  <tr><th>指标</th><th>值</th><th>说明</th></tr>
+  <tr><td>查询数</td><td>15</td><td>全部 <code>ok</code> / <code>200</code> / <code>attempts=1</code>（<b>本轮无重试</b>）</td></tr>
+  <tr><td><code>kept</code></td><td><b>0</b></td><td>2026-10-27 整批已在 r118 入 <code>SEEN</code> ⇒ 无新增候选</td></tr>
+  <tr><td><code>dropped</code></td><td><b>600</b></td><td><b>557</b> = <code>already in SEEN</code>；<b>43</b> = <code>stale &gt; 72h</code>（最久 645.3h）</td></tr>
+  <tr><td>窗口</td><td><code>daily</code> · 72h</td><td>脚本按 UTC 时间<b>自动</b>判定，<b>未人工放宽</b></td></tr>
+  <tr><td>时间戳</td><td><code>generated=2026-10-29T22:01:07Z</code></td><td>本轮唤醒 = 本地 2026-10-30 06:00 CST</td></tr>
+</table>
+<table>
+  <tr><th>#</th><th>独立复核查询（本轮新增）</th><th>返回</th><th>结论</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code> + <code>sortBy=lastUpdatedDate&amp;sortOrder=descending</code></td><td><code>200</code> / <code>124009</code> / 最新 <code>2026-10-27T17:58:52Z</code></td><td>最近「更新」也停在 10-27</td></tr>
+  <tr><td>2</td><td>全库 <code>submittedDate:[202610280000 TO 202610312359]</code></td><td><code>200</code> / <b><code>totalResults=0</code></b> / 0 条</td><td><b>10-28 之后无任何已公告提交</b></td></tr>
+  <tr><td>3</td><td>全库同区间（不加分类限制）</td><td><code>200</code> / <b><code>totalResults=0</code></b> / 0 条</td><td>同上，排除「分类过滤太窄」</td></tr>
+</table>
+<p>3 篇入账论文在 <code>SEEN.md</code> 中<b>原本即为「候选」</b>（首次收录 2026-10-28，来自 r118 的 162 条候选池），本轮<b>只翻状态为「收录」</b>，<b>不新增行</b>；与近 7 天 <code>daily/*.html</code> 逐条比对<b>无重复</b>（3 个 ID 均未在任何日报出现过）。</p>
+
+
+<h2 class="sec">附录 C · PDF 落地与校验（AM 3 / 3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节</th><th>页数</th><th>字符（去空白）</th><th>校验结果</th></tr>
+  <tr><td><code>2610.37648</code></td><td>4,483,220</td><td>24</td><td>67,331</td><td><code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code>/<code>pdftotext</code> 可解析；字节 == <code>Content-Range</code> total（12 段 Range 拼接）</td></tr>
+  <tr><td><code>2610.37553</code></td><td>749,369</td><td>20</td><td>74,911</td><td>同上</td></tr>
+  <tr><td><code>2610.37631</code></td><td>3,822,269</td><td>13</td><td>36,246</td><td>同上</td></tr>
+</table>
+<p class="note">⚠️ <b>如实记录（不写成「端到端校验通过」）</b>：① 本轮沿用 <code>raw/fetch_pdfs_r121.sh</code> 的 <b>12 段并发 HTTP Range</b>（<code>--resolve</code> 固定实测可用 Fastly IP，TLS/SNI/证书不变；逐段最多 3 次重试）—— 本轮<b>一次成功、无重试</b>，与 10-29 PM 轮「单连接 ≈2.7 KB/s、需逐段续传」不同；② 三篇的 <b><code>sha256</code> 与 CDN <code>etag</code> 均不一致</b>（<code>2610.37553</code> 的 <code>etag</code> 还是 base64、无法直接比对）⇒ 完整性证据 = <b>结构校验（头/尾 + <code>pdfinfo</code> + <code>pdftotext</code>）+ 字节数 == <code>Content-Range</code> total</b>，<b>不声称哈希端到端一致</b>；③ 本轮脚本已修正 r119 的 <code>tail -c 5</code> 误判（改为在尾部 64 字节里找 <code>%%EOF</code>）。PDF 在 <code>research/pdf/</code>（<code>.gitignore</code> 已排除）⇒ <b>不入 git</b>。三篇合计 <b>9,054,858 B ≈ 8.64 MB</b>。</p>
+
+<h2 class="sec">附录 D · 台账与今日待办</h2>
+<ul>
+  <li><b>台账（本轮后）</b>：<code>SEEN.md</code> <b>行数不变</b>（3 行「候选」→「收录」，<b>不新增行</b>）⇒ 状态行 <b>收录 274 / 候选 4,356 / 候选（RSS补充）507</b>（合计 <b>5,137</b>）；文件 <b>5,395 行</b>；<code>papers.jsonl</code> <b>274</b>（只追加 3 条，元数据均取自官方 <code>id_list</code> XML）。</li>
+  <li><b>落盘脚本</b>：<code>raw/update_r121.py</code>（幂等断言：<code>n_queries==15</code>、<code>n_kept==0</code>、<code>n_dropped==600</code>、<code>window_mode=='daily'</code>、15 条全 <code>ok/200</code> 且全 <code>attempts==1</code>、3 个推荐 ID 均在 <code>SEEN</code> 且状态为「候选」、<code>id_list</code> 恰 3 条且 <code>published</code> 前缀匹配 <code>2026-10-27</code>）。</li>
+  <li><b>今日 PM 待办</b>：① 复验公告批次（已连续三轮未刷新，PM 轮继续核对并如实记录）；② 若仍无新批 ⇒ 从候选池补 <b>2 篇「科普」</b> 收口 <b>5/5</b> + 追加 <code>晚报变更说明（AM → PM）</code>；③ 科普 TOP-1 分镜 → <code>video/SCENES/10_30.html</code>；④ 当日论文日报邮件（<code>paul.liu@cxmt.com</code>，5 篇齐后 1 封，台账 <code>research/mail/发送记录.md</code>）。</li>
+  <li><b>口径纪律</b>：早报 3 篇全按「<b>借鉴</b>」选（与 BaiZe / ZhuLong 在研工作的相关性），晚报 2 篇全按「<b>科普</b>」选（大众看得懂 + 有传播力），<b>两口径不混用</b>，同一 arXiv ID 全天只出现一次；「推荐」≠「结论」；<code>SOTA / 首次 / 突破</code> 一律不写；所有数字可回查 PDF 与官方 Atom 元数据。</li>
+</ul>
+
+<footer>
+  research 线 · <code>research/daily/2026-10-30.html</code>（<b>早报 · 3/5</b>，AM 轮）｜ 数据源 arXiv <code>export.arxiv.org</code> ｜ 生成 2026-10-30 06:0x CST ｜
+  上一次唤醒：2026-10-29 18:3x CST（r120 · 晚报收口 5/5）｜ 免责：推荐 = 待读线索，非结论；数字作者自报，本线未复现。
+</footer>
+</div>
+</body>
+</html>
+

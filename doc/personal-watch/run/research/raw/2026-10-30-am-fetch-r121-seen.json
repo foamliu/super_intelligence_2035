@@ -1,0 +1,3228 @@
+{
+  "items": [],
+  "meta": {
+    "generated": "2026-10-29T22:01:07.178107+00:00",
+    "endpoint": "https://export.arxiv.org/api/query",
+    "window_hours": 72.0,
+    "window_mode": "daily",
+    "window_note": "日报口径：首次提交 <= 72h",
+    "rate_limit_seconds": 3.0,
+    "n_queries": 15,
+    "n_kept": 0,
+    "n_dropped": 600,
+    "per_query": [
+      {
+        "search_query": "cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 639590,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "广度扫描",
+        "name": "sweep-cs-5cats",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.CL AND all:\"large language model\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 39514,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "LLM",
+        "name": "llm-large-language-model",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.CL AND all:\"long context\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 1875,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "LLM",
+        "name": "llm-long-context",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.LG AND all:\"scaling law\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 1026,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "LLM",
+        "name": "llm-scaling-law",
+        "kept": 0
+      },
+      {
+        "search_query": "abs:\"small language model\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 1112,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "SLM",
+        "name": "slm-small-language-model",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.LG AND all:\"on-device\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 11071,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "SLM",
+        "name": "slm-on-device",
+        "kept": 0
+      },
+      {
+        "search_query": "all:\"vision-language\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 18082,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "多模态",
+        "name": "mm-vision-language",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.CV AND all:\"multimodal\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 16714,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "多模态",
+        "name": "mm-multimodal",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.MM",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 10287,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "多模态",
+        "name": "mm-csmm",
+        "kept": 0
+      },
+      {
+        "search_query": "ti:\"agent harness\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 155,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "agent harness",
+        "name": "agent-harness-title",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.SE AND all:\"SWE-bench\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 416,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "agent harness",
+        "name": "agent-swe-bench",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.AI AND all:\"tool use\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 1739,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "agent harness",
+        "name": "agent-tool-use",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.MA AND all:\"multi-agent\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 6069,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "agent harness",
+        "name": "agent-csma-multiagent",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.CL AND all:\"retrieval augmented\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 3988,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "邻域",
+        "name": "nb-retrieval-augmented",
+        "kept": 0
+      },
+      {
+        "search_query": "cat:cs.AI AND all:\"alignment\"",
+        "status": 200,
+        "content_type": "application/atom+xml; charset=utf-8",
+        "ok": true,
+        "error": null,
+        "total_results": 22176,
+        "n_entries": 40,
+        "attempts": 1,
+        "retries": [],
+        "area": "邻域",
+        "name": "nb-alignment",
+        "kept": 0
+      }
+    ],
+    "dropped": [
+      [
+        "2610.37668",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37666",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37663",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37662",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37658",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37657",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37656",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37655",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37652",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37651",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37649",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37648",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37647",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37645",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37642",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37633",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37631",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37626",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37624",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37619",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37613",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37609",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37605",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37599",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37598",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37588",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37585",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37584",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37583",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37580",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37579",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37576",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37571",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37570",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37567",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37566",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37563",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37561",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37553",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37550",
+        "already in SEEN",
+        "sweep-cs-5cats"
+      ],
+      [
+        "2610.37651",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37649",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37645",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37484",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37481",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37443",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37276",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37245",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37229",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37157",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37041",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36991",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36990",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36980",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36948",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36918",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36877",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36811",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36809",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36794",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36734",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36668",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36582",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36569",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36513",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36437",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36384",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36353",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36191",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.36083",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35846",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35826",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35804",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35793",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35698",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35685",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35480",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35432",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35416",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.35328",
+        "already in SEEN",
+        "llm-large-language-model"
+      ],
+      [
+        "2610.37645",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.37037",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.36794",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.34949",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.34585",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.34180",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.34146",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.32781",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.32483",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.32213",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.31945",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.31911",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.31135",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.31098",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.30132",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.29352",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.28393",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.26827",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.26754",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.25919",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.25463",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.26951",
+        "stale 276.8h > 72h (since first submit)",
+        "llm-long-context"
+      ],
+      [
+        "2610.24991",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.33047",
+        "stale 304.9h > 72h (since first submit)",
+        "llm-long-context"
+      ],
+      [
+        "2610.23787",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.22985",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.22273",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.22067",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.21165",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.21126",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.20582",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.20392",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.19928",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.19247",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.19210",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.19026",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.17959",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.17868",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.17202",
+        "already in SEEN",
+        "llm-long-context"
+      ],
+      [
+        "2610.15542",
+        "stale 442.4h > 72h (since first submit)",
+        "llm-long-context"
+      ],
+      [
+        "2610.37648",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.35514",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.35164",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.34514",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.33840",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.33420",
+        "stale 138.5h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.33337",
+        "stale 143.7h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.33311",
+        "stale 144.6h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.31897",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.31867",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.30678",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.28698",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.27789",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.26030",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.23453",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.23337",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.22976",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.22157",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.21820",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.21480",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.20533",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.20247",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.19721",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.19362",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.19281",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.19279",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.19013",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.17637",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.17590",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.17221",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.16518",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.16297",
+        "stale 422.6h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.16090",
+        "stale 427.1h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.15146",
+        "stale 458.2h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.14423",
+        "stale 477.3h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.12428",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.23946",
+        "stale 510.1h > 72h (since first submit)",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.11063",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.10311",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.08540",
+        "already in SEEN",
+        "llm-scaling-law"
+      ],
+      [
+        "2610.35957",
+        "stale 112.4h > 72h (since first submit)",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.32235",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.32193",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.31280",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.29426",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.28872",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.28364",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.26399",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.26013",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.25516",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.25458",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.25351",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.24818",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.26913",
+        "stale 303.8h > 72h (since first submit)",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.24335",
+        "stale 310.0h > 72h (since first submit)",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.23534",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.23212",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.22906",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.22245",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.21436",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.22428",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.21327",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.21151",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.20980",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.19928",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.19439",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.19169",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.18624",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.18459",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.16440",
+        "stale 420.9h > 72h (since first submit)",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.15640",
+        "stale 439.8h > 72h (since first submit)",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.14576",
+        "stale 473.2h > 72h (since first submit)",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.13285",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.11167",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.10827",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.10812",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.10261",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.09209",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.09163",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.09063",
+        "already in SEEN",
+        "slm-small-language-model"
+      ],
+      [
+        "2610.37567",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.37480",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.37441",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.37319",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.37056",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.36896",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.36395",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.35304",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.35212",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.35175",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.34890",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.34861",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.34566",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.34384",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.35957",
+        "stale 112.4h > 72h (since first submit)",
+        "slm-on-device"
+      ],
+      [
+        "2610.33788",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.33732",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.33522",
+        "stale 134.0h > 72h (since first submit)",
+        "slm-on-device"
+      ],
+      [
+        "2610.33404",
+        "stale 139.5h > 72h (since first submit)",
+        "slm-on-device"
+      ],
+      [
+        "2610.33358",
+        "stale 143.1h > 72h (since first submit)",
+        "slm-on-device"
+      ],
+      [
+        "2610.33277",
+        "stale 145.3h > 72h (since first submit)",
+        "slm-on-device"
+      ],
+      [
+        "2610.32969",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.33133",
+        "stale 152.0h > 72h (since first submit)",
+        "slm-on-device"
+      ],
+      [
+        "2610.32438",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.32275",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.31897",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.31479",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.31024",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.30965",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.30792",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.31712",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.30228",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.30225",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.29815",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.29607",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.29594",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.29320",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.28976",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.28784",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.28545",
+        "already in SEEN",
+        "slm-on-device"
+      ],
+      [
+        "2610.37666",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37619",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37567",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37533",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37518",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37381",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37378",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37349",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37330",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37219",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37215",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37098",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37093",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37091",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37019",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36986",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36978",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36925",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36877",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36765",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36761",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36756",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36729",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36671",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36554",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36449",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36379",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36375",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36285",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36195",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35832",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35817",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.36011",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35704",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35687",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35626",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35606",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35542",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35489",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.35312",
+        "already in SEEN",
+        "mm-vision-language"
+      ],
+      [
+        "2610.37662",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37613",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37583",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37579",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37471",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37430",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37364",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37341",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37216",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37211",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37202",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37093",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37037",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36986",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36929",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36809",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36729",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36672",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36569",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36554",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36509",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36384",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36364",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36269",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36249",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36210",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36195",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36077",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.35864",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.35842",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.35816",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.36013",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.35244",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.35044",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.34939",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.34689",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.34384",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.34333",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.34221",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.34218",
+        "already in SEEN",
+        "mm-multimodal"
+      ],
+      [
+        "2610.37583",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.36467",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.36456",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.36249",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.35816",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.36014",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.35757",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.34807",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.34688",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.34177",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.34162",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.33413",
+        "stale 139.0h > 72h (since first submit)",
+        "mm-csmm"
+      ],
+      [
+        "2610.33377",
+        "stale 141.8h > 72h (since first submit)",
+        "mm-csmm"
+      ],
+      [
+        "2610.32792",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.33127",
+        "stale 153.7h > 72h (since first submit)",
+        "mm-csmm"
+      ],
+      [
+        "2610.32373",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.32332",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.33120",
+        "stale 160.0h > 72h (since first submit)",
+        "mm-csmm"
+      ],
+      [
+        "2610.33118",
+        "stale 160.4h > 72h (since first submit)",
+        "mm-csmm"
+      ],
+      [
+        "2610.31731",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.35935",
+        "stale 185.4h > 72h (since first submit)",
+        "mm-csmm"
+      ],
+      [
+        "2610.30651",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.30108",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.29587",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.29327",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.29176",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.29138",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.29026",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.28245",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.27974",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.27757",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.30181",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.27103",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.26860",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.26402",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.26112",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.25695",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.25394",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.25352",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.24791",
+        "already in SEEN",
+        "mm-csmm"
+      ],
+      [
+        "2610.36114",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.35349",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.34938",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.34577",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.34370",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.33636",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.32380",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.32285",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.30042",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.28815",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.28798",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.28380",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.28282",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.28201",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.27889",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.23791",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.21458",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.20673",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.18813",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.18616",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.17651",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.15389",
+        "stale 447.4h > 72h (since first submit)",
+        "agent-harness-title"
+      ],
+      [
+        "2610.15150",
+        "stale 457.9h > 72h (since first submit)",
+        "agent-harness-title"
+      ],
+      [
+        "2610.14224",
+        "stale 483.4h > 72h (since first submit)",
+        "agent-harness-title"
+      ],
+      [
+        "2610.11552",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.09377",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.08432",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.07639",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.06597",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.05778",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.05566",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.05300",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.05039",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.04921",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.04178",
+        "stale 645.3h > 72h (since first submit)",
+        "agent-harness-title"
+      ],
+      [
+        "2610.03056",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.02920",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.02616",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.02001",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.01766",
+        "already in SEEN",
+        "agent-harness-title"
+      ],
+      [
+        "2610.35496",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.34938",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.34763",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.33958",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.33851",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.33667",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.32686",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.32338",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.32313",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.32131",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.31809",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.31710",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.30047",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.29870",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.28834",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.28612",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.28069",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.25826",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.24206",
+        "stale 313.6h > 72h (since first submit)",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.23782",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.22881",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.22760",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.23996",
+        "stale 352.3h > 72h (since first submit)",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.20193",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.19970",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.19596",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.19447",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.18004",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.14460",
+        "stale 476.4h > 72h (since first submit)",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.13563",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.12598",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.12269",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.11578",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.10478",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.10242",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.09633",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.10610",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.09159",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.07898",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.06193",
+        "already in SEEN",
+        "agent-swe-bench"
+      ],
+      [
+        "2610.37533",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.37471",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.36570",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.36499",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.36444",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.36114",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.36108",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.35579",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.35398",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.35013",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.34535",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.34238",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.34167",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.33962",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.33312",
+        "stale 144.5h > 72h (since first submit)",
+        "agent-tool-use"
+      ],
+      [
+        "2610.32969",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.32483",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.31945",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.31916",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.31846",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.31650",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.31013",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.30738",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.30499",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.30491",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.30436",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.30051",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.30041",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.29005",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.28982",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.28386",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27822",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27777",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27467",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27307",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27244",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27234",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.27233",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.26860",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.26828",
+        "already in SEEN",
+        "agent-tool-use"
+      ],
+      [
+        "2610.37592",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.37342",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36989",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36652",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36325",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36289",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36264",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36221",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36151",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35736",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35690",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35592",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35398",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34878",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34836",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34569",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34564",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35966",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34467",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34450",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35964",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.34121",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.35950",
+        "stale 129.5h > 72h (since first submit)",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.33282",
+        "stale 145.2h > 72h (since first submit)",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.33281",
+        "stale 145.2h > 72h (since first submit)",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.32392",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31985",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31974",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31971",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31746",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31743",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31355",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31351",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.31325",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.30851",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.30769",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.30557",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.30469",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.30221",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.29934",
+        "already in SEEN",
+        "agent-csma-multiagent"
+      ],
+      [
+        "2610.36991",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.36557",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.36169",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.35635",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.35142",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.35094",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.34872",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.34585",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.34391",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.34294",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.33931",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.33849",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.33776",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.33511",
+        "stale 134.3h > 72h (since first submit)",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.33279",
+        "stale 145.3h > 72h (since first submit)",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.32435",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.32332",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.32128",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.32122",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.31863",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.31606",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.31467",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.31256",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.31019",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.30705",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.30435",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.29933",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.29792",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.29722",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.30193",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.29223",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.28340",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.27114",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.26825",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.26730",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.26339",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.25298",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.25192",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.26951",
+        "stale 276.8h > 72h (since first submit)",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.24990",
+        "already in SEEN",
+        "nb-retrieval-augmented"
+      ],
+      [
+        "2610.37668",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37598",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37584",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37561",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37481",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37369",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37342",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37245",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37224",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37149",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37139",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37134",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.37110",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36958",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36900",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36859",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36824",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36625",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36617",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36584",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36583",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36477",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36460",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36445",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36433",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36389",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36384",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36374",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36226",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36204",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36192",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.36146",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35733",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35695",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35684",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35629",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35593",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35482",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35229",
+        "already in SEEN",
+        "nb-alignment"
+      ],
+      [
+        "2610.35218",
+        "already in SEEN",
+        "nb-alignment"
+      ]
+    ]
+  }
+}

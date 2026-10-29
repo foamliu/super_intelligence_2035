@@ -5240,12 +5240,12 @@
 | 2026-10-28 | 2610.37652 | Pushing Dexterity and Safety for In-Hand Object Pose Reaching That Works Remarkably Well | cs.RO | 候选 |
 | 2026-10-28 | 2610.37651 | GEPA-Curator: Curated Learning for Self Improving Agents | cs.CL | 候选 |
 | 2026-10-28 | 2610.37649 | Can LLMs Uncover Hidden Physical Laws through Free Exploration? | cs.CL | 收录 |
-| 2026-10-28 | 2610.37648 | Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis | cs.LG | 候选 |
+| 2026-10-28 | 2610.37648 | Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis | cs.LG | 收录 |
 | 2026-10-28 | 2610.37647 | MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control | cs.LG | 收录 |
 | 2026-10-28 | 2610.37645 | Multi-State Linear Attention with Generalized Second-Order Routing | cs.CL | 候选 |
 | 2026-10-28 | 2610.37642 | Metacognitive Decoding: Efficient Inference for Diffusion Language Agents | cs.CL | 候选 |
 | 2026-10-28 | 2610.37633 | Repurposing Video Diffusion Transformers for Cross-View Temporal Object Correspondence | cs.CV | 候选 |
-| 2026-10-28 | 2610.37631 | What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models | cs.AI | 候选 |
+| 2026-10-28 | 2610.37631 | What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models | cs.AI | 收录 |
 | 2026-10-28 | 2610.37626 | Know, then Draw: A New Learning Paradigm for Visual Generation | cs.CV | 候选 |
 | 2026-10-28 | 2610.37624 | Rare, Relevant, and Still Wrong: How Memory Fails LLM Group Decisions | cs.AI | 候选 |
 | 2026-10-28 | 2610.37619 | Perceiving and Predicting Dynamic Sports: Spatiotemporal Intelligence in Vision Models for Egocentric Tennis Video | cs.CV | 收录 |
@@ -5268,7 +5268,7 @@
 | 2026-10-28 | 2610.37566 | ReferStream: Interactive Subject Injection for Streaming Video Generation | cs.CV | 候选 |
 | 2026-10-28 | 2610.37563 | Pneuma: A Large-Scale Real-World Time Series Benchmark for Commercial Aircraft Predictive Maintenance | cs.LG | 候选 |
 | 2026-10-28 | 2610.37561 | When uncertainty quantification fails: structural vulnerabilities and corrections for selective prediction under clinical class imbalance | cs.LG | 候选 |
-| 2026-10-28 | 2610.37553 | Collective Dynamics of Self-Reinforcement: How Cross-Task Coupling Drives Policy Collapse in Unsupervised RLVR | cs.LG | 候选 |
+| 2026-10-28 | 2610.37553 | Collective Dynamics of Self-Reinforcement: How Cross-Task Coupling Drives Policy Collapse in Unsupervised RLVR | cs.LG | 收录 |
 | 2026-10-28 | 2610.37550 | Kinematic Constraint-Referenced Evaluation for Articulated Object Manipulation | cs.RO | 候选 |
 | 2026-10-28 | 2610.37533 | Which Hand Was Late? Diagnosis for Robot Failure Recovery in Bimanual Tool Use | cs.RO | 候选 |
 | 2026-10-28 | 2610.37518 | World Dreamer v5-lite: A Multi-Robot World Action Model with One Dreamer | cs.RO | 候选 |

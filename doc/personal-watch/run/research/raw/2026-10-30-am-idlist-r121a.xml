@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/l/QPTcV2D4ik7o9kVsMRAp/THUs</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.37648,2610.37553,2610.37631&amp;start=0&amp;max_results=3</title>
+  <updated>2026-10-29T22:02:58Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=3&amp;id_list=2610.37648,2610.37553,2610.37631" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37631v1</id>
+    <title>What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models</title>
+    <updated>2026-10-27T17:52:38Z</updated>
+    <link href="https://arxiv.org/abs/2610.37631v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37631v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Language models pretrained on web corpora collected over multiple years learn both general and domain-specific knowledge. How these different kinds of knowledge are learned as pretraining progresses remains unclear. Recent point-in-time models trained on web snapshots from different years provide a way to probe how knowledge prevalence varies over time. Using these models, we propose a temporal variability score (TVS), defined as the coefficient of variation of an item's negative log-likelihood across models. A higher score suggests that the knowledge may be less consistently represented across years of web text. We evaluate six benchmarks covering diverse topics using six models from multiple open-source model families. We find that low- and high-TVS items are learned similarly early in training, but high-TVS items improve faster later on. At the end of the pretraining run, high-TVS items outperform low-TVS items in 34 of 36 model-benchmark settings, with an average advantage of 7.3 points of chance-normalized accuracy. This pattern is most robust on knowledge-intensive tasks, even when comparing items of similar difficulty. Our findings reveal differences in how knowledge is learned over the course of pretraining, with temporal variability providing a diagnostic of these learning dynamics beyond aggregate benchmark scores.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T17:52:38Z</published>
+    <arxiv:comment>Accepted to AACL 2026. This version corrects minor errors in the appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Chang Su</name>
+    </author>
+    <author>
+      <name>Bin Wu</name>
+    </author>
+    <author>
+      <name>Emine Yilmaz</name>
+    </author>
+    <author>
+      <name>Yao Lu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37553v1</id>
+    <title>Collective Dynamics of Self-Reinforcement: How Cross-Task Coupling Drives Policy Collapse in Unsupervised RLVR</title>
+    <updated>2026-10-27T17:01:55Z</updated>
+    <link href="https://arxiv.org/abs/2610.37553v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37553v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Label-free reinforcement learning with verifiable rewards (RLVR) rewards a language model for agreeing with its own majority vote. It improves reasoning at first but eventually collapses: the self-assessed reward goes to one while accuracy falls, often until the model gives the same answer to every problem. The collapse appears only when training uses many problems. We explain this dataset-size dependence as a collective instability. In a solvable many-problem model in which problems share parameters, a population whose problems prefer different answers amplifies any shared perturbation for as long as the population-averaged slope $\langle F'\rangle$ of the single-problem self-reinforcement drift $F$ is positive. This holds while problems are still uncertain about their answers. Per-problem sharpening, slowed by $1/N$ for $N$ training problems, races against the shared mode, which grows at a rate $\proptoλ^2$ independent of $N$, where $λ$ is the strength of the shared coupling. This yields a critical number of problems $N_c\simeq\ln(1/δ)/(λ^2G)$, where $δ$ seeds the shared mode and $G$ decreases with the initial confidence. Simulations of the model confirm the predictions: a sharp transition, $N_c\proptoλ^{-2}$ up to a logarithmic correction, a single critical amplification $λ^2NG$ across couplings, confidence profiles and training variants, a logarithmic dependence on batch size, and no collapse for confident initial models. A kernel version of the theory identifies a protective coupling (generalization of sharpening) and a marginal-entropy bonus that stabilizes the uniform collective mode. In label-free RL of a small Transformer, removing the shared direction prevents collapse entirely, restoring it causes collapse, and collapse grows with training-set size and base-model entropy.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T17:01:55Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Peize Ding</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37648v1</id>
+    <title>Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis</title>
+    <updated>2026-10-27T17:56:46Z</updated>
+    <link href="https://arxiv.org/abs/2610.37648v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37648v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We explore how to build performant large language model (LLM) tool-use agents that complete complex, multi-step tasks. Specifically, we study how data composition in synthetically generated tool-use environments affects the training of such agents. To do so, we propose the SynthAPI pipeline, which explicitly controls the diversity of generated environments along the axes of tools, tasks, and the databases on which the tools operate. By systematically varying SynthAPI's generation controls in 458,752 tasks across 849 trained models of four different sizes, we derive a scaling law that predicts downstream tool-use agent generalization based on the scale and composition of the synthesized environments. These predictable relationships reveal several lessons for scaling tool-use agent data. As data budgets grow, scaling tool and database diversity becomes more effective than increasing the number of tasks, and increasing data complexity yields larger gains. Scaling according to these findings yields agents that outperform models trained on data from prior work in large-scale tool-use agent and synthetic environment generation across four evaluation benchmarks.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T17:56:46Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Andrew Szot</name>
+    </author>
+    <author>
+      <name>Samira Abnar</name>
+    </author>
+    <author>
+      <name>Omar Attia</name>
+    </author>
+    <author>
+      <name>Abbas Kazerouni</name>
+    </author>
+    <author>
+      <name>Michael Kirchhof</name>
+    </author>
+    <author>
+      <name>Cheng-Yu Hsieh</name>
+    </author>
+    <author>
+      <name>Raviteja Vemulapalli</name>
+    </author>
+    <author>
+      <name>Alexander Toshev</name>
+    </author>
+  </entry>
+</feed>
