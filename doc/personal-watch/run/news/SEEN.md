@@ -1484,3 +1484,12 @@
 | 2026-10-29 | 第 174 轮 附录 A62–A63：研究 500Wh/kg 电池（ACS Energy Letters · paper）· ISHO Intelligence / 2.76 亿人睡眠不佳（同场发布会分条） | IT之家 `1/019/759`/`1/019/737`/`1/019/734` | 不收（paper / 同事件） | https://www.ithome.com/1/019/759.htm |
 | 2026-10-29 | 第 174 轮 附录 A64：CNBC（AI capex 442B 拦截页）· Ars（Delaware AI 公司 403）· BMJ（AI 处方更贵 · Cloudflare）· The Register（AI Mode 变现 · 反爬） | HN Algolia 转链 | 不收（不可直取） | https://www.cnbc.com/2026/10/29/microsoft-google-ai-capex-estimates.html |
 | 2026-10-29 | 第 174 轮 附录 A65–A68：dsrupt 澳儿童 AI 情感亲密禁令（单源）· HN 60 条其余（政治/宗教/司法/Show HN）· 中新网 30 条（时政军事伤亡）· 钛媒体 16 / 爱范儿 20（分析实测体） | 多源 | 不收（单源·红线·非报道体） | https://dsrupt.news/articles/australia-bans-ai-emotional-intimacy-with-children-chatbot-makers-will-keep-the/ |
+| 2026-10-30 | Mistral 放出万亿参数开源模型 ML4 权重，主打网络安全（厂商口径：较 GLM-5.3 每任务少用 47% token、Coding Agent Index 开源第一） | TechCrunch（正文全文已读） | news（第 175 轮 · §1） | https://techcrunch.com/2026/10/29/mistral-releases-weights-for-its-trillion-parameter-ai-model-targeting-cybersecurity/ |
+| 2026-10-30 | DiffuSpace 开源 Clover-35B-A3B-Preview（MoE 扩散语言模型 · Apache 许可） | IT之家 `1/019/783`（正文全文已读） | news（第 175 轮 · §1） | https://www.ithome.com/1/019/783.htm |
+| 2026-10-30 | 盖洛普：美国员工工作投入度 29% 为 2011 年以来最低（2020 年 36% / 2024 年 31% · 远程 -5pp、混合 -2pp、坐班 -1pp · 用了 AI 的企业投入度与未用者相当） | IT之家 `1/019/794`（正文全文已读 · 转 TechRadar→盖洛普） | news（第 175 轮 · §4） | https://www.ithome.com/1/019/794.htm |
+| 2026-10-30 | EA 裁员 400 人后内部士气报道（BioWare 关停 · 有员工称从领英得知被裁） | IT之家 `1/019/785`（正文全文已读） | news（第 175 轮 · §4） | https://www.ithome.com/1/019/785.htm |
+| 2026-10-30 | 百度集团副总裁、研究院副院长吴甜离职（公关经理确认 · 文心下周有新进展 · 百度世界 11-12） | IT之家 `1/019/769`（正文全文已读） | news（第 175 轮 · §5） | https://www.ithome.com/1/019/769.htm |
+| 2026-10-30 | Alphabet 盘中跌超 13% 创史上最大单日跌幅（路透社：Q3 不及预期 · 搜索广告放缓 + AI 投入成本） | IT之家 `1/019/773`（正文全文已读） | news（第 175 轮 · §5 · 仅记事实） | https://www.ithome.com/1/019/773.htm |
+| 2026-10-30 | Kimi 接入谷歌 Gmail / Drive / 日历（Plugins · OAuth 授权） | IT之家 `1/019/782`（正文全文已读） | news（第 175 轮 · §6） | https://www.ithome.com/1/019/782.htm |
+| 2026-10-30 | 第 175 轮 附录 A1–A3：OpenAI 支持的 Thrive Holdings 153 亿美元收 ADT · Reddit 转登录体验 · Meta Style Sketch（**仅 RSS 摘要可取**） | TechCrunch AI RSS | 不收（正文未直取 · 只登记） | https://techcrunch.com/2026/10/29/openai-backed-thrive-holdings-acquires-adt/ |
+| 2026-10-30 | 第 175 轮 附录 A4–A9：UEFI CVE-2026-97631 · iPhone Duo 内屏 · 星闪 SLE 3.0 蓝皮书（+791/795/796/797 同场）· 华为制药军团言论 · 中新网/央视 AI 0 条 · 当日财报叠加 | IT之家 / cn_news | 不收（非 AI 主线 / 活动稿 / 财报叠加 / 红线题） | https://www.ithome.com/1/019/771.htm |
