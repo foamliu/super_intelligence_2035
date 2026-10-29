@@ -6,8 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #378, 2026-10-29 21:08]**：空唤醒·补心跳防判死。上次心跳 wake#377@20:36 距今 ~32min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase 成功（up to date）。交付物复核：35 vision report HTML + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=~30.1KB 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
-> 📦 wake#372/#371/#370/#369/#368 (2026-10-29 15:08~17:18, 5轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
+> **本唤醒流水 [wake #379, 2026-10-29 21:40]**：空唤醒·补心跳防判死。上次心跳 wake#378@21:08 距今 ~32min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase 成功（up to date）。交付物复核：35 vision report HTML + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=~30.1KB 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#378/#372/#371/#370/#369/#368 (2026-10-29 15:08~21:08, 6轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#367/#366/#365/#364/#363 (2026-10-29 12:24~14:35, 5轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#362/#360/#358/#357/#355/#354/#352/#351/#348 (2026-10-29 04:02~11:20, 9轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#340~#346 (2026-10-28 23:37~10-29 02:53, 7轮空唤醒·均无新令·补心跳防判死·交付物在位·体积均≤32KB) 已滚动归档 → daily-memories-vision/2026-10-{28,29}.md。需要时再读。
