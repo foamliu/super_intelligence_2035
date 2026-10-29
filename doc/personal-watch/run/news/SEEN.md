@@ -1429,3 +1429,12 @@
 | 2026-10-29 | 第 169 轮 附录 A26：风云卫星科技成果中试平台（与 `1/019/303` 同场会议） | 中国新闻网 `10722631` | 不收（同事件不重复） | https://www.chinanews.com.cn/gn/2026/10-29/10722631.shtml |
 | 2026-10-29 | 第 169 轮 附录 A29：MicroZig 采纳 No LLM / No AI 行为准则（HN 49 分） | GitHub ZigEmbeddedGroup/microzig（CODE_OF_CONDUCT） | 不收（社区规则，非事件报道） | https://github.com/ZigEmbeddedGroup/microzig/blob/main/CODE_OF_CONDUCT.md |
 | 2026-10-29 | 第 169 轮 附录 A23/A27：IT之家其余 11 条（游戏/产品/财报/万代 34 万邮箱泄露等）+ 中新网其余 28 条（A 股/地震/行拘/涉台/军事等红线或非 AI） | IT之家 RSS / 中国新闻网滚动 RSS | 不收（产品·财报·红线） | https://www.chinanews.com.cn/rss/scroll-news.xml |
+| 2026-10-29 | 第 170 轮 §2：部分 GPU 算力合同延期，微软下调 2026 年资本开支预期至 1700 亿美元 | IT之家 `1/019/405`（据《商业内幕》） | news | https://www.ithome.com/1/019/405.htm |
+| 2026-10-29 | 第 170 轮 §2：AI startup claims it hacked Anthropic in 12 hours, gains access to employee details and internal messages | TechRadar（2026-10-28T15:25Z） | news | https://www.techradar.com/pro/security/ai-startup-claims-it-hacked-anthropic-in-12-hours-gains-access-to-employee-details-and-internal-messages |
+| 2026-10-29 | 第 170 轮 §3：纽约州长签署 AI 陪伴系统新法 S9051B（禁止对未满 18 岁提供不安全功能） | NY 州参议院官网（SIGNED BY GOVERNOR）+ 爱范儿早报 `1686590` | news | https://www.nysenate.gov/legislation/bills/2025/S9051 |
+| 2026-10-29 | 第 170 轮 §4：IDC 2026 Q3 中国智能手机出货约 5806 万台、同比 -15.2%；折叠屏 177 万台、-32.7% | IT之家 `1/019/400`（IDC 报告） | news | https://www.ithome.com/1/019/400.htm |
+| 2026-10-29 | 第 170 轮 §5：甲骨文公布「扭亏为盈」计划（2030 财年前 AI 业务新增融资不超过 200 亿美元 · 2028 财年下半年 FCF 转正） | IT之家 `1/019/333`（据路透社） | news | https://www.ithome.com/1/019/333.htm |
+| 2026-10-29 | 第 170 轮 附录 A31：巴慕达 AI 个性化电台 Good Morning Radio（11-02 Beta · 限量 1000 名） | IT之家 `1/019/368` | 不收（厂商产品发布稿） | https://www.ithome.com/1/019/368.htm |
+| 2026-10-29 | 第 170 轮 附录 A34：爱范儿早报（Gemini 4 Carbon / 微软 FY27Q1 / SK 海力士 / 豆包回应 15 万群演 / 抖音治理 50.7 万账号 / Amodei 编码先被取代） | 爱范儿 `1686590` | 部分同事件不重复，其余仅标题层不收 | https://www.ifanr.com/1686590 |
+| 2026-10-29 | 第 170 轮 附录 A30/A33/A35：IT之家其余 16 条 + 中新网/央视 30 条（A 股/地震/行拘/涉台/民族团结等红线或非 AI）+ 雷峰网/钛媒体 20 条分析稿 | IT之家 RSS / 中国新闻网滚动 RSS / 雷峰网 / 钛媒体 | 不收（产品·财报·红线·分析稿） | https://www.chinanews.com.cn/rss/scroll-news.xml |
+| 2026-10-29 | 第 170 轮 附录 A36：NYT「Top Dartmouth Leader Steps Down over Undisclosed A.I. Use」（A24 复核仍在） | NYT（HN 2 分，直取 000） | 不收（源不可达，待补第二源） | https://www.nytimes.com/2026/10/28/us/dartmouth-santiago-schnell-ai.html |
