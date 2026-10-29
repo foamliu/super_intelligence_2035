@@ -3,34 +3,34 @@
 
 \begin{table*}[!t]
 \centering
-\caption{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm$ s.d.), pooled over all 449 tasks and per slice. The two right-most columns report per-task operating cost on the 291-task audited subset (SKILL + two Tcl hosts; five runs, mean $\pm$ s.d.). The lower block varies the \emph{read-back} $\Omega$ alone (retrieval and effector fixed); (F) coincides with the Full row.}
+\caption{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm$ s.d.), pooled over all 449 tasks and per slice. The three right-most columns report per-task operating cost over all 449 tasks (five runs, mean $\pm$ s.d.). The lower block varies the \emph{read-back} $\Omega$ alone (retrieval and effector fixed); (F) coincides with the Full row.}
 \label{tab:main-ablation}
 \label{tab:omega}
 \label{tab:cost}
 \scriptsize
 \renewcommand{\arraystretch}{0.82}
 \setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}lcccccc@{}}
+\begin{tabular}{@{}lccccccc@{}}
 \toprule
- & \textbf{Overall} & \textbf{PyAether} & \textbf{SKILL} & \textbf{Tcl} & \textbf{Time (s)} & \textbf{\texttt{run\_code}} \\
-\textbf{Configuration} & (449) & (158) & (157) & (134) & \multicolumn{2}{c}{(291-task subset)} \\
+ & \textbf{Overall} & \textbf{PyAether} & \textbf{SKILL} & \textbf{Tcl} & \textbf{Time (s)} & \textbf{\texttt{run\_code}} & \textbf{Input (k)} \\
+\textbf{Configuration} & (449) & (158) & (157) & (134) & \multicolumn{3}{c}{(per task, 449)} \\
 \midrule
-Baseline 1: Pure LLM & 18.3 $\pm$ 1.1 & 10.5 $\pm$ 1.9 & 33.2 $\pm$ 2.3 & 10.1 $\pm$ 1.1 & 163 $\pm$ 9 & 0 \\
-Baseline 2: RAG (retr.+self-expl., no sandbox) & 62.5 $\pm$ 3.9 & 72.2 $\pm$ 1.6 & 33.9 $\pm$ 10.6 & 84.6 $\pm$ 1.9 & 174 $\pm$ 7 & 0 \\
-ZhuLong w/o Retrieval (execution only) & 64.0 $\pm$ 6.4 & 81.0 $\pm$ 4.5 & 39.0 $\pm$ 12.6 & 73.1 $\pm$ 13.8 & 904 $\pm$ 123 & 23.0 $\pm$ 2.2 \\
-ZhuLong w/o Self-Expl. & 72.6 $\pm$ 1.7 & 77.3 $\pm$ 2.9 & \textbf{61.5 $\pm$ 0.7} & 80.1 $\pm$ 4.2 & 535 $\pm$ 77 & 13.1 $\pm$ 1.0 \\
-\textbf{ZhuLong} (Full) & \textbf{75.7 $\pm$ 3.1} & \textbf{81.4 $\pm$ 1.5} & 60.3 $\pm$ 6.7 & \textbf{87.2 $\pm$ 6.0} & 390 $\pm$ 114 & 11.5 $\pm$ 0.5 \\
+Baseline 1: Pure LLM & 19.7 $\pm$ 1.4 & 14.3 $\pm$ 2.1 & 33.2 $\pm$ 2.3 & 10.1 $\pm$ 1.1 & 183 $\pm$ 9 & 0 & 72 $\pm$ 2 \\
+Baseline 2: RAG (retr.+self-expl., no sandbox) & 68.6 $\pm$ 1.6 & 71.1 $\pm$ 4.6 & 52.2 $\pm$ 1.9 & 84.6 $\pm$ 1.9 & 226 $\pm$ 9 & 0 & 272 $\pm$ 8 \\
+ZhuLong w/o Retrieval (execution only) & 66.2 $\pm$ 4.2 & 73.4 $\pm$ 7.3 & 45.2 $\pm$ 9.4 & 82.2 $\pm$ 2.3 & 981 $\pm$ 151 & 22.6 $\pm$ 2.8 & 658 $\pm$ 133 \\
+ZhuLong w/o Self-Expl. & 74.5 $\pm$ 1.8 & 77.0 $\pm$ 4.1 & \textbf{61.5 $\pm$ 0.7} & 86.7 $\pm$ 3.0 & 645 $\pm$ 132 & 12.6 $\pm$ 1.4 & 722 $\pm$ 116 \\
+\textbf{ZhuLong} (Full) & \textbf{76.9 $\pm$ 2.3} & \textbf{82.5 $\pm$ 2.0} & 60.3 $\pm$ 6.7 & \textbf{89.9 $\pm$ 2.0} & 464 $\pm$ 57 & 10.6 $\pm$ 0.7 & 710 $\pm$ 21 \\
 \midrule
-\multicolumn{7}{@{}l}{\emph{Read-back axis (retrieval + effector fixed, only what} \texttt{run\_code} \emph{returns varies)}}\\
-(N$'$) No read-back (prior only) & 62.2 $\pm$ 1.0 & 73.3 $\pm$ 2.2 & 30.2 $\pm$ 1.1 & 86.6 $\pm$ 1.4 & --- & --- \\
-(B) Binary pass/fail & 65.5 $\pm$ 4.0 & 78.1 $\pm$ 1.3 & 38.7 $\pm$ 11.2 & 82.1 $\pm$ 2.1 & --- & --- \\
-(F) Full observation & \textbf{75.7 $\pm$ 3.1} & \textbf{81.4 $\pm$ 1.5} & \textbf{60.3 $\pm$ 6.7} & \textbf{87.2 $\pm$ 6.0} & 390 $\pm$ 114 & 11.5 $\pm$ 0.5 \\
+\multicolumn{8}{@{}l}{\emph{Read-back axis (retrieval + effector fixed, only what} \texttt{run\_code} \emph{returns varies)}}\\
+(N$'$) No read-back (prior only) & 69.8 $\pm$ 1.9 & 73.3 $\pm$ 2.2 & 50.7 $\pm$ 4.9 & 87.9 $\pm$ 1.7 & --- & --- & --- \\
+(B) Binary pass/fail & 72.2 $\pm$ 1.2 & 78.1 $\pm$ 1.3 & 57.2 $\pm$ 4.8 & 83.0 $\pm$ 2.3 & --- & --- & --- \\
+(F) Full observation & \textbf{76.9 $\pm$ 2.3} & \textbf{82.5 $\pm$ 2.0} & \textbf{60.3 $\pm$ 6.7} & \textbf{89.9 $\pm$ 2.0} & 464 $\pm$ 57 & 10.6 $\pm$ 0.7 & 710 $\pm$ 21 \\
 \bottomrule
 \end{tabular}
 
-\scriptsize{The Tcl column pools the two Tcl hosts, WaveView (77 tasks) and Innovus (57). Bold marks the per-column best. Time = net-active solve time (per-session message-span sum, excluding startup/quota-wait); \texttt{run\_code} = calls per task. Read-back-axis rows share the Full cost (F) or are not separately costed (N$'$, B).}
+\scriptsize{Bold marks the per-column best. The Tcl column pools the two Tcl hosts, WaveView (77 tasks) and Innovus (57), by summing pass counts per run over 134 tasks. Time = net-active solve time (final-session active-seconds, excluding quota wait); \texttt{run\_code} = calls per task; Input = input tokens per task (thousands), each averaged over all 449 tasks (five runs). Read-back-axis rows share the Full cost (F) or are not separately costed (N$'$, B).}
 \end{table*}
-% 表：主结果 + 回读轴 + cost 列合并表（5 配置 + 3 回读档 + 2 cost 列）。(F) 行=Full 行。tab:main-ablation / tab:omega / tab:cost 三 label 指向同表。cost 数据来自 291-task audited subset（SKILL+两 Tcl host，PyAether 待审计排除）；readback 轴 N′/B 未单独 cost，填 ---。
+% 表：主结果 + 回读轴 + cost 列合并表（5 配置 + 3 回读档 + 3 cost 列）。(F) 行=Full 行。tab:main-ablation / tab:omega / tab:cost 三 label 指向同表。cost（Time/run\_code/Input）为全 449 逐 task 均值（5 轮，mean±sd）；readback 轴 N′/B 未单独 cost，填 ---。
 
 \subsection{Experimental Setup}
 \label{sec:exp-setup}
@@ -47,25 +47,25 @@ ZhuLong w/o Self-Expl. & 72.6 $\pm$ 1.7 & 77.3 $\pm$ 2.9 & \textbf{61.5 $\pm$ 0.
 \subsection{Results and Ablations}
 \label{sec:exp-results}
 
-Table~\ref{tab:main-ablation} gives the five configurations pooled and per slice. Relative to the full system, removing execution costs $13.2$~pp pooled, removing retrieval $11.8$~pp, and removing self-exploration $3.1$~pp; against the pure-LLM floor the full system gains $57.4$~pp. Wilson 95\% intervals on the pooled Pass@1 ($n{=}2245$): Full $[73.86,77.41]$, w/o-Self-Expl.\ $[70.72,74.41]$, w/o-Retrieval $[62.00,65.97]$, RAG $[60.47,64.47]$, N$'$ $[60.16,64.17]$, B $[63.49,67.42]$, Pure-LLM $[16.76,19.96]$; the controlled $N'\to F$ read-back gap of $13.50$~pp has 95\% interval $[10.82,16.18]$~pp (SE$=1.37$~pp). A paired bootstrap is deferred: batch directories store only counts, so per-task arrays would require a one-shot regrade over both arms' batches. Where each component's contribution comes from is toolchain-specific (Section~\ref{sec:cross-language}).
-% 主结果（表~\ref{tab:main-ablation}，5 配置合并+分切片）。相对完整系统：移除执行 -13.2pp、移除检索 -11.8pp、移除自探索 -3.1pp；相对纯 LLM 下限 +57.4pp。Wilson 95% CI（pooled n=2245）已加；N′→F 13.5pp gap 独立比例正态近似 CI [10.82,16.18]pp（保守·比 paired 紧）；paired bootstrap 待 per-task regrade（batch 目录仅存计数）。各组件贡献来源因工具链而异（§6.3 S4）。
+Table~\ref{tab:main-ablation} gives the five configurations pooled and per slice. Relative to the full system, removing execution costs $8.3$~pp pooled, removing retrieval $10.7$~pp, and removing self-exploration $2.4$~pp; against the pure-LLM floor the full system gains $57.2$~pp. Wilson 95\% intervals on the pooled Pass@1 ($n{=}2245$): Full $[75.11,78.60]$, w/o-Self-Expl.\ $[72.66,76.26]$, w/o-Retrieval $[64.22,68.13]$, RAG $[66.65,70.49]$, N$'$ $[67.87,71.66]$, B $[70.31,74.01]$, Pure-LLM $[18.11,21.40]$; the controlled $N'\to F$ read-back gap of $7.1$~pp has 95\% interval $[4.52,9.68]$~pp (SE$=1.32$~pp). A paired bootstrap is deferred: batch directories store only counts, so per-task arrays would require a one-shot regrade over both arms' batches. Where each component's contribution comes from is toolchain-specific (Section~\ref{sec:cross-language}).
+% 主结果（表~\ref{tab:main-ablation}，5 配置合并+分切片）。相对完整系统：移除执行 -8.3pp、移除检索 -10.7pp、移除自探索 -2.4pp；相对纯 LLM 下限 +57.2pp。Wilson 95% CI（pooled n=2245）已加；N′→F 7.1pp gap 独立比例正态近似 CI [4.52,9.68]pp（保守·比 paired 紧）；paired bootstrap 待 per-task regrade（batch 目录仅存计数）。各组件贡献来源因工具链而异（§6.3 S4）。
 
 \subsubsection{S1: Observation fidelity (RQ1)}
 \label{sec:omega-fidelity}
 
-Principle 2 predicts that with the model fixed, accuracy is bounded by the fidelity of $\Omega$. \textbf{Documentation axis.} Holding the agent loop, effector, and LLM fixed, removing retrieval costs 11.8~pp pooled, but highly toolchain-specific: on PyAether the read-back channel substitutes for retrieval (86.7\% of traces introspect via the sandbox using \texttt{dir()}/\texttt{inspect}/\texttt{\_\_doc\_\_}, reconstructing the API knowledge retrieval would return), whereas on SKILL and Tcl the API surfaces cannot be recovered from execution alone, so removing retrieval removes the knowledge. Retrieval is thus one \emph{implementation} of $\Omega$, not the channel itself.
-% S1 观测保真度（RQ1）。原则 2 预测固定模型时准确率受 Ω 保真度约束。文档轴：固定循环/执行器/LLM，移除检索合并 -11.8pp，但高度工具链特定——PyAether 上回读通道可替代检索（86.7% trace 沙盒内省重建 API 知识）；SKILL/Tcl API 面无法仅凭执行恢复。故检索只是 Ω 的一种实现而非通道本身。
+Principle 2 predicts that with the model fixed, accuracy is bounded by the fidelity of $\Omega$. \textbf{Documentation axis.} Holding the agent loop, effector, and LLM fixed, removing retrieval costs 10.7~pp pooled, but highly toolchain-specific: on PyAether the read-back channel partially substitutes for retrieval (86.7\% of traces introspect via the sandbox using \texttt{dir()}/\texttt{inspect}/\texttt{\_\_doc\_\_}, reconstructing the API knowledge retrieval would return), whereas on SKILL and Tcl the API surfaces cannot be recovered from execution alone, so removing retrieval removes the knowledge. Retrieval is thus one \emph{implementation} of $\Omega$, not the channel itself.
+% S1 观测保真度（RQ1）。原则 2 预测固定模型时准确率受 Ω 保真度约束。文档轴：固定循环/执行器/LLM，移除检索合并 -10.7pp，但高度工具链特定——PyAether 上回读通道只部分替代检索（残差 −9.1pp；86.7% trace 沙盒内省重建 API 知识）；SKILL/Tcl API 面无法仅凭执行恢复。故检索只是 Ω 的一种实现而非通道本身。（待复核：86.7% 内省率为旧 trace 统计，trace 重分析未完成。）
 
 \textbf{Read-back axis.} The second axis is how much of the live state execution returns. We compare three closed-loop variants differing only here (Table~\ref{tab:omega}, lower block): (N$'$) \emph{no read-back}---\texttt{run\_code} executes but returns nothing; (B) \emph{binary feedback}---pass/fail only; (F) \emph{full observation}---stdout, traces, per-assertion outcomes, and queried state (the default). The predicted monotone ordering N$'$ $<$ B $<$ F holds pooled and on the two largest slices; on Tcl it inverts at the middle rung, because Tcl scripts are short and near-single-shot, largely solved from documentation, so a binary signal supplies no actionable information. This is the $\epsilon$-axis the claim of Section~\ref{sec:bayesian} predicts tracks accuracy; the N$'$-to-F gap operationalizes the grounding gap as an accuracy difference.
 % 回读轴：执行返回多少实时状态。三闭环变体仅此处不同：(N′) 无回读、(B) 二值、(F) 全观测（默认）。预测单调 N′<B<F 在合并与两最大切片成立；Tcl 中间档倒挂（短脚本近单发，二值信号无可操作信息）。这是 §4.2 引理预测的 ε 轴：N′→F 差距即落地鸿沟的准确率化。
 
-\textbf{Self-exploration rung.} The top rung adds constraints discovered offline (Section~\ref{sec:selfdoc}); per the framework this enriches only the L1--L3 facts $\Omega$ can return, so it should move the result less than the channel's own fidelity. Removing it (retrieval and effector kept) drops Pass@1 from 81.4\% to 77.3\% on PyAether (75.7\% to 72.6\% pooled), a bounded prior-side complement rather than a substitute. Self-exploration is the one cost-negative rung (cutting net-active solve time by 27.0\%, see Table~\ref{tab:cost}), whereas removing retrieval makes the agent fall back on blind sandbox probing (2.3$\times$ the full system's time).
-% 自探索档：加离线发现的约束（§3.4）。按框架只丰富 Ω 可返回的 L1–L3 事实，效应应小于通道自身保真度。移除（保留检索+执行器）PyAether 81.4→77.3（合并 75.7→72.6），有界先验侧补充非替代。自探索唯一成本为负档（求解时间 -27.0%）；移除检索退化为盲探沙盒（2.3 倍完整系统时间）。
+\textbf{Self-exploration rung.} The top rung adds constraints discovered offline (Section~\ref{sec:selfdoc}); per the framework this enriches only the L1--L3 facts $\Omega$ can return, so it should move the result less than the channel's own fidelity. Removing it (retrieval and effector kept) drops Pass@1 from 82.5\% to 77.0\% on PyAether (76.9\% to 74.5\% pooled), a bounded prior-side complement rather than a substitute. Self-exploration is the one cost-negative rung (cutting net-active solve time by 28.1\%, see Table~\ref{tab:cost}), whereas removing retrieval makes the agent fall back on blind sandbox probing (2.1$\times$ the full system's time).
+% 自探索档：加离线发现的约束（§3.4）。按框架只丰富 Ω 可返回的 L1–L3 事实，效应应小于通道自身保真度。移除（保留检索+执行器）PyAether 82.5→77.0（合并 76.9→74.5），有界先验侧补充非替代。自探索唯一成本为负档（求解时间 -28.1%）；移除检索退化为盲探沙盒（2.1 倍完整系统时间）。
 
 \subsubsection{S2: The closed loop (RQ2)}
 \label{sec:closed-loop}
 
-Principle 3 requires that actions reach the design through a causal interface and that $\Phi$ run continuously. \textbf{Effector.} Removing the sandbox drops pooled Pass@1 from 75.7\% to 62.5\% ($-13.2$~pp): without an effector, $b_t$ receives no live-state evidence and the agent is a prior-only predictor. \textbf{Belief update.} We bound how often the agent \emph{may} execute (the number of \texttt{run\_code} calls per trace, denied at the tool boundary once spent) rather than forcing early submission, and vary the evidence along two axes: the budget $k$, and a \emph{lagged} channel that returns the \emph{previous} execution's state, leaving the agent one action behind the design. On PyAether, accuracy rises monotonically with the budget (63.8\% at $k{=}1$, 69.1\% at $k{=}3$, 77.7\% at $k{=}10$, unsaturated); the lagged channel lands between $k{=}3$ and $k{=}10$ (73.0\%)---stale evidence is worth markedly less than fresh---and tighter budgets leave traces unfinished (Converged drops from $99.1$ to $76.3$ at $k{=}1$).
+Principle 3 requires that actions reach the design through a causal interface and that $\Phi$ run continuously. \textbf{Effector.} Removing the sandbox drops pooled Pass@1 from 76.9\% to 68.6\% ($-8.3$~pp): without an effector, $b_t$ receives no live-state evidence and the agent is a prior-only predictor. \textbf{Belief update.} We bound how often the agent \emph{may} execute (the number of \texttt{run\_code} calls per trace, denied at the tool boundary once spent) rather than forcing early submission, and vary the evidence along two axes: the budget $k$, and a \emph{lagged} channel that returns the \emph{previous} execution's state, leaving the agent one action behind the design. On PyAether, accuracy rises monotonically with the budget (63.8\% at $k{=}1$, 69.1\% at $k{=}3$, 77.7\% at $k{=}10$, unsaturated); the lagged channel lands between $k{=}3$ and $k{=}10$ (73.0\%)---stale evidence is worth markedly less than fresh---and tighter budgets leave traces unfinished (Converged drops from $99.1$ to $76.3$ at $k{=}1$).
 \subsubsection{S3: The prior axis (the prior-side contrast of RQ1)}
 \label{sec:k-axis}
 
@@ -81,30 +81,30 @@ Principle 3 requires that actions reach the design through a causal interface an
  & \textbf{PyAether} & \textbf{SKILL} & \textbf{Tcl} & \textbf{Overall} & \textbf{$\Delta$} \\
 \textbf{Backbone} & (158) & (157) & (134) & (449) & \\
 \midrule
-DeepSeek-V4-Pro & 81.4$\pm$1.5 & \textbf{60.3$\pm$6.7} & \textbf{87.2$\pm$6.0} & \textbf{75.7$\pm$3.1} & --- \\
-GLM-5.3-Flash & \textbf{86.8$\pm$1.6} & 57.2$\pm$6.9 & 81.3$\pm$6.7 & 74.8$\pm$3.1 & $-1.0$ \\
-GLM-5.2 & 83.3$\pm$3.1 & 54.4$\pm$4.5 & 75.7$\pm$7.3 & 70.9$\pm$2.8 & $-4.8$ \\
-Kimi-K2.6 & 77.0$\pm$1.6 & 51.0$\pm$12.0 & 75.2$\pm$8.2 & 67.4$\pm$5.1 & $-8.4$ \\
-DeepSeek-V4-Flash & 60.1$\pm$5.5 & 47.0$\pm$1.8 & 70.6$\pm$4.2 & 58.7$\pm$2.4 & $-17.1$ \\
-Doubao-Seed-2.0-Pro & 63.8$\pm$1.4 & 42.5$\pm$3.4 & 55.1$\pm$3.4 & 53.7$\pm$1.6 & $-22.0$ \\
+DeepSeek-V4-Pro & 82.5$\pm$2.0 & \textbf{60.3$\pm$6.7} & \textbf{89.9$\pm$2.0} & \textbf{76.9$\pm$2.3} & --- \\
+GLM-5.3-Flash & \textbf{86.8$\pm$1.6} & 57.2$\pm$6.9 & 80.3$\pm$3.8 & 74.5$\pm$2.4 & $-2.4$ \\
+GLM-5.2 & 83.3$\pm$3.1 & 54.4$\pm$4.5 & 82.7$\pm$1.6 & 73.0$\pm$2.1 & $-3.9$ \\
+Kimi-K2.6 & 77.0$\pm$1.6 & 55.5$\pm$2.7 & 75.8$\pm$1.9 & 69.1$\pm$0.5 & $-7.8$ \\
+DeepSeek-V4-Flash & 60.1$\pm$5.5 & 47.0$\pm$1.8 & 70.4$\pm$3.1 & 58.6$\pm$2.3 & $-18.3$ \\
+Doubao-Seed-2.0-Pro & 63.8$\pm$1.4 & 42.5$\pm$3.4 & 53.3$\pm$3.4 & 53.2$\pm$1.9 & $-23.7$ \\
 \bottomrule
 \end{tabular}
 
-\footnotesize{Pass@1 (\%), five runs (mean $\pm$ s.d.); Tcl pools WaveView (77) and Innovus (57); $\Delta$ vs.\ the primary backbone, pooled. Bold = per-column best. The strongest-to-weakest span is $75.7-53.7=22.0$~pp. Per-host WaveView and Innovus Pass@1 for all configurations are reported in the supplementary material; the pooled Tcl column aggregates them with weights $77/134$ and $57/134$.}
+\footnotesize{Pass@1 (\%), five runs (mean $\pm$ s.d.); Tcl pools WaveView (77) and Innovus (57), by summing pass counts per run over 134 tasks; $\Delta$ vs.\ the primary backbone, pooled. Bold = per-column best. The strongest-to-weakest span is $76.9-53.2=23.7$~pp. Per-host WaveView and Innovus Pass@1 for all configurations are reported in the supplementary material.}
 \end{table}
-% 表：LLM backbone 影响（单栏 table，\scriptsize 以释放正文空间）。保留全部 6 backbone（09:5x 否决：禁删，22.0pp 跨度需表格支撑）。最强-最弱跨度 = 75.7−53.7 = 22.0pp（表注显式给出）。
+% 表：LLM backbone 影响（单栏 table，\scriptsize 以释放正文空间）。保留全部 6 backbone（09:5x 否决：禁删，跨度需表格支撑）。最强-最弱跨度 = 76.9−53.2 = 23.7pp（表注显式给出）。
 
-Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$ (the LLM) with the harness fixed; DeepSeek-V4-Pro is the primary backbone, yet the backbone remains decisive---even with retrieval, sandbox, and self-exploration in place, the strongest-to-weakest spread is 22.0~pp pooled. Read against Principle 2, this spread is what the $\mathcal{K}$ axis can move, and it does not substitute for observation: the system-level observation-fidelity axis moves the result by more than the entire backbone range ($57.4$ vs.\ $22.0$~pp pooled), exactly the prediction of the claim in Section~\ref{sec:bayesian}. GLM-5.3-Flash beats the primary on PyAether yet loses $1.0$~pp pooled---slice-level snapshots can invert backbone rankings, itself an argument for the pooled protocol.
-% S3 先验轴（RQ1 先验侧对照）。原则 1 解耦知识与信念：冻结先验界定框架上限而不替代观测。表~\ref{tab:llm-comparison} 仅变 K 固定框架；DeepSeek-V4-Pro 主干，backbone 仍决定性——齐备时最强与最弱跨 22.0pp。对照原则 2，此即 K 轴可移动量，且不替代观测：观测保真度轴移动量大于整个 backbone 跨度（57.4 vs 22.0pp），正是 §4.2 引理预测。GLM-5.3-Flash 在 PyAether 上超主 backbone 但合并低 1.0pp——切片快照可颠倒排序，合并协议的论据。
+Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$ (the LLM) with the harness fixed; DeepSeek-V4-Pro is the primary backbone, yet the backbone remains decisive---even with retrieval, sandbox, and self-exploration in place, the strongest-to-weakest spread is 23.7~pp pooled. Read against Principle 2, this spread is what the $\mathcal{K}$ axis can move, and it does not substitute for observation: the system-level observation-fidelity axis moves the result by more than the entire backbone range ($57.2$ vs.\ $23.7$~pp pooled), exactly the prediction of the claim in Section~\ref{sec:bayesian}. GLM-5.3-Flash beats the primary on PyAether yet loses $2.4$~pp pooled---slice-level snapshots can invert backbone rankings, itself an argument for the pooled protocol.
+% S3 先验轴（RQ1 先验侧对照）。原则 1 解耦知识与信念：冻结先验界定框架上限而不替代观测。表~\ref{tab:llm-comparison} 仅变 K 固定框架；DeepSeek-V4-Pro 主干，backbone 仍决定性——齐备时最强与最弱跨 23.7pp。对照原则 2，此即 K 轴可移动量，且不替代观测：观测保真度轴移动量大于整个 backbone 跨度（57.2 vs 23.7pp），正是 §4.2 引理预测。GLM-5.3-Flash 在 PyAether 上超主 backbone 但合并低 2.4pp——切片快照可颠倒排序，合并协议的论据。
 
 \subsubsection{S4: The toolchain axis (RQ3)}
 \label{sec:cross-language}
 
-The four slices share one schema, assertion criterion, and harness, so S1--S2 re-runs slice by slice with nothing changed but the toolchain. Table~\ref{tab:main-ablation} carries the comparison: the pure-LLM floor and the advantage of closed-loop configurations reproduce on every slice (the one exception being SKILL, where the full system trails its w/o-Self-Exploration variant by $1.2$~pp), and the read-back ordering N$'$ $<$ B $<$ F holds on the two largest slices and pooled (the Tcl inversion is disclosed in Section~\ref{sec:omega-fidelity}). Component magnitudes are toolchain-specific---execution buys $+26.4$~pp on SKILL but only $+2.6$ on Tcl, and retrieval is redundant on PyAether yet worth $21.3$ and $14.1$~pp on SKILL and Tcl---but the structure (observation and execution jointly closing the loop) reproduces on every slice.
-% S4 工具链轴（RQ3）。四切片共享 schema/断言/框架，S1–S2 逐切片重跑除工具链外不变。表~\ref{tab:main-ablation}：纯 LLM 下限与闭环优势每切片复现（唯一例外 SKILL 完整系统比 w/o-Self-Exploration 低 1.2pp）；回读排序 N′<B<F 在两最大切片与合并成立（Tcl 倒挂见 §6.2 S1）。组件量级工具链特定——执行 SKILL +26.4pp、Tcl 仅 +2.6pp；检索 PyAether 冗余、SKILL/Tcl 价值 21.3/14.1pp——但结构（观测+执行共同闭环）每切片复现。
+The four slices share one schema, assertion criterion, and harness, so S1--S2 re-runs slice by slice with nothing changed but the toolchain. Table~\ref{tab:main-ablation} carries the comparison: the pure-LLM floor and the advantage of closed-loop configurations reproduce on every slice (the one exception being SKILL, where the full system trails its w/o-Self-Exploration variant by $1.2$~pp), and the read-back ordering N$'$ $<$ B $<$ F holds on the two largest slices and pooled (the Tcl inversion is disclosed in Section~\ref{sec:omega-fidelity}). Component magnitudes are toolchain-specific---execution buys $+8.1$~pp on SKILL but only $+5.3$ on Tcl, and retrieval buys $+15.1$~pp on SKILL, $+9.1$~pp on PyAether, and $+7.7$~pp on Tcl---but the structure (observation and execution jointly closing the loop) reproduces on every slice.
+% S4 工具链轴（RQ3）。四切片共享 schema/断言/框架，S1–S2 逐切片重跑除工具链外不变。表~\ref{tab:main-ablation}：纯 LLM 下限与闭环优势每切片复现（唯一例外 SKILL 完整系统比 w/o-Self-Exploration 低 1.2pp）；回读排序 N′<B<F 在两最大切片与合并成立（Tcl 倒挂见 §6.2 S1）。组件量级工具链特定——执行 SKILL +8.1pp、Tcl +5.3pp；检索 SKILL +15.1pp、PyAether +9.1pp、Tcl +7.7pp——但结构（观测+执行共同闭环）每切片复现。
 
 \subsection{Error Analysis}
 \label{sec:error-analysis}
 
-On PyAether, ZhuLong reaches 81.4\% Pass@1 (129/158). Generation-stage failures are a harness-budget, not a grounding, phenomenon---mostly timeouts on multi-step tasks or message-budget exhaustion cycling through \texttt{search\_apis}. Manual inspection of execution-stage failures yields two root causes: 12 \textbf{API-misuse} cases (correct API family, but an undocumented C++-binding contract---hidden types, internal state, or context preconditions---is violated), and 9 \textbf{API-composition errors} (valid calls composed incorrectly, or a mandated call replaced by a plausible approximation, e.g., a substring match for equality). Both share one signature: the violated constraint is invisible in documentation and only weakly exposed by execution---the L4 invisibility Section~\ref{sec:grounding-theory} predicts situated correctness hinges on.
-% 错误分析（16:1x 微调正文压缩 ~4 行以让结论回 p6；事实保真：81.4%/129/158、12 API 误用、9 组合错误、L4 不可见性）。PyAether 81.4%（129/158）。生成阶段失败=框架预算现象非落地现象（多步任务超时 / 消息预算耗尽于 search_apis 循环）。执行阶段失败两类：12 例 API 误用（选对 API 族但违反 C++ 绑定强制而文档未揭示的契约——隐藏类型/内部状态/上下文前置条件）；9 例 API 组合与工作流错误（各自有效调用错误组合，或强制调用被似是而非近似替换如子串匹配代相等性）。两类共享同一签名：被违反约束文档不可见、执行仅弱暴露——即 §4 预测情境正确性所系的 L4 契约不可见性。
+On PyAether, ZhuLong reaches 82.5\% Pass@1 (130/158). Generation-stage failures are a harness-budget, not a grounding, phenomenon---mostly timeouts on multi-step tasks or message-budget exhaustion cycling through \texttt{search\_apis}. Manual inspection of execution-stage failures yields two root causes: 12 \textbf{API-misuse} cases (correct API family, but an undocumented C++-binding contract---hidden types, internal state, or context preconditions---is violated), and 9 \textbf{API-composition errors} (valid calls composed incorrectly, or a mandated call replaced by a plausible approximation, e.g., a substring match for equality). Both share one signature: the violated constraint is invisible in documentation and only weakly exposed by execution---the L4 invisibility Section~\ref{sec:grounding-theory} predicts situated correctness hinges on.
+% 错误分析（16:1x 微调正文压缩 ~4 行以让结论回 p6）。PyAether 82.5%（130/158）[Pass@1 已同步表]。生成阶段失败=框架预算现象非落地现象（多步任务超时 / 消息预算耗尽于 search_apis 循环）。⚠️ 执行阶段失败两类为旧 trace 分类待复核：12 例 API 误用（选对 API 族但违反 C++ 绑定强制而文档未揭示的契约——隐藏类型/内部状态/上下文前置条件）；9 例 API 组合与工作流错误（各自有效调用错误组合，或强制调用被似是而非近似替换如子串匹配代相等性）——trace 重分析暂搁置未完成，此 12/9 分类需在重分析完成后更新。两类共享同一签名：被违反约束文档不可见、执行仅弱暴露——即 §4 预测情境正确性所系的 L4 契约不可见性。
