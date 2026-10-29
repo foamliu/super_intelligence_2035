@@ -11,6 +11,24 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-10-29 14:1x（**整理并提交 baize-llm 独立仓库**）· 用户直令 · 最高优先
+
+> 用户原话（2026-10-29 14:1x）：「请 pretrain 把 baize-llm 这个仓库整理提交一下」
+
+**① 现状（运维已核）**：
+- `/nas_train/app.e0031982/code/baize-llm/` 是**独立 git 仓库**，remote = `ssh://git@devops.cxmt.com:8022/git/AIX/PAI/eda/baize-llm.git`，当前只有 `Initial commit`；`README.md` 是 582B 的**空模板**（「请介绍一下你的项目吧」）；工作树里还有一个**未跟踪的 symlink** `baize-llm -> super_intelligence_2035/code/baize-llm`（`git status` 显示 `?? baize-llm`）。
+- 真实代码（`configs/` 10 个、`scripts/` 18 个、`docs/` 2 个、`README.md` 19.6KB）全在**主仓库** `super_intelligence_2035/code/baize-llm/` 下，已随主仓库持续提交（最近 `281384228 pretrain train`）。
+
+**② 要求（整理 + 提交，按序）**：
+1. **补全独立仓库 README.md**：把 582B 空模板替换为真实项目说明（项目定位 / 目录结构 / 三阶段 S→S2→Decay 口径 / 启动命令 `bash scripts/train.sh <stage>` / 配置说明 / 依赖环境），与主仓库 `code/baize-llm/README.md`（19.6KB）口径一致、可照做。
+2. **把真实代码纳入独立仓库**：将 `configs/`、`scripts/`、`docs/`（去 `__pycache__`、`.pyc`）整理进独立仓库工作树，`git add` 后 `git commit`（commit 信息带 `pretrain 项目:` 前缀）。
+3. **push 到 origin/devops**：`git push origin master`（若 push 失败带代理重试：`https_proxy=$P http_proxy=$P git push origin master`），确认 devops `baize-llm.git` 上已可见完整代码。
+4. **symlink 处置**：那个未跟踪的 `baize-llm` symlink 要么纳入 `.gitignore`、要么删除，🚫 不许把 symlink 当真实文件提交。
+
+**③ 判据**：`git -C /nas_train/app.e0031982/code/baize-llm status` 干净；`git -C ... log --oneline` 最新提交为本轮；`git -C ... push` 后 `git ls-remote origin` 可见新 commit；README 非空模板。
+
+**④ 纪律**：不打断 S1 主线（iter 9600+ 在跑，纯 git/文件整理零 GPU）；不碰 vision/data/harness；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到 push 成功；只提交 baize-llm 独立仓库相关文件。
+
 ### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
 
 > 用户原话（2026-10-28 17:0x）：「安排 pretrain 往项目目录 /nas_train/app.e0031982/code/baize-llm/baize-llm 写脚本&文档。后续训练从项目目录启动。」
