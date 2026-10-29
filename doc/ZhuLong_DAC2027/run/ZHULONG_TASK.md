@@ -10,7 +10,7 @@
 - **本次每个改动数字都必须重新溯源**；旧报告（`reports/report_zhulong_paper_review_zh.html`、`report_zhulong_dac_readiness_review_zh.html`、`report_zhulong_review_response_zh.html`）只当线索，**结论不得原样复用**。
 
 **② 核对范围（A–I 九类，全部要覆盖）**
-- **A 结构/元数据**：`main.tex`（anonymous·sigconf·作者/邮箱/单位·CCS·keywords·标题摘要）；用 web 核实 **DAC 2027 投稿规则**（页数上限、模板版本、双盲、图表与引用格式）。
+- **A 结构/元数据**：`main.tex`（anonymous·sigconf·作者/邮箱/单位·CCS·keywords·标题摘要）；用 web 核实 **DAC 2027 投稿规则**（页数上限、模板版本、双盲、图表与引用格式）；**页数必须实测**——`pdfinfo main.pdf` 取页数（无 `pdfinfo` 则 `pdftotext main.pdf - | grep -c $'\f'`，两者都没有就如实写「未实测」），再与官方上限比对。
 - **B 数字一致性**：摘要 ↔ 正文 ↔ 表 1/2/3 ↔ 图 ↔ 结论；449/158/157/134、291 子集、5 runs、mean±sd 等，**同一数字出现多处必须逐处比对**。
 - **C 数字溯源**：每个数字对应 batch / regrade log / results json，写明路径 + 行号或可复现 `grep` 命令；对不上 ⇒ ❌。
 - **D 参考文献**：`reference.bib` + `software.bib` **逐条**核 title / 作者 / 年份 / venue / DOI / arXiv / pages，查缺字段、查幻觉条目、查重复。
