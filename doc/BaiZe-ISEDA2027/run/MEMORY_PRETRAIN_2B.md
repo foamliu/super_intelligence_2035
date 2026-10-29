@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-29 22:35 #913：**S1监控iter13910健康·loss~2.31稳态·ckpt@12000·0 NaN·minor spike@13880已恢复**。iter 13910/700k(1.99%): lm loss last5(13870-13910)=[2.308,2.312,2.335,2.320,2.309]. 0 NaN(13910步), 0 skip, LR=1e-3, ~7.3s/step≈574K tok/s. grad-norm last5=[0.105,0.164,0.170,0.246,0.089](spike@13880=0.246→loss2.335, 已恢复). 16卡100%util ~75GB/卡. mem .29 863G/2TB(43%) swap 5G. /nas_train 35T free(84%). ckpt@12000(6ckpt), next@14000(~11min). TB6006 OK. 未完成指令：有(⑦零训练PPL/passkey基线, 需GPU空闲, 16卡满载~57天训练无法执行). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~28KB.
+> 🆕 2026-10-29 23:00 #914：**S1监控iter14100健康·loss~2.30稳态·ckpt@14000·0 NaN·grad-norm spike@14090已恢复**。iter 14100/700k(2.01%): lm loss last5(14060-14100)=[2.323,2.313,2.305,2.298,2.287]. 0 NaN(14100步), 0 skip, LR=1e-3, ~7.3s/step≈574K tok/s. grad-norm last5=[0.212,0.184,0.082,0.881,0.144](spike@14090=0.881但loss继续下降, 已恢复). 16卡100%util ~75GB/卡. mem .29 869G/2TB(43%) swap 5G. /nas_train 35T free(84%). ckpt@14000(7ckpt:2k~14k), next@16000. TB6006 OK(200). 未完成指令：有(⑦零训练PPL/passkey基线, 需GPU空闲, 16卡满载~57天训练无法执行). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~28.4KB.
+> 📦 §#913（10-29 22:35, S1监控iter13910健康·loss~2.31·ckpt@12000·0 NaN·spike@13880恢复）→ daily-memories/2026-10-29.md；**结论**：loss~2.31, 0NaN, 574K tok/s, ckpt@12000, spike@13880恢复. 被#914更新。需要时再读。
 > 📦 §#912（10-29 22:15, S1监控iter13758健康·loss~2.28·ckpt@12000·0 NaN·无spike）→ daily-memories/2026-10-29.md；**结论**：loss~2.28, 0NaN, 574K tok/s, ckpt@12000, 无spike. 被#913更新。需要时再读。
 > 📦 §#911（10-29 21:55, S1监控iter13590健康·loss~2.29·ckpt@12000·0 NaN·无spike）→ daily-memories/2026-10-29.md；**结论**：loss~2.29, 0NaN, 559K tok/s, ckpt@12000, 无spike. 被#912更新。需要时再读。
 > 📦 §#910（10-29 21:38, S1监控iter13440健康·loss~2.31·ckpt@12000·0 NaN·spike@13300已恢复）→ daily-memories/2026-10-29.md；**结论**：loss~2.31, 0NaN, 564K tok/s, ckpt@12000, spike@13300恢复. 被#911更新。需要时再读。
