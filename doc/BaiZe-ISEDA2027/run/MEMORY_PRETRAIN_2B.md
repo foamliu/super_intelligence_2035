@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-29 12:55 #885：**S1监控iter9110健康·loss spike@8970已恢复·ckpt@8000**。iter 9110/700k(1.3%): lm loss avg10(9020-9110)≈2.40(稳定). **注意**: iter8970-8990出现loss spike(3.16/3.10/3.10, grad-norm 13.01), 9010恢复至2.57, 9040回到2.41正常区间——典型bad batch, 0 NaN 0 skipped, 训练鲁棒. 0 NaN, 0 skipped, LR=1e-3(WSD stable). 速率~7.2s/step≈580K tok/s(16卡满载, .29 84-100%/.12 96-100% util, ~75GB/卡). grad-norm last5(9070-9110)=0.092~0.138(健康). loss-scale 1.0. mem .29 679G/2TB(33%) swap 5.4G/8G; .12 499G/2TB(25%) swap 0; /nas_train 35T free(84%). ckpt@8000(4ckpt: 2000/4000/6000/8000), next@10000(~890步, ~1.8h). TB6006 OK(.29:6006 LISTEN). 项目目录✅(16脚本+9配置+2docs+README 19.7KB). 6源pre-blend全✅(各16 shards). **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~57天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲, 不打断主线). 📦 体积：TASK=31.3KB / MEMORY=28.9KB（均在限内, 本轮无归档）.
+> 🆕 2026-10-29 13:20 #886：**S1监控iter9290健康·loss稳定~2.375·ckpt@8000**。iter 9290/700k(1.33%): lm loss avg10(9200-9290)≈2.375(稳定, spike@8970已完全恢复). 0 NaN, 0 skipped, LR=1e-3(WSD stable). 速率~7.2s/step≈580K tok/s(16卡满载, .29 100%/.12 100% util, ~75GB/卡). grad-norm last5(9250-9290)=0.087~0.202(健康). loss-scale 1.0. mem .29 686G/2TB(33%) swap 5.4G/8G; .12 496G/2TB(24%) swap 0; /nas_train 35T free(84%). ckpt@8000(4ckpt: 2000/4000/6000/8000), next@10000(~710步, ~1.4h). TB6006 OK(.29:6006 LISTEN, HTTP200). 项目目录✅(16脚本+9配置+2docs+README 19.7KB). 6源pre-blend全✅(各16 shards). **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~57天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲, 不打断主线). 📦 体积：TASK=31.3KB / MEMORY=29.1KB（均在限内, 本轮无归档）.
+> 📦 §#885（10-29 12:55, S1监控iter9110健康·loss spike@8970已恢复·ckpt@8000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.40, 0NaN, 580K tok/s, ckpt@8000, spike@8970已恢复。被#886更新。需要时再读。
 > 📦 §#884（10-29 12:37, S1监控iter8950健康·ckpt@8000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.375, 0NaN, 584K tok/s, ckpt@8000。被#885更新。需要时再读。
 > 📦 §#882（10-29 12:00, S1监控iter8620健康·ckpt@8000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.377, 0NaN, 584K tok/s, ckpt@8000。被#883更新。需要时再读。
 > 📦 §#881（10-29 11:38, S1监控iter8470健康·ckpt@8000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.379, 0NaN, 584K tok/s, ckpt@8000。被#882更新。需要时再读。
@@ -21,7 +22,6 @@ WAITING: 1
 > 📦 §#858~#860（10-29 04:05~04:45, S1监控iter4660~5000健康×3）→ daily-memories/2026-10-29.md；**结论汇总**：loss ~2.53→2.51, 0NaN, 588-591K tok/s, ckpt@4000。被#861更新。需要时再读。
 > 📦 §#851~#857（10-29 01:25~03:47, S1监控iter3330~4503健康×7）→ daily-memories/2026-10-29.md；**结论汇总**：loss 2.64→2.53持续↓, 0NaN, 559-575K tok/s, ckpt@2000→4000, train.sh PASS, README§9✅。被#858更新。需要时再读。
 > 📦 §#850（10-29 01:25, S1监控iter3330+README§9依赖环境+abf_plan.py✅）→ daily-memories/2026-10-29.md；**结论**：loss ~2.636, 0NaN, 559K tok/s, README 19.7KB+abf_plan.py✅。被#851更新。需要时再读。
-> 📦 §#847~#849（10-29 00:20~01:01, S1监控iter2844~3160健康×3）→ daily-memories/2026-10-29.md；**结论汇总**：loss 2.73→2.66持续↓, 0NaN, 561K tok/s. 被#850更新。需要时再读。
 > 📦 §#844~#846（10-28 23:22~10-29 00:01, S1监控iter2350~2680健康×3）→ daily-memories/2026-10-28.md & 2026-10-29.md；**结论**：loss 2.83→2.75持续↓, 0NaN, 567K tok/s. 被#847更新。需要时再读。
 > 📦 §#842（10-28 22:42, ckpt@2000+HF导出+check_rope PASS+LR达峰）→ daily-memories/2026-10-28.md；**结论**：iter2017 loss2.81, ckpt2000→HF→check_rope PASS, export_hf.sh新增。被#843更新。需要时再读。
 > 📦 §#834~#841（10-28 19:1x~22:07, S1监控轮×8）→ daily-memories/2026-10-28.md；**结论汇总**：S1从iter270→2017持续健康, loss 6.12→2.81单调下降, 0 NaN, 585K tok/s, pre-blend+nw=8恢复613K基线。被#842更新。需要时再读。
