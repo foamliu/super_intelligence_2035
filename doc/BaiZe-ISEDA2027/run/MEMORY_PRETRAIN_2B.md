@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-29 11:17 #880：**S1监控iter8288健康·ckpt@8000**。iter 8288/700k(1.184%): lm loss avg15=2.3724(持续微降 vs #879的2.376). 0 NaN, 0 skipped, LR=1e-3(恒定peak, WSD stable). 速率~7.06s/step≈594K tok/s(16卡满载, peak mem ~75GB/卡). grad-norm last5=0.0995~0.1149(健康稳定). loss-scale 1.0. mem .29 650G/2015G(31%) swap 5.4G/8G; /nas_train 35TB free(84%). ckpt@8000(latest, 4ckpt: 2000/4000/6000/8000), next@10000(~1712步, ~3.4h). TB6006 OK(.29:6006 LISTEN). 项目目录✅(16脚本+9配置+2docs+README 19.7KB, git clean). **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~57.7天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲, 不打断主线).
+> 🆕 2026-10-29 11:38 #881：**S1监控iter8470健康·ckpt@8000**。iter 8470/700k(1.21%): lm loss avg15=2.3788(微波动, vs #880的2.3724). 0 NaN, 0 skipped, LR=1e-3(恒定peak, WSD stable). 速率~7.18s/step≈584K tok/s(16卡满载, .12 100%/.29 88-100%, peak mem ~75GB/卡). grad-norm last5=0.101~0.164(健康稳定). loss-scale 1.0. mem .29 654G/2015G(31%) swap 5.4G/8G; /nas_train 35TB free(84%). ckpt@8000(latest, 4ckpt: 2000/4000/6000/8000), next@10000(~1530步, ~3.1h). TB6006 OK(.29:6006 LISTEN). 项目目录✅. **仅剩⑦**零训练PPL/passkey基线(需GPU空闲, 16卡占满~56天). WAITING=1(30min轮询). 未完成指令：有(⑦, 需GPU空闲, 不打断主线).
+> 📦 §#880（10-29 11:17, S1监控iter8288健康·ckpt@8000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.372, 0NaN, 594K tok/s, ckpt@8000。被#881更新。需要时再读。
 > 📦 §#879（10-29 11:00, S1监控iter8103健康·ckpt@8000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.376, 0NaN, 592K tok/s, ckpt@8000。被#880更新。需要时再读。
 > 📦 §#878（10-29 10:33, S1监控iter7920健康·ckpt@6000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.389, 0NaN, 583K tok/s, ckpt@6000。被#879更新。需要时再读。
 > 📦 §#876（10-29 10:00, S1监控iter7589健康·ckpt@6000）→ daily-memories/2026-10-29.md；**结论**：loss ~2.40, 0NaN, 591K tok/s, ckpt@6000。被#877更新。需要时再读。
