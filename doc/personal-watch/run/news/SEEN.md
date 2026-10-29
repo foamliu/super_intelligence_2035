@@ -90,6 +90,7 @@
 | 2026-10-03 | 填充 AI 资金弹药：曝 OpenAI 融资再落袋 200 亿美元，英伟达、软银和亚马逊已出资约 90% | IT之家 | news | https://www.ithome.com/1/009/270.htm |
 | 2026-10-03 | 消息称博通着手筹集 600 亿美元，为 Anthropic 等公司采购芯片提供资金 | IT之家 | news | https://www.ithome.com/1/009/261.htm |
 | 2026-10-03 | 史上最大 IPO 冲刺感恩节前挂牌，消息称 Anthropic 寻求最早 11 月中旬上市 | IT之家 | news | https://www.ithome.com/1/009/237.htm |
+
 | 2026-10-03 | 连败 6 场遭强制执行 寒武纪前高管无端再提天价索赔 谁最受伤？ | 雷峰网 | analysis | https://www.leiphone.com/category/industrynews/kf23Cq1EQJfpwbcX.html |
 | 2026-10-03 | 苹果 homeOS 前瞻：整合 iOS / iPadOS / watchOS 特性，主打 Siri AI 交互 | IT之家 | analysis | https://www.ithome.com/1/009/380.htm |
 | 2026-10-04 | OpenAI safety leader quits, warning AI company's culture is 'broken' | The Guardian | news | https://www.theguardian.com/technology/2026/oct/03/openai-safety-leader-quits-warning-ai-companys-culture-is-broken |
@@ -1463,3 +1464,13 @@
 | 2026-10-29 | 第 172 轮 附录 A49：HN search_by_date query=AI 40 命中（Ars 405 CAPTCHA · Bloomberg 付费墙 · dsrupt 单源） | HN Algolia | 不收（不可达/单源/工具/讨论） | https://hn.algolia.com/api/v1/search_by_date |
 | 2026-10-29 | 第 172 轮 附录 A50：arXiv cat:cs.AI 最新 5 条（2026-10-27T17:57–17:59Z 提交，超 72h） | arXiv API（https 端点） | 不收（超窗） | https://export.arxiv.org/api/query?search_query=cat:cs.AI |
 | 2026-10-29 | 第 172 轮 附录 A51：cn_news(30) 与 IT之家其余（五中全会·涉台·军事·伤亡慰问电等红线项） | 中新网/央视/IT之家 | 不收（非 AI·红线） | https://www.chinanews.com.cn/rss/scroll-news.xml |
+| 2026-10-29 | 2026 年 10 月游戏版号下发：183 款国产游戏、12 款进口网络游戏获批 | IT之家（引国家新闻出版署） | news | https://www.ithome.com/1/019/695.htm |
+| 2026-10-29 | 慧荣 2026Q3 营收 5.6 亿美元，环比增长 24%、同比增长 131% | IT之家 | news | https://www.ithome.com/1/019/571.htm |
+| 2026-10-29 | 《绝地求生》电竞 2027 年启用四阶段赛制，印度成为独立赛区 | IT之家（引 PUBG 官方） | news | https://www.ithome.com/1/019/590.htm |
+| 2026-10-29 | Microsoft just shared Azure’s actual revenue in dollars: $33.2 billion | TechCrunch | news | https://techcrunch.com/2026/10/28/microsoft-just-shared-azures-actual-revenue-in-dollars-33-2-billion/ |
+| 2026-10-29 | Google expands AI Search ads globally as core ad growth slows | TechCrunch | news | https://techcrunch.com/2026/10/28/google-expands-ai-search-ads-globally-as-core-ad-growth-slows/ |
+| 2026-10-29 | Chrome’s AI-powered Autofill can now dig through your Gmail to fill out forms | TechCrunch | news | https://techcrunch.com/2026/10/28/chromes-ai-powered-autofill-can-now-dig-through-your-gmail-to-fill-out-forms/ |
+| 2026-10-29 | AI Article Reviews Dominate Human Peer Reviews at Their Best（工作论文 · 不收） | Harvard (gking) | paper | https://gking.harvard.edu/files/peerless.pdf |
+| 2026-10-29 | Are we human?（Anthropic engineer declares the coding interview dead · 反爬挑战页不可取 · 不收） | The Register | news(不可直取) | https://www.theregister.com/ai-and-ml/2026/10/28/anthropic-engineer_declares_the_coding_interview_dead/ |
+| 2026-10-29 | I Used AI to Fake a Scientific Paper. Here's What Happened（第一人称实验 · 不收） | IEEE Spectrum | feature | https://spectrum.ieee.org/ai-generated-scientific-papers |
+| 2026-10-29 | 空客 2026 年前三季度收入 506 亿欧元、交付 547 架（纯财报 · 不收） | IT之家 | news | https://www.ithome.com/1/019/605.htm |
