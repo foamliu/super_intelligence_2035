@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R846 SWE-bench全量500 predict 5路后台运行中(07:1x令)·健康·5路总1308(+11vsR845)·52.3%.
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·三路7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改(QA 5问✅)✅·R584 补令-R580顶层结果JSON补齐untrack+gitignore加固✅·R782-R845巡检✅
-当前动作:     R846:巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·权威_count_pred.py分类总1308(+11vsR845:cline+3·codex+3·opencode+3·pi+2·claude-code+0):cline320(289patch/31np,9.7%)·opencode316(309patch/7np,2.2%)·pi276(254patch/22np,8.0%)·claude-code233(188patch/45np,19.3%)·codex163(122patch/41np,25.2%). 5路总1308/2500(52.3%)(patch1162,np146). 5父predict ALIVE(ppid=1,etimes~135390-135510s≈37.6h)+5孙run_single ALIVE(claude-code591s·pi222s·codex54s·opencode45s·cline23s,均<1800s✅). 当前实例:cline→pydata__xarray-6992·codex→matplotlib-14623·claude-code→sympy-13091·pi→django-14787·opencode→django-13449. 硬约束:predictions tracked=0✅(check-ignore验证.gitignore:3覆盖predictions/)·instances(inputs)tracked=500(合规·非结果JSON);补令③生效. ETA:cline/opencode~Oct31·pi~Oct31·claude-code~Nov1·codex~Nov3. no_patch率:opencode2.2%✅·pi8.0%✅·cline9.7%✅·claude-code19.3%🟠·codex25.2%🟠. 闸门未过(报告将如实列):hermes no_patch=3>2❌·deepseek patch=0适配器未修复❌. /data6.0T(15%)·load31.22·mem968G avail.
-下一步:       ①继续监控full_predict→②五路predict全完(ETA:cline/opencode~Oct31·pi~Oct31·claude-code~Nov1·codex~Nov3)→全量eval(docker workers8-12)→③交付report_harness_swebench_verified_full500_zh.html. ④永久硬约束:禁止commit评测结果JSON(补令③). ⑤报告如实列hermes/deepseek未参与(闸门no-patch>2). [R846巡检·predict 52.3%]
+PHASE:        R847 SWE-bench全量500 predict 5路后台运行中(07:1x令)·健康·5路总1313(+5vsR846)·52.5%.
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·三路7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改(QA 5问✅)✅·R584 补令-R580顶层结果JSON补齐untrack+gitignore加固✅·R782-R846巡检✅
+当前动作:     R847:巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·分类总1313(+5vsR846:cline+2·opencode+2·pi+1·codex+0·claude-code+0):cline322(291patch/31np,9.6%)·opencode318(311patch/7np,2.2%)·pi277(255patch/22np,7.9%)·claude-code233(188patch/45np,19.3%)·codex163(122patch/41np,25.2%). 5路总1313/2500(52.5%)(patch1167,np146). 5父predict ALIVE(ppid=1,etimes~136000s≈37.8h)+5孙run_single ALIVE(claude-code1188s·codex651s·opencode96s·cline55s·pi23s,均<1800s✅). 当前实例:cline→pydata__xarray-7233·codex→matplotlib-14623·claude-code→sympy-13091·pi→django-14855·opencode→django-13513. 硬约束:predictions tracked=0✅(check-ignore验证.gitignore:3覆盖predictions/);补令③生效. ETA:cline/opencode~Oct31·pi~Oct31·claude-code~Nov1·codex~Nov3. no_patch率:opencode2.2%✅·pi7.9%✅·cline9.6%✅·claude-code19.3%🟠·codex25.2%🟠. 闸门未过(报告将如实列):hermes no_patch=3>2❌·deepseek patch=0适配器未修复❌. /data6.0T(15%)·load33.13·mem963G avail.
+下一步:       ①继续监控full_predict→②五路predict全完(ETA:cline/opencode~Oct31·pi~Oct31·claude-code~Nov1·codex~Nov3)→全量eval(docker workers8-12)→③交付report_harness_swebench_verified_full500_zh.html. ④永久硬约束:禁止commit评测结果JSON(补令③). ⑤报告如实列hermes/deepseek未参与(闸门no-patch>2). [R847巡检·predict 52.5%]
 阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=33364B(32.6KB,略超32KB软标·<40KB红线·无已闭合运维块可归档) / MEMORY=26028B+R846≈26.6KB✅(归档R835-R840→2026-10-30.md)
+📦 体积：TASK=33364B(32.6KB,略超32KB软标·<40KB红线·无已闭合运维块可归档) / MEMORY=27002B+R847≈26.4KB✅(归档R835-R840→2026-10-30.md)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,10 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[03:08] R847 巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·分类总1313(+5vsR846:cline+2·opencode+2·pi+1·codex+0·claude-code+0):cline322(291patch/31np,9.6%)·opencode318(311patch/7np,2.2%)·pi277(255patch/22np,7.9%)·claude-code233(188patch/45np,19.3%)·codex163(122patch/41np,25.2%). 5路总1313/2500(52.5%)(patch1167,np146). 5父predict ALIVE(ppid=1,etimes~136000s≈37.8h)+5孙run_single ALIVE(claude-code1188s·codex651s·opencode96s·cline55s·pi23s,均<1800s✅). 当前实例:cline→pydata__xarray-7233·codex→matplotlib-14623·claude-code→sympy-13091·pi→django-14855·opencode→django-13513. 硬约束:predictions tracked=0✅(check-ignore验证.gitignore:3覆盖predictions/). gw_proxy=400(reachable). docker=0(eval未开始). /data6.0T(15%)·load33.13·mem963G avail. 体积:TASK=33364B(32.6KB)·MEMORY=27002B(26.4KB)✅. 判据自检:predict运行中未交付→WAITING=0.
+
+
+
 [02:59] R846 巡检SWE-bench全量500 predict(运维令10-28 07:1x)·5路健康·权威_count_pred.py分类总1308(+11vsR845:cline+3·codex+3·opencode+3·pi+2·claude-code+0):cline320(289patch/31np,9.7%)·opencode316(309patch/7np,2.2%)·pi276(254patch/22np,8.0%)·claude-code233(188patch/45np,19.3%)·codex163(122patch/41np,25.2%). 5路总1308/2500(52.3%)(patch1162,np146). 5父predict ALIVE(ppid=1,etimes~135390-135510s≈37.6h)+5孙run_single ALIVE(claude-code591s·pi222s·codex54s·opencode45s·cline23s,均<1800s✅). 当前实例:cline→pydata__xarray-6992·codex→matplotlib-14623·claude-code→sympy-13091·pi→django-14787·opencode→django-13449. 硬约束:predictions tracked=0✅(check-ignore验证.gitignore:3覆盖predictions/). /data6.0T(15%)·load31.22·mem968G avail. 体积:TASK=33364B(32.6KB)·MEMORY归档R835-R840后=26028B(25.4KB)✅. 判据自检:predict运行中未交付→WAITING=0.
 
 
