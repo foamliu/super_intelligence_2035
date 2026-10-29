@@ -1451,3 +1451,15 @@
 | 2026-10-29 | 第 171 轮 附录 A41：HN search_by_date 50 命中（arXiv Trinity / Bernstein / Alphabet 营收 Bloomberg 付费墙） | HN Algolia | 不收（论文/工具/付费墙） | https://hn.algolia.com/api/v1/search_by_date |
 | 2026-10-29 | 第 171 轮 附录 A42：arXiv cat:cs.AI 最新 15 条（2026-10-27 提交，超 72h） | arXiv API | 不收（超窗） | https://export.arxiv.org/api/query?search_query=cat:cs.AI |
 | 2026-10-29 | 第 171 轮 附录 A43：cn_news(30) 与 IT之家其余（含伊朗击落无人机·司法个案等红线项） | 中新网/央视/IT之家 | 不收（非 AI·红线） | https://www.chinanews.com.cn/rss/scroll-news.xml |
+| 2026-10-29 | 第 172 轮 §1：英伟达开源 Nemotron 3.5 Transcribe（MoE 340 亿/激活 43 亿 · 40 语言 · Granary v2 463,062 小时） | IT之家 `1/019/545` | news | https://www.ithome.com/1/019/545.htm |
+| 2026-10-29 | 第 172 轮 §1：新芯航途 X7 Ultra（700 TOPS · Armv9 车规 CPU）与 X9 预告（3000 TOPS · 700GB/s · 2027） | IT之家 `1/019/603` / `1/019/609` | news | https://www.ithome.com/1/019/609.htm |
+| 2026-10-29 | 第 172 轮 §2：Anthropic 推出 Claude 智能报告（员工 AI 使用/产出/花销 · 每月免费 10 份 · 最长 28 天） | IT之家 `1/019/568` | news | https://www.ithome.com/1/019/568.htm |
+| 2026-10-29 | 第 172 轮 §3：欧盟《官方公报》公布首个 AI 法案协调标准 EN 18286:2026（QMS · 符合推定 · 决定 (EU) 2026/2274 · 页面日期 10-19 窗口外补录） | 欧盟委员会 digital-strategy 官网 | news | https://digital-strategy.ec.europa.eu/en/library/first-harmonised-standard-supporting-ai-act-published-official-journal |
+| 2026-10-29 | 第 172 轮 §4：纽约州签署法令禁止向未成年人提供不安全 AI 聊天机器人（每项违规最高 2.5 万美元 · 年龄验证 + 用后删除） | IT之家 `1/019/627` | news | https://www.ithome.com/1/019/627.htm |
+| 2026-10-29 | 第 172 轮 §4：韩国用 AI 智能眼镜高考作弊拟追刑责、禁考 3 年（现 1 年）· 每考点 1 名专职甄别员 | IT之家 `1/019/586` | news | https://www.ithome.com/1/019/586.htm |
+| 2026-10-29 | 第 172 轮 §4：《影之刃零》首发 Steam 峰值 431,541 在线 · 登顶全球热销 · 分析师估含 WeGame 超 100 万份 | IT之家 `1/019/624` | news | https://www.ithome.com/1/019/624.htm |
+| 2026-10-29 | 第 172 轮 §5：微软 2027 财年 Q1 从 OpenAI 合作获 100 亿美元（占总营收 923 亿近 11% · 应收 72 亿） | IT之家 `1/019/583` | news | https://www.ithome.com/1/019/583.htm |
+| 2026-10-29 | 第 172 轮 附录 A44–A48：IT之家财报 12 条 + 产品稿 19 条 + 微软拉曼纳/稚晖君观点 + 同事件稿/英伟达 Vera Rubin 回应 + 传闻题外 | IT之家 RSS | 不收（财报·厂商稿·观点） | https://www.ithome.com/rss/ |
+| 2026-10-29 | 第 172 轮 附录 A49：HN search_by_date query=AI 40 命中（Ars 405 CAPTCHA · Bloomberg 付费墙 · dsrupt 单源） | HN Algolia | 不收（不可达/单源/工具/讨论） | https://hn.algolia.com/api/v1/search_by_date |
+| 2026-10-29 | 第 172 轮 附录 A50：arXiv cat:cs.AI 最新 5 条（2026-10-27T17:57–17:59Z 提交，超 72h） | arXiv API（https 端点） | 不收（超窗） | https://export.arxiv.org/api/query?search_query=cat:cs.AI |
+| 2026-10-29 | 第 172 轮 附录 A51：cn_news(30) 与 IT之家其余（五中全会·涉台·军事·伤亡慰问电等红线项） | 中新网/央视/IT之家 | 不收（非 AI·红线） | https://www.chinanews.com.cn/rss/scroll-news.xml |
