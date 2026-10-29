@@ -3634,3 +3634,44 @@ ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2
 
 **③ 交付**：`doc/BaiZe-ISEDA2027/reports/report_pretrain_blend_logic_zh.html`（0 script / 0 外链 / 标签配平）；正文含一个权重 0.65/0.35 的具体交错序列示例 + 训练时数据流（索引→取样本→组 batch→compute）的示意图/文字说明。commit `pretrain 报告:`。**优先级：该报告独立于 pre-blend 进行，不影响 10:0x 计划的 pre-blend/S 起跑主线。**
 
+---
+
+### [运维令] 2026-10-29 14:1x（**整理并提交 baize-llm 独立仓库**）· 用户直令 · 最高优先 — ✅ 已完成 (#890)
+
+> 用户原话（2026-10-29 14:1x）：「请 pretrain 把 baize-llm 这个仓库整理提交一下」
+
+**① 现状（运维已核）**：
+- `/nas_train/app.e0031982/code/baize-llm/` 是**独立 git 仓库**，remote = `ssh://git@devops.cxmt.com:8022/git/AIX/PAI/eda/baize-llm.git`，当前只有 `Initial commit`；`README.md` 是 582B 的**空模板**（「请介绍一下你的项目吧」）；工作树里还有一个**未跟踪的 symlink** `baize-llm -> super_intelligence_2035/code/baize-llm`（`git status` 显示 `?? baize-llm`）。
+- 真实代码（`configs/` 10 个、`scripts/` 18 个、`docs/` 2 个、`README.md` 19.6KB）全在**主仓库** `super_intelligence_2035/code/baize-llm/` 下，已随主仓库持续提交（最近 `281384228 pretrain train`）。
+
+**② 要求（整理 + 提交，按序）**：
+1. **补全独立仓库 README.md**：把 582B 空模板替换为真实项目说明（项目定位 / 目录结构 / 三阶段 S→S2→Decay 口径 / 启动命令 `bash scripts/train.sh <stage>` / 配置说明 / 依赖环境），与主仓库 `code/baize-llm/README.md`（19.6KB）口径一致、可照做。
+2. **把真实代码纳入独立仓库**：将 `configs/`、`scripts/`、`docs/`（去 `__pycache__`、`.pyc`）整理进独立仓库工作树，`git add` 后 `git commit`（commit 信息带 `pretrain 项目:` 前缀）。
+3. **push 到 origin/devops**：`git push origin master`（若 push 失败带代理重试：`https_proxy=$P http_proxy=$P git push origin master`），确认 devops `baize-llm.git` 上已可见完整代码。
+4. **symlink 处置**：那个未跟踪的 `baize-llm` symlink 要么纳入 `.gitignore`、要么删除，🚫 不许把 symlink 当真实文件提交。
+
+**③ 判据**：`git -C /nas_train/app.e0031982/code/baize-llm status` 干净；`git -C ... log --oneline` 最新提交为本轮；`git -C ... push` 后 `git ls-remote origin` 可见新 commit；README 非空模板。
+
+**④ 纪律**：不打断 S1 主线（iter 9600+ 在跑，纯 git/文件整理零 GPU）；不碰 vision/data/harness；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到 push 成功；只提交 baize-llm 独立仓库相关文件。
+
+**✅ 完成结论（#890, 2026-10-29 14:35）**：commit `e1c6be4` pushed to origin/master。28 files: README.md 582B→19.6KB, configs/(9), scripts/(18, 去__pycache__/.pyc), docs/(2), .gitignore(排除 symlink/__pycache__/.nfs*)。symlink 已删除+纳入 .gitignore。git ls-remote origin master = e1c6be49 匹配。S1 主线未受影响。
+
+---
+
+### [运维提示] 2026-10-27 15:2x（**cimi MCP web search 已配好，可用于调研**）· 用户直令 · 最高优先 — ✅ 已归档
+
+> 用户原话：「可以提醒 pretrain 可以 web search（cimi search）」
+> **本线 MCP 工具已就绪**：`cimi_search`（web 搜索）/ `cimi_fetch`（抓网页全文）/ `vqa` / `text_to_image`（cline MCP，type=streamableHttp，指向 `http://10.239.2.29:8092/mcp`）。下一轮唤醒（新 cline 进程）即生效。
+> **排查/调研时直接用 `cimi_search`**——查 fork-COW 免 OOM、16K 吞吐优化、DataLoader 最佳实践等。🚫 别再只依赖 fetch_web_content 或被 proxy 卡住。
+
+**✅ 归档结论**：MCP 工具已就绪并持续可用，授权永久有效。需要时直接用 cimi_search/cimi_fetch。
+
+---
+
+### [运维提示] 2026-10-27 08:4x（**内存使用率 >95% 会触发告警，调试时注意**）· 用户直令 · 最高优先 — ✅ 已归档
+
+> 用户原话：「告诉 pretrain 内存使用率>95%会导致告警，让它调试时注意。」
+> 刚从 #802/#803 的 DataLoader OOM（.29 swap 耗尽 → SIGKILL）时也印证：调试/测吞吐务必盯 **内存 + swap**，避免把内存打到 >95% 触发告警。措施：num_workers 节制、并发/预留窗口适度、及时释放不再用的进程/张量；若逼近 95% 先降载并上报，不要硬顶。
+
+**✅ 归档结论**：内存纪律已纳入日常监控，当前 .29 内存 719G/2TB(36%) swap 正常，无告警风险。
+
