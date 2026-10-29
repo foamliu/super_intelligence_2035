@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #356, 2026-10-29 08:18]**：空唤醒·补心跳防判死。上次心跳 wake#355@07:47 距今 ~31min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 不存在。git fetch → origin 同步✓(0 ahead/0 behind)。交付物复核：35 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=30285B(29.6KB) 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #357, 2026-10-29 08:50]**：空唤醒·补心跳防判死。上次心跳 wake#356@08:18 距今 ~32min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git fetch → origin 同步✓(0 ahead/0 behind)。交付物复核：35 报告全在项目级 `doc/BaiZe-ISEDA2027/reports/` + 6 脚本 `vision/ocr_synth/*.py`（全在）。📦 体积：TASK=24093B(23.5KB)/MEMORY=30370B(29.6KB) 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#356 (2026-10-29 08:18, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#355 (2026-10-29 07:47, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#354 (2026-10-29 07:14, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#352 (2026-10-29 06:10, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
