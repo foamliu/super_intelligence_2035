@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-30 02:35 #925：**S1监控iter15852健康·loss~2.25稳态·0 NaN·grad-norm极稳无spike·ckpt@14000(即将@16000)**。iter 15852/700k(2.26%): lm loss last20(15833-15852) avg≈2.247, range[2.06~2.41]. 0 NaN(17697 points total), 0 skip. LR=1e-3恒定, GBS=256. grad-norm last20 avg≈0.096, range[0.085~0.123], 极稳无spike. 16卡.12+.29全97-100%util ~75GB/卡. step~7.23s→~580K tok/s. mem .29 938G/2TB(46%) swap 5G. /nas_train 35T free(84%). ckpt@14000(7ckpt:2k~14k), next@16000(距当前148步~18min). TB6006 OK(LISTEN 0.0.0.0:6006). 未完成指令：有(⑦零训练PPL/passkey基线, 需GPU空闲, 16卡满载训练无法执行). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~31.7KB.
+> 🆕 2026-10-30 02:57 #926：**S1监控iter16028健康·loss~2.27稳态·0 NaN·grad-norm极稳无spike·ckpt@16000(新)**。iter 16028/700k(2.29%): lm loss last20(16009-16028) avg=2.275, range[2.157~2.425]. 0 NaN(17877 points total), 0 skip. LR=1e-3恒定, GBS=256. grad-norm last20 avg≈0.075, range[0.069~0.081], 极稳无spike. 16卡.12+.29全92-100%util ~75GB/卡. step~7.3s→~574K tok/s. mem .29 943G/2TB(47%) swap 5G. /nas_train 35T free(84%). ckpt@16000(8ckpt:2k~16k, 新增16k), next@18000(距当前972步~2h). TB6006 OK(LISTEN 0.0.0.0:6006). 未完成指令：有(⑦零训练PPL/passkey基线, 需GPU空闲, 16卡满载训练无法执行). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~30.5KB.
+> 📦 §#925（10-30 02:35, S1监控iter15852健康·loss~2.25稳态·0 NaN·grad-norm极稳无spike·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.247, 0NaN(17697pts), ~580K tok/s, ckpt@14000, 极稳无spike. 被#926更新。需要时再读。
 > 📦 §#924（10-30 02:15, S1监控iter15670健康·loss~2.26稳态·0 NaN·grad-norm spike@15590恢复·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.264, 0NaN, ~585K tok/s, ckpt@14000, spike@15590恢复. 被#925更新。需要时再读。
 > 📦 §#923（10-30 01:51, S1监控iter15500健康·loss~2.26稳态·0 NaN·grad-norm极稳无spike·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.259, 0NaN, ~580K tok/s, ckpt@14000, 极稳无spike. 被#924更新。需要时再读。
 > 📦 §#922（10-30 01:32, S1监控iter15330健康·loss~2.25微降·0 NaN·grad-norm极稳无spike·ckpt@14000）→ daily-memories/2026-10-30.md；**结论**：loss~2.257, 0NaN, ~560K tok/s, ckpt@14000, 极稳无spike. 被#923更新。需要时再读。
@@ -18,11 +19,6 @@ WAITING: 1
 > 📦 §#910（10-29 21:38, S1监控iter13440健康·loss~2.31·ckpt@12000·0 NaN·spike@13300已恢复）→ daily-memories/2026-10-29.md；**结论**：loss~2.31, 0NaN, 564K tok/s, ckpt@12000, spike@13300恢复. 被#911更新。需要时再读。
 > 📦 §#909（10-29 21:15, S1监控iter13270健康·loss~2.29·ckpt@12000·0 NaN）→ daily-memories/2026-10-29.md；**结论**：loss~2.29, 0NaN, 574K tok/s, ckpt@12000. 被#910更新。需要时再读。
 > 📦 §#908（10-29 20:53, S1监控iter13090健康·baize-llm README路径修正commit b67bf0c）→ daily-memories/2026-10-29.md；**结论**：loss~2.31, 0NaN, 570K tok/s, ckpt@12000, b67bf0c pushed, 17:0x②实质完成。被#909更新。需要时再读。
-> 📦 §#907（10-29 20:33, S1监控iter12910健康·check_rope复验PASS·ufw_zh pre-blend判定不必要）→ daily-memories/2026-10-29.md；**结论**：loss~2.31, 0NaN, 582K tok/s, ckpt@12000, check_rope PASS, ufw_zh无需pre-blend。被#908更新。需要时再读。
-> 📦 §#905（10-29 19:52, S1监控iter12580健康·loss~2.31·ckpt@12000·spike@12570恢复中）→ daily-memories/2026-10-29.md；**结论**：loss last5~2.31, 0NaN, 586K tok/s, ckpt@12000, spike@12570恢复中。被#906更新。需要时再读。
-> 📦 §#904（10-29 19:32, S1监控iter12420健康·loss稳态~2.31·ckpt@12000·grad-norm spike@12390已恢复）→ daily-memories/2026-10-29.md；**结论**：loss last5~2.31, 0NaN, 589K tok/s, ckpt@12000, spike@12390已恢复。被#905更新。需要时再读。
-> 📦 §#903（10-29 19:12, S1监控iter12250健康·loss稳态~2.33·ckpt@12000·loss spike@12150已恢复）→ daily-memories/2026-10-29.md；**结论**：loss last5~2.33, 0NaN, 582K tok/s, ckpt@12000, spike@12150已恢复。被#904更新。需要时再读。
-> 📦 §#902（10-29 18:55, S1监控iter12070健康·loss稳态~2.32·ckpt@12000·grad-norm spike@12050恢复）→ daily-memories/2026-10-29.md；**结论**：loss last5~2.32, 0NaN, 584K tok/s, ckpt@12000, spike@12050已恢复。被#903更新。需要时再读。
 > 📦 §#901（10-29 18:30, S1监控iter11900健康·loss spike@11730已完全恢复·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss last5~2.35, 0NaN, 582K tok/s, ckpt@10000, spike@11730完全恢复。被#902更新。需要时再读。
 > 📦 §#900（10-29 18:12, S1监控iter11750健康·loss spike@11730-11740恢复中·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss spike@11730(grad-norm=4.019→loss=4.18)已恢复, 0NaN, 590K tok/s, ckpt@10000。被#901更新。需要时再读。
 > 📦 §#899（10-29 17:50, S1监控iter11569健康·loss~2.37·grad-norm spike@11568已恢复·ckpt@10000）→ daily-memories/2026-10-29.md；**结论**：loss~2.37, 0NaN, 620K tok/s, ckpt@10000, spike@11568已恢复。被#900更新。需要时再读。
