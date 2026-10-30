@@ -15717,3 +15717,72 @@ echo "=== DONE 132 ==="
   trace_source_keys=['host', 'match_count', 'real_task_summary', 'session_file', 'session_msgs', 'user']
 === DONE 132 ===
 ```
+
+---
+
+## RUN_ID 133 · 2026-10-30 20:59:14 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 133 | regen report (user column) | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$WS" || exit 0
+echo "[1] generator check"
+grep -n "def trace_user" doc/ZhuLong_DAC2027/benchmark/designflow/gen_daily_report.py | cut -c1-100
+echo "[2] regen"
+python3 doc/ZhuLong_DAC2027/benchmark/designflow/gen_daily_report.py
+R=doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html
+ls -l "$R" | cut -c1-120
+echo "[3] verify user column"
+python3 - "$R" <<'PY'
+import sys,re
+h=open(sys.argv[1],encoding='utf-8').read()
+print("  th=", " | ".join(re.sub('<[^>]+>','',x) for x in re.findall(r'<th>(.*?)</th>',h)))
+rows=re.findall(r'<tr><td>(EDA-[^<]*)</td><td>([^<]*)</td>',h)
+print("  rows=%d"%len(rows))
+for t,u in rows: print("   %-44s user=%s"%(t[:44],u))
+PY
+echo "[4] prompts that still demand desensitization"
+python3 - <<'PY'
+import json
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+key="\u8131\u654f"
+for line in open(p,encoding='utf-8'):
+    if not line.strip(): continue
+    r=json.loads(line)
+    pr=r.get("prompt") or r.get("task") or ""
+    if isinstance(pr,str) and key in pr:
+        print("  %s"%(r.get("task_id") or r.get("id")))
+PY
+echo "=== DONE 133 ==="
+```
+
+**输出**
+```
+=== RUN_ID 133 | regen report (user column) | 2026-10-30 20:59:14 | host=hfeg0tedaap02 ===
+[1] generator check
+99:def trace_user(c):
+[2] regen
+wrote /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html (11 cases, 11 proper, 0 legacy)
+-rw-r----- 1 app.e0031982 app.adm 16918 Oct 30  2026 doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html
+[3] verify user column
+  th= task_id | 用户 | trace 来源 | 解决的问题 | 任务说明(prompt) | 交付件要求 | test 思路 | test 语言 | pi 结果
+  rows=11
+   EDA-Eval-DesignFlow-Analog-001               user=haoyut
+   EDA-Eval-DesignFlow-Backannot-001            user=haoyut
+   EDA-Eval-DesignFlow-Characterization-001     user=vincelu
+   EDA-Eval-DesignFlow-Digital-010              user=t0002948
+   EDA-Eval-DesignFlow-Digital-021              user=klhu
+   EDA-Eval-DesignFlow-Digital-022              user=t0002948
+   EDA-Eval-DesignFlow-Digital-023              user=t0002948
+   EDA-Eval-DesignFlow-LayoutAether-001         user=yan1zh
+   EDA-Eval-DesignFlow-LayoutVirtuoso-001       user=e0014566
+   EDA-Eval-DesignFlow-PDKQA-001                user=xinqiaoz
+   EDA-Eval-DesignFlow-Verification-001         user=e0031668
+[4] prompts that still demand desensitization
+  EDA-Eval-DesignFlow-PDKQA-001
+  EDA-Eval-DesignFlow-Backannot-001
+  EDA-Eval-DesignFlow-Analog-001
+=== DONE 133 ===
+```
