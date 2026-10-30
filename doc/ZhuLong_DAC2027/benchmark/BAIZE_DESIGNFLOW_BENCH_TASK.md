@@ -20,7 +20,7 @@
 
 **三、gen_daily_report.py 路径已改**
 - 日报脚本现在用 `EDA_FLOW_BENCH_ROOT` 环境变量或硬编码 `/nasdata/app.e0031982/code/EDA-Flow-Bench` 找用例和 reports 目录。
-- 跑法不变：`cd <benchmark>/designflow && python3 gen_daily_report.py`，产物落到 `EDA-Flow-Bench/docs/reports/report_MM_DD.html`（用例仓库，提交时走 master）。
+- 跑法不变：`cd <benchmark>/designflow && python3 gen_daily_report.py`，产物落到 `super_intelligence_2035/doc/ZhuLong_DAC2027/reports/report_benchmark_MM_DD.html`（workspace 仓库，提交时走 main）。
 
 **四、旧 workspace 不删（作备份）**
 - `EDA-Flow-Bench/agent_workspace/` 保留，但**你不再往那写**。新写入只去 `benchmark/`。
@@ -210,7 +210,7 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
 
 ### 🆕 2026-10-29 运维增补 III：三条新任务（评测用例落盘 / pi 被测调试 / 每日中文 HTML 日报）· 最高优先
 
-> **运维令**：「1. 评测用例保存到 `benchmarks/EDA-Eval-DesignFlow/`，可新建 jsonl，每次睡去前提交。2. 用本机已装的 `pi` agent 作被测，调试新建的评测用例——把 `eda_fastmcp_flow` 这个 MCP 端口给 pi 配上，让它在 EDA 环境中探索和调试。3. 每天下午 4 点生成中文 HTML 日报，存 `docs/reports/`，文件名 `report_MM_DD.html`。」
+> **运维令**：「1. 评测用例保存到 `benchmarks/EDA-Eval-DesignFlow/`，可新建 jsonl，每次睡去前提交。2. 用本机已装的 `pi` agent 作被测，调试新建的评测用例——把 `eda_fastmcp_flow` 这个 MCP 端口给 pi 配上，让它在 EDA 环境中探索和调试。3. 每天下午 4 点生成中文 HTML 日报，存 `doc/ZhuLong_DAC2027/reports/`，文件名 `report_benchmark_MM_DD.html`。」
 
 #### 已就绪环境（运维 2026-10-29 实测确认，直接用）
 
@@ -267,9 +267,9 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
 
 **任务 3：每天下午 4 点生成中文 HTML 日报**
 - 路径：`/nasdata/app.e0031982/code/EDA-Flow-Bench/docs/reports/`（**不存在则 `mkdir -p` 创建**）
-- 文件名：`report_<MM>_<DD>.html`（如 `report_10_29.html`，月份/日补零两位）
+- 文件名：`report_benchmark_<MM>_<DD>.html`（如 `report_benchmark_10_29.html`，月份/日补零两位）
 - 内容（中文）：当日新增用例数 + 累计用例数 + 用例分类分布 + pi 调试结果（PASS/FAIL/draft 统计）+ 三口径数字（698机/2850用户/24085命中）+ 当日流水摘要 + 阻塞/下一步
-- 触发：每天 **16:00**（本机时间）。loop 自适应睡眠唤醒时检查"当前时间 ≥ 16:00 且今天还没生成 report_MM_DD.html"→ 生成；或用 `at`/cron（若可用）。优先用 loop 内判断，不依赖 cron。
+- 触发：每天 **16:00**（本机时间）。loop 自适应睡眠唤醒时检查"当前时间 ≥ 16:00 且今天还没生成 report_benchmark_MM_DD.html"→ 生成；或用 `at`/cron（若可用）。优先用 loop 内判断，不依赖 cron。
 - 生成后按收尾铁律 `git add -- docs/reports/` 提交推送。
 - HTML 要纯静态（CSS 内联，不引外链），可在浏览器直接打开。
 

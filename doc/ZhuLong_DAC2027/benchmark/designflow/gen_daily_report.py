@@ -31,6 +31,7 @@ TRACE_SRC = {
     "EDA-Eval-DesignFlow-Verification-001": "ukkn7/8adf72139dee @ hfeg0plg91 (ERC_AI_CHECK pipeline 子section 过滤 + virtuoso→aether flow 改写)",
     "EDA-Eval-DesignFlow-Characterization-001": "9knot/vincelu @ hfeg0plg49 (SiliconSmart drgqx 5 库表征 .tcl/.inst 多类 error 修复)",
     "EDA-Eval-DesignFlow-PDKQA-001": "x4b0p/xinqiaoz @ hfeg0pkn004 (PDK QA DRC 框架 Windows→Linux 迁移, Calibre VCO aok/aoi autoswitch bug 假 MGC_HOME 绕过)",
+    "EDA-Eval-DesignFlow-Backannot-001": "82ybr/haoyut @ hfeg0plg49 (PrimeTime read_parasitics 寄生反标失败诊断·DRAM STA signoff, 跨 EDA 厂家 hierarchy 策略差异 StarRC merge vs Cadence SI)",
 }
 
 
@@ -257,7 +258,7 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 </div></body></html>"""
 
     os.makedirs(REPORT_DIR, exist_ok=True)
-    out = os.path.join(REPORT_DIR, f"report_{mmdd}.html")
+    out = os.path.join(REPORT_DIR, f"report_benchmark_{mmdd}.html")
     with open(out, "w") as f:
         f.write(doc)
     print("wrote", out, f"({len(cases)} cases, {proper_n} proper, {legacy_n} legacy)")
