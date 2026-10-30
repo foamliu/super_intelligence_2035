@@ -15666,3 +15666,54 @@ echo "=== DONE 131 ==="
   x4b0p_pdkqa_drc_calibre_vco.md               names=7
 === DONE 131 ===
 ```
+
+---
+
+## RUN_ID 132 · 2026-10-30 20:33:38 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 132 | read-only: desensitize wording context | $(date '+%F %T') | host=$(hostname) ==="
+BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench
+J=$BENCH/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+if [ -f "$J" ]; then
+  python3 - "$J" <<'PY'
+import json,sys,re
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p,encoding='utf-8') if l.strip()]
+key="\u8131\u654f"
+for r in rows:
+    def walk(o,path=""):
+        if isinstance(o,dict):
+            for k,v in o.items(): walk(v,path+"/"+str(k))
+        elif isinstance(o,list):
+            for i,v in enumerate(o): walk(v,path+"[%d]"%i)
+        elif isinstance(o,str) and key in o:
+            for m in re.finditer(key,o):
+                s=max(0,m.start()-45); e=min(len(o),m.end()+45)
+                print("  %s %s :: ...%s..." % (str(r.get("id"))[:40], path, o[s:e].replace("\n"," ")))
+    walk(r)
+print("  --- keys containing user ---")
+seen=set()
+for r in rows:
+    for k in (r.get("metadata") or {}).get("trace_source",{}).keys(): seen.add(k)
+print("  trace_source_keys=%s"%sorted(seen))
+PY
+else
+  echo "  jsonl missing"
+fi
+echo "=== DONE 132 ==="
+```
+
+**输出**
+```
+=== RUN_ID 132 | read-only: desensitize wording context | 2026-10-30 20:33:38 | host=hfeg0tedaap02 ===
+  None /prompt :: ...（test 只读 zip 内文件内容判分，不实跑 Calibre）； - 真实用户名/路径脱敏（附件已脱敏，交付件里不要出现真实用户名）。 - 交付件打包成 outputs/submi...
+  None /prompt :: ...只读 zip 内文件内容判分，不实跑 Calibre）； - 真实用户名/路径脱敏（附件已脱敏，交付件里不要出现真实用户名）。 - 交付件打包成 outputs/submit.zip，...
+  None /prompt :: ...022.12-SP5，DRAMTOP STA signoff）。  附件是该任务的真实数据脱敏合成件： - parasitics_command.log：PrimeTime read_...
+  None /prompt :: ...vs Cadence SI 网表保留完整层级）导致的，哪些需真正修复）。  附件是真实数据脱敏合成件： - dram_fragment.v：DRAM 结构化 Verilog 网表片段（...
+  --- keys containing user ---
+  trace_source_keys=['host', 'match_count', 'real_task_summary', 'session_file', 'session_msgs', 'user']
+=== DONE 132 ===
+```
