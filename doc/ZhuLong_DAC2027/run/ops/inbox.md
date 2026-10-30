@@ -1,4 +1,35 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 140 -->
+## RUN_ID 140 - bootstrap trace ledger from existing 11 cases + verify dedup exclusion
+
+```bash
+set -u
+echo "=== RUN_ID 140 | bootstrap trace ledger | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+DF=$WS/doc/ZhuLong_DAC2027/benchmark
+J=/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+
+cd "$WS" || exit 0
+git pull --rebase --autostash origin main 2>&1 | tail -2
+
+echo "[1] files"
+ls -l "$DF/designflow/trace_ledger.py" 2>/dev/null | cut -c1-100
+ls -l "$J" | cut -c1-100
+
+echo "[2] seed from jsonl (one-off)"
+python3 "$DF/designflow/trace_ledger.py" seed --jsonl "$J"
+
+echo "[3] stats"
+python3 "$DF/designflow/trace_ledger.py" stats
+
+echo "[4] next: exclusion list must contain the seeded sessions"
+python3 "$DF/designflow/trace_ledger.py" next --n 3 | head -2 | cut -c1-200
+
+echo "[5] ledger"
+wc -l < "$DF/designflow/trace_ledger.tsv"
+cut -f1,2,3,6,7 "$DF/designflow/trace_ledger.tsv" | head -12
+echo "=== DONE 140 ==="
+```
 <!-- RUN_ID: 139 -->
 ## RUN_ID 139 - read-only: inspect local scan.tsv (candidate source for trace ledger) + MCP reachability
 
