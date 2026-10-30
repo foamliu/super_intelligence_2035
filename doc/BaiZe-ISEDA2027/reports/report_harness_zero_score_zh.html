@@ -28,7 +28,7 @@ pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; 
 <body>
 <h1>SWE-bench Verified · 恒0分 Harness 调试报告</h1>
 <p><small>运维直令 2026-10-30 22:2x: 「SWE-bench Verified 是否有几个 harness 分数始终是 0, 调试跑通。」</small></p>
-<p><small>生成时间: 2026-10-31 01:19 · 骨干模型: kimi-k2.6-cloud · 打分: 官方 swebench docker harness v5.0.2</small></p>
+<p><small>生成时间: 2026-10-31 01:24 · 骨干模型: kimi-k2.6-cloud · 打分: 官方 swebench docker harness v5.0.2</small></p>
 <div class="tldr">
   <strong>TL;DR</strong>: SWE-bench Verified full500 中<strong>无 runner 因模型能力「恒 0」</strong>。5 个 gate-PASS runner 全部 pass&gt;0(73.0%–80.7%)。hermes / deepseek 的 0% 是<strong>适配器/启动配置回归</strong>(进程秒退不调模型), <strong>非模型能力问题</strong>, 且<strong>已修复并经 docker eval 验证 pass&gt;0</strong>。hermes eval <strong>4/5 resolved</strong>(sympy/sphinx/sklearn/psf 全部 resolved=true, django=infra error, 根因=PYTHONPATH中毒→R548修复); deepseek eval <strong>1/2 resolved</strong>(sympy resolved=true, django=unresolved, 根因=网关SSE非标字段→gw_proxy_dsh rewrite_sse_event修复)。deepseek verify predict 仍在补齐剩余 3 题至 5 题完整集。
 </div>
@@ -41,7 +41,7 @@ pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; 
 <tr><td><strong>claude-code</strong></td><td>full500 (gate PASS)</td><td>352 / 279</td><td>200/266 (75.2%)</td><td class='ok'>No</td><td>Gen7曾0%→已修复→75.2%; predict进行中</td></tr>
 <tr><td><strong>codex</strong></td><td>full500 (gate PASS)</td><td>425 / 177</td><td>131/169 (77.5%)</td><td class='ok'>No</td><td>健康; predict进行中</td></tr>
 <tr><td><strong>hermes</strong></td><td>gate v2 FAIL→已修复→eval PASS</td><td>verify 5/5 patch → eval 4/5 resolved</td><td>4/5 resolved (80%)</td><td class='fix'>gate阶段Yes, 实际No</td><td>PYTHONPATH中毒→R548修复→eval确认pass&gt;0✅</td></tr>
-<tr><td><strong>deepseek-harness</strong></td><td>gate v2 FAIL→已修复→eval PASS</td><td>verify 3/5 patch → eval 1/3 resolved</td><td>1/3 resolved (33%)</td><td class='fix'>gate阶段Yes, 实际No</td><td>SSE格式不匹配→gw_proxy_dsh修复✅+超时patch丢弃→run_harness修复✅→eval确认pass&gt;0✅</td></tr>
+<tr><td><strong>deepseek-harness</strong></td><td>gate v2 FAIL→已修复→eval PASS</td><td>verify 4/5 patch → eval 2/4 resolved</td><td>2/4 resolved (50%)</td><td class='fix'>gate阶段Yes, 实际No</td><td>SSE格式不匹配→gw_proxy_dsh修复✅+超时patch丢弃→run_harness修复✅→eval确认pass&gt;0✅(sympy+sklearn resolved)</td></tr>
 
 </table>
 <p><strong>结论</strong>: 7 路 runner 中, <strong>无一路因模型能力恒 0</strong>。gate v2 阶段 hermes / deepseek 的 0% 是适配器秒退(不调模型), 有充分先例证明可修复。</p>
@@ -117,7 +117,7 @@ pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; 
 <div class="blocker">
   <ol>
     <li><strong>✅ hermes 适配器修复已验证</strong>: docker eval 3/4 resolved (sympy/sphinx/sklearn 全部 resolved=true)。pass&gt;0 确认。django-10097 的 1 error 是 docker 容器崩溃(infra, 非patch问题)。psf-1142 predict 仍在跑, 完成后补齐 5 题完整集。</li>
-    <li><strong>✅ deepseek 适配器修复已验证</strong>: docker eval 1/3 resolved (sympy resolved=true, django/sphinx patch应用但测试未全通过)。pass&gt;0 确认。sphinx patch由超时patch丢弃bug恢复(run_harness.py:398 修复: 超时也提取git diff)。sklearn predict运行中(550s+), psf待跑, 完成后补齐 5 题完整集并 re-eval。</li>
+    <li><strong>✅ deepseek 适配器修复已验证</strong>: docker eval 2/4 resolved (sympy✅+sklearn✅ resolved=true, django/sphinx patch应用但测试未全通过)。pass&gt;0 确认。sphinx patch由超时patch丢弃bug恢复(run_harness.py:398 修复: 超时也提取git diff)。psf predict运行中(251s), 完成后补齐 5 题完整集并 re-eval。</li>
     <li><strong>新增修复: 超时patch丢弃</strong>: run_harness.py 所有driver的 <code>r.model_patch = git_patch(workdir) if r.returncode == 0 else ""</code> 在超时/错误时丢弃patch。deepseek sphinx predict超时(1893s&gt;1800s)但agent已产出真实patch(1702B)。已修DeepseekHarnessDriver(line 398): 超时也提取git diff。sphinx patch已手动注入prediction JSON并eval(resolved=false, patch应用成功但测试未全通过=模型能力非infra)。</li>
     <li><strong>剩余 verify predict</strong>: deepseek sklearn-10297(PID 2880646 运行中) + psf-1142(待跑, PID 337174)。完成后自动 merge + re-eval 补齐 5 题完整结果。</li>
     <li><strong>full500 放大</strong>: 两路验证(eval pass&gt;0 已确认)通过后启动 full500 predict(ETA ~3-5h/runner)。5 路已在跑: <strong>cline 500/500✅ + opencode 500/500✅ (predict完成)</strong>, pi 420/500, claude-code 352/500, codex 425/500。cline/opencode eval可启动(R954已有部分eval: cline 313/429=73.0%, opencode 394/488=80.7%)。</li>
@@ -128,7 +128,7 @@ pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; 
 <table>
 <tr><th>runner</th><th>修复前(gate v2)</th><th>修复后(smoke)</th><th>docker eval 验证</th><th>根因</th></tr>
 <tr><td><strong>hermes</strong></td><td class="fail">0/10 patch, ~2s 退出</td><td class="ok">1/1 patch=1957B, 314.8s</td><td class="ok"><strong>4/5 resolved (80%)</strong></td><td>PYTHONPATH 中毒(dsh_sdk 影子 pydantic_core)</td></tr>
-<tr><td><strong>deepseek-harness</strong></td><td class="fail">0/10 patch, ~3-6s 退出(SSE error)</td><td class="ok">1/1 patch=1904B, 1649.4s</td><td class="ok"><strong>1/3 resolved (33%)</strong><br><small>sympy✅ django❌ sphinx❌<br>sklearn/psf待跑</small></td><td>网关 SSE 非标字段 + 超时patch丢弃(已修)</td></tr>
+<tr><td><strong>deepseek-harness</strong></td><td class="fail">0/10 patch, ~3-6s 退出(SSE error)</td><td class="ok">1/1 patch=1904B, 1649.4s</td><td class="ok"><strong>2/4 resolved (50%)</strong><br><small>sympy✅ sklearn✅ django❌ sphinx❌<br>psf predict进行中</small></td><td>网关 SSE 非标字段 + 超时patch丢弃(已修)</td></tr>
 <tr><td><strong>claude-code</strong></td><td class="fail">Gen7 pilot 0%</td><td class="ok">full500 200/266=75.2%</td><td class="ok">full500 eval 已完成</td><td>docker exec 超时→已修(先例)</td></tr>
 </table>
 <h2>8. 复现命令</h2>
