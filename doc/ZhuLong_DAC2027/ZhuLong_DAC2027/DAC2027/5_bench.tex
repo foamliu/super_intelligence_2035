@@ -3,7 +3,7 @@
 
 \subsection{Dataset: EDA-Scripting-Bench}
 
-\textbf{EDA-Scripting-Bench} is the instrument for both of this paper's comparisons: within one toolchain, the effect of each grounding component, and across toolchains, the effect of language structure. It covers PyAether, SKILL, and Tcl on four commercial runtimes, \textbf{449 tasks} in four slices (Table~\ref{tab:benchmark-composition}), all specified by one schema---a target language and runtime, a natural-language prompt, a function signature, and language-appropriate assertions---so a single harness (Section~\ref{sec:agent-workflow}) scores all four platforms uniformly. Scoring is execution-based (a task passes only when the generated code acts correctly in the live runtime), and the cross-language slices are difficulty-controlled by construction (Section~\ref{sec:benchmark-slices}). Each task is a real break in a design flow where a closed tool stops and glue must be hand-written---a microcosm of the flow-orchestration gap this paper targets.
+\textbf{EDA-Scripting-Bench} is the instrument for both of this paper's comparisons: within one toolchain, the effect of each grounding component, and across toolchains, the effect of language structure. It covers PyAether, SKILL, and Tcl on four commercial runtimes, \textbf{449 tasks} in four slices (Table~\ref{tab:benchmark-composition}), all specified by one schema---a target language and runtime, a natural-language prompt, a function signature, and language-appropriate assertions---so a single harness (Section~\ref{sec:agent-workflow}) scores all four platforms uniformly. Scoring is execution-based (a task passes only when the generated code acts correctly in the live runtime), and the cross-language slices are difficulty-controlled by construction (Section~\ref{sec:benchmark-slices}). Each task is a real break in a design flow where a closed tool stops and glue must be hand-written.
 % EDA-Scripting-Bench：449 任务、四切片、单一 schema（语言/运行时/提示/签名/断言），单一框架统一评分。执行式评分；跨语言切片构造上控难度。每任务是设计流中"封闭工具停步、需手写胶水"的真实断链——本文所瞄 flow 编排断链的微缩切片。
 
 \begin{table}[htbp]
@@ -29,7 +29,7 @@ EDA-Eval-InnovusTcl & Cadence Innovus & 57 \\
 
 \subsection{The PyAether slice (EDA-Eval-PyAether)}
 
-The reference slice, \textbf{EDA-Eval-PyAether} (158 tasks), anchors every task to a concrete PyAether API; EDA experts curated each assertion to be self-contained and executable in a clean sandbox without vendor-internal context. Tasks span layout, schematic, and design-management workflows, compose several distinct APIs, and sometimes depend on a technology library, so passing reflects genuine command of the tool's behavior rather than surface-level retrieval.
+The reference slice, \textbf{EDA-Eval-PyAether} (158 tasks), anchors every task to a concrete PyAether API; EDA experts curated each assertion to be self-contained and executable in a clean sandbox without vendor-internal context. Tasks span layout, schematic, and design-management workflows, compose several distinct APIs, and sometimes depend on a technology library, so passing reflects command of the tool's behavior, not surface retrieval.
 % 参照切片 EDA-Eval-PyAether（158 任务）：每任务锚定一个 PyAether API，专家确保断言自包含可在干净沙盒执行。覆盖 layout/schematic/design-management 工作流，组合多 API，部分依赖工艺库——通过反映对工具行为的真正掌握。
 
 \subsection{SKILL and Tcl slices}
