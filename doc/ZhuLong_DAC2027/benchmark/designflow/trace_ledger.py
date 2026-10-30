@@ -110,8 +110,12 @@ def cmd_stats(args):
     for r in rows:
         by[r["status"]] = by.get(r["status"], 0) + 1
     pct = (100.0 * len(covered) / target) if target else 0.0
-    print("trace 覆盖率 %s %5.1f%%   covered=%d / target=%d (mc>=%d)"
-          % (bar(pct), pct, len(covered), target, mc))
+    if target:
+        print("trace 覆盖率 %s %5.1f%%   covered=%d / target=%d (mc>=%d)"
+              % (bar(pct), pct, len(covered), target, mc))
+    else:
+        print("trace 覆盖率：候选池未知（先 refresh：sessions/mc300/mc500/mc1000）；covered=%d"
+              % len(covered))
     print("  已动过 %d：case %d · deepread %d · parked %d · claimed %d"
           % (len(touched), by.get("case", 0), by.get("deepread", 0),
              by.get("parked", 0), by.get("claimed", 0)))
@@ -154,19 +158,22 @@ def html_block(rows=None, st=None):
         delta = "新增 traces（自上次刷新）：%+d" % (
             int(st.get("sessions", 0)) - int(st["prev_sessions"]))
     dom_html = "".join("<li>%s：<b>%d</b></li>" % (k, v) for k, v in sorted(dom.items()))
+    pct_txt = ("%.1f%%" % pct) if target else "—"
+    width = pct if target else 0.0
+    pool_txt = str(target) if target else "未知（待 refresh）"
     return (
         '<h2>二、trace 覆盖率（进度条）</h2>\n'
         '<div class="kpis">\n'
-        '<div class="kpi"><div class="n">%.1f%%</div><div class="l">已交付 / 候选池（mc&ge;%d）</div></div>\n'
+        '<div class="kpi"><div class="n">%s</div><div class="l">已交付 / 候选池（mc&ge;%d）</div></div>\n'
         '<div class="kpi"><div class="n">%d</div><div class="l">已交付 case</div></div>\n'
-        '<div class="kpi"><div class="n">%d</div><div class="l">候选池总量</div></div>\n'
+        '<div class="kpi"><div class="n">%s</div><div class="l">候选池总量</div></div>\n'
         '<div class="kpi"><div class="n">%d</div><div class="l">已动过（含暂缓）</div></div>\n'
         '</div>\n'
         '<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden">'
         '<div style="width:%.1f%%;height:18px;background:#2c7be5"></div></div>\n'
         '<p style="color:#666;font-size:.8rem">%s · 台账 case %d / deepread %d / parked %d / claimed %d</p>\n'
         '<ul>%s</ul>\n'
-        % (pct, mc, len(covered), target, len(touched), pct, delta,
+        % (pct_txt, mc, len(covered), pool_txt, len(touched), width, delta,
            by.get("case", 0), by.get("deepread", 0), by.get("parked", 0),
            by.get("claimed", 0), dom_html or "<li>—</li>"))
 def cmd_next(args):
