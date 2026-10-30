@@ -24,7 +24,7 @@ td{word-break:break-word}
 footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </style></head><body><div class="wrap">
 <h1>设计流 Benchmark 日报 · 10_30</h1>
-<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-10-30 22:48</span></p>
+<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-10-30 23:22</span></p>
 
 <h2>一、三口径数字（多机版，.75 落盘实测值）</h2>
 <div class="kpis">
@@ -37,24 +37,24 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
 <div class="kpis">
-<div class="kpi"><div class="n">13</div><div class="l">累计用例数</div></div>
-<div class="kpi"><div class="n">13</div><div class="l">设计流口径（proper design_flow）</div></div>
+<div class="kpi"><div class="n">14</div><div class="l">累计用例数</div></div>
+<div class="kpi"><div class="n">14</div><div class="l">设计流口径（proper design_flow）</div></div>
 <div class="kpi"><div class="n">0</div><div class="l">legacy scripting（已标记 legacy:true）</div></div>
 <div class="kpi"><div class="n">1</div><div class="l">jsonl 文件数（已合并）</div></div>
 </div>
-<p><b>按 domain 分布：</b>analog_context: 1 · characterization: 1 · digital: 4 · layout_aether: 1 · layout_virtuoso: 1 · physical_verify: 1 · pnr_signoff: 1 · schematic_netlist: 1 · spice_sim: 1 · verification: 1</p>
+<p><b>按 domain 分布：</b>analog_context: 1 · characterization: 1 · digital: 4 · layout_aether: 1 · layout_virtuoso: 1 · physical_verify: 1 · pnr_signoff: 1 · schematic_netlist: 1 · spice_sim: 1 · verification: 1 · waveform: 1</p>
 <div class="note">即时令 VIII 已将原 15 个按工具分文件合并为单一 <code>EDA-Eval-DesignFlow.jsonl</code>；scripting 口径用例标记 <code>legacy:true</code> 保留存量，不再追加。新建用例只往此文件追加，按设计流契约（mode=design_flow / entry_point=outputs/submit.zip / 双参 check(deliverable, workdir) / 无 lang·host）。</div>
 
 <h2>二、trace 覆盖率（进度条）</h2>
 <div class="kpis">
 <div class="kpi"><div class="n">—</div><div class="l">已交付 / 候选池（mc&ge;300）</div></div>
-<div class="kpi"><div class="n">12</div><div class="l">已交付 case</div></div>
+<div class="kpi"><div class="n">13</div><div class="l">已交付 case</div></div>
 <div class="kpi"><div class="n">未知（待 refresh）</div><div class="l">候选池总量</div></div>
-<div class="kpi"><div class="n">12</div><div class="l">已动过（含暂缓）</div></div>
+<div class="kpi"><div class="n">13</div><div class="l">已动过（含暂缓）</div></div>
 </div>
 <div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden"><div style="width:0.0%;height:18px;background:#2c7be5"></div></div>
-<p style="color:#666;font-size:.8rem">— · 台账 case 12 / deepread 0 / parked 0 / claimed 0</p>
-<ul><li>analog_context：<b>1</b></li><li>characterization：<b>1</b></li><li>digital：<b>4</b></li><li>layout_aether：<b>1</b></li><li>layout_virtuoso：<b>1</b></li><li>physical_verify：<b>1</b></li><li>pnr_signoff：<b>1</b></li><li>spice_sim：<b>1</b></li><li>verification：<b>1</b></li></ul>
+<p style="color:#666;font-size:.8rem">— · 台账 case 13 / deepread 0 / parked 0 / claimed 0</p>
+<ul><li>analog_context：<b>1</b></li><li>characterization：<b>1</b></li><li>digital：<b>4</b></li><li>layout_aether：<b>1</b></li><li>layout_virtuoso：<b>1</b></li><li>physical_verify：<b>1</b></li><li>pnr_signoff：<b>1</b></li><li>spice_sim：<b>1</b></li><li>verification：<b>1</b></li><li>waveform：<b>1</b></li></ul>
 
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
@@ -72,6 +72,7 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 <tr><td>EDA-Eval-DesignFlow-Schematic-001</td><td>e0039602</td><td>e0039602/1792376698189_1nsgi @ hfeg0plg17 (netlist_cell_convert 抽象cell网表→simlib物理单元转换+死节点/合并/互补选通 三级映射规则迭代)</td><td>netlist_cell_convert 抽象cell→simlib物理单元转换</td><td>你是 EDA 工程师 e0039602 在 hfeg0plg17 上维护 netlist_cell_convert 工具：把 schematic 导出的结构化 Verilog 网表…</td><td>outputs/submit.zip</td><td>8 条断言：①解 zip 校验 3 文件(netlist_convert.py/converted.sv/transform_report.md)齐全 ②netlist_convert.py 语法合法(py_compile) ③实跑候选工具在隐藏网表 B 上退出码 0 且输出含全部 4 个隐藏 module 名(H_inv_quad/H_mux2_selbar/H_nand_chain4/H_latq_keep) ④H_inv_quad 合并 4 invDSx1→1 inv_base(.A(din).Y(qout)) 且死节点 dead_a/dead_b 删除且无 invDSx1(逐格改名保留死节点→FAIL) ⑤H_mux2_selbar 互补选通合并出 2 inven_base+assign clk+buf(ck0nb_int)+not(ck0_int) 且无 invenLVSx1(保留 2 invenLVSx1→FAIL) ⑥H_nand_chain4 nand4→inv_base .A(p&amp;q&amp;r&amp;s) 且 nand2→inv_base .A(t&amp;mid_n) 且无 nand2/nand4(保留 nand→FAIL) ⑦H_latq_keep 锁存出 trireg+inven_base+inv_base+invhiz_base 且每 module 注 fgc_pwrstate_monitor(≥4)(无 fgc/无锁存模板→FAIL) ⑧transform_report.md 列死节点 net6/net7+merge 组+互补选通组+nand 合并组且各带 module 名(T_inv/PWY/IO)(无合并记录→FAIL)</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-SpiceSim-001</td><td>irene1li</td><td>irene1li/1791523486486_ws2bi @ hfeg0pkn004 (DDR4 P2S predriver TX 链 tr/tf/duty 测量：给 netlist+MEAS_tr.sp+MEAS_skew.sp，生成 HSPICE .measure deck，要求 tr 全测→tf 全测→duty 全测分组，迭代管子尺寸满足 trtf&lt;20ps/duty 50%±3%/skew&lt;5ps)</td><td>HSPICE TR/TF/DUTY measurement-deck generator</td><td>你是模拟/SPICE 工程师 irene1li 在 hfeg0pkn004 上给 DDR4 P2S predriver TX 链做 tr/tf/duty 测量（真实 ws2bi s…</td><td>outputs/submit.zip</td><td>10 条断言：①解 zip 含 gen_meas_deck.py 且 ASCII-only(中文乱码→FAIL) ②gen_meas_deck.py py_compile 语法合法 ③实跑候选在隐藏 B(nodes q1/q2/q3)上退出 0 且产出含 .measure tran ④deck 分组顺序=TR 全→TF 全→DUTY 全(不交错)且 TR/TF 块覆盖 B 全部节点(交错→FAIL) ⑤每个 B 节点都有 tr/tf/pw/per/duty 五类 measure 且 deck 不引用 B 以外节点(硬编 A 的 dq_stg1..→FAIL) ⑥tr/tf/pw 的 val= 电平=10%/90%/50% vdd 绝对值(用 0/100%→FAIL) ⑦真跑 hspice 在隐藏 B+deck 上退出 0 且 .lis 含全部 tr/tf/duty 数值无 failed(缺 rise=/fall=→负值/failed→FAIL) ⑧全部 TR/TF &lt; spec_trtf ⑨全部 DUTY 在 [duty_lo,duty_hi] ⑩3 随机种子打乱节点序重生成+重跑 hspice，每节点 tr/tf/duty 跨种子一致(&lt;1%)且每种子均满足 spec(顺序依赖/硬编→FAIL)</td><td>Python</td><td><span class='tag draft'>PENDING</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-Verification-001</td><td>e0031668</td><td>e0031668/1789370647360_ukkn7 @ hfeg0plg91 (ERC_AI_CHECK pipeline 跑通 + 子 section 过滤修复 + step3+ virtuoso→aether flow 改写)</td><td>ERC pipeline 子 section 过滤修复 + step3+ virtuoso→aether flow 改写</td><td>这是一个 ERC_AI_CHECK pipeline（附件 run_all.sh 编排 step0~step3；Python prepare_new_netlist.py 从 ER…</td><td>outputs/submit.zip</td><td>解 zip 校验 5 文件(prepare_new_netlist.py/step3_aether.il/erc_report_2_1_to_2_8.csv/lib.defs/run_all.sh)齐全；用附件 ERC_Wesign.csv 临时 import 跑 prepare_new_netlist.py 验子 section 2.1-2.8 精确过滤(行尾#注释无效陷阱)；erc_report 只含 2.1-2.8；lib.defs INCLUDE aether SKIP amsLib 注释剥离；step3_aether.il 无 virtuoso 直调/cds.lib —— 能区分过滤越界/未改 aether flow 的错误</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
+<tr><td>EDA-Eval-DesignFlow-Waveform-001</td><td>e0039602</td><td>e0039602/1792371248997_fa3cd @ hfeg0plg85 (调试/理解 waveview-fsdb-readerV2-2 skill：跑 FSDB 报 FileNotFoundError(路径错机)→解释 detect_signal_type 数字/模拟判定+found 两种 no-data(信号名不在表 vs 时间窗滤空)→确认读出数据落 wv_tmp/wv_o_*.tbl)</td><td>WaveView .tbl offline waveform analyzer (digital/analog classify + timing metrics)</td><td>你是 DRAM 设计组 e0039602 在 hfeg0plg85 上维护的 waveview-fsdb-readerV2-2 skill （真实 fa3cd session：用 …</td><td>outputs/submit.zip</td><td>11 条断言：①解 zip 含 tbl_analyzer.py 且 ASCII-only(中文→FAIL) ②tbl_analyzer.py py_compile 语法合法 ③实跑候选在隐藏 B(clk/sense/absent)上退出 0 且输出含三个信号 key ④v(tb.clk) 判定 type=digital(always-analog/empty→FAIL) ⑤v(tb.sense) 判定 type=analog(always-digital→FAIL) ⑥v(tb.absent) 报 found=False 不崩溃(skip_missing→FAIL) ⑦v(tb.clk) n_rising==4 且 n_falling==4 且 n_edges&gt;=4(计数 stub→FAIL) ⑧v(tb.clk) v_low~0/v_high~1.8/mid~0.9 用 reference_levels 中位数(fixed min/max 或 0/1→FAIL) ⑨v(tb.clk) rise_stats.n==4 且 rise_avg~1ns(真实 25%→75% 线性插值，core-deleted 返回 []/0→FAIL) ⑩v(tb.sense) n_zero_crossings==4 且 双极 v_min&lt;0&lt;v_max 且 v_min~-0.5/v_max~0.5(无过零/单极→FAIL) ⑪3 随机种子打乱信号顺序+随机时间窗(50n-350n/20n-380n)重跑，每信号 type/n_edges/n_zero_crossings/v_levels 跨种子一致且与同窗 reference 一致(顺序依赖/硬编全 B 期望→窗内不匹配 FAIL)；外加反序全窗跑 type/n_rising 不变(顺序不变性)</td><td>Python</td><td><span class='tag draft'>PENDING</span></td></tr>
 </table>
 
 <h2>四、pi 被测调试结果</h2>
