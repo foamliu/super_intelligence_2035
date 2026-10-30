@@ -1506,3 +1506,18 @@
 | 2026-10-30 | Rivian 与大众 58 亿美元合资扩围：Rivian 向大众授权 AI 语音助手技术要素（授权费/车型未披露 · 或在 ID EVERY1 首落） | TechCrunch 10-29（正文已读 · `<title>` 一致） | news（第 176 轮 · §6） | https://techcrunch.com/2026/10/29/rivian-expands-joint-venture-with-vw-to-include-ai-assistant/ |
 | 2026-10-30 | 第 176 轮 附录 A10–A11：Wabi 融资 5500 万美元/估值 12.5 亿美元 · 前 Palantir 高管创立 Dream（a16z 领投 1700 万美元种子轮） | TechCrunch AI RSS | 不收（与关注清单关联弱 · 只登记） | https://techcrunch.com/2026/10/29/wabi-the-ai-agent-that-builds-mini-apps-now-valued-at-1-25b-after-latest-round/ |
 | 2026-10-30 | 第 176 轮 附录 A12–A17：星巴克得来速 AI（测试阶段）· Omdia AI PC 60%/12% 调研 · 谷歌芬兰砍伐 25 万棵树被立案 · 英特尔 Q3 财报叠加 · 中新网/央视 AI 0 条 · 量子位厂商口径稿 | IT之家 / cn_news / 量子位 | 不收（非 AI 主线 / 预测 / 财报 / 营销） | https://www.ithome.com/1/019/866.htm |
+| 2026-10-30 | OpenAI 更新《模型规范》：重构为五项准则，以「忠于人类意图」为基础 | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §1） | https://www.ithome.com/1/019/898.htm |
+| 2026-10-30 | 台积电复盘 24 小时研发「夜猫子」计划：约 6 个月即失败，秦永沛称研发「靠脑力而非劳动力」 | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §2） | https://www.ithome.com/1/019/974.htm |
+| 2026-10-30 | Neuralink VOICE 研究：ALS 参与者首周 75 WPM、词错误率 5.8%（单一参与者 · 未经同行评审） | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §4） | https://www.ithome.com/1/019/960.htm |
+| 2026-10-30 | 通用汽车付 2.2 亿美元了结 36 州「出售司机驾驶数据」共同诉讼 | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §4） | https://www.ithome.com/1/019/962.htm |
+| 2026-10-30 | 谷歌 AI 编程助手 Jules 将逐步停服，经验并入 Antigravity | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §4） | https://www.ithome.com/1/019/963.htm |
+| 2026-10-30 | 彭博：支撑 7500 亿美元 AI 投入的核心业务增速放缓（Alphabet 市值蒸发近 5000 亿美元 · Azure +48% 达 332 亿） | IT之家 10-30（正文已读 · <title> 一致 · 不含投资含义） | news（第 177 轮 · §5） | https://www.ithome.com/1/019/958.htm |
+| 2026-10-30 | 科大讯飞回应高管薪酬质疑：董事长、总裁主动降薪，双双少领超 2000 万元 | IT之家 10-30（RSS 摘要） | news（第 177 轮 · §5） | https://www.ithome.com/1/019/912.htm |
+| 2026-10-30 | 零一万物总部落地杭州临平区，市区两级国资联动投资数亿元 | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §5） | https://www.ithome.com/1/019/877.htm |
+| 2026-10-30 | 美国六处军事基地冷冻设备同期故障，五角大楼调查人员怀疑系黑客攻击（法国超市同类攻击致制冷升至 50℃ 约 6 小时） | IT之家 10-30（正文已读 · <title> 一致） | news（第 177 轮 · §6） | https://www.ithome.com/1/019/968.htm |
+| 2026-10-30 | Anthropic 升级移动端：iPhone 版 Claude 语音模式接入 Apple CarPlay | IT之家 10-30（RSS 摘要） | news（第 177 轮 · §6） | https://www.ithome.com/1/019/966.htm |
+| 2026-10-30 | 谷歌 Gemini：生成文档/表格等可在聊天中直接修改（面向所有用户开放） | IT之家 10-30（RSS 摘要） | news（第 177 轮 · §6） | https://www.ithome.com/1/019/878.htm |
+| 2026-10-30 | 第 177 轮 附录 A18–A19：闪迪 2027Q1 财报（110.31 亿美元）+ AI 推理引爆 NAND 需求（长单至 2030 年·厂商口径） | IT之家 10-30 | 不收（财报/厂商口径 · 只登记） | https://www.ithome.com/1/019/924.htm |
+| 2026-10-30 | 第 177 轮 附录 A20–A21：币安暂停充值提现并冻结约 30 亿美元（另路逾 25 亿）· Polymarket 安全事件；工信部反诈专班二手手机预植木马提醒 | IT之家 10-30 | 不收（非 AI 主线 · 只登记） | https://www.ithome.com/1/019/944.htm |
+| 2026-10-30 | 第 177 轮 附录 A22–A24：福特 CEO 称电机效率高比亚迪约 30% · 英特尔 Q3 财报叠加（净利 -18%）· 终端行情叠加 | IT之家 10-30 | 不收（企业表态/财报/行情 · 只登记） | https://www.ithome.com/1/019/879.htm |
+| 2026-10-30 | 第 177 轮 附录 A25–A27：量子位 10 条（厂商稿/融资/技术报告）· 爱范儿 15 条（产品上手）· 中新网·央视 AI 0 条 · TechCrunch 14 条重复 | 量子位 / 爱范儿 / cn_news / TechCrunch | 不收（非硬新闻或已入账） | https://www.ifanr.com/feed |
