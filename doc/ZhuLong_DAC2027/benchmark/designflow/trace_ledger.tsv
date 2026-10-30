@@ -16,4 +16,4 @@
 1791611498731_wg5u2.messages.json	zjqiao	hfhds211	728	analog_context	case	EDA-Eval-DesignFlow-LibCell-001	2026-10-31 01:30	
 1793147699495_as67p.messages.json	easont	hfhds211	786	waveform	case	EDA-Eval-DesignFlow-WaveView-002	2026-10-31 02:18	
 1790142100320_n91pk.messages.json	alenxu	hfeg0pkn003	755	layout_aether	case	EDA-Eval-DesignFlow-CTLEAC-001	2026-10-31 02:56	
-1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	spice_sim	claimed		2026-10-31 03:05	
+1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	spice_sim	case	EDA-Eval-DesignFlow-CTLESpec-001	2026-10-31 04:02	spice_sim L2 CTLE AC spec-compliance harness; 12 conds; ref 12/12 PASS, 5 negs FAIL; appended as jsonl line 20
