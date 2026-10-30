@@ -40,6 +40,10 @@
 % 参考文献里少数超长姓氏无断点 → Underfull \hbox；补断字提示（只影响换行，不改内容）
 \hyphenation{Mi-cha-lew-ski Au-stin Ode-na Ko-ma-rov-sky}
 
+% --- 本机构建环境修复：缺失 cm-super/EC 可伸缩字体，cmr 无可扩张数据时 microtype 的
+% font expansion 会中止 pdflatex。关闭 expansion 仅去掉字符级微拉伸/压缩，字体与内容不变。 ---
+\microtypesetup{expansion=false}
+
 \begin{document}
 
 \title{ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting}

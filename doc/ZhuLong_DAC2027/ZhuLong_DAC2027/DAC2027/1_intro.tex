@@ -13,10 +13,10 @@ We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether
 \noindent\textbf{Contributions.}
 \begin{itemize}
     \item \textbf{RQ1 (ceiling).} We formalize the grounding gap and measure it from both
-    sides: the observation-fidelity axis (no observation $\to$ full observation) spans
-    57.2~pp (LLM fixed), while the backbone axis spans 23.7~pp (harness fixed)---observation,
-    not scale, sets the ceiling (Section~\ref{sec:grounding-theory}, \ref{sec:experiments}).
-    % RQ1（上限）：形式化落地鸿沟，两侧测量——观测保真度轴（无观测→全观测）跨 57.2pp（固定 LLM），backbone 轴跨 23.7pp（固定框架）。
+    sides: the system-level axis (pure LLM, no observation $\to$ full system) spans
+    57.2~pp (LLM fixed), while the backbone axis spans 23.7~pp (harness fixed)---the system-level
+    grounding range exceeds the backbone range (Section~\ref{sec:grounding-theory}, \ref{sec:experiments}).
+    % RQ1（上限）：形式化落地鸿沟，两侧测量——系统级轴（纯 LLM 无观测→完整系统）跨 57.2pp（固定 LLM），backbone 轴跨 23.7pp（固定框架）——系统级落地跨度超过 backbone 跨度。
 
     \item \textbf{RQ2 (necessary components).} Ablation isolates retrieval, execution, and
     belief update as jointly necessary, with toolchain-specific magnitudes that make them

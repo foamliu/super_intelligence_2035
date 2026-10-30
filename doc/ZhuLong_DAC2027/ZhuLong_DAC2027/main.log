@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  28 OCT 2026 06:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  30 OCT 2026 10:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -563,7 +563,7 @@ Package: doi 2018/09/09 handle doi numbers
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 )
-Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 43.
+Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 47.
 
 \c@theorem=\count308
 
@@ -581,50 +581,47 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
 <<ot1.cmap>><<oml.cmap>><<oms.cmap>><<omx.cmap>>
-LaTeX Font Info:    Trying to load font information for U+msa on input line 43.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 47.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 47.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Info: Redefining \microtypecontext on input line 43.
-Package microtype Info: Applying patch `item' on input line 43.
-Package microtype Info: Applying patch `toc' on input line 43.
-Package microtype Info: Applying patch `eqnum' on input line 43.
-Package microtype Info: Applying patch `footnote' on input line 43.
-Package microtype Info: Applying patch `verbatim' on input line 43.
+LaTeX Info: Redefining \microtypecontext on input line 47.
+Package microtype Info: Applying patch `item' on input line 47.
+Package microtype Info: Applying patch `toc' on input line 47.
+Package microtype Info: Applying patch `eqnum' on input line 47.
+Package microtype Info: Applying patch `footnote' on input line 47.
+Package microtype Info: Applying patch `verbatim' on input line 47.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
-Package microtype Info: Automatic font expansion enabled (level 2),
-(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
-Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 43.
+Package microtype Info: No font expansion.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -633,7 +630,7 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-Package hyperref Info: Link coloring OFF on input line 43.
+Package hyperref Info: Link coloring OFF on input line 47.
  (./main.out)
 (./main.out)
 \@outlinefile=\write4
@@ -716,28 +713,65 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \hbox (badness 1127) in paragraph at lines 27--32
-[]\OT1/cmr/bx/n/9 (+20) RQ3 (toolchain gen-er-al-ity). EDA-Scripting-
+Underfull \hbox (badness 2707) in paragraph at lines 27--32
+[]\OT1/cmr/bx/n/9 RQ3 (toolchain gen-er-al-ity). EDA-Scripting-
+ []
+
+
+Underfull \hbox (badness 1668) in paragraph at lines 27--32
+\OT1/cmr/bx/n/9 Bench \OT1/cmr/m/n/9 (449 tasks, 4 run-times, one schema) re-
+ []
+
+
+Underfull \hbox (badness 2608) in paragraph at lines 27--32
+\OT1/cmr/m/n/9 measures the same struc-ture slice by slice; we
  []
 
 ) (./DAC2027/2_background.tex [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdfte
 x.map}
 
-]) (./DAC2027/3_design.tex
+]
+Underfull \hbox (badness 1142) in paragraph at lines 10--12
+\OT1/cmr/m/n/9 er-rors re-main un-de-tected and the gap be-tween ``looks
+ []
+
+
+Underfull \hbox (badness 1210) in paragraph at lines 10--12
+\OT1/cmr/m/n/9 tools, the sur-face this pa-per tar-gets. A re-cent sur-vey
+ []
+
+
+Underfull \hbox (badness 1052) in paragraph at lines 10--12
+\OT1/cmr/m/n/9 tar-gets the cus-tom/analog script-ing hand-off, pre-vi-ously
+ []
+
+) (./DAC2027/3_design.tex
+Underfull \hbox (badness 1052) in paragraph at lines 13--1
+\OT1/cmr/bx/n/9 ing \OT1/cmr/m/n/9 (Sec-tion []4[]) ex-plain-ing \OT1/cmr/m/it/
+9 why \OT1/cmr/m/n/9 ex-e-cu-tion is nec-es-sary,
+ []
+
+
 
 pdfTeX warning: pdflatex (file ./figures/zhulong_arch.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figures/zhulong_arch.pdf, id=168, 963.35912pt x 449.5194pt>
+<figures/zhulong_arch.pdf, id=162, 963.35912pt x 449.5194pt>
 File: figures/zhulong_arch.pdf Graphic file (type pdf)
 <use figures/zhulong_arch.pdf>
 Package pdftex.def Info: figures/zhulong_arch.pdf  used on input line 12.
-(pdftex.def)             Requested size: 425.28593pt x 198.4476pt.
+(pdftex.def)             Requested size: 506.295pt x 236.24814pt.
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <9> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 13.
 ) (./DAC2027/4_grounding.tex [2.2] [3.3 <./figures/zhulong_arch.pdf>]
-Underfull \hbox (badness 3635) in paragraph at lines 56--58
-[]\OT1/cmr/bx/n/9 (+20) Claim (observation-fidelity bound). \OT1/cmr/m/n/9 (+20
-) Let $\OML/cmm/m/it/9 ^^O \U/msa/m/n/9 ,
+Underfull \hbox (badness 4995) in paragraph at lines 56--58
+[]\OT1/cmr/bx/n/9 Claim (observation-fidelity bound). \OT1/cmr/m/n/9 Let $\OML/
+cmm/m/it/9 ^^O \U/msa/m/n/9 ,
+ []
+
+
+Underfull \hbox (badness 2205) in paragraph at lines 65--67
+\OT1/cmr/m/n/9 im-ple-men-ta-tion of $
+$ (re-trieval qual-ity plus ex-e-cu-tion
  []
 
 ) (./DAC2027/5_bench.tex
@@ -745,39 +779,135 @@ Overfull \hbox (1.29785pt too wide) in paragraph at lines 14--27
  [][] 
  []
 
-[4.4]) (./DAC2027/6_exp.tex
+[4.4]
+Underfull \hbox (badness 3058) in paragraph at lines 38--40
+\OT1/cmr/m/n/9 Ca-dence Vir-tu-oso) is \OT1/cmr/m/it/9 function-aligned \OT1/cm
+r/m/n/9 with PyAether:
+ []
+
+
+Underfull \hbox (badness 3189) in paragraph at lines 38--40
+\OT1/cmr/m/n/9 across two fur-ther toolchains: wave-form mea-sure-ment
+ []
+
+
+Underfull \hbox (badness 6300) in paragraph at lines 38--40
+\OT1/cmr/m/n/9 on Wave-View (\OT1/cmr/bx/n/9 EDA-Eval-WaveViewTcl\OT1/cmr/m/n/9
+ , 77 tasks)
+ []
+
+
+Underfull \hbox (badness 1515) in paragraph at lines 38--40
+\OT1/cmr/m/n/9 and floor-plan-ning, place-ment, and rout-ing on In-novus
+ []
+
+) (./DAC2027/6_exp.tex
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <6> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 15.
 
-Underfull \hbox (badness 1014) in paragraph at lines 50--52
-\OT1/cmr/m/n/9 (+20) Rel-a-tive to the full sys-tem, re-mov-ing ex-e-cu-tion co
-sts
+Underfull \hbox (badness 1122) in paragraph at lines 41--43
+\OT1/cmr/m/n/9 time-out; a file-based \OT1/cmtt/m/n/9 PreToolUse \OT1/cmr/m/n/9
+ hook en-forces a tool
  []
 
 
-Underfull \hbox (badness 1694) in paragraph at lines 50--52
-\OT1/cmr/m/n/9 (+20) pooled Pass@1 ($\OML/cmm/m/it/9 n[]\OT1/cmr/m/n/9 (+20) 22
-45$): Full $[73\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 (+20) 86\OML/cmm/m/it/9 ; \OT1/c
-mr/m/n/9 (+20) 77\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 (+20) 41]$, w/o-Self-
+Underfull \hbox (badness 1603) in paragraph at lines 50--52
+\OT1/cmr/m/n/9 Rel-a-tive to the full sys-tem, re-mov-ing ex-e-cu-tion costs
  []
 
 
-Underfull \hbox (badness 3168) in paragraph at lines 50--52
-\OT1/cmr/m/n/9 (+20) Expl. $[70\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 (+20) 72\OML/cmm
-/m/it/9 ; \OT1/cmr/m/n/9 (+20) 74\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 (+20) 41]$, w/
-o-Retrieval $[62\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 (+20) 00\OML/cmm/m/it/9 ; \OT1/
-cmr/m/n/9 (+20) 65\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 (+20) 97]$, RAG
+Underfull \hbox (badness 2818) in paragraph at lines 50--52
+\OT1/cmr/m/n/9 pooled Pass@1 ($\OML/cmm/m/it/9 n[]\OT1/cmr/m/n/9 2245$): Full $
+[75\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 11\OML/cmm/m/it/9 ; \OT1/cmr/m/n/9 78\OML/cm
+m/m/it/9 :\OT1/cmr/m/n/9 60]$, w/o-Self-
+ []
+
+
+Underfull \hbox (badness 5374) in paragraph at lines 50--52
+\OT1/cmr/m/n/9 Expl. $[72\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 66\OML/cmm/m/it/9 ; \O
+T1/cmr/m/n/9 76\OML/cmm/m/it/9 :\OT1/cmr/m/n/9 26]$, w/o-Retrieval $[64\OML/cmm
+/m/it/9 :\OT1/cmr/m/n/9 22\OML/cmm/m/it/9 ; \OT1/cmr/m/n/9 68\OML/cmm/m/it/9 :\
+OT1/cmr/m/n/9 13]$, RAG
  []
 
 LaTeX Font Info:    Font shape `OT1/cmss/m/it' in size <9> not available
 (Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 56.
-[5.5]) (./DAC2027/7_discussion.tex [6.6]) (./DAC2027/8_conclusion.tex) [7.7]
-(./main.bbl
-LaTeX Info: Redefining \tempurl on input line 211.
-LaTeX Info: Redefining \tempurl on input line 251.
-) (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
+
+Underfull \hbox (badness 4556) in paragraph at lines 56--58
+ \OT1/cmss/m/sl/9 6.2.1 S1: Ob-ser-va-tion fi-delity (RQ1).[] \OT1/cmr/m/n/9 Pr
+in-ci-ple 2 pre-
+ []
+
+
+Underfull \hbox (badness 1152) in paragraph at lines 56--58
+\OT1/cmr/m/n/9 the fi-delity of $
+$. \OT1/cmr/bx/n/9 Doc-u-men-ta-tion axis. \OT1/cmr/m/n/9 Hold-ing the
+ []
+
+
+Underfull \hbox (badness 1043) in paragraph at lines 56--58
+\OT1/cmr/m/n/9 costs 10.7 pp pooled, but highly toolchain-specific: on
+ []
+
+[5.5]) (./DAC2027/7_discussion.tex
+Underfull \hbox (badness 4492) in paragraph at lines 109--1
+\OT1/cmr/m/n/9 but an un-doc-u-mented C++-binding contract---hidden
+ []
+
+[6.6]
+Underfull \hbox (badness 2096) in paragraph at lines 4--6
+\OT1/cmr/m/n/9 tailed, under-documented APIs, the ground-ing gap is
+ []
+
+
+Underfull \hbox (badness 1845) in paragraph at lines 7--9
+[]\OT1/cmr/m/n/9 Three lim-i-ta-tions: base-LLM per-for-mance varies sig-
+ []
+
+) (./DAC2027/8_conclusion.tex)
+Underfull \hbox (badness 1337) in paragraph at lines 4--117
+\OT1/cmr/m/n/9 execution-grounded loop and the grounding-gap bound
+ []
+
+
+Underfull \hbox (badness 6157) in paragraph at lines 4--117
+\OT1/cmr/m/n/9 across runs); (iii) \OT1/cmr/m/it/9 mul-ti-modal ground-ing \OT1
+/cmr/m/n/9 (schemat-ics,
+ []
+
+
+Underfull \hbox (badness 1668) in paragraph at lines 4--117
+\OT1/cmr/m/n/9 wave-forms, and lay-out im-ages ex-tend-ing $
+$); and (iv)
+ []
+
+
+Underfull \hbox (badness 1337) in paragraph at lines 4--117
+\OT1/cmr/m/it/9 bench-mark-ing design-flow or-ches-tra-tion \OT1/cmr/m/n/9 (end
+-to-end flow
+ []
+
+[7.7] (./main.bbl
+Underfull \hbox (badness 1661) in paragraph at lines 158--164
+\OT1/cmr/m/n/7 Sizhe Tang, Wuxi Li, Duo Ding, Chia-Tung Ho, Haox-ing
+ []
+
+
+Underfull \hbox (badness 2351) in paragraph at lines 158--164
+\OT1/cmr/m/n/7 Ren, David Z. Pan, Tian Lan, and Wei-dong Cao. 2026.
+ []
+
+LaTeX Info: Redefining \tempurl on input line 208.
+LaTeX Info: Redefining \tempurl on input line 249.
+)
+
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
+
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
 File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
-) (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
+)
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 ) [8.8
 
@@ -788,16 +918,16 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 7E199DDB43CC2DC7A3B06FCFD606A629;4910.
+(rerunfilecheck)             Checksum: 0E60899B42AFFE6989524179C9FD794C;4754.
  ) 
 Here is how much of TeX's memory you used:
- 17971 strings out of 475589
- 284789 string characters out of 5782859
- 1955975 words of memory out of 5000000
- 39266 multiletter control sequences out of 15000+600000
- 580131 words of font info for 224 fonts, out of 8000000 for 9000
+ 17687 strings out of 475589
+ 282838 string characters out of 5782859
+ 1956975 words of memory out of 5000000
+ 39269 multiletter control sequences out of 15000+600000
+ 570518 words of font info for 81 fonts, out of 8000000 for 9000
  474 hyphenation exceptions out of 8191
- 90i,12n,131p,1381b,565s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,131p,1480b,565s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/app.e0031982/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0
 900.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb></u
@@ -824,10 +954,10 @@ ts/cm/cmti8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mti9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on main.pdf (8 pages, 698884 bytes).
+Output written on main.pdf (8 pages, 719428 bytes).
 PDF statistics:
- 457 PDF objects out of 1000 (max. 8388607)
- 384 compressed objects within 4 object streams
- 69 named destinations out of 1000 (max. 500000)
- 48366 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 450 PDF objects out of 1000 (max. 8388607)
+ 376 compressed objects within 4 object streams
+ 68 named destinations out of 1000 (max. 500000)
+ 13030 words of extra memory for PDF output out of 14400 (max. 10000000)
 

@@ -96,7 +96,6 @@
 \newblock \bibinfo{journal}{\emph{Operations Research}} \bibinfo{volume}{58},
   \bibinfo{number}{1} (\bibinfo{year}{2010}), \bibinfo{pages}{203--213}.
 \newblock
-\href{https://doi.org/10.1287/opre.1090.0711}{doi:\nolinkurl{10.1287/opre.1090.0711}}
 
 
 \bibitem[Douze et~al\mbox{.}(2024)]%
@@ -126,16 +125,14 @@
 
 \bibitem[He et~al\mbox{.}(2024)]%
         {he2024chateda}
-\bibfield{author}{\bibinfo{person}{Wei He}, \bibinfo{person}{Yibo Ren},
-  \bibinfo{person}{Hang Zhu}, \bibinfo{person}{Yuyang Wang},
-  \bibinfo{person}{Yibo Pan}, \bibinfo{person}{Yuxuan Zhou},
-  \bibinfo{person}{Yibang Lin}, \bibinfo{person}{Rui Diao},
-  \bibinfo{person}{Haizhi Ye}, \bibinfo{person}{Jianye Hu}, {et~al\mbox{.}}}
-  \bibinfo{year}{2024}\natexlab{}.
+\bibfield{author}{\bibinfo{person}{Zhuolun He}, \bibinfo{person}{Haoyuan Wu},
+  \bibinfo{person}{Xinyun Zhang}, \bibinfo{person}{Xufeng Yao},
+  \bibinfo{person}{Su Zheng}, \bibinfo{person}{Haisheng Zheng}, {and}
+  \bibinfo{person}{Bei Yu}.} \bibinfo{year}{2024}\natexlab{}.
 \newblock \bibinfo{title}{{ChatEDA}: A Large Language Model Powered Autonomous
   Agent for {EDA}}.
 \newblock
-\showeprint[arxiv]{2401.00754}
+\showeprint[arxiv]{2308.10204}
 
 
 \bibitem[Kaelbling et~al\mbox{.}(1998)]%
@@ -213,17 +210,18 @@
 \tempurl}
 
 
-\bibitem[Pu et~al\mbox{.}(2024)]%
+\bibitem[Pu et~al\mbox{.}(2025)]%
         {pu2024rag}
 \bibfield{author}{\bibinfo{person}{Yuan Pu}, \bibinfo{person}{Zhuolun He},
   \bibinfo{person}{Tairu Qiu}, \bibinfo{person}{Haoyuan Wu}, {and}
-  \bibinfo{person}{Bei Yu}.} \bibinfo{year}{2024}\natexlab{}.
+  \bibinfo{person}{Bei Yu}.} \bibinfo{year}{2025}\natexlab{}.
 \newblock \showarticletitle{Customized Retrieval Augmented Generation and
-  Benchmarking for {EDA} Tool Documentation {QA}}. In
-  \bibinfo{booktitle}{\emph{Proc. IEEE/ACM Int. Conf. on Computer-Aided Design
-  (ICCAD)}}. \bibinfo{publisher}{IEEE}, \bibinfo{address}{New York, NY, USA}.
+  Benchmarking for {EDA} Tool Documentation {QA}}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Computer-Aided Design of
+  Integrated Circuits and Systems (TCAD)}}  \bibinfo{volume}{44}
+  (\bibinfo{year}{2025}).
 \newblock
-\showeprint[arxiv]{2407.15353}~[cs.CL]
+\showeprint[arxiv]{2407.15353}
 
 
 \bibitem[Rui et~al\mbox{.}(2025)]%
@@ -266,13 +264,14 @@
 
 \bibitem[Wang et~al\mbox{.}(2025)]%
         {wang2025mcp4eda}
-\bibfield{author}{\bibinfo{person}{Ziyuan Wang}, \bibinfo{person}{Bangyu Liu},
-  \bibinfo{person}{Jiandong Chen}, \bibinfo{person}{Yuyang Wu}, {and}
-  \bibinfo{person}{Haoyu Hu}.} \bibinfo{year}{2025}\natexlab{}.
-\newblock \bibinfo{title}{{MCP4EDA}: Bridging Large Language Models to {EDA}
-  Tools via the Model Context Protocol}.
+\bibfield{author}{\bibinfo{person}{Yiting Wang}, \bibinfo{person}{Wanghao Ye},
+  \bibinfo{person}{Yexiao He}, \bibinfo{person}{Yiran Chen},
+  \bibinfo{person}{Gang Qu}, {and} \bibinfo{person}{Ang Li}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{{MCP4EDA}: {LLM}-Powered Model Context Protocol
+  {RTL}-to-{GDSII} Automation with Backend Aware Synthesis Optimization}.
 \newblock
-\showeprint[arxiv]{2502.18436}
+\showeprint[arxiv]{2507.19570}
 
 
 \bibitem[Xu et~al\mbox{.}(2026)]%

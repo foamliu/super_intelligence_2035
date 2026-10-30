@@ -206,64 +206,13 @@
 }
 
 % ==================== LLM 基础 ====================
-@article{vaswani2017attention,
-  title={Attention is All You Need},
-  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, Lukasz and Polosukhin, Illia},
-  journal={Advances in Neural Information Processing Systems},
-  volume={30},
-  pages={5998--6008},
-  year={2017}
-}
 
-@techreport{openai2023gpt4,
-  title={GPT-4 Technical Report},
-  author={OpenAI},
-  year={2023},
-  number={arXiv:2303.08774},
-  institution={OpenAI}
-}
 
-@misc{yang2025qwen3,
-  title={Qwen3 Technical Report},
-  author={Yang, An and others},
-  year={2025},
-  eprint={2505.09388},
-  archivePrefix={arXiv},
-  primaryClass={cs.CL},
-  url={https://arxiv.org/abs/2505.09388}
-}
 
 % ==================== HDL 生成 ====================
-@article{thakur2023verigen,
-  title={VeriGen: A Large Language Model for Verilog Code Generation},
-  author={Thakur, Shailja and Ahmad, Baleegh and Pearce, Hammond A and Tan, Benjamin and Dolan-Gavitt, Brendan and Karri, Ramesh and Garg, Siddharth},
-  journal={ACM Transactions on Design Automation of Electronic Systems},
-  volume={29},
-  number={3},
-  pages={1--31},
-  year={2023},
-  publisher={ACM}
-}
 
-@inproceedings{liu2023rtlcoder,
-  title={RTLCoder: Outperforming GPT-3.5 in Design RTL Generation with Our Open-Source Dataset and Lightweight Solution},
-  author={Liu, Shang and Fang, Wenji and Lu, Yao and Zhang, Qijun and Zhang, Hongce and Xie, Zhiyao},
-  booktitle={2024 IEEE/ACM International Conference on Computer Aided Design (ICCAD)},
-  year={2024},
-  publisher={IEEE},
-  address={New York, NY, USA},
-  note={Also available at arXiv:2312.08617},
-  url={https://arxiv.org/abs/2312.08617}
-}
 
 % ==================== EDA + AI ====================
-@article{chen2024dawning,
-  title={The Dawn of AI-Native EDA: Promises and Challenges of Large Circuit Models},
-  author={Chen, Lei and Chen, Yiqi and Chu, Zhufei and Fang, Wenji and Ho, Tsung-Yi and Huang, Yu and Khan, Sadaf and Li, Min and Li, Xingquan and Liang, Yun and Lin, Yibo and Liu, Jinwei and Liu, Yi and Luo, Guojie and Shi, Zhengyuan and Sun, Guangyu and Tsaras, Dimitrios and Wang, Runsheng and Wang, Ziyi and Wei, Xinming and Xie, Zhiyao and Xu, Qiang and Xue, Chenhao and Young, Evangeline F Y and Yu, Bei and Yuan, Minjie and Zhang, Haoyi and Zhang, Zuodong and Zhao, Yuxiang and Zhen, Hui-Ling and Zheng, Ziyang and Zhu, Binwu and Zhu, Keren and Zou, Sunan},
-  journal={arXiv preprint arXiv:2403.07257},
-  year={2024},
-  url={https://arxiv.org/abs/2403.07257}
-}
 
 @misc{lee2025autoeda,
   title={AutoEDA: Enabling EDA Flow Automation through Microservice-Based LLM Agents},
@@ -275,21 +224,8 @@
   url={https://arxiv.org/abs/2508.01012}
 }
 
-@article{blocklove2024eda,
-  title={Can EDA Tool Feedback Improve Verilog Generation by LLMs?},
-  author={Blocklove, Jason and Garg, Siddharth and Karri, Ramesh and Pearce, Hammond},
-  journal={arXiv preprint arXiv:2411.11856},
-  year={2024}
-}
 
 % ==================== LLM Agent 框架 ====================
-@article{kumar2026agentforge,
-  title={AgentForge: Execution-Grounded Multi-Agent LLM Framework for Autonomous Software Engineering},
-  author={Kumar, Rajesh and others},
-  journal={arXiv preprint arXiv:2604.13120},
-  year={2026},
-  url={https://arxiv.org/abs/2604.13120}
-}
 
 % ==================== 工具与协议 ====================
 @misc{cline2024cline,
@@ -299,19 +235,7 @@
   howpublished={\url{https://github.com/cline/cline}}
 }
 
-@misc{mcp2024protocol,
-  title={Model Context Protocol (MCP)},
-  author={Anthropic},
-  year={2024},
-  howpublished={\url{https://modelcontextprotocol.io/}}
-}
 
-@article{jiang2024seed,
-  title={SEED: Customize Large Language Models with Sample-Efficient Adaptation for Code Generation},
-  author={Jiang, Xue and Dong, Yihong and Jin, Zhi and Li, Ge},
-  journal={arXiv preprint arXiv:2403.00046},
-  year={2024}
-}
 
 @misc{bge2024,
       title={M3-Embedding: Multi-Linguality, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation}, 
@@ -351,16 +275,14 @@
   doi = {10.1109/TCAD.2025.3529805}
 }
 
-@inproceedings{pu2024rag,
+@article{pu2024rag,
   author = {Pu, Yuan and He, Zhuolun and Qiu, Tairu and Wu, Haoyuan and Yu, Bei},
   title = {Customized Retrieval Augmented Generation and Benchmarking for {EDA} Tool Documentation {QA}},
-  booktitle = {Proc. IEEE/ACM Int. Conf. on Computer-Aided Design (ICCAD)},
-  year = {2024},
-  publisher = {IEEE},
-  address = {New York, NY, USA},
+  journal = {IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems (TCAD)},
+  volume = {44},
+  year = {2025},
   eprint = {2407.15353},
-  archivePrefix = {arXiv},
-  primaryClass = {cs.CL}
+  archivePrefix = {arXiv}
 }
 
 @inproceedings{rui2025chatcl,
@@ -418,8 +340,7 @@
   volume  = {58},
   number  = {1},
   pages   = {203--213},
-  year    = {2010},
-  doi     = {10.1287/opre.1090.0711}
+  year    = {2010}
 }
 
 @book{thrun2005probabilistic,
@@ -440,16 +361,16 @@
 
 @misc{he2024chateda,
   title={{ChatEDA}: A Large Language Model Powered Autonomous Agent for {EDA}},
-  author={He, Wei and Ren, Yibo and Zhu, Hang and Wang, Yuyang and Pan, Yibo and Zhou, Yuxuan and Lin, Yibang and Diao, Rui and Ye, Haizhi and Hu, Jianye and others},
-  eprint={2401.00754},
+  author={He, Zhuolun and Wu, Haoyuan and Zhang, Xinyun and Yao, Xufeng and Zheng, Su and Zheng, Haisheng and Yu, Bei},
+  eprint={2308.10204},
   archivePrefix={arXiv},
   year={2024}
 }
 
 @misc{wang2025mcp4eda,
-  title={{MCP4EDA}: Bridging Large Language Models to {EDA} Tools via the Model Context Protocol},
-  author={Wang, Ziyuan and Liu, Bangyu and Chen, Jiandong and Wu, Yuyang and Hu, Haoyu},
-  eprint={2502.18436},
+  title={{MCP4EDA}: {LLM}-Powered Model Context Protocol {RTL}-to-{GDSII} Automation with Backend Aware Synthesis Optimization},
+  author={Wang, Yiting and Ye, Wanghao and He, Yexiao and Chen, Yiran and Qu, Gang and Li, Ang},
+  eprint={2507.19570},
   archivePrefix={arXiv},
   year={2025}
 }
