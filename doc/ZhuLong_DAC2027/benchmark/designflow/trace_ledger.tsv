@@ -21,3 +21,6 @@
 1792149907675_axjv8.messages.json	xinqiaoz	hfeg0pkn004	520	physical_verify	case	EDA-Eval-DesignFlow-DummyMeas-001	2026-10-31 04:38	
 1792488619552_mt7ua.messages.json	johnl	hfeg0plg49	679	pnr_signoff	parked		2026-10-31 05:01	Innovus PnR+GenLEF trace (johnl/591msgs/2.04MB). Innovus 22.31 headless on .75 unstable: report_library_sets SEGFAULT; create_library_set loads set but get_libs/get_lib_cells empty until init_design (needs tech-LEF+cell-LEF+netlist=trace's own blocker); read_lef invalid cmd. No self-contained L2 grader feasible. GenLEF/ski-genlef are PyQt5/Aether-GUI (not headless). Trace deepread preserved. Better as L1-structural (deferred) or skip.
 1785846039627_itvhk.messages.json	e0014566	hfeg0plg58	689	physical_verify	case	EDA-Eval-DesignFlow-PowerFill-001	2026-10-31 05:29	
+1785735994579_tckme.messages.json	e0014566	hfeg0plg58	654	layout_virtuoso	parked		2026-10-31 05:42	同 e0014566 PowerFill flow 重复 itvhk/PowerFill-001，避免同域重复
+1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	layout_virtuoso	parked		2026-10-31 05:44	RTEXT/RNODE 打齐同 LayoutVirtuoso-001 主题，避免重复
+1792205753795_x5t0t.messages.json	brian	hfeg0plg95	497	characterization	case	EDA-Eval-DesignFlow-OpampChar-001	2026-10-31 06:17	
