@@ -2,43 +2,39 @@
 
 ## 🔧 运维指令区（每次唤醒先读）
 
-### 🚨 2026-10-30 运维即时令 XI：日报表格改两处——去 synthesized + test 思路写真 · 最高优先
+### 🚨 2026-10-30 运维即时令 XI：删除所有非真实 trace 构建的用例 + test 思路写真 · 最高优先
 
-> **运维令**：「日报表格两个问题：(1) 63 条 legacy 用例 trace 来源全显示 "synthesized"，没意义，去掉；(2) test 思路列全是同一句废话 "校验交付件 (双参 check(deliverable, workdir): 解 zip + 断言内含文件 + 内容达标)"，没有真实思路。立即改。」
+> **运维令**：「"去掉 synthesized" 不是改个名字，是**删除所有不是基于真实 trace 构建的用例**。当前 72 条里只有 8 条有真实 trace 来源，其余 64 条（63 legacy + 1 proper 无 trace）全删。test 思路列也要写真思路，不要写废话。」
 
-**一、去掉 synthesized（改 gen_daily_report.py）**
+**一、删除非真实 trace 用例（硬性，本轮内完成）**
 
-`trace_source()` 函数里，legacy 用例（无 `metadata.trace_source`）当前返回 `"synthesized (legacy scripting 口径)"` 或 `"synthesized"`。这没意义——legacy 就是 legacy，不需要标 synthesized。
-
-改为：
-- legacy 用例 trace 来源列显示 **`—`**（破折号，表示无真实 trace 来源，本就是 scripting 口径合成题）
-- proper 用例照常显示 `metadata.trace_source` 的 host/session_file 等
-
-具体改 `gen_daily_report.py` 的 `trace_source(c)` 函数：legacy 返回 `"—"`，proper 无 trace_source 也返回 `"—"`。
+1. **删除范围**：所有**没有 `metadata.trace_source`**（或 trace_source 无 `session_file`）的用例。当前 72 条里删 64 条，**只留 8 条**有真实 trace 来源的 proper design_flow case：
+   - 保留：Verification-001 / Characterization-001 / PDKQA-001 / Backannot-001 / Digital-010 / Digital-021 / Digital-022 / Digital-023（后 4 条若 trace_source 也为空则一并删，自己核对）
+2. **操作**：
+   - 编辑 `EDA-Eval-DesignFlow.jsonl`，只保留有真实 trace 来源的行
+   - 删除的用例对应的 `assets/<task_id>/` 和 `reference/<task_id>/` 也一并删（`git rm -r`）
+   - 保留的用例如果 `legacy:true` 字段还在，去掉（它们是 proper，不是 legacy）
+3. **核对**：删完后 `wc -l EDA-Eval-DesignFlow.jsonl` = 保留条数；每行都有 `metadata.trace_source.session_file`
+4. **git**：`git add -- benchmarks/EDA-Eval-DesignFlow` → commit → push origin master
 
 **二、test 思路列写真思路（改 gen_daily_report.py + 补 case metadata）**
 
 当前 test 思路列是写死的一句废话，所有 case 都一样。要改为**每条 case 显示自己的真实验证思路**。
 
-做法：
-1. **每条 case 在 `metadata` 加一个字段 `test_rationale`**（一句话，中文，写真实验证思路）：
+1. **每条保留的 case 在 `metadata` 加 `test_rationale` 字段**（一句话，中文，写真实验证思路）：
    - ❌ 错（废话）：`"校验交付件 (双参 check(deliverable, workdir): 解 zip + 断言内含文件 + 内容达标)"`
    - ✅ 对（真实）：`"解 zip 校验 5 个 export/*.tcl 行首#注释有效(行尾#无效陷阱)+model -timing 替换 -verilog all + 5 个 .inst 的 add_latch 空{}/forbidden_state ^/netlist 名漂移/pintype/default_input_state 7 类缺陷全修复 + fix_summary 覆盖 8 类别"`
    - ✅ 对（真实）：`"解 zip 校验 filter_erc_by_section 子section精确过滤(2.1-2.8) + step3_aether.il 无virtuoso直调/cds.lib + erc_report 只含2.1-2.8 + lib.defs INCLUDE aether SKIP amsLib 注释剥离"`
-   - 写法：说清楚**校验交付件里哪些文件、哪些字段、什么条件、为什么这样能区分对错**。读你 test 代码的人看这一句就知道你在验什么。
-2. **gen_daily_report.py 的 test 思路列改为读 `metadata.test_rationale`**：
-   - 有该字段 → 显示该字段内容
-   - 无该字段 → 显示 `"—"`（不要显示废话）
-   - 删掉写死的废话逻辑
-3. **补字段范围**：
-   - **proper design_flow case**（当前 9 条）：**全部补** `metadata.test_rationale`（这是重点，proper case 要有完整溯源）
-   - **legacy scripting case**（63 条）：**不补**（trace 来源都标 — 了，test 思路也标 — 即可，不浪费精力）
+   - 写法：说清楚**校验交付件里哪些文件、哪些字段、什么条件、为什么这样能区分对错**
+2. **gen_daily_report.py 的 test 思路列改为读 `metadata.test_rationale`**：有则显示，无则显示 `—`；删掉写死的废话逻辑
+3. **trace 来源列**：有 `metadata.trace_source` 显示 host/session_file，无则显示 `—`（删掉 "synthesized" 逻辑）
 
-**三、执行**
-1. 先改 `gen_daily_report.py`：trace_source legacy 返回 "—"；test 思路列读 `metadata.test_rationale`，无则 "—"
-2. 给 9 条 proper case 补 `metadata.test_rationale`（逐条写真思路，追加到 EDA-Eval-DesignFlow.jsonl 对应行）
-3. regen 日报验证：trace 来源列 legacy 显示 —，test 思路列 proper 显示真思路、legacy 显示 —
-4. 收尾铁律提交（workspace+日报→main，用例→master）
+**三、执行顺序**
+1. 先删非真实 trace 用例（jsonl + assets + reference）
+2. 给保留的 case 补 `metadata.test_rationale`
+3. 改 `gen_daily_report.py`（trace 来源读 trace_source，test 思路读 test_rationale，无则 —）
+4. regen 日报验证
+5. 收尾铁律提交（workspace+日报→main，用例→master）
 
 ### 🚨 2026-10-30 运维即时令 X：workspace 已迁移到 ZhuLong_DAC2027/benchmark/ · 最高优先（先读）
 
