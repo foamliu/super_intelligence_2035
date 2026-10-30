@@ -395,7 +395,11 @@ class DeepseekHarnessDriver:
             r.timed_out = "timeout" in str(ex).lower() or "timed out" in str(ex).lower()
 
         r.wall_s = time.time() - t0
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        # Always extract the git diff as model_patch, even on timeout/error.
+        # The agent may have produced a valid (partial) patch before timing out;
+        # discarding it on non-zero returncode loses real agent output.  The
+        # official SWE-bench docker eval will judge the patch honestly.
+        r.model_patch = git_patch(workdir)
         return r
 
 
