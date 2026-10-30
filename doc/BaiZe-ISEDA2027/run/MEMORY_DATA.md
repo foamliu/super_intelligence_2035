@@ -18,9 +18,9 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.1%,字节增长~7MB/s刚重启).候选表已交付
-已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID3425450 hf download运行中,10433/12126parquet=86.1%,8.incomplete=3活跃+5起步,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
-当前动作:     唤醒973(2026-10-31 05:51):复核85M下载→旧hf子进程(PID3043316)因proxy 503崩溃→脚本自动重启新hf子进程(PID3425450,etimes~2min)→.incomplete文件判活:15s内AVXiG4 768M→805M(+37MB)+VtNVjj 268M→335M(+67MB)+Jc1qbA 1024M→1024M(持平)=3活跃增长+5起步(0字节建立连接中)+parquet 10433/12126(86.1%,+6 vs唤醒972)+/proc/io: wchar=268MB write_bytes=268MB(进程2min内已写268MB)+候选表38行✓+DATA_MAPPING.md D节✓+df /nas_train 173T/207T(84%)35T可用→心跳
+PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.1%,字节增长~13.4MB/s).候选表已交付
+已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID3425450 hf download运行中,10433/12126parquet=86.1%,8.incomplete活跃写入,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒974(2026-10-31 05:57):复核85M下载→/proc/io铁证字节增长:write_bytes 8,344,821,760→8,747,290,624(+402MB/30s=13.4MB/s✓)+8.incomplete全活跃(mtime05:55-05:56,sizes804M-1.34GB)+parquet10433/12126=86.1%(flat vs唤醒973,parquet在incomplete完成后才rename)+候选表38行✓+DATA_MAPPING.md D节✓+df /nas_train 173T/207T(84%)35T可用→心跳
 下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,剩余1693parquet≈6.5TB);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [05:57] 唤醒974：复核85M下载持续运行 → ①ps确认PID2668156(bash脚本,etimes=25151s≈7h)+PID3425450(hf download,etimes=449s≈7.5min,ppid=2668156)活跃;②/proc/3425450/io铁证字节增长:write_bytes 8,344,821,760→8,747,290,624(+402,468,864B/30s=13.4MB/s✓);③8 .incomplete全活跃(mtime 05:55-05:56,sizes 804M-1.34GB,较唤醒973增长:AVXiG4 805M→1.34G+VtNVjj 335M→1.07G+Jc1qbA 1.02G→1.34G);④parquet 10,433/12,126=86.1%(flat vs唤醒973,因incomplete未完成不rename);⑤31,324总文件;⑥候选表38行✓+DATA_MAPPING.md D节✓;⑦df:/nas_train 173T/207T(84%),35T可用;⑧ETA:剩余1693parquet≈6.5TB@13.4MB/s→~5.6天(爬坡中,稳态预计20-25MB/s→~3天)→更新心跳
+> 📦 唤醒973(10-31 05:51)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 > [05:51] 唤醒973：复核85M下载 → ①ps确认PID2668156(bash脚本,etimes=24743s≈6.9h)alive,旧hf子进程PID3043316已退出(日志显示proxy 503→MaxRetryError崩溃),脚本自动重启新hf子进程PID3425450(etimes~2min,ppid=2668156);②du -sb超时(NFS 40TB目录慢),改用.incomplete文件判活:15s内AVXiG4 768M→805M(+37MB=2.5MB/s)+VtNVjj 268M→335M(+67MB=4.5MB/s)+Jc1qbA 1024M(持平,可能写满一块)=3活跃增长+5起步(0字节建立连接);③/proc/3425450/io:wchar=268MB write_bytes=268MB(2min内已写268MB≈2.2MB/s均速,含建立连接开销,将逐步加速);④parquet 10,433/12,126=86.1%(+6 vs唤醒972);⑤8 .incomplete(sa1b/EN/part01_0/train-00011~18),0失败shard(proxy 503已自动恢复);⑥候选表38行✓+DATA_MAPPING.md D节✓;⑦df:/nas_train 173T/207T(84%),35T可用;⑧ETA:剩余1693 parquet≈6.5TB,当前~7MB/s(刚重启爬坡),之前稳态~20-25MB/s→ETA~3天@25MB/s→更新心跳
 > 📦 唤醒972(10-31 05:42)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 > [05:39] 唤醒971：复核85M下载持续运行 → ①ps确认PID2668156+3043316活跃(etimes=24082s≈6.7h+3137s≈52min,ppid=1/2668156);②du -sb 2次判活:40195231399324→40195432501121(+201MB/10s=20.1MB/s,严格递增✓);③.incomplete 9文件:7活跃(mtime05:38sizes128M-3.5G实时写入)+2队列(0字节,mtime05:15);④parquet 10,425/12,126=86.1%(持平唤醒970);⑤候选表39行✓(3可删+9保留+26待定)+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3天@20MB/s(剩余1701parquet≈6.6TB)→更新心跳
