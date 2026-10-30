@@ -4,3 +4,7 @@
 [verified-full 00:31:36] [2/5] PREDICT deepseek-harness on sympy__sympy-11618
 [verified-full 00:34:40]   -> patch-produced (patch=945B wall=183.2s)
 [verified-full 00:34:40] [3/5] PREDICT deepseek-harness on sphinx-doc__sphinx-10323
+[verified-full 01:06:40]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 01:06:40] [4/5] PREDICT deepseek-harness on scikit-learn__scikit-learn-10297
+[verified-full 01:19:46]   -> patch-produced (patch=1547B wall=786.1s)
+[verified-full 01:19:46] [5/5] PREDICT deepseek-harness on psf__requests-1142
