@@ -19,8 +19,8 @@ WAITING: 0
 
 ```
 PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(字节增长✓).候选表已交付
-已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh PID2668156运行中,10321/12126files=85.1%,字节3连增39,719,217M→39,719,351M→39,719,418M,~10MB/s,8.incomplete=活跃sa1b/EN下载);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
-当前动作:     唤醒897(2026-10-30 23:34):验证85M下载持续字节增长(3连du -sb递增✓ 39,719,217,785,003→39,719,351,882,612→39,719,418,889,194,+201MB/20s≈10MB/s)+parquet 10321/8.incomplete=sa1b/EN(part00_8,0-268MB,活跃非失败)+候选表38行每行有判定+证据命令✓+D节已commit(f7482afc1)→心跳
+已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh PID2668156运行中,10322/12126parquet=85.2%,字节3连增39,727,131M→39,727,467M→39,727,668M,+536MB/20s≈27MB/s,8.incomplete=活跃sa1b/EN下载);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒898(2026-10-30 23:37):复核85M下载(3连du -sb递增✓ 39,727,131,812,124→39,727,467,017,566→39,727,668,229,667,+335MB+201MB/20s≈27MB/s)+parquet 10322(↑from 10321)/8.incomplete=sa1b/EN(part00_8活跃)+.nfs垃圾仍在(514KB)+候选表38行每行有判定+证据命令✓+D节已commit(f7482afc1,ac8563dc3)→心跳
 下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,7 +30,9 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [23:34] 唤醒897：验证85M下载持续运行 → ①pgrep确认PID2668156+2668173活跃;②字节增长判活:3连du -sb→39,719,217,785,003→39,719,351,882,612→39,719,418,889,194(递增✓,+201MB/20s≈10MB/s);③进度:10,321parquet/8incomplete(sa1b/EN/part00_8)/12,126total=85.1%;④候选表38行每行有判定+证据命令✓,D节合计估算完整;⑤env14 hardlink count=2(ls -li确认),full_*均symlink→/nas_env(ls -la确认);⑥git log f7482afc1(23:27)为最新data commit→更新心跳
+> [23:37] 唤醒898：复核85M下载+候选表 → ①pgrep确认PID2668156+2668173活跃;②字节增长判活:3连du -sb→39,727,131,812,124→39,727,467,017,566→39,727,668,229,667(递增✓,+335MB+201MB/20s≈27MB/s);③进度:10,322parquet(↑from 10321)/8incomplete(sa1b/EN/part00_8活跃)/12,126total=85.2%;④.nfs垃圾仍存在(tmp/.nfs0000000b14c0fe4000fd2352=514KB,已在候选表标"可删");⑤候选表38行+D节已commit(f7482afc1,ac8563dc3);⑥datasets du实测:FineVision 4.3T+baize-data 8.4T+baize-vision 1.1T+conceptual-captions 1.2T;code/plan-and-execute 146G(项目代码,保留)→更新心跳
+>
+> 📦 唤醒897(10-30 23:34)原文归档 → daily-memories-data/2026-10-30.md（验证85M字节增长+候选表复核,详见日文件）
 >
 > 📦 唤醒896(10-30 23:26)原文归档 → daily-memories-data/2026-10-30.md（验证85M字节增长+心跳,详见日文件）
 >
