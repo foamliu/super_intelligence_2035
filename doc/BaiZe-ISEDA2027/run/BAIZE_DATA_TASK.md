@@ -1,5 +1,25 @@
 # BAIZE_DATA_TASK.md
 
+### 🚨 2026-10-30 22:2x 运维直令：恢复 85M 下载 + `/nas_train` 大目录清理盘点 · 最高优先
+
+> **用户令**：「data: 恢复下载 85M，看看 /nas_train 有哪些大目录可以删掉」
+
+**A. 恢复 85M 下载（先交活，再记账）**
+1. 探针 4 条（proxy `.23` / hf-mirror、目标 repo、剩余 shard、磁盘余量）→ 按 A/B/C 分支起下载。
+2. **判活按字节增长**（不看进程存活）：连续 3 次 `du -sb` 递增、无 `.incomplete` 堆积。
+3. 回报：已下/总量、实测 MB/s、ETA、失败 shard 名单（原文）。
+
+**B. `/nas_train` 大目录盘点 + 可删候选表**
+1. `du -x --max-depth=2 -h /nas_train 2>/dev/null | sort -h | tail -40` + `df -h /nas_train`。
+2. 对 top-20 目录逐项给：表观（`du -sh`）/ 实占（`du -sb`）/ 文件数 + 抽样 `ls -li` 看 inode 硬链接数 / 是否已被镜像收录（对照 `INDEX.tsv`）/ 归属（`full_*` / `tokenized` / 下载 parquet / staging / 旧日志 / 孤儿）。
+3. 产出 `run/data/cleanup_candidates_YYYYMMDD.tsv`：path、表观、实占、inode、判定（可删/保留/待定）、证据命令。
+4. **红线不变**：`full_*`、`tokenized/`、`INDEX.tsv`、`DATA_LEDGER.md`、下载 parquet **一律不可删**；本轮**只出候选清单，不执行删除**（等运维批准）。
+5. `DATA_MAPPING.md` 增设「可删候选」节（只列清单与合计；🚫 把表观当实占）。
+
+**判据**：85M 有字节增长 + 候选表每行都有判定与证据命令；本轮不删任何数据。
+
+
+
 > 🧷 **行动优先纪律（2026-10-25 13:4x 用户令 · 覆盖一切归档/收尾/铁律类条文）**
 > 用户原话：「放开这些什么禁制、铁律什么的。」
 > 1. **先把活干出来，再谈记录**：本轮有未完成指令时，**先交付**（文件落盘/进程起来），心跳、日报、归档都排在交付之后。

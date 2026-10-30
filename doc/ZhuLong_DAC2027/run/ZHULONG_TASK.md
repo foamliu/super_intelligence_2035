@@ -1,5 +1,18 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🚨 2026-10-30 22:2x 运维直令：`zhulong-full` 配置 `kimi-k2.6` 模型跑 5-run · 最高优先
+
+> **用户令**：「zhulong：zhulong-full 配置 kimi-k2.6 模型跑 5-run」
+
+1. **先确认模型可用**：查 gateway `GET /v1/models` 确认真实 model 名（大小写/前缀），写进 4 个 worker 的 `providers.json`；**不存在 → 记原文 + WAITING=1，不臆造名字**。
+2. **配置**：`C1.full`（READBACK=full）/ OMEGA=high / BUDGET=0 / LAGGED=0 / CLI_AGENT=zhulong / PROXY_PORTS=8650,8651,8652,8654 / **maxTokens=16384**（与 cline 基线对齐）/ **model=kimi-k2.6**。
+3. **跑 5-run**：r1..r5 各自独立 batch 目录；每 run 记 batch id、PID、起止时间、耗时、pass/158、regrade 结果（区分 exec_err / infra-void）。
+4. **判据**：5/5 完成且 regrade 有效（非 infra-void）→ 报 `mean ± std` + 5 个单值；任一 run infra-void 即作废重跑并写原因。
+5. **交付**：§8 表格加 kimi-k2.6 行 + 与 glm-5.3-flash / glm-5.2 / cline 基线对比；MEMORY 状态头更新。
+6. 红线：只用被裁决可用的端口池（8664/8665/8653/8669 或自有池），🚫 抢他人 license。
+
+
+
 ### 🔴 运维指令 · 2026-10-29 21:5x（**论文审阅：参考文献 + 逻辑链 + 数字↔措辞一致性**）· 用户直令 · 最高优先 · 覆盖一切
 
 > 用户原话：「数字是没错的，主要核对参考文献，和论文逻辑。以及数字和措辞是否一致。」

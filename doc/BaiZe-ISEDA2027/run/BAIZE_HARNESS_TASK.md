@@ -1,5 +1,19 @@
 # BAIZE_HARNESS_TASK.md
 
+### 🚨 2026-10-30 22:2x 运维直令：把恒为 0 分的 harness 调试跑通 · 最高优先
+
+> **用户令**：「SWE-bench Verified 是否有几个 harness 分数始终是 0，调试跑通。」
+
+1. **先出归因表（不许猜）**：对全部 runner（cline / opencode / pi / claude-code / codex / hermes / deepseek）列出：已跑题数 n、pass 数、是否"恒 0"（n≥5 且 pass=0）、错误分类（适配器/凭证/容量/上游 5xx/超时/其实判错）。
+   - 已知线索：Gen7 pilot（7×5）里 **hermes / deepseek / claude-code = 0%**；claude-code 后来进了全量，hermes/deepseek 仍"未参与"。
+2. **逐条最小复现**：每个恒 0 runner 选 1 题 smoke（原题原命令），存完整命令 + 原文日志（≤200 行）到 `reports/harness_zero_debug/<runner>/`。
+3. **修**：只准改适配器/启动参数/凭证/超时/镜像；🚫 改题、🚫 改判分、🚫 伪造分数。
+4. **验收**：修好的 runner 重跑 ≥5 题，`pass>0` 才算通；仍不通的写「根因 + 阻塞点 + 需要的运维动作」。
+5. **交付**：`reports/report_harness_zero_score_zh.html`（中文、单文件、无外链）：归因表 + 修复前后对比 + 剩余阻塞。
+6. 硬约束不变：🚫 commit 结果 JSON；hermes/deepseek 若确实不可用，如实列"未参与"，不许补数。
+
+
+
 
 ### 🧷 📛 命名与归档纪律（常驻）
 > 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
