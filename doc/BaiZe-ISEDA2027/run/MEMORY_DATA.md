@@ -18,10 +18,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载已起(字节增长验证✓).候选表已产出
-已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh已起,10315/12126files,.cache字节3连增2.28GB→2.55GB→3.09GB→13.82GB);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
-当前动作:     唤醒894(2026-10-30 22:5x):①探针4条(proxy .23✓/hf-mirror✓/HF直连✓/磁盘35T可用✓)→起下载✓;②字节增长判活3连du -sb .cache递增✓(~30-60MB/s);③盘点/nas_train/app.e0031982(datasets 24目录du -sh+du -sb+其他12目录)→cleanup_candidates_20261030.tsv(38行:6保留/3可删/25待定)→DATA_MAPPING.md增D节;④更新心跳+日报+commit+push
-下一步:       下轮唤醒:①查85M下载进度(du -sb .cache是否增长+parquet数+incomplete数);②push如失败补推;③待运维批准后执行删除
+PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(字节增长✓).候选表已交付
+已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh PID2668156运行中,10315/12126files=85%,.cache字节3连增27.18→27.38→27.44GB,~13MB/s);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒895(2026-10-30 23:18):验证85M下载字节增长(.cache 3连du -sb递增✓ 27,175,195,017→27,376,455,559→27,443,541,546,~13MB/s)+确认候选表与D节已commit+push(fd7e9c66e/833e528af)→更新心跳
+下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+.cache增长);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(A+B均已交付)
@@ -30,7 +30,9 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [22:5x] 唤醒894：运维令10-30 22:2x恢复85M下载+/nas_train盘点 → ①探针4条(proxy .23→hf-mirror HTTP/2 200✓/HF直连 HTTP/2 200✓/磁盘35T可用✓/85M目录37T已下10313parquet+8incomplete)→setsid起download_85m_parallel16.sh✓(PID2668145);②字节增长判活:du -sb .cache 3连测→2,282,420,406→2,550,688,808→3,093,026,443(递增✓,~30-60MB/s,第4测13,821,674,803=13.8GB加速✓);③/nas_train盘点:du -sh+du -sb逐目录测(datasets 24目录+其他12目录)→cleanup_candidates_20261030.tsv(38行:6保留/3可删/25待定)→DATA_MAPPING.md增D节(红线/可删/待定/合计);④更新MEMORY+日报+commit+push
+> [23:18] 唤醒895：验证85M下载运行状态 → ①pgrep确认download_85m_parallel16.sh(PID2668156)+hf download(PID2668173)活跃;②字节增长判活:.cache 3连du -sb→27,175,195,017→27,376,455,559→27,443,541,546(递增✓,~13MB/s);③进度:10313parquet/8incomplete/12,126total=85%,.cache=27.4GB,日志显示sa1b/EN活跃下载中;④cleanup_candidates_20261030.tsv(38行)+DATA_MAPPING.md D节已commit+push(fd7e9c66e/833e528af);⑤git status无未提交→更新心跳
+>
+> 📦 唤醒894(10-30 22:5x)原文归档 → daily-memories-data/2026-10-30.md（恢复85M下载+盘点,详见日文件）
 >
 > 📦 唤醒892(10-30 22:03)原文归档 → daily-memories-data/2026-10-30.md（例行巡检,详见日文件）
 >
