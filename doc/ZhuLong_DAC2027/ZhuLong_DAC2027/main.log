@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  30 OCT 2026 11:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  30 OCT 2026 14:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -41,7 +41,6 @@ Package acmart Info: Explicitly selecting natbib mode on input line 141.
 Package acmart Info: Not using anonymous mode on input line 149.
 Package acmart Info: Not using timestamp mode on input line 157.
 Package acmart Info: Not using authordraft mode on input line 167.
-Package acmart Info: Using anonymous mode on input line 182.
 Class acmart Info: Using format sigconf, number 4 on input line 182.
 Class acmart Info: Using fontsize 9pt on input line 288.
 
@@ -563,8 +562,8 @@ Package: doi 2018/09/09 handle doi numbers
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 )
-Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 47.
-
+Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 102
+.
 \c@theorem=\count308
 
 (/usr/share/texlive/texmf-dist/tex/latex/preprint/balance.sty
@@ -572,7 +571,7 @@ Package: balance 1999/02/23 4.3 (PWD)
 \oldvsize=\dimen193
 )
 Excluding comment 'screenonly' Include comment 'printonly'
-Excluding comment 'anonsuppress' Excluding comment 'acks'
+Include comment 'anonsuppress'
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count309
@@ -581,43 +580,43 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
 <<ot1.cmap>><<oml.cmap>><<oms.cmap>><<omx.cmap>>
-LaTeX Font Info:    Trying to load font information for U+msa on input line 47.
-
+LaTeX Font Info:    Trying to load font information for U+msa on input line 102
+.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 47.
-
+LaTeX Font Info:    Trying to load font information for U+msb on input line 102
+.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Info: Redefining \microtypecontext on input line 47.
-Package microtype Info: Applying patch `item' on input line 47.
-Package microtype Info: Applying patch `toc' on input line 47.
-Package microtype Info: Applying patch `eqnum' on input line 47.
-Package microtype Info: Applying patch `footnote' on input line 47.
-Package microtype Info: Applying patch `verbatim' on input line 47.
+LaTeX Info: Redefining \microtypecontext on input line 102.
+Package microtype Info: Applying patch `item' on input line 102.
+Package microtype Info: Applying patch `toc' on input line 102.
+Package microtype Info: Applying patch `eqnum' on input line 102.
+Package microtype Info: Applying patch `footnote' on input line 102.
+Package microtype Info: Applying patch `verbatim' on input line 102.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -630,7 +629,7 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-Package hyperref Info: Link coloring OFF on input line 47.
+Package hyperref Info: Link coloring OFF on input line 102.
  (./main.out)
 (./main.out)
 \@outlinefile=\write4
@@ -707,6 +706,9 @@ File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
+
+Class acmart Warning: No city present for an affiliation.
+
 (./DAC2027/1_intro.tex<<ot1tt.cmap>>
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `cmtt' (encoding: OT1).
@@ -728,7 +730,9 @@ Underfull \hbox (badness 5771) in paragraph at lines 7--12
 \OT1/cmr/m/n/9 a generate--execute--refine loop over four com-mer-cial
  []
 
+[1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
+]
 Underfull \hbox (badness 2707) in paragraph at lines 27--32
 []\OT1/cmr/bx/n/9 RQ3 (toolchain gen-er-al-ity). EDA-Scripting-
  []
@@ -743,10 +747,7 @@ Underfull \hbox (badness 2608) in paragraph at lines 27--32
 \OT1/cmr/m/n/9 measures the same struc-ture slice by slice; we
  []
 
-) (./DAC2027/2_background.tex [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdfte
-x.map}
-
-]) (./DAC2027/3_design.tex
+) (./DAC2027/2_background.tex) (./DAC2027/3_design.tex
 Underfull \hbox (badness 1052) in paragraph at lines 13--1
 \OT1/cmr/bx/n/9 ing \OT1/cmr/m/n/9 (Sec-tion []4[]) ex-plain-ing \OT1/cmr/m/it/
 9 why \OT1/cmr/m/n/9 ex-e-cu-tion is nec-es-sary,
@@ -774,7 +775,7 @@ Overfull \hbox (1.29785pt too wide) in paragraph at lines 14--27
  [][] 
  []
 
-
+[4.4]
 Underfull \hbox (badness 3058) in paragraph at lines 38--40
 \OT1/cmr/m/n/9 Ca-dence Vir-tu-oso) is \OT1/cmr/m/it/9 function-aligned \OT1/cm
 r/m/n/9 with PyAether:
@@ -810,7 +811,7 @@ Underfull \hbox (badness 1394) in paragraph at lines 41--43
 \OT1/cmr/m/n/9 s.d. Task cases de-rive from non-redistributable ven-dor
  []
 
-[4.4]
+
 Underfull \hbox (badness 1603) in paragraph at lines 50--52
 \OT1/cmr/m/n/9 Rel-a-tive to the full sys-tem, re-mov-ing ex-e-cu-tion costs
  []
@@ -854,12 +855,14 @@ Underfull \hbox (badness 4492) in paragraph at lines 109--1
 \OT1/cmr/m/n/9 but an un-doc-u-mented C++-binding contract---hidden
  []
 
-
+[6.6]
 Underfull \hbox (badness 2096) in paragraph at lines 4--6
 \OT1/cmr/m/n/9 tailed, under-documented APIs, the ground-ing gap is
  []
 
-) (./DAC2027/8_conclusion.tex) [6.6] (./main.bbl
+) (./DAC2027/8_conclusion.tex) [7.7
+
+] (./main.bbl
 Underfull \hbox (badness 1661) in paragraph at lines 158--164
 \OT1/cmr/m/n/7 Sizhe Tang, Wuxi Li, Duo Ding, Chia-Tung Ho, Haox-ing
  []
@@ -881,7 +884,7 @@ File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 )
 (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
-) [7.7
+) [8.8
 
 ]
 (./main.aux)
@@ -889,17 +892,21 @@ File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 6959019A92F1974A4250986694DD7792;4437.
  ) 
 Here is how much of TeX's memory you used:
- 17683 strings out of 475589
- 282781 string characters out of 5782859
- 1952975 words of memory out of 5000000
- 39267 multiletter control sequences out of 15000+600000
- 570518 words of font info for 81 fonts, out of 8000000 for 9000
+ 17722 strings out of 475589
+ 283393 string characters out of 5782859
+ 1955975 words of memory out of 5000000
+ 39301 multiletter control sequences out of 15000+600000
+ 572125 words of font info for 87 fonts, out of 8000000 for 9000
  474 hyphenation exceptions out of 8191
- 90i,12n,131p,1093b,565s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,131p,1093b,568s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/app.e0031982/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0
 900.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb></u
@@ -910,26 +917,28 @@ exmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb></usr/share/texlive/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/
 type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmti8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mti9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on main.pdf (7 pages, 714402 bytes).
+ublic/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mti8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on main.pdf (8 pages, 743567 bytes).
 PDF statistics:
- 437 PDF objects out of 1000 (max. 8388607)
- 364 compressed objects within 4 object streams
- 66 named destinations out of 1000 (max. 500000)
+ 455 PDF objects out of 1000 (max. 8388607)
+ 377 compressed objects within 4 object streams
+ 67 named destinations out of 1000 (max. 500000)
  13022 words of extra memory for PDF output out of 14400 (max. 10000000)
 

@@ -44,6 +44,61 @@
 % font expansion 会中止 pdflatex。关闭 expansion 仅去掉字符级微拉伸/压缩，字体与内容不变。 ---
 \microtypesetup{expansion=false}
 
+% --- 18 位作者改为网格布局（每行 3 人，共 6 行），单位/邮箱仅在网格下方显示一次 ---
+% 覆盖 acmart 的 sigconf 作者排版（\@mkauthors@iii）：默认所有作者隶属同一单位时，
+% acmart 会把 18 个名字竖排成一列；这里改为每行 3 人的并排网格，并把 email 与单位
+% 汇总到网格下方统一显示，避免 "单位 18 行重复" 的难看效果。
+\makeatletter
+\def\@mkauthors@iii{%
+  \author@bx@wd=\textwidth\relax
+  \advance\author@bx@wd by -\author@bx@sep\relax
+  \divide\author@bx@wd by 3\relax
+  \advance\author@bx@wd by -\author@bx@sep\relax
+  \gdef\@currentauthors{}%
+  \gdef\@sharedaffil{}%
+  \let\and\@empty
+  \def\@renderauthorbx{%
+    \global\setbox\author@bx=\vtop{\hsize=\author@bx@wd\relax
+      \centering\@authorfont\@currentauthors}%
+    \box\author@bx\hspace{\author@bx@sep}\relax
+    \gdef\@currentauthors{}}%
+  \def\@author##1{%
+    \ifx\@currentauthors\@empty\else\@renderauthorbx\fi
+    \gdef\@currentauthors{##1}}%
+  \def\email##1##2{%
+    \ifx\@sharedaffil\@empty
+      \gdef\@sharedaffil{\bgroup
+        \mathchardef\UrlBreakPenalty=10000\href{mailto:##2}{##2}\egroup}%
+    \else
+      \g@addto@macro\@sharedaffil{\par\bgroup
+        \mathchardef\UrlBreakPenalty=10000\href{mailto:##2}{##2}\egroup}%
+    \fi}%
+  \def\affiliation##1##2{%
+    \ifx\@sharedaffil\@empty
+      \gdef\@sharedaffil{%
+        \setkeys{@ACM@affiliation@}{obeypunctuation=false}%
+        \setkeys{@ACM@affiliation@}{##1}\@ACM@resetaffil
+        ##2\@ACM@checkaffil}%
+    \else
+      \g@addto@macro\@sharedaffil{\par
+        \setkeys{@ACM@affiliation@}{obeypunctuation=false}%
+        \setkeys{@ACM@affiliation@}{##1}\@ACM@resetaffil
+        ##2\@ACM@checkaffil}%
+    \fi}%
+  \hsize=\textwidth
+  \global\setbox\mktitle@bx=\vbox{\noindent
+    \unvbox\mktitle@bx\par\medskip\leavevmode
+    \lineskip=1pc\relax\centering\hspace*{-1em}%
+    \addresses
+    \ifx\@currentauthors\@empty\else\@renderauthorbx\fi
+    \par
+    \ifx\@sharedaffil\@empty\else
+      \medskip\@affiliationfont\@sharedaffil
+    \fi
+    \par\bigskip}%
+}
+\makeatother
+
 \begin{document}
 
 \title{ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting}
