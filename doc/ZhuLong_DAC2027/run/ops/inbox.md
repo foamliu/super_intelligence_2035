@@ -1,4 +1,28 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 139 -->
+## RUN_ID 139 - read-only: inspect local scan.tsv (candidate source for trace ledger) + MCP reachability
+
+```bash
+set -u
+echo "=== RUN_ID 139 | scan.tsv probe | $(date '+%F %T') | host=$(hostname) ==="
+SC=/nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace/designflow/bench_v0.50/scan.tsv
+ls -l "$SC" 2>/dev/null | cut -c1-110
+echo "[1] header + 2 rows"
+head -3 "$SC" 2>/dev/null | cut -c1-320
+echo "[2] rows=$(wc -l < "$SC" 2>/dev/null)"
+echo "[3] column count of header"
+head -1 "$SC" 2>/dev/null | awk -F'\t' '{print "  cols="NF}'
+echo "[4] sample of last row"
+tail -1 "$SC" 2>/dev/null | cut -c1-320
+echo "[5] any summary.tsv anywhere on this host (bounded)"
+timeout 40 find /nasdata/app.e0031982 -maxdepth 7 -name 'summary.tsv' 2>/dev/null | head -5
+timeout 20 find /home -maxdepth 4 -name 'summary.tsv' 2>/dev/null | head -3
+echo "[6] eda_flow MCP port"
+timeout 5 bash -c 'exec 3<>/dev/tcp/127.0.0.1/18891' 2>/dev/null && echo "  18891 OPEN" || echo "  18891 CLOSED"
+echo "[7] bench_v0.50 dir"
+ls -1 /nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace/designflow/bench_v0.50 2>/dev/null | head -15
+echo "=== DONE 139 ==="
+```
 <!-- RUN_ID: 138 -->
 ## RUN_ID 138 - read-only probe: summary.tsv scale/structure (to design a trace ledger + progress bar)
 
