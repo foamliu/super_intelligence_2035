@@ -1,0 +1,35 @@
+=== RTEXT / RNODE label audit ===
+inventory       : label_inventory_unclean.txt
+labels parsed   : 49 (RTEXT + RNODE, drawing ignored)
+drawing skipped : 24
+nets            : 5
+
+--- per-net audit ---
+net=edit_test  RTEXT=1  RNODE=0  layers=RDL  verdict=GARBAGE
+net=test2  RTEXT=2  RNODE=0  layers=RDL  verdict=GARBAGE
+net=vcc  RTEXT=2  RNODE=11  layers=RDL  verdict=ALIGNED
+net=viso  RTEXT=2  RNODE=9  layers=RDL  verdict=ALIGNED
+net=vss  RTEXT=2  RNODE=11  layers=RDL  verdict=ALIGNED
+
+--- summary ---
+garbage_nets: 2
+  edit_test
+  test2
+missing_rtext_nets: 0
+duplicate_labels: 9
+
+--- suggested delete list (12) ---
+DELETE  (garbage)  (RDL "RTEXT")  "edit_test"  xy=(100.0000 100.00)
+DELETE  (garbage)  (RDL "RTEXT")  "test2"  xy=(0.0000 0.00)
+DELETE  (garbage)  (RDL "RTEXT")  "test2"  xy=(10.0000 10.00)
+DELETE  (duplicate)  (RDL "RTEXT")  "viso"  xy=(15818.6100 -1351.52)
+DELETE  (duplicate)  (RDL "RTEXT")  "vss"  xy=(17664.2000 -1351.52)
+DELETE  (duplicate)  (RDL "RTEXT")  "vcc"  xy=(17501.0300 -1351.52)
+DELETE  (duplicate)  (RDL "RNODE")  "vcc"  xy=(17501.0300 -1351.52)
+DELETE  (duplicate)  (RDL "RNODE")  "vcc"  xy=(17501.0300 -1351.52)
+DELETE  (duplicate)  (RDL "RNODE")  "vss"  xy=(17664.2000 -1351.52)
+DELETE  (duplicate)  (RDL "RNODE")  "vss"  xy=(17664.2000 -1351.52)
+DELETE  (duplicate)  (RDL "RNODE")  "viso"  xy=(15818.6100 -1351.52)
+DELETE  (duplicate)  (RDL "RNODE")  "viso"  xy=(15818.6100 -1351.52)
+
+overall: MISALIGNED

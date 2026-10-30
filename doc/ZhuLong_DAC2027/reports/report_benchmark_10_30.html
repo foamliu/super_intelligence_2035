@@ -24,7 +24,7 @@ td{word-break:break-word}
 footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </style></head><body><div class="wrap">
 <h1>设计流 Benchmark 日报 · 10_30</h1>
-<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-10-30 19:54</span></p>
+<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-10-30 20:44</span></p>
 
 <h2>一、三口径数字（多机版，.75 落盘实测值）</h2>
 <div class="kpis">
@@ -37,12 +37,12 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
 <div class="kpis">
-<div class="kpi"><div class="n">10</div><div class="l">累计用例数</div></div>
-<div class="kpi"><div class="n">10</div><div class="l">设计流口径（proper design_flow）</div></div>
+<div class="kpi"><div class="n">11</div><div class="l">累计用例数</div></div>
+<div class="kpi"><div class="n">11</div><div class="l">设计流口径（proper design_flow）</div></div>
 <div class="kpi"><div class="n">0</div><div class="l">legacy scripting（已标记 legacy:true）</div></div>
 <div class="kpi"><div class="n">1</div><div class="l">jsonl 文件数（已合并）</div></div>
 </div>
-<p><b>按 domain 分布：</b>analog_context: 1 · characterization: 1 · digital: 4 · layout_aether: 1 · physical_verify: 1 · pnr_signoff: 1 · verification: 1</p>
+<p><b>按 domain 分布：</b>analog_context: 1 · characterization: 1 · digital: 4 · layout_aether: 1 · layout_virtuoso: 1 · physical_verify: 1 · pnr_signoff: 1 · verification: 1</p>
 <div class="note">即时令 VIII 已将原 15 个按工具分文件合并为单一 <code>EDA-Eval-DesignFlow.jsonl</code>；scripting 口径用例标记 <code>legacy:true</code> 保留存量，不再追加。新建用例只往此文件追加，按设计流契约（mode=design_flow / entry_point=outputs/submit.zip / 双参 check(deliverable, workdir) / 无 lang·host）。</div>
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
@@ -55,13 +55,14 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 <tr><td>EDA-Eval-DesignFlow-Digital-022</td><td>t0002948/1792133892937_i2dlp @ hfeg0plg49 (DC 综合 DFT 插入失败根因诊断与修复)</td><td>DC 综合 DFT 插入失败根因诊断与修复</td><td>给定两个 DC 综合脚本与 DRC 指标: 附件 case1_dc.tcl 是插入 DFT 成功的基线，case_fail_dc.tcl 是插入 DFT 失败的版本，dft_drc…</td><td>outputs/submit.zip 内含 fix_report.md, dc_fixed.tcl</td><td>解 zip 校验 fix_report.md 含 scan_enable/scan_mode/Constant/TEST-130/门控 诊断关键点；dc_fixed.tcl 将 -control_signal 改为 scan_enable（不能残留 scan_mode）、-type TestMode 改 Constant、set_dft_configuration -fix_clock_gating 行被注释(#) —— 能区分未改 control_signal/未改类型/未注释门控的半成品修复</td><td>Python</td><td><span class='tag draft'>未跑</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-Digital-023</td><td>t0002948/1792400029503_0na23 @ hfeg0plg49 (VCS 编译/仿真 makefile 参数化改造)</td><td>VCS 编译/仿真 makefile 参数化改造</td><td>附件 makefile 是当前 VCS 编译/仿真脚本，但它把 PU 模块硬编码在驱动层(filelist 名 pu.f / pu_net.f、UPF 路径、testcase 前缀…</td><td>outputs/submit.zip 内含 makefile_para, cfg/tpl_mod.cfg, cfg/README.md</td><td>解 zip 校验 makefile_para 含 MOD/CONFIG/$(MOD)/RTL_F/TB_TOP/UPF_FILE/QUEUE/ONLINE 变量 + 接入 cfg/$(MOD).cfg 配置卡 + 无 pu.f/pu_net.f/pu_pr_net.f 硬编码残留 + ONLINE 本机直跑开关；tpl_mod.cfg 含 MOD/RTL_F/TB_TOP/UPF_FILE；cfg/README.md 含 优先级/接入 说明 —— 能区分仍硬编码 PU/未参数化的错误</td><td>Python</td><td><span class='tag draft'>未跑</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-LayoutAether-001</td><td>yan1zh/1792487689184_4ybw1 @ hfeg0plg65 (pyAether 驱动 and2CSx1 版图从原理图绘制 + calibre LVS CORRECT(7ports/9nets/6insts) + DRC 179-&gt;32 修复 (MT2/M0U/spacer))</td><td>and2CSx1 标准单元 LVS 网表比对工具 (schematic CDL flatten vs layout 提取网表)</td><td>你是 EDA 版图工程师，在为标准单元 and2CSx1（AND2 = NAND2 + INV，6 个 MOSFET，顶层 7 端口 A/B/Y/vbn!/vbp!/vcc!/vs…</td><td>outputs/submit.zip</td><td>解 zip 校验 4 文件(lvs_tool.py/sample_output_correct.txt/sample_output_buggy.txt/comparison_report.txt)齐全 + 实跑 candidate lvs_tool.py --layout layout_correct.txt 退出码 0 + 断言 CORRECT + Ports 7 matched/0 unmatched + Instances 6/0 + Nets 9/0 + 实跑 --layout layout_buggy.txt 断言 INCORRECT + Nets unmatched&gt;=1(naive 只数器件个数的工具 buggy 仍是 6 器件会误判 CORRECT -&gt; FAIL) + buggy 输出点名 I1.MM0 + terminal G + net A/B(只给 INCORRECT 无定位 -&gt; FAIL e) + comparison_report 枚举全 7 端口名 A/B/Y/vbn!/vbp!/vcc!/vss!(只比对端口的工具 -&gt; FAIL g 需内部网) + 内部网 net7/zn1(证明解析了内部连接非仅端口计数)</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
+<tr><td>EDA-Eval-DesignFlow-LayoutVirtuoso-001</td><td>e0014566/1786541065533_cgqd1 @ hfeg0pkn001 (virtuoso SKILL 扫 Array16G_B 版图 RTEXT/RNODE label 审计 + 清理(删 test2/edit_test 垃圾 + 9 重复) for rscalc 电阻计算 + 总结可复用方法)</td><td>Array16G_B 电源网 RTEXT/RNODE 标签审计 + 清理工具 (label inventory dump per-net verdict + 去重 + 垃圾识别)</td><td>你是 EDA 版图工程师 e0014566 在 hfeg0pkn001 上为 DRAM 版图 Array16G_B 做电源网络电阻计算（rscalc）前的 RTEXT/RNODE …</td><td>outputs/submit.zip</td><td>解 zip 校验 4 文件(rtext_rnode_audit.py/sample_output_unclean.txt/sample_output_clean.txt/cleanup_report.txt)齐全 + 实跑 candidate rtext_rnode_audit.py --inventory label_inventory_unclean.txt 退出码 0 + 断言 MISALIGNED + 点名 garbage nets test2/edit_test(naive 只数总 RTEXT/RNODE 个数不分 net -&gt; FAIL c) + 点名 3 real nets vcc/vss/viso + duplicate_labels=9(3 RTEXT+6 RNODE dups，naive 不去重 -&gt; FAIL d) + drawing vblh 不入审计(naive 把 drawing 当 dup -&gt; FAIL d) + per-net verdict test2/edit_test=GARBAGE(RTEXT&gt;0 且 RNODE==0)(naive 只查 RTEXT&gt;0 不查 RNODE==0 把 garbage 误报 ALIGNED -&gt; FAIL e) + vcc=ALIGNED + 实跑 --inventory label_inventory_clean.txt 断言 ALIGNED + duplicate_labels=0 + garbage_nets=0 + vcc RTEXT=2/RNODE=11/vss 2/11/viso 2/9 全 ALIGNED + cleanup_report 枚举全 5 net(vcc/vss/viso/test2/edit_test)+DELETE 清单带 xy(naive 只报总数无 per-net -&gt; FAIL g)+BEFORE(MISALIGNED)/AFTER(ALIGNED) 对比</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-PDKQA-001</td><td>xinqiaoz/1788770994295_x4b0p @ hfeg0pkn004 (PDK QA DRC 框架 Windows→Linux 迁移, Calibre VCO aok/aoi autoswitch bug 以假 MGC_HOME+stub libXss 绕过, 17 checker 测试建立)</td><td>PDK QA DRC 测试环境建立 (Calibre VCO aok/aoi autoswitch bug 绕过)</td><td>这是一个 PDK QA System 的 DRC 测试环境建立任务（真实 trace 来源：pdkQaSystem Windows→Linux 迁移 Phase 2，主机 hfeg…</td><td>outputs/submit.zip</td><td>解 zip 校验 3 文件(test_env.py/smoke_report.md/PHASE2_REPORT.md)齐全；test_env.py 含 17 SUPPORT checker 名 + 假 MGC_HOME + stub libXss + auto-rebuild 绕过 Calibre VCO aok/aoi autoswitch bug；naive 仅 CALIBRE_HOME 方案会 FAIL (c)(d)(g) —— 能区分未绕过 autoswitch/漏 checker 的错误</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-Verification-001</td><td>e0031668/1789370647360_ukkn7 @ hfeg0plg91 (ERC_AI_CHECK pipeline 跑通 + 子 section 过滤修复 + step3+ virtuoso→aether flow 改写)</td><td>ERC pipeline 子 section 过滤修复 + step3+ virtuoso→aether flow 改写</td><td>这是一个 ERC_AI_CHECK pipeline（附件 run_all.sh 编排 step0~step3；Python prepare_new_netlist.py 从 ER…</td><td>outputs/submit.zip</td><td>解 zip 校验 5 文件(prepare_new_netlist.py/step3_aether.il/erc_report_2_1_to_2_8.csv/lib.defs/run_all.sh)齐全；用附件 ERC_Wesign.csv 临时 import 跑 prepare_new_netlist.py 验子 section 2.1-2.8 精确过滤(行尾#注释无效陷阱)；erc_report 只含 2.1-2.8；lib.defs INCLUDE aether SKIP amsLib 注释剥离；step3_aether.il 无 virtuoso 直调/cds.lib —— 能区分过滤越界/未改 aether flow 的错误</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
 </table>
 
 <h2>四、pi 被测调试结果</h2>
 <div class="kpis">
-<div class="kpi"><div class="n" style="color:#155724">5</div><div class="l">PASS</div></div>
+<div class="kpi"><div class="n" style="color:#155724">6</div><div class="l">PASS</div></div>
 <div class="kpi"><div class="n" style="color:#721c24">0</div><div class="l">FAIL</div></div>
 <div class="kpi"><div class="n" style="color:#856404">0</div><div class="l">draft</div></div>
 <div class="kpi"><div class="n" style="color:#888">5</div><div class="l">未跑</div></div>

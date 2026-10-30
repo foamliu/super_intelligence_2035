@@ -1,0 +1,19 @@
+=== RTEXT / RNODE label audit ===
+inventory       : label_inventory_clean.txt
+labels parsed   : 37 (RTEXT + RNODE, drawing ignored)
+drawing skipped : 24
+nets            : 3
+
+--- per-net audit ---
+net=vcc  RTEXT=2  RNODE=11  layers=RDL  verdict=ALIGNED
+net=viso  RTEXT=2  RNODE=9  layers=RDL  verdict=ALIGNED
+net=vss  RTEXT=2  RNODE=11  layers=RDL  verdict=ALIGNED
+
+--- summary ---
+garbage_nets: 0
+missing_rtext_nets: 0
+duplicate_labels: 0
+
+--- suggested delete list (0) ---
+
+overall: ALIGNED
