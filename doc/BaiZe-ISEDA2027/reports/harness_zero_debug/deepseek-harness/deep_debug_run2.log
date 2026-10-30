@@ -1,0 +1,92 @@
+=== DEEPSEEK HARNESS DEEP DEBUG ===
+instance: django__django-10097
+base_url: http://127.0.0.1:9091/v1
+profile: sdk-minimal
+dsh_home: /tmp/dsh_home
+workdir: /dev/shm/harness_verified_full/workdirs/deepseek-harness/django_django
+DEEPSEEK_BASE_URL will be set to http://127.0.0.1:9091/v1
+DEEPSEEK_API_KEY will be set to dummy-key-for-proxy
+
+env preview: {
+  "DEEPSEEK_BASE_URL": "http://127.0.0.1:9091/v1",
+  "DEEPSEEK_API_KEY": "dummy-key-for-proxy",
+  "DSH_HOME": "/tmp/dsh_home"
+}
+
+[0.0s] DeepSeekHarness created
+[0.6s] runtime started (entered context)
+  runtime pid=1227078, poll=None
+  runtime args (first 5): ['/tmp/dsh_sdk/deepseek_harness_runtime/runtime/deepseek-harness-sdk-runtime-linux-x64', '--profile', 'sdk-minimal']
+[0.6s] calling harness.run()...
+[24.7s] harness.run() returned
+  final_response len: 0
+  final_response (first 500): 
+  finish_reason: error
+  events count: 44
+    event[0]: {"type": "agent/inbox/spliced", "seq": 0, "time": 1793375162861, "data": {"target": "next-turn", "start": 0, "inserted": [{"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n\t\t(last modified by Tim Bell)\n\t \nSince #20003, core.validators.URLValidator accepts URLs with usernames and passwords. RFC 1738 section 3.1 requires \"Within the user and password field, any \":\", \"@\", or \"/\" must be encoded\"; however, 
+    event[1]: {"type": "turn/start", "seq": 1, "time": 1793375162863, "data": {"turn": 1}}
+    event[2]: {"type": "agent/inbox/spliced", "seq": 2, "time": 1793375162865, "data": {"target": "next-turn", "start": 0, "removedCount": 1, "inserted": []}}
+    event[3]: {"type": "step/start", "seq": 3, "time": 1793375162869, "data": {"turn": 1, "step": 1}}
+    event[4]: {"type": "system/message", "seq": 4, "time": 1793375162871, "data": {"turn": 1, "step": 1, "message": {"role": "system", "content": [{"type": "text", "text": "You are a helpful software engineer assistant."}], "source": {"kind": "system-prompt"}, "id": "eaa47319-718e-41c0-bb40-9f90fc19c8c5"}}, "surfaceOp": "append"}
+    event[5]: {"type": "user/message", "seq": 5, "time": 1793375162872, "data": {"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n\t\t(last modified by Tim Bell)\n\t \nSince #20003, core.validators.URLValidator accepts URLs with usernames and passwords. RFC 1738 section 3.1 requires \"Within the user and password field, any \":\", \"@\", or \"/\" must be encoded\"; however, those characters are currently accepted without being %-
+    event[6]: {"type": "user/message", "seq": 6, "time": 1793375162873, "data": {"content": [{"type": "text", "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/dev/shm/harness_verified_full/workdirs/deepseek-harness/django_django\"."}], "source": {"kind": "runtime-context", "form": "snapshot", "sections": [{"name": "working-directory:current", "text": "Current working directory: \"/dev/shm/harness_verified_full/workdirs/deepseek-harn
+    event[7]: {"type": "request/header", "seq": 7, "time": 1793375162874, "data": {"header": {"config": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "maxTokens": 256000, "reasoningEffort": "high"}, "adapterDefaults": {"reasoningEffort": true, "maxTokens": true}, "tools": [{"name": "bash", "description": "Run commands in a bash shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* Network access depends on the task environment. Prefer c
+    event[8]: {"type": "request/context", "seq": 8, "time": 1793375162874, "data": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "contextWindow": 1000000}}
+    event[9]: {"type": "session/title", "seq": 9, "time": 1793375162878, "data": {"title": "Make URLValidator reject invalid charact", "messageSeqs": [5], "source": {"kind": "fallback"}}}
+    event[10]: {"type": "session-log-deepseek/delivery-accepted", "seq": 10, "time": 1793375168171, "data": {"sessionId": "django__django-10097", "sessionFormatVersion": 4, "throughSeq": 9}}
+    event[11]: {"type": "assistant/message", "seq": 11, "time": 1793375168199, "data": {"turn": 1, "step": 1, "message": {"role": "assistant", "content": [{"type": "text", "text": ""}, {"type": "tool-call", "id": "bash_0_64a12c2b", "name": "bash", "arguments": "{\"command\": \"ls -la\"}"}], "source": {"kind": "model", "provider": "deepseek-official", "model": "kimi-k2.6-cloud", "replayState": {"response": {"kind": "deepseek-messages", "version": 1, "model": "kimi-k2.6-cloud"}, "blocks": [{"type": "text"}, {"ty
+    event[12]: {"type": "tool/call", "seq": 12, "time": 1793375168201, "data": {"turn": 1, "step": 1, "callId": "bash_0_64a12c2b", "name": "bash", "arguments": "{\"command\": \"ls -la\"}"}}
+    event[13]: {"type": "tool/result", "seq": 13, "time": 1793375169035, "data": {"turn": 1, "step": 1, "message": {"role": "tool", "source": {"kind": "tool", "callId": "bash_0_64a12c2b"}, "toolCallId": "bash_0_64a12c2b", "content": [{"type": "text", "text": "total 120\ndrwxr-x---  10 app.e0031982 app.adm   560 Oct 28 09:25 .\ndrwxr-x---  12 app.e0031982 app.adm   260 Oct 30 23:13 ..\n-rw-r-----   1 app.e0031982 app.adm 34286 Oct 28 09:25 AUTHORS\n-rw-r-----   1 app.e0031982 app.adm  1115 Oct 28 09:25 CONTRIBU
+    event[14]: {"type": "step/end", "seq": 14, "time": 1793375169036, "data": {"turn": 1, "step": 1}}
+    event[15]: {"type": "step/start", "seq": 15, "time": 1793375169042, "data": {"turn": 1, "step": 2}}
+    event[16]: {"type": "session-log-deepseek/delivery-accepted", "seq": 16, "time": 1793375170075, "data": {"sessionId": "django__django-10097", "sessionFormatVersion": 4, "throughSeq": 15}}
+    event[17]: {"type": "assistant/message", "seq": 17, "time": 1793375172002, "data": {"turn": 1, "step": 2, "message": {"role": "assistant", "content": [{"type": "text", "text": ""}, {"type": "tool-call", "id": "bash_1_b0fd602e", "name": "bash", "arguments": "{\"command\":\"find . -name \\\"validators.py\\\" | head -5\"}"}], "source": {"kind": "model", "provider": "deepseek-official", "model": "kimi-k2.6-cloud", "replayState": {"response": {"kind": "deepseek-messages", "version": 1, "model": "kimi-k2.6-cloud
+    event[18]: {"type": "tool/call", "seq": 18, "time": 1793375172005, "data": {"turn": 1, "step": 2, "callId": "bash_1_b0fd602e", "name": "bash", "arguments": "{\"command\":\"find . -name \\\"validators.py\\\" | head -5\"}"}}
+    event[19]: {"type": "tool/result", "seq": 19, "time": 1793375172237, "data": {"turn": 1, "step": 2, "message": {"role": "tool", "source": {"kind": "tool", "callId": "bash_1_b0fd602e"}, "toolCallId": "bash_1_b0fd602e", "content": [{"type": "text", "text": "./django/core/validators.py\n./django/contrib/postgres/validators.py\n./django/contrib/auth/validators.py\n[Command finished with exit code 0]"}], "isError": false, "id": "d35f6143-cd13-46ca-af1e-f9b0816d42dc"}}, "sourceEventSeqs": [18], "surfaceOp": "app
+    event[20]: {"type": "step/end", "seq": 20, "time": 1793375172238, "data": {"turn": 1, "step": 2}}
+    event[21]: {"type": "step/start", "seq": 21, "time": 1793375172241, "data": {"turn": 1, "step": 3}}
+    event[22]: {"type": "session-log-deepseek/delivery-accepted", "seq": 22, "time": 1793375173513, "data": {"sessionId": "django__django-10097", "sessionFormatVersion": 4, "throughSeq": 21}}
+    event[23]: {"type": "assistant/message", "seq": 23, "time": 1793375174289, "data": {"turn": 1, "step": 3, "message": {"role": "assistant", "content": [{"type": "text", "text": ""}, {"type": "tool-call", "id": "bash_2_2ac41138", "name": "bash", "arguments": "{\"command\": \"cat ./django/core/validators.py\"}"}], "source": {"kind": "model", "provider": "deepseek-official", "model": "kimi-k2.6-cloud", "replayState": {"response": {"kind": "deepseek-messages", "version": 1, "model": "kimi-k2.6-cloud"}, "blocks"
+    event[24]: {"type": "tool/call", "seq": 24, "time": 1793375174290, "data": {"turn": 1, "step": 3, "callId": "bash_2_2ac41138", "name": "bash", "arguments": "{\"command\": \"cat ./django/core/validators.py\"}"}}
+    event[25]: {"type": "tool/result", "seq": 25, "time": 1793375174482, "data": {"turn": 1, "step": 3, "message": {"role": "tool", "source": {"kind": "tool", "callId": "bash_2_2ac41138"}, "toolCallId": "bash_2_2ac41138", "content": [{"type": "text", "text": "import ipaddress\nimport re\nfrom pathlib import Path\nfrom urllib.parse import urlsplit, urlunsplit\n\nfrom django.core.exceptions import ValidationError\nfrom django.utils.deconstruct import deconstructible\nfrom django.utils.functional import SimpleLaz
+    event[26]: {"type": "step/end", "seq": 26, "time": 1793375174483, "data": {"turn": 1, "step": 3}}
+    event[27]: {"type": "step/start", "seq": 27, "time": 1793375174486, "data": {"turn": 1, "step": 4}}
+    event[28]: {"type": "session-log-deepseek/delivery-accepted", "seq": 28, "time": 1793375179471, "data": {"sessionId": "django__django-10097", "sessionFormatVersion": 4, "throughSeq": 27}}
+    event[29]: {"type": "assistant/message", "seq": 29, "time": 1793375180291, "data": {"turn": 1, "step": 4, "message": {"role": "assistant", "content": [{"type": "text", "text": ""}, {"type": "tool-call", "id": "bash_3_a7113a10", "name": "bash", "arguments": "{\"command\":\"grep -n \\\"user:pass\\\\|authentication\\\\|URLValidator\\\\|regex = _lazy\\\" ./django/core/validators.py | head -20\"}"}], "source": {"kind": "model", "provider": "deepseek-official", "model": "kimi-k2.6-cloud", "replayState": {"respon
+    event[30]: {"type": "tool/call", "seq": 30, "time": 1793375180291, "data": {"turn": 1, "step": 4, "callId": "bash_3_a7113a10", "name": "bash", "arguments": "{\"command\":\"grep -n \\\"user:pass\\\\|authentication\\\\|URLValidator\\\\|regex = _lazy\\\" ./django/core/validators.py | head -20\"}"}}
+    event[31]: {"type": "tool/result", "seq": 31, "time": 1793375180518, "data": {"turn": 1, "step": 4, "message": {"role": "tool", "source": {"kind": "tool", "callId": "bash_3_a7113a10"}, "toolCallId": "bash_3_a7113a10", "content": [{"type": "text", "text": "50:        self.regex = _lazy_re_compile(self.regex, self.flags)\n74:class URLValidator(RegexValidator):\n95:    regex = _lazy_re_compile(\n97:        r'(?:\\S+(?::\\S*)?@)?'  # user:pass authentication\n167:    user_regex = _lazy_re_compile(\n171:    dom
+    event[32]: {"type": "step/end", "seq": 32, "time": 1793375180519, "data": {"turn": 1, "step": 4}}
+    event[33]: {"type": "step/start", "seq": 33, "time": 1793375180522, "data": {"turn": 1, "step": 5}}
+    event[34]: {"type": "session-log-deepseek/delivery-accepted", "seq": 34, "time": 1793375181684, "data": {"sessionId": "django__django-10097", "sessionFormatVersion": 4, "throughSeq": 33}}
+    event[35]: {"type": "assistant/message", "seq": 35, "time": 1793375182553, "data": {"turn": 1, "step": 5, "message": {"role": "assistant", "content": [{"type": "text", "text": ""}, {"type": "tool-call", "id": "bash_4_611d51f6", "name": "bash", "arguments": "{\"command\": \"sed -n '90,110p' ./django/core/validators.py\"}"}], "source": {"kind": "model", "provider": "deepseek-official", "model": "kimi-k2.6-cloud", "replayState": {"response": {"kind": "deepseek-messages", "version": 1, "model": "kimi-k2.6-clou
+    event[36]: {"type": "tool/call", "seq": 36, "time": 1793375182555, "data": {"turn": 1, "step": 5, "callId": "bash_4_611d51f6", "name": "bash", "arguments": "{\"command\": \"sed -n '90,110p' ./django/core/validators.py\"}"}}
+    event[37]: {"type": "tool/result", "seq": 37, "time": 1793375182779, "data": {"turn": 1, "step": 5, "message": {"role": "tool", "source": {"kind": "tool", "callId": "bash_4_611d51f6"}, "toolCallId": "bash_4_611d51f6", "content": [{"type": "text", "text": "        r'(?<!-)'                            # can't end with a dash\n        r'\\.?'                               # may have a trailing dot\n    )\n    host_re = '(' + hostname_re + domain_re + tld_re + '|localhost)'\n\n    regex = _lazy_re_compile(\n  
+    event[38]: {"type": "step/end", "seq": 38, "time": 1793375182779, "data": {"turn": 1, "step": 5}}
+    event[39]: {"type": "step/start", "seq": 39, "time": 1793375182782, "data": {"turn": 1, "step": 6}}
+    event[40]: {"type": "session-log-deepseek/delivery-accepted", "seq": 40, "time": 1793375183686, "data": {"sessionId": "django__django-10097", "sessionFormatVersion": 4, "throughSeq": 39}}
+    event[41]: {"type": "assistant/attempt", "seq": 41, "time": 1793375186945, "data": {"turn": 1, "step": 6, "stream": [{"type": "chunk", "time": 1793375183690, "chunk": {"type": "block-start", "index": 0, "blockType": "text"}}, {"type": "text-chunks", "time0": 1793375183690, "index": 0, "dt": [0, 0, 0, 0, 189, 1, 0, 0, 0, 0, 0, 0, 0, 0, 183, 0, 0, 0, 0, 5, 0, 1, 0, 0, 0, 0, 126, 0, 0, 0, 13, 0, 0, 0, 0, 0, 1, 0, 0, 315, 0, 0, 0, 0, 0, 0, 0, 0, 0, 233, 0, 0, 0, 0, 0, 0, 0, 0, 0, 159, 4, 0, 0, 0, 0, 0, 0, 0, 1
+    event[42]: {"type": "step/end", "seq": 42, "time": 1793375186947, "data": {"turn": 1, "step": 6}}
+    event[43]: {"type": "turn/end", "seq": 43, "time": 1793375186948, "data": {"turn": 1, "reason": {"kind": "error", "error": {"message": "DeepSeek Messages SSE contains invalid JSON", "code": "MALFORMED_RESPONSE"}}}}
+  notifications count: 46
+    notif[0]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "agent/inbox/spliced", "seq": 0, "time": 1793375162861, "data": {"target": "next-turn", "start": 0, "inserted": [{"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n
+    notif[1]: method=session.status payload={"sessionId": "django__django-10097", "status": "running"}
+    notif[2]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "turn/start", "seq": 1, "time": 1793375162863, "data": {"turn": 1}}}
+    notif[3]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "agent/inbox/spliced", "seq": 2, "time": 1793375162865, "data": {"target": "next-turn", "start": 0, "removedCount": 1, "inserted": []}}}
+    notif[4]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "step/start", "seq": 3, "time": 1793375162869, "data": {"turn": 1, "step": 1}}}
+    notif[5]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "system/message", "seq": 4, "time": 1793375162871, "data": {"turn": 1, "step": 1, "message": {"role": "system", "content": [{"type": "text", "text": "You are a helpful software engineer assistant."}], "source": {"kind": "system-prompt"}, "id": 
+    notif[6]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "user/message", "seq": 5, "time": 1793375162872, "data": {"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n\t\t(last modified by Tim Bell)\n\t \nSince #20003, core
+    notif[7]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "user/message", "seq": 6, "time": 1793375162873, "data": {"content": [{"type": "text", "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/dev/shm/harness_verified_full/
+    notif[8]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "request/header", "seq": 7, "time": 1793375162874, "data": {"header": {"config": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "maxTokens": 256000, "reasoningEffort": "high"}, "adapterDefaults": {"reasoningEffort": true, "maxTok
+    notif[9]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "request/context", "seq": 8, "time": 1793375162874, "data": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "contextWindow": 1000000}}}
+[25.9s] runtime closed (exited context)
+
+=== RUNTIME STDERR (last 50 lines) ===
+  shutdown request failed: shutdown timed out waiting for DeepSeek Harness runtime
+
+=== RUNTIME PROCESS ===
+  pid=1227078, returncode=0, poll=0
+
+=== GIT DIFF (workdir changes) ===
+(no changes)
+
+Total wall: 26.0s

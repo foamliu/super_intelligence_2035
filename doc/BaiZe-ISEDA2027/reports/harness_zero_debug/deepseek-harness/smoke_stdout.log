@@ -1,0 +1,24 @@
+=== DEEPSEEK-HARNESS SMOKE TEST ===
+instance: django__django-10097
+workdir:  /dev/shm/harness_verified_full/workdirs/deepseek-harness/django_django
+timestamp: 2026-10-30 23:12:55
+gw_proxy_dsh 9091 chat test:
+  HTTP 200
+
+--- git reset ---
+HEAD is now at b9cf764 Fixed #29517 -- Added support for SQLite column check constraints on positive integer fields.
+
+--- running deepseek-harness (timeout 600s) ---
+[run_single] instance_id=django__django-10097
+[run_single] base_commit=b9cf764be62e77b4777b3a75ec256f6209a57671
+[run_single] ps_len=2656
+[run_single] git reset --hard b9cf764be62e
+[run_single] running deepseek-harness ...
+== harness=deepseek-harness rc=0 timed_out=False wall=3.5s ==
+[run_single] model_patch: 0 bytes
+[run_single] wrote patch -> /dev/shm/harness_verified_full/workdirs/deepseek-harness/smoke_django__django-10097.patch
+[run_single] cleanup: git reset --hard b9cf764be62e
+
+=== SMOKE RESULT: rc=0 ===
+patch size: 0 bytes
+timestamp: 2026-10-30 23:13:02

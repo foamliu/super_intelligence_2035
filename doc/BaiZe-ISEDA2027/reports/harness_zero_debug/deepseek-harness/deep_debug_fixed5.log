@@ -1,0 +1,40 @@
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/harness_zero_debug/deepseek-harness/deep_debug.py", line 61, in <module>
+    result = harness.run(INST["problem_statement"], session_id=INST["instance_id"])
+  File "/tmp/dsh_sdk/deepseek_harness/api.py", line 140, in run
+    return self.start_session(session_id).run(input, on_notification=on_notification)
+  File "/tmp/dsh_sdk/deepseek_harness/api.py", line 181, in run
+    message_id = self.harness.client.session_prompt(
+  File "/tmp/dsh_sdk/deepseek_harness/client.py", line 181, in session_prompt
+    response = self.request(
+  File "/tmp/dsh_sdk/deepseek_harness/client.py", line 228, in request
+    result = self._request_raw(
+  File "/tmp/dsh_sdk/deepseek_harness/client.py", line 355, in _request_raw
+    raise item
+deepseek_harness.errors.JsonRpcError: session "django__django-10097" already exists
+=== DEEPSEEK HARNESS DEEP DEBUG ===
+instance: django__django-10097
+base_url: http://127.0.0.1:9091/v1
+profile: sdk-minimal
+dsh_home: /tmp/dsh_home
+workdir: /dev/shm/harness_verified_full/workdirs/deepseek-harness/django_django
+DEEPSEEK_BASE_URL will be set to http://127.0.0.1:9091/v1
+DEEPSEEK_API_KEY will be set to dummy-key-for-proxy
+
+env preview: {
+  "DEEPSEEK_BASE_URL": "http://127.0.0.1:9091/v1",
+  "DEEPSEEK_API_KEY": "dummy-key-for-proxy",
+  "DSH_HOME": "/tmp/dsh_home"
+}
+
+[0.0s] DeepSeekHarness created
+[0.5s] runtime started (entered context)
+  runtime pid=386614, poll=None
+  runtime args (first 5): ['/tmp/dsh_sdk/deepseek_harness_runtime/runtime/deepseek-harness-sdk-runtime-linux-x64', '--profile', 'sdk-minimal']
+[0.5s] calling harness.run()...
+[0.6s] EXCEPTION: JsonRpcError: session "django__django-10097" already exists
+
+=== GIT DIFF (workdir changes) ===
+(no changes)
+
+Total wall: 0.6s

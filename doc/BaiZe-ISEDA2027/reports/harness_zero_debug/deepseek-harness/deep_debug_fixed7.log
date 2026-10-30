@@ -1,0 +1,75 @@
+=== DEEPSEEK HARNESS DEEP DEBUG ===
+instance: django__django-10097
+base_url: http://127.0.0.1:9091/v1
+profile: sdk-minimal
+dsh_home: /tmp/dsh_home
+workdir: /dev/shm/harness_verified_full/workdirs/deepseek-harness/django_django
+DEEPSEEK_BASE_URL will be set to http://127.0.0.1:9091/v1
+DEEPSEEK_API_KEY will be set to dummy-key-for-proxy
+
+env preview: {
+  "DEEPSEEK_BASE_URL": "http://127.0.0.1:9091/v1",
+  "DEEPSEEK_API_KEY": "dummy-key-for-proxy",
+  "DSH_HOME": "/tmp/dsh_home"
+}
+
+[0.0s] DeepSeekHarness created
+[0.5s] runtime started (entered context)
+  runtime pid=547096, poll=None
+  runtime args (first 5): ['/tmp/dsh_sdk/deepseek_harness_runtime/runtime/deepseek-harness-sdk-runtime-linux-x64', '--profile', 'sdk-minimal']
+[0.5s] calling harness.run()...
+[19.9s] harness.run() returned
+  final_response len: 0
+  final_response (first 500): 
+  finish_reason: error
+  events count: 28
+    event[0]: {"type": "agent/inbox/spliced", "seq": 0, "time": 1793374611258, "data": {"target": "next-turn", "start": 0, "inserted": [{"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n\t\t(last modified by Tim Bell)\n\t \nSince #20003, core.validators.URLValidator accepts URLs with usernames and passwords. RFC 1738 section 3.1 requires \"Within the user and password field, any \":\", \"@\", or \"/\" must be encoded\"; however, 
+    event[1]: {"type": "turn/start", "seq": 1, "time": 1793374611261, "data": {"turn": 1}}
+    event[2]: {"type": "agent/inbox/spliced", "seq": 2, "time": 1793374611262, "data": {"target": "next-turn", "start": 0, "removedCount": 1, "inserted": []}}
+    event[3]: {"type": "step/start", "seq": 3, "time": 1793374611266, "data": {"turn": 1, "step": 1}}
+    event[4]: {"type": "system/message", "seq": 4, "time": 1793374611269, "data": {"turn": 1, "step": 1, "message": {"role": "system", "content": [{"type": "text", "text": "You are a helpful software engineer assistant."}], "source": {"kind": "system-prompt"}, "id": "04e57fc2-dabc-472c-989a-59592e0ebfc1"}}, "surfaceOp": "append"}
+    event[5]: {"type": "user/message", "seq": 5, "time": 1793374611269, "data": {"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n\t\t(last modified by Tim Bell)\n\t \nSince #20003, core.validators.URLValidator accepts URLs with usernames and passwords. RFC 1738 section 3.1 requires \"Within the user and password field, any \":\", \"@\", or \"/\" must be encoded\"; however, those characters are currently accepted without being %-
+    event[6]: {"type": "user/message", "seq": 6, "time": 1793374611271, "data": {"content": [{"type": "text", "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/dev/shm/harness_verified_full/workdirs/deepseek-harness/django_django\"."}], "source": {"kind": "runtime-context", "form": "snapshot", "sections": [{"name": "working-directory:current", "text": "Current working directory: \"/dev/shm/harness_verified_full/workdirs/deepseek-harn
+    event[7]: {"type": "request/header", "seq": 7, "time": 1793374611271, "data": {"header": {"config": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "maxTokens": 256000, "reasoningEffort": "high"}, "adapterDefaults": {"reasoningEffort": true, "maxTokens": true}, "tools": [{"name": "bash", "description": "Run commands in a bash shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* Network access depends on the task environment. Prefer c
+    event[8]: {"type": "request/context", "seq": 8, "time": 1793374611272, "data": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "contextWindow": 1000000}}
+    event[9]: {"type": "session/title", "seq": 9, "time": 1793374611276, "data": {"title": "Make URLValidator reject invalid charact", "messageSeqs": [5], "source": {"kind": "fallback"}}}
+    event[10]: {"type": "assistant/attempt", "seq": 10, "time": 1793374611317, "data": {"turn": 1, "step": 1, "stream": [{"type": "chunk", "time": 1793374611316, "chunk": {"type": "finish", "reason": {"kind": "error", "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}]}}
+    event[11]: {"type": "llm/retry", "seq": 11, "time": 1793374611318, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "provider": "deepseek-official", "mode": "normal", "policyKey": "[\"normal\",5,[\"EMPTY_RESPONSE\",\"RATE_LIMIT\",\"SERVER\",\"TIMEOUT\",\"TRANSPORT\"],500,10000,0.1]", "retry": 1, "maxRetries": 5, "delayMs": 477.523914331271, "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}
+    event[12]: {"type": "llm/retry-started", "seq": 12, "time": 1793374615947, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "retry": 1}}
+    event[13]: {"type": "assistant/attempt", "seq": 13, "time": 1793374615957, "data": {"turn": 1, "step": 1, "stream": [{"type": "chunk", "time": 1793374615956, "chunk": {"type": "finish", "reason": {"kind": "error", "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}]}}
+    event[14]: {"type": "llm/retry", "seq": 14, "time": 1793374615957, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "provider": "deepseek-official", "mode": "normal", "policyKey": "[\"normal\",5,[\"EMPTY_RESPONSE\",\"RATE_LIMIT\",\"SERVER\",\"TIMEOUT\",\"TRANSPORT\"],500,10000,0.1]", "retry": 2, "maxRetries": 5, "delayMs": 1020.9850144900834, "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}
+    event[15]: {"type": "llm/retry-started", "seq": 15, "time": 1793374616979, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "retry": 2}}
+    event[16]: {"type": "assistant/attempt", "seq": 16, "time": 1793374616987, "data": {"turn": 1, "step": 1, "stream": [{"type": "chunk", "time": 1793374616987, "chunk": {"type": "finish", "reason": {"kind": "error", "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}]}}
+    event[17]: {"type": "llm/retry", "seq": 17, "time": 1793374616988, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "provider": "deepseek-official", "mode": "normal", "policyKey": "[\"normal\",5,[\"EMPTY_RESPONSE\",\"RATE_LIMIT\",\"SERVER\",\"TIMEOUT\",\"TRANSPORT\"],500,10000,0.1]", "retry": 3, "maxRetries": 5, "delayMs": 1978.0241812152587, "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}
+    event[18]: {"type": "llm/retry-started", "seq": 18, "time": 1793374618967, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "retry": 3}}
+    event[19]: {"type": "assistant/attempt", "seq": 19, "time": 1793374618978, "data": {"turn": 1, "step": 1, "stream": [{"type": "chunk", "time": 1793374618977, "chunk": {"type": "finish", "reason": {"kind": "error", "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}]}}
+    event[20]: {"type": "llm/retry", "seq": 20, "time": 1793374618979, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "provider": "deepseek-official", "mode": "normal", "policyKey": "[\"normal\",5,[\"EMPTY_RESPONSE\",\"RATE_LIMIT\",\"SERVER\",\"TIMEOUT\",\"TRANSPORT\"],500,10000,0.1]", "retry": 4, "maxRetries": 5, "delayMs": 3930.792761934363, "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}
+    event[21]: {"type": "llm/retry-started", "seq": 21, "time": 1793374622911, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "retry": 4}}
+    event[22]: {"type": "assistant/attempt", "seq": 22, "time": 1793374622917, "data": {"turn": 1, "step": 1, "stream": [{"type": "chunk", "time": 1793374622916, "chunk": {"type": "finish", "reason": {"kind": "error", "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}]}}
+    event[23]: {"type": "llm/retry", "seq": 23, "time": 1793374622917, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "provider": "deepseek-official", "mode": "normal", "policyKey": "[\"normal\",5,[\"EMPTY_RESPONSE\",\"RATE_LIMIT\",\"SERVER\",\"TIMEOUT\",\"TRANSPORT\"],500,10000,0.1]", "retry": 5, "maxRetries": 5, "delayMs": 7624.602576980452, "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}
+    event[24]: {"type": "llm/retry-started", "seq": 24, "time": 1793374630547, "data": {"retryId": "7cc1774a-1dce-4774-82bb-e925cc32744c", "turn": 1, "step": 1, "retry": 5}}
+    event[25]: {"type": "assistant/attempt", "seq": 25, "time": 1793374630558, "data": {"turn": 1, "step": 1, "stream": [{"type": "chunk", "time": 1793374630557, "chunk": {"type": "finish", "reason": {"kind": "error", "failure": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}]}}
+    event[26]: {"type": "step/end", "seq": 26, "time": 1793374630559, "data": {"turn": 1, "step": 1}}
+    event[27]: {"type": "turn/end", "seq": 27, "time": 1793374630560, "data": {"turn": 1, "reason": {"kind": "error", "error": {"message": "DeepSeek Messages transport failed", "code": "TRANSPORT"}}}}
+  notifications count: 30
+    notif[0]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "agent/inbox/spliced", "seq": 0, "time": 1793374611258, "data": {"target": "next-turn", "start": 0, "inserted": [{"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n
+    notif[1]: method=session.status payload={"sessionId": "django__django-10097", "status": "running"}
+    notif[2]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "turn/start", "seq": 1, "time": 1793374611261, "data": {"turn": 1}}}
+    notif[3]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "agent/inbox/spliced", "seq": 2, "time": 1793374611262, "data": {"target": "next-turn", "start": 0, "removedCount": 1, "inserted": []}}}
+    notif[4]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "step/start", "seq": 3, "time": 1793374611266, "data": {"turn": 1, "step": 1}}}
+    notif[5]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "system/message", "seq": 4, "time": 1793374611269, "data": {"turn": 1, "step": 1, "message": {"role": "system", "content": [{"type": "text", "text": "You are a helpful software engineer assistant."}], "source": {"kind": "system-prompt"}, "id": 
+    notif[6]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "user/message", "seq": 5, "time": 1793374611269, "data": {"content": [{"type": "text", "text": "Make URLValidator reject invalid characters in the username and password\nDescription\n\t \n\t\t(last modified by Tim Bell)\n\t \nSince #20003, core
+    notif[7]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "user/message", "seq": 6, "time": 1793374611271, "data": {"content": [{"type": "text", "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/dev/shm/harness_verified_full/
+    notif[8]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "request/header", "seq": 7, "time": 1793374611271, "data": {"header": {"config": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "maxTokens": 256000, "reasoningEffort": "high"}, "adapterDefaults": {"reasoningEffort": true, "maxTok
+    notif[9]: method=session.event payload={"sessionId": "django__django-10097", "event": {"type": "request/context", "seq": 8, "time": 1793374611272, "data": {"provider": "deepseek-official", "model": "kimi-k2.6-cloud", "contextWindow": 1000000}}}
+[19.9s] runtime closed (exited context)
+
+=== RUNTIME STDERR (last 50 lines) ===
+
+=== RUNTIME PROCESS ===
+  pid=547096, returncode=0, poll=0
+
+=== GIT DIFF (workdir changes) ===
+(no changes)
+
+Total wall: 19.9s
