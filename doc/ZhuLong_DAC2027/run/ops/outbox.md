@@ -15453,3 +15453,124 @@ NO_PROXY=10.129.32.75,localhost,127.0.0.1  (http_proxy/https_proxy/ALL_PROXY uns
 - **根因**：旧 regrade 脚本硬编码 t0002997 池 8650-8654 → 跨用户争用（licence/infra-void）；已改回自有池 + 清 stale-shard。
 - **r3-r5 端口裁决**：用户重启的 8650-8654=t0002997 第三方池（其 14:17 起重起 81 进程/10+ cline worker，仍争用）→ 🚫；8663/8666/8667 listen 无 backend → 🚫。**唯一指定池 = 8664/8665/8653/8669**。
 - **下一步**：agent 起 r3 generation（CLI_AGENT=zhulong run_zhulong_script.sh -p 4 -n）→ r3 regrade → r4 → r5 → 5/5 mean±std → 报告 §8。
+
+---
+
+## RUN_ID 130 · 2026-10-30 19:57:45 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 130 | read-only probe: designflow | $(date '+%F %T') | host=$(hostname) ==="
+
+DF=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench
+
+echo "[1] designflow loop process"
+ps -eo pid,etime,rss,args 2>/dev/null | awk '/[d]esignflow_bench_loop/ {print substr($0,1,130)}' | grep -v -E 'cline|opencode' | head -5
+echo "  count=$(ps -eo args 2>/dev/null | grep '[d]esignflow_bench_loop' | grep -v -E 'cline|opencode' | wc -l)"
+
+echo "[2] loop log tail"
+if [ -f /tmp/designflow_bench_loop.log ]; then
+  echo "  size=$(stat -c %s /tmp/designflow_bench_loop.log)B mtime=$(stat -c %y /tmp/designflow_bench_loop.log | cut -c1-19)"
+  tail -n 12 /tmp/designflow_bench_loop.log | cut -c1-170
+else
+  echo "  missing /tmp/designflow_bench_loop.log"
+fi
+
+echo "[3] workspace repo git state"
+if cd "$WS" 2>/dev/null; then
+  git status -sb | head -4
+  echo "  ahead_behind(origin/main...HEAD)=$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null)"
+  echo "  HEAD=$(git log -1 --date=format:'%m-%d %H:%M' --pretty='%h %ad %s' | cut -c1-110)"
+  echo "  last designflow commits:"
+  git log -5 --date=format:'%m-%d %H:%M' --pretty='    %h %ad %s' -- doc/ZhuLong_DAC2027/benchmark | cut -c1-120
+else
+  echo "  cannot cd $WS"
+fi
+
+echo "[4] github reachability (curl vs git, no secrets printed)"
+printf "  curl https://github.com -> "; timeout 10 curl -s -o /dev/null -w '%{http_code}\n' -m 8 https://github.com || echo "(fail)"
+printf "  git ls-remote -> "; timeout 25 git ls-remote origin HEAD 2>&1 | head -1 | cut -c1-90
+printf "  proxy env: "; env 2>/dev/null | grep -i proxy | cut -c1-90 | head -4
+
+echo "[5] designflow deliverables"
+ls -1 "$DF" 2>/dev/null | head -12
+echo "  jsonl files:"
+find "$DF" -maxdepth 3 -name '*.jsonl' 2>/dev/null | head -6 | while read f; do
+  printf "    %s lines=%s\n" "$(echo "$f" | sed "s#$DF/##")" "$(wc -l < "$f" 2>/dev/null)"
+done
+echo "  case dirs=$(find "$DF" -maxdepth 4 -type d -name 'EDA-Eval-DesignFlow-*' 2>/dev/null | wc -l)"
+echo "  reports (latest 5 by mtime):"
+find "$DF" -name 'report_*.html' 2>/dev/null | head -20 | while read f; do stat -c '    %y %s %n' "$f"; done | sort | tail -5 | cut -c1-150
+
+echo "[6] EDA-Flow-Bench repo"
+if cd "$BENCH" 2>/dev/null; then
+  git status -sb | head -3
+  echo "  ahead_behind(origin/master...HEAD)=$(git rev-list --left-right --count origin/master...HEAD 2>/dev/null)"
+else
+  echo "  cannot cd $BENCH"
+fi
+
+echo "=== DONE 130 ==="
+```
+
+**输出**
+```
+=== RUN_ID 130 | read-only probe: designflow | 2026-10-30 19:57:45 | host=hfeg0tedaap02 ===
+[1] designflow loop process
+1327815    08:22:05  3584 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow_bench_l
+  count=1
+[2] loop log tail
+  size=2218043B mtime=2026-10-30 19:57:42
+  EDA-Eval-DesignFlow-Analog-001 1
+  EDA-Eval-DesignFlow-Backannot-001 1
+  EDA-Eval-DesignFlow-Characterization-001 1
+  EDA-Eval-DesignFlow-Digital-010 1
+  EDA-Eval-DesignFlow-Digital-021 1
+  EDA-Eval-DesignFlow-Digital-022 1
+  EDA-Eval-DesignFlow-Digital-023 1
+  EDA-Eval-DesignFlow-LayoutAether-001 1
+  EDA-Eval-DesignFlow-PDKQA-001 1
+  EDA-Eval-DesignFlow-Verification-001 1
+user/ occurrences: Counter({'t0002948': 3, 'haoyut': 2, 'vincelu': 1, 'klhu': 1, 'yan1zh': 1, 'xinqiaoz': 1, 'e0031668': 1})
+> build · glm-5.2
+[3] workspace repo git state
+## main...origin/main
+?? doc/ZhuLong_DAC2027/_vqa_fig1.png
+?? doc/ZhuLong_DAC2027/trace_retest/
+  ahead_behind(origin/main...HEAD)=0	0
+  HEAD=2623ef173 10-30 19:56 zhulong ops: RUN_ID 130 read-only probe for designflow status
+  last designflow commits:
+    ea910a6ad 10-30 19:54 designflow #123: pi+ref双PASS LayoutAether-001(layout_aether域首条proper,pi独立flatten C
+    1be6b6cf3 10-30 19:51 designflow #123: 合成 LayoutAether-001(layout_aether域首条proper)+XII复核闭环(9行tra
+    00222c0df 10-30 19:30 designflow #122: 深读 4ybw1 layout_aether 域(yan1zh/hfeg0plg65, LVS CORRECT 7/9/6 + DRC 179
+    4e43b4585 10-30 19:08 designflow ws 2026-10-30 19:08:51
+    965ff1624 10-30 18:21 designflow #120: 补推workspace push失败(GitHub443不可达,curl/ssh双超时,内部Codeup�
+[4] github reachability (curl vs git, no secrets printed)
+  curl https://github.com -> 200
+  git ls-remote -> 2623ef173f6f5e701e9475a365dfce21dc322921	HEAD
+  proxy env: https_proxy=http://172.19.92.23:13128
+http_proxy=http://172.19.92.23:13128
+[5] designflow deliverables
+ARCHIVE_OPERATOR_DESIGNFLOW.md
+BAIZE_DESIGNFLOW_BENCH_TASK.md
+build_logicsynth2_jsonl.py
+daily-memories-designflow
+designflow
+designflow_bench_loop.sh
+EXPERIMENTS_DESIGNFLOW.md
+MEMORY_DESIGNFLOW.md
+  jsonl files:
+    designflow/pi_debug_status.jsonl lines=104
+    .pi_debug/pnrsignoff003_only.jsonl lines=1
+    .pi_debug/EDA-Eval-DesignFlow-EdaOther-003/EDA-Eval-DesignFlow-EdaOther-003.jsonl lines=1
+    .pi_debug/EDA-Eval-DesignFlow-Backannot-001/pi_debug_status.jsonl lines=1
+  case dirs=43
+  reports (latest 5 by mtime):
+[6] EDA-Flow-Bench repo
+## master...origin/master
+  ahead_behind(origin/master...HEAD)=0	0
+=== DONE 130 ===
+```
