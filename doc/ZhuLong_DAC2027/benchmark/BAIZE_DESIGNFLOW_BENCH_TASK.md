@@ -61,7 +61,7 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 - **深读是硬闸门，但不是独立的一轮**：必须先解析完整对话流（`scp` `messages.json` → user 意图 / assistant 工具链 / 关键产物 → `designflow/trace_deepreads/<sid>_<主题>.md`）才允许合成；已有笔记可直接复用，不重复深读。
 - **DoD（交付定义）**：1 条 case 通过自验并写进 `EDA-Eval-DesignFlow.jsonl` 才算交付；**深读笔记是中间产物，不算交付**。
-- **每轮至少交付 1 条 case**；预算（`AGENT_TIMEOUT` 45 min，单条约 35–45 min）内有剩余就继续下一条，**不设上限**。
+- **每轮只做 1 条 case**：做完即收尾，**不在同一轮开第二条**（控制上下文不膨胀）；交付后首行 `WAITING: 0`，loop 60s 后唤醒做下一条。
 - **唯一例外**：单条 trace 过大（>2MB 或 >600 msgs）允许本轮只深读，但**下一轮必须先交付 case**，心跳记 `DEBT: 1 deepread 未合成`；🚫 禁止连续两轮只深读。
 - 选 trace：`summary.tsv` 按 `match_count` 降序，排除已用 / 已清理 session，优先**命中最多且尚无 case 的 domain**。
 
@@ -104,7 +104,7 @@ metadata:    { trace_source{...}, domain, test_rationale }
 3. pi 实跑：`designflow/pi_debug_status.jsonl` 追加一行，记 `pi_model / pi_thinking / pi_dur_sec / pi_verdict / ref_check`。
 4. 追加 jsonl → 日报：`python3 designflow/gen_daily_report.py`，中文单文件 HTML，含「用户」列与 `k 条断言` 清单。
 5. 难度回路：按 §5 判定"加难 / 保持 / 查判分"，结论写进当日日报的"阻塞/下一步"。
-6. **有余量 → 回到第 1 步做下一条**（一轮交付 ≥1 条，上不封顶）。
+6. 收尾：`WAITING: 0`（下一轮 60s 后立即开下一条 case）；仅真外部阻塞（pi 异步未回 / 推送失败 / 等人工）才写 `WAITING: 1`。
 
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
@@ -114,12 +114,12 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 ## 8. 收尾（轻量结账，不是每轮做全套）
 
-> 收尾是"结账"，**不是产出单位**：一轮可以交付多条 case，时间将尽时结账一次即可。
+> 收尾是"结账"：**一轮 = 1 条 case = 1 次结账**。别把结账做成产出，也别攒着不提交。
 
 0. **体积自检**：TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限先把已闭合块**原文**搬 `ARCHIVE_OPERATOR_DESIGNFLOW.md`（留 1 行指针），搬前 `git pull --rebase --autostash`，🚫 不改小节编号/标题。数字抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB`。
 1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `DEBT`）；🚫 每轮重写整份快照。
 2. **日记忆**：`daily-memories-designflow/<YYYY-MM-DD>.md` **当天首轮创建，之后只追加**。
-3. **提交**：**每 30 分钟或每 3 条 case 提交一次**（loop 本身每 30 分钟兜底）；本轮结束前必须提交，🚫 把工作留在工作树过夜。双仓命令：
+3. **提交**：**每轮（1 条 case）结束即提交**（loop 另有每 30 分钟兜底）；🚫 把工作留在工作树过夜。双仓命令：
 ```bash
 cd /nasdata/app.e0031982/code/super_intelligence_2035 && git fetch origin && git pull --rebase --autostash origin main
 git add -- doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW.md \
@@ -141,27 +141,6 @@ git commit -m "designflow #<轮次>: <一句话>" && git push origin master
 
 - Benchmark 是否对外（默认：先内部）
 - 是否允许主动扫描 698 机（默认：否，只被动只读发现）
-
-## 10. 并发协作（多进程时的唯一契约）
-
-多进程共用**一份工作树**，靠"文件所有权"消除冲突，不靠事后修 jsonl：
-
-| 角色 | 只写（独占） | 禁止 |
-|:--|:--|:--|
-| `scout` | `designflow/claims/` `designflow/candidates/` | 不建 case、不改 jsonl、不 commit |
-| `deepread` | `designflow/trace_deepreads/` | 不建 case、不改 jsonl、不 commit |
-| `synth` | `designflow/cases_staging/<task_id>/` | 不改主 jsonl、不 commit |
-| `teeth` | `designflow/governance/teeth/` | 不改 case 内容、不 commit |
-| `integrator` | 主 jsonl / `reports/` / MEMORY / git commit+push | 不替 producer 写产物 |
-
-- **领取协议**：出题前先 `mkdir designflow/claims/<sid>.claim`（原子操作，失败 = 已被抢）；claim 内写 `owner / 时间 / task_id`；**>2h 无产出自动回收**（integrator 负责删）。
-- **只有 `integrator` 能 commit/push**；producer 的产物以 `cases_staging/<task_id>/` 交付，由 integrator 跑完 §4 自验（ref + 三假提交 + negative）后才合并进主 jsonl。
-- **同一角色只能起一份**（脚本用 `/tmp/designflow_loop_<ROLE>.lock` 自锁），启动：
-```bash
-export ROLE=synth      # solo | scout | deepread | synth | teeth | integrator
-setsid bash <benchmark>/designflow_bench_loop.sh > /tmp/df_$ROLE.log 2>&1 < /dev/null &
-```
-- 建议起步配比：`1 deepread + 2 synth + 1 integrator`（teeth 先由 integrator 兼）；观察 12h 后若 evaluator 排队 >5 条再单独起 `teeth`。
 
 ---
 
