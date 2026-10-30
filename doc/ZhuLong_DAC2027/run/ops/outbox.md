@@ -15574,3 +15574,95 @@ MEMORY_DESIGNFLOW.md
   ahead_behind(origin/master...HEAD)=0	0
 === DONE 130 ===
 ```
+
+---
+
+## RUN_ID 131 · 2026-10-30 20:31:30 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 131 | read-only audit: trace_source user | $(date '+%F %T') | host=$(hostname) ==="
+BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench
+J=$(ls "$BENCH"/benchmarks/EDA-Eval-DesignFlow/*.jsonl 2>/dev/null | head -1)
+echo "[1] jsonl: ${J:-<not found>}"
+if [ -n "${J:-}" ] && [ -f "$J" ]; then
+  echo "  lines=$(wc -l < "$J") bytes=$(stat -c %s "$J") mtime=$(stat -c %y "$J" | cut -c1-19)"
+  python3 - "$J" <<'PY'
+import json,sys,re
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p,encoding='utf-8') if l.strip()]
+print("  cases=%d"%len(rows))
+names=set(); hu=0
+for r in rows:
+    md=r.get("metadata") or {}
+    ts=md.get("trace_source") or {}
+    if "user_hash" in ts: hu+=1
+    u=ts.get("user") or ts.get("user_hash") or "-"
+    names.add(str(u))
+    print("   %-44s user=%-12s host=%-18s session=%s" % (str(r.get("id") or r.get("task_id"))[:44], u, str(ts.get("host","-")), str(ts.get("session_file","-"))))
+blob=open(p,encoding='utf-8').read()
+print("   rows_with_user_hash_key=%d"%hu)
+print("   user_hash_string_count=%d"%blob.count("user_hash"))
+print("   unique_user_values=%s"%sorted(names))
+print("   12hex_like_tokens=%d"%len(re.findall(r"\b[0-9a-f]{12}\b",blob)))
+print("   desensitize_word_count=%d"%blob.count("\u8131\u654f"))
+PY
+else
+  echo "  jsonl not found"
+fi
+
+echo "[2] bench repo state"
+if cd "$BENCH" 2>/dev/null; then
+  git status -sb | head -3
+  echo "  ahead_behind=$(git rev-list --left-right --count origin/master...HEAD 2>/dev/null)"
+  git log -3 --date=format:'%m-%d %H:%M' --pretty='    %h %ad %s' | cut -c1-110
+else
+  echo "  cannot cd $BENCH"
+fi
+
+echo "[3] deepread notes: real-identifier counts"
+for f in /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/trace_deepreads/*.md; do
+  printf "  %-44s names=%s\n" "$(basename "$f")" "$(grep -oE "yan1zh|vincelu|haoyut|klhu|xinqiaoz|t0002948|e0031668" "$f" | wc -l)"
+done
+
+echo "=== DONE 131 ==="
+```
+
+**输出**
+```
+=== RUN_ID 131 | read-only audit: trace_source user | 2026-10-30 20:31:30 | host=hfeg0tedaap02 ===
+[1] jsonl: /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+  lines=10 bytes=93838 mtime=2026-10-30 19:45:07
+  cases=10
+   EDA-Eval-DesignFlow-Digital-010              user=t0002948     host=hfeg0plg49         session=1789900011859_zpx23
+   EDA-Eval-DesignFlow-Digital-021              user=klhu         host=hfeg0plg49         session=1792224347250_fww0m
+   EDA-Eval-DesignFlow-Digital-022              user=t0002948     host=hfeg0plg49         session=1792133892937_i2dlp
+   EDA-Eval-DesignFlow-Digital-023              user=t0002948     host=hfeg0plg49         session=1792400029503_0na23
+   EDA-Eval-DesignFlow-Verification-001         user=e0031668     host=hfeg0plg91         session=1789370647360_ukkn7
+   EDA-Eval-DesignFlow-Characterization-001     user=vincelu      host=hfeg0plg49         session=1792297573507_9knot
+   EDA-Eval-DesignFlow-PDKQA-001                user=xinqiaoz     host=hfeg0pkn004        session=1788770994295_x4b0p
+   EDA-Eval-DesignFlow-Backannot-001            user=haoyut       host=hfeg0plg49         session=1787798131361_82ybr
+   EDA-Eval-DesignFlow-Analog-001               user=haoyut       host=hfeg0pkn003        session=1788172501150_w4x70
+   EDA-Eval-DesignFlow-LayoutAether-001         user=yan1zh       host=hfeg0plg65         session=1792487689184_4ybw1
+   rows_with_user_hash_key=0
+   user_hash_string_count=0
+   unique_user_values=['e0031668', 'haoyut', 'klhu', 't0002948', 'vincelu', 'xinqiaoz', 'yan1zh']
+   12hex_like_tokens=0
+   desensitize_word_count=4
+[2] bench repo state
+## master...origin/master
+  ahead_behind=0	0
+    2286e33 10-30 19:50 designflow #123: 合成 LayoutAether-001(layout_aether域首条proper,offline-Python L
+    1531a5e 10-30 19:05 designflow #121: 新增 Analog-001 (analog_context域首条proper, w4x70深读合成) 
+    805b1d0 10-30 17:49 designflow #118: 即时令XII trace_source user_hash->user (8用例改原用户名, Ve
+[3] deepread notes: real-identifier counts
+  4ybw1_layout_from_schematic_lvs_drc.md       names=6
+  82ybr_pt_parasitics_backannot_diag.md        names=2
+  9knot_siliconsmart_char_debug.md             names=8
+  cgqd1_rtext_rnode_audit_layout_virtuoso.md   names=0
+  ukkn7_erc_aether_flow_rewrite.md             names=1
+  w4x70_netlist_spef_connectivity_tracer.md    names=4
+  x4b0p_pdkqa_drc_calibre_vco.md               names=7
+=== DONE 131 ===
+```
