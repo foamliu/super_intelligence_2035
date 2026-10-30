@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R956 SWE-bench全量500: 内存自检PASS(2nd). incr_eval_all.sh后台运行中(opencode eval post-processing 19/20done,0docker=cleanup). predict(cline462/opencode478/pi387/claude-code317/codex221,全alive写入中). eval report.json:opencode466/cline388/pi352/claude-code245/codex163(待chain跑完regen).
-已完成:       H-B ctx压缩✅·Gate7/7·三路7x89·TB报告✅·pilot20报告✅·TB整改✅·R584顶层JSON补齐✅·R954 5路eval全DONE+首版full500报告✅·R955 内存自检+orphan清理+增量eval启动✅
-当前动作:     R956 ①内存自检(运维令10-30 11:1x,2nd):PASS(free 1.3Ti avail,最大harness线进程cline hub daemon 2.7GB,无>50GB,无partitions(,无需kill)②巡检incr_eval_all.sh(PID2296896,alive,opencode eval post-processing 19/20done,0docker)③巡检predict 5路全alive(cline462·opencode478·pi387·claude-code317·codex221,最新写入18:16-18:29)④硬约束全绿:tracked JSON=0✅
-下一步:       ①等incr_eval_all.sh跑完(opencode→cline→pi→claude-code→regen→gen_report,~15-30min)→确认eval_*.json增长→确认报告重生成→commit报告②predict继续跑③predict全达500后最终eval+最终完整报告④hermes/deepseek如实列未参与⑤永久硬约束:禁止commit结果JSON
+PHASE:        R957 SWE-bench全量500: 内存自检PASS(3rd). incr_eval_all.sh后台运行中(opencode eval phase 19→20/20,20th=sklearn慢测试,bounded 1800s). predict 5路全alive(cline411patch/opencode468/pi361/claude-code253/codex163 with_patch). eval summaries(R954):opencode367/448·cline288/394·pi263/352·claude-code185/246·codex129/163(待chain regen增长).
+已完成:       H-B ctx压缩✅·Gate7/7·三路7x89·TB报告✅·pilot20报告✅·TB整改✅·R584顶层JSON补齐✅·R954 5路eval全DONE+首版full500报告✅·R955 内存自检+orphan清理+增量eval启动✅·R956 内存自检2nd+chain巡检✅
+当前动作:     R957 ①内存自检(运维令10-30 11:1x,3rd):PASS(free 1.3Ti avail,最大harness线进程cline hub daemon 2.59GB(26d daemon),predict run_single各30-600MB,eval pytest 238MB,无>50GB,无partitions(/list(/test_fancy,10-29 sympy爆炸未复发,无需kill)②验证chain健康:RUN_EVALUATION_LOG_DIR=logs/run_evaluation(相对,匹配regen的EVAL_LOG_ROOT)✅·opencode run_dir 466 report.json✅③巡检incr_eval_all.sh(PID2296896,alive~22min,opencode phase 19→20/20)④predict 5路全alive⑤硬约束勘误:R956"tracked JSON=0"误用buggy glob(harness/**/*.json实返522);正确口径=eval结果JSON(predictions/logs/reports)tracked=0✅,524 tracked JSON=500 instance定义+21 pilot+3 config(合法输入,非结果)
+下一步:       ①等incr_eval_all.sh跑完(opencode→cline→pi→claude-code→regen→gen_report)→确认eval_*.json增长→确认报告重生成→commit报告②predict继续跑③predict全达500后最终eval+最终完整报告④hermes/deepseek如实列未参与⑤永久硬约束:禁止commit结果JSON
 阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=35189B(34.4KB,<40KB红线,活跃令不可归档) / MEMORY=31346B(30.6KB,≤32KB✅)
+📦 体积：TASK=35189B(34.4KB,<40KB红线,活跃令不可归档) / MEMORY=25719B(25.1KB,≤32KB✅,本轮归档22条2026-10-29巡检指针→1条合并指针,详情已在daily-memories-harness/2026-10-29.md)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[18:39] R957 内存自检(运维令10-30 11:1x,3rd):PASS. free 1.3Ti avail. 最大harness线RSS=cline hub daemon 2.59GB(26d daemon)·opencode 1.1GB·predict run_single各30-600MB·eval pytest 238MB,无>50GB,无partitions(/list(/test_fancy(10-29 sympy爆炸未复发,无需kill. **chain健康验证**:RUN_EVALUATION_LOG_DIR=logs/run_evaluation(swebench相对默认,匹配regen_eval_summaries.py的EVAL_LOG_ROOT)✅;opencode run_dir有466 report.json✅;regen写reports/eval_*.json✅. **incr_eval_all.sh**(PID2296896,alive~22min):opencode eval phase 19→20/20(20th=sklearn test_gradient_boosting,25min,RSS238MB,bounded by 1800s timeout,非内存威胁),完自动续cline→pi→claude-code→regen→gen_report. **predict 5路全alive**(with_patch):cline411·opencode468·pi361·claude-code253·codex163. **⚠️硬约束勘误**:R956心跳"tracked JSON=0"误用buggy glob(harness/**/*.json实返522,非0);正确口径=eval结果JSON(predictions/logs/run_evaluation/reports/eval_*.json)tracked=0✅(gitignore:run/harness/**/predictions/·**/eval_*.json·**/logs/);524 tracked JSON=500 instance定义文件(数据集输入)+21 pilot+3 config(均合法输入,非结果). 永久硬约束(禁commit结果JSON)完好. 判据自检:运维令10-28 07:1x(full500)未交付(predict未全达500,incr_eval opencode phase进行中)→WAITING=0.
 [18:32] R956 内存自检(运维令10-30 11:1x,2nd):PASS(free 1.3Ti avail,最大harness线进程cline hub daemon RSS 2.7GB(26天daemon),所有predict/eval<1.2GB,无>50GB,无partitions(,10-29 sympy爆炸未复发,无需kill). **incr_eval_all.sh巡检**:PID2296896 alive(etimes~825s),opencode eval phase 19/20 done,0 docker(post-processing/cleanup),report.json=466,log mtime 18:19. chain自动续:cline→pi→claude-code→regen_eval_summaries→gen_report. **predict 5路全alive**:cline462(18:22)·opencode478(18:16)·pi387(18:22)·claude-code317(18:29)·codex221(18:19). **eval summaries(待regen)**:opencode n=447 resolved=367·cline n=388 resolved=288·pi n=352 resolved=263·claude-code n=245 resolved=185·codex n=163 resolved=129. 硬约束全绿:git ls-files harness/**/*.json=0✅·非白名单=0✅. 判据自检:运维令10-28 07:1x(full500)未交付(predict未全达500,incr_eval进行中)→WAITING=0.
 [18:15] R955 内存自检(运维令10-30 11:1x):PASS(free 1.3Ti avail,所有harness线进程<6GB,无>50GB,10-29 sympy partitions(200)爆炸未复发,无需kill). **orphan容器清理**:docker stop sweb.eval.scikit-learn-14710.verified_full_claude-code(202核CPU空烧43min,232MiB,结果已分类infra,chain已EXIT→纯orphan)+docker rm sweb.eval.astropy-13977.verified_full_cline-patched(never-started). **swebench skip验证**:run_evaluation.py:272-273 `if report_path.exists(): return cached`→同run_id重跑跳过已eval实例. **增量eval后台启动**:incr_eval_all.sh(PID2296896,detached)链式opencode→cline→pi→claude-code,实测opencode 447skip+20new(10/20 done @1m51s),完自动regen_eval_summaries.py+gen_report. predict 5路alive:opencode477·cline460·pi386·claude-code316·codex220. 硬约束全绿:predictions/eval/progress/logs tracked=0✅. 判据自检:运维令10-28 07:1x(full500)未交付(predict未全达500,eval增量进行中)→WAITING=0.
 [17:56] R954 巡检full500 eval(运维令10-28 07:1x)+内存自检(运维令10-30 11:1x):无失控(free 1.3Ti avail,所有harness线进程<1.2GB,无>50GB,10-29 sympy爆炸未复发). **codex eval DONE**:chain PID3875809已EXIT,sg docker 156+7skip=163实例全跑完,0 err. regen_eval_summaries.py codex WROTE eval_codex.json(n=163,resolved=129,failed=34,infra=0). **5路eval全DONE**:opencode367/448=81.9%·cline288/394=73.1%·pi263/352=74.7%·claude-code185/246=75.2%·codex129/163=79.1%. **首版报告已生成**:gen_report_swebench_verified_full500_zh.py→doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html(13169B,自包含,含partial banner+TL;DR+Wilson CI+McNemar5x5+闸门未过hermes/deepseek+pilot20对照+复现命令). McNemar:opencode vs cline sig p=0.000·opencode vs pi sig p=0.000,其余ns. predict 5路仍在跑(cline459·opencode475·pi385·claude-code315·codex220). 硬约束全绿:eval_*.json tracked=0✅. 判据:predict未全达500→首版为progress报告→WAITING=0(等predict完成后重eval+重生成).
@@ -54,67 +55,13 @@ ERROR_COUNT:  0
 
 > 📦 R841-R852 巡检流水(2026-10-30 02:26~03:4x,12轮常态巡检)已归档 → daily-memories-harness/2026-10-30.md。结论：5路predict持续健康推进,进度1279→1338(+59),全路ALIVE·timeout=0·429=0·tracked=0✅,hermes/deepseek闸门FAIL未进全量。需要时再读。
 
-
 > 📦 R835-R840 巡检流水(2026-10-30 01:13~02:20,6轮常态巡检)已归档 → daily-memories-harness/2026-10-30.md。结论：5路predict持续健康推进,进度1229→1277(+48),全路timeout=0,429=0,infra单列,hermes/deepseek闸门FAIL未进全量,硬约束tracked=0✅。需要时再读。
 
 > 📦 R831-R834 巡检流水(2026-10-30 01:13~01:32,4轮常态巡检)已归档 → daily-memories-harness/2026-10-30.md。结论：5路predict持续健康推进,进度1229→1244(+15),全路ALIVE·tracked=0✅。需要时再读。
 
 > 📦 R821-R830 巡检流水(2026-10-30 00:04~01:08,9轮常态巡检)已归档 → daily-memories-harness/2026-10-30.md。结论：5路predict持续健康推进,进度1183→1219(+36),全路timeout=0,429=0,infra单列,hermes/deepseek闸门FAIL未进全量,硬约束tracked=0✅。需要时再读。
 
-
-> 📦 R817-R820 巡检流水(2026-10-29 23:43~23:58,4轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康推进,进度1168→1175(+7),全路timeout=0,429=0,infra单列(6),hermes/deepseek闸门FAIL未进全量,硬约束tracked=0✅。需要时再读。
-
-> 📦 R810-R816 巡检流水(2026-10-29 22:58~23:38,7轮常态巡检)已归档 → daily-memories-harness/2026-10-30.md。结论：5路predict持续健康推进,进度1137→1165(+28),全路timeout=0,429=0,infra单列(6),hermes/deepseek闸门FAIL未进全量,硬约束tracked=0✅。需要时再读。
-
-> 📦 R802-R809 巡检流水(2026-10-29 22:05~22:53,8轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康推进,进度1094→1137(+43),全路timeout=0,429=0,infra单列(6),hermes/deepseek闸门FAIL未进全量,硬约束tracked=0✅。需要时再读。
-
-> 📦 R789-R801 巡检流水(2026-10-29 20:33~21:57,13轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,进度1042→1090(+48),全路timeout=0,429=0,infra单列(6),hermes/deepseek闸门FAIL未进全量,硬约束tracked=0✅。需要时再读。
-
-> 📦 R787-R788 巡检流水(2026-10-29 20:19-20:27,2轮predict巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康,进度1033→1035(+2),全路429=0,tracked JSON合规,闸门hermes/deepseek FAIL未进全量。需要时再读。
-
-> 📦 R782-R786 巡检流水(2026-10-29 19:47-20:13,5轮predict巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康,进度1007→1028(+21),全路429=0,tracked JSON合规,闸门hermes/deepseek FAIL未进全量。需要时再读。
-
-> 📦 R775-R780 巡检流水(2026-10-29 16:0x-19:3x,6轮predict巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康推进,进度从977→1001(+24),速率~4-7/hr,ETA cline~Oct31 codex~Nov3,429=0,tracked JSON合规。需要时再读。
-
-> 📦 R780 巡检流水(2026-10-29 19:31,1轮predict巡检,全文已在R775-R780归档块)已归档 → daily-memories-harness/2026-10-29.md。需要时再读。
-> 📦 R774 巡检流水(2026-10-29 18:49,1轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总963→974,cline232→235·opencode228→232·pi196→198·claude-code187→188·codex120→121),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R773 巡检流水(2026-10-29 18:37,1轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总956→963,cline224→232·opencode218→227·pi184→195·claude-code181→188·codex116→121),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R763-R772 巡检流水(2026-10-29 17:23~18:28,10轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总923→963,cline224→232·opencode218→227·pi184→195·claude-code181→188·codex116→121),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R756-R762 巡检流水(2026-10-29 16:26~17:15,7轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总903→921,cline220→224·opencode211→217·pi181→184·claude-code177→180·codex114→116),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R745-R755 巡检流水(2026-10-29 14:47~16:14,11轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总855→900,cline209→219·opencode203→210·pi172→180·claude-code161→177·codex110→114),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R740-R744 巡检流水(2026-10-29 14:07~14:37,5轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总820→848,cline203→209·opencode193→201·pi166→170·claude-code152→160·codex106→108),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-
-> 📦 R724-R739 巡检流水(2026-10-29 12:23~13:57,常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总780→812,cline194→202·opencode185→193·pi158→164·claude-code142→148·codex101→105),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-> 📦 R709-R722 巡检流水(2026-10-29 10:17~11:53,14轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(总722→760,cline182→190·opencode170→180·pi146→154·claude-code131→137·codex93→99),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R704-R708 巡检流水(2026-10-29 09:43~10:11,5轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline176→182·opencode166→169·pi141→145·claude-code127→131·codex92→93),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-> 📦 R693-R703 巡检流水(2026-10-29 08:29~09:36,11轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline162→176·opencode151→166·pi132→141·claude-code121→127·codex88→92),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R681-R692 巡检流水(2026-10-29 06:59~08:23,12轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline144→159·opencode142→150·pi115→130·claude-code113→121·codex83→86),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R671-R680 巡检流水(2026-10-29 05:50-06:55,10轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline135→148·opencode132→146·pi105→123·claude-code97→117·codex75→85),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-> 📦 R668-R670 巡检流水(2026-10-29 05:23~05:38,3轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline129→134·opencode132→133·pi105→108·claude-code97→101·codex75→76),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-
-> 📦 R656-R664 巡检流水(2026-10-29 04:16~05:01,9轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline117→125·opencode121→128·pi93→100·claude-code90→96·codex72→73),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-> 📦 R652-R655 巡检流水(2026-10-29 03:50~04:12,4轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(opencode118→120·cline116·pi90→93·claude-code89→90·codex68→72),全路timeout=0,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-
-
-
-
-
-> 📦 R637-R651 巡检流水(2026-10-29 02:03~03:43,15轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(opencode101→118·cline91→116·claude-code77→89·pi73→91·codex55→69),全路timeout=0,无429系统级错误,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-> 📦 R627-R636 巡检流水(2026-10-29 00:58~02:03,10轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(opencode90→101·cline82→91·claude-code67→77·pi64→73·codex49→55),全路timeout=0,无429系统级错误,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R609-R625 巡检流水(2026-10-28 23:11~2026-10-29 00:45, R609-R625共~12轮常态巡检)已归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(opencode80→89·cline70→80·claude-code59→68·pi56→64·codex47→50),全路timeout=0,无429系统级错误,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
-
+> 📦 R609-R820 巡检流水(2026-10-29 00:58~18:28,~90轮常态巡检)已合并归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline70→232·opencode80→227·pi56→195·claude-code59→188·codex47→121),全路timeout=0,无429系统级错误,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
 
 > [00:51] R626 及更早巡检流水已归档 → daily-memories-harness/2026-10-28.md（5路健康·opencode89·总349·增量+0·大实例耗时正常·资源稳定）。需要时再读。
 
@@ -124,7 +71,6 @@ ERROR_COUNT:  0
 
 > 📦 R581-R589 巡检流水(2026-10-28 19:44~21:01,9轮常态巡检)已归档 → daily-memories-harness/2026-10-28.md。结论：5路predict持续健康运行,稳步推进(cline50→56·opencode46→55·codex31→40·pi40→47·claude-code34→42),全路timeout=0,gw_proxy=200,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
 
-
 > 📦 R568-R578 巡检流水(2026-10-28 17:47~19:02,11轮常态巡检)已归档 → daily-memories-harness/2026-10-28.md。结论：5路predict持续健康运行,全路增量稳定,无error/timeout,hermes/deepseek闸门FAIL未进全量。需要时再读。
 > 📦 R559-R564 流水（2026-10-28 16:30-17:07, SWE-bench full500 predict 巡检, 6 条）已归档 → daily-memories-harness/2026-10-28.md。结论：5路predict持续ALIVE·稳步推进(cline29→31·codex18→19·claude-code22→24·opencode30→33·pi22→28);无429·无error·gw_proxy=200·infra单列·闸门FAIL路未进全量。需要时再读。
 
@@ -133,7 +79,6 @@ ERROR_COUNT:  0
 > 📦 R549-R552 流水（2026-10-28 12:20-15:1x, GATE v2 predict+eval+全量500启动+TB整改, 4条）已归档 → daily-memories-harness/2026-10-28.md。结论：GATE v2 5路PASS(cline/codex/claude-code/opencode/pi)·2路FAIL(hermes/deepseek)·全量500 predict 5路后台启动·TB整改5问已交付。需要时再读。
 
 > 📦 R536-R548 流水(2026-10-27 19:0x ~ 2026-10-28 10:15, R536-R548共13轮:pilot20交付+TB报告+心跳防判死+GATE v2启动+config修复)已归档 → daily-memories-harness/2026-10-28.md。结论：pilot20两报告已交付(cline 13/20=65%·hermes 11/20=55%);GATE v2 predict全7路完成(5路PASS:cline/codex/claude-code/opencode/pi·2路FAIL:hermes/deepseek)。需要时再读。
-
 
 > 📦 R527-R530 流水(2026-10-28 09:3x~14:2x, TB报告交付+20条试点编排器smoke+启动)已归档 → daily-memories-harness/2026-10-28.md。结论：R527 TB报告交付(commit92ce36995)·R528编排器就绪+gold eval验通·R529 smoke修复(short-hash→full40sha+setsid)·R530端到端pipeline验通+20条试点启动。需要时再读。
 > 📦 R518-R526 流水(2026-10-27 22:4x ~ 2026-10-28 08:0x, 9轮:就绪核查R518+防判死心跳R519-R526)已归档 → daily-memories-harness/2026-10-28.md。结论：就绪状态活性复检全通过(swebench500/500·gateway200·/data6.0T·harness loop在跑),运维待批20条Verified试点决策有效。需要时再读。
