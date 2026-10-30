@@ -1,4 +1,62 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 138 -->
+## RUN_ID 138 - read-only probe: summary.tsv scale/structure (to design a trace ledger + progress bar)
+
+```bash
+set -u
+echo "=== RUN_ID 138 | probe summary.tsv for ledger design | $(date '+%F %T') | host=$(hostname) ==="
+S=/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv
+echo "[0] locate summary.tsv"
+if [ -f "$S" ]; then echo "  local:$S"; else
+  echo "  not local; try ssh 10.129.32.75"
+  if timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=8 10.129.32.75 "ls -l $S 2>/dev/null | head -2" 2>&1 | head -3; then :; fi
+  echo "  --- search workspace copies ---"
+  timeout 30 find /nasdata/app.e0031982/code -maxdepth 6 -name 'summary.tsv' 2>/dev/null | head -5
+  timeout 30 find /nasdata/app.e0031982/code -maxdepth 6 -name 'scan.tsv' 2>/dev/null | head -3
+fi
+
+if [ -f "$S" ]; then
+  echo "[1] size/header"
+  ls -l "$S" | cut -c1-100
+  head -2 "$S" | cut -c1-260
+  echo "[2] rows=$(wc -l < "$S")"
+  echo "[3] match_count buckets"
+  awk -F'\t' 'NR>1{v=$5+0; if(v>=1000)a++; else if(v>=500)b++; else if(v>=300)c++; else if(v>=100)d++; else e++} END{printf "  >=1000:%d  500-999:%d  300-499:%d  100-299:%d  <100:%d\n",a,b,c,d,e}' "$S"
+  echo "[4] unique"
+  awk -F'\t' 'NR>1{u[$3]++;h[$2]++;s[$4]++} END{printf "  users=%d hosts=%d sessions=%d\n",length(u),length(h),length(s)}' "$S"
+fi
+
+echo "[5] used sessions in jsonl (11 cases)"
+python3 - <<'PY'
+import json
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+rows=[json.loads(l) for l in open(p,encoding="utf-8") if l.strip()]
+print("  cases=%d"%len(rows))
+for r in rows:
+    ts=(r.get("metadata") or {}).get("trace_source",{})
+    print("   %-44s %s/%s @%s"%(r.get("task_id","")[:44],ts.get("user"),ts.get("session_file"),ts.get("host")))
+PY
+
+echo "[6] designflow dir contents (any registry?)"
+ls -1 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow | head -20
+echo "  deepread_notes=$(ls /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/trace_deepreads/*.md 2>/dev/null | wc -l)"
+
+echo "[7] actionable pool if summary.tsv is local"
+if [ -f "$S" ]; then
+python3 - <<'PY'
+import json,csv
+S="/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv"
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+used={(json.loads(l).get("metadata") or {}).get("trace_source",{}).get("session_file") for l in open(p,encoding="utf-8") if l.strip()}
+rows=list(csv.DictReader(open(S,encoding="utf-8",errors="ignore"),delimiter="\t"))
+print("  summary_rows=%d used=%d"%(len(rows),len([u for u in used if u])))
+for th in (100,300,500,800,1000):
+    pool=[r for r in rows if float(r.get("match_count") or 0)>=th and r.get("session_file") not in used]
+    print("   mc>=%-4d actionable=%d"%(th,len(pool)))
+PY
+fi
+echo "=== DONE 138 ==="
+```
 <!-- RUN_ID: 137 -->
 ## RUN_ID 137 - restart designflow loop again (fix backtick command-substitution bug in task card)
 
