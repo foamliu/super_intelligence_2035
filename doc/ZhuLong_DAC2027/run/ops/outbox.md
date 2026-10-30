@@ -16221,3 +16221,98 @@ Already up to date.
 0
 === DONE 137 ===
 ```
+
+---
+
+## RUN_ID 138 · 2026-10-30 21:37:06 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 138 | probe summary.tsv for ledger design | $(date '+%F %T') | host=$(hostname) ==="
+S=/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv
+echo "[0] locate summary.tsv"
+if [ -f "$S" ]; then echo "  local:$S"; else
+  echo "  not local; try ssh 10.129.32.75"
+  if timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=8 10.129.32.75 "ls -l $S 2>/dev/null | head -2" 2>&1 | head -3; then :; fi
+  echo "  --- search workspace copies ---"
+  timeout 30 find /nasdata/app.e0031982/code -maxdepth 6 -name 'summary.tsv' 2>/dev/null | head -5
+  timeout 30 find /nasdata/app.e0031982/code -maxdepth 6 -name 'scan.tsv' 2>/dev/null | head -3
+fi
+
+if [ -f "$S" ]; then
+  echo "[1] size/header"
+  ls -l "$S" | cut -c1-100
+  head -2 "$S" | cut -c1-260
+  echo "[2] rows=$(wc -l < "$S")"
+  echo "[3] match_count buckets"
+  awk -F'\t' 'NR>1{v=$5+0; if(v>=1000)a++; else if(v>=500)b++; else if(v>=300)c++; else if(v>=100)d++; else e++} END{printf "  >=1000:%d  500-999:%d  300-499:%d  100-299:%d  <100:%d\n",a,b,c,d,e}' "$S"
+  echo "[4] unique"
+  awk -F'\t' 'NR>1{u[$3]++;h[$2]++;s[$4]++} END{printf "  users=%d hosts=%d sessions=%d\n",length(u),length(h),length(s)}' "$S"
+fi
+
+echo "[5] used sessions in jsonl (11 cases)"
+python3 - <<'PY'
+import json
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+rows=[json.loads(l) for l in open(p,encoding="utf-8") if l.strip()]
+print("  cases=%d"%len(rows))
+for r in rows:
+    ts=(r.get("metadata") or {}).get("trace_source",{})
+    print("   %-44s %s/%s @%s"%(r.get("task_id","")[:44],ts.get("user"),ts.get("session_file"),ts.get("host")))
+PY
+
+echo "[6] designflow dir contents (any registry?)"
+ls -1 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow | head -20
+echo "  deepread_notes=$(ls /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/trace_deepreads/*.md 2>/dev/null | wc -l)"
+
+echo "[7] actionable pool if summary.tsv is local"
+if [ -f "$S" ]; then
+python3 - <<'PY'
+import json,csv
+S="/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv"
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+used={(json.loads(l).get("metadata") or {}).get("trace_source",{}).get("session_file") for l in open(p,encoding="utf-8") if l.strip()}
+rows=list(csv.DictReader(open(S,encoding="utf-8",errors="ignore"),delimiter="\t"))
+print("  summary_rows=%d used=%d"%(len(rows),len([u for u in used if u])))
+for th in (100,300,500,800,1000):
+    pool=[r for r in rows if float(r.get("match_count") or 0)>=th and r.get("session_file") not in used]
+    print("   mc>=%-4d actionable=%d"%(th,len(pool)))
+PY
+fi
+echo "=== DONE 138 ==="
+```
+
+**输出**
+```
+=== RUN_ID 138 | probe summary.tsv for ledger design | 2026-10-30 21:37:06 | host=hfeg0tedaap02 ===
+[0] locate summary.tsv
+  not local; try ssh 10.129.32.75
+ssh: connect to host 10.129.32.75 port 22: Connection timed out
+  --- search workspace copies ---
+/nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace/designflow/bench_v0.50/scan.tsv
+[5] used sessions in jsonl (11 cases)
+  cases=11
+   EDA-Eval-DesignFlow-Digital-010              t0002948/1789900011859_zpx23 @hfeg0plg49
+   EDA-Eval-DesignFlow-Digital-021              klhu/1792224347250_fww0m @hfeg0plg49
+   EDA-Eval-DesignFlow-Digital-022              t0002948/1792133892937_i2dlp @hfeg0plg49
+   EDA-Eval-DesignFlow-Digital-023              t0002948/1792400029503_0na23 @hfeg0plg49
+   EDA-Eval-DesignFlow-Verification-001         e0031668/1789370647360_ukkn7 @hfeg0plg91
+   EDA-Eval-DesignFlow-Characterization-001     vincelu/1792297573507_9knot @hfeg0plg49
+   EDA-Eval-DesignFlow-PDKQA-001                xinqiaoz/1788770994295_x4b0p @hfeg0pkn004
+   EDA-Eval-DesignFlow-Backannot-001            haoyut/1787798131361_82ybr @hfeg0plg49
+   EDA-Eval-DesignFlow-Analog-001               haoyut/1788172501150_w4x70 @hfeg0pkn003
+   EDA-Eval-DesignFlow-LayoutAether-001         yan1zh/1792487689184_4ybw1 @hfeg0plg65
+   EDA-Eval-DesignFlow-LayoutVirtuoso-001       e0014566/1786541065533_cgqd1 @hfeg0pkn001
+[6] designflow dir contents (any registry?)
+build_pdkqa001.py
+gen_daily_report.py
+pi_debug_status.jsonl
+__pycache__
+README.md
+RELEASE_INDEX.md
+trace_deepreads
+  deepread_notes=8
+[7] actionable pool if summary.tsv is local
+=== DONE 138 ===
+```
