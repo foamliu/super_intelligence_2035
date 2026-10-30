@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        ✅运维令10:1x暂停下载DONE.无活跃下载/迁移进程(.12验),12源全部镜像完整.例行巡检中
 已完成:       ✅运维令10:1x暂停下载(pgrep验.12无download_85m/hf/rsync/wget/aria2进程,判据满足);✅运维令13:3x SFT分词全DONE;✅运维令08:3x刷新两文件;✅12源全部镜像完整(922shard)
-当前动作:     唤醒865(2026-10-30 13:49):例行心跳巡检(上次心跳@13:31距今~18min)→①git fetch=already up to date,无data新令✓;②pgrep验无下载/迁移进程✓;③df /nas_train 173T/84%(35T可用)+/nas_env 8.3T/84%(1.7T可用)✓;④体积MEMORY 22.2KB/TASK 35.7KB→均在限内✓;⑤ops/inbox=RUN_ID224(pretrain重启,非data令)✓;⑥更新心跳+日报+commit+push
+当前动作:     唤醒866(2026-10-30 14:08):例行心跳巡检(上次心跳@13:49距今~19min)→①git fetch=up to date,无data新令✓;②pgrep验无下载/迁移进程✓;③df /nas_train 173T/84%(35T可用)+/nas_env 8.3T/84%(1.7T可用)✓;④体积MEMORY 22.2KB/TASK 35.7KB→均在限内✓;⑤ops/inbox=RUN_ID224(pretrain重启,非data令)✓;⑥更新心跳+日报+commit+push
 下一步:       待「恢复下载」新令.此前不发起新下载/迁移.WAITING:1
 阻塞:         无
 ERROR_COUNT:  10
@@ -30,7 +30,9 @@ ERROR_COUNT:  10
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [13:49] 唤醒865：例行心跳巡检(上次心跳@13:31距今~18min) → ①git fetch=already up to date,无data新令✓;②pgrep验无下载/迁移进程✓;③df /nas_train 173T/84%(35T可用)+/nas_env 8.3T/84%(1.7T可用)✓;④体积MEMORY 22.2KB/TASK 35.7KB→均在限内✓;⑤ops/inbox=RUN_ID224(pretrain重启,非data令)✓;⑥更新心跳+日报+commit+push.未完成指令:无(所有运维令已DONE)→WAITING:1
+> [14:08] 唤醒866：例行心跳巡检(上次心跳@13:49距今~19min) → ①git fetch=up to date,无data新令✓;②pgrep验无下载/迁移进程✓;③df /nas_train 173T/84%(35T可用)+/nas_env 8.3T/84%(1.7T可用)✓;④体积MEMORY 22.2KB/TASK 35.7KB→均在限内✓;⑤ops/inbox=RUN_ID224(pretrain重启,非data令)✓;⑥更新心跳+日报+commit+push.未完成指令:无(所有运维令已DONE)→WAITING:1
+>
+> 📦 唤醒865(10-30 13:49)原文归档 → daily-memories-data/2026-10-30.md（例行巡检,详见日文件）
 >
 > 📦 唤醒864(10-30 13:31)原文归档 → daily-memories-data/2026-10-30.md（例行巡检,详见日文件）
 >
