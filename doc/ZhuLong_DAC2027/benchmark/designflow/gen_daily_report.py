@@ -183,6 +183,15 @@ def main():
 
     domain_dist = " · ".join(f"{esc(k)}: {v}" for k, v in sorted(by_domain.items())) or "(无)"
 
+    # trace 覆盖率（进度条）：读 designflow/trace_ledger.tsv + summary_stats.json
+    cov_html = ""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import trace_ledger
+        cov_html = trace_ledger.html_block()
+    except Exception as e:
+        cov_html = "<p style='color:#999'>trace 台账未就绪（%s）</p>" % esc(e)
+
     doc = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -229,6 +238,8 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 </div>
 <p><b>按 domain 分布：</b>{domain_dist}</p>
 <div class="note">即时令 VIII 已将原 15 个按工具分文件合并为单一 <code>EDA-Eval-DesignFlow.jsonl</code>；scripting 口径用例标记 <code>legacy:true</code> 保留存量，不再追加。新建用例只往此文件追加，按设计流契约（mode=design_flow / entry_point=outputs/submit.zip / 双参 check(deliverable, workdir) / 无 lang·host）。</div>
+
+{cov_html}
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
 <table><tr><th>task_id</th><th>用户</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>pi 结果</th></tr>

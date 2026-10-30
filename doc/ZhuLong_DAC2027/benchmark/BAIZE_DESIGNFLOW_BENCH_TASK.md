@@ -63,7 +63,11 @@ metadata:    { trace_source{...}, domain, test_rationale }
 - **DoD（交付定义）**：1 条 case 通过自验并写进 `EDA-Eval-DesignFlow.jsonl` 才算交付；**深读笔记是中间产物，不算交付**。
 - **每轮只做 1 条 case**：做完即收尾，**不在同一轮开第二条**（控制上下文不膨胀）；交付后首行 `WAITING: 0`，loop 60s 后唤醒做下一条。
 - **唯一例外**：单条 trace 过大（>2MB 或 >600 msgs）允许本轮只深读，但**下一轮必须先交付 case**，心跳记 `DEBT: 1 deepread 未合成`；🚫 禁止连续两轮只深读。
-- 选 trace：`summary.tsv` 按 `match_count` 降序，排除已用 / 已清理 session，优先**命中最多且尚无 case 的 domain**。
+- **选 trace 一律走台账（唯一去重口径）**：`python3 designflow/trace_ledger.py next --n 5` → 按它给出的 awk 在 `.75` 上取候选（**已自动排除台账里的 session**）→ 选第一条 → `claim` 落台账。
+  - 出完 case：`mark --session <s> --status case --case-id <EDA-Eval-DesignFlow-XXX>`（覆盖率的唯一分子）；
+  - 暂缓：`mark --session <s> --status parked --note "<原因>"`（如 aether 超时），**不重复捡**。
+  - 🚫 禁止凭记忆/凭 jsonl 目测选 trace；🚫 禁止跳过 claim 直接开工（去重与进度都会失真）。
+- 选料偏好：`match_count` 高 + **该 domain 尚无 case**（domain 覆盖优先于纯命中数）。
 
 ## 4. 判分质量（"有牙"，缺一不可）
 
@@ -99,16 +103,17 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 ## 6. 每轮流程
 
-1. 选 trace → 深读（有笔记就复用）→ 合成（`assets/` `reference/` `hidden/` `negative/`）。
+1. `trace_ledger.py next --n 5` 取候选 → `claim` → 深读（有笔记就复用）→ 合成（`assets/` `reference/` `hidden/` `negative/`）。
 2. 自验：`reference/` 参考解跑 `check()` 必 PASS；§4.9 (a)(b)(c) 三假提交必 FAIL；`negative_selftest.py` 全 FAIL。
 3. pi 实跑：`designflow/pi_debug_status.jsonl` 追加一行，记 `pi_model / pi_thinking / pi_dur_sec / pi_verdict / ref_check`。
-4. 追加 jsonl → 日报：`python3 designflow/gen_daily_report.py`，中文单文件 HTML，含「用户」列与 `k 条断言` 清单。
+4. 追加 jsonl → **`mark --status case --case-id <id>`** → 日报：`python3 designflow/gen_daily_report.py`（含「用户」列、`k 条断言` 清单、trace 覆盖率进度条）。
 5. 难度回路：按 §5 判定"加难 / 保持 / 查判分"，结论写进当日日报的"阻塞/下一步"。
 6. 收尾：`WAITING: 0`（下一轮 60s 后立即开下一条 case）；仅真外部阻塞（pi 异步未回 / 推送失败 / 等人工）才写 `WAITING: 1`。
 
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
 `11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/11 · 目标通过率 20–30%`
+`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥300 候选池）`
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
@@ -117,7 +122,10 @@ metadata:    { trace_source{...}, domain, test_rationale }
 > 收尾是"结账"：**一轮 = 1 条 case = 1 次结账**。别把结账做成产出，也别攒着不提交。
 
 0. **体积自检**：TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限先把已闭合块**原文**搬 `ARCHIVE_OPERATOR_DESIGNFLOW.md`（留 1 行指针），搬前 `git pull --rebase --autostash`，🚫 不改小节编号/标题。数字抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB`。
-1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `DEBT`）；🚫 每轮重写整份快照。
+1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `📊 trace 覆盖率 x/y=z%` + `DEBT`）；🚫 每轮重写整份快照。
+   - 顺带刷新候选池：在 `.75` 上跑一次 `awk` 统计 `sessions / mc300 / mc500 / mc1000`，然后
+     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc300":N,"mc500":N,"mc1000":N}'`
+     （进度条的分母与"新增 traces"都来自这里）。
 2. **日记忆**：`daily-memories-designflow/<YYYY-MM-DD>.md` **当天首轮创建，之后只追加**。
 3. **提交**：**每轮（1 条 case）结束即提交**（loop 另有每 30 分钟兜底）；🚫 把工作留在工作树过夜。双仓命令：
 ```bash
