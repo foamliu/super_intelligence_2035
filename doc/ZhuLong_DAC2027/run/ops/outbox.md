@@ -15831,3 +15831,235 @@ echo "=== DONE 134 ==="
   th= task_id | 用户 | trace 来源 | 解决的问题 | 任务说明(prompt) | 交付件要求 | test 思路 | test 语言 | pi 结果
 === DONE 134 ===
 ```
+
+---
+
+## RUN_ID 135 · 2026-10-30 21:06:34 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 135 | audit test strength | $(date '+%F %T') | host=$(hostname) ==="
+J=/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+python3 - "$J" <<'PY'
+import json,sys,re
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p,encoding='utf-8') if l.strip()]
+for r in rows:
+    tid=str(r.get("task_id") or r.get("id"))
+    t=r.get("test") or ""
+    if isinstance(t,dict): t=json.dumps(t,ensure_ascii=False)
+    st={"len":len(t),"assert":t.count("assert"),"subprocess":t.count("subprocess"),
+        "open":t.count("open("),"zipfile":t.count("zipfile"),"import":t.count("import "),
+        "expected":t.count("expected"),"sha256":t.count("sha256"),"defcheck":t.count("def check(")}
+    print("  %-44s %s"%(tid[:44],st))
+print("  ---- first 12 lines of each test ----")
+for r in rows:
+    tid=str(r.get("task_id") or r.get("id"))
+    t=r.get("test") or ""
+    if isinstance(t,dict): t=json.dumps(t,ensure_ascii=False)
+    print("  ## %s"%tid)
+    for ln in t.splitlines()[:12]:
+        print("     "+ln[:105])
+PY
+
+echo "[2] pi workdir: is the checker / reference visible to the SUT?"
+for d in /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-Analog-001 \
+         /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-LayoutAether-001; do
+  echo "  == $d"
+  ls -la "$d" 2>/dev/null | head -12 | cut -c1-120
+  find "$d" -maxdepth 3 -type f 2>/dev/null | head -20 | sed 's#^.*/\.pi_debug/##' | cut -c1-110
+done
+
+echo "[3] bench case dir: test/reference layout"
+for c in EDA-Eval-DesignFlow-Analog-001 EDA-Eval-DesignFlow-LayoutAether-001; do
+  echo "  == $c"
+  find /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow -maxdepth 3 -path "*$c*" -type f 2>/dev/null | sed "s#.*EDA-Eval-DesignFlow/#  #" | head -15
+done
+echo "=== DONE 135 ==="
+```
+
+**输出**
+```
+=== RUN_ID 135 | audit test strength | 2026-10-30 21:06:34 | host=hfeg0tedaap02 ===
+  EDA-Eval-DesignFlow-Digital-010              {'len': 1123, 'assert': 0, 'subprocess': 0, 'open': 0, 'zipfile': 2, 'import': 1, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Digital-021              {'len': 1568, 'assert': 0, 'subprocess': 2, 'open': 1, 'zipfile': 2, 'import': 1, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Digital-022              {'len': 1357, 'assert': 0, 'subprocess': 0, 'open': 0, 'zipfile': 2, 'import': 1, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Digital-023              {'len': 1500, 'assert': 0, 'subprocess': 0, 'open': 0, 'zipfile': 2, 'import': 1, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Verification-001         {'len': 6023, 'assert': 0, 'subprocess': 0, 'open': 1, 'zipfile': 2, 'import': 1, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Characterization-001     {'len': 7104, 'assert': 0, 'subprocess': 0, 'open': 0, 'zipfile': 2, 'import': 1, 'expected': 1, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-PDKQA-001                {'len': 6984, 'assert': 13, 'subprocess': 0, 'open': 0, 'zipfile': 2, 'import': 3, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Backannot-001            {'len': 6856, 'assert': 13, 'subprocess': 0, 'open': 0, 'zipfile': 2, 'import': 1, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-Analog-001               {'len': 7369, 'assert': 19, 'subprocess': 2, 'open': 1, 'zipfile': 2, 'import': 2, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-LayoutAether-001         {'len': 7195, 'assert': 22, 'subprocess': 2, 'open': 1, 'zipfile': 2, 'import': 2, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  EDA-Eval-DesignFlow-LayoutVirtuoso-001       {'len': 8764, 'assert': 24, 'subprocess': 2, 'open': 1, 'zipfile': 2, 'import': 2, 'expected': 0, 'sha256': 0, 'defcheck': 1}
+  ---- first 12 lines of each test ----
+  ## EDA-Eval-DesignFlow-Digital-010
+     def check(deliverable, workdir):
+         import os, zipfile
+         p = os.path.join(workdir, deliverable)
+         if not os.path.isfile(p):
+             raise FileNotFoundError(deliverable)
+         with zipfile.ZipFile(p) as z:
+             names = set(z.namelist())
+             need = {"mac4.v", "tb_mac4.sv", "run_vcs.tcl", "sim_mac4.log", "mac4_wave.vcd"}
+             missing = need - names
+             if missing:
+                 raise AssertionError("missing artifacts: " + ", ".join(sorted(missing)))
+             rtl = z.read("mac4.v").decode("utf-8", "ignore")
+  ## EDA-Eval-DesignFlow-Digital-021
+     def check(deliverable, workdir):
+         import os, zipfile, subprocess, sys
+         p = os.path.join(workdir, deliverable)
+         if not os.path.isfile(p):
+             raise FileNotFoundError(deliverable)
+         with zipfile.ZipFile(p) as z:
+             names = set(z.namelist())
+             for f in ["extract_neg_slack.py", "neg_slack.rpt"]:
+                 if f not in names:
+                     raise AssertionError("missing artifact: " + f)
+             z.extractall(os.path.join(workdir, "__chk"))
+         chk = os.path.join(workdir, "__chk")
+  ## EDA-Eval-DesignFlow-Digital-022
+     def check(deliverable, workdir):
+         import os, zipfile, re
+         p = os.path.join(workdir, deliverable)
+         if not os.path.isfile(p):
+             raise FileNotFoundError(deliverable)
+         with zipfile.ZipFile(p) as z:
+             names = set(z.namelist())
+             for f in ["fix_report.md", "dc_fixed.tcl"]:
+                 if f not in names:
+                     raise AssertionError("missing artifact: " + f)
+             report = z.read("fix_report.md").decode("utf-8", "ignore")
+             fixed = z.read("dc_fixed.tcl").decode("utf-8", "ignore")
+  ## EDA-Eval-DesignFlow-Digital-023
+     def check(deliverable, workdir):
+         import os, zipfile
+         p = os.path.join(workdir, deliverable)
+         if not os.path.isfile(p):
+             raise FileNotFoundError(deliverable)
+         with zipfile.ZipFile(p) as z:
+             names = set(z.namelist())
+             for f in ["makefile_para", "cfg/tpl_mod.cfg", "cfg/README.md"]:
+                 if f not in names:
+                     raise AssertionError("missing artifact: " + f)
+             top = z.read("makefile_para").decode("utf-8", "ignore")
+             cfg = z.read("cfg/tpl_mod.cfg").decode("utf-8", "ignore")
+  ## EDA-Eval-DesignFlow-Verification-001
+     def check(deliverable, workdir):
+         import os, zipfile, io, csv, re, tempfile, importlib.util, sys
+     
+         p = os.path.join(workdir, deliverable)
+         if not os.path.isfile(p):
+             raise FileNotFoundError(deliverable)
+     
+         with zipfile.ZipFile(p) as z:
+             names = set(z.namelist())
+             need = {
+                 "prepare_new_netlist.py",
+                 "step3_aether.il",
+  ## EDA-Eval-DesignFlow-Characterization-001
+     def check(deliverable, workdir):
+         """SiliconSmart library-characterization config-debug deliverable checker.
+     
+         deliverable: path to submit.zip (relative to workdir), e.g. "outputs/submit.zip"
+         workdir:     session workdir (attachments are placed here at session open)
+     
+         7 independent conditions (a)-(g); each has teeth so the buggy originals FAIL
+         and a correct patch PASSES. All-static Python (no SiliconSmart run needed).
+         """
+         import os, re, zipfile
+     
+         p = os.path.join(workdir, deliverable)
+  ## EDA-Eval-DesignFlow-PDKQA-001
+     def check(deliverable, workdir):
+         """PDK-QA DRC test-environment deliverable checker.
+     
+         deliverable: path to submit.zip (relative to workdir), e.g. "outputs/submit.zip"
+         workdir:     session workdir (attachments placed here at session open).
+     
+         7 independent conditions (a)-(g). All-static Python (no Calibre run needed).
+         TEETH: a naive "only CALIBRE_HOME" solution FAILS (c)+(d)+(g); the correct
+         fake-MGC_HOME + stub-libXss + auto-rebuild solution PASSES.
+         """
+         import os, re, zipfile
+     
+  ## EDA-Eval-DesignFlow-Backannot-001
+     def check(deliverable, workdir):
+         """Backannot-001 deliverable checker — PrimeTime parasitics backannotation
+         failure diagnosis (DRAM STA signoff).
+     
+         deliverable: path to submit.zip (relative to workdir), e.g. "outputs/submit.zip"
+         workdir:     session workdir (attachments placed here at session open).
+     
+         7 independent conditions (a)-(g). All-static Python (no PrimeTime/StarRC
+         run needed — this is an offline log-diagnosis task).
+         TEETH: a naive report that only counts error numbers, does NO hierarchy
+         comparison, does NOT split critical vs noncritical, and dumps all 9660
+         into the ignore list -> FAILS (e)+(f)+(g).
+  ## EDA-Eval-DesignFlow-Analog-001
+     def check(deliverable, workdir):
+         """Analog-001 deliverable checker — structured-Verilog net connectivity
+         tracer for DRAM parasitic back-annotation debug.
+     
+         deliverable: path to submit.zip (relative to workdir), e.g. "outputs/submit.zip"
+         workdir:     session workdir (attachments placed here at session open).
+     
+         7 independent conditions (a)-(g). All-static Python (no EDA tool run
+         needed — this is an offline netlist/log analysis task). The checker RUNS
+         the candidate's own net_trace.py on the attachment to verify it actually
+         works and produces the required structure.
+     
+  ## EDA-Eval-DesignFlow-LayoutAether-001
+     def check(deliverable, workdir):
+         """LayoutAether-001 deliverable checker — offline-Python LVS netlist
+         comparison tool for the and2CSx1 standard cell (layout_aether domain).
+     
+         deliverable: path to submit.zip (relative to workdir), e.g. "outputs/submit.zip"
+         workdir:     session workdir (attachments placed here at session open).
+     
+         7 independent conditions (a)-(g). All-static Python (no EDA tool run
+         needed — this is an offline netlist comparison task). The checker RUNS
+         the candidate's own lvs_tool.py on the two attachments (correct + buggy
+         layout netlists) to verify it actually compares connectivity and is not
+         a naive device-counter or always-CORRECT stub.
+  ## EDA-Eval-DesignFlow-LayoutVirtuoso-001
+     def check(deliverable, workdir):
+         """LayoutVirtuoso-001 deliverable checker — offline-Python RTEXT/RNODE
+         label audit + cleanup advisor (layout_virtuoso domain).
+     
+         deliverable: path to submit.zip (relative to workdir), e.g. "outputs/submit.zip"
+         workdir:     session workdir (attachments placed here at session open).
+     
+         7 independent conditions (a)-(g). All-static Python (no EDA tool run
+         needed — this is an offline label-inventory audit task). The checker RUNS
+         the candidate's own rtext_rnode_audit.py on the two attachments (unclean
+         + clean inventories) to verify it actually does per-net audit + garbage
+         detection + dedup and is not a naive total-counter or always-ALIGNED stub.
+[2] pi workdir: is the checker / reference visible to the SUT?
+  == /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-Analog-001
+  == /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-LayoutAether-001
+[3] bench case dir: test/reference layout
+  == EDA-Eval-DesignFlow-Analog-001
+  assets/EDA-Eval-DesignFlow-Analog-001/dram_fragment.v
+  assets/EDA-Eval-DesignFlow-Analog-001/parasitics_command.log
+  assets/EDA-Eval-DesignFlow-Analog-001/task_brief.md
+  reference/EDA-Eval-DesignFlow-Analog-001/net_trace.py
+  reference/EDA-Eval-DesignFlow-Analog-001/sample_output.txt
+  reference/EDA-Eval-DesignFlow-Analog-001/error_summary.txt
+  reference/EDA-Eval-DesignFlow-Analog-001/reference_submit.zip
+  reference/EDA-Eval-DesignFlow-Analog-001/check.py
+  == EDA-Eval-DesignFlow-LayoutAether-001
+  assets/EDA-Eval-DesignFlow-LayoutAether-001/and2CSx1_schematic.cdl
+  assets/EDA-Eval-DesignFlow-LayoutAether-001/layout_correct.txt
+  assets/EDA-Eval-DesignFlow-LayoutAether-001/layout_buggy.txt
+  assets/EDA-Eval-DesignFlow-LayoutAether-001/task_brief.md
+  reference/EDA-Eval-DesignFlow-LayoutAether-001/lvs_tool.py
+  reference/EDA-Eval-DesignFlow-LayoutAether-001/sample_output_correct.txt
+  reference/EDA-Eval-DesignFlow-LayoutAether-001/sample_output_buggy.txt
+  reference/EDA-Eval-DesignFlow-LayoutAether-001/comparison_report.txt
+  reference/EDA-Eval-DesignFlow-LayoutAether-001/reference_submit.zip
+  reference/EDA-Eval-DesignFlow-LayoutAether-001/check.py
+=== DONE 135 ===
+```
