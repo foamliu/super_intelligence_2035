@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #415, 2026-10-30 17:32]**：空唤醒·补心跳防判死。上次心跳 wake#414@10-30 16:59 距今 ~33min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase → already up to date。vision loop 活(PID 669545)。📦 体积：TASK=24093B(23.5KB)/MEMORY=30806B(30.1KB) 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #416, 2026-10-30 18:04]**：空唤醒·补心跳防判死。上次心跳 wake#415@10-30 17:33 距今 ~31min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git pull --rebase → already up to date。vision loop 活(PID 669545)。📦 体积：TASK=24093B(23.5KB)/MEMORY=30989B(30.3KB) 均≤32KB✓。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#415 (2026-10-30 17:33, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#414 (2026-10-30 16:59, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#413 (2026-10-30 16:27, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#412 (2026-10-30 15:54, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
