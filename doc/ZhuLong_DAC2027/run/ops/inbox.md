@@ -1,4 +1,50 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 137 -->
+## RUN_ID 137 - restart designflow loop again (fix backtick command-substitution bug in task card)
+
+```bash
+set -u
+echo "=== RUN_ID 137 | restart designflow loop (heredoc fix) | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+DF=$WS/doc/ZhuLong_DAC2027/benchmark
+LOOP=$DF/designflow_bench_loop.sh
+LOG=/tmp/designflow_bench_loop.log
+
+cd "$WS" || exit 0
+git pull --rebase --autostash origin main 2>&1 | tail -2
+
+echo "[1] script check"
+grep -n '^SLEEP_' "$LOOP"
+echo "  heredoc_card=$(grep -c "cat <<'CARD'" "$LOOP" || echo 0)  backtick_card=$(grep -c 'WAITING: 0`' "$LOOP" || echo 0)"
+
+echo "[2] stop agent + loop"
+DFOPEN=$(ps -eww -o pid=,args= | grep -F '本轮任务卡（loop 自动生成' | grep -v grep | awk '{print $1}')
+[ -n "${DFOPEN:-}" ] && { echo "  opencode pids: $DFOPEN"; kill $DFOPEN 2>/dev/null || true; }
+sleep 3
+DFOPEN2=$(ps -eww -o pid=,args= | grep -F '本轮任务卡（loop 自动生成' | grep -v grep | awk '{print $1}')
+[ -n "${DFOPEN2:-}" ] && { echo "  force kill opencode: $DFOPEN2"; kill -9 $DFOPEN2 2>/dev/null || true; }
+LPIDS=$(ps -eo pid=,args= | awk '/[d]esignflow_bench_loop\.sh/ {print $1}')
+for p in ${LPIDS:-}; do
+  for c in $(ps --ppid "$p" -o pid= 2>/dev/null); do kill "$c" 2>/dev/null || true; done
+  kill "$p" 2>/dev/null || true
+done
+sleep 3
+LPIDS2=$(ps -eo pid=,args= | awk '/[d]esignflow_bench_loop\.sh/ {print $1}')
+[ -n "${LPIDS2:-}" ] && kill -9 $LPIDS2 2>/dev/null || true
+sleep 1
+echo "  remaining_loops=$(ps -eo args= | grep -c '[d]esignflow_bench_loop\.sh')"
+
+echo "[3] start"
+: > "$LOG"
+setsid bash "$LOOP" > "$LOG" 2>&1 < /dev/null &
+sleep 8
+ps -eo pid=,etime=,args= | awk '/[d]esignflow_bench_loop\.sh/ {print substr($0,1,110)}' | head -2
+
+echo "[4] log (must have no 'command not found')"
+tail -n 8 "$LOG" | cut -c1-150
+echo "  cmd_not_found_count=$(grep -c 'command not found' "$LOG" || echo 0)"
+echo "=== DONE 137 ==="
+```
 <!-- RUN_ID: 136 -->
 ## RUN_ID 136 - restart designflow loop with the updated script (one case per wake, sleep 120s)
 
