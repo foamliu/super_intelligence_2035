@@ -1,4 +1,40 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 132 -->
+## RUN_ID 132 - read-only: context of "desensitize" wording inside designflow benchmark jsonl
+
+```bash
+set -u
+echo "=== RUN_ID 132 | read-only: desensitize wording context | $(date '+%F %T') | host=$(hostname) ==="
+BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench
+J=$BENCH/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+if [ -f "$J" ]; then
+  python3 - "$J" <<'PY'
+import json,sys,re
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p,encoding='utf-8') if l.strip()]
+key="\u8131\u654f"
+for r in rows:
+    def walk(o,path=""):
+        if isinstance(o,dict):
+            for k,v in o.items(): walk(v,path+"/"+str(k))
+        elif isinstance(o,list):
+            for i,v in enumerate(o): walk(v,path+"[%d]"%i)
+        elif isinstance(o,str) and key in o:
+            for m in re.finditer(key,o):
+                s=max(0,m.start()-45); e=min(len(o),m.end()+45)
+                print("  %s %s :: ...%s..." % (str(r.get("id"))[:40], path, o[s:e].replace("\n"," ")))
+    walk(r)
+print("  --- keys containing user ---")
+seen=set()
+for r in rows:
+    for k in (r.get("metadata") or {}).get("trace_source",{}).keys(): seen.add(k)
+print("  trace_source_keys=%s"%sorted(seen))
+PY
+else
+  echo "  jsonl missing"
+fi
+echo "=== DONE 132 ==="
+```
 <!-- RUN_ID: 131 -->
 ## RUN_ID 131 - read-only audit: designflow trace_source user names (user order: no desensitize, keep usernames)
 
