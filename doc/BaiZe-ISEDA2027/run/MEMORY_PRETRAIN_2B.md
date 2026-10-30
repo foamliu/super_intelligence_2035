@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-30 13:17 #955：**S1监控iter21050健康·loss~2.222稳态微降·0NaN·grad-norm极稳(0.083~0.107)·~574K tok/s·ckpt@20000·TB6006OK**。iter 21050/700k(3.01%): lm loss last10 avg≈2.222[2.212~2.248], 全程0 NaN/Inf. LR=1e-3恒定, GBS=256, loss-scale=1.0. grad-norm last10 0.083~0.107(极稳, 一spike 0.489@20710秒恢复). ~7.1s/iter→~574K tok/s. 16卡.29 95~100%util, .12 99~100%util, 全~75GB/81GB. mem .29 1133G/2T(avail 774G), .12 555G/2T(avail 1256G). /nas_train 35T free(84%). ckpt@20000(6ckpt:10k~20k), next@22000(~950步~1.9h~15:10). TB6006 OK(0.0.0.0:6006 LISTEN). ETA~55天. 17:0x✅DONE. 10:0x✅DONE. 未完成指令：有(⑦PPL/passkey+RULER/needle eval, BLOCKED: 16/16 GPU满载训练; HF导出iter_18000✅=前置就绪, 待GPU空闲). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~26.7KB(无需归档).
+> 🆕 2026-10-30 13:36 #956：**S1监控iter21210健康·loss~2.215稳态微降·0NaN·grad-norm极稳(0.084~0.142)·~590K tok/s·ckpt@20000·TB6006OK**。iter 21210/700k(3.03%): lm loss last10 avg≈2.215[2.205~2.237], 全程0 NaN/Inf. LR=1e-3恒定, GBS=256, loss-scale=1.0. grad-norm last10 0.084~0.142(极稳). ~7.1s/iter→~590K tok/s. 16卡.29 97~100%util, .12 95~100%util, 全~75GB/81GB. mem .29 1210G/2T(avail 696G). /nas_train 35T free(84%). ckpt@20000(10ckpt:2k~20k), next@22000(~790步~1.6h~15:12). TB6006 OK(0.0.0.0:6006 LISTEN). ETA~55天. 17:0x✅DONE. 10:0x✅DONE. 未完成指令：有(⑦PPL/passkey+RULER/needle eval, BLOCKED: 16/16 GPU满载训练; HF导出iter_18000✅=前置就绪, 待GPU空闲). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~27.2KB(无需归档).
+> 📦 §#955（10-30 13:17, S1监控iter21050健康·loss~2.222·0NaN·grad-norm极稳(0.083~0.107)·~574K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态微降. 被#956更新。需要时再读。
 > 📦 §#954（10-30 12:54, S1监控iter20860健康·loss~2.236·0NaN·grad-norm极稳·~591K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.24稳态微降. 被#955更新。需要时再读。
 > 📦 §#953（10-30 12:35, S1监控iter20700健康·loss~2.220·0NaN·grad-norm极稳(0.083~0.187)·~592K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态微降. 被#954更新。需要时再读。
 > 📦 §#952（10-30 12:14, S1监控iter20530健康·loss~2.220·0NaN·grad-norm极稳(0.088~0.111)·~566K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态微降. 被#953更新。需要时再读。
@@ -17,8 +18,8 @@ WAITING: 1
 > 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
 
 
-> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 20860/700k=2.98%, ~591K tok/s, 0 NaN, loss ~2.236 稳态微降, ckpt@20000, grad-norm极稳) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@18000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅(16脚本+9配置+2docs+README 19.4KB, git clean)）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~56天）。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~56天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=30.2KB / MEMORY=26.6KB（无需归档）
+> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 21210/700k=3.03%, ~590K tok/s, 0 NaN, loss ~2.215 稳态微降, ckpt@20000, grad-norm极稳) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@18000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅(16脚本+9配置+2docs+README 19.4KB, git clean)）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~55天）。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~55天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=30.2KB / MEMORY=27.2KB（无需归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
