@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-30 20:39 #976：**S1监控iter24680健康·loss~2.19稳态微降·0NaN·grad-norm极稳(0.081~0.114)·~582K tok/s·ckpt@24000·TB6006OK**。iter 24680/700k(3.53%): lm loss last5=[2.176,2.196,2.188,2.181,2.187]avg≈2.186, 0 NaN/Inf. LR=1e-3恒定, GBS=256, loss-scale=1.0. grad-norm last5=[0.098,0.091,0.091,0.081,0.114](极稳). Step time ~7.2s→582K tok/s. 16卡(.12 100%/.29 100%, 均~75GB/81GB). mem .29 avail 1337G/swap 6/7G. /nas_train 35T free(84%). ckpt@24000(12 ckpt dirs, 50GB), next@26000. TB6006 OK(.29 HTTP200, 0.0.0.0:6006 LISTEN). 无stale find. ETA~56天. 17:0x✅DONE. 10:0x✅DONE. 未完成指令：有(⑦PPL/passkey+RULER/needle eval, BLOCKED: 16/16 GPU满载训练; CPU前置全部✅, 待GPU空闲). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=30.5KB(无需归档).
+> 🆕 2026-10-30 21:00 #977：**S1监控iter24830健康·loss~2.19稳态微降·0NaN·grad-norm极稳(0.085~0.189)·~575K tok/s·ckpt@24000·TB6006OK**。iter 24830/700k(3.55%): lm loss last5=[2.183,2.195,2.179,2.191,2.187]avg≈2.187, 0 NaN/Inf. LR=1e-3恒定, GBS=256, loss-scale=1.0. grad-norm last5=[0.189,0.085,0.095,0.099,0.087](极稳). Step time ~7.3s→575K tok/s. 16卡(.12 65-100%/.29 100%, 均~75GB/81GB). mem .29 avail 1335G/swap 6/7G. /nas_train 35T free(84%). ckpt@24000(12 ckpt dirs), next@26000. TB6006 OK(.29 HTTP200, 0.0.0.0:6006 LISTEN). 无stale find. ETA~56天. 17:0x✅DONE. 10:0x✅DONE. 未完成指令：有(⑦PPL/passkey+RULER/needle eval, BLOCKED: 16/16 GPU满载训练; CPU前置全部✅, 待GPU空闲). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=30.7KB(无需归档).
+> 📦 §#976（10-30 20:39, S1监控iter24680健康·loss~2.19·0NaN·grad-norm极稳(0.081~0.114)·~582K tok/s·ckpt@24000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.19稳态微降. 被#977更新。需要时再读。
 > 📦 §#975（10-30 20:17, S1监控iter24500健康·loss~2.20·0NaN·grad-norm极稳(0.080~0.108)+1spike(0.202)·~576K tok/s·ckpt@24000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.20稳态微降. 被#976更新。需要时再读。
 > 📦 §#974（10-30 19:57, S1监控iter24340健康·loss~2.19·0NaN·grad-norm极稳(0.08~0.15)+1spike(0.660)·~579K tok/s·ckpt@24000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.19稳态微降. 被#975更新。需要时再读。
 > 📦 §#973（10-30 19:37, S1监控iter24147健康·loss~2.20·0NaN·grad-norm极稳(0.094~0.104)·~582K tok/s·ckpt@24000·check_rope PASS@hf_18000·prune dry-run keep3删9）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.20稳态微降, check_rope PASS. 被#974更新。需要时再读。
@@ -19,7 +20,7 @@ WAITING: 1
 > 📦 §#961（10-30 15:18, S1监控iter22030健康·loss~2.21·0NaN·grad-norm极稳(0.080~0.168)·~575K tok/s·ckpt@22000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.21稳态微降. 被#962更新。需要时再读。
 > 📦 §#960（10-30 14:55, S1监控iter21850健康·loss~2.21·0NaN·grad-norm极稳(0.078~0.168)·~575K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.21稳态微降, ckpt@20000→22000. 被#961更新。需要时再读。
 > 📦 §#959（10-30 14:35, S1监控iter21690健康·loss~2.217·0NaN·grad-norm稳(0.086~0.210)·~560K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态微降. 被#960更新。需要时再读。
-> 📦 §#958（10-30 14:17, S1监控iter21540健康·loss~2.225·0NaN·grad-norm极稳(0.075~0.155)·~566K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态微降. 被#959更新。需要时再读。
+
 > 📦 §#950~#956（10-30 11:34~13:36, S1监控iter20204→21210健康×7轮·loss~2.22·0NaN·~566-592K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1全程健康, loss~2.22稳态微降. 被#957更新。需要时再读。
 > 📦 §#949（10-30 11:11, S1监控iter20010健康·loss~2.236·0NaN·~574K tok/s·ckpt@20000·prune dry-run@20k完成）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.24稳态, prune dry-run@20k keep3删7. 被#950更新。需要时再读。
 > 📦 §#948（10-30 10:50, S1监控iter19850健康·loss~2.221·0NaN·~574K tok/s·ckpt@18000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态. 被#949更新。需要时再读。
