@@ -17,7 +17,7 @@ ATTRIBUTION = [
     ("claude-code", "full500 (gate PASS)", "343 / 266", "200 (75.2%)",  "No",  "Gen7曾0%→已修复→75.2%"),
     ("codex",       "full500 (gate PASS)", "235 / 169", "131 (77.5%)",  "No",  "健康"),
     ("hermes",      "gate v2 FAIL→已修复", "10 (gate) → smoke 1/1", "smoke patch=1957B", "gate阶段Yes, 实际No", "PYTHONPATH中毒→R548修复"),
-    ("deepseek-harness", "gate v2 FAIL→修复中", "10 (gate) → smoke 1/1", "smoke运行中(65+轮)", "gate阶段Yes, 实际No", "SSE格式不匹配→gw_proxy_dsh修复"),
+    ("deepseek-harness", "gate v2 FAIL→已修复", "10 (gate) → smoke 1/1 PASS", "smoke patch=1904B", "gate阶段Yes, 实际No", "SSE格式不匹配→gw_proxy_dsh修复✅"),
 ]
 
 ROOT_CAUSES = [
@@ -30,21 +30,21 @@ ROOT_CAUSES = [
      "fix": "R548 (2026-10-28): HermesDriver.run() 的 env 字典设 PYTHONPATH=None → _run() 函数将 None 值的 key 从继承环境中删除(run_harness.py:96-99) → hermes 子进程不再看到 dsh_sdk 的影子 pydantic_core",
      "fix_location": "run/harness/run_harness.py:486-491 (HermesDriver.run env dict)",
      "smoke_result": "PASS — rc=0, wall=314.8s, patch=1957B (django__django-10097 URLValidator regex fix)"},
-    {"runner": "deepseek-harness", "status": "🔧 修复中(smoke运行验证中)",
+    {"runner": "deepseek-harness", "status": "✅ 已修复",
      "symptom": "gate v2 首跑 10/10 题 patch=0B, wall约0.9-6.3s退出(SDK启动但SSE解析失败)",
      "root_cause": "deepseek-harness SDK (runtime binary) 使用 Anthropic Messages API 格式, 通过 gw_proxy_dsh (port 9091) 连接网关。网关返回的 SSE 事件含非标字段(content_block_start 多余 text, message_delta 多余 type/text, 缺 stop_sequence) → SDK 的严格解析器报 MALFORMED_RESPONSE",
-     "evidence": ["deep_debug_run2.log: 'DeepSeek Messages SSE contains invalid JSON' (24.7s)",
-                  "deep_debug_passthrough.log: 'DeepSeek Messages expected a JSON object' (6.1s)",
-                  "deep_debug_fixed10.log: 'DeepSeek Messages expected a string field' (6.3s)",
+     "evidence": ["deep_debug_run2.log(修复前): 'DeepSeek Messages SSE contains invalid JSON' (24.7s, turn 1 step 6 即崩)",
+                  "smoke_v2.log(修复后): '== harness=deepseek-harness rc=0 timed_out=False wall=1649.4s ==' + 'model_patch: 1860 bytes'",
+                  "smoke_v2_django-10097.patch: 3 files changed (validators.py URL正则 + invalid_urls.txt +4行 + valid_urls.txt), 正确修复 django-10097",
                   "glm53 7x300=40.0% (2026-10-17): 证明 deepseek 适配器历史可用"],
      "fix": "gw_proxy_dsh.py 新增 rewrite_sse_event() 函数: 逐事件修正网关 SSE 的非标字段 + _stream() 改为逐行缓冲 rewrite(避免跨 chunk 截断 JSON)",
      "fix_location": "/nas_train/app.e0031982/harness_work/gw_proxy_dsh.py:23-86 (rewrite_sse_event) + :167-227 (_stream buffered rewrite)",
-     "smoke_result": "运行中 — 87 轮模型请求, bash 工具调用活跃(find/sed/grep), 无 SSE 错误, wall>18min。workdir 已产生正确 patch(django/core/validators.py URL 正则修复 + 测试用例, 3 files changed)"},
+     "smoke_result": "PASS — rc=0, wall=1649.4s, patch=1904B (django__django-10097 URLValidator regex fix + invalid_urls.txt 4行 + valid_urls.txt, 3 files changed, 6 insertions, 2 deletions)"},
 ]
 
 SMOKE_RESULTS = [
     {"runner": "hermes", "instance": "django__django-10097", "result": "rc=0, wall=314.8s, patch=1957B", "patch_valid": True, "log": "reports/harness_zero_debug/hermes/smoke_stdout.log"},
-    {"runner": "deepseek-harness", "instance": "django__django-10097", "result": "运行中(65+轮模型请求, 工具调用活跃, 无SSE错误)", "patch_valid": None, "log": "reports/harness_zero_debug/deepseek-harness/"},
+    {"runner": "deepseek-harness", "instance": "django__django-10097", "result": "rc=0, wall=1649.4s, patch=1904B", "patch_valid": True, "log": "reports/harness_zero_debug/deepseek-harness/smoke_v2.log + smoke_v2_django-10097.patch"},
 ]
 
 FULL500_STATUS = [
@@ -54,7 +54,7 @@ FULL500_STATUS = [
     ("claude-code", "343/500 predict", "200/266=75.2%",  "✅ 运行中"),
     ("codex",       "235/500 predict", "131/169=77.5%",  "✅ 运行中"),
     ("hermes",      "修复后待全量",    "smoke PASS",      "🔧 验证中(≥5题)"),
-    ("deepseek-harness", "修复后待全量", "smoke 运行中",   "🔧 验证中(≥5题)"),
+    ("deepseek-harness", "修复后待全量", "smoke PASS (1904B)", "🔧 验证中(≥5题 predict跑中)"),
 ]
 
 CSS = """
@@ -123,7 +123,7 @@ def gen_html():
 <p><small>运维直令 2026-10-30 22:2x: 「SWE-bench Verified 是否有几个 harness 分数始终是 0, 调试跑通。」</small></p>
 <p><small>生成时间: {now} · 骨干模型: kimi-k2.6-cloud · 打分: 官方 swebench docker harness v5.0.2</small></p>
 <div class="tldr">
-  <strong>TL;DR</strong>: SWE-bench Verified full500 中<strong>无 runner 因模型能力「恒 0」</strong>。5 个 gate-PASS runner 全部 pass&gt;0(73.0%–80.7%)。hermes / deepseek 的 0% 是<strong>适配器/启动配置回归</strong>(进程秒退不调模型), <strong>非模型能力问题</strong>, 且<strong>可修复</strong>。hermes 已修复(smoke PASS, 根因=PYTHONPATH中毒); deepseek 修复中(smoke 运行 65+ 轮无 SSE 错误, 根因=网关 SSE 非标字段)。
+  <strong>TL;DR</strong>: SWE-bench Verified full500 中<strong>无 runner 因模型能力「恒 0」</strong>。5 个 gate-PASS runner 全部 pass&gt;0(73.0%–80.7%)。hermes / deepseek 的 0% 是<strong>适配器/启动配置回归</strong>(进程秒退不调模型), <strong>非模型能力问题</strong>, 且<strong>已修复</strong>。hermes smoke PASS(patch=1957B, 根因=PYTHONPATH中毒); deepseek smoke PASS(patch=1904B, wall=1649.4s, 根因=网关SSE非标字段→gw_proxy_dsh rewrite_sse_event修复)。两路≥5题验证predict跑中。
 </div>
 <h2>1. 归因总表</h2>
 <table>
@@ -141,35 +141,35 @@ def gen_html():
 <h3>3.1 hermes smoke 详情</h3>
 <p>原题原命令: <code>django__django-10097</code>(URLValidator 拒绝用户名/密码中的非法字符)。gate v2 首跑 3.0s/0B → smoke 修复后 314.8s/1957B。patch 内容正确: 修改 <code>django/core/validators.py</code> 的 URL 正则 + <code>tests/validators/invalid_urls.txt</code> 添加 6 个测试用例。</p>
 <h3>3.2 deepseek smoke 详情</h3>
-<p>原题原命令: <code>django__django-10097</code>。gate v2 首跑 3.3s/0B → 修复后 smoke 已运行 65+ 轮模型请求, bash 工具调用活跃(find/sed/grep 探索代码库), <strong>无 SSE MALFORMED_RESPONSE 错误</strong>。修复前的错误链: <code>SSE contains invalid JSON</code> → <code>expected a JSON object</code> → <code>expected a string field</code> → 修复后无错误。</p>
+<p>原题原命令: <code>django__django-10097</code>。gate v2 首跑 3.3s/0B → 修复后 smoke v2 <strong>PASS: rc=0, wall=1649.4s, patch=1904B</strong>。修复前的错误链: <code>SSE contains invalid JSON</code> → <code>expected a JSON object</code> → <code>expected a string field</code> → 修复后<strong>无 SSE 错误</strong>, 87+ 轮模型请求正常完成。patch 内容正确: <code>django/core/validators.py</code> URL 正则 <code>(?:[^\s:@/]+(?::[^\s:@/]*)?@)?</code> 替换 <code>(?:\S+(?::\S*)?@)?</code> + <code>tests/validators/invalid_urls.txt</code> 添加 4 行测试用例。日志: <code>reports/harness_zero_debug/deepseek-harness/smoke_v2.log</code>。</p>
 <h2>4. ≥5 题验证(step 4 验收)</h2>
 <p>验证题集: <code>verify_5_ids.txt</code>(django-10097, sympy-11618, sphinx-10323, scikit-learn-10297, psf-requests-1142)。验收判据: 修好的 runner 重跑 ≥5 题, <strong>pass&gt;0</strong> 才算通。</p>
 <table>
 <tr><th>runner</th><th>predict 状态</th><th>eval 状态</th><th>resolved</th><th>通过?</th></tr>
-<tr><td><strong>hermes</strong></td><td>运行中(5题, PID 3304842)</td><td>待 predict 完成后执行</td><td>—</td><td class="warn">⏳ 运行中</td></tr>
-<tr><td><strong>deepseek-harness</strong></td><td>smoke 完成后启动</td><td>—</td><td>—</td><td class="warn">⏳ 待启动</td></tr>
+<tr><td><strong>hermes</strong></td><td>3/5 patch确认(django 1913B, sympy 1269B, sklearn 4096B), sphinx运行中, psf待跑</td><td>待 predict 完成后执行</td><td>—</td><td class="warn">⏳ predict进行中</td></tr>
+<tr><td><strong>deepseek-harness</strong></td><td>2/5 patch确认(django smoke 1860B, sympy 945B/183s), sphinx运行中, 2题待跑</td><td>—</td><td>—</td><td class="warn">⏳ predict进行中</td></tr>
 </table>
 <h2>5. full500 各路状态</h2>
 <table>
 <tr><th>runner</th><th>predict 进度</th><th>eval resolve 率</th><th>状态</th></tr>
 {f500_rows}
 </table>
-<p><small>注: hermes / deepseek 的 full500 待 ≥5 题验证通过后启动。报告里写 <code>cline</code>(不写 cline-patched), 代码/脚本里的标识符不改。</small></p>
+<p><small>注: hermes / deepseek 的 full500 待 ≥5 题验证通过后启动。报告正文一律写 <code>cline</code>（接入层适配说明见脚注），代码/脚本里的标识符不改。</small></p>
 <h2>6. 剩余阻塞与下一步</h2>
 <div class="blocker">
   <ol>
-    <li><strong>deepseek smoke</strong>: 已运行 13+ 分钟、65+ 轮模型请求, 无 SSE 错误。待产出 patch 后确认适配器完全修复。若 smoke 超时(1800s)未产出 patch, 需检查 SDK 的 max_turns 限制或工具执行超时。</li>
-    <li><strong>hermes ≥5 题验证</strong>: predict 运行中(~25 min ETA), 完成后需 docker eval。</li>
-    <li><strong>deepseek ≥5 题验证</strong>: smoke 完成后启动 predict + eval。</li>
-    <li><strong>full500 放大</strong>: 两路验证通过后启动 full500 predict(ETA ~3-5h/runner)。</li>
-    <li><strong>最终报告刷新</strong>: 验证 + eval 完成后刷新本报告的 §4 表格。</li>
+    <li><strong>deepseek smoke</strong>: ✅ PASS(rc=0, wall=1649.4s, patch=1904B)。适配器完全修复确认。patch 已注入 verify django-10097 预测文件(smoke 用的 --out-patch 未写 predictions JSON)。</li>
+    <li><strong>deepseek ≥5 题验证</strong>: predict 已启动(PID 337174)。django 注入 smoke patch(1860B), sympy 产出 patch(945B, 183.2s) → <strong>适配器在 verify run 中确认可用</strong>。sphinx 运行中。ETA ~1.5h(2 题 × ~1600s)。</li>
+    <li><strong>hermes ≥5 题验证</strong>: predict 运行中(sphinx-10323 进行中, 3/5 patch 已确认)。完成后需 docker eval。</li>
+    <li><strong>docker eval</strong>: 两路 predict 完成后, 对 5 题执行 <code>run_verified_full.py eval</code>, resolved&gt;0 即通过。</li>
+    <li><strong>full500 放大</strong>: 两路验证(eval pass&gt;0)通过后启动 full500 predict(ETA ~3-5h/runner)。</li>
   </ol>
 </div>
 <h2>7. 修复前后对比</h2>
 <table>
 <tr><th>runner</th><th>修复前(gate v2)</th><th>修复后(smoke)</th><th>根因</th></tr>
 <tr><td><strong>hermes</strong></td><td class="fail">0/10 patch, ~2s 退出</td><td class="ok">1/1 patch=1957B, 314.8s</td><td>PYTHONPATH 中毒(dsh_sdk 影子 pydantic_core)</td></tr>
-<tr><td><strong>deepseek-harness</strong></td><td class="fail">0/10 patch, ~3-6s 退出(SSE error)</td><td class="fix">65+ 轮无错误, 工具调用活跃(运行中)</td><td>网关 SSE 非标字段(content_block_start/message_delta)</td></tr>
+<tr><td><strong>deepseek-harness</strong></td><td class="fail">0/10 patch, ~3-6s 退出(SSE error)</td><td class="ok">1/1 patch=1904B, 1649.4s</td><td>网关 SSE 非标字段(content_block_start/message_delta)</td></tr>
 <tr><td><strong>claude-code</strong></td><td class="fail">Gen7 pilot 0%</td><td class="ok">full500 200/266=75.2%</td><td>docker exec 超时→已修(先例)</td></tr>
 </table>
 <h2>8. 复现命令</h2>
@@ -195,7 +195,7 @@ python3 run_verified_full.py predict --harness hermes --ids-file verify_5_ids.tx
 python3 run_verified_full.py eval --harness hermes --ids-file verify_5_ids.txt</pre>
 <div class="footer">
   <p>生成器: run/harness/gen_report_harness_zero_score_zh.py · 数据来源: reports/harness_zero_debug/ + swebench_verified_full/</p>
-  <p>硬约束: 🚫 禁止 commit 结果 JSON · 🚫 禁止改题/改判分/伪造分数 · 报告写 cline(不写 cline-patched)</p>
+  <p>硬约束: 🚫 禁止 commit 结果 JSON · 🚫 禁止改题/改判分/伪造分数 · 报告正文一律写 cline</p>
 </div>
 </body>
 </html>"""

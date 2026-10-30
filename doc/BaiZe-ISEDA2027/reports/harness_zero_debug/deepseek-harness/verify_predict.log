@@ -1,0 +1,6 @@
+[verified-full 00:31:35] resume: loaded 10 existing results
+[verified-full 00:31:35] [1/5] PREDICT deepseek-harness on django__django-10097
+[verified-full 00:31:36]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 00:31:36] [2/5] PREDICT deepseek-harness on sympy__sympy-11618
+[verified-full 00:34:40]   -> patch-produced (patch=945B wall=183.2s)
+[verified-full 00:34:40] [3/5] PREDICT deepseek-harness on sphinx-doc__sphinx-10323
