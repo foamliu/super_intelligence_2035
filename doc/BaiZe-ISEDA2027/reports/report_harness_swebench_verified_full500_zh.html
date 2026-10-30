@@ -22,7 +22,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 .foot{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}
 </style></head><body>
 <h1>SWE-bench Verified · 全量 500 题横评报告</h1>
-<div class="meta">生成时间：2026-10-31 05:48 · 任务令：2026-10-28 07:1x（用户直令：跑完整的 SWE-bench Verified）<br>
+<div class="meta">生成时间：2026-10-31 05:51 · 任务令：2026-10-28 07:1x（用户直令：跑完整的 SWE-bench Verified）<br>
 模型：kimi-k2.6-cloud（统一骨干）· 评测集：princeton-nlp/SWE-bench_Verified 全量 500 题<br>
 评测脚本：官方 swebench v5.0.2 docker harness（<code>sg docker</code>，max_workers 8–12，timeout 1800s/题）<br>
 命名规程：正文一律写 <code>cline</code>（不写 cline-patched）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
@@ -30,7 +30,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <div class="tldr"><h3 style="margin-top:0">TL;DR</h3>
 <p>5 路 gate-PASS harness 各跑 SWE-bench Verified <b>全量 500 题</b>（同一 500 题 / 同一模型 kimi-k2.6-cloud /
 同一 timeout 1800s / 同一官方 docker 评测）（predict 进行中 / eval 待完成）：</p>
-<ul><li><b>cline</b>：resolve <b>325/442</b>（73.5%）（95% CI 69.2%–77.4%）；产出 patch 442 · 未产出 patch 51 · infra 0。</li><li><b>opencode</b>：resolve <b>394/488</b>（80.7%）（95% CI 77.0%–84.0%）；产出 patch 488 · 未产出 patch 2 · infra 0。</li><li><b>pi</b>：resolve <b>294/403</b>（73.0%）（95% CI 68.4%–77.1%）；产出 patch 404 · 未产出 patch 23 · infra 59。</li><li><b>claude-code</b>：resolve <b>218/288</b>（75.7%）（95% CI 70.4%–80.3%）；产出 patch 289 · 未产出 patch 73 · infra 0。</li><li><b>codex</b>：resolve <b>144/185</b>（77.8%）（95% CI 71.3%–83.2%）；产出 patch 187 · 未产出 patch 62 · infra 185。</li><li><b>hermes</b>：resolve <b>10/14</b>（71.4%）（95% CI 45.4%–88.3%）；产出 patch 13 · 未产出 patch 6 · infra 0。</li><li><b>deepseek-harness</b>：resolve <b>15/19</b>（78.9%）（95% CI 56.7%–91.5%）；产出 patch 17 · 未产出 patch 5 · infra 1。</li></ul>
+<ul><li><b>cline</b>：resolve <b>325/442</b>（73.5%）（95% CI 69.2%–77.4%）；产出 patch 442 · 未产出 patch 51 · infra 0。</li><li><b>opencode</b>：resolve <b>394/488</b>（80.7%）（95% CI 77.0%–84.0%）；产出 patch 488 · 未产出 patch 2 · infra 0。</li><li><b>pi</b>：resolve <b>294/403</b>（73.0%）（95% CI 68.4%–77.1%）；产出 patch 406 · 未产出 patch 23 · infra 59。</li><li><b>claude-code</b>：resolve <b>218/288</b>（75.7%）（95% CI 70.4%–80.3%）；产出 patch 289 · 未产出 patch 73 · infra 0。</li><li><b>codex</b>：resolve <b>144/185</b>（77.8%）（95% CI 71.3%–83.2%）；产出 patch 187 · 未产出 patch 62 · infra 185。</li><li><b>hermes</b>：resolve <b>10/14</b>（71.4%）（95% CI 45.4%–88.3%）；产出 patch 13 · 未产出 patch 6 · infra 0。</li><li><b>deepseek-harness</b>：resolve <b>15/19</b>（78.9%）（95% CI 56.7%–91.5%）；产出 patch 17 · 未产出 patch 5 · infra 1。</li></ul>
 <p>闸门未过的 <b>hermes</b> / <b>deepseek-harness</b> 不进全量（如实列「未参与 + 原因」，铁律 4）。
 infra-or-fetch-timeout 单列、不计入模型失败/成功（铁律 3）。</p></div>
 <h2>一、评测口径</h2><div class="card"><table>
@@ -49,7 +49,7 @@ infra-or-fetch-timeout 单列、不计入模型失败/成功（铁律 3）。</p
 <table>
 <tr><th>harness</th><th>done</th><th>产出 patch</th><th class="nopatch">未产出 patch</th>
 <th class="infra">infra</th><th>quota</th><th>总耗时</th><th>平均/题</th><th>last_update</th></tr>
-<tr><td class="l">cline</td><td>500/500</td><td>442 (88.4%)</td><td class="nopatch">51 (10.2%)</td><td class="infra">0</td><td>7</td><td>58.8h</td><td>423s</td><td>2026-10-31 01:16:08</td></tr><tr><td class="l">opencode</td><td>500/500</td><td>488 (97.6%)</td><td class="nopatch">2 (0.4%)</td><td class="infra">0</td><td>10</td><td>56.7h</td><td>408s</td><td>2026-10-30 21:47:22</td></tr><tr><td class="l">pi</td><td>494/500</td><td>404 (81.8%)</td><td class="nopatch">23 (4.7%)</td><td class="infra">59</td><td>8</td><td>63.7h</td><td>527s</td><td>2026-10-31 05:40:17</td></tr><tr><td class="l">claude-code</td><td>367/500</td><td>289 (78.7%)</td><td class="nopatch">73 (19.9%)</td><td class="infra">0</td><td>5</td><td>63.4h</td><td>622s</td><td>2026-10-31 05:38:28</td></tr><tr><td class="l">codex</td><td>439/500</td><td>187 (42.6%)</td><td class="nopatch">62 (14.1%)</td><td class="infra">185</td><td>5</td><td>64.0h</td><td>907s</td><td>2026-10-31 05:43:48</td></tr><tr><td class="l">hermes</td><td>19/500</td><td>13 (68.4%)</td><td class="nopatch">6 (31.6%)</td><td class="infra">0</td><td>0</td><td>4.8h</td><td>916s</td><td>2026-10-31 05:29:17</td></tr><tr><td class="l">deepseek-harness</td><td>25/500</td><td>17 (68.0%)</td><td class="nopatch">5 (20.0%)</td><td class="infra">1</td><td>0</td><td>3.7h</td><td>551s</td><td>2026-10-31 05:39:46</td></tr><tr style="font-weight:700"><td class="l">合计</td><td>2344/2500</td><td>1840</td><td class="nopatch">222</td><td class="infra">245</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></table></div>
+<tr><td class="l">cline</td><td>500/500</td><td>442 (88.4%)</td><td class="nopatch">51 (10.2%)</td><td class="infra">0</td><td>7</td><td>58.8h</td><td>423s</td><td>2026-10-31 01:16:08</td></tr><tr><td class="l">opencode</td><td>500/500</td><td>488 (97.6%)</td><td class="nopatch">2 (0.4%)</td><td class="infra">0</td><td>10</td><td>56.7h</td><td>408s</td><td>2026-10-30 21:47:22</td></tr><tr><td class="l">pi</td><td>496/500</td><td>406 (81.9%)</td><td class="nopatch">23 (4.6%)</td><td class="infra">59</td><td>8</td><td>63.9h</td><td>526s</td><td>2026-10-31 05:51:01</td></tr><tr><td class="l">claude-code</td><td>367/500</td><td>289 (78.7%)</td><td class="nopatch">73 (19.9%)</td><td class="infra">0</td><td>5</td><td>63.4h</td><td>622s</td><td>2026-10-31 05:38:28</td></tr><tr><td class="l">codex</td><td>439/500</td><td>187 (42.6%)</td><td class="nopatch">62 (14.1%)</td><td class="infra">185</td><td>5</td><td>64.0h</td><td>907s</td><td>2026-10-31 05:43:48</td></tr><tr><td class="l">hermes</td><td>19/500</td><td>13 (68.4%)</td><td class="nopatch">6 (31.6%)</td><td class="infra">0</td><td>0</td><td>4.8h</td><td>916s</td><td>2026-10-31 05:29:17</td></tr><tr><td class="l">deepseek-harness</td><td>25/500</td><td>17 (68.0%)</td><td class="nopatch">5 (20.0%)</td><td class="infra">1</td><td>0</td><td>3.7h</td><td>551s</td><td>2026-10-31 05:39:46</td></tr><tr style="font-weight:700"><td class="l">合计</td><td>2346/2500</td><td>1842</td><td class="nopatch">222</td><td class="infra">245</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></table></div>
 <h2>三、eval 阶段三列汇总（resolved / failed / infra-or-quota）</h2>
 <div class="card"><p>resolved = 通过官方测试；failed = 产出 patch 但未通过测试（模型能力）；infra-or-quota = 基础设施/配额失败（单列，不计模型能力）。</p>
 <table>
@@ -82,7 +82,7 @@ python3 -c "import json,glob,os; [print(os.path.basename(f), json.load(open(f))[
 python3 run_verified_full.py eval --harness &lt;h&gt; --ids-file full_500_ids_&lt;h&gt;.txt<br><br>
 # 生成报告（predict-only 也可运行；eval 完成后重运行得完整报告）<br>
 python3 gen_report_swebench_verified_full500_zh.py</p></div>
-<div class="foot">报告生成器：harness/gen_report_swebench_verified_full500_zh.py · 数据目录：harness/swebench_verified_full/ · 生成时间：2026-10-31 05:48<br>
+<div class="foot">报告生成器：harness/gen_report_swebench_verified_full500_zh.py · 数据目录：harness/swebench_verified_full/ · 生成时间：2026-10-31 05:51<br>
 溯源：reports/progress_*.json（predict 逐题）· reports/eval_*.json（eval 汇总）· predictions/（逐题 patch）· full_500_ids_*.txt（500 题清单）<br>
 铁律遵守：评测口径不变 · infra 单列 · 闸门不过不硬跑 · 结果 JSON 不入仓库（永久硬约束）</div>
 </body></html>
