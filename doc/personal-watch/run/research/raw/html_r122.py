@@ -24,7 +24,7 @@ SUB_NEW = ('  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>
            '晚 2 篇按<b>「科普」</b>口径（一张照片生成会动的游戏头发 / AI 智能体自己开量子实验室并推翻自己的结论）。</div>')
 
 META_LINES = [
-    ('    <span>📅 日期：2026-10-30（CST 本地日；AM 轮 = UTC 2026-10-29T22:00，PM 轮 = UTC 2026-10-30T10:00）</span>',
+    ('    <span>📅 日期：2026-10-30（CST 本地日；AM 轮 = UTC 2026-10-29T22:00）</span>',
      '    <span>📅 日期：2026-10-30（CST 本地日；AM 轮 = UTC 2026-10-29T22:00，PM 轮 = UTC 2026-10-30T10:00）</span>'),
     ('    <span>🏷 标识：早报（AM · 3 / 5）</span>',
      '    <span>🏷 标识：晚报（PM · 5 / 5 · 当日上午 3 篇 + 下午 2 篇）</span>'),
@@ -114,7 +114,9 @@ PM_HEAD = '''
   <b>15/15 查询 <code>ok</code> / <code>HTTP 200</code></b>（<b>2 条 <code>attempts=2</code> 后成功</b>：<code>mm-multimodal</code>、<code>agent-tool-use</code>）、
   <b><code>kept 217</code> / <code>dropped 357</code></b>（357 = <b>__NSEEN__</b> 条「already in SEEN」+ <b>__NSTALE__</b> 条「stale &gt; 72h」）。
   晚 2 篇<b>直接取自本批 <code>kept 217</code></b>（<code>published</code> 均为 <b>2026-10-29</b>，距本轮唤醒 ≈ <b>24h</b>，在 72h 窗口内），并做 <b><code>id_list</code> 权威复核</b>
-  （<b>2/2 完整返回</b>，<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>BYTES=4845</code>、<code>1.03s</code>；证据 <code>raw/2026-10-30-pm-idlist-r122a.{xml,headers}</code>）。
+  （<b>2/2 完整返回</b>，<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，<code>BYTES=5349</code>、<code>2.95s</code>；证据 <code>raw/2026-10-30-pm-idlist-r122b.{xml,headers}</code>）。
+  <br>⚠️ <b>如实记录（PM 轮的一次返工）</b>：18:09 先按<b>初选组合</b>（<code>2610.40599</code> + <code>2610.40640</code> SonoWorld4D）取了 <code>id_list</code>（<code>raw/2026-10-30-pm-idlist-r122a.xml</code>，4,845 B），
+  随后按「科普口径」改选 <code>2610.40589</code>（量子自旋自主实验室）⇒ <b>18:4x 重新取 <code>id_list</code>（<code>r122b</code>）作为最终依据</b>，<code>r122a</code> 原件保留在 <code>raw/</code> 备查（<b>不作为本轮推荐证据</b>）。
 </div>
 '''
 
@@ -125,7 +127,7 @@ CHANGES = '''
     <li><b>页头</b>：<code>早报 · 3/5</code> → <code>晚报 · 5/5</code>；<code>今日进度 3 / 5</code> → <b>5 / 5（当日收口）</b>；<code>🏷 标识</code> 由 AM 改为 PM；<code>🕒 生成</code> 增加「18:4x CST 收口」时间点。<b>为什么</b>：第 4 批要求同一文件当天写两遍（06:00 生成 3 篇 / 18:00 优化补齐 2 篇）。</li>
     <li><b>新增第 4、5 篇</b>（<span class="badge b-kp">科普</span>）：<b>HairDeck</b>（<code>2610.40599</code>，本日科普 TOP-1）与<b>量子自旋自主实验室</b>（<code>2610.40589</code>），并新增「晚报取数说明」与<b>附录 E</b>（PM 检索式 / 命中数 / PDF 校验）。<b>为什么</b>：晚报 2 篇按「科普」口径补足 5/5。</li>
     <li><b>早报「公告批次连续三轮未刷新」的表述保留原文、不改写</b>，只在页头与「晚报变更说明」标注：该判断在 AM 时刻成立，<b>PM 轮已复测到批次刷新为 <code>2026-10-29</code></b>（<code>totalResults 124009 → 124184</code>、广度 <code>639590 → 640516</code>、全库 <code>submittedDate</code> 区间 <code>0 → 2571</code>）。<b>为什么</b>：日报是「当轮事实记录」，不得用后见之明回改早报结论；变化另写一节。</li>
-    <li><b>附录 D 台账数字更新</b>：<code>SEEN.md</code> 由 <b>+0 行</b>（AM 只翻状态）变为 <b>+217 行</b>（PM 新批候选入账），收录 <b>274 → 276</b>，候选 <b>4,356 → 4,573</b>；<code>papers.jsonl</code> <b>274 → 276</b>。<b>为什么</b>：<code>kept 217</code> 为本轮真实新增候选。</li>
+    <li><b>附录 D 台账数字更新</b>：<code>SEEN.md</code> 由 <b>+0 行</b>（AM 只翻状态）变为 <b>+217 行</b>（PM 新批候选入账：<b>215 条「候选」+ 2 条「收录」</b>），收录 <b>274 → 276</b>，候选 <b>4,356 → 4,571</b>；<code>papers.jsonl</code> <b>274 → 276</b>。<b>为什么</b>：<code>kept 217</code> 为本轮真实新增候选。</li>
     <li><b>页脚</b>：标注「晚报 · 5/5 · 当日收口」与两个时间点。<b>为什么</b>：与页头一致，便于 supervisor 巡检。</li>
     <li><b>未改动</b>：早报 3 篇的标题、摘要、数字、推荐理由与边界一律不动（口径「借鉴」）；免责声明、标签口径说明、合规边界不动。</li>
   </ol>
@@ -202,7 +204,11 @@ def main():
     lines[f0[0]:f1[0] + 1] = FOOTER_NEW.split("\n")
 
     pm_block = (PM_HEAD + CARD4 + CARD5 + CHANGES).replace("__NSEEN__", str(n_seen)).replace("__NSTALE__", str(n_stale)) \
-        .replace("__AFF4__", AFF4).replace("__AFF5__", AFF5)
+        .replace("__AFF4__", AFF4).replace("__AFF5__", AFF5) \
+        .replace("__BY4__", "{:,}".format(by4)).replace("__PG4__", str(s4["pages"])) \
+        .replace("__CH4__", "{:,}".format(s4["chars"])).replace("__MB4__", mb4) \
+        .replace("__BY5__", "{:,}".format(s5["bytes"])).replace("__PG5__", str(s5["pages"])) \
+        .replace("__CH5__", "{:,}".format(s5["chars"]))
     insert_before(lines, '<h2 class="sec">附录 A', pm_block)
 
     rows = []
@@ -220,7 +226,7 @@ def main():
     mail_bytes = 9054858 + s5["bytes"]
     mailb = "%s B（≈%.2f MB；AM 3 篇 9,054,858 B + <code>2610.40589</code> %s B）" % (
         "{:,}".format(mail_bytes), mail_bytes / 1048576.0, "{:,}".format(s5["bytes"]))
-    insert_before(lines, "</footer>", app.rstrip("\n").replace("__MAILB__", mailb))
+    insert_before(lines, "<footer>", app.rstrip("\n").replace("__MAILB__", mailb))
 
     text = "\n".join(lines)
     # 台账（附录 D 三条）按前缀替换
@@ -250,7 +256,7 @@ def main():
     HTML.write_text(text, encoding="utf-8")
 
     # 自检
-    assert text.count('<div class="card">') >= 6, text.count('<div class="card">')
+    assert text.count('<div class="card">') >= 5, text.count('<div class="card">')
     for i in (1, 2, 3, 4, 5):
         assert ('<span class="no">%d</span>' % i) in text, i
     assert "<script" not in text

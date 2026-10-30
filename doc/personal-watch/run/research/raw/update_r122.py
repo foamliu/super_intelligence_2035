@@ -23,7 +23,7 @@ BASE = Path(__file__).resolve().parent.parent  # research/
 SEEN = BASE / "SEEN.md"
 PAPERS = BASE / "papers.jsonl"
 FETCH = BASE / "raw" / "2026-10-30-pm-fetch-r122-seen.json"
-XML = BASE / "raw" / "2026-10-30-pm-idlist-r122a.xml"
+XML = BASE / "raw" / "2026-10-30-pm-idlist-r122b.xml"
 
 RECOMMENDED = ["2610.40599", "2610.40589"]
 FIRST_SEEN = "2026-10-30"
