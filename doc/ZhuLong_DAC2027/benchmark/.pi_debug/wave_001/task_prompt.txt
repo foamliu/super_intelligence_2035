@@ -1,0 +1,18 @@
+# Scenario: a verification sign-off tool must report how many signals were
+# captured in a regression waveform dump, e.g. to gate a coverage closure
+# review (only dumps with enough signals are worth analyzing). The waveform
+# is a Synopsys FSDB database.
+#
+# Environment: Synopsys Custom WaveView ACE Tcl. Useful API entry points:
+#   sx_open_sim_file_read <path>   -> returns a file object handle
+#   sx_first_wave   <file_obj>     -> first signal handle (or "NULL")
+#   sx_next_wave    <wave_obj>     -> next signal handle (or "NULL")
+#   sx_get_name     <wave_obj>     -> hierarchical signal name string
+#   sx_close_sim_file <file_obj>   -> release the file
+#
+# Task: implement wv_count_signals, which opens the FSDB at fsdb_path,
+# iterates every signal (wave) in it, and returns the total signal count as
+# an integer. Must return 0 when the file has no signals.
+proc wv_count_signals {fsdb_path} {
+    # your code here
+}

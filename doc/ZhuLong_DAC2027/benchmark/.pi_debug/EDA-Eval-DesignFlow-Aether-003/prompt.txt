@@ -1,0 +1,73 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual DRC (Design Rule Check) violation report for a layout
+cellview. This is a pure text-analysis task (no EDA tool calls needed to produce
+the answer); you will verify your implementation on the Empyrean WaveView Tcl
+sandbox.
+
+TASK
+Implement the Tcl proc `layout_drc_audit` that takes ONE string argument
+`drc_text` (the full DRC report text) and returns a flat Tcl dict with EXACTLY
+these 10 keys, in this exact order:
+
+    total_rules  total_violations  error_count  warning_count  checked_rules
+    duplicate_rule_names  per_layer_errors  mismatched_summary  layers_used  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# DRC run ..." header may
+appear and is ignored):
+
+  RULE <rulename> layer=<L> count=<N> severity=<err|warn>
+  SUMMARY total=<N> errors=<N> warnings=<N> checked=<N>
+
+SEMAPTICS (read carefully — a naive implementation fails several of these):
+
+1. total_rules = number of DISTINCT rule names across all RULE lines.
+2. Duplicate rule names: if the same <rulename> appears on multiple RULE lines,
+   the LAST occurrence WINS (its count/layer/severity replace earlier ones).
+   duplicate_rule_names = sorted (lsort -dictionary) list of names that appeared
+   more than once. total_rules counts the name only ONCE.
+3. total_violations = sum of count over the distinct (last-wins) rules.
+4. severity is CASE-INSENSITIVE: "err", "ERR", "Err" all mean error; "warn",
+   "WARN" mean warning.
+   error_count = sum of count over rules whose (normalized) severity == "err".
+   warning_count = sum of count over rules whose severity == "warn".
+5. checked_rules = number of distinct RULE entries. A rule with count=0 STILL
+   COUNTS as checked (do not skip zero-count rules).
+6. per_layer_errors = a Tcl dict mapping layer -> error-count, INCLUDING ONLY
+   layers that have at least one error (severity err), sorted by layer name
+   (lsort -dictionary). Warning layers are EXCLUDED. Build as a flat list
+   {layer1 count1 layer2 count2 ...} in sorted layer order.
+7. layers_used = sorted (lsort -dictionary) list of all layers that appear on
+   ANY RULE line (err or warn), each layer once.
+8. mismatched_summary: if a SUMMARY line is present, compare each provided
+   SUMMARY field to the COMPUTED value:
+     total   <-> total_violations
+     errors  <-> error_count
+     warnings<-> warning_count
+     checked <-> checked_rules
+   mismatched_summary = sorted (lsort -dictionary) list of field NAMES whose
+   SUMMARY value differs from the computed value. If a SUMMARY field is absent
+   (not provided), do not report it as mismatched. If NO SUMMARY line is
+   present, mismatched_summary is the EMPTY list.
+9. verdict (single string, by priority — first match wins):
+     error_count   > 0  -> "FAIL"
+     warning_count > 0  -> "WARN"
+     no SUMMARY present -> "INCOMPLETE"
+     otherwise          -> "PASS"
+   NOTE: missing SUMMARY yields "INCOMPLETE" even when there are zero
+   violations; it is only "PASS" when a SUMMARY is present AND no errors and no
+   warnings.
+
+Return the dict with `dict create` in the exact key order above. All list-valued
+keys must be lexicographically sorted with `lsort -dictionary`.
+
+EXAMPLE
+Input:
+  # DRC run INVX1 at 2026-10-30 06:00:00
+  RULE R1 layer=M1 count=3 severity=ERR
+  RULE R2 layer=M2 count=2 severity=warn
+  SUMMARY total=5 errors=3 warnings=2 checked=2
+Expected dict (key order as above):
+  total_rules 2  total_violations 5  error_count 3  warning_count 2
+  checked_rules 2  duplicate_rule_names {}  per_layer_errors {M1 3}
+  mismatched_summary {}  layers_used {M1 M2}  verdict FAIL

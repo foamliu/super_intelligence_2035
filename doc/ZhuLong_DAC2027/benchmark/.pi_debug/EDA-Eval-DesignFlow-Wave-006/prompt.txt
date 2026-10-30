@@ -1,0 +1,119 @@
+# Scenario: you are on a mixed-signal verification team that runs Synopsys
+# Custom WaveView in batch mode (`wv -ace_no_gui <script.tcl`) to perform
+# automated waveform measurements across many FSDB/tr0 files. Each ACE Tcl
+# script wraps every measurement in `catch` and prints a structured PROTOCOL
+# line to stdout so a downstream Python/Tcl driver can parse the results:
+#
+#   * `WVRES|<file>|<key>|<value>`   -- a measurement that SUCCEEDED.
+#       <file> = the waveform file the measurement ran on (a basename/path
+#                token with NO pipe characters).
+#       <key>  = the measurement key (a token with NO pipe characters, e.g.
+#                `delay_ps`, `edges`, `tr`, `duty_pct`).
+#       <value>= the measurement result. It is ONE of:
+#                  - a numeric literal (e.g. `15.234`, `82.5`, `1.5e-9`,
+#                    `-0.001`) -> a SCALAR numeric value;
+#                  - a non-numeric string (e.g. `failed`, `n/a`) -> a SCALAR
+#                    non-numeric value (the measurement returned a sentinel
+#                    string, NOT a number);
+#                  - a COMMA-SEPARATED LIST of numerics (e.g.
+#                    `1.5e-9,2.3e-9,4.1e-9`) -> a LIST value (edge-scan times
+#                    or `count=all` results). A list value is detected by the
+#                    presence of a comma. Individual list tokens that are not
+#                    numeric are kept as strings.
+#   * `WVERR|<file>|<key>|<msg>`     -- a measurement that THREW (catch fired).
+#       <msg>  = the error message. It MAY itself contain pipe characters
+#                (e.g. `invalid signal: top.a|b`), so the line must be split
+#                into AT MOST 4 parts (split on `|` with a maxsplit of 3) so
+#                the message is preserved verbatim in the 4th part.
+#       A WVERR line is an ERROR, NOT a result: its <key> is a FAILED key,
+#       separate from the result keys.
+#   * `WVINFO|<file>|<msg>`          -- a status/info line (no measurement).
+#       <msg>  = the info message. It MAY contain pipe characters (e.g.
+#                `processing: stage|2`), so the line must be split into AT
+#                MOST 3 parts (split on `|` with a maxsplit of 2) so the
+#                message is preserved verbatim in the 3rd part.
+#   * Any other line (the `wv` banner, `license -96` warnings, blank lines,
+#     stray text) is NOT a protocol line and MUST be ignored.
+#
+# Numeric detection: a token is numeric iff it parses as a floating-point
+# literal (e.g. `15.234`, `1.5e-9`, `1e-9`, `-0.001`, `82.5`). Tokens like
+# `failed`, `n/a`, or the empty string are NOT numeric. (In Tcl use
+# `string is double -strict`.)
+#
+# Task: implement `wv_parse_ace_batch_output {text}`, which takes the raw
+# `wv -ace_no_gui` stdout TEXT (one string) and RETURNS a flat Tcl dict
+# string (space-separated `key value` pairs) with EXACTLY these keys, in this
+# order:
+#
+#     wvres_count              = number of well-formed WVRES lines (4 fields)
+#                                (int)
+#     wverr_count              = number of well-formed WVERR lines (4 fields)
+#                                (int)
+#     wvinfo_count             = number of well-formed WVINFO lines (3 fields)
+#                                (int)
+#     scalar_count             = number of WVRES values that are SCALARS
+#                                (no comma) (int)
+#     list_count               = number of WVRES values that are LISTS
+#                                (contain a comma) (int)
+#     numeric_scalar_count     = number of WVRES scalar values that are
+#                                NUMERIC (int)
+#     non_numeric_scalar_count = number of WVRES scalar values that are
+#                                NON-numeric strings (int)
+#     total_numeric_elements   = total numeric elements across ALL WVRES
+#                                values: each numeric scalar contributes 1,
+#                                each numeric token inside a list contributes
+#                                1, non-numeric scalars and non-numeric list
+#                                tokens contribute 0 (int)
+#     files_seen               = the DISTINCT <file> fields across all
+#                                well-formed WVRES and WVERR lines, in
+#                                first-seen order, comma-joined into ONE token
+#                                with NO spaces (e.g. `fa.fsdb,fb.fsdb`), or
+#                                `none` if there are none
+#     failed_keys              = the <key> fields of all WVERR lines, in
+#                                order, comma-joined into ONE token with NO
+#                                spaces, or `none` if there are none
+#     has_list_value           = 1 if ANY WVRES value contains a comma, else 0
+#     has_error                = 1 if ANY WVERR line was parsed, else 0
+#     result_keys              = the <key> fields of all WVRES lines, in
+#                                order, space-separated (a single list value
+#                                that is the LAST value in the returned
+#                                string)
+#
+# Rules:
+#   * Split WVRES and WVERR lines on `|` into AT MOST 4 parts (maxsplit 3);
+#     a line that does not yield exactly 4 parts is NOT well-formed and is
+#     ignored (not counted).
+#   * Split WVINFO lines on `|` into AT MOST 3 parts (maxsplit 2); a line
+#     that does not yield exactly 3 parts is NOT well-formed and is ignored.
+#     (This differs from WVRES/WVERR -- a naive uniform split drops WVINFO
+#     lines whose message contains a pipe, and drops WVERR lines whose error
+#     message contains a pipe.)
+#   * A WVRES value is a LIST iff it contains a comma; otherwise it is a
+#     SCALAR. Coerce numeric tokens to numbers conceptually (you only need to
+#     COUNT them, not return the floats); never let a non-numeric value or a
+#     comma-list crash the parser.
+#   * `files_seen` draws from BOTH WVRES and WVERR (a file that only had
+#     errors is still "seen"). `failed_keys` is from WVERR only. `result_keys`
+#     is from WVRES only.
+#   * Emit ints as ints and the booleans as `0`/`1`. `files_seen` and
+#     `failed_keys` are single comma-joined tokens (no spaces). `result_keys`
+#     is the final value and may contain spaces.
+#   * Do NOT write any file -- just return the dict string.
+#
+# Runtime note: the runtime is Synopsys WaveView ACE Tcl. It supports POSIX
+# regex classes ([[:space:]], [[:graph:]], etc.) but does NOT support
+# \s, \d, \b, \w, or Perl classes. Tcl's `split` does NOT support a maxsplit
+# argument -- to split into at most N parts, find the first N-1 separators
+# with `string first` and keep the remainder as the last part. Use
+# `string is double -strict` for numeric detection. Use `string match` for
+# prefix tests. Keep your solution minimal.
+#
+# Args:
+#   text - the raw wv -ace_no_gui stdout (one string, possibly multi-line)
+# Returns:
+#   A flat space-separated dict string with the keys above, in the order
+#   listed, ending with `result_keys <key1> <key2> ...`.
+#
+# proc wv_parse_ace_batch_output {text} {
+#     # your code here
+# }

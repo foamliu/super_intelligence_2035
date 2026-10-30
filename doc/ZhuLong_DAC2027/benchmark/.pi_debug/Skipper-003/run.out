@@ -1,0 +1,7 @@
+=== pi-SUT Skipper-003 start Fri Oct 30 02:46:16 AM CST 2026 ===
+pi exit=0
+--- result lines ---
+- `RESULT:CHECK_PASS`
+- `DESIGN_FLOW_VERDICT=PASS`
+DESIGN_FLOW_VERDICT=PASS
+RESULT:CHECK_PASS

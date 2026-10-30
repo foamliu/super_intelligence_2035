@@ -1,0 +1,18 @@
+The implementation passed all 6 verification cases on the Synopsys WaveView Tcl sandbox.
+
+**Implementation summary** — `wv_parse_ace_batch_output`:
+- Emulates maxsplit via a `split_max` helper (uses `string first` + `string range`, since WaveView Tcl's `split` has no maxsplit).
+- Prefix detection with `string match` on `WVRES|`, `WVERR|`, `WVINFO|`; requires exactly 4/4/3 fields respectively, otherwise ignored.
+- Comma detection drives scalar vs. list classification (a WVRES value is a list iff it contains a comma); comma tokenization contributes numeric elements via `string is double -strict`.
+- Accumulates distinct `files_seen` (from WVRES *and* WVERR) in first-seen order, `failed_keys` from WVERR, and `result_keys` from WVRES, returning the flat dict with `result_keys` as the final value.
+
+**Sandbox run results:**
+
+```
+CHECK_RESULT=PASS 6 / FAIL 0 (6 cases: A basic-scalar+err+info, B comma-list teeth, C non-numeric-scalar teeth, D WVINFO pipe-in-msg teeth, E WVERR pipe-in-msg teeth, F multi-file comprehensive)
+```
+
+`error_log` was empty (no Tcl exceptions), and the session workdir was cleaned up (`cleaned: true`).
+
+DESIGN_FLOW_VERDICT=PASS
+=== pi exit=0 end Thu Oct 29 10:01:40 PM CST 2026 ===

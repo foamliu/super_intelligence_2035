@@ -1,0 +1,59 @@
+# Scenario: a digital verification team runs UniVista Skipper (UVS) Verilog
+# regressions on an LSF farm (cf. Skipper-002, the live vps.log state
+# classifier). After a regression batch finishes, each regression tag (e.g.
+# `func_basic`, `func_checkin`) produces a scoreboard block. The team needs a
+# helper that aggregates the WHOLE scoreboard across all tags against the
+# declared test list, so the dashboard can report per-outcome counts, a correct
+# pass-rate, FLAKY tests (passed in some tag, failed/timed-out in another),
+# MISSING tests (declared but never run), duplicate reruns and the overall
+# verdict.
+#
+# Inputs:
+#   `scoreboard_text` -- multi-line text of `=== <tag> ===` section headers,
+#       each followed by `<testname> <outcome>` rows. Outcome codes are single
+#       letters: `P` pass, `F` fail, `S` skipped, `T` timeout, `.` pending
+#       (declared in that tag's run but not yet executed). A row may repeat
+#       (a test re-run inside the same tag).
+#   `test_list_text`  -- multi-line text of the DECLARED test list, one test
+#       name per line. Lines starting with `#` and blank lines are skipped;
+#       an inline `# comment` after a name is allowed (the name is the first
+#       whitespace token).
+#
+# Parsing & aggregation rules:
+# 1. Parse `scoreboard_text`: a line `=== <tag> ===` opens a new tag section
+#    (increment tags_scanned). A line `<testname> <outcome>` (exactly one
+#    name token + one single-letter outcome code) is a run row; increment
+#    total_tests_run for every row (including duplicates). Any other non-empty
+#    line is ignored.
+# 2. Per (testname, tag) keep the LAST outcome row (last-wins; an earlier row
+#    for the same (testname, tag) is a duplicate rerun -> increment
+#    duplicate_runs). The per-outcome counts (passed/failed/skipped/timeout/
+#    pending) are computed over these LAST-WINS unique (testname, tag) pairs,
+#    NOT over raw rows.
+# 3. FLAKY detection uses RAW rows (before dedup): a testname that has at
+#    least one `P` row AND at least one `F` or `T` row ANYWHERE in the
+#    scoreboard is flaky. flaky_tests is a SORTED (lsort) list of such names.
+#    (A test that only ever fails is NOT flaky; a re-run that flips P->F inside
+#    one tag IS flaky.)
+# 4. missing_tests: a declared test name (from test_list_text) that has NO row
+#    in ANY tag. SORTED (lsort) list. (Declared but absent -> reported, not
+#    silently dropped.)
+# 5. pass_rate = passed * 100 / (passed + failed + timeout), INTEGER division.
+#    The denominator EXCLUDES skipped (`S`) and pending (`.`) -- they are not
+#    scored outcomes. If the denominator is 0, pass_rate = 0.
+# 6. overall_verdict (priority FAIL > INCOMPLETE > PASS):
+#    - `FAIL`        when failed > 0 OR timeout > 0 (any scoring failure fails
+#                    the whole batch; pass>0 does NOT rescue it);
+#    - `INCOMPLETE`  when no failure but missing_tests non-empty OR pending > 0;
+#    - `PASS`        otherwise.
+# 7. Return a FLAT Tcl dict with EXACTLY these keys in this order:
+#       tags_scanned total_tests_run passed failed skipped timeout pending
+#       flaky_tests missing_tests duplicate_runs pass_rate overall_verdict
+#    Lists (flaky_tests, missing_tests) are Tcl lists; numbers are integers;
+#    overall_verdict is a string.
+#
+# Implement `proc uvs_regr_scoreboard_aggregate {scoreboard_text test_list_text} { ... }`
+# in Tcl. Use only Tcl builtins (no external packages). The runtime is Empyrean
+# Skipper Tcl (skipper host), which supports `dict`, `regexp`, `split`,
+# `lassign`, POSIX character classes `[[:space:]]` / `[[:digit:]]` in regexps
+# -- do NOT rely on `\s` / `\d` / `\b`.

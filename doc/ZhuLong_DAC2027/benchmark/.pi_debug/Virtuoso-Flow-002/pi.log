@@ -1,0 +1,6 @@
+=== pi-SUT Virtuoso-Flow-002 start Fri Oct 30 03:10:53 AM CST 2026 ===
+pi exit=0
+--- result lines ---
+RESULT:CHECK_PASS
+DESIGN_FLOW_VERDICT=PASS
+DESIGN_FLOW_VERDICT=PASS — the `vflow_config_validate` proc is correct.

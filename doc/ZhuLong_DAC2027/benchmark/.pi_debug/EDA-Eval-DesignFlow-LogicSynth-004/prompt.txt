@@ -1,0 +1,68 @@
+# Scenario: a logic-synthesis QA team runs Cadence Genus and reviews the QoR
+# report to decide whether the synthesized netlist is closure-ready.
+#
+# The QoR report is a multi-line string with header comments and bracketed
+# sections. Header comments (only these set design/corner):
+#   # Design: <name>
+#   # Corner: <name>
+# (the colon must come IMMEDIATELY after the keyword -- a line like
+# `# Design notes: ...` is NOT a design header and must be ignored.)
+#
+# Sections (each introduced by an exact header line, fields inside):
+#   === TIMING (setup) ===
+#       WNS = <float> ns
+#       TNS = <float> ns
+#       Violated endpoints = <int>
+#       Total endpoints = <int>
+#   === TIMING (hold) ===       (same four fields)
+#   === AREA ===
+#       Combinational area = <float> <unit>
+#       Sequential area = <float> <unit>
+#       Macro area = <float> <unit>
+#       Total area = <float> <unit>
+#   === INSTANCE ===
+#       Number of leaf cells = <int>
+#       Number of hierarchical cells = <int>
+#       Number of registers = <int>
+#       Number of nets = <int>
+# Spacing around `=` may vary; trailing `ns` / area unit tokens are present.
+# Any other line (other comments, blank lines, unknown keys) is ignored.
+#
+# You are given ONE report as a multi-line string -- `report`.
+# Implement
+#     synthesis_qor_audit {report}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys, all as
+# STRING values (floats as their literal report substring incl. sign & decimals;
+# counts as decimal strings; verdicts "0"/"1"):
+#
+#   design          -- trimmed text after `# Design: ` (literal "none" if absent)
+#   corner          -- trimmed text after `# Corner: ` (literal "none" if absent)
+#   setup_wns       -- WNS from the setup section (sign preserved); "0.000" if absent
+#   setup_tns       -- TNS from the setup section; "0.000" if absent
+#   setup_violated  -- Violated endpoints (setup); "0" if absent
+#   setup_total     -- Total endpoints (setup); "0" if absent
+#   hold_wns        -- WNS from the hold section; "0.000" if absent
+#   hold_tns        -- TNS from the hold section; "0.000" if absent
+#   hold_violated   -- Violated endpoints (hold); "0" if absent
+#   hold_total      -- Total endpoints (hold); "0" if absent
+#   combo_area      -- Combinational area value; "0.00" if absent
+#   seq_area        -- Sequential area value; "0.00" if absent
+#   macro_area      -- Macro area value; "0.00" if absent
+#   total_area      -- the EXPLICIT `Total area` value; "0.00" if absent
+#   area_unit       -- unit token from the `Total area` line; "none" if absent
+#   leaf_cells      -- Number of leaf cells; "0" if absent
+#   hier_cells      -- Number of hierarchical cells; "0" if absent
+#   total_cells     -- leaf_cells + hierarchical_cells (registers are a SUBSET
+#                      of leaf cells and MUST NOT be subtracted)
+#   registers       -- Number of registers; "0" if absent
+#   nets            -- Number of nets; "0" if absent
+#   timing_met      -- "1" iff setup_wns >= 0 AND hold_wns >= 0 (both met), else "0"
+#   area_check      -- "1" iff |combo_area + seq_area + macro_area - total_area| < 1e-6, else "0"
+#
+# Implement in Tcl using ONLY Tcl builtins (no external packages). The runtime
+# is Cadence WaveView Tcl (host=waveview). The waveview Tcl `regexp` supports
+# POSIX character classes (`[[:space:]]`, `[[:alnum:]]`, `[[:alpha:]]`) and
+# extended constructs; it does NOT support Perl `\b`/`\s`/`\d` -- use POSIX
+# classes instead. Use `dict create` for the return so keys are queryable via
+# `dict get`. Compare floats with `expr`; preserve the literal numeric
+# substring for the float fields (do NOT reformat).

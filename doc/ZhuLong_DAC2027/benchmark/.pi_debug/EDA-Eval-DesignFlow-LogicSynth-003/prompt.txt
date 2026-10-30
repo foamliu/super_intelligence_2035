@@ -1,0 +1,91 @@
+# Scenario: a digital design team is migrating a Design Compiler (DC NXT) WLM
+# (non-topographical) logic-synthesis flow to Cadence Genus 21.x. They have a
+# legacy DC Tcl script that uses the classic DC idioms --
+#     set_app_var target_library / link_library
+#     set_app_var hdlin_infer_multibit
+#     set_multibit_options -min_bit_width
+#     set_dont_use [get_lib_cells <pattern>]
+#     compile_ultra  /  compile_ultra -spg
+#     report_multibit_banking
+# -- and they need each construct translated to the Genus 21.x `set_db` idiom.
+# The team built an internal KB with the real mappings (Genus has no
+# `target_library` attribute; libs are loaded with `read_lib`; multibit is a
+# design attribute `design:<top>.multibit`; dont_use is a lib_cell attribute;
+# Genus has no `compile_ultra` -- it uses the `syn_generic` -> `syn_map` ->
+# `opt -pre_cts` stage flow; the DC `-spg` topographical flag has no equivalent
+# in a WLM-only Genus port).
+#
+# You are given ONE DC Tcl command line (a string) -- `dc_cmd`. Implement
+#     logicsynth_dc_to_genus_port {dc_cmd}
+# which RETURNS a Tcl dict (via `dict create`) with exactly these keys:
+#
+#   genus_cmd   -- the equivalent Genus command string, OR the literal token
+#                  `NO_EQUIVALENT` if the DC construct has no single Genus
+#                  command in a WLM (non-physical) port.
+#   port_type   -- one of (exactly): `library_read` , `attr_set_db` ,
+#                  `dontuse_set_db` , `stages` , `report_qor` , `no_equiv`.
+#   removed     -- `1` if the DC construct is fully REPLACED by a different
+#                  Genus mechanism (so the DC variable/flag itself is gone),
+#                  else `0` (the construct maps to an attribute that still
+#                  exists, or has no equivalent).
+#
+# Mapping rules (the test enforces these -- a wrong mapping fails):
+#
+#   1. `set_app_var target_library {<libs>}`  -> genus_cmd = `read_lib <libs>`
+#      (strip the `{}`; libs stay space-separated), port_type = `library_read`,
+#      removed = `1`. Genus has NO `target_library` attribute.
+#
+#   2. `set_app_var link_library {<libs>}`     -> genus_cmd = `read_lib <libs>`
+#      where <libs> is the link_library list with a leading `*` dropped if
+#      present (the `*` is a DC search-order marker, not a library); the rest
+#      are the libs to read. port_type = `library_read`, removed = `1`.
+#
+#   3. `set_app_var hdlin_infer_multibit <val>` -> genus_cmd =
+#      `set_db design:${DESIGN}.multibit true` , port_type = `attr_set_db`,
+#      removed = `0`. (The `${DESIGN}` token is literal -- it is the Genus
+#      design-top placeholder; do NOT substitute it.)
+#
+#   4. `set_multibit_options -min_bit_width <N>` -> genus_cmd =
+#      `set_db design:${DESIGN}.multibit_threshold <N>` (extract the integer
+#      <N>), port_type = `attr_set_db`, removed = `0`.
+#
+#   5. `set_dont_use [get_lib_cells <pattern>]` -> genus_cmd =
+#      `set_db lib_cell:<pattern>.dont_use true` (extract <pattern>, which is
+#      the text between `get_lib_cells ` and the closing `]`; keep it as-is),
+#      port_type = `dontuse_set_db`, removed = `0`.
+#
+#   6. `compile_ultra` (no flags, or only flags OTHER than `-spg`) -> genus_cmd
+#      = the three Genus stages, each on its own line, in order:
+#          syn_generic
+#          syn_map
+#          opt -pre_cts
+#      port_type = `stages`, removed = `1`. Genus has no `compile_ultra`.
+#
+#   7. `compile_ultra -spg` (topographical / spatial flag present) -> genus_cmd
+#      = `NO_EQUIVALENT` (the `-spg` topographical mode is DC-specific; a
+#      WLM-only Genus port has no equivalent), port_type = `no_equiv`,
+#      removed = `1`. NOTE: a plain `compile_ultra` (rule 6) is NOT this case;
+#      only when `-spg` is present.
+#
+#   8. `report_multibit_banking` -> genus_cmd = `report_qor -summary`,
+#      port_type = `report_qor`, removed = `1`.
+#
+#   9. any other `set_app_var <name> <val>` (unknown variable) -> genus_cmd =
+#      `NO_EQUIVALENT`, port_type = `no_equiv`, removed = `0`.
+#
+# The dc_cmd input is a single trimmed line; you may assume the brace patterns
+# above are well-formed. Use `dict create genus_cmd <..> port_type <..> removed <..>`
+# so the keys are enumerable with `dict get`. A junior engineer's first attempt
+# is a 1:1 keyword swap (`set_app_var` -> `set_db`); that is WRONG for the
+# library, multibit-attribute, compile, and -spg cases -- produce the correct
+# Genus idiom instead.
+#
+# proc logicsynth_dc_to_genus_port {dc_cmd} -> dict
+
+
+# === PI SUT INSTRUCTIONS ===
+# Implement the proc `logicsynth_dc_to_genus_port` in Tcl exactly per the spec above.
+# Output ONLY the full Tcl `proc logicsynth_dc_to_genus_port {dc_cmd} {...}` definition, in a single
+# fenced ```tcl code block, with no extra prose. Do NOT include the test/check proc.
+# The runtime is Synopsys WaveView Tcl (supports `dict`, `regexp` ARE with \s \d \S,
+# but NOT \b word-boundary -- avoid \b; use `($|\s)` for boundaries).

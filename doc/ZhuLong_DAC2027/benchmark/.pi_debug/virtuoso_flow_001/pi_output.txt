@@ -1,0 +1,1 @@
+Error: Model "deepseek-v4-pro-cloud" not found. Use --list-models to see available models.

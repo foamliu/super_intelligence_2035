@@ -1,0 +1,69 @@
+# Scenario: a physical-verification team runs Calibre DRC, then applies a
+# waiver file to the results to decide which violations are intentionally
+# waived (fixed-by-design, false-positive, or tracked). The QA must report how
+# many violations remain un-waived, how many waivers are stale (orphan -- matched
+# nothing), and how many waivers are redundant (duplicate -- only matched
+# already-waived violations, an over-waiving audit signal).
+#
+# You are given TWO multi-line strings:
+#   `violations` -- one violation per line, tab-separated, EXACTLY 5 fields:
+#       rule \t cell \t x \t y \t layer
+#   `waivers`    -- one waiver per line, tab-separated, EXACTLY 6 fields:
+#       rule \t cell \t x \t y \t layer \t reason
+# In a waiver, any of cell / x / y / layer may be the single character `*`,
+# meaning wildcard (match ANY value of that field). The rule field is a literal
+# rule name (never `*`) and is matched case-INSENSITIVELY (so waiver rule
+# `met2.sp` matches violation rule `MET2.SP`). The reason field is free text and
+# is IGNORED for matching. Blank lines in either string are skipped. Lines with
+# fewer than the required fields are skipped.
+#
+# MATCHING & FIRST-MATCH WINS:
+#   A waiver MATCHES a violation iff
+#       tolower(waiver.rule) == tolower(violation.rule)  AND
+#       (waiver.cell  == "*" OR waiver.cell  == violation.cell)  AND
+#       (waiver.x     == "*" OR waiver.x     == violation.x)     AND
+#       (waiver.y     == "*" OR waiver.y     == violation.y)     AND
+#       (waiver.layer == "*" OR waiver.layer == violation.layer)
+#   Waivers are processed in file order. The FIRST waiver that matches a
+#   not-yet-waived violation WAIVES it (sets its waived flag). A violation can
+#   be waived at most once. A waiver that matches a violation which is ALREADY
+#   waived does NOT change waived_count -- it is a (partial) duplicate touch.
+#
+# WAIVER CLASSIFICATION (per waiver, in order):
+#   - APPLIED   : the waiver waived at least one FRESH (not-yet-waived) violation.
+#   - DUPLICATE : the waiver matched >=1 violation but ALL its matches were
+#                 already waived by earlier waivers (waived zero fresh).
+#   - ORPHAN    : the waiver matched ZERO violations (no violation satisfied the
+#                 match rule at all).
+#   waived_count       = number of VIOLATIONS waived (each violation counted once).
+#   orphan_waivers     = number of waivers classified ORPHAN.
+#   duplicate_waivers  = number of waivers classified DUPLICATE.
+#
+# AUDIT VERDICT:
+#   - "clean"        if remaining_count == 0 AND orphan_waivers == 0 AND duplicate_waivers == 0
+#   - "violations"   if remaining_count > 0 AND orphan_waivers == 0 AND duplicate_waivers == 0
+#   - "audit_issues" if remaining_count == 0 AND (orphan_waivers > 0 OR duplicate_waivers > 0)
+#   - "both"         if remaining_count > 0 AND (orphan_waivers > 0 OR duplicate_waivers > 0)
+#
+# Implement
+#     drc_waiver_apply_audit {violations waivers}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys, all as
+# STRING values (counts as decimal strings; remaining_by_rule as a nested dict
+# rule->count using the violation's ORIGINAL-CASE rule name as key; the nested
+# dict is the literal string "none" when empty):
+#
+#   total_violations   -- number of parsed violations
+#   waived_count       -- number of violations waived (each once)
+#   remaining_count    -- total_violations - waived_count
+#   orphan_waivers     -- number of ORPHAN waivers
+#   duplicate_waivers  -- number of DUPLICATE waivers
+#   remaining_by_rule  -- nested dict: original-case rule -> count of REMAINING (un-waived) violations of that rule; "none" if no remaining violations
+#   audit_verdict      -- one of "clean" / "violations" / "audit_issues" / "both" per the rule above
+#
+# Implement in Tcl using ONLY Tcl builtins (no external packages). The runtime
+# is Synopsys Custom WaveView Tcl (host=waveview). The waveview Tcl `regexp`
+# supports POSIX character classes; you do NOT need regexp here -- use `split`
+# (on tab "\t") and `string tolower` / `string compare`. Use `dict create` for
+# the return (and a nested `dict create` for remaining_by_rule) so keys are
+# queryable via `dict get`. Compare the wildcard `*` as a literal single-char
+# string equality (do NOT treat it as a glob).

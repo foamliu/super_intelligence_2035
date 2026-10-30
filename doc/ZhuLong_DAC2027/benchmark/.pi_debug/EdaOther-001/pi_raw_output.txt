@@ -1,0 +1,34 @@
+proc cdl_lib_coverage_check {lib_path cdl_dir} {
+    set cells_lib {}
+    set fo [open $lib_path r]
+    while {[gets $fo line] >= 0} {
+        if {[regexp {^[[:space:]]*cell[[:space:]]*\([[:space:]]*\"?([^\"\)[:space:]]+)\"?[[:space:]]*\)} $line -> name]} {
+            lappend cells_lib $name
+        }
+    }
+    close $fo
+    set cells_lib [lsort -unique $cells_lib]
+
+    set cells_cdl {}
+    foreach f [glob -nocomplain -- [file join $cdl_dir *.cdl]] {
+        lappend cells_cdl [file rootname [file tail $f]]
+    }
+    set cells_cdl [lsort -unique $cells_cdl]
+
+    set cdl_set {}
+    foreach c $cells_cdl { dict set cdl_set $c 1 }
+    set lib_set {}
+    foreach c $cells_lib { dict set lib_set $c 1 }
+
+    set missing {}
+    foreach c $cells_lib { if {![dict exists $cdl_set $c]} { lappend missing $c } }
+    set extra {}
+    foreach c $cells_cdl { if {![dict exists $lib_set $c]} { lappend extra $c } }
+
+    return "lib_cell_count [llength $cells_lib] cdl_cell_count [llength $cells_cdl] missing_count [llength $missing] extra_count [llength $extra] missing_in_cdl $missing extra_in_cdl $extra"
+}
+ tokens {*}$missing
+    lappend tokens extra_in_cdl
+    lappend tokens {*}$extra
+    return "[join $tokens " "] "
+}

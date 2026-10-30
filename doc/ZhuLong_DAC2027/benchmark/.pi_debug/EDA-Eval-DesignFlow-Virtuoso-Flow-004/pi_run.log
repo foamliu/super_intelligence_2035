@@ -1,0 +1,134 @@
+Implemented and verified. The final Tcl proc:
+
+```tcl
+proc vflow_manifest_audit {manifest_text} {
+    set statusMap [dict create]
+    set artifactMap [dict create]
+    set curKind ""
+    set curStep ""
+
+    foreach line [split $manifest_text "\n"] {
+        set line [string trim $line]
+        if {$line eq ""} { continue }
+        set first [string index $line 0]
+        if {$first eq ";" || $first eq "#"} { continue }
+
+        set len [string length $line]
+        if {$len >= 2 && [string match {\[*\]} $line]} {
+            set section [string range $line 1 end-1]
+            if {$section eq "declared_outputs"} {
+                set curKind declared
+                set curStep ""
+            } elseif {[string match "step:*" $section]} {
+                set curKind step
+                set curStep [string range $section 5 end]
+                # last-wins: entering a block fully resets status + artifacts
+                dict set statusMap $curStep ""
+                dict set artifactMap $curStep [list]
+            } else {
+                set curKind other
+                set curStep ""
+            }
+            continue
+        }
+
+        if {$curKind ne "step" || $curStep eq ""} { continue }
+
+        if {[regexp {^status[[:space:]]*=[[:space:]]*(PASS|FAIL|SKIP)$} $line _m st]} {
+            dict set statusMap $curStep $st
+            continue
+        }
+
+        if {[regexp {^artifact[[:space:]]*=[[:space:]]*(.*)$} $line _m val]} {
+            set parts [split $val "|"]
+            if {[llength $parts] >= 4} {
+                set path [string trim [lindex $parts 0]]
+                set size [string trim [lindex $parts 1]]
+                set csum [string trim [lindex $parts 2]]
+                set sign [string trim [lindex $parts 3]]
+                set arts [dict get $artifactMap $curStep]
+                lappend arts [list $path $size $csum $sign]
+                dict set artifactMap $curStep $arts
+            }
+            continue
+        }
+    }
+
+    set total_steps [dict size $statusMap]
+    set pass_steps 0
+    set fail_steps 0
+    set skip_steps 0
+    set missing [list]
+    set ghost [list]
+    set zero [list]
+    set missacheck [list]
+    set baseSteps [dict create]
+
+    dict for {name status} $statusMap {
+        if {$status eq "PASS"} {
+            incr pass_steps
+        } elseif {$status eq "FAIL"} {
+            incr fail_steps
+        } elseif {$status eq "SKIP"} {
+            incr skip_steps
+        }
+
+        set arts [dict get $artifactMap $name]
+        if {$status eq "PASS" && [llength $arts] == 0} {
+            lappend missing $name
+        }
+
+        foreach rec $arts {
+            lassign $rec path size csum sign
+            if {$status eq "PASS" && [string equal $size "0"]} {
+                lappend zero $path
+            }
+            if {$status eq "FAIL" || $status eq "SKIP"} {
+                lappend ghost $path
+            }
+            if {[string equal $sign "true"] && [string equal $csum ""]} {
+                lappend missacheck $path
+            }
+            set idx [string last "/" $path]
+            if {$idx >= 0} {
+                set base [string range $path [expr {$idx + 1}] end]
+            } else {
+                set base $path
+            }
+            dict set baseSteps $base $name 1
+        }
+    }
+
+    set collisions [list]
+    dict for {base stepset} $baseSteps {
+        if {[llength [dict keys $stepset]] >= 2} {
+            lappend collisions $base
+        }
+    }
+
+    if {[llength $missing] == 0 && [llength $ghost] == 0 && [llength $zero] == 0
+        && [llength $missacheck] == 0 && [llength $collisions] == 0} {
+        set verdict clean
+    } else {
+        set verdict dirty
+    }
+
+    return [dict create total_steps $total_steps pass_steps $pass_steps fail_steps $fail_steps skip_steps $skip_steps missing_artifacts [lsort $missing] ghost_artifacts [lsort $ghost] zero_byte_artifacts [lsort $zero] missing_checksum_signoff [lsort $missacheck] name_collisions [lsort $collisions] verdict $verdict]
+}
+```
+
+Key implementation notes:
+- **Last-wins**: `[step:<name>]` headers reset that step's status to `""` and artifact list to `[list]`, so repeated blocks fully overwrite (no merge).
+- **Name collisions** tracked as `basename -> nested dict of distinct step names`; a basename is reported only when it maps to ≥2 distinct steps (per-step duplicates ignored).
+- **Zero-byte** gated on owning step status `PASS` (FAIL/SKIP artifacts are ghosts, not zero-byte).
+- **Missing checksum** gated on `signoff == "true"` independent of status.
+- **Verdict** is `clean` only when all five violation lists are empty.
+- Used `string match {\[*\]}` instead of `"["` in the `if` expression — the latter triggers command substitution in `expr`.
+
+Sandbox verification (Empyrean WaveView Tcl 8.6.6, .75 sandbox):
+- `RESULT:ALL_ASSERTS_PASS`
+- `DESIGN_FLOW_VERDICT=PASS`
+
+Session cleanup: `cleaned=true`.
+
+DESIGN_FLOW_VERDICT=PASS

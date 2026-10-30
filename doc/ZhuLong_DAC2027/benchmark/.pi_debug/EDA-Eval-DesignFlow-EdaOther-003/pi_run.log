@@ -1,0 +1,107 @@
+Implemented and verified. Here is the final Tcl procedure:
+
+```tcl
+proc regr_log_classify {log} {
+    set pass_count 0
+    set fail_count 0
+    set timeout_count 0
+    set skipped_count 0
+    set xpass_count 0
+    set xfail_ok_count 0
+
+    array set has_run {}
+    array set has_outcome {}
+    array set outcome_seq {}
+    array set rerun_flag {}
+    array set seed_set {}
+    array set test_set {}
+
+    foreach line [split $log "\n"] {
+        if {![regexp {^\[[[:space:]]*([A-Z]+)[[:space:]]*\][[:space:]]*(.*)$} $line -> status rest]} {
+            continue
+        }
+        if {![regexp {^[[:space:]]*([[:alnum:]_]+)[[:space:]]*} $rest -> test]} {
+            continue
+        }
+        set test_set($test) 1
+
+        switch -exact $status {
+            RUN     { set has_run($test) 1 }
+            PASS    { incr pass_count; set has_outcome($test) 1; lappend outcome_seq($test) PASS }
+            FAIL    { incr fail_count; set has_outcome($test) 1; lappend outcome_seq($test) FAIL }
+            TIMEOUT { incr timeout_count; set has_outcome($test) 1; lappend outcome_seq($test) TIMEOUT }
+            XPASS   { incr xpass_count; set has_outcome($test) 1; lappend outcome_seq($test) XPASS }
+            XFAIL   { incr xfail_ok_count; set has_outcome($test) 1; lappend outcome_seq($test) XFAIL }
+            SKIP    { incr skipped_count }
+            default { continue }
+        }
+
+        if {[regexp {seed=[[:space:]]*([0-9]+)} $rest -> seed]} { set seed_set($seed) 1 }
+        if {[regexp {\(rerun #[0-9]+\)} $rest]} { set rerun_flag($test) 1 }
+    }
+
+    set fail_total  [expr {$fail_count + $xpass_count}]
+    set total_runs  [expr {$pass_count + $fail_total + $timeout_count + $xfail_ok_count}]
+    set unique_tests [array size test_set]
+    set unique_seeds [array size seed_set]
+
+    set incomplete 0
+    foreach t [array names has_run] {
+        if {![info exists has_outcome($t)]} { incr incomplete }
+    }
+
+    set rerun_list {}
+    foreach t [array names rerun_flag] { lappend rerun_list $t }
+    set rerun_list [lsort $rerun_list]
+
+    set flaky_list {}
+    foreach t [array names outcome_seq] {
+        set seen_bad 0
+        foreach oc $outcome_seq($t) {
+            if {$oc eq "FAIL" || $oc eq "TIMEOUT"} { set seen_bad 1 }
+            if {$seen_bad && $oc eq "PASS"} { lappend flaky_list $t; break }
+        }
+    }
+    set flaky_list [lsort $flaky_list]
+
+    set denom [expr {$pass_count + $fail_total + $timeout_count}]
+    if {$denom == 0} {
+        set pass_rate "0.0000"
+    } else {
+        set pass_rate [format "%.4f" [expr {1.0 * $pass_count / $denom}]]
+    }
+
+    set parts {}
+    lappend parts "total_runs $total_runs"
+    lappend parts "unique_tests $unique_tests"
+    lappend parts "pass_count $pass_count"
+    lappend parts "fail_count $fail_total"
+    lappend parts "timeout_count $timeout_count"
+    lappend parts "skipped_count $skipped_count"
+    lappend parts "xpass_count $xpass_count"
+    lappend parts "xfail_ok_count $xfail_ok_count"
+    lappend parts "incomplete_runs $incomplete"
+    lappend parts "rerun_tests"
+    foreach t $rerun_list { lappend parts $t }
+    lappend parts "flaky_tests"
+    foreach t $flaky_list { lappend parts $t }
+    lappend parts "unique_seeds $unique_seeds"
+    lappend parts "pass_rate $pass_rate"
+
+    return [join $parts " "]
+}
+```
+
+Key triage semantics handled:
+- `total_runs` counts only PASS/FAIL/TIMEOUT/XPASS/XFAIL (RUN/SKIP excluded).
+- `fail_count = raw FAIL + XPASS`; `xfail_ok_count` kept separate.
+- `incomplete_runs` = tests with ≥1 RUN but zero outcomes (SKIP-only is not incomplete).
+- `flaky_tests` only marks FAIL/TIMEOUT-before-later-PASS (PASS-then-FAIL is a regression).
+- `pass_rate = pass_count / (pass + fail + timeout)`, 4-decimal formatted.
+
+Sandbox verification on Synopsys Custom WaveView passed all Cases A–F (including the XPASS-is-failure, XFAIL-is-OK, TIMEOUT≠FAIL, flaky-direction, and invariant assertions).
+
+CHECK_RESULT: `RESULT:ALL_ASSERTS_PASS`
+
+DESIGN_FLOW_VERDICT=PASS
+=== pi exit=0 end Fri Oct 30 12:05:15 AM CST 2026 ===

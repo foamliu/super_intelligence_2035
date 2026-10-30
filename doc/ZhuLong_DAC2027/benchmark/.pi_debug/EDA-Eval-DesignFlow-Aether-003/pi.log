@@ -1,0 +1,33 @@
+=== pi-SUT Aether-003 start 2026-10-30 07:19:04 ===
+=== pi exit=0 end 2026-10-30 07:23:57 ===
+=== tail pi_run.log ===
+        if {$summary_warnings ne "" && $summary_warnings ne $warning_count}    {lappend mm "warnings"}
+        if {$summary_checked  ne "" && $summary_checked  ne $checked_rules}   {lappend mm "checked"}
+    }
+    set mm_sorted [lsort -dictionary $mm]
+
+    if      {$error_count > 0}   { set verdict "FAIL" }
+    elseif  {$warning_count > 0} { set verdict "WARN" }
+    elseif  {!$has_summary}      { set verdict "INCOMPLETE" }
+    else                          { set verdict "PASS" }
+
+    return [dict create \
+        total_rules $total_rules total_violations $total_violations \
+        error_count $error_count warning_count $warning_count \
+        checked_rules $checked_rules duplicate_rule_names $dup_sorted \
+        per_layer_errors $per_layer_errors mismatched_summary $mm_sorted \
+        layers_used $layers_used verdict $verdict]
+}
+```
+
+## Verification results
+
+- All 13 checker cases (A–M) passed: severity case-insensitivity, last-wins dedup, duplicate-name reporting, zero-count checked rules, missing-SUMMARY → INCOMPLETE, per-layer error dict (err-only, sorted), mismatched-summary field detection (absent fields ignored), verdict priority, and sorted `layers_used`.
+- Sandbox output: `RESULT:ALL_ASSERTS_PASS`
+- `DESIGN_FLOW_VERDICT=PASS`
+- Session workdir cleaned up (`cleaned: true`, `keep=false`).
+
+DESIGN_FLOW_VERDICT=PASS
+RESULT:ALL_ASSERTS_PASS
+
+PASS (the implementation passed the sandbox verification).

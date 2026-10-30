@@ -1,0 +1,25 @@
+=== pi-SUT Aether-011 start 2026-10-30 10:26:01 ===
+=== pi exit=0 end 2026-10-30 10:32:26 ===
+=== tail pi_run.log ===
+Implemented `layout_eco_audit` (Tcl) and verified it on the Empyrean WaveView sandbox against the full 13-case checker.
+
+Key implementation points:
+- Parses `ECO` / `SUMMARY` lines (comments/blank lines ignored), case-insensitive `ECO`/`SUMMARY` keywords.
+- Deduplicates on the ordered `(action, inst_name)` key — last occurrence wins (overwrites cell/status/delta), counted once.
+- Action and status normalization via `string tolower`; status empty/absent → inferred from delta (`>0` applied, `==0` skipped, `<0` pending).
+- Missing/empty delta defaults to `0.0` → skipped.
+- `cells_affected` unioned from final deduped records, empty/absent cells dropped, `lsort -dictionary`.
+- `mismatched_summary` compares only *present* SUMMARY fields with integer equality (`field=summary_val vs computed_val`).
+- Verdict priority: FAIL > REVIEW > INCOMPLETE > PASS.
+
+Sandbox run output:
+```
+ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+Session cleaned up (`cleaned: true`).
+
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS → PASS

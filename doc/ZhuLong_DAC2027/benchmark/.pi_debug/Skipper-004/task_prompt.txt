@@ -1,0 +1,74 @@
+# Scenario: a digital verification team runs UniVista Skipper (UVS) Verilog
+# regressions on an LSF farm (cf. Skipper-001 build cmd, Skipper-002 live
+# vps.log state classifier, Skipper-003 final run scoreboard aggregator).
+# BEFORE a regression executes, UVS compiles each testbench; the compile step
+# emits a per-tag compile summary. You are writing a helper that audits that
+# compile summary against the DECLARED testbench list, so the dashboard can
+# report per-status counts, total errors/warnings (over the final status of
+# each testbench), duplicate re-compiles, MISSING testbenches (declared but
+# never compiled), RECOVERED testbenches (failed to compile in one tag but
+# compiled OK in another), total elapsed compile time, the single slowest
+# testbench, and the overall verdict.
+#
+# Inputs:
+#   `compile_log_text` -- multi-line text. A line
+#       `# Compile summary for tag <tag>`
+#       opens a new tag section (increment tags_compiled). A row
+#       `[<STATUS>] <testbench> errors=<N> warns=<N> elapsed=<T>`
+#       records one compile of `<testbench>` in the current tag, where
+#       STATUS is one of `OK`, `FAIL`, `SKIP`; N are non-negative integers;
+#       T is the elapsed compile time as EITHER plain seconds (`<int>`) OR
+#       `<minutes>:<seconds>` (e.g. `1:30` = 90 seconds). A testbench may be
+#       re-compiled inside the same tag (its row repeats). Any other non-empty
+#       line is ignored.
+#   `test_list_text` -- multi-line text of the DECLARED testbench list, one
+#       name per line. Lines starting with `#` and blank lines are skipped;
+#       an inline `# comment` after a name is allowed (the name is the first
+#       whitespace token).
+#
+# Parsing & audit rules:
+# 1. Parse `compile_log_text`: a `# Compile summary for tag <tag>` header
+#    opens a new tag section (increment tags_compiled). A row
+#    `[<STATUS>] <tb> errors=<N> warns=<N> elapsed=<T>` is a compile record;
+#    increment total_rows for every row (including duplicates). Normalize
+#    elapsed T to total seconds (`<m>:<ss>` -> m*60+ss; plain int -> int).
+#    Any other non-empty line is ignored.
+# 2. Per (testbench, tag) keep the LAST compile row (last-wins; an earlier row
+#    for the same (testbench, tag) is a duplicate re-compile -> increment
+#    duplicate_compiles). The re-compile REPLACES the earlier row's errors,
+#    warns and elapsed (it does NOT add to them). The per-status counts
+#    (compiled_ok / compile_fail / skipped) and error_total / warn_total /
+#    elapsed_total_sec are computed over these LAST-WINS unique
+#    (testbench, tag) pairs, NOT over raw rows.
+# 3. duplicate_compiles counts ONLY same-(testbench,tag) overrides. The same
+#    testbench compiled in DIFFERENT tags is NOT a duplicate (different tag ->
+#    different key).
+# 4. missing_compiles: a declared testbench (from test_list_text) that has NO
+#    compile row in ANY tag. SORTED (lsort) list. (Declared but never compiled
+#    -> reported, not silently dropped.)
+# 5. recovered_compiles: a testbench whose last-wins status is `FAIL` in some
+#    tag AND `OK` in another tag (cross-tag recovery). SORTED (lsort) list.
+#    (A testbench that only ever fails is NOT recovered.)
+# 6. max_elapsed_tb: the testbench (across ALL last-wins pairs) with the
+#    largest normalized elapsed seconds. On a TIE, the lexicographically
+#    SMALLEST name wins (lsort order). If there are no rows, return the empty
+#    string. (max is over testbenches, not over (tb,tag) pairs -- if a
+#    testbench appears in several tags, its max elapsed across tags is used
+#    for the comparison.)
+# 7. overall_verdict (priority FAIL > INCOMPLETE > PASS):
+#    - `FAIL`        when compile_fail > 0 (any last-wins FAIL fails the
+#                    whole compile batch);
+#    - `INCOMPLETE`  when no FAIL but missing_compiles non-empty;
+#    - `PASS`        otherwise.
+# 8. Return a FLAT Tcl dict with EXACTLY these keys in this order:
+#       tags_compiled total_rows compiled_ok compile_fail skipped
+#       error_total warn_total duplicate_compiles missing_compiles
+#       recovered_compiles elapsed_total_sec max_elapsed_tb overall_verdict
+#    Lists (missing_compiles, recovered_compiles) are Tcl lists; numbers are
+#    integers; max_elapsed_tb and overall_verdict are strings.
+#
+# Implement `proc uvs_regr_compile_summary_audit {compile_log_text test_list_text} { ... }`
+# in Tcl. Use only Tcl builtins (no external packages). The runtime is
+# Empyrean Skipper Tcl (skipper host), which supports `dict`, `regexp`,
+# `split`, `lassign`, POSIX character classes `[[:space:]]` / `[[:digit:]]` in
+# regexps -- do NOT rely on `\s` / `\d` / `\b`.

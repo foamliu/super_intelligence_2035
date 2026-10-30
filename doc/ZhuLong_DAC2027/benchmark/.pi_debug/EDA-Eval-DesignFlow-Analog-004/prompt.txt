@@ -1,0 +1,63 @@
+# Scenario: after an HSPICE PVT corner sweep, an analog sign-off step audits every
+# extracted measurement against the design spec across all simulated corners and
+# reports the worst-case corner per metric and an overall pass/fail verdict.
+#
+# You are given TWO inputs:
+#
+#   `corner_results` -- a Tcl list of lines. Each line describes one PVT corner:
+#       <CORNER> <m1>=<v1> <m2>=<v2> ...
+#     * The first whitespace token is the corner name (e.g. tt/ff/ss/...).
+#     * Each subsequent token is `metric=value` where value is a number (may be
+#       integer, decimal, or scientific like 1.2e6; no units suffix).
+#     * A metric may be ABSENT from a corner line (that corner did not produce
+#       that measurement). Absence is NOT a zero and NOT a failure -- it is
+#       "not measured" and must be skipped for that metric (but counted in
+#       missing_count). Empty lines are ignored.
+#
+#   `spec` -- a Tcl dict mapping a metric name to a SINGLE-SIDED bound, expressed
+#     as a two-element sublist: either `{min <bound>}` (the metric must be
+#       >= bound; higher is better) or `{max <bound>}` (the metric must be
+#       <= bound; lower is better). Every metric in `spec` is audited.
+#
+# For each measured (corner, metric) pair, the SIGNED MARGIN is:
+#     min-spec : margin = value - bound       (>= 0 means pass)
+#     max-spec : margin = bound - value       (>= 0 means pass)
+# A pair FAILS when its margin is < 0. A pair with the metric absent is SKIPPED
+# (not a failure; not a pass; just missing).
+#
+# The WORST corner for a metric is the corner (among those that measured it)
+# with the SMALLEST margin (the most-negative margin is the worst; if all pass,
+# the tightest positive margin is the worst). Ties in margin are broken by the
+# corner NAME in ascending lexicographic order (lsort), so the alphabetically
+# smaller corner name wins the tie.
+#
+# The OVERALL WORST is the single (metric, corner) pair with the smallest margin
+# across all metrics that were measured at least once. If no pair was measured
+# at all, worst_metric is "" and worst_corner is "" and worst_margin is 0.
+#
+# The OVERALL VERDICT is "pass" if and only if NO measured pair failed (an empty
+# `corner_results` or a spec whose metrics are never measured is vacuously
+# "pass"). Otherwise it is "fail".
+#
+# Task: implement hspice_corner_worst_case_audit, which returns a dict with
+# EXACTLY these keys (flat, in this order):
+#   corners_scanned   -- number of non-empty corner lines parsed (integer)
+#   metrics_audited   -- sorted list (lsort, ascending) of metric names in spec
+#   overall_verdict    -- "pass" or "fail"
+#   failing_pairs     -- sorted list (lsort) of "corner metric" strings for every
+#                        measured pair that failed (margin < 0). Each entry is
+#                        the two tokens separated by a single space, corner first.
+#   worst_metric      -- metric name of the overall worst pair, or "" if none
+#   worst_corner      -- corner name of the overall worst pair, or "" if none
+#   worst_margin      -- signed margin of the overall worst pair, or 0 if none
+#   missing_count     -- total number of (corner, metric) pairs where the corner
+#                        line lacked a metric that exists in spec (integer)
+#
+# Return the dict via `dict create`. Lists must be sorted (lsort). The proc must
+# be self-contained, deterministic, and use pure Tcl string operations (POSIX
+# character classes only if you use regexp -- no \s \d \b). Numeric parsing is
+# done by Tcl `expr` / implicit conversion (no custom number parser needed).
+
+proc hspice_corner_worst_case_audit {corner_results spec} {
+    # your code here
+}

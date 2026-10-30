@@ -1,0 +1,127 @@
+Implemented and verified on the Synopsys WaveView Tcl sandbox. The implementation is:
+
+```tcl
+proc pnr_signoff_audit_pt_launcher {launcher} {
+    set nl [format %c 10]
+    set lines [split $launcher $nl]
+
+    set shebang_csh_f 0
+    foreach ln $lines {
+        set t [string trim $ln]
+        if {$t eq ""} { continue }
+        if {[regexp {^[[:space:]]*#![[:space:]]*[^[:space:]]*(csh|tcsh)[[:space:]]} $t] && \
+            [regexp {(^|[[:space:]])-f([[:space:]]|$)} $t]} {
+            set shebang_csh_f 1
+        }
+        break
+    }
+
+    set first_module_call -1
+    set boot_idx -1
+    set has_module_bootstrap 0
+    set has_module_load_pt 0
+    set has_pt_shell_x_preset 0
+    set preset_text ""
+
+    set i 0
+    foreach ln $lines {
+        if {[regexp {(^|[[:space:]])module[[:space:]]+(purge|load|unload|avail|list)([[:space:]]|$)} $ln]} {
+            if {$first_module_call < 0} { set first_module_call $i }
+        }
+        if {[regexp {^[[:space:]]*alias[[:space:]]+module([[:space:]]|$)} $ln] || \
+            [regexp {^[[:space:]]*source[[:space:]].*modules[.]csh} $ln]} {
+            set has_module_bootstrap 1
+            if {$boot_idx < 0} { set boot_idx $i }
+        }
+        if {[regexp {(^|[[:space:]])module[[:space:]]+load[[:space:]]+ds/pt/} $ln]} {
+            set has_module_load_pt 1
+        }
+        if {[regexp {(^|[^[:alnum:]_])pt_shell([^[:alnum:]_]|$)} $ln] && \
+            [regexp {(^|[^[:alnum:]_])-f([^[:alnum:]_]|$)} $ln] && \
+            [regexp {(^|[^[:alnum:]_])-x([^[:alnum:]_]|$)} $ln]} {
+            set has_pt_shell_x_preset 1
+        }
+        if {[regexp {(^|[^[:alnum:]_])XVAR([^[:alnum:]_]|$)} $ln] || \
+            [regexp {(^|[^[:alnum:]_])-x([^[:alnum:]_]|$)} $ln]} {
+            append preset_text $ln $nl
+        }
+        incr i
+    }
+
+    if {$first_module_call < 0} {
+        set bootstrap_before_first_module_call 1
+    } elseif {$shebang_csh_f == 0} {
+        set bootstrap_before_first_module_call 1
+    } elseif {$boot_idx >= 0 && $boot_idx < $first_module_call} {
+        set bootstrap_before_first_module_call 1
+    } else {
+        set bootstrap_before_first_module_call 0
+    }
+
+    set xok 0
+    if {$has_pt_shell_x_preset} {
+        set sd [format "set DESIGN %c" 36]
+        set sc [format "set PT_CORNER %c" 36]
+        set sm [format "set MODE %c" 36]
+        if {[string first $sd $preset_text] >= 0 && \
+            [string first $sc $preset_text] >= 0 && \
+            [string first $sm $preset_text] >= 0} {
+            set xok 1
+        }
+    }
+
+    set D [format %c 36]
+    set L [format %c 123]
+    set R [format %c 125]
+    set vd  [format "%s%sDESIGN%s" $D $L $R]
+    set vc  [format "%s%sCORNER%s" $D $L $R]
+    set vpc [format "%s%sPT_CORNER%s" $D $L $R]
+    set vm  [format "%s%sMODE%s" $D $L $R]
+    set tag1 [format "%s_%s_%s" $vd $vc $vm]
+    set tag2 [format "%s_%s_%s" $vd $vpc $vm]
+    set has_run_tag_suffix 0
+    if {[string first $tag1 $launcher] >= 0 || [string first $tag2 $launcher] >= 0} {
+        set has_run_tag_suffix 1
+    }
+
+    set reasons {}
+    if {$shebang_csh_f == 1 && $first_module_call >= 0} {
+        if {!($has_module_bootstrap == 1 && $bootstrap_before_first_module_call == 1)} {
+            lappend reasons R1
+        }
+    }
+    if {$has_module_load_pt == 0} { lappend reasons R2 }
+    if {$has_pt_shell_x_preset == 0} { lappend reasons R3 }
+    if {$has_pt_shell_x_preset == 1 && $xok == 0} { lappend reasons R4 }
+
+    if {[llength $reasons] == 0} {
+        set verdict ok
+        set fail_reasons none
+    } else {
+        set verdict broken
+        set fail_reasons [join $reasons ";"]
+    }
+
+    return [dict create \
+        shebang_csh_f $shebang_csh_f \
+        has_module_bootstrap $has_module_bootstrap \
+        bootstrap_before_first_module_call $bootstrap_before_first_module_call \
+        has_module_load_pt $has_module_load_pt \
+        has_pt_shell_x_preset $has_pt_shell_x_preset \
+        x_preset_has_design_corner_mode $xok \
+        has_run_tag_suffix $has_run_tag_suffix \
+        verdict $verdict \
+        fail_reasons $fail_reasons]
+}
+```
+
+The sandbox run against the 6 provided fixtures produced:
+
+```
+CHECK_RESULT: PASS 6 cases
+DESIGN_FLOW_VERDICT=PASS
+```
+
+All six cases (csh‑f trap, alias fix, source bootstrap, wrong order, bash, missing `set MODE`) passed exactly as asserted.
+
+DESIGN_FLOW_VERDICT=PASS

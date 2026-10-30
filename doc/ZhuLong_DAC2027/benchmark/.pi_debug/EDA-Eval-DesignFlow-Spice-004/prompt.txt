@@ -1,0 +1,106 @@
+# Scenario: you are on an analog characterization team that runs Synopsys
+# HSPICE / FineSim on a foundry PDK to characterize a delay cell. To run a
+# sizing sweep (Monte Carlo / HSMC sigma minimization) over four key
+# transistors, the recurring FIRST step is to PARAMETERIZE the SPICE netlist:
+# turn the hardcoded `w=<number>` / `l=<number>` on the four target transistor
+# instances into `.PARAM` references, and inject a `.PARAM` definition block
+# (defaulted to the original sizes so the netlist is functionally equivalent
+# at nominal) so a sweep driver can later override the params per corner.
+#
+# The delay cell is the subcircuit `R_RasVdbiasDlyStd_gut_MC`. The four target
+# transistors (the only ones to parameterize) are, by INSTANCE name on the
+# netlist line:
+#
+#     XMMP0   -> param prefix MP0   (PMOS, input pair)
+#     XMMN0   -> param prefix MN0   (NMOS, input pair)
+#     XMMP10  -> param prefix MP10  (PMOS, output stage)
+#     XMMN15  -> param prefix MN15  (NMOS, output stage)
+#
+# For each target instance the parameter names are `<prefix>_w` and `<prefix>_l`
+# (e.g. `MP0_w`, `MP0_l`, `MP10_w`, `MP10_l`).
+#
+# You are given one SPICE netlist file (its path is the only argument). Its
+# relevant structure:
+#
+#   * A `.SUBCKT R_RasVdbiasDlyStd_gut_MC <ports...>` line opens the target
+#     subcircuit and a `.ENDS R_RasVdbiasDlyStd_gut_MC` line closes it. The
+#     subcircuit body holds the four target instance lines plus a number of
+#     OTHER transistor instances (e.g. XMMP1, XMMN1, XMMP2, ...) that each
+#     ALSO carry their own `w=<num> l=<num>` -- those must NOT be touched.
+#   * The netlist may contain OTHER subcircuits (e.g. a variant
+#     `R_RasVdbiasDlyStd_gut` WITHOUT the `_MC` suffix) that ALSO happen to
+#     contain an instance named `XMMP0` with its own `w=<num> l=<num>`. Those
+#     must NOT be touched -- only instances INSIDE `R_RasVdbiasDlyStd_gut_MC`
+#     are targets.
+#   * A target instance line looks like
+#         XMMP10 delay1 InN inh_vcc inh_vbp ptn_lv w=8.001e-6 l=325e-9 nf=3
+#     i.e. the FIRST whitespace-delimited token is the instance name (XMMP10),
+#     followed by node names, then `w=<num>`, `l=<num>`, and other parameters
+#     (`nf=`, `m=`, `ad=`, `as=`, `pd=`, `ps=`, ...). The `<num>` is a
+#     floating-point size in scientific notation (e.g. `7.952e-6`, `325e-9`).
+#   * There may be `*` comment lines, `.inc`/`.include` lines, `.measure`
+#     lines, `.OPTION` lines, and a top-level stimulus -- all preserved as-is.
+#
+# Task: implement `spice_netlist_parametrize {path}`, which reads the netlist
+# at `path` and RETURNS the full parameterized netlist as a single string
+# (newline-separated lines, just like the input), with EXACTLY these
+# transformations:
+#
+# 1. TARGET INSTANCE REWRITE -- For each of the four instance names (XMMP0,
+#    XMMN0, XMMP10, XMMN15), find the line(s) that START with that instance
+#    name (first token equals the instance name) AND that lie INSIDE the
+#    `R_RasVdbiasDlyStd_gut_MC` subcircuit (between its `.SUBCKT` line and its
+#    matching `.ENDS`). On each such line:
+#      * Extract the numeric value following `w=` (the device width) and the
+#        numeric value following `l=` (the device length).
+#      * Replace the `w=<num>` token with `w='<prefix>_w'` and the `l=<num>`
+#        token with `l='<prefix>_l'` (single-quoted expression reference; the
+#        prefix is MP0/MN0/MP10/MN15 respectively).
+#      * Leave every other token on the line (`nf=`, `m=`, `ad=`, node names,
+#        the instance name) UNCHANGED.
+#    A line is matched by its leading instance-name token ONLY -- not by
+#    substring. `XMMP0` must match `XMMP0 ` but NOT `XMMP01` or `XXMMP0`.
+#
+# 2. .PARAM BLOCK INJECTION -- Build a `.PARAM` definition block that gives
+#    each of the eight params (`MP0_w`,`MP0_l`,`MN0_w`,`MN0_l`,`MP10_w`,
+#    `MP10_l`,`MN15_w`,`MN15_l`) its DEFAULT = the ORIGINAL numeric value
+#    extracted from that instance's `w=`/`l=` in step 1. Emit one `.PARAM`
+#    line per target instance, in the order MP0, MN0, MP10, MN15, each:
+#        .PARAM MP0_w=7.952e-6 MP0_l=325e-9
+#    Inject this block IMMEDIATELY BEFORE the `.SUBCKT R_RasVdbiasDlyStd_gut_MC`
+#    line (params must be defined before the subcircuit that references them).
+#
+# 3. PRESERVE EVERYTHING ELSE -- Do not modify:
+#      * other transistor instances inside the target subcircuit (XMMP1,
+#        XMMN1, ... keep their numeric `w=`/`l=`);
+#      * any instance in any OTHER subcircuit, even if it is named XMMP0;
+#      * top-level instances, comments, `.inc`, `.measure`, `.OPTION`, the
+#        `.SUBCKT`/`.ENDS` lines themselves, blank lines, line order.
+#
+# 4. IDEMPOTENCY -- If the input netlist is ALREADY parameterized (a target
+#    line already reads `w='MP0_w' l='MP10_l'`), do NOT double-parameterize
+#    (no `w=''MP0_w'_w'`) and do NOT inject a SECOND `.PARAM` block. Running
+#    the proc twice must yield the same output as running once. (You may
+#    detect an already-parameterized target line by the absence of a numeric
+#    `w=<num>` -- a `w='<name>'` reference is NOT a numeric literal.)
+#
+# Rules:
+#   * Read the file once; produce the transformed netlist string.
+#   * Match the target subcircuit by its EXACT name `R_RasVdbiasDlyStd_gut_MC`
+#     (do not match the variant `R_RasVdbiasDlyStd_gut` that lacks the `_MC`).
+#   * A numeric size matches the regex `[0-9.eE+-]+` (digits, dot, exponent
+#     sign). A quoted reference `'<name>'` does NOT match it.
+#   * Do NOT write any file -- just return the netlist string.
+#
+# Runtime note: the runtime is Synopsys WaveView ACE Tcl. It supports POSIX
+# regex classes ([[:space:]], [[:alnum:]_], [0-9.eE+-]) but does NOT support
+# \s, \d, \b, or Perl character classes. Use `regexp -line -- {PATTERN}` with
+# POSIX classes; use `string match` / `string first` / `lindex $line 0` for
+# the leading-token instance-name test. Reading a file:
+# `set fh [open $path r]; set raw [read $fh]; close $fh`;
+# `set lines [split $raw "\n"]` (a trailing newline yields a trailing empty
+# element -- preserve the input line structure; if the input ended with a
+# newline, your returned string should too).
+#
+# Return: a single string -- the full parameterized netlist. The checker
+# parses it with tolerant line/substring helpers.

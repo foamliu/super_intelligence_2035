@@ -1,0 +1,78 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual GDS layer-map usage report for a layout cellview. This
+is a pure text-analysis task (no EDA tool calls needed to produce the answer);
+you will verify your implementation on the Empyrean WaveView Tcl sandbox.
+
+TASK
+Implement the Tcl proc `layout_gds_layermap_audit` that takes ONE string
+argument `report_text` (the full GDS layer-map report text) and returns a flat
+Tcl dict with EXACTLY these 11 keys, in this exact order:
+
+    total_layers  total_shapes  drawing_layers  pin_layers  label_layers
+    dup_gdsno  missing_purpose_layers  max_shape_layer  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# GDS layer map ..." header
+may appear and is ignored):
+
+  LAYER <name> gdsno=<N> datatype=<N> purpose=<drawing|pin|label> count=<N>
+  SUMMARY total_layers=<N> total_shapes=<N>
+
+SEMANTICS (read carefully — a naive implementation fails several of these):
+
+1. total_layers = number of DISTINCT layer names across all LAYER lines.
+2. Duplicate layer names: if the same <name> appears on multiple LAYER lines,
+   the LAST occurrence WINS (its gdsno/datatype/purpose/count replace earlier
+   ones). total_layers counts the name only ONCE.
+3. total_shapes = sum of count over the distinct (last-wins) layers. A missing
+   count= field is treated as 0.
+4. purpose is CASE-INSENSITIVE: "drawing", "DRAWING", "Drawing" all mean
+   drawing; likewise "pin"/"PIN" and "label"/"LABEL".
+   drawing_layers = sorted (lsort -dictionary) list of layer names whose
+   (normalized) purpose == "drawing". pin_layers and label_layers likewise.
+   A layer whose purpose= field is ABSENT (empty) is NOT placed in any of
+   drawing/pin/label; it goes into missing_purpose_layers instead. Do NOT
+   default an empty purpose to "drawing".
+5. missing_purpose_layers = sorted (lsort -dictionary) list of layer names
+   whose (last-wins) entry has no purpose= field (empty purpose).
+6. dup_gdsno = sorted (lsort -dictionary) list of layer names whose
+   (gdsno, datatype) PAIR is shared by MORE THAN ONE layer. The pair is the
+   COMBINATION of gdsno AND datatype: two layers with the same gdsno but
+   DIFFERENT datatype are NOT duplicates. List EVERY layer name that belongs
+   to a shared pair (if 3 layers share a pair, all 3 names are listed), each
+   name once. A layer with no gdsno= field is never a dup.
+7. max_shape_layer = the layer name with the maximum count (over distinct
+   last-wins layers). On a tie, the LEXICOGRAPHICALLY SMALLEST name wins
+   (lsort -dictionary order). Empty string if there are no layers.
+8. mismatched_summary: if a SUMMARY line is present, compare each provided
+   SUMMARY field to the COMPUTED value:
+     total_layers <-> total_layers (computed)
+     total_shapes <-> total_shapes (computed)
+   mismatched_summary = sorted (lsort -dictionary) list of field NAMES whose
+   SUMMARY value differs from the computed value. If a SUMMARY field is absent
+   (not provided), do not report it as mismatched. If NO SUMMARY line is
+   present, mismatched_summary is the EMPTY list.
+9. verdict (single string, by priority — first match wins):
+     dup_gdsno non-empty                  -> "FAIL"
+     missing_purpose_layers non-empty     -> "INCOMPLETE"
+     no SUMMARY present                   -> "INCOMPLETE"
+     otherwise                            -> "PASS"
+   NOTE: if both dup_gdsno and missing_purpose_layers are non-empty, FAIL wins
+   (dup has priority). missing SUMMARY yields "INCOMPLETE" only when there is
+   no dup and no missing-purpose layer; it is "PASS" only when a SUMMARY is
+   present AND no dup AND no missing-purpose.
+
+Return the dict with `dict create` in the exact key order above. All
+list-valued keys must be lexicographically sorted with `lsort -dictionary`.
+
+EXAMPLE
+Input:
+  # GDS layer map INVX1 at 2026-10-30 06:00:00
+  LAYER M1 gdsno=1 datatype=0 purpose=drawing count=10
+  LAYER M2 gdsno=2 datatype=0 purpose=drawing count=5
+  LAYER M1PIN gdsno=1 datatype=10 purpose=pin count=3
+  SUMMARY total_layers=3 total_shapes=18
+Expected dict (key order as above):
+  total_layers 3  total_shapes 18  drawing_layers {M1 M2}  pin_layers {M1PIN}
+  label_layers {}  dup_gdsno {}  missing_purpose_layers {}  max_shape_layer M1
+  mismatched_summary {}  verdict PASS

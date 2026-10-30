@@ -1,0 +1,109 @@
+# Scenario: an analog/full-chip QA engineer receives an emy2netlist-exported
+# SPICE netlist fragment of X-sub-circuit instantiations interspersed with
+# `.subckt`/`.ends`/`.global`/`.param` dot-commands and `*` comments. Before
+# tape-in they must audit NET CONNECTIVITY: count how many times every net
+# appears as a connection point across all X-instantiations, flag FLOATING
+# nets (exactly one connection, not a power/ground reference), classify
+# POWER/GROUND nets (by name rule, by the SPICE global ground node `0`, and by
+# `.global` declaration), report the max-fanout net, and emit a verdict that
+# combines floating detection with sparse-power detection (a power/ground net
+# with fewer than two connections is a power-integrity warning).
+#
+# You are given ONE multi-line string `netlist_text`.
+#
+# LINE CLASSIFICATION (strict):
+#   - A line whose first non-space character is `*` is a COMMENT: it is
+#     ignored AND it BREAKS a pending `+` continuation.
+#   - A blank (empty after trim) line is ignored AND BREAKS a pending `+`
+#     continuation.
+#   - A line whose first non-space character is `.` is a DOT-COMMAND
+#     (`.subckt`/`.ends`/`.global`/`.param`/`.option`/`.lib`/`.include`/...):
+#     it is NOT an instance; it is ignored for the connection map (but
+#     `.global` declarations are recorded -- see below) AND it BREAKS a
+#     pending `+` continuation.
+#   - A line whose first non-space character is `+` is a CONTINUATION: the
+#     `+` is stripped, the remainder is appended (space-joined) to the
+#     previous instance line, and the joined line is then processed as one
+#     instance. A continuation is only attached to the immediately preceding
+#     instance line; if a comment / blank / dot-command / non-instance line
+#     sits between them, the continuation is BROKEN and the `+...` line is
+#     ignored.
+#   - A line whose first non-space character is `X` or `x` is an
+#     X-INSTANTIATION. All other leading-letter lines are ignored (not
+#     instances) AND BREAK a pending continuation.
+#
+# X-INSTANCE TOKENIZATION:
+#   - Tokenize the (continuation-joined) line on spaces/tabs; drop empty
+#     tokens. The instance must have at least 3 tokens (`Xname` + >=1 node +
+#     subname); otherwise ignore it.
+#   - The FIRST token is the instance name (dropped, not a node).
+#   - A token containing `=` is a PARAMETER: it is NOT a node and NOT the
+#     subckt name.
+#   - Among the remaining (non-`=`) tokens, the LAST one is the SUBCKT NAME
+#     (dropped, not a node); all the others are NODES.
+#   - Each NODE OCCURRENCE increments that net's connection count by 1. A net
+#     listed twice in the SAME instance (e.g. `X1 a a INV`) counts as TWO
+#     connections -- do NOT dedup within an instance.
+#
+# POWER/GROUND CLASSIFICATION:
+#   A net is power/ground-class iff ANY of:
+#     (a) its name is exactly `0` (the SPICE global ground node); OR
+#     (b) its lowercased name, after stripping a single trailing `!`, matches
+#         any of the globs `gnd*` `vdd*` `vss*` `vcc*` `avdd*` `avss*`
+#         `dvdd*` `dvss*` (case-INSENSITIVE; `!`-stripped; glob suffix
+#         allowed -- e.g. `gnd!`, `AVDD`, `vss0`, `avdd_analog` all match); OR
+#     (c) it is named on any `.global` declaration line (`.global n1 n2 ...`
+#         declares each subsequent whitespace-separated token as a global
+#         net), regardless of whether its name matches the globs in (b).
+#   A power/ground net is NEVER reported as floating, even if it has only one
+#   connection. A power/ground net with fewer than two connections raises a
+#   SPARSE-POWER condition.
+#   A `.global`-declared net that never appears as a node in any
+#   X-instantiation is NOT included in any output list (it is not in the net
+#   map) and does NOT raise sparse-power.
+#
+# Implement
+#     netlist_fanout_floating_audit {netlist_text}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys, in this
+# order (counts as decimal strings; net lists as Tcl lists of strings):
+#
+#   total_nets           -- number of UNIQUE nets seen as nodes in
+#                           X-instantiations.
+#   total_connections    -- sum of all per-net connection counts (every node
+#                           occurrence across all instances).
+#   floating_nets        -- list of nets with connection count == 1 AND NOT
+#                           power/ground-class, LEXICOGRAPHICALLY sorted
+#                           (lsort -dictionary).
+#   floating_count       -- [llength $floating_nets].
+#   power_ground_nets    -- list of UNIQUE nets that are power/ground-class
+#                           AND that appear as a node in some
+#                           X-instantiation, LEXICOGRAPHICALLY sorted.
+#   power_ground_count   -- [llength $power_ground_nets].
+#   multi_connect_count  -- number of UNIQUE nets with connection count >= 2.
+#   max_fanout_net       -- the net with the highest connection count; on a
+#                           tie, the LEXICOGRAPHICALLY SMALLEST net wins; the
+#                           empty string "" if there are no nets at all.
+#   max_fanout_count     -- that highest connection count; "0" if no nets.
+#   verdict              -- "clean"        if floating_count == 0 AND no
+#                                                  power/ground net has < 2
+#                                                  connections;
+#                          "floating"     if floating_count  > 0 AND no
+#                                                  power/ground net has < 2
+#                                                  connections;
+#                          "sparse_power" if floating_count == 0 AND some
+#                                                  power/ground net has < 2
+#                                                  connections;
+#                          "both"         if floating_count  > 0 AND some
+#                                                  power/ground net has < 2
+#                                                  connections.
+#
+# Implement in Tcl using ONLY Tcl builtins (no external packages). The runtime
+# is Synopsys Custom WaveView Tcl (host=waveview). Use `split` on newline,
+# `string map` to drop `\r`, `string trim`, `string index`, `string tolower`,
+# `string match` for the power/ground globs, `string match *=* $tok` to detect
+# params, `lsort -dictionary` for all output lists and for the
+# lex-smallest-tie-break max-fanout scan, `info exists` / `array` for the
+# connection map and the `.global` set, and `dict create` to build the
+# returned dict in the exact key order above. Do NOT rely on Perl-style regex
+# classes (\b \s \d \w); the WaveView Tcl regexp supports POSIX classes
+# ([[:space:]] etc.) if you need them, but pure string ops suffice.

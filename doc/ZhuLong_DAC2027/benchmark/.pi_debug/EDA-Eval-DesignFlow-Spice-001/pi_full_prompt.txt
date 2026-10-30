@@ -1,0 +1,70 @@
+Implement the Tcl proc described below. This is a pure text-parsing task; you do NOT need to call any tool or run anything. Output ONLY the completed `proc spice_summarize_measure_lis {path} { ... }` inside a single ```tcl fenced block, and nothing else. Runtime is Synopsys WaveView ACE Tcl: use POSIX regex classes ([[:space:]], [A-Za-z0-9_]) not \s/\w.
+
+# Scenario: you are part of an analog characterization team that runs
+# Synopsys HSPICE (2020.12) on a foundry PDK (cxmt10G4plus) to characterize
+# a delay cell (DUT: R_RasVdbiasDlyStd_gut_MC, a 4-tube delay cell whose
+# MP0/MN0/MP10/MN15 sizes are swept). The team's recurring workflow is:
+# write a .sp testbench -> run hspice -> read the .lis listing that HSPICE
+# emits -> extract every .measure result -> hand the characterization lead a
+# compact measurement scoreboard (counts, mean, worst-case / best-case delay,
+# range) so the lead can see, at a glance, how the delay behaves across the
+# corners / sweep points.
+#
+# You are given one HSPICE .lis listing file (attached: meas.lis). Its format:
+#   * Lines starting with '#' are comments (header / metadata) -- ignore them.
+#   * Blank lines and the '****** ...' job banner lines -- ignore them.
+#   * '.measure tran <name> trig ... targ ...' lines are the measurement
+#     *declarations* -- ignore them (they carry no result value).
+#   * Operating-point lines like 'operating point: vdd = 1.1' or
+#     'node voltage = 0.55' are NOT measurement results -- ignore them.
+#   * A MEASUREMENT-RESULT line has the exact form:
+#         <name> = <value>  targ = <num>  trig = <num>
+#     where <value> is a floating-point number in scientific notation
+#     (e.g. 1.2345e-09). The <name> is the measurement name (letters, digits,
+#     underscore). The trailing 'targ = <num>  trig = <num>' is the trigger/
+#     target cross-time; you must IGNORE those trailing numbers -- the
+#     measurement value you want is the FIRST number after the '='.
+#
+# Task: implement spice_summarize_measure_lis, which reads the .lis file and
+# RETURNS a flat Tcl dict string (key value pairs, space-separated) with
+# exactly these nine keys:
+#
+#     total_measurements = number of measurement-result lines parsed
+#     sum_values         = sum of all measurement values (float)
+#     mean_value         = sum_values / total_measurements (float)
+#     max_value          = the largest measurement value (float)
+#     max_name           = the name of the measurement with max_value
+#                          (ties broken by first-encountered)
+#     min_value          = the smallest measurement value (float)
+#     min_name           = the name of the measurement with min_value
+#                          (ties broken by first-encountered)
+#     range              = max_value - min_value (float)
+#     num_nonzero        = number of measurements whose value is non-zero
+#
+# Rules:
+#   * Only count lines that match the
+#         <name> = <value>  targ = ...
+#     pattern (i.e. a name, an '=', a scientific-notation value, then the
+#     literal token 'targ'). Do NOT count '.measure' declaration lines,
+#     comments, blanks, or operating-point lines.
+#   * The measurement value is the FIRST number after '='; ignore the
+#     targ=/trig= numbers that follow.
+#   * Do NOT write any file -- just return the dict string.
+#   * Float values may be emitted in any standard numeric format (e.g.
+#     1.2345e-09, 1.2345E-9, 0.0000000012345); the checker parses them
+#     numerically with a tolerance.
+#
+# Runtime note: the runtime is Synopsys WaveView ACE Tcl. It supports POSIX
+# regex classes ([[:space:]], [A-Za-z0-9_]) but does NOT support the \s and
+# \w shortcuts -- use the POSIX forms in your regexp.
+#
+# Args:
+#   path - path to the meas.lis file
+# Returns:
+#   A string: "total_measurements <N> sum_values <F> mean_value <F>
+#   max_value <F> max_name <name> min_value <F> min_name <name>
+#   range <F> num_nonzero <N>"
+#
+# proc spice_summarize_measure_lis {path} {
+#     # your code here
+# }

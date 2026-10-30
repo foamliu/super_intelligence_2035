@@ -1,0 +1,4 @@
+=== pi debug start Thu Oct 29 09:10:26 AM CST 2026 ===
+=== pi exit=124 end Thu Oct 29 09:35:26 AM CST 2026 ===
+=== outputs dir ===
+ls: cannot access 'outputs': No such file or directory

@@ -1,0 +1,15 @@
+=== pi-SUT Aether-009 start 2026-10-30 09:35:14 ===
+=== pi exit=0 end 2026-10-30 09:41:39 ===
+=== tail pi_run.log ===
+Implementation verified on the Empyrean WaveView Tcl sandbox.
+
+The `layout_routing_audit` proc is implemented in `./layout_routing_audit.tcl` and handles all the tricky semantics: case-insensitive status, last-wins dedup of duplicate nets, status inference from segments when absent, multi-layer-0-via missing-via detection, layer dedup/empty handling, the single-segment watchlist regardless of status, max_segments over non-skipped nets only with dictionary-order tie-breaks, numeric/string SUMMARY comparisons, and the FAIL > INCOMPLETE > PASS verdict priority.
+
+Sandbox run output:
+```
+ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+DESIGN_FLOW_VERDICT=PASS

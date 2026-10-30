@@ -1,0 +1,79 @@
+# Scenario: a Cadence Virtuoso resistance-reduction flow (cf. Virtuoso-Flow-001
+# config-consolidation, Virtuoso-Flow-002 static-config-DAG-validation, and
+# Virtuoso-Flow-003 dynamic-runlog-audit) is driven by an orchestrator that runs
+# the batch SKILL steps (rscalc / pe / autovia / ...) and, at the end of each
+# run, writes a single ARTIFACT MANIFEST. The manifest records, for each step,
+# its final status and the files it produced (path, size in bytes, checksum,
+# whether it is a signoff artifact), plus a global `declared_outputs` mapping
+# each step name to the path PREFIX the step is contractually supposed to write
+# under. Before the run's deliverables are handed to signoff, the team runs a
+# manifest reconciler that catches the mistakes that actually corrupt
+# downstream consumption: a step marked PASS that produced NO artifact (its
+# output silently vanished), a FAIL/SKIP step that nonetheless lists artifacts
+# (stale leftovers from a prior run leaking into this delivery), a zero-byte
+# artifact under a PASS step (a truncated write), a signoff-flagged artifact
+# with no checksum (cannot be integrity-verified), and a basename collision
+# across two steps (two steps writing the same filename into the shared
+# delivery directory, one overwriting the other).
+#
+# Input:
+#   `manifest_text` -- the artifact manifest, line-oriented. Sections:
+#     * `[declared_outputs]`  -- lines `step = /prefix/path/` mapping a step
+#                                name to the path PREFIX it must write under.
+#                                A step may appear at most once here (duplicates
+#                                are last-wins). Steps NOT listed here have no
+#                                declared prefix (prefix is the empty string).
+#     * `[step:<name>]`       -- per-step block. Within it, exactly one line
+#                                `status = <PASS|FAIL|SKIP>` (a step may have
+#                                MORE THAN ONE `[step:<name>]` block -- the
+#                                LAST block fully overwrites the earlier one:
+#                                last-wins status AND last-wins artifact list,
+#                                the earlier block is entirely discarded, NOT
+#                                merged). Then zero or more `artifact = ` lines
+#                                of the form
+#                                  artifact = <path>|<size>|<checksum>|<signoff>
+#                                where <size> is an integer >= 0, <checksum> is
+#                                a hex string (may be EMPTY), and <signoff> is
+#                                the literal token `true` or `false`.
+#     * any other section     -- ignored (not an error).
+#   Blank lines and lines whose first non-space char is `;` or `#` are skipped.
+#
+# Reconciliation rules:
+# 1. total_steps: the number of DISTINCT step names that have at least one
+#    `[step:<name>]` block (after last-wins collapse). Integer.
+# 2. pass_steps: count of steps whose (last-wins) status is `PASS`. Integer.
+# 3. fail_steps: count whose status is `FAIL`. Integer.
+# 4. skip_steps: count whose status is `SKIP`. Integer.
+# 5. missing_artifacts: step names whose (last-wins) status is `PASS` but whose
+#    (last-wins) artifact list is EMPTY (zero artifact lines). These are
+#    silently-dropped outputs. SORTED (lsort) list of step names.
+# 6. ghost_artifacts: artifact PATHS listed under a step whose (last-wins)
+#    status is `FAIL` or `SKIP` (stale leftovers that must not be delivered).
+#    SORTED list of the PATHS (not the step names).
+# 7. zero_byte_artifacts: artifact PATHS whose size == 0 AND whose owning
+#    step's (last-wins) status is `PASS` (a truncated write under a step that
+#    claimed success). Artifacts under FAIL/SKIP steps are NOT reported here
+#    (they are already ghosts). SORTED list of paths.
+# 8. missing_checksum_signoff: artifact PATHS whose signoff flag is `true` but
+#    whose checksum is EMPTY, regardless of step status. SORTED list of paths.
+# 9. name_collisions: artifact BASENAMES (the substring after the last `/`; if
+#    the path has no `/`, the whole path is the basename) that appear under TWO
+#    OR MORE DISTINCT steps. Report each colliding basename ONCE. SORTED list of
+#    basenames. (The same basename appearing twice under the SAME step is NOT a
+#    collision -- it is a per-step duplicate, not a cross-step collision.)
+# 10. verdict: `clean` iff ALL of missing_artifacts, ghost_artifacts,
+#     zero_byte_artifacts, missing_checksum_signoff and name_collisions are
+#     empty; otherwise `dirty`.
+#
+# Return a FLAT Tcl dict with EXACTLY these keys in this order:
+#       total_steps pass_steps fail_steps skip_steps missing_artifacts
+#       ghost_artifacts zero_byte_artifacts missing_checksum_signoff
+#       name_collisions verdict
+#    total/pass/fail/skip are integers; the next five are Tcl lists (sorted);
+#    verdict is a string (`clean` or `dirty`).
+#
+# Implement `proc vflow_manifest_audit {manifest_text} { ... }` in Tcl. Use only
+# Tcl builtins (no external packages). The runtime is Empyrean WaveView Tcl
+# (waveview host), which supports `dict`, `regexp`, `split`, `lassign`, POSIX
+# character classes `[[:space:]]` / `[[:alnum:]_]` in regexps -- do NOT rely on
+# `\s` / `\d` / `\b`.

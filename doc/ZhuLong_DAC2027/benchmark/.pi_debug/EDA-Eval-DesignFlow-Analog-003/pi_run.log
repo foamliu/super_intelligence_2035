@@ -1,0 +1,159 @@
+Implementation verified on the Synopsys WaveView Tcl sandbox. The final `hspice_meas_script_parse` proc:
+
+```tcl
+proc hspice_meas_script_parse {script} {
+    set lines [split $script "\n"]
+    set stmts {}
+    set cur -1
+    foreach raw $lines {
+        set line [string trim $raw]
+        if {$line eq ""} { continue }
+        set c0 [string index $line 0]
+        if {$c0 eq "*"} { continue }
+        if {$c0 eq "+"} {
+            if {$cur >= 0} {
+                set cont [string range $line 1 end]
+                set ctoks [regexp -all -inline -- {[^[:space:]]+} $cont]
+                set st [lindex $stmts $cur]
+                set old [lindex $st 1]
+                lset stmts $cur 1 [concat $old $ctoks]
+            }
+            continue
+        }
+        set toks [regexp -all -inline -- {[^[:space:]]+} $line]
+        lappend stmts [list [lindex $toks 0] $toks]
+        set cur [expr {[llength $stmts] - 1}]
+    }
+
+    set param_count 0
+    set measure_count 0
+    set bodiless_count 0
+    set mode_trig_targ 0
+    set mode_when 0
+    set mode_find_when 0
+    set mode_param 0
+    set mode_unknown 0
+    set has_differential 0
+    set has_td_reference 0
+    set measures_with_quoted_param_level 0
+    set dual_trig_no_targ 0
+    set td_refs {}
+    set measure_names {}
+
+    foreach st $stmts {
+        set kind [lindex $st 0]
+        set toks [lindex $st 1]
+        if {$kind eq ".param"} { incr param_count; continue }
+        if {$kind ne ".meas"} { continue }
+        incr measure_count
+        set name ""
+        if {[llength $toks] >= 2} {
+            set t1 [lindex $toks 1]
+            if {$t1 eq "tran" || $t1 eq "ac" || $t1 eq "dc"} {
+                set name [lindex $toks 2]
+            } else {
+                set name $t1
+            }
+        }
+        lappend measure_names $name
+
+        set trig 0; set targ 0; set when 0; set find 0; set pflag 0
+        set qpl 0
+        set n [llength $toks]
+        for {set i 0} {$i < $n} {incr i} {
+            set t [lindex $toks $i]
+            if {$t eq "trig"} { incr trig }
+            if {$t eq "targ"} { incr targ }
+            if {$t eq "when"} { incr when }
+            if {$t eq "find"} { incr find }
+            if {[string match {param=*} $t]} { set pflag 1 }
+            if {[string match {td=*} $t]} {
+                set tdval [string range $t 3 end]
+                if {![regexp -- {^[0-9.]+([pnumkKMgGxXuU]?|[Mm][Ee][Gg])?$} $tdval]} {
+                    set has_td_reference 1
+                    lappend td_refs $tdval
+                }
+            }
+            if {[string match {v(*} $t]} {
+                set inside [string range $t 2 end-1]
+                if {[string first "," $inside] >= 0} { set has_differential 1 }
+            } elseif {[string match {find(*} $t]} {
+                set inside [string range $t 5 end-1]
+                if {[string first "," $inside] >= 0} { set has_differential 1 }
+            } elseif {$t eq "find" && [expr {$i+1}] < $n} {
+                set nt [lindex $toks [expr {$i+1}]]
+                if {[string match {(*} $nt]} {
+                    set inside [string range $nt 1 end-1]
+                    if {[string first "," $inside] >= 0} { set has_differential 1 }
+                }
+            }
+            if {[string match {'*} $t] && [string length $t] >= 2 && [string index $t end] eq "'"} {
+                if {$i >= 2} {
+                    set eq [lindex $toks [expr {$i-1}]]
+                    set vsig [lindex $toks [expr {$i-2}]]
+                    if {$eq eq "=" && [string match {v(*} $vsig]} {
+                        set inner [string range $t 1 end-1]
+                        if {![regexp -- {^[0-9.]+([pnumkKMgGxXuU]?|[Mm][Ee][Gg])?$} $inner]} {
+                            set qpl 1
+                        }
+                    }
+                }
+            }
+        }
+        if {$qpl} { incr measures_with_quoted_param_level }
+
+        set has_clause 0
+        if {$trig > 0 || $targ > 0 || $when > 0 || $find > 0 || $pflag} { set has_clause 1 }
+        if {!$has_clause} {
+            incr bodiless_count
+            incr mode_unknown
+        } elseif {$pflag} {
+            incr mode_param
+        } elseif {$find > 0} {
+            incr mode_find_when
+        } elseif {$when > 0 && $trig == 0 && $targ == 0} {
+            incr mode_when
+        } elseif {$trig > 0 || $targ > 0} {
+            incr mode_trig_targ
+        } else {
+            incr mode_unknown
+        }
+
+        if {$trig >= 2 && $targ == 0} { incr dual_trig_no_targ }
+    }
+
+    set trs "none"
+    if {[llength $td_refs] > 0} { set trs [join $td_refs ","] }
+    set nms [join $measure_names " "]
+    set parts [list \
+        param_count $param_count \
+        measure_count $measure_count \
+        bodiless_count $bodiless_count \
+        mode_trig_targ $mode_trig_targ \
+        mode_when $mode_when \
+        mode_find_when $mode_find_when \
+        mode_param $mode_param \
+        mode_unknown $mode_unknown \
+        has_differential $has_differential \
+        has_td_reference $has_td_reference \
+        measures_with_quoted_param_level $measures_with_quoted_param_level \
+        dual_trig_no_targ $dual_trig_no_targ \
+        td_references $trs \
+        measure_names $nms]
+    return [join $parts " "]
+}
+```
+
+Key design points:
+- Line-merging pass first: `+` continuation lines append to the most-recent non-comment statement; `*`/blank lines never break continuation.
+- Tokenizing with POSIX class `{[^[:space:]]+}` handles tabs and runs of whitespace.
+- Clause detection by whole-token equality (`trig`/`targ`/`when`/`find`); `param=` clause detected by token prefix, which survives the arithmetic expression being split on internal spaces.
+- Mode precedence `param > find_when > when > trig_targ > unknown`, with bodiless ⇒ `unknown`.
+- Numeric-literal check uses `^[0-9.]+([pnumkKMgGxXuU]?|[Mm][Ee][Gg])?$`; only quotes attached to `v(...)` `=` count toward `measures_with_quoted_param_level`.
+
+Sandbox results:
+```
+DESIGN_FLOW_VERDICT=PASS
+DETAIL=PASS 6 / FAIL 0 (6 cases)
+```
+=== pi exit=143 end Thu Oct 29 09:34:35 PM CST 2026 ===

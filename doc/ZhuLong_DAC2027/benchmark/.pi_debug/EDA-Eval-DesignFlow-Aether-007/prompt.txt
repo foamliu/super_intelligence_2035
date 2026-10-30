@@ -1,0 +1,86 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual antenna-rule-check report for a layout cellview.
+This is a pure text-analysis task (no EDA tool calls needed to produce the
+answer); you will verify your implementation on the Empyrean WaveView Tcl
+sandbox.
+
+TASK
+Implement the Tcl proc `layout_antenna_audit` that takes ONE string argument
+`report_text` (the full antenna-check report text) and returns a flat Tcl dict
+with EXACTLY these 10 keys, in this exact order:
+
+    total_nets  total_lines  pass_count  warn_count  fail_count
+    skip_count  worst_net  max_ratio  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# Antenna check ..." header
+may appear and is ignored):
+
+  NET <name> layer=<L> gate_area=<N> diode_area=<N> ratio=<float> limit=<float> status=<S>
+  SUMMARY nets_checked=<N> violations=<N> warns=<N> skipped=<N> max_ratio=<float> worst_net=<name>
+
+  - <name>  : a bare token (the net name), e.g. vdd, n1, clk.
+  - <L>     : a bare token (the layer name), e.g. M1, M2, VIA1.
+  - gate_area=  : a non-negative number. Field may be ABSENT (kept for record only).
+  - diode_area= : a non-negative number. Field may be ABSENT (kept for record only).
+  - ratio=      : a non-negative float (the computed antenna ratio). May be ABSENT.
+  - limit=      : a non-negative float (the antenna limit). May be ABSENT.
+  - status=     : one of PASS | WARN | FAIL | SKIP (case-insensitive). May be ABSENT.
+  - SUMMARY carries 6 fields (each may be present or absent).
+
+NOTE: gate_area and diode_area appear in real reports but are NOT used in any
+output key (red herrings). Do not let them affect any computed value.
+
+SEMANTICS (read carefully — a naive implementation fails several of these):
+
+1. total_nets  = number of DISTINCT net names across all NET lines (after dedup).
+2. total_lines = number of DISTINCT (net, layer) pairs across all NET lines.
+   DUPLICATE (net, layer) pair: LAST occurrence WINS (replace ALL fields —
+   ratio/limit/status — not sum, not first-wins). The pair counts ONCE in
+   total_lines.
+3. status is CASE-INSENSITIVE ("fail", "FAIL", "Fail" all match FAIL). When
+   status is ABSENT, infer it from ratio vs limit: FAIL if ratio > limit,
+   else PASS (status absent NEVER becomes WARN or SKIP).
+4. pass_count / warn_count / fail_count / skip_count = number of dedup'd
+   (net, layer) lines whose EFFECTIVE status is PASS / WARN / FAIL / SKIP.
+   warn_count counts ONLY explicit status=WARN (never inferred).
+5. ratio == limit -> PASS (inclusive). FAIL only when ratio STRICTLY greater
+   than limit. (Applies to both inferred status and reconciliation.)
+6. missing limit= -> default 400.0. missing ratio= -> default 0.0 (always
+   PASS unless 0 > limit which is impossible).
+7. worst_net / max_ratio: computed over NON-SKIP lines ONLY. SKIP lines are
+   EXCLUDED from max_ratio/worst_net even if their ratio is the highest in
+   the file. max_ratio = the maximum ratio among non-SKIP lines (default 0.0
+   if a non-SKIP line has missing ratio=). If there are NO non-SKIP lines,
+   max_ratio = -1.0 and worst_net = "" (empty string).
+8. worst_net tie at max_ratio: among non-SKIP lines whose ratio equals
+   max_ratio, pick the LEXICOGRAPHICALLY SMALLEST net name
+   (lsort -dictionary). (Same net name on two layers tying -> that net.)
+9. mismatched_summary: list of SUMMARY field names whose provided value
+   mismatches the computed value. Compared:
+     - nets_checked, violations, warns, skipped : INTEGER equality
+     - max_ratio : NUMERIC equality (expr ==), so "100.0" matches 100
+     - worst_net : STRING equality
+   ABSENT SUMMARY fields are NOT reported (do not appear in the list).
+   Empty list if there is no SUMMARY line.
+   Computed values: nets_checked=total_lines, violations=fail_count,
+   warns=warn_count, skipped=skip_count, max_ratio and worst_net as above.
+10. verdict priority (top first):
+      fail_count > 0                              -> "FAIL"
+      mismatched_summary non-empty OR no SUMMARY  -> "INCOMPLETE"
+      otherwise                                   -> "PASS"
+
+RETURN a flat Tcl dict created with `dict create` in EXACTLY the order above.
+The only list-valued key is mismatched_summary; it is lex-sorted with
+`lsort -dictionary`. All other keys are scalars (integers, floats, or strings).
+
+CONSTRAINTS
+- Empyrean WaveView Tcl: NO Perl classes (\b \s \d \w). Use POSIX classes
+  ([[:space:]], [^[:space:]]) in regexp. Use `split` on newline, `string trim`,
+  `string match` globs (e.g. "ratio=*"), `lsort -dictionary` for lexicographic
+  sort + tie-breaks, `array`/`info exists` for sets, `dict create` for the
+  returned dict in exact key order. Compare floats NUMERICALLY (expr ==), NOT
+  with `string equal` (so "100.0" equals 100). Avoid `lassign` if unsure; use
+  `lindex`.
+- The checker builds all fixtures inline (no external files). Pure text +
+  float/integer math. No EDA tool calls.

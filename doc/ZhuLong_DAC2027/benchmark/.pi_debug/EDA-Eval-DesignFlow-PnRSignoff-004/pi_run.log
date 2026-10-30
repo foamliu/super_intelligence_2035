@@ -1,0 +1,14 @@
+Implemented and verified. The Tcl solution parses the log with a small state machine:
+
+- Sorts lines into **stage markers** (`# Stage: route_complete` flips `late=1`, exact-name only), **severity lines** (`**ERROR:`/`**WARNING:`/`**INFO:`), **continuation lines** (leading whitespace, non-empty after trim, not `**`), and **ignored** lines.
+- Builds each message's merged text (first-line text + trimmed continuations), extracts the optional `(IMPRPT-NNNN)` id, and groups `ERROR`s into `waived`/`blocking`/`early` via the whole-token `WAIVED` POSIX regex `(^|[[:space:]])WAIVED([[:space:]]|$)`.
+- Tracks distinct ids and distinct blocking ids, all counts returned as strings via `dict create`.
+
+Local `tclsh 8.6.14` run: `CHECK_RESULT:ALL_ASSERTS_PASS` (all 6 fixture cases A–F).
+
+WaveView Tcl sandbox (`.75`, `open_session` → `run_code lang=tcl host=waveview` → `close_session keep=false`): `error_log` empty, output:
+
+`CHECK_RESULT:ALL_ASSERTS_PASS`
+
+DESIGN_FLOW_VERDICT=PASS
+=== pi exit=0 end Thu Oct 29 11:39:06 PM CST 2026 ===

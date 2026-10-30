@@ -1,0 +1,52 @@
+# Scenario: a PDK-QA team runs a Calibre DRC "emptyDeriveLayer" probe to catch
+# derived layers in the DRC Deck that resolve to NO shapes (i.e. the derivation
+# is dead/empty). The probe works by generating, for each derived layer, a
+# `deriveCheck_<LAYER>` DRC rule that INTENTIONALLY flags that layer's shapes as
+# DRC errors, then submitting one Calibre DRC job per derived layer and reading
+# the per-rule error count out of the DRC summary.
+#
+# THE KEY TRAP -- the verdict semantics are INVERTED from a normal DRC run:
+#     error_count > 0  -> the derived layer HAS shapes   -> the layer is OK
+#     error_count == 0 -> the derived layer is EMPTY     -> a real problem
+# (a normal DRC rule treats 0 errors as PASS; here 0 errors means the layer
+# produced nothing, which is exactly the defect the probe is hunting.)
+# On top of that, a known WAIVE list (e.g. FB_CMP, POWER_SINGLE, VOLTAGE_L,
+# VOLTAGE_H, PROBEPAD) must be honored: a WAIVED layer that comes back empty
+# is NOT a problem (it is expected/allowed) -- it is tracked separately and
+# must NOT be reported as a defect.
+#
+# You are given the DRC summary text `summary` (one `RULE: deriveCheck_<LAYER>
+# ERRORS: <n>` line per probed derived layer, possibly with leading whitespace,
+# extra spaces, or lower-case keywords) and a Tcl list `waive_list` of waived
+# layer names (possibly empty). Implement
+#     calibre_empty_derive_layer_classify {summary {waive_list {}}}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys, all as
+# string values (use "none" for an empty list field):
+#
+#   total_derive_layers  -- number of `deriveCheck_<LAYER>` rules parsed.
+#   has_shapes_count     -- number of probed layers with error_count > 0
+#                           (layer has shapes = OK).
+#   empty_count          -- number of probed layers with error_count == 0
+#                           (layer is empty).
+#   waived_empty_count   -- number of empty layers whose name is in waive_list.
+#   empty_unwaived       -- comma-joined, alphabetically sorted (lsort) list of
+#                           empty layers whose name is NOT in waive_list -- the
+#                           real defects to report; "none" if there are none.
+#   verdict              -- "pass" if empty_unwaived is empty, else "fail".
+#   fail_reasons         -- semicolon-joined ids "empty_unwaived:<LAYER>" for
+#                           each defect in empty_unwaived (in the same sorted
+#                           order); "none" if verdict is "pass".
+#
+# Parsing rules:
+#   * a rule line matches (case-insensitive) `rule:` then `deriveCheck_` then
+#     the layer name (run of non-whitespace) then `errors:` then an integer.
+#     Use POSIX classes (`[[:space:]]`, `[^[:space:]]`, `[0-9]`); the waveview
+#     Tcl `regexp` does NOT support `\b` / `\s` / `\d` escapes.
+#   * lines that do not match (comments, headers, totals) are ignored.
+#   * each layer is probed exactly once; you do not need to deduplicate.
+#   * waive_list membership is an exact, case-sensitive string match.
+#
+# NOTE on the runtime Tcl: this is the Synopsys Custom WaveView Tcl sandbox
+# (host=waveview). `dict create` makes the keys enumerable with `dict get`.
+#
+# proc calibre_empty_derive_layer_classify {summary {waive_list {}}} -> dict

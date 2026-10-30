@@ -1,0 +1,28 @@
+# Scenario: a verification sign-off tool must report how many signals were
+# captured in a regression waveform dump, e.g. to gate a coverage closure
+# review (only dumps with enough signals are worth analyzing). The waveform
+# is a Synopsys FSDB database.
+#
+# Environment: Synopsys Custom WaveView ACE Tcl. Useful API entry points:
+#   sx_open_sim_file_read <path>   -> returns a file object handle
+#   sx_first_wave   <file_obj>     -> first signal handle (or "NULL")
+#   sx_next_wave    <wave_obj>     -> next signal handle (or "NULL")
+#   sx_get_name     <wave_obj>     -> hierarchical signal name string
+#   sx_close_sim_file <file_obj>   -> release the file
+#
+# Task: implement wv_count_signals, which opens the FSDB at fsdb_path,
+# iterates every signal (wave) in it, and returns the total signal count as
+# an integer. Must return 0 when the file has no signals.
+proc wv_count_signals {fsdb_path} {
+    # your code here
+}
+
+You have an 'eda_flow' MCP server connected (tools: open_session, run_code, run_code, close_session, etc.) that gives you access to a Synopsys Custom WaveView ACE Tcl sandbox on a remote EDA host.
+
+Workflow you MUST follow:
+1. Call eda_flow.open_session (task_id='WAVE-001-PI', eval_id='20261029-pi', user='pi_sut', sample='0') to get a workdir.
+2. Write your candidate proc wv_count_signals to a .tcl file in the workdir, then call eda_flow.run_code with lang='tcl', host='waveview', workdir=<workdir> to source it and run it against the fsdb '/apps/synopsys/verdi/Verdi_M-2017.03-SP2-9/demo/mixed/mixed.fsdb'. Print the result.
+3. The expected answer is 240 signals. Confirm your proc returns 240.
+4. Call eda_flow.close_session with the workdir to clean up.
+
+At the end, output your final proc wv_count_signals in a single fenced tcl code block, and state PASS or FAIL with the count you observed.

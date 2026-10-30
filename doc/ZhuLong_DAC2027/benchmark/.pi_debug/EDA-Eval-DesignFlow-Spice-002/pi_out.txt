@@ -1,0 +1,127 @@
+```tcl
+proc spice_parse_mt0_sram {path} {
+    set fh [open $path r]
+    set content [read $fh]
+    close $fh
+
+    set lines [split $content "\n"]
+    set line_no 0
+    set colnames {}
+    set rows {}
+
+    foreach line $lines {
+        if {[string trim $line] eq ""} {
+            continue
+        }
+        incr line_no
+        if {$line_no <= 2} {
+            continue
+        }
+        set tokens [regexp -all -inline {[^[:space:]]+} $line]
+        if {$line_no == 3} {
+            set colnames $tokens
+        } else {
+            lappend rows $tokens
+        }
+    }
+
+    if {[llength $colnames] == 0} {
+        return ""
+    }
+
+    array set val {}
+    set result {}
+    set num 0
+    set max_iread 0.0
+    set max_iwrite 0.0
+    set iread_mono 1
+    set iwrite_mono 1
+
+    foreach row $rows {
+        foreach name $colnames token $row {
+            set val($name) $token
+        }
+
+        set vdd_s $val(vdd)
+        set iread_max_s $val(iread_max)
+        set iread_min_s $val(iread_min)
+        set iwrite_max_s $val(iwrite_max)
+        set iwrite_min_s $val(iwrite_min)
+        set vq_peak_s $val(vq_peak)
+        set vq_end_s $val(vq_end)
+
+        set vdd [expr {double($vdd_s)}]
+
+        set imx [expr {abs(double($iread_max_s))}]
+        set imn [expr {abs(double($iread_min_s))}]
+        set iread_ua [expr {(($imx > $imn) ? $imx : $imn) * 1000000.0}]
+
+        set iwx [expr {abs(double($iwrite_max_s))}]
+        set iwn [expr {abs(double($iwrite_min_s))}]
+        set iwrite_ua [expr {(($iwx > $iwn) ? $iwx : $iwn) * 1000000.0}]
+
+        set vq_peak [expr {double($vq_peak_s)}]
+        set vq_end [expr {double($vq_end_s)}]
+        set vhalf [expr {$vdd / 2.0}]
+        set read_stable [expr {($vq_peak < $vhalf) ? 1 : 0}]
+        set write_ok [expr {($vq_end < $vhalf) ? 1 : 0}]
+
+        if {$num == 0} {
+            set max_iread $iread_ua
+            set max_iwrite $iwrite_ua
+        } else {
+            if {$iread_ua > $max_iread} {set max_iread $iread_ua}
+            if {$iwrite_ua > $max_iwrite} {set max_iwrite $iwrite_ua}
+            if {$iread_ua < $prev_iread} {set iread_mono 0}
+            if {$iwrite_ua < $prev_iwrite} {set iwrite_mono 0}
+        }
+        set prev_iread $iread_ua
+        set prev_iwrite $iwrite_ua
+
+        lappend result "p${num}_vdd" [format %.15g $vdd]
+        lappend result "p${num}_iread_ua" [format %.15g $iread_ua]
+        lappend result "p${num}_iwrite_ua" [format %.15g $iwrite_ua]
+        lappend result "p${num}_vq_peak" [format %.15g $vq_peak]
+        lappend result "p${num}_vq_end" [format %.15g $vq_end]
+        lappend result "p${num}_read_stable" $read_stable
+        lappend result "p${num}_write_ok" $write_ok
+
+        incr num
+    }
+
+    lappend result num_points $num
+    lappend result max_iread_ua [format %.15g $max_iread]
+    lappend result max_iwrite_ua [format %.15g $max_iwrite]
+    lappend result iread_monotonic $iread_mono
+    lappend result iwrite_monotonic $iwrite_mono
+
+    return [join $result " "]
+}
+```
+ead_ua
+            }
+            if {$iwrite_ua > $max_iwrite_ua} {
+                set max_iwrite_ua $iwrite_ua
+            }
+            if {$iread_ua < $prev_iread} {
+                set iread_monotonic 0
+            }
+            if {$iwrite_ua < $prev_iwrite} {
+                set iwrite_monotonic 0
+            }
+        }
+
+        set prev_iread $iread_ua
+        set prev_iwrite $iwrite_ua
+        incr np
+    }
+
+    lappend result "num_points" $np
+    lappend result "max_iread_ua" $max_iread_ua
+    lappend result "max_iwrite_ua" $max_iwrite_ua
+    lappend result "iread_monotonic" $iread_monotonic
+    lappend result "iwrite_monotonic" $iwrite_monotonic
+
+    return [join $result " "]
+}
+```

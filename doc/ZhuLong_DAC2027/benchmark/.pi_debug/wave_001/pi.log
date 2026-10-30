@@ -1,0 +1,15 @@
+PASS — observed count: **240**.
+
+```tcl
+proc wv_count_signals {fsdb_path} {
+    set file_obj [sx_open_sim_file_read $fsdb_path]
+    set count 0
+    set wave_obj [sx_first_wave $file_obj]
+    while {$wave_obj ne "NULL"} {
+        incr count
+        set wave_obj [sx_next_wave $wave_obj]
+    }
+    sx_close_sim_file $file_obj
+    return $count
+}
+```

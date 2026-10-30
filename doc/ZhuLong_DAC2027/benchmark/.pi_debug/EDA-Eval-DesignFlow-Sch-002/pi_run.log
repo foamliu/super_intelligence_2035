@@ -1,0 +1,99 @@
+The implementation passed all six test cases (A–F) covering the state-machine, view filter, header strictness, multi-library, dedup, and unmapped teeth.
+
+## Implementation (Tcl)
+
+```tcl
+# header parser (strict)
+proc read_header {line} {
+    if {[string length $line] == 0} { return {} }
+    if {[string index $line 0] ne "*"} { return {} }
+    set body [string trim [string range $line 1 end]]
+    foreach kw {Library Cell View} {
+        set klen [string length $kw]
+        if {[string length $body] < $klen} { continue }
+        if {[string range $body 0 [expr {$klen - 1}]] ne $kw} { continue }
+        set rest [string trimleft [string range $body $klen end]]
+        if {[string length $rest] > 0 && [string index $rest 0] eq ":"} {
+            set value [string trim [string range $rest 1 end]]
+            return [list $kw $value]
+        }
+    }
+    return {}
+}
+
+proc netlist_lib_cell_map {cell_list netlist} {
+    set cells {}
+    foreach line [split $cell_list "\n"] {
+        set h [read_header $line]
+        if {[llength $h] == 2} {
+            set kw [lindex $h 0]
+            set val [lindex $h 1]
+            if {$kw eq "Cell" && [lsearch -exact $cells $val] < 0} {
+                lappend cells $val
+            }
+        }
+    }
+    set total_cell_list [llength $cells]
+
+    set cur_lib ""
+    set cur_cell ""
+    set pairs {}
+    array set seen {}
+    array set cell_libs {}
+
+    foreach line [split $netlist "\n"] {
+        set h [read_header $line]
+        if {[llength $h] != 2} { continue }
+        set kw [lindex $h 0]
+        set val [lindex $h 1]
+        if {$kw eq "Library"} {
+            set cur_lib $val
+        } elseif {$kw eq "Cell"} {
+            set cur_cell $val
+        } elseif {$kw eq "View"} {
+            if {$val eq "schematic" && $cur_lib ne "" && $cur_cell ne ""} {
+                if {[lsearch -exact $cells $cur_cell] >= 0} {
+                    set key "$cur_lib|$cur_cell"
+                    if {![info exists seen($key)]} {
+                        set seen($key) 1
+                        lappend pairs "$cur_lib $cur_cell"
+                    }
+                    if {![info exists cell_libs($cur_cell)] || [lsearch -exact $cell_libs($cur_cell) $cur_lib] < 0} {
+                        lappend cell_libs($cur_cell) $cur_lib
+                    }
+                }
+            }
+        }
+    }
+
+    set unmapped {}
+    set multi_lib_cells {}
+    foreach c $cells {
+        if {![info exists cell_libs($c)] || [llength $cell_libs($c)] == 0} {
+            lappend unmapped $c
+        } elseif {[llength $cell_libs($c)] > 1} {
+            lappend multi_lib_cells $c
+        }
+    }
+
+    set mapped_count [llength $pairs]
+    set unmapped_count [llength $unmapped]
+    set verdict "incomplete"
+    if {$unmapped_count == 0} { set verdict "complete" }
+
+    return [dict create pairs $pairs mapped_count $mapped_count unmapped $unmapped \
+            unmapped_count $unmapped_count total_cell_list $total_cell_list \
+            multi_lib_cells $multi_lib_cells verdict $verdict]
+}
+```
+
+## Sandbox results
+
+- `RESULT:ALL_ASSERTS_PASS`
+- `print_log`: `RESULT:ALL_ASSERTS_PASS` / `DESIGN_FLOW_VERDICT=PASS`
+- `error_log`: empty
+- Session workdir cleaned (`cleaned: true`)
+
+RESULT:ALL_ASSERTS_PASS
+
+DESIGN_FLOW_VERDICT=PASS

@@ -1,0 +1,25 @@
+You are being evaluated as a coding agent on a real EDA design-flow task. Implement the Tcl procedure described below, then SELF-VERIFY it on the Empyrean Skipper Tcl runtime via the `eda_flow` MCP, and report the verdict.
+
+== TASK SPEC ==
+$(TASK_PROMPT)
+
+== SELF-VERIFICATION PROTOCOL (mandatory) ==
+You have the `eda_flow` MCP available (8 tools: open_session, run_commands, run_code, read_file, list_files, write_file, close_session, declare_done). The runtime for this task is Empyrean Skipper Tcl (lang="tcl", host="skipper").
+
+Do exactly this:
+1. Call `eda_flow.open_session` with task_id="Skipper-004-SUT", eval_id="20261030-pi", user="pi_sut", sample="0". Keep the returned workdir.
+2. Write a single Tcl file `sol_check.tcl` into that workdir containing:
+   - YOUR implementation of `proc uvs_regr_compile_summary_audit {compile_log_text test_list_text} { ... }`
+   - followed EXACTLY by the checker text provided below (it defines `proc check {candidate}` and asserts 7 cases A-G).
+   - followed by the line:  if {[catch {puts [check uvs_regr_compile_summary_audit]} err]} { puts "CHECK_ERROR: $err"; error $err }
+   Use `eda_flow.write_file` (content = the full Tcl text). Use only Tcl builtins (dict, regexp, split, lassign, POSIX char classes [[:space:]]/[[:digit:]]). Do NOT rely on \s / \d / \b. Tcl has no native `assert`; the checker defines its own.
+3. Call `eda_flow.run_code` with code="source <workdir>/sol_check.tcl", lang="tcl", host="skipper", workdir=<workdir>. Read print_log; it must contain "ALL_ASSERTS_PASS".
+4. If it does NOT pass, READ the error, FIX your implementation, rewrite the file, and re-run (repeat up to your turn budget). Do NOT modify the checker.
+5. When "ALL_ASSERTS_PASS" appears, call `eda_flow.close_session` with the workdir (keep=false) to clean up.
+6. Report on the LAST line of your final answer EXACTLY one of:
+     RESULT:ALL_ASSERTS_PASS
+     RESULT:CHECK_FAILED
+   preceded by a one-line summary of what you did.
+
+== CHECKER (append verbatim after your impl) ==
+$(CHECKER)

@@ -1,0 +1,35 @@
+Verification complete. The sandbox run on Synopsys Custom WaveView Tcl returned empty `error_log` and printed:
+
+```
+RESULT: ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+All six checker cases passed, including the "tooth" cases that specifically catch wildcard `*` (Case B), case-insensitive rule matching (Case C), orphan/duplicate classification (Case D), cell/layer scoping (Case E), and the comprehensive multi-rule case (Case F). The session was closed with `keep=false`.
+
+**Implementation** (stored at `pv4_check.tcl`):
+
+```tcl
+proc drc_waiver_apply_audit {violations waivers} {
+    # parse violations (rule cell x y layer) and waivers (rule cell x y layer reason)
+    # - split each line on "\n", string trim, skip blanks and lines with too few fields
+    # - each violation gets a waived flag; waivers processed in file order
+    # - a waiver matches if tolower(rule) equal AND (cell/x/y/layer are "*" or exact-equal)
+    # - first-match wins: only not-yet-waived matches are "fresh" (waived)
+    # - matched-nothing -> ORPHAN; matched-only-already-waived -> DUPLICATE
+    # - remaining_by_rule keyed by original-case rule name, or "none" when empty
+    # - audit_verdict per remaining/orphan/duplicate rules
+    ...
+}
+```
+
+Key details:
+- `string tolower` only on the rule field (case-insensitive); cell/x/y/layer compared by literal string equality or the single `*` character.
+- Each violation waived at most once via a per-violation flag (`lset waived $idx 1`).
+- Waiver classification is computed per waiver while scanning all violations, tracking both `matched` and `fresh`.
+- Returns `dict create` with all values as strings and a nested `dict create` for `remaining_by_rule` (or `"none"`).
+
+RESULT: ALL_ASSERTS_PASS
+
+DESIGN_FLOW_VERDICT=PASS
+=== pi exit=0 end Fri Oct 30 12:43:30 AM CST 2026 ===

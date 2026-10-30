@@ -1,0 +1,37 @@
+You are analyzing a simulation regression log from a DDR DV flow. The log uses a bracketed-event format, one event per line:
+
+    [ RUN    ] <test> seed=<n>
+    [ PASS   ] <test> seed=<n> wall=<f>s
+    [ FAIL   ] <test> seed=<n> wall=<f>s exit=<n>
+    [ TIMEOUT] <test> seed=<n> wall=<f>s
+    [ SKIP   ] <test> reason=<txt>
+    [ XPASS  ] <test> seed=<n> wall=<f>s
+    [ XFAIL  ] <test> seed=<n> wall=<f>s
+    [ RUN    ] <test> seed=<n> (rerun #2)
+
+The status token inside `[ ... ]` is one of: RUN, PASS, FAIL, TIMEOUT, SKIP, XPASS, XFAIL (surrounding spaces vary). Lines that do not match this bracket pattern (banner comments, tool warnings like `xrun: *W,...`, blank lines) are NOISE and must be ignored.
+
+Implement `regr_log_classify(log)` taking the full log text and returning a FLAT key/value string. Classification rules (mirror a real DV regression triage):
+
+1. Outcome lines are PASS / FAIL / TIMEOUT / XPASS / XFAIL. RUN and SKIP are NOT outcomes.
+   - `total_runs` = number of outcome lines (PASS + FAIL + TIMEOUT + XPASS + XFAIL). RUN and SKIP do NOT count here.
+2. Severity semantics (the common triage traps):
+   - PASS  -> pass_count
+   - FAIL  -> fail_count (raw)
+   - TIMEOUT -> timeout_count (SEPARATE from fail; a hung test is not a logic FAIL)
+   - XPASS -> xpass_count AND ALSO counted in fail_count (an expected-fail that passed is a BUG = failure)
+   - XFAIL -> xfail_ok_count (expected-fail and failed = working as intended, NOT a failure)
+   So: fail_count = (raw FAIL) + (XPASS). xfail_ok_count is separate and NOT in fail_count.
+   SKIP -> skipped_count (separate, not a run, not in any outcome tally).
+3. `unique_tests` = distinct test names appearing on ANY recognized event line (RUN/PASS/FAIL/TIMEOUT/SKIP/XPASS/XFAIL), sorted-insensitive count.
+4. `incomplete_runs` = number of tests that have at least one RUN line but ZERO real outcomes (PASS/FAIL/TIMEOUT/XPASS/XFAIL). A test that only has SKIP (no RUN) is NOT incomplete (it was deliberately skipped). A RUN with a following outcome is not incomplete.
+5. `rerun_tests` = sorted list (ascending by name) of tests that have a `(rerun #N)` marker on ANY line (RUN or outcome).
+6. `flaky_tests` = sorted list of tests whose outcome sequence (in log order) has a FAIL or TIMEOUT occurring BEFORE a later PASS. ORDER MATTERS: a test that PASSes then FAILs on rerun is a REGRESSION (final FAIL), NOT flaky. Only FAIL/TIMEOUT-then-PASS is flaky.
+7. `unique_seeds` = count of distinct `seed=<n>` values across ALL lines that carry a seed (RUN + outcomes; SKIP has `reason=` instead of `seed=` and contributes no seed).
+8. `pass_rate` = pass_count / (pass_count + fail_count + timeout_count), formatted with exactly 4 decimals (e.g. "0.4000"). Denominator EXCLUDES xfail_ok, skip, incomplete, and RUN. If the denominator is 0, emit "0.0000".
+
+Output string format (single line, keys separated by single spaces, list values are space-separated names appearing after the key, terminated by the next key):
+
+    total_runs <n> unique_tests <n> pass_count <n> fail_count <n> timeout_count <n> skipped_count <n> xpass_count <n> xfail_ok_count <n> incomplete_runs <n> rerun_tests <name...> flaky_tests <name...> unique_seeds <n> pass_rate <0.xxxx>
+
+For empty rerun_tests / flaky_tests, emit the key immediately followed by the next key (no names). Use POSIX character classes only (`[[:space:]]`, `[[:digit:]]`, `[[:alnum:]_]`, `[0-9]`); do NOT use `\b`, `\s`, `\d`. Sorting must be lexicographic ascending (`lsort`).

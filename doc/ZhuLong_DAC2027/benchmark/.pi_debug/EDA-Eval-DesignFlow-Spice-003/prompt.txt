@@ -1,0 +1,97 @@
+# Scenario: you are on a post-sim verification team that runs Synopsys
+# FineSim / CustomSim XA (FastSPICE) on foundry PDK netlists. After every XA
+# run the simulator writes a text log `xa.log`. Your recurring job: read that
+# log, decide whether the run SUCCEEDED or FAILED, and -- when it failed --
+# pin down the ROOT-CAUSE CATEGORY so the verification lead can route the
+# ticket (model team / netlist owner / environment owner) without re-reading
+# a 50k-line log by hand.
+#
+# You are given one `xa.log` file (its path is the only argument). Its format:
+#
+#   * Line 1 is the simulator banner, in one of these two exact shapes:
+#         CustomSim XA linux64 <VERSION> (built ...)
+#         PrimeSim XA linux64 <VERSION> (built ...)
+#     where <VERSION> is either a `P-YYYY.MM-SPn(-BETA-yyyymmdd)` token
+#     (old CustomSim) or a `V-YYYY.MM` token (new PrimeSim XA). The tool name
+#     is the FIRST word (`CustomSim` or `PrimeSim`); the version token is the
+#     one immediately after the literal `linux64`.
+#   * There may be a `Command line: xa ...` line and many setup / loading lines.
+#   * A `Warnings/Messages from CMI:` header may introduce a CMI model-warning
+#     table. Lines in that table look like
+#         (<model>:<inst>)**warning**: Version = <VER> in BSIM-CMG model is not supported. Reset it to version = <VER2>
+#     This is the BSIM-CMG model-version-unsupported warning. <VER> is the
+#     version the model card declares (e.g. `111.2`); <VER2> is the version
+#     the simulator silently reset it to (e.g. `110`).
+#   * `Error: ...` lines are simulator errors (one per line; the literal token
+#     `Error:` starts the message).
+#   * The run's final status line is exactly one of:
+#         XA done (<date>)
+#         XA failed (<date>)
+#     (it appears once, near the end of the file).
+#
+# Task: implement `xa_log_diagnose {path}`, which reads the `xa.log` at `path`
+# and RETURNS a flat Tcl dict string (space-separated `key value` pairs, NOT a
+# Tcl dict object) with exactly these nine keys:
+#
+#     xa_tool_name            = `CustomSim` | `PrimeSim` | `unknown`
+#                               (the banner's FIRST word: `CustomSim` for the
+#                               old CustomSim banner, `PrimeSim` for the new
+#                               PrimeSim XA banner; a single token, not the
+#                               two-word `PrimeSim XA`)
+#     xa_version              = the <VERSION> token after `linux64` in the
+#                               banner (e.g. `P-2019.06-SP1-BETA-20190515` or
+#                               `V-2023.12`); `` if no banner
+#     final_status            = `done` | `failed` | `unknown`
+#     total_lines             = total number of lines in the file (int)
+#     error_line_count        = number of lines whose text contains the token
+#                               `Error:` (int)
+#     cmi_unsupported_version = the <VER> from the FIRST
+#                               `Version = <VER> in BSIM-CMG model is not supported`
+#                               line, or `none` if no such line
+#     version_reset_to        = the <VER2> from the FIRST
+#                               `Reset it to version = <VER2>` line, or `none` if
+#                               no such line
+#     unsupported_model_version = `1` if a BSIM-CMG-unsupported warning line
+#                               was found, else `0`
+#     root_cause              = one of (exactly these strings):
+#         `model_version_unsupported` -- run failed AND a BSIM-CMG-unsupported
+#                                        warning was found. This category takes
+#                                        PRECEDENCE over all other failure
+#                                        categories (the unsupported model
+#                                        version is the upstream root cause
+#                                        even if the log also shows downstream
+#                                        convergence / "Unable to create mosfet"
+#                                        errors).
+#         `success`                   -- final_status is `done`.
+#         `convergence`               -- run failed, no BSIM-CMG-unsupported
+#                                        warning, AND an `Error:` line mentions
+#                                        `time step too small` or `convergence`.
+#         `missing_model`             -- run failed, no BSIM-CMG-unsupported
+#                                        warning, AND an `Error:` line mentions
+#                                        a model `not found`.
+#         `unknown`                   -- run failed but none of the above
+#                                        categories matched.
+#
+# Rules:
+#   * Read the file once; derive all keys from what you read.
+#   * The precedence for root_cause is: success > model_version_unsupported >
+#     convergence > missing_model > unknown. (A `done` run is `success` even
+#     if stray warnings are present.)
+#   * `error_line_count` counts EVERY line containing the token `Error:`
+#     (including downstream "Unable to create mosfet" errors that follow a
+#     BSIM-CMG warning -- they are still Error: lines).
+#   * Do NOT write any file -- just return the dict string.
+#   * Emit ints as ints (`12`, not `12.0`) and the booleans as `0`/`1`.
+#
+# Runtime note: the runtime is Synopsys WaveView ACE Tcl. It supports POSIX
+# regex classes ([[:space:]], [A-Za-z0-9_.-]) but does NOT support \s, \d, or
+# Perl character classes. Use `regexp -nocase -- {PATTERN} $str -> cap1` with
+# POSIX classes; use `string match` / `string first` for literal substrings.
+# Reading a file: `set fh [open $path r]; set lines [split [read $fh] "\n"]; close $fh`.
+# Note `split ... "\n"` on a file ending in newline yields a trailing empty
+# element -- you must NOT count that empty element in `total_lines` (i.e.
+# total_lines is the count of real lines; trim a single trailing empty element
+# only, do not drop genuine blank lines in the middle).
+#
+# Return: a single flat space-separated `key value` string. The checker parses
+# it with a tolerant `get_str`/`get_int` regex helper.

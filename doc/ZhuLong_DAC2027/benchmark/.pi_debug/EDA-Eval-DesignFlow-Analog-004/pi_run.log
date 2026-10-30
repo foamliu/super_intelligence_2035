@@ -1,0 +1,17 @@
+The implementation passed all checker assertions on the Synopsys WaveView Tcl sandbox and the session was cleaned up.
+
+**Implementation summary** — `hspice_corner_worst_case_audit`:
+- Parses each non-empty line; first token is the corner, remaining `metric=value` tokens go into a per-corner dict.
+- Audits every metric in `spec`, computing signed margins (`value - bound` for `min`, `bound - value` for `max`).
+- Missing metrics are skipped (only incremented in `missing_count`), never treated as pass/fail.
+- Tracks `failing_pairs`, the overall worst `(metric, corner)` pair by smallest margin with tie-break on lexicographically smallest corner name (then metric name).
+- Returns the flat dict with all eight required keys, lists sorted via `lsort`.
+
+Sandbox output:
+```
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+DESIGN_FLOW_VERDICT=PASS — the solution is correct.
+=== pi exit=0 end Fri Oct 30 01:56:35 AM CST 2026 ===

@@ -1,0 +1,52 @@
+# Scenario: you are part of a library-characterization QA team. Before
+# running LVS / characterization on a standard-cell library, the team must
+# confirm that the CDL (Circuit Description Language, transistor-level
+# SPICE netlist) coverage matches the Synopsys Liberty (.lib) timing
+# library. The flow: for each cell declared in the .lib, there should be a
+# matching `<cell>.cdl` file in the CDL directory; any cell present in the
+# .lib but missing a .cdl is a coverage gap (LVS will fail), and any .cdl
+# with no .lib entry is an orphan (extra, unused characterization data).
+#
+# A designer's recurring job: given one .lib file and one CDL directory,
+# produce a compact coverage scoreboard so the QA lead can see, at a glance:
+#   - how many cells are declared in the .lib
+#   - how many .cdl files are in the CDL directory
+#   - which .lib cells are MISSING a .cdl (coverage gaps)
+#   - which .cdl files are EXTRA (orphan, no .lib entry)
+#
+# Real-world gotchas (observed in production sessions):
+#   1. Real Synopsys .lib declares cells as `cell ("NAME") {` with DOUBLE
+#      QUOTES around the name. A regex that only matches the unquoted
+#      `cell (NAME)` form silently extracts 0 cells and reports no gaps.
+#   2. The .lib also contains `cell_footprint (...)` definitions — those
+#      must NOT be counted as cells (anchor on the `cell` keyword).
+#   3. The .lib can be hundreds of MB; do not slurp it whole — read line by
+#      line.
+#
+# Task: implement `cdl_lib_coverage_check` in Tcl. It takes two arguments:
+#   - `lib_path` : path to a Synopsys .lib file
+#   - `cdl_dir`  : path to a directory of `<cell>.cdl` files
+#
+# It must return a flat Tcl dict STRING (not a Tcl dict object) with these
+# keys IN THIS EXACT ORDER (scalar counts first, list values last so each
+# list is terminated by the next key):
+#
+#   lib_cell_count <N> cdl_cell_count <N> missing_count <N> extra_count <N> missing_in_cdl <sorted space-joined list> extra_in_cdl <sorted space-joined list>
+#
+# Rules:
+#   - Extract cell names from lines matching `cell (...)` at the start of a
+#     line (modulo leading whitespace), handling BOTH `cell ("NAME")` and
+#     `cell (NAME)` forms. Exclude `cell_footprint` and any other
+#     `cell_*` constructs.
+#   - CDL cells = basenames of `*.cdl` files in `cdl_dir` with the `.cdl`
+#     extension stripped.
+#   - missing_in_cdl = cells in the .lib but with no matching .cdl, sorted.
+#   - extra_in_cdl   = .cdl files with no matching .lib cell, sorted.
+#   - Dedupe cell names (use `lsort -unique`).
+#   - Read the .lib line by line (do not slurp).
+#   - When a list is empty, emit nothing between the key and the next key
+#     (e.g. `... missing_count 0 extra_count 0 missing_in_cdl extra_in_cdl `).
+#
+# The test will source your implementation, call
+# `cdl_lib_coverage_check <lib_path> <cdl_dir>`, and assert the returned
+# dict string matches the expected scoreboard for a realistic fixture.

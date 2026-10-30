@@ -1,0 +1,96 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual metal-fill / density report for a layout cellview.
+This is a pure text-analysis task (no EDA tool calls needed to produce the
+answer); you will verify your implementation on the Empyrean WaveView Tcl
+sandbox.
+
+TASK
+Implement the Tcl proc `layout_metalfill_target_audit` that takes ONE string
+argument `report_text` (the full metal-fill density report text) and returns a
+flat Tcl dict with EXACTLY these 10 keys, in this exact order:
+
+    total_layers  total_fill  underfill_layers  met_layers  missing_target_layers
+    zero_fill_met_layers  min_density_layer  max_density_layer  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# Metal-fill density ..."
+header may appear and is ignored):
+
+  LAYER <name> target=<float> actual=<float> fill_count=<N>
+  SUMMARY total_layers=<N> total_fill=<N> min_density=<float> max_density=<float>
+
+  - <name>  : a bare token (the layer name), e.g. M1, M2, VIA1.
+  - target= : a non-negative float (e.g. 80, 80.0, 72.5). Field may be ABSENT.
+  - actual= : a non-negative float. Field may be ABSENT.
+  - fill_count= : a non-negative integer. Field may be ABSENT.
+  - SUMMARY carries 4 fields (each may be present or absent).
+
+SEMANTICS (read carefully — a naive implementation fails several of these):
+
+1. total_layers = number of DISTINCT layer names across all LAYER lines.
+2. Duplicate layer names: if the same <name> appears on multiple LAYER lines,
+   the LAST occurrence WINS (its target/actual/fill_count replace earlier
+   ones). total_layers counts the name only ONCE.
+3. total_fill = sum of fill_count over the distinct (last-wins) layers. A
+   missing fill_count= field is treated as 0.
+4. actual default: a layer whose actual= field is ABSENT is treated as
+   actual=0.0 (it still counts as a layer; 0.0 is used for all comparisons
+   and for min/max density).
+5. underfill_layers = sorted (lsort -dictionary) list of layer names whose
+   (last-wins) actual < target (STRICT less-than). A layer with a MISSING
+   target= field is NEVER in underfill_layers (it has no target to miss).
+6. met_layers = sorted (lsort -dictionary) list of layer names whose
+   (last-wins) actual >= target (inclusive). A layer with a MISSING target=
+   field is NEVER in met_layers.
+7. missing_target_layers = sorted (lsort -dictionary) list of layer names
+   whose (last-wins) entry has NO target= field (empty target). Such a layer
+   is in NEITHER underfill_layers NOR met_layers.
+8. zero_fill_met_layers = sorted (lsort -dictionary) list of layer names that
+   are in met_layers (actual >= target) AND whose fill_count == 0. Note
+   fill_count defaults to 0 when the field is absent, so a met layer with a
+   missing fill_count= field IS flagged here.
+9. min_density_layer = the layer name with the MINIMUM actual value (over
+   distinct last-wins layers, using actual=0.0 default). On a tie, the
+   LEXICOGRAPHICALLY SMALLEST name wins (lsort -dictionary order). Empty
+   string if there are no layers.
+10. max_density_layer = the layer name with the MAXIMUM actual value. On a
+    tie, the LEXICOGRAPHICALLY SMALLEST name wins. Empty string if no layers.
+11. mismatched_summary: if a SUMMARY line is present, compare each PROVIDED
+    SUMMARY field to the COMPUTED value:
+      total_layers <-> total_layers (computed, integer)
+      total_fill   <-> total_fill   (computed, integer)
+      min_density   <-> the computed MINIMUM actual value (a float)
+      max_density   <-> the computed MAXIMUM actual value (a float)
+    Comparison is NUMERIC (so a SUMMARY "72.30" matches a computed "72.3";
+    do NOT use string equality). mismatched_summary = sorted
+    (lsort -dictionary) list of field NAMES whose provided SUMMARY value
+    differs numerically from the computed value. If a SUMMARY field is
+    absent (not provided), do NOT report it as mismatched. If NO SUMMARY
+    line is present, mismatched_summary is the EMPTY list. If there are no
+    layers, the computed min/max density are both the empty string and any
+    provided min_density/max_density is treated as mismatched.
+12. verdict (single string, by priority — first match wins):
+      underfill_layers non-empty               -> "FAIL"
+      missing_target_layers non-empty          -> "INCOMPLETE"
+      no SUMMARY present                       -> "INCOMPLETE"
+      otherwise                                -> "PASS"
+    NOTE: underfill has TOP priority — if underfill is non-empty the verdict
+    is "FAIL" even if missing_target is also non-empty or no SUMMARY. A
+    missing target (or missing SUMMARY) yields "INCOMPLETE" only when there
+    is no underfill. "PASS" requires no underfill, no missing-target, AND a
+    SUMMARY present.
+
+Return the dict with `dict create` in the exact key order above. All
+list-valued keys must be lexicographically sorted with `lsort -dictionary`.
+
+EXAMPLE
+Input:
+  # Metal-fill density INVX1 at 2026-10-30 07:00:00
+  LAYER M1 target=80 actual=85.5 fill_count=12
+  LAYER M2 target=80 actual=72.3 fill_count=8
+  LAYER VIA1 target=40 actual=40.0 fill_count=0
+  SUMMARY total_layers=3 total_fill=20 min_density=40.0 max_density=85.5
+Expected dict (key order as above):
+  total_layers 3  total_fill 20  underfill_layers {M2}  met_layers {M1 VIA1}
+  missing_target_layers {}  zero_fill_met_layers {VIA1}  min_density_layer VIA1
+  max_density_layer M1  mismatched_summary {}  verdict FAIL

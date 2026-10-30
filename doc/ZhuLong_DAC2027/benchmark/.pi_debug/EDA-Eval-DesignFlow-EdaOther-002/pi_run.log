@@ -1,0 +1,72 @@
+Verification complete on the Cadence WaveView Tcl sandbox via the `eda_flow` MCP.
+
+## Result
+- **REF_CHECK_RC** = `0`
+- **REF_CHECK_MSG** = `ALL_ASSERTS_PASS`
+
+The implementation passes all assertions (Case A: 28 records → 15 valid, week grouping 3×5, only-irunlog exclusions; Case B: multi-speed counting; Case C: second-to-last-field trap checks).
+
+## Implementation (core logic)
+```tcl
+proc pattern_speed_weekly_stats {manifest} {
+    set total 0; set valid 0
+    set n_no_folder 0; set n_only_irunlog 0; set n_empty 0; set n_no_speed 0
+    set lo ""; set hi ""
+
+    foreach rec $manifest {
+        incr total
+        set name [lindex $rec 0]; set fe [lindex $rec 1]
+        set ff   [lindex $rec 2]; set mt [lindex $rec 3]
+
+        set root [regsub {\.avc$} $name {}]
+        set fields [split $root "_"]
+        if {[llength $fields] < 2} { incr n_no_speed; continue }
+        set speed [lindex $fields end-1]   ;# SECOND-TO-LAST field
+
+        if {!$fe}                          { incr n_no_folder;  continue }
+        if {[llength $ff] == 0}            { incr n_empty;       continue }
+        if {[llength $ff] == 1 && [string equal [lindex $ff 0] "irun.log"]} {
+            incr n_only_irunlog; continue
+        }
+
+        incr valid
+        if {[info exists speed_count($speed)]} { incr speed_count($speed) } else { set speed_count($speed) 1 }
+        set wk [clock format $mt -format %G-W%V -gmt 1]
+        if {[info exists week_count($wk)]} { incr week_count($wk) } else { set week_count($wk) 1 }
+        set wsk "$wk:$speed"
+        if {[info exists week_speed($wsk)]} { incr week_speed($wsk) } else { set week_speed($wsk) 1 }
+        if {$lo eq "" || $mt < $lo} { set lo $mt }
+        if {$hi eq "" || $mt > $hi} { set hi $mt }
+    }
+
+    set speeds [lsort -integer -unique [array names speed_count]]
+    set speed_totals {}; foreach sp $speeds { lappend speed_totals "$sp:$speed_count($sp)" }
+    set weeks [lsort [array names week_count]]
+    set week_totals {};  foreach wk $weeks  { lappend week_totals "$wk:$week_count($wk)" }
+    set week_speed_items {}
+    foreach wk $weeks {
+        foreach sp $speeds {
+            set wsk "$wk:$sp"
+            if {[info exists week_speed($wsk)]} { lappend week_speed_items "$wsk:$week_speed($wsk)" }
+        }
+    }
+
+    return [join [list total_avc $total total_valid $valid \
+                num_no_folder $n_no_folder num_only_irunlog $n_only_irunlog \
+                num_empty $n_empty num_no_speed $n_no_speed \
+                time_span_lo $lo time_span_hi $hi \
+                speeds [join $speeds " "] speed_totals [join $speed_totals " "] \
+                weeks [join $weeks " "] week_totals [join $week_totals " "] \
+                week_speed [join $week_speed_items " "]] " "]
+}
+```
+
+Key design choices:
+- Speed is `[lindex $fields end-1]` (second-to-last `_` field), avoiding the last-field traps (001/996/007).
+- Strict folder validation order: missing folder → empty → only `irun.log`.
+- Uses associative arrays (portable across Tcl 8.x) instead of `dict`; `%G-W%V` with `-gmt 1` for ISO-week labels.
+- Numeric speed sort via `lsort -integer`; weeks via plain lexicographic sort (valid since `%V` is zero-padded); `week_speed` ordered by week then (numeric) speed.
+- Flat single-line output, list-valued keys placed last so each list is terminated by the next key.
+
+PI_FINAL_RESULT: PASS
+REF_CHECK_MSG=ALL_ASSERTS_PASS
