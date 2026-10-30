@@ -77,9 +77,9 @@ def esc(s):
 
 
 def trace_source(c):
-    # 即时令 XI: legacy 用例 trace 来源标 "—"（无真实 trace，本就是 scripting 口径合成题）；
-    # proper 用例显示 metadata.trace_source 的 host/session_file 等；无则也 "—"。
-    # （不再回退 legacy_source_file —— 那是旧 jsonl 文件名，对 legacy 无意义。）
+    # 即时令 XII: trace 来源列显示用户名（溯源到具体是谁的工作）。
+    # 格式: <user>/<session_file> @ <host> (<real_task_summary>)
+    # 读 metadata.trace_source.user（新字段名）；旧字段 user_hash 作兼容回退；无则 "—"。
     md = c.get("metadata", {}) or {}
     src = md.get("trace_source")
     if src:
@@ -87,7 +87,11 @@ def trace_source(c):
             host = src.get("host", "?")
             sf = src.get("session_file", "")
             summ = src.get("real_task_summary", "")
-            return f"{sf} @ {host} ({summ})" if summ else f"{sf} @ {host}"
+            user = src.get("user") or src.get("user_hash") or "—"
+            base = f"{sf} @ {host}"
+            if summ:
+                base = f"{base} ({summ})"
+            return f"{user}/{base}"
         return src
     return "—"
 
