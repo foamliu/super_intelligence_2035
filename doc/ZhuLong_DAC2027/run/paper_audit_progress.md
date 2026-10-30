@@ -39,7 +39,7 @@
 - ✅ 实验数字内部高度自洽（Wilson CI、组件差值、跨切片归因全可对齐）；57.2/23.7/7.1/76.9/19.7/68.6 全文一致；部署兜底句已按评审处理
 
 ## 交付物
-- 报告：`doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html`（46KB）
+- 报告：`doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html`（复审 46KB → +§⑧ 跟踪后 55KB）
 - 进度：本文件
 - MEMORY：`MEMORY_ZHULONG.md` 顶部已写结论
 
@@ -50,3 +50,4 @@
 - [2026-10-30] 建 claim 映射表(8) + 逻辑断点(6) + 数字↔措辞表(20+)；核心断点 LB1：57.2pp 系统轴混杂 ε vs backbone 23.7pp，受控回读轴仅 7.1pp<23.7pp。
 - [2026-10-30] 写完 HTML 报告 46KB（0 script / 0 外链 / 标签配平）。
 - [2026-10-30] 更新 MEMORY 顶部 + commit+push。
+- [2026-10-30 wake#370] **审计后修订跟踪**：发现审成后平行改稿线提交 `91de519e2`（10:40）+ `cf7cfabc`（11:08），HEAD 由 `c78558a0` → `cf7cfabc`，论文树变更（reference.bib -101 行 / 1_intro.tex / main.tex / 6_exp.tex / main.pdf 重建）。逐项核验：P0①②（he2024chateda→2308.10204、wang2025mcp4eda→2507.19570）经 arXiv 主源 cimi_fetch 逐字核验为真 ✅；P0③ main.pdf 已重建 ✅；P1 10 孤儿 bib 全删 ✅；P1 57.2pp 逻辑断点 intro 措辞降级（"sets the ceiling"→"exceeds the backbone range"）⚠️部分解决；P2 6_exp 表注 dangling 指针已删 ✅。报告新增 §⑧ Post-Audit Revision Tracker（55470B / 0 script / 0 外链 / div 9·table 11 配平）。**原 3 P0 全部已被正确解决**；§①–⑦ 结论仍针对 c78558a0 基线，不自动等同当前 HEAD；完整重审需另下令。未改 .tex/.bib/figures（只审不改红线遵守）。
