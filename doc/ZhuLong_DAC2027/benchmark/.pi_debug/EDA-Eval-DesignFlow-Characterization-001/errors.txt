@@ -1,0 +1,50 @@
+SiliconSmart characterization run errors (drgqx project, corner tt_25_1017)
+==========================================================================
+[ERROR] lc_shell: Operation not permitted (qualify_library invocation)
+  location: export/drgqx_cmos_*.tcl
+  lines:    set_config_opt qualification_lc_shell "..."
+            qualify_library $lib
+  note:     commenting must be at LINE START with '#'; a trailing
+            "...  # disabled" does NOT comment the command (Tcl parses
+            '#' as a command word, the command still runs).
+
+[SMSC-99] model: cannot build verilog model for cells without PEX data
+  location: export/drgqx_cmos_analog.tcl
+  line:     model -create_new_model -verilog all
+  fix:      model -create_new_model -timing $cells   (only model cells
+            that have characterization data)
+
+[PARSE] add_latch: bad register name '{}'
+  location: sisregular/drgqx_cmos_io/control/ffrqIOLVx2_pc60_odt.inst
+  line:     add_latch Q {} Ck D -clear {!RN}
+  fix:      add_latch Q Ck D -clear {!RN}   (drop the empty '{}' arg)
+
+[PARSE] add_forbidden_state / add_function: illegal operator '^'
+  location: ffrqIOLVx2_pc60_odt.inst  (add_forbidden_state { !(Ck ^ CkN) })
+            T_CompXor.inst             (add_function Y { A ^ B })
+  fix:      rewrite XOR with & | !  e.g.  ((!Ck) & CkN) | (Ck & (!CkN))
+
+[LINK] set_netlist_file: netlist not found 'netlists/nor3IOLVIO_1p6.spf_RC'
+  location: sisregular/drgqx_cmos_io/control/nor3IOLVIOx1_DQS.inst
+  lines:    set_netlist_file netlists/nor3IOLVIO_1p6.spf_RC
+            cut_netlist       netlists/nor3IOLVIO_1p6.spf_RC
+  fix:      point both to netlists/nor3IOLVIOx1_DQS.spf_RC (actual name)
+
+[PARA-7] default_input_state undefined
+  location: sisregular/drgqx_cmos_io/control/IO_TX_LOCAL_DCA_DQS.inst
+  fix:      add  set_config_opt -opcond __default__ -- default_input_state { DP1_per_0 1 DP1_per_1 0 }
+
+[PARSE] bachIn: illegal '<' / '||' in boolean expression
+  location: IO_TX_LOCAL_DCA_DQS.inst
+  line:     add_function DQ { DP1_per<0> == 0 || DP1_per<1> == 0 }
+  fix:      rewrite with | & ! (no '<' bitstream index, no '||')
+            e.g.  add_function DQ { (!DP1_per_0) | (!DP1_per_1) }
+
+[PARA] vssFoot duplicate definition
+  location: sisregular/configure.tcl
+  fix:      remove the duplicate, or rename one to __param_VSSFOOT
+
+[PINTYPE] invYx2_CoM input pin threshold too low
+  location: sisregular/drgqx_cmos_io/control/invYx2_CoM.inst
+  lines:    add_pin A default ; add_pin Y default
+  fix:      add_pin A vwlp_type ; add_pin Y vwlp_type   (2.75V vwlp supply)

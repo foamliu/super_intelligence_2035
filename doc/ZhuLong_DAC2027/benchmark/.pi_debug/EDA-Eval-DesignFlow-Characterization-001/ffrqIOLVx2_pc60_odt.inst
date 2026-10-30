@@ -1,0 +1,15 @@
+# cell control: ffrqIOLVx2_pc60_odt (IO library latch)
+add_pin Q  output
+add_pin Ck input
+add_pin D  input
+add_pin RN input
+add_pin CkN input
+
+# fixed: drop empty {} register name (add_latch Q Ck D -clear {!RN})
+add_latch Q Ck D -clear {!RN}
+
+# fixed: ^ (XOR) is illegal in Liberty boolean expressions
+#        !(Ck ^ CkN) = (Ck & CkN) | ((!Ck) & (!CkN))
+add_forbidden_state { (Ck & CkN) | ((!Ck) & (!CkN)) }
+
+set_config_opt -opcond __default__ -- vdd 2.5

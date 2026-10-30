@@ -1,0 +1,14 @@
+# cell control: IO_TX_LOCAL_DCA_DQS (IO driver)
+add_pin Ck        input
+add_pin DQ        output
+add_pin DP1_per_0 input
+add_pin DP1_per_1 input
+
+# fixed: default_input_state defined (PARA-7)
+set_config_opt -opcond __default__ -- default_input_state { DP1_per_0 1 DP1_per_1 0 }
+
+add_forbidden_state { !(Ck & DQ) }
+
+# fixed: no '<' bitstream index and no '||' in Liberty boolean expression
+#        DP1_per<0> == 0 || DP1_per<1> == 0  =>  (!DP1_per_0) | (!DP1_per_1)
+add_function DQ { (!DP1_per_0) | (!DP1_per_1) }
