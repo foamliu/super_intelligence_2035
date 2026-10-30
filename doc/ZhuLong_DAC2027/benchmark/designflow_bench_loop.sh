@@ -131,16 +131,22 @@ while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking opencode ..."
     if [[ -f "$TASK_MD" ]]; then
         budget_min=$(( AGENT_TIMEOUT / 60 - 5 ))
-        prompt="$(< "$TASK_MD")"
-        prompt="${prompt}
+        # 任务卡用引号 heredoc 生成（避免反引号/$ 被当命令替换），占位符再替换
+        card="$(cat <<'CARD'
 
 ---
 
-## 本轮任务卡（loop 自动生成 · $(date '+%F %T')）
+## 本轮任务卡（loop 自动生成 · __TS__）
 - **本轮只做 1 条 case**：选料 → 深读 → 合成 → 自验 → 写入 jsonl → 日报一行；做完即收尾，**不要在本轮开第二条**（控制上下文不膨胀）。
-- 硬预算：${budget_min} 分钟（进程 ${AGENT_TIMEOUT}s 后被 timeout 终止）。
-- 交付定义（DoD，§3）：该 case 通过 ref 自验 + §4.9 三种假提交 FAIL，并已进 `EDA-Eval-DesignFlow.jsonl`。
-- **交付后必须把 MEMORY 首行写成 `WAITING: 0`**（loop 60s 后立刻唤醒做下一条）；`WAITING: 1` 仅用于真外部阻塞（pi 异步未回 / 推送失败 / 等人工）。"
+- 硬预算：__BUDGET__ 分钟（进程 __TIMEOUT__s 后被 timeout 终止）。
+- 交付定义（DoD，§3）：该 case 通过 ref 自验 + §4.9 三种假提交 FAIL，并已进 EDA-Eval-DesignFlow.jsonl。
+- **交付后必须把 MEMORY 首行写成 WAITING: 0**（loop 60s 后立刻唤醒做下一条）；WAITING: 1 仅用于真外部阻塞（pi 异步未回 / 推送失败 / 等人工）。
+CARD
+)"
+        card="${card//__TS__/$(date '+%F %T')}"
+        card="${card//__BUDGET__/$budget_min}"
+        card="${card//__TIMEOUT__/$AGENT_TIMEOUT}"
+        prompt="$(< "$TASK_MD")${card}"
         # 🚫 剥代理环境变量：内网网关 agi-gateway.cxmt.com 不该走外网代理。
         #    ⚠️ 只作用于本行 opencode；loop 自身 git push 到内网 devops.cxmt.com 不需要代理。
         cd "$CWD" && env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
