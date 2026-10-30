@@ -22,17 +22,7 @@ PI_STATUS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pi_debug_s
 # three-mouth numbers (from .75 落盘实测值, 运维增补II)
 THREE_MOUTH = {"hosts": 698, "users": 2850, "session_files": 52698, "ic_eda_hits": 24085}
 
-# trace provenance for the known proper design_flow cases (from rtl_design_flow_case_design.md)
-TRACE_SRC = {
-    "EDA-Eval-DesignFlow-Digital-010": "t0002948/1789900011859_zpx23 (std_intmac 乘加树+饱和)",
-    "EDA-Eval-DesignFlow-Digital-021": "klhu/1792224347250_fww0m (PrimeTime 负 slack 提取)",
-    "EDA-Eval-DesignFlow-Digital-022": "t0002948/1792133892937_i2dlp + 1791602575997_53vw2 (DC DFT 失败诊断)",
-    "EDA-Eval-DesignFlow-Digital-023": "t0002948/1792400029503_0na23 (VCS makefile 参数化)",
-    "EDA-Eval-DesignFlow-Verification-001": "ukkn7/8adf72139dee @ hfeg0plg91 (ERC_AI_CHECK pipeline 子section 过滤 + virtuoso→aether flow 改写)",
-    "EDA-Eval-DesignFlow-Characterization-001": "9knot/vincelu @ hfeg0plg49 (SiliconSmart drgqx 5 库表征 .tcl/.inst 多类 error 修复)",
-    "EDA-Eval-DesignFlow-PDKQA-001": "x4b0p/xinqiaoz @ hfeg0pkn004 (PDK QA DRC 框架 Windows→Linux 迁移, Calibre VCO aok/aoi autoswitch bug 假 MGC_HOME 绕过)",
-    "EDA-Eval-DesignFlow-Backannot-001": "82ybr/haoyut @ hfeg0plg49 (PrimeTime read_parasitics 寄生反标失败诊断·DRAM STA signoff, 跨 EDA 厂家 hierarchy 策略差异 StarRC merge vs Cadence SI)",
-}
+# (trace provenance for every proper case lives in metadata.trace_source — 即时令 XI)
 
 
 def today_mmdd():
@@ -49,11 +39,6 @@ def detect_test_lang(t):
     if "def check" in t:
         return "Python"
     return "—"
-
-
-def is_two_param(t):
-    return ("def check(deliverable" in t or "procedure(check(deliverable" in t
-            or "proc check {deliverable" in t)
 
 
 def load_cases():
@@ -92,13 +77,11 @@ def esc(s):
 
 
 def trace_source(c):
-    tid = c.get("task_id", "")
-    if tid in TRACE_SRC:
-        return TRACE_SRC[tid]
-    if c.get("legacy"):
-        return "synthesized (legacy scripting 口径)"
+    # 即时令 XI: legacy 用例 trace 来源标 "—"（无真实 trace，本就是 scripting 口径合成题）；
+    # proper 用例显示 metadata.trace_source 的 host/session_file 等；无则也 "—"。
+    # （不再回退 legacy_source_file —— 那是旧 jsonl 文件名，对 legacy 无意义。）
     md = c.get("metadata", {}) or {}
-    src = md.get("trace_source") or md.get("legacy_source_file")
+    src = md.get("trace_source")
     if src:
         if isinstance(src, dict):
             host = src.get("host", "?")
@@ -106,7 +89,7 @@ def trace_source(c):
             summ = src.get("real_task_summary", "")
             return f"{sf} @ {host} ({summ})" if summ else f"{sf} @ {host}"
         return src
-    return "synthesized"
+    return "—"
 
 
 def solve_problem(c):
@@ -130,11 +113,12 @@ def deliverable_req(c):
 
 
 def test_approach(c):
-    t = c.get("test", "") or ""
-    if c.get("legacy"):
-        return "校验函数返回值 (scripting 单参 check(candidate))"
-    if is_two_param(t):
-        return "校验交付件 (双参 check(deliverable, workdir): 解 zip + 断言内含文件 + 内容达标)"
+    # 即时令 XI: test 思路列读 metadata.test_rationale（每条 case 自己的真实验证思路）；
+    # 无该字段则 "—"（不再显示写死的废话）。
+    md = c.get("metadata", {}) or {}
+    tr = md.get("test_rationale")
+    if tr:
+        return tr
     return "—"
 
 
