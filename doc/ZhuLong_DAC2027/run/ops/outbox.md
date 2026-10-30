@@ -16369,3 +16369,70 @@ scan.tsv
 scorer.py
 === DONE 139 ===
 ```
+
+---
+
+## RUN_ID 140 · 2026-10-30 21:42:31 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 140 | bootstrap trace ledger | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+DF=$WS/doc/ZhuLong_DAC2027/benchmark
+J=/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+
+cd "$WS" || exit 0
+git pull --rebase --autostash origin main 2>&1 | tail -2
+
+echo "[1] files"
+ls -l "$DF/designflow/trace_ledger.py" 2>/dev/null | cut -c1-100
+ls -l "$J" | cut -c1-100
+
+echo "[2] seed from jsonl (one-off)"
+python3 "$DF/designflow/trace_ledger.py" seed --jsonl "$J"
+
+echo "[3] stats"
+python3 "$DF/designflow/trace_ledger.py" stats
+
+echo "[4] next: exclusion list must contain the seeded sessions"
+python3 "$DF/designflow/trace_ledger.py" next --n 3 | head -2 | cut -c1-200
+
+echo "[5] ledger"
+wc -l < "$DF/designflow/trace_ledger.tsv"
+cut -f1,2,3,6,7 "$DF/designflow/trace_ledger.tsv" | head -12
+echo "=== DONE 140 ==="
+```
+
+**输出**
+```
+=== RUN_ID 140 | bootstrap trace ledger | 2026-10-30 21:42:31 | host=hfeg0tedaap02 ===
+ * branch                main       -> FETCH_HEAD
+Already up to date.
+[1] files
+-rw-r----- 1 app.e0031982 app.adm 11394 Oct 30 21:42 /nasdata/app.e0031982/code/super_intelligence_2
+-rw-r----- 1 app.e0031982 app.adm 109156 Oct 30 20:38 /nasdata/app.e0031982/code/EDA-Flow-Bench/benc
+[2] seed from jsonl (one-off)
+seeded 11 case(s) from /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl; ledger total=11
+[3] stats
+trace 覆盖率 [............................]   0.0%   covered=11 / target=0 (mc>=300)
+  已动过 11：case 11 · deepread 0 · parked 0 · claimed 0
+  已覆盖 domain：analog_context:1 · characterization:1 · digital:4 · layout_aether:1 · layout_virtuoso:1 · physical_verify:1 · pnr_signoff:1 · verification:1
+[4] next: exclusion list must contain the seeded sessions
+# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session：
+awk -F'\t' 'NR>1 && $5+0>=300 && $4 !~ /^(1789900011859_zpx23|1792224347250_fww0m|1792133892937_i2dlp|1792400029503_0na23|1789370647360_ukkn7|1792297573507_9knot|1788770994295_x4b0p|1787798131361_82yb
+[5] ledger
+11
+1789900011859_zpx23	t0002948	hfeg0plg49	case	EDA-Eval-DesignFlow-Digital-010
+1792224347250_fww0m	klhu	hfeg0plg49	case	EDA-Eval-DesignFlow-Digital-021
+1792133892937_i2dlp	t0002948	hfeg0plg49	case	EDA-Eval-DesignFlow-Digital-022
+1792400029503_0na23	t0002948	hfeg0plg49	case	EDA-Eval-DesignFlow-Digital-023
+1789370647360_ukkn7	e0031668	hfeg0plg91	case	EDA-Eval-DesignFlow-Verification-001
+1792297573507_9knot	vincelu	hfeg0plg49	case	EDA-Eval-DesignFlow-Characterization-001
+1788770994295_x4b0p	xinqiaoz	hfeg0pkn004	case	EDA-Eval-DesignFlow-PDKQA-001
+1787798131361_82ybr	haoyut	hfeg0plg49	case	EDA-Eval-DesignFlow-Backannot-001
+1788172501150_w4x70	haoyut	hfeg0pkn003	case	EDA-Eval-DesignFlow-Analog-001
+1792487689184_4ybw1	yan1zh	hfeg0plg65	case	EDA-Eval-DesignFlow-LayoutAether-001
+1786541065533_cgqd1	e0014566	hfeg0pkn001	case	EDA-Eval-DesignFlow-LayoutVirtuoso-001
+=== DONE 140 ===
+```
