@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SWE-bench Verified 全量 500 题横评报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6f8;color:#222;margin:0;padding:24px;max-width:1280px;margin:0 auto;line-height:1.6}
+h1{font-size:1.5rem;border-bottom:3px solid #2b6cb0;padding-bottom:8px}
+h2{font-size:1.2rem;color:#2b6cb0;margin-top:32px;border-left:5px solid #2b6cb0;padding-left:10px}
+h3{font-size:1.05rem;margin-top:22px}
+.meta{color:#666;font-size:.85rem;margin-bottom:18px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:18px 22px;margin:14px 0}
+.tldr{background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:16px 20px;margin:16px 0}
+.warn{background:#fffbeb;border:1px solid #fbd38d;border-radius:8px;padding:12px 18px;margin:14px 0;color:#744210}
+table{border-collapse:collapse;width:100%;font-size:.83rem;background:#fff;margin:10px 0}
+th,td{border:1px solid #e2e8f0;padding:6px 8px;text-align:center}
+th{background:#edf2f7;font-weight:600} tr:nth-child(even){background:#f7fafc}
+td.l{text-align:left}
+td.pass{background:#c6f6d5;font-weight:700;color:#22543d} td.fail{background:#fed7d7;color:#822727}
+td.infra{background:#feebc8;color:#7b341e} td.nopatch{background:#e2e8f0;color:#718096} td.evalpend{background:#e9d8fd;color:#553c9a}
+td.sig{background:#fed7d7;font-weight:700} td.nosig{background:#f7fafc;color:#718096}
+code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
+.ev{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;color:#555}
+.foot{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}
+</style></head><body>
+<h1>SWE-bench Verified · 全量 500 题横评报告</h1>
+<div class="meta">生成时间：2026-10-30 12:45 · 任务令：2026-10-28 07:1x（用户直令：跑完整的 SWE-bench Verified）<br>
+模型：kimi-k2.6-cloud（统一骨干）· 评测集：princeton-nlp/SWE-bench_Verified 全量 500 题<br>
+评测脚本：官方 swebench v5.0.2 docker harness（<code>sg docker</code>，max_workers 8–12，timeout 1800s/题）<br>
+命名规程：正文一律写 <code>cline</code>（不写 cline-patched）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
+<div class="warn">⚠️ eval 阶段尚未完成（eval_*.json 仍为 gate 旧产物或缺失）。本报告当前仅含 <b>predict 阶段</b>统计（产出 patch 率 / 未产出 patch / infra / 配额）。predict+eval 全部完成后请重新运行本生成器以获得 resolved/failed 三列、Wilson 95% CI 与 McNemar 配对检验。</div>
+<div class="tldr"><h3 style="margin-top:0">TL;DR</h3>
+<p>5 路 gate-PASS harness 各跑 SWE-bench Verified <b>全量 500 题</b>（同一 500 题 / 同一模型 kimi-k2.6-cloud /
+同一 timeout 1800s / 同一官方 docker 评测）（predict 进行中 / eval 待完成）：</p>
+<ul><li><b>cline</b>：predict done <b>425/500</b>；产出 patch 377（88.7%）· 未产出 patch 41 · infra 1 · eval 待完成。</li><li><b>opencode</b>：predict done <b>441/500</b>；产出 patch 430（97.5%）· 未产出 patch 1 · infra 1 · eval 待完成。</li><li><b>pi</b>：predict done <b>361/500</b>；产出 patch 336（93.1%）· 未产出 patch 18 · infra 0 · eval 待完成。</li><li><b>claude-code</b>：predict done <b>288/500</b>；产出 patch 228（79.2%）· 未产出 patch 56 · infra 0 · eval 待完成。</li><li><b>codex</b>：predict done <b>197/500</b>；产出 patch 145（73.6%）· 未产出 patch 48 · infra 0 · eval 待完成。</li></ul>
+<p>闸门未过的 <b>hermes</b> / <b>deepseek-harness</b> 不进全量（如实列「未参与 + 原因」，铁律 4）。
+infra-or-fetch-timeout 单列、不计入模型失败/成功（铁律 3）。</p></div>
+<h2>一、评测口径</h2><div class="card"><table>
+<tr><th class="l">维度</th><th class="l">取值</th></tr>
+<tr><td class="l">评测集</td><td class="l">SWE-bench Verified 全量 500 题（princeton-nlp/SWE-bench_Verified，非 Lite、非子集）</td></tr>
+<tr><td class="l">模型</td><td class="l">kimi-k2.6-cloud（统一骨干，与 20 题试点、2100 Lite 同口径可比）</td></tr>
+<tr><td class="l">harness</td><td class="l">5 路 gate-PASS：cline / opencode / pi / claude-code / codex（闸门：10 题 resolve≥1 且未产出 patch≤2）</td></tr>
+<tr><td class="l">predict</td><td class="l">每题 git clone@base_commit → 跑 harness CLI agent（problem_statement）→ git diff 作 model_patch；timeout 1800s/题；断点续跑（已有 prediction 跳过）</td></tr>
+<tr><td class="l">fetch 优化</td><td class="l">git fetch timeout 300→1800s；各路 ids 轮转避免同仓并发 fetch 拥塞；fetch 超时题判 infra 单列</td></tr>
+<tr><td class="l">eval</td><td class="l">官方 swebench v5.0.2 docker harness；<code>sg docker</code>，max_workers 8–12，timeout 1800s/题</td></tr>
+<tr><td class="l">代理</td><td class="l">git fetch 经 172.19.92.25:13128（外网）；agent CLI 经本地 gw_proxy（剥外网代理，R529）</td></tr>
+<tr><td class="l">铁律</td><td class="l">①不许改评测口径 ②不许放宽测试 ③infra 单列 ④闸门不过不硬跑 ⑤资源不足先报 blocker</td></tr>
+</table></div>
+<h2>二、predict 阶段汇总（适配器健康度）</h2>
+<div class="card"><p>「未产出 patch」= 适配器健康度指标（agent 跑完但没产出 diff）；「infra」= git-fetch 超时等基础设施失败（单列，不计模型能力）。</p>
+<table>
+<tr><th>harness</th><th>done</th><th>产出 patch</th><th class="nopatch">未产出 patch</th>
+<th class="infra">infra</th><th>quota</th><th>总耗时</th><th>平均/题</th><th>last_update</th></tr>
+<tr><td class="l">cline</td><td>425/500</td><td>377 (88.7%)</td><td class="nopatch">41 (9.6%)</td><td class="infra">1</td><td>6</td><td>47.4h</td><td>402s</td><td>2026-10-30 12:43:35</td></tr><tr><td class="l">opencode</td><td>441/500</td><td>430 (97.5%)</td><td class="nopatch">1 (0.2%)</td><td class="infra">1</td><td>9</td><td>47.8h</td><td>391s</td><td>2026-10-30 12:44:55</td></tr><tr><td class="l">pi</td><td>361/500</td><td>336 (93.1%)</td><td class="nopatch">18 (5.0%)</td><td class="infra">0</td><td>7</td><td>48.0h</td><td>479s</td><td>2026-10-30 12:32:35</td></tr><tr><td class="l">claude-code</td><td>288/500</td><td>228 (79.2%)</td><td class="nopatch">56 (19.4%)</td><td class="infra">0</td><td>4</td><td>48.6h</td><td>607s</td><td>2026-10-30 12:39:19</td></tr><tr><td class="l">codex</td><td>197/500</td><td>145 (73.6%)</td><td class="nopatch">48 (24.4%)</td><td class="infra">0</td><td>4</td><td>49.6h</td><td>906s</td><td>2026-10-30 12:44:17</td></tr><tr style="font-weight:700"><td class="l">合计</td><td>1712/2500</td><td>1516</td><td class="nopatch">164</td><td class="infra">2</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></table></div>
+<h2>三、eval 阶段（待完成）</h2>
+<div class="card"><p class="warn">eval 阶段尚未启动（predict 进行中）。predict 全部完成后将启动官方 swebench v5.0.2 docker harness
+（<code>sg docker</code>，max_workers 8–12）对每路 predictions 打分，产出 <code>eval_{harness}.json</code>
+（resolved / failed / infra_or_quota），随后重新运行本生成器以补全：三列汇总 · Wilson 95% CI · McNemar 7×7 配对检验。</p>
+<p>当前 eval_*.json 为 gate 阶段（≤10 题）旧产物，不计入全量统计（本生成器以 n&gt;10 判定真实全量 eval）。</p></div>
+<h2>六、未参与全量的 harness（闸门未过，如实列）</h2>
+<div class="card"><p>用户令要求 7 路；其中 hermes / deepseek-harness 闸门 10 题不达标（铁律 4：闸门不过不硬跑全量）。
+已如实列「未参与 + 原因」，不为凑 7 路而硬跑。</p>
+<table><tr><th>harness</th><th>未参与原因</th></tr><tr><td class="l">hermes</td><td class="nopatch">闸门 10 题：no_patch=5（&gt;2）→ 判适配器不健康，不放大全量</td></tr><tr><td class="l">deepseek-harness</td><td class="nopatch">闸门 10 题：patch=0（9 no_patch）→ 判适配器未修复，不放大全量</td></tr></table></div>
+<h2>七、与 20 题试点一致性对照</h2>
+<div class="card"><p>试点为抽样，全量应落在试点 CI 内；偏离要解释（任务令④）。</p>
+<table><tr><th>harness</th><th>20 题试点</th><th>全量 500</th><th>一致性</th></tr><tr><td class="l">cline</td><td>13/20 (65.0%)</td><td class="evalpend">eval 待完成</td><td>—</td></tr><tr><td class="l">hermes</td><td>11/20 (55.0%)</td><td class="evalpend">eval 待完成</td><td>—</td></tr></table>
+<p>试点口径：report_harness_swebench_verified_pilot20_zh.html（cline 13/20=65.0%，hermes 11/20=55.0%）。</p></div>
+<h2>八、复现命令</h2>
+<div class="card"><p class="ev"># predict（断点续跑，已有 prediction 跳过）<br>
+cd doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full<br>
+setsid bash launch_full_predict_5.sh &gt; logs/full_predict_launcher.log 2&gt;&amp;1 &amp;<br><br>
+# 监控（progress JSON 为权威）<br>
+python3 -c "import json,glob,os; [print(os.path.basename(f), json.load(open(f))['done'],'/500') for f in sorted(glob.glob('reports/progress_*.json')) if 'hermes' not in f and 'deepseek' not in f]"<br><br>
+# eval（predict 全部完成后；sg docker，max_workers 8–12）<br>
+python3 run_verified_full.py eval --harness &lt;h&gt; --ids-file full_500_ids_&lt;h&gt;.txt<br><br>
+# 生成报告（predict-only 也可运行；eval 完成后重运行得完整报告）<br>
+python3 gen_report_swebench_verified_full500_zh.py</p></div>
+<div class="foot">报告生成器：harness/gen_report_swebench_verified_full500_zh.py · 数据目录：harness/swebench_verified_full/ · 生成时间：2026-10-30 12:45<br>
+溯源：reports/progress_*.json（predict 逐题）· reports/eval_*.json（eval 汇总）· predictions/（逐题 patch）· full_500_ids_*.txt（500 题清单）<br>
+铁律遵守：评测口径不变 · infra 单列 · 闸门不过不硬跑 · 结果 JSON 不入仓库（永久硬约束）</div>
+</body></html>
