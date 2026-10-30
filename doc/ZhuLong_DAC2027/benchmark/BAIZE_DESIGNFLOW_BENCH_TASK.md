@@ -2,6 +2,37 @@
 
 ## 🔧 运维指令区（每次唤醒先读）
 
+### 🚨 2026-10-30 运维即时令 XII：trace_source 用原用户名不要 hash + 日报显示用户 · 最高优先
+
+> **运维令**：「trace 来源里 user 用原用户名，不要 hash。这是内部 benchmark，要能溯源到具体是谁的工作。日报 trace 来源列也要显示用户名。」
+
+**一、改 trace_source 字段（8 条现有用例 + 以后新建）**
+
+1. **字段名改**：`metadata.trace_source.user_hash` → `metadata.trace_source.user`（直接存原用户名）
+2. **值改回原用户名**：
+   - Digital-010/022/023：`t0002948`（已是原名，字段名改即可）
+   - Digital-021：`klhu`（已是原名，字段名改即可）
+   - Verification-001：`8adf72139dee` → 改回原用户名（去 summary.tsv 查，或 SSH 到 hfeg0plg91 确认 session 1789370647360_ukkn7 的归属用户）
+   - PDKQA-001：`7fa3eec75ddd` → 改回原用户名（x4b0p session 归属 xinqiaoz，已在你深读笔记里记录）
+   - Backannot-001：`96f3e5727c78` → 改回原用户名（82ybr session 归属 haoyut，已在你深读笔记里记录）
+   - Characterization-001：`sha1[:12] of 'vincelu'` → 直接写 `vincelu`（你深读笔记里已有原名）
+3. **以后新建用例**：`metadata.trace_source.user` 直接写原用户名，**不要 hash、不要脱敏**
+4. **红线放宽**：原任务书红线"人名入库前脱敏"对 `trace_source.user` 字段**局部放宽**——这是内部 benchmark，用户名用于溯源，不对外发布。其他字段（密码/key/token/邮箱）仍脱敏。
+
+**二、改 gen_daily_report.py（日报 trace 来源列显示用户名）**
+
+当前日报 trace 来源列格式：`<session_file> @ <host> (<real_task_summary>)`，没显示用户。
+
+改为：`<user>/<session_file> @ <host> (<real_task_summary>)`，例如 `vincelu/1792297573507_9knot @ hfeg0plg49 (SiliconSmart 跑 drgqx 5 库表征...)`。
+
+读 `metadata.trace_source.user`（新字段名）或 `user_hash`（旧字段名，兼容），有则显示，无则 `—`。
+
+**三、执行**
+1. 改 8 条现有用例的 trace_source（字段名 user_hash→user，值改回原用户名）
+2. 改 gen_daily_report.py（trace 来源列加用户名）
+3. regen 日报验证：trace 来源列每行显示 `用户名/session @ host (任务)`
+4. 收尾铁律提交（workspace+日报→main，用例→master）
+
 ### 🚨 2026-10-30 运维即时令 XI：删除所有非真实 trace 构建的用例 + test 思路写真 · 最高优先
 
 > **运维令**：「"去掉 synthesized" 不是改个名字，是**删除所有不是基于真实 trace 构建的用例**。当前 72 条里只有 8 条有真实 trace 来源，其余 64 条（63 legacy + 1 proper 无 trace）全删。test 思路列也要写真思路，不要写废话。」
