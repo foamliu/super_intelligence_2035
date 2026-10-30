@@ -24,7 +24,7 @@ td{word-break:break-word}
 footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </style></head><body><div class="wrap">
 <h1>设计流 Benchmark 日报 · 10_30</h1>
-<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-10-30 17:45</span></p>
+<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-10-30 18:59</span></p>
 
 <h2>一、三口径数字（多机版，.75 落盘实测值）</h2>
 <div class="kpis">
@@ -37,16 +37,17 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
 <div class="kpis">
-<div class="kpi"><div class="n">8</div><div class="l">累计用例数</div></div>
-<div class="kpi"><div class="n">8</div><div class="l">设计流口径（proper design_flow）</div></div>
+<div class="kpi"><div class="n">9</div><div class="l">累计用例数</div></div>
+<div class="kpi"><div class="n">9</div><div class="l">设计流口径（proper design_flow）</div></div>
 <div class="kpi"><div class="n">0</div><div class="l">legacy scripting（已标记 legacy:true）</div></div>
 <div class="kpi"><div class="n">1</div><div class="l">jsonl 文件数（已合并）</div></div>
 </div>
-<p><b>按 domain 分布：</b>characterization: 1 · digital: 4 · physical_verify: 1 · pnr_signoff: 1 · verification: 1</p>
+<p><b>按 domain 分布：</b>analog_context: 1 · characterization: 1 · digital: 4 · physical_verify: 1 · pnr_signoff: 1 · verification: 1</p>
 <div class="note">即时令 VIII 已将原 15 个按工具分文件合并为单一 <code>EDA-Eval-DesignFlow.jsonl</code>；scripting 口径用例标记 <code>legacy:true</code> 保留存量，不再追加。新建用例只往此文件追加，按设计流契约（mode=design_flow / entry_point=outputs/submit.zip / 双参 check(deliverable, workdir) / 无 lang·host）。</div>
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
 <table><tr><th>task_id</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>pi 结果</th></tr>
+<tr><td>EDA-Eval-DesignFlow-Analog-001</td><td>haoyut/1788172501150_w4x70 @ hfeg0pkn003 (netlist/SPEF 连接追踪器构建·反标失败诊断辅助 (net_tracer v4-&gt;net_trace.py, UPSTREAM/DOWNSTREAM 链式格式, cell type/pin/bus bit/hierarchy))</td><td>DRAM 结构化网表 net 连接追踪器 (反标失败诊断辅助)</td><td>这是一个 DRAM 结构化网表连接追踪任务（真实 trace 来源：DRAM 时序/寄生工程师在主机 hfeg0pkn003 上做 PrimeTime read_parasitic…</td><td>outputs/submit.zip</td><td>解 zip 校验 3 文件(net_trace.py/sample_output.txt/error_summary.txt)齐全 + 实跑 candidate net_trace.py --net RowRedComp64/net016 --depth 3 退出码 0 + 断言 I1(nor2GFLx4) cell type 在括号内 + .A/.B/.Y pin 名 + net016/017/014 + UPSTREAM 与 DOWNSTREAM 双段 + 下游 I25(invGFLx4)/I3(aoi21PFDx2_H) + bus 位 RRH12N[1] 与 RRH12N[0] 各&gt;=1 独立 token(合并即 FAIL) + 完整 hierarchy 路径 DRAMTOP/.../net016 解析到 Module:RowRedComp64 + error_summary 按 PARA-043/044/124 各带计数+样例 net —— 能区分无 cell type/合并 bus 位/只单向/不支持 hierarchy/不分类的错误追踪器</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-Backannot-001</td><td>haoyut/1787798131361_82ybr @ hfeg0plg49 (PrimeTime 寄生反标失败诊断·DRAM STA signoff (跨 EDA 厂家 hierarchy 策略差异 StarRC merge vs Cadence SI 完整层级))</td><td>PrimeTime 寄生参数反标失败诊断 (DRAM STA signoff, 跨厂家 hierarchy 策略差异)</td><td>这是一个 PrimeTime 寄生参数反标失败诊断任务（真实 trace 来源：DRAM 时序/寄生工程师在 PIM LPDDR6 双芯验证平台上做 PrimeTime read_…</td><td>outputs/submit.zip</td><td>解 zip 校验 4 文件(annot_diag_report.md/hierarchy_compare.tsv/noncritical_ignore_list.txt/critical_fails.tsv)齐全；做跨 EDA 厂家 hierarchy 比较 + critical/noncritical 分离 + 9660 net 分类 + CDL ignore list；naive 只数 error 数不做 hierarchy 比较会 FAIL (e)(f)(g) —— 能区分未做层级比较/未分 critical 的错误诊断</td><td>Python</td><td><span class='tag draft'>未跑</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-Characterization-001</td><td>vincelu/1792297573507_9knot @ hfeg0plg49 (SiliconSmart 跑 drgqx 5 库表征，逐类修 configure/characterize/model 阶段 error 至全 tasks 成功 (16 类 error-fix))</td><td>SiliconSmart 库表征配置调试 (.tcl/.inst 多类 error 修复)</td><td>这是一个 Synopsys SiliconSmart 库表征 (characterization) 配置调试任务（真实 trace 来源：drgqx 项目，corner tt_25…</td><td>outputs/submit.zip</td><td>解 zip 校验 11 交付件(5 库 drgqx_*.tcl + stdcells_ac.tcl + configure.tcl + 5 个 .inst + fix_summary.md)齐全；5 个 .inst 的 add_latch 空{}/forbidden_state ^/netlist 名漂移/pintype/default_input_state 7 类缺陷全修复；.tcl model -timing 替换 -verilog all；fix_summary 覆盖 8 类别 —— 能区分只修部分 .inst/未改 model 选项的半成品</td><td>Python</td><td><span class='tag pass'>PASS</span></td></tr>
 <tr><td>EDA-Eval-DesignFlow-Digital-010</td><td>t0002948/1789900011859_zpx23 @ hfeg0plg49 (std_intmac 4 通道乘加树+饱和 RTL 实现与 VCS 仿真)</td><td>4 通道带饱和乘累加器 RTL 实现与功能仿真</td><td>根据附件 spec_mac4.md 的规格，实现一个 4 通道 16-bit 带饱和乘累加器（MAC）RTL，并完成功能仿真。 要求: 1. 用 Verilog-2001 实现模块…</td><td>outputs/submit.zip 内含 mac4.v, tb_mac4.sv, run_vcs.tcl, sim_mac4.log, mac4_wave.vcd</td><td>解 outputs/submit.zip 校验 5 文件(mac4.v/tb_mac4.sv/run_vcs.tcl/sim_mac4.log/mac4_wave.vcd)齐全；mac4.v 含 module mac4/endmodule/clk/rst_n/acc0 结构 token + 32-bit 有符号饱和字面量 7fffffff/80000000（缺饱和=错）；sim_mac4.log 含 MAC4_SIM_PASS 且无 MAC4_SIM_FAIL —— 能区分未饱和/仿真未过的错误</td><td>Python</td><td><span class='tag draft'>未跑</span></td></tr>
@@ -59,7 +60,7 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 
 <h2>四、pi 被测调试结果</h2>
 <div class="kpis">
-<div class="kpi"><div class="n" style="color:#155724">3</div><div class="l">PASS</div></div>
+<div class="kpi"><div class="n" style="color:#155724">4</div><div class="l">PASS</div></div>
 <div class="kpi"><div class="n" style="color:#721c24">0</div><div class="l">FAIL</div></div>
 <div class="kpi"><div class="n" style="color:#856404">0</div><div class="l">draft</div></div>
 <div class="kpi"><div class="n" style="color:#888">5</div><div class="l">未跑</div></div>
