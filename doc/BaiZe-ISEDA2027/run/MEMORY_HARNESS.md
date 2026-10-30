@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R949 SWE-bench全量500 predict 5路后台+eval 3/5路(opencode/cline DONE,pi RUNNING,claude-code/codex QUEUED)·5路predict总1815·72.6%·pi eval setsid后台344实例8worker.
-已完成:       H-B ctx压缩✅·Gate7/7(R466)·三路7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改✅·R584 顶层结果JSON补齐✅·R925 预建full500报告生成器✅·R943 opencode eval提前启动✅·R947 opencode eval DONE(367/500=73.4%)·R948 cline eval DONE(288/500=57.6%)·R949 pi eval setsid启动(chain→claude-code→codex)
-当前动作:     R949:opencode eval DONE(367/500=73.4%)·cline eval DONE(288/500=57.6%)·pi eval RUNNING(352patch,344实例,setsid PID3875809,8docker容器,0/344进度刚启动)·claude-code eval QUEUED(244patch)·codex eval QUEUED(162patch). 5路predict总1815(+9vsR948):opencode467·cline444·pi378·claude-code309·codex217. 5父predict全ALIVE(etimes≈185000s≈51.4h). 硬约束全绿:predictions/logs tracked=0✅. /data6.0T(15%)·load239(共享训练高). 闸门未过:hermes/deepseek(报告如实列未参与).
-下一步:       ①pi eval完成(~20min,344实例)→收pi resolved→②chain自动启动claude-code eval(244patch)→③chain自动启动codex eval(162patch)→④3路eval全完→重跑生成器得完整报告(resolved/500+三列+Wilson CI+McNemar 5x5)→⑤hermes/deepseek如实列未参与. ⑥永久硬约束:禁止commit评测结果JSON. [R949·pi eval RUNNING+chain→claude-code→codex]
+PHASE:        R950 SWE-bench全量500 predict 5路后台+eval 3/5路(opencode/cline DONE,pi RUNNING 122/344=35%,claude-code/codex QUEUED)·5路predict总1820·72.8%·pi eval ETA~17min.
+已完成:       H-B ctx压缩✅·Gate7/7(R466)·三路7x89(R479)·R527 TB报告✅·R539 pilot20报告✅·GATE v2全完成·R552 TB整改✅·R584 顶层结果JSON补齐✅·R925 预建full500报告生成器✅·R947 opencode eval DONE(367/500=73.4%)·R948 cline eval DONE(288/500=57.6%)·R949 pi eval启动(chain→claude-code→codex)
+当前动作:     R950:opencode eval DONE(367/500=73.4%)·cline eval DONE(288/500=57.6%)·pi eval RUNNING(122/344=35%,154reports,112resolved,7docker容器,ETA~17min,chain PID3875809 ALIVE)·claude-code eval QUEUED·codex eval QUEUED. 5路predict总1820(+5vsR949):opencode468·cline446·pi379·claude-code309·codex218. 5父predict全ALIVE(etimes≈185500s≈51.5h). 硬约束全绿:eval/predictions tracked=0✅. /data6.0T(15%)·load44(训练降). 闸门未过:hermes/deepseek(报告如实列未参与).
+下一步:       ①pi eval完成(~17min)→收pi resolved→②chain自动启动claude-code eval(重merge最新patch)→③chain自动启动codex eval(重merge最新patch)→④5路eval全完→重跑生成器得完整报告(resolved/500+三列+Wilson CI+McNemar 5x5)→⑤hermes/deepseek如实列未参与. ⑥永久硬约束:禁止commit评测结果JSON. [R950·pi eval RUNNING 35%+chain→claude-code→codex]
 阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=33364B(32.6KB,<40KB红线,活跃令不可归档) / MEMORY=~31KB(归档R939-R944后≤32KB✅)
+📦 体积：TASK=33364B(32.6KB,<40KB红线,活跃令不可归档) / MEMORY=~26KB(≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[17:04] R950 巡检full500 predict+eval(运维令10-28 07:1x)·**pi eval推进至122/344=35%**:154reports,112resolved,7docker容器运行中,~4.5s/it,ETA~17min,chain PID3875809 ALIVE(ppid=1). opencode eval DONE(447reports,367/500=73.4%). cline eval DONE(388reports,288/500=57.6%). claude-code/codex eval QUEUED(chain脚本自动续跑,重merge最新patch). 5路predict总1820(+5vsR949):opencode468(+1)·cline446(+2)·pi379(+1)·claude-code309(=)·codex218(+1). 5父predict全ALIVE(etimes≈185500s≈51.5h). 硬约束全绿:git ls-files logs/**/json=0✅·predictions/**/json=0✅. /data6.0T(15%)·load44(训练降,远好于R949的239). 闸门未过:hermes/deepseek(报告如实列未参与). 判据自检:运维令10-28 07:1x(full500)未交付(pi eval 35%在跑→claude-code/codex eval未启→报告未完整)→WAITING=0(loop 60s后再唤醒巡检).
 [16:44] R949 巡检full500 predict+eval(运维令10-28 07:1x)·**opencode eval DONE**:447reports,resolved=367/500=73.4%,infra=0. **cline eval DONE**:388reports,resolved=288/500=57.6%,infra=0(PID1361576 stuck in cleanup→killed). **pi eval STARTED**:merge 352patches→chain_eval_pi_claude_codex.sh setsid后台(PID3875809,ppid=1,detached)→sg docker swebench workers=8→344实例(8gate跳过)→8 docker容器→0/344进度刚启动. chain脚本自动续跑claude-code(244patch)+codex(162patch)eval. 5路predict总1815(+9vsR948):opencode467(+4)·cline444(+1)·pi378(+2)·claude-code309(+1)·codex217(+1). 5父predict全ALIVE(etimes≈185000s≈51.4h). 清理:8 orphaned pi容器+8 leftover cline容器已docker rm -f. 硬约束全绿:predictions/logs tracked=0✅. /data6.0T(15%)·load239(共享训练高). 判据自检:运维令10-28 07:1x(full500)未交付(pi eval在跑→claude-code/codex eval未启→报告未完整)→WAITING=0(loop 60s后再唤醒巡检).
 [16:22] R948 巡检full500 predict+eval·cline eval推进至232/388=60%,ETA~8min. opencode eval rerun中(PID2403513,52min). 5路predict总1806. /data6.0T(15%)·load286. WAITING=0.
 [16:10] R947 巡检full500 predict+eval(运维令10-28 07:1x)·**opencode eval DONE**:447/448 evaluated,resolved=367(73.4% of 500),unresolved=80,infra=0(1 instance无report.json). **cline eval R947启动**:merge_predictions构建predictions_cline-patched.json(394patch)→launch_eval_cline.sh后台sg docker workers=8→PID1361576,387实例(7gate跳过),18/388done(5%),24 docker容器运行中. 5路predict总1802(+2vsR946):opencode463(452patch/剩37)·cline442(393patch/剩58)·pi375(剩125)·claude-code307(剩193)·codex215(剩285). 5父predict全ALIVE(etimes≈182800s≈50.8h). 硬约束全绿:git ls-files结果json=0✅. /data6.0T(15%)·load255. 判据自检:运维令未交付(5路predict+eval未全完→报告未完整)→WAITING=0.
