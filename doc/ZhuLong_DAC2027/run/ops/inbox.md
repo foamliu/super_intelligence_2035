@@ -1,4 +1,55 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 131 -->
+## RUN_ID 131 - read-only audit: designflow trace_source user names (user order: no desensitize, keep usernames)
+
+```bash
+set -u
+echo "=== RUN_ID 131 | read-only audit: trace_source user | $(date '+%F %T') | host=$(hostname) ==="
+BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench
+J=$(ls "$BENCH"/benchmarks/EDA-Eval-DesignFlow/*.jsonl 2>/dev/null | head -1)
+echo "[1] jsonl: ${J:-<not found>}"
+if [ -n "${J:-}" ] && [ -f "$J" ]; then
+  echo "  lines=$(wc -l < "$J") bytes=$(stat -c %s "$J") mtime=$(stat -c %y "$J" | cut -c1-19)"
+  python3 - "$J" <<'PY'
+import json,sys,re
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p,encoding='utf-8') if l.strip()]
+print("  cases=%d"%len(rows))
+names=set(); hu=0
+for r in rows:
+    md=r.get("metadata") or {}
+    ts=md.get("trace_source") or {}
+    if "user_hash" in ts: hu+=1
+    u=ts.get("user") or ts.get("user_hash") or "-"
+    names.add(str(u))
+    print("   %-44s user=%-12s host=%-18s session=%s" % (str(r.get("id") or r.get("task_id"))[:44], u, str(ts.get("host","-")), str(ts.get("session_file","-"))))
+blob=open(p,encoding='utf-8').read()
+print("   rows_with_user_hash_key=%d"%hu)
+print("   user_hash_string_count=%d"%blob.count("user_hash"))
+print("   unique_user_values=%s"%sorted(names))
+print("   12hex_like_tokens=%d"%len(re.findall(r"\b[0-9a-f]{12}\b",blob)))
+print("   desensitize_word_count=%d"%blob.count("\u8131\u654f"))
+PY
+else
+  echo "  jsonl not found"
+fi
+
+echo "[2] bench repo state"
+if cd "$BENCH" 2>/dev/null; then
+  git status -sb | head -3
+  echo "  ahead_behind=$(git rev-list --left-right --count origin/master...HEAD 2>/dev/null)"
+  git log -3 --date=format:'%m-%d %H:%M' --pretty='    %h %ad %s' | cut -c1-110
+else
+  echo "  cannot cd $BENCH"
+fi
+
+echo "[3] deepread notes: real-identifier counts"
+for f in /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/trace_deepreads/*.md; do
+  printf "  %-44s names=%s\n" "$(basename "$f")" "$(grep -oE "yan1zh|vincelu|haoyut|klhu|xinqiaoz|t0002948|e0031668" "$f" | wc -l)"
+done
+
+echo "=== DONE 131 ==="
+```
 <!-- RUN_ID: 130 -->
 ## RUN_ID 130 - read-only probe: designflow runtime status (ops request 2026-10-30)
 
