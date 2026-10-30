@@ -157,15 +157,33 @@
 | `datasets/MMMU/` | 232M | 240,736,341 | MMMU 评测数据 |
 | `Downloads/` | 209M | 216,932,527 | 旧下载 |
 | `datasets/allenai/` | 1.7M | 1,415,941 | 用途不明 |
+| `code/BaiZe-ISEDA2027/nemo_experiments/` | 645G | 692,340,206,072 | 旧 NeMo 训练实验（128 子目录，架构搜索期已收敛），不在 INDEX.tsv |
+| `datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/` | 5.5T | 5,989,056,868,520 | LLaVA 指令调优数据（182 子目录），不在 INDEX.tsv |
+| `datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M/` | 149G | 159,121,745,303 | LLaVA 快速启动 webdataset，不在 INDEX.tsv |
+| `datasets/mvp-lab/LLaVA-NeXT-780k-webdataset/` | 101G | 108,079,183,973 | LLaVA-NeXT webdataset，不在 INDEX.tsv |
+| `code/LLaVA-OneVision-1.5-RL/` | 30G | 30,125,997,787 | LLaVA RL 代码+数据，不在 INDEX.tsv |
+| `code/BaiZe-ISEDA2027/output/` | 22G | 22,792,217,964 | 旧训练输出，不在 INDEX.tsv |
+| `code/BaiZe-ISEDA2027/hf_checkpoints/` | 8.9G | — | 旧 HF 检查点 |
+| `code/flash-attention/` | 8.9G | — | flash-attention 源码（编译依赖） |
+| `datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/` | 19G | — | LLaVA RL 数据，不在 INDEX.tsv |
+| `datasets/mvp-lab/llava_conversion_work/` | 7.1G | — | LLaVA 转换工作目录 |
+
+> ⚠️ 上述 `nemo_experiments/`、`code/BaiZe-ISEDA2027/output/`、`code/LLaVA-OneVision-1.5-RL/` 等是 `code/`（红线保留）下的子目录；`mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/` 等是 `mvp-lab/`（红线保留，含 85M 下载）下的子目录。它们作为独立条目列出以供运维逐项决策，但表观合计与父目录有重叠。
+
+### 可删（低风险）· 补充
+
+| 路径 | 表观 | 实占(B) | 理由 |
+|:---|---:|---:|:---|
+| `code/BaiZe-ISEDA2027/p6_tf5/` | 302M | 214,841,930 | 旧实验数据（63 子目录，架构搜索期），不在 INDEX.tsv |
 
 ### 合计估算
 
 | 分类 | 表观合计 | 实占合计(B) | 说明 |
 |:---|---:|---:|:---|
-| 红线（保留） | ~61.7T | ~66,906,379,766,145 | 不可删 |
-| 可删（低风险） | ~389M | ~388,633,790 | 等批准即可删 |
-| 待定（待确认） | ~7.6T | ~7,703,920,233,097 | 需各线 agent 确认是否使用 |
+| 红线（保留） | ~61.7T | ~66,906,379,766,145 | 不可删（含 85M 下载 37T + 源 parquet + 分词产物） |
+| 可删（低风险） | ~691M | ~603,475,720 | 等批准即可删（stanford-corenlp zip + .nfs + nccl_dbg + p6_tf5） |
+| 待定（待确认） | ~14.3T | ~14,649,436,452,716 | 需各线 agent 确认是否使用（含子目录独立条目，与父目录有重叠） |
 | **总计** | ~69.7T | | /nas_train 已用 173T / 207T (84%) |
 
-> ⚠️ **待定项中 FineVision(4.3T) + HuggingFaceFW(1.3T) + conceptual-captions(1.2T) = 6.8T** 是最大可释放空间，但需 vision agent 确认是否使用 FineVision 和 conceptual-captions，需确认 HuggingFaceFW/fineweb-edu 是否为旧下载。
+> ⚠️ **待定项中 Top-5 最大可释放空间**：FineVision(4.3T) + LLaVA-Instruct-Data(5.5T) + HuggingFaceFW(1.3T) + conceptual-captions(1.2T) + nemo_experiments(645G) = **~12.9T**，但需 vision agent 确认 FineVision/conceptual-captions/Instruct-Data 是否使用，需确认 HuggingFaceFW/fineweb-edu 是否为旧下载，需确认 nemo_experiments 是否仍有参考价值。
 
