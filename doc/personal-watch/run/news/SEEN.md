@@ -1534,3 +1534,17 @@
 | 2026-10-30 | 第 178 轮 附录 A28–A29：帕特里克·斯图尔特逝世（86 岁 · 讣告）；内存一年涨 760%（DDR5 128GB 套装 51.48 万日元 · 行情） | IT之家 10-30 | 不收（讣告/行情 · 只登记） | https://www.ithome.com/1/020/032.htm |
 | 2026-10-30 | 第 178 轮 附录 A30–A32：起亚 2026Q3（净利 -9.7%）· 三星 Fit 4/雷蛇手柄/ColorOS 计划 · 欣旺达全固态电池表态 | IT之家 10-30 | 不收（财报/产品/企业表态 · 只登记） | https://www.ithome.com/1/020/034.htm |
 | 2026-10-30 | 第 178 轮 附录 A33–A34：量子位 10 条（厂商稿/传闻/技术报告）· 爱范儿 15 条（上手稿）· 中新网央视 AI 0 条（含直升机相撞伤亡 · 依 §2.3 不采）· TechCrunch 20 条全重复 | 量子位 / 爱范儿 / cn_news / TechCrunch | 不收（非硬新闻或已入账） | https://www.qbitai.com/feed |
+| 2026-10-30 | DeepSeek 官网前端代码曝光 Cyber 网安独立模型（cyber-personal-v3 / cyber-enterprise-v4 · 灰度 · 官方未公告） | IT之家 10-30（正文已读） | news（第 179 轮 · §1） | https://www.ithome.com/1/020/154.htm |
+| 2026-10-30 | 百度搜索 API 活动价 4.9 元/千次（低于 DeepSeek 5 元）+ 文心助手转向「一份交付」（170+ 场景 / 9 种方言 / 50 亿条数据） | IT之家 10-30（正文已读） | news（第 179 轮 · §1） | https://www.ithome.com/1/020/165.htm |
+| 2026-10-30 | 前特斯拉 Autopilot 负责人斯特林·安德森抨击纯视觉方案（The Verge 10-27 采访） | IT之家 10-30（正文已读） | news（第 179 轮 · §1） | https://www.ithome.com/1/020/137.htm |
+| 2026-10-30 | 群晖：近期勒索攻击利用 2024-12 已修复漏洞，非 DSM 零日（10-29 表态） | IT之家 10-30（正文已读） | news（第 179 轮 · §2） | https://www.ithome.com/1/020/231.htm |
+| 2026-10-30 | Stack Overflow 每月新增提问跌破 1000 条（2026-09 = 969 · 2020-10 = 141,749 · -99.3%） | IT之家 10-30（正文已读 · Stack Exchange API 统计） | news（第 179 轮 · §4） | https://www.ithome.com/1/020/114.htm |
+| 2026-10-30 | Sierra Club：AI 算力或使美国电力碳排放 2030 年较 2025 年升 42%（增 6.18 亿吨 · 抵消 15 年减排） | IT之家 10-30（正文已读 · 组织测算） | news（第 179 轮 · §4） | https://www.ithome.com/1/020/232.htm |
+| 2026-10-30 | 曝 DeepSeek 第二轮融资 1055 亿元、估值 6155 亿元（The Information · 国资占比约 27%） | IT之家 10-30（正文已读） | news（第 179 轮 · §5） | https://www.ithome.com/1/020/121.htm |
+| 2026-10-30 | 亚马逊：AWS 年化 1,840 亿美元（+39%）、2026 现金资本开支约 2,200 亿美元、贾西称万亿营收目标 | TechCrunch 10-29（正文已读） | news（第 179 轮 · §5） | https://techcrunch.com/2026/10/29/aws-will-be-a-1t-business-jassy-says-but-first-it-will-spend-big/ |
+| 2026-10-30 | 腾讯 Marvis 上线 Coding 管家（手机遥控 · 首批 CodeBuddy IDE / Kimi Code Desktop · 10-29） | 中新网 10-30 | news（第 179 轮 · §5） | https://www.chinanews.com.cn/cj/2026/10-30/10723416.shtml |
+| 2026-10-30 | Wabi 融资 5,500 万美元、估值 12.5 亿美元（Replika 创始人 · 转向会搭小程序的个人 agent） | TechCrunch 10-29（正文已读） | news（第 179 轮 · §6） | https://techcrunch.com/2026/10/29/wabi-the-ai-agent-that-builds-mini-apps-now-valued-at-1-25b-after-latest-round/ |
+| 2026-10-30 | 第 179 轮 附录 A35：Fable 5.5 测试曝光 / Claude 新模型曝光（均为无官方确认爆料） | 爱范儿 / 量子位 10-30 | 不收（泄露传闻 · 只登记） | https://www.ifanr.com/1686874 |
+| 2026-10-30 | 第 179 轮 附录 A36–A37：量子位 10 条（厂商稿/活动稿）· 爱范儿 15 条（上手稿/已入账） | 量子位 / 爱范儿 10-30 | 不收（非硬新闻或已入账） | https://www.qbitai.com/feed |
+| 2026-10-30 | 第 179 轮 附录 A38–A39：TechCrunch 20 条（多为前轮已登记 · 涉间谍指控不采）· 中新网央视 120 条 AI 相关 5 条（地方数据/综述/活动预热） | TechCrunch / cn_news 10-30 | 不收（重复/不采/综述） | https://techcrunch.com/category/artificial-intelligence/feed/ |
+| 2026-10-30 | 第 179 轮 附录 A40–A42：A股/车企常规财报叠加 · 消费电子新品与降价 · 乌克兰战场 AI 机枪炮塔（军事 · 依 SPEC §2.3 不采） | IT之家 10-30 | 不收（财报/产品/军事） | https://www.ithome.com/1/020/131.htm |
