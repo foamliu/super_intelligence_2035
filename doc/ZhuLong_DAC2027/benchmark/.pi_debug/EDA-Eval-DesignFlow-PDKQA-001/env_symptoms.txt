@@ -1,0 +1,36 @@
+# env_symptoms.txt -- observed environment failures when running DRC QA tests
+# as a non-interactive process on hfeg0pkn004 (RHEL 8).
+
+[1] Python:
+    $ python3 DRC/tests/run_all_tests.py
+    ImportError: libpython3.7m.so.1.0: cannot open shared object file: No such file
+    -> python-3.7.1 x86_64 lib not on LD_LIBRARY_PATH for non-interactive shells.
+
+[2] Calibre VCO:
+    $ calibre -batch
+    ERROR: VCO aok not supported by autoswitch; no matching tree
+    -> machine OS=RHEL8 -> calibre_vco returns 'aok', but installed tree is 'aoi'.
+
+[3] Non-interactive shell:
+    $ ssh host "calibre -batch"
+    (same VCO error)  -- but the user's interactive terminal runs calibre fine.
+    Reason: non-interactive process does NOT source .bashrc -> no `module load
+    calibre` -> CALIBRE_HOME unset -> calibre_env runs calibre_vco -> autoswitch
+    bug triggers.
+
+[4] "Regular" fix attempted (set CALIBRE_HOME only):
+    CALIBRE_HOME=/apps/mentor/calibre/2020.1_36/aoi_cal_2020.1_36.18
+    PATH=$CALIBRE_HOME/bin:$PATH  LD_LIBRARY_PATH=$CALIBRE_HOME/shared/lib:...
+    $ calibre -batch
+    ERROR: VCO aok not supported by autoswitch; no matching tree
+    -> SETTING CALIBRE_HOME ALONE DOES NOT HELP: calibre_env UNCONDITIONALLY
+       runs calibre_vco and the autoswitch grep bug still fires.
+    -> Also missing: libXss.so.1 (X scrnSaver) dependency not on the box.
+
+[5] Conclusion:
+    The autoswitch bug is in calibre_env (shell variable name resolution), an
+    environment/infrastructure defect, NOT application-fixable.  A test-env
+    workaround is required: fake MGC_HOME whose bin/calibre_vco returns 'aoi'
+    (so calibre_env's autoswitch sees the installed tree) + a stub libXss.so.1
+    + LD_LIBRARY_PATH pointing at the real aoi libs.  The workaround must
+    auto-rebuild at import (the /tmp stubs may be cleaned).

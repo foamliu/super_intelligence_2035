@@ -1,0 +1,15 @@
+=== pi-SUT PDKQA-001 start 2026-10-30 14:20:25 ===
+=== pi exit=0 end 2026-10-30 14:24:42 ===
+=== outputs/submit.zip ===
+-rw-r----- 1 app.e0031982 app.adm 5481 Oct 30 14:24 outputs/submit.zip
+=== tail pi_run.log ===
+三份交付件已生成并打包为 `outputs/submit.zip`（扁平文件名，无子目录），本地校验器 `_check.py` 自检通过（PASS），且 `test_env.py` 导入时自动重建桩脚本、`check_calibre_env()` 返回 `(True, 'calibre env OK ...')`。
+
+交付内容要点：
+- `test_env.py`：修 `libpython3.7m.so.1.0`（把 `/apps/local/python/python-3.7.1/x86_64/lib` 加到 `LD_LIBRARY_PATH`）；在 `/tmp/calibre_fake_home` 建假 `MGC_HOME`，其 `bin/calibre_vco` 桩返回 `aoi`；建桩 `/tmp/libXss.so.1`；`LD_LIBRARY_PATH` 指向真实 aoi lib 与 `/tmp`；导入时检查缺失并自动重建，模块末尾模块级调用 `_setup_calibre_env()`；提供 `check_calibre_env` / `get_real_path` / `chdir_to_data_dir` / `print_result`。
+- `smoke_report.md`：17 个 checker 与 `SUPPORT_FUNCNAMES` 完全一致——11 个 text checker `PASS`、`drcSyntax` `PASS`、5 个 pattern QA checker `CAN_START`（emptyDeriveLayer / patternDeviceLayer / patternLayerVsFracture / patternLayerVsDesignRuleLayerChange / drcWithPattern）。
+- `PHASE2_REPORT.md`：定位 calibre_env 中 `$SW_WKSTN_` / `$MGC_VCO_` 带下划线变量名解析 bug；明确记录"只设 CALIBRE_HOME 的正规方案已尝试且无效（calibre_env 无条件运行 calibre_vco）"；记录假 MGC_HOME + 桩 libXss 绕过方案及导入自动重建。
+
+DESIGN_FLOW_VERDICT=PASS
+=== local check ===
+CHECK_RESULT: PASS
