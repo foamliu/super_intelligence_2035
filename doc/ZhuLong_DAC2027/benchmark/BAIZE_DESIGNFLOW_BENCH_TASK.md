@@ -129,9 +129,9 @@
 **红线（硬，不许碰）**
 - 🚫 SSH 目标机**只读**：不改文件、不删目录、不装包、不写目标机磁盘。
 - 🚫 不碰他人进程；连接失败记原文，不静默重试掩盖。
-- 🚫 **敏感信息脱敏**：key/token/密码入库前脱敏；**未脱敏样本不入 git**。
+- 🚫 **敏感信息**：key/token/密码不入 git（其他都可入库）。
 - 🚫 主动扫描（如 `nmap -sn`）**必须先获书面授权**，否则只用被动发现。
-- 🚫 原始轨迹不入库，只入提炼后的 prompt/test/metadata 与统计。
+- ✅ 真实轨迹可入库（prompt/test/metadata + 必要时原始 session 片段都行），用于溯源和复现。
 - 🚫 不因"样本还不够 500"就等——边采集边构建，版本化交付。
 - 🚫 本线不用 GPU，不与 pretrain/vision 抢资源。
 
@@ -318,7 +318,7 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
 - 用例保存目录：`/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/`（已存在，已有 jsonl + assets + reference）
 - 可新建 jsonl（按上述 schema），也可往现有 jsonl 追加行；assets/ 下按题放参考文件。
 - **每次睡去前**（收尾铁律第 3 步）必须 `git add -- benchmarks/EDA-Eval-DesignFlow/` 并提交推送。不要等"凑够一批"才提交，每轮有新增就提交。
-- 用例数据来源 = 增补 II 的 .75 上 `summary.tsv`（24085 命中）经 eda_flow 拉取 + 提炼。**原始 session 内容不入 git**，只入提炼后的 prompt/test/metadata。
+- 用例数据来源 = 增补 II 的 .75 上 `summary.tsv`（24085 命中）经 eda_flow 拉取 + 提炼。真实 session 内容可入库（key/token/密码除外）。
 
 **任务 2：用 pi agent 作被测调试用例**
 - 每新建/修改一条用例，**用 `pi` 实际跑一遍**验证可执行、test 能正确判 PASS/FAIL。
@@ -370,7 +370,7 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
    - 🚫 **只读**：不 `>`/`tee`/`rm` 任何东西到目标机（红线）
 3. `close_session(workdir)` 清理。
 4. 从真实 session 内容提炼 prompt/test → 落 `benchmarks/EDA-Eval-DesignFlow/` 新 jsonl（按增补 III schema）。
-5. **入库**：session 里的 key/token/密码不入库；用户名/路径/IP/文件名保留原值用于溯源。
+5. **入库**：session 内容可入库（key/token/密码除外）。
 6. 用 pi 调试用例（增补 III 任务 2）。
 
 **SSH 命令模板（直接抄）**
