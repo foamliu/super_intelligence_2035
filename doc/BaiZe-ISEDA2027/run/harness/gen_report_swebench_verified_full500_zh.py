@@ -46,15 +46,14 @@ PRED_DIR = FULL / "predictions"
 PROJECT_REPORTS = HERE.parent.parent / "reports"
 OUT = PROJECT_REPORTS / "report_harness_swebench_verified_full500_zh.html"
 
-# 5 路 gate-PASS（闸门判据：10 题里 resolve≥1 且 未产出 patch≤2）
-HARNESS_ORDER = ["cline-patched", "opencode", "pi", "claude-code", "codex"]
+# 7 路（5 原 gate-PASS + 2 adapter-fixed R988: hermes/deepseek 适配器修复后恢复全量）
+HARNESS_ORDER = ["cline-patched", "opencode", "pi", "claude-code", "codex",
+                 "hermes", "deepseek-harness"]
 DISPLAY = {"cline-patched": "cline", "opencode": "opencode", "pi": "pi",
-           "claude-code": "claude-code", "codex": "codex"}
-# 闸门 FAIL → 未参与全量（如实列）
-GATE_FAILED = {
-    "hermes": "闸门 10 题：no_patch=5（>2）→ 判适配器不健康，不放大全量",
-    "deepseek-harness": "闸门 10 题：patch=0（9 no_patch）→ 判适配器未修复，不放大全量",
-}
+           "claude-code": "claude-code", "codex": "codex",
+           "hermes": "hermes", "deepseek-harness": "deepseek-harness"}
+# 闸门 FAIL → 未参与全量（如实列）— R988 修复后 hermes/deepseek 已恢复，GATE_FAILED 为空
+GATE_FAILED = {}
 N_TOTAL = 500
 # 20 题试点对照（pilot20 报告实测，commit 33782ab93 系列）
 PILOT20 = {"cline-patched": (13, 20), "hermes": (11, 20)}
@@ -352,11 +351,15 @@ exact binomial two-sided p；<span class="sig">p&lt;0.05 显著</span>，<span c
 
 
 def gate_failed_section():
+    if not GATE_FAILED:
+        return """<h2>六、闸门状态</h2>
+<div class="card"><p>用户令要求 7 路，全部 7 路已通过闸门或经适配器修复（R988）后恢复全量评测。
+hermes / deepseek-harness 原闸门 fail（适配器不健康），R988 修复后 verify5b 分别达 80% / 60%，已纳入全量。</p></div>"""
     rows = "".join(
         f'<tr><td class="l">{esc(k)}</td><td class="nopatch">{esc(v)}</td></tr>'
         for k, v in GATE_FAILED.items())
     return f"""<h2>六、未参与全量的 harness（闸门未过，如实列）</h2>
-<div class="card"><p>用户令要求 7 路；其中 hermes / deepseek-harness 闸门 10 题不达标（铁律 4：闸门不过不硬跑全量）。
+<div class="card"><p>用户令要求 7 路；其中部分闸门 10 题不达标（铁律 4：闸门不过不硬跑全量）。
 已如实列「未参与 + 原因」，不为凑 7 路而硬跑。</p>
 <table><tr><th>harness</th><th>未参与原因</th></tr>{rows}</table></div>"""
 
@@ -384,7 +387,7 @@ def repro_section():
 cd doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full<br>
 setsid bash launch_full_predict_5.sh &gt; logs/full_predict_launcher.log 2&gt;&amp;1 &amp;<br><br>
 # 监控（progress JSON 为权威）<br>
-python3 -c "import json,glob,os; [print(os.path.basename(f), json.load(open(f))['done'],'/500') for f in sorted(glob.glob('reports/progress_*.json')) if 'hermes' not in f and 'deepseek' not in f]"<br><br>
+python3 -c "import json,glob,os; [print(os.path.basename(f), json.load(open(f))['done'],'/500') for f in sorted(glob.glob('reports/progress_*.json'))]"<br><br>
 # eval（predict 全部完成后；sg docker，max_workers 8–12）<br>
 python3 run_verified_full.py eval --harness &lt;h&gt; --ids-file full_500_ids_&lt;h&gt;.txt<br><br>
 # 生成报告（predict-only 也可运行；eval 完成后重运行得完整报告）<br>
