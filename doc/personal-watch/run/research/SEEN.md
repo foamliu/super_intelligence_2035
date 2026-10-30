@@ -5420,7 +5420,7 @@
 | 2026-10-30 | 2610.40578 | VeriCUA: Verification as Agentic Exploration for Computer-Using Agents | cs.AI | 候选 |
 | 2026-10-30 | 2610.40577 | Multi-View MoE: Letting Every Router Shape Expert Computation | cs.CL | 候选 |
 | 2026-10-30 | 2610.40576 | PIVOT: Progressive Intervention via Online Teacher Correction | cs.CL | 候选 |
-| 2026-10-30 | 2610.40574 | Every Token Needs Its Own Teacher: Multi-teacher Adaptive On-policy Self-distillation | cs.CL | 候选 |
+| 2026-10-30 | 2610.40574 | Every Token Needs Its Own Teacher: Multi-teacher Adaptive On-policy Self-distillation | cs.CL | 收录 |
 | 2026-10-30 | 2610.40565 | Gym-Anything for Robotics: Scaling physical simulations with digital agents | cs.RO | 候选 |
 | 2026-10-30 | 2610.40564 | Training Foundation Models with a Single Algorithm | cs.LG | 候选 |
 | 2026-10-30 | 2610.40563 | Comparing Human Role-Players and LLM-Simulated Clients in Online Counselling Training: An Analysis of Counselling Patterns | cs.AI | 候选 |
@@ -5448,7 +5448,7 @@
 | 2026-10-30 | 2610.40350 | Don't Lose the Thread: Empowering Long-Horizon LLM Agents with Cognitive Resource Self-Allocation | cs.CL | 候选 |
 | 2026-10-30 | 2610.40349 | TouchBridge: Tactile-Conditioned Human-to-Robot Transfer for Dexterous Manipulation | cs.RO | 候选 |
 | 2026-10-30 | 2610.40309 | Textual Response-Aware Guidance for Zero-Shot Adversarial Robustness of Vision-Language Models | cs.CV | 候选 |
-| 2026-10-30 | 2610.40305 | Rimuru: Unified Memory Management for Modern LLM Serving via Elastic Expert Offloading | cs.OS | 候选 |
+| 2026-10-30 | 2610.40305 | Rimuru: Unified Memory Management for Modern LLM Serving via Elastic Expert Offloading | cs.OS | 收录 |
 | 2026-10-30 | 2610.40293 | MAServeBench: Benchmarking Multi-Agent LLM Serving Systems with Hierarchical Collaboration Workloads | cs.MA | 候选 |
 | 2026-10-30 | 2610.40284 | LoRe-MIM: Lost-or-Replaced Masked Image Modeling for Self-Supervised Representation Learning in Whole-Body PET/CT | cs.CV | 候选 |
 | 2026-10-30 | 2610.40280 | Latent Prediction Yields Cross-Subject Alignable Representations in Sensory-Evoked fMRI | cs.LG | 候选 |
@@ -5586,7 +5586,7 @@
 | 2026-10-30 | 2610.38147 | SkillCT: A Multidimensional Benchmark and Execution-Free Baseline for Agent Skill Assessment | cs.AI | 候选 |
 | 2026-10-30 | 2610.38145 | El Agente Quntur: Agentic Active-Space Selection for CASSCF | physics.chem-ph | 候选 |
 | 2026-10-30 | 2610.38109 | Who Called? V33DA: A Physically Verified Multimodal Benchmark for Vocal Attribution in Zebra Finch Groups | cs.SD | 候选 |
-| 2026-10-30 | 2610.38095 | Nemotron 3.5 Super and Lightning: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Models for Agentic AI | cs.CL | 候选 |
+| 2026-10-30 | 2610.38095 | Nemotron 3.5 Super and Lightning: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Models for Agentic AI | cs.CL | 收录 |
 | 2026-10-30 | 2610.38091 | Jailbreak Connectivity: Towards Diverse, Transferable, and Universal Multimodal Large Language Model Jailbreak | cs.LG | 候选 |
 | 2026-10-30 | 2610.38086 | From Next Day Wildfire to Next Days Wildfire: A New Multi-Continent Dataset of Active-Fire Spread for Sequence-to-Sequence Forecasting | cs.CV | 候选 |
 | 2026-10-30 | 2610.38074 | Progressive-Observation Physical-Layer Fingerprinting for Efficient Open-Set Ethernet Authentication | cs.CR | 候选 |

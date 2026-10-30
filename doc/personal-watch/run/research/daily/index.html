@@ -39,6 +39,14 @@
 <table>
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
+    <td>2026-10-31</td>
+    <td>早报（AM · 3/5）</td>
+    <td>3 / 5（待 PM 收口）</td>
+    <td><a href="2026-10-31.html">2026-10-31.html</a></td>
+    <td><b>☀️ 早报 3 篇「借鉴」</b>（AM 轮 · 06:0x CST，周六）：<b>公告批次未刷新</b>（仍 <code>2026-10-29</code>：<code>cat:cs.CL</code> 探针 <code>totalResults=124184</code>、最新 <code>published=2026-10-29T17:59:53Z</code>、广度 <code>640516</code>，与昨晚 PM 逐条相同；独立复核 <code>submittedDate:[202610300000 TO 202610312359]</code> 全库 + <code>cs.CL</code> 子区间<b>均为 0</b> ⇒ 周六 arXiv 停发、符合日历），<code>--fetch --seen</code> 15/15 200（<b>全 <code>attempts=1</code></b>）、<b><code>kept 0</code></b> / <code>dropped 600</code>（558 已入 SEEN + 42 stale，最久 669.3h）⇒ 3 篇取自昨晚 r122 的 217 条候选池 + <code>id_list</code> 3/3：<code>2610.38095</code> <b>Nemotron 3.5 Super &amp; Lightning</b>（NVIDIA；120B-A12B 多模态 / 30B-A3B 文本，MoE + 混合 Mamba–Transformer；各 <b>1T tokens</b> 蒸馏、<b>MTP</b> 投机解码 hidden-state mixing、<b>NVFP4</b> 精度恢复 <b>99.62%</b>；SWE-bench Pro <b>51.78%</b>，作者称激活参数比 Nemotron 3 Ultra 少 <b>4.6×</b>）/ <code>2610.40305</code> <b>Rimuru</b>（中山大学珠海 + 独立研究者；权重与 KV 共用页池 + memory views + 多级页分配器 + 页表感知 MoE kernel + 负载感知调节，vLLM 上的弹性专家卸载；自报 <b>1.39×–19.03×</b> 吞吐、<b>TTFT −98.1%</b>，⚠️ 19.03× 的前提是「4090D 上无 AMX 的 KTransformers」）/ <code>2610.40574</code> <b>MTA-OPSD</b>（TUM 等；每个 token 自己挑教师的多教师 on-policy 自蒸馏；Qwen3-1.7B/4B/8B 平均 <b>+5.9 / +1.5 / +2.8</b>，⚠️ 仅数学、按步数对齐）。PDF <b>3/3</b>（79 / 14 / 19 页；合计 <b>5,988,962 B ≈ 5.71 MB</b>；⚠️ 三篇 sha256 与 <code>etag</code> 均不一致 ⇒ 只声称结构校验 + 字节数对齐）；台账 <b>收录 279 / 候选 4,568 / RSS 补充 507</b>（5,612 行）、<code>papers.jsonl</code> <b>279</b>。⚠️ 如实记录：初选第 3 篇 <code>2610.37842</code> 因 <code>published=2026-10-27</code>（≈83h &gt; 72h）<b>弃用</b>，改选 <code>2610.40574</code>。PM 待办：补 2 篇「科普」收口 5/5 + 分镜 <code>SCENES/10_31.html</code> + 日报邮件。</td>
+  </tr>
+
+  <tr>
     <td>2026-10-30</td>
     <td>晚报（PM · 5/5）</td>
     <td>5 / 5（当日收口）</td>
@@ -226,7 +234,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-10-30 18:3x CST（<b>2026-10-30 晚报 · 5/5 当日收口</b>：晚 2 篇「科普」= <code>2610.40599</code> HairDeck（本日科普 TOP-1）/ <code>2610.40589</code> 量子自旋自主实验室；<b>公告批次已刷新</b> <code>2026-10-27</code> → <code>2026-10-29</code>、<code>kept 217</code>；台账 收录 <b>276</b> / 候选 <b>4,571</b>（+RSS 507）｜ 上一版：2026-10-30 06:0x CST 早报 3/5）<br>
+  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-10-31 06:0x CST（<b>2026-10-31 早报 · 3/5</b>：早 3 篇「借鉴」= <code>2610.38095</code> Nemotron 3.5 / <code>2610.40305</code> Rimuru / <code>2610.40574</code> MTA-OPSD；<b>公告批次未刷新</b>（仍 <code>2026-10-29</code>，周六 arXiv 停发）、<code>kept 0</code>；台账 收录 <b>279</b> / 候选 <b>4,568</b>（+RSS 507）｜ 上一版：2026-10-30 18:3x CST 晚报 5/5 收口）<br>
 </footer>
 </div>
 </body>
