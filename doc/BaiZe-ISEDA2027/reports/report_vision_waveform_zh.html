@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Vision：2B MLLM 看懂波形图 — 能力建设与评测方案报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  max-width:1080px;margin:0 auto;padding:24px 28px 80px;color:#1f2328;line-height:1.7;background:#fafbfc}
+h1{font-size:1.7em;border-bottom:2px solid #2563eb;padding-bottom:.3em;margin:.2em 0 .6em}
+h2{font-size:1.32em;color:#1d4ed8;margin-top:1.8em;border-left:5px solid #2563eb;padding-left:.6em}
+h3{font-size:1.08em;color:#334155;margin-top:1.4em}
+h4{font-size:1.0em;color:#475569;margin:1em 0 .3em}
+.meta{color:#64748b;font-size:.88em;margin-bottom:1.2em}
+.tag{display:inline-block;font-size:.78em;padding:.05em .5em;border-radius:.4em;
+  background:#e0e7ff;color:#3730a3;margin-right:.3em;vertical-align:middle}
+.tag.ok{background:#dcfce7;color:#166534}
+.tag.warn{background:#fef9c3;color:#854d0e}
+.tag.bad{background:#fee2e2;color:#991b1b}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid #cbd5e1;padding:.4em .6em;text-align:left;vertical-align:top}
+th{background:#f1f5f9;font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover{background:#f8fafc}
+caption{caption-side:top;text-align:left;color:#64748b;font-size:.85em;padding-bottom:.3em}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;
+  background:#f1f5f9;padding:.05em .35em;border-radius:.3em;color:#334155}
+.note{background:#eff6ff;border-left:4px solid #3b82f6;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+.warn{background:#fffbeb;border-left:4px solid #f59e0b;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+.win{background:#ecfdf5;border-left:4px solid #10b981;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+ul{margin:.4em 0 .8em}
+li{margin:.18em 0}
+.small{font-size:.84em;color:#64748b}
+.toc{background:#f8fafc;border:1px solid #e2e8f0;border-radius:.5em;padding:.6em 1.1em;margin:.4em 0 1.4em;font-size:.92em}
+.toc a{color:#2563eb;text-decoration:none}
+hr{border:0;border-top:1px solid #e2e8f0;margin:1.6em 0}
+.foot{color:#64748b;font-size:.82em;margin-top:2em;border-top:1px solid #e2e8f0;padding-top:.8em}
+.kbox{background:#f0f7ff;border:1px solid #c3dafe;padding:12px 16px;border-radius:6px;margin:10px 0}
+</style>
+</head>
+<body>
+<article>
+<h1>BaiZe Vision：2B MLLM 看懂波形图 — 能力建设与评测方案报告</h1>
+<div class="meta">
+报告线：<span class="tag">vision</span> ·
+交付物：<code>reports/report_vision_waveform_zh.html</code> ·
+生成于 2026-10-30 ·
+覆盖：波形图理解能力拆解 / 合成+真实数据方案 / 训练策略 / 自建 WaveQA 评测 / 成本 ETA
+</div>
+
+<div class="note">
+<b>诚实条款（先读）</b>：本报告为<b>方案设计报告</b>，不包含任何训练后的评测数字。
+凡引用本项目已有实测数字，均标注「文件:行」或「实测」，可逐项溯源；
+凡涉及外部论文/榜单数字，均标注「论文自报，未在本项目复现」；成本/ETA 标注「估算」。
+本报告<b>不伪造任何 API key 或评测数字</b>，<b>本轮只写报告不训练</b>。
+</div>
+
+<div class="toc">
+<b>目录</b><br>
+<a href="#s1">1. 任务定义：波形图分类与「看懂」的层次</a> ·
+<a href="#s2">2. 能力拆解：从像素到语义的五层</a> ·
+<a href="#s3">3. 数据方案：合成波形 + 真实截图</a> ·
+<a href="#s4">4. 训练策略：从对齐到专项 SFT</a> ·
+<a href="#s5">5. 评测方案：自建 WaveQA + 迁移基准</a> ·
+<a href="#s6">6. 成本与 ETA：pilot 与全量两档</a>
+</div>
+
+<!-- ===================== 1. 任务定义 ===================== -->
+<h2 id="s1">1. 任务定义：波形图分类与「看懂」的层次</h2>
+
+<h3>1.1 为什么「波形图」是 EDA 领域 MLLM 的核心能力</h3>
+<p>
+在 IC 设计验证流程中，工程师需要频繁查看多种波形/曲线图来理解电路行为、定位故障、验证规格。
+当前这些工作高度依赖人工读图——工程师需要打开 SPICE 仿真器、波形查看器、DRC/LVS 报告，
+<b>肉眼判读趋势、测量参数、定位异常、推理因果</b>。一个能「看懂波形图」的 2B MLLM，
+可以直接接入设计验证回路，实现：
+</p>
+<ul>
+<li><b>自动化参数提取</b>：从 tran 曲线读出周期、幅度、上升/下降沿时间，省去人工光标测量；</li>
+<li><b>异常快速定位</b>：识别眼图闭合、毛刺、振铃、过冲等异常，缩短 debug 周期；</li>
+<li><b>报告自动解读</b>：把 DRC/LVS 截图中的违规条目和修复建议结构化输出；</li>
+<li><b>因果推理辅助</b>：结合电路拓扑和仿真结果，推理「为什么这一段波形异常」。</li>
+</ul>
+
+<h3>1.2 波形图四大类及其「看懂」要求</h3>
+<p>根据 EDA 设计验证流程的实际工作场景，我们将波形图分为<b>四大类</b>，每类的「看懂」要求分为<b>四个层次</b>：</p>
+
+<table>
+<caption>表 1.1 波形图四大类 × 四层「看懂」要求矩阵</caption>
+<tr>
+<th>类别</th><th>典型来源</th><th>趋势判读</th><th>参数测量</th><th>异常定位</th><th>因果解释</th>
+</tr>
+<tr>
+<td><b>A. SPICE transient 曲线</b></td>
+<td>HSPICE/Spectre .tran 仿真输出（电压/电流 vs 时间）</td>
+<td>单调/振荡/饱和/发散趋势识别；信号区间划分</td>
+<td>周期 T、频率 f、幅度 V_pp、上升沿 t_r(10-90%)、下降沿 t_f、占空比 D、过冲/下冲百分比</td>
+<td>非单调段、异常翻转、DC 偏移漂移、振铃位置</td>
+<td>结合器件参数解释振荡成因（如 RC 时间常数不足、反馈环路不稳定）；区分瞬态建立 vs 稳态行为</td>
+</tr>
+<tr>
+<td><b>B. SPICE AC 分析曲线</b></td>
+<td>.ac 仿真输出（增益/相位 vs 频率，Bode 图）</td>
+<td>低频/高频渐近线、极点/零点处斜率变化、带宽范围</td>
+<td>增益裕量 GM、相位裕量 PM、带宽 BW(-3dB)、品质因数 Q、谐振频率</td>
+<td>谐振峰异常、相位翻转过快、增益突降</td>
+<td>稳定性判断（GM>10dB, PM>45°）、极点/零点位置与电路拓扑的对应关系</td>
+</tr>
+<tr>
+<td><b>C. 眼图 (Eye Diagram)</b></td>
+<td>高速串行链路仿真/测量（PRBS 叠加形成的眼图）</td>
+<td>眼张开度、眼高、眼宽的整体判断；抖动趋势</td>
+<td>眼高 Eye Height (mV)、眼宽 Eye Width (UI)、抖动峰峰值 J_pp、RMS 抖动、SNR</td>
+<td>眼闭合区域、码间干扰 (ISI)、确定性抖动 (DJ) 峰</td>
+<td>信道损耗/反射导致的码间干扰分析；均衡器/预加重参数调整建议</td>
+</tr>
+<tr>
+<td><b>D. 时序/时钟图 & DRC/LVS 报告截图</b></td>
+<td>时序报告截图（setup/hold slack 表）、时钟树时序图、DRC violation 截图、LVS summary 截图</td>
+<td>slack 正负分布、违例数量趋势、关键路径走向</td>
+<td>setup/hold slack 值、WNS/TNS、违例数量、DRC rule 编号、LVS mismatch 数</td>
+<td>负 slack 路径、DRC violation 坐标/层名、LVS port/instance mismatch</td>
+<td>时序违例根因（逻辑级数过多/驱动不足/互线延迟过大）；DRC 违规修复建议；LVS 差异定位</td>
+</tr>
+</table>
+
+<h3>1.3 「看懂」的四层能力梯度</h3>
+<div class="kbox">
+<p>四层能力从低到高，对应模型需要具备的不同认知能力：</p>
+<ol>
+<li><b>趋势判读（L1 — 感知层）</b>：识别图的整体走势——是单调递增/递减、振荡、饱和、还是发散？对应 MLLM 的<b>全局视觉理解</b>能力。</li>
+<li><b>参数测量（L2 — 量化层）</b>：从图上精确读出数值——周期、幅度、上升沿时间、眼高等。要求模型能<b>OCR 轴刻度 + 几何量测</b>，而非仅做定性描述。</li>
+<li><b>异常定位（L3 — 检测层）</b>：在正常波形中找到异常段——眼图闭合区域、非单调翻转、DRC 违规条目。要求<b>局部注意力 + 区域级描述</b>。</li>
+<li><b>因果解释（L4 — 推理层）</b>：将观察到的波形/违例与电路原理关联——「这段振荡是因为反馈环路相位裕量不足」。要求<b>领域知识 + 链式推理</b>，是最高层能力。</li>
+</ol>
+</div>
+
+<div class="warn">
+<b>本项目现状定位</b>：当前 BaiZe 2B MLLM（ArmE-R2, ViT-L/14 编码器, 224px 单块, 无 anyres）在 12 集 lmms-eval 评测中，
+<b>ChartQA 12.16%、DocVQA 7.35%、OCRBench 1.6%</b>（实测，来源：<code>mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json</code>）。
+这意味着模型当前<b>连 L1 趋势判读和 L2 轴刻度 OCR 都很弱</b>——图表数值提取和文档识别能力几乎在随机水平。
+波形图理解需要的不只是通用 VQA 能力，而是<b>专项数据 + 专项训练 + 专项评测</b>的三位一体建设。
+</div>
+
+<!-- ===================== 2. 能力拆解 ===================== -->
+<h2 id="s2">2. 能力拆解：从像素到语义的五层</h2>
+
+<p>要让 2B MLLM 真正「看懂」波形图，需要将能力拆解为<b>五个可独立训练、可独立评测的子能力</b>：</p>
+
+<h3>2.1 分辨率与 anyres 适配</h3>
+<table>
+<caption>表 2.1 分辨率对波形图理解的影响</caption>
+<tr><th>配置</th><th>token 数</th><th>patch 网格</th><th>波形图适用性</th></tr>
+<tr><td>224px 单块（当前）</td><td class="num">196</td><td>14×14</td><td class="bad">❌ 无法分辨轴刻度标签、多信号线、细密网格</td></tr>
+<tr><td>336px 单块</td><td class="num">576</td><td>24×24</td><td class="warn">⚠️ 改善但仍不足以读密集刻度，需 anyres</td></tr>
+<tr><td>336px + anyres（2×2 切分）</td><td class="num">~2304</td><td>48×48 等效</td><td><span class="tag ok">✅</span> 可分辨轴标签和主信号趋势</td></tr>
+<tr><td>448px + anyres（3×2 切分）</td><td class="num">~4416</td><td>66×42 等效</td><td><span class="tag ok">✅</span> 最佳：可分辨细密刻度和多信号线</td></tr>
+</table>
+<div class="note">
+<b>2B 容量下的取舍</b>：2B LLM 的上下文窗口通常为 32K tokens（本项目 Qwen3-2B 基座）。
+anyres 多块切分会大幅增加视觉 token 数（196→2304→4416），挤压文本侧 token 预算。
+<b>推荐方案</b>：波形图专用推理路径使用 <b>336px + anyres 2×2 切分（~2304 视觉 token）</b>，
+留 ~29K 给文本推理；训练时则用 224px 单块以控制显存和吞吐量，推理时切换高分辨率。
+这与 LLaVA-NeXT/LLaVA-OV 的 anyres 策略一致（官方 OV 用 384px + anyres，论文自报）。
+</div>
+<p class="small">来源：本项目 <code>mllm_bridge/open_clip_baize.py</code> 第 19 行注释「Resolution: 224 single block (no anyres)」；LLaVA-OV anyres 策略参考 LLaVA-Next 论文（arXiv:2310.03744，论文自报，未在本项目复现）。</p>
+
+<h3>2.2 轴刻度 OCR</h3>
+<p>
+波形图的<b>一切定量分析都始于轴刻度读取</b>：x 轴标注时间（ns/μs）或频率（Hz/MHz），y 轴标注电压（mV/V）或增益（dB）。
+当前模型 OCRBench 仅 1.6%（实测），无法可靠读取刻度标签 → <b>所有 L2 参数测量都无法进行</b>。
+</p>
+<ul>
+<li><b>难点</b>：刻度标签常为小字号、旋转 90°、部分被网格线遮挡、科学计数法（如 1e-6）；</li>
+<li><b>解决路径</b>：① 在 OCR 合成数据（已交付 10M 样本，见 <code>report_vision_ocr_synth10m_zh.html</code>）中加入<b>轴刻度专项子集</b>（含旋转/科学计数法/密集小字）；② SFT 阶段加入「给定波形图，读出 x/y 轴范围和刻度」的 QA 对。</li>
+<li><b>验收指标</b>：轴刻度数值识别相对误差 ≤10%（合成数据 ground truth 可控）。</li>
+</ul>
+
+<h3>2.3 几何量测（周期 / 幅度 / 上升沿 / 占空比）</h3>
+<p>
+在轴刻度已知的前提下，模型需要从像素坐标<b>反推物理量</b>。这要求模型具备<b>几何推理</b>能力：
+</p>
+<table>
+<caption>表 2.2 几何量测子能力拆解</caption>
+<tr><th>量测项</th><th>视觉操作</th><th>所需精度</th><th>难点</th></tr>
+<tr><td>周期 T</td><td>识别相邻同相位点，量横向像素距离 × x 轴分辨率</td><td>±5%</td><td>振荡信号相位对齐；多周期取平均</td></tr>
+<tr><td>幅度 V_pp</td><td>识别波形最高/最低点，量纵向像素距离 × y 轴分辨率</td><td>±5%</td><td>噪声/振铃干扰极值判断</td></tr>
+<tr><td>上升沿 t_r (10-90%)</td><td>在跳变段定位 10% 和 90% 幅度点，量横向距离</td><td>±10%</td><td>需先确定稳态高低电平；10%/90% 判定依赖幅度参考</td></tr>
+<tr><td>占空比 D</td><td>量高电平持续时间 ÷ 周期</td><td>±5%</td><td>需准确判定高/低电平阈值</td></tr>
+<tr><td>眼高/眼宽</td><td>在眼图中央十字区域量纵向/横向张开度</td><td>±10%</td><td>眼图叠加导致边界模糊；需统计性判断而非单次测量</td></tr>
+</table>
+<div class="note">
+<b>关键洞察</b>：几何量测不是单纯的视觉感知，而是<b>视觉感知 + 数值计算</b>的复合能力。
+模型需要先从图中读出轴刻度（OCR），再在像素空间定位关键点，最后做「像素 → 物理量」的换算。
+这比通用 ChartQA（仅提取数值）更难——ChartQA 只需读出柱状图上方的数字标签，波形图量测需要<b>从连续曲线上的点反推数值</b>。
+</div>
+
+<h3>2.4 多子图对齐</h3>
+<p>
+实际仿真输出常以<b>多子图</b>形式呈现——同一时间轴上叠放多个信号（如时钟 CLK、数据 D、输出 Q），
+或 AC 分析的幅度图和相位图上下排列。模型需要：
+</p>
+<ul>
+<li><b>子图边界检测</b>：区分多个 subplot 区域（颜色框、标题、坐标轴）；</li>
+<li><b>共享轴对齐</b>：识别多个子图共享同一 x 轴（时间/频率），将不同 y 轴刻度独立处理；</li>
+<li><b>跨子图关联</b>：「在 CLK 上升沿时刻，D 信号是高还是低？」——需要在时间轴上对齐两个子图的信号状态。</li>
+</ul>
+<p class="small">这与 BLINK（视觉语言跳变推理，本项目实测 38.88%）的能力有部分重叠，但 EDA 场景的子图对齐需要<b>精确到时间点</b>而非仅判断「是否变化」。</p>
+
+<h3>2.5 领域语义理解（器件 / 工艺 / EDA 术语）</h3>
+<p>
+波形图的因果解释（L4）需要<b>EDA 领域知识</b>。模型需要理解：
+</p>
+<ul>
+<li><b>器件术语</b>：MOSFET（NMOS/PMOS）、BJT、传输门、运放等器件在波形上的典型行为；</li>
+<li><b>工艺参数</b>：工艺节点（28nm/7nm）、阈值电压 Vth、迁移率等对波形特征的影响；</li>
+<li><b>EDA 工具语义</b>：SPICE 仿真类型（.tran/.ac/.dc/.noise）、DRC rule 编号体系、LVS 比对逻辑；</li>
+<li><b>设计规范</b>：setup/hold time 的定义和违例含义、眼图 mask 的通过/失败判定标准。</li>
+</ul>
+<div class="warn">
+<b>2B 容量的限制</b>：2B 参数量的 LLM 领域知识容量有限。通用预训练语料中 EDA 相关内容稀少，
+模型很可能不知道「相位裕量 45°」是稳定性判据。解决方案：① 在 SFT 数据中嵌入<b>领域知识 QA</b>
+（如「什么是 setup time？如何从时序报告中读取 slack？」）；② 可选地用 EDA 文本语料做轻量 continued pretraining。
+</div>
+
+<!-- ===================== 3. 数据方案 ===================== -->
+<h2 id="s3">3. 数据方案：合成波形 + 真实截图</h2>
+
+<h3>3.1 数据策略总览</h3>
+<div class="kbox">
+<p>采用<b>「合成为主（参数可控、QA 自动生成）+ 真实为辅（领域覆盖、泛化验证）」</b>的双轨策略：</p>
+<ul>
+<li><b>合成波形（A 级，~80% 数据量）</b>：用 matplotlib 程序化生成参数可控的波形图，自动生成 QA 对。优势：ground truth 精确已知、可大规模生成、可覆盖参数空间。</li>
+<li><b>真实截图（B 级，~20% 数据量）</b>：从 698 机 SSH 扫描得到的 EDA session 中深读取样。优势：领域真实分布、覆盖工具风格差异、检验泛化能力。</li>
+</ul>
+</div>
+
+<h3>3.2 合成波形数据生成方案</h3>
+<h4>3.2.1 四类波形的合成参数空间</h4>
+<table>
+<caption>表 3.1 合成波形参数空间设计</caption>
+<tr><th>类别</th><th>参数</th><th>取值范围</th><th>变化维度</th></tr>
+<tr><td rowspan="5"><b>A. Tran 曲线</b></td>
+<td>信号类型</td><td>正弦波 / 方波 / 三角波 / 阻尼振荡 / 阶跃 / 指数衰减</td><td>6 种</td></tr>
+<tr><td>频率 f</td><td>1 MHz – 1 GHz（对数采样 10 点）</td><td>10 档</td></tr>
+<tr><td>幅度 V_pp</td><td>0.1 V – 5 V（线性采样 10 点）</td><td>10 档</td></tr>
+<tr><td>上升沿 t_r</td><td>0.1 ns – 10 ns</td><td>8 档</td></tr>
+<tr><td>噪声 SNR</td><td>无噪声 / 20 dB / 10 dB / 5 dB</td><td>4 档</td></tr>
+<tr><td rowspan="4"><b>B. AC 曲线 (Bode)</b></td>
+<td>极点数</td><td>1 / 2 / 3</td><td>3 档</td></tr>
+<tr><td>零点数</td><td>0 / 1 / 2</td><td>3 档</td></tr>
+<tr><td>DC 增益</td><td>0 dB – 80 dB</td><td>8 档</td></tr>
+<tr><td>相位初始</td><td>0° / -90° / -180°</td><td>3 档</td></tr>
+<tr><td rowspan="3"><b>C. 眼图</b></td>
+<td>数据率</td><td>1 / 5 / 10 / 25 Gbps</td><td>4 档</td></tr>
+<tr><td>信道损耗</td><td>无 / 轻度 / 中度 / 重度</td><td>4 档</td></tr>
+<tr><td>抖动类型</td><td>无 / 随机(RJ) / 确定性(DJ) / 混合</td><td>4 档</td></tr>
+<tr><td rowspan="3"><b>D. 时序/DRC 报告</b></td>
+<td>报告类型</td><td>setup/hold slack 表 / DRC violation 列表 / LVS summary</td><td>3 种</td></tr>
+<tr><td>违例数</td><td>0 / 1-5 / 6-20 / 21-100</td><td>4 档</td></tr>
+<tr><td>版面风格</td><td>Virtuoso / Innovus / Calibre / 自定义</td><td>4 种</td></tr>
+</table>
+<p class="small">
+参数空间总组合数（去重后估算）：A 类 6×10×10×8×4=19200 → 去重后 ~8000 唯一；
+B 类 3×3×8×3=216 → ~200；C 类 4×4×4=64 → ~60；
+D 类 3×4×4=48 → ~48。总唯一参数组合 ~8300，每组合生成 3-5 个随机变体（不同噪声种子、不同图大小、不同配色）→ 合成图总数 ~30K-40K。
+</p>
+
+<h4>3.2.2 自动 QA 生成：三类问答</h4>
+<p>每张合成波形图自动生成<b>三类 QA 对</b>，分别对应 L2（量化）、L1+L3（比较/检测）、L4（因果）：</p>
+<table>
+<caption>表 3.2 三类 QA 设计</caption>
+<tr><th>QA 类型</th><th>对应能力层</th><th>示例问题</th><th>答案格式</th><th>评分方式</th></tr>
+<tr>
+<td><b>数值型 (Numeric)</b></td>
+<td>L2 参数测量</td>
+<td>「图中信号的周期是多少？」「上升沿时间是多少？」「眼高是多少 mV？」</td>
+<td>浮点数 + 单位（如 "2.5 ns"）</td>
+<td>相对误差 ≤ 阈值则正确</td>
+</tr>
+<tr>
+<td><b>比较型 (Comparative)</b></td>
+<td>L1 趋势 + L3 异常</td>
+<td>「图中的信号是单调递增还是振荡？」「这个眼图是张开还是闭合？」「是否存在过冲？」</td>
+<td>多选（A/B/C/D）+ 简短理由</td>
+<td>选项 exact-match + 理由关键词匹配</td>
+</tr>
+<tr>
+<td><b>因果型 (Causal)</b></td>
+<td>L4 推理</td>
+<td>「为什么这段波形出现振铃？」「相位裕量是否足够？请解释。」「这条 DRC 违规应如何修复？」</td>
+<td>开放式文本（2-5 句）</td>
+<td>关键事实点核查（如提及「相位裕量不足」「反馈环路」等关键词）</td>
+</tr>
+</table>
+<div class="note">
+<b>自动 QA 的可信度保证</b>：合成数据的 ground truth 来自<b>生成参数本身</b>（如周期 T=1/f 精确已知），
+因此数值型 QA 的答案<b>无需人工标注</b>，可大规模生成。
+比较型 QA 的选项由规则模板生成（如「如果 SNR < 10dB 且信号类型=方波，则存在明显噪声」）。
+因果型 QA 需要部分人工审核（~10% 抽检），确保推理链条合理。
+</div>
+
+<h4>3.2.3 合成数据的渲染多样性</h4>
+<p>为避免模型过拟合于单一渲染风格，合成时随机变化以下维度：</p>
+<ul>
+<li><b>图大小</b>：400×300 ~ 1200×800 像素（5 档）</li>
+<li><b>配色方案</b>：白底黑线 / 黑底绿线 / 白底多彩 / 论文灰度（4 种）</li>
+<li><b>网格密度</b>：无网格 / 稀疏 / 密集（3 种）</li>
+<li><b>标签格式</b>：科学计数法 / 工程计数法 / 普通小数（3 种）</li>
+<li><b>轴范围</b>：紧凑范围 / 含余量 / 对数轴（3 种）</li>
+<li><b>字体大小</b>：8pt / 10pt / 12pt（3 种，模拟截图清晰度差异）</li>
+<li><b>多信号叠加</b>：单信号 / 2 信号 / 4 信号（3 种，模拟真实仿真输出）</li>
+</ul>
+
+<h3>3.3 真实截图数据采集方案</h3>
+<h4>3.3.1 数据来源：698 机 SSH 扫描</h4>
+<div class="kbox">
+<p><b>数据来源</b>：沈佳成 698 机 SSH 扫描结果，落盘于 <code>.75:/home/t0002965/log/ssh_eda_search_20261028_174426/</code>。</p>
+<p><b>三口径数字</b>（实测，来源：<code>reports/report_benchmark_10_30.html</code>）：698 机 / 2850 用户 / 52,698 会话文件 / 24,085 IC/EDA 命中。</p>
+<p><b>11 类分布</b>：layout_aether 14534 · layout_virtuoso 2496 · schematic_netlist 2362 · physical_verify 1295 · analog_context 1167 · <b>spice_sim 1027 · waveform 368</b> · pnr_signoff 503 · logic_synth 167 · eda_other 159 · skipper 7。</p>
+<p>其中 <b>waveform 368 命中</b>是波形图理解任务的<b>核心真实数据来源</b>；spice_sim 1027 命中可提供 SPICE 仿真上下文（含 .tran/.ac 命令和输出路径）。</p>
+</div>
+
+<h4>3.3.2 深读取样策略</h4>
+<p>从 368 个 waveform 命中和 1027 个 spice_sim 命中中，执行<b>分层深读取样</b>：</p>
+<table>
+<caption>表 3.3 真实截图深读取样计划</caption>
+<tr><th>层</th><th>来源</th><th>样本数</th><th>操作</th><th>产出</th></tr>
+<tr><td>L1 — 波形截图</td><td>waveform 368 命中中的波形文件</td><td class="num">~100</td><td>SSH 远程拉取波形截图文件</td><td>真实波形 PNG（含工具风格差异）</td></tr>
+<tr><td>L2 — SPICE 上下文</td><td>spice_sim 1027 命中的网表 + 仿真命令</td><td class="num">~50</td><td>提取网表参数，与波形图配对</td><td>(网表参数, 波形图) 配对样本</td></tr>
+<tr><td>L3 — DRC/LVS 报告</td><td>physical_verify 1295 命中的报告截图</td><td class="num">~50</td><td>拉取 DRC/LVS 输出截图</td><td>真实 DRC/LVS 报告截图</td></tr>
+<tr><td>L4 — 时序报告</td><td>pnr_signoff 503 命中中的时序报告</td><td class="num">~30</td><td>拉取 setup/hold 报告截图</td><td>真实时序报告截图</td></tr>
+</table>
+<p class="small">总计真实截图 ~230 张。考虑到 SSH 访问限制和数据脱敏需求，真实截图采样量受限；其核心价值在于<b>验证模型在真实工具渲染风格上的泛化能力</b>，而非作为主要训练数据。</p>
+
+<h4>3.3.3 标注协议</h4>
+<div class="kbox">
+<p><b>真实截图标注协议</b>（因无法自动生成 ground truth，需人工标注）：</p>
+<ol>
+<li><b>标注者资质</b>：至少 1 名有 SPICE 仿真经验的 EDA 工程师 + 1 名标注质量审核员；</li>
+<li><b>标注内容</b>：图像元信息（来源工具、信号类型、分辨率）· 轴信息（x/y 轴物理量、范围、刻度）· 波形参数（周期/幅度/上升沿/占空比，人工测量）· 异常标注（过冲/振铃/眼图闭合/DRC 违规）· QA 对（每图 2-3 个数值型 + 1 个比较型 + 1 个因果型，人工撰写答案）</li>
+<li><b>一致性抽检</b>：20% 样本双标注（2 人独立标注），计算 Cohen's Kappa（目标 ≥ 0.7）；数值型参数双标注相对误差 ≤ 15% 视为一致；不一致样本由审核员仲裁</li>
+<li><b>脱敏要求</b>：移除所有用户名、IP 地址、项目代号；对截图中的敏感文本做马赛克处理</li>
+</ol>
+</div>
+
+<h3>3.4 数据量规划</h3>
+<table>
+<caption>表 3.4 数据量规划（pilot / 全量两档）</caption>
+<tr><th>数据类别</th><th>Pilot（最小可行）</th><th>全量</th><th>说明</th></tr>
+<tr><td>合成波形图</td><td class="num">16,000</td><td class="num">35,000</td><td>参数空间采样 + 渲染多样性</td></tr>
+<tr><td>合成 QA 对（每图 ~3）</td><td class="num">~48,000</td><td class="num">~105,000</td><td>数值/比较/因果 = 5:3:2</td></tr>
+<tr><td>真实截图</td><td class="num">~50</td><td class="num">~230</td><td>698 机深读取样</td></tr>
+<tr><td>真实 QA 对（每图 ~3）</td><td class="num">~150</td><td class="num">~700</td><td>人工标注</td></tr>
+<tr><td><b>总计 QA 对</b></td><td class="num">~20,000</td><td class="num">~106,000</td><td>—</td></tr>
+</table>
+
+<!-- ===================== 4. 训练策略 ===================== -->
+<h2 id="s4">4. 训练策略：从对齐到专项 SFT</h2>
+
+<h3>4.1 当前训练管线回顾</h3>
+<p>
+BaiZe vision 线当前 MLLM 训练管线为<b>三阶段对齐</b>（实测，来源：<code>BAIZE_VISION_TASK.md §最佳实践</code>）：
+</p>
+<ul>
+<li><b>Stage-1（projector 训练）</b>：冻结视觉编码器 + 冻结 LLM，仅训练 projector（MLP 连接器），将视觉特征映射到 LLM 的 token 空间；</li>
+<li><b>Stage-1.5（LoRA 微调）</b>：冻结视觉编码器，对 LLM 加 LoRA（rank=64），用图文对训练；</li>
+<li><b>Stage-2（instruct SFT）</b>：用原版 LLaVA-NeXT-780k 指令数据做全量 instruct 微调（step 3500）。</li>
+</ul>
+<p class="small">当前编码器：ViT-L/14（304M），AIMv2-style dense objective（InfoNCE 1.0 + masked-patch-MSE 1.0，mask-ratio 0.6），在 10.239.2.12 上训练 63400 步完成。ProtB lp 68.236%（本项目历史最高，实测）。但 MLLM 12 集 avg 26.10%，编码器优势未传递到下游（ProtB→MLLM 传递性证伪，见 <code>report_vision_recent_work_zh.html</code>）。</p>
+
+<h3>4.2 波形图能力训练方案：两阶段增量</h3>
+<h4>4.2.1 Stage-1W：波形图对齐（Waveform Alignment）</h4>
+<div class="kbox">
+<p><b>目标</b>：让 projector 和 LoRA 层学会「波形图 → 文本描述」的基础映射。</p>
+<ul>
+<li><b>输入</b>：合成波形图 + 自动生成的数值型 QA 对（~48K pilot / ~105K 全量）</li>
+<li><b>训练对象</b>：projector + LLM LoRA（rank=64），冻结视觉编码器</li>
+<li><b>学习率</b>：1e-5（与现有 Stage-1.5 一致，避免灾难性遗忘）</li>
+<li><b>训练步数</b>：pilot ~2000 步 / 全量 ~5000 步</li>
+<li><b>数据配比</b>：波形 QA 70% + 原版 LLaVA-NeXT 通用 VQA 30%（防止通用能力退化）</li>
+</ul>
+</div>
+
+<h4>4.2.2 Stage-2W：波形图专项 SFT（Waveform SFT）</h4>
+<div class="kbox">
+<p><b>目标</b>：在 Stage-1W 基础上，加入比较型和因果型 QA，训练异常定位和因果推理能力。</p>
+<ul>
+<li><b>输入</b>：合成波形图（全部三类 QA）+ 真实截图（人工标注 QA）</li>
+<li><b>训练对象</b>：projector + LLM LoRA（rank=128，提升容量），冻结视觉编码器</li>
+<li><b>学习率</b>：5e-6（更低 LR，精细调整）</li>
+<li><b>训练步数</b>：pilot ~1000 步 / 全量 ~3000 步</li>
+<li><b>数据配比</b>：波形 QA（数值 40% + 比较 25% + 因果 15%）+ 原版通用 VQA 20%</li>
+<li><b>真实数据权重</b>：真实截图 QA 每条复制 3-5 倍（弥补数量不足，增强真实分布覆盖）</li>
+</ul>
+</div>
+
+<h4>4.2.3 可选 Stage-3W：RL 微调（Reward-Based）</h4>
+<div class="kbox">
+<p><b>可选</b>：如 Stage-2W 后数值量测仍不够精确，可用 RL 进一步优化。</p>
+<ul>
+<li><b>奖励函数</b>：数值型 QA 用「相对误差越小奖励越高」（连续奖励，如 r = max(0, 1 - |pred - gt| / |gt|)）</li>
+<li><b>算法</b>：GRPO 或 PPO（本项目 pretrain 线有相关经验可复用）</li>
+<li><b>前提</b>：Stage-2W 已产出可用 ckpt；合成数据可自动计算奖励（无需人工标注）</li>
+<li><b>风险</b>：RL 训练不稳定，2B 模型容量小可能 reward hacking；建议仅在 SFT 不够时尝试</li>
+</ul>
+</div>
+
+<h3>4.3 2B 容量下的关键取舍</h3>
+<table>
+<caption>表 4.1 2B 容量下的取舍决策</caption>
+<tr><th>取舍维度</th><th>选项 A</th><th>选项 B</th><th>推荐</th><th>理由</th></tr>
+<tr>
+<td>训练分辨率</td>
+<td>224px 单块（196 token）</td>
+<td>336px + anyres（~2304 token）</td>
+<td><b>A（训练用 224px）</b></td>
+<td>训练时省显存/提速；推理时可切换高分辨率。anyres 训练需更多显存（2B 模型 8×A100 可能 OOM）</td>
+</tr>
+<tr>
+<td>LoRA rank</td>
+<td>rank=64（与现有一致）</td>
+<td>rank=128（双倍容量）</td>
+<td><b>Stage-1W 用 64，Stage-2W 升 128</b></td>
+<td>渐进式增加容量；rank=128 在 2B 模型上显存仍可控</td>
+</tr>
+<tr>
+<td>视觉编码器</td>
+<td>冻结现有 ViT-L/14</td>
+<td>解冻微调</td>
+<td><b>冻结</b></td>
+<td>编码器 ProtB 68.2% 已足够；解冻风险高（可能破坏通用表征）且显存翻倍</td>
+</tr>
+<tr>
+<td>数据配比</td>
+<td>纯波形 QA（100%）</td>
+<td>波形 QA 70-80% + 通用 VQA 20-30%</td>
+<td><b>B（混合）</b></td>
+<td>防止通用能力退化（回归护栏要求 MMStar/MMBench 掉幅 ≤1pp）</td>
+</tr>
+<tr>
+<td>因果型 QA</td>
+<td>纯合成模板（规则生成）</td>
+<td>合成模板 + 人工审核（~10%）</td>
+<td><b>B（混合）</b></td>
+<td>纯规则生成的因果解释可能模式化；人工审核确保推理链条多样性和合理性</td>
+</tr>
+</table>
+
+<h3>4.4 灾难性遗忘防护</h3>
+<div class="warn">
+<b>核心风险</b>：专项 SFT 可能导致模型在通用 VQA 任务上退化。本项目已有教训——Stage-2 从 opt47 切到原版 780k 时，
+数据分布变化导致下游评测波动（见 <code>report_vision_recent_work_zh.html</code> §3）。
+<b>防护措施</b>：
+<ol>
+<li><b>混合训练</b>：每个 batch 中保持 ≥20% 通用 VQA 数据（从 LLaVA-NeXT-780k 采样）；</li>
+<li><b>学习率控制</b>：Stage-1W 用 1e-5、Stage-2W 用 5e-6，远低于 Stage-2 的典型 LR；</li>
+<li><b>回归评测</b>：每 500 步在 MMStar/MMBench 上跑一次子集评测，监控掉幅；掉幅 >1pp 立即回退到上一个 ckpt；</li>
+<li><b>早停</b>：WaveQA 达标后即停，不过度训练。</li>
+</ol>
+</div>
+
+<!-- ===================== 5. 评测方案 ===================== -->
+<h2 id="s5">5. 评测方案：自建 WaveQA + 迁移基准</h2>
+
+<h3>5.1 WaveQA 评测集设计</h3>
+<div class="kbox">
+<p><b>WaveQA</b>：自建波形图理解评测集，≥300 题，覆盖四大类波形 × 三类 QA。</p>
+</div>
+
+<h4>5.1.1 题目分布</h4>
+<table>
+<caption>表 5.1 WaveQA 题目分布设计（≥300 题）</caption>
+<tr><th>波形类别</th><th>数值型</th><th>多选型</th><th>开放型</th><th>小计</th></tr>
+<tr><td>A. Tran 曲线</td><td class="num">60</td><td class="num">30</td><td class="num">20</td><td class="num">110</td></tr>
+<tr><td>B. AC 曲线 (Bode)</td><td class="num">40</td><td class="num">20</td><td class="num">15</td><td class="num">75</td></tr>
+<tr><td>C. 眼图</td><td class="num">30</td><td class="num">20</td><td class="num">10</td><td class="num">60</td></tr>
+<tr><td>D. 时序/DRC/LVS 报告</td><td class="num">20</td><td class="num">15</td><td class="num">20</td><td class="num">55</td></tr>
+<tr><td><b>合计</b></td><td class="num">150</td><td class="num">85</td><td class="num">65</td><td class="num">300</td></tr>
+</table>
+<p class="small">
+题目来源：<b>合成测试集 80%</b>（使用与训练集不同的参数种子和渲染风格，确保无泄漏）+ <b>真实截图 20%</b>（从 698 机深读取样的真实截图 + 人工标注 QA）。
+合成测试集的 ground truth 精确已知；真实截图的 ground truth 经双标注一致性验证。
+</p>
+
+<h4>5.1.2 评测指标</h4>
+<table>
+<caption>表 5.2 WaveQA 评测指标体系</caption>
+<tr><th>QA 类型</th><th>指标</th><th>计算方式</th><th>目标值</th></tr>
+<tr>
+<td><b>数值型 (150 题)</b></td>
+<td>数值相对误差 (NRE)</td>
+<td>NRE = |pred - gt| / |gt|，按阈值（5%/10%/20%）分档统计准确率</td>
+<td>≤5% 误差率 ≥ 40%<br>≤10% 误差率 ≥ 65%<br>≤20% 误差率 ≥ 85%</td>
+</tr>
+<tr>
+<td><b>多选型 (85 题)</b></td>
+<td>多选准确率 (MCQ-Acc)</td>
+<td>exact-match（A/B/C/D）</td>
+<td>≥ 75%（随机基线 25%）</td>
+</tr>
+<tr>
+<td><b>开放型 (65 题)</b></td>
+<td>解释事实性 (Fact-Score)</td>
+<td>关键事实点核查表：每题预设 2-4 个关键事实点，模型回答命中得 1 分/点</td>
+<td>平均 Fact-Score ≥ 0.6</td>
+</tr>
+<tr>
+<td><b>综合</b></td>
+<td>WaveQA-Score</td>
+<td>加权综合：0.4×NRE_acc(≤10%) + 0.35×MCQ-Acc + 0.25×Fact-Score</td>
+<td>≥ 0.55</td>
+</tr>
+</table>
+
+<div class="note">
+<b>开放型评分细节</b>：Fact-Score 不依赖 LLM judge（本项目 MMVet/MathVista 因缺 OPENAI_API_KEY 阻塞的教训——见 <code>report_vision_next_steps_protb_mllm_zh.html</code>），
+而是用<b>预设关键事实点 + 关键词/语义匹配</b>的规则评分。例如：
+<ul>
+<li>题：「为什么这段波形出现振铃？」</li>
+<li>预设关键事实点：① 提及「反馈环路 / ringing / 振荡」；② 提及「相位裕量不足 / phase margin」；③ 提及「阻尼不足 / underdamped」</li>
+<li>模型回答命中 2/3 → Fact-Score = 0.67</li>
+</ul>
+</div>
+
+<h3>5.2 迁移基准（ChartQA / DocVQA）</h3>
+<p>
+除自建 WaveQA 外，还需在<b>已有通用基准</b>上评测，验证波形训练是否带来<b>正向迁移</b>（而非仅过拟合波形任务）：
+</p>
+<table>
+<caption>表 5.3 迁移基准与回归护栏</caption>
+<tr><th>基准</th><th>当前成绩（ArmE-R2 实测）</th><th>迁移目标</th><th>说明</th></tr>
+<tr><td>ChartQA</td><td class="num">12.16%</td><td class="num">≥ 14% (+2pp)</td><td>波形量测能力应正向迁移到通用图表数值提取</td></tr>
+<tr><td>DocVQA (val)</td><td class="num">7.35%</td><td class="num">≥ 8.5% (+1.5pp)</td><td>轴刻度 OCR 能力应迁移到文档文本识别</td></tr>
+<tr><td>OCRBench</td><td class="num">1.6%</td><td class="num">≥ 3% (+1.4pp)</td><td>小字/旋转刻度标签识别应迁移到通用 OCR</td></tr>
+<tr><td><b>MMStar（回归护栏）</b></td><td class="num">27.17%</td><td class="num">≥ 26.17% (≤1pp 掉幅)</td><td>通用多模态综合能力不得退化</td></tr>
+<tr><td><b>MMBench（回归护栏）</b></td><td class="num">23.88%</td><td class="num">≥ 22.88% (≤1pp 掉幅)</td><td>通用多模态基准不得退化</td></tr>
+</table>
+<p class="small">当前成绩来源：<code>mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json</code>（实测）。迁移目标为<b>预注册判据</b>，训练前先定，训练后不得更改。</p>
+
+<h3>5.3 预注册判据（Pre-registered Criteria）</h3>
+<div class="win">
+<p><b>判据在训练前确定，训练后不得更改</b>（遵循本项目 BP-1/BP-2/BP-3 的预注册原则）。</p>
+<table>
+<caption>表 5.4 预注册判据总表</caption>
+<tr><th>指标</th><th>基线</th><th>Pilot 目标</th><th>全量目标</th><th>判据类型</th></tr>
+<tr><td>WaveQA-Score</td><td class="num">— (无基线)</td><td class="num">≥ 0.40</td><td class="num">≥ 0.55</td><td>能力获取</td></tr>
+<tr><td>WaveQA 数值型 ≤10% 误差率</td><td class="num">—</td><td class="num">≥ 50%</td><td class="num">≥ 65%</td><td>能力获取</td></tr>
+<tr><td>WaveQA 多选准确率</td><td class="num">~25% (随机)</td><td class="num">≥ 60%</td><td class="num">≥ 75%</td><td>能力获取</td></tr>
+<tr><td>WaveQA Fact-Score</td><td class="num">—</td><td class="num">≥ 0.45</td><td class="num">≥ 0.60</td><td>能力获取</td></tr>
+<tr><td>ChartQA 迁移</td><td class="num">12.16%</td><td class="num">≥ 13% (+0.8pp)</td><td class="num">≥ 14% (+2pp)</td><td>正向迁移</td></tr>
+<tr><td>MMStar 回归护栏</td><td class="num">27.17%</td><td class="num">≥ 26.17%</td><td class="num">≥ 26.17%</td><td>不得退化 >1pp</td></tr>
+<tr><td>MMBench 回归护栏</td><td class="num">23.88%</td><td class="num">≥ 22.88%</td><td class="num">≥ 22.88%</td><td>不得退化 >1pp</td></tr>
+</table>
+</div>
+
+<div class="warn">
+<b>判据解释</b>：
+<ul>
+<li><b>Pilot 通过条件</b>：WaveQA-Score ≥ 0.40 <b>且</b> MMStar/MMBench 掉幅 ≤ 1pp → 证明能力获取可行、无明显遗忘 → 批准全量训练；</li>
+<li><b>全量通过条件</b>：全部 7 项判据达标 → 波形图理解能力建设完成；</li>
+<li><b>失败处理</b>：若 Pilot 后 WaveQA-Score < 0.30 → 数据/方案需重新设计；若回归护栏不达标 → 降低学习率或增加通用数据配比，重训。</li>
+</ul>
+</div>
+
+<h3>5.4 评测执行方案</h3>
+<ul>
+<li><b>评测环境</b>：8×A100 80G（10.239.2.12，vision 专属 GPU），用 lmms-eval 框架（与现有 12 集评测一致）</li>
+<li><b>WaveQA 评测</b>：自定义 lmms-eval task，数值型用相对误差评分、多选用 exact-match、开放型用 Fact-Score 规则评分</li>
+<li><b>推理分辨率</b>：WaveQA 评测时使用 336px（如 anyres 工程改造已完成）或 224px（未完成时，标注口径差异）</li>
+<li><b>回归评测</b>：MMStar/MMBench/ChartQA/DocVQA 用现有 lmms-eval 脚本直接跑（<code>vision/mllm_bridge/launch_12benchmarks.sh</code>）</li>
+</ul>
+
+<!-- ===================== 6. 成本与 ETA ===================== -->
+<h2 id="s6">6. 成本与 ETA：pilot 与全量两档</h2>
+
+<h3>6.1 成本估算总表</h3>
+<table>
+<caption>表 6.1 成本估算（Pilot vs 全量）</caption>
+<tr><th>项</th><th>Pilot（最小可行）</th><th>全量</th><th>说明</th></tr>
+<tr><td>合成数据生成</td><td class="num">16K 图 + 48K QA</td><td class="num">35K 图 + 105K QA</td><td>matplotlib CPU 生成，无需 GPU</td></tr>
+<tr><td>合成数据生成耗时</td><td class="num">~4 h（CPU）</td><td class="num">~8 h（CPU）</td><td>8 核并行，含渲染多样性变体</td></tr>
+<tr><td>真实截图采集+标注</td><td class="num">~50 图 / ~8 h</td><td class="num">~230 图 / ~24 h</td><td>含 SSH 拉取 + 脱敏 + 人工标注 + 一致性抽检</td></tr>
+<tr><td>Stage-1W 训练</td><td class="num">~2000 步 / ~3 h</td><td class="num">~5000 步 / ~7 h</td><td>8×A100 80G, batch=8, ViT-L/14 冻结</td></tr>
+<tr><td>Stage-2W 训练</td><td class="num">~1000 步 / ~2 h</td><td class="num">~3000 步 / ~5 h</td><td>LoRA rank=128, 含回归评测 checkpoint</td></tr>
+<tr><td>WaveQA 评测</td><td class="num">~1 h</td><td class="num">~1 h</td><td>300 题，8 GPU 并行</td></tr>
+<tr><td>回归评测 (12 集)</td><td class="num">~4 h</td><td class="num">~4 h</td><td>与现有 12 集评测一致</td></tr>
+<tr><td><b>GPU 小时合计</b></td><td class="num">~10 GPU·h</td><td class="num">~24 GPU·h</td><td>不含数据生成（CPU only）</td></tr>
+<tr><td><b>总耗时（墙钟）</b></td><td class="num">~1.5 天</td><td class="num">~3 天</td><td>数据生成与训练串行；含标注人工时间</td></tr>
+<tr><td><b>Token 预算（训练）</b></td><td class="num">~15M tokens</td><td class="num">~50M tokens</td><td>视觉 token（196/样本）+ 文本 token（~128/样本）</td></tr>
+<tr><td><b>Token 预算（评测）</b></td><td class="num">~0.5M tokens</td><td class="num">~0.5M tokens</td><td>WaveQA 300 题 + 回归 4 集</td></tr>
+</table>
+
+<h3>6.2 Pilot 方案（最小可行 · 2 万题）</h3>
+<div class="kbox">
+<p><b>目标</b>：用最小成本验证「2B MLLM 能否获取波形图理解能力」这一核心假设。</p>
+<ul>
+<li><b>数据</b>：16K 合成波形图 + 48K 合成 QA + 50 真实截图 + 150 真实 QA ≈ <b>20K 总 QA</b></li>
+<li><b>训练</b>：Stage-1W（2000 步）+ Stage-2W（1000 步），仅用合成数据训练</li>
+<li><b>评测</b>：WaveQA 300 题 + ChartQA + DocVQA + MMStar + MMBench</li>
+<li><b>判据</b>：WaveQA-Score ≥ 0.40 且回归护栏达标 → 批准全量</li>
+<li><b>GPU</b>：~10 GPU·h（8×A100 约 1.25 小时纯训练 + 评测）</li>
+<li><b>墙钟</b>：~1.5 天（含数据生成 ~4h + 标注 ~8h + 训练 ~5h + 评测 ~5h + 缓冲）</li>
+<li><b>人工投入</b>：~1 人天（标注 50 张真实截图 + QA 撰写）</li>
+</ul>
+</div>
+
+<h3>6.3 全量方案</h3>
+<div class="kbox">
+<p><b>目标</b>：在 Pilot 验证可行后，全量训练以达到预注册判据的目标值。</p>
+<ul>
+<li><b>数据</b>：35K 合成波形图 + 105K 合成 QA + 230 真实截图 + 700 真实 QA ≈ <b>106K 总 QA</b></li>
+<li><b>训练</b>：Stage-1W（5000 步）+ Stage-2W（3000 步）+ 可选 Stage-3W RL（~2000 步）</li>
+<li><b>评测</b>：WaveQA 300 题 + 完整 12 集 lmms-eval 回归</li>
+<li><b>判据</b>：表 5.4 全部 7 项达标</li>
+<li><b>GPU</b>：~24 GPU·h（含 RL 则 ~32 GPU·h）</li>
+<li><b>墙钟</b>：~3 天（含数据生成 ~8h + 标注 ~24h + 训练 ~12h + 评测 ~5h + 缓冲）</li>
+<li><b>人工投入</b>：~3 人天（标注 230 张真实截图 + QA + 一致性抽检）</li>
+</ul>
+</div>
+
+<h3>6.4 风险与缓解</h3>
+<table>
+<caption>表 6.2 风险矩阵</caption>
+<tr><th>风险</th><th>概率</th><th>影响</th><th>缓解措施</th></tr>
+<tr><td>224px 分辨率不足，模型无法读轴刻度</td><td>高</td><td>高</td><td>Pilot 阶段先验证 224px 能否达到 WaveQA-Score 0.40；若不足，优先推进 anyres 工程改造（需 scope 批准）</td></tr>
+<tr><td>合成数据与真实截图风格差异大，泛化不足</td><td>中</td><td>中</td><td>合成时增加渲染多样性（4 种配色/3 种网格/3 种字体）；真实截图比例从 20% 起步，逐步增加</td></tr>
+<tr><td>专项 SFT 导致通用能力退化</td><td>中</td><td>高</td><td>混合训练（≥20% 通用 VQA）+ 低学习率 + 每 500 步回归评测 + 早停</td></tr>
+<tr><td>2B 模型容量不足以学习领域语义</td><td>中</td><td>中</td><td>因果型 QA 先用简单规则模板（1-2 句解释）；不要求深度推理；必要时用 EDA 文本语料做轻量 continued pretraining</td></tr>
+<tr><td>698 机真实截图访问受限或脱敏后信息丢失</td><td>低</td><td>中</td><td>真实数据仅占 20%，合成数据可独立支撑训练；真实截图主要用于泛化验证</td></tr>
+<tr><td>anyres 工程改造延迟（bridge 硬编码 224px）</td><td>中</td><td>中</td><td>已识别：open_clip_baize.py 第 19 行硬编码 224px。改造需修改 3 处。Pilot 可先在 224px 上跑，标注口径差异</td></tr>
+<tr><td>Fact-Score 评分规则覆盖不全</td><td>低</td><td>低</td><td>Pilot 后根据模型实际回答模式迭代评分规则；开放型仅占 25% 权重，影响可控</td></tr>
+</table>
+
+<h3>6.5 前置条件与依赖</h3>
+<div class="warn">
+<p><b>前置条件</b>（需在启动前确认）：</p>
+<ol>
+<li><b>OCR SFT 预算批准</b>：当前仍在等用户批 OCR SFT 预算（见 <code>MEMORY_VISION.md</code> 待等项 ②）。波形图训练与 OCR SFT 可共用 Stage-1W/Stage-2W 管线，建议合并审批。</li>
+<li><b>10.239.2.12 GPU 可用</b>：vision 专属 GPU，当前 ArmE-R2 训练已完成，GPU 应可释放。</li>
+<li><b>698 机 SSH 访问权限</b>：真实截图采集需要 SSH 访问 .75 上的扫描结果（沈佳成已建免密通道）。</li>
+<li><b>anyres 改造（可选）</b>：如 Pilot 显示 224px 不足，需先完成 anyres 工程改造（修改 <code>open_clip_baize.py</code> 3 处硬编码 + export 导出兼容）。</li>
+<li><b>标注人员</b>：至少 1 名有 SPICE 仿真经验的标注者 + 1 名审核员。</li>
+</ol>
+</div>
+
+<hr>
+<h3>总结</h3>
+<div class="kbox">
+<p>本报告提出了一套完整的「2B MLLM 看懂波形图」能力建设与评测方案，核心要点：</p>
+<ul>
+<li><b>任务定义</b>：四大类波形（SPICE tran/ac、眼图、时序/DRC/LVS 报告）× 四层看懂（趋势/参数/异常/因果）</li>
+<li><b>能力拆解</b>：五层子能力（分辨率 anyres / 轴刻度 OCR / 几何量测 / 多子图对齐 / 领域语义）</li>
+<li><b>数据</b>：合成 80%（matplotlib 参数可控 + 自动三类 QA）+ 真实 20%（698 机 368 waveform 命中深读取样）</li>
+<li><b>训练</b>：Stage-1W 对齐 → Stage-2W 专项 SFT（可选 Stage-3W RL），2B 下取 224px 训练 + 推理高分辨率切换</li>
+<li><b>评测</b>：自建 WaveQA（300 题，数值/多选/开放）+ ChartQA/DocVQA 迁移 + MMStar/MMBench 回归护栏（≤1pp 掉幅）</li>
+<li><b>成本</b>：Pilot ~10 GPU·h / ~1.5 天 / 2 万题；全量 ~24 GPU·h / ~3 天 / 10.6 万题</li>
+</ul>
+<p><b>建议执行路径</b>：先批准 Pilot → 验证能力获取可行性 → 通过后推进全量。本轮<b>只写报告不训练</b>，不伪造任何 API key 或评测数字。</p>
+</div>
+
+<div class="foot">
+本报告由 vision 线生成 · 所有已有实测数字来自 <code>mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json</code> 及 <code>reports/report_benchmark_10_30.html</code>，可逐项溯源 ·
+外部数字标注「论文自报」· 成本/ETA 标注「估算」· 生成于 2026-10-30 · 未做任何训练 · 未伪造任何 API key 或评测数字
+</div>
+</article>
+</body>
+</html>
