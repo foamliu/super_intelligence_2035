@@ -28,6 +28,23 @@
 
 > 📦 §运维令·2026-10-28 12:0x（TB 7way 报告质量整改 · 逐条回应 5 问）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：5 问已逐条回应并交付（commit `33782ab93`）——①分母改回89官方口径(87题子集作附注,2题mteb缺镜像被启动器过滤)②三路0%精确stack(hermes exit127/claude-code docker exec超时/deepseek pip缺失)③codex 429=34条无退避重试(调用层缺陷)④基线对照(kimi公开57.3-66.7% vs cline48.3%,归因接入层损耗+超时)⑤复跑合表(hermes25/89·claude-code20/89入主表双列). 产 `tb_qa_rectification_20261028.md`+修订版报告. 需要时再读。
 
+### 🚀 运维令 · 2026-10-30 11:1x（**唤醒后首事：自检本线评测进程内存，失控先杀再重测**）· 用户直令 · 最高优先
+
+> 用户原话（2026-10-30 11:1x）：「这些 agent 不是应该在容器中运行吗？内存过高可否限制？…harness 唤醒后先看看自己的评测是否占用过多内存，如果是，先杀掉，再想办法重测。」
+
+**① 背景（运维已核）**：10-29 凌晨 harness 的 cline 路在 `.29` **宿主机**上跑 SWE-bench sympy 任务时失控——`list(partitions(200))` + `pytest test_fancysets.py` 吃掉 **~1.2TB** 内存，威胁 S1 训练（运维已 kill）。**agent 的 predict 阶段跑在宿主机（非容器），不受内存限制**，这是根因。
+
+**② 硬要求（每次唤醒第一件事，先于一切业务）**：
+- `ps -eo pid=,ppid=,rss=,args=` 检查**本线**评测相关进程（predict 的 cline/codex/opencode/pi/claude-code/hermes/deepseek 及其子 bash/python/pytest 子树）内存。
+- 判据：任何**本线**进程（或同 bash 进程树）RSS 异常高（单进程 >50GB，或多棵进程树累计吃掉宿主机 available 的显著份额）→ **先 kill -9 整棵失控进程树**（含父 bash），再记录。
+- 特别警惕缩放型失控 cmdline：`partitions(`、`list(...)`、无界 `pytest`（内存爆炸测试）等。
+
+**③ kill 掉的是正在跑的预测子任务** → **该题重新 predict**（不丢题、不重复 eval）；并评估加内存护栏（cgroup / ulimit / 改评测触发方式）后再重测。
+
+**④ 纪律**：只清本线，🚫 不碰 S1 训练 / vision / data / zhulong 进程；心跳写 `未完成指令：有` ⇒ `WAITING: 0`；commit `harness 内存:`。
+
+**⑤ loop 已改（运维改好了，无需你动）**：`SLEEP_WAIT`/`PUSH_INTERVAL` 30→15min。
+
 ### 🚀 运维令 · 2026-10-28 07:1x（**跑完整的 SWE-bench Verified 全量 500 题**）· 用户直令 · 最高优先
 > 用户原话：「安排 harness 跑完整的 SWE-bench Verified」
 > **前置已就绪（运维已核）**：镜像 **500/500 全部拉完**（`swebench_verified_pull.txt`：`DONE 2026-10-26 18:23:06 total=500 pulled=500 failed=0`）；20 题试点已交付（cline 13/20=65.0%、hermes 11/20=55.0%，管线可用）。
