@@ -61,7 +61,7 @@ CARD4 = '''
   <div class="row"><div class="k">作者 / 机构</div><div class="v">Yuze He, Yixiang Wei, Wang Zhao, Chuhao Chen, Yanning Zhou, Yong-Jin Liu（<b>6 位署名</b>；据 PDF 首页：<b>__AFF4__</b>）</div></div>
   <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-29</b>（<code>published=2026-10-29T17:50:26Z</code>；<code>updated</code> 同日，无 v2）· <code>comment</code>：<b>27 pages, 23 figures</b> · PDF 实测 <b>__PG4__ 页</b> / __CH4__ 字符（去空白）</div></div>
   <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code>（+<code>cs.GR</code>）· <span class="badge b-kp">科普</span> · 关键词：3D 生成 / 游戏美术资产 / 发卡 hair cards / 集合扩散 Transformer / 单图生成</div></div>
-  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.40599">https://arxiv.org/abs/2610.40599</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.40599.pdf</code>，__BY4__ B；<b>36.98 MB 超邮件 20MB 上限 ⇒ 日报邮件只给链接 + 摘要</b>，见附录 C/E）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.40599">https://arxiv.org/abs/2610.40599</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.40599.pdf</code>，__BY4__ B；<b>36.98 MB 超邮件 20MB 上限 ⇒ 日报邮件只给链接 + 摘要</b>，见附录 F）</div></div>
   <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力 · 本篇 = 本日科普 TOP-1）</b>
     <ol>
       <li><b>钩子是现成的反直觉</b>：多数人以为「头发 = 一根根发丝」，实际游戏里的头发是<b>一叠美术手摆的面片</b>；从「一根根」到「一叠面片」天然开场反转，不需要任何前置知识。</li>
@@ -83,7 +83,7 @@ CARD5 = '''
   <div class="row"><div class="k">作者 / 机构</div><div class="v">El Mustapha Mansouri, Eikichi Kimura, Masato Koga, Keigo Arai（<b>4 位署名</b>；据 PDF 首页：<b>__AFF5__</b>）</div></div>
   <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-10-29</b>（<code>published=2026-10-29T17:47:50Z</code>；<code>updated</code> 同日，无 v2）· <code>comment</code>：<b>17 pages, 5 figures</b>；代码 <code>github.com/E-zClap/auctopus</code> · PDF 实测 <b>__PG5__ 页</b> / __CH5__ 字符（去空白）</div></div>
   <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code>（+<code>cs.MA</code>, <code>quant-ph</code>）· <span class="badge b-kp">科普</span> · 关键词：agent harness / 自主实验室 / AI for Science / 多智能体互审 / 固态量子自旋</div></div>
-  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.40589">https://arxiv.org/abs/2610.40589</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.40589.pdf</code>，__BY5__ B，校验见附录 C/E）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.40589">https://arxiv.org/abs/2610.40589</a>（PDF 已落地：<code>research/pdf/2026-10-30/2610.40589.pdf</code>，__BY5__ B，校验见附录 F）</div></div>
   <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
     <ol>
       <li><b>「AI 主动说自己错」是极稀缺的叙事</b>：大众熟悉的 AI 故事是「越做越强」，本文的高潮恰恰相反 —— <b>实验做出来了、也符合理论，agent 却因为参考测量漂移判定「不算数」</b>，然后在<b>不降标准</b>的前提下改协议重做。这是两分钟视频天然的戏剧结构（钩子 → 反转 → 结果）。</li>
