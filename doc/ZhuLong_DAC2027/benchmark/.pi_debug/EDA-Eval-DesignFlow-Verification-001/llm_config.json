@@ -1,0 +1,7 @@
+{
+  "model": "deepseek-v4-pro-cloud",
+  "endpoint": "http://agi-gateway.example/cloud/v1",
+  "max_tokens": 8192,
+  "temperature": 0.2,
+  "erc_sections_of_interest": ["2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8"]
+}

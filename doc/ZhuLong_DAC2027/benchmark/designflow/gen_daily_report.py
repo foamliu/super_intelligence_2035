@@ -26,6 +26,7 @@ TRACE_SRC = {
     "EDA-Eval-DesignFlow-Digital-021": "klhu/1792224347250_fww0m (PrimeTime 负 slack 提取)",
     "EDA-Eval-DesignFlow-Digital-022": "t0002948/1792133892937_i2dlp + 1791602575997_53vw2 (DC DFT 失败诊断)",
     "EDA-Eval-DesignFlow-Digital-023": "t0002948/1792400029503_0na23 (VCS makefile 参数化)",
+    "EDA-Eval-DesignFlow-Verification-001": "ukkn7/8adf72139dee @ hfeg0plg91 (ERC_AI_CHECK pipeline 子section 过滤 + virtuoso→aether flow 改写)",
 }
 
 
