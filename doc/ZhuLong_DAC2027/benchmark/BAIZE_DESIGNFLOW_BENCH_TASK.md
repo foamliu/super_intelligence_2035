@@ -2,6 +2,44 @@
 
 ## 🔧 运维指令区（每次唤醒先读）
 
+### 🚨 2026-10-30 运维即时令 XI：日报表格改两处——去 synthesized + test 思路写真 · 最高优先
+
+> **运维令**：「日报表格两个问题：(1) 63 条 legacy 用例 trace 来源全显示 "synthesized"，没意义，去掉；(2) test 思路列全是同一句废话 "校验交付件 (双参 check(deliverable, workdir): 解 zip + 断言内含文件 + 内容达标)"，没有真实思路。立即改。」
+
+**一、去掉 synthesized（改 gen_daily_report.py）**
+
+`trace_source()` 函数里，legacy 用例（无 `metadata.trace_source`）当前返回 `"synthesized (legacy scripting 口径)"` 或 `"synthesized"`。这没意义——legacy 就是 legacy，不需要标 synthesized。
+
+改为：
+- legacy 用例 trace 来源列显示 **`—`**（破折号，表示无真实 trace 来源，本就是 scripting 口径合成题）
+- proper 用例照常显示 `metadata.trace_source` 的 host/session_file 等
+
+具体改 `gen_daily_report.py` 的 `trace_source(c)` 函数：legacy 返回 `"—"`，proper 无 trace_source 也返回 `"—"`。
+
+**二、test 思路列写真思路（改 gen_daily_report.py + 补 case metadata）**
+
+当前 test 思路列是写死的一句废话，所有 case 都一样。要改为**每条 case 显示自己的真实验证思路**。
+
+做法：
+1. **每条 case 在 `metadata` 加一个字段 `test_rationale`**（一句话，中文，写真实验证思路）：
+   - ❌ 错（废话）：`"校验交付件 (双参 check(deliverable, workdir): 解 zip + 断言内含文件 + 内容达标)"`
+   - ✅ 对（真实）：`"解 zip 校验 5 个 export/*.tcl 行首#注释有效(行尾#无效陷阱)+model -timing 替换 -verilog all + 5 个 .inst 的 add_latch 空{}/forbidden_state ^/netlist 名漂移/pintype/default_input_state 7 类缺陷全修复 + fix_summary 覆盖 8 类别"`
+   - ✅ 对（真实）：`"解 zip 校验 filter_erc_by_section 子section精确过滤(2.1-2.8) + step3_aether.il 无virtuoso直调/cds.lib + erc_report 只含2.1-2.8 + lib.defs INCLUDE aether SKIP amsLib 注释剥离"`
+   - 写法：说清楚**校验交付件里哪些文件、哪些字段、什么条件、为什么这样能区分对错**。读你 test 代码的人看这一句就知道你在验什么。
+2. **gen_daily_report.py 的 test 思路列改为读 `metadata.test_rationale`**：
+   - 有该字段 → 显示该字段内容
+   - 无该字段 → 显示 `"—"`（不要显示废话）
+   - 删掉写死的废话逻辑
+3. **补字段范围**：
+   - **proper design_flow case**（当前 9 条）：**全部补** `metadata.test_rationale`（这是重点，proper case 要有完整溯源）
+   - **legacy scripting case**（63 条）：**不补**（trace 来源都标 — 了，test 思路也标 — 即可，不浪费精力）
+
+**三、执行**
+1. 先改 `gen_daily_report.py`：trace_source legacy 返回 "—"；test 思路列读 `metadata.test_rationale`，无则 "—"
+2. 给 9 条 proper case 补 `metadata.test_rationale`（逐条写真思路，追加到 EDA-Eval-DesignFlow.jsonl 对应行）
+3. regen 日报验证：trace 来源列 legacy 显示 —，test 思路列 proper 显示真思路、legacy 显示 —
+4. 收尾铁律提交（workspace+日报→main，用例→master）
+
 ### 🚨 2026-10-30 运维即时令 X：workspace 已迁移到 ZhuLong_DAC2027/benchmark/ · 最高优先（先读）
 
 > **运维令**：「你的 workspace 已从 `EDA-Flow-Bench/agent_workspace/` 迁到 `super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/`，和 zhulong agent 统一管理。你写的用例还是提交到 EDA-Flow-Bench。读完这条继续执行即时令 VII/VIII/IX。」
