@@ -6,8 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #423, 2026-10-30 22:21]**：空唤醒·补心跳防判死。上次心跳 wake#422@10-30 21:49 距今 ~32min。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git fetch+pull --rebase → already up to date。vision loop 活(PID 669545)。📦 体积：TASK=24093B(23.5KB)/MEMORY=32282B(31.5KB) 均≤32KB✓。⚠️ **push 失败×2**（GitHub Internal Server Error, 非本地问题）→ 已 commit(67630459f) 未 push，**下一轮唤醒第一件事补推**。**仍在等**：②OCR SFT 预算 ③MMVet/MathVista key ④336+anyres。**未完成指令：无** ⇒ **WAITING: 1**。
-> 📦 wake#422 (2026-10-30 21:49, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
+> **本唤醒流水 [wake #424, 2026-10-30 23:10]**：✅ 执行运维直令 22:2x「写波形图报告」。交付 `reports/report_vision_waveform_zh.html`（45236B/666行/6节/14表/0script/0外链/标签配平✓）。覆盖：任务定义(4类波形×4层看懂)/能力拆解(5层子能力)/数据(合成80%+真实20%·698机368命中)/训练(Stage-1W→Stage-2W·可选RL)/评测(WaveQA≥300题+MMStar/MMBench护栏≤1pp)/成本ETA(pilot 2万题/10GPU·h·全量10.6万/24GPU·h)。commit 83591a2b1 已push。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#423 (2026-10-30 22:21, 空唤醒·补心跳防判死·push失败×2→后已补推) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#421 (2026-10-30 21:17, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#420 (2026-10-30 20:45, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#419 (2026-10-30 20:12, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
