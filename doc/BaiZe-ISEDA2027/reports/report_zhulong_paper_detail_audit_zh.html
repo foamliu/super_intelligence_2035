@@ -46,7 +46,7 @@ a{color:#246;text-decoration:none}
 <div class="hdrmeta">
 审阅对象：<code>doc/ZhuLong_DAC2027/ZhuLong_DAC2027/</code>（<code>main.tex</code> + <code>DAC2027/0~9_*.tex</code> + <code>reference.bib</code> + <code>software.bib</code> + <code>figures/</code>）<br>
 审计基线（源码 HEAD @ 审成时）：<code>c78558a0a30b03c1fc851652d98297ed69c2ddb7</code>　|　复审完成：2026-10-30 05:28　|　口径：数值正确性已由用户确认，本报告只查 ①参考文献 ②论文逻辑 ③数字↔措辞一致性<br>
-<strong>⚠️ 审计后修订跟踪（§⑧）</strong>：审成后平行改稿线于 2026-10-30 10:40/11:08 提交 <code>91de519e2</code>/<code>cf7cfabc</code>，HEAD 推进至 <code>cf7cfabc</code>，论文树已变更。<strong>原 3 个 P0 全部已被正确解决</strong>（2 伪造 bib 经 arXiv 主源核验为真、stale PDF 已重建）；详见本报告 <a href="#postaudit">§⑧ Post-Audit Revision Tracker</a>。§①–§⑦ 结论针对 c78558a0 基线，不自动等同当前 HEAD。<br>
+<strong>⚠️ 审计后修订跟踪（§⑧）</strong>：审成后平行改稿线于 2026-10-30 10:40/11:08/11:33 提交 <code>91de519e2</code>/<code>cf7cfabc</code>/<code>83d4c49f6</code>，HEAD 推进至 <code>c931cef6</code>，论文树已变更。<strong>原 3 个 P0 全部已被正确解决</strong>（2 伪造 bib 经 arXiv 主源核验为真、stale PDF 已重建）；P1 页数 8→7 经压缩解决；详见本报告 <a href="#postaudit">§⑧ Post-Audit Revision Tracker</a>。§①–§⑦ 结论针对 c78558a0 基线（<code>83d4c49f6</code> 经核为纯 prose 压缩、零数字变更，故数字↔措辞结论仍有效）。<br>
 只审不改：本报告所有"建议改法"均写入报告，未改动任何 <code>.tex</code>/<code>.bib</code>/<code>figures/</code>。
 </div>
 
@@ -294,13 +294,14 @@ a{color:#246;text-decoration:none}
 <h2 id="postaudit">⑧ 审计后修订跟踪（Post-Audit Revision Tracker）</h2>
 <p class="small">
 <strong>⚠️ 本节为审计 <em>之后</em> 的跟踪，非原审计基线内容。</strong>原审计基于源码 HEAD <code>c78558a0</code>（2026-10-30 05:28 完成复审）。
-审计交付后，平行改稿线（commit 作者 Yang Liu &lt;paul.liu@cxmt.com&gt;）于 <strong>2026-10-30 10:40 / 11:08</strong> 提交了两个 commit 对论文树进行了修订，
-当前 HEAD 已推进至 <code>cf7cfabc</code>，论文树相对审计基线 <code>c78558a0..HEAD</code> 发生实质性变更。
+审计交付后，平行改稿线（commit 作者 Yang Liu &lt;paul.liu@cxmt.com&gt;）于 <strong>2026-10-30 10:40 / 11:08</strong> 提交了两个 commit（<code>91de519e2</code>/<code>cf7cfabc</code>）对论文树进行了修订，
+随后于 <strong>11:33</strong> 再提交 <code>83d4c49f6</code>（"condense redundant prose + conclusion/future work to 7 pages"）做全文措辞压缩。
+当前 HEAD 已推进至 <code>c931cef6</code>，论文树相对审计基线 <code>c78558a0..HEAD</code> 发生实质性变更。
 本节如实记录这些修订对原审计结论的影响，<strong>不重新执行全文审计</strong>（重审需用户/运维单独下令）；只对修订触及的发现做"已解决 / 部分解决 / 仍存 / 新增"判定，并给出核验证据。
 </p>
 
 <table>
-<tr><th>原发现</th><th>级别</th><th>修订内容（commit 91de519e2 / cf7cfabc）</th><th>当前状态</th><th>核验证据</th></tr>
+<tr><th>原发现</th><th>级别</th><th>修订内容（commit 91de519e2 / cf7cfabc / 83d4c49f6）</th><th>当前状态</th><th>核验证据</th></tr>
 
 <tr>
 <td>① <code>he2024chateda</code> eprint=2401.00754 实为天体物理论文（Kosec et al.），作者全错 → 伪造 bib</td>
@@ -358,19 +359,27 @@ a{color:#246;text-decoration:none}
 <td>git diff <code>c78558a0..HEAD -- main.tex</code>：+4 行注释 + 1 行 <code>\microtypesetup{expansion=false}</code>。不改变字体/内容，仅去掉字符级微拉伸 ✅。</td>
 </tr>
 
+<tr>
+<td>⑧ 页数 8 &gt; 目标 7（正文 6 + refs 1）——超 DAC 页数上限</td>
+<td><span class="tag p1">P1</span></td>
+<td>commit <code>83d4c49f6</code>（2026-10-30 11:33）压缩冗余措辞 + conclusion/future work：2_background / 3_design / 4_grounding / 5_bench / 6_exp / 8_conclusion 共 6 个 .tex 文件、+14/−14 行纯 prose 压缩，main.pdf 重建</td>
+<td>✅ <strong>已解决（页数 8 → 7）</strong></td>
+<td><code>mutool info main.pdf</code> 实测当前页数 = <strong>7</strong> ✅（2026-10-30 wake#371 核验）。git show <code>83d4c49f6</code> 全文 diff 确认：<strong>所有数字未变</strong>（57.2pp / 7.1pp / 8.3 / 10.7 / 2.4pp / 76.9% / Wilson CI / 449 / 158 / 2245 全保留），仅 prose tighten（如 "is built on Cline-CLI ... extended with" → "extends Cline-CLI with"；"A paired bootstrap is deferred: batch directories store only counts, so ..." → "A paired bootstrap is deferred (batch directories store only counts)."）。故原审计 §⑤ 数字↔措辞一致性表结论<strong>不受影响、仍然有效</strong>。⚠️ 8_conclusion 删除 "an end in itself" 与 future-work 详细分点（(i)~(iv) 收紧为简列），系措辞压缩不引入新主张，无需重判。</td>
+</tr>
+
 </table>
 
 <h3>⑧.1 修订后 P0/P1 计数变化（仅针对本跟踪覆盖的发现）</h3>
 <table>
-<tr><th>级别</th><th>原审计（@c78558a0）</th><th>本次跟踪后（@cf7cfabc，仅已核项）</th><th>说明</th></tr>
+<tr><th>级别</th><th>原审计（@c78558a0）</th><th>本次跟踪后（@c931cef6，仅已核项）</th><th>说明</th></tr>
 <tr><td>P0</td><td>3</td><td><strong>0</strong>（①②③均已被修订解决）</td><td>前提：修订正确性已经 arXiv 主源 / git diff 核验。若要求对当前 HEAD 做完整重审（含 cite 上下文、数字↔措辞、新可能引入的问题），P0 计数需重算。</td></tr>
-<tr><td>P1</td><td>6</td><td><strong>4</strong>（④孤儿 / ⑤逻辑断点 已处理；余 delage DOI 错 / pu2024rag venue 可疑 / cost 口径 449vs291 待核）</td><td>⑤ 降级为"部分解决"。原 P1 其余项（delage DOI、pu2024rag venue、cost 口径）本次修订未触及，<strong>仍存</strong>，需在重审或改稿中处理。</td></tr>
+<tr><td>P1</td><td>6</td><td><strong>3</strong>（④孤儿 / ⑤逻辑断点 / ⑧页数 已处理；余 delage DOI 错 / pu2024rag venue 可疑 / cost 口径 449vs291 待核）</td><td>⑤ 降级为"部分解决"；⑧ 页数 8→7 经 <code>83d4c49f6</code> 压缩已解决 ✅。原 P1 其余 3 项（delage DOI、pu2024rag venue、cost 口径）本次修订未触及，<strong>仍存</strong>，需在重审或改稿中处理。</td></tr>
 <tr><td>P2</td><td>12</td><td><strong>11</strong>（⑥表注指针已解决；余 11 项未触及）</td><td>其余 P2（li2026pdagent 漏引、VLM、lee2025autoeda 作者不全、3 处 cite 上下文⚠️、孤儿 blocklove/chen2024dawning/jiang2024seed 标题小误【注：此 3 条已随孤儿删除一并移除，相关 P2 同步消失→实际 P2 可能 −3 = 8】、82.5% 均值 vs 计数、12/9 分类与 86.7% 内省率、software.bib 模板遗留、中文注释残留等）本次未逐一复核。</td></tr>
 </table>
 <p class="small">
-<strong>跟踪结论</strong>：审计基线 <code>c78558a0</code> 的 <strong>3 个 P0 全部已被平行改稿线正确解决</strong>（2 条伪造 bib 经 arXiv 主源逐字核验为真、stale PDF 已重建）；P1/P2 各有部分被处理。
-但当前 HEAD <code>cf7cfabc</code> 的论文树已与审计基线不同，<strong>本报告主体（§①–§⑦）的结论针对 c78558a0 基线，不自动等同于当前 HEAD 的状态</strong>。
-若需对当前 HEAD 出具一份全新的完整审计报告（重跑 bib 100% 外部核验 + 21 处 cite 上下文 + claim 映射 + 数字↔措辞），请用户/运维单独下令；本 agent 将另起报告（不覆盖本报告）。
+<strong>跟踪结论</strong>：审计基线 <code>c78558a0</code> 的 <strong>3 个 P0 全部已被平行改稿线正确解决</strong>（2 条伪造 bib 经 arXiv 主源逐字核验为真、stale PDF 已重建）；P1 中页数超标、孤儿 bib、逻辑断点措辞三项已处理（页数 8→7 经 <code>83d4c49f6</code> 压缩解决），余 delage DOI / pu2024rag venue / cost 口径三项仍存。
+当前 HEAD <code>c931cef6</code> 的论文树已与审计基线不同，但 <code>83d4c49f6</code> 经全文 diff 核验为<strong>纯 prose 压缩、零数字变更</strong>，故 §①–§⑦ 的数字↔措辞与参考文献结论<strong>仍然有效</strong>。
+若需对当前 HEAD 出具一份全新的完整审计报告（重跑 bib 100% 外部核验 + cite 上下文 + claim 映射 + 数字↔措辞），请用户/运维单独下令；本 agent 将另起报告（不覆盖本报告）。
 </p>
 
 <hr class="hr">
