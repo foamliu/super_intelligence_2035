@@ -96,6 +96,15 @@ def trace_source(c):
     return "—"
 
 
+def trace_user(c):
+    # 即时令 XII: 独立的「用户」列，直接显示原用户名（不 hash），便于一眼溯源。
+    md = c.get("metadata", {}) or {}
+    src = md.get("trace_source")
+    if isinstance(src, dict):
+        return src.get("user") or src.get("user_hash") or "—"
+    return "—"
+
+
 def solve_problem(c):
     md = c.get("metadata", {}) or {}
     return md.get("task_name") or md.get("scenario") or md.get("direction") or "—"
@@ -158,8 +167,9 @@ def main():
         pi_st = pi_by_tid.get(tid, {}).get("status", "未跑")
         pclass = {"PASS": "pass", "FAIL": "fail"}.get(pi_st, "draft")
         rows_html.append(
-            "<tr><td>{tid}</td><td>{ts}</td><td>{sp}</td><td>{ps}</td><td>{dr}</td><td>{ta}</td><td>{tl}</td><td><span class='tag {pc}'>{pst}</span></td></tr>".format(
+            "<tr><td>{tid}</td><td>{usr}</td><td>{ts}</td><td>{sp}</td><td>{ps}</td><td>{dr}</td><td>{ta}</td><td>{tl}</td><td><span class='tag {pc}'>{pst}</span></td></tr>".format(
                 tid=esc(tid),
+                usr=esc(trace_user(c)),
                 ts=esc(trace_source(c)),
                 sp=esc(solve_problem(c)),
                 ps=esc(prompt_summary(c)),
@@ -169,7 +179,7 @@ def main():
                 pc=pclass, pst=esc(pi_st),
             )
         )
-    table_rows = "\n".join(rows_html) or '<tr><td colspan="8">(无用例)</td></tr>'
+    table_rows = "\n".join(rows_html) or '<tr><td colspan="9">(无用例)</td></tr>'
 
     domain_dist = " · ".join(f"{esc(k)}: {v}" for k, v in sorted(by_domain.items())) or "(无)"
 
@@ -221,7 +231,7 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 <div class="note">即时令 VIII 已将原 15 个按工具分文件合并为单一 <code>EDA-Eval-DesignFlow.jsonl</code>；scripting 口径用例标记 <code>legacy:true</code> 保留存量，不再追加。新建用例只往此文件追加，按设计流契约（mode=design_flow / entry_point=outputs/submit.zip / 双参 check(deliverable, workdir) / 无 lang·host）。</div>
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
-<table><tr><th>task_id</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>pi 结果</th></tr>
+<table><tr><th>task_id</th><th>用户</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>pi 结果</th></tr>
 {table_rows}
 </table>
 
