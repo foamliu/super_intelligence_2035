@@ -27,6 +27,8 @@ TRACE_SRC = {
     "EDA-Eval-DesignFlow-Digital-022": "t0002948/1792133892937_i2dlp + 1791602575997_53vw2 (DC DFT 失败诊断)",
     "EDA-Eval-DesignFlow-Digital-023": "t0002948/1792400029503_0na23 (VCS makefile 参数化)",
     "EDA-Eval-DesignFlow-Verification-001": "ukkn7/8adf72139dee @ hfeg0plg91 (ERC_AI_CHECK pipeline 子section 过滤 + virtuoso→aether flow 改写)",
+    "EDA-Eval-DesignFlow-Characterization-001": "9knot/vincelu @ hfeg0plg49 (SiliconSmart drgqx 5 库表征 .tcl/.inst 多类 error 修复)",
+    "EDA-Eval-DesignFlow-PDKQA-001": "x4b0p/xinqiaoz @ hfeg0pkn004 (PDK QA DRC 框架 Windows→Linux 迁移, Calibre VCO aok/aoi autoswitch bug 假 MGC_HOME 绕过)",
 }
 
 
@@ -95,6 +97,11 @@ def trace_source(c):
     md = c.get("metadata", {}) or {}
     src = md.get("trace_source") or md.get("legacy_source_file")
     if src:
+        if isinstance(src, dict):
+            host = src.get("host", "?")
+            sf = src.get("session_file", "")
+            summ = src.get("real_task_summary", "")
+            return f"{sf} @ {host} ({summ})" if summ else f"{sf} @ {host}"
         return src
     return "synthesized"
 
