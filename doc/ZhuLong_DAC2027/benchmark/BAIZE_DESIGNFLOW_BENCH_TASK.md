@@ -54,10 +54,16 @@ metadata:    { trace_source{...}, domain, test_rationale }
 ```
 🚫 不带 `lang` / `host` / `runtime`；🚫 不写"实现 `xxx(args)->dict`"这类抽象题。
 
-**两轮节奏（宁慢勿糙）**
-- 第 1 轮：只深读 trace——`scp` `messages.json` 到 `.75` workdir → python 解析完整对话流（user 意图 / assistant 工具链 / 关键产物）→ 写 `designflow/trace_deepreads/<sid>_<主题>.md`（含真实用户名、主机、session）。**本轮不出 case。**
-- 第 2 轮：按笔记合成 case（assets + reference + proper 契约 + jsonl 追加）。
-- 选 trace：`summary.tsv` 按 `match_count` 降序，排除已用 session 与已清理 home，优先**命中最多且尚无 case 的 domain**。
+**单轮闭环 + 交付定义（DoD）**
+
+一轮 = 一条 case 从选料到落库，**不要拆成两轮**：
+`选料 → 深读 → 合成 → 自验(ref PASS + §4.9 三假提交 FAIL) → 追加 jsonl → 日报一行`
+
+- **深读是硬闸门，但不是独立的一轮**：必须先解析完整对话流（`scp` `messages.json` → user 意图 / assistant 工具链 / 关键产物 → `designflow/trace_deepreads/<sid>_<主题>.md`）才允许合成；已有笔记可直接复用，不重复深读。
+- **DoD（交付定义）**：1 条 case 通过自验并写进 `EDA-Eval-DesignFlow.jsonl` 才算交付；**深读笔记是中间产物，不算交付**。
+- **每轮至少交付 1 条 case**；预算（`AGENT_TIMEOUT` 45 min，单条约 35–45 min）内有剩余就继续下一条，**不设上限**。
+- **唯一例外**：单条 trace 过大（>2MB 或 >600 msgs）允许本轮只深读，但**下一轮必须先交付 case**，心跳记 `DEBT: 1 deepread 未合成`；🚫 禁止连续两轮只深读。
+- 选 trace：`summary.tsv` 按 `match_count` 降序，排除已用 / 已清理 session，优先**命中最多且尚无 case 的 domain**。
 
 ## 4. 判分质量（"有牙"，缺一不可）
 
@@ -93,11 +99,12 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 ## 6. 每轮流程
 
-1. 选 trace（§3）→ 深读或合成（§3 两轮节奏）。
-2. 自验：`reference/` 参考解跑 `check()` 必须 PASS；§4.9 三种假提交必须 FAIL。
+1. 选 trace → 深读（有笔记就复用）→ 合成（`assets/` `reference/` `hidden/` `negative/`）。
+2. 自验：`reference/` 参考解跑 `check()` 必 PASS；§4.9 (a)(b)(c) 三假提交必 FAIL；`negative_selftest.py` 全 FAIL。
 3. pi 实跑：`designflow/pi_debug_status.jsonl` 追加一行，记 `pi_model / pi_thinking / pi_dur_sec / pi_verdict / ref_check`。
-4. 日报：`python3 designflow/gen_daily_report.py`（16:00 前），中文单文件 HTML，含「用户」列；「test 思路」列**原样渲染 `metadata.test_rationale` 的 `k 条断言：①…` 清单**，🚫 回退成"解 zip 校验 N 文件"这类模板句。
+4. 追加 jsonl → 日报：`python3 designflow/gen_daily_report.py`，中文单文件 HTML，含「用户」列与 `k 条断言` 清单。
 5. 难度回路：按 §5 判定"加难 / 保持 / 查判分"，结论写进当日日报的"阻塞/下一步"。
+6. **有余量 → 回到第 1 步做下一条**（一轮交付 ≥1 条，上不封顶）。
 
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
@@ -105,12 +112,14 @@ metadata:    { trace_source{...}, domain, test_rationale }
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
-## 8. 收尾铁律（每轮必做）
+## 8. 收尾（轻量结账，不是每轮做全套）
+
+> 收尾是"结账"，**不是产出单位**：一轮可以交付多条 case，时间将尽时结账一次即可。
 
 0. **体积自检**：TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限先把已闭合块**原文**搬 `ARCHIVE_OPERATOR_DESIGNFLOW.md`（留 1 行指针），搬前 `git pull --rebase --autostash`，🚫 不改小节编号/标题。数字抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB`。
-1. **心跳** `MEMORY_DESIGNFLOW.md`：更新顶部快照（`PHASE/已完成/当前动作/下一步/阻塞`）+ 1 行流水（含三口径 + 🎯 通过率）。
-2. **日报** `daily-memories-designflow/<YYYY-MM-DD>.md`（当天必建）。
-3. **双仓提交**（不许等 loop 兜底）：
+1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `DEBT`）；🚫 每轮重写整份快照。
+2. **日记忆**：`daily-memories-designflow/<YYYY-MM-DD>.md` **当天首轮创建，之后只追加**。
+3. **提交**：**每 30 分钟或每 3 条 case 提交一次**（loop 本身每 30 分钟兜底）；本轮结束前必须提交，🚫 把工作留在工作树过夜。双仓命令：
 ```bash
 cd /nasdata/app.e0031982/code/super_intelligence_2035 && git fetch origin && git pull --rebase --autostash origin main
 git add -- doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW.md \
