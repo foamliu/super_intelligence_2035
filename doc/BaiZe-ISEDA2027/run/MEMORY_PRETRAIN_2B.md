@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-30 08:01 #940：**S1监控iter18398健康·loss~2.25稳态·0NaN·grad-norm温和抬升0.09→0.22(step18390起)·566K tok/s·ckpt@18000**。iter 18398/700k(2.63%): lm loss last=2.245, last20 avg=2.251, range[2.100~2.372]. 0 NaN/Inf(全程10000点). LR=1e-3恒定, GBS=256, loss-scale=1.0(FP8无溢出). grad-norm: last=0.223, 抬升始于step18390(0.128→0.132→0.223), last10 avg=0.145, 此前稳态~0.09. 温和波动非spike, 持续监控. 16卡.12+.29全100%util ~75GB/81GB. mem .29 541G/2TB(27%) swap 5.6G/8G, .12 533G/2TB swap 0. /nas_train 35T free(84%). ckpt@18000(9ckpt:2k~18k), next@20000(~1602步~3.2h). TB6006 OK. baize-llm项目目录就绪(15脚本+configs+docs+README 363行, git commit b67bf0c). check_rope.py PASS(#931). abf_plan.py完成(#939). prune dry-run验证(#939). 未完成指令：有(⑦零训练PPL/passkey基线, BLOCKED: 16/16 GPU满载训练~75GB/80GB, 无法执行GPU推理). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~30KB(无需归档, 均<32KB).
+> 🆕 2026-10-30 08:12 #941：**S1监控iter18560健康·loss~2.245稳态·0NaN·grad-norm SPIKE@18540(1.860=20x baseline)恢复中(0.592→0.776)·567K tok/s·ckpt@18000**。iter 18560/700k(2.65%): lm loss last=2.323, last20 avg=2.245, range[2.220~2.323]. 0 NaN/Inf(全程1856条记录, 0 skipped). LR=1e-3恒定, GBS=256, loss-scale=1.0(FP8无溢出). grad-norm: baseline~0.09(iter18370-18530), SPIKE@18540=1.860(20x), 18550=0.592, 18560=0.776(恢复中, 未完全回稳, 可能bad batch, 持续监控). 16卡.12+.29全100%util ~75GB/81GB. mem .29 541G/2TB(27%) swap 5.6G/8G, .12 534G/2TB swap 0. /nas_train 35T free(84%). ckpt@18000(9ckpt:2k~18k), next@20000(~1440步~3h). TB6006 OK. check_rope.py PASS(#931). abf_plan.py完成(#939). prune dry-run验证(#939). 未完成指令：有(⑦零训练PPL/passkey基线, BLOCKED: 16/16 GPU满载训练~75GB/80GB, 无法执行GPU推理). WAITING=1(30min轮询). 📦 体积：TASK=30.2KB / MEMORY=~30KB(无需归档, 均<32KB).
+> 📦 §#940（10-30 08:01, S1监控iter18398健康·loss~2.25·0NaN·grad-norm温和抬升·ckpt@18000）→ daily-memories/2026-10-30.md；**结论**：loss~2.245, 0NaN, 566K tok/s, ckpt@18000, grad-norm 0.09→0.22温和波动. 被#941更新。需要时再读。
 > 📦 §#939（10-30 07:28, S1监控iter18223健康·loss~2.24·0NaN·grad-norm极稳·abf_plan.py完成·prune dry-run验证）→ daily-memories/2026-10-30.md；**结论**：loss~2.237, 0NaN, 568K tok/s, abf_plan.py step10③完成, prune dry-run通过. 被#940更新。需要时再读。
 > 📦 §#938（10-30 07:10, S1监控iter18010健康·loss~2.27·0NaN·ckpt@18000·长上下文数据体检完成）→ daily-memories/2026-10-30.md；**结论**：loss~2.271, 0NaN, ckpt@18000, en_v1_4≥32K=2.2%LOW, code_l2≥32K=8.1%LOW. 被#939更新。需要时再读。
 > 📦 §#937（10-30 06:42, S1监控iter17840健康·loss~2.25稳态·0NaN·grad-norm spike@17810(1.346)恢复·ckpt@16000）→ daily-memories/2026-10-30.md；**结论**：loss~2.254, 0NaN, ~556K tok/s, ckpt@16000, spike@17810恢复. 被#938更新。需要时再读。
@@ -27,8 +28,8 @@ WAITING: 1
 > 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
 
 
-> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 17360/700k, ~566K tok/s, 0 NaN, loss ~2.26 稳态, ckpt@16000) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@2000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅(16脚本+9配置+2docs+README 19.4KB, git clean)）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~57天）。首次prune dry-run待step20k。ETA ~57天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=30.2KB / MEMORY=30.7KB（无需归档）
+> - 未完成指令：有（① en_v1_4 pre-blend ✅ ② activate ✅ ③ smoke ✅ ④ **16卡S1** ✅RUNNING(iter 18560/700k=2.65%, ~567K tok/s, 0 NaN, loss ~2.245 稳态, ckpt@18000, grad-norm spike@18540恢复中) ⑤ **check_rope.py ✅PASS**(56层/4注意力/max_pos=1M/theta=1e6) ⑥ lr-decay-shape exponential ✓(S1恒定1e-3, Decay段验证待Decay起跑) ⑦ 长上下文ABF[数据体检✅, abf_plan.py✅, HF ckpt@2000已导出, 零训练PPL/passkey基线待GPU空闲] ⑧ 项目目录脚本&文档 ✅(16脚本+9配置+2docs+README 19.4KB, git clean)）。**仅剩⑦**（需GPU空闲跑inference, 训练占用全部16卡~57天）。首次prune dry-run待step20k。ETA ~57天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=30.2KB / MEMORY=30.4KB（无需归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
