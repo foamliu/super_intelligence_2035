@@ -1684,3 +1684,36 @@ ALL ALIGNED → 评估器口径正确，bundle 可信。
 - v0.7 可复现性隐患修复：4处 `datetime.now()`→`_now_iso()`；所有 reproduce.sh `export PYTHONHASHSEED=0`。
 - v0.3-v0.6 leak check 全通过（0 残留）。
 - 第69–75轮详细流水原文已归档至归档批次 39。要点：pi+ref 双 PASS 累计 19 条，LogicSynth-001 pi-SUT FAIL。
+
+## 归档批次 48（2026-10-30 第121轮）：MEMORY 第112-119轮流水 + 旧"扩量阶段"块
+
+搬入原因：第121轮新增 Analog-001 后 MEMORY 达 37KB（超 32KB 软限，未触 40KB
+红线）。按规程把最新活跃块（顶部快照 + 第121/120轮流水）之下的已闭合块归档。
+本批含：第112-119轮流水原文 + 第93-95轮旧"扩量阶段"块（描述已被即时令 XI 删除
+作废的 57-case/16-jsonl legacy 时代，已不反映当前 9-case/1-jsonl 现状，归档
+保留历史）。结论已沉淀在 MEMORY 顶部快照。
+
+### 第119轮流水（即时令 XII 复核确认——Verification-001 用户名 e0031668 双源核对正确）
+醒查发现 round #118 已把 XII 全闭环（8 用例 trace_source `user_hash`→`user`+原用户名 / gen_daily_report.py trace 列显 `<user>/<session> @ <host> (任务)` / regen report_benchmark_10_30.html 8 行均显用户名 / 双仓库已 push）。**唯 Verification-001 用户名 e0031668 需独立复核**。open_session(BENCH-VERIFY)→run_commands 双源核对：① `.75` grep `summary.tsv` → `e0031668  1789370647360_ukkn7.messages.json  match_count=1478`（hfeg0plg91/hfeg0pkn003/hfeg0plg15 三机同 session，NFS home 同用户）；② `ssh hfeg0plg91 'ls -la /home/*/.cline/data/sessions/1789370647360_ukkn7*'` → `-rw-rw-r-- 1 e0031668 drcqa 1616161 ... .messages.json`（文件 owner=e0031668）。**双源一致确认 e0031668 正确**，无需改 jsonl。close_session cleaned=true。
+
+### 第118轮流水（即时令 XII trace_source user 用原用户名 + 日报列显示用户）
+**改 8 用例 trace_source**——`eda_flow.run_commands` 在 .75 grep `summary.tsv` 核 4 条 hashed 用例真实用户：Verification-001 `1789370647360_ukkn7`→**e0031668** / PDKQA-001 `x4b0p`→xinqiaoz / Backannot-001 `82ybr`→haoyut / Characterization-001 `9knot`→vincelu；4 条 Digital 已是原用户名（t0002948/klhu）仅改字段名。python 重写 jsonl 删 `user_hash` 加 `user`=原用户名。**改 gen_daily_report.py** `trace_source()` 读 `metadata.trace_source.user`（回退 `user_hash`），格式 `<user>/<session_file> @ <host> (<real_task_summary>)`。regen report_benchmark_10_30.html 验证 8 行均显用户名。close_session cleaned=true。
+
+### 第117轮流水（即时令 IX §五 深读第五条 trace w4x70）
+选 w4x70（764，haoyut/hfeg0pkn003，netlist:1394/cmos:269/analog:171/schematic:94）深读——analog_context 域(1167命中)0 proper 填补最大空白。open_session(BENCH-DEEPREAD)→**SSH hang 修复**：run_commands 里 ssh `-n` flag 会断 stdin pipe，改用 `</dev/null`+无 ControlMaster 后 ssh 正常返回。scp 3.116MB messages.json→.75 workdir→python 解析 **1181 msgs(596 user/585 assistant)/551 tool_use(446 run_commands/54 read_files/51 editor)**→提取 45 real user msg(5 阶段)：A 反标报告分析(PARA-043/044/124/162/003/040/004) / B netlist 层级连接提取 / C net_tracer 工具构建+格式迭代(annot_analyzer.py→net_tracer_v4.py→net_tree_v5/v6.py→net_trace.py，输出格式迭代4版) / D SPEF vs netlist 连接对比(SPEF=StarRC merge trivial 节点 vs netlist=Cadence SI 完整层级，与82ybr同根因) / E Virtuoso 集成+完整 hierarchy。**7 类 case 牙齿识别**：cell type 必须在括号内 / 上下游双向 / bus bit RRH12N[1] vs [0] 分离 / PARA-xxx 分类统计 / hierarchy 路径解析 / pin 名 .A/.B/.Y / 连接链精确匹配。脱敏笔记落 `designflow/trace_deepreads/w4x70_netlist_spef_connectivity_tracer.md`。close_session keep=false cleaned=true。**本轮按 IX §五 两轮节奏不出 case（深读本轮→下轮合成 Analog-001）**。
+
+### 第115-116轮流水（运维即时令 XI 全闭环）
+删 64 条无真实 trace 用例(72→8 proper) + 8 proper 补 test_rationale/trace_source + gen_daily_report 读 metadata(无 synthesized) + regen 日报验证。双仓库已落 origin。
+
+### 第114轮流水（Backannot-001 合成 pi+ref 双 PASS）
+按 82ybr 深读笔记合成 EDA-Eval-DesignFlow-Backannot-001（pnr_signoff 域首条 proper）。合成 6 assets → proper 契约 → 追加 jsonl。test 7 条件独立有牙：ref PASS / 3 类 naive FAIL。pi-SUT deepseek-v4-pro-cloud ~10min exit=0，产出 outputs/submit.zip(5563B/4文件)，pi 自检 PASS，独立 reference/check.py 判 PASS → **pi+ref 双 PASS**。
+
+### 第112轮流水（PDKQA-001 合成 pi+ref 双 PASS）
+按 x4b0p 深读笔记合成第三条 proper design_flow case EDA-Eval-DesignFlow-PDKQA-001（physical_verify 域首条 proper）。合成 5 assets → proper 契约 → 追加 jsonl（71行/8 proper）。test 7 条件独立有牙：CORRECT PASS / BUGGY FAIL / 11 per-condition isolated FAIL。pi-SUT ~4min exit=0，自报 DESIGN_FLOW_VERDICT=PASS，独立 reference/check.py 判 PASS → **pi+ref 双 PASS**。
+
+### 旧"扩量阶段"块（第93-95轮，legacy 57-case 时代，已被即时令 XI 删除作废）
+- 第94-95轮：Schematic-Netlist-004 / aether host run_code 超时 block（layout_aether 类 14534 scan hits 最大类仍只能 draft）。
+- 第93轮：Skipper-004 pi+ref 双 PASS；eda_flow write_file content_base64 服务端 bug 发现（`$dA`→`$d\x01`），改用 plain content 规避。
+- 第110-114轮流水（Characterization-001 / 82ybr 深读 / Backannot-001 / x4b0p 深读 / PDKQA-001）已浓缩，详情见各 trace_deepreads 笔记 + 顶部快照 + 归档批次 39/47。
+- 第103/104/106轮（Aether-Layout-009/010/012）、第96-99轮（Aether-Layout-002/003/004/005）、第85-102轮旧流水已移入归档批次 42/43/44/46。
+- 旧"扩量阶段"统计：57 条/16 jsonl/pi_debug 54=51PASS/1FAIL/2draft —— **此统计已作废**（即时令 XI 删 64 条无真实 trace 用例，现 9 条/1 jsonl）。
