@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #428, 2026-10-31 03:29]**：空唤醒·补心跳防判死。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 内容为 pretrain(RUN_ID 224/223)+harness 线命令，无 vision 线指令。git fetch → up to date（latest=2fe857c84 data线03:28）。vision loop 活(PID 669545)。交付物 report_vision_waveform_zh.html 45236B 在位。📦 体积：TASK=26080B/MEMORY=31773B 均≤32KB✓。**未完成指令：无** ⇒ **WAITING: 1**（待运维下一令/批准 OCR SFT 预算，30min轮询）。
+> **本唤醒流水 [wake #429, 2026-10-31 04:00]**：空唤醒·补心跳防判死。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 内容为 pretrain(RUN_ID 224 重启pretrain loop / RUN_ID 223 liveness)+harness 线命令，无 vision 线指令。git fetch → up to date（latest=39c6805bf data线03:5x）。vision loop 活(PID 669545)。交付物 report_vision_waveform_zh.html 45236B 在位。📦 体积：TASK=26080B/MEMORY=31956B 均≤32KB✓。**未完成指令：无** ⇒ **WAITING: 1**（待运维下一令/批准 OCR SFT 预算，30min轮询）。
+> 📦 wake#428 (2026-10-31 03:29, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
 > 📦 wake#427 (2026-10-31 02:56, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
 > 📦 wake#426 (2026-10-31 01:53, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
 > 📦 wake#425 (2026-10-31 01:20, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
@@ -86,7 +87,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（OCR 10M质量偏差✅已裁定:接受现状; 16:1x方案报告已交付,无训练运行,待运维下一令/OCR SFT预算）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-31 01:53 (wake #426, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 存在但为 pretrain/harness 线命令(RUN_ID 224/223/4)，无 vision 指令。git fetch → up to date。vision loop 活(PID 669545)。体积 TASK=26080B/MEMORY=32573B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
+| 更新 | **2026-10-31 04:00 (wake #429, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 存在但为 pretrain/harness 线命令(RUN_ID 224/223)，无 vision 指令。git fetch → up to date(latest=39c6805bf)。vision loop 活(PID 669545)。体积 TASK=26080B/MEMORY=31956B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
 
 ### 评测耗时归因（2026-10-15）
 
