@@ -6,7 +6,8 @@ WAITING: 1
 
 ## 状态头
 
-> **本唤醒流水 [wake #424, 2026-10-30 23:10]**：✅ 执行运维直令 22:2x「写波形图报告」。交付 `reports/report_vision_waveform_zh.html`（45236B/666行/6节/14表/0script/0外链/标签配平✓）。覆盖：任务定义(4类波形×4层看懂)/能力拆解(5层子能力)/数据(合成80%+真实20%·698机368命中)/训练(Stage-1W→Stage-2W·可选RL)/评测(WaveQA≥300题+MMStar/MMBench护栏≤1pp)/成本ETA(pilot 2万题/10GPU·h·全量10.6万/24GPU·h)。commit 83591a2b1 已push。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #425, 2026-10-31 01:20]**：空唤醒·补心跳防判死。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 不存在。git fetch+pull --rebase → already up to date（latest=96e99df24 data线01:18）。vision loop 活(PID 669545)。📦 体积：TASK=26080B/MEMORY=32493B 均≤32KB✓。**未完成指令：无** ⇒ **WAITING: 1**（待运维下一令/批准 OCR SFT 预算，30min轮询）。
+> 📦 wake#424 (2026-10-30 23:10, ✅执行运维直令「写波形图报告」·交付report_vision_waveform_zh.html 45236B·commit 83591a2b1) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#423 (2026-10-30 22:21, 空唤醒·补心跳防判死·push失败×2→后已补推) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#421 (2026-10-30 21:17, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#420 (2026-10-30 20:45, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
@@ -89,7 +90,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **ArmE-R2 全链路 DONE**（①训练63400步✅ · ②ProtB lp68.236✅ · ③MLLM三阶段✅ · ④12集avg26.10%✅ · ⑤报告✅ · ⑥下一步方案报告✅）。ArmE-R2=ArmE降LR重跑(LR1e-3→5e-4+warmup2000→3000, ViT-L/14, 6源173M对)。历史最高C1=0.9664@s45240。现仅存ckpt@60000+63400(40000/50000已滚动删,训练代码无save-best机制)。ArmE(发散)/ArmD-R2/ArmB/ArmC产物未动。**WAITING=1**（OCR 10M质量偏差✅已裁定:接受现状; 16:1x方案报告已交付,无训练运行,待运维下一令/OCR SFT预算）。 |
 | BUDGET_USED | ~999 GPU·h (V3 ~106, ② ~1, ④-2ep ~80, ④-4ep ~134 incl. eval) |
-| 更新 | **2026-10-30 21:17 (wake #421, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md RUN_ID 224=pretrain令(非vision)。git fetch+pull --rebase → already up to date。vision loop 活(PID 669545)。体积 TASK=24093B/MEMORY=31916B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
+| 更新 | **2026-10-31 01:20 (wake #425, 空唤醒·补心跳防判死)**：运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 不存在。git fetch+pull --rebase → already up to date。vision loop 活(PID 669545)。体积 TASK=26080B/MEMORY=32493B 均≤32KB✓。**未完成指令：无**。**WAITING=1**（待运维下一令/批准 OCR SFT 预算/API key/336 scope 裁决，30min轮询）。 |
 
 ### 评测耗时归因（2026-10-15）
 
