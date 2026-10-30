@@ -1560,3 +1560,18 @@
 | 2026-10-30 | 第 180 轮 附录 A47–A48：爱范儿 20 条（Fable 5.5 爆料 / 汽车 AI 流水线特稿 / 上手稿与已入账） | 爱范儿 | 不收（爆料/特稿/重复） | https://www.ifanr.com/feed |
 | 2026-10-30 | 第 180 轮 附录 A49：TechCrunch 20 条（17 条重复或已入账 · 涉间谍指控不采 · Waymo/Runware 已入账） | TechCrunch | 不收（重复/不采） | https://techcrunch.com/category/artificial-intelligence/feed/ |
 | 2026-10-30 | 第 180 轮 附录 A50：中新网/央视网 40 条（时政·外交·伤亡·司法·非 AI） | 中新网 / 央视网 | 不收（非 AI / 红线题材） | https://www.chinanews.com.cn/rss/scroll-news.xml |
+| 2026-10-31 | 苹果 Apple 智能国行版官宣落地：接入阿里千问（11-04 iOS 开发者 Beta 测试 · 12 月 iOS 27.3 上线 · 不含 Siri AI） | IT之家 10-31（正文已读 · title 一致） | news | https://www.ithome.com/1/020/389.htm |
+| 2026-10-31 | 华为 Mate 90 系列小艺升级「帮记 / 触发式 AI」，官方称超百款应用已接入 | IT之家 10-30（正文已读 · title 一致） | news | https://www.ithome.com/1/020/381.htm |
+| 2026-10-31 | 奥尔特曼回应 AI 冲击数学界：承认发布方式需改进 · 数学投入数亿美元（NS 方程约 1,000 万美元）· 捐西蒙斯基金会 500 万美元 | IT之家 10-30（正文已读 · title 一致） | news | https://www.ithome.com/1/020/361.htm |
+| 2026-10-31 | 硅基流动港股上市申请获证监会备案受理（用户超 1,000 万 / 企业客户 1.3 万 / 年内融资近 29 亿元 / Token 份额 1.5%） | IT之家 10-30（正文已读 · title 一致） | news | https://www.ithome.com/1/020/369.htm |
+| 2026-10-31 | DoorDash：第三方 AI 智能体订单仅「数百单」，平台日均约 300 万单 | TechCrunch 10-30（正文已读 · title 一致） | news | https://techcrunch.com/2026/10/30/doordash-said-its-only-received-several-hundred-orders-from-ai-agents/ |
+| 2026-10-31 | Ollie（隐私型 AI 助手）宣布 11-06 关停（种子轮 750 万美元 · 最早过 SOC 2 的主流应用之一） | TechCrunch 10-30（正文已读 · title 一致） | news | https://techcrunch.com/2026/10/30/ollie-a-privacy-focused-ai-assistant-is-shutting-down/ |
+| 2026-10-31 | 四大科技公司今年资本开支合计超 7,400 亿美元；市场担心 AI 支出繁荣出现裂缝（纳指 -2.9% · 五家公司年内发债 3,260 亿美元） | TechCrunch 10-30（正文已读 · title 一致） | news | https://techcrunch.com/2026/10/30/cracks-are-emerging-in-the-ai-spending-boom/ |
+| 2026-10-31 | 英特尔盘中一度跌超 30%（TC 口径约 28%）· 市值蒸发逾 1,370 亿美元 · Q4 指引 150-160 亿美元低于预期 | IT之家 / TechCrunch 10-30（正文已读 · title 一致） | news | https://www.ithome.com/1/020/364.htm |
+| 2026-10-31 | 苹果收购数据工程公司 Ascend.io（欧盟公示：IP 非独占许可 + 部分员工招聘 + 部分专利转让） | IT之家 10-30（正文已读 · title 一致） | news | https://www.ithome.com/1/020/354.htm |
+| 2026-10-31 | 地平线余凯吐槽智驾芯片算力虚标（英伟达按稠密 2 倍标 · 业界吹到 6-7 倍 · 征程 6P 560/1960 TOPS） | IT之家 10-30（正文已读 · title 一致） | news | https://www.ithome.com/1/020/358.htm |
+| 2026-10-31 | 谷歌 Suncatcher 首颗太空数据中心卫星上线（4 块 TPU · 最高 1 kW · 一次开机约 20 分钟 · 机载 Gemma 4 写俳句） | TechCrunch 10-30（正文已读 · title 一致） | news | https://techcrunch.com/2026/10/30/googles-first-data-center-satellite-is-online-and-writing-poetry/ |
+| 2026-10-31 | 第 181 轮 附录 A1–A3：华为标注麒麟 9000S（促销推文）· AI 复活 Windows Phone（玩家作品）· Win11 26H2 启用包（第 180 轮已登记） | IT之家 10-30 | 不收录 | — |
+| 2026-10-31 | 第 181 轮 附录 A4：英特尔以色列 Fab 28 爆炸（含 2 死 1 重伤 · 依 SPEC §2.3 不采） | IT之家 10-30 | 不收录（事故伤亡） | — |
+| 2026-10-31 | 第 181 轮 附录 A5：IT之家同日 30 余条消费电子新品与国补降价 | IT之家 10-30 | 不收录（非 AI 主线） | — |
+| 2026-10-31 | 第 181 轮 附录 A6–A8：爱范儿 20 条 0 入（特稿/上手/已登记）· TechCrunch 其余 15 条（观点/广告/预期报道）· 中新网央视 40 条 AI 硬新闻 0 条 | 爱范儿 / TechCrunch / 中新网·央视网 10-30 | 不收录 | — |
