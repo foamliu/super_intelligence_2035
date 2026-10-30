@@ -1548,3 +1548,15 @@
 | 2026-10-30 | 第 179 轮 附录 A36–A37：量子位 10 条（厂商稿/活动稿）· 爱范儿 15 条（上手稿/已入账） | 量子位 / 爱范儿 10-30 | 不收（非硬新闻或已入账） | https://www.qbitai.com/feed |
 | 2026-10-30 | 第 179 轮 附录 A38–A39：TechCrunch 20 条（多为前轮已登记 · 涉间谍指控不采）· 中新网央视 120 条 AI 相关 5 条（地方数据/综述/活动预热） | TechCrunch / cn_news 10-30 | 不收（重复/不采/综述） | https://techcrunch.com/category/artificial-intelligence/feed/ |
 | 2026-10-30 | 第 179 轮 附录 A40–A42：A股/车企常规财报叠加 · 消费电子新品与降价 · 乌克兰战场 AI 机枪炮塔（军事 · 依 SPEC §2.3 不采） | IT之家 10-30 | 不收（财报/产品/军事） | https://www.ithome.com/1/020/131.htm |
+| 2026-10-30 | 小米开源 0.8B 文档理解模型 Xiaomi-OCR-0（文档解析/关键信息抽取/OCR 视觉问答 · HF+GitHub 上线 · 官方口径多项基准第一） | IT之家 | news | https://www.ithome.com/1/020/346.htm |
+| 2026-10-30 | 地平线 HSD 被曝切入比亚迪天神之眼 B（大算力芯片+软件栈 · 首批车型 11 月上市 · 知情人士） | IT之家（蓝鲸汽车） | news | https://www.ithome.com/1/020/311.htm |
+| 2026-10-30 | 沐曦股份 2026 前三季度营收 28.24 亿元（+128.45%）、归母净利 6.39 亿元扭亏 | IT之家 | news | https://www.ithome.com/1/020/271.htm |
+| 2026-10-30 | 长鑫科技 2026 前三季度营收 2,690.24 亿元（+738.51%）、归母净利 1,320.4 亿元扭亏 | IT之家 | news | https://www.ithome.com/1/020/263.htm |
+| 2026-10-30 | Waymo 联手丰田：2027 款 bZ4X 高冈工厂集成 Waymo 系统，明年日本测试、目标英国 | TechCrunch | news | https://techcrunch.com/2026/10/30/waymos-next-robotaxi-will-be-a-toyota-bz4x-destined-for-japan-and-the-uk/ |
+| 2026-10-30 | Runware 要把 AI 数据中心像汽车一样上流水线（2028 年日产 30 兆瓦 · 48 小时投运） | TechCrunch | news | https://techcrunch.com/2026/10/30/can-ai-data-centers-be-mass-produced-like-cars-and-online-in-48-hours-this-startup-aims-to-find-out/ |
+| 2026-10-30 | 第 180 轮 附录 A43：攻击-21 在四川舰首次起降（军事 · 依 SPEC §2.3 不采） | IT之家（据央视） | 不收（军事） | https://www.ithome.com/1/020/307.htm |
+| 2026-10-30 | 第 180 轮 附录 A44–A45：宁德时代巧克力换电海南全岛贯通 · 铠侠 2027 财年上半年财报（+436.8%） | IT之家 | 不收（非 AI 主线/单家财报叠加） | https://www.ithome.com/1/020/323.htm ｜ https://www.ithome.com/1/020/247.htm |
+| 2026-10-30 | 第 180 轮 附录 A46：Win11 26H2 启用包 174KB · 荣耀 MagicOS 11 月预告 · 小米手环返印爆料 · 极空间 NAS · 天马 MFD 屏 · 三星收购 TCL 华星 10.16% | IT之家 | 不收（消费电子/软件公告） | https://www.ithome.com/1/020/343.htm |
+| 2026-10-30 | 第 180 轮 附录 A47–A48：爱范儿 20 条（Fable 5.5 爆料 / 汽车 AI 流水线特稿 / 上手稿与已入账） | 爱范儿 | 不收（爆料/特稿/重复） | https://www.ifanr.com/feed |
+| 2026-10-30 | 第 180 轮 附录 A49：TechCrunch 20 条（17 条重复或已入账 · 涉间谍指控不采 · Waymo/Runware 已入账） | TechCrunch | 不收（重复/不采） | https://techcrunch.com/category/artificial-intelligence/feed/ |
+| 2026-10-30 | 第 180 轮 附录 A50：中新网/央视网 40 条（时政·外交·伤亡·司法·非 AI） | 中新网 / 央视网 | 不收（非 AI / 红线题材） | https://www.chinanews.com.cn/rss/scroll-news.xml |
