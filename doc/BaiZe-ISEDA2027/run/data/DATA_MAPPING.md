@@ -105,14 +105,14 @@
 ## D. 可删候选（2026-10-30 /nas_train 盘点）
 
 > 运维令 2026-10-30 22:2x：`/nas_train` 大目录盘点 + 可删候选表。本轮**只出候选清单，不执行删除**（等运维批准）。
-> 完整明细：`run/data/cleanup_candidates_20261030.tsv`（38 行，含 path / 表观(du -sh) / 实占(du -sb) / inode / 判定 / 证据命令）。
+> 完整明细：`run/data/cleanup_candidates_20261030.tsv`（49 行，含 path / 表观(du -sh) / 实占(du -sb) / inode / 判定 / 证据命令）。
 > ⚠️ **表观 ≠ 实占**：硬链接目录（如 baize-data/ env14）表观 8.4T 但实占因 hardlink 部分已被 tokenized/ 镜像共享；本节只列合计与判定，不把表观当实占。
 
 ### 红线（一律保留，不可删）
 
 | 路径 | 表观 | 实占(B) | 理由 |
 |:---|---:|---:|:---|
-| `datasets/mvp-lab/` | 42T | 45,985,312,034,386 | 85M 下载进行中（10315/12126 files） |
+| `datasets/mvp-lab/` | 42T | 45,985,312,034,386 | 85M 下载进行中（10462/12126 files，86.3%） |
 | `datasets/openbmb/` | 9.8T | 10,698,031,684,940 | INDEX.tsv 下载源 parquet（Ultra-FineWeb / UltraX-Preview） |
 | `datasets/baize-data/` | 8.4T | 9,186,503,937,898 | RED LINE：tokenized/ INDEX.tsv full_* |
 | `datasets/baize-vision/` | 1.1T | 1,116,034,189,821 | vision agent 活跃数据 |
@@ -125,7 +125,7 @@
 |:---|---:|---:|:---|
 | `datasets/stanford-corenlp-full-2016-10-31.zip` | 389M | 388,633,790 | 解压目录已存在，zip 冗余 |
 | `tmp/.nfs0000000b14c0fe4000fd2352` | — | — | NFS silly-rename 垃圾 |
-| `nccl_dbg/` | 68K | — | NCCL 调试日志 |
+| `nccl_dbg/` | 68K | 37,673 | NCCL 调试日志 |
 
 ### 待定（需运维/各线确认后决定）
 
@@ -163,10 +163,10 @@
 | `datasets/mvp-lab/LLaVA-NeXT-780k-webdataset/` | 101G | 108,079,183,973 | LLaVA-NeXT webdataset，不在 INDEX.tsv |
 | `code/LLaVA-OneVision-1.5-RL/` | 30G | 30,125,997,787 | LLaVA RL 代码+数据，不在 INDEX.tsv |
 | `code/BaiZe-ISEDA2027/output/` | 22G | 22,792,217,964 | 旧训练输出，不在 INDEX.tsv |
-| `code/BaiZe-ISEDA2027/hf_checkpoints/` | 8.9G | — | 旧 HF 检查点 |
-| `code/flash-attention/` | 8.9G | — | flash-attention 源码（编译依赖） |
-| `datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/` | 19G | — | LLaVA RL 数据，不在 INDEX.tsv |
-| `datasets/mvp-lab/llava_conversion_work/` | 7.1G | — | LLaVA 转换工作目录 |
+| `code/BaiZe-ISEDA2027/hf_checkpoints/` | 8.9G | 9,485,369,788 | 旧 HF 检查点 |
+| `code/flash-attention/` | 8.9G | 9,359,124,562 | flash-attention 源码（编译依赖） |
+| `datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/` | 19G | 20,022,879,590 | LLaVA RL 数据，不在 INDEX.tsv |
+| `datasets/mvp-lab/llava_conversion_work/` | 7.1G | 7,220,256,280 | LLaVA 转换工作目录 |
 
 > ⚠️ 上述 `nemo_experiments/`、`code/BaiZe-ISEDA2027/output/`、`code/LLaVA-OneVision-1.5-RL/` 等是 `code/`（红线保留）下的子目录；`mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/` 等是 `mvp-lab/`（红线保留，含 85M 下载）下的子目录。它们作为独立条目列出以供运维逐项决策，但表观合计与父目录有重叠。
 
@@ -181,7 +181,7 @@
 | 分类 | 表观合计 | 实占合计(B) | 说明 |
 |:---|---:|---:|:---|
 | 红线（保留） | ~61.7T | ~66,906,379,766,145 | 不可删（含 85M 下载 37T + 源 parquet + 分词产物） |
-| 可删（低风险） | ~691M | ~603,475,720 | 等批准即可删（stanford-corenlp zip + .nfs + nccl_dbg + p6_tf5） |
+| 可删（低风险） | ~691M | ~603,513,393 | 等批准即可删（stanford-corenlp zip + .nfs + nccl_dbg + p6_tf5） |
 | 待定（待确认） | ~14.3T | ~14,649,436,452,716 | 需各线 agent 确认是否使用（含子目录独立条目，与父目录有重叠） |
 | **总计** | ~69.7T | | /nas_train 已用 173T / 207T (84%) |
 

@@ -1,5 +1,5 @@
 path	表观(du_-sh)	实占(du_-sb)	inode/硬链接	判定	证据命令
-/nas_train/app.e0031982/datasets/mvp-lab/	42T	45985312034386	目录	保留	85M下载进行中(10315/12126 files); du -sb /nas_train/app.e0031982/datasets/mvp-lab/
+/nas_train/app.e0031982/datasets/mvp-lab/	42T	45985312034386	目录	保留	85M下载进行中(10462/12126 files,86.3%); du -sb /nas_train/app.e0031982/datasets/mvp-lab/
 /nas_train/app.e0031982/datasets/openbmb/	9.8T	10698031684940	含hardlink+symlink	保留	INDEX.tsv L2/L8-L11 download_dir指向此处; du -sb /nas_train/app.e0031982/datasets/openbmb/
 /nas_train/app.e0031982/datasets/baize-data/	8.4T	9186503937898	含hardlink(env14)+symlink(full_*)	保留	RED LINE: tokenized/INDEX.tsv/full_*; du -sb /nas_train/app.e0031982/datasets/baize-data/
 /nas_train/app.e0031982/datasets/baize-vision/	1.1T	1116034189821	目录	保留	vision agent活跃数据(en500k/eval5k/ocr_synth_10m); du -sb /nas_train/app.e0031982/datasets/baize-vision/
@@ -36,7 +36,7 @@ path	表观(du_-sh)	实占(du_-sb)	inode/硬链接	判定	证据命令
 /nas_train/app.e0031982/tmp/	1.3G	1180858456	含.nfs文件	待定	临时文件; 含1个.nfs垃圾文件; find /nas_train/app.e0031982/tmp/ -name '.nfs*'
 /nas_train/app.e0031982/Downloads/	209M	216932527	目录	待定	旧下载; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/Downloads/
 /nas_train/app.e0031982/tmp/.nfs0000000b14c0fe4000fd2352	-	-	单文件	可删	NFS silly-rename垃圾; find /nas_train/app.e0031982 -maxdepth 2 -name '.nfs*'
-/nas_train/app.e0031982/nccl_dbg/	68K	-	目录	可删	NCCL调试日志; ls /nas_train/app.e0031982/nccl_dbg/
+/nas_train/app.e0031982/nccl_dbg/	68K	37673	目录	可删	NCCL调试日志; ls /nas_train/app.e0031982/nccl_dbg/
 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/	645G	692340206072	128子目录	待定	旧NeMo训练实验(架构搜索期,已收敛); 不在INDEX.tsv; du -sb /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/
 /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/	5.5T	5989056868520	182子目录	待定	LLaVA指令调优数据; 不在INDEX.tsv镜像; du -sb /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/
 /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M/	149G	159121745303	目录	待定	LLaVA快速启动webdataset; 不在INDEX.tsv; du -sb /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M/
@@ -44,7 +44,7 @@ path	表观(du_-sh)	实占(du_-sb)	inode/硬链接	判定	证据命令
 /nas_train/app.e0031982/code/LLaVA-OneVision-1.5-RL/	30G	30125997787	目录	待定	LLaVA RL代码+数据; 不在INDEX.tsv; du -sb /nas_train/app.e0031982/code/LLaVA-OneVision-1.5-RL/
 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/output/	22G	22792217964	目录	待定	旧训练输出; 不在INDEX.tsv; du -sb /nas_train/app.e0031982/code/BaiZe-ISEDA2027/output/
 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5/	302M	214841930	63子目录	可删	旧实验数据(架构搜索期); 不在INDEX.tsv; du -sb /nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5/
-/nas_train/app.e0031982/code/BaiZe-ISEDA2027/hf_checkpoints/	8.9G	-	目录	待定	旧HF检查点; ls /nas_train/app.e0031982/code/BaiZe-ISEDA2027/hf_checkpoints/
-/nas_train/app.e0031982/code/flash-attention/	8.9G	-	目录	待定	flash-attention源码(编译依赖); ls /nas_train/app.e0031982/code/flash-attention/
-/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/	19G	-	目录	待定	LLaVA RL数据; 不在INDEX.tsv; du -sh /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/
-/nas_train/app.e0031982/datasets/mvp-lab/llava_conversion_work/	7.1G	-	目录	待定	LLaVA转换工作目录; 不在INDEX.tsv; du -sh /nas_train/app.e0031982/datasets/mvp-lab/llava_conversion_work/
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/hf_checkpoints/	8.9G	9485369788	目录	待定	旧HF检查点; ls /nas_train/app.e0031982/code/BaiZe-ISEDA2027/hf_checkpoints/
+/nas_train/app.e0031982/code/flash-attention/	8.9G	9359124562	目录	待定	flash-attention源码(编译依赖); ls /nas_train/app.e0031982/code/flash-attention/
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/	19G	20022879590	目录	待定	LLaVA RL数据; 不在INDEX.tsv; du -sh /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data/
+/nas_train/app.e0031982/datasets/mvp-lab/llava_conversion_work/	7.1G	7220256280	目录	待定	LLaVA转换工作目录; 不在INDEX.tsv; du -sh /nas_train/app.e0031982/datasets/mvp-lab/llava_conversion_work/
