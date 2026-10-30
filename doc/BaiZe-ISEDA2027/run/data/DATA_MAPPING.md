@@ -100,3 +100,72 @@
 
 > 注：`释放字节(实占)` = 硬链接只算一次后的实际释放量（非表观体积）。batch1 释放 ~1.13 MB（78 个 staging_r3 符号链接目录 + .bak + 空目录 + 旧日志）；表观体积远大于实占因 110 env14 hardlink 实占 0。
 
+---
+
+## D. 可删候选（2026-10-30 /nas_train 盘点）
+
+> 运维令 2026-10-30 22:2x：`/nas_train` 大目录盘点 + 可删候选表。本轮**只出候选清单，不执行删除**（等运维批准）。
+> 完整明细：`run/data/cleanup_candidates_20261030.tsv`（38 行，含 path / 表观(du -sh) / 实占(du -sb) / inode / 判定 / 证据命令）。
+> ⚠️ **表观 ≠ 实占**：硬链接目录（如 baize-data/ env14）表观 8.4T 但实占因 hardlink 部分已被 tokenized/ 镜像共享；本节只列合计与判定，不把表观当实占。
+
+### 红线（一律保留，不可删）
+
+| 路径 | 表观 | 实占(B) | 理由 |
+|:---|---:|---:|:---|
+| `datasets/mvp-lab/` | 42T | 45,985,312,034,386 | 85M 下载进行中（10315/12126 files） |
+| `datasets/openbmb/` | 9.8T | 10,698,031,684,940 | INDEX.tsv 下载源 parquet（Ultra-FineWeb / UltraX-Preview） |
+| `datasets/baize-data/` | 8.4T | 9,186,503,937,898 | RED LINE：tokenized/ INDEX.tsv full_* |
+| `datasets/baize-vision/` | 1.1T | 1,116,034,189,821 | vision agent 活跃数据 |
+| `code/` | 3.5T | — | BaiZe-ISEDA2027 项目代码 |
+| `.cline_*/` | ~4.4G | — | 活跃 agent 会话数据（4 个） |
+
+### 可删（低风险）
+
+| 路径 | 表观 | 实占(B) | 理由 |
+|:---|---:|---:|:---|
+| `datasets/stanford-corenlp-full-2016-10-31.zip` | 389M | 388,633,790 | 解压目录已存在，zip 冗余 |
+| `tmp/.nfs0000000b14c0fe4000fd2352` | — | — | NFS silly-rename 垃圾 |
+| `nccl_dbg/` | 68K | — | NCCL 调试日志 |
+
+### 待定（需运维/各线确认后决定）
+
+| 路径 | 表观 | 实占(B) | 说明 |
+|:---|---:|---:|:---|
+| `datasets/FineVision/` | 4.3T | 4,645,236,803,666 | 186 视觉数据子目录，不在 INDEX.tsv，待 vision 确认 |
+| `datasets/HuggingFaceFW/` | 1.3T | 1,365,756,121,231 | fineweb-edu，不在 INDEX.tsv，旧文本下载 |
+| `datasets/conceptual-captions-12m-webdataset/` | 1.2T | 1,244,033,908,448 | webdataset 格式，不在 INDEX.tsv |
+| `datasets/imagenet-1k/` | 156G | 166,753,472,862 | ImageNet-1K，不在 INDEX.tsv |
+| `datasets/lmms-lab/` | 137G | 146,251,614,972 | LMM 评测数据，不在 INDEX.tsv |
+| `datasets/LLaVA-Instruct-150K/` | 91G | 97,680,038,930 | LLaVA 指令数据，不在 INDEX.tsv |
+| `datasets/LLaVA-Pretrain/` | 85G | 85,723,169,187 | LLaVA 预训练（664 entries），不在 INDEX.tsv |
+| `datasets/coco/` | 63G | 65,303,204,197 | COCO 数据集，不在 INDEX.tsv |
+| `datasets/gqa/` | 42G | 43,816,985,024 | GQA 视觉推理，不在 INDEX.tsv |
+| `datasets/vg/` | 30G | 30,545,172,713 | Visual Genome，不在 INDEX.tsv |
+| `datasets/textvqa/` | 14G | 14,168,782,169 | TextVQA，不在 INDEX.tsv |
+| `datasets/ocr_vqa/` | 9.1G | 7,988,057,464 | OCR-VQA，不在 INDEX.tsv |
+| `datasets/LLaVA-CC3M-Pretrain-595K/` | 6.4G | 6,866,613,212 | LLaVA CC3M，不在 INDEX.tsv |
+| `models/` | 460G | 493,837,583,591 | 模型权重，pretrain/vision 可能依赖 |
+| `hf_cache/` | 49G | 51,781,238,854 | HF 缓存，清理可能影响续传 |
+| `outputs/` | 6.7G | 7,125,118,579 | 旧训练输出 |
+| `download/` | 3.4G | 2,674,418,927 | 旧下载目录 |
+| `.hf_cache/` | 2.0G | 2,074,331,978 | 隐藏 HF 缓存 |
+| `tmp/` | 1.3G | 1,180,858,456 | 临时文件（含 .nfs 垃圾） |
+| `datasets/armanakbari4/` | 1.6G | 387,389,164 | 用途不明 |
+| `datasets/red_caps/` | 1013M | 1,061,997,941 | RedCaps，不在 INDEX.tsv |
+| `datasets/AMSbench/` | 495M | 517,861,956 | AMS benchmark |
+| `datasets/stanford-corenlp-full-2016-10-31/` | 373M | 390,330,174 | Stanford CoreNLP（如不使用） |
+| `datasets/MMMU/` | 232M | 240,736,341 | MMMU 评测数据 |
+| `Downloads/` | 209M | 216,932,527 | 旧下载 |
+| `datasets/allenai/` | 1.7M | 1,415,941 | 用途不明 |
+
+### 合计估算
+
+| 分类 | 表观合计 | 实占合计(B) | 说明 |
+|:---|---:|---:|:---|
+| 红线（保留） | ~61.7T | ~66,906,379,766,145 | 不可删 |
+| 可删（低风险） | ~389M | ~388,633,790 | 等批准即可删 |
+| 待定（待确认） | ~7.6T | ~7,703,920,233,097 | 需各线 agent 确认是否使用 |
+| **总计** | ~69.7T | | /nas_train 已用 173T / 207T (84%) |
+
+> ⚠️ **待定项中 FineVision(4.3T) + HuggingFaceFW(1.3T) + conceptual-captions(1.2T) = 6.8T** 是最大可释放空间，但需 vision agent 确认是否使用 FineVision 和 conceptual-captions，需确认 HuggingFaceFW/fineweb-edu 是否为旧下载。
+

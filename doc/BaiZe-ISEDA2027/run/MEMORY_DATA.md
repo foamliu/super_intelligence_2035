@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -18,19 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅运维令10:1x暂停下载DONE.无活跃下载/迁移进程(.12验),12源全部镜像完整.例行巡检中
-已完成:       ✅运维令10:1x暂停下载(pgrep验.12无download_85m/hf/rsync/wget/aria2进程,判据满足);✅运维令13:3x SFT分词全DONE;✅运维令08:3x刷新两文件;✅12源全部镜像完整(922shard)
-当前动作:     唤醒893(2026-10-30 22:21):例行心跳巡检(上次心跳@22:03距今~18min)→①git fetch origin→无data新令✓;②pgrep验无下载/迁移进程✓;③df /nas_train 173T/84%(35T可用)+/nas_env 8.3T/84%(1.7T可用)✓;④体积MEMORY 24.7KB/TASK 35.7KB→均在限内✓;⑤更新心跳+日报+commit✓;⑥push失败(GitHub Internal Server Error,重试1次仍失败)→下轮补推
-下一步:       🔴第一件事=补推(d8029ab67).待「恢复下载」新令.此前不发起新下载/迁移.WAITING:1
-阻塞:         git push GitHub Internal Server Error(临时性,下轮补推)
+PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载已起(字节增长验证✓).候选表已产出
+已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh已起,10315/12126files,.cache字节3连增2.28GB→2.55GB→3.09GB→13.82GB);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒894(2026-10-30 22:5x):①探针4条(proxy .23✓/hf-mirror✓/HF直连✓/磁盘35T可用✓)→起下载✓;②字节增长判活3连du -sb .cache递增✓(~30-60MB/s);③盘点/nas_train/app.e0031982(datasets 24目录du -sh+du -sb+其他12目录)→cleanup_candidates_20261030.tsv(38行:6保留/3可删/25待定)→DATA_MAPPING.md增D节;④更新心跳+日报+commit+push
+下一步:       下轮唤醒:①查85M下载进度(du -sb .cache是否增长+parquet数+incomplete数);②push如失败补推;③待运维批准后执行删除
+阻塞:         无
 ERROR_COUNT:  11
-未完成指令:   无(所有运维令已DONE)→WAITING:1
+未完成指令:   无(A+B均已交付)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [22:21] 唤醒893：例行心跳巡检(上次心跳@22:03距今~18min) → ①git fetch origin→无data新令✓;②pgrep验无下载/迁移进程✓;③df /nas_train 173T/84%(35T可用)+/nas_env 8.3T/84%(1.7T可用)✓;④体积MEMORY 24.7KB/TASK 35.7KB→均在限内✓;⑤commit✓(d8029ab67);⑥push失败(GitHub Internal Server Error×2)→下轮补推.未完成指令:无(所有运维令已DONE)→WAITING:1
+> [22:5x] 唤醒894：运维令10-30 22:2x恢复85M下载+/nas_train盘点 → ①探针4条(proxy .23→hf-mirror HTTP/2 200✓/HF直连 HTTP/2 200✓/磁盘35T可用✓/85M目录37T已下10313parquet+8incomplete)→setsid起download_85m_parallel16.sh✓(PID2668145);②字节增长判活:du -sb .cache 3连测→2,282,420,406→2,550,688,808→3,093,026,443(递增✓,~30-60MB/s,第4测13,821,674,803=13.8GB加速✓);③/nas_train盘点:du -sh+du -sb逐目录测(datasets 24目录+其他12目录)→cleanup_candidates_20261030.tsv(38行:6保留/3可删/25待定)→DATA_MAPPING.md增D节(红线/可删/待定/合计);④更新MEMORY+日报+commit+push
 >
 > 📦 唤醒892(10-30 22:03)原文归档 → daily-memories-data/2026-10-30.md（例行巡检,详见日文件）
 >
