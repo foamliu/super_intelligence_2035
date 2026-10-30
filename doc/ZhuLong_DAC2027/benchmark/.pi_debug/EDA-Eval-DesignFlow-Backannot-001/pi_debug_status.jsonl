@@ -1,0 +1,1 @@
+{"task_id":"EDA-Eval-DesignFlow-Backannot-001","status":"PASS","sut":"pi 1.4.0 deepseek-v4-pro-cloud","start":"15:25:45","end":"15:36:05","exit":0,"verdict":"DESIGN_FLOW_VERDICT=PASS","note":"offline log-diagnosis (no EDA tool); pi self-check PASS via _reference_check.py; independent reference/check.py PASS on pi submit.zip (5563B/4 files); teeth proven (naive fails on d/e/f/g)"}

@@ -1,0 +1,91 @@
+# =========================================================================
+# PrimeTime read_parasitics command log  (脱敏合成, 基于真实 trace)
+# Tool: PrimeTime U-2022.12-SP5   Design: DRAMTOP
+# Original: <USER>@<HOST>  Aug 13 11:07:02 2026   (PII scrubbed)
+# Host run: hfhds201   netlist/V0_DRAMTOP_2026Aug12.091738/pt_dir/
+# =========================================================================
+
+pt_shell> source setup.tcl
+pt_shell> read_verilog netlist/V0_DRAMTOP_2026Aug12.091738/DRAMTOP.vp
+Loading netlist file netlist/V0_DRAMTOP_2026Aug12.091738/DRAMTOP.vp
+   * 690934 lines, 4827 blocks
+   * Top design: DRAMTOP
+pt_shell> link_design DRAMTOP
+Linking design DRAMTOP ...
+   * 1041009 nets total
+pt_shell> read_sdc constr/DRAMTOP.sdc
+pt_shell> set_timing_derate -early 0.95
+pt_shell> set_timing_derate -late  1.05
+pt_shell> read_parasitics -keep_capacitive_coupling -format spef \
+              parasitics/V0_DRAMTOP_2026Aug12.spef.cvps
+
+# ---------- read_parasitics summary ----------
+# Net Type                              Total       RC network   Not Annotated
+# Internal nets (pin to pin)         1,005,545       1,002,982         2,563
+# Boundary/port nets (pin to pin)      35,464          28,367         7,097
+# TOTAL                              1,041,009        1,031,349         9,660  (0.93%)
+
+# ---------- Error samples (capped at 100 lines per category, DES024) ----------
+
+Error: Invalid coupling capacitor
+       (I_Array16GTop.I_Array8G_SC1.I_CMAryB_222.I34_1_:A2
+        5.29591e-06) on net
+        I_Array16GTop.I_Array8G_SC1.I_CMAryB_222.ACLevelA[1]:
+        At least one node is not on this net. (PARA-043)
+       ...  (98 more PARA-043, suppressed, DES024 100/class limit)
+
+Error: Invalid capacitor
+       (I_Array16GTop.I_Array8G_SC1.I_CMAryB_222.I34_1_:A2
+        5.29591e-06) on net
+        I_Array16GTop.I_Array8G_SC1.I_CMAryB_222.ACLevelA[1]:
+        Pin 'I_Array16GTop.I_Array8G_SC1.I_CMAryB_222.I34_1_:A2'
+        is not connected to net. (PARA-044)
+       ...  (99 more PARA-044, suppressed, DES024 100/class limit)
+
+Error: Cannot find net
+        'cm1_ro_ACThDefN[3]' in design 'DRAMTOP'.
+        Parasitics for this net will not be annotated. (PARA-124)
+       ...  (99 more PARA-124, suppressed, DES024 100/class limit)
+
+Warning: DES024: The number of error/warning messages for the
+         'read_parasitics' command exceeds the display limit (100 per class).
+         Use 'report_annotated' to see the full list.  The un-displayed
+         messages are counted but not shown.
+
+# ---------- report_annotated (excerpt) ----------
+# Not annotated nets by reason:
+#   PARA-043 (coupling cap node off-net)        :  3871
+#   PARA-044 (cap pin not connected to net)     :  4902
+#   PARA-124 (net not found in design netlist)  :   887
+#   TOTAL not annotated                          : 9660
+#
+# NOTE: actual occurrences in this log are capped at 100/class (DES024).
+#       The 3871/4902/887 counts above are from 'report_annotated'.
+
+# ---------- SPEF source info (from *SPEF header) ----------
+#   *DESIGN "DRAMTOP"
+#   *VENDOR "Synopsys Inc."
+#   *PROGRAM "StarRC"
+#   *VERSION "R-2020.09-SP5-4"
+#
+# ---------- Netlist source info (from si.log) ----------
+#   Cadence Virtuoso ADE SI Verilog Netlister
+#   ihnl/ : incremental block-level netlist chunks
+#   si.log: netlister generation log
+
+# ---------- sample mismatch (net exists in SPEF, merged in StarRC,
+#            full hierarchy kept in Cadence netlist) ----------
+# SPEF net *9977688  -> I_Array16GTop.I_Array8G_SC1.I_CMAryB_222.ACDef[3]
+#                      (StarRC merged internal node net023 -> ACDef[3])
+# Cadence netlist    -> mx4Lx2 I34_3_  (.A2(cm1_ro_ACThLevelA[3]),
+#                                        .A3(cm1_ro_ACThDefN[3]),
+#                                        .Y(net0296[3]))
+#                    -> net0296[3] is an internal trivial node kept by
+#                       Cadence SI but MERGED away by StarRC.
+#  -> name mismatch -> PARA-044 / PARA-124 -> not annotated
+#  -> this is a merge-trivial-node failure (NOT critical path)
+#  -> candidate for CDL ignore:  CellName#OldNetName#NewNetName
+
+pt_shell> report_annotated -list_annotated
+# (full report omitted for brevity)
+pt_shell> exit
