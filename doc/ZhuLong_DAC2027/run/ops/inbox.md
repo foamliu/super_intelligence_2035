@@ -1,4 +1,63 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 130 -->
+## RUN_ID 130 - read-only probe: designflow runtime status (ops request 2026-10-30)
+
+```bash
+set -u
+echo "=== RUN_ID 130 | read-only probe: designflow | $(date '+%F %T') | host=$(hostname) ==="
+
+DF=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench
+
+echo "[1] designflow loop process"
+ps -eo pid,etime,rss,args 2>/dev/null | awk '/[d]esignflow_bench_loop/ {print substr($0,1,130)}' | grep -v -E 'cline|opencode' | head -5
+echo "  count=$(ps -eo args 2>/dev/null | grep '[d]esignflow_bench_loop' | grep -v -E 'cline|opencode' | wc -l)"
+
+echo "[2] loop log tail"
+if [ -f /tmp/designflow_bench_loop.log ]; then
+  echo "  size=$(stat -c %s /tmp/designflow_bench_loop.log)B mtime=$(stat -c %y /tmp/designflow_bench_loop.log | cut -c1-19)"
+  tail -n 12 /tmp/designflow_bench_loop.log | cut -c1-170
+else
+  echo "  missing /tmp/designflow_bench_loop.log"
+fi
+
+echo "[3] workspace repo git state"
+if cd "$WS" 2>/dev/null; then
+  git status -sb | head -4
+  echo "  ahead_behind(origin/main...HEAD)=$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null)"
+  echo "  HEAD=$(git log -1 --date=format:'%m-%d %H:%M' --pretty='%h %ad %s' | cut -c1-110)"
+  echo "  last designflow commits:"
+  git log -5 --date=format:'%m-%d %H:%M' --pretty='    %h %ad %s' -- doc/ZhuLong_DAC2027/benchmark | cut -c1-120
+else
+  echo "  cannot cd $WS"
+fi
+
+echo "[4] github reachability (curl vs git, no secrets printed)"
+printf "  curl https://github.com -> "; timeout 10 curl -s -o /dev/null -w '%{http_code}\n' -m 8 https://github.com || echo "(fail)"
+printf "  git ls-remote -> "; timeout 25 git ls-remote origin HEAD 2>&1 | head -1 | cut -c1-90
+printf "  proxy env: "; env 2>/dev/null | grep -i proxy | cut -c1-90 | head -4
+
+echo "[5] designflow deliverables"
+ls -1 "$DF" 2>/dev/null | head -12
+echo "  jsonl files:"
+find "$DF" -maxdepth 3 -name '*.jsonl' 2>/dev/null | head -6 | while read f; do
+  printf "    %s lines=%s\n" "$(echo "$f" | sed "s#$DF/##")" "$(wc -l < "$f" 2>/dev/null)"
+done
+echo "  case dirs=$(find "$DF" -maxdepth 4 -type d -name 'EDA-Eval-DesignFlow-*' 2>/dev/null | wc -l)"
+echo "  reports (latest 5 by mtime):"
+find "$DF" -name 'report_*.html' 2>/dev/null | head -20 | while read f; do stat -c '    %y %s %n' "$f"; done | sort | tail -5 | cut -c1-150
+
+echo "[6] EDA-Flow-Bench repo"
+if cd "$BENCH" 2>/dev/null; then
+  git status -sb | head -3
+  echo "  ahead_behind(origin/master...HEAD)=$(git rev-list --left-right --count origin/master...HEAD 2>/dev/null)"
+else
+  echo "  cannot cd $BENCH"
+fi
+
+echo "=== DONE 130 ==="
+```
 <!-- RUN_ID: 129 -->
 ## RUN_ID 129 — 🔎 只读探针：r2 regrade 前置体检（4 端口 license + jsonl + 脚本 + loop/8090）·regrade 本身由 agent 经任务书①执行
 
