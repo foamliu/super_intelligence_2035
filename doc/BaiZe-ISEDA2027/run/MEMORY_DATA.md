@@ -19,9 +19,9 @@ WAITING: 0
 
 ```
 PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(字节增长✓).候选表已交付
-已完成:       ✅A.85M下载已恢复(PID2668156运行中,10350/12126parquet=85.4%,字节增长39,851GB,8.incomplete=活跃下载sa1b/EN/part00_8,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
-当前动作:     唤醒918(2026-10-31 01:12):复核85M下载(PID2668156 alive etimes=8145s≈2h15m)+parquet 10350/12126(85.4%,+2 since唤醒917)+bytes 2次du -sb递增:39,850,979,973,847→39,851,230,140,162(+250MB/15s≈16.7MB/s✓)+8.incomplete=活跃下载(sa1b/EN/part00_8)+候选表38行(3可删/6保留/待定)✓+DATA_MAPPING.md D节✓+df /nas_train 173T/207T(84%)35T可用→心跳
-下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,ETA~4天@17MB/s剩余1776parquet≈6.8TB或已DONE);②待运维批准后执行删除
+已完成:       ✅A.85M下载已恢复(PID2668156运行中,10350/12126parquet=85.4%,字节增长39,857GB,8.incomplete=活跃下载sa1b/EN/part00_8,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒919(2026-10-31 01:2x):复核85M下载(PID2668156 alive etimes=8354s≈2h19m)+parquet 10350/12126(85.4%,flat since唤醒918)+bytes 3次du -sb递增:39,855,589,018,293→39,855,991,219,506→39,856,759,270,062(+1.17GB/~30s≈39MB/s✓)+8.incomplete=活跃下载(sa1b/EN/part00_8)+候选表38行(3可删/6保留/待定)✓+DATA_MAPPING.md D节✓+df /nas_train 173T/207T(84%)35T可用→心跳
+下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,ETA~2天@39MB/s剩余1776parquet≈6.8TB或已DONE);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(A+B均已交付)
@@ -30,7 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [01:12] 唤醒918：复核85M下载持续运行 → ①ps确认PID2668156活跃(etimes=8145s≈2h15m);②字节增长判活(du -sb 2次):39,850,979,973,847→39,851,230,140,162(+250MB/15s≈16.7MB/s✓);③parquet 10,350/12,126=85.4%(+2 since唤醒917);④8.incomplete=活跃下载(sa1b/EN/part00_8);⑤候选表38行(3可删:stanford-corenlp zip/.nfs垃圾/nccl_dbg + 6保留红线 + 待定FineVision4.3T/HuggingFaceFW1.3T等)✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4天@17MB/s(剩余1776parquet)→更新心跳
+> [01:2x] 唤醒919：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=8354s≈2h19m);②字节增长判活(du -sb 3次):39,855,589,018,293→39,855,991,219,506→39,856,759,270,062(+1.17GB/~30s≈39MB/s✓);③parquet 10,350/12,126=85.4%(flat since唤醒918,字节增长说明正在写incomplete);④8.incomplete=活跃下载(sa1b/EN/part00_8);⑤候选表38行(3可删/保留/待定)✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~2天@39MB/s(剩余1776parquet≈6.8TB)→更新心跳
+> 📦 唤醒918(10-31 01:12)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 > 📦 唤醒917(10-31 01:09)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 > [01:09] 唤醒917：复核85M下载持续运行 → ①ps确认PID2668156活跃(etimes=7846s≈2h11m);②字节增长判活(du -sb 2次):39,845,063,904,502→39,845,331,122,469(+268MB/15s≈17.9MB/s✓);③parquet 10,348/12,126=85.3%(+3 since唤醒916);④8.incomplete=活跃下载(sa1b/EN/part00_8);⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4天@17.9MB/s(剩余1778parquet≈6.8TB)→更新心跳
 > 📦 唤醒916(10-31 01:06)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
