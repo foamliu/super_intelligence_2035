@@ -1,4 +1,41 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 133 -->
+## RUN_ID 133 - regen daily report with explicit 用户 column + list prompts that still demand desensitization
+
+```bash
+set -u
+echo "=== RUN_ID 133 | regen report (user column) | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$WS" || exit 0
+echo "[1] generator check"
+grep -n "def trace_user" doc/ZhuLong_DAC2027/benchmark/designflow/gen_daily_report.py | cut -c1-100
+echo "[2] regen"
+python3 doc/ZhuLong_DAC2027/benchmark/designflow/gen_daily_report.py
+R=doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html
+ls -l "$R" | cut -c1-120
+echo "[3] verify user column"
+python3 - "$R" <<'PY'
+import sys,re
+h=open(sys.argv[1],encoding='utf-8').read()
+print("  th=", " | ".join(re.sub('<[^>]+>','',x) for x in re.findall(r'<th>(.*?)</th>',h)))
+rows=re.findall(r'<tr><td>(EDA-[^<]*)</td><td>([^<]*)</td>',h)
+print("  rows=%d"%len(rows))
+for t,u in rows: print("   %-44s user=%s"%(t[:44],u))
+PY
+echo "[4] prompts that still demand desensitization"
+python3 - <<'PY'
+import json
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+key="\u8131\u654f"
+for line in open(p,encoding='utf-8'):
+    if not line.strip(): continue
+    r=json.loads(line)
+    pr=r.get("prompt") or r.get("task") or ""
+    if isinstance(pr,str) and key in pr:
+        print("  %s"%(r.get("task_id") or r.get("id")))
+PY
+echo "=== DONE 133 ==="
+```
 <!-- RUN_ID: 132 -->
 ## RUN_ID 132 - read-only: context of "desensitize" wording inside designflow benchmark jsonl
 
