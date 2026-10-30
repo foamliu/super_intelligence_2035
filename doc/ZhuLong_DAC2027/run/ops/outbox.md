@@ -15786,3 +15786,48 @@ wrote /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/rep
   EDA-Eval-DesignFlow-Analog-001
 === DONE 133 ===
 ```
+
+---
+
+## RUN_ID 134 · 2026-10-30 21:01:22 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 134 | commit regenerated report | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$WS" || exit 0
+R=doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html
+git status --short -- "$R"
+git add "$R"
+if git diff --cached --quiet; then
+  echo "  nothing to commit (report already current)"
+else
+  git -c user.name='zhulong-ops' -c user.email='ops@local' commit -m "designflow report: regen with explicit user column (trace_source.user, no hash)" | tail -2
+  i=1
+  while [ $i -le 3 ]; do
+    git pull --rebase --autostash origin main >/dev/null 2>&1
+    if git push origin main >/dev/null 2>&1; then echo "  pushed on try $i"; break; fi
+    echo "  push retry $i"; sleep 5; i=$((i+1))
+  done
+fi
+git log -1 --oneline | cut -c1-110
+python3 - "$R" <<'PY'
+import sys,re
+h=open(sys.argv[1],encoding='utf-8').read()
+print("  th=", " | ".join(re.sub('<[^>]+>','',x) for x in re.findall(r'<th>(.*?)</th>',h)))
+PY
+echo "=== DONE 134 ==="
+```
+
+**输出**
+```
+=== RUN_ID 134 | commit regenerated report | 2026-10-30 21:01:22 | host=hfeg0tedaap02 ===
+ M doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html
+[main 4aa3348a4] designflow report: regen with explicit user column (trace_source.user, no hash)
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+  pushed on try 1
+4aa3348a4 designflow report: regen with explicit user column (trace_source.user, no hash)
+  th= task_id | 用户 | trace 来源 | 解决的问题 | 任务说明(prompt) | 交付件要求 | test 思路 | test 语言 | pi 结果
+=== DONE 134 ===
+```
