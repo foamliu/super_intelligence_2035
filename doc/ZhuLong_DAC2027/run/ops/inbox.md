@@ -1,4 +1,48 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 135 -->
+## RUN_ID 135 - read-only audit: test strength + leakage of checker/reference into pi workdir
+
+```bash
+set -u
+echo "=== RUN_ID 135 | audit test strength | $(date '+%F %T') | host=$(hostname) ==="
+J=/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+python3 - "$J" <<'PY'
+import json,sys,re
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p,encoding='utf-8') if l.strip()]
+for r in rows:
+    tid=str(r.get("task_id") or r.get("id"))
+    t=r.get("test") or ""
+    if isinstance(t,dict): t=json.dumps(t,ensure_ascii=False)
+    st={"len":len(t),"assert":t.count("assert"),"subprocess":t.count("subprocess"),
+        "open":t.count("open("),"zipfile":t.count("zipfile"),"import":t.count("import "),
+        "expected":t.count("expected"),"sha256":t.count("sha256"),"defcheck":t.count("def check(")}
+    print("  %-44s %s"%(tid[:44],st))
+print("  ---- first 12 lines of each test ----")
+for r in rows:
+    tid=str(r.get("task_id") or r.get("id"))
+    t=r.get("test") or ""
+    if isinstance(t,dict): t=json.dumps(t,ensure_ascii=False)
+    print("  ## %s"%tid)
+    for ln in t.splitlines()[:12]:
+        print("     "+ln[:105])
+PY
+
+echo "[2] pi workdir: is the checker / reference visible to the SUT?"
+for d in /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-Analog-001 \
+         /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-LayoutAether-001; do
+  echo "  == $d"
+  ls -la "$d" 2>/dev/null | head -12 | cut -c1-120
+  find "$d" -maxdepth 3 -type f 2>/dev/null | head -20 | sed 's#^.*/\.pi_debug/##' | cut -c1-110
+done
+
+echo "[3] bench case dir: test/reference layout"
+for c in EDA-Eval-DesignFlow-Analog-001 EDA-Eval-DesignFlow-LayoutAether-001; do
+  echo "  == $c"
+  find /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow -maxdepth 3 -path "*$c*" -type f 2>/dev/null | sed "s#.*EDA-Eval-DesignFlow/#  #" | head -15
+done
+echo "=== DONE 135 ==="
+```
 <!-- RUN_ID: 134 -->
 ## RUN_ID 134 - commit the regenerated daily report (explicit user column)
 
