@@ -33,16 +33,19 @@ EVAL_LOG_ROOT = HERE / "logs" / "run_evaluation"
 REPORT_DIR = HERE / "reports"
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-# 5 路 gate-PASS（与 gen_report 一致）
+# 7 路：5 gate-PASS + 2 adapter-fixed (R988: hermes/deepseek 适配器修复后恢复全量)
 HARNESS_MAP = {
     "cline-patched": "cline-kimi-k2.6-cloud",
     "opencode": "opencode-kimi-k2.6-cloud",
     "pi": "pi-kimi-k2.6-cloud",
     "claude-code": "claude-code-kimi-k2.6-cloud",
     "codex": "codex-kimi-k2.6-cloud",
+    "hermes": "hermes-kimi-k2.6-cloud",
+    "deepseek-harness": "deepseek-harness-kimi-k2.6-cloud",
 }
 DISPLAY = {"cline-patched": "cline", "opencode": "opencode", "pi": "pi",
-           "claude-code": "claude-code", "codex": "codex"}
+           "claude-code": "claude-code", "codex": "codex",
+           "hermes": "hermes", "deepseek-harness": "deepseek-harness"}
 
 
 def classify_one(report_path: Path, iid: str) -> str:
