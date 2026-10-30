@@ -19,9 +19,9 @@ WAITING: 0
 
 ```
 PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(字节增长✓).候选表已交付
-已完成:       ✅A.85M下载已恢复(PID2668156运行中,10336/12126parquet=85.3%,字节增长39,788,392M→39,788,730M,+338MB/20s≈16.9MB/s,8.incomplete=活跃下载sa1b/EN/part00_8,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
-当前动作:     唤醒908(2026-10-31 00:26):复核85M下载(du -sb 3×递增✓ 39,788,392,292,888→39,788,529,655,497→39,788,730,764,341,+137MB+201MB≈13-19MB/s)+parquet 10336/12126(85.3%,+3since907)+8.incomplete=活跃下载(sa1b/EN/part00_8)+候选表38行✓+DATA_MAPPING.md D节✓+df /nas_train 173T/207T(84%)35T可用→心跳
-下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,ETA~4.7天或已DONE);②待运维批准后执行删除
+已完成:       ✅A.85M下载已恢复(PID2668156运行中,10337/12126parquet=85.3%,字节增长39,795M(+1.35GB/40s≈33.8MB/s),8.incomplete=活跃下载sa1b/EN/part00_8,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒909(2026-10-31 00:57):复核85M下载(du -sb 3次:39,793,582M→39,793,850M→39,795,204M,+1.35GB/40s≈33.8MB/s✓)+parquet 10337/12126(85.3%)+8.incomplete=活跃下载(sa1b/EN/part00_8)+候选表38行✓+DATA_MAPPING.md D节✓+df /nas_train 173T/207T(84%)35T可用→心跳
+下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,ETA~2天@34MB/s或已DONE);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(A+B均已交付)
@@ -30,7 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [00:26] 唤醒908：复核85M下载持续运行 → ①pgrep确认PID2668156+2668173活跃;②字节增长判活(du -sb,间隔10s,3次):39,788,392,292,888→39,788,529,655,497→39,788,730,764,341(递增✓,+137MB+201MB≈13-19MB/s);③进度:10,336parquet/12,126total=85.3%(+3since907);④8incomplete=活跃下载(sa1b/EN/part00_8,非失败shard);⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4.7天(剩余1790parquet/~6.89TB@17MB/s)→更新心跳
+> [00:57] 唤醒909：复核85M下载持续运行 → ①pgrep确认PID2668156+2668173活跃(~91min);②字节增长判活(du -sb,3次):39,793,582,619,224→39,793,850,875,046→39,795,204,553,061(+1.35GB/40s≈33.8MB/s✓);③进度:10,337parquet/12,126total=85.3%;④8incomplete=活跃下载(sa1b/EN/part00_8);⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~2天@34MB/s(剩余1789parquet)→更新心跳
+> 📦 唤醒908(10-31 00:26)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 > 📦 唤醒907(10-31 00:22)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 > 📦 唤醒906(10-31 00:16)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
 >
