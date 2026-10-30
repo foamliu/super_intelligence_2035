@@ -543,7 +543,7 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no <IP> \
 2. **写日报** `daily-memories-designflow/<YYYY-MM-DD>.md`（当天必建）。
 3. **提交+推送**（不许等 loop 兜底）· **双仓库**：
    ```bash
-   # (A) workspace 仓库：super_intelligence_2035 (main 分支)
+   # (A) workspace 仓库：super_intelligence_2035 (main 分支) — 含 workspace + 日报
    cd /nasdata/app.e0031982/code/super_intelligence_2035
    git fetch origin && git pull --rebase --autostash origin main
    git add -- doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW.md \
@@ -551,19 +551,20 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no <IP> \
               doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_BENCH_TASK.md \
               doc/ZhuLong_DAC2027/benchmark/ARCHIVE_OPERATOR_DESIGNFLOW.md \
               doc/ZhuLong_DAC2027/benchmark/designflow \
-              doc/ZhuLong_DAC2027/benchmark/daily-memories-designflow
+              doc/ZhuLong_DAC2027/benchmark/daily-memories-designflow \
+              doc/ZhuLong_DAC2027/reports
    git commit -m "designflow #<轮次>: <一句话>"
    git push origin main
 
-   # (B) 用例仓库：EDA-Flow-Bench (master 分支)
+   # (B) 用例仓库：EDA-Flow-Bench (master 分支) — 仅用例产物
    cd /nasdata/app.e0031982/code/EDA-Flow-Bench
    git fetch origin && git pull --rebase --autostash origin master
-   git add -- benchmarks/EDA-Eval-DesignFlow docs/reports
+   git add -- benchmarks/EDA-Eval-DesignFlow
    git commit -m "designflow #<轮次>: <一句话>"
    git push origin master
    ```
    🚫 绝不用 `git add -A`（两个仓库都是共享工作副本）。
-   ⚠️ 分支别搞混：workspace→main，用例→master。
+   ⚠️ 分支别搞混：workspace+日报→main，用例→master。
 4. **闭环自检**：`git status -sb` 无 ahead/behind；`git log -1` 时间戳 = 本轮。
    push 失败重试 1 次，仍失败把报错原文写进心跳，下轮第一件事补推。
 

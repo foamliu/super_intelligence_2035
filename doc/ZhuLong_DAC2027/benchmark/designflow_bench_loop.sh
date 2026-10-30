@@ -104,7 +104,7 @@ git_sync_one() {
 
 # ── 双仓库兜底 git 同步 ──
 git_push_if_needed() {
-    # (A) workspace 仓库：super_intelligence_2035 (main)
+    # (A) workspace 仓库：super_intelligence_2035 (main) — 含 workspace + 日报
     git_sync_one "$WS_REPO_ROOT" main "$LAST_PUSH_WS" "ws" \
         "$WS_REL/BAIZE_DESIGNFLOW_BENCH_TASK.md" \
         "$WS_REL/MEMORY_DESIGNFLOW.md" \
@@ -112,12 +112,11 @@ git_push_if_needed() {
         "$WS_REL/ARCHIVE_OPERATOR_DESIGNFLOW.md" \
         "$WS_REL/designflow" \
         "$WS_REL/daily-memories-designflow" \
-        "$WS_REL/.pi_debug"
+        "doc/ZhuLong_DAC2027/reports"
 
-    # (B) 用例仓库：EDA-Flow-Bench (master)
+    # (B) 用例仓库：EDA-Flow-Bench (master) — 仅用例产物
     git_sync_one "$BENCH_REPO_ROOT" master "$LAST_PUSH_BENCH" "bench" \
-        benchmarks/EDA-Eval-DesignFlow \
-        docs/reports
+        benchmarks/EDA-Eval-DesignFlow
 }
 
 # WAITING 判定：只认**行首**的 WAITING 字段；文件不存在时按"等待"处理（省 token）

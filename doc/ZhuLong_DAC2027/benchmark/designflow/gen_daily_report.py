@@ -14,7 +14,9 @@ REPO = os.environ.get("EDA_FLOW_BENCH_ROOT") or "/nasdata/app.e0031982/code/EDA-
 REPO = os.path.abspath(REPO)
 BENCH_DIR = os.path.join(REPO, "benchmarks", "EDA-Eval-DesignFlow")
 BENCH_FILE = os.path.join(BENCH_DIR, "EDA-Eval-DesignFlow.jsonl")  # single merged file (即时令 VIII)
-REPORT_DIR = os.path.join(REPO, "docs", "reports")
+# 日报输出到 super_intelligence_2035/doc/ZhuLong_DAC2027/reports/（与 zhulong 报告统一管理）
+WS_REPO_ROOT = os.environ.get("SUPER_INTELLIGENCE_2035_ROOT") or "/nasdata/app.e0031982/code/super_intelligence_2035"
+REPORT_DIR = os.path.join(WS_REPO_ROOT, "doc", "ZhuLong_DAC2027", "reports")
 PI_STATUS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pi_debug_status.jsonl")
 
 # three-mouth numbers (from .75 落盘实测值, 运维增补II)
