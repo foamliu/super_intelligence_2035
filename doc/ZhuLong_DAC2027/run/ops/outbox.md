@@ -16063,3 +16063,87 @@ echo "=== DONE 135 ==="
   reference/EDA-Eval-DesignFlow-LayoutAether-001/check.py
 === DONE 135 ===
 ```
+
+---
+
+## RUN_ID 136 · 2026-10-30 21:31:20 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 136 | restart designflow loop | $(date '+%F %T') | host=$(hostname) ==="
+WS=/nasdata/app.e0031982/code/super_intelligence_2035
+DF=$WS/doc/ZhuLong_DAC2027/benchmark
+LOOP=$DF/designflow_bench_loop.sh
+
+cd "$WS" || exit 0
+git pull --rebase --autostash origin main 2>&1 | tail -2
+
+echo "[1] new script check"
+grep -n '^SLEEP_' "$LOOP"
+echo "  ROLE_refs=$(grep -c ROLE "$LOOP" 2>/dev/null || echo 0)  taskcard=$(grep -c '本轮任务卡' "$LOOP" 2>/dev/null || echo 0)"
+
+echo "[2] in-flight snapshot (will be lost)"
+ls -t "$DF/designflow/trace_deepreads" 2>/dev/null | head -2
+python3 - <<'PY' 2>/dev/null || true
+import json
+p="/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
+print("  jsonl_rows=%d" % sum(1 for l in open(p,encoding="utf-8") if l.strip()))
+PY
+
+echo "[3] stop designflow agent (its own opencode children first)"
+DFOPEN=$(ps -eww -o pid=,args= | grep -F '本轮任务卡（loop 自动生成' | grep -v grep | awk '{print $1}')
+if [ -n "${DFOPEN:-}" ]; then echo "  designflow opencode pids: $DFOPEN"; kill $DFOPEN 2>/dev/null || true; fi
+sleep 3
+DFOPEN2=$(ps -eww -o pid=,args= | grep -F '本轮任务卡（loop 自动生成' | grep -v grep | awk '{print $1}')
+if [ -n "${DFOPEN2:-}" ]; then echo "  force kill opencode: $DFOPEN2"; kill -9 $DFOPEN2 2>/dev/null || true; fi
+
+LPIDS=$(ps -eo pid=,args= | awk '/[d]esignflow_bench_loop\.sh/ {print $1}')
+[ -n "${LPIDS:-}" ] && echo "  loop pids: $LPIDS"
+for p in ${LPIDS:-}; do
+  for c in $(ps --ppid "$p" -o pid= 2>/dev/null); do kill "$c" 2>/dev/null || true; done
+  kill "$p" 2>/dev/null || true
+done
+sleep 3
+LPIDS2=$(ps -eo pid=,args= | awk '/[d]esignflow_bench_loop\.sh/ {print $1}')
+if [ -n "${LPIDS2:-}" ]; then echo "  force kill loop: $LPIDS2"; kill -9 $LPIDS2 2>/dev/null || true; sleep 1; fi
+echo "  remaining_loops=$(ps -eo args= | grep -c '[d]esignflow_bench_loop\.sh')"
+
+echo "[4] start with new script"
+setsid bash "$LOOP" > /tmp/designflow_bench_loop.log 2>&1 < /dev/null &
+sleep 6
+ps -eo pid=,etime=,args= | awk '/[d]esignflow_bench_loop\.sh/ {print substr($0,1,110)}' | head -3
+
+echo "[5] log head"
+tail -n 6 /tmp/designflow_bench_loop.log | cut -c1-150
+echo "=== DONE 136 ==="
+```
+
+**输出**
+```
+=== RUN_ID 136 | restart designflow loop | 2026-10-30 21:31:20 | host=hfeg0tedaap02 ===
+ * branch                main       -> FETCH_HEAD
+Current branch main is up to date.
+[1] new script check
+51:SLEEP_BUSY=60             # WAITING=0：1 分钟后续跑下一条 case
+52:SLEEP_WAIT=120            # WAITING=1（真外部阻塞：pi 异步/推送挂）：最多等 2 分钟，不再长睡
+  ROLE_refs=0
+0  taskcard=1
+[2] in-flight snapshot (will be lost)
+1nsgi_netlist_cell_convert.md
+cgqd1_rtext_rnode_audit_layout_virtuoso.md
+  jsonl_rows=11
+[3] stop designflow agent (its own opencode children first)
+  loop pids: 1327815
+  remaining_loops=0
+[4] start with new script
+ 782451       00:06 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/desi
+[5] log head
+[loop] 2026-10-30 21:31:28 wake up, invoking opencode ...
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow_bench_loop.sh: line 143: EDA-Eval-DesignFlow.jsonl: comman
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow_bench_loop.sh: line 143: WAITING:: command not found
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow_bench_loop.sh: line 143: WAITING:: command not found
+[0m
+> build · glm-5.2
+=== DONE 136 ===
+```
