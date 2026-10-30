@@ -19,9 +19,9 @@ WAITING: 0
 
 ```
 PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(字节增长✓).候选表已交付
-已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh PID2668156运行中,10315/12126files=85%,.cache字节3连增27.18→27.38→27.44GB,~13MB/s);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
-当前动作:     唤醒895(2026-10-30 23:18):验证85M下载字节增长(.cache 3连du -sb递增✓ 27,175,195,017→27,376,455,559→27,443,541,546,~13MB/s)+确认候选表与D节已commit+push(fd7e9c66e/833e528af)→更新心跳
-下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+.cache增长);②待运维批准后执行删除
+已完成:       ✅A.85M下载已恢复(download_85m_parallel16.sh PID2668156运行中,10321/12126files=85.1%,字节3连增39,709,416M→39,709,617M→39,709,751M,~15-20MB/s,8.incomplete=活跃sa1b/EN下载);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 38行+DATA_MAPPING.md D节)
+当前动作:     唤醒896(2026-10-30 23:26):验证85M下载持续字节增长(3连du -sb递增✓ 39,709,416,152,745→39,709,617,328,525→39,709,751,451,927,~15-20MB/s)+parquet 10317→10321(+4新文件)+8.incomplete=sa1b/EN活跃下载(非失败)+候选表与D节已commit(81b72e441)→更新心跳
+下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(A+B均已交付)
@@ -30,7 +30,9 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [23:18] 唤醒895：验证85M下载运行状态 → ①pgrep确认download_85m_parallel16.sh(PID2668156)+hf download(PID2668173)活跃;②字节增长判活:.cache 3连du -sb→27,175,195,017→27,376,455,559→27,443,541,546(递增✓,~13MB/s);③进度:10313parquet/8incomplete/12,126total=85%,.cache=27.4GB,日志显示sa1b/EN活跃下载中;④cleanup_candidates_20261030.tsv(38行)+DATA_MAPPING.md D节已commit+push(fd7e9c66e/833e528af);⑤git status无未提交→更新心跳
+> [23:26] 唤醒896：验证85M下载持续运行 → ①pgrep确认PID2668156+2668173活跃;②字节增长判活:3连du -sb→39,709,416,152,745→39,709,617,328,525→39,709,751,451,927(递增✓,~15-20MB/s);③进度:10,321parquet/8incomplete/12,126total=85.1%,.incomplete=sa1b/EN/part00_8活跃下载(0-268MB,非失败);④候选表与D节已commit(81b72e441);⑤git status无本线未提交→更新心跳
+>
+> 📦 唤醒895(10-30 23:18)原文归档 → daily-memories-data/2026-10-30.md（验证85M字节增长+心跳,详见日文件）
 >
 > 📦 唤醒894(10-30 22:5x)原文归档 → daily-memories-data/2026-10-30.md（恢复85M下载+盘点,详见日文件）
 >
