@@ -34,17 +34,17 @@
 \newlabel{sec:agent-workflow}{{3.3}{2}{Agent Workflow}{subsection.3.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Offline API Self-Exploration (Complementary)}{2}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:selfdoc}{{3.4}{2}{Offline API Self-Exploration (Complementary)}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Theoretical Grounding: The Grounding Gap}{2}{section.4}\protected@file@percent }
+\newlabel{sec:grounding-theory}{{4}{2}{Theoretical Grounding: The Grounding Gap}{section.4}{}}
 \citation{kaelbling1998planning,thrun2005probabilistic}
+\citation{kaelbling1998planning}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ZhuLong system architecture. The LLM agent runtime, the API knowledge base, and the EDA execution sandbox are linked through \emph  {four} unified MCP tools that dispatch on a single \texttt  {lang}--\texttt  {host} pair to \emph  {three} platforms (PyAether, SKILL, Tcl). Offline API self-exploration pre-augments the knowledge base (dashed); execution feedback is looped back for iterative refinement.}}{3}{figure.caption.5}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{fig:architecture}{{1}{3}{ZhuLong system architecture. The LLM agent runtime, the API knowledge base, and the EDA execution sandbox are linked through \emph {four} unified MCP tools that dispatch on a single \texttt {lang}--\texttt {host} pair to \emph {three} platforms (PyAether, SKILL, Tcl). Offline API self-exploration pre-augments the knowledge base (dashed); execution feedback is looped back for iterative refinement}{figure.caption.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Theoretical Grounding: The Grounding Gap}{3}{section.4}\protected@file@percent }
-\newlabel{sec:grounding-theory}{{4}{3}{Theoretical Grounding: The Grounding Gap}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}A Four-Level Hierarchy of Information}{3}{subsection.4.1}\protected@file@percent }
 \newlabel{sec:four-levels}{{4.1}{3}{A Four-Level Hierarchy of Information}{subsection.4.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}A Bayesian Formalization of the Grounding Gap}{3}{subsection.4.2}\protected@file@percent }
 \newlabel{sec:bayesian}{{4.2}{3}{A Bayesian Formalization of the Grounding Gap}{subsection.4.2}{}}
-\citation{kaelbling1998planning}
 \citation{delage2010percentile}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The four levels of information}}{4}{table.caption.6}\protected@file@percent }
 \newlabel{tab:four-levels}{{1}{4}{The four levels of information}{table.caption.6}{}}
@@ -56,9 +56,9 @@
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Composition of EDA-Scripting-Bench}}{4}{table.caption.7}\protected@file@percent }
 \newlabel{tab:benchmark-composition}{{2}{4}{Composition of EDA-Scripting-Bench}{table.caption.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}The PyAether slice (EDA-Eval-PyAether)}{4}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SKILL and Tcl slices}{4}{subsection.5.3}\protected@file@percent }
+\newlabel{sec:benchmark-slices}{{5.3}{4}{SKILL and Tcl slices}{subsection.5.3}{}}
 \citation{chen2021evaluating}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SKILL and Tcl slices}{5}{subsection.5.3}\protected@file@percent }
-\newlabel{sec:benchmark-slices}{{5.3}{5}{SKILL and Tcl slices}{subsection.5.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Evaluation Protocol}{5}{subsection.5.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Experiments}{5}{section.6}\protected@file@percent }
 \newlabel{sec:experiments}{{6}{5}{Experiments}{section.6}{}}
@@ -68,22 +68,22 @@
 \newlabel{sec:exp-results}{{6.2}{5}{Results and Ablations}{subsection.6.2}{}}
 \newlabel{sec:omega-fidelity}{{6.2.1}{5}{S1: Observation fidelity (RQ1)}{subsubsection.6.2.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}S1: Observation fidelity (RQ1)}{5}{subsubsection.6.2.1}\protected@file@percent }
+\newlabel{sec:closed-loop}{{6.2.2}{5}{S2: The closed loop (RQ2)}{subsubsection.6.2.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}S2: The closed loop (RQ2)}{5}{subsubsection.6.2.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The three right-most columns report per-task operating cost over all 449 tasks (five runs, mean $\pm $ s.d.). The lower block varies the \emph  {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row.}}{6}{table.caption.8}\protected@file@percent }
 \newlabel{tab:main-ablation}{{3}{6}{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The three right-most columns report per-task operating cost over all 449 tasks (five runs, mean $\pm $ s.d.). The lower block varies the \emph {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row}{table.caption.8}{}}
 \newlabel{tab:omega}{{3}{6}{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The three right-most columns report per-task operating cost over all 449 tasks (five runs, mean $\pm $ s.d.). The lower block varies the \emph {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row}{table.caption.8}{}}
 \newlabel{tab:cost}{{3}{6}{Main results on EDA-Scripting-Bench: Pass@1 (\%) over five runs (mean $\pm $ s.d.), pooled over all 449 tasks and per slice. The three right-most columns report per-task operating cost over all 449 tasks (five runs, mean $\pm $ s.d.). The lower block varies the \emph {read-back} $\Omega $ alone (retrieval and effector fixed); (F) coincides with the Full row}{table.caption.8}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Impact of LLM backbone (ZhuLong, full harness).}}{6}{table.caption.9}\protected@file@percent }
 \newlabel{tab:llm-comparison}{{4}{6}{Impact of LLM backbone (ZhuLong, full harness)}{table.caption.9}{}}
-\newlabel{sec:closed-loop}{{6.2.2}{6}{S2: The closed loop (RQ2)}{subsubsection.6.2.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}S2: The closed loop (RQ2)}{6}{subsubsection.6.2.2}\protected@file@percent }
 \newlabel{sec:k-axis}{{6.2.3}{6}{S3: The prior axis (the prior-side contrast of RQ1)}{subsubsection.6.2.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}S3: The prior axis (the prior-side contrast of RQ1)}{6}{table.caption.9}\protected@file@percent }
 \newlabel{sec:cross-language}{{6.2.4}{6}{S4: The toolchain axis (RQ3)}{subsubsection.6.2.4}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.4}S4: The toolchain axis (RQ3)}{6}{subsubsection.6.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Error Analysis}{6}{subsection.6.3}\protected@file@percent }
 \newlabel{sec:error-analysis}{{6.3}{6}{Error Analysis}{subsection.6.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{7}{section.7}\protected@file@percent }
-\newlabel{sec:discussion}{{7}{7}{Discussion}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{6}{section.7}\protected@file@percent }
+\newlabel{sec:discussion}{{7}{6}{Discussion}{section.7}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{7}{section.8}\protected@file@percent }
 \newlabel{sec:conclusion}{{8}{7}{Conclusion and Future Work}{section.8}{}}
 \bibstyle{ACM-Reference-Format}
