@@ -172,6 +172,11 @@
     ✅ **可用做法**：**真实按键逐字输入** —— CDP `Input.dispatchKeyEvent({type:'keyDown', text:'<char>', unmodifiedText:'<char>', key:'<char>'})` + `keyUp`（助手命令 `~/news_cdp.js typetext "<selector>" "<text>"`）；实测输入 37 字后 `btnCls = "submit-btn"`（`.disable` 已移除）、点击即成功。
     清空/重来用 `~/news_cdp.js keys "Ctrl+A,Backspace"`（先 `eval` 令目标框 `.focus()`）。
 - ✅ **成功判据（三取二）**：① 提交后输入框**清空**；② 评论列表**顶部**出现本号评论（作者 = 本号昵称）；③ 该帖**评论计数 +1**。
+- 🔧 **2026-10-30 第 178 轮补充（滚动 / 自赞，实测）**：
+  - ⚠️ **`window.scrollBy` 在头条文章页/微头条页常不生效**（目标元素 `getBoundingClientRect().top` 恒定不变）⇒ 要滚到某条评论，一律用 **`el.scrollIntoView({block:'center'})`**。
+  - ⚠️ **自赞必须「真实鼠标点击」**：`element.click()` 即使元素已在视口内**也不触发**；须 CDP **`Input.dispatchMouseEvent`**（mouseMoved → mousePressed → mouseReleased）点 `div.ttp-comment-like`。
+  - 判据：`div.ttp-comment-like > .inner` 的 **`liked` 类** + 其文本由「赞」变「1」。
+  - 若目标帖渲染区内**读不到自己的评论**（折叠/未加载），**不硬点、不刷第二投**，如实记「未赞」。
 - ⚠️ **字数口径**：输入框按**字符数**计数（标点 / 字母均计入）⇒ **≤40 字**按字符算。
 - 🧹 评论完成后**逐个关闭**自建标签页（`/json/close`），每轮结束 `hr_tabs.py prune toutiao.com`（只留 1 个头条页）。
 
