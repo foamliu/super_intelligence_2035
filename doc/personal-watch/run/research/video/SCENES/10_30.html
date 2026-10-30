@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-30 · 一张照片，给游戏角色长出一头会动的头发</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#7a4bd0 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#153e75; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-30</h1>
+  <div class="sub">今日 TOP-1：<b>一张照片，给游戏角色长出一头会动的头发</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>约 430 字</b></div>
+  <div class="meta">
+    <span>📄 HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</span>
+    <span>🆔 arXiv:2610.40599</span>
+    <span>🏷 口径：目的 2「科普」（大众能懂 + 有传播力）</span>
+    <span>🕒 生成：2026-10-30 18:3x CST（PM 轮）</span>
+  </div>
+  <div class="disc">⚠️ <b>本页为分镜脚本（V2），不是成片</b>；V3（TTS / 文生图 / 剪辑）待用户确认工具链。所有数字<b>作者自报、本线未复现</b>；<b>论文解读 · 非官方 · 非结论</b>。</div>
+</header>
+
+<h2 class="sec">📄 选题卡（为什么选它）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Yuze He, Yixiang Wei, Wang Zhao, Chuhao Chen, Yanning Zhou, Yong-Jin Liu（<b>6 位署名</b>；机构以论文首页为准，见下方勘误口径）</div></div>
+  <div class="row"><div class="k">日期 / 规格</div><div class="v">首次提交 <b>2026-10-29</b>（<code>published=2026-10-29T17:50:26Z</code>）· <code>comment</code>：<b>27 pages, 23 figures</b> · 分类 <code>cs.CV</code>（+<code>cs.GR</code>）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.40599">https://arxiv.org/abs/2610.40599</a></div></div>
+  <div class="row"><div class="k">一句话</div><div class="v">把一整套「发卡（hair cards）」当<b>无序集合</b>，一张发卡 = 一个 token，用<b>集合扩散 Transformer</b> 一次性去噪生成全部发卡，<b>同时生成驱动它们的弹簧骨骼链</b> ⇒ 单张图片直接产出可用于动画的头发资产。</div></div>
+  <div class="reason kp-box" style="margin-top:12px;">
+    <b>为什么选它做《论文两分钟》</b>（四问 · 本线判断）：
+    <ol>
+      <li><b>大众能懂 + 有画面</b>：「游戏角色的头发为什么会飘」，几乎人人有直观经验；画面是<b>头发、发卡、弹簧骨骼</b>，全部可矢量自绘，不需要任何公式。</li>
+      <li><b>反直觉/有钩子</b>：直觉以为「头发 = 一根根发丝」，论文里的头发其实是<b>美术手摆的一叠带状面片</b>；从「一根根」到「一叠面片」就是天然的开场反转。</li>
+      <li><b>可讲清</b>：核心只有两句 —— ①把「一叠面片」当集合、一次生成；②顺手把驱动它的骨骼一起生成，所以「出来后能直接动」。不必搬全篇 27 页。</li>
+      <li><b>有真实来源、数字干净</b>：<code>arXiv:2610.40599</code> + 三项可上屏的对比（Chamfer <b>−44%</b>、朝向误差<b>减半以上</b>、<b>33×</b> 更快），均出自摘要原文。</li>
+    </ol>
+    ⚠️ 若担心「游戏题材偏窄」：本篇真正的看点是<b>「一次性生成一整套结构化的东西」＋「连驱动它的骨架一起生成」</b>，这个思路与做头发无关于行业 —— 口播里已经把这层剥出来（镜 5）。
+  </div>
+</div>
+
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:96px;">时间轴</th><th style="width:96px;">段落</th><th style="width:30%;">口播文案</th><th style="width:26%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">游戏里角色一甩头，头发能飘起来 —— 但你猜，它靠的不是一根根头发丝。</td>
+    <td>竖版：游戏角色<b>侧脸特写</b>，一甩头，发梢<i>滞后半拍</i>跟上来。镜头顺势推近到发梢，画面里浮出一叠<b>半透明的带状面片</b>轮廓（自绘矢量，不用任何截图）。</td>
+    <td>「<b>不是头发丝</b>」</td>
+    <td>发丝摩擦「唰」；BGM 轻电子，60 BPM。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">真身是一张张美术手摆的带状面片，业内叫发卡；每张发卡背后挂着一串弹簧骨骼，靠它才动得自然。麻烦在于：这叠面片过去只能人一层层摆；唯一能自动生成的系统，是像写字一样一条一条往下画控制点 —— 慢，而且画到后面容易乱。</td>
+    <td>画面切成三格：①美术在软件里<b>一片片拖拽发卡</b>（手部剪影 + 面片）；②面片背后亮起<b>一串弹簧</b>，摆动时弹簧拉长压缩；③对手方法：一条<b>越来越长的点列</b>在画面上向右延伸，末尾开始<b>抖动、打结</b>（示意「逐点自回归」的累积误差）。</td>
+    <td>「发卡 hair cards」<br>「弹簧骨骼 spring bones」<br>「一条一条画 ⇒ 越画越乱」</td>
+    <td>拖拽「咔哒」；弹簧「啵嘤」；点列延伸「嗒嗒嗒」后接一声<b>走音</b>。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">这篇换了个看法：一整套发卡，本来就是一堆没有先后顺序的面片。那就把它当集合处理 —— 一张发卡就是一个词元，用集合扩散 Transformer 让所有发卡同时去噪、同时成形；再顺手把驱动它们的弹簧骨骼链一起生成。因为输出自带骨骼，拿到的不是一张不能动的模型，而是能直接导出、能动画的资产。输入，只要一张图片。</td>
+    <td>①画面中央<b>散落的 40 张面片</b>（灰色、随机朝向）→ 打上编号但<b>编号被打乱</b>，示意「无序集合」；②「扩散」用<b>噪点 → 半透面片 → 清晰发卡</b>的三段渐变表示，<b>所有面片同步变化</b>（而不是一片片排队）；③面片成形瞬间，<b>弹簧骨骼链从发根长出</b>并开始摆动；④最后一张图 → 箭头 → 可导出资产（头发 + 骨骼），旁边跳出一张<b>单张输入图片</b>的缩略框。</td>
+    <td>「一叠面片 = 无序集合」<br>「一张发卡 = 一个 token」<br>「所有发卡同时成形」<br>「骨骼一起生成 ⇒ 生来能动」</td>
+    <td>噪点「沙沙」→ 同步成形「叮」×1（强调「同时」而不是连击）；骨骼长出「咔、咔」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">在对手自己的测试集上，几何误差、也就是 Chamfer 距离降低四成四；发卡朝向误差减半以上；速度快三十三倍。只看单图输入，它也胜过原来的发卡生成器、通用的图生三维流程，以及基于发丝的方法。</td>
+    <td>三根<b>水平柱状条</b>依次亮起（基准 = 100%）：Chamfer<b>降到 56%</b>、朝向误差<b>降到不足 50%</b>、耗时<b>降到约 3%</b>（33× 的倒数，画成短条 + 「33×」角标）。随后三个对手图标（CHARM / 图生 3D / 发丝方法）在单图任务上被<b>依次灰掉</b>。<b>字幕永远带「作者自报」小字</b>。</td>
+    <td>Chamfer <b>−44%</b><br>朝向误差 <b>&gt;50% ↓</b><br>速度 <b>33×</b><br><span style="font-size:11.5px;">（作者自报 · 本线未复现）</span></td>
+    <td>柱条「啵」×3；灰掉「噗」×3；BGM 抬 2 dB。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">真正值得记的是那个思路：把一整套结构化的东西当成无序集合，一次生成；再把驱动它的骨架一起生成。头发的资产，可能从「美术摆一天」变成「看一眼图就出一套」。论文链接在简介。</td>
+    <td>画面回到镜 1 的角色，头发自然飘动；镜头拉远，角色周围浮现<b>一排其他「一套套结构」的示意图标</b>（面片、骨骼、树、齿轮等抽象符号，全部自绘），暗示同一思路可迁移。定格成片尾卡：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.40599</b> + 一行「<b>论文解读 · 非官方 · 非结论</b>」。</td>
+    <td>「集合 + 骨架」<br>「美术摆一天 → 看一眼就出一套」</td>
+    <td>BGM 收尾；片尾单音「叮」后留 1s 静音。</td>
+  </tr>
+
+<h2 class="sec">📝 口播全文（可直接念 · 约 430 字）</h2>
+<div class="card">
+  <p class="vo">游戏里角色一甩头，头发能飘起来 —— 但你猜，它靠的不是一根根头发丝。</p>
+  <p class="vo">真身是一张张美术手摆的带状面片，业内叫发卡；每张发卡背后挂着一串弹簧骨骼，靠它才动得自然。麻烦在于：这叠面片过去只能人一层层摆；唯一能自动生成的系统，是像写字一样一条一条往下画控制点 —— 慢，而且画到后面容易乱。</p>
+  <p class="vo">这篇换了个看法：一整套发卡，本来就是一堆没有先后顺序的面片。那就把它当集合处理 —— 一张发卡就是一个词元，用集合扩散 Transformer 让所有发卡同时去噪、同时成形；再顺手把驱动它们的弹簧骨骼链一起生成。因为输出自带骨骼，拿到的不是一张不能动的模型，而是能直接导出、能动画的资产。输入，只要一张图片。</p>
+  <p class="vo">在对手自己的测试集上，几何误差、也就是 Chamfer 距离降低四成四；发卡朝向误差减半以上；速度快三十三倍。只看单图输入，它也胜过原来的发卡生成器、通用的图生三维流程，以及基于发丝的方法。</p>
+  <p class="vo">真正值得记的是那个思路：把一整套结构化的东西当成无序集合，一次生成；再把驱动它的骨架一起生成。头发的资产，可能从「美术摆一天」变成「看一眼图就出一套」。论文链接在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 与任何表格截图；头发一律画成<b>「带状面片 + 半透明高光」</b>的示意，不追求照片级真实，避免与论文渲染图混淆。</li>
+  <li><b>数字上屏规则</b>：每个百分比/倍数第一次出现时，字幕必须带「<b>作者自报 · 本线未复现</b>」小字；口播把 44% 念「四成四」、33× 念「三十三倍」，<b>不把「减半以上」念成「减一半」</b>。</li>
+  <li><b>不能混的口径</b>：44% / 33× / 朝向误差减半以上 = <b>在 CHARM 自己的测试集上</b>、与 CHARM 对比；「单图输入下胜出」是<b>与 CHARM、通用 image-to-3D、基于 strand 的方法</b>比较 —— 两句话不要合并成「全面 SOTA」。</li>
+  <li><b>术语处理</b>：<code>hair cards</code> 口播念「发卡」，首次出现字幕补「美术手摆的带状面片」；<code>spring bones</code> 念「弹簧骨骼」；<code>set diffusion transformer</code> 念「集合扩散 Transformer」，<b>不解释扩散公式</b>。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜），每 8–10s 必须有画面变化；BGM 在方法段低音量、结果段抬 2 dB。</li>
+  <li><b>比例/时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：镜 1 <b>38</b> 字 / 镜 2 <b>105</b> 字 / 镜 3 <b>150</b> 字 / 镜 4 <b>96</b> 字 / 镜 5 <b>76</b> 字 ⇒ 合计 <b>465 字</b>（按 200 字/分 ≈ 140s）；<b>录制压到 120s 需 ≈230 字/分，或按下方删句</b> —— 删镜 2「慢，而且画到后面容易乱」与镜 5 第二句（约 −45 字）⇒ 约 <b>420 字</b> ≈ 126s（200 字/分）/ 以 <b>120s</b> 为准。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 210–220 字/分；数字前后各留 80ms 停顿；「33×」读「三十三倍」。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接。</li>
+    <li><b>不夸大</b>：禁用「AI 已取代美术 / 头发制作彻底自动化 / 首个头发生成模型」等表述；原文只支持「单张图片生成可动画的发卡资产，并在 CHARM 测试集上 Chamfer −44%、朝向误差减半以上、速度快 33×」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>44%</code> / <code>33×</code> / <code>朝向误差减半以上</code> / <code>27 pages, 23 figures</code> / <code>CHARM 测试集</code>），不得二次加工成新数字；「降到 56%」「降到约 3%」是<b>换算表述</b>，字幕须标「(换算)」。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；如需引用论文图，必须另行取得授权（本片不引用）。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；如需借鉴版解读，见当日日报 <code>research/daily/2026-10-30.html</code>。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；Range 分段续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见日报附录 C）。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · <code>research/video/SCENES/10_30.html</code> ｜ TOP-1 = <i>HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</i>（<code>arXiv:2610.40599</code>）· 5 镜 / 120s / 口播约 430 字 ｜ 数据源：当日 <code>research/daily/2026-10-30.html</code> 5 篇（早 3 借鉴 + 晚 2 科普）。</p>
+  <p>🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片：TTS / 文生图 / 剪辑）待用户确认工具链。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+</footer>
+</div>
+</body>
+</html>
+
+</table>

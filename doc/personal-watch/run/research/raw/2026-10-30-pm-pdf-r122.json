@@ -1,0 +1,22 @@
+{
+  "2610.40599": {
+    "bytes": 36976708,
+    "pages": 27,
+    "chars": 61333,
+    "sha256": "15e7c9c629d8bf81e0bf6ff367d0fdc2b336405723753462c1867129381a631a",
+    "etag": "sha256:bf35fa84a78d1baf318d6250a058eb263af07d8a08e6d05cf8b9abd118c9fdce",
+    "etag_sha256_match": false,
+    "head": "%PDF-",
+    "tail_has_eof": true
+  },
+  "2610.40589": {
+    "bytes": 565605,
+    "pages": 17,
+    "chars": 50541,
+    "sha256": "ab28e16bc9e2d50f30a2150702f15cdf7985326c28c575ced1917a0a5c433dfc",
+    "etag": "CMS86IH54JcDEAI=",
+    "etag_sha256_match": false,
+    "head": "%PDF-",
+    "tail_has_eof": true
+  }
+}

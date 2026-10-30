@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/4YGEuemovE/OxS+AkStGbEJofaQ</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.40599,2610.40640&amp;start=0&amp;max_results=2</title>
+  <updated>2026-10-30T10:09:28Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=2&amp;id_list=2610.40599,2610.40640" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40640v1</id>
+    <title>SonoWorld4D: From One Video to a 4D Audio-Visual Scene via Diffusion Synchronization</title>
+    <updated>2026-10-29T17:58:45Z</updated>
+    <link href="https://arxiv.org/abs/2610.40640v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40640v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent progress in visual scene generation has extended beyond static 3D scenes toward the more challenging problem of generating dynamic 4D scenes from minimal input. However, sound, despite being intrinsically coupled with dynamic objects and events, remains largely unmodeled in prior work. We introduce Video-to-4DAVScene, a new task that turns a video into an explorable, time-varying 4D audio-visual scene, and present the SonoWorld4D framework for this task. Given a monocular video, our method generates a 360 static background, reconstructs explicit motion trajectories of dynamic, sound-emitting foreground objects, and synthesizes a physically-grounded sound field consistent across multiple sources through dual-space audio diffusion synchronization. The resulting 4D scene supports real-time novel-view visual and spatial audio rendering. Evaluation on real-world dynamic scenes and a user study demonstrates SonoWorld4D generates 4D audio-visual scenes with perceptually realistic, physically grounded spatial audio consistent with scene geometry and visual content.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SD" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:58:45Z</published>
+    <arxiv:comment>Project Page: https://humathe.github.io/sonoworld4d/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Derong Jin</name>
+    </author>
+    <author>
+      <name>Xiyi Chen</name>
+    </author>
+    <author>
+      <name>Ming C. Lin</name>
+    </author>
+    <author>
+      <name>Ruohan Gao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40599v1</id>
+    <title>HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</title>
+    <updated>2026-10-29T17:50:26Z</updated>
+    <link href="https://arxiv.org/abs/2610.40599v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40599v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The hair of stylized characters in games and avatars is built from hair cards: artist-placed ribbons whose geometry is the visible hair, animated by spring bones. Existing image-based methods produce realistic hair or a single fused mesh, while CHARM, the only generator of stylized hair cards, decodes a hairstyle autoregressively as a long sequence of control points. Observing that a card hairstyle is an unordered set of artist-defined primitives, we propose HairDeck, which generates it as one: each card is a single token, and a set diffusion transformer denoises all cards together. From a single image, HairDeck generates the cards and the spring-bone chains that drive them, yielding an animatable asset that exports to ready-to-use downstream formats. On CHARM's own test set, it lowers Chamfer distance by 44% and card-orientation error by more than half while running 33 times faster, and from single images it outperforms CHARM, image-to-3D pipelines and strand-based methods. Project page: https://hyzcluster.github.io/HairDeck</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.GR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:50:26Z</published>
+    <arxiv:comment>27 pages, 23 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yuze He</name>
+    </author>
+    <author>
+      <name>Yixiang Wei</name>
+    </author>
+    <author>
+      <name>Wang Zhao</name>
+    </author>
+    <author>
+      <name>Chuhao Chen</name>
+    </author>
+    <author>
+      <name>Yanning Zhou</name>
+    </author>
+    <author>
+      <name>Yong-Jin Liu</name>
+    </author>
+  </entry>
+</feed>

@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-30</td>
+    <td><i>HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</i><br><code>arXiv:2610.40599</code>（Yuze He, Yixiang Wei, Wang Zhao, Chuhao Chen, Yanning Zhou, Yong-Jin Liu 共 6 位 · 机构以论文首页为准）</td>
+    <td><b>游戏角色的头发，不是一根根发丝</b>：业界用<b>发卡（hair cards）</b>——美术手摆的带状面片，背后挂<b>弹簧骨骼</b>驱动动画。唯一同类生成器 <b>CHARM</b> 是「逐点自回归」往下画控制点（慢且末段易乱）。<b>HairDeck</b> 把一整套发卡当<b>无序集合</b>：<b>一张发卡 = 一个 token</b>，<b>集合扩散 Transformer</b> 一次性去噪生成全部发卡，并<b>同时生成弹簧骨骼链</b> ⇒ 单张图片产出可直接导出、能动画的资产。在 <b>CHARM 自己的测试集</b>上：Chamfer 距离 <b>−44%</b>、发卡朝向误差 <b>减半以上</b>、速度 <b>33×</b>；单图输入下胜过 CHARM / 通用 image-to-3D / 基于 strand 的方法（<b>作者自报 · 本线未复现</b>；对比基线为唯一同类生成器 + 通用方法；论文 27 页 / 23 图）</td>
+    <td><a href="10_30.html">10_30.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-29</td>
     <td><i>Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</i><br><code>arXiv:2610.36195</code>（Kartik Jangra, Atharva Gawane, Siddharth Pulipaka 等 5 位 · AI4Bharat / IIT Madras / Mahindra University）</td>
     <td><b>AI 读得懂发票，却读不懂盲文</b>：盲文字符只由小格子里<b>哪几个点凸起</b>决定，考的是<b>数点 + 几何</b>，恰好是 VLM 的软肋。作者建 <b>BrailleBench</b>：<b>259 张</b>人工校验真实照片（<b>215 一级 + 44 二级</b>，书本 / 标牌 / 低分辨率都有）。<b>四类系统同台</b>：单次推理的通用 VLM 一级<b>除 GPT Sol 系外全 &lt;3%</b>（最强 GPT-6.1 Sol <b>53.95%</b>、CER 0.374；二级 11.36%）；OCR 专用与工具辅助 agent（Claude Code / Opus 5.5 High）一级 <b>88.37%</b>、二级 <b>40.91%</b>，代价 <b>≈180 秒 + $0.51–0.58 / 图</b>；自建合成管线 <b>276k</b> 样本微调 <b>Qwen3.5-2B</b> ⇒ <b>一次调用</b>一级 <b>86.98%</b> / 二级 <b>61.36%</b>（二级比 Claude Code 高 20.45 pp）。<b>最扎心的负结果</b>：用他人合成数据训练时，<b>合成验证集 96.00% → 真实照片一级仅 3.26%</b>（Llama-3.2-11B 55.00% → 0.47%）；把合成语料扩到 500k 长文本，真实一级反而 <b>82.63% → 72.97%</b> ⇒ <b>考得好 ≠ 会</b>（<b>作者自报 · 本线未复现</b>；基准仅 259 张、以一级为主；工具成绩依赖具体 harness 版本）</td>
@@ -157,7 +163,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-29 18:3x CST（新增 <code>10_29.html</code> · TOP-1 = Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs / <code>arXiv:2610.36195</code> · 5 镜 / 120s / 口播 440 字；上一版 <code>10_28.html</code> · <code>arXiv:2610.37649</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-30 18:4x CST（新增 <code>10_30.html</code> · TOP-1 = HairDeck: Animation-Ready Stylized Hair Cards from a Single Image / <code>arXiv:2610.40599</code> · 5 镜 / 120s / 口播约 430 字；上一版 <code>10_29.html</code> · <code>arXiv:2610.36195</code>）<br>
 </footer>
 </div>
 </body>
