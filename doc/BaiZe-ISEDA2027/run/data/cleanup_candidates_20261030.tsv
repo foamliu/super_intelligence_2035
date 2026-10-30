@@ -1,0 +1,39 @@
+path	表观(du_-sh)	实占(du_-sb)	inode/硬链接	判定	证据命令
+/nas_train/app.e0031982/datasets/mvp-lab/	42T	45985312034386	目录	保留	85M下载进行中(10315/12126 files); du -sb /nas_train/app.e0031982/datasets/mvp-lab/
+/nas_train/app.e0031982/datasets/openbmb/	9.8T	10698031684940	含hardlink+symlink	保留	INDEX.tsv L2/L8-L11 download_dir指向此处; du -sb /nas_train/app.e0031982/datasets/openbmb/
+/nas_train/app.e0031982/datasets/baize-data/	8.4T	9186503937898	含hardlink(env14)+symlink(full_*)	保留	RED LINE: tokenized/INDEX.tsv/full_*; du -sb /nas_train/app.e0031982/datasets/baize-data/
+/nas_train/app.e0031982/datasets/baize-vision/	1.1T	1116034189821	目录	保留	vision agent活跃数据(en500k/eval5k/ocr_synth_10m); du -sb /nas_train/app.e0031982/datasets/baize-vision/
+/nas_train/app.e0031982/code/	3.5T	-	目录	保留	BaiZe-ISEDA2027项目代码(3.2T)+其他代码; du -xsh /nas_train/app.e0031982/code/
+/nas_train/app.e0031982/.cline_data/	1.8G	-	目录	保留	活跃agent会话数据(cline主进程); du -sh /nas_train/app.e0031982/.cline_data/
+/nas_train/app.e0031982/.cline_vision/	1.7G	-	目录	保留	vision agent会话数据; du -sh /nas_train/app.e0031982/.cline_vision/
+/nas_train/app.e0031982/.cline_pretrain/	868M	-	目录	保留	pretrain agent会话数据; du -sh /nas_train/app.e0031982/.cline_pretrain/
+/nas_train/app.e0031982/.cline_harness/	1.2M	-	目录	保留	harness agent会话数据; du -sh /nas_train/app.e0031982/.cline_harness/
+/nas_train/app.e0031982/models/	460G	493837583591	目录	待定	模型权重(DeepSeek/CLIP/Mistral等); pretrain/vision可能依赖; ls /nas_train/app.e0031982/models/
+/nas_train/app.e0031982/datasets/FineVision/	4.3T	4645236803666	186子目录	待定	186个视觉数据集子目录; 不在INDEX.tsv镜像中; 可能vision agent源数据; ls /nas_train/app.e0031982/datasets/FineVision/ | wc -l
+/nas_train/app.e0031982/datasets/HuggingFaceFW/	1.3T	1365756121231	目录	待定	fineweb-edu; 不在INDEX.tsv镜像中; 旧文本数据下载; ls /nas_train/app.e0031982/datasets/HuggingFaceFW/
+/nas_train/app.e0031982/datasets/conceptual-captions-12m-webdataset/	1.2T	1244033908448	目录	待定	webdataset格式; 不在INDEX.tsv镜像中; 旧视觉预训练数据; ls /nas_train/app.e0031982/datasets/conceptual-captions-12m-webdataset/
+/nas_train/app.e0031982/datasets/imagenet-1k/	156G	166753472862	目录	待定	ImageNet-1K; 不在INDEX.tsv镜像中; 旧图像分类数据; ls /nas_train/app.e0031982/datasets/imagenet-1k/
+/nas_train/app.e0031982/datasets/lmms-lab/	137G	146251614972	目录	待定	LMM评测数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/lmms-lab/
+/nas_train/app.e0031982/datasets/LLaVA-Instruct-150K/	91G	97680038930	目录	待定	LLaVA指令数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/LLaVA-Instruct-150K/
+/nas_train/app.e0031982/datasets/LLaVA-Pretrain/	85G	85723169187	664子目录	待定	LLaVA预训练数据(664 entries); 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/LLaVA-Pretrain/ | wc -l
+/nas_train/app.e0031982/datasets/coco/	63G	65303204197	目录	待定	COCO数据集; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/coco/
+/nas_train/app.e0031982/datasets/gqa/	42G	43816985024	目录	待定	GQA视觉推理数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/gqa/
+/nas_train/app.e0031982/datasets/vg/	30G	30545172713	目录	待定	Visual Genome数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/vg/
+/nas_train/app.e0031982/datasets/textvqa/	14G	14168782169	目录	待定	TextVQA数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/textvqa/
+/nas_train/app.e0031982/datasets/ocr_vqa/	9.1G	7988057464	目录	待定	OCR-VQA数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/ocr_vqa/
+/nas_train/app.e0031982/datasets/LLaVA-CC3M-Pretrain-595K/	6.4G	6866613212	目录	待定	LLaVA CC3M预训练595K; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/LLaVA-CC3M-Pretrain-595K/
+/nas_train/app.e0031982/datasets/armanakbari4/	1.6G	387389164	目录	待定	用途不明; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/armanakbari4/
+/nas_train/app.e0031982/datasets/red_caps/	1013M	1061997941	目录	待定	RedCaps数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/red_caps/
+/nas_train/app.e0031982/datasets/AMSbench/	495M	517861956	目录	待定	AMS benchmark数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/AMSbench/
+/nas_train/app.e0031982/datasets/stanford-corenlp-full-2016-10-31.zip	389M	388633790	单文件	可删	解压目录已存在(stanford-corenlp-full-2016-10-31/ 373M); zip冗余; ls -la /nas_train/app.e0031982/datasets/stanford-corenlp-full-2016-10-31.zip
+/nas_train/app.e0031982/datasets/stanford-corenlp-full-2016-10-31/	373M	390330174	目录	待定	Stanford CoreNLP; 不在INDEX.tsv镜像中; du -sb /nas_train/app.e0031982/datasets/stanford-corenlp-full-2016-10-31/
+/nas_train/app.e0031982/datasets/MMMU/	232M	240736341	目录	待定	MMMU评测数据; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/MMMU/
+/nas_train/app.e0031982/datasets/allenai/	1.7M	1415941	目录	待定	用途不明; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/datasets/allenai/
+/nas_train/app.e0031982/hf_cache/	49G	51781238854	目录	待定	HuggingFace缓存; 可清理但可能影响下载续传; ls /nas_train/app.e0031982/hf_cache/
+/nas_train/app.e0031982/outputs/	6.7G	7125118579	目录	待定	旧训练输出; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/outputs/
+/nas_train/app.e0031982/download/	3.4G	2674418927	目录	待定	旧下载目录; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/download/
+/nas_train/app.e0031982/.hf_cache/	2.0G	2074331978	目录	待定	隐藏HF缓存; 可清理; ls /nas_train/app.e0031982/.hf_cache/
+/nas_train/app.e0031982/tmp/	1.3G	1180858456	含.nfs文件	待定	临时文件; 含1个.nfs垃圾文件; find /nas_train/app.e0031982/tmp/ -name '.nfs*'
+/nas_train/app.e0031982/Downloads/	209M	216932527	目录	待定	旧下载; 不在INDEX.tsv镜像中; ls /nas_train/app.e0031982/Downloads/
+/nas_train/app.e0031982/tmp/.nfs0000000b14c0fe4000fd2352	-	-	单文件	可删	NFS silly-rename垃圾; find /nas_train/app.e0031982 -maxdepth 2 -name '.nfs*'
+/nas_train/app.e0031982/nccl_dbg/	68K	-	目录	可删	NCCL调试日志; ls /nas_train/app.e0031982/nccl_dbg/
