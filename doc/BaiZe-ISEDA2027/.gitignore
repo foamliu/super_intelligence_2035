@@ -7,6 +7,11 @@ run/harness/**/logs/
 run/harness/**/*_results*.json
 run/harness/**/eval_*.json
 run/harness/**/*verified_full_*.json
+# 补充（harness agent 2026-10-31 R997）：恒0分调试产出的 verify5/verify5b eval 结果 JSON 也是评测结果
+# （R984-R988 调试时漏网被 commit，违反「每轮 predict/eval 后禁止 commit 结果 JSON」硬约束；本轮 untrack + 加固）
+run/harness/**/*verify5*.json
+run/harness/**/*verify_*.json
+run/harness/**/*gate*.json
 # 补充（harness agent 2026-10-28 R580）：reports/ 下 predict/progress JSON 也是评测结果
 run/harness/**/reports/predict_*.json
 run/harness/**/reports/progress_*.json
