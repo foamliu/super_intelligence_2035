@@ -16316,3 +16316,56 @@ trace_deepreads
 [7] actionable pool if summary.tsv is local
 === DONE 138 ===
 ```
+
+---
+
+## RUN_ID 139 · 2026-10-30 21:38:44 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 139 | scan.tsv probe | $(date '+%F %T') | host=$(hostname) ==="
+SC=/nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace/designflow/bench_v0.50/scan.tsv
+ls -l "$SC" 2>/dev/null | cut -c1-110
+echo "[1] header + 2 rows"
+head -3 "$SC" 2>/dev/null | cut -c1-320
+echo "[2] rows=$(wc -l < "$SC" 2>/dev/null)"
+echo "[3] column count of header"
+head -1 "$SC" 2>/dev/null | awk -F'\t' '{print "  cols="NF}'
+echo "[4] sample of last row"
+tail -1 "$SC" 2>/dev/null | cut -c1-320
+echo "[5] any summary.tsv anywhere on this host (bounded)"
+timeout 40 find /nasdata/app.e0031982 -maxdepth 7 -name 'summary.tsv' 2>/dev/null | head -5
+timeout 20 find /home -maxdepth 4 -name 'summary.tsv' 2>/dev/null | head -3
+echo "[6] eda_flow MCP port"
+timeout 5 bash -c 'exec 3<>/dev/tcp/127.0.0.1/18891' 2>/dev/null && echo "  18891 OPEN" || echo "  18891 CLOSED"
+echo "[7] bench_v0.50 dir"
+ls -1 /nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace/designflow/bench_v0.50 2>/dev/null | head -15
+echo "=== DONE 139 ==="
+```
+
+**输出**
+```
+=== RUN_ID 139 | scan.tsv probe | 2026-10-30 21:38:44 | host=hfeg0tedaap02 ===
+-rw-r----- 1 app.e0031982 app.adm 23016 Oct 29 08:43 /nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace
+[1] header + 2 rows
+ip	host	users_with_cline	files_scanned	matched
+10.129.32.189	hfeg0pnd001	3	31	9
+10.129.32.195	hfeg0pnd007	2	30	4
+[2] rows=699
+[3] column count of header
+  cols=5
+[4] sample of last row
+10.129.8.86	hfeg0plg49	126	4337	2409
+[5] any summary.tsv anywhere on this host (bounded)
+[6] eda_flow MCP port
+  18891 OPEN
+[7] bench_v0.50 dir
+build.py
+out
+README.md
+reproduce.sh
+scan.tsv
+scorer.py
+=== DONE 139 ===
+```
