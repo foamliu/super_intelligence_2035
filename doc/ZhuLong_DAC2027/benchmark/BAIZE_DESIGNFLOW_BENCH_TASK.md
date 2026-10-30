@@ -66,7 +66,11 @@ metadata:    { trace_source{...}, domain, test_rationale }
 3. **≥8 个独立条件**，每个单独可 FAIL；🚫 "仅成员名 / 仅子串出现"式断言。
 4. **负样本入库**：`reference/<id>/negative/` ≥2 个错解（naive / always-XXX stub）+ `negative_selftest.py`，一次跑完必须**全 FAIL**；每轮抽查 1 条重跑。
 5. **随机化**：在 B 上随机抽子集（net / signal / 行），3 个随机种子跑 3 次结论一致；🚫 把期望值硬编码成固定串。
-6. **`metadata.test_rationale`** 写清"哪个条件抓什么错"；🚫 废话（如"解 zip + 断言内含文件"）。
+6. **`metadata.test_rationale` = 逐条断言清单（不是摘要）**：格式固定 `k 条断言：①<验什么> ②<验什么> …`，**一条对应 `check()` 里一个可独立失败的条件**，写清"对象 + 判定"。
+   - ✅ `7 条断言：① zip 内 5 个文件齐全 ② mac4.v 有 module mac4 且端口 clk/rst_n/acc0 齐全 ③ 累加为 32-bit 有符号饱和（边界 0x7fffffff/0x80000000） ④ sim_mac4.log 含 MAC4_SIM_PASS 且无 MAC4_SIM_FAIL ⑤ …`
+   - 🚫 废话：`解 zip 校验 3 文件`、`校验交付件完整性`、`断言内容达标`
+   - 🚫 实现细节：`raise AssertionError(...)`、`zipfile.ZipFile(...)`、`z.read(...).decode(...)`
+   - 自检：`k` 必须等于 §4.3 要求的独立条件数（≥8）；两者对不上 = 未完成。
 7. `check()` 在**独立临时目录**解 zip；🚫 在 SUT workdir 留 `__chk`。
 8. **泄漏隔离**：SUT 沙箱不得包含 `benchmarks/EDA-Eval-DesignFlow/`（`reference/`、jsonl、`test` 字段）；结论写 MEMORY 一行。
 9. **退化提交回归**：每条 case 必须让 (a) 空壳 (b) 只 print 期望串 (c) 参考解删核心 三种假提交**全部 FAIL**；任一 PASS ⇒ 该 case 判分不合格，限期整改或下线。
@@ -92,13 +96,14 @@ metadata:    { trace_source{...}, domain, test_rationale }
 1. 选 trace（§3）→ 深读或合成（§3 两轮节奏）。
 2. 自验：`reference/` 参考解跑 `check()` 必须 PASS；§4.9 三种假提交必须 FAIL。
 3. pi 实跑：`designflow/pi_debug_status.jsonl` 追加一行，记 `pi_model / pi_thinking / pi_dur_sec / pi_verdict / ref_check`。
-4. 日报：`python3 designflow/gen_daily_report.py`（16:00 前），中文单文件 HTML，含「用户」列。
+4. 日报：`python3 designflow/gen_daily_report.py`（16:00 前），中文单文件 HTML，含「用户」列；「test 思路」列**原样渲染 `metadata.test_rationale` 的 `k 条断言：①…` 清单**，🚫 回退成"解 zip 校验 N 文件"这类模板句。
 5. 难度回路：按 §5 判定"加难 / 保持 / 查判分"，结论写进当日日报的"阻塞/下一步"。
 
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
-`11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · 目标通过率 20–30%`
+`11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/11 · 目标通过率 20–30%`
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
+> 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
 ## 8. 收尾铁律（每轮必做）
 
