@@ -56,10 +56,12 @@ print(f'${harness}: {len(all_preds)} patches merged, {len(patch_ids)} eval IDs')
 }
 
 # Order: highest-value (most new patches) first.
+# codex re-added R964 (63 new patches accumulated since it was skipped at 0-new).
 merge_and_eval "opencode"
 merge_and_eval "cline-patched"
 merge_and_eval "pi"
 merge_and_eval "claude-code"
+merge_and_eval "codex"
 
 echo "[$(date)] === regen eval summaries (all 5) ==="
 python3 regen_eval_summaries.py
