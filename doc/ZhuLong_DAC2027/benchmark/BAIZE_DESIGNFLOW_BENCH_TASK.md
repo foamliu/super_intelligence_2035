@@ -16,8 +16,8 @@
    - PDKQA-001：`7fa3eec75ddd` → 改回原用户名（x4b0p session 归属 xinqiaoz，已在你深读笔记里记录）
    - Backannot-001：`96f3e5727c78` → 改回原用户名（82ybr session 归属 haoyut，已在你深读笔记里记录）
    - Characterization-001：`sha1[:12] of 'vincelu'` → 直接写 `vincelu`（你深读笔记里已有原名）
-3. **以后新建用例**：`metadata.trace_source.user` 直接写原用户名，**不要 hash、不要脱敏**
-4. **红线放宽**：原任务书红线"人名入库前脱敏"对 `trace_source.user` 字段**局部放宽**——这是内部 benchmark，用户名用于溯源，不对外发布。其他字段（密码/key/token/邮箱）仍脱敏。
+3. **以后新建用例**：`metadata.trace_source.user` 直接写原用户名，**不要 hash**
+4. **红线**：key/token/密码入库前脱敏；用户名/路径/session_file 保留原值用于溯源。
 
 **二、改 gen_daily_report.py（日报 trace 来源列显示用户名）**
 
@@ -129,9 +129,9 @@
 **红线（硬，不许碰）**
 - 🚫 SSH 目标机**只读**：不改文件、不删目录、不装包、不写目标机磁盘。
 - 🚫 不碰他人进程；连接失败记原文，不静默重试掩盖。
-- 🚫 **隐私脱敏**：key/token/密码/域名/人名/邮箱入库前脱敏；**未脱敏样本不入 git**。
+- 🚫 **敏感信息脱敏**：key/token/密码入库前脱敏；**未脱敏样本不入 git**。
 - 🚫 主动扫描（如 `nmap -sn`）**必须先获书面授权**，否则只用被动发现。
-- 🚫 原始轨迹不入库，只入脱敏样本与统计。
+- 🚫 原始轨迹不入库，只入提炼后的 prompt/test/metadata 与统计。
 - 🚫 不因"样本还不够 500"就等——边采集边构建，版本化交付。
 - 🚫 本线不用 GPU，不与 pretrain/vision 抢资源。
 
@@ -164,7 +164,7 @@
    - `cat <session>/*.messages.json`（用 `head -c` 限量，避免大输出）→ 采样轨迹
    - 🚫 **只读**：不 `rm`/`mv`/`>`/`tee`/`mkdir`/`pip install` 任何东西到 .75（红线）
 3. `close_session(workdir)` 清理。
-4. 脱敏后入 `designflow/bench_v0.X/`，写心跳+日报+push。
+4. 入 `designflow/bench_v0.X/`，写心跳+日报+push。
 
 **指令（最高优先，覆盖之前的"等运维"阻塞）**
 - 🛑 **立即停止** v0.23/v0.30/v0.34/v0.40/v0.44/v0.46/v0.48/v0.50… 这类**纯 lineage sha256 自审计层**。已做 7 次全树审计，足够了；再造同类层 = 空转烧 token，违规。
@@ -255,7 +255,7 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
    - `cat /home/t0002965/log/probe_remote.sh` → 匹配规则
    - 🚫 **只读**：不 `rm`/`mv`/`>`/`tee`/`mkdir`/`pip install`（红线）
 3. `close_session(workdir)` 清理。
-4. 把拉到的 `scan.tsv` / `summary.tsv`（或脱敏切片）存到本机 `designflow/bench_v0.X/out/`，**脱敏后**入 git（user 名 → hash，ip → 网段或 hash，session_file 名 → hash；保留 host/category/tools 统计）。
+4. 把拉到的 `scan.tsv` / `summary.tsv`（或切片）存到本机 `designflow/bench_v0.X/out/`，入 git（保留 host/user/category/tools 统计；key/token/密码除外）。
 5. 基于 summary.tsv 的 24085 命中会话，**按 EDA 工具/类别分桶**构建 benchmark 任务集（不是再扫一遍）。需要深挖某会话内容时，再 `run_commands` 去 `<ip>` 上 `head -c` 采样（按需，不批量）。
 6. 写心跳+日报+push。
 
@@ -318,7 +318,7 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
 - 用例保存目录：`/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/`（已存在，已有 jsonl + assets + reference）
 - 可新建 jsonl（按上述 schema），也可往现有 jsonl 追加行；assets/ 下按题放参考文件。
 - **每次睡去前**（收尾铁律第 3 步）必须 `git add -- benchmarks/EDA-Eval-DesignFlow/` 并提交推送。不要等"凑够一批"才提交，每轮有新增就提交。
-- 用例数据来源 = 增补 II 的 .75 上 `summary.tsv`（24085 命中）经 eda_flow 拉取 + 脱敏 + 提炼。**原始 session 内容不入 git**，只入提炼后的 prompt/test/metadata。
+- 用例数据来源 = 增补 II 的 .75 上 `summary.tsv`（24085 命中）经 eda_flow 拉取 + 提炼。**原始 session 内容不入 git**，只入提炼后的 prompt/test/metadata。
 
 **任务 2：用 pi agent 作被测调试用例**
 - 每新建/修改一条用例，**用 `pi` 实际跑一遍**验证可执行、test 能正确判 PASS/FAIL。
@@ -370,7 +370,7 @@ IP 清单：`/home/t0002965/ssh_auth_ok.txt`（698 个唯一 IP，运维已 `wc 
    - 🚫 **只读**：不 `>`/`tee`/`rm` 任何东西到目标机（红线）
 3. `close_session(workdir)` 清理。
 4. 从真实 session 内容提炼 prompt/test → 落 `benchmarks/EDA-Eval-DesignFlow/` 新 jsonl（按增补 III schema）。
-5. **脱敏**：session 里的真实用户名/路径/IP/key 入库前脱敏（user→hash, ip→hash, 路径里的人名→占位）。
+5. **入库**：session 里的 key/token/密码不入库；用户名/路径/IP/文件名保留原值用于溯源。
 6. 用 pi 调试用例（增补 III 任务 2）。
 
 **SSH 命令模板（直接抄）**
@@ -435,7 +435,7 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no <IP> \
    - `entry_point`: 交付件路径（`outputs/submit.zip`）
    - `test`: `check(deliverable, workdir)` 双参，校验交付件（解 zip + 断言内含文件 + 内容达标）
    - `prompt`: 自然语言任务目标，**无函数签名**，描述要完成什么设计流 + 交付什么 + 约束
-   - `attachments`: 注入真实输入文件（从 698 机 SSH 抓的真实数据，脱敏后入 assets/）
+   - `attachments`: 注入真实输入文件（从 698 机 SSH 抓的真实数据，入 assets/）
    - **不带** `lang`/`host`/`runtime` 字段
    - `metadata.domain`: digital/analog/verification/test
    - `budget`: `{max_turns, wall_time_sec, max_tool_calls}`
@@ -550,8 +550,8 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no <IP> \
    - 提取所有 tool_result（EDA 工具的真实输出/报告/报错）
    - 理解用户的**完整工作过程**：用户给了什么目标 → agent 做了什么 → 遇到什么问题 → 怎么解决 → 最终交付什么
 3. **从完整对话流提炼 case**（不是从 keywords 猜）：
-   - prompt = 真实用户的第一条需求（改写脱敏，但保留真实场景细节：设计什么电路/用什么工具/什么指标/什么约束）
-   - attachments = 真实 session 里的输入文件（RTL/网表/TB/报告，脱敏后入 assets/）
+   - prompt = 真实用户的第一条需求（保留真实场景细节：设计什么电路/用什么工具/什么指标/什么约束）
+   - attachments = 真实 session 里的输入文件（RTL/网表/TB/报告，入 assets/）
    - entry_point = 真实 session 里用户最终交付的产物（zip 包）
    - test = 校验交付件是否达到真实 session 里的验收标准
 
@@ -562,19 +562,19 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no <IP> \
    "metadata": {
      "trace_source": {
        "host": "hfeg0plg49",
-       "user_hash": "sha1[:12] of real username",
+       "user": "vincelu",
        "session_file": "1792719811850_q5ogm",
        "session_msgs": 337,
        "real_task_summary": "DC NXT WLM 综合 0% multi-bit banking 诊断"
      }
    }
    ```
-   脱敏：user → hash，但 host/session_file 可保留（用于溯源）。
+   保留原用户名用于溯源；key/token/密码除外。
 
 2. **prompt 要反映真实场景**（不是通用抽象）：
    - ❌ 错："实现 `logicsynth_build_lint_scaffold(rtl, mod) -> dict`"
    - ✅ 对："这是 cfreq_ctrl.v（VCO 自动校准 RTL），请在 .75 沙盒里用 SpyGlass 跑 lint 检查，修复所有 Error 级违规，产出 lint 报告 + 修复后的 RTL，打包成 outputs/submit.zip。约束：不改模块接口，只改 RTL 内部逻辑消除 lint 违规。"
-   - prompt 里可以有真实文件名/电路名/工具名/指标，但要脱敏真实用户名/路径
+   - prompt 里可以有真实文件名/电路名/工具名/指标/用户名/路径
 
 3. **test 要校验真实交付件**（不是函数返回值）：
    - `check(deliverable, workdir)` 双参
@@ -650,7 +650,7 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no <IP> \
 
 **交付物**
 1. 资产盘点报告（目标机/用户/轨迹三个数字）。
-2. `bench_v0.1/`：脱敏任务集 + 评分器 + 复现脚本。
+2. `bench_v0.1/`：任务集 + 评分器 + 复现脚本。
 3. HTML 交付报告（规模、分类、评分、局限）。
 4. `MEMORY_DESIGNFLOW.md` / `EXPERIMENTS_DESIGNFLOW.md` / 日报。
 
