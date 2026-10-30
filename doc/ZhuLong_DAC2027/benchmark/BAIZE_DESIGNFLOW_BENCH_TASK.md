@@ -142,6 +142,27 @@ git commit -m "designflow #<轮次>: <一句话>" && git push origin master
 - Benchmark 是否对外（默认：先内部）
 - 是否允许主动扫描 698 机（默认：否，只被动只读发现）
 
+## 10. 并发协作（多进程时的唯一契约）
+
+多进程共用**一份工作树**，靠"文件所有权"消除冲突，不靠事后修 jsonl：
+
+| 角色 | 只写（独占） | 禁止 |
+|:--|:--|:--|
+| `scout` | `designflow/claims/` `designflow/candidates/` | 不建 case、不改 jsonl、不 commit |
+| `deepread` | `designflow/trace_deepreads/` | 不建 case、不改 jsonl、不 commit |
+| `synth` | `designflow/cases_staging/<task_id>/` | 不改主 jsonl、不 commit |
+| `teeth` | `designflow/governance/teeth/` | 不改 case 内容、不 commit |
+| `integrator` | 主 jsonl / `reports/` / MEMORY / git commit+push | 不替 producer 写产物 |
+
+- **领取协议**：出题前先 `mkdir designflow/claims/<sid>.claim`（原子操作，失败 = 已被抢）；claim 内写 `owner / 时间 / task_id`；**>2h 无产出自动回收**（integrator 负责删）。
+- **只有 `integrator` 能 commit/push**；producer 的产物以 `cases_staging/<task_id>/` 交付，由 integrator 跑完 §4 自验（ref + 三假提交 + negative）后才合并进主 jsonl。
+- **同一角色只能起一份**（脚本用 `/tmp/designflow_loop_<ROLE>.lock` 自锁），启动：
+```bash
+export ROLE=synth      # solo | scout | deepread | synth | teeth | integrator
+setsid bash <benchmark>/designflow_bench_loop.sh > /tmp/df_$ROLE.log 2>&1 < /dev/null &
+```
+- 建议起步配比：`1 deepread + 2 synth + 1 integrator`（teeth 先由 integrator 兼）；观察 12h 后若 evaluator 排队 >5 条再单独起 `teeth`。
+
 ---
 
 > ⚠️ 本文件为**只读指令文件**，agent 禁止修改；有异议写进 MEMORY 并存疑执行。

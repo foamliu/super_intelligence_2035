@@ -22,3 +22,5 @@ desktop.ini
 
 hf_checkpoints/
 doc/sudo.txt
+# designflow 并发：staging 是临时产物（由 integrator 合并后即可丢弃）
+doc/ZhuLong_DAC2027/benchmark/designflow/cases_staging/

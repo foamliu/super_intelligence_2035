@@ -24,6 +24,8 @@
 #   3) commit 只 add 本任务自己的文件（旧版 git add -A 会把别的任务在途文件一起卷进提交）
 #   4) 编排 harness 用 opencode（config 在 ~/.config/opencode/），与被采样对象 cline 完全隔离。
 #   5) 双仓库 sync：workspace → super_intelligence_2035(main)；用例 → EDA-Flow-Bench(master)。
+#   6) 并发：ROLE=solo|scout|deepread|synth|teeth|integrator（默认 solo=旧行为）；
+#      生产者只写自己的目录且不 push，integrator 统一提交；同角色由 flock 自锁。
 set -u
 
 # ── 路径 ──
@@ -44,11 +46,38 @@ WS_REL="doc/ZhuLong_DAC2027/benchmark"
 # 编排 agent 的模型（opencode 的 provider/model 格式）
 OPENCODE_MODEL="glm/glm-5.2"
 
+# ── 角色（并发用；不设 = solo，行为与旧版一致）──
+ROLE="${ROLE:-solo}"
+case "$ROLE" in
+  solo)       ROLE_DESC="单进程全流程（现状）";;
+  scout)      ROLE_DESC="选料：只读 summary.tsv + 领取 claim，写 candidates/ 与 claims/；不建 case、不改 jsonl、不 commit";;
+  deepread)   ROLE_DESC="深读：只处理已 claim 的 session，写 trace_deepreads/；不建 case、不改 jsonl、不 commit";;
+  synth)      ROLE_DESC="出题：只写 cases_staging/<task_id>/；不改主 jsonl、不 commit";;
+  teeth)      ROLE_DESC="验牙：只跑 ref/三假提交/pi，写 governance/teeth/；不改 case 内容、不 commit";;
+  integrator) ROLE_DESC="集成：唯一可写主 jsonl / reports / MEMORY 并 commit+push";;
+  *) echo "[loop] unknown ROLE=$ROLE (solo|scout|deepread|synth|teeth|integrator)"; exit 2;;
+esac
+
 # ── 时间参数 ──
 AGENT_TIMEOUT=2700        # 单次编排 opencode 最多 45 分钟
 PUSH_INTERVAL=1800        # 每 30 分钟兜底同步一次
 SLEEP_BUSY=60             # WAITING=0：约 1 分钟续跑
 SLEEP_WAIT=1800           # WAITING=1：30 分钟轮询省 token
+
+# ── 并发协作目录 + 同角色互斥锁（防同一角色起两份）──
+mkdir -p "$SCRIPT_DIR/designflow/claims" \
+         "$SCRIPT_DIR/designflow/candidates" \
+         "$SCRIPT_DIR/designflow/cases_staging" \
+         "$SCRIPT_DIR/designflow/governance/teeth" 2>/dev/null || true
+LOCK="/tmp/designflow_loop_${ROLE}.lock"
+if command -v flock >/dev/null 2>&1; then
+    exec 9>"$LOCK"
+    if ! flock -n 9; then echo "[loop] ROLE=$ROLE 已在运行（$LOCK），本进程退出。"; exit 0; fi
+fi
+
+# 仅 solo / integrator 允许提交推送（生产者只写自己的目录）
+CAN_PUSH=0
+case "$ROLE" in solo|integrator) CAN_PUSH=1;; esac
 
 # ── 通用 git sync（单仓库）──
 # 用法: git_sync_one REPO_ROOT BRANCH REL_PATHS... LAST_PUSH_FILE COMMIT_TAG
@@ -129,19 +158,34 @@ waiting_is_1() {
 while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking opencode ..."
     if [[ -f "$TASK_MD" ]]; then
+        budget_min=$(( AGENT_TIMEOUT / 60 - 5 ))
         prompt="$(< "$TASK_MD")"
+        prompt="${prompt}
+
+---
+
+## 本轮任务卡（loop 自动生成 · $(date '+%F %T')）
+- 角色：**${ROLE}** — ${ROLE_DESC}
+- 硬预算：${budget_min} 分钟（进程 ${AGENT_TIMEOUT}s 后被 timeout 终止）
+- 交付目标：**至少 1 条 case 通过自验并写入 jsonl（DoD，§3）**；预算有余就继续下一条，不设上限。
+- 结账：每 30 分钟或每 3 条提交一次；时间将尽时按 §8 轻量结账。
+- 角色边界：非 solo/integrator **不得**修改主 jsonl、不得 commit/push 主库。"
         # 🚫 剥代理环境变量：内网网关 agi-gateway.cxmt.com 不该走外网代理。
         #    ⚠️ 只作用于本行 opencode；loop 自身 git push 到内网 devops.cxmt.com 不需要代理。
         cd "$CWD" && env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
             -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
           timeout -k 15 "$AGENT_TIMEOUT" opencode run --auto -m "$OPENCODE_MODEL" "$prompt" < /dev/null
-        echo "[loop] $(date '+%F %T') opencode returned (exit $?), checking git push ..."
+        echo "[loop] $(date '+%F %T') opencode returned (exit $?), role=$ROLE, checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
     fi
 
-    git_push_if_needed
+    if [ "$CAN_PUSH" = "1" ]; then
+        git_push_if_needed
+    else
+        echo "[loop] $(date '+%F %T') ROLE=$ROLE 为生产者，跳过推送（由 integrator 统一提交）"
+    fi
 
     # 自适应睡眠：只认行首的 WAITING 字段
     if waiting_is_1; then
