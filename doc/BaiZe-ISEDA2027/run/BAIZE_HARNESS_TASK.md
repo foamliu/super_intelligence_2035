@@ -1,16 +1,6 @@
 # BAIZE_HARNESS_TASK.md
 
-### 🚨 2026-10-30 22:2x 运维直令：把恒为 0 分的 harness 调试跑通 · 最高优先
-
-> **用户令**：「SWE-bench Verified 是否有几个 harness 分数始终是 0，调试跑通。」
-
-1. **先出归因表（不许猜）**：对全部 runner（cline / opencode / pi / claude-code / codex / hermes / deepseek）列出：已跑题数 n、pass 数、是否"恒 0"（n≥5 且 pass=0）、错误分类（适配器/凭证/容量/上游 5xx/超时/其实判错）。
-   - 已知线索：Gen7 pilot（7×5）里 **hermes / deepseek / claude-code = 0%**；claude-code 后来进了全量，hermes/deepseek 仍"未参与"。
-2. **逐条最小复现**：每个恒 0 runner 选 1 题 smoke（原题原命令），存完整命令 + 原文日志（≤200 行）到 `reports/harness_zero_debug/<runner>/`。
-3. **修**：只准改适配器/启动参数/凭证/超时/镜像；🚫 改题、🚫 改判分、🚫 伪造分数。
-4. **验收**：修好的 runner 重跑 ≥5 题，`pass>0` 才算通；仍不通的写「根因 + 阻塞点 + 需要的运维动作」。
-5. **交付**：`reports/report_harness_zero_score_zh.html`（中文、单文件、无外链）：归因表 + 修复前后对比 + 剩余阻塞。
-6. 硬约束不变：🚫 commit 结果 JSON；hermes/deepseek 若确实不可用，如实列"未参与"，不许补数。
+> 📦 §运维令·2026-10-30 22:2x（把恒为0分的harness调试跑通·用户直令）**✅ 已完成 R988** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：7路归因表全列(attribution.md)·hermes根因=PYTHONPATH中毒→修复(run_harness.py:486-491)→verify5b 4/5 resolved(80%)✅·deepseek根因=网关SSE非标字段+超时patch丢弃bug→修复(gw_proxy_dsh.py+run_harness.py:398)→verify5b 3/5 resolved(60%)✅·报告report_harness_zero_score_zh.html(18008B,commit1c1890d83)·结果JSON未commit✅. R997-R998复核确认. 需要时再读。
 
 
 

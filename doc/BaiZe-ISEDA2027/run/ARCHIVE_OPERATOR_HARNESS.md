@@ -1579,3 +1579,22 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 **✅ R584 执行结论（2026-10-28）**：补令已补齐并复核通过。**根因**：R580 的 `.gitignore` 全用 `run/harness/**/...` 模式，而 gitignore 的 `**` 需 ≥1 层目录才匹配，**不匹配 `harness/` 直接下层的 15 个顶层评测结果 JSON**（`kimi_pilot_results*`×8、`glm53_pilot_results*`×2、`pilot_results.json`、`baseline_rewards_7x89_20261024.json`、`summary_rerun_20261025.json`、`scan_rerun_20261025.json`）→ 这些仍被跟踪；权威 `git ls-files -- .../run/harness/ | grep '\.json$'` = **204**（非白名单 17 = 15 结果 + 2 配置）。注意：补令字面命令 `git ls-files '...harness/**/*.json'` 因 shell 把 `**` 当 `*`（只 1 层）→ 只数到 187，**漏掉顶层**，故 1925/187 都不可单信，必须用 `git ls-files -- <dir> | grep` 权威法。
 本轮动作：①补令① subdir 命令全 **no-op**（`fatal: pathspec ... did not match any files`，证 `predictions/`/`jobs_*`/`oracle_check/`/`logs/`/`*_results*`/`eval_*`/`*verified_full_*` 已 untrack + gitignore）；②`git rm --cached` 15 个顶层结果 JSON（**本地文件全保留**）；③`.gitignore` 加顶层模式 `run/harness/*_results*.json` / `baseline_rewards_*.json` / `summary_rerun_*.json` / `scan_rerun_*.json`（防 loop `git add -- harness` auto-commit 再跟踪）；④**复核通过**：权威 `git ls-files -- .../run/harness/ | grep '\.json$' | wc -l` = **189**（≤200），非白名单 = **0**（仅 instances/+enriched_+2 配置），`predictions/jobs/oracle/logs` 跟踪 JSON = **0**；补令字面 `**` 命令 = 187。`instance_selection_100.json` + `swebench_verified_manifests.json` 属「配置/infra」白名单，保留跟踪。③永久硬约束（每轮 predict/eval 后禁止 commit 结果 JSON）继续生效。commit `harness R584`。
 
+
+## 归档 2026-10-31（由 BAIZE_HARNESS_TASK.md 搬入，原文未改）
+
+> 搬入：2026-10-31 R998。恒0分调试任务已交付并 commit（R984-R988, commit 1c1890d83）。原文未改，仅搬迁；完成结论见任务书对应 1 行指针。
+
+### [运维令] 2026-10-30 22:2x（把恒为 0 分的 harness 调试跑通）· 用户直令 · 最高优先
+
+> **用户令**：「SWE-bench Verified 是否有几个 harness 分数始终是 0，调试跑通。」
+
+1. **先出归因表（不许猜）**：对全部 runner（cline / opencode / pi / claude-code / codex / hermes / deepseek）列出：已跑题数 n、pass 数、是否"恒 0"（n≥5 且 pass=0）、错误分类（适配器/凭证/容量/上游 5xx/超时/其实判错）。
+   - 已知线索：Gen7 pilot（7×5）里 **hermes / deepseek / claude-code = 0%**；claude-code 后来进了全量，hermes/deepseek 仍"未参与"。
+2. **逐条最小复现**：每个恒 0 runner 选 1 题 smoke（原题原命令），存完整命令 + 原文日志（≤200 行）到 `reports/harness_zero_debug/<runner>/`。
+3. **修**：只准改适配器/启动参数/凭证/超时/镜像；🚫 改题、🚫 改判分、🚫 伪造分数。
+4. **验收**：修好的 runner 重跑 ≥5 题，`pass>0` 才算通；仍不通的写「根因 + 阻塞点 + 需要的运维动作」。
+5. **交付**：`reports/report_harness_zero_score_zh.html`（中文、单文件、无外链）：归因表 + 修复前后对比 + 剩余阻塞。
+6. 硬约束不变：🚫 commit 结果 JSON；hermes/deepseek 若确实不可用，如实列"未参与"，不许补数。
+
+**✅ R988 执行结论（2026-10-31）**：恒0分调试任务完成。归因表7路全列（attribution.md）；smoke hermes+deepseek PASS；根因：hermes=PYTHONPATH中毒（run_harness.py:486-491修复），deepseek=网关SSE非标字段（gw_proxy_dsh.py rewrite_sse_event修复）+超时patch丢弃bug（run_harness.py:398修复）；验收：verify5b docker eval hermes 4/5 resolved(80%)+deepseek 3/5 resolved(60%)，pass>0✅；报告 report_harness_zero_score_zh.html(18008B, commit 1c1890d83)；硬约束：verify5b结果JSON未commit✅。R997复核确认+4个漏网verify5b JSON已untrack(0147c7d25)。R998再次复核确认完整。
+
