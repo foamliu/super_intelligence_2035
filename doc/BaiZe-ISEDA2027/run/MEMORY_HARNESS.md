@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R987 恒0分harness调试: deepseek eval 2/4 resolved(sympy✅+sklearn✅)+超时patch丢弃bug修复(run_harness.py:398). hermes 4/5 resolved✅. cline/opencode full500 predict完成(500/500)✅. psf predict运行中.
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R954 5路eval✅·R983归因表✅·R984 hermes+deepseek smoke PASS✅·R985 deepseek verify启动✅·R986 docker eval两路PASS(hermes4/5+deepseek1/2)✅·R987 sphinx+sklearn eval+超时patch修复+报告刷新✅
-当前动作:     R987 ①超时patch丢弃bug修复(run_harness.py:398)②sphinx patch恢复注入(1702B)③re-merge deepseek predictions(4/5)④sklearn docker eval完成(resolved=true✅)⑤deepseek eval总计2/4 resolved(sympy✅+sklearn✅,django❌+sphinx❌)⑥报告report_harness_zero_score_zh.html刷新(17676B)⑦cline/opencode full500 predict完成(500/500)⑧psf predict运行中(PID3830298,251s)
-下一步:       ①psf predict完成→re-merge→re-eval补齐5题完整集②cline/opencode full500 eval启动(incr_eval)③最终报告刷新④predict 3路继续(pi420/claude352/codex425)⑤永久硬约束:禁止commit结果JSON
+PHASE:        R988 恒0分harness调试✅完成: hermes verify5b 4/5 resolved(80%)+deepseek verify5b 3/5 resolved(60%), 两路均pass>0✅. 报告report_harness_zero_score_zh.html数据驱动刷新(15493B). cline/opencode full500 predict完成(500/500)✅.
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R954 5路eval✅·R983归因表✅·R984 hermes+deepseek smoke PASS✅·R985-R986 verify启动+eval PASS✅·R987 deepseek 2/4+超时patch修复✅·R988 verify5b完整5题eval✅(hermes4/5+deepseek3/5)+报告数据驱动✅
+当前动作:     R988 ①hermes verify5b eval 5题(4/5 resolved:sympy/sphinx/sklearn/psf✅,django❌模型能力)②deepseek verify5b eval 5题(3/5 resolved:sympy/sklearn/psf✅,django/sphinx❌模型能力)③报告生成器改数据驱动(读report.json+eval summary)④报告report_harness_zero_score_zh.html刷新(15493B,无cline-patched,无script,无外链)⑤验收判据满足(≥5题pass>0)
+下一步:       ①cline/opencode full500 eval启动(incr_eval)②hermes/deepseek full500 predict启动(闸门已过)③predict 3路继续(pi/claude-code/codex)④永久硬约束:禁止commit结果JSON
 阻塞:         无.
 ERROR_COUNT:  0
-📦 体积：TASK=36531B(35.7KB,<40KB红线,活跃令不可归档) / MEMORY≈32KB
+📦 体积：TASK=36531B(35.7KB,<40KB红线,活跃令不可归档) / MEMORY=29658B(29.0KB)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[01:44] R988 恒0分harness调试✅完成(verify5b完整5题eval). ①**hermes verify5b eval 5题=4/5 resolved(80%)**: sympy✅sphinx✅sklearn✅psf✅,django❌(patch应用成功,测试未全通过=模型能力,infra=0,error=0). run_id=verify5b_hermes,汇总resolved_instances=4,unresolved=1. ②**deepseek verify5b eval 5题=3/5 resolved(60%)**: sympy✅sklearn✅psf✅,django❌+sphinx❌(均模型能力,infra=0,error=0). run_id=verify5b_deepseek,汇总resolved_instances=3,unresolved=2. ③**报告生成器改数据驱动**: gen_report_harness_zero_score_zh.py读取report.json+eval_*.json+progress_*.json,ATTRIBUTION/FULL500_STATUS/§4逐题明细/§7对比表全部由数据生成. ④**报告report_harness_zero_score_zh.html刷新**(15493B,验证:无cline-patched✅·无script✅·无外链✅·hermes4/5+deepseek3/5✅). ⑤**验收判据满足**: 用户令「重跑≥5题且pass>0」——hermes4/5✅+deepseek3/5✅,7路无一路因模型能力恒0,hermes/deepseek的0%=适配器回归(已修复). ⑥**psf predict完成**(1436B,deepseek)+re-merge(5/5)+re-eval补齐. 判据:恒0分调试运维令已完成→WAITING=0(full500运维令10-28仍在途,continue).
 [01:20] R987 恒0分harness调试: deepseek eval 2/4 resolved+超时patch修复. ①**超时patch丢弃bug修复**: run_harness.py:398 DeepseekHarnessDriver原逻辑超时(rc≠0)时丢弃patch→sphinx predict超时(1893s>1800s)但agent已产出真实patch(1702B). 已修: 超时也提取git diff. ②**sphinx patch恢复**: git diff提取1702B→注入prediction JSON→re-merge(3/5). ③**sphinx docker eval**: resolved=false,patch应用成功,测试未全通过(模型能力非infra). ④**sklearn predict完成**(1547B)+**sklearn docker eval resolved=true✅**(test_ridge_classifier_cv_store_cv_values). ⑤**deepseek eval总计2/4 resolved**: sympy✅+sklearn✅+django❌+sphinx❌,pass>0确认✅. ⑥**hermes eval 4/5 resolved**. ⑦报告report_harness_zero_score_zh.html刷新(17676B). ⑧**cline/opencode full500 predict完成(500/500)✅**. predict进度: cline500·opencode500·pi420·claude352·codex425. ⑨psf predict运行中(PID3830298,251s). 判据: deepseek verify未达5题→WAITING=0.
 [00:39] R985 deepseek smoke v2 PASS(1649.4s,1904B)+verify predict启动(django注入+sympy945B).
 [00:20] R984 hermes smoke PASS(314.8s,1957B,PYTHONPATH中毒修复)+deepseek smoke BREAKTHROUGH(SSE修复).
