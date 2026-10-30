@@ -18,10 +18,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.3%,字节增长~22MB/s).候选表已扩充至49行
-已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID471618 hf download运行中,10453/12126parquet=86.3%,8.incomplete活跃,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 49行+DATA_MAPPING.md D节,新增nemo_experiments645G+Instruct-Data5.5T等11条目)
-当前动作:     唤醒989(2026-10-31 07:15):复核85M下载→3x du -sb判活:T1=40,306,885,318,519→T2=40,309,495,860,533(+2.61GB/2min≈21.8MB/s✓)→T3=40,318,281,175,566(+8.79GB/3min≈48.8MB/s✓)连续递增→8.incomplete全mtime07:13新鲜→parquet10453/12126=86.3%→候选表扩充11新条目(nemo_experiments645G/mvp-lab Instruct-Data5.5T等)→DATA_MAPPING.md D节同步更新→心跳
-下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,剩余1673parquet≈6.5TB);②待运维批准后执行删除
+PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.3%,字节增长~10.9MB/s).候选表49行已交付
+已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID471618 hf download运行中,10457/12126parquet=86.3%,8.incomplete活跃,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 49行+DATA_MAPPING.md D节)
+当前动作:     唤醒990(2026-10-31 07:48):复核85M下载→2x du -sb判活:T1=40,329,846,243,630→T2=40,331,158,121,370(+1.31GB/~2min≈10.9MB/s✓)连续递增→8.incomplete全mtime07:29-07:30新鲜→parquet10457/12126=86.3%→候选表49行确认→心跳
+下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,剩余1669parquet≈6.5TB);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(A+B均已交付)
@@ -30,7 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [当前] 唤醒989(07:15)：复核85M下载+扩充候选表 → ①ps确认PID2668156(bash脚本,etimes≈8h,ppid=1)+PID471618(hf download,etimes=495s≈8min,ppid=2668156)活跃;②3x du -sb判活:T1=40,306,885,318,519→T2=40,309,495,860,533(+2,610,542,014B/2min≈21.8MB/s✓)→T3=40,318,281,175,566(+8,785,315,033B/3min≈48.8MB/s✓)连续递增;③8.incomplete(sa1b/EN/part01_0)全mtime07:13新鲜,sizes1.1-1.8GB,无失败shard;④parquet10,453/12,126=86.3%;⑤候选表扩充:新增11条目(nemo_experiments645G/692,340,206,072B+Instruct-Data5.5T/5,989,056,868,520B+Quick-Start-3M149G+NeXT-780k101G+LLaVA-RL30G+output22G+p6_tf5302M可删+hf_checkpoints8.9G+flash-attention8.9G+RL-Data19G+conversion_work7.1G)→TSV从38行→49行;⑥DATA_MAPPING.md D节同步更新(Top-5可释放~12.9T);⑦df:/nas_train173T/207T(84%),/nas_env8.3T/10T(84%);⑧hardlink确认:text/与tokenized/同inode(link=2),实占仅text/8.3T→心跳
+> [当前] 唤醒990(07:48)：复核85M下载+候选表确认 → ①ps确认PID2668156(bash脚本,etimes=30709s≈8.5h,ppid=1)+PID471618(hf download,etimes=1542s≈25min,ppid=2668156)活跃;②2x du -sb判活:T1=40,329,846,243,630→T2=40,331,158,121,370(+1,311,877,740B/~2min≈10.9MB/s✓)连续递增;③8.incomplete(sa1b/EN/part01_0×7+part01_1×1)全mtime07:29-07:30新鲜,sizes 0-4.3GB,无失败shard;④parquet10,457/12,126=86.3%(+4vs989);⑤候选表49行确认(cleanup_candidates_20261030.tsv,3可删+9保留+37待定);⑥df:/nas_train173T/207T(84%),/nas_env8.3T/10T(84%);⑦log确认sa1b/EN/part01_0下载中(6.56it/s,ETA~4h1669files)→心跳
+> 📦 唤醒989(10-31 07:15)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长22-49MB/s+候选表扩充至49行,详见日文件）
 > 📦 唤醒987(10-31 07:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长34MB/s+候选表确认,详见日文件）
 > 📦 唤醒986(10-31 06:55)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长22MB/s+候选表确认,详见日文件）
 > 📦 唤醒985(10-31 06:52)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长68MB/s+候选表确认,详见日文件）
