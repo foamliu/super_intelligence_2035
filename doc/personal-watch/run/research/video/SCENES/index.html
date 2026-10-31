@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-10-31</td>
+    <td><i>PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</i><br><code>arXiv:2610.40530</code>（Lidong Lu, Jiaxin Lv, Liangrui Dong 等 8 位 · 南京大学 + NVIDIA）</td>
+    <td><b>照片里「看见几次」≠「有几个东西」</b>：一个杯子在镜子里出现三次，实体还是一个。<b>PhysCount</b> = <b>546</b> 张真实照片 / <b>651</b> 组目标 / <b>4,595</b> 道人工题 / <b>137</b> 类目标，共 <b>7,086</b> 次出现（<b>2,416</b> 直接 + <b>3,996</b> 镜面 + <b>674</b> 隔玻璃）；四类问题拆开考「数出现 / 数实体 / 怎么成像 / 哪几次是同一个」。<b>40 个多模态模型</b>：最强 <b>Gemini 3.7 Flash</b> 整体 Score <b>36.45</b>、<b>整组全对率仅 13.36%</b>（5 位人类 <b>97.10 / 95.98</b>）；放大到 4,096 px 单题 Score <b>21.04 → 28.84</b>，但<b>整组正确率 1,024 px 后不再涨</b> ⇒ 短板不在清晰度；把同组问题<b>一起问</b>，Qwen3.8-27B 整组正确率 <b>7.37% → 23.96%</b>（<b>作者自报 · 本线未复现</b>；13.36% 是「整组全对率」而非单题准确率；论文 38 页）</td>
+    <td><a href="10_31.html">10_31.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-30</td>
     <td><i>HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</i><br><code>arXiv:2610.40599</code>（Yuze He, Yixiang Wei, Wang Zhao, Chuhao Chen, Yanning Zhou, Yong-Jin Liu 共 6 位 · 机构以论文首页为准）</td>
     <td><b>游戏角色的头发，不是一根根发丝</b>：业界用<b>发卡（hair cards）</b>——美术手摆的带状面片，背后挂<b>弹簧骨骼</b>驱动动画。唯一同类生成器 <b>CHARM</b> 是「逐点自回归」往下画控制点（慢且末段易乱）。<b>HairDeck</b> 把一整套发卡当<b>无序集合</b>：<b>一张发卡 = 一个 token</b>，<b>集合扩散 Transformer</b> 一次性去噪生成全部发卡，并<b>同时生成弹簧骨骼链</b> ⇒ 单张图片产出可直接导出、能动画的资产。在 <b>CHARM 自己的测试集</b>上：Chamfer 距离 <b>−44%</b>、发卡朝向误差 <b>减半以上</b>、速度 <b>33×</b>；单图输入下胜过 CHARM / 通用 image-to-3D / 基于 strand 的方法（<b>作者自报 · 本线未复现</b>；对比基线为唯一同类生成器 + 通用方法；论文 27 页 / 23 图）</td>
@@ -163,7 +169,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-30 18:3x CST（新增 <code>10_30.html</code> · TOP-1 = HairDeck: Animation-Ready Stylized Hair Cards from a Single Image / <code>arXiv:2610.40599</code> · 5 镜 / 120s / 口播 406 字（逐镜含标点 465 字符；录制建议删句至 ≤430，见附录）；上一版 <code>10_29.html</code> · <code>arXiv:2610.36195</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-31 18:4x CST（新增 <code>10_31.html</code> · TOP-1 = PhysCount: Do MLLMs Count Visual Appearances or Physical Entities? / <code>arXiv:2610.40530</code> · 5 镜 / 120s / 口播 386 字（逐镜含标点 497 字符，200 字/分 ≈ 116s，无需删句）；上一版 <code>10_30.html</code> · <code>arXiv:2610.40599</code>）<br>
 </footer>
 </div>
 </body>

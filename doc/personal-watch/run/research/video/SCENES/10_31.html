@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-31 · AI 数东西：数的是「看见几次」，还是「有几个」</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#153e75; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-31</h1>
+  <div class="sub">今日 TOP-1：<b>AI 数东西：数的是「看见几次」，还是「有几个」</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>386 字</b>（纯汉字；逐镜含标点 <b>497</b> 字符）</div>
+  <div class="meta">
+    <span>📄 PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</span>
+    <span>🆔 arXiv:2610.40530</span>
+    <span>🏫 Nanjing University + NVIDIA（8 位署名）</span>
+    <span>🗓 首次提交 2026-10-29（cs.CV · 38 页）</span>
+  </div>
+  <div class="disc">⚠️ 本页为<b>分镜脚本（V2），不是成片</b>；V3（TTS / 文生图 / 剪辑）待用户确认工具链。所有数字<b>作者自报、本线未复现</b>；<b>论文解读 · 非官方 · 非结论</b>。</div>
+</header>
+
+<h2 class="sec">📄 选题卡（为什么选它）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Lidong Lu, Jiaxin Lv, Liangrui Dong, …（<b>8 位署名</b>；据 PDF 首页：<b>Nanjing University</b> + <b>NVIDIA</b>）</div></div>
+  <div class="row"><div class="k">日期 / 规格</div><div class="v">首次提交 <b>2026-10-29</b>（<code>published=2026-10-29T17:33:34Z</code>，无 v2）· 分类 <code>cs.CV</code> · PDF 实测 <b>38 页</b> / 107,479 字符（去空白）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.40530">https://arxiv.org/abs/2610.40530</a> ｜ 项目页 <code>PhysCount.github.io</code>（作者声明）</div></div>
+  <div class="row"><div class="k">一句话</div><div class="v">照片里「<b>看见几次</b>」不等于「<b>有几个东西</b>」：一个杯子在镜子里出现三次，实体还是一个。作者建 <b>PhysCount</b>（<b>546</b> 张真实照片 / <b>651</b> 个目标组 / <b>4,595</b> 道人工题 / <b>137</b> 类目标），用四类问题把「数出现」和「数实体」拆开考，<b>40 个多模态模型</b>上数「出现」明显容易、数「实体」明显难。</div></div>
+  <div class="reason kp-box" style="margin-top:12px;">
+    <b>为什么选它做《论文两分钟》</b>（四问 · 本线判断）：
+    <ol>
+      <li><b>大众能懂 + 有画面</b>：「镜子里出现三个杯子，桌上有几个杯子」是<b>人人都有直觉</b>的题；画面只需要<b>镜子、玻璃、杯子</b>三类自绘图标，不需要任何公式。</li>
+      <li><b>反直觉、有钩子</b>：直觉以为「AI 看图数数」早就解决了；结果最强的模型在<b>一组题全部答对</b>上只有 <b>13.36%</b>，人类 <b>95.98%</b>。而且<b>把图放大也救不回来</b> —— 这是天然的第二层反转。</li>
+      <li><b>可讲清</b>：核心只有两句 —— ①「出现」和「实体」是两件事；② 模型缺的不是清晰度，而是「<b>把同一个东西的多次出现归并成一个</b>」。不必搬全篇 38 页。</li>
+      <li><b>有真实来源、数字干净</b>：<code>arXiv:2610.40530</code> + 三个可上屏的对比（<b>13.36% vs 95.98%</b>、<b>21.04 → 28.84</b>、<b>7.37% → 23.96%</b>），均出自原文摘要与主表。</li>
+    </ol>
+    ⚠️ 若担心「计数题太小众」：本篇真正的看点是<b>「模型的短板有时候不在看得清不清，而在有没有把碎片归并成一个」</b> —— 口播镜 5 已把这层剥出来，与计数本身无关。
+  </div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:96px;">时间轴</th><th style="width:96px;">段落</th><th style="width:30%;">口播文案</th><th style="width:26%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">两面镜子对着放，中间摆一个杯子 —— 照片里，杯子出现了好几个。那桌上，到底有几个杯子？</td>
+    <td>竖版：<b>俯拍桌面</b>，一个杯子居中，左右两面镜子（自绘矢量），镜中<b>一个接一个</b>排出杯子的倒影，越远越淡。镜头快速<b>拉远</b>，倒影数量随视角变化，形成「越数越多」的错觉。</td>
+    <td>「照片里 = <b>好几个</b>」<br>「桌上 = <b>几个</b>？」</td>
+    <td>玻璃「叮」；BGM 轻悬疑，70 BPM。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">人一眼就知道：影子出现了很多次，东西只有一个。可换成 AI 来看，这两件事它常常分不开 —— 镜子里的影子、玻璃后面的影子，都会被它当成另一个东西，一个一个数进去。这篇论文，就专门造了一套题来考这件事。</td>
+    <td>①左半屏：<b>人眼图标</b>看向画面，倒影被一条<b>虚线</b>连回同一个杯子，标「1 个东西」；②右半屏：<b>模型图标</b>，倒影被一个个<b>红框</b>圈住并编号「1、2、3、4」，标「4 个东西」；③画面下方浮出一叠<b>题卡</b>，示意「造了一套题」。</td>
+    <td>「出现 ≠ 实体」<br>「影子被当成另一个东西」</td>
+    <td>红框「咔」×4（略急促）；BGM 降到 −6 dB。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">他们拍了 546 张真实照片，标出 651 组目标、4,595 道人工题，覆盖 137 类东西。照片里一共七千多次出现：两千四百多次是直接看到，三千九百多次是镜面反射，六百多次是隔着玻璃看到。每组照片要回答四类问题：看见几次、实际有几个、它们是怎么成像的、哪几次出现属于同一个东西。然后再拿 40 个多模态模型来答。</td>
+    <td>①四个大数字依次<b>弹入</b>：546 / 651 / 4,595 / 137，每个配一张<b>极简自绘缩略图</b>（照片框 / 分组框 / 题卡 / 图标网格）；②一条<b>横向堆叠条</b>把 7,086 次出现拆成三段：直接 2,416（实心绿）/ 镜面 3,996（斜纹蓝）/ 隔玻璃 674（点纹灰），三段<b>同步点亮</b>、比例按真实数字；③四类问题以<b>四张题卡</b>并排出现，卡面各画一个示意场景（同一实体多次出现被虚线连起）；④最后一格：<b>40 个小方块</b>排成网格，逐格亮起，示意「40 个模型逐个上考场」。</td>
+    <td>「546 张 / 651 组 / 4,595 题」<br>「7,086 次出现：2,416 直接 · 3,996 镜面 · 674 隔玻璃」<br>「四问：几次 / 几个 / 怎么成像 / 哪几次是同一个」<br>「40 个多模态模型」</td>
+    <td>数字弹入「啵」×4；堆叠条「唰」；题卡翻页「啪」×4；40 格亮起用<b>低频扫频</b>（不做连击，避免误导为「快」）。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结论很干脆：数「出现」容易，数「东西」难。最强的模型，一组题全部答对的只有一成三；五位人类是九成六。把图片放大到四千像素，单题分数从二十一涨到二十八，可是过了一千像素，整组正确率就不再涨 —— 它缺的不是清晰度。</td>
+    <td>①两条<b>水平柱</b>对比：模型 <b>13.36%</b> vs 人类 <b>95.98%</b>（人类柱实心，模型柱斜纹）；②接着一条<b>折线</b>：横轴分辨率 512 → 1,024 → 2,048 → 4,096，纵轴 Score <b>21.04 → 28.84</b> 上升，但另一条「整组正确率」曲线<b>在 1,024 之后平掉</b>，用红圈标出「<b>不再涨</b>」；③画面角落<b>常驻小字</b>「作者自报 · 本线未复现」。</td>
+    <td>整组全对率 <b>13.36%</b>（人类 <b>95.98%</b>）<br>Score <b>21.04 → 28.84</b><br>整组正确率 <b>1,024 px 后不再涨</b><br><span style="font-size:11.5px;">（作者自报 · 本线未复现）</span></td>
+    <td>柱条「啵」×2；折线走笔「嘶」；平掉处一声<b>闷响</b>；BGM 抬 2 dB。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">更有意思的是：把同一组问题一起给它，Qwen3.8-27B 的整组正确率从 7% 跳到 24%。所以短板不在眼睛，在于它不会把同一个东西的多次出现，归并成一个。论文链接在简介。</td>
+    <td>①把镜 1 的倒影<b>收束回一个杯子</b>（红框全部溶解成一根虚线）；②一组题卡<b>合并成一叠</b>同时递入模型图标，数字从 <b>7.37%</b> 顶到 <b>23.96%</b>；③定格片尾卡：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.40530</b> + 「<b>论文解读 · 非官方 · 非结论</b>」。</td>
+    <td>「一起问：<b>7.37% → 23.96%</b>」<br>「短板不在眼睛，在<b>归并</b>」</td>
+    <td>BGM 收尾；片尾单音「叮」后留 1s 静音。</td>
+  </tr>
+</table>
+
+
+<h2 class="sec">📝 口播全文（可直接念 · 386 字）</h2>
+<div class="card">
+  <p class="vo">两面镜子对着放，中间摆一个杯子 —— 照片里，杯子出现了好几个。那桌上，到底有几个杯子？</p>
+  <p class="vo">人一眼就知道：影子出现了很多次，东西只有一个。可换成 AI 来看，这两件事它常常分不开 —— 镜子里的影子、玻璃后面的影子，都会被它当成另一个东西，一个一个数进去。这篇论文，就专门造了一套题来考这件事。</p>
+  <p class="vo">他们拍了 546 张真实照片，标出 651 组目标、4,595 道人工题，覆盖 137 类东西。照片里一共七千多次出现：两千四百多次是直接看到，三千九百多次是镜面反射，六百多次是隔着玻璃看到。每组照片要回答四类问题：看见几次、实际有几个、它们是怎么成像的、哪几次出现属于同一个东西。然后再拿 40 个多模态模型来答。</p>
+  <p class="vo">结论很干脆：数「出现」容易，数「东西」难。最强的模型，一组题全部答对的只有一成三；五位人类是九成六。把图片放大到四千像素，单题分数从二十一涨到二十八，可是过了一千像素，整组正确率就不再涨 —— 它缺的不是清晰度。</p>
+  <p class="vo">更有意思的是：把同一组问题一起给它，Qwen3.8-27B 的整组正确率从 7% 跳到 24%。所以短板不在眼睛，在于它不会把同一个东西的多次出现，归并成一个。论文链接在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure、表格与照片截图（PhysCount 的照片本身受版权与隐私约束，<b>一律不引用</b>）；镜子 / 玻璃一律画成<b>「半透明面 + 左侧一道高光」</b>的示意，倒影用<b>降透明度</b>区分，避免与真实照片混淆。</li>
+  <li><b>数字上屏规则</b>：每个百分比 / 倍数第一次出现时，字幕必须带「<b>作者自报 · 本线未复现</b>」小字；口播把 13.36% 念「一成三」、95.98% 念「九成六」、7.37% 念「7%」（字幕仍写精确值），<b>不把「整组全对率」念成「准确率」</b>。</li>
+  <li><b>不能混的口径</b>：13.36% = <b>「整组题全部答对」的比例</b>，<b>不是</b>单题准确率（单题指标显著更高，例如外观计数的归一化绝对误差 NAE ≈ 20%）；21.04 → 28.84 是<b>提高输入分辨率</b>时的整体 Score，<b>与「整组全对率」是两条不同曲线</b>，字幕必须分两行写；7.37% → 23.96% 是<b>把同一组题一起提问</b>的对照，不是训练改动的结果。</li>
+  <li><b>术语处理</b>：<code>appearance</code> 念「出现（次数）」、<code>entity</code> 念「实体 / 东西」；<code>mirror reflection</code> 念「镜面反射」、<code>through glass</code> 念「隔着玻璃」；<code>MLLM</code> 念「多模态模型」，<b>不解释架构</b>。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜），每 8–10s 必须有画面变化；BGM 在方法段低音量、结果段抬 2 dB。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：镜 1 <b>35</b> 字 / 镜 2 <b>83</b> 字 / 镜 3 <b>119</b> 字 / 镜 4 <b>88</b> 字 / 镜 5 <b>61</b> 字 ⇒ 纯汉字 <b>386</b>（逐镜含标点共 <b>497</b> 字符）；按 <b>200 字/分 ≈ 116s</b>，天然留 ~4s 给画面停顿，<b>无需删句</b>。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 195–205 字/分；数字前后各留 80ms 停顿；「Qwen3.8-27B」读作「Qwen 三点八，二十七 B」。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2610.40530</code>）。</li>
+    <li><b>不夸大</b>：禁用「AI 不会数数 / 多模态模型全军覆没 / 人类完胜」等表述；原文只支持「40 个 MLLM 在 PhysCount 上数实体明显难于数出现；最强模型整组全对率 13.36%，5 位人类 97.10 / 95.98」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>546</code> / <code>651</code> / <code>4,595</code> / <code>137</code> / <code>7,086</code> / <code>2,416</code> / <code>3,996</code> / <code>674</code> / <code>36.45</code> / <code>13.36%</code> / <code>97.10</code> / <code>95.98</code> / <code>21.04 → 28.84</code> / <code>7.37% → 23.96%</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成，<b>不使用论文中的真实照片</b>（示例场景用示意图重画）。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；如需借鉴版解读，见当日日报 <code>research/daily/2026-10-31.html</code>。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；Range 分段续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见日报附录 E）。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · <code>research/video/SCENES/10_31.html</code> ｜ TOP-1 = <i>PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</i>（<code>arXiv:2610.40530</code>）· 5 镜 / 120s / 口播 386 汉字（逐镜 497 字符） ｜ 数据源：当日 <code>research/daily/2026-10-31.html</code> 5 篇（早 3 借鉴 + 晚 2 科普）。</p>
+  <p>🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片：TTS / 文生图 / 剪辑）待用户确认工具链。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+</footer>
+</div>
+</body>
+</html>
+
