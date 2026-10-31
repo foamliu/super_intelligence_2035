@@ -1,9 +1,11 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 16:14 #1012：**S1健康监控 + 审计任务复核**。确认15:2x运维令(#1011)已完整交付：commit ff6721da0(6处.tex修正+报告24.6KB+编译ERR=0/6页)。S1健康：iter 31970/700k(4.57%), loss 2.160, 0NaN, grad-norm 0.103, ~7s/step≈593K tok/s, ckpt@30000(下个@32000)。未完成指令：无。📦 体积：TASK=30.3KB / MEMORY=31.2KB。
+> 🆕 2026-10-31 16:41 #1013：**论文审计复核补遗**。#1011已交付6处修改(commit ff6721da0)，本轮全文复核对账发现1处遗漏：3_arch L69 stage(iv) MLLM "design"→"in progress"（ch7已有实测结果26.10%/26.12%，非[TBD]）。已改+重编译ERR=0/UNDEF=0/6页+报告更新(26.3KB/7处修改)。commit 2f895f418已push。S1未碰。未完成指令：无。📦 体积：TASK=30.3KB / MEMORY=31.1KB。
 
-> 📦 §#1011（10-31 15:2x, 论文全文事实审订·6处修改·commit ff6721da0）→ daily-memories/2026-10-31.md；**结论**：3_arch BF16→FP8/4096→16384/8GPU→16GPU/complete→in_progress/six删除 + 5_posttrain 4096→16384, ERR=0/6页, 报告24.6KB。被#1012复核确认。需要时再读。
+> 📦 §#1012（10-31 16:14, S1健康监控iter31970/loss2.160/0NaN/593K + 审计任务#1011复核确认）→ daily-memories/2026-10-31.md；**结论**：S1健康iter31970(4.57%), #1011确认完整交付。被#1013补遗更新。需要时再读。
+
+> 📦 §#1011（10-31 15:2x, 论文全文事实审订·6处修改·commit ff6721da0）→ daily-memories/2026-10-31.md；**结论**：3_arch BF16→FP8/4096→16384/8GPU→16GPU/complete→in_progress/six删除 + 5_posttrain 4096→16384, ERR=0/6页, 报告24.6KB。**#1013补遗**：+1处(L69 MLLM design→in_progress), 报告更新26.3KB, commit 2f895f418。需要时再读。
 
 > 📦 §#1010（10-31 15:20, S1健康监控 iter31514/700k loss~2.14 0NaN ~573K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康, iter31514(4.50%), loss~2.14稳态, ~573K tok/s, ckpt@30000。被#1011更新。需要时再读。
 
