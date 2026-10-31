@@ -1,58 +1,34 @@
-﻿\section{Introduction}\label{sec:intro}
+\section{Introduction}
 
-ZhuLong~\cite{liu2026zhulong} closes the loop on EDA scripting: four MCP tools (semantic API search, keyword search, documentation lookup, sandboxed execution) let a large language model generate PyAether, SKILL and Tcl code, run it, read the state back, and refine.
-% 中文：ZhuLong 把 EDA 脚本的闭环闭合起来：四个 MCP 工具（语义 API 检索、关键词检索、文档查询、沙箱执行）让大模型生成 PyAether/SKILL/Tcl 代码、执行、回读状态并改进。
-On a 449-task benchmark it reports $76.9\%$ pooled Pass@1, against $19.7\%$ for the same model without any harness.
-% 中文：在 449 任务的基准上，它报告合并 Pass@1 $76.9\%$，而同模型无框架时仅 $19.7\%$。
-Its central finding is negative for scaling: with the harness held fixed, six backbones span $23.7$\,pp ($76.9\%$ to $53.2\%$), while the observation axis---what \texttt{run\_code} returns---spans $57.2$\,pp.
-% 中文：其核心发现对「堆规模」是负面的：框架固定时六个骨干仅相差 $23.7$ pp（76.9\% 至 53.2\%），而观测轴——\texttt{run\_code} 返回什么——跨度为 $57.2$ pp。
-Accuracy, on this account, is a property of \emph{observation fidelity} $\varepsilon$, not of parameter count.
-% 中文：按这一解释，准确率是 \emph{观测保真度} $\varepsilon$ 的属性，而非参数量的属性。
+Large language models have recently demonstrated agentic capabilities---planning, tool invocation, and long-horizon reasoning---that make them attractive cores for intelligent assistants spanning chip design, verification, and other domains of electronic design automation.
+% 中文：大语言模型近来展现出智能体能力——规划、工具调用与长程推理——这使其成为覆盖芯片设计、验证及其他电子设计自动化领域的智能助手的理想内核。
+However, state-of-the-art agent backbones are routinely 7\,B parameters or larger, demanding high-end accelerators and memory footprints that are incompatible with edge, embedded, and cost-sensitive deployments where inference latency and energy are first-class constraints.
+% 中文：然而，最先进的智能体骨干网络通常为 70 亿参数或更大，需要高端加速器与大显存，这与边缘、嵌入式以及对成本敏感的部署场景不兼容——在这些场景中，推理时延与能耗是第一等约束。
+The constraint is sharper than raw cost in the settings we target: proprietary design artifacts---layouts, schematics and review judgements---cannot leave the premises, so an agentic core must be served locally; and because an agentic session accumulates context, what dominates serving cost is not prompt throughput but the memory that grows with the session.
+% 中文：在我们面向的场景中，这一约束比单纯的成本更严苛：专有的设计产物——版图、原理图与评审判断——不能离开本地，因此智能体内核必须在本地部署；并且由于智能体会话会累积上下文，主导服务成本的并非提示词吞吐，而是随会话增长的内存占用。
+For a hybrid backbone this is architectural: only the four attention layers carry a session-growing state, while the Mamba-2 layers hold a constant-size recurrent one.
+% 中文：对混合骨干网络而言，这是架构层面决定的：只有 4 个注意力层携带随会话增长的状态，而 Mamba-2 层持有恒定大小的循环状态。
 
-That conclusion leaves two engineering questions unanswered, and they are the ones a deployment team actually faces.
-% 中文：该结论留下两个工程问题未答，而这两个正是落地团队真正面对的。
-\textbf{First, cost.} ZhuLong's full configuration spends $\approx$710k input tokens, $10.6$ \texttt{run\_code} calls and $464$\,s of net-active time per task; removing retrieval pushes the time to $981$\,s ($2.1\times$).
-% 中文：第一是成本。ZhuLong 完整配置每任务约 710k 输入 token、10.6 次 \texttt{run\_code}、464 秒净活跃时间；去掉检索后耗时升至 981 秒（2.1 倍）。
-At fleet scale these are the dominant terms, and proprietary layouts, schematics and review judgements cannot leave the premises anyway, so the alternative to a local small model is not a hosted large model but no model at all.
-% 中文：在规模化部署中，这些是主要成本项；而专有版图、原理图与评审判断本就无法出内网，因此本地小模型的替代品不是托管大模型，而是根本没有模型。
-For an agentic session the binding resource is not prompt throughput but the state that grows with accumulated context; in a hybrid backbone only the four attention layers carry that state, while the 52 Mamba-2 layers hold a constant-size recurrent one.
-% 中文：对智能体会话而言，真正的瓶颈资源不是提示词吞吐，而是随上下文累积增长的状态；在混合骨干中只有 4 个注意力层携带该状态，其余 52 层 Mamba-2 持有恒定大小的循环状态。
-\textbf{Second, observation.} Layout and schematic views account for $70.2\%$ of the benchmark's tasks, yet ZhuLong is a text-only agent: it can manipulate these artifacts only through scripts, never look at them.
-% 中文：第二是观测。版图与原理图视图占基准任务的 $70.2\%$，但 ZhuLong 是纯文本智能体：它只能通过脚本间接操作这些产物，无法「看」它们。
-Waveforms are the same story---period, edge count, glitch and threshold crossing are quantities that text represents poorly.
-% 中文：波形同理——周期、边沿数、毛刺与阈值穿越这些量，用文本表达效果很差。
+Recent small language models (SLMs, $<\,$2\,B) have closed much of the gap with larger counterparts on single-turn benchmarks, but building such a model \emph{from scratch} remains an under-documented engineering problem.
+% 中文：近期的小语言模型（SLM，$<$ 20 亿参数）已在单轮基准上大幅缩小与更大模型的差距，但从零构建这样一个模型仍是一个缺乏文档记录的工程问题。
+Every choice---architecture, optimizer, learning-rate schedule, data mixture---interacts with every other, and a naive grid search is prohibitively expensive.
+% 中文：每一个选择——架构、优化器、学习率调度、数据配比——都与其他选择相互影响，而朴素的网格搜索代价高昂到不可行。
+Our goal is therefore twofold: (i) to construct, from scratch and on a strictly limited compute budget, an end-to-end multimodal agentic system---an efficient hybrid language core paired with a custom vision encoder, aligned into a semiconductor-domain agent---and (ii) to expose the concrete, reproducible decisions that lead to it.
+% 中文：因此我们的目标有两重：(i) 在严格受限的算力预算下从零构建一个端到端多模态智能体系统——一个高效的混合语言内核配以自研视觉编码器，并对齐为半导体领域智能体；(ii) 把导向这一结果的具体且可复现的决策过程完整公开。
 
-\paragraph{This paper.}
-We build \llm, an end-to-end system trained from scratch in five stages---(i) language pre-training, (ii) agentic post-training, (iii) vision-encoder pre-training, (iv) multimodal alignment, (v) semiconductor-domain adaptation---and use it to answer both questions.
-% 中文：本文。我们构建 \llm——一个从零分五阶段训练的系统：(i) 语言预训练、(ii) 智能体后训练、(iii) 视觉编码器预训练、(iv) 多模态对齐、(v) 半导体领域适配——并用它回答上述两个问题。
-Stages~(i) and~(iii) are complete; stages~(ii), (iv) and~(v) are specified as protocols whose measurements are placeholders.
-% 中文：第 (i)(iii) 阶段已完成；第 (ii)(iv)(v) 阶段以协议形式给出，其测量值为占位。
-We state this openly because the contribution we claim is not a finished leaderboard entry but a set of \emph{testable} claims with pre-registered failure conditions.
-% 中文：我们坦白这一点，因为我们主张的贡献不是一张完成的榜单成绩，而是一组带预注册失败条件的 \emph{可检验} 主张。
+\paragraph{BaiZe.}
+We present BaiZe, an end-to-end multimodal agentic system assembled from scratch across five stages: (i) pre-training a $\approx$2.2B-parameter hybrid (state-space + attention) LLM, (ii) post-training it for agentic capability, (iii) pre-training a custom vision encoder, (iv) aligning the two into a multimodal model, and (v) adapting the result to the semiconductor domain.
+% 中文：BaiZe。我们提出 BaiZe，一个从零开始、由五个阶段组装而成的端到端多模态智能体系统：(i) 预训练一个约 22 亿参数的混合（状态空间+注意力）LLM；(ii) 为智能体能力进行后训练；(iii) 预训练自研视觉编码器；(iv) 将两者对齐为多模态模型；(v) 将其适配到半导体领域。
+Three design pillars organise our work:
+% 中文：三项设计支柱组织起我们的工作：
 
-\paragraph{Claims.}
-\textbf{A (efficiency).} Under ZhuLong's harness, the 2.2B hybrid reaches pooled Pass@1 no lower than the weakest measured backbone ($53.2\%$), at materially lower per-task serving cost.
-% 中文：主张 A（效率）：在 ZhuLong 的框架下，2.2B 混合模型合并 Pass@1 不低于已测最弱骨干（$53.2\%$），且每任务服务成本显著更低。
-\textbf{B (observation).} The visual channel shrinks the grounding gap on detail-dense EDA views only above a token budget; the $196$-token view may widen it.
-% 中文：主张 B（观测）：视觉通道只在 token 预算超过某阈值时才缩小细节密集 EDA 视图上的鸿沟；$196$-token 视图可能反而扩大它。
-\textbf{C (theory).} The read-back ladder N$'\!\to$B$\to$F is re-measurable on the small model, and its span relative to ZhuLong's $7.1$\,pp decides whether $\varepsilon$ binds harder on small models (larger span, supporting the $\varepsilon$-bound) or is partly replaced by weight priors (smaller span).
-% 中文：主张 C（理论）：回读阶梯 N′→B→F 可在小模型上重测，其跨度相对 ZhuLong 的 7.1 pp 决定 ε 在小模型上更紧（跨度更大，支持 ε 界），还是部分被权重先验替代（跨度更小）。
-Claim~C is the only place where a continuation of ZhuLong can \emph{test} ZhuLong rather than merely apply it; we therefore reserve RQ4 for it.
-% 中文：主张 C 是「作为续作却能检验 ZhuLong」的唯一位置，因此我们为它保留 RQ4。
+\begin{itemize}
+\item \textbf{Architecture.} A sequential hybrid language backbone---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---giving linear-time decoding for inference-heavy agents, paired with a from-scratch vision encoder.
 
-\paragraph{Contributions.}
-(i) A reproducible from-scratch 2.2B hybrid backbone (2.94T tokens, $700$k steps, sequence $16{,}384$) with a published schedule and cost accounting.
-% 中文：(i) 一个可复现的从零 2.2B 混合骨干（2.94T token、700k 步、序列 16,384），含公开调度与成本账。
-(ii) A completion protocol for the agentic stack---domain annealing, SFT, RLVR and preference-based domain adaptation---specified so that only the backbone varies against ZhuLong's byte-identical harness (Table~\ref{tab:harness}).
-% 中文：(ii) 智能体栈的补全协议——领域退火、SFT、RLVR 与基于偏好的领域适配——其规定使相对 ZhuLong 逐字节一致的框架下只有骨干在变（表 \ref{tab:harness}）。
-(iii) A pre-registered multimodal study of visual-token budgets on layout, schematic and waveform views, including a waveform-reading task drawn from ZhuLong's WaveView failures (Section~\ref{sec:grounding}).
-% 中文：(iii) 一份预注册的多模态研究：版图、原理图与波形视图上的视觉 token 预算，含源自 ZhuLong WaveView 失败案例的波形识图任务（第 \ref{sec:grounding} 节）。
-(iv) \textbf{A test of the $\varepsilon$-bound itself} (RQ4): a re-measurement of the read-back ladder on a 2.2B model, with both outcomes interpretable in advance.
-% 中文：(iv) 对 ε 界本身的检验（RQ4）：在 2.2B 模型上重测回读阶梯，两种结果都事先可解释。
+\item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs to rank candidate hyper-parameters, so that the ranking discovered at small scale carries over to the full model without re-tuning at scale.
 
-\paragraph{Positioning.}
-``ZhuLong answers what bounds the capability of an EDA agent; \llm asks whether, at fixed $\varepsilon$, a 2.2B on-premises model plus a visual observation channel can reach a deployable $\varepsilon'$ at acceptable cost---and whether $\varepsilon'$ contracts or expands relative to $\varepsilon$.''
-% 中文：定位。ZhuLong 回答了 EDA 智能体的能力上限由什么决定；\llm 追问在 ε 固定的前提下，能否用 2.2B 本地模型加视觉观测通道、以可接受成本达到可部署的 ε′，并检验 ε′ 相对 ε 是收缩还是扩张。
-We do not claim that a 2B model ``matches'' large models; the comparison we pre-register is against the \emph{weakest measured backbone}, and a miss converts Claim~A into a cost--accuracy Pareto report rather than a failure to publish.
-% 中文：我们不声称 2B 打得过大模型；预注册的对照是已测最弱骨干；若未达标，主张 A 转为「成本—精度帕累托」报告，而不是不可发表。
+\item \textbf{Budget-constrained stage-wise pipeline.} Each of the five stages is trained under a hard GPU-hour budget, with a staged search protocol (S1--S5) for the language backbone and a single frozen evaluation protocol shared by the later stages.
+\end{itemize}
 
+We hope BaiZe serves as a minimal, reproducible blueprint for building efficient agentic SLMs from scratch, and that our search methodology is of practical value to cost-bounded training efforts in the EDA and embedded-AI communities.
+% 中文：我们希望 BaiZe 能成为从零构建高效智能体 SLM 的最小化、可复现蓝图，也希望我们的搜索方法学对 EDA 与嵌入式 AI 社区中受成本约束的训练工作具有实用价值。

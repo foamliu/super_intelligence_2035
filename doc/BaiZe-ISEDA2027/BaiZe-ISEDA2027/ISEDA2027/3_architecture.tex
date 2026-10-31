@@ -1,23 +1,27 @@
-﻿\section{System Architecture}\label{sec:arch}
+\section{Architecture and Pipeline Overview}\label{sec:overview}
 
-\llm is assembled in five stages: (i) from-scratch pre-training of a hybrid language backbone, (ii) agentic post-training (annealing, SFT, RLVR), (iii) from-scratch pre-training of a vision encoder, (iv) multimodal alignment, and (v) semiconductor-domain adaptation.
-% 中文：\llm 由五阶段组装：(i) 从零预训练混合语言骨干、(ii) 智能体后训练（退火、SFT、RLVR）、(iii) 从零预训练视觉编码器、(iv) 多模态对齐、(v) 半导体领域适配。
-This section fixes what is shared---the two backbones, the serving-state argument, the subagent protocol, the visual-token interface, and the harness contract---before each stage is specified in its own section.
-% 中文：本节先固定共享部分——两个骨干、服务状态论证、subagent 协议、视觉 token 接口与框架契约——随后各阶段分节详述。
+BaiZe is an end-to-end multimodal agentic system assembled in five stages: (i) from-scratch pre-training of a hybrid language backbone, (ii) post-training of that backbone (instruction tuning and reinforcement learning to strengthen agentic capability), (iii) pre-training of a custom vision encoder, (iv) alignment of the two into a multimodal large language model, and (v) semiconductor-domain adaptation via reinforcement learning.
+% 中文：BaiZe 是一个由五个阶段组装而成的端到端多模态智能体系统：(i) 从零预训练混合语言骨干；(ii) 对该骨干做后训练（指令微调与强化学习以增强智能体能力）；(iii) 预训练自研视觉编码器；(iv) 将两者对齐为多模态大语言模型；(v) 通过强化学习完成半导体领域适配。
+This section fixes the shared scaffolding---the two backbones, the overall pipeline, and the global training environment---before each stage is detailed in its own section.
+% 中文：本节先固定各部分共享的脚手架——两个骨干网络、整体流水线与全局训练环境——随后各阶段再在各自章节中详述。
 
 \subsection{Language Backbone}\label{sec:arch}
-The backbone is a sequential hybrid~\cite{dao2024transformers,nvidia2025nemotronh}: 56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention (GQA) layers and MLP layers, reusing Megatron-Core's 56-layer Mamba-hybrid pattern verbatim while halving only the hidden and FFN widths.
-% 中文：骨干是顺序式混合模型：56 层交替 Mamba-2、4 层 GQA 与 MLP，原样复用 Megatron-Core 的 56 层 Mamba 混合模式，仅把隐藏维与 FFN 宽度减半。
-It is not a Nemotron-H model: an order of magnitude smaller, no mixture-of-experts, pre-trained from scratch on an independent corpus under a fixed GPU-hour budget.
-% 中文：它不是 Nemotron-H：小一个数量级、无 MoE、在固定 GPU·h 预算下于独立语料从零预训练。
-Each Mamba-2 layer uses 8 state-space groups; the attention layers use 16 query heads and 4 query groups with untied embeddings (Table~\ref{tab:config}).
-% 中文：每个 Mamba-2 层 8 个状态空间组；注意力层 16 个查询头、4 个查询组，词嵌入不共享（表 \ref{tab:config}）。
-Only the four attention layers carry rotary position embeddings, so long-context extrapolation depends on $4/56=7.1\%$ of layers (Section~\ref{sec:longctx}).
-% 中文：只有 4 个注意力层带 RoPE，故长上下文外推仅取决于 4/56=7.1% 的层（第 \ref{sec:longctx} 节）。
+The language backbone is a sequential hybrid model~\cite{dao2024transformers,nvidia2025nemotronh}: 56 transformer layers interleave Mamba-2 state-space layers, four grouped-query-attention (GQA) layers, and MLP layers.
+% 中文：语言骨干。语言骨干是一个顺序式混合模型 \cite{dao2024transformers,nvidia2025nemotronh}：56 个 transformer 层交替排列 Mamba-2 状态空间层、4 个分组查询注意力（GQA）层与 MLP 层。
+The layer allocation follows the Nemotron-H sequential hybrid convention---four attention layers among the 56, the remainder Mamba-2 and MLP---as provided by Megatron-Core's Mamba-hybrid recipe, whose 56-layer pattern we reuse verbatim while halving only the hidden and FFN widths to reach the $\approx$2B scale.
+% 中文：层的分配遵循 Nemotron-H 的顺序式混合约定——56 层中 4 层为注意力，其余为 Mamba-2 与 MLP——由 Megatron-Core 的 Mamba 混合配方给出；我们原样复用了其 56 层模式，仅将隐藏维度与 FFN 宽度减半以达到约 2B 规模。
+BaiZe is not a Nemotron-H model: it is an order of magnitude smaller, contains no mixture-of-experts layers, and is pre-trained from scratch on an independent corpus under a fixed GPU-hour budget.
+% 中文：BaiZe 并非 Nemotron-H 模型：它小了一个数量级，不含专家混合（MoE）层，并在固定 GPU·h 预算下于独立语料上从零预训练。
+Each Mamba-2 layer uses 8 state-space groups; the four attention layers use 16 query heads and 4 query groups (GQA) with untied word embeddings.
+% 中文：每个 Mamba-2 层使用 8 个状态空间组；4 个注意力层使用 16 个查询头与 4 个查询组（GQA），且词嵌入不共享。
+Crucially, only the four attention layers carry rotary position embeddings (RoPE); the 52 Mamba-2 state-space layers are position-agnostic, so the backbone's long-context extrapolation quality depends on just $4/56{=}7.1\%$ of layers, an asymmetry exploited in Section~\ref{sec:longctx}.
+% 中文：关键在于，只有 4 个注意力层携带旋转位置编码（RoPE）；其余 52 个 Mamba-2 状态空间层与位置无关，因此骨干的长上下文外推质量仅取决于 $4/56{=}7.1\%$ 的层——这一不对称性在第 \ref{sec:longctx} 节被加以利用。
+The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
+% 中文：完整配置见表 \ref{tab:config}；模型参数量约 22.2 亿。
 
 \begin{table}[t]
 \centering
-\caption{Language-backbone configuration (Mamba2-hybrid, $\approx$2.22B).}
+\caption{BaiZe language-backbone configuration (Mamba2-hybrid).}
 \label{tab:config}
 \begin{tabular}{lc}
 \toprule
@@ -28,131 +32,42 @@ Architecture & hybrid (Mamba-2 + GQA + MLP) \\
 Attention layers & 4 (interleaved) \\
 Hidden size & 2048 \\
 FFN hidden size & 8192 \\
-Attention heads (Q) / groups & 16 / 4 \\
+Attention heads (Q) & 16 \\
+Query groups (GQA) & 4 \\
 Mamba-2 state-space groups & 8 \\
 Vocabulary size & 129{,}281 \\
-Sequence length & 16{,}384 (production) \\
-Normalisation / activation & RMSNorm / SiLU \\
+Sequence length & 4096 \\
+Activation & SiLU / SwiGLU \\
+Normalisation & RMSNorm \\
+Precision & BF16 \\
 Parameters & $\approx$2.22B \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Why a Hybrid: Constant-Size Session State}\label{sec:session-state}
-An agentic session is not a prompt: each \texttt{run\_code} round appends code, stdout, trace and error text, and the conversation that results is re-read on every subsequent step.
-% 中文：智能体会话不是一次提示：每轮 \texttt{run\_code} 都会追加代码、stdout、trace 与报错文本，且后续每一步都要重读整段对话。
-For a dense Transformer the cached key/value state grows linearly in the session length, so per-step memory is $O(L)$ and total cost is quadratic in the number of rounds.
-% 中文：对稠密 Transformer，缓存的 K/V 状态随会话长度线性增长，故每步内存为 $O(L)$，总成本随轮数呈二次增长。
-In \llm only the four GQA layers contribute a growing cache; the 52 Mamba-2 layers carry a recurrent state of fixed size.
-% 中文：在 \llm 中只有 4 个 GQA 层贡献增长中的缓存；其余 52 层 Mamba-2 携带固定大小的循环状态。
-Writing $L_a{=}4$ attention layers with $h$ KV heads, head dimension $d$, context $L$ and BF16 storage, the session state is
-% 中文：记注意力层数 $L_a{=}4$、KV 头数 $h$、头维 $d$、上下文 $L$、BF16 存储，则会话状态为
-\begin{equation}
-M(L)\;=\;\underbrace{2\,L_a\,h\,d\,L}_{\text{attention cache}}\;+\;\underbrace{C_{\mathrm{ssm}}}_{\text{constant}},
-\label{eq:mem}
-\end{equation}
-where $C_{\mathrm{ssm}}$ is independent of $L$; the corresponding dense model replaces $L_a$ by $56$ and therefore grows $14\times$ faster.
-% 中文：其中 $C_{\mathrm{ssm}}$ 与 $L$ 无关；对应的稠密模型把 $L_a$ 换成 56，增长速度快 14 倍。
-This is a statement about scaling, not about absolute size, and it is measured, not assumed: Figure~\ref{fig:session-mem} is the placeholder for the measurement we will report.
-% 中文：这是关于增长阶而非绝对规模的陈述，且将被实测而非假定：图 \ref{fig:session-mem} 是待填的测量占位。
+\subsection{Vision Encoder}\label{sec:backbone-enc}
+The vision encoder is pre-trained from scratch in stage~(iii) and is selected from six iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
+% 中文：视觉编码器。视觉编码器在第 (iii) 阶段从零预训练，是在 $500$–$600$M 参数量级的六个同参数候选模型中选出的；第 \ref{sec:vision} 节报告该对比及其结果。
 
-\begin{figure}[t]
-\centering
-\phfig{3.1cm}{\textbf{Figure placeholder: session state}\\[2pt]$M(L)$ vs.\ rounds $L$\\hybrid (4 attn) vs.\ dense (56 attn) vs.\ API baseline\\[2pt]\tbd}
-\caption{Per-session serving memory against accumulated context. Predicted shape from Eq.~\ref{eq:mem}: the hybrid grows $14\times$ slower in the attention term and adds a constant SSM term. Measurement is pending.}
-\label{fig:session-mem}
-\end{figure}
-
-\subsection{Subagent--Master Protocol}\label{sec:protocol}
-\llm is not meant to replace the orchestrator; it is meant to be one expert per tool, reachable from a stronger planner or from a human flow (Figure~\ref{fig:deploy}).
-% 中文：\llm 不是替代编排者，而是「每个工具一位专家」，可由更强的规划器或人工流程调用（图 \ref{fig:deploy}）。
-The boundary is deliberately asymmetric: the subagent exchanges \emph{natural language} with its caller and \emph{EDA scripts} with the tool, so a master never has to understand SKILL or Tcl, and the subagent never has to trust the master's code.
-% 中文：边界刻意不对称：subagent 与调用者交换自然语言、与工具交换 EDA 脚本——master 无需懂 SKILL/Tcl，subagent 也无需信任 master 的代码。
-Table~\ref{tab:protocol} fixes the message schema; every field is machine-checkable, which is what lets us swap the backbone without touching the harness.
-% 中文：表 \ref{tab:protocol} 固定消息 schema；每个字段都可机器校验，这正是「换骨干不动框架」的前提。
+\subsection{Pipeline and Global Environment}\label{sec:pipeline}
+Table~\ref{tab:pipeline} summarises the five-stage pipeline.
+% 中文：流水线与全局环境。表 \ref{tab:pipeline} 汇总了五阶段流水线。
+All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.10); fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$ and BF16 precision throughout.
+% 中文：所有阶段均运行在 $8\times$NVIDIA H100 GPU 上（CUDA 12.8、PyTorch 2.8.0、Python 3.10）；在适用处启用融合核、选择性激活重计算与交叉熵损失融合，全程使用 $\texttt{tensor\_model\_parallel\_size}=1$ 与 BF16 精度。
 
 \begin{table}[t]
 \centering
-\caption{Subagent--master message schema (T3). $\to$: caller to subagent; $\leftarrow$: subagent to caller.}
-\label{tab:protocol}
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llp{2.55cm}l@{}}
+\caption{BaiZe five-stage pipeline overview.}
+\label{tab:pipeline}
+\begin{tabular}{llll}
 \toprule
-\textbf{Field} & \textbf{Type} & \textbf{Constraint} & \textbf{Dir.} \\
+\textbf{Stage} & \textbf{Task} & \textbf{Status} & \textbf{Section} \\
 \midrule
-\texttt{role} & enum & \texttt{layout} / \texttt{schematic} / \texttt{waveform} & $\to$ \\
-\texttt{intent} & text & NL request, $\le$512 tok & $\to$ \\
-\texttt{artifacts} & image[] & rendered view(s), $224$--$448$px & $\to$ \\
-\texttt{budget} & int & max \texttt{run\_code} calls & $\to$ \\
-\texttt{script} & code & PyAether / SKILL / Tcl & $\leftarrow$ \\
-\texttt{tool\_calls} & record[] & tool id + args (audit) & $\leftarrow$ \\
-\texttt{assertion} & record & per-assertion pass/fail & $\leftarrow$ \\
-\texttt{handoff} & text & NL summary + open issues & $\leftarrow$ \\
+(i) & LM pre-training & complete & \ref{sec:llm-pretrain} \\
+(ii) & Post-training (SFT, RLVR) & design & \ref{sec:llm-posttrain} \\
+(iii) & Vision encoder & complete & \ref{sec:vision} \\
+(iv) & MLLM alignment & design & \ref{sec:mllm} \\
+(v) & Domain adapt.\ (RLHF) & design & \ref{sec:domain} \\
 \bottomrule
 \end{tabular}
-\tnote{Every field is validated at the tool boundary, so the caller cannot inject execution and the subagent cannot claim success without an assertion record.}
 \end{table}
-
-\subsection{Visual-Token Interface}\label{sec:vtoken}
-The encoder of stage~(iii) renders an image as $14{\times}14{=}196$ tokens at $224$px/$16$-px patches; two coarser-finer tiers are pre-registered so that Claim~B is measured rather than argued (Table~\ref{tab:vtoken}).
-% 中文：第 (iii) 阶段的编码器把图像表示为 224px/16px 块下的 196 个 token；另预注册两档更细粒度，使主张 B 可测而非仅争论（表 \ref{tab:vtoken}）。
-The tier is a single scalar in the projector, so accuracy and cost move along one axis and the ablation cannot confound architecture with resolution.
-% 中文：档位只是投影层里的一个标量，故精度与成本沿同一根轴变化，消融不会把架构与分辨率混为一谈。
-
-\begin{table}[t]
-\centering
-\caption{Visual-token tiers exposed by the stage-(iv) interface (T4).}
-\label{tab:vtoken}
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{Tier} & \textbf{Input} & \textbf{Tokens} & \textbf{px/token} & \textbf{Rel.\ cost} \\
-\midrule
-T196 (default) & $224$ & $196$ & $16{\times}16$ & $1.0\times$ \\
-T576 & $336$ & $576$ & $16{\times}16$ & $2.9\times$ \\
-T1024 & $448$ & $1024$ & $16{\times}16$ & $5.2\times$ \\
-\bottomrule
-\end{tabular}
-\tnote{Rel.\ cost counts visual tokens only; end-to-end serving cost per task is measured separately (Table~\ref{tab:econ}). Which tier is ``enough'' for layout, schematic and waveform views is the object of RQ5--RQ6.}
-\end{table}
-
-\subsection{Harness Contract: Byte-Identical}\label{sec:harness}
-Because ZhuLong attributes its gains to the interface rather than to the policy, varying the backbone is only informative if everything else is frozen.
-% 中文：由于 ZhuLong 把增益归因于接口而非策略，只有在其余全冻结时替换骨干才具信息量。
-Table~\ref{tab:harness} is the checklist we commit to; any deviation invalidates the comparison and is reported as such.
-% 中文：表 \ref{tab:harness} 是我们承诺的核对清单；任何偏离都会使比较失效，并如实报告。
-
-\begin{table}[t]
-\centering
-\caption{Harness contract for the \llm--ZhuLong comparison (T5).}
-\label{tab:harness}
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}p{3.05cm}p{1.65cm}p{1.35cm}@{}}
-\toprule
-\textbf{Component} & \textbf{ZhuLong} & \textbf{\llm} \\
-\midrule
-Agent scaffold & Cline-CLI, unmodified & identical \\
-MCP tools & 4 (search, detail, doc, run) & identical \\
-Retrieval stack & API + keyword + docs & identical \\
-Sandbox / effector & vendor runtime & identical \\
-Anti-cheat hook & enabled & identical \\
-Assertion criterion & per-task assertions & identical \\
-Timeout & $2500$\,s / task & identical \\
-Runs & 5, reshuffled, fresh ctx & identical \\
-Contamination & $n$-gram blacklist & identical \\
-Task schema / slices & $158/157/134$ & identical \\
-\bottomrule
-\end{tabular}
-\tnote{Only the backbone (and, in stage iv, the visual channel) varies. Deviations found during the run are listed in the appendix rather than silently corrected.}
-\end{table}
-
-\begin{figure}[t]
-\centering
-\phfig{2.6cm}{\textbf{Figure placeholder: deployment}\\[2pt]master (planner / human) $\leftrightarrow$ \llm subagent $\leftrightarrow$ EDA runtime\\per-tool expert instances behind one NL contract}
-\caption{Deployment shape: one subagent per EDA tool, addressed in natural language, speaking EDA script to the tool.}
-\label{fig:deploy}
-\end{figure}
-

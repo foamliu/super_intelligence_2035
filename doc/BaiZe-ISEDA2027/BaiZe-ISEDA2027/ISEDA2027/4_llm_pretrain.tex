@@ -1,4 +1,4 @@
-﻿\section{LLM Pretraining}\label{sec:llm-pretrain}
+\section{LLM Pretraining}\label{sec:llm-pretrain}
 
 Stage~(i) pre-trains the hybrid language backbone (Section~\ref{sec:arch}) from scratch under a fixed budget.
 % 中文：第 (i) 阶段在固定预算下从零预训练混合语言骨干（第 \ref{sec:arch} 节）。
@@ -33,10 +33,6 @@ Sources are pre-blended into large shards so each rank opens $\mathcal{O}(10)$ i
 % 中文：各源预混合为大 shard，使每个 rank 只需打开 $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$，这限制了数据加载的内存占用，也是上述吞吐的前提。
 Contamination is controlled by a $193{,}295$-entry 13-gram fingerprint blacklist built from all $536$ benchmark tasks; every shard is scanned for ${\geq}0.80$ n-gram overlap before release.
 % 中文：污染控制由 $193{,}295$ 条 13-gram 指纹黑名单实现（覆盖全部 $536$ 个基准任务）；每个 shard 在发布前都扫描 ${\geq}0.80$ 的 n-gram 重叠。
-The corpus deliberately contains \emph{no} EDA artifacts: no PyAether, SKILL or Tcl API reference, no tool documentation and no vendor script enters pre-training.
-% 中文：语料刻意\emph{不含}任何 EDA 产物：PyAether/SKILL/Tcl 的 API 参考、工具文档与厂商脚本均不进入预训练。
-This is a design choice rather than an omission, and it is what makes the comparison with ZhuLong informative: ZhuLong supplies API knowledge through retrieval at inference time, whereas any such knowledge \llm holds must be installed in stage~(ii) and carried in weights---the assumption that RQ2 (Section~\ref{sec:rq2}) tests directly.
-% 中文：这是设计选择而非疏漏，也正是与 ZhuLong 比较有意义的原因：ZhuLong 在推理时通过检索提供 API 知识，而 \llm 掌握的此类知识必须于第 (ii) 阶段装入并保存在权重中——这一假设由 RQ2（第 \ref{sec:rq2} 节）直接检验。
 
 \subsection{Long-Context Data Gate}\label{sec:longctx-data}
 Segment~B learns whatever length structure the corpus contains, so we measured the document-length distribution before budgeting it: only $\mathbf{2.52\%}$ of tokens sit in documents of ${\geq}32$K and $0.03\%$ reach ${\geq}128$K, with a mean document of $889$ tokens (Table~\ref{tab:longctx-data}).

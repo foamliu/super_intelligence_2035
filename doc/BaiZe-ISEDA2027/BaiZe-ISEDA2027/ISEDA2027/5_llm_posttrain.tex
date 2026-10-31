@@ -1,189 +1,62 @@
-﻿\section{Post-Training for EDA Agentic Capability}\label{sec:llm-posttrain}
+\section{LLM Post-Training}\label{sec:llm-posttrain}
 
-Stage~(ii) is where the domain prior enters: the pre-training corpus of Section~\ref{sec:llm-data} is general web, code and mathematics text and contains no EDA artifacts, so every EDA fact the model holds must be installed here.
-% 中文：第 (ii) 阶段是领域先验的入口：第 \ref{sec:llm-data} 节的预训练语料是通用网页、代码与数学文本，不含 EDA 产物，因此模型掌握的每个 EDA 事实都必须在此装入。
-This is also what makes the small model interesting: ZhuLong supplies API knowledge through retrieval, whereas \llm can, in principle, carry some of it in weights---a difference RQ2 measures directly.
-% 中文：这也正是小模型的有趣之处：ZhuLong 通过检索提供 API 知识，而 \llm 原则上可以把一部分装进权重——这一差异由 RQ2 直接测量。
-The stage has three steps---domain annealing, supervised fine-tuning and RLVR---and terminates in the preference-based adaptation of Section~\ref{sec:domain}.
-% 中文：该阶段分三步——领域退火、监督微调与 RLVR——并以第 \ref{sec:domain} 节的基于偏好的适配收尾。
+Stage~(ii) adapts the pre-trained backbone to EDA scripting, and it is the stage that carries BaiZe's domain claim: the pre-training corpus of Section~\ref{sec:llm-data} is general web, code, and mathematics text and contains no EDA artifacts, so the domain prior must be introduced here.
+% 中文：第 (ii) 阶段把预训练骨干适配到 EDA 脚本编写，而承载本文领域主张的正是这一阶段：第 \ref{sec:llm-data} 节的预训练语料是通用网页、代码与数学文本，不含任何 EDA 产物，因此领域先验必须在此引入。
+We organise the stage as three steps---\emph{domain annealing}, \emph{supervised fine-tuning}, and \emph{reinforcement learning}---all evaluated under a single frozen protocol (Section~\ref{sec:posttrain-eval}).
+% 中文：我们按三个步骤组织该阶段——\emph{领域退火}、\emph{监督微调} 与 \emph{强化学习}——三者在同一套冻结协议下评测（第 \ref{sec:posttrain-eval} 节）。
 
-\subsection{Common Protocol}\label{sec:posttrain-eval}
-All variants are scored on \textbf{EDA-Eval-PyAether}~\cite{liu2026zhulong} and, where stated, on the full 449-task suite of that benchmark ($158$ PyAether, $157$ SKILL, $134$ Tcl, the latter pooling WaveView $77$ and Innovus $57$).
-% 中文：所有变体在 EDA-Eval-PyAether 上评分，并在注明处使用该基准的完整 449 任务（158 PyAether、157 SKILL、134 Tcl，后者合并 WaveView 77 与 Innovus 57）。
-We follow the benchmark protocol exactly---five runs, reshuffled order, fresh context, mean Pass@1 with run-to-run s.d., $2500$\,s per task---and hold the harness byte-identical (Table~\ref{tab:harness}).
-% 中文：我们严格遵循基准协议——五次运行、打乱顺序、重置上下文、平均 Pass@1 及运行间标准差、单任务 2500 秒——并保持框架逐字节一致（表 \ref{tab:harness}）。
-A second control is contamination: the 13-gram blacklist of Section~\ref{sec:llm-data} covers $193{,}295$ entries drawn from $536$ tasks, and any task whose overlap exceeds threshold is reported rather than dropped silently.
-% 中文：第二项对照是污染：第 \ref{sec:llm-data} 节的 13-gram 黑名单覆盖来自 536 个任务的 193,295 条，任何越阈任务如实报告而不静默丢弃。
+\subsection{Domain Annealing}\label{sec:posttrain-anneal}
+The cheapest lever on the domain prior is to continue pre-training on EDA text before any behavioural tuning.
+% 中文：领域退火。对领域先验最廉价的杠杆，是在任何行为层面的微调之前，先用 EDA 文本做继续预训练。
+We reuse the warmup--stable--decay machinery of Stage~(i) and anneal on a corpus assembled from PyAether and SKILL API references, EDA tool documentation, and open HDL sources, blended with the general mixture at a controlled ratio.
+% 中文：我们复用第 (i) 阶段的预热—稳定—衰减机制，并在由 PyAether 与 SKILL API 参考、EDA 工具文档与开源 HDL 源码汇编而成的语料上做退火，按受控比例与通用混合数据混合。
+Because the step changes only the data distribution, we contrast it against an SFT-only control to isolate its contribution from the behavioural tuning that follows.
+% 中文：由于该步骤只改变数据分布，我们将其与「仅做 SFT」的对照组进行比较，以把它的贡献从随后的行为微调中隔离出来。
 
-\subsection{RQ1: Does a 2.2B Backbone Clear the Floor? (Claim~A)}\label{sec:rq1}
-Table~\ref{tab:backbone} is the pre-registered comparison: the six backbones ZhuLong measured, plus one row for \llm.
-% 中文：表 \ref{tab:backbone} 是预注册对照：ZhuLong 已测的六个骨干，加上 \llm 的一行。
-The question is narrow and falsifiable---\emph{does the 2.2B model reach $53.2\%$ pooled}---because ZhuLong's own data show that a $23.7$\,pp spread separates the strongest from the weakest large backbone, and claiming more than the weakest would be claiming the model beats models $30\times$ its size.
-% 中文：问题很窄且可证伪——2.2B 模型能否达到合并 53.2\%——因为 ZhuLong 自己的数据显示最强与最弱大骨干相差 23.7 pp，声称超过最弱即等于声称打败了 30 倍大的模型。
+\subsection{Supervised Fine-Tuning}\label{sec:posttrain-sft}
+SFT teaches the generate--execute--refine loop that the deployment target requires.
+% 中文：监督微调。SFT 教授部署目标所要求的「生成—执行—改进」闭环。
+The corpus combines the agentic instruction set (\texttt{UltraData-SFT-Agent-2609}, $51$\,G across 50 shards) and a general instruction set (\texttt{UltraData-SFT-2605}, $319$\,G across 1{,}504 JSONL files, verified byte-identical to the HuggingFace manifest) with PyAether-specific material synthesised from API documentation.
+% 中文：语料由智能体指令集（\texttt{UltraData-SFT-Agent-2609}，$51$ G、50 个 shard）与通用指令集（\texttt{UltraData-SFT-2605}，$319$ G、1,504 个 JSONL 文件，已核验与 HuggingFace manifest 逐字节一致）合并，并加入依据 API 文档合成的 PyAether 专属材料。
+We ablate the data mixture (agentic / code / mathematics / PyAether), the presence of interleaved tool-call traces, full fine-tuning versus LoRA, and the sequence length: agentic traces---code, tool returns, and successive refinements---routinely exceed the $4096$-token window of Table~\ref{tab:config}, so window extension is treated as a first-class variable rather than a fixed setting.
+% 中文：我们消融以下方面：数据配比（智能体／代码／数学／PyAether）、是否包含交错的工具调用轨迹、全量微调还是 LoRA、以及序列长度：智能体轨迹——代码、工具返回与多次迭代改进——通常远超表 \ref{tab:config} 的 $4096$-token 窗口，因此窗口扩展在这里被当作一等变量处理，而非固定设定。
 
-\begin{table*}[!t]
-\centering
-\caption{RQ1: pooled and per-slice Pass@1 (\%) over five runs, mean$\pm$s.d., under ZhuLong's byte-identical harness (T6). ZhuLong rows are measured; the \llm row is the pre-registered hypothesis. Cost columns are per task over all 449 tasks.}
-\label{tab:backbone}
-\scriptsize
-\renewcommand{\arraystretch}{0.84}
-\setlength{\tabcolsep}{3.2pt}
-\begin{tabular}{@{}lcccccccc@{}}
-\toprule
-\textbf{Backbone} & \textbf{PyAether (158)} & \textbf{SKILL (157)} & \textbf{Tcl (134)} & \textbf{Overall (449)} & \textbf{$\Delta$ vs 2B} & \textbf{Time (s)} & \texttt{run\_code} & \textbf{Input (k)} \\
-\midrule
-DeepSeek-V4-Pro & \textbf{82.5}$\pm$2.0 & \textbf{60.3}$\pm$6.7 & \textbf{89.9}$\pm$2.0 & \textbf{76.9}$\pm$2.3 & \tbd & 464 & 10.6 & 710 \\
-GLM-5.3-Flash & 86.8$\pm$1.6 & 57.2$\pm$6.9 & 80.3$\pm$3.8 & 74.5$\pm$2.4 & \tbd & \tbd & \tbd & \tbd \\
-GLM-5.2 & 83.3$\pm$3.1 & 54.4$\pm$4.5 & 82.7$\pm$1.6 & 73.0$\pm$2.1 & \tbd & \tbd & \tbd & \tbd \\
-Kimi-K2.6 & 77.0$\pm$1.6 & 55.5$\pm$2.7 & 75.8$\pm$1.9 & 69.1$\pm$0.5 & \tbd & \tbd & \tbd & \tbd \\
-DeepSeek-V4-Flash & 60.1$\pm$5.5 & 47.0$\pm$1.8 & 70.4$\pm$3.1 & 58.6$\pm$2.3 & \tbd & \tbd & \tbd & \tbd \\
-Doubao-Seed-2.0-Pro & 63.8$\pm$1.4 & 42.5$\pm$3.4 & 53.3$\pm$3.4 & 53.2$\pm$1.9 & \tbd & \tbd & \tbd & \tbd \\
-\midrule
-\textbf{\llm-2.2B} & \tbd & \tbd & \tbd & \tbd & --- & \tbd & \tbd & \tbd \\
-\bottomrule
-\end{tabular}
-\tnote{ZhuLong rows reproduced from its Table~4 (strongest--weakest span $76.9-53.2=23.7$\,pp); cost columns are only reported for its primary backbone, so ``\tbd'' there means \emph{not measured by ZhuLong}, not \emph{failed}. \rv{Reverse contingency: if \llm $<$53.2\% pooled, Claim~A becomes a cost--accuracy Pareto statement and the paper reports the $k{=}10$ budget at which the gap closes (RQ3).}}
-\end{table*}
-
-Two outcomes are both publishable and both are pre-registered: clearing $53.2\%$ supports Claim~A, while falling short yields the Pareto frontier of Section~\ref{sec:econ} with the accuracy gap quantified per slice.
-% 中文：两种结果都可发表且都已预注册：越过 53.2\% 支持主张 A；没达到则给出第 \ref{sec:econ} 节的帕累托前沿，并按切片量化精度差距。
-We add one diagnostic that ZhuLong did not need: per-slice deltas, because a small model may hold up on PyAether (where execution can substitute for retrieval) and collapse on SKILL (where it cannot).
-% 中文：我们补一项 ZhuLong 无需的诊断：逐切片差值——小模型可能在 PyAether 上撑住（执行可部分替代检索），却在 SKILL 上崩塌（无法替代）。
-
-\subsection{RQ2: Does a Small Model Need Retrieval More?}\label{sec:rq2}
-ZhuLong reports that removing retrieval costs $10.7$\,pp pooled, but that the loss is toolchain-specific ($15.1$\,pp on SKILL, $9.1$\,pp on PyAether, $7.7$\,pp on Tcl) because PyAether traces can partly rebuild API knowledge by introspecting the sandbox.
-% 中文：ZhuLong 报告移除检索合并损失 10.7 pp，但高度工具链特定（SKILL 15.1 pp、PyAether 9.1 pp、Tcl 7.7 pp），因为 PyAether 轨迹可通过沙盒自省部分重建 API 知识。
-A 2.2B model has fewer parameters in which to store that knowledge, so the natural prediction is a \emph{larger} retrieval delta everywhere, and a larger gap between PyAether and SKILL.
-% 中文：2.2B 模型可存该知识的参数更少，故自然预测是各切片检索差值\emph{更大}，且 PyAether 与 SKILL 之间的差距更大。
-This is the test of whether ``weights can replace retrieval''---the assumption a local subagent must rely on (Table~\ref{tab:retrieval}).
-% 中文：这检验「权重能否替代检索」——本地 subagent 必须依赖的假设（表 \ref{tab:retrieval}）。
+\subsection{Reinforcement Learning with Verifiable Rewards}\label{sec:posttrain-rl}
+An execution sandbox turns correctness into a verifiable signal, so we optimise with group-relative policy optimisation and no value network.
+% 中文：基于可验证奖励的强化学习。执行沙盒把正确性转化为可验证信号，因此我们采用无需价值网络的组相对策略优化（GRPO）。
+Table~\ref{tab:reward} separates the reward variants we study.
+% 中文：表 \ref{tab:reward} 区分了我们研究的各种奖励方案。
+A binary signal is the simplest baseline; partial credit over executable attempts addresses the sparsity of pass/fail; a tool-call penalty aligns the policy with the harness cost model; and an API-legality term penalises hallucinated symbols.
+% 中文：二值信号是最简单的基线；对多次可执行尝试给予部分得分可缓解「通过／不通过」的稀疏性；工具调用惩罚项使策略与 harness 的成本模型对齐；API 合法性项则惩罚虚构的符号。
+Because the reward is computed from assertions a policy could in principle target directly, we keep the harness anti-cheat hook enabled in every run and report a cheat rate beside every accuracy figure.
+% 中文：由于奖励由策略原则上可以直接瞄准的断言计算而来，我们在每次运行中都保持 harness 的反作弊钩子开启，并在每个准确率数字旁报告作弊率。
 
 \begin{table}[t]
 \centering
-\caption{RQ2: five harness configurations, pooled Pass@1 (\%) (T7). ZhuLong columns are measured; the \llm column is the hypothesis.}
-\label{tab:retrieval}
-\scriptsize
-\setlength{\tabcolsep}{2.6pt}
-\begin{tabular}{@{}lcccccc@{}}
-\toprule
-\textbf{Configuration} & \textbf{PyA.} & \textbf{SKILL} & \textbf{Tcl} & \textbf{ZL all} & \textbf{\llm} & \textbf{$\Delta$} \\
- & (158) & (157) & (134) & (449) & (449) & \\
-\midrule
-Full & 82.5 & 60.3 & 89.9 & 76.9 & \tbd & \tbd \\
-w/o Retrieval & 73.4 & 45.2 & 82.2 & 66.2 & \tbd & \tbd \\
-w/o Self-expl. & 77.0 & 61.5 & 86.7 & 74.5 & \tbd & \tbd \\
-RAG (no sandbox) & 71.1 & 52.2 & 84.6 & 68.6 & \tbd & \tbd \\
-Pure LLM & 14.3 & 33.2 & 10.1 & 19.7 & \tbd & \tbd \\
-\bottomrule
-\end{tabular}
-\tnote{ZhuLong numbers from its Table~3. \rv{Reverse contingency: if the \llm retrieval delta is \emph{not} larger than ZhuLong's on SKILL, the ``weights replace retrieval'' hypothesis survives and the local-subagent argument strengthens; if it is larger, the deployment needs a retrieval stack after all, which is reported as a scope limit rather than hidden.}}
-\end{table}
-
-\subsection{RQ3: Is the Belief-Update Budget Still Monotone?}\label{sec:rq3}
-ZhuLong bounds the number of \texttt{run\_code} calls per trace and finds accuracy monotone in $k$ on PyAether ($63.8\%$ at $k{=}1$, $69.1\%$ at $k{=}3$, $77.7\%$ at $k{=}10$, unsaturated), with a \emph{lagged} channel---returning the previous execution's state---landing between $k{=}3$ and $k{=}10$ at $73.0\%$.
-% 中文：ZhuLong 限制每条轨迹的 \texttt{run\_code} 次数，在 PyAether 上发现精度随 k 单调（k=1 为 63.8%、k=3 为 69.1%、k=10 为 77.7%，未见饱和），而「滞后」通道（返回上一次执行的状态）落在 k=3 与 k=10 之间（73.0%）。
-On a smaller model the same budget may bind earlier or later; both directions are informative, so we pre-register the shape, not the numbers (Table~\ref{tab:budget}).
-% 中文：在小模型上同一预算可能更早或更晚成为瓶颈；两种方向都有信息量，故我们预注册形状而非数字（表 \ref{tab:budget}）。
-
-\begin{table}[t]
-\centering
-\caption{RQ3: belief-update budget on PyAether, Pass@1 (\%) (T8).}
-\label{tab:budget}
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lccc@{}}
-\toprule
-\textbf{Budget} & \textbf{ZhuLong} & \textbf{\llm} & \textbf{Expected} \\
-\midrule
-$k{=}1$ & 63.8 & \tbd & $\uparrow$ vs.\ $k{=}0$ \\
-$k{=}3$ & 69.1 & \tbd & monotone \\
-$k{=}10$ & 77.7 & \tbd & best of the three \\
-lagged ($k{=}10$) & 73.0 & \tbd & between $k{=}3,k{=}10$ \\
-Converged (\%) & 99.1$\to$76.3 & \tbd & tightens with $k$ \\
-\bottomrule
-\end{tabular}
-\tnote{\rv{Reverse contingency: if \llm saturates at $k{=}3$, the deployment defaults to three-round traces and the serving budget of Section~\ref{sec:econ} is computed there; if it is still rising at $k{=}10$, the budget axis is the binding constraint and is reported as such.}}
-\end{table}
-
-
-\subsection{RQ4: Re-measuring the Read-Back Ladder on 2.2B (Claim~C)}\label{sec:rq4}
-This is the load-bearing experiment of the paper.
-% 中文：这是全文的承重实验。
-ZhuLong operationalizes observation fidelity as three closed-loop variants that differ only in what \texttt{run\_code} returns: (N$'$) nothing, (B) pass/fail, (F) full state; pooled accuracy moves $69.8\to72.2\to76.9$, a span of $7.1$\,pp.
-% 中文：ZhuLong 把观测保真度操作化为三种仅「返回值」不同的闭环变体：(N′) 无、(B) 二值、(F) 全状态；合并精度 69.8→72.2→76.9，跨度 7.1 pp。
-Repeating that ladder on \llm produces one of two readings, and both are decisive:
-% 中文：在 \llm 上重测该阶梯会产生两种解读之一，且都有决定性：
-\begin{itemize}
-\item \textbf{Span $>7.1$\,pp} (expected): a model with weaker weight priors depends \emph{more} on observation, so $\varepsilon$ binds harder as scale falls; ZhuLong's $\varepsilon$-bound is then \emph{strengthened} by the continuation rather than merely repeated.
-% 中文：跨度 >7.1 pp（预期）：权重先验更弱的模型更依赖观测，故随规模下降 ε 更紧；这样 ZhuLong 的 ε 界被续作加强，而不只是被重复。
-\item \textbf{Span $<7.1$\,pp}: the small model substitutes priors for observation, and the $\varepsilon$-bound is conditional on backbone capacity; the paper then reports the substitution ratio and revises the framing.
-% 中文：跨度 <7.1 pp：小模型以先验替代观测，则 ε 界以骨干容量为条件；论文随后报告替代比并修正表述。
-\end{itemize}
-Table~\ref{tab:readback} therefore contains no hypothesis about \emph{which} outcome obtains, only about what each outcome means.
-% 中文：因此表 \ref{tab:readback} 不对「哪种结果出现」下注，只规定每种结果的含义。
-
-\begin{table*}[!t]
-\centering
-\caption{RQ4: the read-back ladder, N$'\to$B$\to$F, Pass@1 (\%) (T9). Left block measured by ZhuLong; right block is the pre-registered re-measurement on \llm.}
-\label{tab:readback}
-\scriptsize
-\renewcommand{\arraystretch}{0.84}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lcccccccc@{}}
-\toprule
-\textbf{Rung} & \textbf{PyA.} & \textbf{SKILL} & \textbf{Tcl} & \textbf{Pooled} & \textbf{\llm PyA.} & \textbf{\llm SKILL} & \textbf{\llm Tcl} & \textbf{\llm Pooled} \\
-\midrule
-(N$'$) no read-back & 73.3 & 50.7 & 87.9 & 69.8 & \tbd & \tbd & \tbd & \tbd \\
-(B) binary pass/fail & 78.1 & 57.2 & 83.0 & 72.2 & \tbd & \tbd & \tbd & \tbd \\
-(F) full observation & \textbf{82.5} & \textbf{60.3} & \textbf{89.9} & \textbf{76.9} & \tbd & \tbd & \tbd & \tbd \\
-\midrule
-Span (F$-$N$'$) & $9.2$ & $9.6$ & $2.0$ & $\mathbf{7.1}$ & \tbd & \tbd & \tbd & \tbd \\
-\bottomrule
-\end{tabular}
-\tnote{Left block from ZhuLong Table~3 (lower block); the Tcl inversion at rung B is retained verbatim because it is the counter-example that makes the ladder a measurement rather than an assumption. \rv{Reverse contingency: both directions are pre-registered (span larger $\Rightarrow$ $\varepsilon$ binds harder at 2B; span smaller $\Rightarrow$ priors substitute for observation). No outcome leaves the claim untested.}}
-\end{table*}
-
-\begin{figure}[t]
-\centering
-\phfig{2.9cm}{\textbf{Figure placeholder: $\varepsilon'\neq\varepsilon$ test}\\[2pt]x: ZhuLong ladder span ($7.1$\,pp)\ \ y: \llm span\\reading 1: $>7.1$ $\Rightarrow$ $\varepsilon$ binds harder at 2B\\reading 2: $<7.1$ $\Rightarrow$ priors substitute for observation}
-\caption{The $\varepsilon$ test of RQ4. Only the span is measured; both readings are fixed before the number exists, which is what keeps the test from becoming a post-hoc narrative.}
-\label{fig:eps}
-\end{figure}
-
-\subsection{Reward Design and Its Ablation}\label{sec:reward}
-An execution sandbox turns correctness into a verifiable signal, so we optimise with group-relative policy optimisation and no value network---cheaper in memory, which matters at 2.2B on one node.
-% 中文：执行沙盒把正确性变成可验证信号，故我们采用无价值网络的 GRPO——更省显存，这对单节点上的 2.2B 很重要。
-Table~\ref{tab:reward} separates four rewards; a binary signal is the baseline, partial credit addresses its sparsity, a tool-call penalty aligns the policy with the harness cost model, and an API-legality term penalises hallucinated symbols.
-% 中文：表 \ref{tab:reward} 区分四种奖励：二值信号为基线，部分得分缓解稀疏性，工具调用惩罚使策略对齐框架成本模型，API 合法性项惩罚虚构符号。
-Because the reward is computed from assertions a policy could target directly, the anti-cheat hook stays on in every run and a cheat rate is reported beside every accuracy figure.
-% 中文：由于奖励由策略可直接瞄准的断言计算而来，反作弊钩子每轮开启，并在每个精度数字旁报告作弊率。
-
-\begin{table}[t]
-\centering
-\caption{Reward ablation in stage~(ii) (T10).}
+\caption{Reward variants studied in stage~(ii).}
 \label{tab:reward}
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llccc@{}}
+\begin{tabular}{ll}
 \toprule
-\textbf{ID} & \textbf{Reward} & \textbf{Pass@1} & \textbf{Cheat} & \textbf{Expected} \\
+\textbf{ID} & \textbf{Reward} \\
 \midrule
-R1 & binary pass/fail & \tbd & \tbd & baseline \\
-R2 & R1 $+$ assertion ratio & \tbd & \tbd & $\uparrow$ vs.\ R1 \\
-R3 & R2 $+$ tool-call penalty & \tbd & \tbd & $\approx$ acc., $\downarrow$ cost \\
-R4 & R3 $+$ API legality & \tbd & \tbd & $\downarrow$ hallucination \\
+R1 & binary pass/fail \\
+R2 & executable $+$ assertion pass ratio \\
+R3 & R2 $+$ tool-call penalty \\
+R4 & R3 $+$ API-legality term \\
 \bottomrule
 \end{tabular}
-\tnote{\rv{Reverse contingency: if R3/R4 lose accuracy, the cost penalty is over-weighted and is retuned rather than dropped, since the deployment objective is cost-aware by construction.}}
 \end{table}
 
-\subsection{Stage (v): Preference-Based Domain Adaptation}\label{sec:domain}
-Stage~(v) differs from stage~(ii) in two respects, stated explicitly because otherwise the two coincide: the reward is learned from human judgement rather than verified, and the target behaviour is a team's internal conventions---naming rules, layer policies, review checklists---which no public benchmark measures.
-% 中文：第 (v) 阶段与第 (ii) 阶段有两点不同（必须明说，否则二者重合）：奖励来自人类判断而非可验证；目标行为是团队内部约定——命名规则、层次策略、评审清单——没有任何公开基准衡量。
-We collect pairwise judgements from in-house reviews over the stage-(iv) task families, fit a reward model, and optimise under a KL-regularised objective from the stage-(iv) checkpoint, since preference data is far scarcer than the verifiable signal.
-% 中文：我们从内部评审中围绕第 (iv) 阶段任务族收集成对偏好，拟合奖励模型，并从第 (iv) 检查点出发在 KL 正则目标下优化，因为偏好数据远比可验证信号稀缺。
-The rationale for a 2.2B core is strongest here and it is a constraint, not a preference: proprietary layouts and preference data cannot leave the premises, so the choice is a small local model or no model at all.
-% 中文：2.2B 内核的理由在此最充分，且是约束而非偏好：专有版图与偏好数据无法出内网，所以选择只是「小模型本地」或「根本没有模型」。
-Evaluation uses held-out review items scored by expert agreement, reported beside the execution-based numbers so that verified and preference-based adaptation are compared on one system.
-% 中文：评测用留出评审条目、以专家一致性打分，并与基于执行的数字并列，使可验证适配与偏好适配在同一系统上比较。
+\subsection{Evaluation Protocol}\label{sec:posttrain-eval}
 
+We track four capability milestones through Stage~(ii): \textbf{M1} tool-call legality (syntactically valid PyAether calls, no hallucinated symbols); \textbf{M2} single-task pass (Pass@1 on EDA-Eval-PyAether); \textbf{M3} multi-turn refinement (recovery from execution failures with up to 3 rounds); \textbf{M4} full-benchmark accuracy.
+% 中文：我们在第 (ii) 阶段跟踪四个能力里程碑：M1 工具调用合法性（语法合法的 PyAether 调用、无虚构符号）；M2 单任务通过（EDA-Eval-PyAether 上的 Pass@1）；M3 多轮改进（最多 3 轮从执行失败中恢复）；M4 全基准准确率。
+All variants are scored on \textbf{EDA-Eval-PyAether}~\cite{liu2026zhulong} ($158$ real-world EDA scripting tasks), each pairing a natural-language prompt and function signature with assertion-based test code, scored by execution in the vendor sandbox.
+% 中文：所有变体均在 EDA-Eval-PyAether \cite{liu2026zhulong} 上评分（$158$ 个真实 EDA 脚本任务），每个任务把自然语言提示与函数签名同基于断言的测试代码配对，并在厂商沙盒中执行评分。
+We follow the benchmark's own protocol---five independent runs, reshuffled order, fresh context, mean Pass@1 with run-to-run standard deviation, $2500$-s per-task timeout---so numbers are comparable to published ones.
+% 中文：我们遵循基准自身的协议——五次独立运行、打乱顺序、重置上下文、平均 Pass@1 及运行间标准差、单任务超时 $2500$ 秒——使数字可与已发表结果比较。
+Two controls make the comparison interpretable: contamination is excluded by the n-gram blacklist of Section~\ref{sec:llm-data}, and only the backbone is varied while the retrieval stack, sandbox, anti-cheat hook, and agent scaffold are held byte-identical, since the harness supplies most of the observed accuracy.
+% 中文：两项对照使比较可解释：污染由第 \ref{sec:llm-data} 节的 n-gram 黑名单排除；且只改变骨干模型，检索栈、沙盒、反作弊钩子与智能体脚手架保持逐字节一致，因为 harness 贡献了观测准确率的大部分。
+
+Results are reported as \textbf{[TBD]}.
+% 中文：结果以 \textbf{[TBD]} 表示（待填）。
