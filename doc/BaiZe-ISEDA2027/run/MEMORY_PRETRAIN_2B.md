@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 11:2x #999：**论文改稿直接落地**。按运维令11:2x直接改4_llm_pretrain.tex(9处)+0_abstract.tex(1处)。P0:88-176B→83.9B(2.94T的2.85%, 推导:20000步×4.19M tok/step). P1×6:补cite{openbmb2026minicpm5}+Feasibility(Megatron-Core复用56层)·warmup 2000(0.29%)vs250(5%)解释·92→82 GPU·h·88:8:4→74:19:7(web=0.74/code=0.19/math=0.07)·41.6K→39,377 tok/s(128K prefill实测)·摘要44B/1.357/412→2.94T/2.151/598K. P2×4:删重复BO句·缩短SFT/RL解释·118→~880 GPU·h(est.)·10-15%降为设计上界. 编译ERR=0/UNDEF=0/Overfull=0/Pages=6. 交付reports/report_pretrain_paper_edit_zh.html(13KB/7节). 扫描1_intro/2_related/3_arch/5_posttrain/7_mllm/8_domain/9_conclusion均无旧口径. 未commit main.pdf. 未碰GPU/S1. 未完成指令：无. 📦 体积：TASK=34.6KB / MEMORY=28.6KB（无归档）.
+> 🆕 2026-10-31 11:3x #1000：**论文改稿验证 + 任务书归档**。验证 #999 改稿全部到位：4_llm_pretrain.tex 逐条核对(P0 83.9B✅/P1×6✅/P2✅)+0_abstract.tex(2.94T/2.151/598K✅)+扫描1_intro/2_related/3_arch/5_posttrain/9_conclusion均无旧口径(44B/1.357/412)✅。编译三连 pdflatex→bibtex→pdflatex→pdflatex: ERR=0/UNDEF=0/Overfull=0/Pages=6✅。commit 85ea67b4d 已push(git status clean)。归档11:0x+09:1x块→ARCHIVE_OPERATOR_PRETRAIN.md, TASK 35.4KB→15.4KB。未碰GPU/S1。未完成指令：无。📦 体积：TASK=15.4KB / MEMORY=29.6KB（归档 ~20KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
+> 📦 §#999（10-31 11:2x, 论文改稿直接落地·9处改4_llm_pretrain.tex+1处改0_abstract.tex·commit 85ea67b4d）→ daily-memories/2026-10-31.md；**结论**：P0/P1×6/P2全部落地, 编译0-error/6页, 报告13KB已交付。被#1000验证。需要时再读。
 > 📦 §#994（10-31 08:13, S1监控iter30500健康·loss~2.15·0NaN·~590K tok/s·ckpt@30000）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.15稳态微降. 被#995更新。需要时再读。
 > 📦 §#993（10-31 07:01, S1监控iter29900健康·loss~2.166·0NaN·~590K tok/s·ckpt@28000·1M报告✅DONE）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.166稳态, 1M报告已交付. 被#994更新。需要时再读。
 > 📦 §#997（10-31 10:0x, 论文审校补遗+任务书归档·删除2行orphaned中文注释+TASK归档→27.2KB）→ daily-memories/2026-10-31.md；**结论**：orphaned注释清理, 编译0-error, TASK 36.6KB→27.2KB。需要时再读。

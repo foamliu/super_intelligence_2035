@@ -1,5 +1,5 @@
 # BAIZE_PRETRAIN_2B_TASK.md
-### 🚀 运维令 · 2026-10-31 11:2x（**直接落地改稿：`4_llm_pretrain.tex` + 刷新摘要/intro 等章节，提交并推送**）· 用户直令 · 最高优先
+### [已完成] 🚀 运维令 · 2026-10-31 11:2x（**直接落地改稿：`4_llm_pretrain.tex` + 刷新摘要/intro 等章节，提交并推送**）· 用户直令 · 最高优先
 
 > **用户原话（2026-10-31 11:2x）**：「请 pretrain 自行修改 4_llm_pretrain.tex 并推送&提交；请 pretrain 把摘要、intro等其他章节也刷新；各自注意篇幅」
 
@@ -37,95 +37,9 @@
 
 
 
-### 🚀 运维令 · 2026-10-31 11:0x（**审校 BaiZe 论文第 4 章「预训练」，出中文 HTML 修订计划**）· 用户直令 · 最高优先
+> 📦 §运维令 2026-10-31 11:0x（论文第4章审校修订计划）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第二批」节；**结论**：✅ 交付 report_pretrain_paper_revise_plan_zh.html（34KB/6节），1 P0 + 6 P1 + 6 P2 逐条列出，已被 11:2x 令落地。需要时再读。
 
-> **用户令**：「让 pretrain 和 vision 看看 BaiZe 论文中各自的章节，出一版中文 HTML 修订计划：哪里跟事实不符，计划怎么改。」
-
-**背景**：论文已压到 ISEDA 6 页正文（实测全文 6 页，参考文献也在内）。你的第 4 章被我按用户指示**大幅压缩**：
-- 12 小节 → **7 小节**，13 张表 → **5 张表**，文件 63KB → 20KB
-- 删掉的：`Why the budget is this small`（文献对比）、mixture-BO 详细论证、独立 Search Budget 小节，以及 8 张表（`tab:wsd`/`tab:stable-blend`/`tab:longctx-budget`/`tab:mix-topk`/`tab:llm-stages`/`tab:longctx-eval`/`tab:longctx-ppl`/`tab:longctx-cost`）
-- **压缩是我做的，可能有事实错漏 —— 这正是要你审的。**
-
-#### ① 先读
-```
-cd doc/BaiZe-ISEDA2027 && git pull --rebase
-cat BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex          # 当前压缩版（~170 行，含中文注释）
-git show f4db0347d                                        # 压缩提交（含 diff）
-git show e85e5dc68 --stat                                 # 同一次修正
-```
-对照源：`code/baize-llm/configs/*.env`、`run/MEMORY_PRETRAIN_2B.md`、`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`、`code/baize-llm/docs/LONGCTX_ABF_PLAN.md`。
-
-#### ② 运维已知的疑点（**逐条核实并给结论**）
-1. **压缩是否导致失实（P0）**：我把 13 张表压到 5 张、把长上下文 7 个小节压成 2 节。**请逐句核对现文的每个数字与断言**，凡因压缩而走样、断章取义、丢掉前提的，全部列出。重点核：`2.94T`/`3.02T`/`700k`/`14k`/`6k`、`613,992`、`351,526`、`iter 30,660`、`loss 2.151`、`598K tok/s`、`2.52%/0.03%/889`、`2.2054`/`2.6739±0.0469`。
-2. **`88--176B` 长上下文预算**：现文写「LC 占 decay 的 30–40%，即 $88$–$176$B」。核：基数用的是 decay 的 10% 还是 15%？下界 88B 对应 10%×30%？表述是否自洽？
-3. **`tab:longctx-train` 的 64K/128K 吞吐（≈180K/≈90K）**：仍是**外推**，表里标了 (est.)。核是否属实，或能否实测回填。
-4. **`§4.1 架构选型` 只留两句**：丢掉了原来「Feasibility: Megatron-Core 复用 56 层模式」那条理由。判断是否该补回一句。
-5. **`§4.7 长上下文能力与推理成本`**：我把 PPL 表和推理成本表压成了一段文字，PPL 值 `83.2→51.5→53.3→53.0→55.8→55.4` 与原表是否完全一致？`41.6K tok/s`、`172s`、`34.7GB`、`455K` 是否属实？
-6. **`§4.4 数据`**：把 7 源比例写成了一句话，比例值与 `configs/blend_s1_preblend.tsv` 是否一致（0.65/0.05/0.04/0.05/0.02/0.15/0.04）？
-
-#### ③ 交付物（唯一硬交付）
-`reports/report_pretrain_paper_revise_plan_zh.html` —— 中文、单文件自包含、**0 `script`/0 外链/0 CDN**、标签配平、**≥20KB**；生成器 `pretrain/generate_paper_revise_plan_report.py`（幂等）；commit `pretrain paper-plan:`，push。
-
-**必须含 6 节**：① 现状逐句摘录 + 标注「✅属实 / ⚠️存疑 / ❌不符事实」+ 证据（文件+行号）；② 不符事实清单表（位置/现文/事实/来源/严重度 P0-P2）；③ **改写方案（可直接替换 `.tex` 的英文目标文本，逐段「改前→改后」）**，且**必须守住 6 页正文上限**；④ 篇幅账（当前第 4 章约 1.6 页，改写后预计多少，如何不超）；⑤ 仍需的实验（无实测支撑的数字如实列出）；⑥ 自检清单。
-
-#### ④ 红线
-- 🚫 **本轮只出计划，不改 `.tex`**（改稿等我确认后下一轮做）。
-- 🚫 **不伪造数字**；未实测写「待核」或「估算」，禁止估算冒充实测。
-- 🚫 **不得把已删内容整段塞回**（用户明确要 6 页）：需要恢复的内容只能在计划里说明，并给出「为腾版面删掉哪段作为交换」。
-- 🚫 只谈 `4_llm_pretrain.tex` + `reference.bib` 本线条目；不动 `6_vision_encoder.tex`（vision 线负责）。
-- 🚫 章节里有 `% 中文：` 双语注释行，**不得删**；改写时同步更新中文。
-- 🚫 **不碰 GPU / 不打断 S1 训练**（当前 iter ~30,660/700k）。
-- 体积：任务书 ≤32KB；本令未完成前不许归档。
-
-### [已完成] 🚀 运维令 · 2026-10-31 09:1x（**接手维护 BaiZe 论文「预训练」章节**）· 用户直令 · 最高优先
-
-> **用户令**：「下发指令给 pretrain agent 去改（论文预训练章节）。」
-
-**背景（先读，决定你改什么）**：运维上一轮已经**手工改过一遍**并已 commit 入 main（`c40b6faf0`→rebase 后 `3c82ffe01`，标题 `BaiZe paper: pretrain 章节改写——删除 44.4B 旧生产跑，新增 WSD decay 两段制与长上下文训练`）。从**本轮起，论文预训练章节由你（pretrain 线）负责维护**；运维不再代替你改。**你的任务 = 在既有修订基础上做专业化审校与补全，不是从零重写。**
-
-#### ① 先读懂现状（本轮第一步，禁止跳过）
-```bash
-cd doc/BaiZe-ISEDA2027 && git pull --rebase
-git log --oneline -5 -- BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex   # 看运维改了什么
-git show 3c82ffe01 -- BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex      # 逐行 diff（主修订）
-git show 9337de26e                                                      # 伪造引用勘误
-```
-结构（14 小节，**4.3 / 4.6 / 4.11 为新增**）：4.1 架构选型 → 4.2 NeMo 框架 → **4.3 WSD 两段 decay** → 4.4 生产前搜索 → 4.5 数据 → **4.6 长上下文数据前置条件** → 4.7 混比搜索 → 4.8 搜索预算 → 4.9 搜索结果 → 4.10 全量生产 → **4.11 长上下文训练（主体）** → 4.12 能力与推理成本。
-
-#### ② 本轮必须做的 6 件事
-1. **事实核校（最高优先）**：每个数字与 `code/baize-llm/configs/*.env`、`run/MEMORY_PRETRAIN_2B.md`、`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 对账。重点：`2.94T`、`4.19M/step`、`700k/14k/6k 步`、`3.02T`、`613,992`、`351,526`、`29,900 iter`、`2.166 loss`、`~590K tok/s`、`2.52%/0.03%/889`。不符立即改，并列「原值→新值→证据」。
-2. **更新 4.10 的「in progress」**到执笔时的真实 iter/loss/tok/s/ckpt（现 #995 = iter 30660、loss~2.151、~598K tok/s、ckpt@30000）。必须写「at the time of writing + 日期」，不留会过期的裸数字。
-3. **64K/128K 吞吐**：表 11 里 ≈180K/≈90K 是外推。能实测就回填，**不能测就保留 est.，禁止改成「实测」**。
-4. **审校 4.11 三条强主张**：「2.2B 长文数据需求不高于 8B 级」「25–176B 位于公开量级之上（保守）」「decay-B 不回升 LR」——站不住就按本项目口径改写并给依据，别照抄。
-5. **补 decay-A 内容**：至少写清配比来源（`configs/blend_decay.tsv`：SFT-2605 0.60 / Agent-2609 0.12 / ufw_en_l3_qa 0.18 / ufw_zh 0.04 / math_l3 0.04 / code_l3 0.02）与「为何先 16K 退火再进长上下文」的因果，别只写 queued。
-6. **编译验收（硬门禁）**：
-```bash
-cd BaiZe-ISEDA2027
-pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
-grep -c '^!' main.log                                   # 必须 0
-grep 'LaTeX Warning: \(Reference\|Citation\)' main.log   # 必须空
-grep 'Overfull \\hbox' main.log                          # 允许 2 条，均在 6_vision_encoder.tex
-```
-🚫 编译不过不许 commit。
-
-#### ③ 已知遗留问题（本轮一并处理）
-- **`chen2024dataeng` 已由运维处理完毕（2026-10-31）**：该条目在 arXiv 上**不存在，属伪造引用**（连同「128K 只需 0.5–5B token」的说法一起删除）；现 §4.11 只引 **已核实的** ProLong-8B（ACL 2025，40B token）与 LongRoPE2（arXiv 2502.20082，10B token），论证方向改为「我们 25–176B ≥ 公开量级，属保守；该预算是 floor 不是 ceiling」。**你不需要再查这条**；但若你在审校中发现其它引用可疑，按同样纪律处理：**查不到就删，不许凭记忆保留**。
-- `4_llm_pretrain.tex.bak_annotated`（已删除，别重建）：改动对照靠 `git show 3c82ffe01` 即可，**不要在 `ISEDA2027/` 目录下留任何非编译输入的副本**。
-- 摘要 `0_abstract.tex` 仍写「≈44B tokens / final loss 1.357 / ≈412 GPU-hours」，**与新正文矛盾**。本轮**不改摘要**（跨章节，另派），但要在回复里指出并登记待办。
-
-#### ④ 红线
-- 🚫 **不碰 GPU / 不打断 S1**（700k 步是主线）；写作纯 CPU。
-- 🚫 **不伪造数字**：未实测写 `estimated`，拿不准写「待核」；禁止估算冒充实测。
-- 🚫 **只改 `4_llm_pretrain.tex` + `reference.bib` 本线条目**；其它章节（abstract/intro/arch/posttrain/vision/mllm/domain/conclusion）**只报告不改**。
-- 🚫 `.tex` 里不许留 `<!-- CHANGED -->` 标注。
-- commit 前缀 `pretrain paper:`，**message 逐条列「改了哪些数字+依据」**；push 被拒就 rebase 重推，失败写进心跳。
-
-#### ⑤ 交付与收尾
-- 交付 = 可编译的 `4_llm_pretrain.tex`（0 error）+ commit + push；
-- 心跳给出：① 核校数字与改动处数；② 编译证据（`^!` / 未定义引用 / Overfull / 页数）；③ 待办（摘要口径、64K/128K 实测、`chen2024dataeng`）。
-- 体积：任务书 **≤32KB**（>40KB 红线）；已归档 10-30 的 1M 报告令腾空间，**新令未完成前不许归档**。
-
-
+> 📦 §运维令 2026-10-31 09:1x（接手维护论文预训练章节）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第二批」节；**结论**：✅ 4_llm_pretrain.tex 事实核校+decay-A补全+§4.11修正，编译0-error，commit b12ddfb57。被 11:2x 令更新。需要时再读。
 
 ### [已完成] 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · ✅ 已完成（#983 2026-10-30 23:17 交付 `reports/report_pretrain_1m_needle_zh.html` 33,667B/6节+总结路线图/0 script/0外链，覆盖现状基线-怎么做到1M-怎么到>95% needle-实验矩阵6组-取舍建议-与Qwen/Llama3对比；commit d0424c1f1）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-10-31」节。需要时再读。
 

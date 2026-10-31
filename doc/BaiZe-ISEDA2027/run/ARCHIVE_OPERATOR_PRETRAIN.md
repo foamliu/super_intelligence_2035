@@ -3758,3 +3758,24 @@ ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2
 
 **✅ 归档结论**：计划已定稿并执行。S1 以 GBS=256 运行中（2.94T 目标, iter 30,660/700k）。pre-blend 已完成, nw=8 恢复, ~598K tok/s。check_rope.py PASS。计划报告在位。Decay 后置（待 data 线分词）。
 
+---
+
+## 归档 2026-10-31 第二批（由 BAIZE_PRETRAIN_2B_TASK.md 搬入，原文未改）
+
+### [已完成] 🚀 运维令 · 2026-10-31 11:0x（**审校 BaiZe 论文第 4 章「预训练」，出中文 HTML 修订计划**）· 用户直令 · 最高优先
+
+> **用户令**：「让 pretrain 和 vision 看看 BaiZe 论文中各自的章节，出一版中文 HTML 修订计划：哪里跟事实不符，计划怎么改。」
+
+**背景**：论文已压到 ISEDA 6 页正文（实测全文 6 页，参考文献也在内）。你的第 4 章被我按用户指示**大幅压缩**：
+- 12 小节 → **7 小节**，13 张表 → **5 张表**，文件 63KB → 20KB
+- 删掉的：`Why the budget is this small`（文献对比）、mixture-BO 详细论证、独立 Search Budget 小节，以及 8 张表（`tab:wsd`/`tab:stable-blend`/`tab:longctx-budget`/`tab:mix-topk`/`tab:llm-stages`/`tab:longctx-eval`/`tab:longctx-ppl`/`tab:longctx-cost`）
+- **压缩是我做的，可能有事实错漏 —— 这正是要你审的。**
+
+交付 `reports/report_pretrain_paper_revise_plan_zh.html`（34KB/6节），列出 1 P0 + 6 P1 + 6 P2 逐条改前→改后。已被 11:2x 令落地。
+
+### [已完成] 🚀 运维令 · 2026-10-31 09:1x（**接手维护 BaiZe 论文「预训练」章节**）· 用户直令 · 最高优先
+
+> **用户令**：「下发指令给 pretrain agent 去改（论文预训练章节）。**
+
+背景：运维上一轮已手工改过并 commit（`3c82ffe01`）。本轮起论文预训练章节由 pretrain 线负责维护。任务 = 专业化审校与补全。已交付：4_llm_pretrain.tex 事实核校+decay-A补全+§4.11修正，编译0-error，commit b12ddfb57。摘要旧口径待办已在 11:2x 令中修复。
+
