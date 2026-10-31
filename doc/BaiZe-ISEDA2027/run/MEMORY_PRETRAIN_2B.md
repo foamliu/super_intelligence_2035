@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 19:01 #1017：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415997 活着，iter 33420/700k（4.77%），loss ~2.14 稳态，grad-norm ~0.09-0.11 极稳，0 NaN/0 skipped，~6.89s/step ≈ ~609K tok/s，ckpt@iter_32000。8×H100 100%util/~75GB。论文6页/ERR=0 维持。未完成指令：无。📦 体积：TASK=23.8KB / MEMORY=28.9KB（归档 0KB）。
+> 🆕 2026-10-31 19:19 #1018：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415549 活着（etimes 25093s ≈ 7h），iter 33580/700k（4.80%），loss ~2.139 稳态，grad-norm ~0.088-0.112 极稳，0 NaN/0 skipped，~6.9s/step ≈ ~607K tok/s，ckpt@iter_32000（next ~34000）。8×H100 100%util/~75GB。论文6页/ERR=0 维持。未完成指令：无。📦 体积：TASK=23.8KB / MEMORY=29.0KB（归档 0KB）。
+> 📦 §#1017（10-31 19:01, S1健康监控iter33420/loss2.14/0NaN/609K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter33420(4.77%), loss~2.14稳态, grad-norm极稳, ~609K tok/s。被#1018监控。需要时再读。
 > 📦 §#1016（10-31 18:30, 任务书+MEMORY归档·3个已闭合运维令→ARCHIVE第三批·TASK 36KB→23.8KB/MEMORY 32.8KB→29.1KB）→ daily-memories/2026-10-31.md；**结论**：paper-slim 令已完成(commit 2fef637c8)，归档后论文6页/ERR=0。被#1017监控。需要时再读。
 > 📦 §#1014（10-31 17:28, 全文事实审订84项·5处.tex修改·commit d6ba844fc）→ daily-memories/2026-10-31.md；**结论**：84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，ERR=0/7页(vision致溢出)，报告25.7KB。被#1015压缩更新。需要时再读。
 
@@ -33,8 +34,8 @@ WAITING: 1
 > 📦 §#996（10-31 09:1x, 论文预训练章节审校·事实核校+decay-A补全+§4.11修正·编译0-error·commit b12ddfb57）→ daily-memories/2026-10-31.md；**结论**：4_llm_pretrain.tex 4处编辑(iter/loss/tok-s更新+decay-A六源配比+先16K退火因果+LC预算88-176B), 编译0-error/0-undef/2-overfull(均在6_vision)/15pp。需要时再读。
 > 📦 §#984及更早 S1监控流水（10-28~10-31, iter270→29740, 全程健康）→ daily-memories/2026-10-{28,29,30,31}.md & ARCHIVE_OPERATOR_PRETRAIN.md；**结论汇总**：S1全程健康稳定, loss 6.12→2.16单调下降, 0NaN, 554-665K tok/s, ckpt 2k→28k, check_rope PASS, HF导出✅, 1M报告✅. 需要时再读。
 
-> - 未完成指令：无。S1 RUNNING(iter ~32000/700k, loss ~2.16, 0NaN, ~593K tok/s, ckpt@30000)。论文全部任务已完成（paper-slim #1015 / paper-audit #1014 / paper-edit #999，6页/ERR=0）。仅剩长上下文ABF基线(需GPU空闲)。ETA ~52天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=23.8KB / MEMORY=30.0KB（归档 2.8KB → ARCHIVE_OPERATOR_PRETRAIN.md）
+> - 未完成指令：无。S1 RUNNING(iter 33580/700k, loss ~2.139, 0NaN, ~607K tok/s, ckpt@32000)。论文全部任务已完成（paper-slim #1015 / paper-audit #1014 / paper-edit #999，6页/ERR=0）。仅剩长上下文ABF基线(需GPU空闲)。ETA ~52天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=23.8KB / MEMORY=29.0KB（归档 0KB）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
