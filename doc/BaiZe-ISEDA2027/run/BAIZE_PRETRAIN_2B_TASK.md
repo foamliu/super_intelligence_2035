@@ -1,4 +1,50 @@
 # BAIZE_PRETRAIN_2B_TASK.md
+### 🚀 运维令 · 2026-10-31 15:2x（**全文事实审订：`3_architecture.tex` 是重灾区，逐表逐句对账实测配置**）· 用户直令 · 最高优先
+
+> **用户原话**：「请 pretrain 审订一下白泽论文，不准确的地方还有不少。比如：Table-1 说 BF16，现在的训练明明是 FP8。这种明显的问题随处可见。」
+
+**这是对上一令的补强**：11:2x 令只覆盖了 ch4 + 摘要 + intro 的**旧口径数字**（44B/1.357/412GPU·h），**漏掉了 `3_architecture.tex`（§III，含 Table 1/Table 2）**，而那里是"显而易见"类错误的集中地。本令要求**把全文当一份技术文档通读审订**，不是只找旧数字。
+
+#### ① 运维已点名的实例（**用户亲自举例，必须改**）
+- **`3_architecture.tex` L42：`Precision & BF16`** —— 生产训练实为 **FP8 tensorwise**（`common.env` `PRECISION`/`FP8_RECIPE=tensorwise`；ch4 已写对「FP8 tensorwise」）。**Table 1 必须改。**
+- **`3_architecture.tex` L55：「All stages run on $8\times$NVIDIA H100 GPUs ... BF16 precision throughout」** —— 两处错：① 生产是 **2 节点 × 8 = 16 卡**（`common.env` `NNODES=2`），不是单机 8 卡；② 不是 "BF16 throughout"。
+- **`3_architecture.tex` L39：`Sequence length & 4096`** —— 主训练序列是 **16,384**（`common.env` `SEQ=16384`），4096 是旧搜索阶段的值。**Table 1 必须改。**
+
+#### ② 运维已扫到的其它可疑点（**逐条核实**，不止这些）
+| 位置 | 现文 | 疑点 |
+|:--|:--|:--|
+| `3_architecture.tex` L66 | `(i) LM pre-training & **complete**` | S1 只跑到 ~30.7k/700k（**4.4%**），decay 未开始，称 "complete" 是否失实？建议改 `in progress` 或注明进度 |
+| `3_architecture.tex` L68 | `(iii) Vision encoder & complete` | 与 vision 线现状是否一致（其章节仍为占位版） |
+| `3_architecture.tex` L49 | 「selected from **six** iso-parameter candidates」 | ch6 已压成不写"六候选"，此处与 ch6 是否自洽？ |
+| `3_architecture.tex` L17 | 「Section~\ref{sec:longctx}」 | 该 label 是否仍存在 |
+| `3_architecture.tex` L3/L55 | CUDA 12.8 / PyTorch 2.8.0 / Python 3.10 | 与 `common.env` 的 `PY` 路径 / 实际环境是否一致 |
+| `tab:pipeline` L66-70 | (ii)(iv)(v) `design` | 与摘要/intro 的表述是否一致 |
+
+#### ③ 本轮任务：**全文事实审订**（范围 = 除 ch6 外全部章节）
+按下列**检查清单**逐项过一遍，**每一条都要给"✅/⚠️/❌ + 证据（文件+行号）"**：
+1. **精度**：凡出现 BF16/FP8 之处，与实际 `PRECISION`/`FP8_RECIPE` 是否一致
+2. **规模**：卡数（8 vs 16）、节点数（1 vs 2）、TP/CP/DP、GBS、MBS、seq —— 逐项对 `configs/*.env`
+3. **token 与步数**：2.94T / 700k / 4.19M per step / decay 83.9B —— 全文出现处是否一致
+4. **状态词**：`complete` / `in progress` / `design` / `[TBD]` —— 是否与真实进度相符（**S1 未完成，不许写 complete**）
+5. **交叉引用**：所有 `\ref{}` 是否指向存在的 label；章节间同一事实的表述是否互相矛盾
+6. **参数与架构**：56 层 / 4 attention / hidden 2048 / FFN 8192 / vocab 129,281 / 2.22B —— 与 `3_architecture` + `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 对齐
+7. **遗留旧口径**：`44.4B` / `1.357` / `412 GPU·h` / `4096` / `六架构` 等
+
+#### ④ 交付
+1. **直接改稿并提交**（本令解除"只出报告"限制，与 11:2x 令一致）：只改 `.tex`（ch6 除外）+ `reference.bib` 本线条目。
+2. `reports/report_pretrain_paper_audit_zh.html`（中文/单文件/0 script/0 外链/**≥20KB**）：**逐章逐表的审订表**（位置 / 现文 / 实测 / 证据文件+行号 / 判定 / 已改为），未改项写原因。
+3. commit `pretrain paper-audit:` + push；`MEMORY_PRETRAIN_2B.md` 顶部登记（含 ERR/UNDEF/页数）。
+
+#### ⑤ 红线
+- 🚫 **全文（正文+参考文献）≤6 页**：每改一次跑 `pdflatex→bibtex→pdflatex×2`，**ERR=0 / UNDEF=0**，实测页数；超页按「删中间过程、保最终数字」取舍。
+- 🚫 **不 commit `main.pdf`**（二进制会与 vision 线冲突；最终 PDF 由运维统一编译）。
+- 🚫 **不动 `6_vision_encoder.tex`**（vision 线正在改）与 `7_mllm.tex` 正文。
+- 🚫 **不伪造**：凡无实测支撑写「估算/待核」，禁止估算冒充实测。
+- 🚫 `% 中文：` 双语注释行**不得删**；改英文时同步更新对应中文。
+- 🚫 不碰 GPU / 不打断 S1（当前 iter ~31,349/700k）。
+- 提交前 `git pull --rebase`，只 `git add` 自己改的 `.tex` + 自己的报告。
+- 体积：本令未完成前**不得归档**。
+
 ### [已完成] 🚀 运维令 · 2026-10-31 11:2x（**直接落地改稿：`4_llm_pretrain.tex` + 刷新摘要/intro 等章节，提交并推送**）· 用户直令 · 最高优先
 
 > **用户原话（2026-10-31 11:2x）**：「请 pretrain 自行修改 4_llm_pretrain.tex 并推送&提交；请 pretrain 把摘要、intro等其他章节也刷新；各自注意篇幅」
