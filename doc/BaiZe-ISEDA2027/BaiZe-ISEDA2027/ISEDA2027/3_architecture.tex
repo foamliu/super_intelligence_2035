@@ -19,7 +19,7 @@ Crucially, only the four attention layers carry rotary position embeddings (RoPE
 The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
 % 中文：完整配置见表 \ref{tab:config}；模型参数量约 22.2 亿。
 
-\begin{table}[htbp]
+\begin{table}[t]
 \centering
 \caption{BaiZe language-backbone configuration (Mamba2-hybrid).}
 \label{tab:config}
@@ -55,7 +55,7 @@ Table~\ref{tab:pipeline} summarises the five-stage pipeline.
 All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.10); fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$ and BF16 precision throughout.
 % 中文：所有阶段均运行在 $8\times$NVIDIA H100 GPU 上（CUDA 12.8、PyTorch 2.8.0、Python 3.10）；在适用处启用融合核、选择性激活重计算与交叉熵损失融合，全程使用 $\texttt{tensor\_model\_parallel\_size}=1$ 与 BF16 精度。
 
-\begin{table}[htbp]
+\begin{table}[t]
 \centering
 \caption{BaiZe five-stage pipeline overview.}
 \label{tab:pipeline}

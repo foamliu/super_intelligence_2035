@@ -31,7 +31,7 @@ A binary signal is the simplest baseline; partial credit over executable attempt
 Because the reward is computed from assertions a policy could in principle target directly, we keep the harness anti-cheat hook enabled in every run and report a cheat rate beside every accuracy figure.
 % 中文：由于奖励由策略原则上可以直接瞄准的断言计算而来，我们在每次运行中都保持 harness 的反作弊钩子开启，并在每个准确率数字旁报告作弊率。
 
-\begin{table}[htbp]
+\begin{table}[t]
 \centering
 \caption{Reward variants studied in stage~(ii).}
 \label{tab:reward}
@@ -49,31 +49,14 @@ R4 & R3 $+$ API-legality term \\
 
 \subsection{Evaluation Protocol}\label{sec:posttrain-eval}
 
-We define four capability milestones to track progress through Stage~(ii):
-% 中文：我们定义四个能力里程碑以追踪第 (ii) 阶段的进展：
-\begin{itemize}
-\item \textbf{M1 (tool-call legality):} the model generates syntactically valid PyAether API calls with no hallucinated symbols (measured by API-legality rate).
-\item \textbf{M2 (single-task pass):} the model solves individual EDA scripting tasks end-to-end (Pass@1 on EDA-Eval-PyAether).
-\item \textbf{M3 (multi-turn refinement):} the model recovers from execution failures by reading error output and revising code (multi-turn Pass@1 with up to 3 refinement rounds).
-\item \textbf{M4 (full benchmark):} the model achieves competitive end-to-end accuracy on the full $158$-task benchmark under the standard five-run protocol.
-\end{itemize}
-All post-training variants are scored on \textbf{EDA-Eval-PyAether}~\cite{liu2026zhulong}, a benchmark of $158$ real-world EDA scripting tasks.
-% 中文：所有后训练变体均在 \textbf{EDA-Eval-PyAether} \cite{liu2026zhulong} 上评分——这是一个包含 $158$ 个真实 EDA 脚本任务的基准。
-Each task pairs a natural-language prompt and a function signature with assertion-based test code, and is scored by execution in the vendor sandbox: a task passes when the generated code runs without error and every assertion holds.
-% 中文：每个任务把自然语言提示与函数签名同基于断言的测试代码配对，并通过在厂商沙盒中执行来评分：只有当生成的代码无错运行且所有断言成立时，该任务才判为通过。
-We follow the benchmark's own protocol so that our numbers are comparable to published ones: five independent runs with reshuffled task order and fresh context, reporting mean Pass@1 and its run-to-run standard deviation, with a $2500$-second per-task timeout and a single non-restartable trace per task.
-% 中文：我们遵循该基准自身的协议，以使数字可与已发表结果比较：五次独立运行，打乱任务顺序并重置上下文，报告平均 Pass@1 及其运行间标准差，单任务超时 $2500$ 秒，且每个任务只有一条不可重启的轨迹。
-
-Two controls make the comparison interpretable.
-% 中文：两项对照使比较可解释。
-First, \emph{contamination}: no task, assertion, or reference solution from the benchmark enters any training split.
-% 中文：第一，\emph{污染}：基准中的任何任务、断言或参考解都不得进入任何训练划分。
-A blacklist of $193{,}295$ character-level 13-gram fingerprints (FNV-1a 64-bit hashed, NFKC-normalised, with 8-gram fallback for short texts) is built from all $536$ tasks across six evaluation snapshots of EDA-Eval-PyAether; every training shard---including SFT corpora---is scanned for ${\geq}0.80$ n-gram overlap before release, with MinHash($k{=}128$) tracing for source attribution.
-% 中文：我们由 EDA-Eval-PyAether 六个评测快照的全部 $536$ 个任务构建了一个包含 $193{,}295$ 条字符级 13-gram 指纹的黑名单（FNV-1a 64 位哈希、NFKC 归一化，短文本回退到 8-gram）；每个训练 shard——包括 SFT 语料——在发布前都被扫描以检查 ${\geq}0.80$ 的 n-gram 重叠，并用 MinHash($k{=}128$) 做来源追溯。
-PyAether training material is drawn only from API documentation, and we isolate it by symbol so that benchmark targets cannot leak.
-% 中文：PyAether 训练材料仅取自 API 文档，并按符号加以隔离，使基准目标无法泄漏。
-Second, \emph{harness parity}: only the backbone is varied. The retrieval stack, sandbox, anti-cheat hook, and agent scaffold are held byte-identical to the published configuration, because the harness supplies most of the observed accuracy and a variant harness would confound the model's contribution with the scaffold's.
-% 中文：第二，\emph{harness 一致性}：只改变骨干模型。检索栈、沙盒、反作弊钩子与智能体脚手架均与已发布的配置逐字节保持一致，因为 harness 贡献了观测到的准确率的大部分，若换用变体 harness，就会把模型本身的贡献与脚手架的贡献混在一起。
+We track four capability milestones through Stage~(ii): \textbf{M1} tool-call legality (syntactically valid PyAether calls, no hallucinated symbols); \textbf{M2} single-task pass (Pass@1 on EDA-Eval-PyAether); \textbf{M3} multi-turn refinement (recovery from execution failures with up to 3 rounds); \textbf{M4} full-benchmark accuracy.
+% 中文：我们在第 (ii) 阶段跟踪四个能力里程碑：M1 工具调用合法性（语法合法的 PyAether 调用、无虚构符号）；M2 单任务通过（EDA-Eval-PyAether 上的 Pass@1）；M3 多轮改进（最多 3 轮从执行失败中恢复）；M4 全基准准确率。
+All variants are scored on \textbf{EDA-Eval-PyAether}~\cite{liu2026zhulong} ($158$ real-world EDA scripting tasks), each pairing a natural-language prompt and function signature with assertion-based test code, scored by execution in the vendor sandbox.
+% 中文：所有变体均在 EDA-Eval-PyAether \cite{liu2026zhulong} 上评分（$158$ 个真实 EDA 脚本任务），每个任务把自然语言提示与函数签名同基于断言的测试代码配对，并在厂商沙盒中执行评分。
+We follow the benchmark's own protocol---five independent runs, reshuffled order, fresh context, mean Pass@1 with run-to-run standard deviation, $2500$-s per-task timeout---so numbers are comparable to published ones.
+% 中文：我们遵循基准自身的协议——五次独立运行、打乱顺序、重置上下文、平均 Pass@1 及运行间标准差、单任务超时 $2500$ 秒——使数字可与已发表结果比较。
+Two controls make the comparison interpretable: contamination is excluded by the n-gram blacklist of Section~\ref{sec:llm-data}, and only the backbone is varied while the retrieval stack, sandbox, anti-cheat hook, and agent scaffold are held byte-identical, since the harness supplies most of the observed accuracy.
+% 中文：两项对照使比较可解释：污染由第 \ref{sec:llm-data} 节的 n-gram 黑名单排除；且只改变骨干模型，检索栈、沙盒、反作弊钩子与智能体脚手架保持逐字节一致，因为 harness 贡献了观测准确率的大部分。
 
 Results are reported as \textbf{[TBD]}.
 % 中文：结果以 \textbf{[TBD]} 表示（待填）。
