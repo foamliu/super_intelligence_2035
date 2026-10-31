@@ -1,4 +1,44 @@
 # BAIZE_VISION_TASK.md
+### 🚀 运维令 · 2026-10-31 08:4x（**起草「波形图强化」中文 HTML 计划书：交互式 RL + WaveView 实操**）· 用户直令 · 最高优先
+
+> **用户原话**：「给vision发个任务，起草中文HTML计划书：如何强化MLLM读懂波形图的能力。提示：我们有WaveView软件的license，也有可以操作WaveView的Tcl文档，可否通过跟环境交互的强化学习使得MLLM在读懂波形图方面游刃有余？这个MLLM最终目的是嵌入到EDA agent 烛龙做个能帮忙读懂仿真结果波形图的工具，帮助烛龙在芯片设计工作流编排方面走的更远。另外它也是烛龙论文future work中multimodal grounding努力的一部分。」
+
+**交付物（唯一硬交付）**：`reports/report_vision_wave_rl_plan_zh.html` —— 中文、单文件自包含、**0 `script`/0 外链/0 CDN**、标签配平、**≥28KB**；生成器 `vision/generate_wave_rl_plan_report.py`（幂等，重跑两次逐字节相同）；commit `vision wave-rl-plan:`，push。
+
+#### ① 与前作的边界（先讲清楚，别重复造轮子）
+`reports/report_vision_waveform_zh.html`（2026-10-30 已交付）讲的是「看懂波形需要哪些能力 / 怎么造数据 / 怎么 SFT 与评测」，RL 在其中仅一句「可选 Stage-3W、风险高」。
+本计划书**不重写它**，只把「与 WaveView 环境交互的 RL」从一句可选项展开成可执行技术路线；基线数字（4 类波形 / 四层能力梯度 / waveform 368 命中 / WaveQA 设计）**直接引用，不重新调研、不重新估算**。
+
+#### ② 必须回答的 9 个问题（逐条成节，缺一不可）
+1. **为什么必须「交互」而非「看图猜」**：论证单凭静态截图做数值量测有原理性上限（像素量化/抗锯齿/分辨率 vs token 预算）。定分工：**看图定性 → 调工具定量**，模型的职责是**决定看什么、量哪里**，精确值由工具读出。
+2. **与烛龙的接口契约**：工具名 `waveform_read`，输入 = 自然语言问题 + FSDB 路径，输出 = **结构化 JSON（值+单位+证据坐标）**而非自然语言；说明如何嵌进烛龙 `run_code` 闭环，以及**为何它提升 Ω（观测似然）保真度**——显式接上烛龙论文 *observation-fidelity bound*（gap 上界由 Ω 决定、与模型规模无关）。**这是本计划书的理论锚点，必须写。**
+3. **RL 环境设计（核心）**：把 WaveView 包成 **Gym 风格确定性环境**：action = **受控 Tcl 子集**（非任意 Tcl，兼顾安全与可判分）；observation = 紧凑文本/数值观测 +（可选）视窗截图；含终止条件、步数上限、失败惩罚、**单 episode 内 wv 调用上限**（见 ③ 崩溃阈值）。
+4. **奖励设计（可验证、防 hack）**：主奖励 = **数值相对误差分档**（如 1%/5%/10%），非文本相似度；加**证据奖励**（真的调用了对应工具并给出正确坐标）与**稠密中间奖励**；**anti-hacking**：禁直输 GT 常量、禁跳过工具、隐藏 FSDB + 隐藏题双盲抽检。
+5. **数据从哪来（可行性论证）**：三级——① 合成（自造激励/开源仿真器，GT 天然可得）；② 真实（烛龙 waveform trace 中可复现 FSDB，用**同一 WaveView 命令回放**取 GT）；③ 派生（换信号/时间窗/量测目标扩题）。给**各来源题量 × GT 可靠性**对比表。
+6. **训练配方**：SFT 冷启动（必须，否则 RL 无有效动作分布）→ RL；GRPO / PPO 二选一**论证倾向 GRPO**（无 value 网络、2B 省显存）；**动作必须是合法 Tcl 子集，非法直接 mask**；2B 容量取舍；**与视觉的分工**：RL 学「调什么」，视觉管「看哪儿」。
+7. **评测协议**：WaveQA-RL（held-out，与训练**不同 FSDB**）；三层指标 = 量测准确率 / 端到端成功率 / 工具调用效率（步数）；**必须有两条参照线**：「无工具（纯看图）」与「Oracle Tcl」，否则无法证明 RL 增益来自学习而非工具；护栏 MMStar/MMBench ≤1pp；**预注册判据** + 决策树。
+8. **成本与 ETA**：SFT / RL 各自 GPU·h；**采样吞吐以 wv 调用开销为瓶颈，不能只算 GPU**；pilot(N 题) → 全量 两档；风险登记表。
+9. **落地与论文贡献**：从「烛龙的一个 tool」→「multimodal grounding 的实证」；给出**可写入烛龙 future work / 后续论文的实验设计**（变量、对照组、期望结论），并说明与 ZhuLong 现有 grounding 框架的关系。
+
+#### ③ 必须复用的实测事实（repo 内已核实，直接引用标来源；**不要重新调研**）
+来源：`doc/ZhuLong_DAC2027/benchmark/designflow/trace_deepreads/` 的 as67p / fa3cd 深读笔记。
+- **后端**：`wv -ace_no_gui`（Tcl），比 fscript **快约 16x**。
+- **可用 API**：`sx_open_sim_file_read`、`sx_signal`（不存在→**空句柄不抛错**）、`sx_wave_is_logic/is_analog`、`sx_number_of_bits`、`sx_wave_to_list`（**无时间戳**）、`sx_dump_hier`（只列 scope）、`sx_exit`。
+- **崩溃阈值（必须进环境设计）**：单进程**连续调用 ≥5 次**即 S01 crash（`sx_crash.sx`），fresh tmp + `HOME` 隔离无效 ⇒ 工程实践**每次最多 3 次**。**决定 episode 动作预算与"重启环境"设计**。
+- **真实踩坑（做成 RL 训练信号）**：① scope 前缀随仿真器变（FineSim SPICE 用裸名 `v(sig<0>)`，Verilog 用 `top.sig` 且 `v()` 包装不行）；② `sx_signal` 多参数时**静默丢弃**不存在信号；③ `.tbl` 头关键字是 `XVAL` 非 `TIME`，表头被**重写**为 `scope.v(net)`；④ 时间窗过滤会把「有信号但窗口内无点」滤成空，与「信号不存在」**同一句话无法区分**。这四条正是"看图猜"学不到、交互式 RL 必须学会区分的。
+- **规模**：698 机 trace 中 waveform 368 命中（引既往报告）；案例 L2、每例 12 条 check。
+- **模型侧**：BaiZe-2B MLLM（ArmE-R2 系），沿用既有报告的 Stage-1W/2W 设计。
+
+#### ④ 纪律与红线
+- 🚫 **只写计划书**：不训练、不起 RL、不跑 WaveView、不动 GPU。本机无 FSDB、无 license ⇒ 所有"实测"**只能引用既有落盘记录**，不可臆造。
+- 🚫 数字标来源：实测写「实测（来源）」；推算写「**估算**」；拿不准写「待核」。**禁止估算冒充实测**。
+- 🚫 不得声称「已跑通 RL / 已提升 XX%」——本轮零实验。
+- 🚫 不得发明 WaveView API（清单外的标「待核」，注明需在 .75 沙盒验证）。
+- 🚫 WaveView **不是可任意脚本化的开放环境**：license 与厂商合规单独成节（沙盒隔离 / 只读打开 / 不写回设计库 / 不反向工程）。
+- 体积：任务书 **≤32KB**（>40KB 红线）；超了只归档**已闭合**块（本条未完成前不许归档）。
+- 收尾：更新 `run/MEMORY_VISION.md` 心跳（写 `未完成指令：无`）→ `WAITING: 1`。
+
+
 
 ### [已完成] §运维直令·2026-10-30 22:2x（写「2B MLLM 看懂波形图」能力与评测报告）· ✅ 已完成（wake#424 2026-10-30 23:10 交付 `reports/report_vision_waveform_zh.html` 45236B/666行/6节/14表/0script/0外链/标签配平；覆盖任务定义(4类波形×4层看懂)/能力拆解(5层)/数据(合成+真实698机368命中)/训练(Stage-1W→Stage-2W·可选RL)/评测(WaveQA≥300题+MMStar/MMBench护栏≤1pp)/成本ETA(pilot 2万题/10GPU·h·全量10.6万/24GPU·h)；数字全溯源实测；只写报告不训练；commit 83591a2b1）
 
