@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 12:4x #1003：**S1 健康监控（重启后首次巡检）**。S1 PID 1415549 活着（etimes~1359s≈22min，12:16重启）。TB 最新：iter **30186**/700000（4.31%），lm loss **~2.09–2.19**（step 30179–30183，稳态~2.15），grad-norm **0.062**（0.060–0.064极稳），loss-scale 1.0（0 NaN/0 skip）。step time ~6.87–7.09s → **~599K tok/s**，GPU util ~1022–1055 TFLOP/s/GPU。ckpt iter_0030000（saved 07:13，下档 iter_0032000 ETA ~17:00）。NCCL NVLS warnings=informational非错误。论文编辑(#999/#1000)已完成。未完成指令：无。📦 体积：TASK=25.8KB / MEMORY=29.3KB。
+> 🆕 2026-10-31 13:1x #1004：**论文改稿复核 + 编译验证（revert 后首次）**。运维令 11:2x `[已完成]`。复核 4_llm_pretrain.tex 全部 P0/P1 编辑在 revert(9ab1e4b3)+后续 abstract/intro 修订(4ec544f5a/df1924ec4) 后仍完好：83.9B✅/74:19:7✅/~82 GPU·h✅/39,377✅/cite{openbmb2026minicpm5}✅/warmup 2000 vs 250✅/Megatron-Core reuse 56层✅。0_abstract.tex：2.94T/2.151/30,660/598K✅，无旧口径(44B/1.357/412)✅。全章节扫描 1_intro/2_related/5_posttrain/9_conclusion 均无旧口径✅。clean compile(pdflatex→bibtex→pdflatex×2)：ERR=0/UNDEF=0/Overfull=0。⚠️ **Pages=7（非6）**——第7页为参考文献溢出，由 abstract/intro 修订（他线 commit 4ec544f5a/df1924ec4）导致，非 pretrain 改稿所致；#1000 验证时为6页。main.pdf 已 restore（不 commit）。S1 训练未碰。未完成指令：无。📦 体积：TASK=25.8KB / MEMORY=29.3KB。
+
+> 📦 §#1003（10-31 12:4x, S1健康监控(重启后首次)iter30186/loss~2.15/0NaN/~599K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1 PID1415549活着, iter30186/700k(4.31%), loss~2.15稳态, grad-norm极稳, ~599K tok/s, ckpt@30000。被#1004复核。需要时再读。
 
 > 📦 §#1002（10-31 12:3x, S1环境污染修复(sklearn ABI)+重启iter30010/loss2.167·commit d21d0ba0b）→ daily-memories/2026-10-31.md；**结论**：harness editable install污染py310环境→sklearn ABI不匹配→pip reinstall 1.7.2修复，S1 12:16重启。被#1003验证。需要时再读。
 
