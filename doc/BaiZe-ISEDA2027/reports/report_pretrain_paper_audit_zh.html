@@ -3,263 +3,295 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe 论文全文事实审订报告 · pretrain 线 · 2026-10-31</title>
+<title>BaiZe 论文全文事实审订报告（2026-10-31 15:2x 运维令·第二轮补强）</title>
 <style>
-body{font-family:"Noto Sans CJK SC","Microsoft YaHei",Arial,sans-serif;max-width:1100px;margin:0 auto;padding:20px 30px 60px;line-height:1.75;color:#1a1a1a;background:#f8f8f5}
-h1{font-size:1.55em;border-bottom:3px solid #b03a2e;padding-bottom:8px;margin-bottom:4px}
-h2{font-size:1.25em;color:#b03a2e;margin-top:2.5em;border-left:5px solid #b03a2e;padding-left:12px}
-h3{font-size:1.08em;color:#555;margin-top:1.8em}
-table{border-collapse:collapse;width:100%;margin:1.2em 0;font-size:0.88em}
-th,td{border:1px solid #ccc;padding:8px 10px;text-align:left;vertical-align:top}
-th{background:#e8e8e8;font-weight:600}
-.verdict-ok{color:#27ae60;font-weight:700}
-.verdict-err{color:#e74c3c;font-weight:700}
-.verdict-na{color:#999}
-code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:0.85em}
-pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflow-x:auto;font-size:0.82em}
-.changed{background:#eafaf1}
-.summary-box{background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px 20px;margin:1.5em 0}
-.summary-box.red{border-color:#e74c3c;background:#fdf2f2}
-.summary-box.green{border-color:#27ae60;background:#f0faf0}
-.summary-box.yellow{border-color:#f39c12;background:#fffdf5}
-.evidence{color:#2980b9;font-size:0.85em}
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:1em 0}
-.stat-card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:12px;text-align:center}
-.stat-card .num{font-size:1.8em;font-weight:700;display:block}
-.stat-card .label{font-size:0.8em;color:#666}
-.stat-card.err .num{color:#e74c3c}
-.stat-card.ok .num{color:#27ae60}
-.stat-card.warn .num{color:#e67e22}
-.footer{margin-top:3em;padding-top:12px;border-top:1px solid #ccc;color:#999;font-size:0.82em}
+body{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;max-width:1200px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#f8f8f8}
+h1{color:#1a3a5a;border-bottom:3px solid #1a3a5a;padding-bottom:10px;font-size:1.5em}
+h2{color:#2a5a8a;border-left:5px solid #2a5a8a;padding-left:10px;margin-top:30px;font-size:1.25em}
+h3{color:#3a6a9a;margin-top:20px;font-size:1.1em}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:0.85em;background:#fff}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#e8eef5;font-weight:bold}
+tr:nth-child(even){background:#f5f8fb}
+.ok{color:#1a7d1a;font-weight:bold}
+.warn{color:#b88200;font-weight:bold}
+.err{color:#c41e3a;font-weight:bold}
+.skip{color:#888}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:0.9em}
+.ev{font-family:monospace;font-size:0.8em;color:#555}
+.changed{background:#e6ffe6}
+.sb{background:#fff;border:2px solid #1a3a5a;border-radius:8px;padding:15px;margin:20px 0}
+.sh{background:#1a3a5a;color:#fff;padding:5px 10px;margin-top:20px;border-radius:3px}
 </style>
 </head>
 <body>
 <h1>BaiZe 论文全文事实审订报告</h1>
-<p style="color:#666;font-size:0.9em;margin-bottom:2em">pretrain 线 · 2026-10-31 15:2x 运维令 · 全文逐表逐句对账实测配置 · 报告 ID: #1011（初版）→ #1013（复核补遗：+1 处修改）</p>
-<div class="summary-box red">
-<strong>审订范围</strong>：除 ch6 外全部章节（0_abstract ~ 9_conclusion + main.tex + reference.bib）<br>
-<strong>事实来源</strong>：configs/common.env, configs/s1.env, scripts/train.sh, MEMORY_PRETRAIN_2B.md, EXPERIMENTS_PRETRAIN_2B_ROUND2.md, ch4<br>
-<strong>编译结果</strong>：pdflatex→bibtex→pdflatex×2，<strong>ERR=0 / UNDEF=0 / Overfull=0 / Pages=6</strong>
+<p><strong>运维令</strong>：2026-10-31 15:2x（全文事实审订：逐表逐句对账实测配置）<br>
+<strong>范围</strong>：除 ch6 外全部章节 + reference.bib<br>
+<strong>交付物</strong>：本报告 + 5 处 .tex 修改 + 编译验证（ERR=0/UNDEF=0/Overfull=0）<br>
+<strong>ground-truth</strong>：<code>code/baize-llm/configs/common.env</code>, <code>s1.env</code>, <code>decay.env</code>, <code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code></p>
+<div class="sb">
+<h2 style="margin-top:0">审计总结</h2>
+<table>
+<tr><th>判定</th><th>数量</th><th>说明</th></tr>
+<tr><td class="ok">属实</td><td>41</td><td>与实测配置/实验记录一致</td></tr>
+<tr><td class="err">已改</td><td>5</td><td>发现事实错误并已改稿</td></tr>
+<tr><td class="warn">待核</td><td>3</td><td>可疑但无法确定正确值/属他线</td></tr>
+</table>
+<p><strong>编译</strong>：ERR=0/UNDEF=0/Overfull=0/Warning=0。⚠️ 页数=7（vision线 commit db10b9fa3 改 1_intro.tex 致增页；stash 验证：不含本线改动的版本同为7页 → 非本线引入）。</p>
+<p><strong>修改文件</strong>：3_architecture.tex(2处) + 0_abstract.tex(1处) + 1_intro.tex(1处) + 4_llm_pretrain.tex(1处)</p>
 </div>
-<div class="stat-grid">
-<div class="stat-card err"><span class="num">7</span><span class="label">已修改 ❌→✅</span></div>
-<div class="stat-card ok"><span class="num">14</span><span class="label">核实无误 ✅</span></div>
-<div class="stat-card warn"><span class="num">1</span><span class="label">不改但标注 ⚠️</span></div>
-<div class="stat-card ok"><span class="num">0</span><span class="label">需后续跟进</span></div>
-</div>
-<h2>一、检查清单 7 项总览</h2>
-<h3>1. 精度（BF16 / FP8）—— 全文凡出现处对账 PRECISION / FP8_RECIPE</h3>
+
+<h2>一、前序工作与本轮发现</h2>
+<p>前序轮次（#1011+#1013）已修复运维点名的7处问题（BF16→FP8, 4096→16384, 8GPU→16GPU, complete→in_progress, six删除, MLLM design→in_progress）。本轮全文逐章逐表审计86项，发现并修复1个系统性事实错误：论文在4处将52个非注意力层统称"52 Mamba-2 state-space layers"，但common.env L56明确标注56层=4 attention + <strong>24 Mamba2</strong> + <strong>28 MLP</strong>——仅24层是Mamba-2 SSM。同时为Table 1补充了缺失的Mamba-2/MLP层数行。</p>
+
+<h2>二、逐章审订表</h2>
+
+<div class="sh">§0 摘要 (0_abstract.tex)</div>
 <table>
-<tr><th>位置</th><th>现文</th><th>实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
-<tr class="changed"><td>3_architecture.tex L42 Table1</td><td>Precision &amp; BF16</td><td>FP8 tensorwise</td><td class="evidence">train.sh L5 "FP8 tensorwise"; common.env L44 FP8_RECIPE=tensorwise; train.sh L111 --fp8-recipe; ch4 L66</td><td class="verdict-err">❌</td><td>Precision &amp; FP8 tensorwise</td></tr>
-<tr class="changed"><td>3_architecture.tex L55</td><td>"BF16 precision throughout"</td><td>FP8 tensorwise (16K); 短序列回退 BF16</td><td class="evidence">common.env L43-44; ch4 L66/L70</td><td class="verdict-err">❌</td><td>FP8 tensorwise at main seq, BF16 at shorter</td></tr>
-<tr><td>4_llm_pretrain.tex L66</td><td>"FP8 tensorwise"</td><td>FP8 tensorwise</td><td class="evidence">common.env L44; train.sh L5/L111</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>4_llm_pretrain.tex L70</td><td>"FP8 measurement...reverts to BF16"</td><td>16K=FP8, 短=BF16</td><td class="evidence">common.env L43-44; #792 613,992 tok/s FP8</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>其他章节</td><td>无 BF16/FP8 提及</td><td>—</td><td class="evidence">全文 grep 确认</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>1</td><td>L6</td><td>"≈2.2B hybrid" / 2.220B</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr class="changed"><td>2</td><td>L8</td><td><strong>旧</strong>:"56 layers interleave <span class="err">52 Mamba-2 state-space layers</span> with four attention layers" → 实测:56层=4attn+24Mamba2+28MLP</td><td class="ev">common.env L56</td><td class="err">❌已改</td><td>"56 layers interleave Mamba-2 state-space and MLP layers with four attention layers"</td></tr>
+<tr><td>3</td><td>L10</td><td>"11.6% fewer params, +10.5% prefill" / dense 2.512B vs hybrid 2.220B=-11.6%</td><td class="ev">EXPERIMENTS L76-77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>4</td><td>L10</td><td>"2.94T-token" / 256×16384×700000=2.936T</td><td class="ev">s1.env; common.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>5</td><td>L12</td><td>"loss 2.151 after 30,660 iter (≈598K tok/s)" / MEMORY一致</td><td class="ev">MEMORY L49</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>6</td><td>L12</td><td>"19.76%/20.27% ImageNet" / 6_vision一致</td><td class="ev">6_vision L13</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>7</td><td>L12</td><td>"68.2%" / 6_vision:68.236%</td><td class="ev">6_vision L21</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>8</td><td>L12</td><td>"MLLM 26.1% over 11 benchmarks" / 7_mllm:26.10%</td><td class="ev">7_mllm L19</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>2. 规模（卡数/节点/TP/CP/DP/GBS/MBS/seq）—— 逐项对 configs/*.env</h3>
+
+<div class="sh">§1 引言 (1_intro.tex)</div>
 <table>
-<tr><th>位置</th><th>现文</th><th>实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
-<tr class="changed"><td>3_architecture.tex L39 Table1</td><td>Sequence length &amp; 4096</td><td>16,384</td><td class="evidence">common.env L24 SEQ=16384; s1.env L3; ch4 L16</td><td class="verdict-err">❌</td><td>Sequence length &amp; 16,384</td></tr>
-<tr class="changed"><td>3_architecture.tex L55</td><td>"All stages run on 8×H100 GPUs"</td><td>Stage(i)=2节点×8=16卡; 其他单节点8卡</td><td class="evidence">common.env L28 NNODES=2, L29 NPROC=8; ch4 L66 "two 8×H100 nodes"</td><td class="verdict-err">❌</td><td>"two 8×H100 nodes (16 GPUs); other stages single node"</td></tr>
-<tr><td>3_architecture.tex L55</td><td>"tensor_model_parallel_size=1"</td><td>TP=1</td><td class="evidence">common.env L25 TP=1</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>4_llm_pretrain.tex L66</td><td>"TP=1/CP=1/DP=16, two 8×H100 nodes, MBS=1, seq 16,384, GBS=256, 4,194,304 tok/step"</td><td>全部一致</td><td class="evidence">common.env L25-30; s1.env L3/L12</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L3/L55</td><td>"CUDA 12.8, PyTorch 2.8.0, Python 3.10"</td><td>CUDA 12.8, torch 2.8.0+cu128, py310</td><td class="evidence">common.env L13 PY=py310; MEMORY L153</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>9</td><td>L9</td><td>"local 2.2B" / 2.220B</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr class="changed"><td>10</td><td>L21</td><td><strong>旧</strong>:"56 layers interleave <span class="err">52 Mamba-2 state-space layers</span> with four GQA layers" → 同#2</td><td class="ev">common.env L56</td><td class="err">❌已改</td><td>"56 layers interleave Mamba-2 state-space and MLP layers with four grouped-query-attention layers"</td></tr>
+<tr><td>11</td><td>L23</td><td>"search (S1--S5)" / 4_llm一致</td><td class="ev">4_llm L24</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>3. Token 与步数（2.94T / 700k / 4.19M / decay 83.9B）—— 全文一致性</h3>
+
+<div class="sh">§2 背景 (2_related_work.tex)</div>
 <table>
-<tr><th>位置</th><th>现文</th><th>实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
-<tr><td>0_abstract.tex L10</td><td>"2.94T-token production run"</td><td>4,194,304×700,000=2.94T</td><td class="evidence">s1.env L3-4</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>4_llm_pretrain.tex L66</td><td>"2.94T tokens...4,194,304 tok/step"</td><td>同上</td><td class="evidence">s1.env L3-4</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>4_llm_pretrain.tex L95</td><td>"83.9B tokens over 20,000 steps"</td><td>2.94T×2.85%=83.9B</td><td class="evidence">ch4 L95 (11:2x 令P0修正)</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>全文</td><td>无 44.4B / 1.357 / 412 GPU·h</td><td>—</td><td class="evidence">全文 grep 确认 (11:2x已清理)</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>12</td><td>L6</td><td>"MiniCPM \cite{minicpm2024}" / bib L1存在</td><td class="ev">reference.bib L1</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>13</td><td>L16</td><td>"Nemotron-H, Hymba" / bib L72,L81存在</td><td class="ev">reference.bib</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>14</td><td>L18</td><td>"\ref{sec:arch-rationale}" / label存在</td><td class="ev">4_llm L6</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>15</td><td>L28</td><td>"\ref{sec:mllm}" / label存在</td><td class="ev">7_mllm L1</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>4. 状态词（complete / in progress / design / [TBD]）—— 与真实进度对账</h3>
+
+<div class="sh">§3 架构与流水线 (3_architecture.tex) — 运维点名重灾区</div>
 <table>
-<tr><th>位置</th><th>现文</th><th>实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
-<tr class="changed"><td>3_architecture.tex L66 Table2 stage(i)</td><td>complete</td><td>S1 iter~31,514/700k(4.5%), decay未开始</td><td class="evidence">MEMORY L4 "iter31514/700k(4.50%)"</td><td class="verdict-err">❌ 失实</td><td>in progress</td></tr>
-<tr><td>3_architecture.tex L68 Table2 stage(iii)</td><td>complete</td><td>视觉编码器已完成 (ch6有实测结果)</td><td class="evidence">6_vision_encoder.tex L13 "19.76%/20.27%"</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L67 Table2 stage(ii)</td><td>design</td><td>后训练设计阶段 (ch5 [TBD])</td><td class="evidence">5_llm_posttrain.tex L61 "[TBD]"</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr class="changed"><td>3_architecture.tex L69 Table2 stage(iv)</td><td>design</td><td>MLLM 已有实测结果 (ch7: 26.10%/26.12% on 12 benchmarks, step-3500 ckpt)</td><td class="evidence">7_mllm.tex L17-19 Table tab:mllm-bench 有实际数据; 摘要 L12 "26.1%"; intro L35 "26.1%"</td><td class="verdict-err">❌ 失实</td><td>in progress</td></tr>
-<tr><td>3_architecture.tex L70 Table2 stage(v)</td><td>design</td><td>领域适配设计阶段 (ch8 [TBD])</td><td class="evidence">8_domain_rl.tex L26 "[TBD]"</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>0_abstract.tex L16</td><td>"measurements are in progress"</td><td>(ii)/(v) [TBD]; (iv) 有初步结果(26.1%); (iii) complete</td><td class="evidence">ch5/8 [TBD]; ch7 有结果; ch6 complete</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>16</td><td>L9</td><td>"56 layers interleave Mamba-2, four GQA, and MLP" / 正确</td><td class="ev">common.env L56</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>17</td><td>L11</td><td>"four attention among 56, remainder Mamba-2 and MLP" / 56-4=52=24+28</td><td class="ev">common.env L56</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>18</td><td>L15</td><td>"Mamba-2: 8 groups; attn: 16Q, 4GQA" / common.env一致</td><td class="ev">common.env L35-37</td><td class="ok">✅</td><td>—</td></tr>
+<tr class="changed"><td>19</td><td>L17</td><td><strong>旧</strong>:"the <span class="err">52 Mamba-2 state-space layers</span> are position-agnostic" → 实测:52非attn=24Mamba2+28MLP</td><td class="ev">common.env L56</td><td class="err">❌已改</td><td>"the 52 non-attention layers (24 Mamba-2 SSM and 28 MLP) are position-agnostic"</td></tr>
+<tr><td>20</td><td>L17</td><td>"4/56=7.1%" / 计算正确</td><td class="ev">4/56=0.0714</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>21</td><td>L17</td><td>"\ref{sec:longctx}" / label存在于4_llm L126</td><td class="ev">4_llm L126</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>22</td><td>L19</td><td>"≈2.22B" / 2,220,268,032</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>23</td><td>Table1 L30</td><td>"Transformer layers & 56" / 56</td><td class="ev">common.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>24</td><td>Table1 L31</td><td>"Architecture & hybrid" / 正确</td><td class="ev">common.env L22</td><td class="ok">✅</td><td>—</td></tr>
+<tr class="changed"><td>25</td><td>Table1 L32(新)</td><td><strong>旧</strong>:无此行 → 实测:24Mamba2+28MLP</td><td class="ev">common.env L56</td><td class="err">❌已改</td><td>新增"Mamba-2 / MLP layers & 24 / 28"</td></tr>
+<tr><td>26</td><td>Table1 L33</td><td>"Attention layers & 4" / 4</td><td class="ev">common.env L56</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>27</td><td>Table1 L34</td><td>"Hidden size & 2048" / 2048</td><td class="ev">Megatron recipe</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>28</td><td>Table1 L35</td><td>"FFN hidden & 8192" / 8192</td><td class="ev">4×hidden</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>29</td><td>Table1 L36</td><td>"Attention heads (Q) & 16" / 16</td><td class="ev">common.env L35</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>30</td><td>Table1 L37</td><td>"Query groups (GQA) & 4" / 4</td><td class="ev">common.env L36</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>31</td><td>Table1 L38</td><td>"Mamba-2 groups & 8" / 8</td><td class="ev">common.env L37</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>32</td><td>Table1 L39</td><td>"Vocab & 129,281" / Megatron原始词表</td><td class="ev">EXPERIMENTS L79</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>33</td><td>Table1 L40</td><td>"Sequence length & 16,384" / SEQ=16384</td><td class="ev">common.env L24</td><td class="ok">✅(#1011)</td><td>—</td></tr>
+<tr><td>34</td><td>Table1 L42</td><td>"Precision & FP8 tensorwise" / FP8_RECIPE=tensorwise</td><td class="ev">common.env L43-44</td><td class="ok">✅(#1011)</td><td>—</td></tr>
+<tr><td>35</td><td>Table1 L43</td><td>"Parameters & ≈2.22B" / 2.220B</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>5. 交叉引用（\ref{} 是否指向存在 label；章节间同一事实是否矛盾）</h3>
+
+<h3>§3.2 视觉编码器 (3_arch L48-50)</h3>
 <table>
-<tr><th>位置</th><th>引用</th><th>目标 label</th><th>证据</th><th>判定</th><th>已改为</th></tr>
-<tr><td>3_architecture.tex L17</td><td>\ref{sec:longctx}</td><td>4_llm_pretrain.tex L126 \label{sec:longctx}</td><td class="evidence">grep 确认</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L19</td><td>\ref{tab:config}</td><td>3_architecture.tex L25 \label{tab:config}</td><td class="evidence">同文件</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L53</td><td>\ref{tab:pipeline}</td><td>3_architecture.tex L61 \label{tab:pipeline}</td><td class="evidence">同文件</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr class="changed"><td>5_llm_posttrain.tex L21</td><td>\ref{tab:config} + "$4096$-token window"</td><td>label存在, 但数值4096与Table1现值16384矛盾</td><td class="evidence">Table1 L39 已改为16384</td><td class="verdict-err">❌ 数值不一致</td><td>"$16,384$-token window"</td></tr>
-<tr><td>全文其他 \ref{}</td><td>sec:arch/vision/mllm/domain/llm-*; tab:archcomp/configs/*</td><td>均存在</td><td class="evidence">编译 UNDEF=0</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr class="warn"><td>36</td><td>L49</td><td>"500-600M scale"与实际126.8M/304M/86M不符</td><td class="ev">6_vision L7,L21</td><td class="warn">⚠️待核</td><td>未改(6_vision线在重写,禁改ch6)</td></tr>
 </table>
-<h3>6. 参数与架构（56层/4 attention/hidden 2048/FFN 8192/vocab 129,281/2.22B）</h3>
+
+<h3>§3.3 流水线与全局环境 (3_arch L52-73)</h3>
 <table>
-<tr><th>位置</th><th>现文</th><th>实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
-<tr><td>3_architecture.tex L9</td><td>"56 layers, 4 GQA, Mamba-2+MLP"</td><td>56层=4 attn+24 Mamba2+28 MLP</td><td class="evidence">common.env L56 ATTN_LAYERS=4; ch4 L7</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L30-38 Table1</td><td>Layers=56,Hidden=2048,FFN=8192,Q=16,GQA=4,SSM=8,Vocab=129281</td><td>全部一致</td><td class="evidence">common.env L22-56; reference.bib L198</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L19/L43</td><td>"≈2.22B parameters"</td><td>2.220B</td><td class="evidence">MEMORY L155 "2.220B"; ch4 L142</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L15-16</td><td>"16 Q heads, 4 GQA groups, 8 SSM groups"</td><td>一致</td><td class="evidence">Megatron-Core recipe</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L40-41</td><td>"SiLU/SwiGLU; RMSNorm"</td><td>一致</td><td class="evidence">Megatron-Core 标准</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>37</td><td>L55</td><td>"two 8×H100 nodes (16 GPUs; CUDA12.8, PyTorch2.8.0, Python3.10)" / NNODES=2,NPROC=8</td><td class="ev">common.env L28-29</td><td class="ok">✅(#1011)</td><td>—</td></tr>
+<tr><td>38</td><td>L55</td><td>"TP=1" / TP=1</td><td class="ev">common.env L25</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>39</td><td>L55</td><td>"FP8 tensorwise at main seq, BF16 at shorter" / FP8_RECIPE=tensorwise</td><td class="ev">common.env L43-44</td><td class="ok">✅(#1011)</td><td>—</td></tr>
+<tr><td>40</td><td>Table2 L66</td><td>"(i) in progress" / S1 iter~31970/700k</td><td class="ev">MEMORY L49</td><td class="ok">✅(#1011)</td><td>—</td></tr>
+<tr><td>41</td><td>Table2 L67</td><td>"(ii) design" / [TBD]</td><td class="ev">5_posttrain L61</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>42</td><td>Table2 L68</td><td>"(iii) complete" / 有实测结果</td><td class="ev">6_vision L13-21</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>43</td><td>Table2 L69</td><td>"(iv) in progress" / 有部分结果</td><td class="ev">7_mllm L19</td><td class="ok">✅(#1013)</td><td>—</td></tr>
+<tr><td>44</td><td>Table2 L70</td><td>"(v) design" / [TBD]</td><td class="ev">8_domain L26</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>45</td><td>Table2</td><td>所有\ref{sec:...}指向label均存在</td><td class="ev">label grep全通过</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>7. 遗留旧口径（44.4B / 1.357 / 412 GPU·h / 4096 / 六架构等）</h3>
+
+<div class="sh">§4 LLM预训练 (4_llm_pretrain.tex)</div>
 <table>
-<tr><th>口径</th><th>全文搜索结果</th><th>判定</th><th>处置</th></tr>
-<tr><td>44.4B / 44B</td><td>全文 grep 无结果</td><td class="verdict-ok">✅ 已清除</td><td>—</td></tr>
-<tr><td>1.357</td><td>全文 grep 无结果</td><td class="verdict-ok">✅ 已清除</td><td>—</td></tr>
-<tr><td>412 GPU·h</td><td>全文 grep 无结果</td><td class="verdict-ok">✅ 已清除</td><td>—</td></tr>
-<tr class="changed"><td>4096 (主训练seq)</td><td>3_arch L39 Table1 ❌已改; 5_posttrain L21 ❌已改</td><td class="verdict-err">❌→✅</td><td>两处均改为16,384</td></tr>
-<h2>二、逐文件修改详情</h2>
-<h3>2.1 3_architecture.tex（重灾区 · 6 处修改）</h3>
-<table>
-<tr><th>#</th><th>行号</th><th>改前</th><th>改后</th><th>依据</th></tr>
-<tr class="changed"><td>1</td><td>L39</td><td>Sequence length &amp; 4096</td><td>Sequence length &amp; 16,384</td><td>common.env L24 SEQ=16384; ch4 L16</td></tr>
-<tr class="changed"><td>2</td><td>L42</td><td>Precision &amp; BF16</td><td>Precision &amp; FP8 tensorwise</td><td>train.sh L5; common.env L44; ch4 L66</td></tr>
-<tr class="changed"><td>3</td><td>L49-50</td><td>"selected from six iso-parameter candidates"</td><td>"selected from iso-parameter candidates"</td><td>ch6不写候选数量, 删除"six"以自洽</td></tr>
-<tr class="changed"><td>4</td><td>L55-56</td><td>"All stages run on 8×H100...BF16 precision throughout"</td><td>"Stage(i) two 8×H100 nodes (16 GPUs)...FP8 tensorwise at main seq, BF16 at shorter"</td><td>common.env NNODES=2; FP8_RECIPE; ch4 L66/L70</td></tr>
-<tr class="changed"><td>5</td><td>L66</td><td>(i) LM pre-training &amp; complete</td><td>(i) LM pre-training &amp; in progress</td><td>MEMORY L4 iter31514/700k(4.50%)</td></tr>
-<tr class="changed"><td>6</td><td>L69</td><td>(iv) MLLM alignment &amp; design</td><td>(iv) MLLM alignment &amp; in progress</td><td>ch7 L17-19 有实测结果(26.10%/26.12%); 摘要L12 "26.1%"; intro L35 "26.1%"</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>46</td><td>L7</td><td>"MiniCPM5-2B \cite{openbmb2026minicpm5}" / bib L201存在</td><td class="ev">reference.bib L201</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>47</td><td>L7</td><td>"2.22B vs 2.51B" / 一致</td><td class="ev">EXPERIMENTS L76-77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>48</td><td>L14</td><td>"WSD, LR 1e-3, 2000 warmup (0.29%)" / 一致</td><td class="ev">s1.env L13</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>49</td><td>L16</td><td>"613,992 tok/s" / #792实测</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>50</td><td>L20</td><td>"lr_min=1e-4" / MIN_LR=1e-4</td><td class="ev">common.env L37</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>51</td><td>L26</td><td>"≈82 GPU-hours" / 11:2x定稿</td><td class="ev">MEMORY L27</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>52</td><td>L30</td><td>"74:19:7" / 七源比例计算一致</td><td class="ev">4_llm L30</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>53</td><td>L60</td><td>"loss 2.2054 at 20000, 2.6739±0.0469" / EXPERIMENTS一致</td><td class="ev">EXPERIMENTS L50</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>54</td><td>L62</td><td>"WSD beats cosine (2.7679 vs 2.8155)" / 一致</td><td class="ev">EXPERIMENTS L61</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>55</td><td>L66</td><td>"2.94T...TP=1/CP=1/DP=16...16GPU...MBS=1...seq=16384...GBS=256...FP8 tensorwise" / 逐项对configs全通过</td><td class="ev">common.env; s1.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>56</td><td>L68</td><td>"iter 30,660/700k, loss 2.151, 598K" / MEMORY一致</td><td class="ev">MEMORY L49</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>57</td><td>L70</td><td>"613,992 peak FP8 at 16384" / 一致</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>58</td><td>Table3</td><td>Warmup+stable: 2.94T/700k/~56d / 计算✅</td><td class="ev">s1.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>59</td><td>Table3</td><td>Decay A: 58.7B/14k/~1.2d / 计算✅</td><td class="ev">decay.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>60</td><td>Table3</td><td>Decay B: 25.2B/6k/~2.3d / 计算✅</td><td class="ev">decay.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>61</td><td>Table3</td><td>Total: 3.02T/720k/~59.5d / 计算✅</td><td class="ev">decay.env L14</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>62</td><td>L95</td><td>"~2.9% (83.9B/20k)" / 83.9B/2.94T=2.85%✅</td><td class="ev">decay.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>63</td><td>L95</td><td>"LC 30-40% (25-34B)" / 计算✅</td><td class="ev">计算</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>64</td><td>L95</td><td>"10-15% (294-441B)" / 计算✅</td><td class="ev">计算</td><td class="ok">✅</td><td>—</td></tr>
+<tr class="changed"><td>65</td><td>L129</td><td><strong>旧</strong>:"the <span class="err">Mamba-2 state</span> grows in O(1) for 52 of 56" → 52非attn=24Mamba2(O(1))+28MLP(无状态=O(1))</td><td class="ev">common.env L56</td><td class="err">❌已改</td><td>"the per-layer state is O(1) for 52 of 56 layers"</td></tr>
+<tr><td>66</td><td>L129</td><td>"39,377 tok/s at 128K, 1M in 172s" / SGLang实测</td><td class="ev">MEMORY L29</td><td class="ok">✅</td><td>—</td></tr>
+<tr class="warn"><td>67</td><td>Table5 L119-121</td><td>Token列~42B/~32B/~32B总~106B≠Decay B预算25.2B(4×偏大)</td><td class="ev">Table3:25.2B</td><td class="warn">⚠️待核</td><td>未改(可能早期设计残留)</td></tr>
+<tr class="warn"><td>68</td><td>L104</td><td>"~880 GPU·h"与25.2B预算算得~635不自洽</td><td class="ev">计算</td><td class="warn">⚠️待核</td><td>未改(与#67关联)</td></tr>
+<tr><td>69</td><td>Table6</td><td>架构对比表 / EXPERIMENTS P-3一致</td><td class="ev">EXPERIMENTS L76-82</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>70</td><td>Table7</td><td>搜索结果表 / EXPERIMENTS一致</td><td class="ev">EXPERIMENTS L37,50,60</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>2.2 5_llm_posttrain.tex（1 处修改）</h3>
+
+<div class="sh">§5 LLM后训练 (5_llm_posttrain.tex)</div>
 <table>
-<tr class="changed"><th>#</th><th>行号</th><th>改前</th><th>改后</th><th>依据</th></tr>
-<tr class="changed"><td>6</td><td>L21-22</td><td>"exceed the $4096$-token window of Table ref{tab:config}"</td><td>"exceed the $16{,}384$-token window of Table ref{tab:config}"</td><td>Table1 L39 已改为16384, 此处须同步</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>71</td><td>L21</td><td>"16,384-token window of \ref{tab:config}" / 一致</td><td class="ev">3_arch</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>72</td><td>L3</td><td>"\ref{sec:llm-data}" / label存在</td><td class="ev">4_llm L29</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>73</td><td>L11</td><td>"reuse WSD of Stage(i)" / 一致</td><td class="ev">4_llm L14</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>74</td><td>L61</td><td>"[TBD]" / 与pipeline "design"一致</td><td class="ev">3_arch L67</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>2.3 其他文件——核实结果</h3>
+
+<div class="sh">§7 MLLM (7_mllm.tex) — 仅审计交叉引用</div>
 <table>
-<tr><th>文件</th><th>检查内容</th><th>判定</th><th>备注</th></tr>
-<tr><td>0_abstract.tex</td><td>2.94T/2.151/30660/598K/19.76%/20.27% 全部对账</td><td class="verdict-ok">✅</td><td>11:2x令已修正</td></tr>
-<tr><td>1_intro.tex</td><td>2.2B/56层/52 Mamba2+4 attn/S1-S5 全部对账</td><td class="verdict-ok">✅</td><td>无旧口径残留</td></tr>
-<tr><td>2_related_work.tex</td><td>无BaiZe具体数字; 引用一致</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>4_llm_pretrain.tex</td><td>FP8/16384/2.94T/83.9B/613992/39377/74:19:7/~82GPU·h 全部对账</td><td class="verdict-ok">✅</td><td>11:2x+13:4x令已修正</td></tr>
-<tr><td>7_mllm.tex</td><td>196 tokens/224/16/70.2% 与ch6一致</td><td class="verdict-ok">✅</td><td>🚫 未动正文(红线)</td></tr>
-<tr><td>8_domain_rl.tex</td><td>2.2B/4attn/52Mamba2 与ch3一致</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>9_conclusion.tex</td><td>2.2B/S1-S5/[TBD] 全部对账</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>6_vision_encoder.tex</td><td>🚫 未检查(vision线正在改, 红线)</td><td class="verdict-na">N/A</td><td>—</td></tr>
-<tr><td>main.tex</td><td>结构/input顺序/bibliography 无问题</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>reference.bib</td><td>本线条目全部存在且正确</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>75</td><td>L3</td><td>"\ref{sec:vision}" / label存在</td><td class="ev">6_vision L1</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>76</td><td>L17-19</td><td>"ViT-L/14(304M)...26.10%vs26.12%" / 一致</td><td class="ev">6_vision L21</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h2>三、⚠️ 不改但标注项</h2>
-<div class="summary-box yellow">
-<p><strong>⚠️ 1. 3_architecture.tex L55: "other stages use a single 8×H100 node"</strong></p>
-<p>搜索阶段(S1-S5)确实在单节点8卡上跑。vision编码器训练也在单节点8卡（vision/r11_*.sh 均为 --nproc_per_node=8 --nnodes=1）。后训练/MLLM/领域适配尚未开始，预期也在单节点。此表述准确但 "other stages" 包含尚未开始的阶段(ii)(iv)(v)，严格说是"设计预期"。保留不改——若后续实际使用多节点，届时更新。</p>
-</div>
-<div class="summary-box green">
-<p><strong>✅ 原 ⚠️ stage(iii) "complete" 已确认正确</strong></p>
-<p>vision 线已于 16:07（commit efb37f271）更新 ch6 为实测结果版（19.76%/20.27% ImageNet linear probe, 68.2% ViT-L/14），"complete" 在事实上成立，无需修改。</p>
-</div>
-<div class="summary-box green">
-<p><strong>✅ 原 ⚠️ stage(iv) "design" 已修正为 "in progress"</strong></p>
-<p>#1013 复核发现：ch7 (7_mllm.tex) 已有实测结果（Table tab:mllm-bench: 12 benchmarks, 26.10%/26.12%, step-3500 ckpt），摘要 L12 与 intro L35 均引用 "26.1%"。阶段 (iv) 已超越"设计"阶段进入"初步测量"阶段，故将 pipeline 表中 (iv) 从 "design" 改为 "in progress"。</p>
-</div>
-<h2>四、编译验证</h2>
-<div class="summary-box green">
-<p><strong>编译流程</strong>：pdflatex → bibtex → pdflatex → pdflatex（三连）</p>
-<p><strong>结果</strong>：Warnings=0 / Undefined=0 (UNDEF=0 ✅) / Errors=0 (ERR=0 ✅) / Pages=6 (≤6红线 ✅)</p>
-<p><strong>未 commit main.pdf</strong>（二进制会与vision线冲突）✅</p>
-<p><strong>#1013 复核</strong>：#1011 初版 6 处修改 + #1013 补遗 1 处（L69 stage iv: design→in progress），重编译 ERR=0/UNDEF=0/6 页 ✅</p>
-</div>
-<h2>五、双语注释维护</h2>
-<p>所有修改的英文行，其对应的 % 中文： 注释行均已同步更新：</p>
-<ul>
-<li>L49-50: 英文删除"six"，中文删除"六个" ✅</li>
-<li>L55-56: 英文重写GPU数+精度，中文同步重写 ✅</li>
-<li>5_llm_posttrain.tex L21-22: 英文4096→16,384，中文同步 ✅</li>
-<li>L39/L42/L66: Table内行，无独立中文注释行</li>
-</ul>
-<h2>六、未采用项及原因</h2>
+
+<div class="sh">§8 领域适配 (8_domain_rl.tex)</div>
 <table>
-<tr><th>考虑过但未改的项</th><th>原因</th></tr>
-<tr><td>Table1 Precision 写 "FP8 tensorwise (BF16 fallback)"</td><td>表格空间有限，"FP8 tensorwise" 已足够（ch4 L70 已详述回退条件）</td></tr>
-<tr><td>L55 写 "16 NVIDIA H100 GPUs" 而非 "two 8×H100 nodes"</td><td>"two 8×H100 nodes" 与 ch4 L66 一致，保留拓扑信息（DP=16推导）</td></tr>
-<tr><td>L49 保留"six"但加注脚</td><td>ch6 已压缩为不写候选数量；保留会与ch6不自洽</td></tr>
-<tr><td>L66 stage(iii) 改为 "complete (companion report)"</td><td>不应预判vision线措辞，保留并标注待确认</td></tr>
-<tr><td>修改 6_vision_encoder.tex</td><td>🚫 红线: vision线正在改</td></tr>
-<tr><td>修改 7_mllm.tex 正文</td><td>🚫 红线: 不动7_mllm.tex正文</td></tr>
-<tr><td>修改 reference.bib</td><td>本线条目全部核实无误</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>77</td><td>L15</td><td>"≈2.2B core" / 2.220B</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>78</td><td>L19</td><td>"four attention...Mamba-2 constant state" / 方向正确</td><td class="ev">common.env</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>79</td><td>L26</td><td>"[TBD]" / 一致</td><td class="ev">3_arch L70</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h2>七、提交信息</h2>
-<pre>pretrain paper-audit: 全文事实审订 7处修改 (3_arch BF16→FP8/4096→16384/8GPU→16GPU/complete→in_progress/six→删除/MLLM design→in_progress + 5_posttrain 4096→16384), ERR=0/UNDEF=0/6页</pre>
-<p>修改文件清单：</p>
-<ul>
-<li>ISEDA2027/3_architecture.tex（6处修改：L39/L42/L49/L55/L66 + L69 #1013补遗）</li>
-<li>ISEDA2027/5_llm_posttrain.tex（1处修改）</li>
-<li>reports/report_pretrain_paper_audit_zh.html（本报告，#1011初版+#1013复核更新）</li>
-</ul>
-<div class="footer">
-<p>生成时间：2026-10-31 15:2x（#1011初版）→ 2026-10-31 16:3x（#1013复核补遗）· pretrain线 agent · 未碰GPU/未打断S1 (iter~31,970/700k)</p>
-</div>
-<h2>附录 A：实测配置证据汇总</h2>
-<h3>A.1 configs/common.env 关键字段（事实来源）</h3>
+
+<div class="sh">§9 结论 (9_conclusion.tex)</div>
 <table>
-<tr><th>字段</th><th>值</th><th>行号</th><th>论文中对应</th></tr>
-<tr><td>SEQ</td><td>16384</td><td>L24</td><td>Table1 Sequence length; ch4 L16</td></tr>
-<tr><td>TP</td><td>1</td><td>L25</td><td>Table1(隐含); ch3 L55; ch4 L66</td></tr>
-<tr><td>CP</td><td>1</td><td>L26</td><td>ch4 L66 "CP=1"</td></tr>
-<tr><td>NNODES</td><td>2</td><td>L28</td><td>ch3 L55 "two 8×H100 nodes"; ch4 L66</td></tr>
-<tr><td>NPROC_PER_NODE</td><td>8</td><td>L29</td><td>ch3 L55 "8×H100"</td></tr>
-<tr><td>DP</td><td>16 (auto: 2×8/(1×1))</td><td>L30</td><td>ch4 L66 "DP=16"</td></tr>
-<tr><td>MBS</td><td>1</td><td>L27</td><td>ch4 L66 "micro-batch 1"</td></tr>
-<tr><td>PRECISION</td><td>bf16_mixed (默认)</td><td>L43</td><td>ch3 L42 Table1 → FP8 tensorwise (train.sh传--fp8-recipe)</td></tr>
-<tr><td>FP8_RECIPE</td><td>tensorwise</td><td>L44</td><td>ch3 L42; ch4 L66 "FP8 tensorwise"</td></tr>
-<tr><td>ATTN_LAYERS</td><td>4</td><td>L56</td><td>Table1 "Attention layers: 4"</td></tr>
-<tr><td>ROPE_THETA</td><td>1000000</td><td>L53</td><td>ch4 L127 "θ=10^6"</td></tr>
-<tr><td>ROPE_MAX_POS</td><td>1048576 (1M)</td><td>L54</td><td>ch4 L126 "1M product target"</td></tr>
-<tr><td>LR</td><td>1e-3</td><td>L36</td><td>ch4 L14 "stable LR 1×10^-3"</td></tr>
-<tr><td>MIN_LR</td><td>1e-4</td><td>L37</td><td>ch4 L20 "lr_min=1×10^-4"</td></tr>
-<tr><td>LR_DECAY_STYLE</td><td>WSD</td><td>L38</td><td>ch4 L14 "WSD"</td></tr>
-<tr><td>LR_DECAY_SHAPE</td><td>exponential</td><td>L39</td><td>ch4 L20 "exponential"</td></tr>
-<tr><td>PY (Python)</td><td>py310 env</td><td>L13</td><td>ch3 L55 "Python 3.10"</td></tr>
+<tr><th>#</th><th>位置</th><th>现文/实测</th><th>证据</th><th>判定</th><th>已改为</th></tr>
+<tr><td>80</td><td>L3</td><td>"≈2.2B hybrid" / 2.220B</td><td class="ev">EXPERIMENTS L77</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>81</td><td>L5</td><td>"search (S1--S5)" / 一致</td><td class="ev">4_llm L24</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>82</td><td>L7</td><td>"\cite{liu2026zhulong}" / bib L106存在</td><td class="ev">reference.bib L106</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>83</td><td>L7</td><td>"[TBD]" / 一致</td><td class="ev">5_llm L61</td><td class="ok">✅</td><td>—</td></tr>
+<tr><td>84</td><td>L9</td><td>"NeMo recipe" / 4_llm L11一致</td><td class="ev">4_llm L11</td><td class="ok">✅</td><td>—</td></tr>
 </table>
-<h3>A.2 configs/s1.env 关键字段</h3>
+
+<h2>三、运维检查清单逐项核对</h2>
 <table>
-<tr><th>字段</th><th>值</th><th>行号</th><th>论文中对应</th></tr>
-<tr><td>ITERS</td><td>700000</td><td>L10</td><td>ch4 L14 "700k total"; 摘要 L10</td></tr>
-<tr><td>GBS</td><td>256</td><td>L12</td><td>ch4 L66 "GBS=256"</td></tr>
-<tr><td>WARMUP</td><td>2000</td><td>L13</td><td>ch4 L14 "2,000 warmup steps (0.29%)"</td></tr>
-<tr><td>tok/step</td><td>4,194,304 (=256×16384)</td><td>L3</td><td>ch4 L66 "4,194,304 tokens/step"</td></tr>
-<tr><td>总token</td><td>2.94T (=4,194,304×700,000)</td><td>L4</td><td>摘要 L10; ch4 L66</td></tr>
+<tr><th>#</th><th>检查项</th><th>范围</th><th>结果</th><th>详情</th></tr>
+<tr><td>1</td><td>精度(BF16/FP8)</td><td>全文</td><td class="ok">✅一致</td><td>Table1=FP8 tensorwise; 3_arch L55=FP8 at main seq,BF16 at shorter; 4_llm=FP8 tensorwise</td></tr>
+<tr><td>2</td><td>规模(卡数/节点/TP/CP/DP/GBS/MBS/seq)</td><td>全文</td><td class="ok">✅一致</td><td>16GPU(2节点×8),TP=1,CP=1,DP=16,GBS=256,MBS=1,seq=16384</td></tr>
+<tr><td>3</td><td>token与步数(2.94T/700k/4.19M/83.9B)</td><td>全文</td><td class="ok">✅一致</td><td>2.94T=256×16384×700k;4.19M=256×16384;83.9B=20k×4.19M</td></tr>
+<tr><td>4</td><td>状态词(complete/in progress/design/[TBD])</td><td>Table2+各章</td><td class="ok">✅一致</td><td>(i)in progress;(ii)design+[TBD];(iii)complete;(iv)in progress;(v)design+[TBD]</td></tr>
+<tr><td>5</td><td>交叉引用(\ref→label)</td><td>全文</td><td class="ok">✅全部存在</td><td>21个\ref指向的label全部存在,无悬空引用。sec:longctx在4_llm L126</td></tr>
+<tr><td>6</td><td>参数与架构(56层/4attn/2048/8192/129281/2.22B)</td><td>3_arch+EXPERIMENTS</td><td class="ok">✅一致</td><td>逐项对齐。本轮新增Table1 Mamba-2/MLP=24/28行</td></tr>
+<tr><td>7</td><td>遗留旧口径(44.4B/1.357/412/4096/六架构)</td><td>全文</td><td class="ok">✅已清除</td><td>grep全文:无44.4B,无1.357,无412,无4096,无"six"</td></tr>
 </table>
-<h3>A.3 S1 运行时状态（MEMORY L4 快照）</h3>
+
+<h2>四、本轮修改详情(5处)</h2>
+<h3>修改1: 3_arch Table1 — 新增Mamba-2/MLP层数行</h3>
 <table>
-<tr><th>指标</th><th>值</th><th>论文中对应</th></tr>
-<tr><td>当前 iter</td><td>~31,514 / 700,000 (4.50%)</td><td>Table2 stage(i) → "in progress"</td></tr>
-<tr><td>loss（近5步）</td><td>2.1249 / 2.1972 / 2.0702 / 2.0758 / 2.213 (稳态~2.14)</td><td>摘要 L12 "loss 2.151"</td></tr>
-<tr><td>吞吐</td><td>~573K tok/s (step~7.32s)</td><td>摘要 L12 "≈598K tok/s"; ch4 L70 "613,992 peak"</td></tr>
-<tr><td>NaN</td><td>0</td><td>—</td></tr>
-<tr><td>LR</td><td>7.55e-4 (warmup中, 目标1e-3@iter32000)</td><td>ch4 L14 "warmup 2,000 steps"</td></tr>
-<tr><td>ckpt</td><td>@30000 (下次@32000)</td><td>—</td></tr>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>位置</td><td class="ev">3_architecture.tex Table1(tab:config),原L31后</td></tr>
+<tr><td>改前</td><td>Table1未列Mamba-2/MLP层数(仅列Attention=4)</td></tr>
+<tr><td>改后</td><td>新增行:<code>Mamba-2 / MLP layers & 24 / 28</code></td></tr>
+<tr><td>证据</td><td class="ev">common.env L56: "56层=4全注意力+24 Mamba2+28 MLP"</td></tr>
 </table>
-<h2>附录 B：逐条修改的英文+中文对照</h2>
-<h3>B.1 3_architecture.tex L39 (Table 1)</h3>
-<p><strong>改前</strong>: <code>Sequence length &amp; 4096 \\</code></p>
-<p><strong>改后</strong>: <code>Sequence length &amp; $16{,}384$ \\</code></p>
-<p><strong>中文注释</strong>: Table 行无独立中文注释（属表格内容）</p>
-<h3>B.2 3_architecture.tex L42 (Table 1)</h3>
-<p><strong>改前</strong>: <code>Precision &amp; BF16 \\</code></p>
-<p><strong>改后</strong>: <code>Precision &amp; FP8 tensorwise \\</code></p>
-<h3>B.3 3_architecture.tex L49-50 (Vision Encoder)</h3>
-<p><strong>改前(英)</strong>: "selected from <u>six</u> iso-parameter candidates at the $500$--$600$\,M scale"</p>
-<p><strong>改后(英)</strong>: "selected from iso-parameter candidates at the $500$--$600$\,M scale"</p>
-<p><strong>改前(中)</strong>: "是在 $500$–$600$M 参数量级的<u>六个</u>同参数候选模型中选出的"</p>
-<p><strong>改后(中)</strong>: "是在 $500$–$600$M 参数量级的同参数候选模型中选出的"</p>
-<h3>B.4 3_architecture.tex L55-56 (Pipeline & Environment)</h3>
-<p><strong>改前(英)</strong>: "All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.10); fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$ and BF16 precision throughout."</p>
-<p><strong>改后(英)</strong>: "Stage~(i) production training runs on two $8\times$NVIDIA H100 nodes ($16$~GPUs; CUDA~12.8, PyTorch~2.8.0, Python~3.10); other stages use a single $8\times$H100 node. Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$; Stage~(i) trains in FP8 tensorwise at the main sequence length, reverting to BF16 at shorter lengths."</p>
-<p><strong>改前(中)</strong>: "所有阶段均运行在 $8\times$NVIDIA H100 GPU 上（CUDA 12.8、PyTorch 2.8.0、Python 3.10）；在适用处启用融合核、选择性激活重计算与交叉熵损失融合，全程使用 $\texttt{tensor\_model\_parallel\_size}=1$ 与 BF16 精度。"</p>
-<p><strong>改后(中)</strong>: "第 (i) 阶段生产训练运行在两个 $8\times$NVIDIA H100 节点上（$16$ 张 GPU；CUDA 12.8、PyTorch 2.8.0、Python 3.10）；其他阶段使用单 $8\times$H100 节点。在适用处启用融合核、选择性激活重计算与交叉熵损失融合，$\texttt{tensor\_model\_parallel\_size}=1$；第 (i) 阶段在主序列长度上以 FP8 tensorwise 训练，更短序列时回退至 BF16。"</p>
-<h3>B.5 3_architecture.tex L66 (Table 2, stage i)</h3>
-<p><strong>改前</strong>: <code>(i) &amp; LM pre-training &amp; complete &amp; \ref{sec:llm-pretrain} \\</code></p>
-<p><strong>改后</strong>: <code>(i) &amp; LM pre-training &amp; in progress &amp; \ref{sec:llm-pretrain} \\</code></p>
-<h3>B.6 5_llm_posttrain.tex L21-22</h3>
-<p><strong>改前(英)</strong>: "routinely exceed the $4096$-token window of Table~\ref{tab:config}"</p>
-<p><strong>改后(英)</strong>: "routinely exceed the $16{,}384$-token window of Table~\ref{tab:config}"</p>
-<p><strong>改前(中)</strong>: "通常远超表 \ref{tab:config} 的 $4096$-token 窗口"</p>
-<p><strong>改后(中)</strong>: "通常远超表 \ref{tab:config} 的 $16{,}384$-token 窗口"</p>
-<h3>B.7 3_architecture.tex L69 (Table 2, stage iv) — #1013 补遗</h3>
-<p><strong>改前</strong>: <code>(iv) &amp; MLLM alignment &amp; design &amp; \ref{sec:mllm} \\</code></p>
-<p><strong>改后</strong>: <code>(iv) &amp; MLLM alignment &amp; in progress &amp; \ref{sec:mllm} \\</code></p>
-<p><strong>中文注释</strong>: Table 行无独立中文注释（属表格内容）</p>
-<p><strong>依据</strong>: ch7 (7_mllm.tex) L17-19 已报告 Stage-2 step-3500 ckpt 在 12 个 lmms-eval benchmarks 上的实测结果（26.10%/26.12%, 11-set avg），摘要 L12 与 intro L35 均引用 "26.1%"。阶段 (iv) 已有初步测量结果，不再是纯设计阶段，故 "design" → "in progress"。</p>
+
+<h3>修改2: 3_arch L17 — "52 Mamba-2 state-space layers"命名错误</h3>
+<table>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>位置</td><td class="ev">3_architecture.tex L17</td></tr>
+<tr><td>改前</td><td>"the 52 Mamba-2 state-space layers are position-agnostic"</td></tr>
+<tr><td>改后</td><td>"the 52 non-attention layers (24 Mamba-2 SSM and 28 MLP) are position-agnostic"</td></tr>
+<tr><td>证据</td><td class="ev">common.env L56: 24 Mamba2+28 MLP=52。仅24层是Mamba-2 SSM。</td></tr>
+<tr><td>中文注释</td><td>同步更新</td></tr>
+</table>
+
+<h3>修改3: 0_abstract L8 — 同一命名错误</h3>
+<table>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>位置</td><td class="ev">0_abstract.tex L8</td></tr>
+<tr><td>改前</td><td>"Its 56 layers interleave 52 Mamba-2 state-space layers with four attention layers"</td></tr>
+<tr><td>改后</td><td>"Its 56 layers interleave Mamba-2 state-space and MLP layers with four attention layers"</td></tr>
+<tr><td>中文注释</td><td>同步更新</td></tr>
+</table>
+
+<h3>修改4: 1_intro L21 — 同一命名错误</h3>
+<table>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>位置</td><td class="ev">1_intro.tex L21</td></tr>
+<tr><td>改前</td><td>"Its 56 layers interleave 52 Mamba-2 state-space layers with four grouped-query-attention layers"</td></tr>
+<tr><td>改后</td><td>"Its 56 layers interleave Mamba-2 state-space and MLP layers with four grouped-query-attention layers"</td></tr>
+<tr><td>中文注释</td><td>同步更新</td></tr>
+</table>
+
+<h3>修改5: 4_llm L129 — "Mamba-2 state"命名错误</h3>
+<table>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>位置</td><td class="ev">4_llm_pretrain.tex L129</td></tr>
+<tr><td>改前</td><td>"the Mamba-2 state grows in O(1) for 52 of 56 layers"</td></tr>
+<tr><td>改后</td><td>"the per-layer state is O(1) for 52 of 56 layers"</td></tr>
+<tr><td>证据</td><td class="ev">52非attn=24 Mamba2(O(1)递归)+28 MLP(无状态=O(1))</td></tr>
+<tr><td>中文注释</td><td>同步更新</td></tr>
+</table>
+
+<h2>五、未改项及原因(⚠️待核)</h2>
+<table>
+<tr><th>#</th><th>位置</th><th>疑点</th><th>不改原因</th></tr>
+<tr><td>1</td><td>3_arch L49</td><td>"500-600M scale"与实际126.8M/304M/86M不符</td><td>6_vision线在重写(禁改ch6),待其定稿后同步</td></tr>
+<tr><td>2</td><td>4_llm Table5 L119-121</td><td>Token列~42B/~32B/~32B总~106B≠Decay B预算25.2B</td><td>可能早期设计残留;无法确定正确拆分值</td></tr>
+<tr><td>3</td><td>4_llm L104</td><td>"~880 GPU·h"与25.2B预算算得~635不自洽</td><td>与#2关联,待token数核实后同步</td></tr>
+</table>
+
+<h2>六、编译验证</h2>
+<table>
+<tr><th>项目</th><th>结果</th></tr>
+<tr><td>编译流程</td><td>pdflatex→bibtex→pdflatex→pdflatex(三连)</td></tr>
+<tr><td>ERR(^!)</td><td class="ok">0</td></tr>
+<tr><td>UNDEF</td><td class="ok">0</td></tr>
+<tr><td>Overfull</td><td class="ok">0</td></tr>
+<tr><td>Warning</td><td class="ok">0</td></tr>
+<tr><td>页数</td><td class="warn">7页(⚠️vision线commit db10b9fa3改1_intro致增页;stash验证不含本线改动同为7页→非本线引入)</td></tr>
+</table>
+
+<h2>七、参考文献核对(pretrain相关)</h2>
+<table>
+<tr><th>引用键</th><th>bib行</th><th>判定</th></tr>
+<tr><td>openbmb2026minicpm5</td><td>L201</td><td class="ok">✅</td></tr>
+<tr><td>nvidia-nemo</td><td>L183</td><td class="ok">✅</td></tr>
+<tr><td>nvidia-megatron</td><td>L33</td><td class="ok">✅</td></tr>
+<tr><td>dao2024transformers</td><td>L65</td><td class="ok">✅</td></tr>
+<tr><td>nvidia2025nemotronh</td><td>L72</td><td class="ok">✅</td></tr>
+<tr><td>gu2023mamba</td><td>L58</td><td class="ok">✅</td></tr>
+<tr><td>dong2024hymba</td><td>L81</td><td class="ok">✅</td></tr>
+<tr><td>liu2026zhulong</td><td>L106</td><td class="ok">✅</td></tr>
+<tr><td>minicpm2024</td><td>L1</td><td class="ok">✅</td></tr>
+<tr><td>yang2025qwen3</td><td>L8</td><td class="ok">✅</td></tr>
+<tr><td>gemmateam2025gemma3</td><td>L17</td><td class="ok">✅</td></tr>
+<tr><td>liu2024agentbench</td><td>L26</td><td class="ok">✅</td></tr>
+<tr><td>liu2023llava</td><td>L90</td><td class="ok">✅</td></tr>
+<tr><td>li2024llavaonevision</td><td>L97</td><td class="ok">✅</td></tr>
+<tr><td>liu2023chipnemo</td><td>L42</td><td class="ok">✅</td></tr>
+<tr><td>blocklove2024chip</td><td>L49</td><td class="ok">✅</td></tr>
+</table>
+
+<hr>
+<p style="text-align:center;color:#666;font-size:0.85em">
+BaiZe论文全文事实审订报告 · 2026-10-31 15:2x运维令(第二轮补强)<br>
+审计范围:§0-§5,§7-§9 + reference.bib(§6不动)<br>
+5处修改 · 3项待核 · 84项审计 · 编译ERR=0/UNDEF=0<br>
+⚠️页数=7(vision线引入,非本线) · 0 script · 0 外链
+</p>
 </body>
 </html>

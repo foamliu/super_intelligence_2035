@@ -14,8 +14,8 @@ BaiZe is not a Nemotron-H model: it is an order of magnitude smaller, contains n
 % 中文：BaiZe 并非 Nemotron-H 模型：它小了一个数量级，不含专家混合（MoE）层，并在固定 GPU·h 预算下于独立语料上从零预训练。
 Each Mamba-2 layer uses 8 state-space groups; the four attention layers use 16 query heads and 4 query groups (GQA) with untied word embeddings.
 % 中文：每个 Mamba-2 层使用 8 个状态空间组；4 个注意力层使用 16 个查询头与 4 个查询组（GQA），且词嵌入不共享。
-Crucially, only the four attention layers carry rotary position embeddings (RoPE); the 52 Mamba-2 state-space layers are position-agnostic, so the backbone's long-context extrapolation quality depends on just $4/56{=}7.1\%$ of layers, an asymmetry exploited in Section~\ref{sec:longctx}.
-% 中文：关键在于，只有 4 个注意力层携带旋转位置编码（RoPE）；其余 52 个 Mamba-2 状态空间层与位置无关，因此骨干的长上下文外推质量仅取决于 $4/56{=}7.1\%$ 的层——这一不对称性在第 \ref{sec:longctx} 节被加以利用。
+Crucially, only the four attention layers carry rotary position embeddings (RoPE); the 52 non-attention layers (24 Mamba-2 SSM and 28 MLP) are position-agnostic, so the backbone's long-context extrapolation quality depends on just $4/56{=}7.1\%$ of layers, an asymmetry exploited in Section~\ref{sec:longctx}.
+% 中文：关键在于，只有 4 个注意力层携带旋转位置编码（RoPE）；其余 52 个非注意力层（24 个 Mamba-2 SSM 与 28 个 MLP）与位置无关，因此骨干的长上下文外推质量仅取决于 $4/56{=}7.1\%$ 的层——这一不对称性在第 \ref{sec:longctx} 节被加以利用。
 The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
 % 中文：完整配置见表 \ref{tab:config}；模型参数量约 22.2 亿。
 
@@ -29,6 +29,7 @@ The full configuration is listed in Table~\ref{tab:config}; the model totals $\a
 \midrule
 Transformer layers & 56 \\
 Architecture & hybrid (Mamba-2 + GQA + MLP) \\
+Mamba-2 / MLP layers & 24 / 28 \\
 Attention layers & 4 (interleaved) \\
 Hidden size & 2048 \\
 FFN hidden size & 8192 \\

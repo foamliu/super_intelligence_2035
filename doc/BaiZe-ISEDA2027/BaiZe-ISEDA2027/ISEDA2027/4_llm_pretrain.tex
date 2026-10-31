@@ -126,8 +126,8 @@ When the WSD schedule ends we take one snapshot and measure base capabilities---
 \subsection{Long-Context Capability and Inference Cost}\label{sec:longctx}
 With adjusted base frequency ($\theta{=}10^{6}$) on the four attention layers, perplexity evolves $83.2\to51.5\to53.3\to53.0\to55.8\to55.4$ from 4K to 1M, i.e.\ flat beyond 64K; the stability follows because only $4$ of $56$ layers carry RoPE, so the extrapolation burden falls on $7.1\%$ of the network.
 % 中文：长上下文能力与推理成本。在 4 个注意力层上采用调整后的基底频率（$\theta{=}10^{6}$）后，困惑度从 4K 到 1M 依次为 $83.2\to51.5\to53.3\to53.0\to55.8\to55.4$，即在 64K 之后基本持平；这种稳定性来自仅 56 层中的 4 层携带 RoPE，外推负担落在网络的 $7.1\%$ 上。
-Under the SGLang production stack, the hybrid achieves $39{,}377$ tok/s prefill at $128$K and serves $1$M in $172$s at $34.7$\,GB, whereas the dense transformer cannot serve beyond $512$K on a single $80$\,GB H100 (KV-pool cap ${\approx}455$K tokens); the hybrid's advantage is architectural, since the Mamba-2 state grows in $O(1)$ for $52$ of $56$ layers.
-% 中文：在 SGLang 生产栈下，混合模型在 $128$K 时 prefill 达 $39{,}377$ tok/s，1M 时以 $172$ 秒、$34.7$ GB 完成，而稠密 Transformer 在单张 80 GB H100 上无法服务超过 $512$K（KV 池上限约 $455$K token）；混合模型的优势是架构性的，因为 56 层中有 52 层的 Mamba-2 状态以 $O(1)$ 增长。
+Under the SGLang production stack, the hybrid achieves $39{,}377$ tok/s prefill at $128$K and serves $1$M in $172$s at $34.7$\,GB, whereas the dense transformer cannot serve beyond $512$K on a single $80$\,GB H100 (KV-pool cap ${\approx}455$K tokens); the hybrid's advantage is architectural, since the per-layer state is $O(1)$ for $52$ of $56$ layers.
+% 中文：在 SGLang 生产栈下，混合模型在 $128$K 时 prefill 达 $39{,}377$ tok/s，1M 时以 $172$ 秒、$34.7$ GB 完成，而稠密 Transformer 在单张 80 GB H100 上无法服务超过 $512$K（KV 池上限约 $455$K token）；混合模型的优势是架构性的，因为 56 层中有 52 层的逐层状态以 $O(1)$ 增长。
 
 \begin{table}[htbp]
 \centering

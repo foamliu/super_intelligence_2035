@@ -18,8 +18,8 @@ We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) age
 \item \textbf{A cost-efficient EDA subagent.}
 BaiZe receives EDA subtasks in natural language from the master and drives EDA tools in their native scripting languages (PyAether, SKILL, Tcl).
 % 中文：高性价比的 EDA 子智能体。BaiZe 以自然语言从 master 接收 EDA 子任务，并以 EDA 工具的原生脚本语言（PyAether、SKILL、Tcl）驱动这些工具。
-Its 56 layers interleave 52 Mamba-2 state-space layers with four grouped-query-attention layers, so only the latter carry a session-growing state---which is what makes per-subtask cost reduction structural rather than a matter of quantization alone.
-% 中文：其 56 层将 52 个 Mamba-2 状态空间层与 4 个分组查询注意力层交错排列，因此只有后者携带随会话增长的状态——这使每子任务成本下降具有结构性，而非仅靠量化。
+Its 56 layers interleave Mamba-2 state-space and MLP layers with four grouped-query-attention layers, so only the latter carry a session-growing state---which is what makes per-subtask cost reduction structural rather than a matter of quantization alone.
+% 中文：其 56 层将 Mamba-2 状态空间层与 MLP 层同 4 个分组查询注意力层交错排列，因此只有后者携带随会话增长的状态——这使每子任务成本下降具有结构性，而非仅靠量化。
 A staged budget-constrained search (S1--S5) with a reduced-horizon proxy protocol fixes the pre-training recipe.
 % 中文：分阶段、受预算约束的搜索（S1--S5）配合缩短视野的代理协议确定预训练配方。
 On a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes, we ask whether it matches deployed Flash masters at comparable accuracy while materially reducing per-subtask cost, and what an on-premise subagent must co-locate with the model.

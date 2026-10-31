@@ -5,8 +5,8 @@ Cost, not feasibility, is now the binding constraint: every EDA subtask routed t
 % 中文：当前约束是成本而非可行性：每个路由到前沿 master 的 EDA 子任务都消耗随设计流程规模增长的 token 与 serving 预算。
 We present \textbf{BaiZe}, a $\approx$2.2B hybrid state-space agentic model built from scratch as a cost-efficient EDA subagent beneath such a master: it receives subtasks in natural language and drives EDA tools in their native scripting languages.
 % 中文：我们提出 \textbf{BaiZe}——一个约 22 亿参数的混合状态空间智能体模型，从零构建，作为此类 master 之下具备成本效益的 EDA 子智能体：以自然语言接收子任务，并以 EDA 工具的原生脚本语言驱动这些工具。
-Its 56 layers interleave 52 Mamba-2 state-space layers with four attention layers, so only the latter carry a session-growing state; decoding is linear-time and per-subtask serving cost is governed by session memory rather than prompt throughput.
-% 中文：其 56 层将 52 个 Mamba-2 状态空间层与 4 个注意力层交错排列，因此只有后者携带随会话增长的状态；解码为线性时间，每子任务的 serving 成本由会话内存而非 prompt 吞吐决定。
+Its 56 layers interleave Mamba-2 state-space and MLP layers with four attention layers, so only the latter carry a session-growing state; decoding is linear-time and per-subtask serving cost is governed by session memory rather than prompt throughput.
+% 中文：其 56 层将 Mamba-2 状态空间层与 MLP 层同 4 个注意力层交错排列，因此只有后者携带随会话增长的状态；解码为线性时间，每子任务的 serving 成本由会话内存而非 prompt 吞吐决定。
 A matched from-scratch comparison against a dense transformer selects this architecture (11.6\% fewer parameters, lower loss at a matched 1k-step budget, and $+10.5\%$ prefill throughput), and a budget-constrained search fixes the pre-training recipe, now scaled to a 2.94T-token production run.
 % 中文：通过与稠密 Transformer 的、条件对齐的从零训练对比选定了该架构（参数少 11.6\%、在同等 1k 步预算下损失更低、prefill 吞吐高 10.5\%），并由受预算约束的搜索确定预训练配方，现已放大到 2.94T token 的生产训练。
 The backbone now stands at training loss 2.151 after 30{,}660 iterations ($\approx$598K tok/s), and the encoder reaches 19.76\% / 20.27\% ImageNet linear probe at 55.3M / 176M samples; a larger ViT-L/14 tower reaches $68.2\%$ on an internal protocol, yet the MLLM stage averages $26.1\%$ over 11 multimodal benchmarks, showing that encoder gains do not transfer downstream at the $224$-px single-tile setting.
