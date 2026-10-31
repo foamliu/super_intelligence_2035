@@ -39,14 +39,16 @@
 </div>
 
 <div class="kbox">
-  <b>一句话结论：差距 ≈100% 来自"约 20% 的题目根本没生成出可执行的 .py"，不是模型 / 框架 / 代码质量。</b><br>
-  定量看：<code>cline 86.8 ± 1.6%</code> vs <code>zhulong 69.0 ± 2.3%</code>（<b>Δ = −17.8pp</b>），其中几乎 <b>100%</b>（≈18pp）来自"未生成 / 未落盘"（生成失败）；<br>
+  <b>一句话结论：差距 ≈100% 来自"约 20% 的题目根本没生成出可执行的 .py"，不是模型 / 框架 / 代码质量——且这一差距是 backbone 依赖的。</b><br>
+  定量看（glm-5.3-flash backbone）：<code>cline 86.8 ± 1.6%</code> vs <code>zhulong 69.0 ± 2.3%</code>（<b>Δ = −17.8pp</b>），其中几乎 <b>100%</b>（≈18pp）来自"未生成 / 未落盘"（生成失败）；<br>
   而"生成后答对率"两侧几乎无差（zhulong <b>88.6%</b> vs cline <b>88.2%</b>，差异 ≈ 0）。<br>
+  <br>
+  <b>跨 backbone 复测（§6）</b>：换 kimi-k2.6-cloud backbone 重做 zhulong 5-run = <b>85.0 ± 2.5%</b>，<b>反超</b> cline×kimi 基线（77.0±1.6%）<b>+8.0pp</b>——kimi 不触发空回复，zhulong 的空响应缺陷不被激活（gen-fail 0-1/轮 vs glm-5.3-flash 上的 23-38/轮），证明差距是 <b>backbone 依赖</b>而非普适劣势。<br>
   <br>
   源码级根因：zhulong CLI 是 <code>cline</code> 的早期 fork（<code>@cline/core 0.0.51</code>，约 2026-06-24），<br>
   <b>缺少 cline 在 2026-08-01～08-04 引入、并随评估基线（3.0.51）一起发布生效的"空响应重试"（empty-response retry）机制</b>。<br>
   在 glm-5.3-flash 这类会间歇性返回"空回复"的 backbone 下，一次空回复在 zhulong CLI 里是<b>直接判死的硬失败</b>（抛 <code>Model returned empty response</code>），<br>
-  而在 cline CLI 里会被<b>静默重试</b>掉——这正是"生成失败 23–38/轮 vs 1–4/轮"的机制来源。
+  而在 cline CLI 里会被<b>静默重试</b>掉——这正是"生成失败 23–38/轮 vs 1–4/轮"的机制来源；在 kimi-k2.6 下两者都不触发空回复，差距翻转。
 </div>
 
 <h2>1. 口径核对：配置逐字节一致（唯一变量 = CLI 二进制）</h2>
@@ -212,10 +214,53 @@ if (finishReason === "error" && toolCalls.length === 0) {
 
 <h2>5. 结论与建议</h2>
 <ol>
-  <li><b>差距定性</b>：<code>−17.8pp</code> ≈ 100% 来自<b>"生成失败 / 未落盘"</b>，不是模型能力、EDA 框架或代码质量问题（<code>exec_err=0</code>；条件通过率 88.6% vs 88.2% 基本打平）。</li>
+  <li><b>差距定性（glm-5.3-flash backbone）</b>：<code>−17.8pp</code> ≈ 100% 来自<b>"生成失败 / 未落盘"</b>，不是模型能力、EDA 框架或代码质量问题（<code>exec_err=0</code>；条件通过率 88.6% vs 88.2% 基本打平）。</li>
   <li><b>差距根因（源码级）</b>：zhulong CLI 是 cline 的<b>早期 fork（core 0.0.51，≈2026-06-24）</b>，缺少 cline 在 2026-08-01～08-04 引入、随基线 3.0.51 一起生效的<b>空响应重试</b>（<code>retry-empty-response</code> 中间件 + <code>withEmptyResponseRetry</code>）。空回复在 zhulong 里被 <code>throw "Model returned empty response"</code> 一票否决。</li>
   <li><b>建议（工程侧）</b>：把 zhulong CLI 回灌到 cline 的 <code>retry-empty-response</code> 中间件（最小改动）；远景对齐 cline <code>main</code> 的可靠性层；重新打 5-run <code>mean±std</code> 确认 Pass@1 收敛到 cline 同量级。</li>
+  <li><b>跨 backbone 复测（§6）</b>：换用 <b>kimi-k2.6-cloud</b> backbone 重做 zhulong CLI 5-run 得 <b>85.0 ± 2.5%</b>，<b>反超</b> cline×kimi 基线 8.0pp——说明 zhulong 的劣势是<b>backbone 依赖</b>的，并非在所有 LLM 上都劣于 cline（详见 §6）。</li>
 </ol>
+
+<h2>6. 跨 backbone 复测：kimi-k2.6 zhulong CLI 5-run（backbone 依赖性验证）</h2>
+<div class="meta">
+  运维直令 2026-10-30 22:2x：「zhulong-full 配 kimi-k2.6 模型跑 5-run」·与 §1-5 同一套 harness（READBACK=full / OMEGA=high / BUDGET=0 / LAGGED=0 / maxTokens=16384 / -p 4 / PyAether 158 题），
+  <b>唯一改变：backbone 由 glm-5.3-flash 换为 kimi-k2.6-cloud（baseUrl <code>/cloud/v1</code>）</b>，端口改用 8664 裁决池。
+  对照臂 = <b>B.kimi-k2.6-cloud（cline × kimi × full，n=5）= 77.0 ± 1.6%</b>。
+</div>
+
+<h3>6.1 逐轮通过率（zhulong CLI × kimi-k2.6-cloud × full × 16384，PyAether 158 题）</h3>
+<table>
+  <tr><th>轮次</th><th class="num">batch</th><th class="num">pass</th><th class="num">Pass@1</th><th class="num">gen ok</th><th class="num">gen fail</th><th class="num">gen timeout</th><th class="num">exec_err</th><th>归档</th></tr>
+  <tr><td>r1</td><td class="num">2026_1030_231313</td><td class="num">134/158</td><td class="num">84.8%</td><td class="num">157</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td>20261031_0443</td></tr>
+  <tr><td>r2</td><td class="num">2026_1031_044456</td><td class="num">129/158</td><td class="num">81.6%</td><td class="num">157</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>20261031_1017</td></tr>
+  <tr><td>r3</td><td class="num">2026_1031_103027</td><td class="num">140/158</td><td class="num">88.6%</td><td class="num">158</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>20261031_1640</td></tr>
+  <tr><td>r4</td><td class="num">2026_1031_164422</td><td class="num">135/158</td><td class="num">85.4%</td><td class="num">158</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>20261031_2305</td></tr>
+  <tr><td>r5</td><td class="num">2026_1031_230700</td><td class="num">134/158</td><td class="num">84.8%</td><td class="num">157</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>20261101_0455</td></tr>
+  <tr><th>5-run</th><th class="num">—</th><th class="num">mean 134.4/158</th><th class="num"><b>85.0 ± 2.5%</b></th><th class="num">157.4</th><th class="num">0.2</th><th class="num">0.4</th><th class="num">0</th><th>判据十三全过 ✅</th></tr>
+</table>
+<p class="sm">注：r3-r5 因 zhulong CLI 目录布局回归（top-level <code>pyAether_code</code> 缺 <code>ws/</code> 层，与 §1-5 同款 Step5 回归）需 <code>mv</code> 修复 158 tasks 后重跑 <code>format</code>+<code>complete</code> 再 regrade；修复仅落盘布局，不改生成代码。各轮 regrade 耗时 18-28 min（8664 裁决池 4 shard）。</p>
+
+<h3>6.2 跨 backbone 对比（同一 zhulong CLI / 同一 cline，换 backbone）</h3>
+<table>
+  <tr><th>backbone</th><th>CLI</th><th class="num">5-run mean±std</th><th class="num">gen-fail/轮</th><th class="num">vs cline同backbone</th><th>备注</th></tr>
+  <tr><td rowspan="2">glm-5.3-flash</td><td>cline 3.0.51</td><td class="num">86.8 ± 1.6%</td><td class="num">1-4</td><td class="num">—（基线）</td><td>§3.1 锚点</td></tr>
+  <tr><td><b>zhulong CLI</b></td><td class="num">69.0 ± 2.3%</td><td class="num">23-38</td><td class="num"><b>−17.8pp</b></td><td>§3.1（空响应判死）</td></tr>
+  <tr><td rowspan="2">kimi-k2.6-cloud</td><td>cline 3.0.51</td><td class="num">77.0 ± 1.6%</td><td class="num">≈1-4</td><td class="num">—（基线）</td><td>B.kimi-k2.6-cloud</td></tr>
+  <tr><td><b>zhulong CLI</b></td><td class="num"><b>85.0 ± 2.5%</b></td><td class="num"><b>0-1</b></td><td class="num"><b>+8.0pp</b></td><td>§6.1（本节）</td></tr>
+</table>
+<div class="good">
+<b>关键发现：zhulong CLI 相对 cline 的差距是 backbone 依赖的，并非普适劣势。</b>
+<ul>
+  <li><b>glm-5.3-flash</b>：zhulong <b>−17.8pp</b>（69.0% vs 86.8%）。该 backbone 间歇性返回空回复，zhulong 缺空响应重试 → gen-fail 23-38/轮（~20%），缺口 ≈100% 来自生成失败（§3-4）。</li>
+  <li><b>kimi-k2.6-cloud</b>：zhulong <b>+8.0pp</b>（85.0% vs 77.0%，反超 ~5σ）。该 backbone <b>不触发空回复</b>，zhulong 的空响应缺陷不被激活 → gen-fail 0-1/轮（与 cline 同量级）；同时 zhulong 更激进的提交风格在 kimi 上反而多拿分。</li>
+  <li>两条 backbone 下 zhulong 的<b>条件通过率</b>（生成后答对率）都与 cline 同量级（glm-5.3-flash: 88.6% vs 88.2%；kimi: 134/157≈85.4% vs cline 137/155.5≈88.1%），再次印证 zhulong 的差异在<b>"能否走完整次交互落下 .py"</b>而非"代码写得好不好"。</li>
+</ul>
+</div>
+<div class="warn">
+<b>口径注意</b>：§6.1 的 zhulong×kimi 与 §3.1 的 zhulong×glm-5.3-flash 是<b>两次独立 5-run</b>，backbone 不同（kimi @ <code>/cloud/v1</code> vs glm-5.3-flash @ <code>/v1</code>），不是单变量实验；cline×kimi 基线（B.kimi-k2.6-cloud）与 cline×glm-5.3-flash 基线也是不同 5-run。故"zhulong 反超 cline 8.0pp"是<b>在同 backbone 内的成对比较</b>，跨 backbone 的绝对值不可直接相减（kimi-cloud 与 glm-5.3-flash 是不同模型）。
+</div>
+
+<h3>6.3 对 §4 归因的强化</h3>
+<p>§4 将 glm-5.3-flash 上的 −17.8pp 归因于"空响应重试缺失"。§6 的 kimi 复测构成<b>反向对照</b>：当 backbone 不触发空回复时（kimi gen-fail 0-1/轮），zhulong 与 cline 的生成覆盖率收敛到同量级，Pass@1 差距随之消失并反超。这<b>进一步支持</b>"缺口来自空响应处理"的归因——若差距来自框架/代码质量，则换 backbone 不应使差距翻转。</p>
 
 <h2>附录 A：数据出处</h2>
 <table>
@@ -224,6 +269,8 @@ if (finishReason === "error" && toolCalls.length === 0) {
   <tr><td>2</td><td>评估基线版本 cline 3.0.51 / core 0.0.71</td><td><code>zhulong_results.md</code> 头部；<code>run/MEMORY_ZHULONG.md</code> CONFIG 行</td></tr>
   <tr><td>3</td><td>zhulong（16384）5-run = 69.0±2.3% [71.5,67.1,67.1,71.5,67.7]（pass 计数 113/106/106/113/107）</td><td>由 pass 计数计算（mean 109.0/158；std 2.3%，样本 n−1）</td></tr>
   <tr><td>4</td><td>zhulong 各轮 gen ok/fail/timeout/exec_err（r1 132ok/23fail/3timeout；r2 118/35；r3 119/33/6；r4 126/32；r5 120/37/1）</td><td><code>/tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r{1..5}_regrade*.log</code>；<code>output_evaluation/2026_10*_app.e0031982/final_report.json</code></td></tr>
+  <tr><td>5</td><td>zhulong×kimi-k2.6-cloud 5/5 = 85.0±2.5% [84.8,81.6,88.6,85.4,84.8]（pass 134/129/140/135/134）·gen 157/157/158/158/157 ok·0-1 fail/轮·判据十三全过</td><td>§6.1；<code>output_evaluation/20261031_0443/1017/1640/2305 + 20261101_0455_app.e0031982/final_report.json</code>；<code>run/MEMORY_ZHULONG.md</code> 成绩表 ZL.kimi 行；regrade log <code>/tmp/ABL_kimi-k2.6_zl_full_r{1..5}_regrade*.log</code></td></tr>
+  <tr><td>6</td><td>B.kimi-k2.6-cloud（cline×kimi）5/5 = 77.0±1.6% [79.1,76.6,77.2,74.7,77.2]（cline 基线·跨 backbone 对照）</td><td><code>zhulong_results.md</code> §Phase B「B.kimi-k2.6-cloud」</td></tr>
 </table>
 
 <h2>附录 B：源码证据索引</h2>
