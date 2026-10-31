@@ -2,29 +2,15 @@
 
 WAITING: 1
 
+> 🆕 **【波形图强化 RL 计划书 ✅ DONE · wake #435 · 2026-10-31 09:0x】** 用户直令(08:4x)。交付 `reports/report_vision_wave_rl_plan_zh.html` 59241B/12节(§0-§9+附录A/B)/41表/0script/0外链/标签配平/≥28KB。生成器 `vision/generate_wave_rl_plan_report.py`（幂等，重跑两次逐字节相同 MD5=a3f1ccf8）。覆盖9个必答问题：①为什么交互（像素量化原理性上限+采样定理）②烛龙接口（waveform_read JSON+run_code 闭环+Omega 保真度 bound 理论锚点）③RL 环境设计（7 类受控 Tcl 子集+崩溃阈值≥5 次→≤3 次 wv/episode）④奖励设计（数值相对误差分档 1%/5%/10%+证据奖励+anti-hacking+双盲抽检）⑤数据三级（合成 GT 天然可得/真实 Oracle Tcl 回放/派生换信号窗口）⑥训练配方（SFT 冷启动→GRPO 强化，论证 GRPO 无 value 网络 2B 省显存）⑦评测（WaveQA-RL 300 题+双参照线纯看图/Oracle Tcl+MMStar/MMBench≤1pp 护栏+预注册决策树）⑧成本（Pilot 4GPU·h+6CPU·h/2 天；全量 12GPU·h+16CPU·h/4 天；wv 调用是瓶颈非 GPU）⑨论文贡献（从烛龙 tool→multimodal grounding 实证，接 ZhuLong ICML2028 Omega bound）。所有 WaveView API 事实引用自 trace_deepreads/as67p+fa3cd 实测深读笔记；烛龙理论引用自 ICML2028/4_collapse.tex+10_conclusion.tex。本轮零实验：不训练/不起 RL/不跑 WaveView/不动 GPU。commit 待推送。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【OCR 合成数据 10M ✅ DONE · wake#275 · 2026-10-26 04:0x】** 用户令(22:4x)。全量 DONE：ok=9,999,999 fail=0 · 2000 tars · 470GB(0.5046TB) · 893.6 img/s · 3h6m30s · 8类 cat_counts==plan。交付物：数据本体+index.jsonl(9.999M)+STATS/VALIDATION/DATASET_CARD/MANIFEST+preview_200.html+preview_10k.tar+报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B)+5脚本`vision/ocr_synth/*.py`。加载器兼容已验 build_gpic_loader→(16,3,224,224)。**两处质量偏差(如实披露,未掩盖)**：①文本sha1去重 **2.4486%>1%目标**(244,858多余,合成文本组合空间有限)；②泄漏 **113命中**(leak_rate1.16e-5,短串巧合如0.29→029非真实泄漏)。**✅ 已裁定：接受现状**（2026-10-28 用户直令·accept as-is·不重生成/不过滤）。本轮只造数据不启encoder训练(等用户批预算)。详见 daily-memories-vision/2026-10-26.md。
 
 ## 状态头
 
-> **本唤醒流水 [wake #434, 2026-10-31 08:15]**：空唤醒·补心跳防判死。运维令区全部✅DONE/已归档/已闭合，无新指令。ops/inbox.md 内容为 pretrain(RUN_ID 224 重启pretrain loop)+harness 线命令，无 vision 线指令。git pull --rebase → already up to date。vision loop 活(PID 669545)。交付物 report_vision_waveform_zh.html 45236B 在位。📦 体积：TASK=26080B/MEMORY=32882B→归档后~31.2KB（归档6条旧📦指针→daily-memories-vision，内容已在对应日文件中保存）。**未完成指令：无** ⇒ **WAITING: 1**（待运维下一令/批准 OCR SFT 预算，30min轮询）。
-> 📦 wake#433 (2026-10-31 06:41, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#432 (2026-10-31 06:08, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#431 (2026-10-31 05:36, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#430 (2026-10-31 04:33, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#429 (2026-10-31 04:00, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#428 (2026-10-31 03:29, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#427 (2026-10-31 02:56, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#426 (2026-10-31 01:53, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#425 (2026-10-31 01:20, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
-> 📦 wake#424 (2026-10-30 23:10, ✅执行运维直令「写波形图报告」·交付report_vision_waveform_zh.html 45236B·commit 83591a2b1) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#423 (2026-10-30 22:21, 空唤醒·补心跳防判死·push失败×2→后已补推) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#421 (2026-10-30 21:17, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#420 (2026-10-30 20:45, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#419 (2026-10-30 20:12, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#418 (2026-10-30 19:09, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#417 (2026-10-30 18:36, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#416 (2026-10-30 18:04, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
-> 📦 wake#415 (2026-10-30 17:33, 空唤醒·补心跳防判死·无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
+> **本唤醒流水 [wake #435, 2026-10-31 09:0x]**：✅ 执行用户直令「起草波形图强化 RL 计划书」。读前作 report_vision_waveform_zh.html + trace_deepreads as67p/fa3cd 深读笔记 + ZhuLong ICML2028 grounding tex → 写 generate_wave_rl_plan_report.py（分 12 个 _s0-_sB 函数逐节构建）→ 生成 report_vision_wave_rl_plan_zh.html 59241B → 验证：幂等(MD5 a3f1ccf8 两次相同)/0 script/0 外链/标签配平/41 表/≥28KB → 写心跳+日流水+commit。📦 体积：TASK=26080B/MEMORY≈33.5KB（新增 1 条 wake#435 心跳 ~0.7KB）。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake#425~#433 (2026-10-31 01:20~06:41, 9轮空唤醒·补心跳防判死·均无新令·交付物在位) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
+> 📦 wake#415~#423 (2026-10-30 17:33~22:21, 8轮空唤醒+1轮波形报告交付, 均已归档·其中wake#424交付report_vision_waveform_zh.html) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#409/#410/#412/#413/#414 (2026-10-30 14:15~16:59, 5轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#380/#378/#372/#371/#370/#369/#368 (2026-10-29 15:08~22:12, 7轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
 > 📦 wake#367/#366/#365/#364/#363 (2026-10-29 12:24~14:35, 5轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-29.md。需要时再读。
