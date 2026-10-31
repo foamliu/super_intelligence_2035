@@ -1,7 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 18:10 #1015：**论文 ch4 压缩（18:2x paper-slim 令）已完成**。4_llm_pretrain.tex 从 15,398B 压至 11,960B（省 22.3%）：9 个小节全部压缩（Architecture Selection / Training Framework / Search Protocol / Data / Long-Context Data Gate / Results / Decay Tail / Long-Context Capability / 表格合并）。tab:archcomp + tab:configs 合并为一个浮窗。**验收：6 页（正文 p1–p5 + refs p6 独占）✅ / ERR=0 ✅ / UNDEF=0 ✅ / Overfull=0 ✅**。保底清单 20 项数字全部原值保留。17 行中文注释全部保留。报告 report_pretrain_paper_slim_zh.html（9.9KB）已交付。commit 2fef637c8 已 push。🚫 未 commit main.pdf。S1 未碰。未完成指令：无。📦 体积：TASK=36.0KB / MEMORY=32.8KB（TASK>32KB，下次唤醒需归档已闭合块）。
+> 🆕 2026-10-31 18:30 #1016：**任务书+MEMORY归档**。18:2x paper-slim 令已完成(#1015/commit 2fef637c8)，本轮归档3个已闭合运维令(18:2x/15:2x/11:2x)→ARCHIVE_OPERATOR_PRETRAIN.md「第三批」节，TASK 36.0KB→23.8KB；MEMORY 旧流水(#984及更早14条)合并为1条指针，MEMORY 32.8KB→29.1KB。论文编译验证：6页/ERR=0/Overfull=0（UNDEF警告来自他线ch5/ch6/ch7，非ch4）。S1未碰。未完成指令：无。📦 体积：TASK=23.8KB / MEMORY=29.1KB（归档 12.2KB+3.7KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
 > 📦 §#1014（10-31 17:28, 全文事实审订84项·5处.tex修改·commit d6ba844fc）→ daily-memories/2026-10-31.md；**结论**：84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，ERR=0/7页(vision致溢出)，报告25.7KB。被#1015压缩更新。需要时再读。
 
 > 📦 §#1012（10-31 16:14, S1健康监控iter31970/loss2.160/0NaN/593K + 审计任务#1011复核确认）→ daily-memories/2026-10-31.md；**结论**：S1健康iter31970(4.57%), #1011确认完整交付。被#1013补遗更新。需要时再读。
@@ -30,25 +30,10 @@ WAITING: 1
 > 📦 §#993（10-31 07:01, S1监控iter29900健康·loss~2.166·0NaN·~590K tok/s·ckpt@28000·1M报告✅DONE）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.166稳态, 1M报告已交付. 被#994更新。需要时再读。
 > 📦 §#997（10-31 10:0x, 论文审校补遗+任务书归档·删除2行orphaned中文注释+TASK归档→27.2KB）→ daily-memories/2026-10-31.md；**结论**：orphaned注释清理, 编译0-error, TASK 36.6KB→27.2KB。需要时再读。
 > 📦 §#996（10-31 09:1x, 论文预训练章节审校·事实核校+decay-A补全+§4.11修正·编译0-error·commit b12ddfb57）→ daily-memories/2026-10-31.md；**结论**：4_llm_pretrain.tex 4处编辑(iter/loss/tok-s更新+decay-A六源配比+先16K退火因果+LC预算88-176B), 编译0-error/0-undef/2-overfull(均在6_vision)/15pp。需要时再读。
-> 📦 §#984~#992（10-31 01:0x~06:42, S1监控iter~27000→29740共9轮健康·loss~2.15~2.18·0NaN·~590K tok/s·ckpt@26000→28000·1M报告✅DONE）→ daily-memories/2026-10-31.md；**结论**：S1全程健康稳定, loss~2.16稳态, 1M报告已交付. 被#993更新。需要时再读。
-> 📦 §#983（10-30 23:2x, ✅交付「1M长上下文+95%大海捞针」技术报告·33KB·commit d0424c1f1）→ daily-memories/2026-10-30.md；**结论**：报告6个必答点全覆盖(现状基线/1M实现/>95%needle/实验矩阵6组/取舍建议/附录对比). 被#984更新。需要时再读。
-> 📦 §#982（10-30 22:45, S1监控iter25705健康·loss~2.164·0NaN·grad-norm极稳·~577K tok/s·ckpt@24000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.164稳态微降. 被#983更新。需要时再读。
-> 📦 §#975~#981（10-30 20:17~22:23, S1监控iter24500→25520健康×7轮·loss~2.16~2.20·0NaN·~574~582K tok/s·ckpt@24000）→ daily-memories/2026-10-30.md；**结论**：S1全程健康稳定, loss~2.2X稳态微降. 被#982更新。需要时再读。
-> 📦 §#960~#976（10-30 14:55~20:39, S1监控iter21850→24680健康×17轮·loss~2.19~2.22·0NaN·grad-norm极稳·~566~600K tok/s·ckpt@20000→24000）→ daily-memories/2026-10-30.md；**结论**：S1全程健康稳定, loss~2.2X稳态微降, ckpt从20000→24000. 被#977更新。需要时再读。
+> 📦 §#984及更早 S1监控流水（10-28~10-31, iter270→29740, 全程健康）→ daily-memories/2026-10-{28,29,30,31}.md & ARCHIVE_OPERATOR_PRETRAIN.md；**结论汇总**：S1全程健康稳定, loss 6.12→2.16单调下降, 0NaN, 554-665K tok/s, ckpt 2k→28k, check_rope PASS, HF导出✅, 1M报告✅. 需要时再读。
 
-> 📦 §#950~#956（10-30 11:34~13:36, S1监控iter20204→21210健康×7轮·loss~2.22·0NaN·~566-592K tok/s·ckpt@20000）→ daily-memories/2026-10-30.md；**结论**：S1全程健康, loss~2.22稳态微降. 被#957更新。需要时再读。
-> 📦 §#949（10-30 11:11, S1监控iter20010健康·loss~2.236·0NaN·~574K tok/s·ckpt@20000·prune dry-run@20k完成）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.24稳态, prune dry-run@20k keep3删7. 被#950更新。需要时再读。
-> 📦 §#948（10-30 10:50, S1监控iter19850健康·loss~2.221·0NaN·~574K tok/s·ckpt@18000）→ daily-memories/2026-10-30.md；**结论**：S1健康, loss~2.22稳态. 被#949更新。需要时再读。
-> 📦 §#947（10-30 10:23, S1监控iter19630健康·✅HF导出iter_18000+check_rope.py PASS）→ daily-memories/2026-10-30.md；**结论**：HF导出成功(2.22B, 323 tensors), check_rope PASS(56层/4注意力/max_pos=1M/theta=1e6). 被#949更新。需要时再读。
-> 📦 §#929~#946（10-30 04:02~10:02, #929~#946共18轮, S1监控iter16530→19460, 全程健康·loss~2.23~2.29稳态微降·0NaN·多次温和grad-norm spike均秒恢复·~554~629K tok/s·ckpt 16000→18000）→ daily-memories/2026-10-30.md；**结论**：S1全程健康稳定, loss从~2.29微降至~2.23, ckpt从16000→18000, 所有spike均自恢复, abf_plan.py/长上下文数据体检/prune dry-run均完成. 被#947更新。需要时再读。
-> 📦 §#928及更早（#918~#928, 10-30 00:15~03:41）已归档 → daily-memories/2026-10-30.md；**结论**：S1 iter14720~16370全程健康, loss~2.25~2.28稳态, 0NaN, ~554~580K tok/s, ckpt从14000→16000, 多次温和grad-norm spike均恢复. 需要 #918~#928 细节时读当日 daily-memories。
-> 📦 §#894~#917（10-29 16:05~23:57, S1监控iter10680~14570, 24轮连续健康·0NaN·ckpt@10000→14000·loss 2.27~2.35·check_rope PASS·b67bf0c pushed·17:0x②实质完成）→ daily-memories/2026-10-29.md。需要时再读。
-> 📦 §#884–#893（10-29 12:37–15:45, 10条S1监控流水·iter8950→10530·loss~2.34–2.40·ckpt@8000→10000）→ daily-memories/2026-10-29.md；**结论**：S1全程健康, 0NaN, ~580K tok/s, 多次grad-norm spike均自恢复。被#894+更新。需要时再读。
-> 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
-
-
-> - 未完成指令：无。S1 RUNNING(iter 31970/700k, loss 2.160, 0NaN, ~593K tok/s, ckpt@30000)。论文全文审计#1014已完成(5处.tex修正/ERR=0/报告25.7KB/commit d6ba844fc)。论文审计#1011/#1013已完成(7处修正)。仅剩长上下文ABF基线(需GPU空闲)。ETA ~52天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=36.0KB / MEMORY=32.7KB（TASK>32KB,下次唤醒需归档已闭合块）
+> - 未完成指令：无。S1 RUNNING(iter ~32000/700k, loss ~2.16, 0NaN, ~593K tok/s, ckpt@30000)。论文全部任务已完成（paper-slim #1015 / paper-audit #1014 / paper-edit #999，6页/ERR=0）。仅剩长上下文ABF基线(需GPU空闲)。ETA ~52天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=23.8KB / MEMORY=30.0KB（归档 2.8KB → ARCHIVE_OPERATOR_PRETRAIN.md）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
