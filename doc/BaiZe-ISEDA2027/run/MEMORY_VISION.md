@@ -20,6 +20,7 @@ WAITING: 1
 
 ## 状态头
 
+> **本唤醒流水 [wake #443, 2026-10-31 18:0x]**：✅ 空唤醒（无新运维令）+ 体积归档。git pull --rebase（up to date）→ 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检 TASK=35733B（**>32KB**）→ 归档 16:0x 块(3856B)+11:2x 块(1830B) 原文移入 ARCHIVE_OPERATOR_VISION.md，各留 1 行指针 → 归档后 TASK=27230B（≤32KB✓）/MEMORY=14093B（≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈14KB（归档 5686B → ARCHIVE_OPERATOR_VISION.md）。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #441, 2026-10-31 15:4x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=29807B/MEMORY=11754B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈12KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #440, 2026-10-31 14:3x]**：✅ 复核11:2x运维令完成状态。git pull --rebase(up to date) → 读6_vision_encoder.tex(18行/wake#439版) → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0 → 报告report_vision_paper_edit_zh.html 10429B(≥10KB✓) → commit f2ca45de5已在远端 → 任务书11:2x指令标记[已完成] → 写心跳+日流水+commit+push。📦 体积：TASK≈30KB/MEMORY≈11KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #439, 2026-10-31 13:5x]**：✅ 执行用户直令(11:2x)「请vision自行修改第6章视觉编码器并推送&提交」。git pull --rebase → 读6_vision_encoder.tex(wake#437版20行)+EXPERIMENTS_VISION.md/ROUND11.md核对 → 发现四臂消融句(L11)属「AIMv2消融」中间过程，运维令明确要求不进正文 → 整句删除(含中文注释) → 18行 → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0（wake#437版7页→删除后6页）→ BOM保持(ef bb bf) → 更新generate_paper_edit_report.py→生成report_vision_paper_edit_zh.html 10429B(7节/标签配平/0script/0外链/≥10KB) → 13项中间过程确认未出现 → 写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈10KB。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -38,9 +39,9 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **论文第6章改稿完成（wake#437+#439+#440复核）**。6_vision_encoder.tex(18行/四臂消融已删/数字全核对✅)。6页/ERR=0/UNDEF=0。report_vision_paper_edit_zh.html已更新。11:2x运维令已标记[已完成]。**WAITING=1**。 |
+| PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-10-31 15:4x (wake #441)**：空唤醒，无新运维令，体积自检通过。📦体积：TASK≈29KB/MEMORY≈12KB。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-10-31 18:0x (wake #443)**：空唤醒+体积归档。TASK 35KB→27KB（归档 16:0x+11:2x 块→ARCHIVE）。📦体积：TASK≈27KB/MEMORY≈14KB。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
