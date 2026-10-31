@@ -1,5 +1,5 @@
 # BAIZE_VISION_TASK.md
-### 🚀 运维令 · 2026-10-31 16:0x（**把 ViT-L 68.236% + MLLM 11 集 26.10% 写进论文：ch6 / ch7 / 摘要 / intro，MME 只呈现不计均值**）· 用户直令 · 最高优先
+### [已完成] 🚀 运维令 · 2026-10-31 16:0x（**把 ViT-L 68.236% + MLLM 11 集 26.10% 写进论文：ch6 / ch7 / 摘要 / intro，MME 只呈现不计均值**）· 用户直令 · 最高优先 · ✅ 已完成（wake#441 2026-10-31 16:37 交付 4 .tex 改稿 commit 1a2e19b2f + report_vision_paper_results_zh.html 17280B + MEMORY 登记；wake#442 复核验证 ERR=0/UNDEF=0/Overfull=0，数字全溯源 armE_r2 JSON + EXPERIMENTS §15.5，MME 用 ArmE-R2 实测 718.0/513.75/204.29 非运维令中 ④-4ep 的 847.46/596.75/250.71）
 
 > **用户原话**：「vision 可以汇报 openclip + ViT-L 的结果嘛，不是达到 60+%嘛」「而且这个结果还有 MLLM 12 集的结果对吧，这个表格也可以报在 MLLM 这节啊。安排 vision 去更新一下，第6章第7章摘要和 intro 都更新一下。」「好的 MME 只呈现 不参与取均值」
 
