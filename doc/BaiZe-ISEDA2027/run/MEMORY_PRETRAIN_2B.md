@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 15:2x #1011：**论文全文事实审订（运维令15:2x）**。逐表逐句对账7项检查清单：精度/规模/token/状态词/交叉引用/参数/旧口径。发现并修正6处错误：(1)3_arch L42 Table1 BF16→FP8 tensorwise; (2)3_arch L39 Table1 seq 4096→16384; (3)3_arch L55 8×H100→two 8×H100 nodes(16GPU)+BF16→FP8 tensorwise; (4)3_arch L66 stage(i) complete→in progress; (5)3_arch L49 删除"six"与ch6自洽; (6)5_posttrain L21 4096→16384同步Table1。编译三连ERR=0/UNDEF=0/Overfull=0/Pages=6✅。报告report_pretrain_paper_audit_zh.html(24.6KB)已交付。S1未碰(iter~31514/700k)。未完成指令：无。📦 体积：TASK=30.4KB / MEMORY=31.3KB。
+> 🆕 2026-10-31 16:14 #1012：**S1健康监控 + 审计任务复核**。确认15:2x运维令(#1011)已完整交付：commit ff6721da0(6处.tex修正+报告24.6KB+编译ERR=0/6页)。S1健康：iter 31970/700k(4.57%), loss 2.160, 0NaN, grad-norm 0.103, ~7s/step≈593K tok/s, ckpt@30000(下个@32000)。未完成指令：无。📦 体积：TASK=30.3KB / MEMORY=31.2KB。
+
+> 📦 §#1011（10-31 15:2x, 论文全文事实审订·6处修改·commit ff6721da0）→ daily-memories/2026-10-31.md；**结论**：3_arch BF16→FP8/4096→16384/8GPU→16GPU/complete→in_progress/six删除 + 5_posttrain 4096→16384, ERR=0/6页, 报告24.6KB。被#1012复核确认。需要时再读。
 
 > 📦 §#1010（10-31 15:20, S1健康监控 iter31514/700k loss~2.14 0NaN ~573K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康, iter31514(4.50%), loss~2.14稳态, ~573K tok/s, ckpt@30000。被#1011更新。需要时再读。
 
@@ -42,8 +44,8 @@ WAITING: 1
 > 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
 
 
-> - 未完成指令：无。S1 RUNNING(iter 30840/700k, loss 2.129, ~599K tok/s, 0NaN, ckpt@30000, 12:16重启后稳定推进840步)。论文编辑#999/#1000/#1005均已完成(6页/ERR=0/commit 85ea67b4d+ed72d5ef5)。仅剩长上下文ABF基线(需GPU空闲, 训练占用全部16卡~52天)。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~52天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=25.8KB / MEMORY=29.0KB（无归档）
+> - 未完成指令：无。S1 RUNNING(iter 31970/700k, loss 2.160, 0NaN, ~593K tok/s, ckpt@30000, 12:20重启后稳定推进1960步)。论文审计#1011已完成(6处修正/6页/ERR=0/commit ff6721da0)。论文编辑#999/#1000/#1005均已完成(6页/ERR=0)。仅剩长上下文ABF基线(需GPU空闲, 训练占用全部16卡~52天)。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~52天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=30.3KB / MEMORY=31.2KB（无归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
