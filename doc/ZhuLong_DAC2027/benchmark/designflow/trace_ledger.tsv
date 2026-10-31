@@ -31,3 +31,5 @@
 1792724929127_2vuso.messages.json	tongni	hfeg0pkn003	468	spice_sim	case	EDA-Eval-DesignFlow-SpGen-001	2026-10-31 11:00	
 1792653194974_s2f9d.messages.json	e0024852	hfeg0plg79	294	spice_sim	parked		2026-10-31 11:39	finesim SRAM-tailor flow runs via bsub/LSF cluster + 9.7G DSPF external /rundata files, not reproducible on .75; flow-debugging not self-contained L2
 1790563683904_l7aol.messages.json	jason17w	hfeg0pnd002	288	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistChk-001	2026-10-31 11:58	
+1792679003281_z44lk.messages.json	xinqiaoz	hfeg0pkn004	610	physical_verify	parked		2026-10-31 12:18	near-dup of DummyDeck-001 (BORD NOT empty-derived-layer->fill collapse, same xinqiaoz PDK QA dummy-flow); pivoted to vaiob for user/topic diversity
+1792829537180_vaiob.messages.json	harrywu	hfeg0pkn002	506	spice_sim	claimed		2026-10-31 12:18	
