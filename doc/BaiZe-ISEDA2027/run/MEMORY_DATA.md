@@ -18,13 +18,13 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告已交付(v2)+验证完成
-已完成:       ✅A.LC+Agentic调研报告v2(report_data_lc_agentic_survey_zh.html 74829B/34table/0script/13+11候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.9%,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/commit+push synced)
-当前动作:     唤醒1047(2026-10-31):验证报告完整性OK+复核85M下载87.9% alive(20.1MB/s)
-下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith)
+PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v3已交付+验证完成
+已完成:       ✅A.LC+Agentic调研报告v3(report_data_lc_agentic_survey_zh.html 92013B/40table/0script/15+15候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.9%,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/66 HF链接/42处「未核到」诚实标注)
+当前动作:     唤醒1048(2026-10-31):v3新增6数据集(InfLLM-V2-data-5B,oellm-longctx,Nemotron-Terminal-Corpus,AgentTrove,SWE-ZERO-12M,SWE-rebench)+更新TL;DR/分类/下载/污染各节
+下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
-未完成指令:   无(调研报告v2已交付+验证完成)
+未完成指令:   无(调研报告v3已交付+验证完成)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。

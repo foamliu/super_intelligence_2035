@@ -241,6 +241,40 @@ LONG_CONTEXT_DATASETS = [
         "evidence": "论文 arXiv:2408.07055: '6,000 long output samples, 2k-20k words'; AgentWrite pipeline 生成",
         "notes": "解决「模型输出长度受限」问题 (SFT 数据中缺长输出)。与 LongAlign 互补: LongAlign=长输入，LongWriter=长输出。对 >=128K 闸门贡献小，但提升长输出能力。中英混合。",
     },
+    {
+        "repo_id": "openbmb/InfLLM-V2-data-5B",
+        "hf_url": "https://huggingface.co/datasets/openbmb/InfLLM-V2-data-5B",
+        "category": "长上下文训练集 (5B tokens, 真实长文档)",
+        "size": "约 5B tokens (parquet 分片)",
+        "samples": "未核到确切样本数",
+        "tokens_est": "~5B tokens (MiniCPM4 tokenizer)",
+        "language": "英语 (含多语言)",
+        "license": "未明确标注 (OpenBMB 出品; 论文公开发表)",
+        "gated": "否",
+        "updated": "2025-12 (InfLLM-V2 模型发布)",
+        "fields": "input_ids (list[int] 已分词 token id 序列), text (string 原始文本)",
+        "ge32k_ratio": "未单独标注; 数据混合 web/code/papers/Wikipedia + 高质量内部数据; 论文称 'high-quality long-text data'; 需抽样实测",
+        "ge128k_ratio": "未单独标注; InfLLM-V2 设计用于长序列处理; 需抽样实测",
+        "evidence": "数据集卡: '5B tokens of long-text data' from web data, source code, scientific papers, Wikipedia + in-house; MiniCPM4 tokenizer; input_ids + text 双字段",
+        "notes": "InfLLM-V2 证明仅需 5B tokens 高质量长文本即可解锁长上下文能力 (无需万亿级数据)。数据已分词 (MiniCPM4 tokenizer) — 需确认与白泽 tokenizer 兼容性，或使用 text 字段重新分词。与 ProLong 31B 互补 (更少但更精选)。",
+    },
+    {
+        "repo_id": "birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1",
+        "hf_url": "https://huggingface.co/datasets/birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1",
+        "category": "长上下文训练集 (128K/256K packed, Megatron-LM 格式)",
+        "size": "~586M source-side estimated tokens (3,072 packed examples)",
+        "samples": "3,072 packed examples (6 source/tier × 512)",
+        "tokens_est": "~586M tokens",
+        "language": "英语 + 多语言",
+        "license": "other (OELLM 项目)",
+        "gated": "否",
+        "updated": "2025 (OELLM 项目)",
+        "fields": "Megatron .bin/.idx 文件, mix/ (weighted data-path), manifests/ (build metadata, SHA256, pack manifest)",
+        "ge32k_ratio": "128K 子集: 100% >=128K (packed); 256K 子集: 100% >=256K (packed)",
+        "ge128k_ratio": "128K 和 256K 子集: 100% >=128K (按 packed 设计)",
+        "evidence": "数据集卡: '128K and 256K sequence scales'; 6 source/tier: code_repo_pack_128k/256k, books_concat_128k/256k, arxiv_full_concat_128k/256k; 每源 512 packed examples",
+        "notes": "OELLM 项目的自然长上下文扩展实验数据。已按 Megatron-LM 格式分词打包 (128K/256K)。来源: starcoderdata-repo (repo-packed code), gutenberg_multilang (books), arxiv (papers)。体量小 (586M tokens) 但格式即用 (Megatron .bin/.idx)。适合作为长上下文 continuation training 的小规模验证集。",
+    },
 ]
 
 # B 类：Agentic 数据集
@@ -421,6 +455,70 @@ AGENTIC_DATASETS = [
         "contamination_risk": "高: 含 SWE-Bench-Train (1,525 样本)，与 SWE-bench Verified 同源。NVIDIA 声称「排除评估数据集中存在的仓库实例」但仍需独立验证",
         "notes": "Nemotron Cascade 的 SFT 数据 (与 RL 版互补)。agentless mini 框架: 三任务 (代码定位/修复/测试生成)。NVIDIA 声称已排除 SWE-bench Verified 仓库，但需独立验证。8B/14B 分别达 37.2%/43.1% pass@1。",
     },
+    {
+        "repo_id": "nvidia/Nemotron-Terminal-Corpus",
+        "hf_url": "https://huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus",
+        "tier": "可直接 RL (Terminal-Bench 对标)",
+        "size": "100K-1M (~366K 轨迹, parquet)",
+        "samples": "~366,000 条高质量执行轨迹 (226K 数据集适配器 + 140K 合成技能任务)",
+        "language": "英语",
+        "license": "CC BY 4.0",
+        "gated": "否",
+        "updated": "2026-02 (arXiv:2602.21193)",
+        "fields": "messages (ShareGPT/terminus-2 格式), task_id, reward (pass/fail), domain (data_querying/model_training/data_processing/debugging/SWE 等)",
+        "reward_signal": "Docker 容器内执行 test script -> pass/fail。每个任务配备程序化测试套件。Terminus 2 代理框架执行。",
+        "stage": "SFT + RL",
+        "contamination_risk": "高: 数据集适配器包含 SWE 数据集转换 -> 与 SWE-bench 可能有重叠。Terminal-Bench 2.0 评测集任务可能被包含 -> 需提取 Terminal-Bench 任务指纹去污染。",
+        "notes": "🏆 Terminal-Bench 直接对标数据集。NVIDIA 证明: Qwen3-8B 基线 2.5% -> 训练后 13.0% (5.2x); 32B: 3.4% -> 27.4% (8x)，超过 Qwen3-Coder-480B (23.9%)。226K 从 Math/Code/SWE 数据集适配 + 140K 合成终端技能任务。CC BY 4.0 干净。是提升 Terminal-Bench 表现的首选数据集。",
+    },
+    {
+        "repo_id": "open-thoughts/AgentTrove",
+        "hf_url": "https://huggingface.co/datasets/open-thoughts/AgentTrove",
+        "tier": "只能 SFT (大规模聚合轨迹)",
+        "size": "~18.6 GB (1M-10M 行, parquet)",
+        "samples": "1,696,847 条轨迹, 219 个源数据集",
+        "language": "英语",
+        "license": "Apache-2.0 (聚合层; 各源保留原始 license)",
+        "gated": "否",
+        "updated": "2026-04",
+        "fields": "messages (list[dict] terminus-2/ShareGPT 格式), original_source (string), original_teacher (string), reward (float pass/fail), task_id (string)",
+        "reward_signal": "reward 字段 (1.0=success, 0.0=failure)，但大多数源不提供可执行验证 (仅标签); 不可直接 RL",
+        "stage": "SFT",
+        "contamination_risk": "高: 聚合 219 个源数据集，含 SWE-bench/HumanEval/MATH 等评测集生成的轨迹 -> 需逐源排查并去污染。上游源许可证不一，需逐源验证。",
+        "notes": "目前最大的开源 agentic 交互轨迹聚合 (1.7M 行，4x Nemotron Terminal Corpus)。覆盖代码修复/shell/数学/竞赛编程/计算机使用。terminus-2 格式统一。适合 SFT 大规模注入 agentic 行为先验。但污染风险高 (219 源中可能含评测集轨迹)，需严格去污染。",
+    },
+    {
+        "repo_id": "AlienKevin/SWE-ZERO-12M-trajectories",
+        "hf_url": "https://huggingface.co/datasets/AlienKevin/SWE-ZERO-12M-trajectories",
+        "tier": "只能 SFT (执行无关, 大规模轨迹)",
+        "size": "112B tokens, ~111 GB (估计)",
+        "samples": "12,290,800 条轨迹, 122,908 个 PR, 3,222 个仓库, 16 种编程语言",
+        "language": "英语 (代码多语言)",
+        "license": "未核到 (需确认)",
+        "gated": "否",
+        "updated": "2026-05",
+        "fields": "未核到完整字段 (execution-free agentic trajectories)",
+        "reward_signal": "无自动可执行验证 (execution-free); 轨迹含 PR merge 状态作为隐式信号",
+        "stage": "SFT",
+        "contamination_risk": "中: 3,222 个仓库中部分与 SWE-bench Verified 仓库重叠; 但使用 PR 而非 issue -> 重叠度低于 SWE-smith",
+        "notes": "目前最大的 agentic coding 轨迹数据集 (12M 轨迹/112B tokens，5.7x AgentTrove)。execution-free pipeline = 不需 Docker 验证。覆盖 16 种编程语言 (非仅 Python)。适合大规模 SFT 注入 agentic coding 先验。体量大需选择性下载。与 AgentTrove 互补 (AgentTrove 含更多非 SWE 任务)。",
+    },
+    {
+        "repo_id": "nebius/SWE-rebench",
+        "hf_url": "https://huggingface.co/datasets/nebius/SWE-rebench",
+        "tier": "可直接 RL (去污染, 可执行验证)",
+        "size": "10K-100K (21,000+ issue-PR pairs)",
+        "samples": "21,000+ 任务, 3,400+ Python 仓库, 7,500 个预构建 Docker 镜像",
+        "language": "英语 (Python 代码)",
+        "license": "未明确标注 (nebius 出品; 论文 NeurIPS 2025)",
+        "gated": "否",
+        "updated": "2025-08 (arXiv:2505.20411, NeurIPS 2025)",
+        "fields": "instance_id, patch (gold patch), repo, base_commit, test_patch, problem_statement, FAIL_TO_PASS, PASS_TO_PASS, hints_text, created_at, quality labels (clarity/complexity/test_patch_validity)",
+        "reward_signal": "单元测试: FAIL_TO_PASS + PASS_TO_PASS; 7,500 个预构建 Docker 镜像可在 Docker Hub 直接拉取; 自动化环境配置",
+        "stage": "SFT + RL",
+        "contamination_risk": "低: 论文核心贡献=去污染 (decontaminated); 从 GitHub Archive 持续挖掘新任务，避免与 SWE-bench 重叠。论文揭示 DeepSeek-V3 在 SWE-bench 39.7% vs SWE-rebench 21.3% -> 污染虚高。",
+        "notes": "🏆 去污染 SWE 训练+评测数据。21K+ 可执行任务 + 7,500 Docker 镜像 (Docker Hub 公开)。论文揭示 SWE-bench 污染问题 (DeepSeek-V3: 39.7% vs 21.3%)。适合作为 RL 训练的干净数据源 + 独立评测。质量标注 (clarity/complexity) 可用于课程学习。与 SWE-smith 互补: SWE-smith 是合成任务, SWE-rebench 是真实 PR。",
+    },
 ]
 
 EXISTING_SOURCES = [
@@ -524,18 +622,19 @@ def section_tldr():
 </tr>
 <tr>
   <td>2</td>
-  <td><a href="https://huggingface.co/datasets/zhangdw/to-tool-call-datasets">zhangdw/to-tool-call-datasets</a></td>
-  <td>244K 工具调用样本，统一 Qwen3 格式，聚合 10 个公开源 (BFCL/ToolBench/ToolACE/τ-bench 等)。SFT 首选，污染风险低。</td>
-  <td>~2.4 GiB</td>
+  <td><a href="https://huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus">nvidia/Nemotron-Terminal-Corpus</a></td>
+  <td>366K 终端执行轨迹，Terminal-Bench 2.0 直接对标。NVIDIA 证明 Qwen3-32B: 3.4%→27.4% (8x)，超过 Qwen3-Coder-480B。CC BY 4.0。提升 Terminal-Bench 的首选数据。</td>
+  <td>~10-15 GiB (parquet)</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-RL-SWE">nvidia/Nemotron-Cascade-RL-SWE</a></td>
-  <td>NVIDIA 执行无关 RL 数据 (不需 Docker 跑测试)，40K+ 样本，CC BY 4.0。14B 模型达 43.1% resolve rate。⚠️ 含 SWE-Bench-Train，污染风险高，需去污染。</td>
-  <td>~10-20 GiB</td>
+  <td><a href="https://huggingface.co/datasets/nebius/SWE-rebench">nebius/SWE-rebench</a></td>
+  <td>21K+ 去污染可执行 SWE 任务 + 7,500 个预构建 Docker 镜像。论文揭示 SWE-bench 污染虚高 (DeepSeek-V3: 39.7% vs 21.3%)。RL 训练的干净数据源 + 独立评测。</td>
+  <td>~3-5 GiB (parquet; Docker 镜像另算)</td>
 </tr>
 </table>
-<p><strong>预计总下载体量 (B 类 TOP-3):</strong> ~20-35 GiB</p>
+<p><strong>预计总下载体量 (B 类 TOP-3):</strong> ~20-30 GiB (不含 Docker 镜像)</p>
+<p><strong>值得关注的补充候选:</strong> nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低)</p>
 </div>
 
 <div class="info">
@@ -550,7 +649,7 @@ def section_method():
 <h3>2.1 检索工具与流程</h3>
 <ul>
 <li><strong>检索工具</strong>: 使用 web search 服务 (cimi_search) 以自然语言查询 HuggingFace 数据集，再用 cimi_fetch 抓取数据集页面全文。</li>
-<li><strong>检索查询</strong>: 共发起 12 轮针对性搜索，覆盖: 长上下文训练数据、128K context、RULER/NIAH、Gutenberg 书籍、ProLong、法律/专利文档、Wikipedia 全文、repo-level 代码拼接、SWE-Gym/SWE-smith、Terminal-Bench、ToolBench/BFCL、Nemotron agentic、SWE-bench 污染。</li>
+<li><strong>检索查询</strong>: 共发起 16 轮针对性搜索，覆盖: 长上下文训练数据、128K/256K context、RULER/NIAH、Gutenberg 书籍、ProLong、InfLLM-V2、法律/专利文档、Wikipedia 全文、repo-level 代码拼接、Stack v3、SWE-Gym/SWE-smith、SWE-rebench 去污染、Terminal-Bench/Nemotron-Terminal-Corpus、ToolBench/BFCL、AgentTrove/SWE-ZERO 大规模轨迹、Nemotron agentic、SWE-bench 污染。</li>
 <li><strong>逐条核实</strong>: 对每个候选数据集，尝试打开其 HF 页面，核实: repo id、体量、语言、license、gated 状态、字段结构、更新时间。</li>
 <li><strong>HF 页面可达性</strong>: fetch_web_content 无法直接访问 hf.co (连接被拒)，改用 cimi_fetch 成功抓取部分页面；部分数据集仅从搜索结果摘要中获取元信息。</li>
 </ul>
@@ -654,6 +753,8 @@ def section_a_table():
 <h4>④ 长上下文训练集</h4>
 <ul>
 <li><strong>princeton-nlp/prolong-data-512K</strong> — 31B tokens，系统化长上下文训练数据 (Princeton 论文验证)</li>
+<li><strong>openbmb/InfLLM-V2-data-5B</strong> — 5B tokens 高质量长文本，InfLLM-V2 证明仅 5B 即可解锁长上下文。含 input_ids + text 双字段</li>
+<li><strong>birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1</strong> — 586M tokens，Megatron-LM 格式 128K/256K packed (code/books/arxiv)，体量小但即用</li>
 <li><strong>caskcsg/NExtLong</strong> — 合成长上下文 64K-512K，不依赖真实长文档</li>
 <li><strong>THUDM/LongAlign-10k</strong> — 10K 长指令 SFT 数据，8K-64K，中英混合 (10% 中文)</li>
 </ul>
@@ -669,6 +770,8 @@ def section_a_table():
 <li><strong>utter-project/LongBlocks</strong> — ≥32K/≥128K 占比未标注，需抽样实测</li>
 <li><strong>alea-institute/kl3m-data</strong> — ≥32K/≥128K 具体占比未标注 (但数据卡显示部分文档 306K tokens)，需抽样实测</li>
 <li><strong>HuggingFaceCode/stack-v3-train</strong> — 每行=一个仓库，但 ≥32K/≥128K 占比未标注，需抽样实测 (仓库大小差异大)</li>
+<li><strong>openbmb/InfLLM-V2-data-5B</strong> — 论文称 "high-quality long-text data" 但 ≥32K/≥128K 占比未标注，需抽样实测</li>
+<li><strong>birgermoell/oellm-longctx-...pilot-v1</strong> — packed 到 128K/256K，所以 100% ≥128K (已验证)；但体量小 (586M tokens)，仅适合小规模验证</li>
 <li><strong>THUDM/LongAlign-10k</strong> — 8K-64K 范围，≥32K 占比未标注，≥128K=0% (上限 64K)</li>
 <li><strong>THUDM/LongWriter-6k</strong> — 2K-20K words，≥32K 占比未标注，≥128K≈0%</li>
 </ul>
@@ -733,14 +836,18 @@ def section_b_table():
 <h4>① 可直接 RL (有可执行验证信号)</h4>
 <ul>
 <li><strong>SWE-bench/SWE-smith</strong> — 59K instances，单测 (FAIL_TO_PASS/PASS_TO_PASS) 作为 reward，需 Docker。MIT。🟡 中等污染风险。</li>
+<li><strong>nvidia/Nemotron-Terminal-Corpus</strong> — 366K 终端轨迹，Terminal-Bench 2.0 直接对标。Docker test script reward。CC BY 4.0。🔴 高污染风险 (含 SWE 适配器)。</li>
+<li><strong>nebius/SWE-rebench</strong> — 21K+ 去污染可执行 SWE 任务，7,500 Docker 镜像 (Docker Hub)。🟢 低污染 (论文核心=去污染)。</li>
 <li><strong>nvidia/Nemotron-Cascade-RL-SWE</strong> — 40K+ 样本，execution-free reward model (不需 Docker)。CC BY 4.0。🔴 高污染风险 (含 SWE-Bench-Train)。</li>
 <li><strong>NovaSky-AI/SkyRL-v0-293-data</strong> — 293 train tasks，SWE-Gym 单测 reward。小数据量验证 RL pipeline。🟡 中等。</li>
 <li><strong>nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</strong> — step-level pass-rate reward，细粒度。🔴 高污染风险。gated 状态未核到。</li>
 </ul>
-<p><strong>奖励信号来源汇总</strong>: 单元测试 (SWE-smith, SkyRL) > 执行无关奖励模型 (Nemotron-Cascade) > step-level pass-rate (Nemotron-Pivot)。单测最可靠但需 Docker；execution-free 最轻量但依赖 reward model 质量。</p>
+<p><strong>奖励信号来源汇总</strong>: 单元测试 (SWE-smith, SWE-rebench, SkyRL) > Docker test script (Nemotron-Terminal-Corpus) > 执行无关奖励模型 (Nemotron-Cascade) > step-level pass-rate (Nemotron-Pivot)。单测最可靠但需 Docker；execution-free 最轻量但依赖 reward model 质量。SWE-rebench 独有「去污染」属性，是 RL 训练的干净数据源首选。</p>
 
 <h4>② 只能 SFT (无自动验证)</h4>
 <ul>
+<li><strong>open-thoughts/AgentTrove</strong> — 1.7M 轨迹 (219 源聚合)，terminus-2 格式。Apache-2.0。🔴 高污染 (含评测集轨迹)。</li>
+<li><strong>AlienKevin/SWE-ZERO-12M-trajectories</strong> — 12M 轨迹/112B tokens，execution-free，16 语言。🟡 中等污染 (PR 而非 issue)。</li>
 <li><strong>zhangdw/to-tool-call-datasets</strong> — 244K 工具调用，统一 Qwen3 格式，10 个公开源聚合。🟢 低污染。</li>
 <li><strong>tuandunghcmut/toolbench-v1</strong> — ToolBench 原始版，16K+ 真实 API，Apache-2.0。🟢 低污染。</li>
 <li><strong>mshojaei77/terminal-command-execution-sft</strong> — 终端命令 SFT，9 种 shell, 17 种技能。🟢 低污染。适合 Terminal-Bench 方向。</li>
@@ -775,6 +882,8 @@ def section_b_table():
 <li>Terminal-Bench 2.0 (harborframework/terminal-bench-2.0) 已发布，任务更新更难。</li>
 <li>Terminal-Bench 的 task instruction + test script 应提取 13-gram 指纹加入黑名单。</li>
 <li><strong>mshojaei77/terminal-command-execution-sft</strong> 是合成/改写数据，非 Terminal-Bench 原始任务 → 污染风险低，但需确认源数据集不含 Terminal-Bench 测试脚本。</li>
+<li><strong>nvidia/Nemotron-Terminal-Corpus</strong> 数据集适配器包含 SWE 数据集转换 → 需排查 Terminal-Bench 2.0 任务是否被包含。建议: 下载后对 Nemotron-Terminal-Corpus 做 Terminal-Bench 2.0 13-gram 扫描，命中即过滤。</li>
+<li><strong>open-thoughts/AgentTrove</strong> 聚合 219 个源数据集，部分源可能含 Terminal-Bench 任务生成的轨迹 → 需逐源排查，对 original_source 字段做 Terminal-Bench 关键词匹配。</li>
 <li>每个 Terminal-Bench 任务是完整自包含 Docker 归档 (含二进制/配置/测试脚本) → 需提取 task_yaml + base_description + test script 的 13-gram。</li>
 </ul>
 </div>
@@ -847,20 +956,26 @@ def section_download():
 <tr><th>优先级</th><th>数据集</th><th>类别</th><th>预计体量</th><th>落盘路径</th><th>理由</th></tr>
 <tr><td>P0</td><td>ysngkil/whole-books</td><td>A 长上下文</td><td>~25 GiB</td><td>/nas_env/datasets/whole-books/</td><td>直接解决 ≥32K 不足，87-98% ≥64K</td></tr>
 <tr><td>P0</td><td>SWE-bench/SWE-smith</td><td>B agentic</td><td>~5-10 GiB</td><td>/nas_env/datasets/swe-smith/</td><td>最大 SWE 训练数据，可 RL，MIT</td></tr>
+<tr><td>P0</td><td>nvidia/Nemotron-Terminal-Corpus</td><td>B agentic</td><td>~10-15 GiB</td><td>/nas_env/datasets/nemotron-terminal/</td><td>Terminal-Bench 2.0 直接对标，366K 轨迹，CC BY 4.0</td></tr>
+<tr><td>P0</td><td>nebius/SWE-rebench</td><td>B agentic</td><td>~3-5 GiB</td><td>/nas_env/datasets/swe-rebench/</td><td>21K+ 去污染可执行任务 + 7,500 Docker 镜像</td></tr>
 <tr><td>P1</td><td>princeton-nlp/prolong-data-512K</td><td>A 长上下文</td><td>~120 GiB</td><td>/nas_env/datasets/prolong-data-512K/</td><td>系统化长上下文训练配方</td></tr>
+<tr><td>P1</td><td>openbmb/InfLLM-V2-data-5B</td><td>A 长上下文</td><td>~20-30 GiB</td><td>/nas_env/datasets/infllm-v2-data-5b/</td><td>5B tokens 高质量长文本，InfLLM-V2 验证</td></tr>
 <tr><td>P1</td><td>zhangdw/to-tool-call-datasets</td><td>B agentic</td><td>~2.4 GiB</td><td>/nas_env/datasets/to-tool-call/</td><td>244K 工具调用 SFT，低污染</td></tr>
 <tr><td>P1</td><td>tuandunghcmut/toolbench-v1</td><td>B agentic</td><td>~10-50 GiB</td><td>/nas_env/datasets/toolbench/</td><td>最大工具调用 SFT (16K+ API)，Apache-2.0</td></tr>
 <tr><td>P1</td><td>self-long/RULER-llama3-1M</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/ruler-1m/</td><td>RULER 合成 haystack，MIT，117 子集</td></tr>
 <tr><td>P2</td><td>caskcsg/NExtLong</td><td>A 长上下文</td><td>&lt;50 GiB</td><td>/nas_env/datasets/nextlong/</td><td>合成长上下文，真实长文档不足时补充</td></tr>
+<tr><td>P2</td><td>open-thoughts/AgentTrove</td><td>B agentic</td><td>~18.6 GiB</td><td>/nas_env/datasets/agenttrove/</td><td>1.7M 轨迹 (219 源)，需严格去污染</td></tr>
 <tr><td>P2</td><td>nvidia/Nemotron-Cascade-RL-SWE</td><td>B agentic</td><td>~10-20 GiB</td><td>/nas_env/datasets/nemotron-cascade-rl/</td><td>execution-free RL，但需去污染</td></tr>
 <tr><td>P2</td><td>nvidia/Nemotron-Cascade-SFT-SWE</td><td>B agentic</td><td>~10-20 GiB</td><td>/nas_env/datasets/nemotron-cascade-sft/</td><td>SFT 版 (agentless mini)，CC BY 4.0，需去污染</td></tr>
 <tr><td>P2</td><td>THUDM/LongAlign-10k</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/longalign/</td><td>10K 长指令 SFT，中英混合</td></tr>
+<tr><td>P2</td><td>birgermoell/oellm-longctx-...pilot-v1</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/oellm-longctx/</td><td>586M tokens Megatron 128K/256K packed，即用</td></tr>
 <tr><td>P3</td><td>mshojaei77/terminal-command-execution-sft</td><td>B agentic</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-sft/</td><td>Terminal-Bench 方向 SFT</td></tr>
 <tr><td>P3</td><td>utter-project/LongBlocks</td><td>A 长上下文</td><td>未核到</td><td>/nas_env/datasets/longblocks/</td><td>多语言长上下文 QA</td></tr>
 <tr><td>P3</td><td>ia03/terminal-bench</td><td>B 评测</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-bench/</td><td>评测集 (仅去污染用，不入训练)</td></tr>
+<tr><td>⚠️</td><td>AlienKevin/SWE-ZERO-12M-trajectories</td><td>B agentic</td><td>~111 GiB</td><td>/nas_env/datasets/swe-zero-12m/</td><td>12M 轨迹/112B tokens，体量大需选择性下载</td></tr>
 <tr><td>⚠️</td><td>HuggingFaceCode/stack-v3-train</td><td>A 长上下文</td><td>15.9 TB</td><td>/nas_env/datasets/stack-v3-train/</td><td>体量巨大，需选择性下载 (按语言/大小过滤)</td></tr>
 </table>
-<p><strong>预计总下载体量: ~240-280 GiB</strong> (P0+P1: ~160 GiB; P2: ~80 GiB; P3: ~15 GiB; stack-v3 需单独评估)</p>
+<p><strong>预计总下载体量: ~280-350 GiB</strong> (P0: ~45 GiB; P1: ~160 GiB; P2: ~100 GiB; P3: ~15 GiB; SWE-ZERO-12M/stack-v3 需单独评估)</p>
 
 <h3>6.2 落盘路径规范</h3>
 <ul>
@@ -881,14 +996,26 @@ hf download ysngkil/whole-books --repo-type dataset --local-dir /nas_env/dataset
 # P0: SWE-smith (~5-10 GiB)
 hf download SWE-bench/SWE-smith --repo-type dataset --local-dir /nas_env/datasets/swe-smith/
 
+# P0: Nemotron-Terminal-Corpus (~10-15 GiB, Terminal-Bench 对标)
+hf download nvidia/Nemotron-Terminal-Corpus --repo-type dataset --local-dir /nas_env/datasets/nemotron-terminal/
+
+# P0: SWE-rebench (~3-5 GiB, 去污染 RL)
+hf download nebius/SWE-rebench --repo-type dataset --local-dir /nas_env/datasets/swe-rebench/
+
 # P1: ProLong data (~120 GiB, MDS 格式, 需 mosaicml-streaming)
 hf download princeton-nlp/prolong-data-512K --repo-type dataset --local-dir /nas_env/datasets/prolong-data-512K/
+
+# P1: InfLLM-V2-data-5B (~20-30 GiB, 5B tokens 长文本)
+hf download openbmb/InfLLM-V2-data-5B --repo-type dataset --local-dir /nas_env/datasets/infllm-v2-data-5b/
 
 # P1: to-tool-call-datasets (~2.4 GiB)
 hf download zhangdw/to-tool-call-datasets --repo-type dataset --local-dir /nas_env/datasets/to-tool-call/
 
 # P2: NExtLong
 hf download caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1 --repo-type dataset --local-dir /nas_env/datasets/nextlong/
+
+# P2: AgentTrove (~18.6 GiB, 1.7M 轨迹)
+hf download open-thoughts/AgentTrove --repo-type dataset --local-dir /nas_env/datasets/agenttrove/
 
 # P2: Nemotron-Cascade-RL-SWE
 hf download nvidia/Nemotron-Cascade-RL-SWE --repo-type dataset --local-dir /nas_env/datasets/nemotron-cascade-rl/
