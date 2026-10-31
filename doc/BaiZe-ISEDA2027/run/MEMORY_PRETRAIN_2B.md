@@ -1,8 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 17:28 #1014：**论文全文事实审订（15:2x令·第二轮补强）已完成**。前序#1011/#1013已修7处运维点名问题；本轮全文逐章逐表审计84项，发现并修复1个系统性事实错误（"52 Mamba-2 state-space layers"在4处出现→实际24 Mamba2+28 MLP）+Table1新增Mamba2/MLP层数行。共5处.tex修改：3_arch(2)+0_abstract(1)+1_intro(1)+4_llm(1)，全部含中文注释同步。编译ERR=0/UNDEF=0/Overfull=0。⚠️页数=7（vision线commit db10b9fa3改1_intro致增页；stash验证不含本线改动同为7页→非本线引入）。报告25.7KB/84项审计/0script/0外链。3项⚠️待核（500-600M scale/LC表token数/880GPU·h）。commit d6ba844fc已push。S1未碰。未完成指令：无。📦 体积：TASK=36.0KB / MEMORY=32.7KB（TASK>32KB但<40KB红线；下次唤醒需归档已闭合块）。
-> 📦 §#1013（10-31 16:41, 审计复核补遗MLLM design→in_progress·commit 2f895f418）→ daily-memories/2026-10-31.md；**结论**：1处遗漏已补，报告26.3KB。被#1014全文审计覆盖。需要时再读。
+> 🆕 2026-10-31 18:10 #1015：**论文 ch4 压缩（18:2x paper-slim 令）已完成**。4_llm_pretrain.tex 从 15,398B 压至 11,960B（省 22.3%）：9 个小节全部压缩（Architecture Selection / Training Framework / Search Protocol / Data / Long-Context Data Gate / Results / Decay Tail / Long-Context Capability / 表格合并）。tab:archcomp + tab:configs 合并为一个浮窗。**验收：6 页（正文 p1–p5 + refs p6 独占）✅ / ERR=0 ✅ / UNDEF=0 ✅ / Overfull=0 ✅**。保底清单 20 项数字全部原值保留。17 行中文注释全部保留。报告 report_pretrain_paper_slim_zh.html（9.9KB）已交付。commit 2fef637c8 已 push。🚫 未 commit main.pdf。S1 未碰。未完成指令：无。📦 体积：TASK=36.0KB / MEMORY=32.8KB（TASK>32KB，下次唤醒需归档已闭合块）。
+> 📦 §#1014（10-31 17:28, 全文事实审订84项·5处.tex修改·commit d6ba844fc）→ daily-memories/2026-10-31.md；**结论**：84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，ERR=0/7页(vision致溢出)，报告25.7KB。被#1015压缩更新。需要时再读。
 
 > 📦 §#1012（10-31 16:14, S1健康监控iter31970/loss2.160/0NaN/593K + 审计任务#1011复核确认）→ daily-memories/2026-10-31.md；**结论**：S1健康iter31970(4.57%), #1011确认完整交付。被#1013补遗更新。需要时再读。
 
