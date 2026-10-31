@@ -1,18 +1,54 @@
 # BAIZE_PRETRAIN_2B_TASK.md
+### 🚀 运维令 · 2026-10-31 09:1x（**接手维护 BaiZe 论文「预训练」章节**）· 用户直令 · 最高优先
 
-### 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · 最高优先
+> **用户令**：「下发指令给 pretrain agent 去改（论文预训练章节）。」
 
-> **用户令**：「pretrain：写个报告，如何实现1M长上下文，如果我想在1M上下文实现>95%的大海捞针正确率，该怎么办。」
+**背景（先读，决定你改什么）**：运维上一轮已经**手工改过一遍**并已 commit 入 main（`c40b6faf0`→rebase 后 `3c82ffe01`，标题 `BaiZe paper: pretrain 章节改写——删除 44.4B 旧生产跑，新增 WSD decay 两段制与长上下文训练`）。从**本轮起，论文预训练章节由你（pretrain 线）负责维护**；运维不再代替你改。**你的任务 = 在既有修订基础上做专业化审校与补全，不是从零重写。**
 
-交付 `reports/report_pretrain_1m_needle_zh.html`（中文、单文件自包含、无外链/无 CDN），必须回答：
-1. **现状基线**：Baize 2B Mamba2-hybrid 已能跑 1M（max_pos=1M、RoPE theta=1e6、64K prefill ≈41,598 tok/s、2M OOM）；长文能力与短文本能力的取舍现状。
-2. **怎么做到 1M**：位置编码（theta / ABF / 动态 NTK）、训练阶段递进（4K→16K→32K→128K→1M 的 token 预算）、数据配比（长文/书籍/代码仓库/合成 haystack）、架构（Mamba2 状态大小、attn/ssm 混合比、CP/序列并行、显存）。
-3. **怎么到 >95% needle**：needle 合成协议（针数 1/3/5、深度 0–100% 均匀、干扰项、多跳、变长针）、训练目标、评测协议（depth×position 网格；多针全中才算对；含改写/噪声）。
-4. **实验矩阵**：≥5 组配置（theta、长文比例、续训步数、针数）附成本估算与预期准确率。
-5. **取舍建议**：若只能做一件事选哪个、为什么；短文本回退的监控与护栏阈值。
-6. 附录：与 Qwen3.5 / Llama3 等公开做法对比（可引 arXiv 摘要，注明来源）。
+#### ① 先读懂现状（本轮第一步，禁止跳过）
+```bash
+cd doc/BaiZe-ISEDA2027 && git pull --rebase
+cat BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain_CHANGELOG.md   # 改动位置一览（9 条标注）
+cat BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain_EDITS.txt       # 删/改清单原文
+```
+结构（14 小节，**4.3 / 4.6 / 4.11 为新增**）：4.1 架构选型 → 4.2 NeMo 框架 → **4.3 WSD 两段 decay** → 4.4 生产前搜索 → 4.5 数据 → **4.6 长上下文数据前置条件** → 4.7 混比搜索 → 4.8 搜索预算 → 4.9 搜索结果 → 4.10 全量生产 → **4.11 长上下文训练（主体）** → 4.12 能力与推理成本。
 
-🚫 本轮不占 GPU 训练（16 卡在跑 S1）；数字必须标来源，无实测的写"估算"。
+#### ② 本轮必须做的 6 件事
+1. **事实核校（最高优先）**：每个数字与 `code/baize-llm/configs/*.env`、`run/MEMORY_PRETRAIN_2B.md`、`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 对账。重点：`2.94T`、`4.19M/step`、`700k/14k/6k 步`、`3.02T`、`613,992`、`351,526`、`29,900 iter`、`2.166 loss`、`~590K tok/s`、`2.52%/0.03%/889`。不符立即改，并列「原值→新值→证据」。
+2. **更新 4.10 的「in progress」**到执笔时的真实 iter/loss/tok/s/ckpt（现 #995 = iter 30660、loss~2.151、~598K tok/s、ckpt@30000）。必须写「at the time of writing + 日期」，不留会过期的裸数字。
+3. **64K/128K 吞吐**：表 11 里 ≈180K/≈90K 是外推。能实测就回填，**不能测就保留 est.，禁止改成「实测」**。
+4. **审校 4.11 三条强主张**：「2.2B 不需多于 8B 级的长文数据」「35B 量级已充裕」「decay-B 不回升 LR」——站不住就按本项目口径改写并给依据，别照抄。
+5. **补 decay-A 内容**：至少写清配比来源（`configs/blend_decay.tsv`：SFT-2605 0.60 / Agent-2609 0.12 / ufw_en_l3_qa 0.18 / ufw_zh 0.04 / math_l3 0.04 / code_l3 0.02）与「为何先 16K 退火再进长上下文」的因果，别只写 queued。
+6. **编译验收（硬门禁）**：
+```bash
+cd BaiZe-ISEDA2027
+pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+grep -c '^!' main.log                                   # 必须 0
+grep 'LaTeX Warning: \(Reference\|Citation\)' main.log   # 必须空
+grep 'Overfull \\hbox' main.log                          # 允许 2 条，均在 6_vision_encoder.tex
+```
+🚫 编译不过不许 commit。
+
+#### ③ 已知遗留问题（本轮一并处理）
+- **`chen2024dataeng` 的作者/venue 运维未联网核实**（只知是 ICML 2024「128K 只需 0.5–5B token」那份研究，`reference.bib` 的 note 已标「Verify before camera-ready」）。请 **web search 核实**：找到正确的标题/作者/venue/eprint 就改对；**找不到就换一条能确证来源的文献**（宁少勿错——这是 §4.11 预算依据的唯一支撑，不能挂空）。
+- `4_llm_pretrain.tex.bak_annotated` 是对照副本、**不是编译输入**；若你大改，请同步重建或删除。
+- 摘要 `0_abstract.tex` 仍写「≈44B tokens / final loss 1.357 / ≈412 GPU-hours」，**与新正文矛盾**。本轮**不改摘要**（跨章节，另派），但要在回复里指出并登记待办。
+
+#### ④ 红线
+- 🚫 **不碰 GPU / 不打断 S1**（700k 步是主线）；写作纯 CPU。
+- 🚫 **不伪造数字**：未实测写 `estimated`，拿不准写「待核」；禁止估算冒充实测。
+- 🚫 **只改 `4_llm_pretrain.tex` + `reference.bib` 本线条目**；其它章节（abstract/intro/arch/posttrain/vision/mllm/domain/conclusion）**只报告不改**。
+- 🚫 `.tex` 里不许留 `<!-- CHANGED -->` 标注。
+- commit 前缀 `pretrain paper:`，**message 逐条列「改了哪些数字+依据」**；push 被拒就 rebase 重推，失败写进心跳。
+
+#### ⑤ 交付与收尾
+- 交付 = 可编译的 `4_llm_pretrain.tex`（0 error）+ commit + push；
+- 心跳给出：① 核校数字与改动处数；② 编译证据（`^!` / 未定义引用 / Overfull / 页数）；③ 待办（摘要口径、64K/128K 实测、`chen2024dataeng`）。
+- 体积：任务书 **≤32KB**（>40KB 红线）；已归档 10-30 的 1M 报告令腾空间，**新令未完成前不许归档**。
+
+
+
+### [已完成] 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · ✅ 已完成（#983 2026-10-30 23:17 交付 `reports/report_pretrain_1m_needle_zh.html` 33,667B/6节+总结路线图/0 script/0外链，覆盖现状基线-怎么做到1M-怎么到>95% needle-实验矩阵6组-取舍建议-与Qwen/Llama3对比；commit d0424c1f1）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-10-31」节。需要时再读。
 
 
 
