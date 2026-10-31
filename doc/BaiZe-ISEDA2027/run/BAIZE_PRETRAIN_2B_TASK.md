@@ -17,7 +17,7 @@ cat BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain_EDITS.txt       # 删/改清单原�
 1. **事实核校（最高优先）**：每个数字与 `code/baize-llm/configs/*.env`、`run/MEMORY_PRETRAIN_2B.md`、`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 对账。重点：`2.94T`、`4.19M/step`、`700k/14k/6k 步`、`3.02T`、`613,992`、`351,526`、`29,900 iter`、`2.166 loss`、`~590K tok/s`、`2.52%/0.03%/889`。不符立即改，并列「原值→新值→证据」。
 2. **更新 4.10 的「in progress」**到执笔时的真实 iter/loss/tok/s/ckpt（现 #995 = iter 30660、loss~2.151、~598K tok/s、ckpt@30000）。必须写「at the time of writing + 日期」，不留会过期的裸数字。
 3. **64K/128K 吞吐**：表 11 里 ≈180K/≈90K 是外推。能实测就回填，**不能测就保留 est.，禁止改成「实测」**。
-4. **审校 4.11 三条强主张**：「2.2B 不需多于 8B 级的长文数据」「35B 量级已充裕」「decay-B 不回升 LR」——站不住就按本项目口径改写并给依据，别照抄。
+4. **审校 4.11 三条强主张**：「2.2B 长文数据需求不高于 8B 级」「25–176B 位于公开量级之上（保守）」「decay-B 不回升 LR」——站不住就按本项目口径改写并给依据，别照抄。
 5. **补 decay-A 内容**：至少写清配比来源（`configs/blend_decay.tsv`：SFT-2605 0.60 / Agent-2609 0.12 / ufw_en_l3_qa 0.18 / ufw_zh 0.04 / math_l3 0.04 / code_l3 0.02）与「为何先 16K 退火再进长上下文」的因果，别只写 queued。
 6. **编译验收（硬门禁）**：
 ```bash
@@ -30,7 +30,7 @@ grep 'Overfull \\hbox' main.log                          # 允许 2 条，均在
 🚫 编译不过不许 commit。
 
 #### ③ 已知遗留问题（本轮一并处理）
-- **`chen2024dataeng` 的作者/venue 运维未联网核实**（只知是 ICML 2024「128K 只需 0.5–5B token」那份研究，`reference.bib` 的 note 已标「Verify before camera-ready」）。请 **web search 核实**：找到正确的标题/作者/venue/eprint 就改对；**找不到就换一条能确证来源的文献**（宁少勿错——这是 §4.11 预算依据的唯一支撑，不能挂空）。
+- **`chen2024dataeng` 已由运维处理完毕（2026-10-31）**：该条目在 arXiv 上**不存在，属伪造引用**（连同「128K 只需 0.5–5B token」的说法一起删除）；现 §4.11 只引 **已核实的** ProLong-8B（ACL 2025，40B token）与 LongRoPE2（arXiv 2502.20082，10B token），论证方向改为「我们 25–176B ≥ 公开量级，属保守；该预算是 floor 不是 ceiling」。**你不需要再查这条**；但若你在审校中发现其它引用可疑，按同样纪律处理：**查不到就删，不许凭记忆保留**。
 - `4_llm_pretrain.tex.bak_annotated` 是对照副本、**不是编译输入**；若你大改，请同步重建或删除。
 - 摘要 `0_abstract.tex` 仍写「≈44B tokens / final loss 1.357 / ≈412 GPU-hours」，**与新正文矛盾**。本轮**不改摘要**（跨章节，另派），但要在回复里指出并登记待办。
 

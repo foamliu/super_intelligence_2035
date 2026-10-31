@@ -81,7 +81,7 @@
 4. **Training configuration**：32K→64K→128K 阶梯，CP 2/4/8，DP 8/4/2，每级 tok/GPU 恒 16,384；**LR 沿 decay 末端、不回升**；**ABF θ=1e6 从头即生效**、128K 由训练达成、1M 只 8× 外推；**不启 PI/NTK/YaRN**；**doc-level reset 强制**。**Tab. `tab:longctx-train`**：三级 rung 的 seq/CP/DP/GBS/token/吞吐（32K 实测 351,526；64K/128K 标 est.）。
 5. **Evaluation checkpoint**：WSD 全部结束后一次快照 —— CS8/CX（退化 ≤1pp）、passkey+RULER（1M ≥95%）、PPL 外推（1M/4K ≤1.10×）、基础格式遵循；复杂推理与 agentic **只记基线**，提升留给 SFT/RL（一句话衔接）。**Tab. `tab:longctx-eval`**。
 6. **Cost**：参考轮 ≈118 GPU·h（其中 32K 轮 33 h），上界 ≈220 GPU·h；32K 吞吐为 16K 的 59%。
-7. **Why the budget is this small**：引 ICML 2024 数据工程研究（128K 只需 0.5–5B token）、ProLong、LongRoPE2（10–40B 量级）；并说明 2.2B 小模型需求量不高于 8B 级，故 35B 量级已充裕。
+7. **Why the budget is this small**：引 **已联网核实的**两条先例——ProLong-8B（ACL 2025，**40B token** 做到 128K SOTA，仅 Llama-3.1-8B-Instruct 的 5%）与 LongRoPE2（arXiv 2502.20082，**10B token** 把 LLaMA3-8B 扩到 128K 且保住 98.5% 短文本性能）；据此说明我们 25–176B 的计划**位于公开量级之上**（保守方向），并把该预算定性为「**下限（floor）而非上限**」——数据闸门若推高就按高走。同时对两个先例的不可比之处（它们是对已长训练的模型做位置编码重标定；且都不是 2.22B 规模）做了显式声明。
 
 ### 3.7 §Throughput / Precision（L404–414）★改写
 - 保留 249,040 tok/s 作为 **单机 4K/BF16 参照**，新增 16K/FP8 的 613,992 tok/s 与实跑 ≈590K tok/s，并写入「关 CUDA graph 是满速前提」。
@@ -89,7 +89,8 @@
 
 ### 3.8 其他文件
 - `main.tex`：+`\usepackage{tabularx}`（1 行；原文件已定义 `Y` 列型却未 load 该宏包）。
-- `reference.bib`：新增 `chen2024dataeng`、`gao2024prolong`、`shang2025longrope2` 三条。**`chen2024dataeng` 的作者/venue 请在投稿前核对**（bib 的 note 内已标注）。
+- `reference.bib`：**新增 2 条（已联网核实）**——`gao2024prolong`（ACL 2025）与 `shang2025longrope2`。
+  > ⚠️ **勘误记录（2026-10-31，运维自查）**：初版还引了第 3 条 `chen2024dataeng`（"How Much Data Is Needed for Long-Context Extension? A Data Engineering Study"），并据以写下「128K 只需 **0.5–5B** token」。联网复核后确认：**该文献在 arXiv 上不存在，属伪造引用**（作者 "Chen, Yukang" 无法对应），且「0.5–5B」与真实文献相差 1–2 个数量级（ProLong 实为 40B、LongRoPE2 实为 10B）。**已删除该 bib 条目、删掉「0.5–5B」的说法**，并把论证方向从「我们的预算很小所以够用」反转为「**我们的预算 ≥ 公开量级，属保守**」。教训：引用必须先查证；查不到就不写，**不许凭记忆拼 bib**。
 
 ---
 
