@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #453 · 2026-11-01 01:55】** 无新运维令。git fetch→origin/main无vision新提交（仅harness R1104~R1109/pretrain #1036~#1037/zhulong）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=18402B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #452 · 2026-11-01 00:20】** 无新运维令。git fetch→origin/main无vision新提交。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=18094B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【运维令 16:0x 复核验证 ✅ DONE · wake #442 · 2026-10-31 17:1x】** 复核 wake#441 交付物（commit 1a2e19b2f）。验证项：①4 个 .tex 数字逐项核对 armE_r2_20261022_protb_vitl14_224_results.json（lp_mean 68.236/lp_sigma 0.0182/knn5 58.904 ✓）+ EXPERIMENTS_VISION.md §15.5（11 集逐项 ✓/11-set avg 26.10 vs 26.12 ✓/MME ArmE-R2 718.0 perc 513.75 cog 204.29 ✓/ArmD-R2 806.5 perc 559.7 cog 246.8 ✓）；②MME 差异已查清：运维令中的 596.75/250.71/847.46 实为 ④-4ep（OpenVision2 w512）值（vision/consolidated_12benchmarks.json），非 ArmE-R2；论文正确使用 ArmE-R2 实测值；③编译验证 pdflatex×3+bibtex→ERR=0/UNDEF=0/Overfull=0（注：当前 7 页因 pretrain 线未提交的架构描述改动致 1 行溢出至第 7 页，vision commit 1a2e19b2f 本身为 6 页）；④1_intro.tex 有 pretrain 线冲突标记（<<<<<<< Updated upstream / >>>>>>> Stashed changes），已解决（取 Stashed 版=pretrain 架构描述+vision 结果保留）+ BOM 修复；⑤报告 report_vision_paper_results_zh.html 17280B ≥15KB ✓；⑥任务书 16:0x 标 [已完成]。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -30,6 +32,7 @@ WAITING: 1
 > **本唤醒流水 [wake #449, 2026-10-31 22:1x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=16799B（均≤32KB✓）→ 交付物在位确认（10个report_vision_*.html）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈17KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #444, 2026-10-31 18:3x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=14734B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈15KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #450, 2026-10-31 22:44]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=17261B（均≤32KB✓） → 交付物在位确认 → 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈17KB。**未完成指令：无** ⇒ **WAITING: 1**。
+> **本唤醒流水 [wake #453, 2026-11-01 01:5x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交（仅harness R1104~R1109/pretrain #1036~#1037/zhulong活动） → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=18402B（均≤32KB✓） → 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈18KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #451, 2026-10-31 23:4x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=17694B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈18KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #441, 2026-10-31 15:4x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=29807B/MEMORY=11754B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈12KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #440, 2026-10-31 14:3x]**：✅ 复核11:2x运维令完成状态。git pull --rebase(up to date) → 读6_vision_encoder.tex(18行/wake#439版) → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0 → 报告report_vision_paper_edit_zh.html 10429B(≥10KB✓) → commit f2ca45de5已在远端 → 任务书11:2x指令标记[已完成] → 写心跳+日流水+commit+push。📦 体积：TASK≈30KB/MEMORY≈11KB。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -51,7 +54,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-01 00:20 (wake #452)**：空唤醒（无新运维令）。git fetch→无vision新提交。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=18094B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-11-01 01:55 (wake #453)**：空唤醒（无新运维令）。git fetch→无vision新提交（仅harness/pretrain/zhulong活动）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=18402B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
