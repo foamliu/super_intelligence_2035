@@ -36,24 +36,24 @@ Attention heads (Q) & 16 \\
 Query groups (GQA) & 4 \\
 Mamba-2 state-space groups & 8 \\
 Vocabulary size & 129{,}281 \\
-Sequence length & 4096 \\
+Sequence length & $16{,}384$ \\
 Activation & SiLU / SwiGLU \\
 Normalisation & RMSNorm \\
-Precision & BF16 \\
+Precision & FP8 tensorwise \\
 Parameters & $\approx$2.22B \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Vision Encoder}\label{sec:backbone-enc}
-The vision encoder is pre-trained from scratch in stage~(iii) and is selected from six iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
-% 中文：视觉编码器。视觉编码器在第 (iii) 阶段从零预训练，是在 $500$–$600$M 参数量级的六个同参数候选模型中选出的；第 \ref{sec:vision} 节报告该对比及其结果。
+The vision encoder is pre-trained from scratch in stage~(iii) and is selected from iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
+% 中文：视觉编码器。视觉编码器在第 (iii) 阶段从零预训练，是在 $500$–$600$M 参数量级的同参数候选模型中选出的；第 \ref{sec:vision} 节报告该对比及其结果。
 
 \subsection{Pipeline and Global Environment}\label{sec:pipeline}
 Table~\ref{tab:pipeline} summarises the five-stage pipeline.
 % 中文：流水线与全局环境。表 \ref{tab:pipeline} 汇总了五阶段流水线。
-All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.10); fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$ and BF16 precision throughout.
-% 中文：所有阶段均运行在 $8\times$NVIDIA H100 GPU 上（CUDA 12.8、PyTorch 2.8.0、Python 3.10）；在适用处启用融合核、选择性激活重计算与交叉熵损失融合，全程使用 $\texttt{tensor\_model\_parallel\_size}=1$ 与 BF16 精度。
+Stage~(i) production training runs on two $8\times$NVIDIA H100 nodes ($16$~GPUs; CUDA~12.8, PyTorch~2.8.0, Python~3.10); other stages use a single $8\times$H100 node. Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$; Stage~(i) trains in FP8 tensorwise at the main sequence length, reverting to BF16 at shorter lengths.
+% 中文：第 (i) 阶段生产训练运行在两个 $8\times$NVIDIA H100 节点上（$16$ 张 GPU；CUDA 12.8、PyTorch 2.8.0、Python 3.10）；其他阶段使用单 $8\times$H100 节点。在适用处启用融合核、选择性激活重计算与交叉熵损失融合，$\texttt{tensor\_model\_parallel\_size}=1$；第 (i) 阶段在主序列长度上以 FP8 tensorwise 训练，更短序列时回退至 BF16。
 
 \begin{table}[t]
 \centering
@@ -63,7 +63,7 @@ All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.
 \toprule
 \textbf{Stage} & \textbf{Task} & \textbf{Status} & \textbf{Section} \\
 \midrule
-(i) & LM pre-training & complete & \ref{sec:llm-pretrain} \\
+(i) & LM pre-training & in progress & \ref{sec:llm-pretrain} \\
 (ii) & Post-training (SFT, RLVR) & design & \ref{sec:llm-posttrain} \\
 (iii) & Vision encoder & complete & \ref{sec:vision} \\
 (iv) & MLLM alignment & design & \ref{sec:mllm} \\

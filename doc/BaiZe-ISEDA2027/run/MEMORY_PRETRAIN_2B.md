@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 15:20 #1010：**S1健康监控（重启后~3h）**。PID1415549活着(etimes~10719s)。TB读出iter31514/700k(4.50%), loss近5步2.1249/2.1972/2.0702/2.0758/2.213(稳态~2.14), 0NaN/batch-size256(0skipped)✅, grad-norm0.080-0.096稳, LR7.55e-4(warmup中,目标1e-3@iter32000), step~7.32s→~573K tok/s✅, ckpt@30000(下次@32000)。无新运维指令。论文#999/#1000/#1005均已完成(6页/ERR=0)。未完成指令：无。📦 体积：TASK=25.7KB / MEMORY=30.4KB。
+> 🆕 2026-10-31 15:2x #1011：**论文全文事实审订（运维令15:2x）**。逐表逐句对账7项检查清单：精度/规模/token/状态词/交叉引用/参数/旧口径。发现并修正6处错误：(1)3_arch L42 Table1 BF16→FP8 tensorwise; (2)3_arch L39 Table1 seq 4096→16384; (3)3_arch L55 8×H100→two 8×H100 nodes(16GPU)+BF16→FP8 tensorwise; (4)3_arch L66 stage(i) complete→in progress; (5)3_arch L49 删除"six"与ch6自洽; (6)5_posttrain L21 4096→16384同步Table1。编译三连ERR=0/UNDEF=0/Overfull=0/Pages=6✅。报告report_pretrain_paper_audit_zh.html(24.6KB)已交付。S1未碰(iter~31514/700k)。未完成指令：无。📦 体积：TASK=30.4KB / MEMORY=31.3KB。
+
+> 📦 §#1010（10-31 15:20, S1健康监控 iter31514/700k loss~2.14 0NaN ~573K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康, iter31514(4.50%), loss~2.14稳态, ~573K tok/s, ckpt@30000。被#1011更新。需要时再读。
 
 > 📦 §#1009（10-31 15:00, S1健康监控 iter31349/700k loss~2.1 0NaN ~589K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康, iter31349, loss~2.1稳态, ~589K tok/s。被#1010更新。需要时再读。
 

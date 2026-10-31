@@ -18,8 +18,8 @@ SFT teaches the generate--execute--refine loop that the deployment target requir
 % 中文：监督微调。SFT 教授部署目标所要求的「生成—执行—改进」闭环。
 The corpus combines the agentic instruction set (\texttt{UltraData-SFT-Agent-2609}, $51$\,G across 50 shards) and a general instruction set (\texttt{UltraData-SFT-2605}, $319$\,G across 1{,}504 JSONL files, verified byte-identical to the HuggingFace manifest) with PyAether-specific material synthesised from API documentation.
 % 中文：语料由智能体指令集（\texttt{UltraData-SFT-Agent-2609}，$51$ G、50 个 shard）与通用指令集（\texttt{UltraData-SFT-2605}，$319$ G、1,504 个 JSONL 文件，已核验与 HuggingFace manifest 逐字节一致）合并，并加入依据 API 文档合成的 PyAether 专属材料。
-We ablate the data mixture (agentic / code / mathematics / PyAether), the presence of interleaved tool-call traces, full fine-tuning versus LoRA, and the sequence length: agentic traces---code, tool returns, and successive refinements---routinely exceed the $4096$-token window of Table~\ref{tab:config}, so window extension is treated as a first-class variable rather than a fixed setting.
-% 中文：我们消融以下方面：数据配比（智能体／代码／数学／PyAether）、是否包含交错的工具调用轨迹、全量微调还是 LoRA、以及序列长度：智能体轨迹——代码、工具返回与多次迭代改进——通常远超表 \ref{tab:config} 的 $4096$-token 窗口，因此窗口扩展在这里被当作一等变量处理，而非固定设定。
+We ablate the data mixture (agentic / code / mathematics / PyAether), the presence of interleaved tool-call traces, full fine-tuning versus LoRA, and the sequence length: agentic traces---code, tool returns, and successive refinements---routinely exceed the $16{,}384$-token window of Table~\ref{tab:config}, so window extension is treated as a first-class variable rather than a fixed setting.
+% 中文：我们消融以下方面：数据配比（智能体／代码／数学／PyAether）、是否包含交错的工具调用轨迹、全量微调还是 LoRA、以及序列长度：智能体轨迹——代码、工具返回与多次迭代改进——通常远超表 \ref{tab:config} 的 $16{,}384$-token 窗口，因此窗口扩展在这里被当作一等变量处理，而非固定设定。
 
 \subsection{Reinforcement Learning with Verifiable Rewards}\label{sec:posttrain-rl}
 An execution sandbox turns correctness into a verifiable signal, so we optimise with group-relative policy optimisation and no value network.
