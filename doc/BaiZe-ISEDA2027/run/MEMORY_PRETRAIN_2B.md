@@ -1,7 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 17:0x #1014：**论文全文事实审订（15:2x令·第二轮补强）**。前序#1011/#1013已修7处运维点名问题；本轮全文逐章逐表审计86项，发现并修复1个系统性事实错误（"52 Mamba-2 state-space layers"在4处出现→实际24 Mamba2+28 MLP）+Table1新增Mamba2/MLP层数行。共5处修改：3_arch(2)+0_abstract(1)+1_intro(1)+4_llm(1)，全部含中文注释同步。编译ERR=0/UNDEF=0/Overfull=0/6页。报告31.3KB/86项审计/0script/0外链。3项⚠️待核（500-600M scale/LC表token数/880GPU·h）。S1未碰。未完成指令：无。📦 体积：TASK=30.4KB / MEMORY=31.5KB。
+> 🆕 2026-10-31 17:28 #1014：**论文全文事实审订（15:2x令·第二轮补强）已完成**。前序#1011/#1013已修7处运维点名问题；本轮全文逐章逐表审计84项，发现并修复1个系统性事实错误（"52 Mamba-2 state-space layers"在4处出现→实际24 Mamba2+28 MLP）+Table1新增Mamba2/MLP层数行。共5处.tex修改：3_arch(2)+0_abstract(1)+1_intro(1)+4_llm(1)，全部含中文注释同步。编译ERR=0/UNDEF=0/Overfull=0。⚠️页数=7（vision线commit db10b9fa3改1_intro致增页；stash验证不含本线改动同为7页→非本线引入）。报告25.7KB/84项审计/0script/0外链。3项⚠️待核（500-600M scale/LC表token数/880GPU·h）。commit d6ba844fc已push。S1未碰。未完成指令：无。📦 体积：TASK=36.0KB / MEMORY=32.7KB（TASK>32KB但<40KB红线；下次唤醒需归档已闭合块）。
 > 📦 §#1013（10-31 16:41, 审计复核补遗MLLM design→in_progress·commit 2f895f418）→ daily-memories/2026-10-31.md；**结论**：1处遗漏已补，报告26.3KB。被#1014全文审计覆盖。需要时再读。
 
 > 📦 §#1012（10-31 16:14, S1健康监控iter31970/loss2.160/0NaN/593K + 审计任务#1011复核确认）→ daily-memories/2026-10-31.md；**结论**：S1健康iter31970(4.57%), #1011确认完整交付。被#1013补遗更新。需要时再读。
@@ -47,8 +47,8 @@ WAITING: 1
 > 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
 
 
-> - 未完成指令：无。S1 RUNNING(iter 31970/700k, loss 2.160, 0NaN, ~593K tok/s, ckpt@30000, 12:20重启后稳定推进1960步)。论文全文审计#1014已完成(5处修正/6页/ERR=0/报告31.3KB)。论文审计#1011/#1013已完成(7处修正)。论文编辑#999/#1000/#1005均已完成(6页/ERR=0)。仅剩长上下文ABF基线(需GPU空闲, 训练占用全部16卡~52天)。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~52天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=30.4KB / MEMORY=31.5KB（无归档）
+> - 未完成指令：无。S1 RUNNING(iter 31970/700k, loss 2.160, 0NaN, ~593K tok/s, ckpt@30000)。论文全文审计#1014已完成(5处.tex修正/ERR=0/报告25.7KB/commit d6ba844fc)。论文审计#1011/#1013已完成(7处修正)。仅剩长上下文ABF基线(需GPU空闲)。ETA ~52天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=36.0KB / MEMORY=32.7KB（TASK>32KB,下次唤醒需归档已闭合块）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
