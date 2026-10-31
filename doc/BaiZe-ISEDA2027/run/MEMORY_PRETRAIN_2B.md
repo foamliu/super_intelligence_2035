@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 19:19 #1018：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415549 活着（etimes 25093s ≈ 7h），iter 33580/700k（4.80%），loss ~2.139 稳态，grad-norm ~0.088-0.112 极稳，0 NaN/0 skipped，~6.9s/step ≈ ~607K tok/s，ckpt@iter_32000（next ~34000）。8×H100 100%util/~75GB。论文6页/ERR=0 维持。未完成指令：无。📦 体积：TASK=23.8KB / MEMORY=29.0KB（归档 0KB）。
+> 🆕 2026-10-31 19:37 #1019：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415997 活着（etimes 26218s ≈ 7.3h），iter 33750/700k（4.82%），loss 2.1155 稳态微降，grad-norm 0.081-0.088 极稳，lr 1e-3 constant，loss-scale 1.0，0 NaN/0 skipped，~6.9s/step ≈ ~608K tok/s，ckpt@iter_32000（next ~34000）。8×H100 100%util/~75GB/~1050 TFLOP/s。论文6页/ERR=0 维持。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=29.0KB（归档 0KB）。
+> 📦 §#1018（10-31 19:19, S1健康监控iter33580/loss2.139/0NaN/607K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter33580(4.80%), loss~2.139稳态, grad-norm极稳, ~607K tok/s。被#1019监控。需要时再读。
 > 📦 §#1017（10-31 19:01, S1健康监控iter33420/loss2.14/0NaN/609K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter33420(4.77%), loss~2.14稳态, grad-norm极稳, ~609K tok/s。被#1018监控。需要时再读。
 > 📦 §#1016（10-31 18:30, 任务书+MEMORY归档·3个已闭合运维令→ARCHIVE第三批·TASK 36KB→23.8KB/MEMORY 32.8KB→29.1KB）→ daily-memories/2026-10-31.md；**结论**：paper-slim 令已完成(commit 2fef637c8)，归档后论文6页/ERR=0。被#1017监控。需要时再读。
 > 📦 §#1014（10-31 17:28, 全文事实审订84项·5处.tex修改·commit d6ba844fc）→ daily-memories/2026-10-31.md；**结论**：84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，ERR=0/7页(vision致溢出)，报告25.7KB。被#1015压缩更新。需要时再读。
