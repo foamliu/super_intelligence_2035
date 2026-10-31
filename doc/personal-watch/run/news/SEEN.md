@@ -1575,3 +1575,15 @@
 | 2026-10-31 | 第 181 轮 附录 A4：英特尔以色列 Fab 28 爆炸（含 2 死 1 重伤 · 依 SPEC §2.3 不采） | IT之家 10-30 | 不收录（事故伤亡） | — |
 | 2026-10-31 | 第 181 轮 附录 A5：IT之家同日 30 余条消费电子新品与国补降价 | IT之家 10-30 | 不收录（非 AI 主线） | — |
 | 2026-10-31 | 第 181 轮 附录 A6–A8：爱范儿 20 条 0 入（特稿/上手/已登记）· TechCrunch 其余 15 条（观点/广告/预期报道）· 中新网央视 40 条 AI 硬新闻 0 条 | 爱范儿 / TechCrunch / 中新网·央视网 10-30 | 不收录 | — |
+| 2026-10-31 | 快手旗下可灵 AI 完成约 198 亿元增资（198.0184 亿元 · 约 29.05 亿美元 · 上限 204.47 亿元 · 国资基金 + 阿里云 13.63 亿元） | IT之家 10-31（正文已读 · title 一致） | news | https://www.ithome.com/1/020/406.htm |
+| 2026-10-31 | Anthropic Claude Max 20x 更名 Ultra（200 美元/月）· 验证账户取消 5 小时会话限制（仍限周额度） | IT之家 10-31（RSS 摘要 + 标题层，未取正文） | news | https://www.ithome.com/1/020/383.htm |
+| 2026-10-31 | 联发科确认第二家 AI ASIC 客户（非中国公司）· 2028 年量产 · 冲击 2027 年 160 亿美元 / 约 20% 份额 | IT之家 10-31（正文已读 · title 一致） | news | https://www.ithome.com/1/020/400.htm |
+| 2026-10-31 | OpenAI 称 ChatGPT 可自动终止暴力执念对话 · 承诺定期发布《社区安全报告》· Q3 移交执法 200 余起线索 | IT之家 10-31（正文已读 · title 一致） | news | https://www.ithome.com/1/020/394.htm |
+| 2026-10-31 | Reddit 转向「以登录为主」体验 · 10 月搜索引荐流量周均减少超 100 万次 · 全球日活 1.303 亿 | TechCrunch 10-29（正文已读 · title + datePublished 一致） | news | https://techcrunch.com/2026/10/29/as-search-traffic-dries-up-reddit-announces-its-shifting-to-a-logged-in-experience/ |
+| 2026-10-31 | 消息称字节 Seed 核心负责人周畅离职创业（物理 AI）· 10-26 字节曾否认 | IT之家 10-31（正文已读 · title 一致） | news（媒体口径） | https://www.ithome.com/1/020/408.htm |
+| 2026-10-31 | AWS 被定调万亿美元业务：2026 现金资本开支约 2,200 亿美元、2027 年更多、年化 1,840 亿美元 | TechCrunch 10-29（正文已读 · title + datePublished 一致） | news | https://techcrunch.com/2026/10/29/aws-will-be-a-1t-business-jassy-says-but-first-it-will-spend-big/ |
+| 2026-10-31 | 英伟达洽谈为 Nscale 西弗吉尼亚数据中心债务做残值担保 · Anthropic 首栋楼 446 亿美元合同 · 460MW | TechCrunch 10-31（正文已读 · title + datePublished 一致） | news（报道口径） | https://techcrunch.com/2026/10/30/nvidia-weighs-playing-the-cosigner-for-nscales-ai-data-center-in-west-virginia/ |
+| 2026-10-31 | 全球最大规模 60 兆瓦液态空气储能示范项目在青海格尔木并网发电（国产化率 100% · 年输电约 1.8 亿度） | IT之家 10-31（正文已读 · title 一致） | news | https://www.ithome.com/1/020/399.htm |
+| 2026-10-31 | 第 182 轮 附录 A9–A11：Apple Music 安卓 7.0 / 消费电子国补 · 安卓 17 占比 1% · 华为麒麟 9000S 促销推文（A1 已登记） | IT之家 10-30~31 | 不收录 | — |
+| 2026-10-31 | 第 182 轮 附录 A12：中新网《长三角智能经济报告》（毕马威 · 90% 企业已出海或有意愿） | 中新网 10-31（正文已读） | 不收录（区域产业综述） | https://www.chinanews.com.cn/cj/2026/10-31/10723757.shtml |
+| 2026-10-31 | 第 182 轮 附录 A13：爱范儿 20 条 + TechCrunch 其余 17 条（已登记 / 特稿 / 观点 / 广告） | 爱范儿 / TechCrunch 10-29~31 | 不收录 | — |
