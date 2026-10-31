@@ -1,4 +1,19 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+### 🚨 2026-10-31 21:5x 运维令：`test 思路` 必须是「k 条断言」（**硬闸门 + 打回重写**）· 用户直令 · 最高优先
+
+> **背景**：§4.6 昨天已要求 `k 条断言：①…`，但 10_31 日报 **30 条 case 里 0 条达标**（全文“断言”出现 0 次，全部仍是散文式，如「解 zip 校验 5 文件…」）。原因不是理解偏差，是**没有闸门**。本轮起改成硬闸门。
+
+**规则（每条 case、每一轮都必须过）**
+1. **写**：`metadata.test_rationale` 必须**以 `k 条断言：` 开头**，后接 ①②③…，**与 `check()` 中可独立失败的条件一一对应**，每条写「对象 + 判定」。🚫 散文 / 🚫 实现细节（`raise`、`zipfile`）/ 🚫 「校验交付件完整性」式废话。
+2. **对账（落 jsonl 之前）**：agent 必须**先把 `check.py` 的条件标签列出来**（a–n，或 `CONDITIONS = [("a","…"), …]` 表），数出 `k_check`；判据 **`k_rationale == k_check` 且 `k_check ≥ 8`**。
+3. **不过就滚回去改**：`k_rationale ≠ k_check` 或 `k_check < 8` ⇒ 该 case 标 **`incomplete`**：🚫 不许 `mark --status case`、🚫 不许追加进 jsonl、🚫 不计入通过率；写入 `designflow/rewrite_queue.tsv`，**下一轮第一件事就是修它**，修完才准开新 case。
+4. **日报必须自证**：`gen_daily_report.py` 的 case 表**新增三列** `k(断言)` / `k(check)` / `一致`；任一 case 显示 `✗` 或 `—` ⇒ 当日日报判「未交付」，心跳写 `DEBT:<n>`。
+5. **存量 30 条**：按 §4.6 全部视为未完成；每轮从 `rewrite_queue.tsv` **修 1 条**，直到清零，心跳写 `断言清单 x/30`。
+6. **心跳新增一行**：`🧾 断言: k_rationale=k_check=n ✓/✗（今日 x/30 达标）`。
+
+> 📦 体积：本令约 1.5KB；TASK 现 17KB，远低于 40KB 红线。
+
+
 ### 🚨 2026-10-31 21:3x 运维令：A/B 双档 casemaking（trace-faithful 试点 10 条）· 用户直令 · 最高优先
 
 > **用户原话**：「如果只把真实 trace 中用户的意图作为任务说明，不妄做修改，是否难度就可以提升、通过率下降？」→「好的试试看」
@@ -110,7 +125,7 @@ metadata:    { trace_source{...}, domain, test_rationale }
    - ✅ `7 条断言：① zip 内 5 个文件齐全 ② mac4.v 有 module mac4 且端口 clk/rst_n/acc0 齐全 ③ 累加为 32-bit 有符号饱和（边界 0x7fffffff/0x80000000） ④ sim_mac4.log 含 MAC4_SIM_PASS 且无 MAC4_SIM_FAIL ⑤ …`
    - 🚫 废话：`解 zip 校验 3 文件`、`校验交付件完整性`、`断言内容达标`
    - 🚫 实现细节：`raise AssertionError(...)`、`zipfile.ZipFile(...)`、`z.read(...).decode(...)`
-   - 自检：`k` 必须等于 §4.3 要求的独立条件数（≥8）；两者对不上 = 未完成。
+   - 自检：`k` 必须等于 §4.3 要求的独立条件数（≥8）；两者对不上 = 未完成。⇒ 按顶部令 21:5x 执行：标 `incomplete`、进 `designflow/rewrite_queue.tsv`、🚫 不许落 jsonl、🚫 不许计入通过率。
 7. `check()` 在**独立临时目录**解 zip；🚫 在 SUT workdir 留 `__chk`。
 8. **泄漏隔离**：SUT 沙箱不得包含 `benchmarks/EDA-Eval-DesignFlow/`（`reference/`、jsonl、`test` 字段）；结论写 MEMORY 一行。
 9. **退化提交回归**：每条 case 必须让 (a) 空壳 (b) 只 print 期望串 (c) 参考解删核心 三种假提交**全部 FAIL**；任一 PASS ⇒ 该 case 判分不合格，限期整改或下线。
@@ -136,13 +151,13 @@ metadata:    { trace_source{...}, domain, test_rationale }
 1. `trace_ledger.py next --n 5` 取候选 → `claim` → 深读（有笔记就复用）→ 合成（`assets/` `reference/` `hidden/` `negative/`）。
 2. 自验：`reference/` 参考解跑 `check()` 必 PASS；§4.9 (a)(b)(c) 三假提交必 FAIL；`negative_selftest.py` 全 FAIL。
 3. pi 实跑：`designflow/pi_debug_status.jsonl` 追加一行，记 `pi_model / pi_thinking / pi_dur_sec / pi_verdict / ref_check`。
-4. 追加 jsonl → **`mark --status case --case-id <id>`** → 日报：`python3 designflow/gen_daily_report.py`（含「用户」列、`k 条断言` 清单、trace 覆盖率进度条）。
+4. **先过断言闸门**（`k_rationale == k_check ≥ 8`；不过 ⇒ 标 `incomplete` 进 `rewrite_queue.tsv`，本轮只改它、不开新 case）→ 追加 jsonl → **`mark --status case --case-id <id>`** → 日报：`python3 designflow/gen_daily_report.py`（含「用户」列、`k 条断言` 清单、trace 覆盖率进度条）。
 5. 难度回路：按 §5 判定"加难 / 保持 / 查判分"，结论写进当日日报的"阻塞/下一步"。
 6. 收尾：`WAITING: 0`（下一轮 60s 后立即开下一条 case）；仅真外部阻塞（pi 异步未回 / 推送失败 / 等人工）才写 `WAITING: 1`。
 
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
-`11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/11 · 目标通过率 20–30%`
+`11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/30（硬闸门见顶部令 21:5x）· 目标通过率（B 档）20–30%`
 `📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥300 候选池）`
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
