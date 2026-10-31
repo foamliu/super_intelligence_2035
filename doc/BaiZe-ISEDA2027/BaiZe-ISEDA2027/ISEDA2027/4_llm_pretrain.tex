@@ -39,7 +39,7 @@ The decay segment itself follows $lr(p)=lr_{\text{peak}}\,(lr_{\min}/lr_{\text{p
 \label{tab:wsd}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}Yrrrr@{}}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
 \textbf{Segment} & \textbf{Tok./step} & \textbf{Steps} & \textbf{Tokens} & \textbf{Seq.} \\
 \midrule
@@ -49,7 +49,7 @@ Decay B: long-ctx ladder & 4.19M & 6{,}000 & 25.2B & 32K--128K \\
 \midrule
 \textbf{Total} & --- & \textbf{720{,}000} & \textbf{3.02T} & --- \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \noindent The decay row is the \emph{reference allocation} used throughout this paper (Section~\ref{sec:longctx-train} discusses scaling it upward to the $10$--$15\%$ range of Table~\ref{tab:longctx-budget}).
@@ -92,7 +92,7 @@ Sources are pre-blended into large shards before the run, so that each rank open
 \label{tab:stable-blend}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}lYcc@{}}
+\begin{tabular}{@{}llcc@{}}
 \toprule
 \textbf{Source} & \textbf{Description} & \textbf{Prop.} & \textbf{Epoch.} \\
 \midrule
@@ -104,7 +104,7 @@ Sources are pre-blended into large shards before the run, so that each rank open
 \texttt{code\_l2} & \texttt{UltraData-Code}, tier L2 & 0.15 & 1.00 \\
 \texttt{code\_l3} & \texttt{UltraData-Code}, tier L3 & 0.04 & 0.87 \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 Contamination control is enforced before any corpus enters training: a blacklist of $193{,}295$ character-level 13-gram fingerprints (FNV-1a 64-bit hashed, NFKC-normalised) is built from all $536$ tasks across six evaluation snapshots of EDA-Eval-PyAether, and every new data shard---including SFT corpora---is scanned for ${\geq}0.80$ n-gram overlap before release (Section~\ref{sec:posttrain-eval}).
@@ -124,7 +124,7 @@ Training a 128K rung on this distribution would teach \emph{document concatenati
 \label{tab:longctx-data}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}lYcY@{}}
+\begin{tabular}{@{}llcl@{}}
 \toprule
 \textbf{Threshold} & \textbf{Documents} & \textbf{Token share} & \textbf{Status vs.\ target} \\
 \midrule
@@ -132,7 +132,7 @@ ${\geq}32$K & 4{,}257 (0.04\%) & \textbf{2.52\%} & target ${\geq}20\%$: \textbf{
 ${\geq}128$K & --- & \textbf{0.03\%} & target ${\geq}5\%$: \textbf{not met} \\
 ${\geq}1$M & $<0.01\%$ & not estimated & not required (extrapolated) \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 We therefore treat the following as \emph{entry conditions} for segment~B, not as tuning knobs.
@@ -274,7 +274,7 @@ The projection below is therefore an extrapolation at the measured rate, not a m
 \label{tab:prod-budget}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}lrcrY@{}}
+\begin{tabular}{@{}lrcrl@{}}
 \toprule
 \textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
 \midrule
@@ -284,7 +284,7 @@ Decay B (32K--128K) & 25.2B & 6k & ${\approx}2.3$ d (est.) & queued, gated \\
 \midrule
 \textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}59.5$ d & --- \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \textbf{Decay---segment~A} ($58.7$B tokens, 16K). The learning rate begins its exponential decay while the sequence length stays at 16K.
@@ -316,14 +316,14 @@ Table~\ref{tab:llm-stages} places segment~B on the pipeline axis.
 \label{tab:llm-stages}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}lYYccc@{}}
+\begin{tabular}{@{}lllccc@{}}
 \toprule
  & \textbf{Warmup} & \textbf{Stable} & \textbf{Decay A} & \textbf{Decay B} & \textbf{SFT/RL} \\
 \midrule
 Seq.\ length & 16K & 16K & 16K & 32K--128K & 16K+ \\
 Share & 2k & 2.94T & 60--70\% & 30--40\% & stage (ii) \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \noindent\textbf{Data budget.}
@@ -342,7 +342,7 @@ The remaining $60$--$70\%$ of the decay phase stays at 16K on short-context data
 \label{tab:longctx-budget}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}lccccc@{}}
+\begin{tabular}{@{}lccccc@{}}
 \toprule
 \textbf{Decay} & \textbf{Decay tok.} & \textbf{LC} & \textbf{LC tok.} & \textbf{32K/64K/128K} & \textbf{16K} \\
 \midrule
@@ -350,7 +350,7 @@ $10\%$ & 294B & $30$--$40\%$ & $88$--$118$B & 35/27/26B & 206B \\
 $12\%$ ref. & 353B & $30$--$40\%$ & $106$--$141$B & 42/32/32B & 247B \\
 $15\%$ & 441B & $30$--$40\%$ & $132$--$176$B & 53/40/40B & 309B \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 % 中文：因此我们的 $88$–$176$B 长上下文预算（表 \ref{tab:longctx-budget}）位于公开运行区间之上，这对一份数据闸门（第 \ref{sec:longctx-data} 节）尚未满足的计划来说，是保守的方向。
 \end{table}
 
@@ -406,18 +406,19 @@ Complex reasoning and agentic ability are recorded at this snapshot as a baselin
 \label{tab:longctx-eval}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}lYl@{}}
+\begin{tabular}{@{}lll@{}}
 \toprule
 \textbf{Axis} & \textbf{Instrument} & \textbf{Gate} \\
 \midrule
-Common sense & CS8 (eight-task mean), CX & ${\leq}1$\,pp drop \\
-Needle retrieval & passkey, NIAH / MK-NIAH / multi-hop at $1$M & ${\geq}95\%$; RULER ${\geq}70\%$ \\
-PPL extrapolation & $4$K $\ldots$ $1$M curve & $1$M$/4$K ${\leq}1.10\times$ \\
-Format following & basic adherence suite & recorded only \\
-Complex reasoning & reasoning suite & baseline only \\
-Agentic & tool-use suite & baseline only \\
+Common sense & CS8 (8-task), CX & ${\leq}1$\,pp drop \\
+Retrieval & passkey, NIAH/MK-NIAH at $1$M & ${\geq}95\%$ \\
+ & RULER (mixed tasks) & ${\geq}70\%$ \\
+PPL extrapolation & $4$K--$1$M curve & $\leq 1.1\times$ \\
+Format following & adherence suite & recorded \\
+Complex reasoning & reasoning suite & baseline \\
+Agentic & tool-use suite & baseline \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \noindent\textbf{Cost.}
