@@ -1,4 +1,4 @@
-\section{Error Analysis}\label{sec:errors}
+﻿\section{Error Analysis}\label{sec:errors}
 
 Comparisons are only interpretable if failures are classified the same way, so we adopt ZhuLong's four classes verbatim---\textbf{wrong internal API} (a correct API family, but an undocumented binding contract violated), \textbf{unauthorized guard} (a call the runtime forbids in that context), \textbf{underspecified semantics} (the same name means different things across hosts), and \textbf{host-language contract} (the embedding language, not the EDA API, is violated).
 % 中文：只有失败分类口径一致，比较才有解释力，故我们原样采用 ZhuLong 的四类——错误的内部 API（族对但违反未文档化的绑定契约）、未授权的守卫（运行时在该上下文禁止的调用）、语义未指定（同名在不同宿主含义不同）、宿主语言契约（违反的是嵌入语言而非 EDA API）。

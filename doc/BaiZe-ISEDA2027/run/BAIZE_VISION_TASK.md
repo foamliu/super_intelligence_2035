@@ -9,6 +9,7 @@
 > 3. §6 任何数字与 `EXPERIMENTS_VISION.md` 冲突时，以实验记录为准改文并给「文件+行号」证据。
 > 4. 篇幅：§6 预算 **≤2 页**，全文当前 **11 页**（ERR=0/UNDEF=0/Overfull=0）；**ISEDA 6 页裁切由运维统一执行**，🚫 不得擅自扩写。
 > 5. 🚫 不动 §4 / 摘要 / T6 / T9 / T16；提交前 `git pull --rebase`，只 add 本线文件。
+> 6. **编码硬规则（2026-10-31 新增）**：`.tex` 一律 **UTF-8 with BOM**；改完跑 `python scripts/check_tex_encoding.py`（`--fix` 可自动补 BOM），必须 `0 problem(s)` 再提交。原因：无 BOM 的 UTF-8 在中文 Windows 编辑器里会按 GBK 解码，`% 中文：` 双语注释全部显示为乱码（用户 12:0x 报障）。
 
 
 
