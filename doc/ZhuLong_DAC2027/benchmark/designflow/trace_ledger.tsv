@@ -28,4 +28,4 @@
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	eda_other	case	EDA-Eval-DesignFlow-TotemSC-001	2026-10-31 08:18	
 1792715254915_8z5a8					case	EDA-Eval-DesignFlow-DummyDeck-001	2026-10-31 09:23	
 1791526272387_1i0em.messages.json	rongtaoy	hfeg0pkn001	574	schematic_netlist	case	EDA-Eval-DesignFlow-SubcktExtract-001	2026-10-31 09:43	
-1792724929127_2vuso.messages.json	tongni	hfeg0pkn003	468	spice_sim	claimed		2026-10-31 09:55	
+1792724929127_2vuso.messages.json	tongni	hfeg0pkn003	468	spice_sim	case	EDA-Eval-DesignFlow-SpGen-001	2026-10-31 11:00	
