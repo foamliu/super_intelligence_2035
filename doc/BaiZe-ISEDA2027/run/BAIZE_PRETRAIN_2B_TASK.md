@@ -1,4 +1,60 @@
 # BAIZE_PRETRAIN_2B_TASK.md
+### 🚀 运维令 · 2026-10-31 18:2x（**压 ch4 约 1750 字符，让正文进 5 页 → references 独立成页**）· 用户直令 · 最高优先
+
+> **用户令**：「页数又膨胀了」「把 reference 单开一页」「安排好 pretrain 去压」
+
+**目标（可验证）**：`main.pdf` 变成 **6 页**，其中 **正文 p1–p5、references p6 独占**。
+**现状**：7 页（正文 p1–p6 + refs p7）。`main.tex` 已加 `\newpage`，但因正文占 6 页，refs 被挤到 p7。
+**需省**：正文第 6 页有 **55 行**，需砍掉约 **0.65 页 ≈ 1750 字符**。ch4 现 7711 字符（占全文 27%），是唯一还有大块可压的章节。
+
+#### ① 四步压缩（按性价比排序，全部做完）
+
+**第 1 步：消除与 `3_architecture.tex` 的重复（省 ~700 字符，最高优先）**
+- `Training Framework and Learning-Rate Schedule`（1348 字符）里**大半是 ch3 已写过的**：56 层/4 attention/8 SSM 组（ch3 §III-A + Table 1）、NVLink/TP=1/fused kernels（ch3 §III-C）、「Megatron-Core provider 56 层模式原样复用」（ch3 §III-A）。
+- **压成 3 句**，只留预训练特有信息：① NeMo + Megatron-Core Mamba-hybrid provider（**引用 ch3，不复述**）；② `tensor_model_parallel_size=1` + 搜索缩步；③ WSD 数值（LR 1e-3 / warmup 2000 / SEQ 16384 / decay 两段）。
+- `Architecture Selection`（704 字符）压一半：ch3 已详述架构，这里只保留**选它的理由**（对比结果 + −11.6% 参数），不再复述层数/组数。
+
+**第 2 步：合并两张长上下文表（省 ~8-10 行版面）**
+- `tab:longctx-data`（4 行）+ `tab:longctx-train`（4 行）都是短表，`[t]` 各占半栏 → **合并为一张**（中间 `\midrule` 分隔，共用 caption），左半「Data gate」右半「Ladder」。
+
+**第 3 步：`Results and Production Run` 去复述（省 ~400 字符）**
+- 「Each ablation confirms...WSD beats cosine (2.7679 vs 2.8155), 10% decay beats 5%, 250 warmup beats 2000」→ `tab:configs` 已列 7 行，正文**只留 1 个代表值**即可。
+- 「400 Bayesian trials...indistinguishable within 0.6pp」→ 属负面结果，压成半句。
+
+**第 4 步：压 `Long-Context Training in the Decay Tail`（1635 字符，最大头，省 ~500）**
+- 核心只有 4 条：① 定位=decay-B（LR 已低、SFT/RL 不建检索能力）；② 预算 ≈2.9%（83.9B），长上下文占 30–40%（25–34B）；③ 配置 32K→64K→128K / CP 2,4,8 / θ=1e6 固定 / 不重预热；④ 评测=WSD 结束后单快照，passkey+RULER，1M ≥95%。
+- 现写法每条展开 2-3 句，且「预算段」与「rung-cycle 成本段」信息重叠 → **压成 3 段**。
+
+#### ② 绝不可删（保底清单）
+全部实测数字：`2.94T` `83.9B` `3.02T` `720k` `613,992` `351,526` `2.52%` `0.03%` `889` `2.2054` `2.6739±0.0469` `30,660` `2.151` `598K`；`tab:configs`（7 行）、`tab:archcomp`（6 行）完整保留；`tab:prod-budget` 保留（可并入合并表但要保持信息完整）。
+
+#### ③ 验收（硬门禁，必须实测写进 commit message）
+```
+cd BaiZe-ISEDA2027
+pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
+grep -c '^!' main.log                                            # 必须 0
+grep 'LaTeX Warning: \(Reference\|Citation\)' main.log            # 必须空
+grep 'Overfull \\hbox' main.log                                   # 尽量 0
+pdftotext -layout main.pdf - | grep -c .                          # 页数
+```
+- **判据：总页数 = 6，且 `REFERENCES` 出现在第 6 页顶部**（正文 p1–p5）。
+- 若压完仍 7 页 → **继续压**（下一步可动 `2.related_work` 的 VLM 段或 `9_conclusion`），**不许停在 7 页就说"已尽力"**，也不许删保底清单里的数字。
+- 🚫 **不 commit `main.pdf`**（二进制，运维统一编译提交）。
+
+#### ④ 交付
+1. 改稿 commit `pretrain paper-slim:` + push（先 `git pull --rebase`，只 add 自己的 `.tex`）。
+2. commit message **必须写**：改了几个小节 / 省了多少字符 / **实测页数** / ERR / UNDEF。
+3. 更新 `reports/report_pretrain_paper_audit_zh.html`（或新建 `report_pretrain_paper_slim_zh.html`）：逐节「改前→改后」+ 字符数变化 + 页数实测 + **未采用项及原因**。
+4. `MEMORY_PRETRAIN_2B.md` 顶部登记。
+
+#### ⑤ 红线
+- 🚫 **只改 `4_llm_pretrain.tex`**；不动 ch3/ch6/ch7（各有归属），不动 `main.tex` 的 `\newpage`（那是用户要的）。
+- 🚫 **不伪造数字**；删句子可以，改数字不行。凡「✅ 属实」的数字（你的审订报告已核）一律原值保留。
+- 🚫 `% 中文：` 双语注释行**不得删**；删英文段落时同步删对应中文行。
+- 🚫 不碰 GPU / 不打断 S1。
+- 提交前 `git pull --rebase`；push 被拒重试，失败写进心跳。
+- 体积：本令未完成前**不得归档**；若任务书 >40KB，可归档已标 `[已完成]` 的 10-31 15:2x 审订令。
+
 ### 🚀 运维令 · 2026-10-31 15:2x（**全文事实审订：`3_architecture.tex` 是重灾区，逐表逐句对账实测配置**）· 用户直令 · 最高优先
 
 > **用户原话**：「请 pretrain 审订一下白泽论文，不准确的地方还有不少。比如：Table-1 说 BF16，现在的训练明明是 FP8。这种明显的问题随处可见。」
