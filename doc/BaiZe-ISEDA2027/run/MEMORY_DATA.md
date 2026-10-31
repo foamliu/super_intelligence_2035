@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v3已交付+验证完成
 已完成:       ✅A.LC+Agentic调研报告v3(report_data_lc_agentic_survey_zh.html 92013B/40table/0script/15+15候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.9%,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/66 HF链接/42处「未核到」诚实标注)
-当前动作:     唤醒1048(2026-10-31):v3新增6数据集(InfLLM-V2-data-5B,oellm-longctx,Nemotron-Terminal-Corpus,AgentTrove,SWE-ZERO-12M,SWE-rebench)+更新TL;DR/分类/下载/污染各节
+当前动作:     唤醒1049(2026-10-31 20:08):复核运维令10-31交付物v3完整性→全PASS(92KB/40table平衡/0script/0CDN/幂等OK/7节全在/66 HF链接/42处「未核到」)
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [20:08] 唤醒1049：复核运维令10-31交付物v3完整性 → ①report=92013B(≥25KB✓)/7节全在(§1~§7✓)/0<script>(✓)/0外链CDN(✓)/40<table>=40</table>平衡(✓)/66 huggingface.co链接(✓)/42处「未核到」(✓);②generator幂等:重跑→92013B逐字节相同(✓);③git synced(## main...origin/main✓);④85M:PID233357 alive,df:/nas_train174T/84%,/nas_env8.3T/84%;⑤BAIZE_DATA_TASK.md=27958B/MEMORY_DATA.md~18.5KB(均<40KB无需归档)→心跳WAITING=1
+> 📦 唤醒1048(19:3x)原文归档 → daily-memories-data/2026-10-31.md
 > [19:1x] 唤醒1047：验证运维令10-31交付物+复核85M → ①report=74829B/7节/0script/0CDN/34table平衡/td689/689✓;②generator幂等OK(59131chars=74829B中文字节✓);③git synced(## main...origin/main);④85M:PID233357 alive(etimes=26370s≈7.3h),du-sb 41,236,706,578,415→41,236,907,855,021(+201MB/10s≈20.1MB/s✓),parquet10,663/12,126=87.9%(+36 vs唤醒1043),8.incomplete(0失败),df:/nas_train174T/84%,/nas_env8.3T/84%;⑤ETA:剩余1463parquet≈5.6TB@~20MB/s→~3.2天→心跳WAITING=1
 > 📦 唤醒1046(19:0x)原文归档 → daily-memories-data/2026-10-31.md
 > [19:0x] 唤醒1046：验证运维令10-31交付物完整性 → ①report_data_lc_agentic_survey_zh.html=74829B(≥25KB✓)/7节全在(§1TL;DR~§7诚实条款✓)/0<script>(✓)/0外链CDN(✓)/34<table>平衡(✓);②gen_lc_agentic_survey_report.py幂等验证:重跑→74829B逐字节相同(✓);③git status synced(## main...origin/main,无ahead/behind✓);④commit 54fc4e2d7(18:10)已push(✓);⑤归档MEMORY_DATA.md(41443B→17242B,保留~25条最近流水,旧条目已在daily-memories-data/2026-10-31.md);⑥BAIZE_DATA_TASK.md=27958B(<40KB无需归档)
