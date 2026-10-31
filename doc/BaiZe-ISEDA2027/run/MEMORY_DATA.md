@@ -18,10 +18,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.7%,字节增长确认+39→13MB/s).候选表49行已交付
-已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID471618 hf download运行中,10507/12126parquet=86.7%,8.incomplete活跃,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 49行+DATA_MAPPING.md D节)
-当前动作:     唤醒1023(2026-10-31 10:2x):复核85M下载→du-sb3次:40548008574704→40548410823885→40548544937230(+39.3MB/s+13.1MB/s✓严格递增)→10507parquet(86.7%,+3)+8.incomplete(sa1b/EN活跃128M-2.9G)+候选表49行✓→心跳
-下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,剩余1619parquet≈6.25TB@~26MB/s≈67h);②待运维批准后执行删除
+PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.8%,字节增长确认+22.9→13.4MB/s).候选表49行已交付
+已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID471618 hf download运行中,10512/12126parquet=86.8%,8.incomplete活跃,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 49行+DATA_MAPPING.md D节)
+当前动作:     唤醒1024(2026-10-31 10:37):复核85M下载→du-sb3次:40574170167025→40574399920861→40574534049021(+22.9MB/s+13.4MB/s✓严格递增)→10512parquet(86.8%,+5)+8.incomplete(sa1b/EN活跃)+per-subset:coyo1940✅imagenet82✅laioncn562✅datacomp1b575✅mint705✅obelics5803✅sa1b846/1147(74%)zero250m0/1310(0%)+候选表49行✓→心跳
+下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,剩余1614parquet≈6.25TB@~20MB/s≈87h);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(A+B均已交付)
@@ -30,7 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [10:2x] 唤醒1023：复核85M下载持续运行 → ①ps确认PID2668156(bash,ppid=1,etimes40783≈11.3h)+PID471618(hf download,ppid=2668156,etimes11616≈3.2h)活跃;②du -sb 3次判活:40,548,008,574,704→40,548,410,823,885→40,548,544,937,230(Delta1=402MB/10s=39.3MB/s✓ Delta2=134MB/10s=13.1MB/s✓严格递增);③parquet10,507/12,126=86.7%(+3 vs唤醒1022);④8 .incomplete全在sa1b/EN/part01_1(5活跃128M-2.9G+3队列0B,mtime10:13-10:16新鲜,0失败shard);⑤per-subset:coyo1940✅imagenet82✅laioncn562✅datacomp1b575✅mint705✅obelics5803✅sa1b840/1147(73%)zero250m0/1310(0%);⑥候选表49行✓(4可删+9保留+36待定)+DATA_MAPPING.md D节✓;⑦df:/nas_train173T/207T(84%),35T可用,/nas_env8.3T/10T(84%),1.7T可用;⑧ETA:剩余1619parquet(sa1b307+zero250m1310)≈6.25TB@~26MB/s→~67h→心跳WAITING=1
+> [10:37] 唤醒1024：复核85M下载持续运行 → ①ps确认PID2668156(bash,ppid=1)+PID471618(hf download,ppid=2668156)活跃;②du -sb 3次判活:40,574,170,167,025→40,574,399,920,861→40,574,534,049,021(Delta1=229.8MB/10s=22.9MB/s✓ Delta2=134.1MB/10s=13.4MB/s✓严格递增);③parquet10,512/12,126=86.8%(+5 vs唤醒1023);④8 .incomplete全在sa1b/EN/part01_1-2(0失败shard);⑤per-subset:coyo1940✅imagenet82✅laioncn562✅datacomp1b575✅mint705✅obelics5803✅sa1b846/1147(74%,+6)zero250m0/1310(0%);⑥候选表49行✓(4可删+9保留+36待定)+DATA_MAPPING.md D节✓;⑦df:/nas_train173T/207T(84%),35T可用,/nas_env8.3T/10T(84%),1.7T可用;⑧ETA:剩余1614parquet(sa1b301+zero250m1310)≈6.25TB@~20MB/s→~87h→心跳WAITING=1
+> 📦 唤醒1023(10:2x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长39.3→13.1MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1022(10:1x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长13→35MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1021(10:0x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长33.5→40.3MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1020(10:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长138MB/s✓加速+候选表49行确认,详见日文件）
