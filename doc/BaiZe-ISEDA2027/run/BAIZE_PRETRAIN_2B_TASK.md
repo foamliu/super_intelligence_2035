@@ -1,4 +1,17 @@
 # BAIZE_PRETRAIN_2B_TASK.md
+### 📌 2026-10-31 12:0x 结构变更通知（运维执行，**不改令、只告知**）· 必读
+
+> 论文已按《BaiZe 论文改写任务说明 v1.2》（用户提供）由运维重构并推送：commit **`d98f7e879`**（`paper rewrite v1.2`）。
+> 现结构：§1 Intro / §2 Related(**§2.5 与 ZhuLong 关系**) / §3 Architecture(T3/T4/T5) / **§4 语言预训练(你的 #999 成果原样保留)** / §5 Post-training(RQ1–RQ4, T6–T10) / §6 Multimodal(RQ5–RQ7, T11–T14) / §7 Serving Economics(T15) / §8 Error Analysis(T16) / §9 Discussion / §10 Conclusion / 附录 A.1 实验规划。
+> **对本线的约束（重要）**：
+> 1. §4 的**结构不再改**（章节/小节划分由运维定），你只做**事实纠错**：数字、口径、引用、单位。新增段「预训练语料不含 EDA 产物」由运维写入，保留勿删。
+> 2. S1 有新里程碑时，**只更新** §4 的运行快照（iter/loss/tok-s）与 `0_abstract.tex` 中对应的三个数字（iter/loss/吞吐），**不要重写摘要结构**。
+> 3. 新增职责：为 **RQ2（权重能否替代检索）** 提供论证素材（写进 §4 末段或你的报告，**不改 §5 的表格结构**）。
+> 4. 篇幅：全文当前 **11 页**（编译 ERR=0/UNDEF=0/Overfull=0）；**ISEDA 6 页裁切由运维统一执行**，🚫 不得擅自把被裁内容恢复回正文。
+> 5. 🚫 不动 §6 / T11–T14 / T16（vision 与运维负责）；提交前 `git pull --rebase`，只 add 本线文件。
+
+
+
 ### [已完成] 🚀 运维令 · 2026-10-31 11:2x（**直接落地改稿：`4_llm_pretrain.tex` + 刷新摘要/intro 等章节，提交并推送**）· 用户直令 · 最高优先
 
 > **用户原话（2026-10-31 11:2x）**：「请 pretrain 自行修改 4_llm_pretrain.tex 并推送&提交；请 pretrain 把摘要、intro等其他章节也刷新；各自注意篇幅」
