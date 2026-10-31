@@ -1,16 +1,14 @@
-﻿\section{Introduction}
+\section{Introduction}
 
-Large language models have recently demonstrated agentic capabilities---planning, tool invocation, and long-horizon reasoning---that make them attractive cores for intelligent assistants spanning chip design, verification, and other domains of electronic design automation.
-% 中文：大语言模型近来展现出智能体能力——规划、工具调用与长程推理——这使其成为覆盖芯片设计、验证及其他电子设计自动化领域的智能助手的理想内核。
+Large language models have recently demonstrated agentic capabilities---planning, tool invocation, and long-horizon reasoning---that make them attractive cores for intelligent assistants in electronic design automation (EDA).
+% 中文：大语言模型近来展现出智能体能力——规划、工具调用与长程推理——这使其成为电子设计自动化（EDA）中智能助手的理想内核。
 Such assistants are no longer hypothetical: agentic EDA flows are already deployed in-house, with Flash-tier masters such as DeepSeek-V4-Flash and GLM-5.3-Flash coordinating the flow.
 % 中文：此类助手已非假设：智能体 EDA 流程已在公司内部署，由 DeepSeek-V4-Flash 与 GLM-5.3-Flash 等 Flash 档 master 负责协调。
-The binding constraint is therefore cost rather than feasibility, and the cost structure is dominated by two terms: every EDA subtask routed to a master consumes tokens and serving budget that scale with design-flow volume, and because an agentic session accumulates context, what dominates serving cost is not prompt throughput but the memory that grows with the session.
-% 中文：因此当前约束是成本而非可行性，而成本结构由两项主导：每个路由到 master 的 EDA 子任务都消耗随设计流程规模增长的 token 与 serving 预算；且由于智能体会话会累积上下文，主导服务成本的并非提示词吞吐，而是随会话增长的内存占用。
-A small, locally served subagent cannot change either term at the master, but it caps the cost of every subtask it takes over by pricing it at a local 2.2B model rather than at a Flash master; and for a hybrid backbone the session-memory term is architectural as well, since only the four attention layers carry a session-growing state while the Mamba-2 layers hold a constant-size recurrent one.
-% 中文：本地部署的小型子智能体无法改变 master 侧的这两项，但它把所接管的每个子任务按本地 22 亿参数模型而非 Flash master 计价，从而为成本设上界；而对混合骨干而言，会话内存项同样是架构决定的：只有 4 个注意力层携带随会话增长的状态，Mamba-2 层则为恒定大小的循环状态。
-
-Recent small language models (SLMs, $<\,$2\,B) have closed much of the gap with larger counterparts on single-turn benchmarks, but building such a model \emph{from scratch} as a production subagent remains an under-documented engineering problem.
-% 中文：近期的小语言模型（SLM，$<$ 20 亿参数）已在单轮基准上大幅缩小与更大模型的差距，但从零构建这样一个模型并将其用作生产级子智能体，仍是一个缺乏文档记录的工程问题。
+The binding constraint is therefore cost, dominated by two terms: every subtask routed to a master consumes tokens and serving budget that scale with flow volume, and because an agentic session accumulates context, serving cost is driven by the memory that grows with the session rather than by prompt throughput.
+% 中文：因此当前约束是成本，由两项主导：每个路由到 master 的子任务都消耗随流程规模增长的 token 与 serving 预算；且由于智能体会话会累积上下文，服务成本由随会话增长的内存而非提示词吞吐驱动。
+A small, locally served subagent caps the cost of every subtask it takes over by pricing it at a local 2.2B model rather than at a Flash master.
+% 中文：本地部署的小型子智能体把所接管的每个子任务按本地 22 亿参数模型而非 Flash master 计价，从而为成本设上界。
+Building such a model \emph{from scratch} as a production subagent, however, remains an under-documented engineering problem.
 
 \paragraph{Contributions.}
 We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed Flash master.
@@ -20,21 +18,17 @@ We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) age
 \item \textbf{A cost-efficient EDA subagent.}
 BaiZe receives EDA subtasks in natural language from the master and drives EDA tools in their native scripting languages (PyAether, SKILL, Tcl).
 % 中文：高性价比的 EDA 子智能体。BaiZe 以自然语言从 master 接收 EDA 子任务，并以 EDA 工具的原生脚本语言（PyAether、SKILL、Tcl）驱动这些工具。
-Its 56 layers interleave 52 Mamba-2 state-space layers with four grouped-query-attention layers, so only the latter carry a session-growing state; linear-time decoding whose serving cost is governed by session memory, rather than by prompt throughput, is what makes per-subtask cost reduction structurally plausible rather than a matter of quantization alone.
-% 中文：其 56 层将 52 个 Mamba-2 状态空间层与 4 个分组查询注意力层交错排列，因此只有后者携带随会话增长的状态；解码为线性时间，其服务成本由会话内存而非提示词吞吐决定——这使每子任务成本下降在结构上可行，而非仅靠量化。
-On this backbone, a staged budget-constrained search (S1--S5) with a reduced-horizon proxy protocol fixes the pre-training recipe.
-% 中文：在此骨干之上，分阶段、受预算约束的搜索（S1--S5）配合缩短视野的代理协议确定预训练配方。
-We then evaluate BaiZe on a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes, asking two questions: whether it matches the deployed Flash masters at comparable task accuracy while materially reducing per-subtask serving cost, and what an on-premise subagent must co-locate with the model---whether a sandbox and multi-round refinement justify their serving cost, or whether a lighter single-shot configuration suffices.
-% 中文：随后我们在一个覆盖三种语言、四种商业 runtime 的 449 任务 EDA 脚本基准上评估 BaiZe，提出两个问题：它能否以可比的任务精度匹配已部署的 Flash master 同时显著降低每子任务服务成本；以及内网子智能体必须与模型共同部署什么——沙箱与多轮精炼是否值得其服务成本，还是更轻的单发配置即足够。
+Its 56 layers interleave 52 Mamba-2 state-space layers with four grouped-query-attention layers, so only the latter carry a session-growing state---which is what makes per-subtask cost reduction structural rather than a matter of quantization alone.
+% 中文：其 56 层将 52 个 Mamba-2 状态空间层与 4 个分组查询注意力层交错排列，因此只有后者携带随会话增长的状态——这使每子任务成本下降具有结构性，而非仅靠量化。
+A staged budget-constrained search (S1--S5) with a reduced-horizon proxy protocol fixes the pre-training recipe.
+% 中文：分阶段、受预算约束的搜索（S1--S5）配合缩短视野的代理协议确定预训练配方。
+On a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes, we ask whether it matches deployed Flash masters at comparable accuracy while materially reducing per-subtask cost, and what an on-premise subagent must co-locate with the model.
 
 \item \textbf{Multimodal grounding for visual EDA artifacts.}
-Layout, schematic, and waveform views carry much of the correctness signal in custom and analog design, yet a text-only subagent cannot observe them directly.
-% 中文：面向视觉 EDA 产物的多模态 grounding。版图、原理图与波形视图承载了定制与模拟设计中大量的正确性信号，然而纯文本子智能体无法直接观测它们。
-BaiZe pairs its from-scratch language core with a from-scratch vision encoder and tests whether its 196-token-per-image budget suffices for such detail-dense views, or whether finer token budgets are required for reliable visual grounding.
-% 中文：BaiZe 将其从零训练的语言内核与从零训练的视觉编码器配对，检验每图 196 token 的预算是否足以应对这类细节密集的视图，还是需要更细的 token 预算才能实现可靠的 visual grounding。
-Measured results: the encoder reaches $68.2\%$ linear-probe on an internal protocol, yet the MLLM stage averages $26.1\%$ over 11 benchmarks, indicating that encoder-quality gains do not transfer downstream at the $224$-px single-tile setting.
-% 中文：实测结果：编码器在内部协议上线性探测达 68.2\%，但 MLLM 阶段在 11 个基准上仅平均 26.1\%，表明编码器质量的增益在 224 像素单块设定下未迁移到下游。
+Layout, schematic, and waveform views carry much of the correctness signal in custom and analog design, yet a text-only subagent cannot observe them.
+% 中文：面向视觉 EDA 产物的多模态 grounding。版图、原理图与波形视图承载定制与模拟设计中大量的正确性信号，而纯文本子智能体无法直接观测。
+BaiZe pairs its language core with a from-scratch vision encoder and tests whether a 196-token-per-image budget suffices for such detail-dense views.
+% 中文：BaiZe 将语言内核与从零训练的视觉编码器配对，检验每图 196 token 的预算是否足以应对这类细节密集的视图。
+The encoder reaches $68.2\%$ linear-probe on an internal protocol, yet the MLLM stage averages $26.1\%$ over 11 benchmarks: encoder-quality gains do not transfer downstream at the $224$-px single-tile setting.
+% 中文：编码器在内部协议上线性探测达 $68.2\%$，但 MLLM 阶段在 11 个基准上平均 $26.1\%$：编码器质量的增益在 224 像素单块设定下未迁移到下游。
 \end{itemize}
-
-We test this architecture rather than assume it: the question we put to the benchmark is whether a small local subagent is viable at production scale, and where its cost--accuracy point lands.
-% 中文：我们检验而非假定该架构：我们向基准提出的问题是，本地小型子智能体在生产规模上是否可行，以及它的成本—精度点落在何处。
