@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 18:30 #1016：**任务书+MEMORY归档**。18:2x paper-slim 令已完成(#1015/commit 2fef637c8)，本轮归档3个已闭合运维令(18:2x/15:2x/11:2x)→ARCHIVE_OPERATOR_PRETRAIN.md「第三批」节，TASK 36.0KB→23.8KB；MEMORY 旧流水(#984及更早14条)合并为1条指针，MEMORY 32.8KB→29.1KB。论文编译验证：6页/ERR=0/Overfull=0（UNDEF警告来自他线ch5/ch6/ch7，非ch4）。S1未碰。未完成指令：无。📦 体积：TASK=23.8KB / MEMORY=29.1KB（归档 12.2KB+3.7KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
+> 🆕 2026-10-31 19:01 #1017：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415997 活着，iter 33420/700k（4.77%），loss ~2.14 稳态，grad-norm ~0.09-0.11 极稳，0 NaN/0 skipped，~6.89s/step ≈ ~609K tok/s，ckpt@iter_32000。8×H100 100%util/~75GB。论文6页/ERR=0 维持。未完成指令：无。📦 体积：TASK=23.8KB / MEMORY=28.9KB（归档 0KB）。
+> 📦 §#1016（10-31 18:30, 任务书+MEMORY归档·3个已闭合运维令→ARCHIVE第三批·TASK 36KB→23.8KB/MEMORY 32.8KB→29.1KB）→ daily-memories/2026-10-31.md；**结论**：paper-slim 令已完成(commit 2fef637c8)，归档后论文6页/ERR=0。被#1017监控。需要时再读。
 > 📦 §#1014（10-31 17:28, 全文事实审订84项·5处.tex修改·commit d6ba844fc）→ daily-memories/2026-10-31.md；**结论**：84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，ERR=0/7页(vision致溢出)，报告25.7KB。被#1015压缩更新。需要时再读。
 
 > 📦 §#1012（10-31 16:14, S1健康监控iter31970/loss2.160/0NaN/593K + 审计任务#1011复核确认）→ daily-memories/2026-10-31.md；**结论**：S1健康iter31970(4.57%), #1011确认完整交付。被#1013补遗更新。需要时再读。
