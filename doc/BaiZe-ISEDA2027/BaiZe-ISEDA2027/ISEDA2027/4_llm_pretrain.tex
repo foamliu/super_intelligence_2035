@@ -202,8 +202,8 @@ The run uses the production configuration fixed by the throughput and precision 
 Precision and replay are not incidental: at a micro-batch of $M{=}16{,}384$ the tensors are large enough that FP8 pays off, and replaying a graph with a data-dependent Mamba-2 state was the cause of a throughput collapse in an earlier build; both settings are fixed for the whole run so that the decay segments are comparable.
 
 \textbf{Stable phase} (in progress).
-At the time of writing the run has passed iteration $29{,}900$ of $700{,}000$ ($4.3\%$), at a sustained $\mathbf{\approx}590$K tok/s (${\approx}1{,}020$ TFLOP/s/GPU; measured over $7.08$--$7.32$ s/step).
-Training loss reached $2.166$ (mean of the last five logged steps) from an initial $\approx$11.5, with gradient norms stable at $0.09$--$0.10$ and no NaN or skipped step; checkpoints are written every $2{,}000$ iterations and pruned to a rolling window.
+At the time of writing (31 October 2026) the run has passed iteration $30{,}660$ of $700{,}000$ ($4.4\%$), at a sustained $\mathbf{\approx}598$K tok/s (${\approx}1{,}030$ TFLOP/s/GPU; measured over $6.91$--$7.21$ s/step).
+Training loss reached $2.151$ (mean of the last five logged steps) from an initial $\approx$11.5, with gradient norms stable at $0.09$--$0.10$ and no NaN or skipped step; the latest checkpoint is at iteration $30{,}000$ (checkpoints are written every $2{,}000$ iterations and pruned to a rolling window).
 The projection below is therefore an extrapolation at the measured rate, not a measurement.
 
 \begin{table}[htbp]
@@ -216,7 +216,7 @@ The projection below is therefore an extrapolation at the measured rate, not a m
 \toprule
 \textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
 \midrule
-Warmup + stable & 2.94T & 700k & ${\approx}56$ d (est.) & 29.9k done \\
+Warmup + stable & 2.94T & 700k & ${\approx}56$ d (est.) & 30.7k done \\
 Decay A (16K) & 58.7B & 14k & ${\approx}1.2$ d (est.) & queued \\
 Decay B (32K--128K) & 25.2B & 6k & ${\approx}2.3$ d (est.) & queued, gated \\
 \midrule
@@ -226,9 +226,10 @@ Decay B (32K--128K) & 25.2B & 6k & ${\approx}2.3$ d (est.) & queued, gated \\
 \end{table}
 
 \textbf{Decay---segment~A} ($58.7$B tokens, 16K). The learning rate begins its exponential decay while the sequence length stays at 16K.
-The blend shifts mass to the curated L3 and instruction-tuning sources: $60\%$ general instruction tuning (\texttt{UltraData-SFT-2605}), $12\%$ agentic instruction tuning (\texttt{UltraData-SFT-Agent-2609}), and the remainder split over curated web, mathematics, and code.
+The blend shifts mass to the curated L3 and instruction-tuning sources (specified in \texttt{configs/blend\_decay.tsv}): $60\%$ general instruction tuning (\texttt{UltraData-SFT-2605}), $12\%$ agentic instruction tuning (\texttt{UltraData-SFT-Agent-2609}), $18\%$ curated web question--answer (\texttt{Ultra-FineWeb-L3-QA}), $4\%$ Chinese web, $4\%$ mathematics~L3, and $2\%$ code~L3.
 Instruction data is used here as \emph{text}: segment~A is still pre-training, and the point of the shift is to expose the model to well-formed directive-response text at the lowest learning rates, not to teach the tool-call behaviour that Section~\ref{sec:llm-posttrain} trains.
-Segment~A occupies $60$--$70\%$ of the decay budget specifically to protect short-context ability while the distribution changes, since the retrieval and long-document material of segment~B is sampled from a different length regime.
+Segment~A anneals at $16$K rather than at a longer length so that the model consolidates its short-context representations under a shrinking learning rate \emph{before} the context distribution changes: entering segment~B with an already-decayed learning rate means the length shift perturbs near-converged weights, not peak-LR weights.
+The $60$--$70\%$ allocation protects short-context ability while the distribution changes, since the retrieval and long-document material of segment~B is sampled from a different length regime and must not regress the capability that segment~A anneals.
 
 \textbf{Decay---segment~B} ($25.2$B tokens, $32$K--$128$K). Described in Section~\ref{sec:longctx-train}; it cannot start until the data conditions of Section~\ref{sec:longctx-data} are met.
 
@@ -341,7 +342,7 @@ The cost is carried by context parallelism rather than by additional nodes: 32K 
 \noindent\textbf{Why the budget is this small.}
 The long-context budget is deliberately an order of magnitude below the stable-phase budget, and the public precedents bound it from both sides.
 ProLong-8B reaches a 128K context with state-of-the-art performance at its size after $40$B tokens of long-context training, which is already only $5\%$ of the long-context tokens used by Llama-3.1-8B-Instruct~\cite{gao2024prolong}; LongRoPE2 extends LLaMA3-8B to a 128K effective context with $10$B tokens while retaining $98.5\%$ of short-context performance~\cite{shang2025longrope2}.
-Our $25$--$176$B plan therefore sits at or above the public operating range rather than below it, which is the conservative direction for a plan whose data gate (Section~\ref{sec:longctx-data}) is not yet satisfied.
+Our $88$--$176$B long-context budget (Table~\ref{tab:longctx-budget}) therefore sits above the public operating range, which is the conservative direction for a plan whose data gate (Section~\ref{sec:longctx-data}) is not yet satisfied.
 Two qualifications keep the comparison honest: both precedents extend an \emph{already long-trained} base model by rescaling position encoding, whereas segment~B trains the length structure itself under a decayed learning rate; and neither operates at the $2.22$B scale, where the token requirement is not expected to exceed the $8$B-class figures above but is not measured here either.
 Long-context ability is accordingly not bought with volume---it is bought with the right volume at the right point in the schedule---but the reference budget in Table~\ref{tab:longctx-budget} should be read as a floor that the data gate may push upward, not as a ceiling (estimate; no scale ablation of this axis is run in this paper).
 
