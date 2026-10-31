@@ -1,7 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 10:0x #997：**论文预训练章节审校补遗+任务书归档**。在#996基础上：①删除§4.8/§4.9之间2行orphaned中文注释（含stale数字1020 TFLOP/s→已在§4.10有正确翻译1030+6.91-7.21s/step）②编译验证0-error/0-undef/2-overfull(均在6_vision)/15pp ③任务书归档（2026-10-26 19:2x + 2026-10-28 10:0x两块→ARCHIVE_OPERATOR_PRETRAIN.md，TASK 36.6KB→27.2KB≤32KB✅）④10-31运维令标记[已完成] ⑤摘要矛盾已登记(0_abstract.tex仍写"44B/1.357/412 GPU-hours"→待跨章节另派)。未完成指令：无（本轮运维令全部完成）。 📦 体积：TASK=27.2KB / MEMORY=28.3KB（归档 9.4KB → ARCHIVE_OPERATOR_PRETRAIN.md）.
+> 🆕 2026-10-31 11:0x #998：**论文第4章修订计划(中文HTML)**。逐句核校压缩版4_llm_pretrain.tex(e85e5dc68,~170行/5表/7小节)全文25处数字/断言，对照源材料(configs/*.env/blend_s1_preblend.tsv/blend_decay.tsv/MEMORY/EXPERIMENTS/旧版tex 191440304)。发现1个P0(88-176B→实际83.9B=2.85%)+6个P1(88:8:4→74:19:7,118→2900GPU·h,41.6K→39377,MiniCPM5 cite丢失,warmup 2000vs250未解释,Feasibility理由丢失)+6个P2。给出7段改前→改后tex文本(含中文注释更新)，篇幅净-3行不超6页。交付reports/report_pretrain_paper_revise_plan_zh.html(34KB/6节/0script/0外链/标签配平)+生成器pretrain/generate_paper_revise_plan_report.py(幂等)。commit 11fc58036(pushed)。🚫未动.tex(本轮只出计划)。未完成指令：无。 📦 体积：TASK=27.2KB / MEMORY=待更新KB（无归档）.
 > 📦 §#994（10-31 08:13, S1监控iter30500健康·loss~2.15·0NaN·~590K tok/s·ckpt@30000）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.15稳态微降. 被#995更新。需要时再读。
 > 📦 §#993（10-31 07:01, S1监控iter29900健康·loss~2.166·0NaN·~590K tok/s·ckpt@28000·1M报告✅DONE）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.166稳态, 1M报告已交付. 被#994更新。需要时再读。
 > 📦 §#997（10-31 10:0x, 论文审校补遗+任务书归档·删除2行orphaned中文注释+TASK归档→27.2KB）→ daily-memories/2026-10-31.md；**结论**：orphaned注释清理, 编译0-error, TASK 36.6KB→27.2KB。需要时再读。
