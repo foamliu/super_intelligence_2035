@@ -31,5 +31,19 @@ BaiZe follows this curriculum in stage~(iv) (Section~\ref{sec:mllm}), substituti
 \subsection{LLMs for Electronic Design Automation}
 A growing line of work applies LLM agents to chip design tasks such as register-transfer-level generation, verification, and bug triage~\cite{liu2023chipnemo,blocklove2024chip}.
 % 中文：面向电子设计自动化的 LLM。越来越多的工作把 LLM 智能体应用于芯片设计任务，如寄存器传输级生成、验证与缺陷分诊 \cite{liu2023chipnemo,blocklove2024chip}。
-These applications motivate a cheap, always-on, agentic multimodal core that can run per-team or per-engineer; our work supplies the efficient multimodal backbone such systems require.
-% 中文：这些应用呼唤一种廉价、常驻、可按团队或按工程师部署的智能体多模态内核；我们的工作正是提供此类系统所需的、高效的多模态骨干网络。
+Concurrent work has begun to benchmark EDA agents and to drive EDA tools directly; we do not re-benchmark, and deliberately reuse one published harness rather than propose another, because our claims concern \emph{what varies} inside a fixed harness.
+% 中文：并发工作已开始对 EDA 智能体做基准、并直接驱动 EDA 工具；我们不重复造基准，刻意复用一个已发表的框架，因为我们的主张关注的是固定框架内部什么在变。
+
+\subsection{The Relation to ZhuLong}\label{sec:relation}
+\llm is a continuation, not a competitor: both papers read accuracy through the same observable---assertion-verified script execution---and both hold the scaffold fixed while varying one axis.
+% 中文：\llm 是续作而非竞争者：两篇论文都用同一个可观测量（断言校验的脚本执行）读准确率，且都在固定脚手架的同时只变一根轴。
+ZhuLong varies the observation and prior axes and concludes that fidelity bounds accuracy; \llm varies the \emph{scale} axis and, in stage~(iv), the \emph{channel} axis---which is what makes its result a test rather than an application.
+% 中文：ZhuLong 变观测轴与先验轴，得出「保真度界定准确率」；\llm 变规模轴，并在第 (iv) 阶段变通道轴——这正是使其实为检验而非应用之处。
+Two of ZhuLong's findings constrain what we may claim.
+% 中文：ZhuLong 的两项发现约束了我们能声称什么。
+First, component contributions are toolchain-specific---retrieval is worth $15.1$\,pp on SKILL but $7.7$\,pp on Tcl---so PyAether alone cannot support a generality claim, and we treat SKILL as the stress slice.
+% 中文：其一，组件贡献因工具链而异——检索在 SKILL 值 15.1 pp、在 Tcl 仅 7.7 pp——故单靠 PyAether 不能支撑「通用性」，我们把 SKILL 当作压力切片。
+Second, the read-back ladder inverts at the middle rung on Tcl because short scripts are near-single-shot; we therefore pre-register the ladder itself rather than an expected ordering.
+% 中文：其二，回读阶梯在 Tcl 中间档倒挂，因为短脚本近于单发；故我们预注册阶梯本身而非预期排序。
+Because layout and schematic views make up $70.2\%$ of the benchmark while ZhuLong's agent is text-only, the visual channel is the one axis ZhuLong could not vary and \llm adds.
+% 中文：由于版图与原理图视图占基准 70.2\%，而 ZhuLong 的智能体是纯文本的，视觉通道正是 ZhuLong 无法变动、而 \llm 补充的那根轴。

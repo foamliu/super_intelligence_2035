@@ -1,0 +1,18 @@
+\section{Conclusion}\label{sec:conclusion}
+
+\llm is a from-scratch system---2.22B hybrid language backbone, $126.8$M visual encoder, five stages---built to answer two questions that ZhuLong's observation-fidelity account leaves open: whether a local 2.2B model can reach the accuracy floor of the weakest measured large backbone at lower serving cost, and whether a visual channel shrinks or widens the grounding gap on detail-dense EDA views.
+% 中文：\llm 是一个从零构建的系统——2.22B 混合语言骨干、126.8M 视觉编码器、五阶段——用以回答 ZhuLong 的观测保真度论述留下的两个问题：本地 2.2B 能否以更低服务成本达到已测最弱大骨干的精度底线；视觉通道在细节密集 EDA 视图上是缩小还是扩大落地鸿沟。
+
+We report status rather than a verdict.
+% 中文：我们报告状态，而非裁决。
+Stages~(i) and~(iii) are complete and measured: 2.94T pre-training tokens at iteration $30{,}660$ with loss $2.151$ and $\approx$598K tok/s, and an encoder whose frozen-trunk ImageNet probe goes from $11.50\%$ to $19.76\%$ and $20.27\%$ at $55.3$M and $176$M samples.
+% 中文：第 (i)(iii) 阶段已完成并实测：2.94T 预训练 token、第 30,660 步 loss 2.151、约 598K tok/s；编码器冻结主干 ImageNet 探测从 11.50\% 升至 55.3M/176M 样本的 19.76\%/20.27\%。
+Claims~A, B and C remain \textbf{unverified}; their placeholder tables (Tables~\ref{tab:backbone}--\ref{tab:wave}, \ref{tab:econ}--\ref{tab:errors}) carry the hypotheses, the control configurations and the reverse contingencies under which each would be reported as false.
+% 中文：主张 A、B、C 仍「未验证」；其占位表（表 \ref{tab:backbone}–\ref{tab:wave}、\ref{tab:econ}–\ref{tab:errors}）承载假设、对照配置，以及各自被证伪时的反向预案。
+
+The single experiment that makes this a continuation rather than an application is RQ4: the read-back ladder measured on the same benchmark, with a span compared against $7.1$\,pp.
+% 中文：使本文成为「续作」而非「应用」的那一个实验是 RQ4：在同一基准上重测回读阶梯，并把跨度与 7.1 pp 比较。
+A larger span would say that as models shrink, observation binds harder---ZhuLong's conclusion, extended rather than repeated; a smaller span would say that weight priors can partly pay for observation, which is a different theory of the same data and would be reported as such.
+% 中文：跨度更大意味着模型越小、观测越紧——这是对 ZhuLong 结论的延伸而非重复；跨度更小意味着权重先验可部分代偿观测，那是对同一数据的另一种理论，将如实报告。
+We release the pre-training recipe, the encoder recipe, the message schema and the harness checklist so that either outcome is reproducible by a third party.
+% 中文：我们公开预训练配方、编码器配方、消息 schema 与框架核对清单，使任一结果都可被第三方复现。

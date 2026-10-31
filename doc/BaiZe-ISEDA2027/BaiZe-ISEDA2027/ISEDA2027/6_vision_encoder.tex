@@ -1,20 +1,131 @@
-\section{Vision Encoder Pretraining}\label{sec:vision}
+\section{Multimodal Grounding}\label{sec:grounding}
 
-Stage~(iii) pre-trains a custom vision encoder from scratch (Section~\ref{sec:mllm}); we summarise the outcome here and defer the design study to a companion report.
-% 中文：第 (iii) 阶段从零预训练一个自研视觉编码器（第 \ref{sec:mllm} 节）；本节只汇报结果，设计研究另文详述。
+The second goal is observational: layout and schematic views carry $70.2\%$ of the benchmark's tasks, and waveforms---one of ZhuLong's four slices---are equally visual, yet its agent can only reach them through scripts.
+% 中文：第二个目标是观测性的：版图与原理图视图承载基准 70.2\% 的任务，而波形（ZhuLong 四个切片之一）同样高度视觉化，但其智能体只能通过脚本触及。
+This section first fixes the encoder (stage~iii, complete) and the alignment protocol (stage~iv), then pre-registers three experiments on whether pixels, at a given token budget, actually widen or narrow the grounding gap.
+% 中文：本节先固定编码器（第 iii 阶段，已完成）与对齐协议（第 iv 阶段），再预注册三项实验，检验「在给定 token 预算下」像素究竟扩大还是缩小落地鸿沟。
 
-\paragraph{Selected encoder.}
+\subsection{Stage (iii): The Visual Encoder}\label{sec:vision}
 We adopt \textbf{OpenVision2}, a pure-attention ViT at width-$512$/depth-$30$ ($126.8$M parameters), trained from scratch with a bidirectional trunk at $224$px/$16$-px patches on a ${\approx}18.5$M-pair image--text corpus (CC12M $+$ Amshaker).
-% 中文：选定编码器。我们采用 OpenVision2——宽度 $512$、深度 $30$ 的纯注意力 ViT，$126.8$M 参数，从零训练，双向主干，$224$ 像素/$16$ 像素块，在约 $18.5$M 图文对语料（CC12M + Amshaker）上训练。
-The objective combines a global InfoNCE contrastive term with a caption-\emph{independent} masked-patch reconstruction term at a $1{:}1$ weight and a $0.6$ mask ratio.
-% 中文：目标函数由全局 InfoNCE 对比项与一个与说明文字无关的掩码块重建项组成，权重 $1{:}1$，掩码比例 $0.6$。
-A four-arm ablation ($15.4$M pairs) confirms the breakthrough depends on their \emph{interaction}: neither term alone suffices ($6.1\%$ and $6.2\%$ linear-probe), but the combination yields $+6.0$\,pp, widening to $+12.4$\,pp at $55.3$M samples.
-% 中文：四臂消融（$15.4$M 对）证实突破依赖两项的交互：单独任一项都不充分（线性探测 $6.1\%$ 与 $6.2\%$），但组合产生 $+6.0$ pp 增益，在 $55.3$M 样本时扩大至 $+12.4$ pp。
+% 中文：我们采用 OpenVision2——宽度 512、深度 30 的纯注意力 ViT（126.8M 参数），从零训练，双向主干，224 像素/16 像素块，在约 18.5M 图文对语料（CC12M + Amshaker）上训练。
+The objective combines a global InfoNCE term with a caption-\emph{independent} masked-patch reconstruction term at $1{:}1$ weight and a $0.6$ mask ratio; a four-arm ablation at $15.4$M pairs shows that neither term alone suffices ($6.1\%$ and $6.2\%$ linear probe) while the combination reaches $+6.0$\,pp, widening to $+12.4$\,pp at $55.3$M samples.
+% 中文：目标函数由全局 InfoNCE 与一个与说明文字无关的掩码块重建项组成，权重 1:1、掩码率 0.6；15.4M 对上的四臂消融显示单用任一项均不充分（线性探测 6.1\% 与 6.2\%），组合则 +6.0 pp，在 55.3M 样本时扩大到 +12.4 pp。
+On the frozen trunk, an ImageNet-1k linear probe gives $11.50\%\to\mathbf{19.76\%}$ top-1 from $5.1$M to $55.3$M samples and $20.27\%$ at $176$M samples ($58.8$M-pair corpus adding GPIC), with no saturation.
+% 中文：在冻结主干上，ImageNet-1k 线性探测从 5.1M 到 55.3M 样本由 11.50\% 升至 19.76\% top-1，在 176M 样本（加入 GPIC 的 58.8M 对语料）达到 20.27\%，均未见饱和。
+The $224/16$ setting yields $14{\times}14{=}196$ visual tokens, i.e.\ ${\sim}16{\times}16$\,px/token, and is retained because it is best on both loss and throughput.
+% 中文：224/16 设定产生 14×14=196 个视觉 token，即约 16×16 像素/token，因在损失与吞吐上均最优而保留。
+That choice was made for \emph{general} images; whether it survives detail-dense line drawings is the question this section is built to answer, not to assume.
+% 中文：该选择是为\emph{通用}图像做的；它能否在细节密集线稿上成立，正是本节要回答（而非假定）的问题。
 
-\paragraph{Final result.}
-On the frozen trunk with an ImageNet-1k linear probe, the encoder reaches $11.50\%\to\mathbf{19.76\%}$ top-1 from $5.1$M to $55.3$M samples (CC12M$+$Amshaker, $18.5$M unique pairs), and $20.27\%$ at $176$M samples on a $58.8$M-pair corpus (adding GPIC), with no saturation.
-% 中文：最终结果。在冻结主干上用 ImageNet-1k 线性探测，编码器在 CC12M+Amshaker（$18.5$M 唯一对）上从 $5.1$M 到 $55.3$M 样本由 $11.50\%$ 升至 $\mathbf{19.76\%}$ top-1，在 $58.8$M 对语料（加入 GPIC）上于 $176$M 样本达到 $20.27\%$，均未见饱和。
-This is $+12.4$\,pp above a contrastive-only baseline at the same sample budget, and it is the operating point used by stage~(iv).
-% 中文：这比同样本量下仅用对比项的基线高 $+12.4$ pp，该点即第 (iv) 阶段使用的配置。
-The $224/16$ resolution is retained because it is best on both loss and throughput; whether $196$ visual tokens suffice for detail-dense layout and schematic views is tested in stage~(iv) (Section~\ref{sec:mllm}).
-% 中文：$224/16$ 分辨率被保留，因为它在损失与吞吐两方面都最优；$196$ 个视觉 token 是否足以应付细节密集的版图与原理图视图，将在第 (iv) 阶段检验（第 \ref{sec:mllm} 节）。
+\subsection{Stage (iv): Alignment Protocol}\label{sec:mllm}
+Alignment follows the open-MLLM curriculum---projector pre-training, mid-training, instruction tuning---with a lightweight projector connecting the encoder to the frozen-then-unfrozen backbone.
+% 中文：对齐沿用开放多模态课程——投影层预训练、中期训练、指令微调——用轻量投影层连接编码器与骨干（先冻结后解冻）。
+Three task families are used, each chosen because it admits an objective ground truth: \emph{image$\to$script} (recreate the rendered view; supervision is the execution itself), \emph{script$\to$image} (predict the geometry a script produces, self-labelled the same way), and \emph{layout VQA} (layer identity, device type, spacing, rule violations; expert-labelled).
+% 中文：使用三类任务，均因具备客观真值而入选：图→脚本（重现渲染视图，监督来自执行本身）、脚本→图（预测脚本产生的几何，同样自标注）、版图 VQA（层号、器件类型、间距、规则违例，专家标注）。
+The first family is the strongest lever: its output is a script, so it is scored by the same assertion sandbox as stage~(ii), which lets multimodal and text-only configurations be compared on \emph{one} metric instead of two incommensurable ones.
+% 中文：第一类杠杆最强：输出是脚本，因此与第 (ii) 阶段共用同一断言沙盒评分，使多模态与纯文本配置在\emph{同一个}指标上比较，而非两套不可换算的指标。
+
+\subsection{RQ5: How Many Visual Tokens Does a Line Drawing Need? (Claim~B)}\label{sec:rq5}
+Claim~B asserts a threshold rather than a suffices/not-suffices verdict: on detail-dense views, accuracy should be \emph{increasing} in the token budget, with the $196$-token tier at or below the text-only baseline.
+% 中文：主张 B 断言的是一个阈值，而非「够/不够」的结论：在细节密集视图上，精度应随 token 预算上升，且 196 档应不高于纯文本基线。
+Table~\ref{tab:vtoken-abl} is the grid; each cell is an assertion pass rate from the image$\to$script family, so the number is generated by the same sandbox that scores stage~(ii).
+% 中文：表 \ref{tab:vtoken-abl} 是网格；每格是「图→脚本」族的断言通过率，故数字由与第 (ii) 阶段相同的沙盒生成。
+
+\begin{table}[t]
+\centering
+\caption{RQ5: image$\to$script assertion pass rate (\%) by visual-token tier and view type (T11).}
+\label{tab:vtoken-abl}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Tier} & \textbf{layout} & \textbf{schem.} & \textbf{wave} & \textbf{$n$} & \textbf{Expected} \\
+\midrule
+text-only & \tbd & \tbd & \tbd & \tbd & floor \\
+T196 & \tbd & \tbd & \tbd & \tbd & $\le$ floor \\
+T576 & \tbd & \tbd & \tbd & \tbd & $\uparrow$ vs.\ T196 \\
+T1024 & \tbd & \tbd & \tbd & \tbd & $\uparrow$ or $\approx$ T576 \\
+\bottomrule
+\end{tabular}
+\tnote{\rv{Reverse contingency: if T196 is \emph{not} worse than T576/T1024 (i.e.\ no threshold), Claim~B's threshold clause is falsified and the paper reports that coarse representation suffices for EDA views---a null result with the same protocol.}}
+\end{table}
+
+\subsection{RQ6: Fine-Grained Discrimination}\label{sec:rq6}
+The failure modes ZhuLong reports are exactly the ones a coarse visual representation should break on: a single rising edge returning \texttt{N/A}, net counts differing by three (1869 vs.\ 1872), a mandated call replaced by a visually plausible neighbour (\texttt{aeAddHighLightRect} vs.\ \texttt{GuCartBox(emyBoxF(...))}).
+% 中文：ZhuLong 报告的失败模式，恰是粗粒度视觉表示应当失效之处：单上升沿返回 N/A、网络计数相差 3（1869 对 1872）、强制调用被视觉上合理的近似替代。
+We therefore build a discrimination subset (Table~\ref{tab:fine}) whose answers are small integers or symbols---quantities a $16{\times}16$\,px/token grid must physically be able to resolve.
+% 中文：因此我们构建判别子集（表 \ref{tab:fine}），答案为小整数或符号——这类量在 16×16 像素/token 的网格上必须具备物理可分辨性。
+
+\begin{table}[t]
+\centering
+\caption{RQ6: fine-grained discrimination subset (T12). Task IDs are \emph{to be instantiated} from ZhuLong's traces.}
+\label{tab:fine}
+\scriptsize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{ID} & \textbf{Task (failure class)} & \textbf{196} & \textbf{576} & \textbf{1024} \\
+\midrule
+F1 & count nets in an Innovus view (composition) & \tbd & \tbd & \tbd \\
+F2 & layer id of a drawn rectangle (API misuse) & \tbd & \tbd & \tbd \\
+F3 & rising-edge count in a waveform (semantics) & \tbd & \tbd & \tbd \\
+F4 & highlight vs.\ bounding box (API misuse) & \tbd & \tbd & \tbd \\
+F5 & spacing violation present? (guard) & \tbd & \tbd & \tbd \\
+F6 & device type from symbol (semantics) & \tbd & \tbd & \tbd \\
+\bottomrule
+\end{tabular}
+\tnote{Classes follow ZhuLong \S6.3 verbatim so counts can be pooled: ``composition''$=$API-composition error, ``guard''$=$unauthorized guard, ``semantics''$=$underspecified semantics, ``API misuse''$=$wrong internal API.}
+\end{table}
+
+
+\subsection{RQ7: Text, Vision, or Both?}\label{sec:rq7}
+The decisive question for the deployment claim is not whether vision helps in isolation but whether the \emph{combination} beats text alone at equal task budget.
+% 中文：对部署主张而言，决定性问题不是视觉单独是否有用，而是「组合」是否在同等任务预算下优于纯文本。
+Three configurations run on the same task set: script-only (text), image-only (pixels to a description to a script), and both (pixels plus docs, Table~\ref{tab:three-chan}).
+% 中文：三种配置在相同任务集上运行：仅脚本（文本）、仅图像（像素→描述→脚本）、两者（像素+文档，表 \ref{tab:three-chan}）。
+
+\begin{table}[t]
+\centering
+\caption{RQ7: text vs.\ vision vs.\ both, assertion pass rate (\%) (T13).}
+\label{tab:three-chan}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Channel} & \textbf{PyAether} & \textbf{SKILL} & \textbf{waveform} & \textbf{Expected} \\
+\midrule
+text only & \tbd & \tbd & \tbd & baseline \\
+vision only & \tbd & \tbd & \tbd & $\downarrow$ where docs matter \\
+text $+$ vision & \tbd & \tbd & \tbd & $\uparrow$ if $\varepsilon$ shrinks \\
+\bottomrule
+\end{tabular}
+\tnote{\rv{Reverse contingency: if text$+$vision does not beat text, the visual channel is not a fidelity gain at this encoder scale, and Claim~B's positive half is reported as unsupported---while RQ6 still localizes where it fails.}}
+\end{table}
+
+\subsection{Waveform Reading}\label{sec:waveform}
+Waveforms deserve their own paragraph because they are simultaneously semantically and geometrically dense: period, duty cycle, edge count, glitch width and threshold crossing are \emph{measurements}, not labels.
+% 中文：波形值得单列一段，因为它同时语义与几何密集：周期、占空比、边沿数、毛刺宽度与阈值穿越是「测量值」而非标签。
+The encoder is a general-purpose $224/16$ ViT, so a $16{\times}16$\,px/token grid must separate a real rising edge from a glitch that occupies a fraction of a pixel row---the same regime in which ZhuLong's WaveView slice already fails on a single edge (WaveView-037 returns \texttt{N/A}).
+% 中文：编码器是通用 224/16 ViT，故 16×16 像素/token 的网格必须把真实上升沿与仅占像素行一小部分的毛刺分开——正是 ZhuLong 的 WaveView 切片已在单边沿上失败（WaveView-037 返回 N/A）的区域。
+Table~\ref{tab:wave} fixes four subtasks and the three tiers; \emph{no} claim is made in advance about whether $196$ suffices.
+% 中文：表 \ref{tab:wave} 固定四个子任务与三档；对 196 是否够用不作任何预设。
+
+\begin{table}[t]
+\centering
+\caption{Waveform reading subtasks (T14), pass rate (\%).}
+\label{tab:wave}
+\scriptsize
+\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Subtask} & \textbf{T196} & \textbf{T576} & \textbf{T1024} \\
+\midrule
+period measurement ($\pm$5\%) & \tbd & \tbd & \tbd \\
+edge count (exact) & \tbd & \tbd & \tbd \\
+glitch present (yes/no) & \tbd & \tbd & \tbd \\
+threshold-crossing time & \tbd & \tbd & \tbd \\
+\bottomrule
+\end{tabular}
+\tnote{Task source: ZhuLong WaveView slice ($77$ tasks) and the WaveView-037 single-edge failure; numeric tolerance follows the assertion sandbox, not a human scale.}
+\end{table}
+

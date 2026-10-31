@@ -1,15 +1,16 @@
+% DEPRECATED 2026-10-31: 本文件已不再被 main.tex include；内容已并入 6_vision_encoder.tex (§6) / 5_llm_posttrain.tex (§5.7) / 10_conclusion.tex (§10)。保留仅供历史对照。
 \section{Conclusion}
 
 We presented BaiZe, an end-to-end multimodal agentic system: a $\approx$2.2B-parameter hybrid (state-space + attention) language model built from scratch, post-trained for agentic capability, paired with a custom vision encoder, aligned into a multimodal model, and adapted to the semiconductor domain.
-% 中文：我们提出了 BaiZe，一个端到端多模态智能体系统：一个约 22 亿参数的混合（状态空间+注意力）语言模型，从零构建、为智能体能力做后训练，配以自研视觉编码器，对齐为多模态模型，并适配到半导体领域。
+% 涓枃锛氭垜浠彁鍑轰簡 BaiZe锛屼竴涓鍒扮澶氭ā鎬佹櫤鑳戒綋绯荤粺锛氫竴涓害 22 浜垮弬鏁扮殑娣峰悎锛堢姸鎬佺┖闂?娉ㄦ剰鍔涳級璇█妯″瀷锛屼粠闆舵瀯寤恒€佷负鏅鸿兘浣撹兘鍔涘仛鍚庤缁冿紝閰嶄互鑷爺瑙嗚缂栫爜鍣紝瀵归綈涓哄妯℃€佹ā鍨嬶紝骞堕€傞厤鍒板崐瀵间綋棰嗗煙銆?
 Through a controlled from-scratch comparison, we selected a sequential Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S5) on the final backbone.
-% 中文：通过受控的从零对比，我们因顺序式 Mamba2 混合骨干具有更低的「每参数损失」与显著更快的推理而选择它、而非稠密 Transformer，随后在最终骨干上执行分阶段的、受预算约束的超参搜索（S1--S5）。
+% 涓枃锛氶€氳繃鍙楁帶鐨勪粠闆跺姣旓紝鎴戜滑鍥犻『搴忓紡 Mamba2 娣峰悎楠ㄥ共鍏锋湁鏇翠綆鐨勩€屾瘡鍙傛暟鎹熷け銆嶄笌鏄捐憲鏇村揩鐨勬帹鐞嗚€岄€夋嫨瀹冦€佽€岄潪绋犲瘑 Transformer锛岄殢鍚庡湪鏈€缁堥骞蹭笂鎵ц鍒嗛樁娈电殑銆佸彈棰勭畻绾︽潫鐨勮秴鍙傛悳绱紙S1--S5锛夈€?
 Stages~(ii) to~(v) are specified here as a protocol and evaluated on a common execution-based benchmark~\cite{liu2026zhulong}; their measurements are reported as \textbf{[TBD]}.
-% 中文：第 (ii) 至 (v) 阶段在此作为协议给出，并在共同的基于执行的基准 \cite{liu2026zhulong} 上评测；其测量结果以 \textbf{[TBD]} 表示（待填）。
+% 涓枃锛氱 (ii) 鑷?(v) 闃舵鍦ㄦ浣滀负鍗忚缁欏嚭锛屽苟鍦ㄥ叡鍚岀殑鍩轰簬鎵ц鐨勫熀鍑?\cite{liu2026zhulong} 涓婅瘎娴嬶紱鍏舵祴閲忕粨鏋滀互 \textbf{[TBD]} 琛ㄧず锛堝緟濉級銆?
 The complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe.
-% 中文：完整配方与单条可复现命令，将整个构建过程封装在 NVIDIA NeMo 配方之下。
+% 涓枃锛氬畬鏁撮厤鏂逛笌鍗曟潯鍙鐜板懡浠わ紝灏嗘暣涓瀯寤鸿繃绋嬪皝瑁呭湪 NVIDIA NeMo 閰嶆柟涔嬩笅銆?
 
 The immediate next step is agentic fine-tuning with the \texttt{UltraData-SFT-Agent} corpus toward a deployable agent core for EDA and embedded applications.
-% 中文：下一步工作是使用 \texttt{UltraData-SFT-Agent} 语料进行智能体微调，目标是得到可用于 EDA 与嵌入式应用的可部署智能体内核。
+% 涓枃锛氫笅涓€姝ュ伐浣滄槸浣跨敤 \texttt{UltraData-SFT-Agent} 璇枡杩涜鏅鸿兘浣撳井璋冿紝鐩爣鏄緱鍒板彲鐢ㄤ簬 EDA 涓庡祵鍏ュ紡搴旂敤鐨勫彲閮ㄧ讲鏅鸿兘浣撳唴鏍搞€?
 We hope this blueprint lowers the barrier for cost-bounded teams building their own efficient agentic SLMs from scratch.
-% 中文：我们希望这份蓝图能降低受成本约束的团队从零构建自有高效智能体 SLM 的门槛。
+% 涓枃锛氭垜浠笇鏈涜繖浠借摑鍥捐兘闄嶄綆鍙楁垚鏈害鏉熺殑鍥㈤槦浠庨浂鏋勫缓鑷湁楂樻晥鏅鸿兘浣?SLM 鐨勯棬妲涖€

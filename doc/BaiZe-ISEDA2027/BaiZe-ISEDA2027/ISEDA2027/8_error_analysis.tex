@@ -1,0 +1,33 @@
+\section{Error Analysis}\label{sec:errors}
+
+Comparisons are only interpretable if failures are classified the same way, so we adopt ZhuLong's four classes verbatim---\textbf{wrong internal API} (a correct API family, but an undocumented binding contract violated), \textbf{unauthorized guard} (a call the runtime forbids in that context), \textbf{underspecified semantics} (the same name means different things across hosts), and \textbf{host-language contract} (the embedding language, not the EDA API, is violated).
+% 中文：只有失败分类口径一致，比较才有解释力，故我们原样采用 ZhuLong 的四类——错误的内部 API（族对但违反未文档化的绑定契约）、未授权的守卫（运行时在该上下文禁止的调用）、语义未指定（同名在不同宿主含义不同）、宿主语言契约（违反的是嵌入语言而非 EDA API）。
+These are the L4 failures ZhuLong identifies as invisible in documentation and only weakly exposed by execution---precisely the regime where a 2.2B model with fewer API facts in weights should fail more, and where a visual channel either helps (if the violation is visible) or does not.
+% 中文：这些正是 ZhuLong 指出的 L4 失败：文档不可见、执行仅弱暴露——正是权重中 API 事实更少的 2.2B 模型应失败更多之处，也是视觉通道要么有用（若违规可见）、要么无用之处。
+
+\begin{table*}[!t]
+\centering
+\caption{Error taxonomy pooled with ZhuLong (T16). Counts are execution-stage failures over all runs; ZhuLong totals from its \S6.3.}
+\label{tab:errors}
+\scriptsize
+\renewcommand{\arraystretch}{0.84}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+\textbf{Class} & \textbf{ZL PyA.} & \textbf{ZL SKILL} & \textbf{ZL WaveView} & \textbf{ZL Innovus} & \textbf{\llm PyA.} & \textbf{\llm SKILL} & \textbf{$\Delta$} \\
+\midrule
+Wrong internal API & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd \\
+Unauthorized guard & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd \\
+Underspecified semantics & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd \\
+Host-language contract & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd & \tbd \\
+\midrule
+Total execution failures & $29/109$ & $31/281$ & $1/43$ & $1/23$ & \tbd & \tbd & \tbd \\
+\bottomrule
+\end{tabular}
+\tnote{ZhuLong reports totals only ($29$ of $109$ PyAether traces, $31$ of $281$ SKILL, $1$ of $43$ WaveView, $1$ of $23$ Innovus); the per-class split of those totals is re-derived from the same traces so the two papers can be pooled cell by cell. \rv{Reverse contingency: if \llm's failures concentrate in ``wrong internal API'' rather than in L4 classes, the diagnosis is missing knowledge rather than insufficient observation, and the remedy is retrieval/annealing, not pixels.}}
+\end{table*}
+
+One asymmetry is worth stating in advance: ZhuLong's SKILL slice has by far the highest failure denominator ($31/281$), because SKILL lacks the \texttt{apropos}/\texttt{describe} introspection that lets PyAether traces recover API knowledge from execution.
+% 中文：有一处不对称值得预先说明：ZhuLong 的 SKILL 切片失败分母最大（31/281），因为 SKILL 缺少 PyAether 那种 \texttt{apropos}/\texttt{describe} 自省，无法从执行中恢复 API 知识。
+If \llm fails disproportionately there, the honest conclusion is that a local subagent needs a retrieval stack on SKILL even if it does not on PyAether---a scope limitation we pre-commit to reporting.
+% 中文：若 \llm 在该处失败比例过高，诚实结论是：本地 subagent 在 SKILL 上即使不在 PyAether 上也需要检索栈——这是我们先承诺如实报告的适用范围限制。

@@ -4,6 +4,8 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 
 \usepackage{times}
+% 本地最小 TeX 缺 Courier 字模（pcrr7t.tfm）时回退到 cmtt，保证任何机器都能编译
+\IfFileExists{pcrr7t.tfm}{}{\renewcommand{\ttdefault}{cmtt}}
 \usepackage{cite}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -12,18 +14,23 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{url}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
 \usepackage[table]{xcolor}
 \usepackage{xspace}
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X} % 左对齐+自动换行
 
 \newcommand{\llm}{BaiZe\xspace}
+% ---- Scaffolding macros (2026-10-31 rewrite) -------------------------------
+\newcommand{\tbd}{\textcolor[rgb]{0.85,0.10,0.10}{\textbf{[TBD]}}}
+\newcommand{\est}{\textcolor[rgb]{0.45,0.45,0.45}{\emph{est.}}}
+\newcommand{\phfig}[2]{\fbox{\parbox[c][#1][c]{0.94\linewidth}{\centering\scriptsize #2}}}
+\newcommand{\tnote}[1]{\par\vspace{1pt}{\scriptsize #1}}
+\newcommand{\rv}[1]{\textcolor[rgb]{0.10,0.35,0.65}{\textbf{#1}}} % reverse-contingency tag
 
 % ---- Author information: ISEDA submission requires NO author information, so the
 % author block is left empty for review. Uncomment the block below for the camera-ready.
-\title{BaiZe Technical Report}
+\title{BaiZe: A 2.2B Local Multimodal Subagent for EDA Scripting\\[2pt]
+{\large and a Test of the Observation-Fidelity Account}}
 
 % \author{\IEEEauthorblockN{Yang Liu}
 % \IEEEauthorblockA{\textit{CXMT (ChangXin Memory Technologies)}\\
@@ -42,9 +49,13 @@
 \input{ISEDA2027/4_llm_pretrain}
 \input{ISEDA2027/5_llm_posttrain}
 \input{ISEDA2027/6_vision_encoder}
-\input{ISEDA2027/7_mllm}
-\input{ISEDA2027/8_domain_rl}
-\input{ISEDA2027/9_conclusion}
+\input{ISEDA2027/7_serving_economics}
+\input{ISEDA2027/8_error_analysis}
+\input{ISEDA2027/9_discussion}
+\input{ISEDA2027/10_conclusion}
+
+\appendix
+\input{ISEDA2027/A1_experiment_plan}
 
 \bibliographystyle{IEEEtran}
 \bibliography{reference}

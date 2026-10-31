@@ -1,0 +1,62 @@
+\section{Experiment Plan and Table Index}\label{app:plan}
+
+Table~\ref{tab:plan} is the execution order; it exists so that a reader can tell which claims are cheap to check and which are blocked.
+% 中文：表 \ref{tab:plan} 是执行顺序；它的作用是让读者看清哪些主张可以廉价检验、哪些被阻塞。
+Table~\ref{tab:index} maps every claim to its research question, its table, and its falsifier, so that no placeholder table can be read as a result.
+% 中文：表 \ref{tab:index} 把每条主张映射到研究问题、对应表格与证伪条件，确保任何占位表都不会被误读为结果。
+
+\begin{table}[t]
+\centering
+\caption{Experiment plan by priority (P0 first). Budgets are estimates on $8{\times}$H100 unless stated.}
+\label{tab:plan}
+\scriptsize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}llp{2.05cm}lr@{}}
+\toprule
+\textbf{Exp.} & \textbf{Depends on} & \textbf{Shape} & \textbf{Est.} & \textbf{P} \\
+\midrule
+RQ1 & stage (ii) SFT & $449{\times}5$ runs & $\approx$290 GPU-h & P0 \\
+RQ4 & RQ1 harness & $3{\times}158{\times}5$ & $\approx$60 GPU-h & P0 \\
+RQ2 & RQ1 harness & $5{\times}449{\times}5$ & $\approx$1{,}450 GPU-h & P1 \\
+RQ5/RQ6 & stage (iv) & $50{\times}3$ tiers & $\approx$40 GPU-h & P1 \\
+T15 & hardware & measurement & $\approx$2 GPU-h & P1 \\
+SKILL/Tcl & RQ1 pass & $2{\times}314{\times}5$ & $\approx$800 GPU-h & P2 \\
+RQ7 & RQ5/RQ6 & $3{\times}$ channels & $\approx$120 GPU-h & P2 \\
+RQ3/T10 & RQ1 harness & $4{\times}158{\times}5$ & $\approx$200 GPU-h & P3 \\
+\bottomrule
+\end{tabular}
+\tnote{Estimates scale ZhuLong's measured $464$\,s/task and five-run protocol; they exclude data preparation and are marked \est. A blocked row is reported as blocked, never as zero.}
+\end{table}
+
+\begin{table*}[!t]
+\centering
+\caption{Claim $\to$ RQ $\to$ table $\to$ falsifier index. Every table in the paper appears exactly once.}
+\label{tab:index}
+\scriptsize
+\renewcommand{\arraystretch}{0.82}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llllp{6.3cm}@{}}
+\toprule
+\textbf{Claim} & \textbf{RQ} & \textbf{Table} & \textbf{Question} & \textbf{Falsifier / reverse contingency} \\
+\midrule
+A & RQ1 & \ref{tab:backbone} & pooled $\ge 53.2\%$? & $<53.2\%$ $\Rightarrow$ Pareto report, not a claim \\
+--- & RQ2 & \ref{tab:retrieval} & does 2B need retrieval more? & delta not larger $\Rightarrow$ weights substitute \\
+--- & RQ3 & \ref{tab:budget} & is $k$-monotonicity kept? & saturates at $k{=}3$ $\Rightarrow$ default budget 3 \\
+C & RQ4 & \ref{tab:readback} & ladder span vs.\ $7.1$\,pp & both spans pre-interpreted \\
+--- & RL & \ref{tab:reward} & which reward wins? & cost penalty over-weighted $\Rightarrow$ retune \\
+B & RQ5 & \ref{tab:vtoken-abl} & is there a token threshold? & no threshold $\Rightarrow$ coarse suffices \\
+--- & RQ6 & \ref{tab:fine} & what breaks at 196? & failures localize the mechanism \\
+--- & RQ7 & \ref{tab:three-chan} & does text$+$vision beat text? & no $\Rightarrow$ visual gain unsupported \\
+--- & wave. & \ref{tab:wave} & does 196 read edges? & source: WaveView-037 \\
+A & econ & \ref{tab:econ} & cost per task & memory negligible $\Rightarrow$ restate A \\
+--- & err. & \ref{tab:errors} & four-class split & failures not L4 $\Rightarrow$ remedy is retrieval \\
+--- & arch & \ref{tab:protocol}, \ref{tab:vtoken}, \ref{tab:harness} & protocol / tiers / identity & any deviation invalidates comparison \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Six-page version.}
+If the venue cap is six pages, the cut is mechanical: keep Tables~\ref{tab:backbone}, \ref{tab:readback}, \ref{tab:errors}; move \ref{tab:protocol}--\ref{tab:harness}, \ref{tab:retrieval}--\ref{tab:reward}, \ref{tab:vtoken-abl}--\ref{tab:wave}, \ref{tab:econ}, \ref{tab:plan} and \ref{tab:index} to a supplementary file; keep \S\ref{sec:intro}, \S\ref{sec:rq1}, \S\ref{sec:rq4}, \S\ref{sec:rq5}--\S\ref{sec:waveform} and \S\ref{sec:discussion} in the body.
+% 中文：六页版。若会场限制六页，裁切可机械化执行：正文保留表 \ref{tab:backbone}、\ref{tab:readback}、\ref{tab:errors}；把 \ref{tab:protocol}–\ref{tab:harness}、\ref{tab:retrieval}–\ref{tab:reward}、\ref{tab:vtoken-abl}–\ref{tab:wave}、\ref{tab:econ}、\ref{tab:plan}、\ref{tab:index} 移入附录文件；正文保留 §\ref{sec:intro}、§\ref{sec:rq1}、§\ref{sec:rq4}、§\ref{sec:rq5}–§\ref{sec:waveform} 与 §\ref{sec:discussion}。
+The four-stage pre-training and encoder sections compress to their tables, since both are complete and already reported elsewhere.
+% 中文：预训练与编码器两节压到表格，因为二者均已完成且已在别处报告。
