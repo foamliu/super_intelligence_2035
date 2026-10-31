@@ -16,3 +16,7 @@ This is $+12.4$\,pp above a contrastive-only baseline at the same sample budget,
 % 中文：这比同样本量下仅用对比项的基线高 $+12.4$ pp，该点即第 (iv) 阶段使用的配置。
 The $224/16$ resolution is retained because it is best on both loss and throughput; whether $196$ visual tokens suffice for detail-dense layout and schematic views is tested in stage~(iv) (Section~\ref{sec:mllm}).
 % 中文：$224/16$ 分辨率被保留，因为它在损失与吞吐两方面都最优；$196$ 个视觉 token 是否足以应付细节密集的版图与原理图视图，将在第 (iv) 阶段检验（第 \ref{sec:mllm} 节）。
+
+\paragraph{Encoder upgrade.}
+A second tower---ViT-L/14 ($304$M) trained with open\_clip under the same objective but lower peak LR ($5{\times}10^{-4}$) and longer warm-up ($3000$ steps)---reaches $\mathbf{68.236\pm0.018\%}$ top-1 (5-NN $58.904\%$) on ImageNet-1k (Protocol~B, 3 seeds), versus $64.337\%$ / $55.956\%$ for the ViT-B/16 ($86$M) tower; the $+3.9$\,pp gap is a joint effect of tower size, LR, and warm-up, not a capacity-only attribution.
+% 中文：编码器升级。第二个塔——ViT-L/14（304M），以 open_clip 在相同目标函数但更低峰值学习率（5×10⁻⁴）与更长预热（3000 步）下训练——在 ImageNet-1k 线性探测（Protocol B、3 seeds）上达到 68.236±0.018% top-1（5-NN 58.904%），对比 ViT-B/16（86M）塔的 64.337% / 55.956%；+3.9pp 的差距是塔规模、学习率与预热的联合效应，不能归因于容量单一变量。

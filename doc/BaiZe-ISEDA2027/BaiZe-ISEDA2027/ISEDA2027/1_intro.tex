@@ -32,6 +32,8 @@ Layout, schematic, and waveform views carry much of the correctness signal in cu
 % 中文：面向视觉 EDA 产物的多模态 grounding。版图、原理图与波形视图承载了定制与模拟设计中大量的正确性信号，然而纯文本子智能体无法直接观测它们。
 BaiZe pairs its from-scratch language core with a from-scratch vision encoder and tests whether its 196-token-per-image budget suffices for such detail-dense views, or whether finer token budgets are required for reliable visual grounding.
 % 中文：BaiZe 将其从零训练的语言内核与从零训练的视觉编码器配对，检验每图 196 token 的预算是否足以应对这类细节密集的视图，还是需要更细的 token 预算才能实现可靠的 visual grounding。
+Measured results: the encoder reaches $68.2\%$ linear-probe on an internal protocol, yet the MLLM stage averages $26.1\%$ over 11 benchmarks, indicating that encoder-quality gains do not transfer downstream at the $224$-px single-tile setting.
+% 中文：实测结果：编码器在内部协议上线性探测达 68.2\%，但 MLLM 阶段在 11 个基准上仅平均 26.1\%，表明编码器质量的增益在 224 像素单块设定下未迁移到下游。
 \end{itemize}
 
 We test this architecture rather than assume it: the question we put to the benchmark is whether a small local subagent is viable at production scale, and where its cost--accuracy point lands.
