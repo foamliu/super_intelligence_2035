@@ -1,13 +1,13 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-11-01 01:53 #1038：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~48755s ≈ 13.5h）活着，iter 37000/700k（5.29%），loss 近8步 2.216/2.230/2.177/2.167/2.168/2.153/2.165/2.169（稳态~2.17），grad-norm 0.380(spike)/0.143/0.090/0.086/0.083/0.117/0.100/0.096（已恢复），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped，~6.9s/step ≈ ~608K tok/s，ckpt@iter_36000（next@38000）。双机16×H100 GPU .12/.29 97-100%util/~75GB。论文6页/ERR=0 维持。ETA ~52.5天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=30.5KB（归档 0KB）。
+> 🆕 2026-11-01 02:15 #1039：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~50060s ≈ 13.9h）活着，iter 37183/700k（5.31%），loss 近8步 2.166/2.065/2.212/2.106/2.207/2.171/2.209/2.108（稳态~2.14），grad-norm 0.128/0.110/0.095/0.119/0.105/0.107/0.108/0.102（极稳无spike），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped，~6.9s/step ≈ ~608K tok/s，ckpt@iter_36000（next@38000）。双机16×H100 GPU .12/.29 97-100%util/~75GB。论文6页/ERR=0 维持。ETA ~53.7天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=29.2KB（归档 0KB）。
+> 📦 §#1038（11-01 01:53, S1健康监控iter37000/loss~2.17/0NaN/~608K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37000(5.29%), loss~2.17稳态, grad-norm 0.380(spike已恢复), ~608K tok/s, ckpt@36000。被#1039监控。需要时再读。
 > 📦 §#1037（11-01 01:33, S1健康监控iter36838/loss~2.16/0NaN/~626K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter36838(5.26%), loss~2.16稳态, grad-norm 0.983(spike@36837已恢复), ~626K tok/s, ckpt@36000。被#1038监控。需要时再读。
 > 📦 §#1036（11-01 01:15, S1健康监控iter36656/loss~2.13/0NaN/~606K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter36656(5.24%), loss~2.13稳态, grad-norm极稳, ~606K tok/s, ckpt@36000。被#1037监控。需要时再读。
 > 📦 §#1035（11-01 01:00, S1健康监控iter36490/loss~2.16/0NaN/~607K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter36490(5.21%), loss~2.16稳态, grad-norm 1.067(spike已恢复), ~607K tok/s, ckpt@36000。被#1036监控。需要时再读。
 > 📦 §#1034（11-01 00:36, S1健康监控iter36320/loss~2.18/0NaN/~600K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter36320(5.19%), loss~2.18稳态, grad-norm极稳, ~600K tok/s, ckpt@36000。被#1035监控。需要时再读。
 > 📦 §#1033（11-01 00:15, S1健康监控iter36151/loss~2.17/0NaN/~608K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter36151(5.16%), loss~2.17稳态, grad-norm极稳, ~608K tok/s, ckpt@36000。被#1034监控。需要时再读。
-> 📦 §#1032（10-31 23:51, S1健康监控iter35966/loss~2.18/0NaN/~626K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter35966(5.14%), loss~2.18稳态, grad-norm极稳, ~626K tok/s, ckpt@34000。被#1033监控。需要时再读。
 > 📦 §#1031（10-31 23:31, S1健康监控iter35786/loss~2.13/0NaN/~629K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter35786(5.11%), loss~2.13稳态, grad-norm极稳, ~629K tok/s。被#1032监控。需要时再读。
 > 📦 §#1030（10-31 23:11, S1健康监控iter35606/loss~2.17/0NaN/~645K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter35606(5.09%), loss~2.17稳态, grad-norm极稳, ~645K tok/s。被#1031监控。需要时再读。
 > 📦 §#1029（10-31 22:54, S1健康监控iter35430/loss~2.16/0NaN/~610K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter35430(5.06%), loss~2.16稳态, grad-norm极稳, ~610K tok/s。被#1030监控。需要时再读。
