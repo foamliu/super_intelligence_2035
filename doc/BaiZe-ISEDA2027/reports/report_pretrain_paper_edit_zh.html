@@ -37,10 +37,10 @@ li{margin:4px 0;}
 <h1>BaiZe 论文预训练章节改稿报告</h1>
 <div class="summary-box">
 <table class="meta-table">
-<tr><th>生成时间</th><td>2026-10-31</td></tr>
+<tr><th>生成时间</th><td>2026-10-31（第二轮：篇幅修正 7→6 页）</td></tr>
 <tr><th>改稿文件</th><td><code>4_llm_pretrain.tex</code> · <code>0_abstract.tex</code></td></tr>
 <tr><th>编译结果</th><td><span class="ok">ERR=0</span> · <span class="ok">UNDEF=0</span> · Overfull=0 · <span class="ok">Pages=6</span></td></tr>
-<tr><th>改稿条目</th><td>1 P0 + 6 P1 + 4 P2 = 11 条</td></tr>
+<tr><th>改稿条目</th><td>第一轮 11 条（1 P0 + 6 P1 + 4 P2）+ 第二轮 7 条（篇幅修正）= 18 条</td></tr>
 <tr><th>未采用项</th><td>1 条（64K/128K 吞吐外推值保留 est.）</td></tr>
 </table>
 </div>
@@ -157,8 +157,56 @@ li{margin:4px 0;}
 <li><span class="ok">✓</span> 未碰 GPU / 未打断 S1 训练</li>
 </ul>
 
+<h2>八、篇幅修正（7→6 页，7 处删中间过程）</h2>
+<p><strong>背景</strong>：#1000 验证时为 6 页。其后他线修订 abstract/intro（commit 4ec544f5a / df1924ec4）导致参考文献溢出至第 7 页（#1004 实测 Pages=7）。本轮按运维令「删中间过程、保最终数字」在 <code>4_llm_pretrain.tex</code> 做 7 处精简，将页数修正回 6 页。所有关键数字（83.9B / 74:19:7 / ~82 / 39,377 / 613,992 / 2.94T / 2.151 / 30,660 / 598K / θ=10⁶）均保留未动。</p>
+
+<h3><span class="tag tag-p2">trim</span> #1 删除 replay 解释段 <span class="section-id">§4.6 原L68-69</span></h3>
+<div class="before"><del>Replay is disabled deliberately: a replayed graph over the data-dependent Mamba-2 state hit a throughput plateau, and this is a precondition for the rate below.</del></div>
+<div class="after"><ins>（删除整段；前文已提及 "computing-graph replay disabled"，下文直接给出吞吐率）</ins></div>
+<div class="evidence"><strong>理由</strong>：中间过程解释段，不影响最终数字。</div>
+
+<h3><span class="tag tag-p2">trim</span> #2 精简 FP8 精度解释 <span class="section-id">§4.6 原L72-73</span></h3>
+<div class="before"><del>Precision was chosen per configuration: at 4096 FP8 runs at 0.91× BF16, whereas at 16,384 FP8 pays, and 613,992 tok/s peak is FP8.</del></div>
+<div class="after"><ins>The 613,992 tok/s peak is an FP8 measurement at M=16,384; at shorter sequences FP8 reverts to BF16.</ins></div>
+<div class="evidence"><strong>保留</strong>：613,992。删除：4096 交叉点细节。</div>
+
+<h3><span class="tag tag-p2">trim</span> #3 精简长上下文闸门准入条件 <span class="section-id">§4.5 原L40</span></h3>
+<div class="before"><del>…impose three entry conditions: supplement long documents until ≥32K reaches 20% and ≥128K 5% (until then stops at 64K); reset state at every EOD; de-duplicate first.</del></div>
+<div class="after"><ins>…gate the ladder: ≥32K must reach 20% and ≥128K 5% (until then stops at 64K), with EOD state resets and prior de-duplication.</ins></div>
+<div class="evidence"><strong>保留</strong>：20%/5% 目标、64K 上限。三条合并为一句。</div>
+
+<h3><span class="tag tag-p2">trim</span> #4 精简合成针数据列表 <span class="section-id">§4.7 原L99-100</span></h3>
+<div class="before"><del>…diversified over single-needle NIAH, multi-needle MK-NIAH, multi-hop, variable-length, paraphrase-plus-noise; remainder is natural long documents, since purely synthetic teaches answering about needles rather than reading.</del></div>
+<div class="after"><ins>Synthetic needle data (NIAH, multi-hop, variable-length) takes 20–40%; the remainder is natural long documents.</ins></div>
+<div class="evidence"><strong>保留</strong>：20–40%。删除：5 种枚举 + 缺点解释。</div>
+
+<h3><span class="tag tag-p2">trim</span> #5 精简评估协议 <span class="section-id">§4.7 原L108-111</span></h3>
+<div class="before"><del>…measure base capabilities—common-sense reasoning, needle retrieval (target ≥95% at 1M), perplexity (≤1.10× at 1M), format following—reported separately. / Retrieval uses depth-by-position grid with all-hit scoring; complex reasoning recorded as baseline only.</del></div>
+<div class="after"><ins>…measure base capabilities—needle retrieval (target ≥95% at 1M) and perplexity extrapolation (≤1.10× at 1M)—reported separately from post-training.</ins></div>
+<div class="evidence"><strong>保留</strong>：≥95%/1M、≤1.10×/1M。删除：format following、检索方法论段。</div>
+
+<h3><span class="tag tag-p2">trim</span> #6 精简架构对比表标题 <span class="section-id">§4.8 原L138</span></h3>
+<div class="before"><del>…measured from scratch under matched data, seed, and GPU footprint, same node, same configuration). Training throughput was re-measured…The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks.</del></div>
+<div class="after"><ins>…from scratch, matched data/seed/GPU, same node). Throughput re-measured on 8×H100; decode gap measured without CUDA graphs and narrows under production stacks.</ins></div>
+<div class="evidence"><strong>保留</strong>：MiniCPM5-2B、8×H100、CUDA graphs。caveat 3 句→1.5 句。</div>
+
+<h3><span class="tag tag-p2">trim</span> #7 删除 NTK/YaRN 否定句 <span class="section-id">§4.7 原L104-105</span></h3>
+<div class="before"><del>…128K is reached by training and 1M is only an 8× extrapolation; no position interpolation, NTK rescaling, or YaRN is enabled.</del></div>
+<div class="after"><ins>…128K is reached by training and 1M is only an 8× extrapolation.</ins></div>
+<div class="evidence"><strong>保留</strong>：θ=10⁶、128K、1M 8×。删除：否定句（正面描述已足够）。</div>
+
+<h2>九、篇幅修正编译验收</h2>
+<table>
+<tr><th>检查项</th><th>结果</th><th>判据</th></tr>
+<tr><td>Errors</td><td><span class="ok">0</span></td><td>= 0 ✓</td></tr>
+<tr><td>Undefined refs</td><td><span class="ok">0</span></td><td>= 0 ✓</td></tr>
+<tr><td>Overfull</td><td><span class="ok">0</span></td><td>≤2 ✓</td></tr>
+<tr><td>PDF 页数</td><td><span class="ok">6</span></td><td>≤6 ✓（7→6 修正成功）</td></tr>
+<tr><td>main.pdf</td><td><span class="ok">已 restore</span></td><td>不 commit ✓</td></tr>
+</table>
+
 <div class="footer">
-<p>BaiZe Pretrain Agent · 2026-10-31 · 改稿报告</p>
+<p>BaiZe Pretrain Agent · 2026-10-31 · 改稿报告（第二轮：篇幅修正 7→6 页）</p>
 </div>
 </body>
 </html>

@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 13:1x #1004：**论文改稿复核 + 编译验证（revert 后首次）**。运维令 11:2x `[已完成]`。复核 4_llm_pretrain.tex 全部 P0/P1 编辑在 revert(9ab1e4b3)+后续 abstract/intro 修订(4ec544f5a/df1924ec4) 后仍完好：83.9B✅/74:19:7✅/~82 GPU·h✅/39,377✅/cite{openbmb2026minicpm5}✅/warmup 2000 vs 250✅/Megatron-Core reuse 56层✅。0_abstract.tex：2.94T/2.151/30,660/598K✅，无旧口径(44B/1.357/412)✅。全章节扫描 1_intro/2_related/5_posttrain/9_conclusion 均无旧口径✅。clean compile(pdflatex→bibtex→pdflatex×2)：ERR=0/UNDEF=0/Overfull=0。⚠️ **Pages=7（非6）**——第7页为参考文献溢出，由 abstract/intro 修订（他线 commit 4ec544f5a/df1924ec4）导致，非 pretrain 改稿所致；#1000 验证时为6页。main.pdf 已 restore（不 commit）。S1 训练未碰。未完成指令：无。📦 体积：TASK=25.8KB / MEMORY=29.3KB。
+> 🆕 2026-10-31 13:4x #1005：**篇幅修正 7→6 页（运维令 11:2x ④篇幅硬约束补完）**。#1004 发现 Pages=7（参考文献溢出，他线 abstract/intro 修订所致）。本轮在 4_llm_pretrain.tex 做 7 处「删中间过程、保最终数字」精简：① 删 replay 解释段 ② 精简 FP8 精度解释（保 613,992）③ 精简长上下文闸门准入条件（保 20%/5%/64K）④ 精简合成针数据列表（保 20-40%）⑤ 精简评估协议（保 ≥95%/1M、≤1.10×/1M）⑥ 精简架构对比表标题 ⑦ 删 NTK/YaRN 否定句（保 θ=10⁶/128K/1M 8×）。clean compile(pdflatex→bibtex→pdflatex×2)：ERR=0/UNDEF=0/Overfull=0/**Pages=6**✅。P0/P1 全部关键数字复核完好：83.9B✅/74:19:7✅/~82✅/39,377✅/cite✅/warmup✅/Megatron-Core✅。报告 report_pretrain_paper_edit_zh.html 更新至 18.8KB（+八/九节）。main.pdf 已 restore（不 commit）。S1 训练未碰。未完成指令：无。📦 体积：TASK=25.8KB / MEMORY=29.8KB。
+
+> 📦 §#1004（10-31 13:1x, 论文改稿复核(revert后首次) ERR=0/Pages=7(他线致溢出)）→ daily-memories/2026-10-31.md；**结论**：P0/P1全部完好, 但Pages=7(他线abstract/intro修订致参考文献溢出)。被#1005修正为6页。需要时再读。
 
 > 📦 §#1003（10-31 12:4x, S1健康监控(重启后首次)iter30186/loss~2.15/0NaN/~599K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1 PID1415549活着, iter30186/700k(4.31%), loss~2.15稳态, grad-norm极稳, ~599K tok/s, ckpt@30000。被#1004复核。需要时再读。
 
