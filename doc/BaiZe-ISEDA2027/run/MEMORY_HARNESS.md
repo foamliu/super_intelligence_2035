@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1109 内存自检148th PASS+scan_backlog=0+硬约束复核0结果JSON tracked✅·4路predict持续(claude-code430·codex303·hermes70·deepseek62)·3路DONE(cline500/opencode499/pi441). eval(unchanged):cline326/442(73.8%)·opencode395/488(80.9%)·pi298/410(72.7%)·claude-code260/337(77.2%)·codex172/219(78.5%)·hermes32/44(72.7%)·deepseek46/58(79.3%). infra单列✅.
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1098 incr_eval链+内存自检+体积归档✅(已压缩)·R1099-R1108 incr_eval+内存自检✅·R1109 内存自检148th+scan_backlog=0+硬约束复核✅
-当前动作:     R1109 内存自检148th PASS(运维令10-30 11:1x):avail~1.4TiB(472Gi used/2015Gi total)·无本线>50GB(最大cline-hub-daemon4.5GB·opencode1.1GB)·无partitions()/list()失控·10-29 sympy爆炸未复发. 4路orch全alive(claude-code1027734·codex1365389·hermes2019197·deepseek2020437,无Died). scan_backlog=0(01:43后无新预测需eval). 硬约束复核:eval-result tracked=0✅. predict(01:43):cline500✅opencode499·pi441·claude-code430·codex303·hermes70·deepseek62(均未变). eval(unchanged). /data6.0Tfree.
+PHASE:        R1110 内存自检149th PASS+scan_backlog=0+硬约束复核0结果JSON tracked✅·4路predict持续(claude-code430·codex303·hermes70·deepseek62)·3路DONE(cline500/opencode499/pi441). eval(unchanged):cline326/442(73.8%)·opencode395/488(80.9%)·pi298/410(72.7%)·claude-code260/337(77.2%)·codex172/219(78.5%)·hermes32/44(72.7%)·deepseek46/58(79.3%). infra单列✅.
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1098 incr_eval链+内存自检+体积归档✅(已压缩)·R1099-R1108 incr_eval+内存自检✅·R1109-R1110 内存自检+scan_backlog=0+硬约束复核✅
+当前动作:     R1110 内存自检149th PASS(运维令10-30 11:1x):avail~1.4TiB(471Gi used/2015Gi total)·无本线>50GB(最大cline-hub-daemon3.4GB·opencode1.09GB)·无partitions()/list()失控·10-29 sympy爆炸未复发. 4路orch全alive(claude-code1027734·codex1365389·hermes2019197·deepseek2020437,无Died). scan_backlog=0(01:49后无新预测需eval,近期均空patch126-133B正确跳过). 硬约束复核:eval-result tracked=0✅. predict(01:52):cline500✅opencode499·pi441·claude-code430·codex303·hermes70·deepseek62(均未变). eval(unchanged). /data6.0Tfree.
 下一步:       ①4路predict持续(claude-code430/500·codex303/500·hermes70/500(极慢~30min/题)·deepseek62/500) ②每轮scan_backlog→有新BACKLOG则incr_eval ③全部predict完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON(本轮复核0✅) ⑥TASK=34.9KB>32KB(2活跃块不可归档,<40KB红线OK)·MEMORY~31.5KB≤32KB✅
 阻塞:         无.
 ERROR_COUNT:  0
-  📦 体积：TASK=34.9KB(35757B,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY=~31.2KB(31939B,≤32KB✅)
+  📦 体积：TASK=34.9KB(35757B,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY=~31.0KB(31782B,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [01:52] R1110 内存自检149th PASS(运维令10-30 11:1x):avail~1.4TiB(471Gi used/2015Gi total)·无本线>50GB(最大cline-hub-daemon3.4GB·opencode1.09GB)·无partitions()/list()失控·10-29 sympy爆炸未复发. 4路orch全alive(claude-code1027734·codex1365389·hermes2019197·deepseek2020437,无Died). scan_backlog=0(01:49后无新预测需eval,近期claude-code15916@01:49=133B空patch·codex13297@01:40=127B空patch·hermes22080@01:24=126B空patch,均正确跳过,无需incr_eval). 硬约束复核:eval-result tracked=0✅. predict(01:52):cline500✅opencode499·pi441·claude-code430·codex303·hermes70·deepseek62(均未变). eval(unchanged):cline326/442·opencode395/488·pi298/410·claude-code260/337·codex172/219·hermes32/44·deepseek46/58. /data6.0Tfree. 未完成指令:有(10-30内存自检常驻+10-28full500跑4路predict)⇒WAITING=0.
+
 > [01:43] R1109 内存自检148th PASS(运维令10-30 11:1x):avail~1.4TiB(472Gi used/2015Gi total)·无本线>50GB(最大cline-hub-daemon4.5GB·opencode1.1GB)·无partitions()/list()失控·10-29 sympy爆炸未复发. 4路orch全alive(claude-code1027734·codex1365389·hermes2019197·deepseek2020437,无Died). scan_backlog=0(无新预测需eval). 硬约束:eval-result tracked=0✅. predict(01:43):cline500✅opencode499·pi441·claude-code430·codex303·hermes70·deepseek62(均未变). eval(unchanged):cline326/442·opencode395/488·pi298/410·claude-code260/337·codex172/219·hermes32/44·deepseek46/58. /data6.0Tfree. 未完成指令:有(10-30内存自检常驻+10-28full500跑4路predict)⇒WAITING=0.
 
 > [01:38] R1108 内存自检147th PASS(运维令10-30 11:1x):avail~1.4TiB(471Gi used/2015Gi total)·无本线>50GB(最大cline-hub-daemon3.88GB·opencode1.1GB)·无partitions()/list()失控·10-29 sympy爆炸未复发. 4路orch全alive(claude-code1027734·codex1365389·hermes2019197·deepseek2020437,无Died). scan_backlog=0(01:36后claude-code django-15814=空patch133B,正确跳过,无需incr_eval). 硬约束:eval-result tracked=0✅. predict(01:38):cline500✅opencode499·pi441·claude-code430·codex303·hermes70·deepseek62(均未变). eval(unchanged):cline326/442·opencode395/488·pi298/410·claude-code260/337·codex172/219·hermes32/44·deepseek46/58. /data6.0Tfree. 未完成指令:有(10-30内存自检常驻+10-28full500跑4路predict)⇒WAITING=0.
