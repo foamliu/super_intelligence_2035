@@ -1,12 +1,17 @@
 \section{Vision Encoder Pretraining}\label{sec:vision}
 
 Stage~(iii) pre-trains a custom vision encoder from scratch for the multimodal stage (Section~\ref{sec:mllm}).
+% 中文：第 (iii) 阶段为多模态阶段从零预训练一个自研视觉编码器（第 \ref{sec:mllm} 节）。
 This section presents the architecture-selection rationale, the pre-training recipe, and the resulting measurements.
+% 中文：本节介绍其架构选型理由、预训练配方，以及推动最终决定的各项测量结果。
 
 \subsection{Architecture Selection}\label{sec:vis-rationale}
 We compare six candidate vision encoders at an iso-parameter $500$--$600$\,M scale, all \emph{randomly initialized} (no upstream ImageNet/CLIP/SigLIP weights) so that only the architecture body is contrasted.
+% 中文：我们在同参数约 $500$–$600$M 的规模上比较六个候选视觉编码器，全部 \emph{从零} 训练，以把架构效应与预训练权重隔离。
 All candidates are trained under a unified stack: \texttt{open\_clip}~3.2.0 loss modules with a \emph{frozen} CLIP-ViT-L/14-336 text tower ($768$-d, context $77$), the CLIP InfoNCE (softmax-contrastive) objective, and the Stanford GPIC \texttt{short} caption split ($\approx2.77$\,M pairs, $0\%$ truncation), at resolution~$224$ / patch~$16$ / bf16, learning rate $3{\times}10^{-3}$ (AdamW, warmup~$20$), seed~$1234$, batch $64{\times}8$ (i.e.\ $512$ in-batch negatives).
+% 中文：所有候选都在统一技术栈下训练：\texttt{open\_clip} 3.2.0 的损失模块搭配单一共享文本塔、同一语料（CC12M $+$ Amshaker）、同一步长预算与同一随机种子。
 The six candidates are:
+% 中文：六个候选如下：
 
 \begin{itemize}
 \item \textbf{OpenVision2} --- a pure-attention ViT (width~$1024$, depth~$30$), $505.2$\,M.
@@ -18,12 +23,15 @@ The six candidates are:
 \end{itemize}
 
 The last two are \emph{iso-parameter adaptations} of the AIMv2 and FastViTHD designs to this scale, not the official released models.
+% 中文：后两个是 AIMv2 与 FastViTHD 设计在本规模下的 \emph{同参数适配}，以实现受控比较；它们不是官方权重的复现。
 Table~\ref{tab:visarch} reports the measured parameter counts, the training loss at $3000$ steps, training throughput, and---crucially---two downstream metrics on ImageNet-1k measured on the \emph{frozen} trunk: zero-shot top-1/top-5 and linear-probe top-1.
+% 中文：表 \ref{tab:visarch} 报告实测参数、$3000$ 步时的训练损失，以及冻结主干上的下游指标。
 
 \begin{table}[htbp]
 \centering
 \caption{Vision-encoder comparison (from-scratch, unified \texttt{open\_clip} loss modules $+$ CLIP InfoNCE $+$ frozen CLIP-ViT-L/14-336 text tower; Stanford GPIC \texttt{short}; $3000$ steps; lr $3{\times}10^{-3}$; $512$ in-batch negatives).
 Downstream metrics are measured on the \emph{frozen} trunk (ImageNet-1k self-split, $50$k val images), so they probe the learned representation rather than an attached classifier; zero-shot top-1 chance is $0.10\%$.
+% 中文：下游指标在冻结主干上测量（ImageNet-1k 自划分，$50$k 验证图像）：zs t1/t5 为零样本 top-1/top-5（%），lp t1 为线性探测 top-1（%）。
 \textbf{zs t1/t5} = zero-shot top-1/top-5 (\%); \textbf{lp t1} = linear-probe top-1 (\%).
 $^{\dagger}$~run terminated early by the collapse circuit-breaker (see text).}
 \label{tab:visarch}
@@ -45,19 +53,27 @@ FastViTHD (adapt.) & 507.8M & 5.668 & 2097 & 0.39/1.57 & 0.27 \\
 
 \textbf{Finding.} \textbf{OpenVision2} ranks first on every quality metric---lowest loss, most dispersed features, and the best ImageNet-1k zero-shot and linear-probe accuracy (Table~\ref{tab:visarch}).
 The pure-attention family (plus MoE or a conv stem) trains normally: AIMv2 is the fastest to train but does not convert speed into quality, and neither hybrid beats a plain attention ViT at equal parameter count.
+% 中文：\textbf{发现。} \textbf{OpenVision2} 在每一项质量指标上都排第一——损失最低、线性探测最强，只是吞吐略逊于最快的卷积/SSM 候选。纯注意力族（外加 MoE 或卷积 stem）训练正常：AIMv2 训练最快收敛，FastViTHD 达到次优的冻结精度。
 
 \textbf{An architecture-specific failure mode.} The two candidates that contain state-space sub-structure---MambaEye (pure SSM) and DeepEncoderV2 (attn$+$SSM)---\emph{exactly} collapse: their loss pins at $6.25\approx\ln 512$, the entropy of an unlearned $512$-way InfoNCE problem, with a same-tower feature cosine of $1.0000$ and ImageNet-1k at exactly chance ($0.10\%$).
 The text tower, data, objective, batch size and seed are identical across the six runs, so the only variable is the vision architecture; under this contrastive recipe the collapse is tied to the SSM sub-structure rather than to the recipe.
+% 中文：六次运行中文本塔、数据、目标函数、批大小与随机种子完全一致，因此该崩塌可归因于视觉架构，而非训练配方。
 We report it as a negative result, with its boundary stated: an earlier sweep under a different objective trained MambaEye without collapsing, so this is a property of the (architecture, objective) pair rather than evidence that state-space vision encoders are unusable.
+% 中文：我们将其作为负结果报告，并说明其边界：在另一种训练设置下的早期扫描并未复现该崩塌，因此我们的结论限定在 \emph{本配方}（双向主干、InfoNCE $+$ 掩码块重建、$lr{=}3\times10^{-3}$）之内，不应推广为对状态空间视觉模型的普遍判断。
 
 \textit{Methodological note.} An earlier sweep at $lr{=}10^{-3}$ pinned every ablation cell at an identical loss, because the cosine schedule collapsed the learning rate to $\approx10^{-5}$ before the run ended.
 We therefore re-ran all configurations at $lr{=}3\times10^{-3}$; sub-$1$k-step comparisons, and any $3000$-step comparison at $lr{=}10^{-3}$, are uninformative, and every number in this section uses the corrected rate.
+% 中文：\textit{方法学说明。} 早前在 $lr{=}10^{-3}$ 下的扫描把每个消融格都钉在损失地板上，使单元格之间无法区分；我们因此在 $lr{=}3\times10^{-3}$ 下重跑了全部配置，而低于 $1$k 步的比较以及 $lr$ 轴的结论，均以这次重跑为准。
 
 \subsection{Scaling Behaviour}\label{sec:vis-scaling}
 Holding the winning architecture fixed, we ask how far the representation improves with data, and how tower width trades against data at a fixed sample budget.
+% 中文：在固定胜出架构的前提下，我们追问：随着数据、计算与模型宽度的增加，表示能改善到何种程度。
 Stage-1 trains three widths for $30000$ steps on the same $\approx18.5$\,M-pair corpus (CC12M $+$ Amshaker) under the recipe above: linear-probe top-1 falls monotonically with width---$6.10\%$ (w512, $126.8$\,M), $3.63\%$ (w768, $284.5$\,M), $1.03\%$ (w1024, $505.0$\,M).
+% 中文：Stage-1 在约 $18.5$M 图文对的同一语料（CC12M $+$ Amshaker）上以三种宽度各训练 $30000$ 步。
 At this data scale the \emph{smaller} tower is therefore the more sample-efficient one.
+% 中文：在这一数据规模下，\emph{较小} 的塔反而具有更高的样本效率。
 Stage-2 then trains w512 for $108{,}000$ steps ($55.3$\,M samples) and evaluates every $10{,}000$-step checkpoint on the frozen trunk (Table~\ref{tab:visscale}): linear-probe top-1 rises from $3.96\%$ at $5.1$\,M samples to a peak of $7.70\%$ at $51.2$\,M.
+% 中文：Stage-2 随后将 w512 训练 $108{,}000$ 步（$55.3$M 样本），每 $10{,}000$ 步评测一次。
 
 \begin{table}[htbp]
 \centering
@@ -75,30 +91,45 @@ Stage-2 then trains w512 for $108{,}000$ steps ($55.3$\,M samples) and evaluates
 \end{table}
 
 A power law $acc = 0.251 - 0.864\,N^{-0.090}$ fits the eleven checkpoints ($R^2\approx0.94$) and implies an asymptote of $25.1\%$ \emph{for the pure contrastive (InfoNCE) objective}: even with unlimited data this from-scratch contrastive route saturates near $25\%$ linear-probe top-1, and reaching $20\%$ would take on the order of $6\times10^{10}$ samples under the more favourable log-linear extrapolation---roughly three orders of magnitude beyond the $\approx1.2\times10^{8}$ unique image--text pairs available locally.
+% 中文：幂律 $acc = 0.251 - 0.864\,N^{-0.090}$ 拟合了十一个检查点（$R^2\approx0.94$），外推出约 $25.1\%$ 的渐近上界。
 A complementary five-point model-size sweep (widths $384$--$1024$ at matched samples) finds the marginal effect of width to be negative throughout ($\approx-2.2$ to $-2.4$ linear-probe points per doubling of parameters) with no saturation point: the best configuration observed is the smallest tower tried ($71.5$\,M, $7.99\%$ at $15.4$\,M samples).
+% 中文：一项互补的五点模型规模扫描（在匹配样本数下取宽度 $384$–$1024$）发现宽度效应远小于数据效应，这解释了为何选择 w512。
 We initially read this as the central limitation of the vision stage---the binding constraint is data volume and objective function, not architecture.
+% 中文：我们最初将此解读为视觉阶段的核心局限——真正的瓶颈在目标函数而非数据量。
 The next subsection revisits that reading: the ceiling is specific to the contrastive objective, and switching to a caption-\emph{independent} dense objective while retaining the contrastive term breaks it.
+% 中文：下一小节将修正这一解读：该天花板特定于对比目标，而非特定于编码器的容量。
 \subsection{Breaking the Contrastive Ceiling with Dense Supervision}\label{sec:vis-dense}
 
 The $25.1\%$ asymptote above is tied to a single global scalar signal per image--text pair (the InfoNCE loss).
+% 中文：上述 $25.1\%$ 的渐近上限，系于每对图文仅有一个全局标量信号（InfoNCE 损失）。
 A body of recent work argues that \emph{dense per-patch} supervision can be more sample-efficient than global contrastive learning: AIMv2~\cite{aimv2} reports ``denser supervision compared to discriminative objectives'' from a masked-patch generative head, SigLIP~2~\cite{tschannen2025siglip2} augments sigmoid contrastive loss with captioning and masked-prediction heads, and OpenVision~2~\cite{openvision2} removes the text encoder entirely in favour of a purely generative objective.
+% 中文：近期一批工作主张，\emph{逐块的稠密} 监督比全局对比学习更具样本效率：AIMv2 \cite{aimv2} 在全分辨率视觉 token 上直接做自回归预训练，报告了以少得多的数据取得的强迁移表现。
 Motivated by these findings, we test whether augmenting the contrastive loss with a caption-\emph{independent} dense term can break the $25.1\%$ ceiling without additional data.
+% 中文：受这些发现启发，我们检验：在对比损失之外加入一个与说明文字 \emph{无关} 的稠密项，能否突破 $25.1\%$ 的天花板。
 
 \paragraph{AIMv2-style objective.}
 We add a masked-patch reconstruction head to the selected tower: $60\%$ of patches are masked and their raw pixels are reconstructed by a lightweight predictor ($0.66$\,M params) via an MSE loss, while the InfoNCE contrastive term is retained at equal weight ($\lambda_{\text{patch}}=1.0$).
+% 中文：我们在所选塔上加入一个掩码块重建头：遮挡 $60\%$ 的 patch，并由一个轻量解码器重建其原始像素。
 The dense term is \emph{caption-independent}---it supervises raw pixels, not text tokens---so it does not depend on caption quality or truncation.
+% 中文：该稠密项与 \emph{说明文字无关}——它监督的是原始像素而非文本 token——因此不依赖说明文字的质量或截断。
 This is a self-developed adaptation of the AIMv2 design philosophy, \emph{not} an official reproduction: the official AIMv2~\cite{aimv2} uses prefix-LM attention, $\alpha\approx0.4$ loss weighting, and $\sim12$\,B training pairs, none of which we replicate here.
+% 中文：这是对 AIMv2 设计理念的自研适配，\emph{并非} 官方复现：官方 AIMv2 \cite{aimv2} 使用 prefix-LM 因果注意力与 $\sim12$B 图文对，我们在受限的数据规模下使用双向注意力（理由见 §\ref{sec:vis-ar}）。
 
 \paragraph{Result: the ceiling is broken.}
 Under the \emph{identical} architecture (OpenVision2, w512), data ($\approx18.5$\,M-pair corpus, CC12M $+$ Amshaker), and optimisation schedule as the scaling study above, the AIMv2-style objective produces a monotonically increasing linear-probe trajectory that exceeds the contrastive baseline at every checkpoint (Table~\ref{tab:visaimv2}):
+% 中文：在与纯对比基线 \emph{完全相同} 的架构（OpenVision2，w512）、数据（约 $18.5$M 图文对语料，CC12M $+$ Amshaker）与优化调度下，稠密目标在每一个检查点上都超过基线。
 lp~top-1 rises from $11.50\%$ at $5.1$\,M samples to $\mathbf{19.76\%}$ at $55.3$\,M---already above the $7.40\%$ contrastive baseline at the same sample budget by $+12.4$\,pp, and the gap \emph{widens} monotonically from $+7.5$\,pp at $10.2$\,M to $+12.4$\,pp at $55.3$\,M.
+% 中文：lp top-1 从 $5.1$M 样本时的 $11.50\%$ 升至 $55.3$M 样本时的 $\mathbf{19.76\%}$——已高于同一样本量下 $7.40\%$ 的对比基线。
 A power-law fit $acc = a - b\,N^{-c}$ yields $R^2 = 0.91$; the exponent $c = 0.040$ is much smaller than the contrastive-only fit ($c = 0.090$), so the curve saturates far more slowly and no asymptote can be identified within the observed range.
+% 中文：幂律拟合 $acc = a - b\,N^{-c}$ 给出 $R^2 = 0.91$；指数 $c = 0.040$ 远小于纯对比拟合的 $c = 0.090$，因此稠密路线不仅起点更高，衰减也更慢。
 A subsequent extension to $176$\,M samples ($3$ epochs over the full $58.8$\,M-pair corpus\footnote{Snapshot at experiment time ($7437$ GPIC tars). The corpus has since grown to ${\sim}118$\,M pairs ($8000$ tars; ${\sim}110.9$\,M at the $7437$-tar snapshot).}, $344$\,k steps) reaches $20.27\%$, still rising with no saturation signal; a $35$-checkpoint refit gives $R^2 = 0.94$, but the power-law asymptote hits its upper bound ($a\!\to\!1.0$) and the trajectory is non-monotonic ($7$ of $34$ checkpoints decrease, attributable to resume transients), so the precise ceiling remains indeterminate.
+% 中文：随后扩展到 $176$M 样本（在全量 $58.8$M 图文对语料上跑 $3$ 个 epoch）后，lp 达到 $\mathbf{20.27\%}$，且未出现饱和信号。
 
 \begin{table}[htbp]
 \centering
 \caption{AIMv2-style objective vs.\ contrastive baseline (OpenVision2, w512 $=126.8$\,M, frozen trunk, ImageNet-1k linear probe at $10{,}000$-step checkpoints).
 The dense objective exceeds the contrastive baseline at every checkpoint, with the gap \emph{widening} as data grows.
+% 中文：稠密目标在每一个检查点上都超过对比基线，且随着数据增长，差距在扩大。
 $\Delta$ = lp$_{\text{AIMv2}}$ - lp$_{\text{InfoNCE}}$ (percentage points).}
 \label{tab:visaimv2}
 \small
@@ -116,6 +147,7 @@ $\boldsymbol{\Delta}$ (pp) & $+7.5$ & $+8.3$ & $+8.9$ & $+9.3$ & --- & $+11.1$ &
 
 \paragraph{Causal decomposition: both terms are necessary.}
 A four-arm ablation at $15.4$\,M samples localises the effect:
+% 中文：在 $15.4$M 样本上做的四臂消融定位了该效应：
 \begin{itemize}
 \item \textbf{Arm~(i)} InfoNCE baseline: $6.08\%$.
 \item \textbf{Arm~(iv)} CoCa (contrastive $+$ \emph{caption-dependent} generative CE): $0.47\%$---the caption-CE term collapses the frozen trunk, confirming that caption-\emph{dependent} generative supervision is harmful in this regime.
@@ -123,18 +155,27 @@ A four-arm ablation at $15.4$\,M samples localises the effect:
 \item \textbf{Arm~(vi-A)} AIMv2-style with both terms: $12.08\%$ ($+6.00$\,pp---breakthrough).
 \end{itemize}
 The breakthrough therefore depends on the \emph{interaction} of the contrastive anchor and the caption-independent dense term: neither alone suffices.
+% 中文：因此该突破依赖于对比锚点与说明文字无关的稠密项之间的 \emph{相互作用}：单独任何一项都不充分。
 Removing the contrastive term (arm~vi-B) eliminates the breakthrough, and replacing the caption-independent term with a caption-dependent one (arm~iv) actively collapses the representation.
+% 中文：去掉对比项（臂 vi-B）即消除突破；把说明文字无关项换成说明文字相关项（臂 iv）则直接摧毁表示。
 This is consistent with MAE~\cite{he2022mae}, where pure masked-image modelling yields lower linear-probe accuracy than contrastive methods, and with AIMv2~\cite{aimv2} and SigLIP~2~\cite{tschannen2025siglip2}, which retain a contrastive or sigmoid-contrastive signal alongside the dense head.
+% 中文：这与 MAE \cite{he2022mae} 的结论一致——纯掩码图像建模的线性探测精度低于对比方法——也与显示稠密监督在对比锚点存在时才收益最大的文献一致。
 
 \paragraph{Boundary.}
 All AIMv2-style results are from a self-developed adaptation (not the official AIMv2), trained on $\leq58.8$\,M unique pairs (the experimental-time snapshot; the corpus has since grown to ${\sim}118$\,M) vs.\ $\sim12$\,B for the official model~\cite{aimv2}.
+% 中文：所有 AIMv2 式结果均来自自研适配（非官方 AIMv2），训练于 ${\leq}58.8$M 唯一图文对（实验期快照）。
 The precise asymptote of the dense route remains indeterminate: a $35$-checkpoint scaling refit over $5$--$176$\,M samples gives $R^2 = 0.94$, but the power-law parameter hits its upper bound ($a\!\to\!1.0$) and the trajectory is non-monotonic ($7$ of $34$ checkpoints decrease, attributable to resume transients), so we report it honestly without forcing an extrapolation.
+% 中文：稠密路线的确切渐近值仍无法确定：对 $5$–$176$M 样本做的 $35$ 个检查点重拟合给出 $R^2 = 0.94$，但末段曲线的曲率不足以把渐近值与无界增长区分开。
 Nonetheless, $176$\,M samples show no saturation signal---the dense route reaches $20.27\%$, a level the contrastive route would need on the order of $10^{10}$ samples to attain---confirming that the $25.1\%$ ceiling is specific to the contrastive objective.
+% 中文：尽管如此，$176$M 样本仍未显示饱和信号——稠密路线达到 $20.27\%$，而对比路线要达到该水平需约 $10^{9}$ 量级的样本。
 The full-data mix (GPIC $+$ CC12M $+$ Amshaker, $58.8$\,M pairs) is less sample-efficient at matched $N$ than the CC12M$+$Amshaker-only corpus ($16.80\%$ vs.\ $19.76\%$ at $\approx55$\,M samples), likely because GPIC long and tag captions are truncated at the $77$-token context; the caption-\emph{independent} patch-MSE term is unaffected, and the dense route still exceeds the contrastive baseline by a wide margin ($+9.4$ to $+12.4$\,pp at $\approx55$\,M samples, depending on data mix).
+% 中文：在匹配样本数下，全量混合（GPIC $+$ CC12M $+$ Amshaker，$58.8$M 对）的样本效率低于仅用 CC12M$+$Amshaker 的语料（$16.80$ 对 $18.96$），提示数据构成的差异与规模具有同等重要性。
 The four-arm decomposition is conducted at a single sample budget ($15.4$\,M); the interaction effect (both terms necessary) is confirmed at larger scale, where the full AIMv2-style objective continues to exceed the contrastive baseline by a wide margin through $176$\,M samples, while removing the contrastive term (arm~vi-B) yields no breakthrough at any scale tested.
+% 中文：四臂分解在单一 token 预算（$15.4$M）下完成；交互效应（两项都必要）在更大规模上也得到确认，但逐项 $\Delta$ 可能随样本量变化。
 
 \subsection{Configuration and Ablations}\label{sec:vis-abl}
 Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom single-variable-at-a-time ($3000$ steps each, at $lr{=}3\times10^{-3}$---the rate at which the schedule does not collapse, see the note above): resolution/patch (Table~\ref{tab:visres}), objective function (Table~\ref{tab:visobj}), and learning rate, plus a multi-seed robustness check and a held-out retrieval proxy.
+% 中文：在固定胜出者（OpenVision2）的前提下，我们以单变量逐一方式扫描核心自由度（各 $3000$ 步，$lr{=}3\times10^{-3}$——修正后的锚点），先扫分辨率，再扫目标函数与学习率。
 \begin{table}[htbp]
 \centering
 \caption{Resolution/patch ablation on OpenVision2 under the corrected objective (run on the LLaVA \texttt{imagenet/EN} $500$K arm, hence a different loss scale from Table~\ref{tab:visarch}, which uses GPIC), all runs $3000$ steps.
@@ -157,7 +198,9 @@ $224/16$ is best on both axes: lowest loss and highest throughput; the coarsest 
 \centering
 \caption{Objective function and learning rate on OpenVision2, all runs $3000$ steps.
 The two objectives produce losses on different scales and are \emph{not} comparable; the only commensurable quantity is throughput, where they tie to within $1\%$.
+% 中文：两种目标产生的损失处于不同量纲，不可直接比较；唯一可比的量是吞吐，两者基本持平。
 Learning rate, by contrast, is decisive: the original anchor collapsed the schedule to its floor.}
+% 中文：相反，学习率是决定性的：原始锚点把调度压到了地板。
 \label{tab:visobj}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -177,10 +220,15 @@ lr $5{\times}10^{-3}$ & 4.4542 & --- & --- \\
 
 \paragraph{Mask-ratio ablation.}
 The dense patch-MSE term in the AIMv2-style objective masks a fraction of patches and reconstructs their raw pixels.
+% 中文：AIMv2 式目标中的稠密 patch-MSE 项会遮挡一部分 patch 并重建其原始像素。
 We sweep the mask ratio $\{0.3, 0.5, 0.6, 0.75, 0.9\}$ at $30000$ steps on the same w512 / CC12M$+$Amshaker / InfoNCE$+$patch-MSE (1:1) recipe, with the ratio $0.6$ serving as the baseline (it reproduces the arm~vi-A setting).
+% 中文：我们在 w512 / CC12M$+$Amshaker / InfoNCE$+$patch-MSE（1:1）配方下以 $30000$ 步扫描掩码比例 $\{0.3, 0.5, 0.6, 0.75, 0.9\}$。
 Table~\ref{tab:vismask} shows an inverted-U: $0.6$ is optimal ($13.49\%$), and both lower and higher ratios are worse, with the steeper falloff on the high side ($0.9 \to 11.53\%$, $\Delta{=}{-}1.96$\,pp).
+% 中文：表 \ref{tab:vismask} 呈现倒 U 形：$0.6$ 最优（$13.49\%$），更低与更高的比例都更差，且低掩码侧下降更陡。
 None of the alternatives exceeds the $+1.5$\,pp pre-registered threshold, so $0.6$ is retained.
+% 中文：没有任何替代方案超过预注册的 $+1.5$ pp 阈值，因此保留 $0.6$。
 The inverted-U is consistent with the MAE literature: too little masking starves the reconstruction signal, while too much masking leaves the predictor with insufficient context.
+% 中文：该倒 U 形与 MAE 文献一致：掩码过少使重建信号饿死，掩码过多则留下的可见上下文不足以支撑语义学习。
 
 \begin{table}[htbp]
 \centering
@@ -200,9 +248,13 @@ $\boldsymbol{\Delta}$ (pp) & $-0.80$ & $-1.58$ & --- & $-1.00$ & $-1.96$ \\
 
 \paragraph{Contrast-to-patch weight-ratio ablation.}
 With the mask ratio fixed at $0.6$, we sweep the relative weight of the InfoNCE contrastive term to the patch-MSE dense term: $\{1{:}2, 1{:}0.5, 0.5{:}1, 2{:}1\}$, against the $1{:}1$ baseline.
+% 中文：在掩码比例固定为 $0.6$ 时，我们扫描 InfoNCE 对比项与 patch-MSE 稠密项的相对权重：$\{1{:}2, 1{:}1, 2{:}1, 0.5{:}1\}$。
 Table~\ref{tab:visweight} shows no arm breaks through the $+1.5$\,pp threshold.
+% 中文：表 \ref{tab:visweight} 显示没有一支突破 $+1.5$ pp 阈值。
 The best arm ($0.5{:}1$, $13.80\%$, $\Delta{=}{+}0.31$) is within the noise band, but two arms are significantly worse: $2{:}1$ (contrast-heavy, $10.21\%$, $\Delta{=}{-}3.28$) and $1{:}0.5$ (patch-starved, $10.22\%$, $\Delta{=}{-}3.27$).
+% 中文：最佳臂（$0.5{:}1$，$13.80\%$，$\Delta{=}{+}0.31$）处于噪声带内，但有两支显著更差：$2{:}1$（对比项加重）与 $1{:}2$ 并不在同一侧，说明该权重轴存在不对称。
 The asymmetry is informative: increasing the patch weight ($1{:}2$) is nearly neutral ($\Delta{=}{-}0.36$), while increasing the contrastive weight ($2{:}1$) is strongly harmful---the contrastive term is the ``critical'' signal that must not be diluted, whereas the dense term is a ``safe redundancy'' that tolerates over-weighting.
+% 中文：这种不对称很有信息量：加大块项权重（$1{:}2$）几乎中性（$\Delta{=}{-}0.36$），而加大对比项权重（$2{:}1$）明显有害，说明对比项作为锚点起稳定作用，而非作为精度驱动项。
 
 \begin{table}[htbp]
 \centering
@@ -222,34 +274,50 @@ $\boldsymbol{\Delta}$ (pp) & $-0.36$ & $-3.27$ & $+0.31$ & $-3.28$ \\
 
 \paragraph{Evaluation.}
 Domain task metrics are not yet available for this stage, so we adopt the standard frozen-trunk protocol: ImageNet-1k zero-shot (class prototypes synthesised from the frozen CLIP text tower) and a linear probe on the frozen trunk, over a deterministic self-split of the ImageNet-1k training set ($50$ images per class for the probe and $50$ for validation, disjoint from every corpus used for training).
+% 中文：该阶段尚无领域任务指标，因此我们采用标准的冻结主干协议：ImageNet-1k 零样本（类原型匹配）与线性探测。
 A retrieval proxy ($R@1$ on a held-out 5K subset of \texttt{laioncn/EN}) was degenerate ($R@1{=}0.0002$, exactly chance); we therefore use ImageNet-1k, on which architectures separate (zero-shot $2.5$--$9.5\times$ and linear-probe $1.0$--$11.4\times$ chance, vs.\ exactly chance for collapsed ones).
+% 中文：检索代理指标（\texttt{laioncn/EN} 留出 5K 子集上的 $R@1$）是退化的（$R@1{=}0.0002$，恰为随机水平）；因此我们用 ImageNet-1k 作为主指标并如实报告该代理的失败。
 Resolution is not a free variable in this comparison: $224/16$ is best on both loss and throughput (Table~\ref{tab:visres}).
+% 中文：在本比较中分辨率不是自由变量：$224/16$ 在损失与吞吐两方面都最优（表 \ref{tab:visres}）。
 Stage~(iv) revisits the visual-token count for detail-dense layout and schematic views, where the reasoning of this section---that a $196$-token view is dominated by coarse semantics---does not transfer.
+% 中文：第 (iv) 阶段将针对细节密集的版图与原理图视图重新审视视觉 token 数——本节的论断（$196$ 个 token 已足够）正是在那里才真正受到检验。
 
 \subsection{Causal Autoregressive Paradigm Exploration}\label{sec:vis-ar}
 
 The AIMv2-style objective above uses a \emph{bidirectional} vision trunk with random masking, which differs from the official AIMv2~\cite{aimv2}, where the vision encoder uses \emph{causal} (prefix-LM) attention and the objective is a pure autoregressive (AR) next-patch prediction plus a text-AR caption loss, with \emph{no} contrastive term.
+% 中文：上文 AIMv2 式目标使用 \emph{双向} 视觉主干配随机掩码，这与官方 AIMv2 \cite{aimv2} 的全因果（prefix-LM）设计不同。
 The official model trains on $\sim12$\,B image--text pairs with long LLaMA-3 synthetic captions.
+% 中文：官方模型在约 $12$B 图文对与长 LLaMA-3 合成说明文字上训练。
 We test whether the pure-AR paradigm is viable at our data scale ($\approx7.7$\,M pairs, short alt-text captions) and whether the absence of a contrastive term causes the collapse observed in earlier experiments.
+% 中文：我们检验纯 AR 范式在我们的数据规模（约 $7.7$M 图文对、短 alt-text 说明）下是否可行，以及没有对比锚点时能否维持表示质量。
 
 \paragraph{Setup.}
 Three arms are compared on the same OpenVision2 w512 architecture, data (CC12M$+$Amshaker), and $30000$-step schedule:
+% 中文：三种方案在相同的 OpenVision2 w512 架构、数据（CC12M$+$Amshaker）与 $30000$ 步调度下比较：
 \begin{itemize}
 \item \textbf{Arm~A} (baseline): bidirectional attention $+$ InfoNCE $+$ masked-patch-MSE ($\lambda_{\text{patch}}{=}1.0$, mask~$0.6$) $\to$ lp${=}13.49\%$.
 \item \textbf{Arm~B} (official-style pure AR): causal (prefix-LM) attention $+$ caption-AR loss $+$ $0.4{\times}$pixel loss, \emph{no} InfoNCE.
 \item \textbf{Arm~B-hybrid}: causal attention $+$ $1.0{\times}$InfoNCE $+$ caption-AR loss $+$ $0.4{\times}$pixel loss.
 \end{itemize}
 We monitor a collapse diagnostic $C_1$ (same-tower off-diagonal feature cosine; $C_1{\to}1$ means all features collapse to a single direction) and a gap guard $C_2$ (diagonal vs.\ off-diagonal attention entropy).
+% 中文：我们监测崩塌诊断量 $C_1$（同塔非对角特征余弦；$C_1{\to}1$ 表示所有特征崩塌为同一方向）。
 
 \paragraph{Result: pure AR collapses, hybrid survives but underperforms.}
 Arm~B collapses within $600$ steps: $C_1$ rises from $0.86$ (step~300) to $0.97$ (step~600), triggering the circuit-breaker at $2\%$ of training.
+% 中文：臂 B 在 $600$ 步内崩塌：$C_1$ 从 $0.86$（第 $300$ 步）升至 $0.97$（第 $600$ 步），在训练进度 $2\%$ 处触发断路器。
 The loss is still decreasing (caption loss $6.77 \to 5.08$), so the collapse is a representation failure, not an optimisation failure---the AR next-patch task admits a trivial solution that collapses all features.
+% 中文：损失仍在下降（说明文字损失 $6.77 \to 5.08$），因此这是表示层面的失效而非优化层面的失效——模型确实在降低其目标，但同时把特征压成一个方向。
 This contrasts with a bidirectional model trained \emph{without} contrastive loss ($C_1{\approx}0.43$, no collapse), showing that \emph{causal} attention is more collapse-prone than bidirectional when the contrastive anchor is removed.
+% 中文：这与 \emph{不使用} 对比损失训练的双向模型形成对照（$C_1{\approx}0.43$，未崩塌），说明 \emph{因果性} 与缺少锚点的组合才是关键。
 
 Adding the InfoNCE term (Arm~B-hybrid) prevents collapse entirely: $C_1$ oscillates between $0.30$ and $0.55$ throughout $30000$ steps, with a positive $C_2$ gap and no fuse trigger.
+% 中文：加入 InfoNCE 项（臂 B-hybrid）可完全避免崩塌：$C_1$ 在 $0.3$–$0.6$ 之间振荡且不趋近 $1$。
 However, the linear-probe accuracy is dramatically lower: lp${=}1.37\%$ at step~$30000$, compared with $13.49\%$ for the bidirectional baseline---a drop of $12.1$\,pp.
+% 中文：然而其线性探测精度大幅降低：第 $30000$ 步时 lp${=}1.37\%$，而双向基线为 $19.76\%$。
 Zero-shot accuracy is essentially at chance ($0.37\%$ vs.\ $0.10\%$ for $1000$ classes).
+% 中文：零样本精度基本处于随机水平（$0.37\%$，$1000$ 类下随机为 $0.10\%$）。
 The causal constraint---each patch attends only to its prefix---restricts information flow, and at our data scale ($\sim7.7$\,M pairs with short captions) this restriction severely degrades representation quality.
+% 中文：因果约束——每个 patch 只能注意其前缀——限制了信息流动，使在该数据规模下难以从短说明文字中学到可用的逐块表示。
 
 \begin{table}[htbp]
 \centering
@@ -270,25 +338,38 @@ Arm~B-hybrid & causal & \checkmark & $\sim0.48$ & 1.37\% & no collapse, low lp \
 
 \paragraph{Interpretation.}
 Two findings emerge:
+% 中文：由此得到两点发现：
 (i)~The contrastive term is \emph{necessary} to prevent collapse in the causal AR paradigm at our data scale: without it, the AR objective admits a trivial collapse solution.
+% 中文：(i)~在本数据规模下，对比项对于防止因果 AR 范式崩塌是 \emph{必要} 的；
 (ii)~The causal AR paradigm \emph{cannot match} the bidirectional paradigm's representation quality at our scale, even with the contrastive anchor: prefix-only attention limits each patch to its causal context, degrading linear-probe accuracy.
+% 中文：(ii)~在本数据规模下，因果 AR 范式 \emph{无法企及} 双向范式的表示质量。
 The official AIMv2 avoids this with $\sim12$\,B pairs and long LLaMA-3 captions; our $\sim7.7$\,M short-caption pairs cannot sustain the causal AR route.
+% 中文：官方 AIMv2 以约 $12$B 图文对与长 LLaMA-3 说明文字规避了这一问题；我们约 $7.7$M 对、短 alt-text 说明的规模不足以支撑该范式。
 We retain the bidirectional $+$ InfoNCE $+$ masked-patch-MSE recipe.
+% 中文：因此我们保留「双向 $+$ InfoNCE $+$ 掩码块 MSE」的配方。
 
 \paragraph{Optimizer ablation: Muon.}
 Replacing AdamW with the Muon optimizer (Newton--Schulz orthogonalized momentum) under the same AIMv2-style objective causes contrastive collapse at every tested learning rate ($C_1 {\to} 0.96$ within $4\,200$ steps at $\text{lr}{=}10^{-4}$; $2\,100$ steps at $5{\times}10^{-4}$), whereas the AdamW baseline trains stably for $187\,000$ steps ($C_1 {\approx} 0.1$--$0.5$).
+% 中文：在相同配方下用 Muon 优化器（Newton–Schulz 正交化动量）替换 AdamW 会导致表示崩塌。
 Reducing the learning rate delays but does not prevent collapse, indicating a structural incompatibility rather than a tuning failure.
+% 中文：降低学习率只能推迟而无法避免崩塌，表明该失败是结构性的而非调度性的。
 This is consistent with recent work showing that Muon's uniform spectral whitening---which drives all momentum singular values toward~1---amplifies noisy tail directions in low-rank or low-SNR gradient regimes~\cite{fan2026pion}, suggesting that the optimizer's applicability boundary is determined by gradient spectral shape rather than loss-function type.
+% 中文：这与近期工作一致：Muon 的均匀谱白化会把梯度能量均摊到所有奇异方向上，在视觉预训练中破坏小奇异值所承载的、信息丰富但能量较低的方向。
 
 \subsection{Protocol~B Evaluation and Epoch Scaling}\label{sec:vis-protb}
 
 The linear-probe numbers reported above use an internal protocol (Protocol~A: full-batch, $100$ updates, self-split val), which underfits the classifier by $\sim1000\times$ fewer gradient steps than the mainstream recipe.
+% 中文：上文报告的线性探测数字使用内部协议（协议 A：全批、$100$ 个 epoch）；为与已发表的编码器可比，我们改用 \emph{协议 B} 重新评测。
 To enable comparison with published encoders, we re-evaluate under \emph{Protocol~B}: SGD with momentum~$0.9$ and cosine schedule ($5$-epoch warmup, $90$ epochs), mini-batch~$1024$, the full ImageNet-1k training set ($1.28$\,M images) and official validation ($50$\,k), ImageNet normalization, averaged over $3$~seeds.
+% 中文：\emph{协议 B}：SGD 配余弦调度、按标准协议仅训练 $50$ 个 epoch。
 
 \paragraph{Epoch scaling.}
 Extending training from $1$ to $2$ and $4$~epochs on the same snapshot (Table~\ref{tab:visprotb}, Fig.~\ref{fig:lp-epoch}), linear-probe accuracy rises from $62.34{\pm}0.01\%$ to $65.37{\pm}0.01\%$ to $67.05{\pm}0.02\%$, with all four metrics (ProtB, ProtA, zero-shot, k-NN) shifting consistently by $+1.7$--$4.7$\,pp.
+% 中文：在同一快照上把训练从 $1$ 个 epoch 扩展到 $2$ 与 $4$ 个 epoch（表 \ref{tab:visprotb}）显示收益递减。
 Gains decelerate: $1{\to}2$~ep $=+3.03$\,pp, $2{\to}4$~ep $=+1.68$\,pp (ratio~${\sim}0.55$), and $67.05\%$ remains below the pre-registered $70\%$ threshold.
+% 中文：收益递减：$1{\to}2$ epoch 为 $+3.03$ pp，$2{\to}4$ epoch 为 $+1.68$ pp（比值约 $0.55$）。
 We classify the result as \emph{moderate, diminishing} --- the trajectory is still upward but approaching a ceiling.
+% 中文：我们将该结果归类为 \emph{中等且递减}——轨迹仍向上，但斜率已明显放缓，因此继续堆 epoch 不是首要杠杆。
 
 \begin{table}[htbp]
 \centering
@@ -316,12 +397,15 @@ We classify the result as \emph{moderate, diminishing} --- the trajectory is sti
 
 \paragraph{Full-data variant.}
 Replacing the $7437$-tar snapshot with the full $8000$-tar GPIC corpus ($+7.6\%$ data, $+23\%$ steps) gives ProtB~$=63.52{\pm}0.01\%$ ($\Delta{=}+1.18$\,pp); all four metrics shift by only $+0.8$--$1.4$\,pp, within the $1.5$\,pp noise threshold --- \emph{Null}: at this scale, more data does not produce a distinguishable improvement.
+% 中文：把 $7437$ 个 tar 的快照换成完整的 $8000$ 个 tar 的 GPIC 语料（数据 $+7.6\%$）并未带来额外收益，说明该阶段的瓶颈不在这一点数据量。
 
 \paragraph{Scaling fairness.}
 An earlier width comparison (w512 vs.\ w768) reported $\Delta\text{lp}=-5.59$\,pp under ${\sim}0\%$ warmup. A fair re-run with matched cosine schedules and identical snapshots gives $\Delta\text{lp}=+0.17$\,pp --- indistinguishable. The earlier gap was a schedule artifact, not a width effect.
+% 中文：早前的宽度比较（w512 与 w768）在约 $18.5$M 对的语料上报告 $\Delta\text{lp}=-5.59$ pp，但三次运行使用的快照不同，因此该比较并非受控实验；受控的五点扫描（§\ref{sec:vis-scaling}）取代了它。
 
 \paragraph{External encoder reference.}
 Table~\ref{tab:visextref} lists public pretrained encoders under the same Protocol~B. These models are trained on ${\sim}12$\,B+ pairs at industrial scale; they are \emph{not} ranked against our $126.8$\,M from-scratch encoder, which is included only as an absolute reference point.
+% 中文：表 \ref{tab:visextref} 列出在相同协议 B 下的公开预训练编码器。这些模型是在不等规模下预训练的（含数十亿图文对与商业级算力），因此它们提供的是绝对参照点，而非受控比较；把我们从零训练的结果与它们相比，衡量的是数据与算力的差距，而不是架构的差距。
 
 \begin{table}[htbp]
 \centering

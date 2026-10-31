@@ -1,18 +1,27 @@
 \section{Semiconductor Domain Adaptation}\label{sec:domain}
 
 Stage~(v) completes the pipeline by adapting the multimodal model to proprietary design practice.
+% 中文：第 (v) 阶段通过把多模态模型适配到专有设计实践，完成整条流水线。
 It differs from stage~(ii) in two respects, which we state explicitly because otherwise the two stages would coincide: the reward is no longer verifiable but \emph{learned from human judgement}, and the target behaviour is no longer general API usage but a team's internal conventions---naming rules, layer policies, review checklists---which no public benchmark measures.
+% 中文：它与第 (ii) 阶段有两点不同（之所以明确写出，是因为否则这两个阶段就会重合）：奖励不再是可验证的，而是 \emph{从人类判断中学习}；目标行为也不再是通用的 API 用法，而是团队内部的约定——命名规则、层次策略、评审清单——这些都没有任何公开基准可以衡量。
 
 \paragraph{Method.}
 We collect pairwise judgements from in-house design reviews over the stage-(iv) task families, fit a domain reward model on them, and optimise the aligned model against that model under a KL-regularised objective.
+% 中文：方法。我们围绕第 (iv) 阶段的任务族，从内部设计评审中收集成对偏好判断，据此拟合一个领域奖励模型，并在 KL 正则化目标下用该模型优化已对齐的模型。
 Because preference data is far scarcer than the verifiable signal of stage~(ii), we initialise from the stage-(iv) checkpoint and constrain the update rather than training the objective from the pre-trained model.
+% 中文：由于偏好数据远比第 (ii) 阶段的可验证信号稀缺，我们从第 (iv) 阶段的检查点初始化并约束参数更新，而不是从预训练模型直接训练该目标。
 
 \paragraph{Why a small model.}
 The rationale for a $\approx$2.2B core is strongest here, and it is a constraint rather than a preference.
+% 中文：为何要用小模型。约 22 亿参数内核的理由在这里最为充分，而且它是约束而非偏好。
 Proprietary layouts and proprietary preference data cannot leave the premises, so the choice is not between a large hosted model and a small local one---it is between a small local model and no model at all.
+% 中文：专有版图与专有偏好数据不能离开本地，因此真正的选择并非「大模型托管」与「小模型本地部署」之间，而是「小模型本地部署」与「根本没有模型」之间。
 Serving cost then dominates, and for an agentic session the relevant cost is not throughput on a short prompt but memory that grows with accumulated context: in the hybrid backbone of Section~\ref{sec:arch}, the four attention layers are the only component whose serving state grows with the session, while the Mamba-2 layers hold a constant-size recurrent state.
+% 中文：此时服务成本成为主导，而对智能体会话而言，相关成本不是短提示词上的吞吐，而是随上下文累积而增长的内存：在第 \ref{sec:arch} 节的混合骨干网络中，4 个注意力层是唯一随会话增长的服务状态，而 Mamba-2 层持有恒定大小的循环状态。
 
 \paragraph{Evaluation.}
 We evaluate on held-out review items using expert agreement, and report the result beside the execution-based numbers of stage~(ii) so that verifiable and preference-based adaptation can be compared on the same system rather than in separate accounts.
+% 中文：评测。我们在留出的评审条目上以专家一致性为指标进行评测，并把结果与第 (ii) 阶段基于执行的数字并列报告，使可验证式适配与偏好式适配能在同一系统上比较，而不是各记各的账。
 
 Results are reported as \textbf{[TBD]}.
+% 中文：结果以 \textbf{[TBD]} 表示（待填）。

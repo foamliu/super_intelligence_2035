@@ -1,11 +1,18 @@
 \begin{abstract}
 Large language models (LLMs) exhibit strong reasoning and tool-use skills, yet their computational footprint makes most agentic models impractical for edge, embedded, and cost-sensitive electronic design automation (EDA) deployments.
+% 中文：大语言模型（LLM）具备很强的推理与工具使用能力，但其计算开销使大多数智能体模型难以用于边缘、嵌入式以及对成本敏感的电子设计自动化（EDA）部署场景。
 We present \textbf{BaiZe}, a $\approx$2.2-billion-parameter agentic language model built \emph{from scratch} on a fixed compute budget around a \emph{hybrid} state-space backbone.
+% 中文：我们提出 BaiZe——一个约 22 亿参数的智能体语言模型，它在固定算力预算下 \emph{从零} 构建，并围绕 \emph{混合} 状态空间骨干网络设计。
 BaiZe adopts a sequential hybrid architecture---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---whose linear-time decoding is well suited to inference-heavy, cost-sensitive agents, and is trained with the NVIDIA NeMo recipe on Megatron-Core.
+% 中文：BaiZe 采用顺序式混合架构——56 层交替排列 Mamba-2 状态空间层、4 个分组查询注意力（GQA）层与 MLP 层——其线性时间解码特性非常适合推理密集、对成本敏感的智能体，并基于 Megatron-Core 使用 NVIDIA NeMo 配方训练。
 The architecture is chosen through a matched from-scratch comparison against a dense transformer counterpart, in which the hybrid attains lower loss and faster inference with fewer parameters at a modest training-throughput cost.
+% 中文：该架构是通过与稠密 Transformer 对照模型进行的、条件对齐的从零训练对比选出的；在该对比中，混合模型以更少参数取得更低损失与更快推理，代价仅是适度的训练吞吐损失。
 We then run a staged, budget-constrained hyper-parameter search (S1--S5) on $8\times$H100 over the final hybrid backbone, which selects a stable learning rate of $1\times10^{-3}$ under a warmup--stable--decay schedule with an $86{:}10{:}4$ annealing mixture, reaching a validation loss of $\mathbf{2.2054}$ after $20000$ steps and $2.6739\pm0.0469$ across three seeds at $5000$ steps.
+% 中文：随后我们在最终的混合骨干网络上，用 8 张 H100 执行分阶段的、受预算约束的超参搜索（S1--S5），选出预热—稳定—衰减（WSD）调度下的稳定学习率 $1\times10^{-3}$、以及 $86{:}10{:}4$ 的退火数据配比；20000 步后验证损失达 $\mathbf{2.2054}$，5000 步时三个随机种子的结果为 $2.6739\pm0.0469$。
 The search recipe is then scaled to a full production run of $\approx$44B tokens---the Chinchilla-optimal budget for a 2.22B model---reaching a final training loss of $\mathbf{1.357}$ in $\approx$412 GPU-hours on $8{\times}$H100.
+% 中文：该搜索配方随后被放大到一次全量生产训练：约 440 亿 token——即 22 亿参数模型的 Chinchilla 最优预算——在 8 张 H100 上耗时约 412 GPU·h，最终训练损失达 $\mathbf{1.357}$。
 We release the complete recipe and training command to support the reproducible construction of efficient agentic small language models.
+% 中文：我们公开完整配方与训练命令，以支持可复现地构建高效的智能体小语言模型。
 \end{abstract}
 
 \begin{IEEEkeywords}

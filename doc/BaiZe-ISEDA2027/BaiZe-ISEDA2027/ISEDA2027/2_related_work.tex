@@ -2,21 +2,34 @@
 
 \subsection{Small Language Models and Agentic Reasoning}
 Parameter-efficient SLMs ($<\,$2\,B) have recently narrowed the gap with larger models on mathematical and commonsense reasoning.
+% 中文：参数高效的小语言模型（SLM，$<$ 20 亿参数）近来在数学与常识推理上已缩小了与更大模型的差距。
 MiniCPM~\cite{minicpm2024} introduced scalable training strategies and domain-weighted data mixing for small models; Qwen~\cite{yang2025qwen3} and Gemma~\cite{gemmateam2025gemma3} demonstrate that strong code- and math-enriched corpora can lift small models substantially.
+% 中文：MiniCPM \cite{minicpm2024} 为小模型引入了可扩展的训练策略与按领域加权的数据混合；Qwen \cite{yang2025qwen3} 与 Gemma \cite{gemmateam2025gemma3} 则表明，高质量的、富含代码与数学的语料能显著提升小模型。
 Most of these efforts, however, treat the final trained model as the deliverable and report comparatively little about the \emph{search} that produced it.
+% 中文：然而这些工作大多把训练完成的最终模型当作交付物，对产生该模型的 \emph{搜索过程} 报告得相对很少。
 Complementarily, agentic instruction-tuning datasets (e.g., tool-use and multi-step reasoning corpora)~\cite{liu2024agentbench} have been shown to elicit planning and tool-invocation behaviour, yet are rarely paired with a from-scratch pre-training recipe for the 1B regime.
+% 中文：作为补充，智能体指令微调数据集（如工具使用与多步推理语料）\cite{liu2024agentbench} 已被证明能激发规划与工具调用行为，但很少与 0.1B 量级（此处指 1B 级）的从零预训练配方配套使用。
 
 \subsection{Hybrid and State-Space Architectures}
 State-space models (SSMs) such as Mamba~\cite{gu2023mamba} and Mamba-2~\cite{dao2024transformers} replace full attention with a recurrent scan update, offering linear-time decoding that suits inference-bound deployments.
+% 中文：混合与状态空间架构。Mamba \cite{gu2023mamba} 与 Mamba-2 \cite{dao2024transformers} 等状态空间模型（SSM）以循环扫描更新替代全注意力，提供适合推理受限部署的线性时间解码。
 Hybrid designs interleave a small number of attention layers among SSM/MLP layers---notably Nemotron-H~\cite{nvidia2025nemotronh} and Hymba~\cite{dong2024hymba}---to recover long-range context while retaining fast decode.
+% 中文：混合设计在 SSM/MLP 层之间插入少量注意力层——尤以 Nemotron-H \cite{nvidia2025nemotronh} 与 Hymba \cite{dong2024hymba} 为代表——以在保持快速解码的同时恢复长程上下文能力。
 Released Megatron-Core variants of these families are scarce below 2B, leaving their small-scale trade-offs under-documented; our controlled 2B comparison (Section~\ref{sec:arch-rationale}) addresses precisely this gap.
+% 中文：这些家族在 20 亿参数以下的 Megatron-Core 公开变体十分稀少，其小尺度的取舍因此缺乏文档记录；我们的受控 2B 对比（第 \ref{sec:arch-rationale} 节）正是针对这一空白。
 
 \subsection{Multimodal Vision-Language Models}
 Vision-language models connect a vision encoder to a language model through a lightweight projector, enabling end-to-end visual understanding and instruction following.
+% 中文：多模态视觉-语言模型。视觉-语言模型通过轻量投影层把视觉编码器连接到语言模型，实现端到端视觉理解与指令遵循。
 LLaVA~\cite{liu2023llava} established visual instruction tuning---aligning a vision encoder to a frozen LLM via a linear projection followed by instruction fine-tuning---as a scalable recipe for open multimodal assistants.
+% 中文：LLaVA \cite{liu2023llava} 把视觉指令微调——通过线性投影将视觉编码器对齐到冻结的 LLM，再进行指令微调——确立为开放多模态助手的可扩展配方。
 LLaVA-OneVision~\cite{li2024llavaonevision} consolidates this line into a single open model spanning single-image, multi-image, and video tasks through a staged curriculum: stage-1 projector pre-training, stage-1.5 mid-training, and stage-2 instruction tuning.
+% 中文：LLaVA-OneVision \cite{li2024llavaonevision} 将这一路线整合为单一开放模型，通过分阶段课程覆盖单图、多图与视频任务：stage-1 投影层预训练、stage-1.5 中期训练、stage-2 指令微调。
 BaiZe follows this curriculum in stage~(iv) (Section~\ref{sec:mllm}), substituting a from-scratch vision encoder (stage~iii) for the frozen off-the-shelf encoder.
+% 中文：BaiZe 在第 (iv) 阶段沿用这一课程（第 \ref{sec:mllm} 节），但把冻结的现成编码器替换为从零训练的视觉编码器（第 iii 阶段）。
 
 \subsection{LLMs for Electronic Design Automation}
 A growing line of work applies LLM agents to chip design tasks such as register-transfer-level generation, verification, and bug triage~\cite{liu2023chipnemo,blocklove2024chip}.
+% 中文：面向电子设计自动化的 LLM。越来越多的工作把 LLM 智能体应用于芯片设计任务，如寄存器传输级生成、验证与缺陷分诊 \cite{liu2023chipnemo,blocklove2024chip}。
 These applications motivate a cheap, always-on, agentic multimodal core that can run per-team or per-engineer; our work supplies the efficient multimodal backbone such systems require.
+% 中文：这些应用呼唤一种廉价、常驻、可按团队或按工程师部署的智能体多模态内核；我们的工作正是提供此类系统所需的、高效的多模态骨干网络。

@@ -1,15 +1,23 @@
 \section{Architecture and Pipeline Overview}\label{sec:overview}
 
 BaiZe is an end-to-end multimodal agentic system assembled in five stages: (i) from-scratch pre-training of a hybrid language backbone, (ii) post-training of that backbone (instruction tuning and reinforcement learning to strengthen agentic capability), (iii) pre-training of a custom vision encoder, (iv) alignment of the two into a multimodal large language model, and (v) semiconductor-domain adaptation via reinforcement learning.
+% 中文：BaiZe 是一个由五个阶段组装而成的端到端多模态智能体系统：(i) 从零预训练混合语言骨干；(ii) 对该骨干做后训练（指令微调与强化学习以增强智能体能力）；(iii) 预训练自研视觉编码器；(iv) 将两者对齐为多模态大语言模型；(v) 通过强化学习完成半导体领域适配。
 This section fixes the shared scaffolding---the two backbones, the overall pipeline, and the global training environment---before each stage is detailed in its own section.
+% 中文：本节先固定各部分共享的脚手架——两个骨干网络、整体流水线与全局训练环境——随后各阶段再在各自章节中详述。
 
 \subsection{Language Backbone}\label{sec:arch}
 The language backbone is a sequential hybrid model~\cite{dao2024transformers,nvidia2025nemotronh}: 56 transformer layers interleave Mamba-2 state-space layers, four grouped-query-attention (GQA) layers, and MLP layers.
+% 中文：语言骨干。语言骨干是一个顺序式混合模型 \cite{dao2024transformers,nvidia2025nemotronh}：56 个 transformer 层交替排列 Mamba-2 状态空间层、4 个分组查询注意力（GQA）层与 MLP 层。
 The layer allocation follows the Nemotron-H sequential hybrid convention---four attention layers among the 56, the remainder Mamba-2 and MLP---as provided by Megatron-Core's Mamba-hybrid recipe, whose 56-layer pattern we reuse verbatim while halving only the hidden and FFN widths to reach the $\approx$2B scale.
+% 中文：层的分配遵循 Nemotron-H 的顺序式混合约定——56 层中 4 层为注意力，其余为 Mamba-2 与 MLP——由 Megatron-Core 的 Mamba 混合配方给出；我们原样复用了其 56 层模式，仅将隐藏维度与 FFN 宽度减半以达到约 2B 规模。
 BaiZe is not a Nemotron-H model: it is an order of magnitude smaller, contains no mixture-of-experts layers, and is pre-trained from scratch on an independent corpus under a fixed GPU-hour budget.
+% 中文：BaiZe 并非 Nemotron-H 模型：它小了一个数量级，不含专家混合（MoE）层，并在固定 GPU·h 预算下于独立语料上从零预训练。
 Each Mamba-2 layer uses 8 state-space groups; the four attention layers use 16 query heads and 4 query groups (GQA) with untied word embeddings.
+% 中文：每个 Mamba-2 层使用 8 个状态空间组；4 个注意力层使用 16 个查询头与 4 个查询组（GQA），且词嵌入不共享。
 Crucially, only the four attention layers carry rotary position embeddings (RoPE); the 52 Mamba-2 state-space layers are position-agnostic, so the backbone's long-context extrapolation quality depends on just $4/56{=}7.1\%$ of layers, an asymmetry exploited in Section~\ref{sec:longctx}.
+% 中文：关键在于，只有 4 个注意力层携带旋转位置编码（RoPE）；其余 52 个 Mamba-2 状态空间层与位置无关，因此骨干的长上下文外推质量仅取决于 $4/56{=}7.1\%$ 的层——这一不对称性在第 \ref{sec:longctx} 节被加以利用。
 The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
+% 中文：完整配置见表 \ref{tab:config}；模型参数量约 22.2 亿。
 
 \begin{table}[htbp]
 \centering
@@ -39,10 +47,13 @@ Parameters & $\approx$2.22B \\
 
 \subsection{Vision Encoder}\label{sec:backbone-enc}
 The vision encoder is pre-trained from scratch in stage~(iii) and is selected from six iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
+% 中文：视觉编码器。视觉编码器在第 (iii) 阶段从零预训练，是在 $500$–$600$M 参数量级的六个同参数候选模型中选出的；第 \ref{sec:vision} 节报告该对比及其结果。
 
 \subsection{Pipeline and Global Environment}\label{sec:pipeline}
 Table~\ref{tab:pipeline} summarises the five-stage pipeline.
+% 中文：流水线与全局环境。表 \ref{tab:pipeline} 汇总了五阶段流水线。
 All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.10); fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$ and BF16 precision throughout.
+% 中文：所有阶段均运行在 $8\times$NVIDIA H100 GPU 上（CUDA 12.8、PyTorch 2.8.0、Python 3.10）；在适用处启用融合核、选择性激活重计算与交叉熵损失融合，全程使用 $\texttt{tensor\_model\_parallel\_size}=1$ 与 BF16 精度。
 
 \begin{table}[htbp]
 \centering
