@@ -18,9 +18,9 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.5%,字节增长~24.7MB/s).候选表49行已交付
+PHASE:        🔴运维令10-30恢复85M下载+盘点/nas_train.下载运行中(86.5%,字节增长~12.8MB/s).候选表49行已交付
 已完成:       ✅A.85M下载已恢复(PID2668156脚本+PID471618 hf download运行中,10478/12126parquet=86.5%,8.incomplete活跃,无失败shard);✅B./nas_train盘点完成(cleanup_candidates_20261030.tsv 49行+DATA_MAPPING.md D节)
-当前动作:     唤醒1004(2026-10-31 08:42):复核85M下载→/proc/471618/io判活:write_bytes T1=124,967,620,608→T2(+10s)=125,226,278,912(+258,658,304B≈247MB/10s≈24.7MB/s✓)+8.incomplete mtime08:39-40新鲜→心跳
+当前动作:     唤醒1005(2026-10-31 08:52):复核85M下载→du -sb 3次:T1=40,429,261,872,786→T2(+5s)=40,429,328,962,365(+67,089,579≈64MB/5s≈12.8MB/s✓)→T3(+5s)flat→字节增长确认✓+8.incomplete(sa1b/EN/part01_1活跃chunk,非失败)+候选表49行✓→心跳
 下一步:       下轮唤醒:①查85M下载进度(parquet数+incomplete数+字节增长,剩余1648parquet≈5-6TB);②待运维批准后执行删除
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,7 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [当前] 唤醒1004(08:42)：复核85M下载 → ①ps确认PID2668156(bash脚本,etimes=34940s≈9.7h,ppid=1)+PID471618(hf download,etimes=5773s≈96min,ppid=2668156)活跃;②/proc/471618/io判活:write_bytes T1=124,967,620,608→T2(+10s)=125,226,278,912(+258,658,304B≈247MB/10s≈24.7MB/s✓);③parquet10,478/12,126=86.5%(同唤醒1003);④8.incomplete活跃(sizes 872M-3.5G mtime08:39-40新鲜,无失败shard);⑤候选表49行✓(4可删+9保留+36待定)+DATA_MAPPING.md D节✓;⑥df:/nas_train173T/207T(84%),35T可用,/nas_env8.3T/10T(84%),1.7T可用;⑦ETA:剩余1648parquet≈5-6TB,实测24.7MB/s→~2.5天→心跳
+> [当前] 唤醒1005(08:52)：复核85M下载 → ①ps确认PID2668156(bash脚本)+PID471618(hf download)活跃;②du -sb 3次判活:T1=40,429,261,872,786→T2(+5s)=40,429,328,962,365(+67,089,579≈64MB/5s≈12.8MB/s✓)→T3(+5s)=40,429,328,962,365(flat,NFS写暂停);③parquet10,478/12,126=86.5%(同前);④8.incomplete在.cache/huggingface/download/sa1b/EN/part01_1/活跃chunk(非失败shard);⑤候选表49行✓(4可删+9保留+36待定)+DATA_MAPPING.md D节✓;⑥df:/nas_train173T/207T(84%),35T可用,/nas_env8.3T/10T(84%),1.7T可用;⑦ETA:剩余1648parquet≈5-6TB,~12.8MB/s→~4.5天→心跳
+> 📦 唤醒1004(08:42)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载io判活24.7MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1003(08:36)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长49.8MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1002(08:29)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长12.8MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1000(08:19)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长17.9MB/s✓+候选表49行确认,详见日文件）
