@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 21:15 #1024：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415997 活着（etimes 32098s ≈ 8.9h），iter 34590/700k（4.94%），loss 2.144 稳态（近10步 2.15~2.18 趋稳），grad-norm 0.097~1.1（极稳），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 skipped，~6.9s/step ≈ ~608K tok/s，ckpt@iter_34000（saved 20:08，next@36000）。双机16×H100 GPU 73-100%util/~75GB/81GB。论文6页/ERR=0 维持。ETA ~53天。未完成指令：无。📦 体积：TASK=23.7KB / MEMORY=30.6KB（归档 0KB）。
+> 🆕 2026-10-31 21:35 #1025：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID1415997/.29 + PID2623280/.12 活着（etimes ~33257s ≈ 9.2h），iter 34759/700k（4.97%），loss 2.1932（近5步 2.16/2.15/2.26/2.12/2.19 稳态~2.15），grad-norm 0.088~0.099（极稳），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 skipped，~7.1s/step ≈ ~591K tok/s，ckpt@iter_34000（next@36000）。双机16×H100 GPU 97-100%util/~75GB/81GB。论文6页/ERR=0 维持。ETA ~53天。未完成指令：无。📦 体积：TASK=23.7KB / MEMORY=30.8KB（归档 0KB）。
+> 📦 §#1024（10-31 21:15, S1健康监控iter34590/loss2.144/0NaN/~608K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter34590(4.94%), loss2.144稳态, grad-norm极稳, ~608K tok/s。被#1025监控。需要时再读。
 > 📦 §#1023（10-31 20:57, S1健康监控iter34426/loss2.171/0NaN/~616K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter34426(4.92%), loss2.171稳态, grad-norm极稳, ~616K tok/s。被#1024监控。需要时再读。
 > 📦 §#1022（10-31 20:37, S1健康监控iter34250/loss~2.14/0NaN/~608K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter34250(4.89%), loss~2.14稳态, grad-norm极稳, ~608K tok/s。被#1023监控。需要时再读。
 > 📦 §#1021（10-31 20:17, S1健康监控iter34075/loss~2.19/0NaN/~599K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1健康iter34075(4.87%), loss~2.19稳态, grad-norm极稳, ~599K tok/s。被#1022监控。需要时再读。
@@ -28,11 +29,7 @@ WAITING: 1
 
 > 📦 §#1004（10-31 13:1x, 论文改稿复核(revert后首次) ERR=0/Pages=7(他线致溢出)）→ daily-memories/2026-10-31.md；**结论**：P0/P1全部完好, 但Pages=7(他线abstract/intro修订致参考文献溢出)。被#1005修正为6页。需要时再读。
 
-> 📦 §#1003（10-31 12:4x, S1健康监控(重启后首次)iter30186/loss~2.15/0NaN/~599K tok/s）→ daily-memories/2026-10-31.md；**结论**：S1 PID1415549活着, iter30186/700k(4.31%), loss~2.15稳态, grad-norm极稳, ~599K tok/s, ckpt@30000。被#1004复核。需要时再读。
-
-> 📦 §#1002（10-31 12:3x, S1环境污染修复(sklearn ABI)+重启iter30010/loss2.167·commit d21d0ba0b）→ daily-memories/2026-10-31.md；**结论**：harness editable install污染py310环境→sklearn ABI不匹配→pip reinstall 1.7.2修复，S1 12:16重启。被#1003验证。需要时再读。
-
-> 🆕 2026-10-31 11:3x #1000：**论文改稿验证 + 任务书归档**。验证 #999 改稿全部到位：4_llm_pretrain.tex 逐条核对(P0 83.9B✅/P1×6✅/P2✅)+0_abstract.tex(2.94T/2.151/598K✅)+扫描1_intro/2_related/3_arch/5_posttrain/9_conclusion均无旧口径(44B/1.357/412)✅。编译三连 pdflatex→bibtex→pdflatex→pdflatex: ERR=0/UNDEF=0/Overfull=0/Pages=6✅。commit 85ea67b4d 已push(git status clean)。归档11:0x+09:1x块→ARCHIVE_OPERATOR_PRETRAIN.md, TASK 35.4KB→15.4KB。未碰GPU/S1。未完成指令：无。📦 体积：TASK=15.4KB / MEMORY=29.6KB（归档 ~20KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
+> 📦 §#1003/#1002/#1000（10-31 11:3x~12:4x, S1重启+论文改稿验证+归档）→ daily-memories/2026-10-31.md；**结论**：S1重启后iter30186健康, 论文改稿全PASS/6页, TASK归档35.4→15.4KB。被后续监控。需要时再读。
 > 📦 §#999（10-31 11:2x, 论文改稿直接落地·9处改4_llm_pretrain.tex+1处改0_abstract.tex·commit 85ea67b4d）→ daily-memories/2026-10-31.md；**结论**：P0/P1×6/P2全部落地, 编译0-error/6页, 报告13KB已交付。被#1000验证。需要时再读。
 > 📦 §#994（10-31 08:13, S1监控iter30500健康·loss~2.15·0NaN·~590K tok/s·ckpt@30000）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.15稳态微降. 被#995更新。需要时再读。
 > 📦 §#993（10-31 07:01, S1监控iter29900健康·loss~2.166·0NaN·~590K tok/s·ckpt@28000·1M报告✅DONE）→ daily-memories/2026-10-31.md；**结论**：S1健康, loss~2.166稳态, 1M报告已交付. 被#994更新。需要时再读。
