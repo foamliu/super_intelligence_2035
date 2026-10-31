@@ -5418,7 +5418,7 @@
 | 2026-10-30 | 2610.40586 | Multistatic ISAC with Deep Learning-Based Clutter Suppression for 5G and Beyond | cs.NI | 候选 |
 | 2026-10-30 | 2610.40580 | RADIOlogy: A Single-Pass Approach to Training-Free Zero-Shot Anomaly Detection | cs.CV | 候选 |
 | 2026-10-30 | 2610.40578 | VeriCUA: Verification as Agentic Exploration for Computer-Using Agents | cs.AI | 候选 |
-| 2026-10-30 | 2610.40577 | Multi-View MoE: Letting Every Router Shape Expert Computation | cs.CL | 候选 |
+| 2026-10-30 | 2610.40577 | Multi-View MoE: Letting Every Router Shape Expert Computation | cs.CL | 收录 |
 | 2026-10-30 | 2610.40576 | PIVOT: Progressive Intervention via Online Teacher Correction | cs.CL | 候选 |
 | 2026-10-30 | 2610.40574 | Every Token Needs Its Own Teacher: Multi-teacher Adaptive On-policy Self-distillation | cs.CL | 收录 |
 | 2026-10-30 | 2610.40565 | Gym-Anything for Robotics: Scaling physical simulations with digital agents | cs.RO | 候选 |
@@ -5501,7 +5501,7 @@
 | 2026-10-30 | 2610.39590 | Red-Teaming Large Language Models in Low-Resource African Languages: A Case Study of Yoruba and Nigerian Pidgin | cs.CL | 候选 |
 | 2026-10-30 | 2610.39576 | Bayesian Offline Multi-Agent Reinforcement Learning with Latent World Models | cs.MA | 候选 |
 | 2026-10-30 | 2610.39571 | Generative artificial intelligence prompting strategies among Chinese university students across academic tasks | cs.HC | 候选 |
-| 2026-10-30 | 2610.39562 | Raincheck: Deferred Multimodal Prefill for Efficient Multi-Turn MLLM Inference | cs.CL | 候选 |
+| 2026-10-30 | 2610.39562 | Raincheck: Deferred Multimodal Prefill for Efficient Multi-Turn MLLM Inference | cs.CL | 收录 |
 | 2026-10-30 | 2610.39543 | From Reasoning to Action: Consequence-Grounded Alignment for Vision-Language-Action Models | cs.RO | 候选 |
 | 2026-10-30 | 2610.39528 | PRIME W0: Physical Priors from World Models for Embodied Manipulation | cs.RO | 候选 |
 | 2026-10-30 | 2610.39497 | Does Scaling Toward AGI Depend on What System-1 Lets System-2 Execute? | cs.AI | 候选 |
@@ -5577,7 +5577,7 @@
 | 2026-10-30 | 2610.38366 | TCC-RAG: Temporal Causal Chain-Guided RAG for Temporal Knowledge Graph Question Answering | cs.CL | 候选 |
 | 2026-10-30 | 2610.38360 | SparseTokenGS: Gaussian-based Sparse-View CBCT Reconstruction via Reusable Token Pool | cs.CV | 候选 |
 | 2026-10-30 | 2610.38349 | Aligning Misaligned Benchmarks for Single-View Novel View Synthesis | cs.CV | 候选 |
-| 2026-10-30 | 2610.38329 | A Case Study of a Multi-Agent Kernel-Optimization Loop That Learns a New AI Accelerator | cs.LG | 候选 |
+| 2026-10-30 | 2610.38329 | A Case Study of a Multi-Agent Kernel-Optimization Loop That Learns a New AI Accelerator | cs.LG | 收录 |
 | 2026-10-30 | 2610.38289 | PulmoWorld: An Asynchronous Multimodal Medical World Model for Longitudinal Pneumonia Dynamics | cs.CV | 候选 |
 | 2026-10-30 | 2610.38252 | A Tutorial on Generative Models for Music Audio | eess.AS | 候选 |
 | 2026-10-30 | 2610.38220 | Rubricon: Automated Rubric Generation and Refinement for LLM Evaluation and Training | cs.AI | 候选 |
