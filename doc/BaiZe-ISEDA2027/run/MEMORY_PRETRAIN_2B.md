@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-10-31 13:4x #1005：**篇幅修正 7→6 页（运维令 11:2x ④篇幅硬约束补完）**。#1004 发现 Pages=7（参考文献溢出，他线 abstract/intro 修订所致）。本轮在 4_llm_pretrain.tex 做 7 处「删中间过程、保最终数字」精简：① 删 replay 解释段 ② 精简 FP8 精度解释（保 613,992）③ 精简长上下文闸门准入条件（保 20%/5%/64K）④ 精简合成针数据列表（保 20-40%）⑤ 精简评估协议（保 ≥95%/1M、≤1.10×/1M）⑥ 精简架构对比表标题 ⑦ 删 NTK/YaRN 否定句（保 θ=10⁶/128K/1M 8×）。clean compile(pdflatex→bibtex→pdflatex×2)：ERR=0/UNDEF=0/Overfull=0/**Pages=6**✅。P0/P1 全部关键数字复核完好：83.9B✅/74:19:7✅/~82✅/39,377✅/cite✅/warmup✅/Megatron-Core✅。报告 report_pretrain_paper_edit_zh.html 更新至 18.8KB（+八/九节）。main.pdf 已 restore（不 commit）。S1 训练未碰。未完成指令：无。📦 体积：TASK=25.8KB / MEMORY=29.8KB。
+> 🆕 2026-10-31 14:0x #1006：**S1健康监控（重启后~100min）**。PID1415549活着(etimes~6006s)。iter30840/700k(4.41%), loss2.129稳态微降(自30450的2.136→2.129), 0NaN/0skipped✅, grad-norm0.067-0.082稳(30750温和spike0.159秒恢复), step~7.0s→~599K tok/s✅, LR4.2e-4(warmup中,目标1e-3@iter32000), ckpt@30000(下次@32000)。无新运维指令。论文#999/#1000/#1005均已完成(6页/ERR=0)。未完成指令：无。📦 体积：TASK=25.8KB / MEMORY=30.2KB。
+
+> 📦 §#1005（10-31 13:4x, 篇幅修正7→6页·7处删中间过程·ERR=0/Pages=6）→ daily-memories/2026-10-31.md；**结论**：4_llm_pretrain.tex 7处精简(保最终数字), 编译0-error/6页, P0/P1复核完好。被#1006监控。需要时再读。
 
 > 📦 §#1004（10-31 13:1x, 论文改稿复核(revert后首次) ERR=0/Pages=7(他线致溢出)）→ daily-memories/2026-10-31.md；**结论**：P0/P1全部完好, 但Pages=7(他线abstract/intro修订致参考文献溢出)。被#1005修正为6页。需要时再读。
 
@@ -32,8 +34,8 @@ WAITING: 1
 > 📦 §#834~#879（10-28 19:1x~10-29 11:00, S1监控iter270~8103健康×~35轮）→ daily-memories/2026-10-{28,29}.md；**结论汇总**：S1从iter270→8103持续健康, loss 6.12→2.376单调下降, 0 NaN, 559-665K tok/s, ckpt 2k→8k, pre-blend+nw=8恢复613K基线, check_rope PASS, abf_plan.py✅。需要时再读。
 
 
-> - 未完成指令：无。S1 RUNNING(iter 30010/700k, loss 2.167, ~598K tok/s, 98-100% GPU util, ckpt@30000, 环境污染已修复)。论文编辑#999/#1000已完成(commit 85ea67b4d)。仅剩长上下文ABF基线(需GPU空闲, 训练占用全部16卡~52天)。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~52天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=25.8KB / MEMORY=28.7KB（无归档）
+> - 未完成指令：无。S1 RUNNING(iter 30840/700k, loss 2.129, ~599K tok/s, 0NaN, ckpt@30000, 12:16重启后稳定推进840步)。论文编辑#999/#1000/#1005均已完成(6页/ERR=0/commit 85ea67b4d+ed72d5ef5)。仅剩长上下文ABF基线(需GPU空闲, 训练占用全部16卡~52天)。prune dry-run@20k✅(keep3删7=28GB, apply@50k)。ETA ~52天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=25.8KB / MEMORY=29.0KB（无归档）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
