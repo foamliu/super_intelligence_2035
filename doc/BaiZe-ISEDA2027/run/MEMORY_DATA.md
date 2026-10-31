@@ -19,8 +19,8 @@ WAITING: 1
 
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告已交付(v2)+验证完成
-已完成:       ✅A.LC+Agentic调研报告v2(report_data_lc_agentic_survey_zh.html 74829B/34table/0script/13+11候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.7%,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/commit+push synced)
-当前动作:     唤醒1046(2026-10-31):验证报告完整性→7节全在/0script/0CDN/34table平衡/幂等OK/git synced→归档MEMORY(41443B→17242B,保留~25条最近流水)
+已完成:       ✅A.LC+Agentic调研报告v2(report_data_lc_agentic_survey_zh.html 74829B/34table/0script/13+11候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.9%,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/commit+push synced)
+当前动作:     唤醒1047(2026-10-31):验证报告完整性OK+复核85M下载87.9% alive(20.1MB/s)
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [19:1x] 唤醒1047：验证运维令10-31交付物+复核85M → ①report=74829B/7节/0script/0CDN/34table平衡/td689/689✓;②generator幂等OK(59131chars=74829B中文字节✓);③git synced(## main...origin/main);④85M:PID233357 alive(etimes=26370s≈7.3h),du-sb 41,236,706,578,415→41,236,907,855,021(+201MB/10s≈20.1MB/s✓),parquet10,663/12,126=87.9%(+36 vs唤醒1043),8.incomplete(0失败),df:/nas_train174T/84%,/nas_env8.3T/84%;⑤ETA:剩余1463parquet≈5.6TB@~20MB/s→~3.2天→心跳WAITING=1
+> 📦 唤醒1046(19:0x)原文归档 → daily-memories-data/2026-10-31.md
 > [19:0x] 唤醒1046：验证运维令10-31交付物完整性 → ①report_data_lc_agentic_survey_zh.html=74829B(≥25KB✓)/7节全在(§1TL;DR~§7诚实条款✓)/0<script>(✓)/0外链CDN(✓)/34<table>平衡(✓);②gen_lc_agentic_survey_report.py幂等验证:重跑→74829B逐字节相同(✓);③git status synced(## main...origin/main,无ahead/behind✓);④commit 54fc4e2d7(18:10)已push(✓);⑤归档MEMORY_DATA.md(41443B→17242B,保留~25条最近流水,旧条目已在daily-memories-data/2026-10-31.md);⑥BAIZE_DATA_TASK.md=27958B(<40KB无需归档)
 > 📦 唤醒1045(18:0x)原文归档 → daily-memories-data/2026-10-31.md
 > [18:0x] 唤醒1045：web search 7轮补充调研HF→增强报告v2 → ①新增A类4个(stack-v3-train 15.9TB repo-level/RULER-llama3-1M 合成haystack/LongAlign-10k 长上下文SFT/LongWriter-6k 长输出);②新增B类3个(ia03/terminal-bench 评测集/tuandunghcmut/toolbench-v1 16K+API/Nemotron-Cascade-SFT-SWE agentless mini);③更新污染分析(OpenAI 2026-07:所有前沿模型可逐字重现SWE-bench Verified golden patch→已停止报告该分数);④报告56544B→74829B(34table/0script/0CDN/7节);⑤幂等验证通过;⑥commit+push
