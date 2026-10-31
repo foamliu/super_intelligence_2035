@@ -8,8 +8,9 @@
 #### ① 先读懂现状（本轮第一步，禁止跳过）
 ```bash
 cd doc/BaiZe-ISEDA2027 && git pull --rebase
-cat BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain_CHANGELOG.md   # 改动位置一览（9 条标注）
-cat BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain_EDITS.txt       # 删/改清单原文
+git log --oneline -5 -- BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex   # 看运维改了什么
+git show 3c82ffe01 -- BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex      # 逐行 diff（主修订）
+git show 9337de26e                                                      # 伪造引用勘误
 ```
 结构（14 小节，**4.3 / 4.6 / 4.11 为新增**）：4.1 架构选型 → 4.2 NeMo 框架 → **4.3 WSD 两段 decay** → 4.4 生产前搜索 → 4.5 数据 → **4.6 长上下文数据前置条件** → 4.7 混比搜索 → 4.8 搜索预算 → 4.9 搜索结果 → 4.10 全量生产 → **4.11 长上下文训练（主体）** → 4.12 能力与推理成本。
 
@@ -31,7 +32,7 @@ grep 'Overfull \\hbox' main.log                          # 允许 2 条，均在
 
 #### ③ 已知遗留问题（本轮一并处理）
 - **`chen2024dataeng` 已由运维处理完毕（2026-10-31）**：该条目在 arXiv 上**不存在，属伪造引用**（连同「128K 只需 0.5–5B token」的说法一起删除）；现 §4.11 只引 **已核实的** ProLong-8B（ACL 2025，40B token）与 LongRoPE2（arXiv 2502.20082，10B token），论证方向改为「我们 25–176B ≥ 公开量级，属保守；该预算是 floor 不是 ceiling」。**你不需要再查这条**；但若你在审校中发现其它引用可疑，按同样纪律处理：**查不到就删，不许凭记忆保留**。
-- `4_llm_pretrain.tex.bak_annotated` 是对照副本、**不是编译输入**；若你大改，请同步重建或删除。
+- `4_llm_pretrain.tex.bak_annotated`（已删除，别重建）：改动对照靠 `git show 3c82ffe01` 即可，**不要在 `ISEDA2027/` 目录下留任何非编译输入的副本**。
 - 摘要 `0_abstract.tex` 仍写「≈44B tokens / final loss 1.357 / ≈412 GPU-hours」，**与新正文矛盾**。本轮**不改摘要**（跨章节，另派），但要在回复里指出并登记待办。
 
 #### ④ 红线
