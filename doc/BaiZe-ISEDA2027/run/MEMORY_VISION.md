@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【11:2x 运维令标记已完成 ✅ · wake #440 · 2026-10-31 14:3x】** 复核：6_vision_encoder.tex 18行（OpenVision2 w512/126.8M、InfoNCE+patch-MSE 1:1/0.6、11.50%→19.76%@55.3M、20.27%@176M、+12.4pp、224/16=196token）。pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0。report_vision_paper_edit_zh.html 10429B(≥10KB✓)。commit f2ca45de5已在远端。任务书11:2x指令标记[已完成]。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【论文第6章四臂消融删除 ✅ DONE · wake #439 · 2026-10-31 13:5x】** 用户直令(11:2x)。wake#437版6_vision_encoder.tex含四臂消融句（AIMv2消融=中间过程），运维令明确要求不进正文 → 整句删除（含中文注释）→ 18行。pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0（wake#437版7页→删除后6页）。BOM保持(ef bb bf)。更新report_vision_paper_edit_zh.html(10429B/7节/0script/0外链/标签配平/≥10KB)+generate_paper_edit_report.py(幂等)。13项中间过程确认未出现。不commit main.pdf。不动abstract/intro/pretrain。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【T11-T14协议细则 ✅ DONE · wake #438 · 2026-10-31 12:1x】** 12:0x结构变更通知「新职责」。发现v1.2重构已被revert(commit 9ab1e4b32)→6_vision_encoder.tex回到wake#437版(20行/无T11-T14表)→revert同时撤销BOM修复→重新运行check_tex_encoding.py --fix→11个.tex全部恢复BOM→0 problem(s)。解决main.pdf合并冲突(checkout --theirs+add)。pdflatex×3+bibtex→6页/ERR=0/Overfull=0/Undef=0。交付报告`reports/report_vision_t11_t14_protocol_zh.html`14737B/7节(§0背景+§1 T11/RQ5 token消融+§2 T12/RQ6细粒度判别+§3 T13/RQ7三通道+§4 T14波形+§5通用基础设施+§6事实核对+§7编码验证)/11表/标签配平/0script/0外链/≥10KB。生成器`vision/generate_t11_t14_protocol_report.py`(幂等)。协议覆盖：每格n(≥20-50)、判据(断言通过率/容差±5%/精确匹配)、抽检(10%)、预注册决策树(正面/零结果/部分)。§6.1全部数字与EXPERIMENTS_VISION.md核对一致(9项✅)。未commit main.pdf。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -16,6 +18,7 @@ WAITING: 1
 
 ## 状态头
 
+> **本唤醒流水 [wake #440, 2026-10-31 14:3x]**：✅ 复核11:2x运维令完成状态。git pull --rebase(up to date) → 读6_vision_encoder.tex(18行/wake#439版) → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0 → 报告report_vision_paper_edit_zh.html 10429B(≥10KB✓) → commit f2ca45de5已在远端 → 任务书11:2x指令标记[已完成] → 写心跳+日流水+commit+push。📦 体积：TASK≈30KB/MEMORY≈11KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #439, 2026-10-31 13:5x]**：✅ 执行用户直令(11:2x)「请vision自行修改第6章视觉编码器并推送&提交」。git pull --rebase → 读6_vision_encoder.tex(wake#437版20行)+EXPERIMENTS_VISION.md/ROUND11.md核对 → 发现四臂消融句(L11)属「AIMv2消融」中间过程，运维令明确要求不进正文 → 整句删除(含中文注释) → 18行 → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0（wake#437版7页→删除后6页）→ BOM保持(ef bb bf) → 更新generate_paper_edit_report.py→生成report_vision_paper_edit_zh.html 10429B(7节/标签配平/0script/0外链/≥10KB) → 13项中间过程确认未出现 → 写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈10KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #438, 2026-10-31 12:1x]**：✅ 执行12:0x结构变更通知「新职责：为T11-T14/RQ5-RQ7补齐可执行细则」。git pull发现unmerged main.pdf→解决冲突(checkout --theirs+add)→发现v1.2重构已被revert(commit 9ab1e4b32)→6_vision_encoder.tex回到wake#437版(20行/无T11-T14表)/revert撤销BOM→重新运行check_tex_encoding.py --fix→11个.tex恢复BOM/0 problem(s)→pdflatex×3+bibtex→6页/ERR=0/Overfull=0/Undef=0→写generate_t11_t14_protocol_report.py→生成report_vision_t11_t14_protocol_zh.html 14737B(7节/11表/标签配平/0script/0外链/≥10KB)→§6.1数字核对9项全✅→写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈33KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #437, 2026-10-31 11:2x]**：✅ 执行用户直令「请vision自行修改第6章视觉编码器并推送&提交；各自注意篇幅」。git pull --rebase → 读6_vision_encoder.tex(改前20行)+EXPERIMENTS_VISION.md(L51/L129)+ROUND11.md(L877/L887/L1130-1137/L1543/L1268) → 重写6_vision_encoder.tex：P0修复width-1024→width-512+P1改"Both terms required"→interaction+四臂数字+P1标注20.27%@176M数据差异+P2删"trunk degrades" → pdflatex×3+bibtex→初稿7页→压缩→6页/ERR=0/UNDEF=0 → 写generate_paper_edit_report.py→生成report_vision_paper_edit_zh.html 16812B(幂等MD5=6240e703/0script/0外链/标签配平) → 写心跳+日流水+commit+push。📦 体积：TASK≈26KB/MEMORY≈34KB。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -32,9 +35,9 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **论文第6章改稿完成（wake#437+#439）**。6_vision_encoder.tex(18行/四臂消融已删/数字全核对✅)。6页/ERR=0/UNDEF=0。report_vision_paper_edit_zh.html已更新。**WAITING=1**。 |
+| PHASE | ✅ **论文第6章改稿完成（wake#437+#439+#440复核）**。6_vision_encoder.tex(18行/四臂消融已删/数字全核对✅)。6页/ERR=0/UNDEF=0。report_vision_paper_edit_zh.html已更新。11:2x运维令已标记[已完成]。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-10-31 13:5x (wake #439)**：删除四臂消融句（AIMv2消融中间过程），6_vision_encoder.tex 18行，6页/ERR=0。更新改稿报告。📦体积：TASK≈29KB/MEMORY≈10KB。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-10-31 14:3x (wake #440)**：复核11:2x运维令完成状态，确认6页/ERR=0，标记任务书[已完成]。📦体积：TASK≈30KB/MEMORY≈11KB。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
