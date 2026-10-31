@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-11-01 03:25 #1042：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~53569s ≈ 14.9h）活着，iter 37700/700k（5.39%），loss 近8步 2.203/2.058/2.214/2.168/2.145/2.127/2.134/2.136（稳态~2.15），grad-norm 0.100/0.105/0.100/0.098/0.105/0.100/0.089/0.089（极稳无spike），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（7700步全clean），~7.1s/step ≈ ~607K tok/s，ckpt@iter_36000（next@38000）。双机16×H100 GPU .12 96-100%util/~75GB。论文6页/ERR=0 维持。ETA ~52.2天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=29.5KB（归档 0KB）。
+> 🆕 2026-11-01 03:45 #1043：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~54713s ≈ 15.2h）活着，iter 37873/700k（5.41%），loss 近8步 2.166/2.053/2.191/2.172/2.134/2.159/2.075/2.083（稳态~2.13），grad-norm 0.100/0.101/0.091/0.091/0.089/0.092/0.090/0.102（极稳无spike），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf（37873步全clean），~7.03s/step ≈ ~597K tok/s，ckpt@iter_36000（next@38000）。双机16×H100 GPU .12 97-100%util/.29 100%util/~75GB。论文6页/ERR=0 维持。ETA ~53.9天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=28.8KB（归档 1.6KB → 删除冗余#715块）。
+> 📦 §#1042（11-01 03:25, S1健康监控iter37700/loss~2.15/0NaN/~607K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37700(5.39%), loss~2.15稳态, grad-norm极稳, ~607K tok/s, ckpt@36000。被#1043监控。需要时再读。
 > 📦 §#1041（11-01 02:55, S1健康监控iter37530/loss~2.16/0NaN/~607K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37530(5.36%), loss~2.16稳态, grad-norm极稳, ~607K tok/s, ckpt@36000。被#1042监控。需要时再读。
 > 📦 §#1040（11-01 02:35, S1健康监控iter37359/loss~2.16/0NaN/~607K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37359(5.34%), loss~2.16稳态, grad-norm极稳, ~607K tok/s, ckpt@36000。被#1041监控。需要时再读。
 > 📦 §#1039（11-01 02:15, S1健康监控iter37183/loss~2.14/0NaN/~608K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37183(5.31%), loss~2.14稳态, grad-norm极稳, ~608K tok/s, ckpt@36000。被#1040监控。需要时再读。
@@ -79,19 +80,7 @@ WAITING: 1
 
 > 📦 §#710 流水（2026-10-22 06:57，L2 健康监控 step 1830）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step1830 loss0.92 0error，短途报告/EXPERIMENTS 同步。需要时再读。
 > 📦 §#711 流水（2026-10-22 07:30，L2 健康监控 step 2000）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2000 loss0.9652 0error，短途报告/EXPERIMENTS 同步至 step2000。需要时再读。
-> 🆕 **2026-10-22 09:1x #715：📋 A方案前置调查（08:5x 新令 1113.sh + 20B）→ repo 克隆 + 脚本/数据/转换全部定位**：用户 08:5x 新令「pretrain 的 xmodel decay 参考官方 `train_decay_fp8_1113.sh`，使用 20B 数据」（**以 1113.sh 为准，覆盖 1120.sh**）。1113.sh 关键参数：48L/h1536/24head/GQA8/ffn3840/rope/swiglu/RMSNorm/use-mup(12.0/1.0/1.4/1.4)/GBS960/MBS5/seq3776/optimizer=muon(muon-matched-adamw-rms 0.2)/lr=1.66667e-3/decoupled-lr=1e-2/min-lr=1.04e-4/WSD exponential/lr-decay-iters=20000/warmup=0/wd=0.1/bf16/FP8 TE hybrid/amax-history=128/DP8(TP1/PP1)+distributed-optimizer/tokenizer deepseekv3/vocab=129280。train-iters=20e9/(960×3776)≈5560 步。
->
-> **前置调查结果**：
-> - **repo 克隆** ✅：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/Xmodel-2.5-code/`（含 megatron/ fork、pretrain_gpt.py、tools/checkpoint/convert.py、tokenizers/deepseekv3/、models/modeling_xmodel2.py）。
-> - **起点 ckpt** ✅：`xmodel25_history/step_532000/pytorch_model.bin`（2.7GB, HF format, XmodelForCausalLM = Llama-style: 48L/h1536/GQA8/ffn3840/rope_theta=500000/RMSNorm/swiglu/use_mup, vocab=129280）。
-> - **数据** ✅ 全部在 Megatron `text_document` 格式（`.bin`+`.idx`）：SFT=`data/mix_sft_tok/mix_sft_train_s{0,1,2,3}`、UFW L3=`data/full_ufw_l3/`(990G,154 shards)、Code=`data/full_ultradata_code_l3/`(481G,63 shards)、Math=`data/full_ultradata_math_l3/`(292G,67 shards)。**1113.sh 原 11 源在 `/data1/i_line_data/`（Xmodel 机器，我们没有）→ 需用现有 4 源配比（SFT 64%:L3 24%:code 8%:math 4%，与 v2 同口径）**。
-> - **HF→Megatron 转换** ⚠️ **无现成 Xmodel loader**：repo `tools/checkpoint/` 有 `loader_llama_mistral.py`（支持 HF llama2/llama3/mistral/yi/qwen2.5，但**不支持 xmodel**）。但有 `megatron_to_hf_mup.py`（Megatron→HF，含完整权重映射 + XmodelConfig/XmodelForCausalLM import）→ **可逆向写 HF→Megatron converter**。
-> - **.29 8×GPU** ✅ 全空（0MiB/0%），无 torchrun。
->
-> **下一步（按序）**：① 写 HF→Megatron 转换脚本（逆向 `megatron_to_hf_mup.py` 的权重映射）→ 验证转换后 ckpt 可被 Megatron 加载；② 搭 DATA_PATH（现有 4 源 text_document 路径 + 权重）；③ 改 1113.sh（CHECKPOINT_PATH→我们路径、train-iters=5560、lr-decay-iters=5560、DATA_PATH→现有 4 源、--load→转换后 Megatron ckpt）；④ 100 步冒烟确认 loss 接住 stable 末点 → ⑤ 起 20B decay。
->
-> **归档**：TASK 从 33.6KB→17.1KB（7 个已闭合运维指令块原文移入 ARCHIVE_OPERATOR_PRETRAIN.md，留 1 行指针）。
-> 📦 体积：TASK=17516B(17.1K)/MEMORY=待测（均≤32KB✓）。
+
 
 > 📦 §#714 流水（2026-10-22 08:44，L2 用户直令 kill 闭环）已归档 → daily-memories/2026-10-22.md；**结论**：L2 kill@step2370，.29 8卡空，方向转 A方案官方 Megatron。需要时再读。
 > 📦 §#713 流水（2026-10-22 08:15，L2 健康监控 step 2200）已归档 → daily-memories/2026-10-22.md；**结论**：L2 健康 step2200 loss0.87 0error。需要时再读。
