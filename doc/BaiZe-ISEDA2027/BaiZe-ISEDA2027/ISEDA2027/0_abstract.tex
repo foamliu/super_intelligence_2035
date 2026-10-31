@@ -9,8 +9,8 @@ The architecture is chosen through a matched from-scratch comparison against a d
 % 中文：该架构是通过与稠密 Transformer 对照模型进行的、条件对齐的从零训练对比选出的；在该对比中，混合模型以更少参数取得更低损失与更快推理，代价仅是适度的训练吞吐损失。
 We then run a staged, budget-constrained hyper-parameter search (S1--S5) on $8\times$H100 over the final hybrid backbone, which selects a stable learning rate of $1\times10^{-3}$ under a warmup--stable--decay schedule with an $86{:}10{:}4$ annealing mixture, reaching a validation loss of $\mathbf{2.2054}$ after $20000$ steps and $2.6739\pm0.0469$ across three seeds at $5000$ steps.
 % 中文：随后我们在最终的混合骨干网络上，用 8 张 H100 执行分阶段的、受预算约束的超参搜索（S1--S5），选出预热—稳定—衰减（WSD）调度下的稳定学习率 $1\times10^{-3}$、以及 $86{:}10{:}4$ 的退火数据配比；20000 步后验证损失达 $\mathbf{2.2054}$，5000 步时三个随机种子的结果为 $2.6739\pm0.0469$。
-The search recipe is then scaled to a full production run of $\approx$44B tokens---the Chinchilla-optimal budget for a 2.22B model---reaching a final training loss of $\mathbf{1.357}$ in $\approx$412 GPU-hours on $8{\times}$H100.
-% 中文：该搜索配方随后被放大到一次全量生产训练：约 440 亿 token——即 22 亿参数模型的 Chinchilla 最优预算——在 8 张 H100 上耗时约 412 GPU·h，最终训练损失达 $\mathbf{1.357}$。
+The search recipe is then scaled to a full production run of $2.94$T tokens ($700$k steps at $\texttt{GBS}{=}256$, sequence $16{,}384$) on $16{\times}$H100; at the time of writing (31 October 2026) the run has passed iteration $30{,}660$ at $\approx$598K tok/s (peak $613{,}992$) with training loss $2.151$, and the remaining schedule is projected at the measured rate.
+% 中文：该搜索配方随后被放大到一次全量生产训练：$2.94$T token（$700$k 步、$\texttt{GBS}{=}256$、序列 $16{,}384$）在 $16{\times}$H100 上运行；截至撰文时（2026 年 10 月 31 日），运行已过第 $30{,}660$ 步，持续约 $598$K tok/s（峰值 $613{,}992$），训练损失 $2.151$，其余调度按实测速率推算。
 We release the complete recipe and training command to support the reproducible construction of efficient agentic small language models.
 % 中文：我们公开完整配方与训练命令，以支持可复现地构建高效的智能体小语言模型。
 \end{abstract}
