@@ -1,136 +1,54 @@
 # BAIZE_DATA_TASK.md
+### 🚀 运维令 · 2026-10-31 17:3x（**web search 调研 HF 两类数据集：长上下文 + agentic**）· 用户直令 · 最高优先
 
-### 🚨 2026-10-30 22:2x 运维直令：恢复 85M 下载 + `/nas_train` 大目录清理盘点 · 最高优先
+> **用户原话**：「让 data 用 web search 去 hf.co 找找下边两类数据集：1. 长上下文（用于白泽的长上下文训练）2. agentic（用于白泽的 SFT 和 RL，提升智能体能力，以提升在 SWE-bench Verified & Terminal Bench 的表现）。上述调研写个中文 HTML 报告」
 
-> **用户令**：「data: 恢复下载 85M，看看 /nas_train 有哪些大目录可以删掉」
+**交付物**：`reports/report_data_lc_agentic_survey_zh.html`（中文、单文件自包含、**0 `script` / 0 外链 / 0 CDN**、标签配平、**≥25KB**）+ 生成器 `data/gen_lc_agentic_survey_report.py`（幂等）+ commit `data survey:` + push。
 
-**A. 恢复 85M 下载（先交活，再记账）**
-1. 探针 4 条（proxy `.23` / hf-mirror、目标 repo、剩余 shard、磁盘余量）→ 按 A/B/C 分支起下载。
-2. **判活按字节增长**（不看进程存活）：连续 3 次 `du -sb` 递增、无 `.incomplete` 堆积。
-3. 回报：已下/总量、实测 MB/s、ETA、失败 shard 名单（原文）。
+#### ① 调研方法（硬性，决定报告可信度）
+- **必须真去 hf.co 检索并打开数据集页面**（用 CLI/data 线可用的检索工具）；**每条必须给 repo id + 可点开的路由**，不许凭记忆写。
+- 每个数据集至少核实：**repo id · 体量（字节或样本数）· 语言 · license · 字段结构 · 更新时间 · 下载是否需授权（gated）**。
+- 拿不到的字段写「未核到」，**禁止编造**；gated/需申请的单独标出（我们下不了就白搭）。
+- 已存在于我们盘上的源（见 `run/data/DATA_MAPPING.md`）**不要重复推荐**，但可在「已覆盖」一节列出以示不遗漏。
 
-**B. `/nas_train` 大目录盘点 + 可删候选表**
-1. `du -x --max-depth=2 -h /nas_train 2>/dev/null | sort -h | tail -40` + `df -h /nas_train`。
-2. 对 top-20 目录逐项给：表观（`du -sh`）/ 实占（`du -sb`）/ 文件数 + 抽样 `ls -li` 看 inode 硬链接数 / 是否已被镜像收录（对照 `INDEX.tsv`）/ 归属（`full_*` / `tokenized` / 下载 parquet / staging / 旧日志 / 孤儿）。
-3. 产出 `run/data/cleanup_candidates_YYYYMMDD.tsv`：path、表观、实占、inode、判定（可删/保留/待定）、证据命令。
-4. **红线不变**：`full_*`、`tokenized/`、`INDEX.tsv`、`DATA_LEDGER.md`、下载 parquet **一律不可删**；本轮**只出候选清单，不执行删除**（等运维批准）。
-5. `DATA_MAPPING.md` 增设「可删候选」节（只列清单与合计；🚫 把表观当实占）。
+#### ② 类别 A：长上下文（用于 BaiZe 长上下文训练）
+**背景约束（必须写进报告，决定筛选口径）**：我们的 decay-B 段目前卡在数据闸门——`en_v1_4` 里 **≥32K 文档仅占 2.52% token、≥128K 仅 0.03%**，目标 ≥20% / ≥5%（见论文 §4.5 与 `configs/longctx_ladder.tsv`）。**所以本类调研的核心不是"数据量大"，而是"真有长文档"**。
 
-**判据**：85M 有字节增长 + 候选表每行都有判定与证据命令；本轮不删任何数据。
+至少覆盖这些方向，每类给 3-5 个候选：
+1. **书籍/长文**（Gutenberg 系、Books3 类、论文全文、Wikipedia 全文）
+2. **代码仓库级**（repo-level，多文件按依赖/目录顺序拼接；SWE 类语料也可归此）
+3. **长文档 QA / 合成 haystack**（RULER、NIAH 生成器、多跳长文 QA）
+4. **长上下文训练集**（公开的 128K/256K/1M 训练用数据）
+5. 法律/标准/专利类（天然超长）
 
+**关键判定**：对每个候选，**尽量给出「≥32K / ≥128K 文档占比」的证据或代理指标**（有数据集卡说明就引用；没有就写「未标注，需下载抽样实测」并给出抽样方法）。**没有这一列，这个报告对我们的价值就很低。**
 
+#### ③ 类别 B：agentic（用于 SFT + RL，目标提升 SWE-bench Verified & Terminal Bench）
+**必须分层给出**，因为两者的"可验证性"完全不同：
+1. **可直接 RL（有可执行验证信号）**：SWE 类轨迹、可跑单测的仓库任务、终端命令任务、可验证奖励数据集。给每个候选说明**奖励信号从哪来**（单测？diff 匹配？脚本断言？）
+2. **只能 SFT（无自动验证）**：通用 agentic 工具调用、多轮规划、浏览器/OS 操作轨迹
+3. **与 SWE-bench Verified / Terminal Bench 的对齐风险**：**必须单独一节**说明哪些数据集与这两个基准有**污染风险**（同源仓库/同 issue），并给出去污染建议（我们已有 193,295 条 13-gram 指纹黑名单机制，可直接复用）
 
-> 🧷 **行动优先纪律（2026-10-25 13:4x 用户令 · 覆盖一切归档/收尾/铁律类条文）**
-> 用户原话：「放开这些什么禁制、铁律什么的。」
-> 1. **先把活干出来，再谈记录**：本轮有未完成指令时，**先交付**（文件落盘/进程起来），心跳、日报、归档都排在交付之后。
-> 2. **未完成指令不许归档**；归档是清理，不是交付物。有未完成指令 ⇒ `WAITING: 0`（loop 60s 后再唤醒），不许睡 30 分钟。
-> 3. **体积不作挡箭牌**：任务书 ≤40KB 即可干活；>40KB 才需归档已闭合块。**不许因为体积/归档/心跳而推迟交付。**
-> 4. 心跳必须写 `未完成指令：<有/无>`。
+至少覆盖：SWE 类（SWE-Gym / SWE-smith / SWE-bench 训练集 / nemotron 类）、终端与 shell 类（Terminal-Bench 相关、tty 轨迹）、通用工具调用（ToolBench/Apibench/BFCL 类）、多轮 agent 轨迹、代码修复轨迹。
 
-> 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
+#### ④ 报告结构（7 节，缺一不可）
+1. **TL;DR**：两类各给 TOP-3 推荐 + 一句话理由 + 预计下载体量
+2. **检索方法与口径**：怎么找的、核了哪些字段、哪些没核到
+3. **A 类主表**：候选表（repo id / 体量 / 语言 / license / gated / **≥32K 占比** / **≥128K 占比** / 证据来源）
+4. **B 类主表**：候选表（repo id / 体量 / **奖励信号类型** / 适用阶段 SFT|RL / 与 SWE-bench·TB 污染风险）
+5. **污染与去重**：与我们现有 12 源的重叠、与两个目标基准的污染风险、去污染方案
+6. **下载方案**：建议下哪几个、体量、落盘路径（遵守现有 `/nas_env` 与 `/nas_train` 规范）、`hf download` 命令模板、**预计磁盘与 ETA（按当前实测带宽）**
+7. **诚实条款**：未核到的字段、代理指标 vs 实测、license 风险
 
-> ⚠️ 本文件由运维维护；agent 可【归档已闭合块】与【追加执行记录】（原文不改、不新增运维令），除此之外不改写正文。
-
-> 🆕 §运维令·2026-10-28 10:1x（**暂停下载**）· 用户直令 · 最高优先
-
-> 用户原话：「让 data 把下载暂停一下。」
-> **任务**：
-> 1. **立即暂停当前所有下载进程**：含 `download_85m_parallel16.sh`（`hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`）及其子进程等，全部停掉。
-> 2. **恢复前不再发起任何新的下载 / 迁移等重 I/O 操作**，直到收到「恢复下载」新令。
-> 3. 给 pretrain 的 pre-blend（.12/.29 并发、将写 ~6TB）让出 IO/磁盘/带宽。
-> **判据**：`pgrep -af "hf download|download_.*\.sh|rsync|wget|aria2"` 无活跃下载/迁移进程。
-
-> 🆕 §运维令·2026-10-27 13:3x（**分词 SFT-2605 + Agent-2609 到 /nas_env，纳入映射镜像同等对待**）· 用户直令 · 最高优先
-
-> 用户原话：「data：分词 UltraData-SFT-2605 和 UltraData-SFT-Agent-2609，分词产物放置在 /nas_env。更新 run/data/DATA_MAPPING.md 和 reports/report_data_mapping_zh.html，把它们俩跟其它 10 个 MiniCPM5 数据同等对待。」
-
-**任务**（当前 DATA_MAPPING.md 行 11-12 状态=「未分词」；这俩是 Decay 段 SFT 配比数据，pretrain 已阻塞等它）：
-1. **分词两个 SFT 源**（复用现有 SFT 分词管线）：
-   - `UltraData-SFT-2605/data/`（1504 jsonl：no_think 855 + think 649；下载 318.99 GB）→ 用 `convert_sft_to_parquet.py`（JSONL chat→parquet content 列）+ `preprocess_data.py --mode content` 产出 .bin/.idx。
-   - `UltraData-SFT-Agent-2609/data/`（50 jsonl：Code_Agent 7 / General_Agent 32 / Search_Agent 2 / Tool_Use 9；下载 54.22 GB）→ 同理转 parquet→分词；⚠️ Agent 类含 tool_call/assistant 结构，转换逻辑须适配并留证据（tool call 如何序列化进 content、是否丢字段）。
-2. **分词产物放 `/nas_env`**：与其余 9 源 `full_*` 同盘同口径；`tokenized/` 镜像建 symlink 指向 /nas_env（storage=symlink，与行 2-10 一致）。
-3. **纳入镜像 + 刷新两文件（同等对待）**：`build_tokenized_mirror.py` 刷新 `INDEX.tsv`（triplet=OK/inode_ok）→ 重跑 `gen_data_mapping_md.py`（行 11-12 状态→「镜像完整」，补 .bin/.idx/.json 数 + tokens + 字节）→ 重跑 `gen_report_data_mapping_html.py` 刷新 `report_data_mapping_zh.html`（A 节由 10 镜像源变 12 镜像源，合计 shard/字节/tokens 随之更新）。
-4. **判据**：两源 triplet/inode 全 OK、0 悬空链接、合计行自动求和无误差；两文件一起 commit + push（前缀 `data tokenize:` 或 `data report:`），心跳报两源新 tokens/字节 + 两文件新大小。
-
-> 🆕 §运维令·2026-10-27 08:3x（**刷新 DATA_MAPPING.md + report_data_mapping_zh.html**）· 用户直令 · 最高优先
-
-> 用户原话：「data：刷新 run/data/DATA_MAPPING.md 和 reports/report_data_mapping_zh.html」
-> **任务**（迁移 4 源已完成，把两个文件刷到最新 symlink 状态）：
-> 1. 重跑 `gen_data_mapping_md.py` → 刷新 `run/data/DATA_MAPPING.md`（9 源 storage=symlink 指向 /nas_env、字节/tokens 最新、SFT-2605/Agent-2609「未分词」行保留）。
-> 2. 重跑报告生成脚本（`gen_report_data_mapping_html.py` 或等价）→ 刷新 `reports/report_data_mapping_zh.html`（列表数字同步迁移后状态，df /nas_env 83%/nas_train 84%）。
-> 3. 两文件一起 commit + push（前缀 `data report:`），心跳报两文件新字节数。
-
-> 📦 §运维令·2026-10-26 14:4x（SFT-2605/Agent-2609 加入映射表+报告；删报告第 4 节）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：两份均未分词(0 .bin/.idx/.json)→DATA_MAPPING.md 行11-12如实登记「未分词」(SFT-2605=1504jsonl/297GB,Agent-2609=50jsonl/50GB)+报告加行11-12+删第4节(节号顺延5→4)+untokenized_sft_sources.tsv侧车+gen_data_mapping_md.py改load_untokenized，commit 86431cfb4 data report:。需要时再读。
-
-> 🆕 §运维令·2026-10-26 13:1x（**迁移 4 份新分词数据到 /nas_env**）· 用户直令 · 最高优先
-
-> 用户原话：「data: 把 ufw_en（ultrafineweb_en）、ufw_l1_en_hq（ultrafineweb_l1_en_hq）、ufw_zh（ultrafineweb_zh）、UltraX-AICC 这四份数据也迁移到 /nas_env 去。」
-> **任务**：把这 4 份已分词数据迁到 `/nas_env`，方式与之前迁移 5 源完全一致（复用 `migrate_to_nas_env_fast.sh`，bwlimit 300000 KiB/s、`--partial` + `flock` 单实例锁）。
-> **迁移对象**（tokenized 镜像内的 4 个目录，131 shard ≈ 4.05TB）：
-> - `tokenized/Ultra-FineWeb/ultrafineweb_en`（32）
-> - `tokenized/Ultra-FineWeb/ultrafineweb_l1_en_hq`（94）
-> - `tokenized/Ultra-FineWeb/ultrafineweb_zh`（4）
-> - `tokenized/UltraX-Preview/UltraX-AICC`（1）
-> **做法**：迁移底层数据 → `/nas_env`，tokenized/ 原路径改为 **symlink** 指向 /nas_env（镜像路径与 `INDEX.tsv` 逻辑不动）；迁移完成后 `gen_data_mapping_md.py` 重跑，`DATA_MAPPING.md` 的 storage 列同步为 symlink。
-> **判据**：`df` 确认 `/nas_train` 释放 ~4TB、`/nas_env` 相应增长；`INDEX.tsv` triplet=OK、inode_ok 不变。🚫 迁移只在有锁单实例内跑、不重复迁、不得就地改在跑脚本。commit `data migrate:`。
-> **⑤ 迁移完成后必须刷新并提交推送（用户补令）**：
-> 1. 重跑 `gen_data_mapping_md.py` → 刷新 `run/data/DATA_MAPPING.md`（storage 列 = symlink、triplet/inode 更新）；
-> 2. 基于新 `DATA_MAPPING.md` **重新生成** `reports/report_data_mapping_zh.html`（列表数字同步迁移后的状态）；
-> 3. 两个文件一起 `git add` + commit + push（前缀 `data migrate:` 或 `data report:`）。
-
-> 🆕 §运维令·2026-10-26 10:4x（**围绕 DATA_MAPPING.md 写数据情况列表报告**）· 用户直令 · 最高优先
-
-> 用户原话：「那就让data写个报告，围绕DATA_MAPPING.md，列表讲清楚数据情况。」
-> **任务**：写报告 `reports/report_data_mapping_zh.html`（自包含中文 HTML，内联样式）。
-> **唯一数据源**：`run/data/DATA_MAPPING.md`（+ `tokenized/INDEX.tsv`，两者 mtime 均 09:52:38）。数字以它们为准，不另做 `du`/`find` 全树扫。
-> **结构（列表讲清楚）**：
-> 1. **总览行**：数据源总数、总 shard 数（=815）、总 tokens、总字节、磁盘占用（/nas_train + /nas_env 的 df）。
-> 2. **逐源列表**（每个下载目录一行）：数据源 → 下载目录 → 分词镜像路径 → `.bin/.idx/.json` 数 → tokens → 字节 → **状态**（镜像完整/分词中/未分词/未映射/已删除）。
-> 3. **重点列全 10 个已镜像源**（当前 DATA_MAPPING.md A 节 1–10 行，全部「镜像完整」）：en_v1_4(110)、ufw_en_l3(154)、Code-L2(141)、Code-L3(63)、Math-L1(149)、Math-L3(67)、**ufw_en(32)、ufw_l1_en_hq(94)、ufw_zh(4)、UltraX-AICC(1)**。
-> 4. **其余状态源**（未分词/未映射/已删除/已废弃）单独一节列清。
-> 5. **结论**：数据管线是否全部收尾就绪（当前应=全部镜像完整），还差什么收尾动作。
-> 纪律：溯源到 DATA_MAPPING.md 行号；commit `data report:`。
-
-> 🆕 §运维令·2026-10-26 09:5x（**提高未分词源的分词并发**）· 用户直令 · 最高优先
-
-> 用户原话：「给 data 下发提高分词并发的指令」。
-> **问题**：当前 `run_tokenize_untokenized.sh` 的 knee 校准把 `MAX_CONCURRENT` 收敛到 ~6（224 核只用了 ~6 核，CPU ~3%），分词巨慢（~18min/shard，ETA 深夜）。
-> **动作（立即，先交付再写心跳）**：
-> 1. kill 当前 `run_tokenize_untokenized.sh` 及其 `preprocess_data_cm.py` 子进程（脚本带 `flock` 锁 `/tmp/tokenize_untokenized.lock`，kill 后锁随进程释放）。
-> 2. 用 `KNEE` 环境变量预设并发、跳过校准，重启：
->    ```bash
->    cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data_pipeline
->    KNEE=96 MAX_CONCURRENT=96 PARQUET_PER_SHARD=64 setsid -f nohup bash run_tokenize_untokenized.sh > /tmp/tokenize_untokenized_96.log 2>&1 &
->    ```
->    （脚本 Phase B 有 resume：`is_done` 跳过已完成 shard + `manifest/failed_shards` 续跑，安全，不会重复分词。）
-> 3. 重启后观察：`done` 推进速率应明显快于 ~18min/shard；每轮报 `tokens/s`、`cpu%`、新 ETA。若 96 已撞 NFS 读 IO 瓶颈（tokens/s 不增反降）→ 回落到 **64** 并在心跳说明；若余量充足再升 128。
-> 4. 判据：目标把「未分词 4 源」（done 97→131）的 ETA 从深夜提前到 **数小时内完成**。
-
-> 🆕 §运维令·2026-10-26 08:2x（**写最近工作报告 · 中文 HTML**）· 用户直令 · 最高优先
-> 用户原话：「关于最近的工作，安排 BaiZe 4个agent各自写一份报告。」
-> **任务**：写本线（data）最近工作（10-20 起）总结报告 `reports/report_data_recent_work_zh.html`（自包含中文 HTML）。
-> - 结构：① 本线定位 → ② 近期任务逐个 → ③ 关键数据速查表 → ④ 阻塞/待拍板 → ⑤ 下一步建议。
-> - **必覆盖**：① en_v1_4 下载（暂停→恢复→**110/110 全源 2238.14B/8.88TB** 完成）；② 5 源全量分词（Code L3/Math L3/Code L2/UFW-L3/Math L1 = **574 shards / 1056.36B**）③ 迁移 5/5 源 → /nas_env + 软链接；④ prune/磁盘清理 + 85M 降优先级；⑤ 当前收尾的未分词 4 源（95/131）。
-> - 数字溯源（log/json/manifest 文件:行）；commit `data report:`。
-
-> 📦 §运维令·2026-10-24 18:1x（85M 降优先级 → 迁移提速）**已闭合**（迁移 5/5 源全 DONE，`migrate_to_nas_env_fast.sh` 已跑完）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：`--bwlimit` 50000→300000 KiB/s、新脚本带 `--partial`+`flock` 单实例锁、不得就地编辑在跑的脚本、不得起第二实例；85M 不再是任何前置条件。需要时再读。
-
-> 📦 §运维指令·2026-10-24 16:1x（写"正在做的迁移"报告）**已闭合**（`reports/report_data_migration_nas_env_zh.html` 已交付，唤醒 637@17:39）→ 原文已归档 → `run/ARCHIVE_OPERATOR_DATA.md`。需要时再读。
+#### ⑤ 红线
+- 🚫 **本轮只调研 + 写报告，不下载任何数据**（磁盘与带宽要留给 85M 下载与训练）。
+- 🚫 **不占 GPU**；不打断 85M 下载（当前 ~87.6%）。
+- 🚫 不许编造 repo id / 体量 / license；**核不到的写「未核到」**。
+- 🚫 不得把「未标注长文档占比」的数据集默认当作满足闸门——**必须单列「未验证」**。
+- 报告必须说明：**HF 上的数据集体量以数据集卡为准，与实际下载字节可能差异大**（这是已知坑）。
+- 体积：任务书当前 37.6KB，**已超 32KB**；本轮请顺手归档已闭合的 10-30 85M 令（如已交付完整）以腾空间，🚫 **不得归档本令**。
 
 
-> 📦 §运维指令·2026-10-24 08:4x（用户质询：分词5worker+85M线路）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：Q1=5worker因串行+剩余shard少(非硬编码),升级65并发后110/110 DONE@11:48;Q2=92.25+hf.co直连✓(无HF_ENDPOINT);85M用parallel16+92.25续传。需要时再读。
-
-
-> 运行时状态写 `MEMORY_DATA.md` / `DATA_LEDGER.md` / `CONTAMINATION_CHECK.md` / `daily-memories-data/`。
-
----
-
-## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
-> 📦 §运维令·2026-10-26 22:0x（修复坏shard env14_CC-MAIN-2023-23）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：已修复DONE(commit 1cfb5e7dd)。.bin截断49GB→从源parquet(512)重分词→新.bin 118.23GB/max_ptr<bin复验PASS→原子替换→mirror rebuild 815shard→DATA_MAPPING+report+LEDGER §7.2全量更新。env14 110/110全齐blender不SKIP。证据run/data/bad_shard_..._20261026.txt §8-9。需要时再读。
-
-> 📦 §运维令·2026-10-25 22:3x（分词停顿2.6h诊断）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：done=95/131 FLAT系supervisor只计finalize的计数artifact非真停；/proc/io铁证36进程健康在写@1.65MB/s=412K tok/s/proc；处置=不杀；分词09:43:35全DONE 131/131。需要时再读。
-
-> 📦 §运维令 2026-10-25 18:5x（DATA_MAPPING 脚本化 + 分批清理 + batch1 DONE）**已完成**（唤醒 657/674 交付：幂等生成器 + 候选清单 + batch1 实占 1.13MB + 清理记录侧车）→ 原文归档 ARCHIVE_OPERATOR_DATA.md。
 ### ⚖️ 口径仲裁（2026-10-25 13:3x · **与下文任何旧条冲突时，一律以本表为准**）
 | 冲突点 | 旧说法 | **现在按这个做** |
 |---|---|---|
