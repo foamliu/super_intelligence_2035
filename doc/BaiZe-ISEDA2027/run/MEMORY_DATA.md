@@ -18,18 +18,20 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告已交付
-已完成:       ✅A.LC+Agentic调研报告(report_data_lc_agentic_survey_zh.html 56544B/27table/0script)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.7%,未中断)
-当前动作:     唤醒1044(2026-10-31 17:3x):web search 12轮调研HF→9个长上下文+8个agentic数据集→7节中文HTML报告→生成器幂等验证通过→commit+push
+PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告已增强交付(v2)
+已完成:       ✅A.LC+Agentic调研报告v2(report_data_lc_agentic_survey_zh.html 74829B/34table/0script/13+11候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.7%,未中断)
+当前动作:     唤醒1045(2026-10-31 18:0x):web search 7轮补充调研→新增4个A类(stack-v3/RULER/LongAlign/LongWriter)+3个B类(terminal-bench/toolbench/nemotron-sft)→更新污染分析(OpenAI 2026-07 SWE-bench Verified污染证实)→报告74829B→幂等验证→commit+push
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith)
 阻塞:         无
 ERROR_COUNT:  11
-未完成指令:   无(调研报告已交付)
+未完成指令:   无(调研报告v2已交付)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [18:0x] 唤醒1045：web search 7轮补充调研HF→增强报告v2 → ①新增A类4个(stack-v3-train 15.9TB repo-level/RULER-llama3-1M 合成haystack/LongAlign-10k 长上下文SFT/LongWriter-6k 长输出);②新增B类3个(ia03/terminal-bench 评测集/tuandunghcmut/toolbench-v1 16K+API/Nemotron-Cascade-SFT-SWE agentless mini);③更新污染分析(OpenAI 2026-07:所有前沿模型可逐字重现SWE-bench Verified golden patch→已停止报告该分数);④报告56544B→74829B(34table/0script/0CDN/7节);⑤幂等验证通过;⑥commit+push
+> 📦 唤醒1044(17:3x)原文归档 → daily-memories-data/2026-10-31.md
 > [17:3x] 唤醒1044：web search 12轮调研HF长上下文+agentic数据集 → ①A类9个候选(whole-books/prolong-data-512K/NExtLong/LongBlocks/arxiv/kl3m/LongBench-v2/gutenberg/stackv1_concat);②B类8个候选(SWE-smith/Nemotron-Cascade/SkyRL-293/Nemotron-Pivot/to-tool-call/terminal-sft/swev-trm/agent-data);③gen_lc_agentic_survey_report.py(幂等OK);④report_data_lc_agentic_survey_zh.html(56544B/27table/0script/0CDN/7节);⑤commit+push
 > 📦 唤醒1043(17:06)原文归档 → daily-memories-data/2026-10-31.md
 > [17:06] 唤醒1043：复核85M下载持续运行 → ①ps确认PID2668156(bash,ppid=1)+PID233357(hf download,ppid=2668156)活跃;②du-sb 3次判活:41,077,493,277,507→41,077,761,574,570→41,077,962,748,985(D1=268MB/10s≈26.8MB/s✓ D2=201MB/10s≈20.1MB/s✓严格递增);③parquet10,627/12,126=87.7%(+8 vs唤醒1042);④8 .incomplete全在.cache/sa1b/EN/part01_4(4活跃2.4-2.7GB+134MB,4零字节排队,0失败shard);⑤per-subset:coyo1940✓imagenet82✓laioncn562✓datacomp575✓mint705✓obelics5803✓sa1b960/1147(84%,+8)zero250m0/1310(0%);⑥候选表49行✓(4可删+9保留+36待定)+DATA_MAPPING.md D节✓;⑦df:/nas_train174T/207T(84%),34T可用,/nas_env8.3T/10T(84%),1.7T可用;⑧ETA:剩余1499parquet(sa1b187+zero250m1310)≈5.2TB@~23MB/s→~63h→~2.6天→心跳WAITING=1

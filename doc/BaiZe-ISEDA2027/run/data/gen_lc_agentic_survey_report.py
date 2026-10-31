@@ -173,6 +173,74 @@ LONG_CONTEXT_DATASETS = [
         "evidence": "数据集卡标注 thestackv1_concat_by_repo-524288 和 -65536",
         "notes": "ProLong 中专门的代码仓库级数据。按 repo 拼接=多文件按目录/依赖顺序合并。与 UltraData-Code (文件级) 互补。",
     },
+    {
+        "repo_id": "HuggingFaceCode/stack-v3-train",
+        "hf_url": "https://huggingface.co/datasets/HuggingFaceCode/stack-v3-train",
+        "category": "代码仓库级 (repo-level, 内联文件内容)",
+        "size": "15.9 TB (train), 113.7 TB (full); ~4.9T tokens",
+        "samples": "173,126,905 个仓库 (train), 224M (full)",
+        "tokens_est": "~4.9T tokens (train subset)",
+        "language": "713 种编程语言",
+        "license": "ODC-By",
+        "gated": "否",
+        "updated": "2025-08 (GitHub Aug 2025 快照)",
+        "fields": "repo_path, repo_id, commit_id, github_metadata (stars/forks/issues), files[].content (内联源码), files[].file_path, files[].language, files[].size_bytes, detected_licenses",
+        "ge32k_ratio": "未标注; 每行=一整个仓库，文件内容内联 → 大仓库拼接后必然 >=32K; 需抽样实测",
+        "ge128k_ratio": "未标注; 大型仓库 (多文件拼接) 预期有相当比例 >=128K; 需抽样实测",
+        "evidence": "数据集卡: '15.9 TB of source code across 713 programming languages from 173M repositories'; files[].content 内联; 每行=一个完整仓库",
+        "notes": "The Stack v3 是目前最大的 repo-level 代码数据集。文件内容内联=无需额外下载。每行=一个完整仓库=天然长上下文。但 15.9TB 体量巨大，需选择性下载。与 ProLong 的 thestackv1_concat 互补 (v1 vs v3，拼接 vs 原始仓库结构)。",
+    },
+    {
+        "repo_id": "self-long/RULER-llama3-1M",
+        "hf_url": "https://huggingface.co/datasets/self-long/RULER-llama3-1M",
+        "category": "长文档 QA / 合成 haystack (RULER/NIAH)",
+        "size": "10K - 100K 样本 (117 个子集)",
+        "samples": "117 子集 × 100-500 行/子集",
+        "tokens_est": "N/A (评测/合成数据)",
+        "language": "英语",
+        "license": "MIT",
+        "gated": "否",
+        "updated": "2024-12 (arXiv:2404.06654, 2412.18860)",
+        "fields": "input_ids (Llama-3 tokenized), 子集类型 (niah_single/multikey/multivalue/multiquery, cwe, fwe, vt, variable_tracking 等), 序列长度 (4K/8K/16K/32K/64K/128K/256K/512K/1M)",
+        "ge32k_ratio": "32K/64K/128K/256K/512K/1M 子集: 100% >=32K (按设计)",
+        "ge128k_ratio": "128K/256K/512K/1M 子集: 100% >=128K (按设计); 32K/64K 子集: 0% (固定长度 <128K)",
+        "evidence": "数据集卡列出 117 子集; 每个子集标注序列长度; NIAH (Needle in a Haystack) 多变体; CWE/FWE/VT 等任务类型",
+        "notes": "RULER 是标准长上下文评测基准，也是合成 haystack 训练数据的来源。包含 NIAH single/multikey/multivalue/multiquery, CWE (common words), FWE (frequent words), VT (variable tracking) 等任务。可用于 SFT + 评测。但合成数据≠真实长文档，不能替代 whole-books/prolong。",
+    },
+    {
+        "repo_id": "THUDM/LongAlign-10k",
+        "hf_url": "https://huggingface.co/datasets/THUDM/LongAlign-10k",
+        "category": "长上下文训练集 (SFT, 指令微调)",
+        "size": "10,000 条长指令",
+        "samples": "10,000",
+        "tokens_est": "未核到 (8K-64K tokens/条)",
+        "language": "中英混合 (10% 中文)",
+        "license": "未明确标注 (清华/智谱出品)",
+        "gated": "否",
+        "updated": "2024-01 (arXiv:2401.18058)",
+        "fields": "长上下文 (书籍/百科/论文/代码/问答), 指令, 回答",
+        "ge32k_ratio": "未标注; 长度范围 8K-64K tokens -> 部分样本 >=32K; 需抽样实测",
+        "ge128k_ratio": "未标注; 最大 64K -> 0% >=128K (上限为 64K)",
+        "evidence": "论文 arXiv:2401.18058: '10,000 long instruction data, length 8k-64k'; 9 个来源 (ArXiv/Books3/C4/Wikipedia/Github/StackExchange 等)",
+        "notes": "长上下文 SFT 数据集，中英混合 (10% 中文)。来源多样 (ArXiv/Books3/C4/Wikipedia/Github/StackExchange/WuDao)。但最大 64K -> 对 >=128K 闸门无贡献。适合 SFT 阶段，不适合预训练长数据。Books3 来源有版权争议。",
+    },
+    {
+        "repo_id": "THUDM/LongWriter-6k",
+        "hf_url": "https://huggingface.co/datasets/THUDM/LongWriter-6k",
+        "category": "长上下文训练集 (长输出生成 SFT)",
+        "size": "6,000 条长输出样本",
+        "samples": "6,000",
+        "tokens_est": "输出 2K-20K words/条",
+        "language": "中英混合 (3K 中文 + 3K 英文)",
+        "license": "未明确标注 (清华/智谱出品)",
+        "gated": "否",
+        "updated": "2024-08 (arXiv:2408.07055)",
+        "fields": "指令 (写作/摘要/分析), 长输出 (2K-20K words)",
+        "ge32k_ratio": "未标注; 输出 2K-20K words -> 部分 >=32K tokens; 需抽样实测",
+        "ge128k_ratio": "未标注; 最大 20K words -> 极少 >=128K tokens",
+        "evidence": "论文 arXiv:2408.07055: '6,000 long output samples, 2k-20k words'; AgentWrite pipeline 生成",
+        "notes": "解决「模型输出长度受限」问题 (SFT 数据中缺长输出)。与 LongAlign 互补: LongAlign=长输入，LongWriter=长输出。对 >=128K 闸门贡献小，但提升长输出能力。中英混合。",
+    },
 ]
 
 # B 类：Agentic 数据集
@@ -304,6 +372,54 @@ AGENTIC_DATASETS = [
         "stage": "SFT (成功轨迹)",
         "contamination_risk": "中: SWE-Gym 与 SWE-bench 部分同源",
         "notes": "SWE-Gym OpenHands 采样轨迹，含成功/失败标签。SWE-Gym 论文报告 19% 绝对提升在 SWE-bench Verified。",
+    },
+    {
+        "repo_id": "ia03/terminal-bench",
+        "hf_url": "https://huggingface.co/datasets/ia03/terminal-bench",
+        "tier": "评测集 (非训练，用于去污染 + 评测)",
+        "size": "~80+ 个任务 (完整自包含 tar.gz 归档)",
+        "samples": "80+ 个 Terminal-Bench 任务",
+        "language": "英语",
+        "license": "未核到 (Laude Institute 出品)",
+        "gated": "否",
+        "updated": "近期 (Terminal-Bench 2.0 已发布)",
+        "fields": "task_id, archive (gzipped tarball), task_yaml, difficulty (easy/medium/hard), tags, category, base_description, max_agent_timeout_sec, max_test_timeout_sec, tar_sha256, archive_bytes, n_files",
+        "reward_signal": "Docker 容器内执行 test script -> pass/fail。每个任务是完整自包含归档 (含目录结构/二进制/Docker 配置/测试脚本)。",
+        "stage": "评测 (非训练，绝不可入训练集)",
+        "contamination_risk": "🔴 极高 (作为评测集): 必须提取 13-gram 指纹加入黑名单。Terminal-Bench 2.0 (harborframework/terminal-bench-2.0) 已发布，任务更新。",
+        "notes": "Terminal-Bench 原始数据集。每个任务是完整自包含 Docker 归档。用于评测 agent 在真实终端环境的能力 (编译/训练模型/搭建服务器/调试)。绝不可入训练集。必须提取 13-gram 指纹用于去污染。",
+    },
+    {
+        "repo_id": "tuandunghcmut/toolbench-v1",
+        "hf_url": "https://huggingface.co/datasets/tuandunghcmut/toolbench-v1",
+        "tier": "只能 SFT",
+        "size": "100K - 1M 样本",
+        "samples": "100K-1M 对话 (train + validation + benchmark)",
+        "language": "英语",
+        "license": "Apache-2.0",
+        "gated": "否",
+        "updated": "2023 (ToolLLM 论文)",
+        "fields": "id, conversations (system/user/assistant/function 多轮对话)",
+        "reward_signal": "无自动验证 (SFT 数据)",
+        "stage": "SFT",
+        "contamination_risk": "低: 通用工具调用 (16,000+ RapidAPI)，与 SWE-bench/Terminal-Bench 无直接关联",
+        "notes": "ToolBench 是最大规模的工具调用 SFT 数据集 (16,000+ 真实 API)。训练 ToolLLaMA。Apache-2.0 干净。与 to-tool-call-datasets 部分重叠 (后者聚合了 ToolBench)，但此为原始版本。",
+    },
+    {
+        "repo_id": "nvidia/Nemotron-Cascade-SFT-SWE",
+        "hf_url": "https://huggingface.co/datasets/nvidia/Nemotron-Cascade-SFT-SWE",
+        "tier": "只能 SFT (Nemotron Cascade SFT 阶段)",
+        "size": "100K - 1M 样本",
+        "samples": "SFT 阶段: SWE-Bench-Train + SWE-reBench + SWE-Smith + R2E-Gym + SWE-Fixer-Train，按难度筛选",
+        "language": "英语",
+        "license": "CC BY 4.0",
+        "gated": "否",
+        "updated": "2025-12 (arXiv:2512.13607)",
+        "fields": "category (SWE Repair/Localization/TestGen), source, messages (agentless mini framework), generator (DeepSeek-R1-0528), patch, thinking",
+        "reward_signal": "无自动验证 (SFT 数据); 但响应由 DeepSeek-R1-0528 生成，质量较高",
+        "stage": "SFT",
+        "contamination_risk": "高: 含 SWE-Bench-Train (1,525 样本)，与 SWE-bench Verified 同源。NVIDIA 声称「排除评估数据集中存在的仓库实例」但仍需独立验证",
+        "notes": "Nemotron Cascade 的 SFT 数据 (与 RL 版互补)。agentless mini 框架: 三任务 (代码定位/修复/测试生成)。NVIDIA 声称已排除 SWE-bench Verified 仓库，但需独立验证。8B/14B 分别达 37.2%/43.1% pass@1。",
     },
 ]
 
@@ -522,20 +638,24 @@ def section_a_table():
 <li><strong>ysngkil/whole-books</strong> — 20.2 万本完整书，87-98% ≥64K，最直接的长文档来源</li>
 <li><strong>common-pile/arxiv_papers_filtered</strong> — 版权干净论文全文 (CC BY/SA/CC0)，多数 8K-50K，对 ≥128K 贡献有限</li>
 <li><strong>common-pile/project_gutenberg_filtered</strong> — whole-books 的上游，无需重复下载</li>
+<li><strong>THUDM/LongWriter-6k</strong> — 6K 长输出样本 (2K-20K words)，解决模型长输出能力不足</li>
 </ul>
 <h4>② 代码仓库级 (repo-level 拼接)</h4>
 <ul>
 <li><strong>princeton-nlp/prolong-data-512K (thestackv1_concat_by_repo)</strong> — The Stack v1 按 repo 拼接到 524K/65K，6.4B tokens。与 UltraData-Code (文件级) 互补</li>
+<li><strong>HuggingFaceCode/stack-v3-train</strong> — The Stack v3，15.9TB，173M 仓库，文件内容内联，每行=一个完整仓库=天然长上下文</li>
 </ul>
 <h4>③ 长文档 QA / 合成 haystack</h4>
 <ul>
 <li><strong>utter-project/LongBlocks</strong> — 194K 长上下文 QA，20 语言，含 3 教师模型响应</li>
 <li><strong>zai-org/LongBench-v2</strong> — ⚠️ 评测集 (503 MCQ)，不可入训练，但可指导配比</li>
+<li><strong>self-long/RULER-llama3-1M</strong> — RULER 合成 haystack (NIAH/CWE/FWE/VT)，117 子集，4K-1M 序列长度，MIT</li>
 </ul>
 <h4>④ 长上下文训练集</h4>
 <ul>
 <li><strong>princeton-nlp/prolong-data-512K</strong> — 31B tokens，系统化长上下文训练数据 (Princeton 论文验证)</li>
 <li><strong>caskcsg/NExtLong</strong> — 合成长上下文 64K-512K，不依赖真实长文档</li>
+<li><strong>THUDM/LongAlign-10k</strong> — 10K 长指令 SFT 数据，8K-64K，中英混合 (10% 中文)</li>
 </ul>
 <h4>⑤ 法律/标准/专利类</h4>
 <ul>
@@ -548,6 +668,9 @@ def section_a_table():
 <li><strong>common-pile/arxiv_papers_filtered</strong> — 论文多数 8K-50K，≥32K 占比未标注，需抽样实测</li>
 <li><strong>utter-project/LongBlocks</strong> — ≥32K/≥128K 占比未标注，需抽样实测</li>
 <li><strong>alea-institute/kl3m-data</strong> — ≥32K/≥128K 具体占比未标注 (但数据卡显示部分文档 306K tokens)，需抽样实测</li>
+<li><strong>HuggingFaceCode/stack-v3-train</strong> — 每行=一个仓库，但 ≥32K/≥128K 占比未标注，需抽样实测 (仓库大小差异大)</li>
+<li><strong>THUDM/LongAlign-10k</strong> — 8K-64K 范围，≥32K 占比未标注，≥128K=0% (上限 64K)</li>
+<li><strong>THUDM/LongWriter-6k</strong> — 2K-20K words，≥32K 占比未标注，≥128K≈0%</li>
 </ul>
 <p><strong>抽样方法建议</strong>: 下载后随机抽 1000 条，用我们的 tokenizer 分词，统计 P50/P90/P99/max 和 ≥32K/≥128K 占比，写入 DATA_MAPPING.md。</p>
 </div>
@@ -619,27 +742,40 @@ def section_b_table():
 <h4>② 只能 SFT (无自动验证)</h4>
 <ul>
 <li><strong>zhangdw/to-tool-call-datasets</strong> — 244K 工具调用，统一 Qwen3 格式，10 个公开源聚合。🟢 低污染。</li>
+<li><strong>tuandunghcmut/toolbench-v1</strong> — ToolBench 原始版，16K+ 真实 API，Apache-2.0。🟢 低污染。</li>
 <li><strong>mshojaei77/terminal-command-execution-sft</strong> — 终端命令 SFT，9 种 shell, 17 种技能。🟢 低污染。适合 Terminal-Bench 方向。</li>
 <li><strong>Nethraaaaa81/swev-trm-trajectories-25models</strong> — 25 个 LLM 在 SWE-bench Verified 上的轨迹，可训练 TRM。🔴 高污染 (直接用 Verified 任务)。</li>
 <li><strong>hariharasudharsanj-008/agent-data-collection</strong> — SWE-Gym OpenHands 轨迹。🟡 中等污染。</li>
+<li><strong>nvidia/Nemotron-Cascade-SFT-SWE</strong> — SFT 版 (agentless mini 框架)，DeepSeek-R1-0528 生成。CC BY 4.0。🔴 高污染 (含 SWE-Bench-Train)。</li>
+</ul>
+
+<h4>②.5 评测集 (仅去污染用，绝不可入训练)</h4>
+<ul>
+<li><strong>ia03/terminal-bench</strong> — Terminal-Bench 原始数据集，80+ 个自包含 Docker 任务。🔴 仅用于提取 13-gram 指纹 + 评测。</li>
 </ul>
 
 <h4>③ 与 SWE-bench Verified / Terminal Bench 的对齐风险</h4>
 <div class="warning">
-<p><strong>🔴 SWE-bench Verified 污染风险</strong> (2026-07 公开报道证实):</p>
+<p><strong>🔴 SWE-bench Verified 污染风险</strong> (2026-07 OpenAI 公开分析证实):</p>
 <ul>
+<li>OpenAI 2026-07 分析发现: <strong>所有前沿模型都能逐字重现 SWE-bench Verified 的 golden patch</strong> → 说明模型在训练中已见过这些问题和解答。</li>
+<li>OpenAI 已停止报告 SWE-bench Verified 分数，建议使用 SWE-bench Pro 替代。</li>
 <li>SWE-bench Verified 的 500 个任务来自公开 GitHub 仓库 → 这些 repo/issue/PR/commit history 在每个大型 web crawl 中都存在 → 模型训练数据中已隐含见过答案。</li>
 <li>SWE-bench Live (2026-05 发布，用训练截止日期后的 issue) 显示: 模型在 Verified 上 70+ 分 → Live 上 50+ 分，差距 ~20 分，跨厂商一致。</li>
+<li>OpenAI 审核了 138 个 o3 无法稳定解决的 Verified 问题: 59.4% 存在重大缺陷 (35.5% 测试过严 + 18.8% 测试过宽 + 5.1% 其他)。</li>
 <li><strong>我们的去污染方案</strong>: 已有 193,295 条 13-gram 指纹黑名单机制 (见 CONTAMINATION_CHECK.md)，可直接复用。建议: (1) 从 SWE-bench Verified 的 500 个 instance_id 提取 patch + problem_statement + test 内容; (2) 生成 13-gram 指纹加入黑名单; (3) 对所有候选训练数据做 13-gram 扫描，命中即过滤。</li>
 <li><strong>SWE-smith 特别注意</strong>: 222 个 repo 与 SWE-bench Verified 的 repo 有重叠 → 即使 task instance 不同，同 repo 的代码风格/依赖/API 模式可能泄露信息。建议 repo 级去重: 排除与 Verified 完全相同 repo 的 SWE-smith instances。</li>
+<li><strong>Nemotron-Cascade-SFT-SWE 特别注意</strong>: NVIDIA 声称已「排除评估数据集中存在的仓库实例」→ 需独立验证 (我们的 13-gram 扫描可复验)。</li>
 </ul>
 </div>
 <div class="warning">
 <p><strong>🟡 Terminal-Bench 污染风险</strong>:</p>
 <ul>
-<li>Terminal-Bench ~100 个任务，来自公开 GitHub 仓库 → 同样的 web crawl 污染风险。</li>
+<li>Terminal-Bench ~80+ 个任务 (ia03/terminal-bench)，来自公开 GitHub 仓库 → 同样的 web crawl 污染风险。</li>
+<li>Terminal-Bench 2.0 (harborframework/terminal-bench-2.0) 已发布，任务更新更难。</li>
 <li>Terminal-Bench 的 task instruction + test script 应提取 13-gram 指纹加入黑名单。</li>
 <li><strong>mshojaei77/terminal-command-execution-sft</strong> 是合成/改写数据，非 Terminal-Bench 原始任务 → 污染风险低，但需确认源数据集不含 Terminal-Bench 测试脚本。</li>
+<li>每个 Terminal-Bench 任务是完整自包含 Docker 归档 (含二进制/配置/测试脚本) → 需提取 task_yaml + base_description + test script 的 13-gram。</li>
 </ul>
 </div>
 """
@@ -713,12 +849,18 @@ def section_download():
 <tr><td>P0</td><td>SWE-bench/SWE-smith</td><td>B agentic</td><td>~5-10 GiB</td><td>/nas_env/datasets/swe-smith/</td><td>最大 SWE 训练数据，可 RL，MIT</td></tr>
 <tr><td>P1</td><td>princeton-nlp/prolong-data-512K</td><td>A 长上下文</td><td>~120 GiB</td><td>/nas_env/datasets/prolong-data-512K/</td><td>系统化长上下文训练配方</td></tr>
 <tr><td>P1</td><td>zhangdw/to-tool-call-datasets</td><td>B agentic</td><td>~2.4 GiB</td><td>/nas_env/datasets/to-tool-call/</td><td>244K 工具调用 SFT，低污染</td></tr>
+<tr><td>P1</td><td>tuandunghcmut/toolbench-v1</td><td>B agentic</td><td>~10-50 GiB</td><td>/nas_env/datasets/toolbench/</td><td>最大工具调用 SFT (16K+ API)，Apache-2.0</td></tr>
+<tr><td>P1</td><td>self-long/RULER-llama3-1M</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/ruler-1m/</td><td>RULER 合成 haystack，MIT，117 子集</td></tr>
 <tr><td>P2</td><td>caskcsg/NExtLong</td><td>A 长上下文</td><td>&lt;50 GiB</td><td>/nas_env/datasets/nextlong/</td><td>合成长上下文，真实长文档不足时补充</td></tr>
 <tr><td>P2</td><td>nvidia/Nemotron-Cascade-RL-SWE</td><td>B agentic</td><td>~10-20 GiB</td><td>/nas_env/datasets/nemotron-cascade-rl/</td><td>execution-free RL，但需去污染</td></tr>
+<tr><td>P2</td><td>nvidia/Nemotron-Cascade-SFT-SWE</td><td>B agentic</td><td>~10-20 GiB</td><td>/nas_env/datasets/nemotron-cascade-sft/</td><td>SFT 版 (agentless mini)，CC BY 4.0，需去污染</td></tr>
+<tr><td>P2</td><td>THUDM/LongAlign-10k</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/longalign/</td><td>10K 长指令 SFT，中英混合</td></tr>
 <tr><td>P3</td><td>mshojaei77/terminal-command-execution-sft</td><td>B agentic</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-sft/</td><td>Terminal-Bench 方向 SFT</td></tr>
 <tr><td>P3</td><td>utter-project/LongBlocks</td><td>A 长上下文</td><td>未核到</td><td>/nas_env/datasets/longblocks/</td><td>多语言长上下文 QA</td></tr>
+<tr><td>P3</td><td>ia03/terminal-bench</td><td>B 评测</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-bench/</td><td>评测集 (仅去污染用，不入训练)</td></tr>
+<tr><td>⚠️</td><td>HuggingFaceCode/stack-v3-train</td><td>A 长上下文</td><td>15.9 TB</td><td>/nas_env/datasets/stack-v3-train/</td><td>体量巨大，需选择性下载 (按语言/大小过滤)</td></tr>
 </table>
-<p><strong>预计总下载体量: ~215-240 GiB</strong> (P0+P1: ~150 GiB; P2: ~60 GiB; P3: ~10 GiB)</p>
+<p><strong>预计总下载体量: ~240-280 GiB</strong> (P0+P1: ~160 GiB; P2: ~80 GiB; P3: ~15 GiB; stack-v3 需单独评估)</p>
 
 <h3>6.2 落盘路径规范</h3>
 <ul>
@@ -753,6 +895,24 @@ hf download nvidia/Nemotron-Cascade-RL-SWE --repo-type dataset --local-dir /nas_
 
 # P3: terminal-command-execution-sft
 hf download mshojaei77/terminal-command-execution-sft --repo-type dataset --local-dir /nas_env/datasets/terminal-sft/
+
+# P1: ToolBench (原始版，Apache-2.0)
+hf download tuandunghcmut/toolbench-v1 --repo-type dataset --local-dir /nas_env/datasets/toolbench/
+
+# P1: RULER (合成 haystack，MIT，<5 GiB)
+hf download self-long/RULER-llama3-1M --repo-type dataset --local-dir /nas_env/datasets/ruler-1m/
+
+# P2: Nemotron-Cascade-SFT-SWE (SFT 版，CC BY 4.0)
+hf download nvidia/Nemotron-Cascade-SFT-SWE --repo-type dataset --local-dir /nas_env/datasets/nemotron-cascade-sft/
+
+# P2: LongAlign-10k (长上下文 SFT，中英混合)
+hf download THUDM/LongAlign-10k --repo-type dataset --local-dir /nas_env/datasets/longalign/
+
+# P3: Terminal-Bench (仅去污染用，不入训练)
+hf download ia03/terminal-bench --repo-type dataset --local-dir /nas_env/datasets/terminal-bench/
+
+# ⚠️: The Stack v3 (15.9TB，需选择性下载，例如仅 Python 大仓库)
+# hf download HuggingFaceCode/stack-v3-train --repo-type dataset --local-dir /nas_env/datasets/stack-v3-train/ --include "*.parquet"
 </code></pre>
 
 <h3>6.4 预计磁盘与 ETA</h3>
