@@ -18,18 +18,20 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告已增强交付(v2)
-已完成:       ✅A.LC+Agentic调研报告v2(report_data_lc_agentic_survey_zh.html 74829B/34table/0script/13+11候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.7%,未中断)
-当前动作:     唤醒1045(2026-10-31 18:0x):web search 7轮补充调研→新增4个A类(stack-v3/RULER/LongAlign/LongWriter)+3个B类(terminal-bench/toolbench/nemotron-sft)→更新污染分析(OpenAI 2026-07 SWE-bench Verified污染证实)→报告74829B→幂等验证→commit+push
+PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告已交付(v2)+验证完成
+已完成:       ✅A.LC+Agentic调研报告v2(report_data_lc_agentic_survey_zh.html 74829B/34table/0script/13+11候选)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(87.7%,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/commit+push synced)
+当前动作:     唤醒1046(2026-10-31):验证报告完整性→7节全在/0script/0CDN/34table平衡/幂等OK/git synced→归档MEMORY(41443B→17242B,保留~25条最近流水)
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith)
 阻塞:         无
 ERROR_COUNT:  11
-未完成指令:   无(调研报告v2已交付)
+未完成指令:   无(调研报告v2已交付+验证完成)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [19:0x] 唤醒1046：验证运维令10-31交付物完整性 → ①report_data_lc_agentic_survey_zh.html=74829B(≥25KB✓)/7节全在(§1TL;DR~§7诚实条款✓)/0<script>(✓)/0外链CDN(✓)/34<table>平衡(✓);②gen_lc_agentic_survey_report.py幂等验证:重跑→74829B逐字节相同(✓);③git status synced(## main...origin/main,无ahead/behind✓);④commit 54fc4e2d7(18:10)已push(✓);⑤归档MEMORY_DATA.md(41443B→17242B,保留~25条最近流水,旧条目已在daily-memories-data/2026-10-31.md);⑥BAIZE_DATA_TASK.md=27958B(<40KB无需归档)
+> 📦 唤醒1045(18:0x)原文归档 → daily-memories-data/2026-10-31.md
 > [18:0x] 唤醒1045：web search 7轮补充调研HF→增强报告v2 → ①新增A类4个(stack-v3-train 15.9TB repo-level/RULER-llama3-1M 合成haystack/LongAlign-10k 长上下文SFT/LongWriter-6k 长输出);②新增B类3个(ia03/terminal-bench 评测集/tuandunghcmut/toolbench-v1 16K+API/Nemotron-Cascade-SFT-SWE agentless mini);③更新污染分析(OpenAI 2026-07:所有前沿模型可逐字重现SWE-bench Verified golden patch→已停止报告该分数);④报告56544B→74829B(34table/0script/0CDN/7节);⑤幂等验证通过;⑥commit+push
 > 📦 唤醒1044(17:3x)原文归档 → daily-memories-data/2026-10-31.md
 > [17:3x] 唤醒1044：web search 12轮调研HF长上下文+agentic数据集 → ①A类9个候选(whole-books/prolong-data-512K/NExtLong/LongBlocks/arxiv/kl3m/LongBench-v2/gutenberg/stackv1_concat);②B类8个候选(SWE-smith/Nemotron-Cascade/SkyRL-293/Nemotron-Pivot/to-tool-call/terminal-sft/swev-trm/agent-data);③gen_lc_agentic_survey_report.py(幂等OK);④report_data_lc_agentic_survey_zh.html(56544B/27table/0script/0CDN/7节);⑤commit+push
@@ -55,124 +57,7 @@ ERROR_COUNT:  11
 > 📦 唤醒1027(11:37)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长17.9→30.2MB/s✓+候选表49行确认,详见日文件）
 > 📦 唤醒1025(10:57)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长13.4→17.1MB/s✓+候选表49行确认,详见日文件）
 > [10:37] 唤醒1024：复核85M下载持续运行 → ①ps确认PID2668156(bash,ppid=1)+PID471618(hf download,ppid=2668156)活跃;②du -sb 3次判活:40,574,170,167,025→40,574,399,920,861→40,574,534,049,021(Delta1=229.8MB/10s=22.9MB/s✓ Delta2=134.1MB/10s=13.4MB/s✓严格递增);③parquet10,512/12,126=86.8%(+5 vs唤醒1023);④8 .incomplete全在sa1b/EN/part01_1-2(0失败shard);⑤per-subset:coyo1940✅imagenet82✅laioncn562✅datacomp1b575✅mint705✅obelics5803✅sa1b846/1147(74%,+6)zero250m0/1310(0%);⑥候选表49行✓(4可删+9保留+36待定)+DATA_MAPPING.md D节✓;⑦df:/nas_train173T/207T(84%),35T可用,/nas_env8.3T/10T(84%),1.7T可用;⑧ETA:剩余1614parquet(sa1b301+zero250m1310)≈6.25TB@~20MB/s→~87h→心跳WAITING=1
-> 📦 唤醒1023(10:2x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长39.3→13.1MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1022(10:1x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长13→35MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1021(10:0x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长33.5→40.3MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1020(10:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长138MB/s✓加速+候选表49行确认,详见日文件）
-> 📦 唤醒1019(09:55)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长26.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1016(09:41)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载.incomplete字节增长21MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1015(09:36)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载.incomplete字节增长12.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1014(09:30)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长47.2MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1013(09:25)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长15.2MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1012(09:22)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长26.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1010(09:12)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长26.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1009(09:09)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长36.9MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1008(09:03)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长19.2MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1007(09:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长16.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1006(08:53)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长5.6MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1003(08:36)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长49.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1002(08:29)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长12.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒1000(08:19)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长17.9MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒999(10-31 08:15)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长49.2MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒998(10-31 08:1x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长17.9MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒996(10-31 08:2x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长26.8MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒995(10-31 08:1x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长6.7-20MB/s✓+候选表49行确认,详见日文件）
-> 📦 唤醒994(10-31 08:0x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长31-33MB/s✓+修复D节5处缺失du -sb,详见日文件）
-> 📦 唤醒992(10-31 07:41)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长402MB+候选表49行确认,详见日文件）
-> 📦 唤醒991(10-31 07:35)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长959MB+候选表49行确认,详见日文件）
-> 📦 唤醒990(10-31 07:32)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长10.9MB/s+候选表49行确认,详见日文件）
-> 📦 唤醒989(10-31 07:15)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长22-49MB/s+候选表扩充至49行,详见日文件）
-> 📦 唤醒987(10-31 07:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长34MB/s+候选表确认,详见日文件）
-> 📦 唤醒986(10-31 06:55)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长22MB/s+候选表确认,详见日文件）
-> 📦 唤醒985(10-31 06:52)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长68MB/s+候选表确认,详见日文件）
-> 📦 唤醒984(06:45)：复核85M下载持续运行 → ①ps确认PID2668156(bash脚本,etimes=28048s≈7h47m,ppid=1)+PID3425450(hf download,etimes=3346s≈55min,ppid=2668156)活跃;②du -sb=40,278,787,659,547(vs唤醒983@06:40=40,273,398,652,223,+5,389,007,324B/5min≈18MB/s✓);③parquet 10,445/12,126=86.3%(+2 vs唤醒983);④10.incomplete(sa1b/EN/part01_0,sizes 0-4.0GB,mtime 06:45活跃,无失败shard);⑤log tail"Fetching 12126 files: 86%|10450/12126 [53:30<08:34, 3.25it/s] Download complete";⑥候选表38行✓+DATA_MAPPING.md D节✓;⑦df:/nas_train 173T/207T(84%),35T可用,/nas_env 8.3T/10T(84%),1.7T可用;⑧ETA:剩余1681parquet≈6.7TB@18MB/s→~4.3天→更新心跳
-> 📦 唤醒983(10-31 06:40)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒981(10-31 06:33)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [06:24] 唤醒979：复核85M下载持续运行 → ①ps确认PID2668156(bash脚本,etimes=26604s≈7h23m)+PID3425450(hf download,etimes=1902s≈31min,ppid=2668156)活跃;②2组du -sb判活:第1组T1=40,247,976,569,920→T2=40,248,043,673,631(+671MB/10s=67.1MB/s✓)→T3=flat;第2组T4=40,248,848,531,489→T5=40,249,049,711,190(+201MB/15s=13.4MB/s✓);整体T1→T5=+1,073,141,270B/35s=30.7MB/s均值✓;③parquet 10,441/12,126=86.1%(+1 vs唤醒978);④8.incomplete全活跃(sa1b/EN/part01_0,sizes 0-1.5GB,mtime 06:17-06:20新鲜,无失败shard);⑤候选表38行(3可删/6保留/26待定)✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用,/nas_env 8.3T/10T(84%),1.7T可用;⑦ETA:剩余1685parquet≈6.7TB@30.7MB/s→~2.5天→更新心跳
-> 📦 唤醒978(10-31 06:16)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒978(10-31 06:16)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长20.1→40.2MB/s✓+候选表38行确认,详见日文件）
-> 📦 唤醒977(10-31 06:12)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长26.8→26.9MB/s✓稳定+候选表38行确认,详见日文件）
-> 📦 唤醒976(10-31 06:08)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒975(10-31 06:05)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒974(10-31 05:57)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒973(10-31 05:51)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒973(10-31 05:51)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载:proxy 503崩溃后自动重启新hf子进程+incomplete判活3活跃+候选表38行,详见日文件）
-> 📦 唤醒972(10-31 05:42)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒971(10-31 05:39)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长20.1MB/s✓+候选表39行,详见日文件）
-> 📦 唤醒970(10-31 05:34)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒969(10-31 05:29)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒970(10-31 05:34)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长20.1→26.8MB/s✓+候选表39行,详见日文件）
-> 📦 唤醒968(10-31 05:24)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒967(10-31 05:20)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒966(10-31 05:13)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒965(10-31 05:07)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒964(10-31 05:04)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒963(10-31 05:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒963(10-31 05:00)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长20.1→40.2MB/s✓+候选表39行,详见日文件）
-> 📦 唤醒962(10-31 04:51)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒962(10-31 04:51)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载du-sb字节增长29MB/s✓+候选表39行,详见日文件）
-> 📦 唤醒961(10-31 04:46)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒960(10-31 04:38)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒959(10-31 04:34)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒957(10-31 04:23)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒956(10-31 04:14)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒955(10-31 04:11)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒954(10-31 04:06)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒953(10-31 04:01)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒952(10-31 03:58)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒951(10-31 03:53)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [03:53] 唤醒951：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=17640s≈4h54m,ppid=1/2668156);②du -sb 3次判活:40,056,628,208,862→40,056,762,368,813→40,058,360,252,167(+134MB/10s+1.73GB/2min≈24.5MB/s✓连续递增);③parquet 10,394/12,126=85.8%(+1 vs唤醒950);④incomplete 8文件(sa1b/EN/part00_9)mtime 03:48-03:52新鲜,sizes 0-3.9G,无失败shard;⑤候选表39行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3.1天@24.5MB/s(剩余1732parquet≈6.67TB)→更新心跳
-> 📦 唤醒950(10-31 03:47)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒949(10-31 03:43)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒947(10-31 03:31)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒946(10-31 03:26)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒945(10-31 03:22)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [03:22] 唤醒945：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=15867s≈4h24m,ppid=1/2668156);②3x连续du -sb判活:40,017,078,047,460→40,017,288,382,991→40,017,748,673,447(+460MB/20s≈23MB/s✓连续递增);③parquet 10,385/12,126=85.7%;④incomplete 8文件(sa1b/EN/part00_9全活跃),无失败shard;⑤候选表39行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3.4天@23MB/s(剩余1741parquet≈6.7TB)→更新心跳
-> 📦 唤醒944(10-31 03:17)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [03:17] 唤醒944：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=15573s≈4h19m,ppid=1/2668156);②du -sb 2次判活:40,012,285,692,233→40,012,486,847,362(+201MB/15s≈13.4MB/s✓);③parquet 10,385/12,126=85.7%;④incomplete 8文件(sa1b/EN/part00_9全活跃),无失败shard;⑤候选表39行✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~5.8天@13.4MB/s(剩余1741parquet≈6.7TB)→更新心跳
-> 📦 唤醒943(10-31 03:15)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [03:15] 唤醒943：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=15241s≈4h14m,ppid=1/2668156);②du -sb 2次判活:40,005,897,845,276→40,006,233,147,960(+335MB/20s≈15MB/s✓);③parquet 10,386/12,126=85.7%(+2 vs唤醒942);④per-subset:coyo1940✅datacomp575✅imagenet82✅laioncn562✅mint705✅obelics5803✅sa1b717/1147(62.5%)zero250m0/1310;⑤incomplete 8文件(sa1b/EN/part00_9,64M-4.0G全活跃增长,mtime 03:11新鲜),无失败shard;⑥候选表38行✓+DATA_MAPPING.md D节✓;⑦df:/nas_train 173T/207T(84%),35T可用;⑧ETA~5.1天@15MB/s(剩余1740parquet≈6.7TB)→更新心跳
-> 📦 唤醒942(10-31 03:08)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [03:08] 唤醒942：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=15002s≈4h10m,ppid=1/2668156);②du -sb 2次判活:39,998,790,330,001→39,999,527,979,396(+737MB/3min≈4.1MB/s瞬时✓,自唤醒941 +7.73GB/8min≈16.1MB/s均值✓);③parquet 10,384/12,126=85.6%(+3 vs唤醒941);④incomplete 8文件(sa1b/EN/part00_9,5个活跃增长3.2G/2.7G/1.0G/896M/128M+3个刚启0B,mtime 03:03-03:07新鲜),无失败shard;⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4.8天@16.1MB/s(剩余1742parquet≈6.7TB)→更新心跳
-> 📦 唤醒941(10-31 03:0x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [03:00] 唤醒941：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=14626s≈4h4m,ppid=1/2668156);②du -sb 2次判活:39,991,397,015,987→39,991,799,348,871(+402MB/~1min≈6.7MB/s瞬时✓,自唤醒940 +6.87GB/5min≈22.9MB/s均值✓);③parquet 10,381/12,126=85.6%(+1 vs唤醒940);④incomplete 8文件(sa1b/EN/part00_9)0-4.16GB全活跃增长(mtime 02:57-03:01新鲜),总14.76GB,无失败shard;⑤候选表39行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3.4天@22.9MB/s(剩余1745parquet≈6.7TB)→更新心跳
-> 📦 唤醒940(10-31 02:5x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [02:5x] 唤醒940：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=14292s≈3h58m,ppid=1/2668156);②du -sb 3次判活:39,984,331,524,788→39,984,532,749,792→39,984,532,749,792(T1→T2 +201MB/15s≈13.4MB/s✓,T2=T3为NFS写缓冲flush间隙但.incomplete mtime 02:55新鲜+log活跃Downloading);③parquet 10,378/12,126=85.6%(log tail已到10380);④incomplete 8文件(sa1b/EN/part00_9)256M-3.8G全活跃增长(mtime 02:55),无失败shard;⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~5.8天@13.4MB/s(剩余1748parquet≈6.7TB)→更新心跳
-> 📦 唤醒939(10-31 02:5x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [02:5x] 唤醒939：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=14015s≈3h54m,ppid=1/2668156);②du -sb 3次判活:39,977,617,879,064→39,977,752,032,465→39,979,227,421,126(连续3次递增✓+1.6GB/~3min≈9MB/s);③parquet 10,378/12,126=85.6%(+2 vs唤醒938);④incomplete 8文件(sa1b/EN/part00_9)mtime 02:50-51新鲜(128M-3.0G,全活跃增长),无失败shard;⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4.2天@9MB/s(剩余1748parquet≈5.8TB)→更新心跳
-> 📦 唤醒938(10-31 02:46)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒937(10-31 02:41)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [02:41] 唤醒937：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=13419s≈3h44m,ppid=1/2668156);②du -sb 3次判活:39,965,707,049,729→39,966,042,432,274→39,966,176,571,401(连续3次递增✓+335MB+134MB/10s≈21MB/s);③parquet 10,376/12,126=85.6%(+2 vs唤醒936);④incomplete 8文件(sa1b/EN/part00_9)mtime 02:38-41新鲜(6个有数据335MB-3.3GB,2个0byte刚启动),无失败shard;⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3.2天@21MB/s(剩余1750parquet≈5.8TB)→更新心跳
-> 📦 唤醒936(10-31 02:35)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [02:35] 唤醒936：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=13068s≈3h37m,ppid=1);②du -sb 3次判活:39,957,889,415,119→39,958,165,841,481→39,958,414,650,131(连续3次递增✓+276MB+249MB/10s≈26MB/s);③parquet 10,374/12,126=85.5%(+1 vs唤醒935);④incomplete 8文件(sa1b/EN/part00_9)mtime 02:34-35新鲜,无失败shard;⑤候选表39行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3.0天@26MB/s(剩余1752parquet≈6.8TB)→更新心跳
-> 📦 唤醒935(10-31 02:32)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒934(10-31 02:27)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒933(10-31 02:35)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [02:35] 唤醒933：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=12338s≈3h26m);②du -sb 3次判活:39,941,072,377,341→39,941,340,483,544→39,941,504,961,082(+432MB/20s≈21.6MB/s✓连续2次递增);③parquet 10,368/12,126=85.5%(flat vs唤醒932);④incomplete 8文件(sa1b/EN/part00_9)mtime 02:22新鲜,无失败shard;⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~3.7天@21.6MB/s(剩余1758parquet≈6.8TB)→更新心跳
-> 📦 唤醒932(10-31 02:25)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [02:25] 唤醒932：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=11912s≈3h18m);②du -sb:39,932,841,057,620→39,933,493,792,822→39,933,493,792,822(+652MB,后次flat=NFS缓存);③incomplete 8文件(sa1b/EN/part00_9)总14.15GB,mtime 02:17新鲜,15s窗口flat=网络波动;④parquet 10,368/12,126=85.5%(+2 vs唤醒931);⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦git data线clean→更新心跳
-> 📦 唤醒931(10-31 02:20)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒930(10-31 02:11)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒929(10-31 02:02)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒928(10-31 01:59)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒927(10-31 01:54)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒926(10-31 01:50)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒925(10-31 01:46)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒924(10-31 01:43)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒922(10-31 01:29)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒921(10-31 01:25)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒920(10-31 01:21)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒919(10-31 01:2x)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒918(10-31 01:12)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒917(10-31 01:09)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [01:09] 唤醒917：复核85M下载持续运行 → ①ps确认PID2668156活跃(etimes=7846s≈2h11m);②字节增长判活(du -sb 2次):39,845,063,904,502→39,845,331,122,469(+268MB/15s≈17.9MB/s✓);③parquet 10,348/12,126=85.3%(+3 since唤醒916);④8.incomplete=活跃下载(sa1b/EN/part00_8);⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4天@17.9MB/s(剩余1778parquet≈6.8TB)→更新心跳
-> 📦 唤醒916(10-31 01:06)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒915(10-31 01:09)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒914(10-31 00:53)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> [00:53] 唤醒914：复核85M下载持续运行 → ①ps确认PID2668156+2668173活跃(etimes=6926s≈1h55m);②字节增长判活(du -sb):39,824,460,233,351→39,824,712,801,274(+252MB/15s≈16.8MB/s✓);③parquet 10,343/12,126=85.3%(+1 since唤醒913);④8.incomplete=活跃下载(sa1b/EN/part00_8,sizes 0-4.0GB);⑤候选表38行✓+DATA_MAPPING.md D节✓;⑥df:/nas_train 173T/207T(84%),35T可用;⑦ETA~4.7天@16.8MB/s(剩余1783parquet)→更新心跳
-> 📦 唤醒913(10-31 01:02)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒912(10-31 00:44)原文归档 → daily-memories-data/2026-10-31.md（复核85M下载字节增长+候选表确认,详见日文件）
-> 📦 唤醒833-910 原文已归档 → daily-memories-data/2026-10-30.md ~ 2026-10-31.md（例行巡检+85M字节增长复核,详见日文件）
+> 📦 唤醒833-1023 原文已归档 → daily-memories-data/2026-10-30.md ~ 2026-10-31.md（例行巡检+85M字节增长复核,详见日文件）
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
