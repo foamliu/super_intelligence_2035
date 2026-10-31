@@ -1,0 +1,446 @@
+\section{LLM Pretraining}\label{sec:llm-pretrain}
+
+Stage~(i) pre-trains the hybrid language backbone (Section~\ref{sec:arch}) from scratch under a fixed budget.
+This section covers the architecture-selection rationale, the data, the production recipe---organised as a warmup--stable--decay (WSD) schedule whose decay phase carries two segments, a \emph{short-context annealing segment} and a \emph{long-context extension segment} (Section~\ref{sec:longctx-train})---and the resulting measurements; the backbone configuration itself is given in Table~\ref{tab:config}.
+<!-- CHANGED: chapter road-map sentence now advertises the two-segment decay phase introduced in Section~\ref{sec:longctx-train}. -->
+
+\subsection{Architecture Selection Rationale}\label{sec:arch-rationale}
+We adopt the hybrid backbone on three grounds.
+\textbf{(i) Inference efficiency.} State-space layers decode with constant-time recurrence per token, while the sparse attention layers retain long-range context; this directly targets the inference-heavy, cost-sensitive deployments that motivate BaiZe.
+\textbf{(ii) Controlled comparison.} A matched from-scratch comparison at the $\approx$2B scale between a dense transformer (MiniCPM5-2B~\cite{openbmb2026minicpm5}) and Mamba2-hybrid---trained under identical data, seed, and GPU footprint---favours the hybrid, which converges to a lower loss with fewer parameters ($\approx$2.22B vs.\ 2.51B, $-11.6\%$) and decodes faster under our direct-drive harness, at a $\sim$8\% training-throughput cost (Table~\ref{tab:archcomp}). Across all five checkpoints from 500 to 5000 steps, the hybrid consistently attains lower loss than the dense baseline, with the gap widening to $\Delta{\approx}0.30$ by step 5000---confirming the advantage is not an early-training artifact and comes with an 11.6\% parameter reduction.
+\textbf{(iii) Feasibility.} Megatron-Core ships a Mamba-hybrid provider whose 56-layer interleaving pattern we reuse verbatim, halving only the hidden and FFN widths to reach the $\approx$2B scale, making the backbone directly executable under the NeMo recipe without custom kernels.
+
+\subsection{Training Framework and Reduced-Horizon Search}\label{sec:framework}
+We train with the NVIDIA NeMo~\cite{nvidia-nemo} pre-training entry point, driving the Megatron-Core~\cite{nvidia-megatron} \texttt{NVIDIAMambaHybridModelProvider2B} provider directly with $\texttt{tensor\_model\_parallel\_size}=1$.
+To keep the entire sweep within budget, we run all hyper-parameter searches at a reduced iteration count and treat the resulting short-horizon ranking as predictive of the full-model optimum.
+Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput.
+
+\subsection{Learning-Rate Schedule: WSD with a Two-Segment Decay}\label{sec:wsd}
+BaiZe trains under a warmup--stable--decay (WSD) schedule with a stable learning rate of $1\times10^{-3}$ and $2{,}000$ warmup steps (Table~\ref{tab:wsd}).
+The schedule has three segments, and the organisation of the third is the subject of Section~\ref{sec:longctx-train}:
+\begin{itemize}
+\item \textbf{Warmup + stable} ($700{,}000$ steps, $4.19$M tokens/step, $2.94$T tokens; Table~\ref{tab:wsd}). The learning rate is held at its peak. The main training sequence length is $16{,}384$; this is a deliberate choice, not a limitation: 16K is the throughput-optimal operating point of the backbone on our cluster ($613{,}992$ tok/s at $\texttt{CP}{=}1$/$\texttt{DP}{=}16$ with computing-graph replay off; measured), and it keeps the extrapolation ratio to the $1$M product target at $64\times$ instead of the $256\times$ that a 4K pretraining length would imply.
+\item \textbf{Decay---segment~A, short-context annealing} ($60$--$70\%$ of the decay budget). The learning rate enters its decay while the sequence length stays at 16K, annealing the model on the high-quality instruction and curated-web mixture.
+\item \textbf{Decay---segment~B, long-context extension} ($30$--$40\%$ of the decay budget). The sequence length is extended on a $32$K$\to$64K$\to$128K ladder while the decayed learning rate continues downward (Section~\ref{sec:longctx-train}).
+\end{itemize}
+The decay segment itself follows $lr(p)=lr_{\text{peak}}\,(lr_{\min}/lr_{\text{peak}})^{p}$ with $p\in[0,1]$ (exponential) and $lr_{\min}{=}1\times10^{-4}$, the setting retained by the schedule-family ablation of Section~\ref{sec:llm-results}; the per-step values it produces ($p{=}0.25/0.5/0.75\Rightarrow5.62/3.16/1.78\times10^{-4}$) are the learning rates under which segment~B runs.
+
+\begin{table}[htbp]
+\centering
+\caption{Production WSD budget. Tokens per step are nominal ($\texttt{GBS}\times\text{seq}$); wall-clock and GPU-hours are estimates at the measured stable-phase throughput. Decay is budgeted as \emph{at least} $10\%$ of the stable phase (Table~\ref{tab:longctx-budget}).}
+\label{tab:wsd}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}Yrrrr@{}}
+\toprule
+\textbf{Segment} & \textbf{Tok./step} & \textbf{Steps} & \textbf{Tokens} & \textbf{Seq.} \\
+\midrule
+Warmup + stable & 4.19M & 700{,}000 & 2.94T & 16K \\
+Decay A: short-ctx anneal & 4.19M & 14{,}000 & 58.7B & 16K \\
+Decay B: long-ctx ladder & 4.19M & 6{,}000 & 25.2B & 32K--128K \\
+\midrule
+\textbf{Total} & --- & \textbf{720{,}000} & \textbf{3.02T} & --- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent The decay row is the \emph{reference allocation} used throughout this paper (Section~\ref{sec:longctx-train} discusses scaling it upward to the $10$--$15\%$ range of Table~\ref{tab:longctx-budget}).
+It inherits the production invariant that every rung keeps $16{,}384$ tokens per micro-batch per GPU ($\texttt{seq}/\texttt{CP}=16{,}384$ with $\texttt{CP}\in\{1,2,4,8\}$), so no rung exceeds the memory ceiling established for the stable phase.
+<!-- CHANGED: replaces the former "hyper-parameters are swept in Section~\ref{sec:search}" framing with the production WSD definition including the A/B decay split, and adds Table~\ref{tab:wsd}. -->
+
+\subsection{Search Protocol Preceding the Production Run}\label{sec:search}
+Because a full grid is infeasible under a fixed GPU budget, the production recipe was selected with a staged, single-variable-at-a-time protocol run on the same backbone at a reduced horizon:
+\begin{itemize}
+\item \textbf{S1 (baseline).} Reproduce the Mamba2-hybrid reference configuration (stable LR $3\times10^{-4}$, WSD) to establish a loss/throughput baseline.
+\item \textbf{S2 (learning-rate sweep).} Sweep the stable learning rate over seven points from $2\times10^{-4}$ to $1\times10^{-3}$ with WSD held fixed.
+\item \textbf{S3 (schedule axes).} On the winning learning rate, perturb one variable at a time---schedule family (WSD vs.\ cosine), decay ratio and decay shape, warmup length, and $min\_lr$.
+\item \textbf{S4 (annealing data mix).} Ablate the annealing data blend (pure Ultra-FineWeb-L3 vs.\ adding code and math) under the winning configuration.
+\item \textbf{S5 (long run + seeds).} Retrain the winning configuration from scratch over a $20000$-step horizon, plus a three-seed short-horizon reproducibility check.
+\end{itemize}
+These sweeps are \emph{proxy experiments}: their hyper-parameter ranking is transferred to the production scale, and the absolute losses they report are not production estimates.
+The production run is specified by the budget of Table~\ref{tab:wsd} and is reported in Section~\ref{sec:full-train}; the long-context segment of that budget is specified in Section~\ref{sec:longctx-train}.
+<!-- CHANGED: keeps S1--S5 (still valid and still referenced) but rewrites the framing so the section no longer presents the search itself as the production recipe; points forward to Section~\ref{sec:full-train} and Section~\ref{sec:longctx-train}. -->
+
+At every stage only a single variable changes relative to the running best, isolating each factor's contribution while keeping total GPU-hours within budget.
+The architectural search space is validated up front: the hybrid (Mamba2-hybrid) and dense (MiniCPM5-2B) candidates are compared head-to-head from scratch (Section~\ref{sec:arch-rationale}), which selects the hybrid backbone before the hyper-parameter search begins.
+
+\subsection{Data}\label{sec:llm-data}
+Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$690\,B tokens across 616 parquet shards, 618\,GiB), streamed and packed, tokenised with the DeepSeek-V4.1-Flash tokenizer~\cite{deepseek2024tokenizer} (vocabulary size $129{,}281$).
+Complementary corpora---code (\texttt{UltraData-Code}), mathematics (\texttt{UltraData-Math}), curated web (\texttt{Ultra-FineWeb} tiers), and instruction-tuning sets (\texttt{UltraData-SFT-2605}, \texttt{UltraData-SFT-Agent-2609})---supply the production blend and the two decay segments.
+The stable phase draws on the seven-source mixture of Table~\ref{tab:stable-blend}, which keeps the $88{:}8{:}4$ web/code/math prior selected in Section~\ref{sec:mix-search} at the top level while promoting high-quality tiers (L1/L2) into the stable phase and reserving the L3 tiers for annealing.
+Sources are pre-blended into large shards before the run, so that each rank opens $\mathcal{O}(10)$ index files rather than the $\mathcal{O}(600)$ of the raw layout; this keeps the data-loader resident set bounded and is a precondition for the throughput reported in Section~\ref{sec:full-train}.
+
+\begin{table}[htbp]
+\centering
+\caption{Stable-phase data mixture (sums to $1.000$; ``epochs'' is the expected number of passes over the source at $2.94$T tokens). The blend follows the $88{:}8{:}4$ web/code/math prior of Section~\ref{sec:mix-search}.}
+\label{tab:stable-blend}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lYcc@{}}
+\toprule
+\textbf{Source} & \textbf{Description} & \textbf{Prop.} & \textbf{Epoch.} \\
+\midrule
+\texttt{en\_v1\_4} & \texttt{Ultra-FineWeb} EN, filtered v1.4 & 0.65 & 0.81 \\
+\texttt{ufw\_l1\_en\_hq} & \texttt{Ultra-FineWeb} EN, high-quality tier & 0.05 & 0.93 \\
+\texttt{ufw\_zh} & \texttt{Ultra-FineWeb} ZH & 0.04 & 0.99 \\
+\texttt{math\_l1} & \texttt{UltraData-Math}, tier L1 & 0.05 & 0.85 \\
+\texttt{math\_l3} & \texttt{UltraData-Math}, tier L3 & 0.02 & 0.72 \\
+\texttt{code\_l2} & \texttt{UltraData-Code}, tier L2 & 0.15 & 1.00 \\
+\texttt{code\_l3} & \texttt{UltraData-Code}, tier L3 & 0.04 & 0.87 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Contamination control is enforced before any corpus enters training: a blacklist of $193{,}295$ character-level 13-gram fingerprints (FNV-1a 64-bit hashed, NFKC-normalised) is built from all $536$ tasks across six evaluation snapshots of EDA-Eval-PyAether, and every new data shard---including SFT corpora---is scanned for ${\geq}0.80$ n-gram overlap before release (Section~\ref{sec:posttrain-eval}).
+<!-- CHANGED: the old paragraph described an L3-only 4096-token pre-training run and listed corpora "reserved for post-training"; it is replaced by the actual seven-source stable blend (Table~\ref{tab:stable-blend}) plus the pre-blend rationale, and the now-wrong "reserved for post-training" claim is dropped. -->
+
+\subsection{Long-Context Data Prerequisites}\label{sec:longctx-data}
+Segment~B learns from whatever length structure the corpus actually contains, so before budgeting it we measured the document-length distribution of the main source with an EOD-aware scan ($\texttt{tokenizer\_eod}=129{,}280$; $8$ shards, $8.59$B tokens, $9.66$M documents).
+The result is the binding constraint on Section~\ref{sec:longctx-train}: only $\mathbf{2.52\%}$ of tokens sit in documents of ${\geq}32$K, only $0.03\%$ reach ${\geq}128$K, and the mean document is $889$ tokens (Table~\ref{tab:longctx-data}).
+Training a 128K rung on this distribution would teach \emph{document concatenation} rather than long-context retrieval: the model would see 128K windows whose content is a chain of unrelated short documents, and its long-context score would be inflated relative to any real long document.
+
+\begin{table}[htbp]
+\centering
+\caption{Measured document-length distribution of the main pre-training source (\texttt{en\_v1\_4}; $8$ shards, $8.59$B tokens, $9.66$M documents, mean $889$ tokens/doc, max $195{,}935$). ``Target'' is the segment~B entry gate; status is measured.}
+\label{tab:longctx-data}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lYcY@{}}
+\toprule
+\textbf{Threshold} & \textbf{Documents} & \textbf{Token share} & \textbf{Status vs.\ target} \\
+\midrule
+${\geq}32$K & 4{,}257 (0.04\%) & \textbf{2.52\%} & target ${\geq}20\%$: \textbf{not met} \\
+${\geq}128$K & --- & \textbf{0.03\%} & target ${\geq}5\%$: \textbf{not met} \\
+${\geq}1$M & $<0.01\%$ & not estimated & not required (extrapolated) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+We therefore treat the following as \emph{entry conditions} for segment~B, not as tuning knobs.
+\textbf{(a) Long-document supplementation.}
+Books, scientific articles, legal and standards text, and repository-level code (multi-file, in repository-consistent order) are added until the ${\geq}32$K token share reaches ${\geq}20\%$ and the ${\geq}128$K share reaches ${\geq}5\%$; until then the ladder stops at 64K.
+Length-weighted sampling is applied as well, but it cannot substitute for supply: re-weighting the present corpus raises the ${\geq}32$K share only by repeating a small number of documents.
+\textbf{(b) Document-level reset.}
+Packed shards concatenate documents back-to-back, so segment~B requires the attention and Mamba-2 recurrent state to be reset at every EOD; without it a 128K window mixes documents and the position statistics the retrieval behaviour depends on are wrong.
+\textbf{(c) Long-document de-duplication.}
+Near-duplicate long documents are removed first, because a 128K rung consumes few optimisation steps relative to its token budget and duplication is amplified by length.
+Item~(b) is a framework capability rather than a data transformation; we list it here because it gates the same decision.
+<!-- CHANGED: NEW subsection. Quantifies the measured 2.52% / 0.03% / 889-token distribution (Table~\ref{tab:longctx-data}) and the three segment-B entry conditions. -->
+
+\subsection{Data Mixture Proportion Search}\label{sec:mix-search}
+Because the optimal web/code/math ratio is scale-dependent and a full-scale sweep is infeasible, we searched the three-way mixture at a proxy scale using Bayesian optimisation.
+A compact proxy model ($d{=}128$, $L{=}14$, $\approx$18.36\,M parameters---two orders of magnitude smaller than the 2.2\,B target and not intended as a performance predictor) was trained for each trial under Optuna's \texttt{TPESampler} with \texttt{MedianPruner}, one trial per GPU, global batch size $2048$ at sequence length $4096$.
+The objective was the average accuracy on eight common-sense \texttt{lm-eval} tasks (\texttt{arc\_challenge}, \texttt{arc\_easy}, \texttt{boolq}, \texttt{hellaswag}, \texttt{openbookqa}, \texttt{piqa}, \texttt{sciq}, \texttt{winogrande}), each evaluated with \texttt{-{}-limit~500} subsampling.
+
+Two rounds of 200 trials each were completed.
+In the first round, using final training loss as the objective, the Spearman rank correlation between loss-ranked and accuracy-ranked mixtures was $\rho{=}{-}0.43$, confirming that loss is a weak proxy for downstream ability.
+In the second round, using the eight-task average directly, the top-5 mixtures were retrained and re-evaluated at the full \texttt{lm-eval} scale.
+Table~\ref{tab:mix-topk} reports the results: the full-eval rankings were nearly inverted relative to the Bayesian-optimisation rankings (Spearman $\rho{=}{-}0.80$, $n{=}5$, $p{\approx}0.10$), and the spread across all five mixtures was only $0.383$--$0.390$ ($\approx 0.6$\,pp).
+
+\begin{table}[htbp]
+\centering
+\caption{Top-5 data mixtures from the second Bayesian-optimisation round, retrained and evaluated at full \texttt{lm-eval} scale. The BO ranking (column~5) is nearly inverted relative to the full-eval ranking (column~6), and the score spread is $\approx$$0.6$\,pp.}
+\label{tab:mix-topk}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{cccccc}
+\toprule
+\textbf{Trial} & \textbf{Web} & \textbf{Code} & \textbf{Math} & \textbf{BO} & \textbf{Full} \\
+\midrule
+23  & 0.941 & 0.109 & 0.010 & \textbf{0.4155} & 0.3846 \\
+38  & 0.895 & 0.100 & 0.010 & 0.4138 & 0.3835 \\
+118 & 0.874 & 0.071 & 0.055 & 0.4130 & 0.3877 \\
+199 & 0.931 & 0.098 & 0.010 & 0.4123 & \textbf{0.3899} \\
+33  & 0.940 & 0.086 & 0.010 & 0.4090 & 0.3897 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\emph{At the proxy scale of 18.36\,M parameters, data-mixture rankings were indistinguishable within 0.6\,pp}, leading us to adopt the $88{:}8{:}4$ (web/code/math) prior for the \emph{stable} phase, rather than over-fitting to proxy-scale noise.
+The empirically optimal region was stable at web $0.87$--$0.94$, code $0.06$--$0.12$, math $\approx$$0.01$, consistent with the prior.
+Raising the discrimination floor---via a larger proxy, multiple seeds, or full-scale evaluation replacing the \texttt{-{}-limit~500} subsampling---is left to future work.
+
+\subsection{Search Budget}\label{sec:llm-budget}
+The pre-training search is bound by a $\approx$92\,GPU-hour plan on eight H100 GPUs ($\approx$192\,GPU-hours wall-clock available); $\approx$85\,GPU-hours were consumed.
+All short-horizon sweeps (S1--S4) run $5000$ steps at a global batch size of $8\times4096\approx32.8$K tokens/step ($\approx$164M tokens, $\approx$4.0\,GPU-hours each); the verification long run (S5) runs $20000$ steps ($\approx$655M tokens, $\approx$13.9\,GPU-hours).
+These token budgets are far below the Chinchilla-optimal scale ($\approx$44B tokens for a 2.22B model); the search is therefore a \emph{proxy experiment}---its hyper-parameter ranking is treated as predictive of the full-scale optimum, not as a converged performance estimate.
+Validation loss is reported at matched step counts so that comparisons across configurations remain apples-to-apples.
+
+\subsection{Results of the Search}\label{sec:llm-results}
+The search selects a stable learning rate of $1\times10^{-3}$ under a warmup--stable--decay (WSD) schedule (warmup $250$ steps, decay $500$ steps, $min\_lr{=}1\times10^{-5}$) with an $86{:}10{:}4$ blend of Ultra-FineWeb-L3, code, and math data in the annealing tail.
+This is the recipe carried into the production run (Section~\ref{sec:full-train}), where only the token budget and the sequence ladder are scaled up.
+Over the $5000$-step horizon the validation loss reaches $\mathbf{2.7647}$.
+The learning-rate sweep improves monotonically from $2.9037$ ($2\times10^{-4}$) to $2.7627$ ($1\times10^{-3}$); because $1\times10^{-3}$ is also the grid maximum, that on its own leaves open whether the true optimum lies beyond the grid.
+Extending the grid upward closes the question: $1.5\times10^{-3}$ gives $2.7752$ and $2\times10^{-3}$ gives $2.7889$, so the sweep is \emph{U-shaped} and $1\times10^{-3}$ is an interior minimum rather than a clipped boundary.
+Each short-horizon ablation confirms a single-variable choice: WSD beats cosine ($2.7679$ vs.\ $2.8155$), a $10\%$ decay ratio beats $5\%$ ($2.7679$ vs.\ $2.7900$), a $250$-step ($5\%$) warmup beats a fixed $2000$-step warmup ($2.7679$ vs.\ $2.7957$), and $min\_lr{=}1\times10^{-5}$ and $3\times10^{-5}$ are statistically indistinguishable ($2.7647$ vs.\ $2.7679$, $\Delta{\approx}0.003$ within run-to-run noise of $\sigma{\approx}0.035$ across $n{=}5$ seeds); we adopt $min\_lr{=}1\times10^{-5}$ as default.
+Adding code and math to the annealing mix lowers the final loss monotonically ($2.7621$ pure L3 $\to$ $2.6793$ L3+code $\to$ $2.6298$ L3+code+math).
+
+The $20000$-step verification run reaches a final training loss of $\mathbf{2.2054}$, with the decay tail (steps $19500$--$20000$) annealing the loss from $\sim2.34$ to $2.2054$ (annealing gain $\sim0.14$; Figure~\ref{fig:pretrain-curve}).
+Across three seeds the $5000$-step loss is $2.6739\pm0.0469$ (mean $\pm$ sample standard deviation, $n{=}3$; per-seed $2.6402$, $2.6539$, $2.7275$).
+
+Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transformer at the $\approx$2B scale, trained from scratch under matched data, seed, and GPU footprint; the hybrid offers fewer parameters and faster decoding at a modest training-throughput cost.
+
+\begin{table}[htbp]
+\centering
+\caption{Architecture-level comparison motivating the hybrid choice (Dense = MiniCPM5-2B, Hybrid = BaiZe; measured from scratch under matched data, seed, and GPU footprint, same node, same configuration). Training throughput was re-measured on a single 8$\times$H100 node after an initial cross-node measurement was found to overstate the gap. The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks (cf.\ Table~\ref{tab:longctx-cost}).}
+\label{tab:archcomp}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Dense} & \textbf{Hybrid} & \textbf{Edge} \\
+\midrule
+Parameters & 2.51B & \textbf{2.22B} & hybrid ($-11.6\%$) \\
+Final loss (1k steps) & 4.81 & \textbf{4.68} & hybrid ($-0.12$) \\
+Train loss (5k steps) & 3.36 & \textbf{3.06} & hybrid ($-0.30$) \\
+Training tok/s & \textbf{90K} & 83K & dense ($+8\%$) \\
+Prefill tok/s & 21.4K & \textbf{23.7K} & hybrid ($+10.5\%$) \\
+Decode tok/s & 2.2 & \textbf{22.8} & hybrid ($+10.3\times$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Full-Scale Production Training}\label{sec:full-train}
+
+The search configuration of Section~\ref{sec:llm-results} was scaled to the production budget of Table~\ref{tab:wsd}: $2.94$T tokens in the warmup-plus-stable phase, followed by the two-segment decay.
+The run uses the production configuration fixed by the throughput and precision studies: $\texttt{TP}{=}1$, $\texttt{CP}{=}1$, $\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, micro-batch $1$ at sequence length $16{,}384$ ($4{,}194{,}304$ tokens/step at $\texttt{GBS}{=}256$), FP8 tensorwise with delayed scaling, computing-graph replay disabled, AdamW ($\beta_1{=}0.9$, $\beta_2{=}0.95$), and the multi-layer tokenizer with an EOD token for document boundaries.
+Precision and replay are not incidental: at a micro-batch of $M{=}16{,}384$ the tensors are large enough that FP8 pays off, and replaying a graph with a data-dependent Mamba-2 state was the cause of a throughput collapse in an earlier build; both settings are fixed for the whole run so that the decay segments are comparable.
+
+\textbf{Stable phase} (in progress).
+At the time of writing the run has passed iteration $29{,}900$ of $700{,}000$ ($4.3\%$), at a sustained $\mathbf{\approx}590$K tok/s (${\approx}1{,}020$ TFLOP/s/GPU; measured over $7.08$--$7.32$ s/step).
+Training loss reached $2.166$ (mean of the last five logged steps) from an initial $\approx$11.5, with gradient norms stable at $0.09$--$0.10$ and no NaN or skipped step; checkpoints are written every $2{,}000$ iterations and pruned to a rolling window.
+The projection below is therefore an extrapolation at the measured rate, not a measurement.
+
+\begin{table}[htbp]
+\centering
+\caption{Production run accounting. Stable-phase wall-clock is an estimate at the measured ${\approx}590$K tok/s; decay figures are estimates at the rung throughputs of Table~\ref{tab:longctx-train}; GPU-hours are nominal ($16$ GPUs).}
+\label{tab:prod-budget}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lrcrY@{}}
+\toprule
+\textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
+\midrule
+Warmup + stable & 2.94T & 700k & ${\approx}56$ d (est.) & 29.9k done \\
+Decay A (16K) & 58.7B & 14k & ${\approx}1.2$ d (est.) & queued \\
+Decay B (32K--128K) & 25.2B & 6k & ${\approx}2.3$ d (est.) & queued, gated \\
+\midrule
+\textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}59.5$ d & --- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Decay---segment~A} ($58.7$B tokens, 16K). The learning rate begins its exponential decay while the sequence length stays at 16K.
+The blend shifts mass to the curated L3 and instruction-tuning sources: $60\%$ general instruction tuning (\texttt{UltraData-SFT-2605}), $12\%$ agentic instruction tuning (\texttt{UltraData-SFT-Agent-2609}), and the remainder split over curated web, mathematics, and code.
+Instruction data is used here as \emph{text}: segment~A is still pre-training, and the point of the shift is to expose the model to well-formed directive-response text at the lowest learning rates, not to teach the tool-call behaviour that Section~\ref{sec:llm-posttrain} trains.
+Segment~A occupies $60$--$70\%$ of the decay budget specifically to protect short-context ability while the distribution changes, since the retrieval and long-document material of segment~B is sampled from a different length regime.
+
+\textbf{Decay---segment~B} ($25.2$B tokens, $32$K--$128$K). Described in Section~\ref{sec:longctx-train}; it cannot start until the data conditions of Section~\ref{sec:longctx-data} are met.
+<!-- CHANGED: the former 10,590-step / 44.4B-token / 412-GPU-hour production run with GBS=1024, seq=4096, TP=1/DP=8 is deleted. In its place: the actual 2.94T-token run at 16K/GBS 256/CP=1/DP=16, its measured stable-phase state, Table~\ref{tab:prod-budget}, and the two decay segments. The old "stable loss 3.734→2.456" and "decay loss 1.914→1.357" numbers belonged to the superseded 44B run and are removed rather than carried forward. -->
+
+\subsection{Long-Context Training: The Decay Tail of the WSD Schedule}\label{sec:longctx-train}
+
+\noindent\textbf{Positioning: a segment of the decay phase, not a separate stage.}
+Long-context training is executed as segment~B of the decay phase (Section~\ref{sec:wsd}), between the stable phase and post-training. It is not a standalone training stage, and it is placed neither in the stable phase nor in SFT/RL. Three properties of the schedule justify the placement.
+\emph{(i) The learning rate is already low.} Segment~B runs under the tail of the decayed learning rate ($5.6\times10^{-4}$ at $p{=}0.25$ falling to $1.8\times10^{-4}$ at $p{=}0.75$; Table~\ref{tab:wsd}), and a distribution shift applied at small step sizes perturbs general capability least; applied at the peak learning rate, the same shift would overwrite the short-context features that the stable phase spent $2.94$T tokens acquiring.
+\emph{(ii) SFT and RL do not establish ground retrieval ability.} SFT shapes instruction-following behaviour and RL optimises a policy preference over sampled outputs; neither exposes the model to the length-and-position distribution that retrieval depends on, and neither can be run at the token scale of segment~B.
+\emph{(iii) The extension must precede post-training.} Post-training assumes a backbone that can already address a long window; if the 1M context of the product target were only an extrapolation of a backbone trained to 16K, every post-training run would inherit that limitation.
+Table~\ref{tab:llm-stages} places segment~B on the pipeline axis.
+
+\begin{table}[htbp]
+\centering
+\caption{Stage~(i) on the training axis. Decay~B (long-context extension) is part of the decay phase and precedes post-training.}
+\label{tab:llm-stages}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lYYccc@{}}
+\toprule
+ & \textbf{Warmup} & \textbf{Stable} & \textbf{Decay A} & \textbf{Decay B} & \textbf{SFT/RL} \\
+\midrule
+Seq.\ length & 16K & 16K & 16K & 32K--128K & 16K+ \\
+Share & 2k & 2.94T & 60--70\% & 30--40\% & stage (ii) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent\textbf{Data budget.}
+The decay phase is budgeted at $10$--$15\%$ of the main training volume---$294$--$441$B tokens against the $2.94$T of the stable phase---and long-context data takes $30$--$40\%$ of that, i.e.\ $88$--$176$B tokens (Table~\ref{tab:longctx-budget}).
+The ladder is not uniform: $40$--$50\%$ is spent at 32K, $30\%$ at 64K, and $20$--$30\%$ at 128K, so that most long-context tokens are spent at the length where the model is currently weakest rather than at the headline length.
+We adopt $12\%$ ($353$B) as the reference operating point at a $30\%$ long-context share with a $12{:}9{:}6$ rung split ($42.4$/$31.8$/$21.2$B; $95.4$B in total), and segment~B of Table~\ref{tab:prod-budget} is its first rung-cycle.
+The remaining $60$--$70\%$ of the decay phase stays at 16K on short-context data specifically to protect short-text ability, with a regression gate of ${\leq}1$\,pp on CS8 and on complex reasoning (Table~\ref{tab:longctx-eval}).
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context token budget as a function of the decay-phase allocation. Decay volume is a fraction of the $2.94$T stable phase; rung splits are $40$--$50\%$ / $30\%$ / $20$--$30\%$ over 32K / 64K / 128K. All figures estimated.}
+\label{tab:longctx-budget}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lccccc@{}}
+\toprule
+\textbf{Decay} & \textbf{Decay tok.} & \textbf{LC} & \textbf{LC tok.} & \textbf{32K/64K/128K} & \textbf{16K} \\
+\midrule
+$10\%$ & 294B & $30$--$40\%$ & $88$--$118$B & 35/27/26B & 206B \\
+$12\%$ ref. & 353B & $30$--$40\%$ & $106$--$141$B & 42/32/32B & 247B \\
+$15\%$ & 441B & $30$--$40\%$ & $132$--$176$B & 53/40/40B & 309B \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent\textbf{Composition inside the long-context segment.}
+Synthetic needle-in-a-haystack data occupies $20$--$40\%$ of the long-context tokens; natural long documents occupy the remainder. A purely synthetic segment is ruled out, because a model trained only on inserted needles learns to answer questions about inserted needles rather than to read long documents.
+The synthetic share is diversified over five protocols rather than one: single-needle NIAH; multi-needle MK-NIAH with distractor needles, where every needle must be returned for credit; multi-hop variable tracing; variable-length needles spanning one sentence to three paragraphs; and paraphrase-plus-noise variants in which the needle is reworded and the haystack is filled with topically related distractors.
+The natural share is drawn from the supplemented long-document sources of Section~\ref{sec:longctx-data} at building proportions of roughly $40\%$ books and scientific articles, $20\%$ repository-level code, and the remainder standards, legal, and documentation text; the haystack filler of the synthetic share is drawn from the same sources so that the two shares do not differ in style.
+Insertion depth is sampled uniformly over $0$--$100\%$ instead of being concentrated at the middle, because the position sensitivity of a hybrid with four attention layers and $52$ recurrent layers is not uniform along the window.
+<!-- CHANGED: NEW subsection ~sec:longctx-train, part 1 of 2: positioning + justification (Table~\ref{tab:llm-stages}), decay/LC budget (Table~\ref{tab:longctx-budget}), and the synthetic/natural composition rules. -->
+\noindent\textbf{Training configuration.}
+The ladder runs \mbox{32K$\to$64K$\to$128K} with context parallelism $\texttt{CP}\in\{2,4,8\}$ and $\texttt{DP}\in\{8,4,2\}$, holding $\texttt{seq}/\texttt{CP}=16{,}384$ tokens per GPU at every rung, and global batch size is held constant within a rung (Table~\ref{tab:longctx-train}).
+The learning rate continues the decay and is never re-warmed: re-warming on entering a longer context would reintroduce the overwriting risk that motivated the placement in the first place.
+Position encoding uses adjusted base frequency from the first training step---$\theta{=}10^{6}$ is fixed at initialisation, so the decay tail carries no post-hoc frequency change, and 128K is reached by training rather than only by extrapolation, leaving $1$M as an $8\times$ extrapolation.
+No position interpolation, NTK rescaling, or YaRN is enabled at any rung; a maximal-position change without the base-frequency change is excluded outright, because in our earlier sweep it produced NaN at every length tested.
+Document-level reset is mandatory: attention and the Mamba-2 recurrent state are reset at each EOD, so a window contains documents rather than document fragments.
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context ladder of segment~B. Tokens per GPU are held at $16{,}384$ at every rung. 32K throughput is measured; 64K and 128K are extrapolated from measured per-GPU scaling and are marked as estimates.}
+\label{tab:longctx-train}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{cccccr}
+\toprule
+\textbf{Rung} & \textbf{Seq.} & \textbf{CP / DP} & \textbf{GBS} & \textbf{Tokens} & \textbf{Throughput (tok/s)} \\
+\midrule
+1 & 32K & 2 / 8 & 128 & $\approx$42B & $351{,}526$ (measured) \\
+2 & 64K & 4 / 4 & 64 & $\approx$32B & ${\approx}180$K (est.) \\
+3 & 128K & 8 / 2 & 32 & $\approx$32B & ${\approx}90$K (est.) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Evaluation checkpoint after the schedule.}
+When the WSD schedule ends---that is, after both decay segments---we take one snapshot and measure \emph{base} capabilities on it, reported separately from post-training results (Table~\ref{tab:longctx-eval}): common-sense reasoning (CS8 and CX), needle retrieval (passkey and RULER, the 1M target being ${\geq}95\%$), perplexity extrapolation ($1$M$/4$K ${\leq}1.10\times$), and basic format following.
+Retrieval is scored on a depth-by-position grid with multi-needle all-hit scoring, because a checkpoint can extrapolate perplexity smoothly while failing retrieval outright; perplexity alone is not accepted as evidence of long-context ability.
+Complex reasoning and agentic ability are recorded at this snapshot as a baseline only; their improvement is the subject of Section~\ref{sec:llm-posttrain}.
+
+\begin{table}[htbp]
+\centering
+\caption{Post-decay base-capability snapshot (single evaluation point, before any post-training). Gates are the acceptance criteria for the 1M product target.}
+\label{tab:longctx-eval}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lYl@{}}
+\toprule
+\textbf{Axis} & \textbf{Instrument} & \textbf{Gate} \\
+\midrule
+Common sense & CS8 (eight-task mean), CX & ${\leq}1$\,pp drop \\
+Needle retrieval & passkey, NIAH / MK-NIAH / multi-hop at $1$M & ${\geq}95\%$; RULER ${\geq}70\%$ \\
+PPL extrapolation & $4$K $\ldots$ $1$M curve & $1$M$/4$K ${\leq}1.10\times$ \\
+Format following & basic adherence suite & recorded only \\
+Complex reasoning & reasoning suite & baseline only \\
+Agentic & tool-use suite & baseline only \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent\textbf{Cost.}
+At the measured 32K throughput and the extrapolated 64K/128K throughputs, the reference rung-cycle ($42$/$32$/$32$B) costs ${\approx}118$ GPU-hours on sixteen GPUs, of which the 32K rung alone is $33$ hours; the upper bound of Table~\ref{tab:longctx-budget} ($15\%$/40\%) costs ${\approx}220$ GPU-hours.
+The cost is carried by context parallelism rather than by additional nodes: 32K runs at $59\%$ of the 16K throughput, and that gap is the price of the training signal, not of the hardware.
+
+\noindent\textbf{Why the budget is this small.}
+The long-context budget is deliberately an order of magnitude below the stable-phase budget. Empirical studies of context extension report that $500$M--$5$B tokens suffice to extend a model to $128$K~\cite{chen2024dataeng}; extension recipes in the public literature operate in the $10$--$40$B token range (ProLong~\cite{gao2024prolong}, LongRoPE2~\cite{shang2025longrope2}). Capacity also sets the requirement: a $2.22$B-parameter model does not need more long-context data than an $8$B-class model, so a budget in the tens of billions is already generous at this scale---which is why we plan $25$--$176$B and not thousands of billions. Long-context ability is not bought with volume; it is bought with the right volume at the right point in the schedule (estimate; no scale ablation of this axis is run in this paper).
+<!-- CHANGED: NEW subsection ~sec:longctx-train, part 2 of 2: ladder configuration (Table~\ref{tab:longctx-train}), post-decay evaluation snapshot (Table~\ref{tab:longctx-eval}), cost estimate, and the literature-grounded budget rationale with three new citations. -->
+
+\subsection{Long-Context Capability and Inference Cost}\label{sec:longctx}
+
+The hybrid backbone's long-context behaviour was characterised along two axes: perplexity extrapolation and inference throughput under a production serving stack.
+
+\textbf{Perplexity extrapolation.}
+With adjusted base frequency (ABF, $\theta_{\text{rope}}{=}10^{6}$) applied to the four attention layers, the 20K-step ($\approx$655M-token) checkpoint sustains near-constant perplexity from 4K to 1M tokens without further training: PPL ranges from 51.5 (64K) to 55.4 (1M), a change of only $+7.6\%$ over a $256{\times}$ context increase (Table~\ref{tab:longctx-ppl}).
+This stability arises because only 4 of 56 layers carry RoPE position encoding; the 52 Mamba-2 state-space layers have no position dependency and therefore incur no out-of-distribution penalty at long range.
+
+\begin{table}[htbp]
+\centering
+\caption{Training-free long-context perplexity of the Mamba2-hybrid (20K-step, $\approx$655M-token checkpoint, ABF $\theta{=}10^{6}$, $b{=}1$).}
+\label{tab:longctx-ppl}
+\small
+\begin{tabular}{rrrr}
+\toprule
+\textbf{Context} & \textbf{PPL} & \textbf{Prefill (s)} & \textbf{Peak VRAM} \\
+\midrule
+4K & 83.2$^{\dagger}$ & --- & --- \\
+64K & 51.5 & --- & --- \\
+128K & 53.3 & 10.7 & 10.9\,GB \\
+256K & 53.0 & 13.8 & 14.3\,GB \\
+512K & 55.8 & 53.0 & 19.7\,GB \\
+1M & 55.4 & 172.4 & 34.7\,GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent$^{\dagger}$The 4K PPL (83.2) is measured on a held-out evaluation shard with a different data distribution and loss-aggregation method than the training-loss reported in Section~\ref{sec:llm-results}; the two are not directly comparable. The key observation is the \emph{stability} from 64K to 1M (51.5$\to$55.4, $+7.6\%$), not the absolute 4K value.
+
+\textbf{Inference throughput.}
+Under the SGLang production serving stack (CUDA graphs, PagedAttention, FlashInfer backend) with warm-up, the hybrid outperforms the dense baseline at long context: at 128K the hybrid achieves $2.8{\times}$ higher prefill throughput and $1.6{\times}$ higher decode throughput; at 256K the gaps widen to $4.3{\times}$ and $1.9{\times}$ respectively (Table~\ref{tab:longctx-cost}).
+The dense model cannot serve beyond 512K on a single 80\,GB H100 (KV-cache pool cap ${\approx}455$K tokens at 30\% memory fraction), whereas the hybrid serves through 1M with near-constant ${\approx}26$\,GB VRAM, as the Mamba-2 state grows in $O(1)$ for 52 of 56 layers.
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context inference cost comparison (SGLang, warm-up corrected, $b{=}1$, gen\_len${=}64$, 80\,GB H100). Dense entries marked ``---'' are out-of-memory.}
+\label{tab:longctx-cost}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{rcccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{Prefill (tok/s)}} & \multicolumn{2}{c}{\textbf{Decode (tok/s)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Ctx} & \textbf{Hybrid} & \textbf{Dense} & \textbf{Hybrid} & \textbf{Dense} \\
+\midrule
+128K & 39\,377 & 14\,051 & 311 & 193 \\
+256K & 32\,381 & 7\,532 & 276 & 144 \\
+512K & 23\,634 & --- & 220 & --- \\
+1M & 15\,530 & --- & 159 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Production training throughput.}
+Two measurements fix the production configuration.
+On a single $8{\times}$H100 node, the hybrid sustains $249\,040$ tok/s at $\texttt{TP}{=}1$/$\texttt{DP}{=}8$, micro-batch $2$, sequence $4096$ in BF16 (${\approx}600$ TFLOP/s/GPU).
+At the production length the picture changes: with sequence $16{,}384$ and $\texttt{CP}{=}1$/$\texttt{DP}{=}16$ across two nodes, FP8 tensorwise with delayed scaling sustains $613{,}992$ tok/s, and the sustained rate observed on the live run is ${\approx}590$K tok/s over $7.08$--$7.32$ s per $4.19$M-token step.
+Computing-graph replay is disabled throughout: a replayed graph over a data-dependent Mamba-2 state ran into a throughput plateau, and disabling replay is a precondition for the rate above.
+
+\textbf{Precision choice.}
+At the $4096$-token screen the FP8 tile ($M{=}8192$) sits below the crossover point ($M^*{\approx}30$--$32$K) and ran at $0.91\times$ the BF16 throughput, so the screen retained BF16; a 1000-step A/B at $M{=}65{,}536$ additionally showed no persistent loss divergence between BF16 and delayed FP8 ($0.19\%$ end-of-run difference, one transient spike at step 700 recovering within ${\sim}60$ steps).
+At $M{=}16{,}384$ the tile is large enough for FP8 to pay, and the production run adopts FP8 tensorwise: the $613{,}992$ tok/s figure is an FP8 measurement, and the BF16 rate at the same shape is not directly measured.
+The two results are therefore consistent rather than contradictory---BF16 is the right choice at short sequence length, FP8 at production length---and the decision was made per configuration, not globally.
+<!-- CHANGED: the former text declared BF16 the production precision on the basis of the 4096-token screen and reported 249,040 tok/s as the production throughput. Both are superseded: the production run is FP8 at 16,384 tokens/step (613,992 tok/s measured), the BF16 measurement is retained as the single-node/4K reference, and the apparent contradiction between the two is now explained explicitly. -->
+
+
+Table~\ref{tab:configs} reports the hyper-parameter search outcomes at a matched horizon; the searched axes target the hybrid training recipe (stable learning rate, warmup length, decay ratio, and schedule family).
+
+\begin{table}[htbp]
+\centering
+\caption{Hyper-parameter and data-mix search outcomes at a matched $5000$-step (S5: $20000$-step) horizon.}
+\label{tab:configs}
+\begin{tabular}{llcc}
+\toprule
+\textbf{ID} & \textbf{Change vs.\ best} & \textbf{Val.\ loss} & \textbf{Outcome} \\
+\midrule
+S1-01 & baseline ($lr{=}3{\times}10^{-4}$, WSD) & 2.849 & baseline \\
+S2-07 & stable LR $=1\times10^{-3}$ & \textbf{2.7627} & best LR \\
+S3-02 & schedule family: cosine & 2.8155 & WSD retains \\
+S3-03 & decay ratio $5\%$ & 2.7900 & $10\%$ retains \\
+S3-04 & warmup $2000$ steps & 2.7957 & $250$ retains \\
+S4-03 & anneal L3+code+math $86{:}10{:}4$ & \textbf{2.6298} & best mix \\
+S5-01 & winner, $20000$ steps & \textbf{2.2054} & \textbf{winner} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textit{Note:} The search-stage IDs (S1--S5) are re-numbered for presentation; they correspond to the internal experiment ledger as follows: S1-01$\to$S2-02, S2-07$\to$S2-07, S3-02/03/04$\to$S3-02/03/04, S4-03$\to$S4-03, S5-01$\to$S5-01.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/s5_01_loss_curve.png}
+\caption{Training-loss curve of the winning Mamba2-hybrid configuration over the $20000$-step verification run (seed $1234$); the decay tail (steps $19500$--$20000$) anneals the loss from $\sim2.34$ to $2.2054$.}
+\label{fig:pretrain-curve}
+\end{figure}
