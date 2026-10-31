@@ -35,16 +35,16 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 </head>
 <body>
 <h1>BaiZe 论文全文事实审订报告</h1>
-<p style="color:#666;font-size:0.9em;margin-bottom:2em">pretrain 线 · 2026-10-31 15:2x 运维令 · 全文逐表逐句对账实测配置 · 报告 ID: #1011</p>
+<p style="color:#666;font-size:0.9em;margin-bottom:2em">pretrain 线 · 2026-10-31 15:2x 运维令 · 全文逐表逐句对账实测配置 · 报告 ID: #1011（初版）→ #1013（复核补遗：+1 处修改）</p>
 <div class="summary-box red">
 <strong>审订范围</strong>：除 ch6 外全部章节（0_abstract ~ 9_conclusion + main.tex + reference.bib）<br>
 <strong>事实来源</strong>：configs/common.env, configs/s1.env, scripts/train.sh, MEMORY_PRETRAIN_2B.md, EXPERIMENTS_PRETRAIN_2B_ROUND2.md, ch4<br>
 <strong>编译结果</strong>：pdflatex→bibtex→pdflatex×2，<strong>ERR=0 / UNDEF=0 / Overfull=0 / Pages=6</strong>
 </div>
 <div class="stat-grid">
-<div class="stat-card err"><span class="num">6</span><span class="label">已修改 ❌→✅</span></div>
+<div class="stat-card err"><span class="num">7</span><span class="label">已修改 ❌→✅</span></div>
 <div class="stat-card ok"><span class="num">14</span><span class="label">核实无误 ✅</span></div>
-<div class="stat-card warn"><span class="num">2</span><span class="label">不改但标注 ⚠️</span></div>
+<div class="stat-card warn"><span class="num">1</span><span class="label">不改但标注 ⚠️</span></div>
 <div class="stat-card ok"><span class="num">0</span><span class="label">需后续跟进</span></div>
 </div>
 <h2>一、检查清单 7 项总览</h2>
@@ -80,9 +80,9 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 <tr class="changed"><td>3_architecture.tex L66 Table2 stage(i)</td><td>complete</td><td>S1 iter~31,514/700k(4.5%), decay未开始</td><td class="evidence">MEMORY L4 "iter31514/700k(4.50%)"</td><td class="verdict-err">❌ 失实</td><td>in progress</td></tr>
 <tr><td>3_architecture.tex L68 Table2 stage(iii)</td><td>complete</td><td>视觉编码器已完成 (ch6有实测结果)</td><td class="evidence">6_vision_encoder.tex L13 "19.76%/20.27%"</td><td class="verdict-ok">✅</td><td>—</td></tr>
 <tr><td>3_architecture.tex L67 Table2 stage(ii)</td><td>design</td><td>后训练设计阶段 (ch5 [TBD])</td><td class="evidence">5_llm_posttrain.tex L61 "[TBD]"</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>3_architecture.tex L69 Table2 stage(iv)</td><td>design</td><td>MLLM设计阶段 (ch7 [TBD])</td><td class="evidence">7_mllm.tex L34 "[TBD]"</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr class="changed"><td>3_architecture.tex L69 Table2 stage(iv)</td><td>design</td><td>MLLM 已有实测结果 (ch7: 26.10%/26.12% on 12 benchmarks, step-3500 ckpt)</td><td class="evidence">7_mllm.tex L17-19 Table tab:mllm-bench 有实际数据; 摘要 L12 "26.1%"; intro L35 "26.1%"</td><td class="verdict-err">❌ 失实</td><td>in progress</td></tr>
 <tr><td>3_architecture.tex L70 Table2 stage(v)</td><td>design</td><td>领域适配设计阶段 (ch8 [TBD])</td><td class="evidence">8_domain_rl.tex L26 "[TBD]"</td><td class="verdict-ok">✅</td><td>—</td></tr>
-<tr><td>0_abstract.tex L16</td><td>"measurements are in progress"</td><td>(ii)-(v) 均 [TBD]</td><td class="evidence">ch5/7/8 均 [TBD]</td><td class="verdict-ok">✅</td><td>—</td></tr>
+<tr><td>0_abstract.tex L16</td><td>"measurements are in progress"</td><td>(ii)/(v) [TBD]; (iv) 有初步结果(26.1%); (iii) complete</td><td class="evidence">ch5/8 [TBD]; ch7 有结果; ch6 complete</td><td class="verdict-ok">✅</td><td>—</td></tr>
 </table>
 <h3>5. 交叉引用（\ref{} 是否指向存在 label；章节间同一事实是否矛盾）</h3>
 <table>
@@ -110,7 +110,7 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 <tr><td>412 GPU·h</td><td>全文 grep 无结果</td><td class="verdict-ok">✅ 已清除</td><td>—</td></tr>
 <tr class="changed"><td>4096 (主训练seq)</td><td>3_arch L39 Table1 ❌已改; 5_posttrain L21 ❌已改</td><td class="verdict-err">❌→✅</td><td>两处均改为16,384</td></tr>
 <h2>二、逐文件修改详情</h2>
-<h3>2.1 3_architecture.tex（重灾区 · 5 处修改）</h3>
+<h3>2.1 3_architecture.tex（重灾区 · 6 处修改）</h3>
 <table>
 <tr><th>#</th><th>行号</th><th>改前</th><th>改后</th><th>依据</th></tr>
 <tr class="changed"><td>1</td><td>L39</td><td>Sequence length &amp; 4096</td><td>Sequence length &amp; 16,384</td><td>common.env L24 SEQ=16384; ch4 L16</td></tr>
@@ -118,6 +118,7 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 <tr class="changed"><td>3</td><td>L49-50</td><td>"selected from six iso-parameter candidates"</td><td>"selected from iso-parameter candidates"</td><td>ch6不写候选数量, 删除"six"以自洽</td></tr>
 <tr class="changed"><td>4</td><td>L55-56</td><td>"All stages run on 8×H100...BF16 precision throughout"</td><td>"Stage(i) two 8×H100 nodes (16 GPUs)...FP8 tensorwise at main seq, BF16 at shorter"</td><td>common.env NNODES=2; FP8_RECIPE; ch4 L66/L70</td></tr>
 <tr class="changed"><td>5</td><td>L66</td><td>(i) LM pre-training &amp; complete</td><td>(i) LM pre-training &amp; in progress</td><td>MEMORY L4 iter31514/700k(4.50%)</td></tr>
+<tr class="changed"><td>6</td><td>L69</td><td>(iv) MLLM alignment &amp; design</td><td>(iv) MLLM alignment &amp; in progress</td><td>ch7 L17-19 有实测结果(26.10%/26.12%); 摘要L12 "26.1%"; intro L35 "26.1%"</td></tr>
 </table>
 <h3>2.2 5_llm_posttrain.tex（1 处修改）</h3>
 <table>
@@ -140,18 +141,23 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 </table>
 <h2>三、⚠️ 不改但标注项</h2>
 <div class="summary-box yellow">
-<p><strong>⚠️ 1. 3_architecture.tex L66: stage (iii) "complete"</strong></p>
-<p>视觉编码器预训练确已完成（ch6 有最终结果 19.76%/20.27% ImageNet linear probe），"complete" 在事实上成立。但 vision 线正在重写 ch6，若 vision 线后续修改了结论状态，此处可能需要同步。本轮保留 "complete"，标注待 vision 线确认。</p>
-</div>
-<div class="summary-box yellow">
-<p><strong>⚠️ 2. 3_architecture.tex L55: "other stages use a single 8×H100 node"</strong></p>
+<p><strong>⚠️ 1. 3_architecture.tex L55: "other stages use a single 8×H100 node"</strong></p>
 <p>搜索阶段(S1-S5)确实在单节点8卡上跑。vision编码器训练也在单节点8卡（vision/r11_*.sh 均为 --nproc_per_node=8 --nnodes=1）。后训练/MLLM/领域适配尚未开始，预期也在单节点。此表述准确但 "other stages" 包含尚未开始的阶段(ii)(iv)(v)，严格说是"设计预期"。保留不改——若后续实际使用多节点，届时更新。</p>
+</div>
+<div class="summary-box green">
+<p><strong>✅ 原 ⚠️ stage(iii) "complete" 已确认正确</strong></p>
+<p>vision 线已于 16:07（commit efb37f271）更新 ch6 为实测结果版（19.76%/20.27% ImageNet linear probe, 68.2% ViT-L/14），"complete" 在事实上成立，无需修改。</p>
+</div>
+<div class="summary-box green">
+<p><strong>✅ 原 ⚠️ stage(iv) "design" 已修正为 "in progress"</strong></p>
+<p>#1013 复核发现：ch7 (7_mllm.tex) 已有实测结果（Table tab:mllm-bench: 12 benchmarks, 26.10%/26.12%, step-3500 ckpt），摘要 L12 与 intro L35 均引用 "26.1%"。阶段 (iv) 已超越"设计"阶段进入"初步测量"阶段，故将 pipeline 表中 (iv) 从 "design" 改为 "in progress"。</p>
 </div>
 <h2>四、编译验证</h2>
 <div class="summary-box green">
 <p><strong>编译流程</strong>：pdflatex → bibtex → pdflatex → pdflatex（三连）</p>
-<p><strong>结果</strong>：Warnings=0 / Undefined=0 (UNDEF=0 ✅) / Errors=0 (ERR=0 ✅) / Overfull=0 / Pages=6 (≤6红线 ✅)</p>
+<p><strong>结果</strong>：Warnings=0 / Undefined=0 (UNDEF=0 ✅) / Errors=0 (ERR=0 ✅) / Pages=6 (≤6红线 ✅)</p>
 <p><strong>未 commit main.pdf</strong>（二进制会与vision线冲突）✅</p>
+<p><strong>#1013 复核</strong>：#1011 初版 6 处修改 + #1013 补遗 1 处（L69 stage iv: design→in progress），重编译 ERR=0/UNDEF=0/6 页 ✅</p>
 </div>
 <h2>五、双语注释维护</h2>
 <p>所有修改的英文行，其对应的 % 中文： 注释行均已同步更新：</p>
@@ -173,15 +179,15 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 <tr><td>修改 reference.bib</td><td>本线条目全部核实无误</td></tr>
 </table>
 <h2>七、提交信息</h2>
-<pre>pretrain paper-audit: 全文事实审订 6处修改 (3_arch BF16→FP8/4096→16384/8GPU→16GPU/complete→in_progress/six→删除 + 5_posttrain 4096→16384), ERR=0/UNDEF=0/6页</pre>
+<pre>pretrain paper-audit: 全文事实审订 7处修改 (3_arch BF16→FP8/4096→16384/8GPU→16GPU/complete→in_progress/six→删除/MLLM design→in_progress + 5_posttrain 4096→16384), ERR=0/UNDEF=0/6页</pre>
 <p>修改文件清单：</p>
 <ul>
-<li>ISEDA2027/3_architecture.tex（5处修改）</li>
+<li>ISEDA2027/3_architecture.tex（6处修改：L39/L42/L49/L55/L66 + L69 #1013补遗）</li>
 <li>ISEDA2027/5_llm_posttrain.tex（1处修改）</li>
-<li>reports/report_pretrain_paper_audit_zh.html（本报告）</li>
+<li>reports/report_pretrain_paper_audit_zh.html（本报告，#1011初版+#1013复核更新）</li>
 </ul>
 <div class="footer">
-<p>生成时间：2026-10-31 15:2x · pretrain线 agent #1011 · 未碰GPU/未打断S1 (iter~31,514/700k)</p>
+<p>生成时间：2026-10-31 15:2x（#1011初版）→ 2026-10-31 16:3x（#1013复核补遗）· pretrain线 agent · 未碰GPU/未打断S1 (iter~31,970/700k)</p>
 </div>
 <h2>附录 A：实测配置证据汇总</h2>
 <h3>A.1 configs/common.env 关键字段（事实来源）</h3>
@@ -250,7 +256,10 @@ pre{background:#2d2d2d;color:#f8f8f2;padding:12px 16px;border-radius:6px;overflo
 <p><strong>改后(英)</strong>: "routinely exceed the $16{,}384$-token window of Table~\ref{tab:config}"</p>
 <p><strong>改前(中)</strong>: "通常远超表 \ref{tab:config} 的 $4096$-token 窗口"</p>
 <p><strong>改后(中)</strong>: "通常远超表 \ref{tab:config} 的 $16{,}384$-token 窗口"</p>
+<h3>B.7 3_architecture.tex L69 (Table 2, stage iv) — #1013 补遗</h3>
+<p><strong>改前</strong>: <code>(iv) &amp; MLLM alignment &amp; design &amp; \ref{sec:mllm} \\</code></p>
+<p><strong>改后</strong>: <code>(iv) &amp; MLLM alignment &amp; in progress &amp; \ref{sec:mllm} \\</code></p>
+<p><strong>中文注释</strong>: Table 行无独立中文注释（属表格内容）</p>
+<p><strong>依据</strong>: ch7 (7_mllm.tex) L17-19 已报告 Stage-2 step-3500 ckpt 在 12 个 lmms-eval benchmarks 上的实测结果（26.10%/26.12%, 11-set avg），摘要 L12 与 intro L35 均引用 "26.1%"。阶段 (iv) 已有初步测量结果，不再是纯设计阶段，故 "design" → "in progress"。</p>
 </body>
 </html>
-<tr class="changed"><td>"six candidates"</td><td>3_arch L49 "six" ❌与ch6不一致</td><td class="verdict-err">❌→✅</td><td>删除"six"</td></tr>
-</table>
