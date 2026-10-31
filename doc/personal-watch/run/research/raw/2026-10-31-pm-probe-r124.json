@@ -1,0 +1,60 @@
+{
+  "generated": "2026-10-31T10:01:27.048405+00:00",
+  "arxiv_api": {
+    "endpoint": "https://export.arxiv.org/api/query",
+    "url": "https://export.arxiv.org/api/query?search_query=cat:cs.CL&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending",
+    "status": 200,
+    "content_type": "application/atom+xml; charset=utf-8",
+    "elapsed_s": 13.07,
+    "total_results": 124184,
+    "n_entries": 3,
+    "sample": [
+      {
+        "arxiv_id": "2610.40655v1",
+        "published": "2026-10-29T17:59:53Z",
+        "category": "cs.CL"
+      },
+      {
+        "arxiv_id": "2610.40627v1",
+        "published": "2026-10-29T17:56:53Z",
+        "category": "cs.CL"
+      },
+      {
+        "arxiv_id": "2610.40619v1",
+        "published": "2026-10-29T17:55:30Z",
+        "category": "cs.CL"
+      }
+    ],
+    "ok": true,
+    "error": null
+  },
+  "hf_daily": {
+    "endpoint": "https://huggingface.co/api/daily_papers",
+    "ok": false,
+    "n_ids": 0,
+    "error": "URLError(OSError(101, 'Network is unreachable'))"
+  },
+  "arxiv_rss": {
+    "cs.CL": {
+      "url": "https://rss.arxiv.org/rss/cs.CL",
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 0,
+      "note": "空 feed（周末/未公告），仅作发现"
+    },
+    "cs.CV": {
+      "url": "https://rss.arxiv.org/rss/cs.CV",
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 0,
+      "note": "空 feed（周末/未公告），仅作发现"
+    },
+    "cs.LG": {
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 0,
+      "note": "空 feed（周末/未公告），仅作发现"
+    }
+  }
+}

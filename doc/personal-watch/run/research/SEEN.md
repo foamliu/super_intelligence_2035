@@ -5433,7 +5433,7 @@
 | 2026-10-30 | 2610.40539 | PhysVLMM: Interaction-Conditioned Physical Belief Maps for Articulated Objects in Robot Scene Maps | cs.RO | 候选 |
 | 2026-10-30 | 2610.40536 | TRACER, a time-to-event EHR foundation model for disease detection across health systems | cs.CE | 候选 |
 | 2026-10-30 | 2610.40532 | BURGER: Benchmarking and Understanding Robotic Generalization via Embodied Drawing | cs.RO | 候选 |
-| 2026-10-30 | 2610.40530 | PhysCount: Do MLLMs Count Visual Appearances or Physical Entities? | cs.CV | 候选 |
+| 2026-10-30 | 2610.40530 | PhysCount: Do MLLMs Count Visual Appearances or Physical Entities? | cs.CV | 收录 |
 | 2026-10-30 | 2610.40516 | How I Aligned Your Model: Scaling Up Multilingual Safety Training with Templates | cs.CL | 候选 |
 | 2026-10-30 | 2610.40511 | A Low-Rank Space Captures Linear Alignment Between LLM and Human Neural Activity During Naturalistic Language Listening | cs.CL | 候选 |
 | 2026-10-30 | 2610.40492 | Agentic University: Collaborative Agents for Personalized Learning | cs.AI | 候选 |
@@ -5541,7 +5541,7 @@
 | 2026-10-30 | 2610.38993 | Open-World Object Motion Anticipation via Meta-Learned Semantic Adaptation | cs.RO | 候选 |
 | 2026-10-30 | 2610.38977 | Beyond Passing Tests: A Systematic Review and Controlled Re-evaluation of Techniques for Improving the Quality of LLM-Generated Code | cs.SE | 候选 |
 | 2026-10-30 | 2610.38975 | Dungeons & Dragons Encounter Analysis with Semi-Random Simulation in Foundry VTT | cs.AI | 候选 |
-| 2026-10-30 | 2610.38957 | What do MLLMs know about 'Waldo'? Evaluating Visual Reasoning under Multi-Instance Multi-Object Challenges | cs.CV | 候选 |
+| 2026-10-30 | 2610.38957 | What do MLLMs know about 'Waldo'? Evaluating Visual Reasoning under Multi-Instance Multi-Object Challenges | cs.CV | 收录 |
 | 2026-10-30 | 2610.38946 | MAS-Loop: Beyond One-Shot Orchestration towards Self-Evolving Multi-Agent Systems | cs.MA | 候选 |
 | 2026-10-30 | 2610.38926 | OneScene-Bench: Do Vision-Language Models Integrate Evidence Across Views? | cs.CV | 候选 |
 | 2026-10-30 | 2610.38882 | Aligning Autoresearch: Co-Improvement between Agents and Humans | cs.AI | 候选 |
