@@ -4,16 +4,16 @@ Stage~(iii) pre-trains a custom vision encoder from scratch (Section~\ref{sec:ml
 % 中文：第 (iii) 阶段从零预训练一个自研视觉编码器（第 \ref{sec:mllm} 节）；本节只汇报结果，设计研究另文详述。
 
 \paragraph{Selected encoder.}
-We adopt \textbf{OpenVision2}, a width-$1024$/depth-$30$ pure-attention ViT with $126.8$M parameters ($505.2$M at full width), trained from scratch with a bidirectional trunk at $224$px/$16$-px patches on a $\approx$18.5M-pair image--text corpus (CC12M $+$ Amshaker).
-% 中文：选定编码器。我们采用 OpenVision2——宽度 $1024$、深度 $30$ 的纯注意力 ViT，$126.8$M 参数（全宽 $505.2$M），从零训练，双向主干，$224$ 像素/$16$ 像素块，在约 18.5M 图文对语料（CC12M + Amshaker）上训练。
+We adopt \textbf{OpenVision2}, a pure-attention ViT at width-$512$/depth-$30$ ($126.8$M parameters), trained from scratch with a bidirectional trunk at $224$px/$16$-px patches on a ${\approx}18.5$M-pair image--text corpus (CC12M $+$ Amshaker).
+% 中文：选定编码器。我们采用 OpenVision2——宽度 $512$、深度 $30$ 的纯注意力 ViT，$126.8$M 参数，从零训练，双向主干，$224$ 像素/$16$ 像素块，在约 $18.5$M 图文对语料（CC12M + Amshaker）上训练。
 The objective combines a global InfoNCE contrastive term with a caption-\emph{independent} masked-patch reconstruction term at a $1{:}1$ weight and a $0.6$ mask ratio.
 % 中文：目标函数由全局 InfoNCE 对比项与一个与说明文字无关的掩码块重建项组成，权重 $1{:}1$，掩码比例 $0.6$。
-Both terms are required: the dense term carries most of the representation quality, while the contrastive term acts as an anchor without which the trunk degrades.
-% 中文：两项都必要：稠密项承载了大部分表示质量，而对比项起锚定作用，缺少它主干会退化。
+A four-arm ablation ($15.4$M pairs) confirms the breakthrough depends on their \emph{interaction}: neither term alone suffices ($6.1\%$ and $6.2\%$ linear-probe), but the combination yields $+6.0$\,pp, widening to $+12.4$\,pp at $55.3$M samples.
+% 中文：四臂消融（$15.4$M 对）证实突破依赖两项的交互：单独任一项都不充分（线性探测 $6.1\%$ 与 $6.2\%$），但组合产生 $+6.0$ pp 增益，在 $55.3$M 样本时扩大至 $+12.4$ pp。
 
 \paragraph{Final result.}
-On the frozen trunk with an ImageNet-1k linear probe, the encoder reaches $11.50\%\to\mathbf{19.76\%}$ top-1 from $5.1$M to $55.3$M samples, and $20.27\%$ at $176$M samples with no saturation.
-% 中文：最终结果。在冻结主干上用 ImageNet-1k 线性探测，编码器从 5.1M 到 55.3M 样本由 $11.50\%$ 升至 $\mathbf{19.76\%}$ top-1，在 176M 样本上达到 $20.27\%$ 且未见饱和。
+On the frozen trunk with an ImageNet-1k linear probe, the encoder reaches $11.50\%\to\mathbf{19.76\%}$ top-1 from $5.1$M to $55.3$M samples (CC12M$+$Amshaker, $18.5$M unique pairs), and $20.27\%$ at $176$M samples on a $58.8$M-pair corpus (adding GPIC), with no saturation.
+% 中文：最终结果。在冻结主干上用 ImageNet-1k 线性探测，编码器在 CC12M+Amshaker（$18.5$M 唯一对）上从 $5.1$M 到 $55.3$M 样本由 $11.50\%$ 升至 $\mathbf{19.76\%}$ top-1，在 $58.8$M 对语料（加入 GPIC）上于 $176$M 样本达到 $20.27\%$，均未见饱和。
 This is $+12.4$\,pp above a contrastive-only baseline at the same sample budget, and it is the operating point used by stage~(iv).
 % 中文：这比同样本量下仅用对比项的基线高 $+12.4$ pp，该点即第 (iv) 阶段使用的配置。
 The $224/16$ resolution is retained because it is best on both loss and throughput; whether $196$ visual tokens suffice for detail-dense layout and schematic views is tested in stage~(iv) (Section~\ref{sec:mllm}).

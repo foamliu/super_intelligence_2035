@@ -2546,3 +2546,7 @@ setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /de
 **③ ArmB**：配方/起训/排队**已被 2026-10-17 12:0x 顶部指令取代**（open_clip ViT-B/16 + AIMv2-style，全量 8000 GPIC，3 epoch）；本条只保留 **① 报告** 与 **② 兼容性附录**。预注册判据仍有效：lp ≥58.03% 不倒退；≥61.0% 且 5-NN ≥48.98% → 接受混合；否则写负面结论。
 
 **④ 纪律**：不占 GPU（除放行）；每个数字可溯源到 `文件:行`/原始日志；不改已发布数值；与 pretrain 线 IO 错峰。
+
+### [已归档] 🚀 运维令 · 2026-10-31 11:0x（审校 BaiZe 论文第 6 章「视觉编码器」，出中文 HTML 修订计划）· ✅ 已完成（wake#436 交付 `reports/report_vision_paper_revise_plan_zh.html` 31603B/6节/0script/0外链/标签配平/≥18KB + 生成器 `vision/generate_paper_revise_plan_report.py`（幂等 MD5=4f8c4e91）；逐句核实6_vision_encoder.tex：发现P0错误1处(width-1024)、P1存疑2处(Both terms required/20.27%@176M需标epoch)、P2建议2处；改写方案给出逐段改前→改后+同步中文注释。已被 11:2x 令升级为直接改稿并执行完毕）
+
+### [已归档] 🚀 运维令 · 2026-10-31 08:4x（起草「波形图强化」中文 HTML 计划书：交互式 RL + WaveView 实操）· ✅ 已完成（wake#435 交付 `reports/report_vision_wave_rl_plan_zh.html` 59241B/12节/41表/0script/0外链/标签配平/≥28KB + 生成器 `vision/generate_wave_rl_plan_report.py`（幂等 MD5=a3f1ccf8）；覆盖9个必答问题：交互必要性/烛龙接口/RL环境/奖励/数据/训练/评测/成本/论文贡献；所有WaveView API事实引用自trace_deepreads实测笔记；本轮零实验）
