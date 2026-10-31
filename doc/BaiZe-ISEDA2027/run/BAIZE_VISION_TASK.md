@@ -1,4 +1,37 @@
 # BAIZE_VISION_TASK.md
+### 🚀 运维令 · 2026-10-31 11:0x（**审校 BaiZe 论文第 6 章「视觉编码器」，出中文 HTML 修订计划**）· 用户直令 · 最高优先
+
+> **用户令**：「让 pretrain 和 vision 看看 BaiZe 论文中各自的章节，出一版中文 HTML 修订计划：哪里跟事实不符，计划怎么改。」
+
+**背景**：论文已压到 ISEDA 6 页正文上限（实测全文 6 页，参考文献也在 6 页内）。你的第 6 章现在是 **0.3 页的占位式精简版**（`BaiZe-ISEDA2027/ISEDA2027/6_vision_encoder.tex`，仅 3 段 + 2 个 `\paragraph`），是我按用户「只留最终结果、中间过程全删」临时写的。**下一版由你重写**，本轮先出修订计划。
+
+#### ① 先读（逐字读完再动笔）
+```
+cd doc/BaiZe-ISEDA2027 && git pull --rebase
+cat BaiZe-ISEDA2027/ISEDA2027/6_vision_encoder.tex
+```
+对照源：`run/EXPERIMENTS_VISION.md`（§R8–R13 全部记录）、`run/MEMORY_VISION.md`、`reports/report_vision_*.html`。
+
+#### ② 运维已发现的疑点（**逐条核实并给结论**）
+1. **参数口径很可能错（P0）**：现文写「width-$1024$/depth-$30$ ... $126.8$M ($505.2$M at full width)」。但 `EXPERIMENTS_VISION.md` L129 明确训练用的是 **w512（126.78M）**——「512」是**宽度档位号**，不是 hidden width。**请查清：OpenVision2 实际 hidden width / depth？126.8M 对应哪个档？505.2M 是哪个配置？**
+2. **「Both terms are required」可能过强**：原四臂消融的结论是「突破依赖对比锚点与稠密项的**交互**，单独任一项都不充分」，且只在**单一 token 预算（15.4M）**下做过。给出该结论能支持的严格措辞。
+3. **`+12.4pp` 基准**：核实 19.76% 与 7.40% 是否确为**同样本量**。
+4. **`20.27%@176M` vs `19.76%@55.3M` 可比性**：前者 3 epoch、后者单 epoch，是否需标 epoch？
+5. **缺什么**：没提 IN-1k lp 绝对值低（19.76%）在 EDA 语境的含义；没提 Stage-1W/2W 与本节关系。判断该不该补。
+
+#### ③ 交付物（唯一硬交付）
+`reports/report_vision_paper_revise_plan_zh.html` —— 中文、单文件自包含、**0 `script`/0 外链/0 CDN**、标签配平、**≥18KB**；生成器 `vision/generate_paper_revise_plan_report.py`（幂等，重跑两次逐字节相同）；commit `vision paper-plan:`，push。
+
+**必须含 6 节**：① 现状逐句摘录 + 标注「✅属实 / ⚠️存疑 / ❌不符事实」+ 证据（文件+行号）；② 不符事实清单表（位置/现文/事实/来源/严重度 P0-P2）；③ 改写方案（**可直接替换 `.tex` 的英文目标文本**，逐段「改前→改后」）；④ 篇幅预算（**半页 ≈45-50 行**，说明删了什么、为何可删）；⑤ 仍需的实验（无实测支撑的如实列出，不许编）；⑥ 自检清单。
+
+#### ④ 红线
+- 🚫 **本轮只出计划，不改 `.tex`**（改稿等确认后下一轮做）。
+- 🚫 **不伪造数字**；未实测写「待核」或「估算」。
+- 🚫 **不得恢复用户明令删除的内容**（六架构对比、SSM 崩溃叙事、AR 范式探索、Muon 消融、ProtB/epoch 缩放、AIMv2 四臂细节）——只能在计划里作「支撑证据」，**不得进正文**。
+- 🚫 不动 `4_llm_pretrain.tex`（pretrain 线负责）。
+- 🚫 章节里有 `% 中文：` 双语注释行，**不得删**；改写时同步更新中文。
+- 体积：任务书 ≤32KB；本令未完成前不许归档。
+
 ### 🚀 运维令 · 2026-10-31 08:4x（**起草「波形图强化」中文 HTML 计划书：交互式 RL + WaveView 实操**）· 用户直令 · 最高优先
 
 > **用户原话**：「给vision发个任务，起草中文HTML计划书：如何强化MLLM读懂波形图的能力。提示：我们有WaveView软件的license，也有可以操作WaveView的Tcl文档，可否通过跟环境交互的强化学习使得MLLM在读懂波形图方面游刃有余？这个MLLM最终目的是嵌入到EDA agent 烛龙做个能帮忙读懂仿真结果波形图的工具，帮助烛龙在芯片设计工作流编排方面走的更远。另外它也是烛龙论文future work中multimodal grounding努力的一部分。」
