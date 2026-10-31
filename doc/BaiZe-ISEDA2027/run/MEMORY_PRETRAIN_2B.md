@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-11-01 02:55 #1041：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~52391s ≈ 14.6h）活着，iter 37530/700k（5.36%），loss 近8步 2.151/2.160/2.161/2.142/2.157/2.160/2.162/2.161（稳态~2.16），grad-norm 0.099/0.115/0.092/0.101/0.090/0.117/0.093/0.102（极稳，iter37500 spike 1.883已恢复），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped，~6.9s/step ≈ ~607K tok/s，ckpt@iter_36000（next@38000）。双机16×H100 GPU .12 97-100%util/~75GB。论文6页/ERR=0 维持。ETA ~52.6天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=29.2KB（归档 0KB）。
+> 🆕 2026-11-01 03:25 #1042：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~53569s ≈ 14.9h）活着，iter 37700/700k（5.39%），loss 近8步 2.203/2.058/2.214/2.168/2.145/2.127/2.134/2.136（稳态~2.15），grad-norm 0.100/0.105/0.100/0.098/0.105/0.100/0.089/0.089（极稳无spike），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（7700步全clean），~7.1s/step ≈ ~607K tok/s，ckpt@iter_36000（next@38000）。双机16×H100 GPU .12 96-100%util/~75GB。论文6页/ERR=0 维持。ETA ~52.2天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=29.5KB（归档 0KB）。
+> 📦 §#1041（11-01 02:55, S1健康监控iter37530/loss~2.16/0NaN/~607K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37530(5.36%), loss~2.16稳态, grad-norm极稳, ~607K tok/s, ckpt@36000。被#1042监控。需要时再读。
 > 📦 §#1040（11-01 02:35, S1健康监控iter37359/loss~2.16/0NaN/~607K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37359(5.34%), loss~2.16稳态, grad-norm极稳, ~607K tok/s, ckpt@36000。被#1041监控。需要时再读。
 > 📦 §#1039（11-01 02:15, S1健康监控iter37183/loss~2.14/0NaN/~608K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37183(5.31%), loss~2.14稳态, grad-norm极稳, ~608K tok/s, ckpt@36000。被#1040监控。需要时再读。
 > 📦 §#1038（11-01 01:53, S1健康监控iter37000/loss~2.17/0NaN/~608K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter37000(5.29%), loss~2.17稳态, grad-norm 0.380(spike已恢复), ~608K tok/s, ckpt@36000。被#1039监控。需要时再读。
