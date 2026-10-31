@@ -26,6 +26,5 @@
 1792205753795_x5t0t.messages.json	brian	hfeg0plg95	497	characterization	case	EDA-Eval-DesignFlow-OpampChar-001	2026-10-31 06:17	
 1792563683776_pwep8.messages.json	jianhaiq	hfeg0plg88	517	skipper	case	EDA-Eval-DesignFlow-PGLayout-001	2026-10-31 07:37	
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	eda_other	case	EDA-Eval-DesignFlow-TotemSC-001	2026-10-31 08:18	
-1792715254915_8z5a8.messages.json	xinqiaoz	hfeg0pkn004	611	physical_verify	parked		2026-10-31 09:29	physical_verify over-covered(4)+xinqiaoz over-represented(3); parked for diversity; r142 chose 1i0em (rongtaoy, new user, schematic_netlist sub-topic)
 1792715254915_8z5a8					case	EDA-Eval-DesignFlow-DummyDeck-001	2026-10-31 09:23	
-1791526272387_1i0em.messages.json	rongtaoy	hfeg0pkn001	574	schematic_netlist	claimed		2026-10-31 09:29	
+1791526272387_1i0em.messages.json	rongtaoy	hfeg0pkn001	574	schematic_netlist	case	EDA-Eval-DesignFlow-SubcktExtract-001	2026-10-31 09:43	
