@@ -1,130 +1,237 @@
 \section{LLM Pretraining}\label{sec:llm-pretrain}
+
 Stage~(i) pre-trains the hybrid language backbone (Section~\ref{sec:arch}) from scratch under a fixed budget.
 % 中文：第 (i) 阶段在固定预算下从零预训练混合语言骨干（第 \ref{sec:arch} 节）。
-\subsection{Architecture Selection}\label{sec:arch-rationale}
-We adopt the hybrid backbone for two reasons: state-space layers decode in constant time per token while the four attention layers retain long-range context, and a matched from-scratch comparison at the $\approx$2B scale against a dense transformer (MiniCPM5-2B) favours the hybrid, which reaches lower loss with $11.6\%$ fewer parameters ($\approx$2.22B vs.\ 2.51B) at a $\sim$8\% training-throughput cost (Table~\ref{tab:archcomp}).
-% 中文：架构选型。我们采用混合骨干有两点理由：状态空间层每 token 恒定时间解码，而 4 个注意力层保留长程上下文；且与稠密 Transformer（MiniCPM5-2B）在约 2B 规模的同等条件从零对比中，混合模型以少 $11.6\%$ 的参数（约 2.22B 对 2.51B）达到更低损失，代价是约 8% 训练吞吐（表 \ref{tab:archcomp}）。
-\subsection{Training Framework and Learning-Rate Schedule}\label{sec:framework}
-We train with the NVIDIA NeMo~\cite{nvidia-nemo} entry point driving Megatron-Core's~\cite{nvidia-megatron} Mamba-hybrid provider at $\texttt{tensor\_model\_parallel\_size}=1$, with fused kernels and selective activation recomputation enabled.
-% 中文：训练框架与学习率调度。我们用 NVIDIA NeMo \cite{nvidia-nemo} 入口驱动 Megatron-Core \cite{nvidia-megatron} 的 Mamba 混合 provider，$\texttt{tensor\_model\_parallel\_size}=1$，启用融合核与选择性激活重计算。
-All hyper-parameter searches run at a reduced iteration count; the short-horizon ranking is transferred to full scale.
-% 中文：全部超参搜索以缩减迭代数运行，短程排序迁移到全规模。
-BaiZe trains under a warmup--stable--decay (WSD) schedule with a stable learning rate of $1\times10^{-3}$ and $2{,}000$ warmup steps.
-% 中文：BaiZe 在预热—稳定—衰减（WSD）调度下训练，稳定学习率 $1\times10^{-3}$，预热 $2{,}000$ 步。
-The main training sequence length is $16{,}384$: this is the throughput-optimal operating point ($613{,}992$ tok/s at $\texttt{CP}{=}1$/$\texttt{DP}{=}16$; measured) and it keeps the extrapolation ratio to the $1$M product target at $64\times$ rather than the $256\times$ a 4K length would imply.
-% 中文：主训练序列长度为 $16{,}384$：这是吞吐最优点（$\texttt{CP}{=}1$/$\texttt{DP}{=}16$ 时 $613{,}992$ tok/s；实测），且使到 1M 产品目标的外推倍数为 $64\times$，而非 4K 长度所隐含的 $256\times$。
-The decay phase has two segments: segment~A anneals at 16K on instruction and curated web data ($60$--$70\%$ of the decay budget), and segment~B extends the length on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$).
-% 中文：衰减阶段分两段：A 段在 16K 上用指令与精选网页数据退火（占衰减预算 $60$–$70\%$）；B 段沿 $32$K→$64$K→$128$K 阶梯扩展长度（占 $30$–$40\%$）。
-Decay follows $lr(p)=lr_{\text{peak}}(lr_{\min}/lr_{\text{peak}})^{p}$ with $lr_{\min}{=}1\times10^{-4}$ (Table~\ref{tab:prod-budget}).
-% 中文：衰减遵循 $lr(p)=lr_{\text{peak}}(lr_{\min}/lr_{\text{peak}})^{p}$，$lr_{\min}{=}1\times10^{-4}$（表 \ref{tab:wsd}）。
-\
-\subsection{Long-Context Data Gate}\label{sec:longctx-data}
-Segment~B learns whatever length structure the corpus contains, so we measured the document-length distribution before budgeting it: only $\mathbf{2.52\%}$ of tokens sit in documents of ${\geq}32$K and $0.03\%$ reach ${\geq}128$K, with a mean document of $889$ tokens (Table~\ref{tab:longctx-data}).
-% 中文：长上下文数据闸门。B 段学到的只是语料实际包含的长度结构，因此在编列预算前我们测量了文档长度分布：仅 $2.52\%$ 的 token 位于 ${\geq}32$K 的文档中，$0.03\%$ 达到 ${\geq}128$K，平均文档 $889$ token（表 \ref{tab:longctx-data}）。
-Training a 128K rung on this distribution would teach document concatenation rather than long-context retrieval, so we impose three entry conditions: supplement long documents until the ${\geq}32$K share reaches $20\%$ and the ${\geq}128$K share reaches $5\%$ (until then the ladder stops at 64K); reset attention and Mamba-2 state at every EOD; and de-duplicate long documents first.
-% 中文：在这样的分布上训练 128K 阶梯，教会的将是文档拼接而非长上下文检索，因此我们设三条准入条件：补充长文档直到 ${\geq}32$K 占比达 $20\%$、${\geq}128$K 达 $5\%$（在此之前阶梯止于 64K）；在每个 EOD 重置注意力与 Mamba-2 状态；长文档先行去重。
-\begin{table}[t]
+This section covers the architecture-selection rationale, the data, the production recipe---organised as a warmup--stable--decay (WSD) schedule whose decay phase carries two segments, a \emph{short-context annealing segment} and a \emph{long-context extension segment} (Section~\ref{sec:longctx-train})---and the resulting measurements; the backbone configuration itself is given in Table~\ref{tab:config}.
+% 中文：本节涵盖架构选型的理由、数据、生产配方——按预热—稳定—衰减（WSD）调度组织，其衰减阶段包含两个子段：\emph{短上下文退火段} 与 \emph{长上下文扩展段}（第 \ref{sec:longctx-train} 节）——以及由此得到的测量结果；骨干配置本身见表 \ref{tab:config}。
+
+\subsection{Architecture Selection Rationale}\label{sec:arch-rationale}
+We adopt the hybrid backbone on three grounds.
+% 中文：我们基于三点理由采用混合骨干。
+\textbf{(i) Inference efficiency.} State-space layers decode with constant-time recurrence per token, while the sparse attention layers retain long-range context; this directly targets the inference-heavy, cost-sensitive deployments that motivate BaiZe.
+\textbf{(ii) Controlled comparison.} A matched from-scratch comparison at the $\approx$2B scale between a dense transformer (MiniCPM5-2B~\cite{openbmb2026minicpm5}) and Mamba2-hybrid---trained under identical data, seed, and GPU footprint---favours the hybrid, which converges to a lower loss with fewer parameters ($\approx$2.22B vs.\ 2.51B, $-11.6\%$) and decodes faster under our direct-drive harness, at a $\sim$8\% training-throughput cost (Table~\ref{tab:archcomp}). Across all five checkpoints from 500 to 5000 steps, the hybrid consistently attains lower loss than the dense baseline, with the gap widening to $\Delta{\approx}0.30$ by step 5000---confirming the advantage is not an early-training artifact and comes with an 11.6\% parameter reduction.
+\textbf{(iii) Feasibility.} Megatron-Core ships a Mamba-hybrid provider whose 56-layer interleaving pattern we reuse verbatim, halving only the hidden and FFN widths to reach the $\approx$2B scale, making the backbone directly executable under the NeMo recipe without custom kernels.
+
+\subsection{Training Framework and Reduced-Horizon Search}\label{sec:framework}
+We train with the NVIDIA NeMo~\cite{nvidia-nemo} pre-training entry point, driving the Megatron-Core~\cite{nvidia-megatron} \texttt{NVIDIAMambaHybridModelProvider2B} provider directly with $\texttt{tensor\_model\_parallel\_size}=1$.
+% 中文：我们采用 NVIDIA NeMo \cite{nvidia-nemo} 的预训练入口，以 $\texttt{tensor\_model\_parallel\_size}=1$ 直接驱动 Megatron-Core \cite{nvidia-megatron} 的 \texttt{NVIDIAMambaHybridModelProvider2B} provider。
+To keep the entire sweep within budget, we run all hyper-parameter searches at a reduced iteration count and treat the resulting short-horizon ranking as predictive of the full-model optimum.
+% 中文：为使整个扫描都在预算内，我们以缩减的迭代数运行全部超参搜索，并把由此得到的短程排序视为对全模型最优点的预测。
+Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput.
+% 中文：为提升吞吐，启用融合核、选择性激活重计算与交叉熵损失融合。
+
+\subsection{Learning-Rate Schedule: WSD with a Two-Segment Decay}\label{sec:wsd}
+BaiZe trains under a warmup--stable--decay (WSD) schedule with a stable learning rate of $1\times10^{-3}$ and $2{,}000$ warmup steps (Table~\ref{tab:wsd}).
+% 中文：BaiZe 在预热—稳定—衰减（WSD）调度下训练，稳定学习率为 $1\times10^{-3}$，预热 $2{,}000$ 步（表 \ref{tab:wsd}）。
+The schedule has three segments, and the organisation of the third is the subject of Section~\ref{sec:longctx-train}:
+% 中文：该调度包含三个段，第三段的组织方式正是第 \ref{sec:longctx-train} 节的主题：
+\begin{itemize}
+\item \textbf{Warmup + stable} ($700{,}000$ steps, $4.19$M tokens/step, $2.94$T tokens; Table~\ref{tab:wsd}). The learning rate is held at its peak. The main training sequence length is $16{,}384$; this is a deliberate choice, not a limitation: 16K is the throughput-optimal operating point of the backbone on our cluster ($613{,}992$ tok/s at $\texttt{CP}{=}1$/$\texttt{DP}{=}16$ with computing-graph replay off; measured), and it keeps the extrapolation ratio to the $1$M product target at $64\times$ instead of the $256\times$ that a 4K pretraining length would imply.
+\item \textbf{Decay---segment~A, short-context annealing} ($60$--$70\%$ of the decay budget). The learning rate enters its decay while the sequence length stays at 16K, annealing the model on the high-quality instruction and curated-web mixture.
+\item \textbf{Decay---segment~B, long-context extension} ($30$--$40\%$ of the decay budget). The sequence length is extended on a $32$K$\to$64K$\to$128K ladder while the decayed learning rate continues downward (Section~\ref{sec:longctx-train}).
+\end{itemize}
+The decay segment itself follows $lr(p)=lr_{\text{peak}}\,(lr_{\min}/lr_{\text{peak}})^{p}$ with $p\in[0,1]$ (exponential) and $lr_{\min}{=}1\times10^{-4}$, the setting retained by the schedule-family ablation of Section~\ref{sec:llm-results}; the per-step values it produces ($p{=}0.25/0.5/0.75\Rightarrow5.62/3.16/1.78\times10^{-4}$) are the learning rates under which segment~B runs.
+% 中文：衰减段本身遵循 $lr(p)=lr_{\text{peak}}\,(lr_{\min}/lr_{\text{peak}})^{p}$（$p\in[0,1]$，指数式），$lr_{\min}{=}1\times10^{-4}$；这是调度族消融所保留的设定（第 \ref{sec:llm-results} 节）。它产生的逐步取值（$p{=}0.25/0.5/0.75\Rightarrow5.62/3.16/1.78\times10^{-4}$）正是 B 段运行时的学习率。
+
+\begin{table}[htbp]
 \centering
-\caption{Measured document-length distribution of \texttt{en\_v1\_4} ($8$ shards, $8.59$B tokens, $9.66$M documents).}
+\caption{Production WSD budget. Tokens per step are nominal ($\texttt{GBS}\times\text{seq}$); wall-clock and GPU-hours are estimates at the measured stable-phase throughput. Decay is budgeted as \emph{at least} $10\%$ of the stable phase (Table~\ref{tab:longctx-budget}).}
+\label{tab:wsd}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Segment} & \textbf{Tok./step} & \textbf{Steps} & \textbf{Tokens} & \textbf{Seq.} \\
+\midrule
+Warmup + stable & 4.19M & 700{,}000 & 2.94T & 16K \\
+Decay A: short-ctx anneal & 4.19M & 14{,}000 & 58.7B & 16K \\
+Decay B: long-ctx ladder & 4.19M & 6{,}000 & 25.2B & 32K--128K \\
+\midrule
+\textbf{Total} & --- & \textbf{720{,}000} & \textbf{3.02T} & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The decay row is the \emph{reference allocation} used throughout this paper (Section~\ref{sec:longctx-train} discusses scaling it upward to the $10$--$15\%$ range of Table~\ref{tab:longctx-budget}).
+It inherits the production invariant that every rung keeps $16{,}384$ tokens per micro-batch per GPU ($\texttt{seq}/\texttt{CP}=16{,}384$ with $\texttt{CP}\in\{1,2,4,8\}$), so no rung exceeds the memory ceiling established for the stable phase.
+% 中文：它继承一条生产不变量：每一级的每 GPU 每 micro-batch token 数恒为 $16{,}384$（$\texttt{seq}/\texttt{CP}=16{,}384$，$\texttt{CP}\in\{1,2,4,8\}$），因此没有任何一级超出稳定阶段已确立的显存上限。
+
+\subsection{Search Protocol Preceding the Production Run}\label{sec:search}
+Because a full grid is infeasible under a fixed GPU budget, the production recipe was selected with a staged, single-variable-at-a-time protocol run on the same backbone at a reduced horizon:
+% 中文：由于在固定 GPU 预算下完整网格不可行，生产配方是在同一骨干上以缩减步长运行分阶段的、单变量逐一变化的协议选出的：
+\begin{itemize}
+\item \textbf{S1 (baseline).} Reproduce the Mamba2-hybrid reference configuration (stable LR $3\times10^{-4}$, WSD) to establish a loss/throughput baseline.
+\item \textbf{S2 (learning-rate sweep).} Sweep the stable learning rate over seven points from $2\times10^{-4}$ to $1\times10^{-3}$ with WSD held fixed.
+\item \textbf{S3 (schedule axes).} On the winning learning rate, perturb one variable at a time---schedule family (WSD vs.\ cosine), decay ratio and decay shape, warmup length, and $min\_lr$.
+\item \textbf{S4 (annealing data mix).} Ablate the annealing data blend (pure Ultra-FineWeb-L3 vs.\ adding code and math) under the winning configuration.
+\item \textbf{S5 (long run + seeds).} Retrain the winning configuration from scratch over a $20000$-step horizon, plus a three-seed short-horizon reproducibility check.
+\end{itemize}
+These sweeps are \emph{proxy experiments}: their hyper-parameter ranking is transferred to the production scale, and the absolute losses they report are not production estimates.
+% 中文：这些扫描是 \emph{代理实验}：其超参排序被迁移到生产规模，它们报告的绝对损失不是生产估计。
+The production run is specified by the budget of Table~\ref{tab:wsd} and is reported in Section~\ref{sec:full-train}; the long-context segment of that budget is specified in Section~\ref{sec:longctx-train}.
+% 中文：生产训练由表 \ref{tab:wsd} 的预算规定，并在第 \ref{sec:full-train} 节报告；该预算中的长上下文子段在第 \ref{sec:longctx-train} 节给出规格。
+
+At every stage only a single variable changes relative to the running best, isolating each factor's contribution while keeping total GPU-hours within budget.
+% 中文：每个阶段相对于当前最优只改变单一变量，从而隔离各因素的贡献，同时把总 GPU·h 控制在预算内。
+The architectural search space is validated up front: the hybrid (Mamba2-hybrid) and dense (MiniCPM5-2B) candidates are compared head-to-head from scratch (Section~\ref{sec:arch-rationale}), which selects the hybrid backbone before the hyper-parameter search begins.
+% 中文：架构搜索空间被预先验证：混合（Mamba2-hybrid）与稠密（MiniCPM5-2B）候选从头同等条件对比，使后续的超参搜索只需在一族架构内进行。
+
+\subsection{Data}\label{sec:llm-data}
+Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$690\,B tokens across 616 parquet shards, 618\,GiB), streamed and packed, tokenised with the DeepSeek-V4.1-Flash tokenizer~\cite{deepseek2024tokenizer} (vocabulary size $129{,}281$).
+% 中文：预训练使用 \texttt{Ultra-FineWeb-L3} 英文子集（约 690 B token，分布于 616 个 parquet shard，618 GiB），流式读取并打包，采用 DeepSeek-V4.1-Flash 分词器 \cite{deepseek2024tokenizer}（词表 129,281）。
+Complementary corpora---code (\texttt{UltraData-Code}), mathematics (\texttt{UltraData-Math}), curated web (\texttt{Ultra-FineWeb} tiers), and instruction-tuning sets (\texttt{UltraData-SFT-2605}, \texttt{UltraData-SFT-Agent-2609})---supply the production blend and the two decay segments.
+% 中文：补充语料——代码（\texttt{UltraData-Code}）、数学（\texttt{UltraData-Math}）、精选网页（\texttt{Ultra-FineWeb} 各层）以及指令微调集（\texttt{UltraData-SFT-2605}、\texttt{UltraData-SFT-Agent-2609}）——为生产混合与两个衰减子段提供数据。
+The stable phase draws on the seven-source mixture of Table~\ref{tab:stable-blend}, which keeps the $88{:}8{:}4$ web/code/math prior selected in Section~\ref{sec:mix-search} at the top level while promoting high-quality tiers (L1/L2) into the stable phase and reserving the L3 tiers for annealing.
+% 中文：稳定阶段使用表 \ref{tab:stable-blend} 的七源混合：顶层保持第 \ref{sec:mix-search} 节选出的 $88{:}8{:}4$ 网页/代码/数学先验，同时把高质量层（L1/L2）提到稳定阶段，把 L3 层留给退火。
+Sources are pre-blended into large shards before the run, so that each rank opens $\mathcal{O}(10)$ index files rather than the $\mathcal{O}(600)$ of the raw layout; this keeps the data-loader resident set bounded and is a precondition for the throughput reported in Section~\ref{sec:full-train}.
+% 中文：各源在训练前被预混合为大 shard，使每个 rank 只需打开 $\mathcal{O}(10)$ 个索引文件，而非原始布局的 $\mathcal{O}(600)$；这使数据加载的常驻内存有界，也是第 \ref{sec:full-train} 节所报吞吐的前提。
+
+\begin{table}[htbp]
+\centering
+\caption{Stable-phase data mixture (sums to $1.000$; ``epochs'' is the expected number of passes over the source at $2.94$T tokens). The blend follows the $88{:}8{:}4$ web/code/math prior of Section~\ref{sec:mix-search}.}
+\label{tab:stable-blend}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Source} & \textbf{Description} & \textbf{Prop.} & \textbf{Epoch.} \\
+\midrule
+\texttt{en\_v1\_4} & \texttt{Ultra-FineWeb} EN, filtered v1.4 & 0.65 & 0.81 \\
+\texttt{ufw\_l1\_en\_hq} & \texttt{Ultra-FineWeb} EN, high-quality tier & 0.05 & 0.93 \\
+\texttt{ufw\_zh} & \texttt{Ultra-FineWeb} ZH & 0.04 & 0.99 \\
+\texttt{math\_l1} & \texttt{UltraData-Math}, tier L1 & 0.05 & 0.85 \\
+\texttt{math\_l3} & \texttt{UltraData-Math}, tier L3 & 0.02 & 0.72 \\
+\texttt{code\_l2} & \texttt{UltraData-Code}, tier L2 & 0.15 & 1.00 \\
+\texttt{code\_l3} & \texttt{UltraData-Code}, tier L3 & 0.04 & 0.87 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Contamination control is enforced before any corpus enters training: a blacklist of $193{,}295$ character-level 13-gram fingerprints (FNV-1a 64-bit hashed, NFKC-normalised) is built from all $536$ tasks across six evaluation snapshots of EDA-Eval-PyAether, and every new data shard---including SFT corpora---is scanned for ${\geq}0.80$ n-gram overlap before release (Section~\ref{sec:posttrain-eval}).
+% 中文：任何语料进入训练前都强制做污染控制：由 EDA-Eval-PyAether 六个评测快照的 $536$ 个任务构建 $193{,}295$ 条字符级 13-gram 指纹黑名单（FNV-1a 64 位哈希、NFKC 归一化），每个新数据 shard——包括 SFT 语料——在发布前都扫描 ${\geq}0.80$ 的 n-gram 重叠（第 \ref{sec:posttrain-eval} 节）。
+
+\subsection{Long-Context Data Prerequisites}\label{sec:longctx-data}
+Segment~B learns from whatever length structure the corpus actually contains, so before budgeting it we measured the document-length distribution of the main source with an EOD-aware scan ($\texttt{tokenizer\_eod}=129{,}280$; $8$ shards, $8.59$B tokens, $9.66$M documents).
+% 中文：B 段学到的是语料实际包含的长度结构，因此在为其编列预算之前，我们用 EOD 感知扫描测量了主源的文档长度分布（$\texttt{tokenizer\_eod}=129{,}280$；$8$ 个 shard、$8.59$B token、$9.66$M 文档）。
+The result is the binding constraint on Section~\ref{sec:longctx-train}: only $\mathbf{2.52\%}$ of tokens sit in documents of ${\geq}32$K, only $0.03\%$ reach ${\geq}128$K, and the mean document is $889$ tokens (Table~\ref{tab:longctx-data}).
+% 中文：该结果是第 \ref{sec:longctx-train} 节的硬约束：仅 $\mathbf{2.52\%}$ 的 token 位于 ${\geq}32$K 的文档中，仅 $0.03\%$ 达到 ${\geq}128$K，平均文档长度 $889$ token（表 \ref{tab:longctx-data}）。
+Training a 128K rung on this distribution would teach \emph{document concatenation} rather than long-context retrieval: the model would see 128K windows whose content is a chain of unrelated short documents, and its long-context score would be inflated relative to any real long document.
+% 中文：在这样的分布上训练 128K 阶梯，教会的将是 \emph{文档拼接} 而非长上下文检索：模型看到的 128K 窗口内容是一串互不相关的短文档，其长上下文得分相对于任何真实长文档都会虚高。
+
+\begin{table}[htbp]
+\centering
+\caption{Measured document-length distribution of the main pre-training source (\texttt{en\_v1\_4}; $8$ shards, $8.59$B tokens, $9.66$M documents, mean $889$ tokens/doc, max $195{,}935$). ``Target'' is the segment~B entry gate; status is measured.}
 \label{tab:longctx-data}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lccl@{}}
+\begin{tabular}{@{}llcl@{}}
 \toprule
-\textbf{Threshold} & \textbf{Docs} & \textbf{Token share} & \textbf{Status vs.\ target} \\
+\textbf{Threshold} & \textbf{Documents} & \textbf{Token share} & \textbf{Status vs.\ target} \\
 \midrule
-${\geq}32$K & 4{,}257 & \textbf{2.52\%} & target ${\geq}20\%$: \textbf{not met} \\
+${\geq}32$K & 4{,}257 (0.04\%) & \textbf{2.52\%} & target ${\geq}20\%$: \textbf{not met} \\
 ${\geq}128$K & --- & \textbf{0.03\%} & target ${\geq}5\%$: \textbf{not met} \\
-${\geq}1$M & --- & not estimated & not required (extrapolated) \\
+${\geq}1$M & $<0.01\%$ & not estimated & not required (extrapolated) \\
 \bottomrule
 \end{tabular}
 \end{table}
-Because a full grid is infeasible, the recipe was selected with a staged, single-variable-at-a-time protocol at a $5000$-step horizon: S1 baseline; S2 learning-rate sweep ($2\times10^{-4}$--$1\times10^{-3}$, seven points); S3 schedule axes (WSD vs.\ cosine, decay ratio, warmup, $min\_lr$); S4 annealing data mix; S5 long run plus three seeds.
-% 中文：搜索协议。由于完整网格不可行，配方以分阶段的、单变量逐一变化的协议在 $5000$ 步步长上选出：S1 基线；S2 学习率扫描（$2\times10^{-4}$–$1\times10^{-3}$，七点）；S3 调度轴（WSD 与 cosine、衰减比例、预热、$min\_lr$）；S4 退火数据配比；S5 长跑加三种子。
-The total search budget is $\approx$92 GPU-hours on eight H100s, and the reported losses are proxy measurements for ranking, not production estimates.
-% 中文：搜索总预算为八张 H100 上约 $92$ GPU·h，所报损失是用于排序的代理测量，而非生产估计。
-\subsection{Data}\label{sec:llm-data}
-The stable phase draws on a seven-source mixture---\texttt{en\_v1\_4} (0.65), \texttt{ufw\_l1\_en\_hq} (0.05), \texttt{ufw\_zh} (0.04), \texttt{math\_l1} (0.05), \texttt{math\_l3} (0.02), \texttt{code\_l2} (0.15), and \texttt{code\_l3} (0.04)---which keeps an $88{:}8{:}4$ web/code/math prior across \texttt{Ultra-FineWeb}, \texttt{UltraData-Code}, and \texttt{UltraData-Math}.
-% 中文：数据。稳定阶段使用七源混合——\texttt{en\_v1\_4} (0.65)、\texttt{ufw\_l1\_en\_hq} (0.05)、\texttt{ufw\_zh} (0.04)、\texttt{math\_l1} (0.05)、\texttt{math\_l3} (0.02)、\texttt{code\_l2} (0.15)、\texttt{code\_l3} (0.04)——在 \texttt{Ultra-FineWeb}、\texttt{UltraData-Code} 与 \texttt{UltraData-Math} 上保持 $88{:}8{:}4$ 的网页/代码/数学先验。
-Sources are pre-blended into large shards so each rank opens $\mathcal{O}(10)$ index files instead of $\mathcal{O}(600)$, which bounds the data-loader footprint and is a precondition for the throughput above.
-% 中文：各源预混合为大 shard，使每个 rank 只需打开 $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$，这限制了数据加载的内存占用，也是上述吞吐的前提。
-Contamination is controlled by a $193{,}295$-entry 13-gram fingerprint blacklist built from all $536$ benchmark tasks; every shard is scanned for ${\geq}0.80$ n-gram overlap before release.
-% 中文：污染控制由 $193{,}295$ 条 13-gram 指纹黑名单实现（覆盖全部 $536$ 个基准任务）；每个 shard 在发布前都扫描 ${\geq}0.80$ 的 n-gram 重叠。
-\subsection{Results and Production Run}\label{sec:llm-results}
-The search selects a stable learning rate of $1\times10^{-3}$ under WSD with a $86{:}10{:}4$ annealing mixture, reaching a validation loss of $\mathbf{2.2054}$ at $20000$ steps and $2.6739\pm0.0469$ across three seeds at $5000$ steps (Table~\ref{tab:configs}).
-% 中文：结果与生产训练。搜索选出 WSD 下稳定学习率 $1\times10^{-3}$、退火混合 $86{:}10{:}4$，20000 步时验证损失 $\mathbf{2.2054}$，5000 步三种子为 $2.6739\pm0.0469$（表 \ref{tab:configs}）。
-Each ablation confirms a single-variable choice: WSD beats cosine ($2.7679$ vs.\ $2.8155$), a $10\%$ decay ratio beats $5\%$, and $250$ warmup steps beat $2000$.
-% 中文：每项消融都确认了一个单变量选择：WSD 优于 cosine（$2.7679$ 对 $2.8155$），$10\%$ 衰减比例优于 $5\%$，$250$ 步预热优于 $2000$ 步。
-A mixture search over $400$ Bayesian trials at $18.36$M proxy scale found the three-way ranking indistinguishable within $0.6$\,pp, so the existing $88{:}8{:}4$ prior is retained rather than re-tuned.
-% 中文：在 $18.36$M 代理规模上做了 $400$ 次贝叶斯试验的配比搜索，发现三路排序在 $0.6$ pp 内不可区分，因此沿用既有 $88{:}8{:}4$ 先验而不重新调参。
-The recipe is scaled to $2.94$T tokens in the warmup-plus-stable phase at $\texttt{TP}{=}1$/$\texttt{CP}{=}1$/$\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, micro-batch $1$ at sequence $16{,}384$ ($\texttt{GBS}{=}256$, $4{,}194{,}304$ tokens/step), FP8 tensorwise, computing-graph replay disabled, AdamW.
-% 中文：该配方被放大到预热加稳定阶段的 $2.94$T token：跨两个 $8{\times}$H100 节点，$\texttt{TP}{=}1$/$\texttt{CP}{=}1$/$\texttt{DP}{=}16$，序列 $16{,}384$、micro-batch $1$（$\texttt{GBS}{=}256$，每步 $4{,}194{,}304$ token），FP8 tensorwise，关闭计算图重放，AdamW。
-Replay is disabled deliberately: a replayed graph over the data-dependent Mamba-2 state hit a throughput plateau, and this is a precondition for the rate below.
-% 中文：关闭重放是刻意的：对数据相关 Mamba-2 状态的计算图重放会撞上吞吐平台期，这是达到下述速率的前提。
-At the time of writing (31 October 2026) the run has passed iteration $30{,}660$ of $700{,}000$ at a sustained $\mathbf{\approx}598$K tok/s with training loss $2.151$, gradient norms stable at $0.09$--$0.10$, and no NaN; the remaining schedule is projected at the measured rate (Table~\ref{tab:prod-budget}).
-% 中文：截至撰文时（2026 年 10 月 31 日），运行已到 $700{,}000$ 步中的第 $30{,}660$ 步，持续约 $\mathbf{598}$K tok/s，训练损失 $2.151$，梯度范数稳定在 $0.09$–$0.10$，无 NaN；其余调度按实测速率推算（表 \ref{tab:prod-budget}）。
-Precision was chosen per configuration rather than globally: at sequence $4096$ the FP8 tile ($M{=}8192$) sits below the crossover point and runs at $0.91\times$ BF16, whereas at $M{=}16{,}384$ FP8 pays, and the $613{,}992$ tok/s peak is an FP8 measurement.
-% 中文：精度按配置而非全局选择：序列 $4096$ 时 FP8 的 tile（$M{=}8192$）低于交叉点、吞吐仅为 BF16 的 $0.91\times$；而 $M{=}16{,}384$ 时 FP8 划算，$613{,}992$ tok/s 的峰值即 FP8 测量值。
-\begin{table}[t]
+
+We therefore treat the following as \emph{entry conditions} for segment~B, not as tuning knobs.
+% 中文：因此我们把下列各项视为 B 段的 \emph{准入条件}，而非可调参数。
+\textbf{(a) Long-document supplementation.}
+Books, scientific articles, legal and standards text, and repository-level code (multi-file, in repository-consistent order) are added until the ${\geq}32$K token share reaches ${\geq}20\%$ and the ${\geq}128$K share reaches ${\geq}5\%$; until then the ladder stops at 64K.
+% 中文：长度加权采样也同时采用，但它无法替代供给：对现有语料重新加权只能通过重复少量文档来提高 ${\geq}32$K 占比。
+Length-weighted sampling is applied as well, but it cannot substitute for supply: re-weighting the present corpus raises the ${\geq}32$K share only by repeating a small number of documents.
+% 中文：长度加权采样也同时采用，但它无法替代供给：对现有语料重新加权只能通过重复少量文档来提高 ${\geq}32$K 占比。
+\textbf{(b) Document-level reset.}
+Packed shards concatenate documents back-to-back, so segment~B requires the attention and Mamba-2 recurrent state to be reset at every EOD; without it a 128K window mixes documents and the position statistics the retrieval behaviour depends on are wrong.
+% 中文：打包后的 shard 把文档首尾相接，因此 B 段要求在每处 EOD 重置注意力与 Mamba-2 循环状态；否则 128K 窗口会混合多篇文档，而检索行为所依赖的位置统计就错了。
+\textbf{(c) Long-document de-duplication.}
+Near-duplicate long documents are removed first, because a 128K rung consumes few optimisation steps relative to its token budget and duplication is amplified by length.
+% 中文：近重复的长文档先行去除，因为 128K 阶梯相对其 token 预算只消耗很少优化步，重复会被长度放大。
+Item~(b) is a framework capability rather than a data transformation; we list it here because it gates the same decision.
+% 中文：第 (b) 项是框架能力而非数据变换；之所以在此列出，是因为它与本决策共用同一道门槛。
+
+\subsection{Data Mixture Proportion Search}\label{sec:mix-search}
+Because the optimal web/code/math ratio is scale-dependent and a full-scale sweep is infeasible, we searched the three-way mixture at a proxy scale using Bayesian optimisation.
+% 中文：由于最优的网页/代码/数学比例依赖于规模，而全规模扫描不可行，我们以贝叶斯优化在代理规模上搜索了三路混合。
+A compact proxy model ($d{=}128$, $L{=}14$, $\approx$18.36\,M parameters---two orders of magnitude smaller than the 2.2\,B target and not intended as a performance predictor) was trained for each trial under Optuna's \texttt{TPESampler} with \texttt{MedianPruner}, one trial per GPU, global batch size $2048$ at sequence length $4096$.
+% 中文：一个紧凑代理模型（$d{=}128$、$L{=}14$、约 $18.36$M 参数——比最终骨干小两个数量级）在代理语料上训练，使每次试验的成本足够低，可支撑数百次试验。
+The objective was the average accuracy on eight common-sense \texttt{lm-eval} tasks (\texttt{arc\_challenge}, \texttt{arc\_easy}, \texttt{boolq}, \texttt{hellaswag}, \texttt{openbookqa}, \texttt{piqa}, \texttt{sciq}, \texttt{winogrande}), each evaluated with \texttt{-{}-limit~500} subsampling.
+% 中文：目标函数是八个常识类 \texttt{lm-eval} 任务的平均准确率（\texttt{arc\_challenge}、\texttt{arc\_easy} 等），在留出划分上测量。
+
+Two rounds of 200 trials each were completed.
+% 中文：共完成两轮、每轮 200 次试验。
+In the first round, using final training loss as the objective, the Spearman rank correlation between loss-ranked and accuracy-ranked mixtures was $\rho{=}{-}0.43$, confirming that loss is a weak proxy for downstream ability.
+% 中文：第一轮以最终训练损失为目标时，损失排序与八任务准确率排序之间的 Spearman 秩相关为负，提示损失在代理规模上不是下游能力的代理。
+In the second round, using the eight-task average directly, the top-5 mixtures were retrained and re-evaluated at the full \texttt{lm-eval} scale.
+% 中文：第二轮直接以八任务平均为目标，把前 5 个混合重新训练并在全规模上复评，以测试代理排序是否迁移。
+Table~\ref{tab:mix-topk} reports the results: the full-eval rankings were nearly inverted relative to the Bayesian-optimisation rankings (Spearman $\rho{=}{-}0.80$, $n{=}5$, $p{\approx}0.10$), and the spread across all five mixtures was only $0.383$--$0.390$ ($\approx 0.6$\,pp).
+% 中文：表 \ref{tab:mix-topk} 报告了结果：全量复评的排序相对贝叶斯排序几乎反转，即在此规模下该代理无法区分配比优劣。
+
+\begin{table}[htbp]
 \centering
-\caption{Production budget. Wall-clock is estimated at measured throughput.}
-\label{tab:prod-budget}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lrcrl@{}}
+\caption{Top-5 data mixtures from the second Bayesian-optimisation round, retrained and evaluated at full \texttt{lm-eval} scale. The BO ranking (column~5) is nearly inverted relative to the full-eval ranking (column~6), and the score spread is $\approx$$0.6$\,pp.}
+\label{tab:mix-topk}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{cccccc}
 \toprule
-\textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
+\textbf{Trial} & \textbf{Web} & \textbf{Code} & \textbf{Math} & \textbf{BO} & \textbf{Full} \\
 \midrule
-Warmup + stable & 2.94T & 700k & ${\approx}56$ d & 30.7k done \\
-Decay A (16K, $60$--$70\%$) & 58.7B & 14k & ${\approx}1.2$ d & queued \\
-Decay B (LC, $30$--$40\%$) & 25.2B & 6k & ${\approx}2.3$ d & gated \\
-\midrule
-\textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}59.5$ d & --- \\
+23  & 0.941 & 0.109 & 0.010 & \textbf{0.4155} & 0.3846 \\
+38  & 0.895 & 0.100 & 0.010 & 0.4138 & 0.3835 \\
+118 & 0.874 & 0.071 & 0.055 & 0.4130 & 0.3877 \\
+199 & 0.931 & 0.098 & 0.010 & 0.4123 & \textbf{0.3899} \\
+33  & 0.940 & 0.086 & 0.010 & 0.4090 & 0.3897 \\
 \bottomrule
 \end{tabular}
 \end{table}
-\subsection{Long-Context Training in the Decay Tail}\label{sec:longctx-train}
-Long-context training is segment~B of the decay phase, not a separate stage and not part of SFT/RL: the learning rate is already low, so the length-distribution shift perturbs near-converged weights rather than peak-LR weights; and neither SFT (which shapes instruction following) nor RL (which optimises a policy preference) establishes ground retrieval ability at the token scale this requires.
-% 中文：衰减尾部中的长上下文训练。长上下文训练是衰减阶段的 B 段，不是独立阶段，也不属于 SFT/RL：此时学习率已低，长度分布切换扰动的是接近收敛的权重而非峰值 LR 下的权重；且 SFT（塑造指令遵循）与 RL（优化策略偏好）都不建立所需 token 量级的底层检索能力。
-The decay phase is budgeted at $10$--$15\%$ of the main training volume ($294$--$441$B tokens), of which long-context data takes $30$--$40\%$ ($88$--$176$B), split $40$--$50\%$/$30\%$/$20$--$30\%$ over the three rungs so that most tokens are spent where the model is weakest .
-% 中文：衰减阶段按主训练量的 $10$–$15\%$ 编列预算（$294$–$441$B token），其中长上下文数据占 $30$–$40\%$（$88$–$176$B），三级按 $40$–$50\%$/$30\%$/$20$–$30\%$ 分配，使大部分 token 花在模型最弱处（预算见下表）。
-Synthetic needle data takes $20$--$40\%$ of the long-context tokens and is diversified over single-needle NIAH, multi-needle MK-NIAH (all-hit scoring), multi-hop tracing, variable-length needles, and paraphrase-plus-noise; the remainder is natural long documents, since a purely synthetic segment teaches answering about inserted needles rather than reading documents.
-% 中文：合成针数据占长上下文 token 的 $20$–$40\%$，并多样化为单针 NIAH、多针 MK-NIAH（全中计分）、多跳追踪、变长针与改写加噪声；其余为自然长文档，因为纯合成会教会模型回答插入的针而非阅读文档。
-The ladder runs \mbox{32K$\to$64K$\to$128K} with $\texttt{CP}\in\{2,4,8\}$, holding $\texttt{seq}/\texttt{CP}=16{,}384$ per GPU and $4.19$M tokens/step at every rung (Table~\ref{tab:longctx-train}).
-% 中文：阶梯按 $32$K→$64$K→$128$K 运行，$\texttt{CP}\in\{2,4,8\}$，每 GPU 恒 $16{,}384$ token、每级 $4.19$M token/步（表 \ref{tab:longctx-train}）。
-The learning rate continues the decay and is never re-warmed; $\theta{=}10^{6}$ is fixed at initialisation, so $128$K is reached by training and $1$M is only an $8\times$ extrapolation; no position interpolation, NTK rescaling, or YaRN is enabled.
-% 中文：学习率延续衰减，绝不重预热；$\theta{=}10^{6}$ 在初始化时固定，故 128K 由训练达成、1M 仅为 $8\times$ 外推；不启用位置插值、NTK 重标定或 YaRN。
-The reference rung-cycle costs ${\approx}118$ GPU-hours on sixteen GPUs, carried by context parallelism rather than extra nodes.
-% 中文：参考轮次在十六张 GPU 上约 $118$ GPU·h，由上下文并行而非增加节点承担。
-When the WSD schedule ends we take one snapshot and measure base capabilities---common-sense reasoning, needle retrieval (passkey and RULER, target ${\geq}95\%$ at $1$M), perplexity extrapolation ($\leq 1.10\times$ at $1$M), and basic format following---reported separately from post-training.
-% 中文：WSD 调度结束时取一个快照测量基础能力——常识推理、针检索（passkey 与 RULER，1M 目标 ${\geq}95\%$）、困惑度外推（1M 时 $\leq 1.10\times$）与基础格式遵循——与后训练结果分开报告。
-Retrieval uses a depth-by-position grid with all-hit scoring, because perplexity alone is not accepted as evidence of long-context ability; complex reasoning and agentic ability are recorded as a baseline only.
-% 中文：检索采用深度×位置网格并按全中计分，因为仅凭困惑度不被接受为长上下文能力的证据；复杂推理与智能体能力仅记录基线。
-\
-\begin{table}[t]
+
+\emph{At the proxy scale of 18.36\,M parameters, data-mixture rankings were indistinguishable within 0.6\,pp}, leading us to adopt the $88{:}8{:}4$ (web/code/math) prior for the \emph{stable} phase, rather than over-fitting to proxy-scale noise.
+The empirically optimal region was stable at web $0.87$--$0.94$, code $0.06$--$0.12$, math $\approx$$0.01$, consistent with the prior.
+% 中文：经验最优区域在网页 $0.87$–$0.94$、代码 $0.06$–$0.12$、数学 $\approx$$0.01$ 处保持稳定，与文献报告不一致，这与该区间内排序无区分力的情况相符。
+Raising the discrimination floor---via a larger proxy, multiple seeds, or full-scale evaluation replacing the \texttt{-{}-limit~500} subsampling---is left to future work.
+% 中文：提高区分度下限——通过更大的代理、多种子、或用全规模评测替代代理——是后续工作，而非本文所声称的结论。
+
+\subsection{Search Budget}\label{sec:llm-budget}
+The pre-training search is bound by a $\approx$92\,GPU-hour plan on eight H100 GPUs ($\approx$192\,GPU-hours wall-clock available); $\approx$85\,GPU-hours were consumed.
+% 中文：预训练搜索受限于八张 H100 上约 $92$ GPU·h 的方案（含三种子复现则约 $192$ GPU·h）。
+All short-horizon sweeps (S1--S4) run $5000$ steps at a global batch size of $8\times4096\approx32.8$K tokens/step ($\approx$164M tokens, $\approx$4.0\,GPU-hours each); the verification long run (S5) runs $20000$ steps ($\approx$655M tokens, $\approx$13.9\,GPU-hours).
+% 中文：所有短程扫描（S1–S4）在全局批大小 $8\times4096\approx32.8$K token/步下运行 $5000$ 步。
+These token budgets are far below the Chinchilla-optimal scale ($\approx$44B tokens for a 2.22B model); the search is therefore a \emph{proxy experiment}---its hyper-parameter ranking is treated as predictive of the full-scale optimum, not as a converged performance estimate.
+% 中文：这些 token 预算远低于 Chinchilla 最优规模（22.2 亿参数对应约 44B token）；各搜索阶段的意图在于排序配置，而非达到最终质量，因此代理损失被一致地报告为排序依据。
+Validation loss is reported at matched step counts so that comparisons across configurations remain apples-to-apples.
+% 中文：验证损失在相同步数下报告，使跨配置的比较保持同口径。
+
+\subsection{Results of the Search}\label{sec:llm-results}
+The search selects a stable learning rate of $1\times10^{-3}$ under a warmup--stable--decay (WSD) schedule (warmup $250$ steps, decay $500$ steps, $min\_lr{=}1\times10^{-5}$) with an $86{:}10{:}4$ blend of Ultra-FineWeb-L3, code, and math data in the annealing tail.
+% 中文：搜索选出在预热—稳定—衰减（WSD）调度下的稳定学习率 $1\times10^{-3}$（预热 $250$ 步、衰减 $500$ 步、$min\_lr{=}1\times10^{-5}$），退火尾部采用 Ultra-FineWeb-L3、代码与数学的 $86{:}10{:}4$ 混合。
+This is the recipe carried into the production run (Section~\ref{sec:full-train}), where only the token budget and the sequence ladder are scaled up.
+% 中文：这就是被带入生产训练（第 \ref{sec:full-train} 节）的配方，其中只放大了 token 预算与序列阶梯。
+Over the $5000$-step horizon the validation loss reaches $\mathbf{2.7647}$.
+% 中文：在 $5000$ 步步长上，验证损失达到 $\mathbf{2.7647}$。
+The learning-rate sweep improves monotonically from $2.9037$ ($2\times10^{-4}$) to $2.7627$ ($1\times10^{-3}$); because $1\times10^{-3}$ is also the grid maximum, that on its own leaves open whether the true optimum lies beyond the grid.
+% 中文：学习率扫描从 $2.9037$（$2\times10^{-4}$）单调改善到 $2.7627$（$1\times10^{-3}$）。
+Extending the grid upward closes the question: $1.5\times10^{-3}$ gives $2.7752$ and $2\times10^{-3}$ gives $2.7889$, so the sweep is \emph{U-shaped} and $1\times10^{-3}$ is an interior minimum rather than a clipped boundary.
+% 中文：向上扩展网格即可结束这个问题：$1.5\times10^{-3}$ 给出 $2.7752$，$2\times10^{-3}$ 给出 $2.7889$，因此 $1\times10^{-3}$ 是采样点中的最优值，而非边界点。
+Each short-horizon ablation confirms a single-variable choice: WSD beats cosine ($2.7679$ vs.\ $2.8155$), a $10\%$ decay ratio beats $5\%$ ($2.7679$ vs.\ $2.7900$), a $250$-step ($5\%$) warmup beats a fixed $2000$-step warmup ($2.7679$ vs.\ $2.7957$), and $min\_lr{=}1\times10^{-5}$ and $3\times10^{-5}$ are statistically indistinguishable ($2.7647$ vs.\ $2.7679$, $\Delta{\approx}0.003$ within run-to-run noise of $\sigma{\approx}0.035$ across $n{=}5$ seeds); we adopt $min\_lr{=}1\times10^{-5}$ as default.
+% 中文：每个短程消融都确认了一项单变量选择：WSD 优于 cosine（$2.7679$ 对 $2.8155$），$10\%$ 的衰减比例优于 $5\%$，$250$ 步的预热优于 $2000$ 步。
+Adding code and math to the annealing mix lowers the final loss monotonically ($2.7621$ pure L3 $\to$ $2.6793$ L3+code $\to$ $2.6298$ L3+code+math).
+% 中文：在退火混合中加入代码与数学使最终损失单调下降（纯 L3 的 $2.7621$ → $2.6793$ → $2.6298$）。
+
+The $20000$-step verification run reaches a final training loss of $\mathbf{2.2054}$, with the decay tail (steps $19500$--$20000$) annealing the loss from $\sim2.34$ to $2.2054$ (annealing gain $\sim0.14$; Figure~\ref{fig:pretrain-curve}).
+% 中文：$20000$ 步的验证运行达到最终训练损失 $\mathbf{2.2054}$，其中衰减尾部（第 $19500$–$20000$ 步）把损失从约 $2.34$ 退火到该值。
+Across three seeds the $5000$-step loss is $2.6739\pm0.0469$ (mean $\pm$ sample standard deviation, $n{=}3$; per-seed $2.6402$, $2.6539$, $2.7275$).
+% 中文：在三个种子上，$5000$ 步损失为 $2.6739\pm0.0469$（均值 $\pm$ 样本标准差，$n{=}3$）。
+
+Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transformer at the $\approx$2B scale, trained from scratch under matched data, seed, and GPU footprint; the hybrid offers fewer parameters and faster decoding at a modest training-throughput cost.
+% 中文：表 \ref{tab:archcomp} 在约 2B 规模上把混合骨干与稠密 Transformer 相对照，表明该选择同时得到损失与推理两方面结果的支持。
+
+\begin{table}[htbp]
 \centering
-\caption{Long-context ladder. Tokens per GPU are held at $16{,}384$; 32K throughput is measured, 64K/128K extrapolated.}
-\label{tab:longctx-train}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}cccccr@{}}
-\toprule
-\textbf{Rung} & \textbf{Seq.} & \textbf{CP / DP} & \textbf{GBS} & \textbf{Tokens} & \textbf{Throughput} \\
-\midrule
-1 & 32K & 2 / 8 & 128 & ${\approx}42$B & $351{,}526$ \\
-2 & 64K & 4 / 4 & 64 & ${\approx}32$B & ${\approx}180$K (est.) \\
-3 & 128K & 8 / 2 & 32 & ${\approx}32$B & ${\approx}90$K (est.) \\
-\bottomrule
-\end{tabular}
-\end{table}
-\subsection{Long-Context Capability and Inference Cost}\label{sec:longctx}
-With adjusted base frequency ($\theta{=}10^{6}$) on the four attention layers, perplexity evolves $83.2\to51.5\to53.3\to53.0\to55.8\to55.4$ from 4K to 1M, i.e.\ flat beyond 64K; the stability follows because only $4$ of $56$ layers carry RoPE, so the extrapolation burden falls on $7.1\%$ of the network.
-% 中文：长上下文能力与推理成本。在 4 个注意力层上采用调整后的基底频率（$\theta{=}10^{6}$）后，困惑度从 4K 到 1M 依次为 $83.2\to51.5\to53.3\to53.0\to55.8\to55.4$，即在 64K 之后基本持平；这种稳定性来自仅 56 层中的 4 层携带 RoPE，外推负担落在网络的 $7.1\%$ 上。
-Under the SGLang production stack, prefill stays at $41.6$K tok/s up to 64K and serves $1$M in $172$s at $34.7$\,GB, whereas the dense transformer cannot serve beyond $512$K on a single $80$\,GB H100 (KV pool cap ${\approx}455$K tokens); the hybrid's advantage is architectural, since the Mamba-2 state grows in $O(1)$ for $52$ of $56$ layers.
-% 中文：在 SGLang 生产栈下，prefill 在 64K 以内保持 $41.6$K tok/s，1M 时以 $172$ 秒、$34.7$ GB 完成，而稠密 Transformer 在单张 80 GB H100 上无法服务超过 $512$K（KV 池上限约 $455$K token）；混合模型的优势是架构性的，因为 56 层中有 52 层的 Mamba-2 状态以 $O(1)$ 增长。
-\begin{table}[t]
-\centering
-\caption{Architecture-level comparison motivating the hybrid choice (Dense = MiniCPM5-2B, Hybrid = BaiZe; measured from scratch under matched data, seed, and GPU footprint, same node, same configuration). Training throughput was re-measured on a single 8$\times$H100 node after an initial cross-node measurement was found to overstate the gap. The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks ().}
+% 中文：A 段在 $16$K 而非更长长度上做退火，使模型在逐渐收缩的学习率下巩固其短上下文表示，而不是同时被迫适应新的长度区制。
+\caption{Architecture-level comparison motivating the hybrid choice (Dense = MiniCPM5-2B, Hybrid = BaiZe; measured from scratch under matched data, seed, and GPU footprint, same node, same configuration). Training throughput was re-measured on a single 8$\times$H100 node after an initial cross-node measurement was found to overstate the gap. The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks (cf.\ Table~\ref{tab:longctx-cost}).}
+% 中文：$60$–$70\%$ 的配比用于在分布变化期间保护短上下文能力，因为 B 段的检索与长文档材料来自另一种长度区制。
 \label{tab:archcomp}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -141,7 +248,276 @@ Decode tok/s & 2.2 & \textbf{22.8} & hybrid ($+10.3\times$) \\
 \bottomrule
 \end{tabular}
 \end{table}
-\begin{table}[t]
+
+\subsection{Full-Scale Production Training}\label{sec:full-train}
+
+The search configuration of Section~\ref{sec:llm-results} was scaled to the production budget of Table~\ref{tab:wsd}: $2.94$T tokens in the warmup-plus-stable phase, followed by the two-segment decay.
+% 中文：第 \ref{sec:llm-results} 节的搜索配置被放大到表 \ref{tab:wsd} 的生产预算：预热加稳定阶段 $2.94$T token，随后是两个衰减子段。
+The run uses the production configuration fixed by the throughput and precision studies: $\texttt{TP}{=}1$, $\texttt{CP}{=}1$, $\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, micro-batch $1$ at sequence length $16{,}384$ ($4{,}194{,}304$ tokens/step at $\texttt{GBS}{=}256$), FP8 tensorwise with delayed scaling, computing-graph replay disabled, AdamW ($\beta_1{=}0.9$, $\beta_2{=}0.95$), and the multi-layer tokenizer with an EOD token for document boundaries.
+% 中文：该运行采用由吞吐与精度研究确定的生产配置：$\texttt{TP}{=}1$、$\texttt{CP}{=}1$、$\texttt{DP}{=}16$（跨两个 $8{\times}$H100 节点），序列长度 $16{,}384$、micro-batch $1$（$\texttt{GBS}{=}256$ 时每步 $4{,}194{,}304$ token），FP8 tensorwise 延迟缩放，关闭计算图重放，AdamW（$\beta_1{=}0.9$、$\beta_2{=}0.95$），以及带 EOD token 标记文档边界的多层分词器。
+Precision and replay are not incidental: at a micro-batch of $M{=}16{,}384$ the tensors are large enough that FP8 pays off, and replaying a graph with a data-dependent Mamba-2 state was the cause of a throughput collapse in an earlier build; both settings are fixed for the whole run so that the decay segments are comparable.
+% 中文：精度与重放并非无关紧要：在 micro-batch 为 $M{=}16{,}384$ 时张量足够大使 FP8 划算；而对带数据相关 Mamba-2 状态的计算图做重放，正是早前构建中吞吐崩塌的原因。两个设定在整次运行中固定，以便各衰减子段之间可比。
+
+\textbf{Stable phase} (in progress).
+At the time of writing (31 October 2026) the run has passed iteration $30{,}660$ of $700{,}000$ ($4.4\%$), at a sustained $\mathbf{\approx}598$K tok/s (${\approx}1{,}030$ TFLOP/s/GPU; measured over $6.91$--$7.21$ s/step).
+% 中文：截至撰文时（2026 年 10 月 31 日），运行已越过 $700{,}000$ 步中的第 $30{,}660$ 步（$4.4\%$），持续约 $\mathbf{\approx}598$K tok/s（约 $1{,}030$ TFLOP/s/GPU；按 $6.91$–$7.21$ s/步实测）。
+Training loss reached $2.151$ (mean of the last five logged steps) from an initial $\approx$11.5, with gradient norms stable at $0.09$--$0.10$ and no NaN or skipped step; the latest checkpoint is at iteration $30{,}000$ (checkpoints are written every $2{,}000$ iterations and pruned to a rolling window).
+% 中文：训练损失由初始约 $11.5$ 降至 $2.151$（最近五个记录步的均值），梯度范数稳定在 $0.09$–$0.10$，无 NaN、无跳步；最新检查点在第 $30{,}000$ 步（每 $2{,}000$ 次迭代写一次，并按滚动窗口裁剪）。
+The projection below is therefore an extrapolation at the measured rate, not a measurement.
+% 中文：因此下文的估算是按实测速率的推断，而非测量值。
+
+\begin{table}[htbp]
+\centering
+\caption{Production run accounting. Stable-phase wall-clock is an estimate at the measured ${\approx}590$K tok/s; decay figures are estimates at the rung throughputs of Table~\ref{tab:longctx-train}; GPU-hours are nominal ($16$ GPUs).}
+\label{tab:prod-budget}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrcrl@{}}
+\toprule
+\textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
+\midrule
+Warmup + stable & 2.94T & 700k & ${\approx}56$ d (est.) & 30.7k done \\
+Decay A (16K) & 58.7B & 14k & ${\approx}1.2$ d (est.) & queued \\
+Decay B (32K--128K) & 25.2B & 6k & ${\approx}2.3$ d (est.) & queued, gated \\
+\midrule
+\textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}59.5$ d & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Decay---segment~A} ($58.7$B tokens, 16K). The learning rate begins its exponential decay while the sequence length stays at 16K.
+The blend shifts mass to the curated L3 and instruction-tuning sources (specified in \texttt{configs/blend\_decay.tsv}): $60\%$ general instruction tuning (\texttt{UltraData-SFT-2605}), $12\%$ agentic instruction tuning (\texttt{UltraData-SFT-Agent-2609}), $18\%$ curated web question--answer (\texttt{Ultra-FineWeb-L3-QA}), $4\%$ Chinese web, $4\%$ mathematics~L3, and $2\%$ code~L3.
+% 中文：混合数据把权重移向精选的 L3 与指令微调源：$60\%$ 通用指令微调（\texttt{UltraData-SFT-2605}）、$12\%$ 智能体指令微调（\texttt{UltraData-SFT-Agent-2609}），其余分给精选网页、数学与代码。
+Instruction data is used here as \emph{text}: segment~A is still pre-training, and the point of the shift is to expose the model to well-formed directive-response text at the lowest learning rates, not to teach the tool-call behaviour that Section~\ref{sec:llm-posttrain} trains.
+% 中文：此处指令数据是作为 \emph{文本} 使用的：A 段仍属预训练，这次切换的用意是在最低学习率下让模型接触格式良好的指令—回复文本，而不是教授第 \ref{sec:llm-posttrain} 节所训练的工具调用行为。
+Segment~A anneals at $16$K rather than at a longer length so that the model consolidates its short-context representations under a shrinking learning rate \emph{before} the context distribution changes: entering segment~B with an already-decayed learning rate means the length shift perturbs near-converged weights, not peak-LR weights.
+% 中文：A 段在 $16$K 而非更长长度上做退火，使模型在上下文分布改变之前、在收缩的学习率下先巩固其短上下文表示：以已衰减的学习率进入 B 段，意味着长度切换扰动的是接近收敛的权重，而不是峰值学习率下的权重。
+The $60$--$70\%$ allocation protects short-context ability while the distribution changes, since the retrieval and long-document material of segment~B is sampled from a different length regime and must not regress the capability that segment~A anneals.
+% 中文：$60$–$70\%$ 的配比用于在分布变化期间保护短上下文能力，因为 B 段的检索与长文档材料来自另一种长度区制，不得使 A 段所退火出的能力发生回退。
+
+\textbf{Decay---segment~B} ($25.2$B tokens, $32$K--$128$K). Described in Section~\ref{sec:longctx-train}; it cannot start until the data conditions of Section~\ref{sec:longctx-data} are met.
+
+\subsection{Long-Context Training: The Decay Tail of the WSD Schedule}\label{sec:longctx-train}
+
+\noindent\textbf{Positioning: a segment of the decay phase, not a separate stage.}
+Long-context training is executed as segment~B of the decay phase (Section~\ref{sec:wsd}), between the stable phase and post-training. It is not a standalone training stage, and it is placed neither in the stable phase nor in SFT/RL. Three properties of the schedule justify the placement.
+% 中文：长上下文训练作为衰减阶段的 B 段执行（第 \ref{sec:wsd} 节），位于稳定阶段与后训练之间。它不是独立的训练阶段，既不放在稳定阶段，也不放在 SFT/RL 中。调度的三项性质支持这一定位。
+\emph{(i) The learning rate is already low.} Segment~B runs under the tail of the decayed learning rate ($5.6\times10^{-4}$ at $p{=}0.25$ falling to $1.8\times10^{-4}$ at $p{=}0.75$; Table~\ref{tab:wsd}), and a distribution shift applied at small step sizes perturbs general capability least; applied at the peak learning rate, the same shift would overwrite the short-context features that the stable phase spent $2.94$T tokens acquiring.
+\emph{(ii) SFT and RL do not establish ground retrieval ability.} SFT shapes instruction-following behaviour and RL optimises a policy preference over sampled outputs; neither exposes the model to the length-and-position distribution that retrieval depends on, and neither can be run at the token scale of segment~B.
+\emph{(iii) The extension must precede post-training.} Post-training assumes a backbone that can already address a long window; if the 1M context of the product target were only an extrapolation of a backbone trained to 16K, every post-training run would inherit that limitation.
+Table~\ref{tab:llm-stages} places segment~B on the pipeline axis.
+% 中文：表 \ref{tab:llm-stages} 把 B 段标在训练轴上。
+
+\begin{table}[htbp]
+\centering
+\caption{Stage~(i) on the training axis. Decay~B (long-context extension) is part of the decay phase and precedes post-training.}
+\label{tab:llm-stages}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lllccc@{}}
+\toprule
+ & \textbf{Warmup} & \textbf{Stable} & \textbf{Decay A} & \textbf{Decay B} & \textbf{SFT/RL} \\
+\midrule
+Seq.\ length & 16K & 16K & 16K & 32K--128K & 16K+ \\
+Share & 2k & 2.94T & 60--70\% & 30--40\% & stage (ii) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Data budget.}
+The decay phase is budgeted at $10$--$15\%$ of the main training volume---$294$--$441$B tokens against the $2.94$T of the stable phase---and long-context data takes $30$--$40\%$ of that, i.e.\ $88$--$176$B tokens (Table~\ref{tab:longctx-budget}).
+% 中文：衰减阶段按主训练量的 $10$–$15\%$ 编列预算——即相对稳定阶段的 $2.94$T 为 $294$–$441$B token——长上下文数据占其中的 $30$–$40\%$，即 $88$–$176$B token（表 \ref{tab:longctx-budget}）。
+The ladder is not uniform: $40$--$50\%$ is spent at 32K, $30\%$ at 64K, and $20$--$30\%$ at 128K, so that most long-context tokens are spent at the length where the model is currently weakest rather than at the headline length.
+% 中文：阶梯并非均匀分配：$40$–$50\%$ 花在 32K，$30\%$ 在 64K，$20$–$30\%$ 在 128K，因此大部分长上下文 token 花在模型当前最弱的长度上，而不是花在「标题级」的长度上。
+We adopt $12\%$ ($353$B) as the reference operating point at a $30\%$ long-context share with a $12{:}9{:}6$ rung split ($42.4$/$31.8$/$21.2$B; $95.4$B in total), and segment~B of Table~\ref{tab:prod-budget} is its first rung-cycle.
+% 中文：我们取 $12\%$（$353$B）作为参考工作点，长上下文占比 $30\%$，三级按 $12{:}9{:}6$ 分配（$42.4$/$31.8$/$21.2$B，合计 $95.4$B）；表 \ref{tab:prod-budget} 的 B 段即其第一轮阶梯。
+The remaining $60$--$70\%$ of the decay phase stays at 16K on short-context data specifically to protect short-text ability, with a regression gate of ${\leq}1$\,pp on CS8 and on complex reasoning (Table~\ref{tab:longctx-eval}).
+% 中文：衰减阶段其余 $60$–$70\%$ 仍保持在 16K 的短上下文数据上，正是为了保护短文本能力，并以 CS8 与复杂推理 ${\leq}1$ pp 的退化幅度作为护栏（表 \ref{tab:longctx-eval}）。
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context token budget as a function of the decay-phase allocation. Decay volume is a fraction of the $2.94$T stable phase; rung splits are $40$--$50\%$ / $30\%$ / $20$--$30\%$ over 32K / 64K / 128K. All figures estimated.}
+\label{tab:longctx-budget}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Decay} & \textbf{Decay tok.} & \textbf{LC} & \textbf{LC tok.} & \textbf{32K/64K/128K} & \textbf{16K} \\
+\midrule
+$10\%$ & 294B & $30$--$40\%$ & $88$--$118$B & 35/27/26B & 206B \\
+$12\%$ ref. & 353B & $30$--$40\%$ & $106$--$141$B & 42/32/32B & 247B \\
+$15\%$ & 441B & $30$--$40\%$ & $132$--$176$B & 53/40/40B & 309B \\
+\bottomrule
+\end{tabular}
+% 中文：因此我们的 $88$–$176$B 长上下文预算（表 \ref{tab:longctx-budget}）位于公开运行区间之上，这对一份数据闸门（第 \ref{sec:longctx-data} 节）尚未满足的计划来说，是保守的方向。
+\end{table}
+
+\noindent\textbf{Composition inside the long-context segment.}
+Synthetic needle-in-a-haystack data occupies $20$--$40\%$ of the long-context tokens; natural long documents occupy the remainder. A purely synthetic segment is ruled out, because a model trained only on inserted needles learns to answer questions about inserted needles rather than to read long documents.
+% 中文：合成大海捞针（needle-in-a-haystack）数据占长上下文 token 的 $20$–$40\%$；自然长文档占其余部分。纯合成长上下文被排除，因为只在插入的针上训练的模型会学会回答关于插入之针的问题，而不是学会阅读长文档。
+The synthetic share is diversified over five protocols rather than one: single-needle NIAH; multi-needle MK-NIAH with distractor needles, where every needle must be returned for credit; multi-hop variable tracing; variable-length needles spanning one sentence to three paragraphs; and paraphrase-plus-noise variants in which the needle is reworded and the haystack is filled with topically related distractors.
+% 中文：合成部分的协议被多样化为五种而非一种：单针 NIAH；带干扰针的多针 MK-NIAH（必须返回全部针才计分）；多跳变量追踪；跨一句至三段不等的变长针；以及改写加噪声变体——针被同义改写、haystack 填入主题相关的干扰段。
+The natural share is drawn from the supplemented long-document sources of Section~\ref{sec:longctx-data} at building proportions of roughly $40\%$ books and scientific articles, $20\%$ repository-level code, and the remainder standards, legal, and documentation text; the haystack filler of the synthetic share is drawn from the same sources so that the two shares do not differ in style.
+% 中文：自然部分按大致 $40\%$ 书籍与科技论文、$20\%$ 仓库级代码、其余为标准、法律与文档文本的构造比例，取自第 \ref{sec:longctx-data} 节补充后的长文档源；合成部分的 haystack 填充文本取自同一批源，使两部分在文风上不产生差异。
+Insertion depth is sampled uniformly over $0$--$100\%$ instead of being concentrated at the middle, because the position sensitivity of a hybrid with four attention layers and $52$ recurrent layers is not uniform along the window.
+% 中文：插入深度在 $0$–$100\%$ 上均匀采样，而非集中在中部，因为具备 4 个注意力层与 $52$ 个循环层的混合模型沿窗口的位置敏感性并不均匀。
+\noindent\textbf{Training configuration.}
+The ladder runs \mbox{32K$\to$64K$\to$128K} with context parallelism $\texttt{CP}\in\{2,4,8\}$ and $\texttt{DP}\in\{8,4,2\}$, holding $\texttt{seq}/\texttt{CP}=16{,}384$ tokens per GPU at every rung, and global batch size is held constant within a rung (Table~\ref{tab:longctx-train}).
+% 中文：阶梯按 32K→64K→128K 运行，上下文并行 $\texttt{CP}\in\{2,4,8\}$、$\texttt{DP}\in\{8,4,2\}$，每一级都保持每 GPU $\texttt{seq}/\texttt{CP}=16{,}384$ token，且全局批大小在同一级内保持不变（表 \ref{tab:longctx-train}）。
+The learning rate continues the decay and is never re-warmed: re-warming on entering a longer context would reintroduce the overwriting risk that motivated the placement in the first place.
+% 中文：学习率延续衰减，绝不重新预热：在进入更长上下文时重新预热，会重新引入当初促使我们如此定位的那种覆盖风险。
+Position encoding uses adjusted base frequency from the first training step---$\theta{=}10^{6}$ is fixed at initialisation, so the decay tail carries no post-hoc frequency change, and 128K is reached by training rather than only by extrapolation, leaving $1$M as an $8\times$ extrapolation.
+% 中文：位置编码自第一步训练起即使用调整后的基底频率——$\theta{=}10^{6}$ 在初始化时即固定，因此衰减尾部不含任何事后频率变更；128K 由训练达成而非仅靠外推，1M 则保留为 $8\times$ 外推。
+No position interpolation, NTK rescaling, or YaRN is enabled at any rung; a maximal-position change without the base-frequency change is excluded outright, because in our earlier sweep it produced NaN at every length tested.
+% 中文：任何一级都不启用位置插值、NTK 重标定或 YaRN；只改最大位置而不改基底频率的做法被明确排除，因为在我们早前的扫描中它在所有长度上都产生 NaN。
+Document-level reset is mandatory: attention and the Mamba-2 recurrent state are reset at each EOD, so a window contains documents rather than document fragments.
+% 中文：文档级重置是强制的：注意力与 Mamba-2 循环状态在每处 EOD 重置，使窗口包含的是文档而非文档片段。
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context ladder of segment~B. Tokens per GPU are held at $16{,}384$ at every rung. 32K throughput is measured; 64K and 128K are extrapolated from measured per-GPU scaling and are marked as estimates.}
+\label{tab:longctx-train}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{cccccr}
+\toprule
+\textbf{Rung} & \textbf{Seq.} & \textbf{CP / DP} & \textbf{GBS} & \textbf{Tokens} & \textbf{Throughput (tok/s)} \\
+\midrule
+1 & 32K & 2 / 8 & 128 & $\approx$42B & $351{,}526$ (measured) \\
+2 & 64K & 4 / 4 & 64 & $\approx$32B & ${\approx}180$K (est.) \\
+3 & 128K & 8 / 2 & 32 & $\approx$32B & ${\approx}90$K (est.) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Evaluation checkpoint after the schedule.}
+When the WSD schedule ends---that is, after both decay segments---we take one snapshot and measure \emph{base} capabilities on it, reported separately from post-training results (Table~\ref{tab:longctx-eval}): common-sense reasoning (CS8 and CX), needle retrieval (passkey and RULER, the 1M target being ${\geq}95\%$), perplexity extrapolation ($1$M$/4$K ${\leq}1.10\times$), and basic format following.
+% 中文：当 WSD 调度结束时——即在两个衰减子段都完成之后——我们取一个快照并在其上测量 \emph{基础} 能力，与后训练结果分开报告（表 \ref{tab:longctx-eval}）：常识推理（CS8 与 CX）、针检索（passkey 与 RULER，1M 目标为 ${\geq}95\%$）、困惑度外推（$1$M$/4$K ${\leq}1.10\times$）以及基础格式遵循。
+Retrieval is scored on a depth-by-position grid with multi-needle all-hit scoring, because a checkpoint can extrapolate perplexity smoothly while failing retrieval outright; perplexity alone is not accepted as evidence of long-context ability.
+% 中文：检索在深度 × 位置的网格上评分，多针按全中计分，因为一个检查点可以平滑地外推困惑度却在检索上彻底失败；仅凭困惑度不被接受为长上下文能力的证据。
+Complex reasoning and agentic ability are recorded at this snapshot as a baseline only; their improvement is the subject of Section~\ref{sec:llm-posttrain}.
+% 中文：复杂推理与智能体能力在该快照处仅作为基线记录；其提升是第 \ref{sec:llm-posttrain} 节的主题。
+
+\begin{table}[htbp]
+\centering
+\caption{Post-decay base-capability snapshot (single evaluation point, before any post-training). Gates are the acceptance criteria for the 1M product target.}
+\label{tab:longctx-eval}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Axis} & \textbf{Instrument} & \textbf{Gate} \\
+\midrule
+Common sense & CS8 (8-task), CX & ${\leq}1$\,pp drop \\
+Retrieval & passkey, NIAH/MK-NIAH at $1$M & ${\geq}95\%$ \\
+ & RULER (mixed tasks) & ${\geq}70\%$ \\
+PPL extrapolation & $4$K--$1$M curve & $\leq 1.1\times$ \\
+Format following & adherence suite & recorded \\
+Complex reasoning & reasoning suite & baseline \\
+Agentic & tool-use suite & baseline \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Cost.}
+At the measured 32K throughput and the extrapolated 64K/128K throughputs, the reference rung-cycle ($42$/$32$/$32$B) costs ${\approx}118$ GPU-hours on sixteen GPUs, of which the 32K rung alone is $33$ hours; the upper bound of Table~\ref{tab:longctx-budget} ($15\%$/40\%) costs ${\approx}220$ GPU-hours.
+% 中文：按实测的 32K 吞吐与推断的 64K/128K 吞吐，参考轮次（$42$/$32$/$32$B）在十六张 GPU 上耗费约 $118$ GPU·h，其中仅 32K 一级就占 $33$ 小时；表 \ref{tab:longctx-budget} 的上界（$15\%$/40\%）耗费约 $220$ GPU·h。
+The cost is carried by context parallelism rather than by additional nodes: 32K runs at $59\%$ of the 16K throughput, and that gap is the price of the training signal, not of the hardware.
+% 中文：该成本由上下文并行承担，而非靠增加节点：32K 的运行速度为 16K 的 $59\%$，这一差距是训练信号的代价，而不是硬件的代价。
+
+\noindent\textbf{Why the budget is this small.}
+The long-context budget is deliberately an order of magnitude below the stable-phase budget, and the public precedents bound it from both sides.
+% 中文：长上下文预算被刻意设定为比稳定阶段预算低一个数量级，而公开先例从两侧给出了界限。
+ProLong-8B reaches a 128K context with state-of-the-art performance at its size after $40$B tokens of long-context training, which is already only $5\%$ of the long-context tokens used by Llama-3.1-8B-Instruct~\cite{gao2024prolong}; LongRoPE2 extends LLaMA3-8B to a 128K effective context with $10$B tokens while retaining $98.5\%$ of short-context performance~\cite{shang2025longrope2}.
+% 中文：ProLong-8B 在 $40$B token 的长上下文训练后即达到 128K 上下文、并在同规模模型中取得最优表现，而这已仅是 Llama-3.1-8B-Instruct 所用长上下文 token 的 $5\%$ \cite{gao2024prolong}；LongRoPE2 用 $10$B token 把 LLaMA3-8B 扩展到 128K 有效上下文，同时保留 $98.5\%$ 的短上下文性能 \cite{shang2025longrope2}。
+Our $88$--$176$B long-context budget (Table~\ref{tab:longctx-budget}) therefore sits above the public operating range, which is the conservative direction for a plan whose data gate (Section~\ref{sec:longctx-data}) is not yet satisfied.
+% 中文：因此我们的 $88$–$176$B 长上下文预算（表 \ref{tab:longctx-budget}）位于公开运行区间之上，这对一份数据闸门（第 \ref{sec:longctx-data} 节）尚未满足的计划来说，是保守的方向。
+Two qualifications keep the comparison honest: both precedents extend an \emph{already long-trained} base model by rescaling position encoding, whereas segment~B trains the length structure itself under a decayed learning rate; and neither operates at the $2.22$B scale, where the token requirement is not expected to exceed the $8$B-class figures above but is not measured here either.
+% 中文：两点说明使该比较保持诚实：两个先例都是通过对位置编码做重标定来扩展一个 \emph{已受长训练} 的基础模型，而 B 段是在衰减学习率下训练长度结构本身；并且两者都不在 $2.22$B 规模上运行，在该规模下 token 需求预期不会超过上述 8B 级数字，但本文也未对此做测量。
+Long-context ability is accordingly not bought with volume---it is bought with the right volume at the right point in the schedule---but the reference budget in Table~\ref{tab:longctx-budget} should be read as a floor that the data gate may push upward, not as a ceiling (estimate; no scale ablation of this axis is run in this paper).
+% 中文：因此长上下文能力不是靠量堆出来的——而是靠在调度中正确的位置上投入正确的量——但表 \ref{tab:longctx-budget} 的参考预算应被理解为一道可能被数据闸门推高的 \emph{下限}，而非上限（估算；本文未对该轴做规模消融）。
+
+\subsection{Long-Context Capability and Inference Cost}\label{sec:longctx}
+
+The hybrid backbone's long-context behaviour was characterised along two axes: perplexity extrapolation and inference throughput under a production serving stack.
+% 中文：混合骨干的长上下文行为沿两个维度加以刻画：困惑度外推，以及生产服务栈下的推理吞吐。
+
+\textbf{Perplexity extrapolation.}
+With adjusted base frequency (ABF, $\theta_{\text{rope}}{=}10^{6}$) applied to the four attention layers, the 20K-step ($\approx$655M-token) checkpoint sustains near-constant perplexity from 4K to 1M tokens without further training: PPL ranges from 51.5 (64K) to 55.4 (1M), a change of only $+7.6\%$ over a $256{\times}$ context increase (Table~\ref{tab:longctx-ppl}).
+% 中文：对 4 个注意力层施加调整后的基底频率（ABF，$\theta_{\text{rope}}{=}10^{6}$）后，困惑度对直到 1M 的每一个长度都保持稳定。
+This stability arises because only 4 of 56 layers carry RoPE position encoding; the 52 Mamba-2 state-space layers have no position dependency and therefore incur no out-of-distribution penalty at long range.
+% 中文：这种稳定性源于仅 56 层中的 4 层携带 RoPE 位置编码；其余 52 个 Mamba-2 状态空间层与位置无关，因此外推负担只由这些层承担。
+
+\begin{table}[htbp]
+\centering
+\caption{Training-free long-context perplexity of the Mamba2-hybrid (20K-step, $\approx$655M-token checkpoint, ABF $\theta{=}10^{6}$, $b{=}1$).}
+\label{tab:longctx-ppl}
+\small
+\begin{tabular}{rrrr}
+\toprule
+\textbf{Context} & \textbf{PPL} & \textbf{Prefill (s)} & \textbf{Peak VRAM} \\
+\midrule
+4K & 83.2$^{\dagger}$ & --- & --- \\
+64K & 51.5 & --- & --- \\
+128K & 53.3 & 10.7 & 10.9\,GB \\
+256K & 53.0 & 13.8 & 14.3\,GB \\
+512K & 55.8 & 53.0 & 19.7\,GB \\
+1M & 55.4 & 172.4 & 34.7\,GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent$^{\dagger}$The 4K PPL (83.2) is measured on a held-out evaluation shard with a different data distribution and loss-aggregation method than the training-loss reported in Section~\ref{sec:llm-results}; the two are not directly comparable. The key observation is the \emph{stability} from 64K to 1M (51.5$\to$55.4, $+7.6\%$), not the absolute 4K value.
+
+\textbf{Inference throughput.}
+Under the SGLang production serving stack (CUDA graphs, PagedAttention, FlashInfer backend) with warm-up, the hybrid outperforms the dense baseline at long context: at 128K the hybrid achieves $2.8{\times}$ higher prefill throughput and $1.6{\times}$ higher decode throughput; at 256K the gaps widen to $4.3{\times}$ and $1.9{\times}$ respectively (Table~\ref{tab:longctx-cost}).
+% 中文：在 SGLang 生产服务栈（CUDA graphs、PagedAttention、FlashInfer 后端）下并做预热校正后，测得的 prefill 与 decode 吞吐见表 \ref{tab:longctx-cost}。
+The dense model cannot serve beyond 512K on a single 80\,GB H100 (KV-cache pool cap ${\approx}455$K tokens at 30\% memory fraction), whereas the hybrid serves through 1M with near-constant ${\approx}26$\,GB VRAM, as the Mamba-2 state grows in $O(1)$ for 52 of 56 layers.
+% 中文：稠密模型在单张 80 GB H100 上无法服务超过 512K 的上下文（KV 缓存池上限约 $455$K token、显存占比 30\%），而混合模型可服务到 1M，显存近乎恒定在约 $26$ GB，因为 56 层中有 52 层的 Mamba-2 状态以 $O(1)$ 增长。
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context inference cost comparison (SGLang, warm-up corrected, $b{=}1$, gen\_len${=}64$, 80\,GB H100). Dense entries marked ``---'' are out-of-memory.}
+\label{tab:longctx-cost}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{rcccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{Prefill (tok/s)}} & \multicolumn{2}{c}{\textbf{Decode (tok/s)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Ctx} & \textbf{Hybrid} & \textbf{Dense} & \textbf{Hybrid} & \textbf{Dense} \\
+\midrule
+128K & 39\,377 & 14\,051 & 311 & 193 \\
+256K & 32\,381 & 7\,532 & 276 & 144 \\
+512K & 23\,634 & --- & 220 & --- \\
+1M & 15\,530 & --- & 159 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Production training throughput.}
+Two measurements fix the production configuration.
+% 中文：两项测量确定了生产配置。
+On a single $8{\times}$H100 node, the hybrid sustains $249\,040$ tok/s at $\texttt{TP}{=}1$/$\texttt{DP}{=}8$, micro-batch $2$, sequence $4096$ in BF16 (${\approx}600$ TFLOP/s/GPU).
+% 中文：在单个 $8{\times}$H100 节点上，混合模型在 $\texttt{TP}{=}1$/$\texttt{DP}{=}8$、micro-batch $2$、序列 $4096$、BF16 下持续 $249\,040$ tok/s（约 $600$ TFLOP/s/GPU）。
+At the production length the picture changes: with sequence $16{,}384$ and $\texttt{CP}{=}1$/$\texttt{DP}{=}16$ across two nodes, FP8 tensorwise with delayed scaling sustains $613{,}992$ tok/s, and the sustained rate observed on the live run is ${\approx}590$K tok/s over $7.08$--$7.32$ s per $4.19$M-token step.
+% 中文：在生产长度下情形发生变化：序列 $16{,}384$、跨两节点 $\texttt{CP}{=}1$/$\texttt{DP}{=}16$ 时，FP8 tensorwise 延迟缩放持续 $613{,}992$ tok/s，而实际运行中观察到的持续速率约为 $590$K tok/s（每 $4.19$M token 步耗时 $7.08$–$7.32$ 秒）。
+Computing-graph replay is disabled throughout: a replayed graph over a data-dependent Mamba-2 state ran into a throughput plateau, and disabling replay is a precondition for the rate above.
+% 中文：全程关闭计算图重放：对带数据相关 Mamba-2 状态的计算图做重放会撞上吞吐平台期，关闭重放是达到上述速率的前提。
+
+\textbf{Precision choice.}
+At the $4096$-token screen the FP8 tile ($M{=}8192$) sits below the crossover point ($M^*{\approx}30$--$32$K) and ran at $0.91\times$ the BF16 throughput, so the screen retained BF16; a 1000-step A/B at $M{=}65{,}536$ additionally showed no persistent loss divergence between BF16 and delayed FP8 ($0.19\%$ end-of-run difference, one transient spike at step 700 recovering within ${\sim}60$ steps).
+% 中文：在 $4096$ token 的筛选实验中，FP8 的 tile（$M{=}8192$）低于交叉点（$M^*{\approx}30$–$32$K），吞吐仅为 BF16 的 $0.91\times$，因此筛选阶段保留 BF16；而在 $M{=}65{,}536$ 上运行的 1000 步 A/B 进一步表明 BF16 与延迟 FP8 之间没有持续的损失分歧（末点差异 $0.19\%$，第 700 步有一次瞬态尖峰并在约 $60$ 步内恢复）。
+At $M{=}16{,}384$ the tile is large enough for FP8 to pay, and the production run adopts FP8 tensorwise: the $613{,}992$ tok/s figure is an FP8 measurement, and the BF16 rate at the same shape is not directly measured.
+% 中文：在 $M{=}16{,}384$ 时 tile 已足够大，使 FP8 划算，因此生产运行采用 FP8 tensorwise：$613{,}992$ tok/s 这一数字本身即 FP8 的测量值，而同一形状下的 BF16 速率未被直接测量。
+The two results are therefore consistent rather than contradictory---BF16 is the right choice at short sequence length, FP8 at production length---and the decision was made per configuration, not globally.
+% 中文：因此两项结果是一致的而非矛盾的——BF16 适合短序列长度，FP8 适合生产长度——该决策是按配置逐项作出的，而非全局统一。
+
+
+Table~\ref{tab:configs} reports the hyper-parameter search outcomes at a matched horizon; the searched axes target the hybrid training recipe (stable learning rate, warmup length, decay ratio, and schedule family).
+% 中文：表 \ref{tab:configs} 报告了在匹配步长下的超参与数据混合搜索结论；所搜索的轴针对混合模型的训练配方（稳定学习率、预热长度、衰减比例与调度族）。
+
+\begin{table}[htbp]
 \centering
 \caption{Hyper-parameter and data-mix search outcomes at a matched $5000$-step (S5: $20000$-step) horizon.}
 \label{tab:configs}
@@ -159,9 +535,10 @@ S5-01 & winner, $20000$ steps & \textbf{2.2054} & \textbf{winner} \\
 \bottomrule
 \end{tabular}
 \end{table}
-\
-\
-\begin{figure}[t]
+
+\noindent\textit{Note:} The search-stage IDs (S1--S5) are re-numbered for presentation; they correspond to the internal experiment ledger as follows: S1-01$\to$S2-02, S2-07$\to$S2-07, S3-02/03/04$\to$S3-02/03/04, S4-03$\to$S4-03, S5-01$\to$S5-01.
+
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\columnwidth]{figures/s5_01_loss_curve.png}
 \caption{Training-loss curve of the winning Mamba2-hybrid configuration over the $20000$-step verification run (seed $1234$); the decay tail (steps $19500$--$20000$) anneals the loss from $\sim2.34$ to $2.2054$.}

@@ -3692,3 +3692,69 @@ ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2
 
 **✅ 归档结论**：内存纪律已纳入日常监控，当前 .29 内存 719G/2TB(36%) swap 正常，无告警风险。
 
+---
+
+## 归档 2026-10-31（TASK 体积维护：36.6KB→<32KB）
+
+### [运维令] 2026-10-26 19:2x（**预训练正式落地并开跑：AdamW / WSD-D 指数 / TensorBoard 6006 / code/baize-llm 项目化**）· 用户直令 · 最高优先 — ✅ 已归档
+
+> 用户原话（逐条照录，六条）：
+> 1. 监控使用 tensorboard，在 `.29` 服务器监听 `6006` 端口
+> 2. WSD 的 **D 段使用 exponential 衰减**
+> 3. 优化器用 **AdamW**
+> 4. 训练脚本放置在 **`code/baize-llm`** 目录，组织好预训练项目目录结构，写 **README**
+> 5. 「你混乱了，**跟 μP 没有一毛钱关系**。」（指上一版报告 §4.2 的 μP 归因 —— 已删除，禁止再提）
+> 6. **开始执行**
+
+**已由运维预置（你不需要重写，直接复用）**
+- `code/baize-llm/` 全套：`README.md` + `configs/{common,s1,s2,decay}.env` + `configs/blend_{s1,decay}.tsv` + `scripts/{lib,preflight,gen_blend,train,tb_6006,lr_schedule,status}` + `docs/LAUNCHER_PATCH_EXP_DECAY.md`。
+- 报告已按六条修订：`doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_pretrain_plan_zh.html`（新增 §五「执行口径与工程落地」；§4.2 改为「已定案」；**μP 内容全删**）。
+- 关键口径（写死在 `configs/`）：16K / CP1 / DP16 / graph-OFF / FP8 tensorwise / AdamW / WSD-D 指数 1e-3→1e-4 / 三阶段累计 iters 700k→1,050k→1,070k / `--name baize2b`。
+
+**执行步骤（按序，每步留证据）**
+1. **部署目录**：`ln -sfn ...`；`ls -l` 确认。
+2. **launcher 特性**：`bash code/baize-llm/scripts/preflight.sh`。
+3. **TensorBoard**：`bash code/baize-llm/scripts/tb_6006.sh start`。
+4. **冒烟（单机 8 卡）**：`bash code/baize-llm/scripts/train.sh s1 --smoke 20`。
+5. **LR 指数形状验收**：`python code/baize-llm/scripts/lr_schedule.py ...`。
+6. **正式开跑 S1（16 卡）**：`setsid bash code/baize-llm/scripts/train.sh s1 ...`。
+7. **S2 / Decay**：S1 收尾后 `train.sh s2`；Decay 当前禁止开跑。
+8. **Checkpoint**：三阶段 `--save-interval` 统一 2000 步。
+9. **RoPE / 1M**：56 层中 4 层全注意力，RoPE max_position=1,048,576（1M）。
+10. **长上下文 ABF 准备**：产品目标 1M，训练保持 16K，路径=ABF（θ=1e6）外推 + 32K→64K→128K→256K 阶梯。
+
+**阻塞与红线**
+- 🚫 Decay 不得开跑（SFT-2605/SFT-Agent-2609 未分词）
+- 🚫 不抢 vision
+- 🚫 不许开 CUDA Graph
+- 🚫 不许把「2M/4M」当精确值对外
+- 🚫 磁盘红线：/nas_train 可用 <15TB ⇒ 先 prune
+- 🚫 RoPE 红线：不许只改 max_position 不改 rope_theta
+- 🚫 长上下文红线：不许拿跨文档拼接冒充长上下文收益
+
+**交付物**
+- `code/baize-llm/`（已随仓库预置）
+- `run/MEMORY_PRETRAIN_2B.md` 心跳
+- `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 追加
+- commit 前缀：`pretrain train:` / `pretrain run:`
+
+**✅ 归档结论**：全部 10 步执行步骤已完成。S1 训练在 .12+.29 双机 16 卡运行中（iter 30,660/700k, loss 2.151, ~598K tok/s）。TB6006 常驻。RoPE check_rope.py PASS。Decay 阻塞（待 data 线分词）。长上下文 ABF 准备完成（check_longctx_data.py + abf_plan.py 已跑）。所有红线仍有效但已纳入日常监控。
+
+---
+
+### [运维令] 2026-10-28 10:0x（**预训练计划定稿：Stable 4M/step × 70w 步 = 2.94T + 数据 pre-blend → nw=8 保 613K**）· 用户直令 · 最高优先 — ✅ 已归档
+
+> 用户原话（2026-10-28 10:0x）：「训练计划已定稿，成文见 `doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_training_plan_final_zh.html`；把 S 换成 4M tok/step（2.94T），数据做 pre-blend（只 Stable），pre-blend 不用等全部完成即可开训。」
+
+**① 定稿口径**：配方冻结（16K/CP1/DP16/mbs=1/gbs=256/accum=16/FP8/graph-OFF=613,992 tok/s）。Stable: GBS=256, ITERS=700000, seq=16384 → 4.19M tok/step → 2.94T。Decay: 4M/step, ~20000 步。LR: AdamW + WSD（2000 warmup → 1e-3 恒定; Decay 段指数衰减）。
+
+**② 吞吐恢复**：pre-blend → nw=8。根因=627 片小 shard fork-COW OOM → nw=0 → 308K。pre-blend 合并为 ~16 片大 shard → nw=8 fork 安全 → 恢复 613K。
+
+**③ 长上下文/监控**：ABF θ=1e6 + RoPE max_position=1048576（4 层注意力）；TB 常驻 .29:6006。
+
+**④ 交付**：改 train.sh/configs(GBS=256) + 重生成 blend; 8 卡 smoke 验证; 起跑 S 前 check_rope.py PASS; 计划报告在位。
+
+**⑤ 纪律**：不碰 vision/data/harness; 只 add 自己线文件。
+
+**✅ 归档结论**：计划已定稿并执行。S1 以 GBS=256 运行中（2.94T 目标, iter 30,660/700k）。pre-blend 已完成, nw=8 恢复, ~598K tok/s。check_rope.py PASS。计划报告在位。Decay 后置（待 data 线分词）。
+

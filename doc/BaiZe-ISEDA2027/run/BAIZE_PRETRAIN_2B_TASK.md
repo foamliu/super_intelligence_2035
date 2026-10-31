@@ -1,5 +1,5 @@
 # BAIZE_PRETRAIN_2B_TASK.md
-### 🚀 运维令 · 2026-10-31 09:1x（**接手维护 BaiZe 论文「预训练」章节**）· 用户直令 · 最高优先
+### [已完成] 🚀 运维令 · 2026-10-31 09:1x（**接手维护 BaiZe 论文「预训练」章节**）· 用户直令 · 最高优先
 
 > **用户令**：「下发指令给 pretrain agent 去改（论文预训练章节）。」
 
@@ -82,26 +82,7 @@ commit `pretrain 项目:`。
 
 > 📦 §运维令 2026-10-28 11:5x（blend 逻辑中文 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告已交付 `reports/report_pretrain_blend_logic_zh.html`（11KB, commit aa6d3eddf），澄清训练时不会串行出不同源（索引层交错）。需要时再读。
 
-### [运维令] 2026-10-28 10:0x（**预训练计划定稿：Stable 4M/step × 70w 步 = 2.94T + 数据 pre-blend → nw=8 保 613K**）· 用户直令 · 最高优先
-
-> 用户原话（2026-10-28 10:0x）：「训练计划已定稿，成文见 `doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_training_plan_final_zh.html`；把 S 换成 4M tok/step（2.94T），数据做 pre-blend（只 Stable），pre-blend 不用等全部完成即可开训。」
-
-**① 定稿口径（取代 09:3x 的 spawn 调试路径，spawn 不再是主路）**
-- 配方冻结不变：16K / CP1 / DP16 / **mbs=1 / gbs=256 / accum=16** / FP8 tensorwise / graph OFF = **613,992 tok/s**。🚫 不许再为吞吐改 seq/TP/CP/精度/graph。
-- **Stable（S1+S2 合并为 S）**：`GBS=256`、`ITERS=700000`、seq=16384 → **4.19M tok/step → 2.94T token**。config 落点：`s1.env` GBS 128→256（ITERS 保持 700000）。
-- **Decay**：4M/step、80B、~20000 步（80B vs 83.9B 的 5% 出入 Decay 起跑前定夺）；`UltraData-SFT-2605`/`SFT-Agent-2609` 未分词 → 后置。
-- **LR**：AdamW + WSD（2000 步 warmup → 1e-3 恒定；Decay 段指数衰减）。7 源配比沿用 `blend_s1.tsv`。
-
-**② 吞吐恢复改为「pre-blend → nw=8」**
-- 根因已定：627 片小 shard 的 blend 采样/索引撑大 fork-COW → OOM → 被迫 nw=0 → 数据/计算串行（308K）。pre-blend 把各源合并成 **~16–32 片大 shard**（对齐 613K 基线用的 16 片 p5b_l3 结构）后索引骤小、COW 可忽略 → **恢复 nw=8（fork 即可，不必 spawn）**。
-- 只 pre-blend **Stable 7 源**（Decay 暂不）；输出目录 `/nas_user/app.e0031982/datasets/pre-blend`；.12/.29 并发多开；**按源分开做，每源做完即可换入 gen_blend，无需等全部完成**。
-- pre-blend 完成前可用现有 tokenized 数据先起 smoke/验证；全量 S 起跑前至少把 en_v1_4（0.65 主源）pre-blend 完并换入。
-
-**③ 长上下文 / 监控（不变）**：ABF θ=1e6 + RoPE max_position=1048576（4 层注意力）；TB 常驻 `.29:6006`。
-
-**④ 交付**：① 改 `train.sh`/`configs`（GBS=256）+ 重生成 blend；② 8 卡 smoke（gbs256 + pre-blend 后 nw=8）验证 0 NaN + 吞吐 ≥500K，16 卡稳态对齐 613K；③ 起跑 S 前 `check_rope.py` PASS；④ 计划报告在位 `doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_training_plan_final_zh.html`；commit `pretrain train:` / `pretrain run:`。
-
-**⑤ 纪律**：不碰 vision/data/harness；盯内存/swap/磁盘余量（pre-blend 写 ~6TB）；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到 smoke 交付；只 add 自己线文件。
+> 📦 §运维令 2026-10-28 10:0x（预训练计划定稿）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31」节；**结论**：计划已定稿并执行，GBS=256/2.94T/700k运行中，pre-blend完成/nw=8恢复/613K，Decay后置待data线。需要时再读。
 
 > 📦 §运维令 2026-10-28 09:3x（锁定 613K 配置 + spawn 调优）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：613K 配方已冻结（16K/CP1/DP16/FP8/graph-OFF），根因=数据加载串行化(nw=0)，spawn 路径被 10:0x pre-blend 取代。需要时再读。
 
@@ -119,48 +100,7 @@ commit `pretrain 项目:`。
 > 📦 §运维令 2026-10-26 21:3x（RoPE θ 未生效：评估 + 方案 + 重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：θ=1e6 实现路径(ii) `--rotary-base` CLI + recipe 透传，commit ae3a093，三重验证 PASS；#799 运行时确认 θ=1e6 + 0崩；rank15 崩因=DDP DETAIL wrapper（非θ）；--dir 修正已落地。**仍有效红线**：check_rope.py PASS 需 ckpt（待 S1 重启）；lr-decay-shape exponential Decay 前验证。需要时再读。
 
 
-### [运维令] 2026-10-26 19:2x（**预训练正式落地并开跑：AdamW / WSD-D 指数 / TensorBoard 6006 / code/baize-llm 项目化**）· 用户直令 · 最高优先
-
-> 用户原话（逐条照录，六条）：
-> 1. 监控使用 tensorboard，在 `.29` 服务器监听 `6006` 端口
-> 2. WSD 的 **D 段使用 exponential 衰减**
-> 3. 优化器用 **AdamW**
-> 4. 训练脚本放置在 **`code/baize-llm`** 目录，组织好预训练项目目录结构，写 **README**
-> 5. 「你混乱了，**跟 μP 没有一毛钱关系**。」（指上一版报告 §4.2 的 μP 归因 —— 已删除，禁止再提）
-> 6. **开始执行**
-
-**已由运维预置（你不需要重写，直接复用）**
-- `code/baize-llm/` 全套：`README.md` + `configs/{common,s1,s2,decay}.env` + `configs/blend_{s1,decay}.tsv` + `scripts/{lib,preflight,gen_blend,train,tb_6006,lr_schedule,status}` + `docs/LAUNCHER_PATCH_EXP_DECAY.md`。
-- 报告已按六条修订：`doc/BaiZe-ISEDA2027/reports/report_pretrain_baize2b_pretrain_plan_zh.html`（新增 §五「执行口径与工程落地」；§4.2 改为「已定案」；**μP 内容全删**）。
-- 关键口径（写死在 `configs/`）：16K / CP1 / DP16 / graph-OFF / FP8 tensorwise / AdamW / WSD-D 指数 1e-3→1e-4 / 三阶段累计 iters 700k→1,050k→1,070k / `--name baize2b`。
-
-**执行步骤（按序，每步留证据）**
-1. **部署目录**：`ln -sfn /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm /nas_train/app.e0031982/code/baize-llm`（git pull 后再做一遍）；`ls -l` 确认。
-2. **launcher 特性**：`bash code/baize-llm/scripts/preflight.sh`。若报「不支持 `--lr-decay-shape`」⇒ 按 `code/baize-llm/docs/LAUNCHER_PATCH_EXP_DECAY.md` 打补丁（新增一个参数 + WSD 分支，**默认 linear 不变**），并把 `pretrain_launcher.py` 的 diff 存入 `run/` 后 commit。
-3. **TensorBoard**：`bash code/baize-llm/scripts/tb_6006.sh start`。判据：`ss -ltn | grep 6006` 见 `0.0.0.0:6006`、`curl 127.0.0.1:6006` 有 HTTP 响应、日志 `/tmp/baize_tb_6006.log` 无 traceback。**必须能在 .29 上常驻**（跨轮询存活）。
-4. **冒烟（单机 8 卡）**：`bash code/baize-llm/scripts/train.sh s1 --smoke 20`。判据：0 NaN、`--optimizer adam` 生效、日志无 graph capture、峰值显存 ≤78GB、吞吐落在 480–550K（S1 2.097M tok/step 档）。
-5. **LR 指数形状验收**：`python code/baize-llm/scripts/lr_schedule.py --peak 1e-3 --min 1e-4 --warmup 2000 --decay-iters 20000 --total-iters 1070000`，并从 TB 导出 `learning-rate` 做 `--tb-csv` 对账（p=0.25/0.5/0.75 = 5.623e-4/3.162e-4/1.778e-4，相对误差 ≤0.1%）。**若 launcher 无 shape 支持且暂不打补丁，必须显式 `LR_DECAY_SHAPE=linear` 并在心跳写「降级」，不许假装已指数。**
-6. **正式开跑 S1（16 卡）**：先核 `.12` 空闲（`train.sh` 会自动拒绝非空闲）；`setsid bash code/baize-llm/scripts/train.sh s1 > /tmp/baize_s1_launch.log 2>&1 < /dev/null &`。起跑后 30 分钟内交 `pretrain run:` 心跳，必须含：`tok/s`、`per-GPU tok/s`、峰值显存、`--train-iters/from`、TB URL、`AdamW` 与 `lr_decay_shape` 实值。
-7. **S2 / Decay**：S1 收尾后 `train.sh s2`；Decay **当前禁止开跑**（见下）。
-8. **Checkpoint（用户 2026-10-26 补令）**：三阶段 `--save-interval` 统一 **2000 步**（`configs/s1|s2|decay.env` 已改，`train.sh` 自动带上）。起跑后用 `ls nemo_experiments/baize2b/checkpoints/iter_* | wc -l` 确认按 2000 步递增（首个点 = 2000）。**同时必须控盘**：每 20k 步跑 `bash scripts/prune_ckpts.sh --keep-last 3 --milestone-every 25000`（dry-run），每 50k 步 `--apply`；保留最近 3 + 每 25k 里程碑 + `latest_checkpointed_iteration.txt` 指向者。S1 350 个 ckpt 全留会占 1.5–10.5TB。
-9. **RoPE / 1M（用户 2026-10-26 补令）**：56 层中 **4 层全注意力**，RoPE **max embedding position = 1,048,576**（1M）；`configs/common.env` 已设 `ROPE_MAX_POS=1048576` + `ROPE_THETA=1000000`（ABF）。`train.sh` 自动传 `--rotary-base 1000000`；launcher 若无该参数会**直接拒绝开跑**（`ROPE_REQUIRED=1`），按 `code/baize-llm/docs/LAUNCHER_PATCH_EXP_DECAY.md` §5 打补丁。导出 HF 后必须 `python scripts/check_rope.py --hf-dir <dir>` **PASS**（56 层 / attention=4 / max_pos=1048576 / theta=1e6 / rope_scaling=None）。冒烟后核对：0 NaN、前 500 步 loss 与 baseline 抬升 ≤5%。
-10. **长上下文 ABF 准备（用户 2026-10-26 补令「长上下文用 ABF，要为此做好准备」）**：口径 = **产品目标 1M**（用户 2026-10-26 明确「产品目标自然是长上下文 1M，要不为啥预训练就用 16K 这么长」）、训练保持 **16K**（16K→1M 外推 64×，优于 4K→1M 的 256×）、路径 = **ABF（θ=1e6）外推** + **32K→64K→128K→256K 阶梯**（16 卡上限 256K[CP16/DP1]；1M 原生训练需 ≥64 卡）（`configs/longctx_ladder.tsv` + `scripts/longctx_ladder.sh`，每级保持 tok/mb/GPU=16384）。**本轮必做三件**：① `python scripts/check_longctx_data.py --shards <tokenized源目录> --eod-id 129280 --targets 32768,131072 --sample 8` 出 token 占比（≥32K 应 ≥20%、≥128K ≥5%），写进心跳；② 首个可导出 ckpt 上跑一次**零训练** PPL/passkey 基线（4K→1M，复用 `run/baize_b1_longctx_extend.py`），并补 **RULER/needle**（1M 目标 RULER ≥70%），留档到 `run/`；③ `python scripts/abf_plan.py` 复核 θ/CP 表（默认**不抬 θ**，只在实测退化时升级，升级后必须复测 16K）。完整方案 `code/baize-llm/docs/LONGCTX_ABF_PLAN.md`。
-
-**阻塞与红线**
-- 🚫 **Decay 不得开跑**：`UltraData-SFT-2605`（0.60）/ `UltraData-SFT-Agent-2609`（0.12）仍「未分词」（`run/data/DATA_MAPPING.md` 0 shard），`gen_blend.py` 会 rc=2 直接退出。需 data 线分词后才能跑；不许用别的数据偷偷替代。
-- 🚫 **不抢 vision**：16 卡 = 借 `.12`；`.12` 非空闲即停手，改单机 8 卡（`--nodes 1`）并在心跳说明。
-- 🚫 **不许开 CUDA Graph**：16K 下会掉到 ~110K tok/s（#786/#788 已实测定性）。
-- 🚫 不许把「2M/4M」当精确值对外：DP16×16K = 262,144，落地档 = gbs128(2,097,152) / gbs256(4,194,304)。
-- 🚫 **磁盘红线**：`/nas_train` 可用 <15TB ⇒ 先 `prune_ckpts.sh --apply` 再继续训练；不许为保 ckpt 把盘写满（会连带卡死 data 迁移与 eval）。
-- 🚫 **RoPE 红线**：不许只改 `max_position_embeddings` 不改 `rope_theta`（实测全 NaN）；不许把「训练跑起来了」当成 1M 配置达标（`max_pos` 只在导出 config 生效，必须过 `check_rope.py`）。
-- 🚫 **长上下文红线**：不许拿「跨文档拼接出来的长序列」冒充长上下文收益（先看 `check_longctx_data.py` 的 token 占比）；θ 若升级必须复测 16K PPL（退化 ≤1%），否则回退。
-
-**交付物**
-- `code/baize-llm/`（已随仓库预置；若你补丁/微调则 commit `pretrain train:`）
-- `run/MEMORY_PRETRAIN_2B.md` 心跳（AdamW / shape / TB URL / 冒烟数值 / 起跑状态）
-- `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 追加「§五·9 预训练落地（AdamW + WSD-exp + TB6006 + 项目化）」
-- commit 前缀：脚本/配置 = `pretrain train:`；实跑 = `pretrain run:`
-
+> 📦 §运维令 2026-10-26 19:2x（预训练正式落地并开跑）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31」节；**结论**：全10步已完成，S1运行中(iter30660/700k,loss2.151,~598K tok/s)，TB6006常驻，RoPE PASS，Decay阻塞待data线。需要时再读。
 
 > 📦 §运维令 15:3x（预训练构想报告 + ETA）**已完成**（#794：`report_pretrain_baize2b_pretrain_plan_zh.html` 22.5KB；§五执行口径已补）→ 原文归档 run/ARCHIVE_OPERATOR_PRETRAIN.md。
 > 📦 §运维令 14:3x（补写 #792 双机实测进吞吐报告）**已完成**（#793：报告 14,208→20,888B）→ 原文同上归档。
