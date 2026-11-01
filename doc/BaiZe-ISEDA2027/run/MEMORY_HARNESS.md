@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1161 内存自检200th PASS+scan_backlog=0·硬约束复核0结果JSON tracked✅. predict:cline500(DONE)·opencode499·pi441·codex303·claude-code430·hermes97·deepseek77→6路runner alive(全healthy,progress mtime<17min). eval:cline326/442·codex176/224·opencode395/488·pi298/410·claude-code263/343·hermes48/64·deepseek57/73. infra单列✅.
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1160 incr_eval链+内存自检+体积归档✅·R1161 内存自检200th+scan_backlog=0+硬约束复核✅
-当前动作:     R1161 内存自检200th PASS(运维令10-30 11:1x):avail~1.4TiB(502Gi used/2.0Ti total)·无本线>50GB(6路predict runner·最大cline-hub daemon3.4GB非predict·opencode1.1GB·deepseek SDK268MB·hermes child186MB·其余<33MB)·无partitions()/list()失控·docker=0(eval时短暂起容器). scan_backlog=0(全real-patch已evald)·7路real=evald=0backlog✅. 硬约束:tracked=523(500instances+enriched+manifests)·0结果JSON✅. /data6.0Tfree.
+PHASE:        R1162 内存自检201st PASS+incr_eval 1backlog RESOLVED+scan_backlog=0·硬约束复核0结果JSON tracked✅. predict:cline500(DONE)·opencode499·pi441·codex303·claude-code430·hermes97·deepseek77→6路runner alive(全healthy). eval:cline326/442·codex176/224·opencode396/489·pi298/410·claude-code263/343·hermes48/64·deepseek57/73. infra单列✅.
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1161 incr_eval链+内存自检+体积归档✅·R1162 内存自检201st+incr_eval opencode pylint-7080 RESOLVED+scan_backlog=0+硬约束复核✅
+当前动作:     R1162 内存自检201st PASS(运维令10-30 11:1x):avail~1.4TiB(501Gi used/2.0Ti total)·无本线>50GB(6路predict runner·最大cline-hub daemon3.0GB非predict·opencode1.1GB·deepseek SDK269MB·hermes child186MB·其余<33MB)·无partitions()/list()失控·docker=0(eval时短暂起容器). scan_backlog:1项→opencode pylint-dev__pylint-7080→incr_eval→RESOLVED(n488→489 r395→396)·7路real=evald=0backlog✅. 硬约束:tracked=501(500instances+enriched+manifests)·0结果JSON✅. /data6.0Tfree.
 下一步:       ①6路predict持续(cline DONE·opencode 1missing·pi 59missing·codex 197missing·claude-code 70missing·hermes[97/500,~3inst/h,ETA~9d]·deepseek[77/500,~3.5inst/h,ETA~5d]) ②每轮scan_backlog→有新real-patch则incr_eval ③全部7路predict完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON(本轮复核0✅) ⑥TASK=34.9KB(>32KB,2活跃块不可归档,<40KB红线OK)·MEMORY≤32KB✅
 阻塞:         无.
 ERROR_COUNT:  0
-  📦 体积：TASK=34.9KB(35757B,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY≈28.1KB(28775B,≤32KB✅,本轮无归档)
+  📦 体积：TASK=34.9KB(35757B,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY≈29.4KB(29402B,≤32KB✅,本轮无归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [12:02] R1162 内存自检201st PASS+incr_eval 1backlog RESOLVED:avail~1.4TiB(501Gi used)·无本线>50GB(6路runner·最大cline-hub daemon3.0GB非predict·opencode1.1GB·deepseek SDK269MB·hermes child186MB·其余<33MB)·无partitions()/list()·docker=0(eval时短暂起容器). scan_backlog:1项→opencode pylint-dev__pylint-7080(patchlen=3649)→incr_eval(docker sweb.eval容器)→RESOLVED(n488→489 r395→396)·7路real=evald=0backlog✅. 硬约束tracked=501全合法instances+enriched+manifests·0结果JSON✅. predict:cline500(DONE)·opencode499·pi441·codex303·claude-code430·hermes97·deepseek77. eval:cline326/442·codex176/224·opencode396/489·pi298/410·claude-code263/343·hermes48/64·deepseek57/73·infra单列✅·/data6.0Tfree·TASK34.9KB·MEMORY≈29.4KB·未完成指令:有(10-30内存自检常驻+10-28full500 6路predict仍跑)⇒WAITING=0.
+
 > [11:54] R1161 内存自检200th PASS+scan_backlog=0:avail~1.4TiB(502Gi used)·无本线>50GB(6路runner·最大cline-hub daemon3.4GB非predict·opencode1.1GB·deepseek SDK268MB·hermes child186MB·其余<33MB)·无partitions()/list()·docker=0(eval时短暂起容器). scan_backlog=0(全real-patch已evald)·7路real=evald=0backlog✅. 硬约束tracked=523全合法instances+enriched+manifests·0结果JSON✅. predict:cline500(DONE)·opencode499·pi441·codex303·claude-code430·hermes97(+1自R1160)·deepseek77. eval:cline326/442·codex176/224·opencode395/488·pi298/410·claude-code263/343·hermes48/64·deepseek57/73·infra单列✅·/data6.0Tfree·TASK34.9KB·MEMORY≈28.1KB·未完成指令:有(10-30内存自检常驻+10-28full500 6路predict仍跑)⇒WAITING=0.
 
 > [11:46] R1160 内存自检199th PASS+incr_eval 2backlog全RESOLVED:avail~1.4TiB(500Gi used)·无本线>50GB(6路runner·最大cline-hub daemon2.9GB非predict·opencode1.1GB·其余<33MB)·无partitions()/list()·docker=0(eval时短暂起容器). scan_backlog:2项→①deepseek django-11815→incr_eval→RESOLVED(n72→73 r56→57)②hermes astropy-14539→incr_eval→RESOLVED(n63→64 r47→48)·7路real=evald=0backlog✅. 硬约束tracked=501(500instances+1backlog_scan)·0结果JSON✅. predict:cline500(DONE)·opencode499·pi441·codex303·claude-code430·hermes96·deepseek77. eval:cline326/442·codex176/224·opencode395/488·pi298/410·claude-code263/343·hermes48/64·deepseek57/73·infra单列✅·/data6.0Tfree·TASK34.9KB·MEMORY≈28.5KB·未完成指令:有(10-30内存自检常驻+10-28full500 6路predict仍跑)⇒WAITING=0.
