@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v4已交付+验证完成
 已完成:       ✅A.LC+Agentic调研报告v4(report_data_lc_agentic_survey_zh.html 102891B/43table/0script/18+14候选/72 HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(92.5%+,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/43table平衡/all tags balanced)
-当前动作:     唤醒1076(2026-11-02 01:38):运维令10-31交付物v4复核→全PASS(102891B/7节/0script/43table平衡/0外链/幂等OK/34未核到)+85M下载alive(PID2694473,etimes≈17049s≈4.7h)
+当前动作:     唤醒1077(2026-11-02 01:58):运维令10-31交付物v4最终复核→全PASS(102891B/7节/0script/43table=43table平衡/0外链/HTMLParser 0 err/幂等OK/34未核到/72 HF链接)+git synced
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [01:58] 唤醒1077：运维令10-31交付物v4最终复核 → ①report=102891B(≥25KB✓)/7节(§1~§7✓)/0<script>/43<table>=43</table>平衡✓/HTMLParser 0 tag errors 0 unclosed/0非HF外链(72 href全huggingface.co)/34「未核到」✓/13 gated✓/generator --check-idempotent OK(81339chars);②git synced(## main...origin/main✓,report+generator已commit 183993e00 pushed);③TASK=27958B/MEMORY~32KB(均<40KB无需归档)→心跳WAITING=1
 > [01:38] 唤醒1076：运维令10-31交付物v4复核 → ①report=102891B(≥25KB✓)/7节(§1~§7✓)/0<script>/43<table>=43</table>平衡✓/HTMLParser 0 tag errors/0 unclosed/0 external links/34「未核到」✓/generator正常运行→102891B一致(幂等✓);②git synced(## main...origin/main✓,report+generator已commit 183993e00 pushed);③85M:PID2694473 alive(etimes≈17049s≈4.7h);④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~32KB(均<40KB无需归档)→心跳WAITING=1
 > [00:43] 唤醒1075：运维令10-31交付物v4再复核 → ①report=102891B(≥25KB✓)/7节(§1~§7✓)/0<script>/72 href全指向huggingface.co(0非HF外链)/43<table>=43</table>平衡✓/HTMLParser 0 tag errors/0 unclosed/0 external CSS/JS/img/34「未核到」✓/47 gated✓/generator --check-idempotent OK(81339chars);②git synced(## main...origin/main✓,report+generator已commit 183993e00+61c32fc02 pushed);③85M:PID2694473 alive(etimes≈13762s≈3.8h)+bash PID2668156(etimes≈179185s≈49.8h);④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~31KB(均<40KB无需归档)→心跳WAITING=1
 > [00:2x] 唤醒1074：运维令10-31交付物v4复核 → ①report=102891B(≥25KB✓)/7节(§1~§7✓)/0<script>/72 href全指向huggingface.co(0非HF外链)/43<table>=43</table>平衡✓/HTMLParser 0 tag errors/34「未核到」✓/13 gated✓/generator --check-idempotent OK(81339chars);②git synced(HEAD=origin/main=392e90b06,report+generator已commit 183993e00 pushed);③85M:PID2694473 alive(etimes≈12634s≈211min)+bash download_85m PID2668156;④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~31KB(均<40KB无需归档)→心跳WAITING=1
