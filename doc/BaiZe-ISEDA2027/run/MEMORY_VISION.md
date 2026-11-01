@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #468 · 2026-11-01 13:03】** 无新运维令。git fetch→origin/main无vision新提交（仅pretrain #1069~#1072/harness R1163~R1165/zhulong wake#437~#438/data news活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=24490B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #467 · 2026-11-01 11:3x】** 无新运维令。git fetch→origin/main无vision新提交（仅harness R1156~R1158/pretrain #1066~#1067/data survey/zhulong wake#435活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=24098B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #466 · 2026-11-01 10:57】** 无新运维令。git fetch→origin/main无vision新提交（仅harness R1154~R1155/pretrain #1064~#1065/zhulong wake#434活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=23718B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -51,6 +53,8 @@ WAITING: 1
 > 🆕 **【OCR 合成数据 10M ✅ DONE · wake#275 · 2026-10-26 04:0x】** 用户令(22:4x)。全量 DONE：ok=9,999,999 fail=0 · 2000 tars · 470GB(0.5046TB) · 893.6 img/s · 3h6m30s · 8类 cat_counts==plan。交付物：数据本体+index.jsonl(9.999M)+STATS/VALIDATION/DATASET_CARD/MANIFEST+preview_200.html+preview_10k.tar+报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B)+5脚本`vision/ocr_synth/*.py`。加载器兼容已验 build_gpic_loader→(16,3,224,224)。**两处质量偏差(如实披露,未掩盖)**：①文本sha1去重 **2.4486%>1%目标**(244,858多余,合成文本组合空间有限)；②泄漏 **113命中**(leak_rate1.16e-5,短串巧合如0.29→029非真实泄漏)。**✅ 已裁定：接受现状**（2026-10-28 用户直令·accept as-is·不重生成/不过滤）。本轮只造数据不启encoder训练(等用户批预算)。详见 daily-memories-vision/2026-10-26.md。
 
 ## 状态头
+
+> **本唤醒流水 [wake #468, 2026-11-01 13:03]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision新提交（仅pretrain #1069~#1072/harness R1163~R1165/zhulong wake#437~#438/data news活动） → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=24490B（均≤32KB✓） → 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈24KB。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > **本唤醒流水 [wake #443, 2026-10-31 18:0x]**：✅ 空唤醒（无新运维令）+ 体积归档。git pull --rebase（up to date）→ 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检 TASK=35733B（**>32KB**）→ 归档 16:0x 块(3856B)+11:2x 块(1830B) 原文移入 ARCHIVE_OPERATOR_VISION.md，各留 1 行指针 → 归档后 TASK=27230B（≤32KB✓）/MEMORY=14093B（≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈14KB（归档 5686B → ARCHIVE_OPERATOR_VISION.md）。**未完成指令：无** ⇒ **WAITING: 1**。
 > **本唤醒流水 [wake #448, 2026-10-31 21:0x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=16393B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈16KB。**未完成指令：无** ⇒ **WAITING: 1**。
